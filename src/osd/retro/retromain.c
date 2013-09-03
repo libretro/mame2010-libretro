@@ -21,7 +21,7 @@
 #define DSTSHIFT_B			0
 
 #include "rendersw.c"
-
+ 
 #define FUNC_PREFIX(x)		rgb888_##x
 #define PIXEL_TYPE			UINT32
 #define SRCSHIFT_R			0
@@ -102,7 +102,7 @@ static int FirstTimeUpdate = 1;
 //============================================================
 //  LIBCO
 //============================================================
-int pauseg=0;
+int pauseg=0; 
 
 #include "libco/libco.h"
 
@@ -115,7 +115,7 @@ void colib_mainthread(){
 
 void colib_emuthread(){
 	co_switch(emuThread);
-}
+} 
 
 //============================================================
 //  RETRO
@@ -287,7 +287,7 @@ int executeGame(char* path) {
 
 	return result;
 } 
-
+ 
 
 //============================================================
 //  main

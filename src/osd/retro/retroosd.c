@@ -44,6 +44,11 @@ void osd_update(running_machine *machine, int skip_redraw)
 	const render_primitive_list *primlist;
 	UINT8 *surfptr;
 
+	if(pauseg==-1){
+		machine->schedule_exit();
+		return;
+	}
+
 	if (FirstTimeUpdate == 1) {
 		skip_redraw = 0; //force redraw to make sure the video texture is created
 	}

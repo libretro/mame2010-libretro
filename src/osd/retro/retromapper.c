@@ -69,9 +69,12 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 }
 
 static void retro_wrap_emulator()
-{
-    
+{    
     mmain(1,RPATH);
+
+    pauseg=-1;
+
+    environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0); 
 
     // Were done here
     co_switch(mainThread);
@@ -106,12 +109,10 @@ void retro_init (void){
 
 }
 
-void Main_UnInit(){}
-
 void retro_deinit(void)
 {
 	 if(emuThread){ 
-       		if(pauseg!=-1)Main_UnInit();
+
         	co_delete(emuThread);
         	emuThread = 0;
     	 }
@@ -179,7 +180,12 @@ bool retro_load_game(const struct retro_game_info *game)
 
 void retro_unload_game(void)
 {
-	LOGI("Retro unload_game\n");
+	if(pauseg==0){
+		pauseg=-1;				
+		colib_emuthread();
+	}
+
+	LOGI("Retro unload_game\n");	
 }
 
 // Stubs
