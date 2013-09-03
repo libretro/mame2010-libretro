@@ -15,6 +15,28 @@
 #################   BEGIN USER-CONFIGURABLE OPTIONS   #####################
 ###########################################################################
 
+NATIVE :=0
+
+ifeq ($(platform), android)
+BUILD_AND :=1
+else
+BUILD_AND :=0
+endif
+
+OPTIMIZE=2
+CROSS_BUILD :=1 
+CROSSBUILD  :=1 
+TARGETOS=linux  
+SUBTARGET=mame
+OSD=retro
+
+NOWERROR = 1
+ANDROID = 1
+AARMV7=1
+
+X86_MIPS3_DRC =
+X86_PPC_DRC =
+FORCE_DRC_C_BACKEND = 1
 
 #-------------------------------------------------
 # specify core target: mame, mess, etc.
@@ -206,10 +228,10 @@ endif
 BUILD_EXPAT = 1
 
 # uncomment next line to build zlib as part of MAME build
-BUILD_ZLIB = 1
+# BUILD_ZLIB = 1
 
 # uncomment next line to include the symbols
-# SYMBOLS = 1
+#  SYMBOLS = 1
 
 # specify symbols level or leave commented to use the default
 # (default is SYMLEVEL = 2 normally; use 1 if you only need backtrace)
@@ -347,7 +369,7 @@ endif
 FULLNAME = $(PREFIX)$(PREFIXSDL)$(NAME)$(SUFFIX)$(SUFFIX64)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 
 # add an EXE suffix to get the final emulator name
-EMULATOR = $(FULLNAME)$(EXE)
+EMULATOR = $(FULLNAME)$(EXE)-libretro.so
 
 
 
@@ -569,7 +591,8 @@ LIBDASM = $(OBJ)/libdasm.a
 LIBSOUND = $(OBJ)/libsound.a
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
-LIBOSD = $(OBJ)/libosd.a
+#LIBOSD = $(OBJ)/libosd.a
+LIBOSD =  $(OBJ)/osd/retro/retromain.o $(OBJ)/osd/retro/libco/libco.o
 
 VERSIONOBJ = $(OBJ)/version.o
 
@@ -606,6 +629,39 @@ SOFTFLOAT = $(OBJ)/libsoftfloat.a
 
 
 
+ifeq ($(BUILD_AND),0)
+
+CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+PLATCFLAGS += -DPC_BUILD -DRETRO_AND -DRETRO -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants 
+LDFLAGS +=  -fPIC -shared -Wl,--version-script=src/osd/retro/link.T
+NATIVELD = g++
+NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+NATIVECC = g++
+NATIVECFLAGS = -std=gnu99 
+CC = g++
+AR = @ar
+LD = @g++ 
+CCOMFLAGS += $(PLATCFLAGS)
+CCOMFLAGS += -fsigned-char -finline  
+CCOMFLAGS += -ffast-math  -fsingle-precision-constant
+else
+
+CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO -DRETRO_AND -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants -mstructure-size-boundary=32  -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
+LDFLAGS += -Wl,--fix-cortex-a8 -llog -fPIC -shared -Wl,--version-script=src/osd/retro/link.T
+NATIVELD = g++
+NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+NATIVECC = g++
+NATIVECFLAGS = -std=gnu99 
+CC = @arm-linux-androideabi-g++
+AR = @arm-linux-androideabi-ar
+LD = @arm-linux-androideabi-g++ 
+CCOMFLAGS += $(PLATCFLAGS)
+CCOMFLAGS += -fsigned-char -finline  
+CCOMFLAGS += -ffast-math  -fsingle-precision-constant
+endif
+
+
 #-------------------------------------------------
 # 'default' target needs to go here, before the 
 # include files which define additional targets
@@ -631,6 +687,7 @@ BUILDOUT = $(BUILDOBJ)
 # include the various .mak files
 #-------------------------------------------------
 
+
 # include OSD-specific rules first
 include $(SRC)/osd/$(OSD)/$(OSD).mak
 
@@ -655,6 +712,14 @@ emulator: maketree $(BUILD) $(EMULATOR)
 
 buildtools: maketree $(BUILD)
 
+ifeq ($(NATIVE),1)
+	cp -R $(OBJ)/build/* prec-build/
+	$(RM) -r $(OBJ)/osd
+	$(RM) -r $(OBJ)/lib/util
+	$(RM) -r $(OBJ)/libutil.a
+	$(RM) -r $(OBJ)/libocore.a
+endif
+
 tools: maketree $(TOOLS)
 
 maketree: $(sort $(OBJDIRS))
@@ -666,6 +731,8 @@ clean: $(OSDCLEAN)
 	$(RM) $(EMULATOR)
 	@echo Deleting $(TOOLS)...
 	$(RM) $(TOOLS)
+	$(RM) prec-build/*
+
 ifdef MAP
 	@echo Deleting $(FULLNAME).map...
 	$(RM) $(FULLNAME).map
@@ -685,6 +752,25 @@ checkautodetect:
 $(sort $(OBJDIRS)):
 	$(MD) -p $@
 
+ifeq ($(NATIVE),0)
+
+$(OBJ)/build/file2str:
+	mkdir -p $(OBJ)/build
+	cp -R prec-build/file2str $(OBJ)/build 
+
+$(OBJ)/build/m68kmake:
+	cp -R prec-build/m68kmake $(OBJ)/build 
+
+$(OBJ)/build/png2bdc:
+	cp -R prec-build/png2bdc $(OBJ)/build 
+
+$(OBJ)/build/tmsmake:
+	cp -R prec-build/tmsmake $(OBJ)/build 
+
+$(OBJ)/build/verinfo:
+	cp -R prec-build/verinfo $(OBJ)/build 
+
+endif
 
 
 #-------------------------------------------------
