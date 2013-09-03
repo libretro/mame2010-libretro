@@ -16,10 +16,12 @@
 /***************************************************************************
     GLOBAL VARIABLES
 ***************************************************************************/
-
+#ifdef ANDROID_BUILD
+UINT8 no_priority_size_is_wrong[1];
+#else
 /* if this line errors during compile, the size of NO_PRIORITY is wrong and I need to use something else */
 UINT8 no_priority_size_is_wrong[2 * (sizeof(NO_PRIORITY) == 3) - 1];
-
+#endif
 
 
 /***************************************************************************
