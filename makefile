@@ -592,7 +592,12 @@ LIBSOUND = $(OBJ)/libsound.a
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
 #LIBOSD = $(OBJ)/libosd.a
+
+ifeq ($(BUILD_AND),0)
 LIBOSD =  $(OBJ)/osd/retro/retromain.o $(OBJ)/osd/retro/libco/libco.o
+else
+LIBOSD =  $(OBJ)/osd/retro/retromain.o $(OBJ)/osd/retro/libco/libco.o $(OBJ)/osd/retro/libco/armeabi_asm.o
+endif
 
 VERSIONOBJ = $(OBJ)/version.o
 
@@ -653,6 +658,7 @@ NATIVELD = g++
 NATIVELDFLAGS = -Wl,--warn-common -lstdc++
 NATIVECC = g++
 NATIVECFLAGS = -std=gnu99 
+CC_AS = @arm-linux-androideabi-gcc
 CC = @arm-linux-androideabi-g++
 AR = @arm-linux-androideabi-ar
 LD = @arm-linux-androideabi-g++ 
@@ -798,6 +804,11 @@ endif
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
+
+ifeq ($(BUILD_AND),1)
+$(LIBCOOBJ)/armeabi_asm.o:
+	$(CC_AS) -c $(SRC)/osd/$(OSD)/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 	@echo Compiling $<...

@@ -64,10 +64,13 @@ OSDCOREOBJS := \
 #-------------------------------------------------
 # OSD mini library
 #-------------------------------------------------
-
+ifeq ($(BUILD_AND),0)
 OSDOBJS = \
-	$(MINIOBJ)/retromain.o $(LIBCOOBJ)/libco.o
-
+	$(MINIOBJ)/retromain.o $(LIBCOOBJ)/libco.o 
+else
+OSDOBJS = \
+	$(MINIOBJ)/retromain.o $(LIBCOOBJ)/libco.o $(LIBCOOBJ)/armeabi_asm.o
+endif
 
 #-------------------------------------------------
 # rules for building the libaries
