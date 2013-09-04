@@ -34,9 +34,15 @@ NOWERROR = 1
 ANDROID = 1
 AARMV7=1
 
+ifeq ($(BUILD_AND),1)
 X86_MIPS3_DRC =
 X86_PPC_DRC =
 FORCE_DRC_C_BACKEND = 1
+else
+X86_MIPS3_DRC = 1
+X86_PPC_DRC = 1
+FORCE_DRC_C_BACKEND = 0
+endif
 
 #-------------------------------------------------
 # specify core target: mame, mess, etc.

@@ -1,6 +1,6 @@
 //============================================================
 //
-//  miniwork.c - Minimal core work item functions
+//  minimisc.c - Minimal core miscellaneous functions
 //
 //============================================================
 //
@@ -42,123 +42,100 @@
 #include "osdcore.h"
 #include <stdlib.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <time.h>
+#include <sys/time.h>
 #include "log.h"
+
 //============================================================
-//  TYPE DEFINITIONS
+//  osd_malloc
 //============================================================
 
-struct _osd_work_item
+void* osd_malloc(size_t size)
 {
-	void *result;
-};
-
-
-
-//============================================================
-//  osd_work_queue_alloc
-//============================================================
-
-osd_work_queue *osd_work_queue_alloc(int flags)
-{
-	// this minimal implementation doesn't need to keep any state
-	// so we just return a non-NULL pointer
-	return (osd_work_queue *)1;
+	return malloc(size);
 }
 
 
 //============================================================
-//  osd_work_queue_items
+//  osd_malloc_array
 //============================================================
 
-int osd_work_queue_items(osd_work_queue *queue)
+void *osd_malloc_array(size_t size)
 {
-	// we never have pending items
-	return 0;
+
 }
 
 
 //============================================================
-//  osd_work_queue_wait
+//  osd_free
 //============================================================
 
-int osd_work_queue_wait(osd_work_queue *queue, osd_ticks_t timeout)
+void osd_free(void *ptr)
 {
-	// never anything to wait for, so do nothing
-	return TRUE;
-}
 
-
-//============================================================
-//  osd_work_queue_free
-//============================================================
-
-void osd_work_queue_free(osd_work_queue *queue)
-{
-	// never allocated anything, so nothing to do
-}
-
-
-//============================================================
-//  osd_work_item_queue
-//============================================================
-
-osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, INT32 numitems, void *parambase, INT32 paramstep, UINT32 flags)
-{
-	osd_work_item *item;
-	int itemnum;
-
-	// allocate memory to hold the result
-	item = (osd_work_item *)malloc(sizeof(*item));
-	if (item == NULL)
-		return NULL;
-
-	write_log("work item queue: size=%i \n", numitems);
-	// loop over all requested items
-	for (itemnum = 0; itemnum < numitems; itemnum++)
-	{
-		// execute the call directly
-		item->result = (*callback)(parambase, 0);
-
-		// advance the param
-		parambase = (UINT8 *)parambase + paramstep;
+	if (ptr) {
+		free(ptr);
 	}
-
-	// free the item if requested
-	if (flags & WORK_ITEM_FLAG_AUTO_RELEASE)
-	{
-		free(item);
-		item = NULL;
-	}
-	return item;
 }
 
 
 //============================================================
-//  osd_work_item_wait
+//  osd_alloc_executable
 //============================================================
 
-int osd_work_item_wait(osd_work_item *item, osd_ticks_t timeout)
+void *osd_alloc_executable(size_t size)
 {
-	// never anything to wait for, so do nothing
-	return TRUE;
+	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
+}
+
+//============================================================
+//  osd_free_executable
+//
+//  frees memory allocated with osd_alloc_executable
+//============================================================
+
+void osd_free_executable(void *ptr, size_t size)
+{
+	munmap(ptr, size);
 }
 
 
 //============================================================
-//  osd_work_item_result
+//  osd_break_into_debugger
 //============================================================
 
-void *osd_work_item_result(osd_work_item *item)
+void osd_break_into_debugger(const char *message)
 {
-	return item->result;
+
 }
 
 
 //============================================================
-//  osd_work_item_release
+//  osd_get_clipboard_text
 //============================================================
 
-void osd_work_item_release(osd_work_item *item)
+char *osd_get_clipboard_text(void)
 {
-	free(item);
+	// can't support clipboards generically
+	return NULL;
+}
+
+
+//============================================================
+//  osd_get_slider_list
+//============================================================
+
+const void *osd_get_slider_list()
+{
+	// nothing to slide in mini OSD
+	return NULL;
+}
+
+const void osd_output_text(const char* format)
+{
+	write_log(format);
 }

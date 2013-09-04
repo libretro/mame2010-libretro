@@ -54,12 +54,13 @@ OBJDIRS += $(MINIOBJ) $(LIBCOOBJ)
 #-------------------------------------------------
 
 OSDCOREOBJS := \
-	$(MINIOBJ)/minidir.o \
-	$(MINIOBJ)/minifile.o \
-	$(MINIOBJ)/minimisc.o \
-	$(MINIOBJ)/minisync.o \
-	$(MINIOBJ)/minitime.o \
-	$(MINIOBJ)/miniwork.o \
+	$(MINIOBJ)/retrodir.o \
+	$(MINIOBJ)/retrofile.o \
+	$(MINIOBJ)/retromisc.o \
+	$(MINIOBJ)/retrosync.o \
+	$(MINIOBJ)/retrotime.o \
+	$(MINIOBJ)/retrowork.o \
+	$(MINIOBJ)/retroos.o \
 
 #-------------------------------------------------
 # OSD mini library
