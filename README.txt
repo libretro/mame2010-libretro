@@ -5,7 +5,9 @@ Very WIP port MAME 0.139 for libretro using libco.
 
 AND BE AWARE OFF THIS WHEN YOU USE IT (AT YOUR OWN RISK).
  
-Source base is mame0.139 official source: http://www.mamedev.org/downloader.php?file=releases/mame0139s.zip
+Source base is mame0.139 official source: 
+
+http://www.mamedev.org/downloader.php?file=releases/mame0139s.zip
 
 OSD code is highly inspired by source code of others mame ports :
  
@@ -16,8 +18,8 @@ OSD code is highly inspired by source code of others mame ports :
 
 Build :
 
-     for now you must build in 2 pass, one for the native buildtools and second for the 
-     target emulator build.
+     for now you must build in 2 pass: 
+     one for the native buildtools and second for the target emulator build.
   
      build for android:
 
@@ -30,11 +32,12 @@ Build :
      make "platform=unix" emulator -j4
      
 
-	(NB: for 64 bits build export PTR64=1 , as autodectect failed a least for me )
+     (NB: for 64 bits build export PTR64=1 )
 
 Usage : 
 
- rompath , inipath and others must be set in mame.ini and the initial inipath is hardcoded.
+ rompath , inipath and others must be set in mame.ini
+ and the initial inipath is hardcoded:
 
  for PC        to	   ./
  for ANDROID   to 	   /mnt/sdcard/
