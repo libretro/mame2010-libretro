@@ -65,7 +65,12 @@ static void initInput(running_machine* machine)
 
 	// our faux keyboard only has a couple of keys (corresponding to the
 	// common defaults)
-
+   fprintf(stderr, "SOURCE FILE: %s\n", machine->gamedrv->source_file);
+   fprintf(stderr, "PARENT: %s\n", machine->gamedrv->parent);
+   fprintf(stderr, "NAME: %s\n", machine->gamedrv->name);
+   fprintf(stderr, "DESCRIPTION: %s\n", machine->gamedrv->description);
+   fprintf(stderr, "YEAR: %s\n", machine->gamedrv->year);
+   fprintf(stderr, "MANUFACTURER: %s\n", machine->gamedrv->manufacturer);
 
 	P1_state[KEY_TAB]      = 0;//RETRO_DEVICE_ID_JOYPAD_R2;
 	P1_state[KEY_ENTER]    = 0;//RETRO_DEVICE_ID_JOYPAD_L2;
@@ -92,12 +97,9 @@ static void initInput(running_machine* machine)
 	input_device_item_add(P1_device, "P1 JoyR", &P1_state[KEY_JOYSTICK_R], ITEM_ID_RIGHT, pad1_get_state);
 
    if ((core_stricmp(machine->gamedrv->name, "tekken") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekkena") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekkenb") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekkenc") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "tekken") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tekken2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken2a") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken2b") == 0)
+         (core_stricmp(machine->gamedrv->parent, "tekken2") == 0)
          )
    {
       /* Tekken 1/2 */
@@ -108,18 +110,9 @@ static void initInput(running_machine* machine)
    }
    else
    if ((core_stricmp(machine->gamedrv->name, "souledge") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "souledge1") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "souledge1j") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "souledgea") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulcl2a") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclb2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclb3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "souledge") == 0) ||
          (core_stricmp(machine->gamedrv->name, "soulclbr") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbrb") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbrb2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbrj") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbrja") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbrjb") == 0)
+         (core_stricmp(machine->gamedrv->parent, "soulclbr") == 0)
 
          )
    {
@@ -130,7 +123,8 @@ static void initInput(running_machine* machine)
       input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
    }
    else
-   if ((core_stricmp(machine->gamedrv->name, "doapp") == 0)
+   if (
+         (core_stricmp(machine->gamedrv->name, "doapp") == 0)
          )
    {
       /* Dead or Alive++ */
@@ -140,17 +134,83 @@ static void initInput(running_machine* machine)
    }
    else
    if (
+         (core_stricmp(machine->gamedrv->name, "vf") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "vf") == 0)
+         )
+   {
+      /* Virtua Fighter */
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
+   }
+   else
+   if (
+         (core_stricmp(machine->gamedrv->name, "ts2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "ts2") == 0)
+         )
+   {
+      /* Toshinden 2 */
+      input_device_item_add(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
+   }
+   else
+   if (
+         (core_stricmp(machine->gamedrv->name, "vsav") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "vsav") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "vsav2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "vsav2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mshvsf") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mshvsf") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "msh") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "msh") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mvsc") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mvsc") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "xmcota") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "xmcota") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sf2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sf2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "ssf2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "ssf2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfa") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfa") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfa2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfa2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfiii") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfiii") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfiii2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfiii2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfiii3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfiii3") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "xmvsf") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "xmvsf") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sftm") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sftm") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "dstlk") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "dstlk") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "nwarr") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "nwarr") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfa3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfa3") == 0)
+         )
+   {
+      /* Capcom CPS2 6-button fighting games */
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
+   }
+   else
+   if (
          (core_stricmp(machine->gamedrv->name, "kinst") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst13") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst14") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst210") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst211") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst213") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinstb") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinstp") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kinst") == 0) ||
          (core_stricmp(machine->gamedrv->name, "kinst2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst2k3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "kinst2k4") == 0)
+         (core_stricmp(machine->gamedrv->parent, "kinst2") == 0)
          )
    {
       /* Killer Instinct 1/2 */
@@ -163,13 +223,9 @@ static void initInput(running_machine* machine)
    }
    else
    if ((core_stricmp(machine->gamedrv->name, "tektagt") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tektagta") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tektagtb") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tektagtc") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "tektagt") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tekken3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken3a") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken3b") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken3c") == 0)
+         (core_stricmp(machine->gamedrv->parent, "tekken3") == 0)
          )
    {
       /* Tekken 3/Tekken Tag Tournament */
@@ -182,28 +238,12 @@ static void initInput(running_machine* machine)
    else
    if (
          (core_stricmp(machine->gamedrv->name, "mk") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mkla1") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mkla2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mkla3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mkla4") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mkla3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mk") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2chal") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r14") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r21") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r30") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r31e") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r32") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r42") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2r91") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mk2") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk3ghw") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk3p40") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk3r10") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk3r20") == 0) ||
          (core_stricmp(machine->gamedrv->name, "umk3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "umk3r10") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "umk3r11") == 0)
+         (core_stricmp(machine->gamedrv->parent, "umk3") == 0)
       )
    {
       /* Mortal Kombat 1/2/3/Ultimate */
