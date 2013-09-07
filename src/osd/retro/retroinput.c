@@ -139,6 +139,29 @@ static void initInput(running_machine* machine)
       input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
    }
    else
+   if (
+         (core_stricmp(machine->gamedrv->name, "kinst") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst13") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst14") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst210") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst211") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst213") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinstb") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinstp") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst2k3") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "kinst2k4") == 0)
+         )
+   {
+      /* Killer Instinct 1/2 */
+      input_device_item_add(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
+   }
+   else
    if ((core_stricmp(machine->gamedrv->name, "tektagt") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tektagta") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tektagtb") == 0) ||
@@ -163,6 +186,7 @@ static void initInput(running_machine* machine)
          (core_stricmp(machine->gamedrv->name, "mkla2") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mkla3") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mkla4") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mkla3") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk2") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk2chal") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk2r14") == 0) ||
