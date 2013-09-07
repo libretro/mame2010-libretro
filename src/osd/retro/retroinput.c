@@ -98,8 +98,6 @@ static void initInput(running_machine* machine) {
 
 	// our faux keyboard only has a couple of keys (corresponding to the
 	// common defaults)
-	P1_state[KEY_ESCAPE] = 0;//RETRO_DEVICE_ID_JOYPAD_L;
-	input_device_item_add(P1_device, "Esc 1", &P1_state[KEY_ESCAPE], ITEM_ID_ESC, pad1_get_state);
 
 	P1_state[KEY_TAB] = 0;//RETRO_DEVICE_ID_JOYPAD_R2;
 	input_device_item_add(P1_device, "Tab", &P1_state[KEY_TAB], ITEM_ID_TAB, pad1_get_state);
@@ -107,8 +105,6 @@ static void initInput(running_machine* machine) {
 	P1_state[KEY_ENTER] = 0;//RETRO_DEVICE_ID_JOYPAD_L2;
 	input_device_item_add(P1_device, "Enter", &P1_state[KEY_ENTER], ITEM_ID_ENTER, pad1_get_state);
 
-	P1_state[KEY_F11] = 0;//RETRO_DEVICE_ID_JOYPAD_R;
-	input_device_item_add(P1_device, "F11", &P1_state[KEY_F11], ITEM_ID_F11, pad1_get_state);
 
 	P1_state[KEY_START] = 0;//RETRO_DEVICE_ID_JOYPAD_START;
 	input_device_item_add(P1_device, "P1 Start", &P1_state[KEY_START], ITEM_ID_1, pad1_get_state);
@@ -124,6 +120,12 @@ static void initInput(running_machine* machine) {
 	input_device_item_add(P1_device, "P1 B3", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
 	P1_state[KEY_BUTTON_4] = 0;//getButtonValue(4, optButtonLayoutP1,0);
 	input_device_item_add(P1_device, "P1 B4", &P1_state[KEY_BUTTON_4], ITEM_ID_LSHIFT, pad1_get_state);
+
+	P1_state[KEY_BUTTON_5] = 0;//RETRO_DEVICE_ID_JOYPAD_L;
+	input_device_item_add(P1_device, "P1 B5", &P1_state[KEY_BUTTON_5], ITEM_ID_Z, pad1_get_state);
+	P1_state[KEY_BUTTON_6] = 0;//RETRO_DEVICE_ID_JOYPAD_R;
+	input_device_item_add(P1_device, "P1 B6", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
+
 
 	P1_state[KEY_JOYSTICK_U] = 0;//RETRO_DEVICE_ID_JOYPAD_UP;
 	input_device_item_add(P1_device, "P1 JoyU", &P1_state[KEY_JOYSTICK_U], ITEM_ID_UP, pad1_get_state);
@@ -344,8 +346,8 @@ void retro_poll_mame_input(){
 
 	}
 
-	P1_state[KEY_ESCAPE] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
-	P1_state[KEY_F11] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
+	P1_state[KEY_BUTTON_5] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+	P1_state[KEY_BUTTON_6] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
 
 	P1_state[KEY_TAB] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
 	P1_state[KEY_ENTER] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);

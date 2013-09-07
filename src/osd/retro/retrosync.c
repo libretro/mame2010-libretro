@@ -1,12 +1,28 @@
+//============================================================
+//
+//  sdlsync.c - SDL core synchronization functions
+//
+//  Copyright (c) 1996-2010, Nicola Salmoria and the MAME Team.
+//  Visit http://mamedev.org for licensing and usage restrictions.
+//
+//  SDLMAME by Olivier Galibert and R. Belmont
+//
+//============================================================
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE 	// for PTHREAD_MUTEX_RECURSIVE; needs to be here before other glibc headers are included
 #endif
 
+#include "SDL/SDL.h"
+
+#ifdef SDLMAME_MACOSX
+#include <mach/mach.h>
+#endif
+
 // standard C headers
 #include <math.h>
 #include <unistd.h>
-#include <stdlib.h>    
+
 // MAME headers
 #include "osdcomm.h"
 #include "osdcore.h"
@@ -288,9 +304,7 @@ osd_thread *osd_thread_create(osd_thread_callback callback, void *cbparam)
 
 	thread = (osd_thread *)calloc(1, sizeof(osd_thread));
 	pthread_attr_init(&attr);
-#ifndef ANDROID_BUILD
 	pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
-#endif
 	if ( pthread_create(&thread->thread, &attr, callback, cbparam) != 0 )
 	{
 		free(thread);
@@ -324,41 +338,6 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust)
 //  osd_thread_cpu_affinity
 //============================================================
 
-#ifdef ANDROID_BUILD
-
-#define CPU_SETSIZE 1024
-#define __NCPUBITS  (8 * sizeof (unsigned long))
-typedef struct
-{
-   unsigned long __bits[CPU_SETSIZE / __NCPUBITS];
-} cpu_set_t;
-
-#define CPU_SET(cpu, cpusetp) \
-  ((cpusetp)->__bits[(cpu)/__NCPUBITS] |= (1UL << ((cpu) % __NCPUBITS)))
-#define CPU_ZERO(cpusetp) \
-  memset((cpusetp), 0, sizeof(cpu_set_t))
-
-#include <sys/syscall.h>
-#include <unistd.h>
-
-int setCurrentThreadAffinityMask(int mask)
-{
-    int err, syscallres;
-    pid_t pid = gettid();
-    syscallres = syscall(__NR_sched_setaffinity, pid, sizeof(mask), &mask);
-    if (syscallres)
-    {
-        err = errno;
-       // write_log("Error in the syscall setaffinity: mask=%d=0x%x err=%d=0x%x", mask, mask, err, err);
-	return 1;
-    }
-	return 0;
-}
-
-#include "log.h"
-
-#endif
-
 int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask)
 {
 #if !defined(NO_AFFINITY_NP)
@@ -375,11 +354,8 @@ int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask)
 		lthread = pthread_self();
 	else
 		lthread = thread->thread;
-#ifdef ANDROID_BUILD
-	if (setCurrentThreadAffinityMask(mask))
-#else
+
 	if (pthread_setaffinity_np(lthread, sizeof(cmask), &cmask) <0)
-#endif
 	{
 		/* Not available during link in all targets */
 		fprintf(stderr, "error %d setting cpu affinity to mask %08x", errno, mask);

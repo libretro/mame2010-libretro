@@ -1,95 +1,39 @@
 //============================================================
 //
-//  minimisc.c - Minimal core miscellaneous functions
+//  sdlos_*.c - OS specific low level code
 //
-//============================================================
+//  Copyright (c) 1996-2010, Nicola Salmoria and the MAME Team.
+//  Visit http://mamedev.org for licensing and usage restrictions.
 //
-//  Copyright Aaron Giles
-//  All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or
-//  without modification, are permitted provided that the
-//  following conditions are met:
-//
-//    * Redistributions of source code must retain the above
-//      copyright notice, this list of conditions and the
-//      following disclaimer.
-//    * Redistributions in binary form must reproduce the
-//      above copyright notice, this list of conditions and
-//      the following disclaimer in the documentation and/or
-//      other materials provided with the distribution.
-//    * Neither the name 'MAME' nor the names of its
-//      contributors may be used to endorse or promote
-//      products derived from this software without specific
-//      prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY AARON GILES ''AS IS'' AND
-//  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-//  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-//  EVENT SHALL AARON GILES BE LIABLE FOR ANY DIRECT,
-//  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-//  DAMAGE (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-//  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-//  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-//  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
-//  IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//  SDLMAME by Olivier Galibert and R. Belmont
 //
 //============================================================
 
-#include "osdcore.h"
-#include <stdlib.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <sys/mman.h>
-#include <time.h>
-#include <sys/time.h>
-#include "log.h"
+#include <signal.h>
+#ifdef MAME_DEBUG
+#include <unistd.h>
+#endif
 
-//============================================================
-//  osd_malloc
-//============================================================
+// MAME headers
+#include "osdcore.h"
 
-void* osd_malloc(size_t size)
-{
-	return malloc(size);
-}
-
-
-//============================================================
-//  osd_malloc_array
-//============================================================
-
-void *osd_malloc_array(size_t size)
-{
-
-}
-
-
-//============================================================
-//  osd_free
-//============================================================
-
-void osd_free(void *ptr)
-{
-
-	if (ptr) {
-		free(ptr);
-	}
-}
-
+#include "retroos.h"
 
 //============================================================
 //  osd_alloc_executable
+//
+//  allocates "size" bytes of executable memory.  this must take
+//  things like NX support into account.
 //============================================================
 
 void *osd_alloc_executable(size_t size)
 {
+#if defined(SDLMAME_BSD)
+	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
+#elif defined(SDLMAME_UNIX)
 	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
+#endif
 }
 
 //============================================================
@@ -100,9 +44,12 @@ void *osd_alloc_executable(size_t size)
 
 void osd_free_executable(void *ptr, size_t size)
 {
+#ifdef SDLMAME_SOLARIS
+	munmap((char *)ptr, size);
+#else
 	munmap(ptr, size);
+#endif
 }
-
 
 //============================================================
 //  osd_break_into_debugger
@@ -110,32 +57,11 @@ void osd_free_executable(void *ptr, size_t size)
 
 void osd_break_into_debugger(const char *message)
 {
-
-}
-
-
-//============================================================
-//  osd_get_clipboard_text
-//============================================================
-
-char *osd_get_clipboard_text(void)
-{
-	// can't support clipboards generically
-	return NULL;
-}
-
-
-//============================================================
-//  osd_get_slider_list
-//============================================================
-
-const void *osd_get_slider_list()
-{
-	// nothing to slide in mini OSD
-	return NULL;
-}
-
-const void osd_output_text(const char* format)
-{
-	write_log(format);
+	#ifdef MAME_DEBUG
+	printf("MAME exception: %s\n", message);
+	printf("Attempting to fall into debugger\n");
+	kill(getpid(), SIGTRAP);
+	#else
+	printf("Ignoring MAME exception: %s\n", message);
+	#endif
 }

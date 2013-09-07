@@ -58,7 +58,6 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retrofile.o \
 	$(MINIOBJ)/retromisc.o \
 	$(MINIOBJ)/retrosync.o \
-	$(MINIOBJ)/retrotime.o \
 	$(MINIOBJ)/retrowork.o \
 	$(MINIOBJ)/retroos.o \
 
