@@ -110,10 +110,20 @@ static void initInput(running_machine* machine)
    if ((core_stricmp(machine->gamedrv->name, "souledge") == 0) ||
          (core_stricmp(machine->gamedrv->name, "souledge1") == 0) ||
          (core_stricmp(machine->gamedrv->name, "souledge1j") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "souledgea") == 0)
+         (core_stricmp(machine->gamedrv->name, "souledgea") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulcl2a") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclb2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclb3") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbr") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbrb") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbrb2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbrj") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbrja") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "soulclbrjb") == 0)
+
          )
    {
-      /* Soul Edge */
+      /* Soul Edge/Soul Calibur */
       input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
