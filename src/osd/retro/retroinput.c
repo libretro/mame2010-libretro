@@ -91,13 +91,46 @@ static void initInput(running_machine* machine)
 	input_device_item_add(P1_device, "P1 JoyL", &P1_state[KEY_JOYSTICK_L], ITEM_ID_LEFT, pad1_get_state);
 	input_device_item_add(P1_device, "P1 JoyR", &P1_state[KEY_JOYSTICK_R], ITEM_ID_RIGHT, pad1_get_state);
 
+   if ((core_stricmp(machine->gamedrv->name, "tekken") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekkena") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekkenb") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekkenc") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken2a") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken2b") == 0)
+         )
+   {
+      /* Tekken 1/2 */
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LSHIFT, pad1_get_state);
+   }
+   else
+   if ((core_stricmp(machine->gamedrv->name, "souledge") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "souledge1") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "souledge1j") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "souledgea") == 0)
+         )
+   {
+      /* Soul Edge */
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+   }
+   else
    if ((core_stricmp(machine->gamedrv->name, "tektagt") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tektagta") == 0) ||
          (core_stricmp(machine->gamedrv->name, "tektagtb") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tektagtc") == 0)
+         (core_stricmp(machine->gamedrv->name, "tektagtc") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken3") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken3a") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken3b") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "tekken3c") == 0)
          )
    {
-      /* Tekken Tag Tournament */
+      /* Tekken 3/Tekken Tag Tournament */
       input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_SPACE, pad1_get_state);
