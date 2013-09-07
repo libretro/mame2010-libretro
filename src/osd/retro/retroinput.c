@@ -207,6 +207,52 @@ static void initInput(running_machine* machine)
    }
    else
    if (
+         (core_stricmp(machine->gamedrv->parent, "aof") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "aof2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "aof3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "fatfury1") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "fatfury2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "fatfury3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "garou") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "neogeo") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslug") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslug2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslugx") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslug3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslug4") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "mslug5") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof94") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof95") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof96") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof97") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof98") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof99") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof2000") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof2001") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof2002") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "kof2003") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "lresort") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "lastblad") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "lastbld2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sengoku3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "samsho") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "samsho2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "samsho3") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "samsho4") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "samsho5") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "matrim") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "viewpoin") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "wakuwak7") == 0)
+      )
+   {
+      /* Neo Geo */
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LCONTROL, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_SPACE, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LSHIFT, pad1_get_state);
+   }
+   else
+   if (
          (core_stricmp(machine->gamedrv->name, "kinst") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "kinst") == 0) ||
          (core_stricmp(machine->gamedrv->name, "kinst2") == 0) ||
