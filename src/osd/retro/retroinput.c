@@ -157,7 +157,22 @@ static void initInput(running_machine* machine)
       input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
    }
    else
-   if ((core_stricmp(machine->gamedrv->name, "mk3") == 0) ||
+   if (
+         (core_stricmp(machine->gamedrv->name, "mk") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mkla1") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mkla2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mkla3") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mkla4") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2chal") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r14") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r21") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r30") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r31e") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r32") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r42") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk2r91") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "mk3") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk3ghw") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk3p40") == 0) ||
          (core_stricmp(machine->gamedrv->name, "mk3r10") == 0) ||
@@ -167,7 +182,7 @@ static void initInput(running_machine* machine)
          (core_stricmp(machine->gamedrv->name, "umk3r11") == 0)
       )
    {
-      /* Mortal Kombat 3/Ultimate Mortal Kombat 3 */
+      /* Mortal Kombat 1/2/3/Ultimate */
       input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LALT, pad1_get_state);
       input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
