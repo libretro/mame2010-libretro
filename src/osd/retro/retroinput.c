@@ -213,6 +213,10 @@ static void initInput(running_machine* machine)
          (core_stricmp(machine->gamedrv->parent, "sfex2") == 0) ||
          (core_stricmp(machine->gamedrv->name, "sfex2p") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "sfex2p") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "rvschool") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "rvschool") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "starglad") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "starglad") == 0) ||
          (core_stricmp(machine->gamedrv->name, "sfa3") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "sfa3") == 0)
          )
