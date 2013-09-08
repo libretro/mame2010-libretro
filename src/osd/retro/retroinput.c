@@ -145,6 +145,18 @@ static void initInput(running_machine* machine)
    }
    else
    if (
+         (core_stricmp(machine->gamedrv->name, "ehrgeiz") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "ehrgeiz") == 0)
+         )
+   {
+      /* Ehrgeiz */
+      input_device_item_add(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      //input_device_item_add(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
+      input_device_item_add(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
+   }
+   else
+   if (
          (core_stricmp(machine->gamedrv->name, "ts2") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "ts2") == 0)
          )
