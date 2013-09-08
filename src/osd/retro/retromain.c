@@ -11,6 +11,8 @@
 
 #include "log.h"
 
+char g_rom_dir[1024];
+
 #define FUNC_PREFIX(x)		rgb565_##x
 #define PIXEL_TYPE			UINT16
 #define SRCSHIFT_R			3
@@ -32,6 +34,40 @@
 #define DSTSHIFT_B			0
 
 #include "rendersw.c"
+
+static void extract_basename(char *buf, const char *path, size_t size)
+{
+   const char *base = strrchr(path, '/');
+   if (!base)
+      base = strrchr(path, '\\');
+   if (!base)
+      base = path;
+
+   if (*base == '\\' || *base == '/')
+      base++;
+
+   strncpy(buf, base, size - 1);
+   buf[size - 1] = '\0';
+
+   char *ext = strrchr(buf, '.');
+   if (ext)
+      *ext = '\0';
+}
+
+static void extract_directory(char *buf, const char *path, size_t size)
+{
+   strncpy(buf, path, size - 1);
+   buf[size - 1] = '\0';
+
+   char *base = strrchr(buf, '/');
+   if (!base)
+      base = strrchr(buf, '\\');
+
+   if (base)
+      *base = '\0';
+   else
+      buf[0] = '\0';
+}
 
 //============================================================
 //  CONSTANTS
@@ -144,7 +180,7 @@ static const char* xargv[] =  {
 		"1.0",
 		"-gamma",
 		"1.0",
-		NULL,
+		"-rompath",
 		NULL,
 		NULL,
 		NULL,
@@ -263,6 +299,8 @@ int executeGame(char* path) {
 	//find how many parameters we have
 	for (paramCount = 0; xargv[paramCount] != NULL; paramCount++);
 
+   xargv[paramCount++] = (char*)g_rom_dir;
+
 	if (tate) {
 		if (screenRot == 3) {
 			xargv[paramCount++] =(char*) "-rol";
@@ -279,10 +317,13 @@ int executeGame(char* path) {
 
 	xargv[paramCount++] = MgameName;
 
-	write_log("executing frontend... params:%i\n", paramCount);
+	write_log("executing frontend... params: %i\n", paramCount);
 
-	for (int i = 0; xargv[i] != NULL; i++)write_log("%s ",xargv[i]);
-	write_log("------------");
+	for (int i = 0; xargv[i] != NULL; i++)
+   {
+      write_log("%s ",xargv[i]);
+      write_log("\n");
+   }
 
 	result = cli_execute(paramCount,(char**) xargv, NULL);
 	xargv[paramCount - 2] = NULL;

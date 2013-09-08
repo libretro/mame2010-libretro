@@ -170,7 +170,7 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
 
 }
 
-bool retro_load_game(const struct retro_game_info *game)
+bool retro_load_game(const struct retro_game_info *info)
 {
 	struct retro_keyboard_callback cb = { keyboard_cb };
     	environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
@@ -181,7 +181,10 @@ bool retro_load_game(const struct retro_game_info *game)
 	memset(videoBuffer,0,1024*1024*2*2);
 #endif
 
-	strcpy(RPATH,game->path);
+   char basename[128];
+   extract_basename(basename, info->path, sizeof(basename));
+   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
+	strcpy(RPATH,info->path);
 	return 1;
 }
 
