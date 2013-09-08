@@ -193,6 +193,14 @@ static void initInput(running_machine* machine)
          (core_stricmp(machine->gamedrv->parent, "dstlk") == 0) ||
          (core_stricmp(machine->gamedrv->name, "nwarr") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "nwarr") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfex") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfex") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfexp") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfexp") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfex2") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfex2") == 0) ||
+         (core_stricmp(machine->gamedrv->name, "sfex2p") == 0) ||
+         (core_stricmp(machine->gamedrv->parent, "sfex2p") == 0) ||
          (core_stricmp(machine->gamedrv->name, "sfa3") == 0) ||
          (core_stricmp(machine->gamedrv->parent, "sfa3") == 0)
          )
