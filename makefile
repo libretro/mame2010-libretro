@@ -41,7 +41,7 @@ FORCE_DRC_C_BACKEND = 1
 else
 X86_MIPS3_DRC = 1
 X86_PPC_DRC = 1
-FORCE_DRC_C_BACKEND = 0
+FORCE_DRC_C_BACKEND = 1
 endif
 
 #-------------------------------------------------

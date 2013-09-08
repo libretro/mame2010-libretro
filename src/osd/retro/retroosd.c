@@ -39,6 +39,8 @@ void osd_init(running_machine* machine)
 	write_log("osd init done\n");
 }
 
+bool draw_this_frame;
+
 void osd_update(running_machine *machine, int skip_redraw)
 {
 	const render_primitive_list *primlist;
@@ -54,6 +56,7 @@ void osd_update(running_machine *machine, int skip_redraw)
 	}
 
 	if (!skip_redraw) {
+      draw_this_frame = true;
 		// get the minimum width/height for the current layout
 		int minwidth, minheight;
 		render_target_get_minimum_size(our_target, &minwidth, &minheight);
@@ -106,8 +109,8 @@ void osd_update(running_machine *machine, int skip_redraw)
 
 		colib_mainthread();
 	} 
-
-
+   else
+      draw_this_frame = false;
 }  
  
 //============================================================

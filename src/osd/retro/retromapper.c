@@ -124,15 +124,22 @@ void retro_reset (void)
 {   
 }
 
+extern bool draw_this_frame;
+
+#ifdef M16B
+#define PITCH 1
+#else
+#define PITCH 2*1
+#endif
+
 void retro_run (void)
 {
 	retro_poll_mame_input();
 
-#ifndef M16B
-	video_cb(videoBuffer,rtwi, rthe, topw << 2*1);
-#else
-	video_cb(videoBuffer,rtwi, rthe, topw << 1);
-#endif
+   if (draw_this_frame)
+      video_cb(videoBuffer,rtwi, rthe, topw << PITCH);
+   else
+      video_cb(NULL,rtwi, rthe, topw << PITCH);
 	colib_emuthread();
 }
 
