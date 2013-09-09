@@ -19,6 +19,7 @@
 
 // standard C headers
 #include <math.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 // MAME headers
