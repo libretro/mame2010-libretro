@@ -31,7 +31,7 @@ void *osd_alloc_executable(size_t size)
 {
 #if defined(SDLMAME_BSD)
 	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
-#elif defined(SDLMAME_UNIX)
+#elif defined(SDLMAME_UNIX) || defined(RETRO)
 	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
 #endif
 }
