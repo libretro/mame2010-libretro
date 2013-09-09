@@ -107,10 +107,11 @@ void osd_update(running_machine *machine, int skip_redraw)
 
 		osd_lock_release(primlist->lock);
 
-		colib_mainthread();
 	} 
    else
       draw_this_frame = false;
+
+   co_switch(mainThread);
 }  
  
 //============================================================

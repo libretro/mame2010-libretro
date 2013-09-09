@@ -147,14 +147,6 @@ int pauseg=0;
 cothread_t mainThread;
 cothread_t emuThread;
 
-void colib_mainthread(){
-	co_switch(mainThread);
-}
-
-void colib_emuthread(){
-	co_switch(emuThread);
-} 
-
 //============================================================
 //  RETRO
 //============================================================

@@ -140,7 +140,8 @@ void retro_run (void)
       video_cb(videoBuffer,rtwi, rthe, topw << PITCH);
    else
       video_cb(NULL,rtwi, rthe, topw << PITCH);
-	colib_emuthread();
+
+   co_switch(emuThread);
 }
 
 void prep_retro_rotation(int rot){
@@ -192,7 +193,7 @@ void retro_unload_game(void)
 {
 	if(pauseg==0){
 		pauseg=-1;				
-		colib_emuthread();
+      co_switch(emuThread);
 	}
 
 	LOGI("Retro unload_game\n");	
