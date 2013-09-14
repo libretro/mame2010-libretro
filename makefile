@@ -643,7 +643,7 @@ SOFTFLOAT = $(OBJ)/libsoftfloat.a
 ifeq ($(BUILD_AND),0)
 
 CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-PLATCFLAGS += -DPC_BUILD -DRETRO_AND -DRETRO -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants 
+PLATCFLAGS += -DPC_BUILD -DRETRO -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants 
 LDFLAGS +=  -fPIC -shared -Wl,--version-script=src/osd/retro/link.T
 NATIVELD = g++
 NATIVELDFLAGS = -Wl,--warn-common -lstdc++
