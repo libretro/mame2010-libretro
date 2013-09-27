@@ -94,7 +94,14 @@ _osd_exchange64(INT64 volatile *ptr, INT64 exchange)
 
 #else
 
+#ifdef RETRO_AND
+#ifndef YieldProcessor
+#define YieldProcessor() do {} while (0)
+#define osd_yield_processor() YieldProcessor()
+#endif
+#else
 #error "no matching assembler implementations found - please compile with NOASM=1"
+#endif
 
 #endif
 

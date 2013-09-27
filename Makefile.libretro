@@ -8,6 +8,7 @@
 #   Visit http://mamedev.org for licensing and usage restrictions.
 #
 ###########################################################################
+NATIVE :=0
 
 UNAME=$(shell uname -a)
 
@@ -134,7 +135,8 @@ else ifeq ($(platform), android)
 	NATIVECC = g++
 	NATIVECFLAGS = -std=gnu99 
 	CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
-	LIBS += -lstdc++ -lpthread
+	LIBS += -lstdc++ 
+#-lpthread
 else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
 	TARGETOS = macosx
@@ -697,6 +699,15 @@ emulator: maketree $(BUILD) $(EMULATOR)
 
 buildtools: maketree $(BUILD)
 
+ifeq ($(NATIVE),1)
+	mkdir prec-build
+	cp -R $(OBJ)/build/* prec-build/
+	$(RM) -r $(OBJ)/osd
+	$(RM) -r $(OBJ)/lib/util
+	$(RM) -r $(OBJ)/libutil.a
+	$(RM) -r $(OBJ)/libocore.a
+endif
+
 tools: maketree $(TOOLS)
 
 maketree: $(sort $(OBJDIRS))
@@ -730,6 +741,7 @@ $(sort $(OBJDIRS)):
 	$(MD) -p $@
 
 ifeq ($(platform), android)
+ifeq ($(NATIVE),0)
 $(OBJ)/build/file2str:
 	mkdir -p $(OBJ)/build
 	cp -R prec-build/file2str $(OBJ)/build 
@@ -748,6 +760,7 @@ $(OBJ)/build/makelist:
 
 $(OBJ)/build/verinfo:
 	cp -R prec-build/verinfo $(OBJ)/build 
+endif
 endif
 
 #-------------------------------------------------

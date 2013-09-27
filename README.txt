@@ -23,8 +23,8 @@ Build :
   
      build for android:
 
-     make "NATIVE=1" buildtools
-     make "platform=android" emulator -j4
+     make -f Makefile.libretro "VRENDER=soft" "NATIVE=1" buildtools
+     make -f Makefile.libretro "VRENDER=soft" "platform=android" emulator -j4
      
      build for pc linux/win:
 
