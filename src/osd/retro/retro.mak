@@ -46,7 +46,10 @@
 MINISRC = $(SRC)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
 LIBCOOBJ = $(OBJ)/osd/$(OSD)/libco
-
+ifeq ($(VRENDER),opengl)
+GLOBJ = $(OBJ)/osd/$(OSD)/glsym
+OBJDIRS += $(GLOBJ)
+endif
 OBJDIRS += $(MINIOBJ) $(LIBCOOBJ)
 
 #-------------------------------------------------
@@ -59,19 +62,23 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retromisc.o \
 	$(MINIOBJ)/retrosync.o \
 	$(MINIOBJ)/retrowork.o \
-	$(MINIOBJ)/retroos.o \
+	$(MINIOBJ)/retroos.o
 
 #-------------------------------------------------
 # OSD mini library
 #-------------------------------------------------
-ifeq ($(BUILD_AND),0)
-OSDOBJS = \
-	$(MINIOBJ)/retromain.o $(LIBCOOBJ)/libco.o 
-else
-OSDOBJS = \
-	$(MINIOBJ)/retromain.o $(LIBCOOBJ)/libco.o $(LIBCOOBJ)/armeabi_asm.o
+OSDOBJS = $(LIBCOOBJ)/libco.o 
+ifeq ($(platform),android)
+OSDOBJS += $(LIBCOOBJ)/armeabi_asm.o
 endif
-
+ifeq ($(VRENDER),opengl)
+OSDOBJS += $(MINIOBJ)/glsym/rglgen.o
+ifeq ($(GLES), 1)
+OSDOBJS += $(MINIOBJ)/glsym/glsym_es2.o
+else
+OSDOBJS += $(MINIOBJ)/glsym/glsym_gl.o
+endif
+endif
 #-------------------------------------------------
 # rules for building the libaries
 #-------------------------------------------------

@@ -26,13 +26,12 @@ Build :
      make "NATIVE=1" buildtools
      make "platform=android" emulator -j4
      
-     build for pc/linux:
+     build for pc linux/win:
 
-     make "NATIVE=1" buildtools
-     make "platform=unix" emulator -j4
-     
-
-     (NB: for 64 bits build export PTR64=1 )
+     make -f Makefile.libretro "VRENDER=soft" -j4 buildtools
+     make -f Makefile.libretro "VRENDER=soft" -j4
+  
+     (NB: for 64 bits build export PTR64=1 at least on win64)
 
 Usage : 
 

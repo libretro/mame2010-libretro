@@ -1,14 +1,3 @@
-//============================================================
-//
-//  sdldir.c - SDL core directory access functions
-//
-//  Copyright (c) 1996-2010, Nicola Salmoria and the MAME Team.
-//  Visit http://mamedev.org for licensing and usage restrictions.
-//
-//  SDLMAME by Olivier Galibert and R. Belmont
-//
-//============================================================
-
 #ifndef _LARGEFILE64_SOURCE
 #define _LARGEFILE64_SOURCE
 #endif
@@ -27,7 +16,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #ifndef __USE_BSD
-#define __USE_BSD	// to get DT_xxx on Linux
+#define __USE_BSD   // to get DT_xxx on Linux
 #endif
 #undef _POSIX_C_SOURCE  // to get DT_xxx on OS X
 #include <dirent.h>
@@ -43,7 +32,7 @@
 #define INVPATHSEPCH '\\'
 #endif
 
-#if defined(SDLMAME_DARWIN) || defined(SDLMAME_WIN32) || defined(SDLMAME_NO64BITIO) || defined(SDLMAME_BSD) || defined(SDLMAME_OS2)
+#if defined(__MACH__) || defined(WIN32) || defined(RETRO_AND) || defined(SDLMAME_NO64BITIO) || defined(SDLMAME_BSD) || defined(SDLMAME_OS2) || defined(SDLMAME_HAIKU)
 typedef struct dirent sdl_dirent;
 typedef struct stat sdl_stat;
 #define sdl_readdir readdir
@@ -55,7 +44,7 @@ typedef struct stat64 sdl_stat;
 #define sdl_stat_fn stat64
 #endif
 
-#define HAS_DT_XXX defined(SDLMAME_LINUX) || defined(SDLMAME_BSD) || defined(SDLMAME_DARWIN)
+#define HAS_DT_XXX defined(SDLMAME_LINUX) || defined(SDLMAME_BSD) || defined(__MACH__)
 
 struct _osd_directory
 {
@@ -67,7 +56,7 @@ struct _osd_directory
 
 static char *build_full_path(const char *path, const char *file)
 {
-	char *ret = (char *) osd_malloc(strlen(path)+strlen(file)+2);
+	char *ret = (char *) osd_malloc/*_array*/(strlen(path)+strlen(file)+2);
 	char *p = ret;
 
 	strcpy(p, path);
@@ -79,12 +68,29 @@ static char *build_full_path(const char *path, const char *file)
 
 
 #if HAS_DT_XXX
-static osd_dir_entry_type get_attributes_enttype(int attributes)
+static osd_dir_entry_type get_attributes_enttype(int attributes, char *path)
 {
-	if (attributes == DT_DIR)
-		return ENTTYPE_DIR;
-	else
-		return ENTTYPE_FILE;
+	switch ( attributes )
+	{
+		case DT_DIR:
+			return ENTTYPE_DIR;
+
+		case DT_REG:
+			return ENTTYPE_FILE;
+
+		case DT_LNK:
+		{
+			struct stat s;
+
+			if ( stat(path, &s) != 0 )
+				return ENTTYPE_OTHER;
+			else
+				return S_ISDIR(s.st_mode) ? ENTTYPE_DIR : ENTTYPE_FILE;
+		}
+
+		default:
+			return ENTTYPE_OTHER;
+	}
 }
 #else
 
@@ -126,13 +132,13 @@ osd_directory *osd_opendir(const char *dirname)
 		dir->fd = NULL;
 	}
 
-	tmpstr = (char *) osd_malloc(strlen(dirname)+1);
+	tmpstr = (char *) osd_malloc/*_array*/(strlen(dirname)+1);
 	strcpy(tmpstr, dirname);
 
 	if (tmpstr[0] == '$')
 	{
 		char *envval;
-		envstr = (char *) osd_malloc(strlen(tmpstr)+1);
+		envstr = (char *) osd_malloc/*_array*/(strlen(tmpstr)+1);
 
 		strcpy(envstr, tmpstr);
 
@@ -149,7 +155,7 @@ osd_directory *osd_opendir(const char *dirname)
 		{
 			j = strlen(envval) + strlen(tmpstr) + 1;
 			osd_free(tmpstr);
-			tmpstr = (char *) osd_malloc(j);
+			tmpstr = (char *) osd_malloc/*_array*/(j);
 
 			// start with the value of $HOME
 			strcpy(tmpstr, envval);
@@ -192,7 +198,7 @@ const osd_directory_entry *osd_readdir(osd_directory *dir)
 	dir->ent.name = dir->data->d_name;
 	temp = build_full_path(dir->path, dir->data->d_name);
 	#if HAS_DT_XXX
-	dir->ent.type = get_attributes_enttype(dir->data->d_type);
+	dir->ent.type = get_attributes_enttype(dir->data->d_type, temp);
 	#else
 	dir->ent.type = get_attributes_stat(temp);
 	#endif
@@ -213,4 +219,3 @@ void osd_closedir(osd_directory *dir)
 	osd_free(dir->path);
 	osd_free(dir);
 }
-

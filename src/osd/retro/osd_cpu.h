@@ -1,12 +1,3 @@
-//============================================================
-//
-//  osd_cpu.h - SDL CPU-specific data types
-//
-//  Copyright (c) 1996-2007, Nicola Salmoria and the MAME Team.
-//  Visit http://mamedev.org for licensing and usage restrictions.
-//
-//============================================================
-
 /*******************************************************************************
 *                                                                              *
 *   Define size independent data types and operations.                         *

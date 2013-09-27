@@ -1,11 +1,13 @@
 #include <unistd.h>
-#include <malloc.h>
 #include <stdint.h>
+
 #include "osdepend.h"
-#include "render.h"
-#include "clifront.h"
+
 #include "emu.h"
+#include "clifront.h"
+#include "render.h"
 #include "ui.h"
+#include "uiinput.h"
 
 #include "libretro.h" 
 
@@ -13,27 +15,32 @@
 
 char g_rom_dir[1024];
 
-#define FUNC_PREFIX(x)		rgb565_##x
-#define PIXEL_TYPE			UINT16
-#define SRCSHIFT_R			3
-#define SRCSHIFT_G			2
-#define SRCSHIFT_B			3
-#define DSTSHIFT_R			11
-#define DSTSHIFT_G			5
-#define DSTSHIFT_B			0
+#define FUNC_PREFIX(x) rgb565_##x
+#define PIXEL_TYPE UINT16
+#define SRCSHIFT_R 3
+#define SRCSHIFT_G 2
+#define SRCSHIFT_B 3
+#define DSTSHIFT_R 11
+#define DSTSHIFT_G 5
+#define DSTSHIFT_B 0
 
 #include "rendersw.c"
  
-#define FUNC_PREFIX(x)		rgb888_##x
-#define PIXEL_TYPE			UINT32
-#define SRCSHIFT_R			0
-#define SRCSHIFT_G			0
-#define SRCSHIFT_B			0
-#define DSTSHIFT_R			16
-#define DSTSHIFT_G			8
-#define DSTSHIFT_B			0
+#define FUNC_PREFIX(x) rgb888_##x
+#define PIXEL_TYPE UINT32
+#define SRCSHIFT_R 0
+#define SRCSHIFT_G 0
+#define SRCSHIFT_B 0
+#define DSTSHIFT_R 16
+#define DSTSHIFT_G 8
+#define DSTSHIFT_B 0
 
 #include "rendersw.c"
+
+
+static bool mouse_enable = false;
+static bool videoapproach1_enable = false;
+bool nagscreenpatch_enable = false;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
@@ -68,7 +75,6 @@ static void extract_directory(char *buf, const char *path, size_t size)
    else
       buf[0] = '\0';
 }
-
 //============================================================
 //  CONSTANTS
 //============================================================
@@ -76,7 +82,6 @@ static void extract_directory(char *buf, const char *path, size_t size)
 // fake a keyboard mapped to retro joypad 
 enum
 {
-	KEY_ESCAPE,
 	KEY_TAB,
 	KEY_ENTER,
 	KEY_START,
@@ -86,14 +91,13 @@ enum
 	KEY_BUTTON_3,
 	KEY_BUTTON_4,
 	KEY_BUTTON_5,
-	KEY_BUTTON_6,
+	KEY_BUTTON_6, 
 	KEY_JOYSTICK_U,
 	KEY_JOYSTICK_D,
 	KEY_JOYSTICK_L,
 	KEY_JOYSTICK_R,
 	KEY_F11,
 	KEY_F3,
-	KEY_SCRLOCK,
 	KEY_TOTAL
 }; 
 
@@ -122,7 +126,7 @@ static UINT16 P2_state[KEY_TOTAL];
 static UINT16 retrokbd_state[RETROK_LAST];
 static int mouseLX,mouseLY;
 static int mouseBUT[4];
-static int mouse_enabled; 
+//static int mouse_enabled;
 
 int optButtonLayoutP1 = 0; //for player 1
 int optButtonLayoutP2 = 0; //for player 2
@@ -152,6 +156,7 @@ cothread_t emuThread;
 //============================================================
 
 #include "retromapper.c"
+//#include "retrorender.c"
 #include "retroinput.c"
 #include "retroosd.c"
 
@@ -159,27 +164,27 @@ cothread_t emuThread;
 //  main
 //============================================================
 
-static const char* xargv[] =  {
-		"mamemini",
-		"-joystick",
-		"-noautoframeskip",
-		"-samplerate",
-		"48000",
-		"-sound",
-		"-contrast",
-		"1.0",
-		"-brightness",
-		"1.0",
-		"-gamma",
-		"1.0",
-		"-rompath",
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-	};
+static const char* xargv[] = {
+	"mamemini",
+	"-joystick",
+	"-noautoframeskip",
+	"-samplerate",
+	"48000",
+	"-sound",
+	"-contrast",
+	"1.0",
+	"-brightness",
+	"1.0",
+	"-gamma",
+	"1.0",
+	"-rompath",
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};
 
 static int parsePath(char* path, char* gamePath, char* gameName) {
 	int i;
@@ -215,24 +220,25 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 	int gameFound = 0;
 	int drvindex;
-
+//FIXME for 0.149 , prevouisly in driver.h
+#if 1
 	//check invalid game name
 	if (gameName[0] == 0) {
 		return 0;
 	}
 
 	for (drvindex = 0; drivers[drvindex]; drvindex++) {
-		if (
-			(drivers[drvindex]->flags & GAME_NO_STANDALONE) == 0 &&
-			mame_strwildcmp(gameName, drivers[drvindex]->name) == 0
-		) {
-			gameFound = 1;
-			*driverIndex = drvindex;
-			*rotation = drivers[drvindex]->flags & 0x7;
-			write_log("%-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
+		if ( (drivers[drvindex]->flags & GAME_NO_STANDALONE) == 0 &&
+			mame_strwildcmp(gameName, drivers[drvindex]->name) == 0 ) {
+				gameFound = 1;
+				*driverIndex = drvindex;
+				*rotation = drivers[drvindex]->flags & 0x7;
+				write_log("%-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
 		}
 	}
-
+#else 
+	gameFound = 1;
+#endif
 	return gameFound;
 } 
 
@@ -290,8 +296,8 @@ int executeGame(char* path) {
 
 	//find how many parameters we have
 	for (paramCount = 0; xargv[paramCount] != NULL; paramCount++);
-
-   xargv[paramCount++] = (char*)g_rom_dir;
+ 
+	xargv[paramCount++] = (char*)g_rom_dir;
 
 	if (tate) {
 		if (screenRot == 3) {
@@ -309,21 +315,20 @@ int executeGame(char* path) {
 
 	xargv[paramCount++] = MgameName;
 
-	write_log("executing frontend... params: %i\n", paramCount);
+	write_log("executing frontend... params:%i\n", paramCount);
 
-	for (int i = 0; xargv[i] != NULL; i++)
-   {
-      write_log("%s ",xargv[i]);
-      write_log("\n");
-   }
+	for (int i = 0; xargv[i] != NULL; i++){
+		write_log("%s ",xargv[i]);
+		write_log("\n");
+	}
 
 	result = cli_execute(paramCount,(char**) xargv, NULL);
+
 	xargv[paramCount - 2] = NULL;
 
 	return result;
-} 
+}  
  
-
 //============================================================
 //  main
 //============================================================
@@ -340,6 +345,3 @@ int mmain(int argc, const char *argv)
 	result = executeGame(gameName);
 	return 1;
 }
-
-
-

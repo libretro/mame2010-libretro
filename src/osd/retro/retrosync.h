@@ -1,16 +1,5 @@
-//============================================================
-//
-//  sdlsync.h - SDL core synchronization functions
-//
-//  Copyright (c) 1996-2007, Nicola Salmoria and the MAME Team.
-//  Visit http://mamedev.org for licensing and usage restrictions.
-//
-//  SDLMAME by Olivier Galibert and R. Belmont
-//
-//============================================================
-
-#ifndef __SDLSYNC__
-#define __SDLSYNC__
+#ifndef __RETROSYNC__
+#define __RETROSYNC__
 
 /***************************************************************************
     SYNCHRONIZATION INTERFACES - Events
@@ -18,8 +7,8 @@
 
 /* osd_event is an opaque type which represents a setable/resetable event */
 
+//struct osd_event;
 typedef struct _osd_event osd_event;
-
 
 /*-----------------------------------------------------------------------------
     osd_lock_event_alloc: allocate a new event
@@ -107,8 +96,8 @@ void osd_event_free(osd_event *event);
 ***************************************************************************/
 
 /* osd_thread is an opaque type which represents a thread */
+//struct osd_thread;
 typedef struct _osd_thread osd_thread;
-
 
 /* osd_thread_callback is a callback function that will be called from the thread */
 typedef void *(*osd_thread_callback)(void *param);
@@ -174,13 +163,25 @@ int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask);
 -----------------------------------------------------------------------------*/
 void osd_thread_wait_free(osd_thread *thread);
 
+/*-----------------------------------------------------------------------------
+    osd_process_kill: kill the current process
+
+    Parameters:
+
+        None.
+
+    Return value:
+
+        None.
+-----------------------------------------------------------------------------*/
+void osd_process_kill(void);
 
 //============================================================
 //  Scalable Locks
 //============================================================
 
+//struct osd_scalable_lock;
 typedef struct _osd_scalable_lock osd_scalable_lock;
-
 osd_scalable_lock *osd_scalable_lock_alloc(void);
 
 INT32 osd_scalable_lock_acquire(osd_scalable_lock *lock);
@@ -189,4 +190,4 @@ void osd_scalable_lock_release(osd_scalable_lock *lock, INT32 myslot);
 
 void osd_scalable_lock_free(osd_scalable_lock *lock);
 
-#endif	/* __SDLSYNC__ */
+#endif  /* __RETROSYNC__ */

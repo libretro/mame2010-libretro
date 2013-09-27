@@ -1,18 +1,4 @@
-//============================================================
-//
-//  sdlos.h - SDLMAME OS dependent functions
-//
-//  Copyright (c) 1996-2007, Nicola Salmoria and the MAME Team.
-//  Visit http://mamedev.org for licensing and usage restrictions.
-//
-//  SDLMAME by Olivier Galibert and R. Belmont
-//
-//============================================================
-
-#ifndef __SDLOS__
-#define __SDLOS__
-
-#define SDLMAME_UNIX 1
+#define SDLMAME_UNIX
 
 /*-----------------------------------------------------------------------------
     osd_num_processors: return the number of processors
@@ -25,8 +11,8 @@
 
         Number of processors
 -----------------------------------------------------------------------------*/
-int osd_num_processors(void);
 
+int osd_num_processors(void);
 
 /*-----------------------------------------------------------------------------
     osd_getenv: return pointer to environment variable
@@ -57,4 +43,3 @@ char *osd_getenv(const char *name);
 
 int osd_setenv(const char *name, const char *value, int overwrite);
 
-#endif	/* __SDLOS__ */
