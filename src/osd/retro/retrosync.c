@@ -32,7 +32,6 @@
 //#include "osdcomm.h"
 #include "osdcore.h"
 
-#include "osinline.h"
 #include "retrosync.h"
 #include <stdlib.h>
 

@@ -18,7 +18,9 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#ifdef __GNUC__
+#if defined(__MACH__)
+#include <type_traits>
+#elif defined(__GNUC__)
 #include <tr1/type_traits>
 #endif
 
@@ -56,7 +58,11 @@ typedef enum _state_save_error state_save_error;
 #define STATE_POSTLOAD(name) void name(running_machine *machine, void *param)
 
 
-#ifdef __GNUC__
+#if defined(__MACH__)
+#define IS_VALID_SAVE_TYPE(_var) \
+	(std::is_arithmetic<typeof(_var)>::value || std::is_enum<typeof(_var)>::value || \
+	 std::is_same<typeof(_var), PAIR>::value || std::is_same<typeof(_var), PAIR64>::value)
+#elif defined(__GNUC__)
 #define IS_VALID_SAVE_TYPE(_var) \
 	(std::tr1::is_arithmetic<typeof(_var)>::value || std::tr1::is_enum<typeof(_var)>::value || \
 	 std::tr1::is_same<typeof(_var), PAIR>::value || std::tr1::is_same<typeof(_var), PAIR64>::value)

@@ -141,11 +141,15 @@ else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
 	TARGETOS = macosx
    fpic := -fPIC
+LDFLAGSEMULATOR +=  -stdlib=libc++
    SHARED := -dynamiclib
-   CC = clang++
-   LD = clang++
-   NATIVELD = clang++
-   CC_AS ?= $(CC)
+   CC = c++ -stdlib=libc++
+   LD = c++ -stdlib=libc++
+   NATIVELD = c++ -stdlib=libc++
+   NATIVECC = c++
+LDFLAGS +=  $(fpic) $(SHARED)
+   CC_AS = clang
+   AR = @ar
    PYTHON ?= @python
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
