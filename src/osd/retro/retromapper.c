@@ -1,4 +1,3 @@
-
 void retro_poll_mame_input();
 
 static int rtwi=320,rthe=240,topw=1024; // DEFAULT TEXW/TEXH/PITCH
@@ -101,8 +100,8 @@ unsigned retro_api_version(void)
 void retro_get_system_info(struct retro_system_info *info)
 {   	
    memset(info, 0, sizeof(*info));
-   info->library_name = "MAME 2013";
-   info->library_version = "0.150";
+   info->library_name = "MAME 2010";
+   info->library_version = "0.139";
    info->valid_extensions = "zip|chd|7z";
    info->need_fullpath = true;   
    info->block_extract = true;
@@ -113,13 +112,9 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.base_width = 640;
    info->geometry.base_height =480;
 
-#ifndef RETRO_AND 
    info->geometry.max_width = 1024;
    info->geometry.max_height = 768;
-#else    	
-   info->geometry.max_width =  640;
-   info->geometry.max_height = 480;
-#endif
+
    info->geometry.aspect_ratio =4/3;
    info->timing.fps = 60;
    info->timing.sample_rate = 48000.0;
