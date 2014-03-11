@@ -35,7 +35,8 @@ empty
 
 #endif
 
-#ifdef RETRO_AND
+#if defined(ARM_ENABLED)
+
 #ifndef YieldProcessor
 #define YieldProcessor() do {} while (0)
 #define osd_yield_processor() YieldProcessor()

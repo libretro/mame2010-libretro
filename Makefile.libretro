@@ -118,6 +118,8 @@ else
 PLATCFLAGS += -DLSB_FIRST
 endif
 else ifeq ($(platform), android)
+EXTRA_RULES = 1
+ARM_ENABLED = 1
    TARGETLIB := $(TARGET_NAME)_libretro.so
 	TARGETOS=linux  
    fpic := -fPIC
@@ -170,10 +172,14 @@ else
 endif
 else ifeq ($(platform), ios)
    TARGETLIB := $(TARGET_NAME)_libretro_ios.dylib
+   TARGETOS = macosx
+EXTRA_RULES = 1
+ARM_ENABLED = 1
    fpic := -fPIC
    SHARED := -dynamiclib
 
    CC = clang++ -arch armv7 -isysroot $(IOSSDK)
+   CCOMFLAGS += -DSDLMAME_NO64BITIO
    CFLAGS += -DIOS
 else ifeq ($(platform), qnx)
    TARGETLIB := $(TARGET_NAME)_libretro_qnx.so
@@ -744,7 +750,7 @@ tests: $(REGTESTS)
 $(sort $(OBJDIRS)):
 	$(MD) -p $@
 
-ifeq ($(platform), android)
+ifeq ($(EXTRA_RULES), 1)
 ifeq ($(NATIVE),0)
 $(OBJ)/build/file2str:
 	mkdir -p $(OBJ)/build
@@ -800,7 +806,8 @@ endif
 # generic rules
 #-------------------------------------------------
 
-ifeq ($(platform), android)
+ifeq ($(ARM_ENABLED), 1)
+CFLAGS += -DARM_ENABLED
 $(LIBCOOBJ)/armeabi_asm.o:
 	$(CC_AS) -c $(SRC)/osd/$(OSD)/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
