@@ -82,8 +82,10 @@ static void extract_directory(char *buf, const char *path, size_t size)
 // fake a keyboard mapped to retro joypad 
 enum
 {
+	KEY_F11,
 	KEY_TAB,
-	KEY_ENTER,
+	KEY_F3,
+	KEY_F2,
 	KEY_START,
 	KEY_COIN,
 	KEY_BUTTON_1,
@@ -96,8 +98,6 @@ enum
 	KEY_JOYSTICK_D,
 	KEY_JOYSTICK_L,
 	KEY_JOYSTICK_R,
-	KEY_F11,
-	KEY_F3,
 	KEY_TOTAL
 }; 
 
