@@ -711,7 +711,7 @@ buildtools: maketree $(BUILD)
 
 ifeq ($(NATIVE),1)
 	mkdir prec-build
-	cp -R $(OBJ)/build/* prec-build/
+	cp -R $(OBJ)_$(SUFFIX)/build/* prec-build/
 	$(RM) -r $(OBJ)/osd
 	$(RM) -r $(OBJ)/lib/util
 	$(RM) -r $(OBJ)/libutil.a
