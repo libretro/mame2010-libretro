@@ -64,7 +64,7 @@
 #include "tokenize.h"
 
 // memory and address spaces
-#include "memory.h"
+#include "mmry.h"
 
 // devices and callbacks
 #include "devintrf.h"

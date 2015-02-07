@@ -68,9 +68,9 @@ OSDCOREOBJS := \
 # OSD mini library
 #-------------------------------------------------
 OSDOBJS = $(LIBCOOBJ)/libco.o 
-ifeq ($(platform),android)
-OSDOBJS += $(LIBCOOBJ)/armeabi_asm.o
-endif
+#ifeq ($(platform),android)
+#OSDOBJS += $(LIBCOOBJ)/armeabi_asm.o
+#endif
 ifeq ($(VRENDER),opengl)
 OSDOBJS += $(MINIOBJ)/glsym/rglgen.o
 ifeq ($(GLES), 1)
