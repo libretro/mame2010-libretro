@@ -321,6 +321,31 @@ PTR64=1
 endif
 endif
 
+# Mame needs PTR64 defined on 64 bit processors, we guess at it if you aren't
+# cross-compiling.  If you ARE, you need to set it yourself.
+ifneq ($(CROSS_BUILD),1)
+
+ifndef ($(PTR64)
+	PTR64 = 0
+ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
+	PTR64 = 1
+endif
+ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
+	PTR64 = 1
+endif
+ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
+	PTR64 = 1
+endif
+ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+	PTR64 = 1
+endif
+ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+	PTR64 = 1
+endif
+
+endif # PTR64
+endif # CROSS_BUILD
+
 ###########################################################################
 #################   BEGIN USER-CONFIGURABLE OPTIONS   #####################
 ###########################################################################
@@ -540,6 +565,7 @@ endif
 
 # add core include paths
 INCPATH += \
+   -I$(SRC)/osd/retro/libco \
 	-I$(SRC)/$(TARGET) \
 	-I$(OBJ)/$(TARGET)/layout \
 	-I$(SRC)/emu \

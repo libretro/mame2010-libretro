@@ -495,6 +495,7 @@ endif
 CCOMFLAGS += \
 	-Wall \
 	-Wcast-align \
+	-fpermissive \
 	-Wundef \
 	-Wformat-security \
 	-Wwrite-strings \

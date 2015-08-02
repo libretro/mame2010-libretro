@@ -146,7 +146,7 @@ static int FirstTimeUpdate = 1;
 //============================================================
 int pauseg=0; 
 
-#include "libco/libco.h"
+#include <libco.h>
 
 cothread_t mainThread;
 cothread_t emuThread;
