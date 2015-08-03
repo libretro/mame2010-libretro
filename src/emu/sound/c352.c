@@ -10,7 +10,7 @@
     32 voices
     Supports 8-bit linear and 8-bit muLaw samples
     Output: digital, 16 bit, 4 channels
-    Output sample rate is the input clock / 384.
+    Output sample rate is the input clock / (288 * 2).
  */
 
 #include "emu.h"
@@ -544,7 +544,7 @@ static DEVICE_START( c352 )
 	info->c352_rom_samples = *device->region();
 	info->c352_rom_length = device->region()->bytes();
 
-	info->sample_rate_base = device->clock() / 192;
+	info->sample_rate_base = device->clock() / 288;
 
 	info->stream = stream_create(device, 0, 4, info->sample_rate_base, info, c352_update);
 

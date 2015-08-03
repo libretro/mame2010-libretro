@@ -2908,7 +2908,7 @@ static MACHINE_DRIVER_START( namcos22s )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/3)
+	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/2)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
@@ -3321,7 +3321,7 @@ static MACHINE_DRIVER_START( namcos22 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/3)
+	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/2)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
