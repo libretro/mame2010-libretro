@@ -153,6 +153,7 @@ LDFLAGS +=  $(fpic) $(SHARED)
    CC_AS = clang
    AR = @ar
    PYTHON ?= @python
+	UNAME=$(shell uname -m)
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
