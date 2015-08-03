@@ -102,6 +102,9 @@ Notes:
       AT28C16  - 2k x8 EEPROM (DIP28)
       61C256   - 32k x8 SRAM (x2, SOJ28)
       2061ASC-1- IC Designs 2061ASC-1 programmable clock generator (SOIC16)
+   * Pin 8 MCLKOUT - 20.0132MHz tied to C352
+   * Pin 9 VCLKOUT - 40.0264MHz (==2x MCLKOUT). Tied to C195
+   * Pin 7 XTALOUT - 16.93426MHz. This is tied to the clock input of the C76
       S11MOT*  - Standard System 11 PALs (DIP20)
       WAVE.8K  - Sound samples, 42 pin DIP MASKROM, either 16MBit or 32MBit. If 32MBit, it is programmed in Byte Mode.
       SPROG.6D - Sound program, Intel PA28F200BX 2MBit Flash ROM (SOP44)
@@ -962,7 +965,7 @@ static MACHINE_DRIVER_START( coh100 )
 	MDRV_CPU_PROGRAM_MAP( namcos11_map)
 	MDRV_CPU_VBLANK_INT("screen", namcos11_vblank)
 
-	MDRV_CPU_ADD("c76", M37702, 16384000)
+	MDRV_CPU_ADD("c76", M37702, 16934400)
 	MDRV_CPU_PROGRAM_MAP(c76_map)
 	MDRV_CPU_IO_MAP(c76_io_map)
 	MDRV_CPU_VBLANK_INT_HACK(c76_interrupt, 3)
@@ -984,7 +987,9 @@ static MACHINE_DRIVER_START( coh100 )
 	MDRV_VIDEO_UPDATE( psx )
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-	MDRV_SOUND_ADD("c352", C352, 16384000)
+   // note: C352 internal divider is currently set to 192, but that sounds wrong with an input clock of 20MHz.
+	// 228.0 here is a guess, estimated from PCB recordings sound/music pitch.
+	MDRV_SOUND_ADD("c352", C352, 20000000 / (228.0/192.0))
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
