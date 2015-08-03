@@ -987,9 +987,9 @@ static MACHINE_DRIVER_START( coh100 )
 	MDRV_VIDEO_UPDATE( psx )
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-   // note: C352 internal divider is currently set to 288, but that sounds wrong with an input clock of 20MHz.
+   // note: C352 internal divider is currently set to 192, but that sounds wrong with an input clock of 20MHz.
 	// 228.0 here is a guess, estimated from PCB recordings sound/music pitch.
-	MDRV_SOUND_ADD("c352", C352, 20000000 / (228.0/288.0))
+	MDRV_SOUND_ADD("c352", C352, 20000000 / (228.0/192.0))
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
