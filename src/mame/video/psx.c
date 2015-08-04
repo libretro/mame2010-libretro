@@ -239,8 +239,8 @@ static int need_sianniv_vblank_hack;
 #define SINT11( x ) ( ( (INT32)( x ) << 21 ) >> 21 )
 
 #define ADJUST_COORD( a ) \
-	a.w.l = COORD_X( a ) + m_n_drawoffset_x; \
-	a.w.h = COORD_Y( a ) + m_n_drawoffset_y;
+	a.w.l = SINT11( COORD_X( a ) + m_n_drawoffset_x ); \
+	a.w.h = SINT11( COORD_Y( a ) + m_n_drawoffset_y );
 
 #define COORD_X( a ) ( (INT16)a.w.l )
 #define COORD_Y( a ) ( (INT16)a.w.h )
