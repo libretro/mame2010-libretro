@@ -226,6 +226,8 @@ static UINT16 m_p_n_greensubtrans[ MAX_LEVEL * MAX_LEVEL ];
 static UINT16 m_p_n_bluesubtrans[ MAX_LEVEL * MAX_LEVEL ];
 static const UINT16 m_p_n_nextpointlist4[] = { 1, 3, 0, 2 };
 static const UINT16 m_p_n_prevpointlist4[] = { 2, 0, 3, 1 };
+static const UINT16 m_p_n_nextpointlist4b[] = { 0, 3, 1, 2 };
+static const UINT16 m_p_n_prevpointlist4b[] = { 0, 2, 3, 1 };
 static const UINT16 m_p_n_nextpointlist3[] = { 1, 2, 0 };
 static const UINT16 m_p_n_prevpointlist3[] = { 2, 0, 1 };
 
@@ -996,6 +998,81 @@ INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxgpu, UIN
 	}
 }
 
+INLINE int CullVertex( int a, int b )
+{
+	int d = a - b;
+	if( d < -1023 || d > 1023 )
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+#define CULLTRIANGLE( PacketType, start ) \
+( \
+	CULLPOINT( PacketType, start, start + 1 ) || CULLPOINT( PacketType, start + 1, start + 2 ) || CULLPOINT( PacketType, start + 2, start ) \
+)
+
+#define CULLPOINT( PacketType, p1, p2 ) \
+( \
+	CullVertex( COORD_Y( m_packet.PacketType.vertex[ p1 ].n_coord ), COORD_Y( m_packet.PacketType.vertex[ p2 ].n_coord ) ) || \
+	CullVertex( COORD_X( m_packet.PacketType.vertex[ p1 ].n_coord ), COORD_X( m_packet.PacketType.vertex[ p2 ].n_coord ) ) \
+)
+
+#define FINDTOPLEFT( PacketType ) \
+	for( n_point = 0; n_point < n_points; n_point++ ) \
+	{ \
+		ADJUST_COORD( m_packet.PacketType.vertex[ n_point ].n_coord ); \
+	} \
+	\
+	n_leftpoint = 0; \
+	if( n_points == 4 ) \
+	{ \
+		if( CULLTRIANGLE( PacketType, 0 ) ) \
+		{ \
+			if( CULLTRIANGLE( PacketType, 1 ) ) \
+			{ \
+				return; \
+			} \
+			\
+			p_n_rightpointlist = m_p_n_nextpointlist4b; \
+			p_n_leftpointlist = m_p_n_prevpointlist4b; \
+			n_leftpoint++; \
+		} \
+		else if( CULLTRIANGLE( PacketType, 1 ) ) \
+		{ \
+			p_n_rightpointlist = m_p_n_nextpointlist3; \
+			p_n_leftpointlist = m_p_n_prevpointlist3; \
+			n_points--; \
+		} \
+		else \
+		{ \
+			p_n_rightpointlist = m_p_n_nextpointlist4; \
+			p_n_leftpointlist = m_p_n_prevpointlist4; \
+	} \
+	} \
+	else if( CULLTRIANGLE( PacketType, 0 ) ) \
+	{ \
+		return; \
+	} \
+	else \
+	{ \
+		p_n_rightpointlist = m_p_n_nextpointlist3; \
+		p_n_leftpointlist = m_p_n_prevpointlist3; \
+	} \
+	\
+	for( n_point = n_leftpoint + 1; n_point < n_points; n_point++ ) \
+	{ \
+		if( COORD_Y( m_packet.PacketType.vertex[ n_point ].n_coord ) < COORD_Y( m_packet.PacketType.vertex[ n_leftpoint ].n_coord ) || \
+			( COORD_Y( m_packet.PacketType.vertex[ n_point ].n_coord ) == COORD_Y( m_packet.PacketType.vertex[ n_leftpoint ].n_coord ) && \
+			COORD_X( m_packet.PacketType.vertex[ n_point ].n_coord ) < COORD_X( m_packet.PacketType.vertex[ n_leftpoint ].n_coord ) ) ) \
+		{ \
+			n_leftpoint = n_point; \
+		} \
+	} \
+	n_rightpoint = n_leftpoint; \
+
 #define SPRITESETUP \
 	if( psxgpu.n_iy != 0 ) \
 	{ \
@@ -1508,33 +1585,7 @@ static void FlatPolygon( running_machine *machine, int n_points )
 	n_g.w.h = BGR_G( m_packet.FlatPolygon.n_bgr ); n_g.w.l = 0;
 	n_b.w.h = BGR_B( m_packet.FlatPolygon.n_bgr ); n_b.w.l = 0;
 
-	if( n_points == 4 )
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist4;
-		p_n_leftpointlist = m_p_n_prevpointlist4;
-	}
-	else
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist3;
-		p_n_leftpointlist = m_p_n_prevpointlist3;
-	}
-
-	for( n_point = 0; n_point < n_points; n_point++ )
-	{
-		ADJUST_COORD( m_packet.FlatPolygon.vertex[ n_point ].n_coord );
-	}
-
-	n_leftpoint = 0;
-	for( n_point = 1; n_point < n_points; n_point++ )
-	{
-		if( COORD_Y( m_packet.FlatPolygon.vertex[ n_point ].n_coord ) < COORD_Y( m_packet.FlatPolygon.vertex[ n_leftpoint ].n_coord ) ||
-			( COORD_Y( m_packet.FlatPolygon.vertex[ n_point ].n_coord ) == COORD_Y( m_packet.FlatPolygon.vertex[ n_leftpoint ].n_coord ) &&
-			COORD_X( m_packet.FlatPolygon.vertex[ n_point ].n_coord ) < COORD_X( m_packet.FlatPolygon.vertex[ n_leftpoint ].n_coord ) ) )
-		{
-			n_leftpoint = n_point;
-		}
-	}
-	n_rightpoint = n_leftpoint;
+   FINDTOPLEFT( FlatPolygon )
 
 	n_dx1 = 0;
 	n_dx2 = 0;
@@ -1702,33 +1753,7 @@ static void FlatTexturedPolygon( running_machine *machine, int n_points )
 		break;
 	}
 
-	if( n_points == 4 )
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist4;
-		p_n_leftpointlist = m_p_n_prevpointlist4;
-	}
-	else
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist3;
-		p_n_leftpointlist = m_p_n_prevpointlist3;
-	}
-
-	for( n_point = 0; n_point < n_points; n_point++ )
-	{
-		ADJUST_COORD( m_packet.FlatTexturedPolygon.vertex[ n_point ].n_coord );
-	}
-
-	n_leftpoint = 0;
-	for( n_point = 1; n_point < n_points; n_point++ )
-	{
-		if( COORD_Y( m_packet.FlatTexturedPolygon.vertex[ n_point ].n_coord ) < COORD_Y( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_coord ) ||
-			( COORD_Y( m_packet.FlatTexturedPolygon.vertex[ n_point ].n_coord ) == COORD_Y( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_coord ) &&
-			COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_point ].n_coord ) < COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_coord ) ) )
-		{
-			n_leftpoint = n_point;
-		}
-	}
-	n_rightpoint = n_leftpoint;
+   FINDTOPLEFT( FlatTexturedPolygon )
 
 	n_dx1 = 0;
 	n_dx2 = 0;
@@ -1902,33 +1927,7 @@ static void GouraudPolygon( running_machine *machine, int n_points )
 
 	SOLIDSETUP
 
-	if( n_points == 4 )
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist4;
-		p_n_leftpointlist = m_p_n_prevpointlist4;
-	}
-	else
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist3;
-		p_n_leftpointlist = m_p_n_prevpointlist3;
-	}
-
-	for( n_point = 0; n_point < n_points; n_point++ )
-	{
-		ADJUST_COORD( m_packet.GouraudPolygon.vertex[ n_point ].n_coord );
-	}
-
-	n_leftpoint = 0;
-	for( n_point = 1; n_point < n_points; n_point++ )
-	{
-		if( COORD_Y( m_packet.GouraudPolygon.vertex[ n_point ].n_coord ) < COORD_Y( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_coord ) ||
-			( COORD_Y( m_packet.GouraudPolygon.vertex[ n_point ].n_coord ) == COORD_Y( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_coord ) &&
-			COORD_X( m_packet.GouraudPolygon.vertex[ n_point ].n_coord ) < COORD_X( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_coord ) ) )
-		{
-			n_leftpoint = n_point;
-		}
-	}
-	n_rightpoint = n_leftpoint;
+   FINDTOPLEFT( GouraudPolygon )
 
 	n_dx1 = 0;
 	n_dx2 = 0;
@@ -2141,33 +2140,7 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 	decode_tpage( machine, &psxgpu, m_packet.GouraudTexturedPolygon.vertex[ 1 ].n_texture.w.h );
 	TEXTURESETUP
 
-	if( n_points == 4 )
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist4;
-		p_n_leftpointlist = m_p_n_prevpointlist4;
-	}
-	else
-	{
-		p_n_rightpointlist = m_p_n_nextpointlist3;
-		p_n_leftpointlist = m_p_n_prevpointlist3;
-	}
-
-	for( n_point = 0; n_point < n_points; n_point++ )
-	{
-		ADJUST_COORD( m_packet.GouraudTexturedPolygon.vertex[ n_point ].n_coord );
-	}
-
-	n_leftpoint = 0;
-	for( n_point = 1; n_point < n_points; n_point++ )
-	{
-		if( COORD_Y( m_packet.GouraudTexturedPolygon.vertex[ n_point ].n_coord ) < COORD_Y( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_coord ) ||
-			( COORD_Y( m_packet.GouraudTexturedPolygon.vertex[ n_point ].n_coord ) == COORD_Y( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_coord ) &&
-			COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_point ].n_coord ) < COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_coord ) ) )
-		{
-			n_leftpoint = n_point;
-		}
-	}
-	n_rightpoint = n_leftpoint;
+   FINDTOPLEFT( GouraudTexturedPolygon )
 
 	n_dx1 = 0;
 	n_dx2 = 0;
