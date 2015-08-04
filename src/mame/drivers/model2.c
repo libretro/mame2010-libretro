@@ -980,10 +980,13 @@ static READ32_HANDLER(daytona_unk_r)
 
 static READ32_HANDLER(desert_unk_r)
 {
+   static UINT8 test;
+
+	test ^= 8;
 	// vcop needs bit 3 clear (infinite loop otherwise)
 	// desert needs other bits set (not sure which specifically)
 	// daytona needs the MSW to return ff
-	return 0x00ff00f7;
+   return 0x00f700ff | (test << 16);
 }
 
 static READ32_HANDLER(model2_irq_r)
@@ -1009,6 +1012,13 @@ static WRITE32_HANDLER(model2_irq_w)
 	}
 
 	model2_intreq &= data;
+   UINT32 irq_ack = data ^ 0xffffffff;
+
+	if(irq_ack & 1<<0)
+		cputag_set_input_line(space->machine, "maincpu", I960_IRQ0, CLEAR_LINE);
+
+	if(irq_ack & 1<<10)
+		cputag_set_input_line(space->machine, "maincpu", I960_IRQ3, CLEAR_LINE);
 }
 
 static int to_68k;
