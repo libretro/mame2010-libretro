@@ -816,6 +816,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 					case 0x62:		compute_max(cpustate, rn, rx, ry); break;
 					case 0x81:		compute_fadd(cpustate, rn, rx, ry); break;
 					case 0x82:		compute_fsub(cpustate, rn, rx, ry); break;
+               case 0x89:		compute_favg(cpustate, rn, rx, ry); break;
 					case 0x8a:		compute_fcomp(cpustate, rx, ry); break;
 					case 0x91:		compute_fabs_plus(cpustate, rn, rx, ry); break;
 					case 0xa1:		compute_fpass(cpustate, rn, rx); break;

@@ -2726,7 +2726,7 @@ static void convert_bitmap( running_machine *machine, bitmap_t *dst, bitmap_t *s
 
 VIDEO_UPDATE(model2)
 {
-	logerror("--- frame ---\n");
+	//logerror("--- frame ---\n");
 
 	bitmap_fill(bitmap, cliprect, screen->machine->pens[0]);
 	bitmap_fill(sys24_bitmap, cliprect, 0);

@@ -572,6 +572,29 @@ INLINE void compute_fadd(SHARC_REGS *cpustate, int rn, int rx, int ry)
 	cpustate->astat |= AF;
 }
 
+INLINE void compute_favg(SHARC_REGS *cpustate, int rn, int rx, int ry)
+{
+	SHARC_REG r;
+	r.f = (FREG(rx) + FREG(ry)) / (float) 2.0f;
+
+	CLEAR_ALU_FLAGS();
+	// AN
+	cpustate->astat |= (r.f < 0.0f) ? AN : 0;
+	// AZ
+	cpustate->astat |= (IS_FLOAT_DENORMAL(r.r) || IS_FLOAT_ZERO(r.r)) ? AZ : 0;
+	// AUS
+	cpustate->stky |= (IS_FLOAT_DENORMAL(r.r)) ? AUS : 0;
+	// AI
+	cpustate->astat |= (IS_FLOAT_NAN(REG(rx)) || IS_FLOAT_NAN(REG(ry))) ? AI : 0;
+	/* TODO: AV flag */
+
+	// AIS
+	if (cpustate->astat & AI)   cpustate->stky |= AIS;
+
+	FREG(rn) = r.f;
+	cpustate->astat |= AF;
+}
+
 /* Fn = Fx - Fy */
 INLINE void compute_fsub(SHARC_REGS *cpustate, int rn, int rx, int ry)
 {
