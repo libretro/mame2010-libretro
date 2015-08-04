@@ -640,6 +640,11 @@ static WRITE32_HANDLER(copro_prg_w)
 	}
 }
 
+static READ32_HANDLER( copro_ctl1_r )
+{
+   return model2_coproctl;
+}
+
 static WRITE32_HANDLER( copro_ctl1_w )
 {
 	// did hi bit change?
@@ -663,7 +668,7 @@ static WRITE32_HANDLER( copro_ctl1_w )
 		}
 	}
 
-	model2_coproctl = data;
+   COMBINE_DATA(&model2_coproctl);
 }
 
 static WRITE32_HANDLER(copro_function_port_w)
@@ -1436,7 +1441,7 @@ static ADDRESS_MAP_START( model2o_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00880000, 0x00883fff) AM_WRITE(copro_function_port_w)
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_fifo_r, copro_fifo_w)
 
-	AM_RANGE(0x00980000, 0x00980003) AM_WRITE( copro_ctl1_w )
+   AM_RANGE(0x00980000, 0x00980003) AM_READWRITE(copro_ctl1_r,copro_ctl1_w)
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
 	AM_RANGE(0x009c0000, 0x009cffff) AM_READWRITE( model2_serial_r, model2o_serial_w )
 
@@ -1466,7 +1471,7 @@ static ADDRESS_MAP_START( model2a_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00880000, 0x00883fff) AM_WRITE(copro_function_port_w)
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_fifo_r, copro_fifo_w)
 
-	AM_RANGE(0x00980000, 0x00980003) AM_WRITE( copro_ctl1_w )
+   AM_RANGE(0x00980000, 0x00980003) AM_READWRITE(copro_ctl1_r,copro_ctl1_w)
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
 	AM_RANGE(0x009c0000, 0x009cffff) AM_READWRITE( model2_serial_r, model2_serial_w )
 
@@ -1497,7 +1502,7 @@ static ADDRESS_MAP_START( model2b_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_fifo_r, copro_fifo_w)
 	AM_RANGE(0x008c0000, 0x008c0fff) AM_WRITE(copro_sharc_iop_w)
 
-	AM_RANGE(0x00980000, 0x00980003) AM_WRITE( copro_ctl1_w )
+   AM_RANGE(0x00980000, 0x00980003) AM_READWRITE(copro_ctl1_r,copro_ctl1_w)
 
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
 	//AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_sharc_ctl1_w )
@@ -1527,7 +1532,7 @@ static ADDRESS_MAP_START( model2c_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00804000, 0x00807fff) AM_READWRITE(geo_prg_r, geo_prg_w)
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_prg_r, copro_prg_w)
 
-	AM_RANGE(0x00980000, 0x00980003) AM_WRITE( copro_ctl1_w )
+   AM_RANGE(0x00980000, 0x00980003) AM_READWRITE(copro_ctl1_r,copro_ctl1_w)
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
 	AM_RANGE(0x009c0000, 0x009cffff) AM_READWRITE( model2_serial_r, model2_serial_w )
 
