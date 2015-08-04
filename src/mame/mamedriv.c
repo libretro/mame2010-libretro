@@ -4322,7 +4322,7 @@ DokiDoki Penguin Land *not confirmed
 	DRIVER( schamp )	/* 1996.05 Sonic Championship */
 	DRIVER( sfight )	/* 1996.05 Sonic the Fighters */
 	DRIVER( lastbrnx )	/* 1996.06 Last Bronx */
-	DRIVER( lastbrnxj )
+	DRIVER( lastbrnxj ) /* 1996.06 Last Bronx (Japan) */
 	DRIVER( sgt24h )	/* 1996.07 Super GT 24h */
 	DRIVER( dynabb )	/* 1996.08 Dynamite Baseball */
 	DRIVER( doa )		/* 1996.11 Dead or Alive */
@@ -4341,7 +4341,7 @@ DokiDoki Penguin Land *not confirmed
 	DRIVER( waverunr )	/* 1996.10 Wave Runner */
 	DRIVER( hotd )		/* 1997.03 The House of the Dead */
 	DRIVER( topskatr )	/* 1997.05 Top Skater */
-	DRIVER( topskatru )
+	DRIVER( topskatru )  /* 1997.05 Top Skater (Japan) */
 	DRIVER( overrev )	/* 1997.09 Overrev */
 	DRIVER( segawski )	/* 1997.09 Sega Water Ski */
 	DRIVER( dynamcopc )	/* 1998.09 Dynamite Cop */
