@@ -964,6 +964,11 @@ static CPU_EXECUTE( mb86233 )
 
 				switch( op )
 				{
+               case 0x04: /* ? */
+						GETA().u = GETARAM()[r1];
+						GETB().u = GETEXTERNAL(cpustate, GETEB(),r2);
+					break;
+
 					case 0x0C:
 						GETA().u = GETARAM()[r1];
 						GETB().u = GETBRAM()[r2];
