@@ -106,16 +106,16 @@ int utf8_is_valid_string(const char *utf8string);
     MACROS
 ***************************************************************************/
 
-#ifdef LSB_FIRST
-#define uchar_from_utf16be	uchar_from_utf16f
-#define uchar_from_utf16le	uchar_from_utf16
-#define utf16be_from_uchar	utf16f_from_uchar
-#define utf16le_from_uchar	utf16_from_uchar
-#else
+#ifdef MSB_FIRST
 #define uchar_from_utf16be	uchar_from_utf16
 #define uchar_from_utf16le	uchar_from_utf16f
 #define utf16be_from_uchar	utf16_from_uchar
 #define utf16le_from_uchar	utf16f_from_uchar
+#else
+#define uchar_from_utf16be	uchar_from_utf16f
+#define uchar_from_utf16le	uchar_from_utf16
+#define utf16be_from_uchar	utf16f_from_uchar
+#define utf16le_from_uchar	utf16_from_uchar
 #endif
 
 #endif /* UNICODE_H */

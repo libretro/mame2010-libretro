@@ -38,12 +38,12 @@ struct _hc11_state
 {
 	union {
 		struct {
-#ifdef LSB_FIRST
-			UINT8 b;
+#ifdef MSB_FIRST
 			UINT8 a;
+			UINT8 b;
 #else
-			UINT8 a;
 			UINT8 b;
+			UINT8 a;
 #endif
 		} d8;
 		UINT16 d16;

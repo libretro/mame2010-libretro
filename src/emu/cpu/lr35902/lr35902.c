@@ -82,27 +82,27 @@ typedef struct {
 	const lr35902_cpu_core *config;
 } lr35902_16BitRegs;
 
-#ifdef LSB_FIRST
+#ifdef MSB_FIRST
 typedef struct {
-	UINT8 F;
 	UINT8 A;
-	UINT8 C;
+	UINT8 F;
 	UINT8 B;
-	UINT8 E;
+	UINT8 C;
 	UINT8 D;
-	UINT8 L;
+	UINT8 E;
 	UINT8 H;
+	UINT8 L;
 } lr35902_8BitRegs;
 #else
 typedef struct {
-	UINT8 A;
 	UINT8 F;
-	UINT8 B;
+	UINT8 A;
 	UINT8 C;
-	UINT8 D;
+	UINT8 B;
 	UINT8 E;
-	UINT8 H;
+	UINT8 D;
 	UINT8 L;
+	UINT8 H;
 } lr35902_8BitRegs;
 #endif
 

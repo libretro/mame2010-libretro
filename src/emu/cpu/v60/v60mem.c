@@ -217,7 +217,7 @@ static const struct cpu_info v70_i =
 #define MemRead32   cpustate->info.mr32
 #define MemWrite32  cpustate->info.mw32
 
-#if defined(LSB_FIRST) && !defined(ALIGN_INTS)
+#if !defined(MSB_FIRST) && !defined(ALIGN_INTS)
 #define OpRead8(s, a)	(memory_decrypted_read_byte(s, a))
 #define OpRead16(s, a)	(memory_decrypted_read_word(s, a))
 #define OpRead32(s, a)	(memory_decrypted_read_dword(s, a))

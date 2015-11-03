@@ -10,10 +10,10 @@
 /* todo: replace this with the PAIR structure */
 typedef union
 {
-#ifdef LSB_FIRST
-	struct { unsigned char l,h; } b;
-#else
+#ifdef MSB_FIRST
 	struct { unsigned char h,l; } b;
+#else
+	struct { unsigned char l,h; } b;
 #endif
 	unsigned short int w;
 }pair;

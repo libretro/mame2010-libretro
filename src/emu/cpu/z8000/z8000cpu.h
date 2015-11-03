@@ -43,7 +43,7 @@
  *             R14 15- 0    RR14  31-16          31-16
  *             R15 15- 0          15- 0          15- 0
  *
- * Note that for LSB_FIRST machines we have the case that the RR registers
+ * Note that for non-MSB_FIRST machines we have the case that the RR registers
  * use the lower numbered R registers in the higher bit positions.
  * And also the RQ registers use the lower numbered RR registers in the
  * higher bit positions.

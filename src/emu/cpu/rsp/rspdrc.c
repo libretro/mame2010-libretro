@@ -7432,7 +7432,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 	drcuml_state *drcuml = rsp->impstate->drcuml;
 	drcuml_block *block;
 	jmp_buf errorbuf;
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 	int unaligned_case = 1;
 #endif
 
@@ -7454,7 +7454,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 	{
 		if (size == 1)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_XOR(block, IREG(0), IREG(0), IMM(3));									// xor     i0,i0,3
 #endif
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
@@ -7462,7 +7462,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 		}
 		else if (size == 2)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_TEST(block, IREG(0), IMM(1));											// test    i0,1
 			UML_JMPc(block, IF_NZ, unaligned_case);										// jnz     <unaligned_case>
 			UML_XOR(block, IREG(0), IREG(0), IMM(2));									// xor     i0,i0,2
@@ -7470,7 +7470,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
 			UML_STORE(block, rsp->impstate->dmem, IREG(0), IREG(1), WORD_x1);			// store   dmem,i0,i1,word_x1
 			UML_RET(block);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_LABEL(block, unaligned_case);										// unaligned_case:
 			UML_AND(block, IREG(2), IREG(0), IMM(3));									// and     i2,i0,3
 			UML_AND(block, IREG(0), IREG(0), IMM(0xffc));								// and     i0,i0,0xffc
@@ -7486,14 +7486,14 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 		}
 		else if (size == 4)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_TEST(block, IREG(0), IMM(3));											// test    i0,3
 			UML_JMPc(block, IF_NZ, unaligned_case);										// jnz     <unaligned_case>
 #endif
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
 			UML_STORE(block, rsp->impstate->dmem, IREG(0), IREG(1), DWORD_x1);			// store   dmem,i0,i1,dword_x1
 			UML_RET(block);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_LABEL(block, unaligned_case);										// unaligned_case:
 			UML_AND(block, IREG(2), IREG(0), IMM(3));									// and     i2,i0,3
 			UML_AND(block, IREG(0), IREG(0), IMM(0xffc));								// and     i0,i0,0xffc
@@ -7511,7 +7511,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 	{
 		if (size == 1)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_XOR(block, IREG(0), IREG(0), IMM(3));									// xor     i0,i0,3
 #endif
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
@@ -7519,7 +7519,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 		}
 		else if (size == 2)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_TEST(block, IREG(0), IMM(1));											// test    i0,1
 			UML_JMPc(block, IF_NZ, unaligned_case);										// jnz     <unaligned_case>
 			UML_XOR(block, IREG(0), IREG(0), IMM(2));									// xor     i0,i0,2
@@ -7527,7 +7527,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
 			UML_LOAD(block, IREG(0), rsp->impstate->dmem, IREG(0), WORD_x1);			// load    i0,dmem,i0,word_x1
 			UML_RET(block);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_LABEL(block, unaligned_case);										// unaligned_case:
 			UML_AND(block, IREG(1), IREG(0), IMM(3));									// and     i1,i0,3
 			UML_AND(block, IREG(0), IREG(0), IMM(0xffc));								// and     i0,i0,0xffc
@@ -7539,14 +7539,14 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
 		}
 		else if (size == 4)
 		{
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_TEST(block, IREG(0), IMM(3));											// test    i0,3
 			UML_JMPc(block, IF_NZ, unaligned_case);										// jnz     <unaligned_case>
 #endif
 			UML_AND(block, IREG(0), IREG(0), IMM(0x00000fff));							// and     i0,i0,0xfff
 			UML_LOAD(block, IREG(0), rsp->impstate->dmem, IREG(0), DWORD_x1);			// load    i0,dmem,i0,dword_x1
 			UML_RET(block);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 			UML_LABEL(block, unaligned_case);										// unaligned_case:
 			UML_AND(block, IREG(1), IREG(0), IMM(3));									// and     i1,i0,3
 			UML_AND(block, IREG(0), IREG(0), IMM(0xffc));								// and     i0,i0,0xffc

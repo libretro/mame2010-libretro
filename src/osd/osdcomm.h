@@ -207,21 +207,21 @@ __extension__ typedef signed long long		INT64;
 		(((((UINT64) (x)) >>  0) & ((UINT64) 0xFF)) << 56)		\
 	)
 
-#ifdef LSB_FIRST
-#define BIG_ENDIANIZE_INT16(x)		(FLIPENDIAN_INT16(x))
-#define BIG_ENDIANIZE_INT32(x)		(FLIPENDIAN_INT32(x))
-#define BIG_ENDIANIZE_INT64(x)		(FLIPENDIAN_INT64(x))
-#define LITTLE_ENDIANIZE_INT16(x)	(x)
-#define LITTLE_ENDIANIZE_INT32(x)	(x)
-#define LITTLE_ENDIANIZE_INT64(x)	(x)
-#else
+#ifdef MSB_FIRST
 #define BIG_ENDIANIZE_INT16(x)		(x)
 #define BIG_ENDIANIZE_INT32(x)		(x)
 #define BIG_ENDIANIZE_INT64(x)		(x)
 #define LITTLE_ENDIANIZE_INT16(x)	(FLIPENDIAN_INT16(x))
 #define LITTLE_ENDIANIZE_INT32(x)	(FLIPENDIAN_INT32(x))
 #define LITTLE_ENDIANIZE_INT64(x)	(FLIPENDIAN_INT64(x))
-#endif /* LSB_FIRST */
+#else
+#define BIG_ENDIANIZE_INT16(x)		(FLIPENDIAN_INT16(x))
+#define BIG_ENDIANIZE_INT32(x)		(FLIPENDIAN_INT32(x))
+#define BIG_ENDIANIZE_INT64(x)		(FLIPENDIAN_INT64(x))
+#define LITTLE_ENDIANIZE_INT16(x)	(x)
+#define LITTLE_ENDIANIZE_INT32(x)	(x)
+#define LITTLE_ENDIANIZE_INT64(x)	(x)
+#endif
 
 
 #endif	/* __OSDCOMM_H__ */

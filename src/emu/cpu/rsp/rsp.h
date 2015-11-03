@@ -155,31 +155,31 @@ typedef struct
 	union
 	{
 		INT64 l;
-#ifdef LSB_FIRST
+#ifdef MSB_FIRST
 		struct
 		{
-			INT16 z;
-			INT16 low;
-			INT16 mid;
 			INT16 high;
+			INT16 mid;
+			INT16 low;
+			INT16 z;
 		} h;
 		struct
 		{
-			INT32 zl;
 			INT32 mh;
+			INT32 zl;
 		} w;
 #else
 		struct
 		{
-			INT16 high;
-			INT16 mid;
-			INT16 low;
 			INT16 z;
+			INT16 low;
+			INT16 mid;
+			INT16 high;
 		} h;
 		struct
 		{
-			INT32 mh;
 			INT32 zl;
+			INT32 mh;
 		} w;
 #endif
 	};

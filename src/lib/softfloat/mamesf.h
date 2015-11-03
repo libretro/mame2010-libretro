@@ -1,10 +1,10 @@
 /*----------------------------------------------------------------------------
 | One of the macros `BIGENDIAN' or `LITTLEENDIAN' must be defined.
 *----------------------------------------------------------------------------*/
-#ifdef LSB_FIRST
-#define LITTLEENDIAN
-#else
+#ifdef MSB_FIRST
 #define BIGENDIAN
+#else
+#define LITTLEENDIAN
 #endif
 
 /*----------------------------------------------------------------------------

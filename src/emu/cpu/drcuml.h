@@ -373,10 +373,10 @@ struct _drcuml_opcode_info
 typedef union _drcuml_ireg drcuml_ireg;
 union _drcuml_ireg
 {
-#ifdef LSB_FIRST
-	struct { UINT32	l,h; } w;				/* 32-bit low, high parts of the register */
-#else
+#ifdef MSB_FIRST
 	struct { UINT32 h,l; } w;				/* 32-bit low, high parts of the register */
+#else
+	struct { UINT32	l,h; } w;				/* 32-bit low, high parts of the register */
 #endif
 	UINT64				d;					/* 64-bit full register */
 };
@@ -386,10 +386,10 @@ union _drcuml_ireg
 typedef union _drcuml_freg drcuml_freg;
 union _drcuml_freg
 {
-#ifdef LSB_FIRST
-	struct { float l,h; } s;				/* 32-bit low, high parts of the register */
-#else
+#ifdef MSB_FIRST
 	struct { float h,l;	} s;				/* 32-bit low, high parts of the register */
+#else
+	struct { float l,h; } s;				/* 32-bit low, high parts of the register */
 #endif
 	double				d;					/* 64-bit full register */
 };

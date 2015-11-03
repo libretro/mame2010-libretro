@@ -32,12 +32,12 @@
 typedef struct _XY XY;
 struct _XY
 {
-#ifdef LSB_FIRST
-	INT16 x;
+#ifdef MSB_FIRST
 	INT16 y;
+	INT16 x;
 #else
-	INT16 y;
 	INT16 x;
+	INT16 y;
 #endif
 };
 

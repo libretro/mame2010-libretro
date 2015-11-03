@@ -33,10 +33,10 @@ static struct
 {
 	union
 	{
-#ifdef LSB_FIRST
-		struct { UINT8 LSB; UINT8 MSB; };
-#else
+#ifdef MSB_FIRST
 		struct { UINT8 MSB; UINT8 LSB; };
+#else
+		struct { UINT8 LSB; UINT8 MSB; };
 #endif
 		UINT16 val;
 	} counts[3];

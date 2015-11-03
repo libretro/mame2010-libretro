@@ -57,10 +57,10 @@ static struct
 
 	union
 	{
-	#ifdef LSB_FIRST
-		struct { UINT16 W; INT16 Z; };
-	#else
+	#ifdef MSB_FIRST
 		struct { INT16 Z; UINT16 W; };
+	#else
+		struct { UINT16 W; INT16 Z; };
 	#endif
 		INT32 ZW32;
 	} ZW;

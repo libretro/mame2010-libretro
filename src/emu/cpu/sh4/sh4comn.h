@@ -30,7 +30,7 @@
 #define FP_XS(r) sh4->xf[(r)] // binary representation of extended single precision floating point register r
 #define FP_XFS(r) *( (float  *)(sh4->xf+(r)) ) // single precision extended floating point register r
 #define FP_XFD(r) *( (double *)(sh4->xf+(r)) ) // double precision extended floating point register r
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 #define FP_RS2(r) sh4->fr[(r) ^ sh4->fpu_pr]
 #define FP_RFS2(r) *( (float  *)(sh4->fr+((r) ^ sh4->fpu_pr)) )
 #define FP_XS2(r) sh4->xf[(r) ^ sh4->fpu_pr]
@@ -145,7 +145,7 @@ void sh4_swap_fp_registers(sh4_state *sh4);
 void sh4_default_exception_priorities(sh4_state *sh4); // setup default priorities for exceptions
 void sh4_parse_configuration(sh4_state *sh4, const struct sh4_config *conf);
 void sh4_set_irq_line(sh4_state *sh4, int irqline, int state); // set state of external interrupt line
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 void sh4_swap_fp_couples(sh4_state *sh4);
 #endif
 void sh4_common_init(running_device *device);

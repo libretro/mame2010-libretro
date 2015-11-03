@@ -1339,10 +1339,10 @@ typedef struct _poly_extra_data poly_extra_data;
 typedef struct _rgba rgba;
 struct _rgba
 {
-#ifdef LSB_FIRST
-	UINT8				b, g, r, a;
-#else
+#ifdef MSB_FIRST
 	UINT8				a, r, g, b;
+#else
+	UINT8				b, g, r, a;
 #endif
 };
 

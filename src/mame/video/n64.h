@@ -65,10 +65,10 @@ class Color
 		union
 		{
 			UINT32 c;
-#ifdef LSB_FIRST
-			struct { UINT8 a, b, g, r; } i;
-#else
+#ifdef MSB_FIRST
 			struct { UINT8 r, g, b, a; } i;
+#else
+			struct { UINT8 a, b, g, r; } i;
 #endif
 		};
 };

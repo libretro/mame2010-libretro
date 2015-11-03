@@ -1162,10 +1162,10 @@ bool mame_validitychecks(const game_driver *curdriver)
 #endif
 	lsbtest = 0;
 	*(UINT8 *)&lsbtest = 0xff;
-#ifdef LSB_FIRST
-	if (lsbtest == 0xff00)		{ mame_printf_error("LSB_FIRST specified, but running on a big-endian machine\n"); error = true; }
+#ifdef MSB_FIRST
+	if (lsbtest == 0x00ff)		{ mame_printf_error("MSB_FIRST specified, but running on a little-endian machine\n"); error = true; }
 #else
-	if (lsbtest == 0x00ff)		{ mame_printf_error("LSB_FIRST not specified, but running on a little-endian machine\n"); error = true; }
+	if (lsbtest == 0xff00)		{ mame_printf_error("MSB_FIRST specified, but running on a big-endian machine\n"); error = true; }
 #endif
 
 	/* validate inline function behavior */

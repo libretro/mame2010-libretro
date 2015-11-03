@@ -21,10 +21,10 @@ class SpanParam
 		union
 		{
 			UINT32 w;
-#ifdef LSB_FIRST
-			struct { UINT16 l; INT16 h; } h;
-#else
+#ifdef MSB_FIRST
 			struct { INT16 h; UINT16 l; } h;
+#else
+			struct { UINT16 l; INT16 h; } h;
 #endif
 		};
 };

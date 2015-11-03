@@ -72,7 +72,7 @@ UINT32 z;
 	}
 }
 
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 void sh4_swap_fp_couples(sh4_state *sh4)
 {
 int s;

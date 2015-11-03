@@ -100,16 +100,16 @@ union generic_ptr
 // PAIR is an endian-safe union useful for representing 32-bit CPU registers
 union PAIR
 {
-#ifdef LSB_FIRST
-	struct { UINT8 l,h,h2,h3; } b;
-	struct { UINT16 l,h; } w;
-	struct { INT8 l,h,h2,h3; } sb;
-	struct { INT16 l,h; } sw;
-#else
+#ifdef MSB_FIRST
 	struct { UINT8 h3,h2,h,l; } b;
 	struct { INT8 h3,h2,h,l; } sb;
 	struct { UINT16 h,l; } w;
 	struct { INT16 h,l; } sw;
+#else
+	struct { UINT8 l,h,h2,h3; } b;
+	struct { UINT16 l,h; } w;
+	struct { INT8 l,h,h2,h3; } sb;
+	struct { INT16 l,h; } sw;
 #endif
 	UINT32 d;
 	INT32 sd;
@@ -119,20 +119,20 @@ union PAIR
 // PAIR64 is a 64-bit extension of a PAIR
 union PAIR64
 {
-#ifdef LSB_FIRST
-	struct { UINT8 l,h,h2,h3,h4,h5,h6,h7; } b;
-	struct { UINT16 l,h,h2,h3; } w;
-	struct { UINT32 l,h; } d;
-	struct { INT8 l,h,h2,h3,h4,h5,h6,h7; } sb;
-	struct { INT16 l,h,h2,h3; } sw;
-	struct { INT32 l,h; } sd;
-#else
+#ifdef MSB_FIRST
 	struct { UINT8 h7,h6,h5,h4,h3,h2,h,l; } b;
 	struct { UINT16 h3,h2,h,l; } w;
 	struct { UINT32 h,l; } d;
 	struct { INT8 h7,h6,h5,h4,h3,h2,h,l; } sb;
 	struct { INT16 h3,h2,h,l; } sw;
 	struct { INT32 h,l; } sd;
+#else
+	struct { UINT8 l,h,h2,h3,h4,h5,h6,h7; } b;
+	struct { UINT16 l,h,h2,h3; } w;
+	struct { UINT32 l,h; } d;
+	struct { INT8 l,h,h2,h3,h4,h5,h6,h7; } sb;
+	struct { INT16 l,h,h2,h3; } sw;
+	struct { INT32 l,h; } sd;
 #endif
 	UINT64 q;
 	INT64 sq;
@@ -153,10 +153,10 @@ enum endianness_t
 
 
 // declare native endianness to be one or the other
-#ifdef LSB_FIRST
-const endianness_t ENDIANNESS_NATIVE = ENDIANNESS_LITTLE;
-#else
+#ifdef MSB_FIRST
 const endianness_t ENDIANNESS_NATIVE = ENDIANNESS_BIG;
+#else
+const endianness_t ENDIANNESS_NATIVE = ENDIANNESS_LITTLE;
 #endif
 
 

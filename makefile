@@ -408,9 +408,9 @@ endif
 # map the INLINE to something digestible by GCC
 DEFS += -DINLINE="static inline"
 
-# define LSB_FIRST if we are a little-endian target
-ifndef BIGENDIAN
-DEFS += -DLSB_FIRST
+# define MSB_FIRST if we are a big-endian target
+ifdef BIGENDIAN
+DEFS += -DMSB_FIRST
 endif
 
 # define PTR64 if we are a 64-bit target
@@ -644,7 +644,7 @@ SOFTFLOAT = $(OBJ)/libsoftfloat.a
 ifeq ($(BUILD_AND),0)
 
 CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-PLATCFLAGS += -DPC_BUILD -DRETRO -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants 
+PLATCFLAGS += -DPC_BUILD -DRETRO -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants 
 LDFLAGS +=  -fPIC -shared -Wl,--version-script=src/osd/retro/link.T
 NATIVELD = g++
 NATIVELDFLAGS = -Wl,--warn-common -lstdc++
@@ -659,7 +659,7 @@ CCOMFLAGS += -ffast-math  -fsingle-precision-constant
 else
 
 CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO -DRETRO_AND -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants -mstructure-size-boundary=32  -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
+PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO -DRETRO_AND -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -mstructure-size-boundary=32  -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
 LDFLAGS += -Wl,--fix-cortex-a8 -llog -fPIC -shared -Wl,--version-script=src/osd/retro/link.T
 NATIVELD = g++
 NATIVELDFLAGS = -Wl,--warn-common -lstdc++
