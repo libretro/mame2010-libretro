@@ -1008,12 +1008,6 @@ $(CPUOBJ)/mc68hc11/mc68hc11.o:	$(CPUSRC)/mc68hc11/mc68hc11.c \
 # Motorola 68000 series
 #-------------------------------------------------
 
-ifneq ($(filter M680X0,$(CPUS)),)
-OBJDIRS += $(CPUOBJ)/m68000
-CPUOBJS += $(CPUOBJ)/m68000/m68kcpu.o $(CPUOBJ)/m68000/m68kops.o
-DASMOBJS += $(CPUOBJ)/m68000/m68kdasm.o
-endif
-
 # when we compile source files we need to include generated files from the OBJ directory
 $(CPUOBJ)/m68000/%.o: $(CPUSRC)/m68000/%.c | $(OSPREBUILD)
 	@echo Compiling $<...
@@ -1026,9 +1020,9 @@ $(CPUOBJ)/m68000/%.o: $(CPUOBJ)/m68000/%.c | $(OSPREBUILD)
 
 # rule to ensure we build the header before building the core CPU file
 $(CPUOBJ)/m68000/m68kcpu.o: 	$(CPUOBJ)/m68000/m68kops.c \
-								$(CPUSRC)/m68000/m68kcpu.h $(CPUSRC)/m68000/m68kfpu.c $(CPUSRC)/m68000/m68kmmu.h
-
-
+                                $(CPUSRC)/m68000/m68kcpu.h \
+                                $(CPUSRC)/m68000/m68kfpu.c \
+                                $(CPUSRC)/m68000/m68kmmu.h
 
 #-------------------------------------------------
 # Motorola/Freescale dsp56k

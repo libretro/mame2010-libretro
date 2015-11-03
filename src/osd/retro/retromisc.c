@@ -22,12 +22,12 @@
 
 void *osd_alloc_executable(size_t size)
 {
-#if defined(WIN32)
+#if defined(_WIN32) && !defined(_XBOX)
    return VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-#elif defined(SDLMAME_BSD) || defined(SDLMAME_MACOSX)
-	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
-#elif defined(SDLMAME_UNIX) || defined(RETRO)
-	return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
+#elif defined(__APPLE__)
+   return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
+#else
+   return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
 #endif
 }
 
