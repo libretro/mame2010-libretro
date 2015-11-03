@@ -85,23 +85,23 @@ ifeq ($(platform), unix)
 	TARGETOS=linux  
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-	CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-	PLATCFLAGS += -DRETRO -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants 
+   CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+   PLATCFLAGS += -DRETRO -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants 
 ifeq ($(VRENDER),opengl)  
-	PLATCFLAGS += -DHAVE_GL
-	LIBS += -lGL
-endif
-	LDFLAGS +=  $(fpic) $(SHARED)
-	NATIVELD = g++
-	NATIVELDFLAGS = -Wl,--warn-common -lstdc++
-	NATIVECC = g++
-	NATIVECFLAGS = -std=gnu99
-	CC_AS = gcc 
-	CC = g++
-	AR = @ar
-	LD = g++ 
-	CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
-	LIBS += -lstdc++ -lpthread 
+   PLATCFLAGS += -DHAVE_GL
+   LIBS += -lGL
+   endif
+LDFLAGS +=  $(fpic) $(SHARED)
+   NATIVELD = g++
+   NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+   NATIVECC = g++
+   NATIVECFLAGS = -std=gnu99
+   CC_AS = gcc 
+   CC = g++
+   AR = @ar
+   LD = g++ 
+   CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
+   LIBS += -lstdc++ -lpthread 
 #-lportmidi
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
 PTR64 = 1
