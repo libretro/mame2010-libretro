@@ -1012,7 +1012,6 @@ ifneq ($(filter M680X0,$(CPUS)),)
 OBJDIRS += $(CPUOBJ)/m68000
 CPUOBJS += $(CPUOBJ)/m68000/m68kcpu.o $(CPUOBJ)/m68000/m68kops.o
 DASMOBJS += $(CPUOBJ)/m68000/m68kdasm.o
-M68KMAKE = $(BUILDOUT)/m68kmake$(BUILD_EXE)
 endif
 
 # when we compile source files we need to include generated files from the OBJ directory
@@ -1024,21 +1023,6 @@ $(CPUOBJ)/m68000/%.o: $(CPUSRC)/m68000/%.c | $(OSPREBUILD)
 $(CPUOBJ)/m68000/%.o: $(CPUOBJ)/m68000/%.c | $(OSPREBUILD)
 	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -I$(CPUSRC)/m68000 -c $< -o $@
-
-# rule to generate the C files
-$(CPUOBJ)/m68000/m68kops.c: $(M68KMAKE) $(CPUSRC)/m68000/m68k_in.c
-	@echo Generating M68K source files...
-	$(M68KMAKE) $(CPUOBJ)/m68000 $(CPUSRC)/m68000/m68k_in.c
-
-# rule to build the generator
-ifneq ($(CROSS_BUILD),1)
-
-BUILD += $(M68KMAKE)
-
-$(M68KMAKE): $(CPUOBJ)/m68000/m68kmake.o $(LIBOCORE)
-	@echo Linking $@...
-	$(NATIVELD) $(NATIVELDFLAGS) $(OSDBGLDFLAGS) $^ $(LIBS) -o $@
-endif
 
 # rule to ensure we build the header before building the core CPU file
 $(CPUOBJ)/m68000/m68kcpu.o: 	$(CPUOBJ)/m68000/m68kops.c \
@@ -1551,7 +1535,6 @@ ifneq ($(filter TMS57002,$(CPUS)),)
 OBJDIRS += $(CPUOBJ)/tms57002
 CPUOBJS += $(CPUOBJ)/tms57002/tms57002.o
 DASMOBJS += $(CPUOBJ)/tms57002/57002dsm.o
-TMSMAKE += $(BUILDOUT)/tmsmake$(BUILD_EXE)
 endif
 
 $(CPUOBJ)/tms57002/tms57002.o:	$(CPUSRC)/tms57002/tms57002.c \
@@ -1560,23 +1543,6 @@ $(CPUOBJ)/tms57002/tms57002.o:	$(CPUSRC)/tms57002/tms57002.c \
 
 $(CPUOBJ)/tms57002/57002dsm.o:	$(CPUSRC)/tms57002/57002dsm.c \
 								$(CPUOBJ)/tms57002/tms57002.inc
-
-# rule to generate the C file
-$(CPUOBJ)/tms57002/tms57002.inc: $(TMSMAKE) $(CPUSRC)/tms57002/tmsinstr.lst
-	@echo Generating TMS57002 source file...
-	$(TMSMAKE) $(CPUSRC)/tms57002/tmsinstr.lst $@
-
-# rule to build the generator
-ifneq ($(CROSS_BUILD),1)
-
-BUILD += $(TMSMAKE)
-
-$(TMSMAKE): $(CPUOBJ)/tms57002/tmsmake.o $(LIBOCORE)
-	@echo Linking $@...
-	$(NATIVELD) $(NATIVELDFLAGS) $(OSDBGLDFLAGS) $^ $(LIBS) -o $@
-
-endif
-
 
 #-------------------------------------------------
 # Toshiba TLCS-90 Series

@@ -772,14 +772,8 @@ $(OBJ)/build/file2str:
 	mkdir -p $(OBJ)/build
 	cp -R prec-build/file2str $(OBJ)/build 
 
-$(OBJ)/build/m68kmake:
-	cp -R prec-build/m68kmake $(OBJ)/build 
-
 $(OBJ)/build/png2bdc:
 	cp -R prec-build/png2bdc $(OBJ)/build 
-
-$(OBJ)/build/tmsmake:
-	cp -R prec-build/tmsmake $(OBJ)/build 
 
 $(OBJ)/build/verinfo:
 	cp -R prec-build/verinfo $(OBJ)/build 
