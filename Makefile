@@ -818,13 +818,6 @@ $(sort $(OBJDIRS)):
 
 ifeq ($(EXTRA_RULES), 1)
 ifeq ($(NATIVE),0)
-$(OBJ)/build/file2str:
-	mkdir -p $(OBJ)/build
-	cp -R prec-build/file2str $(OBJ)/build 
-
-$(OBJ)/build/png2bdc:
-	cp -R prec-build/png2bdc $(OBJ)/build 
-
 $(OBJ)/build/makedep:
 	cp -R prec-build/makelist $(OBJ)/build
 
