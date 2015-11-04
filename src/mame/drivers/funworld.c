@@ -743,9 +743,9 @@
 #include "video/mc6845.h"
 #include "machine/6821pia.h"
 #include "sound/ay8910.h"
-#include "jollycrd.lh"
-#include "bigdeal.lh"
-#include "royalcrd.lh"
+#include "../lh/jollycrd.lh"
+#include "../lh/bigdeal.lh"
+#include "../lh/royalcrd.lh"
 
 /* from video */
 extern UINT8* funworld_videoram;

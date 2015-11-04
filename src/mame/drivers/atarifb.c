@@ -108,9 +108,9 @@
 #include "includes/atarifb.h"
 #include "sound/discrete.h"
 
-#include "atarifb.lh"
-#include "atarifb4.lh"
-#include "abaseb.lh"
+#include "../lh/atarifb.lh"
+#include "../lh/atarifb4.lh"
+#include "../lh/abaseb.lh"
 
 /*************************************
  *

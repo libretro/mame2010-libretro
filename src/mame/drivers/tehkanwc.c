@@ -92,7 +92,7 @@ TO DO :
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 #include "sound/msm5205.h"
-#include "gridiron.lh"
+#include "../lh/gridiron.lh"
 
 extern UINT8 *tehkanwc_videoram;
 extern UINT8 *tehkanwc_colorram;

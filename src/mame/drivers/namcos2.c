@@ -452,7 +452,7 @@ $a00000 checks have been seen on the Final Lap boards.
 #include "sound/2151intf.h"
 #include "sound/c140.h"
 
-#include "finallap.lh"
+#include "../lh/finallap.lh"
 
 /* Define clocks based on actual OSC on the PCB */
 

@@ -41,7 +41,7 @@
 #include "machine/z80sio.h"
 #include "sound/ay8910.h"
 #include "sound/beep.h"
-#include "dlair.lh"
+#include "../lh/dlair.lh"
 
 
 

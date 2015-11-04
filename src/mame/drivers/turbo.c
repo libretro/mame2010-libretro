@@ -151,9 +151,9 @@
 #include "machine/segacrpt.h"
 #include "sound/samples.h"
 
-#include "turbo.lh"
-#include "subroc3d.lh"
-#include "buckrog.lh"
+#include "../lh/turbo.lh"
+#include "../lh/subroc3d.lh"
+#include "../lh/buckrog.lh"
 
 
 

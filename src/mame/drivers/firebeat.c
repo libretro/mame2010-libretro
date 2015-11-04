@@ -118,7 +118,7 @@
 #include "sound/ymz280b.h"
 #include "sound/cdda.h"
 #include "cdrom.h"
-#include "firebeat.lh"
+#include "../lh/firebeat.lh"
 
 
 

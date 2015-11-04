@@ -48,7 +48,7 @@
 #include "aviio.h"
 #include "crsshair.h"
 
-#include "snap.lh"
+#include "lh/snap.lh"
 
 
 

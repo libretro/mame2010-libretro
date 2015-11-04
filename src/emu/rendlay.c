@@ -73,26 +73,26 @@
 ***************************************************************************/
 
 /* single screen layouts */
-#include "horizont.lh"
-#include "vertical.lh"
+#include "lh/horizont.lh"
+#include "lh/vertical.lh"
 
 /* dual screen layouts */
-#include "dualhsxs.lh"
-#include "dualhovu.lh"
-#include "dualhuov.lh"
+#include "lh/dualhsxs.lh"
+#include "lh/dualhovu.lh"
+#include "lh/dualhuov.lh"
 
 /* triple screen layouts */
-#include "triphsxs.lh"
+#include "lh/triphsxs.lh"
 
 /* generic color overlay layouts */
-#include "ho20ffff.lh"
-#include "ho2eff2e.lh"
-#include "ho4f893d.lh"
-#include "ho88ffff.lh"
-#include "hoa0a0ff.lh"
-#include "hoffe457.lh"
-#include "voffff20.lh"
-#include "hoffff20.lh"
+#include "lh/ho20ffff.lh"
+#include "lh/ho2eff2e.lh"
+#include "lh/ho4f893d.lh"
+#include "lh/ho88ffff.lh"
+#include "lh/hoa0a0ff.lh"
+#include "lh/hoffe457.lh"
+#include "lh/voffff20.lh"
+#include "lh/hoffff20.lh"
 
 
 

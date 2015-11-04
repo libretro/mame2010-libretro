@@ -279,7 +279,7 @@ Notes:
 #include "sound/segapcm.h"
 #include "video/segaic16.h"
 
-#include "outrun.lh"
+#include "../lh/outrun.lh"
 
 
 #define MASTER_CLOCK		(XTAL_40MHz)

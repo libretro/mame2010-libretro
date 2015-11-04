@@ -6,7 +6,7 @@ Taito Super Speed Race driver
 
 #include "emu.h"
 #include "cpu/z80/z80.h"
-#include "sspeedr.lh"
+#include "../lh/sspeedr.lh"
 #include "includes/sspeedr.h"
 
 static UINT8 led_TIME[2];

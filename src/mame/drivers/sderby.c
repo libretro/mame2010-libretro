@@ -63,9 +63,9 @@
 #include "sound/okim6295.h"
 #include "includes/sderby.h"
 
-#include "sderby.lh"
-#include "spacewin.lh"
-#include "pmroulet.lh"
+#include "../lh/sderby.lh"
+#include "../lh/spacewin.lh"
+#include "../lh/pmroulet.lh"
 
 /***************************
 *       R/W Handlers       *

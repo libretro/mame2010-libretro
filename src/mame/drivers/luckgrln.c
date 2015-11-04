@@ -80,7 +80,7 @@
 #include "emu.h"
 #include "cpu/z180/z180.h"
 #include "video/mc6845.h"
-#include "luckgrln.lh"
+#include "../lh/luckgrln.lh"
 
 static UINT8 *luck_vram1,*luck_vram2,*luck_vram3;
 static UINT8 nmi_enable;

@@ -86,7 +86,7 @@ Game is V30 based, with rom banking (2Mb)
 #include "cpu/nec/nec.h"
 #include "cpu/i86/i86.h"
 #include "sound/okim6376.h"
-#include "fashion.lh"
+#include "../lh/fashion.lh"
 
 static UINT16 *blit_ram;
 

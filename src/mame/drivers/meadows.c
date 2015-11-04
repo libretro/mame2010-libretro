@@ -122,8 +122,8 @@
 #include "sound/dac.h"
 #include "sound/samples.h"
 
-#include "deadeye.lh"
-#include "gypsyjug.lh"
+#include "../lh/deadeye.lh"
+#include "../lh/gypsyjug.lh"
 
 #define MASTER_CLOCK XTAL_5MHz
 

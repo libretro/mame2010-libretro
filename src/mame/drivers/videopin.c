@@ -13,7 +13,7 @@
 #include "emu.h"
 #include "cpu/m6502/m6502.h"
 #include "includes/videopin.h"
-#include "videopin.lh"
+#include "../lh/videopin.lh"
 #include "sound/discrete.h"
 
 static attotime time_pushed;

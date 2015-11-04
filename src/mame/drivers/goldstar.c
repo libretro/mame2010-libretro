@@ -116,7 +116,7 @@
 #include "machine/8255ppi.h"
 #include "includes/goldstar.h"
 
-#include "lucky8.lh"
+#include "../lh/lucky8.lh"
 
 
 static NVRAM_HANDLER( goldstar )

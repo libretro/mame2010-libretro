@@ -37,7 +37,7 @@ The Grid         v1.2   10/18/2000
 #include "machine/timekpr.h"
 #include "audio/dcs.h"
 
-#include "crusnexo.lh"
+#include "../lh/crusnexo.lh"
 
 
 #define CPU_CLOCK		XTAL_60MHz

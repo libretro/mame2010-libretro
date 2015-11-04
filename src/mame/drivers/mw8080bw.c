@@ -150,12 +150,12 @@
 #include "machine/mb14241.h"
 #include "includes/mw8080bw.h"
 
-#include "280zzzap.lh"
-#include "clowns.lh"
-#include "invaders.lh"
-#include "invad2ct.lh"
-#include "lagunar.lh"
-#include "spacwalk.lh"
+#include "../lh/280zzzap.lh"
+#include "../lh/clowns.lh"
+#include "../lh/invaders.lh"
+#include "../lh/invad2ct.lh"
+#include "../lh/lagunar.lh"
+#include "../lh/spacwalk.lh"
 
 
 

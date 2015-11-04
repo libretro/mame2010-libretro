@@ -229,8 +229,8 @@ Todo:
 #include "includes/polepos.h"
 #include "sound/tms5220.h"
 
-#include "polepos.lh"
-#include "topracer.lh"
+#include "../lh/polepos.lh"
+#include "../lh/topracer.lh"
 
 
 #define MASTER_CLOCK	XTAL_24_576MHz

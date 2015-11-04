@@ -163,7 +163,7 @@ OSC3: 48.384MHz
 #include "cpu/i960/i960.h"
 #include "cpu/m37710/m37710.h"
 #include "sound/c352.h"
-#include "namcofl.lh"
+#include "../lh/namcofl.lh"
 
 
 static emu_timer *raster_interrupt_timer;

@@ -87,7 +87,7 @@ Changes (2008-12-10, Roberto Fresca):
 #include "emu.h"
 #include "cpu/m68000/m68000.h"
 #include "sound/okim6295.h"
-#include "mil4000.lh"
+#include "../lh/mil4000.lh"
 
 
 static UINT16 *sc0_vram,*sc1_vram,*sc2_vram,*sc3_vram;

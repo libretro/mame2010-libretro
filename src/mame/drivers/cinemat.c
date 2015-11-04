@@ -36,9 +36,9 @@
 #include "includes/cinemat.h"
 #include "rendlay.h"
 
-#include "armora.lh"
-#include "starcas.lh"
-#include "solarq.lh"
+#include "../lh/armora.lh"
+#include "../lh/starcas.lh"
+#include "../lh/solarq.lh"
 
 #define MASTER_CLOCK			XTAL_19_923MHz
 

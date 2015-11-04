@@ -208,14 +208,14 @@
 #include "sound/okim6295.h"
 #include "sound/2413intf.h"
 #include "sound/3812intf.h"
-#include "victor5.lh"
-#include "victor21.lh"
-#include "crsbingo.lh"
-#include "sharkpy.lh"
-#include "sharkpye.lh"
-#include "smoto.lh"
-#include "tisub.lh"
-#include "stisub.lh"
+#include "../lh/victor5.lh"
+#include "../lh/victor21.lh"
+#include "../lh/crsbingo.lh"
+#include "../lh/sharkpy.lh"
+#include "../lh/sharkpye.lh"
+#include "../lh/smoto.lh"
+#include "../lh/tisub.lh"
+#include "../lh/stisub.lh"
 
 
 /***************************************************************************

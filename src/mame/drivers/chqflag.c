@@ -21,7 +21,7 @@
 #include "sound/k007232.h"
 #include "includes/chqflag.h"
 
-#include "chqflag.lh"
+#include "../lh/chqflag.lh"
 
 
 static WRITE8_DEVICE_HANDLER( k007232_extvolume_w );

@@ -145,7 +145,7 @@
 #include "sound/2151intf.h"
 #include "sound/okim6295.h"
 
-#include "roundup5.lh"
+#include "../lh/roundup5.lh"
 
 
 #define CLOCK_1		XTAL_16MHz

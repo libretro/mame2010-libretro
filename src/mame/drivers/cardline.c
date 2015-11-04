@@ -20,7 +20,7 @@
 #include "cpu/mcs51/mcs51.h"
 #include "sound/okim6295.h"
 
-#include "cardline.lh"
+#include "../lh/cardline.lh"
 
 static int cardline_video;
 static UINT8 *videoram;

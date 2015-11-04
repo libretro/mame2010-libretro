@@ -80,18 +80,30 @@ BUILD_JPEGLIB = 1
 #BUILD_MIDILIB = 1
 VRENDER ?= soft
 
+PLATCFLAGS += -DRETRO
+CCOMFLAGS  += -DRETRO
+
+fpic := 
+ALIGNED = 0
+
+ifeq ($(VRENDER),opengl)  
+	PLATCFLAGS += -DHAVE_GL
+	CCOMFLAGS  += -DHAVE_GL
+endif
+
+# UNIX
 ifeq ($(platform), unix)
    TARGETLIB := $(TARGET_NAME)_libretro.so
 	TARGETOS=linux  
-   fpic := -fPIC
+   fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-   CCOMFLAGS += -fPIC -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-   PLATCFLAGS += -DRETRO -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants 
+   CCOMFLAGS += -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+	ALIGNED=1
+   PLATCFLAGS += -fstrict-aliasing -fno-merge-constants 
 ifeq ($(VRENDER),opengl)  
-   PLATCFLAGS += -DHAVE_GL
    LIBS += -lGL
-   endif
-LDFLAGS +=  $(fpic) $(SHARED)
+endif
+	LDFLAGS += $(SHARED)
    NATIVELD = g++
    NATIVELDFLAGS = -Wl,--warn-common -lstdc++
    NATIVECC = g++
@@ -102,7 +114,6 @@ LDFLAGS +=  $(fpic) $(SHARED)
    LD = g++ 
    CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
    LIBS += -lstdc++ -lpthread 
-#-lportmidi
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
 PTR64 = 1
 endif
@@ -115,39 +126,43 @@ endif
 ifneq (,$(findstring ppc,$(UNAME)))
 BIGENDIAN=1
 endif
+
+# Android
 else ifeq ($(platform), android)
 EXTRA_RULES = 1
 ARM_ENABLED = 1
    TARGETLIB := $(TARGET_NAME)_libretro.so
 	TARGETOS=linux  
-   fpic := -fPIC
+   fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
 	CC_AS = @arm-linux-androideabi-gcc
 	CC = @arm-linux-androideabi-g++
 	AR = @arm-linux-androideabi-ar
 	LD = @arm-linux-androideabi-g++ 
+	ALIGNED=1
 	FORCE_DRC_C_BACKEND = 1
-	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO -DRETRO_AND -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
-	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
+	CCOMFLAGS += -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO_AND -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
+	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
 	NATIVELD = g++
 	NATIVELDFLAGS = -Wl,--warn-common -lstdc++
 	NATIVECC = g++
 	NATIVECFLAGS = -std=gnu99 
 	CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
 	LIBS += -lstdc++ 
-#-lpthread
+
+# OS X
 else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
 	TARGETOS = macosx
-   fpic := -fPIC
+   fpic = -fPIC
 LDFLAGSEMULATOR +=  -stdlib=libc++
    SHARED := -dynamiclib
    CC = c++ -stdlib=libc++
    LD = c++ -stdlib=libc++
    NATIVELD = c++ -stdlib=libc++
    NATIVECC = c++
-LDFLAGS +=  $(fpic) $(SHARED)
+	LDFLAGS +=  $(SHARED)
    CC_AS = clang
    AR = @ar
    PYTHON ?= @python
@@ -175,22 +190,26 @@ else ifneq (,$(findstring ios,$(platform)))
    TARGETOS = macosx
 EXTRA_RULES = 1
 ARM_ENABLED = 1
-   fpic := -fPIC
+   fpic = -fPIC
    SHARED := -dynamiclib
 
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
    CCOMFLAGS += -DSDLMAME_NO64BITIO
    CFLAGS += -DIOS
+
+# QNX
 else ifeq ($(platform), qnx)
    TARGETLIB := $(TARGET_NAME)_libretro_qnx.so
 	TARGETOS=linux  
-   fpic := -fPIC
+   fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
 
    CC = qcc -Vgcc_ntoarmv7le
    AR = qcc -Vgcc_ntoarmv7le
    CFLAGS += -D__BLACKBERRY_QNX__
 	LIBS += -lstdc++ -lpthread
+
+# PS3
 else ifeq ($(platform), ps3)
    TARGETLIB := $(TARGET_NAME)_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
@@ -199,6 +218,8 @@ else ifeq ($(platform), ps3)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# PS3 (SNC)
 else ifeq ($(platform), sncps3)
    TARGETLIB := $(TARGET_NAME)_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
@@ -207,6 +228,8 @@ else ifeq ($(platform), sncps3)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# Lightweight PS3 Homebrew SDK
 else ifeq ($(platform), psl1ght)
    TARGETLIB := $(TARGET_NAME)_libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
@@ -215,6 +238,8 @@ else ifeq ($(platform), psl1ght)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# PSP
 else ifeq ($(platform), psp1)
 	TARGETLIB := $(TARGET_NAME)_libretro_psp1.a
 	CC = psp-g++$(EXE_EXT)
@@ -222,6 +247,8 @@ else ifeq ($(platform), psp1)
 	CFLAGS += -DPSP -G0
 	STATIC_LINKING = 1
 	LIBS += -lstdc++ -lpthread
+
+# Xbox 360
 else ifeq ($(platform), xenon)
    TARGETLIB := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-g++$(EXE_EXT)
@@ -230,6 +257,8 @@ else ifeq ($(platform), xenon)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# Nintendo Game Cube
 else ifeq ($(platform), ngc)
    TARGETLIB := $(TARGET_NAME)_libretro_ngc.a
 	CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
@@ -238,6 +267,8 @@ else ifeq ($(platform), ngc)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# Nintendo Wii
 else ifeq ($(platform), wii)
    TARGETLIB := $(TARGET_NAME)_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
@@ -246,10 +277,12 @@ else ifeq ($(platform), wii)
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
+
+# ARM
 else ifneq (,$(findstring armv,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro.so
    SHARED := -shared -Wl,--no-undefined
-   fpic := -fPIC
+   fpic = -fPIC
    CC = g++
 ifneq (,$(findstring cortexa8,$(platform)))
    CFLAGS += -marm -mcpu=cortex-a8
@@ -273,6 +306,7 @@ else ifneq (,$(findstring hardfloat,$(platform)))
 endif
    CFLAGS += -DARM
 	LIBS += -lstdc++ -lpthread
+
 else ifeq ($(platform), wincross)
    TARGETLIB := $(TARGET_NAME)_libretro.dll
 	TARGETOS = win32
@@ -282,18 +316,18 @@ else ifeq ($(platform), wincross)
 	CC_AS ?= gcc
 
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
-   	CCOMFLAGS += -DRETRO -D__WIN32__ -D__WIN32_LIBRETRO__
+	CCOMFLAGS +=-D__WIN32__ -D__WIN32_LIBRETRO__
 ifeq ($(VRENDER),opengl)  
-	CCOMFLAGS += -DHAVE_GL
 	LIBS += -lopengl32
 endif
 	LDFLAGS +=   $(SHARED)
 	EXE = .exe
-	#LIBS += -lpthread
 	DEFS = -DCRLF=3
 ifneq (,$(findstring mingw64-w64,$(PATH)))
 PTR64=1
 endif
+
+# Windows
 else
    TARGETLIB := $(TARGET_NAME)_libretro.dll
 	TARGETOS = win32
@@ -305,21 +339,19 @@ else
 ifneq ($(MDEBUG),1)
 	SHARED += -s
 endif
-   	#CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
-   	CCOMFLAGS += -DRETRO -D__WIN32__ -D__WIN32_LIBRETRO__
+CCOMFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
 ifeq ($(VRENDER),opengl)  
-	CCOMFLAGS += -DHAVE_GL
 	LIBS += -lopengl32
 endif
 	LDFLAGS +=   $(SHARED)
 	EXE = .exe
-	#LIBS += -lpthread
 	DEFS = -DCRLF=3
 	DEFS += -DX64_WINDOWS_ABI
 ifneq (,$(findstring mingw64-w64,$(PATH)))
 PTR64=1
 endif
 endif
+
 
 # Mame needs PTR64 defined on 64 bit processors, we guess at it if you aren't
 # cross-compiling.  If you ARE, you need to set it yourself.
@@ -346,6 +378,13 @@ endif
 endif # PTR64
 endif # CROSS_BUILD
 
+ifeq ($(ALIGNED),1)
+	PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
+endif
+
+CCOMFLAGS += $(fpic)
+LDFLAGS   += $(fpic)
+
 ###########################################################################
 #################   BEGIN USER-CONFIGURABLE OPTIONS   #####################
 ###########################################################################
@@ -370,7 +409,7 @@ NOWERROR = 1
 # src/osd/$(OSD)/$(OSD).mak
 #-------------------------------------------------
 
-CROSS_BUILD_OSD = $(OSD)
+CROSS_BUILD_OSD = retro
 
 #-------------------------------------------------
 # configure name of final executable
