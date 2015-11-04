@@ -11,7 +11,7 @@ Inputs and Dip Switches by Stephh
 #include "emu.h"
 #include "cpu/z80/z80.h"
 
-#include "sidewndr.lh"
+#include "../lh/sidewndr.lh"
 
 static UINT8 *colorram;
 static UINT8 *videoram;

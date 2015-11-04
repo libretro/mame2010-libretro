@@ -9,7 +9,7 @@
 #include "cpu/i8085/i8085.h"
 #include "deprecat.h"
 
-#include "sstrangr.lh"
+#include "../lh/sstrangr.lh"
 
 
 #define NUM_PENS	(8)

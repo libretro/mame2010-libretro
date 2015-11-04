@@ -11,7 +11,7 @@
 #include "emu.h"
 #include "cpu/s2650/s2650.h"
 
-#include "tinv2650.lh"
+#include "../lh/tinv2650.lh"
 
 extern UINT8 *zac2650_s2636_0_ram;
 WRITE8_HANDLER( tinvader_videoram_w );

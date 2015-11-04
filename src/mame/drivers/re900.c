@@ -78,7 +78,7 @@
 #include "cpu/mcs51/mcs51.h"
 #include "video/tms9928a.h"
 #include "sound/ay8910.h"
-#include "re900.lh"
+#include "../lh/re900.lh"
 
 static UINT8 *re900_rom;
 static UINT8 psg_pa, psg_pb, mux_data, ledant, player, stat_a;

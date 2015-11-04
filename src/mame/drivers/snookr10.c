@@ -364,7 +364,7 @@
 #include "emu.h"
 #include "cpu/m6502/m6502.h"
 #include "sound/okim6295.h"
-#include "snookr10.lh"
+#include "../lh/snookr10.lh"
 
 
 /* from video */

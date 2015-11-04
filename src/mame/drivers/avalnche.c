@@ -33,7 +33,7 @@
 #include "sound/discrete.h"
 #include "includes/avalnche.h"
 
-#include "avalnche.lh"
+#include "../lh/avalnche.lh"
 
 #define MASTER_CLOCK XTAL_12_096MHz
 

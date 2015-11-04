@@ -34,7 +34,7 @@
 #include "cpu/m6502/m6502.h"
 #include "sound/dac.h"
 
-#include "sbrkout.lh"
+#include "../lh/sbrkout.lh"
 
 
 

@@ -83,7 +83,7 @@ Dip locations and factory settings verified from dip listing
 #include "sound/msm5232.h"
 #include "includes/buggychl.h"
 
-#include "buggychl.lh"
+#include "../lh/buggychl.lh"
 
 
 static WRITE8_HANDLER( bankswitch_w )

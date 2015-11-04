@@ -672,7 +672,7 @@
 #include "sound/sn76496.h"
 #include "sound/msm5205.h"
 #include "machine/8255ppi.h"
-#include "lucky74.lh"
+#include "../lh/lucky74.lh"
 
 /* from video hardware */
 extern UINT8 *lucky74_fg_videoram, *lucky74_fg_colorram, *lucky74_bg_videoram, *lucky74_bg_colorram;

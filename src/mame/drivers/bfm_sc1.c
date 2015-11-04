@@ -91,7 +91,7 @@ Optional (on expansion card) (Viper)
 #include "machine/meters.h"
 #include "sound/ay8910.h"
 #include "sound/upd7759.h"
-#include "bfm_sc1.lh"
+#include "../lh/bfm_sc1.lh"
 #define VFD_RESET  0x20
 #define VFD_CLOCK1 0x80
 #define VFD_DATA   0x40

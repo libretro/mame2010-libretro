@@ -884,10 +884,6 @@ $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
 $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
 
-$(OBJ)/%.lh: $(SRC)/%.lay $(FILE2STR_TARGET)
-	@echo Converting $<...
-	@$(FILE2STR) $< $@ layout_$(basename $(notdir $<))
-
 $(OBJ)/%.fh: $(SRC)/%.png $(PNG2BDC_TARGET) $(FILE2STR_TARGET)
 	@echo Converting $<...
 	@$(PNG2BDC) $< $(OBJ)/temp.bdc

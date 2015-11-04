@@ -39,8 +39,8 @@ D000      Paddle Position and Interrupt Reset
 #include "sound/samples.h"
 #include "includes/circus.h"
 
-#include "circus.lh"
-#include "crash.lh"
+#include "../lh/circus.lh"
+#include "../lh/crash.lh"
 
 #if 0
 static READ8_HANDLER( ripcord_IN2_r )

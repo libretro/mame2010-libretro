@@ -151,15 +151,15 @@ Adder hardware:
 #include "machine/bfm_bd1.h"  // vfd
 #include "machine/meters.h"
 
-#include "bfm_sc2.lh"
-#include "gldncrwn.lh"
-#include "paradice.lh"
-#include "pokio.lh"
-#include "pyramid.lh"
-#include "quintoon.lh"
-#include "sltblgpo.lh"
-#include "sltblgtk.lh"
-#include "slots.lh"
+#include "../lh/bfm_sc2.lh"
+#include "../lh/gldncrwn.lh"
+#include "../lh/paradice.lh"
+#include "../lh/pokio.lh"
+#include "../lh/pyramid.lh"
+#include "../lh/quintoon.lh"
+#include "../lh/sltblgpo.lh"
+#include "../lh/sltblgtk.lh"
+#include "../lh/slots.lh"
 
 #ifdef MAME_DEBUG
 #define VERBOSE 1
@@ -2634,10 +2634,10 @@ GAMEL( 1997, gldncrwn, 0,		  scorpion2_vid, gldncrwn,  gldncrwn,   0,       "BFM
 
 /* fruit machines only */
 #include "video/bfm_dm01.h"
-#include "awpdmd.lh"
-#include "drwho.lh"
-#include "awpvid14.lh"
-#include "awpvid16.lh"
+#include "../lh/awpdmd.lh"
+#include "../lh/drwho.lh"
+#include "../lh/awpvid14.lh"
+#include "../lh/awpvid16.lh"
 
 /* Reels 1 and 2 */
 static WRITE8_HANDLER( reel12_w )

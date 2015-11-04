@@ -211,7 +211,7 @@
 
 #include "sound/pokey.h"
 
-#include "bzone.lh"
+#include "../lh/bzone.lh"
 
 
 static UINT8 analog_data;

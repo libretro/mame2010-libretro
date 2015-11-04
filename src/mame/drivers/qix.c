@@ -227,7 +227,7 @@ Interrupts:
 #include "includes/qix.h"
 #include "cpu/m6809/m6809.h"
 
-#include "elecyoyo.lh"
+#include "../lh/elecyoyo.lh"
 
 
 

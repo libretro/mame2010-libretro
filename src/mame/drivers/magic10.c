@@ -78,7 +78,7 @@
 #include "emu.h"
 #include "cpu/m68000/m68000.h"
 #include "sound/okim6295.h"
-#include "sgsafari.lh"
+#include "../lh/sgsafari.lh"
 
 static tilemap_t *layer0_tilemap, *layer1_tilemap, *layer2_tilemap;
 static UINT16 *layer0_videoram, *layer1_videoram, *layer2_videoram;

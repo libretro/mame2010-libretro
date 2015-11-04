@@ -188,8 +188,8 @@
 #include "deprecat.h"
 #include "includes/mw8080bw.h"
 
-#include "invrvnge.lh"
-#include "shuttlei.lh"
+#include "../lh/invrvnge.lh"
+#include "../lh/shuttlei.lh"
 
 /*******************************************************/
 /*                                                     */

@@ -82,10 +82,11 @@
 #include "machine/6821pia.h"
 #include "machine/8255ppi.h"
 #include "deprecat.h"
-#include "aristmk4.lh"
 #include "state.h"
 #include "sound/samples.h"
 #include "machine/mc146818.h" // DALLAS1287 is functionally compatible.
+
+#include "../lh/aristmk4.lh"
 
 
 int rtc_address_strobe = 0;

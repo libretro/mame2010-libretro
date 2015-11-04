@@ -269,9 +269,9 @@ TODO: - Fix lamp timing, MAME doesn't update fast enough to see everything
 #define LOG_IC8(x)	do { if (MPU4VERBOSE) logerror x; } while (0)
 
 #include "video/awpvid.h"		//Fruit Machines Only
-#include "connect4.lh"
-#include "gamball.lh"
-#include "mpu4.lh"
+#include "../lh/connect4.lh"
+#include "../lh/gamball.lh"
+#include "../lh/mpu4.lh"
 #define MPU4_MASTER_CLOCK (6880000)
 
 /* local vars */

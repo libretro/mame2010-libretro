@@ -231,8 +231,8 @@
 #include "sound/sn76496.h"
 #include "machine/8255ppi.h"
 
-#include "poker41.lh"
-#include "pulltabs.lh"
+#include "../lh/poker41.lh"
+#include "../lh/pulltabs.lh"
 
 /* from video */
 WRITE8_HANDLER( gat_videoram_w );

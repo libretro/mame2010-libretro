@@ -278,7 +278,7 @@ TODO:
 #include "sound/2151intf.h"
 #include "sound/k007232.h"
 
-#include "wecleman.lh"
+#include "../lh/wecleman.lh"
 
 /* Variables only used here: */
 static UINT16 *blitter_regs;

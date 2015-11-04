@@ -271,7 +271,7 @@ MH86171 Color Pallete RAMDAC
 #include "cpu/z80/z80.h"
 #include "sound/okim6295.h"
 
-#include "pirpok2.lh"
+#include "../lh/pirpok2.lh"
 
 
 static bitmap_t *temp_reel_bitmap;

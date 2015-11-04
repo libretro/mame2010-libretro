@@ -18,7 +18,7 @@
 #include "emu.h"
 #include "cpu/m68000/m68000.h"
 #include "rendlay.h"
-#include "stepstag.lh"
+#include "../lh/stepstag.lh"
 
 static READ16_HANDLER( unknown_read_0xc00000 )
 {

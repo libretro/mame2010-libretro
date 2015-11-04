@@ -231,7 +231,7 @@ DIP locations verified for:
 #include "includes/balsente.h"
 #include "sound/cem3394.h"
 
-#include "stocker.lh"
+#include "../lh/stocker.lh"
 
 
 

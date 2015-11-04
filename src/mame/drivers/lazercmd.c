@@ -227,7 +227,7 @@
 #include "includes/lazercmd.h"
 
 #include "rendlay.h"
-#include "lazercmd.lh"
+#include "../lh/lazercmd.lh"
 
 #define MASTER_CLOCK XTAL_8MHz
 

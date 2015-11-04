@@ -22,7 +22,7 @@
 #include "machine/6821pia.h"
 #include "video/gtia.h"
 
-#include "maxaflex.lh"
+#include "../lh/maxaflex.lh"
 
 
 /* Supervisor board emulation */

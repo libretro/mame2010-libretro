@@ -118,8 +118,8 @@
 #include "sound/samples.h"
 #include "sound/astrocde.h"
 #include "sound/ay8910.h"
-#include "tenpindx.lh"
-#include "gorf.lh"
+#include "../lh/tenpindx.lh"
+#include "../lh/gorf.lh"
 
 
 static UINT8 *protected_ram;

@@ -285,12 +285,12 @@
 #include "cpu/mcs51/mcs51.h"
 #include "sound/ay8910.h"
 #include "sound/dac.h"
-#include "videopkr.lh"
-#include "blckjack.lh"
-#include "videocba.lh"
-#include "videodad.lh"
-#include "babypkr.lh"
-#include "babydad.lh"
+#include "../lh/videopkr.lh"
+#include "../lh/blckjack.lh"
+#include "../lh/videocba.lh"
+#include "../lh/videodad.lh"
+#include "../lh/babypkr.lh"
+#include "../lh/babydad.lh"
 
 #define DATA_NVRAM_SIZE     0x100
 

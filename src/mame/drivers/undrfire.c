@@ -194,7 +194,7 @@ Board contains only 29 ROMs and not much else.
 #include "includes/taito_f3.h"
 #include "audio/taito_en.h"
 
-#include "cbombers.lh"
+#include "../lh/cbombers.lh"
 
 VIDEO_START( undrfire );
 VIDEO_UPDATE( undrfire );

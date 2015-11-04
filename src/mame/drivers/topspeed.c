@@ -240,7 +240,7 @@ Stephh's notes (based on the game M68000 code and some tests) :
 #include "sound/msm5205.h"
 #include "includes/topspeed.h"
 
-#include "topspeed.lh"
+#include "../lh/topspeed.lh"
 
 
 static READ16_HANDLER( sharedram_r )

@@ -170,7 +170,7 @@
 #include "emu.h"
 #include "cpu/z80/z80.h"
 //#include "sound/dac.h"
-#include "mpoker.lh"
+#include "../lh/mpoker.lh"
 
 static UINT8 output[8];
 

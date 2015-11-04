@@ -622,8 +622,8 @@
 #include "machine/6821pia.h"
 #include "sound/discrete.h"
 
-#include "pmpoker.lh"
-#include "goldnpkr.lh"
+#include "../lh/pmpoker.lh"
+#include "../lh/goldnpkr.lh"
 
 
 /*************************

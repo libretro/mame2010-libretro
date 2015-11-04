@@ -541,8 +541,8 @@
 #include "machine/i8255a.h"
 #include "includes/norautp.h"
 
-#include "noraut11.lh"
-#include "noraut12.lh"
+#include "../lh/noraut11.lh"
+#include "../lh/noraut12.lh"
 
 static UINT16 *np_vram;
 static UINT16 np_addr;

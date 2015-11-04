@@ -37,7 +37,7 @@ TODO:
 #include "sound/ay8910.h"
 #include "sound/3812intf.h"
 #include "rendlay.h"
-#include "nbmj8688.lh"
+#include "../lh/nbmj8688.lh"
 #include "includes/nbmj8688.h"
 
 

@@ -16,7 +16,7 @@
 #include "sound/2151intf.h"
 #include "sound/namco.h"
 #include "rendlay.h"
-#include "tceptor2.lh"
+#include "../lh/tceptor2.lh"
 
 PALETTE_INIT( tceptor );
 VIDEO_START( tceptor );

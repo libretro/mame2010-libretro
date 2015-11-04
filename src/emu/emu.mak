@@ -261,25 +261,3 @@ $(EMUOBJ)/rendfont.o:	$(EMUOBJ)/uismall.fh
 
 $(EMUOBJ)/video.o:	$(EMUSRC)/rendersw.c
 $(EMUVIDEO)/v9938.o:	$(EMUSRC)/video/v9938mod.c
-
-
-#-------------------------------------------------
-# core layouts
-#-------------------------------------------------
-
-$(EMUOBJ)/rendlay.o:	$(EMULAYOUT)/dualhovu.lh \
-						$(EMULAYOUT)/dualhsxs.lh \
-						$(EMULAYOUT)/dualhuov.lh \
-						$(EMULAYOUT)/horizont.lh \
-						$(EMULAYOUT)/triphsxs.lh \
-						$(EMULAYOUT)/vertical.lh \
-						$(EMULAYOUT)/ho20ffff.lh \
-						$(EMULAYOUT)/ho2eff2e.lh \
-						$(EMULAYOUT)/ho4f893d.lh \
-						$(EMULAYOUT)/ho88ffff.lh \
-						$(EMULAYOUT)/hoa0a0ff.lh \
-						$(EMULAYOUT)/hoffe457.lh \
-						$(EMULAYOUT)/hoffff20.lh \
-						$(EMULAYOUT)/voffff20.lh \
-
-$(EMUOBJ)/video.o:		$(EMULAYOUT)/snap.lh

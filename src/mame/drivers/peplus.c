@@ -166,12 +166,12 @@ Stephh's log (2007.11.28) :
 #include "machine/i2cmem.h"
 #include "video/mc6845.h"
 
-#include "peplus.lh"
-#include "pe_schip.lh"
-#include "pe_poker.lh"
-#include "pe_bjack.lh"
-#include "pe_keno.lh"
-#include "pe_slots.lh"
+#include "../lh/peplus.lh"
+#include "../lh/pe_schip.lh"
+#include "../lh/pe_poker.lh"
+#include "../lh/pe_bjack.lh"
+#include "../lh/pe_keno.lh"
+#include "../lh/pe_slots.lh"
 
 #define MASTER_CLOCK		XTAL_20MHz
 #define CPU_CLOCK			((MASTER_CLOCK)/2)		/* divided by 2 - 7474 */

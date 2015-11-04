@@ -46,7 +46,7 @@
 #include "sound/ay8910.h"
 #include "includes/grchamp.h"
 
-#include "grchamp.lh"
+#include "../lh/grchamp.lh"
 
 
 /*************************************

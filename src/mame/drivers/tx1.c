@@ -46,9 +46,9 @@
 #include "rendlay.h"
 #include "includes/tx1.h"
 
-#include "tx1.lh"
-#include "buggyboy.lh"
-#include "buggybjr.lh"
+#include "../lh/tx1.lh"
+#include "../lh/buggyboy.lh"
+#include "../lh/buggybjr.lh"
 
 
 /*************************************

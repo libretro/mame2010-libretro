@@ -37,7 +37,7 @@ Notes:
 #include "cpu/m68000/m68000.h"
 #include "sound/okim6295.h"
 #include "sound/ymz280b.h"
-#include "rocknms.lh"
+#include "../lh/rocknms.lh"
 #include "includes/tetrisp2.h"
 
 UINT16 tetrisp2_systemregs[0x10];

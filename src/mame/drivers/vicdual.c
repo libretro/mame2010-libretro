@@ -52,7 +52,7 @@
 #include "cpu/i8085/i8085.h"
 #include "includes/vicdual.h"
 
-#include "depthch.lh"
+#include "../lh/depthch.lh"
 
 
 

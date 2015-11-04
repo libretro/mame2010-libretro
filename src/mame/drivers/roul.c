@@ -49,7 +49,7 @@ not handled commands with reg[3] & 0xc0 == 0x00
 #include "emu.h"
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
-#include "roul.lh"
+#include "../lh/roul.lh"
 
 #define VIDEOBUF_SIZE 256*256
 

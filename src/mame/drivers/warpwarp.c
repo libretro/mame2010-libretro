@@ -130,8 +130,8 @@ TODO:
 #include "emu.h"
 #include "cpu/i8085/i8085.h"
 #include "includes/warpwarp.h"
-#include "geebee.lh"
-#include "sos.lh"
+#include "../lh/geebee.lh"
+#include "../lh/sos.lh"
 
 #define MASTER_CLOCK		XTAL_18_432MHz
 

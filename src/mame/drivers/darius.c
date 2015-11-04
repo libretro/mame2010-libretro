@@ -136,7 +136,7 @@ sounds.
 #include "sound/flt_vol.h"
 #include "includes/darius.h"
 
-#include "darius.lh"
+#include "../lh/darius.lh"
 
 
 static void parse_control( running_machine *machine )	/* assumes Z80 sandwiched between 68Ks */

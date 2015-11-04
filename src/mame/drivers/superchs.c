@@ -41,7 +41,7 @@
 #include "includes/taito_f3.h"
 #include "audio/taito_en.h"
 
-#include "superchs.lh"
+#include "../lh/superchs.lh"
 
 
 VIDEO_START( superchs );

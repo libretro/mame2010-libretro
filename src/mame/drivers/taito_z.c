@@ -887,8 +887,8 @@ J1100256A VIDEO PCB
 #include "machine/taitoio.h"
 #include "includes/taito_z.h"
 
-#include "contcirc.lh"
-#include "dblaxle.lh"
+#include "../lh/contcirc.lh"
+#include "../lh/dblaxle.lh"
 
 static void parse_control( running_machine *machine )
 {

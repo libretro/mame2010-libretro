@@ -31,7 +31,7 @@ TODO:
 #include "cdrom.h"
 #include "machine/timekpr.h"
 #include "sound/cdda.h"
-#include "cdi.lh"
+#include "../lh/cdi.lh"
 
 #define ENABLE_UART_PRINTING (0)
 

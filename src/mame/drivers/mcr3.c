@@ -108,7 +108,7 @@
 #include "audio/mcr.h"
 #include "includes/mcr.h"
 
-#include "turbotag.lh"
+#include "../lh/turbotag.lh"
 
 
 #define MASTER_CLOCK		XTAL_20MHz

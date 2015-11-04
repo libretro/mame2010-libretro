@@ -339,7 +339,7 @@ orunners:  Interleaved with the dj and << >> buttons is the data the drives the 
 #include "sound/rf5c68.h"
 #include "sound/multipcm.h"
 
-#include "radr.lh"
+#include "../lh/radr.lh"
 
 
 

@@ -15,7 +15,7 @@ Tomasz Slanina
 #include "sound/ay8910.h"
 #include "includes/changela.h"
 
-#include "changela.lh"
+#include "../lh/changela.lh"
 
 
 static READ8_HANDLER( mcu_r )

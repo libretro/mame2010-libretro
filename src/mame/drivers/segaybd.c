@@ -31,7 +31,7 @@ Known games currently not dumped:
 #include "sound/segapcm.h"
 #include "video/segaic16.h"
 
-#include "pdrift.lh"
+#include "../lh/pdrift.lh"
 
 
 #define MASTER_CLOCK		50000000

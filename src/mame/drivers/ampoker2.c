@@ -367,8 +367,8 @@
 #include "emu.h"
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
-#include "ampoker2.lh"
-#include "sigmapkr.lh"
+#include "../lh/ampoker2.lh"
+#include "../lh/sigmapkr.lh"
 
 /* from video */
 extern WRITE8_HANDLER( ampoker2_videoram_w );

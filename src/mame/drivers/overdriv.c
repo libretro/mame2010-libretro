@@ -28,7 +28,7 @@
 #include "sound/k053260.h"
 #include "includes/overdriv.h"
 
-#include "overdriv.lh"
+#include "../lh/overdriv.lh"
 
 /***************************************************************************
 
