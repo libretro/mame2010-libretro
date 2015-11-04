@@ -758,8 +758,7 @@ include $(SRC)/$(TARGET)/$(SUBTARGET).mak
 #-include $(SRC)/$(TARGET)/osd/$(OSD)/$(OSD).mak
 include $(SRC)/emu/emu.mak
 include $(SRC)/lib/lib.mak
-include $(SRC)/build/build.mak
--include $(SRC)/osd/$(CROSS_BUILD_OSD)/build.mak
+-include $(SRC)/osd/retro/build.mak
 include $(SRC)/tools/tools.mak
 #include $(SRC)/regtests/regtests.mak
 
@@ -823,9 +822,6 @@ $(OBJ)/build/makedep:
 
 $(OBJ)/build/makelist:
 	cp -R prec-build/makelist $(OBJ)/build
-
-$(OBJ)/build/verinfo:
-	cp -R prec-build/verinfo $(OBJ)/build 
 endif
 endif
 
