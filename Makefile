@@ -884,11 +884,6 @@ $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
 $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
 
-$(OBJ)/%.fh: $(SRC)/%.png $(PNG2BDC_TARGET) $(FILE2STR_TARGET)
-	@echo Converting $<...
-	@$(PNG2BDC) $< $(OBJ)/temp.bdc
-	@$(FILE2STR) $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
-
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
