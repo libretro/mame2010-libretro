@@ -1533,10 +1533,10 @@ endif
 
 $(CPUOBJ)/tms57002/tms57002.o:	$(CPUSRC)/tms57002/tms57002.c \
 								$(CPUSRC)/tms57002/tms57002.h \
-								$(CPUOBJ)/tms57002/tms57002.inc
+								$(CPUSRC)/tms57002/tms57002.inc
 
 $(CPUOBJ)/tms57002/57002dsm.o:	$(CPUSRC)/tms57002/57002dsm.c \
-								$(CPUOBJ)/tms57002/tms57002.inc
+								$(CPUSRC)/tms57002/tms57002.inc
 
 #-------------------------------------------------
 # Toshiba TLCS-90 Series
