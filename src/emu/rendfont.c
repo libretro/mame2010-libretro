@@ -15,7 +15,7 @@
 #include "emuopts.h"
 #include "zlib.h"
 
-#include "uismall.fh"
+#include "bdc/uismall.fh"
 
 
 /***************************************************************************
