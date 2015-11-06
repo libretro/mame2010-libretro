@@ -90,6 +90,8 @@ ifeq ($(VRENDER),opengl)
 	CCOMFLAGS  += -DHAVE_GL
 endif
 
+UNAME=$(shell uname -m)
+
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
 PTR64 = 1
 endif
@@ -173,7 +175,6 @@ LDFLAGSEMULATOR +=  -stdlib=libc++
    CC_AS = clang
    AR = @ar
    PYTHON ?= @python
-	UNAME=$(shell uname -m)
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
