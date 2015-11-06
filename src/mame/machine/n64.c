@@ -1500,11 +1500,7 @@ static UINT32 si_dram_addr = 0;
 static UINT32 si_pif_addr = 0;
 static UINT32 si_pif_addr_rd64b = 0;
 static UINT32 si_pif_addr_wr64b = 0;
-#ifdef RETRO_AND
 static UINT32 rsi_status = 0;	
-#else
-static UINT32 si_status = 0;
-#endif
 
 static UINT8 eeprom[512];
 static UINT8 mempack[0x8000];
@@ -1914,11 +1910,7 @@ static void pif_dma(running_machine *machine, int direction)
 		}
 	}
 
-#ifdef RETRO_AND
 	rsi_status |= 0x1000;
-#else
-	si_status |= 0x1000;
-#endif
 	signal_rcp_interrupt(machine, SI_INTERRUPT);
 }
 
@@ -1930,11 +1922,7 @@ READ32_HANDLER( n64_si_reg_r )
 			//return si_dram_addr;
 
 		case 0x18/4:		// SI_STATUS_REG
-#ifdef RETRO_AND
 			return rsi_status;
-#else
-			return si_status;
-#endif
 	}
 	return 0;
 }
@@ -1963,11 +1951,7 @@ WRITE32_HANDLER( n64_si_reg_w )
 			break;
 
 		case 0x18/4:		// SI_STATUS_REG
-#ifdef RETRO_AND
 			rsi_status &= ~0x1000;
-#else
-			si_status &= ~0x1000;
-#endif
 			clear_rcp_interrupt(space->machine, SI_INTERRUPT);
 			break;
 
@@ -2081,11 +2065,7 @@ MACHINE_RESET( n64 )
 	memset(pif_cmd, 0, sizeof(pif_cmd));
 	si_dram_addr = 0;
 	si_pif_addr = 0;
-#ifdef RETRO_AND
 	rsi_status = 0;
-#else
-	si_status = 0;
-#endif
 
 	memset(eeprom, 0, sizeof(eeprom));
 	memset(mempack, 0, sizeof(mempack));

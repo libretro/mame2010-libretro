@@ -43,11 +43,7 @@ const options_entry mame_core_options[] =
 	{ "samplepath;sp",               "samples",   0,                 "path to samplesets" },
 	{ "artpath;artwork_directory",   "artwork",   0,                 "path to artwork files" },
 	{ "ctrlrpath;ctrlr_directory",   "ctrlr",     0,                 "path to controller definitions" },
-#ifdef ANDROID_BUILD /*LIBRETRO INIPATH FOR ANDROID */
-	{ "inipath",                     ".;ini;/mnt/sdcard",     0,                 "path to ini files" },
-#else
 	{ "inipath",                     ".;ini",     0,                 "path to ini files" },
-#endif
 	{ "fontpath",                    ".",         0,                 "path to font files" },
 	{ "cheatpath",                   "cheat",     0,                 "path to cheat files" },
 	{ "crosshairpath",               "crosshair", 0,                 "path to crosshair files" },

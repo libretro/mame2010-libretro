@@ -142,7 +142,8 @@ ARM_ENABLED = 1
 	ALIGNED=1
 	FORCE_DRC_C_BACKEND = 1
 	CCOMFLAGS += -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DRETRO_AND -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH -DANDROID_BUILD
+	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH
+	PLATCFLAGS += -DANDROID
 	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
 	NATIVELD = g++
 	NATIVELDFLAGS = -Wl,--warn-common -lstdc++
