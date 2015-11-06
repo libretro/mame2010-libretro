@@ -44,7 +44,6 @@ ARFLAGS = -cr
 TARGET_NAME := mame2010
 EXE = 
 LIBS = 
-CROSS_BUILD :=0
 
 #-------------------------------------------------
 # compile flags
@@ -91,30 +90,24 @@ ifeq ($(VRENDER),opengl)
 	CCOMFLAGS  += -DHAVE_GL
 endif
 
-# Mame needs PTR64 defined on 64 bit processors, we guess at it if you aren't
-# cross-compiling.  If you ARE, you need to set it yourself.
-ifneq ($(CROSS_BUILD),1)
-
-ifndef ($(PTR64)
-	PTR64 = 0
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-	PTR64 = 1
+PTR64 = 1
 endif
 ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-	PTR64 = 1
+PTR64 = 1
 endif
 ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-	PTR64 = 1
+PTR64 = 1
 endif
-ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-	PTR64 = 1
+ifneq (,$(findstring mingw64-w64,$(PATH)))
+PTR64=1
 endif
-ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-	PTR64 = 1
+ifneq (,$(findstring Power,$(UNAME)))
+BIGENDIAN=1
 endif
-
-endif # PTR64
-endif # CROSS_BUILD
+ifneq (,$(findstring ppc,$(UNAME)))
+BIGENDIAN=1
+endif
 
 # UNIX
 ifeq ($(platform), unix)
@@ -139,18 +132,6 @@ LDFLAGS += $(SHARED)
    LD = g++ 
    CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
    LIBS += -lstdc++ -lpthread 
-ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-PTR64 = 1
-endif
-ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-PTR64 = 1
-endif
-ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-PTR64 = 1
-endif
-ifneq (,$(findstring ppc,$(UNAME)))
-BIGENDIAN=1
-endif
 
 # Android
 else ifeq ($(platform), android)
@@ -195,18 +176,6 @@ LDFLAGSEMULATOR +=  -stdlib=libc++
 	UNAME=$(shell uname -m)
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
-endif
-ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-PTR64 = 1
-endif
-ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-PTR64 = 1
-endif
-ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-PTR64 = 1
-endif
-ifneq (,$(findstring Power,$(UNAME)))
-BIGENDIAN=1
 endif
 
 # iOS
@@ -358,9 +327,6 @@ endif
 	LDFLAGS +=   $(SHARED)
 	EXE = .exe
 	DEFS = -DCRLF=3
-ifneq (,$(findstring mingw64-w64,$(PATH)))
-PTR64=1
-endif
 
 # Windows
 else
@@ -382,9 +348,6 @@ endif
 	EXE = .exe
 	DEFS = -DCRLF=3
 	DEFS += -DX64_WINDOWS_ABI
-ifneq (,$(findstring mingw64-w64,$(PATH)))
-PTR64=1
-endif
 endif
 
 
