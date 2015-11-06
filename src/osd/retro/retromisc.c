@@ -41,10 +41,8 @@ void osd_free_executable(void *ptr, size_t size)
 {
 #if defined(WIN32)
    VirtualFree(ptr, 0, MEM_RELEASE);
-#elif defined SDLMAME_SOLARIS
-	munmap((char *)ptr, size);
 #else
-	munmap(ptr, size);
+   munmap(ptr, size);
 #endif
 }
 
