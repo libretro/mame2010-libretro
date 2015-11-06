@@ -18,10 +18,14 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#include <type_traits>
 #if defined(__MACH__) && !defined(IOS)
+#include <type_traits>
 #define DEF_NAMESPACE std
-#elif defined(__GNUC__) || defined(IOS)
+#elif defined(IOS)
+#include <type_traits>
+#define DEF_NAMESPACE std::tr1
+#elif defined(__GNUC__)
+#include <tr1/type_traits>
 #define DEF_NAMESPACE std::tr1
 #endif
 
