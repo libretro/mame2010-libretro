@@ -578,7 +578,7 @@ endif
 
 # add core include paths
 INCPATH += \
-   -I$(SRC)/osd/retro/libco \
+   -I$(SRC)/osd/retro/libretro-common/include \
 	-I$(SRC)/$(TARGET) \
 	-I$(OBJ)/$(TARGET)/layout \
 	-I$(SRC)/emu \

@@ -45,12 +45,12 @@
 
 MINISRC = $(SRC)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
-LIBCOOBJ = $(OBJ)/osd/$(OSD)/libco
+LIBCOOBJ = $(OBJ)/osd/$(OSD)/libretro-common/libco
 ifeq ($(VRENDER),opengl)
 GLOBJ = $(OBJ)/osd/$(OSD)/glsym
 OBJDIRS += $(GLOBJ)
 endif
-OBJDIRS += $(MINIOBJ) $(LIBCOOBJ)
+OBJDIRS += $(MINIOBJ)
 
 #-------------------------------------------------
 # OSD core library
@@ -68,15 +68,12 @@ OSDCOREOBJS := \
 # OSD mini library
 #-------------------------------------------------
 OSDOBJS = $(LIBCOOBJ)/libco.o 
-#ifeq ($(platform),android)
-#OSDOBJS += $(LIBCOOBJ)/armeabi_asm.o
-#endif
 ifeq ($(VRENDER),opengl)
-OSDOBJS += $(MINIOBJ)/glsym/rglgen.o
+OSDOBJS += $(MINIOBJ)/libretro-common/glsym/rglgen.o
 ifeq ($(GLES), 1)
-OSDOBJS += $(MINIOBJ)/glsym/glsym_es2.o
+OSDOBJS += $(MINIOBJ)/libretro-common/glsym/glsym_es2.o
 else
-OSDOBJS += $(MINIOBJ)/glsym/glsym_gl.o
+OSDOBJS += $(MINIOBJ)/libretro-common/glsym/glsym_gl.o
 endif
 endif
 #-------------------------------------------------
