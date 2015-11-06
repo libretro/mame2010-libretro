@@ -91,6 +91,31 @@ ifeq ($(VRENDER),opengl)
 	CCOMFLAGS  += -DHAVE_GL
 endif
 
+# Mame needs PTR64 defined on 64 bit processors, we guess at it if you aren't
+# cross-compiling.  If you ARE, you need to set it yourself.
+ifneq ($(CROSS_BUILD),1)
+
+ifndef ($(PTR64)
+	PTR64 = 0
+ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
+	PTR64 = 1
+endif
+ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
+	PTR64 = 1
+endif
+ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
+	PTR64 = 1
+endif
+ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
+	PTR64 = 1
+endif
+ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
+	PTR64 = 1
+endif
+
+endif # PTR64
+endif # CROSS_BUILD
+
 # UNIX
 ifeq ($(platform), unix)
    TARGETLIB := $(TARGET_NAME)_libretro.so
@@ -189,14 +214,20 @@ else ifneq (,$(findstring ios,$(platform)))
 
    TARGETLIB := $(TARGET_NAME)_libretro_ios.dylib
    TARGETOS = macosx
-EXTRA_RULES = 1
-ARM_ENABLED = 1
+   EXTRA_RULES = 1
+   ARM_ENABLED = 1
    fpic = -fPIC
    SHARED := -dynamiclib
+   PTR64 = 0
+
+ifeq ($(IOSSDK),)
+IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
+endif
 
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
-   CCOMFLAGS += -DSDLMAME_NO64BITIO
+   CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
+   CXXFLAGS += -DIOS
 
 # QNX
 else ifeq ($(platform), qnx)
@@ -354,30 +385,6 @@ endif
 endif
 
 
-# Mame needs PTR64 defined on 64 bit processors, we guess at it if you aren't
-# cross-compiling.  If you ARE, you need to set it yourself.
-ifneq ($(CROSS_BUILD),1)
-
-ifndef ($(PTR64)
-	PTR64 = 0
-ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-	PTR64 = 1
-endif
-ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-	PTR64 = 1
-endif
-ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-	PTR64 = 1
-endif
-ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-	PTR64 = 1
-endif
-ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
-	PTR64 = 1
-endif
-
-endif # PTR64
-endif # CROSS_BUILD
 
 ifeq ($(ALIGNED),1)
 	PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
