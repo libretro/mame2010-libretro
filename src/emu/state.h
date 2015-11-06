@@ -22,7 +22,7 @@
 #include <type_traits>
 #define DEF_NAMESPACE std
 #elif defined(IOS)
-#include <type_traits>
+#include <tr1/type_traits>
 #define DEF_NAMESPACE std::tr1
 #elif defined(__GNUC__)
 #include <tr1/type_traits>

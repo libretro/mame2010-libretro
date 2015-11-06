@@ -128,7 +128,7 @@ ifeq ($(platform), unix)
 ifeq ($(VRENDER),opengl)  
    LIBS += -lGL
 endif
-	LDFLAGS += $(SHARED)
+LDFLAGS += $(SHARED)
    NATIVELD = g++
    NATIVELDFLAGS = -Wl,--warn-common -lstdc++
    NATIVECC = g++
@@ -228,6 +228,9 @@ endif
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
    CXXFLAGS += -DIOS
+   NATIVELD = $(CC) -stdlib=libc++
+   LDFLAGS +=  $(SHARED)
+   LD = $(CC)
 
 # QNX
 else ifeq ($(platform), qnx)
