@@ -18,10 +18,12 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#if defined(__MACH__)
+#if defined(__MACH__) && !defined(IOS)
 #include <type_traits>
-#elif defined(__GNUC__)
+#define DEF_NAMESPACE std
+#elif defined(__GNUC__) || defined(IOS)
 #include <tr1/type_traits>
+#define DEF_NAMESPACE std::tr1
 #endif
 
 
@@ -58,19 +60,9 @@ typedef enum _state_save_error state_save_error;
 #define STATE_POSTLOAD(name) void name(running_machine *machine, void *param)
 
 
-#if defined(__MACH__)
 #define IS_VALID_SAVE_TYPE(_var) \
-	(std::is_arithmetic<typeof(_var)>::value || std::is_enum<typeof(_var)>::value || \
-	 std::is_same<typeof(_var), PAIR>::value || std::is_same<typeof(_var), PAIR64>::value)
-#elif defined(__GNUC__)
-#define IS_VALID_SAVE_TYPE(_var) \
-	(std::tr1::is_arithmetic<typeof(_var)>::value || std::tr1::is_enum<typeof(_var)>::value || \
-	 std::tr1::is_same<typeof(_var), PAIR>::value || std::tr1::is_same<typeof(_var), PAIR64>::value)
-#else
-#define IS_VALID_SAVE_TYPE(_var) \
-	(sizeof(_var) == 1 || sizeof(_var) == 2 || sizeof(_var) == 4 || sizeof(_var) == 8)
-#endif
-
+	(DEF_NAMESPACE::is_arithmetic<typeof(_var)>::value || DEF_NAMESPACE::is_enum<typeof(_var)>::value || \
+	 DEF_NAMESPACE::is_same<typeof(_var), PAIR>::value || DEF_NAMESPACE::is_same<typeof(_var), PAIR64>::value)
 
 /* generic registration; all further registrations are based on this */
 #define state_save_register_generic(_mach, _mod, _tag, _index, _name, _val, _valsize, _count)		\

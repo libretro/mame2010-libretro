@@ -194,8 +194,9 @@ ARM_ENABLED = 1
    SHARED := -dynamiclib
 
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
-   CCOMFLAGS += -DSDLMAME_NO64BITIO
+   CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
+   CXXFLAGS += -DIOS
 
 # QNX
 else ifeq ($(platform), qnx)
