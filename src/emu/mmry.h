@@ -18,7 +18,7 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 #include <stddef.h>
 #endif
 
