@@ -174,7 +174,6 @@ LDFLAGSEMULATOR +=  -stdlib=libc++
 	LDFLAGS +=  $(SHARED)
    CC_AS = clang
    AR = @ar
-   PYTHON ?= @python
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
@@ -447,7 +446,6 @@ OPTIMIZE = 3
 MD = -mkdir$(EXE_EXT)
 RM = @rm -f
 OBJDUMP = @objdump
-PYTHON ?= @python2
 
 #-------------------------------------------------
 # form the name of the executable
