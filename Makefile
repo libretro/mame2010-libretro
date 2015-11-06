@@ -188,10 +188,14 @@ else ifneq (,$(findstring ios,$(platform)))
 
    TARGETLIB := $(TARGET_NAME)_libretro_ios.dylib
    TARGETOS = macosx
-EXTRA_RULES = 1
-ARM_ENABLED = 1
+   EXTRA_RULES = 1
+   ARM_ENABLED = 1
    fpic = -fPIC
    SHARED := -dynamiclib
+
+ifeq ($(IOSSDK),)
+IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
+endif
 
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
