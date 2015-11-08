@@ -50,7 +50,9 @@ ifeq ($(VRENDER),opengl)
 GLOBJ = $(OBJ)/osd/$(OSD)/glsym
 OBJDIRS += $(GLOBJ)
 endif
-OBJDIRS += $(MINIOBJ)
+OBJDIRS += $(MINIOBJ) \
+			  $(OBJ)/osd/$(OSD)/libretro-common \
+			  $(OBJ)/osd/$(OSD)/libretro-common/libco
 
 #-------------------------------------------------
 # OSD core library
