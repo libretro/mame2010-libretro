@@ -394,7 +394,7 @@ int running_machine::run(bool firstrun)
 		sound_mute(this, FALSE);
 
 		// display the startup screens
-		ui_display_startup_screens(this, firstrun, !settingsloaded);
+		ui_display_startup_screens(this, firstrun, !options_get_bool(&m_options, OPTION_SKIP_NAGSCREEN));
 
 		// perform a soft reset -- this takes us to the running phase
 		soft_reset();
