@@ -153,6 +153,8 @@
 #define OPTION_BIOS					"bios"
 #define OPTION_CHEAT				"cheat"
 #define OPTION_SKIP_GAMEINFO		"skip_gameinfo"
+#define OPTION_SKIP_WARNINGS		"skip_warnings"
+#define OPTION_SKIP_NAGSCREEN		"skip_nagscreen"
 
 /* image device options */
 #define OPTION_ADDED_DEVICE_OPTIONS	"added_device_options"
