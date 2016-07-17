@@ -40,7 +40,9 @@ char g_rom_dir[1024];
 
 static bool mouse_enable = false;
 static bool videoapproach1_enable = false;
-bool nagscreenpatch_enable = false;
+bool hide_nagscreen = false;
+bool hide_gameinfo = false;
+bool hide_warnings = false;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
