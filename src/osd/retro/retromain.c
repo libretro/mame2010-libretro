@@ -315,6 +315,18 @@ int executeGame(char* path) {
 		}
 	}
 
+	if(hide_gameinfo) {
+		xargv[paramCount++] =(char*) "-skip_gameinfo";
+	}
+
+	if(hide_nagscreen) {
+		xargv[paramCount++] =(char*) "-skip_nagscreen";
+	}
+
+	if(hide_warnings) {
+		xargv[paramCount++] =(char*) "-skip_warnings";
+	}
+
 	xargv[paramCount++] = MgameName;
 
 	write_log("executing frontend... params:%i\n", paramCount);
