@@ -40,7 +40,9 @@ char g_rom_dir[1024];
 
 static bool mouse_enable = false;
 static bool videoapproach1_enable = false;
-bool nagscreenpatch_enable = false;
+bool hide_nagscreen = false;
+bool hide_gameinfo = false;
+bool hide_warnings = false;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
@@ -311,6 +313,18 @@ int executeGame(char* path) {
 		} else {
 			xargv[paramCount++] = (char*)(screenRot ? "-ror" : "-mouse");
 		}
+	}
+
+	if(hide_gameinfo) {
+		xargv[paramCount++] =(char*) "-skip_gameinfo";
+	}
+
+	if(hide_nagscreen) {
+		xargv[paramCount++] =(char*) "-skip_nagscreen";
+	}
+
+	if(hide_warnings) {
+		xargv[paramCount++] =(char*) "-skip_warnings";
 	}
 
 	xargv[paramCount++] = MgameName;

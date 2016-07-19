@@ -43,7 +43,9 @@ void retro_set_environment(retro_environment_t cb)
    static const struct retro_variable vars[] = {
       { "mame_current_mouse_enable", "Mouse supported; disabled|enabled" },
       { "mame_current_videoapproach1_enable", "Video approach 1 Enabled; disabled|enabled" },
-      { "mame_current_nagscreenpatch_enable", "Nagscreen patch Enabled; disabled|enabled" },
+      { "mame_current_skip_nagscreen", "Hide nag screen; disabled|enabled" },
+      { "mame_current_skip_gameinfo", "Hide game info screen; disabled|enabled" },
+      { "mame_current_skip_warnings", "Hide warning screen; disabled|enabled" },
       { NULL, NULL },
    };
 
@@ -66,16 +68,40 @@ static void check_variables(void)
          mouse_enable = true;
    }
 
-   var.key = "mame_current_nagscreenpatch_enable";
+   var.key = "mame_current_skip_nagscreen";
    var.value = NULL;
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
       if (strcmp(var.value, "disabled") == 0)
-         nagscreenpatch_enable = false;
+         hide_nagscreen = false;
       if (strcmp(var.value, "enabled") == 0)
-         nagscreenpatch_enable = true;
+         hide_nagscreen = true;
+   }
+
+   var.key = "mame_current_skip_gameinfo";
+   var.value = NULL;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      fprintf(stderr, "value: %s\n", var.value);
+      if (strcmp(var.value, "disabled") == 0)
+         hide_gameinfo = false;
+      if (strcmp(var.value, "enabled") == 0)
+         hide_gameinfo = true;
+   }
+
+   var.key = "mame_current_skip_warnings";
+   var.value = NULL;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      fprintf(stderr, "value: %s\n", var.value);
+      if (strcmp(var.value, "disabled") == 0)
+         hide_warnings = false;
+      if (strcmp(var.value, "enabled") == 0)
+         hide_warnings = true;
    }
 
    var.key = "mame_current_videoapproach1_enable";
