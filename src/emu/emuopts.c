@@ -162,7 +162,9 @@ const options_entry mame_core_options[] =
 	{ NULL,                          NULL,        OPTION_HEADER,     "CORE MISC OPTIONS" },
 	{ "bios",                        NULL,        0,                 "select the system BIOS to use" },
 	{ "cheat;c",                     "0",         OPTION_BOOLEAN,    "enable cheat subsystem" },
-	{ "skip_gameinfo",               "0",         OPTION_BOOLEAN,    "skip displaying the information screen at startup" },
+	{ "skip_gameinfo",               "0",         OPTION_BOOLEAN,    "skip displaying the game information screen at startup" },
+	{ "skip_nagscreen",              "0",         OPTION_BOOLEAN,    "skip displaying the legal notice at startup" },
+	{ "skip_warnings",               "0",         OPTION_BOOLEAN,    "skip displaying the emulation status at startup" },
 
 	/* image device options */
 	{ OPTION_ADDED_DEVICE_OPTIONS,	 "0",		  OPTION_BOOLEAN | OPTION_INTERNAL,	"image device-specific options have been added" },
