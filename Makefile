@@ -203,7 +203,7 @@ endif
 
 # QNX
 else ifeq ($(platform), qnx)
-   TARGETLIB := $(TARGET_NAME)_libretro_qnx.so
+   TARGETLIB := $(TARGET_NAME)_libretro_$(platform).so
 	TARGETOS=linux  
    fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
@@ -215,7 +215,7 @@ else ifeq ($(platform), qnx)
 
 # PS3
 else ifeq ($(platform), ps3)
-   TARGETLIB := $(TARGET_NAME)_libretro_ps3.a
+   TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__
@@ -235,7 +235,7 @@ else ifeq ($(platform), sncps3)
 
 # Lightweight PS3 Homebrew SDK
 else ifeq ($(platform), psl1ght)
-   TARGETLIB := $(TARGET_NAME)_libretro_psl1ght.a
+   TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__
@@ -245,7 +245,7 @@ else ifeq ($(platform), psl1ght)
 
 # PSP
 else ifeq ($(platform), psp1)
-	TARGETLIB := $(TARGET_NAME)_libretro_psp1.a
+	TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
 	CC = psp-g++$(EXE_EXT)
 	AR = psp-ar$(EXE_EXT)
 	CFLAGS += -DPSP -G0
@@ -264,7 +264,7 @@ else ifeq ($(platform), xenon)
 
 # Nintendo Game Cube
 else ifeq ($(platform), ngc)
-   TARGETLIB := $(TARGET_NAME)_libretro_ngc.a
+   TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
 	CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DBLARGG_BIG_ENDIAN=1 -D__ppc__
@@ -274,7 +274,7 @@ else ifeq ($(platform), ngc)
 
 # Nintendo Wii
 else ifeq ($(platform), wii)
-   TARGETLIB := $(TARGET_NAME)_libretro_wii.a
+   TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DBLARGG_BIG_ENDIAN=1 -D__ppc__
@@ -573,35 +573,6 @@ CCOMFLAGS += \
 endif
 
 #-------------------------------------------------
-# include paths
-#-------------------------------------------------
-
-# add core include paths
-INCPATH += \
-   -I$(SRC)/osd/retro/libretro-common/include \
-	-I$(SRC)/$(TARGET) \
-	-I$(OBJ)/$(TARGET)/layout \
-	-I$(SRC)/emu \
-	-I$(OBJ)/emu \
-	-I$(OBJ)/emu/layout \
-	-I$(SRC)/lib/util \
-	-I$(SRC)/lib \
-	-I$(SRC)/osd \
-	-I$(SRC)/osd/$(OSD) \
-
-
-
-#-------------------------------------------------
-# archiving flags
-#-------------------------------------------------
-
-
-#-------------------------------------------------
-# linking flags
-#-------------------------------------------------
-
-
-#-------------------------------------------------
 # define the standard object directory; other
 # projects can add their object directories to
 # this variable
@@ -634,69 +605,6 @@ VERSIONOBJ = $(OBJ)/version.o
 #DRIVLISTSRC = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.c
 #DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
 
-
-
-#-------------------------------------------------
-# either build or link against the included
-# libraries
-#-------------------------------------------------
-
-
-# add expat XML library
-ifeq ($(BUILD_EXPAT),1)
-INCPATH += -I$(SRC)/lib/expat
-EXPAT = $(OBJ)/libexpat.a
-else
-LIBS += -lexpat
-EXPAT =
-endif
-
-# add ZLIB compression library
-ifeq ($(BUILD_ZLIB),1)
-INCPATH += -I$(SRC)/lib/zlib
-ZLIB = $(OBJ)/libz.a
-else
-LIBS += -lz
-ZLIB =
-endif
-
-# add flac library
-ifeq ($(BUILD_FLAC),1)
-INCPATH += -I$(SRC)/lib/util
-FLAC_LIB = $(OBJ)/libflac.a
-# $(OBJ)/libflac++.a
-else
-LIBS += -lFLAC
-FLAC_LIB =
-endif
-
-# add jpeglib image library
-ifeq ($(BUILD_JPEGLIB),1)
-INCPATH += -I$(SRC)/lib/libjpeg
-JPEG_LIB = $(OBJ)/libjpeg.a
-else
-LIBS += -ljpeg
-JPEG_LIB =
-endif
-
-# add SoftFloat floating point emulation library
-SOFTFLOAT = $(OBJ)/libsoftfloat.a
-
-# add formats emulation library
-FORMATS_LIB = $(OBJ)/libformats.a
-
-# add LUA library
-LUA_LIB = $(OBJ)/liblua.a
-
-# add PortMidi MIDI library
-ifeq ($(BUILD_MIDILIB),1)
-INCPATH += -I$(SRC)/lib/portmidi
-MIDI_LIB = $(OBJ)/libportmidi.a
-else
-#LIBS += -lportmidi
-MIDI_LIB =
-endif
-
 #-------------------------------------------------
 # 'default' target needs to go here, before the
 # include files which define additional targets
@@ -718,25 +626,10 @@ BUILDSRC = $(SRC)/build
 BUILDOBJ = $(OBJ)/build
 BUILDOUT = $(BUILDOBJ)
 
-#-------------------------------------------------
-# include the various .mak files
-#-------------------------------------------------
-
-# include OSD-specific rules first
-include $(SRC)/osd/$(OSD)/$(OSD).mak
-
-# then the various core pieces
-
-include $(SRC)/$(TARGET)/$(SUBTARGET).mak
-#-include $(SRC)/$(TARGET)/osd/$(OSD)/$(OSD).mak
-include $(SRC)/emu/emu.mak
-include $(SRC)/lib/lib.mak
--include $(SRC)/osd/retro/build.mak
-include $(SRC)/tools/tools.mak
-#include $(SRC)/regtests/regtests.mak
+include Makefile.common
 
 # combine the various definitions to one
-CCOMFLAGS += $(INCPATH)
+CCOMFLAGS += $(INCFLAGS)
 CDEFS = $(DEFS)
 
 #-------------------------------------------------
@@ -831,7 +724,7 @@ endif
 ifeq ($(ARM_ENABLED), 1)
 CFLAGS += -DARM_ENABLED
 $(LIBCOOBJ)/armeabi_asm.o:
-	$(CC_AS) -c $(SRC)/osd/$(OSD)/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+	$(CC_AS) -c $(SRC)/osd/retro/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
@@ -857,6 +750,3 @@ $(OBJ)/%.a:
 	@echo Archiving $@...
 	$(RM) $@
 	$(AR) $(ARFLAGS) $@ $^
-
-#-include depend_emu.mak
-#-include depend_$(TARGET).mak
