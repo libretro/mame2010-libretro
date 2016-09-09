@@ -111,6 +111,8 @@ ifneq (,$(findstring ppc,$(UNAME)))
 BIGENDIAN=1
 endif
 
+CORE_DIR = .
+
 # UNIX
 ifeq ($(platform), unix)
    TARGETLIB := $(TARGET_NAME)_libretro.so
@@ -468,9 +470,6 @@ EMULATOR = $(TARGET)
 # source and object locations
 #-------------------------------------------------
 
-# all sources are under the src/ directory
-SRC = src
-
 # build the targets in different object dirs, so they can co-exist
 OBJ = obj/$(PREFIX)$(OSD)$(SUFFIX)$(SUFFIX64)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 
@@ -609,7 +608,7 @@ tests: maketree jedutil$(EXE_EXT) chdman$(EXE_EXT)
 # defines needed by multiple make files
 #-------------------------------------------------
 
-BUILDSRC = $(SRC)/build
+BUILDSRC = $(CORE_DIR)/src/build
 BUILDOBJ = $(OBJ)/build
 BUILDOUT = $(BUILDOBJ)
 
@@ -693,25 +692,25 @@ $(EMULATOR): $(OBJECTS)
 ifeq ($(ARM_ENABLED), 1)
 CFLAGS += -DARM_ENABLED
 $(LIBCOOBJ)/armeabi_asm.o:
-	$(CC_AS) -c $(SRC)/osd/retro/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+	$(CC_AS) -c $(CORE_DIR)/src/osd/retro/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
-$(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
+$(OBJ)/%.o: $(CORE_DIR)/src/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: $(OBJ)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
-$(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
+$(OBJ)/%.pp: $(CORE_DIR)/src/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
 
-$(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
+$(OBJ)/%.s: $(CORE_DIR)/src/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
 
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
-$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(MAKELIST_TARGET)
+$(DRIVLISTSRC): $(CORE_DIR)/src/$(TARGET)/$(SUBTARGET).lst $(MAKELIST_TARGET)
 	@echo Building driver list $<...
 	@$(MAKELIST) $< >$@
 

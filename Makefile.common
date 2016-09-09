@@ -1,17 +1,18 @@
-LIBRETRO_COMM_DIR = $(SRC)/osd/retro/libretro-common
-DEPS_DIR          = $(SRC)/lib
+SRC_DIR           = $(CORE_DIR)/src
+LIBRETRO_COMM_DIR = $(SRC_DIR)/osd/retro/libretro-common
+DEPS_DIR          = $(SRC_DIR)/lib
 
 INCFLAGS := \
    -I$(LIBRETRO_COMM_DIR)/include \
-	-I$(SRC)/$(TARGET) \
+	-I$(SRC_DIR)/$(TARGET) \
 	-I$(OBJ)/$(TARGET)/layout \
-	-I$(SRC)/emu \
+	-I$(SRC_DIR)/emu \
 	-I$(OBJ)/emu \
 	-I$(OBJ)/emu/layout \
 	-I$(DEPS_DIR)/util \
-	-I$(SRC)/lib \
-	-I$(SRC)/osd \
-	-I$(SRC)/osd/retro \
+	-I$(SRC_DIR)/lib \
+	-I$(SRC_DIR)/osd \
+	-I$(SRC_DIR)/osd/retro \
 
 # add expat XML library
 ifeq ($(BUILD_EXPAT),1)
@@ -82,14 +83,14 @@ endif
 ###########################################################################
 
 
-MAMESRC = $(SRC)/mame
+MAMESRC = $(SRC_DIR)/mame
 MAMEOBJ = $(OBJ)/mame
 
-AUDIO = $(MAMEOBJ)/audio
+AUDIO   = $(MAMEOBJ)/audio
 DRIVERS = $(MAMEOBJ)/drivers
-LAYOUT = $(MAMEOBJ)/layout
+LAYOUT  = $(MAMEOBJ)/layout
 MACHINE = $(MAMEOBJ)/machine
-VIDEO = $(MAMEOBJ)/video
+VIDEO   = $(MAMEOBJ)/video
 
 OBJDIRS += \
 	$(AUDIO) \
@@ -1771,7 +1772,7 @@ $(VIDEO)/n64.o:			$(MAMESRC)/video/rdpfiltr.c
 ###########################################################################
 
 
-EMUSRC = $(SRC)/emu
+EMUSRC = $(SRC_DIR)/emu
 EMUOBJ = $(OBJ)/emu
 
 EMUAUDIO = $(EMUOBJ)/audio
@@ -2089,14 +2090,12 @@ DASMOBJS += $(CPUOBJ)/arm7/arm7dasm.o
 endif
 
 $(CPUOBJ)/arm/arm.o:	$(CPUSRC)/arm/arm.c \
-						$(CPUSRC)/arm/arm.h
+							$(CPUSRC)/arm/arm.h
 
 $(CPUOBJ)/arm7/arm7.o:	$(CPUSRC)/arm7/arm7.c \
-						$(CPUSRC)/arm7/arm7.h \
-						$(CPUSRC)/arm7/arm7exec.c \
-						$(CPUSRC)/arm7/arm7core.c
-
-
+								$(CPUSRC)/arm7/arm7.h \
+								$(CPUSRC)/arm7/arm7exec.c \
+								$(CPUSRC)/arm7/arm7core.c
 
 #-------------------------------------------------
 # Advanced Digital Chips SE3208
@@ -2124,7 +2123,7 @@ DASMOBJS += $(CPUOBJ)/alph8201/8201dasm.o
 endif
 
 $(CPUOBJ)/alph8201/alph8201.o:	$(CPUSRC)/alph8201/alph8201.c \
-								$(CPUSRC)/alph8201/alph8201.h
+											$(CPUSRC)/alph8201/alph8201.h
 
 
 
@@ -4378,7 +4377,7 @@ $(EMUVIDEO)/v9938.o:	$(EMUSRC)/video/v9938mod.c
 ###########################################################################
 
 
-LIBSRC = $(SRC)/lib
+LIBSRC = $(SRC_DIR)/lib
 LIBOBJ = $(OBJ)/lib
 
 OBJDIRS += \
@@ -4528,7 +4527,7 @@ $(LIBOBJ)/softfloat/softfloat.o: $(LIBSRC)/softfloat/softfloat.c \
 # object and source roots
 #-------------------------------------------------
 
-MINISRC = $(SRC)/osd/$(OSD)
+MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
 LIBCOOBJ = $(OBJ)/osd/$(OSD)/libretro-common/libco
 ifeq ($(VRENDER),opengl)
