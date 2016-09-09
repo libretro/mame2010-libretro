@@ -1,4 +1,5 @@
 LIBRETRO_COMM_DIR = $(SRC)/osd/retro/libretro-common
+DEPS_DIR          = $(SRC)/lib
 
 INCFLAGS := \
    -I$(LIBRETRO_COMM_DIR)/include \
@@ -7,14 +8,14 @@ INCFLAGS := \
 	-I$(SRC)/emu \
 	-I$(OBJ)/emu \
 	-I$(OBJ)/emu/layout \
-	-I$(SRC)/lib/util \
+	-I$(DEPS_DIR)/util \
 	-I$(SRC)/lib \
 	-I$(SRC)/osd \
 	-I$(SRC)/osd/retro \
 
 # add expat XML library
 ifeq ($(BUILD_EXPAT),1)
-INCFLAGS += -I$(SRC)/lib/expat
+INCFLAGS += -I$(DEPS_DIR)/expat
 EXPAT = $(OBJ)/libexpat.a
 else
 LIBS += -lexpat
@@ -23,7 +24,7 @@ endif
 
 # add ZLIB compression library
 ifeq ($(BUILD_ZLIB),1)
-INCFLAGS += -I$(SRC)/lib/zlib
+INCFLAGS += -I$(DEPS_DIR)/zlib
 ZLIB = $(OBJ)/libz.a
 else
 LIBS += -lz
@@ -32,7 +33,7 @@ endif
 
 # add flac library
 ifeq ($(BUILD_FLAC),1)
-INCFLAGS += -I$(SRC)/lib/util
+INCFLAGS += -I$(DEPS_DIR)/util
 FLAC_LIB = $(OBJ)/libflac.a
 # $(OBJ)/libflac++.a
 else
@@ -42,7 +43,7 @@ endif
 
 # add jpeglib image library
 ifeq ($(BUILD_JPEGLIB),1)
-INCFLAGS += -I$(SRC)/lib/libjpeg
+INCFLAGS += -I$(DEPS_DIR)/libjpeg
 JPEG_LIB = $(OBJ)/libjpeg.a
 else
 LIBS += -ljpeg
@@ -60,7 +61,7 @@ LUA_LIB = $(OBJ)/liblua.a
 
 # add PortMidi MIDI library
 ifeq ($(BUILD_MIDILIB),1)
-INCFLAGS += -I$(SRC)/lib/portmidi
+INCFLAGS += -I$(DEPS_DIR)/portmidi
 MIDI_LIB = $(OBJ)/libportmidi.a
 else
 #LIBS += -lportmidi
