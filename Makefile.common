@@ -1,5 +1,7 @@
+LIBRETRO_COMM_DIR = $(SRC)/osd/retro/libretro-common
+
 INCFLAGS := \
-   -I$(SRC)/osd/retro/libretro-common/include \
+   -I$(LIBRETRO_COMM_DIR)/include \
 	-I$(SRC)/$(TARGET) \
 	-I$(OBJ)/$(TARGET)/layout \
 	-I$(SRC)/emu \
