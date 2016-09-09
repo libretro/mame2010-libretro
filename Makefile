@@ -584,26 +584,13 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 #-------------------------------------------------
 # define standard libarires for CPU and sounds
 #-------------------------------------------------
-LIBEMU = $(OBJ)/libemu.a
-LIBCPU = $(OBJ)/libcpu.a
-LIBDASM = $(OBJ)/libdasm.a
+LIBEMU   = $(OBJ)/libemu.a
+LIBCPU   = $(OBJ)/libcpu.a
+LIBDASM  = $(OBJ)/libdasm.a
 LIBSOUND = $(OBJ)/libsound.a
-LIBUTIL = $(OBJ)/libutil.a
+LIBUTIL  = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
-
-#LIBEMU = $(OBJ)/libemu.a
-#LIBCPU = $(OBJ)/libcpu.a
-#LIBOPTIONAL = $(OBJ)/$(TARGET)/$(SUBTARGET)/liboptional.a
-#LIBSOUND = $(OBJ)/libsound.a
-#LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
-#LIBUTIL = $(OBJ)/libutil.a
-#LIBOCORE = $(OBJ)/libocore.a
-LIBOSD = $(OBJ)/osd/retro/retromain.o $(OSDOBJS)
-
-VERSIONOBJ = $(OBJ)/version.o
-#EMUINFOOBJ = $(OBJ)/$(TARGET)/$(TARGET).o
-#DRIVLISTSRC = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.c
-#DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
+LIBOSD   = $(OSDOBJS)
 
 #-------------------------------------------------
 # 'default' target needs to go here, before the
@@ -694,27 +681,9 @@ endif
 #-------------------------------------------------
 # executable targets and dependencies
 #-------------------------------------------------
-# always recompile the version string
-#$(VERSIONOBJ): $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(ZLIB) $(SOFTFLOAT) $(LIBOCORE) $(RESFILE)
-
-#$(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBOPTIONAL) $(LIBEMU) $(LIBDASM) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(JPEG_LIB) $(FLAC_LIB) $(7Z_LIB) $(FORMATS_LIB) $(LUA_LIB) $(ZLIB) $(LIBOCORE) $(MIDI_LIB) $(RESFILE)
-#	$(CC) $(CDEFS) $(CFLAGS) -c $(SRC)/version.c -o $(VERSIONOBJ)
-#	@echo Linking $(TARGETLIB)
-#	$(LD) $(LDFLAGS) $(LDFLAGSEMULATOR) $(VERSIONOBJ) $^ $(LIBS) -o $(TARGETLIB)
-
-#	ifndef EXECUTABLE_DEFINED
-
-# always recompile the version string
-$(VERSIONOBJ): $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(ZLIB) $(SOFTFLOAT) $(LIBOCORE) $(RESFILE)
-
-$(EMULATOR): $(VERSIONOBJ) $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBDASM) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(ZLIB) $(LIBOCORE) $(RESFILE)
+$(EMULATOR): $(OBJECTS)
 	@echo Linking $(TARGETLIB)
 	$(LD) $(LDFLAGS) $(LDFLAGSEMULATOR) $^ $(LIBS) -o $(TARGETLIB)
-ifeq ($(TARGETOS),win32)
-ifdef SYMBOLS
-	$(OBJDUMP) --section=.text --line-numbers --syms --demangle $@ >$(FULLNAME).sym
-endif
-endif
 
 #endif
 #-------------------------------------------------
