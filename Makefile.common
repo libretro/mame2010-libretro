@@ -15,13 +15,8 @@ INCFLAGS := \
 	-I$(SRC_DIR)/osd/retro \
 
 # add expat XML library
-ifeq ($(BUILD_EXPAT),1)
 INCFLAGS += -I$(DEPS_DIR)/expat
 EXPAT = $(OBJ)/libexpat.a
-else
-LIBS += -lexpat
-EXPAT =
-endif
 
 # add ZLIB compression library
 ifeq ($(BUILD_ZLIB),1)
@@ -33,23 +28,12 @@ ZLIB =
 endif
 
 # add flac library
-ifeq ($(BUILD_FLAC),1)
 INCFLAGS += -I$(DEPS_DIR)/util
 FLAC_LIB = $(OBJ)/libflac.a
-# $(OBJ)/libflac++.a
-else
-LIBS += -lFLAC
-FLAC_LIB =
-endif
 
 # add jpeglib image library
-ifeq ($(BUILD_JPEGLIB),1)
 INCFLAGS += -I$(DEPS_DIR)/libjpeg
 JPEG_LIB = $(OBJ)/libjpeg.a
-else
-LIBS += -ljpeg
-JPEG_LIB =
-endif
 
 # add SoftFloat floating point emulation library
 SOFTFLOAT = $(OBJ)/libsoftfloat.a

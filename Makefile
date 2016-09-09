@@ -63,17 +63,8 @@ CPPONLYFLAGS =
 LDFLAGS =
 LDFLAGSEMULATOR =
 
-# uncomment next line to build expat as part of MAME build
-BUILD_EXPAT = 1
-
 # uncomment next line to build zlib as part of MAME build
 #BUILD_ZLIB = 1
-
-# uncomment next line to build libflac as part of MAME build
-BUILD_FLAC = 1
-
-# uncomment next line to build jpeglib as part of MAME build
-BUILD_JPEGLIB = 1
 
 # uncomment next line to build PortMidi as part of MAME/MESS build
 #BUILD_MIDILIB = 1
@@ -493,14 +484,7 @@ endif
 DEFS += -DNDEBUG 
 
 # need to ensure FLAC functions are statically linked
-ifeq ($(BUILD_FLAC),1)
 DEFS += -DFLAC__NO_DLL
-endif
-
-# define USE_SYSTEM_JPEGLIB if library shipped with MAME is not used
-ifneq ($(BUILD_JPEGLIB),1)
-DEFS += -DUSE_SYSTEM_JPEGLIB
-endif
 
 # CFLAGS is defined based on C or C++ targets
 # (remember, expansion only happens when used, so doing it here is ok)
