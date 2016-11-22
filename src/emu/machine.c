@@ -369,90 +369,69 @@ void running_machine::start()
 
 int running_machine::run(bool firstrun)
 {
-	int error = MAMERR_NONE;
+   int error = MAMERR_NONE;
 
-	// use try/catch for deep error recovery
-	try
-	{
-		// move to the init phase
-		m_current_phase = MACHINE_PHASE_INIT;
+   // move to the init phase
+   m_current_phase = MACHINE_PHASE_INIT;
 
-		// if we have a logfile, set up the callback
-		if (options_get_bool(&m_options, OPTION_LOG))
-		{
-			file_error filerr = mame_fopen(SEARCHPATH_DEBUGLOG, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
-			assert_always(filerr == FILERR_NONE, "unable to open log file");
-			add_logerror_callback(logfile_callback);
-		}
+   // if we have a logfile, set up the callback
+   if (options_get_bool(&m_options, OPTION_LOG))
+   {
+      file_error filerr = mame_fopen(SEARCHPATH_DEBUGLOG, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
+      assert_always(filerr == FILERR_NONE, "unable to open log file");
+      add_logerror_callback(logfile_callback);
+   }
 
-		// then finish setting up our local machine
-		start();
+   // then finish setting up our local machine
+   start();
 
-		// load the configuration settings and NVRAM
-		bool settingsloaded = config_load_settings(this);
-		nvram_load(this);
-		sound_mute(this, FALSE);
+   // load the configuration settings and NVRAM
+   bool settingsloaded = config_load_settings(this);
+   nvram_load(this);
+   sound_mute(this, FALSE);
 
-		// display the startup screens
-		ui_display_startup_screens(this, firstrun, !options_get_bool(&m_options, OPTION_SKIP_NAGSCREEN));
+   // display the startup screens
+   ui_display_startup_screens(this, firstrun, !options_get_bool(&m_options, OPTION_SKIP_NAGSCREEN));
 
-		// perform a soft reset -- this takes us to the running phase
-		soft_reset();
+   // perform a soft reset -- this takes us to the running phase
+   soft_reset();
 
-		// run the CPUs until a reset or exit
-		m_hard_reset_pending = false;
-		while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
-		{
-			profiler_mark_start(PROFILER_EXTRA);
+   // run the CPUs until a reset or exit
+   m_hard_reset_pending = false;
+   while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
+   {
+      profiler_mark_start(PROFILER_EXTRA);
 
-			// execute CPUs if not paused
-			if (!m_paused)
-				m_scheduler.timeslice();
+      // execute CPUs if not paused
+      if (!m_paused)
+         m_scheduler.timeslice();
 
-			// otherwise, just pump video updates through
-			else
-				video_frame_update(this, false);
+      // otherwise, just pump video updates through
+      else
+         video_frame_update(this, false);
 
-			// handle save/load
-			if (m_saveload_schedule != SLS_NONE)
-				handle_saveload();
+      // handle save/load
+      if (m_saveload_schedule != SLS_NONE)
+         handle_saveload();
 
-			profiler_mark_end();
-		}
+      profiler_mark_end();
+   }
 
-		// and out via the exit phase
-		m_current_phase = MACHINE_PHASE_EXIT;
+   // and out via the exit phase
+   m_current_phase = MACHINE_PHASE_EXIT;
 
-		// save the NVRAM and configuration
-		sound_mute(this, true);
-		nvram_save(this);
-		config_save_settings(this);
-	}
-	catch (emu_fatalerror &fatal)
-	{
-		mame_printf_error("%s\n", fatal.string());
-		error = MAMERR_FATALERROR;
-		if (fatal.exitcode() != 0)
-			error = fatal.exitcode();
-	}
-	catch (emu_exception &)
-	{
-		mame_printf_error("Caught unhandled emulator exception\n");
-		error = MAMERR_FATALERROR;
-	}
-	catch (std::bad_alloc &)
-	{
-		mame_printf_error("Out of memory!\n");
-		error = MAMERR_FATALERROR;
-	}
+   // save the NVRAM and configuration
+   sound_mute(this, true);
+   nvram_save(this);
+   config_save_settings(this);
 
-	// call all exit callbacks registered
-	call_notifiers(MACHINE_NOTIFY_EXIT);
+   // call all exit callbacks registered
+   call_notifiers(MACHINE_NOTIFY_EXIT);
 
-	// close the logfile
-	if (m_logfile != NULL)
-		mame_fclose(m_logfile);
-	return error;
+   // close the logfile
+   if (m_logfile != NULL)
+      mame_fclose(m_logfile);
+   return error;
 }
 
 
