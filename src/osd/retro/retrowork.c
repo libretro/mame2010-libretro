@@ -611,10 +611,6 @@ static void *worker_thread_entry(void *param)
 	work_thread_info *thread = (work_thread_info *)param;
 	osd_work_queue *queue = thread->queue;
 
-	#if defined(SDLMAME_MACOSX)
-	void *arp = NewAutoreleasePool();
-	#endif
-
 	// loop until we exit
 	for ( ;; )
 	{
@@ -666,10 +662,6 @@ static void *worker_thread_entry(void *param)
 		atomic_exchange32(&thread->active, FALSE);
 		atomic_decrement32(&queue->livethreads);
 	}
-
-	#if defined(SDLMAME_MACOSX)
-	ReleaseAutoreleasePool(arp);
-	#endif
 
 	return NULL;
 }
