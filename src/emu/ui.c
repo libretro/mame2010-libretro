@@ -281,6 +281,10 @@ int ui_display_startup_screens(running_machine *machine, int first_time, int sho
 	int show_gameinfo = !options_get_bool(machine->options(), OPTION_SKIP_GAMEINFO);
 	int show_warnings = !options_get_bool(machine->options(), OPTION_SKIP_WARNINGS);
 	int state;
+#ifdef __LIBRETRO__
+//for nonlibco
+	show_gameinfo = show_warnings = show_disclaimer = FALSE;
+#endif
 
 	/* disable everything if we are using -str for 300 or fewer seconds, or if we're the empty driver,
        or if we are debugging */

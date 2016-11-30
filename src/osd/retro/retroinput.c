@@ -1,3 +1,117 @@
+
+kt_table ktable[]={
+{"A",RETROK_a,ITEM_ID_A},
+{"B",RETROK_b,ITEM_ID_B},
+{"C",RETROK_c,ITEM_ID_C},
+{"D",RETROK_d,ITEM_ID_D},
+{"E",RETROK_e,ITEM_ID_E},
+{"F",RETROK_f,ITEM_ID_F},
+{"G",RETROK_g,ITEM_ID_G},
+{"H",RETROK_h,ITEM_ID_H},
+{"I",RETROK_i,ITEM_ID_I},
+{"J",RETROK_j,ITEM_ID_J},
+{"K",RETROK_k,ITEM_ID_K},
+{"L",RETROK_l,ITEM_ID_L},
+{"M",RETROK_m,ITEM_ID_M},
+{"N",RETROK_n,ITEM_ID_N},
+{"O",RETROK_o,ITEM_ID_O},
+{"P",RETROK_p,ITEM_ID_P},
+{"Q",RETROK_q,ITEM_ID_Q},
+{"R",RETROK_r,ITEM_ID_R},
+{"S",RETROK_s,ITEM_ID_S},
+{"T",RETROK_t,ITEM_ID_T},
+{"U",RETROK_u,ITEM_ID_U},
+{"V",RETROK_v,ITEM_ID_V},
+{"W",RETROK_w,ITEM_ID_W},
+{"X",RETROK_x,ITEM_ID_X},
+{"Y",RETROK_y,ITEM_ID_Y},
+{"Z",RETROK_z,ITEM_ID_Z},
+{"0",RETROK_0,ITEM_ID_0},
+{"1",RETROK_1,ITEM_ID_1},
+{"2",RETROK_2,ITEM_ID_2},
+{"3",RETROK_3,ITEM_ID_3},
+{"4",RETROK_4,ITEM_ID_4},
+{"5",RETROK_5,ITEM_ID_5},
+{"6",RETROK_6,ITEM_ID_6},
+{"7",RETROK_7,ITEM_ID_7},
+{"8",RETROK_8,ITEM_ID_8},
+{"9",RETROK_9,ITEM_ID_9},
+{"F1",RETROK_F1,ITEM_ID_F1},
+{"F2",RETROK_F2,ITEM_ID_F2},
+{"F3",RETROK_F3,ITEM_ID_F3},
+{"F4",RETROK_F4,ITEM_ID_F4},
+{"F5",RETROK_F5,ITEM_ID_F5},
+{"F6",RETROK_F6,ITEM_ID_F6},
+{"F7",RETROK_F7,ITEM_ID_F7},
+{"F8",RETROK_F8,ITEM_ID_F8},
+{"F9",RETROK_F9,ITEM_ID_F9},
+{"F10",RETROK_F10,ITEM_ID_F10},
+{"F11",RETROK_F11,ITEM_ID_F11},
+{"F12",RETROK_F12,ITEM_ID_F12},
+{"F13",RETROK_F13,ITEM_ID_F13},
+{"F14",RETROK_F14,ITEM_ID_F14},
+{"F15",RETROK_F15,ITEM_ID_F15},
+{"Esc",RETROK_ESCAPE,ITEM_ID_ESC},
+{"TILDE",RETROK_BACKQUOTE,ITEM_ID_TILDE},
+{"MINUS",RETROK_MINUS,ITEM_ID_MINUS},
+{"EQUALS",RETROK_EQUALS,ITEM_ID_EQUALS},
+{"BKCSPACE",RETROK_BACKSPACE,ITEM_ID_BACKSPACE},
+{"TAB",RETROK_TAB,ITEM_ID_TAB},
+{"(",RETROK_LEFTPAREN,ITEM_ID_OPENBRACE},
+{")",RETROK_RIGHTPAREN,ITEM_ID_CLOSEBRACE},
+{"ENTER",RETROK_RETURN,ITEM_ID_ENTER},
+{"·",RETROK_COLON,ITEM_ID_COLON},
+{"\'",RETROK_QUOTE,ITEM_ID_QUOTE},
+{"BCKSLASH",RETROK_BACKSLASH,ITEM_ID_BACKSLASH},
+///**/BCKSLASH2*/RETROK_,ITEM_ID_BACKSLASH2},
+{",",RETROK_COMMA,ITEM_ID_COMMA},
+///**/STOP*/RETROK_,ITEM_ID_STOP},
+{"/",RETROK_SLASH,ITEM_ID_SLASH},
+{"SPACE",RETROK_SPACE,ITEM_ID_SPACE},
+{"INS",RETROK_INSERT,ITEM_ID_INSERT},
+{"DEL",RETROK_DELETE,ITEM_ID_DEL},
+{"HOME",RETROK_HOME,ITEM_ID_HOME},
+{"END",RETROK_END,ITEM_ID_END},
+{"PGUP",RETROK_PAGEUP,ITEM_ID_PGUP},
+{"PGDW",RETROK_PAGEDOWN,ITEM_ID_PGDN},
+{"LEFT",RETROK_LEFT,ITEM_ID_LEFT},
+{"RIGHT",RETROK_RIGHT,ITEM_ID_RIGHT},
+{"UP",RETROK_UP,ITEM_ID_UP},
+{"DOWN",RETROK_DOWN,ITEM_ID_DOWN},
+{"KO",RETROK_KP0,ITEM_ID_0_PAD},
+{"K1",RETROK_KP1,ITEM_ID_1_PAD},
+{"K2",RETROK_KP2,ITEM_ID_2_PAD},
+{"K3",RETROK_KP3,ITEM_ID_3_PAD},
+{"K4",RETROK_KP4,ITEM_ID_4_PAD},
+{"K5",RETROK_KP5,ITEM_ID_5_PAD},
+{"K6",RETROK_KP6,ITEM_ID_6_PAD},
+{"K7",RETROK_KP7,ITEM_ID_7_PAD},
+{"K8",RETROK_KP8,ITEM_ID_8_PAD},
+{"K9",RETROK_KP9,ITEM_ID_9_PAD},
+{"K/",RETROK_KP_DIVIDE,ITEM_ID_SLASH_PAD},
+{"K*",RETROK_KP_MULTIPLY,ITEM_ID_ASTERISK},
+{"K-",RETROK_KP_MINUS,ITEM_ID_MINUS_PAD},
+{"K+",RETROK_KP_PLUS,ITEM_ID_PLUS_PAD},
+{"KDEL",RETROK_KP_PERIOD,ITEM_ID_DEL_PAD},
+{"KRTRN",RETROK_KP_ENTER,ITEM_ID_ENTER_PAD},
+{"PRINT",RETROK_PRINT,ITEM_ID_PRTSCR},
+{"PAUSE",RETROK_PAUSE,ITEM_ID_PAUSE},
+{"LSHFT",RETROK_LSHIFT,ITEM_ID_LSHIFT},
+{"RSHFT",RETROK_RSHIFT,ITEM_ID_RSHIFT},
+{"LCTRL",RETROK_LCTRL,ITEM_ID_LCONTROL},
+{"RCTRL",RETROK_RCTRL,ITEM_ID_RCONTROL},
+{"LALT",RETROK_LALT,ITEM_ID_LALT},
+{"RALT",RETROK_RALT,ITEM_ID_RALT},
+{"SCRLOCK",RETROK_SCROLLOCK,ITEM_ID_SCRLOCK},
+{"NUMLOCK",RETROK_NUMLOCK,ITEM_ID_NUMLOCK},
+{"CPSLOCK",RETROK_CAPSLOCK,ITEM_ID_CAPSLOCK},
+{"LMETA",RETROK_LMETA,ITEM_ID_LWIN},
+{"RMETA",RETROK_RMETA,ITEM_ID_RWIN},
+{"MENU",RETROK_MENU,ITEM_ID_MENU},
+{"BREAK",RETROK_BREAK,ITEM_ID_CANCEL},
+{"-1",-1,ITEM_ID_INVALID},
+};
+
 static INT32 pad1_get_state(void *device_internal, void *item_internal)
 {
 	UINT8 *itemdata = (UINT8 *)item_internal;
@@ -502,125 +616,44 @@ static void initInput(running_machine* machine)
 	if (retrokbd_device == NULL)
 			fatalerror("KBD Error creating keyboard device\n");
 
-	#define RETROK_TILDE 178
-
-   for(i = 0; i < RETROK_LAST; i++)
+   for(i = 0; i < RETROK_LAST; i++){
       retrokbd_state[i]=0;
+      retrokbd_state2[i]=0;
+   }
 
-   input_device_item_add_kbd(retrokbd_device, "A", &retrokbd_state[RETROK_a],ITEM_ID_A,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "B", &retrokbd_state[RETROK_b],ITEM_ID_B,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "C", &retrokbd_state[RETROK_c],ITEM_ID_C,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "D", &retrokbd_state[RETROK_d],ITEM_ID_D,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "E", &retrokbd_state[RETROK_e],ITEM_ID_E,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F", &retrokbd_state[RETROK_f],ITEM_ID_F,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "G", &retrokbd_state[RETROK_g],ITEM_ID_G,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "H", &retrokbd_state[RETROK_h],ITEM_ID_H,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "I", &retrokbd_state[RETROK_i],ITEM_ID_I,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "J", &retrokbd_state[RETROK_j],ITEM_ID_J,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K", &retrokbd_state[RETROK_k],ITEM_ID_K,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "L", &retrokbd_state[RETROK_l],ITEM_ID_L,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "M", &retrokbd_state[RETROK_m],ITEM_ID_M,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "N", &retrokbd_state[RETROK_n],ITEM_ID_N,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "O", &retrokbd_state[RETROK_o],ITEM_ID_O,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "P", &retrokbd_state[RETROK_p],ITEM_ID_P,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "Q", &retrokbd_state[RETROK_q],ITEM_ID_Q,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "R", &retrokbd_state[RETROK_r],ITEM_ID_R,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "S", &retrokbd_state[RETROK_s],ITEM_ID_S,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "T", &retrokbd_state[RETROK_t],ITEM_ID_T,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "U", &retrokbd_state[RETROK_u],ITEM_ID_U,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "V", &retrokbd_state[RETROK_v],ITEM_ID_V,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "W", &retrokbd_state[RETROK_w],ITEM_ID_W,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "X", &retrokbd_state[RETROK_x],ITEM_ID_X,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "Y", &retrokbd_state[RETROK_y],ITEM_ID_Y,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "Z", &retrokbd_state[RETROK_z],ITEM_ID_Z,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "0", &retrokbd_state[RETROK_0],ITEM_ID_0,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "1", &retrokbd_state[RETROK_1],ITEM_ID_1,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "2", &retrokbd_state[RETROK_2],ITEM_ID_2,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "3", &retrokbd_state[RETROK_QUOTEDBL/*RETROK_3*/],ITEM_ID_3,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "4", &retrokbd_state[RETROK_4],ITEM_ID_4,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "5", &retrokbd_state[RETROK_5],ITEM_ID_5,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "6", &retrokbd_state[RETROK_6],ITEM_ID_6,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "7", &retrokbd_state[RETROK_7],ITEM_ID_7,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "8", &retrokbd_state[RETROK_8],ITEM_ID_8,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "9", &retrokbd_state[RETROK_9],ITEM_ID_9,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F1", &retrokbd_state[RETROK_F1],ITEM_ID_F1,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F2", &retrokbd_state[RETROK_F2],ITEM_ID_F2,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F3", &retrokbd_state[RETROK_F3],ITEM_ID_F3,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F4", &retrokbd_state[RETROK_F4],ITEM_ID_F4,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F5", &retrokbd_state[RETROK_F5],ITEM_ID_F5,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F6", &retrokbd_state[RETROK_F6],ITEM_ID_F6,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F7", &retrokbd_state[RETROK_F7],ITEM_ID_F7,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F8", &retrokbd_state[RETROK_F8],ITEM_ID_F8,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F9", &retrokbd_state[RETROK_F9],ITEM_ID_F9,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F10", &retrokbd_state[RETROK_F10],ITEM_ID_F10,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F11", &retrokbd_state[RETROK_F11],ITEM_ID_F11,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F12", &retrokbd_state[RETROK_F12],ITEM_ID_F12,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F13", &retrokbd_state[RETROK_F13],ITEM_ID_F13,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F14", &retrokbd_state[RETROK_F14],ITEM_ID_F14,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "F15", &retrokbd_state[RETROK_F15],ITEM_ID_F15,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "Esc", &retrokbd_state[RETROK_ESCAPE],ITEM_ID_ESC,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "TILDE", &retrokbd_state[RETROK_TILDE],ITEM_ID_TILDE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "MINUS", &retrokbd_state[RETROK_MINUS],ITEM_ID_MINUS,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "EQUALS", &retrokbd_state[RETROK_EQUALS],ITEM_ID_EQUALS,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "BKCSPACE", &retrokbd_state[RETROK_BACKSPACE],ITEM_ID_BACKSPACE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "TAB", &retrokbd_state[RETROK_TAB],ITEM_ID_TAB,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "(", &retrokbd_state[RETROK_LEFTPAREN],ITEM_ID_OPENBRACE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, ")", &retrokbd_state[RETROK_RIGHTPAREN],ITEM_ID_CLOSEBRACE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "ENTER", &retrokbd_state[RETROK_RETURN],ITEM_ID_ENTER,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "·", &retrokbd_state[RETROK_COLON],ITEM_ID_COLON,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "\'", &retrokbd_state[RETROK_QUOTE],ITEM_ID_QUOTE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "BCKSLASH", &retrokbd_state[RETROK_BACKSLASH],ITEM_ID_BACKSLASH,retrokbd_get_state);
-   //input_device_item_add_kbd(retrokbd_device, "BCKSLASH2", &retrokbd_state[RETROK_],ITEM_ID_BACKSLASH2,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, ",", &retrokbd_state[RETROK_COMMA],ITEM_ID_COMMA,retrokbd_get_state);
-   //input_device_item_add_kbd(retrokbd_device, "STOP", &retrokbd_state[RETROK_],ITEM_ID_STOP,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "/", &retrokbd_state[RETROK_SLASH],ITEM_ID_SLASH,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "SPACE", &retrokbd_state[RETROK_SPACE],ITEM_ID_SPACE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "INS", &retrokbd_state[RETROK_INSERT],ITEM_ID_INSERT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "DEL", &retrokbd_state[RETROK_DELETE],ITEM_ID_DEL,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "HOME", &retrokbd_state[RETROK_HOME],ITEM_ID_HOME,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "END", &retrokbd_state[RETROK_END],ITEM_ID_END,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "PGUP", &retrokbd_state[RETROK_PAGEUP],ITEM_ID_PGUP,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "PGDW", &retrokbd_state[RETROK_PAGEDOWN],ITEM_ID_PGDN,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "LEFT", &retrokbd_state[RETROK_LEFT],ITEM_ID_LEFT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "RIGHT", &retrokbd_state[RETROK_RIGHT],ITEM_ID_RIGHT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "UP", &retrokbd_state[RETROK_UP],ITEM_ID_UP,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "DOWN", &retrokbd_state[RETROK_DOWN],ITEM_ID_DOWN,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "KO", &retrokbd_state[RETROK_KP0],ITEM_ID_0_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K1", &retrokbd_state[RETROK_KP1],ITEM_ID_1_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K2", &retrokbd_state[RETROK_KP2],ITEM_ID_2_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K3", &retrokbd_state[RETROK_KP3],ITEM_ID_3_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K4", &retrokbd_state[RETROK_KP4],ITEM_ID_4_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K5", &retrokbd_state[RETROK_KP5],ITEM_ID_5_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K6", &retrokbd_state[RETROK_KP6],ITEM_ID_6_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K7", &retrokbd_state[RETROK_KP7],ITEM_ID_7_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K8", &retrokbd_state[RETROK_KP8],ITEM_ID_8_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K9", &retrokbd_state[RETROK_KP9],ITEM_ID_9_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K/", &retrokbd_state[RETROK_KP_DIVIDE],ITEM_ID_SLASH_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K*", &retrokbd_state[RETROK_KP_MULTIPLY],ITEM_ID_ASTERISK,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K-", &retrokbd_state[RETROK_KP_MINUS],ITEM_ID_MINUS_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "K+", &retrokbd_state[RETROK_KP_PLUS],ITEM_ID_PLUS_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "KDEL", &retrokbd_state[RETROK_KP_PERIOD],ITEM_ID_DEL_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "KRTRN", &retrokbd_state[RETROK_KP_ENTER],ITEM_ID_ENTER_PAD,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "PRINT", &retrokbd_state[RETROK_PRINT],ITEM_ID_PRTSCR,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "PAUSE", &retrokbd_state[RETROK_PAUSE],ITEM_ID_PAUSE,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "LSHFT", &retrokbd_state[RETROK_LSHIFT],ITEM_ID_LSHIFT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "RSHFT", &retrokbd_state[RETROK_RSHIFT],ITEM_ID_RSHIFT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "LCTRL", &retrokbd_state[RETROK_LCTRL],ITEM_ID_LCONTROL,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "RCTRL", &retrokbd_state[RETROK_RCTRL],ITEM_ID_RCONTROL,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "LALT", &retrokbd_state[RETROK_LALT],ITEM_ID_LALT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "RALT", &retrokbd_state[RETROK_RALT],ITEM_ID_RALT,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "SCRLOCK", &retrokbd_state[RETROK_SCROLLOCK],ITEM_ID_SCRLOCK,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "NUMLOCK", &retrokbd_state[RETROK_NUMLOCK],ITEM_ID_NUMLOCK,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "CPSLOCK", &retrokbd_state[RETROK_CAPSLOCK],ITEM_ID_CAPSLOCK,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "LMETA", &retrokbd_state[RETROK_LMETA],ITEM_ID_LWIN,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "RMETA", &retrokbd_state[RETROK_RMETA],ITEM_ID_RWIN,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "MENU", &retrokbd_state[RETROK_MENU],ITEM_ID_MENU,retrokbd_get_state);
-   input_device_item_add_kbd(retrokbd_device, "BREAK", &retrokbd_state[RETROK_BREAK],ITEM_ID_CANCEL,retrokbd_get_state);
+   i=0;
+   do{
+      input_device_item_add_kbd(retrokbd_device,\
+            ktable[i].mame_key_name, &retrokbd_state[ktable[i].retro_key_name],ktable[i].mame_key,retrokbd_get_state);
+      i++;
+   }while(ktable[i].retro_key_name!=-1);
+
 }
 
 void retro_poll_mame_input()
 {
 	input_poll_cb();
+
+// process_keyboard_state
+
+   /* TODO: handle mods:SHIFT/CTRL/ALT/META/NUMLOCK/CAPSLOCK/SCROLLOCK */
+   unsigned i = 0;
+   do
+   {
+      retrokbd_state[ktable[i].retro_key_name] = input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0,ktable[i].retro_key_name) ? 0x80 : 0;
+
+      if(retrokbd_state[ktable[i].retro_key_name] && retrokbd_state2[ktable[i].retro_key_name] == 0)
+      {
+         ui_ipt_pushchar=ktable[i].retro_key_name;
+         retrokbd_state2[ktable[i].retro_key_name]=1;
+      }
+      else if(!retrokbd_state[ktable[i].retro_key_name] && retrokbd_state2[ktable[i].retro_key_name] == 1)
+         retrokbd_state2[ktable[i].retro_key_name]=0;
+
+      i++;
+
+   }while(ktable[i].retro_key_name!=-1);
+
 
    if (mouse_enable)
    {

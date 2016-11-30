@@ -37,6 +37,8 @@ char g_rom_dir[1024];
 
 #include "rendersw.c"
 
+int mame_reset = -1;
+static int ui_ipt_pushchar=-1;
 
 static bool mouse_enable = false;
 static bool videoapproach1_enable = false;
@@ -126,6 +128,14 @@ static input_device *mouse_device;    // MOUSE
 static UINT16 P1_state[KEY_TOTAL];
 static UINT16 P2_state[KEY_TOTAL];
 static UINT16 retrokbd_state[RETROK_LAST];
+static UINT16 retrokbd_state2[RETROK_LAST];
+
+struct kt_table
+{
+   const char  *   mame_key_name;
+   int retro_key_name;
+   input_item_id   mame_key;
+};
 static int mouseLX,mouseLY;
 static int mouseBUT[4];
 //static int mouse_enabled;
@@ -147,12 +157,12 @@ static int FirstTimeUpdate = 1;
 //  LIBCO
 //============================================================
 int pauseg=0; 
-
+/*
 #include <libco.h>
 
 cothread_t mainThread;
 cothread_t emuThread;
-
+*/
 //============================================================
 //  RETRO
 //============================================================

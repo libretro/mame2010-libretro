@@ -149,19 +149,19 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 static void retro_wrap_emulator()
 {    
     mmain(1,RPATH);
-
+return;
     pauseg=-1;
 
 //    environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0); 
 
     // Were done here
-    co_switch(mainThread);
+  //  co_switch(mainThread);
         
     // Dead emulator, but libco says not to return
     while(true)
     {
         LOGI("Running a dead emulator.");
-        co_switch(mainThread);
+   //     co_switch(mainThread);
     }
 }
 
@@ -178,27 +178,36 @@ void retro_init (void){
     		fprintf(stderr, "RGB pixel format is not supported.\n");
     		exit(0);
     	}
-
+/*
 	if(!emuThread && !mainThread)
     	{
         	mainThread = co_active();
         	emuThread = co_create(65536*sizeof(void*), retro_wrap_emulator);
     	}
-
+*/
 }
+
+extern void retro_finish();
 
 void retro_deinit(void)
 {
+/*
    if(emuThread)
    { 
       co_delete(emuThread);
       emuThread = 0;
    }
-
-   LOGI("Retro DeInit\n");
+*/
+  retro_finish();
+  LOGI("Retro DeInit\n");
 }
 
-void retro_reset (void) {}
+void retro_reset (void)  {
+ mame_reset = 1;
+}
+
+int RLOOP=1;
+extern void retro_main_loop();
 
 void retro_run (void)
 {
@@ -206,7 +215,9 @@ void retro_run (void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
 
+	retro_main_loop();
 	retro_poll_mame_input();
+	RLOOP=1;
 
 #ifdef HAVE_GL
 	do_gl2d();
@@ -217,7 +228,7 @@ void retro_run (void)
       		video_cb(NULL,rtwi, rthe, topw << PITCH); 
 #endif
 
-	co_switch(emuThread);
+	//co_switch(emuThread);
 }
 
 void prep_retro_rotation(int rot)
@@ -225,7 +236,7 @@ void prep_retro_rotation(int rot)
    LOGI("Rotation:%d\n",rot);
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rot);
 }
-
+/*
 static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_t mod)
 {
 #ifdef KEYDBG
@@ -252,12 +263,13 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
       }
    }
 }
-
+*/
 bool retro_load_game(const struct retro_game_info *info) 
 {
+/*
 	struct retro_keyboard_callback cb = { keyboard_cb };
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
-
+*/
    check_variables();
 
 #ifdef M16B
@@ -284,6 +296,7 @@ bool retro_load_game(const struct retro_game_info *info)
   	extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
 	strcpy(RPATH,info->path);
 
+	retro_wrap_emulator();
 	return 1;
 }
 
@@ -292,7 +305,7 @@ void retro_unload_game(void)
 	if(pauseg==0)
    {
 		pauseg=-1;				
-      co_switch(emuThread);
+      //co_switch(emuThread);
 	}
 
 	LOGI("Retro unload_game\n");	

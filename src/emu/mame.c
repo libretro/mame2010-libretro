@@ -144,6 +144,13 @@ int mame_is_valid_machine(running_machine *machine)
 	return (machine != NULL && machine == global_machine);
 }
 
+#ifdef __LIBRETRO__
+static running_machine *retro_global_machine;
+static const machine_config *retro_global_config;
+int ENDEXEC=0;
+static bool firstgame = true;
+static bool firstrun = true;
+#endif
 
 /*-------------------------------------------------
     mame_execute - run the core emulation
@@ -151,9 +158,10 @@ int mame_is_valid_machine(running_machine *machine)
 
 int mame_execute(core_options *options)
 {
+#ifndef __LIBRETRO__
 	bool firstgame = true;
 	bool firstrun = true;
-
+#endif
 	// loop across multiple hard resets
 	bool exit_pending = false;
 	int error = MAMERR_NONE;
@@ -187,7 +195,18 @@ int mame_execute(core_options *options)
 			options_revert(options, OPTION_PRIORITY_INI);
 			mame_parse_ini_files(options, driver);
 		}
+#ifdef __LIBRETRO__
 
+		retro_global_config= global_alloc(machine_config(driver->machine_config));
+		retro_global_machine= global_alloc(running_machine(*driver, *retro_global_config, *options, started_empty));
+		global_machine = retro_global_machine;
+
+		error = retro_global_machine->run(firstrun);
+		firstrun = false;
+
+		goto retro_handle;
+
+#else
 		// create the machine configuration
 		const machine_config *config = global_alloc(machine_config(driver->machine_config));
 
@@ -217,12 +236,76 @@ int mame_execute(core_options *options)
 
 		// reset the options
 		mame_opts = NULL;
+#endif
 	}
 
 	// return an error
 	return error;
+#ifdef __LIBRETRO__
+retro_handle:
+	return 1;
+#endif
 }
 
+#ifdef __LIBRETRO__
+extern int RLOOP;
+extern void retro_loop(running_machine *machine);
+extern void retro_execute();
+extern core_options *retro_global_options;
+
+void retro_main_loop()
+{
+	retro_global_machine->retro_loop();
+
+	if(ENDEXEC==1){
+
+		// check the state of the machine
+		if (retro_global_machine->new_driver_pending())
+		{
+			options_set_string(retro_global_options, OPTION_GAMENAME, retro_global_machine->new_driver_name(), OPTION_PRIORITY_CMDLINE);
+			firstrun = true;
+		}
+		if (retro_global_machine->exit_pending())
+			;//exit_pending = true;
+
+		// destroy the machine and the config
+		global_free(retro_global_machine);
+		global_free(retro_global_config);
+		global_machine = NULL;
+
+		// reset the options
+		mame_opts = NULL;
+		ENDEXEC=0;
+		retro_execute();
+
+	}
+
+/*
+	device_scheduler * scheduler;
+	scheduler = &(retro_global_machine->scheduler());
+	while (RLOOP==1) {
+		scheduler->timeslice();
+	}
+*/
+}
+
+void free_machineconfig(){
+
+		global_free(retro_global_machine);
+		global_free(retro_global_config);
+		global_machine = NULL;
+}
+
+extern void free_opt();
+
+void retro_finish(){
+
+	retro_global_machine->retro_machineexit();
+	free_machineconfig();
+	free_opt();
+}
+
+#endif
 
 /*-------------------------------------------------
     mame_options - accesses the options for the

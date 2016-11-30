@@ -48,6 +48,12 @@ void osd_update(running_machine *machine,int skip_redraw)
 	const render_primitive_list *primlist;
 	UINT8 *surfptr;
 
+   if (mame_reset == 1)
+   {
+      machine->schedule_soft_reset();
+      mame_reset = -1;
+   }
+
 	if(pauseg==-1){
 		machine->schedule_exit();
 		return;
@@ -150,8 +156,14 @@ rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
    } 
 	else
     		draw_this_frame = false;
+    RLOOP=0;
 
-   co_switch(mainThread);
+   if(ui_ipt_pushchar!=-1)
+   {
+	ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
+	ui_ipt_pushchar=-1;
+   }
+   //co_switch(mainThread);
 }  
  
  //============================================================
