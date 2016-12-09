@@ -1,9 +1,6 @@
 MAME.0139-LIBRETRO
 
 Port of MAME 0.139 for libretro.
-
-
-AND BE AWARE OFF THIS WHEN YOU USE IT (AT YOUR OWN RISK).
  
 Source base is mame0.139 official source: 
 
@@ -65,4 +62,3 @@ Usage :
         tips: L2 to tab and select newgame from mameui
               R2 to show framerate
               L3 to access Service Mode
-              R3 to reset
