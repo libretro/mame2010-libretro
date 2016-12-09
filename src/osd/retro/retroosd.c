@@ -3,50 +3,50 @@
 
 void osd_exit(running_machine &machine)
 {	
-	write_log("osd_exit called \n");
+   write_log("osd_exit called \n");
 
-        if (our_target != NULL)
-                render_target_free(our_target);
-        our_target = NULL;
-		
-	global_free(P1_device);
-	global_free(P2_device);
-	global_free(retrokbd_device);
-	global_free(mouse_device);
+   if (our_target != NULL)
+      render_target_free(our_target);
+   our_target = NULL;
+
+   global_free(P1_device);
+   global_free(P2_device);
+   global_free(retrokbd_device);
+   global_free(mouse_device);
 }
 
 void osd_init(running_machine* machine)
 {
-	int gamRot=0;
+   int gamRot=0;
 
-  machine->add_notifier(MACHINE_NOTIFY_EXIT, osd_exit);
+   machine->add_notifier(MACHINE_NOTIFY_EXIT, osd_exit);
 
-our_target = render_target_alloc(machine,NULL, 0);
+   our_target = render_target_alloc(machine,NULL, 0);
 
-initInput(machine);
+   initInput(machine);
 
-write_log("machine screen orientation: %s \n",
-(machine->gamedrv->flags & ORIENTATION_SWAP_XY) ? "VERTICAL" : "HORIZONTAL"
-);
+   write_log("machine screen orientation: %s \n",
+         (machine->gamedrv->flags & ORIENTATION_SWAP_XY) ? "VERTICAL" : "HORIZONTAL"
+         );
 
-        orient = (machine->gamedrv->flags & ORIENTATION_MASK);
-vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
-        
-        gamRot = (ROT270 == orient) ? 1 : gamRot;
-        gamRot = (ROT180 == orient) ? 2 : gamRot;
-        gamRot = (ROT90 == orient) ? 3 : gamRot;
-        
-prep_retro_rotation(gamRot);
+   orient = (machine->gamedrv->flags & ORIENTATION_MASK);
+   vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
 
-write_log("osd init done\n");
+   gamRot = (ROT270 == orient) ? 1 : gamRot;
+   gamRot = (ROT180 == orient) ? 2 : gamRot;
+   gamRot = (ROT90 == orient) ? 3 : gamRot;
+
+   prep_retro_rotation(gamRot);
+
+   write_log("osd init done\n");
 }
 
 bool draw_this_frame;
 
 void osd_update(running_machine *machine,int skip_redraw)
 {
-	const render_primitive_list *primlist;
-	UINT8 *surfptr;
+   const render_primitive_list *primlist;
+   UINT8 *surfptr;
 
    if (mame_reset == 1)
    {
@@ -54,13 +54,13 @@ void osd_update(running_machine *machine,int skip_redraw)
       mame_reset = -1;
    }
 
-	if(pauseg==-1){
-		machine->schedule_exit();
-		return;
-	}
+   if(pauseg==-1){
+      machine->schedule_exit();
+      return;
+   }
 
-	if (FirstTimeUpdate == 1)
-		skip_redraw = 0; //force redraw to make sure the video texture is created
+   if (FirstTimeUpdate == 1)
+      skip_redraw = 0; //force redraw to make sure the video texture is created
 
    if (!skip_redraw)
    {
@@ -69,12 +69,12 @@ void osd_update(running_machine *machine,int skip_redraw)
       // get the minimum width/height for the current layout
       int minwidth, minheight;
 
-	if(videoapproach1_enable==false){	     
-		render_target_get_minimum_size(our_target,&minwidth, &minheight);
-	}
-	else{
-     		 minwidth=1024;minheight=768;
-        }
+      if(videoapproach1_enable==false){	     
+         render_target_get_minimum_size(our_target,&minwidth, &minheight);
+      }
+      else{
+         minwidth=1024;minheight=768;
+      }
 
       if (FirstTimeUpdate == 1) {
 
@@ -105,25 +105,25 @@ void osd_update(running_machine *machine,int skip_redraw)
       }
 
       if(videoapproach1_enable){
-		rtwi=topw=1024;
-		rthe=768;
+         rtwi=topw=1024;
+         rthe=768;
       }
 
       // make that the size of our target
-	  render_target_set_bounds(our_target,rtwi,rthe, 0);
-     // our_target->set_bounds(rtwi,rthe);
+      render_target_set_bounds(our_target,rtwi,rthe, 0);
+      // our_target->set_bounds(rtwi,rthe);
       // get the list of primitives for the target at the current size
-     // render_primitive_list &primlist = our_target->get_primitives();
-primlist = render_target_get_primitives(our_target);
+      // render_primitive_list &primlist = our_target->get_primitives();
+      primlist = render_target_get_primitives(our_target);
       // lock them, and then render them
-//      primlist.acquire_lock();
-osd_lock_acquire(primlist->lock);
+      //      primlist.acquire_lock();
+      osd_lock_acquire(primlist->lock);
 
-	surfptr = (UINT8 *) videoBuffer;
+      surfptr = (UINT8 *) videoBuffer;
 #ifdef M16B
-rgb565_draw_primitives(primlist->head, surfptr,rtwi,rthe,rtwi);
+      rgb565_draw_primitives(primlist->head, surfptr,rtwi,rthe,rtwi);
 #else
-rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
+      rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
 #endif
 #if 0
       surfptr = (UINT8 *) videoBuffer;
@@ -149,21 +149,20 @@ rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
          }
       }
 #endif
-	osd_lock_release(primlist->lock);
+      osd_lock_release(primlist->lock);
 
 
-    //  primlist.release_lock();
+      //  primlist.release_lock();
    } 
-	else
-    		draw_this_frame = false;
-    RLOOP=0;
+   else
+      draw_this_frame = false;
+   RLOOP=0;
 
    if(ui_ipt_pushchar!=-1)
    {
-	ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
-	ui_ipt_pushchar=-1;
+      ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
+      ui_ipt_pushchar=-1;
    }
-   //co_switch(mainThread);
 }  
  
  //============================================================
@@ -172,7 +171,7 @@ rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
  
 void osd_wait_for_debugger(running_device *device, int firststop)
 {
-// we don't have a debugger, so we just return here
+   // we don't have a debugger, so we just return here
 }
 
 //============================================================
@@ -189,8 +188,8 @@ void osd_update_audio_stream(running_machine *machine,short *buffer, int samples
 //============================================================
 void osd_set_mastervolume(int attenuation)
 {
-	// if we had actual sound output, we would adjust the global
-	// volume in response to this function
+   // if we had actual sound output, we would adjust the global
+   // volume in response to this function
 }
 
 

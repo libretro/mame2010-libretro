@@ -383,15 +383,13 @@ int osd_event_wait(osd_event *event, osd_ticks_t timeout)
 			do {
 				int ret = pthread_cond_timedwait(&event->cond, &event->mutex, &ts);
 				if ( ret == ETIMEDOUT )
-				{
-					if (!event->signalled)
-					{
-						pthread_mutex_unlock(&event->mutex);
-						return FALSE;
-					}
-					else
-						break;
-				}
+            {
+               if (event->signalled)
+                  break;
+
+               pthread_mutex_unlock(&event->mutex);
+               return FALSE;
+            }
 				if (ret == 0)
 					break;
 				if ( ret != EINTR)
@@ -479,11 +477,8 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust)
 		sched.sched_priority += adjust;
 		if ( pthread_setschedparam(thread->thread, policy, &sched ) == 0)
 			return TRUE;
-		else
-			return FALSE;
 	}
-	else
-		return FALSE;
+   return FALSE;
 #endif
 }
 
