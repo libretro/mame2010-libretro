@@ -145,17 +145,11 @@ void device_list::start_all()
 		int prevstarted = numstarted;
 		for (device_t *device = first(); device != NULL; device = device->next())
 			if (!device->started())
-			{
-				// attempt to start the device, catching any expected exceptions
-				try
-				{
-					device->start();
-					numstarted++;
-				}
-				catch (device_missing_dependencies &)
-				{
-				}
-			}
+         {
+            // attempt to start the device
+            device->start();
+            numstarted++;
+         }
 
 		// if we didn't start anything new, we're in trouble
 		if (numstarted == prevstarted)

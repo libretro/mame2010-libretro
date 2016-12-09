@@ -399,25 +399,7 @@ int running_machine::run(bool firstrun)
    // run the CPUs until a reset or exit
    m_hard_reset_pending = false;
    while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
-   {
-      profiler_mark_start(PROFILER_EXTRA);
-#ifdef __LIBRETRO__
-	return 0;
-#endif
-      // execute CPUs if not paused
-      if (!m_paused)
-         m_scheduler.timeslice();
-
-      // otherwise, just pump video updates through
-      else
-         video_frame_update(this, false);
-
-      // handle save/load
-      if (m_saveload_schedule != SLS_NONE)
-         handle_saveload();
-
-      profiler_mark_end();
-   }
+      return 0;
 
    // and out via the exit phase
    m_current_phase = MACHINE_PHASE_EXIT;
@@ -437,8 +419,8 @@ int running_machine::run(bool firstrun)
 }
 
 
-#ifdef __LIBRETRO__
-void running_machine::retro_machineexit(){
+void running_machine::retro_machineexit()
+{
 		// and out via the exit phase
 		m_current_phase = MACHINE_PHASE_EXIT;
 
@@ -494,8 +476,6 @@ void running_machine::retro_loop(){
 		ENDEXEC=1;
 	}
 }
-
-#endif
 
 //-------------------------------------------------
 //  schedule_exit - schedule a clean exit

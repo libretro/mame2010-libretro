@@ -293,10 +293,8 @@ public:
 	device_scheduler &scheduler() { return m_scheduler; }
 
 	// immediate operations
-#ifdef __LIBRETRO__
-void retro_machineexit();
-void retro_loop();
-#endif
+   void retro_machineexit();
+   void retro_loop();
 	int run(bool firstrun);
 	void pause();
 	void resume();

@@ -101,9 +101,7 @@ static const options_entry cli_options[] =
 	{ NULL }
 };
 
-#ifdef __LIBRETRO__
 /*static*/ core_options *retro_global_options;
-#endif
 
 /***************************************************************************
     CORE IMPLEMENTATION
@@ -116,108 +114,76 @@ static const options_entry cli_options[] =
 
 int cli_execute(int argc, char **argv, const options_entry *osd_options)
 {
-	core_options *options = NULL;
-	const char *gamename_option;
-	const game_driver *driver;
-	int result = MAMERR_FATALERROR;
-	astring gamename;
-	astring exename;
+   const char *gamename_option;
+   const game_driver *driver;
+   int result = MAMERR_FATALERROR;
+   astring gamename;
+   astring exename;
 
-	try
-	{
-		/* initialize the options manager and add the CLI-specific options */
-		options = mame_options_init(osd_options);
-		options_add_entries(options, cli_options);
+   /* initialize the options manager and add the CLI-specific options */
+   core_options *options = mame_options_init(osd_options);
 
-		/* parse the command line first; if we fail here, we're screwed */
-		if (options_parse_command_line(options, argc, argv, OPTION_PRIORITY_CMDLINE))
-		{
-			result = MAMERR_INVALID_CONFIG;
-			goto error;
-		}
+   options_add_entries(options, cli_options);
 
-		/* parse the simple commmands before we go any further */
-		core_filename_extract_base(&exename, argv[0], TRUE);
-		result = execute_simple_commands(options, exename);
-		if (result != -1)
-			goto error;
+   /* parse the command line first; if we fail here, we're screwed */
+   if (options_parse_command_line(options, argc, argv, OPTION_PRIORITY_CMDLINE))
+   {
+      result = MAMERR_INVALID_CONFIG;
+      goto error;
+   }
 
-		/* find out what game we might be referring to */
-		gamename_option = options_get_string(options, OPTION_GAMENAME);
-		core_filename_extract_base(&gamename, gamename_option, TRUE);
-		driver = driver_get_name(gamename);
+   /* parse the simple commmands before we go any further */
+   core_filename_extract_base(&exename, argv[0], TRUE);
+   result = execute_simple_commands(options, exename);
+   if (result != -1)
+      goto error;
 
-		/* execute any commands specified */
-		result = execute_commands(options, exename, driver);
-		if (result != -1)
-			goto error;
+   /* find out what game we might be referring to */
+   gamename_option = options_get_string(options, OPTION_GAMENAME);
+   core_filename_extract_base(&gamename, gamename_option, TRUE);
+   driver = driver_get_name(gamename);
 
-		/* if we don't have a valid driver selected, offer some suggestions */
-		if (strlen(gamename_option) > 0 && driver == NULL)
-		{
-			const game_driver *matches[10];
-			int drvnum;
+   /* execute any commands specified */
+   result = execute_commands(options, exename, driver);
+   if (result != -1)
+      goto error;
 
-			/* get the top 10 approximate matches */
-			driver_list_get_approx_matches(drivers, gamename_option, ARRAY_LENGTH(matches), matches);
+   /* if we don't have a valid driver selected, offer some suggestions */
+   if (strlen(gamename_option) > 0 && driver == NULL)
+   {
+      const game_driver *matches[10];
+      int drvnum;
 
-			/* print them out */
-			fprintf(stderr, "\n\"%s\" approximately matches the following\n"
-					"supported " GAMESNOUN " (best match first):\n\n", gamename_option);
-			for (drvnum = 0; drvnum < ARRAY_LENGTH(matches); drvnum++)
-				if (matches[drvnum] != NULL)
-					fprintf(stderr, "%-18s%s\n", matches[drvnum]->name, matches[drvnum]->description);
+      /* get the top 10 approximate matches */
+      driver_list_get_approx_matches(drivers, gamename_option, ARRAY_LENGTH(matches), matches);
 
-			/* exit with an error */
-			result = MAMERR_NO_SUCH_GAME;
-			goto error;
-		}
+      /* print them out */
+      fprintf(stderr, "\n\"%s\" approximately matches the following\n"
+            "supported " GAMESNOUN " (best match first):\n\n", gamename_option);
+      for (drvnum = 0; drvnum < ARRAY_LENGTH(matches); drvnum++)
+         if (matches[drvnum] != NULL)
+            fprintf(stderr, "%-18s%s\n", matches[drvnum]->name, matches[drvnum]->description);
 
-		/* run the game */
-#ifdef __LIBRETRO__
-		retro_global_options=options;
-	        result = mame_execute(retro_global_options);
-		goto retro_exit;
+      /* exit with an error */
+      result = MAMERR_NO_SUCH_GAME;
+      goto error;
+   }
 
-#else
-	result = mame_execute(options);
-#endif
-	}
-	catch (emu_fatalerror &fatal)
-	{
-		fprintf(stderr, "%s\n", fatal.string());
-		if (fatal.exitcode() != 0)
-			result = fatal.exitcode();
-	}
-	catch (emu_exception &)
-	{
-		fprintf(stderr, "Caught unhandled emulator exception\n");
-	}
-	catch (std::bad_alloc &)
-	{
-		fprintf(stderr, "Out of memory!\n");
-	}
-	catch (...)
-	{
-		fprintf(stderr, "Caught unhandled exception\n");
-	}
+   /* run the game */
+   retro_global_options = options;
+   result = mame_execute(retro_global_options);
+
+   return 0;
 
 error:
-	/* free our options and exit */
-	if (options != NULL)
-		options_free(options);
+   /* free our options and exit */
+   if (options != NULL)
+      options_free(options);
 
-	/* report any unfreed memory */
-	dump_unfreed_mem();
-	return result;
-#ifdef __LIBRETRO__
-retro_exit:
-
-	return 0;
-#endif
+   /* report any unfreed memory */
+   dump_unfreed_mem();
+   return result;
 }
-
-#ifdef __LIBRETRO__
 
 void retro_execute(){
    mame_execute(retro_global_options);
@@ -227,7 +193,6 @@ void free_opt(){
    if (retro_global_options != NULL)options_free(retro_global_options );
    dump_unfreed_mem();
 }
-#endif
 /*-------------------------------------------------
     help_output - output callback for printing
     requested help information
