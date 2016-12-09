@@ -570,7 +570,7 @@ void speaker_device::device_start()
 			{
 				// if the sound device is not yet started, bail however -- we need the its stream
 				if (!sound->device().started())
-					throw device_missing_dependencies();
+               return;
 
 				// accumulate inputs
 				inputs += (route->m_output == ALL_OUTPUTS) ? stream_get_device_outputs(*sound) : 1;
