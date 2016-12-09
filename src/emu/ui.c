@@ -1409,6 +1409,7 @@ static UINT32 handler_ingame(running_machine *machine, render_container *contain
 	if (ui_input_pressed(machine, IPT_UI_SNAPSHOT))
 		video_save_active_screen_snapshots(machine);
 
+#if 0
 	/* toggle pause */
 	if (ui_input_pressed(machine, IPT_UI_PAUSE))
 	{
@@ -1423,6 +1424,7 @@ static UINT32 handler_ingame(running_machine *machine, render_container *contain
 		else
 			machine->pause();
 	}
+#endif
 
 	/* handle a toggle cheats request */
 	if (ui_input_pressed(machine, IPT_UI_TOGGLE_CHEAT))
