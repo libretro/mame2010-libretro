@@ -8,9 +8,9 @@ static GLuint vbo;
 
 struct frame
 {
-#if defined(HAVE_GL)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
    GLuint tex;
-#if !defined(GLES)
+#if !defined(HAVE_OPENGLES)
    GLuint pbo;
 #endif
 #endif
@@ -89,7 +89,7 @@ static void setup_texture(void)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-#ifndef GLES
+#ifndef HAVE_OPENGLES
       glGenBuffers(1, &frames[i].pbo);
       glBindBuffer(GL_PIXEL_UNPACK_BUFFER, frames[i].pbo);
       glBufferData(GL_PIXEL_UNPACK_BUFFER, 1024 * 768 * 4, NULL, GL_STREAM_DRAW);

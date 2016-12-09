@@ -77,8 +77,8 @@ fpic :=
 ALIGNED = 0
 
 ifeq ($(VRENDER),opengl)  
-	PLATCFLAGS += -DHAVE_GL
-	CCOMFLAGS  += -DHAVE_GL
+	PLATCFLAGS += -DHAVE_OPENGL
+	CCOMFLAGS  += -DHAVE_OPENGL
 endif
 
 UNAME=$(shell uname -m)

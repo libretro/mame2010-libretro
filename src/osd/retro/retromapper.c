@@ -7,7 +7,7 @@ char RPATH[512];
 extern "C" int mmain(int argc, const char *argv);
 extern bool draw_this_frame;
 
-#if !defined(HAVE_GL) && !defined(HAVE_RGB32)
+#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
 #define M16B
 #endif
 
@@ -25,7 +25,7 @@ retro_environment_t environ_cb = NULL;
 static retro_input_state_t input_state_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 
-#if defined(HAVE_GL)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #include "retroogl.c"
 #endif
 
@@ -186,7 +186,7 @@ void retro_run (void)
 	retro_poll_mame_input();
 	RLOOP=1;
 
-#ifdef HAVE_GL
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 	do_gl2d();
 #else
 	if (draw_this_frame)
@@ -244,8 +244,8 @@ bool retro_load_game(const struct retro_game_info *info)
 	memset(videoBuffer,0,1024*1024*2*2);
 #endif
 
-#if defined(HAVE_GL)
-#ifdef GLES
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
+#ifdef HAVE_OPENGLES
    hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
 #else
    hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
