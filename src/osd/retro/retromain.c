@@ -157,18 +157,12 @@ static int FirstTimeUpdate = 1;
 //  LIBCO
 //============================================================
 int pauseg=0; 
-/*
-#include <libco.h>
 
-cothread_t mainThread;
-cothread_t emuThread;
-*/
 //============================================================
 //  RETRO
 //============================================================
 
 #include "retromapper.c"
-//#include "retrorender.c"
 #include "retroinput.c"
 #include "retroosd.c"
 
@@ -235,9 +229,8 @@ static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 //FIXME for 0.149 , prevouisly in driver.h
 #if 1
 	//check invalid game name
-	if (gameName[0] == 0) {
+	if (gameName[0] == 0)
 		return 0;
-	}
 
 	for (drvindex = 0; drivers[drvindex]; drvindex++) {
 		if ( (drivers[drvindex]->flags & GAME_NO_STANDALONE) == 0 &&

@@ -1,6 +1,6 @@
-MAME.0139-LIBRETRO WIP
+MAME.0139-LIBRETRO
 
-Very WIP port MAME 0.139 for libretro using libco.
+Port of MAME 0.139 for libretro.
 
 
 AND BE AWARE OFF THIS WHEN YOU USE IT (AT YOUR OWN RISK).

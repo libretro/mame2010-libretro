@@ -675,8 +675,6 @@ $(EMULATOR): $(OBJECTS)
 
 ifeq ($(ARM_ENABLED), 1)
 CFLAGS += -DARM_ENABLED
-$(LIBCOOBJ)/armeabi_asm.o:
-	$(CC_AS) -c $(CORE_DIR)/src/osd/retro/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
 $(OBJ)/%.o: $(CORE_DIR)/src/%.c | $(OSPREBUILD)

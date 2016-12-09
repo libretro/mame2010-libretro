@@ -4513,14 +4513,12 @@ $(LIBOBJ)/softfloat/softfloat.o: $(LIBSRC)/softfloat/softfloat.c \
 
 MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
-#LIBCOOBJ = $(OBJ)/osd/$(OSD)/libretro-common/libco
 ifeq ($(VRENDER),opengl)
 GLOBJ = $(OBJ)/osd/$(OSD)/glsym
 OBJDIRS += $(GLOBJ)
 endif
 OBJDIRS += $(MINIOBJ) \
-			  $(OBJ)/osd/$(OSD)/libretro-common \
-#			  $(OBJ)/osd/$(OSD)/libretro-common/libco
+			  $(OBJ)/osd/$(OSD)/libretro-common
 
 #-------------------------------------------------
 # OSD core library
@@ -4537,7 +4535,6 @@ OSDCOREOBJS := \
 #-------------------------------------------------
 # OSD mini library
 #-------------------------------------------------
-#OSDOBJS = $(LIBCOOBJ)/libco.o 
 ifeq ($(VRENDER),opengl)
 OSDOBJS += $(MINIOBJ)/libretro-common/glsym/rglgen.o
 ifeq ($(GLES), 1)

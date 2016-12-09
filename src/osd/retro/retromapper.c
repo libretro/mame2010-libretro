@@ -135,69 +135,36 @@ void retro_get_system_info(struct retro_system_info *info)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   info->geometry.base_width = 640;
-   info->geometry.base_height =480;
+   info->geometry.base_width   = 640;
+   info->geometry.base_height  = 480;
 
-   info->geometry.max_width = 1024;
-   info->geometry.max_height = 768;
+   info->geometry.max_width    = 1024;
+   info->geometry.max_height   = 768;
 
    info->geometry.aspect_ratio = 0;
-   info->timing.fps = 60;
-   info->timing.sample_rate = 48000.0;
+   info->timing.fps            = 60;
+   info->timing.sample_rate    = 48000.0;
 }
 
-static void retro_wrap_emulator()
-{    
-    mmain(1,RPATH);
-return;
-    pauseg=-1;
-
-//    environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0); 
-
-    // Were done here
-  //  co_switch(mainThread);
-        
-    // Dead emulator, but libco says not to return
-    while(true)
-    {
-        LOGI("Running a dead emulator.");
-   //     co_switch(mainThread);
-    }
-}
-
-void retro_init (void){ 
-
+void retro_init (void)
+{
 #ifndef M16B
-    	enum retro_pixel_format fmt =RETRO_PIXEL_FORMAT_XRGB8888;
+   enum retro_pixel_format fmt =RETRO_PIXEL_FORMAT_XRGB8888;
 #else
-    	enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
 #endif
 
-    	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-    	{
-    		fprintf(stderr, "RGB pixel format is not supported.\n");
-    		exit(0);
-    	}
-/*
-	if(!emuThread && !mainThread)
-    	{
-        	mainThread = co_active();
-        	emuThread = co_create(65536*sizeof(void*), retro_wrap_emulator);
-    	}
-*/
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   {
+      fprintf(stderr, "RGB pixel format is not supported.\n");
+      exit(0);
+   }
 }
 
 extern void retro_finish();
 
 void retro_deinit(void)
 {
-/*
-   if(emuThread)
-   { 
-      co_delete(emuThread);
-      emuThread = 0;
-   }
-*/
   retro_finish();
   LOGI("Retro DeInit\n");
 }
@@ -227,8 +194,6 @@ void retro_run (void)
    	else
       		video_cb(NULL,rtwi, rthe, topw << PITCH); 
 #endif
-
-	//co_switch(emuThread);
 }
 
 void prep_retro_rotation(int rot)
@@ -236,6 +201,7 @@ void prep_retro_rotation(int rot)
    LOGI("Rotation:%d\n",rot);
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rot);
 }
+
 /*
 static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_t mod)
 {
@@ -296,17 +262,15 @@ bool retro_load_game(const struct retro_game_info *info)
   	extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
 	strcpy(RPATH,info->path);
 
-	retro_wrap_emulator();
+   mmain(1,RPATH);
+
 	return 1;
 }
 
 void retro_unload_game(void)
 {
 	if(pauseg==0)
-   {
 		pauseg=-1;				
-      //co_switch(emuThread);
-	}
 
 	LOGI("Retro unload_game\n");	
 }
