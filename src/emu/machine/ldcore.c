@@ -1484,7 +1484,7 @@ static DEVICE_START( laserdisc )
 	ld->screen = downcast<screen_device *>(device->machine->device(config->screen));
 	assert(ld->screen != NULL);
 	if (!ld->screen->started())
-      return;
+      throw device_missing_dependencies();
 
 	/* save a copy of the device pointer */
 	ld->device = device;
