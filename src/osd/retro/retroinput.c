@@ -198,7 +198,6 @@ static void initInput(running_machine* machine)
 
 	P1_state[KEY_F11]        = 0;//RETRO_DEVICE_ID_JOYPAD_R2
 	P1_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
-	P1_state[KEY_F3]         = 0;//RETRO_DEVICE_ID_JOYPAD_R3
 	P1_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
 	P1_state[KEY_START]      = 0;//RETRO_DEVICE_ID_JOYPAD_START
 	P1_state[KEY_COIN]       = 0;//RETRO_DEVICE_ID_JOYPAD_SELECT
@@ -216,7 +215,6 @@ static void initInput(running_machine* machine)
 
 	P2_state[KEY_F11]        = 0;//RETRO_DEVICE_ID_JOYPAD_R2
 	P2_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
-	P2_state[KEY_F3]         = 0;//RETRO_DEVICE_ID_JOYPAD_R3
 	P2_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
 	P2_state[KEY_START]      = 0;//RETRO_DEVICE_ID_JOYPAD_START
 	P2_state[KEY_COIN]       = 0;//RETRO_DEVICE_ID_JOYPAD_SELECT
@@ -696,7 +694,6 @@ void retro_poll_mame_input()
 	P1_state[KEY_F11] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
 	P1_state[KEY_TAB] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
 	
-	P1_state[KEY_F3] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
 	P1_state[KEY_F2] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
 	
 	P1_state[KEY_START] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
@@ -716,7 +713,6 @@ void retro_poll_mame_input()
 	P2_state[KEY_F11] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
 	P2_state[KEY_TAB] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
 	
-	P2_state[KEY_F3] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
 	P2_state[KEY_F2] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
 	
 	P2_state[KEY_START] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
