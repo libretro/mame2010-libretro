@@ -18,7 +18,9 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
+#ifdef __LIBRETRO__
 #include <stddef.h>
+#endif
 
 /***************************************************************************
     CONSTANTS
