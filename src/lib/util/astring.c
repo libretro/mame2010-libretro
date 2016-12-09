@@ -252,7 +252,7 @@ void astring_expand(astring *str, int length)
     astring_cpy - copy one astring into another
 -------------------------------------------------*/
 
-astring *astring_cpy(astring *dst, const astring *src)
+astring __attribute__((optimize("O0"))) *astring_cpy(astring *dst, const astring *src)
 {
 	return astring_cpyc(dst, src->text);
 }
@@ -262,7 +262,7 @@ astring *astring_cpy(astring *dst, const astring *src)
     astring_cpyc - copy a C string into an astring
 -------------------------------------------------*/
 
-astring *astring_cpyc(astring *dst, const char *src)
+astring __attribute__((optimize("O0"))) *astring_cpyc(astring *dst, const char *src)
 {
 	return astring_cpych(dst, src, strlen(src));
 }
@@ -273,7 +273,7 @@ astring *astring_cpyc(astring *dst, const char *src)
     an astring
 -------------------------------------------------*/
 
-astring *astring_cpych(astring *dst, const char *src, int count)
+astring __attribute__((optimize("O0"))) *astring_cpych(astring *dst, const char *src, int count)
 {
 	/* make room; if we fail or if dst is the dummy, do nothing */
 	if (!ensure_room(dst, count))

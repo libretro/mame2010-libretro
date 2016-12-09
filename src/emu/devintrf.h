@@ -382,7 +382,7 @@ public:
 	bool interface(device_state_interface *&intf) { intf = m_state; return (intf != NULL); }
 
 	// owned object helpers
-	astring &subtag(astring &dest, const char *tag) const { return m_baseconfig.subtag(dest, tag); }
+	astring __attribute__((optimize("O0"))) &subtag(astring &dest, const char *tag) const { return m_baseconfig.subtag(dest, tag); }
 	astring &siblingtag(astring &dest, const char *tag) const { return m_baseconfig.siblingtag(dest, tag); }
 	const region_info *subregion(const char *tag) const;
 	device_t *subdevice(const char *tag) const;
@@ -527,7 +527,7 @@ inline device_config *device_config::typenext() const
 }
 
 // create a tag for an object that is owned by this device
-inline astring &device_config::subtag(astring &dest, const char *_tag) const
+inline astring __attribute__((optimize("O0"))) &device_config::subtag(astring &dest, const char *_tag) const
 {
 	return (this != NULL) ? dest.cpy(m_tag).cat(":").cat(_tag) : dest.cpy(_tag);
 }
