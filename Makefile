@@ -63,6 +63,11 @@ CPPONLYFLAGS =
 LDFLAGS =
 LDFLAGSEMULATOR =
 
+GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
+ifneq ($(GIT_VERSION)," unknown")
+	CCOMFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+endif
+
 # uncomment next line to build zlib as part of MAME build
 #BUILD_ZLIB = 1
 
