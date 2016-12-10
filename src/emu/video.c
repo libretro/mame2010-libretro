@@ -2542,7 +2542,7 @@ void screen_device::finalize_burnin()
 #define DSTSHIFT_R			16
 #define DSTSHIFT_G			8
 #define DSTSHIFT_B			0
-#define BILINEAR_FILTER		1
+#define BILINEAR_FILTER		0
 
 #include "rendersw.c"
 
