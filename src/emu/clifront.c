@@ -101,9 +101,7 @@ static const options_entry cli_options[] =
 	{ NULL }
 };
 
-#ifdef __LIBRETRO__
 /*static*/ core_options *retro_global_options;
-#endif
 
 /***************************************************************************
     CORE IMPLEMENTATION
@@ -174,14 +172,9 @@ int cli_execute(int argc, char **argv, const options_entry *osd_options)
 		}
 
 		/* run the game */
-#ifdef __LIBRETRO__
 		retro_global_options=options;
-	        result = mame_execute(retro_global_options);
-		goto retro_exit;
-
-#else
-	result = mame_execute(options);
-#endif
+      result = mame_execute(retro_global_options);
+      return 0;
 	}
 	catch (emu_fatalerror &fatal)
 	{
@@ -210,24 +203,19 @@ error:
 	/* report any unfreed memory */
 	dump_unfreed_mem();
 	return result;
-#ifdef __LIBRETRO__
-retro_exit:
-
-	return 0;
-#endif
 }
 
-#ifdef __LIBRETRO__
-
-void retro_execute(){
+void retro_execute(void)
+{
    mame_execute(retro_global_options);
 }
 
-void free_opt(){
+void free_opt(void)
+{
    if (retro_global_options != NULL)options_free(retro_global_options );
    dump_unfreed_mem();
 }
-#endif
+
 /*-------------------------------------------------
     help_output - output callback for printing
     requested help information

@@ -144,13 +144,11 @@ int mame_is_valid_machine(running_machine *machine)
 	return (machine != NULL && machine == global_machine);
 }
 
-#ifdef __LIBRETRO__
 static running_machine *retro_global_machine;
 static const machine_config *retro_global_config;
-int ENDEXEC=0;
+int ENDEXEC           = 0;
 static bool firstgame = true;
-static bool firstrun = true;
-#endif
+static bool firstrun  = true;
 
 /*-------------------------------------------------
     mame_execute - run the core emulation
@@ -158,127 +156,86 @@ static bool firstrun = true;
 
 int mame_execute(core_options *options)
 {
-#ifndef __LIBRETRO__
-	bool firstgame = true;
-	bool firstrun = true;
-#endif
-	// loop across multiple hard resets
-	bool exit_pending = false;
-	int error = MAMERR_NONE;
-	while (error == MAMERR_NONE && !exit_pending)
-	{
-		// specify the global mame_options
-		mame_opts = options;
+   // loop across multiple hard resets
+   bool exit_pending = false;
+   int error         = MAMERR_NONE;
 
-		// convert the specified gamename to a driver
-		astring gamename;
-		core_filename_extract_base(&gamename, options_get_string(options, OPTION_GAMENAME), true);
-		const game_driver *driver = driver_get_name(gamename);
+   while (error == MAMERR_NONE && !exit_pending)
+   {
+      // specify the global mame_options
+      mame_opts = options;
 
-		// if no driver, use the internal empty driver
-		if (driver == NULL)
-		{
-			driver = &GAME_NAME(empty);
-			if (firstgame)
-				started_empty = true;
-		}
+      // convert the specified gamename to a driver
+      astring gamename;
+      core_filename_extract_base(&gamename, options_get_string(options, OPTION_GAMENAME), true);
+      const game_driver *driver = driver_get_name(gamename);
 
-		// otherwise, perform validity checks before anything else
-		else if (mame_validitychecks(driver) != 0)
-			return MAMERR_FAILED_VALIDITY;
+      // if no driver, use the internal empty driver
+      if (driver == NULL)
+      {
+         driver = &GAME_NAME(empty);
+         if (firstgame)
+            started_empty = true;
+      }
 
-		firstgame = false;
+      // otherwise, perform validity checks before anything else
+      else if (mame_validitychecks(driver) != 0)
+         return MAMERR_FAILED_VALIDITY;
 
-		// parse any INI files as the first thing
-		if (options_get_bool(options, OPTION_READCONFIG))
-		{
-			options_revert(options, OPTION_PRIORITY_INI);
-			mame_parse_ini_files(options, driver);
-		}
-#ifdef __LIBRETRO__
+      firstgame = false;
 
-		retro_global_config= global_alloc(machine_config(driver->machine_config));
-		retro_global_machine= global_alloc(running_machine(*driver, *retro_global_config, *options, started_empty));
-		global_machine = retro_global_machine;
+      // parse any INI files as the first thing
+      if (options_get_bool(options, OPTION_READCONFIG))
+      {
+         options_revert(options, OPTION_PRIORITY_INI);
+         mame_parse_ini_files(options, driver);
+      }
 
-		error = retro_global_machine->run(firstrun);
-		firstrun = false;
+      retro_global_config= global_alloc(machine_config(driver->machine_config));
+      retro_global_machine= global_alloc(running_machine(*driver, *retro_global_config, *options, started_empty));
+      global_machine = retro_global_machine;
 
-		goto retro_handle;
+      error    = retro_global_machine->run(firstrun);
+      firstrun = false;
 
-#else
-		// create the machine configuration
-		const machine_config *config = global_alloc(machine_config(driver->machine_config));
+      return 1;
+   }
 
-		// create the machine structure and driver
-		running_machine *machine = global_alloc(running_machine(*driver, *config, *options, started_empty));
-
-		// looooong term: remove this
-		global_machine = machine;
-
-		// run the machine
-		error = machine->run(firstrun);
-		firstrun = false;
-
-		// check the state of the machine
-		if (machine->new_driver_pending())
-		{
-			options_set_string(options, OPTION_GAMENAME, machine->new_driver_name(), OPTION_PRIORITY_CMDLINE);
-			firstrun = true;
-		}
-		if (machine->exit_pending())
-			exit_pending = true;
-
-		// destroy the machine and the config
-		global_free(machine);
-		global_free(config);
-		global_machine = NULL;
-
-		// reset the options
-		mame_opts = NULL;
-#endif
-	}
-
-	// return an error
-	return error;
-#ifdef __LIBRETRO__
-retro_handle:
-	return 1;
-#endif
+   // return an error
+   return error;
 }
 
-#ifdef __LIBRETRO__
 extern int RLOOP;
 extern void retro_loop(running_machine *machine);
 extern void retro_execute();
 extern core_options *retro_global_options;
 
-void retro_main_loop()
+void retro_main_loop(void)
 {
 	retro_global_machine->retro_loop();
 
-	if(ENDEXEC==1){
+	if(ENDEXEC==1)
+   {
+      // check the state of the machine
+      if (retro_global_machine->new_driver_pending())
+      {
+         options_set_string(retro_global_options, OPTION_GAMENAME, retro_global_machine->new_driver_name(), OPTION_PRIORITY_CMDLINE);
+         firstrun = true;
+      }
+      if (retro_global_machine->exit_pending())
+         ;//exit_pending = true;
 
-		// check the state of the machine
-		if (retro_global_machine->new_driver_pending())
-		{
-			options_set_string(retro_global_options, OPTION_GAMENAME, retro_global_machine->new_driver_name(), OPTION_PRIORITY_CMDLINE);
-			firstrun = true;
-		}
-		if (retro_global_machine->exit_pending())
-			;//exit_pending = true;
+      // destroy the machine and the config
+      global_free(retro_global_machine);
+      global_free(retro_global_config);
+      global_machine = NULL;
 
-		// destroy the machine and the config
-		global_free(retro_global_machine);
-		global_free(retro_global_config);
-		global_machine = NULL;
+      // reset the options
+      mame_opts = NULL;
+      ENDEXEC=0;
+      retro_execute();
 
-		// reset the options
-		mame_opts = NULL;
-		ENDEXEC=0;
-		retro_execute();
-
-	}
+   }
 
 /*
 	device_scheduler * scheduler;
@@ -289,23 +246,21 @@ void retro_main_loop()
 */
 }
 
-void free_machineconfig(){
-
-		global_free(retro_global_machine);
-		global_free(retro_global_config);
-		global_machine = NULL;
+void free_machineconfig(void)
+{
+   global_free(retro_global_machine);
+   global_free(retro_global_config);
+   global_machine = NULL;
 }
 
 extern void free_opt();
 
-void retro_finish(){
-
+void retro_finish(void)
+{
 	retro_global_machine->retro_machineexit();
 	free_machineconfig();
 	free_opt();
 }
-
-#endif
 
 /*-------------------------------------------------
     mame_options - accesses the options for the
