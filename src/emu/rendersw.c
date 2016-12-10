@@ -42,12 +42,6 @@
 #define NO_DEST_READ 0
 #endif
 
-#if !defined(BILINEAR_FILTER)
-#define BILINEAR_FILTER 0
-#endif
-
-
-
 /***************************************************************************
     ONE-TIME-ONLY DEFINITIONS
 ***************************************************************************/
@@ -522,13 +516,7 @@ INLINE UINT32 get_texel_argb32_bilinear(const render_texinfo *texture, INT32 cur
 
 /* texel functions */
 #undef GET_TEXEL
-#if BILINEAR_FILTER
-#define GET_TEXEL(type)				get_texel_##type##_##bilinear
-#else
 #define GET_TEXEL(type)				get_texel_##type##_##nearest
-#endif
-
-
 
 /***************************************************************************
     LINE RASTERIZERS
@@ -2261,13 +2249,6 @@ static void FUNC_PREFIX(setup_and_draw_textured_quad)(const render_primitive *pr
 	/* advance U/V to the middle of the first texel */
 	setup.startu += (setup.dudx + setup.dudy) / 2;
 	setup.startv += (setup.dvdx + setup.dvdy) / 2;
-
-	/* if we're bilinear filtering, we need to offset u/v by half a texel */
-	if (BILINEAR_FILTER)
-	{
-		setup.startu -= 0x8000;
-		setup.startv -= 0x8000;
-	}
 
 	/* render based on the texture coordinates */
 	switch (prim->flags & (PRIMFLAG_TEXFORMAT_MASK | PRIMFLAG_BLENDMODE_MASK))
