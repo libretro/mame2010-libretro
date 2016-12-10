@@ -27,8 +27,6 @@
 
 #define VPRINTF(x)		do { if (VERBOSE) mame_printf_debug x; } while (0)
 
-
-
 /***************************************************************************
     CONSTANTS
 ***************************************************************************/
@@ -395,64 +393,54 @@ static void sound_save(running_machine *machine, int config_type, xml_data_node 
 
 static TIMER_CALLBACK( sound_update )
 {
-	UINT32 finalmix_step, finalmix_offset;
-	int samples_this_update = 0;
-	int sample;
-	sound_private *global = machine->sound_data;
-	INT16 *finalmix;
-	INT32 *leftmix, *rightmix;
+   UINT32 finalmix_step, finalmix_offset = 0;
+   int samples_this_update = 0;
+   int sample;
+   sound_private *global = machine->sound_data;
+   INT32 *leftmix = global->leftmix;
+   INT32 *rightmix = global->rightmix;
+   INT16 *finalmix = global->finalmix;
 
-	VPRINTF(("sound_update\n"));
+   /* force all the speaker streams to generate the proper number of samples */
+   for (speaker_device *speaker = speaker_first(*machine); speaker != NULL; speaker = speaker_next(speaker))
+      speaker->mix(leftmix, rightmix, samples_this_update, !global->enabled || global->nosound_mode);
 
-	profiler_mark_start(PROFILER_SOUND);
+   /* now downmix the final result */
+   finalmix_step = video_get_speed_factor();
 
-	leftmix = global->leftmix;
-	rightmix = global->rightmix;
-	finalmix = global->finalmix;
+   for (sample = global->finalmix_leftover; sample < samples_this_update * 100; sample += finalmix_step)
+   {
+      int sampindex = sample / 100;
 
-	/* force all the speaker streams to generate the proper number of samples */
-	for (speaker_device *speaker = speaker_first(*machine); speaker != NULL; speaker = speaker_next(speaker))
-		speaker->mix(leftmix, rightmix, samples_this_update, !global->enabled || global->nosound_mode);
+      /* clamp the left side */
+      INT32 samp = leftmix[sampindex];
+      if (samp < -32768)
+         samp = -32768;
+      else if (samp > 32767)
+         samp = 32767;
+      finalmix[finalmix_offset++] = samp;
 
-	/* now downmix the final result */
-	finalmix_step = video_get_speed_factor();
-	finalmix_offset = 0;
-	for (sample = global->finalmix_leftover; sample < samples_this_update * 100; sample += finalmix_step)
-	{
-		int sampindex = sample / 100;
-		INT32 samp;
+      /* clamp the right side */
+      samp = rightmix[sampindex];
+      if (samp < -32768)
+         samp = -32768;
+      else if (samp > 32767)
+         samp = 32767;
+      finalmix[finalmix_offset++] = samp;
+   }
+   global->finalmix_leftover = sample - samples_this_update * 100;
 
-		/* clamp the left side */
-		samp = leftmix[sampindex];
-		if (samp < -32768)
-			samp = -32768;
-		else if (samp > 32767)
-			samp = 32767;
-		finalmix[finalmix_offset++] = samp;
+   /* play the result */
+   if (finalmix_offset > 0)
+   {
+      osd_update_audio_stream(machine, finalmix, finalmix_offset / 2);
+      video_avi_add_sound(machine, finalmix, finalmix_offset / 2);
+      if (global->wavfile != NULL)
+         wav_add_data_16(global->wavfile, finalmix, finalmix_offset);
+   }
 
-		/* clamp the right side */
-		samp = rightmix[sampindex];
-		if (samp < -32768)
-			samp = -32768;
-		else if (samp > 32767)
-			samp = 32767;
-		finalmix[finalmix_offset++] = samp;
-	}
-	global->finalmix_leftover = sample - samples_this_update * 100;
-
-	/* play the result */
-	if (finalmix_offset > 0)
-	{
-		osd_update_audio_stream(machine, finalmix, finalmix_offset / 2);
-		video_avi_add_sound(machine, finalmix, finalmix_offset / 2);
-		if (global->wavfile != NULL)
-			wav_add_data_16(global->wavfile, finalmix, finalmix_offset);
-	}
-
-	/* update the streamer */
-	streams_update(machine);
-
-	profiler_mark_end();
+   /* update the streamer */
+   streams_update(machine);
 }
 
 
@@ -642,10 +630,9 @@ void speaker_device::device_post_load()
 
 void speaker_device::mixer_update(stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
-	VPRINTF(("Mixer_update(%d)\n", samples));
-
+   int pos;
 	// loop over samples
-	for (int pos = 0; pos < samples; pos++)
+	for (pos = 0; pos < samples; pos++)
 	{
 		INT32 sample = inputs[0][pos];
 		int inp;

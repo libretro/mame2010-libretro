@@ -246,8 +246,6 @@ void streams_update(running_machine *machine)
 	int second_tick = FALSE;
 	sound_stream *stream;
 
-	VPRINTF(("streams_update\n"));
-
 	/* see if we ticked over to the next second */
 	if (curtime.seconds != strdata->last_update.seconds)
 	{
@@ -849,8 +847,6 @@ static void generate_samples(sound_stream *stream, int samples)
 	if (samples <= 0)
 		return;
 
-	VPRINTF(("generate_samples(%p, %d)\n", stream, samples));
-
 	/* ensure all inputs are up to date and generate resampled data */
 	for (inputnum = 0; inputnum < stream->inputs; inputnum++)
 	{
@@ -872,9 +868,7 @@ static void generate_samples(sound_stream *stream, int samples)
 	}
 
 	/* run the callback */
-	VPRINTF(("  callback(%p, %d)\n", stream, samples));
 	(*stream->callback)(stream->device, stream->param, stream->input_array, stream->output_array, samples);
-	VPRINTF(("  callback done\n"));
 }
 
 
