@@ -370,10 +370,10 @@ void timer_execute_timers(running_machine *machine)
 		/* call the callback */
 		if (was_enabled && timer->callback != NULL)
 		{
+#if 0
 			LOG(("Timer %s:%d[%s] fired (expire=%s)\n", timer->file, timer->line, timer->func, attotime_string(timer->expire, 9)));
-			profiler_mark_start(PROFILER_TIMER_CALLBACK);
+#endif
 			(*timer->callback)(machine, timer->ptr, timer->param);
-			profiler_mark_end();
 		}
 
 		/* clear the callback timer global */
