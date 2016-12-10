@@ -56,20 +56,12 @@
     DEBUGGING
 ***************************************************************************/
 
-#define LOG_THROTTLE				(0)
-#define VERBOSE						(0)
-#define LOG_PARTIAL_UPDATES(x)		do { if (VERBOSE) logerror x; } while (0)
-
-
-
 /***************************************************************************
     CONSTANTS
 ***************************************************************************/
 
 #define SUBSECONDS_PER_SPEED_UPDATE	(ATTOSECONDS_PER_SECOND / 4)
 #define PAUSED_REFRESH_RATE			(30)
-
-
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -461,9 +453,7 @@ void video_frame_update(running_machine *machine, int debug)
 		update_throttle(machine, current_time);
 
 	/* ask the OSD to update */
-	profiler_mark_start(PROFILER_BLIT);
 	osd_update(machine, !debug && skipped_it);
-	profiler_mark_end();
 
 	/* perform tasks for this frame */
 	if (!debug)
@@ -486,11 +476,7 @@ void video_frame_update(running_machine *machine, int debug)
 
 		/* otherwise, call the video EOF callback */
 		else if (machine->config->m_video_eof != NULL)
-		{
-			profiler_mark_start(PROFILER_VIDEO);
 			(*machine->config->m_video_eof)(machine);
-			profiler_mark_end();
-		}
 	}
 }
 
@@ -796,8 +782,9 @@ static void update_throttle(running_machine *machine, attotime emutime)
 	emu_delta_attoseconds = attotime_to_attoseconds(attotime_sub(emutime, global.throttle_emutime));
 	if (emu_delta_attoseconds < 0 || emu_delta_attoseconds > ATTOSECONDS_PER_SECOND / 10)
 	{
-		if (LOG_THROTTLE)
-			logerror("Resync due to weird emutime delta: %s\n", attotime_string(attotime_make(0, emu_delta_attoseconds), 18));
+#if 0
+      logerror("Resync due to weird emutime delta: %s\n", attotime_string(attotime_make(0, emu_delta_attoseconds), 18));
+#endif
 		goto resync;
 	}
 
@@ -811,8 +798,9 @@ static void update_throttle(running_machine *machine, attotime emutime)
        function, we just need to resynchronize */
 	if (diff_ticks >= ticks_per_second)
 	{
-		if (LOG_THROTTLE)
-			logerror("Resync due to real time advancing by more than 1 second\n");
+#if 0
+      logerror("Resync due to real time advancing by more than 1 second\n");
+#endif
 		goto resync;
 	}
 
@@ -837,8 +825,9 @@ static void update_throttle(running_machine *machine, attotime emutime)
 	if (real_is_ahead_attoseconds < -ATTOSECONDS_PER_SECOND / 10 ||
 		(real_is_ahead_attoseconds < 0 && popcount[global.throttle_history & 0xff] < 6))
 	{
-		if (LOG_THROTTLE)
-			logerror("Resync due to being behind: %s (history=%08X)\n", attotime_string(attotime_make(0, -real_is_ahead_attoseconds), 18), global.throttle_history);
+#if 0
+      logerror("Resync due to being behind: %s (history=%08X)\n", attotime_string(attotime_make(0, -real_is_ahead_attoseconds), 18), global.throttle_history);
+#endif
 		goto resync;
 	}
 
@@ -882,7 +871,6 @@ static osd_ticks_t throttle_until_ticks(running_machine *machine, osd_ticks_t ta
     	allowed_to_sleep = TRUE;
 
 	/* loop until we reach our target */
-	profiler_mark_start(PROFILER_IDLE);
 	while (current_ticks < target_ticks)
 	{
 		osd_ticks_t delta;
@@ -914,13 +902,13 @@ static osd_ticks_t throttle_until_ticks(running_machine *machine, osd_ticks_t ta
 				/* take 90% of the previous average plus 10% of the new value */
 				global.average_oversleep = (global.average_oversleep * 99 + oversleep_milliticks) / 100;
 
-				if (LOG_THROTTLE)
-					logerror("Slept for %d ticks, got %d ticks, avgover = %d\n", (int)delta, (int)actual_ticks, (int)global.average_oversleep);
+#if 0
+            logerror("Slept for %d ticks, got %d ticks, avgover = %d\n", (int)delta, (int)actual_ticks, (int)global.average_oversleep);
+#endif
 			}
 		}
 		current_ticks = new_ticks;
 	}
-	profiler_mark_end();
 
 	return current_ticks;
 }
@@ -1370,8 +1358,6 @@ static void video_mng_record_frame(running_machine *machine)
 		png_info pnginfo = { 0 };
 		png_error error;
 
-		profiler_mark_start(PROFILER_MOVIE_REC);
-
 		/* create the bitmap */
 		create_snapshot_bitmap(NULL);
 
@@ -1405,8 +1391,6 @@ static void video_mng_record_frame(running_machine *machine)
 			global.movie_next_frame_time = attotime_add(global.movie_next_frame_time, global.movie_frame_period);
 			global.movie_frame++;
 		}
-
-		profiler_mark_end();
 	}
 }
 
@@ -1505,8 +1489,6 @@ static void video_avi_record_frame(running_machine *machine)
 		attotime curtime = timer_get_time(machine);
 		avi_error avierr;
 
-		profiler_mark_start(PROFILER_MOVIE_REC);
-
 		/* create the bitmap */
 		create_snapshot_bitmap(NULL);
 
@@ -1525,8 +1507,6 @@ static void video_avi_record_frame(running_machine *machine)
 			global.movie_next_frame_time = attotime_add(global.movie_next_frame_time, global.movie_frame_period);
 			global.movie_frame++;
 		}
-
-		profiler_mark_end();
 	}
 }
 
@@ -1543,16 +1523,12 @@ void video_avi_add_sound(running_machine *machine, const INT16 *sound, int numsa
 	{
 		avi_error avierr;
 
-		profiler_mark_start(PROFILER_MOVIE_REC);
-
 		/* write the next frame */
 		avierr = avi_append_sound_samples(global.avifile, 0, sound + 0, numsamples, 1);
 		if (avierr == AVIERR_NONE)
 			avierr = avi_append_sound_samples(global.avifile, 1, sound + 1, numsamples, 1);
 		if (avierr != AVIERR_NONE)
 			video_avi_end_recording(machine);
-
-		profiler_mark_end();
 	}
 }
 
@@ -2078,32 +2054,28 @@ bool screen_device::update_partial(int scanline)
 	// validate arguments
 	assert(scanline >= 0);
 
+#if 0
 	LOG_PARTIAL_UPDATES(("Partial: update_partial(%s, %d): ", tag(), scanline));
+#endif
 
 	// these two checks only apply if we're allowed to skip frames
 	if (!(machine->config->m_video_attributes & VIDEO_ALWAYS_UPDATE))
 	{
 		// if skipping this frame, bail
+      /* skipped due to frameskipping */
 		if (global.skipping_this_frame)
-		{
-			LOG_PARTIAL_UPDATES(("skipped due to frameskipping\n"));
 			return FALSE;
-		}
 
 		// skip if this screen is not visible anywhere
+      /* skipped because screen not live */
 		if (!render_is_live_screen(this))
-		{
-			LOG_PARTIAL_UPDATES(("skipped because screen not live\n"));
 			return FALSE;
-		}
 	}
 
 	// skip if less than the lowest so far
+   /* skipped because less than previous */
 	if (scanline < m_last_partial_scan)
-	{
-		LOG_PARTIAL_UPDATES(("skipped because less than previous\n"));
 		return FALSE;
-	}
 
 	// set the start/end scanlines
 	rectangle clip = m_visarea;
@@ -2118,13 +2090,13 @@ bool screen_device::update_partial(int scanline)
 	{
 		UINT32 flags = UPDATE_HAS_NOT_CHANGED;
 
-		profiler_mark_start(PROFILER_VIDEO);
+#if 0
 		LOG_PARTIAL_UPDATES(("updating %d-%d\n", clip.min_y, clip.max_y));
+#endif
 
 		if (machine->config->m_video_update != NULL)
 			flags = (*machine->config->m_video_update)(this, m_bitmap[m_curbitmap], &clip);
 		global.partial_updates_this_frame++;
-		profiler_mark_end();
 
 		// if we modified the bitmap, we have to commit
 		m_changed |= ~flags & UPDATE_HAS_NOT_CHANGED;
