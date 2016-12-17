@@ -68,9 +68,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
-      if (strcmp(var.value, "disabled") == 0)
+      if (!strcmp(var.value, "disabled"))
          mouse_enable = false;
-      if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          mouse_enable = true;
    }
 
@@ -80,9 +80,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
-      if (strcmp(var.value, "disabled") == 0)
+      if (!strcmp(var.value, "disabled"))
          hide_nagscreen = false;
-      if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          hide_nagscreen = true;
    }
 
@@ -92,9 +92,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
-      if (strcmp(var.value, "disabled") == 0)
+      if (!strcmp(var.value, "disabled"))
          hide_gameinfo = false;
-      if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          hide_gameinfo = true;
    }
 
@@ -104,9 +104,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
-      if (strcmp(var.value, "disabled") == 0)
+      if (!strcmp(var.value, "disabled"))
          hide_warnings = false;
-      if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          hide_warnings = true;
    }
 
@@ -116,9 +116,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
-      if (strcmp(var.value, "disabled") == 0)
+      if (!strcmp(var.value, "disabled"))
          videoapproach1_enable = false;
-      if (strcmp(var.value, "enabled") == 0)
+      if (!strcmp(var.value, "enabled"))
          videoapproach1_enable = true;
    }
 
