@@ -22,6 +22,12 @@ extern bool draw_this_frame;
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
 
+const char *retro_save_directory;
+const char *retro_system_directory;
+const char *retro_content_directory;
+
+retro_log_printf_t log_cb;
+
 static retro_input_state_t input_state_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 
@@ -151,33 +157,69 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
 void retro_init (void)
 {
-#ifndef M16B
-   enum retro_pixel_format fmt =RETRO_PIXEL_FORMAT_XRGB8888;
-#else
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-#endif
+   struct retro_log_callback log;
+   const char *system_dir  = NULL;
+   const char *content_dir = NULL;
+   const char *save_dir    = NULL;
 
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
+      log_cb = log.log;
+   else
+      log_cb = NULL;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
    {
-      fprintf(stderr, "RGB pixel format is not supported.\n");
-      exit(0);
+      /* if defined, use the system directory */
+      retro_system_directory = system_dir;
    }
+
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "SYSTEM_DIRECTORY: %s", retro_system_directory);
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY, &content_dir) && content_dir)
+   {
+      // if defined, use the system directory
+      retro_content_directory=content_dir;
+   }
+
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "CONTENT_DIRECTORY: %s", retro_content_directory);
+
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
+   {
+      /* If save directory is defined use it, 
+       * otherwise use system directory. */
+      retro_save_directory = *save_dir ? save_dir : retro_system_directory;
+
+   }
+   else
+   {
+      /* make retro_save_directory the same,
+       * in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY 
+       * is not implemented by the frontend. */
+      retro_save_directory=retro_system_directory;
+   }
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "SAVE_DIRECTORY: %s", retro_save_directory);
 }
 
 extern void retro_finish();
+extern void retro_main_loop();
+
+int RLOOP=1;
 
 void retro_deinit(void)
 {
-  retro_finish();
-  LOGI("Retro DeInit\n");
+   retro_finish();
+   LOGI("Retro DeInit\n");
 }
 
-void retro_reset (void)  {
- mame_reset = 1;
+void retro_reset (void)
+{
+   mame_reset = 1;
 }
 
-int RLOOP=1;
-extern void retro_main_loop();
 
 void retro_run (void)
 {
@@ -235,16 +277,28 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
 */
 bool retro_load_game(const struct retro_game_info *info) 
 {
-/*
-	struct retro_keyboard_callback cb = { keyboard_cb };
+#if 0
+   struct retro_keyboard_callback cb = { keyboard_cb };
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
-*/
+#endif
+
+#ifndef M16B
+   enum retro_pixel_format fmt =RETRO_PIXEL_FORMAT_XRGB8888;
+#else
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
+#endif
+
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   {
+      fprintf(stderr, "RGB pixel format is not supported.\n");
+      exit(0);
+   }
    check_variables();
 
 #ifdef M16B
-	memset(videoBuffer,0,1024*1024*2);
+   memset(videoBuffer,0,1024*1024*2);
 #else
-	memset(videoBuffer,0,1024*1024*2*2);
+   memset(videoBuffer,0,1024*1024*2*2);
 #endif
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
@@ -260,14 +314,14 @@ bool retro_load_game(const struct retro_game_info *info)
       return false;
 #endif
 
-	char basename[128];
-	extract_basename(basename, info->path, sizeof(basename));
-  	extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
-	strcpy(RPATH,info->path);
+   char basename[128];
+   extract_basename(basename, info->path, sizeof(basename));
+   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
+   strcpy(RPATH,info->path);
 
    mmain(1,RPATH);
 
-	return 1;
+   return 1;
 }
 
 void retro_unload_game(void)
