@@ -137,7 +137,7 @@ LDFLAGS += $(SHARED)
 else ifeq ($(platform), android)
 EXTRA_RULES = 1
 ARM_ENABLED = 1
-   TARGETLIB := $(TARGET_NAME)_libretro.so
+   TARGETLIB := $(TARGET_NAME)_libretro_android.so
 	TARGETOS=linux  
    fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
