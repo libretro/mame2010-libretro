@@ -90,7 +90,7 @@ machine_config::~machine_config()
 //  detokenize - detokenize a machine config
 //-------------------------------------------------
 
-void __attribute__((optimize("O0"))) machine_config::detokenize(const machine_config_token *tokens, const device_config *owner)
+void machine_config::detokenize(const machine_config_token *tokens, const device_config *owner)
 {
 	device_config *device = NULL;
 	astring tempstring;

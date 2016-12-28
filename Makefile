@@ -604,7 +604,7 @@ BUILDOUT = $(BUILDOBJ)
 include Makefile.common
 
 # combine the various definitions to one
-CCOMFLAGS += $(INCFLAGS)
+CCOMFLAGS += $(INCFLAGS) -fno-delete-null-pointer-checks
 CDEFS = $(DEFS)
 
 #-------------------------------------------------
