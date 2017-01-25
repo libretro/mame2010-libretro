@@ -211,7 +211,7 @@ int RLOOP=1;
 
 void retro_deinit(void)
 {
-   retro_finish();
+   if(retro_load_ok)retro_finish();
    LOGI("Retro DeInit\n");
 }
 
@@ -321,6 +321,7 @@ bool retro_load_game(const struct retro_game_info *info)
    strcpy(RPATH,info->path);
 
    mmain(1,RPATH);
+   retro_load_ok  = true;
 
    return 1;
 }
