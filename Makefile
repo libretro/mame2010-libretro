@@ -287,23 +287,23 @@ else ifneq (,$(findstring armv,$(platform)))
    fpic = -fPIC
    CC = g++
 ifneq (,$(findstring cortexa8,$(platform)))
-   CFLAGS += -marm -mcpu=cortex-a8
+   CCOMFLAGS += -marm -mcpu=cortex-a8
    ASFLAGS += -mcpu=cortex-a8
 else ifneq (,$(findstring cortexa9,$(platform)))
-   CFLAGS += -marm -mcpu=cortex-a9
+   CCOMFLAGS += -marm -mcpu=cortex-a9
    ASFLAGS += -mcpu=cortex-a9
 endif
-   CFLAGS += -marm
+   CCOMFLAGS += -marm
 ifneq (,$(findstring neon,$(platform)))
-   CFLAGS += -mfpu=neon
+   CCOMFLAGS += -mfpu=neon
    ASFLAGS += -mfpu=neon
    HAVE_NEON = 1
 endif
 ifneq (,$(findstring softfloat,$(platform)))
-   CFLAGS += -mfloat-abi=softfp
+   CCOMFLAGS += -mfloat-abi=softfp
    ASFLAGS += -mfloat-abi=softfp
 else ifneq (,$(findstring hardfloat,$(platform)))
-   CFLAGS += -mfloat-abi=hard
+   CCOMFLAGS += -mfloat-abi=hard
    ASFLAGS += -mfloat-abi=hard
 endif
    CFLAGS += -DARM
