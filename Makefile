@@ -286,6 +286,8 @@ else ifneq (,$(findstring armv,$(platform)))
    SHARED := -shared -Wl,--no-undefined
    fpic = -fPIC
    CC = g++
+   LDFLAGS +=  $(SHARED)
+   ARM_ENABLED = 1
 ifneq (,$(findstring cortexa8,$(platform)))
    CCOMFLAGS += -marm -mcpu=cortex-a8
    ASFLAGS += -mcpu=cortex-a8
