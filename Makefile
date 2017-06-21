@@ -283,7 +283,7 @@ else ifeq ($(platform), wii)
 # ARM
 else ifneq (,$(findstring armv,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro.so
-   SHARED := -shared --no-undefined
+   SHARED := -shared -Wl,--no-undefined
    fpic = -fPIC
    CC = g++
    LDFLAGS +=  $(SHARED)
