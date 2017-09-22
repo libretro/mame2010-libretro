@@ -190,6 +190,12 @@ static const char* xargv[] = {
 	NULL,
 };
 
+#ifdef _WIN32
+char slash = '\\';
+#else
+char slash = '/';
+#endif
+
 static int parsePath(char* path, char* gamePath, char* gameName) {
 	int i;
 	int slashIndex = -1;
@@ -200,7 +206,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 	}
 
 	for (i = len - 1; i >=0; i--) {
-		if (path[i] == '/') {
+		if (path[i] == slash) {
 			slashIndex = i;
 			break;
 		} else
