@@ -129,6 +129,13 @@ unsigned retro_api_version(void)
    return RETRO_API_VERSION;
 }
 
+static void update_geometry()
+{
+   struct retro_system_av_info av_info;
+   retro_get_system_av_info( &av_info);
+   environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
+}
+
 void retro_get_system_info(struct retro_system_info *info)
 {   	
    memset(info, 0, sizeof(*info));
@@ -144,15 +151,16 @@ void retro_get_system_info(struct retro_system_info *info)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   info->geometry.base_width   = 640;
-   info->geometry.base_height  = 480;
+   info->geometry.base_width   = rtwi;
+   info->geometry.base_height  = rthe;
 
    info->geometry.max_width    = 1024;
    info->geometry.max_height   = 768;
 	
-   float display_ratio = (float)rtwi / (float)rthe;
-   info->geometry.aspect_ratio = vertical ? (1.0f / display_ratio) : display_ratio;
-	
+   float display_ratio 	= vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe;
+   info->geometry.aspect_ratio = display_ratio;
+   write_log("display aspect ratio = %f \n", display_ratio);
+
    info->timing.fps            = 60;
    info->timing.sample_rate    = 48000.0;
 }

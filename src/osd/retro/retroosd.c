@@ -102,6 +102,8 @@ void osd_update(running_machine *machine,int skip_redraw)
          rtwi=minwidth;
          rthe=minheight;
          topw=minwidth;
+
+	 update_geometry();
       }
 
       if(videoapproach1_enable){
