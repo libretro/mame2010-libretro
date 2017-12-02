@@ -52,6 +52,7 @@ void retro_set_environment(retro_environment_t cb)
       { "mame_current_skip_nagscreen", "Hide nag screen; disabled|enabled" },
       { "mame_current_skip_gameinfo", "Hide game info screen; disabled|enabled" },
       { "mame_current_skip_warnings", "Hide warning screen; disabled|enabled" },
+      { "mame_current_aspect_ratio", "Core provided aspect ratio; automatic|standard" },
       { "mame_current_turbo_button", "Enable autofire; disabled|button 1|button 2|R2 to button 1 mapping|R2 to button 2 mapping" },
       { "mame_current_turbo_delay", "Set autofire pulse speed; medium|slow|fast" },
       { NULL, NULL },
@@ -65,8 +66,9 @@ void retro_set_environment(retro_environment_t cb)
 static void check_variables(void)
 {
    struct retro_variable var = {0};
+   bool tmp_ar = set_par;
+	
    var.key = "mame_current_mouse_enable";
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
@@ -78,7 +80,6 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_nagscreen";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
@@ -90,7 +91,6 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_gameinfo";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
@@ -102,7 +102,6 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_warnings";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
@@ -114,7 +113,6 @@ static void check_variables(void)
 
    var.key = "mame_current_videoapproach1_enable";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       fprintf(stderr, "value: %s\n", var.value);
@@ -149,7 +147,18 @@ static void check_variables(void)
 	else
 		turbo_delay = 3;
    }
-	
+
+   var.key = "mame_current_aspect_ratio";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      	if (!strcmp(var.value, "automatic"))
+		set_par = true;
+	else
+		set_par = false;
+   }
+
+   if (tmp_ar != set_par)
+	update_geometry();
 }
 
 unsigned retro_api_version(void)
@@ -184,12 +193,12 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
    info->geometry.max_width    = 1024;
    info->geometry.max_height   = 768;
-	
-   float display_ratio 	= vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe;
+
+   float display_ratio = set_par ? (vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe) : (vertical ? 3.0f / 4.0f : 4.0f / 3.0f);
    info->geometry.aspect_ratio = display_ratio;
    write_log("display aspect ratio = %f \n", display_ratio);
 
-   info->timing.fps            = 60;
+   info->timing.fps            = refresh_rate;
    info->timing.sample_rate    = 48000.0;
 }
 
