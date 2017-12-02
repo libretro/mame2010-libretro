@@ -46,7 +46,9 @@ bool hide_nagscreen = false;
 bool hide_gameinfo = false;
 bool hide_warnings = false;
 //
+static void update_geometry();
 static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
+static bool set_par = false;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
