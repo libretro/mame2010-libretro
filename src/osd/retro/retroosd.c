@@ -38,6 +38,9 @@ void osd_init(running_machine* machine)
 
    prep_retro_rotation(gamRot);
 
+   screen_device *screen = screen_first(*machine);
+   refresh_rate = (screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(screen->frame_period().attoseconds);
+	
    write_log("osd init done\n");
 }
 
