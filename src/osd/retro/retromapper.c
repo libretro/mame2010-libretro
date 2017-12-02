@@ -198,7 +198,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.aspect_ratio = display_ratio;
    write_log("display aspect ratio = %f \n", display_ratio);
 
-   info->timing.fps            = 60;
+   info->timing.fps            = refresh_rate;
    info->timing.sample_rate    = 48000.0;
 }
 
