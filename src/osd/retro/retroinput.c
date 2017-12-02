@@ -1,4 +1,7 @@
 
+#define PLAYER1_PRESS(button)	input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
+#define PLAYER2_PRESS(button)	input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
+
 kt_table ktable[]={
 {"A",RETROK_a,ITEM_ID_A},
 {"B",RETROK_b,ITEM_ID_B},
@@ -196,7 +199,7 @@ static void initInput(running_machine* machine)
    fprintf(stderr, "YEAR: %s\n", machine->gamedrv->year);
    fprintf(stderr, "MANUFACTURER: %s\n", machine->gamedrv->manufacturer);
 
-	P1_state[KEY_F11]        = 0;//RETRO_DEVICE_ID_JOYPAD_R2
+	P1_state[KEY_F11]        = 0;/*RETRO_DEVICE_ID_JOYPAD_R3*/
 	P1_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
 	P1_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
 	P1_state[KEY_START]      = 0;//RETRO_DEVICE_ID_JOYPAD_START
@@ -213,12 +216,12 @@ static void initInput(running_machine* machine)
 	P1_state[KEY_JOYSTICK_L] = 0;//RETRO_DEVICE_ID_JOYPAD_LEFT
 	P1_state[KEY_JOYSTICK_R] = 0;//RETRO_DEVICE_ID_JOYPAD_RIGHT
 
-	P2_state[KEY_F11]        = 0;//RETRO_DEVICE_ID_JOYPAD_R2
+	P2_state[KEY_F11]        = 0;/*RETRO_DEVICE_ID_JOYPAD_R3*/
 	P2_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
 	P2_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
 	P2_state[KEY_START]      = 0;//RETRO_DEVICE_ID_JOYPAD_START
 	P2_state[KEY_COIN]       = 0;//RETRO_DEVICE_ID_JOYPAD_SELECT
-	
+
 	P2_state[KEY_BUTTON_1]   = 0;//RETRO_DEVICE_ID_JOYPAD_A
 	P2_state[KEY_BUTTON_2]   = 0;//RETRO_DEVICE_ID_JOYPAD_B
   	P2_state[KEY_BUTTON_3]   = 0;//RETRO_DEVICE_ID_JOYPAD_X
@@ -670,7 +673,7 @@ void retro_poll_mame_input()
 
       if(mbL==0 && mouse_l)
       {
-         mbL=1;		
+         mbL=1;
          mouseBUT[0]=0x80;
       }
       else if(mbL==1 && !mouse_l)
@@ -691,41 +694,65 @@ void retro_poll_mame_input()
       }
    }
 
-	P1_state[KEY_F11] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
-	P1_state[KEY_TAB] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
-	
-	P1_state[KEY_F2] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
-	
-	P1_state[KEY_START] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
-	P1_state[KEY_COIN] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
-	P1_state[KEY_BUTTON_1] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_A);
-	P1_state[KEY_BUTTON_2] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_B);
-	P1_state[KEY_BUTTON_3] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_X);
-	P1_state[KEY_BUTTON_4] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_Y);
-	P1_state[KEY_BUTTON_5] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
-	P1_state[KEY_BUTTON_6] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
-
+	P1_state[KEY_F11]	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);	/* change : remap F11 to R3,the R2 button becomes available */
+	P1_state[KEY_TAB] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+	P1_state[KEY_F2] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
+	P1_state[KEY_START] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+	P1_state[KEY_COIN] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
+	P1_state[KEY_BUTTON_1] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
+	P1_state[KEY_BUTTON_2] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
+	P1_state[KEY_BUTTON_3] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
+	P1_state[KEY_BUTTON_4] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
+	P1_state[KEY_BUTTON_5] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+	P1_state[KEY_BUTTON_6] 	 = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
 	P1_state[KEY_JOYSTICK_U] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
 	P1_state[KEY_JOYSTICK_D] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
 	P1_state[KEY_JOYSTICK_L] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
 	P1_state[KEY_JOYSTICK_R] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
 
-	P2_state[KEY_F11] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
-	P2_state[KEY_TAB] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
-	
-	P2_state[KEY_F2] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
-	
-	P2_state[KEY_START] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
-	P2_state[KEY_COIN] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
-	P2_state[KEY_BUTTON_1] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_A);
-	P2_state[KEY_BUTTON_2] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_B);
-	P2_state[KEY_BUTTON_3] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_X);
-	P2_state[KEY_BUTTON_4] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_Y);
-	P2_state[KEY_BUTTON_5] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_L);
-	P2_state[KEY_BUTTON_6] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0,  RETRO_DEVICE_ID_JOYPAD_R);
-
+	P2_state[KEY_F11] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
+	P2_state[KEY_TAB] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+	P2_state[KEY_F2] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
+	P2_state[KEY_START] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+	P2_state[KEY_COIN] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
+	P2_state[KEY_BUTTON_1] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
+	P2_state[KEY_BUTTON_2] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
+	P2_state[KEY_BUTTON_3] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
+	P2_state[KEY_BUTTON_4] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
+	P2_state[KEY_BUTTON_5] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+	P2_state[KEY_BUTTON_6] 	 = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
 	P2_state[KEY_JOYSTICK_U] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP);
 	P2_state[KEY_JOYSTICK_D] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN);
 	P2_state[KEY_JOYSTICK_L] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
 	P2_state[KEY_JOYSTICK_R] = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
+
+	switch (turbo_enable)
+	{
+		case 0:
+		break;
+		case 1:
+			if (PLAYER1_PRESS(A))
+				P1_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+			if (PLAYER2_PRESS(A))
+				P2_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+		break;
+		case 2:
+			if (PLAYER1_PRESS(B))
+				P1_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+			if (PLAYER2_PRESS(B))
+				P2_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+		break;
+		case 3:
+			if (PLAYER1_PRESS(R2))
+				P1_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+			if (PLAYER2_PRESS(R2))
+				P2_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+		break;
+		case 4:
+			if (PLAYER1_PRESS(R2))
+				P1_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+			if (PLAYER2_PRESS(R2))
+				P2_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+		break;
+	}
 }
