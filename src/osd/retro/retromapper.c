@@ -52,6 +52,8 @@ void retro_set_environment(retro_environment_t cb)
       { "mame_current_skip_nagscreen", "Hide nag screen; disabled|enabled" },
       { "mame_current_skip_gameinfo", "Hide game info screen; disabled|enabled" },
       { "mame_current_skip_warnings", "Hide warning screen; disabled|enabled" },
+      { "mame_current_turbo_button", "Enable autofire; disabled|button 1|button 2|R2 to button 1 mapping|R2 to button 2 mapping" },
+      { "mame_current_turbo_delay", "Set autofire pulse speed; medium|slow|fast" },
       { NULL, NULL },
    };
 
@@ -121,7 +123,33 @@ static void check_variables(void)
       if (!strcmp(var.value, "enabled"))
          videoapproach1_enable = true;
    }
+	
+   var.key = "mame_current_turbo_button";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      	if (!strcmp(var.value, "button 1"))
+		turbo_enable = 1;
+      	else if (!strcmp(var.value, "button 2"))
+		turbo_enable = 2;
+      	else if (!strcmp(var.value, "R2 to button 1 mapping"))
+		turbo_enable = 3;
+      	else if (!strcmp(var.value, "R2 to button 2 mapping"))
+		turbo_enable = 4;
+      	else
+		turbo_enable = 0;
+   }
 
+   var.key = "mame_current_turbo_delay";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      	if (!strcmp(var.value, "medium"))
+		turbo_delay = 5;
+      	else if (!strcmp(var.value, "slow"))
+		turbo_delay = 7;
+	else
+		turbo_delay = 3;
+   }
+	
 }
 
 unsigned retro_api_version(void)
@@ -249,6 +277,7 @@ void retro_run (void)
    	else
       		video_cb(NULL,rtwi, rthe, topw << PITCH); 
 #endif
+   turbo_state > turbo_delay ? turbo_state = 0 : turbo_state++;
 }
 
 void prep_retro_rotation(int rot)
