@@ -210,7 +210,7 @@ ADDRESS_MAP_END
 
 static INPUT_PORTS_START( m107_2player )
 	PORT_START("P1_P2")
-	IREM_GENERIC_JOYSTICKS_2_BUTTONS(1, 2)
+	IREM_GENERIC_JOYSTICKS_3_BUTTONS(1, 2)
 
 	PORT_START("COINS_DSW3")
 	PORT_BIT( 0x0001, IP_ACTIVE_LOW, IPT_START1 )
@@ -220,8 +220,7 @@ static INPUT_PORTS_START( m107_2player )
 	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_SERVICE1 )
 	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_SERVICE )
 	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_UNUSED )
-	/* This is sprite flag on IREM M92, if this is active low, then "Dream Soccer'94" is unplayably slow . */
-	PORT_BIT( 0x0080, IP_ACTIVE_HIGH, IPT_VBLANK )
+	PORT_BIT( 0x0080, IP_ACTIVE_HIGH, IPT_VBLANK )	/* This is sprite flag on IREM M92, if this is active low, then "Dream Soccer'94" is unplayably slow . */
 
 	/* DIP switch bank 3 */
 	PORT_DIPUNKNOWN_DIPLOC( 0x0100, 0x0100, "SW3:1" )
@@ -300,6 +299,12 @@ static INPUT_PORTS_START( firebarr )
 	PORT_INCLUDE(m107_2player)
 
 	PORT_MODIFY("COINS_DSW3")
+	PORT_DIPNAME( 0x0c00, 0x0800, "Rapid Fire" ) PORT_DIPLOCATION("SW3:3,4")
+	PORT_DIPSETTING(      0x0000, "Button 1 Normal, Button 3 Rapid Fire" )
+	PORT_DIPSETTING(      0x0400, "Button 1 Rapid Fire, Button 3 No Function" )
+	PORT_DIPSETTING(      0x0800, DEF_STR( Off ) )
+	PORT_DIPSETTING(      0x0c00, DEF_STR( Off ) )
+
 	PORT_DIPNAME( 0x1000, 0x0000, "Continuous Play" ) PORT_DIPLOCATION("SW3:5")
 	PORT_DIPSETTING(      0x1000, DEF_STR( Off ) )
 	PORT_DIPSETTING(      0x0000, DEF_STR( On ) )
