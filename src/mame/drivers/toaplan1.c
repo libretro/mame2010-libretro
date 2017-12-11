@@ -345,6 +345,13 @@ To Do:
 #include "includes/toaplan1.h"
 #include "sound/3812intf.h"
 
+static UINT8 to_mcu;
+static UINT8 cmdavailable;
+static WRITE16_HANDLER( samesame_mcu_w );
+static READ8_HANDLER( samesame_soundlatch_r );
+static WRITE8_HANDLER( samesame_sound_done_w );
+static READ8_HANDLER( samesame_cmdavailable_r );
+
 /***************************** 68000 Memory Map *****************************/
 
 static ADDRESS_MAP_START( rallybik_main_map, ADDRESS_SPACE_PROGRAM, 16 )
@@ -666,6 +673,26 @@ static ADDRESS_MAP_START( hd647180_io_map, ADDRESS_SPACE_IO, 8 )
 	AM_RANGE(0x87, 0x87) AM_DEVREADWRITE("ymsnd", ym3812_status_port_r, ym3812_control_port_w)
 	AM_RANGE(0x8f, 0x8f) AM_DEVREADWRITE("ymsnd", ym3812_read_port_r, ym3812_write_port_w)
 ADDRESS_MAP_END
+
+static WRITE16_HANDLER( samesame_mcu_w )
+{
+	to_mcu = data;
+	cmdavailable = 1;
+}
+
+static READ8_HANDLER( samesame_soundlatch_r ) { return to_mcu; }
+
+static WRITE8_HANDLER( samesame_sound_done_w )
+{
+	to_mcu = data;
+	cmdavailable = 0;
+}
+
+static READ8_HANDLER( samesame_cmdavailable_r )
+{
+	if (cmdavailable) return 0xff;
+	else return 0x00;
+}
 
 static ADDRESS_MAP_START( samesame_hd647180_mem_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x00000, 0x03fff) AM_ROM	/* Internal 16k byte ROM */
@@ -2540,6 +2567,7 @@ ROM_START( vimanan )
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
 	ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP )
+	/* ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )*/
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "vim6.bin",  0x00000, 0x20000, CRC(2886878d) SHA1(f44933d87bbcd3bd58f46e0f0f89b05c409b713b) )
@@ -2564,6 +2592,7 @@ ROM_START( vimana1 )
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
 	ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP )
+	/* ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )*/
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "vim6.bin",  0x00000, 0x20000, CRC(2886878d) SHA1(f44933d87bbcd3bd58f46e0f0f89b05c409b713b) )
@@ -2597,7 +2626,6 @@ static DRIVER_INIT( vimana )
 	toaplan1_driver_savestate(machine);
 	vimana_driver_savestate(machine);
 }
-
 
 
 GAME( 1988, rallybik,   0,        rallybik, rallybik,  toaplan1, ROT270, "Toaplan / Taito Corporation", "Rally Bike / Dash Yarou", 0 )
