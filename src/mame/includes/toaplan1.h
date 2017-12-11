@@ -40,34 +40,6 @@ extern int toaplan1_unk_reset_port;
 
 extern UINT8 *toaplan1_sharedram;
 
-/* For fire shark / samesame sound */
-UINT8	to_mcu;
-UINT8	cmdavailable;
-
-WRITE16_HANDLER( samesame_mcu_w );
-READ8_HANDLER( samesame_soundlatch_r );
-WRITE8_HANDLER( samesame_sound_done_w );
-READ8_HANDLER( samesame_cmdavailable_r );
-
-WRITE16_HANDLER( samesame_mcu_w )
-{
-	to_mcu = data;
-	cmdavailable = 1;
-}
-
-READ8_HANDLER( samesame_soundlatch_r ) { return to_mcu; }
-
-WRITE8_HANDLER( samesame_sound_done_w )
-{
-	to_mcu = data;
-	cmdavailable = 0;
-}
-
-READ8_HANDLER( samesame_cmdavailable_r )
-{
-	if (cmdavailable) return 0xff;
-	else return 0x00;
-}
 
 /*----------- defined in video/toaplan1.c -----------*/
 
