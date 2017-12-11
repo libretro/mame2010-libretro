@@ -345,8 +345,6 @@ To Do:
 #include "includes/toaplan1.h"
 #include "sound/3812intf.h"
 
-
-
 /***************************** 68000 Memory Map *****************************/
 
 static ADDRESS_MAP_START( rallybik_main_map, ADDRESS_SPACE_PROGRAM, 16 )
@@ -481,7 +479,7 @@ static ADDRESS_MAP_START( samesame_main_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x140008, 0x140009) AM_READ_PORT("SYSTEM")
 	AM_RANGE(0x14000a, 0x14000b) AM_READ(samesame_port_6_word_r)	/* Territory, and MCU ready */
 	AM_RANGE(0x14000c, 0x14000d) AM_WRITE(samesame_coin_w)	/* Coin counter/lockout */
-//  AM_RANGE(0x14000e, 0x14000f) AM_WRITE(samesame_mcu_w)   /* Commands sent to HD647180 */
+	AM_RANGE(0x14000e, 0x14000f) AM_WRITE(samesame_mcu_w)   /* Commands sent to HD647180 */
 	AM_RANGE(0x180000, 0x180001) AM_WRITE(toaplan1_bcu_flipscreen_w)
 	AM_RANGE(0x180002, 0x180003) AM_READWRITE(toaplan1_tileram_offs_r, toaplan1_tileram_offs_w)
 	AM_RANGE(0x180004, 0x180007) AM_READWRITE(toaplan1_tileram16_r, toaplan1_tileram16_w)
@@ -644,9 +642,44 @@ ADDRESS_MAP_END
 
 static ADDRESS_MAP_START( hd647180_mem_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x00000, 0x03fff) AM_ROM	/* Internal 16k byte ROM */
+	AM_RANGE(0x08000, 0x087ff) AM_RAM   AM_SHARE("sharedram")
 	AM_RANGE(0x0fe00, 0x0ffff) AM_RAM	/* Internal 512 byte RAM */
 ADDRESS_MAP_END
 
+static ADDRESS_MAP_START( hd647180_io_map, ADDRESS_SPACE_IO, 8 )
+	ADDRESS_MAP_GLOBAL_MASK(0xff)
+	AM_RANGE(0x32, 0x32) AM_WRITENOP
+	AM_RANGE(0x33, 0x33) AM_WRITENOP
+	AM_RANGE(0x36, 0x36) AM_WRITENOP
+	AM_RANGE(0x60, 0x60) AM_READ_PORT("DSWB")
+	AM_RANGE(0x66, 0x66) AM_READ_PORT("TJUMP")
+	AM_RANGE(0x71, 0x71) AM_WRITENOP
+	AM_RANGE(0x72, 0x72) AM_WRITENOP
+	AM_RANGE(0x73, 0x73) AM_WRITENOP
+	AM_RANGE(0x74, 0x74) AM_WRITENOP
+	AM_RANGE(0x75, 0x75) AM_WRITENOP
+	AM_RANGE(0x80, 0x80) AM_READ_PORT("P1")
+	AM_RANGE(0x81, 0x81) AM_READ_PORT("P2")
+	AM_RANGE(0x82, 0x82) AM_READ_PORT("DSWA")
+	AM_RANGE(0x83, 0x83) AM_READ_PORT("SYSTEM")
+	AM_RANGE(0x84, 0x84) AM_WRITE( toaplan1_coin_w )
+	AM_RANGE(0x87, 0x87) AM_DEVREADWRITE("ymsnd", ym3812_status_port_r, ym3812_control_port_w)
+	AM_RANGE(0x8f, 0x8f) AM_DEVREADWRITE("ymsnd", ym3812_read_port_r, ym3812_write_port_w)
+ADDRESS_MAP_END
+
+static ADDRESS_MAP_START( samesame_hd647180_mem_map, ADDRESS_SPACE_PROGRAM, 8 )
+	AM_RANGE(0x00000, 0x03fff) AM_ROM	/* Internal 16k byte ROM */
+	AM_RANGE(0x0fe00, 0x0ffff) AM_RAM	/* Internal 512 byte RAM */
+ADDRESS_MAP_END
+
+static ADDRESS_MAP_START( samesame_hd647180_io_map, ADDRESS_SPACE_IO, 8 )
+	ADDRESS_MAP_GLOBAL_MASK(0xff)
+	AM_RANGE(0x63, 0x63) AM_READ( samesame_cmdavailable_r )
+	AM_RANGE(0xa0, 0xa0) AM_READ( samesame_soundlatch_r )
+	AM_RANGE(0xb0, 0xb0) AM_WRITE( samesame_sound_done_w )
+	AM_RANGE(0x80, 0x80) AM_DEVREADWRITE("ymsnd", ym3812_status_port_r, ym3812_control_port_w)
+	AM_RANGE(0x81, 0x81) AM_DEVREADWRITE("ymsnd", ym3812_read_port_r, ym3812_write_port_w)
+ADDRESS_MAP_END
 
 
 /*****************************************************************************
@@ -1722,9 +1755,10 @@ static MACHINE_DRIVER_START( samesame )
 	MDRV_CPU_VBLANK_INT("screen", toaplan1_interrupt)
 
 	MDRV_CPU_ADD("audiocpu", Z180, XTAL_28MHz/8)	/* HD647180XOFS6 CPU */
-	MDRV_CPU_PROGRAM_MAP(hd647180_mem_map)
-	MDRV_DEVICE_DISABLE()		/* Internal code is not dumped */
+	MDRV_CPU_PROGRAM_MAP(samesame_hd647180_mem_map)
+	MDRV_CPU_IO_MAP(samesame_hd647180_io_map)
 
+//	MDRV_QUANTUM_TIME(HZ(600))
 	MDRV_MACHINE_RESET(toaplan1)
 
 	/* video hardware */
@@ -1828,8 +1862,6 @@ static MACHINE_DRIVER_START( vimana )
 	MDRV_SOUND_CONFIG(ym3812_config)
 	MDRV_SOUND_ROUTE(ALL_OUTPUTS, "mono", 1.0)
 MACHINE_DRIVER_END
-
-
 
 
 /***************************************************************************
@@ -2200,7 +2232,7 @@ ROM_START( samesame )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, NO_DUMP )
+	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, CRC(43523032) SHA1(1b94003a00e7bf6bdf1b1b946f42ff5d04629949) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "o17_05.12j",  0x00000, 0x20000, CRC(565315f8) SHA1(6b1c5ef52359483228b329c89c2e1174e3fbf017) )
@@ -2228,7 +2260,7 @@ ROM_START( samesame2 )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, NO_DUMP )
+	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, CRC(43523032) SHA1(1b94003a00e7bf6bdf1b1b946f42ff5d04629949) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "o17_05.12j",  0x00000, 0x20000, CRC(565315f8) SHA1(6b1c5ef52359483228b329c89c2e1174e3fbf017) )
@@ -2256,7 +2288,7 @@ ROM_START( fireshrk )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, NO_DUMP )
+	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, CRC(43523032) SHA1(1b94003a00e7bf6bdf1b1b946f42ff5d04629949) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "o17_05.12j",  0x00000, 0x20000, CRC(565315f8) SHA1(6b1c5ef52359483228b329c89c2e1174e3fbf017) )
@@ -2284,7 +2316,7 @@ ROM_START( fireshrkd )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, NO_DUMP )
+	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, CRC(43523032) SHA1(1b94003a00e7bf6bdf1b1b946f42ff5d04629949) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "o17_05.12j",  0x00000, 0x20000, CRC(565315f8) SHA1(6b1c5ef52359483228b329c89c2e1174e3fbf017) )
@@ -2312,7 +2344,7 @@ ROM_START( fireshrkdh )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, NO_DUMP )
+	ROM_LOAD( "hd647180.017",  0x00000, 0x08000, CRC(43523032) SHA1(1b94003a00e7bf6bdf1b1b946f42ff5d04629949) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "o17_05.12j",  0x00000, 0x20000, CRC(565315f8) SHA1(6b1c5ef52359483228b329c89c2e1174e3fbf017) )
@@ -2581,16 +2613,19 @@ GAME( 1989, demonwld1,  demonwld, demonwld, demonwld1, demonwld, ROT0,   "Toapla
 GAME( 1989, demonwld2,  demonwld, demonwld, demonwld1, demonwld, ROT0,   "Toaplan", "Demon's World / Horror Story (set 3)", 0 )
 GAME( 1989, demonwld3,  demonwld, demonwld, demonwld1, demonwld, ROT0,   "Toaplan", "Demon's World / Horror Story (set 4)", 0 )
 GAME( 1989, demonwld4,  demonwld, demonwld, demonwld1, demonwld, ROT0,   "Toaplan", "Demon's World / Horror Story (set 5)", 0 )
-GAME( 1990, fireshrk,   0,        samesame, fireshrk,  toaplan1, ROT270, "Toaplan", "Fire Shark", GAME_NO_SOUND )
-GAME( 1990, fireshrkd,  fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan (Dooyong license)", "Fire Shark (Korea, set 1, easier)", GAME_NO_SOUND )
-GAME( 1990, fireshrkdh, fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan (Dooyong license)", "Fire Shark (Korea, set 2, harder)", GAME_NO_SOUND )
-GAME( 1989, samesame,   fireshrk, samesame, samesame,  toaplan1, ROT270, "Toaplan", "Same! Same! Same! (2 player alternating ver.)", GAME_NO_SOUND )
-GAME( 1989, samesame2,  fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan", "Same! Same! Same!", GAME_NO_SOUND )
+
+GAME( 1990, fireshrk,   0,        samesame, fireshrk,  toaplan1, ROT270, "Toaplan", "Fire Shark", 0 )
+GAME( 1990, fireshrkd,  fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan (Dooyong license)", "Fire Shark (Korea, set 1, easier)", 0 )
+GAME( 1990, fireshrkdh, fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan (Dooyong license)", "Fire Shark (Korea, set 2, harder)", 0 )
+GAME( 1989, samesame,   fireshrk, samesame, samesame,  toaplan1, ROT270, "Toaplan", "Same! Same! Same! (2 player alternating ver.)", 0 )
+GAME( 1989, samesame2,  fireshrk, samesame, samesame2, toaplan1, ROT270, "Toaplan", "Same! Same! Same!", 0 )
+
 GAME( 1990, outzone,    0,        outzone,  outzone,   toaplan1, ROT270, "Toaplan", "Out Zone (set 1)", 0 ) // later fixed version
 GAME( 1990, outzonea,   outzone,  outzone,  outzone,   toaplan1, ROT270, "Toaplan", "Out Zone (set 2)", 0 )
 GAME( 1990, outzoneb,   outzone,  outzone,  outzoneb,  toaplan1, ROT270, "Toaplan", "Out Zone (set 3, prototype?)", 0 ) // early revision at least
 GAME( 1990, outzonec,   outzone,  outzone,  outzonec,  toaplan1, ROT270, "Toaplan", "Out Zone (set 4)", 0 )
 GAME( 1990, outzoned,   outzone,  outzone,  outzonec,  toaplan1, ROT270, "Toaplan", "Out Zone (set 5)", 0 )
+
 GAME( 1991, vimana,     0,        vimana,   vimana,    vimana,   ROT270, "Toaplan", "Vimana", GAME_NO_SOUND )
 GAME( 1991, vimanan,    vimana,   vimana,   vimanan,   vimana,   ROT270, "Toaplan (Nova Apparate GmbH license)", "Vimana (Nova Apparate GmbH)", GAME_NO_SOUND )
 GAME( 1991, vimana1,    vimana,   vimana,   vimana1,   vimana,   ROT270, "Toaplan", "Vimana (Japan)", GAME_NO_SOUND )
