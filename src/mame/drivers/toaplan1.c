@@ -351,6 +351,8 @@ static WRITE16_HANDLER( samesame_mcu_w );
 static READ8_HANDLER( samesame_soundlatch_r );
 static WRITE8_HANDLER( samesame_sound_done_w );
 static READ8_HANDLER( samesame_cmdavailable_r );
+static READ8_HANDLER( vimana_dswb_invert_r );
+static READ8_HANDLER( vimana_tjump_invert_r );
 
 /***************************** 68000 Memory Map *****************************/
 
@@ -534,13 +536,7 @@ static ADDRESS_MAP_START( vimana_main_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x400008, 0x40000f) AM_WRITE(toaplan1_bcu_control_w)
 	AM_RANGE(0x404000, 0x4047ff) AM_READWRITE(toaplan1_colorram1_r, toaplan1_colorram1_w) AM_BASE(&toaplan1_colorram1) AM_SIZE(&toaplan1_colorram1_size)
 	AM_RANGE(0x406000, 0x4067ff) AM_READWRITE(toaplan1_colorram2_r, toaplan1_colorram2_w) AM_BASE(&toaplan1_colorram2) AM_SIZE(&toaplan1_colorram2_size)
-	AM_RANGE(0x440000, 0x440005) AM_READWRITE(vimana_mcu_r, vimana_mcu_w)  /* shared memory from 0x440000 to 0x44ffff ? */
-	AM_RANGE(0x440006, 0x440007) AM_READ_PORT("DSWA")
-	AM_RANGE(0x440008, 0x440009) AM_READ(vimana_system_port_r)   /* "SYSTEM" + coinage simulation */
-	AM_RANGE(0x44000a, 0x44000b) AM_READ_PORT("P1")
-	AM_RANGE(0x44000c, 0x44000d) AM_READ_PORT("P2")
-	AM_RANGE(0x44000e, 0x44000f) AM_READ_PORT("DSWB")
-	AM_RANGE(0x440010, 0x440011) AM_READ_PORT("TJUMP")
+	AM_RANGE(0x440000, 0x4407ff) AM_READWRITE(toaplan1_shared_r, toaplan1_shared_w)
 	AM_RANGE(0x480000, 0x487fff) AM_RAM
 	AM_RANGE(0x4c0000, 0x4c0001) AM_WRITE(toaplan1_bcu_flipscreen_w)
 	AM_RANGE(0x4c0002, 0x4c0003) AM_READWRITE(toaplan1_tileram_offs_r, toaplan1_tileram_offs_w)
@@ -646,20 +642,30 @@ ADDRESS_MAP_END
 
 
 /***************************** HD647180 Memory Map **************************/
+/* For vimana sound */
+static READ8_HANDLER( vimana_dswb_invert_r )
+{
+	return input_port_read(space->machine, "DSWB") ^ 0xff;
+}
 
-static ADDRESS_MAP_START( hd647180_mem_map, ADDRESS_SPACE_PROGRAM, 8 )
+static READ8_HANDLER( vimana_tjump_invert_r )
+{
+	return (input_port_read(space->machine, "TJUMP") ^ 0xff) | 0xc0;
+}
+
+static ADDRESS_MAP_START( vimana_hd647180_mem_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x00000, 0x03fff) AM_ROM	/* Internal 16k byte ROM */
-	AM_RANGE(0x08000, 0x087ff) AM_RAM   AM_SHARE("sharedram")
+	AM_RANGE(0x08000, 0x087ff) AM_RAM   AM_BASE(&toaplan1_sharedram)
 	AM_RANGE(0x0fe00, 0x0ffff) AM_RAM	/* Internal 512 byte RAM */
 ADDRESS_MAP_END
 
-static ADDRESS_MAP_START( hd647180_io_map, ADDRESS_SPACE_IO, 8 )
+static ADDRESS_MAP_START( vimana_hd647180_io_map, ADDRESS_SPACE_IO, 8 )
 	ADDRESS_MAP_GLOBAL_MASK(0xff)
 	AM_RANGE(0x32, 0x32) AM_WRITENOP
 	AM_RANGE(0x33, 0x33) AM_WRITENOP
 	AM_RANGE(0x36, 0x36) AM_WRITENOP
-	AM_RANGE(0x60, 0x60) AM_READ_PORT("DSWB")
-	AM_RANGE(0x66, 0x66) AM_READ_PORT("TJUMP")
+	AM_RANGE(0x60, 0x60) AM_READ(vimana_dswb_invert_r)
+	AM_RANGE(0x66, 0x66) AM_READ(vimana_tjump_invert_r)
 	AM_RANGE(0x71, 0x71) AM_WRITENOP
 	AM_RANGE(0x72, 0x72) AM_WRITENOP
 	AM_RANGE(0x73, 0x73) AM_WRITENOP
@@ -674,6 +680,7 @@ static ADDRESS_MAP_START( hd647180_io_map, ADDRESS_SPACE_IO, 8 )
 	AM_RANGE(0x8f, 0x8f) AM_DEVREADWRITE("ymsnd", ym3812_read_port_r, ym3812_write_port_w)
 ADDRESS_MAP_END
 
+/* For fireshark / samesame sound */
 static WRITE16_HANDLER( samesame_mcu_w )
 {
 	to_mcu = data;
@@ -1400,7 +1407,7 @@ static INPUT_PORTS_START( vimana )
 
 	/* 0x440011.b */
 	PORT_START("TJUMP")       /* Territory Jumper Block - see notes */
-	PORT_DIPNAME( 0x0f, 0x02, "Territory" )
+	PORT_DIPNAME( 0x0f, 0x02, DEF_STR( Region ) )
 	PORT_DIPSETTING(    0x02, DEF_STR( Europe ) )
 	PORT_DIPSETTING(    0x01, DEF_STR( USA ) )
 	PORT_DIPSETTING(    0x07, "USA (Romstar license)" )
@@ -1424,9 +1431,7 @@ static INPUT_PORTS_START( vimana )
 	PORT_BIT( 0x40, IP_ACTIVE_HIGH, IPT_OTHER ) PORT_NAME("Fast Scrolling") PORT_CODE(KEYCODE_F1)   /* see notes */
 
 	/* P2 : 0x44000d.b */
-
 	/* SYSTEM : 0x440009.b */
-
 	/* VBLANK : 0x400001.b */
 INPUT_PORTS_END
 
@@ -1439,7 +1444,7 @@ static INPUT_PORTS_START( vimanan )
 
 	/* 0x440011.b */
 	PORT_MODIFY("TJUMP")      /* Territory Jumper Block - see notes */
-	PORT_DIPNAME( 0x0f, 0x02, "Territory" )
+	PORT_DIPNAME( 0x0f, 0x02, DEF_STR( Region ) )
 	PORT_DIPSETTING(    0x02, "Europe (Nova Apparate license)" )
 	PORT_DIPSETTING(    0x01, DEF_STR( USA ) )
 	PORT_DIPSETTING(    0x07, "USA (Romstar license)" )
@@ -1456,12 +1461,11 @@ static INPUT_PORTS_START( vimanan )
 //  PORT_DIPSETTING(    0x0c, "???" )
 //  PORT_DIPSETTING(    0x0d, "???" )
 //  PORT_DIPSETTING(    0x0e, "???" )
+	PORT_BIT( 0xf0, IP_ACTIVE_HIGH, IPT_UNKNOWN )
 
 	/* P1 : 0x44000b.b */
 	/* P2 : 0x44000d.b */
-
 	/* SYSTEM : 0x440009.b */
-
 	/* VBLANK : 0x400001.b */
 INPUT_PORTS_END
 
@@ -1474,7 +1478,7 @@ static INPUT_PORTS_START( vimana1 )
 
 	/* 0x440011.b */
 	PORT_MODIFY("TJUMP")      /* Territory Jumper Block - see notes */
-	PORT_DIPNAME( 0x0f, 0x00, "Territory" )
+	PORT_DIPNAME( 0x0f, 0x00, DEF_STR( Region ) )
 //  PORT_DIPSETTING(    0x02, DEF_STR( Europe ) )
 //  PORT_DIPSETTING(    0x01, DEF_STR( USA ) )
 //  PORT_DIPSETTING(    0x07, "USA (Romstar license)" )
@@ -1495,9 +1499,7 @@ static INPUT_PORTS_START( vimana1 )
 
 	/* P1 : 0x44000b.b */
 	/* P2 : 0x44000d.b */
-
 	/* SYSTEM : 0x440009.b */
-
 	/* VBLANK : 0x400001.b */
 INPUT_PORTS_END
 
@@ -1567,7 +1569,6 @@ static const ym3812_interface ym3812_config =
 {
 	irqhandler
 };
-
 
 
 static MACHINE_DRIVER_START( rallybik )
@@ -1785,7 +1786,8 @@ static MACHINE_DRIVER_START( samesame )
 	MDRV_CPU_PROGRAM_MAP(samesame_hd647180_mem_map)
 	MDRV_CPU_IO_MAP(samesame_hd647180_io_map)
 
-//	MDRV_QUANTUM_TIME(HZ(600))
+/*	MDRV_QUANTUM_PERFECT_CPU("maincpu") */
+	MDRV_QUANTUM_TIME(HZ(1200))   /* 1200 / 60 = 20 CPU slices per frame, maybe this will be better FPS */
 	MDRV_MACHINE_RESET(toaplan1)
 
 	/* video hardware */
@@ -1861,9 +1863,10 @@ static MACHINE_DRIVER_START( vimana )
 	MDRV_CPU_VBLANK_INT("screen", toaplan1_interrupt)
 
 	MDRV_CPU_ADD("audiocpu", Z180, XTAL_28MHz/8)	/* HD647180XOFS6 CPU */
-	MDRV_CPU_PROGRAM_MAP(hd647180_mem_map)
-	MDRV_DEVICE_DISABLE()		/* Internal code is not dumped */
+	MDRV_CPU_PROGRAM_MAP(vimana_hd647180_mem_map)
+	MDRV_CPU_IO_MAP(vimana_hd647180_io_map)
 
+	MDRV_QUANTUM_TIME(HZ(600))
 	MDRV_MACHINE_RESET(vimana)
 
 	/* video hardware */
@@ -2390,7 +2393,6 @@ ROM_START( fireshrkdh )
 	ROM_LOAD( "prom15.20c",  0x20, 0x20, CRC(a1e17492) SHA1(9ddec4c97f2d541f69f3c32c47aaa21fd9699ae2) )	/* ??? */
 ROM_END
 
-
 /*
 Out Zone - Seems to be a later version, Differences:
 
@@ -2452,7 +2454,6 @@ ROM_START( outzonea )
     ROM_LOAD16_BYTE( "16.bin",  0x0e0000, 0x10000, CRC(cffcb99b) )
     ROM_LOAD16_BYTE( "12.bin",  0x0e0001, 0x10000, CRC(90d37ded) )
 */
-
 	ROM_REGION( 0x80000, "gfx2", 0 )
 	ROM_LOAD( "rom2.bin",  0x00000, 0x20000, CRC(6bb72d16) SHA1(a127b10d9c255542bd09fcb5df057c12fd28c0d1) )
 	ROM_LOAD( "rom1.bin",  0x20000, 0x20000, CRC(0934782d) SHA1(e4a775ead23227d7d6e76aea23aa3103b511d031) )
@@ -2542,7 +2543,8 @@ ROM_START( vimana )			/* From board serial number 1547.04 (July '94) */
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP )
+	/* ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP ) */
+	ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "vim6.bin",  0x00000, 0x20000, CRC(2886878d) SHA1(f44933d87bbcd3bd58f46e0f0f89b05c409b713b) )
@@ -2566,8 +2568,7 @@ ROM_START( vimanan )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP )
-	/* ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )*/
+	ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "vim6.bin",  0x00000, 0x20000, CRC(2886878d) SHA1(f44933d87bbcd3bd58f46e0f0f89b05c409b713b) )
@@ -2591,8 +2592,7 @@ ROM_START( vimana1 )
 
 	ROM_REGION( 0x10000, "audiocpu", 0 )	/* Sound HD647180 code */
 	/* sound CPU is a HD647180 (Z180) with internal ROM - not yet supported */
-	ROM_LOAD( "hd647180.019",  0x00000, 0x08000, NO_DUMP )
-	/* ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )*/
+	ROM_LOAD( "hd647180.019", 0x00000, 0x08000, CRC(41a97ebe) SHA1(9b377086e4d9b8de6e3c8c7d2dd099b80ab88934) )
 
 	ROM_REGION( 0x80000, "gfx1", 0 )
 	ROM_LOAD( "vim6.bin",  0x00000, 0x20000, CRC(2886878d) SHA1(f44933d87bbcd3bd58f46e0f0f89b05c409b713b) )
@@ -2624,7 +2624,7 @@ static DRIVER_INIT( demonwld )
 static DRIVER_INIT( vimana )
 {
 	toaplan1_driver_savestate(machine);
-	vimana_driver_savestate(machine);
+	/* vimana_driver_savestate(machine); */
 }
 
 
@@ -2654,6 +2654,6 @@ GAME( 1990, outzoneb,   outzone,  outzone,  outzoneb,  toaplan1, ROT270, "Toapla
 GAME( 1990, outzonec,   outzone,  outzone,  outzonec,  toaplan1, ROT270, "Toaplan", "Out Zone (set 4)", 0 )
 GAME( 1990, outzoned,   outzone,  outzone,  outzonec,  toaplan1, ROT270, "Toaplan", "Out Zone (set 5)", 0 )
 
-GAME( 1991, vimana,     0,        vimana,   vimana,    vimana,   ROT270, "Toaplan", "Vimana", GAME_NO_SOUND )
-GAME( 1991, vimanan,    vimana,   vimana,   vimanan,   vimana,   ROT270, "Toaplan (Nova Apparate GmbH license)", "Vimana (Nova Apparate GmbH)", GAME_NO_SOUND )
-GAME( 1991, vimana1,    vimana,   vimana,   vimana1,   vimana,   ROT270, "Toaplan", "Vimana (Japan)", GAME_NO_SOUND )
+GAME( 1991, vimana,     0,        vimana,   vimana,    vimana,   ROT270, "Toaplan", "Vimana", 0 )
+GAME( 1991, vimanan,    vimana,   vimana,   vimanan,   vimana,   ROT270, "Toaplan (Nova Apparate GmbH license)", "Vimana (Nova Apparate GmbH)", 0 )
+GAME( 1991, vimana1,    vimana,   vimana,   vimana1,   vimana,   ROT270, "Toaplan", "Vimana (Japan)", 0 )
