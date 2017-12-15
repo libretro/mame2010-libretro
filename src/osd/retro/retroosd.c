@@ -76,6 +76,12 @@ void osd_update(running_machine *machine,int skip_redraw)
          minwidth=1024;minheight=768;
       }
 
+      if (FirstTimeUpdate == 2)
+      {
+         FirstTimeUpdate++;
+	 refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
+      }
+
       if (FirstTimeUpdate == 1) {
 
          FirstTimeUpdate++;			
@@ -94,7 +100,6 @@ void osd_update(running_machine *machine,int skip_redraw)
          gamRot = (ROT90  == orient) ? 3 : gamRot;
 
          prep_retro_rotation(gamRot);
-
       }
 
       if (minwidth != rtwi || minheight != rthe ){
@@ -103,14 +108,13 @@ void osd_update(running_machine *machine,int skip_redraw)
          rthe=minheight;
          topw=minwidth;
 
-	 if (set_par)
-		update_geometry();
+	 update_geometry();
       }
-
+/*    No need
       if(videoapproach1_enable){
          rtwi=topw=1024;
          rthe=768;
-      }
+      } */
 
       // make that the size of our target
       render_target_set_bounds(our_target,rtwi,rthe, 0);
