@@ -230,10 +230,27 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 	
    float display_ratio 	= set_par ? (vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe) : (vertical ? 3.0f / 4.0f : 4.0f / 3.0f);
    info->geometry.aspect_ratio = display_ratio;
-   write_log("display aspect ratio = %f \n", display_ratio);
 
-   info->timing.fps            = 60;
+   info->timing.fps            = refresh_rate;
    info->timing.sample_rate    = 48000.0;
+
+#if 0	/* Test */
+	int common_factor = 1;
+	if (set_par)
+	{
+		int temp_width = rtwi;
+		int temp_height = rthe;
+		while (temp_width != temp_height)
+		{
+			if (temp_width > temp_height)
+				temp_width -= temp_height;
+			else
+				temp_height -= temp_width;
+		}
+		common_factor = temp_height;
+	}
+	write_log("Current aspect ratio = %d : %d and screen refresh rate = %f\n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor : vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, refresh_rate);
+#endif
 }
 
 void retro_init (void)

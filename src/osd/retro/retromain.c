@@ -48,7 +48,8 @@ bool hide_warnings = false;
 //
 static void update_geometry();
 static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
-static bool set_par = false; 
+static bool set_par = false;
+static double refresh_rate = 60.0;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
