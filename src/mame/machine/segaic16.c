@@ -331,10 +331,15 @@ static void update_memory_mapping(running_machine *machine, struct memory_mapper
 			memory_install_read16_handler(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror, read);
 		else if (readbank != NULL)
 			memory_install_read_bank(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror, readbank);
+		else
+			memory_install_read16_handler(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror, segaic16_open_bus_r);
+
 		if (write != NULL)
 			memory_install_write16_handler(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror, write);
 		else if (writebank != NULL)
 			memory_install_write_bank(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror, writebank);
+		else
+			memory_unmap_write(cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM), region_start, region_end, 0, region_mirror);
 
 		/* set the bank pointer */
 		if (readbank != NULL)
