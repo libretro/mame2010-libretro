@@ -96,9 +96,9 @@ const options_entry mame_core_options[] =
 	/* artwork options */
 	{ NULL,                          NULL,        OPTION_HEADER,     "CORE ARTWORK OPTIONS" },
 	{ "artwork_crop;artcrop",        "0",         OPTION_BOOLEAN,    "crop artwork to game screen size" },
-	{ "use_backdrops;backdrop",      "1",         OPTION_BOOLEAN,    "enable backdrops if artwork is enabled and available" },
-	{ "use_overlays;overlay",        "1",         OPTION_BOOLEAN,    "enable overlays if artwork is enabled and available" },
-	{ "use_bezels;bezel",            "1",         OPTION_BOOLEAN,    "enable bezels if artwork is enabled and available" },
+	{ "use_backdrops;backdrop",      "0",         OPTION_BOOLEAN,    "enable backdrops if artwork is enabled and available" },
+	{ "use_overlays;overlay",        "0",         OPTION_BOOLEAN,    "enable overlays if artwork is enabled and available" },
+	{ "use_bezels;bezel",            "0",         OPTION_BOOLEAN,    "enable bezels if artwork is enabled and available" },
 
 	/* screen options */
 	{ NULL,                          NULL,        OPTION_HEADER,     "CORE SCREEN OPTIONS" },
