@@ -70,10 +70,9 @@ static void check_variables(void)
    bool tmp_ar = set_par;
 	
    var.key = "mame_current_mouse_enable";
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "value: %s\n", var.value);
+      fprintf(stderr, "mouse_enable value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          mouse_enable = false;
       if (!strcmp(var.value, "enabled"))
@@ -82,10 +81,9 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_nagscreen";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "value: %s\n", var.value);
+      fprintf(stderr, "skip_nagscreen value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_nagscreen = false;
       if (!strcmp(var.value, "enabled"))
@@ -94,10 +92,9 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_gameinfo";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "value: %s\n", var.value);
+      fprintf(stderr, "skip_gameinfo value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_gameinfo = false;
       if (!strcmp(var.value, "enabled"))
@@ -106,10 +103,9 @@ static void check_variables(void)
 
    var.key = "mame_current_skip_warnings";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "value: %s\n", var.value);
+      fprintf(stderr, "skip_warnings value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_warnings = false;
       if (!strcmp(var.value, "enabled"))
@@ -118,10 +114,9 @@ static void check_variables(void)
 
    var.key = "mame_current_videoapproach1_enable";
    var.value = NULL;
-
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "value: %s\n", var.value);
+      fprintf(stderr, "vidoapproach1_enable value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          videoapproach1_enable = false;
       if (!strcmp(var.value, "enabled"))
@@ -200,16 +195,16 @@ void init_input_descriptors(void)
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Joystick Right" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "Joystick Up" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "Joystick Down" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Button 1" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "Button 2" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Button 1" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Button 2" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,     "Button 3" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Button 4" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "Button 4" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,     "Button 5" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Button 6" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "Button 7" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Button 8" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Button 9" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Button 10" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "UI Menu" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Turbo Button" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Reset" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Framerate" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Insert Coin" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
 
@@ -248,7 +243,6 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
    info->timing.fps            = refresh_rate;
    info->timing.sample_rate    = 48000.0;
-   video_set_frameskip(set_frame_skip);
 
 #if 0	/* Test */
 	int common_factor = 1;
@@ -439,6 +433,8 @@ bool retro_load_game(const struct retro_game_info *info)
 
    mmain(1,RPATH);
    retro_load_ok  = true;
+
+   video_set_frameskip(set_frame_skip);
 
    return 1;
 }
