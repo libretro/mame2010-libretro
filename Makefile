@@ -613,9 +613,9 @@ CDEFS = $(DEFS)
 # primary targets
 #-------------------------------------------------
 
-emulator: maketree $(BUILD) $(EMULATOR)
+emulator: maketree $(EMULATOR)
 
-buildtools: maketree $(BUILD)
+buildtools: maketree
 
 ifeq ($(NATIVE),1)
 	mkdir prec-build
