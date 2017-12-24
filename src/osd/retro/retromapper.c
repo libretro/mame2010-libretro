@@ -56,6 +56,7 @@ void retro_set_environment(retro_environment_t cb)
       { "mame_current_turbo_button", "Enable autofire; disabled|button 1|button 2|R2 to button 1 mapping|R2 to button 2 mapping" },
       { "mame_current_turbo_delay", "Set autofire pulse speed; medium|slow|fast" },
       { "mame_current_frame_skip", "Set frameskip; 0|1|2|3|4|automatic" },
+      { "mame_current_sample_rate", "Set sample rate (Restart); 48000Hz|44100Hz|32000Hz|22050Hz" },
       { NULL, NULL },
    };
 
@@ -116,7 +117,7 @@ static void check_variables(void)
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "vidoapproach1_enable value: %s\n", var.value);
+      fprintf(stderr, "videoapproach1_enable value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          videoapproach1_enable = false;
       if (!strcmp(var.value, "enabled"))
@@ -137,6 +138,11 @@ static void check_variables(void)
 		video_set_frameskip(set_frame_skip);
    }
 
+   var.key = "mame_current_sample_rate";
+   var.value = NULL;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+	sample_rate = atoi(var.value);	
+	
    var.key = "mame_current_turbo_button";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
@@ -203,7 +209,7 @@ void init_input_descriptors(void)
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Button 6" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "UI Menu" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Turbo Button" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Reset" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Service" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Framerate" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Insert Coin" },\
    { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
@@ -242,7 +248,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.aspect_ratio = display_ratio;
 
    info->timing.fps            = refresh_rate;
-   info->timing.sample_rate    = 48000.0;
+   info->timing.sample_rate    = (double)sample_rate;
 
 #if 0	/* Test */
 	int common_factor = 1;
@@ -259,7 +265,8 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 		}
 		common_factor = temp_height;
 	}
-	write_log("Current aspect ratio = %d : %d and screen refresh rate = %f\n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor : vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, refresh_rate);
+	write_log("Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
+		  	vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, info->timing.fps, info->timing.sample_rate);
 #endif
 }
 
