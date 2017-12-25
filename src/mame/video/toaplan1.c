@@ -178,6 +178,8 @@ static int toaplan1_reset;		/* Hack! See toaplan1_bcu_control below */
 
 static tilemap_t *pf1_tilemap, *pf2_tilemap, *pf3_tilemap, *pf4_tilemap;
 
+/* an empty tile, so that we can safely disable tile */
+static UINT8 empty_tile[8 * 8];
 
 /***************************************************************************
 
@@ -197,8 +199,9 @@ static TILE_GET_INFO( get_pf1_tile_info )
 			tile_number,
 			color,
 			0);
-	if (pf1_tilevram16[2*tile_index+1] & 0x8000) tileinfo->category = 0;
-	else tileinfo->category = (attrib & 0xf000) >> 12;
+
+	if (pf1_tilevram16[2*tile_index+1] & 0x8000) tileinfo->pen_data = empty_tile;
+	tileinfo->category = (attrib & 0xf000) >> 12;
 }
 
 static TILE_GET_INFO( get_pf2_tile_info )
@@ -213,8 +216,9 @@ static TILE_GET_INFO( get_pf2_tile_info )
 			tile_number,
 			color,
 			0);
-	if (pf2_tilevram16[2*tile_index+1] & 0x8000) tileinfo->category = 0;
-	else tileinfo->category = (attrib & 0xf000) >> 12;
+
+	if (pf2_tilevram16[2*tile_index+1] & 0x8000) tileinfo->pen_data = empty_tile;
+	tileinfo->category = (attrib & 0xf000) >> 12;
 }
 
 static TILE_GET_INFO( get_pf3_tile_info )
@@ -229,8 +233,9 @@ static TILE_GET_INFO( get_pf3_tile_info )
 			tile_number,
 			color,
 			0);
-	if (pf3_tilevram16[2*tile_index+1] & 0x8000) tileinfo->category = 0;
-	else tileinfo->category = (attrib & 0xf000) >> 12;
+
+	if (pf3_tilevram16[2*tile_index+1] & 0x8000) tileinfo->pen_data = empty_tile;
+	tileinfo->category = (attrib & 0xf000) >> 12;
 }
 
 static TILE_GET_INFO( get_pf4_tile_info )
@@ -245,8 +250,9 @@ static TILE_GET_INFO( get_pf4_tile_info )
 			tile_number,
 			color,
 			0);
-	if (pf4_tilevram16[2*tile_index+1] & 0x8000) tileinfo->category = 0;
-	else tileinfo->category = (attrib & 0xf000) >> 12;
+
+	if (pf4_tilevram16[2*tile_index+1] & 0x8000) tileinfo->pen_data = empty_tile;
+	tileinfo->category = (attrib & 0xf000) >> 12;
 }
 
 /***************************************************************************
@@ -266,6 +272,8 @@ static void toaplan1_create_tilemaps(running_machine *machine)
 	tilemap_set_transparent_pen(pf2_tilemap,0);
 	tilemap_set_transparent_pen(pf3_tilemap,0);
 	tilemap_set_transparent_pen(pf4_tilemap,0);
+
+	memset(empty_tile, 0x00, sizeof(empty_tile));
 }
 
 
@@ -1178,9 +1186,8 @@ VIDEO_UPDATE( toaplan1 )
 	bitmap_fill(screen->machine->priority_bitmap,cliprect,0);
 	bitmap_fill(bitmap,cliprect,0x120);
 
-	tilemap_draw(bitmap,cliprect,pf4_tilemap,TILEMAP_DRAW_OPAQUE,0);
-	for (priority = 8; priority < 16; priority++)
-		tilemap_draw(bitmap,cliprect,pf1_tilemap,TILEMAP_DRAW_OPAQUE | priority,0);
+	tilemap_draw(bitmap, cliprect, pf1_tilemap, TILEMAP_DRAW_OPAQUE | 0, 0);
+	tilemap_draw(bitmap, cliprect, pf1_tilemap, TILEMAP_DRAW_OPAQUE | 1, 0);
 
 	for (priority = 1; priority < 16; priority++)
 	{
