@@ -37,7 +37,8 @@ void osd_init(running_machine* machine)
    gamRot = (ROT90 == orient) ? 3 : gamRot;
 
    prep_retro_rotation(gamRot);
-
+   machine->sample_rate = sample_rate;	/* Override original value */
+	
    write_log("osd init done\n");
 }
 

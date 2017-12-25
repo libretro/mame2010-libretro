@@ -51,6 +51,7 @@ static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
 static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
+static unsigned sample_rate = 48000;
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
