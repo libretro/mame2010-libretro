@@ -1,3 +1,4 @@
+
 #include <unistd.h>
 #include <stdint.h>
 
@@ -13,29 +14,33 @@
 
 #include "log.h"
 
+#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
+   #define M16B
+#endif
+
 char g_rom_dir[1024];
 
-#define FUNC_PREFIX(x) rgb565_##x
-#define PIXEL_TYPE UINT16
-#define SRCSHIFT_R 3
-#define SRCSHIFT_G 2
-#define SRCSHIFT_B 3
-#define DSTSHIFT_R 11
-#define DSTSHIFT_G 5
-#define DSTSHIFT_B 0
-
-#include "rendersw.c"
- 
-#define FUNC_PREFIX(x) rgb888_##x
-#define PIXEL_TYPE UINT32
-#define SRCSHIFT_R 0
-#define SRCSHIFT_G 0
-#define SRCSHIFT_B 0
-#define DSTSHIFT_R 16
-#define DSTSHIFT_G 8
-#define DSTSHIFT_B 0
-
-#include "rendersw.c"
+#ifdef M16B
+   #define FUNC_PREFIX(x) rgb565_##x
+   #define PIXEL_TYPE UINT16
+   #define SRCSHIFT_R 3
+   #define SRCSHIFT_G 2
+   #define SRCSHIFT_B 3
+   #define DSTSHIFT_R 11
+   #define DSTSHIFT_G 5
+   #define DSTSHIFT_B 0
+   #include "rendersw.c"
+#else
+   #define FUNC_PREFIX(x) rgb888_##x
+   #define PIXEL_TYPE UINT32
+   #define SRCSHIFT_R 0
+   #define SRCSHIFT_G 0
+   #define SRCSHIFT_B 0
+   #define DSTSHIFT_R 16
+   #define DSTSHIFT_G 8
+   #define DSTSHIFT_B 0
+   #include "rendersw.c"
+#endif
 
 int mame_reset = -1;
 static int ui_ipt_pushchar=-1;
@@ -110,13 +115,13 @@ enum
 	KEY_JOYSTICK_L,
 	KEY_JOYSTICK_R,
 	KEY_TOTAL
-}; 
+};
 
 #ifdef DEBUG_LOG
 # define LOG(msg) fprintf(stderr, "%s\n", msg)
 #else
 # define LOG(msg)
-#endif 
+#endif
 
 //============================================================
 //  GLOBALS
@@ -131,7 +136,7 @@ static input_device *P2_device; // P2 JOYPAD
 static input_device *retrokbd_device; // KEYBD
 static input_device *mouse_device;    // MOUSE
 
-// state 
+// state
 static UINT16 P1_state[KEY_TOTAL];
 static UINT16 P2_state[KEY_TOTAL];
 static UINT16 retrokbd_state[RETROK_LAST];
@@ -161,7 +166,7 @@ static char MgameName[512];
 static int FirstTimeUpdate = 1;
 
 bool retro_load_ok  = false;
-int pauseg=0; 
+int pauseg = 0;
 
 //============================================================
 //  RETRO
@@ -260,11 +265,11 @@ static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 				write_log("%-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
 		}
 	}
-#else 
+#else
 	gameFound = 1;
 #endif
 	return gameFound;
-} 
+}
 
 int executeGame(char* path) {
 	// cli_frontend does the heavy lifting; if we have osd-specific options, we
@@ -320,7 +325,7 @@ int executeGame(char* path) {
 
 	//find how many parameters we have
 	for (paramCount = 0; xargv[paramCount] != NULL; paramCount++);
- 
+
 	xargv[paramCount++] = (char*)g_rom_dir;
 
 	if (tate) {
@@ -363,8 +368,8 @@ int executeGame(char* path) {
 	xargv[paramCount - 2] = NULL;
 
 	return result;
-}  
- 
+}
+
 //============================================================
 //  main
 //============================================================

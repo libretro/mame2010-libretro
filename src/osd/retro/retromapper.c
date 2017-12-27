@@ -1,23 +1,19 @@
 void retro_poll_mame_input();
 
 static int rtwi=320,rthe=240,topw=1024; // DEFAULT TEXW/TEXH/PITCH
-int SHIFTON=-1;
+int SHIFTON = -1;
 char RPATH[512];
 
 extern "C" int mmain(int argc, const char *argv);
 extern bool draw_this_frame;
-
-#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
-#define M16B
-#endif
 
 #ifdef M16B
 	uint16_t videoBuffer[1024*1024];
 	#define PITCH 1
 #else
 	unsigned int videoBuffer[1024*1024];
-	#define PITCH 2*1
-#endif 
+	#define PITCH 1 * 2
+#endif
 
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
@@ -69,7 +65,7 @@ static void check_variables(void)
 {
    struct retro_variable var = {0};
    bool tmp_ar = set_par;
-	
+
    var.key = "mame_current_mouse_enable";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
@@ -141,8 +137,8 @@ static void check_variables(void)
    var.key = "mame_current_sample_rate";
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-	sample_rate = atoi(var.value);	
-	
+	sample_rate = atoi(var.value);
+
    var.key = "mame_current_turbo_button";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
@@ -224,7 +220,7 @@ void init_input_descriptors(void)
 }
 
 void retro_get_system_info(struct retro_system_info *info)
-{   	
+{
    memset(info, 0, sizeof(*info));
    info->library_name = "MAME 2010";
 #ifndef GIT_VERSION
@@ -232,7 +228,7 @@ void retro_get_system_info(struct retro_system_info *info)
 #endif
    info->library_version = "0.139" GIT_VERSION;
    info->valid_extensions = "zip|chd|7z";
-   info->need_fullpath = true;   
+   info->need_fullpath = true;
    info->block_extract = true;
 }
 
@@ -243,7 +239,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
    info->geometry.max_width    = 1024;
    info->geometry.max_height   = 768;
-	
+
    float display_ratio 	= set_par ? (vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe) : (vertical ? 3.0f / 4.0f : 4.0f / 3.0f);
    info->geometry.aspect_ratio = display_ratio;
 
@@ -303,7 +299,7 @@ void retro_init (void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
    {
-      /* If save directory is defined use it, 
+      /* If save directory is defined use it,
        * otherwise use system directory. */
       retro_save_directory = *save_dir ? save_dir : retro_system_directory;
 
@@ -311,7 +307,7 @@ void retro_init (void)
    else
    {
       /* make retro_save_directory the same,
-       * in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY 
+       * in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY
        * is not implemented by the frontend. */
       retro_save_directory=retro_system_directory;
    }
@@ -344,7 +340,7 @@ void retro_run (void)
 
 	retro_main_loop();
 	retro_poll_mame_input();
-	RLOOP=1;
+	RLOOP = 1;
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 	do_gl2d();
@@ -352,7 +348,7 @@ void retro_run (void)
 	if (draw_this_frame)
       		video_cb(videoBuffer,rtwi, rthe, topw << PITCH);
    	else
-      		video_cb(NULL,rtwi, rthe, topw << PITCH); 
+      		video_cb(NULL,rtwi, rthe, topw << PITCH);
 #endif
    turbo_state > turbo_delay ? turbo_state = 0 : turbo_state++;
 }
@@ -391,7 +387,8 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
    }
 }
 */
-bool retro_load_game(const struct retro_game_info *info) 
+
+bool retro_load_game(const struct retro_game_info *info)
 {
    char basename[128];
 #if 0
@@ -399,10 +396,10 @@ bool retro_load_game(const struct retro_game_info *info)
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
 #endif
 
-#ifndef M16B
-   enum retro_pixel_format fmt =RETRO_PIXEL_FORMAT_XRGB8888;
-#else
+#ifdef M16B
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
+#else
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
 #endif
 
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
@@ -413,9 +410,9 @@ bool retro_load_game(const struct retro_game_info *info)
    check_variables();
 
 #ifdef M16B
-   memset(videoBuffer,0,1024*1024*2);
+   memset(videoBuffer, 0, 1024*1024*2);
 #else
-   memset(videoBuffer,0,1024*1024*2*2);
+   memset(videoBuffer, 0, 1024*1024*2*2);
 #endif
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
@@ -448,10 +445,10 @@ bool retro_load_game(const struct retro_game_info *info)
 
 void retro_unload_game(void)
 {
-	if(pauseg==0)
-		pauseg=-1;				
+	if(pauseg == 0)
+		pauseg = -1;
 
-	LOGI("Retro unload_game\n");	
+	LOGI("Retro unload_game\n");
 }
 
 // Stubs

@@ -2,6 +2,7 @@
 
 extern UINT8 *dooyong_txvideoram;
 extern UINT8 *paletteram_flytiger;
+extern int interrupt_line_1, interrupt_line_2;
 
 WRITE8_HANDLER( dooyong_bgscroll8_w );
 WRITE8_HANDLER( dooyong_fgscroll8_w );
