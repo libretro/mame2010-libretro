@@ -58,6 +58,7 @@ Flying Tiger
 #include "sound/okim6295.h"
 #include "includes/dooyong.h"
 
+int interrupt_line_1, interrupt_line_2;
 
 static WRITE8_HANDLER( lastday_bankswitch_w )
 {
@@ -74,6 +75,12 @@ static MACHINE_START( lastday )
 static WRITE8_HANDLER( flip_screen_w )
 {
 	flip_screen_set(space->machine, data);
+}
+
+static MACHINE_RESET( sound_ym2203 )
+{
+	interrupt_line_1 = 0;
+	interrupt_line_2 = 0;
 }
 
 /***************************************************************************
@@ -732,14 +739,27 @@ static GFXDECODE_START( popbingo )
 	GFXDECODE_ENTRY( "gfx2", 0, popbingo_tilelayout, 256,  1 )
 GFXDECODE_END
 
+
+static READ8_DEVICE_HANDLER( unk_r )
+{
+	return 0;
+}
+
 static void irqhandler(running_device *device, int irq)
 {
 	cputag_set_input_line(device->machine, "audiocpu", 0, irq ? ASSERT_LINE : CLEAR_LINE);
 }
 
-static READ8_DEVICE_HANDLER( unk_r )
+static void irqhandler_2203_1(running_device *device, int irq)
 {
-	return 0;
+	interrupt_line_1 = irq;
+	cputag_set_input_line(device->machine, "audiocpu", 0, (interrupt_line_1 | interrupt_line_2) ? ASSERT_LINE : CLEAR_LINE);
+}
+
+static void irqhandler_2203_2(running_device *device, int irq)
+{
+	interrupt_line_2 = irq;
+	cputag_set_input_line(device->machine, "audiocpu", 0, (interrupt_line_1 | interrupt_line_2) ? ASSERT_LINE : CLEAR_LINE);
 }
 
 static const ym2203_interface ym2203_interface_1 =
@@ -749,7 +769,7 @@ static const ym2203_interface ym2203_interface_1 =
 		AY8910_DEFAULT_LOADS,
 		DEVCB_HANDLER(unk_r), DEVCB_NULL, DEVCB_NULL, DEVCB_NULL
 	},
-	irqhandler
+	irqhandler_2203_1
 };
 
 static const ym2203_interface ym2203_interface_2 =
@@ -759,7 +779,7 @@ static const ym2203_interface ym2203_interface_2 =
 		AY8910_DEFAULT_LOADS,
 		DEVCB_HANDLER(unk_r), DEVCB_NULL, DEVCB_NULL, DEVCB_NULL
 	},
-	NULL
+	irqhandler_2203_2
 };
 
 static const ym2151_interface ym2151_config =
@@ -777,11 +797,11 @@ static const ym2151_interface ym2151_config =
 static MACHINE_DRIVER_START( sound_2203 )
 	MDRV_SPEAKER_STANDARD_MONO("mono")
 
-	MDRV_SOUND_ADD("ym1", YM2203, 4000000)
+	MDRV_SOUND_ADD("ym1", YM2203, 1500000)
 	MDRV_SOUND_CONFIG(ym2203_interface_1)
 	MDRV_SOUND_ROUTE(ALL_OUTPUTS, "mono", 0.40)
 
-	MDRV_SOUND_ADD("ym2", YM2203, 4000000)
+	MDRV_SOUND_ADD("ym2", YM2203, 1500000)
 	MDRV_SOUND_CONFIG(ym2203_interface_2)
 	MDRV_SOUND_ROUTE(ALL_OUTPUTS, "mono", 0.40)
 MACHINE_DRIVER_END
@@ -817,10 +837,11 @@ static MACHINE_DRIVER_START( lastday )
 	MDRV_CPU_PROGRAM_MAP(lastday_map)
 	MDRV_CPU_VBLANK_INT("screen", irq0_line_hold)
 
-	MDRV_CPU_ADD("audiocpu", Z80, 4000000)	/* ??? */
+	MDRV_CPU_ADD("audiocpu", Z80, 8000000)	/* ??? */
 	MDRV_CPU_PROGRAM_MAP(lastday_sound_map)
 
 	MDRV_MACHINE_START(lastday)
+	MDRV_MACHINE_RESET(sound_ym2203)
 
 	/* video hardware */
 	MDRV_VIDEO_ATTRIBUTES(VIDEO_BUFFERS_SPRITERAM)
@@ -840,7 +861,15 @@ static MACHINE_DRIVER_START( lastday )
 	MDRV_VIDEO_UPDATE(lastday)
 
 	/* sound hardware */
-	MDRV_IMPORT_FROM( sound_2203 )
+	MDRV_SPEAKER_STANDARD_MONO("mono")
+
+	MDRV_SOUND_ADD("ym1", YM2203, 4000000)
+	MDRV_SOUND_CONFIG(ym2203_interface_1)
+	MDRV_SOUND_ROUTE(ALL_OUTPUTS, "mono", 0.40)
+
+	MDRV_SOUND_ADD("ym2", YM2203, 4000000)
+	MDRV_SOUND_CONFIG(ym2203_interface_2)
+	MDRV_SOUND_ROUTE(ALL_OUTPUTS, "mono", 0.40)
 MACHINE_DRIVER_END
 
 static MACHINE_DRIVER_START( gulfstrm )
@@ -850,10 +879,11 @@ static MACHINE_DRIVER_START( gulfstrm )
 	MDRV_CPU_PROGRAM_MAP(gulfstrm_map)
 	MDRV_CPU_VBLANK_INT("screen", irq0_line_hold)
 
-	MDRV_CPU_ADD("audiocpu", Z80, 4000000)	/* ??? */
+	MDRV_CPU_ADD("audiocpu", Z80, 8000000)	/* ??? */
 	MDRV_CPU_PROGRAM_MAP(lastday_sound_map)
 
 	MDRV_MACHINE_START(lastday)
+	MDRV_MACHINE_RESET(sound_ym2203)
 
 	/* video hardware */
 	MDRV_VIDEO_ATTRIBUTES(VIDEO_BUFFERS_SPRITERAM)
@@ -883,10 +913,11 @@ static MACHINE_DRIVER_START( pollux )
 	MDRV_CPU_PROGRAM_MAP(pollux_map)
 	MDRV_CPU_VBLANK_INT("screen", irq0_line_hold)
 
-	MDRV_CPU_ADD("audiocpu", Z80, 4000000)	/* ??? */
+	MDRV_CPU_ADD("audiocpu", Z80, 8000000)	/* ??? */
 	MDRV_CPU_PROGRAM_MAP(pollux_sound_map)
 
 	MDRV_MACHINE_START(lastday)
+	MDRV_MACHINE_RESET(sound_ym2203)
 
 	/* video hardware */
 	MDRV_VIDEO_ATTRIBUTES(VIDEO_BUFFERS_SPRITERAM)
@@ -1844,11 +1875,11 @@ ROM_END
 
 GAME( 1990, lastday,  0,        lastday,  lastday,  0, ROT270, "Dooyong",  "The Last Day (set 1)", GAME_SUPPORTS_SAVE )
 GAME( 1990, lastdaya, lastday,  lastday,  lastday,  0, ROT270, "Dooyong",  "The Last Day (set 2)", GAME_SUPPORTS_SAVE )
-GAME( 1991, gulfstrm, 0,        gulfstrm, gulfstrm, 0, ROT270, "Dooyong",  "Gulf Storm",           GAME_IMPERFECT_SOUND | GAME_SUPPORTS_SAVE )
-GAME( 1991, gulfstrmm,gulfstrm, gulfstrm, gulfstrm, 0, ROT270, "Dooyong (Media Shoji license)", "Gulf Storm (Media Shoji)", GAME_IMPERFECT_SOUND | GAME_SUPPORTS_SAVE )
-GAME( 1991, pollux,   0,        pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 1)",       GAME_IMPERFECT_SOUND | GAME_SUPPORTS_SAVE )
-GAME( 1991, polluxa,  pollux,   pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 2)",       GAME_IMPERFECT_SOUND | GAME_SUPPORTS_SAVE )
-GAME( 1991, polluxa2, pollux,   pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 3)",       GAME_IMPERFECT_SOUND | GAME_SUPPORTS_SAVE ) /* Original Dooyong Board distributed by TCH */
+GAME( 1991, gulfstrm, 0,        gulfstrm, gulfstrm, 0, ROT270, "Dooyong",  "Gulf Storm",           GAME_SUPPORTS_SAVE )
+GAME( 1991, gulfstrmm,gulfstrm, gulfstrm, gulfstrm, 0, ROT270, "Dooyong (Media Shoji license)", "Gulf Storm (Media Shoji)", GAME_SUPPORTS_SAVE )
+GAME( 1991, pollux,   0,        pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 1)",       GAME_SUPPORTS_SAVE )
+GAME( 1991, polluxa,  pollux,   pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 2)",       GAME_SUPPORTS_SAVE )
+GAME( 1991, polluxa2, pollux,   pollux,   pollux,   0, ROT270, "Dooyong",  "Pollux (set 3)",       GAME_SUPPORTS_SAVE ) /* Original Dooyong Board distributed by TCH */
 GAME( 1992, flytiger, 0,        flytiger, flytiger, 0, ROT270, "Dooyong",  "Flying Tiger",         GAME_IMPERFECT_GRAPHICS | GAME_SUPPORTS_SAVE )
 GAME( 1993, bluehawk, 0,        bluehawk, bluehawk, 0, ROT270, "Dooyong",  "Blue Hawk",            GAME_SUPPORTS_SAVE )
 GAME( 1993, bluehawkn,bluehawk, bluehawk, bluehawk, 0, ROT270, "Dooyong (NTC license)", "Blue Hawk (NTC)", GAME_SUPPORTS_SAVE )
