@@ -81,6 +81,9 @@ CCOMFLAGS  += -D__LIBRETRO__
 fpic := 
 ALIGNED = 0
 
+# If X86_SH2DRC = 1 , X86-SH2 dynamic recompile code is enabled at compile time, and if X86_SH2DRC = 0 , it is not used.
+X86_SH2DRC = 1
+
 ifeq ($(VRENDER),opengl)  
 	PLATCFLAGS += -DHAVE_OPENGL
 	CCOMFLAGS  += -DHAVE_OPENGL
@@ -288,6 +291,7 @@ else ifneq (,$(findstring armv,$(platform)))
    CC = g++
    LDFLAGS +=  $(SHARED)
    ARM_ENABLED = 1
+   X86_SH2DRC = 0
 ifneq (,$(findstring cortexa8,$(platform)))
    CCOMFLAGS += -marm -mcpu=cortex-a8
    ASFLAGS += -mcpu=cortex-a8
@@ -682,6 +686,10 @@ $(EMULATOR): $(OBJECTS)
 
 ifeq ($(ARM_ENABLED), 1)
 CFLAGS += -DARM_ENABLED
+endif
+
+ifeq ($(X86_SH2DRC), 0)
+CFLAGS += -DDISABLE_SH2DRC
 endif
 
 $(OBJ)/%.o: $(CORE_DIR)/src/%.c | $(OSPREBUILD)
