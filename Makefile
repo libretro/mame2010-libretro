@@ -283,6 +283,28 @@ else ifeq ($(platform), wii)
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
 
+# Raspberry Pi 2/3
+else ifneq (,$(findstring rpi,$(platform)))
+   CC = g++
+   CC_AS = gcc
+   AR = @ar
+   NATIVELD = g++
+   LD = g++
+   TARGETLIB := $(TARGET_NAME)_libretro.so
+   SHARED := -shared -Wl,--no-undefined
+   fpic = -fPIC
+   LDFLAGS += $(SHARED)
+   LIBS += -lstdc++ -lpthread
+   CCOMFLAGS += -fomit-frame-pointer -ffast-math -fsigned-char
+   ARM_ENABLED = 1
+   X86_SH2DRC = 0
+
+   ifneq (,$(findstring rpi2, $(platform)))
+	CCOMFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+   else ifneq (,$(findstring rpi3, $(platform)))
+	CCOMFLAGS += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+   endif
+
 # ARM
 else ifneq (,$(findstring armv,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro.so
