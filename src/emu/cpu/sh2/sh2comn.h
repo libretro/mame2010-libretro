@@ -11,8 +11,9 @@
 #ifndef __SH2COMN_H__
 #define __SH2COMN_H__
 
-
-#define USE_SH2DRC
+#if !defined(DISABLE_SH2DRC)
+	#define USE_SH2DRC
+#endif
 
 #ifdef USE_SH2DRC
 #include "cpu/drcfe.h"

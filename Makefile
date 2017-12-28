@@ -81,6 +81,9 @@ CCOMFLAGS  += -D__LIBRETRO__
 fpic := 
 ALIGNED = 0
 
+# If X86_SH2DRC = 1 , X86-SH2 dynamic recompile code is enabled at compile time, and if X86_SH2DRC = 0 , it is not used.
+X86_SH2DRC = 1
+
 ifeq ($(VRENDER),opengl)  
 	PLATCFLAGS += -DHAVE_OPENGL
 	CCOMFLAGS  += -DHAVE_OPENGL
@@ -280,6 +283,28 @@ else ifeq ($(platform), wii)
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
 
+# Raspberry Pi 2/3
+else ifneq (,$(findstring rpi,$(platform)))
+   CC = g++
+   CC_AS = gcc
+   AR = @ar
+   NATIVELD = g++
+   LD = g++
+   TARGETLIB := $(TARGET_NAME)_libretro.so
+   SHARED := -shared -Wl,--no-undefined
+   fpic = -fPIC
+   LDFLAGS += $(SHARED)
+   LIBS += -lstdc++ -lpthread
+   CCOMFLAGS += -fomit-frame-pointer -ffast-math -fsigned-char
+   ARM_ENABLED = 1
+   X86_SH2DRC = 0
+
+   ifneq (,$(findstring rpi2, $(platform)))
+	CCOMFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+   else ifneq (,$(findstring rpi3, $(platform)))
+	CCOMFLAGS += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
+   endif
+
 # ARM
 else ifneq (,$(findstring armv,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro.so
@@ -288,6 +313,7 @@ else ifneq (,$(findstring armv,$(platform)))
    CC = g++
    LDFLAGS +=  $(SHARED)
    ARM_ENABLED = 1
+   X86_SH2DRC = 0
 ifneq (,$(findstring cortexa8,$(platform)))
    CCOMFLAGS += -marm -mcpu=cortex-a8
    ASFLAGS += -mcpu=cortex-a8
@@ -682,6 +708,10 @@ $(EMULATOR): $(OBJECTS)
 
 ifeq ($(ARM_ENABLED), 1)
 CFLAGS += -DARM_ENABLED
+endif
+
+ifeq ($(X86_SH2DRC), 0)
+CFLAGS += -DDISABLE_SH2DRC
 endif
 
 $(OBJ)/%.o: $(CORE_DIR)/src/%.c | $(OSPREBUILD)
