@@ -338,8 +338,9 @@ void retro_run (void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
 
-	retro_main_loop();
 	retro_poll_mame_input();
+	retro_main_loop();
+
 	RLOOP = 1;
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
