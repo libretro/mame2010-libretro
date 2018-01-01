@@ -155,6 +155,76 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 #define input_device_item_add_p2(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
 
 #define input_device_item_add_kbd(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
+//
+#define TEKKEN_LAYOUT	(core_stricmp(machine->gamedrv->name, "tekken") == 0) || (core_stricmp(machine->gamedrv->parent, "tekken") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "tekken2") == 0) || (core_stricmp(machine->gamedrv->parent, "tekken2") == 0)
+
+#define SOULEDGE_LAYOUT	(core_stricmp(machine->gamedrv->name, "souledge") == 0) || (core_stricmp(machine->gamedrv->parent, "souledge") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "soulclbr") == 0) || (core_stricmp(machine->gamedrv->parent, "soulclbr") == 0)
+
+#define DOA_LAYOUT	(core_stricmp(machine->gamedrv->name, "doapp") == 0)
+
+#define VF_LAYOUT	(core_stricmp(machine->gamedrv->name, "vf") == 0) || (core_stricmp(machine->gamedrv->parent, "vf") == 0)
+
+#define EHRGEIZ_LAYOUT	(core_stricmp(machine->gamedrv->name, "ehrgeiz") == 0) || (core_stricmp(machine->gamedrv->parent, "ehrgeiz") == 0)
+
+#define TS2_LAYOUT	(core_stricmp(machine->gamedrv->name, "ts2") == 0) || (core_stricmp(machine->gamedrv->parent, "ts2") == 0)
+
+#define SF_LAYOUT	(core_stricmp(machine->gamedrv->name, "dstlk") == 0) || (core_stricmp(machine->gamedrv->parent, "dstlk") == 0) || (core_stricmp(machine->gamedrv->name, "hsf2") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "hsf2") == 0) || (core_stricmp(machine->gamedrv->name, "msh") == 0) || (core_stricmp(machine->gamedrv->parent, "msh") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "mshvsf") == 0) || (core_stricmp(machine->gamedrv->parent, "mshvsf") == 0) || (core_stricmp(machine->gamedrv->name, "mvsc") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mvsc") == 0) || (core_stricmp(machine->gamedrv->name, "nwarr") == 0) || (core_stricmp(machine->gamedrv->parent, "nwarr") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "rvschool") == 0) || (core_stricmp(machine->gamedrv->parent, "rvschool") == 0) || (core_stricmp(machine->gamedrv->name, "sf2") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "sf2") == 0) || (core_stricmp(machine->gamedrv->name, "sf2ce") == 0) || (core_stricmp(machine->gamedrv->parent, "sf2ce") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "sf2hf") == 0) || (core_stricmp(machine->gamedrv->parent, "sf2hf") == 0) || (core_stricmp(machine->gamedrv->name, "sfa") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "sfa") == 0) || (core_stricmp(machine->gamedrv->name, "sfa2") == 0) || (core_stricmp(machine->gamedrv->parent, "sfa2") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "sfa3") == 0) || (core_stricmp(machine->gamedrv->parent, "sfa3") == 0) || (core_stricmp(machine->gamedrv->name, "sfex") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "sfex") == 0) || (core_stricmp(machine->gamedrv->name, "sfex2") == 0) || (core_stricmp(machine->gamedrv->parent, "sfex2") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "sfex2p") == 0) || (core_stricmp(machine->gamedrv->parent, "sfex2p") == 0) || (core_stricmp(machine->gamedrv->name, "sfexp") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "sfexp") == 0) || (core_stricmp(machine->gamedrv->name, "sfiii") == 0) || (core_stricmp(machine->gamedrv->parent, "sfiii") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "sfiii2") == 0) || (core_stricmp(machine->gamedrv->parent, "sfiii2") == 0) || (core_stricmp(machine->gamedrv->name, "sfiii3") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "sfiii3") == 0) || (core_stricmp(machine->gamedrv->name, "sftm") == 0) || (core_stricmp(machine->gamedrv->parent, "sftm") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "ssf2") == 0) || (core_stricmp(machine->gamedrv->parent, "ssf2") == 0) || (core_stricmp(machine->gamedrv->name, "ssf2t") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "ssf2t") == 0) || (core_stricmp(machine->gamedrv->name, "starglad") == 0) || (core_stricmp(machine->gamedrv->parent, "starglad") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "vsav") == 0) || (core_stricmp(machine->gamedrv->parent, "vsav") == 0) || (core_stricmp(machine->gamedrv->name, "vsav2") == 0) || \
+			(core_stricmp(machine->gamedrv->parent, "vsav2") == 0) || (core_stricmp(machine->gamedrv->name, "xmcota") == 0) || (core_stricmp(machine->gamedrv->parent, "xmcota") == 0) || \
+			(core_stricmp(machine->gamedrv->name, "xmvsf") == 0) || (core_stricmp(machine->gamedrv->parent, "xmvsf") == 0)
+
+#define NEOGEO_LAYOUT	(core_stricmp(machine->gamedrv->parent, "aof") == 0) || (core_stricmp(machine->gamedrv->parent, "aof2") == 0) || (core_stricmp(machine->gamedrv->parent, "aof3") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "breakers") == 0) || (core_stricmp(machine->gamedrv->parent, "breakrev") == 0) || (core_stricmp(machine->gamedrv->parent, "doubledr") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "fatfursp") == 0) || (core_stricmp(machine->gamedrv->parent, "fatfury1") == 0) || (core_stricmp(machine->gamedrv->parent, "fatfury2") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "fatfury3") == 0) || (core_stricmp(machine->gamedrv->parent, "fightfev") == 0) || (core_stricmp(machine->gamedrv->parent, "galaxyfg") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "garou") == 0) || (core_stricmp(machine->gamedrv->parent, "gowcaizr") == 0) || (core_stricmp(machine->gamedrv->parent, "kabukikl") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "kizuna") == 0) || (core_stricmp(machine->gamedrv->parent, "kof94") == 0) || (core_stricmp(machine->gamedrv->parent, "kof95") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "kof96") == 0) || (core_stricmp(machine->gamedrv->parent, "kof97") == 0) || (core_stricmp(machine->gamedrv->parent, "kof98") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "kof99") == 0) || (core_stricmp(machine->gamedrv->parent, "kof2000") == 0) || (core_stricmp(machine->gamedrv->parent, "kof2001") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "kof2002") == 0) || (core_stricmp(machine->gamedrv->parent, "kof2003") == 0) || (core_stricmp(machine->gamedrv->parent, "lastblad") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "lastbld2") == 0) || (core_stricmp(machine->gamedrv->parent, "lresort") == 0) || (core_stricmp(machine->gamedrv->parent, "matrim") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mslug") == 0) || (core_stricmp(machine->gamedrv->parent, "mslug2") == 0) || (core_stricmp(machine->gamedrv->parent, "mslug3") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mslug4") == 0) || (core_stricmp(machine->gamedrv->parent, "mslug5") == 0) || (core_stricmp(machine->gamedrv->parent, "rbff1") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mslugx") == 0) || (core_stricmp(machine->gamedrv->parent, "neogeo") == 0) ||(core_stricmp(machine->gamedrv->parent, "ninjamas") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "rbff2") == 0) || (core_stricmp(machine->gamedrv->parent, "rbffspec") == 0) || (core_stricmp(machine->gamedrv->parent, "rotd") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "samsh5sp") == 0) || (core_stricmp(machine->gamedrv->parent, "samsho") == 0) || (core_stricmp(machine->gamedrv->parent, "samsho2") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "samsho3") == 0) || (core_stricmp(machine->gamedrv->parent, "samsho4") == 0) || (core_stricmp(machine->gamedrv->parent, "samsho5") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "savagere") == 0) || (core_stricmp(machine->gamedrv->parent, "sengoku3") == 0) || (core_stricmp(machine->gamedrv->parent, "svc") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "viewpoin") == 0) || (core_stricmp(machine->gamedrv->parent, "wakuwak7") == 0) || (core_stricmp(machine->gamedrv->parent, "wh1") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "wh2") == 0) || (core_stricmp(machine->gamedrv->parent, "wh2j") == 0) || (core_stricmp(machine->gamedrv->parent, "whp") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "karnovr") == 0)
+
+#define KINST_LAYOUT	(core_stricmp(machine->gamedrv->name, "kinst") == 0) || (core_stricmp(machine->gamedrv->parent, "kinst") == 0)
+
+#define KINST2_LAYOUT	(core_stricmp(machine->gamedrv->name, "kinst2") == 0) || (core_stricmp(machine->gamedrv->parent, "kinst2") == 0)
+
+#define TEKKEN3_LAYOUT	(core_stricmp(machine->gamedrv->name, "tektagt") == 0) || (core_stricmp(machine->gamedrv->parent, "tektagt") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "tekken3") == 0) || (core_stricmp(machine->gamedrv->parent, "tekken3") == 0)
+
+#define MK_LAYOUT	(core_stricmp(machine->gamedrv->name, "mk") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mk") == 0) || (core_stricmp(machine->gamedrv->name, "mk2") == 0) || \
+         		(core_stricmp(machine->gamedrv->parent, "mk2") == 0) || (core_stricmp(machine->gamedrv->name, "mk3") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "umk3") == 0) || (core_stricmp(machine->gamedrv->parent, "umk3") == 0) || \
+         		(core_stricmp(machine->gamedrv->name, "wwfmania") == 0) || (core_stricmp(machine->gamedrv->parent, "wwfmania") == 0)
+
+#define ECOFGT_LAYOUT	(core_stricmp(machine->gamedrv->name, "ecofghtr") == 0) || (core_stricmp(machine->gamedrv->parent, "ecofghtr") == 0)
 
 static void initInput(running_machine* machine)
 {
@@ -255,362 +325,204 @@ static void initInput(running_machine* machine)
 	input_device_item_add_p1(P1_device, "P1 JoyL", &P1_state[KEY_JOYSTICK_L], ITEM_ID_LEFT, pad1_get_state);
 	input_device_item_add_p1(P1_device, "P1 JoyR", &P1_state[KEY_JOYSTICK_R], ITEM_ID_RIGHT, pad1_get_state);
 
-   if ((core_stricmp(machine->gamedrv->name, "tekken") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "tekken") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "tekken2") == 0)
-         )
-   {
-      /* Tekken 1/2 */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LSHIFT, pad1_get_state);
+	if (TEKKEN_LAYOUT)	/* Tekken 1/2 */
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LSHIFT, pad1_get_state);
 
-      input_device_item_add_p1(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_W, pad2_get_state);
-   }
-   else
-   if ((core_stricmp(machine->gamedrv->name, "souledge") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "souledge") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "soulclbr") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "soulclbr") == 0)
+      		input_device_item_add_p1(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p1(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p1(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p1(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_W, pad2_get_state);
+   	}
+   	else      /* Soul Edge / Soul Calibur */
+	if (SOULEDGE_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
 
-         )
-   {
-      /* Soul Edge/Soul Calibur */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
+   	}
+   	else      /* Dead or Alive++ */
+	if (DOA_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "doapp") == 0)
-         )
-   {
-      /* Dead or Alive++ */
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+   	}
+   	else      /* Virtua Fighter */
+	if (VF_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "vf") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "vf") == 0)
-         )
-   {
-      /* Virtua Fighter */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
+   	}
+  	else      /* Ehrgeiz */
+	if (EHRGEIZ_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
-   }
-  else
-   if (
-         (core_stricmp(machine->gamedrv->name, "ehrgeiz") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "ehrgeiz") == 0)
-         )
-   {
-      /* Ehrgeiz */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_Q, pad2_get_state);
+   	}
+   	else      /* Toshinden 2 */
+	if (TS2_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_Q, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "ts2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "ts2") == 0)
-         )
-   {
-      /* Toshinden 2 */
-      input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
+   	}
+   	else      /* Capcom 6-button fighting games */
+	if (SF_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "dstlk") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "dstlk") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "hsf2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "hsf2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "msh") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "msh") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mshvsf") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mshvsf") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mvsc") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mvsc") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "nwarr") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "nwarr") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "rvschool") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "rvschool") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sf2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sf2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sf2ce") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sf2ce") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sf2hf") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sf2hf") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfa") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfa") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfa2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfa2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfa3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfa3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfex") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfex") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfex2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfex2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfex2p") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfex2p") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfexp") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfexp") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfiii") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfiii") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfiii2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfiii2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sfiii3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sfiii3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "sftm") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sftm") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "ssf2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "ssf2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "ssf2t") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "ssf2t") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "starglad") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "starglad") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "vsav") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "vsav") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "vsav2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "vsav2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "xmcota") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "xmcota") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "xmvsf") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "xmvsf") == 0)
-      )
-   {
-      /* Capcom CPS2 6-button fighting games */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
+   	}
+   	else      /* Neo Geo */
+	if (NEOGEO_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LSHIFT, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->parent, "aof") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "aof2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "aof3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "breakers") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "breakrev") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "doubledr") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "fatfursp") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "fatfury1") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "fatfury2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "fatfury3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "fightfev") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "galaxyfg") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "garou") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "gowcaizr") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kabukikl") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "karnovr") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kizuna") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof94") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof95") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof96") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof97") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof98") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof99") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof2000") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof2001") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof2002") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kof2003") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "lastblad") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "lastbld2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "lresort") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "matrim") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslug") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslug2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslug3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslug4") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslug5") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mslugx") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "neogeo") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "ninjamas") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "rbff1") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "rbff2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "rbffspec") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "rotd") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsh5sp") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsho") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsho2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsho3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsho4") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "samsho5") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "savagere") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "sengoku3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "svc") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "viewpoin") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "wakuwak7") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "wh1") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "wh2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "wh2j") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "whp") == 0)
-      )
-   {
-      /* Neo Geo */
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_W, pad2_get_state);
+   	}
+   	else      /* Killer Instinct 1 */
+	if (KINST_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_W, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "kinst") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kinst") == 0)
-      )
-   {
-      /* Killer Instinct 1 */
-      input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
+   	}
+   	else      /* Killer Instinct 2 */
+	if (KINST2_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "kinst2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "kinst2") == 0)
-      )
-   {
-      /* Killer Instinct 2 */
-      input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_6], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_2], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_1], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
+   	}
+   	else      /* Tekken 3 / Tekken Tag Tournament */
+	if (TEKKEN3_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_6], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_2], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_1], ITEM_ID_K, pad2_get_state);
-   }
-   else
-   if ((core_stricmp(machine->gamedrv->name, "tektagt") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "tektagt") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "tekken3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "tekken3") == 0)
-         )
-   {
-      /* Tekken 3/Tekken Tag Tournament */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
+   	}
+   	else      /* Mortal Kombat 1/2/3 / Ultimate/WWF: Wrestlemania */
+	if (MK_LAYOUT)
+   	{
+      		input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
-   }
-   else
-   if (
-         (core_stricmp(machine->gamedrv->name, "mk") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mk") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk2") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "mk2") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "mk3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "umk3") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "umk3") == 0) ||
-         (core_stricmp(machine->gamedrv->name, "wwfmania") == 0) ||
-         (core_stricmp(machine->gamedrv->parent, "wwfmania") == 0)
-      )
-   {
-      /* Mortal Kombat 1/2/3/Ultimate/WWF: Wrestlemania */
-      input_device_item_add_p1(P1_device, "RetroPad P1 Y", &P1_state[KEY_BUTTON_4], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 L", &P1_state[KEY_BUTTON_5], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 X", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "RetroPad P1 R", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
+   	}
+	else	/* Capcom Eco Fighters */
+	if (ECOFGT_LAYOUT)
+	{
+      		input_device_item_add_p1(P1_device, "P1 B1", &P1_state[KEY_BUTTON_5], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B2", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B3", &P1_state[KEY_BUTTON_6], ITEM_ID_SPACE, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 L", &P2_state[KEY_BUTTON_5], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "RetroPad P2 R", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
-   }
-   else
-   {
-      /* Default config */
-      input_device_item_add_p1(P1_device, "P1 B1", &P1_state[KEY_BUTTON_1], ITEM_ID_LCONTROL, pad1_get_state);
-      input_device_item_add_p1(P1_device, "P1 B2", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "P1 B3", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
-      input_device_item_add_p1(P1_device, "P1 B4", &P1_state[KEY_BUTTON_4], ITEM_ID_LSHIFT, pad1_get_state);
-      input_device_item_add_p1(P1_device, "P1 B5", &P1_state[KEY_BUTTON_5], ITEM_ID_Z, pad1_get_state);
-      input_device_item_add_p1(P1_device, "P1 B6", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B1", &P2_state[KEY_BUTTON_5], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B2", &P2_state[KEY_BUTTON_2], ITEM_ID_S, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B3", &P2_state[KEY_BUTTON_6], ITEM_ID_Q, pad2_get_state);
+	}
+   	else      /* Default config */
+   	{
+      		input_device_item_add_p1(P1_device, "P1 B1", &P1_state[KEY_BUTTON_1], ITEM_ID_LCONTROL, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B2", &P1_state[KEY_BUTTON_2], ITEM_ID_LALT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B3", &P1_state[KEY_BUTTON_3], ITEM_ID_SPACE, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B4", &P1_state[KEY_BUTTON_4], ITEM_ID_LSHIFT, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B5", &P1_state[KEY_BUTTON_5], ITEM_ID_Z, pad1_get_state);
+      		input_device_item_add_p1(P1_device, "P1 B6", &P1_state[KEY_BUTTON_6], ITEM_ID_X, pad1_get_state);
 
-      input_device_item_add_p2(P2_device, "P2 B1", &P2_state[KEY_BUTTON_1], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p2(P2_device, "P2 B2", &P2_state[KEY_BUTTON_2], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p2(P2_device, "P2 B3", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p2(P2_device, "P2 B4", &P2_state[KEY_BUTTON_4], ITEM_ID_W, pad2_get_state);
-      input_device_item_add_p2(P2_device, "P2 B5", &P2_state[KEY_BUTTON_5], ITEM_ID_I, pad2_get_state);
-      input_device_item_add_p2(P2_device, "P2 B6", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
-   }
+      		input_device_item_add_p2(P2_device, "P2 B1", &P2_state[KEY_BUTTON_1], ITEM_ID_A, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B2", &P2_state[KEY_BUTTON_2], ITEM_ID_S, pad2_get_state);
+     	 	input_device_item_add_p2(P2_device, "P2 B3", &P2_state[KEY_BUTTON_3], ITEM_ID_Q, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B4", &P2_state[KEY_BUTTON_4], ITEM_ID_W, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B5", &P2_state[KEY_BUTTON_5], ITEM_ID_I, pad2_get_state);
+      		input_device_item_add_p2(P2_device, "P2 B6", &P2_state[KEY_BUTTON_6], ITEM_ID_K, pad2_get_state);
+   	}
 
 	retrokbd_device = input_device_add(machine,DEVICE_CLASS_KEYBOARD,"Retrokdb",NULL);
 
@@ -630,6 +542,19 @@ static void initInput(running_machine* machine)
    }while(ktable[i].retro_key_name!=-1);
 
 }
+#undef TEKKEN_LAYOUT
+#undef SOULEDGE_LAYOUT
+#undef DOA_LAYOUT
+#undef VF_LAYOUT
+#undef EHRGEIZ_LAYOUT
+#undef TS2_LAYOUT
+#undef SF_LAYOUT
+#undef NEOGEO_LAYOUT
+#undef KINST_LAYOUT
+#undef KINST2_LAYOUT
+#undef TEKKEN3_LAYOUT
+#undef MK_LAYOUT
+#undef ECOFGT_LAYOUT
 
 void retro_poll_mame_input()
 {
