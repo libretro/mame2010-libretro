@@ -64,7 +64,7 @@ static void draw_chars( running_machine *machine, bitmap_t *bitmap, const rectan
 
 		col = state->colorram[((sy & 0x1c) << 3) + sx];
 
-		if ((col & 0x10) != priority)
+		if (priority & ~col)
 			continue;
 
 		scroll = ~state->scrollram[sx];
@@ -95,7 +95,7 @@ VIDEO_UPDATE( ambush )
 
 	bitmap_fill(bitmap, cliprect, 0);
 
-	/* Draw the background priority characters */
+	/* Draw the characters */
 	draw_chars(screen->machine, bitmap, cliprect, 0x00);
 
 	/* Draw the sprites. */
@@ -154,7 +154,7 @@ VIDEO_UPDATE( ambush )
 	}
 
 
-	/* Draw the foreground priority characters */
+	/* Draw the foreground priority characters over the sprites */
 	draw_chars(screen->machine, bitmap, cliprect, 0x10);
 	return 0;
 }
