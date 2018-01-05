@@ -2,7 +2,7 @@
 
 
 void osd_exit(running_machine &machine)
-{	
+{
    write_log("osd_exit called \n");
 
    if (our_target != NULL)
@@ -38,7 +38,7 @@ void osd_init(running_machine* machine)
 
    prep_retro_rotation(gamRot);
    machine->sample_rate = sample_rate;	/* Override original value */
-	
+
    write_log("osd init done\n");
 }
 
@@ -70,27 +70,62 @@ void osd_update(running_machine *machine,int skip_redraw)
       // get the minimum width/height for the current layout
       int minwidth, minheight;
 
-      if(videoapproach1_enable==false){	     
+      if(videoapproach1_enable==false){
          render_target_get_minimum_size(our_target,&minwidth, &minheight);
       }
       else{
          minwidth=1024;minheight=768;
       }
 
-      if (FirstTimeUpdate == 2)
+      if (adjust_opt[0])
       {
-         FirstTimeUpdate++;
-	 refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
+		adjust_opt[0] = 0;
+
+		if (adjust_opt[1])
+		{
+			adjust_opt[1] = 0;
+			refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
+			update_geometry();
+		}
+
+		if (adjust_opt[2] || adjust_opt[3] || adjust_opt[4])
+		{
+			screen_device *screen = screen_first(*machine);
+			render_container *container = render_container_get_screen(screen);
+			render_container_user_settings settings;
+			render_container_get_user_settings(container, &settings);
+
+			if (adjust_opt[2])
+			{
+				adjust_opt[2] = 0;
+				settings.brightness = arroffset[0] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+
+			if (adjust_opt[3])
+			{
+				adjust_opt[3] = 0;
+				settings.contrast = arroffset[1] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+
+			if (adjust_opt[4])
+			{
+				adjust_opt[4] = 0;
+				settings.gamma = arroffset[2] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+		}
       }
 
       if (FirstTimeUpdate == 1) {
 
-         FirstTimeUpdate++;			
+         FirstTimeUpdate++;
          write_log("game screen w=%i h=%i  rowPixels=%i\n", minwidth, minheight,minwidth );
 
          rtwi=minwidth;
          rthe=minheight;
-         topw=minwidth;			
+         topw=minwidth;
 
          int gamRot=0;
          orient  = (machine->gamedrv->flags & ORIENTATION_MASK);
@@ -164,6 +199,7 @@ void osd_update(running_machine *machine,int skip_redraw)
    } 
    else
       draw_this_frame = false;
+
    RLOOP=0;
 
    if(ui_ipt_pushchar!=-1)
@@ -171,12 +207,12 @@ void osd_update(running_machine *machine,int skip_redraw)
       ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
       ui_ipt_pushchar=-1;
    }
-}  
- 
+}
+
  //============================================================
 // osd_wait_for_debugger
 //============================================================
- 
+
 void osd_wait_for_debugger(running_device *device, int firststop)
 {
    // we don't have a debugger, so we just return here
@@ -189,7 +225,7 @@ void osd_update_audio_stream(running_machine *machine,short *buffer, int samples
 {
 	if(pauseg!=-1)audio_batch_cb(buffer, samples_this_frame);
 }
-  
+
 
 //============================================================
 //  set_mastervolume
@@ -211,4 +247,3 @@ void osd_customize_input_type_list(input_type_desc *typelist)
 	// default control mappings you want. It is quite possible
 	// you won't need to change a thing.
 }
- 
