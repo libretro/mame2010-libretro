@@ -53,6 +53,9 @@ void retro_set_environment(retro_environment_t cb)
       { "mame_current_turbo_delay", "Set autofire pulse speed; medium|slow|fast" },
       { "mame_current_frame_skip", "Set frameskip; 0|1|2|3|4|automatic" },
       { "mame_current_sample_rate", "Set sample rate (Restart); 48000Hz|44100Hz|32000Hz|22050Hz" },
+      { "mame_current_adj_brightness", "Set brightness; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+12%|+14%|+16%|+18%|+20%|-20%|-18%|-16%|-14%|-12%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
+      { "mame_current_adj_contrast", "Set contrast; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+12%|+14%|+16%|+18%|+20%|-20%|-18%|-16%|-14%|-12%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
+      { "mame_current_adj_gamma", "Set gamma; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+12%|+14%|+16%|+18%|+20%|-20%|-18%|-16%|-14%|-12%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
       { NULL, NULL },
    };
 
@@ -174,6 +177,48 @@ static void check_variables(void)
 		set_par = false;
    }
 
+   var.key = "mame_current_adj_brightness";
+   var.value = NULL;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+	float temp_value = arroffset[0];
+	if (!strcmp(var.value, "default"))
+		arroffset[0] = 0.0;
+	else
+		arroffset[0] = (float)atoi(var.value) / 100.0f;
+
+	if (temp_value != arroffset[0])
+		adjust_opt[0] = adjust_opt[2] = 1;
+   }
+
+   var.key = "mame_current_adj_contrast";
+   var.value = NULL;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+	float temp_value = arroffset[1];
+	if (!strcmp(var.value, "default"))
+		arroffset[1] = 0.0;
+	else
+		arroffset[1] = (float)atoi(var.value) / 100.0f;
+
+	if (temp_value != arroffset[1])
+		adjust_opt[0] = adjust_opt[3] = 1;
+   }
+
+   var.key = "mame_current_adj_gamma";
+   var.value = NULL;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+	float temp_value = arroffset[2];
+	if (!strcmp(var.value, "default"))
+		arroffset[2] = 0.0;
+	else
+		arroffset[2] = (float)atoi(var.value) / 100.0f;
+
+	if (temp_value != arroffset[2])
+		adjust_opt[0] = adjust_opt[4] = 1;
+   }
+
    if (tmp_ar != set_par)
 	update_geometry();
 }
@@ -261,8 +306,8 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 		}
 		common_factor = temp_height;
 	}
-	write_log("Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
-		  	vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, info->timing.fps, info->timing.sample_rate);
+	write_log("Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %.1f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
+			vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, info->timing.fps, info->timing.sample_rate);
 #endif
 }
 
@@ -440,6 +485,9 @@ bool retro_load_game(const struct retro_game_info *info)
    retro_load_ok  = true;
 
    video_set_frameskip(set_frame_skip);
+
+   for (int i = 0; i < 5; i++)
+	adjust_opt[i] = 1;
 
    return 1;
 }
