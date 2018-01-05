@@ -29,7 +29,6 @@ char g_rom_dir[1024];
    #define DSTSHIFT_R 11
    #define DSTSHIFT_G 5
    #define DSTSHIFT_B 0
-   #include "rendersw.c"
 #else
    #define FUNC_PREFIX(x) rgb888_##x
    #define PIXEL_TYPE UINT32
@@ -39,8 +38,8 @@ char g_rom_dir[1024];
    #define DSTSHIFT_R 16
    #define DSTSHIFT_G 8
    #define DSTSHIFT_B 0
-   #include "rendersw.c"
 #endif
+#include "rendersw.c"
 
 int mame_reset = -1;
 static int ui_ipt_pushchar=-1;
@@ -57,6 +56,8 @@ static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
 static unsigned sample_rate = 48000;
+static unsigned adjust_opt[5] = {0/*Enable/Disable*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
+static float arroffset[3] = {0/*For brightness*/, 0/*For contrast*/, 0/*For gamma*/};
 
 static void extract_basename(char *buf, const char *path, size_t size)
 {
