@@ -81,37 +81,35 @@ void osd_update(running_machine *machine,int skip_redraw)
       {
 		adjust_opt[0] = 0;
 
-		if (adjust_opt[1])
+		if (adjust_opt[2])
 		{
-			adjust_opt[1] = 0;
+			adjust_opt[2] = 0;
 			refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
 			update_geometry();
 		}
 
-		if (adjust_opt[2] || adjust_opt[3] || adjust_opt[4])
+		if ((adjust_opt[3] || adjust_opt[4] || adjust_opt[5]) && adjust_opt[1])
 		{
 			screen_device *screen = screen_first(*machine);
 			render_container *container = render_container_get_screen(screen);
 			render_container_user_settings settings;
 			render_container_get_user_settings(container, &settings);
 
-			if (adjust_opt[2])
-			{
-				adjust_opt[2] = 0;
-				settings.brightness = arroffset[0] + 1.0f;
-				render_container_set_user_settings(container, &settings);
-			}
-
 			if (adjust_opt[3])
 			{
 				adjust_opt[3] = 0;
-				settings.contrast = arroffset[1] + 1.0f;
+				settings.brightness = arroffset[0] + 1.0f;
 				render_container_set_user_settings(container, &settings);
 			}
-
 			if (adjust_opt[4])
 			{
 				adjust_opt[4] = 0;
+				settings.contrast = arroffset[1] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+			if (adjust_opt[5])
+			{
+				adjust_opt[5] = 0;
 				settings.gamma = arroffset[2] + 1.0f;
 				render_container_set_user_settings(container, &settings);
 			}
@@ -144,7 +142,7 @@ void osd_update(running_machine *machine,int skip_redraw)
          rthe=minheight;
          topw=minwidth;
 
-	 update_geometry();
+	 adjust_opt[0] = adjust_opt[2] = 1;
       }
 /*    No need
       if(videoapproach1_enable){
