@@ -56,7 +56,7 @@ static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
 static unsigned sample_rate = 48000;
-static unsigned adjust_opt[5] = {0/*Enable/Disable*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
+static unsigned adjust_opt[6] = {0/*Enable/Disable*/, 0/*Limit*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
 static float arroffset[3] = {0/*For brightness*/, 0/*For contrast*/, 0/*For gamma*/};
 
 static void extract_basename(char *buf, const char *path, size_t size)
