@@ -5,6 +5,9 @@
 !/.gitignore
 !/makefile
 !/*.md
+!/*.mri
+!/Makefile.tiny
+!/*.
 /cfg
 /diff
 /ini

@@ -2,7 +2,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
+#ifndef WIIU
 #include <sys/mman.h>
+#else
+#include <stdlib.h>
+#endif
 #include <signal.h>
 #ifdef MAME_DEBUG
 #include <unistd.h>
@@ -26,6 +30,8 @@ void *osd_alloc_executable(size_t size)
    return VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 #elif defined(__APPLE__)
    return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
+#elif defined(WIIU)
+	return malloc(size);
 #else
    return (void *)mmap(0, size, PROT_EXEC|PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, 0, 0);
 #endif
@@ -41,6 +47,8 @@ void osd_free_executable(void *ptr, size_t size)
 {
 #if defined(WIN32)
    VirtualFree(ptr, 0, MEM_RELEASE);
+#elif defined(WIIU)
+	free(ptr);
 #else
    munmap(ptr, size);
 #endif

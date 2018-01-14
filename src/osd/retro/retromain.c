@@ -138,8 +138,8 @@ static input_device *retrokbd_device; // KEYBD
 static input_device *mouse_device;    // MOUSE
 
 // state
-static UINT16 P1_state[KEY_TOTAL];
-static UINT16 P2_state[KEY_TOTAL];
+static UINT8 P1_state[KEY_TOTAL];
+static UINT8 P2_state[KEY_TOTAL];
 static UINT16 retrokbd_state[RETROK_LAST];
 static UINT16 retrokbd_state2[RETROK_LAST];
 
@@ -385,5 +385,6 @@ int mmain(int argc, const char *argv)
 
 	strcpy(gameName,argv);
 	result = executeGame(gameName);
+	if(result!=0)return -1;
 	return 1;
 }

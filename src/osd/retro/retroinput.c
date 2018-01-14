@@ -303,6 +303,7 @@ static void initInput(running_machine* machine)
 	P1_state[KEY_JOYSTICK_L] = 0;//RETRO_DEVICE_ID_JOYPAD_LEFT
 	P1_state[KEY_JOYSTICK_R] = 0;//RETRO_DEVICE_ID_JOYPAD_RIGHT
 
+
 	P2_state[KEY_F11]        = 0;/*RETRO_DEVICE_ID_JOYPAD_R3*/
 	P2_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
 	P2_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
@@ -319,8 +320,12 @@ static void initInput(running_machine* machine)
 	P2_state[KEY_JOYSTICK_D] = 0;//RETRO_DEVICE_ID_JOYPAD_DOWN
 	P2_state[KEY_JOYSTICK_L] = 0;//RETRO_DEVICE_ID_JOYPAD_LEFT
 	P2_state[KEY_JOYSTICK_R] = 0;//RETRO_DEVICE_ID_JOYPAD_RIGHT
-
+#ifdef WIIU
+	//FIXME: HACK WIIU GUI CONFIRM (ENTER) MAP TO R3
+	input_device_item_add_p2(P2_device, "F11", &P2_state[KEY_F11],ITEM_ID_ENTER/* ITEM_ID_F11*/, pad2_get_state);
+#else
 	input_device_item_add_p2(P2_device, "F11", &P2_state[KEY_F11], ITEM_ID_F11, pad2_get_state);
+#endif
 	input_device_item_add_p2(P2_device, "Tab", &P2_state[KEY_TAB], ITEM_ID_TAB, pad2_get_state);
 	input_device_item_add_p2(P2_device, "F3", &P2_state[KEY_F3], ITEM_ID_F3, pad2_get_state);
 	input_device_item_add_p2(P2_device, "F2", &P2_state[KEY_F2], ITEM_ID_F2, pad2_get_state);
@@ -330,8 +335,12 @@ static void initInput(running_machine* machine)
 	input_device_item_add_p2(P2_device, "P2 JoyD", &P2_state[KEY_JOYSTICK_D], ITEM_ID_F, pad2_get_state);
 	input_device_item_add_p2(P2_device, "P2 JoyL", &P2_state[KEY_JOYSTICK_L], ITEM_ID_D, pad2_get_state);
 	input_device_item_add_p2(P2_device, "P2 JoyR", &P2_state[KEY_JOYSTICK_R], ITEM_ID_G, pad2_get_state);
-
+#ifdef WIIU
+	//FIXME: HACK WIIU GUI CONFIRM (ENTER) MAP TO R3
+	input_device_item_add_p1(P1_device, "F11", &P1_state[KEY_F11],ITEM_ID_ENTER/* ITEM_ID_F11*/, pad1_get_state);
+#else
 	input_device_item_add_p1(P1_device, "F11", &P1_state[KEY_F11], ITEM_ID_F11, pad1_get_state);
+#endif
 	input_device_item_add_p1(P1_device, "Tab", &P1_state[KEY_TAB], ITEM_ID_TAB, pad1_get_state);
 	input_device_item_add_p1(P1_device, "F3", &P1_state[KEY_F3], ITEM_ID_F3, pad1_get_state);
 	input_device_item_add_p1(P1_device, "F2", &P1_state[KEY_F2], ITEM_ID_F2, pad1_get_state);

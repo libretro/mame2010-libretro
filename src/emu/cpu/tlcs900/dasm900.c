@@ -8,6 +8,9 @@ Toshiba TLCS-900/H disassembly
 #include "debugger.h"
 #include "tlcs900.h"
 
+#ifdef WIIU
+#undef _AND
+#endif
 
 enum e_mnemonics
 {

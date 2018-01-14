@@ -1471,7 +1471,9 @@ static void init_audio(running_device *device)
 /*-------------------------------------------------
     device start callback
 -------------------------------------------------*/
-
+#ifdef WIIU
+extern int laserdisc_started;
+#endif
 static DEVICE_START( laserdisc )
 {
 	const laserdisc_config *config = (const laserdisc_config *)downcast<const legacy_device_config_base &>(device->baseconfig()).inline_config();
@@ -1484,8 +1486,14 @@ static DEVICE_START( laserdisc )
 	ld->screen = downcast<screen_device *>(device->machine->device(config->screen));
 	assert(ld->screen != NULL);
 	if (!ld->screen->started())
-      throw device_missing_dependencies();
-
+#ifndef WIIU
+       throw device_missing_dependencies();
+#else
+	{
+		laserdisc_started=0;
+		return;
+	}else laserdisc_started=1;
+#endif
 	/* save a copy of the device pointer */
 	ld->device = device;
 

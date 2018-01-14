@@ -441,6 +441,7 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
 bool retro_load_game(const struct retro_game_info *info)
 {
    char basename[128];
+   int result;
 #if 0
    struct retro_keyboard_callback cb = { keyboard_cb };
    environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
@@ -485,7 +486,12 @@ bool retro_load_game(const struct retro_game_info *info)
    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
    strcpy(RPATH,info->path);
 
-   mmain(1,RPATH);
+   result=mmain(1,RPATH);
+   if(result!=1){
+        	printf("Error: mame return an error\n");
+		return 0;
+   } 
+
    retro_load_ok  = true;
 
    video_set_frameskip(set_frame_skip);

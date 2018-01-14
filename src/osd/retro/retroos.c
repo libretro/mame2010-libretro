@@ -4,13 +4,18 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
+#ifndef WIIU
 #include <sys/mman.h>
+#endif
 #include <sys/time.h>
 #endif
 
 #include <time.h>
 #include <sys/stat.h>
 
+#ifdef WIIU
+#include <features_cpu.h>
+#endif
 extern const char build_version[];
 const char build_version[] = "0.139 ("__DATE__")";
 
@@ -48,6 +53,17 @@ osd_ticks_t osd_ticks(void)
 
 	// call ourselves to get the first value
 	return osd_ticks();
+#elif defined(WIIU)
+    static osd_ticks_t start_sec = 0;
+    uint64_t secs;
+    uint64_t usecs;
+    int64_t time = cpu_features_get_time_usec();
+
+    secs  = time / 1000000;
+    usecs = time - (secs * 1000000); 
+    if (start_sec==0)
+      start_sec = secs;
+    return (secs - start_sec) * (osd_ticks_t) 1000000 + usecs;
 #else
    struct timeval    tp;
    static osd_ticks_t start_sec = 0;
@@ -101,6 +117,19 @@ void osd_sleep(osd_ticks_t duration)
 		Sleep(msec);
 		SetThreadPriority(current_thread, old_priority);
 	}
+#elif defined(WIIU)
+	UINT32 msec;
+
+	// convert to milliseconds, rounding down
+	msec = (UINT32)(duration * 1000 / osd_ticks_per_second());
+
+	// only sleep if at least 2 full milliseconds
+	if (msec >= 2)
+	{
+		// take a couple of msecs off the top for good measure
+		msec -= 2;
+		//usleep(msec*1000);
+	}
 #else
 	UINT32 msec;
 
@@ -137,6 +166,8 @@ int osd_num_processors(void)
 
 #if defined(_SC_NPROCESSORS_ONLN)
 	processors = sysconf(_SC_NPROCESSORS_ONLN);
+#elif defined(WIIU)
+	processors=3;
 #endif
 	return processors;
 	
