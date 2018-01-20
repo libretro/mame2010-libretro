@@ -263,7 +263,7 @@ static void initInput(running_machine* machine)
       }
    }
 
-   P1_device = input_device_add(machine, DEVICE_CLASS_KEYBOARD, "Pad1", NULL);	
+   P1_device = input_device_add(machine, DEVICE_CLASS_KEYBOARD, "Pad1", NULL);
    P2_device = input_device_add(machine, DEVICE_CLASS_KEYBOARD, "Pad2", NULL);
 
    if (P1_device == NULL)
@@ -639,11 +639,11 @@ void retro_poll_mame_input()
       }
    }
 
-   P1_state[KEY_F11]	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);	/* change : remap F11 to R3,the R2 button becomes available */
-   P1_state[KEY_TAB] 	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+   P1_state[KEY_F11]        = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);	/* change : remap F11 to R3,the R2 button becomes available */
+   P1_state[KEY_TAB]        = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
    P1_state[KEY_F2] 	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
-   P1_state[KEY_START] 	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
-   P1_state[KEY_COIN] 	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
+   P1_state[KEY_START]      = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+   P1_state[KEY_COIN]       = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
    P1_state[KEY_BUTTON_1]   = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
    P1_state[KEY_BUTTON_2]   = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
    P1_state[KEY_BUTTON_3]   = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
@@ -655,11 +655,11 @@ void retro_poll_mame_input()
    P1_state[KEY_JOYSTICK_L] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT);
    P1_state[KEY_JOYSTICK_R] = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT);
 
-   P2_state[KEY_F11] 	    = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
-   P2_state[KEY_TAB] 	    = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+   P2_state[KEY_F11]        = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
+   P2_state[KEY_TAB]        = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
    P2_state[KEY_F2] 	    = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
-   P2_state[KEY_START] 	    = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
-   P2_state[KEY_COIN] 	    = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
+   P2_state[KEY_START]      = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+   P2_state[KEY_COIN]       = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
    P2_state[KEY_BUTTON_1]   = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A);
    P2_state[KEY_BUTTON_2]   = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
    P2_state[KEY_BUTTON_3]   = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
