@@ -692,7 +692,7 @@ void retro_poll_mame_input()
             P1_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
          if (PLAYER2_PRESS(R2))
             P2_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
-            break;
+         break;
       case 4:
          if (PLAYER1_PRESS(R2))
             P1_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
