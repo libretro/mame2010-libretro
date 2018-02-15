@@ -1,3 +1,5 @@
+#include "retromapper.h"
+
 void retro_poll_mame_input();
 
 static int rtwi=320,rthe=240,topw=1024; // DEFAULT TEXW/TEXH/PITCH
