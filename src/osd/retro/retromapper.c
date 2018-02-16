@@ -262,6 +262,10 @@ void init_input_descriptors(void)
    struct retro_input_descriptor desc[] = {
       describe_buttons(0)
       describe_buttons(1)
+      describe_buttons(2)
+      describe_buttons(3)
+      describe_buttons(4)
+      describe_buttons(5)
       { 0, 0, 0, 0, NULL }
    };
 
