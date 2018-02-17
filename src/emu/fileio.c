@@ -133,7 +133,6 @@ static void fileio_exit(running_machine &machine)
 file_error mame_fopen(const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
 {
 	path_iterator iterator;
-    printf("\n\n\nmame_fopen searchpath: %s\n\n", searchpath);
 	path_iterator_init(&iterator, mame_options(), searchpath);
 	return fopen_internal(mame_options(), &iterator, filename, 0, openflags, file);
 }
