@@ -103,6 +103,8 @@
 #include <ctype.h>
 #include <time.h>
 
+#include "retromain.h"
+
 /* temporary: set this to 1 to enable the originally defined behavior that
    a field specified via PORT_MODIFY which intersects a previously-defined
    field completely wipes out the previous definition */
@@ -4399,7 +4401,7 @@ static time_t playback_init(running_machine *machine)
 		return 0;
 
 	/* open the playback file */
-	filerr = mame_fopen(SEARCHPATH_INPUTLOG, filename, OPEN_FLAG_READ, &portdata->playback_file);
+	filerr = mame_fopen(input_directory, filename, OPEN_FLAG_READ, &portdata->playback_file);
 	assert_always(filerr == FILERR_NONE, "Failed to open file for playback");
 
 	/* read the header and verify that it is a modern version; if not, print an error */
@@ -4597,7 +4599,7 @@ static void record_init(running_machine *machine)
 		return;
 
 	/* open the record file  */
-	filerr = mame_fopen(SEARCHPATH_INPUTLOG, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &portdata->record_file);
+	filerr = mame_fopen(input_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &portdata->record_file);
 	assert_always(filerr == FILERR_NONE, "Failed to open file for recording");
 
 	/* get the base time */

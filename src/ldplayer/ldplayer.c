@@ -18,6 +18,7 @@
 
 #include "pr8210.lh"
 
+#include "retromain.h"
 
 
 /*************************************
@@ -94,7 +95,7 @@ static chd_file *get_disc(running_device *device)
 	mame_path *path;
 
 	/* open a path to the ROMs and find the first CHD file */
-	path = mame_openpath(device->machine->options(), OPTION_ROMPATH);
+	path = mame_openpath(device->machine->options(), libretro_content_directory);
 	if (path != NULL)
 	{
 		const osd_directory_entry *dir;

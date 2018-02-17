@@ -2416,44 +2416,7 @@ static void execute_history(running_machine *machine, int ref, int params, const
 
 static void execute_snap(running_machine *machine, int ref, int params, const char *param[])
 {
-	/* if no params, use the default behavior */
-	if (params == 0)
-	{
-		video_save_active_screen_snapshots(machine);
-		debug_console_printf(machine, "Saved snapshot\n");
-	}
 
-	/* otherwise, we have to open the file ourselves */
-	else
-	{
-		file_error filerr;
-		mame_file *fp;
-		const char *filename = param[0];
-		int scrnum = (params > 1) ? atoi(param[1]) : 0;
-
-		device_t *screen = machine->m_devicelist.find(SCREEN, scrnum);
-
-		if ((screen == NULL) || !render_is_live_screen(screen))
-		{
-			debug_console_printf(machine, "Invalid screen number '%d'\n", scrnum);
-			return;
-		}
-
-		astring fname(filename);
-		if (fname.find(0, ".png") == -1)
-			fname.cat(".png");
-		filerr = mame_fopen(SEARCHPATH_SCREENSHOT, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &fp);
-
-		if (filerr != FILERR_NONE)
-		{
-			debug_console_printf(machine, "Error creating file '%s'\n", filename);
-			return;
-		}
-
-		screen_save_snapshot(screen->machine, screen, fp);
-		mame_fclose(fp);
-		debug_console_printf(machine, "Saved screen #%d snapshot as '%s'\n", scrnum, filename);
-	}
 }
 
 

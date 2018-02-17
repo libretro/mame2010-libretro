@@ -1,5 +1,3 @@
-#include "retromapper.h"
-
 void retro_poll_mame_input();
 
 static int rtwi=320,rthe=240,topw=1024; // DEFAULT TEXW/TEXH/PITCH
@@ -19,10 +17,6 @@ extern bool draw_this_frame;
 
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
-
-const char *retro_save_directory;
-const char *retro_system_directory;
-const char *retro_content_directory;
 
 retro_log_printf_t log_cb;
 
@@ -264,6 +258,10 @@ void init_input_descriptors(void)
    struct retro_input_descriptor desc[] = {
       describe_buttons(0)
       describe_buttons(1)
+      describe_buttons(2)
+      describe_buttons(3)
+      describe_buttons(4)
+      describe_buttons(5)
       { 0, 0, 0, 0, NULL }
    };
 
@@ -315,55 +313,6 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 	write_log("Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %.1f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
 			vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, info->timing.fps, info->timing.sample_rate);
 #endif
-}
-
-void retro_init (void)
-{
-   struct retro_log_callback log;
-   const char *system_dir  = NULL;
-   const char *content_dir = NULL;
-   const char *save_dir    = NULL;
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
-      log_cb = log.log;
-   else
-      log_cb = NULL;
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
-   {
-      /* if defined, use the system directory */
-      retro_system_directory = system_dir;
-   }
-
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "SYSTEM_DIRECTORY: %s", retro_system_directory);
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY, &content_dir) && content_dir)
-   {
-      // if defined, use the system directory
-      retro_content_directory=content_dir;
-   }
-
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "CONTENT_DIRECTORY: %s", retro_content_directory);
-
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
-   {
-      /* If save directory is defined use it,
-       * otherwise use system directory. */
-      retro_save_directory = *save_dir ? save_dir : retro_system_directory;
-
-   }
-   else
-   {
-      /* make retro_save_directory the same,
-       * in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY
-       * is not implemented by the frontend. */
-      retro_save_directory=retro_system_directory;
-   }
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "SAVE_DIRECTORY: %s", retro_save_directory);
 }
 
 extern void retro_finish();
@@ -439,70 +388,6 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
    }
 }
 */
-
-bool retro_load_game(const struct retro_game_info *info)
-{
-   char basename[128];
-   int result;
-#if 0
-   struct retro_keyboard_callback cb = { keyboard_cb };
-   environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
-#endif
-
-#ifdef M16B
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-#else
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
-#endif
-
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-   {
-      fprintf(stderr, "RGB pixel format is not supported.\n");
-      exit(0);
-   }
-   check_variables();
-
-#ifdef M16B
-   memset(videoBuffer, 0, 1024*1024*2);
-#else
-   memset(videoBuffer, 0, 1024*1024*2*2);
-#endif
-
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
-#ifdef HAVE_OPENGLES
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
-#else
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
-#endif
-   hw_render.context_reset = context_reset;
-   hw_render.context_destroy = context_destroy;
-
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
-      return false;
-#endif
-
-   init_input_descriptors();
-
-   basename[0] = '\0';
-   extract_basename(basename, info->path, sizeof(basename));
-   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
-   strcpy(RPATH,info->path);
-
-   result=mmain(1,RPATH);
-   if(result!=1){
-        	printf("Error: mame return an error\n");
-		return 0;
-   } 
-
-   retro_load_ok  = true;
-
-   video_set_frameskip(set_frame_skip);
-
-   for (int i = 0; i < 6; i++)
-	adjust_opt[i] = 1;
-
-   return 1;
-}
 
 void retro_unload_game(void)
 {

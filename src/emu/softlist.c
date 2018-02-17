@@ -15,6 +15,8 @@
 
 #include <ctype.h>
 
+#include "retromain.h"
+
 enum softlist_parse_position
 {
 	POS_ROOT,
@@ -785,7 +787,6 @@ done:
 	swlist->current_software_info = swlist->software_info_list;
 }
 
-
 /*-------------------------------------------------
     software_list_open
 -------------------------------------------------*/
@@ -793,27 +794,29 @@ done:
 software_list *software_list_open(core_options *options, const char *listname, int is_preload,
 	void (*error_proc)(const char *message))
 {
+    return NULL; // disabled in libretro port
+/*
 	file_error filerr;
 	astring *fname;
 	software_list *swlist = NULL;
 	object_pool *pool = NULL;
 
-	/* create a pool for this software list file */
+	// create a pool for this software list file
 	pool = pool_alloc_lib(error_proc);
 	if (!pool)
 		goto error;
 
-	/* allocate space for this software list file */
+	// allocate space for this software list file
 	swlist = (software_list *) pool_malloc_lib(pool, sizeof(*swlist));
 	if (!swlist)
 		goto error;
 
-	/* set up the software_list structure */
+	// set up the software_list structure
 	memset(swlist, 0, sizeof(*swlist));
 	swlist->pool = pool;
 	swlist->error_proc = error_proc;
 
-	/* open a file */
+	// open a file
 	fname = astring_assemble_2(astring_alloc(), listname, ".xml");
 	filerr = mame_fopen_options(options, SEARCHPATH_HASH, astring_c(fname), OPEN_FLAG_READ, &swlist->file);
 	astring_free(fname);
@@ -833,6 +836,7 @@ error:
 	if (swlist != NULL)
 		software_list_close(swlist);
 	return NULL;
+    */
 }
 
 
@@ -959,6 +963,8 @@ software_part *software_part_next(software_part *part)
 
 bool load_software_part(device_image_interface *image, const char *path, software_info **sw_info, software_part **sw_part, char **full_sw_name)
 {
+    return false;
+    /*
 	char *swlist_name, *swname, *swpart;
 	bool result = false;
 	software_list *software_list_ptr = NULL;
@@ -968,14 +974,14 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 	*sw_info = NULL;
 	*sw_part = NULL;
 
-	/* Split full software name into software list name and short software name */
+	// Split full software name into software list name and short software name
 	software_name_split( image->device().machine, path, &swlist_name, &swname, &swpart );
 
 	const char *interface = image->image_config().image_interface();
 
 	if ( swlist_name )
 	{
-		/* Try to open the software list xml file explicitly named by the user */
+		// Try to open the software list xml file explicitly named by the user
 		software_list_ptr = software_list_open( mame_options(), swlist_name, FALSE, NULL );
 
 		if ( software_list_ptr )
@@ -990,7 +996,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 	}
 	else
 	{
-		/* Loop through all the software lists named in the driver */
+		// Loop through all the software lists named in the driver
 		for (device_t *swlists = image->device().machine->m_devicelist.first(SOFTWARE_LIST); swlists != NULL; swlists = swlists->typenext())
 		{
 			if ( swlists )
@@ -1027,7 +1033,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 			}
 		}
 
-		/* If not found try to load the software list using the driver name */
+		// If not found try to load the software list using the driver name
 		if ( ! software_part_ptr )
 		{
 			swlist_name = (char *)image->device().machine->gamedrv->name;
@@ -1050,8 +1056,8 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 			}
 		}
 
-		/* If not found try to load the software list using the software name as software */
-		/* list name and software part name as software name. */
+		// If not found try to load the software list using the software name as software
+		// list name and software part name as software name.
 		if ( ! software_part_ptr )
 		{
 			swlist_name = swname;
@@ -1085,7 +1091,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 
 	if ( software_part_ptr )
 	{
-		/* Load the software part */
+		// Load the software part
 		try {
 			result = image->call_softlist_load((char *)swlist_name, (char *)software_info_ptr->shortname, software_part_ptr->romdata );
 		}
@@ -1095,7 +1101,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 			throw fatal;
 		}
 
-		/* Create a copy of the software and part information */
+		// Create a copy of the software and part information
 		*sw_info = auto_alloc_clear( image->device().machine, software_info );
 		(*sw_info)->shortname = auto_strdup( image->device().machine, software_info_ptr->shortname );
 		(*sw_info)->longname = auto_strdup( image->device().machine, software_info_ptr->longname );
@@ -1134,12 +1140,12 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 			new_list->next = NULL;
 		}
 
-		/* Tell the world which part we actually loaded */
+		// Tell the world which part we actually loaded
 		*full_sw_name = auto_alloc_array( image->device().machine, char, strlen(swlist_name) + strlen(software_info_ptr->shortname) + strlen(software_part_ptr->name) + 3 );
 		sprintf( *full_sw_name, "%s:%s:%s", swlist_name, software_info_ptr->shortname, software_part_ptr->name );
 	}
 
-	/* Close the software list if it's still open */
+	// Close the software list if it's still open
 	if ( software_list_ptr )
 	{
 		software_list_close( software_list_ptr );
@@ -1151,6 +1157,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 	auto_free( image->device().machine, swpart );
 
 	return result;
+    */
 }
 
 

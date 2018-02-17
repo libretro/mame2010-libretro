@@ -44,6 +44,8 @@
 #include "hashfile.h"
 #include "zippath.h"
 
+#include "retromain.h"
+
 
 //**************************************************************************
 //  LEGACY IMAGE DEVICE CONFIGURATION
@@ -322,9 +324,9 @@ bool legacy_image_device_base::load_software(char *swlist, char *swname, rom_ent
 
 				astring fname(swlist, PATH_SEPARATOR, swname, PATH_SEPARATOR, ROM_GETNAME(romp));
 				if (has_crc)
-					filerr = mame_fopen_crc(SEARCHPATH_ROM, fname, crc, OPEN_FLAG_READ, &m_mame_file);
+					filerr = mame_fopen_crc(libretro_content_directory, fname, crc, OPEN_FLAG_READ, &m_mame_file);
 				else
-					filerr = mame_fopen(SEARCHPATH_ROM, fname, OPEN_FLAG_READ, &m_mame_file);
+					filerr = mame_fopen(libretro_content_directory, fname, OPEN_FLAG_READ, &m_mame_file);
 
 				if (filerr == FILERR_NONE)
 				{

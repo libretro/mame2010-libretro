@@ -133,6 +133,7 @@ static void fileio_exit(running_machine &machine)
 file_error mame_fopen(const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
 {
 	path_iterator iterator;
+    printf("\n\n\nmame_fopen searchpath: %s\n\n", searchpath);
 	path_iterator_init(&iterator, mame_options(), searchpath);
 	return fopen_internal(mame_options(), &iterator, filename, 0, openflags, file);
 }
@@ -158,6 +159,7 @@ file_error mame_fopen_crc(const char *searchpath, const char *filename, UINT32 c
 
 file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
 {
+    printf("\n\n\nmame_fopen_options searchpath: %s\n\n", searchpath);
 	path_iterator iterator;
 	path_iterator_init(&iterator, opts, searchpath);
 	return fopen_internal(opts, &iterator, filename, 0, openflags, file);
@@ -276,6 +278,7 @@ static file_error fopen_internal(core_options *opts, path_iterator *iterator, co
 static file_error fopen_attempt_zipped(astring &fullname, UINT32 crc, UINT32 openflags, mame_file *file)
 {
 	astring filename;
+       
 	zip_error ziperr;
 	zip_file *zip;
 
@@ -795,7 +798,7 @@ const char *mame_fhash(mame_file *file, UINT32 functions)
 static void path_iterator_init(path_iterator *iterator, core_options *opts, const char *searchpath)
 {
 	/* reset the structure */
-	iterator->base = (searchpath != NULL && !osd_is_absolute_path(searchpath)) ? options_get_string(opts, searchpath) : "";
+	iterator->base = searchpath;
 	iterator->cur = iterator->base;
 	iterator->index = 0;
 }

@@ -41,29 +41,6 @@
 #define OPTION_READCONFIG			"readconfig"
 #define OPTION_WRITECONFIG			"writeconfig"
 
-/* core search path options */
-#define OPTION_ROMPATH				"rompath"
-#ifdef MESS
-#define OPTION_HASHPATH				"hashpath"
-#endif
-#define OPTION_SAMPLEPATH			"samplepath"
-#define OPTION_ARTPATH				"artpath"
-#define OPTION_CTRLRPATH			"ctrlrpath"
-#define OPTION_INIPATH				"inipath"
-#define OPTION_FONTPATH				"fontpath"
-#define OPTION_CHEATPATH			"cheatpath"
-#define OPTION_CROSSHAIRPATH		"crosshairpath"
-
-/* core directory options */
-#define OPTION_CFG_DIRECTORY		"cfg_directory"
-#define OPTION_NVRAM_DIRECTORY		"nvram_directory"
-#define OPTION_MEMCARD_DIRECTORY	"memcard_directory"
-#define OPTION_INPUT_DIRECTORY		"input_directory"
-#define OPTION_STATE_DIRECTORY		"state_directory"
-#define OPTION_SNAPSHOT_DIRECTORY	"snapshot_directory"
-#define OPTION_DIFF_DIRECTORY		"diff_directory"
-#define OPTION_COMMENT_DIRECTORY	"comment_directory"
-
 /* core state/playback options */
 #define OPTION_STATE				"state"
 #define OPTION_AUTOSAVE				"autosave"

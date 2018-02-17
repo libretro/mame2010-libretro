@@ -29,7 +29,7 @@
 #include "info.h"
 #include <zlib.h>
 
-
+#include "retromain.h"
 
 /***************************************************************************
     DEBUGGING
@@ -411,7 +411,7 @@ int debug_comment_save(running_machine *machine)
 		mame_file *fp;
 
 		astring fname(machine->basename(), ".cmt");
-		filerr = mame_fopen(SEARCHPATH_COMMENT, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &fp);
+		filerr = mame_fopen(comment_directory, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &fp);
 
 		if (filerr == FILERR_NONE)
 		{
@@ -440,7 +440,7 @@ int debug_comment_load(running_machine *machine)
 	mame_file *fp;
 
 	astring fname(machine->basename(), ".cmt");
-	filerr = mame_fopen(SEARCHPATH_COMMENT, fname, OPEN_FLAG_READ, &fp);
+	filerr = mame_fopen(comment_directory, fname, OPEN_FLAG_READ, &fp);
 
 	if (filerr != FILERR_NONE) return 0;
 	debug_comment_load_xml(machine, fp);

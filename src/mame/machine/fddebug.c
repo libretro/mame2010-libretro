@@ -115,7 +115,7 @@
 #include "debug/debugvw.h"
 #include "machine/fddebug.h"
 
-#include "../../osd/retro/retromapper.h"
+#include "retromain.h"
 
 
 
@@ -590,7 +590,7 @@ static void load_overlay_file(running_machine *machine)
 
 	/* determine the filename and open the file */
 	sprintf(filename, "%s.kov", machine->gamedrv->name);
-	filerr = mame_fopen(retro_save_directory, filename, OPEN_FLAG_READ, &file);
+	filerr = mame_fopen(libretro_save_directory, filename, OPEN_FLAG_READ, &file);
 	if (filerr == FILERR_NONE)
 	{
 		mame_fread(file, keystatus, keystatus_words * 2);
@@ -620,7 +620,7 @@ static void save_overlay_file(running_machine *machine)
 
 	/* determin the filename and open the file */
 	sprintf(filename, "%s.kov", machine->gamedrv->name);
-	filerr = mame_fopen(retro_save_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
+	filerr = mame_fopen(libretro_save_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
 	if (filerr == FILERR_NONE)
 	{
 		/* convert to big-endian */
@@ -766,7 +766,7 @@ static void execute_fdoutput(running_machine *machine, int ref, int params, cons
 		fd1094_regenerate_key(machine);
 
 	/* determin the filename and open the file */
-	filerr = mame_fopen(retro_save_directory, param[0], OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
+	filerr = mame_fopen(libretro_save_directory, param[0], OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
 	if (filerr == FILERR_NONE)
 	{
 		mame_fwrite(file, keyregion, KEY_SIZE);
@@ -1192,7 +1192,7 @@ static void execute_fddasm(running_machine *machine, int ref, int params, const 
 	filename = param[0];
 
 	/* open the file */
-	filerr = mame_fopen(retro_save_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
+	filerr = mame_fopen(libretro_save_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
 	if (filerr != FILERR_NONE)
 	{
 		debug_console_printf(machine, "Unable to create file '%s'\n", filename);
