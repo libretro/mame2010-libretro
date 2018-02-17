@@ -224,38 +224,40 @@ void retro_init (void)
         *libretro_save_directory = *libretro_system_directory;
    }
    
-    mkdir(libretro_system_directory);
-    mkdir(libretro_save_directory);
+//    mkdir(libretro_system_directory);
+//    mkdir(libretro_save_directory);
  
     // content loaded from mame2010 subfolder within the libretro system folder
     snprintf(cheatpath, sizeof(cheatpath), "%c%s", PATH_DELIMITER, libretro_system_directory);
-    mkdir(libretro_save_directory);
+//    mkdir(libretro_save_directory);
     snprintf(samplepath, sizeof(samplepath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "samples");
-    mkdir(samplepath);
+//    mkdir(samplepath);
     snprintf(artpath, sizeof(artpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "artwork");
-    mkdir(artpath);
+//    mkdir(artpath);
     snprintf(fontpath, sizeof(fontpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "fonts");
-    mkdir(fontpath);
+//    mkdir(fontpath);
     snprintf(crosshairpath, sizeof(crosshairpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "crosshairs");
-    mkdir(crosshairpath);
+// mkdir(crosshairpath);
 
     // user-generated content loaded from mame2010 subfolder within the libretro save folder
     snprintf(ctrlrpath, sizeof(ctrlrpath), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "ctrlr");
-    mkdir(ctrlrpath);
+//    mkdir(ctrlrpath);
     snprintf(inipath, sizeof(inipath), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "ini");
-    mkdir(inipath);
+//    mkdir(inipath);
     snprintf(cfg_directory, sizeof(cfg_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "cfg");
-    mkdir(cfg_directory);
+//    mkdir(cfg_directory);
     snprintf(nvram_directory, sizeof(nvram_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "nvram");
-    mkdir(nvram_directory);
+//    mkdir(nvram_directory);
     snprintf(memcard_directory, sizeof(memcard_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "memcard");
-    mkdir(memcard_directory);
+//    mkdir(memcard_directory);
     snprintf(input_directory, sizeof(input_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "input");
-    mkdir(input_directory);
+//    mkdir(input_directory);
     snprintf(image_directory, sizeof(image_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "image");
-    mkdir(image_directory);
+//    mkdir(image_directory);
+	snprintf(diff_directory, sizeof(diff_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "diff");
+//    mkdir(diff_directory);
     snprintf(comment_directory, sizeof(comment_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "comment");
-    mkdir(comment_directory);
+//    mkdir(comment_directory);
 
 }
 
