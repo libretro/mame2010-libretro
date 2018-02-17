@@ -1,8 +1,8 @@
 
 #include <unistd.h>
 #include <stdint.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+// #include <sys/stat.h>
+// #include <sys/types.h>
 #include "osdepend.h"
 
 #include "emu.h"
