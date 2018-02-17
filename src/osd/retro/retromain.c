@@ -254,6 +254,8 @@ void retro_init (void)
     mkdir(input_directory);
     snprintf(image_directory, sizeof(image_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "image");
     mkdir(image_directory);
+    snprintf(diff_directory, sizeof(diff_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "diff");
+    mkdir(diff_directory);	
     snprintf(comment_directory, sizeof(comment_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "comment");
     mkdir(comment_directory);
 
