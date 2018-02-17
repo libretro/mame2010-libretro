@@ -3,6 +3,7 @@
 #include "streams.h"
 #include "samples.h"
 
+#include "retromain.h"
 
 typedef struct _sample_channel sample_channel;
 struct _sample_channel
@@ -211,12 +212,12 @@ loaded_samples *readsamples(running_machine *machine, const char *const *samplen
 			mame_file *f;
 
 			astring fname(basename, PATH_SEPARATOR, samplenames[i+skipfirst]);
-			filerr = mame_fopen(SEARCHPATH_SAMPLE, fname, OPEN_FLAG_READ, &f);
+			filerr = mame_fopen(samplepath, fname, OPEN_FLAG_READ, &f);
 
 			if (filerr != FILERR_NONE && skipfirst)
 			{
 				astring fname(samplenames[0] + 1, PATH_SEPARATOR, samplenames[i+skipfirst]);
-				filerr = mame_fopen(SEARCHPATH_SAMPLE, fname, OPEN_FLAG_READ, &f);
+				filerr = mame_fopen(samplepath, fname, OPEN_FLAG_READ, &f);
 			}
 			if (filerr == FILERR_NONE)
 			{

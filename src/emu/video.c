@@ -1062,20 +1062,6 @@ static void recompute_speed(running_machine *machine, attotime emutime)
 	/* if we're past the "time-to-execute" requested, signal an exit */
 	if (global.seconds_to_run != 0 && emutime.seconds >= global.seconds_to_run)
 	{
-		if (machine->primary_screen != NULL)
-		{
-			astring fname(machine->basename(), PATH_SEPARATOR "final.png");
-			file_error filerr;
-			mame_file *file;
-
-			/* create a final screenshot */
-			filerr = mame_fopen(SEARCHPATH_SCREENSHOT, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
-			if (filerr == FILERR_NONE)
-			{
-				screen_save_snapshot(machine, machine->primary_screen, file);
-				mame_fclose(file);
-			}
-		}
 
 		/* schedule our demise */
 		machine->schedule_exit();
@@ -1129,38 +1115,7 @@ void screen_save_snapshot(running_machine *machine, device_t *screen, mame_file 
 
 void video_save_active_screen_snapshots(running_machine *machine)
 {
-	mame_file *fp;
 
-	/* validate */
-	assert(machine != NULL);
-	assert(machine->config != NULL);
-
-	/* if we're native, then write one snapshot per visible screen */
-	if (global.snap_native)
-	{
-		/* write one snapshot per visible screen */
-		for (screen_device *screen = screen_first(*machine); screen != NULL; screen = screen_next(screen))
-			if (render_is_live_screen(screen))
-			{
-				file_error filerr = mame_fopen_next(machine, SEARCHPATH_SCREENSHOT, "png", &fp);
-				if (filerr == FILERR_NONE)
-				{
-					screen_save_snapshot(machine, screen, fp);
-					mame_fclose(fp);
-				}
-			}
-	}
-
-	/* otherwise, just write a single snapshot */
-	else
-	{
-		file_error filerr = mame_fopen_next(machine, SEARCHPATH_SCREENSHOT, "png", &fp);
-		if (filerr == FILERR_NONE)
-		{
-			screen_save_snapshot(machine, NULL, fp);
-			mame_fclose(fp);
-		}
-	}
 }
 
 
@@ -1293,36 +1248,7 @@ int video_mng_is_movie_active(running_machine *machine)
 
 void video_mng_begin_recording(running_machine *machine, const char *name)
 {
-	file_error filerr;
-	png_error pngerr;
-	int rate;
 
-	/* close any existing movie file */
-	if (global.mngfile != NULL)
-		video_mng_end_recording(machine);
-
-	/* create a snapshot bitmap so we know what the target size is */
-	create_snapshot_bitmap(NULL);
-
-	/* create a new movie file and start recording */
-	if (name != NULL)
-		filerr = mame_fopen(SEARCHPATH_MOVIE, name, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &global.mngfile);
-	else
-		filerr = mame_fopen_next(machine, SEARCHPATH_MOVIE, "mng", &global.mngfile);
-
-	/* start the capture */
-	rate = (machine->primary_screen != NULL) ? ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds) : screen_device::k_default_frame_rate;
-	pngerr = mng_capture_start(mame_core_file(global.mngfile), global.snap_bitmap, rate);
-	if (pngerr != PNGERR_NONE)
-	{
-		video_mng_end_recording(machine);
-		return;
-	}
-
-	/* compute the frame time */
-	global.movie_next_frame_time = timer_get_time(machine);
-	global.movie_frame_period = ATTOTIME_IN_HZ(rate);
-	global.movie_frame = 0;
 }
 
 
@@ -1407,55 +1333,7 @@ static void video_mng_record_frame(running_machine *machine)
 
 void video_avi_begin_recording(running_machine *machine, const char *name)
 {
-	avi_movie_info info;
-	mame_file *tempfile;
-	file_error filerr;
-	avi_error avierr;
 
-	/* close any existing movie file */
-	if (global.avifile != NULL)
-		video_avi_end_recording(machine);
-
-	/* create a snapshot bitmap so we know what the target size is */
-	create_snapshot_bitmap(NULL);
-
-	/* build up information about this new movie */
-	info.video_format = 0;
-	info.video_timescale = 1000 * ((machine->primary_screen != NULL) ? ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds) : screen_device::k_default_frame_rate);
-	info.video_sampletime = 1000;
-	info.video_numsamples = 0;
-	info.video_width = global.snap_bitmap->width;
-	info.video_height = global.snap_bitmap->height;
-	info.video_depth = 24;
-
-	info.audio_format = 0;
-	info.audio_timescale = machine->sample_rate;
-	info.audio_sampletime = 1;
-	info.audio_numsamples = 0;
-	info.audio_channels = 2;
-	info.audio_samplebits = 16;
-	info.audio_samplerate = machine->sample_rate;
-
-	/* create a new temporary movie file */
-	if (name != NULL)
-		filerr = mame_fopen(SEARCHPATH_MOVIE, name, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &tempfile);
-	else
-		filerr = mame_fopen_next(machine, SEARCHPATH_MOVIE, "avi", &tempfile);
-
-	/* reset our tracking */
-	global.movie_frame = 0;
-	global.movie_next_frame_time = timer_get_time(machine);
-	global.movie_frame_period = attotime_div(ATTOTIME_IN_SEC(1000), info.video_timescale);
-
-	/* if we succeeded, make a copy of the name and create the real file over top */
-	if (filerr == FILERR_NONE)
-	{
-		astring fullname(mame_file_full_name(tempfile));
-		mame_fclose(tempfile);
-
-		/* create the file and free the string */
-		avierr = avi_create(fullname, &info, &global.avifile);
-	}
 }
 
 
@@ -2450,82 +2328,7 @@ void screen_device::update_burnin()
 
 void screen_device::finalize_burnin()
 {
-	if (m_burnin == NULL)
-		return;
 
-	// compute the scaled visible region
-	rectangle scaledvis;
-	scaledvis.min_x = m_visarea.min_x * m_burnin->width / m_width;
-	scaledvis.max_x = m_visarea.max_x * m_burnin->width / m_width;
-	scaledvis.min_y = m_visarea.min_y * m_burnin->height / m_height;
-	scaledvis.max_y = m_visarea.max_y * m_burnin->height / m_height;
-
-	// wrap a bitmap around the subregion we care about
-	bitmap_t *finalmap = auto_alloc(machine, bitmap_t(scaledvis.max_x + 1 - scaledvis.min_x,
-				                        scaledvis.max_y + 1 - scaledvis.min_y,
-				                        BITMAP_FORMAT_ARGB32));
-
-	int srcwidth = m_burnin->width;
-	int srcheight = m_burnin->height;
-	int dstwidth = finalmap->width;
-	int dstheight = finalmap->height;
-	int xstep = (srcwidth << 16) / dstwidth;
-	int ystep = (srcheight << 16) / dstheight;
-
-	// find the maximum value
-	UINT64 minval = ~(UINT64)0;
-	UINT64 maxval = 0;
-	for (int y = 0; y < srcheight; y++)
-	{
-		UINT64 *src = BITMAP_ADDR64(m_burnin, y, 0);
-		for (int x = 0; x < srcwidth; x++)
-		{
-			minval = MIN(minval, src[x]);
-			maxval = MAX(maxval, src[x]);
-		}
-	}
-
-	if (minval == maxval)
-		return;
-
-	// now normalize and convert to RGB
-	for (int y = 0, srcy = 0; y < dstheight; y++, srcy += ystep)
-	{
-		UINT64 *src = BITMAP_ADDR64(m_burnin, srcy >> 16, 0);
-		UINT32 *dst = BITMAP_ADDR32(finalmap, y, 0);
-		for (int x = 0, srcx = 0; x < dstwidth; x++, srcx += xstep)
-		{
-			int brightness = (UINT64)(maxval - src[srcx >> 16]) * 255 / (maxval - minval);
-			dst[x] = MAKE_ARGB(0xff, brightness, brightness, brightness);
-		}
-	}
-
-	// write the final PNG
-
-	// compute the name and create the file
-	astring fname;
-	fname.printf("%s" PATH_SEPARATOR "burnin-%s.png", machine->basename(), tag());
-	mame_file *file;
-	file_error filerr = mame_fopen(SEARCHPATH_SCREENSHOT, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
-	if (filerr == FILERR_NONE)
-	{
-		png_info pnginfo = { 0 };
-		png_error pngerr;
-		char text[256];
-
-		// add two text entries describing the image
-		sprintf(text, APPNAME " %s", build_version);
-		png_add_text(&pnginfo, "Software", text);
-		sprintf(text, "%s %s", machine->gamedrv->manufacturer, machine->gamedrv->description);
-		png_add_text(&pnginfo, "System", text);
-
-		// now do the actual work
-		pngerr = png_write_bitmap(mame_core_file(file), &pnginfo, finalmap, 0, NULL);
-
-		// free any data allocated
-		png_free(&pnginfo);
-		mame_fclose(file);
-	}
 }
 
 

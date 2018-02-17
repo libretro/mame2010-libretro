@@ -38,7 +38,7 @@ const options_entry mame_core_options[] =
 	{ NULL,                          NULL,        OPTION_HEADER,     "CORE SEARCH PATH OPTIONS" },
 	{ "rompath;rp;biospath;bp",      "roms",      0,                 "path to ROMsets and hard disk images" },
 #ifdef MESS
-	{ "hashpath;hash_directory;hash","hash",      0,                 "path to hash files" },
+	/*{ "hashpath;hash_directory;hash","hash",      0,                 "path to hash files" },*/
 #endif /* MESS */
 	{ "samplepath;sp",               "samples",   0,                 "path to samplesets" },
 	{ "artpath;artwork_directory",   "artwork",   0,                 "path to artwork files" },

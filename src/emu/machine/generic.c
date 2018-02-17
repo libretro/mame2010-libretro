@@ -13,7 +13,7 @@
 #include "emuopts.h"
 #include "config.h"
 
-
+#include "retromain.h"
 
 /***************************************************************************
     FUNCTION PROTOTYPES
@@ -325,7 +325,7 @@ mame_file *nvram_fopen(running_machine *machine, UINT32 openflags)
 	mame_file *file;
 
 	astring fname(machine->basename(), ".nv");
-	filerr = mame_fopen(SEARCHPATH_NVRAM, fname, openflags, &file);
+	filerr = mame_fopen(nvram_directory, fname, openflags, &file);
 
 	return (filerr == FILERR_NONE) ? file : NULL;
 }
@@ -497,7 +497,7 @@ int memcard_create(running_machine *machine, int index, int overwrite)
 	astring fname(machine->basename(), PATH_SEPARATOR, name);
 	if (!overwrite)
 	{
-		filerr = mame_fopen(SEARCHPATH_MEMCARD, fname, OPEN_FLAG_READ, &file);
+		filerr = mame_fopen(memcard_directory, fname, OPEN_FLAG_READ, &file);
 		if (filerr == FILERR_NONE)
 		{
 			mame_fclose(file);
@@ -506,7 +506,7 @@ int memcard_create(running_machine *machine, int index, int overwrite)
 	}
 
 	/* create a new file */
-	filerr = mame_fopen(SEARCHPATH_MEMCARD, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
+	filerr = mame_fopen(memcard_directory, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
 	if (filerr != FILERR_NONE)
 		return 1;
 
@@ -542,7 +542,7 @@ int memcard_insert(running_machine *machine, int index)
 	astring fname(machine->basename(), PATH_SEPARATOR, name);
 
 	/* open the file; if we can't, it's an error */
-	filerr = mame_fopen(SEARCHPATH_MEMCARD, fname, OPEN_FLAG_READ, &file);
+	filerr = mame_fopen(memcard_directory, fname, OPEN_FLAG_READ, &file);
 	if (filerr != FILERR_NONE)
 		return 1;
 
@@ -578,7 +578,7 @@ void memcard_eject(running_machine &machine)
 	astring fname(machine.basename(), PATH_SEPARATOR, name);
 
 	/* open the file; if we can't, it's an error */
-	filerr = mame_fopen(SEARCHPATH_MEMCARD, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
+	filerr = mame_fopen(memcard_directory, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
 	if (filerr != FILERR_NONE)
 	{
 		mame_fclose(file);

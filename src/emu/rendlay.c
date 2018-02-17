@@ -66,7 +66,7 @@
 #include "xmlfile.h"
 #include "png.h"
 
-
+#include "retromain.h"
 
 /***************************************************************************
     STANDARD LAYOUTS
@@ -1494,7 +1494,7 @@ layout_file *layout_file_load(const machine_config *config, const char *dirname,
 		if (dirname != NULL)
 			fname.ins(0, PATH_SEPARATOR).ins(0, dirname);
 
-		filerr = mame_fopen(SEARCHPATH_ARTWORK, fname, OPEN_FLAG_READ, &layoutfile);
+		filerr = mame_fopen(artpath, fname, OPEN_FLAG_READ, &layoutfile);
 
 		if (filerr != FILERR_NONE)
 			return NULL;
@@ -1875,11 +1875,11 @@ static bitmap_t *load_component_bitmap(const char *dirname, const char *file, co
 	bitmap_t *bitmap;
 
 	/* load the basic bitmap */
-	bitmap = render_load_png(OPTION_ARTPATH, dirname, file, NULL, hasalpha);
+	bitmap = render_load_png(artpath, dirname, file, NULL, hasalpha);
 	if (bitmap != NULL && alphafile != NULL)
 
 		/* load the alpha bitmap if specified */
-		if (render_load_png(OPTION_ARTPATH, dirname, alphafile, bitmap, hasalpha) == NULL)
+		if (render_load_png(artpath, dirname, alphafile, bitmap, hasalpha) == NULL)
 		{
 			global_free(bitmap);
 			bitmap = NULL;

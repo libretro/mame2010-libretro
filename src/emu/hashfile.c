@@ -10,6 +10,9 @@
 #include "pool.h"
 #include "expat.h"
 #include "emuopts.h"
+
+#include "retromain.h"
+
 /***************************************************************************
     TYPE DEFINITIONS
 ***************************************************************************/
@@ -405,33 +408,34 @@ static void preload_use_proc(hash_file *hashfile, void *param, hash_info *hi)
 /*-------------------------------------------------
     hashfile_open_options
 -------------------------------------------------*/
-
+/*
 hash_file *hashfile_open_options(core_options *opts, const char *sysname, int is_preload,
 	void (*error_proc)(const char *message))
 {
+  
 	file_error filerr;
 	astring *fname;
 	hash_file *hashfile = NULL;
 	object_pool *pool = NULL;
 
-	/* create a pool for this hash file */
+	// create a pool for this hash file
 	pool = pool_alloc_lib(error_proc);
 	if (!pool)
 		goto error;
 
-	/* allocate space for this hash file */
+	// allocate space for this hash file
 	hashfile = (hash_file *) pool_malloc_lib(pool, sizeof(*hashfile));
 	if (!hashfile)
 		goto error;
 
-	/* set up the hashfile structure */
+	// set up the hashfile structure
 	memset(hashfile, 0, sizeof(*hashfile));
 	hashfile->pool = pool;
 	hashfile->error_proc = error_proc;
 
-	/* open a file */
+	// open a file
 	fname = astring_assemble_2(astring_alloc(), sysname, ".hsi");
-	filerr = mame_fopen_options(opts, SEARCHPATH_HASH, astring_c(fname), OPEN_FLAG_READ, &hashfile->file);
+	filerr = mame_fopen_options(opts, hashpath, astring_c(fname), OPEN_FLAG_READ, &hashfile->file);
 	astring_free(fname);
 
 	if (filerr != FILERR_NONE)
@@ -447,7 +451,7 @@ error:
 		hashfile_close(hashfile);
 	return NULL;
 }
-
+*/
 
 
 /*-------------------------------------------------
@@ -457,7 +461,8 @@ error:
 hash_file *hashfile_open(const char *sysname, int is_preload,
 	void (*error_proc)(const char *message))
 {
-	return hashfile_open_options(mame_options(), sysname, is_preload, error_proc);
+    return NULL; // disabled in libretro port
+	// return hashfile_open_options(mame_options(), sysname, is_preload, error_proc);
 }
 
 
@@ -550,6 +555,8 @@ unsigned int hashfile_functions_used(hash_file *hashfile, iodevice_t devtype)
 
 int hashfile_verify(const char *sysname, void (*my_error_proc)(const char *message))
 {
+    return 0;
+/*
 	hash_file *hashfile;
 
 	hashfile = hashfile_open(sysname, FALSE, my_error_proc);
@@ -559,6 +566,7 @@ int hashfile_verify(const char *sysname, void (*my_error_proc)(const char *messa
 	hashfile_parse(hashfile, NULL, NULL, my_error_proc, NULL);
 	hashfile_close(hashfile);
 	return 0;
+*/
 }
 
 

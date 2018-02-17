@@ -84,7 +84,7 @@
 
 #include <ctype.h>
 
-
+#include "retromain.h"
 
 
 /***************************************************************************
@@ -1024,7 +1024,7 @@ static cheat_entry *cheat_list_load(running_machine *machine, const char *filena
 
 	/* open the file with the proper name */
 	astring fname(filename, ".xml");
-	filerr = mame_fopen(SEARCHPATH_CHEAT, fname, OPEN_FLAG_READ, &cheatfile);
+	filerr = mame_fopen(cheatpath, fname, OPEN_FLAG_READ, &cheatfile);
 
 	/* loop over all instrances of the files found in our search paths */
 	while (filerr == FILERR_NONE)
@@ -1122,7 +1122,7 @@ static int cheat_list_save(const char *filename, const cheat_entry *cheatlist)
 
 	/* open the file with the proper name */
 	astring fname(filename, ".xml");
-	filerr = mame_fopen(SEARCHPATH_CHEAT, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &cheatfile);
+	filerr = mame_fopen(cheatpath, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &cheatfile);
 
 	/* if that failed, return nothing */
 	if (filerr != FILERR_NONE)

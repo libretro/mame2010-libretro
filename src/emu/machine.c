@@ -119,7 +119,7 @@
 
 #include <time.h>
 
-
+#include "retromain.h"
 
 //**************************************************************************
 //  GLOBAL VARIABLES
@@ -377,7 +377,7 @@ int running_machine::run(bool firstrun)
    // if we have a logfile, set up the callback
    if (options_get_bool(&m_options, OPTION_LOG))
    {
-      file_error filerr = mame_fopen(SEARCHPATH_DEBUGLOG, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
+      file_error filerr = mame_fopen(libretro_save_directory, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
       assert_always(filerr == FILERR_NONE, "unable to open log file");
       add_logerror_callback(logfile_callback);
    }
@@ -553,6 +553,7 @@ void running_machine::schedule_new_driver(const game_driver &driver)
 //  for state loading/saving
 //-------------------------------------------------
 
+/*
 void running_machine::set_saveload_filename(const char *filename)
 {
 	// free any existing request and allocate a copy of the requested name
@@ -563,11 +564,11 @@ void running_machine::set_saveload_filename(const char *filename)
 	}
 	else
 	{
-		m_saveload_searchpath = SEARCHPATH_STATE;
+		m_saveload_searchpath = state_directory;
 		m_saveload_pending_file.cpy(basename()).cat(PATH_SEPARATOR).cat(filename).cat(".sta");
 	}
 }
-
+*/
 
 //-------------------------------------------------
 //  schedule_save - schedule a save to occur as
@@ -576,15 +577,7 @@ void running_machine::set_saveload_filename(const char *filename)
 
 void running_machine::schedule_save(const char *filename)
 {
-	// specify the filename to save or load
-	set_saveload_filename(filename);
 
-	// note the start time and set a timer for the next timeslice to actually schedule it
-	m_saveload_schedule = SLS_SAVE;
-	m_saveload_schedule_time = timer_get_time(this);
-
-	// we can't be paused since we need to clear out anonymous timers
-	resume();
 }
 
 
@@ -595,15 +588,7 @@ void running_machine::schedule_save(const char *filename)
 
 void running_machine::schedule_load(const char *filename)
 {
-	// specify the filename to save or load
-	set_saveload_filename(filename);
 
-	// note the start time and set a timer for the next timeslice to actually schedule it
-	m_saveload_schedule = SLS_LOAD;
-	m_saveload_schedule_time = timer_get_time(this);
-
-	// we can't be paused since we need to clear out anonymous timers
-	resume();
 }
 
 

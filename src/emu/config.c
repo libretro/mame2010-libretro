@@ -14,6 +14,7 @@
 #include "config.h"
 #include "xmlfile.h"
 
+#include "retromain.h"
 
 #define DEBUG_CONFIG		0
 
@@ -117,7 +118,7 @@ int config_load_settings(running_machine *machine)
 	{
 		/* open the config file */
 		astring fname(controller, ".cfg");
-		filerr = mame_fopen(SEARCHPATH_CTRLR, fname, OPEN_FLAG_READ, &file);
+		filerr = mame_fopen(ctrlrpath, fname, OPEN_FLAG_READ, &file);
 
 		if (filerr != FILERR_NONE)
 			throw emu_fatalerror("Could not load controller file %s.cfg", controller);
@@ -129,7 +130,7 @@ int config_load_settings(running_machine *machine)
 	}
 
 	/* next load the defaults file */
-	filerr = mame_fopen(SEARCHPATH_CONFIG, "default.cfg", OPEN_FLAG_READ, &file);
+	filerr = mame_fopen(cfg_directory, "default.cfg", OPEN_FLAG_READ, &file);
 	if (filerr == FILERR_NONE)
 	{
 		config_load_xml(machine, file, CONFIG_TYPE_DEFAULT);
@@ -138,7 +139,7 @@ int config_load_settings(running_machine *machine)
 
 	/* finally, load the game-specific file */
 	astring fname(machine->basename(), ".cfg");
-	filerr = mame_fopen(SEARCHPATH_CONFIG, fname, OPEN_FLAG_READ, &file);
+	filerr = mame_fopen(cfg_directory, fname, OPEN_FLAG_READ, &file);
 
 	if (filerr == FILERR_NONE)
 	{
@@ -167,7 +168,7 @@ void config_save_settings(running_machine *machine)
 		(*type->save)(machine, CONFIG_TYPE_INIT, NULL);
 
 	/* save the defaults file */
-	filerr = mame_fopen(SEARCHPATH_CONFIG, "default.cfg", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
+	filerr = mame_fopen(cfg_directory, "default.cfg", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
 	if (filerr == FILERR_NONE)
 	{
 		config_save_xml(machine, file, CONFIG_TYPE_DEFAULT);
@@ -176,7 +177,7 @@ void config_save_settings(running_machine *machine)
 
 	/* finally, save the game-specific file */
 	astring fname(machine->basename(), ".cfg");
-	filerr = mame_fopen(SEARCHPATH_CONFIG, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
+	filerr = mame_fopen(cfg_directory, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &file);
 
 	if (filerr == FILERR_NONE)
 	{

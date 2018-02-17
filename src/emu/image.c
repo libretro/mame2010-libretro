@@ -16,6 +16,8 @@
 #include "config.h"
 #include "xmlfile.h"
 
+#include "retromain.h"
+
 /* ----------------------------------------------------------------------- */
 
 static int image_fseek_thunk(void *file, INT64 offset, int whence)
@@ -138,7 +140,7 @@ static int write_config(const char *filename, const game_driver *gamedrv)
 		filename = buffer;
 	}
 
-	filerr = mame_fopen(SEARCHPATH_INI, buffer, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &f);
+	filerr = mame_fopen(inipath, buffer, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &f);
 	if (filerr != FILERR_NONE)
 		goto done;
 
@@ -313,7 +315,7 @@ void image_init(running_machine *machine)
 static file_error open_battery_file_by_name(const char *filename, UINT32 openflags, mame_file **file)
 {
     file_error filerr;
-    filerr = mame_fopen(SEARCHPATH_NVRAM, filename, openflags, file);
+    filerr = mame_fopen(nvram_directory, filename, openflags, file);
     return filerr;
 }
 

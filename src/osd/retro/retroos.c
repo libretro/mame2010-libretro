@@ -17,7 +17,7 @@
 #include <features_cpu.h>
 #endif
 extern const char build_version[];
-const char build_version[] = "0.139 ("__DATE__")";
+const char build_version[] = "0.139 (" __DATE__ ")";
 
 // MAME headers
 #include "osdcore.h"

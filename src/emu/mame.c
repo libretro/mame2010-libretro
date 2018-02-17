@@ -91,6 +91,8 @@
 
 #include <time.h>
 
+#include "retromain.h"
+
 
 
 /***************************************************************************
@@ -599,7 +601,7 @@ static int parse_ini_file(core_options *options, const char *name, int priority)
 
 	/* open the file; if we fail, that's ok */
 	astring fname(name, ".ini");
-	filerr = mame_fopen_options(options, SEARCHPATH_INI, fname, OPEN_FLAG_READ, &file);
+	filerr = mame_fopen_options(options, inipath, fname, OPEN_FLAG_READ, &file);
 	if (filerr != FILERR_NONE)
 		return FALSE;
 
