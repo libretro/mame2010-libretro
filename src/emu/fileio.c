@@ -158,7 +158,6 @@ file_error mame_fopen_crc(const char *searchpath, const char *filename, UINT32 c
 
 file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
 {
-    printf("\n\n\nmame_fopen_options searchpath: %s\n\n", searchpath);
 	path_iterator iterator;
 	path_iterator_init(&iterator, opts, searchpath);
 	return fopen_internal(opts, &iterator, filename, 0, openflags, file);
