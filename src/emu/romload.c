@@ -17,6 +17,8 @@
 #include "config.h"
 #include "ui.h"
 
+#include "retromain.h"
+
 
 #define LOG_LOAD 0
 #define LOG(x) do { if (LOG_LOAD) debugload x; } while(0)
@@ -667,9 +669,9 @@ static int open_rom_file(rom_load_data *romdata, const char *regiontag, const ro
 		{
 			astring fname(drv->name, PATH_SEPARATOR, ROM_GETNAME(romp));
 			if (has_crc)
-				filerr = mame_fopen_crc(SEARCHPATH_ROM, fname, crc, OPEN_FLAG_READ, &romdata->file);
+				filerr = mame_fopen_crc(libretro_content_directory, fname, crc, OPEN_FLAG_READ, &romdata->file);
 			else
-				filerr = mame_fopen(SEARCHPATH_ROM, fname, OPEN_FLAG_READ, &romdata->file);
+				filerr = mame_fopen(libretro_content_directory, fname, OPEN_FLAG_READ, &romdata->file);
 		}
 
 	/* if the region is load by name, load the ROM from there */
@@ -677,9 +679,9 @@ static int open_rom_file(rom_load_data *romdata, const char *regiontag, const ro
 	{
 		astring fname(regiontag, PATH_SEPARATOR, ROM_GETNAME(romp));
 		if (has_crc)
-			filerr = mame_fopen_crc(SEARCHPATH_ROM, fname, crc, OPEN_FLAG_READ, &romdata->file);
+			filerr = mame_fopen_crc(libretro_content_directory, fname, crc, OPEN_FLAG_READ, &romdata->file);
 		else
-			filerr = mame_fopen(SEARCHPATH_ROM, fname, OPEN_FLAG_READ, &romdata->file);
+			filerr = mame_fopen(libretro_content_directory, fname, OPEN_FLAG_READ, &romdata->file);
 	}
 
 	/* update counters */
@@ -1018,13 +1020,13 @@ chd_error open_disk_image_options(core_options *options, const game_driver *game
 	for (searchdrv = gamedrv; searchdrv != NULL && filerr != FILERR_NONE; searchdrv = driver_get_clone(searchdrv))
 	{
 		astring fname(searchdrv->name, PATH_SEPARATOR, ROM_GETNAME(romp), ".chd");
-		filerr = mame_fopen_options(options, SEARCHPATH_IMAGE, fname, OPEN_FLAG_READ, image_file);
+		filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ, image_file);
 	}
 
 	if (filerr != FILERR_NONE)
 	{
 		astring fname(ROM_GETNAME(romp), ".chd");
-		filerr = mame_fopen_options(options, SEARCHPATH_IMAGE, fname, OPEN_FLAG_READ, image_file);
+		filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ, image_file);
 	}
 
 	/* did the file open succeed? */
@@ -1059,13 +1061,13 @@ chd_error open_disk_image_options(core_options *options, const game_driver *game
 							for (searchdrv = drv; searchdrv != NULL && filerr != FILERR_NONE; searchdrv = driver_get_clone(searchdrv))
 							{
 								astring fname(searchdrv->name, PATH_SEPARATOR, ROM_GETNAME(rom), ".chd");
-								filerr = mame_fopen_options(options, SEARCHPATH_IMAGE, fname, OPEN_FLAG_READ, image_file);
+								filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ, image_file);
 							}
 
 							if (filerr != FILERR_NONE)
 							{
 								astring fname(ROM_GETNAME(rom), ".chd");
-								filerr = mame_fopen_options(options, SEARCHPATH_IMAGE, fname, OPEN_FLAG_READ, image_file);
+								filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ, image_file);
 							}
 
 							/* did the file open succeed? */
@@ -1101,12 +1103,12 @@ static chd_error open_disk_diff(const game_driver *drv, const rom_entry *romp, c
 
 	/* try to open the diff */
 	LOG(("Opening differencing image file: %s\n", fname.cstr()));
-	filerr = mame_fopen(SEARCHPATH_IMAGE_DIFF, fname, OPEN_FLAG_READ | OPEN_FLAG_WRITE, diff_file);
+	filerr = mame_fopen(diff_directory, fname, OPEN_FLAG_READ | OPEN_FLAG_WRITE, diff_file);
 	if (filerr != FILERR_NONE)
 	{
 		/* didn't work; try creating it instead */
 		LOG(("Creating differencing image: %s\n", fname.cstr()));
-		filerr = mame_fopen(SEARCHPATH_IMAGE_DIFF, fname, OPEN_FLAG_READ | OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, diff_file);
+		filerr = mame_fopen(diff_directory, fname, OPEN_FLAG_READ | OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, diff_file);
 		if (filerr != FILERR_NONE)
 		{
 			err = CHDERR_FILE_NOT_FOUND;

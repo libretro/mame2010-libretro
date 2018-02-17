@@ -17,6 +17,8 @@
 
 #include "bdc/uismall.fh"
 
+#include "retromain.h"
+
 
 /***************************************************************************
     CONSTANTS
@@ -427,7 +429,7 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 	UINT32 hash;
 
 	/* first try to open the BDF itself */
-	filerr = mame_fopen(SEARCHPATH_FONT, filename, OPEN_FLAG_READ, &file);
+	filerr = mame_fopen(fontpath, filename, OPEN_FLAG_READ, &file);
 	if (filerr != FILERR_NONE)
 		return 1;
 
@@ -450,7 +452,7 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 	cachedname[strlen(cachedname) - 1] -= 3;
 
 	/* attempt to load a cached version of the font */
-	filerr = mame_fopen(SEARCHPATH_FONT, cachedname, OPEN_FLAG_READ, &cachefile);
+	filerr = mame_fopen(fontpath, cachedname, OPEN_FLAG_READ, &cachefile);
 	if (filerr == FILERR_NONE)
 	{
 		result = render_font_load_cached(font, cachefile, hash);
@@ -715,7 +717,7 @@ static int render_font_save_cached(render_font *font, const char *filename, UINT
 	mame_printf_warning("Generating cached BDF font...\n");
 
 	/* attempt to open the file */
-	filerr = mame_fopen(SEARCHPATH_FONT, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
+	filerr = mame_fopen(fontpath, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE, &file);
 	if (filerr != FILERR_NONE)
 		return 1;
 

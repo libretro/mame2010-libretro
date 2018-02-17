@@ -722,7 +722,7 @@ const char *options_get_string(core_options *opts, const char *name)
 
 	/* error if not found */
 	if (data == NULL)
-		message(opts, OPTMSG_ERROR, "Unexpected option %s queried\n", name);
+		message(opts, OPTMSG_ERROR, "[ERROR][MAME2010] Unexpected option %s queried\n", name);
 
 	/* copy if non-NULL */
 	else

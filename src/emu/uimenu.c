@@ -18,6 +18,7 @@
 #include "uiinput.h"
 #include "uimenu.h"
 #include "audit.h"
+#include "fileio.h"
 #include "crsshair.h"
 
 #ifdef MESS
@@ -26,6 +27,7 @@
 
 #include <ctype.h>
 
+#include "retromain.h"
 
 
 /***************************************************************************
@@ -3279,7 +3281,7 @@ static void menu_crosshair_populate(running_machine *machine, ui_menu *menu)
 			/* search for crosshair graphics */
 
 			/* open a path to the crosshairs */
-			path = mame_openpath(machine->options(), OPTION_CROSSHAIRPATH);
+			path = mame_openpath(machine->options(), crosshairpath);
 			if (path != NULL)
 			{
 				const osd_directory_entry *dir;
@@ -3599,7 +3601,8 @@ static void menu_select_game_build_driver_list(ui_menu *menu, select_game_state 
 	memset(found, 0, (driver_count + 7) / 8);
 
 	/* open a path to the ROMs and find them in the array */
-	path = mame_openpath(menu->machine->options(), OPTION_ROMPATH);
+	path = mame_openpath(menu->machine->options(), libretro_content_directory);
+        
 	if (path != NULL)
 	{
 		const osd_directory_entry *dir;

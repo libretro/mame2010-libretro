@@ -16,7 +16,7 @@
 #include "harddisk.h"
 #include "sound/samples.h"
 
-
+#include "retromain.h"
 
 /***************************************************************************
     FUNCTION PROTOTYPES
@@ -195,13 +195,13 @@ int audit_samples(core_options *options, const game_driver *gamedrv, audit_recor
 
 						/* attempt to access the file from the game driver name */
 						astring fname(gamedrv->name, PATH_SEPARATOR, intf->samplenames[sampnum]);
-						filerr = mame_fopen_options(options, SEARCHPATH_SAMPLE, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+						filerr = mame_fopen_options(options, samplepath, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 
 						/* attempt to access the file from the shared driver name */
 						if (filerr != FILERR_NONE && sharedname != NULL)
 						{
 							fname.cpy(sharedname).cat(PATH_SEPARATOR).cat(intf->samplenames[sampnum]);
-							filerr = mame_fopen_options(options, SEARCHPATH_SAMPLE, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+							filerr = mame_fopen_options(options, samplepath, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 						}
 
 						/* fill in the record */
@@ -355,9 +355,9 @@ static void audit_one_rom(core_options *options, const rom_entry *rom, const cha
 		/* open the file if we can */
 		astring fname(drv->name, PATH_SEPARATOR, ROM_GETNAME(rom));
 	    if (has_crc)
-			filerr = mame_fopen_crc_options(options, SEARCHPATH_ROM, fname, crc, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+			filerr = mame_fopen_crc_options(options, libretro_content_directory, fname, crc, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 		else
-			filerr = mame_fopen_options(options, SEARCHPATH_ROM, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+			filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 
 		/* if we got it, extract the hash and length */
 		if (filerr == FILERR_NONE)
@@ -378,9 +378,9 @@ static void audit_one_rom(core_options *options, const rom_entry *rom, const cha
 		/* open the file if we can */
 		astring fname(regiontag, PATH_SEPARATOR, ROM_GETNAME(rom));
 	    if (has_crc)
-			filerr = mame_fopen_crc_options(options, SEARCHPATH_ROM, fname, crc, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+			filerr = mame_fopen_crc_options(options, libretro_content_directory, fname, crc, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 		else
-			filerr = mame_fopen_options(options, SEARCHPATH_ROM, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
+			filerr = mame_fopen_options(options, libretro_content_directory, fname, OPEN_FLAG_READ | OPEN_FLAG_NO_PRELOAD, &file);
 
 		/* if we got it, extract the hash and length */
 		if (filerr == FILERR_NONE)

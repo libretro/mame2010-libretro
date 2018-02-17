@@ -276,6 +276,7 @@ static file_error fopen_internal(core_options *opts, path_iterator *iterator, co
 static file_error fopen_attempt_zipped(astring &fullname, UINT32 crc, UINT32 openflags, mame_file *file)
 {
 	astring filename;
+       
 	zip_error ziperr;
 	zip_file *zip;
 
@@ -795,7 +796,7 @@ const char *mame_fhash(mame_file *file, UINT32 functions)
 static void path_iterator_init(path_iterator *iterator, core_options *opts, const char *searchpath)
 {
 	/* reset the structure */
-	iterator->base = (searchpath != NULL && !osd_is_absolute_path(searchpath)) ? options_get_string(opts, searchpath) : "";
+	iterator->base = searchpath;
 	iterator->cur = iterator->base;
 	iterator->index = 0;
 }
