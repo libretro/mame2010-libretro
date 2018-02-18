@@ -13,6 +13,31 @@ retromain.h
 #include "osdepend.h"
 
 extern int RLOOP;
+
+#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
+   #define M16B
+#endif
+
+#ifdef M16B
+   #define FUNC_PREFIX(x) rgb565_##x
+   #define PIXEL_TYPE UINT16
+   #define SRCSHIFT_R 3
+   #define SRCSHIFT_G 2
+   #define SRCSHIFT_B 3
+   #define DSTSHIFT_R 11
+   #define DSTSHIFT_G 5
+   #define DSTSHIFT_B 0
+#else
+   #define FUNC_PREFIX(x) rgb888_##x
+   #define PIXEL_TYPE UINT32
+   #define SRCSHIFT_R 0
+   #define SRCSHIFT_G 0
+   #define SRCSHIFT_B 0
+   #define DSTSHIFT_R 16
+   #define DSTSHIFT_G 8
+   #define DSTSHIFT_B 0
+#endif
+
 //============================================================
 //  TYPE DEFINITIONS
 //============================================================
