@@ -4518,7 +4518,9 @@ GLOBJ = $(OBJ)/osd/$(OSD)/glsym
 OBJDIRS += $(GLOBJ)
 endif
 OBJDIRS += $(MINIOBJ) \
-			  $(OBJ)/osd/$(OSD)/libretro-common
+			  $(OBJ)/osd/$(OSD)/libretro-common \
+              $(OBJ)/osd/$(OSD)/libretro-common/compat \
+              $(OBJ)/osd/$(OSD)/libretro-common/file
 
 #-------------------------------------------------
 # OSD core library
@@ -4527,7 +4529,10 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retrodir.o \
 	$(MINIOBJ)/retrofile.o \
 	$(MINIOBJ)/retromisc.o \
-	$(MINIOBJ)/retroos.o
+	$(MINIOBJ)/retroos.o \
+    $(MINIOBJ)/libretro-common/file/file_path.o \
+    $(MINIOBJ)/libretro-common/compat/compat_strcasestr.o \
+    $(MINIOBJ)/libretro-common/compat/compat_strl.o    
 
 ifeq ($(platform), wiiu)
 OSDCOREOBJS += \
@@ -4550,7 +4555,7 @@ else
 OSDOBJS += $(MINIOBJ)/libretro-common/glsym/glsym_gl.o
 endif
 endif
-OSDOBJS += $(OBJ)/osd/retro/retromain.o
+OSDOBJS += $(OBJ)/osd/retro/retromain.o 
 #-------------------------------------------------
 # rules for building the libaries
 #-------------------------------------------------
