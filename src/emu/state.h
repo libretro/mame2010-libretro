@@ -24,7 +24,7 @@
 #elif defined(IOS)
 #include <tr1/type_traits>
 #define DEF_NAMESPACE std::tr1
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(PS3_LIBRETRO)
 #include <tr1/type_traits>
 #define DEF_NAMESPACE std::tr1
 #endif
