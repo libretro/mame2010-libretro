@@ -12,7 +12,7 @@ The OSD code is highly inspired by other MAME ports :
 
 mame2010 requires the folllowing directories exist, and will create them if they are missing:
 
-* libretro system folder/mame2010/ - `cheat.dat` cheats file
+* libretro system folder/mame2010/ - `cheat.zip` cheats file
 * libretro system folder/mame2010/artwork
 * libretro system folder/mame2010/crosshairs
 * libretro system folder/mame2010/fonts
