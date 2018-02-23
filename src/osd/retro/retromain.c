@@ -20,6 +20,15 @@ mame2010 - libretro port of mame 0.139
 #include "log.h"
 #include "rendersw.c"
 
+#ifdef COMPILE_DATS
+	#include "precompile_hiscore_dat.h"
+    #include "precompile_mameini_boilerplate.h"
+#else
+	#include "hiscore_dat.h"
+    #include "mameini_boilerplate.h"
+#endif
+
+
 #ifdef M16B
 	uint16_t videoBuffer[1024*1024];
 	#define PITCH 1
@@ -32,11 +41,6 @@ mame2010 - libretro port of mame 0.139
 #include "retroogl.c"
 #endif
 
-#if defined(_WIN32)
-char PATH_DELIMITER = '\\';
-#else
-char PATH_DELIMITER = '/';
-#endif
 
 const char* core_name = "mame2010";
 char libretro_content_directory[1024];
@@ -117,25 +121,6 @@ void retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
 void retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
 void retro_set_audio_sample(retro_audio_sample_t cb) { }
 
-static void extract_basename(char *buf, const char *path, size_t size)
-{
-   const char *base = strrchr(path, '/');
-   if (!base)
-      base = strrchr(path, '\\');
-   if (!base)
-      base = path;
-
-   if (*base == '\\' || *base == '/')
-      base++;
-
-   strncpy(buf, base, size - 1);
-   buf[size - 1] = '\0';
-
-   char *ext = strrchr(buf, '.');
-   if (ext)
-      *ext = '\0';
-}
-
 static void extract_directory(char *buf, const char *path, size_t size)
 {
    strncpy(buf, path, size - 1);
@@ -150,37 +135,7 @@ static void extract_directory(char *buf, const char *path, size_t size)
    else
       buf[0] = '\0';
 }
-//============================================================
-//  CONSTANTS
-//============================================================
 
-// fake a keyboard mapped to retro joypad 
-enum
-{
-	KEY_F11,
-	KEY_TAB,
-	KEY_F3,
-	KEY_F2,
-	KEY_START,
-	KEY_COIN,
-	KEY_BUTTON_1,
-	KEY_BUTTON_2,
-	KEY_BUTTON_3,
-	KEY_BUTTON_4,
-	KEY_BUTTON_5,
-	KEY_BUTTON_6, 
-	KEY_JOYSTICK_U,
-	KEY_JOYSTICK_D,
-	KEY_JOYSTICK_L,
-	KEY_JOYSTICK_R,
-	KEY_TOTAL
-};
-
-#ifdef DEBUG_LOG
-# define LOG(msg) fprintf(stderr, "%s\n", msg)
-#else
-# define LOG(msg)
-#endif
 
 //============================================================
 //  GLOBALS
@@ -236,7 +191,7 @@ void retro_set_environment(retro_environment_t cb)
    static const struct retro_variable vars[] = {
       { "mame_current_mouse_enable", "Mouse supported; disabled|enabled" },
       { "mame_current_videoapproach1_enable", "Video approach 1 Enabled; disabled|enabled" },
-      { "mame_current_skip_nagscreen", "Hide nag screen; disabled|enabled" },
+      { "mame_current_skip_nagscreen", "Hide nag screen; enabled|disabled" },
       { "mame_current_skip_gameinfo", "Hide game info screen; disabled|enabled" },
       { "mame_current_skip_warnings", "Hide warning screen; disabled|enabled" },
       { "mame_current_aspect_ratio", "Core provided aspect ratio; DAR|PAR" },
@@ -430,39 +385,6 @@ static void update_geometry()
    environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
 }
 
-void init_input_descriptors(void)
-{
-   #define describe_buttons(INDEX) \
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "Joystick Left" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Joystick Right" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "Joystick Up" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "Joystick Down" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Button 1" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Button 2" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,     "Button 3" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "Button 4" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,     "Button 5" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Button 6" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "UI Menu" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Turbo Button" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Service" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Framerate" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Insert Coin" },\
-   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
-
-   struct retro_input_descriptor desc[] = {
-      describe_buttons(0)
-      describe_buttons(1)
-      describe_buttons(2)
-      describe_buttons(3)
-      describe_buttons(4)
-      describe_buttons(5)
-      { 0, 0, 0, 0, NULL }
-   };
-
-   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
-}
-
 void retro_get_system_info(struct retro_system_info *info)
 {
    memset(info, 0, sizeof(*info));
@@ -521,7 +443,6 @@ void retro_reset (void)
    mame_reset = 1;
 }
 
-
 void retro_run (void)
 {
    bool updated = false;
@@ -548,6 +469,47 @@ void prep_retro_rotation(int rot)
 {
    LOGI("Rotation:%d\n",rot);
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rot);
+}
+
+void retro_unload_game(void)
+{
+	if(pauseg == 0)
+		pauseg = -1;
+
+	LOGI("Retro unload_game\n");
+}
+
+void init_input_descriptors(void)
+{
+   #define describe_buttons(INDEX) \
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "Joystick Left" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Joystick Right" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "Joystick Up" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "Joystick Down" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Button 1" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Button 2" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,     "Button 3" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "Button 4" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,     "Button 5" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Button 6" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "UI Menu" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,     "Turbo Button" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,     "Service" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3,     "Framerate" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Insert Coin" },\
+   { INDEX, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
+
+   struct retro_input_descriptor desc[] = {
+      describe_buttons(0)
+      describe_buttons(1)
+      describe_buttons(2)
+      describe_buttons(3)
+      describe_buttons(4)
+      describe_buttons(5)
+      { 0, 0, 0, 0, NULL }
+   };
+
+   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 }
 
 /*
@@ -578,14 +540,6 @@ static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_
    }
 }
 */
-
-void retro_unload_game(void)
-{
-	if(pauseg == 0)
-		pauseg = -1;
-
-	LOGI("Retro unload_game\n");
-}
 
 #define PLAYER1_PRESS(button) input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
 #define PLAYER2_PRESS(button) input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
@@ -1298,13 +1252,13 @@ void retro_init (void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
    {
        // use a subfolder in the system directory with the core name (ie mame2010)
-        snprintf(libretro_system_directory, sizeof(libretro_system_directory), "%s%c%s", system_dir, PATH_DELIMITER, core_name);
+        snprintf(libretro_system_directory, sizeof(libretro_system_directory), "%s%s%s", system_dir, path_default_slash(), core_name);
    }
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
    {
        // use a subfolder in the save directory with the core name (ie mame2010)
-        snprintf(libretro_save_directory, sizeof(libretro_save_directory), "%s%c%s", save_dir, PATH_DELIMITER, core_name);
+        snprintf(libretro_save_directory, sizeof(libretro_save_directory), "%s%s%s", save_dir, path_default_slash(), core_name);
    }
    else
    {
@@ -1315,47 +1269,63 @@ void retro_init (void)
     path_mkdir(libretro_save_directory);
  
     // content loaded from mame2010 subfolder within the libretro system folder
-    snprintf(cheatpath, sizeof(cheatpath), "%c%s", PATH_DELIMITER, libretro_system_directory);
+    snprintf(cheatpath, sizeof(cheatpath), "%s%s", path_default_slash(), libretro_system_directory);
     path_mkdir(libretro_save_directory);
-    snprintf(samplepath, sizeof(samplepath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "samples");
+    snprintf(samplepath, sizeof(samplepath), "%s%s%s", libretro_system_directory, path_default_slash(), "samples");
     path_mkdir(samplepath);
-    snprintf(artpath, sizeof(artpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "artwork");
+    snprintf(artpath, sizeof(artpath), "%s%s%s", libretro_system_directory, path_default_slash(), "artwork");
     path_mkdir(artpath);
-    snprintf(fontpath, sizeof(fontpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "fonts");
+    snprintf(fontpath, sizeof(fontpath), "%s%s%s", libretro_system_directory, path_default_slash(), "fonts");
     path_mkdir(fontpath);
-    snprintf(crosshairpath, sizeof(crosshairpath), "%s%c%s", libretro_system_directory, PATH_DELIMITER, "crosshairs");
+    snprintf(crosshairpath, sizeof(crosshairpath), "%s%s%s", libretro_system_directory, path_default_slash(), "crosshairs");
     path_mkdir(crosshairpath);
 
     // user-generated content loaded from mame2010 subfolder within the libretro save folder
-    snprintf(ctrlrpath, sizeof(ctrlrpath), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "ctrlr");
+    snprintf(ctrlrpath, sizeof(ctrlrpath), "%s%s%s", libretro_save_directory, path_default_slash(), "ctrlr");
     path_mkdir(ctrlrpath);
-    snprintf(inipath, sizeof(inipath), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "ini");
+    snprintf(inipath, sizeof(inipath), "%s%s%s", libretro_save_directory, path_default_slash(), "ini");
     path_mkdir(inipath);
-    snprintf(cfg_directory, sizeof(cfg_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "cfg");
+    snprintf(cfg_directory, sizeof(cfg_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "cfg");
     path_mkdir(cfg_directory);
-    snprintf(nvram_directory, sizeof(nvram_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "nvram");
+    snprintf(nvram_directory, sizeof(nvram_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "nvram");
     path_mkdir(nvram_directory);
-    snprintf(memcard_directory, sizeof(memcard_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "memcard");
+    snprintf(memcard_directory, sizeof(memcard_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "memcard");
     path_mkdir(memcard_directory);
-    snprintf(input_directory, sizeof(input_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "input");
+    snprintf(input_directory, sizeof(input_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "input");
     path_mkdir(input_directory);
-    snprintf(image_directory, sizeof(image_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "image");
+    snprintf(image_directory, sizeof(image_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "image");
     path_mkdir(image_directory);
-	snprintf(diff_directory, sizeof(diff_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "diff");
+	snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
     path_mkdir(diff_directory);
-    snprintf(comment_directory, sizeof(comment_directory), "%s%c%s", libretro_save_directory, PATH_DELIMITER, "comment");
+    snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
     path_mkdir(comment_directory);
 
+    char mameini_path[1024];
+    
+    snprintf(mameini_path, sizeof(mameini_path), "%s%s%s", inipath, path_default_slash(), "mame.ini");
+    if(!path_file_exists(mameini_path))
+    {
+        FILE *mameini_file;
+        if((mameini_file=fopen(mameini_path, "wb"))==NULL)
+        {
+            printf("[MAME 2010][ERROR] Something went wrong creating new mame.ini at: %s\n", mameini_path);
+        }
+        else
+        {
+            fwrite(mameini_boilerplate, sizeof(char), mameini_boilerplate_length, mameini_file);          
+            fclose(mameini_file);         
+        }
+    }
 }
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-   char basename[1024];
-   
-   basename[0] = '\0';
-   extract_basename(basename, info->path, sizeof(basename));
+
    extract_directory(libretro_content_directory, info->path, sizeof(libretro_content_directory));
+   strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory));
    
+   printf("\npath_parent_dir output: %s\n\n", libretro_content_directory);
+
    struct retro_log_callback log_cb;
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log_cb))
@@ -1417,7 +1387,6 @@ bool retro_load_game(const struct retro_game_info *info)
 
    return 1;
 }
-
 
 void osd_exit(running_machine &machine)
 {
@@ -1644,28 +1613,6 @@ void osd_update_audio_stream(running_machine *machine,short *buffer, int samples
 
 
 //============================================================
-//  set_mastervolume
-//============================================================
-void osd_set_mastervolume(int attenuation)
-{
-   // if we had actual sound output, we would adjust the global
-   // volume in response to this function
-}
-
-
-//============================================================
-//  customize_input_type_list
-//============================================================
-void osd_customize_input_type_list(input_type_desc *typelist)
-{
-	// This function is called on startup, before reading the
-	// configuration from disk. Scan the list, and change the
-	// default control mappings you want. It is quite possible
-	// you won't need to change a thing.
-}
-
-
-//============================================================
 //  main
 //============================================================
 
@@ -1702,7 +1649,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 	}
 
 	for (i = len - 1; i >=0; i--) {
-		if (path[i] == PATH_DELIMITER) {
+		if (path[i] == path_default_slash()[0]) {
 			slashIndex = i;
 			break;
 		} else
@@ -1733,8 +1680,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 	int gameFound = 0;
 	int drvindex;
-//FIXME for 0.149 , prevouisly in driver.h
-#if 1
+
 	//check invalid game name
 	if (gameName[0] == 0)
 		return 0;
@@ -1748,9 +1694,6 @@ static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 				write_log("[INFO][MAME2010] %-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
 		}
 	}
-#else
-	gameFound = 1;
-#endif
 	return gameFound;
 }
 
@@ -1864,9 +1807,8 @@ extern "C"
 int mmain(int argc, const char *argv)
 {
 	static char gameName[1024];
-	int result = 0;
 
-	strcpy(gameName,argv);
-	if(executeGame(gameName)!=0)return -1;
+	strncpy(gameName, argv, 1024);
+	if(executeGame(gameName)!=0) return -1;
 	return 1;
 }

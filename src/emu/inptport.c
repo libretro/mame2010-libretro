@@ -1882,9 +1882,6 @@ static void init_port_types(running_machine *machine)
 		stateptr = &(*stateptr)->next;
 	}
 
-	/* ask the OSD to customize the list */
-	osd_customize_input_type_list(&portdata->typestatelist->typedesc);
-
 	/* now iterate over the OSD-modified types */
 	for (curtype = portdata->typestatelist; curtype != NULL; curtype = curtype->next)
 	{

@@ -159,24 +159,4 @@ void osd_update_audio_stream(running_machine *machine, INT16 *buffer, int sample
 void osd_set_mastervolume(int attenuation);
 
 
-
-/******************************************************************************
-
-    Controls
-
-******************************************************************************/
-
-/*
-  inptport.c defines some general purpose defaults for key and joystick bindings.
-  They may be further adjusted by the OS dependent code to better match the
-  available keyboard, e.g. one could map pause to the Pause key instead of P, or
-  snapshot to PrtScr instead of F12. Of course the user can further change the
-  settings to anything he/she likes.
-  This function is called on startup, before reading the configuration from disk.
-  Scan the list, and change the keys/joysticks you want.
-*/
-void osd_customize_input_type_list(input_type_desc *typelist);
-
-
-
 #endif	/* __OSDEPEND_H__ */

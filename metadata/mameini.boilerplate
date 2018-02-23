@@ -6,28 +6,6 @@
 readconfig                1
 writeconfig               0
 
-#
-# CORE SEARCH PATH OPTIONS
-rompath                   roms
-samplepath                samples
-artpath                   artwork
-ctrlrpath                 ctrlr
-inipath                   .;ini
-fontpath                  .
-cheatpath                 cheat
-crosshairpath             crosshair
-
-#
-# CORE OUTPUT DIRECTORY OPTIONS
-#
-cfg_directory             cfg
-nvram_directory           nvram
-memcard_directory         memcard
-input_directory           inp
-state_directory           sta
-snapshot_directory        snap
-diff_directory            diff
-comment_directory         comments
 
 #
 # CORE STATE/PLAYBACK OPTIONS
@@ -75,14 +53,6 @@ use_overlays              1
 use_bezels                1
 
 #
-# CORE SCREEN OPTIONS
-#
-brightness                0.95
-contrast                  1.0
-gamma                     0.85
-pause_brightness          0.65
-
-#
 # CORE VECTOR OPTIONS
 #
 antialias                 1
@@ -93,7 +63,6 @@ flicker                   0
 # CORE SOUND OPTIONS
 #
 sound                     1
-samplerate                48000
 samples                   1
 volume                    0
 
@@ -104,7 +73,7 @@ coin_lockout              1
 ctrlr                     
 mouse                     1
 joystick                  1
-lightgun                  0
+lightgun                  1
 multikeyboard             0
 multimouse                0
 steadykey                 0
