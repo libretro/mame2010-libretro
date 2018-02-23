@@ -239,11 +239,10 @@ else ifeq ($(platform), ps3)
    TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-   CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__
+   CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__ -DPS3_LIBRETRO
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
-
 # PS3 (SNC)
 else ifeq ($(platform), sncps3)
    TARGETLIB := $(TARGET_NAME)_libretro_ps3.a
