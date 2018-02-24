@@ -298,7 +298,7 @@ static void check_irqs(adsp2100_state *adsp);
     STATE ACCESSORS
 ***************************************************************************/
 
-INLINE adsp2100_state *get_safe_token(running_device *device)
+static INLINE adsp2100_state *get_safe_token(running_device *device)
 {
 	assert(device != NULL);
 	assert(device->type() == ADSP2100 ||
@@ -316,32 +316,32 @@ INLINE adsp2100_state *get_safe_token(running_device *device)
     MEMORY ACCESSORS
 ***************************************************************************/
 
-INLINE UINT16 RWORD_DATA(adsp2100_state *adsp, UINT32 addr)
+static INLINE UINT16 RWORD_DATA(adsp2100_state *adsp, UINT32 addr)
 {
 	return memory_read_word_16le(adsp->data, addr << 1);
 }
 
-INLINE void WWORD_DATA(adsp2100_state *adsp, UINT32 addr, UINT16 data)
+static INLINE void WWORD_DATA(adsp2100_state *adsp, UINT32 addr, UINT16 data)
 {
 	memory_write_word_16le(adsp->data, addr << 1, data);
 }
 
-INLINE UINT16 RWORD_IO(adsp2100_state *adsp, UINT32 addr)
+static INLINE UINT16 RWORD_IO(adsp2100_state *adsp, UINT32 addr)
 {
 	return memory_read_word_16le(adsp->io, addr << 1);
 }
 
-INLINE void WWORD_IO(adsp2100_state *adsp, UINT32 addr, UINT16 data)
+static INLINE void WWORD_IO(adsp2100_state *adsp, UINT32 addr, UINT16 data)
 {
 	memory_write_word_16le(adsp->io, addr << 1, data);
 }
 
-INLINE UINT32 RWORD_PGM(adsp2100_state *adsp, UINT32 addr)
+static INLINE UINT32 RWORD_PGM(adsp2100_state *adsp, UINT32 addr)
 {
 	return memory_read_dword_32le(adsp->program, addr << 2);
 }
 
-INLINE void WWORD_PGM(adsp2100_state *adsp, UINT32 addr, UINT32 data)
+static INLINE void WWORD_PGM(adsp2100_state *adsp, UINT32 addr, UINT32 data)
 {
 	memory_write_dword_32le(adsp->program, addr << 2, data & 0xffffff);
 }
@@ -361,7 +361,7 @@ INLINE void WWORD_PGM(adsp2100_state *adsp, UINT32 addr, UINT32 data)
     IRQ HANDLING
 ***************************************************************************/
 
-INLINE int adsp2100_generate_irq(adsp2100_state *adsp, int which)
+static INLINE int adsp2100_generate_irq(adsp2100_state *adsp, int which)
 {
 	/* skip if masked */
 	if (!(adsp->imask & (1 << which)))
@@ -386,7 +386,7 @@ INLINE int adsp2100_generate_irq(adsp2100_state *adsp, int which)
 }
 
 
-INLINE int adsp2101_generate_irq(adsp2100_state *adsp, int which, int indx)
+static INLINE int adsp2101_generate_irq(adsp2100_state *adsp, int which, int indx)
 {
 	/* skip if masked */
 	if (!(adsp->imask & (0x20 >> indx)))
@@ -411,7 +411,7 @@ INLINE int adsp2101_generate_irq(adsp2100_state *adsp, int which, int indx)
 }
 
 
-INLINE int adsp2181_generate_irq(adsp2100_state *adsp, int which, int indx)
+static INLINE int adsp2181_generate_irq(adsp2100_state *adsp, int which, int indx)
 {
 	/* skip if masked */
 	if (!(adsp->imask & (0x200 >> indx)))

@@ -224,7 +224,7 @@ typedef struct {
 #define LP1				lp1
 #define LP2				lp2
 
-INLINE alpha8201_state *get_safe_token(running_device *device)
+static INLINE alpha8201_state *get_safe_token(running_device *device)
 {
 	assert(device != NULL);
 	assert(device->type() == ALPHA8201 ||
@@ -233,7 +233,7 @@ INLINE alpha8201_state *get_safe_token(running_device *device)
 }
 
 /* Get next opcode argument and increment program counter */
-INLINE unsigned M_RDMEM_OPCODE (alpha8201_state *cpustate)
+static INLINE unsigned M_RDMEM_OPCODE (alpha8201_state *cpustate)
 {
 	unsigned retval;
 	retval=M_RDOP_ARG(cpustate->PC);
@@ -241,7 +241,7 @@ INLINE unsigned M_RDMEM_OPCODE (alpha8201_state *cpustate)
 	return retval;
 }
 
-INLINE void M_ADD(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_ADD(alpha8201_state *cpustate, UINT8 dat)
 {
 	UINT16 temp = cpustate->A + dat;
 	cpustate->A = temp & 0xff;
@@ -249,7 +249,7 @@ INLINE void M_ADD(alpha8201_state *cpustate, UINT8 dat)
 	cpustate->cf = temp>>8;
 }
 
-INLINE void M_ADDB(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_ADDB(alpha8201_state *cpustate, UINT8 dat)
 {
 	UINT16 temp = cpustate->B + dat;
 	cpustate->B = temp & 0xff;
@@ -257,40 +257,40 @@ INLINE void M_ADDB(alpha8201_state *cpustate, UINT8 dat)
 	cpustate->cf = temp>>8;
 }
 
-INLINE void M_SUB(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_SUB(alpha8201_state *cpustate, UINT8 dat)
 {
 	cpustate->cf = (cpustate->A>=dat);	// cpustate->cf is No Borrow
 	cpustate->A -= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_AND(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_AND(alpha8201_state *cpustate, UINT8 dat)
 {
 	cpustate->A &= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_OR(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_OR(alpha8201_state *cpustate, UINT8 dat)
 {
 	cpustate->A |= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_XOR(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_XOR(alpha8201_state *cpustate, UINT8 dat)
 {
 	cpustate->A ^= dat;
 	cpustate->zf = (cpustate->A==0);
 	cpustate->cf = 0;
 }
 
-INLINE void M_JMP(alpha8201_state *cpustate, UINT8 dat)
+static INLINE void M_JMP(alpha8201_state *cpustate, UINT8 dat)
 {
 	cpustate->PCL = dat;
 	/* update pc page */
 	cpustate->pc.b.h  = cpustate->ix0.b.h = cpustate->ix1.b.h = cpustate->ix2.b.h = cpustate->mb & 3;
 }
 
-INLINE void M_UNDEFINED(alpha8201_state *cpustate)
+static INLINE void M_UNDEFINED(alpha8201_state *cpustate)
 {
 	logerror("alpha8201:  cpustate->PC = %03x,  Unimplemented opcode = %02x\n", cpustate->PC-1, M_RDMEM(cpustate->PC-1));
 #if SHOW_MESSAGE_CONSOLE
@@ -301,7 +301,7 @@ INLINE void M_UNDEFINED(alpha8201_state *cpustate)
 #endif
 }
 
-INLINE void M_UNDEFINED2(alpha8201_state *cpustate)
+static INLINE void M_UNDEFINED2(alpha8201_state *cpustate)
 {
 	UINT8 op  = M_RDOP(cpustate->PC-1);
 	UINT8 imm = M_RDMEM_OPCODE(cpustate);

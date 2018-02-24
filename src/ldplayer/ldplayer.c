@@ -276,7 +276,7 @@ static MACHINE_RESET( ldplayer )
  *
  *************************************/
 
-INLINE void pr8210_add_command(UINT8 command)
+static INLINE void pr8210_add_command(UINT8 command)
 {
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = (command & 0x1f) | 0x20;
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = 0x00 | 0x20;

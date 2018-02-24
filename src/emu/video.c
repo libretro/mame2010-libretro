@@ -191,7 +191,7 @@ static void rgb888_draw_primitives(const render_primitive *primlist, void *dstda
     forward
 -------------------------------------------------*/
 
-INLINE int effective_autoframeskip(running_machine *machine)
+static INLINE int effective_autoframeskip(running_machine *machine)
 {
 	/* if we're fast forwarding or paused, autoframeskip is disabled */
 	if (global.fastforward || machine->paused())
@@ -208,7 +208,7 @@ INLINE int effective_autoframeskip(running_machine *machine)
     forward
 -------------------------------------------------*/
 
-INLINE int effective_frameskip(void)
+static INLINE int effective_frameskip(void)
 {
 	/* if we're fast forwarding, use the maximum frameskip */
 	if (global.fastforward)
@@ -225,7 +225,7 @@ INLINE int effective_frameskip(void)
     forward and user interface
 -------------------------------------------------*/
 
-INLINE int effective_throttle(running_machine *machine)
+static INLINE int effective_throttle(running_machine *machine)
 {
 	/* if we're paused, or if the UI is active, we always throttle */
 	if (machine->paused() || ui_is_menu_active())
@@ -245,7 +245,7 @@ INLINE int effective_throttle(running_machine *machine)
     speed setting
 -------------------------------------------------*/
 
-INLINE int original_speed_setting(void)
+static INLINE int original_speed_setting(void)
 {
 	return options_get_float(mame_options(), OPTION_SPEED) * 100.0 + 0.5;
 }

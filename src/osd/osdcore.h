@@ -49,6 +49,7 @@
 #define __OSDCORE_H__
 
 #include "osdcomm.h"
+#include <retro_inline.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -657,7 +658,7 @@ osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_call
 
 
 /* inline helper to queue a single work item using the same interface */
-INLINE osd_work_item *osd_work_item_queue(osd_work_queue *queue, osd_work_callback callback, void *param, UINT32 flags)
+static INLINE osd_work_item *osd_work_item_queue(osd_work_queue *queue, osd_work_callback callback, void *param, UINT32 flags)
 {
 	return osd_work_item_queue_multiple(queue, callback, 1, param, 0, flags);
 }

@@ -52,7 +52,7 @@ static int input_seq_is_valid(const input_seq *seq);
     sequence
 -------------------------------------------------*/
 
-INLINE int input_seq_length(const input_seq *seq)
+static INLINE int input_seq_length(const input_seq *seq)
 {
 	int seqnum;
 
@@ -69,7 +69,7 @@ INLINE int input_seq_length(const input_seq *seq)
     of an input sequence
 -------------------------------------------------*/
 
-INLINE int input_seq_append(input_seq *seq, input_code code)
+static INLINE int input_seq_append(input_seq *seq, input_code code)
 {
 	int length = input_seq_length(seq);
 
@@ -89,7 +89,7 @@ INLINE int input_seq_append(input_seq *seq, input_code code)
     in a sequence
 -------------------------------------------------*/
 
-INLINE input_code input_seq_get_last(const input_seq *seq)
+static INLINE input_code input_seq_get_last(const input_seq *seq)
 {
 	int length = input_seq_length(seq);
 	return (length == 0) ? SEQCODE_END : seq->code[length - 1];
@@ -100,7 +100,7 @@ INLINE input_code input_seq_get_last(const input_seq *seq)
     last_but_one code in a sequence
 -------------------------------------------------*/
 
-INLINE input_code input_seq_get_last_but_one(const input_seq *seq)
+static INLINE input_code input_seq_get_last_but_one(const input_seq *seq)
 {
 	int length = input_seq_length(seq);
 	return (length < 2) ? SEQCODE_END : seq->code[length - 2];
@@ -112,7 +112,7 @@ INLINE input_code input_seq_get_last_but_one(const input_seq *seq)
     last entry in a sequence
 -------------------------------------------------*/
 
-INLINE void input_seq_backspace(input_seq *seq)
+static INLINE void input_seq_backspace(input_seq *seq)
 {
 	int length = input_seq_length(seq);
 

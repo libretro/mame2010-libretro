@@ -3,6 +3,7 @@ retromain.c
 mame2010 - libretro port of mame 0.139
 ****************************************************************************/
 
+#include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
 #include "osdepend.h"
@@ -14,8 +15,8 @@ mame2010 - libretro port of mame 0.139
 #include "uiinput.h"
 
 #include "libretro.h" 
+#include <file/file_path.h>
 #include "retromain.h"
-#include "file/file_path.h"
 
 #include "log.h"
 #include "rendersw.c"
@@ -1244,6 +1245,22 @@ void retro_poll_mame_input()
    }
 }
 
+static bool path_file_exists(const char *path)
+{
+   FILE *dummy;
+
+   if (!path || !*path)
+      return false;
+
+   dummy = fopen(path, "rb");
+
+   if (!dummy)
+      return false;
+
+   fclose(dummy);
+   return true;
+}
+
 void retro_init (void)
 {      
    const char *system_dir  = NULL;
@@ -1302,7 +1319,9 @@ void retro_init (void)
 
     char mameini_path[1024];
     
-    snprintf(mameini_path, sizeof(mameini_path), "%s%s%s", inipath, path_default_slash(), "mame.ini");
+    snprintf(mameini_path,
+          sizeof(mameini_path),
+          "%s%s%s", inipath, path_default_slash(), "mame.ini");
     if(!path_file_exists(mameini_path))
     {
         FILE *mameini_file;

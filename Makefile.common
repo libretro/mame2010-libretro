@@ -4528,6 +4528,8 @@ OBJDIRS += $(MINIOBJ)
 ifneq ($(STATIC_LINKING), 1)
 OBJDIRS += $(OBJ)/osd/$(OSD)/libretro-common \
 			  $(OBJ)/osd/$(OSD)/libretro-common/compat \
+			  $(OBJ)/osd/$(OSD)/libretro-common/encodings \
+			  $(OBJ)/osd/$(OSD)/libretro-common/string \
 			  $(OBJ)/osd/$(OSD)/libretro-common/file
 endif
 
@@ -4542,8 +4544,10 @@ OSDCOREOBJS := \
 
 ifneq ($(STATIC_LINKING), 1)
 OSDCOREOBJS += \
-    $(MINIOBJ)/libretro-common/file/file_path.o \
+	 $(MINIOBJ)/libretro-common/file/file_path.o \
     $(MINIOBJ)/libretro-common/compat/compat_strcasestr.o \
+	 $(MINIOBJ)/libretro-common/encodings/encoding_utf.o \
+	 $(MINIOBJ)/libretro-common/string/stdstring.o \
     $(MINIOBJ)/libretro-common/compat/compat_strl.o    
 endif
 

@@ -293,7 +293,7 @@ static void render_container_update_palette(render_container *container);
     set of bounds
 -------------------------------------------------*/
 
-INLINE void apply_orientation(render_bounds *bounds, int orientation)
+static INLINE void apply_orientation(render_bounds *bounds, int orientation)
 {
 	/* swap first */
 	if (orientation & ORIENTATION_SWAP_XY)
@@ -323,7 +323,7 @@ INLINE void apply_orientation(render_bounds *bounds, int orientation)
     x0/y0 are less than x1/y1
 -------------------------------------------------*/
 
-INLINE void normalize_bounds(render_bounds *bounds)
+static INLINE void normalize_bounds(render_bounds *bounds)
 {
 	if (bounds->x0 > bounds->x1)
 		FSWAP(bounds->x0, bounds->x1);
@@ -337,7 +337,7 @@ INLINE void normalize_bounds(render_bounds *bounds)
     container item object
 --------------------------------------------------*/
 
-INLINE container_item *alloc_container_item(void)
+static INLINE container_item *alloc_container_item(void)
 {
 	container_item *result = container_item_free_list;
 
@@ -357,7 +357,7 @@ INLINE container_item *alloc_container_item(void)
     allocated render element object
 -------------------------------------------------*/
 
-INLINE void free_container_item(container_item *item)
+static INLINE void free_container_item(container_item *item)
 {
 	item->next = container_item_free_list;
 	container_item_free_list = item;
@@ -369,7 +369,7 @@ INLINE void free_container_item(container_item *item)
     element object
 -------------------------------------------------*/
 
-INLINE render_primitive *alloc_render_primitive(int type)
+static INLINE render_primitive *alloc_render_primitive(int type)
 {
 	render_primitive *result = render_primitive_free_list;
 
@@ -391,7 +391,7 @@ INLINE render_primitive *alloc_render_primitive(int type)
     to the end of the list
 -------------------------------------------------*/
 
-INLINE void append_render_primitive(render_primitive_list *list, render_primitive *prim)
+static INLINE void append_render_primitive(render_primitive_list *list, render_primitive *prim)
 {
 	*list->nextptr = prim;
 	list->nextptr = &prim->next;
@@ -403,7 +403,7 @@ INLINE void append_render_primitive(render_primitive_list *list, render_primitiv
     allocated render element object
 -------------------------------------------------*/
 
-INLINE void free_render_primitive(render_primitive *element)
+static INLINE void free_render_primitive(render_primitive *element)
 {
 	element->next = render_primitive_free_list;
 	render_primitive_free_list = element;
@@ -414,7 +414,7 @@ INLINE void free_render_primitive(render_primitive *element)
     add_render_ref - add a new reference
 -------------------------------------------------*/
 
-INLINE void add_render_ref(render_ref **list, void *refptr)
+static INLINE void add_render_ref(render_ref **list, void *refptr)
 {
 	render_ref *ref;
 
@@ -442,7 +442,7 @@ INLINE void add_render_ref(render_ref **list, void *refptr)
     list
 -------------------------------------------------*/
 
-INLINE int has_render_ref(render_ref *list, void *refptr)
+static INLINE int has_render_ref(render_ref *list, void *refptr)
 {
 	render_ref *ref;
 
@@ -459,7 +459,7 @@ INLINE int has_render_ref(render_ref *list, void *refptr)
     allocated render reference
 -------------------------------------------------*/
 
-INLINE void free_render_ref(render_ref *ref)
+static INLINE void free_render_ref(render_ref *ref)
 {
 	ref->next = render_ref_free_list;
 	render_ref_free_list = ref;
@@ -471,7 +471,7 @@ INLINE void free_render_ref(render_ref *ref)
     appropriate layer index and blendmode
 -------------------------------------------------*/
 
-INLINE int get_layer_and_blendmode(const layout_view *view, int index, int *blendmode)
+static INLINE int get_layer_and_blendmode(const layout_view *view, int index, int *blendmode)
 {
     const int *layer_order = layer_order_standard;
     int layer;
@@ -510,7 +510,7 @@ INLINE int get_layer_and_blendmode(const layout_view *view, int index, int *blen
     screen container for this screen index
 -------------------------------------------------*/
 
-INLINE render_container *get_screen_container_by_index(int index)
+static INLINE render_container *get_screen_container_by_index(int index)
 {
 	render_container *container;
 

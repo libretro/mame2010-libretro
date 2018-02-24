@@ -386,7 +386,7 @@ else ifeq ($(platform), wincross)
 	CC_AS ?= gcc
 
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
-	CCOMFLAGS +=-D__WIN32__ -D__WIN32_LIBRETRO__ 
+	CCOMFLAGS +=-D__WIN32__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -409,7 +409,7 @@ else
 ifneq ($(MDEBUG),1)
 	SHARED += -s
 endif
-CCOMFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
+CCOMFLAGS += -D__WIN32__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -549,8 +549,6 @@ OBJ = obj/$(PREFIX)$(OSD)$(SUFFIX)$(SUFFIX64)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
-# map the INLINE to something digestible by GCC
-DEFS += -DINLINE="static inline"
 
 # define MSB_FIRST if we are a big-endian target
 ifdef BIGENDIAN

@@ -73,7 +73,7 @@ public:
     indexed string from the input port system
 -------------------------------------------------*/
 
-INLINE const char *input_port_string_from_index(UINT32 index)
+static INLINE const char *input_port_string_from_index(UINT32 index)
 {
 	input_port_token token;
 	token.i = index;

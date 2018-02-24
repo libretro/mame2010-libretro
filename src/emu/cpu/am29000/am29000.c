@@ -141,7 +141,7 @@ typedef struct _am29000_state
     STATE ACCESSORS
 ***************************************************************************/
 
-INLINE am29000_state *get_safe_token(running_device *device)
+static INLINE am29000_state *get_safe_token(running_device *device)
 {
 	assert(device != NULL);
 	assert(device->type() == AM29000);
@@ -279,7 +279,7 @@ static UINT32 read_program_word(am29000_state *state, UINT32 address)
     HELPER FUNCTIONS
 ***************************************************************************/
 
-INLINE UINT32 get_abs_reg(am29000_state *am29000, UINT8 r, UINT32 iptr)
+static INLINE UINT32 get_abs_reg(am29000_state *am29000, UINT8 r, UINT32 iptr)
 {
 	if (r & 0x80)
 	{
@@ -311,7 +311,7 @@ INLINE UINT32 get_abs_reg(am29000_state *am29000, UINT8 r, UINT32 iptr)
     PIPELINE STAGES
 ***************************************************************************/
 
-INLINE void fetch_decode(am29000_state *am29000)
+static INLINE void fetch_decode(am29000_state *am29000)
 {
 	UINT32 inst;
 	op_info op;
