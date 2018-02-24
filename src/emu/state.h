@@ -18,17 +18,6 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#if defined(__MACH__) && !defined(IOS)
-#include <type_traits>
-#define DEF_NAMESPACE std
-#elif defined(IOS)
-#include <tr1/type_traits>
-#define DEF_NAMESPACE std::tr1
-#elif defined(__GNUC__) && !defined(PS3_LIBRETRO)
-#include <tr1/type_traits>
-#define DEF_NAMESPACE std::tr1
-#endif
-
 
 /***************************************************************************
     TYPE DEFINTIONS
@@ -63,14 +52,9 @@ typedef enum _state_save_error state_save_error;
 #define STATE_POSTLOAD(name) void name(running_machine *machine, void *param)
 
 
-#define IS_VALID_SAVE_TYPE(_var) \
-	(DEF_NAMESPACE::is_arithmetic<typeof(_var)>::value || DEF_NAMESPACE::is_enum<typeof(_var)>::value || \
-	 DEF_NAMESPACE::is_same<typeof(_var), PAIR>::value || DEF_NAMESPACE::is_same<typeof(_var), PAIR64>::value)
-
 /* generic registration; all further registrations are based on this */
 #define state_save_register_generic(_mach, _mod, _tag, _index, _name, _val, _valsize, _count)		\
 do {																								\
-	assert_always(IS_VALID_SAVE_TYPE(_valsize), "Invalid data type supplied for state saving.");	\
 	state_save_register_memory(_mach, _mod, _tag, _index, _name, _val, sizeof(_valsize), _count, __FILE__, __LINE__);	\
 } while (0)
 
