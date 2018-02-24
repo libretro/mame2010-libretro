@@ -894,10 +894,10 @@ static void initInput(running_machine* machine)
       input_device_item_add_p1(P1_device, "RetroPad P1 B", &P1_state[KEY_BUTTON_2], ITEM_ID_SPACE, pad1_get_state);
       input_device_item_add_p1(P1_device, "RetroPad P1 A", &P1_state[KEY_BUTTON_1], ITEM_ID_LSHIFT, pad1_get_state);
 
-      input_device_item_add_p1(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
-      input_device_item_add_p1(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_W, pad2_get_state);
+      input_device_item_add_p2(P2_device, "RetroPad P2 Y", &P2_state[KEY_BUTTON_4], ITEM_ID_A, pad2_get_state);
+      input_device_item_add_p2(P2_device, "RetroPad P2 X", &P2_state[KEY_BUTTON_3], ITEM_ID_S, pad2_get_state);
+      input_device_item_add_p2(P2_device, "RetroPad P2 B", &P2_state[KEY_BUTTON_2], ITEM_ID_Q, pad2_get_state);
+      input_device_item_add_p2(P2_device, "RetroPad P2 A", &P2_state[KEY_BUTTON_1], ITEM_ID_W, pad2_get_state);
    }
    else      /* Soul Edge / Soul Calibur */
    if (SOULEDGE_LAYOUT)
