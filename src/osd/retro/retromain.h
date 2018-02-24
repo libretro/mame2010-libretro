@@ -44,8 +44,6 @@ extern int RLOOP;
 void osd_init(running_machine* machine);
 void osd_update(running_machine* machine,int skip_redraw);
 void osd_update_audio_stream(running_machine* machine,short *buffer, int samples_this_frame);
-void osd_set_mastervolume(int attenuation);
-void osd_customize_input_type_list(input_type_desc *typelist);
 void osd_exit(running_machine &machine);
 
 //============================================================
@@ -73,5 +71,33 @@ extern char memcard_directory[];
 extern char input_directory[];
 extern char diff_directory[];
 extern char comment_directory[];
+
+// fake a keyboard mapped to retro joypad 
+enum
+{
+	KEY_F11,
+	KEY_TAB,
+	KEY_F3,
+	KEY_F2,
+	KEY_START,
+	KEY_COIN,
+	KEY_BUTTON_1,
+	KEY_BUTTON_2,
+	KEY_BUTTON_3,
+	KEY_BUTTON_4,
+	KEY_BUTTON_5,
+	KEY_BUTTON_6, 
+	KEY_JOYSTICK_U,
+	KEY_JOYSTICK_D,
+	KEY_JOYSTICK_L,
+	KEY_JOYSTICK_R,
+	KEY_TOTAL
+};
+
+#ifdef DEBUG_LOG
+# define LOG(msg) fprintf(stderr, "%s\n", msg)
+#else
+# define LOG(msg)
+#endif
 
 #endif	/* __RETROMAIN_H__ */

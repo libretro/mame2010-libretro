@@ -246,14 +246,12 @@ static void sound_pause(running_machine &machine)
 {
 	sound_private *global = machine.sound_data;
 	global->muted |= 0x02;
-	osd_set_mastervolume(global->muted ? -32 : global->attenuation);
 }
 
 static void sound_resume(running_machine &machine)
 {
 	sound_private *global = machine.sound_data;
 	global->muted &= ~0x02;
-	osd_set_mastervolume(global->muted ? -32 : global->attenuation);
 }
 
 
@@ -263,6 +261,7 @@ static void sound_resume(running_machine &machine)
 
 void sound_mute(running_machine *machine, int mute)
 {
+/*
 	sound_private *global = machine->sound_data;
 
 	if (mute)
@@ -270,6 +269,7 @@ void sound_mute(running_machine *machine, int mute)
 	else
 		global->muted &= ~0x01;
 	osd_set_mastervolume(global->muted ? -32 : global->attenuation);
+*/
 }
 
 
@@ -279,9 +279,11 @@ void sound_mute(running_machine *machine, int mute)
 
 void sound_set_attenuation(running_machine *machine, int attenuation)
 {
+    /*
 	sound_private *global = machine->sound_data;
 	global->attenuation = attenuation;
 	osd_set_mastervolume(global->muted ? -32 : global->attenuation);
+    */
 }
 
 
