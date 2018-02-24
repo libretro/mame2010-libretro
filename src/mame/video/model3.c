@@ -707,7 +707,7 @@ static const UINT8 texture_decode[64] =
 	50, 51, 54, 55, 58, 59, 62, 63
 };
 
-INLINE void write_texture16(int xpos, int ypos, int width, int height, int page, UINT16 *data)
+static INLINE void write_texture16(int xpos, int ypos, int width, int height, int page, UINT16 *data)
 {
 	int x,y,i,j;
 
@@ -730,7 +730,7 @@ INLINE void write_texture16(int xpos, int ypos, int width, int height, int page,
 }
 
 #ifdef UNUSED_FUNCTION
-INLINE void write_texture8(int xpos, int ypos, int width, int height, int page, UINT16 *data)
+static INLINE void write_texture8(int xpos, int ypos, int width, int height, int page, UINT16 *data)
 {
 	int x,y,i,j;
 	UINT16 color = 0x7c00;
@@ -905,13 +905,13 @@ WRITE64_HANDLER( real3d_cmd_w )
 /* matrix and vector operations */
 
 #ifdef UNUSED_FUNCTION
-INLINE float dot_product(VECTOR a, VECTOR b)
+static INLINE float dot_product(VECTOR a, VECTOR b)
 {
 	return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]) + (a[3] * b[3]);
 }
 #endif
 
-INLINE float dot_product3(VECTOR3 a, VECTOR3 b)
+static INLINE float dot_product3(VECTOR3 a, VECTOR3 b)
 {
 	return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
@@ -1005,7 +1005,7 @@ static void translate_matrix_stack(float x, float y, float z)
 
 #include "m3raster.c"
 
-INLINE int is_point_inside(float x, float y, float z, PLANE cp)
+static INLINE int is_point_inside(float x, float y, float z, PLANE cp)
 {
 	float s = (x * cp.x) + (y * cp.y) + (z * cp.z) + cp.d;
 	if (s >= 0.0f)
@@ -1014,7 +1014,7 @@ INLINE int is_point_inside(float x, float y, float z, PLANE cp)
 		return 0;
 }
 
-INLINE float line_plane_intersection(const poly_vertex *v1, const poly_vertex *v2, PLANE cp)
+static INLINE float line_plane_intersection(const poly_vertex *v1, const poly_vertex *v2, PLANE cp)
 {
 	float x = v1->x - v2->x;
 	float y = v1->y - v2->y;
@@ -1384,7 +1384,7 @@ static void traverse_list(running_machine *machine, UINT32 address)
 	list_depth--;
 }
 
-INLINE void process_link(running_machine *machine, UINT32 address, UINT32 link)
+static INLINE void process_link(running_machine *machine, UINT32 address, UINT32 link)
 {
 	if (link != 0 && link != 0x0fffffff && link != 0x00800800 && link != 0x01000000)
 	{

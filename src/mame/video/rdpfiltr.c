@@ -1,13 +1,13 @@
-INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres);
-INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index);
-INLINE void restore_filter16(INT32* r, INT32* g, INT32* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres);
-INLINE void divot_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuffer);
-INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres);
-INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour);
-INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb);
-INLINE UINT32 ge_two(UINT32 enb);
+static INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres);
+static INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index);
+static INLINE void restore_filter16(INT32* r, INT32* g, INT32* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres);
+static INLINE void divot_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuffer);
+static INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres);
+static INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour);
+static INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb);
+static INLINE UINT32 ge_two(UINT32 enb);
 
-INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres)
+static INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres)
 {
 	N64::RDP::Color penumax, penumin, max, min;
 	UINT16 pix = *vbuff;
@@ -207,7 +207,7 @@ INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UI
 }
 
 // This needs to be fixed for endianness.
-INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index)
+static INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index)
 {
 	UINT8 leftr, leftg, leftb, rightr, rightg, rightb;
 	UINT16 leftpix, rightpix;
@@ -253,7 +253,7 @@ INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 f
 	}
 }
 
-INLINE void divot_filter16_buffer(int* r, int* g, int* b, N64::RDP::Color* vibuffer)
+static INLINE void divot_filter16_buffer(int* r, int* g, int* b, N64::RDP::Color* vibuffer)
 {
 	N64::RDP::Color leftpix = vibuffer[-1];
 	N64::RDP::Color rightpix = vibuffer[1];
@@ -300,7 +300,7 @@ INLINE void divot_filter16_buffer(int* r, int* g, int* b, N64::RDP::Color* vibuf
 }
 
 // Fix me.
-INLINE void restore_filter16(int* r, int* g, int* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres)
+static INLINE void restore_filter16(int* r, int* g, int* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres)
 {
 	INT32 leftuppix = -hres - 1;
 	INT32 leftdownpix = hres - 1;
@@ -427,7 +427,7 @@ INLINE void restore_filter16(int* r, int* g, int* b, UINT16* fbuff, UINT32 fbuff
 	}
 }
 
-INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres)
+static INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres)
 {
 	N64::RDP::Color filtered;
 	N64::RDP::Color leftuppix, leftdownpix, leftpix;
@@ -471,7 +471,7 @@ INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Colo
 }
 
 // This is wrong, only the 5 upper bits are compared.
-INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour)
+static INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour)
 {
 	if (neighbour->i.r > filtered->i.r)
 	{
@@ -499,7 +499,7 @@ INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour)
 	}
 }
 
-INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb)
+static INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb)
 {
     int i;
     int pos = 0;
@@ -523,7 +523,7 @@ INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb)
     *max = Pixels[pos];
 }
 
-INLINE UINT32 ge_two(UINT32 enb)
+static INLINE UINT32 ge_two(UINT32 enb)
 {
 	if(enb & 1)
 	{
