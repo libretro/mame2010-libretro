@@ -145,16 +145,16 @@ ifeq ($(VRENDER),opengl)
    LIBS += -lGL
 endif
 LDFLAGS += $(SHARED)
-   NATIVELD = g++
+   NATIVELD = gcc
    NATIVELDFLAGS = -Wl,--warn-common -lstdc++
-   NATIVECC = g++
+   NATIVECC = gcc
    NATIVECFLAGS = -std=gnu99
    CC_AS = gcc 
-   CC = g++
+   CC = gcc
    AR = @ar
-   LD = g++ 
+   LD = gcc
    CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
-   LIBS += -lstdc++ -lpthread 
+   LIBS += -lpthread 
 
 # Android
 else ifeq ($(platform), android)
@@ -165,21 +165,20 @@ ARM_ENABLED = 1
    fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
 	CC_AS = @arm-linux-androideabi-gcc
-	CC = @arm-linux-androideabi-g++
+	CC = @arm-linux-androideabi-gcc
 	AR = @arm-linux-androideabi-ar
-	LD = @arm-linux-androideabi-g++ 
+	LD = @arm-linux-androideabi-gcc
 	ALIGNED=1
 	FORCE_DRC_C_BACKEND = 1
 	CCOMFLAGS += -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
 	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH
 	PLATCFLAGS += -DANDROID
 	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
-	NATIVELD = g++
+	NATIVELD = gcc
 	NATIVELDFLAGS = -Wl,--warn-common -lstdc++
-	NATIVECC = g++
+	NATIVECC = gcc
 	NATIVECFLAGS = -std=gnu99 
 	CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
-	LIBS += -lstdc++ 
 
 # OS X
 else ifeq ($(platform), osx)
@@ -266,7 +265,7 @@ else ifeq ($(platform), psl1ght)
 # PSP
 else ifeq ($(platform), psp1)
 	TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
-	CC = psp-g++$(EXE_EXT)
+	CC = psp-gcc$(EXE_EXT)
 	AR = psp-ar$(EXE_EXT)
 	CFLAGS += -DPSP -G0
 	STATIC_LINKING = 1
@@ -275,7 +274,7 @@ else ifeq ($(platform), psp1)
 # Xbox 360
 else ifeq ($(platform), xenon)
    TARGETLIB := $(TARGET_NAME)_libretro_xenon360.a
-   CC = xenon-g++$(EXE_EXT)
+   CC = xenon-gcc$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    CFLAGS += -D__LIBXENON__ -m32 -D__ppc__
 	STATIC_LINKING = 1
@@ -285,7 +284,7 @@ else ifeq ($(platform), xenon)
 # Nintendo Game Cube
 else ifeq ($(platform), ngc)
    TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
-	CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+	CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DBLARGG_BIG_ENDIAN=1 -D__ppc__
 	STATIC_LINKING = 1
@@ -295,7 +294,7 @@ else ifeq ($(platform), ngc)
 # Nintendo Wii
 else ifeq ($(platform), wii)
    TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
-   CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+   CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DBLARGG_BIG_ENDIAN=1 -D__ppc__
 	STATIC_LINKING = 1
@@ -305,8 +304,8 @@ else ifeq ($(platform), wii)
 # Nintendo Wii U
 else ifeq ($(platform), wiiu)
    TARGETLIB := $(TARGET_NAME)_libretro_wiiu.a
-   CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-   CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
+   CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
+   CXX = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    COMMONFLAGS += -DGEKKO -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DWORDS_BIGENDIAN=1 -malign-natural 
    COMMONFLAGS += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -fsingle-precision-constant -mno-bit-align
@@ -319,17 +318,17 @@ else ifeq ($(platform), wiiu)
    PLATCFLAGS += -DSDLMAME_NO64BITIO $(COMMONFLAGS) -falign-functions=16
    PTR64 = 0
    REALCC   = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-   NATIVECC = g++
+   NATIVECC = gcc
    NATIVECFLAGS = -std=gnu99
    CCOMFLAGS += $(PLATCFLAGS) -Iwiiu-deps
 #   LITE:=1
 # Raspberry Pi 2/3
 else ifneq (,$(findstring rpi,$(platform)))
-   CC = g++
+   CC = gcc
    CC_AS = gcc
    AR = @ar
-   NATIVELD = g++
-   LD = g++
+   NATIVELD = gcc
+   LD = gcc
    TARGETLIB := $(TARGET_NAME)_libretro.so
    SHARED := -shared -Wl,--no-undefined
    fpic = -fPIC
@@ -350,7 +349,7 @@ else ifneq (,$(findstring armv,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro.so
    SHARED := -shared -Wl,--no-undefined
    fpic = -fPIC
-   CC = g++
+   CC = gcc
    LDFLAGS +=  $(SHARED)
    ARM_ENABLED = 1
    X86_SH2DRC = 0
@@ -380,13 +379,13 @@ endif
 else ifeq ($(platform), wincross)
    TARGETLIB := $(TARGET_NAME)_libretro.dll
 	TARGETOS = win32
-	CC ?= g++
-	LD ?= g++
+	CC ?= gcc
+	LD ?= gcc
 	NATIVELD = $(LD)
 	CC_AS ?= gcc
 
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
-	CCOMFLAGS +=-D__WIN32__ -D__WIN32_LIBRETRO__ 
+	CCOMFLAGS +=-D__WIN32__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -401,15 +400,15 @@ endif
 else
    TARGETLIB := $(TARGET_NAME)_libretro.dll
 	TARGETOS = win32
-	CC = g++
-	LD = g++
+	CC = gcc
+	LD = gcc
 	NATIVELD = $(LD)
 	CC_AS = gcc
 	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=src/osd/retro/link.T
 ifneq ($(MDEBUG),1)
 	SHARED += -s
 endif
-CCOMFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
+CCOMFLAGS += -D__WIN32__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -506,7 +505,7 @@ CROSS_BUILD_OSD = retro
 ifeq ($(platform), wiiu)
 OPTIMIZE = s
 else
-OPTIMIZE = 3
+OPTIMIZE = 2
 endif
 
 ###########################################################################
@@ -563,8 +562,6 @@ ifeq ($(PTR64),1)
 DEFS += -DPTR64
 endif
 
-DEFS += -DNDEBUG 
-
 # need to ensure FLAC functions are statically linked
 DEFS += -DFLAC__NO_DLL
 
@@ -590,7 +587,7 @@ ifeq ($(MDEBUG),1)
 CCOMFLAGS +=  -O0 -g
 else
 # add the optimization flag
-CCOMFLAGS += -O$(OPTIMIZE)
+CCOMFLAGS += -O$(OPTIMIZE) -DNDEBUG
 endif
 
 # add the error warning flag
