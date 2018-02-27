@@ -1319,15 +1319,13 @@ void retro_init (void)
 
     char mameini_path[1024];
     
-    snprintf(mameini_path,
-          sizeof(mameini_path),
-          "%s%s%s", inipath, path_default_slash(), "mame.ini");
+    snprintf(mameini_path, sizeof(mameini_path), "%s%s%s", inipath, path_default_slash(), "mame.ini");
     if(!path_file_exists(mameini_path))
     {
         FILE *mameini_file;
         if((mameini_file=fopen(mameini_path, "wb"))==NULL)
         {
-            printf("[MAME 2010][ERROR] Something went wrong creating new mame.ini at: %s\n", mameini_path);
+            printf("[ERROR][MAME 2010] Something went wrong creating new mame.ini at: %s\n", mameini_path);
         }
         else
         {
@@ -1339,20 +1337,14 @@ void retro_init (void)
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-
    extract_directory(libretro_content_directory, info->path, sizeof(libretro_content_directory));
    strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory));
-   
-   printf("\npath_parent_dir output: %s\n\n", libretro_content_directory);
-
+	
    struct retro_log_callback log_cb;
    
-   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log_cb))
-   {     
-      log_cb.log(RETRO_LOG_INFO, "mame2010 system directory: %s\n", libretro_system_directory);
-      log_cb.log(RETRO_LOG_INFO, "mame2010 content directory: %s\n", libretro_content_directory);
-      log_cb.log(RETRO_LOG_INFO, "mame2010 save directory: %s\n", libretro_save_directory);
-   }   
+   printf("[INFO][MAME 2010] mame2010 system directory: %s\n", libretro_system_directory);
+   printf("[INFO][MAME 2010] mame2010 content directory: %s\n", libretro_content_directory);
+   printf("[INFO][MAME 2010] mame2010 save directory: %s\n", libretro_save_directory); 
    
 #if 0
    struct retro_keyboard_callback cb = { keyboard_cb };
@@ -1367,7 +1359,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
-      fprintf(stderr, "RGB pixel format is not supported.\n");
+      fprintf(stderr, "[ERROR][MAME 2010] RGB pixel format is not supported.\n");
       exit(0);
    }
    check_variables();
