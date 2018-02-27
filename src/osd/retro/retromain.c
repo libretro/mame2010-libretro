@@ -22,10 +22,10 @@ mame2010 - libretro port of mame 0.139
 #include "rendersw.c"
 
 #ifdef COMPILE_DATS
-	#include "precompile_hiscore_dat.h"
+    #include "precompile_hiscore_dat.h"
     #include "precompile_mameini_boilerplate.h"
 #else
-	#include "hiscore_dat.h"
+    #include "hiscore_dat.h"
     #include "mameini_boilerplate.h"
 #endif
 
@@ -42,7 +42,7 @@ mame2010 - libretro port of mame 0.139
 #include "retroogl.c"
 #endif
 
-
+char log_message_buffer[1024];
 const char* core_name = "mame2010";
 char libretro_content_directory[1024];
 char libretro_save_directory[1024];
@@ -89,7 +89,7 @@ extern bool draw_this_frame;
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
 
-retro_log_printf_t log_cb;
+retro_log_printf_t log_cb = NULL;
 
 static retro_input_state_t input_state_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
@@ -1262,7 +1262,10 @@ static bool path_file_exists(const char *path)
 }
 
 void retro_init (void)
-{      
+{   
+    struct retro_log_callback log;
+    log_cb = log.log;
+	
    const char *system_dir  = NULL;
    const char *save_dir    = NULL;
 
@@ -1312,7 +1315,7 @@ void retro_init (void)
     path_mkdir(input_directory);
     snprintf(image_directory, sizeof(image_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "image");
     path_mkdir(image_directory);
-	snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
+    snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
     path_mkdir(diff_directory);
     snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
     path_mkdir(comment_directory);
@@ -1325,7 +1328,8 @@ void retro_init (void)
         FILE *mameini_file;
         if((mameini_file=fopen(mameini_path, "wb"))==NULL)
         {
-            printf("[ERROR][MAME 2010] Something went wrong creating new mame.ini at: %s\n", mameini_path);
+	    snprintf(log_message_buffer, sizeof(log_message_buffer), "[MAME 2010] Something went wrong creating new mame.ini at: %s\n", mameini_path)
+            retro_log_printf_t(RETRO_LOG_ERROR, log_message_buffer);
         }
         else
         {
@@ -1342,9 +1346,12 @@ bool retro_load_game(const struct retro_game_info *info)
 	
    struct retro_log_callback log_cb;
    
-   printf("[INFO][MAME 2010] mame2010 system directory: %s\n", libretro_system_directory);
-   printf("[INFO][MAME 2010] mame2010 content directory: %s\n", libretro_content_directory);
-   printf("[INFO][MAME 2010] mame2010 save directory: %s\n", libretro_save_directory); 
+   snprintf(log_message_buffer, sizeof(log_message_buffer), "[MAME 2010] mame2010 system directory: %s\n", libretro_system_directory);
+   retro_log_printf_t(RETRO_LOG_INFO, log_message_buffer);
+   snprintf(log_message_buffer, sizeof(log_message_buffer), "[MAME 2010] mame2010 content directory: %s\n", libretro_content_directory);
+   retro_log_printf_t(RETRO_LOG_INFO, log_message_buffer);
+   snprintf(log_message_buffer, sizeof(log_message_buffer), "[MAME 2010] mame2010 save directory: %s\n", libretro_save_directory); 
+   retro_log_printf_t(RETRO_LOG_INFO, log_message_buffer);
    
 #if 0
    struct retro_keyboard_callback cb = { keyboard_cb };
@@ -1359,7 +1366,8 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
-      fprintf(stderr, "[ERROR][MAME 2010] RGB pixel format is not supported.\n");
+      snprintf(log_message_buffer, sizeof(log_message_buffer), "[MAME 2010] RGB pixel format is not supported.\n");
+      retro_log_printf_t(RETRO_LOG_INFO, log_message_buffer);	   
       exit(0);
    }
    check_variables();
