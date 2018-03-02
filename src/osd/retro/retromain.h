@@ -11,8 +11,7 @@ retromain.h
 
 #include "options.h"
 #include "osdepend.h"
-
-extern int RLOOP;
+#include "libretro.h"
 
 #if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
    #define M16B
@@ -38,21 +37,27 @@ extern int RLOOP;
    #define DSTSHIFT_B 0
 #endif
 
-//============================================================
-//  TYPE DEFINITIONS
-//============================================================
 void osd_init(running_machine* machine);
 void osd_update(running_machine* machine,int skip_redraw);
 void osd_update_audio_stream(running_machine* machine,short *buffer, int samples_this_frame);
 void osd_exit(running_machine &machine);
 
-//============================================================
-//  GLOBAL VARIABLES
-//============================================================
+void retro_poll_mame_input();
+void retro_init (void);
+void check_variables(void);
+void prep_retro_rotation(int rot);
+void initInput(running_machine* machine);
+void init_input_descriptors(void);
+
+extern void retro_finish();
+extern void retro_main_loop();
+
 extern int osd_num_processors;
 
 // use if you want to print something with the verbose flag
 void CLIB_DECL mame_printf_verbose(const char *text, ...) ATTR_PRINTF(1,2);
+
+extern int RLOOP;
 
 extern const char* core_name;
 
@@ -71,6 +76,9 @@ extern char memcard_directory[];
 extern char input_directory[];
 extern char diff_directory[];
 extern char comment_directory[];
+
+extern retro_log_printf_t retro_log;
+
 
 // fake a keyboard mapped to retro joypad 
 enum
