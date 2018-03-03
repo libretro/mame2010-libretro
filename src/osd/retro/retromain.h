@@ -44,9 +44,9 @@ void osd_exit(running_machine &machine);
 
 void retro_poll_mame_input();
 void retro_init (void);
-void check_variables(void);
+static void check_variables(void);
 void prep_retro_rotation(int rot);
-void initInput(running_machine* machine);
+static void initInput(running_machine* machine);
 void init_input_descriptors(void);
 
 extern void retro_finish();
