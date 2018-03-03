@@ -1626,7 +1626,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 		strcpy(gamePath, ".\0");
 		strncpy(gameName, path , dotIndex );
 		gameName[dotIndex] = 0;
-		retro_log(RETRO_LOG_INFO, "[MAME 2010] gamePath=%s gameName=%s\n", gamePath, gameName);
+		retro_log(RETRO_LOG_INFO, "[MAME 2010] path=%s gamePath=%s gameName=%s\n", path, gamePath, gameName);
 		return 1;
 	}
 	if (slashIndex < 0 || dotIndex < 0) {
@@ -1638,7 +1638,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 	strncpy(gameName, path + (slashIndex + 1), dotIndex - (slashIndex + 1));
 	gameName[dotIndex - (slashIndex + 1)] = 0;
 
-	retro_log(RETRO_LOG_INFO, "[MAME 2010] gamePath=%s gameName=%s\n", gamePath, gameName);
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] path=%s gamePath=%s gameName=%s\n", path, gamePath, gameName);
 	return 1;
 }
 
@@ -1749,11 +1749,11 @@ int executeGame(char* path) {
 
 	retro_log(RETRO_LOG_INFO, "[MAME 2010] Invoking MAME2010 CLI frontend. Parameter count: %i\n", paramCount);
 
-    retro_log(RETRO_LOG_INFO, "[MAME 2010] Parameter list: %s\n", (char*) xargv);
-//	for (int i = 0; xargv[i] != NULL; i++){
-//		write_log("%s ",xargv[i]);
-//	}
-//    write_log("\n");
+    char parameters[1024];
+	for (int i = 0; xargv[i] != NULL; i++)
+ 		snprintf(parameters, sizeof(parameters), "%s ",xargv[i]);
+
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] Parameter list: %s\n", parameters);
 
 	result = cli_execute(paramCount,(char**) xargv, NULL);
 
