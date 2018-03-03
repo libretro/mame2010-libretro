@@ -18,14 +18,13 @@ mame2010 - libretro port of mame 0.139
 #include <file/file_path.h>
 #include "retromain.h"
 
-#include "log.h"
 #include "rendersw.c"
 
 #ifdef COMPILE_DATS
-	#include "precompile_hiscore_dat.h"
+    #include "precompile_hiscore_dat.h"
     #include "precompile_mameini_boilerplate.h"
 #else
-	#include "hiscore_dat.h"
+    #include "hiscore_dat.h"
     #include "mameini_boilerplate.h"
 #endif
 
@@ -41,7 +40,6 @@ mame2010 - libretro port of mame 0.139
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #include "retroogl.c"
 #endif
-
 
 const char* core_name = "mame2010";
 char libretro_content_directory[1024];
@@ -70,7 +68,7 @@ static bool videoapproach1_enable = false;
 bool hide_nagscreen = false;
 bool hide_gameinfo = false;
 bool hide_warnings = false;
-//
+
 static void update_geometry();
 static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
 static bool set_par = false;
@@ -89,58 +87,13 @@ extern bool draw_this_frame;
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
 
-retro_log_printf_t log_cb;
+retro_log_printf_t retro_log = NULL;
 
 static retro_input_state_t input_state_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
+static retro_input_poll_t input_poll_cb = NULL;
 
 int RLOOP=1;
-
-extern void retro_finish();
-extern void retro_main_loop();
-
-void retro_poll_mame_input();
-
-size_t retro_serialize_size(void){ return 0; }
-bool retro_serialize(void *data, size_t size){ return false; }
-bool retro_unserialize(const void * data, size_t size){ return false; }
-
-unsigned retro_get_region (void) {return RETRO_REGION_NTSC;}
-void *retro_get_memory_data(unsigned type) {return 0;}
-size_t retro_get_memory_size(unsigned type) {return 0;}
-bool retro_load_game_special(unsigned game_type, const struct retro_game_info *info, size_t num_info){return false;}
-void retro_cheat_reset(void){}
-void retro_cheat_set(unsigned unused, bool unused1, const char* unused2){}
-void retro_set_controller_port_device(unsigned in_port, unsigned device){}
-
-void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_batch_cb = cb; }
-static retro_input_poll_t input_poll_cb;
-
-void retro_set_input_state(retro_input_state_t cb) { input_state_cb = cb; }
-void retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
-
-void retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
-void retro_set_audio_sample(retro_audio_sample_t cb) { }
-
-static void extract_directory(char *buf, const char *path, size_t size)
-{
-   strncpy(buf, path, size - 1);
-   buf[size - 1] = '\0';
-
-   char *base = strrchr(buf, '/');
-   if (!base)
-      base = strrchr(buf, '\\');
-
-   if (base)
-      *base = '\0';
-   else
-      buf[0] = '\0';
-}
-
-
-//============================================================
-//  GLOBALS
-//============================================================
 
 // rendering target
 static render_target *our_target = NULL;
@@ -183,9 +136,386 @@ static int FirstTimeUpdate = 1;
 bool retro_load_ok  = false;
 int pauseg = 0;
 
-//============================================================
-//  RETRO
-//============================================================
+size_t retro_serialize_size(void){ return 0; }
+bool retro_serialize(void *data, size_t size){ return false; }
+bool retro_unserialize(const void * data, size_t size){ return false; }
+
+unsigned retro_get_region (void) {return RETRO_REGION_NTSC;}
+void *retro_get_memory_data(unsigned type) {return 0;}
+size_t retro_get_memory_size(unsigned type) {return 0;}
+bool retro_load_game_special(unsigned game_type, const struct retro_game_info *info, size_t num_info){return false;}
+void retro_cheat_reset(void){}
+void retro_cheat_set(unsigned unused, bool unused1, const char* unused2){}
+void retro_set_controller_port_device(unsigned in_port, unsigned device){}
+
+void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_batch_cb = cb; }
+void retro_set_input_state(retro_input_state_t cb) { input_state_cb = cb; }
+void retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
+void retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
+void retro_set_audio_sample(retro_audio_sample_t cb) { }
+
+void retro_init (void)
+{   
+    struct retro_log_callback log_cb;
+
+    if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log_cb))
+        retro_log = log_cb.log;
+    	
+   const char *system_dir  = NULL;
+   const char *save_dir    = NULL;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
+   {
+       // use a subfolder in the system directory with the core name (ie mame2010)
+        snprintf(libretro_system_directory, sizeof(libretro_system_directory), "%s%s%s", system_dir, path_default_slash(), core_name);
+   }
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
+   {
+       // use a subfolder in the save directory with the core name (ie mame2010)
+        snprintf(libretro_save_directory, sizeof(libretro_save_directory), "%s%s%s", save_dir, path_default_slash(), core_name);
+   }
+   else
+   {
+        *libretro_save_directory = *libretro_system_directory;
+   }
+   
+    path_mkdir(libretro_system_directory);
+    path_mkdir(libretro_save_directory);
+ 
+    // content loaded from mame2010 subfolder within the libretro system folder
+    snprintf(cheatpath, sizeof(cheatpath), "%s%s", path_default_slash(), libretro_system_directory);
+    path_mkdir(libretro_save_directory);
+    snprintf(samplepath, sizeof(samplepath), "%s%s%s", libretro_system_directory, path_default_slash(), "samples");
+    path_mkdir(samplepath);
+    snprintf(artpath, sizeof(artpath), "%s%s%s", libretro_system_directory, path_default_slash(), "artwork");
+    path_mkdir(artpath);
+    snprintf(fontpath, sizeof(fontpath), "%s%s%s", libretro_system_directory, path_default_slash(), "fonts");
+    path_mkdir(fontpath);
+    snprintf(crosshairpath, sizeof(crosshairpath), "%s%s%s", libretro_system_directory, path_default_slash(), "crosshairs");
+    path_mkdir(crosshairpath);
+
+    // user-generated content loaded from mame2010 subfolder within the libretro save folder
+    snprintf(ctrlrpath, sizeof(ctrlrpath), "%s%s%s", libretro_save_directory, path_default_slash(), "ctrlr");
+    path_mkdir(ctrlrpath);
+    snprintf(inipath, sizeof(inipath), "%s%s%s", libretro_save_directory, path_default_slash(), "ini");
+    path_mkdir(inipath);
+    snprintf(cfg_directory, sizeof(cfg_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "cfg");
+    path_mkdir(cfg_directory);
+    snprintf(nvram_directory, sizeof(nvram_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "nvram");
+    path_mkdir(nvram_directory);
+    snprintf(memcard_directory, sizeof(memcard_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "memcard");
+    path_mkdir(memcard_directory);
+    snprintf(input_directory, sizeof(input_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "input");
+    path_mkdir(input_directory);
+    snprintf(image_directory, sizeof(image_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "image");
+    path_mkdir(image_directory);
+    snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
+    path_mkdir(diff_directory);
+    snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
+    path_mkdir(comment_directory);
+
+    char mameini_path[1024];
+    
+    snprintf(mameini_path, sizeof(mameini_path), "%s%s%s", inipath, path_default_slash(), "mame.ini");
+    if(!path_is_valid(mameini_path))
+    {
+        retro_log(RETRO_LOG_INFO, "[MAME 2010] mame.ini not found at: %s\n", mameini_path);
+        
+        FILE *mameini_file;
+        if((mameini_file=fopen(mameini_path, "wb"))==NULL)
+        {
+            retro_log(RETRO_LOG_ERROR, "[MAME 2010] something went wrong generating new mame.ini at: %s\n", mameini_path);
+        }
+        else
+        {
+            fwrite(mameini_boilerplate, sizeof(char), mameini_boilerplate_length, mameini_file);          
+            fclose(mameini_file);
+            retro_log(RETRO_LOG_INFO, "[MAME 2010] new mame.ini generated at: %s\n", mameini_path);            
+        }
+    }
+    else
+        retro_log(RETRO_LOG_INFO, "[MAME 2010] mame.ini found at: %s\n", mameini_path);
+
+}
+
+bool retro_load_game(const struct retro_game_info *info)
+{
+   strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory));
+   path_basedir(libretro_content_directory);
+   
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] libretro_content_directory: %s\n", libretro_content_directory);  
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] libretro_system_directory: %s\n", libretro_system_directory);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] libretro_save directory: %s\n", libretro_save_directory); 
+   
+#if 0
+   struct retro_keyboard_callback cb = { keyboard_cb };
+   environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
+#endif
+
+#ifdef M16B
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
+#else
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+#endif
+
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   {
+      retro_log(RETRO_LOG_ERROR, "[MAME 2010] RGB pixel format is not supported.\n");
+      exit(0);
+   }
+   check_variables();
+
+#ifdef M16B
+   memset(videoBuffer, 0, 1024*1024*2);
+#else
+   memset(videoBuffer, 0, 1024*1024*2*2);
+#endif
+
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
+#ifdef HAVE_OPENGLES
+   hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
+#else
+   hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
+#endif
+   hw_render.context_reset = context_reset;
+   hw_render.context_destroy = context_destroy;
+
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
+      return false;
+#endif
+
+   init_input_descriptors();
+   
+   if(mmain(1,info->path)!=1){ // path the romset path to the mmain function to start emulation
+        retro_log(RETRO_LOG_ERROR, "[MAME 2010] MAME returned an error!\n");
+		return 0;
+   } 
+
+   retro_load_ok  = true;
+   video_set_frameskip(set_frame_skip);
+
+   for (int i = 0; i < 6; i++)
+	adjust_opt[i] = 1;
+
+   return 1;
+}
+
+void osd_exit(running_machine &machine)
+{
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] osd_exit called \n");
+
+   if (our_target != NULL)
+      render_target_free(our_target);
+   our_target = NULL;
+
+   global_free(P1_device);
+   global_free(P2_device);
+   global_free(retrokbd_device);
+   global_free(mouse_device);
+}
+
+void osd_init(running_machine* machine)
+{
+   int gamRot=0;
+
+   machine->add_notifier(MACHINE_NOTIFY_EXIT, osd_exit);
+
+   our_target = render_target_alloc(machine,NULL, 0);
+
+   initInput(machine);
+
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] Machine screen orientation: %s \n",
+         (machine->gamedrv->flags & ORIENTATION_SWAP_XY) ? "VERTICAL" : "HORIZONTAL"
+         );
+
+   orient = (machine->gamedrv->flags & ORIENTATION_MASK);
+   vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
+
+   gamRot = (ROT270 == orient) ? 1 : gamRot;
+   gamRot = (ROT180 == orient) ? 2 : gamRot;
+   gamRot = (ROT90 == orient) ? 3 : gamRot;
+
+   prep_retro_rotation(gamRot);
+   machine->sample_rate = sample_rate;	/* Override original value */
+
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] osd_init done\n");
+}
+
+bool draw_this_frame;
+
+void osd_update(running_machine *machine,int skip_redraw)
+{
+   const render_primitive_list *primlist;
+   UINT8 *surfptr;
+
+   if (mame_reset == 1)
+   {
+      machine->schedule_soft_reset();
+      mame_reset = -1;
+   }
+
+   if(pauseg==-1){
+      machine->schedule_exit();
+      return;
+   }
+
+   if (FirstTimeUpdate == 1)
+      skip_redraw = 0; //force redraw to make sure the video texture is created
+
+   if (!skip_redraw)
+   {
+
+      draw_this_frame = true;
+      // get the minimum width/height for the current layout
+      int minwidth, minheight;
+
+      if(videoapproach1_enable==false){
+         render_target_get_minimum_size(our_target,&minwidth, &minheight);
+      }
+      else{
+         minwidth=1024;minheight=768;
+      }
+
+      if (adjust_opt[0])
+      {
+		adjust_opt[0] = 0;
+
+		if (adjust_opt[2])
+		{
+			adjust_opt[2] = 0;
+			refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
+			update_geometry();
+		}
+
+		if ((adjust_opt[3] || adjust_opt[4] || adjust_opt[5]) && adjust_opt[1])
+		{
+			screen_device *screen = screen_first(*machine);
+			render_container *container = render_container_get_screen(screen);
+			render_container_user_settings settings;
+			render_container_get_user_settings(container, &settings);
+
+			if (adjust_opt[3])
+			{
+				adjust_opt[3] = 0;
+				settings.brightness = arroffset[0] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+			if (adjust_opt[4])
+			{
+				adjust_opt[4] = 0;
+				settings.contrast = arroffset[1] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+			if (adjust_opt[5])
+			{
+				adjust_opt[5] = 0;
+				settings.gamma = arroffset[2] + 1.0f;
+				render_container_set_user_settings(container, &settings);
+			}
+		}
+      }
+
+      if (FirstTimeUpdate == 1) {
+
+         FirstTimeUpdate++;
+         retro_log(RETRO_LOG_INFO, "[MAME 2010] game screen w=%i h=%i  rowPixels=%i\n", minwidth, minheight,minwidth );
+
+         rtwi=minwidth;
+         rthe=minheight;
+         topw=minwidth;
+
+         int gamRot=0;
+         orient  = (machine->gamedrv->flags & ORIENTATION_MASK);
+         vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
+
+         gamRot = (ROT270 == orient) ? 1 : gamRot;
+         gamRot = (ROT180 == orient) ? 2 : gamRot;
+         gamRot = (ROT90  == orient) ? 3 : gamRot;
+
+         prep_retro_rotation(gamRot);
+      }
+
+      if (minwidth != rtwi || minheight != rthe ){
+         retro_log(RETRO_LOG_INFO, "[MAME 2010] Res change: old(%d,%d) new(%d,%d) %d\n",rtwi,rthe,minwidth,minheight,topw);
+         rtwi=minwidth;
+         rthe=minheight;
+         topw=minwidth;
+
+	 adjust_opt[0] = adjust_opt[2] = 1;
+      }
+/*    No need
+      if(videoapproach1_enable){
+         rtwi=topw=1024;
+         rthe=768;
+      } */
+
+      // make that the size of our target
+      render_target_set_bounds(our_target,rtwi,rthe, 0);
+      // our_target->set_bounds(rtwi,rthe);
+      // get the list of primitives for the target at the current size
+      // render_primitive_list &primlist = our_target->get_primitives();
+      primlist = render_target_get_primitives(our_target);
+      // lock them, and then render them
+      //      primlist.acquire_lock();
+      osd_lock_acquire(primlist->lock);
+
+      surfptr = (UINT8 *) videoBuffer;
+#ifdef M16B
+      rgb565_draw_primitives(primlist->head, surfptr,rtwi,rthe,rtwi);
+#else
+      rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
+#endif
+#if 0
+      surfptr = (UINT8 *) videoBuffer;
+
+      //  draw a series of primitives using a software rasterizer
+      for (const render_primitive *prim = primlist.first(); prim != NULL; prim = prim->next())
+      {
+         switch (prim->type)
+         {
+            case render_primitive::LINE:
+               draw_line(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
+               break;
+
+            case render_primitive::QUAD:
+               if (!prim->texture.base)
+                  draw_rect(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
+               else
+                  setup_and_draw_textured_quad(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
+               break;
+
+            default:
+               throw emu_fatalerror("Unexpected render_primitive type");
+         }
+      }
+#endif
+      osd_lock_release(primlist->lock);
+
+
+      //  primlist.release_lock();
+   } 
+   else
+      draw_this_frame = false;
+
+   RLOOP=0;
+
+   if(ui_ipt_pushchar!=-1)
+   {
+      ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
+      ui_ipt_pushchar=-1;
+   }
+}
+
+void osd_wait_for_debugger(running_device *device, int firststop)
+{
+   // we don't have a debugger, so we just return here
+}
+
+void osd_update_audio_stream(running_machine *machine,short *buffer, int samples_this_frame) 
+{
+	if(pauseg!=-1)audio_batch_cb(buffer, samples_this_frame);
+}
 
 void retro_set_environment(retro_environment_t cb)
 {
@@ -223,7 +553,7 @@ static void check_variables(void)
    var.key = "mame_current_mouse_enable";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "mouse_enable value: %s\n", var.value);
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] mouse_enable value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          mouse_enable = false;
       if (!strcmp(var.value, "enabled"))
@@ -234,7 +564,7 @@ static void check_variables(void)
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "skip_nagscreen value: %s\n", var.value);
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] skip_nagscreen value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_nagscreen = false;
       if (!strcmp(var.value, "enabled"))
@@ -245,7 +575,7 @@ static void check_variables(void)
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "skip_gameinfo value: %s\n", var.value);
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] skip_gameinfo value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_gameinfo = false;
       if (!strcmp(var.value, "enabled"))
@@ -256,7 +586,7 @@ static void check_variables(void)
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "skip_warnings value: %s\n", var.value);
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] skip_warnings value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          hide_warnings = false;
       if (!strcmp(var.value, "enabled"))
@@ -267,7 +597,7 @@ static void check_variables(void)
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      fprintf(stderr, "videoapproach1_enable value: %s\n", var.value);
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] videoapproach1_enable value: %s\n", var.value);
       if (!strcmp(var.value, "disabled"))
          videoapproach1_enable = false;
       if (!strcmp(var.value, "enabled"))
@@ -428,7 +758,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 		}
 		common_factor = temp_height;
 	}
-	write_log("Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %.1f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
+	retro_log(RETRO_LOG_INFO, "Current aspect ratio = %d : %d , screen refresh rate = %f , sound sample rate = %.1f \n", set_par ? vertical ? rthe / common_factor : rtwi / common_factor :
 			vertical ? 3 : 4, set_par ? vertical ? rtwi / common_factor : rthe / common_factor : vertical ? 4 : 3, info->timing.fps, info->timing.sample_rate);
 #endif
 }
@@ -436,7 +766,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 void retro_deinit(void)
 {
    if(retro_load_ok)retro_finish();
-   LOGI("Retro DeInit\n");
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] retro_deinit called\n");
 }
 
 void retro_reset (void)
@@ -468,7 +798,7 @@ void retro_run (void)
 
 void prep_retro_rotation(int rot)
 {
-   LOGI("Rotation:%d\n",rot);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] Rotation:%d\n",rot);
    environ_cb(RETRO_ENVIRONMENT_SET_ROTATION, &rot);
 }
 
@@ -477,7 +807,7 @@ void retro_unload_game(void)
 	if(pauseg == 0)
 		pauseg = -1;
 
-	LOGI("Retro unload_game\n");
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] Retro unload_game\n");
 }
 
 void init_input_descriptors(void)
@@ -517,7 +847,7 @@ void init_input_descriptors(void)
 static void keyboard_cb(bool down, unsigned keycode, uint32_t character, uint16_t mod)
 {
 #ifdef KEYDBG
-   printf( "Down: %s, Code: %d, Char: %u, Mod: %u. \n",
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] Down: %s, Code: %d, Char: %u, Mod: %u. \n",
          down ? "yes" : "no", keycode, character, mod);
 #endif
    if (keycode>=320);
@@ -800,12 +1130,14 @@ static void initInput(running_machine* machine)
       for (button = 0; button < 4; button++)
       {
          input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1 + button);
-         sprintf(defname, "B%d", button + 1);
+         snprintf(defname, sizeof(defname), "B%d", button + 1);
 
          input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
       }
    }
-
+   
+   // our faux keyboard only has a couple of keys (corresponding to the
+   // common defaults)
    P1_device = input_device_add(machine, DEVICE_CLASS_KEYBOARD, "Pad1", NULL);
    P2_device = input_device_add(machine, DEVICE_CLASS_KEYBOARD, "Pad2", NULL);
 
@@ -815,14 +1147,13 @@ static void initInput(running_machine* machine)
    if (P2_device == NULL)
       fatalerror("P2 Error creating keyboard device\n");
 
-   // our faux keyboard only has a couple of keys (corresponding to the
-   // common defaults)
-   fprintf(stderr, "SOURCE FILE: %s\n", machine->gamedrv->source_file);
-   fprintf(stderr, "PARENT: %s\n", machine->gamedrv->parent);
-   fprintf(stderr, "NAME: %s\n", machine->gamedrv->name);
-   fprintf(stderr, "DESCRIPTION: %s\n", machine->gamedrv->description);
-   fprintf(stderr, "YEAR: %s\n", machine->gamedrv->year);
-   fprintf(stderr, "MANUFACTURER: %s\n", machine->gamedrv->manufacturer);
+   
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] SOURCE FILE: %s\n", machine->gamedrv->source_file);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] PARENT: %s\n", machine->gamedrv->parent);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] NAME: %s\n", machine->gamedrv->name);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] DESCRIPTION: %s\n", machine->gamedrv->description);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] YEAR: %s\n", machine->gamedrv->year);
+   retro_log(RETRO_LOG_INFO, "[MAME 2010] MANUFACTURER: %s\n", machine->gamedrv->manufacturer);
 
    P1_state[KEY_F11]        = 0;/*RETRO_DEVICE_ID_JOYPAD_R3*/
    P1_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_L2
@@ -1245,391 +1576,6 @@ void retro_poll_mame_input()
    }
 }
 
-static bool path_file_exists(const char *path)
-{
-   FILE *dummy;
-
-   if (!path || !*path)
-      return false;
-
-   dummy = fopen(path, "rb");
-
-   if (!dummy)
-      return false;
-
-   fclose(dummy);
-   return true;
-}
-
-void retro_init (void)
-{      
-   const char *system_dir  = NULL;
-   const char *save_dir    = NULL;
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
-   {
-       // use a subfolder in the system directory with the core name (ie mame2010)
-        snprintf(libretro_system_directory, sizeof(libretro_system_directory), "%s%s%s", system_dir, path_default_slash(), core_name);
-   }
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
-   {
-       // use a subfolder in the save directory with the core name (ie mame2010)
-        snprintf(libretro_save_directory, sizeof(libretro_save_directory), "%s%s%s", save_dir, path_default_slash(), core_name);
-   }
-   else
-   {
-        *libretro_save_directory = *libretro_system_directory;
-   }
-   
-    path_mkdir(libretro_system_directory);
-    path_mkdir(libretro_save_directory);
- 
-    // content loaded from mame2010 subfolder within the libretro system folder
-    snprintf(cheatpath, sizeof(cheatpath), "%s%s", path_default_slash(), libretro_system_directory);
-    path_mkdir(libretro_save_directory);
-    snprintf(samplepath, sizeof(samplepath), "%s%s%s", libretro_system_directory, path_default_slash(), "samples");
-    path_mkdir(samplepath);
-    snprintf(artpath, sizeof(artpath), "%s%s%s", libretro_system_directory, path_default_slash(), "artwork");
-    path_mkdir(artpath);
-    snprintf(fontpath, sizeof(fontpath), "%s%s%s", libretro_system_directory, path_default_slash(), "fonts");
-    path_mkdir(fontpath);
-    snprintf(crosshairpath, sizeof(crosshairpath), "%s%s%s", libretro_system_directory, path_default_slash(), "crosshairs");
-    path_mkdir(crosshairpath);
-
-    // user-generated content loaded from mame2010 subfolder within the libretro save folder
-    snprintf(ctrlrpath, sizeof(ctrlrpath), "%s%s%s", libretro_save_directory, path_default_slash(), "ctrlr");
-    path_mkdir(ctrlrpath);
-    snprintf(inipath, sizeof(inipath), "%s%s%s", libretro_save_directory, path_default_slash(), "ini");
-    path_mkdir(inipath);
-    snprintf(cfg_directory, sizeof(cfg_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "cfg");
-    path_mkdir(cfg_directory);
-    snprintf(nvram_directory, sizeof(nvram_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "nvram");
-    path_mkdir(nvram_directory);
-    snprintf(memcard_directory, sizeof(memcard_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "memcard");
-    path_mkdir(memcard_directory);
-    snprintf(input_directory, sizeof(input_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "input");
-    path_mkdir(input_directory);
-    snprintf(image_directory, sizeof(image_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "image");
-    path_mkdir(image_directory);
-	snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
-    path_mkdir(diff_directory);
-    snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
-    path_mkdir(comment_directory);
-
-    char mameini_path[1024];
-    
-    snprintf(mameini_path,
-          sizeof(mameini_path),
-          "%s%s%s", inipath, path_default_slash(), "mame.ini");
-    if(!path_file_exists(mameini_path))
-    {
-        FILE *mameini_file;
-        if((mameini_file=fopen(mameini_path, "wb"))==NULL)
-        {
-            printf("[MAME 2010][ERROR] Something went wrong creating new mame.ini at: %s\n", mameini_path);
-        }
-        else
-        {
-            fwrite(mameini_boilerplate, sizeof(char), mameini_boilerplate_length, mameini_file);          
-            fclose(mameini_file);         
-        }
-    }
-}
-
-bool retro_load_game(const struct retro_game_info *info)
-{
-
-   extract_directory(libretro_content_directory, info->path, sizeof(libretro_content_directory));
-   strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory));
-   
-   printf("\npath_parent_dir output: %s\n\n", libretro_content_directory);
-
-   struct retro_log_callback log_cb;
-   
-   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log_cb))
-   {     
-      log_cb.log(RETRO_LOG_INFO, "mame2010 system directory: %s\n", libretro_system_directory);
-      log_cb.log(RETRO_LOG_INFO, "mame2010 content directory: %s\n", libretro_content_directory);
-      log_cb.log(RETRO_LOG_INFO, "mame2010 save directory: %s\n", libretro_save_directory);
-   }   
-   
-#if 0
-   struct retro_keyboard_callback cb = { keyboard_cb };
-   environ_cb(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK, &cb);
-#endif
-
-#ifdef M16B
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-#else
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
-#endif
-
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-   {
-      fprintf(stderr, "RGB pixel format is not supported.\n");
-      exit(0);
-   }
-   check_variables();
-
-#ifdef M16B
-   memset(videoBuffer, 0, 1024*1024*2);
-#else
-   memset(videoBuffer, 0, 1024*1024*2*2);
-#endif
-
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
-#ifdef HAVE_OPENGLES
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
-#else
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
-#endif
-   hw_render.context_reset = context_reset;
-   hw_render.context_destroy = context_destroy;
-
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
-      return false;
-#endif
-
-   init_input_descriptors();
-   
-   if(mmain(1,info->path)!=1){ // path the romset path to the mmain function to start emulation
-        printf("[ERROR][MAME2010] MAME returned an error!\n");
-		return 0;
-   } 
-
-   retro_load_ok  = true;
-   video_set_frameskip(set_frame_skip);
-
-   for (int i = 0; i < 6; i++)
-	adjust_opt[i] = 1;
-
-   return 1;
-}
-
-void osd_exit(running_machine &machine)
-{
-   write_log("osd_exit called \n");
-
-   if (our_target != NULL)
-      render_target_free(our_target);
-   our_target = NULL;
-
-   global_free(P1_device);
-   global_free(P2_device);
-   global_free(retrokbd_device);
-   global_free(mouse_device);
-}
-
-void osd_init(running_machine* machine)
-{
-   int gamRot=0;
-
-   machine->add_notifier(MACHINE_NOTIFY_EXIT, osd_exit);
-
-   our_target = render_target_alloc(machine,NULL, 0);
-
-   initInput(machine);
-
-   write_log("[INFO][MAME2010] Machine screen orientation: %s \n",
-         (machine->gamedrv->flags & ORIENTATION_SWAP_XY) ? "VERTICAL" : "HORIZONTAL"
-         );
-
-   orient = (machine->gamedrv->flags & ORIENTATION_MASK);
-   vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
-
-   gamRot = (ROT270 == orient) ? 1 : gamRot;
-   gamRot = (ROT180 == orient) ? 2 : gamRot;
-   gamRot = (ROT90 == orient) ? 3 : gamRot;
-
-   prep_retro_rotation(gamRot);
-   machine->sample_rate = sample_rate;	/* Override original value */
-
-   write_log("[INFO][MAME2010] OSD init done\n");
-}
-
-bool draw_this_frame;
-
-void osd_update(running_machine *machine,int skip_redraw)
-{
-   const render_primitive_list *primlist;
-   UINT8 *surfptr;
-
-   if (mame_reset == 1)
-   {
-      machine->schedule_soft_reset();
-      mame_reset = -1;
-   }
-
-   if(pauseg==-1){
-      machine->schedule_exit();
-      return;
-   }
-
-   if (FirstTimeUpdate == 1)
-      skip_redraw = 0; //force redraw to make sure the video texture is created
-
-   if (!skip_redraw)
-   {
-
-      draw_this_frame = true;
-      // get the minimum width/height for the current layout
-      int minwidth, minheight;
-
-      if(videoapproach1_enable==false){
-         render_target_get_minimum_size(our_target,&minwidth, &minheight);
-      }
-      else{
-         minwidth=1024;minheight=768;
-      }
-
-      if (adjust_opt[0])
-      {
-		adjust_opt[0] = 0;
-
-		if (adjust_opt[2])
-		{
-			adjust_opt[2] = 0;
-			refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
-			update_geometry();
-		}
-
-		if ((adjust_opt[3] || adjust_opt[4] || adjust_opt[5]) && adjust_opt[1])
-		{
-			screen_device *screen = screen_first(*machine);
-			render_container *container = render_container_get_screen(screen);
-			render_container_user_settings settings;
-			render_container_get_user_settings(container, &settings);
-
-			if (adjust_opt[3])
-			{
-				adjust_opt[3] = 0;
-				settings.brightness = arroffset[0] + 1.0f;
-				render_container_set_user_settings(container, &settings);
-			}
-			if (adjust_opt[4])
-			{
-				adjust_opt[4] = 0;
-				settings.contrast = arroffset[1] + 1.0f;
-				render_container_set_user_settings(container, &settings);
-			}
-			if (adjust_opt[5])
-			{
-				adjust_opt[5] = 0;
-				settings.gamma = arroffset[2] + 1.0f;
-				render_container_set_user_settings(container, &settings);
-			}
-		}
-      }
-
-      if (FirstTimeUpdate == 1) {
-
-         FirstTimeUpdate++;
-         write_log("game screen w=%i h=%i  rowPixels=%i\n", minwidth, minheight,minwidth );
-
-         rtwi=minwidth;
-         rthe=minheight;
-         topw=minwidth;
-
-         int gamRot=0;
-         orient  = (machine->gamedrv->flags & ORIENTATION_MASK);
-         vertical = (machine->gamedrv->flags & ORIENTATION_SWAP_XY);
-
-         gamRot = (ROT270 == orient) ? 1 : gamRot;
-         gamRot = (ROT180 == orient) ? 2 : gamRot;
-         gamRot = (ROT90  == orient) ? 3 : gamRot;
-
-         prep_retro_rotation(gamRot);
-      }
-
-      if (minwidth != rtwi || minheight != rthe ){
-         write_log("Res change: old(%d,%d) new(%d,%d) %d\n",rtwi,rthe,minwidth,minheight,topw);
-         rtwi=minwidth;
-         rthe=minheight;
-         topw=minwidth;
-
-	 adjust_opt[0] = adjust_opt[2] = 1;
-      }
-/*    No need
-      if(videoapproach1_enable){
-         rtwi=topw=1024;
-         rthe=768;
-      } */
-
-      // make that the size of our target
-      render_target_set_bounds(our_target,rtwi,rthe, 0);
-      // our_target->set_bounds(rtwi,rthe);
-      // get the list of primitives for the target at the current size
-      // render_primitive_list &primlist = our_target->get_primitives();
-      primlist = render_target_get_primitives(our_target);
-      // lock them, and then render them
-      //      primlist.acquire_lock();
-      osd_lock_acquire(primlist->lock);
-
-      surfptr = (UINT8 *) videoBuffer;
-#ifdef M16B
-      rgb565_draw_primitives(primlist->head, surfptr,rtwi,rthe,rtwi);
-#else
-      rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
-#endif
-#if 0
-      surfptr = (UINT8 *) videoBuffer;
-
-      //  draw a series of primitives using a software rasterizer
-      for (const render_primitive *prim = primlist.first(); prim != NULL; prim = prim->next())
-      {
-         switch (prim->type)
-         {
-            case render_primitive::LINE:
-               draw_line(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
-               break;
-
-            case render_primitive::QUAD:
-               if (!prim->texture.base)
-                  draw_rect(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
-               else
-                  setup_and_draw_textured_quad(*prim, (PIXEL_TYPE*)surfptr, minwidth, minheight, minwidth);
-               break;
-
-            default:
-               throw emu_fatalerror("Unexpected render_primitive type");
-         }
-      }
-#endif
-      osd_lock_release(primlist->lock);
-
-
-      //  primlist.release_lock();
-   } 
-   else
-      draw_this_frame = false;
-
-   RLOOP=0;
-
-   if(ui_ipt_pushchar!=-1)
-   {
-      ui_input_push_char_event(machine, our_target, (unicode_char)ui_ipt_pushchar);
-      ui_ipt_pushchar=-1;
-   }
-}
-
- //============================================================
-// osd_wait_for_debugger
-//============================================================
-
-void osd_wait_for_debugger(running_device *device, int firststop)
-{
-   // we don't have a debugger, so we just return here
-}
-
-//============================================================
-//  update_audio_stream
-//============================================================
-void osd_update_audio_stream(running_machine *machine,short *buffer, int samples_this_frame) 
-{
-	if(pauseg!=-1)audio_batch_cb(buffer, samples_this_frame);
-}
-
 
 //============================================================
 //  main
@@ -1680,7 +1626,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 		strcpy(gamePath, ".\0");
 		strncpy(gameName, path , dotIndex );
 		gameName[dotIndex] = 0;
-		write_log("[INFO][MAME2010] gamePath=%s gameName=%s\n", gamePath, gameName);
+		retro_log(RETRO_LOG_INFO, "[MAME 2010] path=%s gamePath=%s gameName=%s\n", path, gamePath, gameName);
 		return 1;
 	}
 	if (slashIndex < 0 || dotIndex < 0) {
@@ -1692,7 +1638,7 @@ static int parsePath(char* path, char* gamePath, char* gameName) {
 	strncpy(gameName, path + (slashIndex + 1), dotIndex - (slashIndex + 1));
 	gameName[dotIndex - (slashIndex + 1)] = 0;
 
-	write_log("[INFO][MAME2010] gamePath=%s gameName=%s\n", gamePath, gameName);
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] path=%s gamePath=%s gameName=%s\n", path, gamePath, gameName);
 	return 1;
 }
 
@@ -1710,7 +1656,7 @@ static int getGameInfo(char* gameName, int* rotation, int* driverIndex) {
 				gameFound = 1;
 				*driverIndex = drvindex;
 				*rotation = drivers[drvindex]->flags & 0x7;
-				write_log("[INFO][MAME2010] %-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
+				retro_log(RETRO_LOG_INFO, "[MAME 2010] %-18s\"%s\" rot=%i \n", drivers[drvindex]->name, drivers[drvindex]->description, *rotation);
 		}
 	}
 	return gameFound;
@@ -1733,14 +1679,14 @@ int executeGame(char* path) {
 	//split the path to directory and the name without the zip extension
 	result = parsePath(path, MgamePath, MgameName);
 	if (result == 0) {
-		write_log("[ERROR][MAME2010] Parse path failed! path=%s\n", path);
+		retro_log(RETRO_LOG_ERROR, "[MAME 2010] Parse path failed! path=%s\n", path);
 		strcpy(MgameName,path);
 	//	return -1;
 	}
 
 	//Find the game info. Exit if game driver was not found.
 	if (getGameInfo(MgameName, &gameRot, &driverIndex) == 0) {
-		write_log("[ERROR][MAME2010] Game not found: %s\n", MgameName);
+		retro_log(RETRO_LOG_ERROR, "[MAME 2010] Game not found: %s\n", MgameName);
 		return -2;
 	}
 
@@ -1751,7 +1697,7 @@ int executeGame(char* path) {
 			screenRot = 1;
 		} else
 		if (gameRot &  ORIENTATION_FLIP_X) {
-			write_log("[INFO][MAME2010] *********** flip X \n");
+			retro_log(RETRO_LOG_INFO, "[MAME 2010]  *********** flip X\n");
 			screenRot = 3;
 		}
 
@@ -1760,13 +1706,13 @@ int executeGame(char* path) {
 		if (gameRot != ROT0) {
 			screenRot = 1;
 			if (gameRot &  ORIENTATION_FLIP_X) {
-				write_log("[INFO][MAME2010] *********** flip X \n");
+				retro_log(RETRO_LOG_INFO, "[MAME 2010]  *********** flip X\n");
 				screenRot = 2;
 			}
 		}
 	}
 
-	write_log("[INFO][MAME2010] Creating frontend... game=%s\n", MgameName);
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] Creating frontend... game=%s\n", MgameName);
 
 	//find how many parameters we have
 	for (paramCount = 0; xargv[paramCount] != NULL; paramCount++);
@@ -1801,13 +1747,13 @@ int executeGame(char* path) {
 
 	xargv[paramCount++] = MgameName;
 
-	write_log("[INFO][MAME2010] Invoking MAME2010 CLI frontend. Parameter count: %i\n", paramCount);
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] Invoking MAME2010 CLI frontend. Parameter count: %i\n", paramCount);
 
-    write_log("[INFO][MAME2010] Parameter list: ");
-	for (int i = 0; xargv[i] != NULL; i++){
-		write_log("%s ",xargv[i]);
-	}
-    write_log("\n");
+    char parameters[1024];
+	for (int i = 0; xargv[i] != NULL; i++)
+ 		snprintf(parameters, sizeof(parameters), "%s ",xargv[i]);
+
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] Parameter list: %s\n", parameters);
 
 	result = cli_execute(paramCount,(char**) xargv, NULL);
 

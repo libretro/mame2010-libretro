@@ -456,6 +456,8 @@ void running_machine::retro_loop()
 
    if( (m_hard_reset_pending || m_exit_pending) && m_saveload_schedule == SLS_NONE)
    {
+      retro_log(RETRO_LOG_INFO, "[MAME 2010] m_hard_reset_pending or m_exit_pending!\n");
+      
       // and out via the exit phase
       m_current_phase = MACHINE_PHASE_EXIT;
 
