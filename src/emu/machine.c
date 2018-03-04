@@ -446,8 +446,10 @@ void running_machine::schedule_exit()
 	m_scheduler.eat_all_cycles();
 
 	// if we're autosaving on exit, schedule a save as well
-	//if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE))
-	//	schedule_save("auto");
+	/*
+	if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE))
+		schedule_save("auto");
+	*/
 }
 
 
