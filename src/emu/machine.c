@@ -422,12 +422,12 @@ void running_machine::retro_machineexit()
 {
    // and out via the exit phase
    m_current_phase = MACHINE_PHASE_EXIT;
-   call_notifiers(MACHINE_NOTIFY_EXIT);
 
    // save the NVRAM and configuration
    sound_mute(this, true);
    nvram_save(this);
    config_save_settings(this);
+   call_notifiers(MACHINE_NOTIFY_EXIT);
 
    // close the logfile
    if (m_logfile != NULL)
