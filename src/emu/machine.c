@@ -186,7 +186,6 @@ running_machine::running_machine(const game_driver &driver, const machine_config
 	  m_exit_to_game_select(exit_to_game_select),
 	  m_new_driver_pending(NULL),
 	  m_soft_reset_timer(NULL),
-	  m_logfile(NULL),
 	  m_saveload_schedule(SLS_NONE),
 	  m_saveload_schedule_time(attotime_zero),
 	  m_saveload_searchpath(NULL),
@@ -243,9 +242,9 @@ const char *running_machine::describe_context()
 	{
 		cpu_device *cpu = downcast<cpu_device *>(&executing->device());
 		if (cpu != NULL)
-			m_context.printf("'%s' (%s)", cpu->tag(), core_i64_hex_format(cpu->pc(), cpu->space(AS_PROGRAM)->logaddrchars));
+			retro_log(RETRO_LOG_INFO, "[MAME 2010] '%s' (%s)", cpu->tag(), core_i64_hex_format(cpu->pc(), cpu->space(AS_PROGRAM)->logaddrchars));
 		else
-			m_context.printf("'%s'", cpu->tag());
+			retro_log(RETRO_LOG_INFO, "[MAME 2010] '%s'", cpu->tag());
 	}
 	else
 		m_context.cpy("(no context)");
@@ -345,15 +344,6 @@ void running_machine::start()
 	if (m_config.m_video_start != NULL)
 		(*m_config.m_video_start)(this);
 
-	// if we're coming in with a savegame request, process it now
-	const char *savegame = options_get_string(&m_options, OPTION_STATE);
-	if (savegame[0] != 0)
-		schedule_load(savegame);
-
-	// if we're in autosave mode, schedule a load
-	else if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE) != 0)
-		schedule_load("auto");
-
 	// set up the cheat engine
 	if (options_get_bool(&m_options, OPTION_CHEAT))
 		cheat_init(this);
@@ -374,14 +364,6 @@ int running_machine::run(bool firstrun)
    // move to the init phase
    m_current_phase = MACHINE_PHASE_INIT;
 
-   // if we have a logfile, set up the callback
-   if (options_get_bool(&m_options, OPTION_LOG))
-   {
-      file_error filerr = mame_fopen(libretro_save_directory, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
-      assert_always(filerr == FILERR_NONE, "unable to open log file");
-      add_logerror_callback(logfile_callback);
-   }
-
    // then finish setting up our local machine
    start();
 
@@ -401,25 +383,12 @@ int running_machine::run(bool firstrun)
    while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
       return 0;
 
-   // and out via the exit phase
-   m_current_phase = MACHINE_PHASE_EXIT;
-
-   // save the NVRAM and configuration
-   sound_mute(this, true);
-   nvram_save(this);
-   config_save_settings(this);
-
-   // call all exit callbacks registered
-   call_notifiers(MACHINE_NOTIFY_EXIT);
-
-   // close the logfile
-   if (m_logfile != NULL)
-      mame_fclose(m_logfile);
-   return error;
+   return 0;
 }
 
 void running_machine::retro_machineexit()
-{
+{   
+ 
    // and out via the exit phase
    m_current_phase = MACHINE_PHASE_EXIT;
 
@@ -427,11 +396,10 @@ void running_machine::retro_machineexit()
    sound_mute(this, true);
    nvram_save(this);
    config_save_settings(this);
+   
+   // call all exit callbacks registered
    call_notifiers(MACHINE_NOTIFY_EXIT);
 
-   // close the logfile
-   if (m_logfile != NULL)
-      mame_fclose(m_logfile);
 }
 
 extern int RLOOP;
@@ -455,28 +423,6 @@ void running_machine::retro_loop()
 
    }
 
-   if( (m_hard_reset_pending || m_exit_pending) && m_saveload_schedule == SLS_NONE)
-   {
-      retro_log(RETRO_LOG_INFO, "[MAME 2010] m_hard_reset_pending or m_exit_pending!\n");
-      
-      // and out via the exit phase
-      m_current_phase = MACHINE_PHASE_EXIT;
-
-      // save the NVRAM and configuration
-      sound_mute(this, true);
-      nvram_save(this);
-      config_save_settings(this);
-
-      // call all exit callbacks registered
-      call_notifiers(MACHINE_NOTIFY_EXIT);
-
-      // close the logfile
-      if (m_logfile != NULL)
-         mame_fclose(m_logfile);
-
-
-      ENDEXEC=1;
-   }
 }
 
 //-------------------------------------------------
@@ -500,8 +446,8 @@ void running_machine::schedule_exit()
 	m_scheduler.eat_all_cycles();
 
 	// if we're autosaving on exit, schedule a save as well
-	if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE))
-		schedule_save("auto");
+	//if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE))
+	//	schedule_save("auto");
 }
 
 
@@ -512,10 +458,25 @@ void running_machine::schedule_exit()
 
 void running_machine::schedule_hard_reset()
 {
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] schedule_hard_reset for current MAME machine.\n");
+    
 	m_hard_reset_pending = true;
 
 	// if we're executing, abort out immediately
 	m_scheduler.eat_all_cycles();
+
+    // and out via the exit phase
+    m_current_phase = MACHINE_PHASE_EXIT;
+
+    // save the NVRAM and configuration
+    sound_mute(this, true);
+    nvram_save(this);
+    config_save_settings(this);
+
+    // call all exit callbacks registered
+    call_notifiers(MACHINE_NOTIFY_EXIT);
+
+    ENDEXEC=1;
 }
 
 
@@ -526,6 +487,8 @@ void running_machine::schedule_hard_reset()
 
 void running_machine::schedule_soft_reset()
 {
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] schedule_soft_reset for current MAME machine.\n");
+    
 	timer_adjust_oneshot(m_soft_reset_timer, attotime_zero, 0);
 
 	// we can't be paused since the timer needs to fire
@@ -572,28 +535,6 @@ void running_machine::set_saveload_filename(const char *filename)
 	}
 }
 */
-
-//-------------------------------------------------
-//  schedule_save - schedule a save to occur as
-//  soon as possible
-//-------------------------------------------------
-
-void running_machine::schedule_save(const char *filename)
-{
-
-}
-
-
-//-------------------------------------------------
-//  schedule_load - schedule a load to occur as
-//  soon as possible
-//-------------------------------------------------
-
-void running_machine::schedule_load(const char *filename)
-{
-
-}
-
 
 //-------------------------------------------------
 //  pause - pause the system
@@ -699,6 +640,7 @@ void running_machine::add_logerror_callback(logerror_callback callback)
 //  logerror - printf-style error logging
 //-------------------------------------------------
 
+/*
 void CLIB_DECL running_machine::logerror(const char *format, ...)
 {
 	// process only if there is a target
@@ -710,7 +652,7 @@ void CLIB_DECL running_machine::logerror(const char *format, ...)
 		va_end(arg);
 	}
 }
-
+*/
 
 //-------------------------------------------------
 //  vlogerror - vprintf-style error logging
@@ -718,20 +660,17 @@ void CLIB_DECL running_machine::logerror(const char *format, ...)
 
 void CLIB_DECL running_machine::vlogerror(const char *format, va_list args)
 {
-	// process only if there is a target
-	if (m_logerror_list != NULL)
-	{
-		profiler_mark_start(PROFILER_LOGERROR);
 
-		// dump to the buffer
-		vsnprintf(giant_string_buffer, ARRAY_LENGTH(giant_string_buffer), format, args);
+    // dump to the buffer
+    vsnprintf(giant_string_buffer, ARRAY_LENGTH(giant_string_buffer), format, args);
+    static char buffer[1024];
+    snprintf((char *)buffer, 1024, "[MAME 2010] %s", (char *)giant_string_buffer);
+    retro_log(RETRO_LOG_INFO, buffer);
+    
+    // log to all callbacks
+    for (logerror_callback_item *cb = m_logerror_list; cb != NULL; cb = cb->m_next)
+        (*cb->m_func)(*this, giant_string_buffer);
 
-		// log to all callbacks
-		for (logerror_callback_item *cb = m_logerror_list; cb != NULL; cb = cb->m_next)
-			(*cb->m_func)(*this, giant_string_buffer);
-
-		profiler_mark_end();
-	}
 }
 
 
@@ -879,7 +818,7 @@ TIMER_CALLBACK( running_machine::static_soft_reset ) { machine->soft_reset(); }
 
 void running_machine::soft_reset()
 {
-	logerror("Soft reset\n");
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] Soft reset now.\n");
 
 	// temporarily in the reset phase
 	m_current_phase = MACHINE_PHASE_RESET;
@@ -910,8 +849,7 @@ void running_machine::soft_reset()
 
 void running_machine::logfile_callback(running_machine &machine, const char *buffer)
 {
-	if (machine.m_logfile != NULL)
-		mame_fputs(machine.m_logfile, buffer);
+
 }
 
 
