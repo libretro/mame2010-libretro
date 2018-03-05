@@ -207,14 +207,6 @@ again:
 		state->bitmap_dirty = TRUE;
 	}
 
-	if (ui_input_pressed(machine, IPT_UI_PAUSE))
-	{
-		if (machine->paused())
-			machine->resume();
-		else
-			machine->pause();
-	}
-
 	if (ui_input_pressed(machine, IPT_UI_CANCEL) || ui_input_pressed(machine, IPT_UI_SHOW_GFX))
 		goto cancel;
 
@@ -633,8 +625,8 @@ static void gfxset_handle_keys(running_machine *machine, ui_gfx_state *state, in
 		state->gfxset.count[set] = 32;
 
 	/* handle rotation (R) */
-	if (ui_input_pressed(machine, IPT_UI_ROTATE))
-		state->gfxset.rotate[set] = orientation_add(ROT90, state->gfxset.rotate[set]);
+	/*if (ui_input_pressed(machine, IPT_UI_ROTATE))
+		state->gfxset.rotate[set] = orientation_add(ROT90, state->gfxset.rotate[set]);*/
 
 	/* handle navigation within the cells (up,down,pgup,pgdown) */
 	if (ui_input_pressed_repeat(machine, IPT_UI_UP, 4))
@@ -993,8 +985,8 @@ static void tilemap_handle_keys(running_machine *machine, ui_gfx_state *state, i
 	}
 
 	/* handle rotation (R) */
-	if (ui_input_pressed(machine, IPT_UI_ROTATE))
-		state->tilemap.rotate = orientation_add(ROT90, state->tilemap.rotate);
+	/*if (ui_input_pressed(machine, IPT_UI_ROTATE))
+		state->tilemap.rotate = orientation_add(ROT90, state->tilemap.rotate);*/
 
 	/* handle navigation (up,down,left,right) */
 	step = 8;
