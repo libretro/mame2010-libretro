@@ -121,22 +121,22 @@
 
 #include "retromain.h"
 
-//**************************************************************************
-//  GLOBAL VARIABLES
-//**************************************************************************
+/**************************************************************************
+  GLOBAL VARIABLES
+**************************************************************************/
 
-// a giant string buffer for temporary strings
+/* a giant string buffer for temporary strings */
 static char giant_string_buffer[65536] = { 0 };
 
 
 
-//**************************************************************************
-//  RUNNING MACHINE
-//**************************************************************************
+/**************************************************************************
+  RUNNING MACHINE
+**************************************************************************/
 
-//-------------------------------------------------
-//  running_machine - constructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  running_machine - constructor
+-------------------------------------------------*/
 
 running_machine::running_machine(const game_driver &driver, const machine_config &_config, core_options &options, bool exit_to_game_select)
 	: m_regionlist(m_respool),
@@ -186,7 +186,6 @@ running_machine::running_machine(const game_driver &driver, const machine_config
 	  m_exit_to_game_select(exit_to_game_select),
 	  m_new_driver_pending(NULL),
 	  m_soft_reset_timer(NULL),
-	  m_logfile(NULL),
 	  m_saveload_schedule(SLS_NONE),
 	  m_saveload_schedule_time(attotime_zero),
 	  m_saveload_searchpath(NULL),
@@ -197,14 +196,14 @@ running_machine::running_machine(const game_driver &driver, const machine_config
 	memset(m_notifier_list, 0, sizeof(m_notifier_list));
 	memset(&m_base_time, 0, sizeof(m_base_time));
 
-	// attach this machine to all the devices in the configuration
+	/* attach this machine to all the devices in the configuration */
 	m_devicelist.import_config_list(m_config.m_devicelist, *this);
 
-	// allocate the driver data (after devices)
+	/* allocate the driver data (after devices) */
 	if (m_config.m_driver_data_alloc != NULL)
 		driver_data = (*m_config.m_driver_data_alloc)(*this);
 
-	// find devices
+	/* find devices */
 	primary_screen = screen_first(*this);
 	for (device_t *device = m_devicelist.first(); device != NULL; device = device->next())
 		if (dynamic_cast<cpu_device *>(device) != NULL)
@@ -213,15 +212,15 @@ running_machine::running_machine(const game_driver &driver, const machine_config
 			break;
 		}
 
-	// fetch core options
+	/* fetch core options */
 	if (options_get_bool(&m_options, OPTION_DEBUG))
 		debug_flags = (DEBUG_FLAG_ENABLED | DEBUG_FLAG_CALL_HOOK) | (options_get_bool(&m_options, OPTION_DEBUG_INTERNAL) ? 0 : DEBUG_FLAG_OSD_ENABLED);
 }
 
 
-//-------------------------------------------------
-//  ~running_machine - destructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  ~running_machine - destructor
+-------------------------------------------------*/
 
 running_machine::~running_machine()
 {
@@ -230,11 +229,11 @@ running_machine::~running_machine()
 }
 
 
-//-------------------------------------------------
-//  describe_context - return a string describing
-//  which device is currently executing and its
-//  PC
-//-------------------------------------------------
+/*-------------------------------------------------
+  describe_context - return a string describing
+  which device is currently executing and its
+  PC
+-------------------------------------------------*/
 
 const char *running_machine::describe_context()
 {
@@ -243,9 +242,9 @@ const char *running_machine::describe_context()
 	{
 		cpu_device *cpu = downcast<cpu_device *>(&executing->device());
 		if (cpu != NULL)
-			m_context.printf("'%s' (%s)", cpu->tag(), core_i64_hex_format(cpu->pc(), cpu->space(AS_PROGRAM)->logaddrchars));
+			retro_log(RETRO_LOG_INFO, "[MAME 2010] '%s' (%s)", cpu->tag(), core_i64_hex_format(cpu->pc(), cpu->space(AS_PROGRAM)->logaddrchars));
 		else
-			m_context.printf("'%s'", cpu->tag());
+			retro_log(RETRO_LOG_INFO, "[MAME 2010] '%s'", cpu->tag());
 	}
 	else
 		m_context.cpy("(no context)");
@@ -254,13 +253,13 @@ const char *running_machine::describe_context()
 }
 
 
-//-------------------------------------------------
-//  start - initialize the emulated machine
-//-------------------------------------------------
+/*-------------------------------------------------
+  start - initialize the emulated machine
+-------------------------------------------------*/
 
 void running_machine::start()
 {
-	// initialize basic can't-fail systems here
+	/* initialize basic can't-fail systems here */
 	fileio_init(this);
 	config_init(this);
 	input_init(this);
@@ -274,70 +273,70 @@ void running_machine::start()
 	generic_video_init(this);
 	generic_sound_init(this);
 
-	// initialize the timers and allocate a soft_reset timer
-	// this must be done before cpu_init so that CPU's can allocate timers
+	/* initialize the timers and allocate a soft_reset timer
+	   this must be done before cpu_init so that CPU's can allocate timers */
 	timer_init(this);
 	m_soft_reset_timer = timer_alloc(this, static_soft_reset, NULL);
 
-	// init the osd layer
+	/* init the osd layer */
 	osd_init(this);
 
-	// initialize the base time (needed for doing record/playback)
+	/* initialize the base time (needed for doing record/playback) */
 	time(&m_base_time);
 
-	// initialize the input system and input ports for the game
-	// this must be done before memory_init in order to allow specifying
-	// callbacks based on input port tags
+	/* initialize the input system and input ports for the game
+	   this must be done before memory_init in order to allow specifying
+	   callbacks based on input port tags */
 	time_t newbase = input_port_init(this, m_game.ipt);
 	if (newbase != 0)
 		m_base_time = newbase;
 
-	// intialize UI input
+	/* intialize UI input */
 	ui_input_init(this);
 
-	// initialize the streams engine before the sound devices start
+	/* initialize the streams engine before the sound devices start */
 	streams_init(this);
 
-	// first load ROMs, then populate memory, and finally initialize CPUs
-	// these operations must proceed in this order
+	/* first load ROMs, then populate memory, and finally initialize CPUs
+	   these operations must proceed in this order */
 	rom_init(this);
 	memory_init(this);
 	watchdog_init(this);
 
-	// allocate the gfx elements prior to device initialization
+	/* allocate the gfx elements prior to device initialization */
 	gfx_init(this);
 
-	// initialize natural keyboard support
+	/* initialize natural keyboard support */
 	inputx_init(this);
 
-	// initialize image devices
+	/* initialize image devices */
 	image_init(this);
 
-	// start up the devices
+	/* start up the devices */
 	m_devicelist.start_all();
 
-	// call the game driver's init function
-	// this is where decryption is done and memory maps are altered
-	// so this location in the init order is important
+	/* call the game driver's init function
+	   this is where decryption is done and memory maps are altered
+	   so this location in the init order is important */
 	ui_set_startup_text(this, "Initializing...", true);
 	if (m_game.driver_init != NULL)
 		(*m_game.driver_init)(this);
 
-	// finish image devices init process
+	/* finish image devices init process */
 	image_postdevice_init(this);
 
-	// start the video and audio hardware
+	/* start the video and audio hardware */
 	video_init(this);
 	tilemap_init(this);
 	crosshair_init(this);
 
 	sound_init(this);
 
-	// initialize the debugger
+	/* initialize the debugger */
 	if ((debug_flags & DEBUG_FLAG_ENABLED) != 0)
 		debugger_init(this);
 
-	// call the driver's _START callbacks
+	/* call the driver's _START callbacks */
 	if (m_config.m_machine_start != NULL)
 		(*m_config.m_machine_start)(this);
 	if (m_config.m_sound_start != NULL)
@@ -345,92 +344,62 @@ void running_machine::start()
 	if (m_config.m_video_start != NULL)
 		(*m_config.m_video_start)(this);
 
-	// if we're coming in with a savegame request, process it now
-	const char *savegame = options_get_string(&m_options, OPTION_STATE);
-	if (savegame[0] != 0)
-		schedule_load(savegame);
-
-	// if we're in autosave mode, schedule a load
-	else if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE) != 0)
-		schedule_load("auto");
-
-	// set up the cheat engine
+	/* set up the cheat engine */
 	if (options_get_bool(&m_options, OPTION_CHEAT))
 		cheat_init(this);
 
-	// disallow save state registrations starting here
+	/* disallow save state registrations starting here */
 	state_save_allow_registration(this, false);
 }
 
 
-//-------------------------------------------------
-//  run - execute the machine
-//-------------------------------------------------
+/*-------------------------------------------------
+  run - execute the machine
+-------------------------------------------------*/
 
 int running_machine::run(bool firstrun)
 {
    int error = MAMERR_NONE;
 
-   // move to the init phase
+   /* move to the init phase */
    m_current_phase = MACHINE_PHASE_INIT;
 
-   // if we have a logfile, set up the callback
-   if (options_get_bool(&m_options, OPTION_LOG))
-   {
-      file_error filerr = mame_fopen(libretro_save_directory, "error.log", OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &m_logfile);
-      assert_always(filerr == FILERR_NONE, "unable to open log file");
-      add_logerror_callback(logfile_callback);
-   }
-
-   // then finish setting up our local machine
+   /* then finish setting up our local machine */
    start();
 
-   // load the configuration settings and NVRAM
+   /* load the configuration settings and NVRAM */
    config_load_settings(this);
    nvram_load(this);
    sound_mute(this, FALSE);
 
-   // display the startup screens
+   /* display the startup screens */
    ui_display_startup_screens(this, firstrun, !options_get_bool(&m_options, OPTION_SKIP_NAGSCREEN));
 
-   // perform a soft reset -- this takes us to the running phase
+   /* perform a soft reset -- this takes us to the running phase */
    soft_reset();
 
-   // run the CPUs until a reset or exit
+   /* run the CPUs until a reset or exit */
    m_hard_reset_pending = false;
    while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
       return 0;
 
-   // and out via the exit phase
-   m_current_phase = MACHINE_PHASE_EXIT;
-
-   // save the NVRAM and configuration
-   sound_mute(this, true);
-   nvram_save(this);
-   config_save_settings(this);
-
-   // call all exit callbacks registered
-   call_notifiers(MACHINE_NOTIFY_EXIT);
-
-   // close the logfile
-   if (m_logfile != NULL)
-      mame_fclose(m_logfile);
-   return error;
+   return 0;
 }
 
 void running_machine::retro_machineexit()
-{
-   // and out via the exit phase
+{   
+ 
+   /* and out via the exit phase */
    m_current_phase = MACHINE_PHASE_EXIT;
 
-   // save the NVRAM and configuration
+   /* save the NVRAM and configuration */
    sound_mute(this, true);
    nvram_save(this);
    config_save_settings(this);
+   
+   /* call all exit callbacks registered */
+   call_notifiers(MACHINE_NOTIFY_EXIT);
 
-   // close the logfile
-   if (m_logfile != NULL)
-      mame_fclose(m_logfile);
 }
 
 extern int RLOOP;
@@ -440,211 +409,163 @@ void running_machine::retro_loop()
 {
    while (RLOOP==1)
    {
-      // execute CPUs if not paused
+      /* execute CPUs if not paused */
       if (!m_paused)
          m_scheduler.timeslice();
 
-      // otherwise, just pump video updates through
+      /* otherwise, just pump video updates through */
       else
          video_frame_update(this, false);
 
-      // handle save/load
+      /* handle save/load */
       if (m_saveload_schedule != SLS_NONE)
          handle_saveload();
 
    }
 
-   if( (m_hard_reset_pending || m_exit_pending) && m_saveload_schedule == SLS_NONE)
-   {
-      retro_log(RETRO_LOG_INFO, "[MAME 2010] m_hard_reset_pending or m_exit_pending!\n");
-      
-      // and out via the exit phase
-      m_current_phase = MACHINE_PHASE_EXIT;
-
-      // save the NVRAM and configuration
-      sound_mute(this, true);
-      nvram_save(this);
-      config_save_settings(this);
-
-      // call all exit callbacks registered
-      call_notifiers(MACHINE_NOTIFY_EXIT);
-
-      // close the logfile
-      if (m_logfile != NULL)
-         mame_fclose(m_logfile);
-
-
-      ENDEXEC=1;
-   }
 }
 
-//-------------------------------------------------
-//  schedule_exit - schedule a clean exit
-//-------------------------------------------------
+/*-------------------------------------------------
+  schedule_exit - schedule a clean exit
+-------------------------------------------------*/
 
 void running_machine::schedule_exit()
 {
-	// if we are in-game but we started with the select game menu, return to that instead
+	/* if we are in-game but we started with the select game menu, return to that instead */
 	if (m_exit_to_game_select && options_get_string(&m_options, OPTION_GAMENAME)[0] != 0)
 	{
 		options_set_string(&m_options, OPTION_GAMENAME, "", OPTION_PRIORITY_CMDLINE);
 		ui_menu_force_game_select(this, render_container_get_ui());
 	}
 
-	// otherwise, exit for real
+	/* otherwise, exit for real */
 	else
 		m_exit_pending = true;
 
-	// if we're executing, abort out immediately
+	/*  if we're executing, abort out immediately */
 	m_scheduler.eat_all_cycles();
 
-	// if we're autosaving on exit, schedule a save as well
+	/* if we're autosaving on exit, schedule a save as well */
+    /*
 	if (options_get_bool(&m_options, OPTION_AUTOSAVE) && (m_game.flags & GAME_SUPPORTS_SAVE))
 		schedule_save("auto");
+	*/
 }
 
 
-//-------------------------------------------------
-//  schedule_hard_reset - schedule a hard-reset of
-//  the machine
-//-------------------------------------------------
+/*-------------------------------------------------
+  schedule_hard_reset - schedule a hard-reset of
+  the machine
+-------------------------------------------------*/
 
 void running_machine::schedule_hard_reset()
 {
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] schedule_hard_reset for current MAME machine.\n");
+    
 	m_hard_reset_pending = true;
 
-	// if we're executing, abort out immediately
+	/* if we're executing, abort out immediately */
 	m_scheduler.eat_all_cycles();
+
+    /* and out via the exit phase */
+    m_current_phase = MACHINE_PHASE_EXIT;
+
+    /* save the NVRAM and configuration */
+    sound_mute(this, true);
+    nvram_save(this);
+    config_save_settings(this);
+
+    /* call all exit callbacks registered */
+    call_notifiers(MACHINE_NOTIFY_EXIT);
+
+    ENDEXEC=1;
 }
 
 
-//-------------------------------------------------
-//  schedule_soft_reset - schedule a soft-reset of
-//  the system
-//-------------------------------------------------
+/*-------------------------------------------------
+  schedule_soft_reset - schedule a soft-reset of
+  the system
+-------------------------------------------------*/
 
 void running_machine::schedule_soft_reset()
 {
+    retro_log(RETRO_LOG_INFO, "[MAME 2010] schedule_soft_reset for current MAME machine.\n");
+    
 	timer_adjust_oneshot(m_soft_reset_timer, attotime_zero, 0);
 
-	// we can't be paused since the timer needs to fire
+	/* we can't be paused since the timer needs to fire */
 	resume();
 
-	// if we're executing, abort out immediately
+	/* if we're executing, abort out immediately */
 	m_scheduler.eat_all_cycles();
 }
 
 
-//-------------------------------------------------
-//  schedule_new_driver - schedule a new game to
-//  be loaded
-//-------------------------------------------------
+/*-------------------------------------------------
+  schedule_new_driver - schedule a new game to
+  be loaded
+-------------------------------------------------*/
 
 void running_machine::schedule_new_driver(const game_driver &driver)
 {
 	m_hard_reset_pending = true;
 	m_new_driver_pending = &driver;
 
-	// if we're executing, abort out immediately
+	/* if we're executing, abort out immediately */
 	m_scheduler.eat_all_cycles();
 }
 
-
-//-------------------------------------------------
-//  set_saveload_filename - specifies the filename
-//  for state loading/saving
-//-------------------------------------------------
-
-/*
-void running_machine::set_saveload_filename(const char *filename)
-{
-	// free any existing request and allocate a copy of the requested name
-	if (osd_is_absolute_path(filename))
-	{
-		m_saveload_searchpath = NULL;
-		m_saveload_pending_file.cpy(filename);
-	}
-	else
-	{
-		m_saveload_searchpath = state_directory;
-		m_saveload_pending_file.cpy(basename()).cat(PATH_SEPARATOR).cat(filename).cat(".sta");
-	}
-}
-*/
-
-//-------------------------------------------------
-//  schedule_save - schedule a save to occur as
-//  soon as possible
-//-------------------------------------------------
-
-void running_machine::schedule_save(const char *filename)
-{
-
-}
-
-
-//-------------------------------------------------
-//  schedule_load - schedule a load to occur as
-//  soon as possible
-//-------------------------------------------------
-
-void running_machine::schedule_load(const char *filename)
-{
-
-}
-
-
-//-------------------------------------------------
-//  pause - pause the system
-//-------------------------------------------------
+/*-------------------------------------------------
+  pause - pause the system
+-------------------------------------------------*/
 
 void running_machine::pause()
 {
-	// ignore if nothing has changed
+	/* ignore if nothing has changed */
 	if (m_paused)
 		return;
 	m_paused = true;
 
-	// call the callbacks
+	/* call the callbacks */
 	call_notifiers(MACHINE_NOTIFY_PAUSE);
 }
 
 
-//-------------------------------------------------
-//  resume - resume the system
-//-------------------------------------------------
+/*-------------------------------------------------
+  resume - resume the system
+-------------------------------------------------*/
 
 void running_machine::resume()
 {
-	// ignore if nothing has changed
+	/* ignore if nothing has changed */
 	if (!m_paused)
 		return;
 	m_paused = false;
 
-	// call the callbacks
+	/* call the callbacks */
 	call_notifiers(MACHINE_NOTIFY_RESUME);
 }
 
 
-//-------------------------------------------------
-//  region_alloc - allocates memory for a region
-//-------------------------------------------------
+/*-------------------------------------------------
+  region_alloc - allocates memory for a region
+-------------------------------------------------*/
 
 region_info *running_machine::region_alloc(const char *name, UINT32 length, UINT32 flags)
 {
-    // make sure we don't have a region of the same name; also find the end of the list
+    /* make sure we don't have a region of the same name; also find the end of the list */
     region_info *info = m_regionlist.find(name);
     if (info != NULL)
 		fatalerror("region_alloc called with duplicate region name \"%s\"\n", name);
 
-	// allocate the region
+	/* allocate the region */
 	return m_regionlist.append(name, auto_alloc(this, region_info(*this, name, length, flags)));
 }
 
 
-//-------------------------------------------------
-//  region_free - releases memory for a region
-//-------------------------------------------------
+/*-------------------------------------------------
+  region_free - releases memory for a region
+-------------------------------------------------*/
 
 void running_machine::region_free(const char *name)
 {
@@ -652,16 +573,16 @@ void running_machine::region_free(const char *name)
 }
 
 
-//-------------------------------------------------
-//  add_notifier - add a notifier of the
-//  given type
-//-------------------------------------------------
+/*-------------------------------------------------
+  add_notifier - add a notifier of the
+  given type
+-------------------------------------------------*/
 
 void running_machine::add_notifier(machine_notification event, notify_callback callback)
 {
 	assert_always(m_current_phase == MACHINE_PHASE_INIT, "Can only call add_notifier at init time!");
 
-	// exit notifiers are added to the head, and executed in reverse order
+	/* exit notifiers are added to the head, and executed in reverse order */
 	if (event == MACHINE_NOTIFY_EXIT)
 	{
 		notifier_callback_item *notifier = auto_alloc(this, notifier_callback_item(callback));
@@ -669,7 +590,7 @@ void running_machine::add_notifier(machine_notification event, notify_callback c
 		m_notifier_list[event] = notifier;
 	}
 
-	// all other notifiers are added to the tail, and executed in the order registered
+	/* all other notifiers are added to the tail, and executed in the order registered */
 	else
 	{
 		notifier_callback_item **tailptr;
@@ -679,10 +600,10 @@ void running_machine::add_notifier(machine_notification event, notify_callback c
 }
 
 
-//-------------------------------------------------
-//  add_logerror_callback - adds a callback to be
-//  called on logerror()
-//-------------------------------------------------
+/*-------------------------------------------------
+  add_logerror_callback - adds a callback to be
+  called on logerror()
+-------------------------------------------------*/
 
 void running_machine::add_logerror_callback(logerror_callback callback)
 {
@@ -693,51 +614,30 @@ void running_machine::add_logerror_callback(logerror_callback callback)
 	*tailptr = auto_alloc(this, logerror_callback_item(callback));
 }
 
-
-//-------------------------------------------------
-//  logerror - printf-style error logging
-//-------------------------------------------------
-
-void CLIB_DECL running_machine::logerror(const char *format, ...)
-{
-	// process only if there is a target
-	if (m_logerror_list != NULL)
-	{
-		va_list arg;
-		va_start(arg, format);
-		vlogerror(format, arg);
-		va_end(arg);
-	}
-}
-
-
-//-------------------------------------------------
-//  vlogerror - vprintf-style error logging
-//-------------------------------------------------
+/*-------------------------------------------------
+  vlogerror - vprintf-style error logging
+-------------------------------------------------*/
 
 void CLIB_DECL running_machine::vlogerror(const char *format, va_list args)
 {
-	// process only if there is a target
-	if (m_logerror_list != NULL)
-	{
-		profiler_mark_start(PROFILER_LOGERROR);
 
-		// dump to the buffer
-		vsnprintf(giant_string_buffer, ARRAY_LENGTH(giant_string_buffer), format, args);
+    /* dump to the buffer */
+    vsnprintf(giant_string_buffer, ARRAY_LENGTH(giant_string_buffer), format, args);
+    static char buffer[1024];
+    snprintf((char *)buffer, 1024, "[MAME 2010] %s", (char *)giant_string_buffer);
+    retro_log(RETRO_LOG_INFO, buffer);
+    
+    /* log to all callbacks */
+    for (logerror_callback_item *cb = m_logerror_list; cb != NULL; cb = cb->m_next)
+        (*cb->m_func)(*this, giant_string_buffer);
 
-		// log to all callbacks
-		for (logerror_callback_item *cb = m_logerror_list; cb != NULL; cb = cb->m_next)
-			(*cb->m_func)(*this, giant_string_buffer);
-
-		profiler_mark_end();
-	}
 }
 
 
-//-------------------------------------------------
-//  base_datetime - retrieve the time of the host
-//  system; useful for RTC implementations
-//-------------------------------------------------
+/*-------------------------------------------------
+  base_datetime - retrieve the time of the host
+  system; useful for RTC implementations
+-------------------------------------------------*/
 
 void running_machine::base_datetime(system_time &systime)
 {
@@ -745,11 +645,11 @@ void running_machine::base_datetime(system_time &systime)
 }
 
 
-//-------------------------------------------------
-//  current_datetime - retrieve the current time
-//  (offset by the base); useful for RTC
-//  implementations
-//-------------------------------------------------
+/*-------------------------------------------------
+  current_datetime - retrieve the current time
+  (offset by the base); useful for RTC
+  implementations
+-------------------------------------------------*/
 
 void running_machine::current_datetime(system_time &systime)
 {
@@ -757,24 +657,24 @@ void running_machine::current_datetime(system_time &systime)
 }
 
 
-//-------------------------------------------------
-//  rand - standardized random numbers
-//-------------------------------------------------
+/*-------------------------------------------------
+  rand - standardized random numbers
+-------------------------------------------------*/
 
 UINT32 running_machine::rand()
 {
 	m_rand_seed = 1664525 * m_rand_seed + 1013904223;
 
-	// return rotated by 16 bits; the low bits have a short period
-    // and are frequently used
+	/* return rotated by 16 bits; the low bits have a short period
+          and are frequently used */
 	return (m_rand_seed >> 16) | (m_rand_seed << 16);
 }
 
 
-//-------------------------------------------------
-//  call_notifiers - call notifiers of the given
-//  type
-//-------------------------------------------------
+/*-------------------------------------------------
+  call_notifiers - call notifiers of the given
+  type
+-------------------------------------------------*/
 
 void running_machine::call_notifiers(machine_notification which)
 {
@@ -783,10 +683,10 @@ void running_machine::call_notifiers(machine_notification which)
 }
 
 
-//-------------------------------------------------
-//  handle_saveload - attempt to perform a save
-//  or load
-//-------------------------------------------------
+/*-------------------------------------------------
+  handle_saveload - attempt to perform a save
+  or load
+-------------------------------------------------*/
 
 void running_machine::handle_saveload()
 {
@@ -795,15 +695,15 @@ void running_machine::handle_saveload()
 	const char *opname = (m_saveload_schedule == SLS_LOAD) ? "load" : "save";
 	file_error filerr = FILERR_NONE;
 
-	// if no name, bail
+	/* if no name, bail */
 	if (m_saveload_pending_file.len() == 0)
 		goto cancel;
 
-	// if there are anonymous timers, we can't save just yet, and we can't load yet either
-	// because the timers might overwrite data we have loaded
+	/* if there are anonymous timers, we can't save just yet, and we can't load yet either
+	   because the timers might overwrite data we have loaded */
 	if (timer_count_anonymous(this) > 0)
 	{
-		// if more than a second has passed, we're probably screwed
+		/* if more than a second has passed, we're probably screwed */
 		if (attotime_sub(timer_get_time(this), m_saveload_schedule_time).seconds > 0)
 		{
 			popmessage("Unable to %s due to pending anonymous timers. See error.log for details.", opname);
@@ -812,17 +712,17 @@ void running_machine::handle_saveload()
 		return;
 	}
 
-	// open the file
+	/* open the file */
 	mame_file *file;
 	filerr = mame_fopen(m_saveload_searchpath, m_saveload_pending_file, openflags, &file);
 	if (filerr == FILERR_NONE)
 	{
 		astring fullname(mame_file_full_name(file));
 
-		// read/write the save state
+		/* read/write the save state */
 		state_save_error staterr = (m_saveload_schedule == SLS_LOAD) ? state_save_read_file(this, file) : state_save_write_file(this, file);
 
-		// handle the result
+		/* handle the result */
 		switch (staterr)
 		{
 			case STATERR_ILLEGAL_REGISTRATIONS:
@@ -853,7 +753,7 @@ void running_machine::handle_saveload()
 				break;
 		}
 
-		// close and perhaps delete the file
+		/* close and perhaps delete the file */
 		mame_fclose(file);
 		if (staterr != STATERR_NONE && m_saveload_schedule == SLS_SAVE)
 			osd_rmfile(fullname);
@@ -861,7 +761,7 @@ void running_machine::handle_saveload()
 	else
 		popmessage("Error: Failed to open file for %s operation.", opname);
 
-	// unschedule the operation
+	/* unschedule the operation */
 cancel:
 	m_saveload_pending_file.reset();
 	m_saveload_searchpath = NULL;
@@ -869,24 +769,24 @@ cancel:
 }
 
 
-//-------------------------------------------------
-//  soft_reset - actually perform a soft-reset
-//  of the system
-//-------------------------------------------------
+/*-------------------------------------------------
+  soft_reset - actually perform a soft-reset
+  of the system
+-------------------------------------------------*/
 
 TIMER_CALLBACK( running_machine::static_soft_reset ) { machine->soft_reset(); }
 
 void running_machine::soft_reset()
 {
-	logerror("Soft reset\n");
+	retro_log(RETRO_LOG_INFO, "[MAME 2010] Soft reset now.\n");
 
-	// temporarily in the reset phase
+	/* temporarily in the reset phase */
 	m_current_phase = MACHINE_PHASE_RESET;
 
-	// call all registered reset callbacks
+	/* call all registered reset callbacks */
 	call_notifiers(MACHINE_NOTIFY_RESET);
 
-	// run the driver's reset callbacks
+	/* run the driver's reset callbacks */
 	if (m_config.m_machine_reset != NULL)
 		(*m_config.m_machine_reset)(this);
 	if (m_config.m_sound_reset != NULL)
@@ -894,23 +794,22 @@ void running_machine::soft_reset()
 	if (m_config.m_video_reset != NULL)
 		(*m_config.m_video_reset)(this);
 
-	// now we're running
+	/* now we're running */
 	m_current_phase = MACHINE_PHASE_RUNNING;
 
-	// allow 0-time queued callbacks to run before any CPUs execute
+	/* allow 0-time queued callbacks to run before any CPUs execute */
 	timer_execute_timers(this);
 }
 
 
-//-------------------------------------------------
-//  logfile_callback - callback for logging to
-//  logfile
-//-------------------------------------------------
+/*-------------------------------------------------
+  logfile_callback - callback for logging to
+  logfile
+-------------------------------------------------*/
 
 void running_machine::logfile_callback(running_machine &machine, const char *buffer)
 {
-	if (machine.m_logfile != NULL)
-		mame_fputs(machine.m_logfile, buffer);
+
 }
 
 
@@ -919,9 +818,9 @@ void running_machine::logfile_callback(running_machine &machine, const char *buf
     MEMORY REGIONS
 ***************************************************************************/
 
-//-------------------------------------------------
-//  region_info - constructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  region_info - constructor
+-------------------------------------------------*/
 
 region_info::region_info(running_machine &machine, const char *name, UINT32 length, UINT32 flags)
 	: m_machine(machine),
@@ -934,9 +833,9 @@ region_info::region_info(running_machine &machine, const char *name, UINT32 leng
 }
 
 
-//-------------------------------------------------
-//  ~region_info - destructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  ~region_info - destructor
+-------------------------------------------------*/
 
 region_info::~region_info()
 {
@@ -945,13 +844,13 @@ region_info::~region_info()
 
 
 
-//**************************************************************************
-//  CALLBACK ITEMS
-//**************************************************************************
+/**************************************************************************
+  CALLBACK ITEMS
+**************************************************************************/
 
-//-------------------------------------------------
-//  notifier_callback_item - constructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  notifier_callback_item - constructor
+-------------------------------------------------*/
 
 running_machine::notifier_callback_item::notifier_callback_item(notify_callback func)
 	: m_next(NULL),
@@ -960,9 +859,9 @@ running_machine::notifier_callback_item::notifier_callback_item(notify_callback 
 }
 
 
-//-------------------------------------------------
-//  logerror_callback_item - constructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  logerror_callback_item - constructor
+-------------------------------------------------*/
 
 running_machine::logerror_callback_item::logerror_callback_item(logerror_callback func)
 	: m_next(NULL),
@@ -972,13 +871,13 @@ running_machine::logerror_callback_item::logerror_callback_item(logerror_callbac
 
 
 
-//**************************************************************************
-//  SYSTEM TIME
-//**************************************************************************
+/**************************************************************************
+  SYSTEM TIME
+**************************************************************************/
 
-//-------------------------------------------------
-//  system_time - constructor
-//-------------------------------------------------
+/*-------------------------------------------------
+  system_time - constructor
+-------------------------------------------------*/
 
 system_time::system_time()
 {
@@ -986,9 +885,9 @@ system_time::system_time()
 }
 
 
-//-------------------------------------------------
-//  set - fills out a system_time structure
-//-------------------------------------------------
+/*-------------------------------------------------
+  set - fills out a system_time structure
+-------------------------------------------------*/
 
 void system_time::set(time_t t)
 {
@@ -998,10 +897,10 @@ void system_time::set(time_t t)
 }
 
 
-//-------------------------------------------------
-//  get_tm_time - converts a tm struction to a
-//  MAME mame_system_tm structure
-//-------------------------------------------------
+/*-------------------------------------------------
+  get_tm_time - converts a tm struction to a
+  MAME mame_system_tm structure
+-------------------------------------------------*/
 
 void system_time::full_time::set(struct tm &t)
 {
