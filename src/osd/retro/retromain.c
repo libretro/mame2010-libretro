@@ -1151,7 +1151,13 @@ static void initInput(running_machine* machine)
    P4_state[KEY_JOYSTICK_D] = 0;//RETRO_DEVICE_ID_JOYPAD_DOWN
    P4_state[KEY_JOYSTICK_L] = 0;//RETRO_DEVICE_ID_JOYPAD_LEFT
    P4_state[KEY_JOYSTICK_R] = 0;//RETRO_DEVICE_ID_JOYPAD_RIGHT 
-     
+
+#ifdef WIIU
+   //FIXME: HACK WIIU GUI CONFIRM (ENTER) MAP TO R3
+   input_device_item_add_p1(P1_device, "F11", &P1_state[KEY_F11], ITEM_ID_ENTER/* ITEM_ID_F11*/, pad1_get_state);
+#else
+   input_device_item_add_p1(P1_device, "F11", &P1_state[KEY_F11], ITEM_ID_F11, pad1_get_state);
+#endif     
    input_device_item_add_p1(P1_device, "Tab", &P1_state[KEY_TAB], ITEM_ID_TAB, pad1_get_state);
    input_device_item_add_p1(P1_device, "F2", &P1_state[KEY_F2], ITEM_ID_F2, pad1_get_state);
    input_device_item_add_p1(P1_device, "P1 Start", &P1_state[KEY_START], ITEM_ID_1, pad1_get_state);
@@ -1161,6 +1167,12 @@ static void initInput(running_machine* machine)
    input_device_item_add_p1(P1_device, "P1 JoyL", &P1_state[KEY_JOYSTICK_L], ITEM_ID_LEFT, pad1_get_state);
    input_device_item_add_p1(P1_device, "P1 JoyR", &P1_state[KEY_JOYSTICK_R], ITEM_ID_RIGHT, pad1_get_state);
 
+#ifdef WIIU
+   //FIXME: HACK WIIU GUI CONFIRM (ENTER) MAP TO R3
+   input_device_item_add_p2(P2_device, "F11", &P2_state[KEY_F11], ITEM_ID_ENTER/* ITEM_ID_F11*/, pad2_get_state);
+#else
+   input_device_item_add_p2(P2_device, "F11", &P2_state[KEY_F11], ITEM_ID_F11, pad2_get_state);
+#endif
    input_device_item_add_p2(P2_device, "P2 Start", &P2_state[KEY_START], ITEM_ID_2, pad2_get_state);
    input_device_item_add_p2(P2_device, "COIN2", &P2_state[KEY_COIN], ITEM_ID_6, pad2_get_state);
    input_device_item_add_p2(P2_device, "P2 JoyU", &P2_state[KEY_JOYSTICK_U], ITEM_ID_R, pad2_get_state);
