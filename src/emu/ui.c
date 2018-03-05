@@ -1504,67 +1504,6 @@ static UINT32 handler_ingame(running_machine *machine, render_container *contain
 static UINT32 handler_load_save(running_machine *machine, render_container *container, UINT32 state)
 {
     return 0;
-/*
-	char filename[20];
-	input_code code;
-	char file = 0;
-
-	// if we're not in the middle of anything, skip
-	if (state == LOADSAVE_NONE)
-		return 0;
-
-	// okay, we're waiting for a key to select a slot; display a message
-	if (state == LOADSAVE_SAVE)
-		ui_draw_message_window(container, "Select position to save to");
-	else
-		ui_draw_message_window(container, "Select position to load from");
-
-	// check for cancel key
-	if (ui_input_pressed(machine, IPT_UI_CANCEL))
-	{
-		// display a popup indicating things were cancelled
-		if (state == LOADSAVE_SAVE)
-			popmessage("Save cancelled");
-		else
-			popmessage("Load cancelled");
-
-		// reset the state
-		machine->resume();
-		return UI_HANDLER_CANCEL;
-	}
-
-	// check for A-Z or 0-9
-	for (code = KEYCODE_A; code <= (input_code)KEYCODE_Z; code++)
-		if (input_code_pressed_once(machine, code))
-			file = code - KEYCODE_A + 'a';
-	if (file == 0)
-		for (code = KEYCODE_0; code <= (input_code)KEYCODE_9; code++)
-			if (input_code_pressed_once(machine, code))
-				file = code - KEYCODE_0 + '0';
-	if (file == 0)
-		for (code = KEYCODE_0_PAD; code <= (input_code)KEYCODE_9_PAD; code++)
-			if (input_code_pressed_once(machine, code))
-				file = code - KEYCODE_0_PAD + '0';
-	if (file == 0)
-		return state;
-
-	// display a popup indicating that the save will proceed
-	sprintf(filename, "%c", file);
-	if (state == LOADSAVE_SAVE)
-	{
-		popmessage("Save to position %c", file);
-		machine->schedule_save(filename);
-	}
-	else
-	{
-		popmessage("Load from position %c", file);
-		machine->schedule_load(filename);
-	}
-
-	remove the pause and reset the state
-	machine->resume();
-	return UI_HANDLER_CANCEL;
-    */
 }
 
 
