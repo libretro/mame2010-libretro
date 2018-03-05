@@ -394,11 +394,8 @@ int running_machine::run(bool firstrun)
 
 void running_machine::retro_machineexit()
 {   
-<<<<<<< HEAD
- 
-=======
     retro_log(RETRO_LOG_INFO, "beginning retro_machineexit()\n");
->>>>>>> preliminary hiscore patch
+
    /* and out via the exit phase */
    m_current_phase = MACHINE_PHASE_EXIT;
 
