@@ -1230,15 +1230,6 @@ static void ui_menu_handle_keys(ui_menu *menu, UINT32 flags)
 		ui_menu_validate_selection(menu, -1);
 	}
 
-	/* pause enables/disables pause */
-	if (!ignorepause && exclusive_input_pressed(menu, IPT_UI_PAUSE, 0))
-	{
-		if (menu->machine->paused())
-			menu->machine->resume();
-		else
-			menu->machine->pause();
-	}
-
 	/* handle a toggle cheats request */
 	if (ui_input_pressed_repeat(menu->machine, IPT_UI_TOGGLE_CHEAT, 0))
 		cheat_set_global_enable(menu->machine, !cheat_get_global_enable(menu->machine));
@@ -1247,7 +1238,7 @@ static void ui_menu_handle_keys(ui_menu *menu, UINT32 flags)
 	if (menu->event.iptkey == IPT_INVALID)
 		for (code = __ipt_ui_start; code <= __ipt_ui_end; code++)
 		{
-			if (code == IPT_UI_CONFIGURE || (code == IPT_UI_LEFT && ignoreleft) || (code == IPT_UI_RIGHT && ignoreright) || (code == IPT_UI_PAUSE && ignorepause))
+			if (code == IPT_UI_CONFIGURE || (code == IPT_UI_LEFT && ignoreleft) || (code == IPT_UI_RIGHT && ignoreright))
 				continue;
 			if (exclusive_input_pressed(menu, code, 0))
 				break;
@@ -3419,9 +3410,6 @@ static void menu_select_game(running_machine *machine, ui_menu *menu, void *para
 	/* if the menu isn't built, populate now */
 	if (!ui_menu_populated(menu))
 		menu_select_game_populate(machine, menu, menustate);
-
-	/* ignore pause keys by swallowing them before we process the menu */
-	ui_input_pressed(machine, IPT_UI_PAUSE);
 
 	/* process the menu */
 	event = ui_menu_process(machine, menu, 0);
