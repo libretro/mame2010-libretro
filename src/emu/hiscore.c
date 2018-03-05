@@ -24,6 +24,8 @@ static emu_timer *timer;
 
 const char *db_filename = "hiscore.dat"; /* high score definition file */
 
+char *parse_hiscoredat(char *s, int n, int *const index);
+
 
 struct _memory_range
 {
@@ -290,7 +292,6 @@ static TIMER_CALLBACK( hiscore_periodic )
 /* call hiscore_close when done playing game */
 void hiscore_close (running_machine &machine)
 {
-    retro_log(RETRO_LOG_INFO, "\n\n\n\n\n\*******************************\n***********************\n\n\n\n\n");
 	if (state.hiscores_have_been_loaded) hiscore_save(&machine);
 	hiscore_free();
 }
@@ -302,10 +303,14 @@ void hiscore_close (running_machine &machine)
 /* call hiscore_open once after loading a game */
 void hiscore_init (running_machine *machine)
 {
-	memory_range *mem_range = state.mem_range;
 	file_error filerr;
  	mame_file *f;
+    
+    memory_range *mem_range = state.mem_range;
+    
     const char *name = machine->gamedrv->name;
+    enum { FIND_NAME, FIND_DATA, FETCH_DATA } mode;    
+    mode = FIND_NAME; 
 	state.hiscores_have_been_loaded = 0;
 
 	while (mem_range)
@@ -344,72 +349,179 @@ void hiscore_init (running_machine *machine)
 	}
 
 	state.mem_range = NULL;
-    retro_log(RETRO_LOG_INFO, "[MAME 2010] Attempting to open %s from %s\n", db_filename, libretro_system_directory);   
-	filerr = mame_fopen(libretro_system_directory, db_filename, OPEN_FLAG_READ, &f);
-	if(filerr == FILERR_NONE)
-	{
-        retro_log(RETRO_LOG_INFO, "[MAME 2010] Succesfully opened %s\n", db_filename);
+    
+    if(use_external_hiscore)
+    {
         
-        char buffer[MAX_CONFIG_LINE_SIZE];
-		enum { FIND_NAME, FIND_DATA, FETCH_DATA } mode;
-		mode = FIND_NAME;
+        retro_log(RETRO_LOG_INFO, "[MAME 2010] Trying to open %s hiscore data file from %s\n", db_filename, libretro_system_directory);   
+        filerr = mame_fopen(libretro_system_directory, db_filename, OPEN_FLAG_READ, &f);
+        if(filerr == FILERR_NONE)
+        {
+            retro_log(RETRO_LOG_INFO, "[MAME 2010] Succesfully opened %s\n", db_filename);
+            
+            char buffer[MAX_CONFIG_LINE_SIZE];
 
-		while (mame_fgets (buffer, MAX_CONFIG_LINE_SIZE, f))
+            while (mame_fgets (buffer, MAX_CONFIG_LINE_SIZE, f))
+            {
+                if (mode==FIND_NAME)
+                {
+                    if (matching_game_name (buffer, name))
+                    {
+                        mode = FIND_DATA;
+                        retro_log(RETRO_LOG_INFO, "[MAME 2010] hiscore configuration found for %s\n", name);
+                    }
+                }
+                else if (is_mem_range (buffer))
+                {
+                    const char *pBuf = buffer;
+                    mem_range = (memory_range *)malloc(sizeof(memory_range));
+                    if (mem_range)
+                    {
+                        mem_range->cpu = hexstr2num (&pBuf);
+                        mem_range->addr = hexstr2num (&pBuf);
+                        mem_range->num_bytes = hexstr2num (&pBuf);
+                        mem_range->start_value = hexstr2num (&pBuf);
+                        mem_range->end_value = hexstr2num (&pBuf);
+
+                        mem_range->next = NULL;
+                        {
+                            memory_range *last = state.mem_range;
+                            while (last && last->next) last = last->next;
+                            if (last == NULL)
+                            {
+                                state.mem_range = mem_range;
+                            }
+                            else
+                            {
+                                last->next = mem_range;
+                            }
+                        }
+
+                        mode = FETCH_DATA;
+                    }
+                    else
+                    {
+                        hiscore_free();
+                        break;
+                    }
+                }
+                else
+                {
+                    /* line is a game name */
+                    if (mode == FETCH_DATA) break;
+                }
+            }
+            mame_fclose (f);
+        }
+    }
+    else /* use internal hiscore data */
+    {
+        int hiscoredat_index = 0;
+        static char buffer[MAX_CONFIG_LINE_SIZE];
+        
+        retro_log(RETRO_LOG_INFO, "[MAME 2010] Searching for %s in internal hiscore data.\n", name);
+
+        while(parse_hiscoredat(buffer, MAX_CONFIG_LINE_SIZE, &hiscoredat_index))
+        {
+            if (mode==FIND_NAME)
+            {
+                if (matching_game_name (buffer, name))
+                {
+                    mode = FIND_DATA;
+                    retro_log(RETRO_LOG_INFO, "[MAME 2010] hiscore configuration found for %s\n", name);
+                }
+            }
+               else if (is_mem_range (buffer))
+                {
+                    const char *pBuf = buffer;
+                    mem_range = (memory_range *)malloc(sizeof(memory_range));
+                    if (mem_range)
+                    {
+                        mem_range->cpu = hexstr2num (&pBuf);
+                        mem_range->addr = hexstr2num (&pBuf);
+                        mem_range->num_bytes = hexstr2num (&pBuf);
+                        mem_range->start_value = hexstr2num (&pBuf);
+                        mem_range->end_value = hexstr2num (&pBuf);
+
+                        mem_range->next = NULL;
+                        {
+                            memory_range *last = state.mem_range;
+                            while (last && last->next) last = last->next;
+                            if (last == NULL)
+                            {
+                                state.mem_range = mem_range;
+                            }
+                            else
+                            {
+                                last->next = mem_range;
+                            }
+                        }
+
+                        mode = FETCH_DATA;
+                    }
+                    else
+                    {
+                        hiscore_free();
+                        break;
+                    }
+                }
+                else
+                {
+                    /* line is a game name */
+                    if (mode == FETCH_DATA) break;
+                }
+        }   
+    }
+
+    timer = timer_alloc(machine,hiscore_periodic, NULL);
+    timer_adjust_periodic(timer, machine->primary_screen->frame_period(), 0, machine->primary_screen->frame_period());
+
+    machine->add_notifier(MACHINE_NOTIFY_EXIT, hiscore_close);
+    
+}
+
+char *parse_hiscoredat(char *s, int n, int *const index)
+{
+	char *cur = s;
+
+	/* loop while we have characters */
+	while (n > 0)
+	{
+        if (*index == hiscoredat_length)
+            break;
+        
+		int c = hiscoredat[(*index)++];
+
+		/* if there's a CR, look for an LF afterwards */
+		if (c == 0x0d)
 		{
-			if (mode==FIND_NAME)
-			{
-				if (matching_game_name (buffer, name))
-				{
-					mode = FIND_DATA;
-					retro_log(RETRO_LOG_INFO, "[MAME 2010] hiscore configuration found for %s\n", name);
-				}
-			}
-			else if (is_mem_range (buffer))
-			{
-				const char *pBuf = buffer;
-				mem_range = (memory_range *)malloc(sizeof(memory_range));
-				if (mem_range)
-				{
-					mem_range->cpu = hexstr2num (&pBuf);
-					mem_range->addr = hexstr2num (&pBuf);
-					mem_range->num_bytes = hexstr2num (&pBuf);
-					mem_range->start_value = hexstr2num (&pBuf);
-					mem_range->end_value = hexstr2num (&pBuf);
-
-					mem_range->next = NULL;
-					{
-						memory_range *last = state.mem_range;
-						while (last && last->next) last = last->next;
-						if (last == NULL)
-						{
-							state.mem_range = mem_range;
-						}
-						else
-						{
-							last->next = mem_range;
-						}
-					}
-
-					mode = FETCH_DATA;
-				}
-				else
-				{
-					hiscore_free();
-					break;
-				}
-			}
-			else
-			{
-				/* line is a game name */
-				if (mode == FETCH_DATA) break;
-			}
+			int c2 = hiscoredat[(*index)++];
+			if (c2 != 0x0a)
+				(*index)--;
+			*cur++ = 0x0d;
+			n--;
+			break;
 		}
-		mame_fclose (f);
+
+		/* if there's an LF, reinterp as a CR for consistency */
+		else if (c == 0x0a)
+		{
+			*cur++ = 0x0d;
+			n--;
+			break;
+		}
+
+		/* otherwise, pop the character in and continue */
+		*cur++ = c;
+		n--;
 	}
 
-	timer = timer_alloc(machine,hiscore_periodic, NULL);
-	timer_adjust_periodic(timer, machine->primary_screen->frame_period(), 0, machine->primary_screen->frame_period());
+	/* if we put nothing in, return NULL */
+	if (cur == s)
+		return NULL;
 
-	machine->add_notifier(MACHINE_NOTIFY_EXIT, hiscore_close);
-    
+	/* otherwise, terminate */
+	if (n > 0)
+		*cur++ = 0;
+	return s;
 }

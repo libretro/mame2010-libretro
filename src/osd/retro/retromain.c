@@ -69,6 +69,7 @@ static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
 static unsigned sample_rate = 48000;
+unsigned use_external_hiscore = 0;
 static unsigned adjust_opt[6] = {0/*Enable/Disable*/, 0/*Limit*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
 static float arroffset[3] = {0/*For brightness*/, 0/*For contrast*/, 0/*For gamma*/};
 
@@ -532,6 +533,7 @@ void retro_set_environment(retro_environment_t cb)
 	"Set contrast; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+11%|+12%|+13%|+14%|+15%|+16%|+17%|+18%|+19%|+20%|-20%|-19%|-18%|-17%|-16%|-15%|-14%|-13%|-12%|-11%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
       { "mame_current_adj_gamma",
 	"Set gamma; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+11%|+12%|+13%|+14%|+15%|+16%|+17%|+18%|+19%|+20%|-20%|-19%|-18%|-17%|-16%|-15%|-14%|-13%|-12%|-11%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
+      { "mame-external_hiscore", "Use external hiscore.dat; disabled|enabled" },      
 
       { NULL, NULL },
    };
@@ -692,6 +694,20 @@ static void check_variables(void)
 	else
 		arroffset[2] = (float)atoi(var.value) / 100.0f;
 
+   var.value = NULL;
+   var.key = "mame-external_hiscore";
+   
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
+   {
+      if(strcmp(var.value, "enabled") == 0)
+         use_external_hiscore = 1;
+      else
+         use_external_hiscore = 0;    
+    }
+   else
+      use_external_hiscore = 0;  
+
+  
 	if (temp_value != arroffset[2])
 		adjust_opt[0] = adjust_opt[5] = 1;
    }
