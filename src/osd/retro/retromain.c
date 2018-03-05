@@ -20,14 +20,7 @@ mame2010 - libretro port of mame 0.139
 
 #include "rendersw.c"
 
-#ifdef COMPILE_DATS
-    #include "precompile_hiscore_dat.h"
-    #include "precompile_mameini_boilerplate.h"
-#else
-    #include "hiscore_dat.h"
-    #include "mameini_boilerplate.h"
-#endif
-
+#include "../../precompile/mameini_boilerplate.h"
 
 #ifdef M16B
 	uint16_t videoBuffer[1024*1024];
@@ -58,6 +51,7 @@ char memcard_directory[1024];
 char input_directory[1024];
 char image_directory[1024];
 char diff_directory[1024];
+char hiscore_directory[1024];
 char comment_directory[1024];
 
 int mame_reset = -1;
@@ -212,6 +206,8 @@ void retro_init (void)
     path_mkdir(image_directory);
     snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
     path_mkdir(diff_directory);
+    snprintf(hiscore_directory, sizeof(hiscore_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "hi");
+    path_mkdir(hiscore_directory);    
     snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
     path_mkdir(comment_directory);
 

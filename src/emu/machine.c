@@ -116,6 +116,7 @@
 #include "crsshair.h"
 #include "validity.h"
 #include "debug/debugcon.h"
+#include "hiscore.h"
 
 #include <time.h>
 
@@ -128,6 +129,7 @@
 /* a giant string buffer for temporary strings */
 static char giant_string_buffer[65536] = { 0 };
 
+int cpunum;
 
 
 /**************************************************************************
@@ -211,6 +213,9 @@ running_machine::running_machine(const game_driver &driver, const machine_config
 			firstcpu = downcast<cpu_device *>(device);
 			break;
 		}
+	cpu[0] = firstcpu;
+	for (cpunum = 1; cpunum < ARRAY_LENGTH(cpu) && cpu[cpunum - 1] != NULL; cpunum++)
+		cpu[cpunum] = cpu[cpunum - 1]->typenext();
 
 	/* fetch core options */
 	if (options_get_bool(&m_options, OPTION_DEBUG))
@@ -344,9 +349,10 @@ void running_machine::start()
 	if (m_config.m_video_start != NULL)
 		(*m_config.m_video_start)(this);
 
-	/* set up the cheat engine */
-	if (options_get_bool(&m_options, OPTION_CHEAT))
-		cheat_init(this);
+	/* set up the cheat engine */    
+	cheat_init(this);
+	/* set up the hiscore engine */    
+    hiscore_init(this);
 
 	/* disallow save state registrations starting here */
 	state_save_allow_registration(this, false);
@@ -388,7 +394,11 @@ int running_machine::run(bool firstrun)
 
 void running_machine::retro_machineexit()
 {   
+<<<<<<< HEAD
  
+=======
+    retro_log(RETRO_LOG_INFO, "beginning retro_machineexit()\n");
+>>>>>>> preliminary hiscore patch
    /* and out via the exit phase */
    m_current_phase = MACHINE_PHASE_EXIT;
 
