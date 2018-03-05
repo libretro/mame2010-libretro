@@ -44,9 +44,9 @@ void osd_exit(running_machine &machine);
 
 void retro_poll_mame_input();
 void retro_init (void);
-static void check_variables(void);
+void check_variables(void);
 void prep_retro_rotation(int rot);
-static void initInput(running_machine* machine);
+void initInput(running_machine* machine);
 void init_input_descriptors(void);
 
 extern void retro_finish();
@@ -60,6 +60,8 @@ void CLIB_DECL mame_printf_verbose(const char *text, ...) ATTR_PRINTF(1,2);
 extern int RLOOP;
 
 extern const char* core_name;
+
+extern unsigned use_external_hiscore;
 
 extern char libretro_content_directory[];
 extern char libretro_save_directory[];
