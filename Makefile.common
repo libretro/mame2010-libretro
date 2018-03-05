@@ -14,12 +14,6 @@ INCFLAGS := \
 	-I$(SRC_DIR)/osd \
 	-I$(SRC_DIR)/osd/retro
     
-ifeq ($(BUILD_BIN2C), 1)
-	INCFLAGS += -I$(CORE_DIR)/precompile
-else
-	INCFLAGS += -I$(CORE_DIR)/metadata
-endif
-
 # add expat XML library
 INCFLAGS += -I$(DEPS_DIR)/expat
 EXPAT = $(OBJ)/libexpat.a
@@ -1817,6 +1811,7 @@ EMUOBJS = \
 	$(EMUOBJ)/fileio.o \
 	$(EMUOBJ)/hash.o \
 	$(EMUOBJ)/hashfile.o \
+	$(EMUOBJ)/hiscore.o \
 	$(EMUOBJ)/image.o \
 	$(EMUOBJ)/info.o \
 	$(EMUOBJ)/input.o \

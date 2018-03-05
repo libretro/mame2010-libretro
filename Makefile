@@ -11,6 +11,7 @@
 NATIVE :=0
 
 UNAME=$(shell uname -a)
+BUILD_BIN2C ?= 1
 
 ifeq ($(platform),)
 platform = unix
@@ -74,20 +75,17 @@ endif
 # uncomment next line to build PortMidi as part of MAME/MESS build
 #BUILD_MIDILIB = 1
 
-# eventually it would be good to compile with bin2c as part of the
-# automated build process for all platforms, but that's not in place yet
-BUILD_BIN2C ?= 0
-
 ifeq ($(BUILD_BIN2C),1)
 # compile bin2c
 	DUMMY_RESULT:=$(shell mkdir -p ./precompile)
 	DUMMY_RESULT:=$(shell gcc -o ./precompile/bin2c ./src/tools/bin2c/bin2c.c)
 # compile hiscore.dat into a c header file for the freshest possible version  
-	DUMMY_RESULT:=$(shell ./precompile/bin2c ./metadata/hiscore.source ./precompile/precompile_hiscore_dat.h hiscoredat)
-	DUMMY_RESULT:=$(shell ./precompile/bin2c ./metadata/mameini.boilerplate ./precompile/precompile_mameini_boilerplate.h mameini_boilerplate)    
+	DUMMY_RESULT:=$(shell ./precompile/bin2c ./metadata/hiscore.dat ./precompile/hiscore_dat.h hiscoredat)
+	DUMMY_RESULT:=$(shell ./precompile/bin2c ./metadata/mameini.boilerplate ./precompile/mameini_boilerplate.h mameini_boilerplate)
+	DUMMY_RESULT:=$(shell rm ./precompile/bin2c*)
 endif
 # otherwise we fall use precompiled data from the github repo
-# which is already located at ./precompiled
+# which is already located at ./precompile
 
 
 VRENDER ?= soft
@@ -710,8 +708,6 @@ maketree: $(sort $(OBJDIRS))
 clean: $(OSDCLEAN)
 	@echo Deleting object tree $(OBJ)...
 	$(RM) -r obj
-	@echo Deleting bin2c working folder...
-	$(RM) -fr precompile
 	@echo Deleting $(EMULATOR)...
 	$(RM) $(EMULATOR)
 	@echo Deleting $(TOOLS)...

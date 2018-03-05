@@ -88,6 +88,7 @@
 #include "crsshair.h"
 #include "validity.h"
 #include "debug/debugcon.h"
+#include "hiscore.h"
 
 #include <time.h>
 

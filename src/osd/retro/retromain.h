@@ -63,6 +63,7 @@ extern const char* core_name;
 
 extern char libretro_content_directory[];
 extern char libretro_save_directory[];
+extern char libretro_system_directory[];
 extern char cheatpath[];
 extern char samplepath[];
 extern char artpath[];
@@ -75,6 +76,7 @@ extern char nvram_directory[];
 extern char memcard_directory[];
 extern char input_directory[];
 extern char diff_directory[];
+extern char hiscore_directory[];
 extern char comment_directory[];
 
 extern retro_log_printf_t retro_log;
