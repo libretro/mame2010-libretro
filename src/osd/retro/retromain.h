@@ -91,7 +91,6 @@ struct kt_table
 // fake a keyboard mapped to retro joypad 
 enum
 {
-    KEY_F11,
 	KEY_TAB,
 	KEY_F3,
 	KEY_F2,

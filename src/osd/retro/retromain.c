@@ -1080,8 +1080,7 @@ static void initInput(running_machine* machine)
 
    if (P4_device == NULL)
       fatalerror("P4 Error creating keyboard device\n");
-
-   
+ 
    retro_log(RETRO_LOG_INFO, "[MAME 2010] SOURCE FILE: %s\n", machine->gamedrv->source_file);
    retro_log(RETRO_LOG_INFO, "[MAME 2010] PARENT: %s\n", machine->gamedrv->parent);
    retro_log(RETRO_LOG_INFO, "[MAME 2010] NAME: %s\n", machine->gamedrv->name);
@@ -1089,7 +1088,6 @@ static void initInput(running_machine* machine)
    retro_log(RETRO_LOG_INFO, "[MAME 2010] YEAR: %s\n", machine->gamedrv->year);
    retro_log(RETRO_LOG_INFO, "[MAME 2010] MANUFACTURER: %s\n", machine->gamedrv->manufacturer);
  
-   P1_state[KEY_F11]        = 0;//RETRO_DEVICE_ID_JOYPAD_R3
    P1_state[KEY_TAB]        = 0;//RETRO_DEVICE_ID_JOYPAD_R2
    P1_state[KEY_F2]         = 0;//RETRO_DEVICE_ID_JOYPAD_L3
    P1_state[KEY_START]      = 0;//RETRO_DEVICE_ID_JOYPAD_START
@@ -1154,10 +1152,6 @@ static void initInput(running_machine* machine)
    P4_state[KEY_JOYSTICK_L] = 0;//RETRO_DEVICE_ID_JOYPAD_LEFT
    P4_state[KEY_JOYSTICK_R] = 0;//RETRO_DEVICE_ID_JOYPAD_RIGHT 
 
-#ifdef WIIU
-   //FIXME: HACK WIIU GUI CONFIRM (ENTER) MAP TO R3
-   input_device_item_add_p1(P1_device, "F11", &P1_state[KEY_F11], ITEM_ID_ENTER/* ITEM_ID_F11*/, pad1_get_state);
-#endif
    input_device_item_add_p1(P1_device, "Tab", &P1_state[KEY_TAB], ITEM_ID_TAB, pad1_get_state);
    input_device_item_add_p1(P1_device, "F2", &P1_state[KEY_F2], ITEM_ID_F2, pad1_get_state);
    input_device_item_add_p1(P1_device, "P1 Start", &P1_state[KEY_START], ITEM_ID_1, pad1_get_state);
@@ -1493,7 +1487,6 @@ void retro_poll_mame_input()
       }
    }
 
-   P1_state[KEY_F11]        = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
    P1_state[KEY_TAB]        = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
    P1_state[KEY_F2] 	    = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
    P1_state[KEY_START]      = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
