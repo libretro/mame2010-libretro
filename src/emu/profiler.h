@@ -47,6 +47,7 @@ enum
 	PROFILER_BLIT,
 	PROFILER_SOUND,
 	PROFILER_TIMER_CALLBACK,
+    PROFILER_HISCORE,
 	PROFILER_INPUT,		/* input.c and inptport.c */
 	PROFILER_MOVIE_REC,	/* movie recording */
 	PROFILER_LOGERROR,	/* logerror */

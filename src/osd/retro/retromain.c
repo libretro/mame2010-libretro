@@ -20,14 +20,7 @@ mame2010 - libretro port of mame 0.139
 
 #include "rendersw.c"
 
-#ifdef COMPILE_DATS
-    #include "precompile_hiscore_dat.h"
-    #include "precompile_mameini_boilerplate.h"
-#else
-    #include "hiscore_dat.h"
-    #include "mameini_boilerplate.h"
-#endif
-
+#include "../../precompile/mameini_boilerplate.h"
 
 #ifdef M16B
 	uint16_t videoBuffer[1024*1024];
@@ -58,6 +51,7 @@ char memcard_directory[1024];
 char input_directory[1024];
 char image_directory[1024];
 char diff_directory[1024];
+char hiscore_directory[1024];
 char comment_directory[1024];
 
 int mame_reset = -1;
@@ -75,6 +69,7 @@ static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
 static unsigned sample_rate = 48000;
+unsigned use_external_hiscore = 0;
 static unsigned adjust_opt[6] = {0/*Enable/Disable*/, 0/*Limit*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
 static float arroffset[3] = {0/*For brightness*/, 0/*For contrast*/, 0/*For gamma*/};
 
@@ -135,6 +130,17 @@ static int FirstTimeUpdate = 1;
 
 bool retro_load_ok  = false;
 int pauseg = 0;
+
+
+/*********************************************
+   LOCAL FUNCTION PROTOTYPES
+*********************************************/
+
+static void check_variables(void);
+static void initInput(running_machine* machine);
+
+/*********************************************/
+
 
 size_t retro_serialize_size(void){ return 0; }
 bool retro_serialize(void *data, size_t size){ return false; }
@@ -212,6 +218,8 @@ void retro_init (void)
     path_mkdir(image_directory);
     snprintf(diff_directory, sizeof(diff_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "diff");
     path_mkdir(diff_directory);
+    snprintf(hiscore_directory, sizeof(hiscore_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "hi");
+    path_mkdir(hiscore_directory);    
     snprintf(comment_directory, sizeof(comment_directory), "%s%s%s", libretro_save_directory, path_default_slash(), "comment");
     path_mkdir(comment_directory);
 
@@ -536,7 +544,7 @@ void retro_set_environment(retro_environment_t cb)
 	"Set contrast; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+11%|+12%|+13%|+14%|+15%|+16%|+17%|+18%|+19%|+20%|-20%|-19%|-18%|-17%|-16%|-15%|-14%|-13%|-12%|-11%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
       { "mame_current_adj_gamma",
 	"Set gamma; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+11%|+12%|+13%|+14%|+15%|+16%|+17%|+18%|+19%|+20%|-20%|-19%|-18%|-17%|-16%|-15%|-14%|-13%|-12%|-11%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
-
+      { "mame-external_hiscore", "Use external hiscore.dat; disabled|enabled" },
       { NULL, NULL },
    };
 
@@ -696,6 +704,20 @@ static void check_variables(void)
 	else
 		arroffset[2] = (float)atoi(var.value) / 100.0f;
 
+   var.value = NULL;
+   var.key = "mame-external_hiscore";
+   
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
+   {
+      if(strcmp(var.value, "enabled") == 0)
+         use_external_hiscore = 1;
+      else
+         use_external_hiscore = 0;    
+    }
+   else
+      use_external_hiscore = 0;  
+
+  
 	if (temp_value != arroffset[2])
 		adjust_opt[0] = adjust_opt[5] = 1;
    }

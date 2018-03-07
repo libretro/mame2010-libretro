@@ -44,9 +44,7 @@ void osd_exit(running_machine &machine);
 
 void retro_poll_mame_input();
 void retro_init (void);
-static void check_variables(void);
 void prep_retro_rotation(int rot);
-static void initInput(running_machine* machine);
 void init_input_descriptors(void);
 
 extern void retro_finish();
@@ -61,8 +59,11 @@ extern int RLOOP;
 
 extern const char* core_name;
 
+extern unsigned use_external_hiscore;
+
 extern char libretro_content_directory[];
 extern char libretro_save_directory[];
+extern char libretro_system_directory[];
 extern char cheatpath[];
 extern char samplepath[];
 extern char artpath[];
@@ -75,6 +76,7 @@ extern char nvram_directory[];
 extern char memcard_directory[];
 extern char input_directory[];
 extern char diff_directory[];
+extern char hiscore_directory[];
 extern char comment_directory[];
 
 extern retro_log_printf_t retro_log;

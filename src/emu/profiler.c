@@ -126,6 +126,7 @@ astring &_profiler_get_text(running_machine *machine, astring &string)
 		{ PROFILER_BLIT,             "OSD Blitting" },
 		{ PROFILER_SOUND,            "Sound Generation" },
 		{ PROFILER_TIMER_CALLBACK,   "Timer Callbacks" },
+        { PROFILER_HISCORE,          "Hiscore" },        
 		{ PROFILER_INPUT,            "Input Processing" },
 		{ PROFILER_MOVIE_REC,        "Movie Recording" },
 		{ PROFILER_LOGERROR,         "Error Logging" },
