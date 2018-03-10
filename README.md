@@ -10,7 +10,9 @@ The OSD code is highly inspired by other MAME ports :
 
 ## Directories
 
-mame2010 requires that the following directories exist, and will create them if they are missing:
+mame2010 requires that the following directories exist, and will create them if they are missing.
+
+libretro system subfolders:
 
 - libretro system folder/mame2010/ - cheat.zip cheats file - not currently working
 - libretro system folder/mame2010/artwork
@@ -18,6 +20,7 @@ mame2010 requires that the following directories exist, and will create them if 
 - libretro system folder/mame2010/fonts
 - libretro system folder/mame2010/samples
 
+libretro saves subfolders
 - libretro saves folder/mame2010/cfg
 - libretro saves folder/mame2010/comment
 - libretro saves folder/mame2010/ctrlr
@@ -48,7 +51,7 @@ mame2010 requires that the following directories exist, and will create them if 
 
 	RETRO_DEVICE_ID_JOYPAD_START        MAME: KEY_START
 	RETRO_DEVICE_ID_JOYPAD_SELECT       MAME: KEY_COIN
-	RETRO_DEVICE_ID_JOYPAD_A		    MAME: KEY_BUTTON_1
+	RETRO_DEVICE_ID_JOYPAD_A            MAME: KEY_BUTTON_1
 	RETRO_DEVICE_ID_JOYPAD_B            MAME: KEY_BUTTON_2
 	RETRO_DEVICE_ID_JOYPAD_X            MAME: KEY_BUTTON_3
 	RETRO_DEVICE_ID_JOYPAD_UP           MAME: KEY_JOYSTICK_U
