@@ -1390,94 +1390,14 @@ static UINT32 handler_ingame(running_machine *machine, render_container *contain
 			machine->pause();
 		return ui_set_handler(ui_gfx_ui_handler, is_paused);
 	}
-
-	/* handle a save state request */
-	if (ui_input_pressed(machine, IPT_UI_SAVE_STATE))
-	{
-		machine->pause();
-		return ui_set_handler(handler_load_save, LOADSAVE_SAVE);
-	}
-
-	/* handle a load state request */
-	if (ui_input_pressed(machine, IPT_UI_LOAD_STATE))
-	{
-		machine->pause();
-		return ui_set_handler(handler_load_save, LOADSAVE_LOAD);
-	}
-
-	/* handle a save snapshot request */
-	if (ui_input_pressed(machine, IPT_UI_SNAPSHOT))
-		video_save_active_screen_snapshots(machine);
-
-#if 0
-	/* toggle pause */
-	if (ui_input_pressed(machine, IPT_UI_PAUSE))
-	{
-		/* with a shift key, it is single step */
-		if (is_paused && (input_code_pressed(machine, KEYCODE_LSHIFT) || input_code_pressed(machine, KEYCODE_RSHIFT)))
-		{
-			single_step = TRUE;
-			machine->resume();
-		}
-		else if (machine->paused())
-			machine->resume();
-		else
-			machine->pause();
-	}
-#endif
-
+    
 	/* handle a toggle cheats request */
 	if (ui_input_pressed(machine, IPT_UI_TOGGLE_CHEAT))
 		cheat_set_global_enable(machine, !cheat_get_global_enable(machine));
 
-	/* toggle movie recording */
-	if (ui_input_pressed(machine, IPT_UI_RECORD_MOVIE))
-	{
-		if (!video_mng_is_movie_active(machine))
-		{
-			video_mng_begin_recording(machine, NULL);
-			popmessage("REC START");
-		}
-		else
-		{
-			video_mng_end_recording(machine);
-			popmessage("REC STOP");
-		}
-	}
-
 	/* toggle profiler display */
 	if (ui_input_pressed(machine, IPT_UI_SHOW_PROFILER))
 		ui_set_show_profiler(!ui_get_show_profiler());
-
-	/* toggle FPS display */
-	if (ui_input_pressed(machine, IPT_UI_SHOW_FPS))
-		ui_set_show_fps(!ui_get_show_fps());
-
-	/* increment frameskip? */
-	if (ui_input_pressed(machine, IPT_UI_FRAMESKIP_INC))
-	{
-		/* get the current value and increment it */
-		int newframeskip = video_get_frameskip() + 1;
-		if (newframeskip > MAX_FRAMESKIP)
-			newframeskip = -1;
-		video_set_frameskip(newframeskip);
-
-		/* display the FPS counter for 2 seconds */
-		ui_show_fps_temp(2.0);
-	}
-
-	/* decrement frameskip? */
-	if (ui_input_pressed(machine, IPT_UI_FRAMESKIP_DEC))
-	{
-		/* get the current value and decrement it */
-		int newframeskip = video_get_frameskip() - 1;
-		if (newframeskip < -1)
-			newframeskip = MAX_FRAMESKIP;
-		video_set_frameskip(newframeskip);
-
-		/* display the FPS counter for 2 seconds */
-		ui_show_fps_temp(2.0);
-	}
 
 	/* toggle throttle? */
 	if (ui_input_pressed(machine, IPT_UI_THROTTLE))
