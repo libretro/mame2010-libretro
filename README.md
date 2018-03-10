@@ -14,7 +14,7 @@ mame2010 requires that the following directories exist, and will create them if 
 
 libretro system subfolders:
 
-- libretro system folder/mame2010/ - cheat.zip cheats file - not currently working
+- libretro system folder/mame2010/ - `cheat.zip` cheats file - not currently working
 - libretro system folder/mame2010/artwork
 - libretro system folder/mame2010/crosshairs
 - libretro system folder/mame2010/fonts
