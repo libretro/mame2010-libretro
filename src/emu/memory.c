@@ -462,7 +462,7 @@ static void input_port_write64(const input_port_config *port, offs_t offset, UIN
     the opcode base
 -------------------------------------------------*/
 
-static INLINE void force_opbase_update(const address_space *space)
+INLINE void force_opbase_update(const address_space *space)
 {
 	address_space *spacerw = (address_space *)space;
 	spacerw->direct.byteend = 0;
@@ -475,7 +475,7 @@ static INLINE void force_opbase_update(const address_space *space)
     given address space in a standard fashion
 -------------------------------------------------*/
 
-static INLINE void adjust_addresses(const address_space *space, offs_t *start, offs_t *end, offs_t *mask, offs_t *mirror)
+INLINE void adjust_addresses(const address_space *space, offs_t *start, offs_t *end, offs_t *mask, offs_t *mirror)
 {
 	/* adjust start/end/mask values */
 	if (*mask == 0)
@@ -499,7 +499,7 @@ static INLINE void adjust_addresses(const address_space *space, offs_t *start, o
     address space
 -------------------------------------------------*/
 
-static INLINE int bank_references_space(const bank_info *bank, const address_space *space)
+INLINE int bank_references_space(const bank_info *bank, const address_space *space)
 {
 	bank_reference *ref;
 
@@ -515,7 +515,7 @@ static INLINE int bank_references_space(const bank_info *bank, const address_spa
     reference to a bank
 -------------------------------------------------*/
 
-static INLINE void add_bank_reference(bank_info *bank, const address_space *space)
+INLINE void add_bank_reference(bank_info *bank, const address_space *space)
 {
 	bank_reference **refptr;
 
@@ -536,7 +536,7 @@ static INLINE void add_bank_reference(bank_info *bank, const address_space *spac
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE UINT8 read_byte_generic(const address_space *space, offs_t byteaddress)
+INLINE UINT8 read_byte_generic(const address_space *space, offs_t byteaddress)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -564,7 +564,7 @@ static INLINE UINT8 read_byte_generic(const address_space *space, offs_t byteadd
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE void write_byte_generic(const address_space *space, offs_t byteaddress, UINT8 data)
+INLINE void write_byte_generic(const address_space *space, offs_t byteaddress, UINT8 data)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -589,7 +589,7 @@ static INLINE void write_byte_generic(const address_space *space, offs_t byteadd
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE UINT16 read_word_generic(const address_space *space, offs_t byteaddress, UINT16 mem_mask)
+INLINE UINT16 read_word_generic(const address_space *space, offs_t byteaddress, UINT16 mem_mask)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -617,7 +617,7 @@ static INLINE UINT16 read_word_generic(const address_space *space, offs_t bytead
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE void write_word_generic(const address_space *space, offs_t byteaddress, UINT16 data, UINT16 mem_mask)
+INLINE void write_word_generic(const address_space *space, offs_t byteaddress, UINT16 data, UINT16 mem_mask)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -645,7 +645,7 @@ static INLINE void write_word_generic(const address_space *space, offs_t byteadd
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE UINT32 read_dword_generic(const address_space *space, offs_t byteaddress, UINT32 mem_mask)
+INLINE UINT32 read_dword_generic(const address_space *space, offs_t byteaddress, UINT32 mem_mask)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -673,7 +673,7 @@ static INLINE UINT32 read_dword_generic(const address_space *space, offs_t bytea
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE void write_dword_generic(const address_space *space, offs_t byteaddress, UINT32 data, UINT32 mem_mask)
+INLINE void write_dword_generic(const address_space *space, offs_t byteaddress, UINT32 data, UINT32 mem_mask)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -701,7 +701,7 @@ static INLINE void write_dword_generic(const address_space *space, offs_t bytead
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE UINT64 read_qword_generic(const address_space *space, offs_t byteaddress, UINT64 mem_mask)
+INLINE UINT64 read_qword_generic(const address_space *space, offs_t byteaddress, UINT64 mem_mask)
 {
 	const handler_data *handler;
 	offs_t byteoffset;
@@ -729,7 +729,7 @@ static INLINE UINT64 read_qword_generic(const address_space *space, offs_t bytea
     arbitrary address space
 -------------------------------------------------*/
 
-static INLINE void write_qword_generic(const address_space *space, offs_t byteaddress, UINT64 data, UINT64 mem_mask)
+INLINE void write_qword_generic(const address_space *space, offs_t byteaddress, UINT64 data, UINT64 mem_mask)
 {
 	const handler_data *handler;
 	offs_t offset;

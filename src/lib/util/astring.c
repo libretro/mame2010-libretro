@@ -70,7 +70,7 @@ static const astring dummy_astring = { (char *)dummy_text, 1, { 0 } };
     given string, or else reallocate our buffer
 -------------------------------------------------*/
 
-static INLINE int ensure_room(astring *str, int length)
+INLINE int ensure_room(astring *str, int length)
 {
 	char *newbuf, *oldbuf;
 	int alloclen;
@@ -105,7 +105,7 @@ static INLINE int ensure_room(astring *str, int length)
     base for a given start index
 -------------------------------------------------*/
 
-static INLINE char *safe_string_base(char *base, int start)
+INLINE char *safe_string_base(char *base, int start)
 {
 	int max = strlen(base);
 	return (start >= 0 && start < max) ? base + start : base + max;
@@ -116,7 +116,7 @@ static INLINE char *safe_string_base(char *base, int start)
     normalize_substr - normalize substr parameters
 -------------------------------------------------*/
 
-static INLINE void normalize_substr(int *start, int *count, int length)
+INLINE void normalize_substr(int *start, int *count, int length)
 {
 	/* limit start */
 	if (*start < 0)

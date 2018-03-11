@@ -839,7 +839,7 @@ static void record_port(const input_port_config *port);
     analog control
 -------------------------------------------------*/
 
-static INLINE INT32 apply_analog_min_max(const analog_field_state *analog, INT32 value)
+INLINE INT32 apply_analog_min_max(const analog_field_state *analog, INT32 value)
 {
 	/* take the analog minimum and maximum values and apply the inverse of the */
 	/* sensitivity so that we can clamp against them before applying sensitivity */
@@ -883,7 +883,7 @@ static INLINE INT32 apply_analog_min_max(const analog_field_state *analog, INT32
     a port
 -------------------------------------------------*/
 
-static INLINE const char *get_port_tag(const input_port_config *port, char *tempbuffer)
+INLINE const char *get_port_tag(const input_port_config *port, char *tempbuffer)
 {
 	const input_port_config *curport;
 	int index = 0;
@@ -906,7 +906,7 @@ static INLINE const char *get_port_tag(const input_port_config *port, char *temp
     buffer
 -------------------------------------------------*/
 
-static INLINE void* ATTR_PRINTF(3,4) error_buf_append(char *errorbuf, int errorbuflen, const char *format, ...)
+INLINE void* ATTR_PRINTF(3,4) error_buf_append(char *errorbuf, int errorbuflen, const char *format, ...)
 {
 	int curlen = (errorbuf != NULL) ? strlen(errorbuf) : 0;
 	int bytesleft = errorbuflen - curlen;
@@ -926,7 +926,7 @@ static INLINE void* ATTR_PRINTF(3,4) error_buf_append(char *errorbuf, int errorb
     equivalent
 -------------------------------------------------*/
 
-static INLINE int condition_equal(const input_condition *cond1, const input_condition *cond2)
+INLINE int condition_equal(const input_condition *cond1, const input_condition *cond2)
 {
 	return (cond1->mask == cond2->mask && cond1->value == cond2->value && cond1->condition == cond2->condition && strcmp(cond1->tag, cond2->tag) == 0);
 }

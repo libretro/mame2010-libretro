@@ -442,7 +442,7 @@ static int input_code_check_axis(running_machine *machine, input_device_item *it
     a pointer to the associated device
 -------------------------------------------------*/
 
-static INLINE input_device *input_code_device(running_machine *machine, input_code code)
+INLINE input_device *input_code_device(running_machine *machine, input_code code)
 {
 	/* if the class is valid... */
 	input_device_class devclass = INPUT_CODE_DEVCLASS(code);
@@ -466,7 +466,7 @@ static INLINE input_device *input_code_device(running_machine *machine, input_co
     pair to a standard code
 -------------------------------------------------*/
 
-static INLINE input_code device_item_to_code(input_device *device, input_item_id itemid)
+INLINE input_code device_item_to_code(input_device *device, input_item_id itemid)
 {
 	int devindex = device->devindex;
 
@@ -483,7 +483,7 @@ static INLINE input_code device_item_to_code(input_device *device, input_item_id
     of a standard item
 -------------------------------------------------*/
 
-static INLINE input_item_class input_item_standard_class(input_device_class devclass, input_item_id itemid)
+INLINE input_item_class input_item_standard_class(input_device_class devclass, input_item_id itemid)
 {
 	/* most everything standard is a switch, apart from the axes */
 	if (itemid == ITEM_ID_OTHER_SWITCH || itemid < ITEM_ID_XAXIS || (itemid > ITEM_ID_SLIDER2 && itemid < ITEM_ID_ADD_ABSOLUTE1))
@@ -504,7 +504,7 @@ static INLINE input_item_class input_item_standard_class(input_device_class devc
     of an input item
 -------------------------------------------------*/
 
-static INLINE void input_item_update_value(running_machine *machine, input_device_item *item)
+INLINE void input_item_update_value(running_machine *machine, input_device_item *item)
 {
 	input_device_list *device_list = machine->input_data->device_list;
 
@@ -517,7 +517,7 @@ static INLINE void input_item_update_value(running_machine *machine, input_devic
     of memory for pressed switches
 -------------------------------------------------*/
 
-static INLINE void code_pressed_memory_reset(running_machine *machine)
+INLINE void code_pressed_memory_reset(running_machine *machine)
 {
 	input_code *code_pressed_memory = machine->input_data->code_pressed_memory;
 	int memnum;
@@ -532,7 +532,7 @@ static INLINE void code_pressed_memory_reset(running_machine *machine)
     via table lookup
 -------------------------------------------------*/
 
-static INLINE UINT32 string_to_code(const code_string_table *table, const char *string)
+INLINE UINT32 string_to_code(const code_string_table *table, const char *string)
 {
 	/* find a matching string */
 	for ( ; table->code != ~0; table++)
@@ -549,7 +549,7 @@ static INLINE UINT32 string_to_code(const code_string_table *table, const char *
     via table lookup
 -------------------------------------------------*/
 
-static INLINE const char *code_to_string(const code_string_table *table, UINT32 code)
+INLINE const char *code_to_string(const code_string_table *table, UINT32 code)
 {
 	/* find a matching code, or  */
 	for ( ; table->code != ~0; table++)

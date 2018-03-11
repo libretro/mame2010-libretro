@@ -3,7 +3,6 @@ retromain.c
 mame2010 - libretro port of mame 0.139
 ****************************************************************************/
 
-#include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
 #include "osdepend.h"
@@ -15,8 +14,8 @@ mame2010 - libretro port of mame 0.139
 #include "uiinput.h"
 
 #include "libretro.h" 
-#include <file/file_path.h>
 #include "retromain.h"
+#include "file/file_path.h"
 
 #include "rendersw.c"
 
@@ -872,7 +871,6 @@ void init_input_descriptors(void)
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 }
 
-
 #define PLAYER1_PRESS(button) input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
 #define PLAYER2_PRESS(button) input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
 #define PLAYER3_PRESS(button) input_state_cb(2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_##button)
@@ -885,7 +883,6 @@ void init_input_descriptors(void)
 #define input_device_item_add_p2(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
 #define input_device_item_add_p3(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
 #define input_device_item_add_p4(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
-
 
 static INT32 pad1_get_state(void *device_internal, void *item_internal)
 {

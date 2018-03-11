@@ -24,7 +24,7 @@
 
 #define VERBOSE_LEVEL ( 0 )
 
-static INLINE void ATTR_PRINTF(3,4) verboselog( running_machine *machine, int n_level, const char *s_fmt, ... )
+INLINE void ATTR_PRINTF(3,4) verboselog( running_machine *machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
 	{
@@ -950,7 +950,7 @@ f  e| d  c| b| a  9| 8  7| 6  5| 4| 3  2  1  0
     |iy|ix|ty|     |   tp|  abr|ty|         tx
 */
 
-static INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxgpu, UINT32 tpage )
+INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxgpu, UINT32 tpage )
 {
 	if( m_n_gputype == 2 )
 	{
@@ -998,7 +998,7 @@ static INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxg
 	}
 }
 
-static INLINE int CullVertex( int a, int b )
+INLINE int CullVertex( int a, int b )
 {
 	int d = a - b;
 	if( d < -1023 || d > 1023 )

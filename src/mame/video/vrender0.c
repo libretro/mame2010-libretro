@@ -90,7 +90,7 @@ struct _vr0video_state
  INLINE FUNCTIONS
  *****************************************************************************/
 
-static INLINE vr0video_state *get_safe_token( running_device *device )
+INLINE vr0video_state *get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == VIDEO_VRENDER0);
@@ -98,7 +98,7 @@ static INLINE vr0video_state *get_safe_token( running_device *device )
 	return (vr0video_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const vr0video_interface *get_interface( running_device *device )
+INLINE const vr0video_interface *get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == VIDEO_VRENDER0);
@@ -119,7 +119,7 @@ no color in the palette will have this value
 #define RGB32(r,g,b) ((r << 16) | (g << 8) | (b << 0))
 #define RGB16(r,g,b) ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | ((b & 0xf8) >> 3)
 
-static INLINE UINT16 RGB32TO16(UINT32 rgb)
+INLINE UINT16 RGB32TO16(UINT32 rgb)
 {
 	return (((rgb >> (16 + 3)) & 0x1f) << 11) | (((rgb >> (8 + 2)) & 0x3f) << 5) | (((rgb >> (3)) & 0x1f) << 0);
 }
@@ -128,7 +128,7 @@ static INLINE UINT16 RGB32TO16(UINT32 rgb)
 #define EXTRACTG8(Src)	(((Src >>  5) << 2) & 0xff)
 #define EXTRACTB8(Src)	(((Src >>  0) << 3) & 0xff)
 
-static INLINE UINT16 Shade(UINT16 Src, UINT32 Shade)
+INLINE UINT16 Shade(UINT16 Src, UINT32 Shade)
 {
 	UINT32 scr = (EXTRACTR8(Src) * ((Shade >> 16) & 0xff)) >> 8;
 	UINT32 scg = (EXTRACTG8(Src) * ((Shade >>  8) & 0xff)) >> 8;

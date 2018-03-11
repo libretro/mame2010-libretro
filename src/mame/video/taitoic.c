@@ -501,7 +501,7 @@ The data bus is 16 bits wide.
 
 /* These scanline drawing routines lifted from Taito F3: optimise / merge ? */
 
-static INLINE void taitoic_drawscanline( bitmap_t *bitmap, const rectangle *cliprect, int x, int y,
+INLINE void taitoic_drawscanline( bitmap_t *bitmap, const rectangle *cliprect, int x, int y,
 		const UINT16 *src, int transparent, UINT32 orient, bitmap_t *priority, int pri)
 {
 	UINT16 *dsti = BITMAP_ADDR16(bitmap, y, x);
@@ -567,7 +567,7 @@ struct _pc080sn_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE pc080sn_state *pc080sn_get_safe_token( running_device *device )
+INLINE pc080sn_state *pc080sn_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == PC080SN);
@@ -575,7 +575,7 @@ static INLINE pc080sn_state *pc080sn_get_safe_token( running_device *device )
 	return (pc080sn_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const pc080sn_interface *pc080sn_get_interface( running_device *device )
+INLINE const pc080sn_interface *pc080sn_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == PC080SN));
@@ -586,7 +586,7 @@ static INLINE const pc080sn_interface *pc080sn_get_interface( running_device *de
     DEVICE HANDLERS
 *****************************************************************************/
 
-static INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
 	UINT16 code, attr;
@@ -609,7 +609,7 @@ static INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-static INLINE void common_get_pc080sn_fg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_pc080sn_fg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
 	UINT16 code,attr;
@@ -1060,7 +1060,7 @@ struct _pc090oj_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE pc090oj_state *pc090oj_get_safe_token( running_device *device )
+INLINE pc090oj_state *pc090oj_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == PC090OJ);
@@ -1068,7 +1068,7 @@ static INLINE pc090oj_state *pc090oj_get_safe_token( running_device *device )
 	return (pc090oj_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const pc090oj_interface *pc090oj_get_interface( running_device *device )
+INLINE const pc090oj_interface *pc090oj_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == PC090OJ));
@@ -1268,7 +1268,7 @@ struct _tc0080vco_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0080vco_state *tc0080vco_get_safe_token( running_device *device )
+INLINE tc0080vco_state *tc0080vco_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0080VCO);
@@ -1276,7 +1276,7 @@ static INLINE tc0080vco_state *tc0080vco_get_safe_token( running_device *device 
 	return (tc0080vco_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0080vco_interface *tc0080vco_get_interface( running_device *device )
+INLINE const tc0080vco_interface *tc0080vco_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0080VCO));
@@ -1952,7 +1952,7 @@ struct _tc0100scn_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0100scn_state *tc0100scn_get_safe_token( running_device *device )
+INLINE tc0100scn_state *tc0100scn_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0100SCN);
@@ -1960,7 +1960,7 @@ static INLINE tc0100scn_state *tc0100scn_get_safe_token( running_device *device 
 	return (tc0100scn_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0100scn_interface *tc0100scn_get_interface( running_device *device )
+INLINE const tc0100scn_interface *tc0100scn_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0100SCN));
@@ -1971,7 +1971,7 @@ static INLINE const tc0100scn_interface *tc0100scn_get_interface( running_device
     DEVICE HANDLERS
 *****************************************************************************/
 
-static INLINE void common_get_bg0_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_bg0_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int code, attr;
@@ -1995,7 +1995,7 @@ static INLINE void common_get_bg0_tile_info( running_device *device, tile_data *
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-static INLINE void common_get_bg1_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_bg1_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int code, attr;
@@ -2019,7 +2019,7 @@ static INLINE void common_get_bg1_tile_info( running_device *device, tile_data *
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-static INLINE void common_get_tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int attr = ram[tile_index];
@@ -2558,7 +2558,7 @@ struct _tc0280grd_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0280grd_state *tc0280grd_get_safe_token( running_device *device )
+INLINE tc0280grd_state *tc0280grd_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0280GRD) || (device->type() == TC0430GRW));
@@ -2566,7 +2566,7 @@ static INLINE tc0280grd_state *tc0280grd_get_safe_token( running_device *device 
 	return (tc0280grd_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0280grd_interface *tc0280grd_get_interface( running_device *device )
+INLINE const tc0280grd_interface *tc0280grd_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0280GRD) || (device->type() == TC0430GRW));
@@ -2728,7 +2728,7 @@ struct _tc0360pri_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0360pri_state *tc0360pri_get_safe_token( running_device *device )
+INLINE tc0360pri_state *tc0360pri_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0360PRI);
@@ -2820,7 +2820,7 @@ struct _tc0480scp_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0480scp_state *tc0480scp_get_safe_token( running_device *device )
+INLINE tc0480scp_state *tc0480scp_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0480SCP);
@@ -2828,7 +2828,7 @@ static INLINE tc0480scp_state *tc0480scp_get_safe_token( running_device *device 
 	return (tc0480scp_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0480scp_interface *tc0480scp_get_interface( running_device *device )
+INLINE const tc0480scp_interface *tc0480scp_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0480SCP));
@@ -2840,7 +2840,7 @@ static INLINE const tc0480scp_interface *tc0480scp_get_interface( running_device
 *****************************************************************************/
 
 
-static INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 	int code = ram[2 * tile_index + 1] & 0x7fff;
@@ -2852,7 +2852,7 @@ static INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_d
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-static INLINE void common_get_tc0480tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_tc0480tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 	int attr = ram[tile_index];
@@ -3762,7 +3762,7 @@ struct _tc0150rod_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0150rod_state *tc0150rod_get_safe_token( running_device *device )
+INLINE tc0150rod_state *tc0150rod_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0150ROD);
@@ -3770,7 +3770,7 @@ static INLINE tc0150rod_state *tc0150rod_get_safe_token( running_device *device 
 	return (tc0150rod_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0150rod_interface *tc0150rod_get_interface( running_device *device )
+INLINE const tc0150rod_interface *tc0150rod_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0150ROD));
@@ -4572,7 +4572,7 @@ struct _tc0110pcr_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0110pcr_state *tc0110pcr_get_safe_token( running_device *device )
+INLINE tc0110pcr_state *tc0110pcr_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0110PCR);
@@ -4580,7 +4580,7 @@ static INLINE tc0110pcr_state *tc0110pcr_get_safe_token( running_device *device 
 	return (tc0110pcr_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0110pcr_interface *tc0110pcr_get_interface( running_device *device )
+INLINE const tc0110pcr_interface *tc0110pcr_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0110PCR));
@@ -4802,7 +4802,7 @@ struct _tc0180vcu_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE tc0180vcu_state *tc0180vcu_get_safe_token( running_device *device )
+INLINE tc0180vcu_state *tc0180vcu_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == TC0180VCU);
@@ -4810,7 +4810,7 @@ static INLINE tc0180vcu_state *tc0180vcu_get_safe_token( running_device *device 
 	return (tc0180vcu_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const tc0180vcu_interface *tc0180vcu_get_interface( running_device *device )
+INLINE const tc0180vcu_interface *tc0180vcu_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == TC0180VCU));

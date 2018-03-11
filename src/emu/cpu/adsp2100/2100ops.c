@@ -81,7 +81,7 @@ static const INT32 constants[] =
 #define MSTAT_GOMODE	0x40			/* go mode enable */
 
 /* you must call this in order to change MSTAT */
-static INLINE void update_mstat(adsp2100_state *adsp)
+INLINE void update_mstat(adsp2100_state *adsp)
 {
 	if ((adsp->mstat ^ adsp->mstat_prev) & MSTAT_BANK)
 	{
@@ -120,7 +120,7 @@ static INLINE void update_mstat(adsp2100_state *adsp)
     PC stack handlers
 ===========================================================================*/
 
-static INLINE UINT32 pc_stack_top(adsp2100_state *adsp)
+INLINE UINT32 pc_stack_top(adsp2100_state *adsp)
 {
 	if (adsp->pc_sp > 0)
 		return adsp->pc_stack[adsp->pc_sp - 1];
@@ -128,7 +128,7 @@ static INLINE UINT32 pc_stack_top(adsp2100_state *adsp)
 		return adsp->pc_stack[0];
 }
 
-static INLINE void set_pc_stack_top(adsp2100_state *adsp, UINT32 top)
+INLINE void set_pc_stack_top(adsp2100_state *adsp, UINT32 top)
 {
 	if (adsp->pc_sp > 0)
 		adsp->pc_stack[adsp->pc_sp - 1] = top;
@@ -136,7 +136,7 @@ static INLINE void set_pc_stack_top(adsp2100_state *adsp, UINT32 top)
 		adsp->pc_stack[0] = top;
 }
 
-static INLINE void pc_stack_push(adsp2100_state *adsp)
+INLINE void pc_stack_push(adsp2100_state *adsp)
 {
 	if (adsp->pc_sp < PC_STACK_DEPTH)
 	{
@@ -148,7 +148,7 @@ static INLINE void pc_stack_push(adsp2100_state *adsp)
 		adsp->sstat |= PC_OVER;
 }
 
-static INLINE void pc_stack_push_val(adsp2100_state *adsp, UINT32 val)
+INLINE void pc_stack_push_val(adsp2100_state *adsp, UINT32 val)
 {
 	if (adsp->pc_sp < PC_STACK_DEPTH)
 	{
@@ -160,7 +160,7 @@ static INLINE void pc_stack_push_val(adsp2100_state *adsp, UINT32 val)
 		adsp->sstat |= PC_OVER;
 }
 
-static INLINE void pc_stack_pop(adsp2100_state *adsp)
+INLINE void pc_stack_pop(adsp2100_state *adsp)
 {
 	if (adsp->pc_sp > 0)
 	{
@@ -171,7 +171,7 @@ static INLINE void pc_stack_pop(adsp2100_state *adsp)
 	adsp->pc = adsp->pc_stack[adsp->pc_sp];
 }
 
-static INLINE UINT32 pc_stack_pop_val(adsp2100_state *adsp)
+INLINE UINT32 pc_stack_pop_val(adsp2100_state *adsp)
 {
 	if (adsp->pc_sp > 0)
 	{
@@ -187,7 +187,7 @@ static INLINE UINT32 pc_stack_pop_val(adsp2100_state *adsp)
     CNTR stack handlers
 ===========================================================================*/
 
-static INLINE UINT32 cntr_stack_top(adsp2100_state *adsp)
+INLINE UINT32 cntr_stack_top(adsp2100_state *adsp)
 {
 	if (adsp->cntr_sp > 0)
 		return adsp->cntr_stack[adsp->cntr_sp - 1];
@@ -195,7 +195,7 @@ static INLINE UINT32 cntr_stack_top(adsp2100_state *adsp)
 		return adsp->cntr_stack[0];
 }
 
-static INLINE void cntr_stack_push(adsp2100_state *adsp)
+INLINE void cntr_stack_push(adsp2100_state *adsp)
 {
 	if (adsp->cntr_sp < CNTR_STACK_DEPTH)
 	{
@@ -207,7 +207,7 @@ static INLINE void cntr_stack_push(adsp2100_state *adsp)
 		adsp->sstat |= COUNT_OVER;
 }
 
-static INLINE void cntr_stack_pop(adsp2100_state *adsp)
+INLINE void cntr_stack_pop(adsp2100_state *adsp)
 {
 	if (adsp->cntr_sp > 0)
 	{
@@ -223,7 +223,7 @@ static INLINE void cntr_stack_pop(adsp2100_state *adsp)
     LOOP stack handlers
 ===========================================================================*/
 
-static INLINE UINT32 loop_stack_top(adsp2100_state *adsp)
+INLINE UINT32 loop_stack_top(adsp2100_state *adsp)
 {
 	if (adsp->loop_sp > 0)
 		return adsp->loop_stack[adsp->loop_sp - 1];
@@ -231,7 +231,7 @@ static INLINE UINT32 loop_stack_top(adsp2100_state *adsp)
 		return adsp->loop_stack[0];
 }
 
-static INLINE void loop_stack_push(adsp2100_state *adsp, UINT32 value)
+INLINE void loop_stack_push(adsp2100_state *adsp, UINT32 value)
 {
 	if (adsp->loop_sp < LOOP_STACK_DEPTH)
 	{
@@ -245,7 +245,7 @@ static INLINE void loop_stack_push(adsp2100_state *adsp, UINT32 value)
 		adsp->sstat |= LOOP_OVER;
 }
 
-static INLINE void loop_stack_pop(adsp2100_state *adsp)
+INLINE void loop_stack_pop(adsp2100_state *adsp)
 {
 	if (adsp->loop_sp > 0)
 	{
@@ -269,7 +269,7 @@ static INLINE void loop_stack_pop(adsp2100_state *adsp)
     STAT stack handlers
 ===========================================================================*/
 
-static INLINE void stat_stack_push(adsp2100_state *adsp)
+INLINE void stat_stack_push(adsp2100_state *adsp)
 {
 	if (adsp->stat_sp < STAT_STACK_DEPTH)
 	{
@@ -283,7 +283,7 @@ static INLINE void stat_stack_push(adsp2100_state *adsp)
 		adsp->sstat |= STATUS_OVER;
 }
 
-static INLINE void stat_stack_pop(adsp2100_state *adsp)
+INLINE void stat_stack_pop(adsp2100_state *adsp)
 {
 	if (adsp->stat_sp > 0)
 	{
@@ -304,7 +304,7 @@ static INLINE void stat_stack_pop(adsp2100_state *adsp)
     condition code checking
 ===========================================================================*/
 
-static INLINE int CONDITION(adsp2100_state *adsp, int c)
+INLINE int CONDITION(adsp2100_state *adsp, int c)
 {
 	if (c != 14)
 		return condition_table[((c) << 8) | adsp->astat];
@@ -323,12 +323,12 @@ static INLINE int CONDITION(adsp2100_state *adsp, int c)
     register writing
 ===========================================================================*/
 
-static INLINE void update_i(adsp2100_state *adsp, int which)
+INLINE void update_i(adsp2100_state *adsp, int which)
 {
 	adsp->base[which] = adsp->i[which] & adsp->lmask[which];
 }
 
-static INLINE void update_l(adsp2100_state *adsp, int which)
+INLINE void update_l(adsp2100_state *adsp, int which)
 {
 	adsp->lmask[which] = mask_table[adsp->l[which] & 0x3fff];
 	adsp->base[which] = adsp->i[which] & adsp->lmask[which];
@@ -535,7 +535,7 @@ static INT32 (*const rd_reg[4][16])(adsp2100_state *adsp) =
     Modulus addressing logic
 ===========================================================================*/
 
-static INLINE void modify_address(adsp2100_state *adsp, UINT32 ireg, UINT32 mreg)
+INLINE void modify_address(adsp2100_state *adsp, UINT32 ireg, UINT32 mreg)
 {
 	UINT32 base = adsp->base[ireg];
 	UINT32 i = adsp->i[ireg];
@@ -553,7 +553,7 @@ static INLINE void modify_address(adsp2100_state *adsp, UINT32 ireg, UINT32 mreg
     Data memory accessors
 ===========================================================================*/
 
-static INLINE void data_write_dag1(adsp2100_state *adsp, UINT32 op, INT32 val)
+INLINE void data_write_dag1(adsp2100_state *adsp, UINT32 op, INT32 val)
 {
 	UINT32 ireg = (op >> 2) & 3;
 	UINT32 mreg = op & 3;
@@ -576,7 +576,7 @@ static INLINE void data_write_dag1(adsp2100_state *adsp, UINT32 op, INT32 val)
 }
 
 
-static INLINE UINT32 data_read_dag1(adsp2100_state *adsp, UINT32 op)
+INLINE UINT32 data_read_dag1(adsp2100_state *adsp, UINT32 op)
 {
 	UINT32 ireg = (op >> 2) & 3;
 	UINT32 mreg = op & 3;
@@ -601,7 +601,7 @@ static INLINE UINT32 data_read_dag1(adsp2100_state *adsp, UINT32 op)
 	return res;
 }
 
-static INLINE void data_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
+INLINE void data_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
 {
 	UINT32 ireg = 4 + ((op >> 2) & 3);
 	UINT32 mreg = 4 + (op & 3);
@@ -618,7 +618,7 @@ static INLINE void data_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
 }
 
 
-static INLINE UINT32 data_read_dag2(adsp2100_state *adsp, UINT32 op)
+INLINE UINT32 data_read_dag2(adsp2100_state *adsp, UINT32 op)
 {
 	UINT32 ireg = 4 + ((op >> 2) & 3);
 	UINT32 mreg = 4 + (op & 3);
@@ -640,7 +640,7 @@ static INLINE UINT32 data_read_dag2(adsp2100_state *adsp, UINT32 op)
     Program memory accessors
 ===========================================================================*/
 
-static INLINE void pgm_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
+INLINE void pgm_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
 {
 	UINT32 ireg = 4 + ((op >> 2) & 3);
 	UINT32 mreg = 4 + (op & 3);
@@ -657,7 +657,7 @@ static INLINE void pgm_write_dag2(adsp2100_state *adsp, UINT32 op, INT32 val)
 }
 
 
-static INLINE UINT32 pgm_read_dag2(adsp2100_state *adsp, UINT32 op)
+INLINE UINT32 pgm_read_dag2(adsp2100_state *adsp, UINT32 op)
 {
 	UINT32 ireg = 4 + ((op >> 2) & 3);
 	UINT32 mreg = 4 + (op & 3);

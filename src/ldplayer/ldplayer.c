@@ -116,7 +116,7 @@ static chd_file *get_disc(running_device *device)
 				chd_error chderr;
 
 				/* open the file itself via our search path */
-				filerr = mame_fopen(SEARCHPATH_IMAGE, dir->name, OPEN_FLAG_READ, &image_file);
+				filerr = mame_fopen(libretro_content_directory, dir->name, OPEN_FLAG_READ, &image_file);
 				if (filerr == FILERR_NONE)
 				{
 					/* try to open the CHD */
@@ -276,7 +276,7 @@ static MACHINE_RESET( ldplayer )
  *
  *************************************/
 
-static INLINE void pr8210_add_command(UINT8 command)
+INLINE void pr8210_add_command(UINT8 command)
 {
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = (command & 0x1f) | 0x20;
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = 0x00 | 0x20;
