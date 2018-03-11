@@ -43,7 +43,6 @@
 #define __ASTRING_H__
 
 #include <stdarg.h>
-#include <retro_inline.h>
 #include "osdcomm.h"
 
 
@@ -210,82 +209,82 @@ astring *astring_trimspace(astring *str);
 ***************************************************************************/
 
 /* allocate a new duplicate of an astring */
-static INLINE astring *astring_dup(const astring *str)
+INLINE astring *astring_dup(const astring *str)
 {
 	return astring_cpy(astring_alloc(), str);
 }
 
 /* allocate a new duplicate of an astring */
-static INLINE astring *astring_dupc(const char *str)
+INLINE astring *astring_dupc(const char *str)
 {
 	return astring_cpyc(astring_alloc(), str);
 }
 
 /* allocate a new duplicate of an astring */
-static INLINE astring *astring_dupch(const char *str, int count)
+INLINE astring *astring_dupch(const char *str, int count)
 {
 	return astring_cpych(astring_alloc(), str, count);
 }
 
 /* allocate a duplicate of a substring */
-static INLINE astring *astring_dupsubstr(const astring *str, int start, int count)
+INLINE astring *astring_dupsubstr(const astring *str, int start, int count)
 {
 	return astring_cpysubstr(astring_alloc(), str, start, count);
 }
 
 
 /* reset an astring to an empty string */
-static INLINE astring *astring_reset(astring *dst)
+INLINE astring *astring_reset(astring *dst)
 {
 	return astring_cpyc(dst, "");
 }
 
 
 /* concatenate one astring to the end of another */
-static INLINE astring *astring_cat(astring *dst, const astring *src)
+INLINE astring *astring_cat(astring *dst, const astring *src)
 {
 	return astring_ins(dst, -1, src);
 }
 
 /* concatenate a C string to the end of an astring */
-static INLINE astring *astring_catc(astring *dst, const char *src)
+INLINE astring *astring_catc(astring *dst, const char *src)
 {
 	return astring_insc(dst, -1, src);
 }
 
 /* concatenate a character array to the end of an astring */
-static INLINE astring *astring_catch(astring *dst, const char *src, int count)
+INLINE astring *astring_catch(astring *dst, const char *src, int count)
 {
 	return astring_insch(dst, -1, src, count);
 }
 
 /* concatenate a substring of one string into another */
-static INLINE astring *astring_catsubstr(astring *dst, const astring *src, int start, int count)
+INLINE astring *astring_catsubstr(astring *dst, const astring *src, int start, int count)
 {
 	return astring_inssubstr(dst, -1, src, start, count);
 }
 
 
 /* assemble an astring from 2 C strings */
-static INLINE astring *astring_assemble_2(astring *dst, const char *src1, const char *src2)
+INLINE astring *astring_assemble_2(astring *dst, const char *src1, const char *src2)
 {
 	return astring_catc(astring_cpyc(dst, src1), src2);
 }
 
 /* assemble an astring from 3 C strings */
-static INLINE astring *astring_assemble_3(astring *dst, const char *src1, const char *src2, const char *src3)
+INLINE astring *astring_assemble_3(astring *dst, const char *src1, const char *src2, const char *src3)
 {
 	return astring_catc(astring_assemble_2(dst, src1, src2), src3);
 }
 
 /* assemble an astring from 4 C strings */
-static INLINE astring *astring_assemble_4(astring *dst, const char *src1, const char *src2, const char *src3, const char *src4)
+INLINE astring *astring_assemble_4(astring *dst, const char *src1, const char *src2, const char *src3, const char *src4)
 {
 	return astring_catc(astring_assemble_3(dst, src1, src2, src3), src4);
 }
 
 /* assemble an astring from 5 C strings */
-static INLINE astring *astring_assemble_5(astring *dst, const char *src1, const char *src2, const char *src3, const char *src4, const char *src5)
+INLINE astring *astring_assemble_5(astring *dst, const char *src1, const char *src2, const char *src3, const char *src4, const char *src5)
 {
 	return astring_catc(astring_assemble_4(dst, src1, src2, src3, src4), src5);
 }

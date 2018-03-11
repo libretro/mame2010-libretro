@@ -102,7 +102,7 @@ static UINT32 cosine_table[2049];
     predictable way
 -------------------------------------------------*/
 
-static INLINE float round_nearest(float f)
+INLINE float round_nearest(float f)
 {
 	return floor(f + 0.5f);
 }
@@ -117,12 +117,12 @@ static INLINE float round_nearest(float f)
     The document also contains the constants below as floats.
 --------------------------------------------------------------------------*/
 
-static INLINE UINT8 clamp16_shift8(UINT32 x)
+INLINE UINT8 clamp16_shift8(UINT32 x)
 {
 	return (((INT32) x < 0) ? 0 : (x > 65535 ? 255: x >> 8));
 }
 
-static INLINE UINT32 ycc_to_rgb(UINT32 ycc)
+INLINE UINT32 ycc_to_rgb(UINT32 ycc)
 {
 	/* original equations:
 
@@ -179,7 +179,7 @@ static INLINE UINT32 ycc_to_rgb(UINT32 ycc)
     16bpp source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_palette16_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_palette16_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 16);
 	return texture->palette[texbase[0]];
@@ -192,7 +192,7 @@ static INLINE UINT32 get_texel_palette16_nearest(const render_texinfo *texture, 
     16bpp source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_palette16_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_palette16_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11;
@@ -223,7 +223,7 @@ static INLINE UINT32 get_texel_palette16_bilinear(const render_texinfo *texture,
     16bpp source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_palette16a_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_palette16a_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 16);
 	return texture->palette[texbase[0]];
@@ -236,7 +236,7 @@ static INLINE UINT32 get_texel_palette16a_nearest(const render_texinfo *texture,
     16bpp source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_palette16a_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_palette16a_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11;
@@ -266,7 +266,7 @@ static INLINE UINT32 get_texel_palette16a_bilinear(const render_texinfo *texture
     nearest neighbor texel from a 15bpp RGB source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_rgb15_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_rgb15_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 16);
 	return texbase[0];
@@ -279,7 +279,7 @@ static INLINE UINT32 get_texel_rgb15_nearest(const render_texinfo *texture, INT3
     source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_rgb15_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_rgb15_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11, filtered;
@@ -315,7 +315,7 @@ static INLINE UINT32 get_texel_rgb15_bilinear(const render_texinfo *texture, INT
     source (pixel is returned as Cr-Cb-Y
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_yuy16_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_yuy16_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 17) * 2;
 	return (texbase[(curu >> 16) & 1] >> 8) | ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
@@ -328,7 +328,7 @@ static INLINE UINT32 get_texel_yuy16_nearest(const render_texinfo *texture, INT3
     source (pixel is returned as Cr-Cb-Y
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_yuy16_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_yuy16_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT16 *texbase = (const UINT16 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11;
@@ -384,7 +384,7 @@ static INLINE UINT32 get_texel_yuy16_bilinear(const render_texinfo *texture, INT
     nearest neighbor texel from a 32bpp RGB source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_rgb32_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_rgb32_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT32 *texbase = (const UINT32 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 16);
 	return texbase[0];
@@ -397,7 +397,7 @@ static INLINE UINT32 get_texel_rgb32_nearest(const render_texinfo *texture, INT3
     source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_rgb32_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_rgb32_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT32 *texbase = (const UINT32 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11;
@@ -428,7 +428,7 @@ static INLINE UINT32 get_texel_rgb32_bilinear(const render_texinfo *texture, INT
     source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_argb32_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_argb32_nearest(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT32 *texbase = (const UINT32 *)texture->base + (curv >> 16) * texture->rowpixels + (curu >> 16);
 	return texbase[0];
@@ -441,7 +441,7 @@ static INLINE UINT32 get_texel_argb32_nearest(const render_texinfo *texture, INT
     source
 -------------------------------------------------*/
 
-static INLINE UINT32 get_texel_argb32_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
+INLINE UINT32 get_texel_argb32_bilinear(const render_texinfo *texture, INT32 curu, INT32 curv)
 {
 	const UINT32 *texbase = (const UINT32 *)texture->base;
 	rgb_t pix00, pix01, pix10, pix11;
@@ -526,7 +526,7 @@ static INLINE UINT32 get_texel_argb32_bilinear(const render_texinfo *texture, IN
     draw_aa_pixel - draw an antialiased pixel
 -------------------------------------------------*/
 
-static INLINE void FUNC_PREFIX(draw_aa_pixel)(void *dstdata, UINT32 pitch, int x, int y, rgb_t col)
+INLINE void FUNC_PREFIX(draw_aa_pixel)(void *dstdata, UINT32 pitch, int x, int y, rgb_t col)
 {
 	UINT32 dpix, dr, dg, db;
 	PIXEL_TYPE *dest;

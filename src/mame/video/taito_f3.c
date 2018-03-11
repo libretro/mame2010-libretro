@@ -485,7 +485,7 @@ static void print_debug_info(bitmap_t *bitmap)
 
 /******************************************************************************/
 
-static INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, UINT32 *gfx_base)
+INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, UINT32 *gfx_base)
 {
 	UINT32 tile=gfx_base[tile_index];
 	UINT8 abtype=(tile>>(16+9)) & 1;
@@ -900,7 +900,7 @@ WRITE32_HANDLER( f3_palette_24bit_w )
 	d = level+1;						\
 }
 
-static INLINE void f3_alpha_set_level(void)
+INLINE void f3_alpha_set_level(void)
 {
 //  SET_ALPHA_LEVEL(alpha_s_1_1, f3_alpha_level_2ad)
 	SET_ALPHA_LEVEL(alpha_s_1_1, 255-f3_alpha_level_2as)
@@ -943,7 +943,7 @@ static INLINE void f3_alpha_set_level(void)
 
 
 
-static INLINE void f3_alpha_blend32_s( int alphas, UINT32 s )
+INLINE void f3_alpha_blend32_s( int alphas, UINT32 s )
 {
 	UINT8 *sc = (UINT8 *)&s;
 	UINT8 *dc = (UINT8 *)&dval;
@@ -952,7 +952,7 @@ static INLINE void f3_alpha_blend32_s( int alphas, UINT32 s )
 	dc[COLOR3] = (alphas * sc[COLOR3]) >> 8;
 }
 
-static INLINE void f3_alpha_blend32_d( int alphas, UINT32 s )
+INLINE void f3_alpha_blend32_d( int alphas, UINT32 s )
 {
 	UINT8 *sc = (UINT8 *)&s;
 	UINT8 *dc = (UINT8 *)&dval;
@@ -963,30 +963,30 @@ static INLINE void f3_alpha_blend32_d( int alphas, UINT32 s )
 
 /*============================================================================*/
 
-static INLINE void f3_alpha_blend_1_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
-static INLINE void f3_alpha_blend_1_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
-static INLINE void f3_alpha_blend_1_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
-static INLINE void f3_alpha_blend_1_5( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
-static INLINE void f3_alpha_blend_1_6( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
-static INLINE void f3_alpha_blend_1_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
-static INLINE void f3_alpha_blend_1_9( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
-static INLINE void f3_alpha_blend_1_a( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
+INLINE void f3_alpha_blend_1_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
+INLINE void f3_alpha_blend_1_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
+INLINE void f3_alpha_blend_1_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
+INLINE void f3_alpha_blend_1_5( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
+INLINE void f3_alpha_blend_1_6( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
+INLINE void f3_alpha_blend_1_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
+INLINE void f3_alpha_blend_1_9( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
+INLINE void f3_alpha_blend_1_a( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
 
-static INLINE void f3_alpha_blend_2a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
-static INLINE void f3_alpha_blend_2a_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
-static INLINE void f3_alpha_blend_2a_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
+INLINE void f3_alpha_blend_2a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
+INLINE void f3_alpha_blend_2a_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
+INLINE void f3_alpha_blend_2a_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
 
-static INLINE void f3_alpha_blend_2b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
-static INLINE void f3_alpha_blend_2b_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
-static INLINE void f3_alpha_blend_2b_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
+INLINE void f3_alpha_blend_2b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
+INLINE void f3_alpha_blend_2b_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
+INLINE void f3_alpha_blend_2b_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
 
-static INLINE void f3_alpha_blend_3a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
-static INLINE void f3_alpha_blend_3a_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
-static INLINE void f3_alpha_blend_3a_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
+INLINE void f3_alpha_blend_3a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
+INLINE void f3_alpha_blend_3a_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
+INLINE void f3_alpha_blend_3a_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
 
-static INLINE void f3_alpha_blend_3b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
-static INLINE void f3_alpha_blend_3b_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
-static INLINE void f3_alpha_blend_3b_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
+INLINE void f3_alpha_blend_3b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
+INLINE void f3_alpha_blend_3b_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
+INLINE void f3_alpha_blend_3b_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
 
 /*============================================================================*/
 
@@ -1174,7 +1174,7 @@ static int dpix_3_2(UINT32 s_pix)
 	return 0;
 }
 
-static INLINE void dpix_1_sprite(UINT32 s_pix)
+INLINE void dpix_1_sprite(UINT32 s_pix)
 {
 	if(s_pix)
 	{
@@ -1190,7 +1190,7 @@ static INLINE void dpix_1_sprite(UINT32 s_pix)
 	}
 }
 
-static INLINE void dpix_bg(UINT32 bgcolor)
+INLINE void dpix_bg(UINT32 bgcolor)
 {
 	UINT8 p1 = pval&0xf0;
 	if(!p1)			dval = bgcolor;
@@ -1408,7 +1408,7 @@ static void init_alpha_blend_func(void)
 
 /*============================================================================*/
 
-static INLINE void draw_scanlines(running_machine *machine,
+INLINE void draw_scanlines(running_machine *machine,
 		bitmap_t *bitmap,int xsize,INT16 *draw_line_num,
 		const struct f3_playfield_line_inf **line_t,
 		const int *sprite,
@@ -2619,7 +2619,7 @@ static void scanline_draw(running_machine *machine, bitmap_t *bitmap, const rect
 	dest++;						\
 	pri++;
 
-static INLINE void f3_drawgfx(
+INLINE void f3_drawgfx(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
 		UINT32 code,
 		UINT32 color,
@@ -2782,7 +2782,7 @@ static INLINE void f3_drawgfx(
 #undef NEXT_P
 
 
-static INLINE void f3_drawgfxzoom(
+INLINE void f3_drawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
 		UINT32 code,
 		UINT32 color,

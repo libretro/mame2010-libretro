@@ -1344,7 +1344,7 @@ struct _k007121_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k007121_state *k007121_get_safe_token( running_device *device )
+INLINE k007121_state *k007121_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K007121);
@@ -1606,7 +1606,7 @@ struct _k007342_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k007342_state *k007342_get_safe_token( running_device *device )
+INLINE k007342_state *k007342_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K007342);
@@ -1614,7 +1614,7 @@ static INLINE k007342_state *k007342_get_safe_token( running_device *device )
 	return (k007342_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k007342_interface *k007342_get_interface( running_device *device )
+INLINE const k007342_interface *k007342_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K007342));
@@ -1783,7 +1783,7 @@ static TILEMAP_MAPPER( k007342_scan )
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
 }
 
-static INLINE void k007342_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int layer, UINT8 *cram, UINT8 *vram )
+INLINE void k007342_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int layer, UINT8 *cram, UINT8 *vram )
 {
 	k007342_state *k007342 = k007342_get_safe_token(device);
 	int color, code, flags;
@@ -1890,7 +1890,7 @@ struct _k007420_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k007420_state *k007420_get_safe_token( running_device *device )
+INLINE k007420_state *k007420_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K007420);
@@ -1898,7 +1898,7 @@ static INLINE k007420_state *k007420_get_safe_token( running_device *device )
 	return (k007420_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k007420_interface *k007420_get_interface( running_device *device )
+INLINE const k007420_interface *k007420_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K007420));
@@ -2167,7 +2167,7 @@ struct _k052109_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k052109_state *k052109_get_safe_token( running_device *device )
+INLINE k052109_state *k052109_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K052109);
@@ -2175,7 +2175,7 @@ static INLINE k052109_state *k052109_get_safe_token( running_device *device )
 	return (k052109_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k052109_interface *k052109_get_interface( running_device *device )
+INLINE const k052109_interface *k052109_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K052109));
@@ -2599,7 +2599,7 @@ void k052109_set_layer_offsets( running_device *device, int layer, int dx, int d
   color RAM    ------xx  depends on external connections (usually banking, flip)
 */
 
-static INLINE void k052109_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int layer, UINT8 *cram, UINT8 *vram1, UINT8 *vram2 )
+INLINE void k052109_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int layer, UINT8 *cram, UINT8 *vram1, UINT8 *vram2 )
 {
 	k052109_state *k052109 = k052109_get_safe_token(device);
 	int flipy = 0;
@@ -2802,7 +2802,7 @@ struct _k051960_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k051960_state *k051960_get_safe_token( running_device *device )
+INLINE k051960_state *k051960_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K051960);
@@ -2810,7 +2810,7 @@ static INLINE k051960_state *k051960_get_safe_token( running_device *device )
 	return (k051960_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k051960_interface *k051960_get_interface( running_device *device )
+INLINE const k051960_interface *k051960_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K051960));
@@ -3344,7 +3344,7 @@ struct _k05324x_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k05324x_state *k05324x_get_safe_token( running_device *device )
+INLINE k05324x_state *k05324x_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K053244 || device->type() == K053245));
@@ -3352,7 +3352,7 @@ static INLINE k05324x_state *k05324x_get_safe_token( running_device *device )
 	return (k05324x_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k05324x_interface *k05324x_get_interface( running_device *device )
+INLINE const k05324x_interface *k05324x_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K053244 || device->type() == K053245));
@@ -3412,7 +3412,7 @@ void k053245_clear_buffer( running_device *device )
 		k053245->buffer[i] = 0;
 }
 
-static INLINE void k053245_update_buffer( running_device *device )
+INLINE void k053245_update_buffer( running_device *device )
 {
 	k05324x_state *k053245 = k05324x_get_safe_token(device);
 	memcpy(k053245->buffer, k053245->ram, k053245->ramsize);
@@ -4134,7 +4134,7 @@ struct _k053247_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k053247_state *k053247_get_safe_token( running_device *device )
+INLINE k053247_state *k053247_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K053246 || device->type() == K053247 || device->type() == K055673));
@@ -4142,7 +4142,7 @@ static INLINE k053247_state *k053247_get_safe_token( running_device *device )
 	return (k053247_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k053247_interface *k053247_get_interface( running_device *device )
+INLINE const k053247_interface *k053247_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K053246 || device->type() == K053247 || device->type() == K055673));
@@ -5125,7 +5125,7 @@ struct _k051316_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k051316_state *k051316_get_safe_token( running_device *device )
+INLINE k051316_state *k051316_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K051316);
@@ -5133,7 +5133,7 @@ static INLINE k051316_state *k051316_get_safe_token( running_device *device )
 	return (k051316_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k051316_interface *k051316_get_interface( running_device *device )
+INLINE const k051316_interface *k051316_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K051316);
@@ -5201,7 +5201,7 @@ void k051316_wraparound_enable( running_device *device, int status )
 
 ***************************************************************************/
 
-static INLINE void k051316_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index )
+INLINE void k051316_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index )
 {
 	k051316_state *k051316 = k051316_get_safe_token(device);
 	int code = k051316->ram[tile_index];
@@ -5413,7 +5413,7 @@ struct _k053936_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k053936_state *k053936_get_safe_token( running_device *device )
+INLINE k053936_state *k053936_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K053936);
@@ -5421,7 +5421,7 @@ static INLINE k053936_state *k053936_get_safe_token( running_device *device )
 	return (k053936_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k053936_interface *k053936_get_interface( running_device *device )
+INLINE const k053936_interface *k053936_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K053936);
@@ -5638,7 +5638,7 @@ struct _k053251_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k053251_state *k053251_get_safe_token( running_device *device )
+INLINE k053251_state *k053251_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K053251);
@@ -5791,7 +5791,7 @@ struct _k054000_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k054000_state *k054000_get_safe_token( running_device *device )
+INLINE k054000_state *k054000_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K054000);
@@ -5902,7 +5902,7 @@ struct _k051733_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k051733_state *k051733_get_safe_token( running_device *device )
+INLINE k051733_state *k051733_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K051733);
@@ -6106,7 +6106,7 @@ struct _k056832_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k056832_state *k056832_get_safe_token( running_device *device )
+INLINE k056832_state *k056832_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K056832);
@@ -6114,7 +6114,7 @@ static INLINE k056832_state *k056832_get_safe_token( running_device *device )
 	return (k056832_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k056832_interface *k056832_get_interface( running_device *device )
+INLINE const k056832_interface *k056832_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K056832);
@@ -6240,7 +6240,7 @@ int k056832_get_lookup( running_device *device, int bits )
 	return res;
 }
 
-static INLINE void k056832_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int pageIndex )
+INLINE void k056832_get_tile_info( running_device *device, tile_data *tileinfo, int tile_index, int pageIndex )
 {
 	k056832_state *k056832 = k056832_get_safe_token(device);
 	static const struct K056832_SHIFTMASKS
@@ -8025,7 +8025,7 @@ struct _k055555_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k055555_state *k055555_get_safe_token( running_device *device )
+INLINE k055555_state *k055555_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K055555);
@@ -8152,7 +8152,7 @@ struct _k054338_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k054338_state *k054338_get_safe_token( running_device *device )
+INLINE k054338_state *k054338_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K054338);
@@ -8160,7 +8160,7 @@ static INLINE k054338_state *k054338_get_safe_token( running_device *device )
 	return (k054338_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k054338_interface *k054338_get_interface( running_device *device )
+INLINE const k054338_interface *k054338_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K054338);
@@ -8455,7 +8455,7 @@ struct _k053250_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k053250_state *k053250_get_safe_token( running_device *device )
+INLINE k053250_state *k053250_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K053250);
@@ -8463,7 +8463,7 @@ static INLINE k053250_state *k053250_get_safe_token( running_device *device )
 	return (k053250_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k053250_interface *k053250_get_interface( running_device *device )
+INLINE const k053250_interface *k053250_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K053250));
@@ -8557,7 +8557,7 @@ static void k053250_unpack_pixels(running_machine *machine, const char *region)
 
 
 // utility function to render a clipped scanline vertically or horizontally
-static INLINE void k053250_pdraw_scanline32(bitmap_t *bitmap, const pen_t *palette, UINT8 *source,
+INLINE void k053250_pdraw_scanline32(bitmap_t *bitmap, const pen_t *palette, UINT8 *source,
 		const rectangle *cliprect, int linepos, int scroll, int zoom,
 		UINT32 clipmask, UINT32 wrapmask, UINT32 orientation, bitmap_t *priority, UINT8 pri)
 {
@@ -8998,7 +8998,7 @@ struct _k053252_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k053252_state *k053252_get_safe_token( running_device *device )
+INLINE k053252_state *k053252_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K053252);
@@ -9084,7 +9084,7 @@ struct _k001006_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k001006_state *k001006_get_safe_token( running_device *device )
+INLINE k001006_state *k001006_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K001006);
@@ -9092,7 +9092,7 @@ static INLINE k001006_state *k001006_get_safe_token( running_device *device )
 	return (k001006_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k001006_interface *k001006_get_interface( running_device *device )
+INLINE const k001006_interface *k001006_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K001006));
@@ -9294,7 +9294,7 @@ static const int decode_y_zr107[16] = {  0, 8, 32, 40, 4, 12, 36, 44, 64, 72, 96
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k001005_state *k001005_get_safe_token( running_device *device )
+INLINE k001005_state *k001005_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K001005);
@@ -9302,7 +9302,7 @@ static INLINE k001005_state *k001005_get_safe_token( running_device *device )
 	return (k001005_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k001005_interface *k001005_get_interface( running_device *device )
+INLINE const k001005_interface *k001005_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K001005));
@@ -10186,7 +10186,7 @@ struct _k001604_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k001604_state *k001604_get_safe_token( running_device *device )
+INLINE k001604_state *k001604_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K001604);
@@ -10194,7 +10194,7 @@ static INLINE k001604_state *k001604_get_safe_token( running_device *device )
 	return (k001604_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k001604_interface *k001604_get_interface( running_device *device )
+INLINE const k001604_interface *k001604_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K001604));
@@ -10599,7 +10599,7 @@ struct _k037122_state
     INLINE FUNCTIONS
 *****************************************************************************/
 
-static INLINE k037122_state *k037122_get_safe_token( running_device *device )
+INLINE k037122_state *k037122_get_safe_token( running_device *device )
 {
 	assert(device != NULL);
 	assert(device->type() == K037122);
@@ -10607,7 +10607,7 @@ static INLINE k037122_state *k037122_get_safe_token( running_device *device )
 	return (k037122_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INLINE const k037122_interface *k037122_get_interface( running_device *device )
+INLINE const k037122_interface *k037122_get_interface( running_device *device )
 {
 	assert(device != NULL);
 	assert((device->type() == K037122));

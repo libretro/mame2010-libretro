@@ -76,7 +76,7 @@ static void output_exit(running_machine &machine);
     copy_string - make a copy of a string
 -------------------------------------------------*/
 
-static INLINE const char *copy_string(const char *string)
+INLINE const char *copy_string(const char *string)
 {
 	char *newstring = global_alloc_array(char, strlen(string) + 1);
 	strcpy(newstring, string);
@@ -88,7 +88,7 @@ static INLINE const char *copy_string(const char *string)
     get_hash - return the hash of an output value
 -------------------------------------------------*/
 
-static INLINE UINT32 get_hash(const char *string)
+INLINE UINT32 get_hash(const char *string)
 {
 	return crc32(0, (UINT8 *)string, (UINT32)strlen(string));
 }
@@ -98,7 +98,7 @@ static INLINE UINT32 get_hash(const char *string)
     find_item - find an item based on a string
 -------------------------------------------------*/
 
-static INLINE output_item *find_item(const char *string)
+INLINE output_item *find_item(const char *string)
 {
 	UINT32 hash = get_hash(string);
 	output_item *item;
@@ -116,7 +116,7 @@ static INLINE output_item *find_item(const char *string)
     create_new_item - create a new item
 -------------------------------------------------*/
 
-static INLINE output_item *create_new_item(const char *outname, INT32 value)
+INLINE output_item *create_new_item(const char *outname, INT32 value)
 {
 	output_item *item = global_alloc(output_item);
 	UINT32 hash = get_hash(outname);

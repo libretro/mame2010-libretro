@@ -237,7 +237,7 @@ else ifeq ($(platform), ps3)
    TARGETLIB := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-   CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__ -DPS3_LIBRETRO
+   CFLAGS += -DBLARGG_BIG_ENDIAN=1 -D__ppc__
 	STATIC_LINKING = 1
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
@@ -384,7 +384,7 @@ else ifeq ($(platform), wincross)
 	CC_AS ?= gcc
 
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
-	CCOMFLAGS +=-D__WIN32__
+	CCOMFLAGS +=-D__WIN32__ -D__WIN32_LIBRETRO__ 
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -407,7 +407,7 @@ else
 ifneq ($(MDEBUG),1)
 	SHARED += -s
 endif
-CCOMFLAGS += -D__WIN32__
+CCOMFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
@@ -547,6 +547,8 @@ OBJ = obj/$(PREFIX)$(OSD)$(SUFFIX)$(SUFFIX64)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
+# map the INLINE to something digestible by GCC
+DEFS += -DINLINE="static inline"
 
 # define MSB_FIRST if we are a big-endian target
 ifdef BIGENDIAN
