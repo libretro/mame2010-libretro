@@ -56,7 +56,7 @@ char comment_directory[1024];
 int mame_reset = -1;
 static int ui_ipt_pushchar=-1;
 
-static bool mouse_enable = false;
+static bool mouse_enable = true;
 static bool videoapproach1_enable = false;
 bool hide_nagscreen = false;
 bool hide_gameinfo = false;
@@ -527,7 +527,7 @@ void osd_update_audio_stream(running_machine *machine,short *buffer, int samples
 void retro_set_environment(retro_environment_t cb)
 {
    static const struct retro_variable vars[] = {
-      { "mame_current_mouse_enable", "Mouse supported; disabled|enabled" },
+      { "mame_current_mouse_enable", "Mouse enabled; enabled|disabled" },
       { "mame_current_videoapproach1_enable", "Video approach 1 Enabled; disabled|enabled" },
       { "mame_current_skip_nagscreen", "Hide nag screen; enabled|disabled" },
       { "mame_current_skip_gameinfo", "Hide game info screen; disabled|enabled" },
