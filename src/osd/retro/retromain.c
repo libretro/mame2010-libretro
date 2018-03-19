@@ -706,7 +706,7 @@ static void check_variables(void)
    var.value = NULL;
    var.key = "mame-external_hiscore";
    
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) || var.value)
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if(strcmp(var.value, "enabled") == 0)
          use_external_hiscore = 1;
