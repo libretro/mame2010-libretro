@@ -11,7 +11,7 @@
 NATIVE :=0
 
 UNAME=$(shell uname -a)
-BUILD_BIN2C ?= 1
+BUILD_BIN2C ?= 0
 
 ifeq ($(platform),)
 platform = unix
