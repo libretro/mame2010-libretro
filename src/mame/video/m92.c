@@ -293,6 +293,24 @@ VIDEO_START( m92 )
 	state_save_register_global_pointer(machine, machine->generic.paletteram.u16, 0x1000);
 }
 
+VIDEO_START( ppan )
+{
+	VIDEO_START_CALL( m92 );
+
+	int laynum;
+	for (laynum = 0; laynum < 3; laynum++)
+	{
+		pf_layer_info *layer = &pf_layer[laynum];
+
+		tilemap_set_scrolldx(layer->tmap, 2 * laynum + 11, -2 * laynum + 11);
+		tilemap_set_scrolldy(layer->tmap, -8, -8);
+		tilemap_set_scrolldx(layer->wide_tmap, 2 * laynum - 256 + 11, -2 * laynum + 11 - 256);
+		tilemap_set_scrolldy(layer->wide_tmap, -8, -8);
+	}
+
+	machine->generic.buffered_spriteram.u16 = machine->generic.spriteram.u16;
+}
+
 /*****************************************************************************/
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
@@ -378,6 +396,79 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	}
 }
 
+static void ppan_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
+{
+	UINT16 *source = machine->generic.buffered_spriteram.u16;
+	int offs, layer, x, y, sprite, color, pri_sprite, pri_back, fx, fy, x_multi, y_multi, row, col, s_ptr;
+
+	for (layer = 0; layer < 8; layer++)
+	{
+		for (offs = 0; offs < m92_sprite_list; )
+		{
+			x = source[offs + 3] & 0x1ff;
+			y = source[offs + 0] & 0x1ff;
+			sprite = source[offs + 1];
+			color = source[offs + 2] & 0x007f;
+			pri_sprite = (source[offs + 0] >> 13) & 7;
+			fx = (source[offs + 2] >> 8) & 1;
+			fy = (source[offs + 2] >> 9) & 1;
+			x_multi = 1 << ( (source[offs + 0] >> 11) & 3 );
+			y_multi = 1 << ( (source[offs + 0] >> 9) & 3 );
+			pri_back = (~source[offs + 2] >> 6) & 2;
+
+			offs += x_multi * 4;
+
+			if (pri_sprite != layer) continue;
+
+			y = 384 - 16 - 7 - y;
+			y -= 128;
+			if (y < 0) y += 512;
+
+			if (fx) x += 16 * (x_multi - 1);
+
+			for (col = 0; col < x_multi; col++)
+			{
+				s_ptr = col * 8;
+				if (!fy) s_ptr += y_multi - 1;
+
+				for (row = 0; row < y_multi; row++)
+				{
+					if (flip_screen_get(machine))
+					{
+						pdrawgfx_transpen( bitmap, cliprect, machine->gfx[1],
+								sprite + s_ptr, color, !fx, !fy,
+								464 - x, 240 - (y - row * 16),
+								machine->priority_bitmap, pri_back, 0 );
+
+						// wrap around x
+						pdrawgfx_transpen( bitmap, cliprect, machine->gfx[1],
+								sprite + s_ptr, color, !fx, !fy,
+								464 - x + 512, 240 - (y - row * 16),
+								machine->priority_bitmap, pri_back, 0 );
+					}
+					else
+					{
+						pdrawgfx_transpen( bitmap, cliprect, machine->gfx[1],
+								sprite + s_ptr, color, fx, fy,
+								x, y - row * 16,
+								machine->priority_bitmap, pri_back, 0 );
+
+						// wrap around x
+						pdrawgfx_transpen( bitmap, cliprect, machine->gfx[1],
+								sprite + s_ptr, color, fx, fy,
+								x - 512, y - row * 16,
+								machine->priority_bitmap, pri_back, 0 );
+					}
+					if (fy) s_ptr++;
+					else s_ptr--;
+				}
+				if (fx) x -= 16;
+				else x += 16;
+			}
+		}
+	}
+}
+
 
 /*****************************************************************************/
 
@@ -428,7 +519,7 @@ static void m92_update_scroll_positions(void)
 
 /*****************************************************************************/
 
-static void m92_screenrefresh(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
+static void m92_screenrefresh(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	bitmap_fill(machine->priority_bitmap, cliprect, 0);
 
@@ -451,8 +542,6 @@ static void m92_screenrefresh(running_machine *machine, bitmap_t *bitmap,const r
 	tilemap_draw(bitmap, cliprect, pf_layer[0].tmap,      TILEMAP_DRAW_LAYER1, 0);
 	tilemap_draw(bitmap, cliprect, pf_layer[0].wide_tmap, TILEMAP_DRAW_LAYER0, 1);
 	tilemap_draw(bitmap, cliprect, pf_layer[0].tmap,      TILEMAP_DRAW_LAYER0, 1);
-
-	draw_sprites(machine, bitmap, cliprect);
 }
 
 
@@ -461,7 +550,23 @@ VIDEO_UPDATE( m92 )
 	m92_update_scroll_positions();
 	m92_screenrefresh(screen->machine, bitmap, cliprect);
 
+	draw_sprites(screen->machine, bitmap, cliprect);
+
 	/* Flipscreen appears hardwired to the dipswitch - strange */
+	if (input_port_read(screen->machine, "DSW") & 0x100)
+		flip_screen_set(screen->machine, 0);
+	else
+		flip_screen_set(screen->machine, 1);
+	return 0;
+}
+
+VIDEO_UPDATE( ppan )
+{
+	m92_update_scroll_positions();
+	m92_screenrefresh(screen->machine, bitmap, cliprect);
+
+	ppan_draw_sprites(screen->machine, bitmap, cliprect);
+
 	if (input_port_read(screen->machine, "DSW") & 0x100)
 		flip_screen_set(screen->machine, 0);
 	else
