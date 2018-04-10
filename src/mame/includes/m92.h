@@ -28,3 +28,6 @@ WRITE16_HANDLER( m92_master_control_w );
 
 VIDEO_START( m92 );
 VIDEO_UPDATE( m92 );
+
+VIDEO_START( ppan );
+VIDEO_UPDATE( ppan );
