@@ -376,6 +376,11 @@ static WRITE16_HANDLER( m92_sound_reset_w )	/* Added sound reset line for IREM M
 	cputag_set_input_line(space->machine, "soundcpu", INPUT_LINE_RESET, (data) ? CLEAR_LINE : ASSERT_LINE);
 }
 
+static WRITE16_DEVICE_HANDLER( oki_bank_w )	/* for ppan (bootleg of hook) */
+{
+	downcast<okim6295_device *>(device)->set_bank_base( 0x40000 * ((data + 1) & 0x03) );
+}
+
 /*****************************************************************************/
 
 /* appears to be an earlier board */
@@ -387,7 +392,8 @@ static ADDRESS_MAP_START( lethalth_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0xf8800, 0xf8fff) AM_READWRITE(m92_paletteram_r, m92_paletteram_w)
 	AM_RANGE(0xf9000, 0xf900f) AM_WRITE(m92_spritecontrol_w) AM_BASE(&m92_spritecontrol)
 	AM_RANGE(0xf9800, 0xf9801) AM_WRITE(m92_videocontrol_w)
-	AM_RANGE(0xffff0, 0xfffff) AM_ROM
+//	AM_RANGE(0xffff0, 0xfffff) AM_ROM
+	AM_RANGE(0xffff0, 0xfffff) AM_ROM  AM_REGION("maincpu", 0x7fff0)
 ADDRESS_MAP_END
 
 static ADDRESS_MAP_START( m92_map, ADDRESS_SPACE_PROGRAM, 16 )
@@ -418,6 +424,22 @@ static ADDRESS_MAP_START( m92_portmap, ADDRESS_SPACE_IO, 16 )
 	AM_RANGE(0x90, 0x97) AM_WRITE(m92_pf3_control_w)
 	AM_RANGE(0x98, 0x9f) AM_WRITE(m92_master_control_w)
 	AM_RANGE(0xc0, 0xc1) AM_WRITE(m92_sound_reset_w)
+ADDRESS_MAP_END
+
+static ADDRESS_MAP_START( ppan_portmap, ADDRESS_SPACE_IO, 16 )		/* ppan (bootleg of hook) */
+	AM_RANGE(0x00, 0x01) AM_READ_PORT("P1_P2")
+	AM_RANGE(0x02, 0x03) AM_READ_PORT("COINS_DSW3")
+	AM_RANGE(0x04, 0x05) AM_READ_PORT("DSW")
+	AM_RANGE(0x06, 0x07) AM_READ_PORT("P3_P4")
+	AM_RANGE(0x08, 0x09) AM_READ(m92_sound_status_r)
+	AM_RANGE(0x10, 0x11) AM_DEVWRITE("oki", oki_bank_w)
+	AM_RANGE(0x18, 0x19) AM_DEVREADWRITE8("oki", okim6295_r, okim6295_w, 0x00ff)
+	AM_RANGE(0x02, 0x03) AM_WRITE(m92_coincounter_w)
+	AM_RANGE(0x40, 0x43) AM_WRITENOP
+	AM_RANGE(0x80, 0x87) AM_WRITE(m92_pf1_control_w)
+	AM_RANGE(0x88, 0x8f) AM_WRITE(m92_pf2_control_w)
+	AM_RANGE(0x90, 0x97) AM_WRITE(m92_pf3_control_w)
+	AM_RANGE(0x98, 0x9f) AM_WRITE(m92_master_control_w)
 ADDRESS_MAP_END
 
 /******************************************************************************/
@@ -1020,7 +1042,7 @@ static MACHINE_DRIVER_START( ppan )
 	/* basic machine hardware */
 	MDRV_CPU_ADD("maincpu",V33,18000000/2)
 	MDRV_CPU_PROGRAM_MAP(m92_map)
-	MDRV_CPU_IO_MAP(m92_portmap)
+	MDRV_CPU_IO_MAP(ppan_portmap)
 
 	/* no Sound CPU */
 
@@ -1037,11 +1059,10 @@ static MACHINE_DRIVER_START( ppan )
 	MDRV_SCREEN_SIZE(512, 256)
 	MDRV_SCREEN_VISIBLE_AREA(80, 511-112, 8, 247) /* 320 x 240 */
 
+	MDRV_VIDEO_UPDATE(ppan)
 	MDRV_GFXDECODE(m92)
 	MDRV_PALETTE_LENGTH(2048)
-
-	MDRV_VIDEO_START(m92)
-	MDRV_VIDEO_UPDATE(m92)
+	MDRV_VIDEO_START(ppan)
 
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_MONO("mono")
@@ -1552,13 +1573,13 @@ ROM_START( ppan )
 	ROM_LOAD16_BYTE( "1.u6", 0x000001, 0x080000, CRC(b135dd6e) SHA1(3e7ac75db53804c605fb628546f5a506ba7f7a5f) )
 	ROM_LOAD16_BYTE( "2.u5", 0x000000, 0x080000, CRC(7785289c) SHA1(8125c4ae8e99b6eed5216c1d956426bf2034ada0) )
 
-	ROM_REGION( 0x100000, "gfx1", 0 ) /* Tiles */
+	ROM_REGION( 0x100000, "gfx1", 0 )	/* Tiles */
 	ROM_LOAD( "7.u114", 0x000000, 0x040000, CRC(dec63dcf) SHA1(e9869110f832d782c460b123928b042c65fdf8bd) )
 	ROM_LOAD( "6.u115", 0x040000, 0x040000, CRC(e4eb0b92) SHA1(159da3ec973490a153c69c96c1373cf4e0290736) )
 	ROM_LOAD( "5.u116", 0x080000, 0x040000, CRC(a52b320b) SHA1(1522562239bb3b93ef552c47445daa4ee021495c) )
 	ROM_LOAD( "4.u117", 0x0c0000, 0x040000, CRC(7ef67731) SHA1(af0b0ee6e1c06af04c609af7e077d4a7d76d8817) )
 
-	ROM_REGION( 0x400000, "gfx2", 0 ) /* Sprites */
+	ROM_REGION( 0x400000, "gfx2", 0 )	/* Sprites */
 	ROM_LOAD( "15.u106", 0x000000, 0x080000, CRC(cdfc2f78) SHA1(02981c5b48afe532a74c9aa72ebdaaaca7a091e5) )
 	ROM_LOAD( "14.u110", 0x080000, 0x080000, CRC(87e767f0) SHA1(ddf3c5a04c8fc1551bddb7e7753972a80442b88b) )
 	ROM_LOAD( "13.u107", 0x100000, 0x080000, CRC(e07f2abe) SHA1(1b404fcf6bcc1a25e510c95a9eb83df0c780934a) )
@@ -1568,8 +1589,18 @@ ROM_START( ppan )
 	ROM_LOAD( "9.u109",  0x300000, 0x080000, CRC(9d466b1a) SHA1(c65b7afcfbd6bfec1b495a5dbce806ff34a7cbc1) )
 	ROM_LOAD( "8.u113",  0x380000, 0x080000, CRC(d08a5f6b) SHA1(ab762be9e5fadac2dc3149bfa69b8cbdbac3218b) )
 
-	ROM_REGION( 0x80000, "oki", 0 ) /* OKI M6295 samples */
+	ROM_REGION( 0x80000, "okidata", 0 )	/* OKI M6295 samples */
 	ROM_LOAD( "3.u122", 0x000000, 0x080000, CRC(d0d37028) SHA1(0f58d220a1972bafa1299a19e704b7735886c8b6) )
+
+	ROM_REGION( 0x100000, "oki", 0 )	/* OKI samples copied here */
+	ROM_COPY( "okidata", 0x000000, 0x000000, 0x020000 )
+	ROM_COPY( "okidata", 0x000000, 0x020000, 0x020000 )
+	ROM_COPY( "okidata", 0x000000, 0x040000, 0x020000 )
+	ROM_COPY( "okidata", 0x020000, 0x060000, 0x020000 )
+	ROM_COPY( "okidata", 0x000000, 0x080000, 0x020000 )
+	ROM_COPY( "okidata", 0x040000, 0x0a0000, 0x020000 )
+	ROM_COPY( "okidata", 0x000000, 0x0c0000, 0x020000 )
+	ROM_COPY( "okidata", 0x060000, 0x0e0000, 0x020000 )
 ROM_END
 
 ROM_START( rtypeleo )
@@ -2138,7 +2169,19 @@ static DRIVER_INIT( uccops )
 {
 	init_m92(machine, 1);
 }
+/*
+static DRIVER_INIT( ppan )
+{
+	UINT8 *RAM = memory_region(machine, "maincpu");
+	init_m92(machine, 1);
 
+	memory_set_bankptr(machine, "bank1", &RAM[0xa0000]);
+	memory_nop_write(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_IO), 0x00, 0x01, 0, 0);
+	memory_nop_write(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_IO), 0xc0, 0xc1, 0, 0);
+	m92_game_kludge = 0;
+	m92_irq_vectorbase = 0x80;
+}
+*/
 static DRIVER_INIT( rtypeleo )
 {
 	init_m92(machine, 1);
@@ -2170,7 +2213,6 @@ static DRIVER_INIT( inthunt )
 {
 	init_m92(machine, 1);
 }
-
 
 static DRIVER_INIT( lethalth )
 {
@@ -2235,7 +2277,7 @@ GAME( 1992, mysticri, 0,        mysticri,      mysticri, mysticri, ROT0,   "Irem
 GAME( 1992, gunhohki, mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Gun Hohki (Japan)", 0 )
 // cheaply produced Korean board, has original chips, but lacks any proper labels - uses older revision sound program that doesn't work in MAME right now
 // main code is also significantly different to the supported original set, so it might just be a legitimate early revision on a cheap board
-GAME( 1992, mysticrib,mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Mystic Riders (bootleg?)", GAME_NO_SOUND )
+GAME( 1992, mysticrib,mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Mystic Riders (bootleg?)", GAME_IMPERFECT_SOUND )
 GAME( 1992, majtitl2, 0,        majtitl2,      majtitl2, majtitl2, ROT0,   "Irem",         "Major Title 2 (World)", 0 )
 GAME( 1992, majtitl2j,majtitl2, majtitl2,      majtitl2, majtitl2, ROT0,   "Irem",         "Major Title 2 (Japan)", 0 )
 GAME( 1992, skingame, majtitl2, majtitl2,      majtitl2, majtitl2, ROT0,   "Irem America", "The Irem Skins Game (US set 1)", 0 )
@@ -2243,7 +2285,7 @@ GAME( 1992, skingame2,majtitl2, majtitl2,      majtitl2, majtitl2, ROT0,   "Irem
 GAME( 1992, hook,     0,        hook,          hook,     hook,     ROT0,   "Irem",         "Hook (World)", 0 )
 GAME( 1992, hooku,    hook,     hook,          hook,     hook,     ROT0,   "Irem America", "Hook (US)", 0 )
 GAME( 1992, hookj,    hook,     hook,          hook,     hook,     ROT0,   "Irem",         "Hook (Japan)", 0 )
-GAME( 1992, ppan,     hook,     ppan,          hook,     hook,     ROT0,   "bootleg",      "Peter Pan (bootleg of Hook)", GAME_NOT_WORKING ) // PCB marked 'Peter Pan', no title screen, made in Italy?
+GAME( 1992, ppan,     hook,     ppan,          hook,     hook,     ROT0,   "bootleg",      "Peter Pan (bootleg of Hook)", GAME_IMPERFECT_GRAPHICS ) /* PCB marked 'Peter Pan', no title screen, made in Italy? */
 GAME( 1992, rtypeleo, 0,        rtypeleo,      rtypeleo, rtypeleo, ROT0,   "Irem",         "R-Type Leo (World)", 0 )
 GAME( 1992, rtypeleoj,rtypeleo, rtypeleo,      rtypeleo, rtypelej, ROT0,   "Irem",         "R-Type Leo (Japan)", 0 )
 GAME( 1993, inthunt,  0,        inthunt,       inthunt,  inthunt,  ROT0,   "Irem",         "In The Hunt (World)", 0 )
