@@ -2169,19 +2169,7 @@ static DRIVER_INIT( uccops )
 {
 	init_m92(machine, 1);
 }
-/*
-static DRIVER_INIT( ppan )
-{
-	UINT8 *RAM = memory_region(machine, "maincpu");
-	init_m92(machine, 1);
 
-	memory_set_bankptr(machine, "bank1", &RAM[0xa0000]);
-	memory_nop_write(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_IO), 0x00, 0x01, 0, 0);
-	memory_nop_write(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_IO), 0xc0, 0xc1, 0, 0);
-	m92_game_kludge = 0;
-	m92_irq_vectorbase = 0x80;
-}
-*/
 static DRIVER_INIT( rtypeleo )
 {
 	init_m92(machine, 1);
@@ -2277,7 +2265,7 @@ GAME( 1992, mysticri, 0,        mysticri,      mysticri, mysticri, ROT0,   "Irem
 GAME( 1992, gunhohki, mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Gun Hohki (Japan)", 0 )
 // cheaply produced Korean board, has original chips, but lacks any proper labels - uses older revision sound program that doesn't work in MAME right now
 // main code is also significantly different to the supported original set, so it might just be a legitimate early revision on a cheap board
-GAME( 1992, mysticrib,mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Mystic Riders (bootleg?)", GAME_IMPERFECT_SOUND )
+GAME( 1992, mysticrib,mysticri, mysticri,      mysticri, mysticri, ROT0,   "Irem",         "Mystic Riders (bootleg?)", 0 )
 GAME( 1992, majtitl2, 0,        majtitl2,      majtitl2, majtitl2, ROT0,   "Irem",         "Major Title 2 (World)", 0 )
 GAME( 1992, majtitl2j,majtitl2, majtitl2,      majtitl2, majtitl2, ROT0,   "Irem",         "Major Title 2 (Japan)", 0 )
 GAME( 1992, skingame, majtitl2, majtitl2,      majtitl2, majtitl2, ROT0,   "Irem America", "The Irem Skins Game (US set 1)", 0 )
