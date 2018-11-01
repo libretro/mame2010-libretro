@@ -324,9 +324,10 @@ else ifeq ($(platform), wiiu)
 # (armv7 a7, hard point, neon based) ### 
 # NESC, SNESC, C64 mini 
 else ifeq ($(platform), classic_armv7_a7)
-	TARGET := $(TARGET_NAME)_libretro.so
-	fpic := -fPIC
-  	LDFLAGS += $(fpic) -shared -Wl,--no-undefined
+	TARGETLIB := $(TARGET_NAME)_libretro.so
+	SHARED := -shared -Wl,--no-undefined
+	fpic = -fPIC
+	LD = $(CC)
 	CCOMFLAGS += -Ofast \
 	-flto=4 -fwhole-program -fuse-linker-plugin \
 	-fdata-sections -ffunction-sections -Wl,--gc-sections \
@@ -338,6 +339,7 @@ else ifeq ($(platform), classic_armv7_a7)
 	CCOMFLAGS += -fomit-frame-pointer -ffast-math -fsigned-char
 	ARM_ENABLED = 1
 	X86_SH2DRC = 0
+	PTR64 = 0
 	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
 	  CFLAGS += -march=armv7-a
 	else
