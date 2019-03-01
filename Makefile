@@ -353,8 +353,9 @@ else ifeq ($(platform), classic_armv7_a7)
 # PS Classic 
 else ifeq ($(platform), classic_armv8_a35)
 	TARGETLIB := $(TARGET_NAME)_libretro.so
-	SHARED := -shared -Wl,--no-undefined
-	fpic = -fPIC
+	SHARED := -shared -Wl,--no-undefined,--version-script=src/osd/retro/link.T
+        LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
+        fpic = -fPIC
 	LD = $(CC)
 	CCOMFLAGS += -Ofast \
 	-flto=4 -fwhole-program -fuse-linker-plugin \
