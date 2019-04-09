@@ -107,6 +107,10 @@ enum
 	KEY_JOYSTICK_D,
 	KEY_JOYSTICK_L,
 	KEY_JOYSTICK_R,
+	LX,
+	LY,
+	RX,
+	RY,
 	KEY_TOTAL
 };
 
