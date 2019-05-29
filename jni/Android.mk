@@ -1,41 +1,56 @@
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
+define uniq
+	$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+endef
+
+TARGET := mame
+OSD    := retro
+
+CORE_DIR := $(LOCAL_PATH)/..
+OBJ      := $(CORE_DIR)/src
+
+LIBEMU   := $(OBJ)/libemu.a
+LIBCPU   := $(OBJ)/libcpu.a
+LIBDASM  := $(OBJ)/libdasm.a
+LIBSOUND := $(OBJ)/libsound.a
+LIBUTIL  := $(OBJ)/libutil.a
+LIBOCORE := $(OBJ)/libocore.a
+LIBOSD   := $(OBJ)/libosd.a
+
+include $(CORE_DIR)/Makefile.common
+
+COREFLAGS := $(DEFS) $(INCFLAGS)
+COREFLAGS += -DCRLF=2 -DINLINE="static inline" -Wno-c++11-narrowing -Wno-reserved-user-defined-literal -Wno-deprecated
+
+# For testing only, remove before PR
+COREFLAGS += -Wno-implicit-exception-spec-mismatch -Wno-inline-new-delete -Wno-tautological-undefined-compare
+
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+  COREFLAGS += -DARM_ENABLED
+endif
 
 GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")
-	LOCAL_CFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+  COREFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
 
-LOCAL_MODULE    := retro
+LIBS         := $(basename $(notdir $(filter %.a,$(OBJECTS))))
+LIBS_UPPER   := $(shell echo $(LIBS) | tr '[:lower:]' '[:upper:]')
+SOURCES_OBJ  := $(filter-out %.a,$(OBJECTS)) $(foreach LIB,$(LIBS_UPPER),$($(LIB)_OBJS))
+SOURCES_UNIQ := $(call uniq,$(SOURCES_OBJ))
+SOURCES_C    := $(SOURCES_UNIQ:%.o=%.c)
 
-ifeq ($(TARGET_ARCH),arm)
-LOCAL_CFLAGS += -DANDROID_ARM
-LOCAL_ARM_MODE := arm
+include $(CLEAR_VARS)
+LOCAL_MODULE        := retro
+LOCAL_SRC_FILES     := $(SOURCES_C)
+LOCAL_CPPFLAGS      := -std=gnu++11 $(COREFLAGS)
+LOCAL_CPP_FEATURES  := exceptions rtti
+LOCAL_CPP_EXTENSION := .c
+LOCAL_LDLIBS        := -lz
+
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-LOCAL_CFLAGS += -D__ARM_NEON__ -mfpu=neon
+  LOCAL_ARM_NEON := true
 endif
-endif
-
-ifeq ($(TARGET_ARCH),x86)
-LOCAL_CFLAGS +=  -DANDROID_X86
-endif
-
-ifeq ($(TARGET_ARCH),mips)
-LOCAL_CFLAGS += -DANDROID_MIPS -D__mips__ -D__MIPSEL__
-endif
-
-CORE_ROOT_DIR := ..
-CORE_DIR      := $(CORE_ROOT_DIR)/src
-
-include $(CORE_ROOT_DIR)/Makefile.common
-
-LOCAL_STATIC_LIBRARIES := $(OBJECTS)
-
-LOCAL_SRC_FILES  += $(SOURCES_C) $(SOURCES_CXX)
-LOCAL_C_INCLUDES = $(INCFLAGS)
-
-LOCAL_CFLAGS += $(DEFS) $(COREDEFS) $(CPUDEFS) $(SOUNDDEFS) $(ASMDEFS) $(DBGDEFS)
-LOCAL_CFLAGS += -O3 -std=gnu99 -ffast-math -funroll-loops -Dstricmp=strcasecmp -DINLINE="static inline" -DANDROID $(INCFLAGS)
 
 include $(BUILD_SHARED_LIBRARY)

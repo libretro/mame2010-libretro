@@ -18,7 +18,7 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#if defined(__MACH__) && !defined(IOS)
+#if (defined(__MACH__) && !defined(IOS)) || defined(ANDROID)
 #include <type_traits>
 #define DEF_NAMESPACE std
 #elif defined(IOS)
