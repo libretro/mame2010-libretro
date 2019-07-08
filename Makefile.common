@@ -542,7 +542,7 @@ ATLUS_OBJS := \
 	$(DRIVERS)/ohmygod.o $(VIDEO)/ohmygod.o \
 	$(DRIVERS)/powerins.o $(VIDEO)/powerins.o
 
-$(MAMEOBJ)/atlus.a: $(ATLUS_OBJ)
+$(MAMEOBJ)/atlus.a: $(ATLUS_OBJS)
 
 BARCREST_OBJS := \
 	$(VIDEO)/awpvid.o \
@@ -1281,7 +1281,7 @@ SANRITSU_OBJS := \
 	$(DRIVERS)/mermaid.o $(VIDEO)/mermaid.o \
 	$(DRIVERS)/mjkjidai.o $(VIDEO)/mjkjidai.o
 
-$(MAMEOBJ)/sanritsu.a: $(SANRITSU)
+$(MAMEOBJ)/sanritsu.a: $(SANRITSU_OBJS)
 
 SEGA_OBJS := \
 	$(DRIVERS)/aladbl.o \
