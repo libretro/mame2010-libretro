@@ -23,8 +23,12 @@ else ifneq ($(findstring Darwin,$(UNAME)),)
    platform = osx
 else ifneq ($(findstring win,$(UNAME)),)
    platform = win
+else ifneq ($(findstring retropie,$(UNAME)),)
+   platform = rpi
 endif
 endif
+
+$(info Building for platform '$(platform)')
 
 # system platform
 system_platform = unix
