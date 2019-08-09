@@ -26,6 +26,8 @@ else ifneq ($(findstring win,$(UNAME)),)
 endif
 endif
 
+$(info Building for platform '$(platform)')
+
 # system platform
 system_platform = unix
 ifeq ($(UNAME),)
@@ -159,25 +161,25 @@ else ifeq ($(platform), android)
 EXTRA_RULES = 1
 ARM_ENABLED = 1
    TARGETLIB := $(TARGET_NAME)_libretro_android.so
-	TARGETOS=linux  
+   TARGETOS=linux  
    fpic = -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-	CC_AS = @arm-linux-androideabi-gcc
-	CC = @arm-linux-androideabi-g++
-	AR = @arm-linux-androideabi-ar
-	LD = @arm-linux-androideabi-g++ 
-	ALIGNED=1
-	FORCE_DRC_C_BACKEND = 1
-	CCOMFLAGS += -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
-	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH
-	PLATCFLAGS += -DANDROID
-	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
-	NATIVELD = g++
-	NATIVELDFLAGS = -Wl,--warn-common -lstdc++
-	NATIVECC = g++
-	NATIVECFLAGS = -std=gnu99 
-	CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
-	LIBS += -lstdc++ 
+   CC_AS = @arm-linux-androideabi-gcc
+   CC = @arm-linux-androideabi-g++
+   AR = @arm-linux-androideabi-ar
+   LD = @arm-linux-androideabi-g++ 
+   ALIGNED=1
+   FORCE_DRC_C_BACKEND = 1
+   CCOMFLAGS += -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16 -fsingle-precision-constant
+   PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DANDTIME -DRANDPATH
+   PLATCFLAGS += -DANDROID
+   LDFLAGS += -Wl,--fix-cortex-a8 -llog $(SHARED)
+   NATIVELD = g++
+   NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+   NATIVECC = g++
+   NATIVECFLAGS = -std=gnu99 
+   CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
+   LIBS += -lstdc++ 
 
 # OS X
 else ifeq ($(platform), osx)
@@ -336,6 +338,7 @@ else ifneq (,$(findstring rpi,$(platform)))
    CCOMFLAGS += -fomit-frame-pointer -ffast-math -fsigned-char
    ARM_ENABLED = 1
    X86_SH2DRC = 0
+   FORCE_DRC_C_BACKEND = 1
 
    ifneq (,$(findstring rpi2, $(platform)))
 	CCOMFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
@@ -481,14 +484,12 @@ CROSS_BUILD_OSD = retro
 # configure this in your environment and never have to think about it
 # ARCHOPTS =
 
-
-
 #-------------------------------------------------
 # specify program options; see each option below
 # for details
 #-------------------------------------------------
 
-# uncomment the force the universal DRC to always use the C backend
+# uncomment to force the universal DRC to always use the C backend
 # you may need to do this if your target architecture does not have
 # a native backend
 # FORCE_DRC_C_BACKEND = 1
