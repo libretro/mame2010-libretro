@@ -213,14 +213,39 @@ else ifneq (,$(findstring ios,$(platform)))
 ifeq ($(IOSSDK),)
 IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
-
+ifeq ($(platform),ios-arm64)
+   CC = c++ -arch arm64 -isysroot $(IOSSDK)
+   PTR64 = 1
+else
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
+endif
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
    CXXFLAGS += -DIOS
    NATIVELD = $(CC) -stdlib=libc++
    LDFLAGS +=  $(SHARED)
-   LD = $(CC)
+   LD = $(CXX)
+
+# tvOS
+else ifeq ($(platform), tvos-arm64)
+
+   TARGETLIB := $(TARGET_NAME)_libretro_tvos.dylib
+   TARGETOS = macosx
+   EXTRA_RULES = 1
+   ARM_ENABLED = 1
+   fpic = -fPIC
+   SHARED := -dynamiclib
+   PTR64 = 1
+   CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
+   CFLAGS += -DIOS
+   CXXFLAGS += -DIOS
+   NATIVELD = $(CC) -stdlib=libc++
+   LDFLAGS +=  $(SHARED)
+   LD = $(CXX)
+
+ifeq ($(IOSSDK),)
+IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
+endif
 
 # QNX
 else ifeq ($(platform), qnx)
