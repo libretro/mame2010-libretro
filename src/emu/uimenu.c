@@ -143,7 +143,7 @@ struct _ui_menu
 
 /* internal input menu item data */
 typedef struct _input_item_data input_item_data;
-struct _input_item_data
+struct __attribute__((packed)) _input_item_data
 {
 	input_item_data *	next;				/* pointer to next item in the list */
 	const void *		ref;				/* reference to type description for global inputs or field for game inputs */
