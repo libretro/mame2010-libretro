@@ -29,5 +29,6 @@ libretro-build-windows-x64:
     CC:       x86_64-w64-mingw32-g++
     CXX:      x86_64-w64-mingw32-g++
     CC_AS:    x86_64-w64-mingw32-gcc
+    AR:       x86_64-w64-mingw32-ar
     NATIVELD: x86_64-w64-mingw32-ld
     LD:       x86_64-w64-mingw32-ld
