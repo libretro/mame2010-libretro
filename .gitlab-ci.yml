@@ -25,3 +25,9 @@ libretro-build-windows-x64:
   extends:
     - .core-defs
     - .libretro-windows-x64-mingw-make-default
+  variables:
+    CC:       x86_64-w64-mingw32-g++
+    CXX:      x86_64-w64-mingw32-g++
+    CC_AS:    x86_64-w64-mingw32-gcc
+    NATIVELD: x86_64-w64-mingw32-ld
+    LD:       x86_64-w64-mingw32-ld
