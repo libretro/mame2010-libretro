@@ -489,10 +489,10 @@ endif
 else
    TARGETLIB := $(TARGET_NAME)_libretro.dll
 	TARGETOS = win32
-	CC = g++
-	LD = g++
+	CC ?= g++
+	LD ?= g++
 	NATIVELD = $(LD)
-	CC_AS = gcc
+	CC_AS ?= gcc
 	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=src/osd/retro/link.T
 ifneq ($(MDEBUG),1)
 	SHARED += -s
