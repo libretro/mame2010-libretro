@@ -491,6 +491,7 @@ else
 	LD ?= g++
 	NATIVELD = $(LD)
 	CC_AS ?= gcc
+   BUILD_ZLIB = 1
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
 ifneq ($(MDEBUG),1)
 	SHARED += -s
