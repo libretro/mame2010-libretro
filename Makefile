@@ -873,10 +873,8 @@ $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CXX) $(CDEFS) $(CFLAGS) -c $< -o $@
 
 $(DRIVLISTSRC): $(CORE_DIR)/src/$(TARGET)/$(SUBTARGET).lst $(MAKELIST_TARGET)
-	@echo Building driver list $<...
-	@$(MAKELIST) $< >$@
+	$(MAKELIST) $< >$@
 
 $(OBJ)/%.a:
-	@echo Archiving $@...
 	$(RM) $@
 	$(AR) $(ARFLAGS) $@ $^
