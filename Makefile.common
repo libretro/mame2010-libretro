@@ -4620,13 +4620,11 @@ LIBZ_OBJS = \
 	$(LIBOBJ)/zlib/compress.o \
 	$(LIBOBJ)/zlib/crc32.o \
 	$(LIBOBJ)/zlib/deflate.o \
-	$(LIBOBJ)/zlib/gzio.o \
 	$(LIBOBJ)/zlib/inffast.o \
 	$(LIBOBJ)/zlib/inflate.o \
 	$(LIBOBJ)/zlib/infback.o \
 	$(LIBOBJ)/zlib/inftrees.o \
 	$(LIBOBJ)/zlib/trees.o \
-	$(LIBOBJ)/zlib/uncompr.o \
 	$(LIBOBJ)/zlib/zutil.o
 
 $(OBJ)/libz.a: $(LIBZ_OBJS)
