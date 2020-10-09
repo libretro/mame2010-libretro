@@ -44,7 +44,7 @@ int inflate_table(codetype type, unsigned short FAR *lens, unsigned codes, code 
     unsigned fill;              /* index for replicating entries */
     unsigned low;               /* low bits for current root entry */
     unsigned mask;              /* mask for low root bits */
-    code this;                  /* table entry for duplication */
+    code _this;                 /* table entry for duplication */
     code FAR *next;             /* next available space in table */
     const unsigned short FAR *base;     /* base value table to use */
     const unsigned short FAR *extra;    /* extra bits table to use */
@@ -109,11 +109,11 @@ int inflate_table(codetype type, unsigned short FAR *lens, unsigned codes, code 
         if (count[max] != 0) break;
     if (root > max) root = max;
     if (max == 0) {                     /* no symbols to code at all */
-        this.op = (unsigned char)64;    /* invalid code marker */
-        this.bits = (unsigned char)1;
-        this.val = (unsigned short)0;
-        *(*table)++ = this;             /* make a table to force an error */
-        *(*table)++ = this;
+        _this.op = (unsigned char)64;    /* invalid code marker */
+        _this.bits = (unsigned char)1;
+        _this.val = (unsigned short)0;
+        *(*table)++ = _this;             /* make a table to force an error */
+        *(*table)++ = _this;
         *bits = 1;
         return 0;     /* no symbols, but wait for decoding to report error */
     }
@@ -209,18 +209,18 @@ int inflate_table(codetype type, unsigned short FAR *lens, unsigned codes, code 
     /* process all codes and make table entries */
     for (;;) {
         /* create table entry */
-        this.bits = (unsigned char)(len - drop);
+        _this.bits = (unsigned char)(len - drop);
         if ((int)(work[sym]) < end) {
-            this.op = (unsigned char)0;
-            this.val = work[sym];
+            _this.op = (unsigned char)0;
+            _this.val = work[sym];
         }
         else if ((int)(work[sym]) > end) {
-            this.op = (unsigned char)(extra[work[sym]]);
-            this.val = base[work[sym]];
+            _this.op = (unsigned char)(extra[work[sym]]);
+            _this.val = base[work[sym]];
         }
         else {
-            this.op = (unsigned char)(32 + 64);         /* end of block */
-            this.val = 0;
+            _this.op = (unsigned char)(32 + 64);         /* end of block */
+            _this.val = 0;
         }
 
         /* replicate for those indices with low len bits equal to huff */
@@ -229,7 +229,7 @@ int inflate_table(codetype type, unsigned short FAR *lens, unsigned codes, code 
         min = fill;                 /* save offset to next table */
         do {
             fill -= incr;
-            next[(huff >> drop) + fill] = this;
+            next[(huff >> drop) + fill] = _this;
         } while (fill != 0);
 
         /* backwards increment the len-bit code huff */
@@ -289,20 +289,20 @@ int inflate_table(codetype type, unsigned short FAR *lens, unsigned codes, code 
        through high index bits.  When the current sub-table is filled, the loop
        drops back to the root table to fill in any remaining entries there.
      */
-    this.op = (unsigned char)64;                /* invalid code marker */
-    this.bits = (unsigned char)(len - drop);
-    this.val = (unsigned short)0;
+    _this.op = (unsigned char)64;                /* invalid code marker */
+    _this.bits = (unsigned char)(len - drop);
+    _this.val = (unsigned short)0;
     while (huff != 0) {
         /* when done with sub-table, drop back to root table */
         if (drop != 0 && (huff & mask) != low) {
             drop = 0;
             len = root;
             next = *table;
-            this.bits = (unsigned char)len;
+            _this.bits = (unsigned char)len;
         }
 
         /* put invalid code marker in table */
-        next[huff >> drop] = this;
+        next[huff >> drop] = _this;
 
         /* backwards increment the len-bit code huff */
         incr = 1U << (len - 1);
