@@ -4,6 +4,8 @@ define uniq
 	$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
 endef
 
+DEFS :=
+
 TARGET := mame
 OSD    := retro
 
@@ -18,6 +20,16 @@ LIBUTIL  := $(OBJ)/libutil.a
 LIBOCORE := $(OBJ)/libocore.a
 LIBOSD   := $(OBJ)/libosd.a
 
+
+ifneq ($(filter $(TARGET_ARCH_ABI), arm64-v8a x86_64),)
+  PTR64 := 1
+  DEFS  += -DPTR64
+endif
+
+ifeq ($(filter $(TARGET_ARCH_ABI), x86 x86_64),)
+  FORCE_DRC_C_BACKEND := 1
+endif
+
 include $(CORE_DIR)/Makefile.common
 
 COREFLAGS := $(DEFS) $(INCFLAGS)
@@ -26,7 +38,7 @@ COREFLAGS += -DCRLF=2 -DINLINE="static inline" -Wno-c++11-narrowing -Wno-reserve
 # For testing only, remove before PR
 COREFLAGS += -Wno-implicit-exception-spec-mismatch -Wno-inline-new-delete -Wno-tautological-undefined-compare
 
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+ifneq ($(filter $(TARGET_ARCH_ABI), armeabi-v7a arm64-v8a),)
   COREFLAGS += -DARM_ENABLED
 endif
 
