@@ -107,16 +107,16 @@ endif
 UNAME=$(shell uname -m)
 
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifneq (,$(findstring mingw64-w64,$(PATH)))
-PTR64=1
+PTR64 ?= 1
 endif
 ifneq (,$(findstring Power,$(UNAME)))
 BIGENDIAN=1
@@ -331,7 +331,7 @@ else ifeq ($(platform), wiiu)
    CC = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   COMMONFLAGS += -DGEKKO -mwup -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DWORDS_BIGENDIAN=1 -malign-natural 
+   COMMONFLAGS += -DGEKKO -mcpu=750 -meabi -mhard-float -D__POWERPC__ -D__ppc__ -DWORDS_BIGENDIAN=1 -malign-natural 
    COMMONFLAGS += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -fsingle-precision-constant -mno-bit-align
    COMMONFLAGS += -DHAVE_STRTOUL -DBIGENDIAN=1 -DWIIU -DOLEFIX
    DEFS       += -DMSB_FIRST
