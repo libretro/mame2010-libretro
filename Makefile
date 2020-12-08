@@ -107,16 +107,16 @@ endif
 UNAME=$(shell uname -m)
 
 ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
-PTR64 = 1
+PTR64 ?= 1
 endif
 ifneq (,$(findstring mingw64-w64,$(PATH)))
-PTR64=1
+PTR64 ?= 1
 endif
 ifneq (,$(findstring Power,$(UNAME)))
 BIGENDIAN=1
