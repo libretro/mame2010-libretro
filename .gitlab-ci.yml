@@ -43,8 +43,8 @@ stages:
 # Windows 64-bit
 libretro-build-windows-x64:
   extends:
-    - .core-defs
     - .libretro-windows-x64-mingw-make-default
+    - .core-defs
   variables:
     CC:       x86_64-w64-mingw32-g++
     CXX:      x86_64-w64-mingw32-g++
@@ -56,8 +56,15 @@ libretro-build-windows-x64:
 # Linux 64-bit
 libretro-build-linux-x64:
   extends:
-    - .core-defs
     - .libretro-linux-x64-make-default
+    - .core-defs
+  variables:
+    CC:       g++
+    CXX:      g++
+    CC_AS:    gcc
+    AR:       ar
+    NATIVELD: ld
+    LD:       ld
 
 # MacOS 64-bit
 #libretro-build-osx-x64:
@@ -69,17 +76,17 @@ libretro-build-linux-x64:
 # Android ARMv7a
 android-armeabi-v7a:
   extends:
-    - .core-defs
     - .libretro-android-jni-armeabi-v7a
+    - .core-defs
 
 # Android ARMv8a
 android-arm64-v8a:
   extends:
-    - .core-defs
     - .libretro-android-jni-arm64-v8a
+    - .core-defs
 
 # Android 64-bit x86
 android-x86_64:
   extends:
-    - .core-defs
     - .libretro-android-jni-x86_64
+    - .core-defs
