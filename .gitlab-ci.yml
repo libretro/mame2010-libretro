@@ -9,6 +9,12 @@
   variables:
     CORENAME: mame2010
 
+.core-defs-ptr64-null-soft:
+  variables:
+    CORENAME: mame2010
+    PTR64: 0
+    VRENDER: soft
+    
 # Inclusion templates, required for the build to work
 include:
   ################################## DESKTOPS ################################
@@ -19,16 +25,17 @@ include:
   # Linux 64-bit
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-x64.yml'
-    
-  # MacOS 64-bit
-  #- project: 'libretro-infrastructure/ci-templates'
-  #file: '/osx-x64.yml'
 
   ################################## CELLULAR ################################
   # Android
   - project: 'libretro-infrastructure/ci-templates'
     file: '/android-jni.yml'
 
+  ################################### CONSOLES #################################
+  # Nintendo WiiU
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/wiiu-static.yml'
+    
 # Stages for building
 stages:
   - build-prepare
@@ -66,12 +73,6 @@ libretro-build-linux-x64:
     NATIVELD: ld
     LD:       ld
 
-# MacOS 64-bit
-#libretro-build-osx-x64:
-#extends:
-#- .libretro-osx-x64-make-default
-#- .core-defs
-
 ################################### CELLULAR #################################
 # Android ARMv7a
 android-armeabi-v7a:
@@ -90,3 +91,10 @@ android-x86_64:
   extends:
     - .libretro-android-jni-x86_64
     - .core-defs
+
+################################### CONSOLES #################################
+# Nintendo WiiU
+libretro-build-wiiu:
+  extends:
+    - .libretro-wiiu-static-retroarch-master
+    - .core-defs-ptr64-null-soft
