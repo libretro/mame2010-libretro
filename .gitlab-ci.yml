@@ -30,11 +30,6 @@ include:
   # Android
   - project: 'libretro-infrastructure/ci-templates'
     file: '/android-jni.yml'
-
-  ################################### CONSOLES #################################
-  # Nintendo WiiU
-  - project: 'libretro-infrastructure/ci-templates'
-    file: '/wiiu-static.yml'
     
 # Stages for building
 stages:
@@ -91,10 +86,3 @@ android-x86_64:
   extends:
     - .libretro-android-jni-x86_64
     - .core-defs
-
-################################### CONSOLES #################################
-# Nintendo WiiU
-libretro-build-wiiu:
-  extends:
-    - .libretro-wiiu-static-retroarch-master
-    - .core-defs-ptr64-null-soft
