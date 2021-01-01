@@ -8,6 +8,11 @@
 .core-defs:
   variables:
     CORENAME: mame2010
+    
+.core-defs-ptr64-null:
+  variables:
+    CORENAME: mame2010
+    PTR64: 0
 
 .core-defs-ptr64-null-soft:
   variables:
@@ -60,7 +65,7 @@ libretro-build-windows-x64:
 libretro-build-windows-i686:
   extends:
     - .libretro-windows-i686-mingw-make-default
-    - .core-defs
+    - .core-defs-ptr64-null
   variables:
     CC:       ${CXX}
     CC_AS:    ${CC}
