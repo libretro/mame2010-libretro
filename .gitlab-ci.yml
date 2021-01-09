@@ -35,6 +35,10 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-x64.yml'
 
+  # Linux 32-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/linux-i686.yml'
+
   ################################## CELLULAR ################################
   # Android
   - project: 'libretro-infrastructure/ci-templates'
@@ -76,6 +80,19 @@ libretro-build-linux-x64:
   extends:
     - .libretro-linux-x64-make-default
     - .core-defs
+  variables:
+    CC:       g++
+    CXX:      g++
+    CC_AS:    gcc
+    AR:       ar
+    NATIVELD: ld
+    LD:       ld
+    
+# Linux 64-bit
+libretro-build-linux-i686:
+  extends:
+    - .libretro-linux-i686-make-default
+    - .core-defs-ptr64-null
   variables:
     CC:       g++
     CXX:      g++
