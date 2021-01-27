@@ -113,7 +113,7 @@ libretro-build-linux-i686:
 libretro-build-osx-x64:
   extends:
     - .libretro-osx-x64-make-default
-    - .core-defs-ptr64-null
+    - .core-defs
   variables:
     CC:       clang++
     CXX:      clang++
@@ -126,7 +126,7 @@ libretro-build-osx-x64:
 libretro-build-osx-arm64:
   extends:
     - .libretro-osx-arm64-make-default
-    - .core-defs-ptr64-null
+    - .core-defs
   variables:
     CC:       clang++
     CXX:      clang++
