@@ -38,10 +38,6 @@ COREFLAGS += -DCRLF=2 -DINLINE="static inline" -Wno-c++11-narrowing -Wno-reserve
 # For testing only, remove before PR
 COREFLAGS += -Wno-implicit-exception-spec-mismatch -Wno-inline-new-delete -Wno-tautological-undefined-compare
 
-ifneq ($(filter $(TARGET_ARCH_ABI), armeabi-v7a arm64-v8a),)
-  COREFLAGS += -DARM_ENABLED
-endif
-
 GIT_VERSION ?= " $(shell git rev-parse --short HEAD || echo unknown)"
 ifneq ($(GIT_VERSION)," unknown")
   COREFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"

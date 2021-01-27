@@ -6,6 +6,7 @@
 #include "retroos.h"
 
 #include "eminline.h"
+#include "osinline.h"
 
 //============================================================
 //  DEBUGGING

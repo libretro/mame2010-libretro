@@ -383,13 +383,13 @@ osd_directory_entry *osd_stat(const char *path)
 {
 	int err;
 	osd_directory_entry *result = NULL;
-	#if defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(WIN32) || defined(SDLMAME_BSD)
+	#if defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(WIN32) || defined(SDLMAME_BSD) || defined(__APPLE__)
 	struct stat st;
 	#else
 	struct stat64 st;
 	#endif
 
-	#if defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(WIN32) || defined(SDLMAME_BSD)
+	#if defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(WIN32) || defined(SDLMAME_BSD) || defined(__APPLE__)
 	err = stat(path, &st);
 	#else
 	err = stat64(path, &st);

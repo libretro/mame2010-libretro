@@ -35,8 +35,7 @@ empty
 
 #endif
 
-#if defined(ARM_ENABLED)
-
+#if defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
 #ifndef YieldProcessor
 #define YieldProcessor() do {} while (0)
 #define osd_yield_processor() YieldProcessor()

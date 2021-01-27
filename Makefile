@@ -849,10 +849,6 @@ endif
 # generic rules
 #-------------------------------------------------
 
-ifeq ($(ARM_ENABLED), 1)
-CFLAGS += -DARM_ENABLED
-endif
-
 ifeq ($(X86_SH2DRC), 0)
 CFLAGS += -DDISABLE_SH2DRC
 endif
