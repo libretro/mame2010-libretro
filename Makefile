@@ -118,6 +118,9 @@ endif
 ifneq (,$(findstring mingw64-w64,$(PATH)))
 PTR64 ?= 1
 endif
+ifeq ($(firstword $(filter arm64,$(UNAME))),arm64)
+PTR64 ?= 1
+endif
 ifneq (,$(findstring Power,$(UNAME)))
 BIGENDIAN=1
 endif
