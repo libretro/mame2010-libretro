@@ -39,6 +39,14 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-i686.yml'
 
+  # MacOS 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/osx-x64.yml'
+ 
+  # MacOS ARM 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/osx-arm64.yml'
+
   ################################## CELLULAR ################################
   # Android
   - project: 'libretro-infrastructure/ci-templates'
@@ -97,6 +105,32 @@ libretro-build-linux-i686:
     CC:       g++
     CXX:      g++
     CC_AS:    gcc
+    AR:       ar
+    NATIVELD: ld
+    LD:       ld
+    
+# MacOS 64-bit
+libretro-build-osx-x64:
+  extends:
+    - .libretro-osx-x64-make-default
+    - .core-defs-ptr64-null
+  variables:
+    CC:       clang++
+    CXX:      clang++
+    CC_AS:    clang
+    AR:       ar
+    NATIVELD: ld
+    LD:       ld
+
+# MacOS ARM 64-bit
+libretro-build-osx-arm64:
+  extends:
+    - .libretro-osx-arm64-make-default
+    - .core-defs-ptr64-null
+  variables:
+    CC:       clang++
+    CXX:      clang++
+    CC_AS:    clang
     AR:       ar
     NATIVELD: ld
     LD:       ld
