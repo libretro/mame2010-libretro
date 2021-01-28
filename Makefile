@@ -193,12 +193,19 @@ LDFLAGSEMULATOR +=  -stdlib=libc++
    LD = c++ -stdlib=libc++
    NATIVELD = c++ -stdlib=libc++
    NATIVECC = c++
-	LDFLAGS +=  $(SHARED)
+   LDFLAGS +=  $(SHARED)
    CC_AS = clang
    AR = @ar
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
+   ifeq ($(CROSS_COMPILE),1)
+	TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
+	CFLAGS   += $(TARGET_RULE)
+	CPPFLAGS += $(TARGET_RULE)
+	CXXFLAGS += $(TARGET_RULE)
+	LDFLAGS  += $(TARGET_RULE)
+   endif
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
