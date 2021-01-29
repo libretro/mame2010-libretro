@@ -210,6 +210,11 @@ endif
 	CPPFLAGS += $(TARGET_RULE)
 	CXXFLAGS += $(TARGET_RULE)
 	LDFLAGS  += $(TARGET_RULE)
+
+	# TODO/FIXME - force DRC c backend for now - find a way to make this dependent on the architecture being targeted
+	ARM_ENABLED = 1
+	X86_SH2DRC = 0
+	FORCE_DRC_C_BACKEND = 1
    endif
 
 # iOS
