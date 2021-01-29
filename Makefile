@@ -199,6 +199,11 @@ LDFLAGSEMULATOR +=  -stdlib=libc++
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
+   ifeq ($(shell uname -p),arm)
+	ARM_ENABLED = 1
+	X86_SH2DRC = 0
+	FORCE_DRC_C_BACKEND = 1
+   endif
    ifeq ($(CROSS_COMPILE),1)
 	TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
 	CFLAGS   += $(TARGET_RULE)
