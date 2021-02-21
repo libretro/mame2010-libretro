@@ -111,6 +111,8 @@ libretro-build-linux-i686:
     
 # MacOS 64-bit
 libretro-build-osx-x64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-osx-x64-make-default
     - .core-defs
@@ -124,6 +126,8 @@ libretro-build-osx-x64:
 
 # MacOS ARM 64-bit
 libretro-build-osx-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-osx-arm64-make-default
     - .core-defs
