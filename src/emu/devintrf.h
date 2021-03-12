@@ -529,13 +529,13 @@ inline device_config *device_config::typenext() const
 // create a tag for an object that is owned by this device
 inline astring &device_config::subtag(astring &dest, const char *_tag) const
 {
-	return (this != NULL) ? dest.cpy(m_tag).cat(":").cat(_tag) : dest.cpy(_tag);
+	return (this != nullptr) ? dest.cpy(m_tag).cat(":").cat(_tag) : dest.cpy(_tag);
 }
 
 // create a tag for an object that a sibling to this device
 inline astring &device_config::siblingtag(astring &dest, const char *_tag) const
 {
-	return (this != NULL && m_owner != NULL) ? m_owner->subtag(dest, _tag) : dest.cpy(_tag);
+	return (this != nullptr && m_owner != NULL) ? m_owner->subtag(dest, _tag) : dest.cpy(_tag);
 }
 
 

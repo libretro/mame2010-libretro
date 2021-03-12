@@ -183,7 +183,7 @@ public:
 	attotime time_until_vblank_end() const;
 	attotime time_until_update() const { return (machine->config->m_video_attributes & VIDEO_UPDATE_AFTER_VBLANK) ? time_until_vblank_end() : time_until_vblank_start(); }
 	attotime scan_period() const { return attotime_make(0, m_scantime); }
-	attotime frame_period() const { return (this == NULL || !started()) ? k_default_frame_period : attotime_make(0, m_frame_period); };
+	attotime frame_period() const { return (this == nullptr || !started()) ? k_default_frame_period : attotime_make(0, m_frame_period); };
 	UINT64 frame_number() const { return m_frame_number; }
 
 	// updating

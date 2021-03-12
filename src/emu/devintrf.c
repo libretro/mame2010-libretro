@@ -734,8 +734,8 @@ device_t::~device_t()
 const region_info *device_t::subregion(const char *_tag) const
 {
 	// safety first
-	if (this == NULL)
-		return NULL;
+	if (this == nullptr)
+		return nullptr;
 
 	// build a fully-qualified name
 	astring tempstring;
@@ -751,8 +751,8 @@ const region_info *device_t::subregion(const char *_tag) const
 device_t *device_t::subdevice(const char *_tag) const
 {
 	// safety first
-	if (this == NULL)
-		return NULL;
+	if (this == nullptr)
+		return nullptr;
 
 	// build a fully-qualified name
 	astring tempstring;
@@ -768,8 +768,8 @@ device_t *device_t::subdevice(const char *_tag) const
 device_t *device_t::siblingdevice(const char *_tag) const
 {
 	// safety first
-	if (this == NULL)
-		return NULL;
+	if (this == nullptr)
+		return nullptr;
 
 	// build a fully-qualified name
 	astring tempstring;

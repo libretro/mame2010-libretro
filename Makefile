@@ -185,17 +185,20 @@ ARM_ENABLED = 1
 # OS X
 else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
-	TARGETOS = macosx
+   TARGETOS = macosx
    fpic = -fPIC
-LDFLAGSEMULATOR +=  -stdlib=libc++
+   LIBCPLUSPLUS := -stdlib=libc++
+   LDFLAGSEMULATOR +=  $(LIBCPLUSPLUS)
    SHARED := -dynamiclib
-   CC = c++ -stdlib=libc++
-   LD = c++ -stdlib=libc++
-   NATIVELD = c++ -stdlib=libc++
+   CC ?= c++
+   LD ?= c++ 
+   NATIVELD = c++
    NATIVECC = c++
-   LDFLAGS +=  $(SHARED)
-   CC_AS = clang
-   AR = @ar
+   CC_AS ?= clang
+   CFLAGS += $(LIBCPLUSPLUS)
+   CXXFLAGS += $(LIBCPLUSPLUS)
+   LDFLAGS +=  $(SHARED) $(LIBCPLUSPLUS)
+   AR ?= @ar
 ifeq ($(COMMAND_MODE),"legacy")
 ARFLAGS = -crs
 endif
@@ -203,6 +206,7 @@ endif
 	ARM_ENABLED = 1
 	X86_SH2DRC = 0
 	FORCE_DRC_C_BACKEND = 1
+        PTR64 = 1
    endif
    ifeq ($(CROSS_COMPILE),1)
 	TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
@@ -233,9 +237,11 @@ IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
 ifeq ($(platform),ios-arm64)
    CC = c++ -arch arm64 -isysroot $(IOSSDK)
+   CXX = c++ -arch arm64 -isysroot $(IOSSDK)
    PTR64 = 1
 else
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
+   CXX = c++ -arch armv7 -isysroot $(IOSSDK)
 endif
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
@@ -573,7 +579,6 @@ CROSS_BUILD_OSD = retro
 
 # uncomment and specify suffix to be added to the name
 # SUFFIX =
-
 
 
 #-------------------------------------------------
