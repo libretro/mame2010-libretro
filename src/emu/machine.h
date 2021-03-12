@@ -173,9 +173,9 @@ class region_info
 public:
 	// getters
 	region_info *next() const { return m_next; }
-	UINT8 *base() const { return (this != nullptr) ? m_base.u8 : NULL; }
-	UINT8 *end() const { return (this != nullptr) ? m_base.u8 + m_length : NULL; }
-	UINT32 bytes() const { return (this != nullptr) ? m_length : 0; }
+	UINT8 *base() const { return (this) ? m_base.u8 : NULL; }
+	UINT8 *end() const { return (this) ? m_base.u8 + m_length : NULL; }
+	UINT32 bytes() const { return (this) ? m_length : 0; }
 	const char *name() const { return m_name; }
 	UINT32 flags() const { return m_flags; }
 
@@ -191,15 +191,15 @@ public:
 	UINT64 &u64(offs_t offset = 0) const { return m_base.u64[offset]; }
 
 	// allow passing a region for any common pointer
-	operator void *() const { return (this != nullptr) ? m_base.v : NULL; }
-	operator INT8 *() const { return (this != nullptr) ? m_base.i8 : NULL; }
-	operator UINT8 *() const { return (this != nullptr) ? m_base.u8 : NULL; }
-	operator INT16 *() const { return (this != nullptr) ? m_base.i16 : NULL; }
-	operator UINT16 *() const { return (this != nullptr) ? m_base.u16 : NULL; }
-	operator INT32 *() const { return (this != nullptr) ? m_base.i32 : NULL; }
-	operator UINT32 *() const { return (this != nullptr) ? m_base.u32 : NULL; }
-	operator INT64 *() const { return (this != nullptr) ? m_base.i64 : NULL; }
-	operator UINT64 *() const { return (this != nullptr) ? m_base.u64 : NULL; }
+	operator void *() const { return (this) ? m_base.v : NULL; }
+	operator INT8 *() const { return (this) ? m_base.i8 : NULL; }
+	operator UINT8 *() const { return (this) ? m_base.u8 : NULL; }
+	operator INT16 *() const { return (this) ? m_base.i16 : NULL; }
+	operator UINT16 *() const { return (this) ? m_base.u16 : NULL; }
+	operator INT32 *() const { return (this) ? m_base.i32 : NULL; }
+	operator UINT32 *() const { return (this) ? m_base.u32 : NULL; }
+	operator INT64 *() const { return (this) ? m_base.i64 : NULL; }
+	operator UINT64 *() const { return (this) ? m_base.u64 : NULL; }
 
 private:
 	// internal data
