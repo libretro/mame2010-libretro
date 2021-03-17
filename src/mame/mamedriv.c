@@ -7067,6 +7067,7 @@ BOMULEUL CHAJARA SEGA ST-V  1997/04/11
 	DRIVER( umk3 )		/* (c) 1994 Midway */
 	DRIVER( umk3r11 )	/* (c) 1994 Midway */
 	DRIVER( umk3r10 )	/* (c) 1994 Midway */
+	DRIVER( umk3pb1 )	/* (c) 2019 Plus Beta 1 */
 	DRIVER( wwfmania )	/* (c) 1995 Midway */
 	DRIVER( wwfmaniab )	/* (c) 1995 Midway */
 	DRIVER( openice )	/* (c) 1995 Midway */
