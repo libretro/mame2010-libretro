@@ -14,7 +14,7 @@
     CORENAME: mame2010
     PTR64: 0
 
-.core-defs-ptr64-null-soft:
+Rcore-defs-ptr64-null-soft:
   variables:
     CORENAME: mame2010
     PTR64: 0
@@ -51,6 +51,14 @@ include:
   # Android
   - project: 'libretro-infrastructure/ci-templates'
     file: '/android-jni.yml'
+
+  # iOS
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/ios-arm64.yml'
+
+  # iOS (armv7)
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/ios9.yml'
     
 # Stages for building
 stages:
@@ -156,4 +164,22 @@ android-arm64-v8a:
 android-x86_64:
   extends:
     - .libretro-android-jni-x86_64
+    - .core-defs
+
+# iOS
+libretro-build-ios-arm64:
+  extends:
+    - .libretro-ios-arm64-make-default
+    - .core-defs
+
+# iOS (armv7) [iOS 9 and up]
+libretro-build-ios9:
+  extends:
+    - .libretro-ios9-make-default
+    - .core-defs-ptr64-null
+    
+# tvOS
+libretro-build-tvos-arm64:
+  extends:
+    - .libretro-tvos-arm64-make-default
     - .core-defs
