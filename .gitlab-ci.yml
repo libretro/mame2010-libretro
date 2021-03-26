@@ -176,18 +176,24 @@ android-x86_64:
 
 # iOS
 libretro-build-ios-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-ios-arm64-make-default
     - .core-defs
 
 # iOS (armv7) [iOS 9 and up]
 libretro-build-ios9:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-ios9-make-default
     - .core-defs-ptr64-null
     
 # tvOS
 libretro-build-tvos-arm64:
+  tags:
+    - macosx-packaging
   extends:
     - .libretro-tvos-arm64-make-default
     - .core-defs
