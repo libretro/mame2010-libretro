@@ -14,7 +14,7 @@
     CORENAME: mame2010
     PTR64: 0
 
-Rcore-defs-ptr64-null-soft:
+.core-defs-ptr64-null-soft:
   variables:
     CORENAME: mame2010
     PTR64: 0
