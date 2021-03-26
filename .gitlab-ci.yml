@@ -59,6 +59,14 @@ include:
   # iOS (armv7)
   - project: 'libretro-infrastructure/ci-templates'
     file: '/ios9.yml'
+
+  ################################## CONSOLES ################################
+
+  # tvOS (AppleTV)
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/tvos-arm64.yml'
+
+  #################################### MISC ##################################
     
 # Stages for building
 stages:
