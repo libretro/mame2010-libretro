@@ -406,12 +406,13 @@ else ifeq ($(platform), classic_armv7_a7)
  # (armv8 a35, hard point, neon based) ### 
 # Playstation Classic 
 else ifeq ($(platform), classic_armv8_a35)
-	TARGET := $(TARGET_NAME)_libretro.so
-  TARGETOS=linux
-  EXTRA_RULES = 1
-  ARM_ENABLED = 1
+   TARGETLIB := $(TARGET_NAME)_libretro.so
+   PTR64 = 0
+   TARGETOS=linux
+   EXTRA_RULES = 1
+   ARM_ENABLED = 1
 	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
+   SHARED := -shared -Wl,--no-undefined
 	CXXFLAGS += -Ofast \
 	-flto=4 -fwhole-program -fuse-linker-plugin \
 	-fdata-sections -ffunction-sections -Wl,--gc-sections \
@@ -420,20 +421,13 @@ else ifeq ($(platform), classic_armv8_a35)
 	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-unroll-loops \
 	-fmerge-all-constants -fno-math-errno \
 	-marm -mtune=cortex-a8 -mfpu=neon-fp-armv8 -mfloat-abi=hard
-	CFLAGS += $(CXXFLAGS)
+   CFLAGS += $(CXXFLAGS) -march=armv8-a
 	HAVE_NEON = 1
 	ARCH = arm
 	BUILTIN_GPU = neon
-#	USE_DYNAREC = 1
-	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
-	  CFLAGS += -march=armv8-a
-	else
-	  CFLAGS += -march=armv8-a
-	  # If gcc is 5.0 or later
-	  ifeq ($(shell echo `$(CC) -dumpversion` ">= 5" | bc -l), 1)
-	    LDFLAGS += -static-libgcc -static-libstdc++
-	  endif
-	endif
+   BUILD_ZLIB=1
+   LIBS += -lstdc++ -lpthread
+   LDFLAGS += $(SHARED)
 #######################################
 
 #   LITE:=1
