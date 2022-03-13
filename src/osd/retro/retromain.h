@@ -107,7 +107,52 @@ enum
 	KEY_JOYSTICK_D,
 	KEY_JOYSTICK_L,
 	KEY_JOYSTICK_R,
+	LX,
+	LY,
+	RX,
+	RY,
 	KEY_TOTAL
+};
+
+enum
+{
+   RETROPAD_B,
+   RETROPAD_Y,
+   RETROPAD_SELECT,
+   RETROPAD_START,
+   RETROPAD_PAD_UP,
+   RETROPAD_PAD_DOWN,
+   RETROPAD_PAD_LEFT,
+   RETROPAD_PAD_RIGHT,
+   RETROPAD_A,
+   RETROPAD_X,
+   RETROPAD_L,
+   RETROPAD_R,
+   RETROPAD_L2,
+   RETROPAD_R2,
+   RETROPAD_L3,
+   RETROPAD_R3,
+   RETROPAD_TOTAL
+};
+
+static const char *Buttons_Name[16]=
+{
+   "B",		//0
+   "Y",		//1
+   "SELECT",	//2
+   "START",	//3
+   "Pad UP",	//4
+   "Pad DOWN",	//5
+   "Pad LEFT",	//6
+   "Pad RIGHT",	//7
+   "A",		//8
+   "X",		//9
+   "L",		//10
+   "R",		//11
+   "L2",		//12
+   "R2",		//13
+   "L3",		//14
+   "R3",		//15
 };
 
 const kt_table ktable[] = {
