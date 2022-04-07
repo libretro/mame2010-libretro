@@ -91,9 +91,7 @@ struct kt_table
 // fake a keyboard mapped to retro joypad 
 enum
 {
-	KEY_TAB,
 	KEY_F3,
-	KEY_F2,
 	KEY_START,
 	KEY_COIN,
 	KEY_BUTTON_1,
@@ -102,7 +100,9 @@ enum
 	KEY_BUTTON_4,
 	KEY_BUTTON_5,
 	KEY_BUTTON_6, 
-	KEY_BUTTON_7,     
+	KEY_BUTTON_7,
+	KEY_BUTTON_8,
+	KEY_BUTTON_9,
 	KEY_JOYSTICK_U,
 	KEY_JOYSTICK_D,
 	KEY_JOYSTICK_L,
