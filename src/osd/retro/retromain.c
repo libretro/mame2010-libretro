@@ -1758,6 +1758,52 @@ void retro_poll_mame_input()
 //		device_t::set_clock_scale(0, oc);
 //	}	
 // }	
+	
+   switch (turbo_enable)
+   {
+      case 0:
+         break;
+      case 1:
+         if (PLAYER1_PRESS(A))
+            P1_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER2_PRESS(A))
+            P2_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER3_PRESS(A))
+            P3_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER4_PRESS(A))
+            P4_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         break;      
+      case 2:
+         if (PLAYER1_PRESS(B))
+            P1_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER2_PRESS(B))
+            P2_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER3_PRESS(B))
+            P3_state[KEY_BUTTON_3] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER4_PRESS(B))
+            P4_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+        break;
+      case 3:
+         if (PLAYER1_PRESS(R2))
+            P1_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER2_PRESS(R2))
+            P2_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER3_PRESS(R2))
+            P3_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER4_PRESS(R2))
+            P4_state[KEY_BUTTON_1] = turbo_state < turbo_delay ? 0 : 1;
+        break;
+      case 4:
+         if (PLAYER1_PRESS(R2))
+            P1_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER2_PRESS(R2))
+            P2_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER3_PRESS(R2))
+            P3_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+         if (PLAYER4_PRESS(R2))
+            P4_state[KEY_BUTTON_2] = turbo_state < turbo_delay ? 0 : 1;
+       break;
+   }
 }
 
 
