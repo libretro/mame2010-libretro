@@ -65,13 +65,6 @@ bool hide_nagscreen = false;
 bool hide_gameinfo = false;
 bool hide_warnings = false;
 
-typedef struct joystate_t
-{
-   int button[16];
-   int a1[2];
-   int a2[2];
-}Joystate;
-
 static void update_geometry();
 static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
 static bool set_par = false;
@@ -174,8 +167,6 @@ static int FirstTimeUpdate = 1;
 
 bool retro_load_ok  = false;
 int pauseg = 0;
-
-static Joystate joystate[4];
 
 /*********************************************
    LOCAL FUNCTION PROTOTYPES
