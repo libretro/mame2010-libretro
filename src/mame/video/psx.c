@@ -874,6 +874,13 @@ VIDEO_UPDATE( psx )
 
 		n_left = ( ( (INT32)m_n_horiz_disstart - n_overscanleft ) * (INT32)m_n_screenwidth ) / 2560;
 		n_columns = ( ( ( (INT32)m_n_horiz_disend - m_n_horiz_disstart ) * (INT32)m_n_screenwidth ) / 2560 );
+		
+		// MAMEFX 2022-11-26 fix for screen cut off on the left (MT02957) (mame PR#7624)- hack by leejeonghun
+		// added by chamcham425 aka Zansword(2023-04-02)
+		if (n_left > p_psxgpu->n_screenwidth - n_columns)
+			n_left = p_psxgpu->n_screenwidth - n_columns;
+		// MAMEFX end
+		
 		if( n_left < 0 )
 		{
 			n_x = -n_left;
