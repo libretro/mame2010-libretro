@@ -877,8 +877,8 @@ VIDEO_UPDATE( psx )
 		
 		// MAMEFX 2022-11-26 fix for screen cut off on the left (MT02957) (mame PR#7624)- hack by leejeonghun
 		// added by chamcham425 aka Zansword(2023-04-02)
-		if (n_left > p_psxgpu->n_screenwidth - n_columns)
-			n_left = p_psxgpu->n_screenwidth - n_columns;
+		if (n_left > m_n_screenwidth - n_columns)
+			n_left = m_n_screenwidth - n_columns;
 		// MAMEFX end
 		
 		if( n_left < 0 )
