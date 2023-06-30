@@ -22,7 +22,7 @@ libretro system subfolders:
 - libretro system folder/mame2010/fonts
 - libretro system folder/mame2010/samples
 
-libretro saves subfolders
+libretro saves subfolders:
 - libretro saves folder/mame2010/ - `cheat.zip` file ONLY works in here.
 - libretro saves folder/mame2010/cheat/ - unziped `.xml` cheat file(s) can be added in here (optional).
 - libretro saves folder/mame2010/cfg
