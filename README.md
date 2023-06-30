@@ -14,17 +14,21 @@ mame2010 requires that the following directories exist, and will create them if 
 
 libretro system subfolders:
 
-- libretro system folder/mame2010/ - `cheat.zip` cheats file - not currently working
+- libretro system folder/mame2010/ - `cheat.zip` file DOES NOT work in here!
+- libretro system folder/mame2010/cheat/ unziped `.xml` cheat file(s) doesn't work in here!
+- libretro system folder/mame2010/ini
 - libretro system folder/mame2010/artwork
 - libretro system folder/mame2010/crosshairs
 - libretro system folder/mame2010/fonts
 - libretro system folder/mame2010/samples
 
 libretro saves subfolders
+- libretro saves folder/mame2010/ - `cheat.zip` file ONLY works in here.
+- libretro saves folder/mame2010/cheat/ - unziped `.xml` cheat file(s) can be added in here (optional).
 - libretro saves folder/mame2010/cfg
 - libretro saves folder/mame2010/comment
 - libretro saves folder/mame2010/ctrlr
-- libretro saves folder/mame2010/ini
+- libretro saves folder/mame2010/ini/ - `mame.ini` file can be found in here.
 - libretro saves folder/mame2010/input
 - libretro saves folder/mame2010/memcard
 - libretro saves folder/mame2010/nvram
