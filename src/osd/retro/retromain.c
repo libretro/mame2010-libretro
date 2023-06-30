@@ -63,8 +63,8 @@ static int mouse_mode = 1;
 static bool videoapproach1_enable = false;
 bool hide_nagscreen = false;
 bool hide_gameinfo = false;
-bool cheat_enable = false;
 bool hide_warnings = false;
+bool cheat_enable = false;
 
 static void update_geometry();
 static unsigned int turbo_enable, turbo_state, turbo_delay = 5;
