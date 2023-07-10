@@ -15,7 +15,7 @@ mame2010 requires that the following directories exist, and will create them if 
 mame2010 supports cheat that `cheat.zip` file must be in this subfolders: libretro saves folder/mame2010/cheat.zip
 
 Use `Cheat enable` switch it's under the Retroarch `Core Options` menu.
-Cheat will be activated and visible on the MAME cofig menu after restart the core.
+Cheat will be activated and visible on the MAME config menu after restart the core.
 
 libretro system subfolders:
 
