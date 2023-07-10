@@ -8,23 +8,32 @@ The OSD code is highly inspired by other MAME ports :
 - ps3 mame0.125 port     : http://www.volny.cz/molej/ps3/mame_ps3.htm
 - mame4droid             : http://code.google.com/p/imame4all/source/browse/
 
-## Directories
+## Directories and Files
 
 mame2010 requires that the following directories exist, and will create them if they are missing.
 
+mame2010 supports cheat that `cheat.zip` file must be in this subfolders: libretro saves folder/mame2010/cheat.zip
+
+Use `Cheat enable` switch it's under the Retroarch `Core Options` menu.
+Cheat will be activated and visible on the MAME config menu after restart the core.
+
 libretro system subfolders:
 
-- libretro system folder/mame2010/ - `cheat.zip` cheats file - not currently working
+- libretro system folder/mame2010/ - `cheat.zip` file DOES NOT work in here!
+- libretro system folder/mame2010/cheat/ unziped `.xml` cheat file(s) doesn't work in here!
+- libretro system folder/mame2010/ini
 - libretro system folder/mame2010/artwork
 - libretro system folder/mame2010/crosshairs
 - libretro system folder/mame2010/fonts
 - libretro system folder/mame2010/samples
 
-libretro saves subfolders
+libretro saves subfolders:
+- libretro saves folder/mame2010/ - `cheat.zip` file ONLY works in here.
+- libretro saves folder/mame2010/cheat/ - unziped `.xml` cheat file(s) can be added in here (optional).
 - libretro saves folder/mame2010/cfg
 - libretro saves folder/mame2010/comment
 - libretro saves folder/mame2010/ctrlr
-- libretro saves folder/mame2010/ini
+- libretro saves folder/mame2010/ini/ - `mame.ini` file can be found in here.
 - libretro saves folder/mame2010/input
 - libretro saves folder/mame2010/memcard
 - libretro saves folder/mame2010/nvram
