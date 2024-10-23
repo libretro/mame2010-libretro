@@ -240,8 +240,8 @@ ifeq ($(platform),ios-arm64)
    CXX = c++ -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=8.0
    PTR64 = 1
 else
-   CC = c++ -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0
-   CXX = c++ -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0
+   CC = c++ -arch armv7 -isysroot $(IOSSDK)
+   CXX = c++ -arch armv7 -isysroot $(IOSSDK)
 endif
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
