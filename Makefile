@@ -236,8 +236,8 @@ ifeq ($(IOSSDK),)
 IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
 ifeq ($(platform),ios-arm64)
-   CC = c++ -arch arm64 -isysroot $(IOSSDK)
-   CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+   CC = c++ -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=8.0
+   CXX = c++ -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=8.0
    PTR64 = 1
 else
    CC = c++ -arch armv7 -isysroot $(IOSSDK)
@@ -265,8 +265,8 @@ endif
    fpic = -fPIC
    SHARED := -dynamiclib
    PTR64 = 1
-   CC = c++ -arch arm64 -isysroot $(IOSSDK)
-   CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+   CC = c++ -arch arm64 -isysroot $(IOSSDK) -mappletvos-version-min=11.0
+   CXX = c++ -arch arm64 -isysroot $(IOSSDK) -mappletvos-version-min=11.0
    CCOMFLAGS += -DSDLMAME_NO64BITIO -DIOS
    CFLAGS += -DIOS
    CXXFLAGS += -DIOS
