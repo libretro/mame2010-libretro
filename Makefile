@@ -121,6 +121,9 @@ endif
 ifeq ($(firstword $(filter arm64,$(UNAME))),arm64)
 PTR64 ?= 1
 endif
+ifeq ($(firstword $(filter aarch64,$(UNAME))),aarch64)
+PTR64 ?= 1
+endif
 ifneq (,$(findstring Power,$(UNAME)))
 BIGENDIAN=1
 endif
