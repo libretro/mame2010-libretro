@@ -153,10 +153,10 @@ LDFLAGS += $(SHARED)
    NATIVELDFLAGS = -Wl,--warn-common -lstdc++
    NATIVECC = g++
    NATIVECFLAGS = -std=gnu99
-   CC_AS = gcc 
-   CC = g++
-   AR = @ar
-   LD = g++ 
+   CC_AS ?= gcc
+   CC ?= g++
+   AR ?= @ar
+   LD ?= g++
    CCOMFLAGS += $(PLATCFLAGS) -ffast-math  
    LIBS += -lstdc++ -lpthread 
 
@@ -544,6 +544,7 @@ endif
 ifneq (,$(or $(findstring webos,$(CROSS_COMPILE)),$(findstring starfish,$(CROSS_COMPILE))))
   FORCE_DRC_C_BACKEND = 1
   PTR64 = 0
+  CCOMFLAGS += -DWEBOS
 endif
 
 ifeq ($(ALIGNED),1)
