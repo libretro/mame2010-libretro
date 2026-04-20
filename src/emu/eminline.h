@@ -30,6 +30,9 @@
 
 #endif
 
+#ifdef WEBOS
+#include <stdint.h>
+#endif
 
 /***************************************************************************
     INLINE MATH FUNCTIONS
@@ -346,7 +349,15 @@ INLINE void *compare_exchange_ptr(void * volatile *ptr, void *compare, void *exc
 	result = compare_exchange64((INT64 volatile *)ptr, (INT64)compare, (INT64)exchange);
 #else
 	INT32 result;
-	result = compare_exchange32((INT32 volatile *)ptr, (INT32)compare, (INT32)exchange);
+#ifdef WEBOS
+    result = compare_exchange32(
+        (INT32 volatile *)ptr,
+        (INT32)(uintptr_t)compare,
+        (INT32)(uintptr_t)exchange
+    );
+#else
+    result = compare_exchange32((INT32 volatile *)ptr, (INT32)compare, (INT32)exchange);
+#endif
 #endif
 	return (void *)result;
 }
