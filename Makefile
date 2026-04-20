@@ -541,7 +541,10 @@ endif
 	DEFS += -DX64_WINDOWS_ABI
 endif
 
-
+ifneq (,$(or $(findstring webos,$(CROSS_COMPILE)),$(findstring starfish,$(CROSS_COMPILE))))
+  FORCE_DRC_C_BACKEND = 1
+  PTR64 = 0
+endif
 
 ifeq ($(ALIGNED),1)
 	PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
