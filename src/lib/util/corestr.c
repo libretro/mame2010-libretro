@@ -51,8 +51,8 @@ int core_stricmp(const char *s1, const char *s2)
 {
 	for (;;)
 	{
-		int c1 = tolower((UINT8)*s1++);
-		int c2 = tolower((UINT8)*s2++);
+		int c1 = tolower((uint8_t)*s1++);
+		int c2 = tolower((uint8_t)*s2++);
 		if (c1 == 0 || c1 != c2)
 			return c1 - c2;
 	}
@@ -68,8 +68,8 @@ int core_strnicmp(const char *s1, const char *s2, size_t n)
 	size_t i;
 	for (i = 0; i < n; i++)
 	{
-		int c1 = tolower((UINT8)*s1++);
-		int c2 = tolower((UINT8)*s2++);
+		int c1 = tolower((uint8_t)*s1++);
+		int c2 = tolower((uint8_t)*s2++);
 		if (c1 == 0 || c1 != c2)
 			return c1 - c2;
 	}
@@ -153,13 +153,13 @@ char *core_strdup(const char *str)
     core_i64_format - i64 format printf helper
 -------------------------------------------------*/
 
-char *core_i64_hex_format(UINT64 value, UINT8 mindigits)
+char *core_i64_hex_format(uint64_t value, uint8_t mindigits)
 {
 	static char buffer[16][64];
 	static int index;
 	char *bufbase = &buffer[index++ % 16][0];
 	char *bufptr = bufbase;
-	INT8 curdigit;
+	int8_t curdigit;
 
 	for (curdigit = 15; curdigit >= 0; curdigit--)
 	{

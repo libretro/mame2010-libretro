@@ -101,7 +101,7 @@ bitmap_t::bitmap_t(int _width, int _height, bitmap_format _format, int _xslop, i
 	memset(alloc, 0, allocbytes);
 
 	/* compute the base */
-	base = (UINT8 *)alloc + (rowpixels * _yslop + _xslop) * (bpp / 8);
+	base = (uint8_t *)alloc + (rowpixels * _yslop + _xslop) * (bpp / 8);
 }
 
 
@@ -241,7 +241,7 @@ bitmap_t *bitmap_alloc_slop(int width, int height, int xslop, int yslop, bitmap_
 	bitmap->height = height;
 	bitmap->bpp = bpp;
 	bitmap->rowpixels = rowpixels;
-	bitmap->base = (UINT8 *)bitmap->alloc + (rowpixels * yslop + xslop) * (bpp / 8);
+	bitmap->base = (uint8_t *)bitmap->alloc + (rowpixels * yslop + xslop) * (bpp / 8);
 	bitmap->cliprect.min_x = 0;
 	bitmap->cliprect.max_x = width - 1;
 	bitmap->cliprect.min_y = 0;
@@ -365,7 +365,7 @@ void bitmap_set_palette(bitmap_t *bitmap, palette_t *palette)
     color
 -------------------------------------------------*/
 
-void bitmap_fill(bitmap_t *dest, const rectangle *cliprect, UINT32 color)
+void bitmap_fill(bitmap_t *dest, const rectangle *cliprect, uint32_t color)
 {
 	rectangle fill = dest->cliprect;
 	int x, y;
@@ -384,24 +384,24 @@ void bitmap_fill(bitmap_t *dest, const rectangle *cliprect, UINT32 color)
 		case 8:
 			/* 8bpp always uses memset */
 			for (y = fill.min_y; y <= fill.max_y; y++)
-				memset(BITMAP_ADDR8(dest, y, fill.min_x), (UINT8)color, fill.max_x + 1 - fill.min_x);
+				memset(BITMAP_ADDR8(dest, y, fill.min_x), (uint8_t)color, fill.max_x + 1 - fill.min_x);
 			break;
 
 		case 16:
 			/* 16bpp can use memset if the bytes are equal */
-			if ((UINT8)(color >> 8) == (UINT8)color)
+			if ((uint8_t)(color >> 8) == (uint8_t)color)
 			{
 				for (y = fill.min_y; y <= fill.max_y; y++)
-					memset(BITMAP_ADDR16(dest, y, fill.min_x), (UINT8)color, (fill.max_x + 1 - fill.min_x) * 2);
+					memset(BITMAP_ADDR16(dest, y, fill.min_x), (uint8_t)color, (fill.max_x + 1 - fill.min_x) * 2);
 			}
 			else
 			{
-				UINT16 *destrow, *destrow0;
+				uint16_t *destrow, *destrow0;
 
 				/* Fill the first line the hard way */
 				destrow  = BITMAP_ADDR16(dest, fill.min_y, 0);
 				for (x = fill.min_x; x <= fill.max_x; x++)
-					destrow[x] = (UINT16)color;
+					destrow[x] = (uint16_t)color;
 
 				/* For the other lines, just copy the first one */
 				destrow0 = BITMAP_ADDR16(dest, fill.min_y, fill.min_x);
@@ -415,19 +415,19 @@ void bitmap_fill(bitmap_t *dest, const rectangle *cliprect, UINT32 color)
 
 		case 32:
 			/* 32bpp can use memset if the bytes are equal */
-			if ((UINT8)(color >> 8) == (UINT8)color && (UINT16)(color >> 16) == (UINT16)color)
+			if ((uint8_t)(color >> 8) == (uint8_t)color && (uint16_t)(color >> 16) == (uint16_t)color)
 			{
 				for (y = fill.min_y; y <= fill.max_y; y++)
-					memset(BITMAP_ADDR32(dest, y, fill.min_x), (UINT8)color, (fill.max_x + 1 - fill.min_x) * 4);
+					memset(BITMAP_ADDR32(dest, y, fill.min_x), (uint8_t)color, (fill.max_x + 1 - fill.min_x) * 4);
 			}
 			else
 			{
-				UINT32 *destrow, *destrow0;
+				uint32_t *destrow, *destrow0;
 
 				/* Fill the first line the hard way */
 				destrow  = BITMAP_ADDR32(dest, fill.min_y, 0);
 				for (x = fill.min_x; x <= fill.max_x; x++)
-					destrow[x] = (UINT32)color;
+					destrow[x] = (uint32_t)color;
 
 				/* For the other lines, just copy the first one */
 				destrow0 = BITMAP_ADDR32(dest, fill.min_y, fill.min_x);
@@ -441,19 +441,19 @@ void bitmap_fill(bitmap_t *dest, const rectangle *cliprect, UINT32 color)
 
 		case 64:
 			/* 64bpp can use memset if the bytes are equal */
-			if ((UINT8)(color >> 8) == (UINT8)color && (UINT16)(color >> 16) == (UINT16)color)
+			if ((uint8_t)(color >> 8) == (uint8_t)color && (uint16_t)(color >> 16) == (uint16_t)color)
 			{
 				for (y = fill.min_y; y <= fill.max_y; y++)
-					memset(BITMAP_ADDR64(dest, y, fill.min_x), (UINT8)color, (fill.max_x + 1 - fill.min_x) * 4);
+					memset(BITMAP_ADDR64(dest, y, fill.min_x), (uint8_t)color, (fill.max_x + 1 - fill.min_x) * 4);
 			}
 			else
 			{
-				UINT64 *destrow, *destrow0;
+				uint64_t *destrow, *destrow0;
 
 				/* Fill the first line the hard way */
 				destrow  = BITMAP_ADDR64(dest, fill.min_y, 0);
 				for (x = fill.min_x; x <= fill.max_x; x++)
-					destrow[x] = (UINT64)color;
+					destrow[x] = (uint64_t)color;
 
 				/* For the other lines, just copy the first one */
 				destrow0 = BITMAP_ADDR64(dest, fill.min_y, fill.min_x);

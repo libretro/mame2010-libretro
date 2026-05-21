@@ -66,7 +66,7 @@
 ***************************************************************************/
 
 /* pool types are UINT32s */
-typedef UINT32 object_type;
+typedef uint32_t object_type;
 
 /* opaque type representing a pool of objects */
 typedef struct _object_pool object_pool;

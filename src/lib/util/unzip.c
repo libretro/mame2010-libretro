@@ -106,12 +106,12 @@
     INLINE FUNCTIONS
 ***************************************************************************/
 
-INLINE UINT16 read_word(UINT8 *buf)
+INLINE uint16_t read_word(uint8_t *buf)
 {
 	return (buf[1] << 8) | buf[0];
 }
 
-INLINE UINT32 read_dword(UINT8 *buf)
+INLINE uint32_t read_dword(uint8_t *buf)
 {
 	return (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 }
@@ -135,11 +135,11 @@ static void free_zip_file(zip_file *zip);
 
 /* ZIP file parsing */
 static zip_error read_ecd(zip_file *zip);
-static zip_error get_compressed_data_offset(zip_file *zip, UINT64 *offset);
+static zip_error get_compressed_data_offset(zip_file *zip, uint64_t *offset);
 
 /* decompression interfaces */
-static zip_error decompress_data_type_0(zip_file *zip, UINT64 offset, void *buffer, UINT32 length);
-static zip_error decompress_data_type_8(zip_file *zip, UINT64 offset, void *buffer, UINT32 length);
+static zip_error decompress_data_type_0(zip_file *zip, uint64_t offset, void *buffer, uint32_t length);
+static zip_error decompress_data_type_8(zip_file *zip, uint64_t offset, void *buffer, uint32_t length);
 
 
 
@@ -155,7 +155,7 @@ zip_error zip_file_open(const char *filename, zip_file **zip)
 {
 	zip_error ziperr = ZIPERR_NONE;
 	file_error filerr;
-	UINT32 read_length;
+	uint32_t read_length;
 	zip_file *newzip;
 	char *string;
 	int cachenum;
@@ -204,7 +204,7 @@ zip_error zip_file_open(const char *filename, zip_file **zip)
 	}
 
 	/* allocate memory for the central directory */
-	newzip->cd = (UINT8 *)malloc(newzip->ecd.cd_size + 1);
+	newzip->cd = (uint8_t *)malloc(newzip->ecd.cd_size + 1);
 	if (newzip->cd == NULL)
 	{
 		ziperr = ZIPERR_OUT_OF_MEMORY;
@@ -366,10 +366,10 @@ const zip_file_header *zip_file_next_file(zip_file *zip)
     from a ZIP into the target buffer
 -------------------------------------------------*/
 
-zip_error zip_file_decompress(zip_file *zip, void *buffer, UINT32 length)
+zip_error zip_file_decompress(zip_file *zip, void *buffer, uint32_t length)
 {
     zip_error ziperr;
-    UINT64 offset;
+    uint64_t offset;
 
     /* if we don't have enough buffer, error */
     if (length < zip->header.uncompressed_length)
@@ -441,22 +441,22 @@ static void free_zip_file(zip_file *zip)
 
 static zip_error read_ecd(zip_file *zip)
 {
-	UINT32 buflen = 1024;
-	UINT8 *buffer;
+	uint32_t buflen = 1024;
+	uint8_t *buffer;
 
 	/* we may need multiple tries */
 	while (buflen < 65536)
 	{
 		file_error error;
-		UINT32 read_length;
-		INT32 offset;
+		uint32_t read_length;
+		int32_t offset;
 
 		/* max out the buffer length at the size of the file */
 		if (buflen > zip->length)
 			buflen = zip->length;
 
 		/* allocate buffer */
-		buffer = (UINT8 *)malloc(buflen + 1);
+		buffer = (uint8_t *)malloc(buflen + 1);
 		if (buffer == NULL)
 			return ZIPERR_OUT_OF_MEMORY;
 
@@ -513,10 +513,10 @@ static zip_error read_ecd(zip_file *zip)
     offset of the compressed data
 -------------------------------------------------*/
 
-static zip_error get_compressed_data_offset(zip_file *zip, UINT64 *offset)
+static zip_error get_compressed_data_offset(zip_file *zip, uint64_t *offset)
 {
 	file_error error;
-	UINT32 read_length;
+	uint32_t read_length;
 
 	/* make sure the file handle is open */
 	if (zip->file == NULL)
@@ -550,10 +550,10 @@ static zip_error get_compressed_data_offset(zip_file *zip, UINT64 *offset)
     type 0 data (which is uncompressed)
 -------------------------------------------------*/
 
-static zip_error decompress_data_type_0(zip_file *zip, UINT64 offset, void *buffer, UINT32 length)
+static zip_error decompress_data_type_0(zip_file *zip, uint64_t offset, void *buffer, uint32_t length)
 {
 	file_error filerr;
-	UINT32 read_length;
+	uint32_t read_length;
 
 	/* the data is uncompressed; just read it */
 	filerr = osd_read(zip->file, buffer, offset, zip->header.compressed_length, &read_length);
@@ -571,10 +571,10 @@ static zip_error decompress_data_type_0(zip_file *zip, UINT64 offset, void *buff
     type 8 data (which is deflated)
 -------------------------------------------------*/
 
-static zip_error decompress_data_type_8(zip_file *zip, UINT64 offset, void *buffer, UINT32 length)
+static zip_error decompress_data_type_8(zip_file *zip, uint64_t offset, void *buffer, uint32_t length)
 {
-    UINT32 input_remaining = zip->header.compressed_length;
-    UINT32 read_length;
+    uint32_t input_remaining = zip->header.compressed_length;
+    uint32_t read_length;
     z_stream stream;
     int filerr;
     int zerr;

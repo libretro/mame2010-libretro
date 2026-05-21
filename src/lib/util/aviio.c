@@ -51,7 +51,7 @@
 
 #define MAX_RIFF_SIZE			(2UL * 1024 * 1024 * 1024 - 1024)	/* just under 2GB */
 #define MAX_AVI_SIZE_IN_GB		(256)
-#define FOUR_GB					((UINT64)1 << 32)
+#define FOUR_GB					((uint64_t)1 << 32)
 
 #define MAX_SOUND_CHANNELS		2
 #define SOUND_BUFFER_MSEC		2000		/* microseconds of sond buffering */
@@ -110,36 +110,36 @@
 typedef struct _avi_chunk avi_chunk;
 struct _avi_chunk
 {
-	UINT64				offset;					/* file offset of chunk header */
-	UINT64				size;					/* size of this chunk */
-	UINT32				type;					/* type of this chunk */
-	UINT32				listtype;				/* type of this list (if we are a list) */
+	uint64_t				offset;					/* file offset of chunk header */
+	uint64_t				size;					/* size of this chunk */
+	uint32_t				type;					/* type of this chunk */
+	uint32_t				listtype;				/* type of this list (if we are a list) */
 };
 
 
 typedef struct _avi_chunk_list avi_chunk_list;
 struct _avi_chunk_list
 {
-	UINT64				offset;					/* offset in the file of header */
-	UINT32				length;					/* length of the chunk including header */
+	uint64_t				offset;					/* offset in the file of header */
+	uint32_t				length;					/* length of the chunk including header */
 };
 
 
 typedef struct _huffyuv_table huffyuv_table;
 struct _huffyuv_table
 {
-	UINT8				shift[256];				/* bit shift amounts */
-	UINT32				bits[256];				/* bit match values */
-	UINT32				mask[256];				/* bit mask values */
-	UINT16				baselookup[65536];		/* base lookup table */
-	UINT16 *			extralookup;			/* extra lookup tables */
+	uint8_t				shift[256];				/* bit shift amounts */
+	uint32_t				bits[256];				/* bit match values */
+	uint32_t				mask[256];				/* bit mask values */
+	uint16_t				baselookup[65536];		/* base lookup table */
+	uint16_t *			extralookup;			/* extra lookup tables */
 };
 
 
 typedef struct _huffyuv_data huffyuv_data;
 struct _huffyuv_data
 {
-	UINT8				predictor;				/* predictor */
+	uint8_t				predictor;				/* predictor */
 	huffyuv_table		table[3];				/* array of tables */
 };
 
@@ -147,30 +147,30 @@ struct _huffyuv_data
 typedef struct _avi_stream avi_stream;
 struct _avi_stream
 {
-	UINT32				type;					/* subtype of stream */
-	UINT32				format;					/* format of stream data */
+	uint32_t				type;					/* subtype of stream */
+	uint32_t				format;					/* format of stream data */
 
-	UINT32				rate;					/* timescale for stream */
-	UINT32				scale;					/* duration of one sample in the stream */
-	UINT32				samples;				/* number of samples */
+	uint32_t				rate;					/* timescale for stream */
+	uint32_t				scale;					/* duration of one sample in the stream */
+	uint32_t				samples;				/* number of samples */
 
 	avi_chunk_list *	chunk;					/* list of chunks */
-	UINT32				chunks;					/* chunks currently known */
-	UINT32				chunksalloc;			/* number of chunks allocated */
+	uint32_t				chunks;					/* chunks currently known */
+	uint32_t				chunksalloc;			/* number of chunks allocated */
 
-	UINT32				width;					/* width of video */
-	UINT32				height;					/* height of video */
-	UINT32				depth;					/* depth of video */
-	UINT8				interlace;				/* interlace parameters */
+	uint32_t				width;					/* width of video */
+	uint32_t				height;					/* height of video */
+	uint32_t				depth;					/* depth of video */
+	uint8_t				interlace;				/* interlace parameters */
 	huffyuv_data *		huffyuv;				/* huffyuv decompression data */
 
-	UINT16				channels;				/* audio channels */
-	UINT16				samplebits;				/* audio bits per sample */
-	UINT32				samplerate;				/* audio sample rate */
+	uint16_t				channels;				/* audio channels */
+	uint16_t				samplebits;				/* audio bits per sample */
+	uint32_t				samplerate;				/* audio sample rate */
 
 	/* only used when creating */
-	UINT64				saved_strh_offset;		/* writeoffset of strh chunk */
-	UINT64				saved_indx_offset;		/* writeoffset of indx chunk */
+	uint64_t				saved_strh_offset;		/* writeoffset of strh chunk */
+	uint64_t				saved_indx_offset;		/* writeoffset of indx chunk */
 };
 
 
@@ -180,8 +180,8 @@ struct _avi_file
 	osd_file *			file;					/* pointer to open file */
 	int					type;					/* type of access (read/create) */
 	avi_movie_info		info;					/* movie info structure */
-	UINT8 *				tempbuffer;				/* temporary buffer */
-	UINT32				tempbuffersize;			/* size of the temporary buffer */
+	uint8_t *				tempbuffer;				/* temporary buffer */
+	uint32_t				tempbuffersize;			/* size of the temporary buffer */
 
 	/* only used when reading */
 	int					streams;				/* number of streams */
@@ -189,20 +189,20 @@ struct _avi_file
 	avi_chunk			rootchunk;				/* dummy root chunk that wraps the whole file */
 
 	/* only used when creating */
-	UINT64				writeoffs;				/* current file write offset */
-	UINT64				riffbase;				/* base of the current RIFF */
+	uint64_t				writeoffs;				/* current file write offset */
+	uint64_t				riffbase;				/* base of the current RIFF */
 
 	avi_chunk			chunkstack[8];			/* stack of chunks we are writing */
 	int					chunksp;				/* stack pointer for the current chunk */
 
-	UINT64				saved_movi_offset;		/* writeoffset of movi list */
-	UINT64				saved_avih_offset;		/* writeoffset of avih chunk */
+	uint64_t				saved_movi_offset;		/* writeoffset of movi list */
+	uint64_t				saved_avih_offset;		/* writeoffset of avih chunk */
 
-	INT16 *				soundbuf;				/* buffer for sound data */
-	UINT32				soundbuf_samples;		/* length of sound buffer in samples */
-	UINT32				soundbuf_chansamples[MAX_SOUND_CHANNELS]; /* samples in buffer for each channel */
-	UINT32				soundbuf_chunks;		/* number of chunks completed so far */
-	UINT32				soundbuf_frames;		/* number of frames ahead of the video */
+	int16_t *				soundbuf;				/* buffer for sound data */
+	uint32_t				soundbuf_samples;		/* length of sound buffer in samples */
+	uint32_t				soundbuf_chansamples[MAX_SOUND_CHANNELS]; /* samples in buffer for each channel */
+	uint32_t				soundbuf_chunks;		/* number of chunks completed so far */
+	uint32_t				soundbuf_frames;		/* number of frames ahead of the video */
 };
 
 
@@ -216,10 +216,10 @@ struct _avi_file
 /* core chunk read routines */
 static avi_error get_first_chunk(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk);
 static avi_error get_next_chunk(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk);
-static avi_error find_first_chunk(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result);
-static avi_error find_next_chunk(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result);
-static avi_error get_next_chunk_internal(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk, UINT64 offset);
-static avi_error read_chunk_data(avi_file *file, const avi_chunk *chunk, UINT8 **buffer);
+static avi_error find_first_chunk(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result);
+static avi_error find_next_chunk(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result);
+static avi_error get_next_chunk_internal(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk, uint64_t offset);
+static avi_error read_chunk_data(avi_file *file, const avi_chunk *chunk, uint8_t **buffer);
 
 /* chunk read helpers */
 static avi_error read_movie_data(avi_file *file);
@@ -228,13 +228,13 @@ static avi_error parse_avih_chunk(avi_file *file, avi_chunk *avih);
 static avi_error parse_strh_chunk(avi_file *file, avi_stream *stream, avi_chunk *strh);
 static avi_error parse_strf_chunk(avi_file *file, avi_stream *stream, avi_chunk *strf);
 static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk *strf);
-static avi_error parse_idx1_chunk(avi_file *file, UINT64 baseoffset, avi_chunk *idx1);
+static avi_error parse_idx1_chunk(avi_file *file, uint64_t baseoffset, avi_chunk *idx1);
 
 /* core chunk write routines */
-static avi_error chunk_open(avi_file *file, UINT32 type, UINT32 listtype, UINT32 estlength);
+static avi_error chunk_open(avi_file *file, uint32_t type, uint32_t listtype, uint32_t estlength);
 static avi_error chunk_close(avi_file *file);
-static avi_error chunk_write(avi_file *file, UINT32 type, const void *data, UINT32 length);
-static avi_error chunk_overwrite(avi_file *file, UINT32 type, const void *data, UINT32 length, UINT64 *offset, int initial_write);
+static avi_error chunk_write(avi_file *file, uint32_t type, const void *data, uint32_t length);
+static avi_error chunk_overwrite(avi_file *file, uint32_t type, const void *data, uint32_t length, uint64_t *offset, int initial_write);
 
 /* chunk write helpers */
 static avi_error write_initial_headers(avi_file *file);
@@ -246,19 +246,19 @@ static avi_error write_idx1_chunk(avi_file *file);
 
 /* sound buffering helpers */
 static avi_error soundbuf_initialize(avi_file *file);
-static avi_error soundbuf_write_chunk(avi_file *file, UINT32 framenum);
+static avi_error soundbuf_write_chunk(avi_file *file, uint32_t framenum);
 static avi_error soundbuf_flush(avi_file *file, int only_flush_full);
 
 /* RGB helpers */
-static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitmap, UINT8 *data, UINT32 numbytes);
+static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitmap, uint8_t *data, uint32_t numbytes);
 
 /* YUY helpers */
-static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, UINT32 numbytes, bitmap_t *bitmap);
-static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitmap, UINT8 *data, UINT32 numbytes);
+static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const uint8_t *data, uint32_t numbytes, bitmap_t *bitmap);
+static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitmap, uint8_t *data, uint32_t numbytes);
 
 /* HuffYUV helpers */
-static avi_error huffyuv_extract_tables(avi_stream *stream, const UINT8 *chunkdata, UINT32 size);
-static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, UINT32 numbytes, bitmap_t *bitmap);
+static avi_error huffyuv_extract_tables(avi_stream *stream, const uint8_t *chunkdata, uint32_t size);
+static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const uint8_t *data, uint32_t numbytes, bitmap_t *bitmap);
 
 /* debugging */
 static void printf_chunk_recursive(avi_file *file, avi_chunk *chunk, int indent);
@@ -274,7 +274,7 @@ static void printf_chunk_recursive(avi_file *file, avi_chunk *chunk, int indent)
     from the given buffer
 -------------------------------------------------*/
 
-INLINE UINT16 fetch_16bits(const UINT8 *data)
+INLINE uint16_t fetch_16bits(const uint8_t *data)
 {
 	return data[0] | (data[1] << 8);
 }
@@ -285,7 +285,7 @@ INLINE UINT16 fetch_16bits(const UINT8 *data)
     from the given buffer
 -------------------------------------------------*/
 
-INLINE UINT32 fetch_32bits(const UINT8 *data)
+INLINE uint32_t fetch_32bits(const uint8_t *data)
 {
 	return data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
 }
@@ -296,12 +296,12 @@ INLINE UINT32 fetch_32bits(const UINT8 *data)
     from the given buffer
 -------------------------------------------------*/
 
-INLINE UINT64 fetch_64bits(const UINT8 *data)
+INLINE uint64_t fetch_64bits(const uint8_t *data)
 {
-	return (UINT64)data[0] | ((UINT64)data[1] << 8) |
-		   ((UINT64)data[2] << 16) | ((UINT64)data[3] << 24) |
-		   ((UINT64)data[4] << 32) | ((UINT64)data[5] << 40) |
-		   ((UINT64)data[6] << 48) | ((UINT64)data[7] << 56);
+	return (uint64_t)data[0] | ((uint64_t)data[1] << 8) |
+		   ((uint64_t)data[2] << 16) | ((uint64_t)data[3] << 24) |
+		   ((uint64_t)data[4] << 32) | ((uint64_t)data[5] << 40) |
+		   ((uint64_t)data[6] << 48) | ((uint64_t)data[7] << 56);
 }
 
 
@@ -310,7 +310,7 @@ INLINE UINT64 fetch_64bits(const UINT8 *data)
     to the given buffer
 -------------------------------------------------*/
 
-INLINE void put_16bits(UINT8 *data, UINT16 value)
+INLINE void put_16bits(uint8_t *data, uint16_t value)
 {
 	data[0] = value >> 0;
 	data[1] = value >> 8;
@@ -322,7 +322,7 @@ INLINE void put_16bits(UINT8 *data, UINT16 value)
     to the given buffer
 -------------------------------------------------*/
 
-INLINE void put_32bits(UINT8 *data, UINT32 value)
+INLINE void put_32bits(uint8_t *data, uint32_t value)
 {
 	data[0] = value >> 0;
 	data[1] = value >> 8;
@@ -336,7 +336,7 @@ INLINE void put_32bits(UINT8 *data, UINT32 value)
     to the given buffer
 -------------------------------------------------*/
 
-INLINE void put_64bits(UINT8 *data, UINT64 value)
+INLINE void put_64bits(uint8_t *data, uint64_t value)
 {
 	data[0] = value >> 0;
 	data[1] = value >> 8;
@@ -398,12 +398,12 @@ INLINE avi_stream *get_audio_stream(avi_file *file, int channel, int *offset)
     for a given chunk within a stream
 -------------------------------------------------*/
 
-INLINE avi_error set_stream_chunk_info(avi_stream *stream, UINT32 index, UINT64 offset, UINT32 length)
+INLINE avi_error set_stream_chunk_info(avi_stream *stream, uint32_t index, uint64_t offset, uint32_t length)
 {
 	/* if we need to allocate more, allocate more */
 	if (index >= stream->chunksalloc)
 	{
-		UINT32 newcount = MAX(index, stream->chunksalloc + 1000);
+		uint32_t newcount = MAX(index, stream->chunksalloc + 1000);
 		stream->chunk = (avi_chunk_list *)realloc(stream->chunk, newcount * sizeof(stream->chunk[0]));
 		if (stream->chunk == NULL)
 			return AVIERR_NO_MEMORY;
@@ -425,7 +425,7 @@ INLINE avi_error set_stream_chunk_info(avi_stream *stream, UINT32 index, UINT64 
     idx1 chunk
 -------------------------------------------------*/
 
-INLINE UINT32 compute_idx1_size(avi_file *file)
+INLINE uint32_t compute_idx1_size(avi_file *file)
 {
 	int chunks = 0;
 	int strnum;
@@ -443,9 +443,9 @@ INLINE UINT32 compute_idx1_size(avi_file *file)
     a given stream
 -------------------------------------------------*/
 
-INLINE UINT32 get_chunkid_for_stream(avi_file *file, avi_stream *stream)
+INLINE uint32_t get_chunkid_for_stream(avi_file *file, avi_stream *stream)
 {
-	UINT32 chunkid;
+	uint32_t chunkid;
 
 	chunkid = AVI_FOURCC('0' + (stream - file->stream) / 10, '0' +  (stream - file->stream) % 10, 0, 0);
 	if (stream->type == STREAMTYPE_VIDS)
@@ -462,9 +462,9 @@ INLINE UINT32 get_chunkid_for_stream(avi_file *file, avi_stream *stream)
     number, get the first sample number
 -------------------------------------------------*/
 
-INLINE UINT32 framenum_to_samplenum(avi_file *file, UINT32 framenum)
+INLINE uint32_t framenum_to_samplenum(avi_file *file, uint32_t framenum)
 {
-	return ((UINT64)file->info.audio_samplerate * (UINT64)framenum * (UINT64)file->info.video_sampletime + file->info.video_timescale - 1) / (UINT64)file->info.video_timescale;
+	return ((uint64_t)file->info.audio_samplerate * (uint64_t)framenum * (uint64_t)file->info.video_sampletime + file->info.video_timescale - 1) / (uint64_t)file->info.video_timescale;
 }
 
 
@@ -474,13 +474,13 @@ INLINE UINT32 framenum_to_samplenum(avi_file *file, UINT32 framenum)
     requested amount of data
 -------------------------------------------------*/
 
-INLINE avi_error expand_tempbuffer(avi_file *file, UINT32 length)
+INLINE avi_error expand_tempbuffer(avi_file *file, uint32_t length)
 {
 	/* expand the tempbuffer to hold the data if necessary */
 	if (length > file->tempbuffersize)
 	{
 		file->tempbuffersize = 2 * length;
-		file->tempbuffer = (UINT8 *)realloc(file->tempbuffer, file->tempbuffersize);
+		file->tempbuffer = (uint8_t *)realloc(file->tempbuffer, file->tempbuffersize);
 		if (file->tempbuffer == NULL)
 			return AVIERR_NO_MEMORY;
 	}
@@ -502,7 +502,7 @@ avi_error avi_open(const char *filename, avi_file **file)
 	avi_file *newfile = NULL;
 	file_error filerr;
 	avi_error avierr;
-	UINT64 length;
+	uint64_t length;
 
 	/* allocate the file */
 	newfile = (avi_file *)malloc(sizeof(*newfile));
@@ -555,7 +555,7 @@ avi_error avi_create(const char *filename, const avi_movie_info *info, avi_file 
 	file_error filerr;
 	avi_stream *stream;
 	avi_error avierr;
-	UINT64 length;
+	uint64_t length;
 
 	/* validate video info */
 	if ((info->video_format != 0 && info->video_format != FORMAT_UYVY && info->video_format != FORMAT_VYUY && info->video_format != FORMAT_YUY2)  ||
@@ -781,7 +781,7 @@ const avi_movie_info *avi_get_movie_info(avi_file *file)
     to a sample index
 -------------------------------------------------*/
 
-UINT32 avi_first_sample_in_frame(avi_file *file, UINT32 framenum)
+uint32_t avi_first_sample_in_frame(avi_file *file, uint32_t framenum)
 {
 	return framenum_to_samplenum(file, framenum);
 }
@@ -793,10 +793,10 @@ UINT32 avi_first_sample_in_frame(avi_file *file, UINT32 framenum)
     converting to YUY16 format
 -------------------------------------------------*/
 
-avi_error avi_read_video_frame_yuy16(avi_file *file, UINT32 framenum, bitmap_t *bitmap)
+avi_error avi_read_video_frame_yuy16(avi_file *file, uint32_t framenum, bitmap_t *bitmap)
 {
 	avi_error avierr = AVIERR_NONE;
-	UINT32 bytes_read, chunkid;
+	uint32_t bytes_read, chunkid;
 	file_error filerr;
 	avi_stream *stream;
 
@@ -851,10 +851,10 @@ avi_error avi_read_video_frame_yuy16(avi_file *file, UINT32 framenum, bitmap_t *
     data from an AVI file
 -------------------------------------------------*/
 
-avi_error avi_read_sound_samples(avi_file *file, int channel, UINT32 firstsample, UINT32 numsamples, INT16 *output)
+avi_error avi_read_sound_samples(avi_file *file, int channel, uint32_t firstsample, uint32_t numsamples, int16_t *output)
 {
 	avi_error avierr = AVIERR_NONE;
-	UINT32 bytes_per_sample;
+	uint32_t bytes_per_sample;
 	file_error filerr;
 	avi_stream *stream;
 	int offset;
@@ -880,8 +880,8 @@ avi_error avi_read_sound_samples(avi_file *file, int channel, UINT32 firstsample
 	/* loop until all samples have been extracted */
 	while (numsamples > 0)
 	{
-		UINT32 chunkbase = 0, chunkend = 0, chunkid;
-		UINT32 bytes_read, samples_this_chunk;
+		uint32_t chunkbase = 0, chunkend = 0, chunkid;
+		uint32_t bytes_read, samples_this_chunk;
 		int chunknum, sampnum;
 
 		/* locate the chunk with the first sample */
@@ -922,7 +922,7 @@ avi_error avi_read_sound_samples(avi_file *file, int channel, UINT32 firstsample
 		/* extract 16-bit samples from the chunk */
 		if (stream->samplebits == 16)
 		{
-			const INT16 *base = (const INT16 *)(file->tempbuffer + 8);
+			const int16_t *base = (const int16_t *)(file->tempbuffer + 8);
 			base += stream->channels * (firstsample - chunkbase) + offset;
 			for (sampnum = 0; sampnum < samples_this_chunk; sampnum++)
 			{
@@ -934,7 +934,7 @@ avi_error avi_read_sound_samples(avi_file *file, int channel, UINT32 firstsample
 		/* extract 8-bit samples from the chunk */
 		else if (stream->samplebits == 8)
 		{
-			const UINT8 *base = (const UINT8 *)(file->tempbuffer + 8);
+			const uint8_t *base = (const uint8_t *)(file->tempbuffer + 8);
 			base += stream->channels * (firstsample - chunkbase) + offset;
 			for (sampnum = 0; sampnum < samples_this_chunk; sampnum++)
 			{
@@ -961,7 +961,7 @@ avi_error avi_append_video_frame_yuy16(avi_file *file, const bitmap_t *bitmap)
 {
 	avi_stream *stream = get_video_stream(file);
 	avi_error avierr;
-	UINT32 maxlength;
+	uint32_t maxlength;
 
 	/* validate our ability to handle the data */
 	if (stream->format != FORMAT_UYVY && stream->format != FORMAT_VYUY && stream->format != FORMAT_YUY2 && stream->format != FORMAT_HFYU)
@@ -1007,7 +1007,7 @@ avi_error avi_append_video_frame_rgb32(avi_file *file, const bitmap_t *bitmap)
 {
 	avi_stream *stream = get_video_stream(file);
 	avi_error avierr;
-	UINT32 maxlength;
+	uint32_t maxlength;
 
 	/* validate our ability to handle the data */
 	if (stream->format != 0)
@@ -1053,10 +1053,10 @@ avi_error avi_append_video_frame_rgb32(avi_file *file, const bitmap_t *bitmap)
     samples
 -------------------------------------------------*/
 
-avi_error avi_append_sound_samples(avi_file *file, int channel, const INT16 *samples, UINT32 numsamples, UINT32 sampleskip)
+avi_error avi_append_sound_samples(avi_file *file, int channel, const int16_t *samples, uint32_t numsamples, uint32_t sampleskip)
 {
-	UINT32 sampoffset = file->soundbuf_chansamples[channel];
-	UINT32 sampnum;
+	uint32_t sampoffset = file->soundbuf_chansamples[channel];
+	uint32_t sampnum;
 
 	/* see if we have enough room in the buffer */
 	if (sampoffset + numsamples > file->soundbuf_samples)
@@ -1065,7 +1065,7 @@ avi_error avi_append_sound_samples(avi_file *file, int channel, const INT16 *sam
 	/* append samples to the buffer in little-endian format */
 	for (sampnum = 0; sampnum < numsamples; sampnum++)
 	{
-		INT16 data = *samples++;
+		int16_t data = *samples++;
 		samples += sampleskip;
 		data = LITTLE_ENDIANIZE_INT16(data);
 		file->soundbuf[sampoffset++ * file->info.audio_channels + channel] = data;
@@ -1082,13 +1082,13 @@ avi_error avi_append_sound_samples(avi_file *file, int channel, const INT16 *sam
     memory
 -------------------------------------------------*/
 
-static avi_error read_chunk_data(avi_file *file, const avi_chunk *chunk, UINT8 **buffer)
+static avi_error read_chunk_data(avi_file *file, const avi_chunk *chunk, uint8_t **buffer)
 {
 	file_error filerr;
-	UINT32 bytes_read;
+	uint32_t bytes_read;
 
 	/* allocate memory for the data */
-	*buffer = (UINT8 *)malloc(chunk->size);
+	*buffer = (uint8_t *)malloc(chunk->size);
 	if (*buffer == NULL)
 		return AVIERR_NO_MEMORY;
 
@@ -1112,7 +1112,7 @@ static avi_error read_chunk_data(avi_file *file, const avi_chunk *chunk, UINT8 *
 
 static avi_error get_first_chunk(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk)
 {
-	UINT64 startoffset = (parent != NULL && parent->type != 0) ? parent->offset + 12 : 0;
+	uint64_t startoffset = (parent != NULL && parent->type != 0) ? parent->offset + 12 : 0;
 	if (parent != NULL && parent->type != CHUNKTYPE_LIST && parent->type != CHUNKTYPE_RIFF && parent->type != 0)
 		return AVIERR_INVALID_DATA;
 	return get_next_chunk_internal(file, parent, newchunk, startoffset);
@@ -1126,7 +1126,7 @@ static avi_error get_first_chunk(avi_file *file, const avi_chunk *parent, avi_ch
 
 static avi_error get_next_chunk(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk)
 {
-	UINT64 nextoffset = newchunk->offset + 8 + newchunk->size + (newchunk->size & 1);
+	uint64_t nextoffset = newchunk->offset + 8 + newchunk->size + (newchunk->size & 1);
 	return get_next_chunk_internal(file, parent, newchunk, nextoffset);
 }
 
@@ -1136,7 +1136,7 @@ static avi_error get_next_chunk(avi_file *file, const avi_chunk *parent, avi_chu
     first chunk of a particular type in a container
 -------------------------------------------------*/
 
-static avi_error find_first_chunk(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result)
+static avi_error find_first_chunk(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result)
 {
 	avi_error avierr;
 
@@ -1153,7 +1153,7 @@ static avi_error find_first_chunk(avi_file *file, UINT32 findme, const avi_chunk
     next chunk of a particular type in a container
 -------------------------------------------------*/
 
-static avi_error find_next_chunk(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result)
+static avi_error find_next_chunk(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result)
 {
 	avi_error avierr;
 
@@ -1170,7 +1170,7 @@ static avi_error find_next_chunk(avi_file *file, UINT32 findme, const avi_chunk 
     first list of a particular type in a container
 -------------------------------------------------*/
 
-static avi_error find_first_list(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result)
+static avi_error find_first_list(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result)
 {
 	avi_error avierr;
 
@@ -1187,7 +1187,7 @@ static avi_error find_first_list(avi_file *file, UINT32 findme, const avi_chunk 
     next list of a particular type in a container
 -------------------------------------------------*/
 
-static avi_error find_next_list(avi_file *file, UINT32 findme, const avi_chunk *container, avi_chunk *result)
+static avi_error find_next_list(avi_file *file, uint32_t findme, const avi_chunk *container, avi_chunk *result)
 {
 	avi_error avierr;
 
@@ -1204,11 +1204,11 @@ static avi_error find_next_list(avi_file *file, UINT32 findme, const avi_chunk *
     chunk relative to the current one
 -------------------------------------------------*/
 
-static avi_error get_next_chunk_internal(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk, UINT64 offset)
+static avi_error get_next_chunk_internal(avi_file *file, const avi_chunk *parent, avi_chunk *newchunk, uint64_t offset)
 {
 	file_error filerr;
-	UINT8 buffer[12];
-	UINT32 bytesread;
+	uint8_t buffer[12];
+	uint32_t bytesread;
 
 	/* NULL parent implies the root */
 	if (parent == NULL)
@@ -1410,7 +1410,7 @@ static avi_error extract_movie_info(avi_file *file)
 
 static avi_error parse_avih_chunk(avi_file *file, avi_chunk *avih)
 {
-	UINT8 *chunkdata = NULL;
+	uint8_t *chunkdata = NULL;
 	avi_error avierr;
 
 	/* read the data */
@@ -1441,7 +1441,7 @@ error:
 
 static avi_error parse_strh_chunk(avi_file *file, avi_stream *stream, avi_chunk *strh)
 {
-	UINT8 *chunkdata = NULL;
+	uint8_t *chunkdata = NULL;
 	avi_error avierr;
 
 	/* read the data */
@@ -1469,7 +1469,7 @@ error:
 
 static avi_error parse_strf_chunk(avi_file *file, avi_stream *stream, avi_chunk *strf)
 {
-	UINT8 *chunkdata = NULL;
+	uint8_t *chunkdata = NULL;
 	avi_error avierr;
 
 	/* read the data */
@@ -1513,11 +1513,11 @@ error:
 
 static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk *strf)
 {
-	UINT32 entries, entry, id;
-	UINT8 *chunkdata = NULL;
-	UINT16 longs_per_entry;
-	UINT8 subtype, type;
-	UINT64 baseoffset;
+	uint32_t entries, entry, id;
+	uint8_t *chunkdata = NULL;
+	uint16_t longs_per_entry;
+	uint8_t subtype, type;
+	uint64_t baseoffset;
 	avi_error avierr;
 
 	/* read the data */
@@ -1543,11 +1543,11 @@ static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk 
 		/* loop over entries and create subchunks for each */
 		for (entry = 0; entry < entries; entry++)
 		{
-			const UINT8 *base = &chunkdata[24 + entry * 16];
+			const uint8_t *base = &chunkdata[24 + entry * 16];
 			file_error filerr;
 			avi_chunk subchunk;
-			UINT32 bytes_read;
-			UINT8 buffer[8];
+			uint32_t bytes_read;
+			uint8_t buffer[8];
 
 			/* go read the subchunk */
 			subchunk.offset = fetch_64bits(&base[0]);
@@ -1579,9 +1579,9 @@ static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk 
 		/* loop over entries and parse out the data */
 		for (entry = 0; entry < entries; entry++)
 		{
-			const UINT8 *base = &chunkdata[24 + entry * 4 * longs_per_entry];
-			UINT32 offset = fetch_32bits(&base[0]);
-			UINT32 size = fetch_32bits(&base[4]);
+			const uint8_t *base = &chunkdata[24 + entry * 4 * longs_per_entry];
+			uint32_t offset = fetch_32bits(&base[0]);
+			uint32_t size = fetch_32bits(&base[4]);
 
 			/* set the info for this chunk and advance */
 			avierr = set_stream_chunk_info(stream, stream->chunks++, baseoffset + offset - 8, size + 8);
@@ -1601,12 +1601,12 @@ error:
     parse_idx1_chunk - parse an idx1 chunk
 -------------------------------------------------*/
 
-static avi_error parse_idx1_chunk(avi_file *file, UINT64 baseoffset, avi_chunk *idx1)
+static avi_error parse_idx1_chunk(avi_file *file, uint64_t baseoffset, avi_chunk *idx1)
 {
-	UINT8 *chunkdata = NULL;
+	uint8_t *chunkdata = NULL;
 	avi_error avierr;
-	UINT32 entries;
-	UINT32 entry;
+	uint32_t entries;
+	uint32_t entry;
 
 	/* read the data */
 	avierr = read_chunk_data(file, idx1, &chunkdata);
@@ -1617,10 +1617,10 @@ static avi_error parse_idx1_chunk(avi_file *file, UINT64 baseoffset, avi_chunk *
 	entries = idx1->size / 16;
 	for (entry = 0; entry < entries; entry++)
 	{
-		const UINT8 *base = &chunkdata[entry * 16];
-		UINT32 chunkid = fetch_32bits(&base[0]);
-		UINT32 offset = fetch_32bits(&base[8]);
-		UINT32 size = fetch_32bits(&base[12]);
+		const uint8_t *base = &chunkdata[entry * 16];
+		uint32_t chunkid = fetch_32bits(&base[0]);
+		uint32_t offset = fetch_32bits(&base[8]);
+		uint32_t size = fetch_32bits(&base[12]);
 		avi_stream *stream;
 		int streamnum;
 
@@ -1651,11 +1651,11 @@ error:
     chunk_open - open a new chunk for writing
 -------------------------------------------------*/
 
-static avi_error chunk_open(avi_file *file, UINT32 type, UINT32 listtype, UINT32 estlength)
+static avi_error chunk_open(avi_file *file, uint32_t type, uint32_t listtype, uint32_t estlength)
 {
 	file_error filerr;
 	avi_chunk *chunk;
-	UINT32 written;
+	uint32_t written;
 
 	/* if we're out of stack entries, bail */
 	if (file->chunksp >= ARRAY_LENGTH(file->chunkstack))
@@ -1671,7 +1671,7 @@ static avi_error chunk_open(avi_file *file, UINT32 type, UINT32 listtype, UINT32
 	/* non-list types */
 	if (type != CHUNKTYPE_RIFF && type != CHUNKTYPE_LIST)
 	{
-		UINT8 buffer[8];
+		uint8_t buffer[8];
 
 		/* populate the header */
 		put_32bits(&buffer[0], chunk->type);
@@ -1687,7 +1687,7 @@ static avi_error chunk_open(avi_file *file, UINT32 type, UINT32 listtype, UINT32
 	/* list types */
 	else
 	{
-		UINT8 buffer[12];
+		uint8_t buffer[12];
 
 		/* populate the header */
 		put_32bits(&buffer[0], chunk->type);
@@ -1712,20 +1712,20 @@ static avi_error chunk_open(avi_file *file, UINT32 type, UINT32 listtype, UINT32
 static avi_error chunk_close(avi_file *file)
 {
 	avi_chunk *chunk = &file->chunkstack[--file->chunksp];
-	UINT64 chunksize = file->writeoffs - (chunk->offset + 8);
-	UINT32 written;
+	uint64_t chunksize = file->writeoffs - (chunk->offset + 8);
+	uint32_t written;
 
 	/* error if we don't fit into 32 bits */
-	if (chunksize != (UINT32)chunksize)
+	if (chunksize != (uint32_t)chunksize)
 		return AVIERR_INVALID_DATA;
 
 	/* write the final size if it is different from the guess */
 	if (chunk->size != chunksize)
 	{
 		file_error filerr;
-		UINT8 buffer[4];
+		uint8_t buffer[4];
 
-		put_32bits(&buffer[0], (UINT32)chunksize);
+		put_32bits(&buffer[0], (uint32_t)chunksize);
 		filerr = osd_write(file->file, buffer, chunk->offset + 4, sizeof(buffer), &written);
 		if (filerr != FILERR_NONE || written != sizeof(buffer))
 			return AVIERR_WRITE_ERROR;
@@ -1742,12 +1742,12 @@ static avi_error chunk_close(avi_file *file)
     chunk_write - write an chunk and its data
 -------------------------------------------------*/
 
-static avi_error chunk_write(avi_file *file, UINT32 type, const void *data, UINT32 length)
+static avi_error chunk_write(avi_file *file, uint32_t type, const void *data, uint32_t length)
 {
 	file_error filerr;
 	avi_error avierr;
-	UINT32 idxreserve;
-	UINT32 written;
+	uint32_t idxreserve;
+	uint32_t written;
 
 	/* if we are the first RIFF, we must reserve enough space for the IDX chunk */
 	idxreserve = 0;
@@ -1813,9 +1813,9 @@ static avi_error chunk_write(avi_file *file, UINT32 type, const void *data, UINT
     original
 -------------------------------------------------*/
 
-static avi_error chunk_overwrite(avi_file *file, UINT32 type, const void *data, UINT32 length, UINT64 *offset, int initial_write)
+static avi_error chunk_overwrite(avi_file *file, uint32_t type, const void *data, uint32_t length, uint64_t *offset, int initial_write)
 {
-	UINT64 savedoffset = 0;
+	uint64_t savedoffset = 0;
 	avi_error avierr;
 
 	/* if this is our initial write, save the offset */
@@ -1920,12 +1920,12 @@ static avi_error write_initial_headers(avi_file *file)
 static avi_error write_avih_chunk(avi_file *file, int initial_write)
 {
 	avi_stream *video = get_video_stream(file);
-	UINT8 buffer[56];
+	uint8_t buffer[56];
 
 	/* reset the buffer */
 	memset(buffer, 0, sizeof(buffer));
 
-	put_32bits(&buffer[0], 1000000 * (INT64)video->scale / video->rate); /* dwMicroSecPerFrame */
+	put_32bits(&buffer[0], 1000000 * (int64_t)video->scale / video->rate); /* dwMicroSecPerFrame */
 	put_32bits(&buffer[12], AVIF_HASINDEX | AVIF_ISINTERLEAVED); /* dwFlags */
 	put_32bits(&buffer[16], video->samples);			/* dwTotalFrames */
 	put_32bits(&buffer[24], file->streams);				/* dwStreams */
@@ -1944,7 +1944,7 @@ static avi_error write_avih_chunk(avi_file *file, int initial_write)
 
 static avi_error write_strh_chunk(avi_file *file, avi_stream *stream, int initial_write)
 {
-	UINT8 buffer[56];
+	uint8_t buffer[56];
 
 	/* reset the buffer */
 	memset(buffer, 0, sizeof(buffer));
@@ -1990,7 +1990,7 @@ static avi_error write_strf_chunk(avi_file *file, avi_stream *stream)
 	/* video stream */
 	if (stream->type == STREAMTYPE_VIDS)
 	{
-		UINT8 buffer[40];
+		uint8_t buffer[40];
 
 		/* reset the buffer */
 		memset(buffer, 0, sizeof(buffer));
@@ -2011,7 +2011,7 @@ static avi_error write_strf_chunk(avi_file *file, avi_stream *stream)
 	/* audio stream */
 	if (stream->type == STREAMTYPE_AUDS)
 	{
-		UINT8 buffer[16];
+		uint8_t buffer[16];
 
 		/* reset the buffer */
 		memset(buffer, 0, sizeof(buffer));
@@ -2040,9 +2040,9 @@ static avi_error write_strf_chunk(avi_file *file, avi_stream *stream)
 
 static avi_error write_indx_chunk(avi_file *file, avi_stream *stream, int initial_write)
 {
-	UINT8 buffer[24 + 16 * MAX_AVI_SIZE_IN_GB / 4];
-	UINT32 chunkid, indexchunkid;
-	UINT32 master_entries = 0;
+	uint8_t buffer[24 + 16 * MAX_AVI_SIZE_IN_GB / 4];
+	uint32_t chunkid, indexchunkid;
+	uint32_t master_entries = 0;
 
 	/* reset the buffer */
 	memset(buffer, 0, sizeof(buffer));
@@ -2054,15 +2054,15 @@ static avi_error write_indx_chunk(avi_file *file, avi_stream *stream, int initia
 	/* loop over chunks of 4GB and write out indexes for them first */
 	if (!initial_write && file->riffbase != 0)
 	{
-		UINT64 currentbase;
+		uint64_t currentbase;
 		for (currentbase = 0; currentbase < file->writeoffs; currentbase += FOUR_GB)
 		{
-			UINT64 currentend = currentbase + FOUR_GB;
-			UINT32 chunks_this_index = 0;
-			UINT32 bytes_this_index = 0;
+			uint64_t currentend = currentbase + FOUR_GB;
+			uint32_t chunks_this_index = 0;
+			uint32_t bytes_this_index = 0;
 			avi_error avierr;
-			UINT32 chunknum;
-			UINT8 *tempbuf;
+			uint32_t chunknum;
+			uint8_t *tempbuf;
 
 			/* count chunks that are in this region */
 			for (chunknum = 0; chunknum < stream->chunks; chunknum++)
@@ -2074,7 +2074,7 @@ static avi_error write_indx_chunk(avi_file *file, avi_stream *stream, int initia
 				continue;
 
 			/* allocate memory */
-			tempbuf = (UINT8 *)malloc(24 + 8 * chunks_this_index);
+			tempbuf = (uint8_t *)malloc(24 + 8 * chunks_this_index);
 			if (tempbuf == NULL)
 				return AVIERR_NO_MEMORY;
 			memset(tempbuf, 0, 24 + 8 * chunks_this_index);
@@ -2136,21 +2136,21 @@ static avi_error write_indx_chunk(avi_file *file, avi_stream *stream, int initia
 
 static avi_error write_idx1_chunk(avi_file *file)
 {
-	UINT32 tempbuflength = compute_idx1_size(file) - 8;
-	UINT32 curchunk[2] = { 0 };
-	UINT32 curoffset;
+	uint32_t tempbuflength = compute_idx1_size(file) - 8;
+	uint32_t curchunk[2] = { 0 };
+	uint32_t curoffset;
 	avi_error avierr;
-	UINT8 *tempbuf;
+	uint8_t *tempbuf;
 
 	/* allocate a temporary buffer */
-	tempbuf = (UINT8 *)malloc(tempbuflength);
+	tempbuf = (uint8_t *)malloc(tempbuflength);
 	if (tempbuf == NULL)
 		return AVIERR_NO_MEMORY;
 
 	/* fill it in */
 	for (curoffset = 0; curoffset < tempbuflength; curoffset += 16)
 	{
-		UINT64 minoffset = ~(UINT64)0;
+		uint64_t minoffset = ~(uint64_t)0;
 		int strnum, minstr = 0;
 
 		/* determine which stream has the next chunk */
@@ -2200,13 +2200,13 @@ static avi_error soundbuf_initialize(avi_file *file)
 	file->soundbuf_samples = file->info.audio_samplerate * SOUND_BUFFER_MSEC / 1000;
 
 	/* allocate a buffer */
-	file->soundbuf = (INT16 *)malloc(file->soundbuf_samples * file->info.audio_channels * sizeof(file->soundbuf[0]));
+	file->soundbuf = (int16_t *)malloc(file->soundbuf_samples * file->info.audio_channels * sizeof(file->soundbuf[0]));
 	if (file->soundbuf == NULL)
 		return AVIERR_NO_MEMORY;
 	memset(file->soundbuf, 0, file->soundbuf_samples * file->info.audio_channels * sizeof(file->soundbuf[0]));
 
 	/* determine the number of frames to be ahead (0.75secs) */
-	file->soundbuf_frames = ((UINT64)video->rate * 75) / ((UINT64)video->scale * 100) + 1;
+	file->soundbuf_frames = ((uint64_t)video->rate * 75) / ((uint64_t)video->scale * 100) + 1;
 	return AVIERR_NONE;
 }
 
@@ -2216,12 +2216,12 @@ static avi_error soundbuf_initialize(avi_file *file)
     chunk data
 -------------------------------------------------*/
 
-static avi_error soundbuf_write_chunk(avi_file *file, UINT32 framenum)
+static avi_error soundbuf_write_chunk(avi_file *file, uint32_t framenum)
 {
 	avi_stream *stream = get_audio_stream(file, 0, NULL);
 	avi_error avierr;
-	UINT32 chunknum;
-	UINT32 length;
+	uint32_t chunknum;
+	uint32_t length;
 
 	/* skip if no audio stream */
 	if (stream == NULL)
@@ -2232,7 +2232,7 @@ static avi_error soundbuf_write_chunk(avi_file *file, UINT32 framenum)
 		length = framenum_to_samplenum(file, file->soundbuf_frames);
 	else
 		length = framenum_to_samplenum(file, framenum + 1 + file->soundbuf_frames) - framenum_to_samplenum(file, framenum + file->soundbuf_frames);
-	length *= stream->channels * sizeof(INT16);
+	length *= stream->channels * sizeof(int16_t);
 
 	/* set the info for this new chunk */
 	chunknum = stream->chunks;
@@ -2253,13 +2253,13 @@ static avi_error soundbuf_write_chunk(avi_file *file, UINT32 framenum)
 static avi_error soundbuf_flush(avi_file *file, int only_flush_full)
 {
 	avi_stream *stream = get_audio_stream(file, 0, NULL);
-	INT32 channelsamples = file->soundbuf_samples;
-	INT32 processedsamples = 0;
-	UINT32 bytes_per_sample;
-	UINT32 finalchunks;
+	int32_t channelsamples = file->soundbuf_samples;
+	int32_t processedsamples = 0;
+	uint32_t bytes_per_sample;
+	uint32_t finalchunks;
 	avi_error avierr;
-	UINT32 chunknum;
-	UINT32 chunkid;
+	uint32_t chunknum;
+	uint32_t chunkid;
 	int channel;
 
 	/* skip if no stream */
@@ -2268,7 +2268,7 @@ static avi_error soundbuf_flush(avi_file *file, int only_flush_full)
 
 	/* get the chunk ID for this stream */
 	chunkid = get_chunkid_for_stream(file, stream);
-	bytes_per_sample = stream->channels * sizeof(INT16);
+	bytes_per_sample = stream->channels * sizeof(int16_t);
 	finalchunks = stream->chunks;
 
 	/* find out how many samples we've accumulated */
@@ -2279,7 +2279,7 @@ static avi_error soundbuf_flush(avi_file *file, int only_flush_full)
 	for (chunknum = file->soundbuf_chunks; chunknum < stream->chunks; chunknum++)
 	{
 		avi_chunk_list *chunk = &stream->chunk[chunknum];
-		UINT32 chunksamples = (chunk->length - 8) / bytes_per_sample;
+		uint32_t chunksamples = (chunk->length - 8) / bytes_per_sample;
 
 		/* stop if we don't have enough to satisfy this chunk */
 		if (only_flush_full && channelsamples < chunksamples)
@@ -2343,22 +2343,22 @@ static avi_error soundbuf_flush(avi_file *file, int only_flush_full)
     bitmap to an RGB encoded frame
 -------------------------------------------------*/
 
-static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitmap, UINT8 *data, UINT32 numbytes)
+static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitmap, uint8_t *data, uint32_t numbytes)
 {
 	int height = MIN(stream->height, bitmap->height);
 	int width = MIN(stream->width, bitmap->width);
-	UINT8 *dataend = data + numbytes;
+	uint8_t *dataend = data + numbytes;
 	int x, y;
 
 	/* compressed video */
 	for (y = 0; y < height; y++)
 	{
-		const UINT32 *source = (UINT32 *)bitmap->base + y * bitmap->rowpixels;
-		UINT8 *dest = data + (stream->height - 1 - y) * stream->width * 3;
+		const uint32_t *source = (uint32_t *)bitmap->base + y * bitmap->rowpixels;
+		uint8_t *dest = data + (stream->height - 1 - y) * stream->width * 3;
 
 		for (x = 0; x < width && dest < dataend; x++)
 		{
-			UINT32 pix = *source++;
+			uint32_t pix = *source++;
 			*dest++ = RGB_BLUE(pix);
 			*dest++ = RGB_GREEN(pix);
 			*dest++ = RGB_RED(pix);
@@ -2376,7 +2376,7 @@ static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitma
 	/* fill in any blank space on the bottom */
 	for ( ; y < stream->height; y++)
 	{
-		UINT8 *dest = data + (stream->height - 1 - y) * stream->width * 3;
+		uint8_t *dest = data + (stream->height - 1 - y) * stream->width * 3;
 		for (x = 0; x < stream->width && dest < dataend; x++)
 		{
 			*dest++ = 0;
@@ -2394,16 +2394,16 @@ static avi_error rgb32_compress_to_rgb(avi_stream *stream, const bitmap_t *bitma
     encoded frame to a YUY16 bitmap
 -------------------------------------------------*/
 
-static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, UINT32 numbytes, bitmap_t *bitmap)
+static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const uint8_t *data, uint32_t numbytes, bitmap_t *bitmap)
 {
-	const UINT16 *dataend = (const UINT16 *)(data + numbytes);
+	const uint16_t *dataend = (const uint16_t *)(data + numbytes);
 	int x, y;
 
 	/* compressed video */
 	for (y = 0; y < stream->height; y++)
 	{
-		const UINT16 *source = (const UINT16 *)data + y * stream->width;
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		const uint16_t *source = (const uint16_t *)data + y * stream->width;
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* switch off the compression */
 		switch (stream->format)
@@ -2417,7 +2417,7 @@ static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, 
 			case FORMAT_YUY2:
 				for (x = 0; x < stream->width && source < dataend; x++)
 				{
-					UINT16 pix = *source++;
+					uint16_t pix = *source++;
 					*dest++ = (pix >> 8) | (pix << 8);
 				}
 				break;
@@ -2433,16 +2433,16 @@ static avi_error yuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, 
     bitmap to a YUV encoded frame
 -------------------------------------------------*/
 
-static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitmap, UINT8 *data, UINT32 numbytes)
+static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitmap, uint8_t *data, uint32_t numbytes)
 {
-	const UINT16 *dataend = (const UINT16 *)(data + numbytes);
+	const uint16_t *dataend = (const uint16_t *)(data + numbytes);
 	int x, y;
 
 	/* compressed video */
 	for (y = 0; y < stream->height; y++)
 	{
-		const UINT16 *source = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
-		UINT16 *dest = (UINT16 *)data + y * stream->width;
+		const uint16_t *source = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *dest = (uint16_t *)data + y * stream->width;
 
 		/* switch off the compression */
 		switch (stream->format)
@@ -2456,7 +2456,7 @@ static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitma
 			case FORMAT_YUY2:
 				for (x = 0; x < stream->width && source < dataend; x++)
 				{
-					UINT16 pix = *source++;
+					uint16_t pix = *source++;
 					*dest++ = (pix >> 8) | (pix << 8);
 				}
 				break;
@@ -2472,9 +2472,9 @@ static avi_error yuy16_compress_to_yuy(avi_stream *stream, const bitmap_t *bitma
     tables
 -------------------------------------------------*/
 
-static avi_error huffyuv_extract_tables(avi_stream *stream, const UINT8 *chunkdata, UINT32 size)
+static avi_error huffyuv_extract_tables(avi_stream *stream, const uint8_t *chunkdata, uint32_t size)
 {
-	const UINT8 *chunkend = chunkdata + size;
+	const uint8_t *chunkend = chunkdata + size;
 	avi_error avierr = AVIERR_NONE;
 	int tabnum;
 
@@ -2504,8 +2504,8 @@ static avi_error huffyuv_extract_tables(avi_stream *stream, const UINT8 *chunkda
 	for (tabnum = 0; tabnum < 3; tabnum++)
 	{
 		huffyuv_table *table = &stream->huffyuv->table[tabnum];
-		UINT32 curbits, bitadd;
-		UINT16 bitsat16 = 0;
+		uint32_t curbits, bitadd;
+		uint16_t bitsat16 = 0;
 		int offset = 0, bits;
 
 		/* loop until we populate the whole table */
@@ -2567,7 +2567,7 @@ static avi_error huffyuv_extract_tables(avi_stream *stream, const UINT8 *chunkda
 		/* allocate the number of extra lookup tables we need */
 		if (bitsat16 > 0)
 		{
-			table->extralookup = (UINT16 *)malloc(bitsat16 * 65536 * sizeof(table->extralookup[0]));
+			table->extralookup = (uint16_t *)malloc(bitsat16 * 65536 * sizeof(table->extralookup[0]));
 			if (table->extralookup == NULL)
 			{
 				avierr = AVIERR_NO_MEMORY;
@@ -2581,16 +2581,16 @@ static avi_error huffyuv_extract_tables(avi_stream *stream, const UINT8 *chunkda
 		for (offset = 0; offset < 256; offset++)
 			if (table->shift[offset] > 16)
 			{
-				UINT16 *tablebase = table->extralookup + (table->bits[offset] >> 16) * 65536;
-				UINT32 start = table->bits[offset] & 0xffff;
-				UINT32 end = start + ((1 << (32 - table->shift[offset])) - 1);
+				uint16_t *tablebase = table->extralookup + (table->bits[offset] >> 16) * 65536;
+				uint32_t start = table->bits[offset] & 0xffff;
+				uint32_t end = start + ((1 << (32 - table->shift[offset])) - 1);
 				while (start <= end)
 					tablebase[start++] = (offset << 8) | (table->shift[offset] - 16);
 			}
 			else if (table->shift[offset] > 0)
 			{
-				UINT32 start = table->bits[offset] >> 16;
-				UINT32 end = start + ((1 << (16 - table->shift[offset])) - 1);
+				uint32_t start = table->bits[offset] >> 16;
+				uint32_t end = start + ((1 << (16 - table->shift[offset])) - 1);
 				while (start <= end)
 					table->baselookup[start++] = (offset << 8) | table->shift[offset];
 			}
@@ -2611,21 +2611,21 @@ error:
     HuffYUV-encoded frame to a YUY16 bitmap
 -------------------------------------------------*/
 
-static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *data, UINT32 numbytes, bitmap_t *bitmap)
+static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const uint8_t *data, uint32_t numbytes, bitmap_t *bitmap)
 {
 	huffyuv_data *huffyuv = stream->huffyuv;
 	int prevlines = (stream->height > 288) ? 2 : 1;
-	UINT8 lastprevy = 0, lastprevcb = 0, lastprevcr = 0;
-	UINT8 lasty = 0, lastcb = 0, lastcr = 0;
-	UINT8 bitsinbuffer = 0;
-	UINT32 bitbuffer = 0;
-	UINT32 dataoffs = 0;
+	uint8_t lastprevy = 0, lastprevcb = 0, lastprevcr = 0;
+	uint8_t lasty = 0, lastcb = 0, lastcr = 0;
+	uint8_t bitsinbuffer = 0;
+	uint32_t bitbuffer = 0;
+	uint32_t dataoffs = 0;
 	int x, y;
 
 	/* compressed video */
 	for (y = 0; y < stream->height; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		/* handle the first four bytes independently */
 		x = 0;
@@ -2646,7 +2646,7 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 		{
 			huffyuv_table *ytable = &huffyuv->table[0];
 			huffyuv_table *ctable = &huffyuv->table[1 + (x & 1)];
-			UINT16 pixel, huffdata;
+			uint16_t pixel, huffdata;
 			int shift;
 
 			/* fill up the buffer; they store little-endian DWORDs, so we XOR with 3 */
@@ -2713,8 +2713,8 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 	lastprevy = lastprevcb = lastprevcr = 0;
 	for (y = 0; y < stream->height; y++)
 	{
-		UINT16 *prevrow = BITMAP_ADDR16(bitmap, y - prevlines, 0);
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *prevrow = BITMAP_ADDR16(bitmap, y - prevlines, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		/* handle the first four bytes independently */
 		x = 0;
@@ -2731,8 +2731,8 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 			/* first do left deltas */
 			for ( ; x < stream->width; x += 2)
 			{
-				UINT16 pixel0 = dest[x + 0];
-				UINT16 pixel1 = dest[x + 1];
+				uint16_t pixel0 = dest[x + 0];
+				uint16_t pixel1 = dest[x + 1];
 
 				lasty += pixel0 >> 8;
 				lastcb += pixel0;
@@ -2747,10 +2747,10 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 			if ((huffyuv->predictor & ~HUFFYUV_PREDICT_DECORR) == HUFFYUV_PREDICT_GRADIENT && y >= prevlines)
 				for (x = 0; x < stream->width; x++)
 				{
-					UINT16 curpix = dest[x];
-					UINT16 prevpix = prevrow[x];
-					UINT8 ysum = (curpix >> 8) + (prevpix >> 8);
-					UINT8 csum = curpix + prevpix;
+					uint16_t curpix = dest[x];
+					uint16_t prevpix = prevrow[x];
+					uint8_t ysum = (curpix >> 8) + (prevpix >> 8);
+					uint8_t csum = curpix + prevpix;
 					dest[x] = (ysum << 8) | csum;
 				}
 		}
@@ -2760,20 +2760,20 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 		{
 			for ( ; x < stream->width; x += 2)
 			{
-				UINT16 prevpixel0 = prevrow[x + 0];
-				UINT16 prevpixel1 = prevrow[x + 1];
-				UINT16 pixel0 = dest[x + 0];
-				UINT16 pixel1 = dest[x + 1];
-				UINT8 a, b, c;
+				uint16_t prevpixel0 = prevrow[x + 0];
+				uint16_t prevpixel1 = prevrow[x + 1];
+				uint16_t pixel0 = dest[x + 0];
+				uint16_t pixel1 = dest[x + 1];
+				uint8_t a, b, c;
 
 				/* compute previous, above, and (prev + above - above-left) */
 				a = lasty;
 				b = prevpixel0 >> 8;
 				c = lastprevy;
 				lastprevy = b;
-				if (a > b) { UINT8 tmp = a; a = b; b = tmp; }
-				if (a > c) { UINT8 tmp = a; a = c; c = tmp; }
-				if (b > c) { UINT8 tmp = b; b = c; c = tmp; }
+				if (a > b) { uint8_t tmp = a; a = b; b = tmp; }
+				if (a > c) { uint8_t tmp = a; a = c; c = tmp; }
+				if (b > c) { uint8_t tmp = b; b = c; c = tmp; }
 				lasty = (pixel0 >> 8) + b;
 
 				/* compute previous, above, and (prev + above - above-left) */
@@ -2781,9 +2781,9 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 				b = prevpixel0 & 0xff;
 				c = lastprevcb;
 				lastprevcb = b;
-				if (a > b) { UINT8 tmp = a; a = b; b = tmp; }
-				if (a > c) { UINT8 tmp = a; a = c; c = tmp; }
-				if (b > c) { UINT8 tmp = b; b = c; c = tmp; }
+				if (a > b) { uint8_t tmp = a; a = b; b = tmp; }
+				if (a > c) { uint8_t tmp = a; a = c; c = tmp; }
+				if (b > c) { uint8_t tmp = b; b = c; c = tmp; }
 				lastcb = (pixel0 & 0xff) + b;
 				dest[x + 0] = (lasty << 8) | lastcb;
 
@@ -2792,9 +2792,9 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 				b = prevpixel1 >> 8;
 				c = lastprevy;
 				lastprevy = b;
-				if (a > b) { UINT8 tmp = a; a = b; b = tmp; }
-				if (a > c) { UINT8 tmp = a; a = c; c = tmp; }
-				if (b > c) { UINT8 tmp = b; b = c; c = tmp; }
+				if (a > b) { uint8_t tmp = a; a = b; b = tmp; }
+				if (a > c) { uint8_t tmp = a; a = c; c = tmp; }
+				if (b > c) { uint8_t tmp = b; b = c; c = tmp; }
 				lasty = (pixel1 >> 8) + b;
 
 				/* compute previous, above, and (prev + above - above-left) */
@@ -2802,9 +2802,9 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 				b = prevpixel1 & 0xff;
 				c = lastprevcr;
 				lastprevcr = b;
-				if (a > b) { UINT8 tmp = a; a = b; b = tmp; }
-				if (a > c) { UINT8 tmp = a; a = c; c = tmp; }
-				if (b > c) { UINT8 tmp = b; b = c; c = tmp; }
+				if (a > b) { uint8_t tmp = a; a = b; b = tmp; }
+				if (a > c) { uint8_t tmp = a; a = c; c = tmp; }
+				if (b > c) { uint8_t tmp = b; b = c; c = tmp; }
 				lastcr = (pixel1 & 0xff) + b;
 				dest[x + 1] = (lasty << 8) | lastcr;
 			}
@@ -2815,10 +2815,10 @@ static avi_error huffyuv_decompress_to_yuy16(avi_stream *stream, const UINT8 *da
 }
 
 
-static void u64toa(UINT64 val, char *output)
+static void u64toa(uint64_t val, char *output)
 {
-	UINT32 lo = (UINT32)(val & 0xffffffff);
-	UINT32 hi = (UINT32)(val >> 32);
+	uint32_t lo = (uint32_t)(val & 0xffffffff);
+	uint32_t hi = (uint32_t)(val >> 32);
 	if (hi != 0)
 		sprintf(output, "%X%08X", hi, lo);
 	else
@@ -2840,16 +2840,16 @@ static void printf_chunk_recursive(avi_file *file, avi_chunk *container, int ind
 	/* iterate over chunks in this container */
 	for (avierr = get_first_chunk(file, container, &curchunk); avierr == AVIERR_NONE; avierr = get_next_chunk(file, container, &curchunk))
 	{
-		UINT32 chunksize = curchunk.size;
+		uint32_t chunksize = curchunk.size;
 		int recurse = FALSE;
 
 		u64toa(curchunk.size, size);
 		u64toa(curchunk.offset, offset);
 		printf("%*schunk = %c%c%c%c, size=%s (%s)\n", indent, "",
-				(UINT8)(curchunk.type >> 0),
-				(UINT8)(curchunk.type >> 8),
-				(UINT8)(curchunk.type >> 16),
-				(UINT8)(curchunk.type >> 24),
+				(uint8_t)(curchunk.type >> 0),
+				(uint8_t)(curchunk.type >> 8),
+				(uint8_t)(curchunk.type >> 16),
+				(uint8_t)(curchunk.type >> 24),
 				size, offset);
 
 		/* certain chunks are just containers; recurse into them */
@@ -2859,10 +2859,10 @@ static void printf_chunk_recursive(avi_file *file, avi_chunk *container, int ind
 			case CHUNKTYPE_RIFF:
 			case CHUNKTYPE_LIST:
 				printf("%*stype = %c%c%c%c\n", indent, "",
-						(UINT8)(curchunk.listtype >> 0),
-						(UINT8)(curchunk.listtype >> 8),
-						(UINT8)(curchunk.listtype >> 16),
-						(UINT8)(curchunk.listtype >> 24));
+						(uint8_t)(curchunk.listtype >> 0),
+						(uint8_t)(curchunk.listtype >> 8),
+						(uint8_t)(curchunk.listtype >> 16),
+						(uint8_t)(curchunk.listtype >> 24));
 				recurse = TRUE;
 				chunksize = 0;
 				break;
@@ -2871,7 +2871,7 @@ static void printf_chunk_recursive(avi_file *file, avi_chunk *container, int ind
 		/* print data within the chunk */
 		if (chunksize > 0 && curchunk.size < 1024 * 1024)
 		{
-			UINT8 *data = NULL;
+			uint8_t *data = NULL;
 			int i;
 
 			/* read the data for a chunk */

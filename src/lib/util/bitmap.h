@@ -127,10 +127,10 @@ typedef bitmap_base bitmap_t;
 #define BITMAP_ADDR(bitmap, type, y, x)	\
 	((type *)(bitmap)->base + (y) * (bitmap)->rowpixels + (x))
 
-#define BITMAP_ADDR8(bitmap, y, x)	BITMAP_ADDR(bitmap, UINT8, y, x)
-#define BITMAP_ADDR16(bitmap, y, x)	BITMAP_ADDR(bitmap, UINT16, y, x)
-#define BITMAP_ADDR32(bitmap, y, x)	BITMAP_ADDR(bitmap, UINT32, y, x)
-#define BITMAP_ADDR64(bitmap, y, x)	BITMAP_ADDR(bitmap, UINT64, y, x)
+#define BITMAP_ADDR8(bitmap, y, x)	BITMAP_ADDR(bitmap, uint8_t, y, x)
+#define BITMAP_ADDR16(bitmap, y, x)	BITMAP_ADDR(bitmap, uint16_t, y, x)
+#define BITMAP_ADDR32(bitmap, y, x)	BITMAP_ADDR(bitmap, uint32_t, y, x)
+#define BITMAP_ADDR64(bitmap, y, x)	BITMAP_ADDR(bitmap, uint64_t, y, x)
 
 
 
@@ -213,7 +213,7 @@ INLINE void union_rect(rectangle *dst, const rectangle *src)
     bitmap of arbitrary depth
 -------------------------------------------------*/
 
-INLINE void plot_box(bitmap_t *bitmap, int x, int y, int width, int height, UINT32 color)
+INLINE void plot_box(bitmap_t *bitmap, int x, int y, int width, int height, uint32_t color)
 {
 	rectangle clip;
 	clip.min_x = x;

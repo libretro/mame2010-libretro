@@ -77,13 +77,13 @@ typedef struct _core_file core_file;
 /* ----- file open/close ----- */
 
 /* open a file with the specified filename */
-file_error core_fopen(const char *filename, UINT32 openflags, core_file **file);
+file_error core_fopen(const char *filename, uint32_t openflags, core_file **file);
 
 /* open a RAM-based "file" using the given data and length (read-only) */
-file_error core_fopen_ram(const void *data, size_t length, UINT32 openflags, core_file **file);
+file_error core_fopen_ram(const void *data, size_t length, uint32_t openflags, core_file **file);
 
 /* open a RAM-based "file" using the given data and length (read-only), copying the data */
-file_error core_fopen_ram_copy(const void *data, size_t length, UINT32 openflags, core_file **file);
+file_error core_fopen_ram_copy(const void *data, size_t length, uint32_t openflags, core_file **file);
 
 /* close an open file */
 void core_fclose(core_file *file);
@@ -96,23 +96,23 @@ file_error core_fcompress(core_file *file, int level);
 /* ----- file positioning ----- */
 
 /* adjust the file pointer within the file */
-int core_fseek(core_file *file, INT64 offset, int whence);
+int core_fseek(core_file *file, int64_t offset, int whence);
 
 /* return the current file pointer */
-UINT64 core_ftell(core_file *file);
+uint64_t core_ftell(core_file *file);
 
 /* return true if we are at the EOF */
 int core_feof(core_file *file);
 
 /* return the total size of the file */
-UINT64 core_fsize(core_file *file);
+uint64_t core_fsize(core_file *file);
 
 
 
 /* ----- file read ----- */
 
 /* standard binary read from a file */
-UINT32 core_fread(core_file *file, void *buffer, UINT32 length);
+uint32_t core_fread(core_file *file, void *buffer, uint32_t length);
 
 /* read one character from the file */
 int core_fgetc(core_file *file);
@@ -128,14 +128,14 @@ char *core_fgets(char *s, int n, core_file *file);
 const void *core_fbuffer(core_file *file);
 
 /* open a file with the specified filename, read it into memory, and return a pointer */
-file_error core_fload(const char *filename, void **data, UINT32 *length);
+file_error core_fload(const char *filename, void **data, uint32_t *length);
 
 
 
 /* ----- file write ----- */
 
 /* standard binary write to a file */
-UINT32 core_fwrite(core_file *file, const void *buffer, UINT32 length);
+uint32_t core_fwrite(core_file *file, const void *buffer, uint32_t length);
 
 /* write a line of text to the file */
 int core_fputs(core_file *f, const char *s);

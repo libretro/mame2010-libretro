@@ -109,21 +109,21 @@ typedef struct _avi_file avi_file;
 typedef struct _avi_movie_info avi_movie_info;
 struct _avi_movie_info
 {
-	UINT32			video_format;				/* format of video data */
-	UINT32			video_timescale;			/* timescale for video data */
-	UINT32			video_sampletime;			/* duration of a single video sample (frame) */
-	UINT32			video_numsamples;			/* total number of video samples */
-	UINT32			video_width;				/* width of the video */
-	UINT32			video_height;				/* height of the video */
-	UINT32			video_depth;				/* depth of the video */
+	uint32_t			video_format;				/* format of video data */
+	uint32_t			video_timescale;			/* timescale for video data */
+	uint32_t			video_sampletime;			/* duration of a single video sample (frame) */
+	uint32_t			video_numsamples;			/* total number of video samples */
+	uint32_t			video_width;				/* width of the video */
+	uint32_t			video_height;				/* height of the video */
+	uint32_t			video_depth;				/* depth of the video */
 
-	UINT32			audio_format;				/* format of audio data */
-	UINT32			audio_timescale;			/* timescale for audio data */
-	UINT32			audio_sampletime;			/* duration of a single audio sample */
-	UINT32			audio_numsamples;			/* total number of audio samples */
-	UINT32			audio_channels;				/* number of audio channels */
-	UINT32			audio_samplebits;			/* number of bits per channel */
-	UINT32			audio_samplerate;			/* sample rate of audio */
+	uint32_t			audio_format;				/* format of audio data */
+	uint32_t			audio_timescale;			/* timescale for audio data */
+	uint32_t			audio_sampletime;			/* duration of a single audio sample */
+	uint32_t			audio_numsamples;			/* total number of audio samples */
+	uint32_t			audio_channels;				/* number of audio channels */
+	uint32_t			audio_samplebits;			/* number of bits per channel */
+	uint32_t			audio_samplerate;			/* sample rate of audio */
 };
 
 
@@ -140,13 +140,13 @@ void avi_printf_chunks(avi_file *file);
 const char *avi_error_string(avi_error err);
 
 const avi_movie_info *avi_get_movie_info(avi_file *file);
-UINT32 avi_first_sample_in_frame(avi_file *file, UINT32 framenum);
+uint32_t avi_first_sample_in_frame(avi_file *file, uint32_t framenum);
 
-avi_error avi_read_video_frame_yuy16(avi_file *file, UINT32 framenum, bitmap_t *bitmap);
-avi_error avi_read_sound_samples(avi_file *file, int channel, UINT32 firstsample, UINT32 numsamples, INT16 *output);
+avi_error avi_read_video_frame_yuy16(avi_file *file, uint32_t framenum, bitmap_t *bitmap);
+avi_error avi_read_sound_samples(avi_file *file, int channel, uint32_t firstsample, uint32_t numsamples, int16_t *output);
 
 avi_error avi_append_video_frame_yuy16(avi_file *file, const bitmap_t *bitmap);
 avi_error avi_append_video_frame_rgb32(avi_file *file, const bitmap_t *bitmap);
-avi_error avi_append_sound_samples(avi_file *file, int channel, const INT16 *samples, UINT32 numsamples, UINT32 sampleskip);
+avi_error avi_append_sound_samples(avi_file *file, int channel, const int16_t *samples, uint32_t numsamples, uint32_t sampleskip);
 
 #endif

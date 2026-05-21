@@ -46,7 +46,7 @@
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static tagmap_error tagmap_add_common(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate, UINT8 unique_hash);
+static tagmap_error tagmap_add_common(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate, uint8_t unique_hash);
 
 
 
@@ -86,7 +86,7 @@ void tagmap_free(tagmap *map)
 
 void tagmap_reset(tagmap *map)
 {
-	UINT32 hashindex;
+	uint32_t hashindex;
 
 	for (hashindex = 0; hashindex < ARRAY_LENGTH(map->table); hashindex++)
 	{
@@ -111,7 +111,7 @@ void tagmap_reset(tagmap *map)
     tagmap
 -------------------------------------------------*/
 
-tagmap_error tagmap_add(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate)
+tagmap_error tagmap_add(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate)
 {
 	return tagmap_add_common(map, tag, object, replace_if_duplicate, FALSE);
 }
@@ -122,7 +122,7 @@ tagmap_error tagmap_add(tagmap *map, const char *tag, void *object, UINT8 replac
     tagmap, ensuring it has a unique hash value
 -------------------------------------------------*/
 
-tagmap_error tagmap_add_unique_hash(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate)
+tagmap_error tagmap_add_unique_hash(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate)
 {
 	return tagmap_add_common(map, tag, object, replace_if_duplicate, TRUE);
 }
@@ -135,7 +135,7 @@ tagmap_error tagmap_add_unique_hash(tagmap *map, const char *tag, void *object, 
 
 void tagmap_remove(tagmap *map, const char *tag)
 {
-	UINT32 fullhash = tagmap_hash(tag);
+	uint32_t fullhash = tagmap_hash(tag);
 	tagmap_entry **entryptr;
 
 	for (entryptr = &map->table[fullhash % ARRAY_LENGTH(map->table)]; *entryptr != NULL; entryptr = &(*entryptr)->next)
@@ -156,7 +156,7 @@ void tagmap_remove(tagmap *map, const char *tag)
 
 void tagmap_remove_object(tagmap *map, void *object)
 {
-	UINT32 hashindex;
+	uint32_t hashindex;
 
 	for (hashindex = 0; hashindex < ARRAY_LENGTH(map->table); hashindex++)
 	{
@@ -184,10 +184,10 @@ void tagmap_remove_object(tagmap *map, void *object)
     a tagmap addition
 -------------------------------------------------*/
 
-static tagmap_error tagmap_add_common(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate, UINT8 unique_hash)
+static tagmap_error tagmap_add_common(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate, uint8_t unique_hash)
 {
-	UINT32 fullhash = tagmap_hash(tag);
-	UINT32 hashindex = fullhash % ARRAY_LENGTH(map->table);
+	uint32_t fullhash = tagmap_hash(tag);
+	uint32_t hashindex = fullhash % ARRAY_LENGTH(map->table);
 	tagmap_entry *entry;
 
 	/* first make sure we don't have a duplicate */

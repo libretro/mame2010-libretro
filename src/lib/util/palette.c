@@ -51,9 +51,9 @@
 typedef struct _dirty_state dirty_state;
 struct _dirty_state
 {
-	UINT32 *		dirty;						/* bitmap of dirty entries */
-	UINT32			mindirty;					/* minimum dirty entry */
-	UINT32			maxdirty;					/* minimum dirty entry */
+	uint32_t *		dirty;						/* bitmap of dirty entries */
+	uint32_t			mindirty;					/* minimum dirty entry */
+	uint32_t			maxdirty;					/* minimum dirty entry */
 };
 
 
@@ -70,14 +70,14 @@ struct _palette_client
 /* a palette object */
 struct _palette_t
 {
-	UINT32			refcount;					/* reference count on the palette */
-	UINT32			numcolors;					/* number of colors in the palette */
-	UINT32			numgroups;					/* number of groups in the palette */
+	uint32_t			refcount;					/* reference count on the palette */
+	uint32_t			numcolors;					/* number of colors in the palette */
+	uint32_t			numgroups;					/* number of groups in the palette */
 
 	float			brightness;					/* overall brightness value */
 	float			contrast;					/* overall contrast value */
 	float			gamma;						/* overall gamma value */
-	UINT8			gamma_map[256];				/* gamma map */
+	uint8_t			gamma_map[256];				/* gamma map */
 
 	rgb_t *			entry_color;				/* array of raw colors */
 	float *			entry_contrast;				/* contrast value for each entry */
@@ -97,7 +97,7 @@ struct _palette_t
 ***************************************************************************/
 
 static void internal_palette_free(palette_t *palette);
-static void update_adjusted_color(palette_t *palette, UINT32 group, UINT32 index);
+static void update_adjusted_color(palette_t *palette, uint32_t group, uint32_t index);
 
 
 
@@ -110,7 +110,7 @@ static void update_adjusted_color(palette_t *palette, UINT32 group, UINT32 index
     entry for brightness
 -------------------------------------------------*/
 
-INLINE rgb_t adjust_palette_entry(rgb_t entry, float brightness, float contrast, const UINT8 *gamma_map)
+INLINE rgb_t adjust_palette_entry(rgb_t entry, float brightness, float contrast, const uint8_t *gamma_map)
 {
 	int r = rgb_clamp((float)gamma_map[RGB_RED(entry)] * contrast + brightness);
 	int g = rgb_clamp((float)gamma_map[RGB_GREEN(entry)] * contrast + brightness);
@@ -130,10 +130,10 @@ INLINE rgb_t adjust_palette_entry(rgb_t entry, float brightness, float contrast,
     and take a single reference on it
 -------------------------------------------------*/
 
-palette_t *palette_alloc(UINT32 numcolors, UINT32 numgroups)
+palette_t *palette_alloc(uint32_t numcolors, uint32_t numgroups)
 {
 	palette_t *palette;
-	UINT32 index;
+	uint32_t index;
 
 	/* allocate memory */
 	palette = (palette_t *)malloc(sizeof(*palette));
@@ -275,7 +275,7 @@ int palette_get_max_index(palette_t *palette)
     the black entry
 -------------------------------------------------*/
 
-UINT32 palette_get_black_entry(palette_t *palette)
+uint32_t palette_get_black_entry(palette_t *palette)
 {
 	return palette->numcolors * palette->numgroups + 0;
 }
@@ -286,7 +286,7 @@ UINT32 palette_get_black_entry(palette_t *palette)
     the white entry
 -------------------------------------------------*/
 
-UINT32 palette_get_white_entry(palette_t *palette)
+uint32_t palette_get_white_entry(palette_t *palette)
 {
 	return palette->numcolors * palette->numgroups + 1;
 }
@@ -304,8 +304,8 @@ UINT32 palette_get_white_entry(palette_t *palette)
 
 palette_client *palette_client_alloc(palette_t *palette)
 {
-	UINT32 total_colors = palette->numcolors * palette->numgroups;
-	UINT32 dirty_dwords = (total_colors + 31) / 32;
+	uint32_t total_colors = palette->numcolors * palette->numgroups;
+	uint32_t dirty_dwords = (total_colors + 31) / 32;
 	palette_client *client;
 
 	/* allocate memory for the client */
@@ -315,14 +315,14 @@ palette_client *palette_client_alloc(palette_t *palette)
 	memset(client, 0, sizeof(*client));
 
 	/* allocate dirty lists */
-	client->live.dirty = (UINT32 *)malloc(dirty_dwords * sizeof(UINT32));
-	client->previous.dirty = (UINT32 *)malloc(dirty_dwords * sizeof(UINT32));
+	client->live.dirty = (uint32_t *)malloc(dirty_dwords * sizeof(uint32_t));
+	client->previous.dirty = (uint32_t *)malloc(dirty_dwords * sizeof(uint32_t));
 	if (client->live.dirty == NULL || client->previous.dirty == NULL)
 		goto error;
 
 	/* mark everything dirty to start with */
-	memset(client->live.dirty, 0xff, dirty_dwords * sizeof(UINT32));
-	memset(client->previous.dirty, 0xff, dirty_dwords * sizeof(UINT32));
+	memset(client->live.dirty, 0xff, dirty_dwords * sizeof(uint32_t));
+	memset(client->previous.dirty, 0xff, dirty_dwords * sizeof(uint32_t));
 	client->live.dirty[dirty_dwords - 1] &= (1 << (total_colors % 32)) - 1;
 	client->previous.dirty[dirty_dwords - 1] &= (1 << (total_colors % 32)) - 1;
 
@@ -395,7 +395,7 @@ palette_t *palette_client_get_palette(palette_client *client)
     the current dirty list for a client
 -------------------------------------------------*/
 
-const UINT32 *palette_client_get_dirty_list(palette_client *client, UINT32 *mindirty, UINT32 *maxdirty)
+const uint32_t *palette_client_get_dirty_list(palette_client *client, uint32_t *mindirty, uint32_t *maxdirty)
 {
 	dirty_state temp;
 
@@ -435,7 +435,7 @@ const UINT32 *palette_client_get_dirty_list(palette_client *client, UINT32 *mind
     color for a given palette index
 -------------------------------------------------*/
 
-void palette_entry_set_color(palette_t *palette, UINT32 index, rgb_t rgb)
+void palette_entry_set_color(palette_t *palette, uint32_t index, rgb_t rgb)
 {
 	int groupnum;
 
@@ -457,7 +457,7 @@ void palette_entry_set_color(palette_t *palette, UINT32 index, rgb_t rgb)
     color for a given palette index
 -------------------------------------------------*/
 
-rgb_t palette_entry_get_color(palette_t *palette, UINT32 index)
+rgb_t palette_entry_get_color(palette_t *palette, uint32_t index)
 {
 	return (index < palette->numcolors) ? palette->entry_color[index] : RGB_BLACK;
 }
@@ -469,7 +469,7 @@ rgb_t palette_entry_get_color(palette_t *palette, UINT32 index)
     a given palette index
 -------------------------------------------------*/
 
-rgb_t palette_entry_get_adjusted_color(palette_t *palette, UINT32 index)
+rgb_t palette_entry_get_adjusted_color(palette_t *palette, uint32_t index)
 {
 	return (index < palette->numcolors * palette->numgroups) ? palette->adjusted_color[index] : RGB_BLACK;
 }
@@ -595,7 +595,7 @@ void palette_set_gamma(palette_t *palette, float gamma)
     adjustment for a single palette index
 -------------------------------------------------*/
 
-void palette_entry_set_contrast(palette_t *palette, UINT32 index, float contrast)
+void palette_entry_set_contrast(palette_t *palette, uint32_t index, float contrast)
 {
 	int groupnum;
 
@@ -617,7 +617,7 @@ void palette_entry_set_contrast(palette_t *palette, UINT32 index, float contrast
     contrast adjustment for a single palette index
 -------------------------------------------------*/
 
-float palette_entry_get_contrast(palette_t *palette, UINT32 index)
+float palette_entry_get_contrast(palette_t *palette, uint32_t index)
 {
 	return (index < palette->numcolors) ? palette->entry_contrast[index] : 1.0f;
 }
@@ -628,7 +628,7 @@ float palette_entry_get_contrast(palette_t *palette, UINT32 index)
     overall brightness for a palette group
 -------------------------------------------------*/
 
-void palette_group_set_brightness(palette_t *palette, UINT32 group, float brightness)
+void palette_group_set_brightness(palette_t *palette, uint32_t group, float brightness)
 {
 	int index;
 
@@ -653,7 +653,7 @@ void palette_group_set_brightness(palette_t *palette, UINT32 group, float bright
     overall contrast for a palette group
 -------------------------------------------------*/
 
-void palette_group_set_contrast(palette_t *palette, UINT32 group, float contrast)
+void palette_group_set_contrast(palette_t *palette, uint32_t group, float contrast)
 {
 	int index;
 
@@ -680,11 +680,11 @@ void palette_group_set_contrast(palette_t *palette, UINT32 group, float contrast
     of palette entries
 -------------------------------------------------*/
 
-void palette_normalize_range(palette_t *palette, UINT32 start, UINT32 end, int lum_min, int lum_max)
+void palette_normalize_range(palette_t *palette, uint32_t start, uint32_t end, int lum_min, int lum_max)
 {
-	UINT32 ymin = 1000 * 255, ymax = 0;
-	UINT32 tmin, tmax;
-	UINT32 index;
+	uint32_t ymin = 1000 * 255, ymax = 0;
+	uint32_t tmin, tmax;
+	uint32_t index;
 
 	/* clamp within range */
 	start = MAX(start, 0);
@@ -694,7 +694,7 @@ void palette_normalize_range(palette_t *palette, UINT32 start, UINT32 end, int l
 	for (index = start; index <= end; index++)
 	{
 		rgb_t rgb = palette->entry_color[index];
-		UINT32 y = 299 * RGB_RED(rgb) + 587 * RGB_GREEN(rgb) + 114 * RGB_BLUE(rgb);
+		uint32_t y = 299 * RGB_RED(rgb) + 587 * RGB_GREEN(rgb) + 114 * RGB_BLUE(rgb);
 		ymin = MIN(ymin, y);
 		ymax = MAX(ymax, y);
 	}
@@ -707,11 +707,11 @@ void palette_normalize_range(palette_t *palette, UINT32 start, UINT32 end, int l
 	for (index = start; index <= end; index++)
 	{
 		rgb_t rgb = palette->entry_color[index];
-		UINT32 y = 299 * RGB_RED(rgb) + 587 * RGB_GREEN(rgb) + 114 * RGB_BLUE(rgb);
-		UINT32 target = tmin + ((y - ymin) * (tmax - tmin + 1)) / (ymax - ymin);
-		UINT8 r = (y == 0) ? 0 : rgb_clamp(RGB_RED(rgb) * 1000 * target / y);
-		UINT8 g = (y == 0) ? 0 : rgb_clamp(RGB_GREEN(rgb) * 1000 * target / y);
-		UINT8 b = (y == 0) ? 0 : rgb_clamp(RGB_BLUE(rgb) * 1000 * target / y);
+		uint32_t y = 299 * RGB_RED(rgb) + 587 * RGB_GREEN(rgb) + 114 * RGB_BLUE(rgb);
+		uint32_t target = tmin + ((y - ymin) * (tmax - tmin + 1)) / (ymax - ymin);
+		uint8_t r = (y == 0) ? 0 : rgb_clamp(RGB_RED(rgb) * 1000 * target / y);
+		uint8_t g = (y == 0) ? 0 : rgb_clamp(RGB_GREEN(rgb) * 1000 * target / y);
+		uint8_t b = (y == 0) ? 0 : rgb_clamp(RGB_BLUE(rgb) * 1000 * target / y);
 		palette_entry_set_color(palette, index, MAKE_RGB(r, g, b));
 	}
 }
@@ -757,9 +757,9 @@ static void internal_palette_free(palette_t *palette)
     by group and index pair
 -------------------------------------------------*/
 
-static void update_adjusted_color(palette_t *palette, UINT32 group, UINT32 index)
+static void update_adjusted_color(palette_t *palette, uint32_t group, uint32_t index)
 {
-	UINT32 finalindex = group * palette->numcolors + index;
+	uint32_t finalindex = group * palette->numcolors + index;
 	palette_client *client;
 	rgb_t adjusted;
 

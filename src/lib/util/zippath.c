@@ -235,7 +235,7 @@ done:
     zippath_fopen - opens a zip path file
 -------------------------------------------------*/
 
-file_error zippath_fopen(const char *filename, UINT32 openflags, core_file **file, astring *revised_path)
+file_error zippath_fopen(const char *filename, uint32_t openflags, core_file **file, astring *revised_path)
 {
 	file_error filerr = FILERR_NOT_FOUND;
 	zip_error ziperr;

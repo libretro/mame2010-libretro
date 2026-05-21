@@ -65,8 +65,8 @@
 typedef struct _jed_data jed_data;
 struct _jed_data
 {
-	UINT32		numfuses;			/* number of defined fuses */
-	UINT8		fusemap[JED_MAX_FUSES / 8];/* array of bit-packed data */
+	uint32_t		numfuses;			/* number of defined fuses */
+	uint8_t		fusemap[JED_MAX_FUSES / 8];/* array of bit-packed data */
 };
 
 
@@ -93,7 +93,7 @@ size_t jedbin_output(const jed_data *data, void *result, size_t length);
     INLINE FUNCTIONS
 ***************************************************************************/
 
-INLINE int jed_get_fuse(const jed_data *data, UINT32 fusenum)
+INLINE int jed_get_fuse(const jed_data *data, uint32_t fusenum)
 {
 	if (fusenum < JED_MAX_FUSES)
 		return (data->fusemap[fusenum / 8] >> (fusenum % 8)) & 1;
@@ -102,7 +102,7 @@ INLINE int jed_get_fuse(const jed_data *data, UINT32 fusenum)
 }
 
 
-INLINE void jed_set_fuse(jed_data *data, UINT32 fusenum, UINT8 value)
+INLINE void jed_set_fuse(jed_data *data, uint32_t fusenum, uint8_t value)
 {
 	if (fusenum < JED_MAX_FUSES)
 	{

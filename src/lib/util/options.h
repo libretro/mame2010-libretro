@@ -86,7 +86,7 @@ struct _options_entry
 {
 	const char *		name;				/* name on the command line */
 	const char *		defvalue;			/* default value of this argument */
-	UINT32				flags;				/* flags to describe the option */
+	uint32_t				flags;				/* flags to describe the option */
 	const char *		description;		/* description for -showusage */
 };
 
@@ -203,7 +203,7 @@ int options_get_int(core_options *opts, const char *name);
 float options_get_float(core_options *opts, const char *name);
 
 /* read an option as a string */
-UINT32 options_get_seqid(core_options *opts, const char *name);
+uint32_t options_get_seqid(core_options *opts, const char *name);
 
 
 

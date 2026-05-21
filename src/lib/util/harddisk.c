@@ -50,9 +50,9 @@ struct _hard_disk_file
 {
 	chd_file *			chd;				/* CHD file */
 	hard_disk_info		info;				/* hard disk info */
-	UINT32				hunksectors;		/* sectors per hunk */
-	UINT32				cachehunk;			/* which hunk is cached */
-	UINT8 *				cache;				/* cache of the current hunk */
+	uint32_t				hunksectors;		/* sectors per hunk */
+	uint32_t				cachehunk;			/* which hunk is cached */
+	uint8_t *				cache;				/* cache of the current hunk */
 };
 
 
@@ -101,7 +101,7 @@ hard_disk_file *hard_disk_open(chd_file *chd)
 	file->cachehunk = -1;
 
 	/* allocate a cache */
-	file->cache = (UINT8 *)malloc(chd_get_header(chd)->hunkbytes);
+	file->cache = (uint8_t *)malloc(chd_get_header(chd)->hunkbytes);
 	if (file->cache == NULL)
 	{
 		free(file);
@@ -152,10 +152,10 @@ hard_disk_info *hard_disk_get_info(hard_disk_file *file)
     disk
 -------------------------------------------------*/
 
-UINT32 hard_disk_read(hard_disk_file *file, UINT32 lbasector, void *buffer)
+uint32_t hard_disk_read(hard_disk_file *file, uint32_t lbasector, void *buffer)
 {
-	UINT32 hunknum = lbasector / file->hunksectors;
-	UINT32 sectoroffs = lbasector % file->hunksectors;
+	uint32_t hunknum = lbasector / file->hunksectors;
+	uint32_t sectoroffs = lbasector % file->hunksectors;
 
 	/* if we haven't cached this hunk, read it now */
 	if (file->cachehunk != hunknum)
@@ -177,10 +177,10 @@ UINT32 hard_disk_read(hard_disk_file *file, UINT32 lbasector, void *buffer)
     disk
 -------------------------------------------------*/
 
-UINT32 hard_disk_write(hard_disk_file *file, UINT32 lbasector, const void *buffer)
+uint32_t hard_disk_write(hard_disk_file *file, uint32_t lbasector, const void *buffer)
 {
-	UINT32 hunknum = lbasector / file->hunksectors;
-	UINT32 sectoroffs = lbasector % file->hunksectors;
+	uint32_t hunknum = lbasector / file->hunksectors;
+	uint32_t sectoroffs = lbasector % file->hunksectors;
 	chd_error err;
 
 	/* if we haven't cached this hunk, read it now */

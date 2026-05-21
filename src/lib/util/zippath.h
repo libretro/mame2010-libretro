@@ -44,7 +44,7 @@ astring *zippath_combine(astring *dst, const char *path1, const char *path2);
 /* ----- file operations ----- */
 
 /* opens a zip path file */
-file_error zippath_fopen(const char *filename, UINT32 openflags, core_file **file, astring *revised_path);
+file_error zippath_fopen(const char *filename, uint32_t openflags, core_file **file, astring *revised_path);
 
 
 /* ----- directory operations ----- */

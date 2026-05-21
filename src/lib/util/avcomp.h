@@ -80,11 +80,11 @@ typedef struct _av_codec_compress_config av_codec_compress_config;
 struct _av_codec_compress_config
 {
 	bitmap_t *	video;						/* pointer to video bitmap */
-	UINT32		channels;					/* number of channels */
-	UINT32		samples;					/* number of samples per channel */
-	INT16 *		audio[16];					/* pointer to individual audio channels */
-	UINT32		metalength;					/* length of metadata */
-	UINT8 *		metadata;					/* pointer to metadata buffer */
+	uint32_t		channels;					/* number of channels */
+	uint32_t		samples;					/* number of samples per channel */
+	int16_t *		audio[16];					/* pointer to individual audio channels */
+	uint32_t		metalength;					/* length of metadata */
+	uint8_t *		metadata;					/* pointer to metadata buffer */
 };
 
 
@@ -93,12 +93,12 @@ typedef struct _av_codec_decompress_config av_codec_decompress_config;
 struct _av_codec_decompress_config
 {
 	bitmap_t *	video;						/* pointer to video bitmap */
-	UINT32		maxsamples;					/* maximum number of samples per channel */
-	UINT32 *	actsamples;					/* actual number of samples per channel */
-	INT16 *		audio[16];					/* pointer to individual audio channels */
-	UINT32		maxmetalength;				/* maximum length of metadata */
-	UINT32 *	actmetalength;				/* actual length of metadata */
-	UINT8 *		metadata;					/* pointer to metadata buffer */
+	uint32_t		maxsamples;					/* maximum number of samples per channel */
+	uint32_t *	actsamples;					/* actual number of samples per channel */
+	int16_t *		audio[16];					/* pointer to individual audio channels */
+	uint32_t		maxmetalength;				/* maximum length of metadata */
+	uint32_t *	actmetalength;				/* actual length of metadata */
+	uint8_t *		metadata;					/* pointer to metadata buffer */
 };
 
 
@@ -111,13 +111,13 @@ typedef struct _avcomp_state avcomp_state;
     PROTOTYPES
 ***************************************************************************/
 
-avcomp_state *avcomp_init(UINT32 maxwidth, UINT32 maxheight, UINT32 maxchannels);
+avcomp_state *avcomp_init(uint32_t maxwidth, uint32_t maxheight, uint32_t maxchannels);
 void avcomp_free(avcomp_state *state);
 
 void avcomp_config_compress(avcomp_state *state, const av_codec_compress_config *config);
 void avcomp_config_decompress(avcomp_state *state, const av_codec_decompress_config *config);
 
-avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 *dest, UINT32 *complength);
-avcomp_error avcomp_decode_data(avcomp_state *state, const UINT8 *source, UINT32 complength, UINT8 *dest);
+avcomp_error avcomp_encode_data(avcomp_state *state, const uint8_t *source, uint8_t *dest, uint32_t *complength);
+avcomp_error avcomp_decode_data(avcomp_state *state, const uint8_t *source, uint32_t complength, uint8_t *dest);
 
 #endif

@@ -160,15 +160,15 @@
 typedef struct _bit_buffer bit_buffer;
 struct _bit_buffer
 {
-	UINT32					buffer;							/* current bit accumulator */
+	uint32_t					buffer;							/* current bit accumulator */
 	int						bits;							/* number of bits in the accumulator */
 	union
 	{
-		const UINT8 *		read;							/* read pointer */
-		UINT8 *				write;							/* write pointer */
+		const uint8_t *		read;							/* read pointer */
+		uint8_t *				write;							/* write pointer */
 	} data;
-	UINT32					doffset;						/* byte offset within the data */
-	UINT32					dlength;						/* length of the data */
+	uint32_t					doffset;						/* byte offset within the data */
+	uint32_t					dlength;						/* length of the data */
 	int						overflow;						/* flag: true if we read/wrote past the end */
 };
 
@@ -177,19 +177,19 @@ typedef struct _huffman_node huffman_node;
 struct _huffman_node
 {
 	huffman_node *			parent;							/* pointer to parent node */
-	UINT32					count;							/* number of hits on this node */
-	UINT32					weight;							/* assigned weight of this node */
-	UINT32					bits;							/* bits used to encode the node */
-	UINT8					numbits;						/* number of bits needed for this node */
+	uint32_t					count;							/* number of hits on this node */
+	uint32_t					weight;							/* assigned weight of this node */
+	uint32_t					bits;							/* bits used to encode the node */
+	uint8_t					numbits;						/* number of bits needed for this node */
 };
 
 
 struct _huffman_context
 {
-	UINT8					maxbits;						/* maximum bits per code */
-	UINT8					lookupdirty;					/* TRUE if the lookup table is dirty */
-	UINT8					prevdata;						/* value of the previous data (for delta-RLE encoding) */
-	UINT32					datahisto[MAX_HUFFMAN_CODES];	/* histogram of data values */
+	uint8_t					maxbits;						/* maximum bits per code */
+	uint8_t					lookupdirty;					/* TRUE if the lookup table is dirty */
+	uint8_t					prevdata;						/* value of the previous data (for delta-RLE encoding) */
+	uint32_t					datahisto[MAX_HUFFMAN_CODES];	/* histogram of data values */
 	int						rleremaining;					/* number of RLE bytes remaining (for delta-RLE encoding) */
 	huffman_node			huffnode[MAX_HUFFMAN_NODES];	/* array of nodes */
 	huffman_lookup_value *	lookup;							/* pointer to the lookup table */
@@ -201,16 +201,16 @@ struct _huffman_context
     PROTOTYPES
 ***************************************************************************/
 
-static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_context **contexts, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength);
+static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_context **contexts, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength);
 
-static huffman_error import_tree(huffman_context *context, const UINT8 *source, UINT32 slength, UINT32 *actlength, UINT32 numcodes);
-static huffman_error export_tree(huffman_context *context, UINT8 *dest, UINT32 dlength, UINT32 *actlength, UINT32 numcodes);
+static huffman_error import_tree(huffman_context *context, const uint8_t *source, uint32_t slength, uint32_t *actlength, uint32_t numcodes);
+static huffman_error export_tree(huffman_context *context, uint8_t *dest, uint32_t dlength, uint32_t *actlength, uint32_t numcodes);
 static void write_rle_tree_bits(bit_buffer *bitbuf, int value, int repcount, int numbits);
 static int CLIB_DECL tree_node_compare(const void *item1, const void *item2);
-static huffman_error compute_optimal_tree(huffman_context *context, const UINT32 *datahisto, UINT32 numcodes);
-static int huffman_build_tree(huffman_context *context, const UINT32 *datahisto, UINT32 totaldata, UINT32 totalweight, UINT32 numcodes);
-static huffman_error assign_canonical_codes(huffman_context *context, UINT32 numcodes);
-static huffman_error build_lookup_table(huffman_context *context, UINT32 numcodes);
+static huffman_error compute_optimal_tree(huffman_context *context, const uint32_t *datahisto, uint32_t numcodes);
+static int huffman_build_tree(huffman_context *context, const uint32_t *datahisto, uint32_t totaldata, uint32_t totalweight, uint32_t numcodes);
+static huffman_error assign_canonical_codes(huffman_context *context, uint32_t numcodes);
+static huffman_error build_lookup_table(huffman_context *context, uint32_t numcodes);
 
 
 
@@ -223,7 +223,7 @@ static huffman_error build_lookup_table(huffman_context *context, UINT32 numcode
     buffer for writing
 -------------------------------------------------*/
 
-INLINE void bit_buffer_write_init(bit_buffer *bitbuf, UINT8 *data, UINT32 dlength)
+INLINE void bit_buffer_write_init(bit_buffer *bitbuf, uint8_t *data, uint32_t dlength)
 {
 	/* fill in the basic data structure */
 	bitbuf->buffer = 0;
@@ -241,7 +241,7 @@ INLINE void bit_buffer_write_init(bit_buffer *bitbuf, UINT8 *data, UINT32 dlengt
     justified
 -------------------------------------------------*/
 
-INLINE void bit_buffer_write(bit_buffer *bitbuf, UINT32 newbits, int numbits)
+INLINE void bit_buffer_write(bit_buffer *bitbuf, uint32_t newbits, int numbits)
 {
 	/* flush the buffer if we're going to overflow it */
 	if (bitbuf->bits + numbits > 32)
@@ -270,7 +270,7 @@ INLINE void bit_buffer_write(bit_buffer *bitbuf, UINT32 newbits, int numbits)
     buffer and return the final data offset
 -------------------------------------------------*/
 
-INLINE UINT32 bit_buffer_flush(bit_buffer *bitbuf)
+INLINE uint32_t bit_buffer_flush(bit_buffer *bitbuf)
 {
 	while (bitbuf->bits > 0)
 	{
@@ -291,7 +291,7 @@ INLINE UINT32 bit_buffer_flush(bit_buffer *bitbuf)
     buffer for reading
 -------------------------------------------------*/
 
-INLINE void bit_buffer_read_init(bit_buffer *bitbuf, const UINT8 *data, UINT32 dlength)
+INLINE void bit_buffer_read_init(bit_buffer *bitbuf, const uint8_t *data, uint32_t dlength)
 {
 	/* fill in the basic data structure */
 	bitbuf->buffer = 0;
@@ -308,9 +308,9 @@ INLINE void bit_buffer_read_init(bit_buffer *bitbuf, const UINT8 *data, UINT32 d
     the buffer, returning them right-justified
 -------------------------------------------------*/
 
-INLINE UINT32 bit_buffer_read(bit_buffer *bitbuf, int numbits)
+INLINE uint32_t bit_buffer_read(bit_buffer *bitbuf, int numbits)
 {
-	UINT32 result;
+	uint32_t result;
 
 	/* fetch data if we need more */
 	if (numbits > bitbuf->bits)
@@ -340,7 +340,7 @@ INLINE UINT32 bit_buffer_read(bit_buffer *bitbuf, int numbits)
     them right-justified
 -------------------------------------------------*/
 
-INLINE UINT32 bit_buffer_peek(bit_buffer *bitbuf, int numbits)
+INLINE uint32_t bit_buffer_peek(bit_buffer *bitbuf, int numbits)
 {
 	/* fetch data if we need more */
 	if (numbits > bitbuf->bits)
@@ -379,9 +379,9 @@ INLINE void bit_buffer_remove(bit_buffer *bitbuf, int numbits)
     rounded byte reading offset
 -------------------------------------------------*/
 
-INLINE UINT32 bit_buffer_read_offset(bit_buffer *bitbuf)
+INLINE uint32_t bit_buffer_read_offset(bit_buffer *bitbuf)
 {
-	UINT32 result = bitbuf->doffset;
+	uint32_t result = bitbuf->doffset;
 	int bits = bitbuf->bits;
 	while (bits >= 8)
 	{
@@ -485,7 +485,7 @@ void huffman_free_context(huffman_context *context)
     from a source data stream
 -------------------------------------------------*/
 
-huffman_error huffman_import_tree(huffman_context *context, const UINT8 *source, UINT32 slength, UINT32 *actlength)
+huffman_error huffman_import_tree(huffman_context *context, const uint8_t *source, uint32_t slength, uint32_t *actlength)
 {
 	return import_tree(context, source, slength, actlength, HUFFMAN_CODES);
 }
@@ -496,7 +496,7 @@ huffman_error huffman_import_tree(huffman_context *context, const UINT8 *source,
     to a target data stream
 -------------------------------------------------*/
 
-huffman_error huffman_export_tree(huffman_context *context, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_export_tree(huffman_context *context, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
 	return export_tree(context, dest, dlength, actlength, HUFFMAN_CODES);
 }
@@ -508,7 +508,7 @@ huffman_error huffman_export_tree(huffman_context *context, UINT8 *dest, UINT32 
     delta-RLE encoded data
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_import_tree(huffman_context *context, const UINT8 *source, UINT32 slength, UINT32 *actlength)
+huffman_error huffman_deltarle_import_tree(huffman_context *context, const uint8_t *source, uint32_t slength, uint32_t *actlength)
 {
 	return import_tree(context, source, slength, actlength, HUFFMAN_DELTARLE_CODES);
 }
@@ -520,7 +520,7 @@ huffman_error huffman_deltarle_import_tree(huffman_context *context, const UINT8
     delta-RLE encoded data
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_export_tree(huffman_context *context, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_deltarle_export_tree(huffman_context *context, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
 	return export_tree(context, dest, dlength, actlength, HUFFMAN_DELTARLE_CODES);
 }
@@ -531,14 +531,14 @@ huffman_error huffman_deltarle_export_tree(huffman_context *context, UINT8 *dest
     huffman tree for the given source data
 -------------------------------------------------*/
 
-huffman_error huffman_compute_tree(huffman_context *context, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor)
+huffman_error huffman_compute_tree(huffman_context *context, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor)
 {
 	return huffman_compute_tree_interleaved(1, &context, source, swidth, sheight, sstride, sxor);
 }
 
-huffman_error huffman_compute_tree_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor)
+huffman_error huffman_compute_tree_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor)
 {
-	UINT32 sx, sy, ctxnum;
+	uint32_t sx, sy, ctxnum;
 	huffman_error error;
 
 	/* initialize all nodes */
@@ -584,14 +584,14 @@ huffman_error huffman_compute_tree_interleaved(int numcontexts, huffman_context 
     data, with pre-encoding as delta-RLE
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_compute_tree(huffman_context *context, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor)
+huffman_error huffman_deltarle_compute_tree(huffman_context *context, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor)
 {
 	return huffman_deltarle_compute_tree_interleaved(1, &context, source, swidth, sheight, sstride, sxor);
 }
 
-huffman_error huffman_deltarle_compute_tree_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor)
+huffman_error huffman_deltarle_compute_tree_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor)
 {
-	UINT32 sx, sy, ctxnum;
+	uint32_t sx, sy, ctxnum;
 	huffman_error error;
 
 	/* initialize all nodes */
@@ -619,7 +619,7 @@ huffman_error huffman_deltarle_compute_tree_interleaved(int numcontexts, huffman
 			for (ctxnum = 0; ctxnum < numcontexts; ctxnum++, sx++)
 			{
 				huffman_context *context = contexts[ctxnum];
-				UINT8 newdata, delta;
+				uint8_t newdata, delta;
 
 				/* if still counting RLE, do nothing */
 				if (context->rleremaining != 0)
@@ -638,7 +638,7 @@ huffman_error huffman_deltarle_compute_tree_interleaved(int numcontexts, huffman
 				{
 					int zerocount = 1;
 					int rlecode;
-					UINT32 scan;
+					uint32_t scan;
 
 					/* count the number of consecutive values */
 					for (scan = sx + 1; scan < swidth; scan++)
@@ -690,14 +690,14 @@ huffman_error huffman_deltarle_compute_tree_interleaved(int numcontexts, huffman
     given tree
 -------------------------------------------------*/
 
-huffman_error huffman_encode_data(huffman_context *context, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_encode_data(huffman_context *context, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
 	return huffman_encode_data_interleaved(1, &context, source, swidth, sheight, sstride, sxor, dest, dlength, actlength);
 }
 
-huffman_error huffman_encode_data_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_encode_data_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
-	UINT32 sx, sy, ctxnum;
+	uint32_t sx, sy, ctxnum;
 	bit_buffer bitbuf;
 
 	/* initialize the output buffer */
@@ -734,14 +734,14 @@ huffman_error huffman_encode_data_interleaved(int numcontexts, huffman_context *
     pre-encoding
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_encode_data(huffman_context *context, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_deltarle_encode_data(huffman_context *context, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
 	return huffman_deltarle_encode_data_interleaved(1, &context, source, swidth, sheight, sstride, sxor, dest, dlength, actlength);
 }
 
-huffman_error huffman_deltarle_encode_data_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 swidth, UINT32 sheight, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 dlength, UINT32 *actlength)
+huffman_error huffman_deltarle_encode_data_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t swidth, uint32_t sheight, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t dlength, uint32_t *actlength)
 {
-	UINT32 sx, sy, ctxnum;
+	uint32_t sx, sy, ctxnum;
 	bit_buffer bitbuf;
 
 	/* initialize the output buffer */
@@ -771,7 +771,7 @@ huffman_error huffman_deltarle_encode_data_interleaved(int numcontexts, huffman_
 			for (ctxnum = 0; ctxnum < numcontexts; ctxnum++, sx++)
 			{
 				huffman_context *context = contexts[ctxnum];
-				UINT8 newdata, delta;
+				uint8_t newdata, delta;
 				huffman_node *node;
 
 				/* if still counting RLE, do nothing */
@@ -791,7 +791,7 @@ huffman_error huffman_deltarle_encode_data_interleaved(int numcontexts, huffman_
 				{
 					int zerocount = 1;
 					int rlecode;
-					UINT32 scan;
+					uint32_t scan;
 
 					/* count the number of consecutive values */
 					for (scan = sx + 1; scan < swidth; scan++)
@@ -839,13 +839,13 @@ huffman_error huffman_deltarle_encode_data_interleaved(int numcontexts, huffman_
     given tree
 -------------------------------------------------*/
 
-huffman_error huffman_decode_data(huffman_context *context, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength)
+huffman_error huffman_decode_data(huffman_context *context, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength)
 {
 	const huffman_lookup_value *table;
 	int maxbits = context->maxbits;
 	huffman_error error;
 	bit_buffer bitbuf;
-	UINT32 dx, dy;
+	uint32_t dx, dy;
 
 	/* regenerate the lookup table if necessary */
 	if (context->lookupdirty)
@@ -866,7 +866,7 @@ huffman_error huffman_decode_data(huffman_context *context, const UINT8 *source,
 		for (dx = 0; dx < dwidth; dx++)
 		{
 			huffman_lookup_value lookup;
-			UINT32 bits;
+			uint32_t bits;
 
 			/* peek ahead to get maxbits worth of data */
 			bits = bit_buffer_peek(&bitbuf, maxbits);
@@ -894,9 +894,9 @@ huffman_error huffman_decode_data(huffman_context *context, const UINT8 *source,
     interleaved data using multiple contexts
 -------------------------------------------------*/
 
-huffman_error huffman_decode_data_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength)
+huffman_error huffman_decode_data_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength)
 {
-	UINT32 dx, dy, ctxnum;
+	uint32_t dx, dy, ctxnum;
 	huffman_error error;
 	bit_buffer bitbuf;
 
@@ -926,7 +926,7 @@ huffman_error huffman_decode_data_interleaved(int numcontexts, huffman_context *
 			{
 				huffman_context *context = contexts[ctxnum];
 				huffman_lookup_value lookup;
-				UINT32 bits;
+				uint32_t bits;
 
 				/* peek ahead to get maxbits worth of data */
 				bits = bit_buffer_peek(&bitbuf, context->maxbits);
@@ -956,15 +956,15 @@ huffman_error huffman_decode_data_interleaved(int numcontexts, huffman_context *
     post-decoding
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_decode_data(huffman_context *context, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength)
+huffman_error huffman_deltarle_decode_data(huffman_context *context, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength)
 {
 	const huffman_lookup_value *table;
 	int maxbits = context->maxbits;
-	UINT32 rleremaining = 0;
+	uint32_t rleremaining = 0;
 	huffman_error error;
-	UINT8 prevdata = 0;
+	uint8_t prevdata = 0;
 	bit_buffer bitbuf;
-	UINT32 dx, dy;
+	uint32_t dx, dy;
 
 	/* regenerate the lookup table if necessary */
 	if (context->lookupdirty)
@@ -988,7 +988,7 @@ huffman_error huffman_deltarle_decode_data(huffman_context *context, const UINT8
 		for (dx = 0; dx < dwidth; dx++)
 		{
 			huffman_lookup_value lookup;
-			UINT32 bits;
+			uint32_t bits;
 			int data;
 
 			/* if we have RLE remaining, just store that */
@@ -1011,7 +1011,7 @@ huffman_error huffman_deltarle_decode_data(huffman_context *context, const UINT8
 
 			/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 			if (data < 0x100)
-				prevdata += (UINT8)data;
+				prevdata += (uint8_t)data;
 			else
 				rleremaining = code_to_rlecount(data) - 1;
 
@@ -1035,9 +1035,9 @@ huffman_error huffman_deltarle_decode_data(huffman_context *context, const UINT8
     delta-RLE post-decoding
 -------------------------------------------------*/
 
-huffman_error huffman_deltarle_decode_data_interleaved(int numcontexts, huffman_context **contexts, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength)
+huffman_error huffman_deltarle_decode_data_interleaved(int numcontexts, huffman_context **contexts, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength)
 {
-	UINT32 dx, dy, ctxnum;
+	uint32_t dx, dy, ctxnum;
 	huffman_error error;
 	bit_buffer bitbuf;
 
@@ -1080,7 +1080,7 @@ huffman_error huffman_deltarle_decode_data_interleaved(int numcontexts, huffman_
 			{
 				huffman_context *context = contexts[ctxnum];
 				huffman_lookup_value lookup;
-				UINT32 bits;
+				uint32_t bits;
 				int data;
 
 				/* if we have RLE remaining, just store that */
@@ -1103,7 +1103,7 @@ huffman_error huffman_deltarle_decode_data_interleaved(int numcontexts, huffman_
 
 				/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 				if (data < 0x100)
-					context->prevdata += (UINT8)data;
+					context->prevdata += (uint8_t)data;
 				else
 					context->rleremaining = code_to_rlecount(data) - 1;
 
@@ -1128,15 +1128,15 @@ huffman_error huffman_deltarle_decode_data_interleaved(int numcontexts, huffman_
     0/1/0/2 order (used for Y/Cb/Y/Cr encoding)
 -------------------------------------------------*/
 
-static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_context **contexts, const UINT8 *source, UINT32 slength, UINT8 *dest, UINT32 dwidth, UINT32 dheight, UINT32 dstride, UINT32 dxor, UINT32 *actlength)
+static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_context **contexts, const uint8_t *source, uint32_t slength, uint8_t *dest, uint32_t dwidth, uint32_t dheight, uint32_t dstride, uint32_t dxor, uint32_t *actlength)
 {
 	const huffman_lookup_value *table02, *table1, *table3;
 	int rleremaining02, rleremaining1, rleremaining3;
-	UINT8 prevdata02 = 0, prevdata1 = 0, prevdata3 = 0;
+	uint8_t prevdata02 = 0, prevdata1 = 0, prevdata3 = 0;
 	int maxbits = contexts[0]->maxbits;
 	huffman_error error;
 	bit_buffer bitbuf;
-	UINT32 dx, dy;
+	uint32_t dx, dy;
 
 	/* regenerate the lookup tables if necessary */
 	if (contexts[0]->lookupdirty)
@@ -1176,7 +1176,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
 		for (dx = 0; dx < dwidth; dx += 4)
 		{
 			huffman_lookup_value lookup;
-			UINT32 bits;
+			uint32_t bits;
 			int data;
 
 			/* ----- offset 0 ----- */
@@ -1198,7 +1198,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
 
 				/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 				if (data < 0x100)
-					prevdata02 += (UINT8)data;
+					prevdata02 += (uint8_t)data;
 				else
 					rleremaining02 = code_to_rlecount(data) - 1;
 			}
@@ -1225,7 +1225,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
 
 				/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 				if (data < 0x100)
-					prevdata1 += (UINT8)data;
+					prevdata1 += (uint8_t)data;
 				else
 					rleremaining1 = code_to_rlecount(data) - 1;
 			}
@@ -1252,7 +1252,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
 
 				/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 				if (data < 0x100)
-					prevdata02 += (UINT8)data;
+					prevdata02 += (uint8_t)data;
 				else
 					rleremaining02 = code_to_rlecount(data) - 1;
 			}
@@ -1279,7 +1279,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
 
 				/* if not an RLE special, just add to the previous; otherwise, start counting RLE */
 				if (data < 0x100)
-					prevdata3 += (UINT8)data;
+					prevdata3 += (uint8_t)data;
 				else
 					rleremaining3 = code_to_rlecount(data) - 1;
 			}
@@ -1308,7 +1308,7 @@ static huffman_error huffman_deltarle_decode_data_interleaved_0102(huffman_conte
     source data stream
 -------------------------------------------------*/
 
-static huffman_error import_tree(huffman_context *context, const UINT8 *source, UINT32 slength, UINT32 *actlength, UINT32 numcodes)
+static huffman_error import_tree(huffman_context *context, const uint8_t *source, uint32_t slength, uint32_t *actlength, uint32_t numcodes)
 {
 	huffman_error error;
 	bit_buffer bitbuf;
@@ -1373,7 +1373,7 @@ static huffman_error import_tree(huffman_context *context, const UINT8 *source, 
     target data stream
 -------------------------------------------------*/
 
-static huffman_error export_tree(huffman_context *context, UINT8 *dest, UINT32 dlength, UINT32 *actlength, UINT32 numcodes)
+static huffman_error export_tree(huffman_context *context, uint8_t *dest, uint32_t dlength, uint32_t *actlength, uint32_t numcodes)
 {
 	bit_buffer bitbuf;
 	int repcount;
@@ -1476,10 +1476,10 @@ static int CLIB_DECL tree_node_compare(const void *item1, const void *item2)
     computing a tree based on the data histogram
 -------------------------------------------------*/
 
-static huffman_error compute_optimal_tree(huffman_context *context, const UINT32 *datahisto, UINT32 numcodes)
+static huffman_error compute_optimal_tree(huffman_context *context, const uint32_t *datahisto, uint32_t numcodes)
 {
-	UINT32 lowerweight, upperweight;
-	UINT32 sdatacount;
+	uint32_t lowerweight, upperweight;
+	uint32_t sdatacount;
 	int i;
 
 	/* compute the number of data items in the histogram */
@@ -1492,7 +1492,7 @@ static huffman_error compute_optimal_tree(huffman_context *context, const UINT32
 	upperweight = sdatacount * 2;
 	while (TRUE)
 	{
-		UINT32 curweight = (upperweight + lowerweight) / 2;
+		uint32_t curweight = (upperweight + lowerweight) / 2;
 		int curmaxbits;
 
 		/* build a tree using the current weight */
@@ -1521,7 +1521,7 @@ static huffman_error compute_optimal_tree(huffman_context *context, const UINT32
     based on the data distribution
 -------------------------------------------------*/
 
-static int huffman_build_tree(huffman_context *context, const UINT32 *datahisto, UINT32 totaldata, UINT32 totalweight, UINT32 numcodes)
+static int huffman_build_tree(huffman_context *context, const uint32_t *datahisto, uint32_t totaldata, uint32_t totalweight, uint32_t numcodes)
 {
 	huffman_node *list[MAX_HUFFMAN_CODES];
 	int listitems;
@@ -1539,7 +1539,7 @@ static int huffman_build_tree(huffman_context *context, const UINT32 *datahisto,
 			context->huffnode[i].count = datahisto[i];
 
 			/* scale the weight by the current effective length, ensuring we don't go to 0 */
-			context->huffnode[i].weight = (UINT64)datahisto[i] * (UINT64)totalweight / (UINT64)totaldata;
+			context->huffnode[i].weight = (uint64_t)datahisto[i] * (uint64_t)totalweight / (uint64_t)totaldata;
 			if (context->huffnode[i].weight == 0)
 				context->huffnode[i].weight = 1;
 		}
@@ -1607,9 +1607,9 @@ static int huffman_build_tree(huffman_context *context, const UINT32 *datahisto,
     number of bits in each
 -------------------------------------------------*/
 
-static huffman_error assign_canonical_codes(huffman_context *context, UINT32 numcodes)
+static huffman_error assign_canonical_codes(huffman_context *context, uint32_t numcodes)
 {
-	UINT32 bithisto[33];
+	uint32_t bithisto[33];
 	int curstart;
 	int i;
 
@@ -1628,7 +1628,7 @@ static huffman_error assign_canonical_codes(huffman_context *context, UINT32 num
 	curstart = 0;
 	for (i = 32; i > 0; i--)
 	{
-		UINT32 nextstart = (curstart + bithisto[i]) >> 1;
+		uint32_t nextstart = (curstart + bithisto[i]) >> 1;
 		if (i != 1 && nextstart * 2 != (curstart + bithisto[i]))
 			return HUFFERR_INTERNAL_INCONSISTENCY;
 		bithisto[i] = curstart;
@@ -1654,13 +1654,13 @@ static huffman_error assign_canonical_codes(huffman_context *context, UINT32 num
     table for fast decoding
 -------------------------------------------------*/
 
-static huffman_error build_lookup_table(huffman_context *context, UINT32 numcodes)
+static huffman_error build_lookup_table(huffman_context *context, uint32_t numcodes)
 {
 	int i;
 
 	/* allocate a table if needed */
 	if (context->lookup == NULL)
-		context->lookup = (huffman_lookup_value *)malloc((UINT32)sizeof(context->lookup[0]) * (UINT32)(1 << context->maxbits));
+		context->lookup = (huffman_lookup_value *)malloc((uint32_t)sizeof(context->lookup[0]) * (uint32_t)(1 << context->maxbits));
 	if (context->lookup == NULL)
 		return HUFFERR_OUT_OF_MEMORY;
 
@@ -1674,8 +1674,8 @@ static huffman_error build_lookup_table(huffman_context *context, UINT32 numcode
 
 			/* left justify this node's bit values to max bits */
 			int shift = context->maxbits - node->numbits;
-			UINT32 start = node->bits << shift;
-			UINT32 end = ((node->bits + 1) << shift) - 1;
+			uint32_t start = node->bits << shift;
+			uint32_t end = ((node->bits + 1) << shift) - 1;
 			huffman_lookup_value value;
 
 			/* set up the entry */

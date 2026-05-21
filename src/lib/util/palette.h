@@ -50,10 +50,10 @@
 ***************************************************************************/
 
 /* an rgb_t is a single combined R,G,B (and optionally alpha) value */
-typedef UINT32 rgb_t;
+typedef uint32_t rgb_t;
 
 /* an rgb15_t is a single combined 15-bit R,G,B value */
-typedef UINT16 rgb15_t;
+typedef uint16_t rgb15_t;
 
 /* a palette is an opaque, reference counted object */
 typedef struct _palette_t palette_t;
@@ -91,7 +91,7 @@ typedef struct _palette_client palette_client;
 /* ----- palette allocation ----- */
 
 /* allocate a new palette object and take a single reference on it */
-palette_t *palette_alloc(UINT32 numcolors, UINT32 numgroups);
+palette_t *palette_alloc(uint32_t numcolors, uint32_t numgroups);
 
 /* reference a palette object, incrementing its reference count */
 void palette_ref(palette_t *palette);
@@ -113,10 +113,10 @@ int palette_get_num_groups(palette_t *palette);
 int palette_get_max_index(palette_t *palette);
 
 /* return the index of the black entry */
-UINT32 palette_get_black_entry(palette_t *palette);
+uint32_t palette_get_black_entry(palette_t *palette);
 
 /* return the index of the white entry */
-UINT32 palette_get_white_entry(palette_t *palette);
+uint32_t palette_get_white_entry(palette_t *palette);
 
 
 
@@ -132,20 +132,20 @@ void palette_client_free(palette_client *client);
 palette_t *palette_client_get_palette(palette_client *client);
 
 /* atomically get the current dirty list for a client */
-const UINT32 *palette_client_get_dirty_list(palette_client *client, UINT32 *mindirty, UINT32 *maxdirty);
+const uint32_t *palette_client_get_dirty_list(palette_client *client, uint32_t *mindirty, uint32_t *maxdirty);
 
 
 
 /* ----- color management ----- */
 
 /* set the raw RGB color for a given palette index */
-void palette_entry_set_color(palette_t *palette, UINT32 index, rgb_t rgb);
+void palette_entry_set_color(palette_t *palette, uint32_t index, rgb_t rgb);
 
 /* return the raw RGB color for a given palette index */
-rgb_t palette_entry_get_color(palette_t *palette, UINT32 index);
+rgb_t palette_entry_get_color(palette_t *palette, uint32_t index);
 
 /* return the adjusted RGB color (after all adjustments) for a given palette index */
-rgb_t palette_entry_get_adjusted_color(palette_t *palette, UINT32 index);
+rgb_t palette_entry_get_adjusted_color(palette_t *palette, uint32_t index);
 
 /* return the entire palette as an array of raw RGB values */
 const rgb_t *palette_entry_list_raw(palette_t *palette);
@@ -170,16 +170,16 @@ void palette_set_contrast(palette_t *palette, float contrast);
 void palette_set_gamma(palette_t *palette, float gamma);
 
 /* set the contrast adjustment for a single palette index */
-void palette_entry_set_contrast(palette_t *palette, UINT32 index, float contrast);
+void palette_entry_set_contrast(palette_t *palette, uint32_t index, float contrast);
 
 /* return the contrast adjustment for a single palette index */
-float palette_entry_get_contrast(palette_t *palette, UINT32 index);
+float palette_entry_get_contrast(palette_t *palette, uint32_t index);
 
 /* configure overall brightness for a palette group */
-void palette_group_set_brightness(palette_t *palette, UINT32 group, float brightness);
+void palette_group_set_brightness(palette_t *palette, uint32_t group, float brightness);
 
 /* configure overall contrast for a palette group */
-void palette_group_set_contrast(palette_t *palette, UINT32 group, float contrast);
+void palette_group_set_contrast(palette_t *palette, uint32_t group, float contrast);
 
 
 
@@ -187,7 +187,7 @@ void palette_group_set_contrast(palette_t *palette, UINT32 group, float contrast
 
 /* normalize a range of palette entries, mapping minimum brightness to lum_min and maximum
    brightness to lum_max; if either value is < 0, that boundary value is not modified */
-void palette_normalize_range(palette_t *palette, UINT32 start, UINT32 end, int lum_min, int lum_max);
+void palette_normalize_range(palette_t *palette, uint32_t start, uint32_t end, int lum_min, int lum_max);
 
 
 
@@ -210,7 +210,7 @@ INLINE rgb15_t rgb_to_rgb15(rgb_t rgb)
     rgb_clamp - clamp an RGB component to 0-255
 -------------------------------------------------*/
 
-INLINE UINT8 rgb_clamp(INT32 value)
+INLINE uint8_t rgb_clamp(int32_t value)
 {
 	if (value < 0)
 		return 0;
@@ -224,7 +224,7 @@ INLINE UINT8 rgb_clamp(INT32 value)
     pal1bit - convert a 1-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal1bit(UINT8 bits)
+INLINE uint8_t pal1bit(uint8_t bits)
 {
 	return (bits & 1) ? 0xff : 0x00;
 }
@@ -234,7 +234,7 @@ INLINE UINT8 pal1bit(UINT8 bits)
     pal2bit - convert a 2-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal2bit(UINT8 bits)
+INLINE uint8_t pal2bit(uint8_t bits)
 {
 	bits &= 3;
 	return (bits << 6) | (bits << 4) | (bits << 2) | bits;
@@ -245,7 +245,7 @@ INLINE UINT8 pal2bit(UINT8 bits)
     pal3bit - convert a 3-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal3bit(UINT8 bits)
+INLINE uint8_t pal3bit(uint8_t bits)
 {
 	bits &= 7;
 	return (bits << 5) | (bits << 2) | (bits >> 1);
@@ -256,7 +256,7 @@ INLINE UINT8 pal3bit(UINT8 bits)
     pal4bit - convert a 4-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal4bit(UINT8 bits)
+INLINE uint8_t pal4bit(uint8_t bits)
 {
 	bits &= 0xf;
 	return (bits << 4) | bits;
@@ -267,7 +267,7 @@ INLINE UINT8 pal4bit(UINT8 bits)
     pal5bit - convert a 5-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal5bit(UINT8 bits)
+INLINE uint8_t pal5bit(uint8_t bits)
 {
 	bits &= 0x1f;
 	return (bits << 3) | (bits >> 2);
@@ -278,7 +278,7 @@ INLINE UINT8 pal5bit(UINT8 bits)
     pal6bit - convert a 6-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal6bit(UINT8 bits)
+INLINE uint8_t pal6bit(uint8_t bits)
 {
 	bits &= 0x3f;
 	return (bits << 2) | (bits >> 4);
@@ -289,7 +289,7 @@ INLINE UINT8 pal6bit(UINT8 bits)
     pal7bit - convert a 7-bit value to 8 bits
 -------------------------------------------------*/
 
-INLINE UINT8 pal7bit(UINT8 bits)
+INLINE uint8_t pal7bit(uint8_t bits)
 {
 	bits &= 0x7f;
 	return (bits << 1) | (bits >> 6);

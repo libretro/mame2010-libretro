@@ -588,9 +588,9 @@ int astring_icmpc(const astring *str1, const char *str2)
 	const char *s1 = str1->text;
 
 	/* loop while equal until we hit the end of strings */
-	while (*s1 != 0 && *str2 != 0 && tolower((UINT8)*s1) == tolower((UINT8)*str2))
+	while (*s1 != 0 && *str2 != 0 && tolower((uint8_t)*s1) == tolower((uint8_t)*str2))
 		s1++, str2++;
-	return tolower((UINT8)*s1) - tolower((UINT8)*str2);
+	return tolower((uint8_t)*s1) - tolower((uint8_t)*str2);
 }
 
 
@@ -605,9 +605,9 @@ int astring_icmpch(const astring *str1, const char *str2, int count)
 	int result;
 
 	/* loop while equal until we hit the end of strings */
-	while (count-- > 0 && *s1 != 0 && *str2 != 0 && tolower((UINT8)*s1) == tolower((UINT8)*str2))
+	while (count-- > 0 && *s1 != 0 && *str2 != 0 && tolower((uint8_t)*s1) == tolower((uint8_t)*str2))
 		s1++, str2++;
-	result = (count == -1) ? 0 : tolower((UINT8)*s1) - tolower((UINT8)*str2);
+	result = (count == -1) ? 0 : tolower((uint8_t)*s1) - tolower((uint8_t)*str2);
 	if (result == 0 && *s1 != 0)
 		result = 1;
 	return result;
@@ -759,7 +759,7 @@ astring *astring_toupper(astring *str)
 
 	/* just toupper() on all characters */
 	for (text = str->text; *text != 0; text++)
-		*text = toupper((UINT8)*text);
+		*text = toupper((uint8_t)*text);
 
 	return str;
 }
@@ -776,7 +776,7 @@ astring *astring_tolower(astring *str)
 
 	/* just tolower() on all characters */
 	for (text = str->text; *text != 0; text++)
-		*text = tolower((UINT8)*text);
+		*text = tolower((uint8_t)*text);
 
 	return str;
 }
@@ -792,11 +792,11 @@ astring *astring_trimspace(astring *str)
 	char *ptr;
 
 	/* first remove stuff from the end */
-	for (ptr = str->text + strlen(str->text) - 1; ptr >= str->text && (!(*ptr & 0x80) && isspace((UINT8)*ptr)); ptr--)
+	for (ptr = str->text + strlen(str->text) - 1; ptr >= str->text && (!(*ptr & 0x80) && isspace((uint8_t)*ptr)); ptr--)
 		*ptr = 0;
 
 	/* then count how much to remove from the beginning */
-	for (ptr = str->text; *ptr != 0 && (!(*ptr & 0x80) && isspace((UINT8)*ptr)); ptr++) ;
+	for (ptr = str->text; *ptr != 0 && (!(*ptr & 0x80) && isspace((uint8_t)*ptr)); ptr++) ;
 	if (ptr > str->text)
 		astring_substr(str, ptr - str->text, -1);
 

@@ -109,13 +109,13 @@
 struct _avcomp_state
 {
 	/* video parameters */
-	UINT32				maxwidth, maxheight;
+	uint32_t				maxwidth, maxheight;
 
 	/* audio parameters */
-	UINT32				maxchannels;
+	uint32_t				maxchannels;
 
 	/* intermediate data */
-	UINT8 *				audiodata;
+	uint8_t *				audiodata;
 
 	/* huffman contexts */
 	huffman_context *	ycontext;
@@ -136,14 +136,14 @@ struct _avcomp_state
 ***************************************************************************/
 
 /* encoding helpers */
-static avcomp_error encode_audio(avcomp_state *state, int channels, int samples, const UINT8 **source, int sourcexor, UINT8 *dest, UINT8 *sizes);
-static avcomp_error encode_video(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 *complength);
-static avcomp_error encode_video_lossless(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 *complength);
+static avcomp_error encode_audio(avcomp_state *state, int channels, int samples, const uint8_t **source, int sourcexor, uint8_t *dest, uint8_t *sizes);
+static avcomp_error encode_video(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t *complength);
+static avcomp_error encode_video_lossless(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t *complength);
 
 /* decoding helpers */
-static avcomp_error decode_audio(avcomp_state *state, int channels, int samples, const UINT8 *source, UINT8 **dest, UINT32 dxor, const UINT8 *sizes);
-static avcomp_error decode_video(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 complength, UINT8 *dest, UINT32 dstride, UINT32 dxor);
-static avcomp_error decode_video_lossless(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 complength, UINT8 *dest, UINT32 deststride, UINT32 destxor);
+static avcomp_error decode_audio(avcomp_state *state, int channels, int samples, const uint8_t *source, uint8_t **dest, uint32_t dxor, const uint8_t *sizes);
+static avcomp_error decode_video(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t complength, uint8_t *dest, uint32_t dstride, uint32_t dxor);
+static avcomp_error decode_video_lossless(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t complength, uint8_t *dest, uint32_t deststride, uint32_t destxor);
 
 
 
@@ -157,7 +157,7 @@ static avcomp_error decode_video_lossless(avcomp_state *state, int width, int he
     decompression
 -------------------------------------------------*/
 
-avcomp_state *avcomp_init(UINT32 maxwidth, UINT32 maxheight, UINT32 maxchannels)
+avcomp_state *avcomp_init(uint32_t maxwidth, uint32_t maxheight, uint32_t maxchannels)
 {
 	huffman_error hufferr;
 	avcomp_state *state;
@@ -180,7 +180,7 @@ avcomp_state *avcomp_init(UINT32 maxwidth, UINT32 maxheight, UINT32 maxchannels)
 	state->maxchannels = maxchannels;
 
 	/* now allocate data buffers */
-	state->audiodata = (UINT8 *)malloc(65536 * state->maxchannels * 2);
+	state->audiodata = (uint8_t *)malloc(65536 * state->maxchannels * 2);
 	if (state->audiodata == NULL)
 		goto cleanup;
 
@@ -267,13 +267,13 @@ void avcomp_config_decompress(avcomp_state *state, const av_codec_decompress_con
     into a compressed data stream
 -------------------------------------------------*/
 
-avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 *dest, UINT32 *complength)
+avcomp_error avcomp_encode_data(avcomp_state *state, const uint8_t *source, uint8_t *dest, uint32_t *complength)
 {
-	const UINT8 *metastart, *videostart, *audiostart[MAX_CHANNELS];
-	UINT32 metasize, channels, samples, width, height;
-	UINT32 audioxor, videoxor, videostride;
+	const uint8_t *metastart, *videostart, *audiostart[MAX_CHANNELS];
+	uint32_t metasize, channels, samples, width, height;
+	uint32_t audioxor, videoxor, videostride;
 	avcomp_error err;
-	UINT32 dstoffs;
+	uint32_t dstoffs;
 	int chnum;
 
 	/* extract data from source if present */
@@ -309,7 +309,7 @@ avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 
 	/* otherwise, extract from the state */
 	else
 	{
-		UINT16 betest = 0;
+		uint16_t betest = 0;
 
 		/* extract metadata information */
 		metastart = state->compress.metadata;
@@ -321,21 +321,21 @@ avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 
 		channels = state->compress.channels;
 		samples = state->compress.samples;
 		for (chnum = 0; chnum < channels; chnum++)
-			audiostart[chnum] = (const UINT8 *)state->compress.audio[chnum];
+			audiostart[chnum] = (const uint8_t *)state->compress.audio[chnum];
 
 		/* extract video information */
 		videostart = NULL;
 		videostride = width = height = 0;
 		if (state->compress.video != NULL)
 		{
-			videostart = (const UINT8 *)state->compress.video->base;
+			videostart = (const uint8_t *)state->compress.video->base;
 			videostride = state->compress.video->rowpixels * 2;
 			width = state->compress.video->width;
 			height = state->compress.video->height;
 		}
 
 		/* data is assumed to be native-endian */
-		*(UINT8 *)&betest = 1;
+		*(uint8_t *)&betest = 1;
 		audioxor = videoxor = (betest == 1) ? 1 : 0;
 	}
 
@@ -382,7 +382,7 @@ avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 
 	/* encode the video data */
 	if (width > 0 && height > 0)
 	{
-		UINT32 vidlength = 0;
+		uint32_t vidlength = 0;
 
 		/* encode the video */
 		err = encode_video(state, width, height, videostart, videostride, videoxor, dest + dstoffs, &vidlength);
@@ -404,12 +404,12 @@ avcomp_error avcomp_encode_data(avcomp_state *state, const UINT8 *source, UINT8 
     audio and video from a raw data stream
 -------------------------------------------------*/
 
-avcomp_error avcomp_decode_data(avcomp_state *state, const UINT8 *source, UINT32 complength, UINT8 *dest)
+avcomp_error avcomp_decode_data(avcomp_state *state, const uint8_t *source, uint32_t complength, uint8_t *dest)
 {
-	UINT8 *metastart, *videostart, *audiostart[MAX_CHANNELS];
-	UINT32 metasize, channels, samples, width, height;
-	UINT32 audioxor, videoxor, videostride;
-	UINT32 srcoffs, totalsize;
+	uint8_t *metastart, *videostart, *audiostart[MAX_CHANNELS];
+	uint32_t metasize, channels, samples, width, height;
+	uint32_t audioxor, videoxor, videostride;
+	uint32_t srcoffs, totalsize;
 	avcomp_error err;
 	int chnum;
 
@@ -477,17 +477,17 @@ avcomp_error avcomp_decode_data(avcomp_state *state, const UINT8 *source, UINT32
 	/* otherwise, extract from the state */
 	else
 	{
-		UINT16 betest = 0;
+		uint16_t betest = 0;
 
 		/* determine the start of each piece of data */
 		metastart = state->decompress.metadata;
 		for (chnum = 0; chnum < channels; chnum++)
-			audiostart[chnum] = (UINT8 *)state->decompress.audio[chnum];
-		videostart = (state->decompress.video != NULL) ? (UINT8 *)state->decompress.video->base : NULL;
+			audiostart[chnum] = (uint8_t *)state->decompress.audio[chnum];
+		videostart = (state->decompress.video != NULL) ? (uint8_t *)state->decompress.video->base : NULL;
 		videostride = (state->decompress.video != NULL) ? state->decompress.video->rowpixels * 2 : 0;
 
 		/* data is assumed to be native-endian */
-		*(UINT8 *)&betest = 1;
+		*(uint8_t *)&betest = 1;
 		audioxor = videoxor = (betest == 1) ? 1 : 0;
 
 		/* verify against sizes */
@@ -550,27 +550,27 @@ avcomp_error avcomp_decode_data(avcomp_state *state, const UINT8 *source, UINT32
     to the destination
 -------------------------------------------------*/
 
-static avcomp_error encode_audio(avcomp_state *state, int channels, int samples, const UINT8 **source, int sourcexor, UINT8 *dest, UINT8 *sizes)
+static avcomp_error encode_audio(avcomp_state *state, int channels, int samples, const uint8_t **source, int sourcexor, uint8_t *dest, uint8_t *sizes)
 {
-	UINT32 size, huffsize, totalsize;
+	uint32_t size, huffsize, totalsize;
 	huffman_context *contexts[2];
 	huffman_error hufferr;
-	UINT8 *output = dest;
+	uint8_t *output = dest;
 	int chnum, sampnum;
-	UINT8 *deltabuf;
+	uint8_t *deltabuf;
 
 	/* iterate over channels to compute deltas */
 	deltabuf = state->audiodata;
 	for (chnum = 0; chnum < channels; chnum++)
 	{
-		const UINT8 *srcdata = source[chnum];
-		INT16 prevsample = 0;
+		const uint8_t *srcdata = source[chnum];
+		int16_t prevsample = 0;
 
 		/* extract audio data into hi and lo deltas stored in big-endian order */
 		for (sampnum = 0; sampnum < samples; sampnum++)
 		{
-			INT16 newsample = (srcdata[0 ^ sourcexor] << 8) | srcdata[1 ^ sourcexor];
-			INT16 delta = newsample - prevsample;
+			int16_t newsample = (srcdata[0 ^ sourcexor] << 8) | srcdata[1 ^ sourcexor];
+			int16_t delta = newsample - prevsample;
 			prevsample = newsample;
 			*deltabuf++ = delta >> 8;
 			*deltabuf++ = delta;
@@ -604,7 +604,7 @@ static avcomp_error encode_audio(avcomp_state *state, int channels, int samples,
 	totalsize = huffsize;
 	for (chnum = 0; chnum < channels; chnum++)
 	{
-		const UINT8 *input = state->audiodata + chnum * samples * 2;
+		const uint8_t *input = state->audiodata + chnum * samples * 2;
 
 		/* encode the data */
 		hufferr = huffman_encode_data_interleaved(2, contexts, input, samples * 2, 1, 0, 0, output, samples * 2, &size);
@@ -642,7 +642,7 @@ static avcomp_error encode_audio(avcomp_state *state, int channels, int samples,
     to the destination
 -------------------------------------------------*/
 
-static avcomp_error encode_video(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 *complength)
+static avcomp_error encode_video(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t *complength)
 {
 	/* only lossless supported at this time */
 	return encode_video_lossless(state, width, height, source, sstride, sxor, dest, complength);
@@ -654,13 +654,13 @@ static avcomp_error encode_video(avcomp_state *state, int width, int height, con
     encoding using deltas and huffman encoding
 -------------------------------------------------*/
 
-static avcomp_error encode_video_lossless(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 sstride, UINT32 sxor, UINT8 *dest, UINT32 *complength)
+static avcomp_error encode_video_lossless(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t sstride, uint32_t sxor, uint8_t *dest, uint32_t *complength)
 {
-	UINT32 srcbytes = width * height * 2;
+	uint32_t srcbytes = width * height * 2;
 	huffman_context *contexts[4];
 	huffman_error hufferr;
-	UINT32 outbytes;
-	UINT8 *output;
+	uint32_t outbytes;
+	uint8_t *output;
 
 	/* set up the output; first byte is 0x80 to indicate lossless encoding */
 	output = dest;
@@ -713,13 +713,13 @@ static avcomp_error encode_video_lossless(avcomp_state *state, int width, int he
     compressed data stream
 -------------------------------------------------*/
 
-static avcomp_error decode_audio(avcomp_state *state, int channels, int samples, const UINT8 *source, UINT8 **dest, UINT32 dxor, const UINT8 *sizes)
+static avcomp_error decode_audio(avcomp_state *state, int channels, int samples, const uint8_t *source, uint8_t **dest, uint32_t dxor, const uint8_t *sizes)
 {
 	huffman_context *contexts[2];
-	UINT32 actsize, huffsize;
+	uint32_t actsize, huffsize;
 	huffman_error hufferr;
 	int chnum, sampnum;
-	UINT16 size;
+	uint16_t size;
 
 	/* if no huffman length, just copy the data */
 	size = (sizes[0] << 8) | sizes[1];
@@ -728,7 +728,7 @@ static avcomp_error decode_audio(avcomp_state *state, int channels, int samples,
 		/* loop over channels */
 		for (chnum = 0; chnum < channels; chnum++)
 		{
-			UINT8 *curdest = dest[chnum];
+			uint8_t *curdest = dest[chnum];
 
 			/* extract the size of this channel */
 			size = (sizes[chnum * 2 + 2] << 8) | sizes[chnum * 2 + 3];
@@ -736,11 +736,11 @@ static avcomp_error decode_audio(avcomp_state *state, int channels, int samples,
 			/* extract data from the deltas */
 			if (dest[chnum] != NULL)
 			{
-				INT16 prevsample = 0;
+				int16_t prevsample = 0;
 				for (sampnum = 0; sampnum < samples; sampnum++)
 				{
-					INT16 delta = (source[0] << 8) | source[1];
-					INT16 newsample = prevsample + delta;
+					int16_t delta = (source[0] << 8) | source[1];
+					int16_t newsample = prevsample + delta;
 					prevsample = newsample;
 
 					curdest[0 ^ dxor] = newsample >> 8;
@@ -783,7 +783,7 @@ static avcomp_error decode_audio(avcomp_state *state, int channels, int samples,
 		/* decode the data */
 		if (dest[chnum] != NULL)
 		{
-			UINT8 *deltabuf = state->audiodata + chnum * samples * 2;
+			uint8_t *deltabuf = state->audiodata + chnum * samples * 2;
 			hufferr = huffman_decode_data_interleaved(2, contexts, source, size, deltabuf, samples * 2, 1, 0, 0, &actsize);
 			if (hufferr != HUFFERR_NONE || actsize != size)
 				return AVCERR_INVALID_DATA;
@@ -797,14 +797,14 @@ static avcomp_error decode_audio(avcomp_state *state, int channels, int samples,
 	for (chnum = 0; chnum < channels; chnum++)
 		if (dest[chnum] != NULL)
 		{
-			UINT8 *deltabuf = state->audiodata + chnum * samples * 2;
-			UINT8 *curdest = dest[chnum];
-			INT16 prevsample = 0;
+			uint8_t *deltabuf = state->audiodata + chnum * samples * 2;
+			uint8_t *curdest = dest[chnum];
+			int16_t prevsample = 0;
 
 			for (sampnum = 0; sampnum < samples; sampnum++)
 			{
-				INT16 delta = (deltabuf[0] << 8) | deltabuf[1];
-				INT16 newsample = prevsample + delta;
+				int16_t delta = (deltabuf[0] << 8) | deltabuf[1];
+				int16_t newsample = prevsample + delta;
 				prevsample = newsample;
 
 				curdest[0 ^ dxor] = newsample >> 8;
@@ -823,7 +823,7 @@ static avcomp_error decode_audio(avcomp_state *state, int channels, int samples,
     compressed data stream
 -------------------------------------------------*/
 
-static avcomp_error decode_video(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 complength, UINT8 *dest, UINT32 dstride, UINT32 dxor)
+static avcomp_error decode_video(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t complength, uint8_t *dest, uint32_t dstride, uint32_t dxor)
 {
 	/* if the high bit of the first byte is set, we decode losslessly */
 	if (source[0] & 0x80)
@@ -838,12 +838,12 @@ static avcomp_error decode_video(avcomp_state *state, int width, int height, con
     decoding using deltas and huffman encoding
 -------------------------------------------------*/
 
-static avcomp_error decode_video_lossless(avcomp_state *state, int width, int height, const UINT8 *source, UINT32 complength, UINT8 *dest, UINT32 deststride, UINT32 destxor)
+static avcomp_error decode_video_lossless(avcomp_state *state, int width, int height, const uint8_t *source, uint32_t complength, uint8_t *dest, uint32_t deststride, uint32_t destxor)
 {
-	const UINT8 *sourceend = source + complength;
+	const uint8_t *sourceend = source + complength;
 	huffman_context *contexts[4];
 	huffman_error hufferr;
-	UINT32 actsize;
+	uint32_t actsize;
 
 	/* skip the first byte */
 	source++;

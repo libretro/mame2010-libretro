@@ -29,15 +29,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-static unsigned int READ_UINT32(const UINT8* data)
+static unsigned int READ_UINT32(const uint8_t* data)
 {
-	return ((UINT32)data[0] << 24) |
-		((UINT32)data[1] << 16) |
-		((UINT32)data[2] << 8) |
-		((UINT32)data[3]);
+	return ((uint32_t)data[0] << 24) |
+		((uint32_t)data[1] << 16) |
+		((uint32_t)data[2] << 8) |
+		((uint32_t)data[3]);
 }
 
-static void WRITE_UINT32(unsigned char* data, UINT32 val)
+static void WRITE_UINT32(unsigned char* data, uint32_t val)
 {
 	data[0] = (val >> 24) & 0xFF;
 	data[1] = (val >> 16) & 0xFF;
@@ -144,9 +144,9 @@ sha1_init(struct sha1_ctx *ctx)
    Note that this function destroys the data area */
 
 static void
-sha1_transform(UINT32 *state, UINT32 *data)
+sha1_transform(uint32_t *state, uint32_t *data)
 {
-  UINT32 A, B, C, D, E;     /* Local vars */
+  uint32_t A, B, C, D, E;     /* Local vars */
 
   /* Set up first buffer and local data buffer */
   A = state[0];
@@ -249,9 +249,9 @@ sha1_transform(UINT32 *state, UINT32 *data)
 }
 
 static void
-sha1_block(struct sha1_ctx *ctx, const UINT8 *block)
+sha1_block(struct sha1_ctx *ctx, const uint8_t *block)
 {
-  UINT32 data[SHA1_DATA_LENGTH];
+  uint32_t data[SHA1_DATA_LENGTH];
   int i;
 
   /* Update block count */
@@ -267,7 +267,7 @@ sha1_block(struct sha1_ctx *ctx, const UINT8 *block)
 
 void
 sha1_update(struct sha1_ctx *ctx,
-	    unsigned length, const UINT8 *buffer)
+	    unsigned length, const uint8_t *buffer)
 {
   if (ctx->index)
     { /* Try to fill partial block */
@@ -304,7 +304,7 @@ sha1_update(struct sha1_ctx *ctx,
 void
 sha1_final(struct sha1_ctx *ctx)
 {
-  UINT32 data[SHA1_DATA_LENGTH];
+  uint32_t data[SHA1_DATA_LENGTH];
   int i;
   int words;
 
@@ -347,7 +347,7 @@ sha1_final(struct sha1_ctx *ctx)
 void
 sha1_digest(const struct sha1_ctx *ctx,
 	    unsigned length,
-	    UINT8 *digest)
+	    uint8_t *digest)
 {
   unsigned i;
   unsigned words;
@@ -363,7 +363,7 @@ sha1_digest(const struct sha1_ctx *ctx,
 
   if (leftover)
     {
-      UINT32 word;
+      uint32_t word;
       unsigned j = leftover;
 
       assert(i < _SHA1_DIGEST_LENGTH);

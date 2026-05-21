@@ -74,8 +74,8 @@
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef UINT16 utf16_char;
-typedef UINT32 unicode_char;
+typedef uint16_t utf16_char;
+typedef uint32_t unicode_char;
 
 
 

@@ -74,9 +74,9 @@ struct _cdrom_file
 {
 	chd_file *			chd;				/* CHD file */
 	cdrom_toc			cdtoc;				/* TOC for the CD */
-	UINT32				hunksectors;		/* sectors per hunk */
-	UINT32				cachehunk;			/* which hunk is cached */
-	UINT8 *				cache;				/* cache of the current hunk */
+	uint32_t				hunksectors;		/* sectors per hunk */
+	uint32_t				cachehunk;			/* which hunk is cached */
+	uint8_t *				cache;				/* cache of the current hunk */
 };
 
 
@@ -85,7 +85,7 @@ struct _cdrom_file
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static chd_error read_sector_into_cache(cdrom_file *file, UINT32 lbasector, UINT32 *sectoroffs, UINT32 *tracknum);
+static chd_error read_sector_into_cache(cdrom_file *file, uint32_t lbasector, uint32_t *sectoroffs, uint32_t *tracknum);
 
 
 
@@ -98,9 +98,9 @@ static chd_error read_sector_into_cache(cdrom_file *file, UINT32 lbasector, UINT
     and the track number
 -------------------------------------------------*/
 
-INLINE UINT32 physical_to_chd_lba(cdrom_file *file, UINT32 physlba, UINT32 *tracknum)
+INLINE uint32_t physical_to_chd_lba(cdrom_file *file, uint32_t physlba, uint32_t *tracknum)
 {
-	UINT32 chdlba;
+	uint32_t chdlba;
 	int track;
 
 	/* loop until our current LBA is less than the start LBA of the next track */
@@ -132,7 +132,7 @@ cdrom_file *cdrom_open(chd_file *chd)
 	const chd_header *header = chd_get_header(chd);
 	int i;
 	cdrom_file *file;
-	UINT32 physofs, chdofs;
+	uint32_t physofs, chdofs;
 	chd_error err;
 
 	/* punt if no CHD */
@@ -192,7 +192,7 @@ cdrom_file *cdrom_open(chd_file *chd)
 	file->cdtoc.tracks[i].chdframeofs = chdofs;
 
 	/* allocate a cache */
-	file->cache = (UINT8 *)malloc(chd_get_header(chd)->hunkbytes);
+	file->cache = (uint8_t *)malloc(chd_get_header(chd)->hunkbytes);
 	if (file->cache == NULL)
 	{
 		free(file);
@@ -229,9 +229,9 @@ void cdrom_close(cdrom_file *file)
     from a CD-ROM
 -------------------------------------------------*/
 
-UINT32 cdrom_read_data(cdrom_file *file, UINT32 lbasector, void *buffer, UINT32 datatype)
+uint32_t cdrom_read_data(cdrom_file *file, uint32_t lbasector, void *buffer, uint32_t datatype)
 {
-	UINT32 tracktype, tracknum, sectoroffs;
+	uint32_t tracktype, tracknum, sectoroffs;
 	chd_error err;
 
 	if (file == NULL)
@@ -283,9 +283,9 @@ UINT32 cdrom_read_data(cdrom_file *file, UINT32 lbasector, void *buffer, UINT32 
     a sector
 -------------------------------------------------*/
 
-UINT32 cdrom_read_subcode(cdrom_file *file, UINT32 lbasector, void *buffer)
+uint32_t cdrom_read_subcode(cdrom_file *file, uint32_t lbasector, void *buffer)
 {
-	UINT32 sectoroffs, tracknum;
+	uint32_t sectoroffs, tracknum;
 	chd_error err;
 
 	if (file == NULL)
@@ -312,9 +312,9 @@ UINT32 cdrom_read_subcode(cdrom_file *file, UINT32 lbasector, void *buffer)
     for a physical frame number
 -------------------------------------------------*/
 
-UINT32 cdrom_get_track(cdrom_file *file, UINT32 frame)
+uint32_t cdrom_get_track(cdrom_file *file, uint32_t frame)
 {
-	UINT32 track = 0;
+	uint32_t track = 0;
 
 	if (file == NULL)
 		return ~0;
@@ -330,7 +330,7 @@ UINT32 cdrom_get_track(cdrom_file *file, UINT32 frame)
     that a track starts at
 -------------------------------------------------*/
 
-UINT32 cdrom_get_track_start(cdrom_file *file, UINT32 track)
+uint32_t cdrom_get_track_start(cdrom_file *file, uint32_t track)
 {
 	if (file == NULL)
 		return ~0;
@@ -419,7 +419,7 @@ const cdrom_toc *cdrom_get_toc(cdrom_file *file)
     and track data size
 -------------------------------------------------*/
 
-static void cdrom_get_info_from_type_string(const char *typestring, UINT32 *trktype, UINT32 *datasize)
+static void cdrom_get_info_from_type_string(const char *typestring, uint32_t *trktype, uint32_t *datasize)
 {
 	if (!strcmp(typestring, "MODE1"))
 	{
@@ -565,7 +565,7 @@ void cdrom_convert_subtype_string_to_pregap_info(const char *typestring, cdrom_t
     associated with the given type
 -------------------------------------------------*/
 
-const char *cdrom_get_type_string(UINT32 trktype)
+const char *cdrom_get_type_string(uint32_t trktype)
 {
 	switch (trktype)
 	{
@@ -587,7 +587,7 @@ const char *cdrom_get_type_string(UINT32 trktype)
     associated with the given subcode type
 -------------------------------------------------*/
 
-const char *cdrom_get_subtype_string(UINT32 subtype)
+const char *cdrom_get_subtype_string(uint32_t subtype)
 {
 	switch (subtype)
 	{
@@ -608,9 +608,9 @@ const char *cdrom_get_subtype_string(UINT32 subtype)
     the given physical LBA
 -------------------------------------------------*/
 
-static chd_error read_sector_into_cache(cdrom_file *file, UINT32 lbasector, UINT32 *sectoroffs, UINT32 *tracknum)
+static chd_error read_sector_into_cache(cdrom_file *file, uint32_t lbasector, uint32_t *sectoroffs, uint32_t *tracknum)
 {
-	UINT32 chdsector, hunknum;
+	uint32_t chdsector, hunknum;
 	chd_error err;
 
 	/* convert to a CHD sector offset and get track information */
@@ -638,9 +638,9 @@ static chd_error read_sector_into_cache(cdrom_file *file, UINT32 lbasector, UINT
 
 chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc)
 {
-	static UINT32 oldmetadata[CD_METADATA_WORDS], *mrp;
+	static uint32_t oldmetadata[CD_METADATA_WORDS], *mrp;
 	const chd_header *header = chd_get_header(chd);
-	UINT32 hunksectors = header->hunkbytes / CD_FRAME_SIZE;
+	uint32_t hunksectors = header->hunkbytes / CD_FRAME_SIZE;
 	char metadata[512];
 	chd_error err;
 	int i;

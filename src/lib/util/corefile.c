@@ -86,9 +86,9 @@ typedef struct _zlib_data zlib_data;
 struct _zlib_data
 {
 	z_stream		stream;
-	UINT8			buffer[1024];
-	UINT64			realoffset;
-	UINT64			nextoffset;
+	uint8_t			buffer[1024];
+	uint64_t			realoffset;
+	uint64_t			nextoffset;
 };
 
 
@@ -97,18 +97,18 @@ struct _core_file
 {
 	osd_file *		file;						/* OSD file handle */
 	zlib_data *		zdata;						/* compression data */
-	UINT32			openflags;					/* flags we were opened with */
-	UINT8			data_allocated;				/* was the data allocated by us? */
-	UINT8 *			data;						/* file data, if RAM-based */
-	UINT64			offset;						/* current file offset */
-	UINT64			length;						/* total file length */
+	uint32_t			openflags;					/* flags we were opened with */
+	uint8_t			data_allocated;				/* was the data allocated by us? */
+	uint8_t *			data;						/* file data, if RAM-based */
+	uint64_t			offset;						/* current file offset */
+	uint64_t			length;						/* total file length */
 	text_file_type	text_type;					/* text output format */
 	char			back_chars[UTF8_CHAR_MAX];	/* buffer to hold characters for ungetc */
 	int				back_char_head;				/* head of ungetc buffer */
 	int				back_char_tail;				/* tail of ungetc buffer */
-	UINT64			bufferbase;					/* base offset of internal buffer */
-	UINT32			bufferbytes;				/* bytes currently loaded into buffer */
-	UINT8			buffer[FILE_BUFFER_SIZE];	/* buffer data */
+	uint64_t			bufferbase;					/* base offset of internal buffer */
+	uint32_t			bufferbytes;				/* bytes currently loaded into buffer */
+	uint8_t			buffer[FILE_BUFFER_SIZE];	/* buffer data */
 };
 
 
@@ -118,9 +118,9 @@ struct _core_file
 ***************************************************************************/
 
 /* misc helpers */
-static UINT32 safe_buffer_copy(const void *source, UINT32 sourceoffs, UINT32 sourcelen, void *dest, UINT32 destoffs, UINT32 destlen);
-static file_error osd_or_zlib_read(core_file *file, void *buffer, UINT64 offset, UINT32 length, UINT32 *actual);
-static file_error osd_or_zlib_write(core_file *file, const void *buffer, UINT64 offset, UINT32 length, UINT32 *actual);
+static uint32_t safe_buffer_copy(const void *source, uint32_t sourceoffs, uint32_t sourcelen, void *dest, uint32_t destoffs, uint32_t destlen);
+static file_error osd_or_zlib_read(core_file *file, void *buffer, uint64_t offset, uint32_t length, uint32_t *actual);
+static file_error osd_or_zlib_write(core_file *file, const void *buffer, uint64_t offset, uint32_t length, uint32_t *actual);
 
 
 
@@ -150,7 +150,7 @@ INLINE int is_directory_separator(char c)
     return an error code
 -------------------------------------------------*/
 
-file_error core_fopen(const char *filename, UINT32 openflags, core_file **file)
+file_error core_fopen(const char *filename, uint32_t openflags, core_file **file)
 {
 	file_error filerr = FILERR_NOT_FOUND;
 
@@ -180,7 +180,7 @@ file_error core_fopen(const char *filename, UINT32 openflags, core_file **file)
     and return an error code
 -------------------------------------------------*/
 
-static file_error core_fopen_ram_internal(const void *data, size_t length, int copy_buffer, UINT32 openflags, core_file **file)
+static file_error core_fopen_ram_internal(const void *data, size_t length, int copy_buffer, uint32_t openflags, core_file **file)
 {
 	/* can only do this for read access */
 	if ((openflags & OPEN_FLAG_WRITE) != 0)
@@ -197,13 +197,13 @@ static file_error core_fopen_ram_internal(const void *data, size_t length, int c
 	/* copy the buffer, if we're asked to */
 	if (copy_buffer)
 	{
-		void *dest = ((UINT8 *) *file) + sizeof(**file);
+		void *dest = ((uint8_t *) *file) + sizeof(**file);
 		memcpy(dest, data, length);
 		data = dest;
 	}
 
 	/* claim the buffer */
-	(*file)->data = (UINT8 *)data;
+	(*file)->data = (uint8_t *)data;
 	(*file)->length = length;
 	(*file)->openflags = openflags;
 
@@ -216,7 +216,7 @@ static file_error core_fopen_ram_internal(const void *data, size_t length, int c
     file-like access and return an error code
 -------------------------------------------------*/
 
-file_error core_fopen_ram(const void *data, size_t length, UINT32 openflags, core_file **file)
+file_error core_fopen_ram(const void *data, size_t length, uint32_t openflags, core_file **file)
 {
 	return core_fopen_ram_internal(data, length, FALSE, openflags, file);
 }
@@ -227,7 +227,7 @@ file_error core_fopen_ram(const void *data, size_t length, UINT32 openflags, cor
     buffer for file-like access and return an error code
 -------------------------------------------------*/
 
-file_error core_fopen_ram_copy(const void *data, size_t length, UINT32 openflags, core_file **file)
+file_error core_fopen_ram_copy(const void *data, size_t length, uint32_t openflags, core_file **file)
 {
 	return core_fopen_ram_internal(data, length, TRUE, openflags, file);
 }
@@ -272,7 +272,7 @@ file_error core_fcompress(core_file *file, int level)
 		/* flush any remaining data if we are writing */
 		while ((file->openflags & OPEN_FLAG_WRITE) != 0 && zerr != Z_STREAM_END)
 		{
-			UINT32 actualdata;
+			uint32_t actualdata;
 			file_error filerr;
 
 			/* deflate some more */
@@ -356,7 +356,7 @@ file_error core_fcompress(core_file *file, int level)
     core_fseek - seek within a file
 -------------------------------------------------*/
 
-int core_fseek(core_file *file, INT64 offset, int whence)
+int core_fseek(core_file *file, int64_t offset, int whence)
 {
 	int err = 0;
 
@@ -391,7 +391,7 @@ int core_fseek(core_file *file, INT64 offset, int whence)
     core_ftell - return the current file position
 -------------------------------------------------*/
 
-UINT64 core_ftell(core_file *file)
+uint64_t core_ftell(core_file *file)
 {
 	/* return the current offset */
 	return file->offset;
@@ -418,7 +418,7 @@ int core_feof(core_file *file)
     core_fsize - returns the size of a file
 -------------------------------------------------*/
 
-UINT64 core_fsize(core_file *file)
+uint64_t core_fsize(core_file *file)
 {
 	return file->length;
 }
@@ -433,10 +433,10 @@ UINT64 core_fsize(core_file *file)
     core_fread - read from a file
 -------------------------------------------------*/
 
-UINT32 core_fread(core_file *file, void *buffer, UINT32 length)
+uint32_t core_fread(core_file *file, void *buffer, uint32_t length)
 {
 	file_error filerr;
-	UINT32 bytes_read = 0;
+	uint32_t bytes_read = 0;
 
 	/* flush any buffered char */
 	file->back_char_head = 0;
@@ -466,8 +466,8 @@ UINT32 core_fread(core_file *file, void *buffer, UINT32 length)
 			/* read the remainder directly from the file */
 			else
 			{
-				UINT32 new_bytes_read = 0;
-				filerr = osd_or_zlib_read(file, (UINT8 *)buffer + bytes_read, file->offset + bytes_read, length - bytes_read, &new_bytes_read);
+				uint32_t new_bytes_read = 0;
+				filerr = osd_or_zlib_read(file, (uint8_t *)buffer + bytes_read, file->offset + bytes_read, length - bytes_read, &new_bytes_read);
 				bytes_read += new_bytes_read;
 			}
 		}
@@ -475,7 +475,7 @@ UINT32 core_fread(core_file *file, void *buffer, UINT32 length)
 
 	/* handle RAM-based files */
 	else
-		bytes_read += safe_buffer_copy(file->data, (UINT32)file->offset, file->length, buffer, bytes_read, length);
+		bytes_read += safe_buffer_copy(file->data, (uint32_t)file->offset, file->length, buffer, bytes_read, length);
 
 	/* return the number of bytes read */
 	file->offset += bytes_read;
@@ -503,7 +503,7 @@ int core_fgetc(core_file *file)
 		/* do we need to check the byte order marks? */
 		if (file->offset == 0)
 		{
-			UINT8 bom[4];
+			uint8_t bom[4];
 			int pos = 0;
 
 			if (core_fread(file, bom, 4) == 4)
@@ -551,7 +551,7 @@ int core_fgetc(core_file *file)
 				if (readlen > 0)
 				{
 					charlen = osd_uchar_from_osdchar(&uchar, default_buffer, readlen / sizeof(default_buffer[0]));
-					core_fseek(file, (INT64) (charlen * sizeof(default_buffer[0])) - readlen, SEEK_CUR);
+					core_fseek(file, (int64_t) (charlen * sizeof(default_buffer[0])) - readlen, SEEK_CUR);
 				}
 				break;
 
@@ -560,7 +560,7 @@ int core_fgetc(core_file *file)
 				if (readlen > 0)
 				{
 					charlen = uchar_from_utf8(&uchar, utf8_buffer, readlen / sizeof(utf8_buffer[0]));
-					core_fseek(file, (INT64) (charlen * sizeof(utf8_buffer[0])) - readlen, SEEK_CUR);
+					core_fseek(file, (int64_t) (charlen * sizeof(utf8_buffer[0])) - readlen, SEEK_CUR);
 				}
 				break;
 
@@ -569,7 +569,7 @@ int core_fgetc(core_file *file)
 				if (readlen > 0)
 				{
 					charlen = uchar_from_utf16be(&uchar, utf16_buffer, readlen / sizeof(utf16_buffer[0]));
-					core_fseek(file, (INT64) (charlen * sizeof(utf16_buffer[0])) - readlen, SEEK_CUR);
+					core_fseek(file, (int64_t) (charlen * sizeof(utf16_buffer[0])) - readlen, SEEK_CUR);
 				}
 				break;
 
@@ -578,7 +578,7 @@ int core_fgetc(core_file *file)
 				if (readlen > 0)
 				{
 					charlen = uchar_from_utf16le(&uchar, utf16_buffer, readlen / sizeof(utf16_buffer[0]));
-					core_fseek(file, (INT64) (charlen * sizeof(utf16_buffer[0])) - readlen, SEEK_CUR);
+					core_fseek(file, (int64_t) (charlen * sizeof(utf16_buffer[0])) - readlen, SEEK_CUR);
 				}
 				break;
 
@@ -687,14 +687,14 @@ char *core_fgets(char *s, int n, core_file *file)
 const void *core_fbuffer(core_file *file)
 {
 	file_error filerr;
-	UINT32 read_length;
+	uint32_t read_length;
 
 	/* if we already have data, just return it */
 	if (file->data != NULL)
 		return file->data;
 
 	/* allocate some memory */
-	file->data = (UINT8 *)malloc(file->length);
+	file->data = (uint8_t *)malloc(file->length);
 	if (file->data == NULL)
 		return NULL;
 	file->data_allocated = TRUE;
@@ -721,11 +721,11 @@ const void *core_fbuffer(core_file *file)
     pointer
 -------------------------------------------------*/
 
-file_error core_fload(const char *filename, void **data, UINT32 *length)
+file_error core_fload(const char *filename, void **data, uint32_t *length)
 {
 	core_file *file = NULL;
 	file_error err;
-	UINT64 size;
+	uint64_t size;
 
 	/* attempt to open the file */
 	err = core_fopen(filename, OPEN_FLAG_READ, &file);
@@ -734,7 +734,7 @@ file_error core_fload(const char *filename, void **data, UINT32 *length)
 
 	/* get the size */
 	size = core_fsize(file);
-	if ((UINT32)size != size)
+	if ((uint32_t)size != size)
 	{
 		core_fclose(file);
 		return FILERR_OUT_OF_MEMORY;
@@ -743,7 +743,7 @@ file_error core_fload(const char *filename, void **data, UINT32 *length)
 	/* allocate memory */
 	*data = malloc(size);
 	if (length != NULL)
-		*length = (UINT32)size;
+		*length = (uint32_t)size;
 
 	/* read the data */
 	if (core_fread(file, *data, size) != size)
@@ -768,9 +768,9 @@ file_error core_fload(const char *filename, void **data, UINT32 *length)
     core_fwrite - write to a file
 -------------------------------------------------*/
 
-UINT32 core_fwrite(core_file *file, const void *buffer, UINT32 length)
+uint32_t core_fwrite(core_file *file, const void *buffer, uint32_t length)
 {
-	UINT32 bytes_written = 0;
+	uint32_t bytes_written = 0;
 	file_error filerr;
 
 	/* can't write to RAM-based stuff */
@@ -915,7 +915,7 @@ int core_filename_ends_with(const char *filename, const char *extension)
 
 	/* work backwards checking for a match */
 	while (extlen > 0)
-		if (tolower((UINT8)filename[--namelen]) != tolower((UINT8)extension[--extlen]))
+		if (tolower((uint8_t)filename[--namelen]) != tolower((uint8_t)extension[--extlen]))
 		{
 			matches = FALSE;
 			break;
@@ -935,13 +935,13 @@ int core_filename_ends_with(const char *filename, const char *extension)
     bounded buffer to another
 -------------------------------------------------*/
 
-static UINT32 safe_buffer_copy(const void *source, UINT32 sourceoffs, UINT32 sourcelen, void *dest, UINT32 destoffs, UINT32 destlen)
+static uint32_t safe_buffer_copy(const void *source, uint32_t sourceoffs, uint32_t sourcelen, void *dest, uint32_t destoffs, uint32_t destlen)
 {
-	UINT32 sourceavail = sourcelen - sourceoffs;
-	UINT32 destavail = destlen - destoffs;
-	UINT32 bytes_to_copy = MIN(sourceavail, destavail);
+	uint32_t sourceavail = sourcelen - sourceoffs;
+	uint32_t destavail = destlen - destoffs;
+	uint32_t bytes_to_copy = MIN(sourceavail, destavail);
 	if (bytes_to_copy > 0)
-		memcpy((UINT8 *)dest + destoffs, (const UINT8 *)source + sourceoffs, bytes_to_copy);
+		memcpy((uint8_t *)dest + destoffs, (const uint8_t *)source + sourceoffs, bytes_to_copy);
 	return bytes_to_copy;
 }
 
@@ -951,7 +951,7 @@ static UINT32 safe_buffer_copy(const void *source, UINT32 sourceoffs, UINT32 sou
     handles zlib-compressed data
 -------------------------------------------------*/
 
-static file_error osd_or_zlib_read(core_file *file, void *buffer, UINT64 offset, UINT32 length, UINT32 *actual)
+static file_error osd_or_zlib_read(core_file *file, void *buffer, uint64_t offset, uint32_t length, uint32_t *actual)
 {
 	/* if no compression, just pass through */
 	if (file->zdata == NULL)
@@ -967,7 +967,7 @@ static file_error osd_or_zlib_read(core_file *file, void *buffer, UINT64 offset,
 	while (file->zdata->stream.avail_out != 0)
 	{
 		file_error filerr;
-		UINT32 actualdata;
+		uint32_t actualdata;
 		int zerr = Z_OK;
 
 		/* if we didn't make progress, report an error or the end */
@@ -1004,7 +1004,7 @@ static file_error osd_or_zlib_read(core_file *file, void *buffer, UINT64 offset,
     handles zlib-compressed data
 -------------------------------------------------*/
 
-static file_error osd_or_zlib_write(core_file *file, const void *buffer, UINT64 offset, UINT32 length, UINT32 *actual)
+static file_error osd_or_zlib_write(core_file *file, const void *buffer, uint64_t offset, uint32_t length, uint32_t *actual)
 {
 	/* if no compression, just pass through */
 	if (file->zdata == NULL)
@@ -1020,7 +1020,7 @@ static file_error osd_or_zlib_write(core_file *file, const void *buffer, UINT64 
 	while (file->zdata->stream.avail_in != 0)
 	{
 		file_error filerr;
-		UINT32 actualdata;
+		uint32_t actualdata;
 		int zerr;
 
 		/* if we didn't make progress, report an error or the end */

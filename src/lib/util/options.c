@@ -85,8 +85,8 @@ struct _options_data
 {
 	options_hash_entry		links[MAX_ENTRY_NAMES]; /* array of hash table entries (one per name) */
 	options_data *			next;				/* link to the next data */
-	UINT32					flags;				/* flags from the entry */
-	UINT32					seqid;				/* sequence ID; bumped on each change */
+	uint32_t					flags;				/* flags from the entry */
+	uint32_t					seqid;				/* sequence ID; bumped on each change */
 	int						error_reported;		/* have we reported an error on this option yet? */
 	int						priority;			/* priority of the data set */
 	astring *				data;				/* data for this item */
@@ -130,7 +130,7 @@ static void update_data(core_options *opts, options_data *data, const char *newd
 static int parse_option_name(core_options *opts, const char *srcstring, options_data *data);
 
 static void message(core_options *opts, options_message msgtype, const char *format, ...) ATTR_PRINTF(3,4);
-static UINT32 hash_value(core_options *opts, const char *str);
+static uint32_t hash_value(core_options *opts, const char *str);
 static void output_printf(void (*output)(const char *s), const char *format, ...) ATTR_PRINTF(2,3);
 
 
@@ -536,7 +536,7 @@ int options_parse_ini_file(core_options *opts, core_file *inifile, int priority)
 
 		/* find the name */
 		for (optionname = buffer; *optionname != 0; optionname++)
-			if (!isspace((UINT8)*optionname))
+			if (!isspace((uint8_t)*optionname))
 				break;
 
 		/* skip comments */
@@ -545,7 +545,7 @@ int options_parse_ini_file(core_options *opts, core_file *inifile, int priority)
 
 		/* scan forward to find the first space */
 		for (temp = optionname; *temp != 0; temp++)
-			if (isspace((UINT8)*temp))
+			if (isspace((uint8_t)*temp))
 				break;
 
 		/* if we hit the end early, print a warning and continue */
@@ -824,7 +824,7 @@ float options_get_float(core_options *opts, const char *name)
     entry
 -------------------------------------------------*/
 
-UINT32 options_get_seqid(core_options *opts, const char *name)
+uint32_t options_get_seqid(core_options *opts, const char *name)
 {
 	options_data *data = find_entry_data(opts, name, FALSE);
 	return (data == NULL) ? 0 : data->seqid;
@@ -1026,9 +1026,9 @@ static void update_data(core_options *opts, options_data *data, const char *newd
 	int i;
 
 	/* strip off leading/trailing spaces */
-	while (isspace((UINT8)*datastart) && datastart <= dataend)
+	while (isspace((uint8_t)*datastart) && datastart <= dataend)
 		datastart++;
-	while (isspace((UINT8)*dataend) && datastart <= dataend)
+	while (isspace((uint8_t)*dataend) && datastart <= dataend)
 		dataend--;
 
 	/* strip off quotes */
@@ -1156,9 +1156,9 @@ static void message(core_options *opts, options_message msgtype, const char *for
     hash_value - computes the hash value for a string
 -------------------------------------------------*/
 
-static UINT32 hash_value(core_options *opts, const char *str)
+static uint32_t hash_value(core_options *opts, const char *str)
 {
-    UINT32 hash = 5381;
+    uint32_t hash = 5381;
     int c;
 
     while ((c = *str++) != 0)

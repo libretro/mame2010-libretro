@@ -64,7 +64,7 @@ int core_strwildcmp(const char *sp1, const char *sp2);
 
 
 /* I64 printf helper */
-char *core_i64_hex_format(UINT64 value, UINT8 mindigits);
+char *core_i64_hex_format(uint64_t value, uint8_t mindigits);
 
 
 #endif /* __CORESTR_H__ */

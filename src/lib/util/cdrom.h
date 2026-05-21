@@ -94,29 +94,29 @@ typedef struct _cdrom_track_info cdrom_track_info;
 struct _cdrom_track_info
 {
 	/* fields used by CHDMAN and in MAME */
-	UINT32 trktype;		/* track type */
-	UINT32 subtype;		/* subcode data type */
-	UINT32 datasize;	/* size of data in each sector of this track */
-	UINT32 subsize;		/* size of subchannel data in each sector of this track */
-	UINT32 frames;		/* number of frames in this track */
-	UINT32 extraframes;	/* number of "spillage" frames in this track */
-	UINT32 pregap;		/* number of pregap frames */
-	UINT32 postgap;		/* number of postgap frames */
-	UINT32 pgtype;		/* type of sectors in pregap */
-	UINT32 pgsub;		/* type of subchannel data in pregap */
-	UINT32 pgdatasize;	/* size of data in each sector of the pregap */
-	UINT32 pgsubsize;	/* size of subchannel data in each sector of the pregap */
+	uint32_t trktype;		/* track type */
+	uint32_t subtype;		/* subcode data type */
+	uint32_t datasize;	/* size of data in each sector of this track */
+	uint32_t subsize;		/* size of subchannel data in each sector of this track */
+	uint32_t frames;		/* number of frames in this track */
+	uint32_t extraframes;	/* number of "spillage" frames in this track */
+	uint32_t pregap;		/* number of pregap frames */
+	uint32_t postgap;		/* number of postgap frames */
+	uint32_t pgtype;		/* type of sectors in pregap */
+	uint32_t pgsub;		/* type of subchannel data in pregap */
+	uint32_t pgdatasize;	/* size of data in each sector of the pregap */
+	uint32_t pgsubsize;	/* size of subchannel data in each sector of the pregap */
 
 	/* fields used in MAME only */
-	UINT32 physframeofs;	/* frame number on the real CD this track starts at */
-	UINT32 chdframeofs;	/* frame number this track starts at on the CHD */
+	uint32_t physframeofs;	/* frame number on the real CD this track starts at */
+	uint32_t chdframeofs;	/* frame number this track starts at on the CHD */
 };
 
 
 typedef struct _cdrom_toc cdrom_toc;
 struct _cdrom_toc
 {
-	UINT32 numtrks;		/* number of tracks */
+	uint32_t numtrks;		/* number of tracks */
 	cdrom_track_info tracks[CD_MAX_TRACKS];
 };
 
@@ -131,12 +131,12 @@ cdrom_file *cdrom_open(chd_file *chd);
 void cdrom_close(cdrom_file *file);
 
 /* core read access */
-UINT32 cdrom_read_data(cdrom_file *file, UINT32 lbasector, void *buffer, UINT32 datatype);
-UINT32 cdrom_read_subcode(cdrom_file *file, UINT32 lbasector, void *buffer);
+uint32_t cdrom_read_data(cdrom_file *file, uint32_t lbasector, void *buffer, uint32_t datatype);
+uint32_t cdrom_read_subcode(cdrom_file *file, uint32_t lbasector, void *buffer);
 
 /* handy utilities */
-UINT32 cdrom_get_track(cdrom_file *file, UINT32 frame);
-UINT32 cdrom_get_track_start(cdrom_file *file, UINT32 track);
+uint32_t cdrom_get_track(cdrom_file *file, uint32_t frame);
+uint32_t cdrom_get_track_start(cdrom_file *file, uint32_t track);
 
 /* TOC utilities */
 int cdrom_get_last_track(cdrom_file *file);
@@ -149,8 +149,8 @@ void cdrom_convert_type_string_to_track_info(const char *typestring, cdrom_track
 void cdrom_convert_type_string_to_pregap_info(const char *typestring, cdrom_track_info *info);
 void cdrom_convert_subtype_string_to_track_info(const char *typestring, cdrom_track_info *info);
 void cdrom_convert_subtype_string_to_pregap_info(const char *typestring, cdrom_track_info *info);
-const char *cdrom_get_type_string(UINT32 trktype);
-const char *cdrom_get_subtype_string(UINT32 subtype);
+const char *cdrom_get_type_string(uint32_t trktype);
+const char *cdrom_get_subtype_string(uint32_t subtype);
 chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc);
 chd_error cdrom_write_metadata(chd_file *chd, const cdrom_toc *toc);
 
@@ -160,9 +160,9 @@ chd_error cdrom_write_metadata(chd_file *chd, const cdrom_toc *toc);
     INLINE FUNCTIONS
 ***************************************************************************/
 
-INLINE UINT32 lba_to_msf(UINT32 lba)
+INLINE uint32_t lba_to_msf(uint32_t lba)
 {
-	UINT8 m, s, f;
+	uint8_t m, s, f;
 
 	m = lba / (60 * 75);
 	lba -= m * (60 * 75);

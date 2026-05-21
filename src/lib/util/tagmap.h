@@ -73,7 +73,7 @@ struct _tagmap_entry
 {
 	tagmap_entry *		next;
 	void *				object;
-	UINT32				fullhash;
+	uint32_t				fullhash;
 	char				tag[1];
 };
 
@@ -108,10 +108,10 @@ void tagmap_reset(tagmap *map);
 /* ----- object management ----- */
 
 /* add a new entry to a tagmap */
-tagmap_error tagmap_add(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate);
+tagmap_error tagmap_add(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate);
 
 /* add a new entry to a tagmap, ensuring it has a unique hash value */
-tagmap_error tagmap_add_unique_hash(tagmap *map, const char *tag, void *object, UINT8 replace_if_duplicate);
+tagmap_error tagmap_add_unique_hash(tagmap *map, const char *tag, void *object, uint8_t replace_if_duplicate);
 
 /* remove an entry from a tagmap */
 void tagmap_remove(tagmap *map, const char *tag);
@@ -146,7 +146,7 @@ public:
 	void remove(T object) { tagmap_remove_object(this, object); }
 
 	T find(const char *tag) const { return reinterpret_cast<T>(tagmap_find(this, tag)); }
-	T find(const char *tag, UINT32 hash) const { return reinterpret_cast<T>(tagmap_find_prehashed(this, tag, hash)); }
+	T find(const char *tag, uint32_t hash) const { return reinterpret_cast<T>(tagmap_find_prehashed(this, tag, hash)); }
 	T find_hash_only(const char *tag) const { return reinterpret_cast<T>(tagmap_find_hash_only(this, tag)); }
 };
 
@@ -162,9 +162,9 @@ public:
     tagmap_hash - compute the hash of a tag
 -------------------------------------------------*/
 
-INLINE UINT32 tagmap_hash(const char *string)
+INLINE uint32_t tagmap_hash(const char *string)
 {
-	UINT32 hash = (string[0] << 5) + string[1];
+	uint32_t hash = (string[0] << 5) + string[1];
 	char c;
 
 	string += 2;
@@ -180,7 +180,7 @@ INLINE UINT32 tagmap_hash(const char *string)
     hash
 -------------------------------------------------*/
 
-INLINE void *tagmap_find_prehashed(const tagmap *map, const char *tag, UINT32 fullhash)
+INLINE void *tagmap_find_prehashed(const tagmap *map, const char *tag, uint32_t fullhash)
 {
 	tagmap_entry *entry;
 
@@ -211,7 +211,7 @@ INLINE void *tagmap_find(const tagmap *map, const char *tag)
 
 INLINE void *tagmap_find_hash_only(const tagmap *map, const char *tag)
 {
-	UINT32 fullhash = tagmap_hash(tag);
+	uint32_t fullhash = tagmap_hash(tag);
 	tagmap_entry *entry;
 
 	for (entry = map->table[fullhash % ARRAY_LENGTH(map->table)]; entry != NULL; entry = entry->next)
