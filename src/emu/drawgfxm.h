@@ -20,8 +20,8 @@
 
     The second set of macros represents the core gfx/bitmap walking
     and rendering code. These macros generally take the target pixel
-    type (UINT8, UINT16, UINT32), one of the PIXEL_OP* macros,
-    and a priority bitmap pixel type (UINT8, UINT16, UINT32, or the
+    type (uint8_t, uint16_t, uint32_t), one of the PIXEL_OP* macros,
+    and a priority bitmap pixel type (uint8_t, uint16_t, uint32_t, or the
     special type NO_PRIORITY).
 
     Although the code may look inefficient at first, the compiler is
@@ -91,7 +91,7 @@ while (0)																			\
 #define PIXEL_OP_COPY_TRANSPEN(DEST, PRIORITY, SOURCE)								\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 		(DEST) = SOURCE;															\
 }																					\
@@ -130,7 +130,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN(DEST, PRIORITY, SOURCE)								\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 		(DEST) = paldata[srcdata];													\
 }																					\
@@ -139,7 +139,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN_PRIORITY(DEST, PRIORITY, SOURCE)					\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
@@ -159,7 +159,7 @@ while (0)																			\
 #define PIXEL_OP_REBASE_TRANSPEN(DEST, PRIORITY, SOURCE)							\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 		(DEST) = color + srcdata;													\
 }																					\
@@ -168,7 +168,7 @@ while (0)																			\
 #define PIXEL_OP_REBASE_TRANSPEN_PRIORITY(DEST, PRIORITY, SOURCE)					\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
@@ -188,7 +188,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSMASK(DEST, PRIORITY, SOURCE)							\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (((transmask >> srcdata) & 1) == 0)											\
 		(DEST) = paldata[srcdata];													\
 }																					\
@@ -197,7 +197,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSMASK_PRIORITY(DEST, PRIORITY, SOURCE)					\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (((transmask >> srcdata) & 1) == 0)											\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
@@ -220,8 +220,8 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSTABLE16(DEST, PRIORITY, SOURCE)							\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
-	UINT32 entry = pentable[srcdata];												\
+	uint32_t srcdata = (SOURCE);														\
+	uint32_t entry = pentable[srcdata];												\
 	if (entry != DRAWMODE_NONE)														\
 	{																				\
 		if (entry == DRAWMODE_SOURCE)												\
@@ -235,8 +235,8 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSTABLE32(DEST, PRIORITY, SOURCE)							\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
-	UINT32 entry = pentable[srcdata];												\
+	uint32_t srcdata = (SOURCE);														\
+	uint32_t entry = pentable[srcdata];												\
 	if (entry != DRAWMODE_NONE)														\
 	{																				\
 		if (entry == DRAWMODE_SOURCE)												\
@@ -250,11 +250,11 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSTABLE16_PRIORITY(DEST, PRIORITY, SOURCE)				\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
-	UINT32 entry = pentable[srcdata];												\
+	uint32_t srcdata = (SOURCE);														\
+	uint32_t entry = pentable[srcdata];												\
 	if (entry != DRAWMODE_NONE)														\
 	{																				\
-		UINT8 pridata = (PRIORITY);													\
+		uint8_t pridata = (PRIORITY);													\
 		if (entry == DRAWMODE_SOURCE)												\
 		{																			\
 			if (((1 << (pridata & 0x1f)) & pmask) == 0)								\
@@ -273,11 +273,11 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSTABLE32_PRIORITY(DEST, PRIORITY, SOURCE)				\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
-	UINT32 entry = pentable[srcdata];												\
+	uint32_t srcdata = (SOURCE);														\
+	uint32_t entry = pentable[srcdata];												\
 	if (entry != DRAWMODE_NONE)														\
 	{																				\
-		UINT8 pridata = (PRIORITY);													\
+		uint8_t pridata = (PRIORITY);													\
 		if (entry == DRAWMODE_SOURCE)												\
 		{																			\
 			if (((1 << (pridata & 0x1f)) & pmask) == 0)								\
@@ -305,7 +305,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN_ALPHA16(DEST, PRIORITY, SOURCE)						\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 		(DEST) = alpha_blend_r16((DEST), paldata[srcdata], alpha);					\
 }																					\
@@ -314,7 +314,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN_ALPHA32(DEST, PRIORITY, SOURCE)						\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 		(DEST) = alpha_blend_r32((DEST), paldata[srcdata], alpha);					\
 }																					\
@@ -323,7 +323,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN_ALPHA16_PRIORITY(DEST, PRIORITY, SOURCE)			\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
@@ -336,7 +336,7 @@ while (0)																			\
 #define PIXEL_OP_REMAP_TRANSPEN_ALPHA32_PRIORITY(DEST, PRIORITY, SOURCE)			\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
@@ -358,12 +358,12 @@ while (0)																			\
         bitmap_t *dest - the bitmap to render to
         const rectangle *cliprect - a clipping rectangle (assumed to be clipped to the size of 'dest')
         const gfx_element *gfx - pointer to the gfx_element to render
-        UINT32 code - index of the entry within gfx_element
-        UINT32 color - index of the color within gfx_element
+        uint32_t code - index of the entry within gfx_element
+        uint32_t color - index of the color within gfx_element
         int flipx - non-zero means render right-to-left instead of left-to-right
         int flipy - non-zero means render bottom-to-top instead of top-to-bottom
-        INT32 destx - the top-left X coordinate to render to
-        INT32 desty - the top-left Y coordinate to render to
+        int32_t destx - the top-left X coordinate to render to
+        int32_t desty - the top-left Y coordinate to render to
         bitmap_t *priority - the priority bitmap (even if PRIORITY_TYPE is NO_PRIORITY, at least needs a dummy)
 */
 
@@ -372,11 +372,11 @@ while (0)																			\
 do {																					\
 	profiler_mark_start(PROFILER_DRAWGFX);												\
 	do {																				\
-		const UINT8 *srcdata;															\
-		INT32 destendx, destendy;														\
-		INT32 srcx, srcy;																\
-		INT32 curx, cury;																\
-		INT32 dy;																		\
+		const uint8_t *srcdata;															\
+		int32_t destendx, destendy;														\
+		int32_t srcx, srcy;																\
+		int32_t curx, cury;																\
+		int32_t dy;																		\
 																						\
 		assert(dest != NULL);															\
 		assert(gfx != NULL);															\
@@ -447,8 +447,8 @@ do {																					\
 		if (!(gfx->flags & GFX_ELEMENT_PACKED))											\
 		{																				\
 			/* compute how many blocks of 4 pixels we have */							\
-			UINT32 numblocks = (destendx + 1 - destx) / 4;								\
-			UINT32 leftovers = (destendx + 1 - destx) - 4 * numblocks;					\
+			uint32_t numblocks = (destendx + 1 - destx) / 4;								\
+			uint32_t leftovers = (destendx + 1 - destx) - 4 * numblocks;					\
 																						\
 			/* adjust srcdata to point to the first source pixel of the row */			\
 			srcdata += srcy * gfx->line_modulo + srcx;									\
@@ -461,7 +461,7 @@ do {																					\
 				{																		\
 					PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 					PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);	\
-					const UINT8 *srcptr = srcdata;										\
+					const uint8_t *srcptr = srcdata;										\
 					srcdata += dy;														\
 																						\
 					/* iterate over unrolled blocks of 4 */								\
@@ -496,7 +496,7 @@ do {																					\
 				{																		\
 					PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 					PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);	\
-					const UINT8 *srcptr = srcdata;										\
+					const uint8_t *srcptr = srcdata;										\
 					srcdata += dy;														\
 																						\
 					/* iterate over unrolled blocks of 4 */								\
@@ -534,16 +534,16 @@ do {																					\
 			if (!flipx)																	\
 			{																			\
 				/* compute how many blocks of 2 pixels we have */						\
-				UINT32 oddstart = srcx & 1;												\
-				UINT32 numblocks = (destendx + 1 - destx - oddstart) / 2;				\
-				UINT32 leftovers = (destendx + 1 - destx - oddstart) - 2 * numblocks;	\
+				uint32_t oddstart = srcx & 1;												\
+				uint32_t numblocks = (destendx + 1 - destx - oddstart) / 2;				\
+				uint32_t leftovers = (destendx + 1 - destx - oddstart) - 2 * numblocks;	\
 																						\
 				/* iterate over pixels in Y */											\
 				for (cury = desty; cury <= destendy; cury++)							\
 				{																		\
 					PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 					PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);	\
-					const UINT8 *srcptr = srcdata;										\
+					const uint8_t *srcptr = srcdata;										\
 					srcdata += dy;														\
 																						\
 					/* odd starting pixel */											\
@@ -558,7 +558,7 @@ do {																					\
 					/* iterate over unrolled blocks of 2 */								\
 					for (curx = 0; curx < numblocks; curx++)							\
 					{																	\
-						UINT8 srcbyte = *srcptr++;										\
+						uint8_t srcbyte = *srcptr++;										\
 						PIXEL_OP(destptr[0], priptr[0], srcbyte & 15);					\
 						PIXEL_OP(destptr[1], priptr[1], srcbyte >> 4);					\
 						destptr += 2;													\
@@ -575,16 +575,16 @@ do {																					\
 			else																		\
 			{																			\
 				/* compute how many blocks of 2 pixels we have */						\
-				UINT32 oddstart = ~srcx & 1;											\
-				UINT32 numblocks = (destendx + 1 - destx - oddstart) / 2;				\
-				UINT32 leftovers = (destendx + 1 - destx - oddstart) - 2 * numblocks;	\
+				uint32_t oddstart = ~srcx & 1;											\
+				uint32_t numblocks = (destendx + 1 - destx - oddstart) / 2;				\
+				uint32_t leftovers = (destendx + 1 - destx - oddstart) - 2 * numblocks;	\
 																						\
 				/* iterate over pixels in Y */											\
 				for (cury = desty; cury <= destendy; cury++)							\
 				{																		\
 					PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 					PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);	\
-					const UINT8 *srcptr = srcdata;										\
+					const uint8_t *srcptr = srcdata;										\
 					srcdata += dy;														\
 																						\
 					/* odd right pixel */												\
@@ -599,7 +599,7 @@ do {																					\
 					/* middle pixels */													\
 					for (curx = 0; curx < numblocks; curx++)							\
 					{																	\
-						UINT8 srcbyte = *srcptr--;										\
+						uint8_t srcbyte = *srcptr--;										\
 						PIXEL_OP(destptr[0], priptr[0], srcbyte >> 4);					\
 						PIXEL_OP(destptr[1], priptr[1], srcbyte & 15);					\
 						destptr += 2;													\
@@ -628,14 +628,14 @@ do {																					\
         bitmap_t *dest - the bitmap to render to
         const rectangle *cliprect - a clipping rectangle (assumed to be clipped to the size of 'dest')
         const gfx_element *gfx - pointer to the gfx_element to render
-        UINT32 code - index of the entry within gfx_element
-        UINT32 color - index of the color within gfx_element
+        uint32_t code - index of the entry within gfx_element
+        uint32_t color - index of the color within gfx_element
         int flipx - non-zero means render right-to-left instead of left-to-right
         int flipy - non-zero means render bottom-to-top instead of top-to-bottom
-        INT32 destx - the top-left X coordinate to render to
-        INT32 desty - the top-left Y coordinate to render to
-        UINT32 scalex - the 16.16 scale factor in the X dimension
-        UINT32 scaley - the 16.16 scale factor in the Y dimension
+        int32_t destx - the top-left X coordinate to render to
+        int32_t desty - the top-left Y coordinate to render to
+        uint32_t scalex - the 16.16 scale factor in the X dimension
+        uint32_t scaley - the 16.16 scale factor in the Y dimension
         bitmap_t *priority - the priority bitmap (even if PRIORITY_TYPE is NO_PRIORITY, at least needs a dummy)
 */
 
@@ -644,12 +644,12 @@ do {																					\
 do {																					\
 	profiler_mark_start(PROFILER_DRAWGFX);													\
 	do {																				\
-		const UINT8 *srcdata;															\
-		UINT32 dstwidth, dstheight;														\
-		INT32 destendx, destendy;														\
-		INT32 srcx, srcy;																\
-		INT32 curx, cury;																\
-		INT32 dx, dy;																	\
+		const uint8_t *srcdata;															\
+		uint32_t dstwidth, dstheight;														\
+		int32_t destendx, destendy;														\
+		int32_t srcx, srcy;																\
+		int32_t curx, cury;																\
+		int32_t dx, dy;																	\
 																						\
 		assert(dest != NULL);															\
 		assert(gfx != NULL);															\
@@ -735,16 +735,16 @@ do {																					\
 		if (!(gfx->flags & GFX_ELEMENT_PACKED))											\
 		{																				\
 			/* compute how many blocks of 4 pixels we have */							\
-			UINT32 numblocks = (destendx + 1 - destx) / 4;								\
-			UINT32 leftovers = (destendx + 1 - destx) - 4 * numblocks;					\
+			uint32_t numblocks = (destendx + 1 - destx) / 4;								\
+			uint32_t leftovers = (destendx + 1 - destx) - 4 * numblocks;					\
 																						\
 			/* iterate over pixels in Y */												\
 			for (cury = desty; cury <= destendy; cury++)								\
 			{																			\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);		\
-				const UINT8 *srcptr = srcdata + (srcy >> 16) * gfx->line_modulo;		\
-				INT32 cursrcx = srcx;													\
+				const uint8_t *srcptr = srcdata + (srcy >> 16) * gfx->line_modulo;		\
+				int32_t cursrcx = srcx;													\
 				srcy += dy;																\
 																						\
 				/* iterate over unrolled blocks of 4 */									\
@@ -782,8 +782,8 @@ do {																					\
 			{																			\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, destx);		\
-				const UINT8 *srcptr = srcdata + (srcy >> 16) * gfx->line_modulo;		\
-				INT32 cursrcx = srcx;													\
+				const uint8_t *srcptr = srcdata + (srcy >> 16) * gfx->line_modulo;		\
+				int32_t cursrcx = srcx;													\
 				srcy += dy;																\
 																						\
 				/* iterate over pixels in X */											\
@@ -814,8 +814,8 @@ do {																					\
         const rectangle *cliprect - a clipping rectangle (assumed to be clipped to the size of 'dest')
         int flipx - non-zero means render right-to-left instead of left-to-right
         int flipy - non-zero means render bottom-to-top instead of top-to-bottom
-        INT32 destx - the top-left X coordinate to copy to
-        INT32 desty - the top-left Y coordinate to copy to
+        int32_t destx - the top-left X coordinate to copy to
+        int32_t desty - the top-left Y coordinate to copy to
         bitmap_t *priority - the priority bitmap (even if PRIORITY_TYPE is NO_PRIORITY, at least needs a dummy)
 */
 
@@ -824,11 +824,11 @@ do {																					\
 	profiler_mark_start(PROFILER_COPYBITMAP);													\
 	do {																				\
 		const PIXEL_TYPE *srcdata;														\
-		UINT32 numblocks, leftovers;													\
-		INT32 destendx, destendy;														\
-		INT32 srcx, srcy;																\
-		INT32 curx, cury;																\
-		INT32 dx, dy;																	\
+		uint32_t numblocks, leftovers;													\
+		int32_t destendx, destendy;														\
+		int32_t srcx, srcy;																\
+		int32_t curx, cury;																\
+		int32_t dx, dy;																	\
 																						\
 		assert(dest != NULL);															\
 		assert(src != NULL);															\
@@ -990,21 +990,21 @@ do {																					\
         bitmap_t *dest - the bitmap to copy to
         bitmap_t *src - the bitmap to copy from (must be same bpp as dest)
         const rectangle *cliprect - a clipping rectangle (assumed to be clipped to the size of 'dest')
-        INT32 destx - the 16.16 source X position at destination pixel (0,0)
-        INT32 desty - the 16.16 source Y position at destination pixel (0,0)
-        INT32 incxx - the 16.16 amount to increment in source X for each destination X pixel
-        INT32 incyx - the 16.16 amount to increment in source Y for each destination X pixel
-        INT32 incxy - the 16.16 amount to increment in source X for each destination Y pixel
-        INT32 incyy - the 16.16 amount to increment in source Y for each destination Y pixel
+        int32_t destx - the 16.16 source X position at destination pixel (0,0)
+        int32_t desty - the 16.16 source Y position at destination pixel (0,0)
+        int32_t incxx - the 16.16 amount to increment in source X for each destination X pixel
+        int32_t incyx - the 16.16 amount to increment in source Y for each destination X pixel
+        int32_t incxy - the 16.16 amount to increment in source X for each destination Y pixel
+        int32_t incyy - the 16.16 amount to increment in source Y for each destination Y pixel
         int wraparound - non-zero means wrap when hitting the edges of the source
         bitmap_t *priority - the priority bitmap (even if PRIORITY_TYPE is NO_PRIORITY, at least needs a dummy)
 */
 
 #define COPYROZBITMAP_CORE(PIXEL_TYPE, PIXEL_OP, PRIORITY_TYPE)						\
 do {																				\
-	UINT32 srcfixwidth, srcfixheight;												\
-	UINT32 numblocks, leftovers;													\
-	INT32 curx, cury;																\
+	uint32_t srcfixwidth, srcfixheight;												\
+	uint32_t numblocks, leftovers;													\
+	int32_t curx, cury;																\
 																					\
 	profiler_mark_start(PROFILER_COPYBITMAP);										\
 																					\
@@ -1050,32 +1050,32 @@ do {																				\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, cliprect->min_x); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, cliprect->min_x); \
 				const PIXEL_TYPE *srcptr;											\
-				INT32 srcx = startx;												\
-				INT32 srcy = starty;												\
+				int32_t srcx = startx;												\
+				int32_t srcy = starty;												\
 																					\
 				starty += incyy;													\
 																					\
 				/* check srcy for the whole row at once */							\
-				if ((UINT32)srcy < srcfixheight)									\
+				if ((uint32_t)srcy < srcfixheight)									\
 				{																	\
 					srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, 0);			\
 																					\
 					/* iterate over unrolled blocks of 4 */							\
 					for (curx = 0; curx < numblocks; curx++)						\
 					{																\
-						if ((UINT32)srcx < srcfixwidth)								\
+						if ((uint32_t)srcx < srcfixwidth)								\
 							PIXEL_OP(destptr[0], priptr[0], srcptr[srcx >> 16]);	\
 						srcx += incxx;												\
 																					\
-						if ((UINT32)srcx < srcfixwidth)								\
+						if ((uint32_t)srcx < srcfixwidth)								\
 							PIXEL_OP(destptr[1], priptr[1], srcptr[srcx >> 16]);	\
 						srcx += incxx;												\
 																					\
-						if ((UINT32)srcx < srcfixwidth)								\
+						if ((uint32_t)srcx < srcfixwidth)								\
 							PIXEL_OP(destptr[2], priptr[2], srcptr[srcx >> 16]);	\
 						srcx += incxx;												\
 																					\
-						if ((UINT32)srcx < srcfixwidth)								\
+						if ((uint32_t)srcx < srcfixwidth)								\
 							PIXEL_OP(destptr[3], priptr[3], srcptr[srcx >> 16]);	\
 						srcx += incxx;												\
 																					\
@@ -1086,7 +1086,7 @@ do {																				\
 					/* iterate over leftover pixels */								\
 					for (curx = 0; curx < leftovers; curx++)						\
 					{																\
-						if ((UINT32)srcx < srcfixwidth)								\
+						if ((uint32_t)srcx < srcfixwidth)								\
 							PIXEL_OP(destptr[0], priptr[0], srcptr[srcx >> 16]);	\
 						srcx += incxx;												\
 						destptr++;													\
@@ -1111,7 +1111,7 @@ do {																				\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, cliprect->min_x); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, cliprect->min_x); \
 				const PIXEL_TYPE *srcptr = BITMAP_ADDR(src, PIXEL_TYPE, starty >> 16, 0); \
-				INT32 srcx = startx;												\
+				int32_t srcx = startx;												\
 																					\
 				starty = (starty + incyy) & srcfixheight;							\
 																					\
@@ -1158,8 +1158,8 @@ do {																				\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, cliprect->min_x); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, cliprect->min_x); \
 				const PIXEL_TYPE *srcptr;											\
-				INT32 srcx = startx;												\
-				INT32 srcy = starty;												\
+				int32_t srcx = startx;												\
+				int32_t srcy = starty;												\
 																					\
 				startx += incyx;													\
 				starty += incyy;													\
@@ -1167,7 +1167,7 @@ do {																				\
 				/* iterate over unrolled blocks of 4 */								\
 				for (curx = 0; curx < numblocks; curx++)							\
 				{																	\
-					if ((UINT32)srcx < srcfixwidth && (UINT32)srcy < srcfixheight)	\
+					if ((uint32_t)srcx < srcfixwidth && (uint32_t)srcy < srcfixheight)	\
 					{																\
 						srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, srcx >> 16); \
 						PIXEL_OP(destptr[0], priptr[0], srcptr[0]);					\
@@ -1175,7 +1175,7 @@ do {																				\
 					srcx += incxx;													\
 					srcy += incxy;													\
 																					\
-					if ((UINT32)srcx < srcfixwidth && (UINT32)srcy < srcfixheight)	\
+					if ((uint32_t)srcx < srcfixwidth && (uint32_t)srcy < srcfixheight)	\
 					{																\
 						srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, srcx >> 16); \
 						PIXEL_OP(destptr[1], priptr[1], srcptr[0]);					\
@@ -1183,7 +1183,7 @@ do {																				\
 					srcx += incxx;													\
 					srcy += incxy;													\
 																					\
-					if ((UINT32)srcx < srcfixwidth && (UINT32)srcy < srcfixheight)	\
+					if ((uint32_t)srcx < srcfixwidth && (uint32_t)srcy < srcfixheight)	\
 					{																\
 						srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, srcx >> 16); \
 						PIXEL_OP(destptr[2], priptr[2], srcptr[0]);					\
@@ -1191,7 +1191,7 @@ do {																				\
 					srcx += incxx;													\
 					srcy += incxy;													\
 																					\
-					if ((UINT32)srcx < srcfixwidth && (UINT32)srcy < srcfixheight)	\
+					if ((uint32_t)srcx < srcfixwidth && (uint32_t)srcy < srcfixheight)	\
 					{																\
 						srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, srcx >> 16); \
 						PIXEL_OP(destptr[3], priptr[3], srcptr[0]);					\
@@ -1206,7 +1206,7 @@ do {																				\
 				/* iterate over leftover pixels */									\
 				for (curx = 0; curx < leftovers; curx++)							\
 				{																	\
-					if ((UINT32)srcx < srcfixwidth && (UINT32)srcy < srcfixheight)	\
+					if ((uint32_t)srcx < srcfixwidth && (uint32_t)srcy < srcfixheight)	\
 					{																\
 						srcptr = BITMAP_ADDR(src, PIXEL_TYPE, srcy >> 16, srcx >> 16); \
 						PIXEL_OP(destptr[0], priptr[0], srcptr[0]);					\
@@ -1234,8 +1234,8 @@ do {																				\
 				PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, cliprect->min_x); \
 				PIXEL_TYPE *destptr = BITMAP_ADDR(dest, PIXEL_TYPE, cury, cliprect->min_x); \
 				const PIXEL_TYPE *srcptr;											\
-				INT32 srcx = startx;												\
-				INT32 srcy = starty;												\
+				int32_t srcx = startx;												\
+				int32_t srcy = starty;												\
 																					\
 				startx = (startx + incyx) & srcfixwidth;							\
 				starty = (starty + incyy) & srcfixheight;							\
@@ -1293,9 +1293,9 @@ do {																				\
     Assumed input parameters or local variables:
 
         bitmap_t *bitmap - the bitmap to copy to
-        INT32 destx - the X coordinate to copy to
-        INT32 desty - the Y coordinate to copy to
-        INT32 length - the total number of pixels to copy
+        int32_t destx - the X coordinate to copy to
+        int32_t desty - the Y coordinate to copy to
+        int32_t length - the total number of pixels to copy
         const UINTx *srcptr - pointer to memory containing the source pixels
         bitmap_t *priority - the priority bitmap (even if PRIORITY_TYPE is NO_PRIORITY, at least needs a dummy)
 */
@@ -1349,9 +1349,9 @@ do {																				\
     Assumed input parameters:
 
         bitmap_t *bitmap - the bitmap to extract from
-        INT32 srcx - the X coordinate to begin extraction
-        INT32 srcy - the Y coordinate to begin extraction
-        INT32 length - the total number of pixels to extract
+        int32_t srcx - the X coordinate to begin extraction
+        int32_t srcy - the Y coordinate to begin extraction
+        int32_t length - the total number of pixels to extract
         UINTx *destptr - pointer to memory to receive the extracted pixels
 */
 

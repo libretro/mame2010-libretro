@@ -322,8 +322,8 @@ resource_pool_item *resource_pool::find(void *ptr)
 
 bool resource_pool::contains(void *_ptrstart, void *_ptrend)
 {
-	UINT8 *ptrstart = reinterpret_cast<UINT8 *>(_ptrstart);
-	UINT8 *ptrend = reinterpret_cast<UINT8 *>(_ptrend);
+	uint8_t *ptrstart = reinterpret_cast<uint8_t *>(_ptrstart);
+	uint8_t *ptrend = reinterpret_cast<uint8_t *>(_ptrend);
 
 	// search for the item
 	osd_lock_acquire(m_listlock);
@@ -331,8 +331,8 @@ bool resource_pool::contains(void *_ptrstart, void *_ptrend)
 	resource_pool_item *item = NULL;
 	for (item = m_ordered_head; item != NULL; item = item->m_ordered_next)
 	{
-		UINT8 *objstart = reinterpret_cast<UINT8 *>(item->m_ptr);
-		UINT8 *objend = objstart + item->m_size;
+		uint8_t *objstart = reinterpret_cast<uint8_t *>(item->m_ptr);
+		uint8_t *objend = objstart + item->m_size;
 		if (ptrstart >= objstart && ptrend <= objend)
 			goto found;
 	}
@@ -507,7 +507,7 @@ void memory_entry::report_unfreed()
 	acquire_lock();
 
 	// check for leaked memory
-	UINT32 total = 0;
+	uint32_t total = 0;
 
 	for (int hashnum = 0; hashnum < k_hash_prime; hashnum++)
 		for (memory_entry *entry = s_hash[hashnum]; entry != NULL; entry = entry->m_next)
@@ -516,7 +516,7 @@ void memory_entry::report_unfreed()
 				if (total == 0)
 					fprintf(stderr, "--- memory leak warning ---\n");
 				total += entry->m_size;
-				fprintf(stderr, "allocation #%06d, %d bytes (%s:%d)\n", entry->m_id, static_cast<UINT32>(entry->m_size), entry->m_file, (int)entry->m_line);
+				fprintf(stderr, "allocation #%06d, %d bytes (%s:%d)\n", entry->m_id, static_cast<uint32_t>(entry->m_size), entry->m_file, (int)entry->m_line);
 			}
 
 	release_lock();

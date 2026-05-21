@@ -86,7 +86,7 @@ struct _profiler_filo_entry
 typedef struct _profiler_data profiler_data;
 struct _profiler_data
 {
-	UINT32			context_switches;	/* number of context switches seen */
+	uint32_t			context_switches;	/* number of context switches seen */
 	osd_ticks_t		duration[PROFILER_TOTAL]; /* duration spent in each entry */
 };
 
@@ -94,10 +94,10 @@ struct _profiler_data
 typedef struct _profiler_state profiler_state;
 struct _profiler_state
 {
-	UINT8			enabled;			/* are we enabled? */
-	UINT8			filoindex;			/* current FILO index */
-	UINT8			dataindex;			/* current data index */
-	UINT8			dataready;			/* are we to display the data yet? */
+	uint8_t			enabled;			/* are we enabled? */
+	uint8_t			filoindex;			/* current FILO index */
+	uint8_t			dataindex;			/* current data index */
+	uint8_t			dataready;			/* are we to display the data yet? */
 	profiler_filo_entry filo[16];		/* array of FILO entries */
 	profiler_data	data[16];			/* array of data */
 };

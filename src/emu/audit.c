@@ -22,8 +22,8 @@
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static void audit_one_rom(core_options *options, const rom_entry *rom, const char *regiontag, const game_driver *gamedrv, UINT32 validation, audit_record *record);
-static void audit_one_disk(core_options *options, const rom_entry *rom, const game_driver *gamedrv, UINT32 validation, audit_record *record);
+static void audit_one_rom(core_options *options, const rom_entry *rom, const char *regiontag, const game_driver *gamedrv, uint32_t validation, audit_record *record);
+static void audit_one_disk(core_options *options, const rom_entry *rom, const game_driver *gamedrv, uint32_t validation, audit_record *record);
 static int rom_used_by_parent(const game_driver *gamedrv, const rom_entry *romentry, const game_driver **parent);
 
 
@@ -37,7 +37,7 @@ static int rom_used_by_parent(const game_driver *gamedrv, const rom_entry *romen
     substatus values
 -------------------------------------------------*/
 
-INLINE void set_status(audit_record *record, UINT8 status, UINT8 substatus)
+INLINE void set_status(audit_record *record, uint8_t status, uint8_t substatus)
 {
 	record->status = status;
 	record->substatus = substatus;
@@ -54,7 +54,7 @@ INLINE void set_status(audit_record *record, UINT8 status, UINT8 substatus)
     images for a game
 -------------------------------------------------*/
 
-int audit_images(core_options *options, const game_driver *gamedrv, UINT32 validation, audit_record **audit)
+int audit_images(core_options *options, const game_driver *gamedrv, uint32_t validation, audit_record **audit)
 {
 	machine_config *config = global_alloc(machine_config(gamedrv->machine_config));
 	const rom_entry *region, *rom;
@@ -327,11 +327,11 @@ int audit_summary(const game_driver *gamedrv, int count, const audit_record *rec
     audit_one_rom - validate a single ROM entry
 -------------------------------------------------*/
 
-static void audit_one_rom(core_options *options, const rom_entry *rom, const char *regiontag, const game_driver *gamedrv, UINT32 validation, audit_record *record)
+static void audit_one_rom(core_options *options, const rom_entry *rom, const char *regiontag, const game_driver *gamedrv, uint32_t validation, audit_record *record)
 {
 	const game_driver *drv;
-	UINT32 crc = 0;
-	UINT8 crcs[4];
+	uint32_t crc = 0;
+	uint8_t crcs[4];
 	int has_crc;
 
 	/* fill in the record basics */
@@ -363,7 +363,7 @@ static void audit_one_rom(core_options *options, const rom_entry *rom, const cha
 		if (filerr == FILERR_NONE)
 		{
 			hash_data_copy(record->hash, mame_fhash(file, validation));
-			record->length = (UINT32)mame_fsize(file);
+			record->length = (uint32_t)mame_fsize(file);
 			mame_fclose(file);
 			break;
 		}
@@ -386,7 +386,7 @@ static void audit_one_rom(core_options *options, const rom_entry *rom, const cha
 		if (filerr == FILERR_NONE)
 		{
 			hash_data_copy(record->hash, mame_fhash(file, validation));
-			record->length = (UINT32)mame_fsize(file);
+			record->length = (uint32_t)mame_fsize(file);
 			mame_fclose(file);
 		}
 	}
@@ -443,7 +443,7 @@ static void audit_one_rom(core_options *options, const rom_entry *rom, const cha
     audit_one_disk - validate a single disk entry
 -------------------------------------------------*/
 
-static void audit_one_disk(core_options *options, const rom_entry *rom, const game_driver *gamedrv, UINT32 validation, audit_record *record)
+static void audit_one_disk(core_options *options, const rom_entry *rom, const game_driver *gamedrv, uint32_t validation, audit_record *record)
 {
 	mame_file *source_file;
 	chd_file *source;
@@ -480,7 +480,7 @@ static void audit_one_disk(core_options *options, const rom_entry *rom, const ga
 	/* if we succeeded, validate it */
 	else
 	{
-		static const UINT8 nullhash[HASH_BUF_SIZE] = { 0 };
+		static const uint8_t nullhash[HASH_BUF_SIZE] = { 0 };
 		chd_header header = *chd_get_header(source);
 
 		/* if there's an MD5 or SHA1 hash, add them to the output hash */

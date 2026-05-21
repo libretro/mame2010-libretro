@@ -187,7 +187,7 @@ int input_seq_pressed(running_machine *machine, const input_seq *seq)
     axis defined in an input sequence
 -------------------------------------------------*/
 
-INT32 input_seq_axis_value(running_machine *machine, const input_seq *seq, input_item_class *itemclass_ptr)
+int32_t input_seq_axis_value(running_machine *machine, const input_seq *seq, input_item_class *itemclass_ptr)
 {
 	input_item_class itemclasszero = ITEM_CLASS_ABSOLUTE;
 	input_item_class itemclass = ITEM_CLASS_INVALID;
@@ -232,7 +232,7 @@ INT32 input_seq_axis_value(running_machine *machine, const input_seq *seq, input
 			/* non-switch codes are analog values */
 			else
 			{
-				INT32 value = input_code_value(machine, code);
+				int32_t value = input_code_value(machine, code);
 
 				/* if we got a 0 value, don't do anything except remember the first type */
 				if (value == 0)
@@ -521,7 +521,7 @@ int input_seq_from_tokens(running_machine *machine, const char *string, input_se
 		char *strtemp;
 
 		/* trim any leading spaces */
-		while (*str != 0 && isspace((UINT8)*str))
+		while (*str != 0 && isspace((uint8_t)*str))
 			str++;
 
 		/* bail if we're done */
@@ -532,8 +532,8 @@ int input_seq_from_tokens(running_machine *machine, const char *string, input_se
 		}
 
 		/* find the end of the token and make it upper-case along the way */
-		for (strtemp = str; *strtemp != 0 && !isspace((UINT8)*strtemp); strtemp++)
-			*strtemp = toupper((UINT8)*strtemp);
+		for (strtemp = str; *strtemp != 0 && !isspace((uint8_t)*strtemp); strtemp++)
+			*strtemp = toupper((uint8_t)*strtemp);
 		origspace = *strtemp;
 		*strtemp = 0;
 

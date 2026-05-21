@@ -228,16 +228,16 @@ public:
 	const char *basename_noext()  { if (m_basename_noext.len()==0) return NULL; else return m_basename_noext; }
 	const char *filetype()  { if (m_filetype.len()==0) return NULL; else return m_filetype; }
 	core_file *image_core_file() { return m_file; }
-	UINT64 length() { check_for_file(); return core_fsize(m_file); }
+	uint64_t length() { check_for_file(); return core_fsize(m_file); }
 	bool is_writable() { return m_writeable; }
 	bool has_been_created() { return m_created; }
 	void make_readonly() { m_writeable = 0; }
-	UINT32 fread(void *buffer, UINT32 length) { check_for_file(); return core_fread(m_file, buffer, length); }
-	UINT32 fwrite(const void *buffer, UINT32 length) { check_for_file(); return core_fwrite(m_file, buffer, length); }
-	int fseek(INT64 offset, int whence) { check_for_file(); return core_fseek(m_file, offset, whence); }
-	UINT64 ftell() { check_for_file(); return core_ftell(m_file); }
+	uint32_t fread(void *buffer, uint32_t length) { check_for_file(); return core_fread(m_file, buffer, length); }
+	uint32_t fwrite(const void *buffer, uint32_t length) { check_for_file(); return core_fwrite(m_file, buffer, length); }
+	int fseek(int64_t offset, int whence) { check_for_file(); return core_fseek(m_file, offset, whence); }
+	uint64_t ftell() { check_for_file(); return core_ftell(m_file); }
 	int fgetc() { char ch; if (fread(&ch, 1) != 1) ch = '\0'; return ch; }
-	char *fgets(char *buffer, UINT32 length) { check_for_file(); return core_fgets(buffer, length, m_file); }
+	char *fgets(char *buffer, uint32_t length) { check_for_file(); return core_fgets(buffer, length, m_file); }
 	int image_feof() { check_for_file(); return core_feof(m_file); }
 	void *ptr() {check_for_file(); return (void *) core_fbuffer(m_file); }
 	// configuration access
@@ -257,8 +257,8 @@ public:
 	virtual void set_working_directory(const char *working_directory) { m_working_directory = working_directory; }
 	virtual const char * working_directory();
 
-	UINT8 *get_software_region(const char *tag);
-	UINT32 get_software_region_length(const char *tag);
+	uint8_t *get_software_region(const char *tag);
+	uint32_t get_software_region_length(const char *tag);
 	const char *get_feature(const char *feature_name);
 
 	void *image_malloc(size_t size);
@@ -266,7 +266,7 @@ public:
 	void *image_realloc(void *ptr, size_t size);
 	void image_freeptr(void *ptr);
 
-	UINT32 crc();
+	uint32_t crc();
 
 	void battery_load(void *buffer, int length, int fill);
 	void battery_save(const void *buffer, int length);

@@ -22,7 +22,7 @@
 
 render_font *render_font_alloc(const char *filename);
 void render_font_free(render_font *font);
-INT32 render_font_get_pixel_height(render_font *font);
+int32_t render_font_get_pixel_height(render_font *font);
 render_texture *render_font_get_char_texture_and_bounds(render_font *font, float height, float aspect, unicode_char ch, render_bounds *bounds);
 void render_font_get_scaled_bitmap_and_bounds(render_font *font, bitmap_t *dest, float height, float aspect, unicode_char chnum, rectangle *bounds);
 float render_font_get_char_width(render_font *font, float height, float aspect, unicode_char ch);

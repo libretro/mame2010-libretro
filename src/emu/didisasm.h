@@ -52,12 +52,12 @@
 //**************************************************************************
 
 // Disassembler constants
-const UINT32 DASMFLAG_SUPPORTED		= 0x80000000;	// are disassembly flags supported?
-const UINT32 DASMFLAG_STEP_OUT		= 0x40000000;	// this instruction should be the end of a step out sequence
-const UINT32 DASMFLAG_STEP_OVER		= 0x20000000;	// this instruction should be stepped over by setting a breakpoint afterwards
-const UINT32 DASMFLAG_OVERINSTMASK	= 0x18000000;	// number of extra instructions to skip when stepping over
-const UINT32 DASMFLAG_OVERINSTSHIFT	= 27;			// bits to shift after masking to get the value
-const UINT32 DASMFLAG_LENGTHMASK	= 0x0000ffff;	// the low 16-bits contain the actual length
+const uint32_t DASMFLAG_SUPPORTED		= 0x80000000;	// are disassembly flags supported?
+const uint32_t DASMFLAG_STEP_OUT		= 0x40000000;	// this instruction should be the end of a step out sequence
+const uint32_t DASMFLAG_STEP_OVER		= 0x20000000;	// this instruction should be stepped over by setting a breakpoint afterwards
+const uint32_t DASMFLAG_OVERINSTMASK	= 0x18000000;	// number of extra instructions to skip when stepping over
+const uint32_t DASMFLAG_OVERINSTSHIFT	= 27;			// bits to shift after masking to get the value
+const uint32_t DASMFLAG_LENGTHMASK	= 0x0000ffff;	// the low 16-bits contain the actual length
 
 
 
@@ -85,13 +85,13 @@ public:
 	virtual ~device_config_disasm_interface();
 
 	// required configuration overrides
-	UINT32 min_opcode_bytes() const { return disasm_min_opcode_bytes(); }
-	UINT32 max_opcode_bytes() const { return disasm_max_opcode_bytes(); }
+	uint32_t min_opcode_bytes() const { return disasm_min_opcode_bytes(); }
+	uint32_t max_opcode_bytes() const { return disasm_max_opcode_bytes(); }
 
 protected:
 	// required configuration overrides
-	virtual UINT32 disasm_min_opcode_bytes() const = 0;
-	virtual UINT32 disasm_max_opcode_bytes() const = 0;
+	virtual uint32_t disasm_min_opcode_bytes() const = 0;
+	virtual uint32_t disasm_max_opcode_bytes() const = 0;
 };
 
 
@@ -108,15 +108,15 @@ public:
 
 	// configuration access
 	const device_config_disasm_interface &disasm_config() const { return m_disasm_config; }
-	UINT32 min_opcode_bytes() const { return m_disasm_config.min_opcode_bytes(); }
-	UINT32 max_opcode_bytes() const { return m_disasm_config.max_opcode_bytes(); }
+	uint32_t min_opcode_bytes() const { return m_disasm_config.min_opcode_bytes(); }
+	uint32_t max_opcode_bytes() const { return m_disasm_config.max_opcode_bytes(); }
 
 	// interface for disassembly
-	offs_t disassemble(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram, UINT32 options = 0) { return disasm_disassemble(buffer, pc, oprom, opram, options); }
+	offs_t disassemble(char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, uint32_t options = 0) { return disasm_disassemble(buffer, pc, oprom, opram, options); }
 
 protected:
 	// required operation overrides
-	virtual offs_t disasm_disassemble(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram, UINT32 options) = 0;
+	virtual offs_t disasm_disassemble(char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, uint32_t options) = 0;
 
 	const device_config_disasm_interface &	m_disasm_config;		// reference to configuration data
 };

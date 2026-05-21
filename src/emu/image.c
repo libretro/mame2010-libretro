@@ -20,7 +20,7 @@
 
 /* ----------------------------------------------------------------------- */
 
-static int image_fseek_thunk(void *file, INT64 offset, int whence)
+static int image_fseek_thunk(void *file, int64_t offset, int whence)
 {
 	device_image_interface *image = (device_image_interface *) file;
 	return image->fseek(offset, whence);
@@ -38,7 +38,7 @@ static size_t image_fwrite_thunk(void *file, const void *buffer, size_t length)
 	return image->fwrite(buffer, length);
 }
 
-static UINT64 image_fsize_thunk(void *file)
+static uint64_t image_fsize_thunk(void *file)
 {
 	device_image_interface *image = (device_image_interface *) file;
 	return image->length();
@@ -312,7 +312,7 @@ void image_init(running_machine *machine)
     NVRAM file for an image
 -------------------------------------------------*/
 
-static file_error open_battery_file_by_name(const char *filename, UINT32 openflags, mame_file **file)
+static file_error open_battery_file_by_name(const char *filename, uint32_t openflags, mame_file **file)
 {
     file_error filerr;
     filerr = mame_fopen(nvram_directory, filename, openflags, file);
@@ -511,7 +511,7 @@ device_image_interface *image_from_absolute_index(running_machine *machine, int 
     device with parameters sent, and all subdevices
     from it's machine config devices list
 -------------------------------------------------*/
-void image_add_device_with_subdevices(device_t *owner, device_type type, const char *tag, UINT32 clock)
+void image_add_device_with_subdevices(device_t *owner, device_type type, const char *tag, uint32_t clock)
 {
 	astring tempstring;
 	device_list *device_list = &owner->machine->m_devicelist;

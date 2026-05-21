@@ -65,9 +65,9 @@ struct _state_entry
 	running_machine *	machine;			/* pointer back to the owning machine */
 	void *				data;				/* pointer to the memory to save/restore */
 	astring				name;				/* full name */
-	UINT8				typesize;			/* size of the raw data type */
-	UINT32				typecount;			/* number of items */
-	UINT32				offset;				/* offset within the final structure */
+	uint8_t				typesize;			/* size of the raw data type */
+	uint32_t				typecount;			/* number of items */
+	uint32_t				offset;				/* offset within the final structure */
 };
 
 
@@ -88,15 +88,15 @@ struct _state_callback
 /* In mame.h: typedef struct _state_private state_private; */
 struct _state_private
 {
-	UINT8				reg_allowed;		/* are registrations allowed? */
+	uint8_t				reg_allowed;		/* are registrations allowed? */
 	int					illegal_regs;		/* number of illegal registrations */
 
 	state_entry *		entrylist;			/* list of live entries */
 	state_callback *	prefunclist;		/* presave function list */
 	state_callback *	postfunclist;		/* postsave function list */
 
-	UINT8 *				ioarray;			/* array where we accumulate all the data */
-	UINT32				ioarraysize;		/* size of the array */
+	uint8_t *				ioarray;			/* array where we accumulate all the data */
+	uint32_t				ioarraysize;		/* size of the array */
 	mame_file *			iofile;				/* file currently in use */
 };
 
@@ -125,27 +125,27 @@ static const char ss_magic_num[8] = { 'M', 'A', 'M', 'E', 'S', 'A', 'V', 'E' };
 
 INLINE void flip_data(state_entry *entry)
 {
-	UINT16 *data16;
-	UINT32 *data32;
-	UINT64 *data64;
+	uint16_t *data16;
+	uint32_t *data32;
+	uint64_t *data64;
 	int count;
 
 	switch (entry->typesize)
 	{
 		case 2:
-			data16 = (UINT16 *)entry->data;
+			data16 = (uint16_t *)entry->data;
 			for (count = 0; count < entry->typecount; count++)
 				data16[count] = FLIPENDIAN_INT16(data16[count]);
 			break;
 
 		case 4:
-			data32 = (UINT32 *)entry->data;
+			data32 = (uint32_t *)entry->data;
 			for (count = 0; count < entry->typecount; count++)
 				data32[count] = FLIPENDIAN_INT32(data32[count]);
 			break;
 
 		case 8:
-			data64 = (UINT64 *)entry->data;
+			data64 = (uint64_t *)entry->data;
 			for (count = 0; count < entry->typecount; count++)
 				data64[count] = FLIPENDIAN_INT64(data64[count]);
 			break;
@@ -170,14 +170,14 @@ class test_class_type { public: int dummy; };
 void state_init(running_machine *machine)
 {
 	bool test_bool;
-	INT8 test_INT8;
-	UINT8 test_UINT8;
-	INT16 test_INT16;
-	UINT16 test_UINT16;
-	INT32 test_INT32;
-	UINT32 test_UINT32;
-	INT64 test_INT64;
-	UINT64 test_UINT64;
+	int8_t test_INT8;
+	uint8_t test_UINT8;
+	int16_t test_INT16;
+	uint16_t test_UINT16;
+	int32_t test_INT32;
+	uint32_t test_UINT32;
+	int64_t test_INT64;
+	uint64_t test_UINT64;
 	float test_float;
 	double test_double;
 	test_enum_type test_enum;
@@ -259,7 +259,7 @@ int state_save_registration_allowed(running_machine *machine)
     array of data in memory
 -------------------------------------------------*/
 
-void state_save_register_memory(running_machine *machine, const char *module, const char *tag, UINT32 index, const char *name, void *val, UINT32 valsize, UINT32 valcount, const char *file, int line)
+void state_save_register_memory(running_machine *machine, const char *module, const char *tag, uint32_t index, const char *name, void *val, uint32_t valsize, uint32_t valcount, const char *file, int line)
 {
 	state_private *global = machine->state_data;
 	state_entry **entryptr, *next;
@@ -315,7 +315,7 @@ void state_save_register_memory(running_machine *machine, const char *module, co
     bitmap to be saved
 -------------------------------------------------*/
 
-void state_save_register_bitmap(running_machine *machine, const char *module, const char *tag, UINT32 index, const char *name, bitmap_t *val, const char *file, int line)
+void state_save_register_bitmap(running_machine *machine, const char *module, const char *tag, uint32_t index, const char *name, bitmap_t *val, const char *file, int line)
 {
 	state_save_register_memory(machine, module, tag, index, name, val->base, val->bpp / 8, val->rowpixels * val->height, file, line);
 }
@@ -396,24 +396,24 @@ void state_save_register_postload(running_machine *machine, state_postload_func 
     is a CRC over the structure of the data
 -------------------------------------------------*/
 
-static UINT32 get_signature(running_machine *machine)
+static uint32_t get_signature(running_machine *machine)
 {
 	state_private *global = machine->state_data;
 	state_entry *entry;
-	UINT32 crc = 0;
+	uint32_t crc = 0;
 
 	/* iterate over entries */
 	for (entry = global->entrylist; entry != NULL; entry = entry->next)
 	{
-		UINT32 temp[2];
+		uint32_t temp[2];
 
 		/* add the entry name to the CRC */
-		crc = crc32(crc, (UINT8 *)entry->name.cstr(), entry->name.len());
+		crc = crc32(crc, (uint8_t *)entry->name.cstr(), entry->name.len());
 
 		/* add the type and size to the CRC */
 		temp[0] = LITTLE_ENDIANIZE_INT32(entry->typecount);
 		temp[1] = LITTLE_ENDIANIZE_INT32(entry->typesize);
-		crc = crc32(crc, (UINT8 *)&temp[0], sizeof(temp));
+		crc = crc32(crc, (uint8_t *)&temp[0], sizeof(temp));
 	}
 
 	return crc;
@@ -430,7 +430,7 @@ static UINT32 get_signature(running_machine *machine)
     header
 -------------------------------------------------*/
 
-static state_save_error validate_header(const UINT8 *header, const char *gamename, UINT32 signature,
+static state_save_error validate_header(const uint8_t *header, const char *gamename, uint32_t signature,
 	void (CLIB_DECL *errormsg)(const char *fmt, ...), const char *error_prefix)
 {
 	/* check magic number */
@@ -460,7 +460,7 @@ static state_save_error validate_header(const UINT8 *header, const char *gamenam
 	/* check signature, if we were asked to */
 	if (signature != 0)
 	{
-		UINT32 rawsig = *(UINT32 *)&header[0x1c];
+		uint32_t rawsig = *(uint32_t *)&header[0x1c];
 		if (signature != LITTLE_ENDIANIZE_INT32(rawsig))
 		{
 			if (errormsg != NULL)
@@ -479,8 +479,8 @@ static state_save_error validate_header(const UINT8 *header, const char *gamenam
 
 state_save_error state_save_check_file(running_machine *machine, mame_file *file, const char *gamename, void (CLIB_DECL *errormsg)(const char *fmt, ...))
 {
-	UINT8 header[HEADER_SIZE];
-	UINT32 signature = 0;
+	uint8_t header[HEADER_SIZE];
+	uint32_t signature = 0;
 
 	/* if we want to validate the signature, compute it */
 	if (machine != NULL)
@@ -509,8 +509,8 @@ state_save_error state_save_check_file(running_machine *machine, mame_file *file
 state_save_error state_save_write_file(running_machine *machine, mame_file *file)
 {
 	state_private *global = machine->state_data;
-	UINT32 signature = get_signature(machine);
-	UINT8 header[HEADER_SIZE];
+	uint32_t signature = get_signature(machine);
+	uint8_t header[HEADER_SIZE];
 	state_callback *func;
 	state_entry *entry;
 
@@ -523,7 +523,7 @@ state_save_error state_save_write_file(running_machine *machine, mame_file *file
 	header[8] = SAVE_VERSION;
 	header[9] = NATIVE_ENDIAN_VALUE_LE_BE(0, SS_MSB_FIRST);
 	strncpy((char *)&header[0x0a], machine->gamedrv->name, 0x1c - 0x0a);
-	*(UINT32 *)&header[0x1c] = LITTLE_ENDIANIZE_INT32(signature);
+	*(uint32_t *)&header[0x1c] = LITTLE_ENDIANIZE_INT32(signature);
 
 	/* write the header and turn on compression for the rest of the file */
 	mame_fcompress(file, FCOMPRESS_NONE);
@@ -539,7 +539,7 @@ state_save_error state_save_write_file(running_machine *machine, mame_file *file
 	/* then write all the data */
 	for (entry = global->entrylist; entry != NULL; entry = entry->next)
 	{
-		UINT32 totalsize = entry->typesize * entry->typecount;
+		uint32_t totalsize = entry->typesize * entry->typecount;
 		if (mame_fwrite(file, entry->data, totalsize) != totalsize)
 			return STATERR_WRITE_ERROR;
 	}
@@ -555,8 +555,8 @@ state_save_error state_save_write_file(running_machine *machine, mame_file *file
 state_save_error state_save_read_file(running_machine *machine, mame_file *file)
 {
 	state_private *global = machine->state_data;
-	UINT32 signature = get_signature(machine);
-	UINT8 header[HEADER_SIZE];
+	uint32_t signature = get_signature(machine);
+	uint8_t header[HEADER_SIZE];
 	state_callback *func;
 	state_entry *entry;
 	int flip;
@@ -582,7 +582,7 @@ state_save_error state_save_read_file(running_machine *machine, mame_file *file)
 	/* read all the data, flipping if necessary */
 	for (entry = global->entrylist; entry != NULL; entry = entry->next)
 	{
-		UINT32 totalsize = entry->typesize * entry->typecount;
+		uint32_t totalsize = entry->typesize * entry->typecount;
 		if (mame_fread(file, entry->data, totalsize) != totalsize)
 			return STATERR_READ_ERROR;
 
@@ -609,7 +609,7 @@ state_save_error state_save_read_file(running_machine *machine, mame_file *file)
     with the given index
 -------------------------------------------------*/
 
-const char *state_save_get_indexed_item(running_machine *machine, int index, void **base, UINT32 *valsize, UINT32 *valcount)
+const char *state_save_get_indexed_item(running_machine *machine, int index, void **base, uint32_t *valsize, uint32_t *valcount)
 {
 	state_private *global = machine->state_data;
 	state_entry *ss;

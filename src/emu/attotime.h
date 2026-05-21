@@ -85,15 +85,15 @@
 #define STATIC_ATTOTIME_IN_USEC(us)		{ ((us) / 1000000), (ATTOSECONDS_IN_USEC((us) % 1000000)) }
 #define STATIC_ATTOTIME_IN_NSEC(ns)		{ ((ns) / 1000000000), (ATTOSECONDS_IN_NSEC((ns) % 1000000000)) }
 
-/* macros for building a reduced-resolution attotime for tokenized storage in a UINT64 */
+/* macros for building a reduced-resolution attotime for tokenized storage in a uint64_t */
 /* this form supports up to 1000 seconds and sacrifices 1/1000 of the full attotime resolution */
-#define UINT64_ATTOTIME_IN_HZ(hz)		((UINT64)((ATTOSECONDS_PER_SECOND / 1000) / (hz)))
-#define UINT64_ATTOTIME_IN_SEC(s)		((UINT64)(s) * (ATTOSECONDS_PER_SECOND / 1000))
-#define UINT64_ATTOTIME_IN_MSEC(ms)		((UINT64)(ms) * (ATTOSECONDS_PER_SECOND / 1000 / 1000))
-#define UINT64_ATTOTIME_IN_USEC(us)		((UINT64)(us) * (ATTOSECONDS_PER_SECOND / 1000 / 1000 / 1000))
-#define UINT64_ATTOTIME_IN_NSEC(ns)		((UINT64)(ns) * (ATTOSECONDS_PER_SECOND / 1000 / 1000 / 1000 / 1000))
+#define UINT64_ATTOTIME_IN_HZ(hz)		((uint64_t)((ATTOSECONDS_PER_SECOND / 1000) / (hz)))
+#define UINT64_ATTOTIME_IN_SEC(s)		((uint64_t)(s) * (ATTOSECONDS_PER_SECOND / 1000))
+#define UINT64_ATTOTIME_IN_MSEC(ms)		((uint64_t)(ms) * (ATTOSECONDS_PER_SECOND / 1000 / 1000))
+#define UINT64_ATTOTIME_IN_USEC(us)		((uint64_t)(us) * (ATTOSECONDS_PER_SECOND / 1000 / 1000 / 1000))
+#define UINT64_ATTOTIME_IN_NSEC(ns)		((uint64_t)(ns) * (ATTOSECONDS_PER_SECOND / 1000 / 1000 / 1000 / 1000))
 
-/* macros for converting a UINT64 attotime to a full attotime */
+/* macros for converting a uint64_t attotime to a full attotime */
 #define UINT64_ATTOTIME_TO_ATTOTIME(v)	attotime_make((v) / (ATTOSECONDS_PER_SECOND / 1000), ((v) % (ATTOSECONDS_PER_SECOND / 1000)) * 1000)
 
 
@@ -103,8 +103,8 @@
 ***************************************************************************/
 
 /* core components of the attotime structure */
-typedef INT64 attoseconds_t;
-typedef INT32 seconds_t;
+typedef int64_t attoseconds_t;
+typedef int32_t seconds_t;
 
 
 /* the attotime structure itself */
@@ -134,10 +134,10 @@ extern const attotime		attotime_never;
 /* ----- core math functions ----- */
 
 /* multiply an attotime by a constant */
-attotime attotime_mul(attotime _time1, UINT32 factor);
+attotime attotime_mul(attotime _time1, uint32_t factor);
 
 /* divide an attotime by a constant */
-attotime attotime_div(attotime _time1, UINT32 factor);
+attotime attotime_div(attotime _time1, uint32_t factor);
 
 
 /* ----- misc utilities ----- */
@@ -226,9 +226,9 @@ INLINE attoseconds_t attotime_to_attoseconds(attotime _time)
     clock ticks at the given frequency
 -------------------------------------------------*/
 
-INLINE UINT64 attotime_to_ticks(attotime _time, UINT32 frequency)
+INLINE uint64_t attotime_to_ticks(attotime _time, uint32_t frequency)
 {
-	UINT32 fracticks = attotime_mul(attotime_make(0, _time.attoseconds), frequency).seconds;
+	uint32_t fracticks = attotime_mul(attotime_make(0, _time.attoseconds), frequency).seconds;
 	return mulu_32x32(_time.seconds, frequency) + fracticks;
 }
 
@@ -238,7 +238,7 @@ INLINE UINT64 attotime_to_ticks(attotime _time, UINT32 frequency)
     the given frequency to an attotime
 -------------------------------------------------*/
 
-INLINE attotime ticks_to_attotime(UINT64 ticks, UINT32 frequency)
+INLINE attotime ticks_to_attotime(uint64_t ticks, uint32_t frequency)
 {
 	attoseconds_t attos_per_tick = HZ_TO_ATTOSECONDS(frequency);
 	attotime result;
@@ -250,9 +250,9 @@ INLINE attotime ticks_to_attotime(UINT64 ticks, UINT32 frequency)
 	}
 	else
 	{
-		UINT32 remainder;
+		uint32_t remainder;
 		result.seconds = divu_64x32_rem(ticks, frequency, &remainder);
-		result.attoseconds = (UINT64)remainder * attos_per_tick;
+		result.attoseconds = (uint64_t)remainder * attos_per_tick;
 	}
 	return result;
 }

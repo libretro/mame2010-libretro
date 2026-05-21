@@ -151,28 +151,28 @@ void palette_set_shadow_dRGB32(running_machine *machine, int mode, int dr, int d
 /* ----- colortable management ----- */
 
 /* allocate a new colortable with the given number of entries */
-colortable_t *colortable_alloc(running_machine *machine, UINT32 palettesize);
+colortable_t *colortable_alloc(running_machine *machine, uint32_t palettesize);
 
 /* set the value of a colortable entry */
-void colortable_entry_set_value(colortable_t *ctable, UINT32 entry, UINT16 value);
+void colortable_entry_set_value(colortable_t *ctable, uint32_t entry, uint16_t value);
 
 /* return the value of a colortable entry */
-UINT16 colortable_entry_get_value(colortable_t *ctable, UINT32 entry);
+uint16_t colortable_entry_get_value(colortable_t *ctable, uint32_t entry);
 
 /* change the color of a colortable palette entry */
-void colortable_palette_set_color(colortable_t *ctable, UINT32 entry, rgb_t color);
+void colortable_palette_set_color(colortable_t *ctable, uint32_t entry, rgb_t color);
 
 /* return the color of a colortable palette entry */
-rgb_t colortable_palette_get_color(colortable_t *ctable, UINT32 entry);
+rgb_t colortable_palette_get_color(colortable_t *ctable, uint32_t entry);
 
 /* return a 32-bit transparency mask for a given gfx element and color */
-UINT32 colortable_get_transpen_mask(colortable_t *ctable, const gfx_element *gfx, int color, int transcolor);
+uint32_t colortable_get_transpen_mask(colortable_t *ctable, const gfx_element *gfx, int color, int transcolor);
 
 /* configure groups in a tilemap to represent transparency based on colortable entries (each group maps to a gfx color) */
 void colortable_configure_tilemap_groups(colortable_t *ctable, tilemap_t *tmap, const gfx_element *gfx, int transcolor);
 
 /* return the number of entries in a colortable */
-UINT32 colortable_palette_get_size(colortable_t *ctable);
+uint32_t colortable_palette_get_size(colortable_t *ctable);
 
 
 
@@ -207,7 +207,7 @@ INLINE void palette_set_color(running_machine *machine, pen_t pen, rgb_t rgb)
     entry with individual R,G,B components
 -------------------------------------------------*/
 
-INLINE void palette_set_color_rgb(running_machine *machine, pen_t pen, UINT8 r, UINT8 g, UINT8 b)
+INLINE void palette_set_color_rgb(running_machine *machine, pen_t pen, uint8_t r, uint8_t g, uint8_t b)
 {
 	palette_entry_set_color(machine->palette, pen, MAKE_RGB(r, g, b));
 }

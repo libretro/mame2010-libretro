@@ -55,7 +55,7 @@
 //  legacy_image_device_config_base - constructor
 //-------------------------------------------------
 
-legacy_image_device_config_base::legacy_image_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config)
+legacy_image_device_config_base::legacy_image_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config)
 	: legacy_device_config_base(mconfig, type, tag, owner, clock, get_config),
 	  device_config_image_interface(mconfig, *this),
 	  m_create_option_guide(NULL),
@@ -225,7 +225,7 @@ bool legacy_image_device_base::is_loaded()
     specific path
 -------------------------------------------------*/
 
-image_error_t legacy_image_device_base::load_image_by_path(UINT32 open_flags, const char *path)
+image_error_t legacy_image_device_base::load_image_by_path(uint32_t open_flags, const char *path)
 {
     file_error filerr = FILERR_NOT_FOUND;
     image_error_t err = IMAGE_ERROR_FILENOTFOUND;
@@ -281,7 +281,7 @@ image_error_t legacy_image_device_base::load_image_by_path(UINT32 open_flags, co
     flags to use, and in what order
 -------------------------------------------------*/
 
-void legacy_image_device_base::determine_open_plan(int is_create, UINT32 *open_plan)
+void legacy_image_device_base::determine_open_plan(int is_create, uint32_t *open_plan)
 {
     int i = 0;
 
@@ -314,8 +314,8 @@ bool legacy_image_device_base::load_software(char *swlist, char *swname, rom_ent
 			/* handle files */
 			if (ROMENTRY_ISFILE(romp))
 			{
-				UINT32 crc = 0;
-				UINT8 crcbytes[4];
+				uint32_t crc = 0;
+				uint8_t crcbytes[4];
 				file_error filerr;
 
 				bool has_crc = hash_data_extract_binary_checksum(ROM_GETHASHDATA(romp), HASH_CRC, crcbytes);
@@ -348,7 +348,7 @@ bool legacy_image_device_base::load_software(char *swlist, char *swname, rom_ent
 bool legacy_image_device_base::load_internal(const char *path, bool is_create, int create_format, option_resolution *create_args)
 {
     image_error_t err;
-    UINT32 open_plan[4];
+    uint32_t open_plan[4];
     int i;
 	bool softload = FALSE;
 

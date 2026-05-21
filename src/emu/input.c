@@ -59,13 +59,13 @@ struct _input_device_item
 	input_item_class		itemclass;				/* class of the item */
 	input_item_id			itemid;					/* originally specified item id */
 	item_get_state_func		getstate;				/* get state callback */
-	INT32					current;				/* current raw value */
-	INT32					memory;					/* "memory" value, to remember where we started during polling */
-	INT32					oncelatch;				/* latched "once" value, cleared after each read  */
+	int32_t					current;				/* current raw value */
+	int32_t					memory;					/* "memory" value, to remember where we started during polling */
+	int32_t					oncelatch;				/* latched "once" value, cleared after each read  */
 
 	/* keyboard information */
-	INT32					steadykey;				/* the live steadykey state */
-	INT32					oldkey;					/* old live state */
+	int32_t					steadykey;				/* the live steadykey state */
+	int32_t					oldkey;					/* old live state */
 };
 
 
@@ -73,7 +73,7 @@ struct _input_device_item
 typedef struct _joystick_map joystick_map;
 struct _joystick_map
 {
-	UINT8					map[9][9];				/* 9x9 grid */
+	uint8_t					map[9][9];				/* 9x9 grid */
 };
 
 
@@ -90,7 +90,7 @@ struct _input_device
 
 	/* joystick information */
 	joystick_map			joymap;					/* joystick map for this device */
-	UINT8					lastmap;				/* last joystick map value for this device */
+	uint8_t					lastmap;				/* last joystick map value for this device */
 };
 
 
@@ -100,8 +100,8 @@ struct _input_device_list
 {
 	input_device **			list;					/* the array */
 	int						count;					/* elements in the array */
-	UINT8					enabled;				/* is this class enabled? */
-	UINT8					multi;					/* are multiple instances of this class allowed? */
+	uint8_t					enabled;				/* is this class enabled? */
+	uint8_t					multi;					/* are multiple instances of this class allowed? */
 };
 
 
@@ -109,7 +109,7 @@ struct _input_device_list
 typedef struct _code_string_table code_string_table;
 struct _code_string_table
 {
-	UINT32					code;
+	uint32_t					code;
 	const char *			string;
 };
 
@@ -121,11 +121,11 @@ struct _input_private
 	input_code			code_pressed_memory[MAX_PRESSED_SWITCHES];
 
 	/* device configuration */
-	UINT8				steadykey_enabled;
-	UINT8				lightgun_reload_button;
+	uint8_t				steadykey_enabled;
+	uint8_t				lightgun_reload_button;
 	const char *		joystick_map_default;
-	INT32				joystick_deadzone;
-	INT32				joystick_saturation;
+	int32_t				joystick_deadzone;
+	int32_t				joystick_saturation;
 };
 
 
@@ -422,10 +422,10 @@ const char			joystick_map_4way_diagonal[] = "4444s8888..444458888.444555888.ss5.
 
 static void input_frame(running_machine &machine);
 static input_device_item *input_code_item(running_machine *machine, input_code code);
-static INT32 convert_absolute_value(running_machine *machine, input_code code, input_device_item *item);
-static INT32 convert_relative_value(input_code code, input_device_item *item);
-static INT32 convert_switch_value(running_machine *machine, input_code code, input_device_item *item);
-static INT32 apply_deadzone_and_saturation(running_machine *machine, input_code code, INT32 result);
+static int32_t convert_absolute_value(running_machine *machine, input_code code, input_device_item *item);
+static int32_t convert_relative_value(input_code code, input_device_item *item);
+static int32_t convert_switch_value(running_machine *machine, input_code code, input_device_item *item);
+static int32_t apply_deadzone_and_saturation(running_machine *machine, input_code code, int32_t result);
 static int joystick_map_parse(const char *mapstring, joystick_map *map);
 static void joystick_map_print(const char *header, const char *origstring, const joystick_map *map);
 static void input_code_reset_axes(running_machine *machine);
@@ -532,7 +532,7 @@ INLINE void code_pressed_memory_reset(running_machine *machine)
     via table lookup
 -------------------------------------------------*/
 
-INLINE UINT32 string_to_code(const code_string_table *table, const char *string)
+INLINE uint32_t string_to_code(const code_string_table *table, const char *string)
 {
 	/* find a matching string */
 	for ( ; table->code != ~0; table++)
@@ -549,7 +549,7 @@ INLINE UINT32 string_to_code(const code_string_table *table, const char *string)
     via table lookup
 -------------------------------------------------*/
 
-INLINE const char *code_to_string(const code_string_table *table, UINT32 code)
+INLINE const char *code_to_string(const code_string_table *table, uint32_t code)
 {
 	/* find a matching code, or  */
 	for ( ; table->code != ~0; table++)
@@ -608,10 +608,10 @@ void input_init(running_machine *machine)
 	/* read other input options */
 	state->steadykey_enabled = options_get_bool(machine->options(), OPTION_STEADYKEY);
 	state->lightgun_reload_button = options_get_bool(machine->options(), OPTION_OFFSCREEN_RELOAD);
-	state->joystick_deadzone = (INT32)(0 * INPUT_ABSOLUTE_MAX);
-	state->joystick_saturation = (INT32)(1 * INPUT_ABSOLUTE_MAX);
-	/* state->joystick_deadzone = (INT32)(options_get_float(machine->options(), OPTION_JOYSTICK_DEADZONE) * INPUT_ABSOLUTE_MAX); */
-	/* state->joystick_saturation = (INT32)(options_get_float(machine->options(), OPTION_JOYSTICK_SATURATION) * INPUT_ABSOLUTE_MAX); */
+	state->joystick_deadzone = (int32_t)(0 * INPUT_ABSOLUTE_MAX);
+	state->joystick_saturation = (int32_t)(1 * INPUT_ABSOLUTE_MAX);
+	/* state->joystick_deadzone = (int32_t)(options_get_float(machine->options(), OPTION_JOYSTICK_DEADZONE) * INPUT_ABSOLUTE_MAX); */
+	/* state->joystick_saturation = (int32_t)(options_get_float(machine->options(), OPTION_JOYSTICK_SATURATION) * INPUT_ABSOLUTE_MAX); */
 
 	/* get the default joystick map */
 	state->joystick_map_default = options_get_string(machine->options(), OPTION_JOYSTICK_MAP);
@@ -629,7 +629,7 @@ void input_init(running_machine *machine)
     a device class
 -------------------------------------------------*/
 
-void input_device_class_enable(running_machine *machine, input_device_class devclass, UINT8 enable)
+void input_device_class_enable(running_machine *machine, input_device_class devclass, uint8_t enable)
 {
 	input_device_list *device_list = machine->input_data->device_list;
 
@@ -643,7 +643,7 @@ void input_device_class_enable(running_machine *machine, input_device_class devc
     enabled?
 -------------------------------------------------*/
 
-UINT8 input_device_class_enabled(running_machine *machine, input_device_class devclass)
+uint8_t input_device_class_enabled(running_machine *machine, input_device_class devclass)
 {
 	input_device_list *device_list = machine->input_data->device_list;
 
@@ -854,13 +854,13 @@ void input_device_item_add(input_device *device, const char *name, void *interna
     given input code
 -------------------------------------------------*/
 
-INT32 input_code_value(running_machine *machine, input_code code)
+int32_t input_code_value(running_machine *machine, input_code code)
 {
 	input_device_list *device_list = machine->input_data->device_list;
 	input_device_class devclass = INPUT_CODE_DEVCLASS(code);
 	int startindex = INPUT_CODE_DEVINDEX(code);
 	int stopindex = startindex;
-	INT32 result = 0;
+	int32_t result = 0;
 	int curindex;
 
 	profiler_mark_start(PROFILER_INPUT);
@@ -1140,7 +1140,7 @@ input_code input_code_poll_keyboard_switches(running_machine *machine, int reset
 
 static int input_code_check_axis(running_machine *machine, input_device_item *item, input_code code)
 {
-	INT32 curval, diff;
+	int32_t curval, diff;
 
 	/* poll the current value */
 	curval = input_code_value(machine, code);
@@ -1398,8 +1398,8 @@ astring &input_code_to_token(running_machine *machine, astring &string, input_co
 
 input_code input_code_from_token(running_machine *machine, const char *_token)
 {
-	UINT32 devclass, itemid, devindex, modifier, standard;
-	UINT32 itemclass = ITEM_CLASS_INVALID;
+	uint32_t devclass, itemid, devindex, modifier, standard;
+	uint32_t itemclass = ITEM_CLASS_INVALID;
 	input_code code = INPUT_CODE_INVALID;
 	astring token[6];
 	int numtokens, curtok;
@@ -1484,7 +1484,7 @@ input_code input_code_from_token(running_machine *machine, const char *_token)
 	/* if we have another token, it is the item class */
 	if (curtok < numtokens)
 	{
-		UINT32 temp = string_to_code(itemclass_token_table, token[curtok]);
+		uint32_t temp = string_to_code(itemclass_token_table, token[curtok]);
 		if (temp != ~0)
 		{
 			curtok++;
@@ -1514,14 +1514,14 @@ exit:
     if the given input code has been pressed
 -------------------------------------------------*/
 
-INT32 debug_global_input_code_pressed(input_code code)
+int32_t debug_global_input_code_pressed(input_code code)
 {
 	if (!mame_is_valid_machine(stashed_machine))
 		return 0;
 	return input_code_pressed(stashed_machine, code);
 }
 
-INT32 debug_global_input_code_pressed_once(input_code code)
+int32_t debug_global_input_code_pressed_once(input_code code)
 {
 	if (!mame_is_valid_machine(stashed_machine))
 		return 0;
@@ -1561,7 +1561,7 @@ static input_device_item *input_code_item(running_machine *machine, input_code c
     value into the class specified by code
 -------------------------------------------------*/
 
-static INT32 convert_absolute_value(running_machine *machine, input_code code, input_device_item *item)
+static int32_t convert_absolute_value(running_machine *machine, input_code code, input_device_item *item)
 {
 	input_private *state = machine->input_data;
 
@@ -1576,7 +1576,7 @@ static INT32 convert_absolute_value(running_machine *machine, input_code code, i
 	else if (INPUT_CODE_ITEMCLASS(code) == ITEM_CLASS_ABSOLUTE)
 	{
 		input_item_modifier modifier = INPUT_CODE_MODIFIER(code);
-		INT32 result = apply_deadzone_and_saturation(machine, code, item->current);
+		int32_t result = apply_deadzone_and_saturation(machine, code, item->current);
 
 		/* if we're doing a lightgun reload hack, override the value */
 		if (state->lightgun_reload_button && item->devclass == DEVICE_CLASS_LIGHTGUN)
@@ -1615,8 +1615,8 @@ static INT32 convert_absolute_value(running_machine *machine, input_code code, i
 			input_device_item *yaxis_item = device->item[ITEM_ID_YAXIS];
 			if (xaxis_item != NULL && yaxis_item != NULL)
 			{
-				INT32 xaxisval, yaxisval;
-				UINT8 mapval;
+				int32_t xaxisval, yaxisval;
+				uint8_t mapval;
 
 				/* determine which item we didn't update, and update it */
 				assert(item == xaxis_item || item == yaxis_item);
@@ -1654,7 +1654,7 @@ static INT32 convert_absolute_value(running_machine *machine, input_code code, i
     value into the class specified by code
 -------------------------------------------------*/
 
-static INT32 convert_relative_value(input_code code, input_device_item *item)
+static int32_t convert_relative_value(input_code code, input_device_item *item)
 {
 	/* if we want relative values, take it as-is */
 	if (INPUT_CODE_ITEMCLASS(code) == ITEM_CLASS_RELATIVE)
@@ -1685,7 +1685,7 @@ static INT32 convert_relative_value(input_code code, input_device_item *item)
     value into the class specified by code
 -------------------------------------------------*/
 
-static INT32 convert_switch_value(running_machine *machine, input_code code, input_device_item *item)
+static int32_t convert_switch_value(running_machine *machine, input_code code, input_device_item *item)
 {
 	input_private *state = machine->input_data;
 
@@ -1729,7 +1729,7 @@ static INT32 convert_switch_value(running_machine *machine, input_code code, inp
     absolute value
 -------------------------------------------------*/
 
-static INT32 apply_deadzone_and_saturation(running_machine *machine, input_code code, INT32 result)
+static int32_t apply_deadzone_and_saturation(running_machine *machine, input_code code, int32_t result)
 {
 	input_private *state = machine->input_data;
 	int negative = FALSE;
@@ -1755,7 +1755,7 @@ static INT32 apply_deadzone_and_saturation(running_machine *machine, input_code 
 
 	/* otherwise, scale */
 	else
-		result = (INT64)(result - state->joystick_deadzone) * (INT64)INPUT_ABSOLUTE_MAX / (INT64)(state->joystick_saturation - state->joystick_deadzone);
+		result = (int64_t)(result - state->joystick_deadzone) * (int64_t)INPUT_ABSOLUTE_MAX / (int64_t)(state->joystick_saturation - state->joystick_deadzone);
 
 	/* apply sign and return */
 	return negative ? -result : result;
@@ -1778,7 +1778,7 @@ static int joystick_map_parse(const char *mapstring, joystick_map *map)
 		if (*mapstring == 0 || *mapstring == '.')
 		{
 			int symmetric = (rownum >= 5 && *mapstring == 0);
-			const UINT8 *srcrow = &map->map[symmetric ? (8 - rownum) : (rownum - 1)][0];
+			const uint8_t *srcrow = &map->map[symmetric ? (8 - rownum) : (rownum - 1)][0];
 
 			/* if this is row 0, we don't have a source row -- invalid */
 			if (rownum == 0)
@@ -1787,7 +1787,7 @@ static int joystick_map_parse(const char *mapstring, joystick_map *map)
 			/* copy from the srcrow, applying up/down symmetry if in the bottom half */
 			for (colnum = 0; colnum < 9; colnum++)
 			{
-				UINT8 val = srcrow[colnum];
+				uint8_t val = srcrow[colnum];
 				if (symmetric)
 					val = (val & (JOYSTICK_MAP_LEFT | JOYSTICK_MAP_RIGHT)) | ((val & JOYSTICK_MAP_UP) << 1) | ((val & JOYSTICK_MAP_DOWN) >> 1);
 				map->map[rownum][colnum] = val;
@@ -1803,7 +1803,7 @@ static int joystick_map_parse(const char *mapstring, joystick_map *map)
 				if (colnum > 0 && (*mapstring == 0 || *mapstring == '.'))
 				{
 					int symmetric = (colnum >= 5);
-					UINT8 val = map->map[rownum][symmetric ? (8 - colnum) : (colnum - 1)];
+					uint8_t val = map->map[rownum][symmetric ? (8 - colnum) : (colnum - 1)];
 					if (symmetric)
 						val = (val & (JOYSTICK_MAP_UP | JOYSTICK_MAP_DOWN)) | ((val & JOYSTICK_MAP_LEFT) << 1) | ((val & JOYSTICK_MAP_RIGHT) >> 1);
 					map->map[rownum][colnum] = val;
@@ -1812,7 +1812,7 @@ static int joystick_map_parse(const char *mapstring, joystick_map *map)
 				/* otherwise, convert the character to its value */
 				else
 				{
-					static const UINT8 charmap[] =
+					static const uint8_t charmap[] =
 					{
 						JOYSTICK_MAP_UP | JOYSTICK_MAP_LEFT,
 						JOYSTICK_MAP_UP,

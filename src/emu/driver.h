@@ -72,7 +72,7 @@ struct game_driver
 	void				(*driver_init)(running_machine *machine); /* DRIVER_INIT callback */
 	const rom_entry *	rom;						/* pointer to list of ROMs for the game */
 	const char *		compatible_with;
-	UINT32				flags;						/* orientation and other flags; see defines below */
+	uint32_t				flags;						/* orientation and other flags; see defines below */
 	const char *		default_layout;				/* default internally defined layout */
 };
 

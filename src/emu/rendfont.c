@@ -41,9 +41,9 @@
 typedef struct _render_font_char render_font_char;
 struct _render_font_char
 {
-	INT32				width;				/* width from this character to the next */
-	INT32				xoffs, yoffs;		/* X and Y offset from baseline to top,left of bitmap */
-	INT32				bmwidth, bmheight;	/* width and height of bitmap */
+	int32_t				width;				/* width from this character to the next */
+	int32_t				xoffs, yoffs;		/* X and Y offset from baseline to top,left of bitmap */
+	int32_t				bmwidth, bmheight;	/* width and height of bitmap */
 	const char *		rawdata;			/* pointer to the raw data for this one */
 	bitmap_t *			bitmap;				/* pointer to the bitmap containing the raw data */
 	render_texture *	texture;			/* pointer to a texture for rendering and sizing */
@@ -60,7 +60,7 @@ struct _render_font
 	float				scale;				/* 1 / height precomputed */
 	render_font_char *	chars[256];			/* array of character subtables */
 	const char *		rawdata;			/* pointer to the raw data for the font */
-	UINT64				rawsize;			/* size of the raw font data */
+	uint64_t				rawsize;			/* size of the raw font data */
 };
 
 
@@ -72,8 +72,8 @@ struct _render_font
 static void render_font_char_expand(render_font *font, render_font_char *ch);
 static int render_font_load_cached_bdf(render_font *font, const char *filename);
 static int render_font_load_bdf(render_font *font);
-static int render_font_load_cached(render_font *font, mame_file *file, UINT32 hash);
-static int render_font_save_cached(render_font *font, const char *filename, UINT32 hash);
+static int render_font_load_cached(render_font *font, mame_file *file, uint32_t hash);
+static int render_font_save_cached(render_font *font, const char *filename, uint32_t hash);
 
 
 
@@ -209,7 +209,7 @@ void render_font_free(render_font *font)
 static void render_font_char_expand(render_font *font, render_font_char *ch)
 {
 	const char *ptr = ch->rawdata;
-	UINT8 accum = 0, accumbit = 7;
+	uint8_t accum = 0, accumbit = 7;
 	int x, y;
 
 	/* punt if nothing there */
@@ -224,7 +224,7 @@ static void render_font_char_expand(render_font *font, render_font_char *ch)
 	for (y = 0; y < ch->bmheight; y++)
 	{
 		int desty = y + font->height + font->yoffs - ch->yoffs - ch->bmheight;
-		UINT32 *dest = (desty >= 0 && desty < font->height) ? BITMAP_ADDR32(ch->bitmap, desty, 0) : NULL;
+		uint32_t *dest = (desty >= 0 && desty < font->height) ? BITMAP_ADDR32(ch->bitmap, desty, 0) : NULL;
 
 		/* text format */
 		if (font->format == FONT_FORMAT_TEXT)
@@ -286,7 +286,7 @@ static void render_font_char_expand(render_font *font, render_font_char *ch)
     height of the font in pixels
 -------------------------------------------------*/
 
-INT32 render_font_get_pixel_height(render_font *font)
+int32_t render_font_get_pixel_height(render_font *font)
 {
 	return font->height;
 }
@@ -325,7 +325,7 @@ void render_font_get_scaled_bitmap_and_bounds(render_font *font, bitmap_t *dest,
 {
 	render_font_char *ch = get_char(font, chnum);
 	float scale = font->scale * height;
-	INT32 origwidth, origheight;
+	int32_t origwidth, origheight;
 
 	/* on entry, assume x0,y0 are the top,left coordinate of the cell and add */
 	/* the character bounding box to that position */
@@ -425,8 +425,8 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 	mame_file *cachefile;
 	mame_file *file;
 	int result = 1;
-	UINT32 bytes;
-	UINT32 hash;
+	uint32_t bytes;
+	uint32_t hash;
 
 	/* first try to open the BDF itself */
 	filerr = mame_fopen(fontpath, filename, OPEN_FLAG_READ, &file);
@@ -441,7 +441,7 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 	bytes = mame_fread(file, data, MIN(CACHED_BDF_HASH_SIZE, font->rawsize));
 	if (bytes != MIN(CACHED_BDF_HASH_SIZE, font->rawsize))
 		goto error;
-	hash = crc32(0, (const UINT8*)data, bytes) ^ (UINT32)font->rawsize;
+	hash = crc32(0, (const uint8_t*)data, bytes) ^ (uint32_t)font->rawsize;
 
 	/* create the cached filename */
 	cachedname = mame_strdup(filename);
@@ -463,7 +463,7 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 		/* if that failed, read the rest of the font and parse it */
 		if (bytes < font->rawsize)
 		{
-			UINT32 read = mame_fread(file, data + bytes, font->rawsize - bytes);
+			uint32_t read = mame_fread(file, data + bytes, font->rawsize - bytes);
 			if (read != font->rawsize - bytes)
 				goto error;
 		}
@@ -622,12 +622,12 @@ static int render_font_load_bdf(render_font *font)
     cached format
 -------------------------------------------------*/
 
-static int render_font_load_cached(render_font *font, mame_file *file, UINT32 hash)
+static int render_font_load_cached(render_font *font, mame_file *file, uint32_t hash)
 {
-	UINT8 header[CACHED_HEADER_SIZE];
-	UINT64 offset, filesize;
-	UINT8 *data = NULL;
-	UINT32 bytes_read;
+	uint8_t header[CACHED_HEADER_SIZE];
+	uint64_t offset, filesize;
+	uint8_t *data = NULL;
+	uint32_t bytes_read;
 	int numchars;
 	int chindex;
 
@@ -642,17 +642,17 @@ static int render_font_load_cached(render_font *font, mame_file *file, UINT32 ha
 	/* validate the header */
 	if (header[0] != 'f' || header[1] != 'o' || header[2] != 'n' || header[3] != 't')
 		goto error;
-	if (header[4] != (UINT8)(hash >> 24) || header[5] != (UINT8)(hash >> 16) || header[6] != (UINT8)(hash >> 8) || header[7] != (UINT8)hash)
+	if (header[4] != (uint8_t)(hash >> 24) || header[5] != (uint8_t)(hash >> 16) || header[6] != (uint8_t)(hash >> 8) || header[7] != (uint8_t)hash)
 		goto error;
 	font->height = (header[8] << 8) | header[9];
 	font->scale = 1.0f / (float)font->height;
-	font->yoffs = (INT16)((header[10] << 8) | header[11]);
+	font->yoffs = (int16_t)((header[10] << 8) | header[11]);
 	numchars = (header[12] << 24) | (header[13] << 16) | (header[14] << 8) | header[15];
 	if (filesize - CACHED_HEADER_SIZE < numchars * CACHED_CHAR_SIZE)
 		goto error;
 
 	/* now read the rest of the data */
-	data = global_alloc_array(UINT8, filesize - CACHED_HEADER_SIZE);
+	data = global_alloc_array(uint8_t, filesize - CACHED_HEADER_SIZE);
 	bytes_read = mame_fread(file, data, filesize - CACHED_HEADER_SIZE);
 	if (bytes_read != filesize - CACHED_HEADER_SIZE)
 		goto error;
@@ -661,7 +661,7 @@ static int render_font_load_cached(render_font *font, mame_file *file, UINT32 ha
 	offset = numchars * CACHED_CHAR_SIZE;
 	for (chindex = 0; chindex < numchars; chindex++)
 	{
-		const UINT8 *info = &data[chindex * CACHED_CHAR_SIZE];
+		const uint8_t *info = &data[chindex * CACHED_CHAR_SIZE];
 		int chnum = (info[0] << 8) | info[1];
 		render_font_char *ch;
 
@@ -672,8 +672,8 @@ static int render_font_load_cached(render_font *font, mame_file *file, UINT32 ha
 		/* fill in the entry */
 		ch = &font->chars[chnum / 256][chnum % 256];
 		ch->width = (info[2] << 8) | info[3];
-		ch->xoffs = (INT16)((info[4] << 8) | info[5]);
-		ch->yoffs = (INT16)((info[6] << 8) | info[7]);
+		ch->xoffs = (int16_t)((info[4] << 8) | info[5]);
+		ch->yoffs = (int16_t)((info[6] << 8) | info[7]);
 		ch->bmwidth = (info[8] << 8) | info[9];
 		ch->bmheight = (info[10] << 8) | info[11];
 		ch->rawdata = (char *)data + offset;
@@ -701,16 +701,16 @@ error:
     cached format
 -------------------------------------------------*/
 
-static int render_font_save_cached(render_font *font, const char *filename, UINT32 hash)
+static int render_font_save_cached(render_font *font, const char *filename, uint32_t hash)
 {
 	file_error filerr;
 	render_font_char *ch;
-	UINT32 bytes_written;
-	UINT8 *tempbuffer;
-	UINT8 *chartable;
+	uint32_t bytes_written;
+	uint8_t *tempbuffer;
+	uint8_t *chartable;
 	mame_file *file;
 	int numchars;
-	UINT8 *dest;
+	uint8_t *dest;
 	int tableindex;
 	int chnum;
 
@@ -735,10 +735,10 @@ static int render_font_save_cached(render_font *font, const char *filename, UINT
 	}
 
 	/* allocate an array to hold the character data */
-	chartable = global_alloc_array_clear(UINT8, numchars * CACHED_CHAR_SIZE);
+	chartable = global_alloc_array_clear(uint8_t, numchars * CACHED_CHAR_SIZE);
 
 	/* allocate a temp buffer to compress into */
-	tempbuffer = global_alloc_array(UINT8, 65536);
+	tempbuffer = global_alloc_array(uint8_t, 65536);
 
 	/* write the header */
 	dest = tempbuffer;
@@ -775,7 +775,7 @@ static int render_font_save_cached(render_font *font, const char *filename, UINT
 		ch = get_char(font, chnum);
 		if (ch != NULL && ch->width > 0)
 		{
-			UINT8 accum, accbit;
+			uint8_t accum, accbit;
 			int x, y;
 
 			/* write out a bit-compressed bitmap if we have one */
@@ -790,7 +790,7 @@ static int render_font_save_cached(render_font *font, const char *filename, UINT
 				for (y = 0; y < ch->bmheight; y++)
 				{
 					int desty = y + font->height + font->yoffs - ch->yoffs - ch->bmheight;
-					const UINT32 *src = (desty >= 0 && desty < font->height) ? BITMAP_ADDR32(ch->bitmap, desty, 0) : NULL;
+					const uint32_t *src = (desty >= 0 && desty < font->height) ? BITMAP_ADDR32(ch->bitmap, desty, 0) : NULL;
 					for (x = 0; x < ch->bmwidth; x++)
 					{
 						if (src != NULL && RGB_ALPHA(src[x]) != 0)

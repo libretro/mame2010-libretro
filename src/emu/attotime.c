@@ -32,10 +32,10 @@ const attotime		attotime_never = STATIC_ATTOTIME_IN_SEC(ATTOTIME_MAX_SECONDS);
     a constant
 -------------------------------------------------*/
 
-attotime attotime_mul(attotime _time1, UINT32 factor)
+attotime attotime_mul(attotime _time1, uint32_t factor)
 {
-	UINT32 attolo, attohi, reslo, reshi;
-	UINT64 temp;
+	uint32_t attolo, attohi, reslo, reshi;
+	uint64_t temp;
 
 	/* if one of the items is attotime_never, return attotime_never */
 	if (_time1.seconds >= ATTOTIME_MAX_SECONDS)
@@ -71,11 +71,11 @@ attotime attotime_mul(attotime _time1, UINT32 factor)
     a constant
 -------------------------------------------------*/
 
-attotime attotime_div(attotime _time1, UINT32 factor)
+attotime attotime_div(attotime _time1, uint32_t factor)
 {
-	UINT32 attolo, attohi, reshi, reslo, remainder;
+	uint32_t attolo, attohi, reshi, reslo, remainder;
 	attotime result;
-	UINT64 temp;
+	uint64_t temp;
 
 	/* if one of the items is attotime_never, return attotime_never */
 	if (_time1.seconds >= ATTOTIME_MAX_SECONDS)
@@ -92,7 +92,7 @@ attotime attotime_div(attotime _time1, UINT32 factor)
 	result.seconds = divu_64x32_rem(_time1.seconds, factor, &remainder);
 
 	/* combine the upper half of attoseconds with the remainder and divide that */
-	temp = (INT64)attohi + mulu_32x32(remainder, ATTOSECONDS_PER_SECOND_SQRT);
+	temp = (int64_t)attohi + mulu_32x32(remainder, ATTOSECONDS_PER_SECOND_SQRT);
 	reshi = divu_64x32_rem(temp, factor, &remainder);
 
 	/* combine the lower half of attoseconds with the remainder and divide that */
@@ -134,7 +134,7 @@ const char *attotime_string(attotime _time, int precision)
 	/* case 2: we want 9 or fewer digits of precision */
 	else if (precision <= 9)
 	{
-		UINT32 upper = _time.attoseconds / ATTOSECONDS_PER_SECOND_SQRT;
+		uint32_t upper = _time.attoseconds / ATTOSECONDS_PER_SECOND_SQRT;
 		int temp = precision;
 		while (temp < 9)
 		{
@@ -147,8 +147,8 @@ const char *attotime_string(attotime _time, int precision)
 	/* case 3: more than 9 digits of precision */
 	else
 	{
-		UINT32 lower;
-		UINT32 upper = divu_64x32_rem(_time.attoseconds, ATTOSECONDS_PER_SECOND_SQRT, &lower);
+		uint32_t lower;
+		uint32_t upper = divu_64x32_rem(_time.attoseconds, ATTOSECONDS_PER_SECOND_SQRT, &lower);
 		int temp = precision;
 		while (temp < 18)
 		{

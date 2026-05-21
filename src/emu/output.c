@@ -40,9 +40,9 @@ struct _output_item
 {
 	output_item *		next;			/* next item in list */
 	const char *		name;			/* string name of the item */
-	UINT32				hash;			/* hash for this item name */
-	UINT32				id;				/* unique ID for this item */
-	INT32				value;			/* current value */
+	uint32_t				hash;			/* hash for this item name */
+	uint32_t				id;				/* unique ID for this item */
+	int32_t				value;			/* current value */
 	output_notify *		notifylist;		/* list of notifier callbacks */
 };
 
@@ -54,7 +54,7 @@ struct _output_item
 
 static output_item *itemtable[HASH_SIZE];
 static output_notify *global_notifylist;
-static UINT32 uniqueid = 12345;
+static uint32_t uniqueid = 12345;
 
 
 
@@ -88,9 +88,9 @@ INLINE const char *copy_string(const char *string)
     get_hash - return the hash of an output value
 -------------------------------------------------*/
 
-INLINE UINT32 get_hash(const char *string)
+INLINE uint32_t get_hash(const char *string)
 {
-	return crc32(0, (UINT8 *)string, (UINT32)strlen(string));
+	return crc32(0, (uint8_t *)string, (uint32_t)strlen(string));
 }
 
 
@@ -100,7 +100,7 @@ INLINE UINT32 get_hash(const char *string)
 
 INLINE output_item *find_item(const char *string)
 {
-	UINT32 hash = get_hash(string);
+	uint32_t hash = get_hash(string);
 	output_item *item;
 
 	/* use the hash as a starting point and find an entry */
@@ -116,10 +116,10 @@ INLINE output_item *find_item(const char *string)
     create_new_item - create a new item
 -------------------------------------------------*/
 
-INLINE output_item *create_new_item(const char *outname, INT32 value)
+INLINE output_item *create_new_item(const char *outname, int32_t value)
 {
 	output_item *item = global_alloc(output_item);
-	UINT32 hash = get_hash(outname);
+	uint32_t hash = get_hash(outname);
 
 	/* fill in the data */
 	item->next = itemtable[hash % HASH_SIZE];
@@ -219,11 +219,11 @@ static void output_exit(running_machine &machine)
     output_set_value - set the value of an output
 -------------------------------------------------*/
 
-void output_set_value(const char *outname, INT32 value)
+void output_set_value(const char *outname, int32_t value)
 {
 	output_item *item = find_item(outname);
 	output_notify *notify;
-	INT32 oldval;
+	int32_t oldval;
 
 	/* if no item of that name, create a new one and send the item's state */
 	if (item == NULL)
@@ -284,7 +284,7 @@ void output_set_indexed_value(const char *basename, int index, int value)
     output
 -------------------------------------------------*/
 
-INT32 output_get_value(const char *outname)
+int32_t output_get_value(const char *outname)
 {
 	output_item *item = find_item(outname);
 
@@ -300,7 +300,7 @@ INT32 output_get_value(const char *outname)
     indexed output
 -------------------------------------------------*/
 
-INT32 output_get_indexed_value(const char *basename, int index)
+int32_t output_get_indexed_value(const char *basename, int index)
 {
 	char buffer[100];
 	char *dest = buffer;
@@ -380,7 +380,7 @@ void output_notify_all(output_notifier_func callback, void *param)
     a given name
 -------------------------------------------------*/
 
-UINT32 output_name_to_id(const char *outname)
+uint32_t output_name_to_id(const char *outname)
 {
 	output_item *item = find_item(outname);
 
@@ -396,7 +396,7 @@ UINT32 output_name_to_id(const char *outname)
     to a given unique ID
 -------------------------------------------------*/
 
-const char *output_id_to_name(UINT32 id)
+const char *output_id_to_name(uint32_t id)
 {
 	output_item *item;
 	int hash;

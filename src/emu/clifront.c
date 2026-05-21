@@ -59,7 +59,7 @@ static int info_listsoftware(core_options *options, const char *gamename);
 /* utilities */
 static void romident(core_options *options, const char *filename, romident_status *status);
 static void identify_file(core_options *options, const char *name, romident_status *status);
-static void identify_data(core_options *options, const char *name, const UINT8 *data, int length, romident_status *status);
+static void identify_data(core_options *options, const char *name, const uint8_t *data, int length, romident_status *status);
 static void match_roms(core_options *options, const char *hash, int length, int *found);
 
 
@@ -468,7 +468,7 @@ int cli_info_listclones(core_options *options, const char *gamename)
 
 int cli_info_listbrothers(core_options *options, const char *gamename)
 {
-	UINT8 *didit = global_alloc_array_clear(UINT8, driver_list_get_count(drivers));
+	uint8_t *didit = global_alloc_array_clear(uint8_t, driver_list_get_count(drivers));
 	int drvindex, count = 0;
 	astring filename;
 
@@ -679,7 +679,7 @@ int cli_info_listdevices(core_options *options, const char *gamename)
 			{
 				printf("   %s ('%s')", devconfig->name(), devconfig->tag());
 
-				UINT32 clock = devconfig->clock();
+				uint32_t clock = devconfig->clock();
 				if (clock >= 1000000000)
 					printf(" @ %d.%02d GHz\n", clock / 1000000000, (clock / 10000000) % 100);
 				else if (clock >= 1000000)
@@ -1268,7 +1268,7 @@ static void romident(core_options *options, const char *filename, romident_statu
 			for (entry = zip_file_first_file(zip); entry; entry = zip_file_next_file(zip))
 				if (entry->uncompressed_length != 0)
 				{
-					UINT8 *data = global_alloc_array(UINT8, entry->uncompressed_length);
+					uint8_t *data = global_alloc_array(uint8_t, entry->uncompressed_length);
 					if (data != NULL)
 					{
 						/* decompress data into RAM and identify it */
@@ -1300,7 +1300,7 @@ static void identify_file(core_options *options, const char *name, romident_stat
 {
 	file_error filerr;
 	osd_file *file;
-	UINT64 length;
+	uint64_t length;
 
 	if (core_filename_ends_with(name, ".chd"))
 	{
@@ -1331,7 +1331,7 @@ static void identify_file(core_options *options, const char *name, romident_stat
 			}
 			else
 			{
-				static const UINT8 nullhash[HASH_BUF_SIZE] = { 0 };
+				static const uint8_t nullhash[HASH_BUF_SIZE] = { 0 };
 				char			hash[HASH_BUF_SIZE];	/* actual hash information */
 
 				hash_data_clear(hash);
@@ -1363,12 +1363,12 @@ static void identify_file(core_options *options, const char *name, romident_stat
 	{
 		/* open for read and process if it opens and has a valid length */
 		filerr = osd_open(name, OPEN_FLAG_READ, &file, &length);
-		if (filerr == FILERR_NONE && length > 0 && (UINT32)length == length)
+		if (filerr == FILERR_NONE && length > 0 && (uint32_t)length == length)
 		{
-			UINT8 *data = global_alloc_array(UINT8, length);
+			uint8_t *data = global_alloc_array(uint8_t, length);
 			if (data != NULL)
 			{
-				UINT32 bytes;
+				uint32_t bytes;
 
 				/* read file data into RAM and identify it */
 				filerr = osd_read(file, data, 0, length, &bytes);
@@ -1388,10 +1388,10 @@ static void identify_file(core_options *options, const char *name, romident_stat
     fusemap into raw data first
 -------------------------------------------------*/
 
-static void identify_data(core_options *options, const char *name, const UINT8 *data, int length, romident_status *status)
+static void identify_data(core_options *options, const char *name, const uint8_t *data, int length, romident_status *status)
 {
 	char hash[HASH_BUF_SIZE];
-	UINT8 *tempjed = NULL;
+	uint8_t *tempjed = NULL;
 	astring basename;
 	int found = 0;
 	jed_data jed;
@@ -1401,7 +1401,7 @@ static void identify_data(core_options *options, const char *name, const UINT8 *
 	{
 		/* now determine the new data length and allocate temporary memory for it */
 		length = jedbin_output(&jed, NULL, 0);
-		tempjed = global_alloc_array(UINT8, length);
+		tempjed = global_alloc_array(uint8_t, length);
 		if (tempjed == NULL)
 			return;
 

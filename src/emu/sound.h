@@ -42,11 +42,11 @@ class speaker_device_config : public device_config
 	friend class speaker_device;
 
 	// construction/destruction
-	speaker_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	speaker_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 	// indexes to inline data
@@ -89,7 +89,7 @@ public:
 	void set_input_gain(int index, float gain);
 
 	// internally for use by the sound system
-	void mix(INT32 *leftmix, INT32 *rightmix, int &samples_this_update, bool suppress);
+	void mix(int32_t *leftmix, int32_t *rightmix, int &samples_this_update, bool suppress);
 
 protected:
 	// device-level overrides
@@ -114,9 +114,9 @@ protected:
 	int					m_inputs;				// number of input streams
 	speaker_input *		m_input;				// array of input information
 #ifdef MAME_DEBUG
-	INT32				m_max_sample;			// largest sample value we've seen
-	INT32				m_clipped_samples;		// total number of clipped samples
-	INT32				m_total_samples;		// total number of samples
+	int32_t				m_max_sample;			// largest sample value we've seen
+	int32_t				m_clipped_samples;		// total number of clipped samples
+	int32_t				m_total_samples;		// total number of samples
 #endif
 };
 
@@ -133,9 +133,9 @@ extern const device_type SPEAKER;
 /* add/remove speakers */
 #define MDRV_SPEAKER_ADD(_tag, _x, _y, _z) \
 	MDRV_DEVICE_ADD(_tag, SPEAKER, 0) \
-	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_X, (INT32)((_x) * (double)(1 << 24))) \
-	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_Y, (INT32)((_y) * (double)(1 << 24))) \
-	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_Z, (INT32)((_z) * (double)(1 << 24)))
+	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_X, (int32_t)((_x) * (double)(1 << 24))) \
+	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_Y, (int32_t)((_y) * (double)(1 << 24))) \
+	MDRV_DEVICE_INLINE_DATA32(speaker_device_config::INLINE_Z, (int32_t)((_z) * (double)(1 << 24)))
 
 #define MDRV_SPEAKER_STANDARD_MONO(_tag) \
 	MDRV_SPEAKER_ADD(_tag, 0.0, 0.0, 1.0)

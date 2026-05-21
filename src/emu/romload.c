@@ -59,8 +59,8 @@ struct _romload_private
 
 	int				romsloaded;			/* current ROMs loaded count */
 	int				romstotal;			/* total number of ROMs to read */
-	UINT32			romsloadedsize;		/* total size of ROMs loaded so far */
-	UINT32			romstotalsize;		/* total size of ROMs to read */
+	uint32_t			romsloadedsize;		/* total size of ROMs loaded so far */
+	uint32_t			romstotalsize;		/* total size of ROMs to read */
 
 	mame_file *		file;				/* current file */
 	open_chd *		chd_list;			/* disks */
@@ -285,14 +285,14 @@ astring &rom_region_name(astring &result, const game_driver *drv, const rom_sour
     file given the ROM description
 -------------------------------------------------*/
 
-UINT32 rom_file_size(const rom_entry *romp)
+uint32_t rom_file_size(const rom_entry *romp)
 {
-	UINT32 maxlength = 0;
+	uint32_t maxlength = 0;
 
 	/* loop until we run out of reloads */
 	do
 	{
-		UINT32 curlength;
+		uint32_t curlength;
 
 		/* loop until we run out of continues/ignores */
 		curlength = ROM_GETLENGTH(romp++);
@@ -415,7 +415,7 @@ static void count_roms(rom_load_data *romdata)
     random data
 -------------------------------------------------*/
 
-static void fill_random(running_machine *machine, UINT8 *base, UINT32 length)
+static void fill_random(running_machine *machine, uint8_t *base, uint32_t length)
 {
 	while (length--)
 		*base++ = mame_rand(machine);
@@ -506,9 +506,9 @@ static void dump_wrong_and_correct_checksums(rom_load_data *romdata, const char 
     and hash signatures of a file
 -------------------------------------------------*/
 
-static void verify_length_and_hash(rom_load_data *romdata, const char *name, UINT32 explength, const char *hash)
+static void verify_length_and_hash(rom_load_data *romdata, const char *name, uint32_t explength, const char *hash)
 {
-	UINT32 actlength;
+	uint32_t actlength;
 	const char* acthash;
 
 	/* we've already complained if there is no file */
@@ -563,7 +563,7 @@ static void display_loading_rom_message(rom_load_data *romdata, const char *name
 	// 2010-04, FP - FIXME: in MESS, load_software_part_region sometimes calls this with romstotalsize = 0!
 	// as a temp workaround, I added a check for romstotalsize !=0.
 	if (name != NULL && romdata->romstotalsize)
-		sprintf(buffer, "Loading (%d%%)", (UINT32)(100 * (UINT64)romdata->romsloadedsize / (UINT64)romdata->romstotalsize));
+		sprintf(buffer, "Loading (%d%%)", (uint32_t)(100 * (uint64_t)romdata->romsloadedsize / (uint64_t)romdata->romstotalsize));
 	else
 		sprintf(buffer, "Loading Complete");
 
@@ -606,7 +606,7 @@ static void display_rom_load_results(rom_load_data *romdata)
 static void region_post_process(rom_load_data *romdata, const char *rgntag)
 {
 	const region_info *region = romdata->machine->region(rgntag);
-	UINT8 *base;
+	uint8_t *base;
 	int i, j;
 
 	// do nothing if no region
@@ -630,7 +630,7 @@ static void region_post_process(rom_load_data *romdata, const char *rgntag)
 		int datawidth = region->width();
 		for (i = 0, base = region->base(); i < region->bytes(); i += datawidth)
 		{
-			UINT8 temp[8];
+			uint8_t temp[8];
 			memcpy(temp, base, datawidth);
 			for (j = datawidth - 1; j >= 0; j--)
 				*base++ = temp[j];
@@ -647,11 +647,11 @@ static void region_post_process(rom_load_data *romdata, const char *rgntag)
 static int open_rom_file(rom_load_data *romdata, const char *regiontag, const rom_entry *romp)
 {
 	file_error filerr = FILERR_NOT_FOUND;
-	UINT32 romsize = rom_file_size(romp);
+	uint32_t romsize = rom_file_size(romp);
 	const game_driver *drv;
 	int has_crc = FALSE;
-	UINT8 crcbytes[4];
-	UINT32 crc = 0;
+	uint8_t crcbytes[4];
+	uint32_t crc = 0;
 
 	/* update status display */
 	display_loading_rom_message(romdata, ROM_GETNAME(romp));
@@ -698,7 +698,7 @@ static int open_rom_file(rom_load_data *romdata, const char *regiontag, const ro
     random data for a NULL file
 -------------------------------------------------*/
 
-static int rom_fread(rom_load_data *romdata, UINT8 *buffer, int length)
+static int rom_fread(rom_load_data *romdata, uint8_t *buffer, int length)
 {
 	/* files just pass through */
 	if (romdata->file != NULL)
@@ -726,9 +726,9 @@ static int read_rom_data(rom_load_data *romdata, const rom_entry *romp)
 	int skip = ROM_GETSKIPCOUNT(romp);
 	int reversed = ROM_ISREVERSED(romp);
 	int numgroups = (numbytes + groupsize - 1) / groupsize;
-	UINT8 *base = romdata->region->base() + ROM_GETOFFSET(romp);
-	UINT32 tempbufsize;
-	UINT8 *tempbuf;
+	uint8_t *base = romdata->region->base() + ROM_GETOFFSET(romp);
+	uint32_t tempbufsize;
+	uint8_t *tempbuf;
 	int i;
 
 	LOG(("Loading ROM data: offs=%X len=%X mask=%02X group=%d skip=%d reverse=%d\n", ROM_GETOFFSET(romp), numbytes, datamask, groupsize, skip, reversed));
@@ -751,7 +751,7 @@ static int read_rom_data(rom_load_data *romdata, const rom_entry *romp)
 
 	/* use a temporary buffer for complex loads */
 	tempbufsize = MIN(TEMPBUFFER_MAX_SIZE, numbytes);
-	tempbuf = auto_alloc_array(romdata->machine, UINT8, tempbufsize);
+	tempbuf = auto_alloc_array(romdata->machine, uint8_t, tempbufsize);
 
 	/* chunky reads for complex loads */
 	skip += groupsize;
@@ -759,7 +759,7 @@ static int read_rom_data(rom_load_data *romdata, const rom_entry *romp)
 	{
 		int evengroupcount = (tempbufsize / groupsize) * groupsize;
 		int bytesleft = (numbytes > evengroupcount) ? evengroupcount : numbytes;
-		UINT8 *bufptr = tempbuf;
+		uint8_t *bufptr = tempbuf;
 
 		/* read as much as we can */
 		LOG(("  Reading %X bytes into buffer\n", bytesleft));
@@ -839,8 +839,8 @@ static int read_rom_data(rom_load_data *romdata, const rom_entry *romp)
 
 static void fill_rom_data(rom_load_data *romdata, const rom_entry *romp)
 {
-	UINT32 numbytes = ROM_GETLENGTH(romp);
-	UINT8 *base = romdata->region->base() + ROM_GETOFFSET(romp);
+	uint32_t numbytes = ROM_GETLENGTH(romp);
+	uint8_t *base = romdata->region->base() + ROM_GETOFFSET(romp);
 
 	/* make sure we fill within the region space */
 	if (ROM_GETOFFSET(romp) + numbytes > romdata->region->bytes())
@@ -861,10 +861,10 @@ static void fill_rom_data(rom_load_data *romdata, const rom_entry *romp)
 
 static void copy_rom_data(rom_load_data *romdata, const rom_entry *romp)
 {
-	UINT8 *base = romdata->region->base() + ROM_GETOFFSET(romp);
+	uint8_t *base = romdata->region->base() + ROM_GETOFFSET(romp);
 	const char *srcrgntag = ROM_GETNAME(romp);
-	UINT32 numbytes = ROM_GETLENGTH(romp);
-	UINT32 srcoffs = (FPTR)ROM_GETHASHDATA(romp);  /* srcoffset in place of hashdata */
+	uint32_t numbytes = ROM_GETLENGTH(romp);
+	uint32_t srcoffs = (FPTR)ROM_GETHASHDATA(romp);  /* srcoffset in place of hashdata */
 
 	/* make sure we copy within the region space */
 	if (ROM_GETOFFSET(romp) + numbytes > romdata->region->bytes())
@@ -895,7 +895,7 @@ static void copy_rom_data(rom_load_data *romdata, const rom_entry *romp)
 
 static void process_rom_entries(rom_load_data *romdata, const char *regiontag, const rom_entry *romp)
 {
-	UINT32 lastflags = 0;
+	uint32_t lastflags = 0;
 
 	/* loop until we hit the end of this region */
 	while (!ROMENTRY_ISREGIONEND(romp))
@@ -1222,7 +1222,7 @@ static void process_disk_entries(rom_load_data *romdata, const char *regiontag, 
     flags for the given device
 -------------------------------------------------*/
 
-static UINT32 normalize_flags_for_device(running_machine *machine, UINT32 startflags, const char *rgntag)
+static uint32_t normalize_flags_for_device(running_machine *machine, uint32_t startflags, const char *rgntag)
 {
 	device_t *device = machine->device(rgntag);
 	device_memory_interface *memory;
@@ -1281,8 +1281,8 @@ void load_software_part_region(running_device *device, char *swlist, char *swnam
 	/* loop until we hit the end */
 	for (region = start_region; region != NULL; region = rom_next_region(region))
 	{
-		UINT32 regionlength = ROMREGION_GETLENGTH(region);
-		UINT32 regionflags = ROMREGION_GETFLAGS(region);
+		uint32_t regionlength = ROMREGION_GETLENGTH(region);
+		uint32_t regionflags = ROMREGION_GETFLAGS(region);
 
 		device->subtag(regiontag, ROMREGION_GETTAG(region));
 		LOG(("Processing region \"%s\" (length=%X)\n", regiontag.cstr(), regionlength));
@@ -1349,8 +1349,8 @@ static void process_region_list(rom_load_data *romdata)
 	for (source = rom_first_source(romdata->machine->gamedrv, romdata->machine->config); source != NULL; source = rom_next_source(romdata->machine->gamedrv, romdata->machine->config, source))
 		for (region = rom_first_region(romdata->machine->gamedrv, source); region != NULL; region = rom_next_region(region))
 		{
-			UINT32 regionlength = ROMREGION_GETLENGTH(region);
-			UINT32 regionflags = ROMREGION_GETFLAGS(region);
+			uint32_t regionlength = ROMREGION_GETLENGTH(region);
+			uint32_t regionflags = ROMREGION_GETFLAGS(region);
 
 			rom_region_name(regiontag, romdata->machine->gamedrv, source, region);
 			LOG(("Processing region \"%s\" (length=%X)\n", regiontag.cstr(), regionlength));

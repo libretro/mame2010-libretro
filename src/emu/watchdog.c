@@ -17,8 +17,8 @@
     GLOBAL VARIABLES
 ***************************************************************************/
 
-static UINT8 watchdog_enabled;
-static INT32 watchdog_counter;
+static uint8_t watchdog_enabled;
+static int32_t watchdog_counter;
 static emu_timer *watchdog_timer;
 
 

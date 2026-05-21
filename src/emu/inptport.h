@@ -576,7 +576,7 @@ enum
 ***************************************************************************/
 
 /* input ports support up to 32 bits each */
-typedef UINT32 input_port_value;
+typedef uint32_t input_port_value;
 
 
 /* opaque types pointing to live state */
@@ -594,10 +594,10 @@ typedef tagged_list<input_port_config> ioport_list;
 
 
 /* custom input port callback function */
-typedef UINT32 (*input_field_custom_func)(const input_field_config *field, void *param);
+typedef uint32_t (*input_field_custom_func)(const input_field_config *field, void *param);
 
 /* input port changed callback function */
-typedef void (*input_field_changed_func)(const input_field_config *field, void *param, UINT32 oldval, UINT32 newval);
+typedef void (*input_field_changed_func)(const input_field_config *field, void *param, uint32_t oldval, uint32_t newval);
 
 /* crosshair mapping function */
 typedef float (*input_field_crossmap_func)(const input_field_config *field, float linear_value);
@@ -624,7 +624,7 @@ struct _input_condition
 	const char *				tag;			/* tag of port whose condition is to be tested */
 	input_port_value			mask;			/* mask to apply to the port */
 	input_port_value			value;			/* value to compare against */
-	UINT8						condition;		/* condition to use */
+	uint8_t						condition;		/* condition to use */
 };
 
 
@@ -637,7 +637,7 @@ struct _input_setting_config
 	input_port_value			value;			/* value of the bits in this setting */
 	input_condition				condition;		/* condition under which this setting is valid */
 	const char *				name;			/* user-friendly name to display */
-	UINT16						category;		/* (MESS-specific) category */
+	uint16_t						category;		/* (MESS-specific) category */
 };
 
 
@@ -647,8 +647,8 @@ struct _input_field_diplocation
 {
 	input_field_diplocation *	next;			/* pointer to the next bit */
 	const char *				swname;			/* name of the physical DIP switch */
-	UINT8						swnum;			/* physical switch number */
-	UINT8						invert;			/* is this an active-high DIP? */
+	uint8_t						swnum;			/* physical switch number */
+	uint8_t						invert;			/* is this an active-high DIP? */
 };
 
 
@@ -661,11 +661,11 @@ struct _input_field_config
 	input_port_value			mask;			/* mask of bits belonging to the field */
 	input_port_value			defvalue;		/* default value of these bits */
 	input_condition				condition;		/* condition under which this field is relevant */
-	UINT32						type;			/* IPT_* type for this port */
-	UINT8						player;			/* player number (0-based) */
-	UINT16						category;		/* (MESS-specific) category */
-	UINT32						flags;			/* combination of FIELD_FLAG_* and ANALOG_FLAG_* above */
-	UINT8						impulse;		/* number of frames before reverting to defvalue */
+	uint32_t						type;			/* IPT_* type for this port */
+	uint8_t						player;			/* player number (0-based) */
+	uint16_t						category;		/* (MESS-specific) category */
+	uint32_t						flags;			/* combination of FIELD_FLAG_* and ANALOG_FLAG_* above */
+	uint8_t						impulse;		/* number of frames before reverting to defvalue */
 	const char *				name;			/* user-friendly name to display */
 	input_seq					seq[SEQ_TYPE_TOTAL];/* sequences of all types */
 	read_line_device_func		read_line_device;	/* input device handler */
@@ -678,23 +678,23 @@ struct _input_field_config
 	void *						changed_param;	/* parameter for changed callback routine */
 
 	/* data relevant to analog control types */
-	INT32						min;			/* minimum value for absolute axes */
-	INT32						max;			/* maximum value for absolute axes */
-	INT32						sensitivity;	/* sensitivity (100=normal) */
-	INT32						delta;			/* delta to apply each frame a digital inc/dec key is pressed */
-	INT32						centerdelta;	/* delta to apply each frame no digital inputs are pressed */
-	UINT8						crossaxis;		/* crosshair axis */
+	int32_t						min;			/* minimum value for absolute axes */
+	int32_t						max;			/* maximum value for absolute axes */
+	int32_t						sensitivity;	/* sensitivity (100=normal) */
+	int32_t						delta;			/* delta to apply each frame a digital inc/dec key is pressed */
+	int32_t						centerdelta;	/* delta to apply each frame no digital inputs are pressed */
+	uint8_t						crossaxis;		/* crosshair axis */
 	float						crossscale;		/* crosshair scale */
 	float						crossoffset;	/* crosshair offset */
 	float						crossaltaxis;	/* crosshair alternate axis value */
 	input_field_crossmap_func	crossmapper;	/* crosshair mapping function */
-	UINT16						full_turn_count;/* number of optical counts for 1 full turn of the original control */
+	uint16_t						full_turn_count;/* number of optical counts for 1 full turn of the original control */
 	const input_port_value *	remap_table;	/* pointer to an array that remaps the port value */
 
 	/* data relevant to other specific types */
 	const input_setting_config *settinglist;	/* list of input_setting_configs */
 	const input_field_diplocation *diploclist;	/* list of locations for various bits */
-	UINT8						way;			/* digital joystick 2/4/8-way descriptions */
+	uint8_t						way;			/* digital joystick 2/4/8-way descriptions */
 	unicode_char				chars[3];		/* (MESS-specific) unicode key data */
 
 	/* this field is only valid if the device is live */
@@ -708,10 +708,10 @@ struct _input_field_user_settings
 {
 	input_port_value			value;			/* for DIP switches */
 	input_seq					seq[SEQ_TYPE_TOTAL];/* sequences of all types */
-	INT32						sensitivity;	/* for analog controls */
-	INT32						delta;			/* for analog controls */
-	INT32						centerdelta;	/* for analog controls */
-	UINT8						reverse;		/* for analog controls */
+	int32_t						sensitivity;	/* for analog controls */
+	int32_t						delta;			/* for analog controls */
+	int32_t						centerdelta;	/* for analog controls */
+	uint8_t						reverse;		/* for analog controls */
 };
 
 
@@ -741,9 +741,9 @@ class input_type_desc
 {
 public:
 	input_type_desc *			next;			/* next description in the list */
-	UINT32						type;			/* IPT_* for this entry */
-	UINT8						group;			/* which group the port belongs to */
-	UINT8						player;			/* player number (0 is player 1) */
+	uint32_t						type;			/* IPT_* for this entry */
+	uint8_t						group;			/* which group the port belongs to */
+	uint8_t						player;			/* player number (0 is player 1) */
 	const char *				token;			/* token used to store settings */
 	const char *				name;			/* user-friendly name */
 	input_seq					seq[SEQ_TYPE_TOTAL];/* default input sequence */
@@ -755,10 +755,10 @@ typedef struct _inp_header inp_header;
 struct _inp_header
 {
 	char						header[8];		/* +00: 8 byte header - must be "MAMEINP\0" */
-	UINT64						basetime;		/* +08: base time of recording */
-	UINT8						majversion;		/* +10: major INP version */
-	UINT8						minversion;		/* +11: minor INP version */
-	UINT8						reserved[2];	/* +12: must be zero */
+	uint64_t						basetime;		/* +08: base time of recording */
+	uint8_t						majversion;		/* +10: major INP version */
+	uint8_t						minversion;		/* +11: minor INP version */
+	uint8_t						reserved[2];	/* +12: must be zero */
 	char						gamename[12];	/* +14: game name string, NULL-terminated */
 	char						version[32];	/* +20: system version string, NULL-terminated */
 };
@@ -770,10 +770,10 @@ struct _inp_header
 ***************************************************************************/
 
 /* macro for a custom callback functions (PORT_CUSTOM) */
-#define CUSTOM_INPUT(name)	UINT32 name(const input_field_config *field, void *param)
+#define CUSTOM_INPUT(name)	uint32_t name(const input_field_config *field, void *param)
 
 /* macro for port changed callback functions (PORT_CHANGED) */
-#define INPUT_CHANGED(name)	void name(const input_field_config *field, void *param, UINT32 oldval, UINT32 newval)
+#define INPUT_CHANGED(name)	void name(const input_field_config *field, void *param, uint32_t oldval, uint32_t newval)
 
 /* macro for port changed callback functions (PORT_CROSSHAIR_MAPPER) */
 #define CROSSHAIR_MAPPER(name)	float name(const input_field_config *field, float linear_value)
@@ -903,8 +903,8 @@ struct _inp_header
 	TOKEN_UINT32_PACK2(INPUT_TOKEN_CENTERDELTA, 8, _delta, 24),
 
 #define PORT_CROSSHAIR(axis, scale, offset, altaxis) \
-	TOKEN_UINT32_PACK3(INPUT_TOKEN_CROSSHAIR, 8, CROSSHAIR_AXIS_##axis, 4, (INT32)((altaxis) * 65536.0f), 20), \
-	TOKEN_UINT64_PACK2((INT32)((scale) * 65536.0f), 32, (INT32)((offset) * 65536.0f), 32),
+	TOKEN_UINT32_PACK3(INPUT_TOKEN_CROSSHAIR, 8, CROSSHAIR_AXIS_##axis, 4, (int32_t)((altaxis) * 65536.0f), 20), \
+	TOKEN_UINT64_PACK2((int32_t)((scale) * 65536.0f), 32, (int32_t)((offset) * 65536.0f), 32),
 
 #define PORT_CROSSHAIR_MAPPER(_callback) \
 	TOKEN_UINT32_PACK1(INPUT_TOKEN_CROSSHAIR_MAPPER, 8), \

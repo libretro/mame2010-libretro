@@ -32,7 +32,7 @@
 ***************************************************************************/
 
 /* logical index */
-typedef UINT32 tilemap_logical_index;
+typedef uint32_t tilemap_logical_index;
 
 
 /* internal set of transparency states for rendering */
@@ -45,8 +45,8 @@ typedef enum
 
 
 /* internal blitting callbacks */
-typedef void (*blitmask_func)(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-typedef void (*blitopaque_func)(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
+typedef void (*blitmask_func)(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+typedef void (*blitopaque_func)(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
 
 
 /* blitting parameters for rendering */
@@ -57,10 +57,10 @@ struct _blit_parameters
 	rectangle			cliprect;
 	blitmask_func		draw_masked;
 	blitopaque_func		draw_opaque;
-	UINT32				tilemap_priority_code;
-	UINT8				mask;
-	UINT8				value;
-	UINT8				alpha;
+	uint32_t				tilemap_priority_code;
+	uint8_t				mask;
+	uint8_t				value;
+	uint8_t				alpha;
 };
 
 
@@ -71,12 +71,12 @@ struct _tilemap_t
 	running_machine *			machine;			/* pointer back to the owning machine */
 
 	/* basic tilemap metrics */
-	UINT32						rows;				/* number of tile rows */
-	UINT32						cols;				/* number of tile columns */
-	UINT32						tilewidth;			/* width of a single tile in pixels */
-	UINT32						tileheight;			/* height of a single tile in pixels */
-	UINT32						width;				/* width of the full tilemap in pixels */
-	UINT32						height;				/* height of the full tilemap in pixels */
+	uint32_t						rows;				/* number of tile rows */
+	uint32_t						cols;				/* number of tile columns */
+	uint32_t						tilewidth;			/* width of a single tile in pixels */
+	uint32_t						tileheight;			/* height of a single tile in pixels */
+	uint32_t						width;				/* width of the full tilemap in pixels */
+	uint32_t						height;				/* height of the full tilemap in pixels */
 
 	/* logical <-> memory mappings */
 	tilemap_mapper_func			mapper;				/* callback to map a row/column to a memory index */
@@ -92,32 +92,32 @@ struct _tilemap_t
 	void *						user_data;			/* user data value passed to the callback */
 
 	/* global tilemap states */
-	UINT8						enable;				/* true if we are enabled */
-	UINT8						attributes;			/* global attributes (flipx/y) */
-	UINT8						all_tiles_dirty;	/* true if all tiles are dirty */
-	UINT8						all_tiles_clean;	/* true if all tiles are clean */
-	UINT32						palette_offset;		/* palette offset */
-	UINT32						pen_data_offset;	/* pen data offset */
-	UINT32						gfx_used;			/* bitmask of gfx items used */
-	UINT32						gfx_dirtyseq[MAX_GFX_ELEMENTS]; /* dirtyseq values from last check */
+	uint8_t						enable;				/* true if we are enabled */
+	uint8_t						attributes;			/* global attributes (flipx/y) */
+	uint8_t						all_tiles_dirty;	/* true if all tiles are dirty */
+	uint8_t						all_tiles_clean;	/* true if all tiles are clean */
+	uint32_t						palette_offset;		/* palette offset */
+	uint32_t						pen_data_offset;	/* pen data offset */
+	uint32_t						gfx_used;			/* bitmask of gfx items used */
+	uint32_t						gfx_dirtyseq[MAX_GFX_ELEMENTS]; /* dirtyseq values from last check */
 
 	/* scroll information */
-	UINT32						scrollrows;			/* number of independently scrolled rows */
-	UINT32						scrollcols;			/* number of independently scrolled colums */
-	INT32 *						rowscroll;			/* array of rowscroll values */
-	INT32 *						colscroll;			/* array of colscroll values */
-	INT32						dx;					/* global horizontal scroll offset */
-	INT32						dx_flipped;			/* global horizontal scroll offset when flipped */
-	INT32						dy;					/* global vertical scroll offset */
-	INT32						dy_flipped;			/* global vertical scroll offset when flipped */
+	uint32_t						scrollrows;			/* number of independently scrolled rows */
+	uint32_t						scrollcols;			/* number of independently scrolled colums */
+	int32_t *						rowscroll;			/* array of rowscroll values */
+	int32_t *						colscroll;			/* array of colscroll values */
+	int32_t						dx;					/* global horizontal scroll offset */
+	int32_t						dx_flipped;			/* global horizontal scroll offset when flipped */
+	int32_t						dy;					/* global vertical scroll offset */
+	int32_t						dy_flipped;			/* global vertical scroll offset when flipped */
 
 	/* pixel data */
 	bitmap_t *					pixmap;				/* cached pixel data */
 
 	/* transparency mapping */
 	bitmap_t *					flagsmap;			/* per-pixel flags */
-	UINT8 *						tileflags;			/* per-tile flags */
-	UINT8 *						pen_to_flags;		/* mapping of pens to flags */
+	uint8_t *						tileflags;			/* per-tile flags */
+	uint8_t *						pen_to_flags;		/* mapping of pens to flags */
 };
 
 
@@ -146,29 +146,29 @@ static void mappings_update(tilemap_t *tmap);
 
 /* tile rendering */
 static void pixmap_update(tilemap_t *tmap, const rectangle *cliprect);
-static void tile_update(tilemap_t *tmap, tilemap_logical_index logindex, UINT32 cached_col, UINT32 cached_row);
-static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 y0, UINT32 palette_base, UINT8 category, UINT8 group, UINT8 flags, UINT8 pen_mask);
-static UINT8 tile_apply_bitmask(tilemap_t *tmap, const UINT8 *maskdata, UINT32 x0, UINT32 y0, UINT8 category, UINT8 flags);
+static void tile_update(tilemap_t *tmap, tilemap_logical_index logindex, uint32_t cached_col, uint32_t cached_row);
+static uint8_t tile_draw(tilemap_t *tmap, const uint8_t *pendata, uint32_t x0, uint32_t y0, uint32_t palette_base, uint8_t category, uint8_t group, uint8_t flags, uint8_t pen_mask);
+static uint8_t tile_apply_bitmask(tilemap_t *tmap, const uint8_t *maskdata, uint32_t x0, uint32_t y0, uint8_t category, uint8_t flags);
 
 /* drawing helpers */
-static void configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, UINT32 flags, UINT8 priority, UINT8 priority_mask);
+static void configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, uint32_t flags, uint8_t priority, uint8_t priority_mask);
 static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, int xpos, int ypos);
 static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy, int wraparound);
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy, int wraparound);
 
 /* scanline rasterizers for drawing to the pixmap */
-static void scanline_draw_opaque_null(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_null(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_opaque_ind16(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_ind16(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_opaque_rgb16(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_rgb16(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_opaque_rgb16_alpha(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_rgb16_alpha(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_opaque_rgb32(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_rgb32(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_opaque_rgb32_alpha(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
-static void scanline_draw_masked_rgb32_alpha(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha);
+static void scanline_draw_opaque_null(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_null(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_opaque_ind16(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_ind16(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_opaque_rgb16(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_rgb16(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_opaque_rgb16_alpha(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_rgb16_alpha(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_opaque_rgb32(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_rgb32(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_opaque_rgb32_alpha(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
+static void scanline_draw_masked_rgb32_alpha(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha);
 
 
 
@@ -182,9 +182,9 @@ static void scanline_draw_masked_rgb32_alpha(void *dest, const UINT16 *source, c
     account tilemap flip states
 -------------------------------------------------*/
 
-INLINE INT32 effective_rowscroll(tilemap_t *tmap, int index, UINT32 screen_width)
+INLINE int32_t effective_rowscroll(tilemap_t *tmap, int index, uint32_t screen_width)
 {
-	INT32 value;
+	int32_t value;
 
 	/* if we're flipping vertically, adjust the row number */
 	if (tmap->attributes & TILEMAP_FLIPY)
@@ -211,9 +211,9 @@ INLINE INT32 effective_rowscroll(tilemap_t *tmap, int index, UINT32 screen_width
     account tilemap flip states
 -------------------------------------------------*/
 
-INLINE INT32 effective_colscroll(tilemap_t *tmap, int index, UINT32 screen_height)
+INLINE int32_t effective_colscroll(tilemap_t *tmap, int index, uint32_t screen_height)
 {
-	INT32 value;
+	int32_t value;
 
 	/* if we're flipping horizontally, adjust the column number */
 	if (tmap->attributes & TILEMAP_FLIPX)
@@ -259,7 +259,7 @@ INLINE tilemap_t *indexed_tilemap(running_machine *machine, int index)
 
 INLINE int gfx_elements_changed(tilemap_t *tmap)
 {
-	UINT32 usedmask = tmap->gfx_used;
+	uint32_t usedmask = tmap->gfx_used;
 	int isdirty = FALSE;
 	int gfxnum;
 
@@ -286,7 +286,7 @@ INLINE int gfx_elements_changed(tilemap_t *tmap)
 
 void tilemap_init(running_machine *machine)
 {
-	UINT32 screen_width, screen_height;
+	uint32_t screen_width, screen_height;
 
 	if (machine->primary_screen == NULL)
 		return;
@@ -378,16 +378,16 @@ static tilemap_t *tilemap_create_common(running_machine *machine, void *get_info
 	/* initialize scroll information */
 	tmap->scrollrows = 1;
 	tmap->scrollcols = 1;
-	tmap->rowscroll = auto_alloc_array_clear(machine, INT32, tmap->height);
-	tmap->colscroll = auto_alloc_array_clear(machine, INT32, tmap->width);
+	tmap->rowscroll = auto_alloc_array_clear(machine, int32_t, tmap->height);
+	tmap->colscroll = auto_alloc_array_clear(machine, int32_t, tmap->width);
 
 	/* allocate the pixel data cache */
 	tmap->pixmap = auto_bitmap_alloc(machine, tmap->width, tmap->height, BITMAP_FORMAT_INDEXED16);
 
 	/* allocate transparency mapping data */
-	tmap->tileflags = auto_alloc_array(machine, UINT8, tmap->max_logical_index);
+	tmap->tileflags = auto_alloc_array(machine, uint8_t, tmap->max_logical_index);
 	tmap->flagsmap = auto_bitmap_alloc(machine, tmap->width, tmap->height, BITMAP_FORMAT_INDEXED8);
-	tmap->pen_to_flags = auto_alloc_array_clear(machine, UINT8, MAX_PEN_TO_FLAGS * TILEMAP_NUM_GROUPS);
+	tmap->pen_to_flags = auto_alloc_array_clear(machine, uint8_t, MAX_PEN_TO_FLAGS * TILEMAP_NUM_GROUPS);
 	for (group = 0; group < TILEMAP_NUM_GROUPS; group++)
 		tilemap_map_pens_to_layer(tmap, group, 0, 0, TILEMAP_PIXEL_LAYER0);
 
@@ -433,7 +433,7 @@ void tilemap_set_user_data(tilemap_t *tmap, void *user_data)
     the palette
 -------------------------------------------------*/
 
-void tilemap_set_palette_offset(tilemap_t *tmap, UINT32 offset)
+void tilemap_set_palette_offset(tilemap_t *tmap, uint32_t offset)
 {
 	tmap->palette_offset = offset;
 }
@@ -466,7 +466,7 @@ int tilemap_get_enable(tilemap_t *tmap)
     tilemap
 -------------------------------------------------*/
 
-void tilemap_set_flip(tilemap_t *tmap, UINT32 attributes)
+void tilemap_set_flip(tilemap_t *tmap, uint32_t attributes)
 {
 	/* if we're changing things, force a refresh of the mappings and mark it all dirty */
 	if (tmap->attributes != attributes)
@@ -482,7 +482,7 @@ void tilemap_set_flip(tilemap_t *tmap, UINT32 attributes)
     the tilemaps
 -------------------------------------------------*/
 
-void tilemap_set_flip_all(running_machine *machine, UINT32 attributes)
+void tilemap_set_flip_all(running_machine *machine, uint32_t attributes)
 {
 	tilemap_t *tmap;
 
@@ -557,11 +557,11 @@ void tilemap_mark_all_tiles_dirty_all(running_machine *machine)
     (<pen> & mask) == pen) to a layer
 -------------------------------------------------*/
 
-void tilemap_map_pens_to_layer(tilemap_t *tmap, int group, pen_t pen, pen_t mask, UINT8 layermask)
+void tilemap_map_pens_to_layer(tilemap_t *tmap, int group, pen_t pen, pen_t mask, uint8_t layermask)
 {
-	UINT8 *array = tmap->pen_to_flags + group * MAX_PEN_TO_FLAGS;
+	uint8_t *array = tmap->pen_to_flags + group * MAX_PEN_TO_FLAGS;
 	pen_t start, stop, cur;
-	UINT8 changed = FALSE;
+	uint8_t changed = FALSE;
 
 	assert(group < TILEMAP_NUM_GROUPS);
 	assert((layermask & TILEMAP_PIXEL_CATEGORY_MASK) == 0);
@@ -612,15 +612,15 @@ void tilemap_set_transparent_pen(tilemap_t *tmap, pen_t pen)
     layer 1)
 -------------------------------------------------*/
 
-void tilemap_set_transmask(tilemap_t *tmap, int group, UINT32 fgmask, UINT32 bgmask)
+void tilemap_set_transmask(tilemap_t *tmap, int group, uint32_t fgmask, uint32_t bgmask)
 {
 	pen_t pen;
 
 	/* iterate over all 32 pens specified */
 	for (pen = 0; pen < 32; pen++)
 	{
-		UINT8 fgbits = ((fgmask >> pen) & 1) ? TILEMAP_PIXEL_TRANSPARENT : TILEMAP_PIXEL_LAYER0;
-		UINT8 bgbits = ((bgmask >> pen) & 1) ? TILEMAP_PIXEL_TRANSPARENT : TILEMAP_PIXEL_LAYER1;
+		uint8_t fgbits = ((fgmask >> pen) & 1) ? TILEMAP_PIXEL_TRANSPARENT : TILEMAP_PIXEL_LAYER0;
+		uint8_t bgbits = ((bgmask >> pen) & 1) ? TILEMAP_PIXEL_TRANSPARENT : TILEMAP_PIXEL_LAYER1;
 		tilemap_map_pen_to_layer(tmap, group, pen, fgbits | bgbits);
 	}
 }
@@ -637,7 +637,7 @@ void tilemap_set_transmask(tilemap_t *tmap, int group, UINT32 fgmask, UINT32 bgm
     covers height/scroll_rows pixels
 -------------------------------------------------*/
 
-void tilemap_set_scroll_rows(tilemap_t *tmap, UINT32 scroll_rows)
+void tilemap_set_scroll_rows(tilemap_t *tmap, uint32_t scroll_rows)
 {
 	assert(scroll_rows <= tmap->height);
 	tmap->scrollrows = scroll_rows;
@@ -650,7 +650,7 @@ void tilemap_set_scroll_rows(tilemap_t *tmap, UINT32 scroll_rows)
     unit covers width/scroll_cols pixels
 -------------------------------------------------*/
 
-void tilemap_set_scroll_cols(tilemap_t *tmap, UINT32 scroll_cols)
+void tilemap_set_scroll_cols(tilemap_t *tmap, uint32_t scroll_cols)
 {
 	assert(scroll_cols <= tmap->width);
 	tmap->scrollcols = scroll_cols;
@@ -795,7 +795,7 @@ bitmap_t *tilemap_get_flagsmap(tilemap_t *tmap)
     (updated) internal per-tile flags for a tilemap
 -------------------------------------------------*/
 
-UINT8 *tilemap_get_tile_flags(tilemap_t *tmap)
+uint8_t *tilemap_get_tile_flags(tilemap_t *tmap)
 {
 	/* ensure all the tiles are up-to-date and then return the per-tile flags */
 	pixmap_update(tmap, NULL);
@@ -814,9 +814,9 @@ UINT8 *tilemap_get_tile_flags(tilemap_t *tmap)
     priority/priority_mask to the priority bitmap
 -------------------------------------------------*/
 
-void tilemap_draw_primask(bitmap_t *dest, const rectangle *cliprect, tilemap_t *tmap, UINT32 flags, UINT8 priority, UINT8 priority_mask)
+void tilemap_draw_primask(bitmap_t *dest, const rectangle *cliprect, tilemap_t *tmap, uint32_t flags, uint8_t priority, uint8_t priority_mask)
 {
-	UINT32 width, height;
+	uint32_t width, height;
 	blit_parameters blit;
 	int xpos, ypos;
 
@@ -937,13 +937,13 @@ void tilemap_draw_primask(bitmap_t *dest, const rectangle *cliprect, tilemap_t *
 -------------------------------------------------*/
 
 void tilemap_draw_roz_primask(bitmap_t *dest, const rectangle *cliprect, tilemap_t *tmap,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy,
-		int wraparound, UINT32 flags, UINT8 priority, UINT8 priority_mask)
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy,
+		int wraparound, uint32_t flags, uint8_t priority, uint8_t priority_mask)
 {
 	blit_parameters blit;
 
 /* notes:
-   - startx and starty MUST be UINT32 for calculations to work correctly
+   - startx and starty MUST be uint32_t for calculations to work correctly
    - srcbitmap->width and height are assumed to be a power of 2 to speed up wraparound
    */
 
@@ -1000,7 +1000,7 @@ int tilemap_count(running_machine *machine)
     indexed tilemap
 -------------------------------------------------*/
 
-void tilemap_size_by_index(running_machine *machine, int number, UINT32 *width, UINT32 *height)
+void tilemap_size_by_index(running_machine *machine, int number, uint32_t *width, uint32_t *height)
 {
 	tilemap_t *tmap = indexed_tilemap(machine, number);
 	*width = tmap->width;
@@ -1014,7 +1014,7 @@ void tilemap_size_by_index(running_machine *machine, int number, UINT32 *width, 
     priority)
 -------------------------------------------------*/
 
-void tilemap_draw_by_index(running_machine *machine, bitmap_t *dest, int number, UINT32 scrollx, UINT32 scrolly)
+void tilemap_draw_by_index(running_machine *machine, bitmap_t *dest, int number, uint32_t scrollx, uint32_t scrolly)
 {
 	tilemap_t *tmap = indexed_tilemap(machine, number);
 	blit_parameters blit;
@@ -1184,7 +1184,7 @@ static void tilemap_dispose(tilemap_t *tmap)
 
 static void mappings_create(tilemap_t *tmap)
 {
-	UINT32 col, row;
+	uint32_t col, row;
 
 	/* compute the maximum logical index */
 	tmap->max_logical_index = tmap->rows * tmap->cols;
@@ -1225,10 +1225,10 @@ static void mappings_update(tilemap_t *tmap)
 	/* now iterate over all logical indexes and populate the memory index */
 	for (logindex = 0; logindex < tmap->max_logical_index; logindex++)
 	{
-		UINT32 logical_col = logindex % tmap->cols;
-		UINT32 logical_row = logindex / tmap->cols;
+		uint32_t logical_col = logindex % tmap->cols;
+		uint32_t logical_row = logindex / tmap->cols;
 		tilemap_memory_index memindex = (*tmap->mapper)(logical_col, logical_row, tmap->cols, tmap->rows);
-		UINT32 flipped_logindex;
+		uint32_t flipped_logindex;
 
 		/* apply tilemap flip to get the final location to store */
 		if (tmap->attributes & TILEMAP_FLIPX)
@@ -1314,12 +1314,12 @@ static void pixmap_update(tilemap_t *tmap, const rectangle *cliprect)
     tile_update - update a single dirty tile
 -------------------------------------------------*/
 
-static void tile_update(tilemap_t *tmap, tilemap_logical_index logindex, UINT32 col, UINT32 row)
+static void tile_update(tilemap_t *tmap, tilemap_logical_index logindex, uint32_t col, uint32_t row)
 {
-	UINT32 x0 = tmap->tilewidth * col;
-	UINT32 y0 = tmap->tileheight * row;
+	uint32_t x0 = tmap->tilewidth * col;
+	uint32_t y0 = tmap->tileheight * row;
 	tilemap_memory_index memindex;
-	UINT32 flags;
+	uint32_t flags;
 
 	/* call the get info callback for the associated memory index */
 	memindex = tmap->logical_to_memory[logindex];
@@ -1352,14 +1352,14 @@ static void tile_update(tilemap_t *tmap, tilemap_logical_index logindex, UINT32 
     the palette_base
 -------------------------------------------------*/
 
-static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 y0, UINT32 palette_base, UINT8 category, UINT8 group, UINT8 flags, UINT8 pen_mask)
+static uint8_t tile_draw(tilemap_t *tmap, const uint8_t *pendata, uint32_t x0, uint32_t y0, uint32_t palette_base, uint8_t category, uint8_t group, uint8_t flags, uint8_t pen_mask)
 {
-	const UINT8 *penmap = tmap->pen_to_flags + group * MAX_PEN_TO_FLAGS;
+	const uint8_t *penmap = tmap->pen_to_flags + group * MAX_PEN_TO_FLAGS;
 	bitmap_t *flagsmap = tmap->flagsmap;
 	bitmap_t *pixmap = tmap->pixmap;
 	int height = tmap->tileheight;
 	int width = tmap->tilewidth;
-	UINT8 andmask = ~0, ormask = 0;
+	uint8_t andmask = ~0, ormask = 0;
 	int dx0 = 1, dy0 = 1;
 	int tx, ty;
 
@@ -1390,8 +1390,8 @@ static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 
 	/* iterate over rows */
 	for (ty = 0; ty < height; ty++)
 	{
-		UINT16 *pixptr = BITMAP_ADDR16(pixmap, y0, x0);
-		UINT8 *flagsptr = BITMAP_ADDR8(flagsmap, y0, x0);
+		uint16_t *pixptr = BITMAP_ADDR16(pixmap, y0, x0);
+		uint8_t *flagsptr = BITMAP_ADDR8(flagsmap, y0, x0);
 		int xoffs = 0;
 
 		/* pre-advance to the next row */
@@ -1402,8 +1402,8 @@ static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 
 		{
 			for (tx = 0; tx < width; tx++)
 			{
-				UINT8 pen = (*pendata++) & pen_mask;
-				UINT8 map = penmap[pen];
+				uint8_t pen = (*pendata++) & pen_mask;
+				uint8_t map = penmap[pen];
 				pixptr[xoffs] = palette_base + pen;
 				flagsptr[xoffs] = map | category;
 				andmask &= map;
@@ -1417,8 +1417,8 @@ static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 
 		{
 			for (tx = 0; tx < width; tx++)
 			{
-				UINT8 data = *pendata++;
-				UINT8 pen, map;
+				uint8_t data = *pendata++;
+				uint8_t pen, map;
 
 				pen = (data & 0x0f) & pen_mask;
 				map = penmap[pen];
@@ -1448,12 +1448,12 @@ static UINT8 tile_draw(tilemap_t *tmap, const UINT8 *pendata, UINT32 x0, UINT32 
     flagsmap appropriately
 -------------------------------------------------*/
 
-static UINT8 tile_apply_bitmask(tilemap_t *tmap, const UINT8 *maskdata, UINT32 x0, UINT32 y0, UINT8 category, UINT8 flags)
+static uint8_t tile_apply_bitmask(tilemap_t *tmap, const uint8_t *maskdata, uint32_t x0, uint32_t y0, uint8_t category, uint8_t flags)
 {
 	bitmap_t *flagsmap = tmap->flagsmap;
 	int height = tmap->tileheight;
 	int width = tmap->tilewidth;
-	UINT8 andmask = ~0, ormask = 0;
+	uint8_t andmask = ~0, ormask = 0;
 	int dx0 = 1, dy0 = 1;
 	int bitoffs = 0;
 	int tx, ty;
@@ -1475,7 +1475,7 @@ static UINT8 tile_apply_bitmask(tilemap_t *tmap, const UINT8 *maskdata, UINT32 x
 	/* iterate over rows */
 	for (ty = 0; ty < height; ty++)
 	{
-		UINT8 *flagsptr = BITMAP_ADDR8(flagsmap, y0, x0);
+		uint8_t *flagsptr = BITMAP_ADDR8(flagsmap, y0, x0);
 		int xoffs = 0;
 
 		/* pre-advance to the next row */
@@ -1484,7 +1484,7 @@ static UINT8 tile_apply_bitmask(tilemap_t *tmap, const UINT8 *maskdata, UINT32 x
 		/* anywhere the bitmask is 0 should be transparent */
 		for (tx = 0; tx < width; tx++)
 		{
-			UINT8 map = flagsptr[xoffs];
+			uint8_t map = flagsptr[xoffs];
 
 			if ((maskdata[bitoffs / 8] & (0x80 >> (bitoffs & 7))) == 0)
 				map = flagsptr[xoffs] = TILEMAP_PIXEL_TRANSPARENT | category;
@@ -1510,7 +1510,7 @@ static UINT8 tile_apply_bitmask(tilemap_t *tmap, const UINT8 *maskdata, UINT32 x
     and indexed drawing code
 -------------------------------------------------*/
 
-static void configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, UINT32 flags, UINT8 priority, UINT8 priority_mask)
+static void configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, uint32_t flags, uint8_t priority, uint8_t priority_mask)
 {
 	/* start with nothing */
 	memset(blit, 0, sizeof(*blit));
@@ -1605,10 +1605,10 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 {
 	bitmap_t *priority_bitmap = tmap->machine->priority_bitmap;
 	bitmap_t *dest = blit->bitmap;
-	const UINT16 *source_baseaddr;
-	const UINT8 *mask_baseaddr;
+	const uint16_t *source_baseaddr;
+	const uint8_t *mask_baseaddr;
 	void *dest_baseaddr = NULL;
-	UINT8 *priority_baseaddr;
+	uint8_t *priority_baseaddr;
 	int dest_line_pitch_bytes = 0;
 	int dest_bytespp = 0;
 	int mincol, maxcol;
@@ -1632,7 +1632,7 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 	{
 		dest_bytespp = dest->bpp / 8;
 		dest_line_pitch_bytes = dest->rowpixels * dest_bytespp;
-		dest_baseaddr = (UINT8 *)dest->base + (y1 * dest->rowpixels + xpos) * dest_bytespp;
+		dest_baseaddr = (uint8_t *)dest->base + (y1 * dest->rowpixels + xpos) * dest_bytespp;
 	}
 
 	/* convert screen coordinates to source tilemap coordinates */
@@ -1702,9 +1702,9 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 			/* if we're rendering something, compute the pointers */
 			if (prev_trans != WHOLLY_TRANSPARENT)
 			{
-				const UINT16 *source0 = source_baseaddr + x_start;
-				void *dest0 = (UINT8 *)dest_baseaddr + x_start * dest_bytespp;
-				UINT8 *pmap0 = priority_baseaddr + x_start;
+				const uint16_t *source0 = source_baseaddr + x_start;
+				void *dest0 = (uint8_t *)dest_baseaddr + x_start * dest_bytespp;
+				uint8_t *pmap0 = priority_baseaddr + x_start;
 				int cury;
 
 				/* if we were opaque, use the opaque renderer */
@@ -1714,7 +1714,7 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 					{
 						(*blit->draw_opaque)(dest0, source0, x_end - x_start, tmap->machine->pens, pmap0, blit->tilemap_priority_code, blit->alpha);
 
-						dest0 = (UINT8 *)dest0 + dest_line_pitch_bytes;
+						dest0 = (uint8_t *)dest0 + dest_line_pitch_bytes;
 						source0 += tmap->pixmap->rowpixels;
 						pmap0 += priority_bitmap->rowpixels;
 					}
@@ -1723,12 +1723,12 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 				/* otherwise use the masked renderer */
 				else
 				{
-					const UINT8 *mask0 = mask_baseaddr + x_start;
+					const uint8_t *mask0 = mask_baseaddr + x_start;
 					for (cury = y; cury < nexty; cury++)
 					{
 						(*blit->draw_masked)(dest0, source0, mask0, blit->mask, blit->value, x_end - x_start, tmap->machine->pens, pmap0, blit->tilemap_priority_code, blit->alpha);
 
-						dest0 = (UINT8 *)dest0 + dest_line_pitch_bytes;
+						dest0 = (uint8_t *)dest0 + dest_line_pitch_bytes;
 						source0 += tmap->pixmap->rowpixels;
 						mask0 += tmap->flagsmap->rowpixels;
 						pmap0 += priority_bitmap->rowpixels;
@@ -1749,7 +1749,7 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 		priority_baseaddr += priority_bitmap->rowpixels * (nexty - y);
 		source_baseaddr += tmap->pixmap->rowpixels * (nexty - y);
 		mask_baseaddr += tmap->flagsmap->rowpixels * (nexty - y);
-		dest_baseaddr = (UINT8 *)dest_baseaddr + dest_line_pitch_bytes * (nexty - y);
+		dest_baseaddr = (uint8_t *)dest_baseaddr + dest_line_pitch_bytes * (nexty - y);
 
 		/* increment the Y counter */
 		y = nexty;
@@ -1768,19 +1768,19 @@ static void tilemap_draw_instance(tilemap_t *tmap, const blit_parameters *blit, 
 #define ROZ_PLOT_PIXEL(INPUT_VAL)											\
 do {																		\
 	if (blit->draw_masked == scanline_draw_masked_ind16)					\
-		*(UINT16 *)dest = (INPUT_VAL) + (priority >> 16);					\
+		*(uint16_t *)dest = (INPUT_VAL) + (priority >> 16);					\
 	else if (blit->draw_masked == scanline_draw_masked_rgb32)				\
-		*(UINT32 *)dest = clut[INPUT_VAL];									\
+		*(uint32_t *)dest = clut[INPUT_VAL];									\
 	else if (blit->draw_masked == scanline_draw_masked_rgb16)				\
-		*(UINT16 *)dest = clut[INPUT_VAL];									\
+		*(uint16_t *)dest = clut[INPUT_VAL];									\
 	else if (blit->draw_masked == scanline_draw_masked_rgb32_alpha)			\
-		*(UINT32 *)dest = alpha_blend_r32(*(UINT32 *)dest, clut[INPUT_VAL], alpha);	\
+		*(uint32_t *)dest = alpha_blend_r32(*(uint32_t *)dest, clut[INPUT_VAL], alpha);	\
 	else if (blit->draw_masked == scanline_draw_masked_rgb16_alpha)			\
-		*(UINT16 *)dest = alpha_blend_r16(*(UINT16 *)dest, clut[INPUT_VAL], alpha);	\
+		*(uint16_t *)dest = alpha_blend_r16(*(uint16_t *)dest, clut[INPUT_VAL], alpha);	\
 } while (0)
 
 static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy, int wraparound)
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy, int wraparound)
 {
 	const pen_t *clut = &tmap->machine->pens[blit->tilemap_priority_code >> 16];
 	bitmap_t *priority_bitmap = tmap->machine->priority_bitmap;
@@ -1791,21 +1791,21 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 	const int ymask = srcbitmap->height-1;
 	const int widthshifted = srcbitmap->width << 16;
 	const int heightshifted = srcbitmap->height << 16;
-	UINT32 priority = blit->tilemap_priority_code;
-	UINT8 mask = blit->mask;
-	UINT8 value = blit->value;
-	UINT8 alpha = blit->alpha;
-	UINT32 cx;
-	UINT32 cy;
+	uint32_t priority = blit->tilemap_priority_code;
+	uint8_t mask = blit->mask;
+	uint8_t value = blit->value;
+	uint8_t alpha = blit->alpha;
+	uint32_t cx;
+	uint32_t cy;
 	int x;
 	int sx;
 	int sy;
 	int ex;
 	int ey;
 	void *dest;
-	UINT8 *pri;
-	const UINT16 *src;
-	const UINT8 *maskptr;
+	uint8_t *pri;
+	const uint16_t *src;
+	const uint8_t *maskptr;
 	int destadvance = destbitmap->bpp / 8;
 
 	/* pre-advance based on the cliprect */
@@ -1847,7 +1847,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 				pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 				src = BITMAP_ADDR16(srcbitmap, cy, 0);
 				maskptr = BITMAP_ADDR8(flagsmap, cy, 0);
-				dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+				dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 
 				/* loop over columns */
 				while (x <= ex && cx < widthshifted)
@@ -1862,7 +1862,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 					/* advance in X */
 					cx += incxx;
 					x++;
-					dest = (UINT8 *)dest + destadvance;
+					dest = (uint8_t *)dest + destadvance;
 					pri++;
 				}
 			}
@@ -1885,7 +1885,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 			cy = starty;
 
 			/* get dest and priority pointers */
-			dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+			dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 			pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 
 			/* loop over columns */
@@ -1902,7 +1902,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 				cx += incxx;
 				cy += incxy;
 				x++;
-				dest = (UINT8 *)dest + destadvance;
+				dest = (uint8_t *)dest + destadvance;
 				pri++;
 			}
 
@@ -1925,7 +1925,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 			cy = starty;
 
 			/* get dest and priority pointers */
-			dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+			dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 			pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 
 			/* loop over columns */
@@ -1943,7 +1943,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
 				cx += incxx;
 				cy += incxy;
 				x++;
-				dest = (UINT8 *)dest + destadvance;
+				dest = (uint8_t *)dest + destadvance;
 				pri++;
 			}
 
@@ -1966,7 +1966,7 @@ static void tilemap_draw_roz_core(tilemap_t *tmap, const blit_parameters *blit,
     bitmap, setting priority only
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_null(void *dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_null(void *dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	int i;
 
@@ -1984,7 +1984,7 @@ static void scanline_draw_opaque_null(void *dest, const UINT16 *source, int coun
     bitmap using a mask, setting priority only
 -------------------------------------------------*/
 
-static void scanline_draw_masked_null(void *dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_null(void *dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	int i;
 
@@ -2004,9 +2004,9 @@ static void scanline_draw_masked_null(void *dest, const UINT16 *source, const UI
     indexed bitmap
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_ind16(void *_dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_ind16(void *_dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int pal = pcode >> 16;
 	int i;
 
@@ -2047,9 +2047,9 @@ static void scanline_draw_opaque_ind16(void *_dest, const UINT16 *source, int co
     indexed bitmap using a mask
 -------------------------------------------------*/
 
-static void scanline_draw_masked_ind16(void *_dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_ind16(void *_dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int pal = pcode >> 16;
 	int i;
 
@@ -2080,10 +2080,10 @@ static void scanline_draw_masked_ind16(void *_dest, const UINT16 *source, const 
     RGB bitmap
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_rgb16(void *_dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_rgb16(void *_dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2110,10 +2110,10 @@ static void scanline_draw_opaque_rgb16(void *_dest, const UINT16 *source, int co
     RGB bitmap using a mask
 -------------------------------------------------*/
 
-static void scanline_draw_masked_rgb16(void *_dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_rgb16(void *_dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2142,10 +2142,10 @@ static void scanline_draw_masked_rgb16(void *_dest, const UINT16 *source, const 
     16bpp RGB bitmap with alpha blending
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_rgb16_alpha(void *_dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_rgb16_alpha(void *_dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2173,10 +2173,10 @@ static void scanline_draw_opaque_rgb16_alpha(void *_dest, const UINT16 *source, 
     blending
 -------------------------------------------------*/
 
-static void scanline_draw_masked_rgb16_alpha(void *_dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_rgb16_alpha(void *_dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT16 *dest = (UINT16 *)_dest;
+	uint16_t *dest = (uint16_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2205,10 +2205,10 @@ static void scanline_draw_masked_rgb16_alpha(void *_dest, const UINT16 *source, 
     RGB bitmap
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_rgb32(void *_dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_rgb32(void *_dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT32 *dest = (UINT32 *)_dest;
+	uint32_t *dest = (uint32_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2235,10 +2235,10 @@ static void scanline_draw_opaque_rgb32(void *_dest, const UINT16 *source, int co
     RGB bitmap using a mask
 -------------------------------------------------*/
 
-static void scanline_draw_masked_rgb32(void *_dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_rgb32(void *_dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT32 *dest = (UINT32 *)_dest;
+	uint32_t *dest = (uint32_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2267,10 +2267,10 @@ static void scanline_draw_masked_rgb32(void *_dest, const UINT16 *source, const 
     32bpp RGB bitmap with alpha blending
 -------------------------------------------------*/
 
-static void scanline_draw_opaque_rgb32_alpha(void *_dest, const UINT16 *source, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_opaque_rgb32_alpha(void *_dest, const uint16_t *source, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT32 *dest = (UINT32 *)_dest;
+	uint32_t *dest = (uint32_t *)_dest;
 	int i;
 
 	/* priority case */
@@ -2298,10 +2298,10 @@ static void scanline_draw_opaque_rgb32_alpha(void *_dest, const UINT16 *source, 
     blending
 -------------------------------------------------*/
 
-static void scanline_draw_masked_rgb32_alpha(void *_dest, const UINT16 *source, const UINT8 *maskptr, int mask, int value, int count, const pen_t *pens, UINT8 *pri, UINT32 pcode, UINT8 alpha)
+static void scanline_draw_masked_rgb32_alpha(void *_dest, const uint16_t *source, const uint8_t *maskptr, int mask, int value, int count, const pen_t *pens, uint8_t *pri, uint32_t pcode, uint8_t alpha)
 {
 	const pen_t *clut = &pens[pcode >> 16];
-	UINT32 *dest = (UINT32 *)_dest;
+	uint32_t *dest = (uint32_t *)_dest;
 	int i;
 
 	/* priority case */

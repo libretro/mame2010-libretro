@@ -130,9 +130,9 @@ struct rom_entry
 {
 	const char *	_name;				/* name of the file to load */
 	const char *	_hashdata;			/* hashing informations (checksums) */
-	UINT32			_offset;			/* offset to load it to */
-	UINT32			_length;			/* length of the file */
-	UINT32			_flags;				/* flags */
+	uint32_t			_offset;			/* offset to load it to */
+	uint32_t			_length;			/* length of the file */
+	uint32_t			_flags;				/* flags */
 };
 
 
@@ -303,7 +303,7 @@ const rom_entry *rom_next_file(const rom_entry *romp);
 int rom_source_is_gamedrv(const game_driver *drv, const rom_source *source);
 
 /* return the expected size of a file given the ROM description */
-UINT32 rom_file_size(const rom_entry *romp);
+uint32_t rom_file_size(const rom_entry *romp);
 
 /* return the appropriate name for a rom region */
 astring &rom_region_name(astring &result, const game_driver *drv, const rom_source *source, const rom_entry *romp);

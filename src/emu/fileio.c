@@ -48,16 +48,16 @@ struct _path_iterator
 struct _mame_file
 {
 #ifdef DEBUG_COOKIE
-	UINT32			debug_cookie;					/* sanity checking for debugging */
+	uint32_t			debug_cookie;					/* sanity checking for debugging */
 #endif
 	astring			filename;						/* full filename */
 	core_file *		file;							/* core file pointer */
 	path_iterator	iterator;						/* iterator for paths */
-	UINT32			openflags;						/* flags we used for the open */
+	uint32_t			openflags;						/* flags we used for the open */
 	char			hash[HASH_BUF_SIZE];			/* hash data for the file */
 	zip_file *		zipfile;						/* ZIP file pointer */
-	UINT8 *			zipdata;						/* ZIP file data */
-	UINT64			ziplength;						/* ZIP file length */
+	uint8_t *			zipdata;						/* ZIP file data */
+	uint64_t			ziplength;						/* ZIP file length */
 };
 
 
@@ -80,8 +80,8 @@ struct _mame_path
 static void fileio_exit(running_machine &machine);
 
 /* file open/close */
-static file_error fopen_internal(core_options *opts, path_iterator *iterator, const char *filename, UINT32 crc, UINT32 flags, mame_file **file);
-static file_error fopen_attempt_zipped(astring &fullname, UINT32 crc, UINT32 openflags, mame_file *file);
+static file_error fopen_internal(core_options *opts, path_iterator *iterator, const char *filename, uint32_t crc, uint32_t flags, mame_file **file);
+static file_error fopen_attempt_zipped(astring &fullname, uint32_t crc, uint32_t openflags, mame_file *file);
 
 /* path iteration */
 static void path_iterator_init(path_iterator *iterator, core_options *opts, const char *searchpath);
@@ -130,7 +130,7 @@ static void fileio_exit(running_machine &machine)
     return an error code
 -------------------------------------------------*/
 
-file_error mame_fopen(const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
+file_error mame_fopen(const char *searchpath, const char *filename, uint32_t openflags, mame_file **file)
 {
 	path_iterator iterator;
 	path_iterator_init(&iterator, mame_options(), searchpath);
@@ -143,7 +143,7 @@ file_error mame_fopen(const char *searchpath, const char *filename, UINT32 openf
     and return an error code
 -------------------------------------------------*/
 
-file_error mame_fopen_crc(const char *searchpath, const char *filename, UINT32 crc, UINT32 openflags, mame_file **file)
+file_error mame_fopen_crc(const char *searchpath, const char *filename, uint32_t crc, uint32_t openflags, mame_file **file)
 {
 	path_iterator iterator;
 	path_iterator_init(&iterator, mame_options(), searchpath);
@@ -156,7 +156,7 @@ file_error mame_fopen_crc(const char *searchpath, const char *filename, UINT32 c
     return an error code
 -------------------------------------------------*/
 
-file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, UINT32 openflags, mame_file **file)
+file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, uint32_t openflags, mame_file **file)
 {
 	path_iterator iterator;
 	path_iterator_init(&iterator, opts, searchpath);
@@ -169,7 +169,7 @@ file_error mame_fopen_options(core_options *opts, const char *searchpath, const 
     or CRC and return an error code
 -------------------------------------------------*/
 
-file_error mame_fopen_crc_options(core_options *opts, const char *searchpath, const char *filename, UINT32 crc, UINT32 openflags, mame_file **file)
+file_error mame_fopen_crc_options(core_options *opts, const char *searchpath, const char *filename, uint32_t crc, uint32_t openflags, mame_file **file)
 {
 	path_iterator iterator;
 	path_iterator_init(&iterator, opts, searchpath);
@@ -182,7 +182,7 @@ file_error mame_fopen_crc_options(core_options *opts, const char *searchpath, co
     actually just an array of data in RAM
 -------------------------------------------------*/
 
-file_error mame_fopen_ram(const void *data, UINT32 length, UINT32 openflags, mame_file **file)
+file_error mame_fopen_ram(const void *data, uint32_t length, uint32_t openflags, mame_file **file)
 {
 	file_error filerr;
 
@@ -215,7 +215,7 @@ error:
     fopen_internal - open a file
 -------------------------------------------------*/
 
-static file_error fopen_internal(core_options *opts, path_iterator *iterator, const char *filename, UINT32 crc, UINT32 openflags, mame_file **file)
+static file_error fopen_internal(core_options *opts, path_iterator *iterator, const char *filename, uint32_t crc, uint32_t openflags, mame_file **file)
 {
 	file_error filerr = FILERR_NOT_FOUND;
 
@@ -273,7 +273,7 @@ static file_error fopen_internal(core_options *opts, path_iterator *iterator, co
     ZIPped file
 -------------------------------------------------*/
 
-static file_error fopen_attempt_zipped(astring &fullname, UINT32 crc, UINT32 openflags, mame_file *file)
+static file_error fopen_attempt_zipped(astring &fullname, uint32_t crc, uint32_t openflags, mame_file *file)
 {
 	astring filename;
        
@@ -330,7 +330,7 @@ static file_error fopen_attempt_zipped(astring &fullname, UINT32 crc, UINT32 ope
 		/* if we got it, read the data */
 		if (header != NULL)
 		{
-			UINT8 crcs[4];
+			uint8_t crcs[4];
 
 			file->zipfile = zip;
 			file->ziplength = header->uncompressed_length;
@@ -383,7 +383,7 @@ void mame_fclose(mame_file *file)
     searchpath
 -------------------------------------------------*/
 
-file_error mame_fclose_and_open_next(mame_file **file, const char *filename, UINT32 openflags)
+file_error mame_fclose_and_open_next(mame_file **file, const char *filename, uint32_t openflags)
 {
 	path_iterator iterator = (*file)->iterator;
 	mame_fclose(*file);
@@ -413,7 +413,7 @@ file_error mame_fcompress(mame_file *file, int level)
     mame_fseek - seek within a file
 -------------------------------------------------*/
 
-int mame_fseek(mame_file *file, INT64 offset, int whence)
+int mame_fseek(mame_file *file, int64_t offset, int whence)
 {
 	/* load the ZIP file now if we haven't yet */
 	if (file->zipfile != NULL)
@@ -434,7 +434,7 @@ int mame_fseek(mame_file *file, INT64 offset, int whence)
     mame_ftell - return the current file position
 -------------------------------------------------*/
 
-UINT64 mame_ftell(mame_file *file)
+uint64_t mame_ftell(mame_file *file)
 {
 	/* load the ZIP file now if we haven't yet */
 	if (file->zipfile != NULL)
@@ -477,7 +477,7 @@ int mame_feof(mame_file *file)
     mame_fsize - returns the size of a file
 -------------------------------------------------*/
 
-UINT64 mame_fsize(mame_file *file)
+uint64_t mame_fsize(mame_file *file)
 {
 	/* use the ZIP length if present */
 	if (file->zipfile != NULL)
@@ -500,7 +500,7 @@ UINT64 mame_fsize(mame_file *file)
     mame_fread - read from a file
 -------------------------------------------------*/
 
-UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length)
+uint32_t mame_fread(mame_file *file, void *buffer, uint32_t length)
 {
 	/* load the ZIP file now if we haven't yet */
 	if (file->zipfile != NULL)
@@ -590,7 +590,7 @@ char *mame_fgets(char *s, int n, mame_file *file)
     mame_fwrite - write to a file
 -------------------------------------------------*/
 
-UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length)
+uint32_t mame_fwrite(mame_file *file, const void *buffer, uint32_t length)
 {
 	/* write the data if we can */
 	if (file->file != NULL)
@@ -753,10 +753,10 @@ const astring &mame_file_full_name(mame_file *file)
     mame_fhash - returns the hash for a file
 -------------------------------------------------*/
 
-const char *mame_fhash(mame_file *file, UINT32 functions)
+const char *mame_fhash(mame_file *file, uint32_t functions)
 {
-	const UINT8 *filedata;
-	UINT32 wehave;
+	const uint8_t *filedata;
+	uint32_t wehave;
 
 	/* if we already have the functions we need, just return */
 	wehave = hash_data_used_functions(file->hash);
@@ -773,7 +773,7 @@ const char *mame_fhash(mame_file *file, UINT32 functions)
 		return file->hash;
 
 	/* read the data if we can */
-	filedata = (const UINT8 *)core_fbuffer(file->file);
+	filedata = (const uint8_t *)core_fbuffer(file->file);
 	if (filedata == NULL)
 		return file->hash;
 
@@ -847,7 +847,7 @@ static file_error load_zipped_file(mame_file *file)
 	assert(file->zipfile != NULL);
 
 	/* allocate some memory */
-	file->zipdata = global_alloc_array(UINT8, file->ziplength);
+	file->zipdata = global_alloc_array(uint8_t, file->ziplength);
 
 	/* read the data into our buffer and return */
 	ziperr = zip_file_decompress(file->zipfile, file->zipdata, file->ziplength);

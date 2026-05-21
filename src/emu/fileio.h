@@ -43,25 +43,25 @@ void fileio_init(running_machine *machine);
 /* ----- file open/close ----- */
 
 /* open a file in the given search path with the specified filename */
-file_error mame_fopen(const char *searchpath, const char *filename, UINT32 openflags, mame_file **file);
+file_error mame_fopen(const char *searchpath, const char *filename, uint32_t openflags, mame_file **file);
 
 /* open a file in the given search path with the specified filename or a matching CRC */
-file_error mame_fopen_crc(const char *searchpath, const char *filename, UINT32 crc, UINT32 openflags, mame_file **file);
+file_error mame_fopen_crc(const char *searchpath, const char *filename, uint32_t crc, uint32_t openflags, mame_file **file);
 
 /* open a file in the given search path with the specified filename, using the specified options */
-file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, UINT32 openflags, mame_file **file);
+file_error mame_fopen_options(core_options *opts, const char *searchpath, const char *filename, uint32_t openflags, mame_file **file);
 
 /* open a file in the given search path with the specified filename or a matching CRC, using the specified options */
-file_error mame_fopen_crc_options(core_options *opts, const char *searchpath, const char *filename, UINT32 crc, UINT32 openflags, mame_file **file);
+file_error mame_fopen_crc_options(core_options *opts, const char *searchpath, const char *filename, uint32_t crc, uint32_t openflags, mame_file **file);
 
 /* open a "file" which is actually data in RAM */
-file_error mame_fopen_ram(const void *data, UINT32 length, UINT32 openflags, mame_file **file);
+file_error mame_fopen_ram(const void *data, uint32_t length, uint32_t openflags, mame_file **file);
 
 /* close an open file */
 void mame_fclose(mame_file *file);
 
 /* close an open file, and open the next entry in the original searchpath*/
-file_error mame_fclose_and_open_next(mame_file **file, const char *filename, UINT32 openflags);
+file_error mame_fclose_and_open_next(mame_file **file, const char *filename, uint32_t openflags);
 
 /* enable/disable streaming file compression via zlib; level is 0 to disable compression, or up to 9 for max compression */
 file_error mame_fcompress(mame_file *file, int compress);
@@ -71,23 +71,23 @@ file_error mame_fcompress(mame_file *file, int compress);
 /* ----- file positioning ----- */
 
 /* adjust the file pointer within the file */
-int mame_fseek(mame_file *file, INT64 offset, int whence);
+int mame_fseek(mame_file *file, int64_t offset, int whence);
 
 /* return the current file pointer */
-UINT64 mame_ftell(mame_file *file);
+uint64_t mame_ftell(mame_file *file);
 
 /* return true if we are at the EOF */
 int mame_feof(mame_file *file);
 
 /* return the total size of the file */
-UINT64 mame_fsize(mame_file *file);
+uint64_t mame_fsize(mame_file *file);
 
 
 
 /* ----- file read ----- */
 
 /* standard binary read from a file */
-UINT32 mame_fread(mame_file *file, void *buffer, UINT32 length);
+uint32_t mame_fread(mame_file *file, void *buffer, uint32_t length);
 
 /* read one character from the file */
 int mame_fgetc(mame_file *file);
@@ -103,7 +103,7 @@ char *mame_fgets(char *s, int n, mame_file *file);
 /* ----- file write ----- */
 
 /* standard binary write to a file */
-UINT32 mame_fwrite(mame_file *file, const void *buffer, UINT32 length);
+uint32_t mame_fwrite(mame_file *file, const void *buffer, uint32_t length);
 
 /* write a line of text to the file */
 int mame_fputs(mame_file *f, const char *s);
@@ -135,7 +135,7 @@ core_file *mame_core_file(mame_file *file);
 const astring &mame_file_full_name(mame_file *file);
 
 /* return a hash string for the file with the given functions */
-const char *mame_fhash(mame_file *file, UINT32 functions);
+const char *mame_fhash(mame_file *file, uint32_t functions);
 
 
 

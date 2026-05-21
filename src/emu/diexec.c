@@ -97,7 +97,7 @@ device_config_execute_interface::~device_config_execute_interface()
 //  of clocks to cycles, rounding down if necessary
 //-------------------------------------------------
 
-UINT64 device_config_execute_interface::execute_clocks_to_cycles(UINT64 clocks) const
+uint64_t device_config_execute_interface::execute_clocks_to_cycles(uint64_t clocks) const
 {
 	return clocks;
 }
@@ -108,7 +108,7 @@ UINT64 device_config_execute_interface::execute_clocks_to_cycles(UINT64 clocks) 
 //  of cycles to clocks, rounding down if necessary
 //-------------------------------------------------
 
-UINT64 device_config_execute_interface::execute_cycles_to_clocks(UINT64 cycles) const
+uint64_t device_config_execute_interface::execute_cycles_to_clocks(uint64_t cycles) const
 {
 	return cycles;
 }
@@ -120,7 +120,7 @@ UINT64 device_config_execute_interface::execute_cycles_to_clocks(UINT64 cycles) 
 //  operation can take
 //-------------------------------------------------
 
-UINT32 device_config_execute_interface::execute_min_cycles() const
+uint32_t device_config_execute_interface::execute_min_cycles() const
 {
 	return 1;
 }
@@ -132,7 +132,7 @@ UINT32 device_config_execute_interface::execute_min_cycles() const
 //  operation can take
 //-------------------------------------------------
 
-UINT32 device_config_execute_interface::execute_max_cycles() const
+uint32_t device_config_execute_interface::execute_max_cycles() const
 {
 	return 1;
 }
@@ -143,7 +143,7 @@ UINT32 device_config_execute_interface::execute_max_cycles() const
 //  of input lines for the device
 //-------------------------------------------------
 
-UINT32 device_config_execute_interface::execute_input_lines() const
+uint32_t device_config_execute_interface::execute_input_lines() const
 {
 	return 0;
 }
@@ -154,7 +154,7 @@ UINT32 device_config_execute_interface::execute_input_lines() const
 //  IRQ vector when an acknowledge is processed
 //-------------------------------------------------
 
-UINT32 device_config_execute_interface::execute_default_irq_vector() const
+uint32_t device_config_execute_interface::execute_default_irq_vector() const
 {
 	return 0;
 }
@@ -165,7 +165,7 @@ UINT32 device_config_execute_interface::execute_default_irq_vector() const
 //  the sound interface
 //-------------------------------------------------
 
-bool device_config_execute_interface::interface_process_token(UINT32 entrytype, const machine_config_token *&tokens)
+bool device_config_execute_interface::interface_process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
 	switch (entrytype)
 	{
@@ -312,7 +312,7 @@ bool device_execute_interface::executing() const
 //  remaining in this timeslice
 //-------------------------------------------------
 
-INT32 device_execute_interface::cycles_remaining() const
+int32_t device_execute_interface::cycles_remaining() const
 {
 	return executing() ? *m_icount : 0;
 }
@@ -390,7 +390,7 @@ void device_execute_interface::set_irq_callback(device_irq_callback callback)
 //  suspend - set a suspend reason for this device
 //-------------------------------------------------
 
-void device_execute_interface::suspend(UINT32 reason, bool eatcycles)
+void device_execute_interface::suspend(uint32_t reason, bool eatcycles)
 {
 if (TEMPLOG) printf("suspend %s (%X)\n", device().tag(), reason);
 	// set the suspend reason and eat cycles flag
@@ -407,7 +407,7 @@ if (TEMPLOG) printf("suspend %s (%X)\n", device().tag(), reason);
 //  device
 //-------------------------------------------------
 
-void device_execute_interface::resume(UINT32 reason)
+void device_execute_interface::resume(uint32_t reason)
 {
 if (TEMPLOG) printf("resume %s (%X)\n", device().tag(), reason);
 	// clear the suspend reason and eat cycles flag
@@ -493,7 +493,7 @@ attotime device_execute_interface::local_time() const
 //  cycles executed on this device
 //-------------------------------------------------
 
-UINT64 device_execute_interface::total_cycles() const
+uint64_t device_execute_interface::total_cycles() const
 {
 	if (executing())
 	{
@@ -511,7 +511,7 @@ UINT64 device_execute_interface::total_cycles() const
 //  spinning devices for performance optimization)
 //-------------------------------------------------
 
-void device_execute_interface::execute_burn(INT32 cycles)
+void device_execute_interface::execute_burn(int32_t cycles)
 {
 	// by default, do nothing
 }
@@ -645,7 +645,7 @@ void device_execute_interface::interface_clock_changed()
 	m_attoseconds_per_cycle = HZ_TO_ATTOSECONDS(m_cycles_per_second);
 
 	// update the device's divisor
-	INT64 attos = m_attoseconds_per_cycle;
+	int64_t attos = m_attoseconds_per_cycle;
 	m_divshift = 0;
 	while (attos >= (1UL << 31))
 	{
@@ -926,7 +926,7 @@ if (TEMPLOG) printf("empty_queue(%s,%d,%d)\n", m_device->tag(), m_linenum, m_qin
 	// loop over all events
 	for (int curevent = 0; curevent < m_qindex; curevent++)
 	{
-		INT32 input_event = m_queue[curevent];
+		int32_t input_event = m_queue[curevent];
 
 		// set the input line state and vector
 		m_curstate = input_event & 0xff;

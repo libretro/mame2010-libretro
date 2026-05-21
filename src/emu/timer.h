@@ -45,7 +45,7 @@
 
 /* macros for a timer callback functions */
 #define TIMER_CALLBACK(name)			void name(running_machine *machine, void *ptr, int param)
-#define TIMER_DEVICE_CALLBACK(name)		void name(timer_device &timer, void *ptr, INT32 param)
+#define TIMER_DEVICE_CALLBACK(name)		void name(timer_device &timer, void *ptr, int32_t param)
 
 
 
@@ -59,8 +59,8 @@ class timer_device;
 
 
 // a timer callback looks like this
-typedef void (*timer_fired_func)(running_machine *machine, void *ptr, INT32 param);
-typedef void (*timer_device_fired_func)(timer_device &timer, void *ptr, INT32 param);
+typedef void (*timer_fired_func)(running_machine *machine, void *ptr, int32_t param);
+typedef void (*timer_device_fired_func)(timer_device &timer, void *ptr, int32_t param);
 
 
 
@@ -158,20 +158,20 @@ int timer_count_anonymous(running_machine *machine);
 emu_timer *_timer_alloc_internal(running_machine *machine, timer_fired_func callback, void *param, const char *file, int line, const char *func);
 
 /* adjust the time when this timer will fire and disable any periodic firings */
-void timer_adjust_oneshot(emu_timer *which, attotime duration, INT32 param);
+void timer_adjust_oneshot(emu_timer *which, attotime duration, int32_t param);
 
 /* adjust the time when this timer will fire and specify a period for subsequent firings */
-void timer_adjust_periodic(emu_timer *which, attotime start_delay, INT32 param, attotime period);
+void timer_adjust_periodic(emu_timer *which, attotime start_delay, int32_t param, attotime period);
 
 
 
 /* ----- anonymous timer management ----- */
 
 /* allocate a one-shot timer, which calls the callback after the given duration */
-void _timer_set_internal(running_machine *machine, attotime duration, void *ptr, INT32 param, timer_fired_func callback, const char *file, int line, const char *func);
+void _timer_set_internal(running_machine *machine, attotime duration, void *ptr, int32_t param, timer_fired_func callback, const char *file, int line, const char *func);
 
 /* allocate a pulse timer, which repeatedly calls the callback using the given period */
-void _timer_pulse_internal(running_machine *machine, attotime period, void *ptr, INT32 param, timer_fired_func callback, const char *file, int line, const char *func);
+void _timer_pulse_internal(running_machine *machine, attotime period, void *ptr, int32_t param, timer_fired_func callback, const char *file, int line, const char *func);
 
 
 
@@ -226,11 +226,11 @@ class timer_device_config : public device_config
 	friend class timer_device;
 
 	// construction/destruction
-	timer_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	timer_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 	// indexes to inline data
@@ -266,14 +266,14 @@ private:
 	void *					m_ptr;				// the pointer parameter passed to the timer callback
 
 	// periodic timers only
-	UINT64					m_start_delay;		// delay before the timer fires for the first time
-	UINT64					m_period;			// period of repeated timer firings
-	INT32					m_param;			// the integer parameter passed to the timer callback
+	uint64_t					m_start_delay;		// delay before the timer fires for the first time
+	uint64_t					m_period;			// period of repeated timer firings
+	int32_t					m_param;			// the integer parameter passed to the timer callback
 
 	// scanline timers only
 	const char *			m_screen;			// the name of the screen this timer tracks
-	UINT32					m_first_vpos;		// the first vertical scanline position the timer fires on
-	UINT32					m_increment;		// the number of scanlines between firings
+	uint32_t					m_first_vpos;		// the first vertical scanline position the timer fires on
+	uint32_t					m_increment;		// the number of scanlines between firings
 };
 
 
@@ -300,7 +300,7 @@ public:
 
 	// adjustments
 	void reset() { adjust(attotime_never, 0, attotime_never); }
-	void adjust(attotime duration, INT32 param = 0, attotime period = attotime_never) { assert(m_config.m_type == timer_device_config::TIMER_TYPE_GENERIC); timer_adjust_periodic(m_timer, duration, param, period); }
+	void adjust(attotime duration, int32_t param = 0, attotime period = attotime_never) { assert(m_config.m_type == timer_device_config::TIMER_TYPE_GENERIC); timer_adjust_periodic(m_timer, duration, param, period); }
 
 	// timing information
 	attotime time_elapsed() const { return timer_timeelapsed(m_timer); }

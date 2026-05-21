@@ -121,7 +121,7 @@ struct _object_transform
 struct _scaled_texture
 {
 	bitmap_t *			bitmap;				/* final bitmap */
-	UINT32				seqid;				/* sequence number */
+	uint32_t				seqid;				/* sequence number */
 };
 
 
@@ -136,10 +136,10 @@ struct render_texture
 	int					format;				/* format of the texture data */
 	texture_scaler_func	scaler;				/* scaling callback */
 	void *				param;				/* scaling callback parameter */
-	UINT32				curseq;				/* current sequence number */
+	uint32_t				curseq;				/* current sequence number */
 	scaled_texture		scaled[MAX_TEXTURE_SCALES];	/* array of scaled variants of this texture */
 	rgb_t *				bcglookup;			/* dynamically allocated B/C/G lookup table */
-	UINT32				bcglookup_entries;	/* number of B/C/G lookup entries allocated */
+	uint32_t				bcglookup_entries;	/* number of B/C/G lookup entries allocated */
 };
 
 
@@ -151,11 +151,11 @@ public:
 	running_machine *	machine;			/* pointer to the machine we are connected with */
 	layout_view *		curview;			/* current view */
 	layout_file *		filelist;			/* list of layout files */
-	UINT32				flags;				/* creation flags */
+	uint32_t				flags;				/* creation flags */
 	render_primitive_list primlist[NUM_PRIMLISTS];/* list of primitives */
 	int					listindex;			/* index of next primlist to use */
-	INT32				width;				/* width in pixels */
-	INT32				height;				/* height in pixels */
+	int32_t				width;				/* width in pixels */
+	int32_t				height;				/* height in pixels */
 	render_bounds		bounds;				/* bounds of the target */
 	float				pixel_aspect;		/* aspect ratio of individual pixels */
 	float				max_refresh;		/* maximum refresh rate, 0 or if none */
@@ -174,11 +174,11 @@ public:
 struct _container_item
 {
 	container_item *	next;				/* pointer to the next element in the list */
-	UINT8				type;				/* type of element */
+	uint8_t				type;				/* type of element */
 	render_bounds		bounds;				/* bounds of the element */
 	render_color		color;				/* RGBA factors */
-	UINT32				flags;				/* option flags */
-	UINT32				internal;			/* internal flags */
+	uint32_t				flags;				/* option flags */
+	uint32_t				internal;			/* internal flags */
 	float				width;				/* width of the line (lines only) */
 	render_texture *	texture;			/* pointer to the source texture (quads only) */
 };
@@ -229,8 +229,8 @@ static render_container *screen_container_list;
 static bitmap_t *screen_overlay;
 
 /* variables for tracking extents to clear */
-static INT32 clear_extents[MAX_CLEAR_EXTENTS];
-static INT32 clear_extent_count;
+static int32_t clear_extents[MAX_CLEAR_EXTENTS];
+static int32_t clear_extent_count;
 
 /* precomputed UV coordinates for various orientations */
 static const render_quad_texuv oriented_texcoords[8] =
@@ -271,13 +271,13 @@ static void add_clear_and_optimize_primitive_list(render_target *target, render_
 static void invalidate_all_render_ref(void *refptr);
 
 /* render textures */
-static int texture_get_scaled(render_texture *texture, UINT32 dwidth, UINT32 dheight, render_texinfo *texinfo, render_ref **reflist);
+static int texture_get_scaled(render_texture *texture, uint32_t dwidth, uint32_t dheight, render_texinfo *texinfo, render_ref **reflist);
 static const rgb_t *texture_get_adjusted_palette(render_texture *texture, render_container *container);
 
 /* render containers */
 static render_container *render_container_alloc(running_machine *machine);
 static void render_container_free(render_container *container);
-static container_item *render_container_item_add_generic(render_container *container, UINT8 type, float x0, float y0, float x1, float y1, rgb_t argb);
+static container_item *render_container_item_add_generic(render_container *container, uint8_t type, float x0, float y0, float x1, float y1, rgb_t argb);
 static void render_container_overlay_scale(bitmap_t *dest, const bitmap_t *source, const rectangle *sbounds, void *param);
 static void render_container_recompute_lookups(render_container *container);
 static void render_container_update_palette(render_container *container);
@@ -961,7 +961,7 @@ int render_is_live_screen(device_t *screen)
 {
 	render_target *target;
 	int screen_index;
-	UINT32 bitmask = 0;
+	uint32_t bitmask = 0;
 
 	assert(screen != NULL);
 	assert(screen->machine != NULL);
@@ -1070,7 +1070,7 @@ float render_get_ui_aspect(void)
     target
 -------------------------------------------------*/
 
-render_target *render_target_alloc(running_machine *machine, const char *layoutfile, UINT32 flags)
+render_target *render_target_alloc(running_machine *machine, const char *layoutfile, uint32_t flags)
 {
 	render_target *target;
 	render_target **nextptr;
@@ -1223,7 +1223,7 @@ const char *render_target_get_view_name(render_target *target, int viewindex)
     given view
 -------------------------------------------------*/
 
-UINT32 render_target_get_view_screens(render_target *target, int viewindex)
+uint32_t render_target_get_view_screens(render_target *target, int viewindex)
 {
 	layout_file *file;
 	layout_view *view;
@@ -1244,7 +1244,7 @@ UINT32 render_target_get_view_screens(render_target *target, int viewindex)
     pixel aspect of a target
 -------------------------------------------------*/
 
-void render_target_get_bounds(render_target *target, INT32 *width, INT32 *height, float *pixel_aspect)
+void render_target_get_bounds(render_target *target, int32_t *width, int32_t *height, float *pixel_aspect)
 {
 	if (width != NULL)
 #ifdef WIIU
@@ -1268,7 +1268,7 @@ void render_target_get_bounds(render_target *target, INT32 *width, INT32 *height
     pixel aspect of a target
 -------------------------------------------------*/
 
-void render_target_set_bounds(render_target *target, INT32 width, INT32 height, float pixel_aspect)
+void render_target_set_bounds(render_target *target, int32_t width, int32_t height, float pixel_aspect)
 {
 	target->width = width;
 	target->height = height;
@@ -1413,7 +1413,7 @@ void render_target_set_max_texture_size(render_target *target, int maxwidth, int
     the current layout and proposed new parameters
 -------------------------------------------------*/
 
-void render_target_compute_visible_area(render_target *target, INT32 target_width, INT32 target_height, float target_pixel_aspect, int target_orientation, INT32 *visible_width, INT32 *visible_height)
+void render_target_compute_visible_area(render_target *target, int32_t target_width, int32_t target_height, float target_pixel_aspect, int target_orientation, int32_t *visible_width, int32_t *visible_height)
 {
 	float width, height;
 	float scale;
@@ -1463,7 +1463,7 @@ void render_target_compute_visible_area(render_target *target, INT32 target_widt
     included screens
 -------------------------------------------------*/
 
-void render_target_get_minimum_size(render_target *target, INT32 *minwidth, INT32 *minheight)
+void render_target_get_minimum_size(render_target *target, int32_t *minwidth, int32_t *minheight)
 {
 	float maxxscale = 1.0f, maxyscale = 1.0f;
 	int screens_considered = 0;
@@ -1542,7 +1542,7 @@ const render_primitive_list *render_target_get_primitives(render_target *target)
 {
 	object_transform root_xform, ui_xform;
 	int itemcount[ITEM_LAYER_MAX];
-	INT32 viswidth, visheight;
+	int32_t viswidth, visheight;
 	int layernum, listnum;
 
 	/* remember the base values if this is the first frame */
@@ -1697,7 +1697,7 @@ const render_primitive_list *render_target_get_primitives(render_target *target)
     logic for mapping points
 -------------------------------------------------*/
 
-static int render_target_map_point_internal(render_target *target, INT32 target_x, INT32 target_y, render_container *container, float *mapped_x, float *mapped_y, view_item **mapped_item)
+static int render_target_map_point_internal(render_target *target, int32_t target_x, int32_t target_y, render_container *container, float *mapped_x, float *mapped_y, view_item **mapped_item)
 {
 	float target_fx, target_fy;
 	view_item *item;
@@ -1774,7 +1774,7 @@ static int render_target_map_point_internal(render_target *target, INT32 target_
     the specified container, if possible
 -------------------------------------------------*/
 
-int render_target_map_point_container(render_target *target, INT32 target_x, INT32 target_y, render_container *container, float *container_x, float *container_y)
+int render_target_map_point_container(render_target *target, int32_t target_x, int32_t target_y, render_container *container, float *container_x, float *container_y)
 {
 	view_item *item;
 	return render_target_map_point_internal(target, target_x, target_y, container, container_x, container_y, &item);
@@ -1787,7 +1787,7 @@ int render_target_map_point_container(render_target *target, INT32 target_x, INT
     specified container, if possible
 -------------------------------------------------*/
 
-int render_target_map_point_input(render_target *target, INT32 target_x, INT32 target_y, const char **input_tag, UINT32 *input_mask, float *input_x, float *input_y)
+int render_target_map_point_input(render_target *target, int32_t target_x, int32_t target_y, const char **input_tag, uint32_t *input_mask, float *input_x, float *input_y)
 {
 	view_item *item = NULL;
 	int result;
@@ -2069,7 +2069,7 @@ static void add_container_primitives(render_target *target, render_primitive_lis
 	/* add the overlay if it exists */
 	if (container->overlaytexture != NULL && (target->layerconfig & LAYER_CONFIG_ENABLE_SCREEN_OVERLAY))
 	{
-		INT32 width, height;
+		int32_t width, height;
 
 		/* allocate a primitive */
 		prim = alloc_render_primitive(RENDER_PRIMITIVE_QUAD);
@@ -2103,8 +2103,8 @@ static void add_container_primitives(render_target *target, render_primitive_lis
 
 static void add_element_primitives(render_target *target, render_primitive_list *list, const object_transform *xform, const layout_element *element, int state, int blendmode)
 {
-	INT32 width = render_round_nearest(xform->xscale);
-	INT32 height = render_round_nearest(xform->yscale);
+	int32_t width = render_round_nearest(xform->xscale);
+	int32_t height = render_round_nearest(xform->yscale);
 	render_texture *texture;
 	render_bounds cliprect;
 	int clipped = TRUE;
@@ -2160,7 +2160,7 @@ static void add_element_primitives(render_target *target, render_primitive_list 
     init_clear_extents - reset the extents list
 -------------------------------------------------*/
 
-static void init_clear_extents(INT32 width, INT32 height)
+static void init_clear_extents(int32_t width, int32_t height)
 {
 	clear_extents[0] = -height;
 	clear_extents[1] = 1;
@@ -2177,19 +2177,19 @@ static void init_clear_extents(INT32 width, INT32 height)
 
 static int remove_clear_extent(const render_bounds *bounds)
 {
-	INT32 *max = &clear_extents[MAX_CLEAR_EXTENTS];
-	INT32 *last = &clear_extents[clear_extent_count];
-	INT32 *ext = &clear_extents[0];
-	INT32 boundsx0 = ceil(bounds->x0);
-	INT32 boundsx1 = floor(bounds->x1);
-	INT32 boundsy0 = ceil(bounds->y0);
-	INT32 boundsy1 = floor(bounds->y1);
-	INT32 y0, y1 = 0;
+	int32_t *max = &clear_extents[MAX_CLEAR_EXTENTS];
+	int32_t *last = &clear_extents[clear_extent_count];
+	int32_t *ext = &clear_extents[0];
+	int32_t boundsx0 = ceil(bounds->x0);
+	int32_t boundsx1 = floor(bounds->x1);
+	int32_t boundsy0 = ceil(bounds->y0);
+	int32_t boundsy1 = floor(bounds->y1);
+	int32_t y0, y1 = 0;
 
 	/* loop over Y extents */
 	while (ext < last)
 	{
-		INT32 *linelast;
+		int32_t *linelast;
 
 		/* first entry of each line should always be negative */
 		assert(ext[0] < 0.0f);
@@ -2199,8 +2199,8 @@ static int remove_clear_extent(const render_bounds *bounds)
 		/* do we intersect this extent? */
 		if (boundsy0 < y1 && boundsy1 > y0)
 		{
-			INT32 *xext;
-			INT32 x0, x1 = 0;
+			int32_t *xext;
+			int32_t x0, x1 = 0;
 
 			/* split the top */
 			if (y0 < boundsy0)
@@ -2313,16 +2313,16 @@ static void add_clear_extents(render_primitive_list *list)
 {
 	render_primitive *clearlist = NULL;
 	render_primitive **clearnext = &clearlist;
-	INT32 *last = &clear_extents[clear_extent_count];
-	INT32 *ext = &clear_extents[0];
-	INT32 y0, y1 = 0;
+	int32_t *last = &clear_extents[clear_extent_count];
+	int32_t *ext = &clear_extents[0];
+	int32_t y0, y1 = 0;
 
 	/* loop over all extents */
 	while (ext < last)
 	{
-		INT32 *linelast = &ext[ext[1] + 2];
-		INT32 *xext = &ext[2];
-		INT32 x0, x1 = 0;
+		int32_t *linelast = &ext[ext[1] + 2];
+		int32_t *xext = &ext[2];
+		int32_t x0, x1 = 0;
 
 		/* first entry should always be negative */
 		assert(ext[0] < 0);
@@ -2587,9 +2587,9 @@ void render_texture_set_bitmap(render_texture *texture, bitmap_t *bitmap, const 
     bitmap (if we can)
 -------------------------------------------------*/
 
-static int texture_get_scaled(render_texture *texture, UINT32 dwidth, UINT32 dheight, render_texinfo *texinfo, render_ref **reflist)
+static int texture_get_scaled(render_texture *texture, uint32_t dwidth, uint32_t dheight, render_texinfo *texinfo, render_ref **reflist)
 {
-	UINT8 bpp = (texture->format == TEXFORMAT_PALETTE16 || texture->format == TEXFORMAT_PALETTEA16 || texture->format == TEXFORMAT_RGB15 || texture->format == TEXFORMAT_YUY16) ? 16 : 32;
+	uint8_t bpp = (texture->format == TEXFORMAT_PALETTE16 || texture->format == TEXFORMAT_PALETTEA16 || texture->format == TEXFORMAT_RGB15 || texture->format == TEXFORMAT_YUY16) ? 16 : 32;
 	const rgb_t *palbase = (texture->format == TEXFORMAT_PALETTE16 || texture->format == TEXFORMAT_PALETTEA16) ? palette_entry_list_adjusted(texture->palette) : NULL;
 	scaled_texture *scaled = NULL;
 	int swidth, sheight;
@@ -2608,7 +2608,7 @@ static int texture_get_scaled(render_texture *texture, UINT32 dwidth, UINT32 dhe
 	{
 		/* add a reference and set up the source bitmap */
 		add_render_ref(reflist, texture->bitmap);
-		texinfo->base = (UINT8 *)texture->bitmap->base + (texture->sbounds.min_y * texture->bitmap->rowpixels + texture->sbounds.min_x) * (bpp / 8);
+		texinfo->base = (uint8_t *)texture->bitmap->base + (texture->sbounds.min_y * texture->bitmap->rowpixels + texture->sbounds.min_x) * (bpp / 8);
 		texinfo->rowpixels = texture->bitmap->rowpixels;
 		texinfo->width = swidth;
 		texinfo->height = sheight;
@@ -2717,9 +2717,9 @@ static const rgb_t *texture_get_adjusted_palette(render_texture *texture, render
 			}
 			for (index = 0; index < numentries; index++)
 			{
-				UINT8 r = apply_brightness_contrast_gamma(RGB_RED(adjusted[index]), container->brightness, container->contrast, container->gamma);
-				UINT8 g = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
-				UINT8 b = apply_brightness_contrast_gamma(RGB_BLUE(adjusted[index]), container->brightness, container->contrast, container->gamma);
+				uint8_t r = apply_brightness_contrast_gamma(RGB_RED(adjusted[index]), container->brightness, container->contrast, container->gamma);
+				uint8_t g = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
+				uint8_t b = apply_brightness_contrast_gamma(RGB_BLUE(adjusted[index]), container->brightness, container->contrast, container->gamma);
 				texture->bcglookup[index] = MAKE_ARGB(RGB_ALPHA(adjusted[index]), r, g, b);
 			}
 			return texture->bcglookup;
@@ -2749,7 +2749,7 @@ static const rgb_t *texture_get_adjusted_palette(render_texture *texture, render
 			/* otherwise, return the 32-entry BCG lookups */
 			for (index = 0; index < 32; index++)
 			{
-				UINT8 val = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
+				uint8_t val = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
 				texture->bcglookup[0x00 + index] = val << 0;
 				texture->bcglookup[0x20 + index] = val << 8;
 				texture->bcglookup[0x40 + index] = val << 16;
@@ -2784,7 +2784,7 @@ static const rgb_t *texture_get_adjusted_palette(render_texture *texture, render
 			/* otherwise, return the 32-entry BCG lookups */
 			for (index = 0; index < 256; index++)
 			{
-				UINT8 val = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
+				uint8_t val = apply_brightness_contrast_gamma(RGB_GREEN(adjusted[index]), container->brightness, container->contrast, container->gamma);
 				texture->bcglookup[0x000 + index] = val << 0;
 				texture->bcglookup[0x100 + index] = val << 8;
 				texture->bcglookup[0x200 + index] = val << 16;
@@ -2990,7 +2990,7 @@ render_container *render_container_get_screen(screen_device *screen)
     generic item to a container
 -------------------------------------------------*/
 
-static container_item *render_container_item_add_generic(render_container *container, UINT8 type, float x0, float y0, float x1, float y1, rgb_t argb)
+static container_item *render_container_item_add_generic(render_container *container, uint8_t type, float x0, float y0, float x1, float y1, rgb_t argb)
 {
 	container_item *item = alloc_container_item();
 
@@ -3020,7 +3020,7 @@ static container_item *render_container_item_add_generic(render_container *conta
     to the specified container
 -------------------------------------------------*/
 
-void render_container_add_line(render_container *container, float x0, float y0, float x1, float y1, float width, rgb_t argb, UINT32 flags)
+void render_container_add_line(render_container *container, float x0, float y0, float x1, float y1, float width, rgb_t argb, uint32_t flags)
 {
 	container_item *item = render_container_item_add_generic(container, CONTAINER_ITEM_LINE, x0, y0, x1, y1, argb);
 	item->width = width;
@@ -3033,7 +3033,7 @@ void render_container_add_line(render_container *container, float x0, float y0, 
     to the specified container
 -------------------------------------------------*/
 
-void render_container_add_quad(render_container *container, float x0, float y0, float x1, float y1, rgb_t argb, render_texture *texture, UINT32 flags)
+void render_container_add_quad(render_container *container, float x0, float y0, float x1, float y1, rgb_t argb, render_texture *texture, uint32_t flags)
 {
 	container_item *item = render_container_item_add_generic(container, CONTAINER_ITEM_QUAD, x0, y0, x1, y1, argb);
 	item->texture = texture;
@@ -3046,7 +3046,7 @@ void render_container_add_quad(render_container *container, float x0, float y0, 
     to the specified container
 -------------------------------------------------*/
 
-void render_container_add_char(render_container *container, float x0, float y0, float height, float aspect, rgb_t argb, render_font *font, UINT16 ch)
+void render_container_add_char(render_container *container, float x0, float y0, float height, float aspect, rgb_t argb, render_font *font, uint16_t ch)
 {
 	render_texture *texture;
 	render_bounds bounds;
@@ -3077,8 +3077,8 @@ static void render_container_overlay_scale(bitmap_t *dest, const bitmap_t *sourc
 	/* simply replicate the source bitmap over the target */
 	for (y = 0; y < dest->height; y++)
 	{
-		UINT32 *src = (UINT32 *)source->base + (y % source->height) * source->rowpixels;
-		UINT32 *dst = (UINT32 *)dest->base + y * dest->rowpixels;
+		uint32_t *src = (uint32_t *)source->base + (y % source->height) * source->rowpixels;
+		uint32_t *dst = (uint32_t *)dest->base + y * dest->rowpixels;
 		int sx = 0;
 
 		/* loop over columns */
@@ -3104,7 +3104,7 @@ static void render_container_recompute_lookups(render_container *container)
 	/* recompute the 256 entry lookup table */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 adjustedval = apply_brightness_contrast_gamma(i, container->brightness, container->contrast, container->gamma);
+		uint8_t adjustedval = apply_brightness_contrast_gamma(i, container->brightness, container->contrast, container->gamma);
 		container->bcglookup256[i + 0x000] = adjustedval << 0;
 		container->bcglookup256[i + 0x100] = adjustedval << 8;
 		container->bcglookup256[i + 0x200] = adjustedval << 16;
@@ -3114,7 +3114,7 @@ static void render_container_recompute_lookups(render_container *container)
 	/* recompute the 32 entry lookup table */
 	for (i = 0; i < 0x20; i++)
 	{
-		UINT8 adjustedval = apply_brightness_contrast_gamma(pal5bit(i), container->brightness, container->contrast, container->gamma);
+		uint8_t adjustedval = apply_brightness_contrast_gamma(pal5bit(i), container->brightness, container->contrast, container->gamma);
 		container->bcglookup32[i + 0x000] = adjustedval << 0;
 		container->bcglookup32[i + 0x020] = adjustedval << 8;
 		container->bcglookup32[i + 0x040] = adjustedval << 16;
@@ -3147,8 +3147,8 @@ static void render_container_recompute_lookups(render_container *container)
 
 static void render_container_update_palette(render_container *container)
 {
-	UINT32 mindirty, maxdirty;
-	const UINT32 *dirty;
+	uint32_t mindirty, maxdirty;
+	const uint32_t *dirty;
 
 	/* skip if no client */
 	if (container->palclient == NULL)
@@ -3162,19 +3162,19 @@ static void render_container_update_palette(render_container *container)
 	{
 		palette_t *palette = palette_client_get_palette(container->palclient);
 		const pen_t *adjusted_palette = palette_entry_list_adjusted(palette);
-		UINT32 entry32, entry;
+		uint32_t entry32, entry;
 
 		/* loop over chunks of 32 entries, since we can quickly examine 32 at a time */
 		for (entry32 = mindirty / 32; entry32 <= maxdirty / 32; entry32++)
 		{
-			UINT32 dirtybits = dirty[entry32];
+			uint32_t dirtybits = dirty[entry32];
 			if (dirtybits != 0)
 
 				/* this chunk of 32 has dirty entries; fix them up */
 				for (entry = 0; entry < 32; entry++)
 					if (dirtybits & (1 << entry))
 					{
-						UINT32 finalentry = entry32 * 32 + entry;
+						uint32_t finalentry = entry32 * 32 + entry;
 						rgb_t newval = adjusted_palette[finalentry];
 						container->bcglookup[finalentry] = (newval & 0xff000000) |
 													  container->bcglookup256[0x200 + RGB_RED(newval)] |

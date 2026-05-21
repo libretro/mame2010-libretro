@@ -77,15 +77,15 @@
 	TOKEN_UINT64_PACK2(MCONFIG_TOKEN_DEVICE_CLOCK, 8, _clock, 32),
 
 #define MDRV_DEVICE_INLINE_DATA16(_index, _data) \
-	TOKEN_UINT32_PACK3(MCONFIG_TOKEN_DEVICE_INLINE_DATA16, 8, _index, 8, (UINT16)(_data), 16), \
+	TOKEN_UINT32_PACK3(MCONFIG_TOKEN_DEVICE_INLINE_DATA16, 8, _index, 8, (uint16_t)(_data), 16), \
 
 #define MDRV_DEVICE_INLINE_DATA32(_index, _data) \
 	TOKEN_UINT32_PACK2(MCONFIG_TOKEN_DEVICE_INLINE_DATA32, 8, _index, 8), \
-	TOKEN_UINT32((UINT32)(_data)),
+	TOKEN_UINT32((uint32_t)(_data)),
 
 #define MDRV_DEVICE_INLINE_DATA64(_index, _data) \
 	TOKEN_UINT32_PACK2(MCONFIG_TOKEN_DEVICE_INLINE_DATA64, 8, _index, 8), \
-	TOKEN_UINT64((UINT64)(_data)),
+	TOKEN_UINT64((uint64_t)(_data)),
 
 #ifdef PTR64
 #define MDRV_DEVICE_INLINE_DATAPTR(_index, _data) MDRV_DEVICE_INLINE_DATA64(_index, (FPTR)(_data))
@@ -119,7 +119,7 @@ class device_missing_dependencies : public emu_exception { };
 
 
 // a device_type is simply a pointer to its alloc function
-typedef device_config *(*device_type)(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+typedef device_config *(*device_type)(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 
 
@@ -234,7 +234,7 @@ class device_config
 
 protected:
 	// construction/destruction
-	device_config(const machine_config &mconfig, device_type type, const char *name, const char *tag, const device_config *owner, UINT32 clock);
+	device_config(const machine_config &mconfig, device_type type, const char *name, const char *tag, const device_config *owner, uint32_t clock);
 	virtual ~device_config();
 
 public:
@@ -259,13 +259,13 @@ public:
 
 	// basic information getters
 	device_type type() const { return m_type; }
-	UINT32 clock() const { return m_clock; }
+	uint32_t clock() const { return m_clock; }
 	const char *name() const { return m_name; }
 	const char *tag() const { return m_tag; }
 	const void *static_config() const { return m_static_config; }
 
 	// methods that wrap both interface-level and device-level behavior
-	void process_token(UINT32 entrytype, const machine_config_token *&tokens);
+	void process_token(uint32_t entrytype, const machine_config_token *&tokens);
 	void config_complete();
 	bool validity_check(const game_driver &driver) const;
 
@@ -276,7 +276,7 @@ public:
 
 	// optional operation overrides
 protected:
-	virtual bool device_process_token(UINT32 entrytype, const machine_config_token *&tokens);
+	virtual bool device_process_token(uint32_t entrytype, const machine_config_token *&tokens);
 	virtual void device_config_complete();
 	virtual bool device_validity_check(const game_driver &driver) const;
 
@@ -294,11 +294,11 @@ protected:
 	device_config_interface *m_interface_list;		// head of interface list
 
 	const device_type		m_type;					// device type
-	UINT32					m_clock;				// device clock
+	uint32_t					m_clock;				// device clock
 
 	const machine_config &	m_machine_config;		// reference to the machine's configuration
 	const void *			m_static_config;		// static device configuration
-	UINT64					m_inline_data[16];		// array of inline configuration values
+	uint64_t					m_inline_data[16];		// array of inline configuration values
 
 	astring					m_name;					// name of the device
 
@@ -333,7 +333,7 @@ public:
 
 	// optional operation overrides
 	virtual void interface_config_complete();
-	virtual bool interface_process_token(UINT32 entrytype, const machine_config_token *&tokens);
+	virtual bool interface_process_token(uint32_t entrytype, const machine_config_token *&tokens);
 	virtual bool interface_validity_check(const game_driver &driver) const;
 
 protected:
@@ -397,13 +397,13 @@ public:
 	void reset();
 
 	// clock/timing accessors
-	UINT32 clock() const { return m_clock; }
-	UINT32 unscaled_clock() const { return m_unscaled_clock; }
-	void set_unscaled_clock(UINT32 clock);
+	uint32_t clock() const { return m_clock; }
+	uint32_t unscaled_clock() const { return m_unscaled_clock; }
+	void set_unscaled_clock(uint32_t clock);
 	double clock_scale() const { return m_clock_scale; }
 	void set_clock_scale(double clockscale);
-	attotime clocks_to_attotime(UINT64 clocks) const;
-	UINT64 attotime_to_clocks(attotime duration) const;
+	attotime clocks_to_attotime(uint64_t clocks) const;
+	uint64_t attotime_to_clocks(attotime duration) const;
 
 	// debugging
 	device_debug *debug() const { return m_debug; }
@@ -456,11 +456,11 @@ protected:
 	device_interface *		m_interface_list;		// head of interface list
 
 	bool					m_started;				// true if the start function has succeeded
-	UINT32					m_clock;				// device clock
+	uint32_t					m_clock;				// device clock
 	const region_info *		m_region;				// our device-local region
 
 	const device_config &	m_baseconfig;			// reference to our device_config
-	UINT32					m_unscaled_clock;		// unscaled clock
+	uint32_t					m_unscaled_clock;		// unscaled clock
 	double					m_clock_scale;			// clock scale factor
 	attoseconds_t			m_attoseconds_per_clock;// period in attoseconds
 };

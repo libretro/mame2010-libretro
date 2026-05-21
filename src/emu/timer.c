@@ -46,13 +46,13 @@ public:
 	emu_timer *				next;			/* next timer in order in the list */
 	emu_timer *				prev;			/* previous timer in order in the list */
 	timer_fired_func		callback;		/* callback function */
-	INT32					param;			/* integer parameter */
+	int32_t					param;			/* integer parameter */
 	void *					ptr;			/* pointer parameter */
 	const char *			file;			/* file that created the timer */
 	int 					line;			/* line number that created the timer */
 	const char *			func;			/* string name of the callback function */
-	UINT8					enabled;		/* is the timer enabled? */
-	UINT8					temporary;		/* is the timer temporary? */
+	uint8_t					enabled;		/* is the timer enabled? */
+	uint8_t					temporary;		/* is the timer temporary? */
 	attotime				period;			/* the repeat frequency of the timer */
 	attotime				start;			/* time when the timer was started */
 	attotime				expire;			/* time when the timer will expire */
@@ -84,7 +84,7 @@ struct _timer_private
 
 	/* other internal states */
 	emu_timer *				callback_timer;		/* pointer to the current callback timer */
-	UINT8					callback_timer_modified; /* TRUE if the current callback timer was modified */
+	uint8_t					callback_timer_modified; /* TRUE if the current callback timer was modified */
 	attotime				callback_timer_expire_time; /* the original expiration time */
 
 	/* scheduling quanta */
@@ -663,7 +663,7 @@ static void timer_remove(emu_timer *which)
     will fire and disable any periodic firings
 -------------------------------------------------*/
 
-void timer_adjust_oneshot(emu_timer *which, attotime duration, INT32 param)
+void timer_adjust_oneshot(emu_timer *which, attotime duration, int32_t param)
 {
 	timer_adjust_periodic(which, duration, param, attotime_never);
 }
@@ -675,7 +675,7 @@ void timer_adjust_oneshot(emu_timer *which, attotime duration, INT32 param)
     subsequent firings
 -------------------------------------------------*/
 
-void timer_adjust_periodic(emu_timer *which, attotime start_delay, INT32 param, attotime period)
+void timer_adjust_periodic(emu_timer *which, attotime start_delay, int32_t param, attotime period)
 {
 	timer_private *global = which->machine->timer_data;
 	attotime time = get_current_time(which->machine);
@@ -719,7 +719,7 @@ void timer_adjust_periodic(emu_timer *which, attotime start_delay, INT32 param, 
     period
 -------------------------------------------------*/
 
-void _timer_pulse_internal(running_machine *machine, attotime period, void *ptr, INT32 param, timer_fired_func callback, const char *file, int line, const char *func)
+void _timer_pulse_internal(running_machine *machine, attotime period, void *ptr, int32_t param, timer_fired_func callback, const char *file, int line, const char *func)
 {
 	emu_timer *timer = _timer_alloc_common(machine, callback, ptr, file, line, func, FALSE);
 	timer_adjust_periodic(timer, period, param, period);
@@ -731,7 +731,7 @@ void _timer_pulse_internal(running_machine *machine, attotime period, void *ptr,
     calls the callback after the given duration
 -------------------------------------------------*/
 
-void _timer_set_internal(running_machine *machine, attotime duration, void *ptr, INT32 param, timer_fired_func callback, const char *file, int line, const char *func)
+void _timer_set_internal(running_machine *machine, attotime duration, void *ptr, int32_t param, timer_fired_func callback, const char *file, int line, const char *func)
 {
 	emu_timer *timer = _timer_alloc_common(machine, callback, ptr, file, line, func, TRUE);
 	timer_adjust_oneshot(timer, duration, param);
@@ -938,7 +938,7 @@ void timer_print_first_timer(running_machine *machine)
 //  timer_device_config - constructor
 //-------------------------------------------------
 
-timer_device_config::timer_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+timer_device_config::timer_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Timer", tag, owner, clock),
 	  m_type(TIMER_TYPE_GENERIC),
 	  m_callback(NULL),
@@ -958,7 +958,7 @@ timer_device_config::timer_device_config(const machine_config &mconfig, const ch
 //  configuration object
 //-------------------------------------------------
 
-device_config *timer_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *timer_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(timer_device_config(mconfig, tag, owner, clock));
 }
@@ -986,12 +986,12 @@ void timer_device_config::device_config_complete()
 	m_type = static_cast<timer_type>(m_inline_data[INLINE_TYPE]);
 	m_callback = reinterpret_cast<timer_device_fired_func>(m_inline_data[INLINE_CALLBACK]);
 	m_ptr = reinterpret_cast<void *>(m_inline_data[INLINE_PTR]);
-	m_start_delay = static_cast<UINT64>(m_inline_data[INLINE_DELAY]);
-	m_period = static_cast<UINT64>(m_inline_data[INLINE_PERIOD]);
-	m_param = static_cast<UINT32>(m_inline_data[INLINE_PARAM]);
+	m_start_delay = static_cast<uint64_t>(m_inline_data[INLINE_DELAY]);
+	m_period = static_cast<uint64_t>(m_inline_data[INLINE_PERIOD]);
+	m_param = static_cast<uint32_t>(m_inline_data[INLINE_PARAM]);
 	m_screen = reinterpret_cast<const char *>(m_inline_data[INLINE_SCREEN]);
-	m_first_vpos = static_cast<INT16>(m_inline_data[INLINE_FIRST_VPOS]);
-	m_increment = static_cast<INT16>(m_inline_data[INLINE_INCREMENT]);
+	m_first_vpos = static_cast<int16_t>(m_inline_data[INLINE_FIRST_VPOS]);
+	m_increment = static_cast<int16_t>(m_inline_data[INLINE_INCREMENT]);
 }
 
 

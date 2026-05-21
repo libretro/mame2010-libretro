@@ -122,7 +122,7 @@ struct _parameter_item
 {
 	parameter_item *	next;							/* next item in list */
 	astring				text;							/* name of the item */
-	UINT64				value;							/* value of the item */
+	uint64_t				value;							/* value of the item */
 	int					valformat;						/* format of value */
 	astring				curtext;						/* name of the current item */
 };
@@ -132,13 +132,13 @@ struct _parameter_item
 typedef struct _cheat_parameter cheat_parameter;
 struct _cheat_parameter
 {
-	UINT64				minval;							/* minimum value */
+	uint64_t				minval;							/* minimum value */
 	int					minformat;						/* format of minimum value */
-	UINT64				maxval;							/* maximum value */
+	uint64_t				maxval;							/* maximum value */
 	int					maxformat;						/* format of maximum value */
-	UINT64				stepval;						/* step value */
+	uint64_t				stepval;						/* step value */
 	int					stepformat;						/* format of step value */
-	UINT64				value;							/* live value of the parameter */
+	uint64_t				value;							/* live value of the parameter */
 	char				valuestring[32];				/* small space for a value string */
 	parameter_item *	itemlist;						/* list of items */
 };
@@ -150,7 +150,7 @@ struct _output_argument
 {
 	output_argument *	next;							/* link to next argument */
 	parsed_expression *	expression;						/* expression for argument */
-	UINT64				count;							/* number of repetitions */
+	uint64_t				count;							/* number of repetitions */
 };
 
 
@@ -163,8 +163,8 @@ struct _script_entry
 	parsed_expression *	expression;						/* expression to execute */
 	astring				format;							/* string format to print */
 	output_argument *	arglist;						/* list of arguments */
-	INT8				line;							/* which line to print on */
-	UINT8				justify;						/* justification when printing */
+	int8_t				line;							/* which line to print on */
+	uint8_t				justify;						/* justification when printing */
 };
 
 
@@ -188,9 +188,9 @@ struct _cheat_entry
 	cheat_script *		script[SCRIPT_STATE_COUNT];		/* up to 1 script for each state */
 	symbol_table *		symbols;						/* symbol table for this cheat */
 	script_state		state;							/* current cheat state */
-	UINT32				numtemp;						/* number of temporary variables */
-	UINT64				argindex;						/* argument index variable */
-	UINT64 *			tempvar;						/* value of the temporary variables */
+	uint32_t				numtemp;						/* number of temporary variables */
+	uint64_t				argindex;						/* argument index variable */
+	uint64_t *			tempvar;						/* value of the temporary variables */
 };
 
 
@@ -198,12 +198,12 @@ struct _cheat_entry
 struct _cheat_private
 {
 	cheat_entry *		cheatlist;						/* cheat list */
-	UINT64				framecount;						/* frame count */
+	uint64_t				framecount;						/* frame count */
 	astring				output[UI_TARGET_FONT_ROWS*2];	/* array of output strings */
-	UINT8				justify[UI_TARGET_FONT_ROWS*2];	/* justification for each string */
-	UINT8				numlines;						/* number of lines available for output */
-	INT8				lastline;						/* last line used for output */
-	UINT8				disabled;						/* true if the cheat engine is disabled */
+	uint8_t				justify[UI_TARGET_FONT_ROWS*2];	/* justification for each string */
+	uint8_t				numlines;						/* number of lines available for output */
+	int8_t				lastline;						/* last line used for output */
+	uint8_t				disabled;						/* true if the cheat engine is disabled */
 };
 
 
@@ -234,10 +234,10 @@ static void script_entry_free(running_machine *machine, script_entry *entry);
 
 static astring &quote_astring_expression(astring &string, int isattribute);
 static int validate_format(const char *filename, int line, const script_entry *entry);
-static UINT64 cheat_variable_get(void *globalref, void *ref);
-static void cheat_variable_set(void *globalref, void *ref, UINT64 value);
-static UINT64 execute_frombcd(void *globalref, void *ref, UINT32 params, const UINT64 *param);
-static UINT64 execute_tobcd(void *globalref, void *ref, UINT32 params, const UINT64 *param);
+static uint64_t cheat_variable_get(void *globalref, void *ref);
+static void cheat_variable_set(void *globalref, void *ref, uint64_t value);
+static uint64_t execute_frombcd(void *globalref, void *ref, uint32_t params, const uint64_t *param);
+static uint64_t execute_tobcd(void *globalref, void *ref, uint32_t params, const uint64_t *param);
 
 
 
@@ -334,25 +334,25 @@ INLINE int is_oneshot_parameter_cheat(const cheat_entry *cheat)
     the format
 -------------------------------------------------*/
 
-INLINE const char *format_int(astring &string, UINT64 value, int format)
+INLINE const char *format_int(astring &string, uint64_t value, int format)
 {
 	switch (format)
 	{
 		default:
 		case XML_INT_FORMAT_DECIMAL:
-			string.printf("%d", (UINT32)value);
+			string.printf("%d", (uint32_t)value);
 			break;
 
 		case XML_INT_FORMAT_DECIMAL_POUND:
-			string.printf("#%d", (UINT32)value);
+			string.printf("#%d", (uint32_t)value);
 			break;
 
 		case XML_INT_FORMAT_HEX_DOLLAR:
-			string.printf("$%X", (UINT32)value);
+			string.printf("$%X", (uint32_t)value);
 			break;
 
 		case XML_INT_FORMAT_HEX_C:
-			string.printf("0x%X", (UINT32)value);
+			string.printf("0x%X", (uint32_t)value);
 			break;
 	}
 	return string;
@@ -415,7 +415,7 @@ void cheat_reload(running_machine *machine)
 		if (image->exists())
 		{
 			char mess_cheat_filename[9];
-			UINT32	crc = image->crc();
+			uint32_t	crc = image->crc();
 			sprintf(mess_cheat_filename, "%08X", crc);
 			if (crc!=0) {
 				cheatinfo->cheatlist = cheat_list_load(machine, mess_cheat_filename);
@@ -540,7 +540,7 @@ void cheat_render_text(running_machine *machine, render_container *container)
     item
 -------------------------------------------------*/
 
-void *cheat_get_next_menu_entry(running_machine *machine, void *previous, const char **description, const char **state, UINT32 *flags)
+void *cheat_get_next_menu_entry(running_machine *machine, void *previous, const char **description, const char **state, uint32_t *flags)
 {
 	cheat_private *cheatinfo = machine->cheat_data;
 	cheat_entry *preventry = (cheat_entry *)previous;
@@ -560,7 +560,7 @@ void *cheat_get_next_menu_entry(running_machine *machine, void *previous, const 
 	{
 		if (description != NULL)
 		{
-			while (isspace((UINT8)**description))
+			while (isspace((uint8_t)**description))
 				*description += 1;
 			if (**description == 0)
 				*description = MENU_SEPARATOR_ITEM;
@@ -603,7 +603,7 @@ void *cheat_get_next_menu_entry(running_machine *machine, void *previous, const 
 		{
 			if (state != NULL)
 			{
-				sprintf(cheat->parameter->valuestring, "%d", (UINT32)cheat->parameter->value);
+				sprintf(cheat->parameter->valuestring, "%d", (uint32_t)cheat->parameter->value);
 				*state = cheat->parameter->valuestring;
 			}
 			if (flags != NULL)
@@ -679,7 +679,7 @@ int cheat_activate(running_machine *machine, void *entry)
 		if (cheat->parameter->itemlist != NULL)
 			popmessage("Activated\n %s = %s", cheat->description.cstr(), cheat->parameter->itemlist->curtext.cstr() );
 		else
-			popmessage("Activated\n %s = %d (0x%X)", cheat->description.cstr(), (UINT32)cheat->parameter->value, (UINT32)cheat->parameter->value );
+			popmessage("Activated\n %s = %d (0x%X)", cheat->description.cstr(), (uint32_t)cheat->parameter->value, (uint32_t)cheat->parameter->value );
 	}
 
 	return changed;
@@ -937,7 +937,7 @@ static void cheat_execute_script(cheat_private *cheatinfo, cheat_entry *cheat, s
 	for (entry = cheat->script[state]->entrylist; entry != NULL; entry = entry->next)
 	{
 		EXPRERR error;
-		UINT64 result;
+		uint64_t result;
 
 		/* evaluate the condition */
 		if (entry->condition != NULL)
@@ -962,7 +962,7 @@ static void cheat_execute_script(cheat_private *cheatinfo, cheat_entry *cheat, s
 		/* if there is a string to display, compute it */
 		if (entry->format.len() != 0)
 		{
-			UINT64 params[MAX_ARGUMENTS];
+			uint64_t params[MAX_ARGUMENTS];
 			output_argument *arg;
 			int curarg = 0;
 			int row;
@@ -991,14 +991,14 @@ static void cheat_execute_script(cheat_private *cheatinfo, cheat_entry *cheat, s
 
 			/* generate the astring */
 			string.printf(entry->format,
-				(UINT32)params[0],  (UINT32)params[1],  (UINT32)params[2],  (UINT32)params[3],
-				(UINT32)params[4],  (UINT32)params[5],  (UINT32)params[6],  (UINT32)params[7],
-				(UINT32)params[8],  (UINT32)params[9],  (UINT32)params[10], (UINT32)params[11],
-				(UINT32)params[12], (UINT32)params[13], (UINT32)params[14], (UINT32)params[15],
-				(UINT32)params[16], (UINT32)params[17], (UINT32)params[18], (UINT32)params[19],
-				(UINT32)params[20], (UINT32)params[21], (UINT32)params[22], (UINT32)params[23],
-				(UINT32)params[24], (UINT32)params[25], (UINT32)params[26], (UINT32)params[27],
-				(UINT32)params[28], (UINT32)params[29], (UINT32)params[30], (UINT32)params[31]);
+				(uint32_t)params[0],  (uint32_t)params[1],  (uint32_t)params[2],  (uint32_t)params[3],
+				(uint32_t)params[4],  (uint32_t)params[5],  (uint32_t)params[6],  (uint32_t)params[7],
+				(uint32_t)params[8],  (uint32_t)params[9],  (uint32_t)params[10], (uint32_t)params[11],
+				(uint32_t)params[12], (uint32_t)params[13], (uint32_t)params[14], (uint32_t)params[15],
+				(uint32_t)params[16], (uint32_t)params[17], (uint32_t)params[18], (uint32_t)params[19],
+				(uint32_t)params[20], (uint32_t)params[21], (uint32_t)params[22], (uint32_t)params[23],
+				(uint32_t)params[24], (uint32_t)params[25], (uint32_t)params[26], (uint32_t)params[27],
+				(uint32_t)params[28], (uint32_t)params[29], (uint32_t)params[30], (uint32_t)params[31]);
 		}
 	}
 }
@@ -1183,7 +1183,7 @@ static cheat_entry *cheat_entry_load(running_machine *machine, const char *filen
 
 	/* allocate memory for the cheat */
 	cheat = auto_alloc_clear(machine, cheat_entry);
-	cheat->tempvar = auto_alloc_array_clear(machine, UINT64, tempcount);
+	cheat->tempvar = auto_alloc_array_clear(machine, uint64_t, tempcount);
 	cheat->numtemp = tempcount;
 
 	/* get the description */
@@ -1885,9 +1885,9 @@ static int validate_format(const char *filename, int line, const script_entry *e
     cheat variable
 -------------------------------------------------*/
 
-static UINT64 cheat_variable_get(void *globalref, void *ref)
+static uint64_t cheat_variable_get(void *globalref, void *ref)
 {
-	return *(UINT64 *)ref;
+	return *(uint64_t *)ref;
 }
 
 
@@ -1896,9 +1896,9 @@ static UINT64 cheat_variable_get(void *globalref, void *ref)
     cheat variable
 -------------------------------------------------*/
 
-static void cheat_variable_set(void *globalref, void *ref, UINT64 value)
+static void cheat_variable_set(void *globalref, void *ref, uint64_t value)
 {
-	*(UINT64 *)ref = value;
+	*(uint64_t *)ref = value;
 }
 
 
@@ -1906,11 +1906,11 @@ static void cheat_variable_set(void *globalref, void *ref, UINT64 value)
     execute_frombcd - convert a value from BCD
 -------------------------------------------------*/
 
-static UINT64 execute_frombcd(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t execute_frombcd(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
-	UINT64 value = param[0];
-	UINT64 multiplier = 1;
-	UINT64 result = 0;
+	uint64_t value = param[0];
+	uint64_t multiplier = 1;
+	uint64_t result = 0;
 
 	while (value != 0)
 	{
@@ -1926,11 +1926,11 @@ static UINT64 execute_frombcd(void *globalref, void *ref, UINT32 params, const U
     execute_tobcd - convert a value to BCD
 -------------------------------------------------*/
 
-static UINT64 execute_tobcd(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t execute_tobcd(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
-	UINT64 value = param[0];
-	UINT64 result = 0;
-	UINT8 shift = 0;
+	uint64_t value = param[0];
+	uint64_t result = 0;
+	uint8_t shift = 0;
 
 	while (value != 0)
 	{

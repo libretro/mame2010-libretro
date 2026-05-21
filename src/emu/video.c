@@ -77,48 +77,48 @@ struct _video_global
 	osd_ticks_t				throttle_last_ticks;	/* osd_ticks the last call to throttle */
 	attotime				throttle_realtime;		/* real time the last call to throttle */
 	attotime				throttle_emutime;		/* emulated time the last call to throttle */
-	UINT32					throttle_history;		/* history of frames where we were fast enough */
+	uint32_t					throttle_history;		/* history of frames where we were fast enough */
 
 	/* dynamic speed computation */
 	osd_ticks_t 			speed_last_realtime;	/* real time at the last speed calculation */
 	attotime				speed_last_emutime;		/* emulated time at the last speed calculation */
 	double					speed_percent;			/* most recent speed percentage */
-	UINT32					partial_updates_this_frame;/* partial update counter this frame */
+	uint32_t					partial_updates_this_frame;/* partial update counter this frame */
 
 	/* overall speed computation */
-	UINT32					overall_real_seconds;	/* accumulated real seconds at normal speed */
+	uint32_t					overall_real_seconds;	/* accumulated real seconds at normal speed */
 	osd_ticks_t				overall_real_ticks;		/* accumulated real ticks at normal speed */
 	attotime				overall_emutime;		/* accumulated emulated time at normal speed */
-	UINT32					overall_valid_counter;	/* number of consecutive valid time periods */
+	uint32_t					overall_valid_counter;	/* number of consecutive valid time periods */
 
 	/* configuration */
-	UINT8					throttle;				/* flag: TRUE if we're currently throttled */
-	UINT8					fastforward;			/* flag: TRUE if we're currently fast-forwarding */
-	UINT32					seconds_to_run;			/* number of seconds to run before quitting */
-	UINT8					auto_frameskip;			/* flag: TRUE if we're automatically frameskipping */
-	UINT32					speed;					/* overall speed (*100) */
+	uint8_t					throttle;				/* flag: TRUE if we're currently throttled */
+	uint8_t					fastforward;			/* flag: TRUE if we're currently fast-forwarding */
+	uint32_t					seconds_to_run;			/* number of seconds to run before quitting */
+	uint8_t					auto_frameskip;			/* flag: TRUE if we're automatically frameskipping */
+	uint32_t					speed;					/* overall speed (*100) */
 
 	/* frameskipping */
-	UINT8					empty_skip_count;		/* number of empty frames we have skipped */
-	UINT8					frameskip_level;		/* current frameskip level */
-	UINT8					frameskip_counter;		/* counter that counts through the frameskip steps */
-	INT8					frameskip_adjust;
-	UINT8					skipping_this_frame;	/* flag: TRUE if we are skipping the current frame */
+	uint8_t					empty_skip_count;		/* number of empty frames we have skipped */
+	uint8_t					frameskip_level;		/* current frameskip level */
+	uint8_t					frameskip_counter;		/* counter that counts through the frameskip steps */
+	int8_t					frameskip_adjust;
+	uint8_t					skipping_this_frame;	/* flag: TRUE if we are skipping the current frame */
 	osd_ticks_t				average_oversleep;		/* average number of ticks the OSD oversleeps */
 
 	/* snapshot stuff */
 	render_target *			snap_target;			/* screen shapshot target */
 	bitmap_t *				snap_bitmap;			/* screen snapshot bitmap */
-	UINT8					snap_native;			/* are we using native per-screen layouts? */
-	INT32					snap_width;				/* width of snapshots (0 == auto) */
-	INT32					snap_height;			/* height of snapshots (0 == auto) */
+	uint8_t					snap_native;			/* are we using native per-screen layouts? */
+	int32_t					snap_width;				/* width of snapshots (0 == auto) */
+	int32_t					snap_height;			/* height of snapshots (0 == auto) */
 
 	/* movie recording */
 	mame_file *				mngfile;				/* handle to the open movie file */
 	avi_file *				avifile;				/* handle to the open movie file */
 	attotime				movie_frame_period;		/* period of a single movie frame */
 	attotime				movie_next_frame_time;	/* time of next frame */
-	UINT32					movie_frame;			/* current movie frame number */
+	uint32_t					movie_frame;			/* current movie frame number */
 };
 
 
@@ -131,7 +131,7 @@ struct _video_global
 static video_global global;
 
 /* frameskipping tables */
-static const UINT8 skiptable[FRAMESKIP_LEVELS][FRAMESKIP_LEVELS] =
+static const uint8_t skiptable[FRAMESKIP_LEVELS][FRAMESKIP_LEVELS] =
 {
 	{ 0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,1 },
@@ -177,7 +177,7 @@ static void video_mng_record_frame(running_machine *machine);
 static void video_avi_record_frame(running_machine *machine);
 
 /* software rendering */
-static void rgb888_draw_primitives(const render_primitive *primlist, void *dstdata, UINT32 width, UINT32 height, UINT32 pitch);
+static void rgb888_draw_primitives(const render_primitive *primlist, void *dstdata, uint32_t width, uint32_t height, uint32_t pitch);
 
 
 
@@ -378,7 +378,7 @@ static void init_buffered_spriteram(running_machine *machine)
 	assert_always(machine->generic.spriteram_size != 0, "Video buffers spriteram but spriteram size is 0");
 
 	/* allocate memory for the back buffer */
-	machine->generic.buffered_spriteram.u8 = auto_alloc_array(machine, UINT8, machine->generic.spriteram_size);
+	machine->generic.buffered_spriteram.u8 = auto_alloc_array(machine, uint8_t, machine->generic.spriteram_size);
 
 	/* register for saving it */
 	state_save_register_global_pointer(machine, machine->generic.buffered_spriteram.u8, machine->generic.spriteram_size);
@@ -387,7 +387,7 @@ static void init_buffered_spriteram(running_machine *machine)
 	if (machine->generic.spriteram2_size)
 	{
 		/* allocate memory */
-		machine->generic.buffered_spriteram2.u8 = auto_alloc_array(machine, UINT8, machine->generic.spriteram2_size);
+		machine->generic.buffered_spriteram2.u8 = auto_alloc_array(machine, uint8_t, machine->generic.spriteram2_size);
 
 		/* register for saving it */
 		state_save_register_global_pointer(machine, machine->generic.buffered_spriteram2.u8, machine->generic.spriteram2_size);
@@ -734,7 +734,7 @@ static void update_throttle(running_machine *machine, attotime emutime)
            restoring from a saved state
 
 */
-	static const UINT8 popcount[256] =
+	static const uint8_t popcount[256] =
 	{
 		0,1,1,2,1,2,2,3, 1,2,2,3,2,3,3,4, 1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,
 		1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5, 2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,
@@ -979,8 +979,8 @@ static void update_refresh_speed(running_machine *machine)
 		if (minrefresh != 0)
 		{
 			attoseconds_t min_frame_period = ATTOSECONDS_PER_SECOND;
-			UINT32 original_speed = original_speed_setting();
-			UINT32 target_speed;
+			uint32_t original_speed = original_speed_setting();
+			uint32_t target_speed;
 
 			/* find the screen with the shortest frame period (max refresh rate) */
 			/* note that we first check the token since this can get called before all screens are created */
@@ -1128,7 +1128,7 @@ void video_save_active_screen_snapshots(running_machine *machine)
 static void create_snapshot_bitmap(device_t *screen)
 {
 	const render_primitive_list *primlist;
-	INT32 width, height;
+	int32_t width, height;
 	int view_index;
 
 	/* select the appropriate view in our dummy target */
@@ -1394,7 +1394,7 @@ static void video_avi_record_frame(running_machine *machine)
     recording
 -------------------------------------------------*/
 
-void video_avi_add_sound(running_machine *machine, const INT16 *sound, int numsamples)
+void video_avi_add_sound(running_machine *machine, const int16_t *sound, int numsamples)
 {
 	/* only record if we have a file */
 	if (global.avifile != NULL)
@@ -1460,7 +1460,7 @@ int video_get_view_for_target(running_machine *machine, render_target *target, c
 			/* find the first view with this screen and this screen only */
 			for (viewindex = 0; ; viewindex++)
 			{
-				UINT32 viewscreens = render_target_get_view_screens(target, viewindex);
+				uint32_t viewscreens = render_target_get_view_screens(target, viewindex);
 				if (viewscreens == (1 << targetindex))
 					break;
 				if (viewscreens == 0)
@@ -1476,7 +1476,7 @@ int video_get_view_for_target(running_machine *machine, render_target *target, c
 		{
 			for (viewindex = 0; ; viewindex++)
 			{
-				UINT32 viewscreens = render_target_get_view_screens(target, viewindex);
+				uint32_t viewscreens = render_target_get_view_screens(target, viewindex);
 				if (viewscreens == (1 << scrcount) - 1)
 					break;
 				if (viewscreens == 0)
@@ -1517,7 +1517,7 @@ void video_assert_out_of_range_pixels(running_machine *machine, bitmap_t *bitmap
 	/* iterate over rows */
 	for (y = 0; y < bitmap->height; y++)
 	{
-		UINT16 *rowbase = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *rowbase = BITMAP_ADDR16(bitmap, y, 0);
 		for (x = 0; x < bitmap->width; x++)
 			assert(rowbase[x] < maxindex);
 	}
@@ -1537,7 +1537,7 @@ const attotime screen_device::k_default_frame_period = STATIC_ATTOTIME_IN_HZ(k_d
 //  screen_device_config - constructor
 //-------------------------------------------------
 
-screen_device_config::screen_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+screen_device_config::screen_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Video Screen", tag, owner, clock),
 	  m_type(SCREEN_TYPE_RASTER),
 	  m_width(0),
@@ -1559,7 +1559,7 @@ screen_device_config::screen_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *screen_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *screen_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(screen_device_config(mconfig, tag, owner, clock));
 }
@@ -1585,20 +1585,20 @@ void screen_device_config::device_config_complete()
 {
 	// move inline data into its final home
 	m_type = static_cast<screen_type_enum>(m_inline_data[INLINE_TYPE]);
-	m_width = static_cast<INT16>(m_inline_data[INLINE_WIDTH]);
-	m_height = static_cast<INT16>(m_inline_data[INLINE_HEIGHT]);
-	m_visarea.min_x = static_cast<INT16>(m_inline_data[INLINE_VIS_MINX]);
-	m_visarea.min_y = static_cast<INT16>(m_inline_data[INLINE_VIS_MINY]);
-	m_visarea.max_x = static_cast<INT16>(m_inline_data[INLINE_VIS_MAXX]);
-	m_visarea.max_y = static_cast<INT16>(m_inline_data[INLINE_VIS_MAXY]);
+	m_width = static_cast<int16_t>(m_inline_data[INLINE_WIDTH]);
+	m_height = static_cast<int16_t>(m_inline_data[INLINE_HEIGHT]);
+	m_visarea.min_x = static_cast<int16_t>(m_inline_data[INLINE_VIS_MINX]);
+	m_visarea.min_y = static_cast<int16_t>(m_inline_data[INLINE_VIS_MINY]);
+	m_visarea.max_x = static_cast<int16_t>(m_inline_data[INLINE_VIS_MAXX]);
+	m_visarea.max_y = static_cast<int16_t>(m_inline_data[INLINE_VIS_MAXY]);
 	m_oldstyle_vblank_supplied = (m_inline_data[INLINE_OLDVBLANK] != 0);
 	m_refresh = m_inline_data[INLINE_REFRESH];
 	m_vblank = m_inline_data[INLINE_VBLANK];
 	m_format = static_cast<bitmap_format>(m_inline_data[INLINE_FORMAT]);
-	m_xoffset = static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_XOFFSET])) / (double)(1 << 24);
-	m_yoffset = static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_YOFFSET])) / (double)(1 << 24);
-	m_xscale = (m_inline_data[INLINE_XSCALE] == 0) ? 1.0 : (static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_XSCALE])) / (double)(1 << 24));
-	m_yscale = (m_inline_data[INLINE_YSCALE] == 0) ? 1.0 : (static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_YSCALE])) / (double)(1 << 24));
+	m_xoffset = static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_XOFFSET])) / (double)(1 << 24);
+	m_yoffset = static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_YOFFSET])) / (double)(1 << 24);
+	m_xscale = (m_inline_data[INLINE_XSCALE] == 0) ? 1.0 : (static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_XSCALE])) / (double)(1 << 24));
+	m_yscale = (m_inline_data[INLINE_YSCALE] == 0) ? 1.0 : (static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_YSCALE])) / (double)(1 << 24));
 }
 
 
@@ -1966,7 +1966,7 @@ bool screen_device::update_partial(int scanline)
 	bool result = false;
 	if (clip.min_y <= clip.max_y)
 	{
-		UINT32 flags = UPDATE_HAS_NOT_CHANGED;
+		uint32_t flags = UPDATE_HAS_NOT_CHANGED;
 
 #if 0
 		LOG_PARTIAL_UPDATES(("updating %d-%d\n", clip.min_y, clip.max_y));
@@ -2274,20 +2274,20 @@ void screen_device::update_burnin()
 	int dstheight = m_burnin->height;
 	int xstep = (srcwidth << 16) / dstwidth;
 	int ystep = (srcheight << 16) / dstheight;
-	int xstart = ((UINT32)rand() % 32767) * xstep / 32767;
-	int ystart = ((UINT32)rand() % 32767) * ystep / 32767;
+	int xstart = ((uint32_t)rand() % 32767) * xstep / 32767;
+	int ystart = ((uint32_t)rand() % 32767) * ystep / 32767;
 	int srcx, srcy;
 	int x, y;
 
 	// iterate over rows in the destination
 	for (y = 0, srcy = ystart; y < dstheight; y++, srcy += ystep)
 	{
-		UINT64 *dst = BITMAP_ADDR64(m_burnin, y, 0);
+		uint64_t *dst = BITMAP_ADDR64(m_burnin, y, 0);
 
 		// handle the 16-bit palettized case
 		if (srcbitmap->format == BITMAP_FORMAT_INDEXED16)
 		{
-			const UINT16 *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
+			const uint16_t *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
 			const rgb_t *palette = palette_entry_list_adjusted(machine->palette);
 			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
 			{
@@ -2299,7 +2299,7 @@ void screen_device::update_burnin()
 		// handle the 15-bit RGB case
 		else if (srcbitmap->format == BITMAP_FORMAT_RGB15)
 		{
-			const UINT16 *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
+			const uint16_t *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
 			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
 			{
 				rgb15_t pixel = src[srcx >> 16];
@@ -2310,7 +2310,7 @@ void screen_device::update_burnin()
 		// handle the 32-bit RGB case
 		else if (srcbitmap->format == BITMAP_FORMAT_RGB32)
 		{
-			const UINT32 *src = BITMAP_ADDR32(srcbitmap, srcy >> 16, 0);
+			const uint32_t *src = BITMAP_ADDR32(srcbitmap, srcy >> 16, 0);
 			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
 			{
 				rgb_t pixel = src[srcx >> 16];
@@ -2338,7 +2338,7 @@ void screen_device::finalize_burnin()
 //**************************************************************************
 
 #define FUNC_PREFIX(x)		rgb888_##x
-#define PIXEL_TYPE			UINT32
+#define PIXEL_TYPE			uint32_t
 #define SRCSHIFT_R			0
 #define SRCSHIFT_G			0
 #define SRCSHIFT_B			0

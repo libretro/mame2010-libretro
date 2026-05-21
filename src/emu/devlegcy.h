@@ -193,10 +193,10 @@ class deviceclass : public basedeviceclass										\
 																				\
 class configclass : public baseconfigclass										\
 {																				\
-	configclass(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock); \
+	configclass(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock); \
 																				\
 public:																			\
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock); \
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock); \
 	virtual device_t *alloc_device(running_machine &machine) const; 			\
 };																				\
 																				\
@@ -210,12 +210,12 @@ deviceclass::deviceclass(running_machine &_machine, const configclass &config)	\
 {																				\
 }																				\
 																				\
-configclass::configclass(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock) \
+configclass::configclass(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock) \
 	: baseconfigclass(mconfig, type, tag, owner, clock, DEVICE_GET_INFO_NAME(basename)) \
 {																				\
 }																				\
 																				\
-device_config *configclass::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock) \
+device_config *configclass::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock) \
 {																				\
 	return global_alloc(configclass(mconfig, static_alloc_device_config, tag, owner, clock)); \
 }																				\
@@ -242,7 +242,7 @@ const device_type name = configclass::static_alloc_device_config
 
 // macros to wrap legacy device functions
 #define DEVICE_GET_INFO_NAME(name)	device_get_config_##name
-#define DEVICE_GET_INFO(name)		void DEVICE_GET_INFO_NAME(name)(const device_config *device, UINT32 state, deviceinfo *info)
+#define DEVICE_GET_INFO(name)		void DEVICE_GET_INFO_NAME(name)(const device_config *device, uint32_t state, deviceinfo *info)
 #define DEVICE_GET_INFO_CALL(name)	DEVICE_GET_INFO_NAME(name)(device, state, info)
 
 #define DEVICE_VALIDITY_CHECK_NAME(name)	device_validity_check_##name
@@ -262,7 +262,7 @@ const device_type name = configclass::static_alloc_device_config
 #define DEVICE_RESET_CALL(name)		DEVICE_RESET_NAME(name)(device)
 
 #define DEVICE_EXECUTE_NAME(name)	device_execute_##name
-#define DEVICE_EXECUTE(name)		INT32 DEVICE_EXECUTE_NAME(name)(device_t *device, INT32 clocks)
+#define DEVICE_EXECUTE(name)		int32_t DEVICE_EXECUTE_NAME(name)(device_t *device, int32_t clocks)
 #define DEVICE_EXECUTE_CALL(name)	DEVICE_EXECUTE_NAME(name)(device, clocks)
 
 #define DEVICE_NVRAM_NAME(name)		device_nvram_##name
@@ -278,7 +278,7 @@ const device_type name = configclass::static_alloc_device_config
 // inline device configurations that require 32 bits of storage in the token
 #define MDRV_DEVICE_CONFIG_DATA32_EXPLICIT(_size, _offset, _val) \
 	TOKEN_UINT32_PACK3(MCONFIG_TOKEN_DEVICE_CONFIG_DATA32, 8, _size, 4, _offset, 12), \
-	TOKEN_UINT32((UINT32)(_val)),
+	TOKEN_UINT32((uint32_t)(_val)),
 
 #define MDRV_DEVICE_CONFIG_DATA32(_struct, _field, _val) \
 	MDRV_DEVICE_CONFIG_DATA32_EXPLICIT(structsizeof(_struct, _field), offsetof(_struct, _field), _val)
@@ -302,7 +302,7 @@ const device_type name = configclass::static_alloc_device_config
 // inline device configurations that require 32 bits of fixed-point storage in the token
 #define MDRV_DEVICE_CONFIG_DATAFP32_EXPLICIT(_size, _offset, _val, _fixbits) \
 	TOKEN_UINT32_PACK4(MCONFIG_TOKEN_DEVICE_CONFIG_DATAFP32, 8, _size, 4, _fixbits, 6, _offset, 12), \
-	TOKEN_UINT32((INT32)((float)(_val) * (float)(1 << (_fixbits)))),
+	TOKEN_UINT32((int32_t)((float)(_val) * (float)(1 << (_fixbits)))),
 
 #define MDRV_DEVICE_CONFIG_DATAFP32(_struct, _field, _val, _fixbits) \
 	MDRV_DEVICE_CONFIG_DATAFP32_EXPLICIT(structsizeof(_struct, _field), offsetof(_struct, _field), _val, _fixbits)
@@ -326,7 +326,7 @@ const device_type name = configclass::static_alloc_device_config
 // inline device configurations that require 64 bits of storage in the token
 #define MDRV_DEVICE_CONFIG_DATA64_EXPLICIT(_size, _offset, _val) \
 	TOKEN_UINT32_PACK3(MCONFIG_TOKEN_DEVICE_CONFIG_DATA64, 8, _size, 4, _offset, 12), \
-	TOKEN_UINT64((UINT64)(_val)),
+	TOKEN_UINT64((uint64_t)(_val)),
 
 #define MDRV_DEVICE_CONFIG_DATA64(_struct, _field, _val) \
 	MDRV_DEVICE_CONFIG_DATA64_EXPLICIT(structsizeof(_struct, _field), offsetof(_struct, _field), _val)
@@ -379,19 +379,19 @@ resource_pool &machine_get_pool(running_machine &machine);
 
 
 // device interface function types
-typedef void (*device_get_config_func)(const device_config *device, UINT32 state, deviceinfo *info);
+typedef void (*device_get_config_func)(const device_config *device, uint32_t state, deviceinfo *info);
 typedef int (*device_validity_check_func)(const game_driver *driver, const device_config *device);
 
 typedef void (*device_start_func)(device_t *device);
 typedef void (*device_stop_func)(device_t *device);
-typedef INT32 (*device_execute_func)(device_t *device, INT32 clocks);
+typedef int32_t (*device_execute_func)(device_t *device, int32_t clocks);
 typedef void (*device_reset_func)(device_t *device);
 typedef void (*device_nvram_func)(device_t *device, mame_file *file, int read_or_write);
 
 // the actual deviceinfo union
 union deviceinfo
 {
-	INT64					i;							// generic integers
+	int64_t					i;							// generic integers
 	void *					p;							// generic pointers
 	genf *  				f;							// generic function pointers
 	char *					s;							// generic strings
@@ -425,7 +425,7 @@ class legacy_device_config_base : public device_config
 
 protected:
 	// construction/destruction
-	legacy_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config);
+	legacy_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config);
 	virtual ~legacy_device_config_base();
 
 	// allocators - defined in derived classes
@@ -443,10 +443,10 @@ protected:
 	virtual bool device_validity_check(const game_driver &driver) const;
 
 	// access to legacy configuration info
-	INT64 get_legacy_config_int(UINT32 state) const;
-	void *get_legacy_config_ptr(UINT32 state) const;
-	genf *get_legacy_config_fct(UINT32 state) const;
-	const char *get_legacy_config_string(UINT32 state) const;
+	int64_t get_legacy_config_int(uint32_t state) const;
+	void *get_legacy_config_ptr(uint32_t state) const;
+	genf *get_legacy_config_fct(uint32_t state) const;
+	const char *get_legacy_config_string(uint32_t state) const;
 
 	// internal state
 	device_get_config_func	m_get_config_func;
@@ -489,7 +489,7 @@ class legacy_sound_device_config_base :	public legacy_device_config_base,
 {
 protected:
 	// construction/destruction
-	legacy_sound_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config);
+	legacy_sound_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config);
 };
 
 
@@ -515,7 +515,7 @@ class legacy_memory_device_config_base : public legacy_device_config_base,
 {
 protected:
 	// construction/destruction
-	legacy_memory_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config);
+	legacy_memory_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config);
 
 	// device_config overrides
 	virtual void device_config_complete();
@@ -550,7 +550,7 @@ class legacy_nvram_device_config_base : 	public legacy_device_config_base,
 {
 protected:
 	// construction/destruction
-	legacy_nvram_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config);
+	legacy_nvram_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config);
 };
 
 
@@ -597,7 +597,7 @@ public:
 	virtual device_image_partialhash_func get_partial_hash() const;
 protected:
 	// construction/destruction
-	legacy_image_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config);
+	legacy_image_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config);
 	virtual ~legacy_image_device_config_base();
 
 	// device_config overrides
@@ -647,8 +647,8 @@ protected:
 	legacy_image_device_base(running_machine &machine, const device_config &config);
 	// device_image_interface overrides
 	bool load_internal(const char *path, bool is_create, int create_format, option_resolution *create_args);
-	void determine_open_plan(int is_create, UINT32 *open_plan);
-	image_error_t load_image_by_path(UINT32 open_flags, const char *path);
+	void determine_open_plan(int is_create, uint32_t *open_plan);
+	image_error_t load_image_by_path(uint32_t open_flags, const char *path);
 	void clear();
 	bool is_loaded();
 

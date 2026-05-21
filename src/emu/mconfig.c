@@ -99,13 +99,13 @@ void machine_config::detokenize(const machine_config_token *tokens, const device
 	m_parse_level++;
 
 	// loop over tokens until we hit the end
-	UINT32 entrytype = MCONFIG_TOKEN_INVALID;
+	uint32_t entrytype = MCONFIG_TOKEN_INVALID;
 	while (entrytype != MCONFIG_TOKEN_END)
 	{
 		device_type devtype;
 		const char *tag;
-		UINT64 data64;
-		UINT32 clock;
+		uint64_t data64;
+		uint32_t clock;
 
 		// unpack the token from the first entry
 		TOKEN_GET_UINT32_UNPACK1(tokens, entrytype, 8);

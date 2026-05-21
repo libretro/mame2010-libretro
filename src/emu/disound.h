@@ -110,8 +110,8 @@ public:
 		sound_route(int output, int input, float gain, const char *target);
 
 		sound_route *		m_next;				// pointer to next route
-		UINT32				m_output;			// output index, or ALL_OUTPUTS
-		UINT32				m_input;			// target input index
+		uint32_t				m_output;			// output index, or ALL_OUTPUTS
+		uint32_t				m_input;			// target input index
 		float				m_gain;				// gain
 		const char *		m_target;			// target tag
 	};
@@ -120,7 +120,7 @@ public:
 
 protected:
 	// optional operation overrides
-	virtual bool interface_process_token(UINT32 entrytype, const machine_config_token *&tokens);
+	virtual bool interface_process_token(uint32_t entrytype, const machine_config_token *&tokens);
 	virtual bool interface_validity_check(const game_driver &driver) const;
 
 	void reset_routes();

@@ -17,10 +17,10 @@
     GLOBAL VARIABLES
 ***************************************************************************/
 #ifdef ANDROID
-UINT8 no_priority_size_is_wrong[1];
+uint8_t no_priority_size_is_wrong[1];
 #else
 /* if this line errors during compile, the size of NO_PRIORITY is wrong and I need to use something else */
-UINT8 no_priority_size_is_wrong[2 * (sizeof(NO_PRIORITY) == 3) - 1];
+uint8_t no_priority_size_is_wrong[2 * (sizeof(NO_PRIORITY) == 3) - 1];
 #endif
 
 
@@ -28,7 +28,7 @@ UINT8 no_priority_size_is_wrong[2 * (sizeof(NO_PRIORITY) == 3) - 1];
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-void decodechar(const gfx_element *gfx, UINT32 code, const UINT8 *src);
+void decodechar(const gfx_element *gfx, uint32_t code, const uint8_t *src);
 
 
 
@@ -41,7 +41,7 @@ void decodechar(const gfx_element *gfx, UINT32 code, const UINT8 *src);
     offset
 -------------------------------------------------*/
 
-INLINE int readbit(const UINT8 *src, unsigned int bitnum)
+INLINE int readbit(const uint8_t *src, unsigned int bitnum)
 {
 	return src[bitnum / 8] & (0x80 >> (bitnum % 8));
 }
@@ -53,7 +53,7 @@ INLINE int readbit(const UINT8 *src, unsigned int bitnum)
     than the width
 -------------------------------------------------*/
 
-INLINE INT32 normalize_xscroll(bitmap_t *bitmap, INT32 xscroll)
+INLINE int32_t normalize_xscroll(bitmap_t *bitmap, int32_t xscroll)
 {
 	return (xscroll >= 0) ? xscroll % bitmap->width : (bitmap->width - (-xscroll) % bitmap->width);
 }
@@ -65,7 +65,7 @@ INLINE INT32 normalize_xscroll(bitmap_t *bitmap, INT32 xscroll)
     than the height
 -------------------------------------------------*/
 
-INLINE INT32 normalize_yscroll(bitmap_t *bitmap, INT32 yscroll)
+INLINE int32_t normalize_yscroll(bitmap_t *bitmap, int32_t yscroll)
 {
 	return (yscroll >= 0) ? yscroll % bitmap->height : (bitmap->height - (-yscroll) % bitmap->height);
 }
@@ -95,18 +95,18 @@ void gfx_init(running_machine *machine)
 	{
 		const gfx_decode_entry *gfxdecode = &gfxdecodeinfo[curgfx];
 		const region_info *region = (gfxdecode->memory_region != NULL) ? machine->region(gfxdecode->memory_region) : NULL;
-		UINT32 region_length = (region != NULL) ? (8 * region->bytes()) : 0;
-		const UINT8 *region_base = (region != NULL) ? region->base() : NULL;
-		UINT32 xscale = (gfxdecode->xscale == 0) ? 1 : gfxdecode->xscale;
-		UINT32 yscale = (gfxdecode->yscale == 0) ? 1 : gfxdecode->yscale;
-		UINT32 *extpoffs, extxoffs[MAX_ABS_GFX_SIZE], extyoffs[MAX_ABS_GFX_SIZE];
+		uint32_t region_length = (region != NULL) ? (8 * region->bytes()) : 0;
+		const uint8_t *region_base = (region != NULL) ? region->base() : NULL;
+		uint32_t xscale = (gfxdecode->xscale == 0) ? 1 : gfxdecode->xscale;
+		uint32_t yscale = (gfxdecode->yscale == 0) ? 1 : gfxdecode->yscale;
+		uint32_t *extpoffs, extxoffs[MAX_ABS_GFX_SIZE], extyoffs[MAX_ABS_GFX_SIZE];
 		const gfx_layout *gl = gfxdecode->gfxlayout;
 		int israw = (gl->planeoffset[0] == GFX_RAW);
 		int planes = gl->planes;
-		UINT32 width = gl->width;
-		UINT32 height = gl->height;
-		UINT32 total = gl->total;
-		UINT32 charincrement = gl->charincrement;
+		uint32_t width = gl->width;
+		uint32_t height = gl->height;
+		uint32_t total = gl->total;
+		uint32_t charincrement = gl->charincrement;
 		gfx_layout glcopy;
 		int j;
 
@@ -156,7 +156,7 @@ void gfx_init(running_machine *machine)
 			/* loop over all the planes, converting fractions */
 			for (j = 0; j < planes; j++)
 			{
-				UINT32 value1 = extpoffs[j];
+				uint32_t value1 = extpoffs[j];
 				if (IS_FRAC(value1))
 				{
 					assert(region_length != 0);
@@ -167,7 +167,7 @@ void gfx_init(running_machine *machine)
 			/* loop over all the X/Y offsets, converting fractions */
 			for (j = 0; j < width; j++)
 			{
-				UINT32 value2 = extxoffs[j];
+				uint32_t value2 = extxoffs[j];
 				if (IS_FRAC(value2))
 				{
 					assert(region_length != 0);
@@ -177,7 +177,7 @@ void gfx_init(running_machine *machine)
 
 			for (j = 0; j < height; j++)
 			{
-				UINT32 value3 = extyoffs[j];
+				uint32_t value3 = extyoffs[j];
 				if (IS_FRAC(value3))
 				{
 					assert(region_length != 0);
@@ -219,13 +219,13 @@ void gfx_init(running_machine *machine)
     based on a given layout
 -------------------------------------------------*/
 
-gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, const UINT8 *srcdata, UINT32 total_colors, UINT32 color_base)
+gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, const uint8_t *srcdata, uint32_t total_colors, uint32_t color_base)
 {
 	int israw = (gl->planeoffset[0] == GFX_RAW);
 	int planes = gl->planes;
-	UINT16 width = gl->width;
-	UINT16 height = gl->height;
-	UINT32 total = gl->total;
+	uint16_t width = gl->width;
+	uint16_t height = gl->height;
+	uint32_t total = gl->total;
 	gfx_element *gfx;
 
 	/* allocate memory for the gfx_element structure */
@@ -258,7 +258,7 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
 		}
 		else
 		{
-			UINT32 *buffer = auto_alloc_array(machine, UINT32, gfx->layout.width);
+			uint32_t *buffer = auto_alloc_array(machine, uint32_t, gfx->layout.width);
 			memcpy(buffer, gfx->layout.extxoffs, sizeof(gfx->layout.extxoffs[0]) * gfx->layout.width);
 			gfx->layout.extxoffs = buffer;
 		}
@@ -273,7 +273,7 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
 		}
 		else
 		{
-			UINT32 *buffer = auto_alloc_array(machine, UINT32, gfx->layout.height);
+			uint32_t *buffer = auto_alloc_array(machine, uint32_t, gfx->layout.height);
 			memcpy(buffer, gfx->layout.extyoffs, sizeof(gfx->layout.extyoffs[0]) * gfx->layout.height);
 			gfx->layout.extyoffs = buffer;
 		}
@@ -281,10 +281,10 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
 
 	/* allocate a pen usage array for entries with 32 pens or less */
 	if (gfx->color_depth <= 32)
-		gfx->pen_usage = auto_alloc_array(machine, UINT32, gfx->total_elements);
+		gfx->pen_usage = auto_alloc_array(machine, uint32_t, gfx->total_elements);
 
 	/* allocate a dirty array */
-	gfx->dirty = auto_alloc_array(machine, UINT8, gfx->total_elements);
+	gfx->dirty = auto_alloc_array(machine, uint8_t, gfx->total_elements);
 	memset(gfx->dirty, 1, gfx->total_elements * sizeof(*gfx->dirty));
 
 	/* raw graphics case */
@@ -300,7 +300,7 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
 			gfx->flags |= GFX_ELEMENT_PACKED;
 
 		/* RAW graphics must have a pointer up front */
-		gfx->gfxdata = (UINT8 *)gfx->srcdata;
+		gfx->gfxdata = (uint8_t *)gfx->srcdata;
 	}
 
 	/* decoded graphics case */
@@ -311,7 +311,7 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
 		gfx->char_modulo = gfx->line_modulo * gfx->origheight;
 
 		/* allocate memory for the data */
-		gfx->gfxdata = auto_alloc_array(machine, UINT8, gfx->total_elements * gfx->char_modulo);
+		gfx->gfxdata = auto_alloc_array(machine, uint8_t, gfx->total_elements * gfx->char_modulo);
 	}
 
 	return gfx;
@@ -323,7 +323,7 @@ gfx_element *gfx_element_alloc(running_machine *machine, const gfx_layout *gl, c
     a gfx_element
 -------------------------------------------------*/
 
-void gfx_element_decode(const gfx_element *gfx, UINT32 code)
+void gfx_element_decode(const gfx_element *gfx, uint32_t code)
 {
 	decodechar(gfx, code, gfx->srcdata);
 }
@@ -354,9 +354,9 @@ void gfx_element_free(gfx_element *gfx)
     temporary one-off gfx_element
 -------------------------------------------------*/
 
-void gfx_element_build_temporary(gfx_element *gfx, running_machine *machine, UINT8 *base, UINT32 width, UINT32 height, UINT32 rowbytes, UINT32 color_base, UINT32 color_granularity, UINT32 flags)
+void gfx_element_build_temporary(gfx_element *gfx, running_machine *machine, uint8_t *base, uint32_t width, uint32_t height, uint32_t rowbytes, uint32_t color_base, uint32_t color_granularity, uint32_t flags)
 {
-	static UINT8 not_dirty = 0;
+	static uint8_t not_dirty = 0;
 
 	gfx->width = width;
 	gfx->height = height;
@@ -391,10 +391,10 @@ void gfx_element_build_temporary(gfx_element *gfx, running_machine *machine, UIN
     a given graphics tile
 -------------------------------------------------*/
 
-static void calc_penusage(const gfx_element *gfx, UINT32 code)
+static void calc_penusage(const gfx_element *gfx, uint32_t code)
 {
-	const UINT8 *dp = gfx->gfxdata + code * gfx->char_modulo;
-	UINT32 usage = 0;
+	const uint8_t *dp = gfx->gfxdata + code * gfx->char_modulo;
+	uint32_t usage = 0;
 	int x, y;
 
 	/* if nothing allocated, don't do it */
@@ -431,16 +431,16 @@ static void calc_penusage(const gfx_element *gfx, UINT32 code)
     on a specified layout
 -------------------------------------------------*/
 
-void decodechar(const gfx_element *gfx, UINT32 code, const UINT8 *src)
+void decodechar(const gfx_element *gfx, uint32_t code, const uint8_t *src)
 {
 	const gfx_layout *gl = &gfx->layout;
 	int israw = (gl->planeoffset[0] == GFX_RAW);
 	int planes = gl->planes;
-	UINT32 charincrement = gl->charincrement;
-	const UINT32 *poffset = gl->planeoffset;
-	const UINT32 *xoffset = gl->extxoffs ? gl->extxoffs : gl->xoffset;
-	const UINT32 *yoffset = gl->extyoffs ? gl->extyoffs : gl->yoffset;
-	UINT8 *dp = gfx->gfxdata + code * gfx->char_modulo;
+	uint32_t charincrement = gl->charincrement;
+	const uint32_t *poffset = gl->planeoffset;
+	const uint32_t *xoffset = gl->extxoffs ? gl->extxoffs : gl->xoffset;
+	const uint32_t *yoffset = gl->extyoffs ? gl->extyoffs : gl->yoffset;
+	uint8_t *dp = gfx->gfxdata + code * gfx->char_modulo;
 	int plane, x, y;
 
 	if (!israw)
@@ -507,7 +507,7 @@ void decodechar(const gfx_element *gfx, UINT32 code, const UINT8 *src)
 -------------------------------------------------*/
 
 void drawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -523,9 +523,9 @@ void drawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 }
 
 
@@ -535,8 +535,8 @@ void drawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element
 -------------------------------------------------*/
 
 void drawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -560,7 +560,7 @@ void drawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_eleme
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -576,9 +576,9 @@ void drawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_eleme
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
 }
 
 
@@ -589,8 +589,8 @@ void drawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_eleme
 -------------------------------------------------*/
 
 void drawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -607,9 +607,9 @@ void drawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_e
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
 }
 
 
@@ -620,8 +620,8 @@ void drawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_e
 -------------------------------------------------*/
 
 void drawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 transmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t transmask)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -645,7 +645,7 @@ void drawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~transmask) == 0)
@@ -661,9 +661,9 @@ void drawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
 }
 
 
@@ -674,8 +674,8 @@ void drawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 -------------------------------------------------*/
 
 void drawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		const UINT8 *pentable, const pen_t *shadowtable)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		const uint8_t *pentable, const pen_t *shadowtable)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -692,9 +692,9 @@ void drawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSTABLE16, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSTABLE16, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSTABLE32, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSTABLE32, NO_PRIORITY);
 }
 
 
@@ -705,8 +705,8 @@ void drawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 -------------------------------------------------*/
 
 void drawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 transpen, UINT8 alpha)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t transpen, uint8_t alpha)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -733,9 +733,9 @@ void drawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element 
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_ALPHA16, NO_PRIORITY);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA16, NO_PRIORITY);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_ALPHA32, NO_PRIORITY);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA32, NO_PRIORITY);
 }
 
 
@@ -750,8 +750,8 @@ void drawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element 
 -------------------------------------------------*/
 
 void drawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -774,9 +774,9 @@ void drawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 }
 
 
@@ -786,8 +786,8 @@ void drawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 -------------------------------------------------*/
 
 void drawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -818,7 +818,7 @@ void drawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_e
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -834,9 +834,9 @@ void drawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_e
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN, NO_PRIORITY);
 }
 
 
@@ -847,8 +847,8 @@ void drawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_e
 -------------------------------------------------*/
 
 void drawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -872,9 +872,9 @@ void drawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const g
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REBASE_TRANSPEN, NO_PRIORITY);
 }
 
 
@@ -885,8 +885,8 @@ void drawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const g
 -------------------------------------------------*/
 
 void drawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, UINT32 transmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, uint32_t transmask)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -917,7 +917,7 @@ void drawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~transmask) == 0)
@@ -933,9 +933,9 @@ void drawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSMASK, NO_PRIORITY);
 }
 
 
@@ -946,8 +946,8 @@ void drawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_
 -------------------------------------------------*/
 
 void drawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, const UINT8 *pentable, const pen_t *shadowtable)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, const uint8_t *pentable, const pen_t *shadowtable)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -971,9 +971,9 @@ void drawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSTABLE16, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSTABLE16, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSTABLE32, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSTABLE32, NO_PRIORITY);
 }
 
 
@@ -984,8 +984,8 @@ void drawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx
 -------------------------------------------------*/
 
 void drawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, UINT32 transpen, UINT8 alpha)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, uint32_t transpen, uint8_t alpha)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 	const pen_t *paldata;
@@ -1019,9 +1019,9 @@ void drawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_ALPHA16, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA16, NO_PRIORITY);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_ALPHA32, NO_PRIORITY);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA32, NO_PRIORITY);
 }
 
 
@@ -1037,8 +1037,8 @@ void drawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 -------------------------------------------------*/
 
 void pdrawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask)
 {
 	const pen_t *paldata;
 
@@ -1056,9 +1056,9 @@ void pdrawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_elemen
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE_PRIORITY, uint8_t);
 }
 
 
@@ -1069,8 +1069,8 @@ void pdrawgfx_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_elemen
 -------------------------------------------------*/
 
 void pdrawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transpen)
 {
 	const pen_t *paldata;
 
@@ -1093,7 +1093,7 @@ void pdrawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -1112,9 +1112,9 @@ void pdrawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, uint8_t);
 }
 
 
@@ -1125,8 +1125,8 @@ void pdrawgfx_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_elem
 -------------------------------------------------*/
 
 void pdrawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transpen)
 {
 	assert(dest != NULL);
 	assert(dest->bpp == 16 || dest->bpp == 32);
@@ -1144,9 +1144,9 @@ void pdrawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, uint8_t);
 }
 
 
@@ -1157,8 +1157,8 @@ void pdrawgfx_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_
 -------------------------------------------------*/
 
 void pdrawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, UINT32 transmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transmask)
 {
 	const pen_t *paldata;
 
@@ -1181,7 +1181,7 @@ void pdrawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~transmask) == 0)
@@ -1200,9 +1200,9 @@ void pdrawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, uint8_t);
 }
 
 
@@ -1214,8 +1214,8 @@ void pdrawgfx_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 -------------------------------------------------*/
 
 void pdrawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, const UINT8 *pentable, const pen_t *shadowtable)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, const uint8_t *pentable, const pen_t *shadowtable)
 {
 	const pen_t *paldata;
 
@@ -1234,9 +1234,9 @@ void pdrawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_el
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSTABLE16_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSTABLE16_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSTABLE32_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSTABLE32_PRIORITY, uint8_t);
 }
 
 
@@ -1248,8 +1248,8 @@ void pdrawgfx_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_el
 -------------------------------------------------*/
 
 void pdrawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, UINT32 transpen, UINT8 alpha)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transpen, uint8_t alpha)
 {
 	const pen_t *paldata;
 
@@ -1278,9 +1278,9 @@ void pdrawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFX_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_ALPHA16_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA16_PRIORITY, uint8_t);
 	else
-		DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_ALPHA32_PRIORITY, UINT8);
+		DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA32_PRIORITY, uint8_t);
 }
 
 
@@ -1296,8 +1296,8 @@ void pdrawgfx_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element
 -------------------------------------------------*/
 
 void pdrawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask)
 {
 	const pen_t *paldata;
 
@@ -1322,9 +1322,9 @@ void pdrawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_el
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE_PRIORITY, uint8_t);
 }
 
 
@@ -1335,9 +1335,9 @@ void pdrawgfxzoom_opaque(bitmap_t *dest, const rectangle *cliprect, const gfx_el
 -------------------------------------------------*/
 
 void pdrawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		uint32_t transpen)
 {
 	const pen_t *paldata;
 
@@ -1367,7 +1367,7 @@ void pdrawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -1386,9 +1386,9 @@ void pdrawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY, uint8_t);
 }
 
 
@@ -1400,9 +1400,9 @@ void pdrawgfxzoom_transpen(bitmap_t *dest, const rectangle *cliprect, const gfx_
 -------------------------------------------------*/
 
 void pdrawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		uint32_t transpen)
 {
 	/* non-zoom case */
 	if (scalex == 0x10000 && scaley == 0x10000)
@@ -1427,9 +1427,9 @@ void pdrawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const 
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REBASE_TRANSPEN_PRIORITY, uint8_t);
 }
 
 
@@ -1441,9 +1441,9 @@ void pdrawgfxzoom_transpen_raw(bitmap_t *dest, const rectangle *cliprect, const 
 -------------------------------------------------*/
 
 void pdrawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		UINT32 transmask)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		uint32_t transmask)
 {
 	const pen_t *paldata;
 
@@ -1473,7 +1473,7 @@ void pdrawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~transmask) == 0)
@@ -1492,9 +1492,9 @@ void pdrawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSMASK_PRIORITY, uint8_t);
 }
 
 
@@ -1506,9 +1506,9 @@ void pdrawgfxzoom_transmask(bitmap_t *dest, const rectangle *cliprect, const gfx
 -------------------------------------------------*/
 
 void pdrawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		const UINT8 *pentable, const pen_t *shadowtable)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		const uint8_t *pentable, const pen_t *shadowtable)
 {
 	const pen_t *paldata;
 
@@ -1534,9 +1534,9 @@ void pdrawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gf
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSTABLE16_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSTABLE16_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSTABLE32_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSTABLE32_PRIORITY, uint8_t);
 }
 
 
@@ -1549,9 +1549,9 @@ void pdrawgfxzoom_transtable(bitmap_t *dest, const rectangle *cliprect, const gf
 -------------------------------------------------*/
 
 void pdrawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		UINT32 transpen, UINT8 alpha)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		uint32_t transpen, uint8_t alpha)
 {
 	const pen_t *paldata;
 
@@ -1587,9 +1587,9 @@ void pdrawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
 
 	/* render based on dest bitmap depth */
 	if (dest->bpp == 16)
-		DRAWGFXZOOM_CORE(UINT16, PIXEL_OP_REMAP_TRANSPEN_ALPHA16_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint16_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA16_PRIORITY, uint8_t);
 	else
-		DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_ALPHA32_PRIORITY, UINT8);
+		DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_ALPHA32_PRIORITY, uint8_t);
 }
 
 
@@ -1603,7 +1603,7 @@ void pdrawgfxzoom_alpha(bitmap_t *dest, const rectangle *cliprect, const gfx_ele
     buffer to a single scanline of a bitmap
 -------------------------------------------------*/
 
-void draw_scanline8(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, const UINT8 *srcptr, const pen_t *paldata)
+void draw_scanline8(bitmap_t *bitmap, int32_t destx, int32_t desty, int32_t length, const uint8_t *srcptr, const pen_t *paldata)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1615,9 +1615,9 @@ void draw_scanline8(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, co
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 	}
 
 	/* raw copy case */
@@ -1625,9 +1625,9 @@ void draw_scanline8(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, co
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	}
 }
 
@@ -1637,7 +1637,7 @@ void draw_scanline8(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, co
     buffer to a single scanline of a bitmap
 -------------------------------------------------*/
 
-void draw_scanline16(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, const UINT16 *srcptr, const pen_t *paldata)
+void draw_scanline16(bitmap_t *bitmap, int32_t destx, int32_t desty, int32_t length, const uint16_t *srcptr, const pen_t *paldata)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1649,9 +1649,9 @@ void draw_scanline16(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 	}
 
 	/* raw copy case */
@@ -1659,9 +1659,9 @@ void draw_scanline16(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	}
 }
 
@@ -1671,7 +1671,7 @@ void draw_scanline16(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
     buffer to a single scanline of a bitmap
 -------------------------------------------------*/
 
-void draw_scanline32(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, const UINT32 *srcptr, const pen_t *paldata)
+void draw_scanline32(bitmap_t *bitmap, int32_t destx, int32_t desty, int32_t length, const uint32_t *srcptr, const pen_t *paldata)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1683,9 +1683,9 @@ void draw_scanline32(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_REMAP_OPAQUE, NO_PRIORITY);
 	}
 
 	/* raw copy case */
@@ -1693,9 +1693,9 @@ void draw_scanline32(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
 	{
 		/* 16bpp case */
 		if (bitmap->bpp == 16)
-			DRAWSCANLINE_CORE(UINT16, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint16_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 		else
-			DRAWSCANLINE_CORE(UINT32, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+			DRAWSCANLINE_CORE(uint32_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	}
 }
 
@@ -1710,16 +1710,16 @@ void draw_scanline32(bitmap_t *bitmap, INT32 destx, INT32 desty, INT32 length, c
     scanline of a bitmap to an 8bpp buffer
 -------------------------------------------------*/
 
-void extract_scanline8(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, UINT8 *destptr)
+void extract_scanline8(bitmap_t *bitmap, int32_t srcx, int32_t srcy, int32_t length, uint8_t *destptr)
 {
 	assert(bitmap != NULL);
 	assert(bitmap->bpp == 16 || bitmap->bpp == 32);
 
 	/* 16bpp case */
 	if (bitmap->bpp == 16)
-		EXTRACTSCANLINE_CORE(UINT16);
+		EXTRACTSCANLINE_CORE(uint16_t);
 	else
-		EXTRACTSCANLINE_CORE(UINT32);
+		EXTRACTSCANLINE_CORE(uint32_t);
 }
 
 
@@ -1728,16 +1728,16 @@ void extract_scanline8(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, U
     scanline of a bitmap to a 16bpp buffer
 -------------------------------------------------*/
 
-void extract_scanline16(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, UINT16 *destptr)
+void extract_scanline16(bitmap_t *bitmap, int32_t srcx, int32_t srcy, int32_t length, uint16_t *destptr)
 {
 	assert(bitmap != NULL);
 	assert(bitmap->bpp == 16 || bitmap->bpp == 32);
 
 	/* 16bpp case */
 	if (bitmap->bpp == 16)
-		EXTRACTSCANLINE_CORE(UINT16);
+		EXTRACTSCANLINE_CORE(uint16_t);
 	else
-		EXTRACTSCANLINE_CORE(UINT32);
+		EXTRACTSCANLINE_CORE(uint32_t);
 }
 
 
@@ -1746,16 +1746,16 @@ void extract_scanline16(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, 
     scanline of a bitmap to a 32bpp buffer
 -------------------------------------------------*/
 
-void extract_scanline32(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, UINT32 *destptr)
+void extract_scanline32(bitmap_t *bitmap, int32_t srcx, int32_t srcy, int32_t length, uint32_t *destptr)
 {
 	assert(bitmap != NULL);
 	assert(bitmap->bpp == 16 || bitmap->bpp == 32);
 
 	/* 16bpp case */
 	if (bitmap->bpp == 16)
-		EXTRACTSCANLINE_CORE(UINT16);
+		EXTRACTSCANLINE_CORE(uint16_t);
 	else
-		EXTRACTSCANLINE_CORE(UINT32);
+		EXTRACTSCANLINE_CORE(uint32_t);
 }
 
 
@@ -1769,7 +1769,7 @@ void extract_scanline32(bitmap_t *bitmap, INT32 srcx, INT32 srcy, INT32 length, 
     copying all unclipped pixels
 -------------------------------------------------*/
 
-void copybitmap(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32 destx, INT32 desty, const rectangle *cliprect)
+void copybitmap(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, int32_t destx, int32_t desty, const rectangle *cliprect)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1779,11 +1779,11 @@ void copybitmap(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32 destx
 	assert(src->bpp == dest->bpp);
 
 	if (dest->bpp == 8)
-		COPYBITMAP_CORE(UINT8, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYBITMAP_CORE(uint8_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	else if (dest->bpp == 16)
-		COPYBITMAP_CORE(UINT16, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYBITMAP_CORE(uint16_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	else
-		COPYBITMAP_CORE(UINT32, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYBITMAP_CORE(uint32_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 }
 
 
@@ -1793,7 +1793,7 @@ void copybitmap(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32 destx
     those that match transpen
 -------------------------------------------------*/
 
-void copybitmap_trans(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32 destx, INT32 desty, const rectangle *cliprect, UINT32 transpen)
+void copybitmap_trans(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, int32_t destx, int32_t desty, const rectangle *cliprect, uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1807,21 +1807,21 @@ void copybitmap_trans(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32
 		if (transpen > 0xff)
 			copybitmap(dest, src, flipx, flipy, destx, desty, cliprect);
 		else
-			COPYBITMAP_CORE(UINT8, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+			COPYBITMAP_CORE(uint8_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 	}
 	else if (dest->bpp == 16)
 	{
 		if (transpen > 0xffff)
 			copybitmap(dest, src, flipx, flipy, destx, desty, cliprect);
 		else
-			COPYBITMAP_CORE(UINT16, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+			COPYBITMAP_CORE(uint16_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 	}
 	else
 	{
 		if (transpen == 0xffffffff)
 			copybitmap(dest, src, flipx, flipy, destx, desty, cliprect);
 		else
-			COPYBITMAP_CORE(UINT32, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+			COPYBITMAP_CORE(uint32_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 	}
 }
 
@@ -1837,7 +1837,7 @@ void copybitmap_trans(bitmap_t *dest, bitmap_t *src, int flipx, int flipy, INT32
     applying scrolling to one or more rows/colums
 -------------------------------------------------*/
 
-void copyscrollbitmap(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const INT32 *rowscroll, UINT32 numcols, const INT32 *colscroll, const rectangle *cliprect)
+void copyscrollbitmap(bitmap_t *dest, bitmap_t *src, uint32_t numrows, const int32_t *rowscroll, uint32_t numcols, const int32_t *colscroll, const rectangle *cliprect)
 {
 	/* just call through to the transparent case as the underlying copybitmap will
        optimize for pen == 0xffffffff */
@@ -1852,7 +1852,7 @@ void copyscrollbitmap(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const INT32
     scrolling to one or more rows/colums
 -------------------------------------------------*/
 
-void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const INT32 *rowscroll, UINT32 numcols, const INT32 *colscroll, const rectangle *cliprect, UINT32 transpen)
+void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, uint32_t numrows, const int32_t *rowscroll, uint32_t numcols, const int32_t *colscroll, const rectangle *cliprect, uint32_t transpen)
 {
 	/* no rowscroll and no colscroll means no scroll */
 	if (numrows == 0 && numcols == 0)
@@ -1877,9 +1877,9 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
 	/* fully scrolling X,Y playfield */
 	if (numrows <= 1 && numcols <= 1)
 	{
-		INT32 xscroll = normalize_xscroll(src, (numrows == 0) ? 0 : rowscroll[0]);
-		INT32 yscroll = normalize_yscroll(src, (numcols == 0) ? 0 : colscroll[0]);
-		INT32 sx, sy;
+		int32_t xscroll = normalize_xscroll(src, (numrows == 0) ? 0 : rowscroll[0]);
+		int32_t yscroll = normalize_yscroll(src, (numcols == 0) ? 0 : colscroll[0]);
+		int32_t sx, sy;
 
 		/* iterate over all portions of the scroll that overlap the destination */
 		for (sx = xscroll - src->width; sx < dest->width; sx += src->width)
@@ -1890,7 +1890,7 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
 	/* scrolling columns plus horizontal scroll */
 	else if (numrows <= 1)
 	{
-		INT32 xscroll = normalize_xscroll(src, (numrows == 0) ? 0 : rowscroll[0]);
+		int32_t xscroll = normalize_xscroll(src, (numrows == 0) ? 0 : rowscroll[0]);
 		rectangle subclip = *cliprect;
 		int col, colwidth, groupcols;
 
@@ -1901,8 +1901,8 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
 		/* iterate over each column */
 		for (col = 0; col < numcols; col += groupcols)
 		{
-			INT32 yscroll = colscroll[col];
-			INT32 sx, sy;
+			int32_t yscroll = colscroll[col];
+			int32_t sx, sy;
 
 			/* count consecutive columns scrolled by the same amount */
 			for (groupcols = 1; col + groupcols < numcols; groupcols++)
@@ -1928,7 +1928,7 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
 	/* scrolling rows plus vertical scroll */
 	else if (numcols <= 1)
 	{
-		INT32 yscroll = normalize_yscroll(src, (numcols == 0) ? 0 : colscroll[0]);
+		int32_t yscroll = normalize_yscroll(src, (numcols == 0) ? 0 : colscroll[0]);
 		rectangle subclip = *cliprect;
 		int row, rowheight, grouprows;
 
@@ -1939,8 +1939,8 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
 		/* iterate over each row */
 		for (row = 0; row < numrows; row += grouprows)
 		{
-			INT32 xscroll = rowscroll[row];
-			INT32 sx, sy;
+			int32_t xscroll = rowscroll[row];
+			int32_t sx, sy;
 
 			/* count consecutive rows scrolled by the same amount */
 			for (grouprows = 1; row + grouprows < numrows; grouprows++)
@@ -1976,7 +1976,7 @@ void copyscrollbitmap_trans(bitmap_t *dest, bitmap_t *src, UINT32 numrows, const
     pixels
 -------------------------------------------------*/
 
-void copyrozbitmap(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, INT32 startx, INT32 starty, INT32 incxx, INT32 incxy, INT32 incyx, INT32 incyy, int wraparound)
+void copyrozbitmap(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, int32_t startx, int32_t starty, int32_t incxx, int32_t incxy, int32_t incyx, int32_t incyy, int wraparound)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -1986,11 +1986,11 @@ void copyrozbitmap(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, INT
 	assert(src->bpp == dest->bpp);
 
 	if (dest->bpp == 8)
-		COPYROZBITMAP_CORE(UINT8, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint8_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	else if (dest->bpp == 16)
-		COPYROZBITMAP_CORE(UINT16, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint16_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 	else
-		COPYROZBITMAP_CORE(UINT32, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint32_t, PIXEL_OP_COPY_OPAQUE, NO_PRIORITY);
 }
 
 
@@ -2001,7 +2001,7 @@ void copyrozbitmap(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, INT
     transpen
 -------------------------------------------------*/
 
-void copyrozbitmap_trans(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, INT32 startx, INT32 starty, INT32 incxx, INT32 incxy, INT32 incyx, INT32 incyy, int wraparound, UINT32 transpen)
+void copyrozbitmap_trans(bitmap_t *dest, const rectangle *cliprect, bitmap_t *src, int32_t startx, int32_t starty, int32_t incxx, int32_t incxy, int32_t incyx, int32_t incyy, int wraparound, uint32_t transpen)
 {
 	bitmap_t *priority = NULL;	/* dummy, no priority in this case */
 
@@ -2011,9 +2011,9 @@ void copyrozbitmap_trans(bitmap_t *dest, const rectangle *cliprect, bitmap_t *sr
 	assert(src->bpp == dest->bpp);
 
 	if (dest->bpp == 8)
-		COPYROZBITMAP_CORE(UINT8, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint8_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 	else if (dest->bpp == 16)
-		COPYROZBITMAP_CORE(UINT16, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint16_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 	else
-		COPYROZBITMAP_CORE(UINT32, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
+		COPYROZBITMAP_CORE(uint32_t, PIXEL_OP_COPY_TRANSPEN, NO_PRIORITY);
 }

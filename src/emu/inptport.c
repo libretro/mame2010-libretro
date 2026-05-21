@@ -147,42 +147,42 @@ struct _analog_field_state
 	const input_field_config *	field;				/* pointer to the input field referenced */
 
 	/* adjusted values (right-justified and tweaked) */
-	UINT8						shift;				/* shift to align final value in the port */
-	INT32						adjdefvalue;		/* adjusted default value from the config */
-	INT32						adjmin;				/* adjusted minimum value from the config */
-	INT32						adjmax;				/* adjusted maximum value from the config */
+	uint8_t						shift;				/* shift to align final value in the port */
+	int32_t						adjdefvalue;		/* adjusted default value from the config */
+	int32_t						adjmin;				/* adjusted minimum value from the config */
+	int32_t						adjmax;				/* adjusted maximum value from the config */
 
 	/* live values of configurable parameters */
-	INT32						sensitivity;		/* current live sensitivity (100=normal) */
-	UINT8						reverse;			/* current live reverse flag */
-	INT32						delta;				/* current live delta to apply each frame a digital inc/dec key is pressed */
-	INT32						centerdelta;		/* current live delta to apply each frame no digital inputs are pressed */
+	int32_t						sensitivity;		/* current live sensitivity (100=normal) */
+	uint8_t						reverse;			/* current live reverse flag */
+	int32_t						delta;				/* current live delta to apply each frame a digital inc/dec key is pressed */
+	int32_t						centerdelta;		/* current live delta to apply each frame no digital inputs are pressed */
 
 	/* live analog value tracking */
-	INT32						accum;				/* accumulated value (including relative adjustments) */
-	INT32						previous;			/* previous adjusted value */
-	INT32						previousanalog;		/* previous analog value */
+	int32_t						accum;				/* accumulated value (including relative adjustments) */
+	int32_t						previous;			/* previous adjusted value */
+	int32_t						previousanalog;		/* previous analog value */
 
 	/* parameters for modifying live values */
-	INT32						minimum;			/* minimum adjusted value */
-	INT32						maximum;			/* maximum adjusted value */
-	INT32						center;				/* center adjusted value for autocentering */
-	INT32						reverse_val;		/* value where we subtract from to reverse directions */
+	int32_t						minimum;			/* minimum adjusted value */
+	int32_t						maximum;			/* maximum adjusted value */
+	int32_t						center;				/* center adjusted value for autocentering */
+	int32_t						reverse_val;		/* value where we subtract from to reverse directions */
 
 	/* scaling factors */
-	INT64						scalepos;			/* scale factor to apply to positive adjusted values */
-	INT64						scaleneg;			/* scale factor to apply to negative adjusted values */
-	INT64						keyscalepos;		/* scale factor to apply to the key delta field when pos */
-	INT64						keyscaleneg;		/* scale factor to apply to the key delta field when neg */
-	INT64						positionalscale;	/* scale factor to divide a joystick into positions */
+	int64_t						scalepos;			/* scale factor to apply to positive adjusted values */
+	int64_t						scaleneg;			/* scale factor to apply to negative adjusted values */
+	int64_t						keyscalepos;		/* scale factor to apply to the key delta field when pos */
+	int64_t						keyscaleneg;		/* scale factor to apply to the key delta field when neg */
+	int64_t						positionalscale;	/* scale factor to divide a joystick into positions */
 
 	/* misc flags */
-	UINT8						absolute;			/* is this an absolute or relative input? */
-	UINT8						wraps;				/* does the control wrap around? */
-	UINT8						autocenter;			/* autocenter this input? */
-	UINT8						single_scale;		/* scale joystick differently if default is between min/max */
-	UINT8						interpolate;		/* should we do linear interpolation for mid-frame reads? */
-	UINT8						lastdigital;		/* was the last modification caused by a digital form? */
+	uint8_t						absolute;			/* is this an absolute or relative input? */
+	uint8_t						wraps;				/* does the control wrap around? */
+	uint8_t						autocenter;			/* autocenter this input? */
+	uint8_t						single_scale;		/* scale joystick differently if default is between min/max */
+	uint8_t						interpolate;		/* should we do linear interpolation for mid-frame reads? */
+	uint8_t						lastdigital;		/* was the last modification caused by a digital form? */
 };
 
 
@@ -191,10 +191,10 @@ typedef struct _digital_joystick_state digital_joystick_state;
 struct _digital_joystick_state
 {
 	const input_field_config *	field[4];			/* input field for up, down, left, right respectively */
-	UINT8						inuse;				/* is this joystick used? */
-	UINT8						current;			/* current value */
-	UINT8						current4way;		/* current 4-way value */
-	UINT8						previous;			/* previous value */
+	uint8_t						inuse;				/* is this joystick used? */
+	uint8_t						current;			/* current value */
+	uint8_t						current4way;		/* current 4-way value */
+	uint8_t						previous;			/* previous value */
 };
 
 
@@ -205,7 +205,7 @@ struct _device_field_info
 	device_field_info *			next;				/* linked list of info for this port */
 	const input_field_config *	field;				/* pointer to the input field referenced */
 	device_t *		device;				/* device */
-	UINT8						shift;				/* shift to apply to the final result */
+	uint8_t						shift;				/* shift to apply to the final result */
 	input_port_value			oldval;				/* last value */
 };
 
@@ -217,9 +217,9 @@ struct _input_field_state
 	digital_joystick_state *	joystick;			/* pointer to digital joystick information */
 	input_seq					seq[SEQ_TYPE_TOTAL];/* currently configured input sequences */
 	input_port_value			value;				/* current value of this port */
-	UINT8						impulse;			/* counter for impulse controls */
-	UINT8						last;				/* were we pressed last time? */
-	UINT8						joydir;				/* digital joystick direction index */
+	uint8_t						impulse;			/* counter for impulse controls */
+	uint8_t						last;				/* were we pressed last time? */
+	uint8_t						joydir;				/* digital joystick direction index */
 	char *						name;				/* overridden name */
 };
 
@@ -251,7 +251,7 @@ struct _input_type_state
 struct _input_port_private
 {
 	/* global state */
-	UINT8						safe_to_read;		/* clear at start; set after state is loaded */
+	uint8_t						safe_to_read;		/* clear at start; set after state is loaded */
 
 	/* types */
 	input_type_state *			typestatelist;		/* list of live type states */
@@ -267,8 +267,8 @@ struct _input_port_private
 	/* playback/record information */
 	mame_file *					record_file;		/* recording file (NULL if not recording) */
 	mame_file *					playback_file;		/* playback file (NULL if not recording) */
-	UINT64						playback_accumulated_speed;/* accumulated speed during playback */
-	UINT32						playback_accumulated_frames;/* accumulated frames during playback */
+	uint64_t						playback_accumulated_speed;/* accumulated speed during playback */
+	uint32_t						playback_accumulated_frames;/* accumulated frames during playback */
 };
 
 
@@ -300,12 +300,12 @@ struct _char_info
     MACROS
 ***************************************************************************/
 
-#define APPLY_SENSITIVITY(x,s)		(((INT64)(x) * (s)) / 100)
-#define APPLY_INVERSE_SENSITIVITY(x,s) (((INT64)(x) * 100) / (s))
+#define APPLY_SENSITIVITY(x,s)		(((int64_t)(x) * (s)) / 100)
+#define APPLY_INVERSE_SENSITIVITY(x,s) (((int64_t)(x) * 100) / (s))
 
-#define COMPUTE_SCALE(num,den)		(((INT64)(num) << 24) / (den))
-#define RECIP_SCALE(s)				(((INT64)1 << 48) / (s))
-#define APPLY_SCALE(x,s)			(((INT64)(x) * (s)) >> 24)
+#define COMPUTE_SCALE(num,den)		(((int64_t)(num) << 24) / (den))
+#define RECIP_SCALE(s)				(((int64_t)1 << 48) / (s))
+#define APPLY_SCALE(x,s)			(((int64_t)(x) * (s)) >> 24)
 
 
 
@@ -632,7 +632,7 @@ static void execute_dumpkbd(running_machine *machine, int ref, int params, const
 
 static const struct
 {
-	UINT32 id;
+	uint32_t id;
 	const char *string;
 } input_port_default_strings[] =
 {
@@ -771,7 +771,7 @@ static const struct
 static void input_port_exit(running_machine &machine);
 
 /* port reading */
-static INT32 apply_analog_settings(INT32 current, analog_field_state *analog);
+static int32_t apply_analog_settings(int32_t current, analog_field_state *analog);
 
 /* initialization helpers */
 static void init_port_types(running_machine *machine);
@@ -839,12 +839,12 @@ static void record_port(const input_port_config *port);
     analog control
 -------------------------------------------------*/
 
-INLINE INT32 apply_analog_min_max(const analog_field_state *analog, INT32 value)
+INLINE int32_t apply_analog_min_max(const analog_field_state *analog, int32_t value)
 {
 	/* take the analog minimum and maximum values and apply the inverse of the */
 	/* sensitivity so that we can clamp against them before applying sensitivity */
-	INT32 adjmin = APPLY_INVERSE_SENSITIVITY(analog->minimum, analog->sensitivity);
-	INT32 adjmax = APPLY_INVERSE_SENSITIVITY(analog->maximum, analog->sensitivity);
+	int32_t adjmin = APPLY_INVERSE_SENSITIVITY(analog->minimum, analog->sensitivity);
+	int32_t adjmax = APPLY_INVERSE_SENSITIVITY(analog->maximum, analog->sensitivity);
 
 	/* for absolute devices, clamp to the bounds absolutely */
 	if (!analog->wraps)
@@ -858,8 +858,8 @@ INLINE INT32 apply_analog_min_max(const analog_field_state *analog, INT32 value)
 	/* for relative devices, wrap around when we go past the edge */
 	else
 	{
-		INT32 adj1 = APPLY_INVERSE_SENSITIVITY(INPUT_RELATIVE_PER_PIXEL, analog->sensitivity);
-		INT32 range = adjmax - adjmin + adj1;
+		int32_t adj1 = APPLY_INVERSE_SENSITIVITY(INPUT_RELATIVE_PER_PIXEL, analog->sensitivity);
+		int32_t range = adjmax - adjmin + adj1;
 		/* rolls to other end when 1 position past end. */
 		adjmax += adj1;
 		adjmin -= adj1;
@@ -1531,13 +1531,13 @@ input_port_value input_port_read_direct(const input_port_config *port)
 		if (input_condition_true(port->machine, &analog->field->condition))
 		{
 			/* start with the raw value */
-			INT32 value = analog->accum;
+			int32_t value = analog->accum;
 
 			/* interpolate if appropriate and if time has passed since the last update */
 			if (analog->interpolate && !(analog->field->flags & ANALOG_FLAG_RESET) && portdata->last_delta_nsec != 0)
 			{
 				attoseconds_t nsec_since_last = attotime_to_attoseconds(attotime_sub(timer_get_time(port->machine), portdata->last_frame_time)) / ATTOSECONDS_PER_NANOSECOND;
-				value = analog->previous + ((INT64)(analog->accum - analog->previous) * nsec_since_last / portdata->last_delta_nsec);
+				value = analog->previous + ((int64_t)(analog->accum - analog->previous) * nsec_since_last / portdata->last_delta_nsec);
 			}
 
 			/* apply standard analog settings */
@@ -1579,7 +1579,7 @@ input_port_value input_port_read(running_machine *machine, const char *tag)
     value if the port does not exist
 -------------------------------------------------*/
 
-input_port_value input_port_read_safe(running_machine *machine, const char *tag, UINT32 defvalue)
+input_port_value input_port_read_safe(running_machine *machine, const char *tag, uint32_t defvalue)
 {
 	const input_port_config *port = machine->port(tag);
 	return (port == NULL) ? defvalue : input_port_read_direct(port);
@@ -1605,7 +1605,7 @@ int input_port_get_crosshair_position(running_machine *machine, int player, floa
 				if (input_condition_true(machine, &field->condition))
 				{
 					analog_field_state *analog = field->state->analog;
-					INT32 rawvalue = apply_analog_settings(analog->accum, analog) & (analog->field->mask >> analog->shift);
+					int32_t rawvalue = apply_analog_settings(analog->accum, analog) & (analog->field->mask >> analog->shift);
 					float value = (float)(rawvalue - field->state->analog->adjmin) / (float)(field->state->analog->adjmax - field->state->analog->adjmin);
 
 					/* apply the scale and offset */
@@ -1690,7 +1690,7 @@ void input_port_update_defaults(running_machine *machine)
     an input port
 -------------------------------------------------*/
 
-static INT32 apply_analog_settings(INT32 value, analog_field_state *analog)
+static int32_t apply_analog_settings(int32_t value, analog_field_state *analog)
 {
 	/* apply the min/max and then the sensitivity */
 	value = apply_analog_min_max(analog, value);
@@ -2420,7 +2420,7 @@ static void input_port_update_hook(running_machine *machine, const input_port_co
 	const inputx_code *code;
 	unicode_char ch;
 	int i;
-	UINT32 value;
+	uint32_t value;
 
 	if (inputx_can_post(machine))
 	{
@@ -2463,8 +2463,8 @@ static void frame_update(running_machine *machine)
 	attotime curtime = timer_get_time(machine);
 	const input_port_config *port;
 	render_target *mouse_target;
-	INT32 mouse_target_x;
-	INT32 mouse_target_y;
+	int32_t mouse_target_x;
+	int32_t mouse_target_y;
 	int mouse_button;
 
 profiler_mark_start(PROFILER_INPUT);
@@ -2642,9 +2642,9 @@ static void frame_update_analog_field(running_machine *machine, analog_field_sta
 {
 	input_item_class itemclass;
 	int keypressed = FALSE;
-	INT64 keyscale;
-	INT32 rawvalue;
-	INT32 delta = 0;
+	int64_t keyscale;
+	int32_t rawvalue;
+	int32_t delta = 0;
 
 	/* clamp the previous value to the min/max range and remember it */
 	analog->previous = analog->accum = apply_analog_min_max(analog, analog->accum);
@@ -2746,7 +2746,7 @@ static void frame_update_analog_field(running_machine *machine, analog_field_sta
 	/* was pressed, apply autocentering */
 	if (analog->autocenter)
 	{
-		INT32 center = APPLY_INVERSE_SENSITIVITY(analog->center, analog->sensitivity);
+		int32_t center = APPLY_INVERSE_SENSITIVITY(analog->center, analog->sensitivity);
 		if (analog->lastdigital && !keypressed)
 		{
 			/* autocenter from positive values */
@@ -2834,7 +2834,7 @@ static int frame_get_digital_field_state(const input_field_config *field, int mo
 	/* additional logic to restrict digital joysticks */
 	if (curstate && !mouse_down && field->state->joystick != NULL && field->way != 16)
 	{
-		UINT8 mask = (field->way == 4) ? field->state->joystick->current4way : field->state->joystick->current;
+		uint8_t mask = (field->way == 4) ? field->state->joystick->current4way : field->state->joystick->current;
 		if (!(mask & (1 << field->state->joydir)))
 			curstate = FALSE;
 	}
@@ -2861,17 +2861,17 @@ static int frame_get_digital_field_state(const input_field_config *field, int mo
 
 static void port_config_detokenize(ioport_list &portlist, const input_port_token *ipt, char *errorbuf, int errorbuflen)
 {
-	UINT32 entrytype = INPUT_TOKEN_INVALID;
+	uint32_t entrytype = INPUT_TOKEN_INVALID;
 	input_setting_config *cursetting = NULL;
 	input_field_config *curfield = NULL;
 	input_port_config *curport = NULL;
 	input_port_value maskbits = 0;
-	UINT16 category;	/* (MESS-specific) category */
+	uint16_t category;	/* (MESS-specific) category */
 
 	/* loop over tokens until we hit the end */
 	while (entrytype != INPUT_TOKEN_END)
 	{
-		UINT32 mask, defval, type, val;
+		uint32_t mask, defval, type, val;
 		input_port_token temptoken;
 		input_condition condition;
 		const char *string;
@@ -4308,10 +4308,10 @@ static void save_game_inputs(running_machine *machine, xml_data_node *parentnode
     from the playback file
 -------------------------------------------------*/
 
-static UINT8 playback_read_uint8(running_machine *machine)
+static uint8_t playback_read_uint8(running_machine *machine)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT8 result;
+	uint8_t result;
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->playback_file == NULL)
@@ -4334,10 +4334,10 @@ static UINT8 playback_read_uint8(running_machine *machine)
     from the playback file
 -------------------------------------------------*/
 
-static UINT32 playback_read_uint32(running_machine *machine)
+static uint32_t playback_read_uint32(running_machine *machine)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT32 result;
+	uint32_t result;
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->playback_file == NULL)
@@ -4360,10 +4360,10 @@ static UINT32 playback_read_uint32(running_machine *machine)
     from the playback file
 -------------------------------------------------*/
 
-static UINT64 playback_read_uint64(running_machine *machine)
+static uint64_t playback_read_uint64(running_machine *machine)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT64 result;
+	uint64_t result;
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->playback_file == NULL)
@@ -4389,7 +4389,7 @@ static time_t playback_init(running_machine *machine)
 {
 	const char *filename = options_get_string(machine->options(), OPTION_PLAYBACK);
 	input_port_private *portdata = machine->input_port_data;
-	UINT8 header[INP_HEADER_SIZE];
+	uint8_t header[INP_HEADER_SIZE];
 	file_error filerr;
 	time_t basetime;
 
@@ -4413,7 +4413,7 @@ static time_t playback_init(running_machine *machine)
 	mame_printf_info("Input file: %s\n", filename);
 	mame_printf_info("INP version %d.%d\n", header[0x10], header[0x11]);
 	basetime = header[0x08] | (header[0x09] << 8) | (header[0x0a] << 16) | (header[0x0b] << 24) |
-				((UINT64)header[0x0c] << 32) | ((UINT64)header[0x0d] << 40) | ((UINT64)header[0x0e] << 48) | ((UINT64)header[0x0f] << 56);
+				((uint64_t)header[0x0c] << 32) | ((uint64_t)header[0x0d] << 40) | ((uint64_t)header[0x0e] << 48) | ((uint64_t)header[0x0f] << 56);
 	mame_printf_info("Created %s", ctime(&basetime));
 	mame_printf_info("Recorded using %s\n", header + 0x20);
 
@@ -4449,8 +4449,8 @@ static void playback_end(running_machine *machine, const char *message)
 
 		/* display speed stats */
 		portdata->playback_accumulated_speed /= portdata->playback_accumulated_frames;
-		mame_printf_info("Total playback frames: %d\n", (UINT32)portdata->playback_accumulated_frames);
-		mame_printf_info("Average recorded speed: %d%%\n", (UINT32)((portdata->playback_accumulated_speed * 200 + 1) >> 21));
+		mame_printf_info("Total playback frames: %d\n", (uint32_t)portdata->playback_accumulated_frames);
+		mame_printf_info("Average recorded speed: %d%%\n", (uint32_t)((portdata->playback_accumulated_speed * 200 + 1) >> 21));
 	}
 }
 
@@ -4524,10 +4524,10 @@ static void playback_port(const input_port_config *port)
     to the record file
 -------------------------------------------------*/
 
-static void record_write_uint8(running_machine *machine, UINT8 data)
+static void record_write_uint8(running_machine *machine, uint8_t data)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT8 result = data;
+	uint8_t result = data;
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->record_file == NULL)
@@ -4544,10 +4544,10 @@ static void record_write_uint8(running_machine *machine, UINT8 data)
     to the record file
 -------------------------------------------------*/
 
-static void record_write_uint32(running_machine *machine, UINT32 data)
+static void record_write_uint32(running_machine *machine, uint32_t data)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT32 result = LITTLE_ENDIANIZE_INT32(data);
+	uint32_t result = LITTLE_ENDIANIZE_INT32(data);
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->record_file == NULL)
@@ -4564,10 +4564,10 @@ static void record_write_uint32(running_machine *machine, UINT32 data)
     to the record file
 -------------------------------------------------*/
 
-static void record_write_uint64(running_machine *machine, UINT64 data)
+static void record_write_uint64(running_machine *machine, uint64_t data)
 {
 	input_port_private *portdata = machine->input_port_data;
-	UINT64 result = LITTLE_ENDIANIZE_INT64(data);
+	uint64_t result = LITTLE_ENDIANIZE_INT64(data);
 
 	/* protect against NULL handles if previous reads fail */
 	if (portdata->record_file == NULL)
@@ -4587,7 +4587,7 @@ static void record_init(running_machine *machine)
 {
 	const char *filename = options_get_string(machine->options(), OPTION_RECORD);
 	input_port_private *portdata = machine->input_port_data;
-	UINT8 header[INP_HEADER_SIZE];
+	uint8_t header[INP_HEADER_SIZE];
 	system_time systime;
 	file_error filerr;
 

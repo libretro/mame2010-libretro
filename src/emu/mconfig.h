@@ -80,7 +80,7 @@
 #define VIDEO_RESET_CALL(name)		VIDEO_RESET_NAME(name)(machine)
 
 #define PALETTE_INIT_NAME(name)		palette_init_##name
-#define PALETTE_INIT(name)			void PALETTE_INIT_NAME(name)(running_machine *machine, const UINT8 *color_prom)
+#define PALETTE_INIT(name)			void PALETTE_INIT_NAME(name)(running_machine *machine, const uint8_t *color_prom)
 #define PALETTE_INIT_CALL(name)		PALETTE_INIT_NAME(name)(machine, color_prom)
 
 #define VIDEO_EOF_NAME(name)		video_eof_##name
@@ -88,7 +88,7 @@
 #define VIDEO_EOF_CALL(name)		VIDEO_EOF_NAME(name)(machine)
 
 #define VIDEO_UPDATE_NAME(name)		video_update_##name
-#define VIDEO_UPDATE(name)			UINT32 VIDEO_UPDATE_NAME(name)(screen_device *screen, bitmap_t *bitmap, const rectangle *cliprect)
+#define VIDEO_UPDATE(name)			uint32_t VIDEO_UPDATE_NAME(name)(screen_device *screen, bitmap_t *bitmap, const rectangle *cliprect)
 #define VIDEO_UPDATE_CALL(name)		VIDEO_UPDATE_NAME(name)(screen, bitmap, cliprect)
 
 
@@ -114,9 +114,9 @@ typedef void   (*sound_start_func)(running_machine *machine);
 typedef void   (*sound_reset_func)(running_machine *machine);
 typedef void   (*video_start_func)(running_machine *machine);
 typedef void   (*video_reset_func)(running_machine *machine);
-typedef void   (*palette_init_func)(running_machine *machine, const UINT8 *color_prom);
+typedef void   (*palette_init_func)(running_machine *machine, const uint8_t *color_prom);
 typedef void   (*video_eof_func)(running_machine *machine);
-typedef UINT32 (*video_update_func)(device_t *screen, bitmap_t *bitmap, const rectangle *cliprect);
+typedef uint32_t (*video_update_func)(device_t *screen, bitmap_t *bitmap, const rectangle *cliprect);
 typedef void * (*driver_data_alloc_func)(running_machine &machine);
 
 
@@ -254,7 +254,7 @@ public:
 
 	attotime				m_minimum_quantum;			// minimum scheduling quantum
 	const char *			m_perfect_cpu_quantum;		// tag of CPU to use for "perfect" scheduling
-	INT32					m_watchdog_vblank_count;	// number of VBLANKs until the watchdog kills us
+	int32_t					m_watchdog_vblank_count;	// number of VBLANKs until the watchdog kills us
 	attotime				m_watchdog_time;			// length of time until the watchdog kills us
 
 	machine_start_func		m_machine_start;			// one-time machine start callback
@@ -263,9 +263,9 @@ public:
 	nvram_handler_func		m_nvram_handler;			// NVRAM save/load callback
 	memcard_handler_func	m_memcard_handler;			// memory card save/load callback
 
-	UINT32					m_video_attributes;			// flags describing the video system
+	uint32_t					m_video_attributes;			// flags describing the video system
 	const gfx_decode_entry *m_gfxdecodeinfo;			// pointer to array of graphics decoding information
-	UINT32					m_total_colors;				// total number of colors in the palette
+	uint32_t					m_total_colors;				// total number of colors in the palette
 	const char *			m_default_layout;			// default layout for this machine
 
 	palette_init_func		m_init_palette;				// one-time palette init callback

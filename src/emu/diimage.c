@@ -426,7 +426,7 @@ const char * device_image_interface::working_directory()
     get_software_region
 -------------------------------------------------*/
 
-UINT8 *device_image_interface::get_software_region(const char *tag)
+uint8_t *device_image_interface::get_software_region(const char *tag)
 {
 	char full_tag[256];
 
@@ -442,7 +442,7 @@ UINT8 *device_image_interface::get_software_region(const char *tag)
     image_get_software_region_length
 -------------------------------------------------*/
 
-UINT32 device_image_interface::get_software_region_length(const char *tag)
+uint32_t device_image_interface::get_software_region_length(const char *tag)
 {
     char full_tag[256];
 
@@ -512,17 +512,17 @@ void device_image_interface::image_freeptr(void *ptr)
     from hash string
 -------------------------------------------------*/
 
-static UINT32 hash_data_extract_crc32(const char *d)
+static uint32_t hash_data_extract_crc32(const char *d)
 {
-	UINT32 crc = 0;
-	UINT8 crc_bytes[4];
+	uint32_t crc = 0;
+	uint8_t crc_bytes[4];
 
 	if (hash_data_extract_binary_checksum(d, HASH_CRC, crc_bytes) == 1)
 	{
-		crc = (((UINT32) crc_bytes[0]) << 24)
-			| (((UINT32) crc_bytes[1]) << 16)
-			| (((UINT32) crc_bytes[2]) << 8)
-			| (((UINT32) crc_bytes[3]) << 0);
+		crc = (((uint32_t) crc_bytes[0]) << 24)
+			| (((uint32_t) crc_bytes[1]) << 16)
+			| (((uint32_t) crc_bytes[2]) << 8)
+			| (((uint32_t) crc_bytes[3]) << 0);
 	}
 	return crc;
 }
@@ -562,13 +562,13 @@ done:
 void device_image_interface::run_hash(void (*partialhash)(char *, const unsigned char *, unsigned long, unsigned int),
     char *dest, unsigned int hash_functions)
 {
-    UINT32 size;
-    UINT8 *buf = NULL;
+    uint32_t size;
+    uint8_t *buf = NULL;
 
     *dest = '\0';
-    size = (UINT32) length();
+    size = (uint32_t) length();
 
-    buf = (UINT8*)malloc(size);
+    buf = (uint8_t*)malloc(size);
 	memset(buf,0,size);
 
     /* read the file */
@@ -625,9 +625,9 @@ void device_image_interface::image_checkhash()
     return;
 }
 
-UINT32 device_image_interface::crc()
+uint32_t device_image_interface::crc()
 {
-    UINT32 crc = 0;
+    uint32_t crc = 0;
 
 	image_checkhash();
     if (m_hash.len()!= 0)

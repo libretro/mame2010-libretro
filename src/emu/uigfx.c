@@ -26,10 +26,10 @@
 typedef struct _ui_gfx_state ui_gfx_state;
 struct _ui_gfx_state
 {
-	UINT8			mode;				/* which mode are we in? */
+	uint8_t			mode;				/* which mode are we in? */
 
 	/* intermediate bitmaps */
-	UINT8			bitmap_dirty;		/* is the bitmap dirty? */
+	uint8_t			bitmap_dirty;		/* is the bitmap dirty? */
 	bitmap_t *		bitmap;				/* bitmap for drawing gfx and tilemaps */
 	render_texture *texture;			/* texture for rendering the above bitmap */
 
@@ -48,7 +48,7 @@ struct _ui_gfx_state
 		int		offset[MAX_GFX_ELEMENTS]; /* current offset of top,left item */
 		int		color[MAX_GFX_ELEMENTS]; /* current color selected */
 		int		count[MAX_GFX_ELEMENTS]; /* number of items per row */
-		UINT8	rotate[MAX_GFX_ELEMENTS]; /* current rotation (orientation) value */
+		uint8_t	rotate[MAX_GFX_ELEMENTS]; /* current rotation (orientation) value */
 	} gfxset;
 
 	/* tilemap-viewer-specific data */
@@ -58,7 +58,7 @@ struct _ui_gfx_state
 		int		xoffs;					/* current X offset */
 		int		yoffs;					/* current Y offset */
 		int		zoom;					/* zoom factor */
-		UINT8	rotate;					/* current rotation (orientation) value */
+		uint8_t	rotate;					/* current rotation (orientation) value */
 	} tilemap;
 };
 
@@ -150,7 +150,7 @@ static void ui_gfx_exit(running_machine &machine)
     ui_gfx_ui_handler - primary UI handler
 -------------------------------------------------*/
 
-UINT32 ui_gfx_ui_handler(running_machine *machine, render_container *container, UINT32 uistate)
+uint32_t ui_gfx_ui_handler(running_machine *machine, render_container *container, uint32_t uistate)
 {
 	ui_gfx_state *state = &ui_gfx;
 
@@ -767,8 +767,8 @@ static void gfxset_draw_item(running_machine *machine, const gfx_element *gfx, i
 	int width = (rotate & ORIENTATION_SWAP_XY) ? gfx->height : gfx->width;
 	int height = (rotate & ORIENTATION_SWAP_XY) ? gfx->width : gfx->height;
 	const rgb_t *palette = (machine->total_colors() != 0) ? palette_entry_list_raw(machine->palette) : NULL;
-	UINT32 rowpixels = bitmap->rowpixels;
-	UINT32 palette_mask = ~0;
+	uint32_t rowpixels = bitmap->rowpixels;
+	uint32_t palette_mask = ~0;
 	int x, y;
 
 	if (palette != NULL)
@@ -782,15 +782,15 @@ static void gfxset_draw_item(running_machine *machine, const gfx_element *gfx, i
 	/* loop over rows in the cell */
 	for (y = 0; y < height; y++)
 	{
-		UINT32 *dest = (UINT32 *)bitmap->base + (dsty + y) * rowpixels + dstx;
-		const UINT8 *src = gfx_element_get_data(gfx, index);
+		uint32_t *dest = (uint32_t *)bitmap->base + (dsty + y) * rowpixels + dstx;
+		const uint8_t *src = gfx_element_get_data(gfx, index);
 
 		/* loop over columns in the cell */
 		for (x = 0; x < width; x++)
 		{
 			int effx = x, effy = y;
 			rgb_t pixel;
-			const UINT8 *s;
+			const uint8_t *s;
 
 			/* compute effective x,y values after rotation */
 			if (!(rotate & ORIENTATION_SWAP_XY))
@@ -845,7 +845,7 @@ static void tilemap_handler(running_machine *machine, render_container *containe
 	float x0, y0;
 	int mapboxwidth, mapboxheight;
 	int maxxscale, maxyscale;
-	UINT32 mapwidth, mapheight;
+	uint32_t mapwidth, mapheight;
 	int x, pixelscale;
 	char title[100];
 
@@ -855,7 +855,7 @@ static void tilemap_handler(running_machine *machine, render_container *containe
 	/* get the size of the tilemap itself */
 	tilemap_size_by_index(machine, state->tilemap.which, &mapwidth, &mapheight);
 	if (state->tilemap.rotate & ORIENTATION_SWAP_XY)
-		{ UINT32 temp = mapwidth; mapwidth = mapheight; mapheight = temp; }
+		{ uint32_t temp = mapwidth; mapwidth = mapheight; mapheight = temp; }
 
 	/* add a half character padding for the box */
 	chheight = ui_get_line_height();
@@ -947,7 +947,7 @@ static void tilemap_handler(running_machine *machine, render_container *containe
 static void tilemap_handle_keys(running_machine *machine, ui_gfx_state *state, int viswidth, int visheight)
 {
 	ui_gfx_state oldstate = *state;
-	UINT32 mapwidth, mapheight;
+	uint32_t mapwidth, mapheight;
 	int step;
 
 	/* handle tilemap selection (open bracket,close bracket) */
@@ -1044,7 +1044,7 @@ static void tilemap_update_bitmap(running_machine *machine, ui_gfx_state *state,
 
 	/* swap the coordinates back if they were talking about a rotated surface */
 	if (state->tilemap.rotate & ORIENTATION_SWAP_XY)
-		{ UINT32 temp = width; width = height; height = temp; }
+		{ uint32_t temp = width; width = height; height = temp; }
 
 	/* realloc the bitmap if it is too small */
 	if (state->bitmap == NULL || state->texture == NULL || state->bitmap->format != screen_format || state->bitmap->width != width || state->bitmap->height != height)

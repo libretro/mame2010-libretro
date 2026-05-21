@@ -145,7 +145,7 @@ if (TEMPLOG)
 		LOG(("cpu_timeslice: target = %s\n", attotime_string(target, 9)));
 
 		// apply pending suspension changes
-		UINT32 suspendchanged = 0;
+		uint32_t suspendchanged = 0;
 		for (device_execute_interface *exec = m_execute_list; exec != NULL; exec = exec->m_nextexec)
 		{
 			suspendchanged |= (exec->m_suspend ^ exec->m_nextsuspend);
@@ -174,7 +174,7 @@ if (TEMPLOG)
 				if (delta >= exec->m_attoseconds_per_cycle)
 				{
 					// compute how many cycles we want to execute
-					int ran = exec->m_cycles_running = divu_64x32((UINT64)delta >> exec->m_divshift, exec->m_divisor);
+					int ran = exec->m_cycles_running = divu_64x32((uint64_t)delta >> exec->m_divshift, exec->m_divisor);
 					LOG(("  cpu '%s': %d cycles\n", exec->device().tag(), exec->m_cycles_running));
 
 					// if we're not suspended, actually execute
@@ -214,7 +214,7 @@ if (TEMPLOG) printf("Skipping %s for %d cycles\n", exec->device().tag(), ran);
 					attoseconds_t actualdelta = exec->m_attoseconds_per_cycle * ran;
 					exec->m_localtime.attoseconds += actualdelta;
 					ATTOTIME_NORMALIZE(exec->m_localtime);
-					LOG(("         %d ran, %d total, time = %s\n", ran, (INT32)exec->m_totalcycles, attotime_string(exec->m_localtime, 9)));
+					LOG(("         %d ran, %d total, time = %s\n", ran, (int32_t)exec->m_totalcycles, attotime_string(exec->m_localtime, 9)));
 
 					// if the new local CPU time is less than our target, move the target up
 					if (ATTOTIME_LT(exec->m_localtime, target))
@@ -397,7 +397,7 @@ void device_scheduler::rebuild_execute_list()
 		// inform the timer system of our decision
 		assert(min_quantum.seconds == 0);
 		timer_add_scheduling_quantum(&m_machine, min_quantum.attoseconds, attotime_never);
-if (TEMPLOG) printf("Setting quantum: %08X%08X\n", (UINT32)(min_quantum.attoseconds >> 32), (UINT32)min_quantum.attoseconds);
+if (TEMPLOG) printf("Setting quantum: %08X%08X\n", (uint32_t)(min_quantum.attoseconds >> 32), (uint32_t)min_quantum.attoseconds);
 		m_quantum_set = true;
 	}
 

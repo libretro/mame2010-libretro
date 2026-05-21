@@ -86,12 +86,12 @@ struct _stream_input
 
 	/* resample buffer */
 	stream_sample_t *	resample;				/* buffer for resampling to the stream's sample rate */
-	UINT32				bufsize;				/* size of output buffer, in samples */
-	UINT32				bufalloc;				/* allocated size of output buffer, in samples */
+	uint32_t				bufsize;				/* size of output buffer, in samples */
+	uint32_t				bufalloc;				/* allocated size of output buffer, in samples */
 
 	/* resampling information */
 	attoseconds_t		latency_attoseconds;	/* latency between this stream and the input stream */
-	INT16				gain;					/* gain to apply to this input */
+	int16_t				gain;					/* gain to apply to this input */
 };
 
 
@@ -105,7 +105,7 @@ struct _stream_output
 
 	/* output buffer position */
 	int					dependents;				/* number of dependents */
-	INT16				gain;					/* gain to apply to the output */
+	int16_t				gain;					/* gain to apply to the output */
 };
 
 
@@ -118,12 +118,12 @@ public:
 	int					index;					/* index for save states */
 
 	/* general information */
-	UINT32				sample_rate;			/* sample rate of this stream */
-	UINT32				new_sample_rate;		/* newly-set sample rate for the stream */
+	uint32_t				sample_rate;			/* sample rate of this stream */
+	uint32_t				new_sample_rate;		/* newly-set sample rate for the stream */
 
 	/* timing information */
 	attoseconds_t		attoseconds_per_sample;	/* number of attoseconds per sample */
-	INT32				max_samples_per_update;	/* maximum samples per update */
+	int32_t				max_samples_per_update;	/* maximum samples per update */
 
 	/* input information */
 	int					inputs;					/* number of inputs */
@@ -131,7 +131,7 @@ public:
 	stream_sample_t **	input_array;			/* array of inputs for passing to the callback */
 
 	/* resample buffer information */
-	UINT32				resample_bufalloc;		/* allocated size of each resample buffer */
+	uint32_t				resample_bufalloc;		/* allocated size of each resample buffer */
 
 	/* output information */
 	int					outputs;				/* number of outputs */
@@ -139,10 +139,10 @@ public:
 	stream_sample_t **	output_array;			/* array of outputs for passing to the callback */
 
 	/* output buffer information */
-	UINT32				output_bufalloc;		/* allocated size of each output buffer */
-	INT32				output_sampindex;		/* current position within each output buffer */
-	INT32				output_update_sampindex;/* position at time of last global update */
-	INT32				output_base_sampindex;	/* sample at base of buffer, relative to the current emulated second */
+	uint32_t				output_bufalloc;		/* allocated size of each output buffer */
+	int32_t				output_sampindex;		/* current position within each output buffer */
+	int32_t				output_update_sampindex;/* position at time of last global update */
+	int32_t				output_base_sampindex;	/* sample at base of buffer, relative to the current emulated second */
 
 	/* callback information */
 	stream_update_func	callback;				/* callback function */
@@ -170,7 +170,7 @@ static void allocate_resample_buffers(running_machine *machine, sound_stream *st
 static void allocate_output_buffers(running_machine *machine, sound_stream *stream);
 static void recompute_sample_rate_data(running_machine *machine, sound_stream *stream);
 static void generate_samples(sound_stream *stream, int samples);
-static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 numsamples);
+static stream_sample_t *generate_resampled_data(stream_input *input, uint32_t numsamples);
 
 
 
@@ -183,10 +183,10 @@ static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 nums
     time to a sample index in a given stream
 -------------------------------------------------*/
 
-INLINE INT32 time_to_sampindex(const streams_private *strdata, const sound_stream *stream, attotime time)
+INLINE int32_t time_to_sampindex(const streams_private *strdata, const sound_stream *stream, attotime time)
 {
 	/* determine the number of samples since the start of this second */
-	INT32 sample = (INT32)(time.attoseconds / stream->attoseconds_per_sample);
+	int32_t sample = (int32_t)(time.attoseconds / stream->attoseconds_per_sample);
 
 	/* if we're ahead of the last update, then adjust upwards */
 	if (time.seconds > strdata->last_update.seconds)
@@ -256,7 +256,7 @@ void streams_update(running_machine *machine)
 	/* iterate over all the streams */
 	for (stream = strdata->stream_head; stream != NULL; stream = stream->next)
 	{
-		INT32 output_bufindex = stream->output_sampindex - stream->output_base_sampindex;
+		int32_t output_bufindex = stream->output_sampindex - stream->output_base_sampindex;
 		int outputnum;
 
 		/* make sure this stream is up-to-date */
@@ -277,7 +277,7 @@ void streams_update(running_machine *machine)
            we need to shuffle things down */
 		if (stream->output_bufalloc - output_bufindex < 2 * stream->max_samples_per_update)
 		{
-			INT32 samples_to_lose = output_bufindex - stream->max_samples_per_update;
+			int32_t samples_to_lose = output_bufindex - stream->max_samples_per_update;
 			if (samples_to_lose > 0)
 			{
 				/* if we have samples to move, do so for each output */
@@ -301,7 +301,7 @@ void streams_update(running_machine *machine)
 	for (stream = strdata->stream_head; stream != NULL; stream = stream->next)
 		if (stream->new_sample_rate != 0)
 		{
-			UINT32 old_rate = stream->sample_rate;
+			uint32_t old_rate = stream->sample_rate;
 			int outputnum;
 
 			/* update to the new rate and remember the old rate */
@@ -312,8 +312,8 @@ void streams_update(running_machine *machine)
 			recompute_sample_rate_data(machine, stream);
 
 			/* reset our sample indexes to the current time */
-			stream->output_sampindex = (INT64)stream->output_sampindex * (INT64)stream->sample_rate / old_rate;
-			stream->output_update_sampindex = (INT64)stream->output_update_sampindex * (INT64)stream->sample_rate / old_rate;
+			stream->output_sampindex = (int64_t)stream->output_sampindex * (int64_t)stream->sample_rate / old_rate;
+			stream->output_update_sampindex = (int64_t)stream->output_update_sampindex * (int64_t)stream->sample_rate / old_rate;
 			stream->output_base_sampindex = stream->output_sampindex - stream->max_samples_per_update;
 
 			/* clear out the buffer */
@@ -503,7 +503,7 @@ void stream_update(sound_stream *stream)
 {
 	running_machine *machine = stream->device->machine;
 	streams_private *strdata = machine->streams_data;
-	INT32 update_sampindex = time_to_sampindex(strdata, stream, timer_get_time(machine));
+	int32_t update_sampindex = time_to_sampindex(strdata, stream, timer_get_time(machine));
 
 	/* generate samples to get us up to the appropriate time */
 	profiler_mark_start(PROFILER_SOUND);
@@ -716,7 +716,7 @@ static STATE_POSTLOAD( stream_postload )
 static void allocate_resample_buffers(running_machine *machine, sound_stream *stream)
 {
 	/* compute the target number of samples */
-	INT32 bufsize = 2 * stream->max_samples_per_update;
+	int32_t bufsize = 2 * stream->max_samples_per_update;
 
 	/* if we don't have enough room, allocate more */
 	if (stream->resample_bufalloc < bufsize)
@@ -749,7 +749,7 @@ static void allocate_resample_buffers(running_machine *machine, sound_stream *st
 static void allocate_output_buffers(running_machine *machine, sound_stream *stream)
 {
 	/* compute the target number of samples */
-	INT32 bufsize = OUTPUT_BUFFER_UPDATES * stream->max_samples_per_update;
+	int32_t bufsize = OUTPUT_BUFFER_UPDATES * stream->max_samples_per_update;
 
 	/* if we don't have enough room, allocate more */
 	if (stream->output_bufalloc < bufsize)
@@ -877,7 +877,7 @@ static void generate_samples(sound_stream *stream, int samples)
     resample buffer for a given input
 -------------------------------------------------*/
 
-static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 numsamples)
+static stream_sample_t *generate_resampled_data(stream_input *input, uint32_t numsamples)
 {
 	stream_sample_t *dest = input->resample;
 	stream_output *output = input->source;
@@ -886,9 +886,9 @@ static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 nums
 	stream_sample_t *source;
 	stream_sample_t sample;
 	attoseconds_t basetime;
-	INT32 basesample;
-	UINT32 basefrac;
-	UINT32 step;
+	int32_t basesample;
+	uint32_t basefrac;
+	uint32_t step;
 	int gain;
 
 	/* if we don't have an output to pull data from, generate silence */
@@ -922,7 +922,7 @@ static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 nums
 	assert(basefrac < FRAC_ONE);
 
 	/* compute the stepping fraction */
-	step = ((UINT64)input_stream->sample_rate << FRAC_BITS) / stream->sample_rate;
+	step = ((uint64_t)input_stream->sample_rate << FRAC_BITS) / stream->sample_rate;
 
 	/* if we have equal sample rates, we just need to copy */
 	if (step == FRAC_ONE)
@@ -950,7 +950,7 @@ static stream_sample_t *generate_resampled_data(stream_input *input, UINT32 nums
 			}
 
 			/* if we're done, we're done */
-			if ((INT32)numsamples-- < 0)
+			if ((int32_t)numsamples-- < 0)
 				break;
 
 			/* compute starting and ending fractional positions */

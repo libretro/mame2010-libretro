@@ -289,7 +289,7 @@ void device_config_interface::interface_config_complete()
 //  processing for a given interface
 //-------------------------------------------------
 
-bool device_config_interface::interface_process_token(UINT32 entrytype, const machine_config_token *&tokens)
+bool device_config_interface::interface_process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
 	return false;
 }
@@ -317,7 +317,7 @@ bool device_config_interface::interface_validity_check(const game_driver &driver
 //  device configuration
 //-------------------------------------------------
 
-device_config::device_config(const machine_config &mconfig, device_type type, const char *name, const char *tag, const device_config *owner, UINT32 clock)
+device_config::device_config(const machine_config &mconfig, device_type type, const char *name, const char *tag, const device_config *owner, uint32_t clock)
 	: m_next(NULL),
 	  m_owner(const_cast<device_config *>(owner)),
 	  m_interface_list(NULL),
@@ -369,11 +369,11 @@ void device_config::config_complete()
 //  process_token - process tokens
 //-------------------------------------------------
 
-void device_config::process_token(UINT32 entrytype, const machine_config_token *&tokens)
+void device_config::process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
 	int size, offset, bits, index;
-	UINT32 data32;
-	UINT64 data64;
+	uint32_t data32;
+	uint64_t data64;
 	bool processed = false;
 
 	// first process stuff we know about
@@ -426,9 +426,9 @@ void device_config::process_token(UINT32 entrytype, const machine_config_token *
 			data32 = TOKEN_GET_UINT32(tokens);
 			switch (size)
 			{
-				case 1: *(UINT8 *) ((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
-				case 2: *(UINT16 *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
-				case 4: *(UINT32 *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
+				case 1: *(uint8_t *) ((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
+				case 2: *(uint16_t *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
+				case 4: *(uint32_t *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data32; break;
 			}
 			processed = true;
 			break;
@@ -440,10 +440,10 @@ void device_config::process_token(UINT32 entrytype, const machine_config_token *
 			TOKEN_EXTRACT_UINT64(tokens, data64);
 			switch (size)
 			{
-				case 1: *(UINT8 *) ((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
-				case 2: *(UINT16 *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
-				case 4: *(UINT32 *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
-				case 8: *(UINT64 *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
+				case 1: *(uint8_t *) ((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
+				case 2: *(uint16_t *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
+				case 4: *(uint32_t *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
+				case 8: *(uint64_t *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = data64; break;
 			}
 			processed = true;
 			break;
@@ -455,8 +455,8 @@ void device_config::process_token(UINT32 entrytype, const machine_config_token *
 			data32 = TOKEN_GET_UINT32(tokens);
 			switch (size)
 			{
-				case 4: *(float *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = (float)(INT32)data32 / (float)(1 << bits); break;
-				case 8: *(double *)((UINT8 *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = (double)(INT32)data32 / (double)(1 << bits); break;
+				case 4: *(float *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = (float)(int32_t)data32 / (float)(1 << bits); break;
+				case 8: *(double *)((uint8_t *)downcast<legacy_device_config_base *>(this)->inline_config() + offset) = (double)(int32_t)data32 / (double)(1 << bits); break;
 			}
 			processed = true;
 			break;
@@ -522,7 +522,7 @@ void device_config::device_config_complete()
 //  tokens
 //-------------------------------------------------
 
-bool device_config::device_process_token(UINT32 entrytype, const machine_config_token *&tokens)
+bool device_config::device_process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
 	// handle nothing by default
 	return false;
@@ -781,7 +781,7 @@ device_t *device_t::siblingdevice(const char *_tag) const
 //  set_clock - sets the given device's raw clock
 //-------------------------------------------------
 
-void device_t::set_unscaled_clock(UINT32 clock)
+void device_t::set_unscaled_clock(uint32_t clock)
 {
 	m_unscaled_clock = clock;
 	m_clock = m_unscaled_clock * m_clock_scale;
@@ -809,15 +809,15 @@ void device_t::set_clock_scale(double clockscale)
 //  clock ticks to an attotime
 //-------------------------------------------------
 
-attotime device_t::clocks_to_attotime(UINT64 numclocks) const
+attotime device_t::clocks_to_attotime(uint64_t numclocks) const
 {
 	if (numclocks < m_clock)
 		return attotime_make(0, numclocks * m_attoseconds_per_clock);
 	else
 	{
-		UINT32 remainder;
-		UINT32 quotient = divu_64x32_rem(numclocks, m_clock, &remainder);
-		return attotime_make(quotient, (UINT64)remainder * (UINT64)m_attoseconds_per_clock);
+		uint32_t remainder;
+		uint32_t quotient = divu_64x32_rem(numclocks, m_clock, &remainder);
+		return attotime_make(quotient, (uint64_t)remainder * (uint64_t)m_attoseconds_per_clock);
 	}
 }
 
@@ -827,9 +827,9 @@ attotime device_t::clocks_to_attotime(UINT64 numclocks) const
 //  attotime to CPU clock ticks
 //-------------------------------------------------
 
-UINT64 device_t::attotime_to_clocks(attotime duration) const
+uint64_t device_t::attotime_to_clocks(attotime duration) const
 {
-	return mulu_32x32(duration.seconds, m_clock) + (UINT64)duration.attoseconds / (UINT64)m_attoseconds_per_clock;
+	return mulu_32x32(duration.seconds, m_clock) + (uint64_t)duration.attoseconds / (uint64_t)m_attoseconds_per_clock;
 }
 
 

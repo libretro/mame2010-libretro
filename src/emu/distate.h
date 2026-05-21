@@ -76,12 +76,12 @@ class device_state_entry
 
 private:
 	// construction/destruction
-	device_state_entry(int index, const char *symbol, void *dataptr, UINT8 size);
+	device_state_entry(int index, const char *symbol, void *dataptr, uint8_t size);
 
 public:
 	// post-construction modifiers
-	device_state_entry &mask(UINT64 _mask) { m_datamask = _mask; format_from_mask(); return *this; }
-	device_state_entry &signed_mask(UINT64 _mask) { m_datamask = _mask; m_flags |= DSF_IMPORT_SEXT; format_from_mask(); return *this; }
+	device_state_entry &mask(uint64_t _mask) { m_datamask = _mask; format_from_mask(); return *this; }
+	device_state_entry &signed_mask(uint64_t _mask) { m_datamask = _mask; m_flags |= DSF_IMPORT_SEXT; format_from_mask(); return *this; }
 	device_state_entry &formatstr(const char *_format);
 	device_state_entry &callimport() { m_flags |= DSF_IMPORT; return *this; }
 	device_state_entry &callexport() { m_flags |= DSF_EXPORT; return *this; }
@@ -98,11 +98,11 @@ public:
 
 protected:
 	// device state flags
-	static const UINT8 DSF_NOSHOW =			0x01;	// don't display this entry in the registers view
-	static const UINT8 DSF_IMPORT =			0x02;	// call the import function after writing new data
-	static const UINT8 DSF_IMPORT_SEXT =	0x04;	// sign-extend the data when writing new data
-	static const UINT8 DSF_EXPORT =			0x08;	// call the export function prior to fetching the data
-	static const UINT8 DSF_CUSTOM_STRING =	0x10;	// set if the format has a custom string
+	static const uint8_t DSF_NOSHOW =			0x01;	// don't display this entry in the registers view
+	static const uint8_t DSF_IMPORT =			0x02;	// call the import function after writing new data
+	static const uint8_t DSF_IMPORT_SEXT =	0x04;	// sign-extend the data when writing new data
+	static const uint8_t DSF_EXPORT =			0x08;	// call the export function prior to fetching the data
+	static const uint8_t DSF_CUSTOM_STRING =	0x10;	// set if the format has a custom string
 
 	// helpers
 	bool needs_custom_string() const { return ((m_flags & DSF_CUSTOM_STRING) != 0); }
@@ -110,28 +110,28 @@ protected:
 
 	// return the current value -- only for our friends who handle export
 	bool needs_export() const { return ((m_flags & DSF_EXPORT) != 0); }
-	UINT64 value() const;
+	uint64_t value() const;
 	astring &format(astring &dest, const char *string, bool maxout = false) const;
 
 	// set the current value -- only for our friends who handle import
 	bool needs_import() const { return ((m_flags & DSF_IMPORT) != 0); }
-	void set_value(UINT64 value) const;
+	void set_value(uint64_t value) const;
 	void set_value(const char *string) const;
 
 	// statics
-	static const UINT64 k_decimal_divisor[20];		// divisors for outputting decimal values
+	static const uint64_t k_decimal_divisor[20];		// divisors for outputting decimal values
 
 	// public state description
 	device_state_entry *	m_next;					// link to next item
-	UINT32					m_index;				// index by which this item is referred
+	uint32_t					m_index;				// index by which this item is referred
 	generic_ptr				m_dataptr;				// pointer to where the data lives
-	UINT64					m_datamask;				// mask that applies to the data
-	UINT8					m_datasize;				// size of the data
-	UINT8					m_flags;				// flags for this data
+	uint64_t					m_datamask;				// mask that applies to the data
+	uint8_t					m_datasize;				// size of the data
+	uint8_t					m_flags;				// flags for this data
 	astring					m_symbol;				// symbol for display; all lower-case version for expressions
 	astring					m_format;				// supported formats
 	bool					m_default_format;		// true if we are still using default format
-	UINT64					m_sizemask;				// mask derived from the data size
+	uint64_t					m_sizemask;				// mask derived from the data size
 };
 
 
@@ -164,16 +164,16 @@ public:
 	const device_state_entry *state_first() const { return m_state_list; }
 
 	// state getters
-	UINT64 state(int index);
+	uint64_t state(int index);
 	offs_t pc() { return state(STATE_GENPC); }
 	offs_t pcbase() { return state(STATE_GENPCBASE); }
 	offs_t sp() { return state(STATE_GENSP); }
-	UINT64 flags() { return state(STATE_GENFLAGS); }
+	uint64_t flags() { return state(STATE_GENFLAGS); }
 	astring &state_string(int index, astring &dest);
 	int state_string_max_length(int index);
 
 	// state setters
-	void set_state(int index, UINT64 value);
+	void set_state(int index, uint64_t value);
 	void set_state(int index, const char *string);
 
 public:	// protected eventually
@@ -183,7 +183,7 @@ public:	// protected eventually
 	{
 		return state_add(index, symbol, &data, sizeof(data));
 	}
-	device_state_entry &state_add(int index, const char *symbol, void *data, UINT8 size);
+	device_state_entry &state_add(int index, const char *symbol, void *data, uint8_t size);
 
 protected:
 	// derived class overrides

@@ -120,7 +120,7 @@ struct _view_item
 	layout_element *	element;			/* pointer to the associated element (non-screens only) */
 	const char *		output_name;		/* name of this item */
 	const char *		input_tag;			/* input tag of this item */
-	UINT32				input_mask;			/* input mask of this item */
+	uint32_t				input_mask;			/* input mask of this item */
 	int					index;				/* index for this item (screens only) */
 	int					orientation;		/* orientation of this item */
 	render_bounds		bounds;				/* bounds of the item */
@@ -136,11 +136,11 @@ struct _layout_view
 	const char *		name;				/* name of the layout */
 	float				aspect;				/* X/Y of the layout */
 	float				scraspect;			/* X/Y of the screen areas */
-	UINT32				screens;			/* bitmask of screens used */
+	uint32_t				screens;			/* bitmask of screens used */
 	render_bounds		bounds;				/* computed bounds of the view */
 	render_bounds		scrbounds;			/* computed bounds of the screens within the view */
 	render_bounds		expbounds;			/* explicit bounds of the view */
-	UINT8				layenabled[ITEM_LAYER_MAX]; /* is this layer enabled? */
+	uint8_t				layenabled[ITEM_LAYER_MAX]; /* is this layer enabled? */
 	view_item *			itemlist[ITEM_LAYER_MAX]; /* list of layout items for each layer */
 };
 

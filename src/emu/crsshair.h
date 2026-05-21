@@ -46,9 +46,9 @@
 typedef struct _crosshair_user_settings crosshair_user_settings;
 struct _crosshair_user_settings
 {
-	UINT8			used;		/* is used */
-	UINT8			mode;		/* visibility mode */
-	UINT8			auto_time;	/* time in seconds to blank crosshair if no movement */
+	uint8_t			used;		/* is used */
+	uint8_t			mode;		/* visibility mode */
+	uint8_t			auto_time;	/* time in seconds to blank crosshair if no movement */
 	char			name[CROSSHAIR_PIC_NAME_LENGTH + 1];		/* bitmap name */
 };
 
@@ -71,10 +71,10 @@ void crosshair_set_screen(running_machine *machine, int player, device_t *screen
 int crosshair_get_usage(running_machine *machine);
 
 /* return the current crosshair settings for the given player */
-void crosshair_get_user_settings(running_machine *machine, UINT8 player, crosshair_user_settings *settings);
+void crosshair_get_user_settings(running_machine *machine, uint8_t player, crosshair_user_settings *settings);
 
 /* modify the current crosshair settings for the given player */
-void crosshair_set_user_settings(running_machine *machine, UINT8 player, crosshair_user_settings *settings);
+void crosshair_set_user_settings(running_machine *machine, uint8_t player, crosshair_user_settings *settings);
 
 
 #endif	/* __CRSSHAIR_H__ */

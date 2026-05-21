@@ -142,7 +142,7 @@ astring &_profiler_get_text(running_machine *machine, astring &string)
 		{ PROFILER_PROFILER,         "Profiler" },
 		{ PROFILER_IDLE,             "Idle" }
 	};
-	UINT64 computed, normalize, total;
+	uint64_t computed, normalize, total;
 	int curtype, curmem, switches;
 
 	profiler_mark_start(PROFILER_PROFILER);

@@ -46,7 +46,7 @@ struct software_info
 	const char *parentname;
 	const char *year;			/* Copyright year on title screen, actual release dates can be tracked in external resources */
 	const char *publisher;
-	UINT32 supported;
+	uint32_t supported;
 	software_part *partdata;
 	struct software_info *next;	/* Used internally */
 };
@@ -87,7 +87,7 @@ typedef struct _software_list_config software_list_config;
 struct _software_list_config
 {
 	char *list_name[SOFTWARE_LIST_CONFIG_SIZE];
-	UINT32 list_type;
+	uint32_t list_type;
 };
 
 

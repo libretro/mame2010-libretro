@@ -87,11 +87,11 @@ class screen_device_config : public device_config
 	friend class screen_device;
 
 	// construction/destruction
-	screen_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	screen_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 	// configuration readers
@@ -184,7 +184,7 @@ public:
 	attotime time_until_update() const { return (machine->config->m_video_attributes & VIDEO_UPDATE_AFTER_VBLANK) ? time_until_vblank_end() : time_until_vblank_start(); }
 	attotime scan_period() const { return attotime_make(0, m_scantime); }
 	attotime frame_period() const { return (!this || !started()) ? k_default_frame_period : attotime_make(0, m_frame_period); };
-	UINT64 frame_number() const { return m_frame_number; }
+	uint64_t frame_number() const { return m_frame_number; }
 
 	// updating
 	bool update_partial(int scanline);
@@ -239,11 +239,11 @@ private:
 	render_texture *		m_texture[2];			// 2x textures for the screen bitmap
 	bitmap_t *				m_bitmap[2];			// 2x bitmaps for rendering
 	bitmap_t *				m_burnin;				// burn-in bitmap
-	UINT8					m_curbitmap;			// current bitmap index
-	UINT8					m_curtexture;			// current texture index
-	INT32					m_texture_format;		// texture format of bitmap for this screen
+	uint8_t					m_curbitmap;			// current bitmap index
+	uint8_t					m_curtexture;			// current texture index
+	int32_t					m_texture_format;		// texture format of bitmap for this screen
 	bool					m_changed;				// has this bitmap changed?
-	INT32					m_last_partial_scan;	// scanline of last partial update
+	int32_t					m_last_partial_scan;	// scanline of last partial update
 
 	// screen timing
 	attoseconds_t			m_frame_period;			// attoseconds per frame
@@ -256,7 +256,7 @@ private:
 	emu_timer *				m_vblank_end_timer;		// timer to signal VBLANK end
 	emu_timer *				m_scanline0_timer;		// scanline 0 timer
 	emu_timer *				m_scanline_timer;		// scanline timer
-	UINT64					m_frame_number;			// the current frame number
+	uint64_t					m_frame_number;			// the current frame number
 
 	struct callback_item
 	{
@@ -318,10 +318,10 @@ extern const device_type SCREEN;
 	MDRV_DEVICE_INLINE_DATA16(screen_device_config::INLINE_VIS_MAXY, _maxy)
 
 #define MDRV_SCREEN_DEFAULT_POSITION(_xscale, _xoffs, _yscale, _yoffs)	\
-	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_XOFFSET, (INT32)((_xoffs) * (double)(1 << 24))) \
-	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_XSCALE, (INT32)((_xscale) * (double)(1 << 24))) \
-	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_YOFFSET, (INT32)((_yoffs) * (double)(1 << 24))) \
-	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_YSCALE, (INT32)((_yscale) * (double)(1 << 24)))
+	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_XOFFSET, (int32_t)((_xoffs) * (double)(1 << 24))) \
+	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_XSCALE, (int32_t)((_xscale) * (double)(1 << 24))) \
+	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_YOFFSET, (int32_t)((_yoffs) * (double)(1 << 24))) \
+	MDRV_DEVICE_INLINE_DATA32(screen_device_config::INLINE_YSCALE, (int32_t)((_yscale) * (double)(1 << 24)))
 
 
 
@@ -386,7 +386,7 @@ void video_mng_end_recording(running_machine *machine);
 
 void video_avi_begin_recording(running_machine *machine, const char *name);
 void video_avi_end_recording(running_machine *machine);
-void video_avi_add_sound(running_machine *machine, const INT16 *sound, int numsamples);
+void video_avi_add_sound(running_machine *machine, const int16_t *sound, int numsamples);
 
 
 /* ----- configuration helpers ----- */

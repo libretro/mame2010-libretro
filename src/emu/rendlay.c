@@ -423,8 +423,8 @@ static void layout_element_scale(bitmap_t *dest, const bitmap_t *source, const r
 
 static void layout_element_draw_rect(bitmap_t *dest, const rectangle *bounds, const render_color *color)
 {
-	UINT32 r, g, b, inva;
-	UINT32 x, y;
+	uint32_t r, g, b, inva;
+	uint32_t x, y;
 
 	/* compute premultiplied colors */
 	r = color->r * color->a * 255.0;
@@ -436,14 +436,14 @@ static void layout_element_draw_rect(bitmap_t *dest, const rectangle *bounds, co
 	for (y = bounds->min_y; y < bounds->max_y; y++)
 		for (x = bounds->min_x; x < bounds->max_x; x++)
 		{
-			UINT32 finalr = r;
-			UINT32 finalg = g;
-			UINT32 finalb = b;
+			uint32_t finalr = r;
+			uint32_t finalg = g;
+			uint32_t finalb = b;
 
 			/* if we're translucent, add in the destination pixel contribution */
 			if (inva > 0)
 			{
-				UINT32 dpix = *BITMAP_ADDR32(dest, y, x);
+				uint32_t dpix = *BITMAP_ADDR32(dest, y, x);
 				finalr += (RGB_RED(dpix) * inva) >> 8;
 				finalg += (RGB_GREEN(dpix) * inva) >> 8;
 				finalb += (RGB_BLUE(dpix) * inva) >> 8;
@@ -464,8 +464,8 @@ static void layout_element_draw_disk(bitmap_t *dest, const rectangle *bounds, co
 {
 	float xcenter, ycenter;
 	float xradius, yradius, ooyradius2;
-	UINT32 r, g, b, inva;
-	UINT32 x, y;
+	uint32_t r, g, b, inva;
+	uint32_t x, y;
 
 	/* compute premultiplied colors */
 	r = color->r * color->a * 255.0;
@@ -485,23 +485,23 @@ static void layout_element_draw_disk(bitmap_t *dest, const rectangle *bounds, co
 	{
 		float ycoord = ycenter - ((float)y + 0.5f);
 		float xval = xradius * sqrt(1.0f - (ycoord * ycoord) * ooyradius2);
-		INT32 left, right;
+		int32_t left, right;
 
 		/* compute left/right coordinates */
-		left = (INT32)(xcenter - xval + 0.5f);
-		right = (INT32)(xcenter + xval + 0.5f);
+		left = (int32_t)(xcenter - xval + 0.5f);
+		right = (int32_t)(xcenter + xval + 0.5f);
 
 		/* draw this scanline */
 		for (x = left; x < right; x++)
 		{
-			UINT32 finalr = r;
-			UINT32 finalg = g;
-			UINT32 finalb = b;
+			uint32_t finalr = r;
+			uint32_t finalg = g;
+			uint32_t finalb = b;
 
 			/* if we're translucent, add in the destination pixel contribution */
 			if (inva > 0)
 			{
-				UINT32 dpix = *BITMAP_ADDR32(dest, y, x);
+				uint32_t dpix = *BITMAP_ADDR32(dest, y, x);
 				finalr += (RGB_RED(dpix) * inva) >> 8;
 				finalg += (RGB_GREEN(dpix) * inva) >> 8;
 				finalb += (RGB_BLUE(dpix) * inva) >> 8;
@@ -523,9 +523,9 @@ static void layout_element_draw_text(bitmap_t *dest, const rectangle *bounds, co
 {
 	render_font *font = render_font_alloc(NULL);
 	bitmap_t *tempbitmap;
-	UINT32 r, g, b, a;
+	uint32_t r, g, b, a;
 	float aspect = 1.0f;
-	INT32 curx, width;
+	int32_t curx, width;
 	const char *s;
 
 	/* compute premultiplied colors */
@@ -562,18 +562,18 @@ static void layout_element_draw_text(bitmap_t *dest, const rectangle *bounds, co
 			int effy = bounds->min_y + y;
 			if (effy >= bounds->min_y && effy <= bounds->max_y)
 			{
-				UINT32 *src = BITMAP_ADDR32(tempbitmap, y, 0);
-				UINT32 *d = BITMAP_ADDR32(dest, effy, 0);
+				uint32_t *src = BITMAP_ADDR32(tempbitmap, y, 0);
+				uint32_t *d = BITMAP_ADDR32(dest, effy, 0);
 				for (x = 0; x < chbounds.max_x - chbounds.min_x; x++)
 				{
 					int effx = curx + x + chbounds.min_x;
 					if (effx >= bounds->min_x && effx <= bounds->max_x)
 					{
-						UINT32 spix = RGB_ALPHA(src[x]);
+						uint32_t spix = RGB_ALPHA(src[x]);
 						if (spix != 0)
 						{
-							UINT32 dpix = d[effx];
-							UINT32 ta, tr, tg, tb;
+							uint32_t dpix = d[effx];
+							uint32_t ta, tr, tg, tb;
 
 							ta = (a * (spix + 1)) >> 8;
 							tr = (r * ta + RGB_RED(dpix) * (0x100 - ta)) >> 8;
@@ -609,8 +609,8 @@ static void draw_segment_horizontal_caps(bitmap_t *dest, int minx, int maxx, int
 	/* loop over the width of the segment */
 	for (y = 0; y < width / 2; y++)
 	{
-		UINT32 *d0 = BITMAP_ADDR32(dest, midy - y, 0);
-		UINT32 *d1 = BITMAP_ADDR32(dest, midy + y, 0);
+		uint32_t *d0 = BITMAP_ADDR32(dest, midy - y, 0);
+		uint32_t *d1 = BITMAP_ADDR32(dest, midy + y, 0);
 		int ty = (y < width / 8) ? width / 8 : y;
 
 		/* loop over the length of the segment */
@@ -644,8 +644,8 @@ static void draw_segment_vertical_caps(bitmap_t *dest, int miny, int maxy, int m
 	/* loop over the width of the segment */
 	for (x = 0; x < width / 2; x++)
 	{
-		UINT32 *d0 = BITMAP_ADDR32(dest, 0, midx - x);
-		UINT32 *d1 = BITMAP_ADDR32(dest, 0, midx + x);
+		uint32_t *d0 = BITMAP_ADDR32(dest, 0, midx - x);
+		uint32_t *d1 = BITMAP_ADDR32(dest, 0, midx + x);
 		int tx = (x < width / 8) ? width / 8 : x;
 
 		/* loop over the length of the segment */
@@ -684,7 +684,7 @@ static void draw_segment_diagonal_1(bitmap_t *dest, int minx, int maxx, int miny
 	for (x = minx; x < maxx; x++)
 		if (x >= 0 && x < dest->width)
 		{
-			UINT32 *d = BITMAP_ADDR32(dest, 0, x);
+			uint32_t *d = BITMAP_ADDR32(dest, 0, x);
 			int step = (x - minx) * ratio;
 
 			for (y = maxy - width - step; y < maxy - step; y++)
@@ -714,7 +714,7 @@ static void draw_segment_diagonal_2(bitmap_t *dest, int minx, int maxx, int miny
 	for (x = minx; x < maxx; x++)
 		if (x >= 0 && x < dest->width)
 		{
-			UINT32 *d = BITMAP_ADDR32(dest, 0, x);
+			uint32_t *d = BITMAP_ADDR32(dest, 0, x);
 			int step = (x - minx) * ratio;
 
 			for (y = miny + step; y < miny + step + width; y++)
@@ -733,7 +733,7 @@ static void draw_segment_diagonal_2(bitmap_t *dest, int minx, int maxx, int miny
 static void draw_segment_decimal(bitmap_t *dest, int midx, int midy, int width, rgb_t color)
 {
 	float ooradius2;
-	UINT32 x, y;
+	uint32_t x, y;
 
 	/* compute parameters */
 	width /= 2;
@@ -742,14 +742,14 @@ static void draw_segment_decimal(bitmap_t *dest, int midx, int midy, int width, 
 	/* iterate over y */
 	for (y = 0; y <= width; y++)
 	{
-		UINT32 *d0 = BITMAP_ADDR32(dest, midy - y, 0);
-		UINT32 *d1 = BITMAP_ADDR32(dest, midy + y, 0);
+		uint32_t *d0 = BITMAP_ADDR32(dest, midy - y, 0);
+		uint32_t *d1 = BITMAP_ADDR32(dest, midy + y, 0);
 		float xval = width * sqrt(1.0f - (float)(y * y) * ooradius2);
-		INT32 left, right;
+		int32_t left, right;
 
 		/* compute left/right coordinates */
-		left = midx - (INT32)(xval + 0.5f);
-		right = midx + (INT32)(xval + 0.5f);
+		left = midx - (int32_t)(xval + 0.5f);
+		right = midx + (int32_t)(xval + 0.5f);
 
 		/* draw this scanline */
 		for (x = left; x < right; x++)
@@ -773,7 +773,7 @@ static void draw_segment_comma(bitmap_t *dest, int minx, int maxx, int miny, int
 	/* draw line */
 	for (x = minx; x < maxx; x++)
 	{
-		UINT32 *d = BITMAP_ADDR32(dest, 0, x);
+		uint32_t *d = BITMAP_ADDR32(dest, 0, x);
 		int step = (x - minx) * ratio;
 
 		for (y = maxy; y < maxy  - width - step; y--)
@@ -795,7 +795,7 @@ static void apply_skew(bitmap_t *dest, int skewwidth)
 
 	for (y = 0; y < dest->height; y++)
 	{
-		UINT32 *destrow = BITMAP_ADDR32(dest, y, 0);
+		uint32_t *destrow = BITMAP_ADDR32(dest, y, 0);
 		int offs = skewwidth * (dest->height - y) / dest->height;
 		for (x = dest->width - skewwidth - 1; x >= 0; x--)
 			destrow[x + offs] = destrow[x];

@@ -558,7 +558,7 @@ void running_machine::resume()
   region_alloc - allocates memory for a region
 -------------------------------------------------*/
 
-region_info *running_machine::region_alloc(const char *name, UINT32 length, UINT32 flags)
+region_info *running_machine::region_alloc(const char *name, uint32_t length, uint32_t flags)
 {
     /* make sure we don't have a region of the same name; also find the end of the list */
     region_info *info = m_regionlist.find(name);
@@ -668,7 +668,7 @@ void running_machine::current_datetime(system_time &systime)
   rand - standardized random numbers
 -------------------------------------------------*/
 
-UINT32 running_machine::rand()
+uint32_t running_machine::rand()
 {
 	m_rand_seed = 1664525 * m_rand_seed + 1013904223;
 
@@ -697,7 +697,7 @@ void running_machine::call_notifiers(machine_notification which)
 
 void running_machine::handle_saveload()
 {
-	UINT32 openflags = (m_saveload_schedule == SLS_LOAD) ? OPEN_FLAG_READ : (OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
+	uint32_t openflags = (m_saveload_schedule == SLS_LOAD) ? OPEN_FLAG_READ : (OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
 	const char *opnamed = (m_saveload_schedule == SLS_LOAD) ? "loaded" : "saved";
 	const char *opname = (m_saveload_schedule == SLS_LOAD) ? "load" : "save";
 	file_error filerr = FILERR_NONE;
@@ -829,14 +829,14 @@ void running_machine::logfile_callback(running_machine &machine, const char *buf
   region_info - constructor
 -------------------------------------------------*/
 
-region_info::region_info(running_machine &machine, const char *name, UINT32 length, UINT32 flags)
+region_info::region_info(running_machine &machine, const char *name, uint32_t length, uint32_t flags)
 	: m_machine(machine),
 	  m_next(NULL),
 	  m_name(name),
 	  m_length(length),
 	  m_flags(flags)
 {
-	m_base.u8 = auto_alloc_array(&machine, UINT8, length);
+	m_base.u8 = auto_alloc_array(&machine, uint8_t, length);
 }
 
 

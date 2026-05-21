@@ -33,10 +33,10 @@
 typedef struct _crosshair_global crosshair_global;
 struct _crosshair_global
 {
-	UINT8				usage;					/* true if any crosshairs are used */
-	UINT8				used[MAX_PLAYERS];		/* usage per player */
-	UINT8				mode[MAX_PLAYERS];		/* visibility mode per player */
-	UINT8				visible[MAX_PLAYERS];	/* visibility per player */
+	uint8_t				usage;					/* true if any crosshairs are used */
+	uint8_t				used[MAX_PLAYERS];		/* usage per player */
+	uint8_t				mode[MAX_PLAYERS];		/* visibility mode per player */
+	uint8_t				visible[MAX_PLAYERS];	/* visibility per player */
 	bitmap_t *			bitmap[MAX_PLAYERS];	/* bitmap per player */
 	render_texture *	texture[MAX_PLAYERS];	/* texture per player */
 	device_t *screen[MAX_PLAYERS];	/* the screen on which this player's crosshair is drawn */
@@ -44,10 +44,10 @@ struct _crosshair_global
 	float				y[MAX_PLAYERS];			/* current Y position */
 	float				last_x[MAX_PLAYERS];	/* last X position */
 	float				last_y[MAX_PLAYERS];	/* last Y position */
-	UINT8				fade;					/* color fading factor */
-	UINT8				animation_counter;		/* animation frame index */
-	UINT16				auto_time;				/* time in seconds to turn invisible */
-	UINT16				time[MAX_PLAYERS];		/* time since last movement */
+	uint8_t				fade;					/* color fading factor */
+	uint8_t				animation_counter;		/* animation frame index */
+	uint16_t				auto_time;				/* time in seconds to turn invisible */
+	uint16_t				time[MAX_PLAYERS];		/* time since last movement */
 	char				name[MAX_PLAYERS][CROSSHAIR_PIC_NAME_LENGTH + 1];	/* name of crosshair png file */
 };
 
@@ -60,7 +60,7 @@ struct _crosshair_global
 static crosshair_global global;
 
 /* raw bitmap */
-static const UINT8 crosshair_raw_top[] =
+static const uint8_t crosshair_raw_top[] =
 {
 	0x00,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,
 	0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xe0,0x00,
@@ -185,8 +185,8 @@ static void create_bitmap(running_machine *machine, int player)
 		for (y = 0; y < CROSSHAIR_RAW_SIZE / 2; y++)
 		{
 			/* assume it is mirrored vertically */
-			UINT32 *dest0 = BITMAP_ADDR32(global.bitmap[player], y, 0);
-			UINT32 *dest1 = BITMAP_ADDR32(global.bitmap[player], CROSSHAIR_RAW_SIZE - 1 - y, 0);
+			uint32_t *dest0 = BITMAP_ADDR32(global.bitmap[player], y, 0);
+			uint32_t *dest1 = BITMAP_ADDR32(global.bitmap[player], CROSSHAIR_RAW_SIZE - 1 - y, 0);
 
 			/* extract to two rows simultaneously */
 			for (x = 0; x < CROSSHAIR_RAW_SIZE; x++)
@@ -290,7 +290,7 @@ int crosshair_get_usage(running_machine *machine)
     Note: auto_time is common for all players
 -------------------------------------------------*/
 
-void crosshair_get_user_settings(running_machine *machine, UINT8 player, crosshair_user_settings *settings)
+void crosshair_get_user_settings(running_machine *machine, uint8_t player, crosshair_user_settings *settings)
 {
 	settings->auto_time = global.auto_time;
 	settings->used = global.used[player];
@@ -305,7 +305,7 @@ void crosshair_get_user_settings(running_machine *machine, UINT8 player, crossha
     Note: auto_time is common for all players
 -------------------------------------------------*/
 
-void crosshair_set_user_settings(running_machine *machine, UINT8 player, crosshair_user_settings *settings)
+void crosshair_set_user_settings(running_machine *machine, uint8_t player, crosshair_user_settings *settings)
 {
 	int changed = FALSE;
 
@@ -451,7 +451,7 @@ static void crosshair_load(running_machine *machine, int config_type, xml_data_n
 			mode = xml_get_attribute_int(crosshairnode, "mode", CROSSHAIR_VISIBILITY_DEFAULT);
 			if (mode >= CROSSHAIR_VISIBILITY_OFF && mode <= CROSSHAIR_VISIBILITY_AUTO)
 			{
-				global.mode[player] = (UINT8)mode;
+				global.mode[player] = (uint8_t)mode;
 				/* set visibility as specified by mode */
 				/* auto mode starts with visibility off */
 				global.visible[player] = (mode == CROSSHAIR_VISIBILITY_ON) ? TRUE : FALSE;
@@ -470,7 +470,7 @@ static void crosshair_load(running_machine *machine, int config_type, xml_data_n
 	{
 		auto_time = xml_get_attribute_int(crosshairnode, "val", CROSSHAIR_VISIBILITY_AUTOTIME_DEFAULT);
 		if ((auto_time >= CROSSHAIR_VISIBILITY_AUTOTIME_MIN) && (auto_time <= CROSSHAIR_VISIBILITY_AUTOTIME_MAX))
-			global.auto_time = (UINT8)auto_time;
+			global.auto_time = (uint8_t)auto_time;
 	}
 }
 

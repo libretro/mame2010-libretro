@@ -72,7 +72,7 @@ device_config_sound_interface::~device_config_sound_interface()
 //  the sound interface
 //-------------------------------------------------
 
-bool device_config_sound_interface::interface_process_token(UINT32 entrytype, const machine_config_token *&tokens)
+bool device_config_sound_interface::interface_process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
 	switch (entrytype)
 	{
@@ -84,7 +84,7 @@ bool device_config_sound_interface::interface_process_token(UINT32 entrytype, co
 
 			// extract data
 			int output, input;
-			UINT32 gain;
+			uint32_t gain;
 			TOKEN_GET_UINT64_UNPACK4(tokens, entrytype, 8, output, 12, input, 12, gain, 32);
 			float fgain = (float)gain * (1.0f / (float)(1 << 24));
 			const char *target = TOKEN_GET_STRING(tokens);

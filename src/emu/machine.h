@@ -167,39 +167,39 @@ class region_info
 	friend resource_pool_object<region_info>::~resource_pool_object();
 
 	// construction/destruction
-	region_info(running_machine &machine, const char *name, UINT32 length, UINT32 flags);
+	region_info(running_machine &machine, const char *name, uint32_t length, uint32_t flags);
 	~region_info();
 
 public:
 	// getters
 	region_info *next() const { return m_next; }
-	UINT8 *base() const { return (this) ? m_base.u8 : NULL; }
-	UINT8 *end() const { return (this) ? m_base.u8 + m_length : NULL; }
-	UINT32 bytes() const { return (this) ? m_length : 0; }
+	uint8_t *base() const { return (this) ? m_base.u8 : NULL; }
+	uint8_t *end() const { return (this) ? m_base.u8 + m_length : NULL; }
+	uint32_t bytes() const { return (this) ? m_length : 0; }
 	const char *name() const { return m_name; }
-	UINT32 flags() const { return m_flags; }
+	uint32_t flags() const { return m_flags; }
 
 	// flag expansion
 	endianness_t endianness() const { return ((m_flags & ROMREGION_ENDIANMASK) == ROMREGION_LE) ? ENDIANNESS_LITTLE : ENDIANNESS_BIG; }
-	UINT8 width() const { return 1 << ((m_flags & ROMREGION_WIDTHMASK) >> 8); }
+	uint8_t width() const { return 1 << ((m_flags & ROMREGION_WIDTHMASK) >> 8); }
 	bool invert() const { return ((m_flags & ROMREGION_INVERTMASK) != 0); }
 
 	// data access
-	UINT8 &u8(offs_t offset = 0) const { return m_base.u8[offset]; }
-	UINT16 &u16(offs_t offset = 0) const { return m_base.u16[offset]; }
-	UINT32 &u32(offs_t offset = 0) const { return m_base.u32[offset]; }
-	UINT64 &u64(offs_t offset = 0) const { return m_base.u64[offset]; }
+	uint8_t &u8(offs_t offset = 0) const { return m_base.u8[offset]; }
+	uint16_t &u16(offs_t offset = 0) const { return m_base.u16[offset]; }
+	uint32_t &u32(offs_t offset = 0) const { return m_base.u32[offset]; }
+	uint64_t &u64(offs_t offset = 0) const { return m_base.u64[offset]; }
 
 	// allow passing a region for any common pointer
 	operator void *() const { return (this) ? m_base.v : NULL; }
-	operator INT8 *() const { return (this) ? m_base.i8 : NULL; }
-	operator UINT8 *() const { return (this) ? m_base.u8 : NULL; }
-	operator INT16 *() const { return (this) ? m_base.i16 : NULL; }
-	operator UINT16 *() const { return (this) ? m_base.u16 : NULL; }
-	operator INT32 *() const { return (this) ? m_base.i32 : NULL; }
-	operator UINT32 *() const { return (this) ? m_base.u32 : NULL; }
-	operator INT64 *() const { return (this) ? m_base.i64 : NULL; }
-	operator UINT64 *() const { return (this) ? m_base.u64 : NULL; }
+	operator int8_t *() const { return (this) ? m_base.i8 : NULL; }
+	operator uint8_t *() const { return (this) ? m_base.u8 : NULL; }
+	operator int16_t *() const { return (this) ? m_base.i16 : NULL; }
+	operator uint16_t *() const { return (this) ? m_base.u16 : NULL; }
+	operator int32_t *() const { return (this) ? m_base.i32 : NULL; }
+	operator uint32_t *() const { return (this) ? m_base.u32 : NULL; }
+	operator int64_t *() const { return (this) ? m_base.i64 : NULL; }
+	operator uint64_t *() const { return (this) ? m_base.u64 : NULL; }
 
 private:
 	// internal data
@@ -207,8 +207,8 @@ private:
 	region_info *			m_next;
 	astring					m_name;
 	generic_ptr				m_base;
-	UINT32					m_length;
-	UINT32					m_flags;
+	uint32_t					m_length;
+	uint32_t					m_flags;
 };
 
 
@@ -216,13 +216,13 @@ private:
 struct generic_pointers
 {
 	generic_ptr				nvram;				// generic NVRAM
-	UINT32					nvram_size;
+	uint32_t					nvram_size;
 	generic_ptr				videoram;			// videoram
-	UINT32					videoram_size;
+	uint32_t					videoram_size;
 	generic_ptr				spriteram;			// spriteram
-	UINT32					spriteram_size;
+	uint32_t					spriteram_size;
 	generic_ptr				spriteram2;			// secondary spriteram
-	UINT32					spriteram2_size;
+	uint32_t					spriteram2_size;
 	generic_ptr				buffered_spriteram;	// buffered spriteram
 	generic_ptr				buffered_spriteram2;// secondary buffered spriteram
 	generic_ptr				paletteram;			// palette RAM
@@ -241,18 +241,18 @@ public:
 	{
 		void set(struct tm &t);
 
-		UINT8		second;		// seconds (0-59)
-		UINT8		minute;		// minutes (0-59)
-		UINT8		hour;		// hours (0-23)
-		UINT8		mday;		// day of month (1-31)
-		UINT8		month;		// month (0-11)
-		INT32		year;		// year (1=1 AD)
-		UINT8		weekday;	// day of week (0-6)
-		UINT16		day;		// day of year (0-365)
-		UINT8		is_dst;		// is this daylight savings?
+		uint8_t		second;		// seconds (0-59)
+		uint8_t		minute;		// minutes (0-59)
+		uint8_t		hour;		// hours (0-23)
+		uint8_t		mday;		// day of month (1-31)
+		uint8_t		month;		// month (0-11)
+		int32_t		year;		// year (1=1 AD)
+		uint8_t		weekday;	// day of week (0-6)
+		uint16_t		day;		// day of year (0-365)
+		uint8_t		is_dst;		// is this daylight savings?
 	};
 
-	INT64			time;		// number of seconds elapsed since midnight, January 1 1970 UTC
+	int64_t			time;		// number of seconds elapsed since midnight, January 1 1970 UTC
 	full_time		local_time;	// local time
 	full_time		utc_time;	// UTC coordinated time
 };
@@ -278,7 +278,7 @@ public:
 	inline const region_info *region(const char *tag);
 
 	// configuration helpers
-	UINT32 total_colors() const { return m_config.m_total_colors; }
+	uint32_t total_colors() const { return m_config.m_total_colors; }
 
 	// getters
 	const char *basename() const { return m_basename; }
@@ -315,13 +315,13 @@ public:
 	void current_datetime(system_time &systime);
 
 	// regions
-	region_info *region_alloc(const char *name, UINT32 length, UINT32 flags);
+	region_info *region_alloc(const char *name, uint32_t length, uint32_t flags);
 	void region_free(const char *name);
 
 	// misc
 	void CLIB_DECL logerror(const char *format, ...);
 	void CLIB_DECL vlogerror(const char *format, va_list args);
-	UINT32 rand();
+	uint32_t rand();
 	const char *describe_context();
 
 	// internals
@@ -356,7 +356,7 @@ public:
 	int						sample_rate;		// the digital audio sample rate
 
 	// debugger-related information
-	UINT32					debug_flags;		// the current debug flags
+	uint32_t					debug_flags;		// the current debug flags
 
 	// UI-related
 	bool					ui_active;			// ui active or not (useful for games / systems with keyboard inputs)
@@ -446,7 +446,7 @@ private:
 	const char *			m_saveload_searchpath;
 
 	// random number seed
-	UINT32					m_rand_seed;
+	uint32_t					m_rand_seed;
 
 	// base time
 	time_t					m_base_time;
@@ -473,18 +473,18 @@ inline const region_info *running_machine::region(const char *tag)
 	return m_regionlist.find(tag);
 }
 
-inline UINT32 mame_rand(running_machine *machine)
+inline uint32_t mame_rand(running_machine *machine)
 {
 	return machine->rand();
 }
 
-inline UINT8 *memory_region(running_machine *machine, const char *name)
+inline uint8_t *memory_region(running_machine *machine, const char *name)
 {
 	const region_info *region = machine->region(name);
 	return (region != NULL) ? region->base() : NULL;
 }
 
-inline UINT32 memory_region_length(running_machine *machine, const char *name)
+inline uint32_t memory_region_length(running_machine *machine, const char *name)
 {
 	const region_info *region = machine->region(name);
 	return (region != NULL) ? region->bytes() : 0;

@@ -23,7 +23,7 @@
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef void (*output_notifier_func)(const char *outname, INT32 value, void *param);
+typedef void (*output_notifier_func)(const char *outname, int32_t value, void *param);
 
 
 
@@ -35,16 +35,16 @@ typedef void (*output_notifier_func)(const char *outname, INT32 value, void *par
 void output_init(running_machine *machine);
 
 /* set the value for a given output */
-void output_set_value(const char *outname, INT32 value);
+void output_set_value(const char *outname, int32_t value);
 
 /* set an indexed value for an output (concatenates basename + index) */
 void output_set_indexed_value(const char *basename, int index, int value);
 
 /* return the current value for a given output */
-INT32 output_get_value(const char *outname);
+int32_t output_get_value(const char *outname);
 
 /* return the current value for a given indexed output */
-INT32 output_get_indexed_value(const char *outname, int index);
+int32_t output_get_indexed_value(const char *outname, int index);
 
 /* set a notifier on a particular output, or globally if NULL */
 void output_set_notifier(const char *outname, output_notifier_func callback, void *param);
@@ -53,10 +53,10 @@ void output_set_notifier(const char *outname, output_notifier_func callback, voi
 void output_notify_all(output_notifier_func callback, void *param);
 
 /* map a name to a unique ID */
-UINT32 output_name_to_id(const char *outname);
+uint32_t output_name_to_id(const char *outname);
 
 /* map a unique ID back to a name */
-const char *output_id_to_name(UINT32 id);
+const char *output_id_to_name(uint32_t id);
 
 
 
@@ -80,17 +80,17 @@ INLINE void output_set_digit_value(int index, int value)
 }
 
 
-INLINE INT32 output_get_led_value(int index)
+INLINE int32_t output_get_led_value(int index)
 {
 	return output_get_indexed_value("led", index);
 }
 
-INLINE INT32 output_get_lamp_value(int index)
+INLINE int32_t output_get_lamp_value(int index)
 {
 	return output_get_indexed_value("lamp", index);
 }
 
-INLINE INT32 output_get_digit_value(int index)
+INLINE int32_t output_get_digit_value(int index)
 {
 	return output_get_indexed_value("digit", index);
 }

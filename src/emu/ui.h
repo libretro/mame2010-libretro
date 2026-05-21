@@ -57,7 +57,7 @@
 #define UI_SLIDER_COLOR			MAKE_ARGB(0xff,0xff,0xff,0xff)
 
 /* cancel return value for a UI handler */
-#define UI_HANDLER_CANCEL		((UINT32)~0)
+#define UI_HANDLER_CANCEL		((uint32_t)~0)
 
 /* justification options for ui_draw_text_full */
 enum
@@ -91,7 +91,7 @@ enum
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef INT32 (*slider_update)(running_machine *machine, void *arg, astring *string, INT32 newval);
+typedef int32_t (*slider_update)(running_machine *machine, void *arg, astring *string, int32_t newval);
 
 typedef struct _slider_state slider_state;
 struct _slider_state
@@ -99,10 +99,10 @@ struct _slider_state
 	slider_state *	next;				/* pointer to next slider */
 	slider_update	update;				/* callback */
 	void *			arg;				/* argument */
-	INT32			minval;				/* minimum value */
-	INT32			defval;				/* default value */
-	INT32			maxval;				/* maximum value */
-	INT32			incval;				/* increment value */
+	int32_t			minval;				/* minimum value */
+	int32_t			defval;				/* default value */
+	int32_t			maxval;				/* maximum value */
+	int32_t			incval;				/* increment value */
 	char			description[1];		/* textual description */
 };
 

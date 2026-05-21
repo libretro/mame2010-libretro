@@ -39,12 +39,12 @@ struct _ui_input_private
 {
 	/* pressed states; retrieved with ui_input_pressed() */
 	osd_ticks_t					next_repeat[__ipt_max];
-	UINT8						seqpressed[__ipt_max];
+	uint8_t						seqpressed[__ipt_max];
 
 	/* mouse position/info */
 	render_target *				current_mouse_target;
-	INT32						current_mouse_x;
-	INT32						current_mouse_y;
+	int32_t						current_mouse_x;
+	int32_t						current_mouse_y;
 	int							current_mouse_down;
 
 	/* popped states; ring buffer of ui_events */
@@ -213,7 +213,7 @@ void ui_input_reset(running_machine *machine)
     location of the mouse
 -------------------------------------------------*/
 
-render_target *ui_input_find_mouse(running_machine *machine, INT32 *x, INT32 *y, int *button)
+render_target *ui_input_find_mouse(running_machine *machine, int32_t *x, int32_t *y, int *button)
 {
 	ui_input_private *uidata = machine->ui_input_data;
 	if (x != NULL)

@@ -24,7 +24,7 @@
 
 /* ----- render utilities ----- */
 
-void render_resample_argb_bitmap_hq(void *dest, UINT32 drowpixels, UINT32 dwidth, UINT32 dheight, const bitmap_t *source, const rectangle *sbounds, const render_color *color);
+void render_resample_argb_bitmap_hq(void *dest, uint32_t drowpixels, uint32_t dwidth, uint32_t dheight, const bitmap_t *source, const rectangle *sbounds, const render_color *color);
 int render_clip_line(render_bounds *bounds, const render_bounds *clip);
 int render_clip_quad(render_bounds *bounds, const render_bounds *clip, render_quad_texuv *texcoords);
 void render_line_to_quad(const render_bounds *bounds, float width, render_bounds *bounds0, render_bounds *bounds1);
@@ -192,11 +192,11 @@ INLINE float apply_brightness_contrast_gamma_fp(float srcval, float brightness, 
     a single RGB component
 -------------------------------------------------*/
 
-INLINE UINT8 apply_brightness_contrast_gamma(UINT8 src, float brightness, float contrast, float gamma)
+INLINE uint8_t apply_brightness_contrast_gamma(uint8_t src, float brightness, float contrast, float gamma)
 {
 	float srcval = (float)src * (1.0f / 255.0f);
 	float result = apply_brightness_contrast_gamma_fp(srcval, brightness, contrast, gamma);
-	return (UINT8)(result * 255.0f);
+	return (uint8_t)(result * 255.0f);
 }
 
 

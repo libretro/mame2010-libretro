@@ -93,8 +93,8 @@ static const input_item_id non_char_keys[] =
 static render_font *ui_font;
 
 /* current UI handler */
-static UINT32 (*ui_handler_callback)(running_machine *, render_container *, UINT32);
-static UINT32 ui_handler_param;
+static uint32_t (*ui_handler_callback)(running_machine *, render_container *, uint32_t);
+static uint32_t ui_handler_param;
 
 /* flag to track single stepping */
 static int single_step;
@@ -119,7 +119,7 @@ static slider_state *slider_current;
 
 /* natural keyboard info */
 static int ui_use_natural_keyboard;
-static UINT8 non_char_keys_down[(ARRAY_LENGTH(non_char_keys) + 7) / 8];
+static uint8_t non_char_keys_down[(ARRAY_LENGTH(non_char_keys) + 7) / 8];
 
 
 /***************************************************************************
@@ -133,38 +133,38 @@ static astring &disclaimer_string(running_machine *machine, astring &buffer);
 static astring &warnings_string(running_machine *machine, astring &buffer);
 
 /* UI handlers */
-static UINT32 handler_messagebox(running_machine *machine, render_container *container, UINT32 state);
-static UINT32 handler_messagebox_ok(running_machine *machine, render_container *container, UINT32 state);
-static UINT32 handler_messagebox_anykey(running_machine *machine, render_container *container, UINT32 state);
-static UINT32 handler_ingame(running_machine *machine, render_container *container, UINT32 state);
-static UINT32 handler_load_save(running_machine *machine, render_container *container, UINT32 state);
+static uint32_t handler_messagebox(running_machine *machine, render_container *container, uint32_t state);
+static uint32_t handler_messagebox_ok(running_machine *machine, render_container *container, uint32_t state);
+static uint32_t handler_messagebox_anykey(running_machine *machine, render_container *container, uint32_t state);
+static uint32_t handler_ingame(running_machine *machine, render_container *container, uint32_t state);
+static uint32_t handler_load_save(running_machine *machine, render_container *container, uint32_t state);
 
 /* slider controls */
-static slider_state *slider_alloc(running_machine *machine, const char *title, INT32 minval, INT32 defval, INT32 maxval, INT32 incval, slider_update update, void *arg);
+static slider_state *slider_alloc(running_machine *machine, const char *title, int32_t minval, int32_t defval, int32_t maxval, int32_t incval, slider_update update, void *arg);
 static slider_state *slider_init(running_machine *machine);
-static INT32 slider_volume(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_mixervol(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_adjuster(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_overclock(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_refresh(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_brightness(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_contrast(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_gamma(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_xscale(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_yscale(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_xoffset(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_yoffset(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_overxscale(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_overyscale(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_overxoffset(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_overyoffset(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_flicker(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_beam(running_machine *machine, void *arg, astring *string, INT32 newval);
+static int32_t slider_volume(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_mixervol(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_adjuster(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_overclock(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_refresh(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_brightness(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_contrast(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_gamma(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_xscale(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_yscale(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_xoffset(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_yoffset(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_overxscale(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_overyscale(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_overxoffset(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_overyoffset(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_flicker(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_beam(running_machine *machine, void *arg, astring *string, int32_t newval);
 static char *slider_get_screen_desc(screen_device &screen);
 static char *slider_get_laserdisc_desc(device_t *screen);
 #ifdef MAME_DEBUG
-static INT32 slider_crossscale(running_machine *machine, void *arg, astring *string, INT32 newval);
-static INT32 slider_crossoffset(running_machine *machine, void *arg, astring *string, INT32 newval);
+static int32_t slider_crossscale(running_machine *machine, void *arg, astring *string, int32_t newval);
+static int32_t slider_crossoffset(running_machine *machine, void *arg, astring *string, int32_t newval);
 #endif
 
 
@@ -177,7 +177,7 @@ static INT32 slider_crossoffset(running_machine *machine, void *arg, astring *st
     pair for the current UI handler
 -------------------------------------------------*/
 
-INLINE UINT32 ui_set_handler(UINT32 (*callback)(running_machine *, render_container *, UINT32), UINT32 param)
+INLINE uint32_t ui_set_handler(uint32_t (*callback)(running_machine *, render_container *, uint32_t), uint32_t param)
 {
 	ui_handler_callback = callback;
 	ui_handler_param = param;
@@ -425,8 +425,8 @@ render_font *ui_get_font(void)
 
 float ui_get_line_height(void)
 {
-	INT32 raw_font_pixel_height = render_font_get_pixel_height(ui_font);
-	INT32 target_pixel_width, target_pixel_height;
+	int32_t raw_font_pixel_height = render_font_get_pixel_height(ui_font);
+	int32_t target_pixel_width, target_pixel_height;
 	float one_to_one_line_height;
 	float target_aspect;
 	float scale_factor;
@@ -458,7 +458,7 @@ float ui_get_line_height(void)
 	/* otherwise, just make sure we hit an even number of pixels */
 	else
 	{
-		INT32 height = scale_factor * one_to_one_line_height * (float)target_pixel_height;
+		int32_t height = scale_factor * one_to_one_line_height * (float)target_pixel_height;
 		scale_factor = (float)height / (one_to_one_line_height * (float)target_pixel_height);
 	}
 
@@ -1112,7 +1112,7 @@ astring &game_info_astring(running_machine *machine, astring &string)
     messagebox_text string but handles no input
 -------------------------------------------------*/
 
-static UINT32 handler_messagebox(running_machine *machine, render_container *container, UINT32 state)
+static uint32_t handler_messagebox(running_machine *machine, render_container *container, uint32_t state)
 {
 	ui_draw_text_box(container, messagebox_text, JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
 	return 0;
@@ -1124,7 +1124,7 @@ static UINT32 handler_messagebox(running_machine *machine, render_container *con
     messagebox_text string and waits for an OK
 -------------------------------------------------*/
 
-static UINT32 handler_messagebox_ok(running_machine *machine, render_container *container, UINT32 state)
+static uint32_t handler_messagebox_ok(running_machine *machine, render_container *container, uint32_t state)
 {
 	/* draw a standard message window */
 	ui_draw_text_box(container, messagebox_text, JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
@@ -1154,7 +1154,7 @@ static UINT32 handler_messagebox_ok(running_machine *machine, render_container *
     any keypress
 -------------------------------------------------*/
 
-static UINT32 handler_messagebox_anykey(running_machine *machine, render_container *container, UINT32 state)
+static uint32_t handler_messagebox_anykey(running_machine *machine, render_container *container, uint32_t state)
 {
 	/* draw a standard message window */
 	ui_draw_text_box(container, messagebox_text, JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
@@ -1200,8 +1200,8 @@ static void process_natural_keyboard(running_machine *machine)
 	int i, pressed;
 	input_item_id itemid;
 	input_code code;
-	UINT8 *key_down_ptr;
-	UINT8 key_down_mask;
+	uint8_t *key_down_ptr;
+	uint8_t key_down_mask;
 
 	/* loop while we have interesting events */
 	while (ui_input_pop_event(machine, &event))
@@ -1286,7 +1286,7 @@ void ui_image_handler_ingame(running_machine *machine)
     of the standard keypresses
 -------------------------------------------------*/
 
-static UINT32 handler_ingame(running_machine *machine, render_container *container, UINT32 state)
+static uint32_t handler_ingame(running_machine *machine, render_container *container, uint32_t state)
 {
 	bool is_paused = machine->paused();
 
@@ -1421,7 +1421,7 @@ static UINT32 handler_ingame(running_machine *machine, render_container *contain
     specifying a game to save or load
 -------------------------------------------------*/
 
-static UINT32 handler_load_save(running_machine *machine, render_container *container, UINT32 state)
+static uint32_t handler_load_save(running_machine *machine, render_container *container, uint32_t state)
 {
     return 0;
 }
@@ -1446,10 +1446,10 @@ const slider_state *ui_get_slider_list(void)
     slider_alloc - allocate a new slider entry
 -------------------------------------------------*/
 
-static slider_state *slider_alloc(running_machine *machine, const char *title, INT32 minval, INT32 defval, INT32 maxval, INT32 incval, slider_update update, void *arg)
+static slider_state *slider_alloc(running_machine *machine, const char *title, int32_t minval, int32_t defval, int32_t maxval, int32_t incval, slider_update update, void *arg)
 {
 	int size = sizeof(slider_state) + strlen(title);
-	slider_state *state = (slider_state *)auto_alloc_array_clear(machine, UINT8, size);
+	slider_state *state = (slider_state *)auto_alloc_array_clear(machine, uint8_t, size);
 
 	state->minval = minval;
 	state->defval = defval;
@@ -1486,8 +1486,8 @@ static slider_state *slider_init(running_machine *machine)
 	numitems = sound_get_user_gain_count(machine);
 	for (item = 0; item < numitems; item++)
 	{
-		INT32 maxval = 2000;
-		INT32 defval = sound_get_default_gain(machine, item) * 1000.0f + 0.5f;
+		int32_t maxval = 2000;
+		int32_t defval = sound_get_default_gain(machine, item) * 1000.0f + 0.5f;
 
 		if (defval > 1000)
 			maxval = 2 * defval;
@@ -1625,7 +1625,7 @@ static slider_state *slider_init(running_machine *machine)
     slider_volume - global volume slider callback
 -------------------------------------------------*/
 
-static INT32 slider_volume(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_volume(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	if (newval != SLIDER_NOCHANGE)
 		sound_set_attenuation(machine, newval);
@@ -1640,7 +1640,7 @@ static INT32 slider_volume(running_machine *machine, void *arg, astring *string,
     slider callback
 -------------------------------------------------*/
 
-static INT32 slider_mixervol(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_mixervol(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	int which = (FPTR)arg;
 	if (newval != SLIDER_NOCHANGE)
@@ -1656,7 +1656,7 @@ static INT32 slider_mixervol(running_machine *machine, void *arg, astring *strin
     callback
 -------------------------------------------------*/
 
-static INT32 slider_adjuster(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_adjuster(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	const input_field_config *field = (const input_field_config *)arg;
 	input_field_user_settings settings;
@@ -1678,7 +1678,7 @@ static INT32 slider_adjuster(running_machine *machine, void *arg, astring *strin
     callback
 -------------------------------------------------*/
 
-static INT32 slider_overclock(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_overclock(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	device_t *cpu = (device_t *)arg;
 	if (newval != SLIDER_NOCHANGE)
@@ -1693,7 +1693,7 @@ static INT32 slider_overclock(running_machine *machine, void *arg, astring *stri
     slider_refresh - refresh rate slider callback
 -------------------------------------------------*/
 
-static INT32 slider_refresh(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_refresh(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	double defrefresh = ATTOSECONDS_TO_HZ(screen->config().refresh());
@@ -1718,7 +1718,7 @@ static INT32 slider_refresh(running_machine *machine, void *arg, astring *string
     callback
 -------------------------------------------------*/
 
-static INT32 slider_brightness(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_brightness(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1741,7 +1741,7 @@ static INT32 slider_brightness(running_machine *machine, void *arg, astring *str
     callback
 -------------------------------------------------*/
 
-static INT32 slider_contrast(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_contrast(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1763,7 +1763,7 @@ static INT32 slider_contrast(running_machine *machine, void *arg, astring *strin
     slider_gamma - screen gamma slider callback
 -------------------------------------------------*/
 
-static INT32 slider_gamma(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_gamma(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1786,7 +1786,7 @@ static INT32 slider_gamma(running_machine *machine, void *arg, astring *string, 
     callback
 -------------------------------------------------*/
 
-static INT32 slider_xscale(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_xscale(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1809,7 +1809,7 @@ static INT32 slider_xscale(running_machine *machine, void *arg, astring *string,
     callback
 -------------------------------------------------*/
 
-static INT32 slider_yscale(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_yscale(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1832,7 +1832,7 @@ static INT32 slider_yscale(running_machine *machine, void *arg, astring *string,
     slider callback
 -------------------------------------------------*/
 
-static INT32 slider_xoffset(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_xoffset(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1855,7 +1855,7 @@ static INT32 slider_xoffset(running_machine *machine, void *arg, astring *string
     slider callback
 -------------------------------------------------*/
 
-static INT32 slider_yoffset(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_yoffset(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(arg);
 	render_container *container = render_container_get_screen(screen);
@@ -1878,7 +1878,7 @@ static INT32 slider_yoffset(running_machine *machine, void *arg, astring *string
     callback
 -------------------------------------------------*/
 
-static INT32 slider_overxscale(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_overxscale(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	device_t *laserdisc = (device_t *)arg;
 	laserdisc_config settings;
@@ -1900,7 +1900,7 @@ static INT32 slider_overxscale(running_machine *machine, void *arg, astring *str
     callback
 -------------------------------------------------*/
 
-static INT32 slider_overyscale(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_overyscale(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	device_t *laserdisc = (device_t *)arg;
 	laserdisc_config settings;
@@ -1922,7 +1922,7 @@ static INT32 slider_overyscale(running_machine *machine, void *arg, astring *str
     slider callback
 -------------------------------------------------*/
 
-static INT32 slider_overxoffset(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_overxoffset(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	device_t *laserdisc = (device_t *)arg;
 	laserdisc_config settings;
@@ -1944,7 +1944,7 @@ static INT32 slider_overxoffset(running_machine *machine, void *arg, astring *st
     slider callback
 -------------------------------------------------*/
 
-static INT32 slider_overyoffset(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_overyoffset(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	device_t *laserdisc = (device_t *)arg;
 	laserdisc_config settings;
@@ -1966,7 +1966,7 @@ static INT32 slider_overyoffset(running_machine *machine, void *arg, astring *st
     callback
 -------------------------------------------------*/
 
-static INT32 slider_flicker(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_flicker(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	if (newval != SLIDER_NOCHANGE)
 		vector_set_flicker((float)newval * 0.1f);
@@ -1981,7 +1981,7 @@ static INT32 slider_flicker(running_machine *machine, void *arg, astring *string
     callback
 -------------------------------------------------*/
 
-static INT32 slider_beam(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_beam(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	if (newval != SLIDER_NOCHANGE)
 		vector_set_beam((float)newval * 0.01f);
@@ -2035,7 +2035,7 @@ static char *slider_get_laserdisc_desc(device_t *laserdisc)
 -------------------------------------------------*/
 
 #ifdef MAME_DEBUG
-static INT32 slider_crossscale(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_crossscale(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	input_field_config *field = (input_field_config *)arg;
 
@@ -2054,7 +2054,7 @@ static INT32 slider_crossscale(running_machine *machine, void *arg, astring *str
 -------------------------------------------------*/
 
 #ifdef MAME_DEBUG
-static INT32 slider_crossoffset(running_machine *machine, void *arg, astring *string, INT32 newval)
+static int32_t slider_crossoffset(running_machine *machine, void *arg, astring *string, int32_t newval)
 {
 	input_field_config *field = (input_field_config *)arg;
 

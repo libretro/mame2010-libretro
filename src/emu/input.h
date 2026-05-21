@@ -40,7 +40,7 @@
 /* extract components of the input code */
 #define INPUT_CODE_IS_INTERNAL(c)		(((c) & INPUT_CODE_INTERNAL) != 0)
 #define INPUT_CODE_DEVCLASS(c)			((input_device_class)(((c) >> 24) & 0x0f))
-#define INPUT_CODE_DEVINDEX(c)			((UINT8)(((c) >> 20) & 0x0f))
+#define INPUT_CODE_DEVINDEX(c)			((uint8_t)(((c) >> 20) & 0x0f))
 #define INPUT_CODE_ITEMCLASS(c)			((input_item_class)(((c) >> 16) & 0x0f))
 #define INPUT_CODE_MODIFIER(c)			((input_item_modifier)(((c) >> 12) & 0x0f))
 #define INPUT_CODE_ITEMID(c)			((input_item_id)(int)((c) & 0xfff))
@@ -566,11 +566,11 @@ enum
     TYPE DEFINITIONS
 ***************************************************************************/
 
-/* input codes are UINT32 */
-typedef UINT32 input_code;
+/* input codes are uint32_t */
+typedef uint32_t input_code;
 
 /* callback for getting the value of an item on a device */
-typedef INT32 (*item_get_state_func)(void *device_internal, void *item_internal);
+typedef int32_t (*item_get_state_func)(void *device_internal, void *item_internal);
 
 /* (opaque) input device object */
 typedef struct _input_device input_device;
@@ -599,10 +599,10 @@ extern const char joystick_map_4way_diagonal[];
 void input_init(running_machine *machine);
 
 /* enable or disable a device class */
-void input_device_class_enable(running_machine *machine, input_device_class devclass, UINT8 enable);
+void input_device_class_enable(running_machine *machine, input_device_class devclass, uint8_t enable);
 
 /* is a device class enabled? */
-UINT8 input_device_class_enabled(running_machine *machine, input_device_class devclass);
+uint8_t input_device_class_enabled(running_machine *machine, input_device_class devclass);
 
 /* configure default joystick maps */
 int input_device_set_joystick_map(running_machine *machine, int devindex, const char *mapstring);
@@ -621,13 +621,13 @@ void input_device_item_add(input_device *device, const char *name, void *interna
 /* ----- state queries ----- */
 
 /* return the value of a particular input code */
-INT32 input_code_value(running_machine *machine, input_code code);
+int32_t input_code_value(running_machine *machine, input_code code);
 
 /* return TRUE if the given input code has been pressed */
-INT32 input_code_pressed(running_machine *machine, input_code code);
+int32_t input_code_pressed(running_machine *machine, input_code code);
 
 /* same as above, but returns TRUE only on the first call after an off->on transition */
-INT32 input_code_pressed_once(running_machine *machine, input_code code);
+int32_t input_code_pressed_once(running_machine *machine, input_code code);
 
 /* translates an input_item_id to an input_code */
 input_code input_code_from_input_item_id(running_machine *machine, input_item_id itemid);
@@ -659,8 +659,8 @@ input_code input_code_from_token(running_machine *machine, const char *_token);
 /* ----- debugging utilities ----- */
 
 /* return TRUE if the given input code has been pressed */
-INT32 debug_global_input_code_pressed(input_code code);
-INT32 debug_global_input_code_pressed_once(input_code code);
+int32_t debug_global_input_code_pressed(input_code code);
+int32_t debug_global_input_code_pressed_once(input_code code);
 
 
 #endif	/* __INPUT_H__ */

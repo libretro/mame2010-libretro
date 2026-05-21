@@ -30,9 +30,9 @@
 
 /* if the following lines error during compile, your PTR64 switch is set incorrectly in the makefile */
 #ifdef PTR64
-UINT8 your_ptr64_flag_is_wrong[(int)(sizeof(void *) - 7)];
+uint8_t your_ptr64_flag_is_wrong[(int)(sizeof(void *) - 7)];
 #else
-UINT8 your_ptr64_flag_is_wrong[(int)(5 - sizeof(void *))];
+uint8_t your_ptr64_flag_is_wrong[(int)(5 - sizeof(void *))];
 #endif
 
 
@@ -52,7 +52,7 @@ public:
 		: length(0) { }
 
 	astring tag;
-	UINT32 length;
+	uint32_t length;
 };
 
 
@@ -73,7 +73,7 @@ public:
     indexed string from the input port system
 -------------------------------------------------*/
 
-INLINE const char *input_port_string_from_index(UINT32 index)
+INLINE const char *input_port_string_from_index(uint32_t index)
 {
 	input_port_token token;
 	token.i = index;
@@ -106,7 +106,7 @@ bool validate_tag(const game_driver *driver, const char *object, const char *tag
 
 	for (p = tag; *p != 0; p++)
 	{
-		if (*p != tolower((UINT8)*p))
+		if (*p != tolower((uint8_t)*p))
 		{
 			mame_printf_error("%s: %s has %s with tag '%s' containing upper-case characters\n", driver->source_file, driver->name, object, tag);
 			error = true;
@@ -164,21 +164,21 @@ bool validate_tag(const game_driver *driver, const char *object, const char *tag
 static bool validate_inlines(void)
 {
 #undef rand
-	volatile UINT64 testu64a = rand() ^ (rand() << 15) ^ ((UINT64)rand() << 30) ^ ((UINT64)rand() << 45);
-	volatile INT64 testi64a = rand() ^ (rand() << 15) ^ ((INT64)rand() << 30) ^ ((INT64)rand() << 45);
+	volatile uint64_t testu64a = rand() ^ (rand() << 15) ^ ((uint64_t)rand() << 30) ^ ((uint64_t)rand() << 45);
+	volatile int64_t testi64a = rand() ^ (rand() << 15) ^ ((int64_t)rand() << 30) ^ ((int64_t)rand() << 45);
 #ifdef PTR64
-	volatile INT64 testi64b = rand() ^ (rand() << 15) ^ ((INT64)rand() << 30) ^ ((INT64)rand() << 45);
+	volatile int64_t testi64b = rand() ^ (rand() << 15) ^ ((int64_t)rand() << 30) ^ ((int64_t)rand() << 45);
 #endif
-	volatile UINT32 testu32a = rand() ^ (rand() << 15);
-	volatile UINT32 testu32b = rand() ^ (rand() << 15);
-	volatile INT32 testi32a = rand() ^ (rand() << 15);
-	volatile INT32 testi32b = rand() ^ (rand() << 15);
-	INT32 resulti32, expectedi32;
-	UINT32 resultu32, expectedu32;
-	INT64 resulti64, expectedi64;
-	UINT64 resultu64, expectedu64;
-	INT32 remainder, expremainder;
-	UINT32 uremainder, expuremainder, bigu32 = 0xffffffff;
+	volatile uint32_t testu32a = rand() ^ (rand() << 15);
+	volatile uint32_t testu32b = rand() ^ (rand() << 15);
+	volatile int32_t testi32a = rand() ^ (rand() << 15);
+	volatile int32_t testi32b = rand() ^ (rand() << 15);
+	int32_t resulti32, expectedi32;
+	uint32_t resultu32, expectedu32;
+	int64_t resulti64, expectedi64;
+	uint64_t resultu64, expectedu64;
+	int32_t remainder, expremainder;
+	uint32_t uremainder, expuremainder, bigu32 = 0xffffffff;
 	bool error = false;
 
 	/* use only non-zero, positive numbers */
@@ -197,86 +197,86 @@ static bool validate_inlines(void)
 	else if (testi32b < 0) testi32b = -testi32b;
 
 	resulti64 = mul_32x32(testi32a, testi32b);
-	expectedi64 = (INT64)testi32a * (INT64)testi32b;
+	expectedi64 = (int64_t)testi32a * (int64_t)testi32b;
 	if (resulti64 != expectedi64)
-		{ mame_printf_error("Error testing mul_32x32 (%08X x %08X) = %08X%08X (expected %08X%08X)\n", testi32a, testi32b, (UINT32)(resulti64 >> 32), (UINT32)resulti64, (UINT32)(expectedi64 >> 32), (UINT32)expectedi64); error = true; }
+		{ mame_printf_error("Error testing mul_32x32 (%08X x %08X) = %08X%08X (expected %08X%08X)\n", testi32a, testi32b, (uint32_t)(resulti64 >> 32), (uint32_t)resulti64, (uint32_t)(expectedi64 >> 32), (uint32_t)expectedi64); error = true; }
 
 	resultu64 = mulu_32x32(testu32a, testu32b);
-	expectedu64 = (UINT64)testu32a * (UINT64)testu32b;
+	expectedu64 = (uint64_t)testu32a * (uint64_t)testu32b;
 	if (resultu64 != expectedu64)
-		{ mame_printf_error("Error testing mulu_32x32 (%08X x %08X) = %08X%08X (expected %08X%08X)\n", testu32a, testu32b, (UINT32)(resultu64 >> 32), (UINT32)resultu64, (UINT32)(expectedu64 >> 32), (UINT32)expectedu64); error = true; }
+		{ mame_printf_error("Error testing mulu_32x32 (%08X x %08X) = %08X%08X (expected %08X%08X)\n", testu32a, testu32b, (uint32_t)(resultu64 >> 32), (uint32_t)resultu64, (uint32_t)(expectedu64 >> 32), (uint32_t)expectedu64); error = true; }
 
 	resulti32 = mul_32x32_hi(testi32a, testi32b);
-	expectedi32 = ((INT64)testi32a * (INT64)testi32b) >> 32;
+	expectedi32 = ((int64_t)testi32a * (int64_t)testi32b) >> 32;
 	if (resulti32 != expectedi32)
 		{ mame_printf_error("Error testing mul_32x32_hi (%08X x %08X) = %08X (expected %08X)\n", testi32a, testi32b, resulti32, expectedi32); error = true; }
 
 	resultu32 = mulu_32x32_hi(testu32a, testu32b);
-	expectedu32 = ((INT64)testu32a * (INT64)testu32b) >> 32;
+	expectedu32 = ((int64_t)testu32a * (int64_t)testu32b) >> 32;
 	if (resultu32 != expectedu32)
 		{ mame_printf_error("Error testing mulu_32x32_hi (%08X x %08X) = %08X (expected %08X)\n", testu32a, testu32b, resultu32, expectedu32); error = true; }
 
 	resulti32 = mul_32x32_shift(testi32a, testi32b, 7);
-	expectedi32 = ((INT64)testi32a * (INT64)testi32b) >> 7;
+	expectedi32 = ((int64_t)testi32a * (int64_t)testi32b) >> 7;
 	if (resulti32 != expectedi32)
 		{ mame_printf_error("Error testing mul_32x32_shift (%08X x %08X) >> 7 = %08X (expected %08X)\n", testi32a, testi32b, resulti32, expectedi32); error = true; }
 
 	resultu32 = mulu_32x32_shift(testu32a, testu32b, 7);
-	expectedu32 = ((INT64)testu32a * (INT64)testu32b) >> 7;
+	expectedu32 = ((int64_t)testu32a * (int64_t)testu32b) >> 7;
 	if (resultu32 != expectedu32)
 		{ mame_printf_error("Error testing mulu_32x32_shift (%08X x %08X) >> 7 = %08X (expected %08X)\n", testu32a, testu32b, resultu32, expectedu32); error = true; }
 
-	while ((INT64)testi32a * (INT64)0x7fffffff < testi64a)
+	while ((int64_t)testi32a * (int64_t)0x7fffffff < testi64a)
 		testi64a /= 2;
-	while ((UINT64)testu32a * (UINT64)bigu32 < testu64a)
+	while ((uint64_t)testu32a * (uint64_t)bigu32 < testu64a)
 		testu64a /= 2;
 
 	resulti32 = div_64x32(testi64a, testi32a);
-	expectedi32 = testi64a / (INT64)testi32a;
+	expectedi32 = testi64a / (int64_t)testi32a;
 	if (resulti32 != expectedi32)
-		{ mame_printf_error("Error testing div_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (UINT32)(testi64a >> 32), (UINT32)testi64a, testi32a, resulti32, expectedi32); error = true; }
+		{ mame_printf_error("Error testing div_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (uint32_t)(testi64a >> 32), (uint32_t)testi64a, testi32a, resulti32, expectedi32); error = true; }
 
 	resultu32 = divu_64x32(testu64a, testu32a);
-	expectedu32 = testu64a / (UINT64)testu32a;
+	expectedu32 = testu64a / (uint64_t)testu32a;
 	if (resultu32 != expectedu32)
-		{ mame_printf_error("Error testing divu_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (UINT32)(testu64a >> 32), (UINT32)testu64a, testu32a, resultu32, expectedu32); error = true; }
+		{ mame_printf_error("Error testing divu_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (uint32_t)(testu64a >> 32), (uint32_t)testu64a, testu32a, resultu32, expectedu32); error = true; }
 
 	resulti32 = div_64x32_rem(testi64a, testi32a, &remainder);
-	expectedi32 = testi64a / (INT64)testi32a;
-	expremainder = testi64a % (INT64)testi32a;
+	expectedi32 = testi64a / (int64_t)testi32a;
+	expremainder = testi64a % (int64_t)testi32a;
 	if (resulti32 != expectedi32 || remainder != expremainder)
-		{ mame_printf_error("Error testing div_64x32_rem (%08X%08X / %08X) = %08X,%08X (expected %08X,%08X)\n", (UINT32)(testi64a >> 32), (UINT32)testi64a, testi32a, resulti32, remainder, expectedi32, expremainder); error = true; }
+		{ mame_printf_error("Error testing div_64x32_rem (%08X%08X / %08X) = %08X,%08X (expected %08X,%08X)\n", (uint32_t)(testi64a >> 32), (uint32_t)testi64a, testi32a, resulti32, remainder, expectedi32, expremainder); error = true; }
 
 	resultu32 = divu_64x32_rem(testu64a, testu32a, &uremainder);
-	expectedu32 = testu64a / (UINT64)testu32a;
-	expuremainder = testu64a % (UINT64)testu32a;
+	expectedu32 = testu64a / (uint64_t)testu32a;
+	expuremainder = testu64a % (uint64_t)testu32a;
 	if (resultu32 != expectedu32 || uremainder != expuremainder)
-		{ mame_printf_error("Error testing divu_64x32_rem (%08X%08X / %08X) = %08X,%08X (expected %08X,%08X)\n", (UINT32)(testu64a >> 32), (UINT32)testu64a, testu32a, resultu32, uremainder, expectedu32, expuremainder); error = true; }
+		{ mame_printf_error("Error testing divu_64x32_rem (%08X%08X / %08X) = %08X,%08X (expected %08X,%08X)\n", (uint32_t)(testu64a >> 32), (uint32_t)testu64a, testu32a, resultu32, uremainder, expectedu32, expuremainder); error = true; }
 
 	resulti32 = mod_64x32(testi64a, testi32a);
-	expectedi32 = testi64a % (INT64)testi32a;
+	expectedi32 = testi64a % (int64_t)testi32a;
 	if (resulti32 != expectedi32)
-		{ mame_printf_error("Error testing mod_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (UINT32)(testi64a >> 32), (UINT32)testi64a, testi32a, resulti32, expectedi32); error = true; }
+		{ mame_printf_error("Error testing mod_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (uint32_t)(testi64a >> 32), (uint32_t)testi64a, testi32a, resulti32, expectedi32); error = true; }
 
 	resultu32 = modu_64x32(testu64a, testu32a);
-	expectedu32 = testu64a % (UINT64)testu32a;
+	expectedu32 = testu64a % (uint64_t)testu32a;
 	if (resultu32 != expectedu32)
-		{ mame_printf_error("Error testing modu_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (UINT32)(testu64a >> 32), (UINT32)testu64a, testu32a, resultu32, expectedu32); error = true; }
+		{ mame_printf_error("Error testing modu_64x32 (%08X%08X / %08X) = %08X (expected %08X)\n", (uint32_t)(testu64a >> 32), (uint32_t)testu64a, testu32a, resultu32, expectedu32); error = true; }
 
-	while ((INT64)testi32a * (INT64)0x7fffffff < ((INT32)testi64a << 3))
+	while ((int64_t)testi32a * (int64_t)0x7fffffff < ((int32_t)testi64a << 3))
 		testi64a /= 2;
-	while ((UINT64)testu32a * (UINT64)0xffffffff < ((UINT32)testu64a << 3))
+	while ((uint64_t)testu32a * (uint64_t)0xffffffff < ((uint32_t)testu64a << 3))
 		testu64a /= 2;
 
-	resulti32 = div_32x32_shift((INT32)testi64a, testi32a, 3);
-	expectedi32 = ((INT64)(INT32)testi64a << 3) / (INT64)testi32a;
+	resulti32 = div_32x32_shift((int32_t)testi64a, testi32a, 3);
+	expectedi32 = ((int64_t)(int32_t)testi64a << 3) / (int64_t)testi32a;
 	if (resulti32 != expectedi32)
-		{ mame_printf_error("Error testing div_32x32_shift (%08X << 3) / %08X = %08X (expected %08X)\n", (INT32)testi64a, testi32a, resulti32, expectedi32); error = true; }
+		{ mame_printf_error("Error testing div_32x32_shift (%08X << 3) / %08X = %08X (expected %08X)\n", (int32_t)testi64a, testi32a, resulti32, expectedi32); error = true; }
 
-	resultu32 = divu_32x32_shift((UINT32)testu64a, testu32a, 3);
-	expectedu32 = ((UINT64)(UINT32)testu64a << 3) / (UINT64)testu32a;
+	resultu32 = divu_32x32_shift((uint32_t)testu64a, testu32a, 3);
+	expectedu32 = ((uint64_t)(uint32_t)testu64a << 3) / (uint64_t)testu32a;
 	if (resultu32 != expectedu32)
-		{ mame_printf_error("Error testing divu_32x32_shift (%08X << 3) / %08X = %08X (expected %08X)\n", (UINT32)testu64a, testu32a, resultu32, expectedu32); error = true; }
+		{ mame_printf_error("Error testing divu_32x32_shift (%08X << 3) / %08X = %08X (expected %08X)\n", (uint32_t)testu64a, testu32a, resultu32, expectedu32); error = true; }
 
 	if (fabs(recip_approx(100.0) - 0.01) > 0.0001)
 		{ mame_printf_error("Error testing recip_approx\n"); error = true; }
@@ -379,7 +379,7 @@ static bool validate_driver(int drivnum, const machine_config *config, game_driv
 
 	/* make sure the year is only digits, '?' or '+' */
 	for (s = driver->year; *s; s++)
-		if (!isdigit((UINT8)*s) && *s != '?' && *s != '+')
+		if (!isdigit((uint8_t)*s) && *s != '?' && *s != '+')
 		{
 			mame_printf_error("%s: %s has an invalid year '%s'\n", driver->source_file, driver->name, driver->year);
 			error = true;
@@ -548,7 +548,7 @@ static bool validate_roms(int drivnum, const machine_config *config, region_arra
 
 				/* make sure it's all lowercase */
 				for (s = last_name; *s; s++)
-					if (tolower((UINT8)*s) != *s)
+					if (tolower((uint8_t)*s) != *s)
 					{
 						mame_printf_error("%s: %s has upper case ROM name %s\n", driver->source_file, driver->name, last_name);
 						error = true;
@@ -637,9 +637,9 @@ static bool validate_gfx(int drivnum, const machine_config *config, region_array
 		const gfx_layout *gl = gfx->gfxlayout;
 		int israw = (gl->planeoffset[0] == GFX_RAW);
 		int planes = gl->planes;
-		UINT16 width = gl->width;
-		UINT16 height = gl->height;
-		UINT32 total = gl->total;
+		uint16_t width = gl->width;
+		uint16_t height = gl->height;
+		uint32_t total = gl->total;
 
 		/* make sure the region exists */
 		if (region != NULL)
@@ -664,8 +664,8 @@ static bool validate_gfx(int drivnum, const machine_config *config, region_array
 					if (!IS_FRAC(total))
 					{
 						int len, avail, plane, start;
-						UINT32 charincrement = gl->charincrement;
-						const UINT32 *poffset = gl->planeoffset;
+						uint32_t charincrement = gl->charincrement;
+						const uint32_t *poffset = gl->planeoffset;
 
 						/* determine which plane is the largest */
 						start = 0;
@@ -753,8 +753,8 @@ static int get_defstr_index(int_map &defstr_map, const char *name, const game_dr
 
 static void validate_analog_input_field(const input_field_config *field, const game_driver *driver, bool *error)
 {
-	INT32 analog_max = field->max;
-	INT32 analog_min = field->min;
+	int32_t analog_max = field->max;
+	int32_t analog_min = field->min;
 	int shift;
 
 	if (field->type == IPT_POSITIONAL || field->type == IPT_POSITIONAL_V)
@@ -797,7 +797,7 @@ static void validate_analog_input_field(const input_field_config *field, const g
 	/* tests for absolute devices */
 	if (field->type >= __ipt_analog_absolute_start && field->type <= __ipt_analog_absolute_end)
 	{
-		INT32 default_value = field->defvalue;
+		int32_t default_value = field->defvalue;
 
 		/* adjust for signed values */
 		if (analog_min > analog_max)
@@ -864,7 +864,7 @@ static void validate_dip_settings(const input_field_config *field, const game_dr
 {
 	const char *demo_sounds = input_port_string_from_index(INPUT_STRING_Demo_Sounds);
 	const char *flipscreen = input_port_string_from_index(INPUT_STRING_Flip_Screen);
-	UINT8 coin_list[INPUT_STRING_1C_9C + 1 - INPUT_STRING_9C_1C] = { 0 };
+	uint8_t coin_list[INPUT_STRING_1C_9C + 1 - INPUT_STRING_9C_1C] = { 0 };
 	const input_setting_config *setting;
 	int coin_error = FALSE;
 
@@ -1134,8 +1134,8 @@ bool mame_validitychecks(const game_driver *curdriver)
 
 	int drivnum, strnum;
 	bool error = false;
-	UINT16 lsbtest;
-	UINT8 a, b;
+	uint16_t lsbtest;
+	uint8_t a, b;
 
 	game_driver_map names;
 	game_driver_map descriptions;
@@ -1147,21 +1147,21 @@ bool mame_validitychecks(const game_driver *curdriver)
 	b = a + 1;
 	if (b > a)	{ mame_printf_error("UINT8 must be 8 bits\n"); error = true; }
 
-	if (sizeof(INT8)   != 1)	{ mame_printf_error("INT8 must be 8 bits\n"); error = true; }
-	if (sizeof(UINT8)  != 1)	{ mame_printf_error("UINT8 must be 8 bits\n"); error = true; }
-	if (sizeof(INT16)  != 2)	{ mame_printf_error("INT16 must be 16 bits\n"); error = true; }
-	if (sizeof(UINT16) != 2)	{ mame_printf_error("UINT16 must be 16 bits\n"); error = true; }
-	if (sizeof(INT32)  != 4)	{ mame_printf_error("INT32 must be 32 bits\n"); error = true; }
-	if (sizeof(UINT32) != 4)	{ mame_printf_error("UINT32 must be 32 bits\n"); error = true; }
-	if (sizeof(INT64)  != 8)	{ mame_printf_error("INT64 must be 64 bits\n"); error = true; }
-	if (sizeof(UINT64) != 8)	{ mame_printf_error("UINT64 must be 64 bits\n"); error = true; }
+	if (sizeof(int8_t)   != 1)	{ mame_printf_error("INT8 must be 8 bits\n"); error = true; }
+	if (sizeof(uint8_t)  != 1)	{ mame_printf_error("UINT8 must be 8 bits\n"); error = true; }
+	if (sizeof(int16_t)  != 2)	{ mame_printf_error("INT16 must be 16 bits\n"); error = true; }
+	if (sizeof(uint16_t) != 2)	{ mame_printf_error("UINT16 must be 16 bits\n"); error = true; }
+	if (sizeof(int32_t)  != 4)	{ mame_printf_error("INT32 must be 32 bits\n"); error = true; }
+	if (sizeof(uint32_t) != 4)	{ mame_printf_error("UINT32 must be 32 bits\n"); error = true; }
+	if (sizeof(int64_t)  != 8)	{ mame_printf_error("INT64 must be 64 bits\n"); error = true; }
+	if (sizeof(uint64_t) != 8)	{ mame_printf_error("UINT64 must be 64 bits\n"); error = true; }
 #ifdef PTR64
 	if (sizeof(void *) != 8)	{ mame_printf_error("PTR64 flag enabled, but was compiled for 32-bit target\n"); error = true; }
 #else
 	if (sizeof(void *) != 4)	{ mame_printf_error("PTR64 flag not enabled, but was compiled for 64-bit target\n"); error = true; }
 #endif
 	lsbtest = 0;
-	*(UINT8 *)&lsbtest = 0xff;
+	*(uint8_t *)&lsbtest = 0xff;
 #ifdef MSB_FIRST
 	if (lsbtest == 0x00ff)		{ mame_printf_error("MSB_FIRST specified, but running on a little-endian machine\n"); error = true; }
 #else

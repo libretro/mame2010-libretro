@@ -45,10 +45,10 @@ struct _sound_private
 
 	int totalsnd;
 
-	UINT32 finalmix_leftover;
-	INT16 *finalmix;
-	INT32 *leftmix;
-	INT32 *rightmix;
+	uint32_t finalmix_leftover;
+	int16_t *finalmix;
+	int32_t *leftmix;
+	int32_t *rightmix;
 
 	int muted;
 	int attenuation;
@@ -127,9 +127,9 @@ void sound_init(running_machine *machine)
 	VPRINTF(("total speakers = %d\n", speaker_output_count(machine->config)));
 
 	/* allocate memory for mix buffers */
-	global->leftmix = auto_alloc_array(machine, INT32, machine->sample_rate);
-	global->rightmix = auto_alloc_array(machine, INT32, machine->sample_rate);
-	global->finalmix = auto_alloc_array(machine, INT16, machine->sample_rate);
+	global->leftmix = auto_alloc_array(machine, int32_t, machine->sample_rate);
+	global->rightmix = auto_alloc_array(machine, int32_t, machine->sample_rate);
+	global->finalmix = auto_alloc_array(machine, int16_t, machine->sample_rate);
 
 	/* allocate a global timer for sound timing */
 	global->update_timer = timer_alloc(machine, sound_update, NULL);
@@ -395,13 +395,13 @@ static void sound_save(running_machine *machine, int config_type, xml_data_node 
 
 static TIMER_CALLBACK( sound_update )
 {
-   UINT32 finalmix_step, finalmix_offset = 0;
+   uint32_t finalmix_step, finalmix_offset = 0;
    int samples_this_update = 0;
    int sample;
    sound_private *global = machine->sound_data;
-   INT32 *leftmix = global->leftmix;
-   INT32 *rightmix = global->rightmix;
-   INT16 *finalmix = global->finalmix;
+   int32_t *leftmix = global->leftmix;
+   int32_t *rightmix = global->rightmix;
+   int16_t *finalmix = global->finalmix;
 
    /* force all the speaker streams to generate the proper number of samples */
    for (speaker_device *speaker = speaker_first(*machine); speaker != NULL; speaker = speaker_next(speaker))
@@ -415,7 +415,7 @@ static TIMER_CALLBACK( sound_update )
       int sampindex = sample / 100;
 
       /* clamp the left side */
-      INT32 samp = leftmix[sampindex];
+      int32_t samp = leftmix[sampindex];
       if (samp < -32768)
          samp = -32768;
       else if (samp > 32767)
@@ -455,7 +455,7 @@ static TIMER_CALLBACK( sound_update )
 //  speaker_device_config - constructor
 //-------------------------------------------------
 
-speaker_device_config::speaker_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+speaker_device_config::speaker_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Speaker", tag, owner, clock),
 	  m_x(0.0),
 	  m_y(0.0),
@@ -469,7 +469,7 @@ speaker_device_config::speaker_device_config(const machine_config &mconfig, cons
 //  configuration object
 //-------------------------------------------------
 
-device_config *speaker_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *speaker_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(speaker_device_config(mconfig, tag, owner, clock));
 }
@@ -494,9 +494,9 @@ device_t *speaker_device_config::alloc_device(running_machine &machine) const
 void speaker_device_config::device_config_complete()
 {
 	// move inline data into its final home
-	m_x = static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_X])) / (double)(1 << 24);
-	m_y = static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_Y])) / (double)(1 << 24);
-	m_z = static_cast<double>(static_cast<INT32>(m_inline_data[INLINE_Z])) / (double)(1 << 24);
+	m_x = static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_X])) / (double)(1 << 24);
+	m_y = static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_Y])) / (double)(1 << 24);
+	m_z = static_cast<double>(static_cast<int32_t>(m_inline_data[INLINE_Z])) / (double)(1 << 24);
 }
 
 
@@ -644,7 +644,7 @@ void speaker_device::mixer_update(stream_sample_t **inputs, stream_sample_t **ou
 	// loop over samples
 	for (pos = 0; pos < samples; pos++)
 	{
-		INT32 sample = inputs[0][pos];
+		int32_t sample = inputs[0][pos];
 		int inp;
 
 		// add up all the inputs
@@ -659,7 +659,7 @@ void speaker_device::mixer_update(stream_sample_t **inputs, stream_sample_t **ou
 //  mix - mix in samples from the speaker's stream
 //-------------------------------------------------
 
-void speaker_device::mix(INT32 *leftmix, INT32 *rightmix, int &samples_this_update, bool suppress)
+void speaker_device::mix(int32_t *leftmix, int32_t *rightmix, int &samples_this_update, bool suppress)
 {
 	// skip if no stream
 	if (m_mixer_stream == NULL)

@@ -106,8 +106,8 @@ class address_space_config
 {
 public:
 	address_space_config();
-	address_space_config(const char *name, endianness_t endian, UINT8 datawidth, UINT8 addrwidth, INT8 addrshift = 0, const addrmap_token *internal = NULL, const addrmap_token *defmap = NULL);
-	address_space_config(const char *name, endianness_t endian, UINT8 datawidth, UINT8 addrwidth, INT8 addrshift, UINT8 logwidth, UINT8 pageshift, const addrmap_token *internal = NULL, const addrmap_token *defmap = NULL);
+	address_space_config(const char *name, endianness_t endian, uint8_t datawidth, uint8_t addrwidth, int8_t addrshift = 0, const addrmap_token *internal = NULL, const addrmap_token *defmap = NULL);
+	address_space_config(const char *name, endianness_t endian, uint8_t datawidth, uint8_t addrwidth, int8_t addrshift, uint8_t logwidth, uint8_t pageshift, const addrmap_token *internal = NULL, const addrmap_token *defmap = NULL);
 
 	inline offs_t addr2byte(offs_t address) const
 	{
@@ -131,11 +131,11 @@ public:
 
 	const char *		m_name;
 	endianness_t		m_endianness;
-	UINT8				m_databus_width;
-	UINT8				m_addrbus_width;
-	INT8				m_addrbus_shift;
-	UINT8				m_logaddr_width;
-	UINT8				m_page_shift;
+	uint8_t				m_databus_width;
+	uint8_t				m_addrbus_width;
+	int8_t				m_addrbus_shift;
+	uint8_t				m_logaddr_width;
+	uint8_t				m_page_shift;
 	const addrmap_token *m_internal_map;
 	const addrmap_token *m_default_map;
 };
@@ -163,7 +163,7 @@ protected:
 	virtual const address_space_config *memory_space_config(int spacenum) const = 0;
 
 	// optional operation overrides
-	virtual bool interface_process_token(UINT32 entrytype, const machine_config_token *&tokens);
+	virtual bool interface_process_token(uint32_t entrytype, const machine_config_token *&tokens);
 	virtual bool interface_validity_check(const game_driver &driver) const;
 
 	const addrmap_token *	m_address_map[ADDRESS_SPACES]; // address maps for each address space
@@ -197,16 +197,16 @@ public:
 	bool translate(int spacenum, int intention, offs_t &address) { return memory_translate(spacenum, intention, address); }
 
 	// read/write access
-	bool read(int spacenum, offs_t offset, int size, UINT64 &value) { return memory_read(spacenum, offset, size, value); }
-	bool write(int spacenum, offs_t offset, int size, UINT64 value) { return memory_write(spacenum, offset, size, value); }
-	bool readop(offs_t offset, int size, UINT64 &value) { return memory_readop(offset, size, value); }
+	bool read(int spacenum, offs_t offset, int size, uint64_t &value) { return memory_read(spacenum, offset, size, value); }
+	bool write(int spacenum, offs_t offset, int size, uint64_t value) { return memory_write(spacenum, offset, size, value); }
+	bool readop(offs_t offset, int size, uint64_t &value) { return memory_readop(offset, size, value); }
 
 protected:
 	// optional operation overrides
 	virtual bool memory_translate(int spacenum, int intention, offs_t &address);
-	virtual bool memory_read(int spacenum, offs_t offset, int size, UINT64 &value);
-	virtual bool memory_write(int spacenum, offs_t offset, int size, UINT64 value);
-	virtual bool memory_readop(offs_t offset, int size, UINT64 &value);
+	virtual bool memory_read(int spacenum, offs_t offset, int size, uint64_t &value);
+	virtual bool memory_write(int spacenum, offs_t offset, int size, uint64_t value);
+	virtual bool memory_readop(offs_t offset, int size, uint64_t &value);
 
 	// interface-level overrides
 

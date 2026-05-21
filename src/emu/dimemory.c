@@ -78,7 +78,7 @@ address_space_config::address_space_config()
 {
 }
 
-address_space_config::address_space_config(const char *name, endianness_t endian, UINT8 datawidth, UINT8 addrwidth, INT8 addrshift, const addrmap_token *internal, const addrmap_token *defmap)
+address_space_config::address_space_config(const char *name, endianness_t endian, uint8_t datawidth, uint8_t addrwidth, int8_t addrshift, const addrmap_token *internal, const addrmap_token *defmap)
 	: m_name(name),
 	  m_endianness(endian),
 	  m_databus_width(datawidth),
@@ -91,7 +91,7 @@ address_space_config::address_space_config(const char *name, endianness_t endian
 {
 }
 
-address_space_config::address_space_config(const char *name, endianness_t endian, UINT8 datawidth, UINT8 addrwidth, INT8 addrshift, UINT8 logwidth, UINT8 pageshift, const addrmap_token *internal, const addrmap_token *defmap)
+address_space_config::address_space_config(const char *name, endianness_t endian, uint8_t datawidth, uint8_t addrwidth, int8_t addrshift, uint8_t logwidth, uint8_t pageshift, const addrmap_token *internal, const addrmap_token *defmap)
 	: m_name(name),
 	  m_endianness(endian),
 	  m_databus_width(datawidth),
@@ -148,9 +148,9 @@ const address_space_config *device_config_memory_interface::memory_space_config(
 //  the memory interface
 //-------------------------------------------------
 
-bool device_config_memory_interface::interface_process_token(UINT32 entrytype, const machine_config_token *&tokens)
+bool device_config_memory_interface::interface_process_token(uint32_t entrytype, const machine_config_token *&tokens)
 {
-	UINT32 data32;
+	uint32_t data32;
 
 	switch (entrytype)
 	{
@@ -212,8 +212,8 @@ bool device_config_memory_interface::interface_validity_check(const game_driver 
 			// loop over entries and look for errors
 			for (address_map_entry *entry = map->entrylist; entry != NULL; entry = entry->next)
 			{
-				UINT32 bytestart = spaceconfig->addr2byte(entry->addrstart);
-				UINT32 byteend = spaceconfig->addr2byte_end(entry->addrend);
+				uint32_t bytestart = spaceconfig->addr2byte(entry->addrstart);
+				uint32_t byteend = spaceconfig->addr2byte_end(entry->addrend);
 
 				// look for overlapping entries
 				if (!detected_overlap)
@@ -379,7 +379,7 @@ bool device_memory_interface::memory_translate(int spacenum, int intention, offs
 //  handled by bypassing the memory system
 //-------------------------------------------------
 
-bool device_memory_interface::memory_read(int spacenum, offs_t offset, int size, UINT64 &value)
+bool device_memory_interface::memory_read(int spacenum, offs_t offset, int size, uint64_t &value)
 {
 	// by default, we don't do anything
 	return false;
@@ -394,7 +394,7 @@ bool device_memory_interface::memory_read(int spacenum, offs_t offset, int size,
 //  handled by bypassing the memory system
 //-------------------------------------------------
 
-bool device_memory_interface::memory_write(int spacenum, offs_t offset, int size, UINT64 value)
+bool device_memory_interface::memory_write(int spacenum, offs_t offset, int size, uint64_t value)
 {
 	// by default, we don't do anything
 	return false;
@@ -410,7 +410,7 @@ bool device_memory_interface::memory_write(int spacenum, offs_t offset, int size
 //  system
 //-------------------------------------------------
 
-bool device_memory_interface::memory_readop(offs_t offset, int size, UINT64 &value)
+bool device_memory_interface::memory_readop(offs_t offset, int size, uint64_t &value)
 {
 	// by default, we don't do anything
 	return false;

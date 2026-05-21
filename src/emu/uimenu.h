@@ -100,10 +100,10 @@ void ui_menu_reset(ui_menu *menu, ui_menu_reset_options options);
 int ui_menu_populated(ui_menu *menu);
 
 /* append a new item to the end of the menu */
-void ui_menu_item_append(ui_menu *menu, const char *text, const char *subtext, UINT32 flags, void *ref);
+void ui_menu_item_append(ui_menu *menu, const char *text, const char *subtext, uint32_t flags, void *ref);
 
 /* process a menu, drawing it and returning any interesting events */
-const ui_menu_event *ui_menu_process(running_machine *machine, ui_menu *menu, UINT32 flags);
+const ui_menu_event *ui_menu_process(running_machine *machine, ui_menu *menu, uint32_t flags);
 
 /* configure the menu for custom rendering */
 void ui_menu_set_custom_render(ui_menu *menu, ui_menu_custom_func custom, float top, float bottom);
@@ -141,10 +141,10 @@ void ui_menu_stack_pop(running_machine *machine);
 /* ----- UI system interaction ----- */
 
 /* master handler */
-UINT32 ui_menu_ui_handler(running_machine *machine, render_container *container, UINT32 state);
+uint32_t ui_menu_ui_handler(running_machine *machine, render_container *container, uint32_t state);
 
 /* slider handler */
-UINT32 ui_slider_ui_handler(running_machine *machine, render_container *container, UINT32 state);
+uint32_t ui_slider_ui_handler(running_machine *machine, render_container *container, uint32_t state);
 
 /* force game select menu */
 void ui_menu_force_game_select(running_machine *machine, render_container *container);

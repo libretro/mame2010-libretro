@@ -341,7 +341,7 @@ static void hashfile_parse(hash_file *hashfile,
 {
 	struct hash_parse_state state;
 	char buf[1024];
-	UINT32 len;
+	uint32_t len;
 	XML_Memory_Handling_Suite memcallbacks;
 
 	mame_fseek(hashfile->file, 0, SEEK_SET);
@@ -584,13 +584,13 @@ int hashfile_verify(const char *sysname, void (*my_error_proc)(const char *messa
 
 static void *expat_malloc(size_t size)
 {
-	return global_alloc_array_clear(UINT8,size);
+	return global_alloc_array_clear(uint8_t,size);
 }
 
 static void *expat_realloc(void *ptr, size_t size)
 {
 	if (ptr) global_free(ptr);
-	return global_alloc_array_clear(UINT8,size);
+	return global_alloc_array_clear(uint8_t,size);
 }
 
 static void expat_free(void *ptr)

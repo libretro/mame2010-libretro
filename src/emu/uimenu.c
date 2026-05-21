@@ -101,8 +101,8 @@ typedef struct _ui_menu_pool ui_menu_pool;
 struct _ui_menu_pool
 {
 	ui_menu_pool *		next;			/* chain to next one */
-	UINT8 *				top;			/* top of the pool */
-	UINT8 *				end;			/* end of the pool */
+	uint8_t *				top;			/* top of the pool */
+	uint8_t *				end;			/* end of the pool */
 };
 
 
@@ -111,7 +111,7 @@ struct _ui_menu_item
 {
 	const char *			text;
 	const char *			subtext;
-	UINT32				flags;
+	uint32_t				flags;
 	void *				ref;
 };
 
@@ -151,8 +151,8 @@ struct _input_item_data
 	input_seq			seq;				/* copy of the live sequence */
 	const input_seq *	defseq;				/* pointer to the default sequence */
 	const char *		name;				/* pointer to the base name of the item */
-	UINT16				sortorder;			/* sorting information */
-	UINT8				type;				/* type of port */
+	uint16_t				sortorder;			/* sorting information */
+	uint8_t				type;				/* type of port */
 };
 
 
@@ -174,8 +174,8 @@ struct _dip_descriptor
 {
 	dip_descriptor *	next;
 	const char *		name;
-	UINT32				mask;
-	UINT32				state;
+	uint32_t				mask;
+	uint32_t				state;
 };
 
 
@@ -191,10 +191,10 @@ struct _settings_menu_state
 typedef struct _input_menu_state input_menu_state;
 struct _input_menu_state
 {
-	UINT16				last_sortorder;
+	uint16_t				last_sortorder;
 	const void *		pollingref;
 	input_item_data *	pollingitem;
-	UINT8				record_next;
+	uint8_t				record_next;
 	input_seq			starting_seq;
 };
 
@@ -203,8 +203,8 @@ struct _input_menu_state
 typedef struct _select_game_state select_game_state;
 struct _select_game_state
 {
-	UINT8				error;
-	UINT8				rerandomize;
+	uint8_t				error;
+	uint8_t				rerandomize;
 	char				search[40];
 	const game_driver *	matchlist[VISIBLE_GAMES_IN_LIST];
 	const game_driver *	driverlist[1];
@@ -215,11 +215,11 @@ struct _select_game_state
 typedef struct _crosshair_item_data crosshair_item_data;
 struct _crosshair_item_data
 {
-	UINT8				type;
-	UINT8				player;
-	UINT8				min, max;
-	UINT8				cur;
-	UINT8				defvalue;
+	uint8_t				type;
+	uint8_t				player;
+	uint8_t				min, max;
+	uint8_t				cur;
+	uint8_t				defvalue;
 	char				last_name[CROSSHAIR_PIC_NAME_LENGTH + 1];
 	char				next_name[CROSSHAIR_PIC_NAME_LENGTH + 1];
 };
@@ -255,7 +255,7 @@ static void ui_menu_exit(running_machine &machine);
 static void ui_menu_draw(running_machine *machine, ui_menu *menu, int customonly);
 static void ui_menu_draw_text_box(ui_menu *menu);
 static void ui_menu_handle_events(ui_menu *menu);
-static void ui_menu_handle_keys(ui_menu *menu, UINT32 flags);
+static void ui_menu_handle_keys(ui_menu *menu, uint32_t flags);
 static void ui_menu_validate_selection(ui_menu *menu, int scandir);
 static void ui_menu_clear_free_list(running_machine *machine);
 
@@ -274,8 +274,8 @@ static void menu_input_populate_and_sort(running_machine *machine, ui_menu *menu
 static void menu_settings_dip_switches(running_machine *machine, ui_menu *menu, void *parameter, void *state);
 static void menu_settings_driver_config(running_machine *machine, ui_menu *menu, void *parameter, void *state);
 static void menu_settings_categories(running_machine *machine, ui_menu *menu, void *parameter, void *state);
-static void menu_settings_common(running_machine *machine, ui_menu *menu, void *state, UINT32 type);
-static void menu_settings_populate(running_machine *machine, ui_menu *menu, settings_menu_state *menustate, UINT32 type);
+static void menu_settings_common(running_machine *machine, ui_menu *menu, void *state, uint32_t type);
+static void menu_settings_populate(running_machine *machine, ui_menu *menu, settings_menu_state *menustate, uint32_t type);
 static void menu_analog(running_machine *machine, ui_menu *menu, void *parameter, void *state);
 static void menu_analog_populate(running_machine *machine, ui_menu *menu);
 static void menu_bookkeeping(running_machine *machine, ui_menu *menu, void *parameter, void *state);
@@ -303,7 +303,7 @@ static void menu_select_game_custom_render(running_machine *machine, ui_menu *me
 
 /* menu helpers */
 static void menu_render_triangle(bitmap_t *dest, const bitmap_t *source, const rectangle *sbounds, void *param);
-static void menu_settings_custom_render_one(render_container *container, float x1, float y1, float x2, float y2, const dip_descriptor *dip, UINT32 selectedmask);
+static void menu_settings_custom_render_one(render_container *container, float x1, float y1, float x2, float y2, const dip_descriptor *dip, uint32_t selectedmask);
 static void menu_settings_custom_render(running_machine *machine, ui_menu *menu, void *state, void *selectedref, float top, float bottom, float x, float y, float x2, float y2);
 
 
@@ -501,7 +501,7 @@ void ui_menu_reset(ui_menu *menu, ui_menu_reset_options options)
 
 	/* reset all the pools and the numitems back to 0 */
 	for (pool = menu->pool; pool != NULL; pool = pool->next)
-		pool->top = (UINT8 *)(pool + 1);
+		pool->top = (uint8_t *)(pool + 1);
 	menu->numitems = 0;
 	menu->visitems = 0;
 	menu->selected = 0;
@@ -532,7 +532,7 @@ int ui_menu_populated(ui_menu *menu)
     end of the menu
 -------------------------------------------------*/
 
-void ui_menu_item_append(ui_menu *menu, const char *text, const char *subtext, UINT32 flags, void *ref)
+void ui_menu_item_append(ui_menu *menu, const char *text, const char *subtext, uint32_t flags, void *ref)
 {
 	ui_menu_item *item;
 	int index;
@@ -585,7 +585,7 @@ void ui_menu_item_append(ui_menu *menu, const char *text, const char *subtext, U
     and returning any interesting events
 -------------------------------------------------*/
 
-const ui_menu_event *ui_menu_process(running_machine *machine, ui_menu *menu, UINT32 flags)
+const ui_menu_event *ui_menu_process(running_machine *machine, ui_menu *menu, uint32_t flags)
 {
 	/* reset the event */
 	menu->event.iptkey = IPT_INVALID;
@@ -646,7 +646,7 @@ void *ui_menu_alloc_state(ui_menu *menu, size_t size, ui_menu_destroy_state_func
 			(*menu->destroy_state)(menu, menu->state);
 		auto_free(menu->machine, menu->state);
 	}
-	menu->state = auto_alloc_array_clear(menu->machine, UINT8, size);
+	menu->state = auto_alloc_array_clear(menu->machine, uint8_t, size);
 	menu->destroy_state = destroy_state;
 
 	return menu->state;
@@ -674,12 +674,12 @@ void *ui_menu_pool_alloc(ui_menu *menu, size_t size)
 		}
 
 	/* allocate a new pool */
-	pool = (ui_menu_pool *)auto_alloc_array_clear(menu->machine, UINT8, sizeof(*pool) + UI_MENU_POOL_SIZE);
+	pool = (ui_menu_pool *)auto_alloc_array_clear(menu->machine, uint8_t, sizeof(*pool) + UI_MENU_POOL_SIZE);
 
 	/* wire it up */
 	pool->next = menu->pool;
 	menu->pool = pool;
-	pool->top = (UINT8 *)(pool + 1);
+	pool->top = (uint8_t *)(pool + 1);
 	pool->end = pool->top + UI_MENU_POOL_SIZE;
 	return ui_menu_pool_alloc(menu, size);
 }
@@ -753,7 +753,7 @@ static void ui_menu_draw(running_machine *machine, ui_menu *menu, int customonly
 	int itemnum, linenum;
 	int mouse_hit, mouse_button;
 	render_target *mouse_target;
-	INT32 mouse_target_x, mouse_target_y;
+	int32_t mouse_target_x, mouse_target_y;
 	float mouse_x = -1, mouse_y = -1;
 
 	/* compute the width and height of the full menu */
@@ -1146,7 +1146,7 @@ static void ui_menu_handle_events(ui_menu *menu)
     keys for a menu
 -------------------------------------------------*/
 
-static void ui_menu_handle_keys(ui_menu *menu, UINT32 flags)
+static void ui_menu_handle_keys(ui_menu *menu, uint32_t flags)
 {
 	int ignorepause = ui_menu_is_force_game_select();
 	int ignoreright = FALSE;
@@ -1340,7 +1340,7 @@ void ui_menu_stack_pop(running_machine *machine)
     and calls the menu handler
 -------------------------------------------------*/
 
-UINT32 ui_menu_ui_handler(running_machine *machine, render_container *container, UINT32 state)
+uint32_t ui_menu_ui_handler(running_machine *machine, render_container *container, uint32_t state)
 {
 	/* if we have no menus stacked up, start with the main menu */
 	if (menu_stack == NULL)
@@ -1370,9 +1370,9 @@ UINT32 ui_menu_ui_handler(running_machine *machine, render_container *container,
     standard menu handler
 -------------------------------------------------*/
 
-UINT32 ui_slider_ui_handler(running_machine *machine, render_container *container, UINT32 state)
+uint32_t ui_slider_ui_handler(running_machine *machine, render_container *container, uint32_t state)
 {
-	UINT32 result;
+	uint32_t result;
 
 	/* if this is the first call, push the sliders menu */
 	if (state)
@@ -1719,7 +1719,7 @@ static void menu_input_specific_populate(running_machine *machine, ui_menu *menu
 				((field->type == IPT_OTHER && field->name != NULL) || input_type_group(machine, field->type, field->player) != IPG_INVALID))
 			{
 				input_seq_type seqtype;
-				UINT16 sortorder;
+				uint16_t sortorder;
 
 				/* determine the sorting order */
 				if (field->type >= IPT_START1 && field->type <= __ipt_analog_end)
@@ -1924,7 +1924,7 @@ static void menu_input_populate_and_sort(running_machine *machine, ui_menu *menu
 	/* build the menu */
 	for (curitem = 0; curitem < numitems; curitem++)
 	{
-		UINT32 flags = 0;
+		uint32_t flags = 0;
 
 		/* generate the name of the item itself, based off the base name and the type */
 		item = itemarray[curitem];
@@ -1989,7 +1989,7 @@ static void menu_settings_categories(running_machine *machine, ui_menu *menu, vo
     switches menus
 -------------------------------------------------*/
 
-static void menu_settings_common(running_machine *machine, ui_menu *menu, void *state, UINT32 type)
+static void menu_settings_common(running_machine *machine, ui_menu *menu, void *state, uint32_t type)
 {
 	settings_menu_state *menustate;
 	const ui_menu_event *event;
@@ -2048,7 +2048,7 @@ static void menu_settings_common(running_machine *machine, ui_menu *menu, void *
     switches menus
 -------------------------------------------------*/
 
-static void menu_settings_populate(running_machine *machine, ui_menu *menu, settings_menu_state *menustate, UINT32 type)
+static void menu_settings_populate(running_machine *machine, ui_menu *menu, settings_menu_state *menustate, uint32_t type)
 {
 	const input_field_config *field;
 	const input_port_config *port;
@@ -2064,7 +2064,7 @@ static void menu_settings_populate(running_machine *machine, ui_menu *menu, sett
 		for (field = port->fieldlist; field != NULL; field = field->next)
 			if (field->type == type && input_condition_true(machine, &field->condition))
 			{
-				UINT32 flags = 0;
+				uint32_t flags = 0;
 
 				/* set the left/right flags appropriately */
 				if (input_field_has_previous_setting(field))
@@ -2080,7 +2080,7 @@ static void menu_settings_populate(running_machine *machine, ui_menu *menu, sett
 				{
 					const input_field_diplocation *diploc;
 					input_field_user_settings settings;
-					UINT32 accummask = field->mask;
+					uint32_t accummask = field->mask;
 
 					/* get current settings */
 					input_field_get_user_settings(field, &settings);
@@ -2088,7 +2088,7 @@ static void menu_settings_populate(running_machine *machine, ui_menu *menu, sett
 					/* iterate over each bit in the field */
 					for (diploc = field->diploclist; diploc != NULL; diploc = diploc->next)
 					{
-						UINT32 mask = accummask & ~(accummask - 1);
+						uint32_t mask = accummask & ~(accummask - 1);
 						dip_descriptor *dip;
 
 						/* find the matching switch name */
@@ -2148,7 +2148,7 @@ static void menu_settings_custom_render(running_machine *machine, ui_menu *menu,
 	for (dip = menustate->diplist; dip != NULL; dip = dip->next)
 	{
 		const input_field_diplocation *diploc;
-		UINT32 selectedmask = 0;
+		uint32_t selectedmask = 0;
 
 		/* determine the mask of selected bits */
 		if (field != NULL)
@@ -2168,7 +2168,7 @@ static void menu_settings_custom_render(running_machine *machine, ui_menu *menu,
     DIP switch
 -------------------------------------------------*/
 
-static void menu_settings_custom_render_one(render_container *container, float x1, float y1, float x2, float y2, const dip_descriptor *dip, UINT32 selectedmask)
+static void menu_settings_custom_render_one(render_container *container, float x1, float y1, float x2, float y2, const dip_descriptor *dip, uint32_t selectedmask)
 {
 	float switch_field_width = SINGLE_TOGGLE_SWITCH_FIELD_WIDTH * render_get_ui_aspect();
 	float switch_width = SINGLE_TOGGLE_SWITCH_WIDTH * render_get_ui_aspect();
@@ -2350,7 +2350,7 @@ static void menu_analog_populate(running_machine *machine, ui_menu *menu)
 					if (type != ANALOG_ITEM_CENTERSPEED || use_autocenter)
 					{
 						analog_item_data *data;
-						UINT32 flags = 0;
+						uint32_t flags = 0;
 
 						/* allocate a data item for tracking what this menu item refers to */
 						data = (analog_item_data *)ui_menu_pool_alloc(menu, sizeof(*data));
@@ -2602,7 +2602,7 @@ static void menu_cheat_populate(running_machine *machine, ui_menu *menu)
 {
 	const char *text, *subtext;
 	void *curcheat;
-	UINT32 flags;
+	uint32_t flags;
 
 	/* iterate over cheats */
 	for (curcheat = cheat_get_next_menu_entry(machine, NULL, &text, &subtext, &flags);
@@ -2712,7 +2712,7 @@ static void menu_memory_card(running_machine *machine, ui_menu *menu, void *para
 static void menu_memory_card_populate(running_machine *machine, ui_menu *menu, int cardnum)
 {
 	char tempstring[20];
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 
 	/* add the card select menu */
 	sprintf(tempstring, "%d", cardnum);
@@ -2738,11 +2738,11 @@ static void menu_sliders(running_machine *machine, ui_menu *menu, void *paramete
 {
 	int menuless_mode = (parameter != NULL);
 	const ui_menu_event *event;
-	UINT8 *hidden = (UINT8 *)state;
+	uint8_t *hidden = (uint8_t *)state;
 
 	/* if no state, allocate some */
 	if (hidden == NULL)
-		hidden = (UINT8 *)ui_menu_alloc_state(menu, sizeof(*hidden), NULL);
+		hidden = (uint8_t *)ui_menu_alloc_state(menu, sizeof(*hidden), NULL);
 	if (menuless_mode)
 		*hidden = TRUE;
 
@@ -2758,8 +2758,8 @@ static void menu_sliders(running_machine *machine, ui_menu *menu, void *paramete
 		if (event->itemref != NULL)
 		{
 			const slider_state *slider = (const slider_state *)event->itemref;
-			INT32 curvalue = (*slider->update)(machine, slider->arg, NULL, SLIDER_NOCHANGE);
-			INT32 increment = 0;
+			int32_t curvalue = (*slider->update)(machine, slider->arg, NULL, SLIDER_NOCHANGE);
+			int32_t increment = 0;
 
 			switch (event->iptkey)
 			{
@@ -2804,7 +2804,7 @@ static void menu_sliders(running_machine *machine, ui_menu *menu, void *paramete
 			/* handle any changes */
 			if (increment != 0)
 			{
-				INT32 newvalue = curvalue + increment;
+				int32_t newvalue = curvalue + increment;
 
 				/* clamp within bounds */
 				if (newvalue < slider->minval)
@@ -2852,8 +2852,8 @@ static void menu_sliders_populate(running_machine *machine, ui_menu *menu, int m
 	/* add all sliders */
 	for (curslider = ui_get_slider_list(); curslider != NULL; curslider = curslider->next)
 	{
-		INT32 curval = (*curslider->update)(machine, curslider->arg, &tempstring, SLIDER_NOCHANGE);
-		UINT32 flags = 0;
+		int32_t curval = (*curslider->update)(machine, curslider->arg, &tempstring, SLIDER_NOCHANGE);
+		uint32_t flags = 0;
 		if (curval > curslider->minval)
 			flags |= MENU_FLAG_LEFT_ARROW;
 		if (curval < curslider->maxval)
@@ -2883,7 +2883,7 @@ static void menu_sliders_custom_render(running_machine *machine, ui_menu *menu, 
 		float percentage, default_percentage;
 		astring tempstring;
 		float text_height;
-		INT32 curval;
+		int32_t curval;
 
 		/* determine the current value and text */
 		curval = (*curslider->update)(machine, curslider->arg, &tempstring, SLIDER_NOCHANGE);
@@ -3224,8 +3224,8 @@ static void menu_crosshair_populate(running_machine *machine, ui_menu *menu)
 	crosshair_item_data *data;
 	char temp_text[16];
 	int player;
-	UINT8 use_auto = FALSE;
-	UINT32 flags = 0;
+	uint8_t use_auto = FALSE;
+	uint32_t flags = 0;
 	mame_path *path;
 
 	/* loop over player and add the manual items */
@@ -3295,9 +3295,9 @@ static void menu_crosshair_populate(running_machine *machine, ui_menu *menu)
 					/* look for files ending in .png with a name not larger then 9 chars*/
 					if ((length > 4) && (length <= CROSSHAIR_PIC_NAME_LENGTH + 4) &&
 						dir->name[length - 4] == '.' &&
-						tolower((UINT8)dir->name[length - 3]) == 'p' &&
-						tolower((UINT8)dir->name[length - 2]) == 'n' &&
-						tolower((UINT8)dir->name[length - 1]) == 'g')
+						tolower((uint8_t)dir->name[length - 3]) == 'p' &&
+						tolower((uint8_t)dir->name[length - 2]) == 'n' &&
+						tolower((uint8_t)dir->name[length - 1]) == 'g')
 
 					{
 						/* remove .png from length */
@@ -3578,14 +3578,14 @@ static void menu_select_game_build_driver_list(ui_menu *menu, select_game_state 
 	int driver_count = driver_list_get_count(drivers);
 	int drivnum, listnum;
 	mame_path *path;
-	UINT8 *found;
+	uint8_t *found;
 
 	/* create a sorted copy of the main driver list */
 	memcpy((void *)menustate->driverlist, drivers, driver_count * sizeof(menustate->driverlist[0]));
 	qsort((void *)menustate->driverlist, driver_count, sizeof(menustate->driverlist[0]), menu_select_game_driver_compare);
 
 	/* allocate a temporary array to track which ones we found */
-	found = (UINT8 *)ui_menu_pool_alloc(menu, (driver_count + 7) / 8);
+	found = (uint8_t *)ui_menu_pool_alloc(menu, (driver_count + 7) / 8);
 	memset(found, 0, (driver_count + 7) / 8);
 
 	/* open a path to the ROMs and find them in the array */
@@ -3607,7 +3607,7 @@ static void menu_select_game_build_driver_list(ui_menu *menu, select_game_state 
 
 			/* build a name for it */
 			for (src = dir->name; *src != 0 && *src != '.' && dst < &drivername[ARRAY_LENGTH(drivername) - 1]; src++)
-				*dst++ = tolower((UINT8)*src);
+				*dst++ = tolower((uint8_t)*src);
 			*dst = 0;
 
 			/* find it in the array */
@@ -3807,7 +3807,7 @@ static void menu_render_triangle(bitmap_t *dest, const bitmap_t *source, const r
 	for (y = 0; y < height; y++)
 	{
 		int linewidth = (y * (halfwidth - 1) + (height / 2)) * 255 * 2 / height;
-		UINT32 *target = BITMAP_ADDR32(dest, y, halfwidth);
+		uint32_t *target = BITMAP_ADDR32(dest, y, halfwidth);
 
 		/* don't antialias if height < 12 */
 		if (dest->height < 12)

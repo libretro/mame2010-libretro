@@ -49,15 +49,15 @@
 //  legacy_device_config_base - constructor
 //-------------------------------------------------
 
-legacy_device_config_base::legacy_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config)
+legacy_device_config_base::legacy_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config)
 	: device_config(mconfig, type, "Legacy Device", tag, owner, clock),
 	  m_get_config_func(get_config),
 	  m_inline_config(NULL)
 {
 	// allocate a buffer for the inline configuration
-	UINT32 configlen = (UINT32)get_legacy_config_int(DEVINFO_INT_INLINE_CONFIG_BYTES);
+	uint32_t configlen = (uint32_t)get_legacy_config_int(DEVINFO_INT_INLINE_CONFIG_BYTES);
 	if (configlen != 0)
-		m_inline_config = global_alloc_array_clear(UINT8, configlen);
+		m_inline_config = global_alloc_array_clear(uint8_t, configlen);
 
 	// set the proper name
 	m_name = get_legacy_config_string(DEVINFO_STR_NAME);
@@ -79,7 +79,7 @@ legacy_device_config_base::~legacy_device_config_base()
 //  configuration parameter as an integer
 //-------------------------------------------------
 
-INT64 legacy_device_config_base::get_legacy_config_int(UINT32 state) const
+int64_t legacy_device_config_base::get_legacy_config_int(uint32_t state) const
 {
 	deviceinfo info = { 0 };
 	(*m_get_config_func)(this, state, &info);
@@ -92,7 +92,7 @@ INT64 legacy_device_config_base::get_legacy_config_int(UINT32 state) const
 //  configuration parameter as a pointer
 //-------------------------------------------------
 
-void *legacy_device_config_base::get_legacy_config_ptr(UINT32 state) const
+void *legacy_device_config_base::get_legacy_config_ptr(uint32_t state) const
 {
 	deviceinfo info = { 0 };
 	(*m_get_config_func)(this, state, &info);
@@ -105,7 +105,7 @@ void *legacy_device_config_base::get_legacy_config_ptr(UINT32 state) const
 //  configuration parameter as a function pointer
 //-------------------------------------------------
 
-genf *legacy_device_config_base::get_legacy_config_fct(UINT32 state) const
+genf *legacy_device_config_base::get_legacy_config_fct(uint32_t state) const
 {
 	deviceinfo info = { 0 };
 	(*m_get_config_func)(this, state, &info);
@@ -118,7 +118,7 @@ genf *legacy_device_config_base::get_legacy_config_fct(UINT32 state) const
 //  configuration parameter as a string pointer
 //-------------------------------------------------
 
-const char *legacy_device_config_base::get_legacy_config_string(UINT32 state) const
+const char *legacy_device_config_base::get_legacy_config_string(uint32_t state) const
 {
 	deviceinfo info;
 	info.s = get_temp_string_buffer();
@@ -157,7 +157,7 @@ legacy_device_base::legacy_device_base(running_machine &_machine, const device_c
 {
 	int tokenbytes = m_config.get_legacy_config_int(DEVINFO_INT_TOKEN_BYTES);
 	if (tokenbytes != 0)
-		m_token = auto_alloc_array_clear(machine, UINT8, tokenbytes);
+		m_token = auto_alloc_array_clear(machine, uint8_t, tokenbytes);
 }
 
 
@@ -209,7 +209,7 @@ void legacy_device_base::device_reset()
 //  legacy_sound_device_config_base - constructor
 //-------------------------------------------------
 
-legacy_sound_device_config_base::legacy_sound_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config)
+legacy_sound_device_config_base::legacy_sound_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config)
 	: legacy_device_config_base(mconfig, type, tag, owner, clock, get_config),
 	  device_config_sound_interface(mconfig, *this)
 {
@@ -241,7 +241,7 @@ legacy_sound_device_base::legacy_sound_device_base(running_machine &machine, con
 //  legacy_memory_device_config_base - constructor
 //-------------------------------------------------
 
-legacy_memory_device_config_base::legacy_memory_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config)
+legacy_memory_device_config_base::legacy_memory_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config)
 	: legacy_device_config_base(mconfig, type, tag, owner, clock, get_config),
 	  device_config_memory_interface(mconfig, *this)
 {
@@ -293,7 +293,7 @@ legacy_memory_device_base::legacy_memory_device_base(running_machine &machine, c
 //  legacy_nvram_device_config_base - constructor
 //-------------------------------------------------
 
-legacy_nvram_device_config_base::legacy_nvram_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, UINT32 clock, device_get_config_func get_config)
+legacy_nvram_device_config_base::legacy_nvram_device_config_base(const machine_config &mconfig, device_type type, const char *tag, const device_config *owner, uint32_t clock, device_get_config_func get_config)
 	: legacy_device_config_base(mconfig, type, tag, owner, clock, get_config),
 	  device_config_nvram_interface(mconfig, *this)
 {

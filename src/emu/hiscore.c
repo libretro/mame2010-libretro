@@ -29,7 +29,7 @@ char *parse_hiscoredat(char *s, int n, int *const index);
 
 struct _memory_range
 {
-	UINT32 cpu, addr, num_bytes, start_value, end_value;
+	uint32_t cpu, addr, num_bytes, start_value, end_value;
 	struct _memory_range *next;
 };
 typedef struct _memory_range memory_range;
@@ -44,7 +44,7 @@ static struct
 
 /*****************************************************************************/
 
-static void copy_to_memory (running_machine *machine, int cpu, int addr, const UINT8 *source, int num_bytes)
+static void copy_to_memory (running_machine *machine, int cpu, int addr, const uint8_t *source, int num_bytes)
 {
 	int i;
 	const address_space *targetspace;
@@ -63,7 +63,7 @@ static void copy_to_memory (running_machine *machine, int cpu, int addr, const U
 	}
 }
 
-static void copy_from_memory (running_machine *machine, int cpu, int addr, UINT8 *dest, int num_bytes)
+static void copy_from_memory (running_machine *machine, int cpu, int addr, uint8_t *dest, int num_bytes)
 {
 	int i;
 	const address_space *targetspace;
@@ -91,10 +91,10 @@ static void copy_from_memory (running_machine *machine, int cpu, int addr, UINT8
     (0x00) is encountered.
 
 */
-static UINT32 hexstr2num (const char **pString)
+static uint32_t hexstr2num (const char **pString)
 {
 	const char *string = *pString;
-	UINT32 result = 0;
+	uint32_t result = 0;
 	if (string)
 	{
 		for(;;)
@@ -221,7 +221,7 @@ static void hiscore_load (running_machine *machine)
         retro_log(RETRO_LOG_INFO, "[MAME 2010] hiscore datafile found.\n");
         while (mem_range)
         {
-            UINT8 *data = global_alloc_array(UINT8, mem_range->num_bytes);
+            uint8_t *data = global_alloc_array(uint8_t, mem_range->num_bytes);
             if (data)
             {
                 /*  this buffer will almost certainly be small
@@ -254,7 +254,7 @@ static void hiscore_save (running_machine *machine)
         retro_log(RETRO_LOG_INFO, "[MAME 2010] saving hiscore datafile.\n");
         while (mem_range)
         {
-            UINT8 *data = global_alloc_array(UINT8, mem_range->num_bytes);
+            uint8_t *data = global_alloc_array(uint8_t, mem_range->num_bytes);
             if (data)
             {
                 /*  this buffer will almost certainly be small

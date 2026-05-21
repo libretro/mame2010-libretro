@@ -119,7 +119,7 @@ typedef void (*write_line_device_func)(device_t *device, int state);
 typedef struct _devcb_read_line devcb_read_line;
 struct _devcb_read_line
 {
-	UINT32					type;			/* one of the special DEVCB_TYPE values */
+	uint32_t					type;			/* one of the special DEVCB_TYPE values */
 	const char *			tag;			/* tag of target, where appropriate */
 	read_line_device_func	readline;		/* read line function */
 	read8_device_func		readdevice;		/* read device function */
@@ -144,7 +144,7 @@ struct _devcb_resolved_read_line
 typedef struct _devcb_write_line devcb_write_line;
 struct _devcb_write_line
 {
-	UINT32					type;			/* one of the special DEVCB_TYPE values */
+	uint32_t					type;			/* one of the special DEVCB_TYPE values */
 	const char *			tag;			/* tag of target, where appropriate */
 	write_line_device_func	writeline;		/* write line function */
 	write8_device_func		writedevice;	/* write device function */
@@ -170,7 +170,7 @@ struct _devcb_resolved_write_line
 typedef struct _devcb_read8 devcb_read8;
 struct _devcb_read8
 {
-	UINT32					type;			/* one of the special DEVCB_TYPE values */
+	uint32_t					type;			/* one of the special DEVCB_TYPE values */
 	const char *			tag;			/* tag of target, where appropriate */
 	read_line_device_func	readline;		/* read line function */
 	read8_device_func		readdevice;		/* read device function */
@@ -196,7 +196,7 @@ struct _devcb_resolved_read8
 typedef struct _devcb_write8 devcb_write8;
 struct _devcb_write8
 {
-	UINT32					type;			/* one of the special DEVCB_TYPE values */
+	uint32_t					type;			/* one of the special DEVCB_TYPE values */
 	const char *			tag;			/* tag of target, where appropriate */
 	write_line_device_func	writeline;		/* write line function */
 	write8_device_func		writedevice;	/* write device function */
@@ -283,7 +283,7 @@ INLINE void devcb_call_write_line(const devcb_resolved_write_line *resolved, int
     resolved write8 handler
 -------------------------------------------------*/
 
-INLINE void devcb_call_write8(const devcb_resolved_write8 *resolved, offs_t offset, UINT8 data)
+INLINE void devcb_call_write8(const devcb_resolved_write8 *resolved, offs_t offset, uint8_t data)
 {
 	if (resolved->write != NULL)
 		(*resolved->write)((device_t *)resolved->target, offset, data);

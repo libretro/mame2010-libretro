@@ -254,11 +254,11 @@ typedef struct _render_texinfo render_texinfo;
 struct _render_texinfo
 {
 	void *				base;				/* base of the data */
-	UINT32				rowpixels;			/* pixels per row */
-	UINT32				width;				/* width of the image */
-	UINT32				height;				/* height of the image */
+	uint32_t				rowpixels;			/* pixels per row */
+	uint32_t				width;				/* width of the image */
+	uint32_t				height;				/* height of the image */
 	const rgb_t *		palette;			/* palette for PALETTE16 textures, LUTs for RGB15/RGB32 */
-	UINT32				seqid;				/* sequence ID */
+	uint32_t				seqid;				/* sequence ID */
 };
 
 
@@ -274,7 +274,7 @@ struct _render_primitive
 	int					type;				/* type of primitive */
 	render_bounds		bounds;				/* bounds or positions */
 	render_color		color;				/* RGBA values */
-	UINT32				flags;				/* flags */
+	uint32_t				flags;				/* flags */
 	float				width;				/* width (for line primitives) */
 	render_texinfo		texture;			/* texture info (for quad primitives) */
 	render_quad_texuv	texcoords;			/* texture coordinates (for quad primitives) */
@@ -347,7 +347,7 @@ float render_get_ui_aspect(void);
 /* ----- render target management ----- */
 
 /* allocate a new render target */
-render_target *render_target_alloc(running_machine *machine, const char *layout, UINT32 flags);
+render_target *render_target_alloc(running_machine *machine, const char *layout, uint32_t flags);
 
 /* free memory for a render target */
 void render_target_free(render_target *target);
@@ -359,13 +359,13 @@ render_target *render_target_get_indexed(int index);
 const char *render_target_get_view_name(render_target *target, int viewindex);
 
 /* return a bitmask of which screens are visible on a given view */
-UINT32 render_target_get_view_screens(render_target *target, int viewindex);
+uint32_t render_target_get_view_screens(render_target *target, int viewindex);
 
 /* get the bounds and pixel aspect of a target */
-void render_target_get_bounds(render_target *target, INT32 *width, INT32 *height, float *pixel_aspect);
+void render_target_get_bounds(render_target *target, int32_t *width, int32_t *height, float *pixel_aspect);
 
 /* set the bounds and pixel aspect of a target */
-void render_target_set_bounds(render_target *target, INT32 width, INT32 height, float pixel_aspect);
+void render_target_set_bounds(render_target *target, int32_t width, int32_t height, float pixel_aspect);
 
 /* get the maximum update rate (refresh rate) of a target, or 0 if no maximum */
 float render_target_get_max_update_rate(render_target *target);
@@ -395,20 +395,20 @@ void render_target_set_view(render_target *target, int viewindex);
 void render_target_set_max_texture_size(render_target *target, int maxwidth, int maxheight);
 
 /* compute the visible area for the given target with the current layout and proposed new parameters */
-void render_target_compute_visible_area(render_target *target, INT32 target_width, INT32 target_height, float target_pixel_aspect, int target_orientation, INT32 *visible_width, INT32 *visible_height);
+void render_target_compute_visible_area(render_target *target, int32_t target_width, int32_t target_height, float target_pixel_aspect, int target_orientation, int32_t *visible_width, int32_t *visible_height);
 
 /* get the "minimum" size of a target, which is the smallest bounds that will ensure at least
    1 target pixel per source pixel for all included screens */
-void render_target_get_minimum_size(render_target *target, INT32 *minwidth, INT32 *minheight);
+void render_target_get_minimum_size(render_target *target, int32_t *minwidth, int32_t *minheight);
 
 /* return a list of primitives for a given render target */
 const render_primitive_list *render_target_get_primitives(render_target *target);
 
 /* attempts to map a point on the specified render_target to the specified container, if possible */
-int render_target_map_point_container(render_target *target, INT32 target_x, INT32 target_y, render_container *container, float *container_x, float *container_y);
+int render_target_map_point_container(render_target *target, int32_t target_x, int32_t target_y, render_container *container, float *container_x, float *container_y);
 
 /* attempts to map a point on the specified render_target to the specified container, if possible */
-int render_target_map_point_input(render_target *target, INT32 target_x, INT32 target_y, const char **input_tag, UINT32 *input_mask, float *input_x, float *input_y);
+int render_target_map_point_input(render_target *target, int32_t target_x, int32_t target_y, const char **input_tag, uint32_t *input_mask, float *input_x, float *input_y);
 
 
 
@@ -452,13 +452,13 @@ render_container *render_container_get_ui(void);
 render_container *render_container_get_screen(screen_device *screen);
 
 /* add a line item to the specified container */
-void render_container_add_line(render_container *container, float x0, float y0, float x1, float y1, float width, rgb_t argb, UINT32 flags);
+void render_container_add_line(render_container *container, float x0, float y0, float x1, float y1, float width, rgb_t argb, uint32_t flags);
 
 /* add a quad item to the specified container */
-void render_container_add_quad(render_container *container, float x0, float y0, float x1, float y1, rgb_t argb, render_texture *texture, UINT32 flags);
+void render_container_add_quad(render_container *container, float x0, float y0, float x1, float y1, rgb_t argb, render_texture *texture, uint32_t flags);
 
 /* add a char item to the specified container */
-void render_container_add_char(render_container *container, float x0, float y0, float height, float aspect, rgb_t argb, render_font *font, UINT16 ch);
+void render_container_add_char(render_container *container, float x0, float y0, float height, float aspect, rgb_t argb, render_font *font, uint16_t ch);
 
 /* "drawable" handling for internal debugger */
 render_container *render_debug_alloc(render_target *target);

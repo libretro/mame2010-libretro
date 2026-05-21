@@ -74,7 +74,7 @@ struct _input_seq
 int input_seq_pressed(running_machine *machine, const input_seq *seq);
 
 /* return the value of an axis sequence */
-INT32 input_seq_axis_value(running_machine *machine, const input_seq *seq, input_item_class *itemclass_ptr);
+int32_t input_seq_axis_value(running_machine *machine, const input_seq *seq, input_item_class *itemclass_ptr);
 
 
 

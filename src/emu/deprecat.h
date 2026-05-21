@@ -63,7 +63,7 @@
  *
  *************************************/
 
-void decodechar(const gfx_element *gfx, UINT32 code, const UINT8 *src);
+void decodechar(const gfx_element *gfx, uint32_t code, const uint8_t *src);
 
 
 

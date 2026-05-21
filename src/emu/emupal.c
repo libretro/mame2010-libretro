@@ -32,11 +32,11 @@
 typedef struct _shadow_table_data shadow_table_data;
 struct _shadow_table_data
 {
-	UINT32 *			base;				/* pointer to the base of the table */
-	INT16				dr;					/* delta red value */
-	INT16				dg;					/* delta green value */
-	INT16				db;					/* delta blue value */
-	UINT8				noclip;				/* clip? */
+	uint32_t *			base;				/* pointer to the base of the table */
+	int16_t				dr;					/* delta red value */
+	int16_t				dg;					/* delta green value */
+	int16_t				db;					/* delta blue value */
+	uint8_t				noclip;				/* clip? */
 };
 
 
@@ -45,8 +45,8 @@ struct _palette_private
 {
 	bitmap_format		format;				/* format assumed for palette data */
 
-	UINT32				shadow_group;		/* index of the shadow group, or 0 if none */
-	UINT32				hilight_group;		/* index of the hilight group, or 0 if none */
+	uint32_t				shadow_group;		/* index of the shadow group, or 0 if none */
+	uint32_t				hilight_group;		/* index of the hilight group, or 0 if none */
 
 	pen_t				black_pen;			/* precomputed black pen value */
 	pen_t				white_pen;			/* precomputed white pen value */
@@ -63,9 +63,9 @@ class colortable_t
 {
 public:
 	running_machine *	machine;			/* associated machine */
-	UINT32				entries;			/* number of entries */
-	UINT32				palentries;			/* number of palette entries */
-	UINT16 *			raw;				/* raw data about each entry */
+	uint32_t				entries;			/* number of entries */
+	uint32_t				palentries;			/* number of palette entries */
+	uint16_t *			raw;				/* raw data about each entry */
 	rgb_t *				palette;			/* palette entries */
 };
 
@@ -313,10 +313,10 @@ void palette_set_shadow_dRGB32(running_machine *machine, int mode, int dr, int d
     with the given number of entries
 -------------------------------------------------*/
 
-colortable_t *colortable_alloc(running_machine *machine, UINT32 palettesize)
+colortable_t *colortable_alloc(running_machine *machine, uint32_t palettesize)
 {
 	colortable_t *ctable;
-	UINT32 index;
+	uint32_t index;
 
 	assert(machine != NULL);
 	assert(machine->config != NULL);
@@ -331,7 +331,7 @@ colortable_t *colortable_alloc(running_machine *machine, UINT32 palettesize)
 	ctable->palentries = palettesize;
 
 	/* allocate the raw colortable */
-	ctable->raw = auto_alloc_array(machine, UINT16, ctable->entries);
+	ctable->raw = auto_alloc_array(machine, uint16_t, ctable->entries);
 	for (index = 0; index < ctable->entries; index++)
 		ctable->raw[index] = index % ctable->palentries;
 	state_save_register_global_pointer(machine, ctable->raw, ctable->entries);
@@ -351,7 +351,7 @@ colortable_t *colortable_alloc(running_machine *machine, UINT32 palettesize)
     of a colortable entry
 -------------------------------------------------*/
 
-void colortable_entry_set_value(colortable_t *ctable, UINT32 entry, UINT16 value)
+void colortable_entry_set_value(colortable_t *ctable, uint32_t entry, uint16_t value)
 {
 	/* ensure values are within range */
 	assert(ctable != NULL);
@@ -372,7 +372,7 @@ void colortable_entry_set_value(colortable_t *ctable, UINT32 entry, UINT16 value
     of a colortable entry
 -------------------------------------------------*/
 
-UINT16 colortable_entry_get_value(colortable_t *ctable, UINT32 entry)
+uint16_t colortable_entry_get_value(colortable_t *ctable, uint32_t entry)
 {
 	assert(ctable != NULL);
 	assert(entry < ctable->entries);
@@ -385,7 +385,7 @@ UINT16 colortable_entry_get_value(colortable_t *ctable, UINT32 entry)
     color of a colortable palette entry
 -------------------------------------------------*/
 
-void colortable_palette_set_color(colortable_t *ctable, UINT32 entry, rgb_t color)
+void colortable_palette_set_color(colortable_t *ctable, uint32_t entry, rgb_t color)
 {
 	/* ensure values are within range */
 	assert(ctable != NULL);
@@ -397,7 +397,7 @@ void colortable_palette_set_color(colortable_t *ctable, UINT32 entry, rgb_t colo
 	/* update if it has changed */
 	if (ctable->palette[entry] != color)
 	{
-		UINT32 index;
+		uint32_t index;
 
 		ctable->palette[entry] = color;
 
@@ -414,7 +414,7 @@ void colortable_palette_set_color(colortable_t *ctable, UINT32 entry, rgb_t colo
     of a colortable palette entry
 -------------------------------------------------*/
 
-rgb_t colortable_palette_get_color(colortable_t *ctable, UINT32 entry)
+rgb_t colortable_palette_get_color(colortable_t *ctable, uint32_t entry)
 {
 	assert(ctable != NULL);
 	assert(entry < ctable->palentries);
@@ -428,11 +428,11 @@ rgb_t colortable_palette_get_color(colortable_t *ctable, UINT32 entry)
     color
 -------------------------------------------------*/
 
-UINT32 colortable_get_transpen_mask(colortable_t *ctable, const gfx_element *gfx, int color, int transcolor)
+uint32_t colortable_get_transpen_mask(colortable_t *ctable, const gfx_element *gfx, int color, int transcolor)
 {
-	UINT32 entry = gfx->color_base + (color % gfx->total_colors) * gfx->color_granularity;
-	UINT32 mask = 0;
-	UINT32 count, bit;
+	uint32_t entry = gfx->color_base + (color % gfx->total_colors) * gfx->color_granularity;
+	uint32_t mask = 0;
+	uint32_t count, bit;
 
 	/* make sure we are in range */
 	assert(ctable != NULL);
@@ -479,7 +479,7 @@ void colortable_configure_tilemap_groups(colortable_t *ctable, tilemap_t *tmap, 
     return the number of entries in a colortable
 -------------------------------------------------*/
 
-UINT32 colortable_palette_get_size(colortable_t *ctable)
+uint32_t colortable_palette_get_size(colortable_t *ctable)
 {
 	assert(ctable != NULL);
 	return ctable->palentries;
@@ -749,9 +749,9 @@ static void configure_rgb_shadows(running_machine *machine, int mode, float fact
 	/* regenerate the table */
 	for (i = 0; i < 32768; i++)
 	{
-		UINT8 r = rgb_clamp((pal5bit(i >> 10) * ifactor) >> 8);
-		UINT8 g = rgb_clamp((pal5bit(i >> 5) * ifactor) >> 8);
-		UINT8 b = rgb_clamp((pal5bit(i >> 0) * ifactor) >> 8);
+		uint8_t r = rgb_clamp((pal5bit(i >> 10) * ifactor) >> 8);
+		uint8_t g = rgb_clamp((pal5bit(i >> 5) * ifactor) >> 8);
+		uint8_t b = rgb_clamp((pal5bit(i >> 0) * ifactor) >> 8);
 		pen_t final = MAKE_RGB(r, g, b);
 
 		/* store either 16 or 32 bit */

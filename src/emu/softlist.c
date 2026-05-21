@@ -73,13 +73,13 @@ typedef tagmap_t<software_info *> softlist_map;
 
 static void *expat_malloc(size_t size)
 {
-	return global_alloc_array_clear(UINT8,size);
+	return global_alloc_array_clear(uint8_t,size);
 }
 
 static void *expat_realloc(void *ptr, size_t size)
 {
 	if (ptr) global_free(ptr);
-	return global_alloc_array_clear(UINT8,size);
+	return global_alloc_array_clear(uint8_t,size);
 }
 
 static void expat_free(void *ptr)
@@ -210,7 +210,7 @@ static void software_name_split(running_machine* machine, const char *swlist_swn
     add_rom_entry
 -------------------------------------------------*/
 
-static void add_rom_entry(software_list *swlist, const char *name, const char *hashdata, UINT32 offset, UINT32 length, UINT32 flags)
+static void add_rom_entry(software_list *swlist, const char *name, const char *hashdata, uint32_t offset, uint32_t length, uint32_t flags)
 {
 	software_part *part = &swlist->softinfo->partdata[swlist->current_part_entry-1];
 	struct rom_entry *entry = &part->romdata[swlist->current_rom_entry];
@@ -515,7 +515,7 @@ static void start_handler(void *data, const char *tagname, const char **attribut
 				{
 					if ( swlist->softinfo )
 					{
-						UINT32 length = strtol( str_size, NULL, 10 );
+						uint32_t length = strtol( str_size, NULL, 10 );
 						char *s = (char *)pool_malloc_lib(swlist->pool, ( strlen( str_name ) + 1 ) * sizeof(char) );
 
 						if ( !s )
@@ -609,8 +609,8 @@ static void start_handler(void *data, const char *tagname, const char **attribut
 				{
 					if ( str_size && str_offset )
 					{
-						UINT32 length = strtol( str_size, NULL, 10 );
-						UINT32 offset = strtol( str_offset, NULL, 16 );
+						uint32_t length = strtol( str_size, NULL, 10 );
+						uint32_t offset = strtol( str_offset, NULL, 16 );
 
 						if ( str_loadflag && !strcmp(str_loadflag, "reload") )
 						{
@@ -745,7 +745,7 @@ static void software_list_parse(software_list *swlist,
 	void *param)
 {
 	char buf[1024];
-	UINT32 len;
+	uint32_t len;
 	XML_Memory_Handling_Suite memcallbacks;
 
 	mame_fseek(swlist->file, 0, SEEK_SET);
@@ -1003,7 +1003,7 @@ bool load_software_part(device_image_interface *image, const char *path, softwar
 			{
 
 				software_list_config *swlist = (software_list_config *)downcast<const legacy_device_config_base *>(&swlists->baseconfig())->inline_config();
-				UINT32 i = DEVINFO_STR_SWLIST_0;
+				uint32_t i = DEVINFO_STR_SWLIST_0;
 
 				while ( ! software_part_ptr && i <= DEVINFO_STR_SWLIST_MAX )
 				{
@@ -1262,7 +1262,7 @@ static DEVICE_VALIDITY_CHECK( software_list )
 
 				/* make sure the year is only digits, '?' or '+' */
 				for (s = swinfo->year; *s; s++)
-					if (!isdigit((UINT8)*s) && *s != '?' && *s != '+')
+					if (!isdigit((uint8_t)*s) && *s != '?' && *s != '+')
 					{
 						mame_printf_error("%s: %s has an invalid year '%s'\n", swlist->list_name[i], swinfo->shortname, swinfo->year);
 						error = TRUE;

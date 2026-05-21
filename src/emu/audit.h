@@ -77,12 +77,12 @@ enum
 typedef struct _audit_record audit_record;
 struct _audit_record
 {
-	UINT8			type;					/* type of item that was audited */
-	UINT8			status;					/* status of audit on this item */
-	UINT8			substatus;				/* finer-detail status */
+	uint8_t			type;					/* type of item that was audited */
+	uint8_t			status;					/* status of audit on this item */
+	uint8_t			substatus;				/* finer-detail status */
 	const char *	name;					/* name of item */
-	UINT32			explength;				/* expected length of item */
-	UINT32			length;					/* actual length of item */
+	uint32_t			explength;				/* expected length of item */
+	uint32_t			length;					/* actual length of item */
 	const char *	exphash;        		/* expected hash data */
 	char			hash[HASH_BUF_SIZE];	/* actual hash information */
 };
@@ -93,7 +93,7 @@ struct _audit_record
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-int audit_images(core_options *options, const game_driver *gamedrv, UINT32 validation, audit_record **audit);
+int audit_images(core_options *options, const game_driver *gamedrv, uint32_t validation, audit_record **audit);
 int audit_samples(core_options *options, const game_driver *gamedrv, audit_record **audit);
 int audit_summary(const game_driver *gamedrv, int count, const audit_record *records, int output);
 
