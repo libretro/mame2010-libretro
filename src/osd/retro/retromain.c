@@ -990,55 +990,55 @@ void init_input_descriptors(void)
 
 static INT32 pad1_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad2_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad3_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad4_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad5_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad6_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad7_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 pad8_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT32 *itemdata = (UINT32 *)item_internal;
    return *itemdata;
 }
 
 static INT32 retrokbd_get_state(void *device_internal, void *item_internal)
 {
-   UINT8 *itemdata = (UINT8 *)item_internal;
+   UINT16 *itemdata = (UINT16 *)item_internal;
    return *itemdata;
 }
 
