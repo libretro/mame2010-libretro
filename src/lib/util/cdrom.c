@@ -732,7 +732,7 @@ chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc)
 	}
 
 	/* TODO: I don't know why sometimes the data is one endian and sometimes another */
-	if ((toc->numtrks < 0) || (toc->numtrks > CD_MAX_TRACKS))
+	if (toc->numtrks > CD_MAX_TRACKS)
 	{
 		toc->numtrks = FLIPENDIAN_INT32(toc->numtrks);
 		for (i = 0; i < CD_MAX_TRACKS; i++)
@@ -745,6 +745,11 @@ chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc)
 			toc->tracks[i].extraframes = FLIPENDIAN_INT32(toc->tracks[i].extraframes);
 		}
 	}
+
+	/* a corrupt or byte-swapped image can still decode an out-of-range
+	   track count; clamp it so callers never index past tracks[] */
+	if (toc->numtrks > CD_MAX_TRACKS)
+		toc->numtrks = CD_MAX_TRACKS;
 
 	return CHDERR_NONE;
 }
