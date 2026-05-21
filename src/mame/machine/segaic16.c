@@ -800,7 +800,7 @@ static DEVICE_RESET( ic_315_5250 )
 {
 	ic_315_5250_state *ic_315_5250 = _315_5250_get_safe_token(device);
 
-	memset(&ic_315_5250, 0, sizeof(ic_315_5250));
+	memset(ic_315_5250, 0, sizeof(*ic_315_5250));
 }
 
 
