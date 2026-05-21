@@ -147,7 +147,7 @@ void osd_update(running_machine *machine, int skip_redraw);
 
 ******************************************************************************/
 
-void osd_update_audio_stream(running_machine *machine, INT16 *buffer, int samples_this_frame);
+void osd_update_audio_stream(running_machine *machine, int16_t *buffer, int samples_this_frame);
 
 /*
   control master volume. attenuation is the attenuation in dB (a negative

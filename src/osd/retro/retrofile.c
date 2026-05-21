@@ -47,14 +47,14 @@ extern const char *sdlfile_ptty_identifier;
 //  Prototypes
 //============================================================
 
-static UINT32 create_path_recursive(char *path);
+static uint32_t create_path_recursive(char *path);
 
 //============================================================
 //  error_to_file_error
 //  (does filling this out on non-Windows make any sense?)
 //============================================================
 
-file_error error_to_file_error(UINT32 error)
+file_error error_to_file_error(uint32_t error)
 {
 	switch (error)
 	{
@@ -87,9 +87,9 @@ file_error error_to_file_error(UINT32 error)
 //  osd_open
 //============================================================
 
-file_error osd_open(const char *path, UINT32 openflags, osd_file **file, UINT64 *filesize)
+file_error osd_open(const char *path, uint32_t openflags, osd_file **file, uint64_t *filesize)
 {
-	UINT32 access;
+	uint32_t access;
 	const char *src;
 	char *dst;
 	#if defined(__MACH__) || defined(WIN32) ||  defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(SDLMAME_BSD) || defined(SDLMAME_OS2) || defined(SDLMAME_HAIKU)
@@ -241,7 +241,7 @@ file_error osd_open(const char *path, UINT32 openflags, osd_file **file, UINT64 
 	fstat64((*file)->handle, &st);
 	#endif
 
-	*filesize = (UINT64)st.st_size;
+	*filesize = (uint64_t)st.st_size;
 
 
 error:
@@ -261,7 +261,7 @@ error:
 //  osd_read
 //============================================================
 
-file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 count, UINT32 *actual)
+file_error osd_read(osd_file *file, void *buffer, uint64_t offset, uint32_t count, uint32_t *actual)
 {
 	ssize_t result;
 
@@ -272,7 +272,7 @@ file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 count, U
 			result = pread(file->handle, buffer, count, offset);
 			if (result < 0)
 #elif defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(SDLMAME_OS2)
-			lseek(file->handle, (UINT32)offset&0xffffffff, SEEK_SET);
+			lseek(file->handle, (uint32_t)offset&0xffffffff, SEEK_SET);
 			result = read(file->handle, buffer, count);
 			if (result < 0)
 #elif defined(SDLMAME_UNIX)
@@ -307,9 +307,9 @@ file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 count, U
 //  osd_write
 //============================================================
 
-file_error osd_write(osd_file *file, const void *buffer, UINT64 offset, UINT32 count, UINT32 *actual)
+file_error osd_write(osd_file *file, const void *buffer, uint64_t offset, uint32_t count, uint32_t *actual)
 {
-	UINT32 result;
+	uint32_t result;
 
 	switch (file->type)
 	{
@@ -318,7 +318,7 @@ file_error osd_write(osd_file *file, const void *buffer, UINT64 offset, UINT32 c
 			result = pwrite(file->handle, buffer, count, offset);
 			if (!result)
 #elif defined(WIN32) || defined(SDLMAME_NO64BITIO) || defined(ANDROID) || defined(SDLMAME_OS2)
-			lseek(file->handle, (UINT32)offset&0xffffffff, SEEK_SET);
+			lseek(file->handle, (uint32_t)offset&0xffffffff, SEEK_SET);
 			result = write(file->handle, buffer, count);
 			if (!result)
 #elif defined(SDLMAME_UNIX)
@@ -394,10 +394,10 @@ file_error osd_rmfile(const char *filename)
 //  create_path_recursive
 //============================================================
 
-static UINT32 create_path_recursive(char *path)
+static uint32_t create_path_recursive(char *path)
 {
 	char *sep = strrchr(path, PATHSEPCH);
-	UINT32 filerr;
+	uint32_t filerr;
 	struct stat st;
 
 	// if there's still a separator, and it's not the root, nuke it and recurse
@@ -428,7 +428,7 @@ static UINT32 create_path_recursive(char *path)
 //  osd_get_physical_drive_geometry
 //============================================================
 
-int osd_get_physical_drive_geometry(const char *filename, UINT32 *cylinders, UINT32 *heads, UINT32 *sectors, UINT32 *bps)
+int osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps)
 {
 	return FALSE;       // no, no way, huh-uh, forget it
 }
@@ -468,10 +468,10 @@ int osd_is_absolute_path(const char *path)
 }
 
 
-int osd_uchar_from_osdchar(UINT32 /* unicode_char */ *uchar, const char *osdchar, size_t count)
+int osd_uchar_from_osdchar(uint32_t /* unicode_char */ *uchar, const char *osdchar, size_t count)
 {
 	// we assume a standard 1:1 mapping of characters to the first 256 unicode characters
-	*uchar = (UINT8)*osdchar;
+	*uchar = (uint8_t)*osdchar;
 	return 1;
 }
 

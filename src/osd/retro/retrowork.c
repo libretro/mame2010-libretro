@@ -51,10 +51,10 @@ struct _work_thread_info
 	osd_work_queue *    queue;          // pointer back to the queue
 	osd_thread *        handle;         // handle to the thread
 	osd_event *         wakeevent;      // wake event for the thread
-	volatile INT32      active;         // are we actively processing work?
+	volatile int32_t      active;         // are we actively processing work?
 
 #if KEEP_STATISTICS
-	INT32               itemsdone;
+	int32_t               itemsdone;
 	osd_ticks_t         actruntime;
 	osd_ticks_t         runtime;
 	osd_ticks_t         spintime;
@@ -69,20 +69,20 @@ struct _osd_work_queue
 	osd_work_item * volatile list;      // list of items in the queue
 	osd_work_item ** volatile tailptr;  // pointer to the tail pointer of work items in the queue
 	osd_work_item * volatile free;      // free list of work items
-	volatile INT32      items;          // items in the queue
-	volatile INT32      livethreads;    // number of live threads
-	volatile INT32      waiting;        // is someone waiting on the queue to complete?
-	volatile UINT8      exiting;        // should the threads exit on their next opportunity?
-	UINT32              threads;        // number of threads in this queue
-	UINT32              flags;          // creation flags
+	volatile int32_t      items;          // items in the queue
+	volatile int32_t      livethreads;    // number of live threads
+	volatile int32_t      waiting;        // is someone waiting on the queue to complete?
+	volatile uint8_t      exiting;        // should the threads exit on their next opportunity?
+	uint32_t              threads;        // number of threads in this queue
+	uint32_t              flags;          // creation flags
 	work_thread_info *  thread;         // array of thread information
 	osd_event   *       doneevent;      // event signalled when work is complete
 
 #if KEEP_STATISTICS
-	volatile INT32      itemsqueued;    // total items queued
-	volatile INT32      setevents;      // number of times we called SetEvent
-	volatile INT32      extraitems;     // how many extra items we got after the first in the queue loop
-	volatile INT32      spinloops;      // how many times spinning bought us more items
+	volatile int32_t      itemsqueued;    // total items queued
+	volatile int32_t      setevents;      // number of times we called SetEvent
+	volatile int32_t      extraitems;     // how many extra items we got after the first in the queue loop
+	volatile int32_t      spinloops;      // how many times spinning bought us more items
 #endif
 };
 
@@ -95,8 +95,8 @@ struct _osd_work_item
 	void *              param;          // callback parameter
 	void *              result;         // callback result
 	osd_event *         event;          // event signalled when complete
-	UINT32              flags;          // creation flags
-	volatile INT32      done;           // is the item done?
+	uint32_t              flags;          // creation flags
+	volatile int32_t      done;           // is the item done?
 };
 
 typedef void *PVOID;
@@ -112,7 +112,7 @@ int mosd_num_processors = 0;
 //============================================================
 
 static int effective_num_processors(void);
-static UINT32 effective_cpu_mask(int index);
+static uint32_t effective_cpu_mask(int index);
 static void * worker_thread_entry(void *param);
 static void worker_thread_process(osd_work_queue *queue, work_thread_info *thread);
 
@@ -335,7 +335,7 @@ void osd_work_queue_free(osd_work_queue *queue)
 					(double)thread->actruntime * 100.0 / (double)total,
 					(double)thread->spintime * 100.0 / (double)total,
 					(double)thread->waittime * 100.0 / (double)total,
-					(UINT32) total);
+					(uint32_t) total);
 		}
 #endif
 	}
@@ -385,11 +385,11 @@ void osd_work_queue_free(osd_work_queue *queue)
 //  osd_work_item_queue_multiple
 //============================================================
 
-osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, INT32 numitems, void *parambase, INT32 paramstep, UINT32 flags)
+osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, int32_t numitems, void *parambase, int32_t paramstep, uint32_t flags)
 {
 	osd_work_item *itemlist = NULL, *lastitem = NULL;
 	osd_work_item **item_tailptr = &itemlist;
-	INT32 lockslot;
+	int32_t lockslot;
 	int itemnum;
 
 	// loop over items, building up a local list of work
@@ -426,7 +426,7 @@ osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_call
 		lastitem = item;
 		*item_tailptr = item;
 		item_tailptr = &item->next;
-		parambase = (UINT8 *)parambase + paramstep;
+		parambase = (uint8_t *)parambase + paramstep;
 	}
 
 	// enqueue the whole thing within the critical section
@@ -569,11 +569,11 @@ static int effective_num_processors(void)
 //  effective_cpu_mask
 //============================================================
 
-static UINT32 effective_cpu_mask(int index)
+static uint32_t effective_cpu_mask(int index)
 {
 	char    *s;
 	char    buf[5];
-	UINT32  mask = 0xFFFF;
+	uint32_t  mask = 0xFFFF;
 
 	s = osd_getenv(SDLENV_CPUMASKS);
 	if (s != NULL && strcmp(s,"none"))
@@ -682,7 +682,7 @@ static void worker_thread_process(osd_work_queue *queue, work_thread_info *threa
 	while (queue->list != NULL)
 	{
 		osd_work_item *item;
-		INT32 lockslot;
+		int32_t lockslot;
 
 		// use a critical section to synchronize the removal of items
 		lockslot = osd_scalable_lock_acquire(queue->lock);

@@ -147,7 +147,7 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust);
 
         TRUE on success, FALSE on failure
 -----------------------------------------------------------------------------*/
-int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask);
+int osd_thread_cpu_affinity(osd_thread *thread, uint32_t mask);
 
 
 /*-----------------------------------------------------------------------------
@@ -184,9 +184,9 @@ void osd_process_kill(void);
 typedef struct _osd_scalable_lock osd_scalable_lock;
 osd_scalable_lock *osd_scalable_lock_alloc(void);
 
-INT32 osd_scalable_lock_acquire(osd_scalable_lock *lock);
+int32_t osd_scalable_lock_acquire(osd_scalable_lock *lock);
 
-void osd_scalable_lock_release(osd_scalable_lock *lock, INT32 myslot);
+void osd_scalable_lock_release(osd_scalable_lock *lock, int32_t myslot);
 
 void osd_scalable_lock_free(osd_scalable_lock *lock);
 

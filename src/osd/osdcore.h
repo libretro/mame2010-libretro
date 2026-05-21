@@ -107,7 +107,7 @@ typedef struct _osd_file osd_file;
         file - pointer to an osd_file * to receive the newly-opened file
             handle; this is only valid if the function returns FILERR_NONE
 
-        filesize - pointer to a UINT64 to receive the size of the opened
+        filesize - pointer to a uint64_t to receive the size of the opened
             file; this is only valid if the function returns FILERR_NONE
 
     Return value:
@@ -128,7 +128,7 @@ typedef struct _osd_file osd_file;
         alternate path separators (specified by users and placed into the
         options database).
 -----------------------------------------------------------------------------*/
-file_error osd_open(const char *path, UINT32 openflags, osd_file **file, UINT64 *filesize);
+file_error osd_open(const char *path, uint32_t openflags, osd_file **file, uint64_t *filesize);
 
 
 /*-----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ file_error osd_close(osd_file *file);
 
         length - number of bytes to read from the file
 
-        actual - pointer to a UINT32 to receive the number of bytes actually
+        actual - pointer to a uint32_t to receive the number of bytes actually
             read during the operation; valid only if the function returns
             FILERR_NONE
 
@@ -168,7 +168,7 @@ file_error osd_close(osd_file *file);
         a file_error describing any error that occurred while reading
         from the file, or FILERR_NONE if no error occurred
 -----------------------------------------------------------------------------*/
-file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 length, UINT32 *actual);
+file_error osd_read(osd_file *file, void *buffer, uint64_t offset, uint32_t length, uint32_t *actual);
 
 
 /*-----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 length, 
 
         length - number of bytes to write to the file
 
-        actual - pointer to a UINT32 to receive the number of bytes actually
+        actual - pointer to a uint32_t to receive the number of bytes actually
             written during the operation; valid only if the function returns
             FILERR_NONE
 
@@ -193,7 +193,7 @@ file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 length, 
         a file_error describing any error that occurred while writing to
         the file, or FILERR_NONE if no error occurred
 -----------------------------------------------------------------------------*/
-file_error osd_write(osd_file *file, const void *buffer, UINT64 offset, UINT32 length, UINT32 *actual);
+file_error osd_write(osd_file *file, const void *buffer, uint64_t offset, uint32_t length, uint32_t *actual);
 
 
 /*-----------------------------------------------------------------------------
@@ -219,16 +219,16 @@ file_error osd_rmfile(const char *filename);
 
         filename - pointer to a path which might describe a physical drive
 
-        cylinders - pointer to a UINT32 to receive the number of cylinders
+        cylinders - pointer to a uint32_t to receive the number of cylinders
             of the physical drive
 
-        heads - pointer to a UINT32 to receive the number of heads per
+        heads - pointer to a uint32_t to receive the number of heads per
             cylinder of the physical drive
 
-        sectors - pointer to a UINT32 to receive the number of sectors per
+        sectors - pointer to a uint32_t to receive the number of sectors per
             cylinder of the physical drive
 
-        bps - pointer to a UINT32 to receive the number of bytes per sector
+        bps - pointer to a uint32_t to receive the number of bytes per sector
             of the physical drive
 
     Return value:
@@ -237,7 +237,7 @@ file_error osd_rmfile(const char *filename);
         pointed to by cylinders, heads, sectors, and bps are valid; FALSE in
         any other case
 -----------------------------------------------------------------------------*/
-int osd_get_physical_drive_geometry(const char *filename, UINT32 *cylinders, UINT32 *heads, UINT32 *sectors, UINT32 *bps);
+int osd_get_physical_drive_geometry(const char *filename, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps);
 
 
 /*-----------------------------------------------------------------------------
@@ -246,7 +246,7 @@ int osd_get_physical_drive_geometry(const char *filename, UINT32 *cylinders, UIN
 
     Parameters:
 
-        uchar - pointer to a UINT32 to receive the resulting unicode
+        uchar - pointer to a uint32_t to receive the resulting unicode
             character
 
         osdchar - pointer to one or more chars that are in the OS-default
@@ -258,7 +258,7 @@ int osd_get_physical_drive_geometry(const char *filename, UINT32 *cylinders, UIN
 
         The number of characters required to form a Unicode character.
 -----------------------------------------------------------------------------*/
-int osd_uchar_from_osdchar(UINT32 /* unicode_char */ *uchar, const char *osdchar, size_t count);
+int osd_uchar_from_osdchar(uint32_t /* unicode_char */ *uchar, const char *osdchar, size_t count);
 
 
 
@@ -286,7 +286,7 @@ struct _osd_directory_entry
 {
 	const char *		name;			/* name of the entry */
 	osd_dir_entry_type	type;			/* type of the entry */
-	UINT64				size;			/* size of the entry */
+	uint64_t				size;			/* size of the entry */
 };
 
 
@@ -359,7 +359,7 @@ int osd_is_absolute_path(const char *path);
 ***************************************************************************/
 
 /* a osd_ticks_t is a 64-bit integer that is used as a core type in timing interfaces */
-typedef INT64 osd_ticks_t;
+typedef int64_t osd_ticks_t;
 
 
 /*-----------------------------------------------------------------------------
@@ -653,11 +653,11 @@ void osd_work_queue_free(osd_work_queue *queue);
         On single-threaded systems, this function may actually execute the
         work item immediately before returning.
 -----------------------------------------------------------------------------*/
-osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, INT32 numitems, void *parambase, INT32 paramstep, UINT32 flags);
+osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, int32_t numitems, void *parambase, int32_t paramstep, uint32_t flags);
 
 
 /* inline helper to queue a single work item using the same interface */
-INLINE osd_work_item *osd_work_item_queue(osd_work_queue *queue, osd_work_callback callback, void *param, UINT32 flags)
+INLINE osd_work_item *osd_work_item_queue(osd_work_queue *queue, osd_work_callback callback, void *param, uint32_t flags)
 {
 	return osd_work_item_queue_multiple(queue, callback, 1, param, 0, flags);
 }

@@ -118,10 +118,10 @@ void osd_sleep(osd_ticks_t duration)
 		SetThreadPriority(current_thread, old_priority);
 	}
 #elif defined(WIIU)
-	UINT32 msec;
+	uint32_t msec;
 
 	// convert to milliseconds, rounding down
-	msec = (UINT32)(duration * 1000 / osd_ticks_per_second());
+	msec = (uint32_t)(duration * 1000 / osd_ticks_per_second());
 
 	// only sleep if at least 2 full milliseconds
 	if (msec >= 2)
@@ -131,10 +131,10 @@ void osd_sleep(osd_ticks_t duration)
 		//usleep(msec*1000);
 	}
 #else
-	UINT32 msec;
+	uint32_t msec;
 
 	// convert to milliseconds, rounding down
-	msec = (UINT32)(duration * 1000 / osd_ticks_per_second());
+	msec = (uint32_t)(duration * 1000 / osd_ticks_per_second());
 
 	// only sleep if at least 2 full milliseconds
 	if (msec >= 2)
@@ -403,7 +403,7 @@ osd_directory_entry *osd_stat(const char *path)
 	strcpy(((char *) result) + sizeof(*result), path);
 	result->name = ((char *) result) + sizeof(*result);
 	result->type = S_ISDIR(st.st_mode) ? ENTTYPE_DIR : ENTTYPE_FILE;
-	result->size = (UINT64)st.st_size;
+	result->size = (uint64_t)st.st_size;
 
 	return result;
 }

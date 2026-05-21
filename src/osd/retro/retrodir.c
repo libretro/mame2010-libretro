@@ -107,7 +107,7 @@ static osd_dir_entry_type get_attributes_stat(const char *file)
 }
 #endif
 
-static UINT64 osd_get_file_size(const char *file)
+static uint64_t osd_get_file_size(const char *file)
 {
 	sdl_stat st;
 	if(sdl_stat_fn(file, &st))

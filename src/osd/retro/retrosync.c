@@ -54,12 +54,12 @@ struct _osd_event {
 #ifndef WIN32
 	pthread_mutex_t     mutex;
 	pthread_cond_t      cond;
-	volatile INT32      autoreset;
-	volatile INT32      signalled;
+	volatile int32_t      autoreset;
+	volatile int32_t      signalled;
 #ifdef PTR64
-	INT8                padding[40];    // Fill a 64-byte cache line
+	int8_t                padding[40];    // Fill a 64-byte cache line
 #else
-	INT8                padding[48];    // A bit more padding
+	int8_t                padding[48];    // A bit more padding
 #endif
 
 #else
@@ -121,7 +121,7 @@ osd_scalable_lock *osd_scalable_lock_alloc(void)
 }
 
 
-INT32 osd_scalable_lock_acquire(osd_scalable_lock *lock)
+int32_t osd_scalable_lock_acquire(osd_scalable_lock *lock)
 {
 #if defined(WIN32)
    EnterCriticalSection(&lock->critsect);
@@ -132,7 +132,7 @@ INT32 osd_scalable_lock_acquire(osd_scalable_lock *lock)
 }
 
 
-void osd_scalable_lock_release(osd_scalable_lock *lock, INT32 myslot)
+void osd_scalable_lock_release(osd_scalable_lock *lock, int32_t myslot)
 {
 #ifdef WIN32
 	LeaveCriticalSection(&lock->critsect);
@@ -370,15 +370,15 @@ int osd_event_wait(osd_event *event, osd_ticks_t timeout)
 		{
 			struct timespec   ts;
 			struct timeval    tp;
-			UINT64 msec = timeout * 1000 / osd_ticks_per_second();
-			UINT64 nsec;
+			uint64_t msec = timeout * 1000 / osd_ticks_per_second();
+			uint64_t nsec;
 
 			gettimeofday(&tp, NULL);
 
 			ts.tv_sec  = tp.tv_sec;
-			nsec = (UINT64) tp.tv_usec * (UINT64) 1000 + (msec * (UINT64) 1000000);
-			ts.tv_nsec = nsec % (UINT64) 1000000000;
-			ts.tv_sec += nsec / (UINT64) 1000000000;
+			nsec = (uint64_t) tp.tv_usec * (uint64_t) 1000 + (msec * (uint64_t) 1000000);
+			ts.tv_nsec = nsec % (uint64_t) 1000000000;
+			ts.tv_sec += nsec / (uint64_t) 1000000000;
 
 			do {
 				int ret = pthread_cond_timedwait(&event->cond, &event->mutex, &ts);
@@ -486,7 +486,7 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust)
 //  osd_thread_cpu_affinity
 //============================================================
 
-int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask)
+int osd_thread_cpu_affinity(osd_thread *thread, uint32_t mask)
 {
 #if defined(__GNUC__) && defined(WIN32)
    return TRUE; /* stub */

@@ -39,14 +39,14 @@ struct _osd_file
 //============================================================
 
 bool sdl_check_socket_path(const char *path);
-file_error sdl_open_socket(const char *path, UINT32 openflags, osd_file **file, UINT64 *filesize);
-file_error sdl_read_socket(osd_file *file, void *buffer, UINT64 offset, UINT32 count, UINT32 *actual);
-file_error sdl_write_socket(osd_file *file, const void *buffer, UINT64 offset, UINT32 count, UINT32 *actual);
+file_error sdl_open_socket(const char *path, uint32_t openflags, osd_file **file, uint64_t *filesize);
+file_error sdl_read_socket(osd_file *file, void *buffer, uint64_t offset, uint32_t count, uint32_t *actual);
+file_error sdl_write_socket(osd_file *file, const void *buffer, uint64_t offset, uint32_t count, uint32_t *actual);
 file_error sdl_close_socket(osd_file *file);
 
-file_error sdl_open_ptty(const char *path, UINT32 openflags, osd_file **file, UINT64 *filesize);
-file_error sdl_read_ptty(osd_file *file, void *buffer, UINT64 offset, UINT32 count, UINT32 *actual);
-file_error sdl_write_ptty(osd_file *file, const void *buffer, UINT64 offset, UINT32 count, UINT32 *actual);
+file_error sdl_open_ptty(const char *path, uint32_t openflags, osd_file **file, uint64_t *filesize);
+file_error sdl_read_ptty(osd_file *file, void *buffer, uint64_t offset, uint32_t count, uint32_t *actual);
+file_error sdl_write_ptty(osd_file *file, const void *buffer, uint64_t offset, uint32_t count, uint32_t *actual);
 file_error sdl_close_ptty(osd_file *file);
 
-file_error error_to_file_error(UINT32 error);
+file_error error_to_file_error(uint32_t error);

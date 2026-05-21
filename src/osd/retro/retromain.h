@@ -19,7 +19,7 @@ retromain.h
 
 #ifdef M16B
    #define FUNC_PREFIX(x) rgb565_##x
-   #define PIXEL_TYPE UINT16
+   #define PIXEL_TYPE uint16_t
    #define SRCSHIFT_R 3
    #define SRCSHIFT_G 2
    #define SRCSHIFT_B 3
@@ -28,7 +28,7 @@ retromain.h
    #define DSTSHIFT_B 0
 #else
    #define FUNC_PREFIX(x) rgb888_##x
-   #define PIXEL_TYPE UINT32
+   #define PIXEL_TYPE uint32_t
    #define SRCSHIFT_R 0
    #define SRCSHIFT_G 0
    #define SRCSHIFT_B 0

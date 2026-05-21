@@ -103,7 +103,7 @@ void osd_work_queue_free(osd_work_queue *queue)
 //  osd_work_item_queue
 //============================================================
 
-osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, INT32 numitems, void *parambase, INT32 paramstep, UINT32 flags)
+osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_callback callback, int32_t numitems, void *parambase, int32_t paramstep, uint32_t flags)
 {
 	osd_work_item *item;
 	int itemnum;
@@ -121,7 +121,7 @@ osd_work_item *osd_work_item_queue_multiple(osd_work_queue *queue, osd_work_call
 		item->result = (*callback)(parambase, 0);
 
 		// advance the param
-		parambase = (UINT8 *)parambase + paramstep;
+		parambase = (uint8_t *)parambase + paramstep;
 	}
 
 	// free the item if requested

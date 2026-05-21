@@ -123,16 +123,16 @@ static input_device *gun8_device; // P8 LIGHTGUN
 static input_device *retrokbd_device; // KEYBD
 
 // state
-static UINT32 P1_state[KEY_TOTAL];
-static UINT32 P2_state[KEY_TOTAL];
-static UINT32 P3_state[KEY_TOTAL];
-static UINT32 P4_state[KEY_TOTAL];
-static UINT32 P5_state[KEY_TOTAL];
-static UINT32 P6_state[KEY_TOTAL];
-static UINT32 P7_state[KEY_TOTAL];
-static UINT32 P8_state[KEY_TOTAL];
-static UINT16 retrokbd_state[RETROK_LAST];
-static UINT16 retrokbd_state2[RETROK_LAST];
+static uint32_t P1_state[KEY_TOTAL];
+static uint32_t P2_state[KEY_TOTAL];
+static uint32_t P3_state[KEY_TOTAL];
+static uint32_t P4_state[KEY_TOTAL];
+static uint32_t P5_state[KEY_TOTAL];
+static uint32_t P6_state[KEY_TOTAL];
+static uint32_t P7_state[KEY_TOTAL];
+static uint32_t P8_state[KEY_TOTAL];
+static uint16_t retrokbd_state[RETROK_LAST];
+static uint16_t retrokbd_state2[RETROK_LAST];
 
 int optButtonLayoutP1 = 0; //for player 1
 int optButtonLayoutP2 = 0; //for player 2
@@ -412,7 +412,7 @@ bool draw_this_frame;
 void osd_update(running_machine *machine,int skip_redraw)
 {
    const render_primitive_list *primlist;
-   UINT8 *surfptr;
+   uint8_t *surfptr;
 
    if (mame_reset == 1)
    {
@@ -525,14 +525,14 @@ void osd_update(running_machine *machine,int skip_redraw)
       //      primlist.acquire_lock();
       osd_lock_acquire(primlist->lock);
 
-      surfptr = (UINT8 *) videoBuffer;
+      surfptr = (uint8_t *) videoBuffer;
 #ifdef M16B
       rgb565_draw_primitives(primlist->head, surfptr,rtwi,rthe,rtwi);
 #else
       rgb888_draw_primitives(primlist->head, surfptr, rtwi,rthe,rtwi);
 #endif
 #if 0
-      surfptr = (UINT8 *) videoBuffer;
+      surfptr = (uint8_t *) videoBuffer;
 
       //  draw a series of primitives using a software rasterizer
       for (const render_primitive *prim = primlist.first(); prim != NULL; prim = prim->next())
@@ -988,69 +988,69 @@ void init_input_descriptors(void)
 #define input_device_item_add_p7(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
 #define input_device_item_add_p8(a,b,c,d,e) input_device_item_add(a,b,c,d,e)
 
-static INT32 pad1_get_state(void *device_internal, void *item_internal)
+static int32_t pad1_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad2_get_state(void *device_internal, void *item_internal)
+static int32_t pad2_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad3_get_state(void *device_internal, void *item_internal)
+static int32_t pad3_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad4_get_state(void *device_internal, void *item_internal)
+static int32_t pad4_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad5_get_state(void *device_internal, void *item_internal)
+static int32_t pad5_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad6_get_state(void *device_internal, void *item_internal)
+static int32_t pad6_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad7_get_state(void *device_internal, void *item_internal)
+static int32_t pad7_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 pad8_get_state(void *device_internal, void *item_internal)
+static int32_t pad8_get_state(void *device_internal, void *item_internal)
 {
-   UINT32 *itemdata = (UINT32 *)item_internal;
+   uint32_t *itemdata = (uint32_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 retrokbd_get_state(void *device_internal, void *item_internal)
+static int32_t retrokbd_get_state(void *device_internal, void *item_internal)
 {
-   UINT16 *itemdata = (UINT16 *)item_internal;
+   uint16_t *itemdata = (uint16_t *)item_internal;
    return *itemdata;
 }
 
-static INT32 generic_axis_get_state(void *device_internal, void *item_internal)
+static int32_t generic_axis_get_state(void *device_internal, void *item_internal)
 {
-   INT32 *axisdata = (INT32 *)item_internal;
+   int32_t *axisdata = (int32_t *)item_internal;
    return *axisdata;
 }
 
-static INT32 generic_button_get_state(void *device_internal, void *item_internal)
+static int32_t generic_button_get_state(void *device_internal, void *item_internal)
 {
-   INT32 *itemdata = (INT32 *)item_internal;
+   int32_t *itemdata = (int32_t *)item_internal;
    return *itemdata >> 7;
 }
 
