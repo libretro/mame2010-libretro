@@ -137,7 +137,7 @@
 #define CHD_V2_HEADER_SIZE			80
 #define CHD_V3_HEADER_SIZE			120
 #define CHD_V4_HEADER_SIZE			108
-#define CHD_MAX_HEADER_SIZE			CHD_V4_HEADER_SIZE
+#define CHD_MAX_HEADER_SIZE			CHD_V3_HEADER_SIZE	/* V3 (120) is the largest, not V4 (108) */
 
 /* checksumming information */
 #define CHD_MD5_BYTES				16
