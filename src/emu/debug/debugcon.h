@@ -66,7 +66,7 @@
 ***************************************************************************/
 
 /* CMDERR is an error code for command evaluation */
-typedef UINT32 CMDERR;
+typedef uint32_t CMDERR;
 
 
 
@@ -80,7 +80,7 @@ void				debug_console_init(running_machine *machine);
 /* command handling */
 CMDERR				debug_console_execute_command(running_machine *machine, const char *command, int echo);
 CMDERR				debug_console_validate_command(running_machine *machine, const char *command);
-void				debug_console_register_command(running_machine *machine, const char *command, UINT32 flags, int ref, int minparams, int maxparams, void (*handler)(running_machine *machine, int ref, int params, const char **param));
+void				debug_console_register_command(running_machine *machine, const char *command, uint32_t flags, int ref, int minparams, int maxparams, void (*handler)(running_machine *machine, int ref, int params, const char **param));
 const char *		debug_cmderr_to_string(CMDERR error);
 
 /* console management */

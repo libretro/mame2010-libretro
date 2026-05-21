@@ -396,8 +396,8 @@ static float filecompare(const fileinfo *file1,const fileinfo *file2,int mode1,i
 static void readfile(const char *path,fileinfo *file)
 {
 	file_error filerr;
-	UINT64 filesize;
-	UINT32 actual;
+	uint64_t filesize;
+	uint32_t actual;
 	char fullname[256];
 	osd_file *f = 0;
 
@@ -470,7 +470,7 @@ static int load_files(int i, int *found, const char *path)
 			sprintf(buf, "%s%c%s", path, PATH_DELIM, d_name);
 			if (d->type == ENTTYPE_FILE)
 			{
-				UINT64 size = d->size;
+				uint64_t size = d->size;
 				while (size && (size & 1) == 0) size >>= 1;
 				if (size & ~1)
 					printf("%-23s %-23s ignored (not a ROM)\n",i ? "" : d_name,i ? d_name : "");

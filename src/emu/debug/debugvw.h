@@ -70,14 +70,14 @@ enum debug_view_notification
 
 
 // attribute bits for debug_view_char.attrib
-const UINT8 DCA_NORMAL		= 0x00;		// in Windows: black on white
-const UINT8 DCA_CHANGED		= 0x01;		// in Windows: red foreground
-const UINT8 DCA_SELECTED	= 0x02;		// in Windows: light red background
-const UINT8 DCA_INVALID		= 0x04;		// in Windows: dark blue foreground
-const UINT8 DCA_DISABLED	= 0x08;		// in Windows: darker foreground
-const UINT8 DCA_ANCILLARY	= 0x10;		// in Windows: grey background
-const UINT8 DCA_CURRENT		= 0x20;		// in Windows: yellow background
-const UINT8 DCA_COMMENT		= 0x40;		// in Windows: green foreground
+const uint8_t DCA_NORMAL		= 0x00;		// in Windows: black on white
+const uint8_t DCA_CHANGED		= 0x01;		// in Windows: red foreground
+const uint8_t DCA_SELECTED	= 0x02;		// in Windows: light red background
+const uint8_t DCA_INVALID		= 0x04;		// in Windows: dark blue foreground
+const uint8_t DCA_DISABLED	= 0x08;		// in Windows: darker foreground
+const uint8_t DCA_ANCILLARY	= 0x10;		// in Windows: grey background
+const uint8_t DCA_CURRENT		= 0x20;		// in Windows: yellow background
+const uint8_t DCA_COMMENT		= 0x40;		// in Windows: green foreground
 
 
 // special characters that can be passed to process_char()
@@ -113,8 +113,8 @@ typedef void (*debug_view_osd_update_func)(debug_view &view, void *osdprivate);
 // a single "character" in the debug view has an ASCII value and an attribute byte
 struct debug_view_char
 {
-	UINT8				byte;
-	UINT8				attrib;
+	uint8_t				byte;
+	uint8_t				attrib;
 };
 
 
@@ -124,8 +124,8 @@ class debug_view_xy
 public:
 	debug_view_xy(int _x = 0, int _y = 0) : x(_x), y(_y) { }
 
-	INT32					x;
-	INT32					y;
+	int32_t					x;
+	int32_t					y;
 };
 
 
@@ -181,7 +181,7 @@ private:
 	running_machine &		m_machine;				// reference to our machine
 	debug_view_source *		m_head;					// head of the list
 	debug_view_source *		m_tail;					// end of the tail
-	UINT32					m_count;				// number of items in the list
+	uint32_t					m_count;				// number of items in the list
 };
 
 
@@ -258,7 +258,7 @@ protected:
 
 	// update info
 	bool					m_recompute;		// does this view require a recomputation?
-	UINT8					m_update_level;		// update level; updates when this hits 0
+	uint8_t					m_update_level;		// update level; updates when this hits 0
 	bool					m_update_pending;	// true if there is a pending update
 	bool					m_osd_update_pending; // true if there is a pending update
 	debug_view_char *		m_viewdata;			// current array of view data
@@ -302,8 +302,8 @@ public:
 
 	// getters
 	bool dirty() const { return m_dirty; }
-	UINT64 last_value() const { return m_result; }
-	UINT64 value() { recompute(); return m_result; }
+	uint64_t last_value() const { return m_result; }
+	uint64_t value() { recompute(); return m_result; }
 	const char *string() const { return m_string; }
 	symbol_table *context() const { return m_context; }
 
@@ -319,7 +319,7 @@ private:
 	// internal state
 	running_machine &	m_machine;				// reference to the machine
 	bool				m_dirty;				// true if the expression needs to be re-evaluated
-	UINT64				m_result;				// last result from the expression
+	uint64_t				m_result;				// last result from the expression
 	parsed_expression *	m_parsed;				// parsed expression data
 	astring				m_string;				// copy of the expression string
 	symbol_table *		m_context;				// context we are using

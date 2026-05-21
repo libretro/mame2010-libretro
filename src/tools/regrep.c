@@ -89,11 +89,11 @@ struct _summary_file
     summary_file *  next;
     char            name[20];
     char            source[100];
-    UINT8           status[MAX_COMPARES];
-    UINT8			matchbitmap[MAX_COMPARES];
+    uint8_t           status[MAX_COMPARES];
+    uint8_t			matchbitmap[MAX_COMPARES];
     char *          text[MAX_COMPARES];
-    UINT32          textsize[MAX_COMPARES];
-    UINT32          textalloc[MAX_COMPARES];
+    uint32_t          textsize[MAX_COMPARES];
+    uint32_t          textalloc[MAX_COMPARES];
 };
 
 
@@ -205,12 +205,12 @@ INLINE char *trim_string(char *string)
 	int length;
 
 	/* trim leading spaces */
-	while (*string != 0 && isspace((UINT8)*string))
+	while (*string != 0 && isspace((uint8_t)*string))
 		string++;
 
 	/* trim trailing spaces */
 	length = strlen(string);
-	while (length > 0 && isspace((UINT8)string[length - 1]))
+	while (length > 0 && isspace((uint8_t)string[length - 1]))
 		string[--length] = 0;
 
 	return string;
@@ -250,7 +250,7 @@ INLINE int get_unique_index(const summary_file *curfile, int index)
 int main(int argc, char *argv[])
 {
 	astring *dirname = NULL, *tempfilename = NULL, *tempheader = NULL, *tempfooter = NULL;
-	UINT32 bufsize;
+	uint32_t bufsize;
 	void *buffer;
 	int listnum;
     int result;
@@ -428,7 +428,7 @@ static int read_summary_log(const char *filename, int index)
 			{
 				/* find the end of the line and normalize it with a CR */
 				for (curptr = linestart; *curptr != 0 && *curptr != '\n' && *curptr != '\r'; curptr++)
-					if (!isspace((UINT8)*curptr))
+					if (!isspace((uint8_t)*curptr))
 						foundchars = 1;
 				*curptr++ = '\n';
 				*curptr = 0;
@@ -462,7 +462,7 @@ static int read_summary_log(const char *filename, int index)
 			char *end;
 
 			/* find the end */
-			for (end = start; !isspace((UINT8)*end); end++) ;
+			for (end = start; !isspace((uint8_t)*end); end++) ;
 			*end = 0;
 			strcpy(lists[index].version, start);
 			fprintf(stderr, "Parsing results from version %s\n", lists[index].version);
@@ -842,8 +842,8 @@ static int compare_screenshots(summary_file *curfile)
 				/* compare scanline by scanline */
 				for (y = 0; y < this_bitmap->height && !bitmaps_differ; y++)
 				{
-					UINT32 *base = BITMAP_ADDR32(base_bitmap, y, 0);
-					UINT32 *curr = BITMAP_ADDR32(this_bitmap, y, 0);
+					uint32_t *base = BITMAP_ADDR32(base_bitmap, y, 0);
+					uint32_t *curr = BITMAP_ADDR32(this_bitmap, y, 0);
 
 					/* scan the scanline */
 					for (x = 0; x < this_bitmap->width; x++)
@@ -975,11 +975,11 @@ static int generate_png_diff(const summary_file *curfile, const astring *destdir
 		/* iterate over rows in these bitmaps */
 		for (y = 0; y < curheight; y++)
 		{
-			UINT32 *src1 = (y < bitmap1->height) ? BITMAP_ADDR32(bitmap1, y, 0) : NULL;
-			UINT32 *src2 = (y < bitmap2->height) ? BITMAP_ADDR32(bitmap2, y, 0) : NULL;
-			UINT32 *dst1 = BITMAP_ADDR32(finalbitmap, starty + y, 0);
-			UINT32 *dst2 = BITMAP_ADDR32(finalbitmap, starty + y, bitmap1->width + BITMAP_SPACE);
-			UINT32 *dstdiff = BITMAP_ADDR32(finalbitmap, starty + y, bitmap1->width + BITMAP_SPACE + maxwidth + BITMAP_SPACE);
+			uint32_t *src1 = (y < bitmap1->height) ? BITMAP_ADDR32(bitmap1, y, 0) : NULL;
+			uint32_t *src2 = (y < bitmap2->height) ? BITMAP_ADDR32(bitmap2, y, 0) : NULL;
+			uint32_t *dst1 = BITMAP_ADDR32(finalbitmap, starty + y, 0);
+			uint32_t *dst2 = BITMAP_ADDR32(finalbitmap, starty + y, bitmap1->width + BITMAP_SPACE);
+			uint32_t *dstdiff = BITMAP_ADDR32(finalbitmap, starty + y, bitmap1->width + BITMAP_SPACE + maxwidth + BITMAP_SPACE);
 
 			/* now iterate over columns */
 			for (x = 0; x < maxwidth; x++)

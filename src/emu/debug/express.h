@@ -98,19 +98,19 @@
 ***************************************************************************/
 
 /* EXPRERR is an error code for expression evaluation */
-typedef UINT32 EXPRERR;
+typedef uint32_t EXPRERR;
 
 
 /* callback functions for getting/setting a symbol value */
-typedef UINT64 (*symbol_getter_func)(void *globalref, void *symref);
-typedef void (*symbol_setter_func)(void *globalref, void *symref, UINT64 value);
+typedef uint64_t (*symbol_getter_func)(void *globalref, void *symref);
+typedef void (*symbol_setter_func)(void *globalref, void *symref, uint64_t value);
 
 /* callback function for execution a function */
-typedef UINT64 (*function_execute_func)(void *globalref, void *symref, UINT32 numparams, const UINT64 *paramlist);
+typedef uint64_t (*function_execute_func)(void *globalref, void *symref, uint32_t numparams, const uint64_t *paramlist);
 
 /* callback function for memory reads/writes */
-typedef UINT64 (*express_read_func)(void *cbparam, const char *name, int space, UINT32 offset, int size);
-typedef void (*express_write_func)(void *cbparam, const char *name, int space, UINT32 offset, int size, UINT64 value);
+typedef uint64_t (*express_read_func)(void *cbparam, const char *name, int space, uint32_t offset, int size);
+typedef void (*express_write_func)(void *cbparam, const char *name, int space, uint32_t offset, int size, uint64_t value);
 typedef EXPRERR (*express_valid_func)(void *cbparam, const char *name, int space);
 
 
@@ -134,7 +134,7 @@ struct _symbol_entry
 {
 	void *			ref;						/* internal reference */
 	symbol_table *	table;						/* pointer back to the owning table */
-	UINT32			type;						/* type of symbol */
+	uint32_t			type;						/* type of symbol */
 	union
 	{
 		/* register info */
@@ -147,8 +147,8 @@ struct _symbol_entry
 		/* function info */
 		struct
 		{
-			UINT16					minparams;	/* minimum expected parameters */
-			UINT16					maxparams;	/* maximum expected parameters */
+			uint16_t					minparams;	/* minimum expected parameters */
+			uint16_t					maxparams;	/* maximum expected parameters */
 			function_execute_func	execute;	/* execute callback */
 		} func;
 
@@ -156,7 +156,7 @@ struct _symbol_entry
 		struct generic_info
 		{
 			void *					ptr;		/* generic pointer */
-			UINT64					value;		/* generic value */
+			uint64_t					value;		/* generic value */
 		} gen;
 	} info;
 };
@@ -172,9 +172,9 @@ typedef struct _parsed_expression parsed_expression;
 ***************************************************************************/
 
 /* expression evaluation */
-EXPRERR 					expression_evaluate(const char *expression, const symbol_table *table, const express_callbacks *callbacks, void *cbparam, UINT64 *result);
+EXPRERR 					expression_evaluate(const char *expression, const symbol_table *table, const express_callbacks *callbacks, void *cbparam, uint64_t *result);
 EXPRERR 					expression_parse(const char *expression, const symbol_table *table, const express_callbacks *callbacks, void *cbparam, parsed_expression **result);
-EXPRERR 					expression_execute(parsed_expression *expr, UINT64 *result);
+EXPRERR 					expression_execute(parsed_expression *expr, uint64_t *result);
 void						expression_free(parsed_expression *expr);
 const char *				expression_original_string(parsed_expression *expr);
 const char *				exprerr_to_string(EXPRERR error);
@@ -184,8 +184,8 @@ symbol_table *				symtable_alloc(symbol_table *parent, void *globalref);
 void *						symtable_get_globalref(symbol_table *table);
 int 						symtable_add(symbol_table *table, const char *name, const symbol_entry *entry);
 int 						symtable_add_register(symbol_table *table, const char *name, void *symref, symbol_getter_func getter, symbol_setter_func setter);
-int 						symtable_add_function(symbol_table *table, const char *name, void *symref, UINT16 minparams, UINT16 maxparams, function_execute_func execute);
-int							symtable_add_value(symbol_table *table, const char *name, UINT64 value);
+int 						symtable_add_function(symbol_table *table, const char *name, void *symref, uint16_t minparams, uint16_t maxparams, function_execute_func execute);
+int							symtable_add_value(symbol_table *table, const char *name, uint64_t value);
 const symbol_entry *		symtable_find(const symbol_table *table, const char *name);
 const char *				symtable_find_indexed(const symbol_table *table, int index, const symbol_entry **entry);
 void						symtable_free(symbol_table *table);

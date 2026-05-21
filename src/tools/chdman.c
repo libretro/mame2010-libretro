@@ -64,9 +64,9 @@
 #define OPERATION_CHOMP			2
 
 #ifdef PTR64
-#define IS_FAKE_AVI_FILE(a)		((UINT64)(a) <= 2)
+#define IS_FAKE_AVI_FILE(a)		((uint64_t)(a) <= 2)
 #else
-#define IS_FAKE_AVI_FILE(a)		((UINT32)(a) <= 2)
+#define IS_FAKE_AVI_FILE(a)		((uint32_t)(a) <= 2)
 #endif
 #define AVI_FAKE_FILE_22		((avi_file *)1)
 #define AVI_FAKE_FILE_32		((avi_file *)2)
@@ -87,7 +87,7 @@
 struct _chd_interface_file
 {
 	osd_file *file;
-	UINT64 length;
+	uint64_t length;
 };
 
 
@@ -96,8 +96,8 @@ struct _chd_interface_file
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, UINT32 offset);
-static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 totalhunks);
+static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, uint32_t offset);
+static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, uint32_t totalhunks);
 static chd_error chdman_clone_metadata(chd_file *source, chd_file *dest);
 
 
@@ -119,7 +119,7 @@ static clock_t lastprogress = 0;
     commas
 -------------------------------------------------*/
 
-static void print_big_int(UINT64 intvalue, char *output)
+static void print_big_int(uint64_t intvalue, char *output)
 {
 	int chunk;
 
@@ -141,7 +141,7 @@ static void print_big_int(UINT64 intvalue, char *output)
     integer
 -------------------------------------------------*/
 
-static char *big_int_string(UINT64 intvalue)
+static char *big_int_string(uint64_t intvalue)
 {
 	static char buffer[256];
 	buffer[0] = 0;
@@ -207,10 +207,10 @@ static int usage(void)
     get_file_size - get the size of a file
 -------------------------------------------------*/
 
-static UINT64 get_file_size(const char *filename)
+static uint64_t get_file_size(const char *filename)
 {
 	osd_file *file;
-	UINT64 filesize = 0;
+	uint64_t filesize = 0;
 	file_error filerr;
 
 	filerr = osd_open(filename, OPEN_FLAG_READ, &file, &filesize);
@@ -225,10 +225,10 @@ static UINT64 get_file_size(const char *filename)
     compute a best guess CHS value set
 -------------------------------------------------*/
 
-static chd_error guess_chs(const char *filename, int offset, int sectorsize, UINT32 *cylinders, UINT32 *heads, UINT32 *sectors, UINT32 *bps)
+static chd_error guess_chs(const char *filename, int offset, int sectorsize, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps)
 {
-	UINT32 totalsecs, hds, secs;
-	UINT64 filesize;
+	uint32_t totalsecs, hds, secs;
+	uint64_t filesize;
 
 	/* if this is a direct physical drive read, handle it specially */
 	if (osd_get_physical_drive_geometry(filename, cylinders, heads, sectors, bps))
@@ -280,9 +280,9 @@ static chd_error guess_chs(const char *filename, int offset, int sectorsize, UIN
     Note: limited to IDE for now
 -------------------------------------------------*/
 
-static chd_error get_chs_from_ident(const char *filename, int offset, const UINT8 *ident, UINT32 identsize, UINT32 *cylinders, UINT32 *heads, UINT32 *sectors, UINT32 *bps)
+static chd_error get_chs_from_ident(const char *filename, int offset, const uint8_t *ident, uint32_t identsize, uint32_t *cylinders, uint32_t *heads, uint32_t *sectors, uint32_t *bps)
 {
-	UINT64 filesize, expected_size;
+	uint64_t filesize, expected_size;
 
 	filesize = get_file_size(filename);
 	if (filesize <= offset)
@@ -308,12 +308,12 @@ static chd_error get_chs_from_ident(const char *filename, int offset, const UINT
 	*heads     = ((unsigned char)ident[ 6]) | (((unsigned char )ident[ 7]) << 8);
 	*sectors   = ((unsigned char)ident[12]) | (((unsigned char )ident[13]) << 8);
 
-	expected_size = (UINT64)*cylinders * (UINT64)*heads * (UINT64)*sectors * 512;
+	expected_size = (uint64_t)*cylinders * (uint64_t)*heads * (uint64_t)*sectors * 512;
 	if (expected_size != filesize - offset)
 	{
 		fprintf(stderr, "Error: Mismatch between the ident CHS data (%u/%u/%u, %u sectors) and the file size (%u sectors)\n",
 				*cylinders, *heads, *sectors, *cylinders * *heads * *sectors,
-				(UINT32)((filesize-offset)/512));
+				(uint32_t)((filesize-offset)/512));
 		return CHDERR_INVALID_FILE;
 	}
 	return CHDERR_NONE;
@@ -327,12 +327,12 @@ static chd_error get_chs_from_ident(const char *filename, int offset, const UINT
 
 static int do_createhd(int argc, char *argv[], int param)
 {
-	UINT32 guess_cylinders = 0, guess_heads = 0, guess_sectors = 0, guess_sectorsize = 0;
-	UINT32 cylinders, heads, sectors, sectorsize, hunksize, totalsectors, offset;
+	uint32_t guess_cylinders = 0, guess_heads = 0, guess_sectors = 0, guess_sectorsize = 0;
+	uint32_t cylinders, heads, sectors, sectorsize, hunksize, totalsectors, offset;
 	const char *inputfile, *outputfile = NULL;
 	chd_error err = CHDERR_NONE;
-	UINT32 identdatasize = 0;
-	UINT8 *identdata = NULL;
+	uint32_t identdatasize = 0;
+	uint8_t *identdata = NULL;
 	chd_file *chd = NULL;
 	char metadata[256];
 
@@ -343,7 +343,7 @@ static int do_createhd(int argc, char *argv[], int param)
 
 		/* if there are any non-digits in the 'offset', then treat it as a ident file */
 		for (scan = argv[4]; *scan != 0; scan++)
-			if (!isdigit((UINT8)*scan))
+			if (!isdigit((uint8_t)*scan))
 				break;
 		if (*scan != 0)
 		{
@@ -400,10 +400,10 @@ static int do_createhd(int argc, char *argv[], int param)
 	printf("Sectors:      %d\n", sectors);
 	printf("Bytes/sector: %d\n", sectorsize);
 	printf("Sectors/hunk: %d\n", hunksize / sectorsize);
-	printf("Logical size: %s\n", big_int_string((UINT64)totalsectors * (UINT64)sectorsize));
+	printf("Logical size: %s\n", big_int_string((uint64_t)totalsectors * (uint64_t)sectorsize));
 
 	/* create the new hard drive */
-	err = chd_create(outputfile, (UINT64)totalsectors * (UINT64)sectorsize, hunksize, CHDCOMPRESSION_ZLIB_PLUS, NULL);
+	err = chd_create(outputfile, (uint64_t)totalsectors * (uint64_t)sectorsize, hunksize, CHDCOMPRESSION_ZLIB_PLUS, NULL);
 	if (err != CHDERR_NONE)
 	{
 		fprintf(stderr, "Error creating CHD file: %s\n", chd_error_string(err));
@@ -461,12 +461,12 @@ cleanup:
 
 static int do_createhd_uncomp(int argc, char *argv[], int param)
 {
-	UINT32 guess_cylinders = 0, guess_heads = 0, guess_sectors = 0, guess_sectorsize = 0;
-	UINT32 cylinders, heads, sectors, sectorsize, hunksize, totalsectors, offset;
+	uint32_t guess_cylinders = 0, guess_heads = 0, guess_sectors = 0, guess_sectorsize = 0;
+	uint32_t cylinders, heads, sectors, sectorsize, hunksize, totalsectors, offset;
 	const char *inputfile, *outputfile = NULL;
 	chd_error err = CHDERR_NONE;
-	UINT32 identdatasize = 0;
-	UINT8 *identdata = NULL;
+	uint32_t identdatasize = 0;
+	uint8_t *identdata = NULL;
 	chd_file *chd = NULL;
 	char metadata[256];
 	chd_header header;
@@ -478,7 +478,7 @@ static int do_createhd_uncomp(int argc, char *argv[], int param)
 
 		/* if there are any non-digits in the 'offset', then treat it as a ident file */
 		for (scan = argv[4]; *scan != 0; scan++)
-			if (!isdigit((UINT8)*scan))
+			if (!isdigit((uint8_t)*scan))
 				break;
 		if (*scan != 0)
 		{
@@ -535,10 +535,10 @@ static int do_createhd_uncomp(int argc, char *argv[], int param)
 	printf("Sectors:      %d\n", sectors);
 	printf("Bytes/sector: %d\n", sectorsize);
 	printf("Sectors/hunk: %d\n", hunksize / sectorsize);
-	printf("Logical size: %s\n", big_int_string((UINT64)totalsectors * (UINT64)sectorsize));
+	printf("Logical size: %s\n", big_int_string((uint64_t)totalsectors * (uint64_t)sectorsize));
 
 	/* create the new hard drive */
-	err = chd_create(outputfile, (UINT64)totalsectors * (UINT64)sectorsize, hunksize, CHDCOMPRESSION_NONE, NULL);
+	err = chd_create(outputfile, (uint64_t)totalsectors * (uint64_t)sectorsize, hunksize, CHDCOMPRESSION_NONE, NULL);
 	if (err != CHDERR_NONE)
 	{
 		fprintf(stderr, "Error creating CHD file: %s\n", chd_error_string(err));
@@ -604,8 +604,8 @@ cleanup:
 static int do_createraw(int argc, char *argv[], int param)
 {
 	const char *inputfile, *outputfile;
-	UINT32 hunksize, offset;
-	UINT64 logicalbytes;
+	uint32_t hunksize, offset;
+	uint64_t logicalbytes;
 	chd_file *chd = NULL;
 	chd_error err;
 
@@ -667,16 +667,16 @@ static int do_createcd(int argc, char *argv[], int param)
 {
 	static chdcd_track_input_info track_info;
 	static cdrom_toc toc;
-	UINT32 hunksize = CD_FRAME_SIZE * CD_FRAMES_PER_HUNK;
-	UINT32 sectorsize = CD_FRAME_SIZE;
+	uint32_t hunksize = CD_FRAME_SIZE * CD_FRAMES_PER_HUNK;
+	uint32_t sectorsize = CD_FRAME_SIZE;
 	const char *inputfile, *outputfile;
 	core_file *srcfile = NULL;
-	UINT32 origtotalsectors;
+	uint32_t origtotalsectors;
 	chd_file *chd = NULL;
-	UINT8 *cache = NULL;
-	UINT32 totalsectors;
+	uint8_t *cache = NULL;
+	uint32_t totalsectors;
 	double ratio = 1.0;
-	UINT32 totalhunks;
+	uint32_t totalhunks;
 	file_error filerr;
 	chd_error err;
 	int i;
@@ -693,7 +693,7 @@ static int do_createcd(int argc, char *argv[], int param)
 	memset(&toc, 0, sizeof(toc));
 
 	/* allocate a cache */
-	cache = (UINT8 *)malloc(hunksize);
+	cache = (uint8_t *)malloc(hunksize);
 	if (cache == NULL)
 	{
 		fprintf(stderr, "Out of memory allocating temporary buffer\n");
@@ -726,7 +726,7 @@ static int do_createcd(int argc, char *argv[], int param)
 	printf("\nCD-ROM %s has %d tracks and %d total frames\n", inputfile, toc.numtrks, origtotalsectors);
 
 	/* create the new CHD file */
-	err = chd_create(outputfile, (UINT64)totalsectors * (UINT64)sectorsize, hunksize, CHDCOMPRESSION_ZLIB_PLUS, NULL);
+	err = chd_create(outputfile, (uint64_t)totalsectors * (uint64_t)sectorsize, hunksize, CHDCOMPRESSION_ZLIB_PLUS, NULL);
 	if (err != CHDERR_NONE)
 	{
 		fprintf(stderr, "Error creating CHD file: %s\n", chd_error_string(err));
@@ -764,7 +764,7 @@ static int do_createcd(int argc, char *argv[], int param)
 		int frames = 0;
 		int bytespersector = toc.tracks[i].datasize + toc.tracks[i].subsize;
 		int trackhunks = (toc.tracks[i].frames + toc.tracks[i].extraframes) / CD_FRAMES_PER_HUNK;
-		UINT64 sourcefileoffset = track_info.offset[i];
+		uint64_t sourcefileoffset = track_info.offset[i];
 		int curhunk;
 
 		/* open the input file for this track */
@@ -853,7 +853,7 @@ cleanup:
     read_avi_frame - read an AVI frame
 -------------------------------------------------*/
 
-static avi_error read_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sample, bitmap_t *fullbitmap, int interlaced, av_codec_compress_config *avconfig)
+static avi_error read_avi_frame(avi_file *avi, uint32_t framenum, uint32_t first_sample, bitmap_t *fullbitmap, int interlaced, av_codec_compress_config *avconfig)
 {
 	const avi_movie_info *info = avi_get_movie_info(avi);
 	int interlace_factor = interlaced ? 2 : 1;
@@ -895,7 +895,7 @@ cleanup:
     fake_avi_frame - fake an AVI frame
 -------------------------------------------------*/
 
-static avi_error fake_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sample, bitmap_t *fullbitmap, int interlaced, av_codec_compress_config *avconfig)
+static avi_error fake_avi_frame(avi_file *avi, uint32_t framenum, uint32_t first_sample, bitmap_t *fullbitmap, int interlaced, av_codec_compress_config *avconfig)
 {
 	static int framecounter = 0;
 	int leftsamp = (framenum % 200 < 10) ? 10000 : 0;
@@ -913,7 +913,7 @@ static avi_error fake_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sam
 	{
 		int modcheck = AVI_FAKE_SAMPLERATE / ((chnum == 0) ? 110 : 220);
 		int samp = (chnum == 0) ? leftsamp : rightsamp;
-		INT16 *dest = avconfig->audio[chnum];
+		int16_t *dest = avconfig->audio[chnum];
 
 		/* store them to the audio buffer */
 		for (sampnum = 0; sampnum < avconfig->samples; sampnum++)
@@ -959,7 +959,7 @@ static avi_error fake_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sam
 	/* loop over the data and copy it to the cache */
 	for (y = 0; y < avconfig->video->height; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(avconfig->video, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(avconfig->video, y, 0);
 
 		/* white flag? */
 		if (y == 11 && whiteflag)
@@ -973,7 +973,7 @@ static avi_error fake_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sam
 		{
 			for (x = 0; x < avconfig->video->width; x++)
 			{
-				UINT16 pixel = 0x0080;
+				uint16_t pixel = 0x0080;
 				if (x >= 20)
 				{
 					int bitnum = (x - 20) / 28;
@@ -1014,13 +1014,13 @@ static avi_error fake_avi_frame(avi_file *avi, UINT32 framenum, UINT32 first_sam
 
 static int do_createav(int argc, char *argv[], int param)
 {
-	UINT32 fps_times_1million, width, height, interlaced, channels, rate, totalframes;
-	UINT32 max_samples_per_frame, bytes_per_frame, firstframe, numframes;
+	uint32_t fps_times_1million, width, height, interlaced, channels, rate, totalframes;
+	uint32_t max_samples_per_frame, bytes_per_frame, firstframe, numframes;
 	av_codec_compress_config avconfig = { 0 };
 	const char *inputfile, *outputfile;
 	bitmap_t *fullbitmap = NULL;
 	const avi_movie_info *info;
-	UINT8 *ldframedata = NULL;
+	uint8_t *ldframedata = NULL;
 	const chd_header *header;
 	chd_file *chd = NULL;
 	avi_file *avi = NULL;
@@ -1028,7 +1028,7 @@ static int do_createav(int argc, char *argv[], int param)
 	double ratio = 1.0;
 	char metadata[256];
 	avi_error avierr;
-	UINT32 framenum;
+	uint32_t framenum;
 	chd_error err;
 	int chnum;
 
@@ -1074,7 +1074,7 @@ static int do_createav(int argc, char *argv[], int param)
 
 		/* get the movie information */
 		info = avi_get_movie_info(avi);
-		fps_times_1million = (UINT64)info->video_timescale * 1000000 / info->video_sampletime;
+		fps_times_1million = (uint64_t)info->video_timescale * 1000000 / info->video_sampletime;
 		width = info->video_width;
 		height = info->video_height;
 		interlaced = ((fps_times_1million / 1000000) <= 30) && (height % 2 == 0) && (height > 288);
@@ -1090,9 +1090,9 @@ static int do_createav(int argc, char *argv[], int param)
 	printf("Frame size:   %d x %d %s\n", width, height, interlaced ? "interlaced" : "non-interlaced");
 	printf("Audio:        %d channels at %d Hz\n", channels, rate);
 	printf("Total frames: %d (%02d:%02d:%02d)\n", totalframes,
-			(UINT32)((UINT64)totalframes * 1000000 / fps_times_1million / 60 / 60),
-			(UINT32)(((UINT64)totalframes * 1000000 / fps_times_1million / 60) % 60),
-			(UINT32)(((UINT64)totalframes * 1000000 / fps_times_1million) % 60));
+			(uint32_t)((uint64_t)totalframes * 1000000 / fps_times_1million / 60 / 60),
+			(uint32_t)(((uint64_t)totalframes * 1000000 / fps_times_1million / 60) % 60),
+			(uint32_t)(((uint64_t)totalframes * 1000000 / fps_times_1million) % 60));
 
 	/* adjust for interlacing */
 	if (interlaced)
@@ -1107,7 +1107,7 @@ static int do_createav(int argc, char *argv[], int param)
 	/* allocate space for the frame data */
 	if (height == 524/2 || height == 624/2)
 	{
-		ldframedata = (UINT8 *)malloc(numframes * VBI_PACKED_BYTES);
+		ldframedata = (uint8_t *)malloc(numframes * VBI_PACKED_BYTES);
 		if (ldframedata == NULL)
 		{
 			fprintf(stderr, "Out of memory allocating frame metadata\n");
@@ -1118,7 +1118,7 @@ static int do_createav(int argc, char *argv[], int param)
 	}
 
 	/* determine the number of bytes per frame */
-	max_samples_per_frame = ((UINT64)rate * 1000000 + fps_times_1million - 1) / fps_times_1million;
+	max_samples_per_frame = ((uint64_t)rate * 1000000 + fps_times_1million - 1) / fps_times_1million;
 	bytes_per_frame = 12 + channels * max_samples_per_frame * 2 + width * height * 2;
 
 	/* allocate a video buffer */
@@ -1135,7 +1135,7 @@ static int do_createav(int argc, char *argv[], int param)
 	avconfig.channels = channels;
 	for (chnum = 0; chnum < channels; chnum++)
 	{
-		avconfig.audio[chnum] = (INT16 *)malloc(max_samples_per_frame * 2);
+		avconfig.audio[chnum] = (int16_t *)malloc(max_samples_per_frame * 2);
 		if (avconfig.audio[chnum] == NULL)
 		{
 			fprintf(stderr, "Out of memory allocating temporary audio buffer\n");
@@ -1145,7 +1145,7 @@ static int do_createav(int argc, char *argv[], int param)
 	}
 
 	/* create the new CHD */
-	err = chd_create(outputfile, (UINT64)numframes * (UINT64)bytes_per_frame, bytes_per_frame, CHDCOMPRESSION_AV, NULL);
+	err = chd_create(outputfile, (uint64_t)numframes * (uint64_t)bytes_per_frame, bytes_per_frame, CHDCOMPRESSION_AV, NULL);
 	if (err != CHDERR_NONE)
 	{
 		fprintf(stderr, "Error creating CHD file: %s\n", chd_error_string(err));
@@ -1179,14 +1179,14 @@ static int do_createav(int argc, char *argv[], int param)
 	for (framenum = 0; framenum < numframes; framenum++)
 	{
 		int effframe = firstframe + framenum;
-		UINT32 first_sample;
+		uint32_t first_sample;
 
 		/* progress */
 		progress(framenum == 0, "Compressing hunk %d/%d... (ratio=%d%%)  \r", framenum, header->totalhunks, (int)(100.0 * ratio));
 
 		/* compute the number of samples in this frame */
-		first_sample = ((UINT64)rate * (UINT64)effframe * (UINT64)1000000 + fps_times_1million - 1) / (UINT64)fps_times_1million;
-		avconfig.samples = ((UINT64)rate * (UINT64)(effframe + 1) * (UINT64)1000000 + fps_times_1million - 1) / (UINT64)fps_times_1million - first_sample;
+		first_sample = ((uint64_t)rate * (uint64_t)effframe * (uint64_t)1000000 + fps_times_1million - 1) / (uint64_t)fps_times_1million;
+		avconfig.samples = ((uint64_t)rate * (uint64_t)(effframe + 1) * (uint64_t)1000000 + fps_times_1million - 1) / (uint64_t)fps_times_1million - first_sample;
 
 		/* read the frame into its proper format in the cache */
 		if (IS_FAKE_AVI_FILE(avi))
@@ -1204,7 +1204,7 @@ static int do_createav(int argc, char *argv[], int param)
 		{
 			/* parse the data and pack it */
 			vbi_metadata vbi;
-			vbi_parse_all((const UINT16 *)avconfig.video->base, avconfig.video->rowpixels, avconfig.video->width, 8, &vbi);
+			vbi_parse_all((const uint16_t *)avconfig.video->base, avconfig.video->rowpixels, avconfig.video->width, 8, &vbi);
 			vbi_metadata_pack(&ldframedata[framenum * VBI_PACKED_BYTES], framenum, &vbi);
 		}
 
@@ -1261,10 +1261,10 @@ cleanup:
 
 static int do_createblankhd(int argc, char *argv[], int param)
 {
-	UINT32 cylinders, heads, sectors, sectorsize, hunksize, totalsectors, hunknum;
+	uint32_t cylinders, heads, sectors, sectorsize, hunksize, totalsectors, hunknum;
 	const char *outputfile;
 	chd_file *chd = NULL;
-	UINT8 *cache = NULL;
+	uint8_t *cache = NULL;
 	char metadata[256];
 	chd_error err;
 
@@ -1289,10 +1289,10 @@ static int do_createblankhd(int argc, char *argv[], int param)
 	printf("Sectors:      %d\n", sectors);
 	printf("Bytes/sector: %d\n", sectorsize);
 	printf("Sectors/hunk: %d\n", hunksize / sectorsize);
-	printf("Logical size: %s\n", big_int_string((UINT64)totalsectors * (UINT64)sectorsize));
+	printf("Logical size: %s\n", big_int_string((uint64_t)totalsectors * (uint64_t)sectorsize));
 
 	/* create the new hard drive */
-	err = chd_create(outputfile, (UINT64)totalsectors * (UINT64)sectorsize, hunksize, CHDCOMPRESSION_NONE, NULL);
+	err = chd_create(outputfile, (uint64_t)totalsectors * (uint64_t)sectorsize, hunksize, CHDCOMPRESSION_NONE, NULL);
 	if (err != CHDERR_NONE)
 	{
 		fprintf(stderr, "Error creating CHD file: %s\n", chd_error_string(err));
@@ -1317,7 +1317,7 @@ static int do_createblankhd(int argc, char *argv[], int param)
 	}
 
 	/* alloc and zero buffer*/
-	cache = (UINT8 *)malloc(hunksize);
+	cache = (uint8_t *)malloc(hunksize);
 	if (cache == NULL)
 	{
 		fprintf(stderr, "Error allocating memory buffer\n");
@@ -1425,7 +1425,7 @@ static int do_extract(int argc, char *argv[], int param)
 	core_file *outfile = NULL;
 	chd_file *infile = NULL;
 	const chd_header *header;
-	UINT64 bytesremaining;
+	uint64_t bytesremaining;
 	void *hunk = NULL;
 	file_error filerr;
 	chd_error err;
@@ -1474,7 +1474,7 @@ static int do_extract(int argc, char *argv[], int param)
 	bytesremaining = header->logicalbytes;
 	for (hunknum = 0; hunknum < header->totalhunks; hunknum++)
 	{
-		UINT32 byteswritten, bytes_to_write;
+		uint32_t byteswritten, bytes_to_write;
 
 		/* progress */
 		progress(hunknum == 0, "Extracting hunk %d/%d...  \r", hunknum, header->totalhunks);
@@ -1489,7 +1489,7 @@ static int do_extract(int argc, char *argv[], int param)
 
 		/* write the hunk to the file */
 		bytes_to_write = MIN(bytesremaining, header->hunkbytes);
-		core_fseek(outfile, (UINT64)hunknum * (UINT64)header->hunkbytes, SEEK_SET);
+		core_fseek(outfile, (uint64_t)hunknum * (uint64_t)header->hunkbytes, SEEK_SET);
 		byteswritten = core_fwrite(outfile, hunk, bytes_to_write);
 		if (byteswritten != bytes_to_write)
 		{
@@ -1528,7 +1528,7 @@ static int do_extractcd(int argc, char *argv[], int param)
 	cdrom_file *cdrom = NULL;
 	FILE *outfile = NULL;
 	const cdrom_toc *toc;
-	UINT64 out2offs;
+	uint64_t out2offs;
 	file_error filerr;
 	chd_error err;
 	int track, cuemode;
@@ -1599,7 +1599,7 @@ static int do_extractcd(int argc, char *argv[], int param)
 	out2offs = 0;
 	for (track = 0; track < toc->numtrks; track++)
 	{
-		UINT32 m, s, f, frame, trackframes;
+		uint32_t m, s, f, frame, trackframes;
 		char trackoutname[512];
 
 		if (cuemode)
@@ -1717,7 +1717,7 @@ static int do_extractcd(int argc, char *argv[], int param)
 
 			/* all tracks but the first one have a file offset */
 			if (track > 0)
-				fprintf(outfile, "DATAFILE \"%s\" #%d %02d:%02d:%02d // length in bytes: %d\n", outputfile2, (UINT32)out2offs, m, s, f, trackframes*(toc->tracks[track].datasize+toc->tracks[track].subsize));
+				fprintf(outfile, "DATAFILE \"%s\" #%d %02d:%02d:%02d // length in bytes: %d\n", outputfile2, (uint32_t)out2offs, m, s, f, trackframes*(toc->tracks[track].datasize+toc->tracks[track].subsize));
 			else
 				fprintf(outfile, "DATAFILE \"%s\" %02d:%02d:%02d // length in bytes: %d\n", outputfile2, m, s, f, trackframes*(toc->tracks[track].datasize+toc->tracks[track].subsize));
 
@@ -1739,8 +1739,8 @@ static int do_extractcd(int argc, char *argv[], int param)
 		/* now write the actual data */
 		for (frame = 0; frame < trackframes; frame++)
 		{
-			UINT8 sector[CD_MAX_SECTOR_DATA + CD_MAX_SUBCODE_DATA];
-			UINT32 byteswritten;
+			uint8_t sector[CD_MAX_SECTOR_DATA + CD_MAX_SUBCODE_DATA];
+			uint32_t byteswritten;
 
 			progress(frame == 0, "Extracting track %d... %d/%d...   \r", track+1, frame, trackframes);
 
@@ -1811,10 +1811,10 @@ static int do_extractav(int argc, char *argv[], int param)
 	int fps, fpsfrac, width, height, interlaced, channels, rate, totalframes;
 	av_codec_decompress_config avconfig = { 0 };
 	const char *inputfile, *outputfile;
-	UINT32 firstframe, numframes;
+	uint32_t firstframe, numframes;
 	bitmap_t *fullbitmap = NULL;
-	UINT32 framenum, numsamples;
-	UINT32 fps_times_1million;
+	uint32_t framenum, numsamples;
+	uint32_t fps_times_1million;
 	const chd_header *header;
 	chd_file *chd = NULL;
 	avi_file *avi = NULL;
@@ -1887,11 +1887,11 @@ static int do_extractav(int argc, char *argv[], int param)
 	avconfig.video = &fakebitmap;
 
 	/* allocate audio buffers */
-	avconfig.maxsamples = ((UINT64)rate * 1000000 + fps_times_1million - 1) / fps_times_1million;
+	avconfig.maxsamples = ((uint64_t)rate * 1000000 + fps_times_1million - 1) / fps_times_1million;
 	avconfig.actsamples = &numsamples;
 	for (chnum = 0; chnum < channels; chnum++)
 	{
-		avconfig.audio[chnum] = (INT16 *)malloc(avconfig.maxsamples * 2);
+		avconfig.audio[chnum] = (int16_t *)malloc(avconfig.maxsamples * 2);
 		if (avconfig.audio[chnum] == NULL)
 		{
 			fprintf(stderr, "Out of memory allocating temporary audio buffer\n");
@@ -1906,9 +1906,9 @@ static int do_extractav(int argc, char *argv[], int param)
 	printf("Frame size:   %d x %d %s\n", width, height, interlaced ? "interlaced" : "non-interlaced");
 	printf("Audio:        %d channels at %d Hz\n", channels, rate);
 	printf("Total frames: %d (%02d:%02d:%02d)\n", totalframes,
-			(UINT32)((UINT64)totalframes * 1000000 / fps_times_1million / 60 / 60),
-			(UINT32)(((UINT64)totalframes * 1000000 / fps_times_1million / 60) % 60),
-			(UINT32)(((UINT64)totalframes * 1000000 / fps_times_1million) % 60));
+			(uint32_t)((uint64_t)totalframes * 1000000 / fps_times_1million / 60 / 60),
+			(uint32_t)(((uint64_t)totalframes * 1000000 / fps_times_1million / 60) % 60),
+			(uint32_t)(((uint64_t)totalframes * 1000000 / fps_times_1million) % 60));
 
 	/* build up the movie info */
 	info.video_format = FORMAT_YUY2;
@@ -2038,7 +2038,7 @@ static int do_verify(int argc, char *argv[], int param)
 	err = chd_verify_begin(chd);
 	if (err == CHDERR_NONE)
 	{
-		UINT32 hunknum;
+		uint32_t hunknum;
 		for (hunknum = 0; hunknum < header.totalhunks; hunknum++)
 		{
 			/* progress */
@@ -2171,14 +2171,14 @@ static int do_fixavdata(int argc, char *argv[], int param)
 	av_codec_decompress_config avconfig = { 0 };
 	bitmap_t *fullbitmap = NULL;
 	const char *inputfile;
-	UINT8 *vbidata = NULL;
+	uint8_t *vbidata = NULL;
 	int writeable = FALSE;
 	chd_file *chd = NULL;
 	bitmap_t fakebitmap;
 	char metadata[256];
 	chd_header header;
-	UINT32 actlength;
-	UINT32 framenum;
+	uint32_t actlength;
+	uint32_t framenum;
 	chd_error err;
 	int fixframes = 0;
 	int fixes = 0;
@@ -2237,7 +2237,7 @@ static int do_fixavdata(int argc, char *argv[], int param)
 	avconfig.video = &fakebitmap;
 
 	/* allocate memory for VBI data */
-	vbidata = (UINT8 *)malloc(header.totalhunks * VBI_PACKED_BYTES);
+	vbidata = (uint8_t *)malloc(header.totalhunks * VBI_PACKED_BYTES);
 	if (vbidata == NULL)
 	{
 		fprintf(stderr, "Out of memory allocating VBI data\n");
@@ -2265,7 +2265,7 @@ static int do_fixavdata(int argc, char *argv[], int param)
 	{
 		vbi_metadata origvbi;
 		vbi_metadata vbi;
-		UINT32 vbiframe;
+		uint32_t vbiframe;
 
 		/* progress */
 		progress(framenum == 0, "Processing hunk %d/%d...  \r", framenum, header.totalhunks);
@@ -2288,7 +2288,7 @@ static int do_fixavdata(int argc, char *argv[], int param)
 		vbi_metadata_unpack(&origvbi, &vbiframe, &vbidata[framenum * VBI_PACKED_BYTES]);
 
 		/* parse the video data */
-		vbi_parse_all((const UINT16 *)avconfig.video->base, avconfig.video->rowpixels, avconfig.video->width, 8, &vbi);
+		vbi_parse_all((const uint16_t *)avconfig.video->base, avconfig.video->rowpixels, avconfig.video->width, 8, &vbi);
 
 		/* verify the data */
 		if (vbiframe != 0 || origvbi.white != 0 || origvbi.line16 != 0 || origvbi.line17 != 0 || origvbi.line18 != 0 || origvbi.line1718 != 0)
@@ -2399,7 +2399,7 @@ static int do_info(int argc, char *argv[], int param)
 {
 	const char *inputfile;
 	chd_file *chd = NULL;
-	UINT8 metadata[256];
+	uint8_t metadata[256];
 	chd_header header;
 	chd_error err;
 	int i, j;
@@ -2474,7 +2474,7 @@ static int do_info(int argc, char *argv[], int param)
 	/* print out metadata */
 	for (i = 0; ; i++)
 	{
-		UINT32 metatag, metasize;
+		uint32_t metatag, metasize;
 
 		/* get the indexed metadata item; stop when we hit an error */
 		err = chd_get_metadata(chd, CHDMETATAG_WILDCARD, i, metadata, sizeof(metadata), &metasize, &metatag, NULL);
@@ -2508,12 +2508,12 @@ cleanup:
 -------------------------------------------------*/
 
 #if ENABLE_CUSTOM_CHOMP
-static chd_error handle_custom_chomp(const char *name, chd_file *chd, UINT32 *maxhunk)
+static chd_error handle_custom_chomp(const char *name, chd_file *chd, uint32_t *maxhunk)
 {
 	const chd_header *header = chd_get_header(chd);
 	int sectors_per_hunk = (header->hunkbytes / IDE_SECTOR_SIZE);
 	chd_error err = CHDERR_INVALID_DATA;
-	UINT8 *temp = NULL;
+	uint8_t *temp = NULL;
 
 	/* allocate memory to hold a hunk */
 	temp = malloc(header->hunkbytes);
@@ -2526,8 +2526,8 @@ static chd_error handle_custom_chomp(const char *name, chd_file *chd, UINT32 *ma
 	/* check for midway */
 	if (strcmp(name, "midway") == 0)
 	{
-		UINT32 maxsector = 0;
-		UINT32 numparts;
+		uint32_t maxsector = 0;
+		uint32_t numparts;
 		chd_error err;
 		int i;
 
@@ -2550,9 +2550,9 @@ static chd_error handle_custom_chomp(const char *name, chd_file *chd, UINT32 *ma
 		/* get the partition information for each one and track the maximum referenced sector */
 		for (i = 0; i < numparts; i++)
 		{
-			UINT32 pstart = temp[i*12 + 8] | (temp[i*12 + 9] << 8) | (temp[i*12 + 10] << 16) | (temp[i*12 + 11] << 24);
-			UINT32 psize  = temp[i*12 + 12] | (temp[i*12 + 13] << 8) | (temp[i*12 + 14] << 16) | (temp[i*12 + 15] << 24);
-			UINT32 pflags = temp[i*12 + 16] | (temp[i*12 + 17] << 8) | (temp[i*12 + 18] << 16) | (temp[i*12 + 19] << 24);
+			uint32_t pstart = temp[i*12 + 8] | (temp[i*12 + 9] << 8) | (temp[i*12 + 10] << 16) | (temp[i*12 + 11] << 24);
+			uint32_t psize  = temp[i*12 + 12] | (temp[i*12 + 13] << 8) | (temp[i*12 + 14] << 16) | (temp[i*12 + 15] << 24);
+			uint32_t pflags = temp[i*12 + 16] | (temp[i*12 + 17] << 8) | (temp[i*12 + 18] << 16) | (temp[i*12 + 19] << 24);
 			printf("  %2d. %7d - %7d (%X)\n", i, pstart, pstart + psize - 1, pflags);
 			if (i != 0 && pstart + psize > maxsector)
 				maxsector = pstart + psize;
@@ -2573,8 +2573,8 @@ static chd_error handle_custom_chomp(const char *name, chd_file *chd, UINT32 *ma
 	/* check for atari */
 	if (strcmp(name, "atari") == 0)
 	{
-		UINT32 sectors[4];
-		UINT8 *data;
+		uint32_t sectors[4];
+		uint8_t *data;
 		int i, maxdiff;
 		chd_error err;
 
@@ -2637,7 +2637,7 @@ static int do_merge_update_chomp(int argc, char *argv[], int param)
 	chd_file *parentchd = NULL;
 	chd_file *outputchd = NULL;
 	chd_file *inputchd = NULL;
-	UINT32 maxhunk = ~0;
+	uint32_t maxhunk = ~0;
 	chd_error err;
 
 	/* require 4-5 args total */
@@ -2830,8 +2830,8 @@ cleanup:
 static int do_setchs(int argc, char *argv[], int param)
 {
 	int oldcyls, oldhds, oldsecs, oldsecsize;
-	UINT8 was_readonly = FALSE;
-	UINT64 old_logicalbytes;
+	uint8_t was_readonly = FALSE;
+	uint64_t old_logicalbytes;
 	const char *inoutfile;
 	chd_file *chd = NULL;
 	int cyls, hds, secs;
@@ -2910,7 +2910,7 @@ static int do_setchs(int argc, char *argv[], int param)
 	/* get the header and compute the new logical size */
 	header = *chd_get_header(chd);
 	old_logicalbytes = header.logicalbytes;
-	header.logicalbytes = (UINT64)cyls * (UINT64)hds * (UINT64)secs * (UINT64)oldsecsize;
+	header.logicalbytes = (uint64_t)cyls * (uint64_t)hds * (uint64_t)secs * (uint64_t)oldsecsize;
 
 	/* close the file */
 	chd_close(chd);
@@ -2954,14 +2954,14 @@ cleanup:
 static int do_addmeta(int argc, char *argv[], int param)
 {
 	const char *inoutfile, *srcfile, *tagstring;
-	UINT8 was_readonly = FALSE;
-	UINT8 *metadata = NULL;
+	uint8_t was_readonly = FALSE;
+	uint8_t *metadata = NULL;
 	chd_file *chd = NULL;
 	chd_header header;
 	file_error filerr;
-	UINT32 metalength;
-	UINT32 metaindex;
-	UINT32 metatag;
+	uint32_t metalength;
+	uint32_t metaindex;
+	uint32_t metatag;
 	chd_error err;
 
 	/* require 5 or 6 args total */
@@ -3045,7 +3045,7 @@ static int do_addmeta(int argc, char *argv[], int param)
 	/* if it's text, strip any trailing Ctrl-Z and CR/LF and add a trailing NULL */
 	if (param)
 	{
-		metadata = (UINT8 *)realloc(metadata, metalength + 1);
+		metadata = (uint8_t *)realloc(metadata, metalength + 1);
 		if (metadata == NULL)
 		{
 			fprintf(stderr, "Out of memory preparing metadata\n");
@@ -3100,12 +3100,12 @@ cleanup:
     file via the compression interfaces
 -------------------------------------------------*/
 
-static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, UINT32 offset)
+static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, uint32_t offset)
 {
 	core_file *sourcefile;
 	const chd_header *header;
-	UINT64 sourceoffset = 0;
-	UINT8 *cache = NULL;
+	uint64_t sourceoffset = 0;
+	uint8_t *cache = NULL;
 	double ratio = 1.0;
 	file_error filerr;
 	chd_error err;
@@ -3121,7 +3121,7 @@ static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, UINT32
 
 	/* get the header */
 	header = chd_get_header(chd);
-	cache = (UINT8 *)malloc(header->hunkbytes);
+	cache = (uint8_t *)malloc(header->hunkbytes);
 	if (cache == NULL)
 	{
 		err = CHDERR_OUT_OF_MEMORY;
@@ -3136,7 +3136,7 @@ static chd_error chdman_compress_file(chd_file *chd, const char *rawfile, UINT32
 	/* loop over source hunks until we run out */
 	for (hunknum = 0; hunknum < header->totalhunks; hunknum++)
 	{
-		UINT32 bytesread;
+		uint32_t bytesread;
 
 		/* progress */
 		progress(hunknum == 0, "Compressing hunk %d/%d... (ratio=%d%%)  \r", hunknum, header->totalhunks, (int)(100.0 * ratio));
@@ -3178,21 +3178,21 @@ cleanup:
     via the compression interfaces
 -------------------------------------------------*/
 
-static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 totalhunks)
+static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, uint32_t totalhunks)
 {
 	const chd_header *source_header;
 	const chd_header *header;
-	UINT8 *source_cache = NULL;
-	UINT64 source_offset = 0;
-	UINT32 source_bytes = 0;
-	UINT8 *cache = NULL;
+	uint8_t *source_cache = NULL;
+	uint64_t source_offset = 0;
+	uint32_t source_bytes = 0;
+	uint8_t *cache = NULL;
 	double ratio = 1.0;
 	chd_error err, verifyerr;
 	int hunknum;
 
 	/* get the header */
 	header = chd_get_header(chd);
-	cache = (UINT8 *)malloc(header->hunkbytes);
+	cache = (uint8_t *)malloc(header->hunkbytes);
 	if (cache == NULL)
 	{
 		err = CHDERR_OUT_OF_MEMORY;
@@ -3201,7 +3201,7 @@ static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 tot
 
 	/* get the source CHD header */
 	source_header = chd_get_header(source);
-	source_cache = (UINT8 *)malloc(source_header->hunkbytes);
+	source_cache = (uint8_t *)malloc(source_header->hunkbytes);
 	if (source_cache == NULL)
 	{
 		err = CHDERR_OUT_OF_MEMORY;
@@ -3223,8 +3223,8 @@ static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 tot
 	/* loop over source hunks until we run out */
 	for (hunknum = 0; hunknum < totalhunks; hunknum++)
 	{
-		UINT32 bytesremaining = header->hunkbytes;
-		UINT8 *dest = cache;
+		uint32_t bytesremaining = header->hunkbytes;
+		uint8_t *dest = cache;
 
 		/* progress */
 		progress(hunknum == 0, "Compressing hunk %d/%d... (ratio=%d%%)  \r", hunknum, totalhunks, (int)(100.0 * ratio));
@@ -3235,7 +3235,7 @@ static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 tot
 			/* if we have data in the buffer, copy it */
 			if (source_bytes > 0)
 			{
-				UINT32 bytestocopy = MIN(bytesremaining, source_bytes);
+				uint32_t bytestocopy = MIN(bytesremaining, source_bytes);
 				memcpy(dest, &source_cache[source_header->hunkbytes - source_bytes], bytestocopy);
 				dest += bytestocopy;
 				source_bytes -= bytestocopy;
@@ -3267,7 +3267,7 @@ static chd_error chdman_compress_chd(chd_file *chd, chd_file *source, UINT32 tot
 	/* if we read all the source data, verify the checksums */
 	if (verifyerr == CHDERR_NONE && source_offset >= source_header->logicalbytes)
 	{
-		static const UINT8 empty_checksum[CHD_SHA1_BYTES] = { 0 };
+		static const uint8_t empty_checksum[CHD_SHA1_BYTES] = { 0 };
 		chd_verify_result verify;
 		int i;
 
@@ -3338,9 +3338,9 @@ cleanup:
 static chd_error chdman_clone_metadata(chd_file *source, chd_file *dest)
 {
 	const chd_header *header = chd_get_header(source);
-	UINT8 metabuffer[MAX(4096, sizeof(cdrom_toc))];
-	UINT32 metatag, metasize, metaindex;
-	UINT8 metaflags;
+	uint8_t metabuffer[MAX(4096, sizeof(cdrom_toc))];
+	uint32_t metatag, metasize, metaindex;
+	uint8_t metaflags;
 	chd_error err;
 
 	/* clone the metadata */
@@ -3389,7 +3389,7 @@ static chd_error chdman_clone_metadata(chd_file *source, chd_file *dest)
 		/* otherwise, allocate a bigger temporary buffer */
 		else
 		{
-			UINT8 *allocbuffer = (UINT8 *)malloc(metasize);
+			uint8_t *allocbuffer = (uint8_t *)malloc(metasize);
 			if (allocbuffer == NULL)
 			{
 				err = CHDERR_OUT_OF_MEMORY;

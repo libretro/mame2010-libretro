@@ -175,7 +175,7 @@ void debug_view_memory::enumerate_sources()
 	for (int itemnum = 0; itemnum < 10000; itemnum++)
 	{
 		// stop when we run out of items
-		UINT32 valsize, valcount;
+		uint32_t valsize, valcount;
 		void *base;
 		const char *itemname = state_save_get_indexed_item(&m_machine, itemnum, &base, &valsize, &valcount);
 		if (itemname == NULL)
@@ -237,18 +237,18 @@ void debug_view_memory::view_update()
 	const memory_view_pos &posdata = s_memory_pos_table[m_bytes_per_chunk];
 
 	// loop over visible rows
-	for (UINT32 row = 0; row < m_visible.y; row++)
+	for (uint32_t row = 0; row < m_visible.y; row++)
 	{
 		debug_view_char *destmin = m_viewdata + row * m_visible.x;
 		debug_view_char *destmax = destmin + m_visible.x;
 		debug_view_char *destrow = destmin - m_topleft.x;
-		UINT32 effrow = m_topleft.y + row;
+		uint32_t effrow = m_topleft.y + row;
 
 		// reset the line of data; section 1 is normal, others are ancillary, cursor is selected
 		debug_view_char *dest = destmin;
 		for (int ch = 0; ch < m_visible.x; ch++, dest++)
 		{
-			UINT32 effcol = m_topleft.x + ch;
+			uint32_t effcol = m_topleft.x + ch;
 			dest->byte = ' ';
 			dest->attrib = DCA_ANCILLARY;
 			if (m_section[1].contains(effcol))
@@ -278,13 +278,13 @@ void debug_view_memory::view_update()
 			{
 				int chunkindex = m_reverse_view ? (m_chunks_per_row - 1 - chunknum) : chunknum;
 
-				UINT64 chunkdata;
+				uint64_t chunkdata;
 				bool ismapped = read(m_bytes_per_chunk, addrbyte + chunknum * m_bytes_per_chunk, chunkdata);
 				dest = destrow + m_section[1].m_pos + 1 + chunkindex * posdata.m_spacing;
 				for (int ch = 0; ch < posdata.m_spacing; ch++, dest++)
 					if (dest >= destmin && dest < destmax)
 					{
-						UINT8 shift = posdata.m_shift[ch];
+						uint8_t shift = posdata.m_shift[ch];
 						if (shift < 64)
 							dest->byte = ismapped ? "0123456789ABCDEF"[(chunkdata >> shift) & 0x0f] : '*';
 					}
@@ -297,7 +297,7 @@ void debug_view_memory::view_update()
 				for (int ch = 0; ch < m_bytes_per_row; ch++, dest++)
 					if (dest >= destmin && dest < destmax)
 					{
-						UINT64 chval;
+						uint64_t chval;
 						bool ismapped = read(1, addrbyte + ch, chval);
 						dest->byte = (ismapped && isprint(chval)) ? chval : '.';
 					}
@@ -331,7 +331,7 @@ void debug_view_memory::view_char(int chval)
 			break;
 
 		case DCH_PUP:
-			for (UINT32 delta = (m_visible.y - 2) * m_bytes_per_row; delta > 0; delta -= m_bytes_per_row)
+			for (uint32_t delta = (m_visible.y - 2) * m_bytes_per_row; delta > 0; delta -= m_bytes_per_row)
 				if (pos.m_address >= m_byte_offset + delta)
 				{
 					pos.m_address -= delta;
@@ -340,7 +340,7 @@ void debug_view_memory::view_char(int chval)
 			break;
 
 		case DCH_PDOWN:
-			for (UINT32 delta = (m_visible.y - 2) * m_bytes_per_row; delta > 0; delta -= m_bytes_per_row)
+			for (uint32_t delta = (m_visible.y - 2) * m_bytes_per_row; delta > 0; delta -= m_bytes_per_row)
 				if (pos.m_address <= m_maxaddr - delta)
 				{
 					pos.m_address += delta;
@@ -385,13 +385,13 @@ void debug_view_memory::view_char(int chval)
 			if (hexchar == NULL)
 				break;
 
-			UINT64 data;
+			uint64_t data;
 			bool ismapped = read(m_bytes_per_chunk, pos.m_address, data);
 			if (!ismapped)
 				break;
 
-			data &= ~((UINT64)0x0f << pos.m_shift);
-			data |= (UINT64)(hexchar - hexvals) << pos.m_shift;
+			data &= ~((uint64_t)0x0f << pos.m_shift);
+			data |= (uint64_t)(hexchar - hexvals) << pos.m_shift;
 			write(m_bytes_per_chunk, pos.m_address, data);
 			// fall through...
 		}
@@ -459,7 +459,7 @@ void debug_view_memory::recompute()
 	// if we are viewing a space with a minimum chunk size, clamp the bytes per chunk
 	if (source.m_space != NULL && source.m_space->ashift < 0)
 	{
-		UINT32 min_bytes_per_chunk = 1 << -source.m_space->ashift;
+		uint32_t min_bytes_per_chunk = 1 << -source.m_space->ashift;
 		while (m_bytes_per_chunk < min_bytes_per_chunk)
 		{
 			m_bytes_per_chunk *= 2;
@@ -494,7 +494,7 @@ void debug_view_memory::recompute()
 	}
 
 	// derive total sizes from that
-	m_total.y = ((UINT64)m_maxaddr - (UINT64)m_byte_offset + (UINT64)m_bytes_per_row - 1) / m_bytes_per_row;
+	m_total.y = ((uint64_t)m_maxaddr - (uint64_t)m_byte_offset + (uint64_t)m_bytes_per_row - 1) / m_bytes_per_row;
 
 	// reset the current cursor position
 	set_cursor_pos(pos);
@@ -612,7 +612,7 @@ void debug_view_memory::set_cursor_pos(cursor_pos pos)
 //  read - generic memory view data reader
 //-------------------------------------------------
 
-bool debug_view_memory::read(UINT8 size, offs_t offs, UINT64 &data)
+bool debug_view_memory::read(uint8_t size, offs_t offs, uint64_t &data)
 {
 	const debug_view_memory_source &source = downcast<const debug_view_memory_source &>(*m_source);
 
@@ -622,7 +622,7 @@ bool debug_view_memory::read(UINT8 size, offs_t offs, UINT64 &data)
 		offs_t dummyaddr = offs;
 
 		bool ismapped = m_no_translation ? true : source.m_memintf->translate(source.m_space->spacenum, TRANSLATE_READ_DEBUG, dummyaddr);
-		data = ~(UINT64)0;
+		data = ~(uint64_t)0;
 		if (ismapped)
 		{
 			switch (size)
@@ -641,7 +641,7 @@ bool debug_view_memory::read(UINT8 size, offs_t offs, UINT64 &data)
 	{
 		size /= 2;
 
-		UINT64 data0, data1;
+		uint64_t data0, data1;
 		bool ismapped = read(size, offs + 0 * size, data0);
 		ismapped |= read(size, offs + 1 * size, data1);
 
@@ -656,7 +656,7 @@ bool debug_view_memory::read(UINT8 size, offs_t offs, UINT64 &data)
 	offs ^= source.m_offsetxor;
 	if (offs >= source.m_length)
 		return false;
-	data = *((UINT8 *)source.m_base + offs);
+	data = *((uint8_t *)source.m_base + offs);
 	return true;
 }
 
@@ -665,7 +665,7 @@ bool debug_view_memory::read(UINT8 size, offs_t offs, UINT64 &data)
 //  write - generic memory view data writer
 //-------------------------------------------------
 
-void debug_view_memory::write(UINT8 size, offs_t offs, UINT64 data)
+void debug_view_memory::write(uint8_t size, offs_t offs, uint64_t data)
 {
 	const debug_view_memory_source &source = downcast<const debug_view_memory_source &>(*m_source);
 
@@ -703,7 +703,7 @@ void debug_view_memory::write(UINT8 size, offs_t offs, UINT64 data)
 	offs ^= source.m_offsetxor;
 	if (offs >= source.m_length)
 		return;
-	*((UINT8 *)source.m_base + offs) = data;
+	*((uint8_t *)source.m_base + offs) = data;
 
 // hack for FD1094 editing
 #ifdef FD1094_HACK
@@ -735,7 +735,7 @@ void debug_view_memory::set_expression(const char *expression)
 //  bytes displayed per chunk
 //-------------------------------------------------
 
-void debug_view_memory::set_bytes_per_chunk(UINT8 chunkbytes)
+void debug_view_memory::set_bytes_per_chunk(uint8_t chunkbytes)
 {
 	const debug_view_memory_source &source = downcast<const debug_view_memory_source &>(*m_source);
 
@@ -760,7 +760,7 @@ void debug_view_memory::set_bytes_per_chunk(UINT8 chunkbytes)
 //  chunks displayed across a row
 //-------------------------------------------------
 
-void debug_view_memory::set_chunks_per_row(UINT32 rowchunks)
+void debug_view_memory::set_chunks_per_row(uint32_t rowchunks)
 {
 	if (rowchunks < 1)
 		return;

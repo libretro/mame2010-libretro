@@ -157,12 +157,12 @@ typedef union _int_ptr int_ptr;
 union _int_ptr
 {
 	void *					p;								/* pointer value */
-	UINT64					i;								/* integer value */
+	uint64_t					i;								/* integer value */
 };
 
 
-typedef UINT32 token_type;
-typedef UINT32 token_info;
+typedef uint32_t token_type;
+typedef uint32_t token_info;
 
 
 typedef struct _parse_token parse_token;
@@ -170,7 +170,7 @@ struct _parse_token
 {
 	token_type				type;							/* type of token */
 	token_info				info;							/* info for token */
-	UINT32					offset;							/* offset within the string */
+	uint32_t					offset;							/* offset within the string */
 	int_ptr					value;							/* value of token */
 };
 
@@ -197,7 +197,7 @@ typedef struct _expression_string expression_string;
 struct _expression_string
 {
 	expression_string *		next;							/* pointer to next string */
-	UINT16					index;							/* index of this string */
+	uint16_t					index;							/* index of this string */
 	char					string[1];						/* string data */
 };
 
@@ -210,7 +210,7 @@ struct _parsed_expression
 	express_callbacks		callbacks;						/* callbacks */
 	void *					cbparam;						/* callbakc parameter */
 	expression_string *		stringlist; 					/* string list */
-	UINT16					stringcount;					/* number of strings allocated so far */
+	uint16_t					stringcount;					/* number of strings allocated so far */
 	parse_token				token[MAX_TOKENS];				/* array of tokens */
 	int						token_stack_ptr;				/* stack poointer */
 	parse_token				token_stack[MAX_STACK_DEPTH];	/* token stack */
@@ -222,8 +222,8 @@ struct _parsed_expression
     PROTOTYPES
 ***************************************************************************/
 
-static char *add_expression_string(parsed_expression *expr, const char *string, int length, UINT16 *index);
-static const char *get_expression_string(parsed_expression *expr, UINT16 index);
+static char *add_expression_string(parsed_expression *expr, const char *string, int length, uint16_t *index);
+static const char *get_expression_string(parsed_expression *expr, uint16_t index);
 
 
 
@@ -371,7 +371,7 @@ INLINE EXPRERR pop_token_rval(parsed_expression *expr, parse_token *token, const
     for a SYMBOL token
 -------------------------------------------------*/
 
-INLINE UINT64 get_lval_value(parsed_expression *expr, parse_token *token, const symbol_table *table)
+INLINE uint64_t get_lval_value(parsed_expression *expr, parse_token *token, const symbol_table *table)
 {
 	if (token->type == TOK_SYMBOL)
 	{
@@ -396,7 +396,7 @@ INLINE UINT64 get_lval_value(parsed_expression *expr, parse_token *token, const 
     for a SYMBOL token
 -------------------------------------------------*/
 
-INLINE void set_lval_value(parsed_expression *expr, parse_token *token, const symbol_table *table, UINT64 value)
+INLINE void set_lval_value(parsed_expression *expr, parse_token *token, const symbol_table *table, uint64_t value)
 {
 	if (token->type == TOK_SYMBOL)
 	{
@@ -445,7 +445,7 @@ static void print_tokens(FILE *out, parsed_expression *expr)
 				break;
 
 			case TOK_NUMBER:
-				fprintf(out, "NUMBER: %08X%08X\n", (UINT32)(token->value.i >> 32), (UINT32)token->value.i);
+				fprintf(out, "NUMBER: %08X%08X\n", (uint32_t)(token->value.i >> 32), (uint32_t)token->value.i);
 				break;
 
 			case TOK_STRING:
@@ -453,7 +453,7 @@ static void print_tokens(FILE *out, parsed_expression *expr)
 				break;
 
 			case TOK_SYMBOL:
-				fprintf(out, "SYMBOL: %08X%08X\n", (UINT32)(token->value.i >> 32), (UINT32)token->value.i);
+				fprintf(out, "SYMBOL: %08X%08X\n", (uint32_t)(token->value.i >> 32), (uint32_t)token->value.i);
 				break;
 
 			case TOK_OPERATOR:
@@ -539,7 +539,7 @@ static EXPRERR parse_memory_operator(parsed_expression *expr, int offset, const 
 	dot = strrchr(buffer, '.');
 	if (dot != NULL)
 	{
-		UINT16 index = 0;
+		uint16_t index = 0;
 
 		namestring = add_expression_string(expr, buffer, dot - buffer, &index);
 		if (namestring == NULL)
@@ -644,7 +644,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 	while (string[0] != 0 && token - expr->token < MAX_TOKENS)
 	{
 		/* ignore any whitespace */
-		while (string[0] != 0 && isspace((UINT8)string[0]))
+		while (string[0] != 0 && isspace((uint8_t)string[0]))
 			string++;
 		if (string[0] == 0)
 			break;
@@ -654,7 +654,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 		token->offset = string - stringstart;
 
 		/* switch off the first character */
-		switch (tolower((UINT8)string[0]))
+		switch (tolower((uint8_t)string[0]))
 		{
 			case '(':
 				SET_TOKEN_INFO(1, TOK_OPERATOR, TVL_LPAREN, TIN_PRECEDENCE_0);
@@ -806,7 +806,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 
 			case '\'':
 			{
-				UINT64 value = 0;
+				uint64_t value = 0;
 
 				/* accumulate the value of the character token */
 				string++;
@@ -819,7 +819,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 							break;
 						string++;
 					}
-					value = (value << 8) | (UINT8)*string++;
+					value = (value << 8) | (uint8_t)*string++;
 				}
 
 				/* if we didn't find the ending quote, report an error */
@@ -839,12 +839,12 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 				static const char numbers[] = "0123456789abcdef";
 				int bufindex = 0, must_be_number = 0, numbase = DEFAULT_BASE;
 				char buffer[MAX_SYMBOL_LENGTH];
-				UINT64 value;
+				uint64_t value;
 
 				/* accumulate a lower-case version of the symbol */
 				while (1)
 				{
-					char val = tolower((UINT8)string[0]);
+					char val = tolower((uint8_t)string[0]);
 					if (val == 0 || strchr(valid, val) == NULL)
 						break;
 					buffer[bufindex++] = val;
@@ -942,7 +942,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 						value = 0;
 						while (buffer[bufindex] != 0)
 						{
-							const char *ptr = strchr(numbers, tolower((UINT8)buffer[bufindex]));
+							const char *ptr = strchr(numbers, tolower((uint8_t)buffer[bufindex]));
 							int digit;
 
 							if (ptr == NULL)
@@ -950,7 +950,7 @@ static EXPRERR parse_string_into_tokens(const char *stringstart, parsed_expressi
 							digit = ptr - numbers;
 							if (digit >= numbase)
 								break;
-							value = (value * (UINT64)numbase) + digit;
+							value = (value * (uint64_t)numbase) + digit;
 							bufindex++;
 						}
 
@@ -1216,7 +1216,7 @@ static EXPRERR infix_to_postfix(parsed_expression *expr)
 
 static EXPRERR execute_function(parsed_expression *expr, parse_token *token)
 {
-	UINT64 funcparams[MAX_FUNCTION_PARAMS];
+	uint64_t funcparams[MAX_FUNCTION_PARAMS];
 	symbol_entry *symbol = NULL;
 	int paramcount = 0;
 	parse_token t1;
@@ -1271,7 +1271,7 @@ static EXPRERR execute_function(parsed_expression *expr, parse_token *token)
     of tokens
 -------------------------------------------------*/
 
-static EXPRERR execute_tokens(parsed_expression *expr, UINT64 *result)
+static EXPRERR execute_tokens(parsed_expression *expr, uint64_t *result)
 {
 	parse_token t1, t2, tempnum, tempmem;
 	EXPRERR exprerr;
@@ -1682,7 +1682,7 @@ static EXPRERR execute_tokens(parsed_expression *expr, UINT64 *result)
     list of expression strings
 -------------------------------------------------*/
 
-static char *add_expression_string(parsed_expression *expr, const char *string, int length, UINT16 *index)
+static char *add_expression_string(parsed_expression *expr, const char *string, int length, uint16_t *index)
 {
 	expression_string *expstring;
 
@@ -1710,7 +1710,7 @@ static char *add_expression_string(parsed_expression *expr, const char *string, 
     expression string
 -------------------------------------------------*/
 
-static const char *get_expression_string(parsed_expression *expr, UINT16 index)
+static const char *get_expression_string(parsed_expression *expr, uint16_t index)
 {
 	expression_string *expstring;
 
@@ -1758,7 +1758,7 @@ static void free_expression_strings(parsed_expression *expr)
     expression using the passed symbol table
 -------------------------------------------------*/
 
-EXPRERR expression_evaluate(const char *expression, const symbol_table *table, const express_callbacks *callbacks, void *cbparam, UINT64 *result)
+EXPRERR expression_evaluate(const char *expression, const symbol_table *table, const express_callbacks *callbacks, void *cbparam, uint64_t *result)
 {
 	parsed_expression temp_expression;
 	EXPRERR exprerr;
@@ -1843,7 +1843,7 @@ cleanup:
     previously-parsed expression
 -------------------------------------------------*/
 
-EXPRERR expression_execute(parsed_expression *expr, UINT64 *result)
+EXPRERR expression_execute(parsed_expression *expr, uint64_t *result)
 {
 	/* execute the expression to get the result */
 	return execute_tokens(expr, result);
@@ -1923,9 +1923,9 @@ const char *exprerr_to_string(EXPRERR error)
     hash_string - simple string hash
 -------------------------------------------------*/
 
-INLINE UINT32 hash_string(const char *string)
+INLINE uint32_t hash_string(const char *string)
 {
-	UINT32 hash = 0;
+	uint32_t hash = 0;
 	while (*string)
 		hash = (hash * 31) + *string++;
 	return hash;
@@ -1974,7 +1974,7 @@ int symtable_add(symbol_table *table, const char *name, const symbol_entry *entr
 	internal_symbol_entry *symbol;
 	symbol_entry *oldentry;
 	char *newstring;
-	UINT32 hash_index;
+	uint32_t hash_index;
 	int strindex;
 	//int all_digits, i;
 
@@ -1985,7 +1985,7 @@ int symtable_add(symbol_table *table, const char *name, const symbol_entry *entr
     all_digits = TRUE;
     for (i = 0; name[i]; i++)
     {
-        if (!isdigit((UINT8)name[i]))
+        if (!isdigit((uint8_t)name[i]))
         {
             all_digits = FALSE;
             break;
@@ -2018,7 +2018,7 @@ int symtable_add(symbol_table *table, const char *name, const symbol_entry *entr
 
 	/* copy the string, converting to lowercase */
 	for (strindex = 0; name[strindex] != 0; strindex++)
-		newstring[strindex] = tolower((UINT8)name[strindex]);
+		newstring[strindex] = tolower((uint8_t)name[strindex]);
 	newstring[strindex] = 0;
 
 	/* fill in the details */
@@ -2057,7 +2057,7 @@ int	symtable_add_register(symbol_table *table, const char *name, void *symref, s
     function symbol to a symbol table
 -------------------------------------------------*/
 
-int symtable_add_function(symbol_table *table, const char *name, void *symref, UINT16 minparams, UINT16 maxparams, function_execute_func execute)
+int symtable_add_function(symbol_table *table, const char *name, void *symref, uint16_t minparams, uint16_t maxparams, function_execute_func execute)
 {
 	symbol_entry symbol;
 
@@ -2076,7 +2076,7 @@ int symtable_add_function(symbol_table *table, const char *name, void *symref, U
     value symbol to a symbol table
 -------------------------------------------------*/
 
-int symtable_add_value(symbol_table *table, const char *name, UINT64 value)
+int symtable_add_value(symbol_table *table, const char *name, uint64_t value)
 {
 	symbol_entry symbol;
 
@@ -2095,7 +2095,7 @@ int symtable_add_value(symbol_table *table, const char *name, UINT64 value)
 
 const symbol_entry *symtable_find(const symbol_table *table, const char *name)
 {
-	UINT32 hash_index = hash_string(name) % SYM_TABLE_HASH_SIZE;
+	uint32_t hash_index = hash_string(name) % SYM_TABLE_HASH_SIZE;
 	const internal_symbol_entry *symbol;
 
 	/* loop until we run out of tables */

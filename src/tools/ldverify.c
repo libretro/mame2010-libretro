@@ -79,7 +79,7 @@ struct _video_info
 	int last_frame;
 	int last_chapter;
 	int cadence;
-	UINT32 cadence_history;
+	uint32_t cadence_history;
 	int prev_whitefield;
 	int min_overall;
 	int max_overall;
@@ -114,7 +114,7 @@ struct _audio_info
     GLOBAL VARIABLES
 ***************************************************************************/
 
-static UINT8 chdinterlaced;
+static uint8_t chdinterlaced;
 
 
 
@@ -158,11 +158,11 @@ static void *open_avi(const char *filename, movie_info *info)
     read_avi - read a frame from an AVI file
 -------------------------------------------------*/
 
-static int read_avi(void *file, int frame, bitmap_t *bitmap, INT16 *lsound, INT16 *rsound, int *samples)
+static int read_avi(void *file, int frame, bitmap_t *bitmap, int16_t *lsound, int16_t *rsound, int *samples)
 {
 	const avi_movie_info *aviinfo = avi_get_movie_info((avi_file *)file);
-	UINT32 firstsample = ((UINT64)aviinfo->audio_samplerate * (UINT64)frame * (UINT64)aviinfo->video_sampletime + aviinfo->video_timescale - 1) / (UINT64)aviinfo->video_timescale;
-	UINT32 lastsample = ((UINT64)aviinfo->audio_samplerate * (UINT64)(frame + 1) * (UINT64)aviinfo->video_sampletime + aviinfo->video_timescale - 1) / (UINT64)aviinfo->video_timescale;
+	uint32_t firstsample = ((uint64_t)aviinfo->audio_samplerate * (uint64_t)frame * (uint64_t)aviinfo->video_sampletime + aviinfo->video_timescale - 1) / (uint64_t)aviinfo->video_timescale;
+	uint32_t lastsample = ((uint64_t)aviinfo->audio_samplerate * (uint64_t)(frame + 1) * (uint64_t)aviinfo->video_sampletime + aviinfo->video_timescale - 1) / (uint64_t)aviinfo->video_timescale;
 	avi_error avierr;
 
 	/* read the frame */
@@ -257,12 +257,12 @@ static void *open_chd(const char *filename, movie_info *info)
     read_chd - read a frame from a CHD file
 -------------------------------------------------*/
 
-static int read_chd(void *file, int frame, bitmap_t *bitmap, INT16 *lsound, INT16 *rsound, int *samples)
+static int read_chd(void *file, int frame, bitmap_t *bitmap, int16_t *lsound, int16_t *rsound, int *samples)
 {
 	av_codec_decompress_config avconfig = { 0 };
 	int interlace_factor = chdinterlaced ? 2 : 1;
 	bitmap_t fakebitmap;
-	UINT32 numsamples;
+	uint32_t numsamples;
 	chd_error chderr;
 	int fieldnum;
 
@@ -356,9 +356,9 @@ static void verify_video(video_info *video, int frame, bitmap_t *bitmap)
 		int yminval, ymaxval, cbminval, cbmaxval, crminval, crmaxval;
 		int field = frame * fields_per_frame + fieldnum;
 		int x, y, pixels, remaining;
-		UINT32 yhisto[256] = { 0 };
-		UINT32 crhisto[256] = { 0 };
-		UINT32 cbhisto[256] = { 0 };
+		uint32_t yhisto[256] = { 0 };
+		uint32_t crhisto[256] = { 0 };
+		uint32_t cbhisto[256] = { 0 };
 		vbi_metadata metadata;
 
 		/* output status */
@@ -665,7 +665,7 @@ static void init_audio(audio_info *audio)
     verify_audio - verify audio data
 -------------------------------------------------*/
 
-static void verify_audio(audio_info *audio, const INT16 *lsound, const INT16 *rsound, int samples)
+static void verify_audio(audio_info *audio, const int16_t *lsound, const int16_t *rsound, int samples)
 {
 	int sampnum;
 
@@ -721,8 +721,8 @@ static void verify_audio(audio_info *audio, const INT16 *lsound, const INT16 *rs
 static void verify_audio_final(audio_info *audio)
 {
 	printf("\nAudio summary:\n");
-	printf("  Overall channel 0 range: %d-%d (%04X-%04X)\n", audio->min_lsample, audio->max_lsample, (UINT16)audio->min_lsample, (UINT16)audio->max_lsample);
-	printf("  Overall channel 1 range: %d-%d (%04X-%04X)\n", audio->min_rsample, audio->max_rsample, (UINT16)audio->min_rsample, (UINT16)audio->max_rsample);
+	printf("  Overall channel 0 range: %d-%d (%04X-%04X)\n", audio->min_lsample, audio->max_lsample, (uint16_t)audio->min_lsample, (uint16_t)audio->max_lsample);
+	printf("  Overall channel 1 range: %d-%d (%04X-%04X)\n", audio->min_rsample, audio->max_rsample, (uint16_t)audio->min_rsample, (uint16_t)audio->max_rsample);
 }
 
 
@@ -745,7 +745,7 @@ static int usage(void)
 int main(int argc, char *argv[])
 {
 	movie_info info = { 0 };
-	INT16 *lsound, *rsound;
+	int16_t *lsound, *rsound;
 	const char *srcfile;
 	bitmap_t *bitmap;
 	int srcfilelen;
@@ -769,9 +769,9 @@ int main(int argc, char *argv[])
 	srcfilelen = strlen(srcfile);
 	if (srcfilelen < 4)
 		return usage();
-	if (tolower((UINT8)srcfile[srcfilelen-3]) == 'a' && tolower((UINT8)srcfile[srcfilelen-2]) == 'v' && tolower((UINT8)srcfile[srcfilelen-1]) == 'i')
+	if (tolower((uint8_t)srcfile[srcfilelen-3]) == 'a' && tolower((uint8_t)srcfile[srcfilelen-2]) == 'v' && tolower((uint8_t)srcfile[srcfilelen-1]) == 'i')
 		isavi = TRUE;
-	else if (tolower((UINT8)srcfile[srcfilelen-3]) == 'c' && tolower((UINT8)srcfile[srcfilelen-2]) == 'h' && tolower((UINT8)srcfile[srcfilelen-1]) == 'd')
+	else if (tolower((uint8_t)srcfile[srcfilelen-3]) == 'c' && tolower((uint8_t)srcfile[srcfilelen-2]) == 'h' && tolower((uint8_t)srcfile[srcfilelen-1]) == 'd')
 		isavi = FALSE;
 	else
 		return usage();
@@ -812,8 +812,8 @@ int main(int argc, char *argv[])
 	}
 
 	/* allocate sound buffers */
-	lsound = (INT16 *)malloc(info.samplerate * sizeof(*lsound));
-	rsound = (INT16 *)malloc(info.samplerate * sizeof(*rsound));
+	lsound = (int16_t *)malloc(info.samplerate * sizeof(*lsound));
+	rsound = (int16_t *)malloc(info.samplerate * sizeof(*rsound));
 	if (lsound == NULL || rsound == NULL)
 	{
 		isavi ? close_avi(file) : close_chd(file);
@@ -822,7 +822,7 @@ int main(int argc, char *argv[])
 			free(rsound);
 		if (lsound != NULL)
 			free(lsound);
-		fprintf(stderr, "Out of memory allocating sound buffers of %d bytes\n", (INT32)(info.samplerate * sizeof(*rsound)));
+		fprintf(stderr, "Out of memory allocating sound buffers of %d bytes\n", (int32_t)(info.samplerate * sizeof(*rsound)));
 		return 1;
 	}
 

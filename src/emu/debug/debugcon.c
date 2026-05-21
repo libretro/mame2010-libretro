@@ -45,7 +45,7 @@ struct _debug_command
 	const char *	help;
 	void			(*handler)(running_machine *machine, int ref, int params, const char **param);
 	void			(*handler_ex)(int ref);
-	UINT32			flags;
+	uint32_t			flags;
 	int				ref;
 	int				minparams;
 	int				maxparams;
@@ -205,12 +205,12 @@ static CMDERR internal_execute_command(running_machine *machine, int execute, in
 		return CMDERR_NONE;
 
 	/* the first parameter has the command and the real first parameter; separate them */
-	for (p = param[0]; *p && isspace((UINT8)*p); p++) { }
-	for (command = p; *p && !isspace((UINT8)*p); p++) { }
+	for (p = param[0]; *p && isspace((uint8_t)*p); p++) { }
+	for (command = p; *p && !isspace((uint8_t)*p); p++) { }
 	if (*p != 0)
 	{
 		*p++ = 0;
-		for ( ; *p && isspace((UINT8)*p); p++) { }
+		for ( ; *p && isspace((uint8_t)*p); p++) { }
 		if (*p != 0)
 			param[0] = p;
 		else
@@ -310,7 +310,7 @@ static CMDERR internal_parse_command(running_machine *machine, const char *origi
 					case '+':	if (parendex == 0 && paramcount == 1 && p[1] == '+') isexpr = TRUE; *p = c; break;
 					case '=':	if (parendex == 0 && paramcount == 1) isexpr = TRUE; *p = c; break;
 					case 0:		foundend = TRUE; break;
-					default:	*p = tolower((UINT8)c); break;
+					default:	*p = tolower((uint8_t)c); break;
 				}
 			}
 		}
@@ -329,7 +329,7 @@ static CMDERR internal_parse_command(running_machine *machine, const char *origi
 		command_start = params[0];
 
 		/* allow for "do" commands */
-		if (tolower((UINT8)command_start[0] == 'd') && tolower((UINT8)command_start[1] == 'o') && isspace((UINT8)command_start[2]))
+		if (tolower((uint8_t)command_start[0] == 'd') && tolower((uint8_t)command_start[1] == 'o') && isspace((uint8_t)command_start[2]))
 		{
 			isexpr = TRUE;
 			command_start += 3;
@@ -338,7 +338,7 @@ static CMDERR internal_parse_command(running_machine *machine, const char *origi
 		/* if it smells like an assignment expression, treat it as such */
 		if (isexpr && paramcount == 1)
 		{
-			UINT64 expresult;
+			uint64_t expresult;
 			EXPRERR exprerr = expression_evaluate(command_start, debug_cpu_get_visible_symtable(machine), &debug_expression_callbacks, machine, &expresult);
 			if (exprerr != EXPRERR_NONE)
 				return MAKE_CMDERR_EXPRESSION_ERROR(EXPRERR_ERROR_OFFSET(exprerr));
@@ -405,7 +405,7 @@ CMDERR debug_console_validate_command(running_machine *machine, const char *comm
     command handler
 -------------------------------------------------*/
 
-void debug_console_register_command(running_machine *machine, const char *command, UINT32 flags, int ref, int minparams, int maxparams, void (*handler)(running_machine *machine, int ref, int params, const char **param))
+void debug_console_register_command(running_machine *machine, const char *command, uint32_t flags, int ref, int minparams, int maxparams, void (*handler)(running_machine *machine, int ref, int params, const char **param))
 {
 	debug_command *cmd;
 

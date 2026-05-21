@@ -19,9 +19,9 @@
 
 struct _generic_audio_private
 {
-	UINT16		latch_clear_value;
-	UINT16		latched_value[4];
-	UINT8		latch_read[4];
+	uint16_t		latch_clear_value;
+	uint16_t		latched_value[4];
+	uint8_t		latch_read[4];
 };
 
 
@@ -68,7 +68,7 @@ int generic_sound_init(running_machine *machine)
 static TIMER_CALLBACK( latch_callback )
 {
 	generic_audio_private *state = machine->generic_audio_data;
-	UINT16 value = param >> 8;
+	uint16_t value = param >> 8;
 	int which = param & 0xff;
 
 	/* if the latch hasn't been read and the value is changed, log a warning */
@@ -85,7 +85,7 @@ static TIMER_CALLBACK( latch_callback )
     latch_w - handle a write to a given latch
 -------------------------------------------------*/
 
-INLINE void latch_w(const address_space *space, int which, UINT16 value)
+INLINE void latch_w(const address_space *space, int which, uint16_t value)
 {
 	timer_call_after_resynch(space->machine, NULL, which | (value << 8), latch_callback);
 }
@@ -95,7 +95,7 @@ INLINE void latch_w(const address_space *space, int which, UINT16 value)
     latch_r - handle a read from a given latch
 -------------------------------------------------*/
 
-INLINE UINT16 latch_r(const address_space *space, int which)
+INLINE uint16_t latch_r(const address_space *space, int which)
 {
 	generic_audio_private *state = space->machine->generic_audio_data;
 	state->latch_read[which] = 1;

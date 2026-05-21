@@ -39,18 +39,18 @@ typedef struct _global_entry global_entry;
 struct _global_entry
 {
 	void *		base;
-	UINT32		size;
+	uint32_t		size;
 };
 
 
 typedef struct _cheat_map cheat_map;
 struct _cheat_map
 {
-	UINT64		offset;
-	UINT64		first_value;
-	UINT64		previous_value;
-	UINT8		state:1;
-	UINT8		undo:7;
+	uint64_t		offset;
+	uint64_t		first_value;
+	uint64_t		previous_value;
+	uint8_t		state:1;
+	uint8_t		undo:7;
 };
 
 
@@ -58,22 +58,22 @@ typedef struct _cheat_system cheat_system;
 struct _cheat_system
 {
 	char		cpu;
-	UINT64		length;
-	UINT8		width;
+	uint64_t		length;
+	uint8_t		width;
 	cheat_map *	cheatmap;
-	UINT8		undo;
-	UINT8		signed_cheat;
-	UINT8		swapped_cheat;
+	uint8_t		undo;
+	uint8_t		signed_cheat;
+	uint8_t		swapped_cheat;
 };
 
 
 typedef struct _cheat_region_map cheat_region_map;
 struct _cheat_region_map
 {
-	UINT64		offset;
-	UINT64		endoffset;
+	uint64_t		offset;
+	uint64_t		endoffset;
 	const char *share;
-	UINT8		disabled;
+	uint8_t		disabled;
 };
 
 
@@ -93,12 +93,12 @@ static cheat_system cheat;
 
 static void debug_command_exit(running_machine &machine);
 
-static UINT64 execute_min(void *globalref, void *ref, UINT32 params, const UINT64 *param);
-static UINT64 execute_max(void *globalref, void *ref, UINT32 params, const UINT64 *param);
-static UINT64 execute_if(void *globalref, void *ref, UINT32 params, const UINT64 *param);
+static uint64_t execute_min(void *globalref, void *ref, uint32_t params, const uint64_t *param);
+static uint64_t execute_max(void *globalref, void *ref, uint32_t params, const uint64_t *param);
+static uint64_t execute_if(void *globalref, void *ref, uint32_t params, const uint64_t *param);
 
-static UINT64 global_get(void *globalref, void *ref);
-static void global_set(void *globalref, void *ref, UINT64 value);
+static uint64_t global_get(void *globalref, void *ref);
+static void global_set(void *globalref, void *ref, uint64_t value);
 
 static void execute_help(running_machine *machine, int ref, int params, const char **param);
 static void execute_print(running_machine *machine, int ref, int params, const char **param);
@@ -172,15 +172,15 @@ INLINE int cheat_address_is_valid(const address_space *space, offs_t address)
     the current cheat width, if signed
 -------------------------------------------------*/
 
-INLINE UINT64 cheat_sign_extend(const cheat_system *cheatsys, UINT64 value)
+INLINE uint64_t cheat_sign_extend(const cheat_system *cheatsys, uint64_t value)
 {
 	if (cheatsys->signed_cheat)
 	{
 		switch (cheatsys->width)
 		{
-			case 1:	value = (INT8)value;	break;
-			case 2:	value = (INT16)value;	break;
-			case 4:	value = (INT32)value;	break;
+			case 1:	value = (int8_t)value;	break;
+			case 2:	value = (int16_t)value;	break;
+			case 4:	value = (int32_t)value;	break;
 		}
 	}
 	return value;
@@ -189,7 +189,7 @@ INLINE UINT64 cheat_sign_extend(const cheat_system *cheatsys, UINT64 value)
     cheat_byte_swap - swap a value
 -------------------------------------------------*/
 
-INLINE UINT64 cheat_byte_swap(const cheat_system *cheatsys, UINT64 value)
+INLINE uint64_t cheat_byte_swap(const cheat_system *cheatsys, uint64_t value)
 {
 	if (cheatsys->swapped_cheat)
 	{
@@ -210,7 +210,7 @@ INLINE UINT64 cheat_byte_swap(const cheat_system *cheatsys, UINT64 value)
     and swapping if necessary
 -------------------------------------------------*/
 
-INLINE UINT64 cheat_read_extended(const cheat_system *cheatsys, const address_space *space, offs_t address)
+INLINE uint64_t cheat_read_extended(const cheat_system *cheatsys, const address_space *space, offs_t address)
 {
 	return cheat_sign_extend(cheatsys, cheat_byte_swap(cheatsys, debug_read_memory(space, address, cheatsys->width, TRUE)));
 }
@@ -240,7 +240,7 @@ void debug_command_init(running_machine *machine)
 	/* add all single-entry save state globals */
 	for (itemnum = 0; itemnum < MAX_GLOBALS; itemnum++)
 	{
-		UINT32 valsize, valcount;
+		uint32_t valsize, valcount;
 		void *base;
 
 		/* stop when we run out of items */
@@ -401,7 +401,7 @@ static void debug_command_exit(running_machine &machine)
     execute_min - return the minimum of two values
 -------------------------------------------------*/
 
-static UINT64 execute_min(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t execute_min(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
 	return (param[0] < param[1]) ? param[0] : param[1];
 }
@@ -411,7 +411,7 @@ static UINT64 execute_min(void *globalref, void *ref, UINT32 params, const UINT6
     execute_max - return the maximum of two values
 -------------------------------------------------*/
 
-static UINT64 execute_max(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t execute_max(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
 	return (param[0] > param[1]) ? param[0] : param[1];
 }
@@ -421,7 +421,7 @@ static UINT64 execute_max(void *globalref, void *ref, UINT32 params, const UINT6
     execute_if - if (a) return b; else return c;
 -------------------------------------------------*/
 
-static UINT64 execute_if(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t execute_if(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
 	return param[0] ? param[1] : param[2];
 }
@@ -436,15 +436,15 @@ static UINT64 execute_if(void *globalref, void *ref, UINT32 params, const UINT64
     global_get - symbol table getter for globals
 -------------------------------------------------*/
 
-static UINT64 global_get(void *globalref, void *ref)
+static uint64_t global_get(void *globalref, void *ref)
 {
 	global_entry *global = (global_entry *)ref;
 	switch (global->size)
 	{
-		case 1:		return *(UINT8 *)global->base;
-		case 2:		return *(UINT16 *)global->base;
-		case 4:		return *(UINT32 *)global->base;
-		case 8:		return *(UINT64 *)global->base;
+		case 1:		return *(uint8_t *)global->base;
+		case 2:		return *(uint16_t *)global->base;
+		case 4:		return *(uint32_t *)global->base;
+		case 8:		return *(uint64_t *)global->base;
 	}
 	return ~0;
 }
@@ -454,15 +454,15 @@ static UINT64 global_get(void *globalref, void *ref)
     global_set - symbol table setter for globals
 -------------------------------------------------*/
 
-static void global_set(void *globalref, void *ref, UINT64 value)
+static void global_set(void *globalref, void *ref, uint64_t value)
 {
 	global_entry *global = (global_entry *)ref;
 	switch (global->size)
 	{
-		case 1:		*(UINT8 *)global->base = value;	break;
-		case 2:		*(UINT16 *)global->base = value;	break;
-		case 4:		*(UINT32 *)global->base = value;	break;
-		case 8:		*(UINT64 *)global->base = value;	break;
+		case 1:		*(uint8_t *)global->base = value;	break;
+		case 2:		*(uint16_t *)global->base = value;	break;
+		case 4:		*(uint32_t *)global->base = value;	break;
+		case 8:		*(uint64_t *)global->base = value;	break;
 	}
 }
 
@@ -477,7 +477,7 @@ static void global_set(void *globalref, void *ref, UINT64 value)
     number parameter
 -------------------------------------------------*/
 
-int debug_command_parameter_number(running_machine *machine, const char *param, UINT64 *result)
+int debug_command_parameter_number(running_machine *machine, const char *param, uint64_t *result)
 {
 	EXPRERR err;
 
@@ -505,7 +505,7 @@ int debug_command_parameter_number(running_machine *machine, const char *param, 
 
 int debug_command_parameter_cpu(running_machine *machine, const char *param, device_t **result)
 {
-	UINT64 cpunum;
+	uint64_t cpunum;
 	EXPRERR err;
 
 	/* if no parameter, use the visible CPU */
@@ -543,7 +543,7 @@ int debug_command_parameter_cpu(running_machine *machine, const char *param, dev
 		}
 
 	/* if out of range, complain */
-	debug_console_printf(machine, "Invalid CPU index %d\n", (UINT32)cpunum);
+	debug_console_printf(machine, "Invalid CPU index %d\n", (uint32_t)cpunum);
 	return FALSE;
 }
 
@@ -652,7 +652,7 @@ static void execute_help(running_machine *machine, int ref, int params, const ch
 
 static void execute_print(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 values[MAX_COMMAND_PARAMS];
+	uint64_t values[MAX_COMMAND_PARAMS];
 	int i;
 
 	/* validate the other parameters */
@@ -671,7 +671,7 @@ static void execute_print(running_machine *machine, int ref, int params, const c
     mini_printf - safe printf to a buffer
 -------------------------------------------------*/
 
-static int mini_printf(running_machine *machine, char *buffer, const char *format, int params, UINT64 *param)
+static int mini_printf(running_machine *machine, char *buffer, const char *format, int params, uint64_t *param)
 {
 	const char *f = format;
 	char *p = buffer;
@@ -727,11 +727,11 @@ static int mini_printf(running_machine *machine, char *buffer, const char *forma
 						debug_console_printf(machine, "Not enough parameters for format!\n");
 						return 0;
 					}
-					if ((UINT32)(*param >> 32) != 0)
-						p += sprintf(p, zerofill ? "%0*X" : "%*X", (width <= 8) ? 1 : width - 8, (UINT32)(*param >> 32));
+					if ((uint32_t)(*param >> 32) != 0)
+						p += sprintf(p, zerofill ? "%0*X" : "%*X", (width <= 8) ? 1 : width - 8, (uint32_t)(*param >> 32));
 					else if (width > 8)
 						p += sprintf(p, zerofill ? "%0*X" : "%*X", width - 8, 0);
-					p += sprintf(p, zerofill ? "%0*X" : "%*X", (width < 8) ? width : 8, (UINT32)*param);
+					p += sprintf(p, zerofill ? "%0*X" : "%*X", (width < 8) ? width : 8, (uint32_t)*param);
 					param++;
 					params--;
 					break;
@@ -743,7 +743,7 @@ static int mini_printf(running_machine *machine, char *buffer, const char *forma
 						debug_console_printf(machine, "Not enough parameters for format!\n");
 						return 0;
 					}
-					p += sprintf(p, zerofill ? "%0*d" : "%*d", width, (UINT32)*param);
+					p += sprintf(p, zerofill ? "%0*d" : "%*d", width, (uint32_t)*param);
 					param++;
 					params--;
 					break;
@@ -767,7 +767,7 @@ static int mini_printf(running_machine *machine, char *buffer, const char *forma
 
 static void execute_printf(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 values[MAX_COMMAND_PARAMS];
+	uint64_t values[MAX_COMMAND_PARAMS];
 	char buffer[1024];
 	int i;
 
@@ -788,7 +788,7 @@ static void execute_printf(running_machine *machine, int ref, int params, const 
 
 static void execute_logerror(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 values[MAX_COMMAND_PARAMS];
+	uint64_t values[MAX_COMMAND_PARAMS];
 	char buffer[1024];
 	int i;
 
@@ -809,7 +809,7 @@ static void execute_logerror(running_machine *machine, int ref, int params, cons
 
 static void execute_tracelog(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 values[MAX_COMMAND_PARAMS];
+	uint64_t values[MAX_COMMAND_PARAMS];
 	char buffer[1024];
 	int i;
 
@@ -841,7 +841,7 @@ static void execute_quit(running_machine *machine, int ref, int params, const ch
 
 static void execute_do(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 dummy;
+	uint64_t dummy;
 	debug_command_parameter_number(machine, param[0], &dummy);
 }
 
@@ -852,7 +852,7 @@ static void execute_do(running_machine *machine, int ref, int params, const char
 
 static void execute_step(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 steps = 1;
+	uint64_t steps = 1;
 
 	/* if we have a parameter, use it instead */
 	if (!debug_command_parameter_number(machine, param[0], &steps))
@@ -868,7 +868,7 @@ static void execute_step(running_machine *machine, int ref, int params, const ch
 
 static void execute_over(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 steps = 1;
+	uint64_t steps = 1;
 
 	/* if we have a parameter, use it instead */
 	if (!debug_command_parameter_number(machine, param[0], &steps))
@@ -894,7 +894,7 @@ static void execute_out(running_machine *machine, int ref, int params, const cha
 
 static void execute_go(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 addr = ~0;
+	uint64_t addr = ~0;
 
 	/* if we have a parameter, use it instead */
 	if (!debug_command_parameter_number(machine, param[0], &addr))
@@ -921,7 +921,7 @@ static void execute_go_vblank(running_machine *machine, int ref, int params, con
 
 static void execute_go_interrupt(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 irqline = -1;
+	uint64_t irqline = -1;
 
 	/* if we have a parameter, use it instead */
 	if (!debug_command_parameter_number(machine, param[0], &irqline))
@@ -937,7 +937,7 @@ static void execute_go_interrupt(running_machine *machine, int ref, int params, 
 
 static void execute_go_time(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 milliseconds = -1;
+	uint64_t milliseconds = -1;
 
 	/* if we have a parameter, use it instead */
 	if (!debug_command_parameter_number(machine, param[0], &milliseconds))
@@ -1099,7 +1099,7 @@ static void execute_observe(running_machine *machine, int ref, int params, const
 static void execute_comment(running_machine *machine, int ref, int params, const char *param[])
 {
 	device_t *cpu;
-	UINT64 address;
+	uint64_t address;
 
 	/* param 1 is the address for the comment */
 	if (!debug_command_parameter_number(machine, param[0], &address))
@@ -1129,7 +1129,7 @@ static void execute_comment(running_machine *machine, int ref, int params, const
 static void execute_comment_del(running_machine *machine, int ref, int params, const char *param[])
 {
 	device_t *cpu;
-	UINT64 address;
+	uint64_t address;
 
 	/* param 1 can either be a command or the address for the comment */
 	if (!debug_command_parameter_number(machine, param[0], &address))
@@ -1167,7 +1167,7 @@ static void execute_bpset(running_machine *machine, int ref, int params, const c
 	parsed_expression *condition = NULL;
 	device_t *cpu;
 	const char *action = NULL;
-	UINT64 address;
+	uint64_t address;
 	int bpnum;
 
 	/* param 1 is the address */
@@ -1199,7 +1199,7 @@ static void execute_bpset(running_machine *machine, int ref, int params, const c
 
 static void execute_bpclear(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 bpindex;
+	uint64_t bpindex;
 
 	/* if 0 parameters, clear all */
 	if (params == 0)
@@ -1219,9 +1219,9 @@ static void execute_bpclear(running_machine *machine, int ref, int params, const
 			if (device->debug()->breakpoint_clear(bpindex))
 				found = true;
 		if (found)
-			debug_console_printf(machine, "Breakpoint %X cleared\n", (UINT32)bpindex);
+			debug_console_printf(machine, "Breakpoint %X cleared\n", (uint32_t)bpindex);
 		else
-			debug_console_printf(machine, "Invalid breakpoint number %X\n", (UINT32)bpindex);
+			debug_console_printf(machine, "Invalid breakpoint number %X\n", (uint32_t)bpindex);
 	}
 }
 
@@ -1233,7 +1233,7 @@ static void execute_bpclear(running_machine *machine, int ref, int params, const
 
 static void execute_bpdisenable(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 bpindex;
+	uint64_t bpindex;
 
 	/* if 0 parameters, clear all */
 	if (params == 0)
@@ -1256,9 +1256,9 @@ static void execute_bpdisenable(running_machine *machine, int ref, int params, c
 			if (device->debug()->breakpoint_enable(bpindex, ref))
 				found = true;
 		if (found)
-			debug_console_printf(machine, "Breakpoint %X %s\n", (UINT32)bpindex, ref ? "enabled" : "disabled");
+			debug_console_printf(machine, "Breakpoint %X %s\n", (uint32_t)bpindex, ref ? "enabled" : "disabled");
 		else
-			debug_console_printf(machine, "Invalid breakpoint number %X\n", (UINT32)bpindex);
+			debug_console_printf(machine, "Invalid breakpoint number %X\n", (uint32_t)bpindex);
 	}
 }
 
@@ -1307,7 +1307,7 @@ static void execute_wpset(running_machine *machine, int ref, int params, const c
 	parsed_expression *condition = NULL;
 	const address_space *space;
 	const char *action = NULL;
-	UINT64 address, length;
+	uint64_t address, length;
 	int type = 0;
 	int wpnum;
 
@@ -1357,7 +1357,7 @@ static void execute_wpset(running_machine *machine, int ref, int params, const c
 
 static void execute_wpclear(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 wpindex;
+	uint64_t wpindex;
 
 	/* if 0 parameters, clear all */
 	if (params == 0)
@@ -1377,9 +1377,9 @@ static void execute_wpclear(running_machine *machine, int ref, int params, const
 			if (device->debug()->watchpoint_clear(wpindex))
 				found = true;
 		if (found)
-			debug_console_printf(machine, "Watchpoint %X cleared\n", (UINT32)wpindex);
+			debug_console_printf(machine, "Watchpoint %X cleared\n", (uint32_t)wpindex);
 		else
-			debug_console_printf(machine, "Invalid watchpoint number %X\n", (UINT32)wpindex);
+			debug_console_printf(machine, "Invalid watchpoint number %X\n", (uint32_t)wpindex);
 	}
 }
 
@@ -1391,7 +1391,7 @@ static void execute_wpclear(running_machine *machine, int ref, int params, const
 
 static void execute_wpdisenable(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 wpindex;
+	uint64_t wpindex;
 
 	/* if 0 parameters, clear all */
 	if (params == 0)
@@ -1414,9 +1414,9 @@ static void execute_wpdisenable(running_machine *machine, int ref, int params, c
 			if (device->debug()->watchpoint_enable(wpindex, ref))
 				found = true;
 		if (found)
-			debug_console_printf(machine, "Watchpoint %X %s\n", (UINT32)wpindex, ref ? "enabled" : "disabled");
+			debug_console_printf(machine, "Watchpoint %X %s\n", (uint32_t)wpindex, ref ? "enabled" : "disabled");
 		else
-			debug_console_printf(machine, "Invalid watchpoint number %X\n", (UINT32)wpindex);
+			debug_console_printf(machine, "Invalid watchpoint number %X\n", (uint32_t)wpindex);
 	}
 }
 
@@ -1491,10 +1491,10 @@ static void execute_hotspot(running_machine *machine, int ref, int params, const
 	device_t *device = NULL;
 	if (!debug_command_parameter_cpu(machine, (params > 0) ? param[0] : NULL, &device))
 		return;
-	UINT64 count = 64;
+	uint64_t count = 64;
 	if (!debug_command_parameter_number(machine, param[1], &count))
 		return;
-	UINT64 threshhold = 250;
+	uint64_t threshhold = 250;
 	if (!debug_command_parameter_number(machine, param[2], &threshhold))
 		return;
 
@@ -1510,10 +1510,10 @@ static void execute_hotspot(running_machine *machine, int ref, int params, const
 
 static void execute_save(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 offset, endoffset, length;
+	uint64_t offset, endoffset, length;
 	const address_space *space;
 	FILE *f;
-	UINT64 i;
+	uint64_t i;
 
 	/* validate parameters */
 	if (!debug_command_parameter_number(machine, param[1], &offset))
@@ -1538,7 +1538,7 @@ static void execute_save(running_machine *machine, int ref, int params, const ch
 	/* now write the data out */
 	for (i = offset; i <= endoffset; i++)
 	{
-		UINT8 byte = debug_read_byte(space, i, TRUE);
+		uint8_t byte = debug_read_byte(space, i, TRUE);
 		fwrite(&byte, 1, 1, f);
 	}
 
@@ -1554,10 +1554,10 @@ static void execute_save(running_machine *machine, int ref, int params, const ch
 
 static void execute_dump(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 offset, endoffset, length, width = 0, ascii = 1;
+	uint64_t offset, endoffset, length, width = 0, ascii = 1;
 	const address_space *space;
 	FILE *f = NULL;
-	UINT64 i, j;
+	uint64_t i, j;
 
 	/* validate parameters */
 	if (!debug_command_parameter_number(machine, param[1], &offset))
@@ -1599,7 +1599,7 @@ static void execute_dump(running_machine *machine, int ref, int params, const ch
 		int outdex = 0;
 
 		/* print the address */
-		outdex += sprintf(&output[outdex], "%s: ", core_i64_hex_format((UINT32)memory_byte_to_address(space, i), space->logaddrchars));
+		outdex += sprintf(&output[outdex], "%s: ", core_i64_hex_format((uint32_t)memory_byte_to_address(space, i), space->logaddrchars));
 
 		/* print the bytes */
 		for (j = 0; j < 16; j += width)
@@ -1609,7 +1609,7 @@ static void execute_dump(running_machine *machine, int ref, int params, const ch
 				offs_t curaddr = i + j;
 				if (debug_cpu_translate(space, TRANSLATE_READ_DEBUG, &curaddr))
 				{
-					UINT64 value = debug_read_memory(space, i + j, width, TRUE);
+					uint64_t value = debug_read_memory(space, i + j, width, TRUE);
 					outdex += sprintf(&output[outdex], " %s", core_i64_hex_format(value, width * 2));
 				}
 				else
@@ -1628,7 +1628,7 @@ static void execute_dump(running_machine *machine, int ref, int params, const ch
 				offs_t curaddr = i + j;
 				if (debug_cpu_translate(space, TRANSLATE_READ_DEBUG, &curaddr))
 				{
-					UINT8 byte = debug_read_byte(space, i + j, TRUE);
+					uint8_t byte = debug_read_byte(space, i + j, TRUE);
 					outdex += sprintf(&output[outdex], "%c", (byte >= 32 && byte < 128) ? byte : '.');
 				}
 				else
@@ -1652,11 +1652,11 @@ static void execute_dump(running_machine *machine, int ref, int params, const ch
 
 static void execute_cheatinit(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 offset, length = 0, real_length = 0;
+	uint64_t offset, length = 0, real_length = 0;
 	const address_space *space;
-	UINT32 active_cheat = 0;
-	UINT64 curaddr;
-	UINT8 i, region_count = 0;
+	uint32_t active_cheat = 0;
+	uint64_t curaddr;
+	uint8_t i, region_count = 0;
 
 	address_map_entry *entry;
 	cheat_region_map cheat_region[100];
@@ -1816,10 +1816,10 @@ static void execute_cheatinit(running_machine *machine, int ref, int params, con
 static void execute_cheatnext(running_machine *machine, int ref, int params, const char *param[])
 {
 	const address_space *space;
-	UINT64 cheatindex;
-	UINT32 active_cheat = 0;
-	UINT8 condition;
-	UINT64 comp_value = 0;
+	uint64_t cheatindex;
+	uint32_t active_cheat = 0;
+	uint8_t condition;
+	uint64_t comp_value = 0;
 
 	enum
 	{
@@ -1882,9 +1882,9 @@ static void execute_cheatnext(running_machine *machine, int ref, int params, con
 	for (cheatindex = 0; cheatindex < cheat.length; cheatindex += 1)
 		if (cheat.cheatmap[cheatindex].state == 1)
 		{
-			UINT64 cheat_value = cheat_read_extended(&cheat, space, cheat.cheatmap[cheatindex].offset);
-			UINT64 comp_byte = (ref == 0) ? cheat.cheatmap[cheatindex].previous_value : cheat.cheatmap[cheatindex].first_value;
-			UINT8 disable_byte = FALSE;
+			uint64_t cheat_value = cheat_read_extended(&cheat, space, cheat.cheatmap[cheatindex].offset);
+			uint64_t comp_byte = (ref == 0) ? cheat.cheatmap[cheatindex].previous_value : cheat.cheatmap[cheatindex].first_value;
+			uint8_t disable_byte = FALSE;
 
 			switch (condition)
 			{
@@ -1909,30 +1909,30 @@ static void execute_cheatnext(running_machine *machine, int ref, int params, con
 
 				case CHEAT_DECREASE:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value >= (INT64)comp_byte);
+						disable_byte = ((int64_t)cheat_value >= (int64_t)comp_byte);
 					else
-						disable_byte = ((UINT64)cheat_value >= (UINT64)comp_byte);
+						disable_byte = ((uint64_t)cheat_value >= (uint64_t)comp_byte);
 					break;
 
 				case CHEAT_INCREASE:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value <= (INT64)comp_byte);
+						disable_byte = ((int64_t)cheat_value <= (int64_t)comp_byte);
 					else
-						disable_byte = ((UINT64)cheat_value <= (UINT64)comp_byte);
+						disable_byte = ((uint64_t)cheat_value <= (uint64_t)comp_byte);
 					break;
 
 				case CHEAT_DECREASE_OR_EQUAL:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value > (INT64)comp_byte);
+						disable_byte = ((int64_t)cheat_value > (int64_t)comp_byte);
 					else
-						disable_byte = ((UINT64)cheat_value > (UINT64)comp_byte);
+						disable_byte = ((uint64_t)cheat_value > (uint64_t)comp_byte);
 					break;
 
 				case CHEAT_INCREASE_OR_EQUAL:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value < (INT64)comp_byte);
+						disable_byte = ((int64_t)cheat_value < (int64_t)comp_byte);
 					else
-						disable_byte = ((UINT64)cheat_value < (UINT64)comp_byte);
+						disable_byte = ((uint64_t)cheat_value < (uint64_t)comp_byte);
 					break;
 
 				case CHEAT_DECREASEOF:
@@ -1945,16 +1945,16 @@ static void execute_cheatnext(running_machine *machine, int ref, int params, con
 
 				case CHEAT_SMALLEROF:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value >= (INT64)comp_value);
+						disable_byte = ((int64_t)cheat_value >= (int64_t)comp_value);
 					else
-						disable_byte = ((UINT64)cheat_value >= (UINT64)comp_value);
+						disable_byte = ((uint64_t)cheat_value >= (uint64_t)comp_value);
 					break;
 
 				case CHEAT_GREATEROF:
 					if (cheat.signed_cheat)
-						disable_byte = ((INT64)cheat_value <= (INT64)comp_value);
+						disable_byte = ((int64_t)cheat_value <= (int64_t)comp_value);
 					else
-						disable_byte = ((UINT64)cheat_value <= (UINT64)comp_value);
+						disable_byte = ((uint64_t)cheat_value <= (uint64_t)comp_value);
 					break;
 			}
 
@@ -1986,9 +1986,9 @@ static void execute_cheatlist(running_machine *machine, int ref, int params, con
 	char spaceletter, sizeletter;
 	const address_space *space;
 	device_t *cpu;
-	UINT32 active_cheat = 0;
-	UINT64 cheatindex;
-	UINT64 sizemask;
+	uint32_t active_cheat = 0;
+	uint64_t cheatindex;
+	uint64_t sizemask;
 	FILE *f = NULL;
 
 	if (!debug_command_parameter_cpu_space(machine, &cheat.cpu, ADDRESS_SPACE_PROGRAM, &space))
@@ -2022,7 +2022,7 @@ static void execute_cheatlist(running_machine *machine, int ref, int params, con
 	{
 		if (cheat.cheatmap[cheatindex].state == 1)
 		{
-			UINT64 value = cheat_byte_swap(&cheat, cheat_read_extended(&cheat, space, cheat.cheatmap[cheatindex].offset)) & sizemask;
+			uint64_t value = cheat_byte_swap(&cheat, cheat_read_extended(&cheat, space, cheat.cheatmap[cheatindex].offset)) & sizemask;
 			offs_t address = memory_byte_to_address(space, cheat.cheatmap[cheatindex].offset);
 
 			if (params > 0)
@@ -2049,8 +2049,8 @@ static void execute_cheatlist(running_machine *machine, int ref, int params, con
 
 static void execute_cheatundo(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 cheatindex;
-	UINT32 undo_count = 0;
+	uint64_t cheatindex;
+	uint32_t undo_count = 0;
 
 	if (cheat.undo > 0)
 	{
@@ -2078,14 +2078,14 @@ static void execute_cheatundo(running_machine *machine, int ref, int params, con
 
 static void execute_find(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 offset, endoffset, length;
+	uint64_t offset, endoffset, length;
 	const address_space *space;
-	UINT64 data_to_find[256];
-	UINT8 data_size[256];
+	uint64_t data_to_find[256];
+	uint8_t data_size[256];
 	int cur_data_size;
 	int data_count = 0;
 	int found = 0;
-	UINT64 i, j;
+	uint64_t i, j;
 
 	/* validate parameters */
 	if (!debug_command_parameter_number(machine, param[0], &offset))
@@ -2122,10 +2122,10 @@ static void execute_find(running_machine *machine, int ref, int params, const ch
 		{
 			/* check for a 'b','w','d',or 'q' prefix */
 			data_size[data_count] = cur_data_size;
-			if (tolower((UINT8)pdata[0]) == 'b' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 1; pdata += 2; }
-			if (tolower((UINT8)pdata[0]) == 'w' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 2; pdata += 2; }
-			if (tolower((UINT8)pdata[0]) == 'd' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 4; pdata += 2; }
-			if (tolower((UINT8)pdata[0]) == 'q' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 8; pdata += 2; }
+			if (tolower((uint8_t)pdata[0]) == 'b' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 1; pdata += 2; }
+			if (tolower((uint8_t)pdata[0]) == 'w' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 2; pdata += 2; }
+			if (tolower((uint8_t)pdata[0]) == 'd' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 4; pdata += 2; }
+			if (tolower((uint8_t)pdata[0]) == 'q' && pdata[1] == '.') { data_size[data_count] = cur_data_size = 8; pdata += 2; }
 
 			/* look for a wildcard */
 			if (!strcmp(pdata, "?"))
@@ -2148,10 +2148,10 @@ static void execute_find(running_machine *machine, int ref, int params, const ch
 		{
 			switch (data_size[j])
 			{
-				case 1:	match = ((UINT8)debug_read_byte(space, i + suboffset, TRUE) == (UINT8)data_to_find[j]);	break;
-				case 2:	match = ((UINT16)debug_read_word(space, i + suboffset, TRUE) == (UINT16)data_to_find[j]);	break;
-				case 4:	match = ((UINT32)debug_read_dword(space, i + suboffset, TRUE) == (UINT32)data_to_find[j]);	break;
-				case 8:	match = ((UINT64)debug_read_qword(space, i + suboffset, TRUE) == (UINT64)data_to_find[j]);	break;
+				case 1:	match = ((uint8_t)debug_read_byte(space, i + suboffset, TRUE) == (uint8_t)data_to_find[j]);	break;
+				case 2:	match = ((uint16_t)debug_read_word(space, i + suboffset, TRUE) == (uint16_t)data_to_find[j]);	break;
+				case 4:	match = ((uint32_t)debug_read_dword(space, i + suboffset, TRUE) == (uint32_t)data_to_find[j]);	break;
+				case 8:	match = ((uint64_t)debug_read_qword(space, i + suboffset, TRUE) == (uint64_t)data_to_find[j]);	break;
 				default:	/* all other cases are wildcards */		break;
 			}
 			suboffset += data_size[j] & 0x0f;
@@ -2161,7 +2161,7 @@ static void execute_find(running_machine *machine, int ref, int params, const ch
 		if (match)
 		{
 			found++;
-			debug_console_printf(machine, "Found at %s\n", core_i64_hex_format((UINT32)memory_byte_to_address(space, i), space->addrchars));
+			debug_console_printf(machine, "Found at %s\n", core_i64_hex_format((uint32_t)memory_byte_to_address(space, i), space->addrchars));
 		}
 	}
 
@@ -2177,7 +2177,7 @@ static void execute_find(running_machine *machine, int ref, int params, const ch
 
 static void execute_dasm(running_machine *machine, int ref, int params, const char *param[])
 {
-	UINT64 offset, length, bytes = 1;
+	uint64_t offset, length, bytes = 1;
 	int minbytes, maxbytes, byteswidth;
 	const address_space *space;
 	FILE *f = NULL;
@@ -2223,13 +2223,13 @@ static void execute_dasm(running_machine *machine, int ref, int params, const ch
 		int numbytes = 0;
 
 		/* print the address */
-		outdex += sprintf(&output[outdex], "%s: ", core_i64_hex_format((UINT32)memory_byte_to_address(space, pcbyte), space->logaddrchars));
+		outdex += sprintf(&output[outdex], "%s: ", core_i64_hex_format((uint32_t)memory_byte_to_address(space, pcbyte), space->logaddrchars));
 
 		/* make sure we can translate the address */
 		tempaddr = pcbyte;
 		if (debug_cpu_translate(space, TRANSLATE_FETCH_DEBUG, &tempaddr))
 		{
-			UINT8 opbuf[64], argbuf[64];
+			uint8_t opbuf[64], argbuf[64];
 
 			/* fetch the bytes up to the maximum */
 			for (numbytes = 0; numbytes < maxbytes; numbytes++)
@@ -2377,7 +2377,7 @@ static void execute_history(running_machine *machine, int ref, int params, const
 	if (!debug_command_parameter_cpu_space(machine, (params > 0) ? param[0] : NULL, ADDRESS_SPACE_PROGRAM, &space))
 		return;
 
-	UINT64 count = device_debug::HISTORY_SIZE;
+	uint64_t count = device_debug::HISTORY_SIZE;
 	if (!debug_command_parameter_number(machine, param[1], &count))
 		return;
 
@@ -2395,7 +2395,7 @@ static void execute_history(running_machine *machine, int ref, int params, const
 
 		/* fetch the bytes up to the maximum */
 		offs_t pcbyte = memory_address_to_byte(space, pc) & space->bytemask;
-		UINT8 opbuf[64], argbuf[64];
+		uint8_t opbuf[64], argbuf[64];
 		for (int numbytes = 0; numbytes < maxbytes; numbytes++)
 		{
 			opbuf[numbytes] = debug_read_opcode(space, pcbyte + numbytes, 1, false);
@@ -2438,7 +2438,7 @@ static void execute_map(running_machine *machine, int ref, int params, const cha
 {
 	const address_space *space;
 	offs_t taddress;
-	UINT64 address;
+	uint64_t address;
 	int intention;
 
 	/* validate parameters */
@@ -2547,7 +2547,7 @@ static void execute_symlist(running_machine *machine, int ref, int params, const
 	for (symnum = 0; symnum < count; symnum++)
 	{
 		const symbol_entry *entry = symtable_find(symtable, namelist[symnum]);
-		UINT64 value = (*entry->info.reg.getter)(symtable_get_globalref(entry->table), entry->ref);
+		uint64_t value = (*entry->info.reg.getter)(symtable_get_globalref(entry->table), entry->ref);
 		assert(entry != NULL);
 
 		/* only display "register" type symbols */

@@ -82,9 +82,9 @@ struct _movie_info
 	int			channels;
 	int			interlaced;
 	bitmap_t *	bitmap;
-	INT16 *		lsound;
-	INT16 *		rsound;
-	UINT32		samples;
+	int16_t *		lsound;
+	int16_t *		rsound;
+	uint32_t		samples;
 };
 
 
@@ -105,9 +105,9 @@ struct _movie_info
     first sample of that field
 -------------------------------------------------*/
 
-INLINE UINT32 field_to_sample_number(const movie_info *info, UINT32 field)
+INLINE uint32_t field_to_sample_number(const movie_info *info, uint32_t field)
 {
-	return ((UINT64)info->samplerate * (UINT64)field * (UINT64)1000000 + info->iframerate - 1) / (UINT64)info->iframerate;
+	return ((uint64_t)info->samplerate * (uint64_t)field * (uint64_t)1000000 + info->iframerate - 1) / (uint64_t)info->iframerate;
 }
 
 
@@ -117,13 +117,13 @@ INLINE UINT32 field_to_sample_number(const movie_info *info, UINT32 field)
     the offset within the field
 -------------------------------------------------*/
 
-INLINE UINT32 sample_number_to_field(const movie_info *info, UINT32 samplenum, UINT32 *offset)
+INLINE uint32_t sample_number_to_field(const movie_info *info, uint32_t samplenum, uint32_t *offset)
 {
-	UINT32 guess = ((UINT64)samplenum * (UINT64)info->iframerate + ((UINT64)info->samplerate * (UINT64)1000000 - 1)) / ((UINT64)info->samplerate * (UINT64)1000000);
+	uint32_t guess = ((uint64_t)samplenum * (uint64_t)info->iframerate + ((uint64_t)info->samplerate * (uint64_t)1000000 - 1)) / ((uint64_t)info->samplerate * (uint64_t)1000000);
 	while (1)
 	{
-		UINT32 fieldstart = field_to_sample_number(info, guess);
-		UINT32 fieldend = field_to_sample_number(info, guess + 1);
+		uint32_t fieldstart = field_to_sample_number(info, guess);
+		uint32_t fieldend = field_to_sample_number(info, guess + 1);
 		if (samplenum >= fieldstart && samplenum < fieldend)
 		{
 			*offset = samplenum - fieldstart;
@@ -158,11 +158,11 @@ static int chd_allocate_buffers(movie_info *info)
 	}
 
 	/* allocate sound buffers */
-	info->lsound = (INT16 *)malloc(info->samplerate * sizeof(*info->lsound));
-	info->rsound = (INT16 *)malloc(info->samplerate * sizeof(*info->rsound));
+	info->lsound = (int16_t *)malloc(info->samplerate * sizeof(*info->lsound));
+	info->rsound = (int16_t *)malloc(info->samplerate * sizeof(*info->rsound));
 	if (info->lsound == NULL || info->rsound == NULL)
 	{
-		fprintf(stderr, "Out of memory allocating sound buffers of %d bytes\n", (INT32)(info->samplerate * sizeof(*info->rsound)));
+		fprintf(stderr, "Out of memory allocating sound buffers of %d bytes\n", (int32_t)(info->samplerate * sizeof(*info->rsound)));
 		return FALSE;
 	}
 	return TRUE;
@@ -291,7 +291,7 @@ static chd_file *create_chd(const char *filename, chd_file *source, const movie_
     read_chd - read a field from a CHD file
 -------------------------------------------------*/
 
-static int read_chd(chd_file *file, UINT32 field, movie_info *info, UINT32 soundoffs)
+static int read_chd(chd_file *file, uint32_t field, movie_info *info, uint32_t soundoffs)
 {
 	av_codec_decompress_config avconfig = { 0 };
 	chd_error chderr;
@@ -319,7 +319,7 @@ static int read_chd(chd_file *file, UINT32 field, movie_info *info, UINT32 sound
     write_chd - write a field to a CHD file
 -------------------------------------------------*/
 
-static int write_chd(chd_file *file, UINT32 field, movie_info *info)
+static int write_chd(chd_file *file, uint32_t field, movie_info *info)
 {
 	av_codec_compress_config avconfig = { 0 };
 	chd_error chderr;
@@ -382,18 +382,18 @@ static void close_chd(chd_file *file, movie_info *info)
     an audio edge
 -------------------------------------------------*/
 
-static int find_edge_near_field(chd_file *srcfile, UINT32 fieldnum, movie_info *info, int report_best_field, INT32 *delta)
+static int find_edge_near_field(chd_file *srcfile, uint32_t fieldnum, movie_info *info, int report_best_field, int32_t *delta)
 {
 	int fields_to_read = info->iframerate / 1000000;
-	UINT32 firstlavg = 0, firstravg = 0;
-	UINT32 firstldev = 0, firstrdev = 0;
-	UINT32 lcount = 0, rcount = 0;
-	UINT32 targetsoundstart = 0;
-	UINT32 firstfieldend = 0;
-	INT32 firstfield, curfield;
-	UINT32 fieldstart[100];
-	UINT32 soundend = 0;
-	UINT32 sampnum;
+	uint32_t firstlavg = 0, firstravg = 0;
+	uint32_t firstldev = 0, firstrdev = 0;
+	uint32_t lcount = 0, rcount = 0;
+	uint32_t targetsoundstart = 0;
+	uint32_t firstfieldend = 0;
+	int32_t firstfield, curfield;
+	uint32_t fieldstart[100];
+	uint32_t soundend = 0;
+	uint32_t sampnum;
 
 	/* clear the sound buffers */
 	memset(info->lsound, 0, info->samplerate * sizeof(*info->lsound));
@@ -433,8 +433,8 @@ static int find_edge_near_field(chd_file *srcfile, UINT32 fieldnum, movie_info *
        next few samples, and take the nth highest value (to remove outliers) */
 	for (sampnum = 0; sampnum < soundend - MAXIMUM_WINDOW_SIZE; sampnum++)
 	{
-		UINT32 lmax = 0, rmax = 0;
-		UINT32 scannum;
+		uint32_t lmax = 0, rmax = 0;
+		uint32_t scannum;
 
 		/* scan forward over the maximum window */
 		for (scannum = 0; scannum < MAXIMUM_WINDOW_SIZE; scannum++)
@@ -586,8 +586,8 @@ int main(int argc, char *argv[])
 	/* if we don't have a destination file, scan for edges */
 	if (dstfilename == NULL)
 	{
-		UINT32 fieldnum;
-		INT32 delta;
+		uint32_t fieldnum;
+		int32_t delta;
 
 		for (fieldnum = 60; fieldnum < info.numfields - 60; fieldnum += 30)
 		{
@@ -599,9 +599,9 @@ int main(int argc, char *argv[])
 	/* otherwise, resample the source to the destination */
 	else
 	{
-		INT64 ioffset = (INT64)(offset * 65536.0 * 256.0);
-		INT64 islope = (INT64)(slope * 65536.0 * 256.0);
-		UINT32 fieldnum;
+		int64_t ioffset = (int64_t)(offset * 65536.0 * 256.0);
+		int64_t islope = (int64_t)(slope * 65536.0 * 256.0);
+		uint32_t fieldnum;
 
 		/* open the destination file */
 		dstfile = create_chd(dstfilename, srcfile, &info);
@@ -614,14 +614,14 @@ int main(int argc, char *argv[])
 		/* loop over all the fields in the source file */
 		for (fieldnum = 0; fieldnum < info.numfields; fieldnum++)
 		{
-			UINT32 srcbegin = field_to_sample_number(&info, fieldnum);
-			UINT32 srcend = field_to_sample_number(&info, fieldnum + 1);
-			INT64 dstbegin = ((INT64)srcbegin << 24) + ioffset + islope * fieldnum;
-			INT64 dstend = ((INT64)srcend << 24) + ioffset + islope * (fieldnum + 1);
-			UINT32 dstbeginoffset, dstendoffset, dstoffset;
-			INT32 dstbeginfield, dstendfield, dstfield;
-			INT64 dstpos, dststep;
-			UINT32 srcoffset;
+			uint32_t srcbegin = field_to_sample_number(&info, fieldnum);
+			uint32_t srcend = field_to_sample_number(&info, fieldnum + 1);
+			int64_t dstbegin = ((int64_t)srcbegin << 24) + ioffset + islope * fieldnum;
+			int64_t dstend = ((int64_t)srcend << 24) + ioffset + islope * (fieldnum + 1);
+			uint32_t dstbeginoffset, dstendoffset, dstoffset;
+			int32_t dstbeginfield, dstendfield, dstfield;
+			int64_t dstpos, dststep;
+			uint32_t srcoffset;
 
 			/* update progress (this ain't fast!) */
 			if (fieldnum % 10 == 0)
@@ -645,8 +645,8 @@ int main(int argc, char *argv[])
 /*
 printf("%5d: start=%10d (%5d.%03d) end=%10d (%5d.%03d)\n",
         fieldnum,
-        (INT32)(dstbegin >> 24), dstbeginfield, dstbeginoffset,
-        (INT32)(dstend >> 24), dstendfield, dstendoffset);
+        (int32_t)(dstbegin >> 24), dstbeginfield, dstbeginoffset,
+        (int32_t)(dstend >> 24), dstendfield, dstendoffset);
 */
 			/* read all samples required into the end of the sound buffers */
 			dstoffset = srcend - srcbegin;
@@ -666,7 +666,7 @@ printf("%5d: start=%10d (%5d.%03d) end=%10d (%5d.%03d)\n",
 			/* resample the destination samples to the source */
 			dstoffset = srcend - srcbegin;
 			dstpos = dstbegin;
-			dststep = (dstend - dstbegin) / (INT64)(srcend - srcbegin);
+			dststep = (dstend - dstbegin) / (int64_t)(srcend - srcbegin);
 			for (srcoffset = 0; srcoffset < srcend - srcbegin; srcoffset++)
 			{
 				info.lsound[srcoffset] = info.lsound[dstoffset + dstbeginoffset + (dstpos >> 24) - (dstbegin >> 24)];

@@ -61,16 +61,16 @@
     hash over a buffer and return a string
 -------------------------------------------------*/
 
-static void compute_hash_as_string(astring *buffer, void *data, UINT32 length)
+static void compute_hash_as_string(astring *buffer, void *data, uint32_t length)
 {
 	char expanded[SHA1_DIGEST_SIZE * 2];
-	UINT8 sha1digest[SHA1_DIGEST_SIZE];
+	uint8_t sha1digest[SHA1_DIGEST_SIZE];
 	struct sha1_ctx sha1;
 	int ch;
 
 	// compute the SHA1
 	sha1_init(&sha1);
-	sha1_update(&sha1, length, (const UINT8 *)data);
+	sha1_update(&sha1, length, (const uint8_t *)data);
 	sha1_final(&sha1);
 	sha1_digest(&sha1, sizeof(sha1digest), sha1digest);
 
@@ -90,15 +90,15 @@ static void compute_hash_as_string(astring *buffer, void *data, UINT32 length)
     split_file - split a file into multiple parts
 -------------------------------------------------*/
 
-static int split_file(const char *filename, const char *basename, UINT32 splitsize)
+static int split_file(const char *filename, const char *basename, uint32_t splitsize)
 {
 	astring *outfilename = astring_alloc(), *basefilename = astring_alloc(), *splitfilename = astring_alloc();
 	core_file *outfile = NULL, *infile = NULL, *splitfile = NULL;
 	astring *computedhash = astring_alloc();
 	void *splitbuffer = NULL;
 	int index, partnum;
-	UINT64 totallength;
-	UINT32 totalparts;
+	uint64_t totallength;
+	uint32_t totalparts;
 	file_error filerr;
 	int error = 1;
 
@@ -125,7 +125,7 @@ static int split_file(const char *filename, const char *basename, UINT32 splitsi
 		fprintf(stderr, "Fatal error: file is smaller than the split size\n");
 		goto cleanup;
 	}
-	if ((UINT64)splitsize * MAX_PARTS < totallength)
+	if ((uint64_t)splitsize * MAX_PARTS < totallength)
 	{
 		fprintf(stderr, "Fatal error: too many splits (maximum is %d)\n", MAX_PARTS);
 		goto cleanup;
@@ -168,7 +168,7 @@ static int split_file(const char *filename, const char *basename, UINT32 splitsi
 	// now iterate until done
 	for (partnum = 0; partnum < 1000; partnum++)
 	{
-		UINT32 actual, length;
+		uint32_t actual, length;
 
 		printf("Reading part %d...", partnum);
 
@@ -257,7 +257,7 @@ static int join_file(const char *filename, const char *outname, int write_output
 	core_file *outfile = NULL, *infile = NULL, *splitfile = NULL;
 	void *splitbuffer = NULL;
 	file_error filerr;
-	UINT32 splitsize;
+	uint32_t splitsize;
 	char buffer[256];
 	int error = 1;
 	int index;
@@ -326,7 +326,7 @@ static int join_file(const char *filename, const char *outname, int write_output
 	// now iterate through each file
 	while (core_fgets(buffer, sizeof(buffer), splitfile))
 	{
-		UINT32 length, actual;
+		uint32_t length, actual;
 
 		// make sure the hash and filename are in the right place
 		if (strncmp(buffer, "hash=", 5) != 0 || strncmp(buffer + 5 + SHA1_DIGEST_SIZE * 2, " file=", 6) != 0)

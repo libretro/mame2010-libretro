@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 {
 	astring *srcdir = NULL, *dstdir = NULL, *tempfilename = NULL, *tempheader = NULL, *tempfooter = NULL;
 	int unadorned = 0;
-	UINT32 bufsize;
+	uint32_t bufsize;
 	void *buffer;
 	int result;
 	int argnum;
@@ -500,7 +500,7 @@ static int output_file(file_type type, int srcrootlen, int dstrootlen, const ast
 	const astring *srcfile_subpath;
 	char srcline[4096], *srcptr;
 	int in_comment = FALSE;
-	UINT8 is_token[256];
+	uint8_t is_token[256];
 	int color_quotes;
 	core_file *src;
 	core_file *dst;
@@ -554,7 +554,7 @@ static int output_file(file_type type, int srcrootlen, int dstrootlen, const ast
 	/* make the token lookup table */
 	memset(is_token, 0, sizeof(is_token));
 	for (toknum = 0; token_chars[toknum] != 0; toknum++)
-		is_token[(UINT8)token_chars[toknum]] = TRUE;
+		is_token[(uint8_t)token_chars[toknum]] = TRUE;
 
 	/* open the source file */
 	if (core_fopen(astring_c(srcfile), OPEN_FLAG_READ, &src) != FILERR_NONE)
@@ -598,7 +598,7 @@ static int output_file(file_type type, int srcrootlen, int dstrootlen, const ast
 		/* iterate over characters in the source line */
 		for (srcptr = srcline; *srcptr != 0; )
 		{
-			UINT8 ch = *srcptr++;
+			uint8_t ch = *srcptr++;
 
 			/* track whether or not we are within an extended (C-style) comment */
 			if (!in_quotes && !in_inline_comment)
@@ -639,7 +639,7 @@ static int output_file(file_type type, int srcrootlen, int dstrootlen, const ast
 				int toklength;
 
 				/* find the end of the token */
-				while (*temp != 0 && is_token[(UINT8)*temp])
+				while (*temp != 0 && is_token[(uint8_t)*temp])
 					temp++;
 				toklength = temp - (srcptr - 1);
 

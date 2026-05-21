@@ -67,11 +67,11 @@ enum
 static astring filename;
 
 static input_port_value last_controls;
-static UINT8 playing;
+static uint8_t playing;
 
 static emu_timer *pr8210_bit_timer;
-static UINT32 pr8210_command_buffer_in, pr8210_command_buffer_out;
-static UINT8 pr8210_command_buffer[10];
+static uint32_t pr8210_command_buffer_in, pr8210_command_buffer_out;
+static uint8_t pr8210_command_buffer[10];
 
 static void (*execute_command)(running_device *laserdisc, int command);
 
@@ -276,7 +276,7 @@ static MACHINE_RESET( ldplayer )
  *
  *************************************/
 
-INLINE void pr8210_add_command(UINT8 command)
+INLINE void pr8210_add_command(uint8_t command)
 {
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = (command & 0x1f) | 0x20;
 	pr8210_command_buffer[pr8210_command_buffer_in++ % ARRAY_LENGTH(pr8210_command_buffer)] = 0x00 | 0x20;
@@ -296,8 +296,8 @@ static TIMER_CALLBACK( pr8210_bit_callback )
 {
 	attotime duration = ATTOTIME_IN_MSEC(30);
 	running_device *laserdisc = (running_device *)ptr;
-	UINT8 bitsleft = param >> 16;
-	UINT8 data = param;
+	uint8_t bitsleft = param >> 16;
+	uint8_t data = param;
 
 	/* if we have bits, process */
 	if (bitsleft != 0)
@@ -339,7 +339,7 @@ static MACHINE_RESET( pr8210 )
 
 static void pr8210_execute(running_device *laserdisc, int command)
 {
-	static const UINT8 digits[10] = { 0x01, 0x11, 0x09, 0x19, 0x05, 0x15, 0x0d, 0x1d, 0x03, 0x13 };
+	static const uint8_t digits[10] = { 0x01, 0x11, 0x09, 0x19, 0x05, 0x15, 0x0d, 0x1d, 0x03, 0x13 };
 
 	switch (command)
 	{
@@ -455,7 +455,7 @@ static void pr8210_execute(running_device *laserdisc, int command)
 
 static void ldv1000_execute(running_device *laserdisc, int command)
 {
-	static const UINT8 digits[10] = { 0x3f, 0x0f, 0x8f, 0x4f, 0x2f, 0xaf, 0x6f, 0x1f, 0x9f, 0x5f };
+	static const uint8_t digits[10] = { 0x3f, 0x0f, 0x8f, 0x4f, 0x2f, 0xaf, 0x6f, 0x1f, 0x9f, 0x5f };
 	switch (command)
 	{
 		case CMD_SCAN_REVERSE:

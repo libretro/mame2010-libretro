@@ -143,7 +143,7 @@ public:
 ***************************************************************************/
 
 static void dview_update(debug_view &dw, void *osdprivate);
-static int map_point(DView *dv, INT32 target_x, INT32 target_y, INT32 *mapped_x, INT32 *mapped_y);
+static int map_point(DView *dv, int32_t target_x, int32_t target_y, int32_t *mapped_x, int32_t *mapped_y);
 
 class DView
 {
@@ -208,8 +208,8 @@ public:
 	adjustment			hsb;
 	adjustment			vsb;
 	// render target tracking
-	INT32				rt_width;
-	INT32				rt_height;
+	int32_t				rt_width;
+	int32_t				rt_height;
 	//optional
 	DView_edit			editor;
 };
@@ -386,7 +386,7 @@ static void dview_draw_box(DView *dv, int rtype, int x, int y, int w, int h, rgb
 			PRIMFLAG_BLENDMODE(BLENDMODE_ALPHA));
 }
 
-static void dview_draw_char(DView *dv, int rtype, int x, int y, int h, rgb_t col, UINT16 ch)
+static void dview_draw_char(DView *dv, int rtype, int x, int y, int h, rgb_t col, uint16_t ch)
 {
 	rectangle r;
 
@@ -499,7 +499,7 @@ static void dview_draw_title(DView *dv)
 	{
 		dview_draw_char(dv, RECT_DVIEW_TITLE, i * debug_font_width + BORDER_XTHICKNESS,
 				BORDER_YTHICKNESS, debug_font_height, //r.max_y - 2 * BORDER_YTHICKNESS,
-				MAKE_ARGB(0xff,0xff,0xff,0xff), (UINT16) dv->title[i] );
+				MAKE_ARGB(0xff,0xff,0xff,0xff), (uint16_t) dv->title[i] );
 	}
 }
 
@@ -697,7 +697,7 @@ static void dview_draw(DView *dv)
 {
 	const debug_view_char *viewdata;
 	debug_view_xy vsize;
-	UINT32 i, j, xx, yy;
+	uint32_t i, j, xx, yy;
 	rgb_t bg_base, bg, fg;
 	rectangle r;
 
@@ -745,7 +745,7 @@ static void dview_draw(DView *dv)
 		xx = BORDER_XTHICKNESS;
 		for(i=0; i<vsize.x; i++)
 		{
-			UINT16 s;
+			uint16_t s;
 			unsigned char v = viewdata->byte;
 
 			if (v != ' ')
@@ -1234,7 +1234,7 @@ static void CreateMainMenu(running_machine *machine)
 	ui_menu_item_append(menu, "Exit", NULL, 0, (void *)on_exit_activate);
 }
 
-static int map_point(DView *dv, INT32 target_x, INT32 target_y, INT32 *mapped_x, INT32 *mapped_y)
+static int map_point(DView *dv, int32_t target_x, int32_t target_y, int32_t *mapped_x, int32_t *mapped_y)
 {
 	rectangle pos;
 
@@ -1261,7 +1261,7 @@ static int map_point(DView *dv, INT32 target_x, INT32 target_y, INT32 *mapped_x,
 static void handle_mouse(running_machine *machine)
 {
 	render_target *	mouse_target;
-	INT32			x,y;
+	int32_t			x,y;
 	int				button;
 
 	if (menu != NULL)
@@ -1411,8 +1411,8 @@ static void followers_set_cpu(running_device *device)
 
 static void dview_update_view(DView *dv)
 {
-	INT32 old_rt_width = dv->rt_width;
-	INT32 old_rt_height = dv->rt_height;
+	int32_t old_rt_width = dv->rt_width;
+	int32_t old_rt_height = dv->rt_height;
 
 	render_target_get_bounds(dv->target, &dv->rt_width, &dv->rt_height, NULL);
 	if (dview_is_state(dv, VIEW_STATE_NEEDS_UPDATE) || dv->rt_width != old_rt_width || dv->rt_height != old_rt_height)

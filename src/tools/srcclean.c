@@ -56,8 +56,8 @@
     GLOBAL VARIABLES
 ***************************************************************************/
 
-static UINT8 original[MAX_FILE_SIZE];
-static UINT8 modified[MAX_FILE_SIZE];
+static uint8_t original[MAX_FILE_SIZE];
+static uint8_t modified[MAX_FILE_SIZE];
 
 
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	/* rip through it */
 	for (src = 0; src < bytes; )
 	{
-		UINT8 ch = original[src++];
+		uint8_t ch = original[src++];
 
 		/* check for invalid upper-ASCII chars */
 		if (ch != 13 && ch != 10 && ch != 9 && (ch > 127 || ch < 32))

@@ -93,10 +93,10 @@
     GLOBAL VARIABLES
 ***************************************************************************/
 
-static UINT8 *srcbuf;
+static uint8_t *srcbuf;
 static size_t srcbuflen;
 
-static UINT8 *dstbuf;
+static uint8_t *dstbuf;
 static size_t dstbuflen;
 
 
@@ -127,7 +127,7 @@ static int read_source_file(const char *srcfile)
 	fseek(file, 0, SEEK_END);
 	srcbuflen = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	srcbuf = (UINT8 *)malloc(srcbuflen);
+	srcbuf = (uint8_t *)malloc(srcbuflen);
 	if (!srcbuf)
 	{
 		fprintf(stderr, "Unable to allocate %d bytes for the source!\n", (int)srcbuflen);
@@ -219,16 +219,16 @@ int main(int argc, char *argv[])
 	/* does the source end in '.jed'? */
 	len = strlen(srcfile);
 	src_is_jed = (srcfile[len - 4] == '.' &&
-	             tolower((UINT8)srcfile[len - 3]) == 'j' &&
-	             tolower((UINT8)srcfile[len - 2]) == 'e' &&
-	             tolower((UINT8)srcfile[len - 1]) == 'd');
+	             tolower((uint8_t)srcfile[len - 3]) == 'j' &&
+	             tolower((uint8_t)srcfile[len - 2]) == 'e' &&
+	             tolower((uint8_t)srcfile[len - 1]) == 'd');
 
 	/* does the destination end in '.jed'? */
 	len = strlen(dstfile);
 	dst_is_jed = (dstfile[len - 4] == '.' &&
-	             tolower((UINT8)dstfile[len - 3]) == 'j' &&
-	             tolower((UINT8)dstfile[len - 2]) == 'e' &&
-	             tolower((UINT8)dstfile[len - 1]) == 'd');
+	             tolower((uint8_t)dstfile[len - 3]) == 'j' &&
+	             tolower((uint8_t)dstfile[len - 2]) == 'e' &&
+	             tolower((uint8_t)dstfile[len - 1]) == 'd');
 
 	/* error if neither or both are .jed */
 	if (!src_is_jed && !dst_is_jed)
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 
 		/* generate the output */
 		dstbuflen = jedbin_output(&jed, NULL, 0);
-		dstbuf = (UINT8 *)malloc(dstbuflen);
+		dstbuf = (uint8_t *)malloc(dstbuflen);
 		if (!dstbuf)
 		{
 			fprintf(stderr, "Unable to allocate %d bytes for the target buffer!\n", (int)dstbuflen);
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 
 		/* generate the output */
 		dstbuflen = jed_output(&jed, NULL, 0);
-		dstbuf = (UINT8 *)malloc(dstbuflen);
+		dstbuf = (uint8_t *)malloc(dstbuflen);
 		if (!dstbuf)
 		{
 			fprintf(stderr, "Unable to allocate %d bytes for the target buffer!\n", (int)dstbuflen);

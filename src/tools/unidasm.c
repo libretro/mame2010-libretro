@@ -67,7 +67,7 @@ struct _dasm_table_entry
 {
 	const char *			name;
 	display_type			display;
-	INT8					pcshift;
+	int8_t					pcshift;
 	cpu_disassemble_func	func;
 };
 
@@ -77,10 +77,10 @@ struct _options
 {
 	const char *			filename;
 	offs_t					basepc;
-	UINT8					norawbytes;
-	UINT8					lower;
-	UINT8					upper;
-	UINT8					flipped;
+	uint8_t					norawbytes;
+	uint8_t					lower;
+	uint8_t					upper;
+	uint8_t					flipped;
 	int						mode;
 	const dasm_table_entry *dasm;
 };
@@ -379,19 +379,19 @@ static int parse_options(int argc, char *argv[], options *opts)
 			if (pending_base || pending_arch || pending_mode)
 				goto usage;
 
-			if (tolower((UINT8)curarg[1]) == 'a')
+			if (tolower((uint8_t)curarg[1]) == 'a')
 				pending_arch = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'b')
+			else if (tolower((uint8_t)curarg[1]) == 'b')
 				pending_base = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'f')
+			else if (tolower((uint8_t)curarg[1]) == 'f')
 				opts->flipped = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'l')
+			else if (tolower((uint8_t)curarg[1]) == 'l')
 				opts->lower = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'm')
+			else if (tolower((uint8_t)curarg[1]) == 'm')
 				pending_mode = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'n')
+			else if (tolower((uint8_t)curarg[1]) == 'n')
 				opts->norawbytes = TRUE;
-			else if (tolower((UINT8)curarg[1]) == 'u')
+			else if (tolower((uint8_t)curarg[1]) == 'u')
 				opts->upper = TRUE;
 			else
 				goto usage;
@@ -475,10 +475,10 @@ int main(int argc, char *argv[])
 	file_error filerr;
 	int displayendian;
 	int displaychunk;
-	UINT32 curbyte;
-	UINT32 length;
+	uint32_t curbyte;
+	uint32_t length;
 	int maxchunks;
-	UINT32 curpc;
+	uint32_t curpc;
 	options opts;
 	int numbytes;
 	void *data;
@@ -513,9 +513,9 @@ int main(int argc, char *argv[])
 		curpc = opts.basepc;
 		for (curbyte = 0; curbyte < length; curbyte += numbytes)
 		{
-			UINT8 *oprom = (UINT8 *)data + curbyte;
+			uint8_t *oprom = (uint8_t *)data + curbyte;
 			char buffer[1024];
-			UINT32 pcdelta;
+			uint32_t pcdelta;
 			int numchunks;
 
 			// disassemble
@@ -530,12 +530,12 @@ int main(int argc, char *argv[])
 			if (opts.lower)
 			{
 				for (p = buffer; *p != 0; p++)
-					*p = tolower((UINT8)*p);
+					*p = tolower((uint8_t)*p);
 			}
 			else if (opts.upper)
 			{
 				for (p = buffer; *p != 0; p++)
-					*p = toupper((UINT8)*p);
+					*p = toupper((uint8_t)*p);
 			}
 
 			// round to the nearest display chunk

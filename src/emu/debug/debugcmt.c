@@ -55,11 +55,11 @@
 typedef struct _debug_comment debug_comment;
 struct _debug_comment
 {
-	UINT8			is_valid;
-	UINT32			address;
+	uint8_t			is_valid;
+	uint32_t			address;
 	char			text[DEBUG_COMMENT_MAX_LINE_LENGTH];
 	rgb_t			color;
-	UINT32			crc;
+	uint32_t			crc;
 };
 
 
@@ -67,7 +67,7 @@ class debug_cpu_comment_group
 {
 public:
 	int 			comment_count;
-	UINT32			change_count;
+	uint32_t			change_count;
 	debug_comment *	comment_info[DEBUG_COMMENT_MAX_NUM];
 };
 
@@ -112,7 +112,7 @@ int debug_comment_init(running_machine *machine)
                         the proper crc32
 -------------------------------------------------------------------------*/
 
-int debug_comment_add(device_t *device, offs_t addr, const char *comment, rgb_t color, UINT32 c_crc)
+int debug_comment_add(device_t *device, offs_t addr, const char *comment, rgb_t color, uint32_t c_crc)
 {
 	debug_cpu_comment_group *comments = device->debug()->m_comments;
 	int insert_point = comments->comment_count;
@@ -179,7 +179,7 @@ int debug_comment_add(device_t *device, offs_t addr, const char *comment, rgb_t 
                         the proper crc32
 -------------------------------------------------------------------------*/
 
-int debug_comment_remove(device_t *device, offs_t addr, UINT32 c_crc)
+int debug_comment_remove(device_t *device, offs_t addr, uint32_t c_crc)
 {
 	debug_cpu_comment_group *comments = device->debug()->m_comments;
 	int remove_index = -1;
@@ -216,7 +216,7 @@ int debug_comment_remove(device_t *device, offs_t addr, UINT32 c_crc)
                         the proper crc32
 -------------------------------------------------------------------------*/
 
-const char *debug_comment_get_text(device_t *device, offs_t addr, UINT32 c_crc)
+const char *debug_comment_get_text(device_t *device, offs_t addr, uint32_t c_crc)
 {
 	debug_cpu_comment_group *comments = device->debug()->m_comments;
 	int i;
@@ -251,7 +251,7 @@ int debug_comment_get_count(device_t *device)
     for a given cpu number
 -------------------------------------------------------------------------*/
 
-UINT32 debug_comment_get_change_count(device_t *device)
+uint32_t debug_comment_get_change_count(device_t *device)
 {
 	debug_cpu_comment_group *comments = device->debug()->m_comments;
 	return comments->change_count;
@@ -262,9 +262,9 @@ UINT32 debug_comment_get_change_count(device_t *device)
     for all cpu's
 -------------------------------------------------------------------------*/
 
-UINT32 debug_comment_all_change_count(running_machine *machine)
+uint32_t debug_comment_all_change_count(running_machine *machine)
 {
-	UINT32 retVal = 0;
+	uint32_t retVal = 0;
 
 	for (device_t *device = machine->m_devicelist.first(); device != NULL; device = device->next())
 		if (device->debug()->m_comments != NULL)
@@ -279,17 +279,17 @@ UINT32 debug_comment_all_change_count(running_machine *machine)
                         for the opcode at the requested address.
 -------------------------------------------------------------------------*/
 
-UINT32 debug_comment_get_opcode_crc32(device_t *device, offs_t address)
+uint32_t debug_comment_get_opcode_crc32(device_t *device, offs_t address)
 {
 	const address_space *space = cpu_get_address_space(device, ADDRESS_SPACE_PROGRAM);
 	int i;
-	UINT32 crc;
-	UINT8 opbuf[64], argbuf[64];
+	uint32_t crc;
+	uint8_t opbuf[64], argbuf[64];
 	char buff[256];
 	offs_t numbytes;
 	cpu_device *cpudevice = downcast<cpu_device *>(device);
 	int maxbytes = cpudevice->max_opcode_bytes();
-	UINT32 addrmask = space->logaddrmask;
+	uint32_t addrmask = space->logaddrmask;
 
 	memset(opbuf, 0x00, sizeof(opbuf));
 	memset(argbuf, 0x00, sizeof(argbuf));
@@ -330,7 +330,7 @@ void debug_comment_dump(device_t *device, offs_t addr)
 	}
 	else
 	{
-		UINT32 c_crc = debug_comment_get_opcode_crc32(device, addr);
+		uint32_t c_crc = debug_comment_get_opcode_crc32(device, addr);
 
 		for (i = 0; i < comments->comment_count; i++)
 			if (comments->comment_info[i]->address == addr)	/* got an address match */

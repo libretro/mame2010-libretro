@@ -225,7 +225,7 @@ void debug_view_state::view_update()
 
 	// get cycle count if we have an execute interface
 	const debug_view_state_source &source = downcast<const debug_view_state_source &>(*m_source);
-	UINT64 total_cycles = 0;
+	uint64_t total_cycles = 0;
 	if (source.m_execintf != NULL)
 		total_cycles = source.m_execintf->total_cycles();
 
@@ -237,16 +237,16 @@ void debug_view_state::view_update()
 	// loop over visible rows
 	screen_device *screen = m_machine.primary_screen;
 	debug_view_char *dest = m_viewdata;
-	for (UINT32 row = 0; row < m_visible.y; row++)
+	for (uint32_t row = 0; row < m_visible.y; row++)
 	{
-		UINT32 col = 0;
+		uint32_t col = 0;
 
 		// if this visible row is valid, add it to the buffer
 		if (curitem != NULL)
 		{
-			UINT32 effcol = m_topleft.x;
-			UINT8 attrib = DCA_NORMAL;
-			UINT32 len = 0;
+			uint32_t effcol = m_topleft.x;
+			uint8_t attrib = DCA_NORMAL;
+			uint32_t len = 0;
 			astring valstr;
 
 			// get the effective string
@@ -266,7 +266,7 @@ void debug_view_state::view_update()
 						if (source.m_execintf != NULL)
 						{
 							curitem->m_currval = source.m_execintf->cycles_remaining();
-							valstr.printf("%-8d", (UINT32)curitem->m_currval);
+							valstr.printf("%-8d", (uint32_t)curitem->m_currval);
 						}
 						break;
 
@@ -274,7 +274,7 @@ void debug_view_state::view_update()
 						if (screen != NULL)
 						{
 							curitem->m_currval = screen->hpos();
-							valstr.printf("%4d", (UINT32)curitem->m_currval);
+							valstr.printf("%4d", (uint32_t)curitem->m_currval);
 						}
 						break;
 
@@ -282,7 +282,7 @@ void debug_view_state::view_update()
 						if (screen != NULL)
 						{
 							curitem->m_currval = screen->vpos();
-							valstr.printf("%4d", (UINT32)curitem->m_currval);
+							valstr.printf("%4d", (uint32_t)curitem->m_currval);
 						}
 						break;
 
@@ -290,7 +290,7 @@ void debug_view_state::view_update()
 						if (screen != NULL)
 						{
 							curitem->m_currval = screen->frame_number();
-							valstr.printf("%6d", (UINT32)curitem->m_currval);
+							valstr.printf("%6d", (uint32_t)curitem->m_currval);
 						}
 						break;
 				}
@@ -359,7 +359,7 @@ void debug_view_state::view_update()
 //  state_item - constructor
 //-------------------------------------------------
 
-debug_view_state::state_item::state_item(int index, const char *name, UINT8 valuechars)
+debug_view_state::state_item::state_item(int index, const char *name, uint8_t valuechars)
 	: m_next(NULL),
 	  m_lastval(0),
 	  m_currval(0),

@@ -81,19 +81,19 @@ struct _debugcpu_private
 
 	symbol_table *	symtable;					/* global symbol table */
 
-	UINT8			within_instruction_hook;
-	UINT8			vblank_occurred;
-	UINT8			memory_modified;
-	UINT8			debugger_access;
+	uint8_t			within_instruction_hook;
+	uint8_t			vblank_occurred;
+	uint8_t			memory_modified;
+	uint8_t			debugger_access;
 
 	int				execution_state;
 
-	UINT32			bpindex;
-	UINT32			wpindex;
+	uint32_t			bpindex;
+	uint32_t			wpindex;
 
-	UINT64			wpdata;
-	UINT64			wpaddr;
-	UINT64			tempvar[NUM_TEMP_VARIABLES];
+	uint64_t			wpdata;
+	uint64_t			wpaddr;
+	uint64_t			tempvar[NUM_TEMP_VARIABLES];
 
 	osd_ticks_t 	last_periodic_update_time;
 };
@@ -111,23 +111,23 @@ static void reset_transient_flags(running_machine &machine);
 static void process_source_file(running_machine *machine);
 
 /* expression handlers */
-static UINT64 expression_read_memory(void *param, const char *name, int space, UINT32 address, int size);
-static UINT64 expression_read_program_direct(const address_space *space, int opcode, offs_t address, int size);
-static UINT64 expression_read_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size);
-static void expression_write_memory(void *param, const char *name, int space, UINT32 address, int size, UINT64 data);
-static void expression_write_program_direct(const address_space *space, int opcode, offs_t address, int size, UINT64 data);
-static void expression_write_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size, UINT64 data);
+static uint64_t expression_read_memory(void *param, const char *name, int space, uint32_t address, int size);
+static uint64_t expression_read_program_direct(const address_space *space, int opcode, offs_t address, int size);
+static uint64_t expression_read_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size);
+static void expression_write_memory(void *param, const char *name, int space, uint32_t address, int size, uint64_t data);
+static void expression_write_program_direct(const address_space *space, int opcode, offs_t address, int size, uint64_t data);
+static void expression_write_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size, uint64_t data);
 static EXPRERR expression_validate(void *param, const char *name, int space);
 
 /* variable getters/setters */
-static UINT64 get_wpaddr(void *globalref, void *ref);
-static UINT64 get_wpdata(void *globalref, void *ref);
-static UINT64 get_cpunum(void *globalref, void *ref);
-static UINT64 get_tempvar(void *globalref, void *ref);
-static void set_tempvar(void *globalref, void *ref, UINT64 value);
-static UINT64 get_beamx(void *globalref, void *ref);
-static UINT64 get_beamy(void *globalref, void *ref);
-static UINT64 get_frame(void *globalref, void *ref);
+static uint64_t get_wpaddr(void *globalref, void *ref);
+static uint64_t get_wpdata(void *globalref, void *ref);
+static uint64_t get_cpunum(void *globalref, void *ref);
+static uint64_t get_tempvar(void *globalref, void *ref);
+static void set_tempvar(void *globalref, void *ref, uint64_t value);
+static uint64_t get_beamx(void *globalref, void *ref);
+static uint64_t get_beamy(void *globalref, void *ref);
+static uint64_t get_frame(void *globalref, void *ref);
 
 
 
@@ -341,11 +341,11 @@ int debug_cpu_translate(const address_space *space, int intention, offs_t *addre
     the specified memory space
 -------------------------------------------------*/
 
-UINT8 debug_read_byte(const address_space *space, offs_t address, int apply_translation)
+uint8_t debug_read_byte(const address_space *space, offs_t address, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
-	UINT64 custom;
-	UINT8 result;
+	uint64_t custom;
+	uint8_t result;
 
 	/* mask against the logical byte mask */
 	address &= space->logbytemask;
@@ -376,10 +376,10 @@ UINT8 debug_read_byte(const address_space *space, offs_t address, int apply_tran
     specified memory space
 -------------------------------------------------*/
 
-UINT16 debug_read_word(const address_space *space, offs_t address, int apply_translation)
+uint16_t debug_read_word(const address_space *space, offs_t address, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
-	UINT16 result;
+	uint16_t result;
 
 	/* mask against the logical byte mask */
 	address &= space->logbytemask;
@@ -387,8 +387,8 @@ UINT16 debug_read_word(const address_space *space, offs_t address, int apply_tra
 	/* if this is misaligned read, or if there are no word readers, just read two bytes */
 	if ((address & 1) != 0)
 	{
-		UINT8 byte0 = debug_read_byte(space, address + 0, apply_translation);
-		UINT8 byte1 = debug_read_byte(space, address + 1, apply_translation);
+		uint8_t byte0 = debug_read_byte(space, address + 0, apply_translation);
+		uint8_t byte1 = debug_read_byte(space, address + 1, apply_translation);
 
 		/* based on the endianness, the result is assembled differently */
 		if (space->endianness == ENDIANNESS_LITTLE)
@@ -400,7 +400,7 @@ UINT16 debug_read_word(const address_space *space, offs_t address, int apply_tra
 	/* otherwise, this proceeds like the byte case */
 	else
 	{
-		UINT64 custom;
+		uint64_t custom;
 
 		/* all accesses from this point on are for the debugger */
 		memory_set_debugger_access(space, global->debugger_access = TRUE);
@@ -430,10 +430,10 @@ UINT16 debug_read_word(const address_space *space, offs_t address, int apply_tra
     specified memory space
 -------------------------------------------------*/
 
-UINT32 debug_read_dword(const address_space *space, offs_t address, int apply_translation)
+uint32_t debug_read_dword(const address_space *space, offs_t address, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
-	UINT32 result;
+	uint32_t result;
 
 	/* mask against the logical byte mask */
 	address &= space->logbytemask;
@@ -441,8 +441,8 @@ UINT32 debug_read_dword(const address_space *space, offs_t address, int apply_tr
 	/* if this is misaligned read, or if there are no dword readers, just read two words */
 	if ((address & 3) != 0)
 	{
-		UINT16 word0 = debug_read_word(space, address + 0, apply_translation);
-		UINT16 word1 = debug_read_word(space, address + 2, apply_translation);
+		uint16_t word0 = debug_read_word(space, address + 0, apply_translation);
+		uint16_t word1 = debug_read_word(space, address + 2, apply_translation);
 
 		/* based on the endianness, the result is assembled differently */
 		if (space->endianness == ENDIANNESS_LITTLE)
@@ -454,7 +454,7 @@ UINT32 debug_read_dword(const address_space *space, offs_t address, int apply_tr
 	/* otherwise, this proceeds like the byte case */
 	else
 	{
-		UINT64 custom;
+		uint64_t custom;
 
 		/* all accesses from this point on are for the debugger */
 		memory_set_debugger_access(space, global->debugger_access = TRUE);
@@ -484,10 +484,10 @@ UINT32 debug_read_dword(const address_space *space, offs_t address, int apply_tr
     specified memory space
 -------------------------------------------------*/
 
-UINT64 debug_read_qword(const address_space *space, offs_t address, int apply_translation)
+uint64_t debug_read_qword(const address_space *space, offs_t address, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
-	UINT64 result;
+	uint64_t result;
 
 	/* mask against the logical byte mask */
 	address &= space->logbytemask;
@@ -495,27 +495,27 @@ UINT64 debug_read_qword(const address_space *space, offs_t address, int apply_tr
 	/* if this is misaligned read, or if there are no qword readers, just read two dwords */
 	if ((address & 7) != 0)
 	{
-		UINT32 dword0 = debug_read_dword(space, address + 0, apply_translation);
-		UINT32 dword1 = debug_read_dword(space, address + 4, apply_translation);
+		uint32_t dword0 = debug_read_dword(space, address + 0, apply_translation);
+		uint32_t dword1 = debug_read_dword(space, address + 4, apply_translation);
 
 		/* based on the endianness, the result is assembled differently */
 		if (space->endianness == ENDIANNESS_LITTLE)
-			result = dword0 | ((UINT64)dword1 << 32);
+			result = dword0 | ((uint64_t)dword1 << 32);
 		else
-			result = dword1 | ((UINT64)dword0 << 32);
+			result = dword1 | ((uint64_t)dword0 << 32);
 	}
 
 	/* otherwise, this proceeds like the byte case */
 	else
 	{
-		UINT64 custom;
+		uint64_t custom;
 
 		/* all accesses from this point on are for the debugger */
 		memory_set_debugger_access(space, global->debugger_access = TRUE);
 
 		/* translate if necessary; if not mapped, return 0xffffffffffffffff */
 		if (apply_translation && !debug_cpu_translate(space, TRANSLATE_READ_DEBUG, &address))
-			result = ~(UINT64)0;
+			result = ~(uint64_t)0;
 
 		/* if there is a custom read handler, and it returns TRUE, use that value */
 		else if (device_memory(space->cpu)->read(space->spacenum, address, 8, custom))
@@ -538,9 +538,9 @@ UINT64 debug_read_qword(const address_space *space, offs_t address, int apply_tr
     from the specified memory space
 -------------------------------------------------*/
 
-UINT64 debug_read_memory(const address_space *space, offs_t address, int size, int apply_translation)
+uint64_t debug_read_memory(const address_space *space, offs_t address, int size, int apply_translation)
 {
-	UINT64 result = ~(UINT64)0 >> (64 - 8*size);
+	uint64_t result = ~(uint64_t)0 >> (64 - 8*size);
 	switch (size)
 	{
 		case 1:		result = debug_read_byte(space, address, apply_translation);	break;
@@ -557,7 +557,7 @@ UINT64 debug_read_memory(const address_space *space, offs_t address, int size, i
     specified memory space
 -------------------------------------------------*/
 
-void debug_write_byte(const address_space *space, offs_t address, UINT8 data, int apply_translation)
+void debug_write_byte(const address_space *space, offs_t address, uint8_t data, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
 
@@ -590,7 +590,7 @@ void debug_write_byte(const address_space *space, offs_t address, UINT8 data, in
     specified memory space
 -------------------------------------------------*/
 
-void debug_write_word(const address_space *space, offs_t address, UINT16 data, int apply_translation)
+void debug_write_word(const address_space *space, offs_t address, uint16_t data, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
 
@@ -642,7 +642,7 @@ void debug_write_word(const address_space *space, offs_t address, UINT16 data, i
     specified memory space
 -------------------------------------------------*/
 
-void debug_write_dword(const address_space *space, offs_t address, UINT32 data, int apply_translation)
+void debug_write_dword(const address_space *space, offs_t address, uint32_t data, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
 
@@ -694,7 +694,7 @@ void debug_write_dword(const address_space *space, offs_t address, UINT32 data, 
     specified memory space
 -------------------------------------------------*/
 
-void debug_write_qword(const address_space *space, offs_t address, UINT64 data, int apply_translation)
+void debug_write_qword(const address_space *space, offs_t address, uint64_t data, int apply_translation)
 {
 	debugcpu_private *global = space->machine->debugcpu_data;
 
@@ -746,7 +746,7 @@ void debug_write_qword(const address_space *space, offs_t address, UINT64 data, 
     to the specified memory space
 -------------------------------------------------*/
 
-void debug_write_memory(const address_space *space, offs_t address, UINT64 data, int size, int apply_translation)
+void debug_write_memory(const address_space *space, offs_t address, uint64_t data, int size, int apply_translation)
 {
 	switch (size)
 	{
@@ -763,9 +763,9 @@ void debug_write_memory(const address_space *space, offs_t address, UINT64 data,
     the given offset from opcode space
 -------------------------------------------------*/
 
-UINT64 debug_read_opcode(const address_space *space, offs_t address, int size, int arg)
+uint64_t debug_read_opcode(const address_space *space, offs_t address, int size, int arg)
 {
-	UINT64 result = ~(UINT64)0 & (~(UINT64)0 >> (64 - 8*size)), result2;
+	uint64_t result = ~(uint64_t)0 & (~(uint64_t)0 >> (64 - 8*size)), result2;
 	debugcpu_private *global = space->machine->debugcpu_data;
 
 	/* keep in logical range */
@@ -784,8 +784,8 @@ UINT64 debug_read_opcode(const address_space *space, offs_t address, int size, i
 	if (size > space->dbits / 8)
 	{
 		int halfsize = size / 2;
-		UINT64 r0 = debug_read_opcode(space, address + 0, halfsize, arg);
-		UINT64 r1 = debug_read_opcode(space, address + halfsize, halfsize, arg);
+		uint64_t r0 = debug_read_opcode(space, address + 0, halfsize, arg);
+		uint64_t r1 = debug_read_opcode(space, address + halfsize, halfsize, arg);
 
 		if (space->endianness == ENDIANNESS_LITTLE)
 			return r0 | (r1 << (8 * halfsize));
@@ -987,7 +987,7 @@ static void process_source_file(running_machine *machine)
 
 		/* strip whitespace */
 		i = (int)strlen(buf);
-		while((i > 0) && (isspace((UINT8)buf[i-1])))
+		while((i > 0) && (isspace((uint8_t)buf[i-1])))
 			buf[--i] = '\0';
 
 		/* execute the command */
@@ -1025,10 +1025,10 @@ static device_t *expression_get_device(running_machine *machine, const char *tag
     space
 -------------------------------------------------*/
 
-static UINT64 expression_read_memory(void *param, const char *name, int spacenum, UINT32 address, int size)
+static uint64_t expression_read_memory(void *param, const char *name, int spacenum, uint32_t address, int size)
 {
 	running_machine *machine = (running_machine *)param;
-	UINT64 result = ~(UINT64)0 >> (64 - 8*size);
+	uint64_t result = ~(uint64_t)0 >> (64 - 8*size);
 	device_t *device = NULL;
 	const address_space *space;
 
@@ -1084,13 +1084,13 @@ static UINT64 expression_read_memory(void *param, const char *name, int spacenum
     directly from an opcode or RAM pointer
 -------------------------------------------------*/
 
-static UINT64 expression_read_program_direct(const address_space *space, int opcode, offs_t address, int size)
+static uint64_t expression_read_program_direct(const address_space *space, int opcode, offs_t address, int size)
 {
-	UINT64 result = ~(UINT64)0 >> (64 - 8*size);
+	uint64_t result = ~(uint64_t)0 >> (64 - 8*size);
 
 	if (space != NULL)
 	{
-		UINT8 *base;
+		uint8_t *base;
 
 		/* adjust the address into a byte address, but not if being called recursively */
 		if ((opcode & 2) == 0)
@@ -1100,7 +1100,7 @@ static UINT64 expression_read_program_direct(const address_space *space, int opc
 		if (size > 1)
 		{
 			int halfsize = size / 2;
-			UINT64 r0, r1;
+			uint64_t r0, r1;
 
 			/* read each half, from lower address to upper address */
 			r0 = expression_read_program_direct(space, opcode | 2, address + 0, halfsize);
@@ -1121,9 +1121,9 @@ static UINT64 expression_read_program_direct(const address_space *space, int opc
 
 			/* get the base of memory, aligned to the address minus the lowbits */
 			if (opcode & 1)
-				base = (UINT8 *)memory_decrypted_read_ptr(space, address & ~lowmask);
+				base = (uint8_t *)memory_decrypted_read_ptr(space, address & ~lowmask);
 			else
-				base = (UINT8 *)memory_get_read_ptr(space, address & ~lowmask);
+				base = (uint8_t *)memory_get_read_ptr(space, address & ~lowmask);
 
 			/* if we have a valid base, return the appropriate byte */
 			if (base != NULL)
@@ -1144,10 +1144,10 @@ static UINT64 expression_read_program_direct(const address_space *space, int opc
     from a memory region
 -------------------------------------------------*/
 
-static UINT64 expression_read_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size)
+static uint64_t expression_read_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size)
 {
 	const region_info *region = machine->region(rgntag);
-	UINT64 result = ~(UINT64)0 >> (64 - 8*size);
+	uint64_t result = ~(uint64_t)0 >> (64 - 8*size);
 
 	/* make sure we get a valid base before proceeding */
 	if (region != NULL)
@@ -1156,7 +1156,7 @@ static UINT64 expression_read_memory_region(running_machine *machine, const char
 		if (size > 1)
 		{
 			int halfsize = size / 2;
-			UINT64 r0, r1;
+			uint64_t r0, r1;
 
 			/* read each half, from lower address to upper address */
 			r0 = expression_read_memory_region(machine, rgntag, address + 0, halfsize);
@@ -1173,8 +1173,8 @@ static UINT64 expression_read_memory_region(running_machine *machine, const char
 		else if (address < region->bytes())
 		{
 			/* lowmask specified which address bits are within the databus width */
-			UINT32 lowmask = region->width() - 1;
-			UINT8 *base = region->base() + (address & ~lowmask);
+			uint32_t lowmask = region->width() - 1;
+			uint8_t *base = region->base() + (address & ~lowmask);
 
 			/* if we have a valid base, return the appropriate byte */
 			if (region->endianness() == ENDIANNESS_LITTLE)
@@ -1193,7 +1193,7 @@ static UINT64 expression_read_memory_region(running_machine *machine, const char
     space
 -------------------------------------------------*/
 
-static void expression_write_memory(void *param, const char *name, int spacenum, UINT32 address, int size, UINT64 data)
+static void expression_write_memory(void *param, const char *name, int spacenum, uint32_t address, int size, uint64_t data)
 {
 	running_machine *machine = (running_machine *)param;
 	device_t *device = NULL;
@@ -1250,12 +1250,12 @@ static void expression_write_memory(void *param, const char *name, int spacenum,
     directly to an opcode or RAM pointer
 -------------------------------------------------*/
 
-static void expression_write_program_direct(const address_space *space, int opcode, offs_t address, int size, UINT64 data)
+static void expression_write_program_direct(const address_space *space, int opcode, offs_t address, int size, uint64_t data)
 {
 	if (space != NULL)
 	{
 		debugcpu_private *global = space->machine->debugcpu_data;
-		UINT8 *base;
+		uint8_t *base;
 
 		/* adjust the address into a byte address, but not if being called recursively */
 		if ((opcode & 2) == 0)
@@ -1265,10 +1265,10 @@ static void expression_write_program_direct(const address_space *space, int opco
 		if (size > 1)
 		{
 			int halfsize = size / 2;
-			UINT64 r0, r1, halfmask;
+			uint64_t r0, r1, halfmask;
 
 			/* break apart based on the target endianness */
-			halfmask = ~(UINT64)0 >> (64 - 8 * halfsize);
+			halfmask = ~(uint64_t)0 >> (64 - 8 * halfsize);
 			if (space->endianness == ENDIANNESS_LITTLE)
 			{
 				r0 = data & halfmask;
@@ -1293,9 +1293,9 @@ static void expression_write_program_direct(const address_space *space, int opco
 
 			/* get the base of memory, aligned to the address minus the lowbits */
 			if (opcode & 1)
-				base = (UINT8 *)memory_decrypted_read_ptr(space, address & ~lowmask);
+				base = (uint8_t *)memory_decrypted_read_ptr(space, address & ~lowmask);
 			else
-				base = (UINT8 *)memory_get_read_ptr(space, address & ~lowmask);
+				base = (uint8_t *)memory_get_read_ptr(space, address & ~lowmask);
 
 			/* if we have a valid base, write the appropriate byte */
 			if (base != NULL)
@@ -1316,7 +1316,7 @@ static void expression_write_program_direct(const address_space *space, int opco
     from a memory region
 -------------------------------------------------*/
 
-static void expression_write_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size, UINT64 data)
+static void expression_write_memory_region(running_machine *machine, const char *rgntag, offs_t address, int size, uint64_t data)
 {
 	debugcpu_private *global = machine->debugcpu_data;
 	const region_info *region = machine->region(rgntag);
@@ -1328,10 +1328,10 @@ static void expression_write_memory_region(running_machine *machine, const char 
 		if (size > 1)
 		{
 			int halfsize = size / 2;
-			UINT64 r0, r1, halfmask;
+			uint64_t r0, r1, halfmask;
 
 			/* break apart based on the target endianness */
-			halfmask = ~(UINT64)0 >> (64 - 8 * halfsize);
+			halfmask = ~(uint64_t)0 >> (64 - 8 * halfsize);
 			if (region->endianness() == ENDIANNESS_LITTLE)
 			{
 				r0 = data & halfmask;
@@ -1352,8 +1352,8 @@ static void expression_write_memory_region(running_machine *machine, const char 
 		else if (address < region->bytes())
 		{
 			/* lowmask specified which address bits are within the databus width */
-			UINT32 lowmask = region->width() - 1;
-			UINT8 *base = region->base() + (address & ~lowmask);
+			uint32_t lowmask = region->width() - 1;
+			uint8_t *base = region->base() + (address & ~lowmask);
 
 			/* if we have a valid base, set the appropriate byte */
 			if (region->endianness() == ENDIANNESS_LITTLE)
@@ -1445,7 +1445,7 @@ static EXPRERR expression_validate(void *param, const char *name, int space)
     get_beamx - get beam horizontal position
 -------------------------------------------------*/
 
-static UINT64 get_beamx(void *globalref, void *ref)
+static uint64_t get_beamx(void *globalref, void *ref)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(ref);
 	return (screen != NULL) ? screen->hpos() : 0;
@@ -1456,7 +1456,7 @@ static UINT64 get_beamx(void *globalref, void *ref)
     get_beamy - get beam vertical position
 -------------------------------------------------*/
 
-static UINT64 get_beamy(void *globalref, void *ref)
+static uint64_t get_beamy(void *globalref, void *ref)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(ref);
 	return (screen != NULL) ? screen->vpos() : 0;
@@ -1467,7 +1467,7 @@ static UINT64 get_beamy(void *globalref, void *ref)
     get_frame - get current frame number
 -------------------------------------------------*/
 
-static UINT64 get_frame(void *globalref, void *ref)
+static uint64_t get_frame(void *globalref, void *ref)
 {
 	screen_device *screen = reinterpret_cast<screen_device *>(ref);
 	return (screen != NULL) ? screen->frame_number() : 0;
@@ -1479,9 +1479,9 @@ static UINT64 get_frame(void *globalref, void *ref)
     'tempX' symbols
 -------------------------------------------------*/
 
-static UINT64 get_tempvar(void *globalref, void *ref)
+static uint64_t get_tempvar(void *globalref, void *ref)
 {
-	return *(UINT64 *)ref;
+	return *(uint64_t *)ref;
 }
 
 
@@ -1490,9 +1490,9 @@ static UINT64 get_tempvar(void *globalref, void *ref)
     'tempX' symbols
 -------------------------------------------------*/
 
-static void set_tempvar(void *globalref, void *ref, UINT64 value)
+static void set_tempvar(void *globalref, void *ref, uint64_t value)
 {
-	*(UINT64 *)ref = value;
+	*(uint64_t *)ref = value;
 }
 
 
@@ -1501,7 +1501,7 @@ static void set_tempvar(void *globalref, void *ref, UINT64 value)
     'wpaddr' symbol
 -------------------------------------------------*/
 
-static UINT64 get_wpaddr(void *globalref, void *ref)
+static uint64_t get_wpaddr(void *globalref, void *ref)
 {
 	running_machine *machine = (running_machine *)globalref;
 	return machine->debugcpu_data->wpaddr;
@@ -1513,7 +1513,7 @@ static UINT64 get_wpaddr(void *globalref, void *ref)
     'wpdata' symbol
 -------------------------------------------------*/
 
-static UINT64 get_wpdata(void *globalref, void *ref)
+static uint64_t get_wpdata(void *globalref, void *ref)
 {
 	running_machine *machine = (running_machine *)globalref;
 	return machine->debugcpu_data->wpdata;
@@ -1525,7 +1525,7 @@ static UINT64 get_wpdata(void *globalref, void *ref)
     'cpunum' symbol
 -------------------------------------------------*/
 
-static UINT64 get_cpunum(void *globalref, void *ref)
+static uint64_t get_cpunum(void *globalref, void *ref)
 {
 	running_machine *machine = (running_machine *)globalref;
 	device_t *target = machine->debugcpu_data->visiblecpu;
@@ -1894,7 +1894,7 @@ void device_debug::instruction_hook(offs_t curpc)
 //  memory read happens
 //-------------------------------------------------
 
-void device_debug::memory_read_hook(const address_space &space, offs_t address, UINT64 mem_mask)
+void device_debug::memory_read_hook(const address_space &space, offs_t address, uint64_t mem_mask)
 {
 	// check watchpoints
 	watchpoint_check(space, WATCHPOINT_READ, address, 0, mem_mask);
@@ -1911,7 +1911,7 @@ void device_debug::memory_read_hook(const address_space &space, offs_t address, 
 //  memory write happens
 //-------------------------------------------------
 
-void device_debug::memory_write_hook(const address_space &space, offs_t address, UINT64 data, UINT64 mem_mask)
+void device_debug::memory_write_hook(const address_space &space, offs_t address, uint64_t data, uint64_t mem_mask)
 {
 	watchpoint_check(space, WATCHPOINT_WRITE, address, data, mem_mask);
 }
@@ -1938,7 +1938,7 @@ void device_debug::set_instruction_hook(debug_instruction_hook_func hook)
 //  PC on a given device
 //-------------------------------------------------
 
-offs_t device_debug::disassemble(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram)
+offs_t device_debug::disassemble(char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram)
 {
 	offs_t result = 0;
 
@@ -2113,7 +2113,7 @@ void device_debug::go_exception(int exception)
 //  delay elapses
 //-------------------------------------------------
 
-void device_debug::go_milliseconds(UINT64 milliseconds)
+void device_debug::go_milliseconds(uint64_t milliseconds)
 {
 	debugcpu_private *global = m_device.machine->debugcpu_data;
 
@@ -2591,7 +2591,7 @@ void device_debug::watchpoint_update_flags(const address_space &space)
 //  for a given CPU and address space
 //-------------------------------------------------
 
-void device_debug::watchpoint_check(const address_space &space, int type, offs_t address, UINT64 value_to_write, UINT64 mem_mask)
+void device_debug::watchpoint_check(const address_space &space, int type, offs_t address, uint64_t value_to_write, uint64_t mem_mask)
 {
 	debugcpu_private *global = space.machine->debugcpu_data;
 
@@ -2656,9 +2656,9 @@ void device_debug::watchpoint_check(const address_space &space, int type, offs_t
 				{
 					buffer.printf("Stopped at watchpoint %X writing %s to %08X (PC=%X)", wp->m_index, sizes[size], memory_byte_to_address(&space, address), pc);
 					if (value_to_write >> 32)
-						buffer.catprintf(" (data=%X%08X)", (UINT32)(value_to_write >> 32), (UINT32)value_to_write);
+						buffer.catprintf(" (data=%X%08X)", (uint32_t)(value_to_write >> 32), (uint32_t)value_to_write);
 					else
-						buffer.catprintf(" (data=%X)", (UINT32)value_to_write);
+						buffer.catprintf(" (data=%X)", (uint32_t)value_to_write);
 				}
 				else
 					buffer.printf("Stopped at watchpoint %X reading %s from %08X (PC=%X)", wp->m_index, sizes[size], memory_byte_to_address(&space, address), pc);
@@ -2723,7 +2723,7 @@ void device_debug::hotspot_check(const address_space &space, offs_t address)
 //  buffer and then disassembling them
 //-------------------------------------------------
 
-UINT32 device_debug::dasm_wrapped(astring &buffer, offs_t pc)
+uint32_t device_debug::dasm_wrapped(astring &buffer, offs_t pc)
 {
 	assert(m_memory != NULL && m_disasm != NULL);
 
@@ -2732,7 +2732,7 @@ UINT32 device_debug::dasm_wrapped(astring &buffer, offs_t pc)
 	offs_t pcbyte = memory_address_to_byte(space, pc) & space->bytemask;
 
 	// fetch the bytes up to the maximum
-	UINT8 opbuf[64], argbuf[64];
+	uint8_t opbuf[64], argbuf[64];
 	int maxbytes = max_opcode_bytes();
 	for (int numbytes = 0; numbytes < maxbytes; numbytes++)
 	{
@@ -2751,7 +2751,7 @@ UINT32 device_debug::dasm_wrapped(astring &buffer, offs_t pc)
 //  current instruction pointer
 //-------------------------------------------------
 
-UINT64 device_debug::get_current_pc(void *globalref, void *ref)
+uint64_t device_debug::get_current_pc(void *globalref, void *ref)
 {
 	device_t *device = reinterpret_cast<device_t *>(globalref);
 	return device->debug()->pc();
@@ -2763,7 +2763,7 @@ UINT64 device_debug::get_current_pc(void *globalref, void *ref)
 //  'cycles' symbol
 //-------------------------------------------------
 
-UINT64 device_debug::get_cycles(void *globalref, void *ref)
+uint64_t device_debug::get_cycles(void *globalref, void *ref)
 {
 	device_t *device = reinterpret_cast<device_t *>(globalref);
 	return device->debug()->m_exec->cycles_remaining();
@@ -2775,7 +2775,7 @@ UINT64 device_debug::get_cycles(void *globalref, void *ref)
 //  symbols
 //-------------------------------------------------
 
-UINT64 device_debug::get_logunmap(void *globalref, void *ref)
+uint64_t device_debug::get_logunmap(void *globalref, void *ref)
 {
 	const address_space *space = reinterpret_cast<const address_space *>(ref);
 	return memory_get_log_unmap(space);
@@ -2787,7 +2787,7 @@ UINT64 device_debug::get_logunmap(void *globalref, void *ref)
 //  symbols
 //-------------------------------------------------
 
-void device_debug::set_logunmap(void *globalref, void *ref, UINT64 value)
+void device_debug::set_logunmap(void *globalref, void *ref, uint64_t value)
 {
 	const address_space *space = reinterpret_cast<const address_space *>(ref);
 	memory_set_log_unmap(space, value ? 1 : 0);
@@ -2799,7 +2799,7 @@ void device_debug::set_logunmap(void *globalref, void *ref, UINT64 value)
 //  state symbols
 //-------------------------------------------------
 
-UINT64 device_debug::get_cpu_reg(void *globalref, void *ref)
+uint64_t device_debug::get_cpu_reg(void *globalref, void *ref)
 {
 	device_t *device = reinterpret_cast<device_t *>(globalref);
 	return device->debug()->m_state->state(reinterpret_cast<FPTR>(ref));
@@ -2811,7 +2811,7 @@ UINT64 device_debug::get_cpu_reg(void *globalref, void *ref)
 //  state symbols
 //-------------------------------------------------
 
-void device_debug::set_state(void *globalref, void *ref, UINT64 value)
+void device_debug::set_state(void *globalref, void *ref, uint64_t value)
 {
 	device_t *device = reinterpret_cast<device_t *>(globalref);
 	device->debug()->m_state->set_state(reinterpret_cast<FPTR>(ref), value);
@@ -2864,7 +2864,7 @@ bool device_debug::breakpoint::hit(offs_t pc)
 		return false;
 
 	// must satisfy the condition
-	UINT64 result;
+	uint64_t result;
 	if (m_condition != NULL && expression_execute(m_condition, &result) == EXPRERR_NONE && result == 0)
 		return false;
 
@@ -2925,7 +2925,7 @@ bool device_debug::watchpoint::hit(int type, offs_t address, int size)
 		return false;
 
 	// must satisfy the condition
-	UINT64 result;
+	uint64_t result;
 	if (m_condition != NULL && expression_execute(m_condition, &result) == EXPRERR_NONE && result == 0)
 		return false;
 

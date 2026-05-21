@@ -85,13 +85,13 @@ protected:
 private:
 	struct state_item
 	{
-		state_item(int index, const char *name, UINT8 valuechars);
+		state_item(int index, const char *name, uint8_t valuechars);
 
 		state_item *		m_next;				// next item
-		UINT64				m_lastval;			// last value
-		UINT64				m_currval;			// current value
+		uint64_t				m_lastval;			// last value
+		uint64_t				m_currval;			// current value
 		int					m_index;			// index
-		UINT8				m_vallen;			// number of value chars
+		uint8_t				m_vallen;			// number of value chars
 		astring				m_symbol;			// symbol
 	};
 
@@ -102,7 +102,7 @@ private:
 
 	// internal state
 	int					m_divider;				// dividing column
-	UINT64				m_last_update;			// execution counter at last update
+	uint64_t				m_last_update;			// execution counter at last update
 	state_item *		m_state_list;			// state data
 
 	// constants

@@ -630,7 +630,7 @@ bool debug_view_expression::recompute()
 	// if we have a parsed expression, evalute it
 	if (m_parsed != NULL)
 	{
-		UINT64 oldresult = m_result;
+		uint64_t oldresult = m_result;
 
 		// recompute the value of the expression
 		expression_execute(m_parsed, &m_result);

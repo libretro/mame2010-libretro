@@ -40,10 +40,10 @@ static char linebuffer[512];
     get_file_size - get the size of a file
 -------------------------------------------------*/
 
-static UINT64 get_file_size(const char *filename)
+static uint64_t get_file_size(const char *filename)
 {
 	osd_file *file;
-	UINT64 filesize = 0;
+	uint64_t filesize = 0;
 	file_error filerr;
 
 	filerr = osd_open(filename, OPEN_FLAG_READ, &file, &filesize);
@@ -63,7 +63,7 @@ static int tokenize( const char *linebuffer, int i, int linebuffersize, char *to
 	int singlequote = 0;
 	int doublequote = 0;
 
-	while ((i < linebuffersize) && isspace((UINT8)linebuffer[i]))
+	while ((i < linebuffersize) && isspace((uint8_t)linebuffer[i]))
 	{
 		i++;
 	}
@@ -78,7 +78,7 @@ static int tokenize( const char *linebuffer, int i, int linebuffersize, char *to
 		{
 			singlequote = !singlequote;
 		}
-		else if (!singlequote && !doublequote && isspace((UINT8)linebuffer[i]))
+		else if (!singlequote && !doublequote && isspace((uint8_t)linebuffer[i]))
 		{
 			break;
 		}
@@ -240,7 +240,7 @@ static void chdcd_tracksize_helper(int trknum, cdrom_toc *outtoc, chdcd_track_in
 {
 	if (outtoc->tracks[trknum].frames == 0)
 	{
-		UINT64 tlen;
+		uint64_t tlen;
 
 		tlen = get_file_size(outinfo->fname[trknum]) - outinfo->offset[trknum];
 		tlen /= (outtoc->tracks[trknum].datasize + outtoc->tracks[trknum].subsize);
@@ -336,7 +336,7 @@ chd_error chdcd_parse_toc(const char *tocfname, cdrom_toc *outtoc, chdcd_track_i
 					/* it's a decimal offset, use it */
 					f = strtoul(&token[1], NULL, 10);
 				}
-				else if (isdigit((UINT8)token[0]))
+				else if (isdigit((uint8_t)token[0]))
 				{
 					/* convert the time to an offset */
 					f = msf_to_frames( token );
@@ -352,14 +352,14 @@ chd_error chdcd_parse_toc(const char *tocfname, cdrom_toc *outtoc, chdcd_track_i
 
 				TOKENIZE
 
-				if (isdigit((UINT8)token[0]))
+				if (isdigit((uint8_t)token[0]))
 				{
 					// this could be the length or an offset from the previous field.
 					f = msf_to_frames( token );
 
 					TOKENIZE
 
-					if (isdigit((UINT8)token[0]))
+					if (isdigit((uint8_t)token[0]))
 					{
 						// it was an offset.
 						f *= (outtoc->tracks[trknum].datasize + outtoc->tracks[trknum].subsize);
