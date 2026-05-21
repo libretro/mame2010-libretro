@@ -12,10 +12,10 @@ public:
 	alpha68k_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    spriteram;
-	UINT16 *    shared_ram;
-	UINT16 *    paletteram;
+	uint16_t *    videoram;
+	uint16_t *    spriteram;
+	uint16_t *    shared_ram;
+	uint16_t *    paletteram;
 
 	/* video-related */
 	tilemap_t     *fix_tilemap;

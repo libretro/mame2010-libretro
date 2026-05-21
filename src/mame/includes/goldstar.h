@@ -7,26 +7,26 @@ public:
 
 	int dataoffset;
 
-	UINT8 *nvram;
+	uint8_t *nvram;
 	size_t nvram_size;
 
-	UINT8 *atrram;
-	UINT8 *fg_atrram;
-	UINT8 *fg_vidram;
+	uint8_t *atrram;
+	uint8_t *fg_atrram;
+	uint8_t *fg_vidram;
 
-	UINT8 *reel1_scroll;
-	UINT8 *reel2_scroll;
-	UINT8 *reel3_scroll;
+	uint8_t *reel1_scroll;
+	uint8_t *reel2_scroll;
+	uint8_t *reel3_scroll;
 
-	UINT8 *reel1_ram;
-	UINT8 *reel2_ram;
-	UINT8 *reel3_ram;
+	uint8_t *reel1_ram;
+	uint8_t *reel2_ram;
+	uint8_t *reel3_ram;
 
 	/* reelx_attrram for unkch sets */
-	UINT8 *reel1_attrram;
-	UINT8 *reel2_attrram;
-	UINT8 *reel3_attrram;
-	UINT8 unkch_vidreg;
+	uint8_t *reel1_attrram;
+	uint8_t *reel2_attrram;
+	uint8_t *reel3_attrram;
+	uint8_t unkch_vidreg;
 
 	tilemap_t *reel1_tilemap;
 	tilemap_t *reel2_tilemap;
@@ -34,11 +34,11 @@ public:
 
 	int bgcolor;
 	tilemap_t *fg_tilemap;
-	UINT8 cmaster_girl_num;
-	UINT8 cmaster_girl_pal;
-	UINT8 cm_enable_reg;
-	UINT8 cm_girl_scroll;
-	UINT8 lucky8_nmi_enable;
+	uint8_t cmaster_girl_num;
+	uint8_t cmaster_girl_pal;
+	uint8_t cm_enable_reg;
+	uint8_t cm_girl_scroll;
+	uint8_t lucky8_nmi_enable;
 	int tile_bank;
 
 };

@@ -1,19 +1,19 @@
 /*----------- defined in drivers/nmk16.c -----------*/
 
-extern UINT16* nmk16_mainram;
+extern uint16_t* nmk16_mainram;
 
 
 /*----------- defined in video/nmk16.c -----------*/
 
-extern UINT16 *nmk_bgvideoram0;
-extern UINT16 *nmk_bgvideoram1;
-extern UINT16 *nmk_bgvideoram2;
-extern UINT16 *nmk_bgvideoram3;
+extern uint16_t *nmk_bgvideoram0;
+extern uint16_t *nmk_bgvideoram1;
+extern uint16_t *nmk_bgvideoram2;
+extern uint16_t *nmk_bgvideoram3;
 
-extern UINT16 *nmk_fgvideoram,*nmk_txvideoram;
-extern UINT16 *gunnail_scrollram, *gunnail_scrollramy;
-extern UINT16 *afega_scroll_0;
-extern UINT16 *afega_scroll_1;
+extern uint16_t *nmk_fgvideoram,*nmk_txvideoram;
+extern uint16_t *gunnail_scrollram, *gunnail_scrollramy;
+extern uint16_t *afega_scroll_0;
+extern uint16_t *afega_scroll_1;
 
 
 WRITE16_HANDLER( nmk_bgvideoram0_w );

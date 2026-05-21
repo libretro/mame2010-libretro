@@ -12,11 +12,11 @@ public:
 	taitoh_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    m68000_mainram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    m68000_mainram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* misc */
-	INT32       banknum;
+	int32_t       banknum;
 
 	/* devices */
 	running_device *maincpu;

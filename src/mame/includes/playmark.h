@@ -7,13 +7,13 @@ public:
 	playmark_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     bgvideoram;
-	UINT16 *     videoram1;
-	UINT16 *     videoram2;
-	UINT16 *     videoram3;
-	UINT16 *     rowscroll;
-	UINT16 *     spriteram;
-//      UINT16 *     paletteram;    // currently this uses generic palette handling
+	uint16_t *     bgvideoram;
+	uint16_t *     videoram1;
+	uint16_t *     videoram2;
+	uint16_t *     videoram3;
+	uint16_t *     rowscroll;
+	uint16_t *     spriteram;
+//      uint16_t *     paletteram;    // currently this uses generic palette handling
 	size_t       spriteram_size;
 
 	/* video-related */
@@ -25,17 +25,17 @@ public:
 	int         yoffset;
 	int         txt_tile_offset;
 	int         pri_masks[3];
-	UINT16      scroll[7];
+	uint16_t      scroll[7];
 
 	/* powerbal-specific */
 	int         tilebank;
 	int         bg_yoffset;
 
 	/* misc */
-	UINT16      snd_command;
-	UINT16      snd_flag;
-	UINT8       oki_control;
-	UINT8       oki_command;
+	uint16_t      snd_command;
+	uint16_t      snd_flag;
+	uint8_t       oki_control;
+	uint8_t       oki_command;
 	int         old_oki_bank;
 
 	/* devices */

@@ -9,11 +9,11 @@
 #include "emu.h"
 #include "video/resnet.h"
 
-extern UINT8 shaolins_nmi_enable;
+extern uint8_t shaolins_nmi_enable;
 
 static int palettebank;
-UINT8 *shaolins_videoram;
-UINT8 *shaolins_colorram;
+uint8_t *shaolins_videoram;
+uint8_t *shaolins_colorram;
 static tilemap_t *bg_tilemap;
 
 /***************************************************************************
@@ -87,7 +87,7 @@ PALETTE_INIT( shaolins )
 
 		for (j = 0; j < 8; j++)
 		{
-			UINT8 ctabentry = (j << 5) | ((~i & 0x100) >> 4) | (color_prom[i] & 0x0f);
+			uint8_t ctabentry = (j << 5) | ((~i & 0x100) >> 4) | (color_prom[i] & 0x0f);
 			colortable_entry_set_value(machine->colortable, ((i & 0x100) << 3) | (j << 8) | (i & 0xff), ctabentry);
 		}
 	}
@@ -153,7 +153,7 @@ VIDEO_START( shaolins )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size-32; offs >= 0; offs-=32 ) /* max 24 sprites */

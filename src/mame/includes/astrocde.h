@@ -13,8 +13,8 @@
 
 /*----------- defined in video/astrocde.c -----------*/
 
-extern UINT8 astrocade_video_config;
-extern UINT8 astrocade_sparkle[4];
+extern uint8_t astrocade_video_config;
+extern uint8_t astrocade_sparkle[4];
 
 PALETTE_INIT( astrocde );
 PALETTE_INIT( profpac );

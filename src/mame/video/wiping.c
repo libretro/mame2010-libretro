@@ -12,8 +12,8 @@
 
 
 static int flipscreen;
-UINT8 *wiping_videoram;
-UINT8 *wiping_colorram;
+uint8_t *wiping_videoram;
+uint8_t *wiping_colorram;
 
 
 /***************************************************************************
@@ -70,14 +70,14 @@ PALETTE_INIT( wiping )
 	/* chars use colors 0-15 */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i ^ 0x03] & 0x0f;
+		uint8_t ctabentry = color_prom[i ^ 0x03] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites use colors 16-31 */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = (color_prom[i ^ 0x03] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i ^ 0x03] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -92,7 +92,7 @@ WRITE8_HANDLER( wiping_flipscreen_w )
 
 VIDEO_UPDATE( wiping )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0x3ff; offs > 0; offs--)
@@ -204,7 +204,7 @@ VIDEO_UPDATE( wiping )
 #if 0
 {
 	int i,j;
-	extern UINT8 *wiping_soundregs;
+	extern uint8_t *wiping_soundregs;
 
 	for (i = 0;i < 8;i++)
 	{

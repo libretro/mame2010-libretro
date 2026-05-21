@@ -149,7 +149,7 @@ rom.
 #include "sound/2151intf.h"
 
 
-UINT8 *t5182_sharedram;
+uint8_t *t5182_sharedram;
 
 
 enum

@@ -61,7 +61,7 @@ WRITE16_HANDLER( ddragon3_fg_videoram_w )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	ddragon3_state *state = (ddragon3_state *)machine->driver_data;
-	UINT16 attr = state->bg_videoram[tile_index];
+	uint16_t attr = state->bg_videoram[tile_index];
 	int code = (attr & 0x0fff) | ((state->bg_tilebase & 0x01) << 12);
 	int color = ((attr & 0xf000) >> 12) + 16;
 
@@ -72,7 +72,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 {
 	ddragon3_state *state = (ddragon3_state *)machine->driver_data;
 	int offs = tile_index * 2;
-	UINT16 attr = state->fg_videoram[offs];
+	uint16_t attr = state->fg_videoram[offs];
 	int code = state->fg_videoram[offs + 1] & 0x1fff;
 	int color = attr & 0xf;
 	int flags = (attr & 0x40) ? TILE_FLIPX : 0;
@@ -119,12 +119,12 @@ VIDEO_START( ddragon3 )
 static void draw_sprites( running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ddragon3_state *state = (ddragon3_state *)machine->driver_data;
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = source + 0x800;
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = source + 0x800;
 
 	while (source < finish)
 	{
-		UINT16 attr = source[1];
+		uint16_t attr = source[1];
 
 		if (attr & 0x01)	/* enable */
 		{

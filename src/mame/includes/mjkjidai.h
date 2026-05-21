@@ -5,14 +5,14 @@ public:
 
 	mjkjidai_state(running_machine &machine) { }
 
-	UINT8 *videoram;
-	UINT8 *spriteram1;
-	UINT8 *spriteram2;
-	UINT8 *spriteram3;
+	uint8_t *videoram;
+	uint8_t *spriteram1;
+	uint8_t *spriteram2;
+	uint8_t *spriteram3;
 
 	int keyb;
 	int nvram_init_count;
-	UINT8 *nvram;
+	uint8_t *nvram;
 	size_t nvram_size;
 };
 

@@ -67,8 +67,8 @@ enum
 	Z80_CLEAR
 };
 
-static UINT8 irqvector;
-static UINT32 sample_addr;
+static uint8_t irqvector;
+static uint32_t sample_addr;
 
 static TIMER_CALLBACK( setvector_callback )
 {

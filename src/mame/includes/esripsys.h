@@ -14,12 +14,12 @@
 #define ESRIPSYS_VBLANK_END		(0)
 
 #define CMOS_RAM_SIZE			(2048)
-#define FDT_RAM_SIZE			(2048 * sizeof(UINT16))
+#define FDT_RAM_SIZE			(2048 * sizeof(uint16_t))
 
 /*----------- defined in video/esripsys.c -----------*/
 
 extern int esripsys_hblank;
-extern UINT8 *esripsys_pal_ram;
+extern uint8_t *esripsys_pal_ram;
 extern int esripsys_frame_vbl;
 extern int esripsys__12sel;
 extern int esripsys_video_firq_en;

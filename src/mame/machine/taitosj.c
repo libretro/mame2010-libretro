@@ -16,13 +16,13 @@
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
 
 
-static UINT8 fromz80,toz80;
-static UINT8 zaccept,zready,busreq;
-static UINT8 portA_in,portA_out;
+static uint8_t fromz80,toz80;
+static uint8_t zaccept,zready,busreq;
+static uint8_t portA_in,portA_out;
 
-static UINT8 spacecr_prot_value;
-static UINT8 protection_value;
-static UINT32 address;
+static uint8_t spacecr_prot_value;
+static uint8_t protection_value;
+static uint32_t address;
 
 MACHINE_START( taitosj )
 {

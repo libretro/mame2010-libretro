@@ -24,16 +24,16 @@ public:
 	cvs_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    video_ram;
-	UINT8 *    bullet_ram;
-	UINT8 *    fo_state;
-	UINT8 *    cvs_4_bit_dac_data;
-	UINT8 *    tms5110_ctl_data;
-	UINT8 *    dac3_state;
-	UINT8 *    color_ram;
-	UINT8 *    palette_ram;
-	UINT8 *    character_ram;
-	UINT8 *    effectram;	// quasar
+	uint8_t *    video_ram;
+	uint8_t *    bullet_ram;
+	uint8_t *    fo_state;
+	uint8_t *    cvs_4_bit_dac_data;
+	uint8_t *    tms5110_ctl_data;
+	uint8_t *    dac3_state;
+	uint8_t *    color_ram;
+	uint8_t *    palette_ram;
+	uint8_t *    character_ram;
+	uint8_t *    effectram;	// quasar
 
 	/* video-related */
 	struct cvs_star stars[CVS_MAX_STARS];
@@ -43,19 +43,19 @@ public:
 	int        collision_register;
 	int        total_stars;
 	int        stars_on;
-	UINT8      scroll_reg;
-	UINT8      effectcontrol;	// quasar
+	uint8_t      scroll_reg;
+	uint8_t      effectcontrol;	// quasar
 	int        stars_scroll;
 
 	/* misc */
 	emu_timer  *cvs_393hz_timer;
-	UINT8      cvs_393hz_clock;
+	uint8_t      cvs_393hz_clock;
 
-	UINT8      character_banking_mode;
-	UINT16     character_ram_page_start;
-	UINT16     speech_rom_bit_address;
+	uint8_t      character_banking_mode;
+	uint16_t     character_ram_page_start;
+	uint16_t     speech_rom_bit_address;
 
-	UINT8      page, io_page;	// quasar
+	uint8_t      page, io_page;	// quasar
 
 	/* devices */
 	running_device *maincpu;

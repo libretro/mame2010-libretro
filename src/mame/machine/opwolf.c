@@ -51,7 +51,7 @@ enum {
 };
 
 
-static const UINT16 level_data_00[0xcc] =
+static const uint16_t level_data_00[0xcc] =
 {
 	0x0480,0x1008,0x0300,0x5701,0x0001,0x0010,0x0480,0x1008,
 	0x0300,0x5701,0x0001,0x002b,0x0780,0x0009,0x0300,0x4a01,
@@ -81,7 +81,7 @@ static const UINT16 level_data_00[0xcc] =
 	0x0000,0xf501,0x0008,0x8026
 };
 
-static const UINT16 level_data_01[0xcc] =
+static const uint16_t level_data_01[0xcc] =
 {
 	0x0780,0x0209,0x0300,0x4c01,0x0004,0x0010,0x0780,0x0209,
 	0x0300,0x4c01,0x4004,0x0020,0x0780,0x0309,0x0300,0x4d01,
@@ -111,7 +111,7 @@ static const UINT16 level_data_01[0xcc] =
 	0x0300,0x4e01,0x0007,0x8007
 };
 
-static const UINT16 level_data_02[0xcc] =
+static const uint16_t level_data_02[0xcc] =
 {
 	0x0480,0x000b,0x0300,0x4501,0x0001,0x0018,0x0480,0x000b,
 	0x0300,0x4501,0x2001,0x0030,0x0780,0x1208,0x0300,0x5d01,
@@ -141,7 +141,7 @@ static const UINT16 level_data_02[0xcc] =
 	0x0000,0xf001,0x0000,0x0000
 };
 
-static const UINT16 level_data_03[0xcc] =
+static const uint16_t level_data_03[0xcc] =
 {
 	0x0480,0x000b,0x0300,0x4501,0x0001,0x0018,0x0480,0x000b,
 	0x0300,0x4501,0x2001,0x002b,0x0780,0x010c,0x0300,0x4601,
@@ -171,7 +171,7 @@ static const UINT16 level_data_03[0xcc] =
 	0x0300,0x4801,0x8007,0x803d
 };
 
-static const UINT16 level_data_04[0xcc] =
+static const uint16_t level_data_04[0xcc] =
 {
 	0x0780,0x0209,0x0300,0x4c01,0x0004,0x0010,0x0780,0x0209,
 	0x0300,0x4c01,0x4004,0x0020,0x0780,0x0309,0x0300,0x4d01,
@@ -201,7 +201,7 @@ static const UINT16 level_data_04[0xcc] =
 	0x0000,0xfc01,0x8009,0x0042
 };
 
-static const UINT16 level_data_05[0xcc] =
+static const uint16_t level_data_05[0xcc] =
 {
 	0x0480,0x1008,0x0300,0x5701,0x0001,0x0010,0x0480,0x1008,
 	0x0300,0x5701,0x0001,0x002b,0x0780,0x0009,0x0300,0x4a01,
@@ -231,7 +231,7 @@ static const UINT16 level_data_05[0xcc] =
 	0x0000,0xf501,0x0008,0x8026
 };
 
-static const UINT16 level_data_06[0xcc] =
+static const uint16_t level_data_06[0xcc] =
 {
 	0x0000,0x1008,0x0300,0x5701,0x0001,0x0010,0x0000,0x1008,
 	0x0300,0x5701,0x0001,0x002b,0x0000,0x0000,0x0000,0x0000,
@@ -261,7 +261,7 @@ static const UINT16 level_data_06[0xcc] =
 	0x0300,0x4e01,0x5006,0x0042
 };
 
-static const UINT16 *const level_data_lookup[] =
+static const uint16_t *const level_data_lookup[] =
 {
 	level_data_00,
 	level_data_01,
@@ -281,7 +281,7 @@ static TIMER_CALLBACK( opwolf_timer_callback )
 	if (state->current_cmd == 0xf5)
 	{
 		int level = state->cchip_ram[0x1b];
-		const UINT16* level_data = level_data_lookup[level];
+		const uint16_t* level_data = level_data_lookup[level];
 		int i = 0;
 		for (i = 0; i < 0xcc; i++)
 		{
@@ -423,9 +423,9 @@ WRITE16_HANDLER( opwolf_cchip_data_w )
 		if (offset == 0x14)
 		{
 #if OPWOLF_READ_COINAGE_FROM_ROM
-			UINT16* rom = (UINT16*)memory_region(space->machine, "maincpu");
-			UINT32 coin_table[2] = {0, 0};
-			UINT8 coin_offset[2];
+			uint16_t* rom = (uint16_t*)memory_region(space->machine, "maincpu");
+			uint32_t coin_table[2] = {0, 0};
+			uint8_t coin_offset[2];
 			int slot;
 
 			if ((state->opwolf_region == OPWOLF_REGION_JAPAN) || (state->opwolf_region == OPWOLF_REGION_US))
@@ -722,7 +722,7 @@ void opwolf_cchip_init( running_machine *machine )
 {
 	opwolf_state *state = (opwolf_state *)machine->driver_data;
 
-	state->cchip_ram = auto_alloc_array_clear(machine, UINT8, 0x400 * 8);
+	state->cchip_ram = auto_alloc_array_clear(machine, uint8_t, 0x400 * 8);
 
 	state_save_register_global(machine, state->current_bank);
 	state_save_register_global(machine, state->current_cmd);

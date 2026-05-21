@@ -29,26 +29,26 @@
 			"%s, scanline: %d\n", cpuexec_describe_context(m), (m)->primary_screen->vpos())
 
 
-UINT8 irobot_vg_clear;
-static UINT8 irvg_vblank;
-static UINT8 irvg_running;
-static UINT8 irmb_running;
+uint8_t irobot_vg_clear;
+static uint8_t irvg_vblank;
+static uint8_t irvg_running;
+static uint8_t irmb_running;
 
 #if IR_TIMING
 static timer_device *irvg_timer;
 static timer_device *irmb_timer;
 #endif
 
-static UINT8 *comRAM[2], *mbRAM, *mbROM;
-static UINT8 irobot_control_num = 0;
-static UINT8 irobot_statwr;
-static UINT8 irobot_out0;
-static UINT8 irobot_outx,irobot_mpage;
+static uint8_t *comRAM[2], *mbRAM, *mbROM;
+static uint8_t irobot_control_num = 0;
+static uint8_t irobot_statwr;
+static uint8_t irobot_out0;
+static uint8_t irobot_outx,irobot_mpage;
 
-static UINT8 *irobot_combase_mb;
-UINT8 *irobot_combase;
-UINT8 irobot_bufsel;
-UINT8 irobot_alphamap;
+static uint8_t *irobot_combase_mb;
+uint8_t *irobot_combase;
+uint8_t irobot_bufsel;
+uint8_t irobot_alphamap;
 
 static void irmb_run(running_machine *machine);
 
@@ -123,7 +123,7 @@ WRITE8_HANDLER( irobot_statwr_w )
 
 WRITE8_HANDLER( irobot_out0_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	irobot_out0 = data;
 	switch (data & 0x60)
@@ -145,7 +145,7 @@ WRITE8_HANDLER( irobot_out0_w )
 
 WRITE8_HANDLER( irobot_rom_banksel_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	switch ((data & 0x0E) >> 1)
 	{
@@ -190,7 +190,7 @@ static TIMER_CALLBACK( scanline_callback )
 
 MACHINE_RESET( irobot )
 {
-	UINT8 *MB = memory_region(machine, "mathbox");
+	uint8_t *MB = memory_region(machine, "mathbox");
 
 	/* initialize the memory regions */
 	mbROM		= MB + 0x00000;
@@ -309,60 +309,60 @@ READ8_HANDLER( irobot_status_r )
 typedef struct irmb_ops
 {
 	const struct irmb_ops *nxtop;
-	UINT32 func;
-	UINT32 diradd;
-	UINT32 latchmask;
-	UINT32 *areg;
-	UINT32 *breg;
-	UINT8 cycles;
-	UINT8 diren;
-	UINT8 flags;
-	UINT8 ramsel;
+	uint32_t func;
+	uint32_t diradd;
+	uint32_t latchmask;
+	uint32_t *areg;
+	uint32_t *breg;
+	uint8_t cycles;
+	uint8_t diren;
+	uint8_t flags;
+	uint8_t ramsel;
 } irmb_ops;
 
 static irmb_ops *mbops;
 
 static const irmb_ops *irmb_stack[16];
-static UINT32 irmb_regs[16];
-static UINT32 irmb_latch;
+static uint32_t irmb_regs[16];
+static uint32_t irmb_latch;
 
 #if DISASSEMBLE_MB_ROM
 static void disassemble_instruction(irmb_ops *op);
 #endif
 
 
-static UINT32 irmb_din(const irmb_ops *curop)
+static uint32_t irmb_din(const irmb_ops *curop)
 {
-	UINT32 d = 0;
+	uint32_t d = 0;
 
 	if (!(curop->flags & FL_MBMEMDEC) && (curop->flags & FL_MBRW))
 	{
-		UINT32 ad = curop->diradd | (irmb_latch & curop->latchmask);
+		uint32_t ad = curop->diradd | (irmb_latch & curop->latchmask);
 
 		if (curop->diren || (irmb_latch & 0x6000) == 0)
-			d = ((UINT16 *)mbRAM)[ad & 0xfff];				/* MB RAM read */
+			d = ((uint16_t *)mbRAM)[ad & 0xfff];				/* MB RAM read */
 		else if (irmb_latch & 0x4000)
-			d = ((UINT16 *)mbROM)[ad + 0x2000];				/* MB ROM read, CEMATH = 1 */
+			d = ((uint16_t *)mbROM)[ad + 0x2000];				/* MB ROM read, CEMATH = 1 */
 		else
-			d = ((UINT16 *)mbROM)[ad & 0x1fff];				/* MB ROM read, CEMATH = 0 */
+			d = ((uint16_t *)mbROM)[ad & 0x1fff];				/* MB ROM read, CEMATH = 0 */
 	}
 	return d;
 }
 
 
-static void irmb_dout(const irmb_ops *curop, UINT32 d)
+static void irmb_dout(const irmb_ops *curop, uint32_t d)
 {
 	/* Write to video com ram */
 	if (curop->ramsel == 3)
-		((UINT16 *)irobot_combase_mb)[irmb_latch & 0x7ff] = d;
+		((uint16_t *)irobot_combase_mb)[irmb_latch & 0x7ff] = d;
 
     /* Write to mathox ram */
 	if (!(curop->flags & FL_MBMEMDEC))
 	{
-		UINT32 ad = curop->diradd | (irmb_latch & curop->latchmask);
+		uint32_t ad = curop->diradd | (irmb_latch & curop->latchmask);
 
 		if (curop->diren || (irmb_latch & 0x6000) == 0)
-			((UINT16 *)mbRAM)[ad & 0xfff] = d;				/* MB RAM write */
+			((uint16_t *)mbRAM)[ad & 0xfff] = d;				/* MB RAM write */
 	}
 }
 
@@ -370,7 +370,7 @@ static void irmb_dout(const irmb_ops *curop, UINT32 d)
 /* Convert microcode roms to a more usable form */
 static void load_oproms(running_machine *machine)
 {
-	UINT8 *MB = memory_region(machine, "proms") + 0x20;
+	uint8_t *MB = memory_region(machine, "proms") + 0x20;
 	int i;
 
 	/* allocate RAM */
@@ -578,23 +578,23 @@ static void irmb_run(running_machine *machine)
 	const irmb_ops *prevop = &mbops[0];
 	const irmb_ops *curop = &mbops[0];
 
-	UINT32 Q = 0;
-	UINT32 Y = 0;
-	UINT32 nflag = 0;
-	UINT32 vflag = 0;
-	UINT32 cflag = 0;
-	UINT32 zresult = 1;
-	UINT32 CI = 0;
-	UINT32 SP = 0;
-	UINT32 icount = 0;
+	uint32_t Q = 0;
+	uint32_t Y = 0;
+	uint32_t nflag = 0;
+	uint32_t vflag = 0;
+	uint32_t cflag = 0;
+	uint32_t zresult = 1;
+	uint32_t CI = 0;
+	uint32_t SP = 0;
+	uint32_t icount = 0;
 
 	profiler_mark_start(PROFILER_USER1);
 
 	while ((prevop->flags & (FL_DPSEL | FL_carry)) != (FL_DPSEL | FL_carry))
 	{
-		UINT32 result;
-		UINT32 fu;
-		UINT32 tmp;
+		uint32_t result;
+		uint32_t fu;
+		uint32_t tmp;
 
 		icount += curop->cycles;
 

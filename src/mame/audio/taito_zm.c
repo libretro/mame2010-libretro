@@ -23,7 +23,7 @@ static ADDRESS_MAP_START(taitozoom_map, ADDRESS_SPACE_PROGRAM, 16)
 	AM_RANGE(0xc00000, 0xc00001) AM_RAM	// TMS57002 comms
 ADDRESS_MAP_END
 
-static UINT8 tms_ctrl;
+static uint8_t tms_ctrl;
 
 static READ8_HANDLER(tms_ctrl_r)
 {

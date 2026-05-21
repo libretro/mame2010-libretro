@@ -35,11 +35,11 @@ public:
 	m10_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *             chargen;
-	UINT8 *             memory;
-	UINT8 *             rom;
-	UINT8 *             videoram;
-	UINT8 *             colorram;
+	uint8_t *             chargen;
+	uint8_t *             memory;
+	uint8_t *             rom;
+	uint8_t *             videoram;
+	uint8_t *             colorram;
 	size_t              videoram_size;
 
 	/* video-related */
@@ -47,11 +47,11 @@ public:
 	gfx_element *       back_gfx;
 
 	/* this is currently unused, because it is needed by gfx_layout (which has no machine) */
-	UINT32              extyoffs[32 * 8];
+	uint32_t              extyoffs[32 * 8];
 
 	/* video state */
-	UINT8	              bottomline;
-	UINT8               flip;
+	uint8_t	              bottomline;
+	uint8_t               flip;
 
 	/* misc */
 	int                 last;

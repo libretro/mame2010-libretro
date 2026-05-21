@@ -12,9 +12,9 @@ public:
 	xexex_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    workram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    workram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        layer_colorbase[4], sprite_colorbase;
@@ -22,8 +22,8 @@ public:
 	int        cur_alpha;
 
 	/* misc */
-	UINT16     cur_control2;
-	INT32      cur_sound_region, strip_0x1a;
+	uint16_t     cur_control2;
+	int32_t      cur_sound_region, strip_0x1a;
 	int        suspension_active, resume_trigger;
 	emu_timer  *dmadelay_timer;
 	int        frame;

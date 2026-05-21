@@ -40,7 +40,7 @@
  *
  *************************************/
 
-static UINT8 mcr_sound_config;
+static uint8_t mcr_sound_config;
 
 
 
@@ -50,38 +50,38 @@ static UINT8 mcr_sound_config;
  *
  *************************************/
 
-static UINT16 dacval;
+static uint16_t dacval;
 
 /* SSIO-specific globals */
 static running_device *ssio_sound_cpu;
-static UINT8 ssio_data[4];
-static UINT8 ssio_status;
-static UINT8 ssio_14024_count;
-static UINT8 ssio_mute;
-static UINT8 ssio_overall[2];
-static UINT8 ssio_duty_cycle[2][3];
-static UINT8 ssio_ayvolume_lookup[16];
-static UINT8 ssio_custom_input_mask[5];
-static UINT8 ssio_custom_output_mask[2];
+static uint8_t ssio_data[4];
+static uint8_t ssio_status;
+static uint8_t ssio_14024_count;
+static uint8_t ssio_mute;
+static uint8_t ssio_overall[2];
+static uint8_t ssio_duty_cycle[2][3];
+static uint8_t ssio_ayvolume_lookup[16];
+static uint8_t ssio_custom_input_mask[5];
+static uint8_t ssio_custom_output_mask[2];
 static read8_space_func ssio_custom_input[5];
 static write8_space_func ssio_custom_output[2];
 
 /* Chip Squeak Deluxe-specific globals */
 static running_device *csdeluxe_sound_cpu;
-static UINT8 csdeluxe_status;
+static uint8_t csdeluxe_status;
 
 /* Turbo Chip Squeak-specific globals */
 static running_device *turbocs_sound_cpu;
-static UINT8 turbocs_status;
+static uint8_t turbocs_status;
 
 /* Sounds Good-specific globals */
 static running_device *soundsgood_sound_cpu;
-static UINT8 soundsgood_status;
+static uint8_t soundsgood_status;
 
 /* Squawk n' Talk-specific globals */
 static running_device *squawkntalk_sound_cpu;
-static UINT8 squawkntalk_tms_command;
-static UINT8 squawkntalk_tms_strobes;
+static uint8_t squawkntalk_tms_command;
+static uint8_t squawkntalk_tms_strobes;
 
 
 
@@ -101,7 +101,7 @@ static void ssio_compute_ay8910_modulation(running_machine *machine);
  *
  *************************************/
 
-void mcr_sound_init(running_machine *machine, UINT8 config)
+void mcr_sound_init(running_machine *machine, uint8_t config)
 {
 	mcr_sound_config = config;
 
@@ -242,7 +242,7 @@ void mcr_sound_reset(running_machine *machine)
 */
 static void ssio_compute_ay8910_modulation(running_machine *machine)
 {
-	UINT8 *prom = memory_region(machine, "proms");
+	uint8_t *prom = memory_region(machine, "proms");
 	int volval;
 
 	/* loop over all possible values of the duty cycle */
@@ -389,7 +389,7 @@ void ssio_reset_w(running_machine *machine, int state)
 READ8_HANDLER( ssio_input_port_r )
 {
 	static const char *const port[] = { "SSIO.IP0", "SSIO.IP1", "SSIO.IP2", "SSIO.IP3", "SSIO.IP4" };
-	UINT8 result = input_port_read_safe(space->machine, port[offset], 0xff);
+	uint8_t result = input_port_read_safe(space->machine, port[offset], 0xff);
 	if (ssio_custom_input[offset])
 		result = (result & ~ssio_custom_input_mask[offset]) |
 		         ((*ssio_custom_input[offset])(space, offset) & ssio_custom_input_mask[offset]);
@@ -496,7 +496,7 @@ static WRITE8_DEVICE_HANDLER( csdeluxe_porta_w )
 
 static WRITE8_DEVICE_HANDLER( csdeluxe_portb_w )
 {
-	UINT8 z_mask = pia6821_get_port_b_z_mask(device);
+	uint8_t z_mask = pia6821_get_port_b_z_mask(device);
 
 	dacval = (dacval & ~0x003) | (data >> 6);
 	dac_signed_data_16_w(device->machine->device("csddac"), dacval << 6);
@@ -634,7 +634,7 @@ static WRITE8_DEVICE_HANDLER( soundsgood_porta_w )
 
 static WRITE8_DEVICE_HANDLER( soundsgood_portb_w )
 {
-	UINT8 z_mask = pia6821_get_port_b_z_mask(device);
+	uint8_t z_mask = pia6821_get_port_b_z_mask(device);
 
 	dacval = (dacval & ~0x003) | (data >> 6);
 	dac_signed_data_16_w(device->machine->device("sgdac"), dacval << 6);

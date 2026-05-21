@@ -27,7 +27,7 @@ PALETTE_INIT( hcastle )
 
 			for (i = 0; i < 0x100; i++)
 			{
-				UINT8 ctabentry;
+				uint8_t ctabentry;
 
 				if (((pal & 0x01) == 0) && (color_prom[(clut << 8) | i] == 0))
 					ctabentry = 0;
@@ -48,7 +48,7 @@ static void set_pens(running_machine *machine)
 
 	for (i = 0x00; i < 0x100; i += 2)
 	{
-		UINT16 data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
+		uint16_t data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 
@@ -73,8 +73,8 @@ static TILEMAP_MAPPER( tilemap_scan )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	hcastle_state *state = (hcastle_state *)machine->driver_data;
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
 	int bit0 = (ctrl_5 >> 0) & 0x03;
 	int bit1 = (ctrl_5 >> 2) & 0x03;
 	int bit2 = (ctrl_5 >> 4) & 0x03;
@@ -98,8 +98,8 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	hcastle_state *state = (hcastle_state *)machine->driver_data;
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121_2, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121_2, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
 	int bit0 = (ctrl_5 >> 0) & 0x03;
 	int bit1 = (ctrl_5 >> 2) & 0x03;
 	int bit2 = (ctrl_5 >> 4) & 0x03;
@@ -210,14 +210,14 @@ WRITE8_HANDLER( hcastle_pf2_control_w )
 
 /*****************************************************************************/
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *sbank, int bank )
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *sbank, int bank )
 {
 	hcastle_state *state = (hcastle_state *)machine->driver_data;
 	running_device *k007121 = bank ? state->k007121_2 : state->k007121_1;
 	int base_color = (k007121_ctrlram_r(k007121, 6) & 0x30) * 2;
 	int bank_base = (bank == 0) ? 0x4000 * (state->gfx_bank & 1) : 0;
 
-	k007121_sprites_draw(k007121, bitmap, cliprect, machine->gfx[bank], machine->colortable, sbank, base_color, 0, bank_base, (UINT32)-1);
+	k007121_sprites_draw(k007121, bitmap, cliprect, machine->gfx[bank], machine->colortable, sbank, base_color, 0, bank_base, (uint32_t)-1);
 }
 
 /*****************************************************************************/
@@ -226,14 +226,14 @@ VIDEO_UPDATE( hcastle )
 {
 	hcastle_state *state = (hcastle_state *)screen->machine->driver_data;
 
-	UINT8 ctrl_1_0 = k007121_ctrlram_r(state->k007121_1, 0);
-	UINT8 ctrl_1_1 = k007121_ctrlram_r(state->k007121_1, 1);
-	UINT8 ctrl_1_2 = k007121_ctrlram_r(state->k007121_1, 2);
-	UINT8 ctrl_1_3 = k007121_ctrlram_r(state->k007121_1, 3);
-	UINT8 ctrl_2_0 = k007121_ctrlram_r(state->k007121_2, 0);
-	UINT8 ctrl_2_1 = k007121_ctrlram_r(state->k007121_2, 1);
-	UINT8 ctrl_2_2 = k007121_ctrlram_r(state->k007121_2, 2);
-	UINT8 ctrl_2_3 = k007121_ctrlram_r(state->k007121_2, 3);
+	uint8_t ctrl_1_0 = k007121_ctrlram_r(state->k007121_1, 0);
+	uint8_t ctrl_1_1 = k007121_ctrlram_r(state->k007121_1, 1);
+	uint8_t ctrl_1_2 = k007121_ctrlram_r(state->k007121_1, 2);
+	uint8_t ctrl_1_3 = k007121_ctrlram_r(state->k007121_1, 3);
+	uint8_t ctrl_2_0 = k007121_ctrlram_r(state->k007121_2, 0);
+	uint8_t ctrl_2_1 = k007121_ctrlram_r(state->k007121_2, 1);
+	uint8_t ctrl_2_2 = k007121_ctrlram_r(state->k007121_2, 2);
+	uint8_t ctrl_2_3 = k007121_ctrlram_r(state->k007121_2, 3);
 
 	set_pens(screen->machine);
 

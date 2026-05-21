@@ -8,8 +8,8 @@
 
 /*----------- defined in machine/midyunit.c -----------*/
 
-extern UINT16 *midyunit_cmos_ram;
-extern UINT32	midyunit_cmos_page;
+extern uint16_t *midyunit_cmos_ram;
+extern uint32_t	midyunit_cmos_page;
 
 WRITE16_HANDLER( midyunit_cmos_w );
 READ16_HANDLER( midyunit_cmos_r );
@@ -41,7 +41,7 @@ WRITE16_HANDLER( midyunit_sound_w );
 
 /*----------- defined in video/midyunit.c -----------*/
 
-extern UINT8 *	midyunit_gfx_rom;
+extern uint8_t *	midyunit_gfx_rom;
 extern size_t	midyunit_gfx_rom_size;
 
 VIDEO_START( midyunit_4bit );
@@ -54,8 +54,8 @@ READ16_HANDLER( midyunit_gfxrom_r );
 WRITE16_HANDLER( midyunit_vram_w );
 READ16_HANDLER( midyunit_vram_r );
 
-void midyunit_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
-void midyunit_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
+void midyunit_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
+void midyunit_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
 
 WRITE16_HANDLER( midyunit_control_w );
 WRITE16_HANDLER( midyunit_paletteram_w );

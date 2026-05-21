@@ -14,18 +14,18 @@ public:
 	irem_z80_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *              videoram;	// m52, m57, m58
-	UINT8 *              spriteram;	// m52, m57, m58, m62
+	uint8_t *              videoram;	// m52, m57, m58
+	uint8_t *              spriteram;	// m52, m57, m58, m62
 	size_t               spriteram_size;
 
-	UINT8 *              colorram;	// m52
-	UINT8 *              m62_tileram;	// m62
-	UINT8 *              m62_textram;	// m62
+	uint8_t *              colorram;	// m52
+	uint8_t *              m62_tileram;	// m62
+	uint8_t *              m62_textram;	// m62
 
-	UINT8 *              scrollram;	// m57, m62 (horizon only)
+	uint8_t *              scrollram;	// m57, m62 (horizon only)
 
 	/* sound-related */
-	UINT8                port1, port2;
+	uint8_t                port1, port2;
 
 	/* video-related */
 	tilemap_t*             bg_tilemap;	// m52, m57, m58, m62
@@ -36,23 +36,23 @@ public:
 	/* travrusa */
 	int                  scrollx[2];
 	/* M52 */
-	UINT8                bg1xpos, bg1ypos;
-	UINT8                bg2xpos, bg2ypos;
-	UINT8                bgcontrol;
+	uint8_t                bg1xpos, bg1ypos;
+	uint8_t                bg2xpos, bg2ypos;
+	uint8_t                bgcontrol;
 	/* M58 */
-	UINT8                *yard_scroll_x_low;
-	UINT8                *yard_scroll_x_high;
-	UINT8                *yard_scroll_y_low;
-	UINT8                *yard_score_panel_disabled;
+	uint8_t                *yard_scroll_x_low;
+	uint8_t                *yard_scroll_x_high;
+	uint8_t                *yard_scroll_y_low;
+	uint8_t                *yard_score_panel_disabled;
 	bitmap_t             *scroll_panel_bitmap;
 	/* M62 */
-	const UINT8          *sprite_height_prom;
-	INT32                m62_background_hscroll;
-	INT32                m62_background_vscroll;
-	UINT8                kidniki_background_bank;
-	INT32                kidniki_text_vscroll;
+	const uint8_t          *sprite_height_prom;
+	int32_t                m62_background_hscroll;
+	int32_t                m62_background_vscroll;
+	uint8_t                kidniki_background_bank;
+	int32_t                kidniki_text_vscroll;
 	int                  ldrun3_topbottom_mask;
-	INT32                spelunkr_palbank;
+	int32_t                spelunkr_palbank;
 
 
 	/* misc */

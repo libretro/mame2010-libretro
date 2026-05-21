@@ -19,12 +19,12 @@ public:
 		: oki(machine.device<okim6295_device>("oki")) { }
 
 	/* memory pointers */
-	UINT16 *        sprite_extension;
-	UINT16 *        spriteram;
-	UINT16 *        spriteram_buffered;
-	UINT16 *        spriteram_delayed;
-	UINT16 *        cchip2_ram;	// for megablst only
-//  UINT16 *        paletteram;    // currently this uses generic palette handling
+	uint16_t *        sprite_extension;
+	uint16_t *        spriteram;
+	uint16_t *        spriteram_buffered;
+	uint16_t *        spriteram_delayed;
+	uint16_t *        cchip2_ram;	// for megablst only
+//  uint16_t *        paletteram;    // currently this uses generic palette handling
 	size_t          spriteram_size;
 	size_t          spriteext_size;
 
@@ -33,38 +33,38 @@ public:
 	struct f2_tempsprite *spritelist;
 	int             sprite_type;
 
-	UINT16          spritebank[8];
-//  UINT16          spritebank_eof[8];
-	UINT16          spritebank_buffered[8];
+	uint16_t          spritebank[8];
+//  uint16_t          spritebank_eof[8];
+	uint16_t          spritebank_buffered[8];
 
-	INT32           sprites_disabled, sprites_active_area, sprites_master_scrollx, sprites_master_scrolly;
+	int32_t           sprites_disabled, sprites_active_area, sprites_master_scrollx, sprites_master_scrolly;
 	/* remember flip status over frames because driftout can fail to set it */
-	INT32           sprites_flipscreen;
+	int32_t           sprites_flipscreen;
 
 	/* On the left hand screen edge (assuming horiz screen, no
        screenflip: in screenflip it is the right hand edge etc.)
        there may be 0-3 unwanted pixels in both tilemaps *and*
        sprites. To erase this we use f2_hide_pixels (0 to +3). */
 
-	INT32           hide_pixels;
-	INT32           flip_hide_pixels;	/* Different in some games */
+	int32_t           hide_pixels;
+	int32_t           flip_hide_pixels;	/* Different in some games */
 
-	INT32           pivot_xdisp;	/* Needed in games with a pivot layer */
-	INT32           pivot_ydisp;
+	int32_t           pivot_xdisp;	/* Needed in games with a pivot layer */
+	int32_t           pivot_ydisp;
 
-	INT32           game;
+	int32_t           game;
 
-	UINT8           tilepri[6]; // todo - move into taitoic.c
-	UINT8           spritepri[6]; // todo - move into taitoic.c
-	UINT8           spriteblendmode; // todo - move into taitoic.c
+	uint8_t           tilepri[6]; // todo - move into taitoic.c
+	uint8_t           spritepri[6]; // todo - move into taitoic.c
+	uint8_t           spriteblendmode; // todo - move into taitoic.c
 
 	int             prepare_sprites;
 
 	/* misc */
-	INT32           mjnquest_input;
+	int32_t           mjnquest_input;
 	int             last[2], nibble;
-	INT32           driveout_sound_latch;
-	INT32           oki_bank;
+	int32_t           driveout_sound_latch;
+	int32_t           oki_bank;
 
 	/* devices */
 	running_device *maincpu;

@@ -480,9 +480,9 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 {
 	_galaga_state *state = (_galaga_state *) machine->driver_data;
 
-	UINT8 *spriteram = state->galaga_ram1 + 0x380;
-	UINT8 *spriteram_2 = state->galaga_ram2 + 0x380;
-	UINT8 *spriteram_3 = state->galaga_ram3 + 0x380;
+	uint8_t *spriteram = state->galaga_ram1 + 0x380;
+	uint8_t *spriteram_2 = state->galaga_ram2 + 0x380;
+	uint8_t *spriteram_3 = state->galaga_ram3 + 0x380;
 	int offs;
 
 

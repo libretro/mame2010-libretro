@@ -15,19 +15,19 @@ public:
 	crgolf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram_a;
-	UINT8 *  videoram_b;
-	UINT8 *  color_select;
-	UINT8 *  screen_flip;
-	UINT8 *  screen_select;
-	UINT8 *  screena_enable;
-	UINT8 *  screenb_enable;
+	uint8_t *  videoram_a;
+	uint8_t *  videoram_b;
+	uint8_t *  color_select;
+	uint8_t *  screen_flip;
+	uint8_t *  screen_select;
+	uint8_t *  screena_enable;
+	uint8_t *  screenb_enable;
 
 	/* misc */
-	UINT8    port_select;
-	UINT8    main_to_sound_data, sound_to_main_data;
-	UINT16   sample_offset;
-	UINT8    sample_count;
+	uint8_t    port_select;
+	uint8_t    main_to_sound_data, sound_to_main_data;
+	uint16_t   sample_offset;
+	uint8_t    sample_count;
 
 	/* devices */
 	running_device *maincpu;

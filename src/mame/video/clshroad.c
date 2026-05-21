@@ -38,8 +38,8 @@ static tilemap_t *tilemap_0a, *tilemap_0b, *tilemap_1;
 
 /* Variables & functions needed by drivers: */
 
-UINT8 *clshroad_vram_0, *clshroad_vram_1;
-UINT8 *clshroad_vregs;
+uint8_t *clshroad_vram_0, *clshroad_vram_1;
+uint8_t *clshroad_vregs;
 
 WRITE8_HANDLER( clshroad_vram_0_w );
 WRITE8_HANDLER( clshroad_vram_1_w );
@@ -86,7 +86,7 @@ PALETTE_INIT( firebatl )
 
 	for (i = 0x200; i < 0x300; i++)
 	{
-		UINT8 ctabentry = ((color_prom[(i - 0x200) + 0x000] & 0x0f) << 4) |
+		uint8_t ctabentry = ((color_prom[(i - 0x200) + 0x000] & 0x0f) << 4) |
 						   (color_prom[(i - 0x200) + 0x100] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -116,7 +116,7 @@ Offset:
 
 static TILE_GET_INFO( get_tile_info_0a )
 {
-	UINT8 code;
+	uint8_t code;
 	tile_index = (tile_index & 0x1f) + (tile_index & ~0x1f)*2;
 	code	=	clshroad_vram_0[ tile_index * 2 + 0x40 ];
 //  color   =   clshroad_vram_0[ tile_index * 2 + 0x41 ];
@@ -129,7 +129,7 @@ static TILE_GET_INFO( get_tile_info_0a )
 
 static TILE_GET_INFO( get_tile_info_0b )
 {
-	UINT8 code;
+	uint8_t code;
 	tile_index = (tile_index & 0x1f) + (tile_index & ~0x1f)*2;
 	code	=	clshroad_vram_0[ tile_index * 2 + 0x00 ];
 //  color   =   clshroad_vram_0[ tile_index * 2 + 0x01 ];
@@ -186,8 +186,8 @@ static TILEMAP_MAPPER( tilemap_scan_rows_extra )
 
 static TILE_GET_INFO( get_tile_info_fb1 )
 {
-	UINT8 code	=	clshroad_vram_1[ tile_index + 0x000 ];
-	UINT8 color	=	clshroad_vram_1[ tile_index + 0x400 ] & 0x3f;
+	uint8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
+	uint8_t color	=	clshroad_vram_1[ tile_index + 0x400 ] & 0x3f;
 	tileinfo->group = color;
 	SET_TILE_INFO(
 			2,
@@ -198,8 +198,8 @@ static TILE_GET_INFO( get_tile_info_fb1 )
 
 static TILE_GET_INFO( get_tile_info_1 )
 {
-	UINT8 code	=	clshroad_vram_1[ tile_index + 0x000 ];
-	UINT8 color	=	clshroad_vram_1[ tile_index + 0x400 ];
+	uint8_t code	=	clshroad_vram_1[ tile_index + 0x000 ];
+	uint8_t color	=	clshroad_vram_1[ tile_index + 0x400 ];
 	SET_TILE_INFO(
 			2,
 			code + ((color & 0xf0)<<4),
@@ -292,7 +292,7 @@ Offset:     Format:     Value:
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int i;
 
 	for (i = 0; i < machine->generic.spriteram_size ; i += 8)

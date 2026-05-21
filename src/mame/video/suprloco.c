@@ -8,8 +8,8 @@
 
 #include "emu.h"
 
-UINT8 *suprloco_videoram;
-UINT8 *suprloco_scrollram;
+uint8_t *suprloco_videoram;
+uint8_t *suprloco_scrollram;
 
 static tilemap_t *bg_tilemap;
 static int control;
@@ -79,7 +79,7 @@ PALETTE_INIT( suprloco )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 attr = suprloco_videoram[2*tile_index+1];
+	uint8_t attr = suprloco_videoram[2*tile_index+1];
 	SET_TILE_INFO(
 			0,
 			suprloco_videoram[2*tile_index] | ((attr & 0x03) << 8),
@@ -180,8 +180,8 @@ static void draw_sprite(running_machine *machine, bitmap_t *bitmap,const rectang
 {
 	int flip = flip_screen_get(machine);
 	int sx,sy,col,row,height,src,adjy,dy;
-	UINT8 *spr_reg;
-	UINT8 *gfx2;
+	uint8_t *spr_reg;
+	uint8_t *gfx2;
 	pen_t pen_base;
 	short skip;	/* bytes to skip before drawing each row (can be negative) */
 
@@ -211,8 +211,8 @@ static void draw_sprite(running_machine *machine, bitmap_t *bitmap,const rectang
 	for (row = 0;row < height;row++,adjy+=dy)
 	{
 		int color1,color2,flipx;
-		UINT8 data;
-		UINT8 *gfx;
+		uint8_t data;
+		uint8_t *gfx;
 
 		src += skip;
 
@@ -253,7 +253,7 @@ static void draw_sprite(running_machine *machine, bitmap_t *bitmap,const rectang
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int spr_number;
-	UINT8 *spr_reg;
+	uint8_t *spr_reg;
 
 
 	for (spr_number = 0;spr_number < (machine->generic.spriteram_size >> 4);spr_number++)

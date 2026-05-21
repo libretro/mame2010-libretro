@@ -8,9 +8,9 @@
 
 #include "emu.h"
 
-UINT16 *targeth_spriteram;
-UINT16 *targeth_vregs;
-UINT16 *targeth_videoram;
+uint16_t *targeth_spriteram;
+uint16_t *targeth_vregs;
+uint16_t *targeth_videoram;
 
 static tilemap_t *pant[2];
 

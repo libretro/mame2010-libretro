@@ -15,30 +15,30 @@ public:
 	fromance_state(running_machine &machine) { }
 
 	/* memory pointers (used by pipedrm) */
-	UINT8 *  videoram;
-	UINT8 *  spriteram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  videoram;
+	uint8_t *  spriteram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 	size_t   videoram_size;
 	size_t   spriteram_size;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap;
-	UINT8    *local_videoram[2];
-	UINT8    *local_paletteram;
-	UINT8    selected_videoram, selected_paletteram;
-	UINT32   scrollx[2], scrolly[2];
-	UINT8    gfxreg;
-	UINT8    flipscreen, flipscreen_old;
-	UINT32   scrolly_ofs, scrollx_ofs;
+	uint8_t    *local_videoram[2];
+	uint8_t    *local_paletteram;
+	uint8_t    selected_videoram, selected_paletteram;
+	uint32_t   scrollx[2], scrolly[2];
+	uint8_t    gfxreg;
+	uint8_t    flipscreen, flipscreen_old;
+	uint32_t   scrolly_ofs, scrollx_ofs;
 
-	UINT8    crtc_register;
-	UINT8    crtc_data[0x10];
+	uint8_t    crtc_register;
+	uint8_t    crtc_data[0x10];
 	emu_timer *crtc_timer;
 
 	/* misc */
-	UINT8    directionflag, commanddata, portselect;
-	UINT8    adpcm_reset, adpcm_data, vclk_left;
-	UINT8    pending_command, sound_command;
+	uint8_t    directionflag, commanddata, portselect;
+	uint8_t    adpcm_reset, adpcm_data, vclk_left;
+	uint8_t    pending_command, sound_command;
 
 	/* devices */
 	running_device *subcpu;

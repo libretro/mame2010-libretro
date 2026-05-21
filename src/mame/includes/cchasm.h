@@ -28,7 +28,7 @@ SOUND_START( cchasm );
 
 /*----------- defined in video/cchasm.c -----------*/
 
-extern UINT16 *cchasm_ram;
+extern uint16_t *cchasm_ram;
 
 WRITE16_HANDLER( cchasm_refresh_control_w );
 VIDEO_START( cchasm );

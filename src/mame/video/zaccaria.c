@@ -11,7 +11,7 @@
 
 
 
-UINT8 *zaccaria_videoram,*zaccaria_attributesram;
+uint8_t *zaccaria_videoram,*zaccaria_attributesram;
 
 static tilemap_t *bg_tilemap;
 
@@ -120,7 +120,7 @@ PALETTE_INIT( zaccaria )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 attr = zaccaria_videoram[tile_index + 0x400];
+	uint8_t attr = zaccaria_videoram[tile_index + 0x400];
 	SET_TILE_INFO(
 			0,
 			zaccaria_videoram[tile_index] + ((attr & 0x03) << 8),
@@ -208,7 +208,7 @@ WRITE8_HANDLER( zaccaria_flip_screen_y_w )
 offsets 1 and 2 are swapped if accessed from spriteram2
 
 */
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,UINT8 *spriteram,int color,int section)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,uint8_t *spriteram,int color,int section)
 {
 	int offs,o1 = 1,o2 = 2;
 

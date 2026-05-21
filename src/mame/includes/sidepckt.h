@@ -6,10 +6,10 @@ public:
 	sidepckt_state(running_machine &machine) { }
 
 	tilemap_t *bg_tilemap;
-	UINT8 *colorram;
-	UINT8 *videoram;
+	uint8_t *colorram;
+	uint8_t *videoram;
 	size_t videoram_size;
-	UINT8 *spriteram;
+	uint8_t *spriteram;
 	size_t spriteram_size;
 	int i8751_return;
 	int current_ptr;

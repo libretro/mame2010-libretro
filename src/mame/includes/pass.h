@@ -8,8 +8,8 @@ public:
 	tilemap_t *bg_tilemap;
 	tilemap_t *fg_tilemap;
 
-	UINT16 *bg_videoram;
-	UINT16 *fg_videoram;
+	uint16_t *bg_videoram;
+	uint16_t *fg_videoram;
 };
 
 

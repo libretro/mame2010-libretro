@@ -34,10 +34,10 @@
 typedef struct _stepper_interface stepper_interface;
 struct _stepper_interface
 {
-	UINT8 type; /* Reel unit type */
-	INT16 index_start;/* start position of index (in half steps) */
-	INT16 index_end;  /* end position of index (in half steps) */
-	INT16 index_patt; /* pattern needed on coils (0=don't care) */
+	uint8_t type; /* Reel unit type */
+	int16_t index_start;/* start position of index (in half steps) */
+	int16_t index_end;  /* end position of index (in half steps) */
+	int16_t index_patt; /* pattern needed on coils (0=don't care) */
 };
 
 extern const stepper_interface starpoint_interface_48step;
@@ -48,7 +48,7 @@ void stepper_reset_position(int id);		/* reset a motor to position 0 */
 
 int  stepper_optic_state(   int id);		/* read a motor's optics */
 
-int  stepper_update(int id, UINT8 pattern);	/* update a motor */
+int  stepper_update(int id, uint8_t pattern);	/* update a motor */
 
 int  stepper_get_position(int id);			/* get current position in half steps */
 

@@ -21,7 +21,7 @@ void TexturePipe::SetMachine(running_machine *machine)
 	m_tex_fetch.SetMachine(m_machine);
 }
 
-void TexturePipe::CalculateClampDiffs(UINT32 prim_tile)
+void TexturePipe::CalculateClampDiffs(uint32_t prim_tile)
 {
 	int start;
 	int end;
@@ -42,9 +42,9 @@ void TexturePipe::CalculateClampDiffs(UINT32 prim_tile)
 	}
 }
 
-void TexturePipe::Mask(INT32* S, INT32* T, Tile* tile)
+void TexturePipe::Mask(int32_t* S, int32_t* T, Tile* tile)
 {
-	INT32 swrap, twrap;
+	int32_t swrap, twrap;
 
 	if (tile->mask_s) // Select clamp if mask == 0
 	{
@@ -75,7 +75,7 @@ void TexturePipe::Mask(INT32* S, INT32* T, Tile* tile)
 	}
 }
 
-void TexturePipe::TexShift(INT32* S, INT32* T, bool* maxs, bool* maxt, Tile *tile)
+void TexturePipe::TexShift(int32_t* S, int32_t* T, bool* maxs, bool* maxt, Tile *tile)
 {
 	*S = SIGN16(*S);
 	*T = SIGN16(*T);
@@ -110,7 +110,7 @@ void TexturePipe::TexShift(INT32* S, INT32* T, bool* maxs, bool* maxt, Tile *til
 	*maxt = ((*T >> 3) >= tile->th);
 }
 
-void TexturePipe::Clamp(INT32* S, INT32* T, INT32* SFRAC, INT32* TFRAC, bool maxs, bool maxt, Tile* tile)
+void TexturePipe::Clamp(int32_t* S, int32_t* T, int32_t* SFRAC, int32_t* TFRAC, bool maxs, bool maxt, Tile* tile)
 {
 	bool notcopy = (m_other_modes->cycle_type != CYCLE_TYPE_COPY);
 	bool dosfrac = (tile->cs || !tile->mask_s);
@@ -158,7 +158,7 @@ void TexturePipe::Clamp(INT32* S, INT32* T, INT32* SFRAC, INT32* TFRAC, bool max
 	}
 }
 
-void TexturePipe::ClampLight(INT32* S, INT32* T, bool maxs, bool maxt, Tile* tile)
+void TexturePipe::ClampLight(int32_t* S, int32_t* T, bool maxs, bool maxt, Tile* tile)
 {
 	bool notcopy = (m_other_modes->cycle_type != CYCLE_TYPE_COPY);
 	bool dos = (tile->cs || !tile->mask_s) && notcopy;
@@ -191,15 +191,15 @@ void TexturePipe::ClampLight(INT32* S, INT32* T, bool maxs, bool maxt, Tile* til
 	}
 }
 
-UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
+uint32_t TexturePipe::Fetch(int32_t SSS, int32_t SST, Tile* tile)
 {
 	Color TEX;
 	if (m_other_modes->sample_type)
 	{
-		INT32 rt[4] = { 0 };
-		INT32 gt[4] = { 0 };
-		INT32 bt[4] = { 0 };
-		INT32 at[4] = { 0 };
+		int32_t rt[4] = { 0 };
+		int32_t gt[4] = { 0 };
+		int32_t bt[4] = { 0 };
+		int32_t at[4] = { 0 };
 		Color t0;
 		Color t1;
 		Color t2;
@@ -221,8 +221,8 @@ UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
 		sss2 = RELATIVE(sss2, tile->sl);
 		sst2 = RELATIVE(sst2, tile->tl);
 
-		INT32 SFRAC = sss1 & 0x1f;
-		INT32 TFRAC = sst1 & 0x1f;
+		int32_t SFRAC = sss1 & 0x1f;
+		int32_t TFRAC = sst1 & 0x1f;
 
 		Clamp(&sss1, &sst1, &SFRAC, &TFRAC, maxs, maxt, tile);
 		ClampLight(&sss2, &sst2, maxs2, maxt2, tile);
@@ -231,8 +231,8 @@ UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
         Mask(&sss2, &sst2, tile);
 
 		bool upper = ((SFRAC + TFRAC) >= 0x20);
-		INT32 INVSF = 0;
-		INT32 INVTF = 0;
+		int32_t INVSF = 0;
+		int32_t INVTF = 0;
 		if (upper)
 		{
 			INVSF = 0x20 - SFRAC;
@@ -258,10 +258,10 @@ UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
 		{
 			if (upper)
 			{
-				INT32 R32 = rt[3] + ((INVSF*(rt[2] - rt[3]))>>5) + ((INVTF*(rt[1] - rt[3]))>>5);
-				INT32 G32 = gt[3] + ((INVSF*(gt[2] - gt[3]))>>5) + ((INVTF*(gt[1] - gt[3]))>>5);
-				INT32 B32 = bt[3] + ((INVSF*(bt[2] - bt[3]))>>5) + ((INVTF*(bt[1] - bt[3]))>>5);
-				INT32 A32 = at[3] + ((INVSF*(at[2] - at[3]))>>5) + ((INVTF*(at[1] - at[3]))>>5);
+				int32_t R32 = rt[3] + ((INVSF*(rt[2] - rt[3]))>>5) + ((INVTF*(rt[1] - rt[3]))>>5);
+				int32_t G32 = gt[3] + ((INVSF*(gt[2] - gt[3]))>>5) + ((INVTF*(gt[1] - gt[3]))>>5);
+				int32_t B32 = bt[3] + ((INVSF*(bt[2] - bt[3]))>>5) + ((INVTF*(bt[1] - bt[3]))>>5);
+				int32_t A32 = at[3] + ((INVSF*(at[2] - at[3]))>>5) + ((INVTF*(at[1] - at[3]))>>5);
 				TEX.i.r = (R32 < 0) ? 0 : R32;
 				TEX.i.g = (G32 < 0) ? 0 : G32;
 				TEX.i.b = (B32 < 0) ? 0 : B32;
@@ -269,10 +269,10 @@ UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
 			}
 			else
 			{
-				INT32 R32 = rt[0] + ((SFRAC*(rt[1] - rt[0]))>>5) + ((TFRAC*(rt[2] - rt[0]))>>5);
-				INT32 G32 = gt[0] + ((SFRAC*(gt[1] - gt[0]))>>5) + ((TFRAC*(gt[2] - gt[0]))>>5);
-				INT32 B32 = bt[0] + ((SFRAC*(bt[1] - bt[0]))>>5) + ((TFRAC*(bt[2] - bt[0]))>>5);
-				INT32 A32 = at[0] + ((SFRAC*(at[1] - at[0]))>>5) + ((TFRAC*(at[2] - at[0]))>>5);
+				int32_t R32 = rt[0] + ((SFRAC*(rt[1] - rt[0]))>>5) + ((TFRAC*(rt[2] - rt[0]))>>5);
+				int32_t G32 = gt[0] + ((SFRAC*(gt[1] - gt[0]))>>5) + ((TFRAC*(gt[2] - gt[0]))>>5);
+				int32_t B32 = bt[0] + ((SFRAC*(bt[1] - bt[0]))>>5) + ((TFRAC*(bt[2] - bt[0]))>>5);
+				int32_t A32 = at[0] + ((SFRAC*(at[1] - at[0]))>>5) + ((TFRAC*(at[2] - at[0]))>>5);
 				TEX.i.r = (R32 < 0) ? 0 : R32;
 				TEX.i.g = (G32 < 0) ? 0 : G32;
 				TEX.i.b = (B32 < 0) ? 0 : B32;
@@ -302,8 +302,8 @@ UINT32 TexturePipe::Fetch(INT32 SSS, INT32 SST, Tile* tile)
 		sss1 += 0x10;
 		sst1 += 0x10;
 
-		INT32 SFRAC = sss1 & 0x1f;
-		INT32 TFRAC = sst1 & 0x1f;
+		int32_t SFRAC = sss1 & 0x1f;
+		int32_t TFRAC = sst1 & 0x1f;
 
 		Clamp(&sss1, &sst1, &SFRAC, &TFRAC, maxs, maxt, tile);
 

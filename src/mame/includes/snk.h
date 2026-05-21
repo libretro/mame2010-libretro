@@ -55,9 +55,9 @@ extern WRITE8_HANDLER( gwara_sp_scroll_msb_w );
 extern WRITE8_HANDLER( tdfever_sp_scroll_msb_w );
 extern WRITE8_HANDLER( tdfever_spriteram_w );
 
-extern UINT8 *snk_tx_videoram;
-extern UINT8 *snk_fg_videoram;
-extern UINT8 *snk_bg_videoram;
+extern uint8_t *snk_tx_videoram;
+extern uint8_t *snk_fg_videoram;
+extern uint8_t *snk_bg_videoram;
 extern WRITE8_HANDLER( snk_tx_videoram_w );
 extern WRITE8_HANDLER( snk_bg_videoram_w );
 extern WRITE8_HANDLER( marvins_fg_videoram_w );

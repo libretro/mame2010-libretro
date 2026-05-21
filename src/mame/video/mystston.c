@@ -75,7 +75,7 @@ static void set_palette(running_machine *machine, mystston_state *state)
 	static const int resistances_b [2] = { 3300, 1500 };
 	double weights_rg[3], weights_b[2];
 
-	UINT8 *color_prom = memory_region(machine, "proms");
+	uint8_t *color_prom = memory_region(machine, "proms");
 
 	compute_resistor_weights(0,	255, -1.0,
 			3, resistances_rg, weights_rg, 0, 1000,
@@ -84,7 +84,7 @@ static void set_palette(running_machine *machine, mystston_state *state)
 
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 data;
+		uint8_t data;
 		int r, g, b;
 		int bit0, bit1, bit2;
 

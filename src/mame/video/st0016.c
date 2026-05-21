@@ -6,19 +6,19 @@
 #include "emu.h"
 #include "includes/st0016.h"
 
-UINT8 *st0016_charram;
-static UINT8 *st0016_spriteram,*st0016_paletteram;
+uint8_t *st0016_charram;
+static uint8_t *st0016_spriteram,*st0016_paletteram;
 
-UINT8 *macs_ram1,*macs_ram2;
+uint8_t *macs_ram1,*macs_ram2;
 
-UINT32 st0016_game;
+uint32_t st0016_game;
 
-extern UINT8 macs_cart_slot;
+extern uint8_t macs_cart_slot;
 
-static INT32 st0016_spr_bank,st0016_spr2_bank,st0016_pal_bank,st0016_char_bank;
+static int32_t st0016_spr_bank,st0016_spr2_bank,st0016_pal_bank,st0016_char_bank;
 static int spr_dx,spr_dy;
 
-static UINT8 st0016_vregs[0xc0];
+static uint8_t st0016_vregs[0xc0];
 static int st0016_ramgfx;
 
 //super eagle shot
@@ -188,11 +188,11 @@ WRITE8_HANDLER(st0016_vregs_w)
 	st0016_vregs[offset]=data;
 	if(offset==0xa8 && (data&0x20))
 	{
-		UINT32 srcadr=(st0016_vregs[0xa0]|(st0016_vregs[0xa1]<<8)|(st0016_vregs[0xa2]<<16))<<1;
-		UINT32 dstadr=(st0016_vregs[0xa3]|(st0016_vregs[0xa4]<<8)|(st0016_vregs[0xa5]<<16))<<1;
-		UINT32 length=((st0016_vregs[0xa6]|(st0016_vregs[0xa7]<<8)|((st0016_vregs[0xa8]&0x1f)<<16))+1)<<1;
-		UINT32 srclen = (memory_region_length(space->machine, "maincpu")-0x10000);
-		UINT8 *mem = memory_region(space->machine, "maincpu");
+		uint32_t srcadr=(st0016_vregs[0xa0]|(st0016_vregs[0xa1]<<8)|(st0016_vregs[0xa2]<<16))<<1;
+		uint32_t dstadr=(st0016_vregs[0xa3]|(st0016_vregs[0xa4]<<8)|(st0016_vregs[0xa5]<<16))<<1;
+		uint32_t length=((st0016_vregs[0xa6]|(st0016_vregs[0xa7]<<8)|((st0016_vregs[0xa8]&0x1f)<<16))+1)<<1;
+		uint32_t srclen = (memory_region_length(space->machine, "maincpu")-0x10000);
+		uint8_t *mem = memory_region(space->machine, "maincpu");
 
 		srcadr += macs_cart_slot*0x400000;
 
@@ -354,11 +354,11 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 						for(y0=(flipy?((1<<ly)-1):0);y0!=(flipy?-1:(1<<ly));y0+=(flipy?-1:1))
 						{
 							/* custom draw */
-							UINT16 *destline;
+							uint16_t *destline;
 							int yloop,xloop;
 							int ypos, xpos;
 							int tileno;
-							const UINT8 *srcgfx;
+							const uint8_t *srcgfx;
 							int gfxoffs;
 							ypos = sy+y0*8+spr_dy;
 							xpos = sx+x0*8+spr_dx;
@@ -369,14 +369,14 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 							for (yloop=0; yloop<8; yloop++)
 							{
-								UINT16 drawypos;
+								uint16_t drawypos;
 
 								if (!flipy) {drawypos = ypos+yloop;} else {drawypos = (ypos+8-1)-yloop;}
 								destline = BITMAP_ADDR16(bitmap, drawypos, 0);
 
 								for (xloop=0; xloop<8; xloop++)
 								{
-									UINT16 drawxpos;
+									uint16_t drawxpos;
 									int pixdata;
 									pixdata = srcgfx[gfxoffs];
 
@@ -441,9 +441,9 @@ void st0016_save_init(running_machine *machine)
 VIDEO_START( st0016 )
 {
 	int gfx_index=0;
-	st0016_charram=auto_alloc_array(machine, UINT8, ST0016_MAX_CHAR_BANK*ST0016_CHAR_BANK_SIZE);
-	st0016_spriteram=auto_alloc_array(machine, UINT8, ST0016_MAX_SPR_BANK*ST0016_SPR_BANK_SIZE);
-	st0016_paletteram=auto_alloc_array(machine, UINT8, ST0016_MAX_PAL_BANK*ST0016_PAL_BANK_SIZE);
+	st0016_charram=auto_alloc_array(machine, uint8_t, ST0016_MAX_CHAR_BANK*ST0016_CHAR_BANK_SIZE);
+	st0016_spriteram=auto_alloc_array(machine, uint8_t, ST0016_MAX_SPR_BANK*ST0016_SPR_BANK_SIZE);
+	st0016_paletteram=auto_alloc_array(machine, uint8_t, ST0016_MAX_PAL_BANK*ST0016_PAL_BANK_SIZE);
 
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
@@ -453,7 +453,7 @@ VIDEO_START( st0016 )
 	assert(gfx_index != MAX_GFX_ELEMENTS);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[gfx_index] = gfx_element_alloc(machine, &charlayout, (UINT8 *) st0016_charram, 0x40, 0);
+	machine->gfx[gfx_index] = gfx_element_alloc(machine, &charlayout, (uint8_t *) st0016_charram, 0x40, 0);
 	st0016_ramgfx = gfx_index;
 
 	spr_dx=0;
@@ -525,10 +525,10 @@ static void draw_bgmap(running_machine *machine, bitmap_t *bitmap,const rectangl
 					}
 					else
 					{
-							UINT16 *destline;
+							uint16_t *destline;
 							int yloop,xloop;
 							int ypos, xpos;
-							const UINT8 *srcgfx;
+							const uint8_t *srcgfx;
 							int gfxoffs;
 							ypos = y*8+spr_dy;//+((st0016_vregs[j+2]==0xaf)?0x50:0);//hack for mayjinsen title screen
 							xpos = x*8+spr_dx;
@@ -537,14 +537,14 @@ static void draw_bgmap(running_machine *machine, bitmap_t *bitmap,const rectangl
 
 							for (yloop=0; yloop<8; yloop++)
 							{
-								UINT16 drawypos;
+								uint16_t drawypos;
 
 								if (!flipy) {drawypos = ypos+yloop;} else {drawypos = (ypos+8-1)-yloop;}
 								destline = BITMAP_ADDR16(bitmap, drawypos, 0);
 
 								for (xloop=0; xloop<8; xloop++)
 								{
-									UINT16 drawxpos;
+									uint16_t drawxpos;
 									int pixdata;
 									pixdata = srcgfx[gfxoffs];
 
@@ -646,7 +646,7 @@ VIDEO_UPDATE( st0016 )
 		//copy temporary bitmap to rgb 32 bit bitmap
 		for(y=cliprect->min_y; y<cliprect->max_y;y++)
 		{
-			UINT16 *srcline = BITMAP_ADDR16(speglsht_bitmap, y, 0);
+			uint16_t *srcline = BITMAP_ADDR16(speglsht_bitmap, y, 0);
 			for(x=cliprect->min_x; x<cliprect->max_x;x++)
 			{
 				if(srcline[x])

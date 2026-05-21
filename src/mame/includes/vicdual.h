@@ -24,8 +24,8 @@
 
 /*----------- defined in drivers/vicdual.c -----------*/
 
-UINT8 vicdual_videoram_r(offs_t offset);
-UINT8 vicdual_characterram_r(offs_t offset);
+uint8_t vicdual_videoram_r(offs_t offset);
+uint8_t vicdual_characterram_r(offs_t offset);
 
 int vicdual_is_cabinet_color(running_machine *machine);
 

@@ -163,7 +163,7 @@ static STATE_POSTLOAD( chaknpop_postload )
 VIDEO_START( chaknpop )
 {
 	chaknpop_state *state = (chaknpop_state *)machine->driver_data;
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	/*                          info                       offset             type             w   h  col row */
 	state->tx_tilemap = tilemap_create(machine, chaknpop_get_tx_tile_info, tilemap_scan_rows,   8,  8, 32, 32);

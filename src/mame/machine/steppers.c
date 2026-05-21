@@ -26,17 +26,17 @@ static void update_optic(int which);
 typedef struct _stepper
 {
 	const stepper_interface *intf;
-	UINT8	 pattern,	/* coil pattern */
+	uint8_t	 pattern,	/* coil pattern */
 		 old_pattern,	/* old coil pattern */
 				type;	/* reel type */
-	INT16	step_pos,	/* step position 0 - max_steps */
+	int16_t	step_pos,	/* step position 0 - max_steps */
 			max_steps;	/* maximum step position */
 
-	INT16 index_start,	/* start position of index (in half steps) */
+	int16_t index_start,	/* start position of index (in half steps) */
 			index_end,	/* end position of index (in half steps) */
 			index_patt;	/* pattern needed on coils (0=don't care) */
 
-	UINT8 optic;
+	uint8_t optic;
 } stepper;
 
 static stepper step[MAX_STEPPERS];
@@ -698,7 +698,7 @@ int stepper_optic_state(int which)
 
 ///////////////////////////////////////////////////////////////////////////
 
-int stepper_update(int which, UINT8 pattern)
+int stepper_update(int which, uint8_t pattern)
 {
 	int changed = 0;
 

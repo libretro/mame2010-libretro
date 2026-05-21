@@ -70,7 +70,7 @@ VIDEO_START( dogfgt )
 	dogfgt_state *state = (dogfgt_state *)machine->driver_data;
 	state->bg_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_rows, 16, 16, 32, 32);
 
-	state->bitmapram = auto_alloc_array(machine, UINT8, BITMAPRAM_SIZE);
+	state->bitmapram = auto_alloc_array(machine, uint8_t, BITMAPRAM_SIZE);
 	state_save_register_global_pointer(machine, state->bitmapram, BITMAPRAM_SIZE);
 
 	state->pixbitmap = machine->primary_screen->alloc_compatible_bitmap();

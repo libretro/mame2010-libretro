@@ -32,7 +32,7 @@
 
 #include "emu.h"
 
-UINT8 *xain_charram, *xain_bgram0, *xain_bgram1, xain_pri;
+uint8_t *xain_charram, *xain_bgram0, *xain_bgram1, xain_pri;
 
 static tilemap_t *char_tilemap, *bgram0_tilemap, *bgram1_tilemap;
 
@@ -125,7 +125,7 @@ WRITE8_HANDLER( xain_charram_w )
 
 WRITE8_HANDLER( xain_scrollxP0_w )
 {
-	static UINT8 xain_scrollxP0[2];
+	static uint8_t xain_scrollxP0[2];
 
 	xain_scrollxP0[offset] = data;
 	tilemap_set_scrollx(bgram0_tilemap, 0, xain_scrollxP0[0]|(xain_scrollxP0[1]<<8));
@@ -133,7 +133,7 @@ WRITE8_HANDLER( xain_scrollxP0_w )
 
 WRITE8_HANDLER( xain_scrollyP0_w )
 {
-	static UINT8 xain_scrollyP0[2];
+	static uint8_t xain_scrollyP0[2];
 
 	xain_scrollyP0[offset] = data;
 	tilemap_set_scrolly(bgram0_tilemap, 0, xain_scrollyP0[0]|(xain_scrollyP0[1]<<8));
@@ -141,7 +141,7 @@ WRITE8_HANDLER( xain_scrollyP0_w )
 
 WRITE8_HANDLER( xain_scrollxP1_w )
 {
-	static UINT8 xain_scrollxP1[2];
+	static uint8_t xain_scrollxP1[2];
 
 	xain_scrollxP1[offset] = data;
 	tilemap_set_scrollx(bgram1_tilemap, 0, xain_scrollxP1[0]|(xain_scrollxP1[1]<<8));
@@ -149,7 +149,7 @@ WRITE8_HANDLER( xain_scrollxP1_w )
 
 WRITE8_HANDLER( xain_scrollyP1_w )
 {
-	static UINT8 xain_scrollyP1[2];
+	static uint8_t xain_scrollyP1[2];
 
 	xain_scrollyP1[offset] = data;
 	tilemap_set_scrolly(bgram1_tilemap, 0, xain_scrollyP1[0]|(xain_scrollyP1[1]<<8));
@@ -170,7 +170,7 @@ WRITE8_HANDLER( xain_flipscreen_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size;offs += 4)

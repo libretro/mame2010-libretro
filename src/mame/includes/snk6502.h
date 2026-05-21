@@ -41,10 +41,10 @@ DISCRETE_SOUND_EXTERN( fantasy );
 
 /*----------- defined in video/snk6502.c -----------*/
 
-extern UINT8 *snk6502_videoram;
-extern UINT8 *snk6502_colorram;
-extern UINT8 *snk6502_videoram2;
-extern UINT8 *snk6502_charram;
+extern uint8_t *snk6502_videoram;
+extern uint8_t *snk6502_colorram;
+extern uint8_t *snk6502_videoram2;
+extern uint8_t *snk6502_charram;
 
 WRITE8_HANDLER( snk6502_videoram_w );
 WRITE8_HANDLER( snk6502_videoram2_w );

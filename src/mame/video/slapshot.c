@@ -9,8 +9,8 @@ VIDEO_START( slapshot )
 	slapshot_state *state = (slapshot_state *)machine->driver_data;
 	int i;
 
-	state->spriteram_delayed = auto_alloc_array(machine, UINT16, state->spriteram_size / 2);
-	state->spriteram_buffered = auto_alloc_array(machine, UINT16, state->spriteram_size / 2);
+	state->spriteram_delayed = auto_alloc_array(machine, uint16_t, state->spriteram_size / 2);
+	state->spriteram_buffered = auto_alloc_array(machine, uint16_t, state->spriteram_size / 2);
 	state->spritelist = auto_alloc_array(machine, struct slapshot_tempsprite, 0x400);
 
 	for (i = 0; i < 8; i ++)
@@ -94,7 +94,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	int code, color, spritedata, spritecont, flipx, flipy;
 	int xcurrent, ycurrent, big_sprite = 0;
 	int y_no = 0, x_no = 0, xlatch = 0, ylatch = 0, last_continuation_tile = 0;   /* for zooms */
-	UINT32 zoomword, zoomx, zoomy, zx = 0, zy = 0, zoomxlatch = 0, zoomylatch = 0;   /* for zooms */
+	uint32_t zoomword, zoomx, zoomy, zx = 0, zy = 0, zoomxlatch = 0, zoomylatch = 0;   /* for zooms */
 	int scroll1x, scroll1y;
 	int scrollx = 0, scrolly = 0;
 	int curx, cury;
@@ -457,10 +457,10 @@ a bg layer given priority over some sprites.
 VIDEO_UPDATE( slapshot )
 {
 	slapshot_state *state = (slapshot_state *)screen->machine->driver_data;
-	UINT8 layer[5];
-	UINT8 tilepri[5];
-	UINT8 spritepri[4];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t tilepri[5];
+	uint8_t spritepri[4];
+	uint16_t priority;
 
 #ifdef MAME_DEBUG
 	static int dislayer[5];	/* Layer toggles to help get the layers correct */

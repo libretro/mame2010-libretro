@@ -1,21 +1,21 @@
 /*----------- defined in drivers/tetrisp2.c -----------*/
 
-extern UINT16 tetrisp2_systemregs[0x10];
+extern uint16_t tetrisp2_systemregs[0x10];
 
 
 /*----------- defined in video/tetrisp2.c -----------*/
 
-extern UINT16 *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
-extern UINT16 *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
-extern UINT16 *tetrisp2_vram_rot, *tetrisp2_rotregs;
+extern uint16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
+extern uint16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
+extern uint16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
 
-extern UINT8 *tetrisp2_priority;
+extern uint8_t *tetrisp2_priority;
 
-extern UINT16 *rocknms_sub_vram_bg, *rocknms_sub_scroll_bg;
-extern UINT16 *rocknms_sub_vram_fg, *rocknms_sub_scroll_fg;
-extern UINT16 *rocknms_sub_vram_rot, *rocknms_sub_rotregs;
+extern uint16_t *rocknms_sub_vram_bg, *rocknms_sub_scroll_bg;
+extern uint16_t *rocknms_sub_vram_fg, *rocknms_sub_scroll_fg;
+extern uint16_t *rocknms_sub_vram_rot, *rocknms_sub_rotregs;
 
-extern UINT16 *rocknms_sub_priority;
+extern uint16_t *rocknms_sub_priority;
 
 WRITE16_HANDLER( tetrisp2_palette_w );
 WRITE16_HANDLER( rocknms_sub_palette_w );
@@ -43,4 +43,4 @@ VIDEO_START( rocknms );
 VIDEO_UPDATE( rocknms );
 
 VIDEO_START( nndmseal );
-void tetrisp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, bitmap_t *bitmap_pri, const rectangle *cliprect, UINT8* priram, UINT16 *sprram_top, size_t sprram_size, int gfxnum, int reverseorder, int flip, int allowzoom);
+void tetrisp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, bitmap_t *bitmap_pri, const rectangle *cliprect, uint8_t* priram, uint16_t *sprram_top, size_t sprram_size, int gfxnum, int reverseorder, int flip, int allowzoom);

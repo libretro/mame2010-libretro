@@ -20,10 +20,10 @@ DISCRETE_SOUND_EXTERN( polepos );
 
 /*----------- defined in video/polepos.c -----------*/
 
-extern UINT16 *polepos_view16_memory;
-extern UINT16 *polepos_road16_memory;
-extern UINT16 *polepos_alpha16_memory;
-extern UINT16 *polepos_sprite16_memory;
+extern uint16_t *polepos_view16_memory;
+extern uint16_t *polepos_road16_memory;
+extern uint16_t *polepos_alpha16_memory;
+extern uint16_t *polepos_sprite16_memory;
 
 VIDEO_START( polepos );
 PALETTE_INIT( polepos );

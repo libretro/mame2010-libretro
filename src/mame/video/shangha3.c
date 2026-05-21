@@ -62,15 +62,15 @@ Word | Bit(s)           | Use
 #include "profiler.h"
 
 
-UINT16 *shangha3_ram;
+uint16_t *shangha3_ram;
 size_t shangha3_ram_size;
 
 int shangha3_do_shadows;
 
-static UINT16 gfxlist_addr;
+static uint16_t gfxlist_addr;
 static bitmap_t *rawbitmap;
 
-static UINT8 drawmode_table[16];
+static uint8_t drawmode_table[16];
 
 
 VIDEO_START( shangha3 )

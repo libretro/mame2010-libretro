@@ -166,9 +166,9 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 	/* sprite information is scattered through memory */
 	/* and uses a portion of the text layer memory (outside the visible area) */
-	UINT8 *spriteram_area1 = &state->spriteram_1[0x28];
-	UINT8 *spriteram_area2 = &state->spriteram_2[0x28];
-	UINT8 *spriteram_area3 = &state->fgvideoram[0x28];
+	uint8_t *spriteram_area1 = &state->spriteram_1[0x28];
+	uint8_t *spriteram_area2 = &state->spriteram_2[0x28];
+	uint8_t *spriteram_area3 = &state->fgvideoram[0x28];
 
 	int n;
 

@@ -11,7 +11,7 @@ WRITE16_HANDLER (system24temp_sys16_paletteram1_w);
 
 // Tilemaps
 //  System24
-void sys24_tile_vh_start(running_machine *machine, UINT16 tile_mask);
+void sys24_tile_vh_start(running_machine *machine, uint16_t tile_mask);
 void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, int pri, int flags);
 
 READ16_HANDLER(sys24_tile_r);

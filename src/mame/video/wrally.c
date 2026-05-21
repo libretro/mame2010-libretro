@@ -9,9 +9,9 @@
 #include "emu.h"
 #include "includes/wrally.h"
 
-UINT16 *wrally_spriteram;
-UINT16 *wrally_vregs;
-UINT16 *wrally_videoram;
+uint16_t *wrally_spriteram;
+uint16_t *wrally_vregs;
+uint16_t *wrally_videoram;
 
 tilemap_t *wrally_pant[2];
 
@@ -136,12 +136,12 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 					sx - 0x0f,sy,0);
 		} else {
 			/* get a pointer to the current sprite's gfx data */
-			const UINT8 *gfx_src = gfx_element_get_data(gfx, number % gfx->total_elements);
+			const uint8_t *gfx_src = gfx_element_get_data(gfx, number % gfx->total_elements);
 
 			for (py = 0; py < gfx->height; py++){
 				/* get a pointer to the current line in the screen bitmap */
 				int ypos = ((sy + py) & 0x1ff);
-				UINT16 *srcy = BITMAP_ADDR16(bitmap, ypos, 0);
+				uint16_t *srcy = BITMAP_ADDR16(bitmap, ypos, 0);
 
 				int gfx_py = yflip ? (gfx->height - 1 - py) : py;
 
@@ -150,7 +150,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 				for (px = 0; px < gfx->width; px++){
 					/* get current pixel */
 					int xpos = (((sx + px) & 0x3ff) - 0x0f) & 0x3ff;
-					UINT16 *pixel = srcy + xpos;
+					uint16_t *pixel = srcy + xpos;
 					int src_color = *pixel;
 
 					int gfx_px = xflip ? (gfx->width - 1 - px) : px;

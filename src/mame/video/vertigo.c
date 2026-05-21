@@ -120,7 +120,7 @@ enum {
  *
  *************************************/
 
-UINT16 *vertigo_vectorram;
+uint16_t *vertigo_vectorram;
 
 
 /*************************************
@@ -131,63 +131,63 @@ UINT16 *vertigo_vectorram;
 
 typedef struct _am2901
 {
-	UINT32 ram[16];	  /* internal ram */
-	UINT32 d;		  /* direct data D input */
-	UINT32 q;		  /* Q register */
-	UINT32 f;		  /* F ALU result */
-	UINT32 y;		  /* Y output */
+	uint32_t ram[16];	  /* internal ram */
+	uint32_t d;		  /* direct data D input */
+	uint32_t q;		  /* Q register */
+	uint32_t f;		  /* F ALU result */
+	uint32_t y;		  /* Y output */
 } am2901;
 
 typedef struct _vector_generator
 {
 	running_machine *machine;
-	UINT32 sreg;	  /* shift register */
-	UINT32 l1;		  /* latch 1 adder operand only */
-	UINT32 l2;		  /* latch 2 adder operand only */
-	UINT32 c_v;		  /* vertical position counter */
-	UINT32 c_h;		  /* horizontal position counter */
-	UINT32 c_l;		  /* length counter */
-	UINT32 adder_s;	  /* slope generator result and B input */
-	UINT32 adder_a;	  /* slope generator A input */
-	UINT32 color;	  /* color */
-	UINT32 intensity; /* intensity */
-	UINT32 brez;	  /* h/v-counters enable */
-	UINT32 vfin;	  /* drawing yes/no */
-	UINT32 hud1;	  /* h-counter up or down (stored in L1) */
-	UINT32 hud2;	  /* h-counter up or down (stored in L2) */
-	UINT32 vud1;	  /* v-counter up or down (stored in L1) */
-	UINT32 vud2;	  /* v-counter up or down (stored in L2) */
-	UINT32 hc1;		  /* use h- or v-counter in L1 mode */
-	UINT32 ven;       /* vector intensity enable */
+	uint32_t sreg;	  /* shift register */
+	uint32_t l1;		  /* latch 1 adder operand only */
+	uint32_t l2;		  /* latch 2 adder operand only */
+	uint32_t c_v;		  /* vertical position counter */
+	uint32_t c_h;		  /* horizontal position counter */
+	uint32_t c_l;		  /* length counter */
+	uint32_t adder_s;	  /* slope generator result and B input */
+	uint32_t adder_a;	  /* slope generator A input */
+	uint32_t color;	  /* color */
+	uint32_t intensity; /* intensity */
+	uint32_t brez;	  /* h/v-counters enable */
+	uint32_t vfin;	  /* drawing yes/no */
+	uint32_t hud1;	  /* h-counter up or down (stored in L1) */
+	uint32_t hud2;	  /* h-counter up or down (stored in L2) */
+	uint32_t vud1;	  /* v-counter up or down (stored in L1) */
+	uint32_t vud2;	  /* v-counter up or down (stored in L2) */
+	uint32_t hc1;		  /* use h- or v-counter in L1 mode */
+	uint32_t ven;       /* vector intensity enable */
 } vector_generator;
 
 typedef struct _microcode
 {
-	UINT32 x;
-	UINT32 a;
-	UINT32 b;
-	UINT32 inst;
-	UINT32 dest;
-	UINT32 cn;
-	UINT32 mreq;
-	UINT32 rsel;
-	UINT32 rwrite;
-	UINT32 of;
-	UINT32 iif;
-	UINT32 oa;
-	UINT32 jpos;
-	UINT32 jmp;
-	UINT32 jcon;
-	UINT32 ma;
+	uint32_t x;
+	uint32_t a;
+	uint32_t b;
+	uint32_t inst;
+	uint32_t dest;
+	uint32_t cn;
+	uint32_t mreq;
+	uint32_t rsel;
+	uint32_t rwrite;
+	uint32_t of;
+	uint32_t iif;
+	uint32_t oa;
+	uint32_t jpos;
+	uint32_t jmp;
+	uint32_t jcon;
+	uint32_t ma;
 } microcode;
 
 typedef struct _vproc
 {
-	UINT16 sram[64]; /* external sram */
-	UINT16 ramlatch; /* latch between 2901 and sram */
-	UINT16 rom_adr;	 /* vector ROM/RAM address latch */
-	UINT32 pc;		 /* program counter */
-	UINT32 ret;		 /* return address */
+	uint16_t sram[64]; /* external sram */
+	uint16_t ramlatch; /* latch between 2901 and sram */
+	uint16_t rom_adr;	 /* vector ROM/RAM address latch */
+	uint32_t pc;		 /* program counter */
+	uint32_t ret;		 /* return address */
 
 } vproc;
 
@@ -201,7 +201,7 @@ typedef struct _vproc
 static vproc vs;
 static am2901 bsp;
 static vector_generator vgen;
-static UINT16 *vertigo_vectorrom;
+static uint16_t *vertigo_vectorrom;
 static microcode mc[MC_LENGTH];
 
 
@@ -249,10 +249,10 @@ void vertigo_vproc_init(running_machine *machine)
 void vertigo_vproc_reset(running_machine *machine)
 {
 	int i;
-	UINT64 *mcode;
+	uint64_t *mcode;
 
-	vertigo_vectorrom = (UINT16 *)memory_region(machine, "user1");
-	mcode = (UINT64 *)memory_region(machine, "proms");
+	vertigo_vectorrom = (uint16_t *)memory_region(machine, "user1");
+	mcode = (uint64_t *)memory_region(machine, "proms");
 
 	/* Decode microcode */
 	for (i = 0; i < MC_LENGTH; i++)

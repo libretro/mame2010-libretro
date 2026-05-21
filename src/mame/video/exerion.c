@@ -82,7 +82,7 @@ PALETTE_INIT( exerion )
 	/* fg chars and sprites */
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT8 ctabentry = 0x10 | (color_prom[(i & 0x1c0) | ((i & 3) << 4) | ((i >> 2) & 0x0f)] & 0x0f);
+		uint8_t ctabentry = 0x10 | (color_prom[(i & 0x1c0) | ((i & 3) << 4) | ((i >> 2) & 0x0f)] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -90,7 +90,7 @@ PALETTE_INIT( exerion )
 	/* using another PROM */
 	for (i = 0x200; i < 0x300; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -107,13 +107,13 @@ VIDEO_START( exerion )
 {
 	exerion_state *state = (exerion_state *)machine->driver_data;
 	int i;
-	UINT8 *gfx;
+	uint8_t *gfx;
 
 	/* get pointers to the mixing and lookup PROMs */
 	state->background_mixer = memory_region(machine, "proms") + 0x320;
 
 	/* allocate memory for the decoded background graphics */
-	state->background_gfx[0] = auto_alloc_array(machine, UINT16, 256 * 256 * 4);
+	state->background_gfx[0] = auto_alloc_array(machine, uint16_t, 256 * 256 * 4);
 	state->background_gfx[1] = state->background_gfx[0] + 256 * 256;
 	state->background_gfx[2] = state->background_gfx[1] + 256 * 256;
 	state->background_gfx[3] = state->background_gfx[2] + 256 * 256;
@@ -140,8 +140,8 @@ VIDEO_START( exerion )
 	{
 		int y;
 
-		UINT8 *src = gfx + i * 0x2000;
-		UINT16 *dst = state->background_gfx[i];
+		uint8_t *src = gfx + i * 0x2000;
+		uint16_t *dst = state->background_gfx[i];
 
 		for (y = 0; y < 0x100; y++)
 		{
@@ -149,8 +149,8 @@ VIDEO_START( exerion )
 
 			for (x = 0; x < 0x80; x += 4)
 			{
-				UINT8 data = *src++;
-				UINT16 val;
+				uint8_t data = *src++;
+				uint16_t val;
 
 				val = ((data >> 3) & 2) | ((data >> 0) & 1);
 				if (val) val |= 0x100 >> i;
@@ -218,8 +218,8 @@ READ8_HANDLER( exerion_video_timing_r )
 	/* bit 0 is the SNMI signal, which is the negated value of H6, if H7=1 & H8=1 & VBLANK=0, otherwise 1 */
 	/* bit 1 is VBLANK */
 
-	UINT16 hcounter = space->machine->primary_screen->hpos() + EXERION_HCOUNT_START;
-	UINT8 snmi = 1;
+	uint16_t hcounter = space->machine->primary_screen->hpos() + EXERION_HCOUNT_START;
+	uint8_t snmi = 1;
 
 	if (((hcounter & 0x180) == 0x180) && !space->machine->primary_screen->vblank())
 		snmi = !((hcounter >> 6) & 0x01);
@@ -242,10 +242,10 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 	/* loop over all visible scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *src0 = &state->background_gfx[0][state->background_latches[1] * 256];
-		UINT16 *src1 = &state->background_gfx[1][state->background_latches[3] * 256];
-		UINT16 *src2 = &state->background_gfx[2][state->background_latches[5] * 256];
-		UINT16 *src3 = &state->background_gfx[3][state->background_latches[7] * 256];
+		uint16_t *src0 = &state->background_gfx[0][state->background_latches[1] * 256];
+		uint16_t *src1 = &state->background_gfx[1][state->background_latches[3] * 256];
+		uint16_t *src2 = &state->background_gfx[2][state->background_latches[5] * 256];
+		uint16_t *src3 = &state->background_gfx[3][state->background_latches[7] * 256];
 		int xoffs0 = state->background_latches[0];
 		int xoffs1 = state->background_latches[2];
 		int xoffs2 = state->background_latches[4];
@@ -258,8 +258,8 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 		int stop1 = state->background_latches[9] >> 4;
 		int stop2 = state->background_latches[10] >> 4;
 		int stop3 = state->background_latches[11] >> 4;
-		UINT8 *mixer = &state->background_mixer[(state->background_latches[12] << 4) & 0xf0];
-		UINT16 scanline[VISIBLE_X_MAX];
+		uint8_t *mixer = &state->background_mixer[(state->background_latches[12] << 4) & 0xf0];
+		uint16_t scanline[VISIBLE_X_MAX];
 		pen_t pen_base = 0x200 + ((state->background_latches[12] >> 4) << 4);
 
 		/* the cocktail flip flag controls whether we count up or down in X */
@@ -277,8 +277,8 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 			/* draw the rest of the scanline fully */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 combined = 0;
-				UINT8 lookupval;
+				uint16_t combined = 0;
+				uint8_t lookupval;
 
 				/* the output enable is controlled by the carries on the start/stop counters */
 				/* they are only active when the start has carried but the stop hasn't */
@@ -314,8 +314,8 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 			/* draw the rest of the scanline fully */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 combined = 0;
-				UINT8 lookupval;
+				uint16_t combined = 0;
+				uint8_t lookupval;
 
 				/* the output enable is controlled by the carries on the start/stop counters */
 				/* they are only active when the start has carried but the stop hasn't */

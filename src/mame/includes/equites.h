@@ -10,25 +10,25 @@ public:
 	equites_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  bg_videoram;
-	UINT8  *  fg_videoram;	// 8bits
-	UINT16 *  spriteram;
-	UINT16 *  spriteram_2;
-	UINT16 *  workram;
-	UINT8  *  mcu_ram;	// 8bits
-//  UINT16 *  nvram;    // currently this uses generic nvram handling
+	uint16_t *  bg_videoram;
+	uint8_t  *  fg_videoram;	// 8bits
+	uint16_t *  spriteram;
+	uint16_t *  spriteram_2;
+	uint16_t *  workram;
+	uint8_t  *  mcu_ram;	// 8bits
+//  uint16_t *  nvram;    // currently this uses generic nvram handling
 
 	/* video-related */
 	tilemap_t   *fg_tilemap, *bg_tilemap;
 	int       fg_char_bank;
-	UINT8     bgcolor;
-	UINT16    splndrbt_bg_scrollx, splndrbt_bg_scrolly;
+	uint8_t     bgcolor;
+	uint16_t    splndrbt_bg_scrollx, splndrbt_bg_scrolly;
 
 	/* misc */
 	int       sound_prom_address;
-	UINT8     dac_latch;
-	UINT8     eq8155_port_b;
-	UINT8     eq8155_port_a,eq8155_port_c,ay_port_a,ay_port_b,eq_cymbal_ctrl;
+	uint8_t     dac_latch;
+	uint8_t     eq8155_port_b;
+	uint8_t     eq8155_port_a,eq8155_port_c,ay_port_a,ay_port_b,eq_cymbal_ctrl;
 	emu_timer *nmi_timer, *adjuster_timer;
 	float     cymvol,hihatvol;
 	int       timer_count;

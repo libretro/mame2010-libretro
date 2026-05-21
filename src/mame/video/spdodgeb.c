@@ -3,7 +3,7 @@
 #include "cpu/m6502/m6502.h"
 
 
-UINT8 *spdodgeb_videoram;
+uint8_t *spdodgeb_videoram;
 
 static int tile_palbank;
 static int sprite_palbank;
@@ -61,8 +61,8 @@ static TILEMAP_MAPPER( background_scan )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 code = spdodgeb_videoram[tile_index];
-	UINT8 attr = spdodgeb_videoram[tile_index + 0x800];
+	uint8_t code = spdodgeb_videoram[tile_index];
+	uint8_t attr = spdodgeb_videoram[tile_index + 0x800];
 	SET_TILE_INFO(
 			0,
 			code + ((attr & 0x1f) << 8),
@@ -115,7 +115,7 @@ WRITE8_HANDLER( spdodgeb_scrollx_lo_w )
 
 WRITE8_HANDLER( spdodgeb_ctrl_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 	/* bit 0 = flip screen */
 	flip_screen_set(space->machine, data & 0x01);
@@ -157,9 +157,9 @@ WRITE8_HANDLER( spdodgeb_videoram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT8 *src;
+	uint8_t *src;
 	int i;
 
 	src = spriteram;

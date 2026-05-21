@@ -164,8 +164,8 @@ WRITE8_HANDLER( msisaac_fg_videoram_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	buggychl_state *state = (buggychl_state *)machine->driver_data;
-	const UINT8 *source = state->spriteram + 32 * 4 - 4;
-	const UINT8 *finish = state->spriteram; /* ? */
+	const uint8_t *source = state->spriteram + 32 * 4 - 4;
+	const uint8_t *finish = state->spriteram; /* ? */
 
 	while (source >= finish)
 	{

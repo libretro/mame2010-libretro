@@ -11,10 +11,10 @@ extern void m92_sprite_interrupt(running_machine *machine);
 
 /*----------- defined in video/m92.c -----------*/
 
-extern UINT32 m92_raster_irq_position;
-extern UINT16 *m92_vram_data, *m92_spritecontrol;
+extern uint32_t m92_raster_irq_position;
+extern uint16_t *m92_vram_data, *m92_spritecontrol;
 
-extern UINT8 m92_sprite_buffer_busy, m92_game_kludge;
+extern uint8_t m92_sprite_buffer_busy, m92_game_kludge;
 
 WRITE16_HANDLER( m92_spritecontrol_w );
 WRITE16_HANDLER( m92_videocontrol_w );

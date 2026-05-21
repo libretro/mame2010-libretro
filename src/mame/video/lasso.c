@@ -90,7 +90,7 @@ PALETTE_INIT( wwjgtin )
 	/* track */
 	for (i = 0x40; i < 0x140; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if ((i - 0x40) & 0x03)
 			ctabentry = ((((i - 0x40) & 0xf0) >> 2) + ((i - 0x40) & 0x0f)) & 0x3f;
@@ -127,14 +127,14 @@ static TILE_GET_INFO( lasso_get_bg_tile_info )
 	int color = state->colorram[tile_index];
 
 	SET_TILE_INFO(0,
-				  code + ((UINT16)state->gfxbank << 8),
+				  code + ((uint16_t)state->gfxbank << 8),
 				  color & 0x0f,
 				  0);
 }
 
 static TILE_GET_INFO( wwjgtin_get_track_tile_info )
 {
-	UINT8 *ROM = memory_region(machine, "user1");
+	uint8_t *ROM = memory_region(machine, "user1");
 	int code = ROM[tile_index];
 	int color = ROM[tile_index + 0x2000];
 
@@ -273,7 +273,7 @@ WRITE8_HANDLER( pinbo_video_control_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int reverse )
 {
 	lasso_state *state = (lasso_state *)machine->driver_data;
-	const UINT8 *finish, *source;
+	const uint8_t *finish, *source;
 	int inc;
 
 	if (reverse)
@@ -314,7 +314,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 		color = source[2] & 0x0f;
 
 		drawgfx_transpen(bitmap, cliprect, machine->gfx[1],
-				code | ((UINT16)state->gfxbank << 6),
+				code | ((uint16_t)state->gfxbank << 6),
 				color,
 				flipx, flipy,
 				sx,sy,0);
@@ -333,9 +333,9 @@ static void draw_lasso( running_machine *machine, bitmap_t *bitmap, const rectan
 	for (offs = 0; offs < 0x2000; offs++)
 	{
 		int bit;
-		UINT8 data;
-		UINT8 x;
-		UINT8 y = offs >> 5;
+		uint8_t data;
+		uint8_t x;
+		uint8_t y = offs >> 5;
 
 		if (flip_screen_y_get(machine))
 			y = ~y;

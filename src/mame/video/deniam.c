@@ -66,7 +66,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 {
 	deniam_state *state = (deniam_state *)machine->driver_data;
 	int page = tile_index >> 11;
-	UINT16 attr = state->videoram[state->bg_page[page] * 0x0800 + (tile_index & 0x7ff)];
+	uint16_t attr = state->videoram[state->bg_page[page] * 0x0800 + (tile_index & 0x7ff)];
 	SET_TILE_INFO(
 			0,
 			attr,
@@ -78,7 +78,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 {
 	deniam_state *state = (deniam_state *)machine->driver_data;
 	int page = tile_index >> 11;
-	UINT16 attr = state->videoram[state->fg_page[page] * 0x0800 + (tile_index & 0x7ff)];
+	uint16_t attr = state->videoram[state->fg_page[page] * 0x0800 + (tile_index & 0x7ff)];
 	SET_TILE_INFO(
 			0,
 			attr,
@@ -89,7 +89,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_tx_tile_info )
 {
 	deniam_state *state = (deniam_state *)machine->driver_data;
-	UINT16 attr = state->textram[tile_index];
+	uint16_t attr = state->textram[tile_index];
 	SET_TILE_INFO(
 			0,
 			attr & 0xf1ff,
@@ -218,12 +218,12 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	deniam_state *state = (deniam_state *)machine->driver_data;
 	int offs;
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t *gfx = memory_region(machine, "gfx2");
 
 	for (offs = state->spriteram_size / 2 - 8; offs >= 0; offs -= 8)
 	{
 		int sx, starty, endy, x, y, start, color, width, flipx, primask;
-		UINT8 *rom = gfx;
+		uint8_t *rom = gfx;
 
 		sx = (state->spriteram[offs + 1] & 0x01ff) + 16 * 8 - 1;
 		if (sx >= 512) sx -= 512;

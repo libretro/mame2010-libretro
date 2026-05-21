@@ -22,7 +22,7 @@ WRITE8_HANDLER( djboy_scrolly_w )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	djboy_state *state = (djboy_state *)machine->driver_data;
-	UINT8 attr = state->videoram[tile_index + 0x800];
+	uint8_t attr = state->videoram[tile_index + 0x800];
 	int code = state->videoram[tile_index] + (attr & 0xf) * 256;
 	int color = attr >> 4;
 

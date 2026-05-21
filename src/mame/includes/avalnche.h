@@ -15,10 +15,10 @@ public:
 	avalnche_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 	size_t   videoram_size;
 
-	UINT8    avalance_video_inverted;
+	uint8_t    avalance_video_inverted;
 };
 
 /*----------- defined in audio/avalnche.c -----------*/

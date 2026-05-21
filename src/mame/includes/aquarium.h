@@ -9,12 +9,12 @@ public:
 	aquarium_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  scroll;
-	UINT16 *  txt_videoram;
-	UINT16 *  mid_videoram;
-	UINT16 *  bak_videoram;
-	UINT16 *  spriteram;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  scroll;
+	uint16_t *  txt_videoram;
+	uint16_t *  mid_videoram;
+	uint16_t *  bak_videoram;
+	uint16_t *  spriteram;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 	size_t    spriteram_size;
 
 	/* video-related */

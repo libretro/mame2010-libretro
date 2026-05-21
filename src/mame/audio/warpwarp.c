@@ -14,7 +14,7 @@
 #define CLOCK_16H	(18432000/3/2/16)
 #define CLOCK_1V    (18432000/3/2/384)
 
-static INT16 *decay = NULL;
+static int16_t *decay = NULL;
 static sound_stream *channel;
 static int sound_latch = 0;
 static int music1_latch = 0;
@@ -207,10 +207,10 @@ static DEVICE_START( warpwarp_sound )
 	running_machine *machine = device->machine;
 	int i;
 
-	decay = auto_alloc_array(machine, INT16, 32768);
+	decay = auto_alloc_array(machine, int16_t, 32768);
 
     for( i = 0; i < 0x8000; i++ )
-		decay[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		decay[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	channel = stream_create(device, 0, 1, CLOCK_16H, NULL, warpwarp_sound_update);
 

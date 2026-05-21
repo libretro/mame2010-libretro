@@ -17,30 +17,30 @@
 #define	BG_PAL_INTENSITY_RG	0x1fe
 #define	BG_PAL_INTENSITY_BU	0x1ff
 
-static UINT8 ps5_vram_page;
-static UINT8 bg_clip_mode;
-static UINT8 title_screen;
-static UINT8 psychic5_bg_status;
+static uint8_t ps5_vram_page;
+static uint8_t bg_clip_mode;
+static uint8_t title_screen;
+static uint8_t psychic5_bg_status;
 
-static UINT8 *ps5_pagedram[2];
+static uint8_t *ps5_pagedram[2];
 
 /* Paged RAM 0 */
-static UINT8 *psychic5_bg_videoram;
-static UINT8 *ps5_dummy_bg_ram;
+static uint8_t *psychic5_bg_videoram;
+static uint8_t *ps5_dummy_bg_ram;
 
 /* Paged RAM 1 */
-static UINT8 *ps5_io_ram;
-static UINT8 *ps5_palette_ram;
-static UINT8 *psychic5_fg_videoram;
+static uint8_t *ps5_io_ram;
+static uint8_t *ps5_palette_ram;
+static uint8_t *psychic5_fg_videoram;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
 static int bg_palette_ram_base;
 static int bg_palette_base;
 
-static UINT16 palette_intensity;
+static uint16_t palette_intensity;
 
-static UINT8 bombsa_unknown;
+static uint8_t bombsa_unknown;
 
 
 /***************************************************************************
@@ -49,15 +49,15 @@ static UINT8 bombsa_unknown;
 
 static void psychic5_change_palette(running_machine *machine, int color, int offset)
 {
-	UINT8 lo = ps5_palette_ram[offset & ~1];
-	UINT8 hi = ps5_palette_ram[offset | 1];
+	uint8_t lo = ps5_palette_ram[offset & ~1];
+	uint8_t hi = ps5_palette_ram[offset | 1];
 	if (jal_blend_table != NULL) jal_blend_table[color] = hi & 0x0f;
 	palette_set_color_rgb(machine, color, pal4bit(lo >> 4), pal4bit(lo), pal4bit(hi >> 4));
 }
 
 static void psychic5_change_bg_palette(running_machine *machine, int color, int lo_offs, int hi_offs)
 {
-	UINT8 r,g,b,lo,hi,ir,ig,ib,ix;
+	uint8_t r,g,b,lo,hi,ir,ig,ib,ix;
 	rgb_t irgb;
 
 	/* red,green,blue intensities */
@@ -79,7 +79,7 @@ static void psychic5_change_bg_palette(running_machine *machine, int color, int 
 	/* Grey background enable */
 	if (psychic5_bg_status & 2)
 	{
-		UINT8 val = (r + g + b) / 3;		/* Grey */
+		uint8_t val = (r + g + b) / 3;		/* Grey */
 		/* Just leave plain grey */
 		palette_set_color(machine,color,jal_blend_func(MAKE_RGB(val,val,val),irgb,ix));
 	}
@@ -155,12 +155,12 @@ WRITE8_HANDLER( psychic5_paged_ram_w )
 	{
 		if (offset == BG_SCROLLX_LSB || offset == BG_SCROLLX_MSB)
 		{
-			UINT16 bg_scrollx = ps5_io_ram[BG_SCROLLX_LSB] | (ps5_io_ram[BG_SCROLLX_MSB] << 8);
+			uint16_t bg_scrollx = ps5_io_ram[BG_SCROLLX_LSB] | (ps5_io_ram[BG_SCROLLX_MSB] << 8);
 			tilemap_set_scrollx(bg_tilemap, 0, bg_scrollx);
 		}
 		else if (offset == BG_SCROLLY_LSB || offset == BG_SCROLLY_MSB)
 		{
-			UINT16 bg_scrolly = ps5_io_ram[BG_SCROLLY_LSB] | (ps5_io_ram[BG_SCROLLY_MSB] << 8);
+			uint16_t bg_scrolly = ps5_io_ram[BG_SCROLLY_LSB] | (ps5_io_ram[BG_SCROLLY_MSB] << 8);
 			tilemap_set_scrolly(bg_tilemap, 0, bg_scrolly);
 		}
 		else if (offset == BG_SCREEN_MODE)
@@ -190,12 +190,12 @@ WRITE8_HANDLER( bombsa_paged_ram_w )
 	{
 		if (offset == BG_SCROLLX_LSB || offset == BG_SCROLLX_MSB)
 		{
-			UINT16 bg_scrollx = ps5_io_ram[BG_SCROLLX_LSB] | (ps5_io_ram[BG_SCROLLX_MSB] << 8);
+			uint16_t bg_scrollx = ps5_io_ram[BG_SCROLLX_LSB] | (ps5_io_ram[BG_SCROLLX_MSB] << 8);
 			tilemap_set_scrollx(bg_tilemap, 0, bg_scrollx);
 		}
 		else if (offset == BG_SCROLLY_LSB || offset == BG_SCROLLY_MSB)
 		{
-			UINT16 bg_scrolly = ps5_io_ram[BG_SCROLLY_LSB] | (ps5_io_ram[BG_SCROLLY_MSB] << 8);
+			uint16_t bg_scrolly = ps5_io_ram[BG_SCROLLY_LSB] | (ps5_io_ram[BG_SCROLLY_MSB] << 8);
 			tilemap_set_scrolly(bg_tilemap, 0, bg_scrolly);
 		}
 		else if (offset == BG_SCREEN_MODE)
@@ -254,8 +254,8 @@ VIDEO_START( psychic5 )
 
 	tilemap_set_transparent_pen(fg_tilemap, 15);
 
-	ps5_pagedram[0] = auto_alloc_array(machine, UINT8, 0x2000);
-	ps5_pagedram[1] = auto_alloc_array(machine, UINT8, 0x2000);
+	ps5_pagedram[0] = auto_alloc_array(machine, uint8_t, 0x2000);
+	ps5_pagedram[1] = auto_alloc_array(machine, uint8_t, 0x2000);
 
 	psychic5_bg_videoram  = &ps5_pagedram[0][0x0000];
 	ps5_dummy_bg_ram      = &ps5_pagedram[0][0x1000];
@@ -263,7 +263,7 @@ VIDEO_START( psychic5 )
 	ps5_palette_ram       = &ps5_pagedram[1][0x0400];
 	psychic5_fg_videoram  = &ps5_pagedram[1][0x1000];
 
-	jal_blend_table = auto_alloc_array(machine, UINT8, 0xc00);
+	jal_blend_table = auto_alloc_array(machine, uint8_t, 0xc00);
 
 	bg_palette_ram_base = 0x400;
 	bg_palette_base = 0x100;
@@ -277,8 +277,8 @@ VIDEO_START( bombsa )
 
 	tilemap_set_transparent_pen(fg_tilemap, 15);
 
-	ps5_pagedram[0] = auto_alloc_array(machine, UINT8, 0x2000);
-	ps5_pagedram[1] = auto_alloc_array(machine, UINT8, 0x2000);
+	ps5_pagedram[0] = auto_alloc_array(machine, uint8_t, 0x2000);
+	ps5_pagedram[1] = auto_alloc_array(machine, uint8_t, 0x2000);
 
 	psychic5_bg_videoram  = &ps5_pagedram[0][0x0000];
 	ps5_dummy_bg_ram      = &ps5_pagedram[0][0x1000];
@@ -286,7 +286,7 @@ VIDEO_START( bombsa )
 	psychic5_fg_videoram  = &ps5_pagedram[1][0x0800];
 	ps5_palette_ram       = &ps5_pagedram[1][0x1000];
 
-	//jal_blend_table = auto_alloc_array(machine, UINT8, 0xc00);
+	//jal_blend_table = auto_alloc_array(machine, uint8_t, 0xc00);
 	jal_blend_table = NULL;
 
 	bg_palette_ram_base = 0x000;
@@ -324,7 +324,7 @@ VIDEO_RESET( bombsa )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	/* Draw the sprites */
@@ -377,7 +377,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 static void draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	static int sx1 = 0, sy1 = 0, sy2 = 0;
 
 	rectangle clip = *cliprect;

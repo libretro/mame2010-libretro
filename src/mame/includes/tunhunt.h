@@ -5,10 +5,10 @@ public:
 
 	tunhunt_state(running_machine &machine) { }
 
-	UINT8 control;
-	UINT8 *workram;
-	UINT8 *spriteram;
-	UINT8 *videoram;
+	uint8_t control;
+	uint8_t *workram;
+	uint8_t *spriteram;
+	uint8_t *videoram;
 	tilemap_t *fg_tilemap;
 };
 

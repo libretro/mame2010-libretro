@@ -54,7 +54,7 @@ PALETTE_INIT( toypop )
 
 	for (i = 0;i < 256;i++)
 	{
-		UINT8 entry;
+		uint8_t entry;
 
 		// characters
 		colortable_entry_set_value(machine->colortable, i + 0*256, (color_prom[i + 0x300] & 0x0f) | 0x70);
@@ -97,7 +97,7 @@ static TILEMAP_MAPPER( tilemap_scan )
 static TILE_GET_INFO( get_tile_info )
 {
 	toypop_state *state = (toypop_state *)machine->driver_data;
-	UINT8 attr = state->videoram[tile_index + 0x400];
+	uint8_t attr = state->videoram[tile_index + 0x400];
 	SET_TILE_INFO(
 			0,
 			state->videoram[tile_index],
@@ -187,10 +187,10 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap)
 		offs = 0xFDFE/2;
 		for (y = 0; y < 224; y++)
 		{
-			UINT16 *scanline = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t *scanline = BITMAP_ADDR16(bitmap, y, 0);
 			for (x = 0; x < 288; x+=2)
 			{
-				UINT16 data = state->bg_image[offs];
+				uint16_t data = state->bg_image[offs];
 				scanline[x]   = pen_base | (data & 0x0f);
 				scanline[x+1] = pen_base | (data >> 8);
 				offs--;
@@ -202,10 +202,10 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap)
 		offs = 0x200/2;
 		for (y = 0; y < 224; y++)
 		{
-			UINT16 *scanline = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t *scanline = BITMAP_ADDR16(bitmap, y, 0);
 			for (x = 0; x < 288; x+=2)
 			{
-				UINT16 data = state->bg_image[offs];
+				uint16_t data = state->bg_image[offs];
 				scanline[x]   = pen_base | (data >> 8);
 				scanline[x+1] = pen_base | (data & 0x0f);
 				offs++;

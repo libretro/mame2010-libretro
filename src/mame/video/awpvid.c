@@ -34,9 +34,9 @@
 #include "rendlay.h"
 #include "machine/steppers.h"
 
-static UINT8 steps[MAX_STEPPERS];
-static UINT8 symbols[MAX_STEPPERS];
-static UINT8 reelpos[MAX_STEPPERS];
+static uint8_t steps[MAX_STEPPERS];
+static uint8_t symbols[MAX_STEPPERS];
+static uint8_t reelpos[MAX_STEPPERS];
 
 void awp_reel_setup(void)
 {

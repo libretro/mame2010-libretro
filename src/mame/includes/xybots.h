@@ -15,7 +15,7 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16			h256;
+	uint16_t			h256;
 };
 
 

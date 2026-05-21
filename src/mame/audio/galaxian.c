@@ -392,7 +392,7 @@ DISCRETE_SOUND_END
  *
  *************************************/
 
-static UINT8 lfo_val;
+static uint8_t lfo_val;
 
 static SOUND_START(galaxian)
 {
@@ -413,7 +413,7 @@ WRITE8_DEVICE_HANDLER( galaxian_pitch_w )
 
 WRITE8_DEVICE_HANDLER( galaxian_lfo_freq_w )
 {
-	UINT8 lfo_val_new = (lfo_val & ~(1<<offset)) | ((data & 0x01) << offset);
+	uint8_t lfo_val_new = (lfo_val & ~(1<<offset)) | ((data & 0x01) << offset);
 
 	if (lfo_val != lfo_val_new)
 	{

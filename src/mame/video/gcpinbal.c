@@ -8,8 +8,8 @@
 static TILE_GET_INFO( get_bg0_tile_info )
 {
 	gcpinbal_state *state = (gcpinbal_state *)machine->driver_data;
-	UINT16 tilenum = state->tilemapram[0 + tile_index * 2];
-	UINT16 attr    = state->tilemapram[1 + tile_index * 2];
+	uint16_t tilenum = state->tilemapram[0 + tile_index * 2];
+	uint16_t attr    = state->tilemapram[1 + tile_index * 2];
 
 	SET_TILE_INFO(
 			1,
@@ -21,8 +21,8 @@ static TILE_GET_INFO( get_bg0_tile_info )
 static TILE_GET_INFO( get_bg1_tile_info )
 {
 	gcpinbal_state *state = (gcpinbal_state *)machine->driver_data;
-	UINT16 tilenum = state->tilemapram[0x800 + tile_index * 2];
-	UINT16 attr    = state->tilemapram[0x801 + tile_index * 2];
+	uint16_t tilenum = state->tilemapram[0x800 + tile_index * 2];
+	uint16_t attr    = state->tilemapram[0x801 + tile_index * 2];
 
 	SET_TILE_INFO(
 			1,
@@ -34,7 +34,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	gcpinbal_state *state = (gcpinbal_state *)machine->driver_data;
-	UINT16 tilenum = state->tilemapram[0x1000 + tile_index];
+	uint16_t tilenum = state->tilemapram[0x1000 + tile_index];
 
 	SET_TILE_INFO(
 			2,
@@ -172,12 +172,12 @@ WRITE16_HANDLER( gcpinbal_ctrl_word_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int y_offs )
 {
 	gcpinbal_state *state = (gcpinbal_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, chain_pos;
 	int x, y, curx, cury;
 	int priority = 0;
-	UINT8 col, flipx, flipy, chain;
-	UINT16 code;
+	uint8_t col, flipx, flipy, chain;
+	uint16_t code;
 
 	/* According to Raine, word in ioc_ram determines sprite/tile priority... */
 	priority = (state->ioc_ram[0x68 / 2] & 0x8800) ? 0 : 1;
@@ -252,8 +252,8 @@ VIDEO_UPDATE( gcpinbal )
 {
 	gcpinbal_state *state = (gcpinbal_state *)screen->machine->driver_data;
 	int i;
-	UINT16 tile_sets = 0;
-	UINT8 layer[3];
+	uint16_t tile_sets = 0;
+	uint8_t layer[3];
 
 #ifdef MAME_DEBUG
 	if (input_code_pressed_once(screen->machine, KEYCODE_V))

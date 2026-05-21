@@ -10,13 +10,13 @@
 
 typedef struct
 {
-       UINT8 ram[0x0c00];
-       UINT8 reg[0x0100];
-       UINT32 r0, r1, r2,  r3,  r4,  r5,  r6,  r7,
+       uint8_t ram[0x0c00];
+       uint8_t reg[0x0100];
+       uint32_t r0, r1, r2,  r3,  r4,  r5,  r6,  r7,
                   r8, r9, r10, r11, r12, r13, r14, r15;
 
-       INT16 C4WFXVal, C4WFYVal, C4WFZVal, C4WFX2Val, C4WFY2Val, C4WFDist, C4WFScale;
-       INT16 C41FXVal, C41FYVal, C41FAngleRes, C41FDist, C41FDistVal;
+       int16_t C4WFXVal, C4WFYVal, C4WFZVal, C4WFX2Val, C4WFY2Val, C4WFDist, C4WFScale;
+       int16_t C41FXVal, C41FYVal, C41FAngleRes, C41FDist, C41FDistVal;
 
        double tanval;
        double c4x, c4y, c4z;

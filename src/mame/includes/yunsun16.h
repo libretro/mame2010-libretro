@@ -12,13 +12,13 @@ public:
 	yunsun16_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    vram_0;
-	UINT16 *    vram_1;
-	UINT16 *    scrollram_0;
-	UINT16 *    scrollram_1;
-	UINT16 *    priorityram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
-	UINT16 *    spriteram;
+	uint16_t *    vram_0;
+	uint16_t *    vram_1;
+	uint16_t *    scrollram_0;
+	uint16_t *    scrollram_1;
+	uint16_t *    priorityram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
+	uint16_t *    spriteram;
 	size_t      spriteram_size;
 
 	/* other video-related elements */

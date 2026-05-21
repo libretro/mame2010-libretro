@@ -12,10 +12,10 @@
 #include "video/rgbutil.h"
 #include "video/poly.h"
 
-UINT8 *gaelco3d_texture;
-UINT8 *gaelco3d_texmask;
-UINT32 gaelco3d_texture_size;
-UINT32 gaelco3d_texmask_size;
+uint8_t *gaelco3d_texture;
+uint8_t *gaelco3d_texmask;
+uint32_t gaelco3d_texture_size;
+uint32_t gaelco3d_texmask_size;
 
 
 #define MAX_POLYGONS		4096
@@ -32,8 +32,8 @@ UINT32 gaelco3d_texmask_size;
 static bitmap_t *screenbits;
 static bitmap_t *zbuffer;
 static rgb_t *palette;
-static UINT32 *polydata_buffer;
-static UINT32 polydata_count;
+static uint32_t *polydata_buffer;
+static uint32_t polydata_count;
 
 static int polygons;
 static int lastscan;
@@ -45,7 +45,7 @@ static poly_manager *poly;
 typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
-	UINT32 tex, color;
+	uint32_t tex, color;
 	float ooz_dx, ooz_dy, ooz_base;
 	float uoz_dx, uoz_dy, uoz_base;
 	float voz_dx, voz_dy, voz_base;
@@ -53,9 +53,9 @@ struct _poly_extra_data
 };
 
 
-static void render_noz_noperspective(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid);
-static void render_normal(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid);
-static void render_alphablend(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid);
+static void render_noz_noperspective(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid);
+static void render_normal(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid);
+static void render_alphablend(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid);
 
 
 
@@ -85,7 +85,7 @@ VIDEO_START( gaelco3d )
 	zbuffer = auto_bitmap_alloc(machine, width, height, BITMAP_FORMAT_INDEXED16);
 
 	palette = auto_alloc_array(machine, rgb_t, 32768);
-	polydata_buffer = auto_alloc_array(machine, UINT32, MAX_POLYDATA);
+	polydata_buffer = auto_alloc_array(machine, uint32_t, MAX_POLYDATA);
 
 	/* save states */
 
@@ -129,7 +129,7 @@ VIDEO_START( gaelco3d )
     (repeat these two for each additional point in the fan)
 */
 
-static void render_poly(screen_device &screen, UINT32 *polydata)
+static void render_poly(screen_device &screen, uint32_t *polydata)
 {
 	float midx = screen.width() / 2;
 	float midy = screen.height() / 2;
@@ -146,7 +146,7 @@ static void render_poly(screen_device &screen, UINT32 *polydata)
 	poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
 	int color = (polydata[10] & 0x7f) << 8;
 	poly_vertex vert[MAX_VERTICES];
-	UINT32 data;
+	uint32_t data;
 	int vertnum;
 
 	if (LOG_POLYGONS)
@@ -165,11 +165,11 @@ static void render_poly(screen_device &screen, UINT32 *polydata)
 				(double)convert_tms3203x_fp_to_float(polydata[9]),
 				polydata[10],
 				polydata[11],
-				(INT16)(polydata[12] >> 16), (INT16)(polydata[12] << 2) >> 2, polydata[12]);
+				(int16_t)(polydata[12] >> 16), (int16_t)(polydata[12] << 2) >> 2, polydata[12]);
 
-		logerror(" (%4d,%4d) %08X %08X", (INT16)(polydata[13] >> 16), (INT16)(polydata[13] << 2) >> 2, polydata[13], polydata[14]);
+		logerror(" (%4d,%4d) %08X %08X", (int16_t)(polydata[13] >> 16), (int16_t)(polydata[13] << 2) >> 2, polydata[13], polydata[14]);
 		for (t = 15; !IS_POLYEND(polydata[t - 2]); t += 2)
-			logerror(" (%4d,%4d) %08X %08X", (INT16)(polydata[t] >> 16), (INT16)(polydata[t] << 2) >> 2, polydata[t], polydata[t+1]);
+			logerror(" (%4d,%4d) %08X %08X", (int16_t)(polydata[t] >> 16), (int16_t)(polydata[t] << 2) >> 2, polydata[t], polydata[t+1]);
 		logerror("\n");
 	}
 
@@ -193,8 +193,8 @@ static void render_poly(screen_device &screen, UINT32 *polydata)
 	{
 		/* extract vertex data */
 		data = polydata[13 + vertnum * 2];
-		vert[vertnum].x = midx + (float)((INT32)data >> 16) + 0.5f;
-		vert[vertnum].y = midy + (float)((INT32)(data << 18) >> 18) + 0.5f;
+		vert[vertnum].x = midx + (float)((int32_t)data >> 16) + 0.5f;
+		vert[vertnum].y = midy + (float)((int32_t)(data << 18) >> 18) + 0.5f;
 	}
 
 	/* if we have a valid number of verts, render them */
@@ -220,7 +220,7 @@ static void render_poly(screen_device &screen, UINT32 *polydata)
 
 
 
-static void render_noz_noperspective(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_noz_noperspective(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *bitmap = (bitmap_t *)destbase;
@@ -230,9 +230,9 @@ static void render_noz_noperspective(void *destbase, INT32 scanline, const poly_
 	int zbufval = (int)(-extra->z0 * zbase);
 	offs_t endmask = gaelco3d_texture_size - 1;
 	const rgb_t *palsource = palette + extra->color;
-	UINT32 tex = extra->tex;
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
-	UINT16 *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
+	uint32_t tex = extra->tex;
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint16_t *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
 	int startx = extent->startx;
 	float uoz = (extra->uoz_base + scanline * extra->uoz_dy + startx * extra->uoz_dx) * zbase;
 	float voz = (extra->voz_base + scanline * extra->voz_dy + startx * extra->voz_dx) * zbase;
@@ -261,7 +261,7 @@ static void render_noz_noperspective(void *destbase, INT32 scanline, const poly_
 }
 
 
-static void render_normal(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_normal(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *bitmap = (bitmap_t *)destbase;
@@ -270,10 +270,10 @@ static void render_normal(void *destbase, INT32 scanline, const poly_extent *ext
 	float voz_dx = extra->voz_dx;
 	offs_t endmask = gaelco3d_texture_size - 1;
 	const rgb_t *palsource = palette + extra->color;
-	UINT32 tex = extra->tex;
+	uint32_t tex = extra->tex;
 	float z0 = extra->z0;
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
-	UINT16 *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint16_t *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
 	int startx = extent->startx;
 	float ooz = extra->ooz_base + scanline * extra->ooz_dy + startx * ooz_dx;
 	float uoz = extra->uoz_base + scanline * extra->uoz_dy + startx * uoz_dx;
@@ -313,7 +313,7 @@ static void render_normal(void *destbase, INT32 scanline, const poly_extent *ext
 }
 
 
-static void render_alphablend(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_alphablend(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *bitmap = (bitmap_t *)destbase;
@@ -322,10 +322,10 @@ static void render_alphablend(void *destbase, INT32 scanline, const poly_extent 
 	float voz_dx = extra->voz_dx;
 	offs_t endmask = gaelco3d_texture_size - 1;
 	const rgb_t *palsource = palette + extra->color;
-	UINT32 tex = extra->tex;
+	uint32_t tex = extra->tex;
 	float z0 = extra->z0;
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
-	UINT16 *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint16_t *zbuf = BITMAP_ADDR16(zbuffer, scanline, 0);
 	int startx = extent->startx;
 	float ooz = extra->ooz_base + extra->ooz_dy * scanline + startx * ooz_dx;
 	float uoz = extra->uoz_base + extra->uoz_dy * scanline + startx * uoz_dx;
@@ -458,7 +458,7 @@ VIDEO_UPDATE( gaelco3d )
 	if (DISPLAY_TEXTURE && (input_code_pressed(screen->machine, KEYCODE_Z) || input_code_pressed(screen->machine, KEYCODE_X)))
 	{
 		static int xv = 0, yv = 0x1000;
-		UINT8 *base = gaelco3d_texture;
+		uint8_t *base = gaelco3d_texture;
 		int length = gaelco3d_texture_size;
 
 		if (input_code_pressed(screen->machine, KEYCODE_X))
@@ -479,7 +479,7 @@ VIDEO_UPDATE( gaelco3d )
 
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
 				int offs = (yv + y - cliprect->min_y) * 4096 + xv + x - cliprect->min_x;

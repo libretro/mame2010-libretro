@@ -12,12 +12,12 @@ public:
 	munchmo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *      vreg;
-	UINT8 *      status_vram;
-	UINT8 *      sprite_xpos;
-	UINT8 *      sprite_attr;
-	UINT8 *      sprite_tile;
-	UINT8 *      videoram;
+	uint8_t *      vreg;
+	uint8_t *      status_vram;
+	uint8_t *      sprite_xpos;
+	uint8_t *      sprite_attr;
+	uint8_t *      sprite_tile;
+	uint8_t *      videoram;
 
 	/* video-related */
 	bitmap_t     *tmpbitmap;
@@ -27,7 +27,7 @@ public:
 	/* misc */
 	int          nmi_enable;
 	int          which;
-	UINT8        sound_nmi_enable;
+	uint8_t        sound_nmi_enable;
 
 	/* devices */
 	running_device *maincpu;

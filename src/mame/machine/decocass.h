@@ -24,14 +24,14 @@ public:
 	decocass_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *   rambase;
-	UINT8 *   charram;
-	UINT8 *   fgvideoram;
-	UINT8 *   colorram;
-	UINT8 *   bgvideoram;	/* shares bits D0-3 with tileram! */
-	UINT8 *   tileram;
-	UINT8 *   objectram;
-	UINT8 *   paletteram;
+	uint8_t *   rambase;
+	uint8_t *   charram;
+	uint8_t *   fgvideoram;
+	uint8_t *   colorram;
+	uint8_t *   bgvideoram;	/* shares bits D0-3 with tileram! */
+	uint8_t *   tileram;
+	uint8_t *   objectram;
+	uint8_t *   paletteram;
 	size_t    fgvideoram_size;
 	size_t    colorram_size;
 	size_t    bgvideoram_size;
@@ -40,39 +40,39 @@ public:
 
 	/* video-related */
 	tilemap_t   *fg_tilemap, *bg_tilemap_l, *bg_tilemap_r;
-	INT32     watchdog_count;
-	INT32     watchdog_flip;
-	INT32     color_missiles;
-	INT32     color_center_bot;
-	INT32     mode_set;
-	INT32     back_h_shift;
-	INT32     back_vl_shift;
-	INT32     back_vr_shift;
-	INT32     part_h_shift;
-	INT32     part_v_shift;
-	INT32     center_h_shift_space;
-	INT32     center_v_shift;
+	int32_t     watchdog_count;
+	int32_t     watchdog_flip;
+	int32_t     color_missiles;
+	int32_t     color_center_bot;
+	int32_t     mode_set;
+	int32_t     back_h_shift;
+	int32_t     back_vl_shift;
+	int32_t     back_vr_shift;
+	int32_t     part_h_shift;
+	int32_t     part_v_shift;
+	int32_t     center_h_shift_space;
+	int32_t     center_v_shift;
 	rectangle bg_tilemap_l_clip;
 	rectangle bg_tilemap_r_clip;
 
 	/* sound-related */
-	UINT8     sound_ack;	/* sound latches, ACK status bits and NMI timer */
-	UINT8     audio_nmi_enabled;
-	UINT8     audio_nmi_state;
+	uint8_t     sound_ack;	/* sound latches, ACK status bits and NMI timer */
+	uint8_t     audio_nmi_enabled;
+	uint8_t     audio_nmi_state;
 
 	/* misc */
-	UINT8     *decrypted;
-	UINT8     *decrypted2;
-	INT32     firsttime;
-	UINT8     latch1;
-	UINT8     decocass_reset;
-	INT32     de0091_enable;	/* DE-0091xx daughter board enable */
-	UINT8     quadrature_decoder[4];	/* four inputs from the quadrature decoder (H1, V1, H2, V2) */
+	uint8_t     *decrypted;
+	uint8_t     *decrypted2;
+	int32_t     firsttime;
+	uint8_t     latch1;
+	uint8_t     decocass_reset;
+	int32_t     de0091_enable;	/* DE-0091xx daughter board enable */
+	uint8_t     quadrature_decoder[4];	/* four inputs from the quadrature decoder (H1, V1, H2, V2) */
 	int       showmsg;		// for debugging purposes
 
 	/* i8041 */
-	UINT8     i8041_p1;
-	UINT8     i8041_p2;
+	uint8_t     i8041_p1;
+	uint8_t     i8041_p2;
 	int       i8041_p1_write_latch, i8041_p1_read_latch;
 	int       i8041_p2_write_latch, i8041_p2_read_latch;
 
@@ -81,26 +81,26 @@ public:
 	write8_space_func   dongle_w;
 
 	/* dongle type #1 */
-	UINT32    type1_inmap;
-	UINT32    type1_outmap;
+	uint32_t    type1_inmap;
+	uint32_t    type1_outmap;
 
 	/* dongle type #2: status of the latches */
-	INT32     type2_d2_latch;	/* latched 8041-STATUS D2 value */
-	INT32     type2_xx_latch;	/* latched value (D7-4 == 0xc0) ? 1 : 0 */
-	INT32     type2_promaddr;	/* latched PROM address A0-A7 */
+	int32_t     type2_d2_latch;	/* latched 8041-STATUS D2 value */
+	int32_t     type2_xx_latch;	/* latched value (D7-4 == 0xc0) ? 1 : 0 */
+	int32_t     type2_promaddr;	/* latched PROM address A0-A7 */
 
 	/* dongle type #3: status and patches */
-	INT32     type3_ctrs;		/* 12 bit counter stage */
-	INT32     type3_d0_latch;	/* latched 8041-D0 value */
-	INT32     type3_pal_19;		/* latched 1 for PAL input pin-19 */
-	INT32     type3_swap;
+	int32_t     type3_ctrs;		/* 12 bit counter stage */
+	int32_t     type3_d0_latch;	/* latched 8041-D0 value */
+	int32_t     type3_pal_19;		/* latched 1 for PAL input pin-19 */
+	int32_t     type3_swap;
 
 	/* dongle type #4: status */
-	INT32     type4_ctrs;		/* latched PROM address (E5x0 LSB, E5x1 MSB) */
-	INT32     type4_latch;		/* latched enable PROM (1100xxxx written to E5x1) */
+	int32_t     type4_ctrs;		/* latched PROM address (E5x0 LSB, E5x1 MSB) */
+	int32_t     type4_latch;		/* latched enable PROM (1100xxxx written to E5x1) */
 
 	/* dongle type #5: status */
-	INT32     type5_latch;		/* latched enable PROM (1100xxxx written to E5x1) */
+	int32_t     type5_latch;		/* latched enable PROM (1100xxxx written to E5x1) */
 
 	/* devices */
 	running_device *maincpu;

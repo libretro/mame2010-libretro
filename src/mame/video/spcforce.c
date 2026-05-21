@@ -9,9 +9,9 @@
 #include "emu.h"
 
 
-UINT8 *spcforce_scrollram;
-UINT8 *spcforce_videoram;
-UINT8 *spcforce_colorram;
+uint8_t *spcforce_scrollram;
+uint8_t *spcforce_videoram;
+uint8_t *spcforce_colorram;
 
 
 WRITE8_HANDLER( spcforce_flip_screen_w )

@@ -5,18 +5,18 @@
 #include "emu.h"
 
 static tilemap_t *tx_tilemap, *bg_tilemap, *bg2_tilemap;
-UINT8 *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
-UINT8 *tbowl_spriteram;
+uint8_t *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
+uint8_t *tbowl_spriteram;
 
 /*** Tilemap Stuff
 
 ***/
 
-static UINT16 tbowl_xscroll;
-static UINT16 tbowl_yscroll;
+static uint16_t tbowl_xscroll;
+static uint16_t tbowl_yscroll;
 
-static UINT16 tbowl_bg2xscroll;
-static UINT16 tbowl_bg2yscroll;
+static uint16_t tbowl_bg2xscroll;
+static uint16_t tbowl_bg2yscroll;
 
 /* Foreground Layer (tx) Tilemap */
 
@@ -119,7 +119,7 @@ WRITE8_HANDLER (tbowl_bg2yscroll_hi)
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect, int xscroll)
 {
 	int offs;
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{0,1,4,5,16,17,20,21},
 		{2,3,6,7,18,19,22,23},

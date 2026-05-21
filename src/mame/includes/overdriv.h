@@ -12,13 +12,13 @@ public:
 	overdriv_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *   paletteram;    // currently this uses generic palette handling
+//  uint16_t *   paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int       zoom_colorbase[2], road_colorbase[2], sprite_colorbase;
 
 	/* misc */
-	UINT16     cpuB_ctrl;
+	uint16_t     cpuB_ctrl;
 
 	/* devices */
 	running_device *maincpu;

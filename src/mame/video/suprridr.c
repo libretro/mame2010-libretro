@@ -8,13 +8,13 @@
 #include "includes/suprridr.h"
 
 
-UINT8 *suprridr_bgram;
-UINT8 *suprridr_fgram;
+uint8_t *suprridr_bgram;
+uint8_t *suprridr_fgram;
 
 static tilemap_t *fg_tilemap;
 static tilemap_t *bg_tilemap;
 static tilemap_t *bg_tilemap_noscroll;
-static UINT8 flipx, flipy;
+static uint8_t flipx, flipy;
 
 
 
@@ -26,14 +26,14 @@ static UINT8 flipx, flipy;
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code = suprridr_bgram[tile_index];
+	uint8_t code = suprridr_bgram[tile_index];
 	SET_TILE_INFO(0, code, 0, 0);
 }
 
 
 static TILE_GET_INFO( get_tile_info2 )
 {
-	UINT8 code = suprridr_fgram[tile_index];
+	uint8_t code = suprridr_fgram[tile_index];
 	SET_TILE_INFO(1, code, 0, 0);
 }
 
@@ -167,7 +167,7 @@ WRITE8_HANDLER( suprridr_fgram_w )
 
 VIDEO_UPDATE( suprridr )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	rectangle subclip;
 	int i;
 	const rectangle &visarea = screen->visible_area();

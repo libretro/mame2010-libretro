@@ -7,9 +7,9 @@
 
 /*----------- defined in drivers/segas32.c -----------*/
 
-extern UINT8 *ga2_dpram;
-extern UINT16 *system32_workram;
-extern UINT16 *system32_protram;
+extern uint8_t *ga2_dpram;
+extern uint16_t *system32_workram;
+extern uint16_t *system32_protram;
 
 
 /*----------- defined in machine/segas32.c -----------*/
@@ -41,11 +41,11 @@ WRITE16_HANDLER( arescue_dsp_w );
 
 /*----------- defined in video/segas32.c -----------*/
 
-extern UINT16 *system32_videoram;
-extern UINT16 *system32_spriteram;
-extern UINT16 *system32_paletteram[2];
-extern UINT16 system32_displayenable[2];
-extern UINT16 system32_tilebank_external;
+extern uint16_t *system32_videoram;
+extern uint16_t *system32_spriteram;
+extern uint16_t *system32_paletteram[2];
+extern uint16_t system32_displayenable[2];
+extern uint16_t system32_tilebank_external;
 
 VIDEO_START(system32);
 VIDEO_START(multi32);

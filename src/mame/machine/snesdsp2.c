@@ -20,16 +20,16 @@ struct _snes_dsp2_state
 	int in_count, in_index;
 	int out_count, out_index;
 
-	UINT8 parameters[512];
-	UINT8 output[512];
+	uint8_t parameters[512];
+	uint8_t output[512];
 
-	UINT8 op05transparent;
+	uint8_t op05transparent;
 	int op05haslen;
 	int op05len;
 	int op06haslen;
 	int op06len;
-	UINT16 op09word1;
-	UINT16 op09word2;
+	uint16_t op09word1;
+	uint16_t op09word2;
 	int op0dhaslen;
 	int op0doutlen;
 	int op0dinlen;
@@ -107,7 +107,7 @@ static void dsp2_op03( void )
 //replace bitmap using transparent color
 static void dsp2_op05( void )
 {
-	UINT8 color;
+	uint8_t color;
 // Overlay bitmap with transparency.
 // Input:
 //
@@ -166,7 +166,7 @@ static void dsp2_op06( void )
 //multiply
 static void dsp2_op09( void )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	dsp2_state.out_count = 4;
 
 	dsp2_state.op09word1 = dsp2_state.parameters[0] | (dsp2_state.parameters[1] << 8);
@@ -196,10 +196,10 @@ static void dsp2_op0d( void )
 // So far I haven't seen Dungeon Master use it.
 // If it does we can adjust the parameters and code to work with it
 
-	UINT32 multiplier; // Any size int >= 32-bits
-	UINT32 pixloc;     // match size of multiplier
+	uint32_t multiplier; // Any size int >= 32-bits
+	uint32_t pixloc;     // match size of multiplier
 	int    i, j;
-	UINT8  pixelarray[512];
+	uint8_t  pixelarray[512];
 	if (dsp2_state.op0dinlen <= dsp2_state.op0doutlen)
 	{
 		multiplier = 0x10000; // In our self defined fixed point 0x10000 == 1
@@ -254,9 +254,9 @@ static void dsp2_init( running_machine *machine )
 	dsp2_register_save(machine);
 }
 
-static UINT8 dsp2_dr_read( void )
+static uint8_t dsp2_dr_read( void )
 {
-	UINT8 r = 0xff;
+	uint8_t r = 0xff;
 	if (dsp2_state.out_count)
 	{
 		r = dsp2_state.output[dsp2_state.out_index++];
@@ -267,7 +267,7 @@ static UINT8 dsp2_dr_read( void )
 	return r;
 }
 
-static void dsp2_dr_write(UINT8 data)
+static void dsp2_dr_write(uint8_t data)
 {
 	if (dsp2_state.waiting_for_command)
 	{
@@ -377,12 +377,12 @@ static void dsp2_dr_write(UINT8 data)
 	}
 }
 
-static UINT8 dsp2_sr_read( void )
+static uint8_t dsp2_sr_read( void )
 {
 	return 0x00;
 }
 
-static void dsp2_sr_write( UINT8 data )
+static void dsp2_sr_write( uint8_t data )
 {
 	// do nothing
 }

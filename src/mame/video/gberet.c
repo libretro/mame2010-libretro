@@ -60,13 +60,13 @@ PALETTE_INIT( gberet )
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (color_prom[i] & 0x0f)
 			ctabentry = color_prom[i] & 0x0f;
@@ -135,7 +135,7 @@ static void gberet_draw_sprites( running_machine *machine, bitmap_t *bitmap, con
 {
 	gberet_state *state = (gberet_state *)machine->driver_data;
 	int offs;
-	UINT8 *sr;
+	uint8_t *sr;
 
 	if (state->spritebank & 0x08)
 		sr = state->spriteram2;
@@ -195,7 +195,7 @@ WRITE8_HANDLER( gberetb_scroll_w )
 static void gberetb_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	gberet_state *state = (gberet_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 4; offs >= 0; offs -= 4)

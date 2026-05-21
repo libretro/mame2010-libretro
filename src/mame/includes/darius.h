@@ -15,22 +15,22 @@ public:
 	darius_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    spriteram;
-	UINT16 *    fg_ram;
+	uint16_t *    spriteram;
+	uint16_t *    fg_ram;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t  *fg_tilemap;
 
 	/* misc */
-	UINT16     cpua_ctrl;
-	UINT16     coin_word;
-	INT32      banknum;
-	UINT8      adpcm_command;
-	UINT8      nmi_enable;
-	UINT32     def_vol[0x10];
-	UINT8      vol[DARIUS_VOL_MAX];
-	UINT8      pan[DARIUS_PAN_MAX];
+	uint16_t     cpua_ctrl;
+	uint16_t     coin_word;
+	int32_t      banknum;
+	uint8_t      adpcm_command;
+	uint8_t      nmi_enable;
+	uint32_t     def_vol[0x10];
+	uint8_t      vol[DARIUS_VOL_MAX];
+	uint8_t      pan[DARIUS_PAN_MAX];
 
 	/* devices */
 	running_device *maincpu;

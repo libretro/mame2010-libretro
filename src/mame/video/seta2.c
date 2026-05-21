@@ -73,7 +73,7 @@
 #include "emu.h"
 #include "includes/seta.h"
 
-UINT16 *seta2_vregs;
+uint16_t *seta2_vregs;
 
 static int yoffset;
 
@@ -124,7 +124,7 @@ WRITE16_HANDLER( seta2_vregs_w )
                grdians =  019a
     */
 
-	UINT16 olddata = seta2_vregs[offset];
+	uint16_t olddata = seta2_vregs[offset];
 	COMBINE_DATA(&seta2_vregs[offset]);
 	if ( seta2_vregs[offset] != olddata )
 		logerror("CPU #0 PC %06X: Video Reg %02X <- %04X\n",cpu_get_pc(space->cpu),offset*2,data);
@@ -163,9 +163,9 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 {
 	/* Sprites list */
 
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
-	UINT16 *s1  = buffered_spriteram16 + 0x3000/2;
-	UINT16 *end = &buffered_spriteram16[machine->generic.spriteram_size/2];
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *s1  = buffered_spriteram16 + 0x3000/2;
+	uint16_t *end = &buffered_spriteram16[machine->generic.spriteram_size/2];
 
 	for ( ; s1 < end; s1+=4 )
 	{
@@ -176,7 +176,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 		int sprite	= s1[3];
 
 		/* Single-sprite address */
-		UINT16 *s2 = &buffered_spriteram16[(sprite & 0x7fff) * 4];
+		uint16_t *s2 = &buffered_spriteram16[(sprite & 0x7fff) * 4];
 
 		/* Single-sprite tile size */
 		int global_sizex = xoffs & 0x0c00;
@@ -269,7 +269,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 						int px = ((dx + x * (8 << tilesize) + 0x10) & 0x3ff) - 0x10;
 						int tx, ty;
 						int attr, code, color;
-						UINT16 *s3;
+						uint16_t *s3;
 
 						if (px < clip.min_x - 0x10) continue;
 						if (px > clip.max_x) continue;
@@ -360,7 +360,7 @@ VIDEO_START( seta2 )
 	machine->gfx[4]->color_granularity = 16;
 	machine->gfx[5]->color_granularity = 16;
 
-	machine->generic.buffered_spriteram.u16 = auto_alloc_array(machine, UINT16, machine->generic.spriteram_size/2);
+	machine->generic.buffered_spriteram.u16 = auto_alloc_array(machine, uint16_t, machine->generic.spriteram_size/2);
 
 	yoffset = 0;
 }

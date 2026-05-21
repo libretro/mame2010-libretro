@@ -9,13 +9,13 @@ public:
 	tilemap_t *tilemap2;
 	tilemap_t *tilemap3;
 
-	UINT16 *videoram;
-	UINT16 *videoram2;
-	UINT16 *videoram3;
+	uint16_t *videoram;
+	uint16_t *videoram2;
+	uint16_t *videoram3;
 
-	UINT16 *vidreg1;
-	UINT16 *vidreg2;
-	UINT16 *spriteram;
+	uint16_t *vidreg1;
+	uint16_t *vidreg2;
+	uint16_t *spriteram;
 };
 
 

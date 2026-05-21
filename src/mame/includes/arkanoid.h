@@ -18,24 +18,24 @@ public:
 	arkanoid_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  spriteram;
 	size_t   spriteram_size;
 	size_t   videoram_size;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
-	UINT8    gfxbank, palettebank;
+	uint8_t    gfxbank, palettebank;
 
 	/* input-related */
-	UINT8    paddle_select;
+	uint8_t    paddle_select;
 
 	/* misc */
 	int      bootleg_id;
-	UINT8    z80write, fromz80, m68705write, toz80;
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_c_out, ddr_c;
-	UINT8    bootleg_cmd;
+	uint8_t    z80write, fromz80, m68705write, toz80;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_c_out, ddr_c;
+	uint8_t    bootleg_cmd;
 
 	/* devices */
 	running_device *mcu;

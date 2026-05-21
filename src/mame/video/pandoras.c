@@ -69,14 +69,14 @@ PALETTE_INIT( pandoras )
 	/* sprites */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* characters */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -90,7 +90,7 @@ PALETTE_INIT( pandoras )
 static TILE_GET_INFO( get_tile_info0 )
 {
 	pandoras_state *state = (pandoras_state *)machine->driver_data;
-	UINT8 attr = state->colorram[tile_index];
+	uint8_t attr = state->colorram[tile_index];
 	SET_TILE_INFO(
 			1,
 			state->videoram[tile_index] + ((attr & 0x10) << 4),
@@ -156,7 +156,7 @@ WRITE8_HANDLER( pandoras_flipscreen_w )
 
 ***************************************************************************/
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8* sr )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t* sr )
 {
 	int offs;
 

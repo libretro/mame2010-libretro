@@ -7,10 +7,10 @@ public:
 	simpsons_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    ram;
-	UINT8 *    xtraram;
-	UINT16 *   spriteram;
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+	uint8_t *    ram;
+	uint8_t *    xtraram;
+	uint16_t *   spriteram;
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        sprite_colorbase, layer_colorbase[3];

@@ -11,7 +11,7 @@ SAMPLES_START( polyplay_sh_start );
 
 /*----------- defined in video/polyplay.c -----------*/
 
-extern UINT8 *polyplay_characterram;
+extern uint8_t *polyplay_characterram;
 
 PALETTE_INIT( polyplay );
 VIDEO_START( polyplay );

@@ -41,7 +41,7 @@ PALETTE_INIT( ultratnk )
 
 static TILE_GET_INFO( ultratnk_tile_info )
 {
-	UINT8 code = machine->generic.videoram.u8[tile_index];
+	uint8_t code = machine->generic.videoram.u8[tile_index];
 
 	if (code & 0x20)
 		SET_TILE_INFO(0, code, code >> 6, 0);
@@ -60,7 +60,7 @@ VIDEO_START( ultratnk )
 
 VIDEO_UPDATE( ultratnk )
 {
-	UINT8 *videoram = screen->machine->generic.videoram.u8;
+	uint8_t *videoram = screen->machine->generic.videoram.u8;
 	int i;
 
 	tilemap_draw(bitmap, cliprect, playfield, 0, 0);
@@ -69,10 +69,10 @@ VIDEO_UPDATE( ultratnk )
 	{
 		int bank = 0;
 
-		UINT8 horz = videoram[0x390 + 2 * i + 0];
-		UINT8 attr = videoram[0x390 + 2 * i + 1];
-		UINT8 vert = videoram[0x398 + 2 * i + 0];
-		UINT8 code = videoram[0x398 + 2 * i + 1];
+		uint8_t horz = videoram[0x390 + 2 * i + 0];
+		uint8_t attr = videoram[0x390 + 2 * i + 1];
+		uint8_t vert = videoram[0x398 + 2 * i + 0];
+		uint8_t code = videoram[0x398 + 2 * i + 1];
 
 		if (code & 4)
 			bank = 32;
@@ -95,9 +95,9 @@ VIDEO_UPDATE( ultratnk )
 VIDEO_EOF( ultratnk )
 {
 	int i;
-	UINT16 BG = colortable_entry_get_value(machine->colortable, 0);
+	uint16_t BG = colortable_entry_get_value(machine->colortable, 0);
 	running_device *discrete = machine->device("discrete");
-	UINT8 *videoram = machine->generic.videoram.u8;
+	uint8_t *videoram = machine->generic.videoram.u8;
 
 	/* check for sprite-playfield collisions */
 
@@ -110,9 +110,9 @@ VIDEO_EOF( ultratnk )
 
 		int bank = 0;
 
-		UINT8 horz = videoram[0x390 + 2 * i + 0];
-		UINT8 vert = videoram[0x398 + 2 * i + 0];
-		UINT8 code = videoram[0x398 + 2 * i + 1];
+		uint8_t horz = videoram[0x390 + 2 * i + 0];
+		uint8_t vert = videoram[0x398 + 2 * i + 0];
+		uint8_t code = videoram[0x398 + 2 * i + 1];
 
 		rect.min_x = horz - 15;
 		rect.min_y = vert - 15;

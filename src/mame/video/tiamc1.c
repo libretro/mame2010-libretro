@@ -11,15 +11,15 @@
 #include "includes/tiamc1.h"
 
 
-static UINT8 *tiamc1_tileram;
-static UINT8 *tiamc1_charram;
-static UINT8 *tiamc1_spriteram_x;
-static UINT8 *tiamc1_spriteram_y;
-static UINT8 *tiamc1_spriteram_a;
-static UINT8 *tiamc1_spriteram_n;
-static UINT8 tiamc1_layers_ctrl;
-static UINT8 tiamc1_bg_vshift;
-static UINT8 tiamc1_bg_hshift;
+static uint8_t *tiamc1_tileram;
+static uint8_t *tiamc1_charram;
+static uint8_t *tiamc1_spriteram_x;
+static uint8_t *tiamc1_spriteram_y;
+static uint8_t *tiamc1_spriteram_a;
+static uint8_t *tiamc1_spriteram_n;
+static uint8_t tiamc1_layers_ctrl;
+static uint8_t tiamc1_bg_vshift;
+static uint8_t tiamc1_bg_hshift;
 
 static tilemap_t *bg_tilemap1, *bg_tilemap2;
 static rgb_t *palette;
@@ -132,9 +132,9 @@ static TILE_GET_INFO( get_bg2_tile_info )
 
 VIDEO_START( tiamc1 )
 {
-	UINT8 *video_ram;
+	uint8_t *video_ram;
 
-	video_ram = auto_alloc_array_clear(machine, UINT8, 0x3040);
+	video_ram = auto_alloc_array_clear(machine, uint8_t, 0x3040);
 
         tiamc1_charram = video_ram + 0x0800;     /* Ram is banked */
         tiamc1_tileram = video_ram + 0x0000;

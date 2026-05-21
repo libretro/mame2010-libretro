@@ -4,12 +4,12 @@
 
 
 
-UINT16 *m72_videoram1,*m72_videoram2,*majtitle_rowscrollram;
-UINT32 m72_raster_irq_position;
-static UINT16 *m72_spriteram;
+uint16_t *m72_videoram1,*m72_videoram2,*majtitle_rowscrollram;
+uint32_t m72_raster_irq_position;
+static uint16_t *m72_spriteram;
 static tilemap_t *fg_tilemap,*bg_tilemap;
-static INT32 scrollx1,scrolly1,scrollx2,scrolly2;
-static INT32 video_off;
+static int32_t scrollx1,scrolly1,scrollx2,scrolly2;
+static int32_t video_off;
 
 
 
@@ -19,7 +19,7 @@ static INT32 video_off;
 
 ***************************************************************************/
 
-INLINE void m72_get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,const UINT16 *vram,int gfxnum)
+INLINE void m72_get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,const uint16_t *vram,int gfxnum)
 {
 	int code,attr,color,pri;
 
@@ -42,7 +42,7 @@ INLINE void m72_get_tile_info(running_machine *machine,tile_data *tileinfo,int t
 	tileinfo->group = pri;
 }
 
-INLINE void rtype2_get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,const UINT16 *vram,int gfxnum)
+INLINE void rtype2_get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,const uint16_t *vram,int gfxnum)
 {
 	int code,attr,color,pri;
 
@@ -124,7 +124,7 @@ VIDEO_START( m72 )
 	bg_tilemap = tilemap_create(machine, m72_get_bg_tile_info,tilemap_scan_rows,8,8,64,64);
 	fg_tilemap = tilemap_create(machine, m72_get_fg_tile_info,tilemap_scan_rows,8,8,64,64);
 
-	m72_spriteram = auto_alloc_array(machine, UINT16, machine->generic.spriteram_size/2);
+	m72_spriteram = auto_alloc_array(machine, uint16_t, machine->generic.spriteram_size/2);
 
 	tilemap_set_transmask(fg_tilemap,0,0xffff,0x0001);
 	tilemap_set_transmask(fg_tilemap,1,0x00ff,0xff01);
@@ -151,7 +151,7 @@ VIDEO_START( rtype2 )
 	bg_tilemap = tilemap_create(machine, rtype2_get_bg_tile_info,tilemap_scan_rows,8,8,64,64);
 	fg_tilemap = tilemap_create(machine, rtype2_get_fg_tile_info,tilemap_scan_rows,8,8,64,64);
 
-	m72_spriteram = auto_alloc_array(machine, UINT16, machine->generic.spriteram_size/2);
+	m72_spriteram = auto_alloc_array(machine, uint16_t, machine->generic.spriteram_size/2);
 
 	tilemap_set_transmask(fg_tilemap,0,0xffff,0x0001);
 	tilemap_set_transmask(fg_tilemap,1,0x00ff,0xff01);
@@ -190,7 +190,7 @@ VIDEO_START( majtitle )
 	bg_tilemap = tilemap_create(machine, rtype2_get_bg_tile_info,majtitle_scan_rows,8,8,128,64);
 	fg_tilemap = tilemap_create(machine, rtype2_get_fg_tile_info,tilemap_scan_rows,8,8,64,64);
 
-	m72_spriteram = auto_alloc_array(machine, UINT16, machine->generic.spriteram_size/2);
+	m72_spriteram = auto_alloc_array(machine, uint16_t, machine->generic.spriteram_size/2);
 
 	tilemap_set_transmask(fg_tilemap,0,0xffff,0x0001);
 	tilemap_set_transmask(fg_tilemap,1,0x00ff,0xff01);
@@ -216,7 +216,7 @@ VIDEO_START( hharry )
 	bg_tilemap = tilemap_create(machine, hharry_get_bg_tile_info,tilemap_scan_rows,8,8,64,64);
 	fg_tilemap = tilemap_create(machine, m72_get_fg_tile_info,   tilemap_scan_rows,8,8,64,64);
 
-	m72_spriteram = auto_alloc_array(machine, UINT16, machine->generic.spriteram_size/2);
+	m72_spriteram = auto_alloc_array(machine, uint16_t, machine->generic.spriteram_size/2);
 
 	tilemap_set_transmask(fg_tilemap,0,0xffff,0x0001);
 	tilemap_set_transmask(fg_tilemap,1,0x00ff,0xff01);
@@ -457,7 +457,7 @@ static void m72_draw_sprites(running_machine *machine, bitmap_t *bitmap,const re
 
 static void majtitle_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16_2 = machine->generic.spriteram2.u16;
+	uint16_t *spriteram16_2 = machine->generic.spriteram2.u16;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 4)

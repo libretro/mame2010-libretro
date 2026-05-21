@@ -26,15 +26,15 @@ static unsigned mFinalLapProtCount;
 static int namcos2_mcu_analog_ctrl;
 static int namcos2_mcu_analog_data;
 static int namcos2_mcu_analog_complete;
-static UINT8 *namcos2_eeprom;
+static uint8_t *namcos2_eeprom;
 static int sendval;
 
 
 READ16_HANDLER( namcos2_flap_prot_r )
 {
-	static const UINT16 table0[8] = { 0x0000,0x0040,0x0440,0x2440,0x2480,0xa080,0x8081,0x8041 };
-	static const UINT16 table1[8] = { 0x0040,0x0060,0x0060,0x0860,0x0864,0x08e4,0x08e5,0x08a5 };
-	UINT16 data;
+	static const uint16_t table0[8] = { 0x0000,0x0040,0x0440,0x2440,0x2480,0xa080,0x8081,0x8041 };
+	static const uint16_t table1[8] = { 0x0040,0x0060,0x0060,0x0860,0x0864,0x08e4,0x08e5,0x08a5 };
+	uint16_t data;
 
 	switch( offset )
 	{
@@ -104,7 +104,7 @@ ResetAllSubCPUs( running_machine *machine, int state )
 
 MACHINE_START( namcos2 )
 {
-	namcos2_eeprom = auto_alloc_array(machine, UINT8, namcos2_eeprom_size);
+	namcos2_eeprom = auto_alloc_array(machine, uint8_t, namcos2_eeprom_size);
 	namcos2_posirq_timer = timer_alloc(machine, namcos2_posirq_tick, NULL);
 }
 
@@ -174,7 +174,7 @@ READ16_HANDLER( namcos2_68k_eeprom_r ){
 /* 68000 Shared memory area - Data ROM area                  */
 /*************************************************************/
 READ16_HANDLER( namcos2_68k_data_rom_r ){
-	UINT16 *ROM = (UINT16 *)memory_region(space->machine, "user1");
+	uint16_t *ROM = (uint16_t *)memory_region(space->machine, "user1");
 	return ROM[offset];
 }
 
@@ -184,8 +184,8 @@ READ16_HANDLER( namcos2_68k_data_rom_r ){
 /* 68000 Shared serial communications processor (CPU5?)       */
 /**************************************************************/
 
-static UINT16  namcos2_68k_serial_comms_ctrl[0x8];
-UINT16 *namcos2_68k_serial_comms_ram;
+static uint16_t  namcos2_68k_serial_comms_ctrl[0x8];
+uint16_t *namcos2_68k_serial_comms_ram;
 
 READ16_HANDLER( namcos2_68k_serial_comms_ram_r ){
 	return namcos2_68k_serial_comms_ram[offset];
@@ -197,7 +197,7 @@ WRITE16_HANDLER( namcos2_68k_serial_comms_ram_w ){
 
 READ16_HANDLER( namcos2_68k_serial_comms_ctrl_r )
 {
-	UINT16 retval = namcos2_68k_serial_comms_ctrl[offset];
+	uint16_t retval = namcos2_68k_serial_comms_ctrl[offset];
 
 	switch(offset){
 	case 0x00:
@@ -452,9 +452,9 @@ WRITE16_HANDLER( namcos2_68k_key_w )
 #define FRAME_TIME		(1.0/60.0)
 #define LINE_LENGTH 	(FRAME_TIME/NO_OF_LINES)
 
-static UINT16  namcos2_68k_master_C148[0x20];
-static UINT16  namcos2_68k_slave_C148[0x20];
-static UINT16  namcos2_68k_gpu_C148[0x20];
+static uint16_t  namcos2_68k_master_C148[0x20];
+static uint16_t  namcos2_68k_slave_C148[0x20];
+static uint16_t  namcos2_68k_gpu_C148[0x20];
 
 
 static int IsSystem21( void )
@@ -485,14 +485,14 @@ static void InitC148(void)
 	}
 }
 
-static UINT16
-ReadWriteC148( const address_space *space, offs_t offset, UINT16 data, int bWrite )
+static uint16_t
+ReadWriteC148( const address_space *space, offs_t offset, uint16_t data, int bWrite )
 {
 	offs_t addr = ((offset * 2) + 0x1c0000) & 0x1fe000;
 	running_device *altcpu = NULL;
-	UINT16 *pC148Reg = NULL;
-	UINT16 *pC148RegAlt = NULL;
-	UINT16 result = 0;
+	uint16_t *pC148Reg = NULL;
+	uint16_t *pC148RegAlt = NULL;
+	uint16_t result = 0;
 
 	if (space->cpu == space->machine->device("maincpu"))
 	{
@@ -722,8 +722,8 @@ INTERRUPT_GEN( namcos2_68k_gpu_vblank )
 
 WRITE8_HANDLER( namcos2_sound_bankselect_w )
 {
-	UINT8 *RAM=memory_region(space->machine, "audiocpu");
-	UINT32 max = (memory_region_length(space->machine, "audiocpu") - 0x10000) / 0x4000;
+	uint8_t *RAM=memory_region(space->machine, "audiocpu");
+	uint32_t max = (memory_region_length(space->machine, "audiocpu") - 0x10000) / 0x4000;
 	int bank = ( data >> 4 ) % max;	/* 991104.CAB */
 	memory_set_bankptr(space->machine,  BANKED_SOUND_ROM, &RAM[ 0x10000 + ( 0x4000 * bank ) ] );
 }

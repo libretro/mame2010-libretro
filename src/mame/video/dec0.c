@@ -101,17 +101,17 @@ static tilemap_t *pf1_tilemap_0,*pf1_tilemap_1,*pf1_tilemap_2;
 static tilemap_t *pf2_tilemap_0,*pf2_tilemap_1,*pf2_tilemap_2;
 static tilemap_t *pf3_tilemap_0,*pf3_tilemap_1,*pf3_tilemap_2;
 
-UINT16 *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
-UINT16 *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
-UINT16 *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
-static UINT16 dec0_pf1_control_0[4];
-static UINT16 dec0_pf1_control_1[4];
-static UINT16 dec0_pf2_control_0[4];
-static UINT16 dec0_pf2_control_1[4];
-static UINT16 dec0_pf3_control_0[4];
-static UINT16 dec0_pf3_control_1[4];
-static UINT16 *dec0_spriteram;
-static UINT16 dec0_pri;
+uint16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
+uint16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
+uint16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
+static uint16_t dec0_pf1_control_0[4];
+static uint16_t dec0_pf1_control_1[4];
+static uint16_t dec0_pf2_control_0[4];
+static uint16_t dec0_pf2_control_1[4];
+static uint16_t dec0_pf3_control_0[4];
+static uint16_t dec0_pf3_control_1[4];
+static uint16_t *dec0_spriteram;
+static uint16_t dec0_pri;
 
 /******************************************************************************/
 
@@ -218,17 +218,17 @@ static void custom_tilemap_draw(running_machine *machine,
 								bitmap_t *bitmap,
 								const rectangle *cliprect,
 								tilemap_t *tilemap_ptr,
-								const UINT16 *rowscroll_ptr,
-								const UINT16 *colscroll_ptr,
-								const UINT16 *control0,
-								const UINT16 *control1,
+								const uint16_t *rowscroll_ptr,
+								const uint16_t *colscroll_ptr,
+								const uint16_t *control0,
+								const uint16_t *control1,
 								int flags)
 {
 	const bitmap_t *src_bitmap = tilemap_get_pixmap(tilemap_ptr);
 	int x, y, p;
 	int column_offset=0, src_x=0, src_y=0;
-	UINT32 scrollx=control1[0];
-	UINT32 scrolly=control1[1];
+	uint32_t scrollx=control1[0];
+	uint32_t scrolly=control1[1];
 	int width_mask;
 	int height_mask;
 	int row_scroll_enabled = (rowscroll_ptr && (control0[0]&0x4));
@@ -605,7 +605,7 @@ WRITE16_HANDLER( dec0_priority_w )
 WRITE8_HANDLER( dec0_pf3_control_8bit_w )
 {
 	static int buffer[0x20];
-	UINT16 myword;
+	uint16_t myword;
 
 	buffer[offset]=data;
 
@@ -620,13 +620,13 @@ WRITE8_HANDLER( dec0_pf3_control_8bit_w )
 WRITE8_HANDLER( dec0_pf3_data_8bit_w )
 {
 	if (offset&1) { /* MSB has changed */
-		UINT16 lsb=dec0_pf3_data[offset>>1];
-		UINT16 newword=(lsb&0xff) | (data<<8);
+		uint16_t lsb=dec0_pf3_data[offset>>1];
+		uint16_t newword=(lsb&0xff) | (data<<8);
 		dec0_pf3_data[offset>>1]=newword;
 	}
 	else { /* LSB has changed */
-		UINT16 msb=dec0_pf3_data[offset>>1];
-		UINT16 newword=(msb&0xff00) | data;
+		uint16_t msb=dec0_pf3_data[offset>>1];
+		uint16_t newword=(msb&0xff00) | data;
 		dec0_pf3_data[offset>>1]=newword;
 	}
 	tilemap_mark_tile_dirty(pf3_tilemap_0,offset>>1);
@@ -714,7 +714,7 @@ VIDEO_START( dec0_nodma )
 VIDEO_START( dec0 )
 {
 	VIDEO_START_CALL(dec0_nodma);
-	dec0_spriteram=auto_alloc_array(machine, UINT16, 0x800/2);
+	dec0_spriteram=auto_alloc_array(machine, uint16_t, 0x800/2);
 }
 
 /******************************************************************************/

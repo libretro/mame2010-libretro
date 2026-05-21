@@ -8,12 +8,12 @@ public:
 
 	segas1x_bootleg_state(running_machine &machine) { }
 
-	UINT16 *    bg0_tileram;
-	UINT16 *    bg1_tileram;
-	UINT16 *    textram;
-	UINT16 *    tileram;
+	uint16_t *    bg0_tileram;
+	uint16_t *    bg1_tileram;
+	uint16_t *    textram;
+	uint16_t *    tileram;
 
-	UINT16 coinctrl;
+	uint16_t coinctrl;
 
 	/* game specific */
 	int passht4b_io1_val;
@@ -24,8 +24,8 @@ public:
 
 	int shinobl_kludge;
 
-	UINT16* goldnaxeb2_fgpage;
-	UINT16* goldnaxeb2_bgpage;
+	uint16_t* goldnaxeb2_fgpage;
+	uint16_t* goldnaxeb2_bgpage;
 
 	int eswat_tilebank0;
 
@@ -49,7 +49,7 @@ public:
 	int bg_page[4];
 	int fg_page[4];
 
-	UINT16 datsu_page[4];
+	uint16_t datsu_page[4];
 
 	int bg2_page[4];
 	int fg2_page[4];
@@ -59,7 +59,7 @@ public:
 
 	int bg_scrollx, bg_scrolly;
 	int fg_scrollx, fg_scrolly;
-	UINT16 tilemapselect;
+	uint16_t tilemapselect;
 
 	int textlayer_lo_min;
 	int textlayer_lo_max;
@@ -73,19 +73,19 @@ public:
 	int sample_buffer;
 	int sample_select;
 
-	UINT8 *soundbank_ptr;		/* Pointer to currently selected portion of ROM */
+	uint8_t *soundbank_ptr;		/* Pointer to currently selected portion of ROM */
 
 	/* sys18 */
-	UINT8 *sound_bank;
-	UINT16 *splittab_bg_x;
-	UINT16 *splittab_bg_y;
-	UINT16 *splittab_fg_x;
-	UINT16 *splittab_fg_y;
+	uint8_t *sound_bank;
+	uint16_t *splittab_bg_x;
+	uint16_t *splittab_bg_y;
+	uint16_t *splittab_fg_x;
+	uint16_t *splittab_fg_y;
 	int     sound_info[4*2];
 	int     refreshenable;
 	int     system18;
 
-	UINT8 *decrypted_region;	// goldnaxeb1 & bayrouteb1
+	uint8_t *decrypted_region;	// goldnaxeb1 & bayrouteb1
 
 	/* devices */
 	running_device *maincpu;

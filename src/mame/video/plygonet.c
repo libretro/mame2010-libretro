@@ -14,7 +14,7 @@
 
 static int ttl_gfx_index;
 static tilemap_t *ttl_tilemap, *roz_tilemap;
-static UINT16 ttl_vram[0x800], roz_vram[0x800];
+static uint16_t ttl_vram[0x800], roz_vram[0x800];
 
 /* TTL text plane */
 
@@ -41,14 +41,14 @@ static TILE_GET_INFO( roz_get_tile_info )
 
 READ32_HANDLER( polygonet_ttl_ram_r )
 {
-	UINT32 *vram = (UINT32 *)ttl_vram;
+	uint32_t *vram = (uint32_t *)ttl_vram;
 
 	return(vram[offset]);
 }
 
 WRITE32_HANDLER( polygonet_ttl_ram_w )
 {
-	UINT32 *vram = (UINT32 *)ttl_vram;
+	uint32_t *vram = (uint32_t *)ttl_vram;
 
 	COMBINE_DATA(&vram[offset]);
 
@@ -58,14 +58,14 @@ WRITE32_HANDLER( polygonet_ttl_ram_w )
 
 READ32_HANDLER( polygonet_roz_ram_r )
 {
-	UINT32 *vram = (UINT32 *)roz_vram;
+	uint32_t *vram = (uint32_t *)roz_vram;
 
 	return(vram[offset]);
 }
 
 WRITE32_HANDLER( polygonet_roz_ram_w )
 {
-	UINT32 *vram = (UINT32 *)roz_vram;
+	uint32_t *vram = (uint32_t *)roz_vram;
 
 	COMBINE_DATA(&vram[offset]);
 

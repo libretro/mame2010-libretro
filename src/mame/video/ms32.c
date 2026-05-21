@@ -21,30 +21,30 @@ static bitmap_t* temp_bitmap_sprites;
 static bitmap_t* temp_bitmap_sprites_pri;
 
 
-//UINT32 *ms32_fce00000;
-UINT32 *ms32_roz_ctrl;
-UINT32 *ms32_tx_scroll;
-UINT32 *ms32_bg_scroll;
-//UINT32 *ms32_priram;
-//UINT32 *ms32_palram;
-//UINT32 *ms32_rozram;
-//UINT32 *ms32_lineram;
-//UINT32 *ms32_spram;
-//UINT32 *ms32_bgram;
-//UINT32 *ms32_txram;
-UINT32 *ms32_mainram;
+//uint32_t *ms32_fce00000;
+uint32_t *ms32_roz_ctrl;
+uint32_t *ms32_tx_scroll;
+uint32_t *ms32_bg_scroll;
+//uint32_t *ms32_priram;
+//uint32_t *ms32_palram;
+//uint32_t *ms32_rozram;
+//uint32_t *ms32_lineram;
+//uint32_t *ms32_spram;
+//uint32_t *ms32_bgram;
+//uint32_t *ms32_txram;
+uint32_t *ms32_mainram;
 
 
-UINT8* ms32_priram_8;
-UINT16* ms32_palram_16;
-UINT16* ms32_rozram_16;
-UINT16 *ms32_lineram_16;
-UINT16 *ms32_sprram_16;
-UINT16 *ms32_bgram_16;
-UINT16 *ms32_txram_16;
-UINT32 ms32_tilemaplayoutcontrol;
+uint8_t* ms32_priram_8;
+uint16_t* ms32_palram_16;
+uint16_t* ms32_rozram_16;
+uint16_t *ms32_lineram_16;
+uint16_t *ms32_sprram_16;
+uint16_t *ms32_bgram_16;
+uint16_t *ms32_txram_16;
+uint32_t ms32_tilemaplayoutcontrol;
 
-UINT16* f1superb_extraram_16;
+uint16_t* f1superb_extraram_16;
 
 // kirarast, tp2m32, and 47pie2 require the sprites in a different order
 static int ms32_reverse_sprite_order;
@@ -97,7 +97,7 @@ static TILE_GET_INFO( get_ms32_extra_tile_info )
 }
 
 
-static UINT32 brt[4];
+static uint32_t brt[4];
 static int brt_r,brt_g,brt_b;
 
 VIDEO_START( ms32 )
@@ -105,13 +105,13 @@ VIDEO_START( ms32 )
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
-	ms32_priram_8   = auto_alloc_array_clear(machine, UINT8, 0x2000);
-	ms32_palram_16  = auto_alloc_array_clear(machine, UINT16, 0x20000);
-	ms32_rozram_16  = auto_alloc_array_clear(machine, UINT16, 0x10000);
-	ms32_lineram_16 = auto_alloc_array_clear(machine, UINT16, 0x1000);
-	ms32_sprram_16  = auto_alloc_array_clear(machine, UINT16, 0x20000);
-	ms32_bgram_16   = auto_alloc_array_clear(machine, UINT16, 0x4000);
-	ms32_txram_16   = auto_alloc_array_clear(machine, UINT16, 0x4000);
+	ms32_priram_8   = auto_alloc_array_clear(machine, uint8_t, 0x2000);
+	ms32_palram_16  = auto_alloc_array_clear(machine, uint16_t, 0x20000);
+	ms32_rozram_16  = auto_alloc_array_clear(machine, uint16_t, 0x10000);
+	ms32_lineram_16 = auto_alloc_array_clear(machine, uint16_t, 0x1000);
+	ms32_sprram_16  = auto_alloc_array_clear(machine, uint16_t, 0x20000);
+	ms32_bgram_16   = auto_alloc_array_clear(machine, uint16_t, 0x4000);
+	ms32_txram_16   = auto_alloc_array_clear(machine, uint16_t, 0x4000);
 
 	ms32_tx_tilemap = tilemap_create(machine, get_ms32_tx_tile_info,tilemap_scan_rows,8, 8,64,64);
 	ms32_bg_tilemap = tilemap_create(machine, get_ms32_bg_tile_info,tilemap_scan_rows,16,16,64,64);
@@ -152,7 +152,7 @@ VIDEO_START( f1superb )
 {
 	VIDEO_START_CALL( ms32 );
 
-	f1superb_extraram_16  = auto_alloc_array_clear(machine, UINT16, 0x10000);
+	f1superb_extraram_16  = auto_alloc_array_clear(machine, uint16_t, 0x10000);
 	ms32_extra_tilemap = tilemap_create(machine, get_ms32_extra_tile_info,tilemap_scan_rows,2048,1,1,0x400);
 
 }
@@ -257,7 +257,7 @@ static void draw_roz(bitmap_t *bitmap, const rectangle *cliprect,int priority)
 
 		while (y <= maxy)
 		{
-			UINT16 *lineaddr = ms32_lineram_16 + 8 * (y & 0xff);
+			uint16_t *lineaddr = ms32_lineram_16 + 8 * (y & 0xff);
 
 			int start2x = (lineaddr[0x00/4] & 0xffff) | ((lineaddr[0x04/4] & 3) << 16);
 			int start2y = (lineaddr[0x08/4] & 0xffff) | ((lineaddr[0x0c/4] & 3) << 16);
@@ -441,12 +441,12 @@ VIDEO_UPDATE( ms32 )
 		int height = screen->height();
 		const pen_t *paldata = screen->machine->pens;
 
-		UINT16* srcptr_tile;
-		UINT8* srcptr_tilepri;
-		UINT16* srcptr_spri;
-		//UINT8* srcptr_spripri;
+		uint16_t* srcptr_tile;
+		uint8_t* srcptr_tilepri;
+		uint16_t* srcptr_spri;
+		//uint8_t* srcptr_spripri;
 
-		UINT32* dstptr_bitmap;
+		uint32_t* dstptr_bitmap;
 
 		bitmap_fill(bitmap,cliprect,0);
 
@@ -459,12 +459,12 @@ VIDEO_UPDATE( ms32 )
 			dstptr_bitmap  =  BITMAP_ADDR32(bitmap, yy, 0);
 			for (xx=0;xx<width;xx++)
 			{
-				UINT16 src_tile  = srcptr_tile[xx];
-				UINT8 src_tilepri = srcptr_tilepri[xx];
-				UINT16 src_spri = srcptr_spri[xx];
-				//UINT8 src_spripri;// = srcptr_spripri[xx];
-				UINT16 spridat = ((src_spri&0x0fff));
-				UINT8  spritepri =     ((src_spri&0xf000) >> 8);
+				uint16_t src_tile  = srcptr_tile[xx];
+				uint8_t src_tilepri = srcptr_tilepri[xx];
+				uint16_t src_spri = srcptr_spri[xx];
+				//uint8_t src_spripri;// = srcptr_spripri[xx];
+				uint16_t spridat = ((src_spri&0x0fff));
+				uint8_t  spritepri =     ((src_spri&0xf000) >> 8);
 				int primask = 0;
 
 				// get sprite priority value back out of bitmap/colour data (this is done in draw_sprite for standalone hw)

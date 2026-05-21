@@ -20,11 +20,11 @@ public:
 		  oki2(machine.device<okim6295_device>("oki2")) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT16 *  pf3_rowscroll;
-	UINT16 *  pf4_rowscroll;
-	UINT16 *  spriteram;
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint16_t *  pf3_rowscroll;
+	uint16_t *  pf4_rowscroll;
+	uint16_t *  spriteram;
 
 	/* devices */
 	cpu_device *maincpu;

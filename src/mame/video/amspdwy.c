@@ -46,8 +46,8 @@ WRITE8_HANDLER( amspdwy_flipscreen_w )
 static TILE_GET_INFO( get_tile_info )
 {
 	amspdwy_state *state = (amspdwy_state *)machine->driver_data;
-	UINT8 code = state->videoram[tile_index];
-	UINT8 color = state->colorram[tile_index];
+	uint8_t code = state->videoram[tile_index];
+	uint8_t color = state->colorram[tile_index];
 	SET_TILE_INFO(
 			0,
 			code + ((color & 0x18)<<5),
@@ -106,7 +106,7 @@ Offset:     Format:     Value:
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	amspdwy_state *state = (amspdwy_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int i;
 	int max_x = machine->primary_screen->width()  - 1;
 	int max_y = machine->primary_screen->height() - 1;

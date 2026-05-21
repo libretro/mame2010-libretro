@@ -10,12 +10,12 @@
 #include "includes/crbaloon.h"
 
 
-UINT8 *crbaloon_videoram;
-UINT8 *crbaloon_colorram;
-UINT8 *crbaloon_spriteram;
+uint8_t *crbaloon_videoram;
+uint8_t *crbaloon_colorram;
+uint8_t *crbaloon_spriteram;
 
-static UINT16 crbaloon_collision_address;
-static UINT8 crbaloon_collision_address_clear;
+static uint16_t crbaloon_collision_address;
+static uint8_t crbaloon_collision_address_clear;
 static tilemap_t *bg_tilemap;
 
 
@@ -38,7 +38,7 @@ PALETTE_INIT( crbaloon )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT8 pen;
+		uint8_t pen;
 		int h, r, g, b;
 
 		if (i & 0x01)
@@ -85,7 +85,7 @@ VIDEO_START( crbaloon )
 }
 
 
-UINT16 crbaloon_get_collision_address(void)
+uint16_t crbaloon_get_collision_address(void)
 {
 	return crbaloon_collision_address_clear ? 0xffff : crbaloon_collision_address;
 }
@@ -101,11 +101,11 @@ void crbaloon_set_clear_collision_address(int _crbaloon_collision_address_clear)
 static void draw_sprite_and_check_collision(running_machine *machine, bitmap_t *bitmap)
 {
 	int y;
-	UINT8 code = crbaloon_spriteram[0] & 0x0f;
-	UINT8 color = crbaloon_spriteram[0] >> 4;
-	UINT8 sy = crbaloon_spriteram[2] - 32;
+	uint8_t code = crbaloon_spriteram[0] & 0x0f;
+	uint8_t color = crbaloon_spriteram[0] >> 4;
+	uint8_t sy = crbaloon_spriteram[2] - 32;
 
-	UINT8 *gfx = memory_region(machine, "gfx2") + (code << 7);
+	uint8_t *gfx = memory_region(machine, "gfx2") + (code << 7);
 
 
 	if (flip_screen_get(machine))
@@ -117,8 +117,8 @@ static void draw_sprite_and_check_collision(running_machine *machine, bitmap_t *
 	for (y = 0x1f; y >= 0; y--)
 	{
 		int x;
-		UINT8 data = 0;
-		UINT8 sx = crbaloon_spriteram[1];
+		uint8_t data = 0;
+		uint8_t sx = crbaloon_spriteram[1];
 
 		for (x = 0x1f; x >= 0; x--)
 		{

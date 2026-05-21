@@ -56,7 +56,7 @@ PALETTE_INIT( gotya )
 
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x07;
+		uint8_t ctabentry = color_prom[i] & 0x07;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -146,7 +146,7 @@ static void draw_status_row( running_machine *machine, bitmap_t *bitmap, const r
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	gotya_state *state = (gotya_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 2; offs < 0x0e; offs += 2)

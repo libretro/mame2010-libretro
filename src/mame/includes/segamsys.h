@@ -44,12 +44,12 @@ extern WRITE8_HANDLER( sms_vdp_2_ctrl_w );
 extern VIDEO_EOF(systeme);
 extern VIDEO_UPDATE(systeme);
 extern MACHINE_RESET(systeme);
-extern UINT8* sms_mainram;
-extern UINT8* vdp2_vram_bank0;
-extern UINT8* vdp2_vram_bank1;
-extern UINT8* vdp1_vram_bank0;
-extern UINT8* vdp1_vram_bank1;
-extern void segae_set_vram_banks(UINT8 data);
+extern uint8_t* sms_mainram;
+extern uint8_t* vdp2_vram_bank0;
+extern uint8_t* vdp2_vram_bank1;
+extern uint8_t* vdp1_vram_bank0;
+extern uint8_t* vdp1_vram_bank1;
+extern void segae_set_vram_banks(uint8_t data);
 READ8_HANDLER( sms_ioport_gg00_r );
 void init_extra_gg_ports(running_machine* machine, const char* tag);
 READ8_HANDLER (megatech_sms_ioport_dc_r);
@@ -65,7 +65,7 @@ extern DRIVER_INIT( smsgg );
 
 INPUT_PORTS_EXTERN(sms);
 INPUT_PORTS_EXTERN(gamegear);
-extern UINT8* smsgg_backupram;
+extern uint8_t* smsgg_backupram;
 
 
 

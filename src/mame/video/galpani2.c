@@ -23,11 +23,11 @@
 
 ***************************************************************************/
 
-UINT16 *galpani2_bg8_0,         *galpani2_bg8_1;
-UINT16 *galpani2_palette_0,     *galpani2_palette_1;
-//UINT16 *galpani2_bg8_regs_0,    *galpani2_bg8_regs_1;
-UINT16 *galpani2_bg8_0_scrollx, *galpani2_bg8_1_scrollx;
-UINT16 *galpani2_bg8_0_scrolly, *galpani2_bg8_1_scrolly;
+uint16_t *galpani2_bg8_0,         *galpani2_bg8_1;
+uint16_t *galpani2_palette_0,     *galpani2_palette_1;
+//uint16_t *galpani2_bg8_regs_0,    *galpani2_bg8_regs_1;
+uint16_t *galpani2_bg8_0_scrollx, *galpani2_bg8_1_scrollx;
+uint16_t *galpani2_bg8_0_scrolly, *galpani2_bg8_1_scrolly;
 
 static bitmap_t *galpani2_bg8_bitmap_0, *galpani2_bg8_bitmap_1;
 
@@ -62,7 +62,7 @@ WRITE16_HANDLER( galpani2_bg8_regs_##_n_##_w ) \
 WRITE16_HANDLER( galpani2_bg8_##_n_##_w ) \
 { \
 	int x,y,pen; \
-	UINT16 newword = COMBINE_DATA(&galpani2_bg8_##_n_[offset]); \
+	uint16_t newword = COMBINE_DATA(&galpani2_bg8_##_n_[offset]); \
 	pen	=	newword & 0xff; \
 	x	=	(offset % 512);	/* 512 x 256 */ \
 	y	=	(offset / 512); \
@@ -72,7 +72,7 @@ WRITE16_HANDLER( galpani2_bg8_##_n_##_w ) \
 #define galpani2_BG8_PALETTE_W( _n_ ) \
 WRITE16_HANDLER( galpani2_palette_##_n_##_w ) \
 { \
-	UINT16 newword = COMBINE_DATA(&galpani2_palette_##_n_[offset]); \
+	uint16_t newword = COMBINE_DATA(&galpani2_palette_##_n_[offset]); \
 	palette_set_color_rgb( space->machine, offset + 0x4000 + _n_ * 0x100, pal5bit(newword >> 5), pal5bit(newword >> 10), pal5bit(newword >> 0) ); \
 }
 
@@ -99,14 +99,14 @@ galpani2_BG8_PALETTE_W( 1 )
 
 ***************************************************************************/
 
-UINT16 *galpani2_bg15;
+uint16_t *galpani2_bg15;
 
 static bitmap_t *galpani2_bg15_bitmap;
 
 /* 8 horizontal pages of 256x256 pixels? */
 WRITE16_HANDLER( galpani2_bg15_w )
 {
-	UINT16 newword = COMBINE_DATA(&galpani2_bg15[offset]);
+	uint16_t newword = COMBINE_DATA(&galpani2_bg15[offset]);
 
 	int x = (offset % 256) + (offset / (256*256)) * 256 ;
 	int y = (offset / 256) % 256;

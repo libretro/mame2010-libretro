@@ -5,18 +5,18 @@ public:
 
 	sderby_state(running_machine &machine) { }
 
-	UINT16 *spriteram;
+	uint16_t *spriteram;
 	size_t spriteram_size;
 
-	UINT16 *videoram;
-	UINT16 *md_videoram;
-	UINT16 *fg_videoram;
+	uint16_t *videoram;
+	uint16_t *md_videoram;
+	uint16_t *fg_videoram;
 
 	tilemap_t *tilemap;
 	tilemap_t *md_tilemap;
 	tilemap_t *fg_tilemap;
 
-	UINT16 scroll[6];
+	uint16_t scroll[6];
 };
 
 

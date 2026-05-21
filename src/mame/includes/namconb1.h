@@ -1,7 +1,7 @@
 /*----------- defined in drivers/namconb1.c -----------*/
 
-extern UINT32 *namconb1_spritebank32;
-extern UINT32 *namconb1_tilebank32;
+extern uint32_t *namconb1_spritebank32;
+extern uint32_t *namconb1_tilebank32;
 
 /*----------- defined in video/namconb1.c -----------*/
 

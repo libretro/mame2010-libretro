@@ -31,7 +31,7 @@ WRITE16_HANDLER( welltris_spriteram_w )
 /* Sprite Drawing is pretty much the same as fromance.c */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	static const UINT8 zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
+	static const uint8_t zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
 	welltris_state *state = (welltris_state *)machine->driver_data;
 	int offs;
 	const rectangle &visarea = machine->primary_screen->visible_area();
@@ -198,7 +198,7 @@ WRITE16_HANDLER( welltris_scrollreg_w )
 static TILE_GET_INFO( get_welltris_tile_info )
 {
 	welltris_state *state = (welltris_state *)machine->driver_data;
-	UINT16 code = state->charvideoram[tile_index];
+	uint16_t code = state->charvideoram[tile_index];
 	int bank = (code & 0x1000) >> 12;
 
 	SET_TILE_INFO(

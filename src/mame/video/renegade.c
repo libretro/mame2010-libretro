@@ -6,8 +6,8 @@
 
 #include "emu.h"
 
-UINT8 *renegade_videoram2;
-static INT32 renegade_scrollx;
+uint8_t *renegade_videoram2;
+static int32_t renegade_scrollx;
 static tilemap_t *bg_tilemap;
 static tilemap_t *fg_tilemap;
 
@@ -42,8 +42,8 @@ WRITE8_HANDLER( renegade_scroll1_w )
 
 static TILE_GET_INFO( get_bg_tilemap_info )
 {
-	const UINT8 *source = &machine->generic.videoram.u8[tile_index];
-	UINT8 attributes = source[0x400]; /* CCC??BBB */
+	const uint8_t *source = &machine->generic.videoram.u8[tile_index];
+	uint8_t attributes = source[0x400]; /* CCC??BBB */
 	SET_TILE_INFO(
 		1 + (attributes & 0x7),
 		source[0],
@@ -53,8 +53,8 @@ static TILE_GET_INFO( get_bg_tilemap_info )
 
 static TILE_GET_INFO( get_fg_tilemap_info )
 {
-	const UINT8 *source = &renegade_videoram2[tile_index];
-	UINT8 attributes = source[0x400];
+	const uint8_t *source = &renegade_videoram2[tile_index];
+	uint8_t attributes = source[0x400];
 	SET_TILE_INFO(
 		0,
 		(attributes & 3) * 256 + source[0],
@@ -75,8 +75,8 @@ VIDEO_START( renegade )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *source = machine->generic.spriteram.u8;
-	UINT8 *finish = source + 96 * 4;
+	uint8_t *source = machine->generic.spriteram.u8;
+	uint8_t *finish = source + 96 * 4;
 
 	while (source < finish)
 	{

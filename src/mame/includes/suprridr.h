@@ -6,8 +6,8 @@
 
 /*----------- defined in video/suprridr.c -----------*/
 
-extern UINT8 *suprridr_fgram;
-extern UINT8 *suprridr_bgram;
+extern uint8_t *suprridr_fgram;
+extern uint8_t *suprridr_bgram;
 
 VIDEO_START( suprridr );
 PALETTE_INIT( suprridr );

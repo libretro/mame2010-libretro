@@ -7,32 +7,32 @@ public:
 	btime_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
-	UINT8 *  lnc_charbank;
-	UINT8 *  bnj_backgroundram;
-	UINT8 *  zoar_scrollram;
-	UINT8 *  deco_charram;
-	UINT8 *  spriteram;	// used by disco
-//  UINT8 *  decrypted;
-	UINT8 *  rambase;
-	UINT8 *  audio_rambase;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  lnc_charbank;
+	uint8_t *  bnj_backgroundram;
+	uint8_t *  zoar_scrollram;
+	uint8_t *  deco_charram;
+	uint8_t *  spriteram;	// used by disco
+//  uint8_t *  decrypted;
+	uint8_t *  rambase;
+	uint8_t *  audio_rambase;
 	size_t   videoram_size;
 	size_t   spriteram_size;
 	size_t   bnj_backgroundram_size;
 
 	/* video-related */
 	bitmap_t *background_bitmap;
-	UINT8    btime_palette;
-	UINT8    bnj_scroll1;
-	UINT8    bnj_scroll2;
-	UINT8    btime_tilemap[4];
+	uint8_t    btime_palette;
+	uint8_t    bnj_scroll1;
+	uint8_t    bnj_scroll2;
+	uint8_t    btime_tilemap[4];
 
 	/* audio-related */
-	UINT8    audio_nmi_enable_type;
-	UINT8    audio_nmi_enabled;
-	UINT8    audio_nmi_state;
+	uint8_t    audio_nmi_enable_type;
+	uint8_t    audio_nmi_enabled;
+	uint8_t    audio_nmi_state;
 
 	/* protection-related (for mmonkey) */
 	int      protection_command;

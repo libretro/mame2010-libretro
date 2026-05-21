@@ -19,7 +19,7 @@
  *
  *************************************/
 
-UINT8 gridlee_cocktail_flip;
+uint8_t gridlee_cocktail_flip;
 
 
 
@@ -29,9 +29,9 @@ UINT8 gridlee_cocktail_flip;
  *
  *************************************/
 
-static UINT8 *local_videoram;
+static uint8_t *local_videoram;
 
-static UINT8 palettebank_vis;
+static uint8_t palettebank_vis;
 
 
 
@@ -82,7 +82,7 @@ static STATE_POSTLOAD( expand_pixels )
 VIDEO_START( gridlee )
 {
 	/* allocate a local copy of video RAM */
-	local_videoram = auto_alloc_array_clear(machine, UINT8, 256 * 256);
+	local_videoram = auto_alloc_array_clear(machine, uint8_t, 256 * 256);
 
 	/* reset the palette */
 	palettebank_vis = 0;
@@ -151,7 +151,7 @@ WRITE8_HANDLER( gridlee_palette_select_w )
 VIDEO_UPDATE( gridlee )
 {
 	const pen_t *pens = &screen->machine->pens[palettebank_vis * 32];
-	UINT8 *gfx;
+	uint8_t *gfx;
 	int x, y, i;
 
 	/* draw scanlines from the VRAM directly */
@@ -165,7 +165,7 @@ VIDEO_UPDATE( gridlee )
 		else
 		{
 			int srcy = BALSENTE_VBSTART - 1 - y;
-			UINT8 temp[256];
+			uint8_t temp[256];
 			int xx;
 
 			for (xx = 0; xx < 256; xx++)
@@ -178,8 +178,8 @@ VIDEO_UPDATE( gridlee )
 	gfx = memory_region(screen->machine, "gfx1");
 	for (i = 0; i < 32; i++)
 	{
-		UINT8 *sprite = screen->machine->generic.spriteram.u8 + i * 4;
-		UINT8 *src;
+		uint8_t *sprite = screen->machine->generic.spriteram.u8 + i * 4;
+		uint8_t *src;
 		int image = sprite[0];
 		int ypos = sprite[2] + 17 + BALSENTE_VBEND;
 		int xpos = sprite[3];

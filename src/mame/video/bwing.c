@@ -204,7 +204,7 @@ static TILEMAP_MAPPER( bwing_scan_cols )
 VIDEO_START( bwing )
 {
 	bwing_state *state = (bwing_state *)machine->driver_data;
-	UINT32 *dwptr;
+	uint32_t *dwptr;
 	int i;
 
 	state->charmap = tilemap_create(machine, get_charinfo, tilemap_scan_cols, 8, 8, 32, 32);
@@ -246,7 +246,7 @@ VIDEO_START( bwing )
 //****************************************************************************
 // Realtime
 
-static void draw_sprites( running_machine *machine, bitmap_t *bmp, const rectangle *clip, UINT8 *ram, int pri )
+static void draw_sprites( running_machine *machine, bitmap_t *bmp, const rectangle *clip, uint8_t *ram, int pri )
 {
 	bwing_state *state = (bwing_state *)machine->driver_data;
 	int attrib, fx, fy, code, x, y, color, i;

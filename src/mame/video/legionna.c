@@ -7,23 +7,23 @@
 #include "emu.h"
 #include "includes/legionna.h"
 
-UINT16 *legionna_back_data,*legionna_fore_data,*legionna_mid_data,*legionna_scrollram16,*legionna_textram;
+uint16_t *legionna_back_data,*legionna_fore_data,*legionna_mid_data,*legionna_scrollram16,*legionna_textram;
 
 static tilemap_t *background_layer,*foreground_layer,*midground_layer,*text_layer;
-UINT16 legionna_layer_disable;
+uint16_t legionna_layer_disable;
 
 /******************************************************************************/
 
-static UINT16 back_gfx_bank = 0,fore_gfx_bank = 0,mid_gfx_bank = 0;
-UINT8 grainbow_pri_n;
+static uint16_t back_gfx_bank = 0,fore_gfx_bank = 0,mid_gfx_bank = 0;
+uint8_t grainbow_pri_n;
 
-void heatbrl_setgfxbank(UINT16 data)
+void heatbrl_setgfxbank(uint16_t data)
 {
 	back_gfx_bank = (data &0x4000) >> 2;
 }
 
 /*xxx- --- ---- ---- banking*/
-void denjinmk_setgfxbank(UINT16 data)
+void denjinmk_setgfxbank(uint16_t data)
 {
 	fore_gfx_bank = (data &0x2000) >> 1;//???
 	back_gfx_bank = (data &0x4000) >> 2;
@@ -167,7 +167,7 @@ VIDEO_START( legionna )
 	text_layer =       tilemap_create(machine, get_text_tile_info,tilemap_scan_rows,  8,8,64,32);
 	legionna_layer_disable = 0x0000;
 
-	legionna_scrollram16 = auto_alloc_array(machine, UINT16, 0x60/2);
+	legionna_scrollram16 = auto_alloc_array(machine, uint16_t, 0x60/2);
 
 	tilemap_set_transparent_pen(background_layer,15);
 	tilemap_set_transparent_pen(midground_layer,15);
@@ -183,7 +183,7 @@ VIDEO_START( denjinmk )
 	text_layer =       tilemap_create(machine, get_text_tile_info,tilemap_scan_rows,  8,8,64,32);
 	legionna_layer_disable = 0x0000;
 
-	legionna_scrollram16 = auto_alloc_array(machine, UINT16, 0x60/2);
+	legionna_scrollram16 = auto_alloc_array(machine, uint16_t, 0x60/2);
 
 	tilemap_set_transparent_pen(background_layer,15);
 	tilemap_set_transparent_pen(midground_layer,15);
@@ -199,7 +199,7 @@ VIDEO_START( cupsoc )
 	text_layer =       tilemap_create(machine, get_text_tile_info,tilemap_scan_rows,  8,8,64,32);
 	legionna_layer_disable = 0x0000;
 
-	legionna_scrollram16 = auto_alloc_array(machine, UINT16, 0x60/2);
+	legionna_scrollram16 = auto_alloc_array(machine, uint16_t, 0x60/2);
 
 	tilemap_set_transparent_pen(background_layer,15);
 	tilemap_set_transparent_pen(midground_layer,15);
@@ -236,13 +236,13 @@ VIDEO_START( cupsoc )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int pri)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite,cur_pri;
 	int dx,dy,ax,ay;
 
 	for (offs = 0x400-4;offs >= 0;offs -= 4)
 	{
-		UINT16 data = spriteram16[offs];
+		uint16_t data = spriteram16[offs];
 		if (!(data &0x8000)) continue;
 
 		cur_pri = (spriteram16[offs+1] & 0xc000) >> 14;

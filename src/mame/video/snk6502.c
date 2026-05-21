@@ -10,10 +10,10 @@
 #include "includes/snk6502.h"
 
 
-UINT8 *snk6502_videoram;
-UINT8 *snk6502_colorram;
-UINT8 *snk6502_videoram2;
-UINT8 *snk6502_charram;
+uint8_t *snk6502_videoram;
+uint8_t *snk6502_colorram;
+uint8_t *snk6502_videoram2;
+uint8_t *snk6502_charram;
 
 static int charbank;
 static int backcolor;

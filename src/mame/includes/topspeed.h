@@ -12,18 +12,18 @@ public:
 	topspeed_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   spritemap;
-	UINT16 *   raster_ctrl;
-	UINT16 *   spriteram;
-	UINT16 *   sharedram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *   spritemap;
+	uint16_t *   raster_ctrl;
+	uint16_t *   spriteram;
+	uint16_t *   sharedram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t     spriteram_size;
 	size_t     sharedram_size;
 
 	/* misc */
-	UINT16     cpua_ctrl;
-	INT32      ioc220_port;
-	INT32      banknum;
+	uint16_t     cpua_ctrl;
+	int32_t      ioc220_port;
+	int32_t      banknum;
 	int        adpcm_pos;
 	int        adpcm_data;
 

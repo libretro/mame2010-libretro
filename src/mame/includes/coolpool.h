@@ -5,22 +5,22 @@ public:
 
 	coolpool_state(running_machine &machine) { }
 
-	UINT16 *vram_base;
+	uint16_t *vram_base;
 
-	UINT8 cmd_pending;
-	UINT16 iop_cmd;
-	UINT16 iop_answer;
+	uint8_t cmd_pending;
+	uint16_t iop_cmd;
+	uint16_t iop_answer;
 	int iop_romaddr;
 
-	UINT8 newx[3];
-	UINT8 newy[3];
-	UINT8 oldx[3];
-	UINT8 oldy[3];
+	uint8_t newx[3];
+	uint8_t newy[3];
+	uint8_t oldx[3];
+	uint8_t oldy[3];
 	int dx[3];
 	int dy[3];
 
-	UINT16 result;
-	UINT16 lastresult;
+	uint16_t result;
+	uint16_t lastresult;
 
 	running_device *maincpu;
 	running_device *dsp;

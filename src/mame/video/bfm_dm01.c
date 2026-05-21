@@ -58,9 +58,9 @@ static int   xcounter;
 static int   busy;
 static int   data_avail;
 
-static UINT8 scanline[DM_BYTESPERROW];
+static uint8_t scanline[DM_BYTESPERROW];
 
-static UINT8 comdata;
+static uint8_t comdata;
 
 //static int   read_index;
 //static int   write_index;
@@ -152,7 +152,7 @@ static WRITE8_HANDLER( mux_w )
 
 			while ( p < DM_BYTESPERROW )
 			{
-				UINT8 d = scanline[p++];
+				uint8_t d = scanline[p++];
 				LOG(("%d",d));
 				*BITMAP_ADDR16(dm_bitmap, off, x++) = (d & 0x80) ? 0 : 1;
 				*BITMAP_ADDR16(dm_bitmap, off, x++) = (d & 0x40) ? 0 : 1;
@@ -220,7 +220,7 @@ ADDRESS_MAP_END
 
 ///////////////////////////////////////////////////////////////////////////
 
-void BFM_dm01_writedata(running_machine *machine, UINT8 data)
+void BFM_dm01_writedata(running_machine *machine, uint8_t data)
 {
 	comdata = data;
 	data_avail = 1;

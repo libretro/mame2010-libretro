@@ -11,9 +11,9 @@
 VIDEO_UPDATE( mw8080bw )
 {
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
-	UINT8 x = 0;
-	UINT8 y = MW8080BW_VCOUNTER_START_NO_VBLANK;
-	UINT8 video_data = 0;
+	uint8_t x = 0;
+	uint8_t y = MW8080BW_VCOUNTER_START_NO_VBLANK;
+	uint8_t video_data = 0;
 
 	while (1)
 	{
@@ -78,24 +78,24 @@ VIDEO_UPDATE( mw8080bw )
 VIDEO_UPDATE( spcenctr )
 {
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
-	UINT8 line_buf[256]; /* 256x1 bit RAM */
+	uint8_t line_buf[256]; /* 256x1 bit RAM */
 
-	UINT8 x = 0;
-	UINT8 y = MW8080BW_VCOUNTER_START_NO_VBLANK;
-	UINT8 video_data = 0;
-	UINT8 draw_line = 0;
-	UINT8 draw_trench = 0;
-	UINT8 draw_floor = 0;
-	UINT8 width = state->spcenctr_trench_width;
-	UINT8 floor_width = width;
-	UINT8 center = state->spcenctr_trench_center;
+	uint8_t x = 0;
+	uint8_t y = MW8080BW_VCOUNTER_START_NO_VBLANK;
+	uint8_t video_data = 0;
+	uint8_t draw_line = 0;
+	uint8_t draw_trench = 0;
+	uint8_t draw_floor = 0;
+	uint8_t width = state->spcenctr_trench_width;
+	uint8_t floor_width = width;
+	uint8_t center = state->spcenctr_trench_center;
 
 	memset(line_buf, 0, 256);
 
 	while (1)
 	{
 		/* plot the current pixel */
-		UINT8 bit = video_data & 0x01;
+		uint8_t bit = video_data & 0x01;
 		pen_t pen = bit ? RGB_WHITE : RGB_BLACK;
 
 		/* possibly draw trench in the background, top of trench first */
@@ -135,7 +135,7 @@ VIDEO_UPDATE( spcenctr )
 		if (x == 0)
 		{
 			offs_t offs;
-			UINT8 trench_control;
+			uint8_t trench_control;
 
 			/* yes, flush out the shift register */
 			int i;
@@ -222,23 +222,23 @@ VIDEO_UPDATE( spcenctr )
 VIDEO_UPDATE( phantom2 )
 {
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
-	UINT8 x = 0;
-	UINT8 y = MW8080BW_VCOUNTER_START_NO_VBLANK;
-	UINT8 video_data = 0;
-	UINT8 cloud_data = 0;
+	uint8_t x = 0;
+	uint8_t y = MW8080BW_VCOUNTER_START_NO_VBLANK;
+	uint8_t video_data = 0;
+	uint8_t cloud_data = 0;
 
-	UINT16 cloud_counter = state->phantom2_cloud_counter;
+	uint16_t cloud_counter = state->phantom2_cloud_counter;
 
-	UINT8 *cloud_region = memory_region(screen->machine, "proms");
+	uint8_t *cloud_region = memory_region(screen->machine, "proms");
 
 	while (1)
 	{
 		int load_shift_reg;
-		UINT8 cloud_data_to_load = 0;
+		uint8_t cloud_data_to_load = 0;
 		pen_t pen;
 
 		/* plot the current pixel */
-		UINT8 bit = video_data & 0x01;
+		uint8_t bit = video_data & 0x01;
 
 		/* if background color, cloud gfx in the background */
 		if ((bit == 0) && (cloud_data & 0x01))
@@ -334,10 +334,10 @@ VIDEO_EOF( phantom2 )
 VIDEO_UPDATE( invaders )
 {
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
-	UINT8 x = 0;
-	UINT8 y = MW8080BW_VCOUNTER_START_NO_VBLANK;
-	UINT8 video_data = 0;
-	UINT8 flip = state->invaders_flip_screen;
+	uint8_t x = 0;
+	uint8_t y = MW8080BW_VCOUNTER_START_NO_VBLANK;
+	uint8_t video_data = 0;
+	uint8_t flip = state->invaders_flip_screen;
 
 	while (1)
 	{

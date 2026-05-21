@@ -163,11 +163,11 @@ enum
 
 
 /* DSP variables */
-static UINT16 dsp_regs[DSP_REGS];
+static uint16_t dsp_regs[DSP_REGS];
 
-static UINT16 serial_frequency;
+static uint16_t serial_frequency;
 
-static UINT8 gpu_irq_state;
+static uint8_t gpu_irq_state;
 
 #if ENABLE_SPEEDUP_HACKS
 static WRITE32_HANDLER( dsp_flags_w );
@@ -348,7 +348,7 @@ static WRITE32_HANDLER( dsp_flags_w )
 		/* see if we're going back to the spin loop */
 		if (!(data & 0x04000) && cpu_get_reg(space->cpu, JAGUAR_R22) != 0)
 		{
-			UINT32 r30 = cpu_get_reg(space->cpu, JAGUAR_R30) & 0xffffff;
+			uint32_t r30 = cpu_get_reg(space->cpu, JAGUAR_R30) & 0xffffff;
 			if (r30 >= 0xf1b124 && r30 <= 0xf1b126)
 				jaguar_dsp_suspend(space->machine);
 		}

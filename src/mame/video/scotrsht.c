@@ -1,9 +1,9 @@
 #include "emu.h"
 
-UINT8 *scotrsht_scroll;
+uint8_t *scotrsht_scroll;
 
-UINT8 *scotrsht_videoram;
-UINT8 *scotrsht_colorram;
+uint8_t *scotrsht_videoram;
+uint8_t *scotrsht_colorram;
 static tilemap_t *bg_tilemap;
 static int scotrsht_charbank = 0;
 static int scotrsht_palette_bank = 0;
@@ -36,7 +36,7 @@ PALETTE_INIT( scotrsht )
 
 		for (j = 0; j < 8; j++)
 		{
-			UINT8 ctabentry = ((~i & 0x100) >> 1) | (j << 4) | (color_prom[i] & 0x0f);
+			uint8_t ctabentry = ((~i & 0x100) >> 1) | (j << 4) | (color_prom[i] & 0x0f);
 			colortable_entry_set_value(machine->colortable, ((i & 0x100) << 3) | (j << 8) | (i & 0xff), ctabentry);
 		}
 	}
@@ -98,7 +98,7 @@ static TILE_GET_INFO( scotrsht_get_bg_tile_info )
 /* Same as Jailbreak + palette bank */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int i;
 
 	for (i = 0; i < machine->generic.spriteram_size; i += 4)

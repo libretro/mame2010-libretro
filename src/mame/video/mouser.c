@@ -57,7 +57,7 @@ WRITE8_HANDLER( mouser_flip_screen_y_w )
 VIDEO_UPDATE( mouser )
 {
 	mouser_state *state = (mouser_state *)screen->machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 	int sx, sy;
 	int flipx, flipy;

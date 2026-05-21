@@ -12,16 +12,16 @@ public:
 	firetrap_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *       bg1videoram;
-	UINT8 *       bg2videoram;
-	UINT8 *       fgvideoram;
-	UINT8 *       spriteram;
+	uint8_t *       bg1videoram;
+	uint8_t *       bg2videoram;
+	uint8_t *       fgvideoram;
+	uint8_t *       spriteram;
 	size_t        spriteram_size;
 
 	/* video-related */
 	tilemap_t       *fg_tilemap, *bg1_tilemap, *bg2_tilemap;
-	UINT8         scroll1_x[2], scroll1_y[2];
-	UINT8         scroll2_x[2], scroll2_y[2];
+	uint8_t         scroll1_x[2], scroll1_y[2];
+	uint8_t         scroll2_x[2], scroll2_y[2];
 
 	/* misc */
 	int           irq_enable, nmi_enable;

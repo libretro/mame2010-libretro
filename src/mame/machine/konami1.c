@@ -9,7 +9,7 @@
 #include "konami1.h"
 
 
-static UINT8 konami1_decodebyte( UINT8 opcode, UINT16 address )
+static uint8_t konami1_decodebyte( uint8_t opcode, uint16_t address )
 {
 /*
 >
@@ -26,7 +26,7 @@ static UINT8 konami1_decodebyte( UINT8 opcode, UINT16 address )
 > CPU_D0 = EPROM_D0
 >
 */
-	UINT8 xormask;
+	uint8_t xormask;
 
 
 	xormask = 0;
@@ -40,14 +40,14 @@ static UINT8 konami1_decodebyte( UINT8 opcode, UINT16 address )
 
 
 
-UINT8 *konami1_decode(running_machine *machine, const char *cpu)
+uint8_t *konami1_decode(running_machine *machine, const char *cpu)
 {
 	const address_space *space = cputag_get_address_space(machine, cpu, ADDRESS_SPACE_PROGRAM);
-	const UINT8 *rom = memory_region(machine, cpu);
+	const uint8_t *rom = memory_region(machine, cpu);
 	int size = memory_region_length(machine, cpu);
 	int A;
 
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, size);
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, size);
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypted);
 
 	for (A = 0;A < size;A++)

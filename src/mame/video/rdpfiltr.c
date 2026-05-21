@@ -1,30 +1,30 @@
-INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres);
-INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index);
-INLINE void restore_filter16(INT32* r, INT32* g, INT32* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres);
-INLINE void divot_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuffer);
-INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres);
+INLINE void video_filter16(int *out_r, int *out_g, int *out_b, uint16_t* vbuff, uint8_t* hbuff, const uint32_t hres);
+INLINE void divot_filter16(uint8_t* r, uint8_t* g, uint8_t* b, uint16_t* fbuff, uint32_t fbuff_index);
+INLINE void restore_filter16(int32_t* r, int32_t* g, int32_t* b, uint16_t* fbuff, uint32_t fbuff_index, uint32_t hres);
+INLINE void divot_filter16_buffer(int32_t* r, int32_t* g, int32_t* b, N64::RDP::Color* vibuffer);
+INLINE void restore_filter16_buffer(int32_t* r, int32_t* g, int32_t* b, N64::RDP::Color* vibuff, uint32_t hres);
 INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour);
-INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb);
-INLINE UINT32 ge_two(UINT32 enb);
+INLINE void video_max(uint32_t* Pixels, uint8_t* max, uint32_t* enb);
+INLINE uint32_t ge_two(uint32_t enb);
 
-INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UINT8* hbuff, const UINT32 hres)
+INLINE void video_filter16(int *out_r, int *out_g, int *out_b, uint16_t* vbuff, uint8_t* hbuff, const uint32_t hres)
 {
 	N64::RDP::Color penumax, penumin, max, min;
-	UINT16 pix = *vbuff;
-	const UINT8 centercvg = (*hbuff & 3) + ((pix & 1) << 2) + 1;
-	UINT32 numoffull = 1;
-	UINT32 cvg;
-	UINT32 backr[7], backg[7], backb[7];
-	UINT32 invr[7], invg[7], invb[7];
-	INT32 coeff;
-	INT32 leftup = -hres - 2;
-	INT32 leftdown = hres - 2;
-	INT32 toleft = -2;
-	UINT32 colr, colg, colb;
-	UINT32 enb;
-	UINT32 r = ((pix >> 8) & 0xf8) | (pix >> 13);
-	UINT32 g = ((pix >> 3) & 0xf8) | ((pix >>  8) & 0x07);
-	UINT32 b = ((pix << 2) & 0xf8) | ((pix >>  3) & 0x07);
+	uint16_t pix = *vbuff;
+	const uint8_t centercvg = (*hbuff & 3) + ((pix & 1) << 2) + 1;
+	uint32_t numoffull = 1;
+	uint32_t cvg;
+	uint32_t backr[7], backg[7], backb[7];
+	uint32_t invr[7], invg[7], invb[7];
+	int32_t coeff;
+	int32_t leftup = -hres - 2;
+	int32_t leftdown = hres - 2;
+	int32_t toleft = -2;
+	uint32_t colr, colg, colb;
+	uint32_t enb;
+	uint32_t r = ((pix >> 8) & 0xf8) | (pix >> 13);
+	uint32_t g = ((pix >> 3) & 0xf8) | ((pix >>  8) & 0x07);
+	uint32_t b = ((pix << 2) & 0xf8) | ((pix >>  3) & 0x07);
 
 	*out_r = *out_g = *out_b = 0;
 
@@ -192,9 +192,9 @@ INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UI
 	penumin.i.g = ~penumin.i.g;
 	penumin.i.b = ~penumin.i.b;
 
-	colr = (UINT32)penumin.i.r + (UINT32)penumax.i.r - (r << 1);
-	colg = (UINT32)penumin.i.g + (UINT32)penumax.i.g - (g << 1);
-	colb = (UINT32)penumin.i.b + (UINT32)penumax.i.b - (b << 1);
+	colr = (uint32_t)penumin.i.r + (uint32_t)penumax.i.r - (r << 1);
+	colg = (uint32_t)penumin.i.g + (uint32_t)penumax.i.g - (g << 1);
+	colb = (uint32_t)penumin.i.b + (uint32_t)penumax.i.b - (b << 1);
 	coeff = 8 - centercvg;
 	colr = (((colr * coeff) + 4) >> 3) + r;
 	colg = (((colg * coeff) + 4) >> 3) + g;
@@ -207,14 +207,14 @@ INLINE void video_filter16(int *out_r, int *out_g, int *out_b, UINT16* vbuff, UI
 }
 
 // This needs to be fixed for endianness.
-INLINE void divot_filter16(UINT8* r, UINT8* g, UINT8* b, UINT16* fbuff, UINT32 fbuff_index)
+INLINE void divot_filter16(uint8_t* r, uint8_t* g, uint8_t* b, uint16_t* fbuff, uint32_t fbuff_index)
 {
-	UINT8 leftr, leftg, leftb, rightr, rightg, rightb;
-	UINT16 leftpix, rightpix;
-	UINT16* next, *prev;
-	UINT32 Lsw = fbuff_index & 1;
-	next = (Lsw) ? (UINT16*)(fbuff - 1) : (UINT16*)(fbuff + 3);
-	prev = (Lsw) ? (UINT16*)(fbuff - 3) : (UINT16*)(fbuff + 1);
+	uint8_t leftr, leftg, leftb, rightr, rightg, rightb;
+	uint16_t leftpix, rightpix;
+	uint16_t* next, *prev;
+	uint32_t Lsw = fbuff_index & 1;
+	next = (Lsw) ? (uint16_t*)(fbuff - 1) : (uint16_t*)(fbuff + 3);
+	prev = (Lsw) ? (uint16_t*)(fbuff - 3) : (uint16_t*)(fbuff + 1);
 	leftpix = *prev;
 	rightpix = *next;
 
@@ -262,12 +262,12 @@ INLINE void divot_filter16_buffer(int* r, int* g, int* b, N64::RDP::Color* vibuf
 	*r = filtered.i.r;
 	*g = filtered.i.g;
 	*b = filtered.i.b;
-	UINT32 leftr = leftpix.i.r;
-	UINT32 leftg = leftpix.i.g;
-	UINT32 leftb = leftpix.i.b;
-	UINT32 rightr = rightpix.i.r;
-	UINT32 rightg = rightpix.i.g;
-	UINT32 rightb = rightpix.i.b;
+	uint32_t leftr = leftpix.i.r;
+	uint32_t leftg = leftpix.i.g;
+	uint32_t leftb = leftpix.i.b;
+	uint32_t rightr = rightpix.i.r;
+	uint32_t rightg = rightpix.i.g;
+	uint32_t rightb = rightpix.i.b;
 
 	if ((leftr >= *r && rightr >= leftr) || (leftr >= rightr && *r >= leftr))
 	{
@@ -300,18 +300,18 @@ INLINE void divot_filter16_buffer(int* r, int* g, int* b, N64::RDP::Color* vibuf
 }
 
 // Fix me.
-INLINE void restore_filter16(int* r, int* g, int* b, UINT16* fbuff, UINT32 fbuff_index, UINT32 hres)
+INLINE void restore_filter16(int* r, int* g, int* b, uint16_t* fbuff, uint32_t fbuff_index, uint32_t hres)
 {
-	INT32 leftuppix = -hres - 1;
-	INT32 leftdownpix = hres - 1;
-	INT32 toleftpix = -1;
-	UINT8 tempr, tempg, tempb;
-	UINT16 pix;
+	int32_t leftuppix = -hres - 1;
+	int32_t leftdownpix = hres - 1;
+	int32_t toleftpix = -1;
+	uint8_t tempr, tempg, tempb;
+	uint16_t pix;
 	int i;
 
-	UINT8 r5 = *r;
-	UINT8 g5 = *g;
-	UINT8 b5 = *b;
+	uint8_t r5 = *r;
+	uint8_t g5 = *g;
+	uint8_t b5 = *b;
 	r5 &= ~7;
 	g5 &= ~7;
 	b5 &= ~7;
@@ -427,13 +427,13 @@ INLINE void restore_filter16(int* r, int* g, int* b, UINT16* fbuff, UINT32 fbuff
 	}
 }
 
-INLINE void restore_filter16_buffer(INT32* r, INT32* g, INT32* b, N64::RDP::Color* vibuff, UINT32 hres)
+INLINE void restore_filter16_buffer(int32_t* r, int32_t* g, int32_t* b, N64::RDP::Color* vibuff, uint32_t hres)
 {
 	N64::RDP::Color filtered;
 	N64::RDP::Color leftuppix, leftdownpix, leftpix;
 	N64::RDP::Color rightuppix, rightdownpix, rightpix;
 	N64::RDP::Color uppix, downpix;
-	INT32 ihres = (INT32)hres; //can't apply unary minus to unsigned
+	int32_t ihres = (int32_t)hres; //can't apply unary minus to unsigned
 
 	leftuppix = vibuff[-ihres - 1];
 	leftdownpix = vibuff[ihres - 1];
@@ -499,7 +499,7 @@ INLINE void restore_two(N64::RDP::Color* filtered, N64::RDP::Color* neighbour)
 	}
 }
 
-INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb)
+INLINE void video_max(uint32_t* Pixels, uint8_t* max, uint32_t* enb)
 {
     int i;
     int pos = 0;
@@ -523,7 +523,7 @@ INLINE void video_max(UINT32* Pixels, UINT8* max, UINT32* enb)
     *max = Pixels[pos];
 }
 
-INLINE UINT32 ge_two(UINT32 enb)
+INLINE uint32_t ge_two(uint32_t enb)
 {
 	if(enb & 1)
 	{

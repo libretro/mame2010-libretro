@@ -14,29 +14,29 @@ public:
 	ladybug_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    colorram;
-	UINT8 *    spriteram;
-	UINT8 *    grid_data;
+	uint8_t *    videoram;
+	uint8_t *    colorram;
+	uint8_t *    spriteram;
+	uint8_t *    grid_data;
 	size_t     spriteram_size;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap, *grid_tilemap;	// ladybug
 	tilemap_t    *fg_tilemap;	// redclash
-	UINT8      grid_color;
+	uint8_t      grid_color;
 	int        star_speed;
 	int        gfxbank;	// redclash only
-	UINT8      stars_enable;
-	UINT8      stars_speed;
-	UINT32     stars_state;
-	UINT16     stars_offset;
-	UINT8      stars_count;
+	uint8_t      stars_enable;
+	uint8_t      stars_speed;
+	uint32_t     stars_state;
+	uint16_t     stars_offset;
+	uint8_t      stars_count;
 
 	/* misc */
-	UINT8      sound_low;
-	UINT8      sound_high;
-	UINT8      weird_value[8];
-	UINT8      sraider_0x30, sraider_0x38;
+	uint8_t      sound_low;
+	uint8_t      sound_high;
+	uint8_t      weird_value[8];
+	uint8_t      sraider_0x30, sraider_0x38;
 
 	/* devices */
 	running_device *maincpu;
@@ -76,7 +76,7 @@ VIDEO_UPDATE( redclash );
 VIDEO_EOF( redclash );
 
 /* sraider uses the zerohour star generator board */
-void redclash_set_stars_enable(running_machine *machine, UINT8 on);
+void redclash_set_stars_enable(running_machine *machine, uint8_t on);
 void redclash_update_stars_state(running_machine *machine);
-void redclash_set_stars_speed(running_machine *machine, UINT8 speed);
-void redclash_draw_stars(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 palette_offset, UINT8 sraider, UINT8 firstx, UINT8 lastx);
+void redclash_set_stars_speed(running_machine *machine, uint8_t speed);
+void redclash_draw_stars(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t palette_offset, uint8_t sraider, uint8_t firstx, uint8_t lastx);

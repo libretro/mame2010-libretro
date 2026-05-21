@@ -71,7 +71,7 @@ VIDEO_START( kchamp )
 static void kchamp_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	kchamp_state *state = (kchamp_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x100; offs += 4)
@@ -100,7 +100,7 @@ static void kchamp_draw_sprites( running_machine *machine, bitmap_t *bitmap, con
 static void kchampvs_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	kchamp_state *state = (kchamp_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x100; offs += 4)

@@ -11,28 +11,28 @@ public:
 
 	zaxxon_state(running_machine &machine) { }
 
-	UINT8 *colorram;
-	UINT8 *videoram;
-	UINT8 *spriteram;
+	uint8_t *colorram;
+	uint8_t *videoram;
+	uint8_t *spriteram;
 
-	UINT8 int_enabled;
-	UINT8 coin_status[3];
-	UINT8 coin_enable[3];
+	uint8_t int_enabled;
+	uint8_t coin_status[3];
+	uint8_t coin_enable[3];
 
-	UINT8 razmataz_dial_pos[2];
-	UINT16 razmataz_counter;
+	uint8_t razmataz_dial_pos[2];
+	uint16_t razmataz_counter;
 
-	UINT8 sound_state[3];
-	UINT8 bg_enable;
-	UINT8 bg_color;
-	UINT16 bg_position;
-	UINT8 fg_color;
+	uint8_t sound_state[3];
+	uint8_t bg_enable;
+	uint8_t bg_color;
+	uint16_t bg_position;
+	uint8_t fg_color;
 
-	UINT8 congo_fg_bank;
-	UINT8 congo_color_bank;
-	UINT8 congo_custom[4];
+	uint8_t congo_fg_bank;
+	uint8_t congo_color_bank;
+	uint8_t congo_custom[4];
 
-	const UINT8 *color_codes;
+	const uint8_t *color_codes;
 	tilemap_t *fg_tilemap;
 	tilemap_t *bg_tilemap;
 };

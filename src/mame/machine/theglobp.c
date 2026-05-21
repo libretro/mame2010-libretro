@@ -64,14 +64,14 @@
 #include "emu.h"
 #include "includes/pacman.h"
 
-static INT8 counter=0;
+static int8_t counter=0;
 
 
 static void theglobp_decrypt_rom_8(running_machine *machine)
 {
 	int oldbyte,inverted_oldbyte,newbyte;
 	int mem;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	RAM = memory_region(machine, "maincpu");
 
@@ -108,7 +108,7 @@ static void theglobp_decrypt_rom_9(running_machine *machine)
 {
 	int oldbyte,inverted_oldbyte,newbyte;
 	int mem;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	RAM = memory_region(machine, "maincpu");
 
@@ -143,7 +143,7 @@ static void theglobp_decrypt_rom_A(running_machine *machine)
 {
 	int oldbyte,inverted_oldbyte,newbyte;
 	int mem;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	RAM = memory_region(machine, "maincpu");
 
@@ -178,7 +178,7 @@ static void theglobp_decrypt_rom_B(running_machine *machine)
 {
 	int oldbyte,inverted_oldbyte,newbyte;
 	int mem;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	RAM = memory_region(machine, "maincpu");
 
@@ -240,7 +240,7 @@ READ8_HANDLER( theglobp_decrypt_rom )
 
 MACHINE_START( theglobp )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	/* While the PAL supports up to 16 decryption methods, only four
         are actually used in the PAL.  Therefore, we'll take a little

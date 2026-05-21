@@ -10,8 +10,8 @@ SAMPLES_START( suna8_sh_start );
 
 /*----------- defined in video/suna8.c -----------*/
 
-extern UINT8 suna8_rombank, suna8_spritebank, suna8_palettebank;
-extern UINT8 suna8_unknown;
+extern uint8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
+extern uint8_t suna8_unknown;
 
 WRITE8_HANDLER( suna8_spriteram_w );			// for debug
 WRITE8_HANDLER( suna8_banked_spriteram_w );	// for debug

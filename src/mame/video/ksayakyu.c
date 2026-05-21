@@ -34,7 +34,7 @@ WRITE8_HANDLER(ksayakyu_videoctrl_w)
 
 PALETTE_INIT( ksayakyu )
 {
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 	int r, g, b, i;
 
 	for (i = 0; i < 0x100; i++)
@@ -84,8 +84,8 @@ static TILE_GET_INFO( get_text_tile_info )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ksayakyu_state *state = (ksayakyu_state *)machine->driver_data;
-	const UINT8 *source = state->spriteram + state->spriteram_size - 4;
-	const UINT8 *finish = state->spriteram;
+	const uint8_t *source = state->spriteram + state->spriteram_size - 4;
+	const uint8_t *finish = state->spriteram;
 
 	while (source>=finish) /* is order correct ? */
 	{

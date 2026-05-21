@@ -7,11 +7,11 @@ Atari Sprint 8 video emulation
 #include "emu.h"
 #include "includes/sprint8.h"
 
-UINT8* sprint8_video_ram;
-UINT8* sprint8_pos_h_ram;
-UINT8* sprint8_pos_v_ram;
-UINT8* sprint8_pos_d_ram;
-UINT8* sprint8_team;
+uint8_t* sprint8_video_ram;
+uint8_t* sprint8_pos_h_ram;
+uint8_t* sprint8_pos_v_ram;
+uint8_t* sprint8_pos_d_ram;
+uint8_t* sprint8_team;
 
 static tilemap_t* tilemap1;
 static tilemap_t* tilemap2;
@@ -77,7 +77,7 @@ static void set_pens(colortable_t *colortable)
 
 static TILE_GET_INFO( get_tile_info1 )
 {
-	UINT8 code = sprint8_video_ram[tile_index];
+	uint8_t code = sprint8_video_ram[tile_index];
 
 	int color = 0;
 
@@ -102,7 +102,7 @@ static TILE_GET_INFO( get_tile_info1 )
 
 static TILE_GET_INFO( get_tile_info2 )
 {
-	UINT8 code = sprint8_video_ram[tile_index];
+	uint8_t code = sprint8_video_ram[tile_index];
 
 	int color = 0;
 
@@ -142,7 +142,7 @@ static void draw_sprites(running_machine *machine, bitmap_t* bitmap, const recta
 
 	for (i = 0; i < 16; i++)
 	{
-		UINT8 code = sprint8_pos_d_ram[i];
+		uint8_t code = sprint8_pos_d_ram[i];
 
 		int x = sprint8_pos_h_ram[i];
 		int y = sprint8_pos_v_ram[i];
@@ -188,8 +188,8 @@ VIDEO_EOF( sprint8 )
 
 	for (y = visarea.min_y; y <= visarea.max_y; y++)
 	{
-		const UINT16* p1 = BITMAP_ADDR16(helper1, y, 0);
-		const UINT16* p2 = BITMAP_ADDR16(helper2, y, 0);
+		const uint16_t* p1 = BITMAP_ADDR16(helper1, y, 0);
+		const uint16_t* p2 = BITMAP_ADDR16(helper2, y, 0);
 
 		for (x = visarea.min_x; x <= visarea.max_x; x++)
 			if (p1[x] != 0x20 && p2[x] == 0x23)

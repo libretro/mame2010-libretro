@@ -20,7 +20,7 @@ static int sound_latch_a;
 static int sound_latch_b;
 static int sound_latch_c;	/* part of the videoreg_w latch */
 
-static UINT32 *poly18 = NULL;
+static uint32_t *poly18 = NULL;
 static int polybit;
 
 /* fixed 8kHz clock */
@@ -457,14 +457,14 @@ static DEVICE_START( common_sh_start )
 {
 	running_machine *machine = device->machine;
 	int i, j;
-	UINT32 shiftreg;
+	uint32_t shiftreg;
 
-	poly18 = auto_alloc_array(machine, UINT32, 1ul << (18-5));
+	poly18 = auto_alloc_array(machine, uint32_t, 1ul << (18-5));
 
 	shiftreg = 0;
 	for( i = 0; i < (1ul << (18-5)); i++ )
 	{
-		UINT32 bits = 0;
+		uint32_t bits = 0;
 		for( j = 0; j < 32; j++ )
 		{
 			bits = (bits >> 1) | (shiftreg << 31);

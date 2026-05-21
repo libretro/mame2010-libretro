@@ -31,14 +31,14 @@ extern enum namcos22_gametype
 
 /*----------- defined in video/namcos22.c -----------*/
 
-extern UINT32 *namcos22_cgram;
-extern UINT32 *namcos22_textram;
-extern UINT32 *namcos22_polygonram;
-extern UINT32 *namcos22_gamma;
-extern UINT32 *namcos22_vics_data;
-extern UINT32 *namcos22_vics_control;
-extern UINT32 *namcos22_czattr;
-extern UINT32 *namcos22_tilemapattr;
+extern uint32_t *namcos22_cgram;
+extern uint32_t *namcos22_textram;
+extern uint32_t *namcos22_polygonram;
+extern uint32_t *namcos22_gamma;
+extern uint32_t *namcos22_vics_data;
+extern uint32_t *namcos22_vics_control;
+extern uint32_t *namcos22_czattr;
+extern uint32_t *namcos22_tilemapattr;
 
 WRITE16_HANDLER( namcos22_dspram16_bank_w );
 READ16_HANDLER( namcos22_dspram16_r );
@@ -71,6 +71,6 @@ VIDEO_UPDATE( namcos22 );
 VIDEO_START( namcos22s );
 VIDEO_UPDATE( namcos22s );
 
-void namcos22_draw_direct_poly( running_machine *machine, const UINT16 *pSource );
-extern UINT32 namcos22_point_rom_r( offs_t offs );
+void namcos22_draw_direct_poly( running_machine *machine, const uint16_t *pSource );
+extern uint32_t namcos22_point_rom_r( offs_t offs );
 extern void namcos22_enable_slave_simulation( void );

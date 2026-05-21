@@ -9,7 +9,7 @@
 
 /*----------- defined in video/midzeus.c -----------*/
 
-extern UINT32 *zeusbase;
+extern uint32_t *zeusbase;
 
 VIDEO_START( midzeus );
 VIDEO_UPDATE( midzeus );

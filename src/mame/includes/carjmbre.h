@@ -12,14 +12,14 @@ public:
 	carjmbre_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * videoram;
-	UINT8 * spriteram;
+	uint8_t * videoram;
+	uint8_t * spriteram;
 	size_t  spriteram_size;
 
 	/* video-related */
 	tilemap_t *cj_tilemap;
-	UINT8   flipscreen;
-	UINT16  bgcolor;
+	uint8_t   flipscreen;
+	uint16_t  bgcolor;
 };
 
 

@@ -1,31 +1,31 @@
 /*----------- defined in drivers/seibuspi.c -----------*/
 
-extern UINT32 *spimainram;
+extern uint32_t *spimainram;
 
 
 /*----------- defined in machine/spisprit.c -----------*/
 
-void seibuspi_sprite_decrypt(UINT8 *src, int romsize);
+void seibuspi_sprite_decrypt(uint8_t *src, int romsize);
 
 
 /*----------- defined in machine/seibuspi.c -----------*/
 
-void seibuspi_text_decrypt(UINT8 *rom);
-void seibuspi_bg_decrypt(UINT8 *rom, int size);
+void seibuspi_text_decrypt(uint8_t *rom);
+void seibuspi_bg_decrypt(uint8_t *rom, int size);
 
-void seibuspi_rise10_text_decrypt(UINT8 *rom);
-void seibuspi_rise10_bg_decrypt(UINT8 *rom, int size);
-void seibuspi_rise10_sprite_decrypt(UINT8 *rom, int romsize);
+void seibuspi_rise10_text_decrypt(uint8_t *rom);
+void seibuspi_rise10_bg_decrypt(uint8_t *rom, int size);
+void seibuspi_rise10_sprite_decrypt(uint8_t *rom, int romsize);
 
-void seibuspi_rise11_text_decrypt(UINT8 *rom);
-void seibuspi_rise11_bg_decrypt(UINT8 *rom, int size);
-void seibuspi_rise11_sprite_decrypt_rfjet(UINT8 *rom, int romsize);
-void seibuspi_rise11_sprite_decrypt_feversoc(UINT8 *rom, int romsize);
+void seibuspi_rise11_text_decrypt(uint8_t *rom);
+void seibuspi_rise11_bg_decrypt(uint8_t *rom, int size);
+void seibuspi_rise11_sprite_decrypt_rfjet(uint8_t *rom, int romsize);
+void seibuspi_rise11_sprite_decrypt_feversoc(uint8_t *rom, int romsize);
 
 
 /*----------- defined in video/seibuspi.c -----------*/
 
-extern UINT32 *spi_scrollram;
+extern uint32_t *spi_scrollram;
 
 VIDEO_START( spi );
 VIDEO_UPDATE( spi );

@@ -2,7 +2,7 @@
 #include "emu.h"
 
 static tilemap_t *bg_layer,*fg_layer,*tx_layer;
-UINT16 *dynduke_back_data,*dynduke_fore_data,*dynduke_scroll_ram;
+uint16_t *dynduke_back_data,*dynduke_fore_data,*dynduke_scroll_ram;
 
 static int back_bankbase,fore_bankbase;
 static int back_enable,fore_enable,sprite_enable,txt_enable;
@@ -133,7 +133,7 @@ WRITE16_HANDLER( dynduke_control_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int pri)
 {
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite;
 
 	if (!sprite_enable) return;
@@ -188,14 +188,14 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 	for (y=0;y<256;y++)
 	{
 		int realy = (y + scrolly) & 0x1ff;
-		UINT16 *src = BITMAP_ADDR16(bm,     realy, 0);
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y,     0);
+		uint16_t *src = BITMAP_ADDR16(bm,     realy, 0);
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y,     0);
 
 
 		for (x=0;x<256;x++)
 		{
 			int realx = (x + scrollx) & 0x1ff;
-			UINT16 srcdat = src[realx];
+			uint16_t srcdat = src[realx];
 
 			/* 0x01 - data bits
                0x02

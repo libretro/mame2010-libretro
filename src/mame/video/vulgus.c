@@ -8,8 +8,8 @@
 
 #include "emu.h"
 
-UINT8 *vulgus_fgvideoram,*vulgus_bgvideoram;
-UINT8 *vulgus_scroll_low,*vulgus_scroll_high;
+uint8_t *vulgus_fgvideoram,*vulgus_bgvideoram;
+uint8_t *vulgus_scroll_low,*vulgus_scroll_high;
 
 static int vulgus_palette_bank;
 static tilemap_t *fg_tilemap, *bg_tilemap;
@@ -172,7 +172,7 @@ WRITE8_HANDLER( vulgus_palette_bank_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 

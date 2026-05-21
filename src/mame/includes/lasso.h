@@ -12,20 +12,20 @@ public:
 	lasso_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
-	UINT8 *  bitmap_ram;	/* 0x2000 bytes for a 256 x 256 x 1 bitmap */
-	UINT8 *  back_color;
-	UINT8 *  chip_data;
-	UINT8 *  track_scroll;
-	UINT8 *  last_colors;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
+	uint8_t *  bitmap_ram;	/* 0x2000 bytes for a 256 x 256 x 1 bitmap */
+	uint8_t *  back_color;
+	uint8_t *  chip_data;
+	uint8_t *  track_scroll;
+	uint8_t *  last_colors;
 	size_t   spriteram_size;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap, *track_tilemap;
-	UINT8    gfxbank;		/* used by lasso, chameleo, wwjgtin and pinbo */
-	UINT8    track_enable;	/* used by wwjgtin */
+	uint8_t    gfxbank;		/* used by lasso, chameleo, wwjgtin and pinbo */
+	uint8_t    track_enable;	/* used by wwjgtin */
 
 	/* devices */
 	running_device *maincpu;

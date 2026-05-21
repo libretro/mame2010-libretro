@@ -83,7 +83,7 @@ static WRITE8_HANDLER( simpsons_k053247_w )
 
 	if (offset < 0x1000)
 	{
-		UINT16 *spriteram = state->spriteram;
+		uint16_t *spriteram = state->spriteram;
 		offs = offset >> 1;
 
 		if (offset & 1)

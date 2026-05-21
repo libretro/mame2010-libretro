@@ -172,7 +172,7 @@ VIDEO_START( mermaid )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	mermaid_state *state = (mermaid_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 4; offs >= 0; offs -= 4)
@@ -218,10 +218,10 @@ VIDEO_UPDATE( mermaid )
 	return 0;
 }
 
-static UINT8 collision_check( running_machine *machine, rectangle* rect )
+static uint8_t collision_check( running_machine *machine, rectangle* rect )
 {
 	mermaid_state *state = (mermaid_state *)machine->driver_data;
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	int x;
 	int y;
@@ -229,8 +229,8 @@ static UINT8 collision_check( running_machine *machine, rectangle* rect )
 	for (y = rect->min_y; y <= rect->max_y; y++)
 		for (x = rect->min_x; x <= rect->max_x; x++)
 		{
-			UINT16 a = colortable_entry_get_value(machine->colortable, *BITMAP_ADDR16(state->helper, y, x)) & 0x3f;
-			UINT16 b = colortable_entry_get_value(machine->colortable, *BITMAP_ADDR16(state->helper2, y, x)) & 0x3f;
+			uint16_t a = colortable_entry_get_value(machine->colortable, *BITMAP_ADDR16(state->helper, y, x)) & 0x3f;
+			uint16_t b = colortable_entry_get_value(machine->colortable, *BITMAP_ADDR16(state->helper2, y, x)) & 0x3f;
 
 			if (b)
 				if (a)
@@ -244,7 +244,7 @@ VIDEO_EOF( mermaid )
 {
 	mermaid_state *state = (mermaid_state *)machine->driver_data;
 	const rectangle &visarea = machine->primary_screen->visible_area();
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 
 	int offs, offs2;
 

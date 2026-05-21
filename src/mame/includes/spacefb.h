@@ -36,7 +36,7 @@ WRITE8_HANDLER( spacefb_port_1_w );
 
 /*----------- defined in video/spacefb.c -----------*/
 
-extern UINT8 *spacefb_videoram;
+extern uint8_t *spacefb_videoram;
 extern size_t spacefb_videoram_size;
 
 VIDEO_START( spacefb );

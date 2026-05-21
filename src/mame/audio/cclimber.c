@@ -10,7 +10,7 @@
 #define SND_CLOCK 3072000	/* 3.072 MHz */
 
 
-static INT16 *samplebuf;	/* buffer to decode samples at run time */
+static int16_t *samplebuf;	/* buffer to decode samples at run time */
 
 
 static SAMPLES_START( cclimber_sh_start )
@@ -18,7 +18,7 @@ static SAMPLES_START( cclimber_sh_start )
 	running_machine *machine = device->machine;
 	samplebuf = 0;
 	if (memory_region(machine, "samples"))
-		samplebuf = auto_alloc_array(machine, INT16, 2 * memory_region_length(machine, "samples"));
+		samplebuf = auto_alloc_array(machine, int16_t, 2 * memory_region_length(machine, "samples"));
 }
 
 
@@ -26,7 +26,7 @@ static void cclimber_play_sample(running_machine *machine, int start,int freq,in
 {
 	int len;
 	int romlen = memory_region_length(machine, "samples");
-	const UINT8 *rom = memory_region(machine, "samples");
+	const uint8_t *rom = memory_region(machine, "samples");
 	running_device *samples = machine->device("samples");
 
 

@@ -23,7 +23,7 @@ static void update_palette(running_machine *machine)
 	for (color = 0; color < 0x800; ++color)
 	{
 		int i, r, g, b;
-		UINT16 const data = machine->generic.paletteram.u16[color];
+		uint16_t const data = machine->generic.paletteram.u16[color];
 
 		/* FIXME this is only a very crude approximation of the palette output.
          * The circuit involves a dozen transistors and probably has an output
@@ -54,7 +54,7 @@ static void update_palette(running_machine *machine)
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	eprom_state *state = (eprom_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = ((data >> 10) & 0x0f) | ((data >> 9) & 0x20);
 	int opaque = data & 0x8000;
@@ -65,8 +65,8 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	eprom_state *state = (eprom_state *)machine->driver_data;
-	UINT16 data1 = state->atarigen.playfield[tile_index];
-	UINT16 data2 = state->atarigen.playfield_upper[tile_index] >> 8;
+	uint16_t data1 = state->atarigen.playfield[tile_index];
+	uint16_t data2 = state->atarigen.playfield_upper[tile_index] >> 8;
 	int code = data1 & 0x7fff;
 	int color = 0x10 + (data2 & 0x0f);
 	SET_TILE_INFO(0, code, color, (data1 >> 15) & 1);
@@ -76,8 +76,8 @@ static TILE_GET_INFO( get_playfield_tile_info )
 static TILE_GET_INFO( guts_get_playfield_tile_info )
 {
 	eprom_state *state = (eprom_state *)machine->driver_data;
-	UINT16 data1 = state->atarigen.playfield[tile_index];
-	UINT16 data2 = state->atarigen.playfield_upper[tile_index] >> 8;
+	uint16_t data1 = state->atarigen.playfield[tile_index];
+	uint16_t data2 = state->atarigen.playfield_upper[tile_index] >> 8;
 	int code = data1 & 0x7fff;
 	int color = 0x10 + (data2 & 0x0f);
 	SET_TILE_INFO(2, code, color, (data1 >> 15) & 1);
@@ -257,8 +257,8 @@ VIDEO_UPDATE( eprom )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -366,8 +366,8 @@ VIDEO_UPDATE( eprom )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -412,8 +412,8 @@ VIDEO_UPDATE( guts )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -440,8 +440,8 @@ VIDEO_UPDATE( guts )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

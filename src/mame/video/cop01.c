@@ -39,7 +39,7 @@ PALETTE_INIT( cop01 )
 	/* I'm only using the first 32 bytes because the rest is empty. */
 	for (i = 0x10; i < 0x90; i++)
 	{
-		UINT8 ctabentry = 0xc0 | ((i - 0x10) & 0x30) |
+		uint8_t ctabentry = 0xc0 | ((i - 0x10) & 0x30) |
 						  (color_prom[(((i - 0x10) & 0x40) >> 2) | ((i - 0x10) & 0x0f)] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -47,7 +47,7 @@ PALETTE_INIT( cop01 )
 	/* sprites use colors 0x80-0x8f (or 0x80-0xbf, but the four rows are identical) */
 	for (i = 0x90; i < 0x190; i++)
 	{
-		UINT8 ctabentry = 0x80 | (color_prom[i - 0x90 + 0x100] & 0x0f);
+		uint8_t ctabentry = 0x80 | (color_prom[i - 0x90 + 0x100] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

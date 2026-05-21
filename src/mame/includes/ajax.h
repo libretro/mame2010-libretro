@@ -7,11 +7,11 @@ public:
 	ajax_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        layer_colorbase[3], sprite_colorbase, zoom_colorbase;
-	UINT8      priority;
+	uint8_t      priority;
 
 	/* misc */
 	int        firq_enable;

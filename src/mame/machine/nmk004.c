@@ -32,67 +32,67 @@
 
 struct psg_control
 {
-/* C220      */	UINT8  flags;
-/* C221-C222 */	UINT16 note_timer;
-/* C223-C224 */	UINT16 note_length;
-/* C225      */	UINT8  volume_timer;
-/* C227-C228 */	UINT16 current;		// current position in control table
-/* C229-C22A */	UINT16 return_address[16];	// return address when control table calls a subtable
+/* C220      */	uint8_t  flags;
+/* C221-C222 */	uint16_t note_timer;
+/* C223-C224 */	uint16_t note_length;
+/* C225      */	uint8_t  volume_timer;
+/* C227-C228 */	uint16_t current;		// current position in control table
+/* C229-C22A */	uint16_t return_address[16];	// return address when control table calls a subtable
 				int return_address_depth;
-/* C22B-C22C */	UINT16 loop_start;	// first instruction of loop
-/* C22D      */	UINT8  loop_times;	// number of times to loop
-/* C22E      */	UINT8  volume_shape;
-/* C22F      */	UINT8  volume_position;
-/* C230      */	UINT8  octave;	// base octave
-/* C231      */	UINT8  note;	// note to play
-/* C233      */	UINT8  note_period_hi_bits;
+/* C22B-C22C */	uint16_t loop_start;	// first instruction of loop
+/* C22D      */	uint8_t  loop_times;	// number of times to loop
+/* C22E      */	uint8_t  volume_shape;
+/* C22F      */	uint8_t  volume_position;
+/* C230      */	uint8_t  octave;	// base octave
+/* C231      */	uint8_t  note;	// note to play
+/* C233      */	uint8_t  note_period_hi_bits;
 };
 
 struct fm_control
 {
-UINT8 note;
-/* C020      */	UINT8  flags;
-/* C021      */	UINT8  slot;	// for ym2203 keyon command
-/* C022-C039 */	UINT8  voice_params[0x18];	// parameters for the YM2203 to configure sound shape
-/* C03A-C03B */	UINT16 f_number;
-/* C03C      */	UINT8  self_feedback;
-/* C03D      */	UINT8  note_duration_table_select;
-/* C03E-C03F */	UINT16 current;	// current position in control table
-/* C040-C041 */	UINT16 loop_start;	// first instruction of loop
-/* C042      */	UINT8  loop_times;	// number of times to loop
-/* C043-C044 */	UINT16 return_address[16];	// return address when control table calls a subtable
+uint8_t note;
+/* C020      */	uint8_t  flags;
+/* C021      */	uint8_t  slot;	// for ym2203 keyon command
+/* C022-C039 */	uint8_t  voice_params[0x18];	// parameters for the YM2203 to configure sound shape
+/* C03A-C03B */	uint16_t f_number;
+/* C03C      */	uint8_t  self_feedback;
+/* C03D      */	uint8_t  note_duration_table_select;
+/* C03E-C03F */	uint16_t current;	// current position in control table
+/* C040-C041 */	uint16_t loop_start;	// first instruction of loop
+/* C042      */	uint8_t  loop_times;	// number of times to loop
+/* C043-C044 */	uint16_t return_address[16];	// return address when control table calls a subtable
 				int    return_address_depth;
-/* C045      */	UINT8  octave;
-/* C046-C047 */	UINT16 timer1;
-/* C048-C049 */	UINT16 timer2;
-/* C04A-C04B */	UINT16 timer1_duration;
-/* C04C-C04D */	UINT16 timer2_duration;
-/* C04E      */	UINT8  modulation_table_number;
-/* C04F-C050 */	UINT16 modulation_timer;
-/* C051-C052 */	UINT16 modulation_table;
-/* C053-C054 */	UINT16 modulation_table_position;
-/* C055-C056 */	UINT16 note_period;
-/* C057-C05A */	UINT8  voice_volume[4];	// parameters for the YM2203 to configure sound shape
-/* C05C      */ UINT8  must_update_voice_params;
+/* C045      */	uint8_t  octave;
+/* C046-C047 */	uint16_t timer1;
+/* C048-C049 */	uint16_t timer2;
+/* C04A-C04B */	uint16_t timer1_duration;
+/* C04C-C04D */	uint16_t timer2_duration;
+/* C04E      */	uint8_t  modulation_table_number;
+/* C04F-C050 */	uint16_t modulation_timer;
+/* C051-C052 */	uint16_t modulation_table;
+/* C053-C054 */	uint16_t modulation_table_position;
+/* C055-C056 */	uint16_t note_period;
+/* C057-C05A */	uint8_t  voice_volume[4];	// parameters for the YM2203 to configure sound shape
+/* C05C      */ uint8_t  must_update_voice_params;
 };
 
 struct effects_control
 {
-/* C1A0      */	UINT8  flags;
-/* C1BE-C1BF */	UINT16 current;	// current position in control table
-/* C1C0-C1C1 */	UINT16 loop_start;	// first instruction of loop
-/* C1C2      */	UINT8  loop_times;	// number of times to loop
-/* C1C3-C1C4 */	UINT16 return_address[16];	// return address when control table calls a subtable
+/* C1A0      */	uint8_t  flags;
+/* C1BE-C1BF */	uint16_t current;	// current position in control table
+/* C1C0-C1C1 */	uint16_t loop_start;	// first instruction of loop
+/* C1C2      */	uint8_t  loop_times;	// number of times to loop
+/* C1C3-C1C4 */	uint16_t return_address[16];	// return address when control table calls a subtable
 				int    return_address_depth;
-/* C1C6-C1C7 */	UINT16 timer;
-/* C1CA-C1CB */	UINT16 timer_duration;
+/* C1C6-C1C7 */	uint16_t timer;
+/* C1CA-C1CB */	uint16_t timer_duration;
 };
 
 static struct
 {
-	const UINT8 *rom;	// NMK004 data ROM
-	UINT8 from_main;	// command from main CPU
-	UINT8 to_main;		// answer to main CPU
+	const uint8_t *rom;	// NMK004 data ROM
+	uint8_t from_main;	// command from main CPU
+	uint8_t to_main;		// answer to main CPU
 	int protection_check;
 
 	running_machine *machine;
@@ -100,8 +100,8 @@ static struct
 	running_device *oki1device;
 	running_device *oki2device;
 
-	/* C001      */	UINT8 last_command;		// last command received
-	/* C016      */	UINT8 oki_playing;		// bitmap of active Oki channels
+	/* C001      */	uint8_t last_command;		// last command received
+	/* C016      */	uint8_t oki_playing;		// bitmap of active Oki channels
 	/* C020-C19F */	struct fm_control fm_control[FM_CHANNELS];
 	/* C220-C2DF */	struct psg_control psg_control[PSG_CHANNELS];
 	/* C1A0-C21F */	struct effects_control effects_control[EFFECTS_CHANNELS];
@@ -120,12 +120,12 @@ static struct
 #define PSG_NOTE_TABLE		0xeff2
 
 
-static UINT8 read8(int address)
+static uint8_t read8(int address)
 {
 	return NMK004_state.rom[address];
 }
 
-static UINT16 read16(int address)
+static uint16_t read16(int address)
 {
 	return NMK004_state.rom[address] + 256 * NMK004_state.rom[address+1];
 }
@@ -140,9 +140,9 @@ static UINT16 read16(int address)
 
 static void oki_play_sample(int sample_no)
 {
-	UINT16 table_start = (sample_no & 0x80) ? read16(SAMPLE_TABLE_1) : read16(SAMPLE_TABLE_0);
-	UINT8 byte1 = read8(table_start + 2 * (sample_no & 0x7f) + 0);
-	UINT8 byte2 = read8(table_start + 2 * (sample_no & 0x7f) + 1);
+	uint16_t table_start = (sample_no & 0x80) ? read16(SAMPLE_TABLE_1) : read16(SAMPLE_TABLE_0);
+	uint8_t byte1 = read8(table_start + 2 * (sample_no & 0x7f) + 0);
+	uint8_t byte2 = read8(table_start + 2 * (sample_no & 0x7f) + 1);
 	int chip = (byte1 & 0x80) >> 7;
 	running_device *okidevice = (chip) ? NMK004_state.oki2device : NMK004_state.oki1device;
 
@@ -167,7 +167,7 @@ static void oki_play_sample(int sample_no)
 
 		if (sample != 0)
 		{
-			UINT8 *rom = memory_region(NMK004_state.machine, (chip == 0) ? "oki1" : "oki2");
+			uint8_t *rom = memory_region(NMK004_state.machine, (chip == 0) ? "oki1" : "oki2");
 			int bank = (byte2 & 0x0c) >> 2;
 			int vol = (byte2 & 0x70) >> 4;
 
@@ -213,7 +213,7 @@ static void effects_update(int channel)
 	{
 		if (effects->timer == 0)
 		{
-			UINT8 token;
+			uint8_t token;
 
 			do
 			{
@@ -282,7 +282,7 @@ static void effects_update(int channel)
 			// optional note length (otherwise use the same length as the previous one)
 			if (read8(effects->current) & 0x80)
 			{
-				UINT16 table_start = read16(NOTE_LENGTH_TABLE_1);
+				uint16_t table_start = read16(NOTE_LENGTH_TABLE_1);
 
 				effects->timer_duration = read16(table_start + 2 * (read8(effects->current++) & 0x7f));
 			}
@@ -326,7 +326,7 @@ static void fm_update(int channel)
 	{
 		if (fm->timer1 == 0)
 		{
-			UINT8 token;
+			uint8_t token;
 
 			do
 			{
@@ -424,7 +424,7 @@ static void fm_update(int channel)
 							}
 							else
 							{
-								UINT16 table_start = read16(FM_MODULATION_TABLE);
+								uint16_t table_start = read16(FM_MODULATION_TABLE);
 
 								fm->modulation_table = read16(table_start + 2 * (fm->modulation_table_number - 1));
 								fm->modulation_timer = read16(fm->modulation_table);
@@ -458,9 +458,9 @@ fm->note = note;
 					fm->flags |=  FM_FLAG_NOTE_IS_PAUSE;
 				else
 				{
-					UINT16 table_start = read16(FM_NOTE_TABLE);
-					UINT16 period = read16(table_start + 2 * (note & 0x0f));
-					UINT8 octave = ((fm->octave << 4) + note) & 0xf0;
+					uint16_t table_start = read16(FM_NOTE_TABLE);
+					uint16_t period = read16(table_start + 2 * (note & 0x0f));
+					uint8_t octave = ((fm->octave << 4) + note) & 0xf0;
 
 					fm->flags &= ~FM_FLAG_NOTE_IS_PAUSE;
 					fm->note_period = period | (octave << 7);
@@ -472,8 +472,8 @@ fm->note = note;
 			// optional note length (otherwise use the same length as the previous one)
 			if (read8(fm->current) & 0x80)
 			{
-				UINT16 table_start;
-				UINT8 duration = read8(fm->current++) & 0x7f;
+				uint16_t table_start;
+				uint8_t duration = read8(fm->current++) & 0x7f;
 
 				table_start = read16(NOTE_LENGTH_TABLE_1);
 				fm->timer1_duration = read16(table_start + 2 * duration);
@@ -520,7 +520,7 @@ fm->note = note;
 		if (fm->modulation_timer == 0)
 		{
 			int i;
-			UINT16 a;
+			uint16_t a;
 
 			for (i = 0; i < 4; i++)
 				fm->voice_params[0x04 + i] = fm->voice_volume[i];
@@ -533,7 +533,7 @@ fm->note = note;
 
 			fm->f_number = fm->note_period + a;
 
-			fm->modulation_timer = read8(fm->modulation_table_position++);	// modulation_timer is UINT16 but this is just 8-bit
+			fm->modulation_timer = read8(fm->modulation_table_position++);	// modulation_timer is uint16_t but this is just 8-bit
 
 			if (read8(fm->modulation_table_position) == 0x80)	// end of table - repeat
 			{
@@ -712,7 +712,7 @@ static void psg_update(int channel)
 	{
 		if (psg->note_timer == 0)
 		{
-			UINT8 token;
+			uint8_t token;
 
 			do
 			{
@@ -799,7 +799,7 @@ static void psg_update(int channel)
 			// optional note length (otherwise use the same length as the previous one)
 			if (read8(psg->current) & 0x80)
 			{
-				UINT16 table_start = read16(NOTE_LENGTH_TABLE_1);
+				uint16_t table_start = read16(NOTE_LENGTH_TABLE_1);
 
 				psg->note_length = read16(table_start + 2 * (read8(psg->current++) & 0x7f));
 			}
@@ -817,9 +817,9 @@ static void psg_update(int channel)
 
 				if (!(psg->flags & PSG_FLAG_NOTE_IS_NOISE))
 				{
-					UINT16 table_start = read16(PSG_NOTE_TABLE);
-					UINT16 period = read16(table_start + 2 * (psg->note & 0x0f));
-					UINT8 octave = psg->octave + ((psg->note & 0xf0) >> 4);
+					uint16_t table_start = read16(PSG_NOTE_TABLE);
+					uint16_t period = read16(table_start + 2 * (psg->note & 0x0f));
+					uint8_t octave = psg->octave + ((psg->note & 0xf0) >> 4);
 
 					period >>= octave;
 
@@ -855,8 +855,8 @@ static void psg_update(int channel)
 
 		if (psg->volume_timer == 0)
 		{
-			UINT16 table_start = read16(PSG_VOLUME_TABLE);
-			UINT16 vol_table_start = read16(table_start + 2 * psg->volume_shape);
+			uint16_t table_start = read16(PSG_VOLUME_TABLE);
+			uint16_t vol_table_start = read16(table_start + 2 * psg->volume_shape);
 			int volume;
 
 			if (psg->flags & PSG_FLAG_INITIALIZE_VOLUME)
@@ -888,16 +888,16 @@ static void psg_update(int channel)
 
 static void get_command(void)
 {
-	static const UINT8 from_main[] =
+	static const uint8_t from_main[] =
 	{
 		0x00,0x22,0x62,0x8c,0xc7,0x00,0x00,0x3f,0x7f,0x89,0xc7,0x00,0x00,0x2b,0x6b
 	};
-	static const UINT8 to_main[] =
+	static const uint8_t to_main[] =
 	{
 		0x82,0xc7,0x00,0x2c,0x6c,0x00,0x9f,0xc7,0x00,0x29,0x69,0x00,0x8b,0xc7,0x00
 	};
 
-	UINT8 cmd = NMK004_state.from_main;
+	uint8_t cmd = NMK004_state.from_main;
 
 	if (NMK004_state.protection_check < sizeof(to_main))
 	{
@@ -916,8 +916,8 @@ static void get_command(void)
 
 	if (NMK004_state.last_command != cmd)
 	{
-		UINT16 table_start = read16(COMMAND_TABLE);
-		UINT16 cmd_table = read16(table_start + 2 * cmd);
+		uint16_t table_start = read16(COMMAND_TABLE);
+		uint16_t cmd_table = read16(table_start + 2 * cmd);
 
 		NMK004_state.last_command = cmd;
 
@@ -1010,7 +1010,7 @@ void NMK004_irq(running_device *device, int irq)
 
 static TIMER_CALLBACK( real_nmk004_init )
 {
-	static const UINT8 ym2203_init[] =
+	static const uint8_t ym2203_init[] =
 	{
 		0x07,0x38,0x08,0x00,0x09,0x00,0x0A,0x00,0x24,0xB3,0x25,0x00,0x26,0xF9,0x27,0x15,
 		0x28,0x00,0x28,0x01,0x28,0x02,0x40,0x00,0x41,0x00,0x42,0x00,0x44,0x00,0x45,0x00,

@@ -38,51 +38,51 @@
 
 struct serial_state
 {
-	UINT8	data[16];
-	UINT8	buffer;
-	UINT8	index;
-	UINT8	status;
-	UINT8	bits;
-	UINT8	ormask;
+	uint8_t	data[16];
+	uint8_t	buffer;
+	uint8_t	index;
+	uint8_t	status;
+	uint8_t	bits;
+	uint8_t	ormask;
 };
 
 struct pic_state
 {
-	UINT16	latch;
+	uint16_t	latch;
 	attotime latch_expire_time;
-	UINT8	state;
-	UINT8	index;
-	UINT8	total;
-	UINT8	nvram_addr;
-	UINT8	buffer[0x10];
-	UINT8	nvram[PIC_NVRAM_SIZE];
-	UINT8	default_nvram[PIC_NVRAM_SIZE];
-	UINT8	time_buf[8];
-	UINT8	time_index;
-	UINT8	time_just_written;
-	UINT16	yearoffs;
+	uint8_t	state;
+	uint8_t	index;
+	uint8_t	total;
+	uint8_t	nvram_addr;
+	uint8_t	buffer[0x10];
+	uint8_t	nvram[PIC_NVRAM_SIZE];
+	uint8_t	default_nvram[PIC_NVRAM_SIZE];
+	uint8_t	time_buf[8];
+	uint8_t	time_index;
+	uint8_t	time_just_written;
+	uint16_t	yearoffs;
 	emu_timer *time_write_timer;
 };
 
 struct ioasic_state
 {
-	UINT32	reg[16];
-	UINT8	has_dcs;
-	UINT8	has_cage;
+	uint32_t	reg[16];
+	uint8_t	has_dcs;
+	uint8_t	has_cage;
 	running_device *dcs_cpu;
-	UINT8	shuffle_type;
-	UINT8	shuffle_active;
-	const UINT8 *	shuffle_map;
+	uint8_t	shuffle_type;
+	uint8_t	shuffle_active;
+	const uint8_t *	shuffle_map;
 	void	(*irq_callback)(running_machine *, int);
-	UINT8	irq_state;
-	UINT16	sound_irq_state;
-	UINT8	auto_ack;
-	UINT8	force_fifo_full;
+	uint8_t	irq_state;
+	uint16_t	sound_irq_state;
+	uint8_t	auto_ack;
+	uint8_t	force_fifo_full;
 
-	UINT16	fifo[FIFO_SIZE];
-	UINT16	fifo_in;
-	UINT16	fifo_out;
-	UINT16	fifo_bytes;
+	uint16_t	fifo[FIFO_SIZE];
+	uint16_t	fifo_in;
+	uint16_t	fifo_out;
+	uint16_t	fifo_bytes;
 	offs_t	fifo_force_buffer_empty_pc;
 };
 
@@ -110,8 +110,8 @@ static struct ioasic_state ioasic;
 static void generate_serial_data(running_machine *machine, int upper)
 {
 	int year = atoi(machine->gamedrv->year), month = 12, day = 11;
-	UINT32 serial_number, temp;
-	UINT8 serial_digit[9];
+	uint32_t serial_number, temp;
+	uint8_t serial_digit[9];
 
 	serial_number = 123456;
 	serial_number += upper * 1000000;
@@ -199,13 +199,13 @@ void midway_serial_pic_reset_w(int state)
 }
 
 
-UINT8 midway_serial_pic_status_r(void)
+uint8_t midway_serial_pic_status_r(void)
 {
 	return serial.status;
 }
 
 
-UINT8 midway_serial_pic_r(const address_space *space)
+uint8_t midway_serial_pic_r(const address_space *space)
 {
 	logerror("%s:security R = %04X\n", cpuexec_describe_context(space->machine), serial.buffer);
 	serial.status = 1;
@@ -213,7 +213,7 @@ UINT8 midway_serial_pic_r(const address_space *space)
 }
 
 
-void midway_serial_pic_w(const address_space *space, UINT8 data)
+void midway_serial_pic_w(const address_space *space, uint8_t data)
 {
 	logerror("%s:security W = %04X\n", cpuexec_describe_context(space->machine), data);
 
@@ -243,7 +243,7 @@ void midway_serial_pic_w(const address_space *space, UINT8 data)
  *
  *************************************/
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ((data / 10) << 4) | (data % 10);
 }
@@ -287,15 +287,15 @@ void midway_serial_pic2_init(running_machine *machine, int upper, int yearoffs)
 }
 
 
-void midway_serial_pic2_set_default_nvram(const UINT8 *nvram)
+void midway_serial_pic2_set_default_nvram(const uint8_t *nvram)
 {
 	memcpy(pic.default_nvram, nvram, sizeof(pic.default_nvram));
 }
 
 
-UINT8 midway_serial_pic2_status_r(const address_space *space)
+uint8_t midway_serial_pic2_status_r(const address_space *space)
 {
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	/* if we're still holding the data ready bit high, do it */
 	if (pic.latch & 0xf00)
@@ -312,9 +312,9 @@ UINT8 midway_serial_pic2_status_r(const address_space *space)
 }
 
 
-UINT8 midway_serial_pic2_r(const address_space *space)
+uint8_t midway_serial_pic2_r(const address_space *space)
 {
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	/* PIC data register */
 	logerror("%s:PIC data read (index=%d total=%d latch=%03X) =", cpuexec_describe_context(space->machine), pic.index, pic.total, pic.latch);
@@ -332,7 +332,7 @@ UINT8 midway_serial_pic2_r(const address_space *space)
 }
 
 
-void midway_serial_pic2_w(const address_space *space, UINT8 data)
+void midway_serial_pic2_w(const address_space *space, uint8_t data)
 {
 	running_machine *machine = space->machine;
 	static FILE *nvramlog;
@@ -558,8 +558,8 @@ enum
 	IOASIC_INTCTL		/* f: interrupt control */
 };
 
-static UINT16 ioasic_fifo_r(running_device *device);
-static UINT16 ioasic_fifo_status_r(running_device *device);
+static uint16_t ioasic_fifo_r(running_device *device);
+static uint16_t ioasic_fifo_status_r(running_device *device);
 static void ioasic_input_empty(running_machine *machine, int state);
 static void ioasic_output_full(running_machine *machine, int state);
 static void update_ioasic_irq(running_machine *machine);
@@ -584,7 +584,7 @@ static void ioasic_register_state(running_machine *machine)
 
 void midway_ioasic_init(running_machine *machine, int shuffle, int upper, int yearoffs, void (*irq_callback)(running_machine *, int))
 {
-	static const UINT8 shuffle_maps[][16] =
+	static const uint8_t shuffle_maps[][16] =
 	{
 		{ 0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa,0xb,0xc,0xd,0xe,0xf },	/* WarGods, WG3DH, SFRush, MK4 */
 		{ 0x4,0x5,0x6,0x7,0xb,0xa,0x9,0x8,0x3,0x2,0x1,0x0,0xf,0xe,0xd,0xc },	/* Blitz, Blitz99 */
@@ -659,9 +659,9 @@ void midway_ioasic_reset(running_machine *machine)
 
 static void update_ioasic_irq(running_machine *machine)
 {
-	UINT16 fifo_state = ioasic_fifo_status_r(NULL);
-	UINT16 irqbits = 0x2000;
-	UINT8 new_state;
+	uint16_t fifo_state = ioasic_fifo_status_r(NULL);
+	uint16_t irqbits = 0x2000;
+	uint8_t new_state;
 
 	irqbits |= ioasic.sound_irq_state;
 	if (ioasic.reg[IOASIC_UARTIN] & 0x1000)
@@ -724,9 +724,9 @@ static void ioasic_output_full(running_machine *machine, int state)
  *
  *************************************/
 
-static UINT16 ioasic_fifo_r(running_device *device)
+static uint16_t ioasic_fifo_r(running_device *device)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	/* we can only read data if there's some to read! */
 	if (ioasic.fifo_bytes != 0)
@@ -759,9 +759,9 @@ static UINT16 ioasic_fifo_r(running_device *device)
 }
 
 
-static UINT16 ioasic_fifo_status_r(running_device *device)
+static uint16_t ioasic_fifo_status_r(running_device *device)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	if (ioasic.fifo_bytes == 0 && !ioasic.force_fifo_full)
 		result |= 0x08;
@@ -805,7 +805,7 @@ void midway_ioasic_fifo_reset_w(running_machine *machine, int state)
 }
 
 
-void midway_ioasic_fifo_w(running_machine *machine, UINT16 data)
+void midway_ioasic_fifo_w(running_machine *machine, uint16_t data)
 {
 	/* if we have room, add it to the FIFO buffer */
 	if (ioasic.fifo_bytes < FIFO_SIZE)
@@ -825,7 +825,7 @@ void midway_ioasic_fifo_w(running_machine *machine, UINT16 data)
 }
 
 
-void midway_ioasic_fifo_full_w(running_machine *machine, UINT16 data)
+void midway_ioasic_fifo_full_w(running_machine *machine, uint16_t data)
 {
 	if (LOG_FIFO)
 		logerror("fifo_full_w(%04X)\n", data);
@@ -844,7 +844,7 @@ void midway_ioasic_fifo_full_w(running_machine *machine, UINT16 data)
 
 READ32_HANDLER( midway_ioasic_packed_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	if (ACCESSING_BITS_0_15)
 		result |= midway_ioasic_r(space, offset*2, 0x0000ffff) & 0xffff;
 	if (ACCESSING_BITS_16_31)
@@ -855,7 +855,7 @@ READ32_HANDLER( midway_ioasic_packed_r )
 
 READ32_HANDLER( midway_ioasic_r )
 {
-	UINT32 result;
+	uint32_t result;
 
 	offset = ioasic.shuffle_active ? ioasic.shuffle_map[offset & 15] : offset;
 	result = ioasic.reg[offset];
@@ -919,7 +919,7 @@ READ32_HANDLER( midway_ioasic_r )
 				result = main_from_cage_r(space);
 			else
 			{
-				static UINT16 val = 0;
+				static uint16_t val = 0;
 				result = val = ~val;
 			}
 			break;
@@ -950,7 +950,7 @@ WRITE32_HANDLER( midway_ioasic_packed_w )
 
 WRITE32_HANDLER( midway_ioasic_w )
 {
-	UINT32 oldreg, newreg;
+	uint32_t oldreg, newreg;
 
 	offset = ioasic.shuffle_active ? ioasic.shuffle_map[offset & 15] : offset;
 	oldreg = ioasic.reg[offset];
@@ -1063,8 +1063,8 @@ READ32_DEVICE_HANDLER( midway_ide_asic_r )
 {
 	/* convert to standard IDE offsets */
 	offs_t ideoffs = 0x1f0/4 + (offset >> 2);
-	UINT8 shift = 8 * (offset & 3);
-	UINT32 result;
+	uint8_t shift = 8 * (offset & 3);
+	uint32_t result;
 
 	/* offset 0 is a special case */
 	if (offset == 0)
@@ -1081,7 +1081,7 @@ WRITE32_DEVICE_HANDLER( midway_ide_asic_w )
 {
 	/* convert to standard IDE offsets */
 	offs_t ideoffs = 0x1f0/4 + (offset >> 2);
-	UINT8 shift = 8 * (offset & 3);
+	uint8_t shift = 8 * (offset & 3);
 
 	/* offset 0 is a special case */
 	if (offset == 0)

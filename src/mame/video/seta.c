@@ -149,12 +149,12 @@ static int tilemaps_flip;
 
 int seta_tiles_offset;
 
-UINT16 *seta_vram_0, *seta_vctrl_0;
-UINT16 *seta_vram_2, *seta_vctrl_2;
-UINT16 *seta_vregs;
+uint16_t *seta_vram_0, *seta_vctrl_0;
+uint16_t *seta_vram_2, *seta_vctrl_2;
+uint16_t *seta_vregs;
 size_t seta_paletteram_size;
 
-UINT16 *seta_workram; // Used for zombraid crosshair hack
+uint16_t *seta_workram; // Used for zombraid crosshair hack
 
 static int twineagl_tilebank[4];
 static int	seta_samples_bank;
@@ -320,7 +320,7 @@ WRITE16_HANDLER( seta_vregs_w )
 
 				if (new_bank != seta_samples_bank)
 				{
-					UINT8 *rom = memory_region(space->machine, "x1snd");
+					uint8_t *rom = memory_region(space->machine, "x1snd");
 					int samples_len = memory_region_length(space->machine, "x1snd");
 					int addr;
 
@@ -388,10 +388,10 @@ Offset + 0x4:
 
 ***************************************************************************/
 
-INLINE void twineagl_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, UINT16 *vram )
+INLINE void twineagl_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, uint16_t *vram )
 {
-	UINT16 code =	vram[ tile_index ];
-	UINT16 attr =	vram[ tile_index + 0x800 ];
+	uint16_t code =	vram[ tile_index ];
+	uint16_t attr =	vram[ tile_index + 0x800 ];
 	if ((code & 0x3e00) == 0x3e00)
 		code = (code & 0xc07f) | ((twineagl_tilebank[(code & 0x0180) >> 7] >> 1) << 7);
 	SET_TILE_INFO( 1, (code & 0x3fff), attr & 0x1f, TILE_FLIPXY((code & 0xc000) >> 14) );
@@ -401,10 +401,10 @@ static TILE_GET_INFO( twineagl_get_tile_info_0 ) { twineagl_tile_info( machine, 
 static TILE_GET_INFO( twineagl_get_tile_info_1 ) { twineagl_tile_info( machine, tileinfo, tile_index, seta_vram_0 + 0x1000 ); }
 
 
-INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int layer, UINT16 *vram )
+INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int layer, uint16_t *vram )
 {
-	UINT16 code =	vram[ tile_index ];
-	UINT16 attr =	vram[ tile_index + 0x800 ];
+	uint16_t code =	vram[ tile_index ];
+	uint16_t attr =	vram[ tile_index + 0x800 ];
 	SET_TILE_INFO( 1 + layer, seta_tiles_offset + (code & 0x3fff), attr & 0x1f, TILE_FLIPXY((code & 0xc000) >> 14) );
 }
 
@@ -671,7 +671,7 @@ PALETTE_INIT( usclssic )
 	/* DECODE PROM */
 	for (x = 0; x < 0x200 ; x++)
 	{
-		UINT16 data = (color_prom[x*2] <<8) | color_prom[x*2+1];
+		uint16_t data = (color_prom[x*2] <<8) | color_prom[x*2+1];
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 10), pal5bit(data >> 5), pal5bit(data >> 0));
 
@@ -693,7 +693,7 @@ static void set_pens(running_machine *machine)
 
 	for (i = 0; i < seta_paletteram_size / 2; i++)
 	{
-		UINT16 data = machine->generic.paletteram.u16[i];
+		uint16_t data = machine->generic.paletteram.u16[i];
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 10), pal5bit(data >> 5), pal5bit(data >> 0));
 
@@ -711,7 +711,7 @@ static void usclssic_set_pens(running_machine *machine)
 
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT16 data = machine->generic.paletteram.u16[i];
+		uint16_t data = machine->generic.paletteram.u16[i];
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 10), pal5bit(data >> 5), pal5bit(data >> 0));
 
@@ -735,7 +735,7 @@ static void usclssic_set_pens(running_machine *machine)
 
 static void draw_sprites_map(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs, col;
 	int xoffs, yoffs;
 
@@ -748,7 +748,7 @@ static void draw_sprites_map(running_machine *machine, bitmap_t *bitmap,const re
 	int numcol	=	ctrl2 & 0x000f;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	UINT16 *src = machine->generic.spriteram2.u16 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = machine->generic.spriteram2.u16 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int upper	=	( spriteram16[ 0x604/2 ] & 0xFF ) +
 					( spriteram16[ 0x606/2 ] & 0xFF ) * 256;
@@ -839,7 +839,7 @@ twineagl:   000 027 00 0f   (test mode)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 	int xoffs, yoffs;
 
@@ -851,7 +851,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 	int flip	=	ctrl & 0x40;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	UINT16 *src = machine->generic.spriteram2.u16 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = machine->generic.spriteram2.u16 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int max_y	=	0xf0;
 

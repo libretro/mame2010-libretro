@@ -14,27 +14,27 @@ public:
 	djboy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8		*videoram;
-	UINT8		*paletteram;
+	uint8_t		*videoram;
+	uint8_t		*paletteram;
 
 	/* ROM banking */
-	UINT8		bankxor;
-	UINT8		addr;
+	uint8_t		bankxor;
+	uint8_t		addr;
 
 	/* video-related */
 	tilemap_t	*background;
-	UINT8		videoreg, scrollx, scrolly;
+	uint8_t		videoreg, scrollx, scrolly;
 
 	/* Kaneko BEAST state */
-	UINT8		data_to_beast;
-	UINT8		data_to_z80;
-	UINT8		beast_to_z80_full;
-	UINT8		z80_to_beast_full;
-	UINT8		beast_int0_l;
-	UINT8		beast_p0;
-	UINT8		beast_p1;
-	UINT8		beast_p2;
-	UINT8		beast_p3;
+	uint8_t		data_to_beast;
+	uint8_t		data_to_z80;
+	uint8_t		beast_to_z80_full;
+	uint8_t		z80_to_beast_full;
+	uint8_t		beast_int0_l;
+	uint8_t		beast_p0;
+	uint8_t		beast_p1;
+	uint8_t		beast_p2;
+	uint8_t		beast_p3;
 
 	/* devices */
 	running_device *maincpu;

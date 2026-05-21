@@ -14,15 +14,15 @@
 #define BLITTER_DEST_HEIGHT			512
 
 
-static UINT16 blitter_data[8];
+static uint16_t blitter_data[8];
 
-static UINT16 *screenram;
-static UINT8 vispage;
-static UINT16 *blitter_base;
+static uint16_t *screenram;
+static uint8_t vispage;
+static uint16_t *blitter_base;
 static int blitter_rows;
 
-static UINT16 gunx, guny;
-static UINT8 blank_palette;
+static uint16_t gunx, guny;
+static uint8_t blank_palette;
 
 
 
@@ -54,7 +54,7 @@ INLINE void get_crosshair_xy(running_machine *machine, int player, int *x, int *
 
 READ16_HANDLER( lethalj_gun_r )
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 	int beamx, beamy;
 
 	switch (offset)
@@ -91,10 +91,10 @@ READ16_HANDLER( lethalj_gun_r )
 VIDEO_START( lethalj )
 {
 	/* allocate video RAM for screen */
-	screenram = auto_alloc_array(machine, UINT16, BLITTER_DEST_WIDTH * BLITTER_DEST_HEIGHT);
+	screenram = auto_alloc_array(machine, uint16_t, BLITTER_DEST_WIDTH * BLITTER_DEST_HEIGHT);
 
 	/* predetermine blitter info */
-	blitter_base = (UINT16 *)memory_region(machine, "gfx1");
+	blitter_base = (uint16_t *)memory_region(machine, "gfx1");
 	blitter_rows = memory_region_length(machine, "gfx1") / (2*BLITTER_SOURCE_WIDTH);
 }
 
@@ -115,12 +115,12 @@ static TIMER_CALLBACK( gen_ext1_int )
 
 static void do_blit(void)
 {
-	int dsty = (INT16)blitter_data[1];
-	int srcx = (UINT16)blitter_data[2];
-	int srcy = (UINT16)(blitter_data[3] + 1);
-	int width = (UINT16)blitter_data[5];
-	int dstx = (INT16)blitter_data[6];
-	int height = (UINT16)blitter_data[7];
+	int dsty = (int16_t)blitter_data[1];
+	int srcx = (uint16_t)blitter_data[2];
+	int srcy = (uint16_t)(blitter_data[3] + 1);
+	int width = (uint16_t)blitter_data[5];
+	int dstx = (int16_t)blitter_data[6];
+	int height = (uint16_t)blitter_data[7];
 	int y;
 /*
     logerror("blitter data = %04X %04X %04X %04X %04X %04X %04X %04X\n",
@@ -133,8 +133,8 @@ static void do_blit(void)
 		/* clip in Y */
 		if (dsty >= 0 && dsty < BLITTER_DEST_HEIGHT/2)
 		{
-			UINT16 *source = blitter_base + (srcy % blitter_rows) * BLITTER_SOURCE_WIDTH;
-			UINT16 *dest = screenram + (dsty + (vispage ^ 1) * 256) * BLITTER_DEST_WIDTH;
+			uint16_t *source = blitter_base + (srcy % blitter_rows) * BLITTER_SOURCE_WIDTH;
+			uint16_t *dest = screenram + (dsty + (vispage ^ 1) * 256) * BLITTER_DEST_WIDTH;
 			int sx = srcx;
 			int dx = dstx;
 			int x;
@@ -183,8 +183,8 @@ WRITE16_HANDLER( lethalj_blitter_w )
 
 void lethalj_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
-	UINT16 *src = &screenram[(vispage << 17) | ((params->rowaddr << 9) & 0x3fe00)];
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint16_t *src = &screenram[(vispage << 17) | ((params->rowaddr << 9) & 0x3fe00)];
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
 	int coladdr = params->coladdr << 1;
 	int x;
 

@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	gundealr_state *state = (gundealr_state *)machine->driver_data;
-	UINT8 attr = state->bg_videoram[2 * tile_index + 1];
+	uint8_t attr = state->bg_videoram[2 * tile_index + 1];
 	SET_TILE_INFO(
 			0,
 			state->bg_videoram[2 * tile_index] + ((attr & 0x07) << 8),
@@ -36,7 +36,7 @@ static TILEMAP_MAPPER( gundealr_scan )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	gundealr_state *state = (gundealr_state *)machine->driver_data;
-	UINT8 attr = state->fg_videoram[2 * tile_index + 1];
+	uint8_t attr = state->fg_videoram[2 * tile_index + 1];
 	SET_TILE_INFO(
 			1,
 			state->fg_videoram[2 * tile_index] + ((attr & 0x03) << 8),

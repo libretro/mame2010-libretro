@@ -12,16 +12,16 @@ public:
 	commando_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  videoram2;
-	UINT8 *  colorram2;
-//  UINT8 *  spriteram; // currently this uses generic buffered_spriteram
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  videoram2;
+	uint8_t *  colorram2;
+//  uint8_t *  spriteram; // currently this uses generic buffered_spriteram
 
 	/* video-related */
 	tilemap_t  *bg_tilemap, *fg_tilemap;
-	UINT8 scroll_x[2];
-	UINT8 scroll_y[2];
+	uint8_t scroll_x[2];
+	uint8_t scroll_y[2];
 
 	/* devices */
 	running_device *audiocpu;

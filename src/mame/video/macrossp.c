@@ -19,7 +19,7 @@ WRITE32_HANDLER( macrossp_scra_videoram_w )
 static TILE_GET_INFO( get_macrossp_scra_tile_info )
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
-	UINT32 attr, tileno, color;
+	uint32_t attr, tileno, color;
 
 	attr = state->scra_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -57,7 +57,7 @@ WRITE32_HANDLER( macrossp_scrb_videoram_w )
 static TILE_GET_INFO( get_macrossp_scrb_tile_info )
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
-	UINT32 attr, tileno, color;
+	uint32_t attr, tileno, color;
 
 	attr = state->scrb_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -95,7 +95,7 @@ WRITE32_HANDLER( macrossp_scrc_videoram_w )
 static TILE_GET_INFO( get_macrossp_scrc_tile_info )
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
-	UINT32 attr, tileno, color;
+	uint32_t attr, tileno, color;
 
 	attr = state->scrc_videoram[tile_index];
 	tileno = attr & 0x0000ffff;
@@ -133,7 +133,7 @@ WRITE32_HANDLER( macrossp_text_videoram_w )
 static TILE_GET_INFO( get_macrossp_text_tile_info )
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
-	UINT32 tileno, colour;
+	uint32_t tileno, colour;
 
 	tileno = state->text_videoram[tile_index] & 0x0000ffff;
 	colour = (state->text_videoram[tile_index] & 0x00fe0000) >> 17;
@@ -149,8 +149,8 @@ VIDEO_START( macrossp )
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
 
-	state->spriteram_old = auto_alloc_array_clear(machine, UINT32, state->spriteram_size / 4);
-	state->spriteram_old2 = auto_alloc_array_clear(machine, UINT32, state->spriteram_size / 4);
+	state->spriteram_old = auto_alloc_array_clear(machine, uint32_t, state->spriteram_size / 4);
+	state->spriteram_old2 = auto_alloc_array_clear(machine, uint32_t, state->spriteram_size / 4);
 
 	state->text_tilemap = tilemap_create(machine, get_macrossp_text_tile_info, tilemap_scan_rows, 16, 16, 64, 64);
 	state->scra_tilemap = tilemap_create(machine, get_macrossp_scra_tile_info, tilemap_scan_rows, 16, 16, 64, 64);
@@ -177,9 +177,9 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	//  UINT32 *source = state->spriteram;
-	UINT32 *source = state->spriteram_old2; /* buffers by two frames */
-	UINT32 *finish = source + state->spriteram_size / 4;
+	//  uint32_t *source = state->spriteram;
+	uint32_t *source = state->spriteram_old2; /* buffers by two frames */
+	uint32_t *finish = source + state->spriteram_size / 4;
 
 	while (source < finish)
 	{
@@ -324,7 +324,7 @@ static void draw_layer( running_machine *machine, bitmap_t *bitmap, const rectan
 {
 	macrossp_state *state = (macrossp_state *)machine->driver_data;
 	tilemap_t *tm;
-	UINT32 *vr;
+	uint32_t *vr;
 
 	switch (layer)
 	{

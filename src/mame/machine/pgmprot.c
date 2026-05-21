@@ -126,8 +126,8 @@ READ16_HANDLER( pstars_r )
 
 	if (offset == 0)
 	{
-		UINT16 d = state->pstars_val & 0xffff;
-		UINT16 realkey = state->pstars_key >> 8;
+		uint16_t d = state->pstars_val & 0xffff;
+		uint16_t realkey = state->pstars_key >> 8;
 		realkey |= state->pstars_key;
 		d ^= realkey;
 //      logerror("PSTARS A27 R  %6X\n", state->pstars_val);
@@ -135,8 +135,8 @@ READ16_HANDLER( pstars_r )
 	}
 	else if (offset == 1)
 	{
-		UINT16 d = state->pstars_val >> 16;
-		UINT16 realkey = state->pstars_key >> 8;
+		uint16_t d = state->pstars_val >> 16;
+		uint16_t realkey = state->pstars_key >> 8;
 		realkey |= state->pstars_key;
 		d ^= realkey;
 		return d;
@@ -157,7 +157,7 @@ WRITE16_HANDLER( pstars_w )
 
 	if (offset == 1)
 	{
-		UINT16 realkey;
+		uint16_t realkey;
 		if ((data >> 8) == 0xff)
 			state->pstars_key = 0xff00;
 		realkey = state->pstars_key >> 8;
@@ -314,7 +314,7 @@ static void asic3_compute_hold(running_machine *machine)
 READ16_HANDLER( pgm_asic3_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT8 res = 0;
+	uint8_t res = 0;
 	/* region is supplied by the protection device */
 
 	switch (state->asic3_reg)
@@ -401,16 +401,16 @@ WRITE16_HANDLER( pgm_asic3_reg_w )
 
 /*** Knights of Valour / Sango / PhotoY2k Protection (from ElSemi) (ASIC28) ***/
 
-static const UINT32 B0TABLE[16] = {2, 0, 1, 4, 3}; //maps char portraits to tables
+static const uint32_t B0TABLE[16] = {2, 0, 1, 4, 3}; //maps char portraits to tables
 
 // photo2yk bonus stage
-static const UINT32 AETABLE[16]={0x00,0x0a,0x14,
+static const uint32_t AETABLE[16]={0x00,0x0a,0x14,
 		0x01,0x0b,0x15,
 		0x02,0x0c,0x16
 };
 
 //Not sure if BATABLE is complete
-static const UINT32 BATABLE[0x40]= {
+static const uint32_t BATABLE[0x40]= {
      0x00,0x29,0x2c,0x35,0x3a,0x41,0x4a,0x4e,  //0x00
      0x57,0x5e,0x77,0x79,0x7a,0x7b,0x7c,0x7d, //0x08
      0x7e,0x7f,0x80,0x81,0x82,0x85,0x86,0x87, //0x10
@@ -458,7 +458,7 @@ READ16_HANDLER( sango_protram_r )
 READ16_HANDLER( asic28_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT32 val = (state->asic28_regs[1] << 16) | (state->asic28_regs[0]);
+	uint32_t val = (state->asic28_regs[1] << 16) | (state->asic28_regs[0]);
 
 	//logerror("Asic28 Read PC = %06x Command = %02x ??\n", cpu_get_pc(space->cpu), state->asic28_regs[1]);
 
@@ -478,7 +478,7 @@ READ16_HANDLER( asic28_r )
 
 		case 0xb4:
 			{
-				//UINT16 tmp = state->eoregs[v2];
+				//uint16_t tmp = state->eoregs[v2];
 				int v2 = state->asic28_regs[0] & 0x0f;
 				int v1 = (state->asic28_regs[0] & 0x0f00) >> 8;
 				//state->eoregs[v2] = state->eoregs[v1];
@@ -574,16 +574,16 @@ READ16_HANDLER( asic28_r )
 
 	if(offset == 0)
 	{
-		UINT16 d = val & 0xffff;
-		UINT16 realkey = state->asic28_key >> 8;
+		uint16_t d = val & 0xffff;
+		uint16_t realkey = state->asic28_key >> 8;
 		realkey |= state->asic28_key;
 		d ^= realkey;
 		return d;
 	}
 	else if (offset == 1)
 	{
-		UINT16 d = val >> 16;
-		UINT16 realkey = state->asic28_key >> 8;
+		uint16_t d = val >> 16;
+		uint16_t realkey = state->asic28_key >> 8;
 		realkey |= state->asic28_key;
 		d ^= realkey;
 		state->asic28_rcnt++;
@@ -603,7 +603,7 @@ WRITE16_HANDLER( asic28_w )
 
 	if (offset == 0)
 	{
-		UINT16 realkey =state->asic28_key >> 8;
+		uint16_t realkey =state->asic28_key >> 8;
 		realkey |= state->asic28_key;
 		data ^= realkey;
 		state->asic28_regs[0] = data;
@@ -611,7 +611,7 @@ WRITE16_HANDLER( asic28_w )
 	}
 	if (offset == 1)
 	{
-		UINT16 realkey;
+		uint16_t realkey;
 
 		state->asic28_key = data & 0xff00;
 
@@ -624,13 +624,13 @@ WRITE16_HANDLER( asic28_w )
 		state->asic_params[state->asic28_regs[1] & 0xff] = state->asic28_regs[0];
 		if (state->asic28_regs[1] == 0xE7)
 		{
-			UINT32 E0R = (state->asic_params[0xe7] >> 12) & 0xf;
+			uint32_t E0R = (state->asic_params[0xe7] >> 12) & 0xf;
 			state->eoregs[E0R] &= 0xffff;
 			state->eoregs[E0R] |= state->asic28_regs[0] << 16;
 		}
 		if (state->asic28_regs[1]==0xE5)
 		{
-			UINT32 E0R = (state->asic_params[0xe7] >> 12) & 0xf;
+			uint32_t E0R = (state->asic_params[0xe7] >> 12) & 0xf;
 			state->eoregs[E0R] &= 0xff0000;
 			state->eoregs[E0R] |= state->asic28_regs[0];
 		}
@@ -648,8 +648,8 @@ READ16_HANDLER( dw2_d80000_r )
 // if(dw2reg<0x20) //NOT SURE!!
 	{
 		//The value at 0x80EECE is computed in the routine at 0x107c18
-		UINT16 d = pgm_mainram[0xEECE/2];
-		UINT16 d2 = 0;
+		uint16_t d = pgm_mainram[0xEECE/2];
+		uint16_t d2 = 0;
 		d = (d >> 8) | (d << 8);
 		DW2BITSWAP(d, d2, 7,  0);
 		DW2BITSWAP(d, d2, 4,  1);
@@ -679,29 +679,29 @@ AddReadArea (0xda0000,0xdaffff,0,dw3_r8,dw3_r16,dw3_r32);
 
 #define DW3BITSWAP(s,d,bs,bd)  d=((d&(~(1<<bd)))|(((s>>bs)&1)<<bd))
 
-UINT16 dw3_Rw[8];
-UINT8 *dw3_R=(UINT8 *) dw3_Rw;
+uint16_t dw3_Rw[8];
+uint8_t *dw3_R=(uint8_t *) dw3_Rw;
 
-UINT8 dw3_r8(UINT32 addr)
+uint8_t dw3_r8(uint32_t addr)
 {
 	if(addr>=0xDA5610 && addr<=0xDA5613)
-		return *((UINT8 *) (dw3_R+((addr-0xDA5610)^1)));
+		return *((uint8_t *) (dw3_R+((addr-0xDA5610)^1)));
 	return 0;
 }
 
-UINT16 dw3_r16(UINT32 addr)
+uint16_t dw3_r16(uint32_t addr)
 {
 	if(addr>=0xDA5610 && addr<=0xDA5613)
-		return *((UINT16 *) (dw3_R+(addr-0xDA5610)));
+		return *((uint16_t *) (dw3_R+(addr-0xDA5610)));
 	return 0;
 }
 
-UINT32 dw3_r32(UINT32 addr)
+uint32_t dw3_r32(uint32_t addr)
 {
 	return 0;
 }
 
-void dw3_w8(UINT32 addr,UINT8 val)
+void dw3_w8(uint32_t addr,uint8_t val)
 {
 	if(addr==0xDA5610)
 		dw3_R[1]=val;
@@ -713,18 +713,18 @@ void dw3_w8(UINT32 addr,UINT8 val)
 		dw3_R[2]=val;
 }
 
-void dw3_w16(UINT32 addr,UINT16 val)
+void dw3_w16(uint32_t addr,uint16_t val)
 {
 	if(addr>=0xDA5610 && addr<=0xDA5613)
 	{
-		UINT16 *s=((UINT16 *) (dw3_R+(addr-0xDA5610)));
+		uint16_t *s=((uint16_t *) (dw3_R+(addr-0xDA5610)));
 		*s=val;
 		if(addr==0xDA5610)
 		{
 			if(val==1)
 			{
-				UINT16 v1=dw3_Rw[1];
-				UINT16 v2=0;
+				uint16_t v1=dw3_Rw[1];
+				uint16_t v2=0;
 				DW3BITSWAP(v1,v2,0,0);
 				DW3BITSWAP(v1,v2,1,1);
 				DW3BITSWAP(v1,v2,7,2);
@@ -742,7 +742,7 @@ void dw3_w16(UINT32 addr,UINT16 val)
 }
 
 
-void dw3_w32(UINT32 addr,UINT32 val)
+void dw3_w32(uint32_t addr,uint32_t val)
 {
 
 }

@@ -15,7 +15,7 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *		interrupt_scan;
+	uint16_t *		interrupt_scan;
 
 	double			brightness;
 	bitmap_t *		pfbitmap;

@@ -138,24 +138,24 @@
  *
  *************************************/
 
-UINT8 *itech8_grom_bank;
+uint8_t *itech8_grom_bank;
 
-static UINT8 blitter_data[16];
-static UINT8 blit_in_progress;
+static uint8_t blitter_data[16];
+static uint8_t blit_in_progress;
 
-static UINT8 page_select;
+static uint8_t page_select;
 
 static offs_t fetch_offset;
-static UINT8 fetch_rle_count;
-static UINT8 fetch_rle_value;
-static UINT8 fetch_rle_literal;
+static uint8_t fetch_rle_count;
+static uint8_t fetch_rle_value;
+static uint8_t fetch_rle_literal;
 
 static struct tms34061_display tms_state;
-static UINT8 *grom_base;
-static UINT32 grom_size;
+static uint8_t *grom_base;
+static uint32_t grom_size;
 
-static UINT8 grmatch_palcontrol;
-static UINT8 grmatch_xscroll;
+static uint8_t grmatch_palcontrol;
+static uint8_t grmatch_xscroll;
 static rgb_t grmatch_palette[2][16];
 
 
@@ -243,7 +243,7 @@ WRITE8_HANDLER( itech8_page_w )
  *
  *************************************/
 
-INLINE UINT8 fetch_next_raw(void)
+INLINE uint8_t fetch_next_raw(void)
 {
 	return grom_base[fetch_offset++ % grom_size];
 }
@@ -255,7 +255,7 @@ INLINE void consume_raw(int count)
 }
 
 
-INLINE UINT8 fetch_next_rle(void)
+INLINE uint8_t fetch_next_rle(void)
 {
 	if (fetch_rle_count == 0)
 	{
@@ -311,7 +311,7 @@ INLINE void consume_rle(int count)
 static void perform_blit(const address_space *space)
 {
 	offs_t addr = tms_state.regs[TMS34061_XYADDRESS] | ((tms_state.regs[TMS34061_XYOFFSET] & 0x300) << 8);
-	UINT8 shift = (BLITTER_FLAGS & BLITFLAG_SHIFT) ? 4 : 0;
+	uint8_t shift = (BLITTER_FLAGS & BLITFLAG_SHIFT) ? 4 : 0;
 	int transparent = (BLITTER_FLAGS & BLITFLAG_TRANSPARENT);
 	int ydir = (BLITTER_FLAGS & BLITFLAG_YFLIP) ? -1 : 1;
 	int xdir = (BLITTER_FLAGS & BLITFLAG_XFLIP) ? -1 : 1;
@@ -320,9 +320,9 @@ static void perform_blit(const address_space *space)
 	int color = tms34061_latch_r(space, 0);
 	int width = BLITTER_WIDTH;
 	int height = BLITTER_HEIGHT;
-	UINT8 transmaskhi, transmasklo;
-	UINT8 mask = BLITTER_MASK;
-	UINT8 skip[3];
+	uint8_t transmaskhi, transmasklo;
+	uint8_t mask = BLITTER_MASK;
+	uint8_t skip[3];
 	int x, y;
 
 	/* debugging */
@@ -395,7 +395,7 @@ static void perform_blit(const address_space *space)
 		/* loop over width */
 		for (x = 0; x < width; x++)
 		{
-			UINT8 pix = rle ? fetch_next_rle() : fetch_next_raw();
+			uint8_t pix = rle ? fetch_next_rle() : fetch_next_raw();
 
 			/* swap pixels for X flip in 4bpp mode */
 			if (xflip && transmaskhi != 0xff)
@@ -596,17 +596,17 @@ TIMER_DEVICE_CALLBACK( grmatch_palette_update )
 	if (grmatch_palcontrol & 0x80)
 	{
 		/* the TMS34070s latch at the start of the frame, based on the first few bytes */
-		UINT32 page_offset = (tms_state.dispstart & 0x0ffff) | grmatch_xscroll;
+		uint32_t page_offset = (tms_state.dispstart & 0x0ffff) | grmatch_xscroll;
 		int page, x;
 
 		/* iterate over both pages */
 		for (page = 0; page < 2; page++)
 		{
-			const UINT8 *base = &tms_state.vram[(page * 0x20000 + page_offset) & 0x3ffff];
+			const uint8_t *base = &tms_state.vram[(page * 0x20000 + page_offset) & 0x3ffff];
 			for (x = 0; x < 16; x++)
 			{
-				UINT8 data0 = base[x * 2 + 0];
-				UINT8 data1 = base[x * 2 + 1];
+				uint8_t data0 = base[x * 2 + 0];
+				uint8_t data1 = base[x * 2 + 1];
 				grmatch_palette[page][x] = MAKE_RGB(pal4bit(data0 >> 0), pal4bit(data1 >> 4), pal4bit(data1 >> 0));
 			}
 		}
@@ -623,7 +623,7 @@ TIMER_DEVICE_CALLBACK( grmatch_palette_update )
 
 VIDEO_UPDATE( itech8_2layer )
 {
-	UINT32 page_offset;
+	uint32_t page_offset;
 	int x, y;
 	const rgb_t *pens = tlc34076_get_pens();
 
@@ -643,9 +643,9 @@ VIDEO_UPDATE( itech8_2layer )
 	page_offset = tms_state.dispstart & 0x0ffff;
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *base0 = &tms_state.vram[(0x00000 + page_offset + y * 256) & 0x3ffff];
-		UINT8 *base2 = &tms_state.vram[(0x20000 + page_offset + y * 256) & 0x3ffff];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *base0 = &tms_state.vram[(0x00000 + page_offset + y * 256) & 0x3ffff];
+		uint8_t *base2 = &tms_state.vram[(0x20000 + page_offset + y * 256) & 0x3ffff];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
@@ -659,7 +659,7 @@ VIDEO_UPDATE( itech8_2layer )
 
 VIDEO_UPDATE( itech8_grmatch )
 {
-	UINT32 page_offset;
+	uint32_t page_offset;
 	int x, y;
 
 	/* first get the current display state */
@@ -680,14 +680,14 @@ VIDEO_UPDATE( itech8_grmatch )
 	page_offset = (tms_state.dispstart & 0x0ffff) | grmatch_xscroll;
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *base0 = &tms_state.vram[0x00000 + ((page_offset + y * 256) & 0xffff)];
-		UINT8 *base2 = &tms_state.vram[0x20000 + ((page_offset + y * 256) & 0xffff)];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *base0 = &tms_state.vram[0x00000 + ((page_offset + y * 256) & 0xffff)];
+		uint8_t *base2 = &tms_state.vram[0x20000 + ((page_offset + y * 256) & 0xffff)];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x & ~1; x <= cliprect->max_x; x += 2)
 		{
-			UINT8 pix0 = base0[x / 2];
-			UINT8 pix2 = base2[x / 2];
+			uint8_t pix0 = base0[x / 2];
+			uint8_t pix2 = base2[x / 2];
 
 			if ((pix0 & 0xf0) != 0)
 				dest[x] = grmatch_palette[0][pix0 >> 4];
@@ -706,7 +706,7 @@ VIDEO_UPDATE( itech8_grmatch )
 
 VIDEO_UPDATE( itech8_2page )
 {
-	UINT32 page_offset;
+	uint32_t page_offset;
 	int x, y;
 	const rgb_t *pens = tlc34076_get_pens();
 
@@ -725,8 +725,8 @@ VIDEO_UPDATE( itech8_2page )
 	page_offset = ((page_select & 0x80) << 10) | (tms_state.dispstart & 0x0ffff);
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *base = &tms_state.vram[(page_offset + y * 256) & 0x3ffff];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *base = &tms_state.vram[(page_offset + y * 256) & 0x3ffff];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			dest[x] = pens[base[x]];
@@ -737,7 +737,7 @@ VIDEO_UPDATE( itech8_2page )
 
 VIDEO_UPDATE( itech8_2page_large )
 {
-	UINT32 page_offset;
+	uint32_t page_offset;
 	int x, y;
 	const rgb_t *pens = tlc34076_get_pens();
 
@@ -758,9 +758,9 @@ VIDEO_UPDATE( itech8_2page_large )
 	page_offset = ((~page_select & 0x80) << 10) | (tms_state.dispstart & 0x0ffff);
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *base = &tms_state.vram[(page_offset + y * 256) & 0x3ffff];
-		UINT8 *latch = &tms_state.latchram[(page_offset + y * 256) & 0x3ffff];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *base = &tms_state.vram[(page_offset + y * 256) & 0x3ffff];
+		uint8_t *latch = &tms_state.latchram[(page_offset + y * 256) & 0x3ffff];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x & ~1; x <= cliprect->max_x; x += 2)
 		{

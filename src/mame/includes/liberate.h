@@ -5,19 +5,19 @@ public:
 
 	liberate_state(running_machine &machine) { }
 
-	UINT8 *videoram;
-	UINT8 *colorram;
-	UINT8 *paletteram;
-	UINT8 *spriteram;
-	UINT8 *scratchram;
-	UINT8 *charram;	/* prosoccr */
-	UINT8 *bg_vram; /* prosport */
+	uint8_t *videoram;
+	uint8_t *colorram;
+	uint8_t *paletteram;
+	uint8_t *spriteram;
+	uint8_t *scratchram;
+	uint8_t *charram;	/* prosoccr */
+	uint8_t *bg_vram; /* prosport */
 
-	UINT8 io_ram[16];
+	uint8_t io_ram[16];
 
 	int bank;
 	int latch;
-	UINT8 gfx_rom_readback;
+	uint8_t gfx_rom_readback;
 	int background_color;
 	int background_disable;
 

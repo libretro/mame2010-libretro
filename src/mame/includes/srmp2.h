@@ -10,15 +10,15 @@ public:
 
 	int adpcm_bank;
 	int adpcm_data;
-	UINT32 adpcm_sptr;
-	UINT32 adpcm_eptr;
+	uint32_t adpcm_sptr;
+	uint32_t adpcm_eptr;
 
 	int port_select;
 
 	union
 	{
-		UINT8 *u8;
-		UINT16 *u16;
+		uint8_t *u8;
+		uint16_t *u16;
 	} spriteram1, spriteram2, spriteram3;
 };
 

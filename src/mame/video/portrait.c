@@ -8,7 +8,7 @@
 #include "emu.h"
 
 int portrait_scroll;
-UINT8 *portrait_bgvideoram, *portrait_fgvideoram;
+uint8_t *portrait_bgvideoram, *portrait_fgvideoram;
 static tilemap_t *foreground, *background;
 
 WRITE8_HANDLER( portrait_bgvideo_write )
@@ -23,7 +23,7 @@ WRITE8_HANDLER( portrait_fgvideo_write )
 	portrait_fgvideoram[offset] = data;
 }
 
-INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, const UINT8 *source )
+INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, const uint8_t *source )
 {
 	int attr    = source[tile_index*2+0];
 	int tilenum = source[tile_index*2+1];
@@ -77,7 +77,7 @@ VIDEO_START( portrait )
 PALETTE_INIT( portrait )
 {
 	int i;
-	UINT8* lookup = memory_region(machine,"tileattr");
+	uint8_t* lookup = memory_region(machine,"tileattr");
 
 	/* allocate the colortable */
 	machine->colortable = colortable_alloc(machine, 0x40);
@@ -120,7 +120,7 @@ PALETTE_INIT( portrait )
 
 	for (i = 0;i < 0x800;i++)
 	{
-		UINT8 ctabentry = lookup[i]&0x3f;
+		uint8_t ctabentry = lookup[i]&0x3f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -128,8 +128,8 @@ PALETTE_INIT( portrait )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *source = machine->generic.spriteram.u8;
-	UINT8 *finish = source + 0x200;
+	uint8_t *source = machine->generic.spriteram.u8;
+	uint8_t *finish = source + 0x200;
 
 	while( source < finish )
 	{

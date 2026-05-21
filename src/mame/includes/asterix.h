@@ -12,18 +12,18 @@ public:
 	asterix_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int         sprite_colorbase;
 	int         layer_colorbase[4], layerpri[3];
-	UINT16      spritebank;
+	uint16_t      spritebank;
 	int         tilebanks[4];
 	int         spritebanks[4];
 
 	/* misc */
-	UINT8       cur_control2;
-	UINT16      prot[2];
+	uint8_t       cur_control2;
+	uint16_t      prot[2];
 
 	/* devices */
 	running_device *maincpu;

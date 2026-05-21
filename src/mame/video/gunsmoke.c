@@ -39,21 +39,21 @@ PALETTE_INIT( gunsmoke )
 	/* characters use colors 0x40-0x4f */
 	for (i = 0; i < 0x80; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | 0x40;
+		uint8_t ctabentry = color_prom[i] | 0x40;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* background tiles use colors 0-0x3f */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | ((color_prom[i + 0x100] & 0x03) << 4);
+		uint8_t ctabentry = color_prom[i] | ((color_prom[i + 0x100] & 0x03) << 4);
 		colortable_entry_set_value(machine->colortable, i - 0x80, ctabentry);
 	}
 
 	/* sprites use colors 0x80-0xff */
 	for (i = 0x300; i < 0x400; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | ((color_prom[i + 0x100] & 0x07) << 4) | 0x80;
+		uint8_t ctabentry = color_prom[i] | ((color_prom[i + 0x100] & 0x07) << 4) | 0x80;
 		colortable_entry_set_value(machine->colortable, i - 0x180, ctabentry);
 	}
 }
@@ -108,7 +108,7 @@ WRITE8_HANDLER( gunsmoke_d806_w )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx4");
+	uint8_t *tilerom = memory_region(machine, "gfx4");
 
 	int offs = tile_index * 2;
 	int attr = tilerom[offs + 1];
@@ -143,7 +143,7 @@ VIDEO_START( gunsmoke )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	gunsmoke_state *state = (gunsmoke_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 32; offs >= 0; offs -= 32)

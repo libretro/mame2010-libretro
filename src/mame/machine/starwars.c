@@ -34,21 +34,21 @@
 
 #define MASTER_CLOCK (12096000)
 
-UINT8 *starwars_mathram;
+uint8_t *starwars_mathram;
 
 /* Local variables */
-static UINT8 control_num = kPitch;
+static uint8_t control_num = kPitch;
 
 static int MPA; /* PROM address counter */
 static int BIC; /* Block index counter  */
 
-static UINT16 dvd_shift, quotient_shift; /* Divider shift registers */
-static UINT16 divisor, dividend;         /* Divider latches */
+static uint16_t dvd_shift, quotient_shift; /* Divider shift registers */
+static uint16_t divisor, dividend;         /* Divider latches */
 
 /* Store decoded PROM elements */
-static UINT8 *PROM_STR; /* Storage for instruction strobe only */
-static UINT8 *PROM_MAS; /* Storage for direct address only */
-static UINT8 *PROM_AM; /* Storage for address mode select only */
+static uint8_t *PROM_STR; /* Storage for instruction strobe only */
+static uint8_t *PROM_MAS; /* Storage for direct address only */
+static uint8_t *PROM_AM; /* Storage for address mode select only */
 
 static int math_run;
 static emu_timer *math_timer;
@@ -171,12 +171,12 @@ WRITE8_HANDLER( starwars_adc_select_w )
 
 void starwars_mproc_init(running_machine *machine)
 {
-	UINT8 *src = memory_region(machine, "user2");
+	uint8_t *src = memory_region(machine, "user2");
 	int cnt, val;
 
-	PROM_STR = auto_alloc_array(machine, UINT8, 1024);
-	PROM_MAS = auto_alloc_array(machine, UINT8, 1024);
-	PROM_AM = auto_alloc_array(machine, UINT8, 1024);
+	PROM_STR = auto_alloc_array(machine, uint8_t, 1024);
+	PROM_MAS = auto_alloc_array(machine, uint8_t, 1024);
+	PROM_AM = auto_alloc_array(machine, uint8_t, 1024);
 
 	for (cnt = 0; cnt < 1024; cnt++)
 	{
@@ -219,8 +219,8 @@ void starwars_mproc_reset(void)
 
 void run_mproc(void)
 {
-	static INT16 A, B, C;
-	static INT32 ACC;
+	static int16_t A, B, C;
+	static int32_t ACC;
 
 	int RAMWORD = 0;
 	int MA_byte;
@@ -338,7 +338,7 @@ void run_mproc(void)
              * takes 33 clock pulses to do a full rotation.
              */
 
-			ACC += (((INT32)(A - B) << 1) * C) << 1;
+			ACC += (((int32_t)(A - B) << 1) * C) << 1;
 
 			/* A and B are sign extended (requred by the ls384). After
              * multiplication they just contain the sign.
@@ -465,7 +465,7 @@ WRITE8_HANDLER( starwars_math_w )
 			for (i = 1; i < 16; i++)
 			{
 				quotient_shift <<= 1;
-				if (((INT32)dvd_shift + (divisor ^ 0xffff) + 1) & 0x10000)
+				if (((int32_t)dvd_shift + (divisor ^ 0xffff) + 1) & 0x10000)
 				{
 					quotient_shift |= 1;
 					dvd_shift = (dvd_shift + (divisor ^ 0xffff) + 1) << 1;

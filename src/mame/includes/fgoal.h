@@ -8,16 +8,16 @@ public:
 	fgoal_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    video_ram;
+	uint8_t *    video_ram;
 
 	/* video-related */
 	bitmap_t   *bgbitmap, *fgbitmap;
-	UINT8      xpos, ypos;
+	uint8_t      xpos, ypos;
 	int        current_color;
 
 	/* misc */
 	int        fgoal_player;
-	UINT8      row, col;
+	uint8_t      row, col;
 	int        prev_coin;
 
 	/* devices */

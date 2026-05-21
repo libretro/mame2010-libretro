@@ -35,7 +35,7 @@ PALETTE_INIT( ikki )
 	/* sprites lookup table */
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT16 ctabentry = color_prom[i] ^ 0xff;
+		uint16_t ctabentry = color_prom[i] ^ 0xff;
 
 		if (((i & 0x07) == 0x07) && (ctabentry == 0))
 		{
@@ -50,7 +50,7 @@ PALETTE_INIT( ikki )
 	/* bg lookup table */
 	for (i = 0x200; i < 0x400; i++)
 	{
-		UINT8 ctabentry = color_prom[i];
+		uint8_t ctabentry = color_prom[i];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -65,7 +65,7 @@ WRITE8_HANDLER( ikki_scrn_ctrl_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ikki_state *state = (ikki_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int y;
 	offs_t offs;
 
@@ -107,7 +107,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT16 pen = *BITMAP_ADDR16(state->sprite_bitmap, y, x);
+			uint16_t pen = *BITMAP_ADDR16(state->sprite_bitmap, y, x);
 
 			if (colortable_entry_get_value(machine->colortable, pen) != 0x100)
 				*BITMAP_ADDR16(bitmap, y, x) = pen;
@@ -128,7 +128,7 @@ VIDEO_UPDATE( ikki )
 {
 	ikki_state *state = (ikki_state *)screen->machine->driver_data;
 	offs_t offs;
-	UINT8 *VIDEOATTR = memory_region(screen->machine, "user1");
+	uint8_t *VIDEOATTR = memory_region(screen->machine, "user1");
 
 	/* draw bg layer */
 

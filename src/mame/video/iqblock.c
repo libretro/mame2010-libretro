@@ -2,9 +2,9 @@
 #include "includes/iqblock.h"
 
 
-UINT8 *iqblock_bgvideoram;
-//UINT8 *iqblock_fgscroll;
-UINT8 *iqblock_fgvideoram;
+uint8_t *iqblock_bgvideoram;
+//uint8_t *iqblock_fgscroll;
+uint8_t *iqblock_fgvideoram;
 int iqblock_videoenable;
 int iqblock_video_type;
 

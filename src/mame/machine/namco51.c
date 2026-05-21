@@ -73,13 +73,13 @@ struct _namco_51xx_state
 	running_device *	cpu;
 	devcb_resolved_read8 in[4];
 	devcb_resolved_write8 out[2];
-	INT32 lastcoins,lastbuttons;
-	INT32 credits;
-	INT32 coins[2];
-	INT32 coins_per_cred[2];
-	INT32 creds_per_coin[2];
-	INT32 in_count;
-	INT32 mode,coincred_mode,remap_joy;
+	int32_t lastcoins,lastbuttons;
+	int32_t credits;
+	int32_t coins[2];
+	int32_t coins_per_cred[2];
+	int32_t creds_per_coin[2];
+	int32_t in_count;
+	int32_t mode,coincred_mode,remap_joy;
 };
 
 INLINE namco_51xx_state *get_safe_token(running_device *device)
@@ -396,13 +396,13 @@ static DEVICE_START( namco_51xx )
 	devcb_resolve_write8(&state->out[0], &config->out[0], device);
 	devcb_resolve_write8(&state->out[1], &config->out[1], device);
 #if 0
-	INT32 lastcoins,lastbuttons;
-	INT32 credits;
-	INT32 coins[2];
-	INT32 coins_per_cred[2];
-	INT32 creds_per_coin[2];
-	INT32 in_count;
-	INT32 mode,coincred_mode,remap_joy;
+	int32_t lastcoins,lastbuttons;
+	int32_t credits;
+	int32_t coins[2];
+	int32_t coins_per_cred[2];
+	int32_t creds_per_coin[2];
+	int32_t in_count;
+	int32_t mode,coincred_mode,remap_joy;
 #endif
 	state_save_register_device_item(device, 0, state->lastcoins);
 	state_save_register_device_item(device, 0, state->lastbuttons);

@@ -22,7 +22,7 @@ WRITE16_HANDLER( asuka_spritectrl_w )
 VIDEO_UPDATE( asuka )
 {
 	asuka_state *state = (asuka_state *)screen->machine->driver_data;
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	tc0100scn_tilemap_update(state->tc0100scn);
 
@@ -48,7 +48,7 @@ VIDEO_UPDATE( asuka )
 VIDEO_UPDATE( bonzeadv )
 {
 	asuka_state *state = (asuka_state *)screen->machine->driver_data;
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 	tc0100scn_tilemap_update(state->tc0100scn);
 

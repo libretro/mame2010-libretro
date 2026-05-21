@@ -12,61 +12,61 @@ public:
 	}
 
 	/* memory pointers */
-	UINT8 *galaga_ram1,*galaga_ram2,*galaga_ram3;
-	UINT8 *galaga_starcontrol;	// 6 addresses
+	uint8_t *galaga_ram1,*galaga_ram2,*galaga_ram3;
+	uint8_t *galaga_starcontrol;	// 6 addresses
 
 	/* machine state */
-	UINT32 stars_scrollx;
-	UINT32 stars_scrolly;
+	uint32_t stars_scrollx;
+	uint32_t stars_scrolly;
 
-	UINT32 galaga_gfxbank; // used by catsbee
+	uint32_t galaga_gfxbank; // used by catsbee
 
 	/* devices */
 
 	/* bank support */
 
 	/* shared */
-	UINT8 *videoram;
+	uint8_t *videoram;
 	tilemap_t *fg_tilemap;
 	tilemap_t *bg_tilemap;
 
 	/* xevious */
 
-	UINT8 *xevious_fg_videoram;
-	UINT8 *xevious_fg_colorram;
-	UINT8 *xevious_bg_videoram;
-	UINT8 *xevious_bg_colorram;
-	UINT8 *xevious_sr1;
-	UINT8 *xevious_sr2;
-	UINT8 *xevious_sr3;
+	uint8_t *xevious_fg_videoram;
+	uint8_t *xevious_fg_colorram;
+	uint8_t *xevious_bg_videoram;
+	uint8_t *xevious_bg_colorram;
+	uint8_t *xevious_sr1;
+	uint8_t *xevious_sr2;
+	uint8_t *xevious_sr3;
 
 	/* xevious static */
-	INT32 xevious_bs[2];
+	int32_t xevious_bs[2];
 
 	/* bosco */
 
-	UINT8 *bosco_radarattr;
+	uint8_t *bosco_radarattr;
 
 	/* bosco static */
 
-	UINT8 *bosco_starcontrol;
-	UINT8 *bosco_starblink;
+	uint8_t *bosco_starcontrol;
+	uint8_t *bosco_starblink;
 
-	UINT8 *bosco_radarx;
-	UINT8 *bosco_radary;
+	uint8_t *bosco_radarx;
+	uint8_t *bosco_radary;
 
 	/* digdug */
 
-	UINT8 *digdug_objram;
-	UINT8 *digdug_posram;
-	UINT8 *digdug_flpram;
+	uint8_t *digdug_objram;
+	uint8_t *digdug_posram;
+	uint8_t *digdug_flpram;
 
 	/* digdug static*/
 
-	UINT8 bg_select;
-	UINT8 tx_color_mode;
-	UINT8 bg_disable;
-	UINT8 bg_color_bank;
+	uint8_t bg_select;
+	uint8_t tx_color_mode;
+	uint8_t bg_disable;
+	uint8_t bg_color_bank;
 
 };
 
@@ -93,8 +93,8 @@ DISCRETE_SOUND_EXTERN( galaga );
 
 struct star
 {
-	UINT16 x,y;
-	UINT8 col,set;
+	uint16_t x,y;
+	uint8_t col,set;
 };
 
 extern const struct star star_seed_tab[];

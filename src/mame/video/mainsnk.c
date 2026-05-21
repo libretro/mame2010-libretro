@@ -2,11 +2,11 @@
 
 static tilemap_t *tx_tilemap;
 static tilemap_t *bg_tilemap;
-UINT8 *mainsnk_fgram;
-UINT8 *mainsnk_bgram;
+uint8_t *mainsnk_fgram;
+uint8_t *mainsnk_bgram;
 
 
-static UINT32 bg_tile_offset;
+static uint32_t bg_tile_offset;
 
 
 static TILEMAP_MAPPER( marvins_tx_scan_cols )
@@ -93,7 +93,7 @@ WRITE8_HANDLER( mainsnk_bgram_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int scrollx, int scrolly )
 {
 	const gfx_element *gfx = machine->gfx[1];
-	const UINT8 *source, *finish;
+	const uint8_t *source, *finish;
 	source =  machine->generic.spriteram.u8;
 	finish =  source + 25*4;
 

@@ -107,7 +107,7 @@ VIDEO_START( commando )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4; offs >= 0; offs -= 4)

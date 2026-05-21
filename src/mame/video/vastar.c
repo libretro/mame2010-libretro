@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	vastar_state *state = (vastar_state *)machine->driver_data;
-	UINT8 *videoram = state->fgvideoram;
+	uint8_t *videoram = state->fgvideoram;
 	int code, color;
 
 	code = videoram[tile_index + 0x800] | (videoram[tile_index + 0x400] << 8);
@@ -34,7 +34,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg1_tile_info )
 {
 	vastar_state *state = (vastar_state *)machine->driver_data;
-	UINT8 *videoram = state->bg1videoram;
+	uint8_t *videoram = state->bg1videoram;
 	int code, color;
 
 	code = videoram[tile_index + 0x800] | (videoram[tile_index] << 8);
@@ -49,7 +49,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 static TILE_GET_INFO( get_bg2_tile_info )
 {
 	vastar_state *state = (vastar_state *)machine->driver_data;
-	UINT8 *videoram = state->bg2videoram;
+	uint8_t *videoram = state->bg2videoram;
 	int code, color;
 
 	code = videoram[tile_index + 0x800] | (videoram[tile_index] << 8);
@@ -140,9 +140,9 @@ READ8_HANDLER( vastar_bg2videoram_r )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	vastar_state *state = (vastar_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram1;
-	UINT8 *spriteram_2 = state->spriteram2;
-	UINT8 *spriteram_3 = state->spriteram3;
+	uint8_t *spriteram = state->spriteram1;
+	uint8_t *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram_3 = state->spriteram3;
 	int offs;
 
 	for (offs = 0; offs < 0x40; offs += 2)

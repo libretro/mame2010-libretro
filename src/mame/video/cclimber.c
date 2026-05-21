@@ -21,21 +21,21 @@
 static tilemap_t *pf_tilemap;
 static tilemap_t *bs_tilemap;
 
-UINT8 *cclimber_videoram;
-UINT8 *cclimber_colorram;
-UINT8 *cclimber_spriteram;
+uint8_t *cclimber_videoram;
+uint8_t *cclimber_colorram;
+uint8_t *cclimber_spriteram;
 
-UINT8 *cclimber_bigsprite_videoram;
-UINT8 *cclimber_bigsprite_control;
-UINT8 *cclimber_column_scroll;
-UINT8 *cclimber_flip_screen;
+uint8_t *cclimber_bigsprite_videoram;
+uint8_t *cclimber_bigsprite_control;
+uint8_t *cclimber_column_scroll;
+uint8_t *cclimber_flip_screen;
 
-UINT8 *swimmer_background_color;
-UINT8 *swimmer_side_background_enabled;
-UINT8 *swimmer_palettebank;
+uint8_t *swimmer_background_color;
+uint8_t *swimmer_side_background_enabled;
+uint8_t *swimmer_palettebank;
 
-UINT8 *toprollr_bg_videoram;
-UINT8 *toprollr_bg_coloram;
+uint8_t *toprollr_bg_videoram;
+uint8_t *toprollr_bg_coloram;
 static tilemap_t *toproller_bg_tilemap;
 
 
@@ -511,8 +511,8 @@ static void draw_playfield(bitmap_t *bitmap, const rectangle *cliprect)
 
 static void cclimber_draw_bigsprite(bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 x = cclimber_bigsprite_control[3] - 8;
-	UINT8 y = cclimber_bigsprite_control[2];
+	uint8_t x = cclimber_bigsprite_control[3] - 8;
+	uint8_t y = cclimber_bigsprite_control[2];
 	int bigsprite_flip_x = (cclimber_bigsprite_control[1] & 0x10) >> 4;
 	int bigsprite_flip_y = (cclimber_bigsprite_control[1] & 0x20) >> 5;
 
@@ -536,8 +536,8 @@ static void cclimber_draw_bigsprite(bitmap_t *bitmap, const rectangle *cliprect)
 
 static void toprollr_draw_bigsprite(bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 x = cclimber_bigsprite_control[3] - 8;
-	UINT8 y = cclimber_bigsprite_control[2];
+	uint8_t x = cclimber_bigsprite_control[3] - 8;
+	uint8_t y = cclimber_bigsprite_control[2];
 
 	tilemap_mark_all_tiles_dirty(bs_tilemap);
 
@@ -690,7 +690,7 @@ VIDEO_UPDATE( cclimber )
 VIDEO_UPDATE( yamato )
 {
 	int i;
-	UINT8 *sky_rom = memory_region(screen->machine, "user1") + 0x1200;
+	uint8_t *sky_rom = memory_region(screen->machine, "user1") + 0x1200;
 
 	for (i = 0; i < 0x100; i++)
 	{

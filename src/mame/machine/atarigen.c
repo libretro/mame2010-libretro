@@ -36,8 +36,8 @@ static STATE_POSTLOAD( slapstic_postload );
 
 static TIMER_CALLBACK( scanline_interrupt_callback );
 
-static void decompress_eeprom_word(UINT16 *dest, const UINT16 *data);
-static void decompress_eeprom_byte(UINT8 *dest, const UINT16 *data);
+static void decompress_eeprom_word(uint16_t *dest, const uint16_t *data);
+static void decompress_eeprom_byte(uint8_t *dest, const uint16_t *data);
 
 static void update_6502_irq(running_machine *machine);
 static TIMER_CALLBACK( delayed_sound_reset );
@@ -48,7 +48,7 @@ static void atarigen_set_vol(running_machine *machine, int volume, device_type t
 
 static TIMER_CALLBACK( scanline_timer_callback );
 
-static void atarivc_common_w(screen_device &screen, offs_t offset, UINT16 newword);
+static void atarivc_common_w(screen_device &screen, offs_t offset, uint16_t newword);
 
 static TIMER_CALLBACK( unhalt_cpu );
 
@@ -414,7 +414,7 @@ NVRAM_HANDLER( atarigen )
 		if (state->eeprom_default)
 		{
 			if (state->eeprom_default[0] == 0)
-				decompress_eeprom_byte((UINT8 *)state->eeprom, state->eeprom_default + 1);
+				decompress_eeprom_byte((uint8_t *)state->eeprom, state->eeprom_default + 1);
 			else
 				decompress_eeprom_word(state->eeprom, state->eeprom_default + 1);
 		}
@@ -427,9 +427,9 @@ NVRAM_HANDLER( atarigen )
     that has every other byte invalid.
 ---------------------------------------------------------------*/
 
-void decompress_eeprom_word(UINT16 *dest, const UINT16 *data)
+void decompress_eeprom_word(uint16_t *dest, const uint16_t *data)
 {
-	UINT16 value;
+	uint16_t value;
 
 	while ((value = *data++) != 0)
 	{
@@ -447,9 +447,9 @@ void decompress_eeprom_word(UINT16 *dest, const UINT16 *data)
     that is byte-packed.
 ---------------------------------------------------------------*/
 
-void decompress_eeprom_byte(UINT8 *dest, const UINT16 *data)
+void decompress_eeprom_byte(uint8_t *dest, const uint16_t *data)
 {
-	UINT16 value;
+	uint16_t value;
 
 	while ((value = *data++) != 0)
 	{
@@ -539,7 +539,7 @@ void atarigen_slapstic_init(running_device *device, offs_t base, offs_t mirror, 
 		state->slapstic = memory_install_readwrite16_handler(cpu_get_address_space(device, ADDRESS_SPACE_PROGRAM), base, base + 0x7fff, 0, mirror, atarigen_slapstic_r, atarigen_slapstic_w);
 
 		/* allocate memory for a copy of bank 0 */
-		state->slapstic_bank0 = auto_alloc_array(device->machine, UINT8, 0x2000);
+		state->slapstic_bank0 = auto_alloc_array(device->machine, uint8_t, 0x2000);
 		memcpy(state->slapstic_bank0, state->slapstic, 0x2000);
 
 		/* ensure we recopy memory for the bank */
@@ -1021,7 +1021,7 @@ static TIMER_CALLBACK( atarivc_eof_update )
     atarivc_reset: Initializes the video controller.
 ---------------------------------------------------------------*/
 
-void atarivc_reset(screen_device &screen, UINT16 *eof_data, int playfields)
+void atarivc_reset(screen_device &screen, uint16_t *eof_data, int playfields)
 {
 	atarigen_state *state = (atarigen_state *)screen.machine->driver_data;
 
@@ -1051,7 +1051,7 @@ void atarivc_reset(screen_device &screen, UINT16 *eof_data, int playfields)
     atarivc_w: Handles an I/O write to the video controller.
 ---------------------------------------------------------------*/
 
-void atarivc_w(screen_device &screen, offs_t offset, UINT16 data, UINT16 mem_mask)
+void atarivc_w(screen_device &screen, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	atarigen_state *state = (atarigen_state *)screen.machine->driver_data;
 	int oldword = state->atarivc_data[offset];
@@ -1068,7 +1068,7 @@ void atarivc_w(screen_device &screen, offs_t offset, UINT16 data, UINT16 mem_mas
     write.
 ---------------------------------------------------------------*/
 
-static void atarivc_common_w(screen_device &screen, offs_t offset, UINT16 newword)
+static void atarivc_common_w(screen_device &screen, offs_t offset, uint16_t newword)
 {
 	atarigen_state *state = (atarigen_state *)screen.machine->driver_data;
 	int oldword = state->atarivc_data[offset];
@@ -1178,7 +1178,7 @@ static void atarivc_common_w(screen_device &screen, offs_t offset, UINT16 newwor
     atarivc_r: Handles an I/O read from the video controller.
 ---------------------------------------------------------------*/
 
-UINT16 atarivc_r(screen_device &screen, offs_t offset)
+uint16_t atarivc_r(screen_device &screen, offs_t offset)
 {
 	atarigen_state *state = (atarigen_state *)screen.machine->driver_data;
 
@@ -1527,8 +1527,8 @@ static TIMER_CALLBACK( unhalt_cpu )
 
 void atarigen_swap_mem(void *ptr1, void *ptr2, int bytes)
 {
-	UINT8 *p1 = (UINT8 *)ptr1;
-	UINT8 *p2 = (UINT8 *)ptr2;
+	uint8_t *p1 = (uint8_t *)ptr1;
+	uint8_t *p2 = (uint8_t *)ptr2;
 	while (bytes--)
 	{
 		int temp = *p1;
@@ -1547,24 +1547,24 @@ void atarigen_blend_gfx(running_machine *machine, int gfx0, int gfx1, int mask0,
 {
 	gfx_element *gx0 = machine->gfx[gfx0];
 	gfx_element *gx1 = machine->gfx[gfx1];
-	UINT8 *srcdata, *dest;
+	uint8_t *srcdata, *dest;
 	int c, x, y;
 
 	/* allocate memory for the assembled data */
-	srcdata = auto_alloc_array(machine, UINT8, gx0->total_elements * gx0->width * gx0->height);
+	srcdata = auto_alloc_array(machine, uint8_t, gx0->total_elements * gx0->width * gx0->height);
 
 	/* loop over elements */
 	dest = srcdata;
 	for (c = 0; c < gx0->total_elements; c++)
 	{
-		const UINT8 *c0base = gfx_element_get_data(gx0, c);
-		const UINT8 *c1base = gfx_element_get_data(gx1, c);
+		const uint8_t *c0base = gfx_element_get_data(gx0, c);
+		const uint8_t *c1base = gfx_element_get_data(gx1, c);
 
 		/* loop over height */
 		for (y = 0; y < gx0->height; y++)
 		{
-			const UINT8 *c0 = c0base;
-			const UINT8 *c1 = c1base;
+			const uint8_t *c0 = c0base;
+			const uint8_t *c1 = c1base;
 
 			for (x = 0; x < gx0->width; x++)
 				*dest++ = (*c0++ & mask0) | (*c1++ & mask1);

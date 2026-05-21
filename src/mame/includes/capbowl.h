@@ -12,14 +12,14 @@ public:
 	capbowl_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  rowaddress;
-//  UINT8 *  nvram; // currently this uses generic_nvram
+	uint8_t *  rowaddress;
+//  uint8_t *  nvram; // currently this uses generic_nvram
 
 	/* video-related */
 	offs_t blitter_addr;
 
 	/* input-related */
-	UINT8 last_trackball_val[2];
+	uint8_t last_trackball_val[2];
 
 	/* devices */
 	running_device *maincpu;

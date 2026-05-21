@@ -23,11 +23,11 @@ public:
 	atarifb_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8 *  alphap1_videoram;
-	UINT8 *  alphap2_videoram;
-	UINT8 *  field_videoram;
-	UINT8 *  spriteram;
-	UINT8 *  scroll_register;
+	uint8_t *  alphap1_videoram;
+	uint8_t *  alphap2_videoram;
+	uint8_t *  field_videoram;
+	uint8_t *  spriteram;
+	uint8_t *  scroll_register;
 	size_t   spriteram_size;
 
 	tilemap_t  *alpha1_tilemap;

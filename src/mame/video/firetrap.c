@@ -95,7 +95,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 			0);
 }
 
-INLINE void get_bg_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, UINT8 *bgvideoram, int gfx_region)
+INLINE void get_bg_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, uint8_t *bgvideoram, int gfx_region)
 {
 	int code = bgvideoram[tile_index];
 	int color = bgvideoram[tile_index + 0x100];

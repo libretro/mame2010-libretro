@@ -21,7 +21,7 @@ Namco System 1 Video Hardware
   7810-7fef : fixed playfield (5)  : 36*28*2
   7ff0-7fff : ?
 */
-static UINT8 *namcos1_videoram;
+static uint8_t *namcos1_videoram;
 
 /*
   paletteram map (s1ram  0x0000-0x7fff)
@@ -34,7 +34,7 @@ static UINT8 *namcos1_videoram;
 
   so there is just 3x0x2000 RAM, plus the CUS116 internal registers.
 */
-static UINT8 namcos1_cus116[0x10];
+static uint8_t namcos1_cus116[0x10];
 
 /*
   spriteram map (s1ram 0x10000-0x10fff)
@@ -44,15 +44,15 @@ static UINT8 namcos1_cus116[0x10];
 
   1000-1fff : playfield control registers
 */
-static UINT8 *namcos1_spriteram;
+static uint8_t *namcos1_spriteram;
 
-static UINT8 namcos1_playfield_control[0x20];
+static uint8_t namcos1_playfield_control[0x20];
 
 static tilemap_t *bg_tilemap[6];
-static UINT8 *tilemap_maskdata;
+static uint8_t *tilemap_maskdata;
 static int copy_sprites;
 
-static UINT8 drawmode_table[16];
+static uint8_t drawmode_table[16];
 
 
 
@@ -63,7 +63,7 @@ static UINT8 drawmode_table[16];
 
 ***************************************************************************/
 
-INLINE void bg_get_info(running_machine *machine,tile_data *tileinfo,int tile_index,UINT8 *info_vram)
+INLINE void bg_get_info(running_machine *machine,tile_data *tileinfo,int tile_index,uint8_t *info_vram)
 {
 	int code;
 
@@ -73,7 +73,7 @@ INLINE void bg_get_info(running_machine *machine,tile_data *tileinfo,int tile_in
 	tileinfo->mask_data = &tilemap_maskdata[code << 3];
 }
 
-INLINE void fg_get_info(running_machine *machine,tile_data *tileinfo,int tile_index,UINT8 *info_vram)
+INLINE void fg_get_info(running_machine *machine,tile_data *tileinfo,int tile_index,uint8_t *info_vram)
 {
 	int code;
 
@@ -102,11 +102,11 @@ VIDEO_START( namcos1 )
 {
 	int i;
 
-	tilemap_maskdata = (UINT8 *)memory_region(machine, "gfx1");
+	tilemap_maskdata = (uint8_t *)memory_region(machine, "gfx1");
 
 	/* allocate videoram */
-	namcos1_videoram = auto_alloc_array(machine, UINT8, 0x8000);
-	namcos1_spriteram = auto_alloc_array(machine, UINT8, 0x1000);
+	namcos1_videoram = auto_alloc_array(machine, uint8_t, 0x8000);
+	namcos1_spriteram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	/* initialize playfields */
 	bg_tilemap[0] = tilemap_create(machine, bg_get_info0,tilemap_scan_rows,8,8,64,64);
@@ -278,8 +278,8 @@ sprite format:
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	const UINT8 *source = &machine->generic.spriteram.u8[0x0800-0x20];	/* the last is NOT a sprite */
-	const UINT8 *finish = &machine->generic.spriteram.u8[0];
+	const uint8_t *source = &machine->generic.spriteram.u8[0x0800-0x20];	/* the last is NOT a sprite */
+	const uint8_t *finish = &machine->generic.spriteram.u8[0];
 	gfx_element *gfx = machine->gfx[1];
 
 	int sprite_xoffs = machine->generic.spriteram.u8[0x07f5] + ((machine->generic.spriteram.u8[0x07f4] & 1) << 8);
@@ -419,7 +419,7 @@ VIDEO_EOF( namcos1 )
 {
 	if (copy_sprites)
 	{
-		UINT8 *spriteram = machine->generic.spriteram.u8;
+		uint8_t *spriteram = machine->generic.spriteram.u8;
 		int i,j;
 
 		for (i = 0;i < 0x800;i += 16)

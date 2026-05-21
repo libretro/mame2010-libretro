@@ -1,7 +1,7 @@
 #include "emu.h"
 
 
-static UINT8 *vram[2],*unkram;
+static uint8_t *vram[2],*unkram;
 static int bankctrl,rambank,pmcbank,gfxrom_select;
 static tilemap_t *bg_tilemap[2];
 
@@ -13,7 +13,7 @@ static tilemap_t *bg_tilemap[2];
 
 ***************************************************************************/
 
-INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,UINT8 *ram)
+INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,uint8_t *ram)
 {
 	tile_index *= 4;
 	SET_TILE_INFO(
@@ -65,7 +65,7 @@ VIDEO_START( hexion )
 
 WRITE8_HANDLER( hexion_bankswitch_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu") + 0x10000;
+	uint8_t *rom = memory_region(space->machine, "maincpu") + 0x10000;
 
 	/* bits 0-3 select ROM bank */
 	memory_set_bankptr(space->machine, "bank1",rom + 0x2000 * (data & 0x0f));

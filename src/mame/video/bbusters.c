@@ -24,28 +24,28 @@
 #include "emu.h"
 
 static tilemap_t *fix_tilemap,*pf1_tilemap,*pf2_tilemap;
-static const UINT8 *scale_table_ptr;
-static UINT8 scale_line_count;
+static const uint8_t *scale_table_ptr;
+static uint8_t scale_line_count;
 
-UINT16 *bbusters_pf1_data,*bbusters_pf2_data,*bbusters_pf1_scroll_data,*bbusters_pf2_scroll_data;
+uint16_t *bbusters_pf1_data,*bbusters_pf2_data,*bbusters_pf1_scroll_data,*bbusters_pf2_scroll_data;
 
 /******************************************************************************/
 
 static TILE_GET_INFO( get_bbusters_tile_info )
 {
-	UINT16 tile=machine->generic.videoram.u16[tile_index];
+	uint16_t tile=machine->generic.videoram.u16[tile_index];
 	SET_TILE_INFO(0,tile&0xfff,tile>>12,0);
 }
 
 static TILE_GET_INFO( get_pf1_tile_info )
 {
-	UINT16 tile=bbusters_pf1_data[tile_index];
+	uint16_t tile=bbusters_pf1_data[tile_index];
 	SET_TILE_INFO(3,tile&0xfff,tile>>12,0);
 }
 
 static TILE_GET_INFO( get_pf2_tile_info )
 {
-	UINT16 tile=bbusters_pf2_data[tile_index];
+	uint16_t tile=bbusters_pf2_data[tile_index];
 	SET_TILE_INFO(4,tile&0xfff,tile>>12,0);
 }
 
@@ -106,7 +106,7 @@ VIDEO_START( mechatt )
 		else if (dy&0x40) code+=32;				\
 		else if (dx&0x40) code+=16
 
-INLINE const UINT8 *get_source_ptr(gfx_element *gfx, UINT32 sprite, int dx, int dy, int block)
+INLINE const uint8_t *get_source_ptr(gfx_element *gfx, uint32_t sprite, int dx, int dy, int block)
 {
 	int code=0;
 
@@ -144,12 +144,12 @@ INLINE const UINT8 *get_source_ptr(gfx_element *gfx, UINT32 sprite, int dx, int 
 	return gfx_element_get_data(gfx, (sprite+code) % gfx->total_elements) + ((dy%16) * gfx->line_modulo);
 }
 
-static void bbusters_draw_block(running_machine *machine, bitmap_t *dest,int x,int y,int size,int flipx,int flipy,UINT32 sprite,int color,int bank,int block)
+static void bbusters_draw_block(running_machine *machine, bitmap_t *dest,int x,int y,int size,int flipx,int flipy,uint32_t sprite,int color,int bank,int block)
 {
 	gfx_element *gfx = machine->gfx[bank];
 	pen_t pen_base = gfx->color_base + gfx->color_granularity * (color % gfx->total_colors);
-	UINT32 xinc=(scale_line_count * 0x10000 ) / size;
-	UINT8 pixel;
+	uint32_t xinc=(scale_line_count * 0x10000 ) / size;
+	uint8_t pixel;
 	int x_index;
 	int dy=y;
 	int sx,ex=scale_line_count;
@@ -157,9 +157,9 @@ static void bbusters_draw_block(running_machine *machine, bitmap_t *dest,int x,i
 	while (scale_line_count) {
 
 		if (dy>=16 && dy<240) {
-			UINT16 *destline = BITMAP_ADDR16(dest, dy, 0);
-			UINT8 srcline=*scale_table_ptr;
-			const UINT8 *srcptr=0;
+			uint16_t *destline = BITMAP_ADDR16(dest, dy, 0);
+			uint8_t srcline=*scale_table_ptr;
+			const uint8_t *srcptr=0;
 
 			if (!flipy)
 				srcline=size-srcline-1;
@@ -190,9 +190,9 @@ static void bbusters_draw_block(running_machine *machine, bitmap_t *dest,int x,i
 	}
 }
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const UINT16 *source, int bank, int colval, int colmask)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const uint16_t *source, int bank, int colval, int colmask)
 {
-	const UINT8 *scale_table=memory_region(machine, "user1");
+	const uint8_t *scale_table=memory_region(machine, "user1");
 	int offs;
 
 	for (offs = 0;offs <0x800 ;offs += 4) {

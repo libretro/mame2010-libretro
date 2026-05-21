@@ -192,7 +192,7 @@ TO DO (2006.09.12) :
 READ8_HANDLER( arkanoid_bootleg_f000_r )
 {
 	arkanoid_state *state = (arkanoid_state *)space->machine->driver_data;
-	UINT8 arkanoid_bootleg_val = 0x00;
+	uint8_t arkanoid_bootleg_val = 0x00;
 
 	switch (state->bootleg_id)
 	{
@@ -235,7 +235,7 @@ READ8_HANDLER( arkanoid_bootleg_f000_r )
 READ8_HANDLER( arkanoid_bootleg_f002_r )
 {
 	arkanoid_state *state = (arkanoid_state *)space->machine->driver_data;
-	UINT8 arkanoid_bootleg_val = 0x00;
+	uint8_t arkanoid_bootleg_val = 0x00;
 
 	switch (state->bootleg_id)
 	{
@@ -587,9 +587,9 @@ READ8_HANDLER( block2_bootleg_f000_r )
 READ8_HANDLER( arkanoid_bootleg_d008_r )
 {
 	arkanoid_state *state = (arkanoid_state *)space->machine->driver_data;
-	UINT8 arkanoid_bootleg_d008_bit[8];
-	UINT8 arkanoid_bootleg_d008_val;
-	UINT8 arkanoid_paddle_value = input_port_read(space->machine, "MUX");
+	uint8_t arkanoid_bootleg_d008_bit[8];
+	uint8_t arkanoid_bootleg_d008_val;
+	uint8_t arkanoid_paddle_value = input_port_read(space->machine, "MUX");
 	int b;
 
 	arkanoid_bootleg_d008_bit[4] = arkanoid_bootleg_d008_bit[6] = arkanoid_bootleg_d008_bit[7] = 0;  /* untested bits */

@@ -7,12 +7,12 @@ public:
 	inufuku_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  bg_videoram;
-	UINT16 *  bg_rasterram;
-	UINT16 *  tx_videoram;
-	UINT16 *  spriteram1;
-	UINT16 *  spriteram2;
-//      UINT16 *  paletteram;    // currently this uses generic palette handling
+	uint16_t *  bg_videoram;
+	uint16_t *  bg_rasterram;
+	uint16_t *  tx_videoram;
+	uint16_t *  spriteram1;
+	uint16_t *  spriteram2;
+//      uint16_t *  paletteram;    // currently this uses generic palette handling
 	size_t    spriteram1_size;
 
 	/* video-related */
@@ -23,7 +23,7 @@ public:
 	int       bg_palettebank, tx_palettebank;
 
 	/* misc */
-	UINT16    pending_command;
+	uint16_t    pending_command;
 
 	/* devices */
 	running_device *audiocpu;

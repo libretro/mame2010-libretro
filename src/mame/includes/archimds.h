@@ -36,7 +36,7 @@
 
 /*----------- defined in machine/archimds.c -----------*/
 
-extern UINT32 *archimedes_memc_physmem;
+extern uint32_t *archimedes_memc_physmem;
 
 void archimedes_init(running_machine *machine);			// call at MACHINE_INIT
 void archimedes_reset(running_machine *machine);		// call at MACHINE_RESET

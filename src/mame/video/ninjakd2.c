@@ -1,11 +1,11 @@
 #include "emu.h"
 #include "includes/ninjakd2.h"
 
-UINT8* ninjakd2_bg_videoram;
-UINT8* ninjakd2_fg_videoram;
+uint8_t* ninjakd2_bg_videoram;
+uint8_t* ninjakd2_fg_videoram;
 
 static int next_sprite_overdraw_enabled;
-static int (*stencil_compare_function) (UINT16 pal);
+static int (*stencil_compare_function) (uint16_t pal);
 static int sprites_updated;
 static bitmap_t *sp_bitmap;
 // in robokid and omegaf big sprites are laid out differently in ROM
@@ -21,9 +21,9 @@ static int bank_mask;
 static int robokid_bg0_bank = 0;
 static int robokid_bg1_bank = 0;
 static int robokid_bg2_bank = 0;
-static UINT8* robokid_bg0_videoram;
-static UINT8* robokid_bg1_videoram;
-static UINT8* robokid_bg2_videoram;
+static uint8_t* robokid_bg0_videoram;
+static uint8_t* robokid_bg1_videoram;
+static uint8_t* robokid_bg2_videoram;
 
 #define TRANSPARENTCODE (15)
 
@@ -90,7 +90,7 @@ static TILEMAP_MAPPER( omegaf_bg_scan )
 	return (col & 0x0f) | ((row & 0x1f) << 4) | ((col & 0x70) << 5);
 }
 
-static void robokid_get_bg_tile_info(running_machine* machine, tile_data* const tileinfo, tilemap_memory_index const tile_index, int const gfxnum, const UINT8* const videoram)
+static void robokid_get_bg_tile_info(running_machine* machine, tile_data* const tileinfo, tilemap_memory_index const tile_index, int const gfxnum, const uint8_t* const videoram)
 {
 	int const lo = videoram[(tile_index << 1)];
 	int const hi = videoram[(tile_index << 1) | 1];
@@ -132,19 +132,19 @@ static void videoram_alloc(running_machine* machine, int const size)
 	if (size)
 	{
 		/* create video ram */
-		robokid_bg0_videoram = auto_alloc_array_clear(machine, UINT8, size);
-		robokid_bg1_videoram = auto_alloc_array_clear(machine, UINT8, size);
-		robokid_bg2_videoram = auto_alloc_array_clear(machine, UINT8, size);
+		robokid_bg0_videoram = auto_alloc_array_clear(machine, uint8_t, size);
+		robokid_bg1_videoram = auto_alloc_array_clear(machine, uint8_t, size);
+		robokid_bg2_videoram = auto_alloc_array_clear(machine, uint8_t, size);
 	}
 
 	sp_bitmap = machine->primary_screen->alloc_compatible_bitmap();
 }
 
-static int stencil_ninjakd2( UINT16 pal );
-static int stencil_mnight(   UINT16 pal );
-static int stencil_arkarea(  UINT16 pal );
-static int stencil_robokid(  UINT16 pal );
-static int stencil_omegaf(   UINT16 pal );
+static int stencil_ninjakd2( uint16_t pal );
+static int stencil_mnight(   uint16_t pal );
+static int stencil_arkarea(  uint16_t pal );
+static int stencil_robokid(  uint16_t pal );
+static int stencil_omegaf(   uint16_t pal );
 
 VIDEO_START( ninjakd2 )
 {
@@ -361,7 +361,7 @@ static void draw_sprites(running_machine* machine, bitmap_t* bitmap)
 	int const big_xshift = robokid_sprites ? 1 : 0;
 	int const big_yshift = robokid_sprites ? 0 : 1;
 
-	UINT8* sprptr = &machine->generic.spriteram.u8[11];
+	uint8_t* sprptr = &machine->generic.spriteram.u8[11];
 	int sprites_drawn = 0;
 
 	// the sprite generator draws exactly 96 16x16 sprites per frame. When big
@@ -434,11 +434,11 @@ static void draw_sprites(running_machine* machine, bitmap_t* bitmap)
 	}
 }
 
-static int stencil_ninjakd2( UINT16 pal ) { return( (pal & 0xf0) == 0xf0 ); }
-static int stencil_mnight(   UINT16 pal ) { return( (pal & 0xf0) == 0xf0 ); }
-static int stencil_arkarea(  UINT16 pal ) { return( (pal & 0xf0) == 0xf0 ); }
-static int stencil_robokid(  UINT16 pal ) { return( (pal & 0xf0) <  0xe0 ); }
-static int stencil_omegaf(   UINT16 pal ) { return( TRUE ); }
+static int stencil_ninjakd2( uint16_t pal ) { return( (pal & 0xf0) == 0xf0 ); }
+static int stencil_mnight(   uint16_t pal ) { return( (pal & 0xf0) == 0xf0 ); }
+static int stencil_arkarea(  uint16_t pal ) { return( (pal & 0xf0) == 0xf0 ); }
+static int stencil_robokid(  uint16_t pal ) { return( (pal & 0xf0) <  0xe0 ); }
+static int stencil_omegaf(   uint16_t pal ) { return( TRUE ); }
 //////            OVERDRAW     STENCIL     UNKNOWN
 //////  NINJAKD2  023459ABCDE  F           1678
 //////    MNIGHT  0134568ABCDE F           279
@@ -463,7 +463,7 @@ static void erase_sprites(running_machine* machine, bitmap_t* bitmap, const rect
 			int x;
 			for (x = 0; x < sp_bitmap->width; ++x)
 			{
-				UINT16* const ptr = BITMAP_ADDR16(sp_bitmap, y, x);
+				uint16_t* const ptr = BITMAP_ADDR16(sp_bitmap, y, x);
 
 				if ( (*stencil_compare_function)(*ptr) ) *ptr = TRANSPARENTCODE ;
 			}

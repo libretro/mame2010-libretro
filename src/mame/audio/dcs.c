@@ -267,17 +267,17 @@ enum
 typedef struct _sdrc_state sdrc_state;
 struct _sdrc_state
 {
-	UINT16		reg[4];
-	UINT8		seed;
+	uint16_t		reg[4];
+	uint8_t		seed;
 };
 
 
 typedef struct _dsio_denver_state dsio_state;
 struct _dsio_denver_state
 {
-	UINT16		reg[4];
-	UINT8		start_on_next_write;
-	UINT16		channelbits;
+	uint16_t		reg[4];
+	uint8_t		start_on_next_write;
+	uint16_t		channelbits;
 };
 
 
@@ -287,69 +287,69 @@ struct _dcs_state
 	cpu_device *cpu;
 	const address_space *program;
 	const address_space *data;
-	UINT8		rev;
+	uint8_t		rev;
 	offs_t		polling_offset;
-	UINT32		polling_count;
+	uint32_t		polling_count;
 
 	/* sound output */
-	UINT8		channels;
-	UINT16		size;
-	UINT16		incs;
+	uint8_t		channels;
+	uint16_t		size;
+	uint16_t		incs;
 	dmadac_sound_device *dmadac[6];
 	timer_device *reg_timer;
 	timer_device *sport_timer;
 	timer_device *internal_timer;
-	INT32		ireg;
-	UINT16		ireg_base;
-	UINT16		control_regs[32];
+	int32_t		ireg;
+	uint16_t		ireg_base;
+	uint16_t		control_regs[32];
 
 	/* memory access/booting */
-	UINT16 *	bootrom;
-	UINT32		bootrom_words;
-	UINT16 *	sounddata;
-	UINT32		sounddata_words;
-	UINT32		sounddata_banks;
-	UINT16		sounddata_bank;
+	uint16_t *	bootrom;
+	uint32_t		bootrom_words;
+	uint16_t *	sounddata;
+	uint32_t		sounddata_words;
+	uint32_t		sounddata_banks;
+	uint16_t		sounddata_bank;
 
 	/* I/O with the host */
-	UINT8		auto_ack;
-	UINT16		latch_control;
-	UINT16		input_data;
-	UINT16		output_data;
-	UINT16		output_control;
-	UINT64		output_control_cycles;
-	UINT8		last_output_full;
-	UINT8		last_input_empty;
-	UINT16		progflags;
+	uint8_t		auto_ack;
+	uint16_t		latch_control;
+	uint16_t		input_data;
+	uint16_t		output_data;
+	uint16_t		output_control;
+	uint64_t		output_control_cycles;
+	uint8_t		last_output_full;
+	uint8_t		last_input_empty;
+	uint16_t		progflags;
 	void		(*output_full_cb)(running_machine *, int);
 	void		(*input_empty_cb)(running_machine *, int);
-	UINT16		(*fifo_data_r)(running_device *device);
-	UINT16		(*fifo_status_r)(running_device *device);
+	uint16_t		(*fifo_data_r)(running_device *device);
+	uint16_t		(*fifo_status_r)(running_device *device);
 
 	/* timers */
-	UINT8		timer_enable;
-	UINT8		timer_ignore;
-	UINT64		timer_start_cycles;
-	UINT32		timer_start_count;
-	UINT32		timer_scale;
-	UINT32		timer_period;
-	UINT32		timers_fired;
+	uint8_t		timer_enable;
+	uint8_t		timer_ignore;
+	uint64_t		timer_start_cycles;
+	uint32_t		timer_start_count;
+	uint32_t		timer_scale;
+	uint32_t		timer_period;
+	uint32_t		timers_fired;
 };
 
 
 typedef struct _hle_transfer_state hle_transfer_state;
 struct _hle_transfer_state
 {
-	UINT8		hle_enabled;
-	INT32		dcs_state;
-	INT32		state;
-	INT32		start;
-	INT32		stop;
-	INT32		type;
-	INT32		temp;
-	INT32		writes_left;
-	UINT16		sum;
-	INT32		fifo_entries;
+	uint8_t		hle_enabled;
+	int32_t		dcs_state;
+	int32_t		state;
+	int32_t		start;
+	int32_t		stop;
+	int32_t		type;
+	int32_t		temp;
+	int32_t		writes_left;
+	uint16_t		sum;
+	int32_t		fifo_entries;
 	timer_device *watchdog;
 };
 
@@ -366,12 +366,12 @@ static sdrc_state sdrc;
 static dsio_state dsio;
 static hle_transfer_state transfer;
 
-static UINT16 *dcs_sram;
+static uint16_t *dcs_sram;
 
-static UINT16 *dcs_polling_base;
+static uint16_t *dcs_polling_base;
 
-static UINT32 *dcs_internal_program_ram;
-static UINT32 *dcs_external_program_ram;
+static uint32_t *dcs_internal_program_ram;
+static uint32_t *dcs_external_program_ram;
 
 
 
@@ -414,13 +414,13 @@ static TIMER_DEVICE_CALLBACK( internal_timer_callback );
 static TIMER_DEVICE_CALLBACK( dcs_irq );
 static TIMER_DEVICE_CALLBACK( sport0_irq );
 static void recompute_sample_rate(running_machine *machine);
-static void sound_tx_callback(cpu_device &device, int port, INT32 data);
+static void sound_tx_callback(cpu_device &device, int port, int32_t data);
 
 static READ16_HANDLER( dcs_polling_r );
 static WRITE16_HANDLER( dcs_polling_w );
 
 static TIMER_DEVICE_CALLBACK( transfer_watchdog_callback );
-static int preprocess_write(running_machine *machine, UINT16 data);
+static int preprocess_write(running_machine *machine, uint16_t data);
 
 
 
@@ -749,9 +749,9 @@ MACHINE_DRIVER_END
 
 static void dcs_boot(void)
 {
-	UINT8 buffer[0x1000];
-	UINT32 max_banks;
-	UINT16 *base;
+	uint8_t buffer[0x1000];
+	uint32_t max_banks;
+	uint16_t *base;
 	int i;
 
 	switch (dcs.rev)
@@ -949,7 +949,7 @@ void dcs_init(running_machine *machine)
 	dcs.dmadac[0] = machine->device<dmadac_sound_device>("dac");
 
 	/* configure boot and sound ROMs */
-	dcs.bootrom = (UINT16 *)memory_region(machine, "dcs");
+	dcs.bootrom = (uint16_t *)memory_region(machine, "dcs");
 	dcs.bootrom_words = memory_region_length(machine, "dcs") / 2;
 	dcs.sounddata = dcs.bootrom;
 	dcs.sounddata_words = dcs.bootrom_words;
@@ -1000,13 +1000,13 @@ void dcs2_init(running_machine *machine, int dram_in_mb, offs_t polling_offset)
 	dcs.dmadac[1] = machine->device<dmadac_sound_device>("dac2");
 
 	/* always boot from the base of "dcs" */
-	dcs.bootrom = (UINT16 *)memory_region(machine, "dcs");
+	dcs.bootrom = (uint16_t *)memory_region(machine, "dcs");
 	dcs.bootrom_words = memory_region_length(machine, "dcs") / 2;
 
 	/* supports both RAM and ROM variants */
 	if (dram_in_mb != 0)
 	{
-		dcs.sounddata = auto_alloc_array(machine, UINT16, dram_in_mb << (20-1));
+		dcs.sounddata = auto_alloc_array(machine, uint16_t, dram_in_mb << (20-1));
 		dcs.sounddata_words = (dram_in_mb << 20) / 2;
 	}
 	else
@@ -1019,7 +1019,7 @@ void dcs2_init(running_machine *machine, int dram_in_mb, offs_t polling_offset)
 		memory_configure_bank(machine, "databank", 0, dcs.sounddata_banks, dcs.sounddata, soundbank_words*2);
 
 	/* allocate memory for the SRAM */
-	dcs_sram = auto_alloc_array(machine, UINT16, 0x8000*4/2);
+	dcs_sram = auto_alloc_array(machine, uint16_t, 0x8000*4/2);
 
 	/* create the timers */
 	dcs.internal_timer = machine->device<timer_device>("dcs_int_timer");
@@ -1068,7 +1068,7 @@ static READ16_HANDLER( dcs_dataram_r )
 
 static WRITE16_HANDLER( dcs_dataram_w )
 {
-	UINT16 newdata = dcs_external_program_ram[offset] >> 8;
+	uint16_t newdata = dcs_external_program_ram[offset] >> 8;
 	COMBINE_DATA(&newdata);
 	dcs_external_program_ram[offset] = (newdata << 8) | (dcs_external_program_ram[offset] & 0xff);
 }
@@ -1197,7 +1197,7 @@ static void sdrc_reset(running_machine *machine)
 
 static READ16_HANDLER( sdrc_r )
 {
-	UINT16 result = sdrc.reg[offset];
+	uint16_t result = sdrc.reg[offset];
 
 	/* offset 3 is for security */
 	if (offset == 3)
@@ -1245,7 +1245,7 @@ static READ16_HANDLER( sdrc_r )
 
 static WRITE16_HANDLER( sdrc_w )
 {
-	UINT16 diff = sdrc.reg[offset] ^ data;
+	uint16_t diff = sdrc.reg[offset] ^ data;
 
 	switch (offset)
 	{
@@ -1325,7 +1325,7 @@ static void dsio_reset(void)
 
 static READ16_HANDLER( dsio_r )
 {
-	UINT16 result = dsio.reg[offset];
+	uint16_t result = dsio.reg[offset];
 
 	if (offset == 1)
 	{
@@ -1376,7 +1376,7 @@ static void denver_reset(void)
 
 static READ16_HANDLER( denver_r )
 {
-	UINT16 result = dsio.reg[offset];
+	uint16_t result = dsio.reg[offset];
 
 	if (offset == 3)
 	{
@@ -1451,7 +1451,7 @@ WRITE32_HANDLER( dsio_idma_addr_w )
 
 WRITE32_HANDLER( dsio_idma_data_w )
 {
-	UINT32 pc = cpu_get_pc(space->cpu);
+	uint32_t pc = cpu_get_pc(space->cpu);
 	if (ACCESSING_BITS_0_15)
 	{
 		if (LOG_DCS_TRANSFERS)
@@ -1474,7 +1474,7 @@ WRITE32_HANDLER( dsio_idma_data_w )
 
 READ32_HANDLER( dsio_idma_data_r )
 {
-	UINT32 result;
+	uint32_t result;
 	result = adsp2181_idma_data_r(dcs.cpu);
 	if (LOG_DCS_TRANSFERS)
 		logerror("%08X:IDMA_data_r(%04X) = %04X\n", cpu_get_pc(space->cpu), adsp2181_idma_addr_r(dcs.cpu), result);
@@ -1494,7 +1494,7 @@ void dcs_set_io_callbacks(void (*output_full_cb)(running_machine *, int), void (
 }
 
 
-void dcs_set_fifo_callbacks(UINT16 (*fifo_data_r)(running_device *device), UINT16 (*fifo_status_r)(running_device *device))
+void dcs_set_fifo_callbacks(uint16_t (*fifo_data_r)(running_device *device), uint16_t (*fifo_status_r)(running_device *device))
 {
 	dcs.fifo_data_r = fifo_data_r;
 	dcs.fifo_status_r = fifo_status_r;
@@ -1715,9 +1715,9 @@ int dcs_data2_r(void)
 
 static void update_timer_count(running_machine *machine)
 {
-	UINT64 periods_since_start;
-	UINT64 elapsed_cycles;
-	UINT64 elapsed_clocks;
+	uint64_t periods_since_start;
+	uint64_t elapsed_cycles;
+	uint64_t elapsed_clocks;
 
 	/* if not enabled, skip */
 	if (!dcs.timer_enable)
@@ -1744,7 +1744,7 @@ static void update_timer_count(running_machine *machine)
 
 static TIMER_DEVICE_CALLBACK( internal_timer_callback )
 {
-	INT64 target_cycles;
+	int64_t target_cycles;
 
 	/* compute the absolute cycle when the next one should fire */
 	/* we do this to avoid drifting */
@@ -1837,7 +1837,7 @@ static void timer_enable_callback(cpu_device &device, int enable)
 
 static READ16_HANDLER( adsp_control_r )
 {
-	UINT16 result = 0xffff;
+	uint16_t result = 0xffff;
 
 	switch (offset)
 	{
@@ -1947,7 +1947,7 @@ static TIMER_DEVICE_CALLBACK( dcs_irq )
 	/* copy the current data into the buffer */
 	{
 		int count = dcs.size / 2;
-		INT16 buffer[0x400];
+		int16_t buffer[0x400];
 		int i;
 
 		for (i = 0; i < count; i++)
@@ -2010,7 +2010,7 @@ static void recompute_sample_rate(running_machine *machine)
 }
 
 
-static void sound_tx_callback(cpu_device &device, int port, INT32 data)
+static void sound_tx_callback(cpu_device &device, int port, int32_t data)
 {
 	/* check if it's for SPORT1 */
 	if (port != 1)
@@ -2024,7 +2024,7 @@ static void sound_tx_callback(cpu_device &device, int port, INT32 data)
 		{
 			/* get the autobuffer registers */
 			int		mreg, lreg;
-			UINT16	source;
+			uint16_t	source;
 
 			dcs.ireg = (dcs.control_regs[S1_AUTOBUF_REG] >> 9) & 7;
 			mreg = (dcs.control_regs[S1_AUTOBUF_REG] >> 7) & 3;
@@ -2147,7 +2147,7 @@ static TIMER_CALLBACK( s1_ack_callback1 )
 }
 
 
-static int preprocess_stage_1(running_machine *machine, UINT16 data)
+static int preprocess_stage_1(running_machine *machine, uint16_t data)
 {
 	switch (transfer.state)
 	{
@@ -2283,7 +2283,7 @@ static TIMER_CALLBACK( s2_ack_callback )
 }
 
 
-static int preprocess_stage_2(running_machine *machine, UINT16 data)
+static int preprocess_stage_2(running_machine *machine, uint16_t data)
 {
 	switch (transfer.state)
 	{
@@ -2383,7 +2383,7 @@ static int preprocess_stage_2(running_machine *machine, UINT16 data)
 }
 
 
-static int preprocess_write(running_machine *machine, UINT16 data)
+static int preprocess_write(running_machine *machine, uint16_t data)
 {
 	int result;
 

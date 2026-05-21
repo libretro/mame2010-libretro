@@ -55,7 +55,7 @@ void antic_reset(void)
  **************************************************************/
 READ8_HANDLER ( atari_antic_r )
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	switch (offset & 15)
 	{

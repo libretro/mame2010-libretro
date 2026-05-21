@@ -102,8 +102,8 @@ static void draw_crosshairs( running_machine *machine, bitmap_t *bitmap, const r
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	oneshot_state *state = (oneshot_state *)machine->driver_data;
-	const UINT16 *source = state->sprites;
-	const UINT16 *finish = source + (0x1000 / 2);
+	const uint16_t *source = state->sprites;
+	const uint16_t *finish = source + (0x1000 / 2);
 	const gfx_element *gfx = machine->gfx[1];
 
 	int xpos, ypos;

@@ -20,7 +20,7 @@ to switch between 8*8 tiles and 16*16 tiles.
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	tumblep_state *state = (tumblep_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x400; offs += 4)
@@ -87,7 +87,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 VIDEO_UPDATE( tumblep )
 {
 	tumblep_state *state = (tumblep_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

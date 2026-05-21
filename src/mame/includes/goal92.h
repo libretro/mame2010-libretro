@@ -12,16 +12,16 @@ public:
 	goal92_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    bg_data;
-	UINT16 *    fg_data;
-	UINT16 *    tx_data;
-	UINT16 *    scrollram;
-//  UINT16 *    paletteram; // this currently use generic palette handling
-//  UINT16 *    spriteram;  // this currently use generic buffered spriteram
+	uint16_t *    bg_data;
+	uint16_t *    fg_data;
+	uint16_t *    tx_data;
+	uint16_t *    scrollram;
+//  uint16_t *    paletteram; // this currently use generic palette handling
+//  uint16_t *    spriteram;  // this currently use generic buffered spriteram
 
 	/* video-related */
 	tilemap_t     *bg_layer, *fg_layer, *tx_layer;
-	UINT16      fg_bank;
+	uint16_t      fg_bank;
 
 	/* misc */
 	int         msm5205next;

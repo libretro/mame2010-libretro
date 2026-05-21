@@ -53,7 +53,7 @@ WRITE8_HANDLER( mjkjidai_videoram_w )
 
 WRITE8_HANDLER( mjkjidai_ctrl_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 //  logerror("%04x: port c0 = %02x\n",cpu_get_pc(space->cpu),data);
 
@@ -92,9 +92,9 @@ WRITE8_HANDLER( mjkjidai_ctrl_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	mjkjidai_state *state = (mjkjidai_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram1;
-	UINT8 *spriteram_2 = state->spriteram2;
-	UINT8 *spriteram_3 = state->spriteram3;
+	uint8_t *spriteram = state->spriteram1;
+	uint8_t *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram_3 = state->spriteram3;
 	int offs;
 
 	for (offs = 0x20-2;offs >= 0;offs -= 2)

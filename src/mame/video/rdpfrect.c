@@ -45,16 +45,16 @@ void Rectangle::Draw()
 
 void Rectangle::Draw1Cycle()
 {
-	UINT16 *fb = (UINT16*)&rdram[(m_misc_state->m_fb_address / 4)];
-	UINT8* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
+	uint16_t *fb = (uint16_t*)&rdram[(m_misc_state->m_fb_address / 4)];
+	uint8_t* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
 
 	int index, i, j;
 	int x1 = m_xh >> 2;
 	int x2 = m_xl >> 2;
 	int y1 = m_yh >> 2;
 	int y2 = m_yl >> 2;
-	UINT16 fill_color1 = (m_rdp->GetFillColor32() >> 16) & 0xffff;
-	UINT16 fill_color2 = (m_rdp->GetFillColor32() >>  0) & 0xffff;
+	uint16_t fill_color1 = (m_rdp->GetFillColor32() >> 16) & 0xffff;
+	uint16_t fill_color2 = (m_rdp->GetFillColor32() >>  0) & 0xffff;
 	int fill_cvg1 = (fill_color1 & 1) ? 8 : 1;
 	int fill_cvg2 = (fill_color2 & 1) ? 8 : 1;
 
@@ -192,16 +192,16 @@ void Rectangle::Draw1Cycle()
 
 void Rectangle::Draw2Cycle()
 {
-	UINT16 *fb = (UINT16*)&rdram[(m_misc_state->m_fb_address / 4)];
-	UINT8* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
+	uint16_t *fb = (uint16_t*)&rdram[(m_misc_state->m_fb_address / 4)];
+	uint8_t* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
 
 	int index, i, j;
 	int x1 = m_xh >> 2;
 	int x2 = m_xl >> 2;
 	int y1 = m_yh >> 2;
 	int y2 = m_yl >> 2;
-	UINT16 fill_color1;
-	UINT16 fill_color2;
+	uint16_t fill_color1;
+	uint16_t fill_color2;
 	int fill_cvg1;
 	int fill_cvg2;
 
@@ -406,16 +406,16 @@ void Rectangle::Draw2Cycle()
 
 void Rectangle::DrawFill()
 {
-	UINT16 *fb = (UINT16*)&rdram[(m_misc_state->m_fb_address / 4)];
-	UINT8* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
+	uint16_t *fb = (uint16_t*)&rdram[(m_misc_state->m_fb_address / 4)];
+	uint8_t* hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
 
 	int index, i, j;
 	int x1 = m_xh >> 2;
 	int x2 = m_xl >> 2;
 	int y1 = m_yh >> 2;
 	int y2 = m_yl >> 2;
-	UINT16 fill_color1;
-	UINT16 fill_color2;
+	uint16_t fill_color1;
+	uint16_t fill_color2;
 	int fill_cvg1;
 	int fill_cvg2;
 

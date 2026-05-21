@@ -6,7 +6,7 @@
 
 #include "emu.h"
 
-UINT8 *zac2650_s2636_0_ram;
+uint8_t *zac2650_s2636_0_ram;
 static bitmap_t *spritebitmap;
 
 static int CollisionBackground;

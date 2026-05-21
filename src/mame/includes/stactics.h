@@ -17,26 +17,26 @@ public:
 	/* machine state */
 	int    vert_pos;
 	int    horiz_pos;
-	UINT8 *motor_on;
+	uint8_t *motor_on;
 
 	/* video state */
-	UINT8 *videoram_b;
-	UINT8 *videoram_d;
-	UINT8 *videoram_e;
-	UINT8 *videoram_f;
-	UINT8 *palette;
-	UINT8 *display_buffer;
-	UINT8 *lamps;
+	uint8_t *videoram_b;
+	uint8_t *videoram_d;
+	uint8_t *videoram_e;
+	uint8_t *videoram_f;
+	uint8_t *palette;
+	uint8_t *display_buffer;
+	uint8_t *lamps;
 
-	UINT8  y_scroll_d;
-	UINT8  y_scroll_e;
-	UINT8  y_scroll_f;
-	UINT8  frame_count;
-	UINT8  shot_standby;
-	UINT8  shot_arrive;
-	UINT16 beam_state;
-	UINT16 old_beam_state;
-	UINT16 beam_states_per_frame;
+	uint8_t  y_scroll_d;
+	uint8_t  y_scroll_e;
+	uint8_t  y_scroll_f;
+	uint8_t  frame_count;
+	uint8_t  shot_standby;
+	uint8_t  shot_arrive;
+	uint16_t beam_state;
+	uint16_t old_beam_state;
+	uint16_t beam_states_per_frame;
 };
 
 

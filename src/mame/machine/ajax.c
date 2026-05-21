@@ -200,8 +200,8 @@ WRITE8_HANDLER( ajax_bankswitch_2_w )
 MACHINE_START( ajax )
 {
 	ajax_state *state = (ajax_state *)machine->driver_data;
-	UINT8 *MAIN = memory_region(machine, "maincpu");
-	UINT8 *SUB  = memory_region(machine, "sub");
+	uint8_t *MAIN = memory_region(machine, "maincpu");
+	uint8_t *SUB  = memory_region(machine, "sub");
 
 	memory_configure_bank(machine, "bank1", 0,  9,  &SUB[0x10000], 0x2000);
 	memory_configure_bank(machine, "bank2", 0, 12, &MAIN[0x10000], 0x2000);

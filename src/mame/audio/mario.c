@@ -468,7 +468,7 @@ static SOUND_START( mario )
 	mario_state	*state = (mario_state *)machine->driver_data;
 	running_device *audiocpu = machine->device("audiocpu");
 #if USE_8039
-	UINT8 *SND = memory_region(machine, "audiocpu");
+	uint8_t *SND = memory_region(machine, "audiocpu");
 
 	SND[0x1001] = 0x01;
 #endif
@@ -534,9 +534,9 @@ static READ8_HANDLER( mario_sh_t1_r )
 
 static READ8_HANDLER( mario_sh_tune_r )
 {
-	UINT8 *SND = memory_region(space->machine, "audiocpu");
-	UINT16 mask = memory_region_length(space->machine, "audiocpu")-1;
-	UINT8 p2 = I8035_P2_R(space);
+	uint8_t *SND = memory_region(space->machine, "audiocpu");
+	uint16_t mask = memory_region_length(space->machine, "audiocpu")-1;
+	uint8_t p2 = I8035_P2_R(space);
 
 	if ((p2 >> 7) & 1)
 		return soundlatch_r(space,offset);

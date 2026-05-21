@@ -1,10 +1,10 @@
 /*----------- defined in drivers/twin16.c -----------*/
 
-extern UINT16 twin16_custom_video;
-extern UINT16 *twin16_gfx_rom;
-extern UINT16 *twin16_text_ram;
-extern UINT16 *twin16_sprite_gfx_ram;
-extern UINT16 *twin16_tile_gfx_ram;
+extern uint16_t twin16_custom_video;
+extern uint16_t *twin16_gfx_rom;
+extern uint16_t *twin16_text_ram;
+extern uint16_t *twin16_sprite_gfx_ram;
+extern uint16_t *twin16_tile_gfx_ram;
 int twin16_spriteram_process_enable( void );
 
 

@@ -61,7 +61,7 @@ Note:   if MAME_DEBUG is defined, pressing Z or X with:
 
 static int cischeat_ip_select;
 static int shift_ret;
-static UINT8 drawmode_table[16];
+static uint8_t drawmode_table[16];
 
 #ifdef MAME_DEBUG
 static int debugsprites;	// For debug purposes
@@ -69,8 +69,8 @@ static int debugsprites;	// For debug purposes
 
 /* Variables that driver has access to: */
 
-UINT16 *cischeat_roadram[2];
-UINT16 *f1gpstr2_ioready;
+uint16_t *cischeat_roadram[2];
+uint16_t *f1gpstr2_ioready;
 
 #ifdef MAME_DEBUG
 #define SHOW_READ_ERROR(_format_,_offset_)\
@@ -247,8 +247,8 @@ READ16_HANDLER( bigrun_vregs_r )
 
 WRITE16_HANDLER( bigrun_vregs_w )
 {
-	UINT16 old_data = megasys1_vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t old_data = megasys1_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -340,8 +340,8 @@ READ16_HANDLER( cischeat_vregs_r )
 
 WRITE16_HANDLER( cischeat_vregs_w )
 {
-	UINT16 old_data = megasys1_vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t old_data = megasys1_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -475,8 +475,8 @@ READ16_HANDLER( wildplt_vregs_r )
 
 WRITE16_HANDLER( f1gpstar_vregs_w )
 {
-//  UINT16 old_data = megasys1_vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+//  uint16_t old_data = megasys1_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -532,8 +532,8 @@ CPU #0 PC 00235C : Warning, vreg 0006 <- 0000
 
 WRITE16_HANDLER( f1gpstr2_vregs_w )
 {
-//  UINT16 old_data = megasys1_vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+//  uint16_t old_data = megasys1_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	if ((offset >= 0x1000/2) && (offset < 0x2000/2))
 		return;
@@ -632,7 +632,7 @@ static void cischeat_draw_road(running_machine *machine, bitmap_t *bitmap, const
 	rectangle rect		=	*cliprect;
 	gfx_element *gfx		=	machine->gfx[(road_num & 1)?5:4];
 
-	UINT16 *roadram			=	cischeat_roadram[road_num & 1];
+	uint16_t *roadram			=	cischeat_roadram[road_num & 1];
 
 	int min_y = rect.min_y;
 	int max_y = rect.max_y;
@@ -722,7 +722,7 @@ static void f1gpstar_draw_road(running_machine *machine, bitmap_t *bitmap, const
 	rectangle rect		=	*cliprect;
 	gfx_element *gfx		=	machine->gfx[(road_num & 1)?5:4];
 
-	UINT16 *roadram			=	cischeat_roadram[road_num & 1];
+	uint16_t *roadram			=	cischeat_roadram[road_num & 1];
 
 	int min_y = rect.min_y;
 	int max_y = rect.max_y;
@@ -836,8 +836,8 @@ static void cischeat_draw_sprites(running_machine *machine, bitmap_t *bitmap , c
 
 	int min_priority, max_priority, high_sprites;
 
-	UINT16		*source	=	machine->generic.spriteram.u16;
-	const UINT16	*finish	=	source + 0x1000/2;
+	uint16_t		*source	=	machine->generic.spriteram.u16;
+	const uint16_t	*finish	=	source + 0x1000/2;
 
 
 	/* Move the priority values in place */
@@ -991,8 +991,8 @@ static void bigrun_draw_sprites(running_machine *machine, bitmap_t *bitmap , con
 
 	int min_priority, max_priority, high_sprites;
 
-	UINT16		*source	=	machine->generic.spriteram.u16;
-	const UINT16	*finish	=	source + 0x1000/2;
+	uint16_t		*source	=	machine->generic.spriteram.u16;
+	const uint16_t	*finish	=	source + 0x1000/2;
 
 	/* Move the priority values in place */
 	high_sprites = (priority1 >= 16) | (priority2 >= 16);

@@ -87,14 +87,14 @@ PALETTE_INIT( 1943 )
 	/* characters use colors 0x40-0x4f */
 	for (i = 0x00; i < 0x80; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0x40;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0x40;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* foreground tiles use colors 0x00-0x3f */
 	for (i = 0x80; i < 0x180; i++)
 	{
-		UINT8 ctabentry = ((color_prom[0x200 + (i - 0x080)] & 0x03) << 4) |
+		uint8_t ctabentry = ((color_prom[0x200 + (i - 0x080)] & 0x03) << 4) |
 						  ((color_prom[0x100 + (i - 0x080)] & 0x0f) << 0);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -102,7 +102,7 @@ PALETTE_INIT( 1943 )
 	/* background tiles also use colors 0x00-0x3f */
 	for (i = 0x180; i < 0x280; i++)
 	{
-		UINT8 ctabentry = ((color_prom[0x400 + (i - 0x180)] & 0x03) << 4) |
+		uint8_t ctabentry = ((color_prom[0x400 + (i - 0x180)] & 0x03) << 4) |
 						  ((color_prom[0x300 + (i - 0x180)] & 0x0f) << 0);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -112,7 +112,7 @@ PALETTE_INIT( 1943 )
        but we handle it differently for speed reasons */
 	for (i = 0x280; i < 0x380; i++)
 	{
-		UINT8 ctabentry = ((color_prom[0x600 + (i - 0x280)] & 0x07) << 4) |
+		uint8_t ctabentry = ((color_prom[0x600 + (i - 0x280)] & 0x07) << 4) |
 						  ((color_prom[0x500 + (i - 0x280)] & 0x0f) << 0) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -175,7 +175,7 @@ WRITE8_HANDLER( c1943_d806_w )
 
 static TILE_GET_INFO( c1943_get_bg2_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx5") + 0x8000;
+	uint8_t *tilerom = memory_region(machine, "gfx5") + 0x8000;
 
 	int offs = tile_index * 2;
 	int attr = tilerom[offs + 1];
@@ -188,7 +188,7 @@ static TILE_GET_INFO( c1943_get_bg2_tile_info )
 
 static TILE_GET_INFO( c1943_get_bg_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx5");
+	uint8_t *tilerom = memory_region(machine, "gfx5");
 
 	int offs = tile_index * 2;
 	int attr = tilerom[offs + 1];

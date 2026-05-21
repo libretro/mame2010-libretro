@@ -1,10 +1,10 @@
 #include "emu.h"
 
-UINT8 *skykid_textram, *skykid_videoram, *skykid_spriteram;
+uint8_t *skykid_textram, *skykid_videoram, *skykid_spriteram;
 
 static tilemap_t *bg_tilemap,*tx_tilemap;
-static UINT8 priority;
-static UINT16 scroll_x,scroll_y;
+static uint8_t priority;
+static uint16_t scroll_x,scroll_y;
 
 
 /***************************************************************************
@@ -47,7 +47,7 @@ PALETTE_INIT( skykid )
 	/* tiles/sprites */
 	for (i = 0x100; i < 0x500; i++)
 	{
-		UINT8 ctabentry = color_prom[i - 0x100];
+		uint8_t ctabentry = color_prom[i - 0x100];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -180,9 +180,9 @@ WRITE8_HANDLER( skykid_flipscreen_priority_w )
 /* the sprite generator IC is the same as Mappy */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = skykid_spriteram + 0x780;
-	UINT8 *spriteram_2 = spriteram + 0x0800;
-	UINT8 *spriteram_3 = spriteram_2 + 0x0800;
+	uint8_t *spriteram = skykid_spriteram + 0x780;
+	uint8_t *spriteram_2 = spriteram + 0x0800;
+	uint8_t *spriteram_3 = spriteram_2 + 0x0800;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)

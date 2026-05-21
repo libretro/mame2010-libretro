@@ -59,7 +59,7 @@ static TILEMAP_MAPPER( background_scan )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
-	UINT8 attr = state->bgvideoram[2 * tile_index];
+	uint8_t attr = state->bgvideoram[2 * tile_index];
 	SET_TILE_INFO(
 			2,
 			state->bgvideoram[2 * tile_index+1] + ((attr & 0x07) << 8),
@@ -70,7 +70,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
-	UINT8 attr = state->fgvideoram[2 * tile_index];
+	uint8_t attr = state->fgvideoram[2 * tile_index];
 	SET_TILE_INFO(
 			0,
 			state->fgvideoram[2 * tile_index + 1] + ((attr & 0x07) << 8),
@@ -81,7 +81,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_fg_16color_tile_info )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
-	UINT8 attr = state->fgvideoram[2 * tile_index];
+	uint8_t attr = state->fgvideoram[2 * tile_index];
 	SET_TILE_INFO(
 			0,
 			state->fgvideoram[2 * tile_index+1] + ((attr & 0x0f) << 8),
@@ -159,13 +159,13 @@ static void draw_sprites( running_machine* machine, bitmap_t *bitmap,const recta
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[1];
 
-	UINT8 *src;
+	uint8_t *src;
 	int i;
 
 	if (state->technos_video_hw == 1)		/* China Gate Sprite RAM */
-		src = (UINT8 *) (state->spriteram);
+		src = (uint8_t *) (state->spriteram);
 	else
-		src = (UINT8 *) (&(state->spriteram[0x800]));
+		src = (uint8_t *) (&(state->spriteram[0x800]));
 
 	for (i = 0; i < (64 * 5); i += 5)
 	{

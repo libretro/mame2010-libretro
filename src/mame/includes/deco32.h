@@ -14,13 +14,13 @@ VIDEO_UPDATE( fghthist );
 VIDEO_UPDATE( dragngun );
 VIDEO_UPDATE( nslasher );
 
-extern UINT32 *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
-extern UINT32 *deco32_pf12_control,*deco32_pf34_control;
-extern UINT32 *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
-extern UINT32 *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
-extern UINT32 *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
-extern UINT32 *deco32_ace_ram;
-extern UINT16 *deco32_raster_display_list;
+extern uint32_t *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
+extern uint32_t *deco32_pf12_control,*deco32_pf34_control;
+extern uint32_t *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
+extern uint32_t *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
+extern uint32_t *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
+extern uint32_t *deco32_ace_ram;
+extern uint16_t *deco32_raster_display_list;
 extern int deco32_raster_display_position;
 
 WRITE32_HANDLER( deco32_pf1_data_w );

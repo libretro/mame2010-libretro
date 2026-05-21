@@ -8,25 +8,25 @@ Atari Fire Truck + Super Bug + Monte Carlo video emulation
 #include "includes/firetrk.h"
 
 
-UINT8 *firetrk_alpha_num_ram;
-UINT8 *firetrk_playfield_ram;
-UINT8 *firetrk_scroll_x;
-UINT8 *firetrk_scroll_y;
-UINT8 *firetrk_car_rot;
-UINT8 *firetrk_drone_rot;
-UINT8 *firetrk_drone_x;
-UINT8 *firetrk_drone_y;
-UINT8 *firetrk_blink;
-UINT8  firetrk_flash;
+uint8_t *firetrk_alpha_num_ram;
+uint8_t *firetrk_playfield_ram;
+uint8_t *firetrk_scroll_x;
+uint8_t *firetrk_scroll_y;
+uint8_t *firetrk_car_rot;
+uint8_t *firetrk_drone_rot;
+uint8_t *firetrk_drone_x;
+uint8_t *firetrk_drone_y;
+uint8_t *firetrk_blink;
+uint8_t  firetrk_flash;
 
-UINT8 firetrk_skid[2];
-UINT8 firetrk_crash[2];
+uint8_t firetrk_skid[2];
+uint8_t firetrk_crash[2];
 
 static bitmap_t *helper1;
 static bitmap_t *helper2;
 
-static UINT32 color1_mask;
-static UINT32 color2_mask;
+static uint32_t color1_mask;
+static uint32_t color2_mask;
 
 
 static const rectangle playfield_window = { 0x02a, 0x115, 0x000, 0x0ff };
@@ -40,7 +40,7 @@ PALETTE_INIT( firetrk )
 {
 	int i;
 
-	static const UINT8 colortable_source[] =
+	static const uint8_t colortable_source[] =
 	{
 		0, 0, 1, 0,
 		2, 0, 3, 0,
@@ -62,7 +62,7 @@ PALETTE_INIT( firetrk )
 
 	for (i = 0; i < ARRAY_LENGTH(colortable_source); i++)
 	{
-		UINT8 color = colortable_source[i];
+		uint8_t color = colortable_source[i];
 
 		if (color == 1)
 			color1_mask |= 1 << i;
@@ -74,7 +74,7 @@ PALETTE_INIT( firetrk )
 }
 
 
-static void prom_to_palette(running_machine *machine, int number, UINT8 val)
+static void prom_to_palette(running_machine *machine, int number, uint8_t val)
 {
 	palette_set_color(machine, number, MAKE_RGB(pal1bit(val >> 2), pal1bit(val >> 1), pal1bit(val >> 0)));
 }
@@ -84,7 +84,7 @@ PALETTE_INIT( montecar )
 {
 	int i;
 
-	static const UINT8 colortable_source[] =
+	static const uint8_t colortable_source[] =
 	{
 		0x00, 0x00, 0x00, 0x01,
 		0x00, 0x02, 0x00, 0x03,
@@ -121,7 +121,7 @@ PALETTE_INIT( montecar )
 
 	for (i = 0; i < ARRAY_LENGTH(colortable_source); i++)
 	{
-		UINT8 color = colortable_source[i];
+		uint8_t color = colortable_source[i];
 
 		if (color == 1)
 			color1_mask |= 1 << i;
@@ -180,7 +180,7 @@ static TILE_GET_INFO( montecar_get_tile_info1 )
 
 static TILE_GET_INFO( firetrk_get_tile_info2 )
 {
-	UINT8 code = firetrk_playfield_ram[tile_index] & 0x3f;
+	uint8_t code = firetrk_playfield_ram[tile_index] & 0x3f;
 	int color = 0;
 
 	/* palette 1 for crash and palette 2 for skid */
@@ -196,7 +196,7 @@ static TILE_GET_INFO( firetrk_get_tile_info2 )
 
 static TILE_GET_INFO( superbug_get_tile_info2 )
 {
-	UINT8 code = firetrk_playfield_ram[tile_index] & 0x3f;
+	uint8_t code = firetrk_playfield_ram[tile_index] & 0x3f;
 	int color = 0;
 
 	/* palette 1 for crash and palette 2 for skid */
@@ -212,7 +212,7 @@ static TILE_GET_INFO( superbug_get_tile_info2 )
 
 static TILE_GET_INFO( montecar_get_tile_info2 )
 {
-	UINT8 code = firetrk_playfield_ram[tile_index];
+	uint8_t code = firetrk_playfield_ram[tile_index];
 	int color = 0;
 
 	/* palette 1 for crash and palette 2 for skid */
@@ -332,7 +332,7 @@ static void montecar_draw_car(bitmap_t *bitmap, const rectangle *cliprect, gfx_e
 }
 
 
-static void draw_text(bitmap_t *bitmap, const rectangle *cliprect, gfx_element **gfx, UINT8 *alpha_ram,
+static void draw_text(bitmap_t *bitmap, const rectangle *cliprect, gfx_element **gfx, uint8_t *alpha_ram,
 					  int x, int count, int height)
 {
 	int i;

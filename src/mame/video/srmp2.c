@@ -62,8 +62,8 @@ static void srmp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, const
 */
 
 	srmp2_state *state = (srmp2_state *)machine->driver_data;
-	UINT16 *spriteram16 = state->spriteram1.u16;
-	UINT16 *spriteram16_2 = state->spriteram2.u16;
+	uint16_t *spriteram16 = state->spriteram1.u16;
+	uint16_t *spriteram16_2 = state->spriteram2.u16;
 	int offs;
 	int xoffs, yoffs;
 
@@ -73,7 +73,7 @@ static void srmp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, const
 	int flip	=	ctrl & 0x40;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	UINT16 *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int max_y = machine->primary_screen->height();
 
@@ -116,9 +116,9 @@ static void srmp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, const
 static void srmp3_draw_sprites_map(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	srmp2_state *state = (srmp2_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram1.u8;
-	UINT8 *spriteram_2 = state->spriteram2.u8;
-	UINT8 *spriteram_3 = state->spriteram3.u8;
+	uint8_t *spriteram = state->spriteram1.u8;
+	uint8_t *spriteram_2 = state->spriteram2.u8;
+	uint8_t *spriteram_3 = state->spriteram3.u8;
 	int offs, col;
 	int xoffs, yoffs;
 
@@ -226,9 +226,9 @@ static void srmp3_draw_sprites(running_machine *machine, bitmap_t *bitmap, const
 */
 
 	srmp2_state *state = (srmp2_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram1.u8;
-	UINT8 *spriteram_2 = state->spriteram2.u8;
-	UINT8 *spriteram_3 = state->spriteram3.u8;
+	uint8_t *spriteram = state->spriteram1.u8;
+	uint8_t *spriteram_2 = state->spriteram2.u8;
+	uint8_t *spriteram_3 = state->spriteram3.u8;
 	int offs;
 	int xoffs, yoffs;
 
@@ -280,8 +280,8 @@ static void srmp3_draw_sprites(running_machine *machine, bitmap_t *bitmap, const
 static void mjyuugi_draw_sprites_map(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	srmp2_state *state = (srmp2_state *)machine->driver_data;
-	UINT16 *spriteram16 = state->spriteram1.u16;
-	UINT16 *spriteram16_2 = state->spriteram2.u16;
+	uint16_t *spriteram16 = state->spriteram1.u16;
+	uint16_t *spriteram16_2 = state->spriteram2.u16;
 	int offs, col;
 	int xoffs, yoffs;
 
@@ -294,7 +294,7 @@ static void mjyuugi_draw_sprites_map(running_machine *machine, bitmap_t *bitmap,
 	int numcol	=	ctrl2 & 0x000f;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	UINT16 *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int upper	=	( spriteram16[ 0x604/2 ] & 0xFF ) +
 					( spriteram16[ 0x606/2 ] & 0xFF ) * 256;
@@ -385,8 +385,8 @@ static void mjyuugi_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 */
 
 	srmp2_state *state = (srmp2_state *)machine->driver_data;
-	UINT16 *spriteram16 = state->spriteram1.u16;
-	UINT16 *spriteram16_2 = state->spriteram2.u16;
+	uint16_t *spriteram16 = state->spriteram1.u16;
+	uint16_t *spriteram16_2 = state->spriteram2.u16;
 	int offs;
 	int xoffs, yoffs;
 
@@ -396,7 +396,7 @@ static void mjyuugi_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 	int flip	=	ctrl & 0x40;
 
 	/* Sprites Banking and/or Sprites Buffering */
-	UINT16 *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
+	uint16_t *src = spriteram16_2 + ( ((ctrl2 ^ (~ctrl2<<1)) & 0x40) ? 0x2000/2 : 0 );
 
 	int max_y = machine->primary_screen->height();
 

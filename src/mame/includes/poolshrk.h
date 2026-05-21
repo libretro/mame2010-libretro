@@ -23,6 +23,6 @@ DISCRETE_SOUND_EXTERN( poolshrk );
 VIDEO_START( poolshrk );
 VIDEO_UPDATE( poolshrk );
 
-extern UINT8* poolshrk_playfield_ram;
-extern UINT8* poolshrk_hpos_ram;
-extern UINT8* poolshrk_vpos_ram;
+extern uint8_t* poolshrk_playfield_ram;
+extern uint8_t* poolshrk_hpos_ram;
+extern uint8_t* poolshrk_vpos_ram;

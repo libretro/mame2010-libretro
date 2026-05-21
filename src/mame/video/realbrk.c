@@ -22,7 +22,7 @@
 #include "emu.h"
 #include "includes/realbrk.h"
 
-UINT16 *realbrk_vram_0, *realbrk_vram_1, *realbrk_vram_2, *realbrk_vregs, *realbrk_vram_0ras, *realbrk_vram_1ras;
+uint16_t *realbrk_vram_0, *realbrk_vram_1, *realbrk_vram_2, *realbrk_vregs, *realbrk_vram_0ras, *realbrk_vram_1ras;
 static bitmap_t *tmpbitmap0 = NULL;
 static bitmap_t *tmpbitmap1 = NULL;
 
@@ -77,8 +77,8 @@ static tilemap_t	*tilemap_0,*tilemap_1,	// Backgrounds
 
 static TILE_GET_INFO( get_tile_info_0 )
 {
-	UINT16 attr = realbrk_vram_0[tile_index * 2 + 0];
-	UINT16 code = realbrk_vram_0[tile_index * 2 + 1];
+	uint16_t attr = realbrk_vram_0[tile_index * 2 + 0];
+	uint16_t code = realbrk_vram_0[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -88,8 +88,8 @@ static TILE_GET_INFO( get_tile_info_0 )
 
 static TILE_GET_INFO( get_tile_info_1 )
 {
-	UINT16 attr = realbrk_vram_1[tile_index * 2 + 0];
-	UINT16 code = realbrk_vram_1[tile_index * 2 + 1];
+	uint16_t attr = realbrk_vram_1[tile_index * 2 + 0];
+	uint16_t code = realbrk_vram_1[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -125,7 +125,7 @@ WRITE16_HANDLER( realbrk_vram_1_w )
 
 static TILE_GET_INFO( get_tile_info_2 )
 {
-	UINT16 code = realbrk_vram_2[tile_index];
+	uint16_t code = realbrk_vram_2[tile_index];
 	SET_TILE_INFO(
 			1,
 			code & 0x0fff,
@@ -213,7 +213,7 @@ VIDEO_START(realbrk)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	int max_x = machine->primary_screen->width();
@@ -232,7 +232,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 		int x, xdim, xnum, xstart, xend, xinc;
 		int y, ydim, ynum, ystart, yend, yinc;
 
-		UINT16 *s;
+		uint16_t *s;
 
 		if (spriteram16[offs] & 0x8000)	continue;
 
@@ -314,8 +314,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 				{
 					case 0x10: // rot 90
 						copyrozbitmap_trans( tmpbitmap1, NULL, tmpbitmap0,
-							(UINT32)0<<16,
-							(UINT32)16<<16,
+							(uint32_t)0<<16,
+							(uint32_t)16<<16,
 							0 << 16,
 							-1 << 16,
 							1 << 16,
@@ -330,8 +330,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 
 					case 0x20: // rot 180
 						copyrozbitmap_trans( tmpbitmap1, NULL, tmpbitmap0,
-							(UINT32)16<<16,
-							(UINT32)16<<16,
+							(uint32_t)16<<16,
+							(uint32_t)16<<16,
 							-1 << 16,
 							0 << 16,
 							0 << 16,
@@ -346,8 +346,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 
 					case 0x30: // rot 270
 						copyrozbitmap_trans( tmpbitmap1, NULL, tmpbitmap0,
-							(UINT32)16<<16,
-							(UINT32)0<<16,
+							(uint32_t)16<<16,
+							(uint32_t)0<<16,
 							0 << 16,
 							1 << 16,
 							-1 << 16,
@@ -379,7 +379,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 /* layer : 0== bghigh<spr    1== bglow<spr<bghigh     2==spr<bglow    3==boarder */
 static void dai2kaku_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect, int layer)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	int max_x = machine->primary_screen->width();
@@ -392,7 +392,7 @@ static void dai2kaku_draw_sprites(running_machine *machine, bitmap_t *bitmap,con
 		int x, xdim, xnum, xstart, xend, xinc;
 		int y, ydim, ynum, ystart, yend, yinc;
 
-		UINT16 *s;
+		uint16_t *s;
 
 		if (spriteram16[offs] & 0x8000)	continue;
 
@@ -483,8 +483,8 @@ static void dai2kaku_draw_sprites(running_machine *machine, bitmap_t *bitmap,con
 
 WRITE16_HANDLER( realbrk_vregs_w )
 {
-	UINT16 old_data = realbrk_vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&realbrk_vregs[offset]);
+	uint16_t old_data = realbrk_vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&realbrk_vregs[offset]);
 	if (new_data != old_data)
 	{
 		if (offset == 0xa/2)

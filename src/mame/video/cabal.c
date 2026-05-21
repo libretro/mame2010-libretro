@@ -109,7 +109,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 {
 	cabal_state *state = (cabal_state *)machine->driver_data;
 	int offs,data0,data1,data2;
-	UINT16 *spriteram16 = state->spriteram;
+	uint16_t *spriteram16 = state->spriteram;
 
 	for( offs = state->spriteram_size/2 - 4; offs >= 0; offs -= 4 )
 	{

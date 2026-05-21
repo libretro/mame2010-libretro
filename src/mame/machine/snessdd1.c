@@ -8,31 +8,31 @@
 
 ***************************************************************************/
 
-static UINT8 sdd1_read(running_machine* machine, UINT32 addr);
+static uint8_t sdd1_read(running_machine* machine, uint32_t addr);
 
 typedef struct //Input Manager
 {
 	running_machine* machine;
-	UINT32 byte_ptr;
-	UINT8 bit_count;
+	uint32_t byte_ptr;
+	uint8_t bit_count;
 } SDD1_IM;
 
 static SDD1_IM* SDD1_IM_ctor(running_machine* machine)
 {
-	SDD1_IM* newclass = (SDD1_IM*)auto_alloc_array(machine, UINT8, sizeof(SDD1_IM));
+	SDD1_IM* newclass = (SDD1_IM*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_IM));
 	newclass->machine = machine;
 	return newclass;
 }
 
-static void SDD1_IM_prepareDecomp(SDD1_IM* thisptr, UINT32 in_buf)
+static void SDD1_IM_prepareDecomp(SDD1_IM* thisptr, uint32_t in_buf)
 {
 	thisptr->byte_ptr = in_buf;
 	thisptr->bit_count = 4;
 }
 
-static UINT8 SDD1_IM_getCodeword(SDD1_IM* thisptr, const UINT8 code_len)
+static uint8_t SDD1_IM_getCodeword(SDD1_IM* thisptr, const uint8_t code_len)
 {
-	UINT8 codeword;
+	uint8_t codeword;
 
 	codeword = sdd1_read(thisptr->machine, thisptr->byte_ptr) << thisptr->bit_count;
 
@@ -61,15 +61,15 @@ typedef struct //Golomb-Code Decoder
 
 static SDD1_GCD* SDD1_GCD_ctor(running_machine* machine, SDD1_IM* associatedIM)
 {
-	SDD1_GCD* newclass = (SDD1_GCD*)auto_alloc_array(machine, UINT8, sizeof(SDD1_GCD));
+	SDD1_GCD* newclass = (SDD1_GCD*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_GCD));
 	newclass->machine = machine;
 	newclass->IM = associatedIM;
 	return newclass;
 }
 
-static void SDD1_GCD_getRunCount(SDD1_GCD* thisptr, UINT8 code_num, UINT8* MPScount, UINT8* LPSind)
+static void SDD1_GCD_getRunCount(SDD1_GCD* thisptr, uint8_t code_num, uint8_t* MPScount, uint8_t* LPSind)
 {
-	const UINT8 run_count[] =
+	const uint8_t run_count[] =
 	{
 		0x00, 0x00, 0x01, 0x00, 0x03, 0x01, 0x02, 0x00,
 		0x07, 0x03, 0x05, 0x01, 0x06, 0x02, 0x04, 0x00,
@@ -105,7 +105,7 @@ static void SDD1_GCD_getRunCount(SDD1_GCD* thisptr, UINT8 code_num, UINT8* MPSco
 		0x70, 0x30, 0x50, 0x10, 0x60, 0x20, 0x40, 0x00,
 	};
 
-	UINT8 codeword = SDD1_IM_getCodeword(thisptr->IM, code_num);
+	uint8_t codeword = SDD1_IM_getCodeword(thisptr->IM, code_num);
 
 	if (codeword & 0x80)
 	{
@@ -121,15 +121,15 @@ static void SDD1_GCD_getRunCount(SDD1_GCD* thisptr, UINT8 code_num, UINT8* MPSco
 typedef struct // Bits Generator
 {
 	running_machine* machine;
-	UINT8 code_num;
-	UINT8 MPScount;
-	UINT8 LPSind;
+	uint8_t code_num;
+	uint8_t MPScount;
+	uint8_t LPSind;
 	SDD1_GCD* GCD;
 } SDD1_BG;
 
-static SDD1_BG* SDD1_BG_ctor(running_machine* machine, SDD1_GCD* associatedGCD, UINT8 code)
+static SDD1_BG* SDD1_BG_ctor(running_machine* machine, SDD1_GCD* associatedGCD, uint8_t code)
 {
-	SDD1_BG* newclass = (SDD1_BG*)auto_alloc_array(machine, UINT8, sizeof(SDD1_BG));
+	SDD1_BG* newclass = (SDD1_BG*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_BG));
 	newclass->machine = machine;
 	newclass->code_num = code;
 	newclass->GCD = associatedGCD;
@@ -142,9 +142,9 @@ static void SDD1_BG_prepareDecomp(SDD1_BG* thisptr)
 	thisptr->LPSind = 0;
 }
 
-static UINT8 SDD1_BG_getBit(SDD1_BG* thisptr, UINT8* endOfRun)
+static uint8_t SDD1_BG_getBit(SDD1_BG* thisptr, uint8_t* endOfRun)
 {
-	UINT8 bit;
+	uint8_t bit;
 
 	if (!(thisptr->MPScount || thisptr->LPSind))
 	{
@@ -177,9 +177,9 @@ static UINT8 SDD1_BG_getBit(SDD1_BG* thisptr, UINT8* endOfRun)
 
 typedef struct
 {
-	UINT8 code_num;
-	UINT8 nextIfMPS;
-	UINT8 nextIfLPS;
+	uint8_t code_num;
+	uint8_t nextIfMPS;
+	uint8_t nextIfLPS;
 } SDD1_PEM_state;
 
 static const SDD1_PEM_state SDD1_PEM_evolution_table[33] =
@@ -221,8 +221,8 @@ static const SDD1_PEM_state SDD1_PEM_evolution_table[33] =
 
 typedef struct
 {
-	UINT8 status;
-	UINT8 MPS;
+	uint8_t status;
+	uint8_t MPS;
 } SDD1_PEM_ContextInfo;
 
 typedef struct //Probability Estimation Module
@@ -238,7 +238,7 @@ static SDD1_PEM* SDD1_PEM_ctor(running_machine* machine,
 							   SDD1_BG* associatedBG4, SDD1_BG* associatedBG5,
 							   SDD1_BG* associatedBG6, SDD1_BG* associatedBG7)
 {
-	SDD1_PEM* newclass = (SDD1_PEM*)auto_alloc_array(machine, UINT8, sizeof(SDD1_PEM));
+	SDD1_PEM* newclass = (SDD1_PEM*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_PEM));
 	newclass->machine = machine;
 	newclass->BG[0] = associatedBG0;
 	newclass->BG[1] = associatedBG1;
@@ -253,7 +253,7 @@ static SDD1_PEM* SDD1_PEM_ctor(running_machine* machine,
 
 static void SDD1_PEM_prepareDecomp(SDD1_PEM* thisptr)
 {
-	UINT8 i;
+	uint8_t i;
 	for(i = 0; i < 32; i++)
 	{
 		thisptr->contextInfo[i].status = 0;
@@ -261,15 +261,15 @@ static void SDD1_PEM_prepareDecomp(SDD1_PEM* thisptr)
 	}
 }
 
-static UINT8 SDD1_PEM_getBit(SDD1_PEM* thisptr, UINT8 context)
+static uint8_t SDD1_PEM_getBit(SDD1_PEM* thisptr, uint8_t context)
 {
-	UINT8 endOfRun;
-	UINT8 bit;
+	uint8_t endOfRun;
+	uint8_t bit;
 
 	SDD1_PEM_ContextInfo *pContInfo = &(thisptr->contextInfo)[context];
-	UINT8 currStatus = pContInfo->status;
+	uint8_t currStatus = pContInfo->status;
 	const SDD1_PEM_state* pState = &(SDD1_PEM_evolution_table[currStatus]);
-	UINT8 currentMPS = pContInfo->MPS;
+	uint8_t currentMPS = pContInfo->MPS;
 
 	bit = SDD1_BG_getBit(thisptr->BG[pState->code_num], &endOfRun);
 
@@ -295,25 +295,25 @@ static UINT8 SDD1_PEM_getBit(SDD1_PEM* thisptr, UINT8 context)
 typedef struct
 {
 	running_machine* machine;
-	UINT8 bitplanesInfo;
-	UINT8 contextBitsInfo;
-	UINT8 bit_number;
-	UINT8 currBitplane;
-	UINT16 prevBitplaneBits[8];
+	uint8_t bitplanesInfo;
+	uint8_t contextBitsInfo;
+	uint8_t bit_number;
+	uint8_t currBitplane;
+	uint16_t prevBitplaneBits[8];
 	SDD1_PEM* PEM;
 } SDD1_CM;
 
 static SDD1_CM* SDD1_CM_ctor(running_machine* machine, SDD1_PEM* associatedPEM)
 {
-	SDD1_CM* newclass = (SDD1_CM*)auto_alloc_array(machine, UINT8, sizeof(SDD1_CM));
+	SDD1_CM* newclass = (SDD1_CM*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_CM));
 	newclass->machine = machine;
 	newclass->PEM = associatedPEM;
 	return newclass;
 }
 
-static void SDD1_CM_prepareDecomp(SDD1_CM* thisptr, UINT32 first_byte)
+static void SDD1_CM_prepareDecomp(SDD1_CM* thisptr, uint32_t first_byte)
 {
-	INT32 i = 0;
+	int32_t i = 0;
 	thisptr->bitplanesInfo = sdd1_read(thisptr->machine, first_byte) & 0xc0;
 	thisptr->contextBitsInfo = sdd1_read(thisptr->machine, first_byte) & 0x30;
 	thisptr->bit_number = 0;
@@ -335,11 +335,11 @@ static void SDD1_CM_prepareDecomp(SDD1_CM* thisptr, UINT32 first_byte)
 	}
 }
 
-static UINT8 SDD1_CM_getBit(SDD1_CM* thisptr)
+static uint8_t SDD1_CM_getBit(SDD1_CM* thisptr)
 {
-	UINT8 currContext;
-	UINT16 *context_bits;
-	UINT8 bit = 0;
+	uint8_t currContext;
+	uint16_t *context_bits;
+	uint8_t bit = 0;
 
 	switch (thisptr->bitplanesInfo)
 	{
@@ -397,21 +397,21 @@ static UINT8 SDD1_CM_getBit(SDD1_CM* thisptr)
 typedef struct
 {
 	running_machine* machine;
-	UINT8 bitplanesInfo;
-	UINT16 length;
-	UINT8* buffer;
+	uint8_t bitplanesInfo;
+	uint16_t length;
+	uint8_t* buffer;
 	SDD1_CM* CM;
 } SDD1_OL;
 
 static SDD1_OL* SDD1_OL_ctor(running_machine* machine, SDD1_CM* associatedCM)
 {
-	SDD1_OL* newclass = (SDD1_OL*)auto_alloc_array(machine, UINT8, sizeof(SDD1_OL));
+	SDD1_OL* newclass = (SDD1_OL*)auto_alloc_array(machine, uint8_t, sizeof(SDD1_OL));
 	newclass->machine = machine;
 	newclass->CM = associatedCM;
 	return newclass;
 }
 
-static void SDD1_OL_prepareDecomp(SDD1_OL* thisptr, UINT32 first_byte, UINT16 out_len, UINT8 *out_buf)
+static void SDD1_OL_prepareDecomp(SDD1_OL* thisptr, uint32_t first_byte, uint16_t out_len, uint8_t *out_buf)
 {
 	thisptr->bitplanesInfo = sdd1_read(thisptr->machine, first_byte) & 0xc0;
 	thisptr->length = out_len;
@@ -420,8 +420,8 @@ static void SDD1_OL_prepareDecomp(SDD1_OL* thisptr, UINT32 first_byte, UINT16 ou
 
 static void SDD1_OL_launch(SDD1_OL* thisptr)
 {
-	UINT8 i;
-	UINT8 register1 = 0, register2 = 0;
+	uint8_t i;
+	uint8_t register1 = 0, register2 = 0;
 
 	switch(thisptr->bitplanesInfo)
 	{
@@ -483,7 +483,7 @@ typedef struct
 
 static SDD1emu* SDD1emu_ctor(running_machine *machine)
 {
-	SDD1emu* newclass = (SDD1emu*)auto_alloc_array(machine, UINT8, sizeof(SDD1emu));
+	SDD1emu* newclass = (SDD1emu*)auto_alloc_array(machine, uint8_t, sizeof(SDD1emu));
 	newclass->machine = machine;
 
 	newclass->IM = SDD1_IM_ctor(machine);
@@ -503,7 +503,7 @@ static SDD1emu* SDD1emu_ctor(running_machine *machine)
 	return newclass;
 }
 
-static void SDD1emu_decompress(SDD1emu* thisptr, UINT32 in_buf, UINT16 out_len, UINT8 *out_buf)
+static void SDD1emu_decompress(SDD1emu* thisptr, uint32_t in_buf, uint16_t out_len, uint8_t *out_buf)
 {
 	SDD1_IM_prepareDecomp(thisptr->IM, in_buf);
 	SDD1_BG_prepareDecomp(thisptr->BG0);
@@ -523,23 +523,23 @@ static void SDD1emu_decompress(SDD1emu* thisptr, UINT32 in_buf, UINT16 out_len, 
 
 typedef struct
 {
-	UINT8 sdd1_enable;	// channel bit-mask
-	UINT8 xfer_enable;	// channel bit-mask
-	UINT32 mmc[4];		// memory map controller ROM indices
+	uint8_t sdd1_enable;	// channel bit-mask
+	uint8_t xfer_enable;	// channel bit-mask
+	uint32_t mmc[4];		// memory map controller ROM indices
 
 	struct
 	{
-		UINT32 addr;	// $43x2-$43x4 -- DMA transfer address
-		UINT16 size;	// $43x5-$43x6 -- DMA transfer size
+		uint32_t addr;	// $43x2-$43x4 -- DMA transfer address
+		uint16_t size;	// $43x5-$43x6 -- DMA transfer size
 	} dma[8];
 
 	SDD1emu* sdd1emu;
 	struct
 	{
-		UINT8 *data;	// pointer to decompressed S-DD1 data (65536 bytes)
-		UINT16 offset;	// read index into S-DD1 decompression buffer
-		UINT32 size;	// length of data buffer; reads decrement counter, set ready to false at 0
-		UINT8 ready;	// 1 when data[] is valid; 0 to invoke sdd1emu.decompress()
+		uint8_t *data;	// pointer to decompressed S-DD1 data (65536 bytes)
+		uint16_t offset;	// read index into S-DD1 decompression buffer
+		uint32_t size;	// length of data buffer; reads decrement counter, set ready to false at 0
+		uint8_t ready;	// 1 when data[] is valid; 0 to invoke sdd1emu.decompress()
 	} buffer;
 } _snes_sdd1_t;
 
@@ -547,7 +547,7 @@ static _snes_sdd1_t snes_sdd1;
 
 static void sdd1_init(running_machine* machine)
 {
-	UINT8 i;
+	uint8_t i;
 
 	snes_sdd1.sdd1_enable = 0x00;
 	snes_sdd1.xfer_enable = 0x00;
@@ -565,11 +565,11 @@ static void sdd1_init(running_machine* machine)
 
 	snes_sdd1.sdd1emu = SDD1emu_ctor(machine);
 
-	snes_sdd1.buffer.data = (UINT8*)auto_alloc_array(machine, UINT8, 0x10000);
+	snes_sdd1.buffer.data = (uint8_t*)auto_alloc_array(machine, uint8_t, 0x10000);
 	snes_sdd1.buffer.ready = 0;
 }
 
-static UINT8 sdd1_mmio_read(const address_space *space, UINT32 addr)
+static uint8_t sdd1_mmio_read(const address_space *space, uint32_t addr)
 {
 	addr &= 0xffff;
 
@@ -593,13 +593,13 @@ static UINT8 sdd1_mmio_read(const address_space *space, UINT32 addr)
 	return snes_open_bus_r(space, 0);
 }
 
-static void sdd1_mmio_write(const address_space *space, UINT32 addr, UINT8 data)
+static void sdd1_mmio_write(const address_space *space, uint32_t addr, uint8_t data)
 {
 	addr &= 0xffff;
 
 	if((addr & 0x4380) == 0x4300)
 	{
-		UINT8 channel = (addr >> 4) & 7;
+		uint8_t channel = (addr >> 4) & 7;
 		switch(addr & 15)
 		{
 			case 2:
@@ -648,14 +648,14 @@ static void sdd1_mmio_write(const address_space *space, UINT32 addr, UINT8 data)
 	}
 }
 
-static UINT8 sdd1_read(running_machine* machine, UINT32 addr)
+static uint8_t sdd1_read(running_machine* machine, uint32_t addr)
 {
 	unsigned char *ROM = memory_region(machine, "cart");
 
 	if(snes_sdd1.sdd1_enable & snes_sdd1.xfer_enable)
 	{
 		// at least one channel has S-DD1 decompression enabled...
-		UINT32 i;
+		uint32_t i;
 		for(i = 0; i < 8; i++)
 		{
 			if(snes_sdd1.sdd1_enable & snes_sdd1.xfer_enable & (1 << i))
@@ -663,10 +663,10 @@ static UINT8 sdd1_read(running_machine* machine, UINT32 addr)
 				// S-DD1 always uses fixed transfer mode, so address will not change during transfer
 				if((addr + 0xc00000) == snes_sdd1.dma[i].addr)
 				{
-					UINT8 data;
+					uint8_t data;
 					if(!snes_sdd1.buffer.ready)
 					{
-						UINT8 temp;
+						uint8_t temp;
 						// first byte read for channel performs full decompression.
 						// this really should stream byte-by-byte, but it's not necessary since the size is known
 						snes_sdd1.buffer.offset = 0;
@@ -683,7 +683,7 @@ static UINT8 sdd1_read(running_machine* machine, UINT32 addr)
 					}
 
 					// fetch a decompressed byte; once buffer is depleted, disable channel and invalidate buffer
-					data = snes_sdd1.buffer.data[(UINT16)snes_sdd1.buffer.offset++];
+					data = snes_sdd1.buffer.data[(uint16_t)snes_sdd1.buffer.offset++];
 					if(snes_sdd1.buffer.offset >= snes_sdd1.buffer.size)
 					{
 						snes_sdd1.buffer.ready = 0;

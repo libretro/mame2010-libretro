@@ -13,10 +13,10 @@ extern int toaplan2_sub_cpu;
 
 /*----------- defined in video/toaplan2.c -----------*/
 
-extern UINT16 *toaplan2_txvideoram16;
-extern UINT16 *toaplan2_txvideoram16_offs;
-extern UINT16 *toaplan2_txscrollram16;
-extern UINT16 *toaplan2_tx_gfxram16;
+extern uint16_t *toaplan2_txvideoram16;
+extern uint16_t *toaplan2_txvideoram16_offs;
+extern uint16_t *toaplan2_txscrollram16;
+extern uint16_t *toaplan2_tx_gfxram16;
 
 extern  size_t toaplan2_tx_vram_size;
 extern  size_t toaplan2_tx_offs_vram_size;

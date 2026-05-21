@@ -34,8 +34,8 @@ static void taitof2_core_vh_start (running_machine *machine, int sprite_type, in
 	state->hide_pixels = hide;
 	state->flip_hide_pixels = flip_hide;
 
-	state->spriteram_delayed = auto_alloc_array(machine, UINT16, state->spriteram_size / 2);
-	state->spriteram_buffered = auto_alloc_array(machine, UINT16, state->spriteram_size / 2);
+	state->spriteram_delayed = auto_alloc_array(machine, uint16_t, state->spriteram_size / 2);
+	state->spriteram_buffered = auto_alloc_array(machine, uint16_t, state->spriteram_size / 2);
 	state->spritelist = auto_alloc_array(machine, struct f2_tempsprite, 0x400);
 
 	for (i = 0; i < 8; i ++)
@@ -287,11 +287,11 @@ WRITE16_HANDLER( koshien_spritebank_w )
 }
 
 static void taito_f2_tc360_spritemixdraw( running_machine *machine, bitmap_t *dest_bmp, const rectangle *clip, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, int sx, int sy, int scalex, int scaley )
+		uint32_t code, uint32_t color, int flipx, int flipy, int sx, int sy, int scalex, int scaley )
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
 	int pal_base = gfx->color_base + gfx->color_granularity * (color % gfx->total_colors);
-	const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+	const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 	bitmap_t *priority_bitmap = gfx->machine->priority_bitmap;
 	int sprite_screen_height = (scaley * gfx->height + 0x8000) >> 16;
 	int sprite_screen_width = (scalex * gfx->width + 0x8000) >> 16;
@@ -365,9 +365,9 @@ static void taito_f2_tc360_spritemixdraw( running_machine *machine, bitmap_t *de
 
 			for (y = sy; y < ey; y++)
 			{
-				const UINT8 *source = source_base + (y_index >> 16) * gfx->line_modulo;
-				UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-				UINT8 *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+				const uint8_t *source = source_base + (y_index >> 16) * gfx->line_modulo;
+				uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+				uint8_t *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
 
 				int x, x_index = x_index_base;
 				for (x = sx; x < ex; x++)
@@ -375,7 +375,7 @@ static void taito_f2_tc360_spritemixdraw( running_machine *machine, bitmap_t *de
 					int c = source[x_index >> 16];
 					if (c && (pri[x] & 0x80) == 0)
 					{
-						UINT8 tilemap_priority = 0, sprite_priority = 0;
+						uint8_t tilemap_priority = 0, sprite_priority = 0;
 
 						// Get tilemap priority (0 - 0xf) for this destination pixel
 						if (pri[x] & 0x10) tilemap_priority = state->tilepri[4];
@@ -499,7 +499,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	int code, color, spritedata, spritecont, flipx, flipy;
 	int xcurrent, ycurrent, big_sprite = 0;
 	int y_no = 0, x_no = 0, xlatch = 0, ylatch = 0, last_continuation_tile = 0;   /* for zooms */
-	UINT32 zoomword, zoomx, zoomy, zx = 0, zy = 0, zoomxlatch = 0, zoomylatch = 0;   /* for zooms */
+	uint32_t zoomword, zoomx, zoomy, zx = 0, zy = 0, zoomxlatch = 0, zoomylatch = 0;   /* for zooms */
 	int scroll1x, scroll1y;
 	int scrollx = 0, scrolly = 0;
 	int curx, cury;
@@ -905,7 +905,7 @@ VIDEO_EOF( taitof2_no_buffer )
 VIDEO_EOF( taitof2_full_buffer_delayed )
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int i;
 
 	taitof2_update_sprites_active_area(machine);
@@ -920,7 +920,7 @@ VIDEO_EOF( taitof2_full_buffer_delayed )
 VIDEO_EOF( taitof2_partial_buffer_delayed )
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int i;
 
 	taitof2_update_sprites_active_area(machine);
@@ -935,7 +935,7 @@ VIDEO_EOF( taitof2_partial_buffer_delayed )
 VIDEO_EOF( taitof2_partial_buffer_delayed_thundfox )
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int i;
 
 	taitof2_update_sprites_active_area(machine);
@@ -957,7 +957,7 @@ VIDEO_EOF( taitof2_partial_buffer_delayed_qzchikyu )
        probably thundfox_eof_callback would work fine */
 
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int i;
 
 	taitof2_update_sprites_active_area(machine);
@@ -1063,7 +1063,7 @@ VIDEO_UPDATE( taitof2_pri )
 
 
 
-static void draw_roz_layer( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 priority)
+static void draw_roz_layer( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t priority)
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
 
@@ -1283,8 +1283,8 @@ and it changes these (and the sprite pri settings) a lot.
 VIDEO_UPDATE( taitof2_metalb )
 {
 	taitof2_state *state = (taitof2_state *)screen->machine->driver_data;
-	UINT8 layer[5], invlayer[4];
-	UINT16 priority;
+	uint8_t layer[5], invlayer[4];
+	uint16_t priority;
 
 	taitof2_handle_sprite_buffering(screen->machine);
 
@@ -1334,10 +1334,10 @@ VIDEO_UPDATE( taitof2_metalb )
 VIDEO_UPDATE( taitof2_deadconx )
 {
 	taitof2_state *state = (taitof2_state *)screen->machine->driver_data;
-	UINT8 layer[5];
-	UINT8 tilepri[5];
-	UINT8 spritepri[4];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t tilepri[5];
+	uint8_t spritepri[4];
+	uint16_t priority;
 
 	taitof2_handle_sprite_buffering(screen->machine);
 

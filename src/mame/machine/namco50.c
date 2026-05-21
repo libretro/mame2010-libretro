@@ -139,9 +139,9 @@ typedef struct _namco_50xx_state namco_50xx_state;
 struct _namco_50xx_state
 {
 	running_device *	cpu;
-	UINT8					latched_cmd;
-	UINT8					latched_rw;
-	UINT8					portO;
+	uint8_t					latched_cmd;
+	uint8_t					latched_rw;
+	uint8_t					portO;
 };
 
 INLINE namco_50xx_state *get_safe_token(running_device *device)
@@ -192,7 +192,7 @@ static READ8_HANDLER( namco_50xx_R2_r )
 static WRITE8_HANDLER( namco_50xx_O_w )
 {
 	namco_50xx_state *state = get_safe_token(space->cpu->owner());
-	UINT8 out = (data & 0x0f);
+	uint8_t out = (data & 0x0f);
 	if (data & 0x10)
 		state->portO = (state->portO & 0x0f) | (out << 4);
 	else
@@ -241,7 +241,7 @@ void namco_50xx_read_request(running_device *device)
 READ8_DEVICE_HANDLER( namco_50xx_read )
 {
 	namco_50xx_state *state = get_safe_token(device);
-	UINT8 res = state->portO;
+	uint8_t res = state->portO;
 
 	namco_50xx_read_request(device);
 

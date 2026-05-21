@@ -81,7 +81,7 @@ VIDEO_START( nycaptor )
 {
 	nycaptor_state *state = (nycaptor_state *)machine->driver_data;
 
-	state->spriteram = auto_alloc_array(machine, UINT8, 160);
+	state->spriteram = auto_alloc_array(machine, uint8_t, 160);
 	state->bg_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_rows, 8, 8, 32, 32 );
 
 	tilemap_set_transmask(state->bg_tilemap, 0, 0xf800, 0x7ff); //split 0
@@ -89,8 +89,8 @@ VIDEO_START( nycaptor )
 	tilemap_set_transmask(state->bg_tilemap, 2, 0xfffc, 0x0003);//split 2
 	tilemap_set_transmask(state->bg_tilemap, 3, 0xfff0, 0x000f);//split 3
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x200);
-	machine->generic.paletteram2.u8 = auto_alloc_array(machine, UINT8, 0x200);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x200);
+	machine->generic.paletteram2.u8 = auto_alloc_array(machine, uint8_t, 0x200);
 	tilemap_set_scroll_cols(state->bg_tilemap, 32);
 
 	state_save_register_global_pointer(machine, state->spriteram, 160);

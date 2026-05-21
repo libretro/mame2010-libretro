@@ -214,17 +214,17 @@ Playfield tile info:
 
 static tilemap_t *pf1_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static tilemap_t *pixel_layer,*vram_layer;
-static UINT32 *spriteram32_buffered;
-static UINT32 f3_control_0[8];
-static UINT32 f3_control_1[8];
+static uint32_t *spriteram32_buffered;
+static uint32_t f3_control_0[8];
+static uint32_t f3_control_1[8];
 static int flipscreen;
-static UINT8 sprite_extra_planes;
-static UINT8 sprite_pen_mask;
+static uint8_t sprite_extra_planes;
+static uint8_t sprite_pen_mask;
 
-static UINT32 *f3_pf_data_1,*f3_pf_data_2,*f3_pf_data_3,*f3_pf_data_4;
+static uint32_t *f3_pf_data_1,*f3_pf_data_2,*f3_pf_data_3,*f3_pf_data_4;
 
-UINT32 *f3_vram,*f3_line_ram;
-UINT32 *f3_pf_data,*f3_pivot_ram;
+uint32_t *f3_vram,*f3_line_ram;
+uint32_t *f3_pf_data,*f3_pivot_ram;
 
 static int f3_skip_this_frame;
 
@@ -289,9 +289,9 @@ struct tempsprite
 static struct tempsprite *spritelist;
 static const struct tempsprite *sprite_end;
 
-static void get_sprite_info(running_machine *machine, const UINT32 *spriteram32_ptr);
+static void get_sprite_info(running_machine *machine, const uint32_t *spriteram32_ptr);
 static int sprite_lag;
-static UINT8 sprite_pri_usage=0;
+static uint8_t sprite_pri_usage=0;
 
 struct f3_playfield_line_inf
 {
@@ -299,25 +299,25 @@ struct f3_playfield_line_inf
 	int pri[256];
 
 	/* use for draw_scanlines */
-	UINT16 *src[256],*src_s[256],*src_e[256];
-	UINT8 *tsrc[256],*tsrc_s[256];
+	uint16_t *src[256],*src_s[256],*src_e[256];
+	uint8_t *tsrc[256],*tsrc_s[256];
 	int x_count[256];
-	UINT32 x_zoom[256];
-	UINT32 clip0[256];
-	UINT32 clip1[256];
+	uint32_t x_zoom[256];
+	uint32_t clip0[256];
+	uint32_t clip1[256];
 };
 
 struct f3_spritealpha_line_inf
 {
-	UINT16 alpha_level[256];
-	UINT16 spri[256];
-	UINT16 sprite_alpha[256];
-	UINT32 sprite_clip0[256];
-	UINT32 sprite_clip1[256];
-	INT16 clip0_l[256];
-	INT16 clip0_r[256];
-	INT16 clip1_l[256];
-	INT16 clip1_r[256];
+	uint16_t alpha_level[256];
+	uint16_t spri[256];
+	uint16_t sprite_alpha[256];
+	uint32_t sprite_clip0[256];
+	uint32_t sprite_clip1[256];
+	int16_t clip0_l[256];
+	int16_t clip0_r[256];
+	int16_t clip1_l[256];
+	int16_t clip1_r[256];
 };
 
 /*
@@ -361,11 +361,11 @@ static int width_mask;
 static int twidth_mask;
 static int twidth_mask_bit;
 
-static UINT8 *tile_opaque_sp;
-static UINT8 *tile_opaque_pf[4];
+static uint8_t *tile_opaque_sp;
+static uint8_t *tile_opaque_pf[4];
 
 
-static UINT8 add_sat[256][256];
+static uint8_t add_sat[256][256];
 
 static int alpha_s_1_1;
 static int alpha_s_1_2;
@@ -392,21 +392,21 @@ static int alpha_s_3b_0;
 static int alpha_s_3b_1;
 static int alpha_s_3b_2;
 
-static UINT32 dval;
-static UINT8 pval;
-static UINT8 tval;
-static UINT8 pdest_2a;
-static UINT8 pdest_2b;
+static uint32_t dval;
+static uint8_t pval;
+static uint8_t tval;
+static uint8_t pdest_2a;
+static uint8_t pdest_2b;
 static int tr_2a;
 static int tr_2b;
-static UINT8 pdest_3a;
-static UINT8 pdest_3b;
+static uint8_t pdest_3a;
+static uint8_t pdest_3b;
 static int tr_3a;
 static int tr_3b;
 
-static int (*dpix_n[8][16])(UINT32 s_pix);
-static int (**dpix_lp[5])(UINT32 s_pix);
-static int (**dpix_sp[9])(UINT32 s_pix);
+static int (*dpix_n[8][16])(uint32_t s_pix);
+static int (**dpix_lp[5])(uint32_t s_pix);
+static int (**dpix_sp[9])(uint32_t s_pix);
 
 
 /******************************************************************************/
@@ -485,14 +485,14 @@ static void print_debug_info(bitmap_t *bitmap)
 
 /******************************************************************************/
 
-INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, UINT32 *gfx_base)
+INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, uint32_t *gfx_base)
 {
-	UINT32 tile=gfx_base[tile_index];
-	UINT8 abtype=(tile>>(16+9)) & 1;
+	uint32_t tile=gfx_base[tile_index];
+	uint8_t abtype=(tile>>(16+9)) & 1;
 	// tiles can be configured to use 4, 5, or 6 bpp data.
 	// if tiles use more than 4bpp, the bottom bits of the color code must be masked out.
 	// This fixes (at least) the rain in round 6 of Arabian Magic.
-	UINT8 extra_planes = ((tile>>(16+10)) & 3);	// 0 = 4bpp, 1 = 5bpp, 2 = unused?, 3 = 6bpp
+	uint8_t extra_planes = ((tile>>(16+10)) & 3);	// 0 = 4bpp, 1 = 5bpp, 2 = unused?, 3 = 6bpp
 
 	SET_TILE_INFO(
 			1,
@@ -664,7 +664,7 @@ VIDEO_START( f3 )
 		twidth_mask_bit=5;
 	}
 
-	spriteram32_buffered = auto_alloc_array(machine, UINT32, 0x10000/4);
+	spriteram32_buffered = auto_alloc_array(machine, uint32_t, 0x10000/4);
 	spritelist = auto_alloc_array(machine, struct tempsprite, 0x400);
 	sprite_end = spritelist;
 	vram_layer = tilemap_create(machine, get_tile_info_vram,tilemap_scan_rows,8,8,64,64);
@@ -674,9 +674,9 @@ VIDEO_START( f3 )
 	width = machine->primary_screen->width();
 	height = machine->primary_screen->height();
 	pri_alp_bitmap = auto_bitmap_alloc(machine, width, height, BITMAP_FORMAT_INDEXED8 );
-	tile_opaque_sp = auto_alloc_array(machine, UINT8, machine->gfx[2]->total_elements);
+	tile_opaque_sp = auto_alloc_array(machine, uint8_t, machine->gfx[2]->total_elements);
 	for (i=0; i<4; i++)
-		tile_opaque_pf[i] = auto_alloc_array(machine, UINT8, machine->gfx[1]->total_elements);
+		tile_opaque_pf[i] = auto_alloc_array(machine, uint8_t, machine->gfx[1]->total_elements);
 
 	tilemap_set_transparent_pen(pf1_tilemap,0);
 	tilemap_set_transparent_pen(pf2_tilemap,0);
@@ -697,8 +697,8 @@ VIDEO_START( f3 )
 	state_save_register_global_array(machine, f3_control_0);
 	state_save_register_global_array(machine, f3_control_1);
 
-	gfx_element_set_source(machine->gfx[0], (UINT8 *)f3_vram);
-	gfx_element_set_source(machine->gfx[3], (UINT8 *)f3_pivot_ram);
+	gfx_element_set_source(machine->gfx[0], (uint8_t *)f3_vram);
+	gfx_element_set_source(machine->gfx[3], (uint8_t *)f3_pivot_ram);
 
 	f3_skip_this_frame=0;
 
@@ -714,7 +714,7 @@ VIDEO_START( f3 )
 		{
 			int x,y;
 			int chk_trans_or_opa=0;
-			const UINT8 *dp = gfx_element_get_data(sprite_gfx, c);
+			const uint8_t *dp = gfx_element_get_data(sprite_gfx, c);
 			for (y = 0;y < sprite_gfx->height;y++)
 			{
 				for (x = 0;x < sprite_gfx->width;x++)
@@ -742,8 +742,8 @@ VIDEO_START( f3 )
 			for (extra_planes=0; extra_planes<4; extra_planes++)
 			{
 				int chk_trans_or_opa=0;
-				UINT8 extra_mask = ((extra_planes << 4) | 0x0f);
-				const UINT8 *dp = gfx_element_get_data(pf_gfx, c);
+				uint8_t extra_mask = ((extra_planes << 4) | 0x0f);
+				const uint8_t *dp = gfx_element_get_data(pf_gfx, c);
 
 				for (y = 0;y < pf_gfx->height;y++)
 				{
@@ -943,19 +943,19 @@ INLINE void f3_alpha_set_level(void)
 
 
 
-INLINE void f3_alpha_blend32_s( int alphas, UINT32 s )
+INLINE void f3_alpha_blend32_s( int alphas, uint32_t s )
 {
-	UINT8 *sc = (UINT8 *)&s;
-	UINT8 *dc = (UINT8 *)&dval;
+	uint8_t *sc = (uint8_t *)&s;
+	uint8_t *dc = (uint8_t *)&dval;
 	dc[COLOR1] = (alphas * sc[COLOR1]) >> 8;
 	dc[COLOR2] = (alphas * sc[COLOR2]) >> 8;
 	dc[COLOR3] = (alphas * sc[COLOR3]) >> 8;
 }
 
-INLINE void f3_alpha_blend32_d( int alphas, UINT32 s )
+INLINE void f3_alpha_blend32_d( int alphas, uint32_t s )
 {
-	UINT8 *sc = (UINT8 *)&s;
-	UINT8 *dc = (UINT8 *)&dval;
+	uint8_t *sc = (uint8_t *)&s;
+	uint8_t *dc = (uint8_t *)&dval;
 	dc[COLOR1] = add_sat[dc[COLOR1]][(alphas * sc[COLOR1]) >> 8];
 	dc[COLOR2] = add_sat[dc[COLOR2]][(alphas * sc[COLOR2]) >> 8];
 	dc[COLOR3] = add_sat[dc[COLOR3]][(alphas * sc[COLOR3]) >> 8];
@@ -963,128 +963,128 @@ INLINE void f3_alpha_blend32_d( int alphas, UINT32 s )
 
 /*============================================================================*/
 
-INLINE void f3_alpha_blend_1_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
-INLINE void f3_alpha_blend_1_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
-INLINE void f3_alpha_blend_1_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
-INLINE void f3_alpha_blend_1_5( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
-INLINE void f3_alpha_blend_1_6( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
-INLINE void f3_alpha_blend_1_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
-INLINE void f3_alpha_blend_1_9( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
-INLINE void f3_alpha_blend_1_a( UINT32 s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
+INLINE void f3_alpha_blend_1_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_1,s);}
+INLINE void f3_alpha_blend_1_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_2,s);}
+INLINE void f3_alpha_blend_1_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_4,s);}
+INLINE void f3_alpha_blend_1_5( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_5,s);}
+INLINE void f3_alpha_blend_1_6( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_6,s);}
+INLINE void f3_alpha_blend_1_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_8,s);}
+INLINE void f3_alpha_blend_1_9( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_9,s);}
+INLINE void f3_alpha_blend_1_a( uint32_t s ){f3_alpha_blend32_d(alpha_s_1_a,s);}
 
-INLINE void f3_alpha_blend_2a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
-INLINE void f3_alpha_blend_2a_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
-INLINE void f3_alpha_blend_2a_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
+INLINE void f3_alpha_blend_2a_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_2a_0,s);}
+INLINE void f3_alpha_blend_2a_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_2a_4,s);}
+INLINE void f3_alpha_blend_2a_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_2a_8,s);}
 
-INLINE void f3_alpha_blend_2b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
-INLINE void f3_alpha_blend_2b_4( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
-INLINE void f3_alpha_blend_2b_8( UINT32 s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
+INLINE void f3_alpha_blend_2b_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_2b_0,s);}
+INLINE void f3_alpha_blend_2b_4( uint32_t s ){f3_alpha_blend32_d(alpha_s_2b_4,s);}
+INLINE void f3_alpha_blend_2b_8( uint32_t s ){f3_alpha_blend32_d(alpha_s_2b_8,s);}
 
-INLINE void f3_alpha_blend_3a_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
-INLINE void f3_alpha_blend_3a_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
-INLINE void f3_alpha_blend_3a_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
+INLINE void f3_alpha_blend_3a_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_3a_0,s);}
+INLINE void f3_alpha_blend_3a_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_3a_1,s);}
+INLINE void f3_alpha_blend_3a_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_3a_2,s);}
 
-INLINE void f3_alpha_blend_3b_0( UINT32 s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
-INLINE void f3_alpha_blend_3b_1( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
-INLINE void f3_alpha_blend_3b_2( UINT32 s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
+INLINE void f3_alpha_blend_3b_0( uint32_t s ){f3_alpha_blend32_s(alpha_s_3b_0,s);}
+INLINE void f3_alpha_blend_3b_1( uint32_t s ){f3_alpha_blend32_d(alpha_s_3b_1,s);}
+INLINE void f3_alpha_blend_3b_2( uint32_t s ){f3_alpha_blend32_d(alpha_s_3b_2,s);}
 
 /*============================================================================*/
 
-static int dpix_1_noalpha(UINT32 s_pix) {dval = s_pix; return 1;}
-static int dpix_ret1(UINT32 s_pix) {return 1;}
-static int dpix_ret0(UINT32 s_pix) {return 0;}
-static int dpix_1_1(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_1(s_pix); return 1;}
-static int dpix_1_2(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_2(s_pix); return 1;}
-static int dpix_1_4(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_4(s_pix); return 1;}
-static int dpix_1_5(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_5(s_pix); return 1;}
-static int dpix_1_6(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_6(s_pix); return 1;}
-static int dpix_1_8(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_8(s_pix); return 1;}
-static int dpix_1_9(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_9(s_pix); return 1;}
-static int dpix_1_a(UINT32 s_pix) {if(s_pix) f3_alpha_blend_1_a(s_pix); return 1;}
+static int dpix_1_noalpha(uint32_t s_pix) {dval = s_pix; return 1;}
+static int dpix_ret1(uint32_t s_pix) {return 1;}
+static int dpix_ret0(uint32_t s_pix) {return 0;}
+static int dpix_1_1(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_1(s_pix); return 1;}
+static int dpix_1_2(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_2(s_pix); return 1;}
+static int dpix_1_4(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_4(s_pix); return 1;}
+static int dpix_1_5(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_5(s_pix); return 1;}
+static int dpix_1_6(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_6(s_pix); return 1;}
+static int dpix_1_8(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_8(s_pix); return 1;}
+static int dpix_1_9(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_9(s_pix); return 1;}
+static int dpix_1_a(uint32_t s_pix) {if(s_pix) f3_alpha_blend_1_a(s_pix); return 1;}
 
-static int dpix_2a_0(UINT32 s_pix)
+static int dpix_2a_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_0(s_pix);
 	else	  dval = 0;
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
-static int dpix_2a_4(UINT32 s_pix)
+static int dpix_2a_4(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_4(s_pix);
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
-static int dpix_2a_8(UINT32 s_pix)
+static int dpix_2a_8(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2a_8(s_pix);
 	if(pdest_2a) {pval |= pdest_2a;return 0;}
 	return 1;
 }
 
-static int dpix_3a_0(UINT32 s_pix)
+static int dpix_3a_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_0(s_pix);
 	else	  dval = 0;
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
-static int dpix_3a_1(UINT32 s_pix)
+static int dpix_3a_1(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_1(s_pix);
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
-static int dpix_3a_2(UINT32 s_pix)
+static int dpix_3a_2(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3a_2(s_pix);
 	if(pdest_3a) {pval |= pdest_3a;return 0;}
 	return 1;
 }
 
-static int dpix_2b_0(UINT32 s_pix)
+static int dpix_2b_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_0(s_pix);
 	else	  dval = 0;
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
-static int dpix_2b_4(UINT32 s_pix)
+static int dpix_2b_4(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_4(s_pix);
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
-static int dpix_2b_8(UINT32 s_pix)
+static int dpix_2b_8(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_2b_8(s_pix);
 	if(pdest_2b) {pval |= pdest_2b;return 0;}
 	return 1;
 }
 
-static int dpix_3b_0(UINT32 s_pix)
+static int dpix_3b_0(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_0(s_pix);
 	else	  dval = 0;
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
-static int dpix_3b_1(UINT32 s_pix)
+static int dpix_3b_1(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_1(s_pix);
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
-static int dpix_3b_2(UINT32 s_pix)
+static int dpix_3b_2(uint32_t s_pix)
 {
 	if(s_pix) f3_alpha_blend_3b_2(s_pix);
 	if(pdest_3b) {pval |= pdest_3b;return 0;}
 	return 1;
 }
 
-static int dpix_2_0(UINT32 s_pix)
+static int dpix_2_0(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_0(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -1097,9 +1097,9 @@ static int dpix_2_0(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_2_4(UINT32 s_pix)
+static int dpix_2_4(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_4(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -1112,9 +1112,9 @@ static int dpix_2_4(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_2_8(UINT32 s_pix)
+static int dpix_2_8(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_2b)		{f3_alpha_blend_2b_8(s_pix);if(pdest_2b) pval |= pdest_2b;else return 1;}
@@ -1128,9 +1128,9 @@ static int dpix_2_8(UINT32 s_pix)
 	return 0;
 }
 
-static int dpix_3_0(UINT32 s_pix)
+static int dpix_3_0(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_0(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1143,9 +1143,9 @@ static int dpix_3_0(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_3_1(UINT32 s_pix)
+static int dpix_3_1(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_1(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1158,9 +1158,9 @@ static int dpix_3_1(UINT32 s_pix)
 	}
 	return 0;
 }
-static int dpix_3_2(UINT32 s_pix)
+static int dpix_3_2(uint32_t s_pix)
 {
-	UINT8 tr2=tval&1;
+	uint8_t tr2=tval&1;
 	if(s_pix)
 	{
 		if(tr2==tr_3b)		{f3_alpha_blend_3b_2(s_pix);if(pdest_3b) pval |= pdest_3b;else return 1;}
@@ -1174,11 +1174,11 @@ static int dpix_3_2(UINT32 s_pix)
 	return 0;
 }
 
-INLINE void dpix_1_sprite(UINT32 s_pix)
+INLINE void dpix_1_sprite(uint32_t s_pix)
 {
 	if(s_pix)
 	{
-		UINT8 p1 = pval&0xf0;
+		uint8_t p1 = pval&0xf0;
 		if     (p1==0x10)	f3_alpha_blend_1_1(s_pix);
 		else if(p1==0x20)	f3_alpha_blend_1_2(s_pix);
 		else if(p1==0x40)	f3_alpha_blend_1_4(s_pix);
@@ -1190,9 +1190,9 @@ INLINE void dpix_1_sprite(UINT32 s_pix)
 	}
 }
 
-INLINE void dpix_bg(UINT32 bgcolor)
+INLINE void dpix_bg(uint32_t bgcolor)
 {
-	UINT8 p1 = pval&0xf0;
+	uint8_t p1 = pval&0xf0;
 	if(!p1)			dval = bgcolor;
 	else if(p1==0x10)	f3_alpha_blend_1_1(bgcolor);
 	else if(p1==0x20)	f3_alpha_blend_1_2(bgcolor);
@@ -1409,41 +1409,41 @@ static void init_alpha_blend_func(void)
 /*============================================================================*/
 
 INLINE void draw_scanlines(running_machine *machine,
-		bitmap_t *bitmap,int xsize,INT16 *draw_line_num,
+		bitmap_t *bitmap,int xsize,int16_t *draw_line_num,
 		const struct f3_playfield_line_inf **line_t,
 		const int *sprite,
-		UINT32 orient,
+		uint32_t orient,
 		int skip_layer_num)
 {
 	const pen_t *clut = &machine->pens[0];
-	UINT32 bgcolor=clut[0];
+	uint32_t bgcolor=clut[0];
 	int length;
 
 	const int x=46;
 
-	static UINT16 *src0=0,*src_s0=0,*src_e0=0,clip_al0=0,clip_ar0=0,clip_bl0=0,clip_br0=0;
-	static UINT8 *tsrc0=0,*tsrc_s0=0;
-	static UINT32 x_count0=0,x_zoom0=0;
+	static uint16_t *src0=0,*src_s0=0,*src_e0=0,clip_al0=0,clip_ar0=0,clip_bl0=0,clip_br0=0;
+	static uint8_t *tsrc0=0,*tsrc_s0=0;
+	static uint32_t x_count0=0,x_zoom0=0;
 
-	static UINT16 *src1=0,*src_s1=0,*src_e1=0,clip_al1=0,clip_ar1=0,clip_bl1=0,clip_br1=0;
-	static UINT8 *tsrc1=0,*tsrc_s1=0;
-	static UINT32 x_count1=0,x_zoom1=0;
+	static uint16_t *src1=0,*src_s1=0,*src_e1=0,clip_al1=0,clip_ar1=0,clip_bl1=0,clip_br1=0;
+	static uint8_t *tsrc1=0,*tsrc_s1=0;
+	static uint32_t x_count1=0,x_zoom1=0;
 
-	static UINT16 *src2=0,*src_s2=0,*src_e2=0,clip_al2=0,clip_ar2=0,clip_bl2=0,clip_br2=0;
-	static UINT8 *tsrc2=0,*tsrc_s2=0;
-	static UINT32 x_count2=0,x_zoom2=0;
+	static uint16_t *src2=0,*src_s2=0,*src_e2=0,clip_al2=0,clip_ar2=0,clip_bl2=0,clip_br2=0;
+	static uint8_t *tsrc2=0,*tsrc_s2=0;
+	static uint32_t x_count2=0,x_zoom2=0;
 
-	static UINT16 *src3=0,*src_s3=0,*src_e3=0,clip_al3=0,clip_ar3=0,clip_bl3=0,clip_br3=0;
-	static UINT8 *tsrc3=0,*tsrc_s3=0;
-	static UINT32 x_count3=0,x_zoom3=0;
+	static uint16_t *src3=0,*src_s3=0,*src_e3=0,clip_al3=0,clip_ar3=0,clip_bl3=0,clip_br3=0;
+	static uint8_t *tsrc3=0,*tsrc_s3=0;
+	static uint32_t x_count3=0,x_zoom3=0;
 
-	static UINT16 *src4=0,*src_s4=0,*src_e4=0,clip_al4=0,clip_ar4=0,clip_bl4=0,clip_br4=0;
-	static UINT8 *tsrc4=0,*tsrc_s4=0;
-	static UINT32 x_count4=0,x_zoom4=0;
+	static uint16_t *src4=0,*src_s4=0,*src_e4=0,clip_al4=0,clip_ar4=0,clip_bl4=0,clip_br4=0;
+	static uint8_t *tsrc4=0,*tsrc_s4=0;
+	static uint32_t x_count4=0,x_zoom4=0;
 
-	UINT16 clip_als=0, clip_ars=0, clip_bls=0, clip_brs=0;
+	uint16_t clip_als=0, clip_ars=0, clip_bls=0, clip_brs=0;
 
-	UINT8 *dstp0,*dstp;
+	uint8_t *dstp0,*dstp;
 
 	int yadv = bitmap->rowpixels;
 	int i=0,y=draw_line_num[0];
@@ -1467,7 +1467,7 @@ INLINE void draw_scanlines(running_machine *machine,
 	tr_3b =(f3_alpha_level_3bs==0 && f3_alpha_level_3bd==255) ? -1 : 1;
 
 	{
-		UINT32 *dsti0,*dsti;
+		uint32_t *dsti0,*dsti;
 		dsti0 = BITMAP_ADDR32(bitmap, ty, x);
 		while(1)
 		{
@@ -1496,7 +1496,7 @@ INLINE void draw_scanlines(running_machine *machine,
 				pval=*dstp;
 				if (pval!=0xff)
 				{
-					UINT8 sprite_pri;
+					uint8_t sprite_pri;
 					switch(skip_layer_num)
 					{
 						case 0: UPDATE_PIXMAP_SP(0) UPDATE_PIXMAP_LP(0)
@@ -1553,10 +1553,10 @@ INLINE void draw_scanlines(running_machine *machine,
 static void visible_tile_check(running_machine *machine,
 							   struct f3_playfield_line_inf *line_t,
 								int line,
-								UINT32 x_index_fx,UINT32 y_index,
-								UINT32 *f3_pf_data_n)
+								uint32_t x_index_fx,uint32_t y_index,
+								uint32_t *f3_pf_data_n)
 {
-	UINT32 *pf_base;
+	uint32_t *pf_base;
 	int i,trans_all,tile_index,tile_num;
 	int alpha_type,alpha_mode;
 	int opaque_all;
@@ -1584,8 +1584,8 @@ static void visible_tile_check(running_machine *machine,
 	alpha_type=0;
 	for(i=0;i<tile_num;i++)
 	{
-		UINT32 tile=pf_base[(tile_index)&twidth_mask];
-		UINT8  extra_planes = (tile>>(16+10)) & 3;
+		uint32_t tile=pf_base[(tile_index)&twidth_mask];
+		uint8_t  extra_planes = (tile>>(16+10)) & 3;
 		if(tile&0xffff)
 		{
 			trans_all=0;
@@ -1626,7 +1626,7 @@ static void visible_tile_check(running_machine *machine,
 
 /******************************************************************************/
 
-static void calculate_clip(int y, UINT16 pri, UINT32* clip0, UINT32* clip1, int* line_enable)
+static void calculate_clip(int y, uint16_t pri, uint32_t* clip0, uint32_t* clip1, int* line_enable)
 {
 	const struct f3_spritealpha_line_inf *sa_line_t=&sa_line_inf[0];
 
@@ -1738,11 +1738,11 @@ static void get_spritealphaclip_info(void)
 
 	int spri_base,clip_base_low,clip_base_high,inc;
 
-	UINT16 spri=0;
-	UINT16 sprite_clip=0;
-	UINT16 clip0_low=0, clip0_high=0, clip1_low=0;
+	uint16_t spri=0;
+	uint16_t sprite_clip=0;
+	uint16_t clip0_low=0, clip0_high=0, clip1_low=0;
 	int alpha_level=0;
-	UINT16 sprite_alpha=0;
+	uint16_t sprite_alpha=0;
 
 	if (flipscreen)
 	{
@@ -1845,7 +1845,7 @@ static void get_spritealphaclip_info(void)
 }
 
 /* sx and sy are 16.16 fixed point numbers */
-static void get_line_ram_info(running_machine *machine, tilemap_t *tmap, int sx, int sy, int pos, UINT32 *f3_pf_data_n)
+static void get_line_ram_info(running_machine *machine, tilemap_t *tmap, int sx, int sy, int pos, uint32_t *f3_pf_data_n)
 {
 	struct f3_playfield_line_inf *line_t=&pf_line_inf[pos];
 	const bitmap_t *srcbitmap;
@@ -1856,13 +1856,13 @@ static void get_line_ram_info(running_machine *machine, tilemap_t *tmap, int sx,
 
 	int line_enable;
 	int colscroll=0,x_offset=0,line_zoom=0;
-	UINT32 _y_zoom[256];
-	UINT16 pri=0;
+	uint32_t _y_zoom[256];
+	uint16_t pri=0;
 	int bit_select0=0x10000<<pos;
 	int bit_select1=1<<pos;
 
 	int _colscroll[256];
-	UINT32 _x_offset[256];
+	uint32_t _x_offset[256];
 	int y_index_fx;
 
 	sx+=((46<<16));
@@ -2032,13 +2032,13 @@ static void get_line_ram_info(running_machine *machine, tilemap_t *tmap, int sx,
 	y=y_start;
 	while(y!=y_end)
 	{
-		UINT32 x_index_fx;
-		UINT32 y_index;
+		uint32_t x_index_fx;
+		uint32_t y_index;
 
 		if(line_t->alpha_mode[y]!=0)
 		{
-			UINT16 *src_s;
-			UINT8 *tsrc_s;
+			uint16_t *src_s;
+			uint8_t *tsrc_s;
 
 			x_index_fx = (sx+_x_offset[y]-(10*0x10000)+(10*line_t->x_zoom[y]))&((width_mask<<16)|0xffff);
 			y_index = ((y_index_fx>>16)+_colscroll[y])&0x1ff;
@@ -2077,7 +2077,7 @@ static void get_vram_info(tilemap_t *vram_tilemap, tilemap_t *pixel_tilemap, int
 
 	int line_enable;
 
-	UINT16 pri=0;
+	uint16_t pri=0;
 
 	const int vram_width_mask=0x1ff;
 
@@ -2163,8 +2163,8 @@ static void get_vram_info(tilemap_t *vram_tilemap, tilemap_t *pixel_tilemap, int
 	{
 		if(line_t->alpha_mode[y]!=0)
 		{
-			UINT16 *src_s;
-			UINT8 *tsrc_s;
+			uint16_t *src_s;
+			uint8_t *tsrc_s;
 
 			// These bits in control ram indicate whether the line is taken from
 			// the VRAM tilemap layer or pixel layer.
@@ -2197,10 +2197,10 @@ static void scanline_draw(running_machine *machine, bitmap_t *bitmap, const rect
 {
 	int i,j,y,ys,ye;
 	int y_start,y_end,y_start_next,y_end_next;
-	UINT8 draw_line[256];
-	INT16 draw_line_num[256];
+	uint8_t draw_line[256];
+	int16_t draw_line_num[256];
 
-	UINT32 rot=0;
+	uint32_t rot=0;
 
 	if (flipscreen)
 	{
@@ -2222,9 +2222,9 @@ static void scanline_draw(running_machine *machine, bitmap_t *bitmap, const rect
 	{
 		int pos;
 		int pri[5],alpha_mode[5],alpha_mode_flag[5],alpha_level;
-		UINT16 sprite_alpha;
-		UINT8 sprite_alpha_check;
-		UINT8 sprite_alpha_all_2a;
+		uint16_t sprite_alpha;
+		uint8_t sprite_alpha_check;
+		uint8_t sprite_alpha_all_2a;
 		int spri;
 		int alpha;
 		int layer_tmp[5];
@@ -2344,8 +2344,8 @@ static void scanline_draw(running_machine *machine, bitmap_t *bitmap, const rect
 			dpix_sp[8]=0;
 			for(i=0;i<4;i++)	/* i = sprite priority offset */
 			{
-				UINT8 sprite_alpha_mode=(sprite_alpha>>(i*2))&3;
-				UINT8 sftbit=1<<i;
+				uint8_t sprite_alpha_mode=(sprite_alpha>>(i*2))&3;
+				uint8_t sftbit=1<<i;
 				if(sprite_pri_usage&sftbit)
 				{
 					if(sprite_alpha_mode==1)
@@ -2621,11 +2621,11 @@ static void scanline_draw(running_machine *machine, bitmap_t *bitmap, const rect
 
 INLINE void f3_drawgfx(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,
-		UINT32 color,
+		uint32_t code,
+		uint32_t color,
 		int flipx,int flipy,
 		int sx,int sy,
-		UINT8 pri_dst)
+		uint8_t pri_dst)
 {
 	rectangle myclip;
 
@@ -2651,7 +2651,7 @@ INLINE void f3_drawgfx(
 	if( gfx )
 	{
 		const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-		const UINT8 *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+		const uint8_t *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 		{
 			/* compute sprite increment per screen pixel */
@@ -2717,21 +2717,21 @@ INLINE void f3_drawgfx(
 				{
 					int y=ey-sy;
 					int x=(ex-sx-1)|(tile_opaque_sp[code % gfx->total_elements]<<4);
-					const UINT8 *source0 = code_base + y_index * 16 + x_index_base;
-					UINT32 *dest0 = BITMAP_ADDR32(dest_bmp, sy, sx);
-					UINT8 *pri0 = BITMAP_ADDR8(pri_alp_bitmap, sy, sx);
+					const uint8_t *source0 = code_base + y_index * 16 + x_index_base;
+					uint32_t *dest0 = BITMAP_ADDR32(dest_bmp, sy, sx);
+					uint8_t *pri0 = BITMAP_ADDR8(pri_alp_bitmap, sy, sx);
 					int yadv = dest_bmp->rowpixels;
 					dy=dy*16;
 					while(1)
 					{
-						const UINT8 *source = source0;
-						UINT32 *dest = dest0;
-						UINT8 *pri = pri0;
+						const uint8_t *source = source0;
+						uint32_t *dest = dest0;
+						uint8_t *pri = pri0;
 
 						switch(x)
 						{
 							int c;
-							UINT8 p;
+							uint8_t p;
 							case 31: PSET_O NEXT_P
 							case 30: PSET_O NEXT_P
 							case 29: PSET_O NEXT_P
@@ -2784,12 +2784,12 @@ INLINE void f3_drawgfx(
 
 INLINE void f3_drawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,
-		UINT32 color,
+		uint32_t code,
+		uint32_t color,
 		int flipx,int flipy,
 		int sx,int sy,
 		int scalex, int scaley,
-		UINT8 pri_dst)
+		uint8_t pri_dst)
 {
 	rectangle myclip;
 
@@ -2815,7 +2815,7 @@ INLINE void f3_drawgfxzoom(
 	if( gfx )
 	{
 		const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-		const UINT8 *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+		const uint8_t *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 		{
 			/* compute sprite increment per screen pixel */
@@ -2882,9 +2882,9 @@ INLINE void f3_drawgfxzoom(
 					int y;
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = code_base + (y_index>>16) * 16;
-						UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-						UINT8 *pri = BITMAP_ADDR8(pri_alp_bitmap, y, 0);
+						const uint8_t *source = code_base + (y_index>>16) * 16;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						uint8_t *pri = BITMAP_ADDR8(pri_alp_bitmap, y, 0);
 
 						int x, x_index = x_index_base;
 						for( x=sx; x<ex; x++ )
@@ -2892,7 +2892,7 @@ INLINE void f3_drawgfxzoom(
 							int c = source[x_index>>16] & sprite_pen_mask;
 							if(c)
 							{
-								UINT8 p=pri[x];
+								uint8_t p=pri[x];
 								if (p == 0 || p == 0xff)
 								{
 									dest[x] = pal[c];
@@ -2917,7 +2917,7 @@ INLINE void f3_drawgfxzoom(
 	/*zoom##p = p##_addition << 12;*/							\
 }
 
-static void get_sprite_info(running_machine *machine, const UINT32 *spriteram32_ptr)
+static void get_sprite_info(running_machine *machine, const uint32_t *spriteram32_ptr)
 {
 	const rectangle &visarea = machine->primary_screen->visible_area();
 	const int min_x=visarea.min_x,max_x=visarea.max_x;
@@ -2949,9 +2949,9 @@ static void get_sprite_info(running_machine *machine, const UINT32 *spriteram32_
 
 		/* Check if the sprite list jump command bit is set */
 		if ((spriteram32_ptr[current_offs+3]>>16) & 0x8000) {
-			UINT32 jump = (spriteram32_ptr[current_offs+3]>>16)&0x3ff;
+			uint32_t jump = (spriteram32_ptr[current_offs+3]>>16)&0x3ff;
 
-			UINT32 new_offs=((offs&0x2000)|((jump<<4)/4));
+			uint32_t new_offs=((offs&0x2000)|((jump<<4)/4));
 			if (new_offs==offs)
 				break;
 			offs=new_offs - 4;
@@ -2959,7 +2959,7 @@ static void get_sprite_info(running_machine *machine, const UINT32 *spriteram32_
 
 		/* Check if special command bit is set */
 		if (spriteram32_ptr[current_offs+1] & 0x8000) {
-			UINT32 cntrl=(spriteram32_ptr[current_offs+2])&0xffff;
+			uint32_t cntrl=(spriteram32_ptr[current_offs+2])&0xffff;
 			flipscreen=cntrl&0x2000;
 
 			/*  cntrl&0x1000 = disabled?  (From F2 driver, doesn't seem used anywhere)
@@ -3227,7 +3227,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 VIDEO_UPDATE( f3 )
 {
-	UINT32 sy_fix[5],sx_fix[5];
+	uint32_t sy_fix[5],sx_fix[5];
 
 	f3_skip_this_frame=0;
 	tilemap_set_flip_all(screen->machine,flipscreen ? (TILEMAP_FLIPY | TILEMAP_FLIPX) : 0);

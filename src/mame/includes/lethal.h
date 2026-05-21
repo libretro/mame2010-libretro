@@ -12,13 +12,13 @@ public:
 	lethal_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        layer_colorbase[4], sprite_colorbase;
 
 	/* misc */
-	UINT8      cur_control2;
+	uint8_t      cur_control2;
 
 	/* devices */
 	running_device *maincpu;

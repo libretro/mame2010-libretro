@@ -12,19 +12,19 @@ public:
 	karnov_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    ram;
-	UINT16 *    pf_data;
-//  UINT16 *    spriteram;  // currently this uses generic buffered spriteram
+	uint16_t *    videoram;
+	uint16_t *    ram;
+	uint16_t *    pf_data;
+//  uint16_t *    spriteram;  // currently this uses generic buffered spriteram
 
 	/* video-related */
 	bitmap_t    *bitmap_f;
 	tilemap_t     *fix_tilemap;
 	int         flipscreen;
-	UINT16      scroll[2];
+	uint16_t      scroll[2];
 
 	/* misc */
-	UINT16      i8751_return, i8751_needs_ack, i8751_coin_pending, i8751_command_queue;
+	uint16_t      i8751_return, i8751_needs_ack, i8751_coin_pending, i8751_command_queue;
 	int         i8751_level;	// needed by chelnov
 	int         microcontroller_id, coin_mask;
 	int         latch;

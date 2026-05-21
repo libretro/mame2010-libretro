@@ -5,17 +5,17 @@
 #include "includes/namcoic.h"
 #include "includes/namcos2.h"
 
-//UINT32 *namcofl_spritebank32;
-//UINT32 *namcofl_tilebank32;
+//uint32_t *namcofl_spritebank32;
+//uint32_t *namcofl_tilebank32;
 
-static UINT32 namcofl_sprbank;
+static uint32_t namcofl_sprbank;
 
 /* nth_word32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of 16 bit words.
  */
 #ifdef UNUSED_FUNCTION
-INLINE UINT16
-nth_word32( const UINT32 *source, int which )
+INLINE uint16_t
+nth_word32( const uint32_t *source, int which )
 {
 	source += which/2;
 	which ^= 1;	/* i960 is little-endian */
@@ -34,10 +34,10 @@ nth_word32( const UINT32 *source, int which )
  * read from 32-bit aligned memory as if it were an array of bytes.
  */
 #ifdef UNUSED_FUNCTION
-INLINE UINT8
-nth_byte32( const UINT32 *pSource, int which )
+INLINE uint8_t
+nth_byte32( const uint32_t *pSource, int which )
 {
-		UINT32 data = pSource[which/4];
+		uint32_t data = pSource[which/4];
 
 		which ^= 3;	/* i960 is little-endian */
 		switch( which&3 )
@@ -53,8 +53,8 @@ nth_byte32( const UINT32 *pSource, int which )
 static void namcofl_install_palette(running_machine *machine)
 {
 	int pen, page, dword_offset, byte_offset;
-	UINT32 r,g,b;
-	UINT32 *pSource;
+	uint32_t r,g,b;
+	uint32_t *pSource;
 
 	/* this is unnecessarily expensive.  Better would be to mark palette entries dirty as
      * they are modified, and only process those that have changed.
@@ -77,7 +77,7 @@ static void namcofl_install_palette(running_machine *machine)
 		}
 	}
 }
-static void TilemapCB(UINT16 code, int *tile, int *mask )
+static void TilemapCB(uint16_t code, int *tile, int *mask )
 {
 	*tile = code;
 	*mask = code;

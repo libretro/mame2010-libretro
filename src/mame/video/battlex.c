@@ -94,8 +94,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	battlex_state *state = (battlex_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT8 *source = state->spriteram;
-	UINT8 *finish = state->spriteram + 0x200;
+	uint8_t *source = state->spriteram;
+	uint8_t *finish = state->spriteram + 0x200;
 
 	while (source < finish)
 	{

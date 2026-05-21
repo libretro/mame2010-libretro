@@ -22,23 +22,23 @@
 
 *******************************************************************************/
 
-UINT8 *snk_tx_videoram;
-UINT8 *snk_fg_videoram;
-UINT8 *snk_bg_videoram;
+uint8_t *snk_tx_videoram;
+uint8_t *snk_fg_videoram;
+uint8_t *snk_bg_videoram;
 
 static tilemap_t *tx_tilemap;
 static tilemap_t *fg_tilemap;
 static tilemap_t *bg_tilemap;
 static int fg_scrollx, fg_scrolly, bg_scrollx, bg_scrolly;
 static int sp16_scrollx, sp16_scrolly, sp32_scrollx, sp32_scrolly;
-static UINT8 sprite_split_point;
+static uint8_t sprite_split_point;
 static int num_sprites, yscroll_mask;
-static UINT32 bg_tile_offset;
-static UINT32 tx_tile_offset;
+static uint32_t bg_tile_offset;
+static uint32_t tx_tile_offset;
 static int is_psychos;
 
-static UINT8 empty_tile[16*16];
-static UINT8 drawmode_table[16];
+static uint8_t empty_tile[16*16];
+static uint8_t drawmode_table[16];
 
 /**************************************************************************************/
 
@@ -667,7 +667,7 @@ static void marvins_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 		const int scrollx, const int scrolly, const int from, const int to)
 {
 	const gfx_element *gfx = machine->gfx[3];
-	const UINT8 *source, *finish;
+	const uint8_t *source, *finish;
 
 	source = machine->generic.spriteram.u8 + from*4;
 	finish = machine->generic.spriteram.u8 + to*4;
@@ -709,7 +709,7 @@ static void marvins_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 
 static void tnk3_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const int xscroll, const int yscroll)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	const gfx_element *gfx = machine->gfx[2];
 	const int size = gfx->width;
 	int tile_number, attributes, color, sx, sy;
@@ -772,7 +772,7 @@ static void tnk3_draw_sprites(running_machine *machine, bitmap_t *bitmap, const 
 
 
 static void ikari_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect,
-		const int start, const int xscroll, const int yscroll, const UINT8 *source, const int gfxnum )
+		const int start, const int xscroll, const int yscroll, const uint8_t *source, const int gfxnum )
 {
 	const gfx_element *gfx = machine->gfx[gfxnum];
 	const int size = gfx->width;
@@ -843,7 +843,7 @@ byte3: attributes
     x------- (x offset bit8)
 */
 static void tdfever_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect,
-		const int xscroll, const int yscroll, const UINT8 *source, const int gfxnum, const int hw_xflip, const int from, const int to )
+		const int xscroll, const int yscroll, const uint8_t *source, const int gfxnum, const int hw_xflip, const int from, const int to )
 {
 	const gfx_element *gfx = machine->gfx[gfxnum];
 	const int size = gfx->width;

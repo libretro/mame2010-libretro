@@ -12,8 +12,8 @@ public:
 	battlex_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * videoram;
-	UINT8 * spriteram;
+	uint8_t * videoram;
+	uint8_t * spriteram;
 
 	/* video-related */
 	tilemap_t *bg_tilemap;

@@ -45,13 +45,13 @@ typedef struct _audio_channel audio_channel;
 struct _audio_channel
 {
 	emu_timer *	irq_timer;
-	UINT32			curlocation;
-	UINT16			curlength;
-	UINT16			curticks;
-	UINT8			index;
-	UINT8			dmaenabled;
-	UINT8			manualmode;
-	INT8			latched;
+	uint32_t			curlocation;
+	uint16_t			curlength;
+	uint16_t			curticks;
+	uint8_t			index;
+	uint8_t			dmaenabled;
+	uint8_t			manualmode;
+	int8_t			latched;
 };
 
 
@@ -102,7 +102,7 @@ static void dma_reload(audio_channel *chan)
  *
  *************************************/
 
-void amiga_audio_data_w(int which, UINT16 data)
+void amiga_audio_data_w(int which, uint16_t data)
 {
 	audio_state->channel[which].manualmode = TRUE;
 }

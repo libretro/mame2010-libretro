@@ -68,9 +68,9 @@ PALETTE_INIT( espial )
 static TILE_GET_INFO( get_tile_info )
 {
 	espial_state *state = (espial_state *)machine->driver_data;
-	UINT8 code = state->videoram[tile_index];
-	UINT8 col = state->colorram[tile_index];
-	UINT8 attr = state->attributeram[tile_index];
+	uint8_t code = state->videoram[tile_index];
+	uint8_t col = state->colorram[tile_index];
+	uint8_t attr = state->attributeram[tile_index];
 	SET_TILE_INFO(0,
 				  code | ((attr & 0x03) << 8),
 				  col & 0x3f,

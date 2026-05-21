@@ -18,8 +18,8 @@
 typedef struct _ticket_config ticket_config;
 struct _ticket_config
 {
-	UINT8	motorhigh;
-	UINT8	statushigh;
+	uint8_t	motorhigh;
+	uint8_t	statushigh;
 };
 
 

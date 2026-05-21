@@ -12,11 +12,11 @@ public:
 	fastlane_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram1;
-	UINT8 *    videoram2;
-	UINT8 *    paletteram;
-	UINT8 *    spriteram;
-	UINT8 *    k007121_regs;
+	uint8_t *    videoram1;
+	uint8_t *    videoram2;
+	uint8_t *    paletteram;
+	uint8_t *    spriteram;
+	uint8_t *    k007121_regs;
 
 	/* video-related */
 	tilemap_t    *layer0, *layer1;

@@ -10,7 +10,7 @@
 
 /* mcu data that is extracted from the real board! */
 /* updated on 2st Jun 2003 */
-static const UINT8 mcu_data[256] = {
+static const uint8_t mcu_data[256] = {
 	0x3a, 0xe6, 0x80, 0xc6, 0x0e, 0xdd, 0x77, 0xfd,
 	0x7e, 0xfe, 0x10, 0x38, 0x10, 0xdd, 0x7e, 0x03,
 	0xc6, 0x08, 0xdd, 0x77, 0x03, 0xdd, 0x7e, 0xff,
@@ -45,7 +45,7 @@ static const UINT8 mcu_data[256] = {
 	0x10, 0xfc, 0x3e, 0x01, 0x32, 0x5b, 0x81, 0xc9
 };
 
-static void mcu_update_seed( running_machine *machine, UINT8 data )
+static void mcu_update_seed( running_machine *machine, uint8_t data )
 {
 	chaknpop_state *state = (chaknpop_state *)machine->driver_data;
 
@@ -89,7 +89,7 @@ READ8_HANDLER( chaknpop_mcu_port_c_r )
 WRITE8_HANDLER( chaknpop_mcu_port_a_w )
 {
 	chaknpop_state *state = (chaknpop_state *)space->machine->driver_data;
-	UINT8 mcu_command;
+	uint8_t mcu_command;
 
 	mcu_command = data + state->mcu_seed;
 	state->mcu_result = 0;

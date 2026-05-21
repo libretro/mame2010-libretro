@@ -10,8 +10,8 @@
 #include "includes/carpolo.h"
 
 
-UINT8 *carpolo_alpharam;
-UINT8 *carpolo_spriteram;
+uint8_t *carpolo_alpharam;
+uint8_t *carpolo_spriteram;
 
 
 /* the screen elements' priorties determine their color */
@@ -101,7 +101,7 @@ PALETTE_INIT( carpolo )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT8 pen, r, g, b;
+		uint8_t pen, r, g, b;
 
 		if (i < 0x18)
 			/* sprites */
@@ -182,7 +182,7 @@ static void draw_alpha_line(running_machine *machine, bitmap_t *bitmap, const re
 
 	for (x = 0; x < 32; x++)
 	{
-		UINT8 code, col;
+		uint8_t code, col;
 
 		code = carpolo_alpharam[alpha_line * 32 + x] >> 2;
 		col  = carpolo_alpharam[alpha_line * 32 + x] & 0x03;
@@ -197,7 +197,7 @@ static void draw_alpha_line(running_machine *machine, bitmap_t *bitmap, const re
 
 static void remap_sprite_code(running_machine *machine, int bank, int code, int *remapped_code, int *flipy)
 {
-	UINT8* PROM = memory_region(machine, "user1");
+	uint8_t* PROM = memory_region(machine, "user1");
 
 	code = (bank << 4) | code;
 	*remapped_code = PROM[code] & 0x0f;
@@ -206,7 +206,7 @@ static void remap_sprite_code(running_machine *machine, int bank, int code, int 
 
 
 static void draw_sprite(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect,
-						UINT8 x, UINT8 y, int bank, int code, int col)
+						uint8_t x, uint8_t y, int bank, int code, int col)
 {
 	int remapped_code, flipy;
 
@@ -224,7 +224,7 @@ static void draw_sprite(running_machine *machine, bitmap_t *bitmap, const rectan
 	drawgfx_transpen(bitmap,cliprect,machine->gfx[0],
 			remapped_code, col,
 			0, flipy,
-			(INT16)x - 256, y,0);
+			(int16_t)x - 256, y,0);
 }
 
 
@@ -515,9 +515,9 @@ static int check_sprite_right_goal_collision(running_machine *machine, int x1, i
 
 /* returns 1 for collision with vertical border,
    2 for collision with horizontal border */
-static int check_sprite_border_collision(running_machine *machine, UINT8 x1, UINT8 y1, int code1, int flipy1)
+static int check_sprite_border_collision(running_machine *machine, uint8_t x1, uint8_t y1, int code1, int flipy1)
 {
-	UINT8 x,y;
+	uint8_t x,y;
 	int collided = 0;
 
 	x1 = 240 - x1;
@@ -532,15 +532,15 @@ static int check_sprite_border_collision(running_machine *machine, UINT8 x1, UIN
 		for (y = 0; y < SPRITE_HEIGHT; y++)
 			if ((*BITMAP_ADDR16(sprite_border_collision_bitmap, y, x) == 1))
 			{
-				if (((UINT8)(x1 + x) == LEFT_BORDER) ||
-					((UINT8)(x1 + x) == RIGHT_BORDER))
+				if (((uint8_t)(x1 + x) == LEFT_BORDER) ||
+					((uint8_t)(x1 + x) == RIGHT_BORDER))
 				{
 					collided = 1;
 					break;
 				}
 
-				if (((UINT8)(y1 + y) == TOP_BORDER) ||
-					((UINT8)(y1 + y) == BOTTOM_BORDER))
+				if (((uint8_t)(y1 + y) == TOP_BORDER) ||
+					((uint8_t)(y1 + y) == BOTTOM_BORDER))
 				{
 					collided = 2;
 					break;

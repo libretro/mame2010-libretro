@@ -44,14 +44,14 @@ struct zs01_chip
 	int shift;
 	int bit;
 	int byte;
-	UINT8 write_buffer[ SIZE_WRITE_BUFFER ];
-	UINT8 read_buffer[ SIZE_READ_BUFFER ];
-	UINT8 response_key[ SIZE_KEY ];
-	UINT8 *response_to_reset;
-	UINT8 *command_key;
-	UINT8 *data_key;
-	UINT8 *data;
-	UINT8 *ds2401;
+	uint8_t write_buffer[ SIZE_WRITE_BUFFER ];
+	uint8_t read_buffer[ SIZE_READ_BUFFER ];
+	uint8_t response_key[ SIZE_KEY ];
+	uint8_t *response_to_reset;
+	uint8_t *command_key;
+	uint8_t *data_key;
+	uint8_t *data;
+	uint8_t *ds2401;
 	zs01_write_handler write;
 	zs01_read_handler read;
 };
@@ -66,7 +66,7 @@ static struct zs01_chip zs01[ ZS01_MAXCHIP ];
 #define STATE_LOAD_COMMAND ( 2 )
 #define STATE_READ_DATA ( 3 )
 
-void zs01_init( running_machine *machine, int chip, UINT8 *data, zs01_write_handler write, zs01_read_handler read, UINT8 *ds2401 )
+void zs01_init( running_machine *machine, int chip, uint8_t *data, zs01_write_handler write, zs01_read_handler read, uint8_t *ds2401 )
 {
 	int offset;
 	struct zs01_chip *c;
@@ -81,7 +81,7 @@ void zs01_init( running_machine *machine, int chip, UINT8 *data, zs01_write_hand
 
 	if( data == NULL )
 	{
-		data = auto_alloc_array(machine, UINT8,
+		data = auto_alloc_array(machine, uint8_t,
 			SIZE_RESPONSE_TO_RESET +
 			SIZE_KEY +
 			SIZE_KEY +
@@ -90,7 +90,7 @@ void zs01_init( running_machine *machine, int chip, UINT8 *data, zs01_write_hand
 
 	if( ds2401 == NULL )
 	{
-		ds2401 = auto_alloc_array(machine, UINT8,  SIZE_DATA_BUFFER );
+		ds2401 = auto_alloc_array(machine, uint8_t,  SIZE_DATA_BUFFER );
 	}
 
 	c->cs = 0;
@@ -189,14 +189,14 @@ void zs01_cs_write( running_machine *machine, int chip, int cs )
 	c->cs = cs;
 }
 
-static void zs01_decrypt( UINT8 *destination, UINT8 *source, int length, UINT8 *key, UINT8 previous_byte )
+static void zs01_decrypt( uint8_t *destination, uint8_t *source, int length, uint8_t *key, uint8_t previous_byte )
 {
-	UINT32 a0;
-	UINT32 v1;
-	UINT32 v0;
-	UINT32 a1;
-	UINT32 t1;
-	UINT32 t0;
+	uint32_t a0;
+	uint32_t v1;
+	uint32_t v0;
+	uint32_t a1;
+	uint32_t t1;
+	uint32_t t0;
 
 	length--;
 	if( length >= 0 )
@@ -236,15 +236,15 @@ static void zs01_decrypt( UINT8 *destination, UINT8 *source, int length, UINT8 *
 	}
 }
 
-static void zs01_decrypt2( UINT8 *destination, UINT8 *source, int length, UINT8 *key, UINT8 previous_byte )
+static void zs01_decrypt2( uint8_t *destination, uint8_t *source, int length, uint8_t *key, uint8_t previous_byte )
 {
-	UINT32 a0;
-	UINT32 v1;
-	UINT32 v0;
-	UINT32 a1;
-	UINT32 t2;
-	UINT32 t1;
-	UINT32 t0;
+	uint32_t a0;
+	uint32_t v1;
+	uint32_t v0;
+	uint32_t a1;
+	uint32_t t2;
+	uint32_t t1;
+	uint32_t t0;
 
 	t2 = 0;
 	if( length >= 0 )
@@ -284,13 +284,13 @@ static void zs01_decrypt2( UINT8 *destination, UINT8 *source, int length, UINT8 
 	}
 }
 
-static void zs01_encrypt( UINT8 *destination, UINT8 *source, int length, UINT8 *key, UINT32 previous_byte )
+static void zs01_encrypt( uint8_t *destination, uint8_t *source, int length, uint8_t *key, uint32_t previous_byte )
 {
-	UINT32 t0;
-	UINT32 v0;
-	UINT32 v1;
-	UINT32 a0;
-	UINT32 a1;
+	uint32_t t0;
+	uint32_t v0;
+	uint32_t v1;
+	uint32_t a0;
+	uint32_t a1;
 
 	length--;
 	if( length >= 0 )
@@ -332,12 +332,12 @@ static void zs01_encrypt( UINT8 *destination, UINT8 *source, int length, UINT8 *
 	}
 }
 
-static UINT16 zs01_crc( UINT8 *buffer, UINT32 length )
+static uint16_t zs01_crc( uint8_t *buffer, uint32_t length )
 {
-	UINT32 v1;
-	UINT32 a3;
-	UINT32 v0;
-	UINT32 a2;
+	uint32_t v1;
+	uint32_t a3;
+	uint32_t v0;
+	uint32_t a2;
 
 	v1 = 0xffff;
 	a3 = 0;
@@ -463,7 +463,7 @@ void zs01_scl_write( running_machine *machine, int chip, int scl )
 						c->byte++;
 						if( c->byte == SIZE_WRITE_BUFFER )
 						{
-							UINT16 crc;
+							uint16_t crc;
 
 							zs01_decrypt( c->write_buffer, c->write_buffer, SIZE_WRITE_BUFFER, c->command_key, 0xff );
 

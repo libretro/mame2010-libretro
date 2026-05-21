@@ -12,20 +12,20 @@ public:
 	goindol_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    bg_videoram;
-	UINT8 *    fg_videoram;
-	UINT8 *    fg_scrollx;
-	UINT8 *    fg_scrolly;
-	UINT8 *    ram;
-	UINT8 *    spriteram;
-	UINT8 *    spriteram2;
+	uint8_t *    bg_videoram;
+	uint8_t *    fg_videoram;
+	uint8_t *    fg_scrollx;
+	uint8_t *    fg_scrolly;
+	uint8_t *    ram;
+	uint8_t *    spriteram;
+	uint8_t *    spriteram2;
 	size_t     fg_videoram_size;
 	size_t     bg_videoram_size;
 	size_t     spriteram_size;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap, *fg_tilemap;
-	UINT16      char_bank;
+	uint16_t      char_bank;
 
 	/* misc */
 	int         prot_toggle;

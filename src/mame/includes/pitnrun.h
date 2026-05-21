@@ -16,7 +16,7 @@ WRITE8_HANDLER( pitnrun_mcu_data_w );
 
 /*----------- defined in video/pitnrun.c -----------*/
 
-extern UINT8* pitnrun_videoram2;
+extern uint8_t* pitnrun_videoram2;
 
 WRITE8_HANDLER( pitnrun_videoram_w );
 WRITE8_HANDLER( pitnrun_videoram2_w );

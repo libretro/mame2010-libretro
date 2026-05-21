@@ -7,10 +7,10 @@
 #define SINGLE_LENGTH 10000
 #define SINGLE_DIVIDER 8
 
-static INT16 *_single;
+static int16_t *_single;
 static int single_rate = 0;
 static int single_volume = 0;
-UINT8 senjyo_sound_cmd;
+uint8_t senjyo_sound_cmd;
 
 const z80_daisy_config senjyo_daisy_chain[] =
 {
@@ -78,7 +78,7 @@ SAMPLES_START( senjyo_sh_start )
 	running_machine *machine = device->machine;
 	int i;
 
-	_single = auto_alloc_array(machine, INT16, SINGLE_LENGTH);
+	_single = auto_alloc_array(machine, int16_t, SINGLE_LENGTH);
 
 	for (i = 0;i < SINGLE_LENGTH;i++)		/* freq = ctc2 zco / 8 */
 		_single[i] = ((i/SINGLE_DIVIDER)&0x01)*127*256;

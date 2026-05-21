@@ -144,12 +144,12 @@ Note: press Z to show some info on each sprite (debug builds only)
 static int shadow_pen_mask, shadow_pen_shift;
 
 static void ssv_drawgfx(	bitmap_t *bitmap, const rectangle *cliprect, const gfx_element *gfx,
-					UINT32 code,UINT32 color,int flipx,int flipy,int x0,int y0,
+					uint32_t code,uint32_t color,int flipx,int flipy,int x0,int y0,
 					int shadow )
 {
-	const UINT8 *addr, *source;
-	UINT8 pen;
-	UINT16 *dest;
+	const uint8_t *addr, *source;
+	uint8_t pen;
+	uint16_t *dest;
 	int sx, x1, dx;
 	int sy, y1, dy;
 
@@ -202,17 +202,17 @@ VIDEO_START( eaglshot )
 {
 	VIDEO_START_CALL(ssv);
 
-	eaglshot_gfxram		=	auto_alloc_array(machine, UINT16, 16 * 0x40000 / 2);
+	eaglshot_gfxram		=	auto_alloc_array(machine, uint16_t, 16 * 0x40000 / 2);
 
-	gfx_element_set_source(machine->gfx[0], (UINT8 *)eaglshot_gfxram);
-	gfx_element_set_source(machine->gfx[1], (UINT8 *)eaglshot_gfxram);
+	gfx_element_set_source(machine->gfx[0], (uint8_t *)eaglshot_gfxram);
+	gfx_element_set_source(machine->gfx[1], (uint8_t *)eaglshot_gfxram);
 }
 
 static tilemap_t *gdfs_tmap;
 
 static TILE_GET_INFO( get_tile_info_0 )
 {
-	UINT16 tile = gdfs_tmapram[tile_index];
+	uint16_t tile = gdfs_tmapram[tile_index];
 	SET_TILE_INFO(3, tile, 0, TILE_FLIPXY( tile >> 14 ));
 }
 
@@ -226,10 +226,10 @@ VIDEO_START( gdfs )
 {
 	VIDEO_START_CALL(ssv);
 
-	eaglshot_gfxram		=	auto_alloc_array(machine, UINT16, 4 * 0x100000 / 2);
+	eaglshot_gfxram		=	auto_alloc_array(machine, uint16_t, 4 * 0x100000 / 2);
 
 	machine->gfx[2]->color_granularity = 64; /* 256 colour sprites with palette selectable on 64 colour boundaries */
-	gfx_element_set_source(machine->gfx[2], (UINT8 *)eaglshot_gfxram);
+	gfx_element_set_source(machine->gfx[2], (uint8_t *)eaglshot_gfxram);
 
 	gdfs_tmap			=	tilemap_create(	machine, get_tile_info_0, tilemap_scan_rows,
 											 16,16, 0x100,0x100	);
@@ -238,7 +238,7 @@ VIDEO_START( gdfs )
 }
 
 /* Scroll values + CRT controller registers */
-UINT16 *ssv_scroll;
+uint16_t *ssv_scroll;
 
 int ssv_special;	// game specific kludges
 
@@ -247,7 +247,7 @@ int ssv_tile_code[16];
 int ssv_sprites_offsx, ssv_sprites_offsy;
 int ssv_tilemap_offsx, ssv_tilemap_offsy;
 
-UINT16 *eaglshot_gfxram, *gdfs_tmapram, *gdfs_tmapscroll;
+uint16_t *eaglshot_gfxram, *gdfs_tmapram, *gdfs_tmapscroll;
 
 /***************************************************************************
 
@@ -388,7 +388,7 @@ WRITE16_HANDLER( ssv_scroll_w )
 WRITE16_HANDLER( paletteram16_xrgb_swap_word_w )
 {
 	int r, g, b;
-	UINT16 data0, data1;
+	uint16_t data0, data1;
 
 	COMBINE_DATA(space->machine->generic.paletteram.u16 + offset);
 
@@ -594,12 +594,12 @@ From the above some noteworthy cases are:
 
 static void draw_row(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int sx, int sy, int scroll)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	rectangle clip;
 	int attr, code, color, mode, size, page, shadow;
 	int x, x1, sx1, flipx, xnum, xstart, xend, xinc;
 	int y, y1, sy1, flipy, ynum, ystart, yend, yinc;
-	UINT16 *s3;
+	uint16_t *s3;
 
 	xnum	=		0x20;		// width in tiles (screen-wide)
 	ynum	=		0x8;		// height in tiles (always 64 pixels?)
@@ -730,12 +730,12 @@ static void draw_layer(running_machine *machine, bitmap_t *bitmap, const rectang
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	/* Sprites list */
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 
-	UINT16 *s1	=	spriteram16;
-	UINT16 *end1	=	spriteram16 + 0x02000/2;
-	UINT16 *end2	=	spriteram16 + 0x40000/2;
-	UINT16 *s2;
+	uint16_t *s1	=	spriteram16;
+	uint16_t *end1	=	spriteram16 + 0x02000/2;
+	uint16_t *end2	=	spriteram16 + 0x40000/2;
+	uint16_t *s2;
 
 	for ( ; s1 < end1; s1+=4 )
 	{
@@ -987,10 +987,10 @@ static void gdfs_draw_zooming_sprites(running_machine *machine, bitmap_t *bitmap
 {
 	/* Sprites list */
 
-	UINT16 *spriteram16_2 = machine->generic.spriteram2.u16;
-	UINT16 *s1	=	spriteram16_2;
-	UINT16 *end1	=	spriteram16_2 + 0x02000/2;
-	UINT16 *s2;
+	uint16_t *spriteram16_2 = machine->generic.spriteram2.u16;
+	uint16_t *s1	=	spriteram16_2;
+	uint16_t *end1	=	spriteram16_2 + 0x02000/2;
+	uint16_t *s2;
 
 	priority <<= 4;
 

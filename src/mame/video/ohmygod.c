@@ -10,8 +10,8 @@
 static TILE_GET_INFO( get_tile_info )
 {
 	ohmygod_state *state = (ohmygod_state *)machine->driver_data;
-	UINT16 code = state->videoram[2 * tile_index + 1];
-	UINT16 attr = state->videoram[2 * tile_index];
+	uint16_t code = state->videoram[2 * tile_index + 1];
+	uint16_t attr = state->videoram[2 * tile_index];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -79,13 +79,13 @@ WRITE16_HANDLER( ohmygod_scrolly_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ohmygod_state *state = (ohmygod_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size / 4; offs += 4)
 	{
 		int sx, sy, code, color, flipx;
-		UINT16 *sr;
+		uint16_t *sr;
 
 		sr = state->spritebank ? (spriteram + state->spriteram_size / 4) : spriteram;
 

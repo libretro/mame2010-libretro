@@ -13,10 +13,10 @@ public:
 	deniam_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *       videoram;
-	UINT16 *       textram;
-	UINT16 *       spriteram;
-	UINT16 *       paletteram;
+	uint16_t *       videoram;
+	uint16_t *       textram;
+	uint16_t *       spriteram;
+	uint16_t *       paletteram;
 	size_t         spriteram_size;
 
 	/* video-related */
@@ -27,7 +27,7 @@ public:
 	int            bg_scrollx_reg, bg_scrolly_reg, bg_page_reg;
 	int            fg_scrollx_reg, fg_scrolly_reg, fg_page_reg;
 	int            bg_page[4], fg_page[4];
-	UINT16         coinctrl;
+	uint16_t         coinctrl;
 
 	/* devices */
 	running_device *audio_cpu;	// system 16c does not have sound CPU

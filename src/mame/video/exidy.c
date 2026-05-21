@@ -9,20 +9,20 @@
 #include "includes/exidy.h"
 
 
-UINT8 *exidy_videoram;
-UINT8 *exidy_characterram;
-UINT8 *exidy_color_latch;
-UINT8 *exidy_sprite1_xpos;
-UINT8 *exidy_sprite1_ypos;
-UINT8 *exidy_sprite2_xpos;
-UINT8 *exidy_sprite2_ypos;
-UINT8 *exidy_spriteno;
-UINT8 *exidy_sprite_enable;
+uint8_t *exidy_videoram;
+uint8_t *exidy_characterram;
+uint8_t *exidy_color_latch;
+uint8_t *exidy_sprite1_xpos;
+uint8_t *exidy_sprite1_ypos;
+uint8_t *exidy_sprite2_xpos;
+uint8_t *exidy_sprite2_ypos;
+uint8_t *exidy_spriteno;
+uint8_t *exidy_sprite_enable;
 
-static UINT8 collision_mask;
-static UINT8 collision_invert;
+static uint8_t collision_mask;
+static uint8_t collision_invert;
 static int is_2bpp;
-static UINT8 int_condition;
+static uint8_t int_condition;
 
 static bitmap_t *background_bitmap;
 static bitmap_t *motion_object_1_vid;
@@ -37,7 +37,7 @@ static bitmap_t *motion_object_2_clip;
  *
  *************************************/
 
-void exidy_video_config(UINT8 _collision_mask, UINT8 _collision_invert, int _is_2bpp)
+void exidy_video_config(uint8_t _collision_mask, uint8_t _collision_invert, int _is_2bpp)
 {
 	collision_mask   = _collision_mask;
 	collision_invert = _collision_invert;
@@ -166,11 +166,11 @@ static void draw_background(void)
 
 	for (offs = 0; offs < 0x400; offs++)
 	{
-		UINT8 cy;
+		uint8_t cy;
 		pen_t on_pen_1, on_pen_2;
 
-		UINT8 y = offs >> 5 << 3;
-		UINT8 code = exidy_videoram[offs];
+		uint8_t y = offs >> 5 << 3;
+		uint8_t code = exidy_videoram[offs];
 
 		if (is_2bpp)
 		{
@@ -186,12 +186,12 @@ static void draw_background(void)
 		for (cy = 0; cy < 8; cy++)
 		{
 			int i;
-			UINT8 x = offs << 3;
+			uint8_t x = offs << 3;
 
 			if (is_2bpp)
 			{
-				UINT8 data1 = exidy_characterram[0x000 | (code << 3) | cy];
-				UINT8 data2 = exidy_characterram[0x800 | (code << 3) | cy];
+				uint8_t data1 = exidy_characterram[0x000 | (code << 3) | cy];
+				uint8_t data2 = exidy_characterram[0x800 | (code << 3) | cy];
 
 				for (i = 0; i < 8; i++)
 				{
@@ -208,7 +208,7 @@ static void draw_background(void)
 			/* 1bpp */
 			else
 			{
-				UINT8 data = exidy_characterram[(code << 3) | cy];
+				uint8_t data = exidy_characterram[(code << 3) | cy];
 
 				for (i = 0; i < 8; i++)
 				{
@@ -301,8 +301,8 @@ static TIMER_CALLBACK( collision_irq_callback )
 
 static void check_collision(running_machine *machine)
 {
-	UINT8 sprite_set_1 = ((*exidy_sprite_enable & 0x20) != 0);
-	UINT8 sprite_set_2 = ((*exidy_sprite_enable & 0x40) != 0);
+	uint8_t sprite_set_1 = ((*exidy_sprite_enable & 0x20) != 0);
+	uint8_t sprite_set_2 = ((*exidy_sprite_enable & 0x40) != 0);
     static const rectangle clip = { 0, 15, 0, 15 };
     int org_1_x = 0, org_1_y = 0;
     int org_2_x = 0, org_2_y = 0;
@@ -349,7 +349,7 @@ static void check_collision(running_machine *machine)
 		{
     		if (*BITMAP_ADDR16(motion_object_1_vid, sy, sx) != 0xff)
 			{
-				UINT8 current_collision_mask = 0;
+				uint8_t current_collision_mask = 0;
 
 				/* check for background collision (M1CHAR) */
 				if (*BITMAP_ADDR16(background_bitmap, org_1_y + sy, org_1_x + sx) != 0)

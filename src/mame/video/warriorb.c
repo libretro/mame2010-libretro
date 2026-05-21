@@ -20,7 +20,7 @@ VIDEO_START( warriorb )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int x_offs, int y_offs )
 {
 	warriorb_state *state = (warriorb_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, data, data2, tilenum, color, flipx, flipy;
 	int x, y, priority, pri_mask;
 
@@ -88,7 +88,7 @@ VIDEO_UPDATE( warriorb )
 {
 	warriorb_state *state = (warriorb_state *)screen->machine->driver_data;
 	int xoffs = 0;
-	UINT8 layer[3], nodraw;
+	uint8_t layer[3], nodraw;
 	running_device *tc0100scn = NULL;
 
 	if (screen == state->lscreen)

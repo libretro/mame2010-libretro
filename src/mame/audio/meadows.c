@@ -13,11 +13,11 @@
 #include "sound/dac.h"
 
 
-UINT8 meadows_0c00 = 0;
-UINT8 meadows_0c01 = 0;
-UINT8 meadows_0c02 = 0;
-UINT8 meadows_0c03 = 0;
-static UINT8 meadows_dac  = 0;
+uint8_t meadows_0c00 = 0;
+uint8_t meadows_0c01 = 0;
+uint8_t meadows_0c02 = 0;
+uint8_t meadows_0c03 = 0;
+static uint8_t meadows_dac  = 0;
 static int dac_enable;
 
 #define BASE_CLOCK		5000000
@@ -32,10 +32,10 @@ static int dac_enable;
 static	int channel;
 static	int freq1;
 static	int freq2;
-static const INT16 waveform[2] = { -120*256, 120*256 };
-static  UINT8 latched_0c01 = 0;
-static	UINT8 latched_0c02 = 0;
-static	UINT8 latched_0c03 = 0;
+static const int16_t waveform[2] = { -120*256, 120*256 };
+static  uint8_t latched_0c01 = 0;
+static	uint8_t latched_0c02 = 0;
+static	uint8_t latched_0c03 = 0;
 
 /************************************/
 /* Sound handler start              */

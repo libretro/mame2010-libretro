@@ -14,10 +14,10 @@
 #define SPR_MASK_COLOR		(0xfe + 0x300)
 
 
-UINT8 *tceptor_tile_ram;
-UINT8 *tceptor_tile_attr;
-UINT8 *tceptor_bg_ram;
-UINT16 *tceptor_sprite_ram;
+uint8_t *tceptor_tile_ram;
+uint8_t *tceptor_tile_attr;
+uint8_t *tceptor_bg_ram;
+uint16_t *tceptor_sprite_ram;
 
 static int sprite16;
 static int sprite32;
@@ -28,12 +28,12 @@ static tilemap_t *tx_tilemap;
 static tilemap_t *bg1_tilemap;
 static tilemap_t *bg2_tilemap;
 
-static INT32 bg1_scroll_x, bg1_scroll_y;
-static INT32 bg2_scroll_x, bg2_scroll_y;
+static int32_t bg1_scroll_x, bg1_scroll_y;
+static int32_t bg2_scroll_x, bg2_scroll_y;
 
 static bitmap_t *temp_bitmap;
 
-static UINT16 *tceptor_sprite_ram_buffered;
+static uint16_t *tceptor_sprite_ram_buffered;
 
 static int is_mask_spr[1024/16];
 
@@ -184,7 +184,7 @@ WRITE8_HANDLER( tceptor_tile_attr_w )
 
 static TILE_GET_INFO( get_bg1_tile_info )
 {
-	UINT16 data = tceptor_bg_ram[tile_index * 2] | (tceptor_bg_ram[tile_index * 2 + 1] << 8);
+	uint16_t data = tceptor_bg_ram[tile_index * 2] | (tceptor_bg_ram[tile_index * 2 + 1] << 8);
 	int code = (data & 0x3ff) | 0x000;
 	int color = (data & 0xfc00) >> 10;
 
@@ -193,7 +193,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 
 static TILE_GET_INFO( get_bg2_tile_info )
 {
-	UINT16 data = tceptor_bg_ram[tile_index * 2 + 0x1000] | (tceptor_bg_ram[tile_index * 2 + 1 + 0x1000] << 8);
+	uint16_t data = tceptor_bg_ram[tile_index * 2 + 0x1000] | (tceptor_bg_ram[tile_index * 2 + 1 + 0x1000] << 8);
 	int code = (data & 0x3ff) | 0x400;
 	int color = (data & 0xfc00) >> 10;
 
@@ -258,12 +258,12 @@ static void decode_bg(running_machine *machine, const char * region)
 	};
 
 	int gfx_index = bg;
-	UINT8 *src = memory_region(machine, region) + 0x8000;
-	UINT8 *buffer;
+	uint8_t *src = memory_region(machine, region) + 0x8000;
+	uint8_t *buffer;
 	int len = 0x8000;
 	int i;
 
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 
 	/* expand rom tc2-19.10d */
 	for (i = 0; i < len / 2; i++)
@@ -282,7 +282,7 @@ static void decode_bg(running_machine *machine, const char * region)
 static void decode_sprite(running_machine *machine, int gfx_index, const gfx_layout *layout, const void *data)
 {
 	/* decode the graphics */
-	machine->gfx[gfx_index] = gfx_element_alloc(machine, layout, (const UINT8 *)data, 64, 1024);
+	machine->gfx[gfx_index] = gfx_element_alloc(machine, layout, (const uint8_t *)data, 64, 1024);
 }
 
 // fix sprite order
@@ -305,12 +305,12 @@ static void decode_sprite16(running_machine *machine, const char * region)
 		2*16*16
 	};
 
-	UINT8 *src = memory_region(machine, region);
+	uint8_t *src = memory_region(machine, region);
 	int len = memory_region_length(machine, region);
-	UINT8 *dst;
+	uint8_t *dst;
 	int i, y;
 
-	dst = auto_alloc_array(machine, UINT8, len);
+	dst = auto_alloc_array(machine, uint8_t, len);
 
 	for (i = 0; i < len / (4*4*16); i++)
 		for (y = 0; y < 16; y++)
@@ -356,14 +356,14 @@ static void decode_sprite32(running_machine *machine, const char * region)
 		2*32*32
 	};
 
-	UINT8 *src = memory_region(machine, region);
+	uint8_t *src = memory_region(machine, region);
 	int len = memory_region_length(machine, region);
 	int total = spr32_layout.total;
 	int size = spr32_layout.charincrement / 8;
-	UINT8 *dst;
+	uint8_t *dst;
 	int i;
 
-	dst = auto_alloc_array(machine, UINT8, len);
+	dst = auto_alloc_array(machine, uint8_t, len);
 
 	memset(dst, 0, len);
 
@@ -385,7 +385,7 @@ VIDEO_START( tceptor )
 {
 	int gfx_index;
 
-	tceptor_sprite_ram_buffered = auto_alloc_array_clear(machine, UINT16, 0x200/2);
+	tceptor_sprite_ram_buffered = auto_alloc_array_clear(machine, uint16_t, 0x200/2);
 
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
@@ -451,8 +451,8 @@ VIDEO_START( tceptor )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int sprite_priority)
 {
-	UINT16 *mem1 = &tceptor_sprite_ram_buffered[0x000/2];
-	UINT16 *mem2 = &tceptor_sprite_ram_buffered[0x100/2];
+	uint16_t *mem1 = &tceptor_sprite_ram_buffered[0x000/2];
+	uint16_t *mem2 = &tceptor_sprite_ram_buffered[0x100/2];
 	int need_mask = 0;
 	int i;
 

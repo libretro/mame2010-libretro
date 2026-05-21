@@ -25,7 +25,7 @@ public:
 	canyon_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;

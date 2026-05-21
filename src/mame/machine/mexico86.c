@@ -105,7 +105,7 @@ static void mcu_simulate( running_machine *machine )
 
 		if (state->protection_ram[0xe0] > 0 && state->protection_ram[0xe0] < 4)
 		{
-			static const UINT8 answers[3][16] =
+			static const uint8_t answers[3][16] =
 			{
 				{ 0x00,0x40,0x48,0x50,0x58,0x60,0x68,0x70,0x78,0x80,0x88,0x00,0x00,0x00,0x00,0x00 },
 				{ 0x00,0x04,0x08,0x0C,0x10,0x14,0x18,0x1C,0x20,0x31,0x2B,0x35,0x00,0x00,0x00,0x00 },
@@ -128,20 +128,20 @@ static void mcu_simulate( running_machine *machine )
 		// The following is missing from Knight Boy
 		// this should be equivalent to the obfuscated kiki_clogic() below
 		{
-			static const UINT8 db[16]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x10,0x18,0x00,0x00,0x00,0x00};
-			UINT16 sy = state->protection_ram[0xa0] + ((0x18) >> 1);
-			UINT16 sx = state->protection_ram[0xa1] + ((0x18) >> 1);
+			static const uint8_t db[16]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x10,0x18,0x00,0x00,0x00,0x00};
+			uint16_t sy = state->protection_ram[0xa0] + ((0x18) >> 1);
+			uint16_t sx = state->protection_ram[0xa1] + ((0x18) >> 1);
 
 			for (i = 0; i < 0x38; i += 8)
 			{
-				UINT8 hw = db[state->protection_ram[0x20 + i] & 0xf];
+				uint8_t hw = db[state->protection_ram[0x20 + i] & 0xf];
 
 				if (hw)
 				{
-					UINT16 xdiff = sx - ((UINT16)state->protection_ram[0x20 + i + 6] << 8 | state->protection_ram[0x20 + i + 7]);
+					uint16_t xdiff = sx - ((uint16_t)state->protection_ram[0x20 + i + 6] << 8 | state->protection_ram[0x20 + i + 7]);
 					if (xdiff < hw)
 					{
-						UINT16 ydiff = sy - ((UINT16)state->protection_ram[0x20 + i + 4] << 8 | state->protection_ram[0x20 + i + 5]);
+						uint16_t ydiff = sy - ((uint16_t)state->protection_ram[0x20 + i + 4] << 8 | state->protection_ram[0x20 + i + 5]);
 						if (ydiff < hw)
 							state->protection_ram[0xa2] = 1; // we have a collision
 					}
@@ -180,8 +180,8 @@ INTERRUPT_GEN( kikikai_interrupt )
 static void kiki_clogic(running_machine *machine, int address, int latch)
 {
 	mexico86_state *state = (mexico86_state *)machine->driver_data;
-	static const UINT8 db[16]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x10,0x18,0x00,0x00,0x00,0x00};
-	static UINT8 queue[64];
+	static const uint8_t db[16]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x00,0x10,0x18,0x00,0x00,0x00,0x00};
+	static uint8_t queue[64];
 	static int qfront = 0, state = 0;
 	int sy, sx, hw, i, qptr, diff1, diff2;
 

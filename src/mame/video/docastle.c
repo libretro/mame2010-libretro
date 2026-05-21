@@ -115,7 +115,7 @@ static TILE_GET_INFO( get_tile_info )
 	SET_TILE_INFO(0, code, color, 0);
 }
 
-static void video_start_common( running_machine *machine, UINT32 tile_transmask )
+static void video_start_common( running_machine *machine, uint32_t tile_transmask )
 {
 	docastle_state *state = (docastle_state *)machine->driver_data;
 	state->do_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_rows,  8, 8, 32, 32);

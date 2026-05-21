@@ -10,15 +10,15 @@ Video hardware driver by Uki
 
 #include "emu.h"
 
-UINT8 *xxmissio_bgram;
-UINT8 *xxmissio_fgram;
-UINT8 *xxmissio_spriteram;
+uint8_t *xxmissio_bgram;
+uint8_t *xxmissio_fgram;
+uint8_t *xxmissio_spriteram;
 
 static tilemap_t *bg_tilemap;
 static tilemap_t *fg_tilemap;
-static UINT8 xscroll;
-static UINT8 yscroll;
-static UINT8 flipscreen;
+static uint8_t xscroll;
+static uint8_t yscroll;
+static uint8_t flipscreen;
 
 
 WRITE8_DEVICE_HANDLER( xxmissio_scroll_x_w )

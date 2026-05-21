@@ -21,19 +21,19 @@ PALETTE_INIT( jackal )
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT16 ctabentry = i | 0x100;
+		uint16_t ctabentry = i | 0x100;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT16 ctabentry = color_prom[i - 0x100] & 0x0f;
+		uint16_t ctabentry = color_prom[i - 0x100] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	for (i = 0x200; i < 0x300; i++)
 	{
-		UINT16 ctabentry = (color_prom[i - 0x100] & 0x0f) | 0x10;
+		uint16_t ctabentry = (color_prom[i - 0x100] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -46,7 +46,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0; i < 0x400; i += 2)
 	{
-		UINT16 data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
+		uint16_t data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 
@@ -63,7 +63,7 @@ void jackal_mark_tile_dirty( running_machine *machine, int offset )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *RAM = memory_region(machine, "master");
+	uint8_t *RAM = memory_region(machine, "master");
 
 	int attr = RAM[0x2000 + tile_index];
 	int code = RAM[0x2400 + tile_index] + ((attr & 0xc0) << 2) + ((attr & 0x30) << 6);
@@ -82,7 +82,7 @@ VIDEO_START( jackal )
 static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	jackal_state *state = (jackal_state *)machine->driver_data;
-	UINT8 *RAM = memory_region(machine, "master");
+	uint8_t *RAM = memory_region(machine, "master");
 	int i;
 
 	state->scrollram = &RAM[0x0020];
@@ -117,7 +117,7 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 
 #define DRAW_SPRITE(bank, code, sx, sy) drawgfx_transpen(bitmap, cliprect, machine->gfx[bank], code, color, flipx, flipy, sx, sy, 0);
 
-static void draw_sprites_region( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *sram, int length, int bank )
+static void draw_sprites_region( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *sram, int length, int bank )
 {
 	int offs;
 
@@ -204,8 +204,8 @@ static void draw_sprites_region( running_machine *machine, bitmap_t *bitmap, con
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	jackal_state *state = (jackal_state *)machine->driver_data;
-	UINT8 *RAM = memory_region(machine, "master");
-	UINT8 *sr, *ss;
+	uint8_t *RAM = memory_region(machine, "master");
+	uint8_t *sr, *ss;
 
 	if (state->videoctrl[0x03] & 0x08)
 	{

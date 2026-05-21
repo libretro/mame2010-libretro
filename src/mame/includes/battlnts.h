@@ -12,7 +12,7 @@ public:
 	battlnts_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT8 *      paletteram;    // this currently uses generic palette handling
+//  uint8_t *      paletteram;    // this currently uses generic palette handling
 
 	/* video-related */
 	int spritebank;

@@ -5,7 +5,7 @@
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	pktgaldx_state *state = (pktgaldx_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 	int flipscreen = !flip_screen_get(machine);
 
@@ -76,7 +76,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap,const recta
 VIDEO_UPDATE( pktgaldx )
 {
 	pktgaldx_state *state = (pktgaldx_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

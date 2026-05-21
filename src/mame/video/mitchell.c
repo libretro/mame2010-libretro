@@ -17,7 +17,7 @@
 static TILE_GET_INFO( get_tile_info )
 {
 	mitchell_state *state = (mitchell_state *)machine->driver_data;
-	UINT8 attr = state->colorram[tile_index];
+	uint8_t attr = state->colorram[tile_index];
 	int code = state->videoram[2 * tile_index] + (state->videoram[2 * tile_index + 1] << 8);
 	SET_TILE_INFO(
 			0,
@@ -42,10 +42,10 @@ VIDEO_START( pang )
 	tilemap_set_transparent_pen(state->bg_tilemap, 15);
 
 	/* OBJ RAM */
-	state->objram = auto_alloc_array_clear(machine, UINT8, state->videoram_size);
+	state->objram = auto_alloc_array_clear(machine, uint8_t, state->videoram_size);
 
 	/* Palette RAM */
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 2 * machine->total_colors());
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 2 * machine->total_colors());
 
 	state_save_register_global_pointer(machine, state->objram, state->videoram_size);
 	state_save_register_global_pointer(machine, machine->generic.paletteram.u8, 2 * machine->total_colors());

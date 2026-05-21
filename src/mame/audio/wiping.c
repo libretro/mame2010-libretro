@@ -25,28 +25,28 @@ typedef struct
 	int frequency;
 	int counter;
 	int volume;
-	const UINT8 *wave;
+	const uint8_t *wave;
 	int oneshot;
 	int oneshotplaying;
 } sound_channel;
 
 
 /* globals available to everyone */
-UINT8 *wiping_soundregs;
+uint8_t *wiping_soundregs;
 
 /* data about the sound system */
 static sound_channel channel_list[MAX_VOICES];
 static sound_channel *last_channel;
 
 /* global sound parameters */
-static const UINT8 *sound_prom,*sound_rom;
+static const uint8_t *sound_prom,*sound_rom;
 static int num_voices;
 static int sound_enable;
 static sound_stream *stream;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 static short *mixer_buffer_2;
 
@@ -59,7 +59,7 @@ static void make_mixer_table(running_machine *machine, int voices, int gain)
 	int i;
 
 	/* allocate memory */
-	mixer_table = auto_alloc_array(machine, INT16, 256 * voices);
+	mixer_table = auto_alloc_array(machine, int16_t, 256 * voices);
 
 	/* find the middle of the table */
 	mixer_lookup = mixer_table + (128 * voices);
@@ -102,7 +102,7 @@ static STREAM_UPDATE( wiping_update_mono )
 		/* only update if we have non-zero volume and frequency */
 		if (v && f)
 		{
-			const UINT8 *w = voice->wave;
+			const uint8_t *w = voice->wave;
 			int c = voice->counter;
 
 			mix = mixer_buffer;

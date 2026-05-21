@@ -23,8 +23,8 @@ static const rectangle bottomvisiblearea =
 	6*8, 32*8-1
 };
 
-//UINT8 *vigilant_paletteram;
-//UINT8 *vigilant_sprite_paletteram;
+//uint8_t *vigilant_paletteram;
+//uint8_t *vigilant_sprite_paletteram;
 
 static int horiz_scroll_low=0;
 static int horiz_scroll_high=0;
@@ -243,7 +243,7 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 8)

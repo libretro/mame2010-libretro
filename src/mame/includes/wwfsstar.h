@@ -8,9 +8,9 @@ public:
 	int vblank;
 	int scrollx;
 	int scrolly;
-	UINT16 *spriteram;
-	UINT16 *fg0_videoram;
-	UINT16 *bg0_videoram;
+	uint16_t *spriteram;
+	uint16_t *fg0_videoram;
+	uint16_t *bg0_videoram;
 	tilemap_t *fg0_tilemap;
 	tilemap_t *bg0_tilemap;
 };

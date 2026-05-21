@@ -28,9 +28,9 @@
 
 #include "emu.h"
 
-static UINT16 *m90_spriteram;
-UINT16 *m90_video_data;
-static UINT16 m90_video_control_data[8];
+static uint16_t *m90_spriteram;
+uint16_t *m90_video_data;
+static uint16_t m90_video_control_data[8];
 static tilemap_t *pf1_layer,*pf2_layer,*pf1_wide_layer,*pf2_wide_layer;
 
 INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int layer,int page_mask)
@@ -188,7 +188,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 
 static void bomblord_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs = 0, last_sprite = 0;
 	int x,y,sprite,colour,fx,fy;
 
@@ -227,7 +227,7 @@ static void bomblord_draw_sprites(running_machine *machine, bitmap_t *bitmap,con
 
 static void dynablsb_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs = 0, last_sprite = 0;
 	int x,y,sprite,colour,fx,fy;
 

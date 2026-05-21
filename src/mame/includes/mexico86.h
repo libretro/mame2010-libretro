@@ -7,9 +7,9 @@ public:
 	mexico86_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     protection_ram;
-	UINT8 *     videoram;
-	UINT8 *     objectram;
+	uint8_t *     protection_ram;
+	uint8_t *     videoram;
+	uint8_t *     objectram;
 	size_t      objectram_size;
 
 	/* video-related */
@@ -17,8 +17,8 @@ public:
 
 	/* mcu */
 	/* mexico86 68705 protection */
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_b_in, port_b_out, ddr_b;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_b_in, port_b_out, ddr_b;
 	int      address, latch;
 	/* kikikai mcu simulation */
 	int      mcu_running, mcu_initialised;

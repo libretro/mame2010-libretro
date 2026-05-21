@@ -330,7 +330,7 @@ VIDEO_UPDATE( taitol )
 VIDEO_EOF( taitol )
 {
 	taitol_state *state = (taitol_state *)machine->driver_data;
-	UINT8 *spriteram = state->rambanks + 0xb000;
+	uint8_t *spriteram = state->rambanks + 0xb000;
 
 	memcpy(state->buff_spriteram, spriteram, TAITOL_SPRITERAM_SIZE);
 }

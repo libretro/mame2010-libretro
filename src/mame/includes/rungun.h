@@ -12,16 +12,16 @@ public:
 	rungun_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    _936_videoram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    _936_videoram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t   *ttl_tilemap, *_936_tilemap;
-	UINT16      ttl_vram[0x1000];
+	uint16_t      ttl_vram[0x1000];
 	int         ttl_gfx_index, sprite_colorbase;
 
 	/* misc */
-	UINT16      sysreg[0x20];
+	uint16_t      sysreg[0x20];
 	int         z80_control;
 	int         sound_status;
 

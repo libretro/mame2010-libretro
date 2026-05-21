@@ -6,18 +6,18 @@ public:
 	nemesis_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  videoram1;
-	UINT16 *  videoram2;
-	UINT16 *  colorram1;
-	UINT16 *  colorram2;
-	UINT16 *  charram;
-	UINT16 *  spriteram;
-	UINT16 *  paletteram;
-	UINT16 *  xscroll1;
-	UINT16 *  xscroll2;
-	UINT16 *  yscroll1;
-	UINT16 *  yscroll2;
-	UINT8 *   gx400_shared_ram;
+	uint16_t *  videoram1;
+	uint16_t *  videoram2;
+	uint16_t *  colorram1;
+	uint16_t *  colorram2;
+	uint16_t *  charram;
+	uint16_t *  spriteram;
+	uint16_t *  paletteram;
+	uint16_t *  xscroll1;
+	uint16_t *  xscroll2;
+	uint16_t *  yscroll1;
+	uint16_t *  yscroll2;
+	uint8_t *   gx400_shared_ram;
 
 	size_t    charram_size;
 	size_t    spriteram_size;
@@ -27,17 +27,17 @@ public:
 	int       spriteram_words;
 	int       tilemap_flip;
 	int       flipscreen;
-	UINT8     irq_port_last;
-	UINT8     blank_tile[8*8];
+	uint8_t     irq_port_last;
+	uint8_t     blank_tile[8*8];
 
 	/* misc */
 	int       irq_on;
 	int       irq1_on;
 	int       irq2_on;
 	int       irq4_on;
-	UINT16    selected_ip; /* Copied from WEC Le Mans 24 driver, explicity needed for Hyper Crash */
+	uint16_t    selected_ip; /* Copied from WEC Le Mans 24 driver, explicity needed for Hyper Crash */
 	int       gx400_irq1_cnt;
-	UINT8     frame_counter;
+	uint8_t     frame_counter;
 
 	/* devices */
 	cpu_device *maincpu;

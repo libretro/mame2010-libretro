@@ -12,11 +12,11 @@ public:
 	warriorb_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   spriteram;
+	uint16_t *   spriteram;
 	size_t     spriteram_size;
 
 	/* misc */
-	INT32      banknum;
+	int32_t      banknum;
 	int        pandata[4];
 
 	/* devices */

@@ -23,7 +23,7 @@ class Triangle
 
 	private:
 		running_machine*	m_machine;
-		UINT32*				m_cmd_data;
+		uint32_t*				m_cmd_data;
 		MiscState*			m_misc_state;
 		Processor*			m_rdp;
 		bool				m_shade;

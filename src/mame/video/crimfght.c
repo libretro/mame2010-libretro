@@ -59,7 +59,7 @@ VIDEO_START( crimfght )
 {
 	crimfght_state *state = (crimfght_state *)machine->driver_data;
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x400);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x400);
 
 	state->layer_colorbase[0] = 0;
 	state->layer_colorbase[1] = 4;

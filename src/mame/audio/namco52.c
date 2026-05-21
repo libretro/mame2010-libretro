@@ -57,8 +57,8 @@ struct _namco_52xx_state
 	int basenode;
 	devcb_resolved_read8 romread;
 	devcb_resolved_read8 si;
-	UINT8 latched_cmd;
-	UINT32 address;
+	uint8_t latched_cmd;
+	uint32_t address;
 };
 
 INLINE namco_52xx_state *get_safe_token(running_device *device)

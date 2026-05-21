@@ -35,18 +35,18 @@ typedef void (*atarigen_scanline_func)(screen_device &screen, int scanline);
 typedef struct _atarivc_state_desc atarivc_state_desc;
 struct _atarivc_state_desc
 {
-	UINT32 latch1;								/* latch #1 value (-1 means disabled) */
-	UINT32 latch2;								/* latch #2 value (-1 means disabled) */
-	UINT32 rowscroll_enable;					/* true if row-scrolling is enabled */
-	UINT32 palette_bank;						/* which palette bank is enabled */
-	UINT32 pf0_xscroll;						/* playfield 1 xscroll */
-	UINT32 pf0_xscroll_raw;					/* playfield 1 xscroll raw value */
-	UINT32 pf0_yscroll;						/* playfield 1 yscroll */
-	UINT32 pf1_xscroll;						/* playfield 2 xscroll */
-	UINT32 pf1_xscroll_raw;					/* playfield 2 xscroll raw value */
-	UINT32 pf1_yscroll;						/* playfield 2 yscroll */
-	UINT32 mo_xscroll;							/* sprite xscroll */
-	UINT32 mo_yscroll;							/* sprite xscroll */
+	uint32_t latch1;								/* latch #1 value (-1 means disabled) */
+	uint32_t latch2;								/* latch #2 value (-1 means disabled) */
+	uint32_t rowscroll_enable;					/* true if row-scrolling is enabled */
+	uint32_t palette_bank;						/* which palette bank is enabled */
+	uint32_t pf0_xscroll;						/* playfield 1 xscroll */
+	uint32_t pf0_xscroll_raw;					/* playfield 1 xscroll raw value */
+	uint32_t pf0_yscroll;						/* playfield 1 yscroll */
+	uint32_t pf1_xscroll;						/* playfield 2 xscroll */
+	uint32_t pf1_xscroll_raw;					/* playfield 2 xscroll raw value */
+	uint32_t pf1_yscroll;						/* playfield 2 yscroll */
+	uint32_t mo_xscroll;							/* sprite xscroll */
+	uint32_t mo_yscroll;							/* sprite xscroll */
 };
 
 
@@ -63,45 +63,45 @@ struct _atarigen_screen_timer
 typedef struct _atarigen_state atarigen_state;
 struct _atarigen_state
 {
-	UINT8				scanline_int_state;
-	UINT8				sound_int_state;
-	UINT8				video_int_state;
+	uint8_t				scanline_int_state;
+	uint8_t				sound_int_state;
+	uint8_t				video_int_state;
 
-	const UINT16 *		eeprom_default;
-	UINT16 *			eeprom;
+	const uint16_t *		eeprom_default;
+	uint16_t *			eeprom;
 	size_t				eeprom_size;
 
-	UINT8				cpu_to_sound_ready;
-	UINT8				sound_to_cpu_ready;
+	uint8_t				cpu_to_sound_ready;
+	uint8_t				sound_to_cpu_ready;
 
-	UINT16 *			playfield;
-	UINT16 *			playfield2;
-	UINT16 *			playfield_upper;
-	UINT16 *			alpha;
-	UINT16 *			alpha2;
-	UINT16 *			xscroll;
-	UINT16 *			yscroll;
+	uint16_t *			playfield;
+	uint16_t *			playfield2;
+	uint16_t *			playfield_upper;
+	uint16_t *			alpha;
+	uint16_t *			alpha2;
+	uint16_t *			xscroll;
+	uint16_t *			yscroll;
 
-	UINT32 *			playfield32;
-	UINT32 *			alpha32;
+	uint32_t *			playfield32;
+	uint32_t *			alpha32;
 
 	tilemap_t *			playfield_tilemap;
 	tilemap_t *			playfield2_tilemap;
 	tilemap_t *			alpha_tilemap;
 	tilemap_t *			alpha2_tilemap;
 
-	UINT16 *			atarivc_data;
-	UINT16 *			atarivc_eof_data;
+	uint16_t *			atarivc_data;
+	uint16_t *			atarivc_eof_data;
 	atarivc_state_desc	atarivc_state;
 
 	/* internal state */
 	atarigen_int_func		update_int_callback;
 
-	UINT8					eeprom_unlocked;
+	uint8_t					eeprom_unlocked;
 
-	UINT8					slapstic_num;
-	UINT16 *				slapstic;
-	UINT8					slapstic_bank;
+	uint8_t					slapstic_num;
+	uint16_t *				slapstic;
+	uint8_t					slapstic_bank;
 	void *					slapstic_bank0;
 	offs_t					slapstic_last_pc;
 	offs_t					slapstic_last_address;
@@ -109,20 +109,20 @@ struct _atarigen_state
 	offs_t					slapstic_mirror;
 
 	running_device *	sound_cpu;
-	UINT8					cpu_to_sound;
-	UINT8					sound_to_cpu;
-	UINT8					timed_int;
-	UINT8					ym2151_int;
+	uint8_t					cpu_to_sound;
+	uint8_t					sound_to_cpu;
+	uint8_t					timed_int;
+	uint8_t					ym2151_int;
 
 	atarigen_scanline_func	scanline_callback;
-	UINT32					scanlines_per_callback;
+	uint32_t					scanlines_per_callback;
 
-	UINT32					actual_vc_latch0;
-	UINT32					actual_vc_latch1;
-	UINT8					atarivc_playfields;
+	uint32_t					actual_vc_latch0;
+	uint32_t					actual_vc_latch1;
+	uint8_t					atarivc_playfields;
 
-	UINT32					playfield_latch;
-	UINT32					playfield2_latch;
+	uint32_t					playfield_latch;
+	uint32_t					playfield2_latch;
 
 	atarigen_screen_timer	screen_timer[2];
 };
@@ -231,10 +231,10 @@ void atarigen_set_oki6295_vol(running_machine *machine, int volume);
     VIDEO CONTROLLER
 ---------------------------------------------------------------*/
 
-void atarivc_reset(screen_device &screen, UINT16 *eof_data, int playfields);
+void atarivc_reset(screen_device &screen, uint16_t *eof_data, int playfields);
 
-void atarivc_w(screen_device &screen, offs_t offset, UINT16 data, UINT16 mem_mask);
-UINT16 atarivc_r(screen_device &screen, offs_t offset);
+void atarivc_w(screen_device &screen, offs_t offset, uint16_t data, uint16_t mem_mask);
+uint16_t atarivc_r(screen_device &screen, offs_t offset);
 
 INLINE void atarivc_update_pf_xscrolls(atarigen_state *state)
 {

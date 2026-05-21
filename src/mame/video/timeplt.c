@@ -179,8 +179,8 @@ READ8_HANDLER( timeplt_scanline_r )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	timeplt_state *state = (timeplt_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *spriteram_2 = state->spriteram2;
 	int offs;
 
 	for (offs = 0x3e;offs >= 0x10;offs -= 2)

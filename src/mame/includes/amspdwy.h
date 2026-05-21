@@ -12,10 +12,10 @@ public:
 	amspdwy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    spriteram;
-	UINT8 *    colorram;
-//  UINT8 *    paletteram;  // currently this uses generic palette handling
+	uint8_t *    videoram;
+	uint8_t *    spriteram;
+	uint8_t *    colorram;
+//  uint8_t *    paletteram;  // currently this uses generic palette handling
 	size_t     spriteram_size;
 
 	/* video-related */
@@ -23,8 +23,8 @@ public:
 	int        flipscreen;
 
 	/* misc */
-	UINT8      wheel_old[2];
-	UINT8      wheel_return[2];
+	uint8_t      wheel_old[2];
+	uint8_t      wheel_return[2];
 
 	/* devices */
 	running_device *audiocpu;

@@ -13,12 +13,12 @@ public:
 	galspnbl_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    bgvideoram;
-	UINT16 *    colorram;
-	UINT16 *    scroll;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    videoram;
+	uint16_t *    bgvideoram;
+	uint16_t *    colorram;
+	uint16_t *    scroll;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* devices */

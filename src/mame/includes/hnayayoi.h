@@ -12,12 +12,12 @@ public:
 	hnayayoi_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8      *pixmap[8];
+	uint8_t      *pixmap[8];
 	int        palbank;
 	int        total_pixmaps;
-	UINT8      blit_layer;
-	UINT16     blit_dest;
-	UINT32     blit_src;
+	uint8_t      blit_layer;
+	uint16_t     blit_dest;
+	uint32_t     blit_src;
 
 	/* misc */
 	int        keyb;

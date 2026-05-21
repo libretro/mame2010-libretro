@@ -12,10 +12,10 @@ public:
 	glass_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    vregs;
-	UINT16 *    spriteram;
-//      UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    videoram;
+	uint16_t *    vregs;
+	uint16_t *    spriteram;
+//      uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t     *pant[2];

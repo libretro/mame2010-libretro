@@ -27,7 +27,7 @@
 
 PALETTE_INIT( dcheese )
 {
-	const UINT16 *src = (UINT16 *)memory_region(machine, "user1");
+	const uint16_t *src = (uint16_t *)memory_region(machine, "user1");
 	int i;
 
 	/* really 65536 colors, but they don't use the later ones so we can stay */
@@ -124,8 +124,8 @@ VIDEO_UPDATE( dcheese )
 	/* update the pixels */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16 *src = BITMAP_ADDR16(state->dstbitmap, (y + state->blitter_vidparam[0x28/2]) % DSTBITMAP_HEIGHT, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *src = BITMAP_ADDR16(state->dstbitmap, (y + state->blitter_vidparam[0x28/2]) % DSTBITMAP_HEIGHT, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			dest[x] = src[x];
@@ -158,18 +158,18 @@ static void do_clear( running_machine *machine )
 static void do_blit( running_machine *machine )
 {
 	dcheese_state *state = (dcheese_state *)machine->driver_data;
-	INT32 srcminx = state->blitter_xparam[0] << 12;
-	INT32 srcmaxx = state->blitter_xparam[1] << 12;
-	INT32 srcminy = state->blitter_yparam[0] << 12;
-	INT32 srcmaxy = state->blitter_yparam[1] << 12;
-	INT32 srcx = ((state->blitter_xparam[2] & 0x0fff) | ((state->blitter_xparam[3] & 0x0fff) << 12)) << 7;
-	INT32 srcy = ((state->blitter_yparam[2] & 0x0fff) | ((state->blitter_yparam[3] & 0x0fff) << 12)) << 7;
-	INT32 dxdx = (INT32)(((state->blitter_xparam[4] & 0x0fff) | ((state->blitter_xparam[5] & 0x0fff) << 12)) << 12) >> 12;
-	INT32 dxdy = (INT32)(((state->blitter_xparam[6] & 0x0fff) | ((state->blitter_xparam[7] & 0x0fff) << 12)) << 12) >> 12;
-	INT32 dydx = (INT32)(((state->blitter_yparam[4] & 0x0fff) | ((state->blitter_yparam[5] & 0x0fff) << 12)) << 12) >> 12;
-	INT32 dydy = (INT32)(((state->blitter_yparam[6] & 0x0fff) | ((state->blitter_yparam[7] & 0x0fff) << 12)) << 12) >> 12;
-	UINT8 *src = memory_region(machine, "gfx1");
-	UINT32 pagemask = (memory_region_length(machine, "gfx1") - 1) / 0x40000;
+	int32_t srcminx = state->blitter_xparam[0] << 12;
+	int32_t srcmaxx = state->blitter_xparam[1] << 12;
+	int32_t srcminy = state->blitter_yparam[0] << 12;
+	int32_t srcmaxy = state->blitter_yparam[1] << 12;
+	int32_t srcx = ((state->blitter_xparam[2] & 0x0fff) | ((state->blitter_xparam[3] & 0x0fff) << 12)) << 7;
+	int32_t srcy = ((state->blitter_yparam[2] & 0x0fff) | ((state->blitter_yparam[3] & 0x0fff) << 12)) << 7;
+	int32_t dxdx = (int32_t)(((state->blitter_xparam[4] & 0x0fff) | ((state->blitter_xparam[5] & 0x0fff) << 12)) << 12) >> 12;
+	int32_t dxdy = (int32_t)(((state->blitter_xparam[6] & 0x0fff) | ((state->blitter_xparam[7] & 0x0fff) << 12)) << 12) >> 12;
+	int32_t dydx = (int32_t)(((state->blitter_yparam[4] & 0x0fff) | ((state->blitter_yparam[5] & 0x0fff) << 12)) << 12) >> 12;
+	int32_t dydy = (int32_t)(((state->blitter_yparam[6] & 0x0fff) | ((state->blitter_yparam[7] & 0x0fff) << 12)) << 12) >> 12;
+	uint8_t *src = memory_region(machine, "gfx1");
+	uint32_t pagemask = (memory_region_length(machine, "gfx1") - 1) / 0x40000;
 	int xstart = state->blitter_xparam[14];
 	int xend = state->blitter_xparam[15] + 1;
 	int ystart = state->blitter_yparam[14];
@@ -182,7 +182,7 @@ static void do_blit( running_machine *machine )
 	/* loop over target rows */
 	for (y = ystart; y <= yend; y++)
 	{
-		UINT16 *dst = BITMAP_ADDR16(state->dstbitmap, y % DSTBITMAP_HEIGHT, 0);
+		uint16_t *dst = BITMAP_ADDR16(state->dstbitmap, y % DSTBITMAP_HEIGHT, 0);
 
 		/* loop over target columns */
 		for (x = xstart; x <= xend; x++)

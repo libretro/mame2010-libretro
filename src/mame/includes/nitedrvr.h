@@ -23,22 +23,22 @@ public:
 	nitedrvr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    hvc;
-	UINT8 *    videoram;
+	uint8_t *    hvc;
+	uint8_t *    videoram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* input */
-	UINT8 gear;
-	UINT8 track;
-	INT32 steering_buf;
-	INT32 steering_val;
-	UINT8 crash_en;
-	UINT8 crash_data;
-	UINT8 crash_data_en;	// IC D8
-	UINT8 ac_line;
-	INT32 last_steering_val;
+	uint8_t gear;
+	uint8_t track;
+	int32_t steering_buf;
+	int32_t steering_val;
+	uint8_t crash_en;
+	uint8_t crash_data;
+	uint8_t crash_data_en;	// IC D8
+	uint8_t ac_line;
+	int32_t last_steering_val;
 
 	/* devices */
 	running_device *maincpu;

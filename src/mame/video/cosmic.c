@@ -17,7 +17,7 @@ WRITE8_HANDLER( cosmic_color_register_w )
 }
 
 
-static pen_t panic_map_color( running_machine *machine, UINT8 x, UINT8 y )
+static pen_t panic_map_color( running_machine *machine, uint8_t x, uint8_t y )
 {
 	cosmic_state *state = (cosmic_state *)machine->driver_data;
 	offs_t offs = (state->color_registers[0] << 9) | (state->color_registers[2] << 10) | ((x >> 4) << 5) | (y >> 3);
@@ -29,7 +29,7 @@ static pen_t panic_map_color( running_machine *machine, UINT8 x, UINT8 y )
 	return pen & 0x0f;
 }
 
-static pen_t cosmica_map_color( running_machine *machine, UINT8 x, UINT8 y )
+static pen_t cosmica_map_color( running_machine *machine, uint8_t x, uint8_t y )
 {
 	cosmic_state *state = (cosmic_state *)machine->driver_data;
 	offs_t offs = (state->color_registers[0] << 9) | ((x >> 4) << 5) | (y >> 3);
@@ -41,7 +41,7 @@ static pen_t cosmica_map_color( running_machine *machine, UINT8 x, UINT8 y )
 	return pen & 0x07;
 }
 
-static pen_t cosmicg_map_color( running_machine *machine, UINT8 x, UINT8 y )
+static pen_t cosmicg_map_color( running_machine *machine, uint8_t x, uint8_t y )
 {
 	cosmic_state *state = (cosmic_state *)machine->driver_data;
 	offs_t offs = (state->color_registers[0] << 8) | (state->color_registers[1] << 9) | ((y >> 4) << 4) | (x >> 4);
@@ -51,7 +51,7 @@ static pen_t cosmicg_map_color( running_machine *machine, UINT8 x, UINT8 y )
 	return pen & 0x0f;
 }
 
-static pen_t magspot_map_color( running_machine *machine, UINT8 x, UINT8 y )
+static pen_t magspot_map_color( running_machine *machine, uint8_t x, uint8_t y )
 {
 	cosmic_state *state = (cosmic_state *)machine->driver_data;
 	offs_t offs = (state->color_registers[0] << 9) | ((x >> 3) << 4) | (y >> 4);
@@ -101,7 +101,7 @@ PALETTE_INIT( panic )
 	/* sprites use colors 0x00-0x07 */
 	for (i = 0x10; i < 0x30; i++)
 	{
-		UINT8 ctabentry = color_prom[i - 0x10] & 0x07;
+		uint8_t ctabentry = color_prom[i - 0x10] & 0x07;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -139,7 +139,7 @@ PALETTE_INIT( cosmica )
 
 	for (i = 0x08; i < 0x28; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		ctabentry = (color_prom[i - 0x08] >> 0) & 0x07;
 		colortable_entry_set_value(machine->colortable, i + 0x00, ctabentry);
@@ -204,7 +204,7 @@ PALETTE_INIT( magspot )
 	/* sprites use colors 0x00-0x0f */
 	for (i = 0x10; i < 0x30; i++)
 	{
-		UINT8 ctabentry = color_prom[i - 0x10] & 0x0f;
+		uint8_t ctabentry = color_prom[i - 0x10] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -235,7 +235,7 @@ PALETTE_INIT( nomnlnd )
 	/* sprites use colors 0x00-0x07 */
 	for (i = 0x10; i < 0x30; i++)
 	{
-		UINT8 ctabentry = color_prom[i - 0x10] & 0x07;
+		uint8_t ctabentry = color_prom[i - 0x10] & 0x07;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -259,10 +259,10 @@ static void draw_bitmap( running_machine *machine, bitmap_t *bitmap, const recta
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
 		int i;
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
-		UINT8 x = offs << 3;
-		UINT8 y = offs >> 5;
+		uint8_t x = offs << 3;
+		uint8_t y = offs >> 5;
 
 		pen_t pen = state->map_color(machine, x, y);
 
@@ -319,20 +319,20 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 static void cosmica_draw_starfield( screen_device *screen, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 y = 0;
-	UINT8 map = 0;
-	UINT8 *PROM = memory_region(screen->machine, "user2");
+	uint8_t y = 0;
+	uint8_t map = 0;
+	uint8_t *PROM = memory_region(screen->machine, "user2");
 
 	while (1)
 	{
 		int va  =  y       & 0x01;
 		int vb  = (y >> 1) & 0x01;
 
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 		while (1)
 		{
-			UINT8 x1;
+			uint8_t x1;
 			int hc, hb_;
 
 			if (flip_screen_get(screen->machine))
@@ -368,18 +368,18 @@ static void cosmica_draw_starfield( screen_device *screen, bitmap_t *bitmap, con
 
 static void devzone_draw_grid( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 y;
-	UINT8 *horz_PROM = memory_region(machine, "user2");
-	UINT8 *vert_PROM = memory_region(machine, "user3");
+	uint8_t y;
+	uint8_t *horz_PROM = memory_region(machine, "user2");
+	uint8_t *vert_PROM = memory_region(machine, "user3");
 	offs_t horz_addr = 0;
 
-	UINT8 count = 0;
-	UINT8 horz_data = 0;
-	UINT8 vert_data;
+	uint8_t count = 0;
+	uint8_t horz_data = 0;
+	uint8_t vert_data;
 
 	for (y = 32; y < 224; y++)
 	{
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 		while (1)
 		{
@@ -426,9 +426,9 @@ static void devzone_draw_grid( running_machine *machine, bitmap_t *bitmap, const
 
 static void nomnlnd_draw_background( screen_device *screen, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 y = 0;
-	UINT8 water = screen->frame_number();
-	UINT8 *PROM = memory_region(screen->machine, "user2");
+	uint8_t y = 0;
+	uint8_t water = screen->frame_number();
+	uint8_t *PROM = memory_region(screen->machine, "user2");
 
 	/* all positioning is via logic gates:
 
@@ -473,7 +473,7 @@ static void nomnlnd_draw_background( screen_device *screen, bitmap_t *bitmap, co
 		int vc_ = (y >> 6) & 0x01;
 		int vd_ =  y >> 7;
 
-		UINT8 x = 0;
+		uint8_t x = 0;
 
 		while (1)
 		{
@@ -493,8 +493,8 @@ static void nomnlnd_draw_background( screen_device *screen, bitmap_t *bitmap, co
 					offs_t offs = ((x >> 3) & 0x03) | ((y & 0x1f) << 2) |
 					              (flip_screen_get(screen->machine) ? 0x80 : 0);
 
-					UINT8 plane1 = PROM[offs         ] << (x & 0x07);
-					UINT8 plane2 = PROM[offs | 0x0400] << (x & 0x07);
+					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
+					uint8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
 
 					plane1 >>= 7;
 					plane2 >>= 7;
@@ -511,8 +511,8 @@ static void nomnlnd_draw_background( screen_device *screen, bitmap_t *bitmap, co
 				{
 					offs_t offs = hd | (water << 1) | 0x0200;
 
-					UINT8 plane1 = PROM[offs         ] << (x & 0x07);
-					UINT8 plane2 = PROM[offs | 0x0400] << (x & 0x07);
+					uint8_t plane1 = PROM[offs         ] << (x & 0x07);
+					uint8_t plane2 = PROM[offs | 0x0400] << (x & 0x07);
 
 					plane1 >>= 7;
 					plane2 >>= 7;

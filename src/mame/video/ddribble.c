@@ -23,7 +23,7 @@ PALETTE_INIT( ddribble )
 	/* sprite #2 uses pens 0x00-0x0f */
 	for (i = 0x40; i < 0x140; i++)
 	{
-		UINT8 ctabentry = color_prom[i - 0x40] & 0x0f;
+		uint8_t ctabentry = color_prom[i - 0x40] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -36,7 +36,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x80; i += 2)
 	{
-		UINT16 data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
+		uint16_t data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 		colortable_palette_set_color(machine->colortable, i >> 1, color);
@@ -97,7 +97,7 @@ static TILEMAP_MAPPER( tilemap_scan )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	ddribble_state *state = (ddribble_state *)machine->driver_data;
-	UINT8 attr = state->fg_videoram[tile_index];
+	uint8_t attr = state->fg_videoram[tile_index];
 	int num = state->fg_videoram[tile_index + 0x400] + ((attr & 0xc0) << 2) + ((attr & 0x20) << 5) + ((state->charbank[0] & 2) << 10);
 	SET_TILE_INFO(
 			0,
@@ -109,7 +109,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	ddribble_state *state = (ddribble_state *)machine->driver_data;
-	UINT8 attr = state->bg_videoram[tile_index];
+	uint8_t attr = state->bg_videoram[tile_index];
 	int num = state->bg_videoram[tile_index + 0x400] + ((attr & 0xc0) << 2) + ((attr & 0x20) << 5) + (state->charbank[1] << 11);
 	SET_TILE_INFO(
 			1,
@@ -176,10 +176,10 @@ byte #4:    attributes
 
 ***************************************************************************/
 
-static void draw_sprites( running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8* source, int lenght, int gfxset, int flipscreen )
+static void draw_sprites( running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t* source, int lenght, int gfxset, int flipscreen )
 {
 	gfx_element *gfx = machine->gfx[gfxset];
-	const UINT8 *finish = source + lenght;
+	const uint8_t *finish = source + lenght;
 
 	while (source < finish)
 	{

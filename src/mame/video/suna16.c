@@ -92,7 +92,7 @@ WRITE16_HANDLER( bestbest_flipscreen_w )
 
 VIDEO_START( suna16 )
 {
-	machine->generic.paletteram.u16 = auto_alloc_array(machine, UINT16, machine->total_colors());
+	machine->generic.paletteram.u16 = auto_alloc_array(machine, uint16_t, machine->total_colors());
 }
 
 READ16_HANDLER( suna16_paletteram16_r )
@@ -116,7 +116,7 @@ WRITE16_HANDLER( suna16_paletteram16_w )
 
 ***************************************************************************/
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16 *sprites, int gfx)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t *sprites, int gfx)
 {
 	int offs;
 

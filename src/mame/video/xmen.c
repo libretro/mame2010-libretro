@@ -115,8 +115,8 @@ VIDEO_UPDATE( xmen6p )
 	if (screen == state->lscreen)
 		for(y = 0; y < 32 * 8; y++)
 		{
-			UINT16* line_dest = BITMAP_ADDR16(bitmap, y, 0);
-			UINT16* line_src = BITMAP_ADDR16(state->screen_left, y, 0);
+			uint16_t* line_dest = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t* line_src = BITMAP_ADDR16(state->screen_left, y, 0);
 
 			for (x = 12 * 8; x < 52 * 8; x++)
 				line_dest[x] = line_src[x];
@@ -124,8 +124,8 @@ VIDEO_UPDATE( xmen6p )
 	else if (screen == state->rscreen)
 		for(y = 0; y < 32 * 8; y++)
 		{
-			UINT16* line_dest = BITMAP_ADDR16(bitmap, y, 0);
-			UINT16* line_src = BITMAP_ADDR16(state->screen_right, y, 0);
+			uint16_t* line_dest = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t* line_src = BITMAP_ADDR16(state->screen_right, y, 0);
 
 			for (x = 12 * 8; x < 52 * 8; x++)
 				line_dest[x] = line_src[x];

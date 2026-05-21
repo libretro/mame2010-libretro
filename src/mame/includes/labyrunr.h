@@ -12,11 +12,11 @@ public:
 	labyrunr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram1;
-	UINT8 *    videoram2;
-	UINT8 *    scrollram;
-	UINT8 *    spriteram;
-	UINT8 *    paletteram;
+	uint8_t *    videoram1;
+	uint8_t *    videoram2;
+	uint8_t *    scrollram;
+	uint8_t *    spriteram;
+	uint8_t *    paletteram;
 
 	/* video-related */
 	tilemap_t    *layer0, *layer1;

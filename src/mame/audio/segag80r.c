@@ -41,19 +41,19 @@ DEFINE_LEGACY_SOUND_DEVICE(005, sega005_sound);
  *
  *************************************/
 
-static UINT8 sound_state[2];
-static UINT8 sound_rate;
-static UINT16 sound_addr;
-static UINT8 sound_data;
+static uint8_t sound_state[2];
+static uint8_t sound_rate;
+static uint16_t sound_addr;
+static uint8_t sound_data;
 
-static UINT8 square_state;
-static UINT8 square_count;
+static uint8_t square_state;
+static uint8_t square_count;
 
 static emu_timer *sega005_sound_timer;
 static sound_stream *sega005_stream;
 
-static UINT8 n7751_command;
-static UINT8 n7751_busy;
+static uint8_t n7751_command;
+static uint8_t n7751_busy;
 
 
 
@@ -249,7 +249,7 @@ WRITE8_HANDLER( astrob_sound_w )
 	running_device *samples = space->machine->device("samples");
 	float freq_factor;
 
-	UINT8 diff = data ^ sound_state[offset];
+	uint8_t diff = data ^ sound_state[offset];
 	sound_state[offset] = data;
 
 	switch (offset)
@@ -479,7 +479,7 @@ static SOUND_START( 005 )
 static WRITE8_DEVICE_HANDLER( sega005_sound_a_w )
 {
 	running_device *samples = device->machine->device("samples");
-	UINT8 diff = data ^ sound_state[0];
+	uint8_t diff = data ^ sound_state[0];
 	sound_state[0] = data;
 
 	/* LARGE EXPL: channel 0 */
@@ -509,8 +509,8 @@ static WRITE8_DEVICE_HANDLER( sega005_sound_a_w )
 
 INLINE void sega005_update_sound_data(running_machine *machine)
 {
-	UINT8 newval = memory_region(machine, "005")[sound_addr];
-	UINT8 diff = newval ^ sound_data;
+	uint8_t newval = memory_region(machine, "005")[sound_addr];
+	uint8_t diff = newval ^ sound_data;
 
 	//mame_printf_debug("  [%03X] = %02X\n", sound_addr, newval);
 
@@ -541,7 +541,7 @@ static WRITE8_DEVICE_HANDLER( sega005_sound_b_w )
            D4: 1 = hold/reset address counter to 0
         D3-D0: upper 4 bits of ROM address
     */
-	UINT8 diff = data ^ sound_state[1];
+	uint8_t diff = data ^ sound_state[1];
 	sound_state[1] = data;
 
 	//mame_printf_debug("sound[%d] = %02X\n", 1, data);
@@ -607,7 +607,7 @@ DEVICE_GET_INFO( sega005_sound )
 
 static STREAM_UPDATE( sega005_stream_update )
 {
-	const UINT8 *sound_prom = memory_region(device->machine, "proms");
+	const uint8_t *sound_prom = memory_region(device->machine, "proms");
 	int i;
 
 	/* no implementation yet */
@@ -707,7 +707,7 @@ static SOUND_START( spaceod )
 WRITE8_HANDLER( spaceod_sound_w )
 {
 	running_device *samples = space->machine->device("samples");
-	UINT8 diff = data ^ sound_state[offset];
+	uint8_t diff = data ^ sound_state[offset];
 	sound_state[offset] = data;
 
 	switch (offset)
@@ -913,7 +913,7 @@ static WRITE8_DEVICE_HANDLER( monsterb_sound_a_w )
 static WRITE8_DEVICE_HANDLER( monsterb_sound_b_w )
 {
 	running_device *samples = device->machine->device("samples");
-	UINT8 diff = data ^ sound_state[1];
+	uint8_t diff = data ^ sound_state[1];
 	sound_state[1] = data;
 
 	/* SHOT: channel 0 */

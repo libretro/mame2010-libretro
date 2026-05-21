@@ -14,7 +14,7 @@
  *
  *************************************/
 
-static void get_tile_info_common( running_machine *machine, tile_data *tileinfo, tilemap_memory_index tile_index, UINT8 *alpha_videoram )
+static void get_tile_info_common( running_machine *machine, tile_data *tileinfo, tilemap_memory_index tile_index, uint8_t *alpha_videoram )
 {
 	int code = alpha_videoram[tile_index] & 0x3f;
 	int flip = alpha_videoram[tile_index] & 0x40;

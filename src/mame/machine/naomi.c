@@ -21,9 +21,9 @@ hotd2o: bp 0xc0ba1f6, modify work RAM 0xc9c35a8 to be zero, bpclear
 #include "emu.h"
 #include "includes/naomi.h"
 
-UINT64 *naomi_ram64;
+uint64_t *naomi_ram64;
 int jvsboard_type;
-UINT16 actel_id;
+uint16_t actel_id;
 
 static READ64_HANDLER( naomi_bios_idle_skip_r )
 {
@@ -36,7 +36,7 @@ static READ64_HANDLER( naomi_bios_idle_skip_r )
 	return naomi_ram64[0x2ad238/8];
 }
 
-static UINT8 asciihex_to_dec(UINT8 in)
+static uint8_t asciihex_to_dec(uint8_t in)
 {
 	if (in>=0x30 && in<=0x39)
 	{
@@ -66,9 +66,9 @@ static UINT8 asciihex_to_dec(UINT8 in)
 static void create_pic_from_retdat(running_machine* machine)
 {
 	{
-		UINT8* hexregion = memory_region(machine,"pichex");
-		UINT8* retregion = memory_region(machine,"picreturn");
-		UINT8* newregion = memory_region(machine,"pic");
+		uint8_t* hexregion = memory_region(machine,"pichex");
+		uint8_t* retregion = memory_region(machine,"picreturn");
+		uint8_t* newregion = memory_region(machine,"pic");
 		int outcount = 0;
 
 		if (hexregion && retregion && newregion)
@@ -87,11 +87,11 @@ static void create_pic_from_retdat(running_machine* machine)
 
 				for (offs2=0;offs2<0x20;offs2++)
 				{
-					UINT8 ascii1 = hexregion[hexoffs+0];
-					UINT8 ascii2 = hexregion[hexoffs+1];
-					UINT8 dec1 = asciihex_to_dec(ascii1);
-					UINT8 dec2 = asciihex_to_dec(ascii2);
-					UINT8 val = dec1 << 4 | dec2;
+					uint8_t ascii1 = hexregion[hexoffs+0];
+					uint8_t ascii2 = hexregion[hexoffs+1];
+					uint8_t dec1 = asciihex_to_dec(ascii1);
+					uint8_t dec2 = asciihex_to_dec(ascii2);
+					uint8_t val = dec1 << 4 | dec2;
 
 					//printf("%02x%02x", ascii1, ascii2);
 

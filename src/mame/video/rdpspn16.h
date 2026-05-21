@@ -20,11 +20,11 @@ class SpanParam
 	public:
 		union
 		{
-			UINT32 w;
+			uint32_t w;
 #ifdef MSB_FIRST
-			struct { INT16 h; UINT16 l; } h;
+			struct { int16_t h; uint16_t l; } h;
 #else
-			struct { UINT16 l; INT16 h; } h;
+			struct { uint16_t l; int16_t h; } h;
 #endif
 		};
 };
@@ -51,7 +51,7 @@ class Span
 		SpanParam m_a;
 		SpanParam m_z;
 
-		UINT8 m_cvg[RDP_CVG_SPAN_MAX];
+		uint8_t m_cvg[RDP_CVG_SPAN_MAX];
 
 		int m_dymax;
 

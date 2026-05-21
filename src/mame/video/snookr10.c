@@ -40,8 +40,8 @@
 #include "emu.h"
 #include "video/resnet.h"
 
-UINT8 *snookr10_videoram;
-UINT8 *snookr10_colorram;
+uint8_t *snookr10_videoram;
+uint8_t *snookr10_colorram;
 static tilemap_t *bg_tilemap;
 
 

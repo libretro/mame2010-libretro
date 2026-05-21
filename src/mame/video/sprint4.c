@@ -42,7 +42,7 @@ PALETTE_INIT( sprint4 )
 
 static TILE_GET_INFO( sprint4_tile_info )
 {
-	UINT8 code = machine->generic.videoram.u8[tile_index];
+	uint8_t code = machine->generic.videoram.u8[tile_index];
 
 	if ((code & 0x30) == 0x30)
 		SET_TILE_INFO(0, code & ~0x40, (code >> 6) ^ 3, 0);
@@ -69,10 +69,10 @@ VIDEO_UPDATE( sprint4 )
 	{
 		int bank = 0;
 
-		UINT8 horz = screen->machine->generic.videoram.u8[0x390 + 2 * i + 0];
-		UINT8 attr = screen->machine->generic.videoram.u8[0x390 + 2 * i + 1];
-		UINT8 vert = screen->machine->generic.videoram.u8[0x398 + 2 * i + 0];
-		UINT8 code = screen->machine->generic.videoram.u8[0x398 + 2 * i + 1];
+		uint8_t horz = screen->machine->generic.videoram.u8[0x390 + 2 * i + 0];
+		uint8_t attr = screen->machine->generic.videoram.u8[0x390 + 2 * i + 1];
+		uint8_t vert = screen->machine->generic.videoram.u8[0x398 + 2 * i + 0];
+		uint8_t code = screen->machine->generic.videoram.u8[0x398 + 2 * i + 1];
 
 		if (i & 1)
 			bank = 32;
@@ -105,9 +105,9 @@ VIDEO_EOF( sprint4 )
 
 		int bank = 0;
 
-		UINT8 horz = machine->generic.videoram.u8[0x390 + 2 * i + 0];
-		UINT8 vert = machine->generic.videoram.u8[0x398 + 2 * i + 0];
-		UINT8 code = machine->generic.videoram.u8[0x398 + 2 * i + 1];
+		uint8_t horz = machine->generic.videoram.u8[0x390 + 2 * i + 0];
+		uint8_t vert = machine->generic.videoram.u8[0x398 + 2 * i + 0];
+		uint8_t code = machine->generic.videoram.u8[0x398 + 2 * i + 1];
 
 		rect.min_x = horz - 15;
 		rect.min_y = vert - 15;

@@ -7,20 +7,20 @@ public:
 	f1gp_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  sharedram;
-	UINT16 *  spr1vram;
-	UINT16 *  spr2vram;
-	UINT16 *  spr1cgram;
-	UINT16 *  spr2cgram;
-	UINT16 *  fgvideoram;
-	UINT16 *  rozvideoram;
-	UINT16 *  sprcgram;
-	UINT16 *  spritelist;
-	UINT16 *  spriteram;
-	UINT16 *  fgregs;
-	UINT16 *  rozregs;
-	UINT16 *  zoomdata;
-//      UINT16 *  paletteram;    // currently this uses generic palette handling
+	uint16_t *  sharedram;
+	uint16_t *  spr1vram;
+	uint16_t *  spr2vram;
+	uint16_t *  spr1cgram;
+	uint16_t *  spr2cgram;
+	uint16_t *  fgvideoram;
+	uint16_t *  rozvideoram;
+	uint16_t *  sprcgram;
+	uint16_t *  spritelist;
+	uint16_t *  spriteram;
+	uint16_t *  fgregs;
+	uint16_t *  rozregs;
+	uint16_t *  zoomdata;
+//      uint16_t *  paletteram;    // currently this uses generic palette handling
 	size_t    spr1cgram_size, spr2cgram_size;
 	size_t    spriteram_size;
 

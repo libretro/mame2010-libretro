@@ -6,9 +6,9 @@ Super Cross II (JPN Ver.)
 #include "emu.h"
 
 static tilemap_t *sprcros2_bgtilemap, *sprcros2_fgtilemap;
-UINT8 *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
+uint8_t *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
 size_t sprcros2_spriteram_size;
-extern UINT8 sprcros2_m_port7;
+extern uint8_t sprcros2_m_port7;
 
 PALETTE_INIT( sprcros2 )
 {
@@ -50,14 +50,14 @@ PALETTE_INIT( sprcros2 )
 	/* bg */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | ((color_prom[i + 0x100] & 0x0f) << 4);
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | ((color_prom[i + 0x100] & 0x0f) << 4);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites & fg */
 	for (i = 0x100; i < 0x300; i++)
 	{
-		UINT8 ctabentry = color_prom[i + 0x100];
+		uint8_t ctabentry = color_prom[i + 0x100];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -89,8 +89,8 @@ WRITE8_HANDLER( sprcros2_bgscrolly_w )
 
 static TILE_GET_INFO( get_sprcros2_bgtile_info )
 {
-	UINT32 tile_number = sprcros2_bgvideoram[tile_index];
-	UINT8 attr = sprcros2_bgvideoram[tile_index+0x400];
+	uint32_t tile_number = sprcros2_bgvideoram[tile_index];
+	uint8_t attr = sprcros2_bgvideoram[tile_index+0x400];
 
 	//attr
 	//76543210
@@ -109,8 +109,8 @@ static TILE_GET_INFO( get_sprcros2_bgtile_info )
 
 static TILE_GET_INFO( get_sprcros2_fgtile_info )
 {
-	UINT32 tile_number = sprcros2_fgvideoram[tile_index];
-	UINT8 attr = sprcros2_fgvideoram[tile_index+0x400];
+	uint32_t tile_number = sprcros2_fgvideoram[tile_index];
+	uint8_t attr = sprcros2_fgvideoram[tile_index+0x400];
 	int color = (attr&0xfc)>>2;
 
 	tileinfo->group = color;

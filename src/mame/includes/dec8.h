@@ -7,13 +7,13 @@ public:
 	dec8_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  pf0_data;
-	UINT8 *  pf1_data;
-	UINT8 *  row;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
-//  UINT8 *  paletteram_2;  // currently this uses generic palette handling
-//  UINT8 *  spriteram; // currently this uses buffered_spriteram in some games
+	uint8_t *  videoram;
+	uint8_t *  pf0_data;
+	uint8_t *  pf1_data;
+	uint8_t *  row;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
+//  uint8_t *  paletteram_2;  // currently this uses generic palette handling
+//  uint8_t *  spriteram; // currently this uses buffered_spriteram in some games
 	size_t   videoram_size;
 
 	/* video-related */

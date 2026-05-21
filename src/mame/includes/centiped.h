@@ -6,7 +6,7 @@
 
 /*----------- defined in video/centiped.c -----------*/
 
-extern UINT8 centiped_flipscreen, *bullsdrt_tiles_bankram;
+extern uint8_t centiped_flipscreen, *bullsdrt_tiles_bankram;
 
 PALETTE_INIT( warlords );
 

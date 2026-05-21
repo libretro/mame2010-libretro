@@ -7,7 +7,7 @@
 */
 
 #ifdef UNUSED_FUNCTION
-UINT16 *system24temp_sys16_shared_ram;
+uint16_t *system24temp_sys16_shared_ram;
 READ16_HANDLER( system24temp_sys16_shared_ram_r )
 {
 	return system24temp_sys16_shared_ram[offset];
@@ -25,16 +25,16 @@ WRITE16_HANDLER( system24temp_sys16_shared_ram_w )
      range
 */
 
-static UINT8  (*system24temp_sys16_io_io_r)(running_machine *machine, int port);
-static void   (*system24temp_sys16_io_io_w)(running_machine *machine, int port, UINT8 data);
-static void   (*system24temp_sys16_io_cnt_w)(const address_space *space, UINT8 data);
+static uint8_t  (*system24temp_sys16_io_io_r)(running_machine *machine, int port);
+static void   (*system24temp_sys16_io_io_w)(running_machine *machine, int port, uint8_t data);
+static void   (*system24temp_sys16_io_cnt_w)(const address_space *space, uint8_t data);
 static READ16_HANDLER ((*system24temp_sys16_io_iod_r));
 static WRITE16_HANDLER((*system24temp_sys16_io_iod_w));
-static UINT8 system24temp_sys16_io_cnt, system24temp_sys16_io_dir;
+static uint8_t system24temp_sys16_io_cnt, system24temp_sys16_io_dir;
 
-void system24temp_sys16_io_set_callbacks(UINT8 (*io_r)(running_machine *machine, int port),
-							  void  (*io_w)(running_machine *machine, int port, UINT8 data),
-							  void  (*cnt_w)(const address_space *space, UINT8 data),
+void system24temp_sys16_io_set_callbacks(uint8_t (*io_r)(running_machine *machine, int port),
+							  void  (*io_w)(running_machine *machine, int port, uint8_t data),
+							  void  (*cnt_w)(const address_space *space, uint8_t data),
 							  read16_space_func iod_r,
 							  write16_space_func iod_w)
 {

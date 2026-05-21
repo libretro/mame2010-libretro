@@ -79,8 +79,8 @@ Multi monitor notes:
 #include "emu.h"
 #include "includes/gaelco2.h"
 
-UINT16 *gaelco2_vregs;
-static UINT16 *gaelco2_videoram;
+uint16_t *gaelco2_vregs;
+static uint16_t *gaelco2_videoram;
 
 /* tilemaps */
 static tilemap_t *pant[2];
@@ -341,7 +341,7 @@ VIDEO_START( gaelco2_dual )
 
 static void draw_sprites(screen_device *screen, bitmap_t *bitmap, const rectangle *cliprect, int mask, int xoffs)
 {
-	UINT16 *buffered_spriteram16 = screen->machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = screen->machine->generic.buffered_spriteram.u16;
 	int j, x, y, ex, ey, px, py;
 	const gfx_element *gfx = screen->machine->gfx[0];
 
@@ -392,12 +392,12 @@ static void draw_sprites(screen_device *screen, bitmap_t *bitmap, const rectangl
 					} else { /* last palette entry is reserved for shadows and highlights */
 
 						/* get a pointer to the current sprite's gfx data */
-						const UINT8 *gfx_src = gfx_element_get_data(gfx, number % gfx->total_elements);
+						const uint8_t *gfx_src = gfx_element_get_data(gfx, number % gfx->total_elements);
 
 						for (py = 0; py < gfx->height; py++){
 							/* get a pointer to the current line in the screen bitmap */
 							int ypos = ((sy + ey*16 + py) & 0x1ff);
-							UINT16 *srcy = BITMAP_ADDR16(bitmap, ypos, 0);
+							uint16_t *srcy = BITMAP_ADDR16(bitmap, ypos, 0);
 
 							int gfx_py = yflip ? (gfx->height - 1 - py) : py;
 
@@ -406,7 +406,7 @@ static void draw_sprites(screen_device *screen, bitmap_t *bitmap, const rectangl
 							for (px = 0; px < gfx->width; px++){
 								/* get current pixel */
 								int xpos = (((sx + ex*16 + px) & 0x3ff) + spr_x_adjust) & 0x3ff;
-								UINT16 *pixel = srcy + xpos;
+								uint16_t *pixel = srcy + xpos;
 								int src_color = *pixel;
 
 								int gfx_px = xflip ? (gfx->width - 1 - px) : px;

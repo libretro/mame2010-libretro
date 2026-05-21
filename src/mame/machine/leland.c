@@ -38,43 +38,43 @@
  *
  *************************************/
 
-UINT8 leland_dac_control;
+uint8_t leland_dac_control;
 
-static UINT8 leland_gfx_control;
-static UINT8 wcol_enable;
+static uint8_t leland_gfx_control;
+static uint8_t wcol_enable;
 static emu_timer *master_int_timer;
 
-static UINT8 *master_base;
-static UINT8 *slave_base;
-static UINT8 *xrom_base;
-static UINT32 master_length;
-static UINT32 slave_length;
-static UINT32 xrom_length;
+static uint8_t *master_base;
+static uint8_t *slave_base;
+static uint8_t *xrom_base;
+static uint32_t master_length;
+static uint32_t slave_length;
+static uint32_t xrom_length;
 
 static int dangerz_x, dangerz_y;
-static UINT8 analog_result;
-static UINT8 dial_last_input[4];
-static UINT8 dial_last_result[4];
+static uint8_t analog_result;
+static uint8_t dial_last_input[4];
+static uint8_t dial_last_result[4];
 
-static UINT8 keycard_shift;
-static UINT8 keycard_bit;
-static UINT8 keycard_state;
-static UINT8 keycard_clock;
-static UINT8 keycard_command[3];
+static uint8_t keycard_shift;
+static uint8_t keycard_bit;
+static uint8_t keycard_state;
+static uint8_t keycard_clock;
+static uint8_t keycard_command[3];
 
-static UINT8 top_board_bank;
-static UINT8 sound_port_bank;
-static UINT8 alternate_bank;
-static UINT8 master_bank;
+static uint8_t top_board_bank;
+static uint8_t sound_port_bank;
+static uint8_t alternate_bank;
+static uint8_t master_bank;
 void (*leland_update_master_bank)(running_machine *machine);
 
-static UINT32 xrom1_addr;
-static UINT32 xrom2_addr;
+static uint32_t xrom1_addr;
+static uint32_t xrom2_addr;
 
-static UINT8 battery_ram_enable;
-static UINT8 *battery_ram;
+static uint8_t battery_ram_enable;
+static uint8_t *battery_ram;
 
-static UINT8 *extra_tram;
+static uint8_t *extra_tram;
 
 
 /* Internal routines */
@@ -92,7 +92,7 @@ static TIMER_CALLBACK( ataxx_interrupt_callback );
 static int dial_compute_value(int new_val, int indx)
 {
 	int delta = new_val - (int)dial_last_input[indx];
-	UINT8 result = dial_last_result[indx] & 0x80;
+	uint8_t result = dial_last_result[indx] & 0x80;
 
 	dial_last_input[indx] = new_val;
 
@@ -148,7 +148,7 @@ READ8_HANDLER( cerberus_dial_2_r )
  *
  *************************************/
 
-UINT8 *alleymas_kludge_mem;
+uint8_t *alleymas_kludge_mem;
 
 WRITE8_HANDLER( alleymas_joystick_kludge )
 {
@@ -180,8 +180,8 @@ WRITE8_HANDLER( alleymas_joystick_kludge )
 
 static void update_dangerz_xy(running_machine *machine)
 {
-	UINT8 newy = input_port_read(machine, "AN0");
-	UINT8 newx = input_port_read(machine, "AN1");
+	uint8_t newy = input_port_read(machine, "AN0");
+	uint8_t newx = input_port_read(machine, "AN1");
 	int deltay = newy - dial_last_input[0];
 	int deltax = newx - dial_last_input[1];
 
@@ -230,7 +230,7 @@ READ8_HANDLER( dangerz_input_upper_r )
  *
  *************************************/
 
-static const UINT8 redline_pedal_value[8] = { 0xf0, 0xe0, 0xc0, 0xd0, 0x90, 0xb0, 0x30, 0x70 };
+static const uint8_t redline_pedal_value[8] = { 0xf0, 0xe0, 0xc0, 0xd0, 0x90, 0xb0, 0x30, 0x70 };
 
 READ8_HANDLER( redline_pedal_1_r )
 {
@@ -363,7 +363,7 @@ WRITE8_HANDLER( indyheat_analog_w )
 MACHINE_START( leland )
 {
 	/* allocate extra stuff */
-	battery_ram = auto_alloc_array(machine, UINT8, LELAND_BATTERY_RAM_SIZE);
+	battery_ram = auto_alloc_array(machine, uint8_t, LELAND_BATTERY_RAM_SIZE);
 
 	/* start scanline interrupts going */
 	master_int_timer = timer_alloc(machine, leland_interrupt_callback, NULL);
@@ -416,8 +416,8 @@ MACHINE_RESET( leland )
 MACHINE_START( ataxx )
 {
 	/* set the odd data banks */
-	battery_ram = auto_alloc_array(machine, UINT8, LELAND_BATTERY_RAM_SIZE);
-	extra_tram = auto_alloc_array(machine, UINT8, ATAXX_EXTRA_TRAM_SIZE);
+	battery_ram = auto_alloc_array(machine, uint8_t, LELAND_BATTERY_RAM_SIZE);
+	extra_tram = auto_alloc_array(machine, uint8_t, ATAXX_EXTRA_TRAM_SIZE);
 
 	/* start scanline interrupts going */
 	master_int_timer = timer_alloc(machine, ataxx_interrupt_callback, NULL);
@@ -534,7 +534,7 @@ void cerberus_bankswitch(running_machine *machine)
 /* bankswitching for Mayhem 2002, Power Play, World Series Baseball, and Alley Master */
 void mayhem_bankswitch(running_machine *machine)
 {
-	UINT8 *address;
+	uint8_t *address;
 
 	battery_ram_enable = ((sound_port_bank & 0x24) == 0);
 
@@ -549,7 +549,7 @@ void mayhem_bankswitch(running_machine *machine)
 /* bankswitching for Danger Zone */
 void dangerz_bankswitch(running_machine *machine)
 {
-	UINT8 *address;
+	uint8_t *address;
 
 	battery_ram_enable = ((top_board_bank & 0x80) != 0);
 
@@ -564,7 +564,7 @@ void dangerz_bankswitch(running_machine *machine)
 /* bankswitching for Baseball the Season II, Super Baseball, and Strike Zone */
 void basebal2_bankswitch(running_machine *machine)
 {
-	UINT8 *address;
+	uint8_t *address;
 
 	battery_ram_enable = (top_board_bank & 0x80);
 
@@ -582,8 +582,8 @@ void basebal2_bankswitch(running_machine *machine)
 /* bankswitching for Red Line Racer */
 void redline_bankswitch(running_machine *machine)
 {
-	static const UINT32 bank_list[] = { 0x10000, 0x18000, 0x02000, 0x02000 };
-	UINT8 *address;
+	static const uint32_t bank_list[] = { 0x10000, 0x18000, 0x02000, 0x02000 };
+	uint8_t *address;
 
 	battery_ram_enable = ((alternate_bank & 3) == 1);
 
@@ -598,8 +598,8 @@ void redline_bankswitch(running_machine *machine)
 /* bankswitching for Viper, Quarterback, Team Quarterback, and All American Football */
 void viper_bankswitch(running_machine *machine)
 {
-	static const UINT32 bank_list[] = { 0x02000, 0x10000, 0x18000, 0x02000 };
-	UINT8 *address;
+	static const uint32_t bank_list[] = { 0x02000, 0x10000, 0x18000, 0x02000 };
+	uint8_t *address;
 
 	battery_ram_enable = ((alternate_bank & 0x04) != 0);
 
@@ -619,8 +619,8 @@ void viper_bankswitch(running_machine *machine)
 /* bankswitching for Super Offroad, Super Offroad Track Pack, and Pig Out */
 void offroad_bankswitch(running_machine *machine)
 {
-	static const UINT32 bank_list[] = { 0x02000, 0x02000, 0x10000, 0x18000, 0x20000, 0x28000, 0x30000, 0x38000 };
-	UINT8 *address;
+	static const uint32_t bank_list[] = { 0x02000, 0x02000, 0x10000, 0x18000, 0x20000, 0x28000, 0x30000, 0x38000 };
+	uint8_t *address;
 
 	battery_ram_enable = ((alternate_bank & 7) == 1);
 
@@ -640,12 +640,12 @@ void offroad_bankswitch(running_machine *machine)
 /* bankswitching for Ataxx, WSF, Indy Heat, and Brute Force */
 void ataxx_bankswitch(running_machine *machine)
 {
-	static const UINT32 bank_list[] =
+	static const uint32_t bank_list[] =
 	{
 		0x02000, 0x18000, 0x20000, 0x28000, 0x30000, 0x38000, 0x40000, 0x48000,
 		0x50000, 0x58000, 0x60000, 0x68000, 0x70000, 0x78000, 0x80000, 0x88000
 	};
-	UINT8 *address;
+	uint8_t *address;
 
 	battery_ram_enable = ((master_bank & 0x30) == 0x10);
 
@@ -676,11 +676,11 @@ void ataxx_bankswitch(running_machine *machine)
  *
  *************************************/
 
-void leland_init_eeprom(running_machine *machine, UINT8 default_val, const UINT16 *data, UINT8 serial_offset, UINT8 serial_type)
+void leland_init_eeprom(running_machine *machine, uint8_t default_val, const uint16_t *data, uint8_t serial_offset, uint8_t serial_type)
 {
-	UINT8 xorval = (serial_type == SERIAL_TYPE_ADD_XOR || serial_type == SERIAL_TYPE_ENCRYPT_XOR) ? 0xff : 0x00;
-	UINT8 eeprom_data[64*2];
-	UINT32 serial;
+	uint8_t xorval = (serial_type == SERIAL_TYPE_ADD_XOR || serial_type == SERIAL_TYPE_ENCRYPT_XOR) ? 0xff : 0x00;
+	uint8_t eeprom_data[64*2];
+	uint32_t serial;
 
 	/*
         NOTE: This code is just illustrative, and explains how to generate the
@@ -787,12 +787,12 @@ void leland_init_eeprom(running_machine *machine, UINT8 default_val, const UINT1
  *
  *************************************/
 
-void ataxx_init_eeprom(running_machine *machine, const UINT16 *data)
+void ataxx_init_eeprom(running_machine *machine, const uint16_t *data)
 {
-	UINT8 eeprom_data[128*2];
-	UINT8 serial_offset = 0;
-	UINT8 default_val = 0;
-	UINT32 serial;
+	uint8_t eeprom_data[128*2];
+	uint8_t serial_offset = 0;
+	uint8_t default_val = 0;
+	uint32_t serial;
 
 	/*
         NOTE: This code is just illustrative, and explains how to generate the
@@ -961,7 +961,7 @@ NVRAM_HANDLER( leland )
 
         for (i = 16, b = 0x70, r = 0x08; i < 128; i++, b--, r += 0x10)
         {
-            UINT8 a = original_data[i] ^ 0xff;
+            uint8_t a = original_data[i] ^ 0xff;
             a = (a >> 3) | (a << 5);
             a = (((a ^ r) + 1 + b) ^ b) - b;
             encrypted_data[i] = a;
@@ -1464,8 +1464,8 @@ void leland_rotate_memory(running_machine *machine, const char *cpuname)
 {
 	int startaddr = 0x10000;
 	int banks = (memory_region_length(machine, cpuname) - startaddr) / 0x8000;
-	UINT8 *ram = memory_region(machine, cpuname);
-	UINT8 temp[0x2000];
+	uint8_t *ram = memory_region(machine, cpuname);
+	uint8_t temp[0x2000];
 	int i;
 
 	for (i = 0; i < banks; i++)

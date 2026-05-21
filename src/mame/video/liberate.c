@@ -40,7 +40,7 @@ static TILEMAP_MAPPER( fix_scan )
 static TILE_GET_INFO( get_back_tile_info )
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
-	const UINT8 *RAM = memory_region(machine, "user1");
+	const uint8_t *RAM = memory_region(machine, "user1");
 	int tile, bank;
 
 	/* Convert tile index of 512x512 to paged format */
@@ -70,8 +70,8 @@ static TILE_GET_INFO( get_back_tile_info )
 static TILE_GET_INFO( get_fix_tile_info )
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
-	UINT8 *videoram = state->videoram;
-	UINT8 *colorram = state->colorram;
+	uint8_t *videoram = state->videoram;
+	uint8_t *colorram = state->colorram;
 	int tile, color;
 
 	tile = videoram[tile_index] + (colorram[tile_index] << 8);
@@ -216,7 +216,7 @@ VIDEO_START( prosoccr )
 
 	tilemap_set_transparent_pen(state->fix_tilemap, 0);
 
-	state->charram = auto_alloc_array(machine, UINT8, 0x1800 * 2);
+	state->charram = auto_alloc_array(machine, uint8_t, 0x1800 * 2);
 }
 
 VIDEO_START( boomrang )
@@ -293,7 +293,7 @@ PALETTE_INIT( liberate )
 static void liberate_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	/* Sprites */
@@ -363,7 +363,7 @@ static void prosport_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
 	int offs, multi, fx, fy, sx, sy, sy2, code, code2, color, gfx_region;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 
 	for (offs = 0x000; offs < 0x800; offs += 4)
 	{
@@ -427,7 +427,7 @@ static void prosport_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 static void boomrang_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri )
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs, multi, fx, fy, sx, sy, sy2, code, code2, color;
 
 	for (offs = 0x000; offs < 0x800; offs += 4)
@@ -488,7 +488,7 @@ static void boomrang_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 static void prosoccr_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	liberate_state *state = (liberate_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs, code, fx, fy, sx, sy;
 
 	for (offs = 0x000; offs < 0x400; offs += 4)
@@ -532,8 +532,8 @@ VIDEO_UPDATE( prosoccr )
 VIDEO_UPDATE( prosport )
 {
 	liberate_state *state = (liberate_state *)screen->machine->driver_data;
-	UINT8 *videoram = state->videoram;
-	UINT8 *colorram = state->colorram;
+	uint8_t *videoram = state->videoram;
+	uint8_t *colorram = state->colorram;
 	int mx, my, tile, offs, gfx_region;
 	int scrollx, scrolly;
 

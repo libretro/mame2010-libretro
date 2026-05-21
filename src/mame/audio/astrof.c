@@ -35,7 +35,7 @@
 WRITE8_HANDLER( astrof_audio_1_w )
 {
 	astrof_state *state = (astrof_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last;
+	uint8_t rising_bits = data & ~state->port_1_last;
 
 	if (state->astrof_death_playing)
 		state->astrof_death_playing = sample_playing(state->samples, CHANNEL_EXPLOSION);
@@ -81,7 +81,7 @@ WRITE8_HANDLER( astrof_audio_1_w )
 WRITE8_HANDLER( astrof_audio_2_w )
 {
 	astrof_state *state = (astrof_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last;
+	uint8_t rising_bits = data & ~state->port_2_last;
 
 	/* D0-D2 - explosion select (triggered by D2 of the other port */
 	if (state->astrof_start_explosion)

@@ -61,14 +61,14 @@ PALETTE_INIT( higemaru )
 	/* characters use colors 0-15 */
 	for (i = 0; i < 0x80; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites use colors 16-31 */
 	for (i = 0x80; i < 0x180; i++)
 	{
-		UINT8 ctabentry = (color_prom[i + 0x80] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i + 0x80] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -109,7 +109,7 @@ VIDEO_START( higemaru )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	higemaru_state *state = (higemaru_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 16; offs >= 0; offs -= 16)

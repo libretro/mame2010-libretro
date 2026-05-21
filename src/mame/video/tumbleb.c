@@ -22,7 +22,7 @@ to switch between 8*8 tiles and 16*16 tiles.
 static void tumblepb_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x400; offs += 4)
@@ -88,7 +88,7 @@ static void tumblepb_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 static void jumpkids_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size / 2; offs += 4)
@@ -155,7 +155,7 @@ static void jumpkids_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 static void fncywld_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x400; offs += 4)
@@ -334,7 +334,7 @@ static TILEMAP_MAPPER( tumblep_scan )
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x60) << 5);
 }
 
-INLINE void get_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, UINT16 *gfx_base)
+INLINE void get_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, uint16_t *gfx_base)
 {
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
 	int data = gfx_base[tile_index];
@@ -361,7 +361,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 			0);
 }
 
-INLINE void get_fncywld_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, UINT16 *gfx_base)
+INLINE void get_fncywld_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, uint16_t *gfx_base)
 {
 	int data = gfx_base[tile_index * 2];
 	int attr = gfx_base[tile_index * 2 + 1];
@@ -440,7 +440,7 @@ static TILE_GET_INFO( get_jumppop_fg_tile_info )
 			0);
 }
 
-INLINE void pangpang_get_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, UINT16 *gfx_base )
+INLINE void pangpang_get_bg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, uint16_t *gfx_base )
 {
 	int data = gfx_base[tile_index * 2 + 1];
 	int attr = gfx_base[tile_index * 2];
@@ -452,7 +452,7 @@ INLINE void pangpang_get_bg_tile_info( running_machine *machine, tile_data *tile
 			0);
 }
 
-INLINE void pangpang_get_bg2x_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, UINT16 *gfx_base )
+INLINE void pangpang_get_bg2x_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int gfx_bank, uint16_t *gfx_base )
 {
 	int data = gfx_base[tile_index * 2 + 1];
 	int attr = gfx_base[tile_index * 2];

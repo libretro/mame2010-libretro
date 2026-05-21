@@ -25,24 +25,24 @@ typedef struct
 	int dvssr_write;			/* Set when the DVSSR register has been written to */
 	int physical_width;			/* Width of the display */
 	int physical_height;		/* Height of the display */
-	UINT16 sprite_ram[64*4];	/* Sprite RAM */
+	uint16_t sprite_ram[64*4];	/* Sprite RAM */
 	int curline;				/* the current scanline we're on */
 	int current_segment;		/* current segment of display */
 	int current_segment_line;	/* current line inside a segment of display */
 	int vblank_triggered;		/* to indicate whether vblank has been triggered */
 	int raster_count;			/* counter to compare RCR against */
 	int satb_countdown;			/* scanlines to wait to trigger the SATB irq */
-	UINT8 *vram;
-	UINT8   inc;
-	UINT8 vdc_register;
-	UINT8 vdc_latch;
+	uint8_t *vram;
+	uint8_t   inc;
+	uint8_t vdc_register;
+	uint8_t vdc_latch;
 	pair vdc_data[32];
 	int status;
 	int y_scroll;
 }VDC;
 
 typedef struct {
-	UINT8	vce_control;			/* VCE control register */
+	uint8_t	vce_control;			/* VCE control register */
 	pair	vce_address;			/* Current address in the palette */
 	pair	vce_data[512];			/* Palette data */
 	int		current_bitmap_line;	/* The current line in the display we are on */
@@ -50,18 +50,18 @@ typedef struct {
 }VCE;
 
 typedef struct {
-	UINT8 prio;
-	UINT8 vdc0_enabled;
-	UINT8 vdc1_enabled;
+	uint8_t prio;
+	uint8_t vdc0_enabled;
+	uint8_t vdc1_enabled;
 } VPC_PRIO;
 
 typedef struct {
 	VPC_PRIO vpc_prio[4];
-	UINT8	prio_map[512];		/* Pre-calculated priority map */
+	uint8_t	prio_map[512];		/* Pre-calculated priority map */
 	pair	priority;			/* Priority settings registers */
 	pair	window1;			/* Window 1 setting */
 	pair	window2;			/* Window 2 setting */
-	UINT8	vdc_select;			/* Which VDC do the ST0, ST1, and ST2 instructions write to */
+	uint8_t	vdc_select;			/* Which VDC do the ST0, ST1, and ST2 instructions write to */
 }VPC;
 
 static VDC vdc[2];
@@ -74,8 +74,8 @@ static void vdc_advance_line(running_machine *machine, int which);
 static void draw_black_line(running_machine *machine, int line);
 static void draw_overscan_line(int line);
 static void draw_sgx_overscan_line(int line);
-static void pce_refresh_line(int which, int line, int external_input, UINT8 *drawn, UINT16 *line_buffer);
-static void pce_refresh_sprites(running_machine *machine, int which, int line, UINT8 *drawn, UINT16 *line_buffer);
+static void pce_refresh_line(int which, int line, int external_input, uint8_t *drawn, uint16_t *line_buffer);
+static void pce_refresh_sprites(running_machine *machine, int which, int line, uint8_t *drawn, uint16_t *line_buffer);
 static void vdc_do_dma(running_machine *machine, int which);
 static void vpc_init( running_machine *machine );
 
@@ -94,9 +94,9 @@ INTERRUPT_GEN( pce_interrupt )
 			/* 0 - no sprite and background pixels drawn
                1 - background pixel drawn
                otherwise is 2 + sprite# */
-			UINT8 drawn[VDC_WPF];
+			uint8_t drawn[VDC_WPF];
 			/* our line buffer */
-			UINT16 *line_buffer = BITMAP_ADDR16( vce.bmp, vce.current_bitmap_line, 86 );
+			uint16_t *line_buffer = BITMAP_ADDR16( vce.bmp, vce.current_bitmap_line, 86 );
 
 			/* clear our priority/sprite collision detection buffer. */
 			memset(drawn, 0, VDC_WPF);
@@ -139,9 +139,9 @@ INTERRUPT_GEN( sgx_interrupt )
 			/* 0 - no sprite and background pixels drawn
                1 - background pixel drawn
                otherwise is 2 + sprite# */
-			UINT8 drawn[2][512];
-			UINT16 *line_buffer;
-			UINT16 temp_buffer[2][512];
+			uint8_t drawn[2][512];
+			uint16_t *line_buffer;
+			uint16_t temp_buffer[2][512];
 			int i;
 
 			/* clear our priority/sprite collision detection buffer. */
@@ -417,8 +417,8 @@ VIDEO_START( pce )
 	memset(&vpc, 0, sizeof(vpc));
 
 	/* allocate VRAM */
-	vdc[0].vram = auto_alloc_array(machine, UINT8, 0x10000);
-	vdc[1].vram = auto_alloc_array(machine, UINT8, 0x10000);
+	vdc[0].vram = auto_alloc_array(machine, uint8_t, 0x10000);
+	vdc[1].vram = auto_alloc_array(machine, uint8_t, 0x10000);
 	memset(vdc[0].vram, 0, 0x10000);
 	memset(vdc[1].vram, 0, 0x10000);
 
@@ -444,7 +444,7 @@ static void draw_black_line(running_machine *machine, int line)
 	int i;
 
 	/* our line buffer */
-	UINT16 *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
+	uint16_t *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
 
 	for( i=0; i< VDC_WPF; i++ )
 		line_buffer[i] = get_black_pen( machine );
@@ -458,7 +458,7 @@ static void draw_overscan_line(int line)
 	int color_base = vce.vce_control & 0x80 ? 512 : 0;
 
 	/* our line buffer */
-	UINT16 *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
+	uint16_t *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
 
 	for ( i = 0; i < VDC_WPF; i++ )
 		line_buffer[i] = color_base + vce.vce_data[0x100].w;
@@ -472,13 +472,13 @@ static void draw_sgx_overscan_line(int line)
 	int color_base = vce.vce_control & 0x80 ? 512 : 0;
 
 	/* our line buffer */
-	UINT16 *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
+	uint16_t *line_buffer = BITMAP_ADDR16( vce.bmp, line, 0 );
 
 	for ( i = 0; i < VDC_WPF; i++ )
 		line_buffer[i] = color_base + vce.vce_data[0].w;
 }
 
-static void vram_write(int which, offs_t offset, UINT8 data)
+static void vram_write(int which, offs_t offset, uint8_t data)
 {
 	if(offset & 0x10000)
 	{
@@ -491,9 +491,9 @@ static void vram_write(int which, offs_t offset, UINT8 data)
 	}
 }
 
-static UINT8 vram_read(int which, offs_t offset)
+static uint8_t vram_read(int which, offs_t offset)
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	if(offset & 0x10000)
 	{
@@ -508,7 +508,7 @@ static UINT8 vram_read(int which, offs_t offset)
 }
 
 
-static void vdc_w( running_machine *machine, int which, offs_t offset, UINT8 data )
+static void vdc_w( running_machine *machine, int which, offs_t offset, uint8_t data )
 {
 	switch(offset&3)
 	{
@@ -596,7 +596,7 @@ static void vdc_w( running_machine *machine, int which, offs_t offset, UINT8 dat
 	}
 }
 
-static UINT8 vdc_r( running_machine *machine, int which, offs_t offset )
+static uint8_t vdc_r( running_machine *machine, int which, offs_t offset )
 {
 	int temp = 0;
 	switch(offset & 3)
@@ -693,7 +693,7 @@ WRITE8_HANDLER ( vce_w )
 }
 
 
-static void pce_refresh_line(int which, int line, int external_input, UINT8 *drawn, UINT16 *line_buffer)
+static void pce_refresh_line(int which, int line, int external_input, uint8_t *drawn, uint16_t *line_buffer)
 {
     static const int width_table[4] = {5, 6, 7, 7};
 
@@ -714,7 +714,7 @@ static void pce_refresh_line(int which, int line, int external_input, UINT8 *dra
     int v_width =        width_table[(vdc[which].vdc_data[MWR].w >> 4) & 3];
 
     /* pointer to the name table (Background Attribute Table) in VRAM */
-    UINT8 *bat = &(vdc[which].vram[nt_row << (v_width+1)]);
+    uint8_t *bat = &(vdc[which].vram[nt_row << (v_width+1)]);
 
 	/* Are we in greyscale mode or in color mode? */
 	int color_base = vce.vce_control & 0x80 ? 512 : 0;
@@ -824,10 +824,10 @@ static void conv_obj(int which, int i, int l, int hf, int vf, char *buf)
 	}
 }
 
-static void pce_refresh_sprites(running_machine *machine, int which, int line, UINT8 *drawn, UINT16 *line_buffer)
+static void pce_refresh_sprites(running_machine *machine, int which, int line, uint8_t *drawn, uint16_t *line_buffer)
 {
     int i;
-	UINT8 sprites_drawn = 0;
+	uint8_t sprites_drawn = 0;
 
 	/* Are we in greyscale mode or in color mode? */
 	int color_base = vce.vce_control & 0x80 ? 512 : 0;
@@ -1057,7 +1057,7 @@ static void vdc_do_dma(running_machine *machine, int which)
 	int dvc = (vdc[which].vdc_data[DCR].w >> 1) & 1;
 
 	do {
-		UINT8 l, h;
+		uint8_t l, h;
 
 		l = vram_read(which, src<<1);
 		h = vram_read(which, (src<<1) + 1);
@@ -1152,7 +1152,7 @@ WRITE8_HANDLER( vpc_w )
 
 READ8_HANDLER( vpc_r )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 	switch( offset & 0x07 )
 	{
 	case 0x00:  /* Priority register #0 */

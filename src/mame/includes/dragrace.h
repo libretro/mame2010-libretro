@@ -30,8 +30,8 @@ public:
 	dragrace_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  playfield_ram;
-	UINT8 *  position_ram;
+	uint8_t *  playfield_ram;
+	uint8_t *  position_ram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;

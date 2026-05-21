@@ -53,8 +53,8 @@
 static TILE_GET_INFO( get_tile_info_##_N_ ) \
 { \
 	fuuki32_state *state = (fuuki32_state *)machine->driver_data; \
-	UINT16 code = (state->vram_##_N_[tile_index] & 0xffff0000) >> 16; \
-	UINT16 attr = (state->vram_##_N_[tile_index] & 0x0000ffff); \
+	uint16_t code = (state->vram_##_N_[tile_index] & 0xffff0000) >> 16; \
+	uint16_t attr = (state->vram_##_N_[tile_index] & 0x0000ffff); \
 	SET_TILE_INFO(1 + _N_, code, (attr & 0x3f) >> 4, TILE_FLIPYX((attr >> 6) & 3)); \
 } \
 \
@@ -70,8 +70,8 @@ WRITE32_HANDLER( fuuki32_vram_##_N_##_w ) \
 static TILE_GET_INFO( get_tile_info_##_N_ ) \
 { \
 	fuuki32_state *state = (fuuki32_state *)machine->driver_data; \
-	UINT16 code = (state->vram_##_N_[tile_index] & 0xffff0000) >> 16; \
-	UINT16 attr = (state->vram_##_N_[tile_index] & 0x0000ffff); \
+	uint16_t code = (state->vram_##_N_[tile_index] & 0xffff0000) >> 16; \
+	uint16_t attr = (state->vram_##_N_[tile_index] & 0x0000ffff); \
 	SET_TILE_INFO(1 + _N_, code, attr & 0x3f, TILE_FLIPYX((attr >> 6) & 3)); \
 } \
 \
@@ -100,8 +100,8 @@ LAYER_4BPP( 3 )
 VIDEO_START( fuuki32 )
 {
 	fuuki32_state *state = (fuuki32_state *)machine->driver_data;
-	state->buf_spriteram = auto_alloc_array(machine, UINT32, state->spriteram_size / 4);
-	state->buf_spriteram2 = auto_alloc_array(machine, UINT32, state->spriteram_size / 4);
+	state->buf_spriteram = auto_alloc_array(machine, uint32_t, state->spriteram_size / 4);
+	state->buf_spriteram2 = auto_alloc_array(machine, uint32_t, state->spriteram_size / 4);
 
 	state_save_register_global_pointer(machine, state->buf_spriteram, state->spriteram_size / 4);
 	state_save_register_global_pointer(machine, state->buf_spriteram2, state->spriteram_size / 4);
@@ -159,7 +159,7 @@ static void draw_sprites( screen_device &screen, bitmap_t *bitmap, const rectang
 	int max_x =	visarea.max_x + 1;
 	int max_y =	visarea.max_y + 1;
 
-	UINT32 *src = state->buf_spriteram2; /* Use spriteram buffered by 2 frames, need palette buffered by one frame? */
+	uint32_t *src = state->buf_spriteram2; /* Use spriteram buffered by 2 frames, need palette buffered by one frame? */
 
 	/* Draw them backwards, for pdrawgfx */
 	for (offs = (state->spriteram_size - 8) / 4; offs >= 0; offs -= 8/4)
@@ -315,10 +315,10 @@ static void fuuki32_draw_layer( running_machine *machine, bitmap_t *bitmap, cons
 VIDEO_UPDATE( fuuki32 )
 {
 	fuuki32_state *state = (fuuki32_state *)screen->machine->driver_data;
-	UINT16 layer0_scrollx, layer0_scrolly;
-	UINT16 layer1_scrollx, layer1_scrolly;
-	UINT16 layer2_scrollx, layer2_scrolly;
-	UINT16 scrollx_offs,   scrolly_offs;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
+	uint16_t layer2_scrollx, layer2_scrolly;
+	uint16_t scrollx_offs,   scrolly_offs;
 
 	/*
     It's not independent bits causing layers to switch, that wouldn't make sense with 3 bits.

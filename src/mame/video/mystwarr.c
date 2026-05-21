@@ -19,10 +19,10 @@ static tilemap_t *ult_936_tilemap;
 // reading the original raw data
 static void mystwarr_decode_tiles(running_machine *machine)
 {
-	UINT8 *s = memory_region(machine, "gfx1");
+	uint8_t *s = memory_region(machine, "gfx1");
 	int len = memory_region_length(machine, "gfx1");
-	UINT8 *pFinish = s+len-3;
-	UINT8 *d, *decoded;
+	uint8_t *pFinish = s+len-3;
+	uint8_t *d, *decoded;
 	int gfxnum;
 
 	for (gfxnum = 0; gfxnum < ARRAY_LENGTH(machine->gfx); gfxnum++)
@@ -30,7 +30,7 @@ static void mystwarr_decode_tiles(running_machine *machine)
 			break;
 	assert(gfxnum != ARRAY_LENGTH(machine->gfx));
 
-	decoded = auto_alloc_array(machine, UINT8, len);
+	decoded = auto_alloc_array(machine, uint8_t, len);
 	d = decoded;
 
 	// now convert the data into a drawable format so we can decode it
@@ -140,8 +140,8 @@ static void martchmp_sprite_callback(int *code, int *color, int *priority)
 static TILE_GET_INFO( get_gai_936_tile_info )
 {
 	int tileno, colour;
-	UINT8 *ROM = memory_region(machine, "gfx4");
-	UINT8 *dat1 = ROM, *dat2 = ROM + 0x20000, *dat3 = ROM + 0x60000;
+	uint8_t *ROM = memory_region(machine, "gfx4");
+	uint8_t *dat1 = ROM, *dat2 = ROM + 0x20000, *dat3 = ROM + 0x60000;
 
 	tileno = dat3[tile_index] | ((dat2[tile_index]&0x3f)<<8);
 
@@ -187,8 +187,8 @@ VIDEO_START(gaiapols)
 static TILE_GET_INFO( get_ult_936_tile_info )
 {
 	int tileno, colour;
-	UINT8 *ROM = memory_region(machine, "gfx4");
-	UINT8 *dat1 = ROM, *dat2 = ROM + 0x40000;
+	uint8_t *ROM = memory_region(machine, "gfx4");
+	uint8_t *dat1 = ROM, *dat2 = ROM + 0x40000;
 
 	tileno = dat2[tile_index] | ((dat1[tile_index]&0x1f)<<8);
 
@@ -394,7 +394,7 @@ WRITE16_HANDLER(ddd_053936_enable_w)
 
 WRITE16_HANDLER(ddd_053936_clip_w)
 {
-	static UINT16 clip;
+	static uint16_t clip;
 	int old, clip_x, clip_y, size_x, size_y;
 	int minx, maxx, miny, maxy;
 
@@ -440,8 +440,8 @@ WRITE16_HANDLER(ddd_053936_clip_w)
 // reference: 223e5c in gaiapolis (ROMs 34j and 36m)
 READ16_HANDLER(gai_053936_tilerom_0_r)
 {
-	UINT8 *ROM1 = (UINT8 *)memory_region(space->machine, "gfx4");
-	UINT8 *ROM2 = (UINT8 *)memory_region(space->machine, "gfx4");
+	uint8_t *ROM1 = (uint8_t *)memory_region(space->machine, "gfx4");
+	uint8_t *ROM2 = (uint8_t *)memory_region(space->machine, "gfx4");
 
 	ROM1 += 0x20000;
 	ROM2 += 0x20000+0x40000;
@@ -451,8 +451,8 @@ READ16_HANDLER(gai_053936_tilerom_0_r)
 
 READ16_HANDLER(ddd_053936_tilerom_0_r)
 {
-	UINT8 *ROM1 = (UINT8 *)memory_region(space->machine, "gfx4");
-	UINT8 *ROM2 = (UINT8 *)memory_region(space->machine, "gfx4");
+	uint8_t *ROM1 = (uint8_t *)memory_region(space->machine, "gfx4");
+	uint8_t *ROM2 = (uint8_t *)memory_region(space->machine, "gfx4");
 
 	ROM2 += 0x40000;
 
@@ -462,7 +462,7 @@ READ16_HANDLER(ddd_053936_tilerom_0_r)
 // reference: 223e1a in gaiapolis (ROM 36j)
 READ16_HANDLER(ddd_053936_tilerom_1_r)
 {
-	UINT8 *ROM = (UINT8 *)memory_region(space->machine, "gfx4");
+	uint8_t *ROM = (uint8_t *)memory_region(space->machine, "gfx4");
 
 	return ROM[offset/2];
 }
@@ -470,7 +470,7 @@ READ16_HANDLER(ddd_053936_tilerom_1_r)
 // reference: 223db0 in gaiapolis (ROMs 32n, 29n, 26n)
 READ16_HANDLER(gai_053936_tilerom_2_r)
 {
-	UINT8 *ROM = (UINT8 *)memory_region(space->machine, "gfx3");
+	uint8_t *ROM = (uint8_t *)memory_region(space->machine, "gfx3");
 
 	offset += (roz_rombank * 0x100000);
 
@@ -479,7 +479,7 @@ READ16_HANDLER(gai_053936_tilerom_2_r)
 
 READ16_HANDLER(ddd_053936_tilerom_2_r)
 {
-	UINT8 *ROM = (UINT8 *)memory_region(space->machine, "gfx3");
+	uint8_t *ROM = (uint8_t *)memory_region(space->machine, "gfx3");
 
 	offset += (roz_rombank * 0x100000);
 

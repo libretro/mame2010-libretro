@@ -11,7 +11,7 @@
 #define AVECTOR(m, x, y, color, intensity) \
 vector_add_point (m, xcenter + ((x) << 16), ycenter - ((y) << 16), color, intensity)
 
-UINT16 *aztarac_vectorram;
+uint16_t *aztarac_vectorram;
 
 static int xcenter, ycenter;
 

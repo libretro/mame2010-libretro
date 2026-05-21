@@ -94,10 +94,10 @@ VIDEO_START( shootout )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int bank_bits )
 {
 	shootout_state *state = (shootout_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	static int bFlicker;
 	const gfx_element *gfx = machine->gfx[1];
-	const UINT8 *source = spriteram+127*4;
+	const uint8_t *source = spriteram+127*4;
 	int count;
 
 	bFlicker = !bFlicker;

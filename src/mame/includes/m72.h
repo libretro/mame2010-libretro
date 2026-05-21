@@ -6,8 +6,8 @@
 
 /*----------- defined in video/m72.c -----------*/
 
-extern UINT16 *m72_videoram1,*m72_videoram2,*majtitle_rowscrollram;
-extern UINT32 m72_raster_irq_position;
+extern uint16_t *m72_videoram1,*m72_videoram2,*majtitle_rowscrollram;
+extern uint32_t m72_raster_irq_position;
 
 VIDEO_START( m72 );
 VIDEO_START( rtype2 );

@@ -19,7 +19,7 @@ WRITE8_HANDLER( canyon_videoram_w )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	canyon_state *state = (canyon_state *)machine->driver_data;
-	UINT8 code = state->videoram[tile_index];
+	uint8_t code = state->videoram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, code >> 7, 0);
 }

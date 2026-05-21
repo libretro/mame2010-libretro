@@ -38,27 +38,27 @@ typedef int (*atarimo_special_func)(bitmap_t *bitmap, const rectangle *clip, int
 typedef struct _atarimo_entry atarimo_entry;
 struct _atarimo_entry
 {
-	UINT16			data[4];
+	uint16_t			data[4];
 };
 
 /* description of the motion objects */
 typedef struct _atarimo_desc atarimo_desc;
 struct _atarimo_desc
 {
-	UINT8				gfxindex;			/* index to which gfx system */
-	UINT8				banks;				/* number of motion object banks */
-	UINT8				linked;				/* are the entries linked? */
-	UINT8				split;				/* are the entries split? */
-	UINT8				reverse;			/* render in reverse order? */
-	UINT8				swapxy;				/* render in swapped X/Y order? */
-	UINT8				nextneighbor;		/* does the neighbor bit affect the next object? */
-	UINT16				slipheight;			/* pixels per SLIP entry (0 for no-slip) */
-	UINT8				slipoffset;			/* pixel offset for SLIPs */
-	UINT16				maxlinks;			/* maximum number of links to visit/scanline (0=all) */
+	uint8_t				gfxindex;			/* index to which gfx system */
+	uint8_t				banks;				/* number of motion object banks */
+	uint8_t				linked;				/* are the entries linked? */
+	uint8_t				split;				/* are the entries split? */
+	uint8_t				reverse;			/* render in reverse order? */
+	uint8_t				swapxy;				/* render in swapped X/Y order? */
+	uint8_t				nextneighbor;		/* does the neighbor bit affect the next object? */
+	uint16_t				slipheight;			/* pixels per SLIP entry (0 for no-slip) */
+	uint8_t				slipoffset;			/* pixel offset for SLIPs */
+	uint16_t				maxlinks;			/* maximum number of links to visit/scanline (0=all) */
 
-	UINT16				palettebase;		/* base palette entry */
-	UINT16				maxcolors;			/* maximum number of colors */
-	UINT8				transpen;			/* transparent pen index */
+	uint16_t				palettebase;		/* base palette entry */
+	uint16_t				maxcolors;			/* maximum number of colors */
+	uint8_t				transpen;			/* transparent pen index */
 
 	atarimo_entry		linkmask;			/* mask for the link */
 	atarimo_entry		gfxmask;			/* mask for the graphics bank */
@@ -76,7 +76,7 @@ struct _atarimo_desc
 	atarimo_entry		absolutemask;		/* mask for absolute coordinates */
 
 	atarimo_entry		specialmask;		/* mask for the special value */
-	UINT16				specialvalue;		/* resulting value to indicate "special" */
+	uint16_t				specialvalue;		/* resulting value to indicate "special" */
 	atarimo_special_func specialcb;			/* callback routine for special entries */
 };
 
@@ -95,9 +95,9 @@ struct _atarimo_rect_list
 
 /* setup/shutdown */
 void atarimo_init(running_machine *machine, int map, const atarimo_desc *desc);
-UINT16 *atarimo_get_code_lookup(int map, int *size);
-UINT8 *atarimo_get_color_lookup(int map, int *size);
-UINT8 *atarimo_get_gfx_lookup(int map, int *size);
+uint16_t *atarimo_get_code_lookup(int map, int *size);
+uint8_t *atarimo_get_color_lookup(int map, int *size);
+uint8_t *atarimo_get_gfx_lookup(int map, int *size);
 
 /* core processing */
 bitmap_t *atarimo_render(int map, const rectangle *cliprect, atarimo_rect_list *rectlist);
@@ -126,11 +126,11 @@ WRITE16_HANDLER( atarimo_1_slipram_w );
     GLOBAL VARIABLES
 ***************************************************************************/
 
-extern UINT16 *atarimo_0_spriteram;
-extern UINT16 *atarimo_0_slipram;
+extern uint16_t *atarimo_0_spriteram;
+extern uint16_t *atarimo_0_slipram;
 
-extern UINT16 *atarimo_1_spriteram;
-extern UINT16 *atarimo_1_slipram;
+extern uint16_t *atarimo_1_spriteram;
+extern uint16_t *atarimo_1_slipram;
 
 
 #endif

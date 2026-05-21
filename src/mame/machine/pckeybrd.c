@@ -171,13 +171,13 @@ typedef struct at_keyboard
 {
 	AT_KEYBOARD_TYPE type;
 	int on;
-	UINT8 delay;   /* 240/60 -> 0,25s */
-	UINT8 repeat;   /* 240/ 8 -> 30/s */
+	uint8_t delay;   /* 240/60 -> 0,25s */
+	uint8_t repeat;   /* 240/ 8 -> 30/s */
 	int numlock;
-	UINT8 queue[AT_KEYBOARD_QUEUE_MAXSIZE];
-	UINT8 head;
-	UINT8 tail;
-	UINT8 make[128];
+	uint8_t queue[AT_KEYBOARD_QUEUE_MAXSIZE];
+	uint8_t head;
+	uint8_t tail;
+	uint8_t make[128];
 
 	int input_state;
 	int scan_code_set;
@@ -302,7 +302,7 @@ static const extended_keyboard_code at_keyboard_extended_codes_set_2_3[]=
 
 };
 
-static void at_keyboard_queue_insert(UINT8 data);
+static void at_keyboard_queue_insert(uint8_t data);
 
 #ifdef MESS
 static int at_keyboard_queue_size(void);
@@ -325,7 +325,7 @@ void at_keyboard_init(running_machine *machine, AT_KEYBOARD_TYPE type)
 	keyboard.numlock = 0;
 	keyboard.head = keyboard.tail = 0;
 	keyboard.input_state = 0;
-	memset(&keyboard.make[0], 0, sizeof(UINT8)*128);
+	memset(&keyboard.make[0], 0, sizeof(uint8_t)*128);
 	/* set default led state */
 	set_led_status(machine, 2, 0);
 	set_led_status(machine, 0, 0);
@@ -354,7 +354,7 @@ void at_keyboard_reset(running_machine *machine)
 {
 	keyboard.head = keyboard.tail = 0;
 	keyboard.input_state = 0;
-	memset(&keyboard.make[0], 0, sizeof(UINT8)*128);
+	memset(&keyboard.make[0], 0, sizeof(uint8_t)*128);
 	/* set default led state */
 	set_led_status(machine, 2, 0);
 	set_led_status(machine, 0, 0);
@@ -373,7 +373,7 @@ void at_keyboard_set_scan_code_set(int set)
 
 
 /* insert a code into the buffer */
-static void at_keyboard_queue_insert(UINT8 data)
+static void at_keyboard_queue_insert(uint8_t data)
 {
 	if (LOG_KEYBOARD)
 		logerror("keyboard queueing %.2x\n",data);
@@ -500,9 +500,9 @@ static void at_keyboard_extended_scancode_insert(int code, int pressed)
  *  scan keys and stuff make/break codes
  **************************************************************************/
 
-static UINT32 at_keyboard_readport(int port)
+static uint32_t at_keyboard_readport(int port)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	if (keyboard.ports[port] != NULL)
 		result = input_port_read_direct(keyboard.ports[port]);
 	return result;
@@ -671,7 +671,7 @@ Note:   each command is acknowledged by FAh (ACK), if not mentioned otherwise.
 SeeAlso: #P046
 */
 
-void at_keyboard_write(running_machine *machine, UINT8 data)
+void at_keyboard_write(running_machine *machine, uint8_t data)
 {
 	if (LOG_KEYBOARD)
 		logerror("keyboard write %.2x\n",data);
@@ -833,9 +833,9 @@ void at_keyboard_write(running_machine *machine, UINT8 data)
   unicode_char_to_at_keycode
 ***************************************************************************/
 
-static UINT8 unicode_char_to_at_keycode(unicode_char ch)
+static uint8_t unicode_char_to_at_keycode(unicode_char ch)
 {
-	UINT8 b;
+	uint8_t b;
 	switch(ch)
 	{
 		case '\033':					b = 1;		break;
@@ -977,7 +977,7 @@ static UINT8 unicode_char_to_at_keycode(unicode_char ch)
 static int at_keyboard_queue_chars(const unicode_char *text, size_t text_len)
 {
 	int i;
-	UINT8 b;
+	uint8_t b;
 
 	for (i = 0; (i < text_len) && ((at_keyboard_queue_size()) + 4 < AT_KEYBOARD_QUEUE_MAXSIZE); i++)
 	{

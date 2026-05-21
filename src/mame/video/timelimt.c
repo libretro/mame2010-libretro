@@ -1,7 +1,7 @@
 #include "emu.h"
 
 /* globals */
-UINT8 *timelimt_bg_videoram;
+uint8_t *timelimt_bg_videoram;
 size_t timelimt_bg_videoram_size;
 
 /* locals */
@@ -115,7 +115,7 @@ WRITE8_HANDLER( timelimt_scroll_y_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for( offs = machine->generic.spriteram_size; offs >= 0; offs -= 4 )

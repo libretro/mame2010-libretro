@@ -12,16 +12,16 @@ public:
 	copsnrob_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
-	UINT8 *        trucky;
-	UINT8 *        truckram;
-	UINT8 *        bulletsram;
-	UINT8 *        cary;
-	UINT8 *        carimage;
+	uint8_t *        videoram;
+	uint8_t *        trucky;
+	uint8_t *        truckram;
+	uint8_t *        bulletsram;
+	uint8_t *        cary;
+	uint8_t *        carimage;
 	size_t         videoram_size;
 
 	/* misc */
-	UINT8          misc;
+	uint8_t          misc;
 };
 
 

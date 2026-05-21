@@ -6,7 +6,7 @@
 
 #include "emu.h"
 
-UINT8 *tecmo_txvideoram,*tecmo_fgvideoram,*tecmo_bgvideoram;
+uint8_t *tecmo_txvideoram,*tecmo_fgvideoram,*tecmo_bgvideoram;
 
 int tecmo_video_type = 0;
 /*
@@ -25,7 +25,7 @@ static tilemap_t *tx_tilemap,*fg_tilemap,*bg_tilemap;
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 attr = tecmo_bgvideoram[tile_index+0x200];
+	uint8_t attr = tecmo_bgvideoram[tile_index+0x200];
 	SET_TILE_INFO(
 			3,
 			tecmo_bgvideoram[tile_index] + ((attr & 0x07) << 8),
@@ -35,7 +35,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
-	UINT8 attr = tecmo_fgvideoram[tile_index+0x200];
+	uint8_t attr = tecmo_fgvideoram[tile_index+0x200];
 	SET_TILE_INFO(
 			2,
 			tecmo_fgvideoram[tile_index] + ((attr & 0x07) << 8),
@@ -45,7 +45,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 
 static TILE_GET_INFO( gemini_get_bg_tile_info )
 {
-	UINT8 attr = tecmo_bgvideoram[tile_index+0x200];
+	uint8_t attr = tecmo_bgvideoram[tile_index+0x200];
 	SET_TILE_INFO(
 			3,
 			tecmo_bgvideoram[tile_index] + ((attr & 0x70) << 4),
@@ -55,7 +55,7 @@ static TILE_GET_INFO( gemini_get_bg_tile_info )
 
 static TILE_GET_INFO( gemini_get_fg_tile_info )
 {
-	UINT8 attr = tecmo_fgvideoram[tile_index+0x200];
+	uint8_t attr = tecmo_fgvideoram[tile_index+0x200];
 	SET_TILE_INFO(
 			2,
 			tecmo_fgvideoram[tile_index] + ((attr & 0x70) << 4),
@@ -65,7 +65,7 @@ static TILE_GET_INFO( gemini_get_fg_tile_info )
 
 static TILE_GET_INFO( get_tx_tile_info )
 {
-	UINT8 attr = tecmo_txvideoram[tile_index+0x400];
+	uint8_t attr = tecmo_txvideoram[tile_index+0x400];
 	SET_TILE_INFO(
 			0,
 			tecmo_txvideoram[tile_index] + ((attr & 0x03) << 8),
@@ -131,7 +131,7 @@ WRITE8_HANDLER( tecmo_bgvideoram_w )
 
 WRITE8_HANDLER( tecmo_fgscroll_w )
 {
-	static UINT8 scroll[3];
+	static uint8_t scroll[3];
 
 	scroll[offset] = data;
 
@@ -141,7 +141,7 @@ WRITE8_HANDLER( tecmo_fgscroll_w )
 
 WRITE8_HANDLER( tecmo_bgscroll_w )
 {
-	static UINT8 scroll[3];
+	static uint8_t scroll[3];
 
 	scroll[offset] = data;
 
@@ -164,9 +164,9 @@ WRITE8_HANDLER( tecmo_flipscreen_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{0,1,4,5,16,17,20,21},
 		{2,3,6,7,18,19,22,23},

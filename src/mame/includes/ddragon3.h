@@ -13,22 +13,22 @@ public:
 	ddragon3_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *        bg_videoram;
-	UINT16 *        fg_videoram;
-	UINT16 *        spriteram;
-//  UINT16 *        paletteram; // currently this uses generic palette handling
+	uint16_t *        bg_videoram;
+	uint16_t *        fg_videoram;
+	uint16_t *        spriteram;
+//  uint16_t *        paletteram; // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t         *fg_tilemap, *bg_tilemap;
-	UINT16          vreg;
-	UINT16          bg_scrollx;
-	UINT16          bg_scrolly;
-	UINT16          fg_scrollx;
-	UINT16          fg_scrolly;
-	UINT16          bg_tilebase;
+	uint16_t          vreg;
+	uint16_t          bg_scrollx;
+	uint16_t          bg_scrolly;
+	uint16_t          fg_scrollx;
+	uint16_t          fg_scrolly;
+	uint16_t          bg_tilebase;
 
 	/* misc */
-	UINT16          io_reg[8];
+	uint16_t          io_reg[8];
 
 	/* devices */
 	running_device *maincpu;

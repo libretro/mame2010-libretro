@@ -16,13 +16,13 @@ public:
 		  oki(machine.device<okim6295_device>("oki")) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    colorram;
+	uint8_t *    videoram;
+	uint8_t *    colorram;
 	size_t     videoram_size;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;
-	UINT8      *objram;           /* Sprite RAM */
+	uint8_t      *objram;           /* Sprite RAM */
 	int        flipscreen;
 	int        video_bank;
 	int        paletteram_bank;

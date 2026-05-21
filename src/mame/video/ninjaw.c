@@ -19,7 +19,7 @@ VIDEO_START( ninjaw )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int primask, int x_offs, int y_offs )
 {
 	ninjaw_state *state = (ninjaw_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, data, tilenum, color, flipx, flipy;
 	int x, y, priority, curx, cury;
 	int code;
@@ -101,7 +101,7 @@ VIDEO_UPDATE( ninjaw )
 {
 	ninjaw_state *state = (ninjaw_state *)screen->machine->driver_data;
 	int xoffs = 0;
-	UINT8 layer[3], nodraw;
+	uint8_t layer[3], nodraw;
 	running_device *tc0100scn = NULL;
 
 	if (screen == state->lscreen)

@@ -12,14 +12,14 @@ public:
 	mouser_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    colorram;
-	UINT8 *    spriteram;
+	uint8_t *    videoram;
+	uint8_t *    colorram;
+	uint8_t *    spriteram;
 	size_t     spriteram_size;
 
 	/* misc */
-	UINT8      sound_byte;
-	UINT8      nmi_enable;
+	uint8_t      sound_byte;
+	uint8_t      nmi_enable;
 
 	/* devices */
 	running_device *maincpu;

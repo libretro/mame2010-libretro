@@ -115,7 +115,7 @@ typedef struct
 {
 	float	diffuse;
 	float	ambient;
-	UINT32	specular_control;
+	uint32_t	specular_control;
 	float	specular_scale;
 } texture_parameter;
 
@@ -123,32 +123,32 @@ typedef struct
 {
 	void *				next;
 	poly_vertex			v[3];
-	UINT16				z;
-	UINT16				texheader[4];
-	UINT8				luma;
-	INT16				viewport[4];
-	INT16				center[2];
+	uint16_t				z;
+	uint16_t				texheader[4];
+	uint8_t				luma;
+	int16_t				viewport[4];
+	int16_t				center[2];
 } triangle;
 
 typedef struct
 {
 	poly_vertex			v[4];
-	UINT16				z;
-	UINT16				texheader[4];
-	UINT8				luma;
+	uint16_t				z;
+	uint16_t				texheader[4];
+	uint8_t				luma;
 } _quad_m2;
 
 typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
-	UINT32		lumabase;
-	UINT32		colorbase;
-	UINT32 *	texsheet;
-	UINT32		texwidth;
-	UINT32		texheight;
-	UINT32		texx, texy;
-	UINT8		texmirrorx;
-	UINT8		texmirrory;
+	uint32_t		lumabase;
+	uint32_t		colorbase;
+	uint32_t *	texsheet;
+	uint32_t		texwidth;
+	uint32_t		texheight;
+	uint32_t		texx, texy;
+	uint8_t		texmirrorx;
+	uint8_t		texmirrory;
 };
 
 
@@ -211,11 +211,11 @@ INLINE void vector_cross3( poly_vertex *dst, poly_vertex *v0, poly_vertex *v1, p
 }
 
 /* 1.8.23 float to 4.12 float converter, courtesy of Aaron Giles */
-static UINT16 float_to_zval( float floatval )
+static uint16_t float_to_zval( float floatval )
 {
-	INT32 fpint = f2u(floatval);
-	INT32 exponent = ((fpint >> 23) & 0xff) - 127;
-	UINT32 mantissa = fpint & 0x7fffff;
+	int32_t fpint = f2u(floatval);
+	int32_t exponent = ((fpint >> 23) & 0xff) - 127;
+	uint32_t mantissa = fpint & 0x7fffff;
 
 	/* round the low bits and reduce to 12 */
 	mantissa += 0x400;
@@ -243,11 +243,11 @@ static UINT16 float_to_zval( float floatval )
 	return 0xffff;
 }
 
-static INT32 clip_polygon(poly_vertex *v, INT32 num_vertices, plane *cp, poly_vertex *vout)
+static int32_t clip_polygon(poly_vertex *v, int32_t num_vertices, plane *cp, poly_vertex *vout)
 {
 	poly_vertex *cur, *out;
 	float	curdot, nextdot, scale;
-	INT32	i, curin, nextin, nextvert, outcount;
+	int32_t	i, curin, nextin, nextvert, outcount;
 
 	outcount = 0;
 
@@ -275,8 +275,8 @@ static INT32 clip_polygon(poly_vertex *v, INT32 num_vertices, plane *cp, poly_ve
 			out[outcount].x = cur->x + ((v[nextvert].x - cur->x) * scale);
 			out[outcount].y = cur->y + ((v[nextvert].y - cur->y) * scale);
 			out[outcount].pz = cur->pz + ((v[nextvert].pz - cur->pz) * scale);
-			out[outcount].pu = (UINT16)((float)cur->pu + (((float)v[nextvert].pu - (float)cur->pu) * scale));
-			out[outcount].pv = (UINT16)((float)cur->pv + (((float)v[nextvert].pv - (float)cur->pv) * scale));
+			out[outcount].pu = (uint16_t)((float)cur->pu + (((float)v[nextvert].pu - (float)cur->pu) * scale));
+			out[outcount].pv = (uint16_t)((float)cur->pv + (((float)v[nextvert].pv - (float)cur->pv) * scale));
             outcount++;
         }
 
@@ -300,25 +300,25 @@ static INT32 clip_polygon(poly_vertex *v, INT32 num_vertices, plane *cp, poly_ve
 
 typedef struct
 {
-	UINT32				mode;				/* bit 0 = Test Mode, bit 2 = Switch 60Hz(1)/30Hz(0) operation */
-	UINT16 *			texture_rom;		/* Texture ROM pointer */
-	UINT16 *			texture_ram;		/* Texture RAM pointer */
-	UINT8 *				log_ram;			/* Log RAM pointer */
-	INT16				viewport[4];		/* View port (startx,starty,endx,endy) */
-	INT16				center[4][2];		/* Centers (eye 0[x,y],1[x,y],2[x,y],3[x,y]) */
-	UINT16				center_sel;			/* Selected center */
-	UINT32				reverse;			/* Left/Right Reverse */
+	uint32_t				mode;				/* bit 0 = Test Mode, bit 2 = Switch 60Hz(1)/30Hz(0) operation */
+	uint16_t *			texture_rom;		/* Texture ROM pointer */
+	uint16_t *			texture_ram;		/* Texture RAM pointer */
+	uint8_t *				log_ram;			/* Log RAM pointer */
+	int16_t				viewport[4];		/* View port (startx,starty,endx,endy) */
+	int16_t				center[4][2];		/* Centers (eye 0[x,y],1[x,y],2[x,y],3[x,y]) */
+	uint16_t				center_sel;			/* Selected center */
+	uint32_t				reverse;			/* Left/Right Reverse */
 	float				z_adjust;			/* ZSort Mode */
 	float				triangle_z;			/* Current Triangle z value */
-	UINT8				master_z_clip;		/* Master Z-Clip value */
-	UINT32				cur_command;		/* Current command */
-	UINT32				command_buffer[32];	/* Command buffer */
-	UINT32				command_index;		/* Command buffer index */
+	uint8_t				master_z_clip;		/* Master Z-Clip value */
+	uint32_t				cur_command;		/* Current command */
+	uint32_t				command_buffer[32];	/* Command buffer */
+	uint32_t				command_index;		/* Command buffer index */
 	triangle *			tri_list;			/* Triangle list */
-	UINT32				tri_list_index;		/* Triangle list index */
+	uint32_t				tri_list_index;		/* Triangle list index */
 	triangle **			tri_sorted_list;	/* Sorted Triangle list */
-	UINT16				min_z;				/* Minimum sortable Z value */
-	UINT16				max_z;				/* Maximum sortable Z value */
+	uint16_t				min_z;				/* Minimum sortable Z value */
+	uint16_t				max_z;				/* Maximum sortable Z value */
 
 } raster_state;
 
@@ -330,13 +330,13 @@ static raster_state raster;
  *
  *******************************************/
 
-static void model2_3d_init( running_machine *machine, UINT16 *texture_rom )
+static void model2_3d_init( running_machine *machine, uint16_t *texture_rom )
 {
 	memset( &raster, 0, sizeof( raster_state ) );
 
 	raster.texture_rom = texture_rom;
-	raster.texture_ram = auto_alloc_array(machine, UINT16, 0x10000);
-	raster.log_ram = auto_alloc_array(machine, UINT8, 0x40000);
+	raster.texture_ram = auto_alloc_array(machine, uint16_t, 0x10000);
+	raster.log_ram = auto_alloc_array(machine, uint8_t, 0x40000);
 	raster.tri_list = auto_alloc_array(machine, triangle, MAX_TRIANGLES);
 	raster.tri_sorted_list = auto_alloc_array(machine, triangle *, 0x10000);
 }
@@ -347,7 +347,7 @@ static void model2_3d_init( running_machine *machine, UINT16 *texture_rom )
  *
  *******************************************/
 
-void model2_3d_set_zclip( UINT8 clip )
+void model2_3d_set_zclip( uint8_t clip )
 {
 	raster.master_z_clip = clip;
 }
@@ -358,12 +358,12 @@ void model2_3d_set_zclip( UINT8 clip )
  *
  *******************************************/
 
-static void model2_3d_process_quad( UINT32 attr )
+static void model2_3d_process_quad( uint32_t attr )
 {
 	_quad_m2	object;
-	UINT16		*th, *tp;
-	INT32		tho;
-	UINT32		cull, i;
+	uint16_t		*th, *tp;
+	int32_t		tho;
+	uint32_t		cull, i;
 	float		zvalue;
 	float		min_z, max_z;
 
@@ -458,7 +458,7 @@ static void model2_3d_process_quad( UINT32 attr )
 		cull = 1;
 
 	/* if the minimum z value is bigger than the master z clip value, don't render */
-	if ( (INT32)(1.0/min_z) > raster.master_z_clip )
+	if ( (int32_t)(1.0/min_z) > raster.master_z_clip )
 		cull = 1;
 
 	/* if the maximum z value is < 0 then we can safely clip the entire polygon */
@@ -485,7 +485,7 @@ static void model2_3d_process_quad( UINT32 attr )
 
 	if ( cull == 0 )
 	{
-		INT32		clipped_verts;
+		int32_t		clipped_verts;
 		poly_vertex	verts[10];
 		plane		clip_plane;
 
@@ -598,12 +598,12 @@ static void model2_3d_process_quad( UINT32 attr )
 	}
 }
 
-static void model2_3d_process_triangle( UINT32 attr )
+static void model2_3d_process_triangle( uint32_t attr )
 {
 	triangle	object;
-	UINT16		*th, *tp;
-	INT32		tho;
-	UINT32		cull, i;
+	uint16_t		*th, *tp;
+	int32_t		tho;
+	uint32_t		cull, i;
 	float		zvalue;
 	float		min_z, max_z;
 
@@ -694,7 +694,7 @@ static void model2_3d_process_triangle( UINT32 attr )
 		cull = 1;
 
 	/* if the minimum z value is bigger than the master z clip value, don't render */
-	if ( (INT32)(1.0/min_z) > raster.master_z_clip )
+	if ( (int32_t)(1.0/min_z) > raster.master_z_clip )
 		cull = 1;
 
 	/* if the maximum z value is < 0 then we can safely clip the entire polygon */
@@ -722,7 +722,7 @@ static void model2_3d_process_triangle( UINT32 attr )
 	/* if we're not culling, do z-clip and add to out triangle list */
 	if ( cull == 0 )
 	{
-		INT32		clipped_verts;
+		int32_t		clipped_verts;
 		poly_vertex	verts[10];
 		plane		clip_plane;
 
@@ -837,12 +837,12 @@ static void model2_3d_process_triangle( UINT32 attr )
 
 /***********************************************************************************************/
 
-INLINE UINT16 get_texel( UINT32 base_x, UINT32 base_y, int x, int y, UINT32 *sheet )
+INLINE uint16_t get_texel( uint32_t base_x, uint32_t base_y, int x, int y, uint32_t *sheet )
 {
-	UINT32	baseoffs = ((base_y/2)*512)+(base_x/2);
-	UINT32	texeloffs = ((y/2)*512)+(x/2);
-	UINT32	offset = baseoffs + texeloffs;
-	UINT32	texel = sheet[offset>>1];
+	uint32_t	baseoffs = ((base_y/2)*512)+(base_x/2);
+	uint32_t	texeloffs = ((y/2)*512)+(x/2);
+	uint32_t	offset = baseoffs + texeloffs;
+	uint32_t	texel = sheet[offset>>1];
 
 	if ( offset & 1 )
 		texel >>= 16;
@@ -929,7 +929,7 @@ static const poly_draw_scanline_func render_funcs[8] =
 static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *cliprect )
 {
 	poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
-	UINT8		renderer;
+	uint8_t		renderer;
 	rectangle	vp;
 
 	/* select renderer based on attributes (bit15 = checker, bit14 = textured, bit13 = transparent */
@@ -997,7 +997,7 @@ static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *
 /* 3D Rasterizer projection: projects a triangle into screen coordinates */
 static void model2_3d_project( triangle *tri )
 {
-	UINT16	i;
+	uint16_t	i;
 
 	for( i = 0; i < 3; i++ )
 	{
@@ -1023,7 +1023,7 @@ static void model2_3d_frame_start( void )
 
 static void model2_3d_frame_end( bitmap_t *bitmap, const rectangle *cliprect )
 {
-	INT32		z;
+	int32_t		z;
 
 	/* if we have nothing to render, bail */
 	if ( raster.tri_list_index == 0 )
@@ -1032,7 +1032,7 @@ static void model2_3d_frame_end( bitmap_t *bitmap, const rectangle *cliprect )
 #if DEBUG
 	if (input_code_pressed(machine, KEYCODE_Q))
 	{
-		UINT32	i;
+		uint32_t	i;
 
 		FILE *f = fopen( "triangles.txt", "w" );
 
@@ -1092,7 +1092,7 @@ static void model2_3d_frame_end( bitmap_t *bitmap, const rectangle *cliprect )
 }
 
 /* 3D Rasterizer main data input port */
-static void model2_3d_push( UINT32 input )
+static void model2_3d_push( uint32_t input )
 {
 	/* see if we have a command in progress */
 	if ( raster.cur_command != 0 )
@@ -1106,7 +1106,7 @@ static void model2_3d_push( UINT32 input )
 
 			case 0x01:	/* Polygon Data */
 			{
-				UINT32	attr;
+				uint32_t	attr;
 
 				/* start by looking if we have the basic input data */
 				if ( raster.command_index < 9 )
@@ -1152,7 +1152,7 @@ static void model2_3d_push( UINT32 input )
 
 			case 0x03:	/* Window Data */
 			{
-				UINT32	i;
+				uint32_t	i;
 
 				/* make sure we have all the data */
 				if ( raster.command_index < 6 )
@@ -1218,7 +1218,7 @@ static void model2_3d_push( UINT32 input )
 					if ( raster.command_index >= 3 )
 					{
 						/* get the address */
-						UINT32	address = raster.command_buffer[0];
+						uint32_t	address = raster.command_buffer[0];
 
 						/* do the write */
 						if ( address & 0x800000 )
@@ -1291,10 +1291,10 @@ static void model2_3d_push( UINT32 input )
 
 typedef struct
 {
-	UINT32				mode;					/* bit 0 = Enable Specular, bit 1 = Calculate Normals */
-	UINT32 *			polygon_rom;			/* Polygon ROM pointer */
-	UINT32 *			polygon_ram0;			/* Fast Polygon RAM pointer */
-	UINT32 *			polygon_ram1;			/* Slow Polygon RAM pointer */
+	uint32_t				mode;					/* bit 0 = Enable Specular, bit 1 = Calculate Normals */
+	uint32_t *			polygon_rom;			/* Polygon ROM pointer */
+	uint32_t *			polygon_ram0;			/* Fast Polygon RAM pointer */
+	uint32_t *			polygon_ram1;			/* Slow Polygon RAM pointer */
 	float				matrix[12];				/* Current Transformation Matrix */
 	poly_vertex			focus;					/* Focus (x,y) */
 	poly_vertex			light;					/* Light Vector */
@@ -1311,13 +1311,13 @@ static geo_state geo;
  *
  *******************************************/
 
-static void geo_init( running_machine *machine, UINT32 *polygon_rom )
+static void geo_init( running_machine *machine, uint32_t *polygon_rom )
 {
 	memset( &geo, 0, sizeof( geo_state ) );
 
 	geo.polygon_rom = polygon_rom;
-	geo.polygon_ram0 = auto_alloc_array(machine, UINT32, 0x8000);
-	geo.polygon_ram1 = auto_alloc_array(machine, UINT32, 0x8000);
+	geo.polygon_ram0 = auto_alloc_array(machine, uint32_t, 0x8000);
+	geo.polygon_ram1 = auto_alloc_array(machine, uint32_t, 0x8000);
 }
 
 /*******************************************
@@ -1327,10 +1327,10 @@ static void geo_init( running_machine *machine, UINT32 *polygon_rom )
  *******************************************/
 
 /* Parse Polygons: Normals Present, No Specular case */
-static void geo_parse_np_ns( UINT32 *input, UINT32 count )
+static void geo_parse_np_ns( uint32_t *input, uint32_t count )
 {
 	poly_vertex	point, normal;
-	UINT32	attr, i;
+	uint32_t	attr, i;
 
 	/* read the 1st point */
 	point.x = u2f( *input++ );
@@ -1387,7 +1387,7 @@ static void geo_parse_np_ns( UINT32 *input, UINT32 count )
 		{
 			float				dotl, dotp, luminance, distance;
 			float				coef, face;
-			INT32				luma;
+			int32_t				luma;
 			texture_parameter *	texparam;
 
 			/* read in the next point */
@@ -1420,7 +1420,7 @@ static void geo_parse_np_ns( UINT32 *input, UINT32 count )
 			else luminance = fabs( dotl );
 
 			luminance = (luminance * texparam->diffuse) + texparam->ambient;
-			luma = (INT32)luminance;
+			luma = (int32_t)luminance;
 
 			if ( luma > 255 ) luma = 255;
 			if ( luma < 0 ) luma = 0;
@@ -1478,10 +1478,10 @@ static void geo_parse_np_ns( UINT32 *input, UINT32 count )
 }
 
 /* Parse Polygons: Normals Present, Specular case */
-static void geo_parse_np_s( UINT32 *input, UINT32 count )
+static void geo_parse_np_s( uint32_t *input, uint32_t count )
 {
 	poly_vertex	point, normal;
-	UINT32	attr, i;
+	uint32_t	attr, i;
 
 	/* read the 1st point */
 	point.x = u2f( *input++ );
@@ -1538,7 +1538,7 @@ static void geo_parse_np_s( UINT32 *input, UINT32 count )
 		{
 			float				dotl, dotp, luminance, distance, specular;
 			float				coef, face;
-			INT32				luma;
+			int32_t				luma;
 			texture_parameter *	texparam;
 
 			/* read in the next point */
@@ -1580,7 +1580,7 @@ static void geo_parse_np_s( UINT32 *input, UINT32 count )
 			specular *= texparam->specular_scale;
 
 			luminance = (luminance * texparam->diffuse) + texparam->ambient + specular;
-			luma = (INT32)luminance;
+			luma = (int32_t)luminance;
 
 			if ( luma > 255 ) luma = 255;
 			if ( luma < 0 ) luma = 0;
@@ -1638,10 +1638,10 @@ static void geo_parse_np_s( UINT32 *input, UINT32 count )
 }
 
 /* Parse Polygons: No Normals, No Specular case */
-static void geo_parse_nn_ns( UINT32 *input, UINT32 count )
+static void geo_parse_nn_ns( uint32_t *input, uint32_t count )
 {
 	poly_vertex	point, normal, p0, p1, p2, p3;
-	UINT32	attr, i;
+	uint32_t	attr, i;
 
 	/* read the 1st point */
 	point.x = u2f( *input++ );
@@ -1699,7 +1699,7 @@ static void geo_parse_nn_ns( UINT32 *input, UINT32 count )
 		{
 			float				dotl, dotp, luminance, distance;
 			float				coef, face;
-			INT32				luma;
+			int32_t				luma;
 			texture_parameter *	texparam;
 
 			/* read in the next point */
@@ -1741,7 +1741,7 @@ static void geo_parse_nn_ns( UINT32 *input, UINT32 count )
 			else luminance = fabs( dotl );
 
 			luminance = (luminance * texparam->diffuse) + texparam->ambient;
-			luma = (INT32)luminance;
+			luma = (int32_t)luminance;
 
 			if ( luma > 255 ) luma = 255;
 			if ( luma < 0 ) luma = 0;
@@ -1832,10 +1832,10 @@ static void geo_parse_nn_ns( UINT32 *input, UINT32 count )
 }
 
 /* Parse Polygons: No Normals, Specular case */
-static void geo_parse_nn_s( UINT32 *input, UINT32 count )
+static void geo_parse_nn_s( uint32_t *input, uint32_t count )
 {
 	poly_vertex	point, normal, p0, p1, p2, p3;
-	UINT32	attr, i;
+	uint32_t	attr, i;
 
 	/* read the 1st point */
 	point.x = u2f( *input++ );
@@ -1893,7 +1893,7 @@ static void geo_parse_nn_s( UINT32 *input, UINT32 count )
 		{
 			float				dotl, dotp, luminance, distance, specular;
 			float				coef, face;
-			INT32				luma;
+			int32_t				luma;
 			texture_parameter *	texparam;
 
 			/* read in the next point */
@@ -1944,7 +1944,7 @@ static void geo_parse_nn_s( UINT32 *input, UINT32 count )
 			specular *= texparam->specular_scale;
 
 			luminance = (luminance * texparam->diffuse) + texparam->ambient + specular;
-			luma = (INT32)luminance;
+			luma = (int32_t)luminance;
 
 			if ( luma > 255 ) luma = 255;
 			if ( luma < 0 ) luma = 0;
@@ -2041,7 +2041,7 @@ static void geo_parse_nn_s( UINT32 *input, UINT32 count )
  *******************************************/
 
 /* Command 00: NOP */
-static UINT32 * geo_nop( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_nop( uint32_t opcode, uint32_t *input )
 {
 	/* push the opcode to the 3d rasterizer */
 	model2_3d_push( opcode >> 23 );
@@ -2050,14 +2050,14 @@ static UINT32 * geo_nop( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 01: Object Data */
-static UINT32 * geo_object_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_object_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	tpa = *input++;		/* Texture Point Address */
-	UINT32	tha = *input++;		/* Texture Header Address */
-	UINT32	oba = *input++;		/* Object Address */
-	UINT32	obc = *input++;		/* Object Count */
+	uint32_t	tpa = *input++;		/* Texture Point Address */
+	uint32_t	tha = *input++;		/* Texture Header Address */
+	uint32_t	oba = *input++;		/* Object Address */
+	uint32_t	obc = *input++;		/* Object Count */
 
-	UINT32 *obp;				/* Object Pointer */
+	uint32_t *obp;				/* Object Pointer */
 
 	/* push the initial set of data to the 3d rasterizer */
 	model2_3d_push( opcode >> 23 );
@@ -2101,11 +2101,11 @@ static UINT32 * geo_object_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 02: Direct Data */
-static UINT32 * geo_direct_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_direct_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	tpa = *input++;		/* Texture Point Address */
-	UINT32	tha = *input++;		/* Texture Header Address */
-	UINT32	attr;
+	uint32_t	tpa = *input++;		/* Texture Point Address */
+	uint32_t	tha = *input++;		/* Texture Header Address */
+	uint32_t	attr;
 
 	/* push the initial set of data to the 3d rasterizer */
 	model2_3d_push( (opcode >> 23) - 1 );
@@ -2159,9 +2159,9 @@ static UINT32 * geo_direct_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 03: Window Data */
-static UINT32 * geo_window_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_window_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	x, y, i;
+	uint32_t	x, y, i;
 
 	/* start by pushing the opcode */
 	model2_3d_push( opcode >> 23 );
@@ -2193,9 +2193,9 @@ static UINT32 * geo_window_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 04: Texture Data Write */
-static UINT32 * geo_texture_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_texture_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	i, count;
+	uint32_t	i, count;
 
 	/* start by pushing the opcode */
 	model2_3d_push( opcode >> 23 );
@@ -2217,10 +2217,10 @@ static UINT32 * geo_texture_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 05: Polygon Data */
-static UINT32 * geo_polygon_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_polygon_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	address, count, i;
-	UINT32 *p;
+	uint32_t	address, count, i;
+	uint32_t *p;
 
 	(void)opcode;
 
@@ -2250,9 +2250,9 @@ static UINT32 * geo_polygon_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 06: Texture Parameters */
-static UINT32 * geo_texture_parameters( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_texture_parameters( uint32_t opcode, uint32_t *input )
 {
-	UINT32	index, count, i, param;
+	uint32_t	index, count, i, param;
 
 	(void)opcode;
 
@@ -2282,7 +2282,7 @@ static UINT32 * geo_texture_parameters( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 07: Geo Mode */
-static UINT32 * geo_mode( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_mode( uint32_t opcode, uint32_t *input )
 {
 	(void)opcode;
 
@@ -2293,7 +2293,7 @@ static UINT32 * geo_mode( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 08: ZSort Mode */
-static UINT32 * geo_zsort_mode( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_zsort_mode( uint32_t opcode, uint32_t *input )
 {
 	/* push the opcode */
 	model2_3d_push( opcode >> 23 );
@@ -2305,7 +2305,7 @@ static UINT32 * geo_zsort_mode( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 09: Focal Distance */
-static UINT32 * geo_focal_distance( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_focal_distance( uint32_t opcode, uint32_t *input )
 {
 	(void)opcode;
 
@@ -2319,7 +2319,7 @@ static UINT32 * geo_focal_distance( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0A: Light Source Vector Write */
-static UINT32 * geo_light_source( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_light_source( uint32_t opcode, uint32_t *input )
 {
 	(void)opcode;
 
@@ -2336,9 +2336,9 @@ static UINT32 * geo_light_source( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0B: Transformation Matrix Write */
-static UINT32 * geo_matrix_write( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_matrix_write( uint32_t opcode, uint32_t *input )
 {
-	UINT32	i;
+	uint32_t	i;
 
 	(void)opcode;
 
@@ -2350,9 +2350,9 @@ static UINT32 * geo_matrix_write( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0C: Parallel Transfer Vector Write */
-static UINT32 * geo_translate_write( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_translate_write( uint32_t opcode, uint32_t *input )
 {
-	UINT32	i;
+	uint32_t	i;
 
 	(void)opcode;
 
@@ -2364,9 +2364,9 @@ static UINT32 * geo_translate_write( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0D: Geo Data Memory Push (undocumented, unsupported) */
-static UINT32 * geo_data_mem_push( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_data_mem_push( uint32_t opcode, uint32_t *input )
 {
-	UINT32	address, count, i;
+	uint32_t	address, count, i;
 
 	/*
         This command pushes data stored in the Geometry DSP's RAM
@@ -2401,9 +2401,9 @@ static UINT32 * geo_data_mem_push( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0E: Geo Test */
-static UINT32 * geo_test( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_test( uint32_t opcode, uint32_t *input )
 {
-	UINT32		data, blocks, address, count, checksum, i;
+	uint32_t		data, blocks, address, count, checksum, i;
 
 	(void)opcode;
 
@@ -2426,7 +2426,7 @@ static UINT32 * geo_test( UINT32 opcode, UINT32 *input )
 
 	for( i = 0; i < blocks; i++ )
 	{
-		UINT32	sum_even, sum_odd, j;
+		uint32_t	sum_even, sum_odd, j;
 
 		/* read in the address */
 		address = (*input++) & 0x7FFFFF;
@@ -2471,7 +2471,7 @@ static UINT32 * geo_test( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 0F: End */
-static UINT32 * geo_end( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_end( uint32_t opcode, uint32_t *input )
 {
 	(void)opcode;
 
@@ -2483,9 +2483,9 @@ static UINT32 * geo_end( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 10: Dummy */
-static UINT32 * geo_dummy( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_dummy( uint32_t opcode, uint32_t *input )
 {
-	UINT32	data;
+	uint32_t	data;
 	(void)opcode;
 
 	/* do the dummy read cycle */
@@ -2495,9 +2495,9 @@ static UINT32 * geo_dummy( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 14: Log Data Write */
-static UINT32 * geo_log_data( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_log_data( uint32_t opcode, uint32_t *input )
 {
-	UINT32	i, count;
+	uint32_t	i, count;
 
 	/* start by pushing the opcode */
 	model2_3d_push( opcode >> 23 );
@@ -2514,7 +2514,7 @@ static UINT32 * geo_log_data( UINT32 opcode, UINT32 *input )
 	/* loop and send the data */
 	for( i = 0; i < count; i++ )
 	{
-		UINT32	data = *input++;
+		uint32_t	data = *input++;
 
 		model2_3d_push( data & 0xff );
 		model2_3d_push( (data >> 8) & 0xff );
@@ -2526,7 +2526,7 @@ static UINT32 * geo_log_data( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 16: LOD */
-static UINT32 * geo_lod( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_lod( uint32_t opcode, uint32_t *input )
 {
 	(void)opcode;
 
@@ -2537,9 +2537,9 @@ static UINT32 * geo_lod( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 1D: Code Upload  (undocumented, unsupported) */
-static UINT32 * geo_code_upload( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_code_upload( uint32_t opcode, uint32_t *input )
 {
-	UINT32	flags, count, i;
+	uint32_t	flags, count, i;
 
 	/*
         This command uploads code to program memory and
@@ -2560,7 +2560,7 @@ static UINT32 * geo_code_upload( UINT32 opcode, UINT32 *input )
 
 	for( i = 0; i < count; i++ )
 	{
-		UINT64	code;
+		uint64_t	code;
 
 		/* read the top part of the opcode */
 		code = *input++;
@@ -2585,9 +2585,9 @@ static UINT32 * geo_code_upload( UINT32 opcode, UINT32 *input )
 }
 
 /* Command 1E: Code Jump (undocumented, unsupported) */
-static UINT32 * geo_code_jump( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_code_jump( uint32_t opcode, uint32_t *input )
 {
-	UINT32	address;
+	uint32_t	address;
 
 	/*
         This command jumps to a specified address in program
@@ -2609,7 +2609,7 @@ static UINT32 * geo_code_jump( UINT32 opcode, UINT32 *input )
 	return input;
 }
 
-static UINT32 * geo_process_command( UINT32 opcode, UINT32 *input )
+static uint32_t * geo_process_command( uint32_t opcode, uint32_t *input )
 {
 	switch( opcode >> 23 )
 	{
@@ -2652,9 +2652,9 @@ static UINT32 * geo_process_command( UINT32 opcode, UINT32 *input )
 
 static void geo_parse( void )
 {
-	UINT32	address = (geo_read_start_address/4);
-	UINT32 *input = &model2_bufferram[address];
-	UINT32	opcode;
+	uint32_t	address = (geo_read_start_address/4);
+	uint32_t *input = &model2_bufferram[address];
+	uint32_t	opcode;
 
 	while( input != NULL && (input - model2_bufferram) < 0x20000  )
 	{
@@ -2701,10 +2701,10 @@ VIDEO_START(model2)
 	machine->add_notifier(MACHINE_NOTIFY_EXIT, model2_exit);
 
 	/* initialize the geometry engine */
-	geo_init( machine, (UINT32*)memory_region(machine, "user2") );
+	geo_init( machine, (uint32_t*)memory_region(machine, "user2") );
 
 	/* initialize the hardware rasterizer */
-	model2_3d_init( machine, (UINT16*)memory_region(machine, "user3") );
+	model2_3d_init( machine, (uint16_t*)memory_region(machine, "user3") );
 }
 
 static void convert_bitmap( running_machine *machine, bitmap_t *dst, bitmap_t *src, const rectangle *rect )
@@ -2713,8 +2713,8 @@ static void convert_bitmap( running_machine *machine, bitmap_t *dst, bitmap_t *s
 
 	for( y = rect->min_y; y < rect->max_y; y++ )
 	{
-		UINT32 *d = BITMAP_ADDR32( dst, y, 0 );
-		UINT16 *s = BITMAP_ADDR16( src, y, 0 );
+		uint32_t *d = BITMAP_ADDR32( dst, y, 0 );
+		uint16_t *s = BITMAP_ADDR16( src, y, 0 );
 
 		for( x = rect->min_x; x < rect->max_x; x++ )
 		{

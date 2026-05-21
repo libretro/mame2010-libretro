@@ -38,45 +38,45 @@ public:
 	mw8080bw_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     main_ram;
-	UINT8 *     colorram;
+	uint8_t *     main_ram;
+	uint8_t *     colorram;
 	size_t      main_ram_size;
 
 	/* sound-related */
-	UINT8       port_1_last;
-	UINT8       port_2_last;
-	UINT8       port_1_last_extra;
-	UINT8       port_2_last_extra;
-	UINT8       port_3_last_extra;
+	uint8_t       port_1_last;
+	uint8_t       port_2_last;
+	uint8_t       port_1_last_extra;
+	uint8_t       port_2_last_extra;
+	uint8_t       port_3_last_extra;
 
 	/* misc game specific */
 	emu_timer   *schaser_effect_555_timer;
 	attotime    schaser_effect_555_time_remain;
-	INT32       schaser_effect_555_time_remain_savable;
+	int32_t       schaser_effect_555_time_remain_savable;
 	int         schaser_effect_555_is_low;
 	int         schaser_explosion;
 	int         schaser_last_effect;
-	UINT8       sfl_int;
-	UINT8       polaris_cloud_speed;
-	UINT8       polaris_cloud_pos;
-	UINT8       schaser_background_disable;
-	UINT8       schaser_background_select;
-	UINT8       c8080bw_flip_screen;
-	UINT8       color_map;
-	UINT8       screen_red;
+	uint8_t       sfl_int;
+	uint8_t       polaris_cloud_speed;
+	uint8_t       polaris_cloud_pos;
+	uint8_t       schaser_background_disable;
+	uint8_t       schaser_background_select;
+	uint8_t       c8080bw_flip_screen;
+	uint8_t       color_map;
+	uint8_t       screen_red;
 
 
-	UINT16      phantom2_cloud_counter;
-	UINT8       invaders_flip_screen;
-	UINT8       rev_shift_res;
-	UINT8       maze_tone_timing_state;	/* output of IC C1, pin 5 */
-	UINT8       desertgun_controller_select;
-	UINT8       clowns_controller_select;
+	uint16_t      phantom2_cloud_counter;
+	uint8_t       invaders_flip_screen;
+	uint8_t       rev_shift_res;
+	uint8_t       maze_tone_timing_state;	/* output of IC C1, pin 5 */
+	uint8_t       desertgun_controller_select;
+	uint8_t       clowns_controller_select;
 
-	UINT8       spcenctr_strobe_state;
-	UINT8       spcenctr_trench_width;
-	UINT8       spcenctr_trench_center;
-	UINT8       spcenctr_trench_slope[16];  /* 16x4 bit RAM */
+	uint8_t       spcenctr_strobe_state;
+	uint8_t       spcenctr_trench_width;
+	uint8_t       spcenctr_trench_center;
+	uint8_t       spcenctr_trench_slope[16];  /* 16x4 bit RAM */
 
 	/* timer */
 	emu_timer   *interrupt_timer;
@@ -106,7 +106,7 @@ extern const char layout_invaders[];
 #define TORNBASE_CAB_TYPE_UPRIGHT_OLD	(0)
 #define TORNBASE_CAB_TYPE_UPRIGHT_NEW	(1)
 #define TORNBASE_CAB_TYPE_COCKTAIL		(2)
-UINT8 tornbase_get_cabinet_type(running_machine *machine);
+uint8_t tornbase_get_cabinet_type(running_machine *machine);
 
 #define DESERTGU_GUN_X_PORT_TAG			("GUNX")
 #define DESERTGU_GUN_Y_PORT_TAG			("GUNY")
@@ -172,7 +172,7 @@ WRITE8_HANDLER( zzzap_audio_1_w );
 WRITE8_HANDLER( zzzap_audio_2_w );
 
 MACHINE_DRIVER_EXTERN( maze_audio );
-void maze_write_discrete(running_device *device, UINT8 maze_tone_timing_state);
+void maze_write_discrete(running_device *device, uint8_t maze_tone_timing_state);
 
 MACHINE_DRIVER_EXTERN( boothill_audio );
 WRITE8_DEVICE_HANDLER( boothill_audio_w );

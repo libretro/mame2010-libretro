@@ -9,7 +9,7 @@
 #include "emu.h"
 
 
-UINT8 *srumbler_backgroundram,*srumbler_foregroundram;
+uint8_t *srumbler_backgroundram,*srumbler_foregroundram;
 static tilemap_t *bg_tilemap,*fg_tilemap;
 
 
@@ -22,7 +22,7 @@ static tilemap_t *bg_tilemap,*fg_tilemap;
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
-	UINT8 attr = srumbler_foregroundram[2*tile_index];
+	uint8_t attr = srumbler_foregroundram[2*tile_index];
 	SET_TILE_INFO(
 			0,
 			srumbler_foregroundram[2*tile_index + 1] + ((attr & 0x03) << 8),
@@ -32,7 +32,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 attr = srumbler_backgroundram[2*tile_index];
+	uint8_t attr = srumbler_backgroundram[2*tile_index];
 	SET_TILE_INFO(
 			1,
 			srumbler_backgroundram[2*tile_index + 1] + ((attr & 0x07) << 8),
@@ -114,7 +114,7 @@ WRITE8_HANDLER( srumbler_scroll_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	/* Draw the sprites. */

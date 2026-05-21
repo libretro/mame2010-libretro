@@ -9,8 +9,8 @@ void K053936GP_set_cliprect(int chip, int minx, int maxx, int miny, int maxy);
 
 
 // 1st-Tier GX/MW Variables and Functions
-extern UINT8  konamigx_wrport1_0, konamigx_wrport1_1;
-extern UINT16 konamigx_wrport2;
+extern uint8_t  konamigx_wrport1_0, konamigx_wrport1_1;
+extern uint16_t konamigx_wrport2;
 
 
 
@@ -66,7 +66,7 @@ void konamigx_mixer_primode(int mode);
 
 
 void konamigx_objdma(void);
-extern UINT16 *K053247_ram;
+extern uint16_t *K053247_ram;
 
 VIDEO_START(konamigx_5bpp);
 VIDEO_START(konamigx_6bpp);
@@ -94,7 +94,7 @@ WRITE32_HANDLER( konamigx_t4_psacmap_w );
 
 extern int konamigx_current_frame;
 extern WRITE32_HANDLER( konamigx_type3_psac2_bank_w );
-extern UINT32* konamigx_type3_psac2_bank;
+extern uint32_t* konamigx_type3_psac2_bank;
 
 
 /*----------- defined in machine/konamigx.c -----------*/
@@ -103,7 +103,7 @@ extern UINT32* konamigx_type3_psac2_bank;
 READ16_HANDLER ( K055550_word_r );
 WRITE16_HANDLER( K055550_word_w );
 WRITE16_HANDLER( K053990_martchmp_word_w );
-void konamigx_esc_alert(UINT32 *srcbase, int srcoffs, int count, int mode);
+void konamigx_esc_alert(uint32_t *srcbase, int srcoffs, int count, int mode);
 
 void fantjour_dma_install(running_machine *machine);
 

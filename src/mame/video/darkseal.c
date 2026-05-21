@@ -87,11 +87,11 @@ Sprites - Data East custom chip 52
 
 #include "emu.h"
 
-UINT16 *darkseal_pf12_row,*darkseal_pf34_row;
-UINT16 *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
+uint16_t *darkseal_pf12_row,*darkseal_pf34_row;
+uint16_t *darkseal_pf1_data,*darkseal_pf2_data,*darkseal_pf3_data;
 
-static UINT16 darkseal_control_0[8];
-static UINT16 darkseal_control_1[8];
+static uint16_t darkseal_control_0[8];
+static uint16_t darkseal_control_1[8];
 
 static tilemap_t *pf1_tilemap,*pf2_tilemap,*pf3_tilemap;
 static int flipscreen;
@@ -105,7 +105,7 @@ static TILEMAP_MAPPER( darkseal_scan )
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5) + ((row & 0x20) << 6);
 }
 
-INLINE void get_bg_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int gfx_bank,UINT16 *gfx_base)
+INLINE void get_bg_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int gfx_bank,uint16_t *gfx_base)
 {
 	int tile,color;
 
@@ -165,7 +165,7 @@ WRITE16_HANDLER( darkseal_palette_24bit_b_w )
 
 static void draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	for (offs = 0;offs < 0x400;offs += 4)

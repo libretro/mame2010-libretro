@@ -8,8 +8,8 @@ public:
 	funybubl_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    banked_vram;
-	UINT8 *    paletteram;
+	uint8_t *    banked_vram;
+	uint8_t *    paletteram;
 
 	/* devices */
 	running_device *audiocpu;

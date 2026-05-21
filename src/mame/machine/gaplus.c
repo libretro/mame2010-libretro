@@ -11,7 +11,7 @@
 #include "sound/samples.h"
 #include "includes/gaplus.h"
 
-UINT8 *gaplus_customio_3;
+uint8_t *gaplus_customio_3;
 
 /************************************************************************************
 *                                                                                   *

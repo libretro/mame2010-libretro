@@ -7,7 +7,7 @@ Namco System 86 Video Hardware
 #include "emu.h"
 
 
-UINT8 *rthunder_videoram1, *rthunder_videoram2, *rthunder_spriteram;
+uint8_t *rthunder_videoram1, *rthunder_videoram2, *rthunder_spriteram;
 
 static int tilebank;
 static int xscroll[4], yscroll[4];	/* scroll + priority */
@@ -15,7 +15,7 @@ static int xscroll[4], yscroll[4];	/* scroll + priority */
 static tilemap_t *bg_tilemap[4];
 
 static int backcolor;
-static const UINT8 *tile_address_prom;
+static const uint8_t *tile_address_prom;
 
 
 /***************************************************************************
@@ -96,7 +96,7 @@ PALETTE_INIT( namcos86 )
 
 ***************************************************************************/
 
-INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int layer,UINT8 *vram)
+INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int layer,uint8_t *vram)
 {
 	int attr = vram[2*tile_index + 1];
 	int tile_offs;
@@ -264,8 +264,8 @@ sprite format:
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	const UINT8 *source = &machine->generic.spriteram.u8[0x0800-0x20];	/* the last is NOT a sprite */
-	const UINT8 *finish = &machine->generic.spriteram.u8[0];
+	const uint8_t *source = &machine->generic.spriteram.u8[0x0800-0x20];	/* the last is NOT a sprite */
+	const uint8_t *finish = &machine->generic.spriteram.u8[0];
 	gfx_element *gfx = machine->gfx[2];
 
 	int sprite_xoffs = machine->generic.spriteram.u8[0x07f5] + ((machine->generic.spriteram.u8[0x07f4] & 1) << 8);
@@ -377,7 +377,7 @@ VIDEO_EOF( namcos86 )
 {
 	if (copy_sprites)
 	{
-		UINT8 *spriteram = machine->generic.spriteram.u8;
+		uint8_t *spriteram = machine->generic.spriteram.u8;
 		int i,j;
 
 		for (i = 0;i < 0x800;i += 16)

@@ -43,7 +43,7 @@ PALETTE_INIT( bking )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT16 pen;
+		uint16_t pen;
 		int bit0, bit1, bit2, r, g, b;
 
 		/* color PROM A7-A8 is the palette select */
@@ -225,8 +225,8 @@ READ8_HANDLER( bking_pos_r )
 static TILE_GET_INFO( get_tile_info )
 {
 	buggychl_state *state = (buggychl_state *)machine->driver_data;
-	UINT8 code0 = state->playfield_ram[2 * tile_index + 0];
-	UINT8 code1 = state->playfield_ram[2 * tile_index + 1];
+	uint8_t code0 = state->playfield_ram[2 * tile_index + 0];
+	uint8_t code1 = state->playfield_ram[2 * tile_index + 1];
 
 	int flags = 0;
 
@@ -286,7 +286,7 @@ VIDEO_EOF( bking )
 	int xld = 0;
 	int yld = 0;
 
-	UINT32 latch = 0;
+	uint32_t latch = 0;
 
 	if (state->pc3259_mask == 6)	/* player 1 */
 	{
@@ -326,15 +326,15 @@ VIDEO_EOF( bking )
 
 	if (latch != 0)
 	{
-		const UINT8* MASK = memory_region(machine, "user1") + 8 * state->hit;
+		const uint8_t* MASK = memory_region(machine, "user1") + 8 * state->hit;
 
 		int x;
 		int y;
 
 		for (y = rect.min_y; y <= rect.max_y; y++)
 		{
-			const UINT16* p0 = BITMAP_ADDR16(state->tmp_bitmap1, y, 0);
-			const UINT16* p1 = BITMAP_ADDR16(state->tmp_bitmap2, y, 0);
+			const uint16_t* p0 = BITMAP_ADDR16(state->tmp_bitmap1, y, 0);
+			const uint16_t* p1 = BITMAP_ADDR16(state->tmp_bitmap2, y, 0);
 
 			for (x = rect.min_x; x <= rect.max_x; x++)
 			{

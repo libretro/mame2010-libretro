@@ -5,7 +5,7 @@ void namcos1_init_DACs(void);
 
 /*----------- defined in machine/namcos1.c -----------*/
 
-extern UINT8 *namcos1_paletteram;
+extern uint8_t *namcos1_paletteram;
 
 WRITE8_HANDLER( namcos1_bankswitch_w );
 WRITE8_HANDLER( namcos1_subcpu_bank_w );

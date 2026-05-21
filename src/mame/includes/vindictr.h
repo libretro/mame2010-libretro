@@ -15,9 +15,9 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT8			playfield_tile_bank;
-	UINT16			playfield_xscroll;
-	UINT16			playfield_yscroll;
+	uint8_t			playfield_tile_bank;
+	uint16_t			playfield_xscroll;
+	uint16_t			playfield_yscroll;
 };
 
 

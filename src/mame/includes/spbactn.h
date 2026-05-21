@@ -5,9 +5,9 @@ public:
 
 	spbactn_state(running_machine &machine) { }
 
-	UINT16 *bgvideoram;
-	UINT16 *fgvideoram;
-	UINT16 *spvideoram;
+	uint16_t *bgvideoram;
+	uint16_t *fgvideoram;
+	uint16_t *spvideoram;
 
 	bitmap_t *tile_bitmap_bg;
 	bitmap_t *tile_bitmap_fg;

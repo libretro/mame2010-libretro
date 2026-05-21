@@ -12,18 +12,18 @@ public:
 	metlclsh_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        bgram;
-	UINT8 *        fgram;
-	UINT8 *        scrollx;
-	UINT8 *        otherram;
-//      UINT8 *        paletteram;    // currently this uses generic palette handling
-//      UINT8 *        paletteram2;    // currently this uses generic palette handling
-	UINT8 *        spriteram;
+	uint8_t *        bgram;
+	uint8_t *        fgram;
+	uint8_t *        scrollx;
+	uint8_t *        otherram;
+//      uint8_t *        paletteram;    // currently this uses generic palette handling
+//      uint8_t *        paletteram2;    // currently this uses generic palette handling
+	uint8_t *        spriteram;
 	size_t         spriteram_size;
 
 	/* video-related */
 	tilemap_t      *bg_tilemap,*fg_tilemap;
-	UINT8          write_mask, gfxbank;
+	uint8_t          write_mask, gfxbank;
 
 	/* devices */
 	running_device *maincpu;

@@ -7,9 +7,9 @@
 
 #include "emu.h"
 
-UINT16 *sshangha_pf2_data,*sshangha_pf1_data;
-UINT16 *sshangha_pf1_rowscroll,*sshangha_pf2_rowscroll;
-static UINT16 sshangha_control_0[8];
+uint16_t *sshangha_pf2_data,*sshangha_pf1_data;
+uint16_t *sshangha_pf1_rowscroll,*sshangha_pf2_rowscroll;
+static uint16_t sshangha_control_0[8];
 static tilemap_t *pf1_8x8_tilemap,*pf1_16x16_tilemap,*pf2_tilemap;
 static int sshangha_pf1_bank,sshangha_pf2_bank,sshangha_video_control;
 
@@ -40,7 +40,7 @@ WRITE16_HANDLER (sshangha_video_w)
 
 /******************************************************************************/
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16 *spritesrc, UINT16 pmask, UINT16 pval)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t *spritesrc, uint16_t pmask, uint16_t pval)
 {
 	int offs;
 
@@ -130,7 +130,7 @@ WRITE16_HANDLER( sshangha_control_0_w )
 /******************************************************************************/
 
 #if 0
-static UINT32 sshangha_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t sshangha_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
@@ -139,19 +139,19 @@ static UINT32 sshangha_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_row
 
 static TILE_GET_INFO( get_pf2_tile_info )
 {
-	UINT16 tile=sshangha_pf2_data[tile_index];
+	uint16_t tile=sshangha_pf2_data[tile_index];
 	SET_TILE_INFO(1,(tile&0xfff)|sshangha_pf2_bank,(tile>>12)|32,0);
 }
 
 static TILE_GET_INFO( get_pf1_16x16_tile_info )
 {
-	UINT16 tile=sshangha_pf1_data[tile_index];
+	uint16_t tile=sshangha_pf1_data[tile_index];
 	SET_TILE_INFO(1,(tile&0xfff)|sshangha_pf1_bank,tile>>12,0);
 }
 
 static TILE_GET_INFO( get_pf1_8x8_tile_info )
 {
-	UINT16 tile=sshangha_pf1_data[tile_index];
+	uint16_t tile=sshangha_pf1_data[tile_index];
 	SET_TILE_INFO(0,(tile&0xfff)|sshangha_pf1_bank,tile>>12,0);
 }
 

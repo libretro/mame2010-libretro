@@ -17,14 +17,14 @@ static tilemap_t *spr1_tilemap;
 static tilemap_t *spr1_tilemap_flipx;
 static tilemap_t *spr2_tilemap;
 
-UINT8 *punchout_bg_top_videoram;
-UINT8 *punchout_bg_bot_videoram;
-UINT8 *armwrest_fg_videoram;
-UINT8 *punchout_spr1_videoram;
-UINT8 *punchout_spr2_videoram;
-UINT8 *punchout_spr1_ctrlram;
-UINT8 *punchout_spr2_ctrlram;
-UINT8 *punchout_palettebank;
+uint8_t *punchout_bg_top_videoram;
+uint8_t *punchout_bg_bot_videoram;
+uint8_t *armwrest_fg_videoram;
+uint8_t *punchout_spr1_videoram;
+uint8_t *punchout_spr2_videoram;
+uint8_t *punchout_spr1_ctrlram;
+uint8_t *punchout_spr2_ctrlram;
+uint8_t *punchout_palettebank;
 
 
 
@@ -217,7 +217,7 @@ static void draw_big_sprite(bitmap_t *bitmap, const rectangle *cliprect, int pal
 	if (zoom)
 	{
 		int sx,sy;
-		UINT32 startx,starty;
+		uint32_t startx,starty;
 		int incxx,incyy;
 
 		sx = 4096 - (punchout_spr1_ctrlram[2] + 256 * (punchout_spr1_ctrlram[3] & 0x0f));
@@ -260,7 +260,7 @@ static void armwrest_draw_big_sprite(bitmap_t *bitmap, const rectangle *cliprect
 	if (zoom)
 	{
 		int sx,sy;
-		UINT32 startx,starty;
+		uint32_t startx,starty;
 		int incxx,incyy;
 		tilemap_t *_tilemap;
 
@@ -332,7 +332,7 @@ static void drawbs2(running_machine *machine, bitmap_t *bitmap, const rectangle 
 static void punchout_copy_top_palette(running_machine *machine, int bank)
 {
 	int i;
-	const UINT8 *color_prom = memory_region(machine, "proms");
+	const uint8_t *color_prom = memory_region(machine, "proms");
 
 	// top monitor palette
 	for (i = 0; i < 0x100; i++)
@@ -351,7 +351,7 @@ static void punchout_copy_top_palette(running_machine *machine, int bank)
 static void punchout_copy_bot_palette(running_machine *machine, int bank)
 {
 	int i;
-	const UINT8 *color_prom = memory_region(machine, "proms") + 0x600;
+	const uint8_t *color_prom = memory_region(machine, "proms") + 0x600;
 
 	// bottom monitor palette
 	for (i = 0; i < 0x100; i++)

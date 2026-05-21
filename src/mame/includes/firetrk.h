@@ -57,16 +57,16 @@ VIDEO_UPDATE( firetrk );
 VIDEO_UPDATE( superbug );
 VIDEO_UPDATE( montecar );
 
-extern UINT8 *firetrk_alpha_num_ram;
-extern UINT8 *firetrk_playfield_ram;
-extern UINT8 *firetrk_scroll_x;
-extern UINT8 *firetrk_scroll_y;
-extern UINT8 *firetrk_car_rot;
-extern UINT8 *firetrk_drone_rot;
-extern UINT8 *firetrk_drone_x;
-extern UINT8 *firetrk_drone_y;
-extern UINT8 *firetrk_blink;
-extern UINT8  firetrk_flash;
+extern uint8_t *firetrk_alpha_num_ram;
+extern uint8_t *firetrk_playfield_ram;
+extern uint8_t *firetrk_scroll_x;
+extern uint8_t *firetrk_scroll_y;
+extern uint8_t *firetrk_car_rot;
+extern uint8_t *firetrk_drone_rot;
+extern uint8_t *firetrk_drone_x;
+extern uint8_t *firetrk_drone_y;
+extern uint8_t *firetrk_blink;
+extern uint8_t  firetrk_flash;
 
-extern UINT8 firetrk_crash[2];
-extern UINT8 firetrk_skid[2];
+extern uint8_t firetrk_crash[2];
+extern uint8_t firetrk_skid[2];

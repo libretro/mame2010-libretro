@@ -10,10 +10,10 @@
 #include "includes/stfight.h"
 
 // Real stuff
-UINT8 *stfight_text_char_ram;
-UINT8 *stfight_text_attr_ram;
-UINT8 *stfight_vh_latch_ram;
-UINT8 *stfight_sprite_ram;
+uint8_t *stfight_text_char_ram;
+uint8_t *stfight_text_attr_ram;
+uint8_t *stfight_vh_latch_ram;
+uint8_t *stfight_sprite_ram;
 
 static tilemap_t *fg_tilemap,*bg_tilemap,*tx_tilemap;
 static int stfight_sprite_base = 0;
@@ -48,28 +48,28 @@ PALETTE_INIT( stfight )
 	/* text uses colors 0xc0-0xcf */
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0xc0;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0xc0;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* fg uses colors 0x40-0x7f */
 	for (i = 0x40; i < 0x140; i++)
 	{
-		UINT8 ctabentry = (color_prom[i + 0x1c0] & 0x0f) | ((color_prom[i + 0x0c0] & 0x03) << 4) | 0x40;
+		uint8_t ctabentry = (color_prom[i + 0x1c0] & 0x0f) | ((color_prom[i + 0x0c0] & 0x03) << 4) | 0x40;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* bg uses colors 0-0x3f */
 	for (i = 0x140; i < 0x240; i++)
 	{
-		UINT8 ctabentry = (color_prom[i + 0x2c0] & 0x0f) | ((color_prom[i + 0x1c0] & 0x03) << 4);
+		uint8_t ctabentry = (color_prom[i + 0x2c0] & 0x0f) | ((color_prom[i + 0x1c0] & 0x03) << 4);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* bg uses colors 0x80-0xbf */
 	for (i = 0x240; i < 0x340; i++)
 	{
-		UINT8 ctabentry = (color_prom[i + 0x3c0] & 0x0f) | ((color_prom[i + 0x2c0] & 0x03) << 4) | 0x80;
+		uint8_t ctabentry = (color_prom[i + 0x3c0] & 0x0f) | ((color_prom[i + 0x2c0] & 0x03) << 4) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -81,7 +81,7 @@ static void set_pens(running_machine *machine)
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT16 data = machine->generic.paletteram.u8[i] | (machine->generic.paletteram2.u8[i] << 8);
+		uint16_t data = machine->generic.paletteram.u8[i] | (machine->generic.paletteram2.u8[i] << 8);
 		rgb_t color = MAKE_RGB(pal4bit(data >> 4), pal4bit(data >> 0), pal4bit(data >> 8));
 
 		colortable_palette_set_color(machine->colortable, i, color);
@@ -103,7 +103,7 @@ static TILEMAP_MAPPER( fg_scan )
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
-	UINT8   *fgMap = memory_region(machine, "gfx5");
+	uint8_t   *fgMap = memory_region(machine, "gfx5");
 	int attr,tile_base;
 
 	attr = fgMap[0x8000+tile_index];
@@ -126,7 +126,7 @@ static TILEMAP_MAPPER( bg_scan )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8   *bgMap = memory_region(machine, "gfx6");
+	uint8_t   *bgMap = memory_region(machine, "gfx6");
 	int attr,tile_bank,tile_base;
 
 	attr = bgMap[0x8000+tile_index];
@@ -142,7 +142,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 
 static TILE_GET_INFO( get_tx_tile_info )
 {
-	UINT8 attr = stfight_text_attr_ram[tile_index];
+	uint8_t attr = stfight_text_attr_ram[tile_index];
 	int color = attr & 0x0f;
 
 	tileinfo->group = color;

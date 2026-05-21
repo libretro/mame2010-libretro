@@ -1,7 +1,7 @@
 #include "emu.h"
 #include "video/taitoic.h"
 
-UINT16 groundfx_rotate_ctrl[8];
+uint16_t groundfx_rotate_ctrl[8];
 
 struct tempsprite
 {
@@ -77,8 +77,8 @@ Heavy use is made of sprite zooming.
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int do_hack,int x_offs,int y_offs)
 {
-	UINT32 *spriteram32 = machine->generic.spriteram.u32;
-	UINT16 *spritemap = (UINT16 *)memory_region(machine, "user1");
+	uint32_t *spriteram32 = machine->generic.spriteram.u32;
+	uint16_t *spritemap = (uint16_t *)memory_region(machine, "user1");
 	int offs, data, tilenum, color, flipx, flipy;
 	int x, y, priority, dblsize, curx, cury;
 	int sprites_flipscreen = 0;
@@ -214,9 +214,9 @@ VIDEO_UPDATE( groundfx )
 {
 	running_device *tc0100scn = screen->machine->device("tc0100scn");
 	running_device *tc0480scp = screen->machine->device("tc0480scp");
-	UINT8 layer[5];
-	UINT8 pivlayer[3];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t pivlayer[3];
+	uint16_t priority;
 
 	tc0100scn_tilemap_update(tc0100scn);
 	tc0480scp_tilemap_update(tc0480scp);

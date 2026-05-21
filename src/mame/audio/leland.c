@@ -97,9 +97,9 @@
 #define DAC_BUFFER_SIZE		1024
 #define DAC_BUFFER_MASK		(DAC_BUFFER_SIZE - 1)
 
-static UINT8 *dac_buffer[2];
-static UINT32 dac_bufin[2];
-static UINT32 dac_bufout[2];
+static uint8_t *dac_buffer[2];
+static uint32_t dac_bufin[2];
+static uint32_t dac_bufout[2];
 
 static sound_stream * dac_stream;
 
@@ -117,12 +117,12 @@ static STREAM_UPDATE( leland_update )
 
 		if (count > 300)
 		{
-			UINT8 *base = dac_buffer[dacnum];
+			uint8_t *base = dac_buffer[dacnum];
 			int i;
 
 			for (i = 0; i < samples && count > 0; i++, count--)
 			{
-				buffer[i] += ((INT16)base[bufout] - 0x80) * 0x40;
+				buffer[i] += ((int16_t)base[bufout] - 0x80) * 0x40;
 				bufout = (bufout + 1) & DAC_BUFFER_MASK;
 			}
 			dac_bufout[dacnum] = bufout;
@@ -142,8 +142,8 @@ static DEVICE_START( leland_sound )
 	dac_stream = stream_create(device, 0, 1, 256*60, NULL, leland_update);
 
 	/* allocate memory */
-	dac_buffer[0] = auto_alloc_array(device->machine, UINT8, DAC_BUFFER_SIZE);
-	dac_buffer[1] = auto_alloc_array(device->machine, UINT8, DAC_BUFFER_SIZE);
+	dac_buffer[0] = auto_alloc_array(device->machine, uint8_t, DAC_BUFFER_SIZE);
+	dac_buffer[1] = auto_alloc_array(device->machine, uint8_t, DAC_BUFFER_SIZE);
 }
 
 
@@ -161,9 +161,9 @@ DEVICE_GET_INFO( leland_sound )
 }
 
 
-void leland_dac_update(int dacnum, UINT8 sample)
+void leland_dac_update(int dacnum, uint8_t sample)
 {
-	UINT8 *buffer = dac_buffer[dacnum];
+	uint8_t *buffer = dac_buffer[dacnum];
 	int bufin = dac_bufin[dacnum];
 
 	/* skip if nothing */
@@ -208,64 +208,64 @@ static sound_stream * dma_stream;
 static sound_stream * nondma_stream;
 static sound_stream * extern_stream;
 
-static UINT8 has_ym2151;
-static UINT8 is_redline;
+static uint8_t has_ym2151;
+static uint8_t is_redline;
 
-static UINT8 last_control;
-static UINT8 clock_active;
-static UINT8 clock_tick;
+static uint8_t last_control;
+static uint8_t clock_active;
+static uint8_t clock_tick;
 
-static UINT16 sound_command;
-static UINT8 sound_response;
+static uint16_t sound_command;
+static uint8_t sound_response;
 
-static UINT32 ext_start;
-static UINT32 ext_stop;
-static UINT8 ext_active;
-static UINT8 *ext_base;
+static uint32_t ext_start;
+static uint32_t ext_stop;
+static uint8_t ext_active;
+static uint8_t *ext_base;
 
 struct mem_state
 {
-	UINT16	lower;
-	UINT16	upper;
-	UINT16	middle;
-	UINT16	middle_size;
-	UINT16	peripheral;
+	uint16_t	lower;
+	uint16_t	upper;
+	uint16_t	middle;
+	uint16_t	middle_size;
+	uint16_t	peripheral;
 };
 
 struct timer_state
 {
-	UINT16	control;
-	UINT16	maxA;
-	UINT16	maxB;
-	UINT16	count;
+	uint16_t	control;
+	uint16_t	maxA;
+	uint16_t	maxB;
+	uint16_t	count;
 	emu_timer *int_timer;
 	emu_timer *time_timer;
-	UINT8	time_timer_active;
+	uint8_t	time_timer_active;
 	attotime last_time;
 };
 
 struct dma_state
 {
-	UINT32	source;
-	UINT32	dest;
-	UINT16	count;
-	UINT16	control;
-	UINT8	finished;
+	uint32_t	source;
+	uint32_t	dest;
+	uint16_t	count;
+	uint16_t	control;
+	uint8_t	finished;
 	emu_timer *finish_timer;
 };
 
 struct intr_state
 {
-	UINT8	pending;
-	UINT16	ack_mask;
-	UINT16	priority_mask;
-	UINT16	in_service;
-	UINT16	request;
-	UINT16	status;
-	UINT16	poll_status;
-	UINT16	timer;
-	UINT16	dma[2];
-	UINT16	ext[4];
+	uint8_t	pending;
+	uint16_t	ack_mask;
+	uint16_t	priority_mask;
+	uint16_t	in_service;
+	uint16_t	request;
+	uint16_t	status;
+	uint16_t	poll_status;
+	uint16_t	timer;
+	uint16_t	dma[2];
+	uint16_t	ext[4];
 };
 
 static struct i80186_state
@@ -281,25 +281,25 @@ static struct i80186_state
 #define DAC_BUFFER_SIZE_MASK	(DAC_BUFFER_SIZE - 1)
 static struct dac_state
 {
-	INT16	value;
-	INT16	volume;
-	UINT32	frequency;
-	UINT32	step;
-	UINT32	fraction;
+	int16_t	value;
+	int16_t	volume;
+	uint32_t	frequency;
+	uint32_t	step;
+	uint32_t	fraction;
 
-	INT16	buffer[DAC_BUFFER_SIZE];
-	UINT32	bufin;
-	UINT32	bufout;
-	UINT32	buftarget;
+	int16_t	buffer[DAC_BUFFER_SIZE];
+	uint32_t	bufin;
+	uint32_t	bufout;
+	uint32_t	buftarget;
 } dac[8];
 
 static struct counter_state
 {
 	emu_timer *timer;
-	INT32 count;
-	UINT8 mode;
-	UINT8 readbyte;
-	UINT8 writebyte;
+	int32_t count;
+	uint8_t mode;
+	uint8_t readbyte;
+	uint8_t writebyte;
 } counter[9];
 
 static void set_dac_frequency(int which, int frequency);
@@ -340,7 +340,7 @@ static STREAM_UPDATE( leland_80186_dac_update )
 		/* if we have data, process it */
 		if (count > 0)
 		{
-			INT16 *base = d->buffer;
+			int16_t *base = d->buffer;
 			int source = d->bufout;
 			int frac = d->fraction;
 			int step = d->step;
@@ -487,7 +487,7 @@ static STREAM_UPDATE( leland_80186_extern_update )
 		/* sample-rate convert to the output frequency */
 		for (j = 0; j < samples && count > 0; j++)
 		{
-			buffer[j] += ((INT16)ext_base[source] - 0x80) * d->volume;
+			buffer[j] += ((int16_t)ext_base[source] - 0x80) * d->volume;
 			frac += step;
 			source += frac >> 24;
 			count -= frac >> 24;
@@ -1863,8 +1863,8 @@ static WRITE16_HANDLER( dac_w )
 		int count = (d->bufin - d->bufout) & DAC_BUFFER_SIZE_MASK;
 
 		/* set the new value */
-		d->value = (INT16)(UINT8)data - 0x80;
-		if (LOG_DAC) logerror("%05X:DAC %d value = %02X\n", cpu_get_pc(space->cpu), offset, (UINT8)data);
+		d->value = (int16_t)(uint8_t)data - 0x80;
+		if (LOG_DAC) logerror("%05X:DAC %d value = %02X\n", cpu_get_pc(space->cpu), offset, (uint8_t)data);
 
 		/* if we haven't overflowed the buffer, add the value value to it */
 		if (count < DAC_BUFFER_SIZE - 1)
@@ -1899,7 +1899,7 @@ static WRITE16_HANDLER( redline_dac_w )
 	int count = (d->bufin - d->bufout) & DAC_BUFFER_SIZE_MASK;
 
 	/* set the new value */
-	d->value = (INT16)(UINT8)data - 0x80;
+	d->value = (int16_t)(uint8_t)data - 0x80;
 
 	/* if we haven't overflowed the buffer, add the value value to it */
 	if (count < DAC_BUFFER_SIZE - 1)
@@ -1934,7 +1934,7 @@ static WRITE16_HANDLER( dac_10bit_w )
 	data16 = data;
 
 	/* set the new value */
-	d->value = (INT16)data16 - 0x200;
+	d->value = (int16_t)data16 - 0x200;
 	if (LOG_DAC) logerror("%05X:DAC 10-bit value = %02X\n", cpu_get_pc(space->cpu), data16);
 
 	/* if we haven't overflowed the buffer, add the value value to it */

@@ -19,7 +19,7 @@ typedef struct _kaneko_pandora_interface kaneko_pandora_interface;
 struct _kaneko_pandora_interface
 {
 	const char *screen;
-	UINT8      gfx_region;
+	uint8_t      gfx_region;
 	int        x;
 	int        y;
 };

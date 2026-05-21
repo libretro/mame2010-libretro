@@ -50,7 +50,7 @@ Bits 0-3 select the permutation on 16 bits of the source data.
 Bits 4-14 are added to the source data, with partial carry.
 Bit 15 is still unknown.
 */
-static const UINT16 key_table[256]=
+static const uint16_t key_table[256]=
 {
 	0x3ad7,0x54b1,0x2d41,0x8ca0,0xa69b,0x9018,0x9db9,0x6559,
 	0xe9a7,0xb087,0x8a5e,0x821c,0xaafc,0x2ae7,0x557b,0xcd80,
@@ -101,7 +101,7 @@ static const UINT16 key_table[256]=
 #endif
 
 
-static const UINT8 bitswap[16][16] =
+static const uint8_t bitswap[16][16] =
 {
 	{ 15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, },
 	{  7, 6, 5,14, 0,15, 4, 3, 2, 8, 9,10,11,12,13, 1, },
@@ -129,7 +129,7 @@ static int key(int table,int addr)
 }
 
 
-void seibuspi_sprite_decrypt(UINT8 *src, int rom_size)
+void seibuspi_sprite_decrypt(uint8_t *src, int rom_size)
 {
 	int i;
 
@@ -142,7 +142,7 @@ void seibuspi_sprite_decrypt(UINT8 *src, int rom_size)
 		int s1,s2;
 		int add1,add2;
 		int plane0,plane1,plane2,plane3,plane4,plane5;
-		const UINT8 *bs;
+		const uint8_t *bs;
 
 		y1 = src[2*i+0*rom_size+0] + (src[2*i+0*rom_size+1] << 8);
 		y2 = src[2*i+1*rom_size+0] + (src[2*i+1*rom_size+1] << 8);

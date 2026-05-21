@@ -11,23 +11,23 @@ public:
 	chaknpop_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  mcu_ram;
-	UINT8 *  tx_ram;
-	UINT8 *  spr_ram;
-	UINT8 *  attr_ram;
+	uint8_t *  mcu_ram;
+	uint8_t *  tx_ram;
+	uint8_t *  spr_ram;
+	uint8_t *  attr_ram;
 	size_t   spr_ram_size;
 
 	/* mcu-related */
-	UINT8 mcu_seed;
-	UINT8 mcu_select;
-	UINT8 mcu_result;
+	uint8_t mcu_seed;
+	uint8_t mcu_select;
+	uint8_t mcu_result;
 
 
 	/* video-related */
 	tilemap_t  *tx_tilemap;
-	UINT8    *vram1, *vram2, *vram3, *vram4;
-	UINT8    gfxmode;
-	UINT8    flip_x, flip_y;
+	uint8_t    *vram1, *vram2, *vram3, *vram4;
+	uint8_t    gfxmode;
+	uint8_t    flip_x, flip_y;
 };
 
 

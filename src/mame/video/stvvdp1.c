@@ -22,13 +22,13 @@ Framebuffer todo:
 
 static int vdp1_sprite_log = 0;
 
-UINT32 *stv_vdp1_vram;
-static UINT32 *stv_vdp1_regs;
-UINT8* stv_vdp1_gfx_decode;
+uint32_t *stv_vdp1_vram;
+static uint32_t *stv_vdp1_regs;
+uint8_t* stv_vdp1_gfx_decode;
 
-static UINT16	 *stv_framebuffer[2];
-static UINT16	 **stv_framebuffer_draw_lines;
-UINT16	 **stv_framebuffer_display_lines;
+static uint16_t	 *stv_framebuffer[2];
+static uint16_t	 **stv_framebuffer_draw_lines;
+uint16_t	 **stv_framebuffer_display_lines;
 static int		 stv_framebuffer_width;
 static int		 stv_framebuffer_height;
 int		 stv_framebuffer_mode;
@@ -45,18 +45,18 @@ static int stvvdp1_local_y;
 
 struct stv_vdp1_poly_scanline
 {
-	INT32	x[2];
-	INT32	b[2];
-	INT32	g[2];
-	INT32	r[2];
-	INT32	db;
-	INT32	dg;
-	INT32	dr;
+	int32_t	x[2];
+	int32_t	b[2];
+	int32_t	g[2];
+	int32_t	r[2];
+	int32_t	db;
+	int32_t	dg;
+	int32_t	dr;
 };
 
 struct stv_vdp1_poly_scanline_data
 {
-	INT32	sy, ey;
+	int32_t	sy, ey;
 	struct	stv_vdp1_poly_scanline scanline[512];
 };
 
@@ -65,14 +65,14 @@ static struct stv_vdp1_poly_scanline_data* stv_vdp1_shading_data;
 enum { FRAC_SHIFT = 16 };
 
 struct spoint {
-	INT32 x, y;
-	INT32 u, v;
+	int32_t x, y;
+	int32_t u, v;
 };
 
 struct shaded_point
 {
-	INT32 x,y;
-	INT32 r,g,b;
+	int32_t x,y;
+	int32_t r,g,b;
 };
 
 #define RGB_R(_color)	(_color & 0x1f)
@@ -81,7 +81,7 @@ struct shaded_point
 
 #define SWAP_INT32(_a,_b) \
 	{ \
-		INT32 t; \
+		int32_t t; \
 		t = _a; \
 		_a = _b; \
 		_b = t; \
@@ -89,7 +89,7 @@ struct shaded_point
 
 #define SWAP_INT32PTR(_p1, _p2) \
 	{ \
-		INT32 *p; \
+		int32_t *p; \
 		p = _p1; \
 		_p1 = _p2; \
 		_p2 = p; \
@@ -201,7 +201,7 @@ READ32_HANDLER( stv_vdp1_regs_r )
 static void stv_clear_framebuffer( int which_framebuffer )
 {
 	if ( vdp1_sprite_log ) logerror( "Clearing %d framebuffer\n", stv_vdp1_current_draw_framebuffer );
-	memset( stv_framebuffer[ which_framebuffer ], 0, 1024 * 256 * sizeof(UINT16) * 2 );
+	memset( stv_framebuffer[ which_framebuffer ], 0, 1024 * 256 * sizeof(uint16_t) * 2 );
 }
 
 
@@ -342,7 +342,7 @@ READ32_HANDLER ( stv_vdp1_vram_r )
 
 WRITE32_HANDLER ( stv_vdp1_vram_w )
 {
-	UINT8 *vdp1 = stv_vdp1_gfx_decode;
+	uint8_t *vdp1 = stv_vdp1_gfx_decode;
 
 	COMBINE_DATA (&stv_vdp1_vram[offset]);
 
@@ -382,7 +382,7 @@ WRITE32_HANDLER ( stv_vdp1_framebuffer0_w )
 
 READ32_HANDLER ( stv_vdp1_framebuffer0_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	//popmessage ("STV VDP1 Framebuffer 0 READ offset %08x",offset);
 	if ( STV_VDP1_TVM & 0 )
 	{
@@ -502,10 +502,10 @@ static struct stv_vdp2_sprite_list
 static struct _stv_gouraud_shading
 {
 	/* Gouraud shading table */
-	UINT16	GA;
-	UINT16	GB;
-	UINT16	GC;
-	UINT16	GD;
+	uint16_t	GA;
+	uint16_t	GB;
+	uint16_t	GC;
+	uint16_t	GD;
 } stv_gouraud_shading;
 
 static void stv_clear_gouraud_shading(void)
@@ -513,7 +513,7 @@ static void stv_clear_gouraud_shading(void)
 	memset( &stv_gouraud_shading, 0, sizeof( stv_gouraud_shading ) );
 }
 
-static UINT8 stv_read_gouraud_table(void)
+static uint8_t stv_read_gouraud_table(void)
 {
 	int gaddr;
 
@@ -532,7 +532,7 @@ static UINT8 stv_read_gouraud_table(void)
 	}
 }
 
-INLINE INT32 _shading( INT32 color, INT32 correction )
+INLINE int32_t _shading( int32_t color, int32_t correction )
 {
 	correction = (correction >> 16) & 0x1f;
 	color += (correction - 16);
@@ -543,9 +543,9 @@ INLINE INT32 _shading( INT32 color, INT32 correction )
 	return color;
 }
 
-static UINT16 stv_vdp1_apply_gouraud_shading( int x, int y, UINT16 pix )
+static uint16_t stv_vdp1_apply_gouraud_shading( int x, int y, uint16_t pix )
 {
-	INT32 r,g,b, msb;
+	int32_t r,g,b, msb;
 
 	msb = pix & 0x8000;
 
@@ -573,9 +573,9 @@ static UINT16 stv_vdp1_apply_gouraud_shading( int x, int y, UINT16 pix )
 	return msb | b << 10 | g << 5 | r;
 }
 
-static void stv_vdp1_setup_shading_for_line(INT32 y, INT32 x1, INT32 x2,
-											INT32 r1, INT32 g1, INT32 b1,
-											INT32 r2, INT32 g2, INT32 b2)
+static void stv_vdp1_setup_shading_for_line(int32_t y, int32_t x1, int32_t x2,
+											int32_t r1, int32_t g1, int32_t b1,
+											int32_t r2, int32_t g2, int32_t b2)
 {
 	int xx1 = x1>>FRAC_SHIFT;
 	int xx2 = x2>>FRAC_SHIFT;
@@ -591,8 +591,8 @@ static void stv_vdp1_setup_shading_for_line(INT32 y, INT32 x1, INT32 x2,
 
 	if ( (y >= 0) && (y < 512) )
 	{
-	    INT32  dx;
-		INT32	gbd, ggd, grd;
+	    int32_t  dx;
+		int32_t	gbd, ggd, grd;
 
 		dx = xx2 - xx1;
 
@@ -628,11 +628,11 @@ static void stv_vdp1_setup_shading_for_line(INT32 y, INT32 x1, INT32 x2,
 }
 
 static void stv_vdp1_setup_shading_for_slope(
-							INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 *nx1, INT32 *nx2,
-							INT32 r1, INT32 r2, INT32 slr1, INT32 slr2, INT32 *nr1, INT32 *nr2,
-							INT32 g1, INT32 g2, INT32 slg1, INT32 slg2, INT32 *ng1, INT32 *ng2,
-							INT32 b1, INT32 b2, INT32 slb1, INT32 slb2, INT32 *nb1, INT32 *nb2,
-							INT32 _y1, INT32 y2)
+							int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t *nx1, int32_t *nx2,
+							int32_t r1, int32_t r2, int32_t slr1, int32_t slr2, int32_t *nr1, int32_t *nr2,
+							int32_t g1, int32_t g2, int32_t slg1, int32_t slg2, int32_t *ng1, int32_t *ng2,
+							int32_t b1, int32_t b2, int32_t slb1, int32_t slb2, int32_t *nb1, int32_t *nb2,
+							int32_t _y1, int32_t y2)
 {
 	if(x1 > x2 || (x1==x2 && sl1 > sl2)) {
 		SWAP_INT32(x1,x2);
@@ -676,13 +676,13 @@ static void stv_vdp1_setup_shading_for_slope(
 
 static void stv_vdp1_setup_shading(const struct spoint* q, const rectangle *cliprect)
 {
-	INT32 x1, x2, delta, cury, limy;
-	INT32 r1, g1, b1, r2, g2, b2;
-	INT32 sl1, slg1, slb1, slr1;
-	INT32 sl2, slg2, slb2, slr2;
+	int32_t x1, x2, delta, cury, limy;
+	int32_t r1, g1, b1, r2, g2, b2;
+	int32_t sl1, slg1, slb1, slr1;
+	int32_t sl2, slg2, slb2, slr2;
 	int pmin, pmax, i, ps1, ps2;
 	struct shaded_point p[8];
-	UINT16 gd[4];
+	uint16_t gd[4];
 
 	if ( stv_read_gouraud_table() == 0 ) return;
 
@@ -850,8 +850,8 @@ to the framebuffer we CAN'T frameskip the vdp1 drawing as the hardware can READ 
 and if we skip the drawing the content could be incorrect when it reads it, although i have no idea
 why they would want to */
 
-static UINT8* gfxdata;
-static UINT16 sprite_colorbank;
+static uint8_t* gfxdata;
+static uint16_t sprite_colorbank;
 
 
 static void (*drawpixel)(running_machine *machine, int x, int y, int patterndata, int offsetcnt);
@@ -863,7 +863,7 @@ static void drawpixel_poly(running_machine *machine, int x, int y, int patternda
 
 static void drawpixel_8bpp_trans(running_machine *machine, int x, int y, int patterndata, int offsetcnt)
 {
-	UINT16 pix;
+	uint16_t pix;
 
 	pix = gfxdata[patterndata+offsetcnt];
 	if ( pix & 0xff )
@@ -874,7 +874,7 @@ static void drawpixel_8bpp_trans(running_machine *machine, int x, int y, int pat
 
 static void drawpixel_4bpp_notrans(running_machine *machine, int x, int y, int patterndata, int offsetcnt)
 {
-	UINT16 pix;
+	uint16_t pix;
 
 	pix = gfxdata[patterndata+offsetcnt/2];
 	pix = offsetcnt&1 ? (pix & 0x0f):((pix & 0xf0)>>4) ;
@@ -883,7 +883,7 @@ static void drawpixel_4bpp_notrans(running_machine *machine, int x, int y, int p
 
 static void drawpixel_4bpp_trans(running_machine *machine, int x, int y, int patterndata, int offsetcnt)
 {
-	UINT16 pix;
+	uint16_t pix;
 
 	pix = gfxdata[patterndata+offsetcnt/2];
 	pix = offsetcnt&1 ? (pix & 0x0f):((pix & 0xf0)>>4) ;
@@ -1082,10 +1082,10 @@ static void stv_vdp1_set_drawpixel(void)
 
 
 static void vdp1_fill_slope(running_machine *machine, const rectangle *cliprect, int patterndata, int xsize,
-							INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 *nx1, INT32 *nx2,
-							INT32 u1, INT32 u2, INT32 slu1, INT32 slu2, INT32 *nu1, INT32 *nu2,
-							INT32 v1, INT32 v2, INT32 slv1, INT32 slv2, INT32 *nv1, INT32 *nv2,
-							INT32 _y1, INT32 y2)
+							int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t *nx1, int32_t *nx2,
+							int32_t u1, int32_t u2, int32_t slu1, int32_t slu2, int32_t *nu1, int32_t *nu2,
+							int32_t v1, int32_t v2, int32_t slv1, int32_t slv2, int32_t *nv1, int32_t *nv2,
+							int32_t _y1, int32_t y2)
 {
 	if(_y1 > cliprect->max_y)
 		return;
@@ -1116,7 +1116,7 @@ static void vdp1_fill_slope(running_machine *machine, const rectangle *cliprect,
 	}
 
 	if(x1 > x2 || (x1==x2 && sl1 > sl2)) {
-		INT32 t, *tp;
+		int32_t t, *tp;
 		t = x1;
 		x1 = x2;
 		x2 = t;
@@ -1150,11 +1150,11 @@ static void vdp1_fill_slope(running_machine *machine, const rectangle *cliprect,
 
 	while(_y1 < y2) {
 		if(_y1 >= cliprect->min_y) {
-			INT32 slux = 0, slvx = 0;
+			int32_t slux = 0, slvx = 0;
 			int xx1 = x1>>FRAC_SHIFT;
 			int xx2 = x2>>FRAC_SHIFT;
-			INT32 u = u1;
-			INT32 v = v1;
+			int32_t u = u1;
+			int32_t v = v1;
 			if(xx1 != xx2) {
 				int delta = xx2-xx1;
 				slux = (u2-u1)/delta;
@@ -1197,8 +1197,8 @@ static void vdp1_fill_slope(running_machine *machine, const rectangle *cliprect,
 	*nv2 = v2;
 }
 
-static void vdp1_fill_line(running_machine *machine, const rectangle *cliprect, int patterndata, int xsize, INT32 y,
-						   INT32 x1, INT32 x2, INT32 u1, INT32 u2, INT32 v1, INT32 v2)
+static void vdp1_fill_line(running_machine *machine, const rectangle *cliprect, int patterndata, int xsize, int32_t y,
+						   int32_t x1, int32_t x2, int32_t u1, int32_t u2, int32_t v1, int32_t v2)
 {
 	int xx1 = x1>>FRAC_SHIFT;
 	int xx2 = x2>>FRAC_SHIFT;
@@ -1207,9 +1207,9 @@ static void vdp1_fill_line(running_machine *machine, const rectangle *cliprect, 
 		return;
 
 	if(xx1 <= cliprect->max_x || xx2 >= cliprect->min_x) {
-		INT32 slux = 0, slvx = 0;
-		INT32 u = u1;
-		INT32 v = v1;
+		int32_t slux = 0, slvx = 0;
+		int32_t u = u1;
+		int32_t v = v1;
 		if(xx1 != xx2) {
 			int delta = xx2-xx1;
 			slux = (u2-u1)/delta;
@@ -1237,7 +1237,7 @@ static void vdp1_fill_line(running_machine *machine, const rectangle *cliprect, 
 
 static void vdp1_fill_quad(running_machine *machine, const rectangle *cliprect, int patterndata, int xsize, const struct spoint *q)
 {
-	INT32 sl1, sl2, slu1, slu2, slv1, slv2, cury, limy, x1, x2, u1, u2, v1, v2, delta;
+	int32_t sl1, sl2, slu1, slu2, slv1, slv2, cury, limy, x1, x2, u1, u2, v1, v2, delta;
 	int pmin, pmax, i, ps1, ps2;
 	struct spoint p[8];
 
@@ -1374,12 +1374,12 @@ static void vdp1_fill_quad(running_machine *machine, const rectangle *cliprect, 
 
 static int x2s(int v)
 {
-	return (INT32)(INT16)v + stvvdp1_local_x;
+	return (int32_t)(int16_t)v + stvvdp1_local_x;
 }
 
 static int y2s(int v)
 {
-	return (INT32)(INT16)v + stvvdp1_local_y;
+	return (int32_t)(int16_t)v + stvvdp1_local_y;
 }
 
 static void stv_vdp1_draw_line(running_machine *machine, const rectangle *cliprect)
@@ -1549,14 +1549,14 @@ static void stv_vpd1_draw_scaled_sprite(running_machine *machine, const rectangl
 	x = stv2_current_sprite.CMDXA;
 	y = stv2_current_sprite.CMDYA;
 
-	screen_width = (INT16)stv2_current_sprite.CMDXB;
+	screen_width = (int16_t)stv2_current_sprite.CMDXB;
 	if ( (screen_width < 0) && zoompoint)
 	{
 		screen_width = -screen_width;
 		direction |= 1;
 	}
 
-	screen_height = (INT16)stv2_current_sprite.CMDYB;
+	screen_height = (int16_t)stv2_current_sprite.CMDYB;
 	if ( (screen_height < 0) && zoompoint )
 	{
 		screen_height_negative = 1;
@@ -1672,13 +1672,13 @@ static void stv_vpd1_draw_scaled_sprite(running_machine *machine, const rectangl
 
 static void stv_vpd1_draw_normal_sprite(running_machine *machine, const rectangle *cliprect, int sprite_type)
 {
-	//UINT16 *destline;
+	//uint16_t *destline;
 
 	int y, ysize, drawypos;
 	int x, xsize, drawxpos;
 	int direction;
 	int patterndata;
-	UINT8 shading;
+	uint8_t shading;
 	int su, u, dux, duy;
 	int maxdrawypos, maxdrawxpos;
 
@@ -1962,8 +1962,8 @@ static void stv_vdp1_process_list(running_machine *machine)
 
 				case 0x000a:
 					if (vdp1_sprite_log) logerror ("Sprite List Local Co-Ordinate Set\n");
-					stvvdp1_local_x = (INT16)stv2_current_sprite.CMDXA;
-					stvvdp1_local_y = (INT16)stv2_current_sprite.CMDYA;
+					stvvdp1_local_x = (int16_t)stv2_current_sprite.CMDXA;
+					stvvdp1_local_y = (int16_t)stv2_current_sprite.CMDYA;
 					break;
 
 				default:
@@ -2073,9 +2073,9 @@ void video_update_vdp1(running_machine *machine)
 
 static STATE_POSTLOAD( stv_vdp1_state_save_postload )
 {
-	UINT8 *vdp1 = stv_vdp1_gfx_decode;
+	uint8_t *vdp1 = stv_vdp1_gfx_decode;
 	int offset;
-	UINT32 data;
+	uint32_t data;
 
 	stv_framebuffer_mode = -1;
 	stv_framebuffer_double_interlace = -1;
@@ -2095,17 +2095,17 @@ static STATE_POSTLOAD( stv_vdp1_state_save_postload )
 
 int stv_vdp1_start ( running_machine *machine )
 {
-	stv_vdp1_regs = auto_alloc_array_clear(machine, UINT32, 0x040000/4 );
-	stv_vdp1_vram = auto_alloc_array_clear(machine, UINT32, 0x100000/4 );
-	stv_vdp1_gfx_decode = auto_alloc_array(machine, UINT8, 0x100000 );
+	stv_vdp1_regs = auto_alloc_array_clear(machine, uint32_t, 0x040000/4 );
+	stv_vdp1_vram = auto_alloc_array_clear(machine, uint32_t, 0x100000/4 );
+	stv_vdp1_gfx_decode = auto_alloc_array(machine, uint8_t, 0x100000 );
 
 	stv_vdp1_shading_data = auto_alloc(machine, struct stv_vdp1_poly_scanline_data);
 
-	stv_framebuffer[0] = auto_alloc_array(machine, UINT16, 1024 * 256 * 2 ); /* *2 is for double interlace */
-	stv_framebuffer[1] = auto_alloc_array(machine, UINT16, 1024 * 256 * 2 );
+	stv_framebuffer[0] = auto_alloc_array(machine, uint16_t, 1024 * 256 * 2 ); /* *2 is for double interlace */
+	stv_framebuffer[1] = auto_alloc_array(machine, uint16_t, 1024 * 256 * 2 );
 
-	stv_framebuffer_display_lines = auto_alloc_array(machine, UINT16 *, 512);
-	stv_framebuffer_draw_lines = auto_alloc_array(machine, UINT16 *, 512);
+	stv_framebuffer_display_lines = auto_alloc_array(machine, uint16_t *, 512);
+	stv_framebuffer_draw_lines = auto_alloc_array(machine, uint16_t *, 512);
 
 	stv_framebuffer_width = stv_framebuffer_height = 0;
 	stv_framebuffer_mode = -1;

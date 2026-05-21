@@ -28,13 +28,13 @@ The LCG is the same that was used to generate the FD1094 keys.
 Note that the algorithm skips the special value that would instruct the CPU to
 not decrypt at that address.
 
-void generate_key(UINT8 *key, int seed, int upper_bound)
+void generate_key(uint8_t *key, int seed, int upper_bound)
 {
     int i;
 
     for (i = 0; i < upper_bound; ++i)
     {
-        UINT8 byteval;
+        uint8_t byteval;
 
         do
         {
@@ -364,7 +364,7 @@ static int decrypt(int val, int key, int opcode)
 }
 
 
-static UINT8 mc8123_decrypt(offs_t addr,UINT8 val,const UINT8 *key,int opcode)
+static uint8_t mc8123_decrypt(offs_t addr,uint8_t val,const uint8_t *key,int opcode)
 {
 	int tbl_num;
 
@@ -379,17 +379,17 @@ void mc8123_decrypt_rom(running_machine *machine, const char *cpu, const char *k
 {
 	const address_space *space = cputag_get_address_space(machine, cpu, ADDRESS_SPACE_PROGRAM);
 	int fixed_length = numbanks == 1 ? 0xc000 : 0x8000;
-	UINT8 *decrypted1 = auto_alloc_array(machine, UINT8, fixed_length);
-	UINT8 *decrypted2 = numbanks > 1 ? auto_alloc_array(machine, UINT8, 0x4000 * numbanks) : 0;
-	UINT8 *rom = memory_region(machine, cpu);
-	UINT8 *key = memory_region(machine, keyrgn);
+	uint8_t *decrypted1 = auto_alloc_array(machine, uint8_t, fixed_length);
+	uint8_t *decrypted2 = numbanks > 1 ? auto_alloc_array(machine, uint8_t, 0x4000 * numbanks) : 0;
+	uint8_t *rom = memory_region(machine, cpu);
+	uint8_t *key = memory_region(machine, keyrgn);
 	int A, bank;
 
 	memory_set_decrypted_region(space, 0x0000, fixed_length-1, decrypted1);
 
 	for (A = 0x0000;A < fixed_length;A++)
 	{
-		UINT8 src = rom[A];
+		uint8_t src = rom[A];
 
 		/* decode the opcodes */
 		decrypted1[A] = mc8123_decrypt(A,src,key,1);
@@ -406,7 +406,7 @@ void mc8123_decrypt_rom(running_machine *machine, const char *cpu, const char *k
 		{
 			for (A = 0x8000;A < 0xc000;A++)
 			{
-				UINT8 src = rom[0x8000 + 0x4000*bank + A];
+				uint8_t src = rom[0x8000 + 0x4000*bank + A];
 
 				/* decode the opcodes */
 				decrypted2[0x4000 * bank + (A-0x8000)] = mc8123_decrypt(A,src,key,1);

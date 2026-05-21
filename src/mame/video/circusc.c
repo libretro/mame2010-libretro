@@ -78,14 +78,14 @@ PALETTE_INIT( circusc )
 	/* characters map to the upper 16 palette entries */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry + 0x10);
 	}
 
 	/* sprites map to the lower 16 palette entries */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -101,7 +101,7 @@ PALETTE_INIT( circusc )
 static TILE_GET_INFO( get_tile_info )
 {
 	circusc_state *state = (circusc_state *)machine->driver_data;
-	UINT8 attr = state->colorram[tile_index];
+	uint8_t attr = state->colorram[tile_index];
 	tileinfo->category = (attr & 0x10) >> 4;
 
 	SET_TILE_INFO(0,
@@ -165,7 +165,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	circusc_state *state = (circusc_state *)machine->driver_data;
 	int offs;
-	UINT8 *sr;
+	uint8_t *sr;
 
 	if ((*state->spritebank & 0x01) != 0)
 		sr = state->spriteram;

@@ -8,17 +8,17 @@
 /* 1st generation Midway serial PIC */
 void midway_serial_pic_init(running_machine *machine, int upper);
 void midway_serial_pic_reset_w(int state);
-UINT8 midway_serial_pic_status_r(void);
-UINT8 midway_serial_pic_r(const address_space *space);
-void midway_serial_pic_w(const address_space *space, UINT8 data);
+uint8_t midway_serial_pic_status_r(void);
+uint8_t midway_serial_pic_r(const address_space *space);
+void midway_serial_pic_w(const address_space *space, uint8_t data);
 
 
 /* 2nd generation Midway serial/NVRAM/RTC PIC */
 void midway_serial_pic2_init(running_machine *machine, int upper, int yearoffs);
-void midway_serial_pic2_set_default_nvram(const UINT8 *nvram);
-UINT8 midway_serial_pic2_status_r(const address_space *space);
-UINT8 midway_serial_pic2_r(const address_space *space);
-void midway_serial_pic2_w(const address_space *space, UINT8 data);
+void midway_serial_pic2_set_default_nvram(const uint8_t *nvram);
+uint8_t midway_serial_pic2_status_r(const address_space *space);
+uint8_t midway_serial_pic2_r(const address_space *space);
+void midway_serial_pic2_w(const address_space *space, uint8_t data);
 NVRAM_HANDLER( midway_serial_pic2 );
 
 
@@ -27,9 +27,9 @@ void midway_ioasic_init(running_machine *machine, int shuffle, int upper, int ye
 void midway_ioasic_set_auto_ack(int auto_ack);
 void midway_ioasic_set_shuffle_state(int state);
 void midway_ioasic_reset(running_machine *machine);
-void midway_ioasic_fifo_w(running_machine *machine, UINT16 data);
+void midway_ioasic_fifo_w(running_machine *machine, uint16_t data);
 void midway_ioasic_fifo_reset_w(running_machine *machine, int state);
-void midway_ioasic_fifo_full_w(running_machine *machine, UINT16 data);
+void midway_ioasic_fifo_full_w(running_machine *machine, uint16_t data);
 READ32_HANDLER( midway_ioasic_r );
 WRITE32_HANDLER( midway_ioasic_w );
 READ32_HANDLER( midway_ioasic_packed_r );

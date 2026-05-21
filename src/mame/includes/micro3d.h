@@ -25,100 +25,100 @@ public:
 		{
 			struct
 			{
-				UINT8 gpdr;
-				UINT8 aer;
-				UINT8 ddr;
-				UINT8 iera;
-				UINT8 ierb;
-				UINT8 ipra;
-				UINT8 iprb;
-				UINT8 isra;
-				UINT8 isrb;
-				UINT8 imra;
-				UINT8 imrb;
-				UINT8 vr;
-				UINT8 tacr;
-				UINT8 tbcr;
-				UINT8 tcdcr;
-				UINT8 tadr;
-				UINT8 tbdr;
-				UINT8 tcdr;
-				UINT8 tddr;
-				UINT8 scr;
-				UINT8 ucr;
-				UINT8 rsr;
-				UINT8 tsr;
-				UINT8 udr;
+				uint8_t gpdr;
+				uint8_t aer;
+				uint8_t ddr;
+				uint8_t iera;
+				uint8_t ierb;
+				uint8_t ipra;
+				uint8_t iprb;
+				uint8_t isra;
+				uint8_t isrb;
+				uint8_t imra;
+				uint8_t imrb;
+				uint8_t vr;
+				uint8_t tacr;
+				uint8_t tbcr;
+				uint8_t tcdcr;
+				uint8_t tadr;
+				uint8_t tbdr;
+				uint8_t tcdr;
+				uint8_t tddr;
+				uint8_t scr;
+				uint8_t ucr;
+				uint8_t rsr;
+				uint8_t tsr;
+				uint8_t udr;
 			};
-			UINT8 regs[24];
+			uint8_t regs[24];
 		};
 
 		emu_timer *timer_a;
 	} mc68901;
 
-	UINT16				*shared_ram;
+	uint16_t				*shared_ram;
 	running_device		*duart68681;
-	UINT8				m68681_tx0;
+	uint8_t				m68681_tx0;
 
 	/* Sound */
-	UINT8				sound_port_latch[4];
-	UINT8				dac_data;
+	uint8_t				sound_port_latch[4];
+	uint8_t				dac_data;
 
 	/* TI UART */
-	UINT8				ti_uart[9];
+	uint8_t				ti_uart[9];
 	int					ti_uart_mode_cycle;
 	int					ti_uart_sync_cycle;
 
 	/* ADC */
-	UINT8				adc_val;
+	uint8_t				adc_val;
 
 	/* Hardware version-check latch for BOTSS 1.1a */
-	UINT8				botssa_latch;
+	uint8_t				botssa_latch;
 
 	/* MAC */
-	UINT32				*mac_sram;
-	UINT32				sram_r_addr;
-	UINT32				sram_w_addr;
-	UINT32				vtx_addr;
-	UINT32				mrab11;
-	UINT32				mac_stat;
-	UINT32				mac_inst;
+	uint32_t				*mac_sram;
+	uint32_t				sram_r_addr;
+	uint32_t				sram_w_addr;
+	uint32_t				vtx_addr;
+	uint32_t				mrab11;
+	uint32_t				mac_stat;
+	uint32_t				mac_inst;
 
 	/* 2D video */
-	UINT16				*micro3d_sprite_vram;
-	UINT16				creg;
-	UINT16				xfer3dk;
+	uint16_t				*micro3d_sprite_vram;
+	uint16_t				creg;
+	uint16_t				xfer3dk;
 
 	/* 3D pipeline */
-	UINT32				pipe_data;
-	UINT32				pipeline_state;
-	INT32				vtx_fifo[512];
-	UINT32				fifo_idx;
-	UINT32				draw_cmd;
+	uint32_t				pipe_data;
+	uint32_t				pipeline_state;
+	int32_t				vtx_fifo[512];
+	uint32_t				fifo_idx;
+	uint32_t				draw_cmd;
 	int					draw_state;
-	INT32				x_min;
-	INT32				x_max;
-	INT32				y_min;
-	INT32				y_max;
-	INT32				z_min;
-	INT32				z_max;
-	INT32				x_mid;
-	INT32				y_mid;
+	int32_t				x_min;
+	int32_t				x_max;
+	int32_t				y_min;
+	int32_t				y_max;
+	int32_t				z_min;
+	int32_t				z_max;
+	int32_t				x_mid;
+	int32_t				y_mid;
 	int					dpram_bank;
-	UINT32				draw_dpram[1024];
-	UINT16				*frame_buffers[2];
-	UINT16				*tmp_buffer;
+	uint32_t				draw_dpram[1024];
+	uint16_t				*frame_buffers[2];
+	uint16_t				*tmp_buffer;
 	int					drawing_buffer;
 	int					display_buffer;
 };
 
 typedef struct _micro3d_vtx_
 {
-	INT32 x, y, z;
+	int32_t x, y, z;
 } micro3d_vtx;
 
 /*----------- defined in drivers/micro3d.c -----------*/
-extern UINT16 *micro3d_sprite_vram;
+extern uint16_t *micro3d_sprite_vram;
 void m68901_int_gen(running_machine *machine, int source);
 
 /*----------- defined in machine/micro3d.c -----------*/
@@ -157,10 +157,10 @@ WRITE32_HANDLER( micro3d_mac1_w );
 WRITE32_HANDLER( micro3d_mac2_w );
 READ32_HANDLER( micro3d_mac2_r );
 
-void micro3d_duart_irq_handler(running_device *device, UINT8 vector);
-UINT8 micro3d_duart_input_r(running_device *device);
-void micro3d_duart_output_w(running_device *device, UINT8 data);
-void micro3d_duart_tx(running_device *device, int channel, UINT8 data);
+void micro3d_duart_irq_handler(running_device *device, uint8_t vector);
+uint8_t micro3d_duart_input_r(running_device *device);
+void micro3d_duart_output_w(running_device *device, uint8_t data);
+void micro3d_duart_tx(running_device *device, int channel, uint8_t data);
 
 MACHINE_RESET( micro3d );
 DRIVER_INIT( micro3d );
@@ -173,7 +173,7 @@ WRITE8_HANDLER( micro3d_snd_dac_b );
 READ8_HANDLER( micro3d_sound_io_r );
 WRITE8_HANDLER( micro3d_sound_io_w );
 
-void micro3d_noise_sh_w(running_machine *machine, UINT8 data);
+void micro3d_noise_sh_w(running_machine *machine, uint8_t data);
 
 DECLARE_LEGACY_SOUND_DEVICE(MICRO3D, micro3d_sound);
 

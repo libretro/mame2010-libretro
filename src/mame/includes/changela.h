@@ -8,43 +8,43 @@ public:
 	changela_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
 
 	/* video-related */
 	bitmap_t *obj0_bitmap, *river_bitmap, *tree0_bitmap, *tree1_bitmap;
-	UINT8*   tree_ram;
-	UINT8*   memory_devices;
-	UINT32   mem_dev_selected;	/* an offset within memory_devices area */
-	UINT32   slopeROM_bank;
-	UINT8    tree_en;
-	UINT8    horizon;
-	UINT8    v_count_river;
-	UINT8    v_count_tree;
+	uint8_t*   tree_ram;
+	uint8_t*   memory_devices;
+	uint32_t   mem_dev_selected;	/* an offset within memory_devices area */
+	uint32_t   slopeROM_bank;
+	uint8_t    tree_en;
+	uint8_t    horizon;
+	uint8_t    v_count_river;
+	uint8_t    v_count_tree;
 	int      tree_on[2];
 	emu_timer* scanline_timer;
 
 	/* misc */
-	UINT8    tree0_col;
-	UINT8    tree1_col;
-	UINT8    left_bank_col;
-	UINT8    right_bank_col;
-	UINT8    boat_shore_col;
-	UINT8    collision_reset;
-	UINT8    tree_collision_reset;
-	UINT8    prev_value_31;
+	uint8_t    tree0_col;
+	uint8_t    tree1_col;
+	uint8_t    left_bank_col;
+	uint8_t    right_bank_col;
+	uint8_t    boat_shore_col;
+	uint8_t    collision_reset;
+	uint8_t    tree_collision_reset;
+	uint8_t    prev_value_31;
 	int      dir_31;
 
 	/* mcu-related */
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_b_out, ddr_b;
-	UINT8    port_c_in, port_c_out, ddr_c;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_b_out, ddr_b;
+	uint8_t    port_c_in, port_c_out, ddr_c;
 
-	UINT8    mcu_out;
-	UINT8    mcu_in;
-	UINT8    mcu_pc_1;
-	UINT8    mcu_pc_0;
+	uint8_t    mcu_out;
+	uint8_t    mcu_in;
+	uint8_t    mcu_pc_1;
+	uint8_t    mcu_pc_0;
 
 	/* devices */
 	running_device *mcu;

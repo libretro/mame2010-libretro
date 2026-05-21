@@ -9,10 +9,10 @@ Driver by Takahiro Nogi (nogi@kt.rim.or.jp) 1999/10/04
 
 #include "emu.h"
 
-UINT8 *ssozumo_videoram;
-UINT8 *ssozumo_colorram;
-UINT8 *ssozumo_videoram2;
-UINT8 *ssozumo_colorram2;
+uint8_t *ssozumo_videoram;
+uint8_t *ssozumo_colorram;
+uint8_t *ssozumo_videoram2;
+uint8_t *ssozumo_colorram2;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
@@ -143,7 +143,7 @@ VIDEO_START( ssozumo )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size; offs += 4)

@@ -11,37 +11,37 @@
 #include "video/resnet.h"
 
 
-UINT8 *tubep_textram;
-UINT8 *rjammer_backgroundram;
-UINT8 *tubep_backgroundram;
-UINT8 *tubep_sprite_colorsharedram;
+uint8_t *tubep_textram;
+uint8_t *rjammer_backgroundram;
+uint8_t *tubep_backgroundram;
+uint8_t *tubep_sprite_colorsharedram;
 
-static UINT8 *spritemap;
-static UINT8 prom2[32];
+static uint8_t *spritemap;
+static uint8_t prom2[32];
 
 /* Globals */
-/*static UINT8 graph_ctrl[10];*/
-static UINT32	romD_addr =0;
-static UINT32	romEF_addr =0;
-static UINT32	E16_add_b = 0;
-static UINT32	HINV = 0;
-static UINT32	VINV = 0;
-static UINT32	XSize = 0;
-static UINT32	YSize = 0;
-static UINT32	mark_1 = 0;
-static UINT32	mark_2 = 0;
-static UINT32	colorram_addr_hi = 0;
-static UINT32	ls273_g6 = 0;
-static UINT32	ls273_j6 = 0;
-static UINT32	romHI_addr_mid = 0;
-static UINT32	romHI_addr_msb = 0;
-static UINT8	DISP = 0;
-static UINT8	background_romsel = 0;
-static UINT8	color_A4 = 0;
-static UINT8	ls175_b7;
-static UINT8	ls175_e8;
-static UINT8	ls377_data = 0;
-static UINT32	page = 0;
+/*static uint8_t graph_ctrl[10];*/
+static uint32_t	romD_addr =0;
+static uint32_t	romEF_addr =0;
+static uint32_t	E16_add_b = 0;
+static uint32_t	HINV = 0;
+static uint32_t	VINV = 0;
+static uint32_t	XSize = 0;
+static uint32_t	YSize = 0;
+static uint32_t	mark_1 = 0;
+static uint32_t	mark_2 = 0;
+static uint32_t	colorram_addr_hi = 0;
+static uint32_t	ls273_g6 = 0;
+static uint32_t	ls273_j6 = 0;
+static uint32_t	romHI_addr_mid = 0;
+static uint32_t	romHI_addr_msb = 0;
+static uint8_t	DISP = 0;
+static uint8_t	background_romsel = 0;
+static uint8_t	color_A4 = 0;
+static uint8_t	ls175_b7;
+static uint8_t	ls175_e8;
+static uint8_t	ls377_data = 0;
+static uint32_t	page = 0;
 
 
 
@@ -371,7 +371,7 @@ PALETTE_INIT( tubep )
 
 VIDEO_START( tubep )
 {
-	spritemap = auto_alloc_array(machine, UINT8, 256*256*2);
+	spritemap = auto_alloc_array(machine, uint8_t, 256*256*2);
 
 	/* Set up save state */
 	state_save_register_global(machine, romD_addr);
@@ -464,49 +464,49 @@ static TIMER_CALLBACK( sprite_timer_callback )
 
 static void draw_sprite(running_machine *machine)
 {
-	UINT32	XDOT;
-	UINT32	YDOT;
-	UINT8 * romCxx  = memory_region(machine, "user2")+0x00000;
-	UINT8 * romD10  = romCxx+0x10000;
-	UINT8 * romEF13 = romCxx+0x12000;
-	UINT8 * romHI2  = romCxx+0x14000;
+	uint32_t	XDOT;
+	uint32_t	YDOT;
+	uint8_t * romCxx  = memory_region(machine, "user2")+0x00000;
+	uint8_t * romD10  = romCxx+0x10000;
+	uint8_t * romEF13 = romCxx+0x12000;
+	uint8_t * romHI2  = romCxx+0x14000;
 
 
 	for (YDOT=0; (YDOT^YSize) != 0x00; YDOT++)
 	{
 	/* upper part of the schematic */
-		UINT32 ls273_e12 = romD10[ romD_addr | YDOT ] & 0x7f;
-		UINT32 romEF_addr_now = romEF_addr | ls273_e12;
-		UINT32 E16_add_a = romEF13[ romEF_addr_now ] |
+		uint32_t ls273_e12 = romD10[ romD_addr | YDOT ] & 0x7f;
+		uint32_t romEF_addr_now = romEF_addr | ls273_e12;
+		uint32_t E16_add_a = romEF13[ romEF_addr_now ] |
 						 ((romEF13[0x1000 + romEF_addr_now ]&0x0f)<<8);
-		UINT32 F16_add_b = E16_add_a + E16_add_b;
+		uint32_t F16_add_b = E16_add_a + E16_add_b;
 
 	/* lower part of the schematic */
-		UINT32 romHI_addr = (YDOT) | (romHI_addr_mid) | (((romHI_addr_msb + 0x800) )&0x1800);
-		UINT32 ls273_g4 = romHI2[ romHI_addr ];
-		UINT32 ls273_j4 = romHI2[0x2000+ romHI_addr ];
-		UINT32 ls86_gh5 = ls273_g4 ^ VINV;
-		UINT32 ls86_ij5 = ls273_j4 ^ VINV;
+		uint32_t romHI_addr = (YDOT) | (romHI_addr_mid) | (((romHI_addr_msb + 0x800) )&0x1800);
+		uint32_t ls273_g4 = romHI2[ romHI_addr ];
+		uint32_t ls273_j4 = romHI2[0x2000+ romHI_addr ];
+		uint32_t ls86_gh5 = ls273_g4 ^ VINV;
+		uint32_t ls86_ij5 = ls273_j4 ^ VINV;
 
-		UINT32 ls157_gh7= ls273_g6 | (mark_2);
-		UINT32 ls157_ij7= ls273_j6 | (mark_1);
-		UINT32 ls283_gh8= (VINV & 1) + ls86_gh5 + ((ls86_gh5 & 0x80)<<1) + ls157_gh7;
-		UINT32 ls283_ij8= (VINV & 1) + ls86_ij5 + ((ls86_ij5 & 0x80)<<1) + ls157_ij7;
+		uint32_t ls157_gh7= ls273_g6 | (mark_2);
+		uint32_t ls157_ij7= ls273_j6 | (mark_1);
+		uint32_t ls283_gh8= (VINV & 1) + ls86_gh5 + ((ls86_gh5 & 0x80)<<1) + ls157_gh7;
+		uint32_t ls283_ij8= (VINV & 1) + ls86_ij5 + ((ls86_ij5 & 0x80)<<1) + ls157_ij7;
 
-		UINT32 ls273_g9 = ls283_gh8;
-		UINT32 ls273_j9 = ls283_ij8;
+		uint32_t ls273_g9 = ls283_gh8;
+		uint32_t ls273_j9 = ls283_ij8;
 
 		for (XDOT=0; (XDOT^XSize) != 0x00; XDOT++)
 		{
 	/* upper part of the schematic */
-			UINT32 romD10_out = romD10[ romD_addr | XDOT ];
-			UINT32 F16_add_a = (romD10_out & 0x7e) >>1;
-			UINT32 romCxx_addr = (F16_add_a + F16_add_b ) & 0xffff;
-			UINT32 romCxx_out = romCxx[ romCxx_addr ];
+			uint32_t romD10_out = romD10[ romD_addr | XDOT ];
+			uint32_t F16_add_a = (romD10_out & 0x7e) >>1;
+			uint32_t romCxx_addr = (F16_add_a + F16_add_b ) & 0xffff;
+			uint32_t romCxx_out = romCxx[ romCxx_addr ];
 
-			UINT32 colorram_addr_lo = (romD10_out&1) ? (romCxx_out>>4)&0x0f: (romCxx_out>>0)&0x0f;
+			uint32_t colorram_addr_lo = (romD10_out&1) ? (romCxx_out>>4)&0x0f: (romCxx_out>>0)&0x0f;
 
-			UINT8 sp_data = tubep_sprite_colorsharedram[ colorram_addr_hi | colorram_addr_lo ] & 0x0f; /* 2114 4-bit RAM */
+			uint8_t sp_data = tubep_sprite_colorsharedram[ colorram_addr_hi | colorram_addr_lo ] & 0x0f; /* 2114 4-bit RAM */
 
 	/* lower part of the schematic */
 			romHI_addr = (XDOT) | (romHI_addr_mid) | (romHI_addr_msb);
@@ -614,21 +614,21 @@ VIDEO_UPDATE( tubep )
 
 	pen_t pen_base = 32; //change it later
 
-	UINT32 v;
-	UINT8 *text_gfx_base = memory_region(screen->machine, "gfx1");
-	UINT8 *romBxx = memory_region(screen->machine, "user1") + 0x2000*background_romsel;
+	uint32_t v;
+	uint8_t *text_gfx_base = memory_region(screen->machine, "gfx1");
+	uint8_t *romBxx = memory_region(screen->machine, "user1") + 0x2000*background_romsel;
 
 	/* logerror(" update: from DISP=%i y_min=%3i y_max=%3i\n", DISP_, cliprect->min_y, cliprect->max_y+1); */
 
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)	/* only for current scanline */
 	{
-		UINT32 h;
-		UINT32 sp_data0=0,sp_data1=0,sp_data2=0;
+		uint32_t h;
+		uint32_t sp_data0=0,sp_data1=0,sp_data2=0;
 		for (h = 0*8; h < 32*8; h++)
 		{
 			offs_t text_offs;
-			UINT8 text_code;
-			UINT8 text_gfx_data;
+			uint8_t text_code;
+			uint8_t text_gfx_data;
 
 			sp_data2 = sp_data1;
 			sp_data1 = sp_data0;
@@ -642,29 +642,29 @@ VIDEO_UPDATE( tubep )
 				*BITMAP_ADDR16(bitmap, v, h) = (tubep_textram[text_offs + 1] & 0x0f) | color_A4;
 			else
 			{
-				UINT32 bg_data;
-				UINT32 sp_data;
+				uint32_t bg_data;
+				uint32_t sp_data;
 
-				UINT32 romB_addr = (((h>>1)&0x3f)^((h&0x80)?0x00:0x3f)) | (((v&0x7f)^((v&0x80)?0x00:0x7f))<<6);
+				uint32_t romB_addr = (((h>>1)&0x3f)^((h&0x80)?0x00:0x3f)) | (((v&0x7f)^((v&0x80)?0x00:0x7f))<<6);
 
-				UINT8  rom_select = (h&0x01) ^ (((h&0x80)>>7)^1);
+				uint8_t  rom_select = (h&0x01) ^ (((h&0x80)>>7)^1);
 
 				/* read from ROMs: B3/4 or B5/6 */
-				UINT8 romB_data_h = romBxx[ 0x4000 + 0x4000*rom_select + romB_addr ];
+				uint8_t romB_data_h = romBxx[ 0x4000 + 0x4000*rom_select + romB_addr ];
 				/* romB_data_h = output of LS374 @B3 or @B4 */
 
-				UINT32 VR_addr = ((romB_data_h + ls175_b7) & 0xfe) << 2;
+				uint32_t VR_addr = ((romB_data_h + ls175_b7) & 0xfe) << 2;
 				/* VR_addr = output of LS157s @B1 and @B6 */
 
-				UINT8 xor_logic = (((h^v)&0x80)>>7) ^ (background_romsel & (((v&0x80)>>7)^1));
+				uint8_t xor_logic = (((h^v)&0x80)>>7) ^ (background_romsel & (((v&0x80)>>7)^1));
 
 				/* read from ROMs: B1/2 */
-				UINT8 romB_data_l = romBxx[ romB_addr ] ^ (xor_logic?0xff:0x00);
+				uint8_t romB_data_l = romBxx[ romB_addr ] ^ (xor_logic?0xff:0x00);
 				/* romB_data_l = output of LS273 @B10 */
 
-				UINT8 ls157_b11 = (romB_data_l >> ((rom_select==0)?4:0))&0x0f;
+				uint8_t ls157_b11 = (romB_data_l >> ((rom_select==0)?4:0))&0x0f;
 
-				UINT8 ls283_b12 = (ls157_b11 + ls175_e8) & 0x0f;
+				uint8_t ls283_b12 = (ls157_b11 + ls175_e8) & 0x0f;
 
 				VR_addr |= (ls283_b12>>1);
 
@@ -767,11 +767,11 @@ VIDEO_UPDATE( rjammer )
 {
 	int DISP_ = DISP^1;
 
-	UINT32 v;
-	UINT8 *text_gfx_base = memory_region(screen->machine, "gfx1");
-	UINT8 *rom13D  = memory_region(screen->machine, "user1");
-	UINT8 *rom11BD = rom13D+0x1000;
-	UINT8 *rom19C  = rom13D+0x5000;
+	uint32_t v;
+	uint8_t *text_gfx_base = memory_region(screen->machine, "gfx1");
+	uint8_t *rom13D  = memory_region(screen->machine, "user1");
+	uint8_t *rom11BD = rom13D+0x1000;
+	uint8_t *rom19C  = rom13D+0x5000;
 
 	/* this can be optimized further by extracting constants out of the loop */
 	/* especially read from ROM19C can be done once per 8 pixels*/
@@ -779,14 +779,14 @@ VIDEO_UPDATE( rjammer )
 
 	for (v = cliprect->min_y; v <= cliprect->max_y; v++)	/* only for current scanline */
 	{
-		UINT32 h;
-		UINT32 sp_data0=0,sp_data1=0,sp_data2=0;
-		UINT8 pal14h4_pin19;
-		UINT8 pal14h4_pin18;
-		UINT8 pal14h4_pin13;
+		uint32_t h;
+		uint32_t sp_data0=0,sp_data1=0,sp_data2=0;
+		uint8_t pal14h4_pin19;
+		uint8_t pal14h4_pin18;
+		uint8_t pal14h4_pin13;
 
-		UINT32 addr = (v*2) | page;
-		UINT32 ram_data = rjammer_backgroundram[ addr ] + 256*(rjammer_backgroundram[ addr+1 ]&0x2f);
+		uint32_t addr = (v*2) | page;
+		uint32_t ram_data = rjammer_backgroundram[ addr ] + 256*(rjammer_backgroundram[ addr+1 ]&0x2f);
 
 		addr = (v>>3) | ((ls377_data&0x1f)<<5);
 		pal14h4_pin13 = (rom19C[addr] >> ((v&7)^7) ) &1;
@@ -795,8 +795,8 @@ VIDEO_UPDATE( rjammer )
 		for (h = 0*8; h < 32*8; h++)
 		{
 			offs_t text_offs;
-			UINT8 text_code;
-			UINT8 text_gfx_data;
+			uint8_t text_code;
+			uint8_t text_gfx_data;
 
 			sp_data2 = sp_data1;
 			sp_data1 = sp_data0;
@@ -810,7 +810,7 @@ VIDEO_UPDATE( rjammer )
 				*BITMAP_ADDR16(bitmap, v, h) = 0x10 | (tubep_textram[text_offs + 1] & 0x0f);
 			else
 			{
-				UINT32 sp_data;
+				uint32_t sp_data;
 
 				if ((sp_data0 != 0x0f) && (sp_data1 == 0x0f) && (sp_data2 != 0x0f))
 					sp_data = sp_data2;
@@ -821,21 +821,21 @@ VIDEO_UPDATE( rjammer )
 					*BITMAP_ADDR16(bitmap, v, h) = 0x00 + sp_data;
 				else
 				{
-					UINT32 bg_data;
-					UINT8 color_bank;
+					uint32_t bg_data;
+					uint8_t color_bank;
 
-					UINT32 ls283 = (ram_data & 0xfff) + h;
-					UINT32 rom13D_addr = ((ls283>>4)&0x00f) | (v&0x0f0) | (ls283&0xf00);
+					uint32_t ls283 = (ram_data & 0xfff) + h;
+					uint32_t rom13D_addr = ((ls283>>4)&0x00f) | (v&0x0f0) | (ls283&0xf00);
 
 					/* note: there is a jumper between bit 7 and bit 6 lines (bit 7 line is unused by default) */
 					/* default: bit 6 is rom select signal 0=rom @11B, 1=rom @11D */
 
-					UINT32 rom13D_data = rom13D[ rom13D_addr ] & 0x7f;
+					uint32_t rom13D_data = rom13D[ rom13D_addr ] & 0x7f;
 					/* rom13d_data is actually a content of LS377 @14C */
 
 
-					UINT32 rom11BD_addr = (rom13D_data<<7) | ((v&0x0f)<<3) | ((ls283>>1)&0x07);
-					UINT32 rom11_data = rom11BD[ rom11BD_addr];
+					uint32_t rom11BD_addr = (rom13D_data<<7) | ((v&0x0f)<<3) | ((ls283>>1)&0x07);
+					uint32_t rom11_data = rom11BD[ rom11BD_addr];
 
 					if ((ls283&1)==0)
 						bg_data = rom11_data & 0x0f;

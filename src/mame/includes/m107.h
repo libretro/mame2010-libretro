@@ -7,9 +7,9 @@
 
 /*----------- defined in video/m107.c -----------*/
 
-extern UINT16 *m107_vram_data;
-extern UINT8 m107_spritesystem;
-extern UINT16 m107_raster_irq_position;
+extern uint16_t *m107_vram_data;
+extern uint8_t m107_spritesystem;
+extern uint16_t m107_raster_irq_position;
 
 WRITE16_HANDLER( m107_spritebuffer_w );
 VIDEO_UPDATE( m107 );

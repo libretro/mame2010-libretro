@@ -34,10 +34,10 @@ struct _mathbox_state
 {
 	running_device *device;
 	/* math box scratch registers */
-	INT16 reg[16];
+	int16_t reg[16];
 
 	/* math box result */
-	INT16 result;
+	int16_t result;
 };
 
 
@@ -65,8 +65,8 @@ WRITE8_DEVICE_HANDLER( mathbox_go_w )
 {
   mathbox_state *mb = get_safe_token(device);
 
-  INT32 mb_temp;  /* temp 32-bit multiply results */
-  INT16 mb_q;     /* temp used in division */
+  int32_t mb_temp;  /* temp 32-bit multiply results */
+  int16_t mb_q;     /* temp used in division */
   int msb;
 
   LOG(("math box command %02x data %02x  ", offset, data));
@@ -109,17 +109,17 @@ WRITE8_DEVICE_HANDLER( mathbox_go_w )
 
       REG5 = (REG5 & 0x00ff) | (data << 8);
 
-      REGf = (INT16)0xffff;
+      REGf = (int16_t)0xffff;
       REG4 -= REG2;
       REG5 -= REG3;
 
     step_048:
 
-      mb_temp = ((INT32) REG0) * ((INT32) REG4);
+      mb_temp = ((int32_t) REG0) * ((int32_t) REG4);
       REGc = mb_temp >> 16;
       REGe = mb_temp & 0xffff;
 
-      mb_temp = ((INT32) -REG1) * ((INT32) REG5);
+      mb_temp = ((int32_t) -REG1) * ((int32_t) REG5);
       REG7 = mb_temp >> 16;
       mb_q = mb_temp & 0xffff;
 
@@ -143,11 +143,11 @@ WRITE8_DEVICE_HANDLER( mathbox_go_w )
 
     case 0x12:
 
-      mb_temp = ((INT32) REG1) * ((INT32) REG4);
+      mb_temp = ((int32_t) REG1) * ((int32_t) REG4);
       REGc = mb_temp >> 16;
       REG9 = mb_temp & 0xffff;
 
-      mb_temp = ((INT32) REG0) * ((INT32) REG5);
+      mb_temp = ((int32_t) REG0) * ((int32_t) REG5);
       REG8 = mb_temp >> 16;
       mb_q = mb_temp & 0xffff;
 
@@ -334,7 +334,7 @@ static DEVICE_RESET( mathbox )
 	mathbox_state *mb = get_safe_token(device);
 
 	mb->result = 0;
-	memset(mb->reg, 0, sizeof(INT16)*16);
+	memset(mb->reg, 0, sizeof(int16_t)*16);
 }
 
 

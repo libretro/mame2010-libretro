@@ -20,10 +20,10 @@ public:
 		  okimusic(machine.device<okim6295_device>("okimusic")) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT32 *  mainram;
-	UINT32 *  systemram;
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint32_t *  mainram;
+	uint32_t *  systemram;
 
 	/* devices */
 	cpu_device *maincpu;

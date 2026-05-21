@@ -11,16 +11,16 @@ public:
 
 	espial_state(running_machine &machine) { }
 
-	UINT8 *   videoram;	// espial, zodiack, marineb
-	UINT8 *   colorram;	// espial, marineb
-	UINT8 *   attributeram;	// espial, zodiack
-	UINT8 *   scrollram;	// espial
-	UINT8 *   spriteram_1;	// espial
-	UINT8 *   spriteram_2;	// espial
-	UINT8 *   spriteram_3;	// espial
-	UINT8 *   spriteram;	// zodiack, marineb (hoccer only)
-	UINT8 *   videoram_2;	// zodiack
-	UINT8 *   bulletsram;	// zodiack
+	uint8_t *   videoram;	// espial, zodiack, marineb
+	uint8_t *   colorram;	// espial, marineb
+	uint8_t *   attributeram;	// espial, zodiack
+	uint8_t *   scrollram;	// espial
+	uint8_t *   spriteram_1;	// espial
+	uint8_t *   spriteram_2;	// espial
+	uint8_t *   spriteram_3;	// espial
+	uint8_t *   spriteram;	// zodiack, marineb (hoccer only)
+	uint8_t *   videoram_2;	// zodiack
+	uint8_t *   bulletsram;	// zodiack
 	size_t    videoram_size;	// zodiack
 	size_t    spriteram_size;	// zodiack
 	size_t    bulletsram_size;	// zodiack
@@ -28,13 +28,13 @@ public:
 	/* video-related */
 	tilemap_t   *bg_tilemap, *fg_tilemap;
 	int       flipscreen;	// espial
-	UINT8     palette_bank;	// marineb
-	UINT8     column_scroll;	// marineb
-	UINT8     flipscreen_x, flipscreen_y;	// marineb
-	UINT8     marineb_active_low_flipscreen;	// marineb
+	uint8_t     palette_bank;	// marineb
+	uint8_t     column_scroll;	// marineb
+	uint8_t     flipscreen_x, flipscreen_y;	// marineb
+	uint8_t     marineb_active_low_flipscreen;	// marineb
 
 	/* sound-related */
-	UINT8     sound_nmi_enabled;	// espial
+	uint8_t     sound_nmi_enabled;	// espial
 
 	/* misc */
 	int       percuss_hardware;	// zodiack

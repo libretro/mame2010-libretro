@@ -9,12 +9,12 @@
 
 /*----------- defined in drivers/starwars.c -----------*/
 
-extern UINT8 starwars_is_esb;
+extern uint8_t starwars_is_esb;
 
 
 /*----------- defined in machine/starwars.c -----------*/
 
-extern UINT8 *starwars_mathram;
+extern uint8_t *starwars_mathram;
 
 WRITE8_DEVICE_HANDLER( starwars_nstore_w );
 

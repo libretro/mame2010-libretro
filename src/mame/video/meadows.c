@@ -77,7 +77,7 @@ WRITE8_HANDLER( meadows_spriteram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *clip)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int i;
 
 	for (i = 0; i < 4; i++)

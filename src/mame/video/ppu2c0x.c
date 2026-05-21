@@ -78,7 +78,7 @@ struct _ppu2c0x_state
 {
 	const address_space 		*space;					/* memory space */
 	bitmap_t                    *bitmap;			/* target bitmap */
-	UINT8                       *spriteram;			/* sprite ram */
+	uint8_t                       *spriteram;			/* sprite ram */
 	pen_t                       *colortable;			/* color table modified at run time */
 	pen_t                       *colortable_mono;		/* monochromatic color table modified at run time */
 	emu_timer                   *scanline_timer;		/* scanline timer */
@@ -103,7 +103,7 @@ struct _ppu2c0x_state
 	int                         sprite_page;			/* current sprite page */
 	int                         back_color;			/* background color */
 	int                         color_base;
-	UINT8                       palette_ram[0x20];		/* shouldn't be in main memory! */
+	uint8_t                       palette_ram[0x20];		/* shouldn't be in main memory! */
 	int                         scan_scale;			/* scan scale */
 	int                         scanlines_per_frame;	/* number of scanlines per frame */
 	rgb_t                       palette[64*4];		/* palette for this chip */
@@ -291,7 +291,7 @@ void ppu2c0x_init_palette_rgb( running_machine *machine, int first_entry )
 
 	int R, G, B;
 
-	UINT8 *palette_data = memory_region(machine, "palette");
+	uint8_t *palette_data = memory_region(machine, "palette");
 
 	/* Loop through the emphasis modes (8 total) */
 	for (color_emphasis = 0; color_emphasis < 8; color_emphasis++)
@@ -357,7 +357,7 @@ static TIMER_CALLBACK( nmi_callback )
 	timer_adjust_oneshot(ppu2c0x->nmi_timer, attotime_never, 0);
 }
 
-static void draw_background( running_device *device, UINT8 *line_priority )
+static void draw_background( running_device *device, uint8_t *line_priority )
 {
 	ppu2c0x_state *ppu2c0x = get_token(device);
 
@@ -369,10 +369,10 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 	const int tile_page = ppu2c0x->tile_page;
 
 	int	start_x = (ppu2c0x->x_fine ^ 0x07) - 7;
-	UINT16 back_pen;
-	UINT16 *dest;
+	uint16_t back_pen;
+	uint16_t *dest;
 
-	UINT8 scroll_x_coarse, scroll_y_coarse, scroll_y_fine, color_mask;
+	uint8_t scroll_x_coarse, scroll_y_coarse, scroll_y_fine, color_mask;
 	int x, tile_index, i;
 
 	const pen_t *color_table;
@@ -407,7 +407,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 	tile_index = ((refresh_data & 0xc00) | 0x2000) + scroll_y_coarse * 32;
 
 	/* set up dest */
-	dest = ((UINT16 *) bitmap->base) + (bitmap->rowpixels * scanline) + start_x;
+	dest = ((uint16_t *) bitmap->base) + (bitmap->rowpixels * scanline) + start_x;
 
 	/* draw the 32 or 33 tiles that make up a line */
 	while (tilecount < 34)
@@ -417,7 +417,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 		int pos;
 		int index1;
 		int page, page2, address;
-		UINT16 pen;
+		uint16_t pen;
 
 		index1 = tile_index + x;
 
@@ -443,7 +443,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 
 		if (start_x < VISIBLE_SCREEN_WIDTH)
 		{
-			UINT8 plane1, plane2;
+			uint8_t plane1, plane2;
 			paldata = &color_table[4 * (((color_byte >> color_bits) & 0x03))];
 
 			// need to read 0x0000 or 0x1000 + 16*nametable data
@@ -457,7 +457,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 			/* render the pixel */
 			for (i = 0; i < 8; i++)
 			{
-				UINT8 pix;
+				uint8_t pix;
 				pix = ((plane1 >> 7) & 1) | (((plane2 >> 7) & 1) << 1);
 				plane1 = plane1 << 1;
 				plane2 = plane2 << 1;
@@ -494,7 +494,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 	/* if the left 8 pixels for the background are off, blank 'em */
 	if (!(ppu_regs[PPU_CONTROL1] & PPU_CONTROL1_BACKGROUND_L8))
 	{
-		dest = ((UINT16 *) bitmap->base) + (bitmap->rowpixels * scanline);
+		dest = ((uint16_t *) bitmap->base) + (bitmap->rowpixels * scanline);
 		for (i = 0; i < 8; i++)
 		{
 			*(dest++) = back_pen;
@@ -503,7 +503,7 @@ static void draw_background( running_device *device, UINT8 *line_priority )
 	}
 }
 
-static void draw_sprites( running_device *device, UINT8 *line_priority )
+static void draw_sprites( running_device *device, uint8_t *line_priority )
 {
 	ppu2c0x_state *ppu2c0x = get_token(device);
 
@@ -511,7 +511,7 @@ static void draw_sprites( running_device *device, UINT8 *line_priority )
 	bitmap_t *bitmap = ppu2c0x->bitmap;
 	const int scanline = ppu2c0x->scanline;
 	const int sprite_page = ppu2c0x->sprite_page;
-	const UINT8 *sprite_ram = ppu2c0x->spriteram;
+	const uint8_t *sprite_ram = ppu2c0x->spriteram;
 	pen_t *color_table = ppu2c0x->colortable;
 	int *ppu_regs = &ppu2c0x->regs[0];
 
@@ -536,8 +536,8 @@ static void draw_sprites( running_device *device, UINT8 *line_priority )
 
 	for (sprite_index = 0; sprite_index < SPRITERAM_SIZE; sprite_index += 4)
 	{
-		UINT8 plane1;
-		UINT8 plane2;
+		uint8_t plane1;
+		uint8_t plane2;
 
 		sprite_ypos = sprite_ram[sprite_index] + 1;
 		sprite_xpos = sprite_ram[sprite_index + 3];
@@ -622,7 +622,7 @@ static void draw_sprites( running_device *device, UINT8 *line_priority )
 			/* draw the low-priority sprites */
 			for (pixel = 0; pixel < 8; pixel++)
 			{
-				UINT8 pixel_data;
+				uint8_t pixel_data;
 				if (flipx)
 				{
 					pixel_data = (plane1 & 1) + ((plane2 & 1) << 1);
@@ -664,7 +664,7 @@ static void draw_sprites( running_device *device, UINT8 *line_priority )
 			/* draw the high-priority sprites */
 			for (pixel = 0; pixel < 8; pixel++)
 			{
-				UINT8 pixel_data;
+				uint8_t pixel_data;
 				if (flipx)
 				{
 					pixel_data = (plane1 & 1) + ((plane2 & 1) << 1);
@@ -713,7 +713,7 @@ static void draw_sprites( running_device *device, UINT8 *line_priority )
 static void render_scanline( running_device *device )
 {
 	ppu2c0x_state *ppu2c0x = get_token(device);
-	UINT8 line_priority[VISIBLE_SCREEN_WIDTH];
+	uint8_t line_priority[VISIBLE_SCREEN_WIDTH];
 	int *ppu_regs = &ppu2c0x->regs[0];
 
 	/* lets see how long it takes */
@@ -729,8 +729,8 @@ static void render_scanline( running_device *device )
 	{
 		bitmap_t *bitmap = ppu2c0x->bitmap;
 		const int scanline = ppu2c0x->scanline;
-		UINT8 color_mask;
-		UINT16 back_pen;
+		uint8_t color_mask;
+		uint16_t back_pen;
 		int i;
 
 		/* setup the color mask and colortable to use */
@@ -776,8 +776,8 @@ static void update_scanline( running_device *device )
 		else
 		{
 			bitmap_t *bitmap = ppu2c0x->bitmap;
-			UINT8 color_mask;
-			UINT16 back_pen;
+			uint8_t color_mask;
+			uint16_t back_pen;
 			int i;
 
 			/* setup the color mask and colortable to use */
@@ -816,7 +816,7 @@ static void update_scanline( running_device *device )
 		/* if it's rolled, increment the coarse y-scroll */
 		if (ppu2c0x->refresh_data & 0x8000)
 		{
-			UINT16 tmp;
+			uint16_t tmp;
 			tmp = (ppu2c0x->refresh_data & 0x03e0) + 0x20;
 			ppu2c0x->refresh_data &= 0x7c1f;
 
@@ -1072,7 +1072,7 @@ WRITE8_DEVICE_HANDLER( ppu2c0x_w )
 				int i;
 				for (i = 0; i <= 0x1f; i++)
 				{
-					UINT8 oldColor = ppu2c0x->palette_ram[i];
+					uint8_t oldColor = ppu2c0x->palette_ram[i];
 
 					ppu2c0x->colortable[i] = color_base + oldColor + (data & PPU_CONTROL1_COLOR_EMPHASIS) * 2;
 				}
@@ -1179,14 +1179,14 @@ WRITE8_DEVICE_HANDLER( ppu2c0x_w )
  *
  *************************************/
 
-void ppu2c0x_spriteram_dma( const address_space *space, running_device *device, const UINT8 page )
+void ppu2c0x_spriteram_dma( const address_space *space, running_device *device, const uint8_t page )
 {
 	int i;
 	int address = page << 8;
 
 	for (i = 0; i < SPRITERAM_SIZE; i++)
 	{
-		UINT8 spriteData = memory_read_byte(space, address + i);
+		uint8_t spriteData = memory_read_byte(space, address + i);
 		memory_write_byte(space, 0x2004, spriteData);
 	}
 
@@ -1315,7 +1315,7 @@ static DEVICE_START( ppu2c0x )
 
 	/* allocate a screen bitmap, videomem and spriteram, a dirtychar array and the monochromatic colortable */
 	ppu2c0x->bitmap = auto_bitmap_alloc(device->machine, VISIBLE_SCREEN_WIDTH, VISIBLE_SCREEN_HEIGHT, device->machine->primary_screen->format());
-	ppu2c0x->spriteram = auto_alloc_array_clear(device->machine, UINT8, SPRITERAM_SIZE);
+	ppu2c0x->spriteram = auto_alloc_array_clear(device->machine, uint8_t, SPRITERAM_SIZE);
 	ppu2c0x->colortable = auto_alloc_array(device->machine, pen_t, ARRAY_LENGTH(default_colortable));
 	ppu2c0x->colortable_mono = auto_alloc_array(device->machine, pen_t, ARRAY_LENGTH(default_colortable_mono));
 

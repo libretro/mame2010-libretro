@@ -184,7 +184,7 @@ WRITE8_HANDLER( paradise_priority_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	paradise_state *state = (paradise_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int i;
 	for (i = 0; i < state->spriteram_size ; i += state->sprite_inc)
 	{

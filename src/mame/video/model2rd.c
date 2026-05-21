@@ -54,23 +54,23 @@
 
 #ifndef MODEL2_TEXTURED
 /* non-textured render path */
-static void MODEL2_FUNC_NAME(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 #if !defined( MODEL2_TRANSLUCENT)
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
-	UINT32 *p = BITMAP_ADDR32(destmap, scanline, 0);
+	uint32_t *p = BITMAP_ADDR32(destmap, scanline, 0);
 
 	/* extract color information */
-	const UINT16 *colortable_r = (const UINT16 *)&model2_colorxlat[0x0000/4];
-	const UINT16 *colortable_g = (const UINT16 *)&model2_colorxlat[0x4000/4];
-	const UINT16 *colortable_b = (const UINT16 *)&model2_colorxlat[0x8000/4];
-	const UINT16 *lumaram = (const UINT16 *)model2_lumaram;
-	const UINT16 *palram = (const UINT16 *)model2_paletteram32;
-	UINT32	lumabase = extra->lumabase;
-	UINT32	color = extra->colorbase;
-	UINT8	luma;
-	UINT32	tr, tg, tb;
+	const uint16_t *colortable_r = (const uint16_t *)&model2_colorxlat[0x0000/4];
+	const uint16_t *colortable_g = (const uint16_t *)&model2_colorxlat[0x4000/4];
+	const uint16_t *colortable_b = (const uint16_t *)&model2_colorxlat[0x8000/4];
+	const uint16_t *lumaram = (const uint16_t *)model2_lumaram;
+	const uint16_t *palram = (const uint16_t *)model2_paletteram32;
+	uint32_t	lumabase = extra->lumabase;
+	uint32_t	color = extra->colorbase;
+	uint8_t	luma;
+	uint32_t	tr, tg, tb;
 	int		x;
 #endif
 	/* if it's translucent, there's nothing to render */
@@ -107,29 +107,29 @@ static void MODEL2_FUNC_NAME(void *dest, INT32 scanline, const poly_extent *exte
 
 #else
 /* textured render path */
-static void MODEL2_FUNC_NAME(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
-	UINT32 *p = BITMAP_ADDR32(destmap, scanline, 0);
+	uint32_t *p = BITMAP_ADDR32(destmap, scanline, 0);
 
-	UINT32	tex_width = extra->texwidth;
-	UINT32	tex_height = extra->texheight;
+	uint32_t	tex_width = extra->texwidth;
+	uint32_t	tex_height = extra->texheight;
 
 	/* extract color information */
-	const UINT16 *colortable_r = (const UINT16 *)&model2_colorxlat[0x0000/4];
-	const UINT16 *colortable_g = (const UINT16 *)&model2_colorxlat[0x4000/4];
-	const UINT16 *colortable_b = (const UINT16 *)&model2_colorxlat[0x8000/4];
-	const UINT16 *lumaram = (const UINT16 *)model2_lumaram;
-	const UINT16 *palram = (const UINT16 *)model2_paletteram32;
-	UINT32	colorbase = extra->colorbase;
-	UINT32	lumabase = extra->lumabase;
-	UINT32	tex_x = extra->texx;
-	UINT32	tex_y = extra->texy;
-	UINT32	tex_x_mask, tex_y_mask;
-	UINT32	tex_mirr_x = extra->texmirrorx;
-	UINT32	tex_mirr_y = extra->texmirrory;
-	UINT32 *sheet = extra->texsheet;
+	const uint16_t *colortable_r = (const uint16_t *)&model2_colorxlat[0x0000/4];
+	const uint16_t *colortable_g = (const uint16_t *)&model2_colorxlat[0x4000/4];
+	const uint16_t *colortable_b = (const uint16_t *)&model2_colorxlat[0x8000/4];
+	const uint16_t *lumaram = (const uint16_t *)model2_lumaram;
+	const uint16_t *palram = (const uint16_t *)model2_paletteram32;
+	uint32_t	colorbase = extra->colorbase;
+	uint32_t	lumabase = extra->lumabase;
+	uint32_t	tex_x = extra->texx;
+	uint32_t	tex_y = extra->texy;
+	uint32_t	tex_x_mask, tex_y_mask;
+	uint32_t	tex_mirr_x = extra->texmirrorx;
+	uint32_t	tex_mirr_y = extra->texmirrory;
+	uint32_t *sheet = extra->texsheet;
 	float ooz = extent->param[0].start;
 	float uoz = extent->param[1].start;
 	float voz = extent->param[2].start;
@@ -150,11 +150,11 @@ static void MODEL2_FUNC_NAME(void *dest, INT32 scanline, const poly_extent *exte
 	for(x = extent->startx; x < extent->stopx; x++, uoz += duoz, voz += dvoz, ooz += dooz)
 	{
 		float z = recip_approx(ooz) * 256.0f;
-		INT32 u = uoz * z;
-		INT32 v = voz * z;
-		UINT32	tr, tg, tb;
-		UINT16	t;
-		UINT8 luma;
+		int32_t u = uoz * z;
+		int32_t v = voz * z;
+		uint32_t	tr, tg, tb;
+		uint16_t	t;
+		uint8_t luma;
 		int u2;
 		int v2;
 

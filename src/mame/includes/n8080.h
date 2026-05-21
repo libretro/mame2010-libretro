@@ -7,8 +7,8 @@ public:
 	n8080_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * videoram;
-	UINT8 * colorram;	// for helifire
+	uint8_t * videoram;
+	uint8_t * colorram;	// for helifire
 
 	/* video-related */
 	emu_timer* cannon_timer;
@@ -17,7 +17,7 @@ public:
 	int sheriff_color_mode;
 	int sheriff_color_data;
 	int helifire_flash;
-	UINT8 helifire_LSFR[63];
+	uint8_t helifire_LSFR[63];
 	unsigned helifire_mv;
 	unsigned helifire_sc; /* IC56 */
 
@@ -27,10 +27,10 @@ public:
 	int helifire_dac_phase;
 	double helifire_dac_volume;
 	double helifire_dac_timing;
-	UINT16 prev_sound_pins;
-	UINT16 curr_sound_pins;
+	uint16_t prev_sound_pins;
+	uint16_t curr_sound_pins;
 	int mono_flop[3];
-	UINT8 prev_snd_data;
+	uint8_t prev_snd_data;
 
 	/* other */
 	unsigned shift_data;

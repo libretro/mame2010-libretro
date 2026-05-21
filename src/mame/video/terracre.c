@@ -8,11 +8,11 @@
 
 #include "emu.h"
 
-static UINT16 xscroll;
-static UINT16 yscroll;
+static uint16_t xscroll;
+static uint16_t yscroll;
 static tilemap_t *background, *foreground;
 
-UINT16 *amazon_videoram;
+uint16_t *amazon_videoram;
 
 static
 TILE_GET_INFO( get_bg_tile_info )
@@ -34,9 +34,9 @@ TILE_GET_INFO( get_fg_tile_info )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	const UINT8 *spritepalettebank = memory_region(machine, "user1");
+	const uint8_t *spritepalettebank = memory_region(machine, "user1");
 	const gfx_element *pGfx = machine->gfx[2];
-	const UINT16 *pSource = machine->generic.spriteram.u16;
+	const uint16_t *pSource = machine->generic.spriteram.u16;
 	int i;
 	int transparent_pen;
 
@@ -122,7 +122,7 @@ PALETTE_INIT( amazon )
 	/* pens 0-7; the top two bits for pens 8-0x0f. */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (i & 0x08)
 			ctabentry = 0xc0 | (i & 0x0f) | ((i & 0xc0) >> 2);
@@ -139,7 +139,7 @@ PALETTE_INIT( amazon )
 	/* 8-15 (like for tiles). */
 	for (i = 0; i < 0x1000; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 		int i_swapped = ((i & 0x0f) << 8) | ((i & 0xff0) >> 4);
 
 		if (i & 0x80)

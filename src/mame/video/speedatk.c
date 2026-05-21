@@ -5,8 +5,8 @@
 *****************************************************************************************/
 #include "emu.h"
 
-UINT8 *speedatk_videoram;
-UINT8 *speedatk_colorram;
+uint8_t *speedatk_videoram;
+uint8_t *speedatk_colorram;
 static tilemap_t *bg_tilemap;
 
 /*
@@ -70,7 +70,7 @@ PALETTE_INIT( speedatk )
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

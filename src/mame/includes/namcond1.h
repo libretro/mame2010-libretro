@@ -15,10 +15,10 @@
 
 /*----------- defined in machine/namcond1.c -----------*/
 
-extern UINT8 namcond1_gfxbank;
+extern uint8_t namcond1_gfxbank;
 
-extern UINT8 namcond1_h8_irq5_enabled;
-extern UINT16 *namcond1_shared_ram;
+extern uint8_t namcond1_h8_irq5_enabled;
+extern uint16_t *namcond1_shared_ram;
 
 extern READ16_HANDLER( namcond1_shared_ram_r );
 extern READ16_HANDLER( namcond1_cuskey_r );

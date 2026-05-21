@@ -98,7 +98,7 @@ WRITE8_HANDLER( brkthru_bgram_w )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	brkthru_state *state = (brkthru_state *)machine->driver_data;
-	UINT8 code = state->fg_videoram[tile_index];
+	uint8_t code = state->fg_videoram[tile_index];
 	SET_TILE_INFO(0, code, 0, 0);
 }
 
@@ -156,7 +156,7 @@ WRITE8_HANDLER( brkthru_1800_w )
 
 
 #if 0
-static void show_register( bitmap_t *bitmap, int x, int y, UINT32 data )
+static void show_register( bitmap_t *bitmap, int x, int y, uint32_t data )
 {
 	char buf[5];
 
@@ -269,7 +269,7 @@ VIDEO_UPDATE( brkthru )
 	/* fg layer */
 	tilemap_draw(bitmap, cliprect, state->fg_tilemap, 0, 0);
 
-/*  show_register(bitmap, 8, 8, (UINT32)state->flipscreen); */
+/*  show_register(bitmap, 8, 8, (uint32_t)state->flipscreen); */
 
 	return 0;
 }

@@ -52,8 +52,8 @@ VIDEO_START( f1gp )
 
 	tilemap_set_transparent_pen(state->fg_tilemap, 0xff);
 
-	state->zoomdata = (UINT16 *)memory_region(machine, "gfx4");
-	gfx_element_set_source(machine->gfx[3], (UINT8 *)state->zoomdata);
+	state->zoomdata = (uint16_t *)memory_region(machine, "gfx4");
+	gfx_element_set_source(machine->gfx[3], (uint8_t *)state->zoomdata);
 
 //  state_save_register_global_pointer(machine, state->zoomdata, memory_region_length(machine, "gfx4"));
 }
@@ -68,8 +68,8 @@ VIDEO_START( f1gpb )
 
 	tilemap_set_transparent_pen(state->fg_tilemap, 0xff);
 
-	state->zoomdata = (UINT16 *)memory_region(machine, "gfx4");
-	gfx_element_set_source(machine->gfx[3], (UINT8 *)state->zoomdata);
+	state->zoomdata = (uint16_t *)memory_region(machine, "gfx4");
+	gfx_element_set_source(machine->gfx[3], (uint8_t *)state->zoomdata);
 
 //  state_save_register_global_pointer(machine, state->zoomdata, memory_region_length(machine, "gfx4"));
 }
@@ -181,7 +181,7 @@ static void f1gp_draw_sprites( running_machine *machine, bitmap_t *bitmap, const
 {
 	f1gp_state *state = (f1gp_state *)machine->driver_data;
 	int attr_start, first;
-	UINT16 *spram = chip ? state->spr2vram : state->spr1vram;
+	uint16_t *spram = chip ? state->spr2vram : state->spr1vram;
 
 	first = 4 * spram[0x1fe];
 
@@ -278,7 +278,7 @@ VIDEO_UPDATE( f1gp )
 static void f1gpb_draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	f1gp_state *state = (f1gp_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int attr_start, start_offset = state->spriteram_size / 2 - 4;
 
 	// find the "end of list" to draw the sprites in reverse order
@@ -346,12 +346,12 @@ static void f1gpb_draw_sprites( running_machine *machine, bitmap_t *bitmap,const
 VIDEO_UPDATE( f1gpb )
 {
 	f1gp_state *state = (f1gp_state *)screen->machine->driver_data;
-	UINT32 startx, starty;
+	uint32_t startx, starty;
 	int incxx, incxy, incyx, incyy;
 
-	incxy = (INT16)state->rozregs[1];
+	incxy = (int16_t)state->rozregs[1];
 	incyx = -incxy;
-	incxx = incyy = (INT16)state->rozregs[3];
+	incxx = incyy = (int16_t)state->rozregs[3];
 	startx = state->rozregs[0] + 328;
 	starty = state->rozregs[2];
 

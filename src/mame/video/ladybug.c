@@ -29,7 +29,7 @@
 
 ***************************************************************************/
 
-static void palette_init_common( running_machine *machine, const UINT8 *color_prom, int colortable_size,
+static void palette_init_common( running_machine *machine, const uint8_t *color_prom, int colortable_size,
 								int r_bit0, int r_bit1, int g_bit0, int g_bit1, int b_bit0, int b_bit1 )
 {
 	static const int resistances[2] = { 470, 220 };
@@ -75,14 +75,14 @@ static void palette_init_common( running_machine *machine, const UINT8 *color_pr
 	/* characters */
 	for (i = 0; i < 0x20; i++)
 	{
-		UINT8 ctabentry = ((i << 3) & 0x18) | ((i >> 2) & 0x07);
+		uint8_t ctabentry = ((i << 3) & 0x18) | ((i >> 2) & 0x07);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites */
 	for (i = 0x20; i < 0x40; i++)
 	{
-		UINT8 ctabentry = color_prom[(i - 0x20) >> 1];
+		uint8_t ctabentry = color_prom[(i - 0x20) >> 1];
 
 		ctabentry = BITSWAP8((color_prom[i - 0x20] >> 0) & 0x0f, 7,6,5,4,0,1,2,3);
 		colortable_entry_set_value(machine->colortable, i + 0x00, ctabentry);
@@ -234,7 +234,7 @@ VIDEO_START( sraider )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ladybug_state *state = (ladybug_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 2 * 0x40; offs >= 2 * 0x40; offs -= 0x40)
@@ -351,7 +351,7 @@ VIDEO_UPDATE( sraider )
 	{
 		if (state->grid_data[i] != 0)
 		{
-			UINT8 x = i;
+			uint8_t x = i;
 			int height = cliprect->max_y - cliprect->min_y + 1;
 
 			if (flip_screen_get(screen->machine))

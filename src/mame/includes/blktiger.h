@@ -12,22 +12,22 @@ public:
 	blktiger_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * txvideoram;
-//  UINT8 * spriteram;  // currently this uses generic buffer_spriteram_w
-//  UINT8 * paletteram; // currently this uses generic palette handling
-//  UINT8 * paletteram2;    // currently this uses generic palette handling
+	uint8_t * txvideoram;
+//  uint8_t * spriteram;  // currently this uses generic buffer_spriteram_w
+//  uint8_t * paletteram; // currently this uses generic palette handling
+//  uint8_t * paletteram2;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t *tx_tilemap, *bg_tilemap8x4, *bg_tilemap4x8;
-	UINT32  scroll_bank;
-	UINT8   scroll_x[2];
-	UINT8   scroll_y[2];
-	UINT8   *scroll_ram;
-	UINT8   screen_layout;
-	UINT8   chon, objon, bgon;
+	uint32_t  scroll_bank;
+	uint8_t   scroll_x[2];
+	uint8_t   scroll_y[2];
+	uint8_t   *scroll_ram;
+	uint8_t   screen_layout;
+	uint8_t   chon, objon, bgon;
 
 	/* mcu-related */
-	UINT8   z80_latch, i8751_latch;
+	uint8_t   z80_latch, i8751_latch;
 
 	/* devices */
 	running_device *mcu;

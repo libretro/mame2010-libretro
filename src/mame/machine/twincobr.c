@@ -22,11 +22,11 @@ static int twincobr_dsp_on;
 static int twincobr_dsp_BIO;
 static int fsharkbt_8741;
 static int dsp_execute;
-static UINT32 dsp_addr_w, main_ram_seg;
+static uint32_t dsp_addr_w, main_ram_seg;
 
 static const int toaplan_port_type[2] = { 0x7800c, 0x5c };
 
-UINT8 *twincobr_sharedram;
+uint8_t *twincobr_sharedram;
 
 
 
@@ -68,7 +68,7 @@ READ16_HANDLER( twincobr_dsp_r )
 	/* DSP can read data from main CPU RAM via DSP IO port 1 */
 
 	const address_space *mainspace;
-	UINT16 input_data = 0;
+	uint16_t input_data = 0;
 	switch (main_ram_seg) {
 		case 0x30000:
 		case 0x40000:
@@ -118,7 +118,7 @@ READ16_HANDLER( wardner_dsp_r )
 	/* DSP can read data from main CPU RAM via DSP IO port 1 */
 
 	const address_space *mainspace;
-	UINT16 input_data = 0;
+	uint16_t input_data = 0;
 	switch (main_ram_seg) {
 		case 0x7000:
 		case 0x8000:

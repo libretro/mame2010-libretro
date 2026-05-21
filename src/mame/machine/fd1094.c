@@ -123,13 +123,13 @@ The following pseudo-code will generate 7 of the 8 bits of the key data
 successfully for all known keys, given the values of the 'shift' and 'B'
 parameters, as well as an initial 'seed' for the generator:
 
-void genkey(UINT32 seed, UINT8 *output)
+void genkey(uint32_t seed, uint8_t *output)
 {
     int bytenum;
 
     for (bytenum = 4; bytenum < 8192; bytenum++)
     {
-        UINT8 byteval;
+        uint8_t byteval;
 
         seed = seed * 0x29;
         seed += seed << 16;
@@ -435,7 +435,7 @@ eswat:
 0x1e7a,
 this only happens with 317-0162 so far; I assume it is a fault in the CPU.
 */
-static const UINT16 masked_opcodes[] =
+static const uint16_t masked_opcodes[] =
 {
 	0x013a,0x033a,0x053a,0x073a,0x083a,0x093a,0x0b3a,0x0d3a,0x0f3a,
 
@@ -514,8 +514,8 @@ static const UINT16 masked_opcodes[] =
 	0xde3a,0xde7a,0xdeba,0xdefa,	0xdffa
 };
 
-static UINT8 masked_opcodes_lookup[2][65536/8/2];
-static UINT8 masked_opcodes_created = FALSE;
+static uint8_t masked_opcodes_lookup[2][65536/8/2];
+static uint8_t masked_opcodes_created = FALSE;
 
 static int final_decrypt(int i,int moreffff)
 {
@@ -534,7 +534,7 @@ static int final_decrypt(int i,int moreffff)
 		masked_opcodes_created = TRUE;
 		for (j = 0; j < ARRAY_LENGTH(masked_opcodes); j++)
 		{
-			UINT16 opcode = masked_opcodes[j];
+			uint16_t opcode = masked_opcodes[j];
 			masked_opcodes_lookup[0][opcode >> 4] |= 1 << ((opcode >> 1) & 7);
 			masked_opcodes_lookup[1][opcode >> 4] |= 1 << ((opcode >> 1) & 7);
 		}
@@ -553,7 +553,7 @@ static int final_decrypt(int i,int moreffff)
 
 
 /* note: address is the word offset (physical address / 2) */
-static int decode(int address,int val,UINT8 *main_key,int gkey1,int gkey2,int gkey3,int vector_fetch)
+static int decode(int address,int val,uint8_t *main_key,int gkey1,int gkey2,int gkey3,int vector_fetch)
 {
 	int mainkey,key_F,key_6a,key_7a,key_6b;
 	int key_0a,key_0b,key_0c;
@@ -673,14 +673,14 @@ static int decode(int address,int val,UINT8 *main_key,int gkey1,int gkey2,int gk
 
 static int global_key1,global_key2,global_key3;
 
-int fd1094_decode(int address,int val,UINT8 *key,int vector_fetch)
+int fd1094_decode(int address,int val,uint8_t *key,int vector_fetch)
 {
 	if (!key) return 0;
 
 	return decode(address,val,key,global_key1,global_key2,global_key3,vector_fetch);
 }
 
-int fd1094_set_state(UINT8 *key,int state)
+int fd1094_set_state(uint8_t *key,int state)
 {
 	static int selected_state,irq_mode;
 

@@ -6,7 +6,7 @@ typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
 	bitmap_t *zbuffer;
-	UINT8 *texture;
+	uint8_t *texture;
 
 	int tex_base_x;
 	int tex_base_y;
@@ -33,7 +33,7 @@ static TILE_GET_INFO( taitojc_tile_info )
 {
 	taitojc_state *state = (taitojc_state *)machine->driver_data;
 
-	UINT32 val = state->tile_ram[tile_index];
+	uint32_t val = state->tile_ram[tile_index];
 	int color = (val >> 22) & 0xff;
 	int tile = (val >> 2) & 0x7f;
 	SET_TILE_INFO(state->gfx_index, tile, color, 0);
@@ -79,15 +79,15 @@ WRITE32_HANDLER(taitojc_char_w)
 // 0x01:   -------- --x----- -------- --------   Priority (0 = below 3D, 1 = above 3D)
 // 0x01:   -------- -------- -xxxxxxx xxxxxxxx   VRAM data address
 
-static void draw_object(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 w1, UINT32 w2)
+static void draw_object(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t w1, uint32_t w2)
 {
 	taitojc_state *state = (taitojc_state *)machine->driver_data;
 	int x, y, width, height, palette;
 	int i, j;
 	int x1, x2, y1, y2;
 	int ix, iy;
-	UINT32 address;
-	UINT8 *v;
+	uint32_t address;
+	uint8_t *v;
 
 	address		= (w2 & 0x7fff) * 0x20;
 	if (w2 & 0x4000)
@@ -105,7 +105,7 @@ static void draw_object(running_machine *machine, bitmap_t *bitmap, const rectan
 	height		= ((w1 >> 26) & 0x3f) * 16;
 	palette		= ((w2 >> 22) & 0x7f) << 8;
 
-	v = (UINT8*)&state->vram[address/4];
+	v = (uint8_t*)&state->vram[address/4];
 
 	if (address >= 0xf8000 || width == 0 || height == 0)
 		return;
@@ -148,12 +148,12 @@ static void draw_object(running_machine *machine, bitmap_t *bitmap, const rectan
 
 	for (j=y1; j < y2; j++)
 	{
-		UINT16 *d = BITMAP_ADDR16(bitmap, j,  0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, j,  0);
 		int index = (iy * width) + ix;
 
 		for (i=x1; i < x2; i++)
 		{
-			UINT8 pen = v[BYTE4_XOR_BE(index)];
+			uint8_t pen = v[BYTE4_XOR_BE(index)];
 			if (pen != 0)
 			{
 				d[i] = palette + pen;
@@ -190,13 +190,13 @@ VIDEO_START( taitojc )
 
 	tilemap_set_transparent_pen(state->tilemap, 0);
 
-	state->char_ram = auto_alloc_array_clear(machine, UINT32, 0x4000/4);
-	state->tile_ram = auto_alloc_array_clear(machine, UINT32, 0x4000/4);
+	state->char_ram = auto_alloc_array_clear(machine, uint32_t, 0x4000/4);
+	state->tile_ram = auto_alloc_array_clear(machine, uint32_t, 0x4000/4);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[state->gfx_index] = gfx_element_alloc(machine, &taitojc_char_layout, (UINT8 *)state->char_ram, machine->total_colors() / 16, 0);
+	machine->gfx[state->gfx_index] = gfx_element_alloc(machine, &taitojc_char_layout, (uint8_t *)state->char_ram, machine->total_colors() / 16, 0);
 
-	state->texture = auto_alloc_array(machine, UINT8, 0x400000);
+	state->texture = auto_alloc_array(machine, uint8_t, 0x400000);
 
 	state->framebuffer = machine->primary_screen->alloc_compatible_bitmap();
 
@@ -230,8 +230,8 @@ VIDEO_UPDATE( taitojc )
 
 	for (i=(0xc00/4)-2; i >= 0; i-=2)
 	{
-		UINT32 w1 = state->objlist[i + 0];
-		UINT32 w2 = state->objlist[i + 1];
+		uint32_t w1 = state->objlist[i + 0];
+		uint32_t w2 = state->objlist[i + 1];
 
 		if ((w2 & 0x200000) == 0)
 		{
@@ -243,8 +243,8 @@ VIDEO_UPDATE( taitojc )
 
 	for (i=(0xc00/4)-2; i >= 0; i-=2)
 	{
-		UINT32 w1 = state->objlist[i + 0];
-		UINT32 w2 = state->objlist[i + 1];
+		uint32_t w1 = state->objlist[i + 0];
+		uint32_t w2 = state->objlist[i + 1];
 
 		if ((w2 & 0x200000) != 0)
 		{
@@ -260,13 +260,13 @@ VIDEO_UPDATE( taitojc )
         int j;
         for (j=cliprect->min_y; j <= cliprect->max_y; j++)
         {
-            UINT16 *d = BITMAP_ADDR16(bitmap, j, 0);
+            uint16_t *d = BITMAP_ADDR16(bitmap, j, 0);
             int index = 2048 * j;
 
             for (i=cliprect->min_x; i <= cliprect->max_x; i++)
             {
-                UINT8 t = state->texture[index+i];
-                UINT32 color;
+                uint8_t t = state->texture[index+i];
+                uint32_t color;
 
                 //color = 0xff000000 | (t << 16) | (t << 8) | (t);
                 color = (state->debug_tex_pal << 8) | t;
@@ -289,15 +289,15 @@ VIDEO_UPDATE( taitojc )
 
 
 
-static void render_solid_scan(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_solid_scan(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
 	float z = extent->param[0].start;
 	int color = extent->param[1].start;
 	float dz = extent->param[0].dpdx;
-	UINT16 *fb = BITMAP_ADDR16(destmap, scanline, 0);
-	UINT16 *zb = BITMAP_ADDR16(extra->zbuffer, scanline, 0);
+	uint16_t *fb = BITMAP_ADDR16(destmap, scanline, 0);
+	uint16_t *zb = BITMAP_ADDR16(extra->zbuffer, scanline, 0);
 	int x;
 
 	for (x = extent->startx; x < extent->stopx; x++)
@@ -314,7 +314,7 @@ static void render_solid_scan(void *dest, INT32 scanline, const poly_extent *ext
 	}
 }
 
-static void render_shade_scan(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_shade_scan(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
@@ -322,8 +322,8 @@ static void render_shade_scan(void *dest, INT32 scanline, const poly_extent *ext
 	float color = extent->param[1].start;
 	float dz = extent->param[0].dpdx;
 	float dcolor = extent->param[1].dpdx;
-	UINT16 *fb = BITMAP_ADDR16(destmap, scanline, 0);
-	UINT16 *zb;
+	uint16_t *fb = BITMAP_ADDR16(destmap, scanline, 0);
+	uint16_t *zb;
 	int x;
 
 	// avoid crash in landgear/dangcurv
@@ -350,7 +350,7 @@ static void render_shade_scan(void *dest, INT32 scanline, const poly_extent *ext
 	}
 }
 
-static void render_texture_scan(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_texture_scan(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
@@ -362,8 +362,8 @@ static void render_texture_scan(void *dest, INT32 scanline, const poly_extent *e
 	float du = extent->param[1].dpdx;
 	float dv = extent->param[2].dpdx;
 	float dcolor = extent->param[3].dpdx;
-	UINT16 *fb = BITMAP_ADDR16(destmap, scanline, 0);
-	UINT16 *zb = BITMAP_ADDR16(extra->zbuffer, scanline, 0);
+	uint16_t *fb = BITMAP_ADDR16(destmap, scanline, 0);
+	uint16_t *zb = BITMAP_ADDR16(extra->zbuffer, scanline, 0);
 	int tex_wrap_x = extra->tex_wrap_x;
 	int tex_wrap_y = extra->tex_wrap_y;
 	int tex_base_x = extra->tex_base_x;
@@ -373,7 +373,7 @@ static void render_texture_scan(void *dest, INT32 scanline, const poly_extent *e
 	for (x = extent->startx; x < extent->stopx; x++)
 	{
 		int iu, iv;
-		UINT8 texel;
+		uint8_t texel;
 		int palette = ((int)color & 0x7f) << 8;
 		int iz = (int)z & 0xffff;
 
@@ -410,7 +410,7 @@ static void render_texture_scan(void *dest, INT32 scanline, const poly_extent *e
 	}
 }
 
-void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int length)
+void taitojc_render_polygons(running_machine *machine, uint16_t *polygon_fifo, int length)
 {
 	taitojc_state *state = (taitojc_state *)machine->driver_data;
 	poly_vertex vert[4];
@@ -420,7 +420,7 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 	ptr = 0;
 	while (ptr < length)
 	{
-		UINT16 cmd = polygon_fifo[ptr++];
+		uint16_t cmd = polygon_fifo[ptr++];
 
 		switch (cmd & 0x7)
 		{
@@ -448,7 +448,7 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 				// 0x13: Vertex 3 Z
 
 				poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(state->poly);
-				UINT16 texbase;
+				uint16_t texbase;
 
 				/*
                 printf("CMD3: ");
@@ -472,11 +472,11 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 				for (i=0; i < 3; i++)
 				{
 					vert[i].p[3] = polygon_fifo[ptr++];	// palette
-					vert[i].p[2] = (UINT16)(polygon_fifo[ptr++]);
-					vert[i].p[1] = (UINT16)(polygon_fifo[ptr++]);
-					vert[i].y =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].x =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].p[0] = (UINT16)(polygon_fifo[ptr++]);
+					vert[i].p[2] = (uint16_t)(polygon_fifo[ptr++]);
+					vert[i].p[1] = (uint16_t)(polygon_fifo[ptr++]);
+					vert[i].y =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].x =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].p[0] = (uint16_t)(polygon_fifo[ptr++]);
 				}
 
 				if (vert[0].p[0] < 0x8000 && vert[1].p[0] < 0x8000 && vert[2].p[0] < 0x8000)
@@ -517,9 +517,9 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 				for (i=0; i < 4; i++)
 				{
 					vert[i].p[1] = polygon_fifo[ptr++];
-					vert[i].y =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].x =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].p[0] = (UINT16)(polygon_fifo[ptr++]);
+					vert[i].y =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].x =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].p[0] = (uint16_t)(polygon_fifo[ptr++]);
 				}
 
 				if (vert[0].p[0] < 0x8000 && vert[1].p[0] < 0x8000 && vert[2].p[0] < 0x8000 && vert[3].p[0] < 0x8000)
@@ -568,7 +568,7 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 				// 0x19: Vertex 4 Z
 
 				poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(state->poly);
-				UINT16 texbase;
+				uint16_t texbase;
 
 				/*
                 printf("CMD6: ");
@@ -592,11 +592,11 @@ void taitojc_render_polygons(running_machine *machine, UINT16 *polygon_fifo, int
 				for (i=0; i < 4; i++)
 				{
 					vert[i].p[3] = polygon_fifo[ptr++];	// palette
-					vert[i].p[2] = (UINT16)(polygon_fifo[ptr++]);
-					vert[i].p[1] = (UINT16)(polygon_fifo[ptr++]);
-					vert[i].y =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].x =  (INT16)(polygon_fifo[ptr++]);
-					vert[i].p[0] = (UINT16)(polygon_fifo[ptr++]);
+					vert[i].p[2] = (uint16_t)(polygon_fifo[ptr++]);
+					vert[i].p[1] = (uint16_t)(polygon_fifo[ptr++]);
+					vert[i].y =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].x =  (int16_t)(polygon_fifo[ptr++]);
+					vert[i].p[0] = (uint16_t)(polygon_fifo[ptr++]);
 				}
 
 				if (vert[0].p[0] < 0x8000 && vert[1].p[0] < 0x8000 && vert[2].p[0] < 0x8000 && vert[3].p[0] < 0x8000)

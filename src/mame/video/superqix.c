@@ -8,8 +8,8 @@
 
 #include "emu.h"
 
-UINT8 *superqix_videoram;
-UINT8 *superqix_bitmapram,*superqix_bitmapram2;
+uint8_t *superqix_videoram;
+uint8_t *superqix_bitmapram,*superqix_bitmapram2;
 int pbillian_show_power;
 
 static int gfxbank;
@@ -170,7 +170,7 @@ WRITE8_HANDLER( superqix_0410_w )
 
 static void pbillian_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size; offs += 4)
@@ -197,7 +197,7 @@ static void pbillian_draw_sprites(running_machine *machine, bitmap_t *bitmap, co
 
 static void superqix_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size; offs += 4)

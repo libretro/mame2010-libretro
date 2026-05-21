@@ -20,15 +20,15 @@
 #define NUM_PENS	(0x18)
 
 
-UINT8 *liberatr_base_ram;
-UINT8 *liberatr_planet_frame;
-UINT8 *liberatr_planet_select;
-UINT8 *liberatr_x;
-UINT8 *liberatr_y;
-UINT8 *liberatr_bitmapram;
-UINT8 *liberatr_colorram;
+uint8_t *liberatr_base_ram;
+uint8_t *liberatr_planet_frame;
+uint8_t *liberatr_planet_select;
+uint8_t *liberatr_x;
+uint8_t *liberatr_y;
+uint8_t *liberatr_bitmapram;
+uint8_t *liberatr_colorram;
 
-static UINT8 *liberatr_videoram;
+static uint8_t *liberatr_videoram;
 
 
 
@@ -40,10 +40,10 @@ static UINT8 *liberatr_videoram;
 */
 typedef struct
 {
-	UINT8 segment_count;	/* the number of segments on this line */
-	UINT8 max_x;			/* the maximum value of x_array for this line */
-	UINT8 color_array[32];	/* the color values  */
-	UINT8 x_array[32];		/* and maximum x values for each segment  */
+	uint8_t segment_count;	/* the number of segments on this line */
+	uint8_t max_x;			/* the maximum value of x_array for this line */
+	uint8_t color_array[32];	/* the color values  */
+	uint8_t x_array[32];		/* and maximum x values for each segment  */
 } planet_frame_line;
 
 /*
@@ -67,7 +67,7 @@ typedef struct
 */
 typedef struct
 {
-	UINT8 *frames[256];
+	uint8_t *frames[256];
 } planet;
 
 
@@ -92,7 +92,7 @@ READ8_HANDLER( liberatr_bitmap_xy_r )
 
 WRITE8_HANDLER( liberatr_bitmap_w )
 {
-	UINT8 x, y;
+	uint8_t x, y;
 
 	liberatr_bitmapram[offset] = data;
 
@@ -120,29 +120,29 @@ WRITE8_HANDLER( liberatr_bitmap_w )
   as it might be, but this is not realtime stuff, so who cares...
  ********************************************************************************************/
 
-static void liberatr_init_planet(running_machine *machine, planet *liberatr_planet, UINT8 *planet_rom)
+static void liberatr_init_planet(running_machine *machine, planet *liberatr_planet, uint8_t *planet_rom)
 {
-	UINT16 longitude;
+	uint16_t longitude;
 
-	const UINT8 *latitude_scale = memory_region(machine, "user1");
-	const UINT8 *longitude_scale = memory_region(machine, "user2");
+	const uint8_t *latitude_scale = memory_region(machine, "user1");
+	const uint8_t *longitude_scale = memory_region(machine, "user2");
 
 	/* for each starting longitude */
 	for (longitude = 0; longitude < 0x100; longitude++)
 	{
-		UINT8 i, latitude, start_segment, segment_count;
-		UINT8 *buffer;
+		uint8_t i, latitude, start_segment, segment_count;
+		uint8_t *buffer;
 
 		planet_frame frame;
 		planet_frame_line *line = 0;
 
-		UINT16 total_segment_count = 0;
+		uint16_t total_segment_count = 0;
 
 		/* for each latitude */
 		for (latitude = 0; latitude < 0x80; latitude++)
 		{
-			UINT8 segment, longitude_scale_factor, latitude_scale_factor, color, x=0;
-			UINT8 x_array[32], color_array[32], visible_array[32];
+			uint8_t segment, longitude_scale_factor, latitude_scale_factor, color, x=0;
+			uint8_t x_array[32], color_array[32], visible_array[32];
 
 			/* point to the structure which will hold the data for this line */
 			line = &frame.lines[latitude];
@@ -152,7 +152,7 @@ static void liberatr_init_planet(running_machine *machine, planet *liberatr_plan
 			/* for this latitude, load the 32 segments into the arrays */
 			for (segment = 0; segment < 0x20; segment++)
 			{
-				UINT16 length, planet_data, address;
+				uint16_t length, planet_data, address;
 
 				/*
                    read the planet picture ROM and get the
@@ -178,7 +178,7 @@ static void liberatr_init_planet(running_machine *machine, planet *liberatr_plan
 					longitude_scale_factor = longitude_scale[address];
 				}
 
-				x_array[segment] = (((UINT16)latitude_scale_factor * (UINT16)longitude_scale_factor) + 0x80) >> 8;	/* round it */
+				x_array[segment] = (((uint16_t)latitude_scale_factor * (uint16_t)longitude_scale_factor) + 0x80) >> 8;	/* round it */
 				color_array[segment] = color;
 			}
 
@@ -227,13 +227,13 @@ static void liberatr_init_planet(running_machine *machine, planet *liberatr_plan
            many segments it will take to store the description, allocate the
            space for it and copy the data to it.
         */
-		buffer = auto_alloc_array(machine, UINT8, 2*(128 + total_segment_count));
+		buffer = auto_alloc_array(machine, uint8_t, 2*(128 + total_segment_count));
 
 		liberatr_planet->frames[longitude] = buffer;
 
 		for (latitude = 0; latitude < 0x80; latitude++)
 		{
-			UINT8 last_x;
+			uint8_t last_x;
 
 
 			line = &frame.lines[latitude];
@@ -247,7 +247,7 @@ static void liberatr_init_planet(running_machine *machine, planet *liberatr_plan
 
 			for (i = 0; i < segment_count; i++)
 			{
-				UINT8 current_x = (line->x_array[i] + 1) / 2;
+				uint8_t current_x = (line->x_array[i] + 1) / 2;
 
 				*buffer++ = line->color_array[i];
 				*buffer++ = current_x - last_x;
@@ -267,7 +267,7 @@ static void liberatr_init_planet(running_machine *machine, planet *liberatr_plan
 
 VIDEO_START( liberatr )
 {
-	liberatr_videoram = auto_alloc_array(machine, UINT8, 0x10000);
+	liberatr_videoram = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	/* allocate the planet descriptor structure */
 	liberatr_planets[0] = auto_alloc(machine, planet);
@@ -285,7 +285,7 @@ static void get_pens(pen_t *pens)
 
 	for (i = 0; i < NUM_PENS; i++)
 	{
-		UINT8 r,g,b;
+		uint8_t r,g,b;
 
 		/* handle the hardware flip of the bit order from 765 to 576 that
            hardware does between vram and color ram */
@@ -293,7 +293,7 @@ static void get_pens(pen_t *pens)
 								   0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
 								   0x10, 0x12, 0x14, 0x16, 0x11, 0x13, 0x15, 0x17 };
 
-		UINT8 data = liberatr_colorram[i];
+		uint8_t data = liberatr_colorram[i];
 
 		/* scale it from 0x00-0xff */
 		r = ((~data >> 3) & 0x07) * 0x24 + 3;  if (r == 3)  r = 0;
@@ -307,29 +307,29 @@ static void get_pens(pen_t *pens)
 
 static void liberatr_draw_planet(bitmap_t *bitmap, pen_t *pens)
 {
-	UINT8 latitude;
+	uint8_t latitude;
 
-	UINT8 *buffer = liberatr_planets[(*liberatr_planet_select >> 4) & 0x01]->frames[*liberatr_planet_frame];
+	uint8_t *buffer = liberatr_planets[(*liberatr_planet_select >> 4) & 0x01]->frames[*liberatr_planet_frame];
 
 	/* for each latitude */
 	for (latitude = 0; latitude < 0x80; latitude++)
 	{
-		UINT8 segment;
+		uint8_t segment;
 
 		/* grab the color value for the base (if any) at this latitude */
-		UINT8 base_color = liberatr_base_ram[latitude >> 3] ^ 0x0f;
+		uint8_t base_color = liberatr_base_ram[latitude >> 3] ^ 0x0f;
 
-		UINT8 segment_count = *buffer++;
-		UINT8 x = *buffer++;
-		UINT8 y = 64 + latitude;
+		uint8_t segment_count = *buffer++;
+		uint8_t x = *buffer++;
+		uint8_t y = 64 + latitude;
 
 		/* run through the segments, drawing its color until its x_array value comes up. */
 		for (segment = 0; segment < segment_count; segment++)
 		{
-			UINT8 i;
+			uint8_t i;
 
-			UINT8 color = *buffer++;
-			UINT8 segment_length = *buffer++;
+			uint8_t color = *buffer++;
+			uint8_t segment_length = *buffer++;
 
 			if ((color & 0x0c) == 0x0c)
 				color = base_color;
@@ -347,10 +347,10 @@ static void liberatr_draw_bitmap(bitmap_t *bitmap, pen_t *pens)
 
 	for (offs = 0; offs < 0x10000; offs++)
 	{
-		UINT8 data = liberatr_videoram[offs];
+		uint8_t data = liberatr_videoram[offs];
 
-		UINT8 y = offs >> 8;
-		UINT8 x = offs & 0xff;
+		uint8_t y = offs >> 8;
+		uint8_t x = offs & 0xff;
 
 		if (data)
 			*BITMAP_ADDR32(bitmap, y, x) = pens[(data >> 5) | 0x10];

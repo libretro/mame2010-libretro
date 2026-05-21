@@ -7,11 +7,11 @@ void sprint8_set_collision(running_machine *machine, int n);
 
 /*----------- defined in video/sprint8.c -----------*/
 
-extern UINT8* sprint8_video_ram;
-extern UINT8* sprint8_pos_h_ram;
-extern UINT8* sprint8_pos_v_ram;
-extern UINT8* sprint8_pos_d_ram;
-extern UINT8* sprint8_team;
+extern uint8_t* sprint8_video_ram;
+extern uint8_t* sprint8_pos_h_ram;
+extern uint8_t* sprint8_pos_v_ram;
+extern uint8_t* sprint8_pos_d_ram;
+extern uint8_t* sprint8_team;
 
 PALETTE_INIT( sprint8 );
 VIDEO_EOF( sprint8 );

@@ -15,7 +15,7 @@
 ****************************************************************************/
 
 
-static const UINT8 batsugun_cmd_snd[64] =
+static const uint8_t batsugun_cmd_snd[64] =
 {
 /* Sound Command 13 (0x0d) is a megamix of OKI sound effects */
 /* Sound Command 20 (0x14) repeats the initial crash part of the sample 4 times */
@@ -29,7 +29,7 @@ static const UINT8 batsugun_cmd_snd[64] =
 /*38*/  0x0e, 0x0f, 0x1b, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-static const UINT8 kbash_cmd_snd[128] =
+static const uint8_t kbash_cmd_snd[128] =
 {
 /*00*/  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 /*08*/  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -49,7 +49,7 @@ static const UINT8 kbash_cmd_snd[128] =
 /*78*/  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-static const UINT8 fixeight_cmd_snd[128] =
+static const uint8_t fixeight_cmd_snd[128] =
 {
 /* Some sound commands are mixed with tones produced by the FM chip */
 /* Probably 96(60H), 82(52H), 80(50H) and 70(46H) and maybe others */

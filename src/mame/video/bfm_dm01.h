@@ -16,7 +16,7 @@ PALETTE_INIT( bfm_dm01 );
 
 void BFM_dm01_reset(void);
 
-void BFM_dm01_writedata(running_machine *machine,UINT8 data);
+void BFM_dm01_writedata(running_machine *machine,uint8_t data);
 
 int BFM_dm01_busy(void);
 

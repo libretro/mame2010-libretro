@@ -12,8 +12,8 @@
 
 /*----------- defined in video/starfire.c -----------*/
 
-extern UINT8 *starfire_videoram;
-extern UINT8 *starfire_colorram;
+extern uint8_t *starfire_videoram;
+extern uint8_t *starfire_colorram;
 
 VIDEO_UPDATE( starfire );
 VIDEO_START( starfire );

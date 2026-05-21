@@ -17,11 +17,11 @@
 static TILE_GET_INFO( get_tile_info_A )
 {
 	flkatck_state *state = (flkatck_state *)machine->driver_data;
-	UINT8 ctrl_0 = k007121_ctrlram_r(state->k007121, 0);
-	UINT8 ctrl_2 = k007121_ctrlram_r(state->k007121, 2);
-	UINT8 ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
-	UINT8 ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
+	uint8_t ctrl_0 = k007121_ctrlram_r(state->k007121, 0);
+	uint8_t ctrl_2 = k007121_ctrlram_r(state->k007121, 2);
+	uint8_t ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
+	uint8_t ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
 	int attr = state->k007121_ram[tile_index];
 	int code = state->k007121_ram[tile_index + 0x400];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
@@ -170,7 +170,7 @@ VIDEO_UPDATE( flkatck )
 
 	/* draw the graphics */
 	tilemap_draw(bitmap, &clip[0], state->k007121_tilemap[0], 0, 0);
-	k007121_sprites_draw(state->k007121, bitmap, cliprect, screen->machine->gfx[0], NULL, &state->k007121_ram[0x1000], 0, 40, 0, (UINT32)-1);
+	k007121_sprites_draw(state->k007121, bitmap, cliprect, screen->machine->gfx[0], NULL, &state->k007121_ram[0x1000], 0, 40, 0, (uint32_t)-1);
 	tilemap_draw(bitmap, &clip[1], state->k007121_tilemap[1], 0, 0);
 	return 0;
 }

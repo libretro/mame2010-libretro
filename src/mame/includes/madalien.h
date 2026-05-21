@@ -14,15 +14,15 @@
 
 /*----------- defined in video/madalien.c -----------*/
 
-extern UINT8 *madalien_videoram;
-extern UINT8 *madalien_charram;
+extern uint8_t *madalien_videoram;
+extern uint8_t *madalien_charram;
 
-extern UINT8 *madalien_video_flags;
-extern UINT8 *madalien_video_control;
-extern UINT8 *madalien_scroll;
-extern UINT8 *madalien_edge1_pos;
-extern UINT8 *madalien_edge2_pos;
-extern UINT8 *madalien_headlight_pos;
+extern uint8_t *madalien_video_flags;
+extern uint8_t *madalien_video_control;
+extern uint8_t *madalien_scroll;
+extern uint8_t *madalien_edge1_pos;
+extern uint8_t *madalien_edge2_pos;
+extern uint8_t *madalien_headlight_pos;
 
 MACHINE_DRIVER_EXTERN( madalien_video );
 

@@ -5,17 +5,17 @@
 #include "includes/namcos2.h"
 #include "includes/namcoic.h"
 
-UINT16 *namcos2_sprite_ram;
-UINT16 *namcos2_68k_palette_ram;
+uint16_t *namcos2_sprite_ram;
+uint16_t *namcos2_68k_palette_ram;
 size_t namcos2_68k_palette_size;
 //size_t namcos2_68k_roz_ram_size;
-UINT16 *namcos2_68k_roz_ram;
+uint16_t *namcos2_68k_roz_ram;
 
-static UINT16 namcos2_68k_roz_ctrl[0x8];
+static uint16_t namcos2_68k_roz_ctrl[0x8];
 static tilemap_t *tilemap_roz;
 
 static void
-TilemapCB( UINT16 code, int *tile, int *mask )
+TilemapCB( uint16_t code, int *tile, int *mask )
 {
 	*mask = code;
 
@@ -44,7 +44,7 @@ TilemapCB( UINT16 code, int *tile, int *mask )
  * ---- ---- xxxx ---- always zero?
  * ---- ---- ---- xxxx sprite bank
  */
-static UINT16 namcos2_gfx_ctrl;
+static uint16_t namcos2_gfx_ctrl;
 
 READ16_HANDLER( namcos2_gfx_ctrl_r )
 {
@@ -64,8 +64,8 @@ static TILE_GET_INFO( get_tile_info_roz )
 
 struct RozParam
 {
-	UINT32 size;
-	UINT32 startx,starty;
+	uint32_t size;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 	int color;
 	int wrap;
@@ -75,23 +75,23 @@ INLINE void
 DrawRozHelperBlock(const struct RozParam *rozInfo, int destx, int desty,
 	int srcx, int srcy, int width, int height,
 	bitmap_t *destbitmap, bitmap_t *flagsbitmap,
-	bitmap_t *srcbitmap, UINT32 size_mask)
+	bitmap_t *srcbitmap, uint32_t size_mask)
 {
 	int desty_end = desty + height;
 
 	int end_incrx = rozInfo->incyx - (width * rozInfo->incxx);
 	int end_incry = rozInfo->incyy - (width * rozInfo->incxy);
 
-	UINT16 *dest = BITMAP_ADDR16(destbitmap, desty, destx);
+	uint16_t *dest = BITMAP_ADDR16(destbitmap, desty, destx);
 	int dest_rowinc = destbitmap->rowpixels - width;
 
 	while (desty < desty_end)
 	{
-		UINT16 *dest_end = dest + width;
+		uint16_t *dest_end = dest + width;
 		while (dest < dest_end)
 		{
-			UINT32 xpos = (srcx >> 16);
-			UINT32 ypos = (srcy >> 16);
+			uint32_t xpos = (srcx >> 16);
+			uint32_t ypos = (srcy >> 16);
 
 			if (rozInfo->wrap)
 			{
@@ -161,12 +161,12 @@ DrawRozHelper(
 
 #define ROZ_BLOCK_SIZE 8
 
-		UINT32 size_mask = rozInfo->size - 1;
+		uint32_t size_mask = rozInfo->size - 1;
 		bitmap_t *srcbitmap = tilemap_get_pixmap(tmap);
 		bitmap_t *flagsbitmap = tilemap_get_flagsmap(tmap);
-		UINT32 srcx = (rozInfo->startx + (clip->min_x * rozInfo->incxx) +
+		uint32_t srcx = (rozInfo->startx + (clip->min_x * rozInfo->incxx) +
 			(clip->min_y * rozInfo->incyx));
-		UINT32 srcy = (rozInfo->starty + (clip->min_x * rozInfo->incxy) +
+		uint32_t srcy = (rozInfo->starty + (clip->min_x * rozInfo->incxy) +
 			(clip->min_y * rozInfo->incyy));
 		int destx = clip->min_x;
 		int desty = clip->min_y;
@@ -251,12 +251,12 @@ DrawROZ(bitmap_t *bitmap,const rectangle *cliprect)
 	struct RozParam rozParam;
 
 	rozParam.color = (namcos2_gfx_ctrl & 0x0f00);
-	rozParam.incxx  = (INT16)namcos2_68k_roz_ctrl[0];
-	rozParam.incxy  = (INT16)namcos2_68k_roz_ctrl[1];
-	rozParam.incyx  = (INT16)namcos2_68k_roz_ctrl[2];
-	rozParam.incyy  = (INT16)namcos2_68k_roz_ctrl[3];
-	rozParam.startx = (INT16)namcos2_68k_roz_ctrl[4];
-	rozParam.starty = (INT16)namcos2_68k_roz_ctrl[5];
+	rozParam.incxx  = (int16_t)namcos2_68k_roz_ctrl[0];
+	rozParam.incxy  = (int16_t)namcos2_68k_roz_ctrl[1];
+	rozParam.incyx  = (int16_t)namcos2_68k_roz_ctrl[2];
+	rozParam.incyy  = (int16_t)namcos2_68k_roz_ctrl[3];
+	rozParam.startx = (int16_t)namcos2_68k_roz_ctrl[4];
+	rozParam.starty = (int16_t)namcos2_68k_roz_ctrl[5];
 	rozParam.size = 2048;
 	rozParam.wrap = 1;
 
@@ -322,10 +322,10 @@ WRITE16_HANDLER( namcos2_68k_roz_ram_w )
 
 /**************************************************************************/
 
-static UINT16
+static uint16_t
 GetPaletteRegister( int which )
 {
-	const UINT16 *source = &namcos2_68k_palette_ram[0x3000/2];
+	const uint16_t *source = &namcos2_68k_palette_ram[0x3000/2];
 	return ((source[which*2]&0xff)<<8) | (source[which*2+1]&0xff);
 }
 

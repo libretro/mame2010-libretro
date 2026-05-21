@@ -31,7 +31,7 @@ HgKairak: 86010000 1f201918 a0000000 Large Screen
 
 
 /* --- SPRITES --- */
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 scr )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t scr )
 {
 	/*- Sprite Format 0x0000 - 0x2bff -**
 
@@ -54,9 +54,9 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 	psikyo4_state *state = (psikyo4_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	UINT32 *source = state->spriteram;
-	UINT16 *list = (UINT16 *)state->spriteram + 0x2c00/2 + 0x04/2; /* 0x2c00/0x2c02 what are these for, pointers? one for each screen */
-	UINT16 listlen = (0xc00/2 - 0x04/2), listcntr = 0;
+	uint32_t *source = state->spriteram;
+	uint16_t *list = (uint16_t *)state->spriteram + 0x2c00/2 + 0x04/2; /* 0x2c00/0x2c02 what are these for, pointers? one for each screen */
+	uint16_t listlen = (0xc00/2 - 0x04/2), listcntr = 0;
 	int flipscreen1, flipscreen2;
 
 	flipscreen1 = (((state->vidregs[1] >> 30) & 2) == 2) ? 1 : 0;
@@ -64,7 +64,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 	while (listcntr < listlen)
 	{
-		UINT16 listdat, sprnum, thisscreen;
+		uint16_t listdat, sprnum, thisscreen;
 
 		listdat = list[BYTE_XOR_BE(listcntr)];
 		sprnum = (listdat & 0x03ff) * 2;
@@ -76,7 +76,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 		if (!(listdat & 0x8000) && thisscreen) /* draw only selected screen */
 		{
 			int loopnum = 0, i, j;
-			UINT32 xpos, ypos, tnum, wide, high, colr, flipx, flipy;
+			uint32_t xpos, ypos, tnum, wide, high, colr, flipx, flipy;
 			int xstart, ystart, xend, yend, xinc, yinc;
 
 			ypos = (source[sprnum + 0] & 0x03ff0000) >> 16;

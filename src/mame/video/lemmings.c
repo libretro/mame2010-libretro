@@ -15,7 +15,7 @@
 #include "emu.h"
 #include "includes/lemmings.h"
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16 *spritedata, int gfxbank, UINT16 pri )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t *spritedata, int gfxbank, uint16_t pri )
 {
 	int offs;
 
@@ -75,7 +75,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 static TILE_GET_INFO( get_tile_info )
 {
 	lemmings_state *state = (lemmings_state *)machine->driver_data;
-	UINT16 tile = state->vram_data[tile_index];
+	uint16_t tile = state->vram_data[tile_index];
 
 	SET_TILE_INFO(
 			2,
@@ -90,9 +90,9 @@ VIDEO_START( lemmings )
 	state->bitmap0 = auto_bitmap_alloc(machine, 2048, 256, machine->primary_screen->format());
 	state->vram_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_cols, 8, 8, 64, 32);
 
-	state->vram_buffer = auto_alloc_array(machine, UINT8, 2048 * 64); /* 64 bytes per VRAM character */
-	state->sprite_triple_buffer_0 = auto_alloc_array(machine, UINT16, 0x800 / 2);
-	state->sprite_triple_buffer_1 = auto_alloc_array(machine, UINT16, 0x800 / 2);
+	state->vram_buffer = auto_alloc_array(machine, uint8_t, 2048 * 64); /* 64 bytes per VRAM character */
+	state->sprite_triple_buffer_0 = auto_alloc_array(machine, uint16_t, 0x800 / 2);
+	state->sprite_triple_buffer_1 = auto_alloc_array(machine, uint16_t, 0x800 / 2);
 
 	tilemap_set_transparent_pen(state->vram_tilemap, 0);
 	bitmap_fill(state->bitmap0, 0, 0x100);

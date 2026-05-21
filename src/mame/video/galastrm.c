@@ -18,7 +18,7 @@ static struct tempsprite *spritelist;
 static bitmap_t *tmpbitmaps;
 static bitmap_t *polybitmap;
 static poly_manager *poly;
-INT16 galastrm_tc0610_ctrl_reg[2][8];
+int16_t galastrm_tc0610_ctrl_reg[2][8];
 
 typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
@@ -102,8 +102,8 @@ static struct tempsprite *sprite_ptr_pre;
 
 static void draw_sprites_pre(running_machine *machine, int x_offs, int y_offs)
 {
-	UINT32 *spriteram32 = machine->generic.spriteram.u32;
-	UINT16 *spritemap = (UINT16 *)memory_region(machine, "user1");
+	uint32_t *spriteram32 = machine->generic.spriteram.u32;
+	uint16_t *spritemap = (uint16_t *)memory_region(machine, "user1");
 	int offs, data, tilenum, color, flipx, flipy;
 	int x, y, priority, dblsize, curx, cury;
 	int sprites_flipscreen = 0;
@@ -232,18 +232,18 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
                 POLYGON RENDERER
 **************************************************************/
 
-static void tc0610_draw_scanline(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void tc0610_draw_scanline(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
-	UINT16 *framebuffer = BITMAP_ADDR16(destmap, scanline, 0);
+	uint16_t *framebuffer = BITMAP_ADDR16(destmap, scanline, 0);
 	bitmap_t *texbase = extra->texbase;
 	int startx = extent->startx;
 	int stopx = extent->stopx;
-	INT32 u = extent->param[0].start;
-	INT32 v = extent->param[1].start;
-	INT32 dudx = extent->param[0].dpdx;
-	INT32 dvdx = extent->param[1].dpdx;
+	int32_t u = extent->param[0].start;
+	int32_t v = extent->param[1].start;
+	int32_t dudx = extent->param[0].dpdx;
+	int32_t dvdx = extent->param[1].dpdx;
 	int x;
 
 	for (x = startx; x < stopx; x++)
@@ -451,9 +451,9 @@ VIDEO_UPDATE( galastrm )
 {
 	running_device *tc0100scn = screen->machine->device("tc0100scn");
 	running_device *tc0480scp = screen->machine->device("tc0480scp");
-	UINT8 layer[5];
-	UINT8 pivlayer[3];
-	UINT16 priority;
+	uint8_t layer[5];
+	uint8_t pivlayer[3];
+	uint16_t priority;
 	static const int primasks[4] = {0xfffc, 0xfff0, 0xff00, 0x0};
 	rectangle clip;
 	bitmap_t *priority_bitmap = screen->machine->priority_bitmap;
@@ -503,7 +503,7 @@ VIDEO_UPDATE( galastrm )
 	if (layer[0]==3 && layer[1]==0 && layer[2]==1 && layer[3]==2)
 	{
 		int x,y;
-		UINT8 *pri;
+		uint8_t *pri;
 
 		for (y=0; y < priority_bitmap->height; y++)
 		{
@@ -550,7 +550,7 @@ VIDEO_UPDATE( galastrm )
 	if (layer[0]==3 && layer[1]==0 && layer[2]==1 && layer[3]==2)
 	{
 		int x,y;
-		UINT8 *pri;
+		uint8_t *pri;
 
 		for (y=0; y < priority_bitmap->height; y++)
 		{

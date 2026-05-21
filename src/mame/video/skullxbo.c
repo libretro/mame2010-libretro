@@ -18,7 +18,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	skullxbo_state *state = (skullxbo_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = (data ^ 0x400) & 0x7ff;
 	int color = (data >> 11) & 0x0f;
 	int opaque = data & 0x8000;
@@ -29,8 +29,8 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	skullxbo_state *state = (skullxbo_state *)machine->driver_data;
-	UINT16 data1 = state->atarigen.playfield[tile_index];
-	UINT16 data2 = state->atarigen.playfield_upper[tile_index] & 0xff;
+	uint16_t data1 = state->atarigen.playfield[tile_index];
+	uint16_t data2 = state->atarigen.playfield_upper[tile_index] & 0xff;
 	int code = data1 & 0x7fff;
 	int color = data2 & 0x0f;
 	SET_TILE_INFO(1, code, color, (data1 >> 15) & 1);
@@ -108,8 +108,8 @@ WRITE16_HANDLER( skullxbo_xscroll_w )
 	skullxbo_state *state = (skullxbo_state *)space->machine->driver_data;
 
 	/* combine data */
-	UINT16 oldscroll = *state->atarigen.xscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.xscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if something changed, force an update */
@@ -131,9 +131,9 @@ WRITE16_HANDLER( skullxbo_yscroll_w )
 
 	/* combine data */
 	int scanline = space->machine->primary_screen->vpos();
-	UINT16 oldscroll = *state->atarigen.yscroll;
-	UINT16 newscroll = oldscroll;
-	UINT16 effscroll;
+	uint16_t oldscroll = *state->atarigen.yscroll;
+	uint16_t newscroll = oldscroll;
+	uint16_t effscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if something changed, force an update */
@@ -192,7 +192,7 @@ WRITE16_HANDLER( skullxbo_playfieldlatch_w )
 void skullxbo_scanline_update(running_machine *machine, int scanline)
 {
 	skullxbo_state *state = (skullxbo_state *)machine->driver_data;
-	UINT16 *base = &state->atarigen.alpha[(scanline / 8) * 64 + 42];
+	uint16_t *base = &state->atarigen.alpha[(scanline / 8) * 64 + 42];
 	int x;
 
 	/* keep in range */
@@ -210,8 +210,8 @@ void skullxbo_scanline_update(running_machine *machine, int scanline)
 	/* update the current parameters */
 	for (x = 42; x < 64; x++)
 	{
-		UINT16 data = *base++;
-		UINT16 command = data & 0x000f;
+		uint16_t data = *base++;
+		uint16_t command = data & 0x000f;
 
 		/* only command I've ever seen */
 		if (command == 0x0d)
@@ -257,8 +257,8 @@ VIDEO_UPDATE( skullxbo )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

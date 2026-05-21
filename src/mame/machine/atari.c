@@ -20,7 +20,7 @@
 #define VERBOSE_SERIAL	0
 #define VERBOSE_TIMERS	0
 
-static void a600xl_mmu(running_machine *machine, UINT8 new_mmu);
+static void a600xl_mmu(running_machine *machine, uint8_t new_mmu);
 
 static void pokey_reset(running_machine &machine);
 
@@ -99,7 +99,7 @@ const pia6821_interface atarixl_pia_interface =
  *
  **************************************************************/
 
-void a600xl_mmu(running_machine *machine, UINT8 new_mmu)
+void a600xl_mmu(running_machine *machine, uint8_t new_mmu)
 {
 	/* check if self-test ROM changed */
 	if ( new_mmu & 0x80 )
@@ -314,17 +314,17 @@ static void pokey_reset(running_machine &machine)
 }
 
 
-static UINT8 console_read(const address_space *space)
+static uint8_t console_read(const address_space *space)
 {
 	return input_port_read(space->machine, "console");
 }
 
 
-static void console_write(const address_space *space, UINT8 data)
+static void console_write(const address_space *space, uint8_t data)
 {
 	running_device *dac = space->machine->device("dac");
 	if (data & 0x08)
-		dac_data_w(dac, (UINT8)-120);
+		dac_data_w(dac, (uint8_t)-120);
 	else
 		dac_data_w(dac, +120);
 }
@@ -355,8 +355,8 @@ void atari_machine_start(running_machine *machine)
 	machine->add_notifier(MACHINE_NOTIFY_RESET, _antic_reset);
 
 	/* save states */
-	state_save_register_global_pointer(machine, ((UINT8 *) &antic.r), sizeof(antic.r));
-	state_save_register_global_pointer(machine, ((UINT8 *) &antic.w), sizeof(antic.w));
+	state_save_register_global_pointer(machine, ((uint8_t *) &antic.r), sizeof(antic.r));
+	state_save_register_global_pointer(machine, ((uint8_t *) &antic.w), sizeof(antic.w));
 }
 
 

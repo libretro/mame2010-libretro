@@ -29,7 +29,7 @@ static TIMER_CALLBACK( reset_yscroll_callback );
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarisy2_state *state = (atarisy2_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = (data >> 13) & 0x07;
 	SET_TILE_INFO(2, code, color, 0);
@@ -39,7 +39,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarisy2_state *state = (atarisy2_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = state->playfield_tile_bank[(data >> 10) & 1] + (data & 0x3ff);
 	int color = (data >> 11) & 7;
 	SET_TILE_INFO(0, code, color, 0);
@@ -130,8 +130,8 @@ VIDEO_START( atarisy2 )
 WRITE16_HANDLER( atarisy2_xscroll_w )
 {
 	atarisy2_state *state = (atarisy2_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.xscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.xscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */
@@ -163,8 +163,8 @@ static TIMER_CALLBACK( reset_yscroll_callback )
 WRITE16_HANDLER( atarisy2_yscroll_w )
 {
 	atarisy2_state *state = (atarisy2_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.yscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.yscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */
@@ -332,9 +332,9 @@ VIDEO_UPDATE( atarisy2 )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + priority_bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + priority_bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x] != 0x0f)
 				{

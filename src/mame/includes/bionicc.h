@@ -12,18 +12,18 @@ public:
 	bionicc_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  bgvideoram;
-	UINT16 *  fgvideoram;
-	UINT16 *  txvideoram;
-	UINT16 *  paletteram;
-//  UINT16 *  spriteram;  // needed for EOF, but currently handled through buffer_spriteram16
+	uint16_t *  bgvideoram;
+	uint16_t *  fgvideoram;
+	uint16_t *  txvideoram;
+	uint16_t *  paletteram;
+//  uint16_t *  spriteram;  // needed for EOF, but currently handled through buffer_spriteram16
 
 	/* video-related */
 	tilemap_t   *tx_tilemap, *bg_tilemap, *fg_tilemap;
-	UINT16    scroll[4];
+	uint16_t    scroll[4];
 
-	UINT16    inp[3];
-	UINT16    soundcommand;
+	uint16_t    inp[3];
+	uint16_t    soundcommand;
 };
 
 

@@ -10,29 +10,29 @@ public:
 	hyprduel_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  videoregs;
-	UINT16 *  screenctrl;
-	UINT16 *  tiletable_old;
-	UINT16 *  tiletable;
-	UINT16 *  vram_0;
-	UINT16 *  vram_1;
-	UINT16 *  vram_2;
-	UINT16 *  window;
-	UINT16 *  scroll;
-	UINT16 *  rombank;
-	UINT16 *  blitter_regs;
-	UINT16 *  irq_enable;
-	UINT16 *  sharedram1;
-	UINT16 *  sharedram3;
-	UINT16 *  spriteram;
-	UINT16 *  paletteram;
+	uint16_t *  videoregs;
+	uint16_t *  screenctrl;
+	uint16_t *  tiletable_old;
+	uint16_t *  tiletable;
+	uint16_t *  vram_0;
+	uint16_t *  vram_1;
+	uint16_t *  vram_2;
+	uint16_t *  window;
+	uint16_t *  scroll;
+	uint16_t *  rombank;
+	uint16_t *  blitter_regs;
+	uint16_t *  irq_enable;
+	uint16_t *  sharedram1;
+	uint16_t *  sharedram3;
+	uint16_t *  spriteram;
+	uint16_t *  paletteram;
 	size_t    tiletable_size;
 	size_t    spriteram_size;
 
 	/* video-related */
 	tilemap_t   *bg_tilemap[3];
-	UINT8     *empty_tiles;
-	UINT8     *dirtyindex;
+	uint8_t     *empty_tiles;
+	uint8_t     *dirtyindex;
 	int       sprite_xoffs, sprite_yoffs, sprite_yoffs_sub;
 
 	/* misc */

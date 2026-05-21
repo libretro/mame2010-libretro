@@ -40,9 +40,9 @@ Note:   if MAME_DEBUG is defined, pressing Z with:
 #include "emu.h"
 
 /* Variables that driver has access to: */
-UINT16 *powerins_vram_0, *powerins_vctrl_0;
-UINT16 *powerins_vram_1, *powerins_vctrl_1;
-//UINT16 *powerins_vregs;
+uint16_t *powerins_vram_0, *powerins_vctrl_0;
+uint16_t *powerins_vram_1, *powerins_vctrl_1;
+//uint16_t *powerins_vregs;
 
 /* Variables only used here: */
 static tilemap_t *tilemap_0, *tilemap_1;
@@ -89,7 +89,7 @@ WRITE16_HANDLER( powerins_paletteram16_w )
 	/*  RRRR GGGG BBBB RGBx */
 	/*  4321 4321 4321 000x */
 
-	UINT16 newword = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
+	uint16_t newword = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 
 	int r = ((newword >> 11) & 0x1E ) | ((newword >> 3) & 0x01);
 	int g = ((newword >>  7) & 0x1E ) | ((newword >> 2) & 0x01);
@@ -129,7 +129,7 @@ Offset:
 
 static TILE_GET_INFO( get_tile_info_0 )
 {
-	UINT16 code = powerins_vram_0[tile_index];
+	uint16_t code = powerins_vram_0[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x07ff) + (tile_bank*0x800),
@@ -169,7 +169,7 @@ Offset:
 
 static TILE_GET_INFO( get_tile_info_1 )
 {
-	UINT16 code = powerins_vram_1[tile_index];
+	uint16_t code = powerins_vram_1[tile_index];
 	SET_TILE_INFO(
 			1,
 			code & 0x0fff,
@@ -268,8 +268,8 @@ Offset:     Format:                 Value:
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *source = machine->generic.spriteram.u16 + 0x8000/2;
-	UINT16 *finish = machine->generic.spriteram.u16 + 0x9000/2;
+	uint16_t *source = machine->generic.spriteram.u16 + 0x8000/2;
+	uint16_t *finish = machine->generic.spriteram.u16 + 0x9000/2;
 
 	int screen_w = machine->primary_screen->width();
 	int screen_h = machine->primary_screen->height();

@@ -8,9 +8,9 @@
 #include "emu.h"
 
 static tilemap_t *fg_tilemap, *bg_tilemap;
-static UINT8 vram_bank;
-static UINT8 *tryout_vram, *tryout_vram_gfx;
-UINT8 *tryout_gfx_control;
+static uint8_t vram_bank;
+static uint8_t *tryout_vram, *tryout_vram_gfx;
+uint8_t *tryout_gfx_control;
 
 PALETTE_INIT( tryout )
 {
@@ -83,7 +83,7 @@ WRITE8_HANDLER( tryout_vram_w )
     gfx data and then set high from that point onwards.
 
     */
-	const UINT8 bank=(vram_bank>>1)&0x7;
+	const uint8_t bank=(vram_bank>>1)&0x7;
 
 
 	if ((bank==0 || bank==2 || bank==4 || bank==6) && (offset&0x7ff)<0x400) {
@@ -168,8 +168,8 @@ VIDEO_START( tryout )
 	fg_tilemap = tilemap_create(machine, get_fg_tile_info,get_fg_memory_offset,8,8,32,32);
 	bg_tilemap = tilemap_create(machine, get_bg_tile_info,get_bg_memory_offset,16,16,64,16);
 
-	tryout_vram=auto_alloc_array(machine, UINT8, 8 * 0x800);
-	tryout_vram_gfx=auto_alloc_array(machine, UINT8, 0x6000);
+	tryout_vram=auto_alloc_array(machine, uint8_t, 8 * 0x800);
+	tryout_vram_gfx=auto_alloc_array(machine, uint8_t, 0x6000);
 
 	gfx_element_set_source(machine->gfx[2], tryout_vram_gfx);
 
@@ -178,8 +178,8 @@ VIDEO_START( tryout )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
-	UINT8 *spriteram_2 = machine->generic.spriteram2.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram_2 = machine->generic.spriteram2.u8;
 	int offs,fx,fy,x,y,color,sprite,inc;
 
 	for (offs = 0;offs < 0x7f;offs += 4)

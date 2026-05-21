@@ -1,5 +1,5 @@
 /*  CAT702 ZN security chip */
 
-void znsec_init(int chip, const UINT8 *transform);
+void znsec_init(int chip, const uint8_t *transform);
 void znsec_start(int chip);
-UINT8 znsec_step(int chip, UINT8 input);
+uint8_t znsec_step(int chip, uint8_t input);

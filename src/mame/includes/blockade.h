@@ -8,14 +8,14 @@ public:
 
 	blockade_state(running_machine &machine) { }
 
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* input-related */
-	UINT8 coin_latch;  /* Active Low */
-	UINT8 just_been_reset;
+	uint8_t coin_latch;  /* Active Low */
+	uint8_t just_been_reset;
 };
 
 

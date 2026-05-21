@@ -51,17 +51,17 @@ struct _filter_state
 typedef struct _timer8253_channel timer8253_channel;
 struct _timer8253_channel
 {
-	UINT8				holding;			/* holding until counts written? */
-	UINT8				latchmode;			/* latching mode */
-	UINT8				latchtoggle;		/* latching state */
-	UINT8				clockmode;			/* clocking mode */
-	UINT8				bcdmode;			/* BCD mode? */
-	UINT8				output;				/* current output value */
-	UINT8				lastgate;			/* previous gate value */
-	UINT8				gate;				/* current gate value */
-	UINT8				subcount;			/* subcount (2MHz clocks per input clock) */
-	UINT16				count;				/* initial count */
-	UINT16				remain;				/* current down counter value */
+	uint8_t				holding;			/* holding until counts written? */
+	uint8_t				latchmode;			/* latching mode */
+	uint8_t				latchtoggle;		/* latching state */
+	uint8_t				clockmode;			/* clocking mode */
+	uint8_t				bcdmode;			/* BCD mode? */
+	uint8_t				output;				/* current output value */
+	uint8_t				lastgate;			/* previous gate value */
+	uint8_t				gate;				/* current gate value */
+	uint8_t				subcount;			/* subcount (2MHz clocks per input clock) */
+	uint16_t				count;				/* initial count */
+	uint16_t				remain;				/* current down counter value */
 };
 
 
@@ -73,7 +73,7 @@ struct _timer8253
 	filter_state		chan_filter[2];		/* filter states for the first two channels */
 	filter_state		gate1;				/* first RC filter state */
 	filter_state		gate2;				/* second RC filter state */
-	UINT8				config;				/* configuration for this timer */
+	uint8_t				config;				/* configuration for this timer */
 };
 
 
@@ -82,19 +82,19 @@ struct _usb_state
 {
 	sound_stream *		stream;				/* output stream */
 	running_device *cpu;				/* CPU index of the 8035 */
-	UINT8				in_latch;			/* input latch */
-	UINT8				out_latch;			/* output latch */
-	UINT8				last_p2_value;		/* current P2 output value */
-	UINT8 *				program_ram;		/* pointer to program RAM */
-	UINT8 *				work_ram;			/* pointer to work RAM */
-	UINT8				work_ram_bank;		/* currently selected work RAM bank */
-	UINT8				t1_clock;			/* T1 clock value */
-	UINT8				t1_clock_mask;		/* T1 clock mask (configured via jumpers) */
+	uint8_t				in_latch;			/* input latch */
+	uint8_t				out_latch;			/* output latch */
+	uint8_t				last_p2_value;		/* current P2 output value */
+	uint8_t *				program_ram;		/* pointer to program RAM */
+	uint8_t *				work_ram;			/* pointer to work RAM */
+	uint8_t				work_ram_bank;		/* currently selected work RAM bank */
+	uint8_t				t1_clock;			/* T1 clock value */
+	uint8_t				t1_clock_mask;		/* T1 clock mask (configured via jumpers) */
 	timer8253			timer_group[3];		/* 3 groups of timers */
-	UINT8				timer_mode[3];		/* mode control for each group */
-	UINT32				noise_shift;
-	UINT8				noise_state;
-	UINT8				noise_subcount;
+	uint8_t				timer_mode[3];		/* mode control for each group */
+	uint32_t				noise_shift;
+	uint8_t				noise_state;
+	uint8_t				noise_subcount;
 	double				gate_rc1_exp[2];
 	double				gate_rc2_exp[2];
 	filter_state		final_filter;
@@ -108,7 +108,7 @@ struct _usb_state
 ***************************************************************************/
 
 /* SP0250-based speech board */
-static UINT8 speech_latch, speech_t0, speech_p2, speech_drq;
+static uint8_t speech_latch, speech_t0, speech_p2, speech_drq;
 
 /* Universal sound board */
 static usb_state usb;
@@ -208,7 +208,7 @@ static void speech_drq_w(running_device *device, int level)
 static TIMER_CALLBACK( delayed_speech_w )
 {
 	int data = param;
-	UINT8 old = speech_latch;
+	uint8_t old = speech_latch;
 
 	/* all 8 bits are latched */
 	speech_latch = data;
@@ -310,7 +310,7 @@ static TIMER_DEVICE_CALLBACK( increment_t1_clock )
 }
 
 
-void sega_usb_reset(running_machine *machine, UINT8 t1_clock_mask)
+void sega_usb_reset(running_machine *machine, uint8_t t1_clock_mask)
 {
 	/* halt the USB CPU at reset time */
 	cpu_set_input_line(usb.cpu, INPUT_LINE_RESET, ASSERT_LINE);
@@ -406,7 +406,7 @@ static WRITE8_HANDLER( usb_p1_w )
 
 static WRITE8_HANDLER( usb_p2_w )
 {
-	UINT8 old = usb.last_p2_value;
+	uint8_t old = usb.last_p2_value;
 	usb.last_p2_value = data;
 
 	/* low 2 bits control the bank of work RAM we are addressing */
@@ -443,7 +443,7 @@ static READ8_HANDLER( usb_t1_r )
 
 INLINE void clock_channel(timer8253_channel *ch)
 {
-	UINT8 lastgate = ch->lastgate;
+	uint8_t lastgate = ch->lastgate;
 
 	/* update the gate */
 	ch->lastgate = ch->gate;
@@ -649,7 +649,7 @@ static DEVICE_START( usb_sound )
 	assert(usb.cpu != NULL);
 
 	/* allocate work RAM */
-	usb.work_ram = auto_alloc_array(machine, UINT8, 0x400);
+	usb.work_ram = auto_alloc_array(machine, uint8_t, 0x400);
 
 	/* create a sound stream */
 	usb.stream = stream_create(device, 0, 1, SAMPLE_RATE, NULL, usb_stream_update);
@@ -753,7 +753,7 @@ DEFINE_LEGACY_SOUND_DEVICE(USB, usb_sound);
  *
  *************************************/
 
-static void timer_w(int which, UINT8 offset, UINT8 data)
+static void timer_w(int which, uint8_t offset, uint8_t data)
 {
 	timer8253 *g = &usb.timer_group[which];
 	timer8253_channel *ch;
@@ -822,7 +822,7 @@ static void timer_w(int which, UINT8 offset, UINT8 data)
 }
 
 
-static void env_w(int which, UINT8 offset, UINT8 data)
+static void env_w(int which, uint8_t offset, uint8_t data)
 {
 	timer8253 *g = &usb.timer_group[which];
 

@@ -143,8 +143,8 @@ a split down the middle of the screen
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int enable_n)
 {
 	angelkds_state *state = (angelkds_state *)machine->driver_data;
-	const UINT8 *source = state->spriteram + 0x100 - 4;
-	const UINT8 *finish = state->spriteram;
+	const uint8_t *source = state->spriteram + 0x100 - 4;
+	const uint8_t *finish = state->spriteram;
 	const gfx_element *gfx = machine->gfx[3];
 
 	while (source >= finish)
@@ -165,16 +165,16 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
     x = X position
 
     */
-		UINT16 tile_no = source[0];
-		UINT8 attr = source[1];
-		UINT8 ypos = source[2];
-		UINT8 xpos = source[3];
+		uint16_t tile_no = source[0];
+		uint8_t attr = source[1];
+		uint8_t ypos = source[2];
+		uint8_t xpos = source[3];
 
-		UINT8 enable = attr & 0xc0;
-		UINT8 flipx = (attr & 0x10) >> 4;
-		UINT8 flipy = (attr & 0x20) >> 5;
-		UINT8 bank = attr & 0x08;
-		UINT8 color = attr & 0x03;
+		uint8_t enable = attr & 0xc0;
+		uint8_t flipx = (attr & 0x10) >> 4;
+		uint8_t flipy = (attr & 0x20) >> 5;
+		uint8_t bank = attr & 0x08;
+		uint8_t color = attr & 0x03;
 
 		if (bank)
 			tile_no += 0x100;

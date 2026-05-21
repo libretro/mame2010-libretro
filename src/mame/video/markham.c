@@ -34,7 +34,7 @@ PALETTE_INIT( markham )
 	/* sprites lookup table */
 	for (i = 0; i < 0x400; i++)
 	{
-		UINT8 ctabentry = color_prom[i];
+		uint8_t ctabentry = color_prom[i];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -76,7 +76,7 @@ VIDEO_START( markham )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	markham_state *state = (markham_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0x60; offs < 0x100; offs += 4)

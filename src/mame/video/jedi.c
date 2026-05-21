@@ -73,7 +73,7 @@ static void get_pens(jedi_state *state, pen_t *pens)
 	{
 		int r, g, b, bits, intensity;
 
-		UINT16 color = state->paletteram[offs] | (state->paletteram[offs | 0x400] << 8);
+		uint16_t color = state->paletteram[offs] | (state->paletteram[offs | 0x400] << 8);
 
 		intensity = (color >> 9) & 7;
 		bits = (color >> 6) & 7;
@@ -137,15 +137,15 @@ static void draw_background_and_text(running_machine *machine, jedi_state *state
 	int y;
 	int background_line_buffer[0x200];	/* RAM chip at 2A */
 
-	UINT8 *tx_gfx = memory_region(machine, "gfx1");
-	UINT8 *bg_gfx = memory_region(machine, "gfx2");
-	UINT8 *prom1 = &memory_region(machine, "proms")[0x0000 | ((*state->smoothing_table & 0x03) << 8)];
-	UINT8 *prom2 = &memory_region(machine, "proms")[0x0800 | ((*state->smoothing_table & 0x03) << 8)];
+	uint8_t *tx_gfx = memory_region(machine, "gfx1");
+	uint8_t *bg_gfx = memory_region(machine, "gfx2");
+	uint8_t *prom1 = &memory_region(machine, "proms")[0x0000 | ((*state->smoothing_table & 0x03) << 8)];
+	uint8_t *prom2 = &memory_region(machine, "proms")[0x0800 | ((*state->smoothing_table & 0x03) << 8)];
 	int vscroll = state->vscroll;
 	int hscroll = state->hscroll;
 	int tx_bank = *state->foreground_bank;
-	UINT8 *tx_ram = state->foregroundram;
-	UINT8 *bg_ram = state->backgroundram;
+	uint8_t *tx_ram = state->foregroundram;
+	uint8_t *bg_ram = state->backgroundram;
 
 	memset(background_line_buffer, 0, 0x200 * sizeof(int));
 
@@ -235,23 +235,23 @@ static void draw_background_and_text(running_machine *machine, jedi_state *state
 static void draw_sprites(running_machine *machine, jedi_state *state, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	offs_t offs;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *gfx3 = memory_region(machine, "gfx3");
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *gfx3 = memory_region(machine, "gfx3");
 
 	for (offs = 0x00; offs < 0x30; offs++)
 	{
 		int sy;
 		int y_size;
-		UINT8 *gfx;
+		uint8_t *gfx;
 
 		/* coordinates adjustments made to match screenshot */
-		UINT8 y = 240 - spriteram[offs + 0x80] + 1;
+		uint8_t y = 240 - spriteram[offs + 0x80] + 1;
 		int flip_x = spriteram[offs + 0x40] & 0x10;
 		int flip_y = spriteram[offs + 0x40] & 0x20;
 		int tall = spriteram[offs + 0x40] & 0x08;
 
 		/* shuffle the bank bits in */
-		UINT16 code = spriteram[offs] |
+		uint16_t code = spriteram[offs] |
 					  ((spriteram[offs + 0x40] & 0x04) << 8) |
 					  ((spriteram[offs + 0x40] & 0x40) << 3) |
 					  ((spriteram[offs + 0x40] & 0x02) << 7);
@@ -274,7 +274,7 @@ static void draw_sprites(running_machine *machine, jedi_state *state, bitmap_t *
 		for (sy = 0; sy < y_size; sy++)
 		{
 			int i;
-			UINT16 x = spriteram[offs + 0x100] + ((spriteram[offs + 0x40] & 0x01) << 8) - 2;
+			uint16_t x = spriteram[offs + 0x100] + ((spriteram[offs + 0x40] & 0x01) << 8) - 2;
 
 			if ((y < cliprect->min_y) || (y > cliprect->max_y))
 				continue;
@@ -285,13 +285,13 @@ static void draw_sprites(running_machine *machine, jedi_state *state, bitmap_t *
 			for (i = 0; i < 2; i++)
 			{
 				int sx;
-				UINT8 data1 = *(0x00000 + gfx);
-				UINT8 data2 = *(0x10000 + gfx);
+				uint8_t data1 = *(0x00000 + gfx);
+				uint8_t data2 = *(0x10000 + gfx);
 
 				for (sx = 0; sx < 4; sx++)
 				{
 					/* the sprite pixel determines pen address bits A4-A7 */
-					UINT32 col = ((data1 & 0x80) >> 0) | ((data1 & 0x08) << 3) | ((data2 & 0x80) >> 2) | ((data2 & 0x08) << 1);
+					uint32_t col = ((data1 & 0x80) >> 0) | ((data1 & 0x08) << 3) | ((data2 & 0x80) >> 2) | ((data2 & 0x08) << 1);
 
 					x = x & 0x1ff;
 

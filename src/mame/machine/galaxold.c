@@ -13,7 +13,7 @@
 
 static int irq_line;
 
-static UINT8 _4in1_bank;
+static uint8_t _4in1_bank;
 
 static IRQ_CALLBACK(hunchbkg_irq_callback)
 {
@@ -166,7 +166,7 @@ WRITE8_HANDLER( zigzag_sillyprotection_w )
 
 DRIVER_INIT( zigzag )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 2, &RAM[0x2000], 0x1000);
 	memory_configure_bank(machine, "bank2", 0, 2, &RAM[0x2000], 0x1000);
 	memory_set_bank(machine, "bank1", 0);
@@ -194,11 +194,11 @@ static READ8_HANDLER( dingoe_3001_r )
 DRIVER_INIT( dingoe )
 {
 	offs_t i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (i = 0; i < 0x3000; i++)
 	{
-		UINT8 data_xor;
+		uint8_t data_xor;
 
 		/* XOR bit 2 with 4 and 5 with 0 */
 		data_xor = BIT(rom[i], 2) << 4 | BIT(rom[i], 5) << 0;
@@ -282,9 +282,9 @@ DRIVER_INIT( dingo )
 }
 
 
-static UINT8 decode_mooncrst(UINT8 data,offs_t addr)
+static uint8_t decode_mooncrst(uint8_t data,offs_t addr)
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = data;
 	if (BIT(data,1)) res ^= 0x40;
@@ -302,7 +302,7 @@ DRIVER_INIT( mooncrsu )
 DRIVER_INIT( mooncrst )
 {
 	offs_t i, len = memory_region_length(machine, "maincpu");
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (i = 0;i < len;i++)
@@ -320,8 +320,8 @@ DRIVER_INIT( moonqsr )
 {
 	offs_t i;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x8000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
 
@@ -366,7 +366,7 @@ Encryption PAL 16L8 on cardridge
 Pin layout is such that links can replace the PAL if encryption is not used.
 
 */
-	static const UINT8 xortable[8][4] =
+	static const uint8_t xortable[8][4] =
 	{
 		{ 6,0,6,0 },
 		{ 5,1,5,1 },
@@ -379,12 +379,12 @@ Pin layout is such that links can replace the PAL if encryption is not used.
 	};
 
 	offs_t i, len = memory_region_length(machine, "maincpu");
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (i = 0; i < len; i++)
 	{
-		UINT8 data_xor;
+		uint8_t data_xor;
 		int line = i & 0x07;
 
 		data_xor = (BIT(rom[i],xortable[line][0]) << xortable[line][1]) |
@@ -399,7 +399,7 @@ DRIVER_INIT( 4in1 )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	offs_t i, len = memory_region_length(machine, "maincpu");
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	/* Decrypt Program Roms */
 	for (i = 0; i < len; i++)

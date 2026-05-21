@@ -10,8 +10,8 @@
 
 static int palettebank;
 
-UINT8 *tagteam_videoram;
-UINT8 *tagteam_colorram;
+uint8_t *tagteam_videoram;
+uint8_t *tagteam_colorram;
 static tilemap_t *bg_tilemap;
 
 PALETTE_INIT( tagteam )

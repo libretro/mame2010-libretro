@@ -27,7 +27,7 @@ static int pitnrun_char_bank;
 static int pitnrun_color_select;
 static bitmap_t *tmp_bitmap[4];
 static tilemap_t *bg, *fg;
-UINT8* pitnrun_videoram2;
+uint8_t* pitnrun_videoram2;
 
 
 static TILE_GET_INFO( get_tile_info1 )
@@ -104,7 +104,7 @@ WRITE8_HANDLER(pitnrun_color_select_w)
 static void pitnrun_spotlights(running_machine *machine)
 {
 	int x,y,i,b,datapix;
-	UINT8 *ROM = memory_region(machine, "user1");
+	uint8_t *ROM = memory_region(machine, "user1");
 	for(i=0;i<4;i++)
 	 for(y=0;y<128;y++)
 	  for(x=0;x<16;x++)
@@ -179,7 +179,7 @@ VIDEO_START(pitnrun)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int sx, sy, flipx, flipy, offs,pal;
 
 	for (offs = 0 ; offs < 0x100; offs+=4)
@@ -219,19 +219,19 @@ VIDEO_UPDATE( pitnrun )
 #ifdef MAME_DEBUG
 	if (input_code_pressed_once(screen->machine, KEYCODE_Q))
 	{
-		UINT8 *ROM = memory_region(screen->machine, "maincpu");
+		uint8_t *ROM = memory_region(screen->machine, "maincpu");
 		ROM[0x84f6]=0; /* lap 0 - normal */
 	}
 
 	if (input_code_pressed_once(screen->machine, KEYCODE_W))
 	{
-		UINT8 *ROM = memory_region(screen->machine, "maincpu");
+		uint8_t *ROM = memory_region(screen->machine, "maincpu");
 		ROM[0x84f6]=6; /* lap 6 = spotlight */
 	}
 
 	if (input_code_pressed_once(screen->machine, KEYCODE_E))
 	{
-		UINT8 *ROM = memory_region(screen->machine, "maincpu");
+		uint8_t *ROM = memory_region(screen->machine, "maincpu");
 		ROM[0x84f6]=2; /* lap 3 (trial 2)= lightnings */
 		ROM[0x8102]=1;
 	}

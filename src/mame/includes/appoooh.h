@@ -8,12 +8,12 @@ public:
 	appoooh_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  bg_videoram;
-	UINT8 *  bg_colorram;
-	UINT8 *  fg_videoram;
-	UINT8 *  fg_colorram;
-	UINT8 *  spriteram;
-	UINT8 *  spriteram_2;
+	uint8_t *  bg_videoram;
+	uint8_t *  bg_colorram;
+	uint8_t *  fg_videoram;
+	uint8_t *  fg_colorram;
+	uint8_t *  spriteram;
+	uint8_t *  spriteram_2;
 
 	/* video-related */
 	tilemap_t  *fg_tilemap, *bg_tilemap;
@@ -21,8 +21,8 @@ public:
 	int priority;
 
 	/* sound-related */
-	UINT32   adpcm_data;
-	UINT32   adpcm_address;
+	uint32_t   adpcm_data;
+	uint32_t   adpcm_address;
 
 	/* devices */
 	running_device *adpcm;

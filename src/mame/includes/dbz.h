@@ -12,9 +12,9 @@ public:
 	dbz_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *      bg1_videoram;
-	UINT16 *      bg2_videoram;
-//  UINT16 *      paletteram;    // currently this uses generic palette handling
+	uint16_t *      bg1_videoram;
+	uint16_t *      bg2_videoram;
+//  uint16_t *      paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t    *bg1_tilemap, *bg2_tilemap;

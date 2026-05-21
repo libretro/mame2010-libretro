@@ -80,7 +80,7 @@ PALETTE_INIT( cave )
 	int pen;
 
 	/* create a 1:1 palette map covering everything */
-	state->palette_map = auto_alloc_array(machine, UINT16, machine->total_colors());
+	state->palette_map = auto_alloc_array(machine, uint16_t, machine->total_colors());
 
 	for (pen = 0; pen < machine->total_colors(); pen++)
 		state->palette_map[pen] = pen % maxpen;
@@ -193,7 +193,7 @@ static void set_pens( running_machine *machine )
 
 	for (pen = 0; pen < machine->total_colors(); pen++)
 	{
-		UINT16 data = state->paletteram[state->palette_map[pen]];
+		uint16_t data = state->paletteram[state->palette_map[pen]];
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 5), pal5bit(data >> 10), pal5bit(data >> 0));
 
@@ -225,9 +225,9 @@ static void set_pens( running_machine *machine )
 
 ***************************************************************************/
 
-INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int GFX, UINT16 *VRAM, int TDIM )
+INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int GFX, uint16_t *VRAM, int TDIM )
 {
-	UINT32 code, color, pri, tile;
+	uint32_t code, color, pri, tile;
 
 	if (TDIM)
 	{
@@ -270,11 +270,11 @@ void sailormn_tilebank_w( running_machine *machine, int bank )
 static TILE_GET_INFO( sailormn_get_tile_info_2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
-	UINT32 code, color, pri;
+	uint32_t code, color, pri;
 
 	if (state->tiledim_2)
 	{
-		UINT32 tile;
+		uint32_t tile;
 		tile  = (tile_index % (512 / 8)) / 2 + ((tile_index / (512 / 8)) / 2) * (512 / 16);
 		code  = (state->vram_2[tile * 2 + 0x0000 / 2] << 16) + state->vram_2[tile * 2 + 0x0002 / 2];
 
@@ -301,7 +301,7 @@ static TILE_GET_INFO( sailormn_get_tile_info_2 )
 }
 
 
-INLINE void vram_w( UINT16 *VRAM, tilemap_t *TILEMAP, ATTR_UNUSED offs_t offset, ATTR_UNUSED UINT16 data, ATTR_UNUSED UINT16 mem_mask )
+INLINE void vram_w( uint16_t *VRAM, tilemap_t *TILEMAP, ATTR_UNUSED offs_t offset, ATTR_UNUSED uint16_t data, ATTR_UNUSED uint16_t mem_mask )
 {
 	if ((VRAM[offset] & mem_mask) == (data & mem_mask))
 			return;
@@ -325,7 +325,7 @@ INLINE void vram_w( UINT16 *VRAM, tilemap_t *TILEMAP, ATTR_UNUSED offs_t offset,
     and 408000-407fff both go to the 8x8 tilemap ram. Use this function
     in this cases. Note that the get_tile_info function looks in the
     4000-7fff range for tiles, so we have to write the data there. */
-INLINE void vram_8x8_w( UINT16 *VRAM, tilemap_t *TILEMAP, ATTR_UNUSED offs_t offset, ATTR_UNUSED UINT16 data, ATTR_UNUSED UINT16 mem_mask )
+INLINE void vram_8x8_w( uint16_t *VRAM, tilemap_t *TILEMAP, ATTR_UNUSED offs_t offset, ATTR_UNUSED uint16_t data, ATTR_UNUSED uint16_t mem_mask )
 {
 	offset %= 0x4000 / 2;
 	if ((VRAM[offset] & mem_mask) == (data & mem_mask))
@@ -543,11 +543,11 @@ static void get_sprite_info_cave( running_machine *machine )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	pen_t base_pal = 0;
-	const UINT8 *base_gfx = memory_region(machine, "sprites");
+	const uint8_t *base_gfx = memory_region(machine, "sprites");
 	int code_max = memory_region_length(machine, "sprites") / (16*16);
 
-	UINT16 *source;
-	UINT16 *finish;
+	uint16_t *source;
+	uint16_t *finish;
 	struct sprite_cave *sprite = state->sprite;
 
 	int glob_flipx = state->videoregs[0] & 0x8000;
@@ -672,11 +672,11 @@ static void get_sprite_info_donpachi( running_machine *machine )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	pen_t base_pal = 0;
-	const UINT8 *base_gfx = memory_region(machine, "sprites");
+	const uint8_t *base_gfx = memory_region(machine, "sprites");
 	int code_max = memory_region_length(machine, "sprites") / (16*16);
 
-	UINT16 *source;
-	UINT16 *finish;
+	uint16_t *source;
+	uint16_t *finish;
 
 	struct sprite_cave *sprite = state->sprite;
 
@@ -774,7 +774,7 @@ static void sprite_init_cave( running_machine *machine )
 
 	state->sprite_zbuf_baseval = 0x10000 - MAX_SPRITE_NUM;
 	state->sprite_zbuf = auto_bitmap_alloc(machine, screen_width, screen_height, BITMAP_FORMAT_INDEXED16);
-	state->blit.baseaddr_zbuf = (UINT8 *)state->sprite_zbuf->base;
+	state->blit.baseaddr_zbuf = (uint8_t *)state->sprite_zbuf->base;
 	state->blit.line_offset_zbuf = state->sprite_zbuf->rowpixels * state->sprite_zbuf->bpp / 8;
 
 	state->num_sprites = state->spriteram_size / 0x10 / 2;
@@ -969,18 +969,18 @@ static void do_blit_zoom16_cave( running_machine *machine, const struct sprite_c
 	}
 
 	{
-		const UINT8 *pen_data = sprite->pen_data -1 -sprite->line_offset;
+		const uint8_t *pen_data = sprite->pen_data -1 -sprite->line_offset;
 		pen_t base_pen = sprite->base_pen;
 		int x, y;
-		UINT8 pen;
+		uint8_t pen;
 		int pitch = state->blit.line_offset * dy / 2;
-		UINT16 *dest = (UINT16 *)(state->blit.baseaddr + state->blit.line_offset * y1);
+		uint16_t *dest = (uint16_t *)(state->blit.baseaddr + state->blit.line_offset * y1);
 		int ycount = ycount0;
 
 		for (y = y1; y != y2; y += dy)
 		{
 			int xcount;
-			const UINT8 *source;
+			const uint8_t *source;
 
 			if (ycount & 0xffff0000)
 			{
@@ -1099,21 +1099,21 @@ static void do_blit_zoom16_cave_zb( running_machine *machine, const struct sprit
 	}
 
 	{
-		const UINT8 *pen_data = sprite->pen_data - 1 - sprite->line_offset;
+		const uint8_t *pen_data = sprite->pen_data - 1 - sprite->line_offset;
 		pen_t base_pen = sprite->base_pen;
 		int x, y;
-		UINT8 pen;
+		uint8_t pen;
 		int pitch = state->blit.line_offset * dy / 2;
-		UINT16 *dest = (UINT16 *)(state->blit.baseaddr + state->blit.line_offset * y1);
+		uint16_t *dest = (uint16_t *)(state->blit.baseaddr + state->blit.line_offset * y1);
 		int pitchz = state->blit.line_offset_zbuf * dy / 2;
-		UINT16 *zbf = (UINT16 *)(state->blit.baseaddr_zbuf + state->blit.line_offset_zbuf * y1);
-		UINT16 pri_sp = (UINT16)(sprite - state->sprite) + state->sprite_zbuf_baseval;
+		uint16_t *zbf = (uint16_t *)(state->blit.baseaddr_zbuf + state->blit.line_offset_zbuf * y1);
+		uint16_t pri_sp = (uint16_t)(sprite - state->sprite) + state->sprite_zbuf_baseval;
 		int ycount = ycount0;
 
 		for (y = y1; y != y2; y += dy)
 		{
 			int xcount;
-			const UINT8 *source;
+			const uint8_t *source;
 
 			if (ycount & 0xffff0000)
 			{
@@ -1214,17 +1214,17 @@ static void do_blit_16_cave( running_machine *machine, const struct sprite_cave 
 	}
 
 	{
-		const UINT8 *pen_data = sprite->pen_data;
+		const uint8_t *pen_data = sprite->pen_data;
 		pen_t base_pen = sprite->base_pen;
 		int x, y;
-		UINT8 pen;
+		uint8_t pen;
 		int pitch = state->blit.line_offset * dy / 2;
-		UINT16 *dest = (UINT16 *)(state->blit.baseaddr + state->blit.line_offset * y1);
+		uint16_t *dest = (uint16_t *)(state->blit.baseaddr + state->blit.line_offset * y1);
 
 		pen_data += sprite->line_offset * ycount0 + xcount0;
 		for (y = y1; y != y2; y += dy)
 		{
-			const UINT8 *source;
+			const uint8_t *source;
 			source = pen_data;
 			for (x = x1; x != x2; x += dx)
 			{
@@ -1311,20 +1311,20 @@ static void do_blit_16_cave_zb( running_machine *machine,  const struct sprite_c
 	}
 
 	{
-		const UINT8 *pen_data = sprite->pen_data;
+		const uint8_t *pen_data = sprite->pen_data;
 		pen_t base_pen = sprite->base_pen;
 		int x, y;
-		UINT8 pen;
+		uint8_t pen;
 		int pitch = state->blit.line_offset * dy / 2;
-		UINT16 *dest = (UINT16 *)(state->blit.baseaddr + state->blit.line_offset * y1);
+		uint16_t *dest = (uint16_t *)(state->blit.baseaddr + state->blit.line_offset * y1);
 		int pitchz = state->blit.line_offset_zbuf * dy / 2;
-		UINT16 *zbf = (UINT16 *)(state->blit.baseaddr_zbuf + state->blit.line_offset_zbuf * y1);
-		UINT16 pri_sp = (UINT16)(sprite - state->sprite) + state->sprite_zbuf_baseval;
+		uint16_t *zbf = (uint16_t *)(state->blit.baseaddr_zbuf + state->blit.line_offset_zbuf * y1);
+		uint16_t pri_sp = (uint16_t)(sprite - state->sprite) + state->sprite_zbuf_baseval;
 
 		pen_data += sprite->line_offset * ycount0 + xcount0;
 		for (y = y1; y != y2; y += dy)
 		{
-			const UINT8 *source;
+			const uint8_t *source;
 			source = pen_data;
 			for (x = x1; x != x2; x += dx)
 			{
@@ -1447,8 +1447,8 @@ static void sprite_draw_donpachi_zbuf( running_machine *machine, int priority )
 
 INLINE void cave_tilemap_draw(
 	running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect,
-	tilemap_t *TILEMAP, UINT16 *VRAM, UINT16 *VCTRL,
-	UINT32 flags, UINT32 priority, UINT32 priority2 )
+	tilemap_t *TILEMAP, uint16_t *VRAM, uint16_t *VCTRL,
+	uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	int sx, sy, flipx, flipy, offs_x, offs_y, offs_row;
@@ -1565,25 +1565,25 @@ INLINE void cave_tilemap_draw(
 	}
 }
 
-static void cave_tilemap_0_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+static void cave_tilemap_0_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	cave_tilemap_draw(machine, bitmap, cliprect, state->tilemap_0, state->vram_0, state->vctrl_0, flags, priority, priority2);
 }
 
-static void cave_tilemap_1_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+static void cave_tilemap_1_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	cave_tilemap_draw(machine, bitmap, cliprect, state->tilemap_1, state->vram_1, state->vctrl_1, flags, priority, priority2);
 }
 
-static void cave_tilemap_2_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+static void cave_tilemap_2_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	cave_tilemap_draw(machine, bitmap, cliprect, state->tilemap_2, state->vram_2, state->vctrl_2, flags, priority, priority2);
 }
 
-static void cave_tilemap_3_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 flags, UINT32 priority, UINT32 priority2 )
+static void cave_tilemap_3_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t flags, uint32_t priority, uint32_t priority2 )
 {
 	cave_state *state = (cave_state *)machine->driver_data;
 	cave_tilemap_draw(machine, bitmap, cliprect, state->tilemap_3, state->vram_3, state->vctrl_3, flags, priority, priority2);
@@ -1598,7 +1598,7 @@ VIDEO_UPDATE( cave )
 
 	set_pens(screen->machine);
 
-	state->blit.baseaddr = (UINT8 *)bitmap->base;
+	state->blit.baseaddr = (uint8_t *)bitmap->base;
 	state->blit.line_offset = bitmap->rowpixels * bitmap->bpp / 8;
 
 	/* Choose the tilemap to display (8x8 tiles or 16x16 tiles) */

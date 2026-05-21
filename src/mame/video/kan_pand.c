@@ -54,10 +54,10 @@ typedef struct _kaneko_pandora_state  kaneko_pandora_state;
 struct _kaneko_pandora_state
 {
 	screen_device *screen;
-	UINT8 *      spriteram;
+	uint8_t *      spriteram;
 	bitmap_t     *sprites_bitmap; /* bitmap to render sprites to, Pandora seems to be frame'buffered' */
 	int          clear_bitmap;
-	UINT8        region;
+	uint8_t        region;
 	int          xoffset, yoffset;
 	int			 bg_pen; // might work some other way..
 };
@@ -307,7 +307,7 @@ static DEVICE_START( kaneko_pandora )
 	pandora->yoffset = intf->y;
 	pandora->bg_pen = 0;
 
-	pandora->spriteram = auto_alloc_array(device->machine, UINT8, 0x1000);
+	pandora->spriteram = auto_alloc_array(device->machine, uint8_t, 0x1000);
 
 	pandora->sprites_bitmap = pandora->screen->alloc_compatible_bitmap();
 

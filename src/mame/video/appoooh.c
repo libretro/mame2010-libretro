@@ -26,7 +26,7 @@ PALETTE_INIT( appoooh )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT8 pen;
+		uint8_t pen;
 		int bit0, bit1, bit2, r, g, b;
 
 		if (i < 0x100)
@@ -66,7 +66,7 @@ PALETTE_INIT( robowres )
 	{
 		int bit0, bit1, bit2, r, g, b;
 
-		UINT8 pen = color_prom[0x020 + i] & 0x0f;
+		uint8_t pen = color_prom[0x020 + i] & 0x0f;
 
 		/* red component */
 		bit0 = (color_prom[pen] >> 0) & 0x01;
@@ -199,7 +199,7 @@ WRITE8_HANDLER( appoooh_out_w )
 
 	/* bit 6 ROM bank select */
 	{
-		UINT8 *RAM = memory_region(space->machine, "maincpu");
+		uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 		memory_set_bankptr(space->machine, "bank1",&RAM[data&0x40 ? 0x10000 : 0x0a000]);
 	}
@@ -207,7 +207,7 @@ WRITE8_HANDLER( appoooh_out_w )
 	/* bit 7 unknown (used) */
 }
 
-static void appoooh_draw_sprites( bitmap_t *dest_bmp, const rectangle *cliprect, const gfx_element *gfx, UINT8 *sprite )
+static void appoooh_draw_sprites( bitmap_t *dest_bmp, const rectangle *cliprect, const gfx_element *gfx, uint8_t *sprite )
 {
 	int offs;
 	int flipy = flip_screen_get(gfx->machine);
@@ -238,7 +238,7 @@ static void appoooh_draw_sprites( bitmap_t *dest_bmp, const rectangle *cliprect,
 	}
 }
 
-static void robowres_draw_sprites( bitmap_t *dest_bmp, const rectangle *cliprect, const gfx_element *gfx, UINT8 *sprite )
+static void robowres_draw_sprites( bitmap_t *dest_bmp, const rectangle *cliprect, const gfx_element *gfx, uint8_t *sprite )
 {
 	int offs;
 	int flipy = flip_screen_get(gfx->machine);

@@ -16,19 +16,19 @@
 
 /*----------- defined in video/galaxold.c -----------*/
 
-extern UINT8 *galaxold_videoram;
-extern UINT8 *galaxold_spriteram;
-extern UINT8 *galaxold_spriteram2;
-extern UINT8 *galaxold_attributesram;
-extern UINT8 *galaxold_bulletsram;
-extern UINT8 *rockclim_videoram;
-extern UINT8 *racknrol_tiles_bank;
+extern uint8_t *galaxold_videoram;
+extern uint8_t *galaxold_spriteram;
+extern uint8_t *galaxold_spriteram2;
+extern uint8_t *galaxold_attributesram;
+extern uint8_t *galaxold_bulletsram;
+extern uint8_t *rockclim_videoram;
+extern uint8_t *racknrol_tiles_bank;
 
 
 extern size_t galaxold_spriteram_size;
 extern size_t galaxold_spriteram2_size;
 extern size_t galaxold_bulletsram_size;
-extern UINT8 galaxold_stars_on;
+extern uint8_t galaxold_stars_on;
 
 PALETTE_INIT( galaxold );
 PALETTE_INIT( scrambold );

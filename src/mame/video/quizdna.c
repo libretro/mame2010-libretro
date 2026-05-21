@@ -11,13 +11,13 @@ Video hardware
 
 #include "emu.h"
 
-static UINT8 *quizdna_bg_ram;
-static UINT8 *quizdna_fg_ram;
+static uint8_t *quizdna_bg_ram;
+static uint8_t *quizdna_fg_ram;
 
 static tilemap_t *quizdna_bg_tilemap;
 static tilemap_t *quizdna_fg_tilemap;
 
-static UINT8 quizdna_bg_xscroll[2];
+static uint8_t quizdna_bg_xscroll[2];
 
 static int quizdna_flipscreen;
 static int quizdna_video_enable;
@@ -37,7 +37,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	int code,col,x,y;
-	UINT8 *FG = memory_region(machine, "user1");
+	uint8_t *FG = memory_region(machine, "user1");
 
 	x = tile_index & 0x1f;
 	y = FG[(tile_index >> 5) & 0x1f] & 0x3f;
@@ -61,8 +61,8 @@ VIDEO_START( quizdna )
 	quizdna_bg_xscroll[0] = 0;
 	quizdna_bg_xscroll[1] = 0;
 
-	quizdna_bg_ram = auto_alloc_array(machine, UINT8, 0x2000);
-	quizdna_fg_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	quizdna_bg_ram = auto_alloc_array(machine, uint8_t, 0x2000);
+	quizdna_fg_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	quizdna_bg_tilemap = tilemap_create( machine, get_bg_tile_info,tilemap_scan_rows,8,8,64,32 );
 	quizdna_fg_tilemap = tilemap_create( machine, get_fg_tile_info,tilemap_scan_rows,16,8,32,32 );
@@ -72,7 +72,7 @@ VIDEO_START( quizdna )
 
 WRITE8_HANDLER( quizdna_bg_ram_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	quizdna_bg_ram[offset] = data;
 	RAM[0x12000+offset] = data;
 
@@ -83,7 +83,7 @@ WRITE8_HANDLER( quizdna_fg_ram_w )
 {
 	int i;
 	int offs = offset & 0xfff;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	RAM[0x10000+offs] = data;
 	RAM[0x11000+offs] = data; /* mirror */
@@ -142,7 +142,7 @@ WRITE8_HANDLER( paletteram_xBGR_RRRR_GGGG_BBBB_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs<machine->generic.spriteram_size; offs+=8)

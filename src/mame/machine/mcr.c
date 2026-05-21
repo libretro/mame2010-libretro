@@ -28,11 +28,11 @@
 
 attotime mcr68_timing_factor;
 
-UINT8 mcr_cocktail_flip;
+uint8_t mcr_cocktail_flip;
 
-UINT32 mcr_cpu_board;
-UINT32 mcr_sprite_board;
-UINT32 mcr_ssio_board;
+uint32_t mcr_cpu_board;
+uint32_t mcr_sprite_board;
+uint32_t mcr_ssio_board;
 
 
 
@@ -42,29 +42,29 @@ UINT32 mcr_ssio_board;
  *
  *************************************/
 
-static UINT8 m6840_status;
-static UINT8 m6840_status_read_since_int;
-static UINT8 m6840_msb_buffer;
-static UINT8 m6840_lsb_buffer;
+static uint8_t m6840_status;
+static uint8_t m6840_status_read_since_int;
+static uint8_t m6840_msb_buffer;
+static uint8_t m6840_lsb_buffer;
 static struct counter_state
 {
-	UINT8			control;
-	UINT16			latch;
-	UINT16			count;
+	uint8_t			control;
+	uint16_t			latch;
+	uint16_t			count;
 	emu_timer *	timer;
-	UINT8			timer_active;
+	uint8_t			timer_active;
 	attotime		period;
 } m6840_state[3];
 
 /* MCR/68k interrupt states */
-static UINT8 m6840_irq_state;
-static UINT8 m6840_irq_vector;
-static UINT8 v493_irq_state;
-static UINT8 v493_irq_vector;
+static uint8_t m6840_irq_state;
+static uint8_t m6840_irq_vector;
+static uint8_t v493_irq_state;
+static uint8_t v493_irq_vector;
 
 static timer_fired_func v493_callback;
 
-static UINT8 zwackery_sound_data;
+static uint8_t zwackery_sound_data;
 
 static attotime m6840_counter_periods[3];
 static attotime m6840_internal_counter_period;	/* 68000 CLK / 10 */
@@ -140,7 +140,7 @@ READ8_DEVICE_HANDLER( zwackery_port_2_r );
 
 static READ8_DEVICE_HANDLER( zwackery_port_1_r )
 {
-	UINT8 ret = input_port_read(device->machine, "IN1");
+	uint8_t ret = input_port_read(device->machine, "IN1");
 
 	pia6821_set_port_a_z_mask(device, ret);
 
@@ -150,7 +150,7 @@ static READ8_DEVICE_HANDLER( zwackery_port_1_r )
 
 static READ8_DEVICE_HANDLER( zwackery_port_3_r )
 {
-	UINT8 ret = input_port_read(device->machine, "IN3");
+	uint8_t ret = input_port_read(device->machine, "IN3");
 
 	pia6821_set_port_a_z_mask(device, ret);
 
@@ -751,7 +751,7 @@ LOG(("reload_count(%d): period = %f  count = %d\n", counter, attotime_to_double(
 }
 
 
-static UINT16 compute_counter(int counter)
+static uint16_t compute_counter(int counter)
 {
 	attotime period;
 	int remaining;
@@ -797,7 +797,7 @@ static WRITE8_HANDLER( mcr68_6840_w_common )
 	if (offset < 2)
 	{
 		int counter = (offset == 1) ? 1 : (m6840_state[1].control & 0x01) ? 0 : 2;
-		UINT8 diffs = data ^ m6840_state[counter].control;
+		uint8_t diffs = data ^ m6840_state[counter].control;
 
 		m6840_state[counter].control = data;
 

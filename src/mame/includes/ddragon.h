@@ -13,28 +13,28 @@ public:
 	ddragon_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        rambase;
-	UINT8 *        bgvideoram;
-	UINT8 *        fgvideoram;
-	UINT8 *        spriteram;
-	UINT8 *        scrollx_lo;
-	UINT8 *        scrolly_lo;
-	UINT8 *        darktowr_mcu_ports;
-//  UINT8 *        paletteram;  // currently this uses generic palette handling
-//  UINT8 *        paletteram_2;    // currently this uses generic palette handling
+	uint8_t *        rambase;
+	uint8_t *        bgvideoram;
+	uint8_t *        fgvideoram;
+	uint8_t *        spriteram;
+	uint8_t *        scrollx_lo;
+	uint8_t *        scrolly_lo;
+	uint8_t *        darktowr_mcu_ports;
+//  uint8_t *        paletteram;  // currently this uses generic palette handling
+//  uint8_t *        paletteram_2;    // currently this uses generic palette handling
 	size_t         spriteram_size;	// FIXME: this appears in chinagat.c, but is it really used?
 
 	/* video-related */
 	tilemap_t        *fg_tilemap, *bg_tilemap;
-	UINT8          technos_video_hw;
-	UINT8          scrollx_hi;
-	UINT8          scrolly_hi;
+	uint8_t          technos_video_hw;
+	uint8_t          scrollx_hi;
+	uint8_t          scrolly_hi;
 
 	/* misc */
-	UINT8          dd_sub_cpu_busy;
-	UINT8          sprite_irq, sound_irq, ym_irq, adpcm_sound_irq;
-	UINT32         adpcm_pos[2], adpcm_end[2];
-	UINT8          adpcm_idle[2];
+	uint8_t          dd_sub_cpu_busy;
+	uint8_t          sprite_irq, sound_irq, ym_irq, adpcm_sound_irq;
+	uint32_t         adpcm_pos[2], adpcm_end[2];
+	uint8_t          adpcm_idle[2];
 	int            adpcm_data[2];
 
 	/* for Sai Yu Gou Ma Roku */

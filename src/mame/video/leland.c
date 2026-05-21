@@ -24,23 +24,23 @@
 
 struct vram_state_data
 {
-	UINT16	addr;
-	UINT8	latch[2];
+	uint16_t	addr;
+	uint8_t	latch[2];
 };
 
 
 /* video RAM */
-UINT8 *ataxx_qram;
-static UINT8 *leland_video_ram;
+uint8_t *ataxx_qram;
+static uint8_t *leland_video_ram;
 
 /* video RAM bitmap drawing */
 static struct vram_state_data vram_state[2];
 
 /* scroll background registers */
-static UINT16 xscroll;
-static UINT16 yscroll;
-static UINT8 gfxbank;
-static UINT16 last_scanline;
+static uint16_t xscroll;
+static uint16_t yscroll;
+static uint8_t gfxbank;
+static uint16_t last_scanline;
 
 static emu_timer *scanline_timer;
 
@@ -79,7 +79,7 @@ static TIMER_CALLBACK( scanline_callback )
 static VIDEO_START( leland )
 {
 	/* allocate memory */
-	leland_video_ram = auto_alloc_array_clear(machine, UINT8, VRAM_SIZE);
+	leland_video_ram = auto_alloc_array_clear(machine, uint8_t, VRAM_SIZE);
 
 	/* scanline timer */
 	scanline_timer = timer_alloc(machine, scanline_callback, NULL);
@@ -94,7 +94,7 @@ static VIDEO_START( ataxx )
 	VIDEO_START_CALL(leland);
 
 	/* allocate memory */
-	ataxx_qram = auto_alloc_array_clear(machine, UINT8, QRAM_SIZE);
+	ataxx_qram = auto_alloc_array_clear(machine, uint8_t, QRAM_SIZE);
 }
 
 
@@ -405,8 +405,8 @@ static VIDEO_UPDATE( leland )
 {
 	int y;
 
-	const UINT8 *bg_prom = memory_region(screen->machine, "user1");
-	const UINT8 *bg_gfx = memory_region(screen->machine, "gfx1");
+	const uint8_t *bg_prom = memory_region(screen->machine, "user1");
+	const uint8_t *bg_gfx = memory_region(screen->machine, "gfx1");
 	offs_t bg_gfx_bank_page_size = memory_region_length(screen->machine, "gfx1") / 3;
 	offs_t char_bank = (((gfxbank >> 4) & 0x03) * 0x2000) & (bg_gfx_bank_page_size - 1);
 	offs_t prom_bank = ((gfxbank >> 3) & 0x01) * 0x2000;
@@ -415,17 +415,17 @@ static VIDEO_UPDATE( leland )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int x;
-		UINT8 fg_data = 0;
+		uint8_t fg_data = 0;
 
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
-		UINT8 *fg_src = &leland_video_ram[y << 8];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t *fg_src = &leland_video_ram[y << 8];
 
 		/* for each pixel on the scanline */
 		for (x = 0; x < VIDEO_WIDTH; x++)
 		{
 			/* compute the effective scrolled pixel coordinates */
-			UINT16 sx = (x + xscroll) & 0x07ff;
-			UINT16 sy = (y + yscroll) & 0x07ff;
+			uint16_t sx = (x + xscroll) & 0x07ff;
+			uint16_t sy = (y + yscroll) & 0x07ff;
 
 			/* get the byte address this background pixel comes from */
 			offs_t bg_prom_offs = (sx >> 3) |
@@ -473,7 +473,7 @@ static VIDEO_UPDATE( ataxx )
 {
 	int y;
 
-	const UINT8 *bg_gfx = memory_region(screen->machine, "gfx1");
+	const uint8_t *bg_gfx = memory_region(screen->machine, "gfx1");
 	offs_t bg_gfx_bank_page_size = memory_region_length(screen->machine, "gfx1") / 6;
 	offs_t bg_gfx_offs_mask = bg_gfx_bank_page_size - 1;
 
@@ -481,17 +481,17 @@ static VIDEO_UPDATE( ataxx )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int x;
-		UINT8 fg_data = 0;
+		uint8_t fg_data = 0;
 
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
-		UINT8 *fg_src = &leland_video_ram[y << 8];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t *fg_src = &leland_video_ram[y << 8];
 
 		/* for each pixel on the scanline */
 		for (x = 0; x < VIDEO_WIDTH; x++)
 		{
 			/* compute the effective scrolled pixel coordinates */
-			UINT16 sx = (x + xscroll) & 0x07ff;
-			UINT16 sy = (y + yscroll) & 0x07ff;
+			uint16_t sx = (x + xscroll) & 0x07ff;
+			uint16_t sy = (y + yscroll) & 0x07ff;
 
 			/* get the byte address this background pixel comes from */
 			offs_t qram_offs = (sx >> 3) |

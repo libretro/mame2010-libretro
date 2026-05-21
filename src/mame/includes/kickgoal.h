@@ -17,12 +17,12 @@ public:
 		  eeprom(machine.device<eeprom_device>("eeprom")) { }
 
 	/* memory pointers */
-	UINT16 *    fgram;
-	UINT16 *    bgram;
-	UINT16 *    bg2ram;
-	UINT16 *    scrram;
-	UINT16 *    spriteram;
-//      UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    fgram;
+	uint16_t *    bgram;
+	uint16_t *    bg2ram;
+	uint16_t *    scrram;
+	uint16_t *    spriteram;
+//      uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
@@ -32,7 +32,7 @@ public:
 	int         melody_loop;
 	int         snd_new, snd_sam[4];
 	int         m6295_comm, m6295_bank;
-	UINT16      m6295_key_delay;
+	uint16_t      m6295_key_delay;
 
 	/* devices */
 	okim6295_device *adpcm;

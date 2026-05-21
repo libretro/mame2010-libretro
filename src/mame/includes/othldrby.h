@@ -14,14 +14,14 @@ public:
 	othldrby_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     vram;
-	UINT16 *     buf_spriteram;
-	UINT16 *     buf_spriteram2;
+	uint16_t *     vram;
+	uint16_t *     buf_spriteram;
+	uint16_t *     buf_spriteram2;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap[3];
-	UINT16       vreg[OTHLDRBY_VREG_SIZE];
-	UINT32       vram_addr, vreg_addr;
+	uint16_t       vreg[OTHLDRBY_VREG_SIZE];
+	uint32_t       vram_addr, vreg_addr;
 
 	/* misc */
 	int          toggle;

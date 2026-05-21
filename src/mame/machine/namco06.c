@@ -96,7 +96,7 @@
 typedef struct _namco_06xx_state namco_06xx_state;
 struct _namco_06xx_state
 {
-	UINT8 control;
+	uint8_t control;
 	emu_timer *nmi_timer;
 	cpu_device *nmicpu;
 	device_t *device[4];
@@ -133,7 +133,7 @@ static TIMER_CALLBACK( nmi_generate )
 READ8_DEVICE_HANDLER( namco_06xx_data_r )
 {
 	namco_06xx_state *state = get_safe_token(device);
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	int devnum;
 
 	LOG(("%s: 06XX '%s' read offset %d\n",cpuexec_describe_context(device->machine),device->tag(),offset));

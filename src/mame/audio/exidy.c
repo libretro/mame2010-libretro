@@ -47,7 +47,7 @@ enum
  *************************************/
 
 /* IRQ variable */
-static UINT8 riot_irq_state;
+static uint8_t riot_irq_state;
 
 /* 6532 variables */
 static running_device *riot;
@@ -55,43 +55,43 @@ static running_device *riot;
 /* 6840 variables */
 struct sh6840_timer_channel
 {
-	UINT8	cr;
-	UINT8	state;
-	UINT8	leftovers;
-	UINT16	timer;
-	UINT32	clocks;
+	uint8_t	cr;
+	uint8_t	state;
+	uint8_t	leftovers;
+	uint16_t	timer;
+	uint32_t	clocks;
 	union
 	{
 #ifdef MSB_FIRST
-		struct { UINT8 h, l; } b;
+		struct { uint8_t h, l; } b;
 #else
-		struct { UINT8 l, h; } b;
+		struct { uint8_t l, h; } b;
 #endif
-		UINT16 w;
+		uint16_t w;
 	} counter;
 };
 static struct sh6840_timer_channel sh6840_timer[3];
-static INT16 sh6840_volume[3];
-static UINT8 sh6840_MSB_latch;
-static UINT8 sh6840_LSB_latch;
-static UINT8 sh6840_LFSR_oldxor = 0;
-static UINT32 sh6840_LFSR_0;
-static UINT32 sh6840_LFSR_1;
-static UINT32 sh6840_LFSR_2;
-static UINT32 sh6840_LFSR_3;
-static UINT32 sh6840_clocks_per_sample;
-static UINT32 sh6840_clock_count;
+static int16_t sh6840_volume[3];
+static uint8_t sh6840_MSB_latch;
+static uint8_t sh6840_LSB_latch;
+static uint8_t sh6840_LFSR_oldxor = 0;
+static uint32_t sh6840_LFSR_0;
+static uint32_t sh6840_LFSR_1;
+static uint32_t sh6840_LFSR_2;
+static uint32_t sh6840_LFSR_3;
+static uint32_t sh6840_clocks_per_sample;
+static uint32_t sh6840_clock_count;
 
-static UINT8 exidy_sfxctrl;
+static uint8_t exidy_sfxctrl;
 
 /* 8253 variables */
 struct sh8253_timer_channel
 {
-	UINT8	clstate;
-	UINT8	enable;
-	UINT16	count;
-	UINT32	step;
-	UINT32	fraction;
+	uint8_t	clstate;
+	uint8_t	enable;
+	uint16_t	count;
+	uint32_t	step;
+	uint32_t	fraction;
 };
 static struct sh8253_timer_channel sh8253_timer[3];
 static int has_sh8253;
@@ -183,7 +183,7 @@ INLINE void sh6840_apply_clock(struct sh6840_timer_channel *t, int clocks)
 
 INLINE int sh6840_update_noise(int clocks)
 {
-	UINT32 newxor;
+	uint32_t newxor;
 	int noise_clocks = 0;
 	int i;
 
@@ -276,7 +276,7 @@ static STREAM_UPDATE( exidy_stream_update )
 		struct sh8253_timer_channel *c;
 		int clocks_this_sample;
 		int clocks;
-		INT16 sample = 0;
+		int16_t sample = 0;
 
 		/* determine how many 6840 clocks this sample */
 		sh6840_clock_count += sh6840_clocks_per_sample;
@@ -287,7 +287,7 @@ static STREAM_UPDATE( exidy_stream_update )
 		if ((sh6840_timer[0].cr & 0x01) == 0)
 		{
 			int noise_clocks_this_sample = 0;
-			UINT32 chan0_clocks;
+			uint32_t chan0_clocks;
 
 			/* generate E-clocked noise if configured to do so */
 			if (noisy && !(exidy_sfxctrl & 0x01))
@@ -494,7 +494,7 @@ static WRITE8_DEVICE_HANDLER( r6532_portb_w )
 
 static READ8_DEVICE_HANDLER( r6532_portb_r )
 {
-	UINT8 newdata = riot6532_portb_in_get(device);
+	uint8_t newdata = riot6532_portb_in_get(device);
 	if (has_tms5220)
 	{
 		running_device *tms = device->machine->device("tms");
@@ -871,8 +871,8 @@ static READ8_HANDLER( mtrap_voiceio_r )
 {
 	if (!(offset & 0x80))
 	{
-		UINT8 porta = riot6532_porta_out_get(riot);
-		UINT8 data = (porta & 0x06) >> 1;
+		uint8_t porta = riot6532_porta_out_get(riot);
+		uint8_t data = (porta & 0x06) >> 1;
 		data |= (porta & 0x01) << 2;
 		data |= (porta & 0x08);
 		return data;
@@ -920,13 +920,13 @@ MACHINE_DRIVER_END
 #define VICTORY_LOG_SOUND			0
 
 
-static UINT8 victory_sound_response_ack_clk;	/* 7474 @ F4 */
+static uint8_t victory_sound_response_ack_clk;	/* 7474 @ F4 */
 
 
 READ8_HANDLER( victory_sound_response_r )
 {
 	running_device *pia1 = space->machine->device("pia1");
-	UINT8 ret = pia6821_get_output_b(pia1);
+	uint8_t ret = pia6821_get_output_b(pia1);
 
 	if (VICTORY_LOG_SOUND) logerror("%04X:!!!! Sound response read = %02X\n", cpu_get_previouspc(space->cpu), ret);
 
@@ -939,7 +939,7 @@ READ8_HANDLER( victory_sound_response_r )
 READ8_HANDLER( victory_sound_status_r )
 {
 	running_device *pia1 = space->machine->device("pia1");
-	UINT8 ret = (pia6821_ca1_r(pia1) << 7) | (pia6821_cb1_r(pia1) << 6);
+	uint8_t ret = (pia6821_ca1_r(pia1) << 7) | (pia6821_cb1_r(pia1) << 6);
 
 	if (VICTORY_LOG_SOUND) logerror("%04X:!!!! Sound status read = %02X\n", cpu_get_previouspc(space->cpu), ret);
 

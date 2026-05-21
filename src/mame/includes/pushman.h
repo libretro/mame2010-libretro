@@ -12,17 +12,17 @@ public:
 	pushman_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   videoram;
-	UINT16 *   spriteram;
-//  UINT16 *   paletteram;    // currently this uses generic palette handling
+	uint16_t *   videoram;
+	uint16_t *   spriteram;
+//  uint16_t *   paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap, *tx_tilemap;
-	UINT16     control[2];
+	uint16_t     control[2];
 
 	/* misc */
-	UINT8      shared_ram[8];
-	UINT16     latch, new_latch;
+	uint8_t      shared_ram[8];
+	uint16_t     latch, new_latch;
 
 	/* devices */
 	running_device *maincpu;

@@ -94,8 +94,8 @@ VIDEO_UPDATE( arcadecl )
 		for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 			for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 			{
-				UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-				UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+				uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+				uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 				for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 					if (mo[x])
 					{

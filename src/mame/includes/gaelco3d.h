@@ -9,8 +9,8 @@
 
 /*----------- defined in video/gaelco3d.c -----------*/
 
-extern UINT8 *gaelco3d_texture;
-extern UINT8 *gaelco3d_texmask;
+extern uint8_t *gaelco3d_texture;
+extern uint8_t *gaelco3d_texmask;
 extern offs_t gaelco3d_texture_size;
 extern offs_t gaelco3d_texmask_size;
 

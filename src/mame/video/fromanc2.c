@@ -76,7 +76,7 @@ READ16_HANDLER( fromanc2_paletteram_1_r )
 WRITE16_HANDLER( fromanc2_paletteram_0_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[0][offset]);
 
@@ -88,7 +88,7 @@ WRITE16_HANDLER( fromanc2_paletteram_0_w )
 WRITE16_HANDLER( fromanc2_paletteram_1_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[1][offset]);
 
@@ -113,7 +113,7 @@ READ16_HANDLER( fromancr_paletteram_1_r )
 WRITE16_HANDLER( fromancr_paletteram_0_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[0][offset]);
 
@@ -125,7 +125,7 @@ WRITE16_HANDLER( fromancr_paletteram_0_w )
 WRITE16_HANDLER( fromancr_paletteram_1_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[1][offset]);
 
@@ -150,7 +150,7 @@ READ16_HANDLER( fromanc4_paletteram_1_r )
 WRITE16_HANDLER( fromanc4_paletteram_0_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[0][offset]);
 
@@ -162,7 +162,7 @@ WRITE16_HANDLER( fromanc4_paletteram_0_w )
 WRITE16_HANDLER( fromanc4_paletteram_1_w )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 color;
+	uint16_t color;
 
 	COMBINE_DATA(&state->paletteram[1][offset]);
 
@@ -172,7 +172,7 @@ WRITE16_HANDLER( fromanc4_paletteram_1_w )
 }
 
 
-INLINE void fromanc2_dispvram_w( running_machine *machine, offs_t offset, UINT16 data, UINT16 mem_mask, int vram, int layer )
+INLINE void fromanc2_dispvram_w( running_machine *machine, offs_t offset, uint16_t data, uint16_t mem_mask, int vram, int layer )
 {
 	fromanc2_state *state = (fromanc2_state *)machine->driver_data;
 	layer += (offset < 0x1000) ? 0 : 1;
@@ -269,7 +269,7 @@ WRITE16_HANDLER( fromanc2_gfxbank_1_w )
 }
 
 
-INLINE void fromancr_vram_w(running_machine *machine, offs_t offset, UINT16 data, UINT16 mem_mask, int layer )
+INLINE void fromancr_vram_w(running_machine *machine, offs_t offset, uint16_t data, uint16_t mem_mask, int layer )
 {
 	fromanc2_state *state = (fromanc2_state *)machine->driver_data;
 	int vram = (offset < 0x1000) ? 0 : 1;
@@ -325,7 +325,7 @@ void fromancr_gfxbank_w( running_machine *machine, int data )
 }
 
 
-INLINE void fromanc4_vram_w( running_machine *machine, offs_t offset, UINT16 data, UINT16 mem_mask, int layer )
+INLINE void fromanc4_vram_w( running_machine *machine, offs_t offset, uint16_t data, uint16_t mem_mask, int layer )
 {
 	fromanc2_state *state = (fromanc2_state *)machine->driver_data;
 	int vram = (offset < 0x4000) ? 0 : 1;
@@ -422,17 +422,17 @@ VIDEO_START( fromanc2 )
 	tilemap_set_transparent_pen(state->tilemap[1][2], 0x000);
 	tilemap_set_transparent_pen(state->tilemap[1][3], 0x000);
 
-	state->videoram[0][0] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[0][1] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[0][2] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[0][3] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][0] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][1] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][2] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][3] = auto_alloc_array(machine, UINT16, (64 * 64));
+	state->videoram[0][0] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[0][1] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[0][2] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[0][3] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][0] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][1] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][2] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][3] = auto_alloc_array(machine, uint16_t, (64 * 64));
 
-	state->paletteram[0] = auto_alloc_array(machine, UINT16, 0x800);
-	state->paletteram[1] = auto_alloc_array(machine, UINT16, 0x800);
+	state->paletteram[0] = auto_alloc_array(machine, uint16_t, 0x800);
+	state->paletteram[1] = auto_alloc_array(machine, uint16_t, 0x800);
 
 	state_save_register_global_pointer(machine, state->videoram[0][0], (64 * 64));
 	state_save_register_global_pointer(machine, state->videoram[0][1], (64 * 64));
@@ -470,15 +470,15 @@ VIDEO_START( fromancr )
 	tilemap_set_transparent_pen(state->tilemap[1][1], 0x0ff);
 	tilemap_set_transparent_pen(state->tilemap[1][2], 0x0ff);
 
-	state->videoram[0][0] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[0][1] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[0][2] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][0] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][1] = auto_alloc_array(machine, UINT16, (64 * 64));
-	state->videoram[1][2] = auto_alloc_array(machine, UINT16, (64 * 64));
+	state->videoram[0][0] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[0][1] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[0][2] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][0] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][1] = auto_alloc_array(machine, uint16_t, (64 * 64));
+	state->videoram[1][2] = auto_alloc_array(machine, uint16_t, (64 * 64));
 
-	state->paletteram[0] = auto_alloc_array(machine, UINT16, 0x800);
-	state->paletteram[1] = auto_alloc_array(machine, UINT16, 0x800);
+	state->paletteram[0] = auto_alloc_array(machine, uint16_t, 0x800);
+	state->paletteram[1] = auto_alloc_array(machine, uint16_t, 0x800);
 
 	state_save_register_global_pointer(machine, state->videoram[0][0], (64 * 64));
 	state_save_register_global_pointer(machine, state->videoram[0][1], (64 * 64));
@@ -515,15 +515,15 @@ VIDEO_START( fromanc4 )
 	tilemap_set_transparent_pen(state->tilemap[1][1], 0x000);
 	tilemap_set_transparent_pen(state->tilemap[1][2], 0x000);
 
-	state->videoram[0][0] = auto_alloc_array(machine, UINT16, (256 * 64));
-	state->videoram[0][1] = auto_alloc_array(machine, UINT16, (256 * 64));
-	state->videoram[0][2] = auto_alloc_array(machine, UINT16, (256 * 64));
-	state->videoram[1][0] = auto_alloc_array(machine, UINT16, (256 * 64));
-	state->videoram[1][1] = auto_alloc_array(machine, UINT16, (256 * 64));
-	state->videoram[1][2] = auto_alloc_array(machine, UINT16, (256 * 64));
+	state->videoram[0][0] = auto_alloc_array(machine, uint16_t, (256 * 64));
+	state->videoram[0][1] = auto_alloc_array(machine, uint16_t, (256 * 64));
+	state->videoram[0][2] = auto_alloc_array(machine, uint16_t, (256 * 64));
+	state->videoram[1][0] = auto_alloc_array(machine, uint16_t, (256 * 64));
+	state->videoram[1][1] = auto_alloc_array(machine, uint16_t, (256 * 64));
+	state->videoram[1][2] = auto_alloc_array(machine, uint16_t, (256 * 64));
 
-	state->paletteram[0] = auto_alloc_array(machine, UINT16, 0x800);
-	state->paletteram[1] = auto_alloc_array(machine, UINT16, 0x800);
+	state->paletteram[0] = auto_alloc_array(machine, uint16_t, 0x800);
+	state->paletteram[1] = auto_alloc_array(machine, uint16_t, 0x800);
 
 	state_save_register_global_pointer(machine, state->videoram[0][0], (256 * 64));
 	state_save_register_global_pointer(machine, state->videoram[0][1], (256 * 64));

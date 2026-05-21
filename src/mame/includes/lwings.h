@@ -7,24 +7,24 @@ public:
 	lwings_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  fgvideoram;
-	UINT8 *  bg1videoram;
-	UINT8 *  soundlatch2;
-//      UINT8 *  spriteram; // currently this uses generic buffered spriteram
-//      UINT8 *  paletteram;    // currently this uses generic palette handling
-//      UINT8 *  paletteram2;   // currently this uses generic palette handling
+	uint8_t *  fgvideoram;
+	uint8_t *  bg1videoram;
+	uint8_t *  soundlatch2;
+//      uint8_t *  spriteram; // currently this uses generic buffered spriteram
+//      uint8_t *  paletteram;    // currently this uses generic palette handling
+//      uint8_t *  paletteram2;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *fg_tilemap, *bg1_tilemap, *bg2_tilemap;
-	UINT8    bg2_image;
+	uint8_t    bg2_image;
 	int      bg2_avenger_hw;
-	UINT8    scroll_x[2], scroll_y[2];
+	uint8_t    scroll_x[2], scroll_y[2];
 
 	/* misc */
-	UINT8    param[4];
+	uint8_t    param[4];
 	int      palette_pen;
-	UINT8    soundstate;
-	UINT8    adpcm;
+	uint8_t    soundstate;
+	uint8_t    adpcm;
 };
 
 

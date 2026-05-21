@@ -31,9 +31,9 @@
 #include "deprecat.h"
 #include "audio/namcoc7x.h"
 
-static UINT16 *namcoc7x_mcuram;
-static UINT16 su_82;
-static UINT32 *namcoc7x_hostram;
+static uint16_t *namcoc7x_mcuram;
+static uint16_t su_82;
+static uint32_t *namcoc7x_hostram;
 
 static READ16_HANDLER( speedup_r )
 {
@@ -72,14 +72,14 @@ READ32_HANDLER(namcoc7x_soundram32_r)
 		namcoc7x_soundram16_r(space, offset*2+1, mem_mask);
 }
 
-void namcoc7x_sound_write16(UINT16 command, UINT32 offset)
+void namcoc7x_sound_write16(uint16_t command, uint32_t offset)
 {
 	namcoc7x_mcuram[offset] = command;
 }
 
 void namcoc7x_on_driver_init(running_machine *machine)
 {
-	UINT8 *pROM = (UINT8 *)memory_region(machine, "c7x");
+	uint8_t *pROM = (uint8_t *)memory_region(machine, "c7x");
 	running_device *cpu;
 
 	// clear the two 16-bits magic values at the start of the rom
@@ -93,7 +93,7 @@ void namcoc7x_on_driver_init(running_machine *machine)
 			memory_install_readwrite16_handler(cpu_get_address_space(cpu, ADDRESS_SPACE_PROGRAM), 0x82, 0x83, 0, 0, speedup_r, speedup_w);
 }
 
-void namcoc7x_set_host_ram(UINT32 *hostram)
+void namcoc7x_set_host_ram(uint32_t *hostram)
 {
 	namcoc7x_hostram = hostram;
 }
@@ -101,7 +101,7 @@ void namcoc7x_set_host_ram(UINT32 *hostram)
 // Only share the sound work area
 static READ16_HANDLER( c7x_shared_r )
 {
-	UINT16 *share16 = (UINT16 *)namcoc7x_hostram;
+	uint16_t *share16 = (uint16_t *)namcoc7x_hostram;
 
 	if (offset >= 0x400/2)
 	{
@@ -113,7 +113,7 @@ static READ16_HANDLER( c7x_shared_r )
 
 static WRITE16_HANDLER( c7x_shared_w )
 {
-	UINT16 *share16 = (UINT16 *)namcoc7x_hostram;
+	uint16_t *share16 = (uint16_t *)namcoc7x_hostram;
 
 	if (offset >= 0x400/2)
 	{

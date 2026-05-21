@@ -34,140 +34,140 @@ public:
 	cpu_device *			jsacpu;
 	cpu_device *			dsp32;
 
-	UINT8					hd34010_host_access;
-	UINT8					dsk_pio_access;
+	uint8_t					hd34010_host_access;
+	uint8_t					dsk_pio_access;
 
-	UINT16 *				msp_ram;
-	UINT16 *				dsk_ram;
-	UINT16 *				dsk_rom;
-	UINT16 *				dsk_zram;
-	UINT16 *				m68k_slapstic_base;
-	UINT16 *				m68k_sloop_alt_base;
+	uint16_t *				msp_ram;
+	uint16_t *				dsk_ram;
+	uint16_t *				dsk_rom;
+	uint16_t *				dsk_zram;
+	uint16_t *				m68k_slapstic_base;
+	uint16_t *				m68k_sloop_alt_base;
 
-	UINT16 *				adsp_data_memory;
-	UINT32 *				adsp_pgm_memory;
+	uint16_t *				adsp_data_memory;
+	uint32_t *				adsp_pgm_memory;
 
-	UINT16 *				gsp_protection;
-	UINT16 *				stmsp_sync[3];
+	uint16_t *				gsp_protection;
+	uint16_t *				stmsp_sync[3];
 
-	UINT16 *				gsp_speedup_addr[2];
+	uint16_t *				gsp_speedup_addr[2];
 	offs_t					gsp_speedup_pc;
 
-	UINT16 *				msp_speedup_addr;
+	uint16_t *				msp_speedup_addr;
 	offs_t					msp_speedup_pc;
 
-	UINT16 *				ds3_speedup_addr;
+	uint16_t *				ds3_speedup_addr;
 	offs_t					ds3_speedup_pc;
 	offs_t					ds3_transfer_pc;
 
-	UINT32 *				rddsp32_sync[2];
+	uint32_t *				rddsp32_sync[2];
 
-	UINT32					gsp_speedup_count[4];
-	UINT32					msp_speedup_count[4];
-	UINT32					adsp_speedup_count[4];
+	uint32_t					gsp_speedup_count[4];
+	uint32_t					msp_speedup_count[4];
+	uint32_t					adsp_speedup_count[4];
 
-	UINT16 *				sounddsp_ram;
+	uint16_t *				sounddsp_ram;
 
-	UINT8					gsp_multisync;
-	UINT8 *					gsp_vram;
-	UINT16 *				gsp_control_lo;
-	UINT16 *				gsp_control_hi;
-	UINT16 *				gsp_paletteram_lo;
-	UINT16 *				gsp_paletteram_hi;
+	uint8_t					gsp_multisync;
+	uint8_t *					gsp_vram;
+	uint16_t *				gsp_control_lo;
+	uint16_t *				gsp_control_hi;
+	uint16_t *				gsp_paletteram_lo;
+	uint16_t *				gsp_paletteram_hi;
 	size_t					gsp_vram_size;
 
 	/* driver state */
-	UINT32 *				rddsp32_speedup;
+	uint32_t *				rddsp32_speedup;
 	offs_t					rddsp32_speedup_pc;
 
 	/* machine state */
-	UINT8					irq_state;
-	UINT8					gsp_irq_state;
-	UINT8					msp_irq_state;
-	UINT8					adsp_irq_state;
-	UINT8					duart_irq_state;
+	uint8_t					irq_state;
+	uint8_t					gsp_irq_state;
+	uint8_t					msp_irq_state;
+	uint8_t					adsp_irq_state;
+	uint8_t					duart_irq_state;
 
-	UINT8					duart_read_data[16];
-	UINT8					duart_write_data[16];
-	UINT8					duart_output_port;
+	uint8_t					duart_read_data[16];
+	uint8_t					duart_write_data[16];
+	uint8_t					duart_output_port;
 	timer_device *			duart_timer;
 
-	UINT8					last_gsp_shiftreg;
+	uint8_t					last_gsp_shiftreg;
 
-	UINT8					m68k_zp1;
-	UINT8					m68k_zp2;
-	UINT8					m68k_adsp_buffer_bank;
+	uint8_t					m68k_zp1;
+	uint8_t					m68k_zp2;
+	uint8_t					m68k_adsp_buffer_bank;
 
-	UINT8					adsp_halt;
-	UINT8					adsp_br;
-	UINT8					adsp_xflag;
-	UINT16					adsp_sim_address;
-	UINT16					adsp_som_address;
-	UINT32					adsp_eprom_base;
+	uint8_t					adsp_halt;
+	uint8_t					adsp_br;
+	uint8_t					adsp_xflag;
+	uint16_t					adsp_sim_address;
+	uint16_t					adsp_som_address;
+	uint32_t					adsp_eprom_base;
 
-	UINT16 *				sim_memory;
-	UINT32					sim_memory_size;
-	UINT16					som_memory[0x8000/2];
-	UINT16 *				adsp_pgm_memory_word;
+	uint16_t *				sim_memory;
+	uint32_t					sim_memory_size;
+	uint16_t					som_memory[0x8000/2];
+	uint16_t *				adsp_pgm_memory_word;
 
-	UINT8					ds3_gcmd;
-	UINT8					ds3_gflag;
-	UINT8					ds3_g68irqs;
-	UINT8					ds3_gfirqs;
-	UINT8					ds3_g68flag;
-	UINT8					ds3_send;
-	UINT8					ds3_reset;
-	UINT16					ds3_gdata;
-	UINT16					ds3_g68data;
-	UINT32					ds3_sim_address;
+	uint8_t					ds3_gcmd;
+	uint8_t					ds3_gflag;
+	uint8_t					ds3_g68irqs;
+	uint8_t					ds3_gfirqs;
+	uint8_t					ds3_g68flag;
+	uint8_t					ds3_send;
+	uint8_t					ds3_reset;
+	uint16_t					ds3_gdata;
+	uint16_t					ds3_g68data;
+	uint32_t					ds3_sim_address;
 
-	UINT16					adc_control;
-	UINT8					adc8_select;
-	UINT8					adc8_data;
-	UINT8					adc12_select;
-	UINT8					adc12_byte;
-	UINT16					adc12_data;
+	uint16_t					adc_control;
+	uint8_t					adc8_select;
+	uint8_t					adc8_data;
+	uint8_t					adc12_select;
+	uint8_t					adc12_byte;
+	uint16_t					adc12_data;
 
-	UINT16					hdc68k_last_wheel;
-	UINT16					hdc68k_last_port1;
-	UINT8					hdc68k_wheel_edge;
-	UINT8					hdc68k_shifter_state;
+	uint16_t					hdc68k_last_wheel;
+	uint16_t					hdc68k_last_port1;
+	uint8_t					hdc68k_wheel_edge;
+	uint8_t					hdc68k_shifter_state;
 
-	UINT8					st68k_sloop_bank;
+	uint8_t					st68k_sloop_bank;
 	offs_t					st68k_last_alt_sloop_offset;
 
 	#define MAX_MSP_SYNC	16
-	UINT32 *				dataptr[MAX_MSP_SYNC];
-	UINT32					dataval[MAX_MSP_SYNC];
+	uint32_t *				dataptr[MAX_MSP_SYNC];
+	uint32_t					dataval[MAX_MSP_SYNC];
 	int 					next_msp_sync;
 
 	/* audio state */
-	UINT8					soundflag;
-	UINT8					mainflag;
-	UINT16					sounddata;
-	UINT16					maindata;
+	uint8_t					soundflag;
+	uint8_t					mainflag;
+	uint16_t					sounddata;
+	uint16_t					maindata;
 
-	UINT8					dacmute;
-	UINT8					cramen;
-	UINT8					irq68k;
+	uint8_t					dacmute;
+	uint8_t					cramen;
+	uint8_t					irq68k;
 
 	offs_t					sound_rom_offs;
 
-	UINT8 *					rombase;
-	UINT32					romsize;
-	UINT16					comram[0x400/2];
-	UINT64					last_bio_cycles;
+	uint8_t *					rombase;
+	uint32_t					romsize;
+	uint16_t					comram[0x400/2];
+	uint64_t					last_bio_cycles;
 
 	/* video state */
 	offs_t					vram_mask;
 
-	UINT8					shiftreg_enable;
+	uint8_t					shiftreg_enable;
 
-	UINT32					mask_table[65536 * 4];
-	UINT8 *					gsp_shiftreg_source;
+	uint32_t					mask_table[65536 * 4];
+	uint8_t *					gsp_shiftreg_source;
 
-	INT8					gfx_finescroll;
-	UINT8					gfx_palettebank;
+	int8_t					gfx_finescroll;
+	uint8_t					gfx_palettebank;
 };
 
 
@@ -253,7 +253,7 @@ READ16_HANDLER( hd68k_ds3_program_r );
 WRITE16_HANDLER( hd68k_ds3_program_w );
 
 /* DSK board */
-void hddsk_update_pif(running_device *device, UINT32 pins);
+void hddsk_update_pif(running_device *device, uint32_t pins);
 WRITE16_HANDLER( hd68k_dsk_control_w );
 READ16_HANDLER( hd68k_dsk_ram_r );
 WRITE16_HANDLER( hd68k_dsk_ram_w );
@@ -339,8 +339,8 @@ READ16_HANDLER( hdsnddsp_compare_r );
 /*----------- defined in video/harddriv.c -----------*/
 
 VIDEO_START( harddriv );
-void hdgsp_write_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
-void hdgsp_read_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
+void hdgsp_write_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
+void hdgsp_read_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
 
 READ16_HANDLER( hdgsp_control_lo_r );
 WRITE16_HANDLER( hdgsp_control_lo_w );

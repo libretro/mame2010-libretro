@@ -12,10 +12,10 @@ public:
 	tail2nos_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    bgvideoram;
-	UINT16 *    spriteram;
-	UINT16 *    zoomdata;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    bgvideoram;
+	uint16_t *    spriteram;
+	uint16_t *    zoomdata;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */

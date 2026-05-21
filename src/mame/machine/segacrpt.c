@@ -159,7 +159,7 @@
 static void lfkp(int mask)
 {
 	int A;
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 
 	for (A = 0x0000;A < 0x8000-14;A++)
@@ -213,15 +213,15 @@ static void look_for_known_plaintext(void)
 }
 #endif
 
-static void sega_decode(running_machine *machine, const char *cputag, const UINT8 convtable[32][4])
+static void sega_decode(running_machine *machine, const char *cputag, const uint8_t convtable[32][4])
 {
 	int A;
 
 	const address_space *space = cputag_get_address_space(machine, cputag, ADDRESS_SPACE_PROGRAM);
 	int length = memory_region_length(machine, cputag);
 	int cryptlen = MIN(length, 0x8000);
-	UINT8 *rom = memory_region(machine, cputag);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0xc000);
+	uint8_t *rom = memory_region(machine, cputag);
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0xc000);
 
 	memory_set_decrypted_region(space, 0x0000, cryptlen - 1, decrypted);
 
@@ -229,7 +229,7 @@ static void sega_decode(running_machine *machine, const char *cputag, const UINT
 	{
 		int xorval = 0;
 
-		UINT8 src = rom[A];
+		uint8_t src = rom[A];
 
 		/* pick the translation table from bits 0, 4, 8 and 12 of the address */
 		int row = (A & 1) + (((A >> 4) & 1) << 1) + (((A >> 8) & 1) << 2) + (((A >> 12) & 1) << 3);
@@ -268,7 +268,7 @@ static void sega_decode(running_machine *machine, const char *cputag, const UINT
 
 void buckrog_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -297,7 +297,7 @@ void buckrog_decode(running_machine *machine, const char *cputag)
 
 void pengo_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -326,7 +326,7 @@ void pengo_decode(running_machine *machine, const char *cputag)
 
 void szaxxon_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -355,7 +355,7 @@ void szaxxon_decode(running_machine *machine, const char *cputag)
 
 void suprloco_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -384,7 +384,7 @@ void suprloco_decode(running_machine *machine, const char *cputag)
 
 void yamato_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -413,9 +413,9 @@ void yamato_decode(running_machine *machine, const char *cputag)
 void toprollr_decode(running_machine *machine, const char *cputag, const char *regiontag)
 {
 	/* same tables as in Yamato, but encrypted ROM is banked */
-	UINT8 *decrypted;
+	uint8_t *decrypted;
 
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -440,9 +440,9 @@ void toprollr_decode(running_machine *machine, const char *cputag, const char *r
 	int A;
 
 	const address_space *space = cputag_get_address_space(machine, cputag, ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, regiontag);
+	uint8_t *rom = memory_region(machine, regiontag);
 	int bankstart;
-	decrypted = auto_alloc_array(machine, UINT8, 0x6000*3);
+	decrypted = auto_alloc_array(machine, uint8_t, 0x6000*3);
 
 
 	for(bankstart=0;bankstart<0x6000*3;bankstart+=0x6000)
@@ -450,7 +450,7 @@ void toprollr_decode(running_machine *machine, const char *cputag, const char *r
 	{
 		int xorval = 0;
 
-		UINT8 src = rom[A+bankstart];
+		uint8_t src = rom[A+bankstart];
 
 		/* pick the translation table from bits 0, 4, 8 and 12 of the address */
 		int row = (A & 1) + (((A >> 4) & 1) << 1) + (((A >> 8) & 1) << 2) + (((A >> 12) & 1) << 3);
@@ -480,7 +480,7 @@ void toprollr_decode(running_machine *machine, const char *cputag, const char *r
 
 void sindbadm_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -509,7 +509,7 @@ void sindbadm_decode(running_machine *machine, const char *cputag)
 
 void regulus_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -538,7 +538,7 @@ void regulus_decode(running_machine *machine, const char *cputag)
 
 void mrviking_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -567,7 +567,7 @@ void mrviking_decode(running_machine *machine, const char *cputag)
 
 void swat_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -596,7 +596,7 @@ void swat_decode(running_machine *machine, const char *cputag)
 
 void flicky_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -625,7 +625,7 @@ void flicky_decode(running_machine *machine, const char *cputag)
 
 void futspy_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -654,7 +654,7 @@ void futspy_decode(running_machine *machine, const char *cputag)
 
 void wmatch_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -683,7 +683,7 @@ void wmatch_decode(running_machine *machine, const char *cputag)
 
 void bullfgtj_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -712,7 +712,7 @@ void bullfgtj_decode(running_machine *machine, const char *cputag)
 
 void pbaction_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -741,7 +741,7 @@ void pbaction_decode(running_machine *machine, const char *cputag)
 
 void spatter_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -771,9 +771,9 @@ void spatter_decode(running_machine *machine, const char *cputag)
 void jongkyo_decode(running_machine *machine, const char *cputag)
 {
 	/* encrypted ROM is banked */
-	UINT8 *decrypted;
+	uint8_t *decrypted;
 
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -798,14 +798,14 @@ void jongkyo_decode(running_machine *machine, const char *cputag)
 	int A;
 
 	const address_space *space = cputag_get_address_space(machine, cputag, ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, cputag);
-	decrypted = auto_alloc_array(machine, UINT8, 0x9000);
+	uint8_t *rom = memory_region(machine, cputag);
+	decrypted = auto_alloc_array(machine, uint8_t, 0x9000);
 
 	for (A = 0x0000;A < 0x9000;A++)
 	{
 		int xorval = 0;
 
-		UINT8 src = rom[A];
+		uint8_t src = rom[A];
 
 		/* pick the translation table from bits 0, 4, 8 and 12 of the address */
 		int row = (A & 1) + (((A >> 4) & 1) << 1) + (((A >> 8) & 1) << 2) + (((A >> 12) & 1) << 3);
@@ -839,7 +839,7 @@ void jongkyo_decode(running_machine *machine, const char *cputag)
 
 void pitfall2_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -868,7 +868,7 @@ void pitfall2_decode(running_machine *machine, const char *cputag)
 
 void nprinces_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -897,7 +897,7 @@ void nprinces_decode(running_machine *machine, const char *cputag)
 
 void seganinj_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -926,7 +926,7 @@ void seganinj_decode(running_machine *machine, const char *cputag)
 
 void imsorry_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -955,7 +955,7 @@ void imsorry_decode(running_machine *machine, const char *cputag)
 
 void teddybb_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -984,7 +984,7 @@ void teddybb_decode(running_machine *machine, const char *cputag)
 
 void myheroj_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -1013,7 +1013,7 @@ void myheroj_decode(running_machine *machine, const char *cputag)
 
 void hvymetal_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */
@@ -1042,7 +1042,7 @@ void hvymetal_decode(running_machine *machine, const char *cputag)
 
 void lvcards_decode(running_machine *machine, const char *cputag)
 {
-	static const UINT8 convtable[32][4] =
+	static const uint8_t convtable[32][4] =
 	{
 		/*       opcode                   data                     address      */
 		/*  A    B    C    D         A    B    C    D                           */

@@ -30,17 +30,17 @@ Fixed-point math reminder:
 static struct dsp4_t dsp4;
 static struct dsp4_vars_t dsp4_vars;
 
-INLINE UINT16 READ_WORD(UINT8 *addr)
+INLINE uint16_t READ_WORD(uint8_t *addr)
 {
 	return (addr[0]) + (addr[1] << 8);
 }
 
-INLINE UINT32 READ_DWORD(UINT8 *addr)
+INLINE uint32_t READ_DWORD(uint8_t *addr)
 {
 	return (addr[0]) + (addr[1] << 8) + (addr[2] << 16) + (addr[3] << 24);
 }
 
-INLINE void WRITE_WORD(UINT8 *addr, UINT16 data)
+INLINE void WRITE_WORD(uint8_t *addr, uint16_t data)
 {
 	addr[0] = data;
 	addr[1] = data >> 8;
@@ -51,9 +51,9 @@ INLINE void WRITE_WORD(UINT8 *addr, UINT16 data)
 
 // input protocol
 
-static INT16 DSP4_READ_WORD( void )
+static int16_t DSP4_READ_WORD( void )
 {
-	INT16 out;
+	int16_t out;
 
 	out = READ_WORD(dsp4.parameters + dsp4.in_index);
 	dsp4.in_index += 2;
@@ -61,9 +61,9 @@ static INT16 DSP4_READ_WORD( void )
 	return out;
 }
 
-static INT32 DSP4_READ_DWORD( void )
+static int32_t DSP4_READ_DWORD( void )
 {
-	INT32 out;
+	int32_t out;
 
 	out = READ_DWORD(dsp4.parameters + dsp4.in_index);
 	dsp4.in_index += 4;
@@ -91,7 +91,7 @@ static INT32 DSP4_READ_DWORD( void )
 #else
 #define DSP4_WRITE_16_WORD( d )                             \
 {                                                           \
-	INT16 *p = ( d ), *end = ( d )+16;                    \
+	int16_t *p = ( d ), *end = ( d )+16;                    \
 	for (; p != end; p++)                                 \
 	{                                                     \
 		WRITE_WORD( dsp4.output + dsp4.out_count, *p ); \
@@ -120,30 +120,30 @@ static INT32 DSP4_READ_DWORD( void )
 //////////////////////////////////////////////////////////////
 
 // 1.7.8 -> 1.15.16
-#define SEX78( a ) ( ( (INT32) ( (INT16) (a) ) ) << 8 )
+#define SEX78( a ) ( ( (int32_t) ( (int16_t) (a) ) ) << 8 )
 
 // 1.15.0 -> 1.15.16
-#define SEX16( a ) ( ( (INT32) ( (INT16) (a) ) ) << 16 )
+#define SEX16( a ) ( ( (int32_t) ( (int16_t) (a) ) ) << 16 )
 
 #ifdef PRINT_OP
-#define U16( a ) ( (UINT16) ( a ) )
+#define U16( a ) ( (uint16_t) ( a ) )
 #endif
 
 #ifdef DEBUG_DSP
-#define U16( a ) ( (UINT16) ( a ) )
+#define U16( a ) ( (uint16_t) ( a ) )
 #endif
 
 //////////////////////////////////////////////////////////////
 
 // Attention: This lookup table is not verified
-static const UINT16 div_lut[64] = { 0x0000, 0x8000, 0x4000, 0x2aaa, 0x2000, 0x1999, 0x1555, 0x1249, 0x1000, 0x0e38,
+static const uint16_t div_lut[64] = { 0x0000, 0x8000, 0x4000, 0x2aaa, 0x2000, 0x1999, 0x1555, 0x1249, 0x1000, 0x0e38,
                                     0x0ccc, 0x0ba2, 0x0aaa, 0x09d8, 0x0924, 0x0888, 0x0800, 0x0787, 0x071c, 0x06bc,
                                     0x0666, 0x0618, 0x05d1, 0x0590, 0x0555, 0x051e, 0x04ec, 0x04bd, 0x0492, 0x0469,
                                     0x0444, 0x0421, 0x0400, 0x03e0, 0x03c3, 0x03a8, 0x038e, 0x0375, 0x035e, 0x0348,
                                     0x0333, 0x031f, 0x030c, 0x02fa, 0x02e8, 0x02d8, 0x02c8, 0x02b9, 0x02aa, 0x029c,
                                     0x028f, 0x0282, 0x0276, 0x026a, 0x025e, 0x0253, 0x0249, 0x023e, 0x0234, 0x022b,
                                     0x0222, 0x0219, 0x0210, 0x0208,  };
-static INT16 dsp4_Inverse(INT16 value)
+static int16_t dsp4_Inverse(int16_t value)
 {
 	// saturate bounds
 	if (value < 0)
@@ -161,12 +161,12 @@ static INT16 dsp4_Inverse(INT16 value)
 //////////////////////////////////////////////////////////////
 
 // Prototype
-static void dsp4_OP0B(UINT8 *draw, INT16 sp_x, INT16 sp_y, INT16 sp_attr, UINT8 size, UINT8 stop);
+static void dsp4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8_t size, uint8_t stop);
 
 //////////////////////////////////////////////////////////////
 
 // OP00
-static void dsp4_Multiply(INT16 Multiplicand, INT16 Multiplier, INT32 *Product)
+static void dsp4_Multiply(int16_t Multiplicand, int16_t Multiplier, int32_t *Product)
 {
 	*Product = (Multiplicand * Multiplier << 1) >> 1;
 }
@@ -212,9 +212,9 @@ static void dsp4_OP01( void )
 	dsp4_vars.view_yofsenv = DSP4_READ_WORD();
 
 	// initial (x,y,offset) at starting dsp4_vars.raster line
-	dsp4_vars.view_x1 = (INT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
-	dsp4_vars.view_y1 = (INT16)(dsp4_vars.world_y >> 16);
-	dsp4_vars.view_xofs1 = (INT16)(dsp4_vars.world_x >> 16);
+	dsp4_vars.view_x1 = (int16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
+	dsp4_vars.view_y1 = (int16_t)(dsp4_vars.world_y >> 16);
+	dsp4_vars.view_xofs1 = (int16_t)(dsp4_vars.world_x >> 16);
 	dsp4_vars.view_yofs1 = dsp4_vars.world_yofs;
 	dsp4_vars.view_turnoff_x = 0;
 	dsp4_vars.view_turnoff_dx = 0;
@@ -229,8 +229,8 @@ static void dsp4_OP01( void )
 
 		// perspective projection of world (x,y,scroll) points
 		// based on the current projection lines
-		dsp4_vars.view_x2 = (INT16)(( ( ( dsp4_vars.world_x + dsp4_vars.world_xenv ) >> 16 ) * dsp4_vars.distance >> 15 ) + ( dsp4_vars.view_turnoff_x * dsp4_vars.distance >> 15 ));
-		dsp4_vars.view_y2 = (INT16)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
+		dsp4_vars.view_x2 = (int16_t)(( ( ( dsp4_vars.world_x + dsp4_vars.world_xenv ) >> 16 ) * dsp4_vars.distance >> 15 ) + ( dsp4_vars.view_turnoff_x * dsp4_vars.distance >> 15 ));
+		dsp4_vars.view_y2 = (int16_t)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
 		dsp4_vars.view_xofs2 = dsp4_vars.view_x2;
 		dsp4_vars.view_yofs2 = (dsp4_vars.world_yofs * dsp4_vars.distance >> 15) + dsp4_vars.poly_bottom[0][0] - dsp4_vars.view_y2;
 
@@ -242,9 +242,9 @@ static void dsp4_OP01( void )
 		// 5. Number of dsp4_vars.raster lines drawn in this iteration
 
 		DSP4_CLEAR_OUT();
-		DSP4_WRITE_WORD((UINT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
+		DSP4_WRITE_WORD((uint16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_x2);
-		DSP4_WRITE_WORD((UINT16)(dsp4_vars.world_y >> 16));
+		DSP4_WRITE_WORD((uint16_t)(dsp4_vars.world_y >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_y2);
 
 		//////////////////////////////////////////////////////
@@ -279,8 +279,8 @@ static void dsp4_OP01( void )
 		// scan next command if no SR check needed
 		if (dsp4_vars.segments)
 		{
-			INT32 px_dx, py_dy;
-			INT32 x_scroll, y_scroll;
+			int32_t px_dx, py_dy;
+			int32_t x_scroll, y_scroll;
 
 			// SR = 0x00
 
@@ -302,8 +302,8 @@ static void dsp4_OP01( void )
 				// 3. horizontal scroll offset ($210D)
 
 				DSP4_WRITE_WORD(dsp4_vars.poly_ptr[0][0]);
-				DSP4_WRITE_WORD((UINT16)((y_scroll + 0x8000) >> 16));
-				DSP4_WRITE_WORD((UINT16)((x_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
 
 				// update memory address
@@ -348,7 +348,7 @@ static void dsp4_OP01( void )
 			break;
 
 		// road turnoff
-		if( (UINT16) dsp4_vars.distance == 0x8001 )
+		if( (uint16_t) dsp4_vars.distance == 0x8001 )
 		{
 			dsp4.in_count = 6;
 			DSP4_WAIT(2) resume2:
@@ -452,8 +452,8 @@ static void dsp4_OP07( void )
 	dsp4_vars.view_yofsenv = DSP4_READ_WORD();
 
 	// initial (x,y,offset) at starting dsp4_vars.raster line
-	dsp4_vars.view_x1 = (INT16)(dsp4_vars.world_x >> 16);
-	dsp4_vars.view_y1 = (INT16)(dsp4_vars.world_y >> 16);
+	dsp4_vars.view_x1 = (int16_t)(dsp4_vars.world_x >> 16);
+	dsp4_vars.view_y1 = (int16_t)(dsp4_vars.world_y >> 16);
 	dsp4_vars.view_xofs1 = dsp4_vars.view_x1;
 	dsp4_vars.view_yofs1 = dsp4_vars.world_yofs;
 
@@ -514,8 +514,8 @@ static void dsp4_OP07( void )
 		// scan next command if no SR check needed
 		if (dsp4_vars.segments)
 		{
-			INT32 px_dx, py_dy;
-			INT32 x_scroll, y_scroll;
+			int32_t px_dx, py_dy;
+			int32_t x_scroll, y_scroll;
 
 			// SR = 0x00
 
@@ -537,8 +537,8 @@ static void dsp4_OP07( void )
 				// 3. horizontal scroll offset ($210F)
 
 				DSP4_WRITE_WORD(dsp4_vars.poly_ptr[0][0]);
-				DSP4_WRITE_WORD((UINT16)((y_scroll + 0x8000) >> 16));
-				DSP4_WRITE_WORD((UINT16)((x_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
 				// update memory address
 				dsp4_vars.poly_ptr[0][0] -= 4;
@@ -590,9 +590,9 @@ static void dsp4_OP07( void )
 
 static void dsp4_OP08( void )
 {
-	INT16 wleft, wright;
-	INT16 view_x[2], view_y[2];
-	INT16 envelope[2][2];
+	int16_t wleft, wright;
+	int16_t view_x[2], view_y[2];
+	int16_t envelope[2][2];
 
 	dsp4.waiting4command = 0;
 
@@ -727,7 +727,7 @@ static void dsp4_OP08( void )
 
 	do
 	{
-		INT16 polygon;
+		int16_t polygon;
 		////////////////////////////////////////////////////
 		// command check
 
@@ -769,10 +769,10 @@ static void dsp4_OP08( void )
 
 		for (polygon = 0; polygon < 2; polygon++)
 		{
-			INT32 left_inc, right_inc;
-			INT16 x1_final, x2_final;
-			INT16 env[2][2];
-			INT16 poly;
+			int32_t left_inc, right_inc;
+			int16_t x1_final, x2_final;
+			int16_t env[2][2];
+			int16_t poly;
 
 			// SR = 0x00
 
@@ -812,10 +812,10 @@ static void dsp4_OP08( void )
 			// scan next command if no SR check needed
 			if (dsp4_vars.segments)
 			{
-				INT32 win_left, win_right;
+				int32_t win_left, win_right;
 
 				// road turnoff selection
-				if( (UINT16) envelope[ polygon ][ 0 ] == (UINT16) 0xc001 )
+				if( (uint16_t) envelope[ polygon ][ 0 ] == (uint16_t) 0xc001 )
 					poly = 1;
 				else if( envelope[ polygon ][ 1 ] == 0x3fff )
 					poly = 1;
@@ -865,15 +865,15 @@ static void dsp4_OP08( void )
 				// rasterize line
 				for (dsp4_vars.lcv = 0; dsp4_vars.lcv < dsp4_vars.segments; dsp4_vars.lcv++)
 				{
-					INT16 x_left, x_right;
+					int16_t x_left, x_right;
 
 					// project new coordinates
 					win_left += left_inc;
 					win_right += right_inc;
 
 					// grab integer portion, drop fraction (no rounding)
-					x_left = (INT16)(win_left >> 16);
-					x_right = (INT16)(win_right >> 16);
+					x_left = (int16_t)(win_left >> 16);
+					x_right = (int16_t)(win_right >> 16);
 
 					// saturate offscreen data
 					if (x_left < dsp4_vars.poly_clipLf[polygon][0])
@@ -995,13 +995,13 @@ static void dsp4_OP09( void )
 		// process projection information
 
 		// vehicle sprite
-		if ((UINT16) dsp4_vars.distance == 0x9000)
+		if ((uint16_t) dsp4_vars.distance == 0x9000)
 		{
-			INT16 car_left, car_right, car_back;
-			INT16 impact_left, impact_back;
-			INT16 world_spx, world_spy;
-			INT16 view_spx, view_spy;
-			UINT16 energy;
+			int16_t car_left, car_right, car_back;
+			int16_t impact_left, impact_back;
+			int16_t world_spx, world_spy;
+			int16_t view_spx, view_spy;
+			uint16_t energy;
 
 			// we already have 4 bytes we want
 			dsp4.in_count = 14;
@@ -1046,8 +1046,8 @@ static void dsp4_OP09( void )
 		// terrain sprite
 		else
 		{
-			INT16 world_spx, world_spy;
-			INT16 view_spx, view_spy;
+			int16_t world_spx, world_spy;
+			int16_t view_spx, view_spy;
 
 			// we already have 4 bytes we want
 			dsp4.in_count = 10;
@@ -1080,13 +1080,13 @@ static void dsp4_OP09( void )
 
 		do
 		{
-			UINT16 header;
+			uint16_t header;
 
-			INT16 sp_x, sp_y, sp_attr, sp_dattr;
-			INT16 sp_dx, sp_dy;
-			INT16 pixels;
+			int16_t sp_x, sp_y, sp_attr, sp_dattr;
+			int16_t sp_dx, sp_dy;
+			int16_t pixels;
 
-			UINT8 draw;
+			uint8_t draw;
 
 			dsp4.in_count = 2;
 			DSP4_WAIT(5) resume5 :
@@ -1182,10 +1182,10 @@ static void dsp4_OP09( void )
 
 //////////////////////////////////////////////////////////////
 
-static const UINT16 OP0A_Values[16] = { 0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150, 0xfe80,
+static const uint16_t OP0A_Values[16] = { 0x0000, 0x0030, 0x0060, 0x0090, 0x00c0, 0x00f0, 0x0120, 0x0150, 0xfe80,
                                  0xfeb0, 0xfee0, 0xff10, 0xff40, 0xff70, 0xffa0, 0xffd0 };
 
-static void dsp4_OP0A(INT16 n2, INT16 *o1, INT16 *o2, INT16 *o3, INT16 *o4)
+static void dsp4_OP0A(int16_t n2, int16_t *o1, int16_t *o2, int16_t *o3, int16_t *o4)
 {
 	*o4 = OP0A_Values[(n2 & 0x000f)];
 	*o3 = OP0A_Values[(n2 & 0x00f0) >> 4];
@@ -1195,9 +1195,9 @@ static void dsp4_OP0A(INT16 n2, INT16 *o1, INT16 *o2, INT16 *o3, INT16 *o4)
 
 //////////////////////////////////////////////////////////////
 
-static void dsp4_OP0B(UINT8 *draw, INT16 sp_x, INT16 sp_y, INT16 sp_attr, UINT8 size, UINT8 stop)
+static void dsp4_OP0B(uint8_t *draw, int16_t sp_x, int16_t sp_y, int16_t sp_attr, uint8_t size, uint8_t stop)
 {
-	INT16 Row1, Row2;
+	int16_t Row1, Row2;
 
 	// SR = 0x00
 
@@ -1316,9 +1316,9 @@ static void dsp4_OP0D( void )
 	dsp4_vars.view_yofsenv = DSP4_READ_WORD();
 
 	// initial (x,y,offset) at starting dsp4_vars.raster line
-	dsp4_vars.view_x1 = (INT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
-	dsp4_vars.view_y1 = (INT16)(dsp4_vars.world_y >> 16);
-	dsp4_vars.view_xofs1 = (INT16)(dsp4_vars.world_x >> 16);
+	dsp4_vars.view_x1 = (int16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
+	dsp4_vars.view_y1 = (int16_t)(dsp4_vars.world_y >> 16);
+	dsp4_vars.view_xofs1 = (int16_t)(dsp4_vars.world_x >> 16);
 	dsp4_vars.view_yofs1 = dsp4_vars.world_yofs;
 
 	// first dsp4_vars.raster line
@@ -1332,8 +1332,8 @@ static void dsp4_OP0D( void )
 
 		// perspective projection of world (x,y,scroll) points
 		// based on the current projection lines
-		dsp4_vars.view_x2 = (INT16)(( ( ( dsp4_vars.world_x + dsp4_vars.world_xenv ) >> 16 ) * dsp4_vars.distance >> 15 ) + ( dsp4_vars.view_turnoff_x * dsp4_vars.distance >> 15 ));
-		dsp4_vars.view_y2 = (INT16)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
+		dsp4_vars.view_x2 = (int16_t)(( ( ( dsp4_vars.world_x + dsp4_vars.world_xenv ) >> 16 ) * dsp4_vars.distance >> 15 ) + ( dsp4_vars.view_turnoff_x * dsp4_vars.distance >> 15 ));
+		dsp4_vars.view_y2 = (int16_t)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
 		dsp4_vars.view_xofs2 = dsp4_vars.view_x2;
 		dsp4_vars.view_yofs2 = (dsp4_vars.world_yofs * dsp4_vars.distance >> 15) + dsp4_vars.poly_bottom[0][0] - dsp4_vars.view_y2;
 
@@ -1344,9 +1344,9 @@ static void dsp4_OP0D( void )
 		// 5. Number of dsp4_vars.raster lines drawn in this iteration
 
 		DSP4_CLEAR_OUT();
-		DSP4_WRITE_WORD((UINT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
+		DSP4_WRITE_WORD((uint16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_x2);
-		DSP4_WRITE_WORD((UINT16)(dsp4_vars.world_y >> 16));
+		DSP4_WRITE_WORD((uint16_t)(dsp4_vars.world_y >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_y2);
 
 		//////////////////////////////////////////////////////////
@@ -1381,8 +1381,8 @@ static void dsp4_OP0D( void )
 		// scan next command if no SR check needed
 		if (dsp4_vars.segments)
 		{
-			INT32 px_dx, py_dy;
-			INT32 x_scroll, y_scroll;
+			int32_t px_dx, py_dy;
+			int32_t x_scroll, y_scroll;
 
 			// SR = 0x00
 
@@ -1404,8 +1404,8 @@ static void dsp4_OP0D( void )
 				// 3. horizontal scroll offset ($210D)
 
 				DSP4_WRITE_WORD(dsp4_vars.poly_ptr[0][0]);
-				DSP4_WRITE_WORD((UINT16)((y_scroll + 0x8000) >> 16));
-				DSP4_WRITE_WORD((UINT16)((x_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
 
 				// update memory address
@@ -1518,9 +1518,9 @@ static void dsp4_OP0F( void )
 	dsp4_vars.view_yofsenv = DSP4_READ_WORD();
 
 	// initial (x,y,offset) at starting dsp4_vars.raster line
-	dsp4_vars.view_x1 = (INT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
-	dsp4_vars.view_y1 = (INT16)(dsp4_vars.world_y >> 16);
-	dsp4_vars.view_xofs1 = (INT16)(dsp4_vars.world_x >> 16);
+	dsp4_vars.view_x1 = (int16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16);
+	dsp4_vars.view_y1 = (int16_t)(dsp4_vars.world_y >> 16);
+	dsp4_vars.view_xofs1 = (int16_t)(dsp4_vars.world_x >> 16);
 	dsp4_vars.view_yofs1 = dsp4_vars.world_yofs;
 	dsp4_vars.view_turnoff_x = 0;
 	dsp4_vars.view_turnoff_dx = 0;
@@ -1536,8 +1536,8 @@ static void dsp4_OP0F( void )
 
 		// perspective projection of world (x,y,scroll) points
 		// based on the current projection lines
-		dsp4_vars.view_x2 = (INT16)(((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16) * dsp4_vars.distance >> 15);
-		dsp4_vars.view_y2 = (INT16)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
+		dsp4_vars.view_x2 = (int16_t)(((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16) * dsp4_vars.distance >> 15);
+		dsp4_vars.view_y2 = (int16_t)((dsp4_vars.world_y >> 16) * dsp4_vars.distance >> 15);
 		dsp4_vars.view_xofs2 = dsp4_vars.view_x2;
 		dsp4_vars.view_yofs2 = (dsp4_vars.world_yofs * dsp4_vars.distance >> 15) + dsp4_vars.poly_bottom[0][0] - dsp4_vars.view_y2;
 
@@ -1548,9 +1548,9 @@ static void dsp4_OP0F( void )
 		// 5. Number of dsp4_vars.raster lines drawn in this iteration
 
 		DSP4_CLEAR_OUT();
-		DSP4_WRITE_WORD((UINT16)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
+		DSP4_WRITE_WORD((uint16_t)((dsp4_vars.world_x + dsp4_vars.world_xenv) >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_x2);
-		DSP4_WRITE_WORD((UINT16)(dsp4_vars.world_y >> 16));
+		DSP4_WRITE_WORD((uint16_t)(dsp4_vars.world_y >> 16));
 		DSP4_WRITE_WORD(dsp4_vars.view_y2);
 
 		//////////////////////////////////////////////////////
@@ -1585,8 +1585,8 @@ static void dsp4_OP0F( void )
 		// scan next command if no SR check needed
 		if (dsp4_vars.segments)
 		{
-			INT32 px_dx, py_dy;
-			INT32 x_scroll, y_scroll;
+			int32_t px_dx, py_dy;
+			int32_t x_scroll, y_scroll;
 
 			for (dsp4_vars.lcv = 0; dsp4_vars.lcv < 4; dsp4_vars.lcv++)
 			{
@@ -1596,8 +1596,8 @@ static void dsp4_OP0F( void )
 				resume1 :
 				for (;;)
 				{
-					INT16 distance;
-					INT16 color, red, green, blue;
+					int16_t distance;
+					int16_t color, red, green, blue;
 
 					distance = DSP4_READ_WORD();
 					color = DSP4_READ_WORD();
@@ -1642,8 +1642,8 @@ static void dsp4_OP0F( void )
 				// 3. horizontal scroll offset ($210D)
 
 				DSP4_WRITE_WORD(dsp4_vars.poly_ptr[0][0]);
-				DSP4_WRITE_WORD((UINT16)((y_scroll + 0x8000) >> 16));
-				DSP4_WRITE_WORD((UINT16)((x_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
 				// update memory address
 				dsp4_vars.poly_ptr[0][0] -= 4;
@@ -1687,7 +1687,7 @@ static void dsp4_OP0F( void )
 			break;
 
 		// road splice
-		if( (UINT16) dsp4_vars.distance == 0x8001 )
+		if( (uint16_t) dsp4_vars.distance == 0x8001 )
 		{
 			dsp4.in_count = 6;
 			DSP4_WAIT(3) resume3:
@@ -1764,8 +1764,8 @@ static void dsp4_OP10( void )
 	dsp4_vars.view_yofsenv = DSP4_READ_WORD();
 
 	// initial (x,y,offset) at starting dsp4_vars.raster line
-	dsp4_vars.view_x1 = (INT16)(dsp4_vars.world_x >> 16);
-	dsp4_vars.view_y1 = (INT16)(dsp4_vars.world_y >> 16);
+	dsp4_vars.view_x1 = (int16_t)(dsp4_vars.world_x >> 16);
+	dsp4_vars.view_y1 = (int16_t)(dsp4_vars.world_y >> 16);
 	dsp4_vars.view_xofs1 = dsp4_vars.view_x1;
 	dsp4_vars.view_yofs1 = dsp4_vars.world_yofs;
 
@@ -1833,8 +1833,8 @@ static void dsp4_OP10( void )
 				resume1 :
 				for (;;)
 				{
-					INT16 distance;
-					INT16 color, red, green, blue;
+					int16_t distance;
+					int16_t color, red, green, blue;
 
 					distance = DSP4_READ_WORD();
 					color = DSP4_READ_WORD();
@@ -1862,8 +1862,8 @@ static void dsp4_OP10( void )
 		// scan next command if no SR check needed
 		if (dsp4_vars.segments)
 		{
-			INT32 px_dx, py_dy;
-			INT32 x_scroll, y_scroll;
+			int32_t px_dx, py_dy;
+			int32_t x_scroll, y_scroll;
 
 			// SR = 0x00
 
@@ -1885,8 +1885,8 @@ static void dsp4_OP10( void )
 				// 3. horizontal scroll offset ($210F)
 
 				DSP4_WRITE_WORD(dsp4_vars.poly_ptr[0][0]);
-				DSP4_WRITE_WORD((UINT16)((y_scroll + 0x8000) >> 16));
-				DSP4_WRITE_WORD((UINT16)((x_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((y_scroll + 0x8000) >> 16));
+				DSP4_WRITE_WORD((uint16_t)((x_scroll + 0x8000) >> 16));
 
 				// update memory address
 				dsp4_vars.poly_ptr[0][0] -= 4;
@@ -1936,7 +1936,7 @@ static void dsp4_OP10( void )
 
 //////////////////////////////////////////////////////////////
 
-static void dsp4_OP11(INT16 A, INT16 B, INT16 C, INT16 D, INT16 *M)
+static void dsp4_OP11(int16_t A, int16_t B, int16_t C, int16_t D, int16_t *M)
 {
 	// 0x155 = 341 = Horizontal Width of the Screen
 	*M = ((A * 0x0155 >> 2) & 0xf000) |
@@ -2043,7 +2043,7 @@ static void dsp4_init( running_machine *machine )
 	dsp4_register_save(machine);
 }
 
-static void dsp4_write( UINT8 dsp4_byte )
+static void dsp4_write( uint8_t dsp4_byte )
 {
 	// clear pending read
 	if (dsp4.out_index < dsp4.out_count)
@@ -2127,8 +2127,8 @@ static void dsp4_write( UINT8 dsp4_byte )
 				// 16-bit multiplication
 			case 0x0000:
 			{
-				INT16 multiplier, multiplicand;
-				INT32 product;
+				int16_t multiplier, multiplicand;
+				int32_t product;
 
 				multiplier = DSP4_READ_WORD();
 				multiplicand = DSP4_READ_WORD();
@@ -2136,8 +2136,8 @@ static void dsp4_write( UINT8 dsp4_byte )
 				dsp4_Multiply(multiplicand, multiplier, &product);
 
 				DSP4_CLEAR_OUT();
-				DSP4_WRITE_WORD((UINT16)(product));
-				DSP4_WRITE_WORD((UINT16)(product >> 16));
+				DSP4_WRITE_WORD((uint16_t)(product));
+				DSP4_WRITE_WORD((uint16_t)(product >> 16));
 			}
 			break;
 
@@ -2172,8 +2172,8 @@ static void dsp4_write( UINT8 dsp4_byte )
 			// unknown
 			case 0x000A:
 			{
-				INT16 in2a;
-				INT16 out1a, out2a, out3a, out4a;
+				int16_t in2a;
+				int16_t out1a, out2a, out3a, out4a;
 
 				/* in1a = */ DSP4_READ_WORD();
 				in2a = DSP4_READ_WORD();
@@ -2192,10 +2192,10 @@ static void dsp4_write( UINT8 dsp4_byte )
 			// set OAM
 			case 0x000B:
 			{
-				INT16 sp_x = DSP4_READ_WORD();
-				INT16 sp_y = DSP4_READ_WORD();
-				INT16 sp_attr = DSP4_READ_WORD();
-				UINT8 draw = 1;
+				int16_t sp_x = DSP4_READ_WORD();
+				int16_t sp_y = DSP4_READ_WORD();
+				int16_t sp_attr = DSP4_READ_WORD();
+				uint8_t draw = 1;
 
 				DSP4_CLEAR_OUT();
 
@@ -2222,7 +2222,7 @@ static void dsp4_write( UINT8 dsp4_byte )
 			// unknown: horizontal mapping command
 			case 0x0011:
 			{
-				INT16 a, b, c, d, m;
+				int16_t a, b, c, d, m;
 
 
 				d = DSP4_READ_WORD();
@@ -2244,13 +2244,13 @@ static void dsp4_write( UINT8 dsp4_byte )
 	}
 }
 
-static UINT8 dsp4_read( void )
+static uint8_t dsp4_read( void )
 {
-	UINT8 value;
+	uint8_t value;
 
 	if (dsp4.out_count)
 	{
-		value = (UINT8) dsp4.output[dsp4.out_index&0x1FF];
+		value = (uint8_t) dsp4.output[dsp4.out_index&0x1FF];
 		dsp4.out_index++;
 		if (dsp4.out_count == dsp4.out_index)
 			dsp4.out_count = 0;

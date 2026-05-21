@@ -24,7 +24,7 @@ MACHINE_RESET( vertigo );
 
 /*----------- defined in video/vertigo.c -----------*/
 
-extern UINT16 *vertigo_vectorram;
+extern uint16_t *vertigo_vectorram;
 
 void vertigo_vproc_init(running_machine *machine);
 void vertigo_vproc_reset(running_machine *machine);

@@ -103,8 +103,8 @@ static STATE_POSTLOAD( redraw_pixels )
 VIDEO_START( fortyl )
 {
 	buggychl_state *state = (buggychl_state *)machine->driver_data;
-	state->pixram1 = auto_alloc_array_clear(machine, UINT8, 0x4000);
-	state->pixram2 = auto_alloc_array_clear(machine, UINT8, 0x4000);
+	state->pixram1 = auto_alloc_array_clear(machine, uint8_t, 0x4000);
+	state->pixram2 = auto_alloc_array_clear(machine, uint8_t, 0x4000);
 
 	state->tmp_bitmap1 = auto_bitmap_alloc(machine, 256, 256, machine->primary_screen->format());
 	state->tmp_bitmap2 = auto_bitmap_alloc(machine, 256, 256, machine->primary_screen->format());
@@ -277,8 +277,8 @@ spriteram format (4 bytes per sprite):
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	buggychl_state *state = (buggychl_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *spriteram_2 = state->spriteram2;
 	int offs;
 
 	/* spriteram #1 */

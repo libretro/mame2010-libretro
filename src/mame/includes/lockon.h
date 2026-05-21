@@ -23,11 +23,11 @@ public:
 	lockon_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16	*char_ram;
-	UINT16	*hud_ram;
-	UINT16	*scene_ram;
-	UINT16	*ground_ram;
-	UINT16	*object_ram;
+	uint16_t	*char_ram;
+	uint16_t	*hud_ram;
+	uint16_t	*scene_ram;
+	uint16_t	*ground_ram;
+	uint16_t	*object_ram;
 
 	size_t	hudram_size;
 	size_t	objectram_size;
@@ -35,33 +35,33 @@ public:
 
 	/* video-related */
 	tilemap_t   *tilemap;
-	UINT8	      ground_ctrl;
-	UINT16      scroll_h;
-	UINT16      scroll_v;
+	uint8_t	      ground_ctrl;
+	uint16_t      scroll_h;
+	uint16_t      scroll_v;
 	bitmap_t    *front_buffer;
 	bitmap_t    *back_buffer;
 	emu_timer   *bufend_timer;
 	emu_timer   *cursor_timer;
 
 	/* Rotation Control */
-	UINT16      xsal;
-	UINT16      x0ll;
-	UINT16      dx0ll;
-	UINT16      dxll;
-	UINT16      ysal;
-	UINT16      y0ll;
-	UINT16      dy0ll;
-	UINT16      dyll;
+	uint16_t      xsal;
+	uint16_t      x0ll;
+	uint16_t      dx0ll;
+	uint16_t      dxll;
+	uint16_t      ysal;
+	uint16_t      y0ll;
+	uint16_t      dy0ll;
+	uint16_t      dyll;
 
 	/* Object palette RAM control */
-	UINT32      iden;
-	UINT8	*     obj_pal_ram;
-	UINT32      obj_pal_latch;
-	UINT32      obj_pal_addr;
+	uint32_t      iden;
+	uint8_t	*     obj_pal_ram;
+	uint32_t      obj_pal_latch;
+	uint32_t      obj_pal_addr;
 
 	/* misc */
-	UINT8       ctrl_reg;
-	UINT32      main_inten;
+	uint8_t       ctrl_reg;
+	uint32_t      main_inten;
 
 	/* devices */
 	running_device *maincpu;

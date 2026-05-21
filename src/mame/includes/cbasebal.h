@@ -12,20 +12,20 @@ public:
 	cbasebal_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    spriteram;
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+	uint8_t *    spriteram;
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 	size_t     spriteram_size;
 
 	/* video-related */
 	tilemap_t    *fg_tilemap, *bg_tilemap;
-	UINT8      *textram, *scrollram;
-	UINT8      scroll_x[2], scroll_y[2];
+	uint8_t      *textram, *scrollram;
+	uint8_t      scroll_x[2], scroll_y[2];
 	int        tilebank, spritebank;
 	int        text_on, bg_on, obj_on;
 	int        flipscreen;
 
 	/* misc */
-	UINT8      rambank;
+	uint8_t      rambank;
 };
 
 /*----------- defined in video/cbasebal.c -----------*/

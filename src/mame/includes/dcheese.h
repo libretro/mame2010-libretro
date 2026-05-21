@@ -13,19 +13,19 @@ public:
 	dcheese_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT16   blitter_color[2];
-	UINT16   blitter_xparam[16];
-	UINT16   blitter_yparam[16];
-	UINT16   blitter_vidparam[32];
+	uint16_t   blitter_color[2];
+	uint16_t   blitter_xparam[16];
+	uint16_t   blitter_yparam[16];
+	uint16_t   blitter_vidparam[32];
 
 	bitmap_t *dstbitmap;
 	emu_timer *blitter_timer;
 
 	/* misc */
-	UINT8    irq_state[5];
-	UINT8    soundlatch_full;
-	UINT8    sound_control;
-	UINT8    sound_msb_latch;
+	uint8_t    irq_state[5];
+	uint8_t    soundlatch_full;
+	uint8_t    sound_control;
+	uint8_t    sound_msb_latch;
 
 	/* devices */
 	running_device *maincpu;

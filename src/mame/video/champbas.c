@@ -66,7 +66,7 @@ PALETTE_INIT( champbas )
 
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT8 ctabentry = (color_prom[i & 0xff] & 0x0f) | ((i & 0x100) >> 4);
+		uint8_t ctabentry = (color_prom[i & 0xff] & 0x0f) | ((i & 0x100) >> 4);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -113,14 +113,14 @@ PALETTE_INIT( exctsccr )
 	for (i = 0; i < 0x100; i++)
 	{
 		int swapped_i = BITSWAP8(i, 2, 7, 6, 5, 4, 3, 1, 0);
-		UINT8 ctabentry = (color_prom[swapped_i] & 0x0f) | ((i & 0x80) >> 3);
+		uint8_t ctabentry = (color_prom[swapped_i] & 0x0f) | ((i & 0x80) >> 3);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites (4bpp) */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[0x100 + i] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[0x100 + i] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i + 0x100, ctabentry);
 	}
 }
@@ -229,7 +229,7 @@ static void exctsccr_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 {
 	champbas_state *state = (champbas_state *)machine->driver_data;
 	int offs;
-	UINT8 *obj1, *obj2;
+	uint8_t *obj1, *obj2;
 
 	obj1 = state->bg_videoram;
 	obj2 = &(state->spriteram[0x20]);

@@ -9,8 +9,8 @@
 #include "emu.h"
 
 static tilemap_t *bg_tilemap;
-UINT8 *pingpong_videoram;
-UINT8 *pingpong_colorram;
+uint8_t *pingpong_videoram;
+uint8_t *pingpong_colorram;
 
 
 /* This is strange; it's unlikely that the sprites actually have a hardware */
@@ -83,14 +83,14 @@ PALETTE_INIT( pingpong )
 	/* characters */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = BITSWAP8(color_prom[i],7,6,5,4,0,1,2,3);
+		uint8_t ctabentry = BITSWAP8(color_prom[i],7,6,5,4,0,1,2,3);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -124,7 +124,7 @@ VIDEO_START( pingpong )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4;offs >= 0;offs -= 4)

@@ -21,7 +21,7 @@ VIDEO_START( cloud9 )
 	static const int resistances[3] = { 22000, 10000, 4700 };
 
 	/* allocate second bank of videoram */
-	state->videoram = auto_alloc_array(machine, UINT8, 0x8000);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x8000);
 	memory_set_bankptr(machine, "bank1", state->videoram);
 
 	/* get pointers to our PROMs */
@@ -109,13 +109,13 @@ WRITE8_HANDLER( cloud9_paletteram_w )
  *
  *************************************/
 
-INLINE void cloud9_write_vram( running_machine *machine, UINT16 addr, UINT8 data, UINT8 bitmd, UINT8 pixba )
+INLINE void cloud9_write_vram( running_machine *machine, uint16_t addr, uint8_t data, uint8_t bitmd, uint8_t pixba )
 {
 	cloud9_state *state = (cloud9_state *)machine->driver_data;
-	UINT8 *dest = &state->videoram[0x0000 | (addr & 0x3fff)];
-	UINT8 *dest2 = &state->videoram[0x4000 | (addr & 0x3fff)];
-	UINT8 promaddr = 0;
-	UINT8 wpbits;
+	uint8_t *dest = &state->videoram[0x0000 | (addr & 0x3fff)];
+	uint8_t *dest2 = &state->videoram[0x4000 | (addr & 0x3fff)];
+	uint8_t promaddr = 0;
+	uint8_t wpbits;
 
 	/*
         Inputs to the write-protect PROM:
@@ -199,10 +199,10 @@ READ8_HANDLER( cloud9_bitmode_r )
 	cloud9_state *state = (cloud9_state *)space->machine->driver_data;
 
 	/* in bitmode, the address comes from the autoincrement latches */
-	UINT16 addr = (state->bitmode_addr[1] << 6) | (state->bitmode_addr[0] >> 2);
+	uint16_t addr = (state->bitmode_addr[1] << 6) | (state->bitmode_addr[0] >> 2);
 
 	/* the appropriate pixel is selected into the upper 4 bits */
-	UINT8 result = state->videoram[((~state->bitmode_addr[0] & 2) << 13) | addr] << ((state->bitmode_addr[0] & 1) * 4);
+	uint8_t result = state->videoram[((~state->bitmode_addr[0] & 2) << 13) | addr] << ((state->bitmode_addr[0] & 1) * 4);
 
 	/* autoincrement because /BITMD was selected */
 	bitmode_autoinc(space->machine);
@@ -217,7 +217,7 @@ WRITE8_HANDLER( cloud9_bitmode_w )
 	cloud9_state *state = (cloud9_state *)space->machine->driver_data;
 
 	/* in bitmode, the address comes from the autoincrement latches */
-	UINT16 addr = (state->bitmode_addr[1] << 6) | (state->bitmode_addr[0] >> 2);
+	uint16_t addr = (state->bitmode_addr[1] << 6) | (state->bitmode_addr[0] >> 2);
 
 	/* the lower 4 bits of data are replicated to the upper 4 bits */
 	data = (data & 0x0f) | (data << 4);
@@ -250,7 +250,7 @@ WRITE8_HANDLER( cloud9_bitmode_addr_w )
 VIDEO_UPDATE( cloud9 )
 {
 	cloud9_state *state = (cloud9_state *)screen->machine->driver_data;
-	UINT8 *spriteaddr = state->spriteram;
+	uint8_t *spriteaddr = state->spriteram;
 	int flip = state->video_control[5] ? 0xff : 0x00;	/* PLAYER2 */
 	pen_t black = get_black_pen(screen->machine);
 	int x, y, offs;
@@ -275,7 +275,7 @@ VIDEO_UPDATE( cloud9 )
 	/* draw the bitmap to the screen, looping over Y */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* if we're in the VBLANK region, just fill with black */
 		if (~state->syncprom[y] & 2)
@@ -287,9 +287,9 @@ VIDEO_UPDATE( cloud9 )
 		/* non-VBLANK region: merge the sprites and the bitmap */
 		else
 		{
-			UINT16 *mosrc = (UINT16 *)state->spritebitmap->base + y * state->spritebitmap->rowpixels;
+			uint16_t *mosrc = (uint16_t *)state->spritebitmap->base + y * state->spritebitmap->rowpixels;
 			int effy = y ^ flip;
-			UINT8 *src[2];
+			uint8_t *src[2];
 
 			/* two videoram arrays */
 			src[0] = &state->videoram[0x4000 | (effy * 64)];
@@ -308,8 +308,8 @@ VIDEO_UPDATE( cloud9 )
 					int effx = x ^ flip;
 
 					/* low 4 bits = left pixel, high 4 bits = right pixel */
-					UINT8 pix = (src[(effx >> 1) & 1][effx / 4] >> ((~effx & 1) * 4)) & 0x0f;
-					UINT8 mopix = mosrc[x];
+					uint8_t pix = (src[(effx >> 1) & 1][effx / 4] >> ((~effx & 1) * 4)) & 0x0f;
+					uint8_t mopix = mosrc[x];
 
 					/* sprites have priority if sprite pixel != 0 or some other condition */
 					if (mopix != 0)

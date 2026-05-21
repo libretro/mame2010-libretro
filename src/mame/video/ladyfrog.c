@@ -142,11 +142,11 @@ static VIDEO_START( ladyfrog_common )
 {
 	ladyfrog_state *state = (ladyfrog_state *)machine->driver_data;
 
-	state->spriteram = auto_alloc_array(machine, UINT8, 160);
+	state->spriteram = auto_alloc_array(machine, uint8_t, 160);
 	state->bg_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x200);
-	machine->generic.paletteram2.u8 = auto_alloc_array(machine, UINT8, 0x200);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x200);
+	machine->generic.paletteram2.u8 = auto_alloc_array(machine, uint8_t, 0x200);
 	tilemap_set_scroll_cols(state->bg_tilemap, 32);
 	tilemap_set_scrolldy(state->bg_tilemap, 15, 15);
 

@@ -40,7 +40,7 @@ WRITE8_HANDLER( bigevglf_vidram_addr_w )
 WRITE8_HANDLER( bigevglf_vidram_w )
 {
 	bigevglf_state *state = (bigevglf_state *)space->machine->driver_data;
-	UINT32 x, y, o;
+	uint32_t x, y, o;
 	o = state->vidram_bank + offset;
 	state->vidram[o + 0x10000 * state->plane_selected] = data;
 	y = o >>8;
@@ -67,7 +67,7 @@ VIDEO_START( bigevglf )
 	state_save_register_global_bitmap(machine, state->tmp_bitmap[2]);
 	state_save_register_global_bitmap(machine, state->tmp_bitmap[3]);
 
-	state->vidram = auto_alloc_array(machine, UINT8, 0x100 * 0x100 * 4);
+	state->vidram = auto_alloc_array(machine, uint8_t, 0x100 * 0x100 * 4);
 
 	state_save_register_global_pointer(machine, state->vidram, 0x100 * 0x100 * 4);
 }

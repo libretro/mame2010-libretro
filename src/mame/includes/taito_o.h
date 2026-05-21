@@ -12,7 +12,7 @@ public:
 	taitoo_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* devices */
 	running_device *maincpu;

@@ -23,15 +23,15 @@ public:
 	orbit_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    playfield_ram;
-	UINT8 *    sprite_ram;
+	uint8_t *    playfield_ram;
+	uint8_t *    sprite_ram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 	int        flip_screen;
 
 	/* misc */
-	UINT8      misc_flags;
+	uint8_t      misc_flags;
 
 	/* devices */
 	running_device *maincpu;

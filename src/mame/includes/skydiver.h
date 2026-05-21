@@ -26,7 +26,7 @@ DISCRETE_SOUND_EXTERN( skydiver );
 
 /*----------- defined in video/skydiver.c -----------*/
 
-extern UINT8 *skydiver_videoram;
+extern uint8_t *skydiver_videoram;
 
 MACHINE_RESET( skydiver );
 WRITE8_HANDLER( skydiver_videoram_w );

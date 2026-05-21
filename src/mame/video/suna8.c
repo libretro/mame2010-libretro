@@ -76,8 +76,8 @@
 
 static int suna8_text_dim; /* specifies format of text layer */
 
-UINT8 suna8_rombank, suna8_spritebank, suna8_palettebank;
-UINT8 suna8_unknown;
+uint8_t suna8_rombank, suna8_spritebank, suna8_palettebank;
+uint8_t suna8_unknown;
 
 
 /***************************************************************************
@@ -89,10 +89,10 @@ static int tiles, rombank, page;
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code, attr;
+	uint8_t code, attr;
 	if (input_code_pressed(screen->machine, KEYCODE_X))
 	{
-		UINT8 *rom = memory_region(machine, REGION_CPU1) + 0x10000 + 0x4000*rombank;
+		uint8_t *rom = memory_region(machine, REGION_CPU1) + 0x10000 + 0x4000*rombank;
 		code = rom[ 2 * tile_index + 0 ];
 		attr = rom[ 2 * tile_index + 1 ];
 	}
@@ -145,7 +145,7 @@ WRITE8_HANDLER( suna8_banked_spriteram_w )
 WRITE8_HANDLER( brickzn_banked_paletteram_w )
 {
 	int r,g,b;
-	UINT16 rgb;
+	uint16_t rgb;
 	offset += suna8_palettebank * 0x200;
 	space->machine->generic.paletteram.u8[offset] = data;
 	rgb = (space->machine->generic.paletteram.u8[offset&~1] << 8) + space->machine->generic.paletteram.u8[offset|1];
@@ -172,8 +172,8 @@ static void suna8_vh_start_common(running_machine *machine, int dim)
 	suna8_text_dim = dim;
 	if (!(suna8_text_dim > 0))
 	{
-		machine->generic.paletteram.u8	=	auto_alloc_array(machine, UINT8, 0x200 * 2);
-		machine->generic.spriteram.u8	=	auto_alloc_array(machine, UINT8, 0x2000 * 2);
+		machine->generic.paletteram.u8	=	auto_alloc_array(machine, uint8_t, 0x200 * 2);
+		machine->generic.spriteram.u8	=	auto_alloc_array(machine, uint8_t, 0x2000 * 2);
 		suna8_spritebank  = 0;
 		suna8_palettebank = 0;
 	}
@@ -201,7 +201,7 @@ VIDEO_START( suna8_textdim12 )	{ suna8_vh_start_common(machine, 12); }
 
 static void draw_normal_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int i;
 	int mx = 0;	// multisprite x counter
 
@@ -334,7 +334,7 @@ static void draw_normal_sprites(running_machine *machine, bitmap_t *bitmap,const
 
 static void draw_text_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int i;
 
 	int max_x = machine->primary_screen->width() - 8;

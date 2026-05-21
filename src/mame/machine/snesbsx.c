@@ -27,18 +27,18 @@ struct _snes_bsx_state
 	// we don't emulate the base unit yet
 
 	// cart regs
-    UINT8 cart_regs[16];
+    uint8_t cart_regs[16];
 
 	// flash regs
-    UINT32 command;
-    UINT8 write_old;
-    UINT8 write_new;
+    uint32_t command;
+    uint8_t write_old;
+    uint8_t write_new;
 
     int flash_enable;
     int read_enable;
     int write_enable;
 
-	UINT8 *pram;
+	uint8_t *pram;
 	int ram_source;
 };
 
@@ -48,7 +48,7 @@ static struct _snes_bsx_state  bsx_state;
 static void bsx_update_memory_map(void)
 {
 	bsx_state.ram_source = BIT(bsx_state.cart_regs[0x01], 7) ? SNES_BSX_PRAM : SNES_BSX_FLASH;
-//  UINT8 *RAM = (bsx_state.cart_regs[0x01] & 0x80) == 0x00 ? memory_region(space->machine, "flash") : bsx_state.pram;
+//  uint8_t *RAM = (bsx_state.cart_regs[0x01] & 0x80) == 0x00 ? memory_region(space->machine, "flash") : bsx_state.pram;
 
 	logerror("BSX: updated memory map, current RAM: %d", bsx_state.ram_source);
 	if (!BIT(bsx_state.cart_regs[0x02], 7))
@@ -100,7 +100,7 @@ static READ8_HANDLER( bsx_read )
 	if ((offset & 0xf0ffff) == 0x005000)
 	{
 		//$[00-0f]:5000 MMIO
-		UINT8 n = (offset >> 16) & 0x0f;
+		uint8_t n = (offset >> 16) & 0x0f;
 		return bsx_state.cart_regs[n];
 	}
 
@@ -119,7 +119,7 @@ static WRITE8_HANDLER( bsx_write )
 	if ((offset & 0xf0ffff) == 0x005000)
 	{
 		//$[00-0f]:5000 MMIO
-		UINT8 n = (offset >> 16) & 0x0f;
+		uint8_t n = (offset >> 16) & 0x0f;
 		bsx_state.cart_regs[n] = data;
 		if ((n == 0x0e) && (data & 0x80))
 			bsx_update_memory_map();
@@ -140,7 +140,7 @@ static void bsx_init( running_machine *machine )
 	bsx_state.cart_regs[0x07] = 0x80;
 	bsx_state.cart_regs[0x08] = 0x80;
 
-	bsx_state.pram = auto_alloc_array(machine, UINT8, 0x80000);
+	bsx_state.pram = auto_alloc_array(machine, uint8_t, 0x80000);
 
 	bsx_update_memory_map();
 	// saves
@@ -149,7 +149,7 @@ static void bsx_init( running_machine *machine )
 #ifdef UNUSED_FUNCTION
 static READ8_HANDLER( bsx_flash_read )
 {
-	UINT8 *FLASH = memory_region(space->machine, "flash");
+	uint8_t *FLASH = memory_region(space->machine, "flash");
 
 	if (offset == 0x0002)
 	{

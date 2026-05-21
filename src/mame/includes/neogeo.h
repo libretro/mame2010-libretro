@@ -36,29 +36,29 @@ public:
 	neogeo_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT8      *memcard_data;   // this currently uses generic handlers
-//  UINT16     *save_ram;       // this currently uses generic handlers
+//  uint8_t      *memcard_data;   // this currently uses generic handlers
+//  uint16_t     *save_ram;       // this currently uses generic handlers
 
 	/* video-related */
-	UINT8      *sprite_gfx;
-	UINT32     sprite_gfx_address_mask;
-	UINT16     *videoram;
-	UINT16     *palettes[2]; /* 0x100*16 2 byte palette entries */
+	uint8_t      *sprite_gfx;
+	uint32_t     sprite_gfx_address_mask;
+	uint16_t     *videoram;
+	uint16_t     *palettes[2]; /* 0x100*16 2 byte palette entries */
 	pen_t      *pens;
-	UINT8      palette_bank;
-	UINT8      screen_dark;
-	UINT16     videoram_read_buffer;
-	UINT16     videoram_modulo;
-	UINT16     videoram_offset;
+	uint8_t      palette_bank;
+	uint8_t      screen_dark;
+	uint16_t     videoram_read_buffer;
+	uint16_t     videoram_modulo;
+	uint16_t     videoram_offset;
 
-	UINT8      fixed_layer_source;
+	uint8_t      fixed_layer_source;
 
-	UINT8      auto_animation_speed;
-	UINT8      auto_animation_disabled;
-	UINT8      auto_animation_counter;
-	UINT8      auto_animation_frame_counter;
+	uint8_t      auto_animation_speed;
+	uint8_t      auto_animation_disabled;
+	uint8_t      auto_animation_counter;
+	uint8_t      auto_animation_frame_counter;
 
-	const UINT8 *region_zoomy;
+	const uint8_t *region_zoomy;
 
 
 	/* palette */
@@ -73,36 +73,36 @@ public:
 	emu_timer  *vblank_interrupt_timer;
 	emu_timer  *auto_animation_timer;
 	emu_timer  *sprite_line_timer;
-	UINT8      display_position_interrupt_control;
-	UINT32     display_counter;
-	UINT32     vblank_interrupt_pending;
-	UINT32     display_position_interrupt_pending;
-	UINT32     irq3_pending;
+	uint8_t      display_position_interrupt_control;
+	uint32_t     display_counter;
+	uint32_t     vblank_interrupt_pending;
+	uint32_t     display_position_interrupt_pending;
+	uint32_t     irq3_pending;
 
 	/* misc */
-	UINT8      controller_select;
+	uint8_t      controller_select;
 
-	UINT32     main_cpu_bank_address;
-	UINT8      main_cpu_vector_table_source;
+	uint32_t     main_cpu_bank_address;
+	uint8_t      main_cpu_vector_table_source;
 
-	UINT8      audio_result;
-	UINT8      audio_cpu_banks[4];
-	UINT8      audio_cpu_rom_source;
-	UINT8      audio_cpu_rom_source_last;
+	uint8_t      audio_result;
+	uint8_t      audio_cpu_banks[4];
+	uint8_t      audio_cpu_rom_source;
+	uint8_t      audio_cpu_rom_source_last;
 
-	UINT8      save_ram_unlocked;
+	uint8_t      save_ram_unlocked;
 
-	UINT8      output_data;
-	UINT8      output_latch;
-	UINT8      el_value;
-	UINT8      led1_value;
-	UINT8      led2_value;
-	UINT8      recurse;
+	uint8_t      output_data;
+	uint8_t      output_latch;
+	uint8_t      el_value;
+	uint8_t      led1_value;
+	uint8_t      led2_value;
+	uint8_t      recurse;
 
 	/* protection */
-	UINT32     fatfury2_prot_data;
-	UINT16     neogeo_rng;
-	UINT16     *pvc_cartridge_ram;
+	uint32_t     fatfury2_prot_data;
+	uint16_t     neogeo_rng;
+	uint16_t     *pvc_cartridge_ram;
 	int        fixed_layer_bank_type;
 
 	/* devices */
@@ -114,11 +114,11 @@ public:
 
 /*----------- defined in drivers/neogeo.c -----------*/
 
-void neogeo_set_display_position_interrupt_control(running_machine *machine, UINT16 data);
-void neogeo_set_display_counter_msb(const address_space *space, UINT16 data);
-void neogeo_set_display_counter_lsb(const address_space *space, UINT16 data);
-void neogeo_acknowledge_interrupt(running_machine *machine, UINT16 data);
-void neogeo_set_main_cpu_bank_address(const address_space *space, UINT32 bank_address);
+void neogeo_set_display_position_interrupt_control(running_machine *machine, uint16_t data);
+void neogeo_set_display_counter_msb(const address_space *space, uint16_t data);
+void neogeo_set_display_counter_lsb(const address_space *space, uint16_t data);
+void neogeo_acknowledge_interrupt(running_machine *machine, uint16_t data);
+void neogeo_set_main_cpu_bank_address(const address_space *space, uint32_t bank_address);
 READ16_HANDLER( neogeo_unmapped_r );
 
 
@@ -177,7 +177,7 @@ void decrypt_kof10th(running_machine *machine);
 void decrypt_kf10thep(running_machine *machine);
 void decrypt_kf2k5uni(running_machine *machine);
 void neogeo_bootleg_sx_decrypt(running_machine *machine, int value);
-void kof2002b_gfx_decrypt(running_machine *machine, UINT8 *src, int size);
+void kof2002b_gfx_decrypt(running_machine *machine, uint8_t *src, int size);
 void kf2k2mp_decrypt(running_machine *machine);
 void kf2k2mp2_px_decrypt(running_machine *machine);
 void decrypt_cthd2003(running_machine *machine);
@@ -216,11 +216,11 @@ VIDEO_UPDATE( neogeo );
 READ16_HANDLER( neogeo_video_register_r );
 WRITE16_HANDLER( neogeo_video_register_w );
 
-void neogeo_set_palette_bank(running_machine *machine, UINT8 data);
-void neogeo_set_screen_dark(running_machine *machine, UINT8 data);
+void neogeo_set_palette_bank(running_machine *machine, uint8_t data);
+void neogeo_set_screen_dark(running_machine *machine, uint8_t data);
 READ16_HANDLER( neogeo_paletteram_r );
 WRITE16_HANDLER( neogeo_paletteram_w );
 
-void neogeo_set_fixed_layer_source(running_machine *machine, UINT8 data);
+void neogeo_set_fixed_layer_source(running_machine *machine, uint8_t data);
 
-UINT8 neogeo_get_auto_animation_counter(running_machine *machine);
+uint8_t neogeo_get_auto_animation_counter(running_machine *machine);

@@ -21,10 +21,10 @@ MACHINE_DRIVER_EXTERN( demoneye_audio );
 
 /*----------- defined in video/redalert.c -----------*/
 
-extern UINT8 *redalert_bitmap_videoram;
-extern UINT8 *redalert_bitmap_color;
-extern UINT8 *redalert_charmap_videoram;
-extern UINT8 *redalert_video_control;
+extern uint8_t *redalert_bitmap_videoram;
+extern uint8_t *redalert_bitmap_color;
+extern uint8_t *redalert_charmap_videoram;
+extern uint8_t *redalert_video_control;
 WRITE8_HANDLER( redalert_bitmap_videoram_w );
 
 MACHINE_DRIVER_EXTERN( ww3_video );

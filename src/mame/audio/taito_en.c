@@ -4,9 +4,9 @@
 #include "taito_en.h"
 
 static int counter,vector_reg,imr_status;
-static UINT16 es5510_dsp_ram[0x200];
-static UINT32	es5510_gpr[0xc0];
-static UINT32	es5510_gpr_latch;
+static uint16_t es5510_dsp_ram[0x200];
+static uint32_t	es5510_gpr[0xc0];
+static uint32_t	es5510_gpr_latch;
 static int timer_mode,m68681_imr;
 
 //static int es_tmp=1;
@@ -36,7 +36,7 @@ static WRITE16_HANDLER(f3_68000_share_w)
 
 static WRITE16_HANDLER( f3_es5505_bank_w )
 {
-	UINT32 max_banks_this_game=(memory_region_length(space->machine, "ensoniq.0")/0x200000)-1;
+	uint32_t max_banks_this_game=(memory_region_length(space->machine, "ensoniq.0")/0x200000)-1;
 
 #if 0
 {
@@ -53,7 +53,7 @@ static WRITE16_HANDLER( f3_es5505_bank_w )
 
 static WRITE16_HANDLER( f3_volume_w )
 {
-	static UINT16 channel[8],last_l,last_r;
+	static uint16_t channel[8],last_l,last_r;
 	static int latch;
 
 	if (offset==0) latch=(data>>8)&0x7;
@@ -191,7 +191,7 @@ static READ16_HANDLER(es5510_dsp_r)
 
 static WRITE16_HANDLER(es5510_dsp_w)
 {
-	UINT8 *snd_mem = (UINT8 *)memory_region(space->machine, "ensoniq.0");
+	uint8_t *snd_mem = (uint8_t *)memory_region(space->machine, "ensoniq.0");
 
 //  if (offset>4 && offset!=0x80  && offset!=0xa0  && offset!=0xc0  && offset!=0xe0)
 //      logerror("%06x: DSP write offset %04x %04x\n",cpu_get_pc(space->cpu),offset,data);
@@ -230,7 +230,7 @@ static WRITE16_HANDLER(es5510_dsp_w)
 	}
 }
 
-static UINT16 *sound_ram;
+static uint16_t *sound_ram;
 
 static ADDRESS_MAP_START( f3_sound_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x000000, 0x00ffff) AM_RAM AM_MIRROR(0x30000) AM_SHARE("share1") AM_BASE(&sound_ram)
@@ -249,7 +249,7 @@ ADDRESS_MAP_END
 SOUND_RESET( taito_f3_soundsystem_reset )
 {
 	/* Sound cpu program loads to 0xc00000 so we use a bank */
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "audiocpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "audiocpu");
 	memory_set_bankptr(machine, "bank1",&ROM[0x80000]);
 	memory_set_bankptr(machine, "bank2",&ROM[0x90000]);
 	memory_set_bankptr(machine, "bank3",&ROM[0xa0000]);

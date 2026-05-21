@@ -9,9 +9,9 @@
 #include "emu.h"
 
 
-UINT16 *prehisle_bg_videoram16;
+uint16_t *prehisle_bg_videoram16;
 
-static UINT16 invert_controls;
+static uint16_t invert_controls;
 
 static tilemap_t *bg2_tilemap, *bg_tilemap, *fg_tilemap;
 
@@ -62,7 +62,7 @@ WRITE16_HANDLER( prehisle_control16_w )
 
 static TILE_GET_INFO( get_bg2_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx5");
+	uint8_t *tilerom = memory_region(machine, "gfx5");
 
 	int offs = tile_index * 2;
 	int attr = tilerom[offs + 1] + (tilerom[offs] << 8);
@@ -125,7 +125,7 @@ o fedcba9876543210
 */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int foreground )
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	for (offs = 0; offs < 1024; offs += 4)

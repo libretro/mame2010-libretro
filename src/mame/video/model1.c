@@ -7,18 +7,18 @@
 
 #define LOG_TGP(x)	do { if (LOG_TGP_VIDEO) logerror x; } while (0)
 
-UINT16 *model1_display_list0, *model1_display_list1;
-UINT16 *model1_color_xlat;
-static UINT16 listctl[2];
-static UINT16 *glist;
+uint16_t *model1_display_list0, *model1_display_list1;
+uint16_t *model1_color_xlat;
+static uint16_t listctl[2];
+static uint16_t *glist;
 
 // Model 1 geometrizer TGP and rasterizer simulation
 enum { FRAC_SHIFT = 16 };
 
 static int render_done;
-static UINT16 *tgp_ram;
+static uint16_t *tgp_ram;
 static float trans_mat[12];
-static UINT16 *paletteram16;
+static uint16_t *paletteram16;
 
 static float vxx, vyy, vzz, ayy, ayyc, ayys;
 
@@ -34,7 +34,7 @@ static struct {
 } view;
 
 struct spoint {
-	INT32 x, y;
+	int32_t x, y;
 };
 
 struct point {
@@ -63,19 +63,19 @@ static struct point *pointdb, *pointpt;
 static struct quad_m1 *quaddb, *quadpt;
 static struct quad_m1 **quadind;
 
-static UINT32 *poly_rom,*poly_ram;
+static uint32_t *poly_rom,*poly_ram;
 
-static UINT32 readi(const UINT16 *adr)
+static uint32_t readi(const uint16_t *adr)
 {
 	return adr[0]|(adr[1] << 16);
 }
 
-static INT16 readi16(const UINT16 *adr)
+static int16_t readi16(const uint16_t *adr)
 {
 	return adr[0];
 }
 
-static float readf(const UINT16 *adr)
+static float readf(const uint16_t *adr)
 {
 	return u2f(readi(adr));
 }
@@ -146,7 +146,7 @@ static void project_point_direct(struct point *p)
 
 static void draw_hline(bitmap_t *bitmap, int x1, int x2, int y, int color)
 {
-	UINT16 *base = BITMAP_ADDR16(bitmap, y, 0);
+	uint16_t *base = BITMAP_ADDR16(bitmap, y, 0);
 	while(x1 <= x2) {
 		base[x1] = color;
 		x1++;
@@ -155,7 +155,7 @@ static void draw_hline(bitmap_t *bitmap, int x1, int x2, int y, int color)
 
 static void draw_hline_moired(bitmap_t *bitmap, int x1, int x2, int y, int color)
 {
-	UINT16 *base = BITMAP_ADDR16(bitmap, y, 0);
+	uint16_t *base = BITMAP_ADDR16(bitmap, y, 0);
 	while(x1 <= x2) {
 		if((x1^y)&1)
 			base[x1] = color;
@@ -163,7 +163,7 @@ static void draw_hline_moired(bitmap_t *bitmap, int x1, int x2, int y, int color
 	}
 }
 
-static void fill_slope(bitmap_t *bitmap, int color, INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 y1, INT32 y2, INT32 *nx1, INT32 *nx2)
+static void fill_slope(bitmap_t *bitmap, int color, int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t y1, int32_t y2, int32_t *nx1, int32_t *nx2)
 {
 	if(y1 > view.y2)
 		return;
@@ -186,7 +186,7 @@ static void fill_slope(bitmap_t *bitmap, int color, INT32 x1, INT32 x2, INT32 sl
 	}
 
 	if(x1 > x2 || (x1==x2 && sl1 > sl2)) {
-		INT32 t, *tp;
+		int32_t t, *tp;
 		t = x1;
 		x1 = x2;
 		x2 = t;
@@ -223,7 +223,7 @@ static void fill_slope(bitmap_t *bitmap, int color, INT32 x1, INT32 x2, INT32 sl
 	*nx2 = x2;
 }
 
-static void fill_line(bitmap_t *bitmap, int color, INT32 y, INT32 x1, INT32 x2)
+static void fill_line(bitmap_t *bitmap, int color, int32_t y, int32_t x1, int32_t x2)
 {
 	int xx1 = x1>>FRAC_SHIFT;
 	int xx2 = x2>>FRAC_SHIFT;
@@ -246,7 +246,7 @@ static void fill_line(bitmap_t *bitmap, int color, INT32 y, INT32 x1, INT32 x2)
 
 static void fill_quad(bitmap_t *bitmap, const struct quad_m1 *q)
 {
-	INT32 sl1, sl2, cury, limy, x1, x2;
+	int32_t sl1, sl2, cury, limy, x1, x2;
 	int pmin, pmax, i, ps1, ps2;
 	struct spoint p[8];
 	int color = q->col;
@@ -475,7 +475,7 @@ static void draw_quads(bitmap_t *bitmap, const rectangle *cliprect)
 	view.y2 = save_y2;
 }
 #if 0
-static UINT16 scale_color(UINT16 color, float level)
+static uint16_t scale_color(uint16_t color, float level)
 {
 	int r, g, b;
 	r = ((color >> 10) & 31)*level;
@@ -697,7 +697,7 @@ static float max4f(float a, float b, float c, float d)
 }
 
 #ifdef UNUSED_DEFINITION
-static const UINT8 num_of_times[]={1,1,1,1,2,2,2,3};
+static const uint8_t num_of_times[]={1,1,1,1,2,2,2,3};
 #endif
 static float compute_specular(struct vector *normal, struct vector *light,float diffuse,int lmode)
 {
@@ -725,10 +725,10 @@ static float compute_specular(struct vector *normal, struct vector *light,float 
 	return 0;
 }
 
-static void push_object(running_machine *machine, UINT32 tex_adr, UINT32 poly_adr, UINT32 size)
+static void push_object(running_machine *machine, uint32_t tex_adr, uint32_t poly_adr, uint32_t size)
 {
 	int i;
-	UINT32 flags;
+	uint32_t flags;
 	struct point *old_p0, *old_p1, *p0, *p1;
 	struct vector vn;
 	int link, type;
@@ -799,12 +799,12 @@ static void push_object(running_machine *machine, UINT32 tex_adr, UINT32 poly_ad
 	for(i=0; i<size; i++) {
 #if 0
 		LOG_TGP(("VIDEO:     %08x (%f, %f, %f) (%f, %f, %f) (%f, %f, %f)\n",
-				 *(UINT32 *)(poly_data+poly_adr) & ~(0x01800303),
+				 *(uint32_t *)(poly_data+poly_adr) & ~(0x01800303),
 				 poly_data[poly_adr+1], poly_data[poly_adr+2], poly_data[poly_adr+3],
 				 poly_data[poly_adr+4], poly_data[poly_adr+5], poly_data[poly_adr+6],
 				 poly_data[poly_adr+7], poly_data[poly_adr+8], poly_data[poly_adr+9]));
 #endif
-		flags = *(UINT32 *)(poly_data+poly_adr);
+		flags = *(uint32_t *)(poly_data+poly_adr);
 
 		type = flags & 3;
 		if(!type)
@@ -845,7 +845,7 @@ static void push_object(running_machine *machine, UINT32 tex_adr, UINT32 poly_ad
 #if 0
 		if(dump)
 			LOG_TGP(("VIDEO:     %08x (%f, %f, %f) (%f, %f, %f)\n",
-					 *(UINT32 *)(poly_data+poly_adr),
+					 *(uint32_t *)(poly_data+poly_adr),
 					 p0->x, p0->y, p0->z,
 					 p1->x, p1->y, p1->z));
 #endif
@@ -854,7 +854,7 @@ static void push_object(running_machine *machine, UINT32 tex_adr, UINT32 poly_ad
 #if 0
 		if(1 || dump) {
 			LOG_TGP(("VIDEO:     %08x (%d, %d) (%d, %d) (%d, %d) (%d, %d)\n",
-					 *(UINT32 *)(poly_data+poly_adr),
+					 *(uint32_t *)(poly_data+poly_adr),
 					 old_p0->s.x, old_p0->s.y,
 					 old_p1->s.x, old_p1->s.y,
 					 p0->s.x, p0->s.y,
@@ -937,10 +937,10 @@ static void push_object(running_machine *machine, UINT32 tex_adr, UINT32 poly_ad
 	}
 }
 
-static UINT16 *push_direct(UINT16 *list)
+static uint16_t *push_direct(uint16_t *list)
 {
-	UINT32 flags;
-	UINT32 tex_adr, lum, v1, v2;
+	uint32_t flags;
+	uint32_t tex_adr, lum, v1, v2;
 	struct point *old_p0, *old_p1, *p0, *p1;
 	int link, type;
 	float z;
@@ -1094,9 +1094,9 @@ static UINT16 *push_direct(UINT16 *list)
 	return list+2;
 }
 
-static UINT16 *skip_direct(UINT16 *list)
+static uint16_t *skip_direct(uint16_t *list)
 {
-	UINT32 flags;
+	uint32_t flags;
 	int type;
 
 	list += 18;
@@ -1128,9 +1128,9 @@ static void draw_objects(bitmap_t *bitmap, const rectangle *cliprect)
 	pointpt = pointdb;
 }
 
-static UINT16 *draw_direct(UINT16 *list, bitmap_t *bitmap, const rectangle *cliprect)
+static uint16_t *draw_direct(uint16_t *list, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *res;
+	uint16_t *res;
 
 	LOG_TGP(("VIDEO:   draw direct %x\n", readi(list)));
 
@@ -1144,7 +1144,7 @@ static UINT16 *draw_direct(UINT16 *list, bitmap_t *bitmap, const rectangle *clip
 	return res;
 }
 
-static UINT16 *get_list(void)
+static uint16_t *get_list(void)
 {
 	if(!(listctl[0] & 4))
 		listctl[0] = (listctl[0] & ~0x40) | (listctl[0] & 8 ? 0x40 : 0);
@@ -1182,7 +1182,7 @@ static void tgp_render(running_machine *machine, bitmap_t *bitmap, const rectang
 {
 	render_done = 1;
 	if((listctl[1] & 0x1f) == 0x1f) {
-		UINT16 *list = get_list();
+		uint16_t *list = get_list();
 		int zz = 0;
 		LOG_TGP(("VIDEO: render list %d\n", get_list_number()));
 
@@ -1346,7 +1346,7 @@ static void tgp_scan(void)
         }
 #endif
 	if(!render_done && (listctl[1] & 0x1f) == 0x1f) {
-		UINT16 *list = get_list();
+		uint16_t *list = get_list();
 		// Skip everything but the data uploads
 		LOG_TGP(("VIDEO: scan list %d\n", get_list_number()));
 		for(;;) {
@@ -1444,9 +1444,9 @@ VIDEO_START(model1)
 
 	sys24_tile_vh_start(machine, 0x3fff);
 
-	poly_rom = (UINT32 *)memory_region(machine, "user1");
-	poly_ram = auto_alloc_array_clear(machine, UINT32, 0x400000);
-	tgp_ram = auto_alloc_array_clear(machine, UINT16, 0x100000-0x40000);
+	poly_rom = (uint32_t *)memory_region(machine, "user1");
+	poly_ram = auto_alloc_array_clear(machine, uint32_t, 0x400000);
+	tgp_ram = auto_alloc_array_clear(machine, uint16_t, 0x100000-0x40000);
 	pointdb = auto_alloc_array_clear(machine, struct point, 1000000*2);
 	quaddb  = auto_alloc_array_clear(machine, struct quad_m1, 1000000);
 	quadind = auto_alloc_array_clear(machine, struct quad_m1 *, 1000000);

@@ -25,7 +25,7 @@ VIDEO_UPDATE( slikshot );
 
 /*----------- defined in video/itech8.c -----------*/
 
-extern UINT8 *itech8_grom_bank;
+extern uint8_t *itech8_grom_bank;
 
 VIDEO_START( itech8 );
 

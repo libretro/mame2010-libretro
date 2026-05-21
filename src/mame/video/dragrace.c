@@ -11,7 +11,7 @@ Atari Drag Race video emulation
 static TILE_GET_INFO( get_tile_info )
 {
 	dragrace_state *state = (dragrace_state *)machine->driver_data;
-	UINT8 code = state->playfield_ram[tile_index];
+	uint8_t code = state->playfield_ram[tile_index];
 	int num = 0;
 	int col = 0;
 

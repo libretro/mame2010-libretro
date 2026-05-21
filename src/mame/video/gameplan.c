@@ -52,10 +52,10 @@ static void leprechn_get_pens( pen_t *pens )
 
 	for (i = 0; i < LEPRECHN_NUM_PENS; i++)
 	{
-		UINT8 bk = (i & 8) ? 0x40 : 0x00;
-		UINT8 r = (i & 1) ? 0xff : bk;
-		UINT8 g = (i & 2) ? 0xff : bk;
-		UINT8 b = (i & 4) ? 0xff : bk;
+		uint8_t bk = (i & 8) ? 0x40 : 0x00;
+		uint8_t r = (i & 1) ? 0xff : bk;
+		uint8_t g = (i & 2) ? 0xff : bk;
+		uint8_t b = (i & 4) ? 0xff : bk;
 
 		pens[i] = MAKE_RGB(r, g, b);
 	}
@@ -79,8 +79,8 @@ static VIDEO_UPDATE( gameplan )
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 y = offs >> 8;
-		UINT8 x = offs & 0xff;
+		uint8_t y = offs >> 8;
+		uint8_t x = offs & 0xff;
 
 		*BITMAP_ADDR32(bitmap, y, x) = pens[state->videoram[offs] & 0x07];
 	}
@@ -99,8 +99,8 @@ static VIDEO_UPDATE( leprechn )
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 y = offs >> 8;
-		UINT8 x = offs & 0xff;
+		uint8_t y = offs >> 8;
+		uint8_t x = offs & 0xff;
 
 		*BITMAP_ADDR32(bitmap, y, x) = pens[state->videoram[offs]];
 	}
@@ -289,7 +289,7 @@ static VIDEO_START( common )
 	gameplan_state *state = (gameplan_state *)machine->driver_data;
 
 	state->videoram_size = (HBSTART - HBEND) * (VBSTART - VBEND);
-	state->videoram = auto_alloc_array(machine, UINT8, state->videoram_size);
+	state->videoram = auto_alloc_array(machine, uint8_t, state->videoram_size);
 
 	state->via_0_ca1_timer = timer_alloc(machine, via_0_ca1_timer_callback, NULL);
 

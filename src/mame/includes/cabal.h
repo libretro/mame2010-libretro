@@ -5,9 +5,9 @@ public:
 
 	cabal_state(running_machine &machine) { }
 
-	UINT16 *spriteram;
-	UINT16 *colorram;
-	UINT16 *videoram;
+	uint16_t *spriteram;
+	uint16_t *colorram;
+	uint16_t *videoram;
 	size_t spriteram_size;
 	tilemap_t *background_layer;
 	tilemap_t *text_layer;

@@ -1,8 +1,8 @@
 /*----------- defined in video/vball.c -----------*/
 
-extern UINT8 *vb_attribram;
-extern UINT8 *vb_videoram;
-extern UINT8 *vb_scrolly_lo;
+extern uint8_t *vb_attribram;
+extern uint8_t *vb_videoram;
+extern uint8_t *vb_scrolly_lo;
 extern int vb_scrollx_hi;
 extern int vb_scrolly_hi;
 extern int vb_scrollx_lo;

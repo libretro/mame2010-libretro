@@ -40,13 +40,13 @@ Note:   if MAME_DEBUG is defined, pressing Z with:
 
 // Variables needed by driver:
 
-UINT16 *lordgun_priority_ram, lordgun_priority;
+uint16_t *lordgun_priority_ram, lordgun_priority;
 
-UINT16 *lordgun_vram_0, *lordgun_scroll_x_0, *lordgun_scroll_y_0;
-UINT16 *lordgun_vram_1, *lordgun_scroll_x_1, *lordgun_scroll_y_1;
-UINT16 *lordgun_vram_2, *lordgun_scroll_x_2, *lordgun_scroll_y_2;
-UINT16 *lordgun_vram_3, *lordgun_scroll_x_3, *lordgun_scroll_y_3;
-UINT16 *lordgun_scrollram;
+uint16_t *lordgun_vram_0, *lordgun_scroll_x_0, *lordgun_scroll_y_0;
+uint16_t *lordgun_vram_1, *lordgun_scroll_x_1, *lordgun_scroll_y_1;
+uint16_t *lordgun_vram_2, *lordgun_scroll_x_2, *lordgun_scroll_y_2;
+uint16_t *lordgun_vram_3, *lordgun_scroll_x_3, *lordgun_scroll_y_3;
+uint16_t *lordgun_scrollram;
 int lordgun_whitescreen;
 
 lordgun_gun_data lordgun_gun[2];
@@ -76,33 +76,33 @@ static tilemap_t *tilemap_0, *tilemap_1, *tilemap_2, *tilemap_3;
 
 static TILE_GET_INFO( get_tile_info_0 )
 {
-	UINT16 attr = lordgun_vram_0[ tile_index * 2 + 0 ];
-	UINT16 code = lordgun_vram_0[ tile_index * 2 + 1 ];
-	UINT16 pri  = (attr & 0x0e00) >> 9;
+	uint16_t attr = lordgun_vram_0[ tile_index * 2 + 0 ];
+	uint16_t code = lordgun_vram_0[ tile_index * 2 + 1 ];
+	uint16_t pri  = (attr & 0x0e00) >> 9;
 	SET_TILE_INFO( 0, code, ((attr & 0x0030) >> 4)+0x500/0x40+pri*0x800/0x40, TILE_FLIPXY(attr >> 14));
 }
 
 static TILE_GET_INFO( get_tile_info_1 )
 {
-	UINT16 attr = lordgun_vram_1[ tile_index * 2 + 0 ];
-	UINT16 code = lordgun_vram_1[ tile_index * 2 + 1 ];
-	UINT16 pri  = (attr & 0x0e00) >> 9;
+	uint16_t attr = lordgun_vram_1[ tile_index * 2 + 0 ];
+	uint16_t code = lordgun_vram_1[ tile_index * 2 + 1 ];
+	uint16_t pri  = (attr & 0x0e00) >> 9;
 	SET_TILE_INFO( 1, code, ((attr & 0x0070) >> 4)+0x600/0x40+pri*0x800/0x40, TILE_FLIPXY(attr >> 14));
 }
 
 static TILE_GET_INFO( get_tile_info_2 )
 {
-	UINT16 attr = lordgun_vram_2[ tile_index * 2 + 0 ];
-	UINT16 code = lordgun_vram_2[ tile_index * 2 + 1 ];
-	UINT16 pri  = (attr & 0x0e00) >> 9;
+	uint16_t attr = lordgun_vram_2[ tile_index * 2 + 0 ];
+	uint16_t code = lordgun_vram_2[ tile_index * 2 + 1 ];
+	uint16_t pri  = (attr & 0x0e00) >> 9;
 	SET_TILE_INFO( 2, code, ((attr & 0x0030) >> 4)+0x700/0x40+pri*0x800/0x40, TILE_FLIPXY(attr >> 14));
 }
 
 static TILE_GET_INFO( get_tile_info_3 )
 {
-	UINT16 attr = lordgun_vram_3[ tile_index * 2 + 0 ];
-	UINT16 code = lordgun_vram_3[ tile_index * 2 + 1 ];
-	UINT16 pri  = (attr & 0x0e00) >> 9;
+	uint16_t attr = lordgun_vram_3[ tile_index * 2 + 0 ];
+	uint16_t code = lordgun_vram_3[ tile_index * 2 + 1 ];
+	uint16_t pri  = (attr & 0x0e00) >> 9;
 	SET_TILE_INFO( 3, code, ((attr & 0x00f0) >> 4)+0x400/0x40+pri*0x800/0x40, TILE_FLIPXY(attr >> 14));
 }
 
@@ -286,8 +286,8 @@ void lordgun_update_gun(running_machine *machine, int i)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *s		=	machine->generic.spriteram.u16;
-	UINT16 *end		=	machine->generic.spriteram.u16 + machine->generic.spriteram_size/2;
+	uint16_t *s		=	machine->generic.spriteram.u16;
+	uint16_t *end		=	machine->generic.spriteram.u16 + machine->generic.spriteram_size/2;
 
 	for ( ; s < end; s += 8/2 )
 	{
@@ -434,7 +434,7 @@ VIDEO_UPDATE( lordgun )
 	{
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT16 pens[5];
+			uint16_t pens[5];
 
 			int pri_addr = 0;
 

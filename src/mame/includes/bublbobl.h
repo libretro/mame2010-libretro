@@ -7,16 +7,16 @@ public:
 	bublbobl_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  mcu_sharedram;
-	UINT8 *  videoram;
-	UINT8 *  objectram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  mcu_sharedram;
+	uint8_t *  videoram;
+	uint8_t *  objectram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 	size_t   videoram_size;
 	size_t   objectram_size;
 
 	/* missb2.c also needs the following */
-	UINT8 *  bgvram;
-	UINT8 *  bg_paletteram;
+	uint8_t *  bgvram;
+	uint8_t *  bg_paletteram;
 
 	/* video-related */
 	int      video_enable;
@@ -28,12 +28,12 @@ public:
 	/* Tokio*/
 	int      tokio_prot_count;
 	/* Bubble Bobble MCU */
-	UINT8    ddr1, ddr2, ddr3, ddr4;
-	UINT8    port1_in, port2_in, port3_in, port4_in;
-	UINT8    port1_out, port2_out, port3_out, port4_out;
+	uint8_t    ddr1, ddr2, ddr3, ddr4;
+	uint8_t    port1_in, port2_in, port3_in, port4_in;
+	uint8_t    port1_out, port2_out, port3_out, port4_out;
 	/* Bubble Bobble 68705 */
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_b_in, port_b_out, ddr_b;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_b_in, port_b_out, ddr_b;
 	int      address, latch;
 	/* Bobble Bobble */
 	int      ic43_a, ic43_b;

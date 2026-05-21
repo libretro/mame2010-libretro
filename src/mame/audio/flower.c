@@ -20,32 +20,32 @@ static const int defgain = 48;
 /* this structure defines the parameters for a channel */
 typedef struct
 {
-	UINT32 frequency;
-	UINT32 counter;
-	UINT16 volume;
-	UINT8 oneshot;
-	UINT8 oneshotplaying;
-	UINT16 rom_offset;
+	uint32_t frequency;
+	uint32_t counter;
+	uint16_t volume;
+	uint8_t oneshot;
+	uint8_t oneshotplaying;
+	uint16_t rom_offset;
 
 } sound_channel;
 
 
 /* globals available to everyone */
-UINT8 *flower_soundregs1,*flower_soundregs2;
+uint8_t *flower_soundregs1,*flower_soundregs2;
 
 /* data about the sound system */
 static sound_channel channel_list[MAX_VOICES];
 static sound_channel *last_channel;
 
 /* global sound parameters */
-static const UINT8 *sound_rom1, *sound_rom2;
-static UINT8 num_voices;
-static UINT8 sound_enable;
+static const uint8_t *sound_rom1, *sound_rom2;
+static uint8_t num_voices;
+static uint8_t sound_enable;
 static sound_stream * stream;
 
 /* mixer tables and internal buffers */
-static INT16 *mixer_table;
-static INT16 *mixer_lookup;
+static int16_t *mixer_table;
+static int16_t *mixer_lookup;
 static short *mixer_buffer;
 static short *mixer_buffer_2;
 
@@ -58,7 +58,7 @@ static void make_mixer_table(running_machine *machine, int voices, int gain)
 	int i;
 
 	/* allocate memory */
-	mixer_table = auto_alloc_array(machine, INT16, 256 * voices);
+	mixer_table = auto_alloc_array(machine, int16_t, 256 * voices);
 
 	/* find the middle of the table */
 	mixer_lookup = mixer_table + (128 * voices);
@@ -101,7 +101,7 @@ static STREAM_UPDATE( flower_update_mono )
 		/* only update if we have non-zero volume and frequency */
 		if (v && f)
 		{
-			const UINT8 *w = &sound_rom1[voice->rom_offset];
+			const uint8_t *w = &sound_rom1[voice->rom_offset];
 			int c = voice->counter;
 
 			mix = mixer_buffer;

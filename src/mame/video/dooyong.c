@@ -2,34 +2,34 @@
 #include "includes/dooyong.h"
 
 
-UINT8 *dooyong_txvideoram;
-UINT8 *paletteram_flytiger;
+uint8_t *dooyong_txvideoram;
+uint8_t *paletteram_flytiger;
 
-static UINT8 flytiger_palette_bank;
-static UINT8 sprites_disabled;		/* Used by lastday/lastdaya */
-static UINT8 flytiger_pri;			/* Used by flytiger */
-static UINT8 tx_pri;				/* Used by sadari/gundl94/primella */
-static UINT16 rshark_pri;			/* Used by rshark/superx/popbingo */
+static uint8_t flytiger_palette_bank;
+static uint8_t sprites_disabled;		/* Used by lastday/lastdaya */
+static uint8_t flytiger_pri;			/* Used by flytiger */
+static uint8_t tx_pri;				/* Used by sadari/gundl94/primella */
+static uint16_t rshark_pri;			/* Used by rshark/superx/popbingo */
 
 /* Up to four ROM-based and one RAM-based tilemap */
 static tilemap_t *bg_tilemap, *bg2_tilemap, *fg_tilemap, *fg2_tilemap;
 static tilemap_t *tx_tilemap;
 
 /* Tilemap control registers */
-static UINT8 bgscroll8[0x10] = {0}, bg2scroll8[0x10] = {0}, fgscroll8[0x10] = {0}, fg2scroll8[0x10] = {0};
+static uint8_t bgscroll8[0x10] = {0}, bg2scroll8[0x10] = {0}, fgscroll8[0x10] = {0}, fg2scroll8[0x10] = {0};
 
 /* These are set at startup to configure the tilemap callbacks */
-static UINT8 *bg_tilerom, *bg2_tilerom, *fg_tilerom, *fg2_tilerom;
-static UINT8 *bg_tilerom2, *bg2_tilerom2, *fg_tilerom2, *fg2_tilerom2; /* For rshark/superx */
+static uint8_t *bg_tilerom, *bg2_tilerom, *fg_tilerom, *fg2_tilerom;
+static uint8_t *bg_tilerom2, *bg2_tilerom2, *fg_tilerom2, *fg2_tilerom2; /* For rshark/superx */
 static int bg_gfx, bg2_gfx, fg_gfx, fg2_gfx;
 static int tx_tilemap_mode;	/* 0 = lastday/gulfstrm/pollux/flytiger; 1 = bluehawk/primella */
 
 
 /* All the dooyong games have the same tilemap control registers */
 
-INLINE void dooyong_scroll8_w(offs_t offset, UINT8 data, UINT8 *scroll, tilemap_t *map)
+INLINE void dooyong_scroll8_w(offs_t offset, uint8_t data, uint8_t *scroll, tilemap_t *map)
 {
-	UINT8 old = scroll[offset];
+	uint8_t old = scroll[offset];
 	if (old != data)
 	{
 		scroll[offset] = data;
@@ -182,7 +182,7 @@ WRITE8_HANDLER( paletteram_flytiger_w )
 {
 	if (flytiger_palette_bank)
 	{
-		UINT16 value;
+		uint16_t value;
 		paletteram_flytiger[offset] = data;
 		value = paletteram_flytiger[offset & ~1] | (paletteram_flytiger[offset | 1] << 8);
 		palette_set_color_rgb(space->machine, offset / 2, pal5bit(value >> 10), pal5bit(value >> 5), pal5bit(value >> 0));
@@ -229,7 +229,7 @@ WRITE16_HANDLER( rshark_ctrl_w )
    at once uses hundreds of megabytes of RAM). */
 
 INLINE void lastday_get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index,
-		const UINT8 *tilerom, UINT8 *scroll, int graphics)
+		const uint8_t *tilerom, uint8_t *scroll, int graphics)
 {
 	int offs = (tile_index + ((int)scroll[1] << 6)) * 2;
 	int attr = tilerom[offs];
@@ -267,7 +267,7 @@ INLINE void lastday_get_tile_info(running_machine *machine, tile_data *tileinfo,
 }
 
 INLINE void rshark_get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index,
-		const UINT8 *tilerom1, const UINT8 *tilerom2, UINT8 *scroll, int graphics)
+		const uint8_t *tilerom1, const uint8_t *tilerom2, uint8_t *scroll, int graphics)
 {
 		/* Tiles take two bytes in tile ROM 1:
                          MSB   LSB
@@ -324,7 +324,7 @@ static TILE_GET_INFO( get_fg2_tile_info )
 
 static TILE_GET_INFO( flytiger_get_fg_tile_info )
 {
-	const UINT8 *tilerom = fg_tilerom;
+	const uint8_t *tilerom = fg_tilerom;
 
 	int offs = (tile_index + (fgscroll8[1] << 6)) * 2;
 	int attr = tilerom[offs];
@@ -386,7 +386,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
        height only used by pollux, bluehawk and flytiger
        x flip and y flip only used by pollux and flytiger */
 
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size; offs += 32)
@@ -454,7 +454,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 static void rshark_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 
 	/* Sprites take 8 16-bit words each in memory:
                   MSB             LSB
@@ -485,7 +485,7 @@ static void rshark_draw_sprites(running_machine *machine, bitmap_t *bitmap, cons
 			int flipx = 0, flipy = 0, width, height, x, y;
 
 			sx = buffered_spriteram16[offs+4] & 0x01ff;
-			sy = (INT16)buffered_spriteram16[offs+6] & 0x01ff;
+			sy = (int16_t)buffered_spriteram16[offs+6] & 0x01ff;
 			if (sy & 0x0100) sy |= ~(int)0x01ff;	// Correctly sign-extend 9-bit number
 			code = buffered_spriteram16[offs+3];
 			color = buffered_spriteram16[offs+7] & 0x000f;

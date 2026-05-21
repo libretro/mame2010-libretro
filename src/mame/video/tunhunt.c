@@ -156,7 +156,7 @@ static void set_pens(running_machine *machine)
     0020:   00 f0 f0 f0 b0 b0 00 f0
             00 f0 f0 00 b0 00 f0 f0
 */
-	//const UINT8 *color_prom = memory_region( machine, "proms" );
+	//const uint8_t *color_prom = memory_region( machine, "proms" );
 	int color;
 	int shade;
 	int i;
@@ -215,8 +215,8 @@ static void draw_motion_object(running_machine *machine, bitmap_t *bitmap, const
 
 	tunhunt_state *state = (tunhunt_state *)machine->driver_data;
 	bitmap_t *tmpbitmap = machine->generic.tmpbitmap;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *tunhunt_ram = state->workram;
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *tunhunt_ram = state->workram;
 	//int skip = tunhunt_ram[MOBST];
 	int x0 = 255-tunhunt_ram[MOBJV];
 	int y0 = 255-tunhunt_ram[MOBJH];
@@ -225,7 +225,7 @@ static void draw_motion_object(running_machine *machine, bitmap_t *bitmap, const
 	int x,span_data;
 	int color;
 	int count;
-	const UINT8 *source;
+	const uint8_t *source;
 
 	for( line=0; line<64; line++ )
 	{
@@ -293,7 +293,7 @@ static void draw_box(running_machine *machine, bitmap_t *bitmap, const rectangle
         ->hue 06 02 ff      60  06 05 03 04 01 06 02 ff     d2 00   c2 ff
 */
 	tunhunt_state *state = (tunhunt_state *)machine->driver_data;
-	UINT8 *tunhunt_ram = state->workram;
+	uint8_t *tunhunt_ram = state->workram;
 	int span,x,y;
 	int color;
 //  rectangle bbox;

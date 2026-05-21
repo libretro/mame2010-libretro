@@ -47,20 +47,20 @@ struct _pf_layer_info
 {
 	tilemap_t *		tmap;
 	tilemap_t *		wide_tmap;
-	UINT16			vram_base;
-	UINT16			control[4];
+	uint16_t			vram_base;
+	uint16_t			control[4];
 };
 
 static pf_layer_info pf_layer[3];
 
-static UINT16 pf_master_control[4];
-static INT32 m92_sprite_list;
+static uint16_t pf_master_control[4];
+static int32_t m92_sprite_list;
 
-UINT32 m92_raster_irq_position;
-UINT16 *m92_vram_data,*m92_spritecontrol;
-UINT8 m92_game_kludge;
+uint32_t m92_raster_irq_position;
+uint16_t *m92_vram_data,*m92_spritecontrol;
+uint8_t m92_game_kludge;
 
-UINT8 m92_sprite_buffer_busy;
+uint8_t m92_sprite_buffer_busy;
 static int m92_palette_bank;
 
 /*****************************************************************************/
@@ -196,7 +196,7 @@ WRITE16_HANDLER( m92_pf3_control_w )
 
 WRITE16_HANDLER( m92_master_control_w )
 {
-	UINT16 old = pf_master_control[offset];
+	uint16_t old = pf_master_control[offset];
 	pf_layer_info *layer;
 
 	COMBINE_DATA(&pf_master_control[offset]);
@@ -278,7 +278,7 @@ VIDEO_START( m92 )
 		state_save_register_item_array(machine, "layer", NULL, laynum, layer->control);
 	}
 
-	machine->generic.paletteram.u16 = auto_alloc_array(machine, UINT16, 0x1000/2);
+	machine->generic.paletteram.u16 = auto_alloc_array(machine, uint16_t, 0x1000/2);
 
 	memset(machine->generic.spriteram.u16,0,0x800);
 	memset(machine->generic.buffered_spriteram.u16,0,0x800);
@@ -315,7 +315,7 @@ VIDEO_START( ppan )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs,k;
 
 	for (k=0; k<8; k++)
@@ -398,7 +398,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 static void ppan_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *source = machine->generic.buffered_spriteram.u16;
+	uint16_t *source = machine->generic.buffered_spriteram.u16;
 	int offs, layer, x, y, sprite, color, pri_sprite, pri_back, fx, fy, x_multi, y_multi, row, col, s_ptr;
 
 	for (layer = 0; layer < 8; layer++)
@@ -494,7 +494,7 @@ static void m92_update_scroll_positions(void)
 
 		if (pf_master_control[laynum] & 0x40)
 		{
-			const UINT16 *scrolldata = m92_vram_data + (0xf400 + 0x400 * laynum) / 2;
+			const uint16_t *scrolldata = m92_vram_data + (0xf400 + 0x400 * laynum) / 2;
 
 			tilemap_set_scroll_rows(layer->tmap, 512);
 			tilemap_set_scroll_rows(layer->wide_tmap, 512);

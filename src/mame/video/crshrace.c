@@ -102,8 +102,8 @@ WRITE16_HANDLER( crshrace_gfxctrl_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	crshrace_state *state = (crshrace_state *)machine->driver_data;
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
-	UINT16 *buffered_spriteram_2 = machine->generic.buffered_spriteram2.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram_2 = machine->generic.buffered_spriteram2.u16;
 	int offs;
 
 	offs = 0;

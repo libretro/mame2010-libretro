@@ -65,7 +65,7 @@ typedef struct _namco_53xx_state namco_53xx_state;
 struct _namco_53xx_state
 {
 	running_device *	cpu;
-	UINT8					portO;
+	uint8_t					portO;
 	devcb_resolved_read8	k;
 	devcb_resolved_read8	in[4];
 	devcb_resolved_write8	p;
@@ -96,7 +96,7 @@ static READ8_HANDLER( namco_53xx_Rx_r )
 static WRITE8_HANDLER( namco_53xx_O_w )
 {
 	namco_53xx_state *state = get_safe_token(space->cpu->owner());
-	UINT8 out = (data & 0x0f);
+	uint8_t out = (data & 0x0f);
 	if (data & 0x10)
 		state->portO = (state->portO & 0x0f) | (out << 4);
 	else
@@ -132,7 +132,7 @@ void namco_53xx_read_request(running_device *device)
 READ8_DEVICE_HANDLER( namco_53xx_read )
 {
 	namco_53xx_state *state = get_safe_token(device);
-	UINT8 res = state->portO;
+	uint8_t res = state->portO;
 
 	namco_53xx_read_request(device);
 

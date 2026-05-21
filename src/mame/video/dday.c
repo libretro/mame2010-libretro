@@ -185,7 +185,7 @@ static TILE_GET_INFO( get_sl_tile_info )
 {
 	dday_state *state = (dday_state *)machine->driver_data;
 	int code, sl_flipx, flipx;
-	UINT8* sl_map;
+	uint8_t* sl_map;
 
 	sl_map = &memory_region(machine, "user1")[(state->sl_image & 0x07) * 0x0200];
 
@@ -334,7 +334,7 @@ VIDEO_UPDATE( dday )
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 			{
-				UINT16 src_pixel = *BITMAP_ADDR16(state->main_bitmap, y, x);
+				uint16_t src_pixel = *BITMAP_ADDR16(state->main_bitmap, y, x);
 
 				if (*BITMAP_ADDR16(sl_bitmap, y, x) == 0xff)
 					src_pixel += screen->machine->total_colors();

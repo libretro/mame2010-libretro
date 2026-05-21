@@ -12,11 +12,11 @@ public:
 	rastan_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *    paletteram; // this currently uses generic palette handlers
+//  uint16_t *    paletteram; // this currently uses generic palette handlers
 
 	/* video-related */
-	UINT16      sprite_ctrl;
-	UINT16      sprites_flipscreen;
+	uint16_t      sprite_ctrl;
+	uint16_t      sprites_flipscreen;
 
 	/* misc */
 	int         adpcm_pos;

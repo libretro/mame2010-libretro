@@ -15,14 +15,14 @@ WRITE8_HANDLER( senjyo_volume_w );
 
 /*----------- defined in video/senjyo.c -----------*/
 
-extern UINT8 *senjyo_fgscroll;
-extern UINT8 *senjyo_scrollx1,*senjyo_scrolly1;
-extern UINT8 *senjyo_scrollx2,*senjyo_scrolly2;
-extern UINT8 *senjyo_scrollx3,*senjyo_scrolly3;
-extern UINT8 *senjyo_fgvideoram,*senjyo_fgcolorram;
-extern UINT8 *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
-extern UINT8 *senjyo_radarram;
-extern UINT8 *senjyo_bgstripesram;
+extern uint8_t *senjyo_fgscroll;
+extern uint8_t *senjyo_scrollx1,*senjyo_scrolly1;
+extern uint8_t *senjyo_scrollx2,*senjyo_scrolly2;
+extern uint8_t *senjyo_scrollx3,*senjyo_scrolly3;
+extern uint8_t *senjyo_fgvideoram,*senjyo_fgcolorram;
+extern uint8_t *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
+extern uint8_t *senjyo_radarram;
+extern uint8_t *senjyo_bgstripesram;
 extern int is_senjyo, senjyo_scrollhack;
 
 WRITE8_HANDLER( senjyo_fgvideoram_w );

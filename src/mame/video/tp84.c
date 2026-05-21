@@ -10,16 +10,16 @@
 #include "video/resnet.h"
 
 
-UINT8 *tp84_bg_videoram;
-UINT8 *tp84_bg_colorram;
-UINT8 *tp84_fg_videoram;
-UINT8 *tp84_fg_colorram;
-UINT8 *tp84_spriteram;
-UINT8 *tp84_scroll_x;
-UINT8 *tp84_scroll_y;
-UINT8 *tp84_palette_bank;
-UINT8 *tp84_flipscreen_x;
-UINT8 *tp84_flipscreen_y;
+uint8_t *tp84_bg_videoram;
+uint8_t *tp84_bg_colorram;
+uint8_t *tp84_fg_videoram;
+uint8_t *tp84_fg_colorram;
+uint8_t *tp84_spriteram;
+uint8_t *tp84_scroll_x;
+uint8_t *tp84_scroll_y;
+uint8_t *tp84_palette_bank;
+uint8_t *tp84_flipscreen_x;
+uint8_t *tp84_flipscreen_y;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
@@ -106,7 +106,7 @@ PALETTE_INIT( tp84 )
 
 		for (j = 0; j < 8; j++)
 		{
-			UINT8 ctabentry = ((~i & 0x100) >> 1) | (j << 4) | (color_prom[i] & 0x0f);
+			uint8_t ctabentry = ((~i & 0x100) >> 1) | (j << 4) | (color_prom[i] & 0x0f);
 			colortable_entry_set_value(machine->colortable, ((i & 0x100) << 3) | (j << 8) | (i & 0xff), ctabentry);
 		}
 	}

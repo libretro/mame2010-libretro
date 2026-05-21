@@ -50,8 +50,8 @@ VIDEO_START( flstory )
 	tilemap_set_transmask(state->bg_tilemap, 1, 0x8000, 0x7fff); /* split type 1 has pen 15 transparent in front half */
 	tilemap_set_scroll_cols(state->bg_tilemap, 32);
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x200);
-	machine->generic.paletteram2.u8 = auto_alloc_array(machine, UINT8, 0x200);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x200);
+	machine->generic.paletteram2.u8 = auto_alloc_array(machine, uint8_t, 0x200);
 	state_save_register_global_pointer(machine, machine->generic.paletteram.u8, 0x200);
 	state_save_register_global_pointer(machine, machine->generic.paletteram2.u8, 0x200);
 }
@@ -62,8 +62,8 @@ VIDEO_START( victnine )
 	state->bg_tilemap = tilemap_create(machine, victnine_get_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 	tilemap_set_scroll_cols(state->bg_tilemap, 32);
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x200);
-	machine->generic.paletteram2.u8 = auto_alloc_array(machine, UINT8, 0x200);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x200);
+	machine->generic.paletteram2.u8 = auto_alloc_array(machine, uint8_t, 0x200);
 	state_save_register_global_pointer(machine, machine->generic.paletteram.u8, 0x200);
 	state_save_register_global_pointer(machine, machine->generic.paletteram2.u8, 0x200);
 }

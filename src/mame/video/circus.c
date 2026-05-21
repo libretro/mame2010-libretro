@@ -194,9 +194,9 @@ static void ripcord_draw_skydiver( running_machine *machine, bitmap_t *bitmap, c
 {
 	circus_state *state = (circus_state *)machine->driver_data;
 	const gfx_element *gfx;
-	const UINT8  *src_lineptr, *src_pixptr;
-	UINT16 *dst_lineptr, *dst_lineend;
-	UINT32 code;
+	const uint8_t  *src_lineptr, *src_pixptr;
+	uint16_t *dst_lineptr, *dst_lineend;
+	uint32_t code;
 	int sx, sy;
 	int src_pitch, dst_width, dst_height, dst_pitch, dst_pixoffs, dst_pixend;
 	int collision, eax, edx;

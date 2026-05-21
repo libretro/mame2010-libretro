@@ -6,28 +6,28 @@ public:
 
 	lkage_state(running_machine &machine) { }
 
-	UINT8 *      scroll;
-	UINT8 *      vreg;
-	UINT8 *      videoram;
-	UINT8 *      spriteram;
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+	uint8_t *      scroll;
+	uint8_t *      vreg;
+	uint8_t *      videoram;
+	uint8_t *      spriteram;
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t *bg_tilemap, *fg_tilemap, *tx_tilemap;
-	UINT8 bg_tile_bank, fg_tile_bank;
+	uint8_t bg_tile_bank, fg_tile_bank;
 
 	/* misc */
 	int sound_nmi_enable, pending_nmi;
 
 	/* mcu */
-	UINT8 from_main, from_mcu;
+	uint8_t from_main, from_mcu;
 	int mcu_sent, main_sent;
-	UINT8 port_a_in, port_a_out, ddr_a;
-	UINT8 port_b_in, port_b_out, ddr_b;
-	UINT8 port_c_in, port_c_out, ddr_c;
+	uint8_t port_a_in, port_a_out, ddr_a;
+	uint8_t port_b_in, port_b_out, ddr_b;
+	uint8_t port_c_in, port_c_out, ddr_c;
 
 	/* lkageb fake mcu */
-	UINT8 mcu_val;
+	uint8_t mcu_val;
 	int mcu_ready;	/* cpu data/mcu ready status */
 
 	/* devices */

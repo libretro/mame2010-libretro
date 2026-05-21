@@ -68,7 +68,7 @@ WRITE16_HANDLER( sderby_fg_videoram_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int codeshift)
 {
 	sderby_state *state = (sderby_state *)machine->driver_data;
-	UINT16 *spriteram16 = state->spriteram;
+	uint16_t *spriteram16 = state->spriteram;
 	int offs;
 	int height = machine->gfx[0]->height;
 	int colordiv = machine->gfx[0]->color_granularity / 16;

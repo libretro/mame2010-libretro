@@ -13,10 +13,10 @@ public:
 	dday_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        bgvideoram;
-	UINT8 *        fgvideoram;
-	UINT8 *        textvideoram;
-	UINT8 *        colorram;
+	uint8_t *        bgvideoram;
+	uint8_t *        fgvideoram;
+	uint8_t *        textvideoram;
+	uint8_t *        colorram;
 
 	/* video-related */
 	tilemap_t        *fg_tilemap, *bg_tilemap, *text_tilemap, *sl_tilemap;

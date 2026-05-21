@@ -105,28 +105,28 @@ In other words,the first three types uses the offset and not the color allocated
 #include "profiler.h"
 #include "includes/stv.h"
 
-UINT32* stv_vdp2_regs;
-UINT32* stv_vdp2_vram;
+uint32_t* stv_vdp2_regs;
+uint32_t* stv_vdp2_vram;
 
-static UINT8* stv_vdp2_gfx_decode;
+static uint8_t* stv_vdp2_gfx_decode;
 
 static int stv_vdp2_render_rbg0;
 int stv_hblank,stv_vblank;
 static int stv_odd;
 static int horz_res,vert_res;
 
-UINT32* stv_vdp2_cram;
+uint32_t* stv_vdp2_cram;
 
 static void stv_vdp2_dynamic_res_change(running_machine *machine);
-static UINT8 get_hblank(running_machine *machine);
+static uint8_t get_hblank(running_machine *machine);
 static int get_vblank_duration(running_machine *machine);
 static int get_hblank_duration(running_machine *machine);
-static UINT8 get_odd_bit(running_machine *machine);
+static uint8_t get_odd_bit(running_machine *machine);
 
 static void refresh_palette_data(running_machine *machine);
 static int stv_vdp2_window_process(int x,int y);
 static int stv_vdp2_apply_window_on_layer(rectangle *cliprect);
-static void stv_vdp2_get_window0_coordinates(UINT16 *s_x, UINT16 *e_x, UINT16 *s_y, UINT16 *e_y);
+static void stv_vdp2_get_window0_coordinates(uint16_t *s_x, uint16_t *e_x, uint16_t *s_y, uint16_t *e_y);
 static void stv_vdp2_check_tilemap(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
 static bitmap_t *stv_vdp2_roz_bitmap[2];
 
@@ -2045,10 +2045,10 @@ bit->  /----15----|----14----|----13----|----12----|----11----|----10----|----09
 /*For Debug purposes only*/
 static struct stv_vdp2_debugging
 {
-	UINT8 l_en;	 /*For Layer enable/disable*/
-	UINT8 win;	 /*Enters into Window effect debug menu*/
-	UINT32 error; /*bits for VDP2 error logging*/
-	UINT8 roz;   /*Debug roz on screen*/
+	uint8_t l_en;	 /*For Layer enable/disable*/
+	uint8_t win;	 /*Enters into Window effect debug menu*/
+	uint32_t error; /*bits for VDP2 error logging*/
+	uint8_t roz;   /*Debug roz on screen*/
 } debug;
 
 /*
@@ -2064,42 +2064,42 @@ x--- ---- ---- ---- ---- ---- ---- ---- VRAM Size = 8 Mbit
 /* Not sure if to use this for the rotating tilemaps as well or just use different draw functions, might add too much bloat */
 static struct stv_vdp2_tilemap_capabilities
 {
-	UINT8  enabled;
-	UINT8  transparency;
-	UINT8  colour_calculation_enabled;
-	UINT8  colour_depth;
-	UINT8  alpha;
-	UINT8  tile_size;
-	UINT8  bitmap_enable;
-	UINT8  bitmap_size;
-	UINT8  bitmap_palette_number;
-	UINT8  bitmap_map;
-	UINT16 map_offset[16];
-	UINT8  map_count;
+	uint8_t  enabled;
+	uint8_t  transparency;
+	uint8_t  colour_calculation_enabled;
+	uint8_t  colour_depth;
+	uint8_t  alpha;
+	uint8_t  tile_size;
+	uint8_t  bitmap_enable;
+	uint8_t  bitmap_size;
+	uint8_t  bitmap_palette_number;
+	uint8_t  bitmap_map;
+	uint16_t map_offset[16];
+	uint8_t  map_count;
 
-	UINT8  pattern_data_size;
-	UINT8  character_number_supplement;
-	UINT8  special_priority_register;
-	UINT8  special_colour_control_register;
-	UINT8  supplementary_palette_bits;
-	UINT8  supplementary_character_bits;
+	uint8_t  pattern_data_size;
+	uint8_t  character_number_supplement;
+	uint8_t  special_priority_register;
+	uint8_t  special_colour_control_register;
+	uint8_t  supplementary_palette_bits;
+	uint8_t  supplementary_character_bits;
 
-	INT16 scrollx;
-	INT16 scrolly;
-	UINT32 incx, incy;
+	int16_t scrollx;
+	int16_t scrolly;
+	uint32_t incx, incy;
 
-	UINT8	linescroll_enable;
-	UINT8	linescroll_interval;
-	UINT32	linescroll_table_address;
-	UINT8	vertical_linescroll_enable;
-	UINT8	linezoom_enable;
+	uint8_t	linescroll_enable;
+	uint8_t	linescroll_interval;
+	uint32_t	linescroll_table_address;
+	uint8_t	vertical_linescroll_enable;
+	uint8_t	linezoom_enable;
 
-	UINT8  plane_size;
-	UINT8  colour_ram_address_offset;
-	UINT8  fade_control;
-	UINT8  window_control;
+	uint8_t  plane_size;
+	uint8_t  colour_ram_address_offset;
+	uint8_t  fade_control;
+	uint8_t  window_control;
 
-//  UINT8  real_map_offset[16];
+//  uint8_t  real_map_offset[16];
 
 	int layer_name; /* just to keep track */
 } stv2_current_tilemap;
@@ -2109,52 +2109,52 @@ static struct stv_vdp2_tilemap_capabilities
 
 static struct rotation_table
 {
-	INT32	xst;
-	INT32	yst;
-	INT32	zst;
-	INT32	dxst;
-	INT32	dyst;
-	INT32	dx;
-	INT32	dy;
-	INT32	A;
-	INT32	B;
-	INT32	C;
-	INT32	D;
-	INT32	E;
-	INT32	F;
-	INT32	px;
-	INT32	py;
-	INT32	pz;
-	INT32	cx;
-	INT32	cy;
-	INT32	cz;
-	INT32	mx;
-	INT32	my;
-	INT32	kx;
-	INT32	ky;
-	UINT32	kast;
-	INT32	dkast;
-	INT32	dkax;
+	int32_t	xst;
+	int32_t	yst;
+	int32_t	zst;
+	int32_t	dxst;
+	int32_t	dyst;
+	int32_t	dx;
+	int32_t	dy;
+	int32_t	A;
+	int32_t	B;
+	int32_t	C;
+	int32_t	D;
+	int32_t	E;
+	int32_t	F;
+	int32_t	px;
+	int32_t	py;
+	int32_t	pz;
+	int32_t	cx;
+	int32_t	cy;
+	int32_t	cz;
+	int32_t	mx;
+	int32_t	my;
+	int32_t	kx;
+	int32_t	ky;
+	uint32_t	kast;
+	int32_t	dkast;
+	int32_t	dkax;
 
 } stv_current_rotation_parameter_table;
 
 static struct _stv_vdp2_layer_data_placement
 {
-	UINT32	map_offset_min;
-	UINT32	map_offset_max;
-	UINT32  tile_offset_min;
-	UINT32	tile_offset_max;
+	uint32_t	map_offset_min;
+	uint32_t	map_offset_max;
+	uint32_t  tile_offset_min;
+	uint32_t	tile_offset_max;
 } stv_vdp2_layer_data_placement;
 
 static struct _stv_rbg_cache_data
 {
-	UINT8	watch_vdp2_vram_writes;
-	UINT8	is_cache_dirty;
+	uint8_t	watch_vdp2_vram_writes;
+	uint8_t	is_cache_dirty;
 
-	UINT32	map_offset_min[2];
-	UINT32	map_offset_max[2];
-	UINT32	tile_offset_min[2];
-	UINT32	tile_offset_max[2];
+	uint32_t	map_offset_min[2];
+	uint32_t	map_offset_max[2];
+	uint32_t	tile_offset_min[2];
+	uint32_t	tile_offset_max[2];
 
 	struct stv_vdp2_tilemap_capabilities	layer_data[2];
 
@@ -2162,9 +2162,9 @@ static struct _stv_rbg_cache_data
 
 #define mul_fixed32( a, b ) mul_32x32_shift( a, b, 16 )
 
-static void stv_vdp2_fill_rotation_parameter_table( running_machine *machine, UINT8 rot_parameter )
+static void stv_vdp2_fill_rotation_parameter_table( running_machine *machine, uint8_t rot_parameter )
 {
-	UINT32 address = 0;
+	uint32_t address = 0;
 
 	address = (((STV_VDP2_RPTAU << 16) | STV_VDP2_RPTAL) << 1);
 	if ( rot_parameter == 1 )
@@ -2248,7 +2248,7 @@ static void stv_vdp2_fill_rotation_parameter_table( running_machine *machine, UI
 }
 
 /* check if RGB layer has rotation applied */
-static UINT8 stv_vdp2_is_rotation_applied(void)
+static uint8_t stv_vdp2_is_rotation_applied(void)
 {
 #define _FIXED_1	(0x00010000)
 #define _FIXED_0	(0x00000000)
@@ -2272,7 +2272,7 @@ static UINT8 stv_vdp2_is_rotation_applied(void)
 	}
 }
 
-static UINT8 stv_vdp2_are_map_registers_equal(void)
+static uint8_t stv_vdp2_are_map_registers_equal(void)
 {
 	int i;
 
@@ -2320,14 +2320,14 @@ static void stv_vdp2_check_fade_control_for_layer(void)
 #define STV_VDP2_CP_NBG2_CPDR		0x6
 #define STV_VDP2_CP_NBG3_CPDR		0x7
 
-static UINT8 stv_vdp2_check_vram_cycle_pattern_registers(
-								UINT8 access_command_pnmdr,
-								UINT8 access_command_cpdr,
-								UINT8 bitmap_enable )
+static uint8_t stv_vdp2_check_vram_cycle_pattern_registers(
+								uint8_t access_command_pnmdr,
+								uint8_t access_command_cpdr,
+								uint8_t bitmap_enable )
 {
 	int i;
-	UINT8  access_command_ok = 0;
-	UINT16 cp_regs[8];
+	uint8_t  access_command_ok = 0;
+	uint16_t cp_regs[8];
 	cp_regs[0] = STV_VDP2_CYCA0L;
 	cp_regs[1] = STV_VDP2_CYCA0U;
 	cp_regs[2] = STV_VDP2_CYCA1L;
@@ -2377,11 +2377,11 @@ static UINT8 stv_vdp2_check_vram_cycle_pattern_registers(
 	return access_command_ok == 3 ? 1 : 0;
 }
 
-INLINE UINT16 stv_add_blend(UINT16 a, UINT16 b)
+INLINE uint16_t stv_add_blend(uint16_t a, uint16_t b)
 {
-	UINT16 _r = (a & 0x7c00) + (b & 0x7c00);
-	UINT16 _g = (a & 0x03e0) + (b & 0x03e0);
-	UINT16 _b = (a & 0x001f) + (b & 0x001f);
+	uint16_t _r = (a & 0x7c00) + (b & 0x7c00);
+	uint16_t _g = (a & 0x03e0) + (b & 0x03e0);
+	uint16_t _b = (a & 0x001f) + (b & 0x001f);
 
 	if ( _r > 0x7c00 ) _r = 0x7c00;
 	if ( _g > 0x03e0 ) _g = 0x03e0;
@@ -2393,7 +2393,7 @@ INLINE UINT16 stv_add_blend(UINT16 a, UINT16 b)
 
 static void stv_vdp2_drawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
 		int transparency,int transparent_color,int scalex, int scaley,
 		int sprite_screen_width, int sprite_screen_height, int alpha)
 {
@@ -2442,7 +2442,7 @@ static void stv_vdp2_drawgfxzoom(
 	if( gfx )
 	{
 		const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-		const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+		const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 		//int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 		//int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
@@ -2519,8 +2519,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2536,8 +2536,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2558,8 +2558,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2576,8 +2576,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2597,8 +2597,8 @@ static void stv_vdp2_drawgfxzoom(
 				{
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-						UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+						const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+						uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 						int x, x_index = x_index_base;
 						for( x=sx; x<ex; x++ )
@@ -2619,8 +2619,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2637,8 +2637,8 @@ static void stv_vdp2_drawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 
 							int x, x_index = x_index_base;
 							for( x=sx; x<ex; x++ )
@@ -2688,7 +2688,7 @@ static void stv_vdp2_compute_color_offset_RGB555( int *r, int *g, int *b, int co
 
 }
 
-static void stv_vdp2_compute_color_offset_RGB555_UINT16(UINT16 *rgb, int cor)
+static void stv_vdp2_compute_color_offset_RGB555_UINT16(uint16_t *rgb, int cor)
 {
 	int _r = (*rgb & 0x7c00) >> (10-3);
 	int _g = (*rgb & 0x03e0) >> (5-3);
@@ -2718,11 +2718,11 @@ static void stv_vdp2_compute_color_offset_RGB555_UINT16(UINT16 *rgb, int cor)
 	*rgb = (_r << 10) |  (_g << 5) | _b;
 }
 
-static void stv_vdp2_drawgfx_rgb555( bitmap_t *dest_bmp, const rectangle *clip, UINT32 code, int flipx, int flipy,
+static void stv_vdp2_drawgfx_rgb555( bitmap_t *dest_bmp, const rectangle *clip, uint32_t code, int flipx, int flipy,
 									 int sx, int sy, int transparency, int alpha)
 {
 	rectangle myclip;
-	UINT8* gfxdata;
+	uint8_t* gfxdata;
 	int t_pen;
 	int sprite_screen_width, sprite_screen_height;
 
@@ -2807,9 +2807,9 @@ static void stv_vdp2_drawgfx_rgb555( bitmap_t *dest_bmp, const rectangle *clip, 
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = gfxdata + (y_index>>16)*16;
-				UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-				UINT16 data;
+				const uint8_t *source = gfxdata + (y_index>>16)*16;
+				uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+				uint16_t data;
 
 				int x, x_index = x_index_base;
 				for( x=sx; x<ex; x++ )
@@ -2853,10 +2853,10 @@ static void stv_vdp2_draw_basic_bitmap(running_machine *machine, bitmap_t *bitma
 	int ysize = 0/*, ysizemask = 0*/;
 	int xlinesize = 0/*, xpixelsize = 0*/;
 	int xcnt,ycnt;
-	UINT8* gfxdata = stv_vdp2_gfx_decode;
-	static UINT16 *destline;
-	UINT16 pal_color_offset = 0;
-	UINT8* gfxdatalow, *gfxdatahigh;
+	uint8_t* gfxdata = stv_vdp2_gfx_decode;
+	static uint16_t *destline;
+	uint16_t pal_color_offset = 0;
+	uint8_t* gfxdatalow, *gfxdatahigh;
 	/*Window effect 1=no draw*/
 	int tw = 0;
 	/*Transparency code 1=opaque,0=transparent*/
@@ -3418,8 +3418,8 @@ static void stv_vdp2_draw_basic_tilemap(running_machine *machine, bitmap_t *bitm
 		}
 	}
 
-	scalex = (INT32)((INT64)S64(0x100000000) / (INT64)stv2_current_tilemap.incx);
-	scaley = (INT32)((INT64)S64(0x100000000) / (INT64)stv2_current_tilemap.incy);
+	scalex = (int32_t)((int64_t)S64(0x100000000) / (int64_t)stv2_current_tilemap.incx);
+	scaley = (int32_t)((int64_t)S64(0x100000000) / (int64_t)stv2_current_tilemap.incy);
 	tilesizex = scalex * 8;
 	tilesizey = scaley * 8;
 	drawypos = drawxpos = 0;
@@ -3854,12 +3854,12 @@ static void stv_vdp2_check_tilemap_with_linescroll(running_machine *machine, bit
 	int cur_line = cliprect->min_y;
 	int address;
 	int active_functions = 0;
-	INT32 scroll_values[3], prev_scroll_values[3];
+	int32_t scroll_values[3], prev_scroll_values[3];
 	int i;
 	int scroll_values_equal;
 	int lines;
-	INT16 scrollx, scrolly;
-	INT32 incx;
+	int16_t scrollx, scrolly;
+	int32_t incx;
 	int linescroll_enable, vertical_linescroll_enable, linezoom_enable;
 	int vertical_linescroll_index = -1;
 
@@ -4036,20 +4036,20 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 									 int planerenderedsizex,
 									 int planerenderedsizey)
 {
-	INT32 xsp, ysp, xp, yp, dx, dy, x, y, xs, ys, dxs, dys;
-	INT32 vcnt, hcnt;
-	INT32 kx, ky;
-	INT8  use_coeff_table, coeff_table_mode, coeff_table_size, coeff_table_shift;
-	INT8  screen_over_process;
-	UINT8 vcnt_shift, hcnt_shift;
-	UINT8 coeff_msb;
-	UINT32 *coeff_table_base, coeff_table_offset;
-	INT32 coeff_table_val;
-	UINT32 address;
-	UINT16 *line;
-	UINT16 pix;
-	UINT32 coeff_line_color_screen_data;
-	INT32 clipxmask = 0, clipymask = 0;
+	int32_t xsp, ysp, xp, yp, dx, dy, x, y, xs, ys, dxs, dys;
+	int32_t vcnt, hcnt;
+	int32_t kx, ky;
+	int8_t  use_coeff_table, coeff_table_mode, coeff_table_size, coeff_table_shift;
+	int8_t  screen_over_process;
+	uint8_t vcnt_shift, hcnt_shift;
+	uint8_t coeff_msb;
+	uint32_t *coeff_table_base, coeff_table_offset;
+	int32_t coeff_table_val;
+	uint32_t address;
+	uint16_t *line;
+	uint16_t pix;
+	uint32_t coeff_line_color_screen_data;
+	int32_t clipxmask = 0, clipymask = 0;
 
 
 	if((STV_VDP2_LSMD & 3) == 3)
@@ -4418,7 +4418,7 @@ static void stv_vdp2_draw_NBG0(running_machine *machine, bitmap_t *bitmap, const
 	if ( STV_VDP2_N0CCEN )
 	{
 		stv2_current_tilemap.colour_calculation_enabled = 1;
-		stv2_current_tilemap.alpha = ((UINT16)(0x1f-STV_VDP2_N0CCRT)*0xff)/0x1f;
+		stv2_current_tilemap.alpha = ((uint16_t)(0x1f-STV_VDP2_N0CCRT)*0xff)/0x1f;
 	}
 	else
 	{
@@ -4508,7 +4508,7 @@ static void stv_vdp2_draw_NBG1(running_machine *machine, bitmap_t *bitmap, const
 	if ( STV_VDP2_N1CCEN )
 	{
 		stv2_current_tilemap.colour_calculation_enabled = 1;
-		stv2_current_tilemap.alpha = ((UINT16)(0x1f-STV_VDP2_N1CCRT)*0xff)/0x1f;
+		stv2_current_tilemap.alpha = ((uint16_t)(0x1f-STV_VDP2_N1CCRT)*0xff)/0x1f;
 	}
 	else
 	{
@@ -4605,7 +4605,7 @@ static void stv_vdp2_draw_NBG2(running_machine *machine, bitmap_t *bitmap, const
 	if ( STV_VDP2_N2CCEN )
 	{
 		stv2_current_tilemap.colour_calculation_enabled = 1;
-		stv2_current_tilemap.alpha = ((UINT16)(0x1f-STV_VDP2_N2CCRT)*0xff)/0x1f;
+		stv2_current_tilemap.alpha = ((uint16_t)(0x1f-STV_VDP2_N2CCRT)*0xff)/0x1f;
 	}
 	else
 	{
@@ -4705,7 +4705,7 @@ static void stv_vdp2_draw_NBG3(running_machine *machine, bitmap_t *bitmap, const
 	if ( STV_VDP2_N3CCEN )
 	{
 		stv2_current_tilemap.colour_calculation_enabled = 1;
-		stv2_current_tilemap.alpha = ((UINT16)(0x1f-STV_VDP2_N3CCRT)*0xff)/0x1f;
+		stv2_current_tilemap.alpha = ((uint16_t)(0x1f-STV_VDP2_N3CCRT)*0xff)/0x1f;
 	}
 	else
 	{
@@ -4780,9 +4780,9 @@ static void stv_vdp2_draw_rotation_screen(running_machine *machine, bitmap_t *bi
 	rectangle roz_clip_rect, mycliprect;
 	int planesizex = 0, planesizey = 0;
 	int planerenderedsizex, planerenderedsizey;
-	UINT8 colour_calculation_enabled;
-	UINT8 window_control;
-	UINT8 fade_control;
+	uint8_t colour_calculation_enabled;
+	uint8_t window_control;
+	uint8_t fade_control;
 
 	if ( iRP == 1)
 	{
@@ -4984,7 +4984,7 @@ static void stv_vdp2_draw_RBG0(running_machine *machine, bitmap_t *bitmap, const
 	if ( STV_VDP2_R0CCEN )
 	{
 		stv2_current_tilemap.colour_calculation_enabled = 1;
-		stv2_current_tilemap.alpha = ((UINT16)(0x1f-STV_VDP2_R0CCRT)*0xff)/0x1f;
+		stv2_current_tilemap.alpha = ((uint16_t)(0x1f-STV_VDP2_R0CCRT)*0xff)/0x1f;
 	}
 	else
 	{
@@ -5062,10 +5062,10 @@ static void stv_vdp2_draw_RBG0(running_machine *machine, bitmap_t *bitmap, const
 static void stv_vdp2_draw_back(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int xcnt,ycnt;
-	UINT8* gfxdata = stv_vdp2_gfx_decode;
-	static UINT16 *destline;
+	uint8_t* gfxdata = stv_vdp2_gfx_decode;
+	static uint16_t *destline;
 	int r,b,g;
-	UINT16 data;
+	uint16_t data;
 
 	if(!(STV_VDP2_BDCLMD & 1))
 		bitmap_fill(bitmap, cliprect, get_black_pen(machine));
@@ -5104,7 +5104,7 @@ static void stv_vdp2_draw_back(running_machine *machine, bitmap_t *bitmap, const
 
 WRITE32_HANDLER ( stv_vdp2_vram_w )
 {
-	UINT8 *stv_vdp2_vram_decode = stv_vdp2_gfx_decode;
+	uint8_t *stv_vdp2_vram_decode = stv_vdp2_gfx_decode;
 
 	COMBINE_DATA(&stv_vdp2_vram[offset]);
 
@@ -5275,8 +5275,8 @@ READ32_HANDLER ( stv_vdp2_cram_r )
 
 WRITE32_HANDLER ( stv_vdp2_regs_w )
 {
-	static UINT8 old_crmd;
-	static UINT16 old_tvmd;
+	static uint8_t old_crmd;
+	static uint16_t old_tvmd;
 	COMBINE_DATA(&stv_vdp2_regs[offset]);
 
 	if(old_crmd != STV_VDP2_CRMD)
@@ -5291,7 +5291,7 @@ WRITE32_HANDLER ( stv_vdp2_regs_w )
 	}
 }
 
-static UINT8 get_hblank(running_machine *machine)
+static uint8_t get_hblank(running_machine *machine)
 {
 	static int cur_h;
 
@@ -5318,7 +5318,7 @@ static int get_hblank_duration(running_machine *machine)
 	return 0;
 }
 
-UINT8 stv_get_vblank(running_machine *machine)
+uint8_t stv_get_vblank(running_machine *machine)
 {
 	static int cur_v;
 	const rectangle &visarea = machine->primary_screen->visible_area();
@@ -5353,7 +5353,7 @@ static int get_vblank_duration(running_machine *machine)
 	return 0;
 }
 
-static UINT8 get_odd_bit(running_machine *machine)
+static uint8_t get_odd_bit(running_machine *machine)
 {
 	static int cur_v;
 	cur_v = machine->primary_screen->vpos();
@@ -5387,7 +5387,7 @@ READ32_HANDLER ( stv_vdp2_regs_r )
 		case 0x8/4:
 		/*H/V Counter Register*/
 		{
-			static UINT16 h_count,v_count;
+			static uint16_t h_count,v_count;
 			/* TODO: handle various h/v settings. */
 			h_count = space->machine->primary_screen->hpos() & 0x3ff;
 			v_count = space->machine->primary_screen->vpos() & (STV_VDP2_LSMD == 3 ? 0x7ff : 0x3ff);
@@ -5401,9 +5401,9 @@ READ32_HANDLER ( stv_vdp2_regs_r )
 
 static STATE_POSTLOAD( stv_vdp2_state_save_postload )
 {
-	UINT8 *stv_vdp2_vram_decode = stv_vdp2_gfx_decode;
+	uint8_t *stv_vdp2_vram_decode = stv_vdp2_gfx_decode;
 	int offset;
-	UINT32 data;
+	uint32_t data;
 
 	for ( offset = 0; offset < 0x100000/4; offset++ )
 	{
@@ -5431,10 +5431,10 @@ static int stv_vdp2_start (running_machine *machine)
 {
 	machine->add_notifier(MACHINE_NOTIFY_EXIT, stv_vdp2_exit);
 
-	stv_vdp2_regs = auto_alloc_array_clear(machine, UINT32, 0x040000/4 );
-	stv_vdp2_vram = auto_alloc_array_clear(machine, UINT32, 0x100000/4 ); // actually we only need half of it since we don't emulate extra 4mbit ram cart.
-	stv_vdp2_cram = auto_alloc_array_clear(machine, UINT32, 0x080000/4 );
-	stv_vdp2_gfx_decode = auto_alloc_array(machine, UINT8, 0x100000 );
+	stv_vdp2_regs = auto_alloc_array_clear(machine, uint32_t, 0x040000/4 );
+	stv_vdp2_vram = auto_alloc_array_clear(machine, uint32_t, 0x100000/4 ); // actually we only need half of it since we don't emulate extra 4mbit ram cart.
+	stv_vdp2_cram = auto_alloc_array_clear(machine, uint32_t, 0x080000/4 );
+	stv_vdp2_gfx_decode = auto_alloc_array(machine, uint8_t, 0x100000 );
 
 	stv_vdp2_render_rbg0 = 1;
 //  machine->gfx[0]->color_granularity=4;
@@ -5473,7 +5473,7 @@ VIDEO_START( stv_vdp2 )
 
 static void stv_vdp2_dynamic_res_change(running_machine *machine)
 {
-	static UINT8 old_vres = 0,old_hres = 0;
+	static uint8_t old_vres = 0,old_hres = 0;
 
 	switch( STV_VDP2_VRES & 3 )
 	{
@@ -5534,8 +5534,8 @@ static void	stv_vdp2_fade_effects(running_machine *machine)
     Note:We have to use temporary storages because palette_get_color must use
     variables setted with unsigned int8
     */
-	INT16 t_r,t_g,t_b;
-	UINT8 r,g,b;
+	int16_t t_r,t_g,t_b;
+	uint8_t r,g,b;
 	rgb_t color;
 	int i;
 	//popmessage("%04x %04x",STV_VDP2_CLOFEN,STV_VDP2_CLOFSL);
@@ -5609,7 +5609,7 @@ Window Registers are hooked up like this ATM:
                   (0 = OR,1 = AND)
 ******************************************************************************************/
 
-static void stv_vdp2_get_window0_coordinates(UINT16 *s_x, UINT16 *e_x, UINT16 *s_y, UINT16 *e_y)
+static void stv_vdp2_get_window0_coordinates(uint16_t *s_x, uint16_t *e_x, uint16_t *s_y, uint16_t *e_y)
 {
 	/*W0*/
 	switch(STV_VDP2_LSMD & 3)
@@ -5654,7 +5654,7 @@ static void stv_vdp2_get_window0_coordinates(UINT16 *s_x, UINT16 *e_x, UINT16 *s
 	}
 }
 
-static void stv_vdp2_get_window1_coordinates(UINT16 *s_x, UINT16 *e_x, UINT16 *s_y, UINT16 *e_y)
+static void stv_vdp2_get_window1_coordinates(uint16_t *s_x, uint16_t *e_x, uint16_t *s_y, uint16_t *e_y)
 {
 	/*W1*/
 	switch(STV_VDP2_LSMD & 3)
@@ -5702,7 +5702,7 @@ static void stv_vdp2_get_window1_coordinates(UINT16 *s_x, UINT16 *e_x, UINT16 *s
 
 static int stv_vdp2_window_process(int x,int y)
 {
-	UINT16 s_x=0,e_x=0,s_y=0,e_y=0;
+	uint16_t s_x=0,e_x=0,s_y=0,e_y=0;
 
 	if ((stv2_current_tilemap.window_control & 6) == 0)
 		return 0;
@@ -5772,7 +5772,7 @@ static int stv_vdp2_window_process(int x,int y)
 
 static int stv_vdp2_apply_window_on_layer(rectangle *cliprect)
 {
-	UINT16 s_x=0,e_x=0,s_y=0,e_y=0;
+	uint16_t s_x=0,e_x=0,s_y=0,e_y=0;
 
 	if ( stv2_current_tilemap.window_control == 0x12 )
 	{
@@ -5807,36 +5807,36 @@ static int stv_vdp2_apply_window_on_layer(rectangle *cliprect)
 /* VDP1 Framebuffer handling */
 static int		stv_sprite_priorities_used[8];
 static int		stv_sprite_priorities_usage_valid;
-static UINT8	stv_sprite_priorities_in_fb_line[512][8];
+static uint8_t	stv_sprite_priorities_in_fb_line[512][8];
 
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 pri)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t pri)
 {
 	int x,y,r,g,b;
 	int i;
-	UINT16 pix;
-	UINT16 *framebuffer_line;
-	UINT16 *bitmap_line, *bitmap_line2 = NULL;
-	UINT8  interlace_framebuffer;
-	UINT8  double_x;
-	static const UINT16 sprite_colormask_table[] = {
+	uint16_t pix;
+	uint16_t *framebuffer_line;
+	uint16_t *bitmap_line, *bitmap_line2 = NULL;
+	uint8_t  interlace_framebuffer;
+	uint8_t  double_x;
+	static const uint16_t sprite_colormask_table[] = {
 		0x07ff, 0x07ff, 0x07ff, 0x07ff, 0x03ff, 0x07ff, 0x03ff, 0x01ff,
 		0x007f, 0x003f, 0x003f, 0x003f, 0x00ff, 0x00ff, 0x00ff, 0x00ff
 	};
-	static const UINT16 priority_shift_table[] = { 14, 13, 14, 13, 13, 12, 12, 12, 7, 7, 6, 0, 7, 7, 6, 0 };
-	static const UINT16 priority_mask_table[]  = {  3,  7,  1,  3,  3,  7,  7,  7, 1, 1, 3, 0, 1, 1, 3, 0 };
-	static const UINT16 ccrr_shift_table[] =	 { 11, 11, 11, 11, 10, 11, 10,  9, 0, 6, 0, 6, 0, 6, 0, 6 };
-	static const UINT16 ccrr_mask_table[] =	     {  7,  3,  7,  3,  7,  1,  3,  7, 0, 1, 0, 3, 0, 1, 0, 3 };
-	UINT16 alpha_enabled;
+	static const uint16_t priority_shift_table[] = { 14, 13, 14, 13, 13, 12, 12, 12, 7, 7, 6, 0, 7, 7, 6, 0 };
+	static const uint16_t priority_mask_table[]  = {  3,  7,  1,  3,  3,  7,  7,  7, 1, 1, 3, 0, 1, 1, 3, 0 };
+	static const uint16_t ccrr_shift_table[] =	 { 11, 11, 11, 11, 10, 11, 10,  9, 0, 6, 0, 6, 0, 6, 0, 6 };
+	static const uint16_t ccrr_mask_table[] =	     {  7,  3,  7,  3,  7,  1,  3,  7, 0, 1, 0, 3, 0, 1, 0, 3 };
+	uint16_t alpha_enabled;
 
 	int sprite_type;
 	int sprite_colormask;
 	int color_offset_pal;
-	UINT16 sprite_priority_shift, sprite_priority_mask, sprite_ccrr_shift, sprite_ccrr_mask;
-	UINT8	priority;
-	UINT8	ccr = 0;
-	UINT8 sprite_priorities[8];
-	UINT8 sprite_ccr[8];
+	uint16_t sprite_priority_shift, sprite_priority_mask, sprite_ccrr_shift, sprite_ccrr_mask;
+	uint8_t	priority;
+	uint8_t	ccr = 0;
+	uint8_t sprite_priorities[8];
+	uint8_t sprite_ccr[8];
 	int		sprite_color_mode = STV_VDP2_SPCLMD;
 	rectangle mycliprect;
 
@@ -6026,7 +6026,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 						}
 						else
 						{
-							bitmap_line[x] = alpha_blend_r16( bitmap_line[x], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f);
+							bitmap_line[x] = alpha_blend_r16( bitmap_line[x], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f);
 						}
 					}
 					else
@@ -6063,7 +6063,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 								}
 								else
 								{
-									bitmap_line[x] = alpha_blend_r16( bitmap_line[x], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
+									bitmap_line[x] = alpha_blend_r16( bitmap_line[x], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
 								}
 							}
 							else
@@ -6149,15 +6149,15 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 						{
 							if(double_x)
 							{
-								bitmap_line[x*2] = alpha_blend_r16( bitmap_line[x*2], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-								if ( interlace_framebuffer == 1 ) bitmap_line2[x*2] = alpha_blend_r16( bitmap_line2[x*2], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-								bitmap_line[x*2+1] = alpha_blend_r16( bitmap_line[x*2+1], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-								if ( interlace_framebuffer == 1 ) bitmap_line2[x*2+1] = alpha_blend_r16( bitmap_line2[x*2+1], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f);
+								bitmap_line[x*2] = alpha_blend_r16( bitmap_line[x*2], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+								if ( interlace_framebuffer == 1 ) bitmap_line2[x*2] = alpha_blend_r16( bitmap_line2[x*2], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+								bitmap_line[x*2+1] = alpha_blend_r16( bitmap_line[x*2+1], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+								if ( interlace_framebuffer == 1 ) bitmap_line2[x*2+1] = alpha_blend_r16( bitmap_line2[x*2+1], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f);
 							}
 							else
 							{
-								bitmap_line[x] = alpha_blend_r16( bitmap_line[x], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f);
-								if ( interlace_framebuffer == 1 ) bitmap_line2[x] = alpha_blend_r16( bitmap_line2[x], b | g << 5 | r << 10, ((UINT16)(0x1f-ccr)*0xff)/0x1f);
+								bitmap_line[x] = alpha_blend_r16( bitmap_line[x], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f);
+								if ( interlace_framebuffer == 1 ) bitmap_line2[x] = alpha_blend_r16( bitmap_line2[x], b | g << 5 | r << 10, ((uint16_t)(0x1f-ccr)*0xff)/0x1f);
 							}
 						}
 					}
@@ -6225,15 +6225,15 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 							{
 								if(double_x)
 								{
-									bitmap_line[x*2] = alpha_blend_r16( bitmap_line[x*2], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-									if ( interlace_framebuffer == 1 ) bitmap_line2[x*2] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-									bitmap_line[x*2+1] = alpha_blend_r16( bitmap_line[x*2+1], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-									if ( interlace_framebuffer == 1 ) bitmap_line2[x*2+1] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
+									bitmap_line[x*2] = alpha_blend_r16( bitmap_line[x*2], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+									if ( interlace_framebuffer == 1 ) bitmap_line2[x*2] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+									bitmap_line[x*2+1] = alpha_blend_r16( bitmap_line[x*2+1], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+									if ( interlace_framebuffer == 1 ) bitmap_line2[x*2+1] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
 								}
 								else
 								{
-									bitmap_line[x] = alpha_blend_r16( bitmap_line[x], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
-									if ( interlace_framebuffer == 1 ) bitmap_line2[x] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((UINT16)(0x1f-ccr)*0xff)/0x1f );
+									bitmap_line[x] = alpha_blend_r16( bitmap_line[x], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
+									if ( interlace_framebuffer == 1 ) bitmap_line2[x] = alpha_blend_r16( bitmap_line2[x], machine->pens[pix], ((uint16_t)(0x1f-ccr)*0xff)/0x1f );
 								}
 							}
 						}
@@ -6248,7 +6248,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 VIDEO_UPDATE( stv_vdp2 )
 {
-	static UINT8 pri;
+	static uint8_t pri;
 	video_update_vdp1(screen->machine);
 
 	stv_vdp2_fade_effects(screen->machine);

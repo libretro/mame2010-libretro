@@ -12,19 +12,19 @@ public:
 	kyugo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     fgvideoram;
-	UINT8 *     bgvideoram;
-	UINT8 *     bgattribram;
-	UINT8 *     spriteram_1;
-	UINT8 *     spriteram_2;
-	UINT8 *     shared_ram;
+	uint8_t *     fgvideoram;
+	uint8_t *     bgvideoram;
+	uint8_t *     bgattribram;
+	uint8_t *     spriteram_1;
+	uint8_t *     spriteram_2;
+	uint8_t *     shared_ram;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap, *fg_tilemap;
-	UINT8       scroll_x_lo, scroll_x_hi, scroll_y;
+	uint8_t       scroll_x_lo, scroll_x_hi, scroll_y;
 	int         bgpalbank, fgcolor;
 	int         flipscreen;
-	const UINT8 *color_codes;
+	const uint8_t *color_codes;
 
 	/* devices */
 	running_device *maincpu;

@@ -23,23 +23,23 @@
 
 
 /* CMOS-related variables */
-static UINT8	cmos_write_enable;
+static uint8_t	cmos_write_enable;
 
 /* sound-related variables */
-static UINT8	chip_type;
-static UINT8	fake_sound_state;
+static uint8_t	chip_type;
+static uint8_t	fake_sound_state;
 
 /* protection */
-static UINT8	mk_prot_index;
-static UINT16	mk2_prot_data;
+static uint8_t	mk_prot_index;
+static uint16_t	mk2_prot_data;
 
-static const UINT32 *nbajam_prot_table;
-static UINT16	nbajam_prot_queue[5];
-static UINT8	nbajam_prot_index;
+static const uint32_t *nbajam_prot_table;
+static uint16_t	nbajam_prot_queue[5];
+static uint8_t	nbajam_prot_index;
 
-static const UINT8 *jdredd_prot_table;
-static UINT8	jdredd_prot_index;
-static UINT8	jdredd_prot_max;
+static const uint8_t *jdredd_prot_table;
+static uint8_t	jdredd_prot_index;
+static uint8_t	jdredd_prot_max;
 
 
 
@@ -118,7 +118,7 @@ READ16_HANDLER( midtunit_input_r )
  *
  *************************************/
 
-static const UINT8 mk_prot_values[] =
+static const uint8_t mk_prot_values[] =
 {
 	0x13, 0x27, 0x0f, 0x1f, 0x3e, 0x3d, 0x3b, 0x37,
 	0x2e, 0x1c, 0x38, 0x31, 0x22, 0x05, 0x0a, 0x15,
@@ -221,7 +221,7 @@ static WRITE16_HANDLER( mk2_prot_w )
  *
  *************************************/
 
-static const UINT32 nbajam_prot_values[128] =
+static const uint32_t nbajam_prot_values[128] =
 {
 	0x21283b3b, 0x2439383b, 0x31283b3b, 0x302b3938, 0x31283b3b, 0x302b3938, 0x232f2f2f, 0x26383b3b,
 	0x21283b3b, 0x2439383b, 0x312a1224, 0x302b1120, 0x312a1224, 0x302b1120, 0x232d283b, 0x26383b3b,
@@ -241,7 +241,7 @@ static const UINT32 nbajam_prot_values[128] =
 	0x0b31283b, 0x0e26383b, 0x19322e06, 0x18312a12, 0x1b332f05, 0x1a302b11, 0x0b31283b,	0x0e26383b
 };
 
-static const UINT32 nbajamte_prot_values[128] =
+static const uint32_t nbajamte_prot_values[128] =
 {
 	0x00000000, 0x04081020, 0x08102000, 0x0c183122, 0x10200000, 0x14281020, 0x18312204, 0x1c393326,
 	0x20000001, 0x24081021, 0x28102000, 0x2c183122, 0x30200001, 0x34281021, 0x38312204, 0x3c393326,
@@ -272,7 +272,7 @@ static READ16_HANDLER( nbajam_prot_r )
 static WRITE16_HANDLER( nbajam_prot_w )
 {
 	int table_index = (offset >> 6) & 0x7f;
-	UINT32 protval = nbajam_prot_table[table_index];
+	uint32_t protval = nbajam_prot_table[table_index];
 
 	nbajam_prot_queue[0] = data;
 	nbajam_prot_queue[1] = ((protval >> 24) & 0xff) << 9;
@@ -290,7 +290,7 @@ static WRITE16_HANDLER( nbajam_prot_w )
  *
  *************************************/
 
-static const UINT8 jdredd_prot_values_10740[] =
+static const uint8_t jdredd_prot_values_10740[] =
 {
 	0x14,0x2A,0x15,0x0A,0x25,0x32,0x39,0x1C,
 	0x2E,0x37,0x3B,0x1D,0x2E,0x37,0x1B,0x0D,
@@ -300,17 +300,17 @@ static const UINT8 jdredd_prot_values_10740[] =
 	0x2B,0x15,0x0A,0x05,0x22,0x00
 };
 
-static const UINT8 jdredd_prot_values_13240[] =
+static const uint8_t jdredd_prot_values_13240[] =
 {
 	0x28
 };
 
-static const UINT8 jdredd_prot_values_76540[] =
+static const uint8_t jdredd_prot_values_76540[] =
 {
 	0x04,0x08
 };
 
-static const UINT8 jdredd_prot_values_77760[] =
+static const uint8_t jdredd_prot_values_77760[] =
 {
 	0x14,0x2A,0x14,0x2A,0x35,0x2A,0x35,0x1A,
 	0x35,0x1A,0x2D,0x1A,0x2D,0x36,0x2D,0x36,
@@ -326,7 +326,7 @@ static const UINT8 jdredd_prot_values_77760[] =
 	0x20,0x00,0x00
 };
 
-static const UINT8 jdredd_prot_values_80020[] =
+static const uint8_t jdredd_prot_values_80020[] =
 {
 	0x3A,0x1D,0x2E,0x37,0x00,0x00,0x2C,0x1C,
 	0x39,0x33,0x00,0x00,0x00,0x00,0x00,0x00
@@ -377,7 +377,7 @@ static WRITE16_HANDLER( jdredd_prot_w )
 
 static READ16_HANDLER( jdredd_prot_r )
 {
-	UINT16 result = 0xffff;
+	uint16_t result = 0xffff;
 
 	if (jdredd_prot_table && jdredd_prot_index < jdredd_prot_max)
 		result = jdredd_prot_table[jdredd_prot_index++] << 9;
@@ -388,7 +388,7 @@ static READ16_HANDLER( jdredd_prot_r )
 
 
 #if ENABLE_ALL_JDREDD_LEVELS
-static UINT16 *jdredd_hack;
+static uint16_t *jdredd_hack;
 static READ16_HANDLER( jdredd_hack_r )
 {
 	if (cpu_get_pc(space->cpu) == 0xFFBA7EB0)
@@ -412,7 +412,7 @@ static READ16_HANDLER( jdredd_hack_r )
 static void init_tunit_generic(running_machine *machine, int sound)
 {
 	offs_t gfx_chunk = midyunit_gfx_rom_size / 4;
-	UINT8 *base;
+	uint8_t *base;
 	int i;
 
 	/* register for state saving */
@@ -526,7 +526,7 @@ DRIVER_INIT( jdreddp )
 	/* sound chip protection (hidden RAM) */
 	memory_install_read_bank(cputag_get_address_space(machine, "adpcm", ADDRESS_SPACE_PROGRAM), 0xfbcf, 0xfbf9, 0, 0, "bank7");
 	memory_install_write_bank(cputag_get_address_space(machine, "adpcm", ADDRESS_SPACE_PROGRAM), 0xfbcf, 0xfbf9, 0, 0, "bank9");
-	memory_set_bankptr(machine, "bank9", auto_alloc_array(machine, UINT8, 0x80));
+	memory_set_bankptr(machine, "bank9", auto_alloc_array(machine, uint8_t, 0x80));
 
 #if ENABLE_ALL_JDREDD_LEVELS
 	/* how about the final levels? */

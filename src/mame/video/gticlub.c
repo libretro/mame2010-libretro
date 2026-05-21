@@ -9,7 +9,7 @@
 typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
-	UINT32 color;
+	uint32_t color;
 	int texture_x, texture_y;
 	int texture_page;
 	int texture_palette;
@@ -17,8 +17,8 @@ struct _poly_extra_data
 	int texture_mirror_y;
 };
 
-extern UINT8 gticlub_led_reg0;
-extern UINT8 gticlub_led_reg1;
+extern uint8_t gticlub_led_reg0;
+extern uint8_t gticlub_led_reg1;
 
 
 /*****************************************************************************/
@@ -26,28 +26,28 @@ extern UINT8 gticlub_led_reg1;
 
 #define MAX_K001006_CHIPS		2
 
-static UINT16 *K001006_pal_ram[MAX_K001006_CHIPS];
-static UINT16 *K001006_unknown_ram[MAX_K001006_CHIPS];
-static UINT32 K001006_addr[MAX_K001006_CHIPS] = { 0, 0 };
+static uint16_t *K001006_pal_ram[MAX_K001006_CHIPS];
+static uint16_t *K001006_unknown_ram[MAX_K001006_CHIPS];
+static uint32_t K001006_addr[MAX_K001006_CHIPS] = { 0, 0 };
 static int K001006_device_sel[MAX_K001006_CHIPS] = { 0, 0 };
 
-static UINT32 *K001006_palette[MAX_K001006_CHIPS];
+static uint32_t *K001006_palette[MAX_K001006_CHIPS];
 
 void K001006_init(running_machine *machine)
 {
 	int i;
 	for (i=0; i<MAX_K001006_CHIPS; i++)
 	{
-		K001006_pal_ram[i] = auto_alloc_array_clear(machine, UINT16, 0x800);
-		K001006_unknown_ram[i] = auto_alloc_array_clear(machine, UINT16, 0x1000);
+		K001006_pal_ram[i] = auto_alloc_array_clear(machine, uint16_t, 0x800);
+		K001006_unknown_ram[i] = auto_alloc_array_clear(machine, uint16_t, 0x1000);
 		K001006_addr[i] = 0;
 		K001006_device_sel[i] = 0;
-		K001006_palette[i] = auto_alloc_array(machine, UINT32, 0x800);
-		memset(K001006_palette[i], 0, 0x800*sizeof(UINT32));
+		K001006_palette[i] = auto_alloc_array(machine, uint32_t, 0x800);
+		memset(K001006_palette[i], 0, 0x800*sizeof(uint32_t));
 	}
 }
 
-static UINT32 K001006_r(running_machine *machine, int chip, int offset, UINT32 mem_mask)
+static uint32_t K001006_r(running_machine *machine, int chip, int offset, uint32_t mem_mask)
 {
 	if (offset == 1)
 	{
@@ -55,12 +55,12 @@ static UINT32 K001006_r(running_machine *machine, int chip, int offset, UINT32 m
 		{
 			case 0x0b:		// CG Board ROM read
 			{
-				UINT16 *rom = (UINT16*)memory_region(machine, "gfx1");
+				uint16_t *rom = (uint16_t*)memory_region(machine, "gfx1");
 				return rom[K001006_addr[chip] / 2] << 16;
 			}
 			case 0x0d:		// Palette RAM read
 			{
-				UINT32 addr = K001006_addr[chip];
+				uint32_t addr = K001006_addr[chip];
 
 				K001006_addr[chip] += 2;
 				return K001006_pal_ram[chip][addr>>1];
@@ -78,7 +78,7 @@ static UINT32 K001006_r(running_machine *machine, int chip, int offset, UINT32 m
 	return 0;
 }
 
-static void K001006_w(int chip, int offset, UINT32 data, UINT32 mem_mask)
+static void K001006_w(int chip, int offset, uint32_t data, uint32_t mem_mask)
 {
 	if (offset == 0)
 	{
@@ -91,7 +91,7 @@ static void K001006_w(int chip, int offset, UINT32 data, UINT32 mem_mask)
 			case 0xd:	// Palette RAM write
 			{
 				int r, g, b, a;
-				UINT32 index = K001006_addr[chip];
+				uint32_t index = K001006_addr[chip];
 
 				K001006_pal_ram[chip][index>>1] = data & 0xffff;
 
@@ -158,22 +158,22 @@ static const int decode_y_gti[16] = {  0, 8, 32, 40, 1, 9, 33, 41, 64, 72, 96, 1
 static const int decode_x_zr107[8] = {  0, 16, 1, 17, 2, 18, 3, 19 };
 static const int decode_y_zr107[16] = {  0, 8, 32, 40, 4, 12, 36, 44, 64, 72, 96, 104, 68, 76, 100, 108 };
 
-static UINT32 K001005_status = 0;
+static uint32_t K001005_status = 0;
 static bitmap_t *K001005_bitmap[2];
 static bitmap_t *K001005_zbuffer;
 static rectangle K001005_cliprect;
 
 static void render_polygons(running_machine *machine);
 
-static UINT8 *K001005_texture;
+static uint8_t *K001005_texture;
 
-static UINT16 *K001005_ram[2];
+static uint16_t *K001005_ram[2];
 static int K001005_ram_ptr = 0;
-static UINT32 *K001005_fifo;
+static uint32_t *K001005_fifo;
 static int K001005_fifo_read_ptr = 0;
 static int K001005_fifo_write_ptr = 0;
 
-static UINT32 *K001005_3d_fifo;
+static uint32_t *K001005_3d_fifo;
 static int K001005_3d_fifo_ptr = 0;
 
 static int tex_mirror_table[4][128];
@@ -184,7 +184,7 @@ static poly_manager *poly;
 static poly_vertex prev_v[4];
 static int prev_poly_type;
 
-static UINT8 *gfxrom;
+static uint8_t *gfxrom;
 
 
 void K001005_swap_buffers(running_machine *machine);
@@ -207,14 +207,14 @@ void K001005_init(running_machine *machine)
 	K001005_bitmap[0] = machine->primary_screen->alloc_compatible_bitmap();
 	K001005_bitmap[1] = machine->primary_screen->alloc_compatible_bitmap();
 
-	K001005_texture = auto_alloc_array(machine, UINT8, 0x800000);
+	K001005_texture = auto_alloc_array(machine, uint8_t, 0x800000);
 
-	K001005_ram[0] = auto_alloc_array(machine, UINT16, 0x140000);
-	K001005_ram[1] = auto_alloc_array(machine, UINT16, 0x140000);
+	K001005_ram[0] = auto_alloc_array(machine, uint16_t, 0x140000);
+	K001005_ram[1] = auto_alloc_array(machine, uint16_t, 0x140000);
 
-	K001005_fifo = auto_alloc_array(machine, UINT32, 0x800);
+	K001005_fifo = auto_alloc_array(machine, uint32_t, 0x800);
 
-	K001005_3d_fifo = auto_alloc_array(machine, UINT32, 0x10000);
+	K001005_3d_fifo = auto_alloc_array(machine, uint32_t, 0x10000);
 
 	poly = poly_alloc(machine, 4000, sizeof(poly_extra_data), POLYFLAG_ALLOW_QUADS);
 	machine->add_notifier(MACHINE_NOTIFY_EXIT, K001005_exit);
@@ -239,11 +239,11 @@ void K001005_init(running_machine *machine)
 }
 
 // rearranges the texture data to a more practical order
-void K001005_preprocess_texture_data(UINT8 *rom, int length, int gticlub)
+void K001005_preprocess_texture_data(uint8_t *rom, int length, int gticlub)
 {
 	int index;
 	int i, x, y;
-	UINT8 temp[0x40000];
+	uint8_t temp[0x40000];
 
 	const int *decode_x;
 	const int *decode_y;
@@ -277,7 +277,7 @@ void K001005_preprocess_texture_data(UINT8 *rom, int length, int gticlub)
 			{
 				for (x=0; x < 8; x++)
 				{
-					UINT8 pixel = rom[offset + decode_y[y] + decode_x[x]];
+					uint8_t pixel = rom[offset + decode_y[y] + decode_x[x]];
 
 					temp[((ty+y) * 512) + (tx+x)] = pixel;
 				}
@@ -296,14 +296,14 @@ READ32_HANDLER( K001005_r )
 	{
 		case 0x000:			// FIFO read, high 16 bits
 		{
-			UINT16 value = K001005_fifo[K001005_fifo_read_ptr] >> 16;
+			uint16_t value = K001005_fifo[K001005_fifo_read_ptr] >> 16;
 		//  mame_printf_debug("FIFO_r0: %08X\n", K001005_fifo_ptr);
 			return value;
 		}
 
 		case 0x001:			// FIFO read, low 16 bits
 		{
-			UINT16 value = K001005_fifo[K001005_fifo_read_ptr] & 0xffff;
+			uint16_t value = K001005_fifo[K001005_fifo_read_ptr] & 0xffff;
 		//  mame_printf_debug("FIFO_r1: %08X\n", K001005_fifo_ptr);
 
 			if (K001005_status != 1 && K001005_status != 2)
@@ -448,20 +448,20 @@ WRITE32_HANDLER( K001005_w )
 
 }
 
-static void draw_scanline(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void draw_scanline(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
 	float z = extent->param[0].start;
 	float dz = extent->param[0].dpdx;
-	UINT32 *fb = BITMAP_ADDR32(destmap, scanline, 0);
-	UINT32 *zb = BITMAP_ADDR32(K001005_zbuffer, scanline, 0);
-	UINT32 color = extra->color;
+	uint32_t *fb = BITMAP_ADDR32(destmap, scanline, 0);
+	uint32_t *zb = BITMAP_ADDR32(K001005_zbuffer, scanline, 0);
+	uint32_t color = extra->color;
 	int x;
 
 	for (x = extent->startx; x < extent->stopx; x++)
 	{
-		UINT32 iz = (UINT32)z >> 16;
+		uint32_t iz = (uint32_t)z >> 16;
 
 		if (iz <= zb[x])
 		{
@@ -476,11 +476,11 @@ static void draw_scanline(void *dest, INT32 scanline, const poly_extent *extent,
 	}
 }
 
-static void draw_scanline_tex(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void draw_scanline_tex(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
 	bitmap_t *destmap = (bitmap_t *)dest;
-	UINT8 *texrom = gfxrom + (extra->texture_page * 0x40000);
+	uint8_t *texrom = gfxrom + (extra->texture_page * 0x40000);
 	int pal_chip = (extra->texture_palette & 0x8) ? 1 : 0;
 	int palette_index = (extra->texture_palette & 0x7) * 256;
 	float z = extent->param[0].start;
@@ -497,19 +497,19 @@ static void draw_scanline_tex(void *dest, INT32 scanline, const poly_extent *ext
 	int texture_y = extra->texture_y;
 	int x;
 
-	UINT32 *fb = BITMAP_ADDR32(destmap, scanline, 0);
-	UINT32 *zb = BITMAP_ADDR32(K001005_zbuffer, scanline, 0);
+	uint32_t *fb = BITMAP_ADDR32(destmap, scanline, 0);
+	uint32_t *zb = BITMAP_ADDR32(K001005_zbuffer, scanline, 0);
 
 	for (x = extent->startx; x < extent->stopx; x++)
 	{
-		UINT32 iz = (UINT32)z >> 16;
+		uint32_t iz = (uint32_t)z >> 16;
 		//int iu = u >> 16;
 		//int iv = v >> 16;
 
 		if (iz < zb[x])
 		{
 			float oow = 1.0f / w;
-			UINT32 color;
+			uint32_t color;
 			int iu, iv;
 			int iiv, iiu, texel;
 
@@ -549,7 +549,7 @@ static void render_polygons(running_machine *machine)
 			poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
 			poly_vertex v[4];
 			int r, g, b, a;
-			UINT32 color;
+			uint32_t color;
 			int index = i;
 
 			++index;
@@ -602,9 +602,9 @@ static void render_polygons(running_machine *machine)
 			poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
 			poly_vertex v[4];
 			int tx, ty;
-			UINT32 color = 0;
-			UINT32 header;
-			UINT32 command;
+			uint32_t color = 0;
+			uint32_t header;
+			uint32_t command;
 			int num_verts = 0;
 			int index = i;
 			int poly_type = 0;
@@ -614,7 +614,7 @@ static void render_polygons(running_machine *machine)
 
 			for (j=0; j < 4; j++)
 			{
-				INT16 u2, v2;
+				int16_t u2, v2;
 				int x, y, z;
 				int end = 0;
 
@@ -729,7 +729,7 @@ static void render_polygons(running_machine *machine)
 
 				for (j=2; j < 4; j++)
 				{
-					INT16 u2, v2;
+					int16_t u2, v2;
 					int x, y, z;
 					int end = 0;
 
@@ -801,7 +801,7 @@ static void render_polygons(running_machine *machine)
 			poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
 			poly_vertex v[4];
 			int r, g, b, a;
-			UINT32 color;
+			uint32_t color;
 			int num_verts = 0;
 			int index = i;
 			int poly_type = 0;
@@ -939,8 +939,8 @@ void K001005_draw(bitmap_t *bitmap, const rectangle *cliprect)
 
 	for (j=cliprect->min_y; j <= cliprect->max_y; j++)
 	{
-		UINT32 *bmp = BITMAP_ADDR32(bitmap, j, 0);
-		UINT32 *src = BITMAP_ADDR32(K001005_bitmap[K001005_bitmap_page^1], j, 0);
+		uint32_t *bmp = BITMAP_ADDR32(bitmap, j, 0);
+		uint32_t *src = BITMAP_ADDR32(K001005_bitmap[K001005_bitmap_page^1], j, 0);
 
 		for (i=cliprect->min_x; i <= cliprect->max_x; i++)
 		{
@@ -1021,13 +1021,13 @@ VIDEO_UPDATE( gticlub )
         int index = (debug_tex_page - 1) * 0x40000;
         int pal = debug_tex_palette & 7;
         int tp = (debug_tex_palette >> 3) & 1;
-        UINT8 *rom = memory_region(machine, "gfx1");
+        uint8_t *rom = memory_region(machine, "gfx1");
 
         for (y=0; y < 384; y++)
         {
             for (x=0; x < 512; x++)
             {
-                UINT8 pixel = rom[index + (y*512) + x];
+                uint8_t pixel = rom[index + (y*512) + x];
                 *BITMAP_ADDR32(bitmap, y, x) = K001006_palette[tp][(pal * 256) + pixel];
             }
         }

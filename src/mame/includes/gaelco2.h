@@ -1,6 +1,6 @@
 /*----------- defined in machine/gaelco2.c -----------*/
 
-extern UINT16 *snowboar_protection;
+extern uint16_t *snowboar_protection;
 
 DRIVER_INIT( alighunt );
 DRIVER_INIT( touchgo );
@@ -24,7 +24,7 @@ WRITE16_HANDLER( snowboar_protection_w );
 
 /*----------- defined in video/gaelco2.c -----------*/
 
-extern UINT16 *gaelco2_vregs;
+extern uint16_t *gaelco2_vregs;
 
 WRITE16_HANDLER( gaelco2_vram_w );
 WRITE16_HANDLER( gaelco2_palette_w );

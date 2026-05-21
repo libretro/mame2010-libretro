@@ -59,15 +59,15 @@
 
 
 
-static UINT8 ball_screen_collision_cause;
-static UINT8 car_ball_collision_x;
-static UINT8 car_ball_collision_y;
-static UINT8 car_car_collision_cause;
-static UINT8 car_goal_collision_cause;
-static UINT8 car_ball_collision_cause;
-static UINT8 car_border_collision_cause;
-static UINT8 priority_0_extension;
-static UINT8 last_wheel_value[4];
+static uint8_t ball_screen_collision_cause;
+static uint8_t car_ball_collision_x;
+static uint8_t car_ball_collision_y;
+static uint8_t car_car_collision_cause;
+static uint8_t car_goal_collision_cause;
+static uint8_t car_ball_collision_cause;
+static uint8_t car_border_collision_cause;
+static uint8_t priority_0_extension;
+static uint8_t last_wheel_value[4];
 
 static running_device *ttl74148_3s;
 
@@ -119,7 +119,7 @@ WRITE_LINE_DEVICE_HANDLER( carpolo_7474_2u_2_q_cb )
 }
 
 
-void carpolo_generate_ball_screen_interrupt(running_machine *machine, UINT8 cause)
+void carpolo_generate_ball_screen_interrupt(running_machine *machine, uint8_t cause)
 {
 	ball_screen_collision_cause = cause;
 
@@ -228,7 +228,7 @@ READ8_HANDLER( carpolo_interrupt_cause_r )
 
 INTERRUPT_GEN( carpolo_timer_interrupt )
 {
-	UINT8 port_value;
+	uint8_t port_value;
 	int player;
 
 
@@ -422,7 +422,7 @@ static READ8_DEVICE_HANDLER( pia_0_port_b_r )
 
 static READ8_DEVICE_HANDLER( pia_1_port_a_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	/* bit 0 - Player 4 steering input (left or right)
        bit 1 - Player 3 steering input (left or right)
@@ -445,7 +445,7 @@ static READ8_DEVICE_HANDLER( pia_1_port_a_r )
 
 static READ8_DEVICE_HANDLER( pia_1_port_b_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	/* bit 4 - Player 4 steering input (wheel moving or stopped)
        bit 5 - Player 3 steering input (wheel moving or stopped)

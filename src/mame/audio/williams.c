@@ -47,10 +47,10 @@
     STATIC GLOBALS
 ****************************************************************************/
 
-static UINT8 williams_sound_int_state;
+static uint8_t williams_sound_int_state;
 
-static UINT8 audio_talkback;
-static UINT8 audio_sync;
+static uint8_t audio_talkback;
+static uint8_t audio_sync;
 
 static running_device *sound_cpu;
 static running_device *soundalt_cpu;
@@ -266,7 +266,7 @@ MACHINE_DRIVER_END
 
 void williams_cvsd_init(running_machine *machine)
 {
-	UINT8 *ROM;
+	uint8_t *ROM;
 	int bank;
 
 	/* configure the CPU */
@@ -298,7 +298,7 @@ void williams_cvsd_init(running_machine *machine)
 
 void williams_narc_init(running_machine *machine)
 {
-	UINT8 *ROM;
+	uint8_t *ROM;
 	int bank;
 
 	/* configure the CPU */
@@ -342,7 +342,7 @@ void williams_narc_init(running_machine *machine)
 
 void williams_adpcm_init(running_machine *machine)
 {
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 	/* configure the CPU */
 	sound_cpu = machine->device("adpcm");

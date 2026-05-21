@@ -12,11 +12,11 @@ public:
 	hcastle_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    pf1_videoram;
-	UINT8 *    pf2_videoram;
-	UINT8 *    paletteram;
-//  UINT8 *    spriteram;
-//  UINT8 *    spriteram2;
+	uint8_t *    pf1_videoram;
+	uint8_t *    pf2_videoram;
+	uint8_t *    paletteram;
+//  uint8_t *    spriteram;
+//  uint8_t *    spriteram2;
 
 	/* video-related */
 	tilemap_t    *fg_tilemap, *bg_tilemap;

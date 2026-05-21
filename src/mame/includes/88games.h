@@ -12,10 +12,10 @@ public:
 	_88games_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *      ram;
-	UINT8 *      banked_rom;
-//  UINT8 *      paletteram_1000;   // this currently uses generic palette handling
-//  UINT8 *      nvram; // this currently uses generic nvram handling
+	uint8_t *      ram;
+	uint8_t *      banked_rom;
+//  uint8_t *      paletteram_1000;   // this currently uses generic palette handling
+//  uint8_t *      nvram; // this currently uses generic nvram handling
 
 	/* video-related */
 	int          k88games_priority;

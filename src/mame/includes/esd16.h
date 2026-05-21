@@ -12,15 +12,15 @@ public:
 	esd16_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *       vram_0;
-	UINT16 *       vram_1;
-	UINT16 *       scroll_0;
-	UINT16 *       scroll_1;
-	UINT16 *       spriteram;
-	UINT16 *       head_layersize;
-	UINT16 *       headpanic_platform_x;
-	UINT16 *       headpanic_platform_y;
-//  UINT16 *       paletteram;  // currently this uses generic palette handling
+	uint16_t *       vram_0;
+	uint16_t *       vram_1;
+	uint16_t *       scroll_0;
+	uint16_t *       scroll_1;
+	uint16_t *       spriteram;
+	uint16_t *       head_layersize;
+	uint16_t *       headpanic_platform_x;
+	uint16_t *       headpanic_platform_y;
+//  uint16_t *       paletteram;  // currently this uses generic palette handling
 	size_t         spriteram_size;
 
 	/* video-related */

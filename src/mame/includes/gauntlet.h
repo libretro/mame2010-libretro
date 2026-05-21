@@ -14,10 +14,10 @@ public:
 	gauntlet_state(running_machine &machine) { }
 
 	atarigen_state	atarigen;
-	UINT16			sound_reset_val;
-	UINT8			vindctr2_screen_refresh;
-	UINT8			playfield_tile_bank;
-	UINT8			playfield_color_bank;
+	uint16_t			sound_reset_val;
+	uint8_t			vindctr2_screen_refresh;
+	uint8_t			playfield_tile_bank;
+	uint8_t			playfield_color_bank;
 };
 
 

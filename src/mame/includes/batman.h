@@ -15,9 +15,9 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16			latch_data;
+	uint16_t			latch_data;
 
-	UINT8			alpha_tile_bank;
+	uint8_t			alpha_tile_bank;
 };
 
 

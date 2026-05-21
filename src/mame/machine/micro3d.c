@@ -29,12 +29,12 @@
  *
  *************************************/
 
-void micro3d_duart_irq_handler(running_device *device, UINT8 vector)
+void micro3d_duart_irq_handler(running_device *device, uint8_t vector)
 {
 	cputag_set_input_line_and_vector(device->machine, "maincpu", 3, HOLD_LINE, vector);
 };
 
-void micro3d_duart_tx(running_device *device, int channel, UINT8 data)
+void micro3d_duart_tx(running_device *device, int channel, uint8_t data)
 {
 	micro3d_state *state = (micro3d_state*)device->machine->driver_data;
 
@@ -71,7 +71,7 @@ static void data_from_i8031(running_device *device, int data)
  * 4: -
  * 5: -
  */
-UINT8 micro3d_duart_input_r(running_device *device)
+uint8_t micro3d_duart_input_r(running_device *device)
 {
 	return 0x2;
 }
@@ -80,7 +80,7 @@ UINT8 micro3d_duart_input_r(running_device *device)
  * 5: /I8051 reset
  * 7: Status LED
 */
-void micro3d_duart_output_w(running_device *device, UINT8 data)
+void micro3d_duart_output_w(running_device *device, uint8_t data)
 {
 	cputag_set_input_line(device->machine, "audiocpu", INPUT_LINE_RESET, data & 0x20 ? CLEAR_LINE : ASSERT_LINE);
 }
@@ -116,9 +116,9 @@ enum
 static void micro3d_mc68901_int_gen(running_machine *machine, int source)
 {
 	micro3d_state *state = (micro3d_state*)machine->driver_data;
-	UINT8 *ien = source & 8 ? &state->mc68901.ierb : &state->mc68901.iera;
-	UINT8 *ipend = source & 8 ? &state->mc68901.iprb : &state->mc68901.ipra;
-	UINT8 *imask = source & 8 ? &state->mc68901.imrb : &state->mc68901.imra;
+	uint8_t *ien = source & 8 ? &state->mc68901.ierb : &state->mc68901.iera;
+	uint8_t *ipend = source & 8 ? &state->mc68901.iprb : &state->mc68901.ipra;
+	uint8_t *imask = source & 8 ? &state->mc68901.imrb : &state->mc68901.imra;
 	int bit = source & 7;
 
 	if (*ien & (1 << bit))
@@ -140,7 +140,7 @@ static TIMER_CALLBACK( mfp_timer_a_cb )
 READ16_HANDLER( micro3d_mc68901_r )
 {
 	micro3d_state *state = (micro3d_state*)space->machine->driver_data;
-	UINT16 val = 0;
+	uint16_t val = 0;
 
 	switch (offset)
 	{
@@ -364,19 +364,19 @@ WRITE16_HANDLER( micro3d_tms_host_w )
  *
  *************************************/
 
-INLINE INT64 dot_product(micro3d_vtx *v1, micro3d_vtx *v2)
+INLINE int64_t dot_product(micro3d_vtx *v1, micro3d_vtx *v2)
 {
-	INT64 result = ((INT64)v1->x * (INT64)v2->x) +
-					((INT64)v1->y * (INT64)v2->y) +
-					((INT64)v1->z * (INT64)v2->z);
+	int64_t result = ((int64_t)v1->x * (int64_t)v2->x) +
+					((int64_t)v1->y * (int64_t)v2->y) +
+					((int64_t)v1->z * (int64_t)v2->z);
 	return result;
 }
 
-INLINE INT64 normalised_multiply(INT32 a, INT32 b)
+INLINE int64_t normalised_multiply(int32_t a, int32_t b)
 {
-	INT64 result;
+	int64_t result;
 
-	result = (INT64)a * (INT64)b;
+	result = (int64_t)a * (int64_t)b;
 	return result >> 14;
 }
 
@@ -408,15 +408,15 @@ WRITE32_HANDLER( micro3d_mac2_w )
 {
 	micro3d_state *state = (micro3d_state*)space->machine->driver_data;
 
-	UINT32 cnt = data & 0xff;
-	UINT32 inst = (data >> 8) & 0x1f;
-	UINT32 mac_cycles = 1;
+	uint32_t cnt = data & 0xff;
+	uint32_t inst = (data >> 8) & 0x1f;
+	uint32_t mac_cycles = 1;
 
-	UINT32 mrab11;
-	UINT32 vtx_addr;
-	UINT32 sram_r_addr;
-	UINT32 sram_w_addr;
-	UINT32 *mac_sram;
+	uint32_t mrab11;
+	uint32_t vtx_addr;
+	uint32_t sram_r_addr;
+	uint32_t sram_w_addr;
+	uint32_t *mac_sram;
 
 	state->mac_stat = BIT(data, 13);
 	state->mac_inst = inst & 0x7;
@@ -443,11 +443,11 @@ WRITE32_HANDLER( micro3d_mac2_w )
 		case 0x08:
 		{
 			int i;
-			const UINT16 *rom = (UINT16*)memory_region(space->machine, "vertex");
+			const uint16_t *rom = (uint16_t*)memory_region(space->machine, "vertex");
 
 			for (i = 0; i <= cnt; ++i)
 			{
-				INT64 acc;
+				int64_t acc;
 				micro3d_vtx v1;
 
 				v1.x = VTXROM_FMT(rom[vtx_addr]);	vtx_addr++;
@@ -482,11 +482,11 @@ WRITE32_HANDLER( micro3d_mac2_w )
 		case 0x0c:
 		{
 			int i;
-			const UINT16 *rom = (UINT16*)memory_region(space->machine, "vertex");
+			const uint16_t *rom = (uint16_t*)memory_region(space->machine, "vertex");
 
 			for (i = 0; i <= cnt; ++i)
 			{
-				INT64 acc;
+				int64_t acc;
 				micro3d_vtx v1;
 
 				v1.x = VTXROM_FMT(rom[vtx_addr]);	vtx_addr++;
@@ -515,7 +515,7 @@ WRITE32_HANDLER( micro3d_mac2_w )
 		case 0x0f:
 		{
 			int i;
-			const UINT16 *rom = (UINT16*)memory_region(space->machine, "vertex");
+			const uint16_t *rom = (uint16_t*)memory_region(space->machine, "vertex");
 
 			for (i = 0; i <= cnt; ++i, vtx_addr += 4)
 			{
@@ -542,7 +542,7 @@ WRITE32_HANDLER( micro3d_mac2_w )
 			for (i = 0; i <= cnt; ++i)
 			{
 				micro3d_vtx v1;
-				INT64 dp;
+				int64_t dp;
 
 				v1.x = mac_sram[sram_r_addr++];
 				v1.y = mac_sram[sram_r_addr++];
@@ -568,7 +568,7 @@ WRITE32_HANDLER( micro3d_mac2_w )
 			{
 				micro3d_vtx v1;
 				micro3d_vtx v2;
-				INT64 dp;
+				int64_t dp;
 
 				v1.x = mac_sram[sram_r_addr++];
 				v1.y = mac_sram[sram_r_addr++];
@@ -611,16 +611,16 @@ WRITE32_HANDLER( micro3d_mac2_w )
 
 READ16_HANDLER( micro3d_encoder_h_r )
 {
-	UINT16 x_encoder = input_port_read_safe(space->machine, "JOYSTICK_X", 0);
-	UINT16 y_encoder = input_port_read_safe(space->machine, "JOYSTICK_Y", 0);
+	uint16_t x_encoder = input_port_read_safe(space->machine, "JOYSTICK_X", 0);
+	uint16_t y_encoder = input_port_read_safe(space->machine, "JOYSTICK_Y", 0);
 
 	return (y_encoder & 0xf00) | ((x_encoder & 0xf00) >> 8);
 }
 
 READ16_HANDLER( micro3d_encoder_l_r )
 {
-	UINT16 x_encoder = input_port_read_safe(space->machine, "JOYSTICK_X", 0);
-	UINT16 y_encoder = input_port_read_safe(space->machine, "JOYSTICK_Y", 0);
+	uint16_t x_encoder = input_port_read_safe(space->machine, "JOYSTICK_X", 0);
+	uint16_t y_encoder = input_port_read_safe(space->machine, "JOYSTICK_Y", 0);
 
 	return ((y_encoder & 0xff) << 8) | (x_encoder & 0xff);
 }
@@ -633,7 +633,7 @@ static TIMER_CALLBACK( adc_done_callback )
 	{
 		case 0: state->adc_val = input_port_read_safe(machine, "THROTTLE", 0);
 				break;
-		case 1: state->adc_val = (UINT8)((255.0/100.0) * input_port_read(machine, "VOLUME") + 0.5);
+		case 1: state->adc_val = (uint8_t)((255.0/100.0) * input_port_read(machine, "VOLUME") + 0.5);
 				break;
 		case 2: break;
 		case 3: break;

@@ -5,10 +5,10 @@ public:
 
 	toypop_state(running_machine &machine) { }
 
-	UINT8 *videoram;
-	UINT8 *spriteram;
-	UINT16 *bg_image;
-	UINT8 *m68000_sharedram;
+	uint8_t *videoram;
+	uint8_t *spriteram;
+	uint16_t *bg_image;
+	uint8_t *m68000_sharedram;
 	tilemap_t *bg_tilemap;
 
 	int bitmapflip;

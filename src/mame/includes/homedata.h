@@ -7,19 +7,19 @@ public:
 	homedata_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  vreg;
-	UINT8 *  videoram;
+	uint8_t *  vreg;
+	uint8_t *  videoram;
 
 	/* video-related */
 	tilemap_t *bg_tilemap[2][4];
 	int      visible_page;
 	int      priority;
-	UINT8    reikaids_which;
+	uint8_t    reikaids_which;
 	int      flipscreen;
-	UINT8	   gfx_bank[2];	// pteacher only uses the first one
-	UINT8	   blitter_bank;
+	uint8_t	   gfx_bank[2];	// pteacher only uses the first one
+	uint8_t	   blitter_bank;
 	int      blitter_param_count;
-	UINT8	   blitter_param[4];		/* buffers last 4 writes to 0x8006 */
+	uint8_t	   blitter_param[4];		/* buffers last 4 writes to 0x8006 */
 
 
 	/* misc */

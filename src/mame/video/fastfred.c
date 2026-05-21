@@ -11,12 +11,12 @@
 #include "includes/fastfred.h"
 #include "includes/galaxold.h"
 
-UINT8 *fastfred_videoram;
-UINT8 *fastfred_spriteram;
+uint8_t *fastfred_videoram;
+uint8_t *fastfred_spriteram;
 size_t fastfred_spriteram_size;
-UINT8 *fastfred_attributesram;
-UINT8 *fastfred_background_color;
-UINT8 *imago_fg_videoram;
+uint8_t *fastfred_attributesram;
+uint8_t *fastfred_background_color;
+uint8_t *imago_fg_videoram;
 
 
 static const rectangle spritevisiblearea =
@@ -31,8 +31,8 @@ static const rectangle spritevisibleareaflipx =
         2*8, 30*8-1
 };
 
-static UINT16 charbank;
-static UINT8 colorbank;
+static uint16_t charbank;
+static uint8_t colorbank;
 int fastfred_hardware_type;
 static tilemap_t *bg_tilemap, *fg_tilemap, *web_tilemap;
 
@@ -105,10 +105,10 @@ PALETTE_INIT( fastfred )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	UINT16 code = charbank | fastfred_videoram[tile_index];
-	UINT8 color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
+	uint16_t code = charbank | fastfred_videoram[tile_index];
+	uint8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
 
 	SET_TILE_INFO(0, code, color, 0);
 }
@@ -168,7 +168,7 @@ WRITE8_HANDLER( fastfred_attributes_w )
 
 WRITE8_HANDLER( fastfred_charbank1_w )
 {
-	UINT16 new_data = (charbank & 0x0200) | ((data & 0x01) << 8);
+	uint16_t new_data = (charbank & 0x0200) | ((data & 0x01) << 8);
 
 	if (new_data != charbank)
 	{
@@ -180,7 +180,7 @@ WRITE8_HANDLER( fastfred_charbank1_w )
 
 WRITE8_HANDLER( fastfred_charbank2_w )
 {
-	UINT16 new_data = (charbank & 0x0100) | ((data & 0x01) << 9);
+	uint16_t new_data = (charbank & 0x0100) | ((data & 0x01) << 9);
 
 	if (new_data != charbank)
 	{
@@ -193,7 +193,7 @@ WRITE8_HANDLER( fastfred_charbank2_w )
 
 WRITE8_HANDLER( fastfred_colorbank1_w )
 {
-	UINT8 new_data = (colorbank & 0x10) | ((data & 0x01) << 3);
+	uint8_t new_data = (colorbank & 0x10) | ((data & 0x01) << 3);
 
 	if (new_data != colorbank)
 	{
@@ -205,7 +205,7 @@ WRITE8_HANDLER( fastfred_colorbank1_w )
 
 WRITE8_HANDLER( fastfred_colorbank2_w )
 {
-	UINT8 new_data = (colorbank & 0x08) | ((data & 0x01) << 4);
+	uint8_t new_data = (colorbank & 0x08) | ((data & 0x01) << 4);
 
 	if (new_data != colorbank)
 	{
@@ -251,7 +251,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	for (offs = fastfred_spriteram_size - 4; offs >= 0; offs -= 4)
 	{
-		UINT8 code,sx,sy;
+		uint8_t code,sx,sy;
 		int flipx,flipy;
 
 		sx = fastfred_spriteram[offs + 3];
@@ -319,10 +319,10 @@ VIDEO_UPDATE( fastfred )
 
 static TILE_GET_INFO( imago_get_tile_info_bg )
 {
-	UINT8 x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	UINT16 code = charbank * 0x100 + fastfred_videoram[tile_index];
-	UINT8 color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
+	uint16_t code = charbank * 0x100 + fastfred_videoram[tile_index];
+	uint8_t color = colorbank | (fastfred_attributesram[2 * x + 1] & 0x07);
 
 	SET_TILE_INFO(0, code, color, 0);
 }

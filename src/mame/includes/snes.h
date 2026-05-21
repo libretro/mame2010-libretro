@@ -364,36 +364,36 @@
 
 struct snes_cart_info
 {
-	UINT8  mode;		/* ROM memory mode */
-	UINT32 sram;		/* Amount of sram in cart */
-	UINT32 sram_max;	/* Maximum amount sram in cart (based on ROM mode) */
+	uint8_t  mode;		/* ROM memory mode */
+	uint32_t sram;		/* Amount of sram in cart */
+	uint32_t sram_max;	/* Maximum amount sram in cart (based on ROM mode) */
 	int    small_sram;
 	int    slot_in_use;	/* this is needed by Sufami Turbo slots (to check if SRAM has to be saved) */
 };
 
 struct snes_joypad
 {
-	UINT16 buttons;
+	uint16_t buttons;
 };
 
 struct snes_mouse
 {
-	INT16 x, y, oldx, oldy;
-	UINT8 buttons;
-	UINT8 deltax, deltay;
+	int16_t x, y, oldx, oldy;
+	uint8_t buttons;
+	uint8_t deltax, deltay;
 	int speed;
 };
 
 struct snes_superscope
 {
-	INT16 x, y;
-	UINT8 buttons;
+	int16_t x, y;
+	uint8_t buttons;
 	int turbo_lock, pause_lock, fire_lock;
 	int offscreen;
 };
 
 typedef void (*snes_io_read)(running_machine *machine);
-typedef UINT8 (*snes_oldjoy_read)(running_machine *machine);
+typedef uint8_t (*snes_oldjoy_read)(running_machine *machine);
 
 class snes_state
 {
@@ -403,15 +403,15 @@ public:
 	snes_state(running_machine &machine) { }
 
 	/* misc */
-	UINT16                htmult;		/* in 512 wide, we run HTOTAL double and halve it on latching */
-	UINT16                cgram_address;	/* CGRAM address */
-	UINT8                 vram_read_offset;	/* VRAM read offset */
-	UINT8                 read_ophct, read_opvct;
-	UINT16                hblank_offset;
-	UINT16                vram_fgr_high, vram_fgr_increment, vram_fgr_count, vram_fgr_mask, vram_fgr_shift, vram_read_buffer;
-	UINT32                wram_address;
-	UINT16                htime, vtime;
-	UINT16                vmadd;
+	uint16_t                htmult;		/* in 512 wide, we run HTOTAL double and halve it on latching */
+	uint16_t                cgram_address;	/* CGRAM address */
+	uint8_t                 vram_read_offset;	/* VRAM read offset */
+	uint8_t                 read_ophct, read_opvct;
+	uint16_t                hblank_offset;
+	uint16_t                vram_fgr_high, vram_fgr_increment, vram_fgr_count, vram_fgr_mask, vram_fgr_shift, vram_read_buffer;
+	uint32_t                wram_address;
+	uint16_t                htime, vtime;
+	uint16_t                vmadd;
 
 	/* timers */
 	emu_timer             *scanline_timer;
@@ -425,27 +425,27 @@ public:
 	/* DMA/HDMA-related */
 	struct
 	{
-		UINT8  dmap;
-		UINT8  dest_addr;
-		UINT16 src_addr;
-		UINT16 trans_size;
-		UINT8  bank;
-		UINT8  ibank;
-		UINT16 hdma_addr;
-		UINT16 hdma_iaddr;
-		UINT8  hdma_line_counter;
-		UINT8  unk;
+		uint8_t  dmap;
+		uint8_t  dest_addr;
+		uint16_t src_addr;
+		uint16_t trans_size;
+		uint8_t  bank;
+		uint8_t  ibank;
+		uint16_t hdma_addr;
+		uint16_t hdma_iaddr;
+		uint8_t  hdma_line_counter;
+		uint8_t  unk;
 
 		int    do_transfer;
 
 		int    dma_disabled;	// used to stop DMA if HDMA is enabled (currently not implemented, see machine/snes.c)
 	}dma_channel[8];
-	UINT8                 hdmaen;	/* channels enabled for HDMA */
+	uint8_t                 hdmaen;	/* channels enabled for HDMA */
 
 	/* input-related */
-	UINT8                 joy1l, joy1h, joy2l, joy2h, joy3l, joy3h, joy4l, joy4h;
-	UINT16                data1[2], data2[2];
-	UINT8                 read_idx[2];
+	uint8_t                 joy1l, joy1h, joy2l, joy2h, joy3l, joy3h, joy4l, joy4h;
+	uint16_t                data1[2], data2[2];
+	uint8_t                 read_idx[2];
 	snes_joypad           joypad[2];
 	snes_mouse            mouse[2];
 	snes_superscope       scope[2];
@@ -455,8 +455,8 @@ public:
 	snes_oldjoy_read      oldjoy1_read, oldjoy2_read;
 
 	/* cart related */
-	UINT8 has_addon_chip;
-	UINT32 cart_size;
+	uint8_t has_addon_chip;
+	uint32_t cart_size;
 	snes_cart_info cart[2];	// the second one is used by MESS for Sufami Turbo and, eventually, BS-X
 
 	/* devices */
@@ -548,7 +548,7 @@ WRITE_LINE_DEVICE_HANDLER( snes_extern_irq_w );
 
 extern void snes_latch_counters(running_machine *machine);
 
-extern UINT8  *snes_ram;			/* Main memory */
+extern uint8_t  *snes_ram;			/* Main memory */
 
 
 /* (PPU) Video related */
@@ -557,105 +557,105 @@ struct SNES_PPU_STRUCT	/* once all the regs are saved in this structure, it woul
 	struct
 	{
 		/* clipmasks */
-		UINT8 window1_enabled, window1_invert;
-		UINT8 window2_enabled, window2_invert;
-		UINT8 wlog_mask;
+		uint8_t window1_enabled, window1_invert;
+		uint8_t window2_enabled, window2_invert;
+		uint8_t wlog_mask;
 		/* color math enabled */
-		UINT8 color_math;
+		uint8_t color_math;
 
-		UINT8 charmap;
-		UINT8 tilemap;
-		UINT8 tilemap_size;
+		uint8_t charmap;
+		uint8_t tilemap;
+		uint8_t tilemap_size;
 
-		UINT8 tile_size;
-		UINT8 mosaic_enabled;	// actually used only for layers 0->3!
+		uint8_t tile_size;
+		uint8_t mosaic_enabled;	// actually used only for layers 0->3!
 
-		UINT8 main_window_enabled;
-		UINT8 sub_window_enabled;
-		UINT8 main_bg_enabled;
-		UINT8 sub_bg_enabled;
+		uint8_t main_window_enabled;
+		uint8_t sub_window_enabled;
+		uint8_t main_bg_enabled;
+		uint8_t sub_bg_enabled;
 
-		UINT16 hoffs;
-		UINT16 voffs;
+		uint16_t hoffs;
+		uint16_t voffs;
 	} layer[6];	// this is for the BG1 - BG2 - BG3 - BG4 - OBJ - color layers
 
 	struct
 	{
-		UINT8 address_low;
-		UINT8 address_high;
-		UINT8 saved_address_low;
-		UINT8 saved_address_high;
-		UINT16 address;
-		UINT16 priority_rotation;
-		UINT8 next_charmap;
-		UINT8 next_size;
-		UINT8 size;
-		UINT32 next_name_select;
-		UINT32 name_select;
-		UINT8 first_sprite;
-		UINT8 flip;
-		UINT16 write_latch;
+		uint8_t address_low;
+		uint8_t address_high;
+		uint8_t saved_address_low;
+		uint8_t saved_address_high;
+		uint16_t address;
+		uint16_t priority_rotation;
+		uint8_t next_charmap;
+		uint8_t next_size;
+		uint8_t size;
+		uint32_t next_name_select;
+		uint32_t name_select;
+		uint8_t first_sprite;
+		uint8_t flip;
+		uint16_t write_latch;
 	} oam;
 
 	struct
 	{
-		UINT16 horizontal[4];
-		UINT16 vertical[4];
+		uint16_t horizontal[4];
+		uint16_t vertical[4];
 	} bgd_offset;
 
 	struct
 	{
-		UINT16 latch_horz;
-		UINT16 latch_vert;
-		UINT16 current_horz;
-		UINT16 current_vert;
-		UINT8 last_visible_line;
-		UINT8 interlace_count;
+		uint16_t latch_horz;
+		uint16_t latch_vert;
+		uint16_t current_horz;
+		uint16_t current_vert;
+		uint8_t last_visible_line;
+		uint8_t interlace_count;
 	} beam;
 
 	struct
 	{
-		UINT8 repeat;
-		UINT8 hflip;
-		UINT8 vflip;
-		INT16 matrix_a;
-		INT16 matrix_b;
-		INT16 matrix_c;
-		INT16 matrix_d;
-		INT16 origin_x;
-		INT16 origin_y;
-		UINT16 hor_offset;
-		UINT16 ver_offset;
-		UINT8 extbg;
+		uint8_t repeat;
+		uint8_t hflip;
+		uint8_t vflip;
+		int16_t matrix_a;
+		int16_t matrix_b;
+		int16_t matrix_c;
+		int16_t matrix_d;
+		int16_t origin_x;
+		int16_t origin_y;
+		uint16_t hor_offset;
+		uint16_t ver_offset;
+		uint8_t extbg;
 	} mode7;
 
-	UINT8 mosaic_size;
-	UINT8 clip_to_black;
-	UINT8 prevent_color_math;
-	UINT8 sub_add_mode;
-	UINT8 bg3_priority_bit;
-	UINT8 direct_color;
-	UINT8 ppu_last_scroll;		/* as per Anomie's doc and Theme Park, all scroll regs shares (but mode 7 ones) the same
+	uint8_t mosaic_size;
+	uint8_t clip_to_black;
+	uint8_t prevent_color_math;
+	uint8_t sub_add_mode;
+	uint8_t bg3_priority_bit;
+	uint8_t direct_color;
+	uint8_t ppu_last_scroll;		/* as per Anomie's doc and Theme Park, all scroll regs shares (but mode 7 ones) the same
                                     'previous' scroll value */
-	UINT8 mode7_last_scroll;	/* as per Anomie's doc mode 7 scroll regs use a different value, shared with mode 7 matrix! */
+	uint8_t mode7_last_scroll;	/* as per Anomie's doc mode 7 scroll regs use a different value, shared with mode 7 matrix! */
 
-	UINT8 ppu1_open_bus, ppu2_open_bus;
-	UINT8 ppu1_version, ppu2_version;
-	UINT8 window1_left, window1_right, window2_left, window2_right;
+	uint8_t ppu1_open_bus, ppu2_open_bus;
+	uint8_t ppu1_version, ppu2_version;
+	uint8_t window1_left, window1_right, window2_left, window2_right;
 
-	UINT16 mosaic_table[16][4096];
-	UINT8 clipmasks[6][SNES_SCR_WIDTH];
-	UINT8 update_windows;
-	UINT8 update_offsets;
-	UINT8 update_oam_list;
-	UINT8 mode;
-	UINT8 interlace; //doubles the visible resolution
-	UINT8 obj_interlace;
-	UINT8 screen_brightness;
-	UINT8 screen_disabled;
-	UINT8 pseudo_hires;
-	UINT8 color_modes;
-	UINT8 stat77_flags;
+	uint16_t mosaic_table[16][4096];
+	uint8_t clipmasks[6][SNES_SCR_WIDTH];
+	uint8_t update_windows;
+	uint8_t update_offsets;
+	uint8_t update_oam_list;
+	uint8_t mode;
+	uint8_t interlace; //doubles the visible resolution
+	uint8_t obj_interlace;
+	uint8_t screen_brightness;
+	uint8_t screen_disabled;
+	uint8_t pseudo_hires;
+	uint8_t color_modes;
+	uint8_t stat77_flags;
 };
 
 extern struct snes_cart_info snes_cart;

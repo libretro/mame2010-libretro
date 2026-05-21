@@ -38,7 +38,7 @@ PALETTE_INIT( contra )
 
 			for (i = 0; i < 0x100; i++)
 			{
-				UINT8 ctabentry;
+				uint8_t ctabentry;
 
 				if (((pal & 0x01) == 0) && (color_prom[(clut << 8) | i] == 0))
 					ctabentry = 0;
@@ -59,7 +59,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x100; i += 2)
 	{
-		UINT16 data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
+		uint16_t data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 
@@ -78,10 +78,10 @@ static void set_pens( running_machine *machine )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	contra_state *state = (contra_state *)machine->driver_data;
-	UINT8 ctrl_3 = k007121_ctrlram_r(state->k007121_1, 3);
-	UINT8 ctrl_4 = k007121_ctrlram_r(state->k007121_1, 4);
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
+	uint8_t ctrl_3 = k007121_ctrlram_r(state->k007121_1, 3);
+	uint8_t ctrl_4 = k007121_ctrlram_r(state->k007121_1, 4);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
 	int attr = state->fg_cram[tile_index];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
 	int bit1 = (ctrl_5 >> 2) & 0x03;
@@ -107,10 +107,10 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	contra_state *state = (contra_state *)machine->driver_data;
-	UINT8 ctrl_3 = k007121_ctrlram_r(state->k007121_2, 3);
-	UINT8 ctrl_4 = k007121_ctrlram_r(state->k007121_2, 4);
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121_2, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
+	uint8_t ctrl_3 = k007121_ctrlram_r(state->k007121_2, 3);
+	uint8_t ctrl_4 = k007121_ctrlram_r(state->k007121_2, 4);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121_2, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
 	int attr = state->bg_cram[tile_index];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
 	int bit1 = (ctrl_5 >> 2) & 0x03;
@@ -137,8 +137,8 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_tx_tile_info )
 {
 	contra_state *state = (contra_state *)machine->driver_data;
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121_1, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
 	int attr = state->tx_cram[tile_index];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
 	int bit1 = (ctrl_5 >> 2) & 0x03;
@@ -172,8 +172,8 @@ VIDEO_START( contra )
 	state->fg_tilemap = tilemap_create(machine, get_fg_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 	state->tx_tilemap = tilemap_create(machine, get_tx_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 
-	state->spriteram = auto_alloc_array(machine, UINT8, 0x800);
-	state->spriteram_2 = auto_alloc_array(machine, UINT8, 0x800);
+	state->spriteram = auto_alloc_array(machine, uint8_t, 0x800);
+	state->spriteram_2 = auto_alloc_array(machine, uint8_t, 0x800);
 
 	state->bg_clip = machine->primary_screen->visible_area();
 	state->bg_clip.min_x += 40;
@@ -248,7 +248,7 @@ WRITE8_HANDLER( contra_text_cram_w )
 WRITE8_HANDLER( contra_K007121_ctrl_0_w )
 {
 	contra_state *state = (contra_state *)space->machine->driver_data;
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
 
 	if (offset == 3)
 	{
@@ -273,7 +273,7 @@ WRITE8_HANDLER( contra_K007121_ctrl_0_w )
 WRITE8_HANDLER( contra_K007121_ctrl_1_w )
 {
 	contra_state *state = (contra_state *)space->machine->driver_data;
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
 
 	if (offset == 3)
 	{
@@ -306,23 +306,23 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	contra_state *state = (contra_state *)machine->driver_data;
 	running_device *k007121 = bank ? state->k007121_2 : state->k007121_1;
 	int base_color = (k007121_ctrlram_r(k007121, 6) & 0x30) * 2;
-	const UINT8 *source;
+	const uint8_t *source;
 
 	if (bank == 0)
 		source = state->spriteram;
 	else
 		source = state->spriteram_2;
 
-	k007121_sprites_draw(k007121, bitmap, cliprect, machine->gfx[bank], machine->colortable, source, base_color, 40, 0, (UINT32)-1);
+	k007121_sprites_draw(k007121, bitmap, cliprect, machine->gfx[bank], machine->colortable, source, base_color, 40, 0, (uint32_t)-1);
 }
 
 VIDEO_UPDATE( contra )
 {
 	contra_state *state = (contra_state *)screen->machine->driver_data;
-	UINT8 ctrl_1_0 = k007121_ctrlram_r(state->k007121_1, 0);
-	UINT8 ctrl_1_2 = k007121_ctrlram_r(state->k007121_1, 2);
-	UINT8 ctrl_2_0 = k007121_ctrlram_r(state->k007121_2, 0);
-	UINT8 ctrl_2_2 = k007121_ctrlram_r(state->k007121_2, 2);
+	uint8_t ctrl_1_0 = k007121_ctrlram_r(state->k007121_1, 0);
+	uint8_t ctrl_1_2 = k007121_ctrlram_r(state->k007121_1, 2);
+	uint8_t ctrl_2_0 = k007121_ctrlram_r(state->k007121_2, 0);
+	uint8_t ctrl_2_2 = k007121_ctrlram_r(state->k007121_2, 2);
 	rectangle bg_finalclip = state->bg_clip;
 	rectangle fg_finalclip = state->fg_clip;
 	rectangle tx_finalclip = state->tx_clip;

@@ -30,24 +30,24 @@
 #endif
 
 
-static UINT8 *gx_objzbuf, *gx_shdzbuf;
+static uint8_t *gx_objzbuf, *gx_shdzbuf;
 
 
 
 static int layer_colorbase[4];
-static INT32 gx_tilebanks[8], gx_oldbanks[8];
+static int32_t gx_tilebanks[8], gx_oldbanks[8];
 static int gx_tilemode, gx_rozenable, psac_colorbase, last_psac_colorbase;
 static int gx_specialrozenable; // type 1 roz, with voxel height-map, rendered from 2 source tilemaps (which include height data) to temp bitmap for further processing
 static int gx_rushingheroes_hack;
 static int gx_le2_textcolour_hack;
 static tilemap_t *gx_psac_tilemap, *gx_psac_tilemap2;
-extern UINT32 *gx_psacram, *gx_subpaletteram32;
+extern uint32_t *gx_psacram, *gx_subpaletteram32;
 static bitmap_t* type3_roz_temp_bitmap;
 static tilemap_t* gx_psac_tilemap_alt;
 
 static int konamigx_has_dual_screen;
 int konamigx_current_frame;
-INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data);
+INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data);
 static int konamigx_palformat;
 static bitmap_t* dualscreen_left_tempbitmap;
 static bitmap_t* dualscreen_right_tempbitmap;
@@ -99,7 +99,7 @@ void K053936GP_set_cliprect(int chip, int minx, int maxx, int miny, int maxy)
 INLINE void K053936GP_copyroz32clip( running_machine *machine,
 		bitmap_t *dst_bitmap, bitmap_t *src_bitmap,
 		const rectangle *dst_cliprect, const rectangle *src_cliprect,
-		UINT32 _startx,UINT32 _starty,int _incxx,int _incxy,int _incyx,int _incyy,
+		uint32_t _startx,uint32_t _starty,int _incxx,int _incxy,int _incyx,int _incyy,
 		int tilebpp, int blend, int alpha, int clip, int pixeldouble_output )
 {
 	static const int colormask[8]={1,3,7,0xf,0x1f,0x3f,0x7f,0xff};
@@ -108,7 +108,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 	int ecx;
 	int src_pitch, incxy, incxx;
 	int src_minx, src_maxx, src_miny, src_maxy, cmask;
-	UINT16 *src_base;
+	uint16_t *src_base;
 	size_t src_size;
 
 	const pen_t *pal_base;
@@ -117,7 +117,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 	int dst_base2;
 
 	int tx, dst_pitch;
-	UINT32 *dst_base;
+	uint32_t *dst_base;
 	int starty, incyy, startx, incyx, ty, sx, sy;
 
 	incxy = _incxy; incxx = _incxx; incyy = _incyy; incyx = _incyx;
@@ -147,7 +147,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 
 	// adjust entry points and other loop constants
 	dst_pitch = dst_bitmap->rowpixels;
-	dst_base = (UINT32*)dst_bitmap->base;
+	dst_base = (uint32_t*)dst_bitmap->base;
 	dst_base2 = sy * dst_pitch + sx + tx;
 	ecx = tx = -tx;
 
@@ -156,7 +156,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 	cmask = colormask[tilebpp];
 
 	src_pitch = src_bitmap->rowpixels;
-	src_base = (UINT16 *)src_bitmap->base;
+	src_base = (uint16_t *)src_bitmap->base;
 	src_size = src_bitmap->width * src_bitmap->height;
 	dst_size = dst_bitmap->width * dst_bitmap->height;
 	dst_ptr = 0;//dst_base;
@@ -174,7 +174,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 				int srcx = (cx >> 16) & 0x1fff;
 				int srcy = (cy >> 16) & 0x1fff;
 				int pixel;
-				UINT32 offs;
+				uint32_t offs;
 				offs = srcy * src_pitch + srcx;
 
 				cx += incxx;
@@ -243,7 +243,7 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 				int srcx = (cx >> 16) & 0x1fff;
 				int srcy = (cy >> 16) & 0x1fff;
 				int pixel;
-				UINT32 offs;
+				uint32_t offs;
 
 				offs = srcy * src_pitch + srcx;
 
@@ -282,16 +282,16 @@ INLINE void K053936GP_copyroz32clip( running_machine *machine,
 
 // adapted from generic K053936_zoom_draw()
 static void K053936GP_zoom_draw(running_machine *machine,
-		int chip, UINT16 *ctrl, UINT16 *linectrl,
+		int chip, uint16_t *ctrl, uint16_t *linectrl,
 		bitmap_t *bitmap, const rectangle *cliprect, tilemap_t *tmap,
 		int tilebpp, int blend, int alpha, int pixeldouble_output)
 {
 	bitmap_t *src_bitmap;
 	rectangle *src_cliprect;
-	UINT16 *lineaddr;
+	uint16_t *lineaddr;
 
 	rectangle my_clip;
-	UINT32 startx, starty;
+	uint32_t startx, starty;
 	int incxx, incxy, incyx, incyy, y, maxy, clip;
 
 	src_bitmap = tilemap_get_pixmap(tmap);
@@ -310,10 +310,10 @@ static void K053936GP_zoom_draw(running_machine *machine,
 			lineaddr = linectrl + ( ((y - K053936_offset[chip][1]) & 0x1ff) << 2);
 			my_clip.min_y = my_clip.max_y = y;
 
-			startx = (INT16)(lineaddr[0] + ctrl[0x00]) << 8;
-			starty = (INT16)(lineaddr[1] + ctrl[0x01]) << 8;
-			incxx  = (INT16)(lineaddr[2]);
-			incxy  = (INT16)(lineaddr[3]);
+			startx = (int16_t)(lineaddr[0] + ctrl[0x00]) << 8;
+			starty = (int16_t)(lineaddr[1] + ctrl[0x01]) << 8;
+			incxx  = (int16_t)(lineaddr[2]);
+			incxy  = (int16_t)(lineaddr[3]);
 
 			if (ctrl[0x06] & 0x8000) incxx <<= 8;
 			if (ctrl[0x06] & 0x0080) incxy <<= 8;
@@ -330,12 +330,12 @@ static void K053936GP_zoom_draw(running_machine *machine,
 	}
 	else    /* "simple" mode */
 	{
-		startx = (INT16)(ctrl[0x00]) << 8;
-		starty = (INT16)(ctrl[0x01]) << 8;
-		incyx  = (INT16)(ctrl[0x02]);
-		incyy  = (INT16)(ctrl[0x03]);
-		incxx  = (INT16)(ctrl[0x04]);
-		incxy  = (INT16)(ctrl[0x05]);
+		startx = (int16_t)(ctrl[0x00]) << 8;
+		starty = (int16_t)(ctrl[0x01]) << 8;
+		incyx  = (int16_t)(ctrl[0x02]);
+		incyy  = (int16_t)(ctrl[0x03]);
+		incxx  = (int16_t)(ctrl[0x04]);
+		incxy  = (int16_t)(ctrl[0x05]);
 
 		if (ctrl[0x06] & 0x4000) { incyx <<= 8; incyy <<= 8; }
 		if (ctrl[0x06] & 0x0040) { incxx <<= 8; incxy <<= 8; }
@@ -386,7 +386,7 @@ static void K053936GP_1_zoom_draw(running_machine *machine, bitmap_t *bitmap, co
 
 INLINE void zdrawgfxzoom32GP(
 		bitmap_t *bitmap, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, int sx, int sy,
+		uint32_t code, uint32_t color, int flipx, int flipy, int sx, int sy,
 		int scalex, int scaley, int alpha, int drawmode, int zcode, int pri)
 {
 #define FP     19
@@ -395,21 +395,21 @@ INLINE void zdrawgfxzoom32GP(
 #define FPENT  0
 
 	// inner loop
-	const UINT8  *src_ptr;
+	const uint8_t  *src_ptr;
 	int src_x;
 	int eax, ecx;
 	int src_fx, src_fdx;
 	int shdpen;
-	UINT8  z8, db0, p8, db1;
-	UINT8  *ozbuf_ptr;
-	UINT8  *szbuf_ptr;
+	uint8_t  z8, db0, p8, db1;
+	uint8_t  *ozbuf_ptr;
+	uint8_t  *szbuf_ptr;
 	const pen_t *pal_base;
 	const pen_t *shd_base;
-	UINT32 *dst_ptr;
+	uint32_t *dst_ptr;
 
 	// outter loop
 	int src_fby, src_fdy, src_fbx;
-	const UINT8 *src_base;
+	const uint8_t *src_base;
 	int dst_w, dst_h;
 
 	// one-time
@@ -453,7 +453,7 @@ INLINE void zdrawgfxzoom32GP(
 	pal_base  = gfx->machine->pens + gfx->color_base + (color % gfx->total_colors) * granularity;
 	shd_base  = gfx->machine->shadow_table;
 
-	dst_ptr   = (UINT32 *)bitmap->base;
+	dst_ptr   = (uint32_t *)bitmap->base;
 	dst_pitch = bitmap->rowpixels;
 	dst_minx  = cliprect->min_x;
 	dst_maxx  = cliprect->max_x;
@@ -510,8 +510,8 @@ INLINE void zdrawgfxzoom32GP(
 
 	// adjust insertion points and pre-entry constants
 	eax = (dst_y - dst_miny) * GX_ZBUFW + (dst_x - dst_minx) + dst_w;
-	db0 = z8 = (UINT8)zcode;
-	db1 = p8 = (UINT8)pri;
+	db0 = z8 = (uint8_t)zcode;
+	db1 = p8 = (uint8_t)pri;
 	ozbuf_ptr += eax;
 	szbuf_ptr += eax << 1;
 	dst_ptr += dst_y * dst_pitch + dst_x + dst_w;
@@ -836,8 +836,8 @@ INLINE void zdrawgfxzoom32GP(
 /***************************************************************************/
 
 // global system ports access
-UINT8  konamigx_wrport1_0, konamigx_wrport1_1;
-UINT16 konamigx_wrport2;
+uint8_t  konamigx_wrport1_0, konamigx_wrport1_1;
+uint16_t konamigx_wrport2;
 
 // frequently used registers
 static int K053246_objset1;
@@ -1064,7 +1064,7 @@ static void gx_wipezbuf(running_machine *machine, int noshadow)
 	int w = visarea.max_x - visarea.min_x + 1;
 	int h = visarea.max_y - visarea.min_y + 1;
 
-	UINT8 *zptr = gx_objzbuf;
+	uint8_t *zptr = gx_objzbuf;
 	int ecx = h;
 
 	do { memset(zptr, -1, w); zptr += GX_ZBUFW; } while (--ecx);
@@ -1111,11 +1111,11 @@ static void gx_wipezbuf(running_machine *machine, int noshadow)
 #define GX_MAX_OBJECTS (GX_MAX_SPRITES + GX_MAX_LAYERS)
 
 static struct GX_OBJ { int order, offs, code, color; } *gx_objpool;
-static UINT16 *gx_spriteram;
+static uint16_t *gx_spriteram;
 static int gx_objdma, gx_primode;
 
 // mirrored K053247 and K054338 settings
-UINT16 *K053247_ram;
+uint16_t *K053247_ram;
 static gfx_element *K053247_gfx;
 static void (*K053247_callback)(int *code,int *color,int *priority);
 static int K053247_dx, K053247_dy;
@@ -1134,8 +1134,8 @@ void konamigx_mixer_init(running_machine *machine, int objdma)
 	gx_objdma = 0;
 	gx_primode = 0;
 
-	gx_objzbuf = (UINT8 *)machine->priority_bitmap->base;
-	gx_shdzbuf = auto_alloc_array(machine, UINT8, GX_ZBUFSIZE);
+	gx_objzbuf = (uint8_t *)machine->priority_bitmap->base;
+	gx_shdzbuf = auto_alloc_array(machine, uint8_t, GX_ZBUFSIZE);
 	gx_objpool = auto_alloc_array(machine, struct GX_OBJ, GX_MAX_OBJECTS);
 
 	K053247_export_config(&K053247_ram, &K053247_gfx, &K053247_callback, &K053247_dx, &K053247_dy);
@@ -1143,7 +1143,7 @@ void konamigx_mixer_init(running_machine *machine, int objdma)
 
 	if (objdma)
 	{
-		gx_spriteram = auto_alloc_array(machine, UINT16, 0x1000/2);
+		gx_spriteram = auto_alloc_array(machine, uint16_t, 0x1000/2);
 		gx_objdma = 1;
 	}
 	else
@@ -1297,7 +1297,7 @@ void konamigx_mixer(running_machine *machine, bitmap_t *bitmap, const rectangle 
 		for (i=j+1; i<6; i++)
 		{
 			temp2 = layerpri[i];
-			if ((UINT32)temp1 <= (UINT32)temp2)
+			if ((uint32_t)temp1 <= (uint32_t)temp2)
 			{
 				layerpri[i] = temp1; layerpri[j] = temp1 = temp2;
 				temp2 = layerid[i]; layerid[i] = layerid[j]; layerid[j] = temp2;
@@ -1493,7 +1493,7 @@ void konamigx_mixer(running_machine *machine, bitmap_t *bitmap, const rectangle 
 		{
 			temp3 = objbuf[i];
 			temp4 = objpool[temp3].order;
-			if ((UINT32)temp2 <= (UINT32)temp4) { temp2 = temp4; objbuf[i] = temp1; objbuf[j] = temp1 = temp3; }
+			if ((uint32_t)temp2 <= (uint32_t)temp4) { temp2 = temp4; objbuf[i] = temp1; objbuf[j] = temp1 = temp3; }
 		}
 	}
 
@@ -1633,12 +1633,12 @@ void konamigx_mixer(running_machine *machine, bitmap_t *bitmap, const rectangle 
 							// - todo, use the pixeldouble_output I just added for vsnet instead?
 							for (yy=0;yy<height;yy++)
 							{
-								UINT16* src = BITMAP_ADDR16(extra_bitmap,yy,0);
-								UINT32* dst = BITMAP_ADDR32(bitmap,yy,0);
+								uint16_t* src = BITMAP_ADDR16(extra_bitmap,yy,0);
+								uint32_t* dst = BITMAP_ADDR32(bitmap,yy,0);
 								int shiftpos = 0;
 								for (xx=0;xx<width;xx+=2)
 								{
-									UINT16 dat = src[(((xx/2)+shiftpos))%width];
+									uint16_t dat = src[(((xx/2)+shiftpos))%width];
 									if (dat&0xff)
 										dst[xx+1] = dst[xx] = paldata[dat];
 								}
@@ -1843,7 +1843,7 @@ static TILE_GET_INFO( get_gx_psac_tile_info )
 	SET_TILE_INFO(0, tileno, colour, TILE_FLIPYX(flip));
 }
 
-UINT32* konamigx_type3_psac2_bank;
+uint32_t* konamigx_type3_psac2_bank;
 static int konamigx_type3_psac2_actual_bank;
 //int konamigx_type3_psac2_actual_last_bank = 0;
 
@@ -1869,7 +1869,7 @@ WRITE32_HANDLER( konamigx_type3_psac2_bank_w )
  static TILE_GET_INFO( get_gx_psac3_tile_info )
  {
 	int tileno, colour, flip;
-	UINT8 *tmap = memory_region(machine, "gfx4");
+	uint8_t *tmap = memory_region(machine, "gfx4");
 
 	int base_index = tile_index;
 
@@ -1890,7 +1890,7 @@ WRITE32_HANDLER( konamigx_type3_psac2_bank_w )
  static TILE_GET_INFO( get_gx_psac3_alt_tile_info )
  {
 	int tileno, colour, flip;
-	UINT8 *tmap = memory_region(machine, "gfx4")+0x20000;
+	uint8_t *tmap = memory_region(machine, "gfx4")+0x20000;
 
 	int base_index = tile_index;
 
@@ -2404,7 +2404,7 @@ VIDEO_UPDATE(konamigx)
 				{
 					for (offset=0;offset<0x4000/4;offset++)
 					{
-						UINT32 coldat = screen->machine->generic.paletteram.u32[offset];
+						uint32_t coldat = screen->machine->generic.paletteram.u32[offset];
 
 						set_color_555(screen->machine, offset*2, 0, 5, 10,coldat >> 16);
 						set_color_555(screen->machine, offset*2+1, 0, 5, 10,coldat & 0xffff);
@@ -2451,7 +2451,7 @@ VIDEO_UPDATE(konamigx)
 				{
 					for (offset=0;offset<0x4000/4;offset++)
 					{
-						UINT32 coldat = gx_subpaletteram32[offset];
+						uint32_t coldat = gx_subpaletteram32[offset];
 
 						set_color_555(screen->machine, offset*2, 0, 5, 10,coldat >> 16);
 						set_color_555(screen->machine, offset*2+1, 0, 5, 10,coldat & 0xffff);
@@ -2577,17 +2577,17 @@ VIDEO_UPDATE(konamigx)
 
 				for (y=0;y<256;y++)
 				{
-					//UINT16* src = BITMAP_ADDR16( gxtype1_roz_dstbitmap, y, 0);
+					//uint16_t* src = BITMAP_ADDR16( gxtype1_roz_dstbitmap, y, 0);
 
-					//UINT32* dst = BITMAP_ADDR32( bitmap, y, 0);
+					//uint32_t* dst = BITMAP_ADDR32( bitmap, y, 0);
 					// ths K053936 rendering should probably just be flipped
 					// this is just kludged to align the racing force 2d logo
-					UINT16* src = BITMAP_ADDR16( gxtype1_roz_dstbitmap2, y+30, 0);
-					UINT32* dst = BITMAP_ADDR32( bitmap, 256-y, 0);
+					uint16_t* src = BITMAP_ADDR16( gxtype1_roz_dstbitmap2, y+30, 0);
+					uint32_t* dst = BITMAP_ADDR32( bitmap, 256-y, 0);
 
 					for (x=0;x<512;x++)
 					{
-						UINT16 dat = src[x];
+						uint16_t dat = src[x];
 						dst[x] = paldata[dat];
 					}
 				}
@@ -2646,7 +2646,7 @@ WRITE32_HANDLER( konamigx_palette2_w )
 }
 #endif
 
-INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> rshift), pal5bit(data >> gshift), pal5bit(data >> bshift));
 }
@@ -2655,7 +2655,7 @@ INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int
 // main monitor for type 3
 WRITE32_HANDLER( konamigx_555_palette_w )
 {
-	UINT32 coldat;
+	uint32_t coldat;
 	COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
 
 	coldat = space->machine->generic.paletteram.u32[offset];
@@ -2667,7 +2667,7 @@ WRITE32_HANDLER( konamigx_555_palette_w )
 // sub monitor for type 3
 WRITE32_HANDLER( konamigx_555_palette2_w )
 {
-	UINT32 coldat;
+	uint32_t coldat;
 	COMBINE_DATA(&gx_subpaletteram32[offset]);
 	coldat = gx_subpaletteram32[offset];
 

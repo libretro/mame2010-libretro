@@ -119,8 +119,8 @@ WRITE8_HANDLER( bowlrama_blitter_w )
 READ8_HANDLER( bowlrama_blitter_r )
 {
 	capbowl_state *state = (capbowl_state *)space->machine->driver_data;
-	UINT8 data = memory_region(space->machine, "gfx1")[state->blitter_addr];
-	UINT8 result = 0;
+	uint8_t data = memory_region(space->machine, "gfx1")[state->blitter_addr];
+	uint8_t result = 0;
 
 	switch (offset)
 	{
@@ -157,7 +157,7 @@ READ8_HANDLER( bowlrama_blitter_r )
  *
  *************************************/
 
-INLINE rgb_t pen_for_pixel( UINT8 *src, UINT8 pix )
+INLINE rgb_t pen_for_pixel( uint8_t *src, uint8_t pix )
 {
 	return MAKE_RGB(pal4bit(src[(pix << 1) + 0] >> 0),
 					pal4bit(src[(pix << 1) + 1] >> 4),
@@ -183,12 +183,12 @@ VIDEO_UPDATE( capbowl )
 	/* now regenerate the bitmap */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *src = &state.vram[256 * y];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *src = &state.vram[256 * y];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x & ~1; x <= cliprect->max_x; x += 2)
 		{
-			UINT8 pix = src[32 + (x / 2)];
+			uint8_t pix = src[32 + (x / 2)];
 			*dest++ = pen_for_pixel(src, pix >> 4);
 			*dest++ = pen_for_pixel(src, pix & 0x0f);
 		}

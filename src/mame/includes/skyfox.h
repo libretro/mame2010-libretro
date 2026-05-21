@@ -12,11 +12,11 @@ public:
 	skyfox_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    spriteram;
+	uint8_t *    spriteram;
 	size_t     spriteram_size;
 
 	/* video-related */
-	UINT8      vreg[8];
+	uint8_t      vreg[8];
 	int        bg_pos, bg_ctrl;
 
 	/* misc */

@@ -9,11 +9,11 @@ public:
 	tilemap_t *bg0tilemap;
 	tilemap_t *bg1tilemap;
 
-	UINT16 *fgvideoram;
-	UINT16 *bg0videoram;
-	UINT16 *bg1videoram;
-	UINT16 *spvideoram;
-	UINT16 *spvideoram_old;
+	uint16_t *fgvideoram;
+	uint16_t *bg0videoram;
+	uint16_t *bg1videoram;
+	uint16_t *spvideoram;
+	uint16_t *spvideoram_old;
 	size_t spvideoram_size;
 
 	int video_enable;

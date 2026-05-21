@@ -1,7 +1,7 @@
 #include "emu.h"
 #include "includes/lsasquad.h"
 
-static void draw_layer( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *scrollram )
+static void draw_layer( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *scrollram )
 {
 	lsasquad_state *state = (lsasquad_state *)machine->driver_data;
 	int offs, scrollx, scrolly;
@@ -161,7 +161,7 @@ static void drawbg( running_machine *machine, bitmap_t *bitmap, const rectangle 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	lsasquad_state *state = (lsasquad_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 4; offs >= 0; offs -= 4)

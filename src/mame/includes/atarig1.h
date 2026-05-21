@@ -14,21 +14,21 @@ public:
 	atarig1_state(running_machine &machine) { }
 
 	atarigen_state	atarigen;
-	UINT8			is_pitfight;
+	uint8_t			is_pitfight;
 
-	UINT8			which_input;
-	UINT16 *		mo_command;
+	uint8_t			which_input;
+	uint16_t *		mo_command;
 
-	UINT16 *		bslapstic_base;
+	uint16_t *		bslapstic_base;
 	void *			bslapstic_bank0;
-	UINT8			bslapstic_bank;
-	UINT8			bslapstic_primed;
+	uint8_t			bslapstic_bank;
+	uint8_t			bslapstic_primed;
 
 	int 			pfscroll_xoffset;
-	UINT16			current_control;
-	UINT8			playfield_tile_bank;
-	UINT16			playfield_xscroll;
-	UINT16			playfield_yscroll;
+	uint16_t			current_control;
+	uint8_t			playfield_tile_bank;
+	uint16_t			playfield_xscroll;
+	uint16_t			playfield_yscroll;
 };
 
 

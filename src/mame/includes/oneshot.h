@@ -7,11 +7,11 @@ public:
 	oneshot_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *        sprites;
-	UINT16 *        bg_videoram;
-	UINT16 *        mid_videoram;
-	UINT16 *        fg_videoram;
-	UINT16 *        scroll;
+	uint16_t *        sprites;
+	uint16_t *        bg_videoram;
+	uint16_t *        mid_videoram;
+	uint16_t *        fg_videoram;
+	uint16_t *        scroll;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap, *mid_tilemap, *fg_tilemap;

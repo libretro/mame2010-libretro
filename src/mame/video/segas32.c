@@ -202,14 +202,14 @@
 struct layer_info
 {
 	bitmap_t *	bitmap;
-	UINT8 *					transparent;
+	uint8_t *					transparent;
 };
 
 
 struct extents_list
 {
-	UINT8					scan_extent[256];
-	UINT16					extent[32][16];
+	uint8_t					scan_extent[256];
+	uint16_t					extent[32][16];
 };
 
 
@@ -217,8 +217,8 @@ struct cache_entry
 {
 	struct cache_entry *	next;
 	tilemap_t *				tmap;
-	UINT8					page;
-	UINT8					bank;
+	uint8_t					page;
+	uint8_t					bank;
 };
 
 
@@ -229,11 +229,11 @@ struct cache_entry
  *
  *************************************/
 
-UINT16 *system32_videoram;
-UINT16 *system32_spriteram;
-UINT16 *system32_paletteram[2];
-UINT16 system32_displayenable[2];
-UINT16 system32_tilebank_external;
+uint16_t *system32_videoram;
+uint16_t *system32_spriteram;
+uint16_t *system32_paletteram[2];
+uint16_t system32_displayenable[2];
+uint16_t system32_tilebank_external;
 
 
 
@@ -243,22 +243,22 @@ UINT16 system32_tilebank_external;
  *
  *************************************/
 
-static UINT8 is_multi32;
+static uint8_t is_multi32;
 
 /* tilemap cache */
 static struct cache_entry *cache_head;
 
 /* mixer data */
 static struct layer_info layer_data[11];
-static UINT16 mixer_control[2][0x40];
-static UINT16 *solid_0000;
-static UINT16 *solid_ffff;
+static uint16_t mixer_control[2][0x40];
+static uint16_t *solid_0000;
+static uint16_t *solid_ffff;
 
 /* sprite data */
-static UINT8 sprite_render_count;
-static UINT8 sprite_control_latched[8];
-static UINT8 sprite_control[8];
-static UINT32 *spriteram_32bit;
+static uint8_t sprite_render_count;
+static uint8_t sprite_control_latched[8];
+static uint8_t sprite_control[8];
+static uint32_t *spriteram_32bit;
 
 
 
@@ -290,7 +290,7 @@ static void common_start(running_machine *machine, int multi32)
 	is_multi32 = multi32;
 
 	/* allocate a copy of spriteram in 32-bit format */
-	spriteram_32bit = auto_alloc_array(machine, UINT32, 0x20000/4);
+	spriteram_32bit = auto_alloc_array(machine, uint32_t, 0x20000/4);
 
 	/* allocate the tilemap cache */
 	cache_head = NULL;
@@ -311,13 +311,13 @@ static void common_start(running_machine *machine, int multi32)
 	for (tmap = 0; tmap < 9 + 2 * multi32; tmap++)
 	{
 		layer_data[tmap].bitmap = auto_bitmap_alloc(machine, 416, 224, BITMAP_FORMAT_INDEXED16);
-		layer_data[tmap].transparent = auto_alloc_array_clear(machine, UINT8, 256);
+		layer_data[tmap].transparent = auto_alloc_array_clear(machine, uint8_t, 256);
 	}
 
 	/* allocate pre-rendered solid lines of 0's and ffff's */
-	solid_0000 = auto_alloc_array(machine, UINT16, 512);
+	solid_0000 = auto_alloc_array(machine, uint16_t, 512);
 	memset(solid_0000, 0x00, sizeof(solid_0000[0]) * 512);
-	solid_ffff = auto_alloc_array(machine, UINT16, 512);
+	solid_ffff = auto_alloc_array(machine, uint16_t, 512);
 	memset(solid_ffff, 0xff, sizeof(solid_ffff[0]) * 512);
 
 	/* initialize videoram */
@@ -384,7 +384,7 @@ void system32_set_vblank(running_machine *machine, int state)
  *
  *************************************/
 
-INLINE UINT16 xBBBBBGGGGGRRRRR_to_xBGRBBBBGGGGRRRR(UINT16 value)
+INLINE uint16_t xBBBBBGGGGGRRRRR_to_xBGRBBBBGGGGRRRR(uint16_t value)
 {
 	int r = (value >> 0) & 0x1f;
 	int g = (value >> 5) & 0x1f;
@@ -395,7 +395,7 @@ INLINE UINT16 xBBBBBGGGGGRRRRR_to_xBGRBBBBGGGGRRRR(UINT16 value)
 }
 
 
-INLINE UINT16 xBGRBBBBGGGGRRRR_to_xBBBBBGGGGGRRRRR(UINT16 value)
+INLINE uint16_t xBGRBBBBGGGGRRRR_to_xBBBBBGGGGGRRRRR(uint16_t value)
 {
 	int r = ((value >> 12) & 0x01) | ((value << 1) & 0x1e);
 	int g = ((value >> 13) & 0x01) | ((value >> 3) & 0x1e);
@@ -404,7 +404,7 @@ INLINE UINT16 xBGRBBBBGGGGRRRR_to_xBBBBBGGGGGRRRRR(UINT16 value)
 }
 
 
-INLINE void update_color(running_machine *machine, int offset, UINT16 data)
+INLINE void update_color(running_machine *machine, int offset, uint16_t data)
 {
 	/* note that since we use this RAM directly, we don't technically need */
 	/* to call palette_set_color() at all; however, it does give us that */
@@ -415,7 +415,7 @@ INLINE void update_color(running_machine *machine, int offset, UINT16 data)
 }
 
 
-INLINE UINT16 common_paletteram_r(int which, offs_t offset)
+INLINE uint16_t common_paletteram_r(int which, offs_t offset)
 {
 	int convert;
 
@@ -433,9 +433,9 @@ INLINE UINT16 common_paletteram_r(int which, offs_t offset)
 }
 
 
-static void common_paletteram_w(const address_space *space, int which, offs_t offset, UINT16 data, UINT16 mem_mask)
+static void common_paletteram_w(const address_space *space, int which, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
-	UINT16 value;
+	uint16_t value;
 	int convert;
 
 	/* the lower half of palette RAM is formatted xBBBBBGGGGGRRRRR */
@@ -691,7 +691,7 @@ WRITE32_HANDLER( multi32_spriteram_w )
 {
 	data = SWAP_HALVES(data);
 	mem_mask = SWAP_HALVES(mem_mask);
-	COMBINE_DATA((UINT32 *)&system32_spriteram[offset*2]);
+	COMBINE_DATA((uint32_t *)&system32_spriteram[offset*2]);
 	spriteram_32bit[offset/2] =
 		((system32_spriteram[offset |  1] >> 8 ) & 0x000000ff) |
 		((system32_spriteram[offset |  1] << 8 ) & 0x0000ff00) |
@@ -722,7 +722,7 @@ WRITE32_HANDLER( multi32_mixer_0_w )
 {
 	data = SWAP_HALVES(data);
 	mem_mask = SWAP_HALVES(mem_mask);
-	COMBINE_DATA((UINT32 *)&mixer_control[0][offset*2]);
+	COMBINE_DATA((uint32_t *)&mixer_control[0][offset*2]);
 }
 
 
@@ -730,7 +730,7 @@ WRITE32_HANDLER( multi32_mixer_1_w )
 {
 	data = SWAP_HALVES(data);
 	mem_mask = SWAP_HALVES(mem_mask);
-	COMBINE_DATA((UINT32 *)&mixer_control[1][offset*2]);
+	COMBINE_DATA((uint32_t *)&mixer_control[1][offset*2]);
 }
 
 
@@ -793,7 +793,7 @@ static tilemap_t *find_cache_entry(int page, int bank)
 static TILE_GET_INFO( get_tile_info )
 {
 	struct cache_entry *entry = (struct cache_entry *)param;
-	UINT16 data = system32_videoram[(entry->page & 0x7f) * 0x200 + tile_index];
+	uint16_t data = system32_videoram[(entry->page & 0x7f) * 0x200 + tile_index];
 	SET_TILE_INFO(0, (entry->bank << 13) + (data & 0x1fff), (data >> 4) & 0x1ff, (data >> 14) & 3);
 }
 
@@ -861,7 +861,7 @@ static int compute_clipping_extents(screen_device &screen, int enable, int clipo
 	for (i = 1; i < 32; i++)
 		if (i & clipmask)
 		{
-			UINT16 *extent = &list->extent[i][0];
+			uint16_t *extent = &list->extent[i][0];
 
 			/* start off with an entry at tempclip.min_x */
 			*extent++ = tempclip.min_x;
@@ -942,8 +942,8 @@ static void update_tilemap_zoom(screen_device &screen, struct layer_info *layer,
 	bitmap_t *bitmap = layer->bitmap;
 	struct extents_list clip_extents;
 	tilemap_t *tilemaps[4];
-	UINT32 srcx, srcx_start, srcy;
-	UINT32 srcxstep, srcystep;
+	uint32_t srcx, srcx_start, srcy;
+	uint32_t srcxstep, srcystep;
 	int dstxstep, dstystep;
 	int flip, opaque;
 	int x, y;
@@ -990,8 +990,8 @@ static void update_tilemap_zoom(screen_device &screen, struct layer_info *layer,
 	srcy += (system32_videoram[0x1ff14/2 + 4 * bgnum] & 0xfe00) << 4;
 
 	/* then account for the destination center coordinates */
-	srcx_start -= ((INT16)(system32_videoram[0x1ff30/2 + 2 * bgnum] << 6) >> 6) * srcxstep;
-	srcy -= ((INT16)(system32_videoram[0x1ff32/2 + 2 * bgnum] << 7) >> 7) * srcystep;
+	srcx_start -= ((int16_t)(system32_videoram[0x1ff30/2 + 2 * bgnum] << 6) >> 6) * srcxstep;
+	srcy -= ((int16_t)(system32_videoram[0x1ff32/2 + 2 * bgnum] << 7) >> 7) * srcystep;
 
 	/* finally, account for destination top,left coordinates */
 	srcx_start += cliprect->min_x * srcxstep;
@@ -1011,8 +1011,8 @@ static void update_tilemap_zoom(screen_device &screen, struct layer_info *layer,
 	/* loop over the target rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 		int clipdraw = clipdraw_start;
 
 		/* optimize for the case where we are clipped out */
@@ -1020,7 +1020,7 @@ static void update_tilemap_zoom(screen_device &screen, struct layer_info *layer,
 		{
 			bitmap_t *tm0, *tm1;
 			int transparent = 0;
-			UINT16 *src[2];
+			uint16_t *src[2];
 
 			/* look up the pages and get their source pixmaps */
 			tm0 = tilemap_get_pixmap(tilemaps[((srcy >> 27) & 2) + 0]);
@@ -1037,7 +1037,7 @@ static void update_tilemap_zoom(screen_device &screen, struct layer_info *layer,
 				{
 					for (x = extents[0]; x < extents[1]; x++)
 					{
-						UINT16 pix = src[(srcx >> 29) & 1][(srcx >> 20) & 0x1ff];
+						uint16_t pix = src[(srcx >> 29) & 1][(srcx >> 20) & 0x1ff];
 						srcx += srcxstep;
 						if ((pix & 0x0f) == 0 && !opaque)
 							pix = 0, transparent++;
@@ -1097,7 +1097,7 @@ static void update_tilemap_rowscroll(screen_device &screen, struct layer_info *l
 	tilemap_t *tilemaps[4];
 	int rowscroll, rowselect;
 	int xscroll, yscroll;
-	UINT16 *table;
+	uint16_t *table;
 	int srcx, srcy;
 	int flip, opaque;
 	int x, y;
@@ -1136,8 +1136,8 @@ static void update_tilemap_rowscroll(screen_device &screen, struct layer_info *l
 	/* render the tilemap into its bitmap */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 		int clipdraw = clipdraw_start;
 
 		/* optimize for the case where we are clipped out */
@@ -1145,7 +1145,7 @@ static void update_tilemap_rowscroll(screen_device &screen, struct layer_info *l
 		{
 			bitmap_t *tm0, *tm1;
 			int transparent = 0;
-			UINT16 *src[2];
+			uint16_t *src[2];
 			int srcxstep;
 
 			/* if we're not flipped, things are straightforward */
@@ -1194,7 +1194,7 @@ static void update_tilemap_rowscroll(screen_device &screen, struct layer_info *l
 				{
 					for (x = extents[0]; x < extents[1]; x++, srcx += srcxstep)
 					{
-						UINT16 pix = src[(srcx >> 9) & 1][srcx & 0x1ff];
+						uint16_t pix = src[(srcx >> 9) & 1][srcx & 0x1ff];
 						if ((pix & 0x0f) == 0 && !opaque)
 							pix = 0, transparent++;
 						dst[x] = pix;
@@ -1244,8 +1244,8 @@ static void update_tilemap_rowscroll(screen_device &screen, struct layer_info *l
 static void update_tilemap_text(screen_device &screen, struct layer_info *layer, const rectangle *cliprect)
 {
 	bitmap_t *bitmap = layer->bitmap;
-	UINT16 *tilebase;
-	UINT16 *gfxbase;
+	uint16_t *tilebase;
+	uint16_t *gfxbase;
 	int startx, starty;
 	int endx, endy;
 	int x, y, iy;
@@ -1269,13 +1269,13 @@ static void update_tilemap_text(screen_device &screen, struct layer_info *layer,
 		for (x = startx; x <= endx; x++)
 		{
 			int tile = tilebase[y * 64 + x];
-			UINT16 *src = &gfxbase[(tile & 0x1ff) * 16];
+			uint16_t *src = &gfxbase[(tile & 0x1ff) * 16];
 			int color = (tile & 0xfe00) >> 5;
 
 			/* non-flipped case */
 			if (!flip)
 			{
-				UINT16 *dst = BITMAP_ADDR16(bitmap, y * 8, x * 8);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, y * 8, x * 8);
 
 				/* loop over rows */
 				for (iy = 0; iy < 8; iy++)
@@ -1336,7 +1336,7 @@ static void update_tilemap_text(screen_device &screen, struct layer_info *layer,
 
 				int effdstx = visarea.max_x - x * 8;
 				int effdsty = visarea.max_y - y * 8;
-				UINT16 *dst = BITMAP_ADDR16(bitmap, effdsty, effdstx);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, effdsty, effdstx);
 
 				/* loop over rows */
 				for (iy = 0; iy < 8; iy++)
@@ -1427,8 +1427,8 @@ static void update_bitmap(screen_device &screen, struct layer_info *layer, const
 	/* loop over target rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *extents = &clip_extents.extent[clip_extents.scan_extent[y]][0];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 		int clipdraw = clipdraw_start;
 
 		/* optimize for the case where we are clipped out */
@@ -1445,7 +1445,7 @@ static void update_bitmap(screen_device &screen, struct layer_info *layer, const
 					/* 8bpp mode case */
 					if (bpp == 8)
 					{
-						UINT8 *src = (UINT8 *)&system32_videoram[512/2 * ((y + yscroll) & 0xff)];
+						uint8_t *src = (uint8_t *)&system32_videoram[512/2 * ((y + yscroll) & 0xff)];
 						for (x = extents[0]; x < extents[1]; x++)
 						{
 							int effx = (x + xscroll) & 0x1ff;
@@ -1459,7 +1459,7 @@ static void update_bitmap(screen_device &screen, struct layer_info *layer, const
 					/* 4bpp mode case */
 					else
 					{
-						UINT16 *src = &system32_videoram[512/4 * ((y + yscroll) & 0x1ff)];
+						uint16_t *src = &system32_videoram[512/4 * ((y + yscroll) & 0x1ff)];
 						for (x = extents[0]; x < extents[1]; x++)
 						{
 							int effx = (x + xscroll) & 0x1ff;
@@ -1510,7 +1510,7 @@ static void update_background(struct layer_info *layer, const rectangle *cliprec
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 		int color;
 
 		/* determine the color */
@@ -1527,7 +1527,7 @@ static void update_background(struct layer_info *layer, const rectangle *cliprec
 }
 
 
-static UINT8 update_tilemaps(screen_device &screen, const rectangle *cliprect)
+static uint8_t update_tilemaps(screen_device &screen, const rectangle *cliprect)
 {
 	int enable0 = !(system32_videoram[0x1ff02/2] & 0x0001) && !(system32_videoram[0x1ff8e/2] & 0x0002);
 	int enable1 = !(system32_videoram[0x1ff02/2] & 0x0002) && !(system32_videoram[0x1ff8e/2] & 0x0004);
@@ -1691,7 +1691,7 @@ static void sprite_swap_buffers(void)
 		}																	\
 	}
 
-static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, int yoffs, const rectangle *clipin, const rectangle *clipout)
+static int draw_one_sprite(running_machine *machine, uint16_t *data, int xoffs, int yoffs, const rectangle *clipin, const rectangle *clipout)
 {
 	static const int transparency_masks[4][4] =
 	{
@@ -1702,8 +1702,8 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 	};
 
 	bitmap_t *bitmap = layer_data[(!is_multi32 || !(data[3] & 0x0800)) ? MIXER_LAYER_SPRITES_2 : MIXER_LAYER_MULTISPR_2].bitmap;
-	UINT8 numbanks = memory_region_length(machine, "gfx2") / 0x400000;
-	const UINT32 *spritebase = (const UINT32 *)memory_region(machine, "gfx2");
+	uint8_t numbanks = memory_region_length(machine, "gfx2") / 0x400000;
+	const uint32_t *spritebase = (const uint32_t *)memory_region(machine, "gfx2");
 
 	int indirect = data[0] & 0x2000;
 	int indlocal = data[0] & 0x1000;
@@ -1724,16 +1724,16 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 					((data[3] & 0x0800) >> 11) | ((data[3] & 0x4000) >> 13);
 	int dsth     = data[2] & 0x3ff;
 	int dstw     = data[3] & 0x3ff;
-	int ypos     = (INT16)(data[4] << 4) >> 4;
-	int xpos     = (INT16)(data[5] << 4) >> 4;
-	UINT32 addr  = data[6] | ((data[2] & 0xf000) << 4);
+	int ypos     = (int16_t)(data[4] << 4) >> 4;
+	int xpos     = (int16_t)(data[5] << 4) >> 4;
+	uint32_t addr  = data[6] | ((data[2] & 0xf000) << 4);
 	int color    = 0x8000 | (data[7] & (bpp8 ? 0x7f00 : 0x7ff0));
 	int hzoom, vzoom;
 	int xdelta = 1, ydelta = 1;
 	int x, y, xtarget, ytarget, yacc = 0, pix, transmask;
-	const UINT32 *spritedata;
-	UINT32 addrmask, curaddr;
-	UINT16 indtable[16];
+	const uint32_t *spritedata;
+	uint32_t addrmask, curaddr;
+	uint16_t indtable[16];
 
 	/* if hidden, or top greater than/equal to bottom, or invalid bank, punt */
 	if (srcw == 0 || srch == 0 || dstw == 0 || dsth == 0)
@@ -1747,7 +1747,7 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 	/* create the local palette for the indirect case */
 	if (indirect)
 	{
-		UINT16 *src = indlocal ? &data[8] : &system32_spriteram[8 * (data[7] & 0x1fff)];
+		uint16_t *src = indlocal ? &data[8] : &system32_spriteram[8 * (data[7] & 0x1fff)];
 		for (x = 0; x < 16; x++)
 			indtable[x] = (src[x] & (bpp8 ? 0xfff0 : 0xffff)) | ((sprite_control_latched[0x0a/2] & 1) ? 0x8000 : 0x0000);
 	}
@@ -1829,7 +1829,7 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 		if (y >= clipin->min_y && y <= clipin->max_y)
 		{
 			int do_clipout = (y >= clipout->min_y && y <= clipout->max_y);
-			UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 			int xacc = 0;
 
 			/* 4bpp case */
@@ -1839,7 +1839,7 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 				curaddr = addr - 1;
 				for (x = xpos; x != xtarget; )
 				{
-					UINT32 pixels = spritedata[++curaddr & addrmask];
+					uint32_t pixels = spritedata[++curaddr & addrmask];
 
 					/* draw four pixels */
 					pix = (pixels >> 28) & 0xf; while (xacc < 0x10000 && x != xtarget) { sprite_draw_pixel_16(transp)  x += xdelta; xacc += hzoom; } xacc -= 0x10000;
@@ -1864,7 +1864,7 @@ static int draw_one_sprite(running_machine *machine, UINT16 *data, int xoffs, in
 				curaddr = addr - 1;
 				for (x = xpos; x != xtarget; )
 				{
-					UINT32 pixels = spritedata[++curaddr & addrmask];
+					uint32_t pixels = spritedata[++curaddr & addrmask];
 
 					/* draw four pixels */
 					pix = (pixels >> 24) & 0xff; while (xacc < 0x10000 && x != xtarget) { sprite_draw_pixel_256(transp); x += xdelta; xacc += hzoom; } xacc -= 0x10000;
@@ -1898,7 +1898,7 @@ static void sprite_render_list(running_machine *machine)
 	int xoffs = 0, yoffs = 0;
 	int numentries = 0;
 	int spritenum = 0;
-	UINT16 *sprite;
+	uint16_t *sprite;
 
 	profiler_mark_start(PROFILER_USER2);
 
@@ -1932,20 +1932,20 @@ static void sprite_render_list(running_machine *machine)
 				/* set the inclusive cliprect */
 				if (sprite[0] & 0x1000)
 				{
-					clipin.min_y = (INT16)(sprite[0] << 4) >> 4;
-					clipin.max_y = (INT16)(sprite[1] << 4) >> 4;
-					clipin.min_x = (INT16)(sprite[2] << 4) >> 4;
-					clipin.max_x = (INT16)(sprite[3] << 4) >> 4;
+					clipin.min_y = (int16_t)(sprite[0] << 4) >> 4;
+					clipin.max_y = (int16_t)(sprite[1] << 4) >> 4;
+					clipin.min_x = (int16_t)(sprite[2] << 4) >> 4;
+					clipin.max_x = (int16_t)(sprite[3] << 4) >> 4;
 					sect_rect(&clipin, &outerclip);
 				}
 
 				/* set the exclusive cliprect */
 				if (sprite[0] & 0x2000)
 				{
-					clipout.min_y = (INT16)(sprite[4] << 4) >> 4;
-					clipout.max_y = (INT16)(sprite[5] << 4) >> 4;
-					clipout.min_x = (INT16)(sprite[6] << 4) >> 4;
-					clipout.max_x = (INT16)(sprite[7] << 4) >> 4;
+					clipout.min_y = (int16_t)(sprite[4] << 4) >> 4;
+					clipout.max_y = (int16_t)(sprite[5] << 4) >> 4;
+					clipout.min_x = (int16_t)(sprite[6] << 4) >> 4;
+					clipout.max_x = (int16_t)(sprite[7] << 4) >> 4;
 				}
 
 				/* advance to the next entry */
@@ -1958,8 +1958,8 @@ static void sprite_render_list(running_machine *machine)
 				/* set the global offset */
 				if (sprite[0] & 0x2000)
 				{
-					yoffs = (INT16)(sprite[1] << 4) >> 4;
-					xoffs = (INT16)(sprite[2] << 4) >> 4;
+					yoffs = (int16_t)(sprite[1] << 4) >> 4;
+					xoffs = (int16_t)(sprite[2] << 4) >> 4;
 				}
 				spritenum = sprite[0] & 0x1fff;
 				break;
@@ -1982,7 +1982,7 @@ static void sprite_render_list(running_machine *machine)
  *
  *************************************/
 
-INLINE UINT8 compute_color_offsets(int which, int layerbit, int layerflag)
+INLINE uint8_t compute_color_offsets(int which, int layerbit, int layerflag)
 {
 	int mode = ((mixer_control[which][0x3e/2] & 0x8000) >> 14) | (layerbit & 1);
 
@@ -2002,7 +2002,7 @@ INLINE UINT8 compute_color_offsets(int which, int layerbit, int layerflag)
 	}
 }
 
-INLINE UINT16 compute_sprite_blend(UINT8 encoding)
+INLINE uint16_t compute_sprite_blend(uint8_t encoding)
 {
 	int value = encoding & 0xf;
 
@@ -2023,29 +2023,29 @@ INLINE UINT16 compute_sprite_blend(UINT8 encoding)
 	}
 }
 
-INLINE UINT16 *get_layer_scanline(int layer, int scanline)
+INLINE uint16_t *get_layer_scanline(int layer, int scanline)
 {
 	if (layer_data[layer].transparent[scanline])
 		return (layer == MIXER_LAYER_SPRITES) ? solid_ffff : solid_0000;
 	return BITMAP_ADDR16(layer_data[layer].bitmap, scanline, 0);
 }
 
-static void mix_all_layers(int which, int xoffs, bitmap_t *bitmap, const rectangle *cliprect, UINT8 enablemask)
+static void mix_all_layers(int which, int xoffs, bitmap_t *bitmap, const rectangle *cliprect, uint8_t enablemask)
 {
 	int blendenable = mixer_control[which][0x4e/2] & 0x0800;
 	int blendfactor = (mixer_control[which][0x4e/2] >> 8) & 7;
 	struct mixer_layer_info
 	{
-		UINT16		palbase;			/* palette base from control reg */
-		UINT16		sprblendmask;		/* mask of sprite priorities this layer blends with */
-		UINT8		blendmask;			/* mask of layers this layer blends with */
-		UINT8		index;				/* index of this layer (MIXER_LAYER_XXX) */
-		UINT8		effpri;				/* effective priority = (priority << 3) | layer_priority */
-		UINT8		mixshift;			/* shift from control reg */
-		UINT8		coloroffs;			/* color offset index */
+		uint16_t		palbase;			/* palette base from control reg */
+		uint16_t		sprblendmask;		/* mask of sprite priorities this layer blends with */
+		uint8_t		blendmask;			/* mask of layers this layer blends with */
+		uint8_t		index;				/* index of this layer (MIXER_LAYER_XXX) */
+		uint8_t		effpri;				/* effective priority = (priority << 3) | layer_priority */
+		uint8_t		mixshift;			/* shift from control reg */
+		uint8_t		coloroffs;			/* color offset index */
 	} layerorder[16][8], layersort[8];
 	struct layer_info temp_sprite_save = { 0 };
-	UINT8 sprgroup_shift, sprgroup_mask, sprgroup_or;
+	uint8_t sprgroup_shift, sprgroup_mask, sprgroup_or;
 	int numlayers, laynum, groupnum;
 	int rgboffs[3][3];
 	int sprpixmask, sprshadowmask;
@@ -2062,12 +2062,12 @@ static void mix_all_layers(int which, int xoffs, bitmap_t *bitmap, const rectang
 	}
 
 	/* extract the RGB offsets */
-	rgboffs[0][0] = (INT8)(mixer_control[which][0x40/2] << 2) >> 2;
-	rgboffs[0][1] = (INT8)(mixer_control[which][0x42/2] << 2) >> 2;
-	rgboffs[0][2] = (INT8)(mixer_control[which][0x44/2] << 2) >> 2;
-	rgboffs[1][0] = (INT8)(mixer_control[which][0x46/2] << 2) >> 2;
-	rgboffs[1][1] = (INT8)(mixer_control[which][0x48/2] << 2) >> 2;
-	rgboffs[1][2] = (INT8)(mixer_control[which][0x4a/2] << 2) >> 2;
+	rgboffs[0][0] = (int8_t)(mixer_control[which][0x40/2] << 2) >> 2;
+	rgboffs[0][1] = (int8_t)(mixer_control[which][0x42/2] << 2) >> 2;
+	rgboffs[0][2] = (int8_t)(mixer_control[which][0x44/2] << 2) >> 2;
+	rgboffs[1][0] = (int8_t)(mixer_control[which][0x46/2] << 2) >> 2;
+	rgboffs[1][1] = (int8_t)(mixer_control[which][0x48/2] << 2) >> 2;
+	rgboffs[1][2] = (int8_t)(mixer_control[which][0x4a/2] << 2) >> 2;
 	rgboffs[2][0] = 0;
 	rgboffs[2][1] = 0;
 	rgboffs[2][2] = 0;
@@ -2206,8 +2206,8 @@ static void mix_all_layers(int which, int xoffs, bitmap_t *bitmap, const rectang
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++, spry += sprdy)
 	{
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, xoffs);
-		UINT16 *layerbase[8];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, xoffs);
+		uint16_t *layerbase[8];
 
 		/* get the starting address for each layer */
 		layerbase[MIXER_LAYER_TEXT] = get_layer_scanline(MIXER_LAYER_TEXT, y);
@@ -2444,7 +2444,7 @@ static void print_mixer_data(int which)
 
 VIDEO_UPDATE( system32 )
 {
-	UINT8 enablemask;
+	uint8_t enablemask;
 
 	/* update the visible area */
 	if (system32_videoram[0x1ff00/2] & 0x8000)
@@ -2487,7 +2487,7 @@ VIDEO_UPDATE( system32 )
 
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");
@@ -2497,7 +2497,7 @@ VIDEO_UPDATE( system32 )
 		f = fopen("nbg0.txt", "w");
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG0, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_NBG0, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");
@@ -2507,7 +2507,7 @@ VIDEO_UPDATE( system32 )
 		f = fopen("nbg1.txt", "w");
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG1, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_NBG1, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");
@@ -2517,7 +2517,7 @@ VIDEO_UPDATE( system32 )
 		f = fopen("nbg2.txt", "w");
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG2, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_NBG2, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");
@@ -2527,7 +2527,7 @@ VIDEO_UPDATE( system32 )
 		f = fopen("nbg3.txt", "w");
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG3, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_NBG3, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");
@@ -2622,7 +2622,7 @@ for (showclip = 0; showclip < 4; showclip++)
 
 VIDEO_UPDATE( multi32 )
 {
-	UINT8 enablemask;
+	uint8_t enablemask;
 
 	running_device *left_screen  = screen->machine->device("lscreen");
 
@@ -2672,7 +2672,7 @@ if (PRINTF_MIXER_DATA)
 
 		for (y = visarea.min_y; y <= visarea.max_y; y++)
 		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
+			uint16_t *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
 			for (x = visarea.min_x; x <= visarea.max_x; x++)
 				fprintf(f, "%04X ", *src++);
 			fprintf(f, "\n");

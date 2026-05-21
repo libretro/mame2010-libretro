@@ -6,10 +6,10 @@
 
 #include "emu.h"
 
-UINT16 *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
+uint16_t *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
 
 static tilemap_t *background_layer,*foreground_layer,*midground_layer,*text_layer;
-static UINT16 dcon_enable;
+static uint16_t dcon_enable;
 static int dcon_gfx_bank_select;
 
 /******************************************************************************/
@@ -145,7 +145,7 @@ VIDEO_START( dcon )
 
 static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite;
 	int dx,dy,ax,ay,inc,pri_mask = 0;
 

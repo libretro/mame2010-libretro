@@ -23,7 +23,7 @@ static void common_vh_start( running_machine *machine, int num_pixmaps )
 	{
 		if (i < state->total_pixmaps)
 		{
-			state->pixmap[i] = auto_alloc_array(machine, UINT8, 256 * 256);
+			state->pixmap[i] = auto_alloc_array(machine, uint8_t, 256 * 256);
 		}
 		else
 			state->pixmap[i] = NULL;
@@ -132,7 +132,7 @@ static void copy_pixel( running_machine *machine, int x, int y, int pen )
 WRITE8_HANDLER( dynax_blitter_rev1_start_w )
 {
 	hnayayoi_state *state = (hnayayoi_state *)space->machine->driver_data;
-	UINT8 *rom = memory_region(space->machine, "gfx1");
+	uint8_t *rom = memory_region(space->machine, "gfx1");
 	int romlen = memory_region_length(space->machine, "gfx1");
 	int sx = state->blit_dest & 0xff;
 	int sy = state->blit_dest >> 8;
@@ -231,15 +231,15 @@ static void draw_layer_interleaved( running_machine *machine, bitmap_t *bitmap, 
 {
 	hnayayoi_state *state = (hnayayoi_state *)machine->driver_data;
 	int county, countx, pen;
-	UINT8 *src1 = state->pixmap[left_pixmap];
-	UINT8 *src2 = state->pixmap[right_pixmap];
-	UINT16 *dstbase = (UINT16 *)bitmap->base;
+	uint8_t *src1 = state->pixmap[left_pixmap];
+	uint8_t *src2 = state->pixmap[right_pixmap];
+	uint16_t *dstbase = (uint16_t *)bitmap->base;
 
 	palbase *= 16;
 
 	for (county = 255; county >= 0; county--, dstbase += bitmap->rowpixels)
 	{
-		UINT16 *dst = dstbase;
+		uint16_t *dst = dstbase;
 
 		if (transp)
 		{

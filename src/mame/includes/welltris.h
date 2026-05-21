@@ -7,15 +7,15 @@ public:
 
 	int pending_command;
 
-	UINT16 *spriteram;
-	UINT16 *pixelram;
-	UINT16 *charvideoram;
+	uint16_t *spriteram;
+	uint16_t *pixelram;
+	uint16_t *charvideoram;
 
 	tilemap_t *char_tilemap;
-	UINT8 gfxbank[8];
-	UINT16 charpalettebank;
-	UINT16 spritepalettebank;
-	UINT16 pixelpalettebank;
+	uint8_t gfxbank[8];
+	uint16_t charpalettebank;
+	uint16_t spritepalettebank;
+	uint16_t pixelpalettebank;
 	int scrollx;
 	int scrolly;
 };

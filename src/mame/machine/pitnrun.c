@@ -12,7 +12,7 @@
 #include "includes/pitnrun.h"
 
 
-static UINT8 fromz80,toz80;
+static uint8_t fromz80,toz80;
 static int zaccept,zready;
 
 MACHINE_RESET( pitnrun )
@@ -54,7 +54,7 @@ READ8_HANDLER( pitnrun_mcu_status_r )
 	return ~((zready << 1) | (zaccept << 0));
 }
 
-static UINT8 portA_in,portA_out;
+static uint8_t portA_in,portA_out;
 
 READ8_HANDLER( pitnrun_68705_portA_r )
 {

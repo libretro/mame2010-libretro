@@ -98,7 +98,7 @@ PALETTE_INIT( drmicro )
 
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -107,7 +107,7 @@ VIDEO_START( drmicro)
 {
 	drmicro_state *state = (drmicro_state *)machine->driver_data;
 
-	state->videoram = auto_alloc_array(machine, UINT8, 0x1000);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x1000);
 	state_save_register_global_pointer(machine, state->videoram, 0x1000);
 
 	state->bg1 = tilemap_create(machine, get_bg1_tile_info, tilemap_scan_rows, 8, 8, 32, 32);

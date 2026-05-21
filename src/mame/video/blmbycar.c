@@ -74,8 +74,8 @@ WRITE16_HANDLER( blmbycar_palette_w )
 static TILE_GET_INFO( get_tile_info_0 )
 {
 	blmbycar_state *state = (blmbycar_state *)machine->driver_data;
-	UINT16 code = state->vram_0[tile_index * 2 + 0];
-	UINT16 attr = state->vram_0[tile_index * 2 + 1];
+	uint16_t code = state->vram_0[tile_index * 2 + 0];
+	uint16_t attr = state->vram_0[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -88,8 +88,8 @@ static TILE_GET_INFO( get_tile_info_0 )
 static TILE_GET_INFO( get_tile_info_1 )
 {
 	blmbycar_state *state = (blmbycar_state *)machine->driver_data;
-	UINT16 code = state->vram_1[tile_index * 2 + 0];
-	UINT16 attr = state->vram_1[tile_index * 2 + 1];
+	uint16_t code = state->vram_1[tile_index * 2 + 0];
+	uint16_t attr = state->vram_1[tile_index * 2 + 1];
 	SET_TILE_INFO(
 			0,
 			code,
@@ -168,7 +168,7 @@ VIDEO_START( blmbycar )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	blmbycar_state *state = (blmbycar_state *)machine->driver_data;
-	UINT16 *source, *finish;
+	uint16_t *source, *finish;
 
 	source = state->spriteram + 0x6 / 2;				// !
 	finish = state->spriteram + state->spriteram_size / 2 - 8 / 2;

@@ -13,8 +13,8 @@ public:
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;
-	UINT8      *videoram;
-	UINT8      *colorram;
+	uint8_t      *videoram;
+	uint8_t      *colorram;
 	int        video_page;
 
 	/* misc */

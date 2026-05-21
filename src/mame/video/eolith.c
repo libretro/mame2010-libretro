@@ -1,13 +1,13 @@
 #include "emu.h"
 
 int eolith_buffer = 0;
-static UINT32 *vram;
+static uint32_t *vram;
 
 
 
 WRITE32_HANDLER( eolith_vram_w )
 {
-	UINT32 *dest = &vram[offset+(0x40000/4)*eolith_buffer];
+	uint32_t *dest = &vram[offset+(0x40000/4)*eolith_buffer];
 
 	if (mem_mask == 0xffffffff)
 	{
@@ -30,7 +30,7 @@ READ32_HANDLER( eolith_vram_r )
 
 VIDEO_START( eolith )
 {
-	vram = auto_alloc_array(machine, UINT32, 0x40000*2/4);
+	vram = auto_alloc_array(machine, uint32_t, 0x40000*2/4);
 }
 
 VIDEO_UPDATE( eolith )
@@ -40,8 +40,8 @@ VIDEO_UPDATE( eolith )
 	for (y = 0; y < 240; y++)
 	{
 		int x;
-		UINT32 *src = &vram[(eolith_buffer ? 0 : 0x10000) | (y * (336 / 2))];
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint32_t *src = &vram[(eolith_buffer ? 0 : 0x10000) | (y * (336 / 2))];
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x = 0; x < 320; x += 2)
 		{

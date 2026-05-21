@@ -11,14 +11,14 @@
 #define	NUM_PENS	(0x40)
 
 
-UINT8 *starfire_videoram;
-UINT8 *starfire_colorram;
+uint8_t *starfire_videoram;
+uint8_t *starfire_colorram;
 
 /* local allocated storage */
-static UINT8 starfire_vidctrl;
-static UINT8 starfire_vidctrl1;
-static UINT8 starfire_color;
-static UINT16 starfire_colors[NUM_PENS];
+static uint8_t starfire_vidctrl;
+static uint8_t starfire_vidctrl1;
+static uint8_t starfire_color;
+static uint16_t starfire_colors[NUM_PENS];
 
 
 
@@ -228,7 +228,7 @@ static void get_pens(pen_t *pens)
 
 	for (offs = 0; offs < NUM_PENS; offs++)
 	{
-		UINT16 color = starfire_colors[offs];
+		uint16_t color = starfire_colors[offs];
 
 		pens[offs] = MAKE_RGB(pal3bit(color >> 6), pal3bit(color >> 3), pal3bit(color >> 0));
 	}
@@ -239,8 +239,8 @@ VIDEO_UPDATE( starfire )
 {
 	pen_t pens[NUM_PENS];
 
-	UINT8 *pix = &starfire_videoram[cliprect->min_y - 32];
-	UINT8 *col = &starfire_colorram[cliprect->min_y - 32];
+	uint8_t *pix = &starfire_videoram[cliprect->min_y - 32];
+	uint8_t *col = &starfire_colorram[cliprect->min_y - 32];
 	int x, y;
 
 	get_pens(pens);

@@ -8,8 +8,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 {
 	sslam_state *state = (sslam_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = source + 0x1000/2;
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = source + 0x1000/2;
 
 	source += 3; // strange
 

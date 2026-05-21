@@ -24,14 +24,14 @@ enum
 
 struct _snes_rtc_state
 {
-	UINT8  ram[13];
-	INT32  mode;
-	INT8   index;
+	uint8_t  ram[13];
+	int32_t  mode;
+	int8_t   index;
 };
 
 static _snes_rtc_state rtc_state;
 
-static const UINT8 srtc_months[12] =
+static const uint8_t srtc_months[12] =
 {
 	31, 28, 31,
 	30, 31, 30,
@@ -61,10 +61,10 @@ static void srtc_update_time( running_machine *machine )
 // Returns day-of-week for specified date
 // e.g. 0 = Sunday, 1 = Monday, ... 6 = Saturday
 // Usage: weekday(2008, 1, 1) returns the weekday of January 1st, 2008
-static UINT8 srtc_weekday( UINT32 year, UINT32 month, UINT32 day )
+static uint8_t srtc_weekday( uint32_t year, uint32_t month, uint32_t day )
 {
-	UINT32 y = 1900, m = 1;	// Epoch is 1900-01-01
-	UINT32 sum = 0;			// Number of days passed since epoch
+	uint32_t y = 1900, m = 1;	// Epoch is 1900-01-01
+	uint32_t sum = 0;			// Number of days passed since epoch
 
 	year = MAX(1900, year);
 	month = MAX(1, MIN(12, month));
@@ -72,7 +72,7 @@ static UINT8 srtc_weekday( UINT32 year, UINT32 month, UINT32 day )
 
 	while (y < year)
 	{
-		UINT8 leapyear = 0;
+		uint8_t leapyear = 0;
 		if ((y % 4) == 0)
 		{
 			leapyear = 1;
@@ -87,10 +87,10 @@ static UINT8 srtc_weekday( UINT32 year, UINT32 month, UINT32 day )
 
 	while (m < month)
 	{
-		UINT32 days = srtc_months[m - 1];
+		uint32_t days = srtc_months[m - 1];
 		if (days == 28)
 		{
-			UINT8 leapyear = 0;
+			uint8_t leapyear = 0;
 			if ((y % 4) == 0)
 			{
 				leapyear = 1;
@@ -109,7 +109,7 @@ static UINT8 srtc_weekday( UINT32 year, UINT32 month, UINT32 day )
 	return (sum + 1) % 7; // 1900-01-01 was a Monday
 }
 
-static UINT8 srtc_read( const address_space *space, UINT16 addr )
+static uint8_t srtc_read( const address_space *space, uint16_t addr )
 {
 	addr &= 0xffff;
 
@@ -140,7 +140,7 @@ static UINT8 srtc_read( const address_space *space, UINT16 addr )
 	return snes_open_bus_r(space, 0);
 }
 
-static void srtc_write( running_machine *machine, UINT16 addr, UINT8 data )
+static void srtc_write( running_machine *machine, uint16_t addr, uint8_t data )
 {
 	addr &= 0xffff;
 
@@ -175,9 +175,9 @@ static void srtc_write( running_machine *machine, UINT16 addr, UINT8 data )
 				if (rtc_state.index == 12)
 				{
 					// Day of week is automatically calculated and written
-					UINT32 day   = rtc_state.ram[6] + rtc_state.ram[7] * 10;
-					UINT32 month = rtc_state.ram[8];
-					UINT32 year  = rtc_state.ram[9] + rtc_state.ram[10] * 10 + rtc_state.ram[11] * 100;
+					uint32_t day   = rtc_state.ram[6] + rtc_state.ram[7] * 10;
+					uint32_t month = rtc_state.ram[8];
+					uint32_t year  = rtc_state.ram[9] + rtc_state.ram[10] * 10 + rtc_state.ram[11] * 100;
 					year += 1000;
 
 					rtc_state.ram[rtc_state.index++] = srtc_weekday(year, month, day);
@@ -193,7 +193,7 @@ static void srtc_write( running_machine *machine, UINT16 addr, UINT8 data )
 			}
 			else if (data == 4)
 			{
-				UINT8 i;
+				uint8_t i;
 				rtc_state.mode = RTCM_Ready;
 				rtc_state.index = -1;
 				for(i = 0; i < 13; i++)

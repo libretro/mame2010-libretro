@@ -159,7 +159,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	taitob_state *state = (taitob_state *)machine->driver_data;
 	int x, y, xlatch = 0, ylatch = 0, x_no = 0, y_no = 0, x_num = 0, y_num = 0, big_sprite = 0;
 	int offs, code, color, flipx, flipy;
-	UINT32 data, zoomx, zoomy, zx, zy, zoomxlatch = 0, zoomylatch = 0;
+	uint32_t data, zoomx, zoomy, zx, zy, zoomxlatch = 0, zoomylatch = 0;
 
 	for (offs = (0x1980 - 16) / 2; offs >=0; offs -= 8)
 	{
@@ -255,8 +255,8 @@ static void draw_framebuffer( running_machine *machine, bitmap_t *bitmap, const 
 	taitob_state *state = (taitob_state *)machine->driver_data;
 	rectangle myclip = *cliprect;
 	int x, y;
-	UINT8 video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
-	UINT8 framebuffer_page = tc0180vcu_get_fb_page(state->tc0180vcu, 0);
+	uint8_t video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
+	uint8_t framebuffer_page = tc0180vcu_get_fb_page(state->tc0180vcu, 0);
 
 profiler_mark_start(PROFILER_USER1);
 
@@ -275,14 +275,14 @@ profiler_mark_start(PROFILER_USER1);
 			/*popmessage("1. X[%3i;%3i] Y[%3i;%3i]", myclip.min_x, myclip.max_x, myclip.min_y, myclip.max_y);*/
 			for (y = myclip.min_y; y <= myclip.max_y; y++)
 			{
-				UINT16 *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
-				UINT16 *dst;
+				uint16_t *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
+				uint16_t *dst;
 
 				dst = BITMAP_ADDR16(bitmap, bitmap->height-1-y, myclip.max_x);
 
 				for (x = myclip.min_x; x <= myclip.max_x; x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0)
 						*dst = state->b_sp_color_base + c;
@@ -295,12 +295,12 @@ profiler_mark_start(PROFILER_USER1);
 		{
 			for (y = myclip.min_y; y <= myclip.max_y; y++)
 			{
-				UINT16 *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
-				UINT16 *dst = BITMAP_ADDR16(bitmap, y, myclip.min_x);
+				uint16_t *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, y, myclip.min_x);
 
 				for (x = myclip.min_x; x <= myclip.max_x; x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0)
 						*dst = state->b_sp_color_base + c;
@@ -317,14 +317,14 @@ profiler_mark_start(PROFILER_USER1);
 			/*popmessage("3. X[%3i;%3i] Y[%3i;%3i]", myclip.min_x, myclip.max_x, myclip.min_y, myclip.max_y);*/
 			for (y = myclip.min_y ;y <= myclip.max_y; y++)
 			{
-				UINT16 *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
-				UINT16 *dst;
+				uint16_t *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
+				uint16_t *dst;
 
 				dst = BITMAP_ADDR16(bitmap, bitmap->height-1-y, myclip.max_x);
 
 				for (x = myclip.min_x; x <= myclip.max_x; x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0 && (c & 0x10) == priority)
 						*dst = state->b_sp_color_base + c;
@@ -337,12 +337,12 @@ profiler_mark_start(PROFILER_USER1);
 	    {
 	        for (y = myclip.min_y; y <= myclip.max_y; y++)
 			{
-				UINT16 *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
-				UINT16 *dst = BITMAP_ADDR16(bitmap, y, myclip.min_x);
+				uint16_t *src = BITMAP_ADDR16(state->framebuffer[framebuffer_page], y, myclip.min_x);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, y, myclip.min_x);
 
 				for (x = myclip.min_x; x <= myclip.max_x; x++)
 				{
-					UINT16 c = *src++;
+					uint16_t c = *src++;
 
 					if (c != 0 && (c & 0x10) == priority)
 						*dst = state->b_sp_color_base + c;
@@ -358,7 +358,7 @@ profiler_mark_end();
 VIDEO_UPDATE( taitob )
 {
 	taitob_state *state = (taitob_state *)screen->machine->driver_data;
-	UINT8 video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
+	uint8_t video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
 
 	if ((video_control & 0x20) == 0)
 	{
@@ -394,8 +394,8 @@ VIDEO_UPDATE( taitob )
 VIDEO_EOF( taitob )
 {
 	taitob_state *state = (taitob_state *)machine->driver_data;
-	UINT8 video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
-	UINT8 framebuffer_page = tc0180vcu_get_fb_page(state->tc0180vcu, 0);
+	uint8_t video_control = tc0180vcu_get_videoctrl(state->tc0180vcu, 0);
+	uint8_t framebuffer_page = tc0180vcu_get_fb_page(state->tc0180vcu, 0);
 
 	if (~video_control & 0x01)
 		bitmap_fill(state->framebuffer[framebuffer_page], &machine->primary_screen->visible_area(), 0);

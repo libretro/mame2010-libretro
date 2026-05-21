@@ -15,20 +15,20 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *		paletteram_0;
-	UINT16 *		paletteram_1;
-	UINT16			current_slip[2];
-	UINT8			playfield_palette_bank[2];
-	UINT16			playfield_xscroll[2];
-	UINT16			playfield_yscroll[2];
+	uint16_t *		paletteram_0;
+	uint16_t *		paletteram_1;
+	uint16_t			current_slip[2];
+	uint8_t			playfield_palette_bank[2];
+	uint16_t			playfield_xscroll[2];
+	uint16_t			playfield_yscroll[2];
 
-	UINT8 *			bank_base;
-	UINT8			fast_68k_int;
-	UINT8			io_68k_int;
-	UINT8			sound_data_from_68k;
-	UINT8			sound_data_from_6502;
-	UINT8			sound_data_from_68k_ready;
-	UINT8			sound_data_from_6502_ready;
+	uint8_t *			bank_base;
+	uint8_t			fast_68k_int;
+	uint8_t			io_68k_int;
+	uint8_t			sound_data_from_68k;
+	uint8_t			sound_data_from_6502;
+	uint8_t			sound_data_from_68k_ready;
+	uint8_t			sound_data_from_6502_ready;
 };
 
 

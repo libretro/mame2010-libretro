@@ -32,6 +32,6 @@ READ8_DEVICE_HANDLER( spc_ipl_r );
 READ8_DEVICE_HANDLER( spc_port_out );
 WRITE8_DEVICE_HANDLER( spc_port_in );
 
-UINT8 *spc_get_ram(running_device *device);
+uint8_t *spc_get_ram(running_device *device);
 
 #endif /* __SNES_SPC_H__ */

@@ -378,8 +378,8 @@ INLINE void blitter_plot_pixel( running_machine *machine, int layer, int mask, i
 static int blitter_drawgfx( running_machine *machine, int layer, int mask, const char *gfx, int src, int pen, int x, int y, int wrap, int flags )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
-	UINT8 cmd;
-	UINT8 *ROM = memory_region(machine, gfx);
+	uint8_t cmd;
+	uint8_t *ROM = memory_region(machine, gfx);
 	size_t ROM_size = memory_region_length(machine, gfx);
 
 	int sx;
@@ -834,14 +834,14 @@ VIDEO_START( hanamai )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
-	state->pixmap[0][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[0][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][1] = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->pixmap[0][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[0][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	dynax_common_reset(machine);
 	state->layer_layout = LAYOUT_HANAMAI;
@@ -860,14 +860,14 @@ VIDEO_START( hnoridur )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
-	state->pixmap[0][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[0][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][1] = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->pixmap[0][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[0][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	dynax_common_reset(machine);
 	state->layer_layout = LAYOUT_HNORIDUR;
@@ -896,12 +896,12 @@ VIDEO_START( sprtmtch )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
-	state->pixmap[0][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[0][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][1] = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->pixmap[0][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[0][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	dynax_common_reset(machine);
 	state->layer_layout = LAYOUT_DRGPUNCH;
@@ -918,22 +918,22 @@ VIDEO_START( jantouki )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
-	state->pixmap[0][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[0][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[2][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[3][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[4][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[4][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[5][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[5][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[6][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[6][1] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[7][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[7][1] = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->pixmap[0][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[0][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[2][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[3][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[4][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[4][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[5][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[5][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[6][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[6][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[7][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[7][1] = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	dynax_common_reset(machine);
 	state->layer_layout = LAYOUT_JANTOUKI;
@@ -961,8 +961,8 @@ VIDEO_START( mjdialq2 )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
-	state->pixmap[0][0] = auto_alloc_array(machine, UINT8, 256 * 256);
-	state->pixmap[1][0] = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->pixmap[0][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
+	state->pixmap[1][0] = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	dynax_common_reset(machine);
 	state->layer_layout = LAYOUT_MJDIALQ2;
@@ -1028,15 +1028,15 @@ static void hanamai_copylayer( running_machine *machine, bitmap_t *bitmap, const
 
 	{
 		int dy, length, pen;
-		UINT8 *src1 = state->pixmap[i][1];
-		UINT8 *src2 = state->pixmap[i][0];
+		uint8_t *src1 = state->pixmap[i][1];
+		uint8_t *src2 = state->pixmap[i][0];
 
 		int palbase = 16 * color;
 
 		for (dy = 0; dy < 256; dy++)
 		{
-			UINT16 *dst;
-			UINT16 *dstbase = BITMAP_ADDR16(bitmap, (dy - scrolly) & 0xff, 0);
+			uint16_t *dst;
+			uint16_t *dstbase = BITMAP_ADDR16(bitmap, (dy - scrolly) & 0xff, 0);
 
 			length = scrollx;
 			dst = dstbase + 2 * (256 - length);
@@ -1095,16 +1095,16 @@ static void jantouki_copylayer( running_machine *machine, bitmap_t *bitmap, cons
 
 	{
 		int dy, length, pen;
-		UINT8 *src1 = state->pixmap[i][1];
-		UINT8 *src2 = state->pixmap[i][0];
+		uint8_t *src1 = state->pixmap[i][1];
+		uint8_t *src2 = state->pixmap[i][0];
 
 		int palbase = 16 * color;
 
 		for (dy = 0; dy < 256; dy++)
 		{
 			int sy = ((dy - scrolly) & 0xff) + y;
-			UINT16 *dst;
-			UINT16 *dstbase = BITMAP_ADDR16(bitmap, sy, 0);
+			uint16_t *dst;
+			uint16_t *dstbase = BITMAP_ADDR16(bitmap, sy, 0);
 
 			if ((sy < cliprect->min_y) || (sy > cliprect->max_y))
 			{
@@ -1159,14 +1159,14 @@ static void mjdialq2_copylayer( running_machine *machine, bitmap_t *bitmap, cons
 
 	{
 		int dy, length, pen;
-		UINT8 *src = state->pixmap[i][0];
+		uint8_t *src = state->pixmap[i][0];
 
 		int palbase = 16 * color;
 
 		for (dy = 0; dy < 256; dy++)
 		{
-			UINT16 *dst;
-			UINT16 *dstbase = BITMAP_ADDR16(bitmap, (dy - scrolly) & 0xff, 0);
+			uint16_t *dst;
+			uint16_t *dstbase = BITMAP_ADDR16(bitmap, (dy - scrolly) & 0xff, 0);
 
 			length = scrollx;
 			dst = dstbase + 256 - length;
@@ -1236,7 +1236,7 @@ static int debug_viewer( running_machine *machine, bitmap_t *bitmap, const recta
 	if (toggle)
 	{
 		dynax_state *state = (dynax_state *)machine->driver_data;
-		UINT8 *RAM = memory_region( machine, "gfx1" );
+		uint8_t *RAM = memory_region( machine, "gfx1" );
 		size_t size = memory_region_length( machine, "gfx1" );
 		static int i = 0, c = 0, r = 0;
 
@@ -1256,10 +1256,10 @@ static int debug_viewer( running_machine *machine, bitmap_t *bitmap, const recta
 		state->blit_palbank  = (c >>  4) & 1;
 
 		bitmap_fill(bitmap, cliprect, 0);
-		memset(state->pixmap[0][0], 0, sizeof(UINT8) * 0x100 * 0x100);
+		memset(state->pixmap[0][0], 0, sizeof(uint8_t) * 0x100 * 0x100);
 
 		if (state->layer_layout != LAYOUT_MJDIALQ2)
-			memset(state->pixmap[0][1], 0, sizeof(UINT8) * 0x100 * 0x100);
+			memset(state->pixmap[0][1], 0, sizeof(uint8_t) * 0x100 * 0x100);
 		for (state->hanamai_layer_half = 0; state->hanamai_layer_half < 2; state->hanamai_layer_half++)
 			blitter_drawgfx(machine, 0, 1, "gfx1", i, 0, cliprect->min_x, cliprect->min_y, 3, 0);
 
@@ -1439,7 +1439,7 @@ VIDEO_UPDATE(htengoku)
 
 		for (y = 0; y < 256; y++)
 			for (x = 0; x < 512; x++)
-				state->ddenlovr_pixmap[3 - layer][y * 512 + x] = (UINT8)(*BITMAP_ADDR16(bitmap, y, x));
+				state->ddenlovr_pixmap[3 - layer][y * 512 + x] = (uint8_t)(*BITMAP_ADDR16(bitmap, y, x));
 	}
 
 	return VIDEO_UPDATE_CALL(ddenlovr);

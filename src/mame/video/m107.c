@@ -34,19 +34,19 @@ typedef struct _pf_layer_info pf_layer_info;
 struct _pf_layer_info
 {
 	tilemap_t *		tmap;
-	UINT16			vram_base;
-	UINT16			control[4];
+	uint16_t			vram_base;
+	uint16_t			control[4];
 };
 
 static pf_layer_info pf_layer[4];
 
 
-static UINT16 m107_control[0x10];
-static UINT16 *m107_spriteram;
-UINT16 *m107_vram_data;
-UINT16 m107_raster_irq_position;
-UINT8 m107_spritesystem;
-UINT8 m107_sprite_display;
+static uint16_t m107_control[0x10];
+static uint16_t *m107_spriteram;
+uint16_t *m107_vram_data;
+uint16_t m107_raster_irq_position;
+uint8_t m107_spritesystem;
+uint8_t m107_sprite_display;
 
 
 /*****************************************************************************/
@@ -86,7 +86,7 @@ WRITE16_HANDLER( m107_vram_w )
 
 WRITE16_HANDLER( m107_control_w )
 {
-	UINT16 old = m107_control[offset];
+	uint16_t old = m107_control[offset];
 	pf_layer_info *layer;
 
 	COMBINE_DATA(&m107_control[offset]);
@@ -150,7 +150,7 @@ VIDEO_START( m107 )
 			tilemap_set_transparent_pen(layer->tmap, 0);
 	}
 
-	m107_spriteram = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
+	m107_spriteram = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
 }
 
 /*****************************************************************************/
@@ -158,7 +158,7 @@ VIDEO_START( m107 )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int offs;
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 
 	for (offs = 0;offs < 0x800;offs += 4)
 	{
@@ -296,7 +296,7 @@ static void m107_update_scroll_positions(void)
 		//used by World PK Soccer goal scrolling and Fire Barrel sea wave effect (stage 2) / canyon parallax effect (stage 6)
 		if (m107_control[0x08 + laynum] & 0x01)
 		{
-			const UINT16 *scrolldata = m107_vram_data + (0xe000 + 0x200 * laynum) / 2;
+			const uint16_t *scrolldata = m107_vram_data + (0xe000 + 0x200 * laynum) / 2;
 
 			tilemap_set_scroll_rows(layer->tmap, 512);
 			for (i = 0; i < 512; i++)
@@ -330,7 +330,7 @@ static void m107_tilemap_draw(running_machine *machine, bitmap_t *bitmap, const 
 	{
 		for (line = cliprect->min_y; line <= cliprect->max_y;line++)
 		{
-			const UINT16 *scrolldata = m107_vram_data + (0xe800 + 0x200 * laynum) / 2;
+			const uint16_t *scrolldata = m107_vram_data + (0xe800 + 0x200 * laynum) / 2;
 			clip.min_y = clip.max_y = line;
 
 			tilemap_set_scrollx(pf_layer[laynum].tmap,0,  m107_control[1 + 2 * laynum]);

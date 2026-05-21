@@ -113,8 +113,8 @@ static TILE_GET_INFO( get_tile_info )
 {
 	irem_z80_state *state = (irem_z80_state *)machine->driver_data;
 
-	UINT8 attr = state->videoram[tile_index * 2 + 0];
-	UINT16 code = state->videoram[tile_index * 2 + 1] | ((attr & 0xc0) << 2);
+	uint8_t attr = state->videoram[tile_index * 2 + 0];
+	uint16_t code = state->videoram[tile_index * 2 + 1] | ((attr & 0xc0) << 2);
 
 	SET_TILE_INFO(0, code, attr & 0x0f, TILE_FLIPXY(attr >> 4));
 }
@@ -181,7 +181,7 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 {
 	irem_z80_state *state = (irem_z80_state *)machine->driver_data;
 	int y,x;
-	INT16 scrolly;
+	int16_t scrolly;
 
 	// from 64 to 127: not wrapped
 	for (y = 64; y < 128; y++)
@@ -228,7 +228,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	for (offs = state->spriteram_size - 4; offs >= 0; offs -= 4)
 	{
-		UINT8 attributes = state->spriteram[offs + 1];
+		uint8_t attributes = state->spriteram[offs + 1];
 		int sx = state->spriteram[offs + 3];
 		int sy = ((224 - state->spriteram[offs + 0] - 32) & 0xff) + 32;
 		int code = state->spriteram[offs + 2];

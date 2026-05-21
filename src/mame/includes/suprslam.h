@@ -12,17 +12,17 @@ public:
 	suprslam_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    screen_videoram;
-	UINT16 *    bg_videoram;
-	UINT16 *    sp_videoram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // this currently uses generic palette handling
+	uint16_t *    screen_videoram;
+	uint16_t *    bg_videoram;
+	uint16_t *    sp_videoram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // this currently uses generic palette handling
 
 	/* video-related */
 	tilemap_t     *screen_tilemap, *bg_tilemap;
-	UINT16      screen_bank, bg_bank;
-	UINT16      *spr_ctrl;
-	UINT16      *screen_vregs;
+	uint16_t      screen_bank, bg_bank;
+	uint16_t      *spr_ctrl;
+	uint16_t      *screen_vregs;
 
 	/* misc */
 	int         pending_command;

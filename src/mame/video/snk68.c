@@ -14,12 +14,12 @@ Notes:
 
 #include "emu.h"
 
-UINT16* pow_fg_videoram;
+uint16_t* pow_fg_videoram;
 
 static int sprite_flip_axis;
 static tilemap_t *fg_tilemap;
 static int flipscreen;
-static UINT32 fg_tile_offset;
+static uint32_t fg_tile_offset;
 
 /***************************************************************************
 
@@ -94,8 +94,8 @@ READ16_HANDLER( pow_spriteram_r )
 
 WRITE16_HANDLER( pow_spriteram_w )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
-	UINT16 newword = spriteram16[offset];
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
+	uint16_t newword = spriteram16[offset];
 
 	if (!(offset & 1))
 		data |= 0xff00;
@@ -163,7 +163,7 @@ WRITE16_HANDLER( searchar_flipscreen16_w )
 
 WRITE16_HANDLER( pow_paletteram16_word_w )
 {
-	UINT16 newword;
+	uint16_t newword;
 	int r,g,b;
 
 	COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
@@ -185,8 +185,8 @@ WRITE16_HANDLER( pow_paletteram16_word_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int group)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
-	const UINT16* tiledata = &spriteram16[0x800*group];
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
+	const uint16_t* tiledata = &spriteram16[0x800*group];
 
 	// pow has 0x4000 tiles and independent x/y flipping
 	// the other games have > 0x4000 tiles and flipping in only one direction

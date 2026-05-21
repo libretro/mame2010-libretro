@@ -32,7 +32,7 @@ WRITE8_HANDLER( crgolf_videoram_w )
 READ8_HANDLER( crgolf_videoram_r )
 {
 	crgolf_state *state = (crgolf_state *)space->machine->driver_data;
-	UINT8 ret;
+	uint8_t ret;
 
 	if (*state->screen_select & 1)
 		ret = state->videoram_b[offset];
@@ -53,13 +53,13 @@ READ8_HANDLER( crgolf_videoram_r )
 static void get_pens( running_machine *machine, pen_t *pens )
 {
 	offs_t offs;
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 
 	for (offs = 0; offs < NUM_PENS; offs++)
 	{
 		int bit0, bit1, bit2, r, g, b;
 
-		UINT8 data = prom[offs];
+		uint8_t data = prom[offs];
 
 		/* red component */
 		bit0 = (data >> 0) & 0x01;
@@ -95,8 +95,8 @@ static VIDEO_START( crgolf )
 	crgolf_state *state = (crgolf_state *)machine->driver_data;
 
 	/* allocate memory for the two bitmaps */
-	state->videoram_a = auto_alloc_array(machine, UINT8, VIDEORAM_SIZE);
-	state->videoram_b = auto_alloc_array(machine, UINT8, VIDEORAM_SIZE);
+	state->videoram_a = auto_alloc_array(machine, uint8_t, VIDEORAM_SIZE);
+	state->videoram_b = auto_alloc_array(machine, uint8_t, VIDEORAM_SIZE);
 
 	/* register for save states */
 	state_save_register_global_pointer(machine, state->videoram_a, VIDEORAM_SIZE);
@@ -126,15 +126,15 @@ static VIDEO_UPDATE( crgolf )
 	{
 		int i;
 
-		UINT8 y = (offs & 0x1fe0) >> 5;
-		UINT8 x = (offs & 0x001f) << 3;
+		uint8_t y = (offs & 0x1fe0) >> 5;
+		uint8_t x = (offs & 0x001f) << 3;
 
-		UINT8 data_a0 = state->videoram_a[0x2000 | offs];
-		UINT8 data_a1 = state->videoram_a[0x0000 | offs];
-		UINT8 data_a2 = state->videoram_a[0x4000 | offs];
-		UINT8 data_b0 = state->videoram_b[0x2000 | offs];
-		UINT8 data_b1 = state->videoram_b[0x0000 | offs];
-		UINT8 data_b2 = state->videoram_b[0x4000 | offs];
+		uint8_t data_a0 = state->videoram_a[0x2000 | offs];
+		uint8_t data_a1 = state->videoram_a[0x0000 | offs];
+		uint8_t data_a2 = state->videoram_a[0x4000 | offs];
+		uint8_t data_b0 = state->videoram_b[0x2000 | offs];
+		uint8_t data_b1 = state->videoram_b[0x0000 | offs];
+		uint8_t data_b2 = state->videoram_b[0x4000 | offs];
 
 		if (flip)
 		{
@@ -146,8 +146,8 @@ static VIDEO_UPDATE( crgolf )
 		for (i = 0; i < 8; i++)
 		{
 			offs_t color;
-			UINT8 data_b = 0;
-			UINT8 data_a = 0;
+			uint8_t data_b = 0;
+			uint8_t data_a = 0;
 
 			if (~*state->screena_enable & 1)
 				data_a = ((data_a0 & 0x80) >> 7) | ((data_a1 & 0x80) >> 6) | ((data_a2 & 0x80) >> 5);

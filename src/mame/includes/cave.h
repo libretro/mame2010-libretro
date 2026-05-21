@@ -8,7 +8,7 @@ struct sprite_cave
 {
 	int priority, flags;
 
-	const UINT8 *pen_data;	/* points to top left corner of tile data */
+	const uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
 	pen_t base_pen;
@@ -29,18 +29,18 @@ public:
 	cave_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     videoregs;
-	UINT16 *     vram_0;
-	UINT16 *     vram_1;
-	UINT16 *     vram_2;
-	UINT16 *     vram_3;
-	UINT16 *     vctrl_0;
-	UINT16 *     vctrl_1;
-	UINT16 *     vctrl_2;
-	UINT16 *     vctrl_3;
-	UINT16 *     spriteram;
-	UINT16 *     spriteram_2;
-	UINT16 *     paletteram;
+	uint16_t *     videoregs;
+	uint16_t *     vram_0;
+	uint16_t *     vram_1;
+	uint16_t *     vram_2;
+	uint16_t *     vram_3;
+	uint16_t *     vctrl_0;
+	uint16_t *     vctrl_1;
+	uint16_t *     vctrl_2;
+	uint16_t *     vctrl_3;
+	uint16_t *     spriteram;
+	uint16_t *     spriteram_2;
+	uint16_t *     paletteram;
 	size_t       spriteram_size;
 	size_t       paletteram_size;
 
@@ -51,9 +51,9 @@ public:
 	struct
 	{
 		int    clip_left, clip_right, clip_top, clip_bottom;
-		UINT8  *baseaddr;
+		uint8_t  *baseaddr;
 		int    line_offset;
-		UINT8  *baseaddr_zbuf;
+		uint8_t  *baseaddr_zbuf;
 		int    line_offset_zbuf;
 	} blit;
 
@@ -68,14 +68,14 @@ public:
 	int          tiledim_3, old_tiledim_3;
 
 	bitmap_t     *sprite_zbuf;
-	UINT16       sprite_zbuf_baseval;
+	uint16_t       sprite_zbuf_baseval;
 
 	int          num_sprites;
 
 	int          spriteram_bank;
 	int          spriteram_bank_delay;
 
-	UINT16       *palette_map;
+	uint16_t       *palette_map;
 
 	int          layers_offs_x, layers_offs_y;
 	int          row_effect_offs_n;
@@ -88,16 +88,16 @@ public:
 
 	/* misc */
 	int          time_vblank_irq;
-	UINT8        irq_level;
-	UINT8        vblank_irq;
-	UINT8        sound_irq;
-	UINT8        unknown_irq;
-	UINT8        agallet_vblank_irq;
+	uint8_t        irq_level;
+	uint8_t        vblank_irq;
+	uint8_t        sound_irq;
+	uint8_t        unknown_irq;
+	uint8_t        agallet_vblank_irq;
 
 	/* sound related */
 	int          soundbuf_len;
-	UINT8        soundbuf_data[32];
-	//UINT8        sound_flag1, sound_flag2;
+	uint8_t        soundbuf_data[32];
+	//uint8_t        sound_flag1, sound_flag2;
 
 	/* eeprom-related */
 	int          region_byte;
@@ -105,9 +105,9 @@ public:
 	/* game specific */
 	// sailormn
 	int          sailormn_tilebank;
-	UINT8        *mirror_ram;
+	uint8_t        *mirror_ram;
 	// korokoro
-	UINT16       leds[2];
+	uint16_t       leds[2];
 	int          hopper;
 
 	/* devices */

@@ -10,20 +10,20 @@
 #define CPS3_VOICES		16
 
 static sound_stream *cps3_stream;
-extern UINT8* cps3_user5region;
+extern uint8_t* cps3_user5region;
 
 typedef struct _cps3_voice_
 {
-	UINT32 regs[8];
-	UINT32 pos;
-	UINT16 frac;
+	uint32_t regs[8];
+	uint32_t pos;
+	uint16_t frac;
 } cps3_voice;
 
 static struct
 {
 	cps3_voice voice[CPS3_VOICES];
-	UINT16     key;
-	INT8*	   base;
+	uint16_t     key;
+	int8_t*	   base;
 } chip;
 
 static STREAM_UPDATE( cps3_stream_update )
@@ -32,7 +32,7 @@ static STREAM_UPDATE( cps3_stream_update )
 
 	// the actual 'user5' region only exists on the nocd sets, on the others it's allocated in the initialization.
 	// it's a shared gfx/sound region, so can't be allocated as part of the sound device.
-	chip.base = (INT8*)cps3_user5region;
+	chip.base = (int8_t*)cps3_user5region;
 
 	/* Clear the buffers */
 	memset(outputs[0], 0, samples*sizeof(*outputs[0]));
@@ -49,16 +49,16 @@ static STREAM_UPDATE( cps3_stream_update )
 
 			cps3_voice *vptr = &chip.voice[i];
 
-			UINT32 start = vptr->regs[1];
-			UINT32 end   = vptr->regs[5];
-			UINT32 loop  = (vptr->regs[3] & 0xffff) + ((vptr->regs[4] & 0xffff) << 16);
-			UINT32 step  = (vptr->regs[3] >> 16);
+			uint32_t start = vptr->regs[1];
+			uint32_t end   = vptr->regs[5];
+			uint32_t loop  = (vptr->regs[3] & 0xffff) + ((vptr->regs[4] & 0xffff) << 16);
+			uint32_t step  = (vptr->regs[3] >> 16);
 
-			INT16 vol_l = (vptr->regs[7] & 0xffff);
-			INT16 vol_r = ((vptr->regs[7] >> 16) & 0xffff);
+			int16_t vol_l = (vptr->regs[7] & 0xffff);
+			int16_t vol_r = ((vptr->regs[7] >> 16) & 0xffff);
 
-			UINT32 pos = vptr->pos;
-			UINT16 frac = vptr->frac;
+			uint32_t pos = vptr->pos;
+			uint16_t frac = vptr->frac;
 
 			/* TODO */
 			start = SWAP(start) - 0x400000;
@@ -68,7 +68,7 @@ static STREAM_UPDATE( cps3_stream_update )
 			/* Go through the buffer and add voice contributions */
 			for (j = 0; j < samples; j ++)
 			{
-				INT32 sample;
+				int32_t sample;
 
 				pos += (frac >> 12);
 				frac &= 0xfff;
@@ -134,7 +134,7 @@ WRITE32_HANDLER( cps3_sound_w )
 	else if (offset == 0x80)
 	{
 		int i;
-		UINT16 key = data >> 16;
+		uint16_t key = data >> 16;
 
 		for (i = 0; i < CPS3_VOICES; i++)
 		{

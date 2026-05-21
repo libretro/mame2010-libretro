@@ -13,24 +13,24 @@ public:
 		  msm(machine.device<msm5205_sound_device>("msm")) { }
 
 	/* memory pointers */
-	UINT16 *    tilemapram;
-	UINT16 *    ioc_ram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    tilemapram;
+	uint16_t *    ioc_ram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t     *tilemap[3];
-	UINT16      scrollx[3], scrolly[3];
-	UINT16      bg0_gfxset, bg1_gfxset;
+	uint16_t      scrollx[3], scrolly[3];
+	uint16_t      bg0_gfxset, bg1_gfxset;
 #ifdef MAME_DEBUG
-	UINT8       dislayer[4];
+	uint8_t       dislayer[4];
 #endif
 
 	/* sound-related */
-	UINT32      msm_start, msm_end, msm_bank;
-	UINT32      adpcm_start, adpcm_end, adpcm_idle;
-	UINT8       adpcm_trigger, adpcm_data;
+	uint32_t      msm_start, msm_end, msm_bank;
+	uint32_t      adpcm_start, adpcm_end, adpcm_idle;
+	uint8_t       adpcm_trigger, adpcm_data;
 
 	/* devices */
 	cpu_device *maincpu;

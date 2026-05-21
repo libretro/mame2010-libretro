@@ -12,7 +12,7 @@
 #include "includes/warpwarp.h"
 
 static emu_timer *volume_timer = NULL;
-static UINT16 *decay = NULL;
+static uint16_t *decay = NULL;
 static sound_stream *channel;
 static int sound_latch = 0;
 static int sound_signal = 0;
@@ -115,10 +115,10 @@ static DEVICE_START( geebee_sound )
 	running_machine *machine = device->machine;
 	int i;
 
-	decay = auto_alloc_array(machine, UINT16, 32768);
+	decay = auto_alloc_array(machine, uint16_t, 32768);
 
     for( i = 0; i < 0x8000; i++ )
-		decay[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		decay[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	/* 1V = HSYNC = 18.432MHz / 3 / 2 / 384 = 8000Hz */
 	channel = stream_create(device, 0, 1, 18432000 / 3 / 2 / 384, NULL, geebee_sound_update);

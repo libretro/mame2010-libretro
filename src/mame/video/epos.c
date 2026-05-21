@@ -25,14 +25,14 @@
 static void get_pens( running_machine *machine, pen_t *pens )
 {
 	offs_t i;
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 	int len = memory_region_length(machine, "proms");
 
 	for (i = 0; i < len; i++)
 	{
 		int bit0, bit1, bit2, r, g, b;
 
-		UINT8 data = prom[i];
+		uint8_t data = prom[i];
 
 		bit0 = (data >> 7) & 0x01;
 		bit1 = (data >> 6) & 0x01;
@@ -82,7 +82,7 @@ VIDEO_UPDATE( epos )
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
 		int x = (offs % 136) * 2;
 		int y = (offs / 136);

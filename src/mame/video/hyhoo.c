@@ -10,7 +10,7 @@
 #include "includes/nb1413m3.h"
 
 
-UINT8 *hyhoo_clut;
+uint8_t *hyhoo_clut;
 
 static int blitter_destx, blitter_desty;
 static int blitter_sizex, blitter_sizey;
@@ -74,7 +74,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void hyhoo_gfxdraw(running_machine *machine)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 
 	int x, y;
 	int dx1, dx2, dy;
@@ -83,7 +83,7 @@ static void hyhoo_gfxdraw(running_machine *machine)
 	int skipx, skipy;
 	int ctrx, ctry;
 	int gfxaddr, gfxlen;
-	UINT8 color, color1, color2;
+	uint8_t color, color1, color2;
 	int r, g, b;
 	pen_t pen;
 

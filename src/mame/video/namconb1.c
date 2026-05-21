@@ -6,13 +6,13 @@
 #include "includes/namcos2.h"
 #include "audio/namcoc7x.h"
 
-static UINT32 tilemap_tile_bank[4];
+static uint32_t tilemap_tile_bank[4];
 
 /* nth_word32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of 16 bit words.
  */
-INLINE UINT16
-nth_word32( const UINT32 *source, int which )
+INLINE uint16_t
+nth_word32( const uint32_t *source, int which )
 {
 	source += which/2;
 	if( which&1 )
@@ -28,10 +28,10 @@ nth_word32( const UINT32 *source, int which )
 /* nth_byte32 is a general-purpose utility function, which allows us to
  * read from 32-bit aligned memory as if it were an array of bytes.
  */
-INLINE UINT8
-nth_byte32( const UINT32 *pSource, int which )
+INLINE uint8_t
+nth_byte32( const uint32_t *pSource, int which )
 {
-	UINT32 data = pSource[which/4];
+	uint32_t data = pSource[which/4];
 	switch( which&3 )
 	{
 	case 0: return data>>24;
@@ -42,14 +42,14 @@ nth_byte32( const UINT32 *pSource, int which )
 } /* nth_byte32 */
 
 static void
-NB1TilemapCB(UINT16 code, int *tile, int *mask )
+NB1TilemapCB(uint16_t code, int *tile, int *mask )
 {
 	*tile = code;
 	*mask = code;
 } /* NB1TilemapCB */
 
 static void
-NB2TilemapCB(UINT16 code, int *tile, int *mask )
+NB2TilemapCB(uint16_t code, int *tile, int *mask )
 {
 	int mangle;
 
@@ -76,8 +76,8 @@ NB2TilemapCB(UINT16 code, int *tile, int *mask )
 static void namconb1_install_palette(running_machine *machine)
 {
 	int pen, page, dword_offset, byte_offset;
-	UINT32 r,g,b;
-	UINT32 *pSource;
+	uint32_t r,g,b;
+	uint32_t *pSource;
 
 	/**
      * This is unnecessarily expensive.  Better would be to mark palette entries dirty as
@@ -137,8 +137,8 @@ VIDEO_UPDATE( namconb1 )
 	/* compute window for custom screen blanking */
 	rectangle clip;
 	//004a 016a 0021 0101 0144 0020 (nebulas ray)
-	UINT32 xclip = screen->machine->generic.paletteram.u32[0x1800/4];
-	UINT32 yclip = screen->machine->generic.paletteram.u32[0x1804/4];
+	uint32_t xclip = screen->machine->generic.paletteram.u32[0x1800/4];
+	uint32_t yclip = screen->machine->generic.paletteram.u32[0x1804/4];
 	clip.min_x = (xclip>>16)    - 0x4a;
 	clip.max_x = (xclip&0xffff) - 0x4a - 1;
 	clip.min_y = (yclip>>16)    - 0x21;
@@ -176,8 +176,8 @@ VIDEO_UPDATE( namconb2 )
 	/* compute window for custom screen blanking */
 	rectangle clip;
 	//004a016a 00210101 01440020
-	UINT32 xclip = screen->machine->generic.paletteram.u32[0x1800/4];
-	UINT32 yclip = screen->machine->generic.paletteram.u32[0x1804/4];
+	uint32_t xclip = screen->machine->generic.paletteram.u32[0x1800/4];
+	uint32_t yclip = screen->machine->generic.paletteram.u32[0x1804/4];
 	clip.min_x = (xclip>>16)    - 0x4b;
 	clip.max_x = (xclip&0xffff) - 0x4b - 1;
 	clip.min_y = (yclip>>16)    - 0x21;

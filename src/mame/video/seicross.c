@@ -8,10 +8,10 @@
 
 #include "emu.h"
 
-UINT8 *seicross_row_scroll;
+uint8_t *seicross_row_scroll;
 
-UINT8 *seicross_videoram;
-UINT8 *seicross_colorram;
+uint8_t *seicross_videoram;
+uint8_t *seicross_colorram;
 static tilemap_t *bg_tilemap;
 
 /***************************************************************************
@@ -97,8 +97,8 @@ VIDEO_START( seicross )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
-	UINT8 *spriteram_2 = machine->generic.spriteram2.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram_2 = machine->generic.spriteram2.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4;offs >= 0;offs -= 4)

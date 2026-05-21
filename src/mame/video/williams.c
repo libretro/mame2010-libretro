@@ -104,21 +104,21 @@
  *************************************/
 
 /* RAM globals */
-UINT8 *williams_videoram;
-UINT8 *williams2_tileram;
-UINT8 *blaster_palette_0;
-UINT8 *blaster_scanline_control;
+uint8_t *williams_videoram;
+uint8_t *williams2_tileram;
+uint8_t *blaster_palette_0;
+uint8_t *blaster_scanline_control;
 
 /* blitter globals */
-UINT8 williams_blitter_config;
-UINT16 williams_blitter_clip_address;
-UINT8 williams_blitter_window_enable;
+uint8_t williams_blitter_config;
+uint16_t williams_blitter_clip_address;
+uint8_t williams_blitter_window_enable;
 
 /* tilemap globals */
-UINT8 williams2_tilemap_config;
+uint8_t williams2_tilemap_config;
 
 /* rendering globals */
-UINT8 williams_cocktail;
+uint8_t williams_cocktail;
 
 
 
@@ -132,20 +132,20 @@ UINT8 williams_cocktail;
 static rgb_t *palette_lookup;
 
 /* blitter variables */
-static UINT8 blitterram[8];
-static UINT8 blitter_xor;
-static UINT8 blitter_remap_index;
-static const UINT8 *blitter_remap;
-static UINT8 *blitter_remap_lookup;
+static uint8_t blitterram[8];
+static uint8_t blitter_xor;
+static uint8_t blitter_remap_index;
+static const uint8_t *blitter_remap;
+static uint8_t *blitter_remap_lookup;
 
 /* Blaster-specific variables */
 static rgb_t blaster_color0;
-static UINT8 blaster_video_control;
+static uint8_t blaster_video_control;
 
 /* tilemap variables */
 static tilemap_t *bg_tilemap;
-static UINT16 tilemap_xscroll;
-static UINT8 williams2_fg_color;
+static uint16_t tilemap_xscroll;
+static uint8_t williams2_fg_color;
 
 
 
@@ -155,7 +155,7 @@ static UINT8 williams2_fg_color;
  *
  *************************************/
 
-static void blitter_init(running_machine *machine, int blitter_config, const UINT8 *remap_prom);
+static void blitter_init(running_machine *machine, int blitter_config, const uint8_t *remap_prom);
 static void create_palette_lookup(running_machine *machine);
 static TILE_GET_INFO( get_tile_info );
 static int blitter_core(const address_space *space, int sstart, int dstart, int w, int h, int data);
@@ -202,7 +202,7 @@ VIDEO_START( williams2 )
 	blitter_init(machine, williams_blitter_config, NULL);
 
 	/* allocate paletteram */
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x400 * 2);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x400 * 2);
 	state_save_register_global_pointer(machine, machine->generic.paletteram.u8, 0x400 * 2);
 
 	/* create the tilemap */
@@ -232,8 +232,8 @@ VIDEO_UPDATE( williams )
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *source = &williams_videoram[y];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *source = &williams_videoram[y];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		/* loop over columns */
 		for (x = cliprect->min_x & ~1; x <= cliprect->max_x; x += 2)
@@ -264,8 +264,8 @@ VIDEO_UPDATE( blaster )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int erase_behind = blaster_video_control & blaster_scanline_control[y] & 2;
-		UINT8 *source = &williams_videoram[y];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *source = &williams_videoram[y];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		/* latch a new color0 pen? */
 		if (blaster_video_control & blaster_scanline_control[y] & 1)
@@ -304,8 +304,8 @@ VIDEO_UPDATE( williams2 )
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 *source = &williams_videoram[y];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint8_t *source = &williams_videoram[y];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		/* loop over columns */
 		for (x = cliprect->min_x & ~1; x <= cliprect->max_x; x += 2)
@@ -359,12 +359,12 @@ static void create_palette_lookup(running_machine *machine)
 
 WRITE8_HANDLER( williams2_paletteram_w )
 {
-	static const UINT8 ztable[16] =
+	static const uint8_t ztable[16] =
 	{
 		0x0, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8,  0x9,
 		0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11
 	};
-	UINT8 entry_lo, entry_hi, i, r, g, b;
+	uint8_t entry_lo, entry_hi, i, r, g, b;
 
 	/* set the new value */
 	space->machine->generic.paletteram.u8[offset] = data;
@@ -521,9 +521,9 @@ WRITE8_HANDLER( blaster_video_control_w )
  *
  *************************************/
 
-static void blitter_init(running_machine *machine, int blitter_config, const UINT8 *remap_prom)
+static void blitter_init(running_machine *machine, int blitter_config, const uint8_t *remap_prom)
 {
-	static const UINT8 dummy_table[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
+	static const uint8_t dummy_table[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
 	int i,j;
 
 	/* by default, there is no clipping window - this will be touched only by games that have one */
@@ -533,12 +533,12 @@ static void blitter_init(running_machine *machine, int blitter_config, const UIN
 	blitter_xor = (blitter_config == WILLIAMS_BLITTER_SC01) ? 4 : 0;
 
 	/* create the remap table; if no PROM, make an identity remap table */
-	blitter_remap_lookup = auto_alloc_array(machine, UINT8, 256 * 256);
+	blitter_remap_lookup = auto_alloc_array(machine, uint8_t, 256 * 256);
 	blitter_remap_index = 0;
 	blitter_remap = blitter_remap_lookup;
 	for (i = 0; i < 256; i++)
 	{
-		const UINT8 *table = remap_prom ? (remap_prom + (i & 0x7f) * 16) : dummy_table;
+		const uint8_t *table = remap_prom ? (remap_prom + (i & 0x7f) * 16) : dummy_table;
 		for (j = 0; j < 256; j++)
 			blitter_remap_lookup[i * 256 + j] = (table[j >> 4] << 4) | table[j & 0x0f];
 	}

@@ -9,7 +9,7 @@
 VIDEO_START( volfied )
 {
 	volfied_state *state = (volfied_state *)machine->driver_data;
-	state->video_ram = auto_alloc_array(machine, UINT16, 0x40000);
+	state->video_ram = auto_alloc_array(machine, uint16_t, 0x40000);
 
 	state->video_ctrl = 0;
 	state->video_mask = 0;
@@ -98,7 +98,7 @@ static void refresh_pixel_layer( running_machine *machine, bitmap_t *bitmap )
     *********************************************************/
 
 	volfied_state *state = (volfied_state *)machine->driver_data;
-	UINT16* p = state->video_ram;
+	uint16_t* p = state->video_ram;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 

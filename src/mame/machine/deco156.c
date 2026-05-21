@@ -34,7 +34,7 @@
 #include "includes/decocrpt.h"
 
 
-static void decrypt(UINT32 *src, UINT32 *dst, int length)
+static void decrypt(uint32_t *src, uint32_t *dst, int length)
 {
 	int a;
 
@@ -124,9 +124,9 @@ static void decrypt(UINT32 *src, UINT32 *dst, int length)
 
 void deco156_decrypt(running_machine *machine)
 {
-	UINT32 *rom = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *rom = (uint32_t *)memory_region(machine, "maincpu");
 	int length = memory_region_length(machine, "maincpu");
-	UINT32 *buf = auto_alloc_array(machine, UINT32, length/4);
+	uint32_t *buf = auto_alloc_array(machine, uint32_t, length/4);
 
 	memcpy(buf, rom, length);
 	decrypt(buf, rom, length);

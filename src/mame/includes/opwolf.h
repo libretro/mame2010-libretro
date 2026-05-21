@@ -12,16 +12,16 @@ public:
 	opwolf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *      cchip_ram;
+	uint8_t *      cchip_ram;
 
 	/* video-related */
-	UINT16       sprite_ctrl;
-	UINT16       sprites_flipscreen;
+	uint16_t       sprite_ctrl;
+	uint16_t       sprites_flipscreen;
 
 	/* misc */
-	UINT8        adpcm_b[0x08];
-	UINT8        adpcm_c[0x08];
-	UINT32       adpcm_pos[2], adpcm_end[2];
+	uint8_t        adpcm_b[0x08];
+	uint8_t        adpcm_c[0x08];
+	uint32_t       adpcm_pos[2], adpcm_end[2];
 	int          adpcm_data[2];
 
 	int          opwolf_gun_xoffs, opwolf_gun_yoffs;
@@ -29,15 +29,15 @@ public:
 	/* c-chip */
 	int          opwolf_region;
 
-	UINT8        current_bank;
-	UINT8        current_cmd;
-	UINT8        cchip_last_7a;
-	UINT8        cchip_last_04;
-	UINT8        cchip_last_05;
-	UINT8        cchip_coins_for_credit[2];
-	UINT8        cchip_credits_for_coin[2];
-	UINT8        cchip_coins[2];
-	UINT8        c588, c589, c58a; // These variables derived from the bootleg
+	uint8_t        current_bank;
+	uint8_t        current_cmd;
+	uint8_t        cchip_last_7a;
+	uint8_t        cchip_last_04;
+	uint8_t        cchip_last_05;
+	uint8_t        cchip_coins_for_credit[2];
+	uint8_t        cchip_credits_for_coin[2];
+	uint8_t        cchip_coins[2];
+	uint8_t        c588, c589, c58a; // These variables derived from the bootleg
 
 	/* devices */
 	cpu_device *maincpu;

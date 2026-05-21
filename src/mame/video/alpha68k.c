@@ -78,7 +78,7 @@ VIDEO_START( alpha68k )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int j, int s, int e )
 {
 	alpha68k_state *state = (alpha68k_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, mx, my, color, tile, fx, fy, i;
 
 	for (offs = s; offs < e; offs += 0x40)
@@ -224,7 +224,7 @@ WRITE16_HANDLER( alpha68k_V_video_control_w )
 static void draw_sprites_V( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int j, int s, int e, int fx_mask, int fy_mask, int sprite_mask )
 {
 	alpha68k_state *state = (alpha68k_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, mx, my, color, tile, fx, fy, i;
 
 	for (offs = s; offs < e; offs += 0x40)
@@ -278,7 +278,7 @@ static void draw_sprites_V( running_machine *machine, bitmap_t *bitmap, const re
 VIDEO_UPDATE( alpha68k_V )
 {
 	alpha68k_state *state = (alpha68k_state *)screen->machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 
 	if (state->last_bank != state->bank_base)
 		tilemap_mark_all_tiles_dirty_all(screen->machine);
@@ -343,9 +343,9 @@ VIDEO_UPDATE( alpha68k_V_sb )
 static void draw_sprites_I( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int c, int d, int yshift )
 {
 	alpha68k_state *state = (alpha68k_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int data, offs, mx, my, tile, color, fy, i;
-	UINT8 *color_prom = memory_region(machine, "user1");
+	uint8_t *color_prom = memory_region(machine, "user1");
 	gfx_element *gfx = machine->gfx[0];
 
 	for (offs = 0; offs < 0x400; offs += 0x20)
@@ -406,7 +406,7 @@ PALETTE_INIT( kyros )
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = ((color_prom[i] & 0x0f) << 4) | (color_prom[i + 0x100] & 0x0f);
+		uint8_t ctabentry = ((color_prom[i] & 0x0f) << 4) | (color_prom[i + 0x100] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -433,7 +433,7 @@ PALETTE_INIT( paddlem )
 
 	for (i = 0; i < 0x400; i++)
 	{
-		UINT8 ctabentry = ((color_prom[i + 0x400] & 0x0f) << 4) | (color_prom[i] & 0x0f);
+		uint8_t ctabentry = ((color_prom[i + 0x400] & 0x0f) << 4) | (color_prom[i] & 0x0f);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -451,10 +451,10 @@ static void jongbou_video_banking(int *bank, int data)
 static void kyros_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int c, int d )
 {
 	alpha68k_state *state = (alpha68k_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, mx, my, color, tile, i, bank, fy, fx;
 	int data;
-	UINT8 *color_prom = memory_region(machine, "user1");
+	uint8_t *color_prom = memory_region(machine, "user1");
 
 //AT
 	for (offs = 0; offs < 0x400; offs += 0x20)
@@ -519,7 +519,7 @@ static void sstingry_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 {
 //AT
 	alpha68k_state *state = (alpha68k_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int data, offs, mx, my, color, tile, i, bank, fy, fx;
 
 	for (offs = 0; offs < 0x400; offs += 0x20)

@@ -4,11 +4,11 @@
 /* set to 1 to fix protection check after bonus round (see notes in pacman.c driver) */
 #define CANNONB_HACK	0
 
-static void cclimber_decode(running_machine *machine, const UINT8 convtable[8][16])
+static void cclimber_decode(running_machine *machine, const uint8_t convtable[8][16])
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x10000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x10000);
 	int A;
 
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypt);
@@ -16,7 +16,7 @@ static void cclimber_decode(running_machine *machine, const UINT8 convtable[8][1
 	for (A = 0x0000;A < 0x10000;A++)
 	{
 		int i,j;
-		UINT8 src;
+		uint8_t src;
 
 
 		src = rom[A];
@@ -35,7 +35,7 @@ static void cclimber_decode(running_machine *machine, const UINT8 convtable[8][1
 
 DRIVER_INIT( cclimber )
 {
-	static const UINT8 convtable[8][16] =
+	static const uint8_t convtable[8][16] =
 	{
 		/* -1 marks spots which are unused and therefore unknown */
 		{ 0x44,0x14,0x54,0x10,0x11,0x41,0x05,0x50,0x51,0x00,0x40,0x55,0x45,0x04,0x01,0x15 },
@@ -53,7 +53,7 @@ DRIVER_INIT( cclimber )
 
 void cclimberj_decode(running_machine *machine)
 {
-	static const UINT8 convtable[8][16] =
+	static const uint8_t convtable[8][16] =
 	{
 		{ 0x41,0x54,0x51,0x14,0x05,0x10,0x01,0x55,0x44,0x11,0x00,0x50,0x15,0x40,0x04,0x45 },
 		{ 0x50,0x11,0x40,0x55,0x51,0x14,0x45,0x04,0x54,0x15,0x10,0x05,0x44,0x01,0x00,0x41 },
@@ -75,7 +75,7 @@ DRIVER_INIT( cclimberj )
 
 void mshuttle_decode(running_machine *machine)
 {
-	static const UINT8 convtable[8][16] =
+	static const uint8_t convtable[8][16] =
 	{
 		/* -1 marks spots which are unused and therefore unknown */
 		{ 0x40,0x41,0x44,0x15,0x05,0x51,0x54,0x55,0x50,0x00,0x01,0x04,  -1,0x10,0x11,0x14 },
@@ -94,7 +94,7 @@ void mshuttle_decode(running_machine *machine)
 DRIVER_INIT( ckongb )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (A = 0x0000;A < 0x6000;A++) /* all the program ROMs are encrypted */
 	{
@@ -105,7 +105,7 @@ DRIVER_INIT( ckongb )
 #if CANNONB_HACK
 static void cannonb_patch(void)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	rom[0x2ba0] = 0x21;
 	rom[0x2ba1] = 0xfb;
@@ -117,13 +117,13 @@ static void cannonb_patch(void)
 DRIVER_INIT( cannonb )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (A = 0x0000;A < 0x1000;A++) /* only first ROM is encrypted */
 	{
-		UINT8 src;
+		uint8_t src;
 		int i;
-		static const UINT8 xor_tab[4] ={0x92, 0x82, 0x12, 0x10};
+		static const uint8_t xor_tab[4] ={0x92, 0x82, 0x12, 0x10};
 
 		src = rom[A+0x10000];
 

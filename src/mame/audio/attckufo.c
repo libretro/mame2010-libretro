@@ -61,9 +61,9 @@ static int noisesize,		  /* number of samples */
 	noisesamples;	  /* count of samples to give out per tone */
 
 static sound_stream *channel;
-static INT16 *tone;
+static int16_t *tone;
 
-static INT8 *noise;
+static int8_t *noise;
 
 void attckufo_soundport_w (int offset, int data)
 {
@@ -219,7 +219,7 @@ static DEVICE_START( attckufo_sound )
 	noisesize = NOISE_FREQUENCY_MAX * NOISE_BUFFER_SIZE_SEC;
 	noisepos = 0;
 	noisesamples = 1;
-	noise = auto_alloc_array(device->machine, INT8, noisesize);
+	noise = auto_alloc_array(device->machine, int8_t, noisesize);
 	{
 		int noiseshift = 0x7ffff8;
 		char data;
@@ -254,11 +254,11 @@ static DEVICE_START( attckufo_sound )
 	tone1pos = tone2pos = tone3pos = 0;
 	tone1samples = tone2samples = tone3samples = 1;
 
-	tone = auto_alloc_array(device->machine, INT16, tonesize);
+	tone = auto_alloc_array(device->machine, int16_t, tonesize);
 
 	for (i = 0; i < tonesize; i++)
 	{
-		tone[i] = (INT16)(sin (2 * M_PI * i / tonesize) * 127 + 0.5);
+		tone[i] = (int16_t)(sin (2 * M_PI * i / tonesize) * 127 + 0.5);
 	}
 }
 

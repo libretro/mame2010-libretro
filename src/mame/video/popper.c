@@ -123,8 +123,8 @@ WRITE8_HANDLER( popper_gfx_bank_w )
 static TILE_GET_INFO( get_popper_p123_tile_info )
 {
 	popper_state *state = (popper_state *)machine->driver_data;
-	UINT32 tile_number = state->videoram[tile_index];
-	UINT8 attr = state->attribram[tile_index];
+	uint32_t tile_number = state->videoram[tile_index];
+	uint8_t attr = state->attribram[tile_index];
 	tile_number += state->gfx_bank << 8;
 
 	SET_TILE_INFO(
@@ -138,8 +138,8 @@ static TILE_GET_INFO( get_popper_p123_tile_info )
 static TILE_GET_INFO( get_popper_p0_tile_info )
 {
 	popper_state *state = (popper_state *)machine->driver_data;
-	UINT32 tile_number = state->videoram[tile_index];
-	UINT8 attr = state->attribram[tile_index];
+	uint32_t tile_number = state->videoram[tile_index];
+	uint8_t attr = state->attribram[tile_index];
 	tile_number += state->gfx_bank << 8;
 
 	//pen 0 only in front if colour set as well
@@ -155,8 +155,8 @@ static TILE_GET_INFO( get_popper_p0_tile_info )
 static TILE_GET_INFO( get_popper_ol_p123_tile_info )
 {
 	popper_state *state = (popper_state *)machine->driver_data;
-	UINT32 tile_number = state->ol_videoram[tile_index];
-	UINT8 attr  = state->ol_attribram[tile_index];
+	uint32_t tile_number = state->ol_videoram[tile_index];
+	uint8_t attr  = state->ol_attribram[tile_index];
 	tile_number += state->gfx_bank << 8;
 
 	SET_TILE_INFO(
@@ -170,8 +170,8 @@ static TILE_GET_INFO( get_popper_ol_p123_tile_info )
 static TILE_GET_INFO( get_popper_ol_p0_tile_info )
 {
 	popper_state *state = (popper_state *)machine->driver_data;
-	UINT32 tile_number = state->ol_videoram[tile_index];
-	UINT8 attr = state->ol_attribram[tile_index];
+	uint32_t tile_number = state->ol_videoram[tile_index];
+	uint8_t attr = state->ol_attribram[tile_index];
 	tile_number += state->gfx_bank << 8;
 
 	//pen 0 only in front if colour set as well

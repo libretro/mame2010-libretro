@@ -41,13 +41,13 @@ enum {
 
 /*----------- defined in drivers/taito_f3.c -----------*/
 
-extern UINT32 *f3_shared_ram;
+extern uint32_t *f3_shared_ram;
 extern int f3_game;
 
 /*----------- defined in video/taito_f3.c -----------*/
 
-extern UINT32 *f3_vram,*f3_line_ram;
-extern UINT32 *f3_pf_data,*f3_pivot_ram;
+extern uint32_t *f3_vram,*f3_line_ram;
+extern uint32_t *f3_pf_data,*f3_pivot_ram;
 
 VIDEO_START( f3 );
 VIDEO_UPDATE( f3 );

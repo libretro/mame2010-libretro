@@ -17,7 +17,7 @@
 
 ***************************************************************************/
 
-static UINT8 customio[16];
+static uint8_t customio[16];
 static char battles_customio_command;
 static char battles_customio_prev_command;
 static char battles_customio_command_count;

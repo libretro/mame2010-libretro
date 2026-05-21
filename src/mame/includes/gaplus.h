@@ -1,14 +1,14 @@
 /*----------- defined in machine/gaplus.c -----------*/
 
-extern UINT8 *gaplus_customio_3;
+extern uint8_t *gaplus_customio_3;
 WRITE8_HANDLER( gaplus_customio_3_w );
 READ8_HANDLER( gaplus_customio_3_r );
 
 
 /*----------- defined in video/gaplus.c -----------*/
 
-extern UINT8 *gaplus_videoram;
-extern UINT8 *gaplus_spriteram;
+extern uint8_t *gaplus_videoram;
+extern uint8_t *gaplus_spriteram;
 READ8_HANDLER( gaplus_videoram_r );
 WRITE8_HANDLER( gaplus_videoram_w );
 WRITE8_HANDLER( gaplus_starfield_control_w );

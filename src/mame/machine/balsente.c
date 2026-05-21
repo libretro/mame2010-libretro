@@ -58,7 +58,7 @@ TIMER_DEVICE_CALLBACK( balsente_interrupt_timer )
 	/* if we're a shooter, we do a little more work */
 	if (state->shooter)
 	{
-		UINT8 tempx, tempy;
+		uint8_t tempx, tempy;
 
 		/* we latch the beam values on the first interrupt after VBLANK */
 		if (param == 64)
@@ -191,8 +191,8 @@ MACHINE_RESET( balsente )
 static void poly17_init(running_machine *machine)
 {
 	balsente_state *state = (balsente_state *)machine->driver_data;
-	UINT32 i, x = 0;
-	UINT8 *p, *r;
+	uint32_t i, x = 0;
+	uint8_t *p, *r;
 
 	/* allocate memory */
 	p = state->poly17;
@@ -215,7 +215,7 @@ void balsente_noise_gen(running_device *device, int count, short *buffer)
 {
 	balsente_state *state = (balsente_state *)device->machine->driver_data;
 	int chip;
-	UINT32 step, noise_counter;
+	uint32_t step, noise_counter;
 
 	/* find the chip we are referring to */
 	for (chip = 0; chip < ARRAY_LENGTH(state->cem_device); chip++)
@@ -254,7 +254,7 @@ WRITE8_HANDLER( balsente_random_reset_w )
 READ8_HANDLER( balsente_random_num_r )
 {
 	balsente_state *state = (balsente_state *)space->machine->driver_data;
-	UINT32 cc;
+	uint32_t cc;
 
 	/* CPU runs at 1.25MHz, noise source at 100kHz --> multiply by 12.5 */
 	cc = space->machine->firstcpu->total_cycles();
@@ -339,7 +339,7 @@ WRITE8_HANDLER( balsente_misc_output_w )
 static void m6850_update_io(running_machine *machine)
 {
 	balsente_state *state = (balsente_state *)machine->driver_data;
-	UINT8 new_state;
+	uint8_t new_state;
 
 	/* sound -> main CPU communications */
 	if (!(state->m6850_sound_status & 0x02))
@@ -957,7 +957,7 @@ READ8_HANDLER( balsente_counter_state_r )
 WRITE8_HANDLER( balsente_counter_control_w )
 {
 	balsente_state *state = (balsente_state *)space->machine->driver_data;
-	UINT8 diff_counter_control = state->counter_control ^ data;
+	uint8_t diff_counter_control = state->counter_control ^ data;
 
 	/* set the new global value */
 	state->counter_control = data;
@@ -1005,7 +1005,7 @@ WRITE8_HANDLER( balsente_counter_control_w )
 
 WRITE8_HANDLER( balsente_chip_select_w )
 {
-	static const UINT8 register_map[8] =
+	static const uint8_t register_map[8] =
 	{
 		CEM3394_VCO_FREQUENCY,
 		CEM3394_FINAL_GAIN,
@@ -1080,7 +1080,7 @@ WRITE8_HANDLER( balsente_dac_data_w )
 	/* if there are open channels, force the values in */
 	if ((state->chip_select & 0x3f) != 0x3f)
 	{
-		UINT8 temp = state->chip_select;
+		uint8_t temp = state->chip_select;
 		balsente_chip_select_w(space, 0, 0x3f);
 		balsente_chip_select_w(space, 0, temp);
 	}
@@ -1129,7 +1129,7 @@ WRITE8_HANDLER( spiker_expand_w )
 READ8_HANDLER( spiker_expand_r )
 {
 	balsente_state *state = (balsente_state *)space->machine->driver_data;
-	UINT8 left, right;
+	uint8_t left, right;
 
 	/* first rotate each nibble */
 	state->spiker_expand_bits = ((state->spiker_expand_bits << 1) & 0xee) | ((state->spiker_expand_bits >> 3) & 0x11);
@@ -1149,8 +1149,8 @@ READ8_HANDLER( spiker_expand_r )
 static void update_grudge_steering(running_machine *machine)
 {
 	balsente_state *state = (balsente_state *)machine->driver_data;
-	UINT8 wheel[3];
-	INT8 diff[3];
+	uint8_t wheel[3];
+	int8_t diff[3];
 
 	/* read the current steering values */
 	wheel[0] = input_port_read(machine, "AN0");
@@ -1207,7 +1207,7 @@ READ8_HANDLER( grudge_steering_r )
 READ8_HANDLER( shrike_shared_6809_r )
 {
 	balsente_state *state = (balsente_state *)space->machine->driver_data;
-	UINT16 mem_mask = offset & 1 ? 0xff00 : 0x00ff;
+	uint16_t mem_mask = offset & 1 ? 0xff00 : 0x00ff;
 
 	switch( offset )
 	{
@@ -1222,7 +1222,7 @@ READ8_HANDLER( shrike_shared_6809_r )
 WRITE8_HANDLER( shrike_shared_6809_w )
 {
 	balsente_state *state = (balsente_state *)space->machine->driver_data;
-	UINT16 mem_mask = offset & 1 ? 0xff00 : 0x00ff;
+	uint16_t mem_mask = offset & 1 ? 0xff00 : 0x00ff;
 	state->shrike_shared[offset >> 1] = ( state->shrike_shared[offset >> 1] & mem_mask ) | ( data << ( mem_mask & 0x8 ) );
 }
 

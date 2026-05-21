@@ -7,12 +7,12 @@ public:
 	flstory_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  workram;
-	UINT8 *  scrlram;
-	UINT8 *  spriteram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
-//  UINT8 *  paletteram_2;  // currently this uses generic palette handling
+	uint8_t *  videoram;
+	uint8_t *  workram;
+	uint8_t *  scrlram;
+	uint8_t *  spriteram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
+//  uint8_t *  paletteram_2;  // currently this uses generic palette handling
 	size_t   videoram_size;
 	size_t   spriteram_size;
 
@@ -21,21 +21,21 @@ public:
 	int      char_bank, palette_bank, flipscreen, gfxctrl;
 
 	/* sound-related */
-	UINT8    snd_data;
-	UINT8    snd_flag;
+	uint8_t    snd_data;
+	uint8_t    snd_flag;
 	int      sound_nmi_enable, pending_nmi;
 	int      vol_ctrl[16];
-	UINT8    snd_ctrl0;
-	UINT8    snd_ctrl1;
-	UINT8    snd_ctrl2;
-	UINT8    snd_ctrl3;
+	uint8_t    snd_ctrl0;
+	uint8_t    snd_ctrl1;
+	uint8_t    snd_ctrl2;
+	uint8_t    snd_ctrl3;
 
 	/* protection */
-	UINT8    from_main, from_mcu;
+	uint8_t    from_main, from_mcu;
 	int      mcu_sent, main_sent;
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_b_in, port_b_out, ddr_b;
-	UINT8    port_c_in, port_c_out, ddr_c;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_b_in, port_b_out, ddr_b;
+	uint8_t    port_c_in, port_c_out, ddr_c;
 	int      mcu_select;
 
 	/* devices */

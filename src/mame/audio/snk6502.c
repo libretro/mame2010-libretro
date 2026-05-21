@@ -36,19 +36,19 @@ typedef struct tone
 	int	offset;
 	int	base;
 	int	mask;
-	INT32	sample_rate;
-	INT32	sample_step;
-	INT32	sample_cur;
-	INT16	form[16];
+	int32_t	sample_rate;
+	int32_t	sample_step;
+	int32_t	sample_cur;
+	int16_t	form[16];
 } TONE;
 
 static TONE tone_channels[CHANNELS];
-static INT32 tone_clock_expire;
-static INT32 tone_clock;
+static int32_t tone_clock_expire;
+static int32_t tone_clock;
 static sound_stream * tone_stream;
 
 static int Sound0StopOnRollover;
-static UINT8 LastPort1;
+static uint8_t LastPort1;
 
 
 static const char *const sasuke_sample_names[] =
@@ -377,8 +377,8 @@ INLINE void validate_tone_channel(running_machine *machine, int channel)
 {
 	if (!tone_channels[channel].mute)
 	{
-		UINT8 *ROM = memory_region(machine, "snk6502");
-		UINT8 romdata = ROM[tone_channels[channel].base + tone_channels[channel].offset];
+		uint8_t *ROM = memory_region(machine, "snk6502");
+		uint8_t romdata = ROM[tone_channels[channel].base + tone_channels[channel].offset];
 
 		if (romdata != 0xff)
 			tone_channels[channel].sample_step = tone_channels[channel].sample_rate / (256 - romdata);
@@ -397,12 +397,12 @@ static STREAM_UPDATE( snk6502_tone_update )
 
 	while (samples-- > 0)
 	{
-		INT32 data = 0;
+		int32_t data = 0;
 
 		for (i = 0; i < CHANNELS; i++)
 		{
 			TONE *voice = &tone_channels[i];
-			INT16 *form = voice->form;
+			int16_t *form = voice->form;
 
 			if (!voice->mute && voice->sample_step)
 			{
@@ -411,8 +411,8 @@ static STREAM_UPDATE( snk6502_tone_update )
 				int cur = form[(cur_pos >> FRAC_BITS) & 15];
 
 				/* interpolate */
-				data += ((INT32)prev * (FRAC_ONE - (cur_pos & FRAC_MASK))
-				        + (INT32)cur * (cur_pos & FRAC_MASK)) >> FRAC_BITS;
+				data += ((int32_t)prev * (FRAC_ONE - (cur_pos & FRAC_MASK))
+				        + (int32_t)cur * (cur_pos & FRAC_MASK)) >> FRAC_BITS;
 
 				voice->sample_cur = cur_pos;
 			}
@@ -1013,12 +1013,12 @@ WRITE8_HANDLER( fantasy_sound_w )
 #define HD68880_SYBS	0x0f
 
 static int	hd38880_cmd;
-static UINT32	hd38880_addr;
+static uint32_t	hd38880_addr;
 static int	hd38880_data_bytes;
 static double	hd38880_speed;
 
 
-static void snk6502_speech_w(running_machine *machine, UINT8 data, const UINT16 *table, int start)
+static void snk6502_speech_w(running_machine *machine, uint8_t data, const uint16_t *table, int start)
 {
 	/*
         bit description
@@ -1163,7 +1163,7 @@ static void snk6502_speech_w(running_machine *machine, UINT8 data, const UINT16 
 
 WRITE8_HANDLER( vanguard_speech_w )
 {
-	static const UINT16 vanguard_table[16] =
+	static const uint16_t vanguard_table[16] =
 	{
 		0x04000,
 		0x04325,
@@ -1188,7 +1188,7 @@ WRITE8_HANDLER( vanguard_speech_w )
 
 WRITE8_HANDLER( fantasy_speech_w )
 {
-	static const UINT16 fantasy_table[16] =
+	static const uint16_t fantasy_table[16] =
 	{
 		0x04000,
 		0x04297,

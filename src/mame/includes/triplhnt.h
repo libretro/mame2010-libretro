@@ -31,11 +31,11 @@ extern const samples_interface triplhnt_samples_interface;
 VIDEO_START( triplhnt );
 VIDEO_UPDATE( triplhnt );
 
-extern UINT8* triplhnt_playfield_ram;
-extern UINT8* triplhnt_vpos_ram;
-extern UINT8* triplhnt_hpos_ram;
-extern UINT8* triplhnt_code_ram;
-extern UINT8* triplhnt_orga_ram;
+extern uint8_t* triplhnt_playfield_ram;
+extern uint8_t* triplhnt_vpos_ram;
+extern uint8_t* triplhnt_hpos_ram;
+extern uint8_t* triplhnt_code_ram;
+extern uint8_t* triplhnt_orga_ram;
 
 extern int triplhnt_sprite_zoom;
 extern int triplhnt_sprite_bank;

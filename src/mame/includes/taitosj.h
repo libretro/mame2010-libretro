@@ -23,20 +23,20 @@ READ8_HANDLER( alpine_port_2_r );
 
 /*----------- defined in video/taitosj.c -----------*/
 
-extern UINT8 *taitosj_videoram_1;
-extern UINT8 *taitosj_videoram_2;
-extern UINT8 *taitosj_videoram_3;
-extern UINT8 *taitosj_spriteram;
-extern UINT8 *taitosj_paletteram;
-extern UINT8 *taitosj_characterram;
-extern UINT8 *taitosj_scroll;
-extern UINT8 *taitosj_colscrolly;
-extern UINT8 *taitosj_gfxpointer;
-extern UINT8 *taitosj_colorbank;
-extern UINT8 *taitosj_video_mode;
-extern UINT8 *taitosj_video_priority;
-extern UINT8 *taitosj_collision_reg;
-extern UINT8 *kikstart_scrollram;
+extern uint8_t *taitosj_videoram_1;
+extern uint8_t *taitosj_videoram_2;
+extern uint8_t *taitosj_videoram_3;
+extern uint8_t *taitosj_spriteram;
+extern uint8_t *taitosj_paletteram;
+extern uint8_t *taitosj_characterram;
+extern uint8_t *taitosj_scroll;
+extern uint8_t *taitosj_colscrolly;
+extern uint8_t *taitosj_gfxpointer;
+extern uint8_t *taitosj_colorbank;
+extern uint8_t *taitosj_video_mode;
+extern uint8_t *taitosj_video_priority;
+extern uint8_t *taitosj_collision_reg;
+extern uint8_t *kikstart_scrollram;
 
 READ8_HANDLER( taitosj_gfxrom_r );
 WRITE8_HANDLER( taitosj_characterram_w );

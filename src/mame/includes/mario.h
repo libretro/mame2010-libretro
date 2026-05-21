@@ -42,20 +42,20 @@ public:
 	/* machine states */
 
 	/* sound state */
-	UINT8	last;
-	UINT8	portT;
+	uint8_t	last;
+	uint8_t	portT;
 	const char *eabank;
 
 	/* video state */
-	UINT8	gfx_bank;
-	UINT8	palette_bank;
-	UINT16	gfx_scroll;
-	UINT8	flip;
+	uint8_t	gfx_bank;
+	uint8_t	palette_bank;
+	uint16_t	gfx_scroll;
+	uint8_t	flip;
 
 	/* driver general */
 
-	UINT8	*spriteram;
-	UINT8	*videoram;
+	uint8_t	*spriteram;
+	uint8_t	*videoram;
 	size_t	spriteram_size;
 	tilemap_t *bg_tilemap;
 	int monitor;

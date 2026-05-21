@@ -29,7 +29,7 @@ struct _atarimo_data
 {
 	running_machine *	machine;			/* pointer back to the machine */
 
-	UINT32				gfxchanged;			/* true if the gfx info has changed */
+	uint32_t				gfxchanged;			/* true if the gfx info has changed */
 	gfx_element			gfxelement[MAX_GFX_ELEMENTS]; /* local copy of graphics elements */
 	int					gfxgranularity[MAX_GFX_ELEMENTS];
 
@@ -39,7 +39,7 @@ struct _atarimo_data
 	int					split;				/* are entries split or together? */
 	int					reverse;			/* render in reverse order? */
 	int					swapxy;				/* render in swapped X/Y order? */
-	UINT8				nextneighbor;		/* does the neighbor bit affect the next object? */
+	uint8_t				nextneighbor;		/* does the neighbor bit affect the next object? */
 	int					slipshift;			/* log2(pixels_per_SLIP) */
 	int					slipoffset;			/* pixel offset for SLIP */
 
@@ -61,13 +61,13 @@ struct _atarimo_data
 	int					sliprammask;		/* combined mask when accessing SLIP RAM with raw addresses */
 	int					slipramsize;		/* total size of SLIP RAM, in entries */
 
-	UINT32				palettebase;		/* base palette entry */
+	uint32_t				palettebase;		/* base palette entry */
 	int					maxcolors;			/* maximum number of colors */
 	int					transpen;			/* transparent pen index */
 
-	UINT32				bank;				/* current bank number */
-	UINT32				xscroll;			/* current x scroll offset */
-	UINT32				yscroll;			/* current y scroll offset */
+	uint32_t				bank;				/* current bank number */
+	uint32_t				xscroll;			/* current x scroll offset */
+	uint32_t				yscroll;			/* current y scroll offset */
 
 	int					maxperline;			/* maximum number of entries/line */
 
@@ -92,23 +92,23 @@ struct _atarimo_data
 	int					codehighshift;		/* shift count for the upper code */
 
 	atarimo_entry *		spriteram;			/* pointer to sprite RAM */
-	UINT16 **			slipram;			/* pointer to the SLIP RAM pointer */
-	UINT16 *			codelookup;			/* lookup table for codes */
-	UINT8 *				colorlookup;		/* lookup table for colors */
-	UINT8 *				gfxlookup;			/* lookup table for graphics */
+	uint16_t **			slipram;			/* pointer to the SLIP RAM pointer */
+	uint16_t *			codelookup;			/* lookup table for codes */
+	uint8_t *				colorlookup;		/* lookup table for colors */
+	uint8_t *				gfxlookup;			/* lookup table for graphics */
 
 	atarimo_entry *		activelist[ATARIMO_MAXPERBANK];	/* pointers to active motion objects */
 	atarimo_entry **	activelast;			/* pointer to the last pointer in the active list */
 
-	UINT8 *				dirtygrid;			/* grid of dirty rects for blending */
+	uint8_t *				dirtygrid;			/* grid of dirty rects for blending */
 	int					dirtywidth;			/* width of dirty grid */
 	int					dirtyheight;		/* height of dirty grid */
 
 	rectangle			rectlist[ATARIMO_MAXPERBANK];	/* list of bounding rectangles */
 	int					rectcount;
 
-	UINT32				last_xpos;			/* (during processing) the previous X position */
-	UINT32				next_xpos;			/* (during processing) the next X position */
+	uint32_t				last_xpos;			/* (during processing) the previous X position */
+	uint32_t				next_xpos;			/* (during processing) the next X position */
 };
 
 
@@ -126,11 +126,11 @@ struct _atarimo_data
     GLOBAL VARIABLES
 ***************************************************************************/
 
-UINT16 *atarimo_0_spriteram;
-UINT16 *atarimo_0_slipram;
+uint16_t *atarimo_0_spriteram;
+uint16_t *atarimo_0_slipram;
 
-UINT16 *atarimo_1_spriteram;
-UINT16 *atarimo_1_slipram;
+uint16_t *atarimo_1_spriteram;
+uint16_t *atarimo_1_slipram;
 
 
 
@@ -411,14 +411,14 @@ void atarimo_init(running_machine *machine, int map, const atarimo_desc *desc)
 	mo->spriteram = auto_alloc_array_clear(machine, atarimo_entry, mo->spriteramsize);
 
 	/* allocate the code lookup */
-	mo->codelookup = auto_alloc_array(machine, UINT16, round_to_powerof2(mo->codemask.mask));
+	mo->codelookup = auto_alloc_array(machine, uint16_t, round_to_powerof2(mo->codemask.mask));
 
 	/* initialize it 1:1 */
 	for (i = 0; i < round_to_powerof2(mo->codemask.mask); i++)
 		mo->codelookup[i] = i;
 
 	/* allocate the color lookup */
-	mo->colorlookup = auto_alloc_array(machine, UINT8, round_to_powerof2(mo->colormask.mask));
+	mo->colorlookup = auto_alloc_array(machine, uint8_t, round_to_powerof2(mo->colormask.mask));
 
 	/* initialize it 1:1 */
 	for (i = 0; i < round_to_powerof2(mo->colormask.mask); i++)
@@ -427,10 +427,10 @@ void atarimo_init(running_machine *machine, int map, const atarimo_desc *desc)
 	/* allocate dirty grid */
 	mo->dirtywidth = (machine->primary_screen->width() >> mo->tilexshift) + 2;
 	mo->dirtyheight = (machine->primary_screen->height() >> mo->tileyshift) + 2;
-	mo->dirtygrid = auto_alloc_array(machine, UINT8, mo->dirtywidth * mo->dirtyheight);
+	mo->dirtygrid = auto_alloc_array(machine, uint8_t, mo->dirtywidth * mo->dirtyheight);
 
 	/* allocate the gfx lookup */
-	mo->gfxlookup = auto_alloc_array(machine, UINT8, round_to_powerof2(mo->gfxmask.mask));
+	mo->gfxlookup = auto_alloc_array(machine, uint8_t, round_to_powerof2(mo->gfxmask.mask));
 
 	/* initialize it with the gfxindex we were passed in */
 	for (i = 0; i < round_to_powerof2(mo->gfxmask.mask); i++)
@@ -458,7 +458,7 @@ void atarimo_init(running_machine *machine, int map, const atarimo_desc *desc)
     lookup table.
 ---------------------------------------------------------------*/
 
-UINT16 *atarimo_get_code_lookup(int map, int *size)
+uint16_t *atarimo_get_code_lookup(int map, int *size)
 {
 	atarimo_data *mo = &atarimo[map];
 
@@ -473,7 +473,7 @@ UINT16 *atarimo_get_code_lookup(int map, int *size)
     lookup table.
 ---------------------------------------------------------------*/
 
-UINT8 *atarimo_get_color_lookup(int map, int *size)
+uint8_t *atarimo_get_color_lookup(int map, int *size)
 {
 	atarimo_data *mo = &atarimo[map];
 
@@ -488,7 +488,7 @@ UINT8 *atarimo_get_color_lookup(int map, int *size)
     lookup table.
 ---------------------------------------------------------------*/
 
-UINT8 *atarimo_get_gfx_lookup(int map, int *size)
+uint8_t *atarimo_get_gfx_lookup(int map, int *size)
 {
 	atarimo_data *mo = &atarimo[map];
 
@@ -506,7 +506,7 @@ UINT8 *atarimo_get_gfx_lookup(int map, int *size)
 static void build_active_list(atarimo_data *mo, int link)
 {
 	atarimo_entry *bankbase = &mo->spriteram[mo->bank << mo->entrybits];
-	UINT8 movisit[ATARIMO_MAXPERBANK];
+	uint8_t movisit[ATARIMO_MAXPERBANK];
 	atarimo_entry **current;
 	int i;
 
@@ -539,9 +539,9 @@ static void build_active_list(atarimo_data *mo, int link)
     X and Y position.
 ---------------------------------------------------------------*/
 
-INLINE UINT8 *get_dirty_base(atarimo_data *mo, int x, int y)
+INLINE uint8_t *get_dirty_base(atarimo_data *mo, int x, int y)
 {
-	UINT8 *result = mo->dirtygrid;
+	uint8_t *result = mo->dirtygrid;
 	result += ((y >> mo->tileyshift) + 1) * mo->dirtywidth;
 	result += (x >> mo->tilexshift) + 1;
 	return result;
@@ -565,7 +565,7 @@ static void erase_dirty_grid(atarimo_data *mo, const rectangle *cliprect)
 	for (y = sy; y <= ey; y++)
 	{
 		/* get the base pointer and memset the row */
-		UINT8 *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
+		uint8_t *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
 		memset(dirtybase, 0, ex - sx + 1);
 	}
 }
@@ -595,7 +595,7 @@ static void convert_dirty_grid_to_rects(atarimo_data *mo, const rectangle *clipr
 	/* loop over all grid rows that intersect our cliprect */
 	for (y = sy; y <= ey; y++)
 	{
-		UINT8 *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
+		uint8_t *dirtybase = get_dirty_base(mo, cliprect->min_x, y << mo->tileyshift);
 		int can_add_to_existing = 0;
 
 		/* loop over all grid columns that intersect our cliprect */
@@ -760,13 +760,13 @@ static int mo_render_object(atarimo_data *mo, const atarimo_entry *entry, const 
 	int height = EXTRACT_DATA(entry, mo->heightmask) + 1;
 	int priority = EXTRACT_DATA(entry, mo->prioritymask);
 	int xadv, yadv, rendered = 0;
-	UINT8 *dirtybase;
+	uint8_t *dirtybase;
 
 #ifdef TEMPDEBUG
 int temp = EXTRACT_DATA(entry, mo->codemask);
 if ((temp & 0xff00) == 0xc800)
 {
-	static UINT8 hits[256];
+	static uint8_t hits[256];
 	if (!hits[temp & 0xff])
 	{
 		fprintf(stderr, "code = %04X\n", temp);

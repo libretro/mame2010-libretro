@@ -8,9 +8,9 @@ public:
 	docastle_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
 	size_t   spriteram_size;
 
 	/* video-related */
@@ -20,7 +20,7 @@ public:
 	int      adpcm_pos, adpcm_idle;
 	int      adpcm_data;
 	int      adpcm_status;
-	UINT8    buffer0[9], buffer1[9];
+	uint8_t    buffer0[9], buffer1[9];
 
 	/* devices */
 	cpu_device *maincpu;

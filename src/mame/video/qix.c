@@ -46,7 +46,7 @@ static VIDEO_START( qix )
 	qix_state *state = (qix_state *)machine->driver_data;
 
 	/* allocate memory for the full video RAM */
-	state->videoram = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->videoram = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	/* set up save states */
 	state_save_register_global_pointer(machine, state->videoram, 256 * 256);
@@ -70,8 +70,8 @@ static WRITE_LINE_DEVICE_HANDLER( display_enable_changed )
 	/* on the rising edge, latch the scanline */
 	if (state)
 	{
-		UINT16 ma = mc6845_get_ma(device);
-		UINT8 ra = mc6845_get_ra(device);
+		uint16_t ma = mc6845_get_ma(device);
+		uint8_t ra = mc6845_get_ra(device);
 
 		/* RA0-RA2 goes to D0-D2 and MA5-MA9 goes to D3-D7 */
 		*driver_state->scanline_latch = ((ma >> 2) & 0xf8) | (ra & 0x07);
@@ -222,7 +222,7 @@ static WRITE8_HANDLER( qix_paletteram_w )
 {
 	qix_state *state = (qix_state *)space->machine->driver_data;
 
-	UINT8 old_data = state->paletteram[offset];
+	uint8_t old_data = state->paletteram[offset];
 
 	/* set the palette RAM value */
 	state->paletteram[offset] = data;
@@ -257,7 +257,7 @@ static void get_pens(qix_state *state, pen_t *pens)
 	/* this conversion table should be about right. It gives a reasonable */
 	/* gray scale in the test screen, and the red, green and blue squares */
 	/* in the same screen are barely visible, as the manual requires. */
-	static const UINT8 table[16] =
+	static const uint8_t table[16] =
 	{
 		0x00,	/* value = 0, intensity = 0 */
 		0x12,	/* value = 0, intensity = 1 */
@@ -281,7 +281,7 @@ static void get_pens(qix_state *state, pen_t *pens)
 	{
 		int bits, intensity, r, g, b;
 
-		UINT8 data = state->paletteram[offs];
+		uint8_t data = state->paletteram[offs];
 
 		/* compute R, G, B from the table */
 		intensity = (data >> 0) & 0x03;
@@ -327,8 +327,8 @@ static MC6845_BEGIN_UPDATE( begin_update )
 static MC6845_UPDATE_ROW( update_row )
 {
 	qix_state *state = (qix_state *)device->machine->driver_data;
-	UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
-	UINT16 x;
+	uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
+	uint16_t x;
 
 	pen_t *pens = (pen_t *)param;
 

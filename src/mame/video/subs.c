@@ -39,7 +39,7 @@ WRITE8_HANDLER( subs_invert2_w )
 
 VIDEO_UPDATE( subs )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	int offs;
 
 	running_device *left_screen  = screen->machine->device("lscreen");

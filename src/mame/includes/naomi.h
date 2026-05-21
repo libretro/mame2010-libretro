@@ -14,7 +14,7 @@ enum {
 
 /*----------- defined in machine/gdcrypt.c -----------*/
 
-extern void naomi_game_decrypt(running_machine* machine, UINT64 key, UINT8* region, int length);
+extern void naomi_game_decrypt(running_machine* machine, uint64_t key, uint8_t* region, int length);
 
 
 /*----------- defined in machine/naomi.c -----------*/
@@ -36,7 +36,7 @@ extern DRIVER_INIT( vf4evoct );
 
 extern DRIVER_INIT( kick4csh );
 
-extern UINT64 *naomi_ram64;
+extern uint64_t *naomi_ram64;
 
 extern int jvsboard_type;
-extern UINT16 actel_id;
+extern uint16_t actel_id;

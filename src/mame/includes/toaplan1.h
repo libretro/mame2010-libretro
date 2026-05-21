@@ -39,7 +39,7 @@ extern void demonwld_driver_savestate(running_machine *machine);
 
 extern int toaplan1_unk_reset_port;
 
-extern UINT8 *toaplan1_sharedram;
+extern uint8_t *toaplan1_sharedram;
 
 
 /*----------- defined in video/toaplan1.c -----------*/
@@ -80,7 +80,7 @@ VIDEO_UPDATE( toaplan1 );
 VIDEO_UPDATE( demonwld );
 
 
-extern UINT16 *toaplan1_colorram1;
-extern UINT16 *toaplan1_colorram2;
+extern uint16_t *toaplan1_colorram1;
+extern uint16_t *toaplan1_colorram2;
 extern size_t toaplan1_colorram1_size;
 extern size_t toaplan1_colorram2_size;

@@ -18,7 +18,7 @@ class TexRectangle
 {
 	public:
 		TexRectangle() {}
-		TexRectangle(running_machine *machine, UINT32 *data, int flip)
+		TexRectangle(running_machine *machine, uint32_t *data, int flip)
 		{
 			SetMachine(machine);
 			InitFromBuffer(data);
@@ -27,17 +27,17 @@ class TexRectangle
 
 		void Draw();
 		void SetMachine(running_machine *machine);
-		void InitFromBuffer(UINT32 *data);
+		void InitFromBuffer(uint32_t *data);
 
 		int m_tilenum;
-		UINT16 m_xl;	// 10.2 fixed-point
-		UINT16 m_yl;	// 10.2 fixed-point
-		UINT16 m_xh;	// 10.2 fixed-point
-		UINT16 m_yh;	// 10.2 fixed-point
-		INT16 m_s;		// 10.5 fixed-point
-		INT16 m_t;		// 10.5 fixed-point
-		INT16 m_dsdx;	// 5.10 fixed-point
-		INT16 m_dtdy;	// 5.10 fixed-point
+		uint16_t m_xl;	// 10.2 fixed-point
+		uint16_t m_yl;	// 10.2 fixed-point
+		uint16_t m_xh;	// 10.2 fixed-point
+		uint16_t m_yh;	// 10.2 fixed-point
+		int16_t m_s;		// 10.5 fixed-point
+		int16_t m_t;		// 10.5 fixed-point
+		int16_t m_dsdx;	// 5.10 fixed-point
+		int16_t m_dtdy;	// 5.10 fixed-point
 		int m_flip;
 
 	private:

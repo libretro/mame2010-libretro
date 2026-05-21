@@ -16,7 +16,7 @@
 INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int plane )
 {
 	othldrby_state *state = (othldrby_state *)machine->driver_data;
-	UINT16 attr;
+	uint16_t attr;
 
 	tile_index = 2 * tile_index + 0x800 * plane;
 	attr = state->vram[tile_index];
@@ -59,8 +59,8 @@ VIDEO_START( othldrby )
 	state->bg_tilemap[1] = tilemap_create(machine, get_tile_info1, tilemap_scan_rows, 16, 16, 32, 32);
 	state->bg_tilemap[2] = tilemap_create(machine, get_tile_info2, tilemap_scan_rows, 16, 16, 32, 32);
 
-	state->vram = auto_alloc_array(machine, UINT16, VIDEORAM_SIZE);
-	state->buf_spriteram = auto_alloc_array(machine, UINT16, 2 * SPRITERAM_SIZE);
+	state->vram = auto_alloc_array(machine, uint16_t, VIDEORAM_SIZE);
+	state->buf_spriteram = auto_alloc_array(machine, uint16_t, 2 * SPRITERAM_SIZE);
 	state->buf_spriteram2 = state->buf_spriteram + SPRITERAM_SIZE;
 
 	tilemap_set_transparent_pen(state->bg_tilemap[0], 0);

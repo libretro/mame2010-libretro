@@ -27,12 +27,12 @@ static const rectangle* spritevisibleareaflipx;
 #define BACKGROUND_COLOR_BASE	(BULLETS_COLOR_BASE + 2)
 
 
-UINT8 *galaxold_videoram;
-UINT8 *galaxold_spriteram;
-UINT8 *galaxold_spriteram2;
-UINT8 *galaxold_attributesram;
-UINT8 *galaxold_bulletsram;
-UINT8 *rockclim_videoram;
+uint8_t *galaxold_videoram;
+uint8_t *galaxold_spriteram;
+uint8_t *galaxold_spriteram2;
+uint8_t *galaxold_attributesram;
+uint8_t *galaxold_bulletsram;
+uint8_t *rockclim_videoram;
 size_t galaxold_spriteram_size;
 size_t galaxold_spriteram2_size;
 size_t galaxold_bulletsram_size;
@@ -44,31 +44,31 @@ static tilemap_t *bg_tilemap;
 static tilemap_t *rockclim_tilemap;
 static int mooncrst_gfxextend;
 static int spriteram2_present;
-static UINT8 gfxbank[5];
-static UINT8 flipscreen_x;
-static UINT8 flipscreen_y;
-static UINT8 color_mask;
+static uint8_t gfxbank[5];
+static uint8_t flipscreen_x;
+static uint8_t flipscreen_y;
+static uint8_t color_mask;
 static tilemap_t *dambustr_tilemap2;
-static UINT8 *dambustr_videoram2;
-static void (*modify_charcode)(running_machine *machine, UINT16 *code,UINT8 x);		/* function to call to do character banking */
-static void mooncrst_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x);
-static void   pisces_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x);
-static void mimonkey_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x);
-static void  mariner_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x);
-static void dambustr_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x);
+static uint8_t *dambustr_videoram2;
+static void (*modify_charcode)(running_machine *machine, uint16_t *code,uint8_t x);		/* function to call to do character banking */
+static void mooncrst_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x);
+static void   pisces_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x);
+static void mimonkey_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x);
+static void  mariner_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x);
+static void dambustr_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x);
 
-static void (*modify_spritecode)(UINT8 *spriteram,int*,int*,int*,int);	/* function to call to do sprite banking */
-static void mshuttle_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void mimonkey_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void  batman2_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void dkongjrm_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void   ad2083_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
-static void dambustr_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void (*modify_spritecode)(uint8_t *spriteram,int*,int*,int*,int);	/* function to call to do sprite banking */
+static void mshuttle_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void mimonkey_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void  batman2_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void dkongjrm_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void   ad2083_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
+static void dambustr_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs);
 
-static void (*modify_color)(UINT8 *color);	/* function to call to do modify how the color codes map to the PROM */
-static void drivfrcg_modify_color(UINT8 *color);
+static void (*modify_color)(uint8_t *color);	/* function to call to do modify how the color codes map to the PROM */
+static void drivfrcg_modify_color(uint8_t *color);
 
-static void (*modify_ypos)(UINT8*);	/* function to call to do modify how vertical positioning bits are connected */
+static void (*modify_ypos)(uint8_t*);	/* function to call to do modify how vertical positioning bits are connected */
 
 static TIMER_CALLBACK( stars_blink_callback );
 static TIMER_CALLBACK( stars_scroll_callback );
@@ -83,12 +83,12 @@ struct star
 };
 static struct star stars[STAR_COUNT];
 static int stars_colors_start;
-       UINT8 galaxold_stars_on;
-static INT32 stars_scrollpos;
-static UINT8 stars_blink_state;
+       uint8_t galaxold_stars_on;
+static int32_t stars_scrollpos;
+static uint8_t stars_blink_state;
 static emu_timer *stars_blink_timer;
 static emu_timer *stars_scroll_timer;
-static UINT8 timer_adjusted;
+static uint8_t timer_adjusted;
        void galaxold_init_stars(running_machine *machine, int colors_offset);
 static void (*draw_stars)(running_machine *machine, bitmap_t *, const rectangle *);		/* function to call to draw the star layer */
 static void     noop_draw_stars(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
@@ -100,7 +100,7 @@ static void start_stars_blink_timer(double ra, double rb, double c);
 static void start_stars_scroll_timer(running_machine *machine);
 
 /* bullets circuit */
-static UINT8 darkplnt_bullet_color;
+static uint8_t darkplnt_bullet_color;
 static void (*draw_bullets)(running_machine *,bitmap_t *,const rectangle *,int,int,int);	/* function to call to draw a bullet */
 static void galaxold_draw_bullets(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int offs, int x, int y);
 static void scrambold_draw_bullets(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int offs, int x, int y);
@@ -108,8 +108,8 @@ static void darkplnt_draw_bullets(running_machine *machine, bitmap_t *bitmap, co
 static void dambustr_draw_bullets(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int offs, int x, int y);
 
 /* background circuit */
-static UINT8 background_enable;
-static UINT8 background_red, background_green, background_blue;
+static uint8_t background_enable;
+static uint8_t background_red, background_green, background_blue;
 static void (*draw_background)(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);	/* function to call to draw the background */
 static void galaxold_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
 static void scrambold_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
@@ -120,8 +120,8 @@ static void  minefld_draw_background(running_machine *machine, bitmap_t *bitmap,
 static void   rescue_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
 static void dambustr_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect);
 
-static UINT16 rockclim_v;
-static UINT16 rockclim_h;
+static uint16_t rockclim_v;
+static uint16_t rockclim_h;
 static int dambustr_bg_split_line;
 static int dambustr_bg_color_1;
 static int dambustr_bg_color_2;
@@ -668,7 +668,7 @@ VIDEO_START( scorpion )
 	modify_spritecode = batman2_modify_spritecode;
 }
 
-static void pisces_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void pisces_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= (gfxbank[0] << 6);
 }
@@ -705,7 +705,7 @@ VIDEO_START( theend )
 }
 #endif
 
-static void mooncrst_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mooncrst_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (gfxbank[2] && ((*code & 0x30) == 0x20))
 	{
@@ -721,7 +721,7 @@ VIDEO_START( mooncrst )
 	modify_spritecode = mooncrst_modify_spritecode;
 }
 
-static void batman2_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void batman2_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
 	if (*code & 0x80)
 	{
@@ -745,7 +745,7 @@ static void rockclim_draw_background(running_machine *machine, bitmap_t *bitmap,
 	tilemap_draw(bitmap,cliprect,rockclim_tilemap, 0,0);
 }
 
-static void rockclim_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void rockclim_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	if (gfxbank[2])	*code|=0x40;
 }
@@ -765,9 +765,9 @@ VIDEO_START( rockclim )
 static TILE_GET_INFO( drivfrcg_get_tile_info )
 {
 	int code = galaxold_videoram[tile_index];
-	UINT8 x = tile_index & 0x1f;
-	UINT8 color = galaxold_attributesram[(x << 1) | 1] & 7;
-	UINT8 bank = galaxold_attributesram[(x << 1) | 1] & 0x30;
+	uint8_t x = tile_index & 0x1f;
+	uint8_t color = galaxold_attributesram[(x << 1) | 1] & 7;
+	uint8_t bank = galaxold_attributesram[(x << 1) | 1] & 0x30;
 
 	code |= (bank << 4);
 	color |= ((galaxold_attributesram[(x << 1) | 1] & 0x40) >> 3);
@@ -851,7 +851,7 @@ VIDEO_START( ad2083 )
 	state_save_register(machine);
 }
 
-UINT8 *racknrol_tiles_bank;
+uint8_t *racknrol_tiles_bank;
 
 WRITE8_HANDLER( racknrol_tiles_bank_w )
 {
@@ -862,9 +862,9 @@ WRITE8_HANDLER( racknrol_tiles_bank_w )
 static TILE_GET_INFO( racknrol_get_tile_info )
 {
 	int code = galaxold_videoram[tile_index];
-	UINT8 x = tile_index & 0x1f;
-	UINT8 color = galaxold_attributesram[(x << 1) | 1] & 7;
-	UINT8 bank = racknrol_tiles_bank[x] & 7;
+	uint8_t x = tile_index & 0x1f;
+	uint8_t color = galaxold_attributesram[(x << 1) | 1] & 7;
+	uint8_t bank = racknrol_tiles_bank[x] & 7;
 
 	code |= (bank << 8);
 
@@ -918,10 +918,10 @@ VIDEO_START( bongo )
 
 static TILE_GET_INFO( dambustr_get_tile_info2 )
 {
-	UINT8 x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	UINT16 code = dambustr_videoram2[tile_index];
-	UINT8 color = galaxold_attributesram[(x << 1) | 1] & color_mask;
+	uint16_t code = dambustr_videoram2[tile_index];
+	uint8_t color = galaxold_attributesram[(x << 1) | 1] & color_mask;
 
 	if (modify_charcode)
 	{
@@ -957,7 +957,7 @@ VIDEO_START( dambustr )
 	dambustr_tmpbitmap = machine->primary_screen->alloc_compatible_bitmap();
 
 	/* make a copy of the tilemap to emulate background priority */
-	dambustr_videoram2 = auto_alloc_array(machine, UINT8, 0x0400);
+	dambustr_videoram2 = auto_alloc_array(machine, uint8_t, 0x0400);
 	dambustr_tilemap2 = tilemap_create(machine, dambustr_get_tile_info2,tilemap_scan_rows,8,8,32,32);
 
 	tilemap_set_transparent_pen(dambustr_tilemap2,0);
@@ -1137,7 +1137,7 @@ WRITE8_HANDLER( dambustr_bg_color_w )
 
 /* character banking functions */
 
-static void mooncrst_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void mooncrst_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
 	if (gfxbank[2] && ((*code & 0xc0) == 0x80))
 	{
@@ -1145,19 +1145,19 @@ static void mooncrst_modify_charcode(running_machine *machine, UINT16 *code,UINT
 	}
 }
 
-static void pisces_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void pisces_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
 	*code |= (gfxbank[0] << 8);
 }
 
-static void mimonkey_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void mimonkey_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
 	*code |= (gfxbank[0] << 8) | (gfxbank[2] << 9);
 }
 
-static void mariner_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void mariner_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
-	UINT8 *prom;
+	uint8_t *prom;
 
 
 	/* bit 0 of the PROM controls character banking */
@@ -1167,7 +1167,7 @@ static void mariner_modify_charcode(running_machine *machine, UINT16 *code,UINT8
 	*code |= ((prom[x] & 0x01) << 8);
 }
 
-static void dambustr_modify_charcode(running_machine *machine, UINT16 *code,UINT8 x)
+static void dambustr_modify_charcode(running_machine *machine, uint16_t *code,uint8_t x)
 {
 	if (dambustr_char_bank == 0) {	// text mode
 		*code |= 0x0300;
@@ -1184,38 +1184,38 @@ static void dambustr_modify_charcode(running_machine *machine, UINT16 *code,UINT
 
 /* sprite banking functions */
 
-static void mshuttle_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mshuttle_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= ((spriteram[offs + 2] & 0x30) << 2);
 }
 
 
-static void mimonkey_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void mimonkey_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code |= (gfxbank[0] << 6) | (gfxbank[2] << 7);
 }
 
-static void batman2_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void batman2_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* only the upper 64 sprites are used */
 	*code |= 0x40;
 }
 
-static void dkongjrm_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void dkongjrm_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* No x flip */
 	*code = (spriteram[offs + 1] & 0x7f) | 0x80;
 	*flipx = 0;
 }
 
-static void ad2083_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void ad2083_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	/* No x flip */
 	*code = (spriteram[offs + 1] & 0x7f) | ((spriteram[offs + 2] & 0x30) << 2);
 	*flipx = 0;
 }
 
-static void dambustr_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int *flipy,int offs)
+static void dambustr_modify_spritecode(uint8_t *spriteram,int *code,int *flipx,int *flipy,int offs)
 {
 	*code += 0x40;
 }
@@ -1223,7 +1223,7 @@ static void dambustr_modify_spritecode(UINT8 *spriteram,int *code,int *flipx,int
 
 /* color PROM mapping functions */
 
-static void drivfrcg_modify_color(UINT8 *color)
+static void drivfrcg_modify_color(uint8_t *color)
 {
 	*color = ((*color & 0x40) >> 3) | (*color & 7);
 }
@@ -1329,8 +1329,8 @@ static void ad2083_draw_background(running_machine *machine, bitmap_t *bitmap, c
 
 static void stratgyx_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 x;
-	UINT8 *prom;
+	uint8_t x;
+	uint8_t *prom;
 	int base = BACKGROUND_COLOR_BASE;
 
 
@@ -1405,8 +1405,8 @@ static void rescue_draw_background(running_machine *machine, bitmap_t *bitmap, c
 static void mariner_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int base = BACKGROUND_COLOR_BASE;
-	UINT8 x;
-	UINT8 *prom;
+	uint8_t x;
+	uint8_t *prom;
 
 
 	/* the background PROM contains the color codes for each 8 pixel
@@ -1494,7 +1494,7 @@ void galaxold_init_stars(running_machine *machine, int colors_offset)
 {
 	int i;
 	int total_stars;
-	UINT32 generator;
+	uint32_t generator;
 	int x,y;
 
 
@@ -1530,7 +1530,7 @@ void galaxold_init_stars(running_machine *machine, int colors_offset)
 	{
 		for (x = 0;x < 512;x++)
 		{
-			UINT32 bit0;
+			uint32_t bit0;
 
 
 			bit0 = ((~generator >> 16) & 0x01) ^ ((generator >> 4) & 0x01);
@@ -1697,7 +1697,7 @@ static void rescue_draw_stars(running_machine *machine, bitmap_t *bitmap, const 
 static void mariner_draw_stars(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int offs;
-	UINT8 *prom;
+	uint8_t *prom;
 
 
 	if (!timer_adjusted)
@@ -1761,10 +1761,10 @@ static void start_stars_scroll_timer(running_machine *machine)
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	UINT16 code = galaxold_videoram[tile_index];
-	UINT8 color = galaxold_attributesram[(x << 1) | 1] & color_mask;
+	uint16_t code = galaxold_videoram[tile_index];
+	uint8_t color = galaxold_attributesram[(x << 1) | 1] & color_mask;
 
 	if (modify_charcode)
 	{
@@ -1781,7 +1781,7 @@ static TILE_GET_INFO( get_tile_info )
 
 static TILE_GET_INFO( rockclim_get_tile_info )
 {
-	UINT16 code = rockclim_videoram[tile_index];
+	uint16_t code = rockclim_videoram[tile_index];
 	SET_TILE_INFO(2, code, 0, 0);
 }
 
@@ -1792,7 +1792,7 @@ static void draw_bullets_common(running_machine *machine, bitmap_t *bitmap, cons
 
 	for (offs = 0;offs < galaxold_bulletsram_size;offs += 4)
 	{
-		UINT8 sx,sy;
+		uint8_t sx,sy;
 
 		sy = 255 - galaxold_bulletsram[offs + 1];
 		sx = 255 - galaxold_bulletsram[offs + 3];
@@ -1804,14 +1804,14 @@ static void draw_bullets_common(running_machine *machine, bitmap_t *bitmap, cons
 }
 
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, UINT8 *spriteram, size_t spriteram_size)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, uint8_t *spriteram, size_t spriteram_size)
 {
 	int offs;
 
 
 	for (offs = spriteram_size - 4;offs >= 0;offs -= 4)
 	{
-		UINT8 sx,sy,color;
+		uint8_t sx,sy,color;
 		int flipx,flipy,code;
 
 
@@ -1902,7 +1902,7 @@ VIDEO_UPDATE( galaxold )
 VIDEO_UPDATE( dambustr )
 {
 	int i, j;
-	UINT8 color;
+	uint8_t color;
 
 	draw_background(screen->machine, bitmap, cliprect);
 

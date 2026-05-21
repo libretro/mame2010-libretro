@@ -12,17 +12,17 @@ public:
 	popper_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * videoram;
-	UINT8 * ol_videoram;
-	UINT8 * attribram;
-	UINT8 * ol_attribram;
-	UINT8 * spriteram;
+	uint8_t * videoram;
+	uint8_t * ol_videoram;
+	uint8_t * attribram;
+	uint8_t * ol_attribram;
+	uint8_t * spriteram;
 	size_t  spriteram_size;
 
 	/* video-related */
 	tilemap_t *p123_tilemap, *p0_tilemap;
 	tilemap_t *ol_p123_tilemap, *ol_p0_tilemap;
-	INT32 flipscreen, e002, gfx_bank;
+	int32_t flipscreen, e002, gfx_bank;
 	rectangle tilemap_clip;
 
 	/* devices */

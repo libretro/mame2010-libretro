@@ -2,12 +2,12 @@
 
 #include "emu.h"
 
-UINT8 *speedspn_attram;
+uint8_t *speedspn_attram;
 
 static tilemap_t *speedspn_tilemap;
-static UINT8 speedspn_display_disable = 0;
+static uint8_t speedspn_display_disable = 0;
 static int speedspn_bank_vidram = 0;
-static UINT8* speedspn_vidram;
+static uint8_t* speedspn_vidram;
 
 
 static TILE_GET_INFO( get_speedspn_tile_info )
@@ -20,7 +20,7 @@ static TILE_GET_INFO( get_speedspn_tile_info )
 
 VIDEO_START(speedspn)
 {
-	speedspn_vidram = auto_alloc_array(machine, UINT8, 0x1000 * 2);
+	speedspn_vidram = auto_alloc_array(machine, uint8_t, 0x1000 * 2);
 	speedspn_tilemap = tilemap_create(machine, get_speedspn_tile_info,tilemap_scan_cols, 8, 8,64,32);
 }
 
@@ -61,8 +61,8 @@ WRITE8_HANDLER(speedspn_global_display_w)
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	const gfx_element *gfx = machine->gfx[1];
-	UINT8 *source = speedspn_vidram+ 0x1000;
-	UINT8 *finish = source + 0x1000;
+	uint8_t *source = speedspn_vidram+ 0x1000;
+	uint8_t *finish = source + 0x1000;
 
 	while( source<finish )
 	{

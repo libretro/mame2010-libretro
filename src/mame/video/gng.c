@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	gng_state *state = (gng_state *)machine->driver_data;
-	UINT8 attr = state->fgvideoram[tile_index + 0x400];
+	uint8_t attr = state->fgvideoram[tile_index + 0x400];
 	SET_TILE_INFO(
 			0,
 			state->fgvideoram[tile_index] + ((attr & 0xc0) << 2),
@@ -30,7 +30,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	gng_state *state = (gng_state *)machine->driver_data;
-	UINT8 attr = state->bgvideoram[tile_index + 0x400];
+	uint8_t attr = state->bgvideoram[tile_index + 0x400];
 	SET_TILE_INFO(
 			1,
 			state->bgvideoram[tile_index] + ((attr & 0xc0) << 2),
@@ -110,14 +110,14 @@ WRITE8_HANDLER( gng_flipscreen_w )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	const gfx_element *gfx = machine->gfx[2];
 	int offs;
 
 
 	for (offs = machine->generic.spriteram_size - 4; offs >= 0; offs -= 4)
 	{
-		UINT8 attributes = buffered_spriteram[offs + 1];
+		uint8_t attributes = buffered_spriteram[offs + 1];
 		int sx = buffered_spriteram[offs + 3] - 0x100 * (attributes & 0x01);
 		int sy = buffered_spriteram[offs + 2];
 		int flipx = attributes & 0x04;

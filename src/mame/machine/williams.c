@@ -16,14 +16,14 @@
 
 
 /* banking addresses set by the drivers */
-UINT8 *mayday_protection;
+uint8_t *mayday_protection;
 
 /* internal bank switching tracking */
-static UINT8 blaster_bank;
-static UINT8 vram_bank;
+static uint8_t blaster_bank;
+static uint8_t vram_bank;
 
 /* other stuff */
-static UINT16 joust2_current_sound_data;
+static uint16_t joust2_current_sound_data;
 
 /* older-Williams routines */
 static void williams_main_irq(running_device *device, int state);
@@ -33,7 +33,7 @@ static WRITE8_DEVICE_HANDLER( williams_snd_cmd_w );
 static WRITE8_DEVICE_HANDLER( playball_snd_cmd_w );
 
 /* input port mapping */
-static UINT8 port_select;
+static uint8_t port_select;
 static WRITE8_DEVICE_HANDLER( williams_port_select_w );
 static READ8_DEVICE_HANDLER( williams_input_port_49way_0_5_r );
 static READ8_DEVICE_HANDLER( williams_49way_port_0_r );
@@ -617,7 +617,7 @@ CUSTOM_INPUT( williams_mux_r )
 
 READ8_DEVICE_HANDLER( williams_49way_port_0_r )
 {
-	static const UINT8 translate49[7] = { 0x0, 0x4, 0x6, 0x7, 0xb, 0x9, 0x8 };
+	static const uint8_t translate49[7] = { 0x0, 0x4, 0x6, 0x7, 0xb, 0x9, 0x8 };
 	return (translate49[input_port_read(device->machine, "49WAYX") >> 4] << 4) | translate49[input_port_read(device->machine, "49WAYY") >> 4];
 }
 

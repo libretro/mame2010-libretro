@@ -11,7 +11,7 @@
 #include "includes/warpwarp.h"
 
 
-UINT8 *geebee_videoram,*warpwarp_videoram;
+uint8_t *geebee_videoram,*warpwarp_videoram;
 int geebee_handleoverlay;
 int geebee_bgw;
 int warpwarp_ball_on;
@@ -122,7 +122,7 @@ PALETTE_INIT( warpwarp )
 ***************************************************************************/
 
 /* convert from 32x32 to 34x28 */
-static UINT32 tilemap_scan(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t tilemap_scan(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	int offs;
 

@@ -17,7 +17,7 @@
 static TILE_GET_INFO( ttl_get_tile_info )
 {
 	rungun_state *state = (rungun_state *)machine->driver_data;
-	UINT8 *lvram = (UINT8 *)state->ttl_vram;
+	uint8_t *lvram = (uint8_t *)state->ttl_vram;
 	int attr, code;
 
 	attr = (lvram[BYTE_XOR_LE(tile_index<<2)] & 0xf0) >> 4;

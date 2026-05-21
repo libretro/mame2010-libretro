@@ -64,8 +64,8 @@ WRITE8_HANDLER( carjmbre_bgcolor_w )
 static TILE_GET_INFO( get_carjmbre_tile_info )
 {
 	carjmbre_state *state = (carjmbre_state *)machine->driver_data;
-	UINT32 tile_number = state->videoram[tile_index] & 0xff;
-	UINT8 attr  = state->videoram[tile_index + 0x400];
+	uint32_t tile_number = state->videoram[tile_index] & 0xff;
+	uint8_t attr  = state->videoram[tile_index + 0x400];
 	tile_number += (attr & 0x80) << 1; /* bank */
 	SET_TILE_INFO(
 			0,

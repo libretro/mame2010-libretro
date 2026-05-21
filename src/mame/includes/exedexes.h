@@ -13,12 +13,12 @@ public:
 	exedexes_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
-	UINT8 *        colorram;
-	UINT8 *        bg_scroll;
-	UINT8 *        nbg_yscroll;
-	UINT8 *        nbg_xscroll;
-//  UINT8 *        spriteram;   // currently this uses generic buffered_spriteram
+	uint8_t *        videoram;
+	uint8_t *        colorram;
+	uint8_t *        bg_scroll;
+	uint8_t *        nbg_yscroll;
+	uint8_t *        nbg_xscroll;
+//  uint8_t *        spriteram;   // currently this uses generic buffered_spriteram
 
 	/* video-related */
 	tilemap_t        *bg_tilemap, *fg_tilemap, *tx_tilemap;

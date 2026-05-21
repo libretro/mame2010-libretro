@@ -12,11 +12,11 @@
 
 static void update_24bitcol( running_machine *machine, int offset )
 {
-	UINT8 r, g, b; /* The highest palette value seems to be 0x8e */
+	uint8_t r, g, b; /* The highest palette value seems to be 0x8e */
 
-	r = (UINT8)((float)((machine->generic.paletteram.u16[offset]  >> 0) & 0xff) * 1.75);
-	g = (UINT8)((float)((machine->generic.paletteram.u16[offset]  >> 8) & 0xff) * 1.75);
-	b = (UINT8)((float)((machine->generic.paletteram2.u16[offset] >> 0) & 0xff) * 1.75);
+	r = (uint8_t)((float)((machine->generic.paletteram.u16[offset]  >> 0) & 0xff) * 1.75);
+	g = (uint8_t)((float)((machine->generic.paletteram.u16[offset]  >> 8) & 0xff) * 1.75);
+	b = (uint8_t)((float)((machine->generic.paletteram2.u16[offset] >> 0) & 0xff) * 1.75);
 
 	palette_set_color(machine, offset, MAKE_RGB(r, g, b));
 }
@@ -38,7 +38,7 @@ WRITE16_HANDLER( twocrude_palette_24bit_b_w )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	for (offs = 0; offs < 0x400; offs += 4)
@@ -116,7 +116,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 VIDEO_UPDATE( twocrude )
 {
 	cbuster_state *state = (cbuster_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, !BIT(flip, 7));
 

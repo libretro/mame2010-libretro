@@ -66,26 +66,26 @@ public:
 
 	/* memory pointers */
 	// cps1
-	UINT16 *     gfxram;
-	UINT16 *     cps_a_regs;
-	UINT16 *     cps_b_regs;
-	UINT16 *     scroll1;
-	UINT16 *     scroll2;
-	UINT16 *     scroll3;
-	UINT16 *     obj;
-	UINT16 *     other;
-	UINT16 *     buffered_obj;
-	UINT8  *     qsound_sharedram1;
-	UINT8  *     qsound_sharedram2;
+	uint16_t *     gfxram;
+	uint16_t *     cps_a_regs;
+	uint16_t *     cps_b_regs;
+	uint16_t *     scroll1;
+	uint16_t *     scroll2;
+	uint16_t *     scroll3;
+	uint16_t *     obj;
+	uint16_t *     other;
+	uint16_t *     buffered_obj;
+	uint8_t  *     qsound_sharedram1;
+	uint8_t  *     qsound_sharedram2;
 	size_t       gfxram_size;
 	// cps2
-	UINT16 *     objram1;
-	UINT16 *     objram2;
-	UINT16 *     output;
-	UINT16 *     cps2_buffered_obj;
+	uint16_t *     objram1;
+	uint16_t *     objram2;
+	uint16_t *     output;
+	uint16_t *     cps2_buffered_obj;
 	size_t       output_size;
 	// game-specific
-	UINT16 *     gigamn2_dummyqsound_ram;
+	uint16_t *     gigamn2_dummyqsound_ram;
 
 	/* video-related */
 	tilemap_t      *bg_tilemap[3];
@@ -123,8 +123,8 @@ public:
 	int          palette_align;
 	int          palette_size;
 	int          stars_rom_size;
-	UINT8        empty_tile8x8[8*8];
-	UINT8        empty_tile[32*32/2];
+	uint8_t        empty_tile8x8[8*8];
+	uint8_t        empty_tile[32*32/2];
 	int          cps_version;
 
 	/* devices */

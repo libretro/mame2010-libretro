@@ -95,7 +95,7 @@ static TILEMAP_MAPPER( get_tile_offset )
 {
     // this optimisation is not much good to us,
     // since we really need row,col in the get_tile_info() routines
-    // - so just pack them into a UINT32
+    // - so just pack them into a uint32_t
 
 	return( ( col << 6 ) | row );
 }
@@ -109,7 +109,7 @@ static TILE_GET_INFO( get_tile_info_A_8 )
 	int             col = tile_index >> 6;
 	int             row = tile_index & 0x3f;
 
-	UINT8   attr = 0;
+	uint8_t   attr = 0;
 	int             pattern_name_base = 0;
 	int             set = ((ygv608.regs.s.r7 & r7_md) == MD_1PLANE_256COLOUR
 			        	? GFX_8X8_8BIT : GFX_8X8_4BIT );
@@ -202,7 +202,7 @@ static TILE_GET_INFO( get_tile_info_B_8 )
 	int             col = tile_index >> 6;
 	int             row = tile_index & 0x3f;
 
-	UINT8   attr = 0;
+	uint8_t   attr = 0;
 	int             pattern_name_base = ( ( ygv608.page_y << ygv608.pny_shift )
 						<< ygv608.bits16 );
 	int             set = GFX_8X8_4BIT;
@@ -273,7 +273,7 @@ static TILE_GET_INFO( get_tile_info_B_8 )
 		}
 		if ((ygv608.regs.s.r12 & r12_bpf) != 0)
 		{
-			UINT8 color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
+			uint8_t color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
 
 			/* assume 16 colour mode for now... */
 			attr = ( j >> ( (color - 1 ) * 2 ) ) & 0x0f;
@@ -299,7 +299,7 @@ static TILE_GET_INFO( get_tile_info_A_16 )
   int             col = tile_index >> 6;
   int             row = tile_index & 0x3f;
 
-  UINT8   attr = 0;
+  uint8_t   attr = 0;
   int             pattern_name_base = 0;
   int             set = ((ygv608.regs.s.r7 & r7_md) == MD_1PLANE_256COLOUR
 			            ? GFX_16X16_8BIT : GFX_16X16_4BIT );
@@ -388,7 +388,7 @@ static TILE_GET_INFO( get_tile_info_B_16 )
   int             col = tile_index >> 6;
   int             row = tile_index & 0x3f;
 
-  UINT8   attr = 0;
+  uint8_t   attr = 0;
   int             pattern_name_base = ( ( ygv608.page_y << ygv608.pny_shift )
 					<< ygv608.bits16 );
   int             set = GFX_16X16_4BIT;
@@ -452,7 +452,7 @@ static TILE_GET_INFO( get_tile_info_B_16 )
 
     if ((ygv608.regs.s.r12 & r12_bpf) != 0)
     {
-      UINT8 color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
+      uint8_t color = (ygv608.regs.s.r12 & r12_bpf) >> 3;
 
       /* assume 16 colour mode for now... */
       attr = ( j >> (color * 2)) & 0x0f;
@@ -937,14 +937,14 @@ READ16_HANDLER( ygv608_r )
 	static int p3_state = 0;
 	static int pattern_name_base = 0;  /* pattern name table base address */
 	int pn=0;
-	UINT16  data = 0;
+	uint16_t  data = 0;
 
 	switch (offset)
 	{
 		case 0x00: /* P#0 - pattern name table data port */
 		{
-			UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
-			UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+			uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
+			uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
 			switch (p0_state)
 			{
@@ -1055,7 +1055,7 @@ READ16_HANDLER( ygv608_r )
 
 		case 0x04: /* P#4 - register data port */
 		{
-			UINT8 regNum = (ygv608.ports.s.p5) & p5_rn;
+			uint8_t regNum = (ygv608.ports.s.p5) & p5_rn;
     		data = ygv608.regs.b[regNum];
 			if (ygv608.ports.s.p5 & p5_rrai)
 			{
@@ -1077,7 +1077,7 @@ READ16_HANDLER( ygv608_r )
 
 		case 0x06:
 		case 0x07:
-			return( (UINT16)(ygv608.ports.b[offset]) << 8 );
+			return( (uint16_t)(ygv608.ports.b[offset]) << 8 );
 
 		default :
 			logerror( "unknown ygv608 register (%d)\n", offset );
@@ -1100,8 +1100,8 @@ WRITE16_HANDLER( ygv608_w )
 	{
 		case 0x00: /* P#0 - pattern name table data port */
 		{
-			UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
-			UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+			uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
+			uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
 			switch (p0_state)
 			{
@@ -1213,7 +1213,7 @@ WRITE16_HANDLER( ygv608_w )
 
 		case 0x04: /* P#4 - register data port */
 		{
-			UINT8 regNum = (ygv608.ports.s.p5) & p5_rn;
+			uint8_t regNum = (ygv608.ports.s.p5) & p5_rn;
 #if 0
 			logerror( "R#%d = $%02X\n", regNum, data );
 #endif
@@ -1292,11 +1292,11 @@ static void HandleYGV608Reset( running_machine *machine )
 static void HandleRomTransfers(running_machine *machine)
 {
 #if 0
-  static UINT8 *sdt = (UINT8 *)ygv608.scroll_data_table;
-  static UINT8 *sat = (UINT8 *)ygv608.sprite_attribute_table.b;
+  static uint8_t *sdt = (uint8_t *)ygv608.scroll_data_table;
+  static uint8_t *sat = (uint8_t *)ygv608.sprite_attribute_table.b;
 
   /* fudge copy from sprite data for now... */
-  UINT8 *RAM = machine->memory_region[0];
+  uint8_t *RAM = machine->memory_region[0];
   int i;
 
   int src = ( ( (int)ygv608.regs.s.tb13 << 8 ) +
@@ -1344,7 +1344,7 @@ static void HandleRomTransfers(running_machine *machine)
 }
 
 #if 0
-void nvsram( offs_t offset, UINT16 data )
+void nvsram( offs_t offset, uint16_t data )
 {
   static int i = 0;
 
@@ -1409,7 +1409,7 @@ static void SetPostShortcuts( running_machine *machine, int reg )
   {
     case 0:
     {
-      UINT8 yTile = ygv608.regs.s.r0 & r0_pny;
+      uint8_t yTile = ygv608.regs.s.r0 & r0_pny;
 
       if (yTile >= ygv608.page_y)
         logerror ("%s:setting pny(%d) >= page_y(%d)\n", cpuexec_describe_context(machine),
@@ -1422,7 +1422,7 @@ static void SetPostShortcuts( running_machine *machine, int reg )
 
     case 1:
     {
-      UINT8 xTile = ygv608.regs.s.r1 & r1_pnx;
+      uint8_t xTile = ygv608.regs.s.r1 & r1_pnx;
 
       if (xTile >= ygv608.page_x)
         logerror ("%s:setting pnx(%d) >= page_x(%d)\n", cpuexec_describe_context(machine),
@@ -1561,7 +1561,7 @@ static void SetPostShortcuts( running_machine *machine, int reg )
 //#define SHOW_SOURCE_MODE
 
 #if 0
-void dump_block( char *name, UINT8 *block, int len )
+void dump_block( char *name, uint8_t *block, int len )
 {
   int i;
 
@@ -1594,19 +1594,19 @@ READ16_HANDLER( ygv608_debug_trigger )
 #ifdef SHOW_SOURCE_MODE
 #if 0
   dump_block( "ygv608_regs",
-	      (UINT8 *)ygv608.regs.b,
+	      (uint8_t *)ygv608.regs.b,
 	      64 );
   dump_block( "ygv608_pnt",
-	      (UINT8 *)ygv608.pattern_name_table,
+	      (uint8_t *)ygv608.pattern_name_table,
 	      4096 );
   dump_block( "ygv608_sat",
-	      (UINT8 *)ygv608.sprite_attribute_table.b,
+	      (uint8_t *)ygv608.sprite_attribute_table.b,
 	      256 );
   dump_block( "ygv608_sdt",
-	      (UINT8 *)ygv608.scroll_data_table,
+	      (uint8_t *)ygv608.scroll_data_table,
 	      512 );
   dump_block( "ygv608_cp",
-	      (UINT8 *)ygv608.colour_palette,
+	      (uint8_t *)ygv608.colour_palette,
 	      768 );
 #endif
 

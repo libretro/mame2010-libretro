@@ -12,8 +12,8 @@ public:
 	battlane_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     tileram;
-	UINT8 *     spriteram;
+	uint8_t *     tileram;
+	uint8_t *     spriteram;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap;

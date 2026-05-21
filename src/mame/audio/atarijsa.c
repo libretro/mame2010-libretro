@@ -50,12 +50,12 @@ ALL: the LPF (low pass filter) bit which selectively places a lowpass filter in 
 #define JSA_MASTER_CLOCK			XTAL_3_579545MHz
 
 
-static UINT8 *bank_base;
-static UINT8 *bank_source_data;
+static uint8_t *bank_base;
+static uint8_t *bank_source_data;
 
 static cpu_device *jsacpu;
 static const char *test_port;
-static UINT16 test_mask;
+static uint16_t test_mask;
 
 static pokey_sound_device *pokey;
 static ym2151_sound_device *ym2151;
@@ -63,13 +63,13 @@ static device_t *tms5220;
 static okim6295_device *oki6295;
 static okim6295_device *oki6295_l, *oki6295_r;
 
-static UINT8 overall_volume;
-static UINT8 pokey_volume;
-static UINT8 ym2151_volume;
-static UINT8 tms5220_volume;
-static UINT8 oki6295_volume;
-static UINT8 ym2151_ct1;
-static UINT8 ym2151_ct2;
+static uint8_t overall_volume;
+static uint8_t pokey_volume;
+static uint8_t ym2151_volume;
+static uint8_t tms5220_volume;
+static uint8_t oki6295_volume;
+static uint8_t ym2151_ct1;
+static uint8_t ym2151_ct2;
 
 static void update_all_volumes(running_machine *machine);
 
@@ -124,7 +124,7 @@ static void init_save_state(running_machine *machine)
 
 void atarijsa_init(running_machine *machine, const char *testport, int testmask)
 {
-	UINT8 *rgn;
+	uint8_t *rgn;
 
 	/* copy in the parameters */
 	jsacpu = machine->device<cpu_device>("jsa");
@@ -161,7 +161,7 @@ void atarijsa_init(running_machine *machine, const char *testport, int testmask)
 		/* the upper 128k is fixed, the lower 128k is bankswitched */
 		for (rgn = 0; rgn < ARRAY_LENGTH(regions); rgn++)
 		{
-			UINT8 *base = memory_region(machine, regions[rgn]);
+			uint8_t *base = memory_region(machine, regions[rgn]);
 			if (base != NULL && memory_region_length(machine, regions[rgn]) >= 0x80000)
 			{
 				const char *bank = (rgn != 2) ? "bank12" : "bank14";

@@ -31,7 +31,7 @@
 VIDEO_START( harddriv )
 {
 	harddriv_state *state = (harddriv_state *)machine->driver_data;
-	UINT32 *destmask, mask;
+	uint32_t *destmask, mask;
 	int i;
 
 	/* fill in the mask table */
@@ -96,7 +96,7 @@ VIDEO_START( harddriv )
  *
  *************************************/
 
-void hdgsp_write_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+void hdgsp_write_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 
@@ -124,7 +124,7 @@ void hdgsp_write_to_shiftreg(const address_space *space, UINT32 address, UINT16 
 }
 
 
-void hdgsp_read_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+void hdgsp_read_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 
@@ -276,10 +276,10 @@ READ16_HANDLER( hdgsp_vram_2bpp_r )
 WRITE16_HANDLER( hdgsp_vram_1bpp_w )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 *dest = (UINT32 *)&state->gsp_vram[offset * 16];
-	UINT32 *mask = &state->mask_table[data * 4];
-	UINT32 color = state->gsp_control_lo[0] & 0xff;
-	UINT32 curmask;
+	uint32_t *dest = (uint32_t *)&state->gsp_vram[offset * 16];
+	uint32_t *mask = &state->mask_table[data * 4];
+	uint32_t color = state->gsp_control_lo[0] & 0xff;
+	uint32_t curmask;
 
 	color |= color << 8;
 	color |= color << 16;
@@ -305,10 +305,10 @@ WRITE16_HANDLER( hdgsp_vram_1bpp_w )
 WRITE16_HANDLER( hdgsp_vram_2bpp_w )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 *dest = (UINT32 *)&state->gsp_vram[offset * 8];
-	UINT32 *mask = &state->mask_table[data * 2];
-	UINT32 color = state->gsp_control_lo[0];
-	UINT32 curmask;
+	uint32_t *dest = (uint32_t *)&state->gsp_vram[offset * 8];
+	uint32_t *mask = &state->mask_table[data * 2];
+	uint32_t color = state->gsp_control_lo[0];
+	uint32_t curmask;
 
 	color |= color << 16;
 
@@ -426,8 +426,8 @@ static void display_speedups(void)
 void harddriv_scanline_driver(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
 	harddriv_state *state = (harddriv_state *)screen.machine->driver_data;
-	UINT8 *vram_base = &state->gsp_vram[(params->rowaddr << 12) & state->vram_mask];
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint8_t *vram_base = &state->gsp_vram[(params->rowaddr << 12) & state->vram_mask];
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
 	int coladdr = (params->yoffset << 9) + ((params->coladdr & 0xff) << 4) - 15 + (state->gfx_finescroll & 0x0f);
 	int x;
 
@@ -442,8 +442,8 @@ void harddriv_scanline_driver(screen_device &screen, bitmap_t *bitmap, int scanl
 void harddriv_scanline_multisync(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
 	harddriv_state *state = (harddriv_state *)screen.machine->driver_data;
-	UINT8 *vram_base = &state->gsp_vram[(params->rowaddr << 11) & state->vram_mask];
-	UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+	uint8_t *vram_base = &state->gsp_vram[(params->rowaddr << 11) & state->vram_mask];
+	uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
 	int coladdr = (params->yoffset << 9) + ((params->coladdr & 0xff) << 3) - 7 + (state->gfx_finescroll & 0x07);
 	int x;
 

@@ -116,7 +116,7 @@ static TILE_GET_INFO( splndrbt_bg_info )
 VIDEO_START( equites )
 {
 	equites_state *state = (equites_state *)machine->driver_data;
-	state->fg_videoram = auto_alloc_array(machine, UINT8, 0x800);
+	state->fg_videoram = auto_alloc_array(machine, uint8_t, 0x800);
 	state_save_register_global_pointer(machine, state->fg_videoram, 0x800);
 
 	state->fg_tilemap = tilemap_create(machine, equites_fg_info, tilemap_scan_cols,  8, 8, 32, 32);
@@ -132,7 +132,7 @@ VIDEO_START( splndrbt )
 	equites_state *state = (equites_state *)machine->driver_data;
 	assert(machine->primary_screen->format() == BITMAP_FORMAT_INDEXED16);
 
-	state->fg_videoram = auto_alloc_array(machine, UINT8, 0x800);
+	state->fg_videoram = auto_alloc_array(machine, uint8_t, 0x800);
 	state_save_register_global_pointer(machine, state->fg_videoram, 0x800);
 
 	state->fg_tilemap = tilemap_create(machine, splndrbt_fg_info, tilemap_scan_cols,  8, 8, 32, 32);
@@ -335,8 +335,8 @@ Also, note that sprites are 30x30, not 32x32.
 static void splndrbt_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	equites_state *state = (equites_state *)machine->driver_data;
-	const UINT8 * const xrom = memory_region(machine, "user2");
-	const UINT8 * const yrom = xrom + 0x100;
+	const uint8_t * const xrom = memory_region(machine, "user2");
+	const uint8_t * const yrom = xrom + 0x100;
 	const gfx_element* const gfx = machine->gfx[2];
 	int offs;
 
@@ -356,9 +356,9 @@ static void splndrbt_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 		int scalex = state->spriteram_2[offs + 1] & 0x000f;
 		int transmask = colortable_get_transpen_mask(machine->colortable, gfx, color, 0);
 
-//      const UINT8 * const xromline = xrom + (scalex << 4);
-		const UINT8 * const yromline = yrom + (scaley << 4) + (15 - scaley);
-		const UINT8* const srcgfx = gfx_element_get_data(gfx, tile);
+//      const uint8_t * const xromline = xrom + (scalex << 4);
+		const uint8_t * const yromline = yrom + (scaley << 4) + (15 - scaley);
+		const uint8_t* const srcgfx = gfx_element_get_data(gfx, tile);
 		const pen_t *paldata = &machine->pens[gfx->color_base + gfx->color_granularity * color];
 		int x,yy;
 
@@ -413,8 +413,8 @@ static void splndrbt_copy_bg( running_machine *machine, bitmap_t *dst_bitmap, co
 	equites_state *state = (equites_state *)machine->driver_data;
 	bitmap_t * const src_bitmap = tilemap_get_pixmap(state->bg_tilemap);
 	bitmap_t * const flags_bitmap = tilemap_get_flagsmap(state->bg_tilemap);
-	const UINT8 * const xrom = memory_region(machine, "user1");
-	const UINT8 * const yrom = xrom + 0x2000;
+	const uint8_t * const xrom = memory_region(machine, "user1");
+	const uint8_t * const yrom = xrom + 0x2000;
 	int scroll_x = state->splndrbt_bg_scrollx;
 	int scroll_y = state->splndrbt_bg_scrolly;
 	int const dinvert = flip_screen_get(machine) ? 0xff : 0x00;
@@ -431,10 +431,10 @@ static void splndrbt_copy_bg( running_machine *machine, bitmap_t *dst_bitmap, co
 	{
 		if (dst_y >= cliprect->min_y && dst_y <= cliprect->max_y)
 		{
-			const UINT8 * const romline = &xrom[(dst_y ^ dinvert) << 5];
-			const UINT16 * const src_line = BITMAP_ADDR16(src_bitmap, (src_y + scroll_y) & 0x1ff, 0);
-			const UINT8 * const flags_line = BITMAP_ADDR8(flags_bitmap, (src_y + scroll_y) & 0x1ff, 0);
-			UINT16 * const dst_line = BITMAP_ADDR16(dst_bitmap, dst_y, 0);
+			const uint8_t * const romline = &xrom[(dst_y ^ dinvert) << 5];
+			const uint16_t * const src_line = BITMAP_ADDR16(src_bitmap, (src_y + scroll_y) & 0x1ff, 0);
+			const uint8_t * const flags_line = BITMAP_ADDR8(flags_bitmap, (src_y + scroll_y) & 0x1ff, 0);
+			uint16_t * const dst_line = BITMAP_ADDR16(dst_bitmap, dst_y, 0);
 			int dst_x = 0;
 			int src_x;
 

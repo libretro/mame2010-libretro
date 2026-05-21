@@ -14,8 +14,8 @@ VIDEO_START( psx_type2 );
 VIDEO_UPDATE( psx );
 INTERRUPT_GEN( psx_vblank );
 extern void psx_gpu_reset( running_machine *machine );
-extern void psx_gpu_read( running_machine *, UINT32 *p_ram, INT32 n_size );
-extern void psx_gpu_write( running_machine *, UINT32 *p_ram, INT32 n_size );
+extern void psx_gpu_read( running_machine *, uint32_t *p_ram, int32_t n_size );
+extern void psx_gpu_write( running_machine *, uint32_t *p_ram, int32_t n_size );
 READ32_HANDLER( psx_gpu_r );
 WRITE32_HANDLER( psx_gpu_w );
 extern void psx_lightgun_set( int, int );
@@ -34,15 +34,15 @@ extern void psx_lightgun_set( int, int );
 #define PSX_IRQ_EXTCD			0x0400
 #define PSX_IRQ_MASK			(PSX_IRQ_ROOTCOUNTER3 | PSX_IRQ_CDROM | PSX_IRQ_DMA | PSX_IRQ_ROOTCOUNTER2 | PSX_IRQ_ROOTCOUNTER1 | PSX_IRQ_ROOTCOUNTER0 | PSX_IRQ_SIO0 | PSX_IRQ_SIO1 | PSX_IRQ_SPU | PSX_IRQ_EXTCD)
 
-extern UINT32 *g_p_n_psxram;
+extern uint32_t *g_p_n_psxram;
 extern size_t g_n_psxramsize;
-typedef void ( *psx_dma_read_handler )( running_machine *, UINT32, INT32 );
-typedef void ( *psx_dma_write_handler )( running_machine *, UINT32, INT32 );
+typedef void ( *psx_dma_read_handler )( running_machine *, uint32_t, int32_t );
+typedef void ( *psx_dma_write_handler )( running_machine *, uint32_t, int32_t );
 WRITE32_HANDLER( psx_com_delay_w );
 READ32_HANDLER( psx_com_delay_r );
 WRITE32_HANDLER( psx_irq_w );
 READ32_HANDLER( psx_irq_r );
-extern void psx_irq_set( running_machine *, UINT32 );
+extern void psx_irq_set( running_machine *, uint32_t );
 extern void psx_dma_install_read_handler( int, psx_dma_read_handler );
 extern void psx_dma_install_write_handler( int, psx_dma_read_handler );
 WRITE32_HANDLER( psx_dma_w );

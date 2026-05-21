@@ -1,6 +1,6 @@
 #include "emu.h"
 
-UINT8 *usgames_videoram,*usgames_charram;
+uint8_t *usgames_videoram,*usgames_charram;
 
 
 static tilemap_t *usgames_tilemap;

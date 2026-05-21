@@ -73,7 +73,7 @@ VIDEO_START( blockout )
 static void update_pixels( running_machine *machine, int x, int y )
 {
 	blockout_state *state = (blockout_state *)machine->driver_data;
-	UINT16 front, back;
+	uint16_t front, back;
 	int color;
 	const rectangle &visarea = machine->primary_screen->visible_area();
 

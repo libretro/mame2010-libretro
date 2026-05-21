@@ -11,10 +11,10 @@
 
 #include "emu.h"
 
-UINT16 *stadhero_pf1_data;
-static UINT16 *stadhero_pf2_data;
-UINT16 *stadhero_pf2_control_0;
-UINT16 *stadhero_pf2_control_1;
+uint16_t *stadhero_pf1_data;
+static uint16_t *stadhero_pf2_data;
+uint16_t *stadhero_pf2_control_0;
+uint16_t *stadhero_pf2_control_1;
 static tilemap_t *pf1_tilemap,*pf2_tilemap;
 static int flipscreen;
 
@@ -22,7 +22,7 @@ static int flipscreen;
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int pri_mask,int pri_val)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	for (offs = 0;offs < 0x400;offs += 4)
@@ -159,7 +159,7 @@ VIDEO_START( stadhero )
 	pf1_tilemap =     tilemap_create(machine, get_pf1_tile_info,tilemap_scan_rows, 8, 8,32,32);
 	pf2_tilemap =     tilemap_create(machine, get_pf2_tile_info,stadhero_scan,     16,16,64,64);
 
-	stadhero_pf2_data = auto_alloc_array(machine, UINT16, 0x2000);
+	stadhero_pf2_data = auto_alloc_array(machine, uint16_t, 0x2000);
 
 	tilemap_set_transparent_pen(pf1_tilemap,0);
 }

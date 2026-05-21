@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	vindictr_state *state = (vindictr_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = ((data >> 10) & 0x0f) | ((data >> 9) & 0x20);
 	int opaque = data & 0x8000;
@@ -30,7 +30,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	vindictr_state *state = (vindictr_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = (state->playfield_tile_bank * 0x1000) + (data & 0xfff);
 	int color = 0x10 + 2 * ((data >> 12) & 7);
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -141,7 +141,7 @@ WRITE16_HANDLER( vindictr_paletteram_w )
 void vindictr_scanline_update(screen_device &screen, int scanline)
 {
 	vindictr_state *state = (vindictr_state *)screen.machine->driver_data;
-	UINT16 *base = &state->atarigen.alpha[((scanline - 8) / 8) * 64 + 42];
+	uint16_t *base = &state->atarigen.alpha[((scanline - 8) / 8) * 64 + 42];
 	int x;
 
 	/* keep in range */
@@ -153,7 +153,7 @@ void vindictr_scanline_update(screen_device &screen, int scanline)
 	/* update the current parameters */
 	for (x = 42; x < 64; x++)
 	{
-		UINT16 data = *base++;
+		uint16_t data = *base++;
 
 		switch ((data >> 9) & 7)
 		{
@@ -233,8 +233,8 @@ VIDEO_UPDATE( vindictr )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -274,8 +274,8 @@ VIDEO_UPDATE( vindictr )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

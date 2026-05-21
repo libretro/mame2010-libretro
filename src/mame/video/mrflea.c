@@ -47,8 +47,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	mrflea_state *state = (mrflea_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	const UINT8 *source = state->spriteram;
-	const UINT8 *finish = source + 0x100;
+	const uint8_t *source = state->spriteram;
+	const uint8_t *finish = source + 0x100;
 	rectangle clip = machine->primary_screen->visible_area();
 
 	clip.max_x -= 24;
@@ -77,7 +77,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	mrflea_state *state = (mrflea_state *)machine->driver_data;
-	const UINT8 *source = state->videoram;
+	const uint8_t *source = state->videoram;
 	const gfx_element *gfx = machine->gfx[1];
 	int sx, sy;
 	int base = 0;

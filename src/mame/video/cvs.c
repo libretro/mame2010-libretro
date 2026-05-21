@@ -39,7 +39,7 @@ PALETTE_INIT( cvs )
 	{
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 ctabentry = color_prom[(i << 8) | attr] & 0x07;
+			uint8_t ctabentry = color_prom[(i << 8) | attr] & 0x07;
 
 			/* bits 0 and 2 are swapped */
 			ctabentry = BITSWAP8(ctabentry,7,6,5,4,3,0,1,2);
@@ -201,11 +201,11 @@ VIDEO_UPDATE( cvs )
 	for (offs = 0; offs < 0x0400; offs++)
 	{
 		int collision_color = 0x100;
-		UINT8 code = state->video_ram[offs];
-		UINT8 color = state->color_ram[offs];
+		uint8_t code = state->video_ram[offs];
+		uint8_t color = state->color_ram[offs];
 
-		UINT8 x = offs << 3;
-		UINT8 y = offs >> 5 << 3;
+		uint8_t x = offs << 3;
+		uint8_t y = offs >> 5 << 3;
 
 		int gfxnum = (code < ram_based_char_start_indices[state->character_banking_mode]) ? 0 : 1;
 
@@ -318,8 +318,8 @@ VIDEO_UPDATE( cvs )
 	{
 		for (offs = 0; offs < state->total_stars; offs++)
 		{
-			UINT8 x = (state->stars[offs].x + state->stars_scroll) >> 1;
-			UINT8 y = state->stars[offs].y + ((state->stars_scroll + state->stars[offs].x) >> 9);
+			uint8_t x = (state->stars[offs].x + state->stars_scroll) >> 1;
+			uint8_t y = state->stars[offs].y + ((state->stars_scroll + state->stars[offs].x) >> 9);
 
 			if ((y & 1) ^ ((x >> 4) & 1))
 			{

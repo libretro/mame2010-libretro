@@ -25,7 +25,7 @@
 static void get_pens(running_machine *machine, const _20pacgal_state *state, pen_t *pens)
 {
 	offs_t offs;
-	UINT8 *color_prom = memory_region(machine, "proms") + (NUM_PENS * state->game_selected);
+	uint8_t *color_prom = memory_region(machine, "proms") + (NUM_PENS * state->game_selected);
 
 	for (offs = 0; offs < NUM_PENS ;offs++)
 	{
@@ -94,7 +94,7 @@ static void do_pen_lookup(running_machine *machine, const _20pacgal_state *state
  *************************************/
 
 static void draw_sprite(const _20pacgal_state *state, bitmap_t *bitmap, int y, int x,
-						UINT8 code, UINT8 color, int flip_y, int flip_x)
+						uint8_t code, uint8_t color, int flip_y, int flip_x)
 {
 	int sy;
 
@@ -114,7 +114,7 @@ static void draw_sprite(const _20pacgal_state *state, bitmap_t *bitmap, int y, i
 		if ((y >= 0) && (y < SCREEN_HEIGHT))
 		{
 			int sx;
-			UINT32 data;
+			uint32_t data;
 
 			offs_t gfx_offs = ((code & 0x7f) << 6) | (sy << 2);
 
@@ -132,7 +132,7 @@ static void draw_sprite(const _20pacgal_state *state, bitmap_t *bitmap, int y, i
 				if ((x >= 0) && (x < SCREEN_WIDTH))
 				{
 					offs_t pen = (data & 0xc0000000) >> 30;
-					UINT8 col;
+					uint8_t col;
 
 					col = state->sprite_color_lookup[pen_base | pen] & 0x0f;
 
@@ -175,8 +175,8 @@ static void draw_sprites(const _20pacgal_state *state, bitmap_t *bitmap)
 		};
 		int x, y;
 
-		UINT8 code = state->sprite_ram[offs + 0x000];
-		UINT8 color = state->sprite_ram[offs + 0x001];
+		uint8_t code = state->sprite_ram[offs + 0x000];
+		uint8_t color = state->sprite_ram[offs + 0x001];
 
 		int sx = state->sprite_ram[offs + 0x081] - 41 + 0x100*(state->sprite_ram[offs + 0x101] & 3);
 		int sy = 256 - state->sprite_ram[offs + 0x080] + 1;
@@ -226,8 +226,8 @@ static void draw_chars(const _20pacgal_state *state, bitmap_t *bitmap)
 		int sy;
 		int y, x;
 
-		UINT8 *gfx = &state->char_gfx_ram[state->video_ram[0x0000 | offs] << 4];
-		UINT32 color_base = (state->video_ram[0x0400 | offs] & 0x3f) << 2;
+		uint8_t *gfx = &state->char_gfx_ram[state->video_ram[0x0000 | offs] << 4];
+		uint32_t color_base = (state->video_ram[0x0400 | offs] & 0x3f) << 2;
 
 		/* map the offset to (x, y) character coordinates */
 		if ((offs & 0x03c0) == 0)
@@ -264,12 +264,12 @@ static void draw_chars(const _20pacgal_state *state, bitmap_t *bitmap)
 			int sx;
 			int x_sav = x;
 
-			UINT16 data = (gfx[8] << 8) | gfx[0];
+			uint16_t data = (gfx[8] << 8) | gfx[0];
 
 			/* for each pixel in the row */
 			for (sx = 0; sx < 8; sx++)
 			{
-				UINT32 col = ((data & 0x8000) >> 14) | ((data & 0x0800) >> 11);
+				uint32_t col = ((data & 0x8000) >> 14) | ((data & 0x0800) >> 11);
 
 				/* pen bits A4-A11 */
 				if ( col != 0 )
@@ -353,10 +353,10 @@ static void draw_stars(_20pacgal_state *state, bitmap_t *bitmap, const rectangle
 	if ( (state->stars_ctrl[0] >> 5) & 1 )
 	{
 		int clock;
-		UINT16 lfsr =   state->stars_seed[0] + state->stars_seed[1]*256;
-		UINT8 feedback = (state->stars_ctrl[0] >> 6) & 1;
-		UINT16 star_seta = (state->stars_ctrl[0] >> 3) & 0x01;
-		UINT16 star_setb = (state->stars_ctrl[0] >> 3) & 0x02;
+		uint16_t lfsr =   state->stars_seed[0] + state->stars_seed[1]*256;
+		uint8_t feedback = (state->stars_ctrl[0] >> 6) & 1;
+		uint16_t star_seta = (state->stars_ctrl[0] >> 3) & 0x01;
+		uint16_t star_setb = (state->stars_ctrl[0] >> 3) & 0x02;
 		int cnt = 0;
 
 		/* This is a guess based on galaga star sets */

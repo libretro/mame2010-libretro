@@ -20,7 +20,7 @@ class Rectangle
 {
 	public:
 		Rectangle() {}
-		Rectangle(running_machine *machine, UINT32 *data)
+		Rectangle(running_machine *machine, uint32_t *data)
 		{
 			SetMachine(machine);
 			InitFromBuffer(data);
@@ -28,12 +28,12 @@ class Rectangle
 
 		void Draw();
 		void SetMachine(running_machine *machine);
-		void InitFromBuffer(UINT32 *data);
+		void InitFromBuffer(uint32_t *data);
 
-		UINT16 m_xl;	// 10.2 fixed-point
-		UINT16 m_yl;	// 10.2 fixed-point
-		UINT16 m_xh;	// 10.2 fixed-point
-		UINT16 m_yh;	// 10.2 fixed-point
+		uint16_t m_xl;	// 10.2 fixed-point
+		uint16_t m_yl;	// 10.2 fixed-point
+		uint16_t m_xh;	// 10.2 fixed-point
+		uint16_t m_yh;	// 10.2 fixed-point
 
 	private:
 		void				Draw1Cycle();

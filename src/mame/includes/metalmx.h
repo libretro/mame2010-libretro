@@ -11,8 +11,8 @@ public:
 	running_device *dsp32c_1;
 	running_device *dsp32c_2;
 
-	UINT16				*gsp_dram;
-	UINT16				*gsp_vram;
+	uint16_t				*gsp_dram;
+	uint16_t				*gsp_vram;
 
-	UINT32				*adsp_internal_program_ram;
+	uint32_t				*adsp_internal_program_ram;
 };

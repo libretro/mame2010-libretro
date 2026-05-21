@@ -7,9 +7,9 @@ public:
 	news_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  bgram;
-	UINT8 *  fgram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  bgram;
+	uint8_t *  fgram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t *fg_tilemap, *bg_tilemap;

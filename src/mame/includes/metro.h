@@ -21,23 +21,23 @@ public:
 		  k053936(machine.device<k053936_device>("k053936")) { }
 
 	/* memory pointers */
-	UINT16 *    vram_0;
-	UINT16 *    vram_1;
-	UINT16 *    vram_2;
-	UINT16 *    spriteram;
-	UINT16 *    tiletable;
-	UINT16 *    tiletable_old;
-	UINT16 *    blitter_regs;
-	UINT16 *    scroll;
-	UINT16 *    window;
-	UINT16 *    irq_enable;
-	UINT16 *    irq_levels;
-	UINT16 *    irq_vectors;
-	UINT16 *    rombank;
-	UINT16 *    videoregs;
-	UINT16 *    screenctrl;
-	UINT16 *    input_sel;
-	UINT16 *    k053936_ram;
+	uint16_t *    vram_0;
+	uint16_t *    vram_1;
+	uint16_t *    vram_2;
+	uint16_t *    spriteram;
+	uint16_t *    tiletable;
+	uint16_t *    tiletable_old;
+	uint16_t *    blitter_regs;
+	uint16_t *    scroll;
+	uint16_t *    window;
+	uint16_t *    irq_enable;
+	uint16_t *    irq_levels;
+	uint16_t *    irq_vectors;
+	uint16_t *    rombank;
+	uint16_t *    videoregs;
+	uint16_t *    screenctrl;
+	uint16_t *    input_sel;
+	uint16_t *    k053936_ram;
 
 	size_t      spriteram_size;
 	size_t      tiletable_size;
@@ -59,22 +59,22 @@ public:
 
 	/* irq_related */
 	int         irq_line;
-	UINT8       requested_int[8];
+	uint8_t       requested_int[8];
 	emu_timer   *mouja_irq_timer;
 
 	/* sound related */
-	UINT16      soundstatus;
+	uint16_t      soundstatus;
 	int         porta, portb, busy_sndcpu;
 
 	/* misc */
 	int         gakusai_oki_bank_lo, gakusai_oki_bank_hi;
 
 	/* used by vmetal.c */
-	UINT16 *vmetal_texttileram;
-	UINT16 *vmetal_mid1tileram;
-	UINT16 *vmetal_mid2tileram;
-	UINT16 *vmetal_tlookup;
-	UINT16 *vmetal_videoregs;
+	uint16_t *vmetal_texttileram;
+	uint16_t *vmetal_mid1tileram;
+	uint16_t *vmetal_mid2tileram;
+	uint16_t *vmetal_tlookup;
+	uint16_t *vmetal_videoregs;
 
 	tilemap_t *vmetal_texttilemap;
 	tilemap_t *vmetal_mid1tilemap;

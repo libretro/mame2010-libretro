@@ -8,8 +8,8 @@
 
 #include "emu.h"
 
-UINT8 *speedbal_background_videoram;
-UINT8 *speedbal_foreground_videoram;
+uint8_t *speedbal_background_videoram;
+uint8_t *speedbal_foreground_videoram;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
@@ -84,7 +84,7 @@ WRITE8_HANDLER( speedbal_background_videoram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int x,y,code,color,offset,flipx,flipy;
 
 	/* Drawing sprites: 64 in total */

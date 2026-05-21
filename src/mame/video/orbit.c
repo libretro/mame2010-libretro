@@ -18,7 +18,7 @@ WRITE8_HANDLER( orbit_playfield_w )
 static TILE_GET_INFO( get_tile_info )
 {
 	orbit_state *state = (orbit_state *)machine->driver_data;
-	UINT8 code = state->playfield_ram[tile_index];
+	uint8_t code = state->playfield_ram[tile_index];
 	int flags = 0;
 
 	if (BIT(code, 6))
@@ -40,7 +40,7 @@ VIDEO_START( orbit )
 static void draw_sprites( running_machine *machine, bitmap_t* bitmap, const rectangle* cliprect )
 {
 	orbit_state *state = (orbit_state *)machine->driver_data;
-	const UINT8* p = state->sprite_ram;
+	const uint8_t* p = state->sprite_ram;
 
 	int i;
 

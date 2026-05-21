@@ -326,7 +326,7 @@ static WRITE16_HANDLER( hippodrm_68000_share_w )
     values are not known to change after bootup.
 */
 
-static UINT8 i8751_ports[4];
+static uint8_t i8751_ports[4];
 
 READ8_HANDLER(dec0_mcu_port_r )
 {
@@ -511,7 +511,7 @@ static WRITE16_HANDLER( robocop_68000_share_w )
 static void h6280_decrypt(running_machine *machine, const char *cputag)
 {
 	int i;
-	UINT8 *RAM = memory_region(machine, cputag);
+	uint8_t *RAM = memory_region(machine, cputag);
 
 	/* Read each byte, decrypt it */
 	for (i = 0x00000; i < 0x10000; i++)
@@ -520,7 +520,7 @@ static void h6280_decrypt(running_machine *machine, const char *cputag)
 
 DRIVER_INIT( hippodrm )
 {
-	UINT8 *RAM = memory_region(machine, "sub");
+	uint8_t *RAM = memory_region(machine, "sub");
 
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x180000, 0x180fff, 0, 0, hippodrm_68000_share_r, hippodrm_68000_share_w);
 	memory_install_write16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xffc800, 0xffcfff, 0, 0, sprite_mirror_w);
@@ -536,7 +536,7 @@ DRIVER_INIT( hippodrm )
 
 DRIVER_INIT( slyspy )
 {
-	UINT8 *RAM = memory_region(machine, "audiocpu");
+	uint8_t *RAM = memory_region(machine, "audiocpu");
 
 	h6280_decrypt(machine, "audiocpu");
 
@@ -562,7 +562,7 @@ DRIVER_INIT( hbarrel )
 
 DRIVER_INIT( birdtry )
 {
-	UINT8 *src, tmp;
+	uint8_t *src, tmp;
 	int i, j, k;
 
 	GAME=3;

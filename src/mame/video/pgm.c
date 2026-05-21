@@ -10,14 +10,14 @@
 static void pgm_prepare_sprite( running_machine *machine, int wide, int high, int palt, int boffset )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT8 *bdata = memory_region(machine, "sprmask");
+	uint8_t *bdata = memory_region(machine, "sprmask");
 	size_t  bdatasize = memory_region_length(machine, "sprmask") - 1;
-	UINT8 *adata = state->sprite_a_region;
+	uint8_t *adata = state->sprite_a_region;
 	size_t  adatasize = state->sprite_a_region_size - 1;
 	int xcnt, ycnt;
 
-	UINT32 aoffset;
-	UINT16 msk;
+	uint32_t aoffset;
+	uint16_t msk;
 
 	aoffset = (bdata[(boffset + 3) & bdatasize] << 24) | (bdata[(boffset + 2) & bdatasize] << 16) |
 				(bdata[(boffset + 1) & bdatasize] << 8) | (bdata[(boffset + 0) & bdatasize] << 0);
@@ -54,7 +54,7 @@ static void pgm_prepare_sprite( running_machine *machine, int wide, int high, in
 
 
 // in the dest bitmap 0x10000 is used to mark 'used pixel' and 0x8000 is used to mark 'high priority'
-static void draw_sprite_line( running_machine *machine, int wide, UINT32* dest, int xzoom, int xgrow, int yoffset, int flip, int xpos, int pri )
+static void draw_sprite_line( running_machine *machine, int wide, uint32_t* dest, int xzoom, int xgrow, int yoffset, int flip, int xpos, int pri )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
 	int xcnt,xcntdraw;
@@ -66,7 +66,7 @@ static void draw_sprite_line( running_machine *machine, int wide, UINT32* dest, 
 	xcntdraw = 0;
 	while (xcnt < wide * 16)
 	{
-		UINT32 srcdat;
+		uint32_t srcdat;
 		if (!(flip & 0x01))
 			xoffset = xcnt;
 		else
@@ -130,11 +130,11 @@ static void draw_sprite_line( running_machine *machine, int wide, UINT32* dest, 
 	}
 }
 /* this just loops over our decoded bitmap and puts it on the screen */
-static void draw_sprite_new_zoomed( running_machine *machine, int wide, int high, int xpos, int ypos, int palt, int boffset, int flip, bitmap_t* bitmap, UINT32 xzoom, int xgrow, UINT32 yzoom, int ygrow, int pri )
+static void draw_sprite_new_zoomed( running_machine *machine, int wide, int high, int xpos, int ypos, int palt, int boffset, int flip, bitmap_t* bitmap, uint32_t xzoom, int xgrow, uint32_t yzoom, int ygrow, int pri )
 {
 	int ycnt;
 	int ydrawpos;
-	UINT32 *dest;
+	uint32_t *dest;
 	int yoffset;
 	int ycntdraw;
 	int yzoombit;
@@ -210,7 +210,7 @@ static void draw_sprite_new_zoomed( running_machine *machine, int wide, int high
 }
 
 
-static void draw_sprites( running_machine *machine, bitmap_t* spritebitmap, UINT16 *sprite_source )
+static void draw_sprites( running_machine *machine, bitmap_t* spritebitmap, uint16_t *sprite_source )
 {
 	/* ZZZZ Zxxx xxxx xxxx
        zzzz z-yy yyyy yyyy
@@ -221,7 +221,7 @@ static void draw_sprites( running_machine *machine, bitmap_t* spritebitmap, UINT
 
 
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	const UINT16 *finish = state->spritebufferram + (0xa00 / 2);
+	const uint16_t *finish = state->spritebufferram + (0xa00 / 2);
 
 	while (sprite_source < finish)
 	{
@@ -238,9 +238,9 @@ static void draw_sprites( running_machine *machine, bitmap_t* spritebitmap, UINT
 		int high = sprite_source[4] & 0x01ff;
 		int pri = (sprite_source[2] & 0x0080) >>  7;
 
-		UINT32 xzoom, yzoom;
+		uint32_t xzoom, yzoom;
 
-		UINT16* sprite_zoomtable = &state->videoregs[0x1000 / 2];
+		uint16_t* sprite_zoomtable = &state->videoregs[0x1000 / 2];
 
 		if (xgrow)
 		{
@@ -354,11 +354,11 @@ VIDEO_START( pgm )
 	for (i = 0; i < 0x1200 / 2; i++)
 		palette_set_color(machine, i, MAKE_RGB(0, 0, 0));
 
-	state->spritebufferram = auto_alloc_array(machine, UINT16, 0xa00/2);
+	state->spritebufferram = auto_alloc_array(machine, uint16_t, 0xa00/2);
 
 	/* we render each sprite to a bitmap then copy the bitmap to screen bitmap with zooming */
 	/* easier this way because of the funky sprite format */
-	state->sprite_temp_render = auto_alloc_array(machine, UINT16, 0x400*0x200);
+	state->sprite_temp_render = auto_alloc_array(machine, uint16_t, 0x400*0x200);
 
 	state_save_register_global_pointer(machine, state->spritebufferram, 0xa00/2);
 	state_save_register_global_pointer(machine, state->sprite_temp_render, 0x400*0x200);
@@ -385,8 +385,8 @@ VIDEO_UPDATE( pgm )
 
 		for (y = 0; y < 224; y++)
 		{
-			UINT32* src = BITMAP_ADDR32(state->tmppgmbitmap, y, 0);
-			UINT16* dst = BITMAP_ADDR16(bitmap, y, 0);
+			uint32_t* src = BITMAP_ADDR32(state->tmppgmbitmap, y, 0);
+			uint16_t* dst = BITMAP_ADDR16(bitmap, y, 0);
 
 			for (x = 0; x < 448; x++)
 			{
@@ -403,8 +403,8 @@ VIDEO_UPDATE( pgm )
 
 		for (y = 0; y < 224; y++)
 		{
-			UINT32* src = BITMAP_ADDR32(state->tmppgmbitmap, y, 0);
-			UINT16* dst = BITMAP_ADDR16(bitmap, y, 0);
+			uint32_t* src = BITMAP_ADDR32(state->tmppgmbitmap, y, 0);
+			uint16_t* dst = BITMAP_ADDR16(bitmap, y, 0);
 
 			for (x = 0; x < 448; x++)
 			{

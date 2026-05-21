@@ -150,7 +150,7 @@ WRITE16_HANDLER( madmotor_pf3_data_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri_mask, int pri_val )
 {
 	madmotor_state *state = (madmotor_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	offs = 0;

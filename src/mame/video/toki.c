@@ -10,9 +10,9 @@
 
 static tilemap_t *background_layer,*foreground_layer,*text_layer;
 
-UINT16 *toki_background1_videoram16;
-UINT16 *toki_background2_videoram16;
-UINT16 *toki_scrollram16;
+uint16_t *toki_background1_videoram16;
+uint16_t *toki_background2_videoram16;
+uint16_t *toki_scrollram16;
 
 /*************************************************************************
                     RASTER EFFECTS
@@ -178,7 +178,7 @@ WRITE16_HANDLER( toki_background2_videoram16_w )
 static void toki_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	int x,y,xoffs,yoffs,tile,flipx,flipy,color,offs;
-	UINT16 *sprite_word;
+	uint16_t *sprite_word;
 
 	for (offs = (machine->generic.spriteram_size/2)-4;offs >= 0;offs -= 4)
 	{
@@ -221,7 +221,7 @@ static void toki_draw_sprites(running_machine *machine, bitmap_t *bitmap,const r
 static void tokib_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	int x,y,tile,flipx,color,offs;
-	UINT16 *sprite_word;
+	uint16_t *sprite_word;
 
 	for (offs = 0;offs < machine->generic.spriteram_size / 2;offs += 4)
 	{

@@ -48,25 +48,25 @@
 
 struct c_state
 {
-	INT32 counter;
-	INT32 level;
+	int32_t counter;
+	int32_t level;
 };
 
 struct n_state
 {
-	INT32 counter;
-	INT32 polyoffs;
-	INT32 polybit;
-	INT32 lowpass_counter;
-	INT32 lowpass_polybit;
+	int32_t counter;
+	int32_t polyoffs;
+	int32_t polybit;
+	int32_t lowpass_counter;
+	int32_t lowpass_polybit;
 };
 
 static struct c_state		c24_state;
 static struct c_state		c25_state;
 static struct n_state		noise_state;
-static UINT8				sound_latch_a;
+static uint8_t				sound_latch_a;
 static sound_stream *		channel;
-static UINT32 *				poly18;
+static uint32_t *				poly18;
 
 INLINE int update_c24(int samplerate)
 {
@@ -518,14 +518,14 @@ static DEVICE_START( phoenix_sound )
 {
 	running_machine *machine = device->machine;
 	int i, j;
-	UINT32 shiftreg;
+	uint32_t shiftreg;
 
-	poly18 = auto_alloc_array(machine, UINT32, 1ul << (18-5));
+	poly18 = auto_alloc_array(machine, uint32_t, 1ul << (18-5));
 
     shiftreg = 0;
 	for( i = 0; i < (1ul << (18-5)); i++ )
 	{
-		UINT32 bits = 0;
+		uint32_t bits = 0;
 		for( j = 0; j < 32; j++ )
 		{
 			bits = (bits >> 1) | (shiftreg << 31);

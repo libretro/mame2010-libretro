@@ -12,26 +12,26 @@ public:
 	aeroboto_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * mainram;
-	UINT8 * spriteram;
-	UINT8 * videoram;
-	UINT8 * hscroll;
-	UINT8 * vscroll;
-	UINT8 * tilecolor;
-	UINT8 * starx;
-	UINT8 * stary;
-	UINT8 * bgcolor;
+	uint8_t * mainram;
+	uint8_t * spriteram;
+	uint8_t * videoram;
+	uint8_t * hscroll;
+	uint8_t * vscroll;
+	uint8_t * tilecolor;
+	uint8_t * starx;
+	uint8_t * stary;
+	uint8_t * bgcolor;
 	size_t  spriteram_size;
 
 	/* stars layout */
-	UINT8 * stars_rom;
+	uint8_t * stars_rom;
 	int     stars_length;
 
 	/* video-related */
 	tilemap_t *bg_tilemap;
 	int     charbank, starsoff;
 	int     sx, sy;
-	UINT8   ox, oy;
+	uint8_t   ox, oy;
 
 	/* misc */
 	int count;

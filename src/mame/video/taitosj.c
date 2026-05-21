@@ -18,20 +18,20 @@
 #define TRANSPARENT_PEN			(0x40)
 
 
-UINT8 *taitosj_videoram_1;
-UINT8 *taitosj_videoram_2;
-UINT8 *taitosj_videoram_3;
-UINT8 *taitosj_spriteram;
-UINT8 *taitosj_paletteram;
-UINT8 *taitosj_characterram;
-UINT8 *taitosj_scroll;
-UINT8 *taitosj_colscrolly;
-UINT8 *taitosj_gfxpointer;
-UINT8 *taitosj_colorbank;
-UINT8 *taitosj_video_mode;
-UINT8 *taitosj_video_priority;
-UINT8 *taitosj_collision_reg;
-UINT8 *kikstart_scrollram;
+uint8_t *taitosj_videoram_1;
+uint8_t *taitosj_videoram_2;
+uint8_t *taitosj_videoram_3;
+uint8_t *taitosj_spriteram;
+uint8_t *taitosj_paletteram;
+uint8_t *taitosj_characterram;
+uint8_t *taitosj_scroll;
+uint8_t *taitosj_colscrolly;
+uint8_t *taitosj_gfxpointer;
+uint8_t *taitosj_colorbank;
+uint8_t *taitosj_video_mode;
+uint8_t *taitosj_video_priority;
+uint8_t *taitosj_collision_reg;
+uint8_t *kikstart_scrollram;
 static bitmap_t *taitosj_layer_bitmap[3];
 static bitmap_t *sprite_sprite_collbitmap1,*sprite_sprite_collbitmap2;
 static bitmap_t *sprite_layer_collbitmap1;
@@ -161,7 +161,7 @@ static void set_pens(running_machine *machine)
 static void compute_draw_order(running_machine *machine)
 {
 	int i;
-	UINT8 *color_prom = memory_region(machine, "proms");
+	uint8_t *color_prom = memory_region(machine, "proms");
 
 	/* do a simple conversion of the PROM into layer priority order. Note that */
 	/* this is a simplification, which assumes the PROM encodes a sensible priority */
@@ -215,7 +215,7 @@ VIDEO_START( taitosj )
 
 READ8_HANDLER( taitosj_gfxrom_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	offs_t offs = taitosj_gfxpointer[0] | (taitosj_gfxpointer[1] << 8);
 
@@ -268,7 +268,7 @@ WRITE8_HANDLER( taitosj_collision_reg_clear_w )
 }
 
 
-INLINE int get_sprite_xy(UINT8 which, UINT8* sx, UINT8* sy)
+INLINE int get_sprite_xy(uint8_t which, uint8_t* sx, uint8_t* sy)
 {
 	offs_t offs = which * 4;
 
@@ -279,7 +279,7 @@ INLINE int get_sprite_xy(UINT8 which, UINT8* sx, UINT8* sy)
 }
 
 
-INLINE const gfx_element *get_sprite_gfx_element(running_machine *machine, UINT8 which)
+INLINE const gfx_element *get_sprite_gfx_element(running_machine *machine, uint8_t which)
 {
 	offs_t offs = which * 4;
 
@@ -360,7 +360,7 @@ static void check_sprite_sprite_collision(running_machine *machine)
 		for (which1 = 0; which1 < 0x20; which1++)
 		{
 			int which2;
-			UINT8 sx1, sy1;
+			uint8_t sx1, sy1;
 
 			if ((which1 >= 0x10) && (which1 <= 0x17)) continue;	/* no sprites here */
 
@@ -368,15 +368,15 @@ static void check_sprite_sprite_collision(running_machine *machine)
 
 			for (which2 = which1 + 1; which2 < 0x20; which2++)
 			{
-				UINT8 sx2, sy2;
+				uint8_t sx2, sy2;
 
 				if ((which2 >= 0x10) && (which2 <= 0x17)) continue;	  /* no sprites here */
 
 				if (!get_sprite_xy(which2, &sx2, &sy2)) continue;
 
 				/* quickly rule out any pairs that cannot be touching */
-				if ((abs((INT8)sx1 - (INT8)sx2) < 16) &&
-					(abs((INT8)sy1 - (INT8)sy2) < 16))
+				if ((abs((int8_t)sx1 - (int8_t)sx2) < 16) &&
+					(abs((int8_t)sy1 - (int8_t)sy2) < 16))
 				{
 					int reg;
 
@@ -417,7 +417,7 @@ static void calculate_sprite_areas(running_machine *machine, int *sprites_on, re
 
 	for (which = 0; which < 0x20; which++)
 	{
-		UINT8 sx, sy;
+		uint8_t sx, sy;
 
 		if ((which >= 0x10) && (which <= 0x17)) continue;	/* no sprites here */
 
@@ -584,7 +584,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap)
 		/* drawing order is a bit strange. The last sprite has to be moved at the start of the list. */
 		for (sprite = 0x1f; sprite >= 0; sprite--)
 		{
-			UINT8 sx, sy;
+			uint8_t sx, sy;
 
 			int which = (sprite - 1) & 0x1f;	/* move last sprite at the head of the list */
 			offs_t offs = which * 4;

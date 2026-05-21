@@ -102,8 +102,8 @@
 #include "video/resnet.h"
 
 static tilemap_t *bg_tilemap;
-UINT8 *funworld_colorram;
-UINT8 *funworld_videoram;
+uint8_t *funworld_colorram;
+uint8_t *funworld_videoram;
 
 
 PALETTE_INIT(funworld)

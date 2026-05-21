@@ -15,20 +15,20 @@ public:
 	psikyo4_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT32 *       vidregs;
-	UINT32 *       paletteram;
-	UINT32 *       ram;
-	UINT32 *       io_select;
-	UINT32 *       bgpen_1;
-	UINT32 *       bgpen_2;
-	UINT32 *       spriteram;
+	uint32_t *       vidregs;
+	uint32_t *       paletteram;
+	uint32_t *       ram;
+	uint32_t *       io_select;
+	uint32_t *       bgpen_1;
+	uint32_t *       bgpen_2;
+	uint32_t *       spriteram;
 	size_t         spriteram_size;
 
 	/* video-related */
 	double         oldbrt1, oldbrt2;
 
 	/* misc */
-	UINT32         sample_offs;	// only used if ROMTEST = 1
+	uint32_t         sample_offs;	// only used if ROMTEST = 1
 
 	/* devices */
 	running_device *maincpu;

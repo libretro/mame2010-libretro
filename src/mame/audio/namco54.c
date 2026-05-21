@@ -57,7 +57,7 @@ struct _namco_54xx_state
 	running_device *cpu;
 	running_device *discrete;
 	int basenode;
-	UINT8 latched_cmd;
+	uint8_t latched_cmd;
 };
 
 INLINE namco_54xx_state *get_safe_token(running_device *device)
@@ -92,7 +92,7 @@ static READ8_HANDLER( namco_54xx_R0_r )
 static WRITE8_HANDLER( namco_54xx_O_w )
 {
 	namco_54xx_state *state = get_safe_token(space->cpu->owner());
-	UINT8 out = (data & 0x0f);
+	uint8_t out = (data & 0x0f);
 	if (data & 0x10)
 		discrete_sound_w(state->discrete, NAMCO_54XX_1_DATA(state->basenode), out);
 	else
@@ -102,7 +102,7 @@ static WRITE8_HANDLER( namco_54xx_O_w )
 static WRITE8_HANDLER( namco_54xx_R1_w )
 {
 	namco_54xx_state *state = get_safe_token(space->cpu->owner());
-	UINT8 out = (data & 0x0f);
+	uint8_t out = (data & 0x0f);
 
 	discrete_sound_w(state->discrete, NAMCO_54XX_2_DATA(state->basenode), out);
 }

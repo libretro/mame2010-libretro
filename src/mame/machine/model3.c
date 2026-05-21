@@ -22,8 +22,8 @@ static int m3_step;
 
 #define NEXT(new_state) fsm[state][new_state]
 
-static INT32  state;  // current state
-static const INT32 fsm[][2] = {
+static int32_t  state;  // current state
+static const int32_t fsm[][2] = {
                             {  1,  0 },  // 0  Test-Logic/Reset
                             {  1,  2 },  // 1  Run-Test/Idle
                             {  3,  9 },  // 2  Select-DR-Scan
@@ -46,12 +46,12 @@ static const INT32 fsm[][2] = {
  * TAP Registers
  */
 
-static UINT64   current_instruction;    // latched IR (not always equal to IR)
-static UINT64   ir;                     // instruction register (46 bits)
+static uint64_t   current_instruction;    // latched IR (not always equal to IR)
+static uint64_t   ir;                     // instruction register (46 bits)
 
-static UINT8    id_data[32];            // ASIC ID code data buffer
-static INT32      id_size;                // size of ID data in bits
-//static INT32      ptr;                    // current bit ptr for data
+static uint8_t    id_data[32];            // ASIC ID code data buffer
+static int32_t      id_size;                // size of ID data in bits
+//static int32_t      ptr;                    // current bit ptr for data
 
 static int      tdo;                    // bit shifted out to TDO
 
@@ -62,9 +62,9 @@ static int      tdo;                    // bit shifted out to TDO
  * the MSB of the first byte in the buffer.
  */
 
-static void insert_bit(UINT8 *buf, INT32 bit_num, INT32 bit)
+static void insert_bit(uint8_t *buf, int32_t bit_num, int32_t bit)
 {
-    INT32 bit_in_byte;
+    int32_t bit_in_byte;
 
     bit_in_byte = 7 - (bit_num & 7);
 
@@ -78,9 +78,9 @@ static void insert_bit(UINT8 *buf, INT32 bit_num, INT32 bit)
  * Inserts a 32-bit ID code into the ID bit field.
  */
 
-static void insert_id(UINT32 id, INT32 start_bit)
+static void insert_id(uint32_t id, int32_t start_bit)
 {
-    INT32 i;
+    int32_t i;
 
     for (i = 31; i >= 0; i--)
         insert_bit(id_data, start_bit++, (id >> i) & 1);
@@ -94,9 +94,9 @@ static void insert_id(UINT32 id, INT32 start_bit)
  * returned.
  */
 
-static int shift(UINT8 *data, INT32 num_bits)
+static int shift(uint8_t *data, int32_t num_bits)
 {
-    INT32     i;
+    int32_t     i;
     int    shift_out, shift_in;
 
     /*
@@ -239,7 +239,7 @@ void model3_tap_write(int tck, int tms, int tdi, int trst)
 
         tdo = ir & 1;   // shift LSB to output
         ir >>= 1;
-        ir |= ((UINT64) tdi << 45);
+        ir |= ((uint64_t) tdi << 45);
         break;
 
     case 15:    // Update-IR
@@ -287,7 +287,7 @@ void model3_machine_init(int step)
 /*****************************************************************************/
 /* Epson RTC-72421 */
 
-static UINT8 rtc_get_reg(running_machine *machine, int reg)
+static uint8_t rtc_get_reg(running_machine *machine, int reg)
 {
 	system_time systime;
 
@@ -352,7 +352,7 @@ static UINT8 rtc_get_reg(running_machine *machine, int reg)
 READ32_HANDLER(rtc72421_r)
 {
 	int reg = offset;
-	UINT32 data;
+	uint32_t data;
 	data = rtc_get_reg(space->machine, reg) << 24;
 	data |= 0x30000;	/* these bits are set to pass the battery voltage test */
 	return data;

@@ -12,8 +12,8 @@ public:
 	gradius3_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    gfxram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    gfxram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int         layer_colorbase[3], sprite_colorbase;

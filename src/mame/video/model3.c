@@ -21,22 +21,22 @@ typedef struct {
 typedef struct
 {
 	poly_vertex v[3];
-	UINT8 texture_x, texture_y;
-	UINT8 texture_width, texture_height;
-	UINT8 transparency;
-	UINT8 texture_format, param;
+	uint8_t texture_x, texture_y;
+	uint8_t texture_width, texture_height;
+	uint8_t transparency;
+	uint8_t texture_format, param;
 	int intensity;
-	UINT32 color;
+	uint32_t color;
 } TRIANGLE;
 
 typedef struct _cached_texture cached_texture;
 struct _cached_texture
 {
 	cached_texture *next;
-	UINT8		width;
-	UINT8		height;
-	UINT8		format;
-	UINT8		alpha;
+	uint8_t		width;
+	uint8_t		height;
+	uint8_t		format;
+	uint8_t		alpha;
 	rgb_t		data[1];
 };
 
@@ -44,8 +44,8 @@ typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
 	cached_texture *texture;
-	UINT32 color;
-	UINT8 texture_param;
+	uint32_t color;
+	uint8_t texture_param;
 	int polygon_transparency;
 	int polygon_intensity;
 };
@@ -61,42 +61,42 @@ struct _poly_extra_data
 
 /* forward declarations */
 static void real3d_traverse_display_list(running_machine *machine);
-static void draw_model(running_machine *machine, UINT32 addr);
+static void draw_model(running_machine *machine, uint32_t addr);
 static void init_matrix_stack(void);
 static void get_top_matrix(MATRIX *out);
 static void push_matrix_stack(void);
 static void pop_matrix_stack(void);
 static void multiply_matrix_stack(MATRIX matrix);
 static void translate_matrix_stack(float x, float y, float z);
-static void traverse_list(running_machine *machine, UINT32 address);
-static void draw_block(running_machine *machine, UINT32 address);
-static void draw_viewport(running_machine *machine, int pri, UINT32 address);
+static void traverse_list(running_machine *machine, uint32_t address);
+static void draw_block(running_machine *machine, uint32_t address);
+static void draw_viewport(running_machine *machine, int pri, uint32_t address);
 static void invalidate_texture(running_machine *machine, int page, int texx, int texy, int texwidth, int texheight);
 
 /*****************************************************************************/
 
-UINT64 *paletteram64;
+uint64_t *paletteram64;
 
-static UINT8 model3_layer_enable = 0;
-static UINT32 layer_modulate_r;
-static UINT32 layer_modulate_g;
-static UINT32 layer_modulate_b;
-static UINT32 model3_layer_modulate1;
-static UINT32 model3_layer_modulate2;
-static UINT64 layer_scroll[2];
+static uint8_t model3_layer_enable = 0;
+static uint32_t layer_modulate_r;
+static uint32_t layer_modulate_g;
+static uint32_t layer_modulate_b;
+static uint32_t model3_layer_modulate1;
+static uint32_t model3_layer_modulate2;
+static uint64_t layer_scroll[2];
 
-static UINT64 *m3_char_ram;
-static UINT64 *m3_tile_ram;
+static uint64_t *m3_char_ram;
+static uint64_t *m3_tile_ram;
 
-static UINT32 *texture_fifo;
+static uint32_t *texture_fifo;
 static int texture_fifo_pos = 0;
 
-static UINT16 *texture_ram[2];
-static UINT32 *display_list_ram;
-static UINT32 *culling_ram;
-static UINT32 *polygon_ram;
+static uint16_t *texture_ram[2];
+static uint32_t *display_list_ram;
+static uint32_t *culling_ram;
+static uint32_t *polygon_ram;
 
-static UINT16 *pal_lookup;
+static uint16_t *pal_lookup;
 
 static int real3d_display_list = 0;
 
@@ -121,7 +121,7 @@ static int tick = 0;
 static int debug_layer_disable = 0;
 
 
-static UINT64 vid_reg0;
+static uint64_t vid_reg0;
 
 /* matrix stack */
 #define MATRIX_STACK_SIZE	256
@@ -142,7 +142,7 @@ static int viewport_region_height;
 
 static PLANE clip_plane[5];
 
-static UINT32 matrix_base_address;
+static uint32_t matrix_base_address;
 
 
 #define BYTE_REVERSE32(x)		(((x >> 24) & 0xff) | \
@@ -172,23 +172,23 @@ VIDEO_START( model3 )
 	bitmap3d = machine->primary_screen->alloc_compatible_bitmap();
 	zbuffer = auto_bitmap_alloc(machine, width, height, BITMAP_FORMAT_INDEXED32);
 
-	m3_char_ram = auto_alloc_array_clear(machine, UINT64, 0x100000/8);
-	m3_tile_ram = auto_alloc_array_clear(machine, UINT64, 0x8000/8);
+	m3_char_ram = auto_alloc_array_clear(machine, uint64_t, 0x100000/8);
+	m3_tile_ram = auto_alloc_array_clear(machine, uint64_t, 0x8000/8);
 
-	pal_lookup = auto_alloc_array_clear(machine, UINT16, 65536);
+	pal_lookup = auto_alloc_array_clear(machine, uint16_t, 65536);
 
-	texture_fifo = auto_alloc_array_clear(machine, UINT32, 0x100000/4);
+	texture_fifo = auto_alloc_array_clear(machine, uint32_t, 0x100000/4);
 
 	/* 2x 4MB texture sheets */
-	texture_ram[0] = auto_alloc_array(machine, UINT16, 0x400000/2);
-	texture_ram[1] = auto_alloc_array(machine, UINT16, 0x400000/2);
+	texture_ram[0] = auto_alloc_array(machine, uint16_t, 0x400000/2);
+	texture_ram[1] = auto_alloc_array(machine, uint16_t, 0x400000/2);
 
 	/* 1MB Display List RAM */
-	display_list_ram = auto_alloc_array_clear(machine, UINT32, 0x100000/4);
+	display_list_ram = auto_alloc_array_clear(machine, uint32_t, 0x100000/4);
 	/* 4MB for nodes (< Step 2.0 have only 2MB) */
-	culling_ram = auto_alloc_array_clear(machine, UINT32, 0x400000/4);
+	culling_ram = auto_alloc_array_clear(machine, uint32_t, 0x400000/4);
 	/* 4MB Polygon RAM */
-	polygon_ram = auto_alloc_array_clear(machine, UINT32, 0x400000/4);
+	polygon_ram = auto_alloc_array_clear(machine, uint32_t, 0x400000/4);
 
 	tick = 0;
 	debug_layer_disable = 0;
@@ -206,8 +206,8 @@ VIDEO_START( model3 )
 static void draw_tile_4bit(bitmap_t *bitmap, int tx, int ty, int tilenum)
 {
 	int x, y;
-	UINT8 *tile_base = (UINT8*)m3_char_ram;
-	UINT8 *tile;
+	uint8_t *tile_base = (uint8_t*)m3_char_ram;
+	uint8_t *tile;
 
 	int data = (BYTE_REVERSE16(tilenum));
 	int c = data & 0x7ff0;
@@ -217,10 +217,10 @@ static void draw_tile_4bit(bitmap_t *bitmap, int tx, int ty, int tilenum)
 	tile = &tile_base[tile_index];
 
 	for(y = ty; y < ty+8; y++) {
-		UINT16 *d = BITMAP_ADDR16(bitmap, y^1, 0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, y^1, 0);
 		for(x = tx; x < tx+8; x+=2) {
-			UINT8 tile0, tile1;
-			UINT16 pix0, pix1;
+			uint8_t tile0, tile1;
+			uint16_t pix0, pix1;
 			tile0 = *tile >> 4;
 			tile1 = *tile & 0xf;
 			pix0 = pal_lookup[c + tile0];
@@ -241,8 +241,8 @@ static void draw_tile_4bit(bitmap_t *bitmap, int tx, int ty, int tilenum)
 static void draw_tile_8bit(bitmap_t *bitmap, int tx, int ty, int tilenum)
 {
 	int x, y;
-	UINT8 *tile_base = (UINT8*)m3_char_ram;
-	UINT8 *tile;
+	uint8_t *tile_base = (uint8_t*)m3_char_ram;
+	uint8_t *tile;
 
 	int data = (BYTE_REVERSE16(tilenum));
 	int c = data & 0x7f00;
@@ -252,11 +252,11 @@ static void draw_tile_8bit(bitmap_t *bitmap, int tx, int ty, int tilenum)
 	tile = &tile_base[tile_index];
 
 	for(y = ty; y < ty+8; y++) {
-		UINT16 *d = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, y, 0);
 		int xx = 0;
 		for(x = tx; x < tx+8; x++) {
-			UINT8 tile0;
-			UINT16 pix;
+			uint8_t tile0;
+			uint16_t pix;
 			tile0 = tile[xx^4];
 			pix = pal_lookup[c + tile0];
 			if((pix & 0x8000) == 0)
@@ -274,10 +274,10 @@ static void draw_texture_sheet(bitmap_t *bitmap, const rectangle *cliprect)
 	int x,y;
 	for(y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *d = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, y, 0);
 		int index = (y*2)*2048;
 		for(x = cliprect->min_x; x <= cliprect->max_x; x++) {
-			UINT16 pix = texture_ram[0][index];
+			uint16_t pix = texture_ram[0][index];
 			index+=4;
 			if(pix != 0) {
 				d[x] = pix;
@@ -291,7 +291,7 @@ static void draw_layer(bitmap_t *bitmap, const rectangle *cliprect, int layer, i
 {
 	int x, y;
 	int tile_index = 0;
-	UINT16 *tiles = (UINT16*)&m3_tile_ram[layer * 0x400];
+	uint16_t *tiles = (uint16_t*)&m3_tile_ram[layer * 0x400];
 
 	//logerror("Layer %d: X: %d, Y: %d\n", layer, x1, y1);
 
@@ -341,7 +341,7 @@ static void draw_layer(bitmap_t *bitmap, const rectangle *cliprect, int layer, i
 		{
 			tile_index = ((y/8) * 64);
 			for (x = cliprect->min_x; x <= cliprect->max_x; x+=8) {
-				UINT16 tile = tiles[tile_index ^ 0x2];
+				uint16_t tile = tiles[tile_index ^ 0x2];
 				draw_tile_4bit(bitmap, x, y, tile);
 				++tile_index;
 			}
@@ -353,7 +353,7 @@ static void draw_layer(bitmap_t *bitmap, const rectangle *cliprect, int layer, i
 		{
 			tile_index = ((y/8) * 64);
 			for (x = cliprect->min_x; x <= cliprect->max_x; x+=8) {
-				UINT16 tile = tiles[tile_index ^ 0x2];
+				uint16_t tile = tiles[tile_index ^ 0x2];
 				draw_tile_8bit(bitmap, x, y, tile);
 				++tile_index;
 			}
@@ -366,10 +366,10 @@ static void copy_screen(bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int x,y;
 	for(y=cliprect->min_y; y <= cliprect->max_y; y++) {
-		UINT16 *d = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16 *s = BITMAP_ADDR16(bitmap3d, y, 0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *s = BITMAP_ADDR16(bitmap3d, y, 0);
 		for(x=cliprect->min_x; x <= cliprect->max_x; x++) {
-			UINT16 pix = s[x];
+			uint16_t pix = s[x];
 			if(!(pix & 0x8000)) {
 				d[x] = pix;
 			}
@@ -382,12 +382,12 @@ VIDEO_UPDATE( model3 )
 {
 /*
     int layer_scroll_x[4], layer_scroll_y[4];
-    UINT32 layer_data[4];
+    uint32_t layer_data[4];
 
-    layer_data[0] = BYTE_REVERSE32((UINT32)(layer_scroll[0] >> 32));
-    layer_data[1] = BYTE_REVERSE32((UINT32)(layer_scroll[0] >> 0));
-    layer_data[2] = BYTE_REVERSE32((UINT32)(layer_scroll[1] >> 32));
-    layer_data[3] = BYTE_REVERSE32((UINT32)(layer_scroll[1] >> 0));
+    layer_data[0] = BYTE_REVERSE32((uint32_t)(layer_scroll[0] >> 32));
+    layer_data[1] = BYTE_REVERSE32((uint32_t)(layer_scroll[0] >> 0));
+    layer_data[2] = BYTE_REVERSE32((uint32_t)(layer_scroll[1] >> 32));
+    layer_data[3] = BYTE_REVERSE32((uint32_t)(layer_scroll[1] >> 0));
     layer_scroll_x[0] = (layer_data[0] & 0x8000) ? (layer_data[0] & 0x1ff) : -(layer_data[0] & 0x1ff);
     layer_scroll_y[0] = (layer_data[0] & 0x8000) ? (layer_data[0] & 0x1ff) : -(layer_data[0] & 0x1ff);
     layer_scroll_x[1] = (layer_data[1] & 0x8000) ? (layer_data[1] & 0x1ff) : -(layer_data[1] & 0x1ff);
@@ -481,8 +481,8 @@ READ64_HANDLER(model3_vid_reg_r)
 	{
 		case 0x00/8:	return vid_reg0;
 		case 0x08/8:	return U64(0xffffffffffffffff);		/* ??? */
-		case 0x20/8:	return (UINT64)model3_layer_enable << 52;
-		case 0x40/8:	return ((UINT64)model3_layer_modulate1 << 32) | (UINT64)model3_layer_modulate2;
+		case 0x20/8:	return (uint64_t)model3_layer_enable << 52;
+		case 0x40/8:	return ((uint64_t)model3_layer_modulate1 << 32) | (uint64_t)model3_layer_modulate2;
 		default:		logerror("read reg %02X\n", offset);break;
 	}
 	return 0;
@@ -492,29 +492,29 @@ WRITE64_HANDLER(model3_vid_reg_w)
 {
 	switch(offset)
 	{
-		case 0x00/8:	logerror("vid_reg0: %08X%08X\n", (UINT32)(data>>32),(UINT32)(data)); vid_reg0 = data; break;
+		case 0x00/8:	logerror("vid_reg0: %08X%08X\n", (uint32_t)(data>>32),(uint32_t)(data)); vid_reg0 = data; break;
 		case 0x08/8:	break;		/* ??? */
 		case 0x10/8:	model3_set_irq_line(space->machine, (data >> 56) & 0x0f, CLEAR_LINE); break;		/* VBL IRQ Ack */
 
 		case 0x20/8:	model3_layer_enable = (data >> 52);	break;
 
-		case 0x40/8:	model3_layer_modulate1 = (UINT32)(data >> 32);
-						model3_layer_modulate2 = (UINT32)(data);
+		case 0x40/8:	model3_layer_modulate1 = (uint32_t)(data >> 32);
+						model3_layer_modulate2 = (uint32_t)(data);
 						break;
 		case 0x60/8:	COMBINE_DATA(&layer_scroll[0]); break;
 		case 0x68/8:	COMBINE_DATA(&layer_scroll[1]); break;
-		default:		logerror("model3_vid_reg_w: %02X, %08X%08X\n", offset, (UINT32)(data >> 32), (UINT32)(data)); break;
+		default:		logerror("model3_vid_reg_w: %02X, %08X%08X\n", offset, (uint32_t)(data >> 32), (uint32_t)(data)); break;
 	}
 }
 
 WRITE64_HANDLER( model3_palette_w )
 {
 	int r1,g1,b1,r2,g2,b2;
-	UINT32 data1,data2;
+	uint32_t data1,data2;
 
 	COMBINE_DATA(&paletteram64[offset]);
-	data1 = BYTE_REVERSE32((UINT32)(paletteram64[offset] >> 32));
-	data2 = BYTE_REVERSE32((UINT32)(paletteram64[offset] >> 0));
+	data1 = BYTE_REVERSE32((uint32_t)(paletteram64[offset] >> 32));
+	data2 = BYTE_REVERSE32((uint32_t)(paletteram64[offset] >> 0));
 
 	r1 = ((data1 >> 0) & 0x1f);
 	g1 = ((data1 >> 5) & 0x1f);
@@ -564,7 +564,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 	cached_texture *tex = texcache[page][texy][texx];
 	int pixheight = 32 << texheight;
 	int pixwidth = 32 << texwidth;
-	UINT32 alpha = ~0;
+	uint32_t alpha = ~0;
 	int x, y;
 
 	/* if we have one already, validate it */
@@ -573,7 +573,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			return tex;
 
 	/* create a new texture */
-	tex = (cached_texture *)auto_alloc_array(machine, UINT8, sizeof(cached_texture) + (2 * pixwidth * 2 * pixheight) * sizeof(rgb_t));
+	tex = (cached_texture *)auto_alloc_array(machine, uint8_t, sizeof(cached_texture) + (2 * pixwidth * 2 * pixheight) * sizeof(rgb_t));
 	tex->width = texwidth;
 	tex->height = texheight;
 	tex->format = format;
@@ -585,7 +585,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 	/* decode it */
 	for (y = 0; y < pixheight; y++)
 	{
-		const UINT16 *texsrc = &texture_ram[page][(texy * 32 + y) * 2048 + texx * 32];
+		const uint16_t *texsrc = &texture_ram[page][(texy * 32 + y) * 2048 + texx * 32];
 		rgb_t *dest = tex->data + 2 * pixwidth * y;
 
 		switch (format)
@@ -593,7 +593,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 0:		/* 1-5-5-5 ARGB */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT16 pixdata = texsrc[x];
+					uint16_t pixdata = texsrc[x];
 					dest[x] = MAKE_ARGB(pal1bit(pixdata >> 15), pal5bit(pixdata >> 10), pal5bit(pixdata >> 5), pal5bit(pixdata >> 0));
 					alpha = ~0;
 				}
@@ -602,7 +602,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 1:		/* 4-bit grayscale in low nibble */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 grayvalue = pal4bit(texsrc[x] >> 0);
+					uint8_t grayvalue = pal4bit(texsrc[x] >> 0);
 					alpha &= dest[x] = MAKE_ARGB(0xff, grayvalue, grayvalue, grayvalue);
 				}
 				break;
@@ -610,7 +610,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 2:		/* 4-bit grayscale in 2nd nibble */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 grayvalue = pal4bit(texsrc[x] >> 4);
+					uint8_t grayvalue = pal4bit(texsrc[x] >> 4);
 					alpha &= dest[x] = MAKE_ARGB(0xff, grayvalue, grayvalue, grayvalue);
 				}
 				break;
@@ -618,7 +618,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 3:		/* 4-bit grayscale in 3rd nibble */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 grayvalue = pal4bit(texsrc[x] >> 8);
+					uint8_t grayvalue = pal4bit(texsrc[x] >> 8);
 					alpha &= dest[x] = MAKE_ARGB(0xff, grayvalue, grayvalue, grayvalue);
 				}
 				break;
@@ -626,7 +626,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 4:		/* 8-bit A4L4 */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 pixdata = texsrc[x / 2] >> ((~x & 1) * 8);
+					uint8_t pixdata = texsrc[x / 2] >> ((~x & 1) * 8);
 					alpha &= dest[x] = MAKE_ARGB(pal4bit(pixdata >> 4), pal4bit(~pixdata), pal4bit(~pixdata), pal4bit(~pixdata));
 				}
 				break;
@@ -634,7 +634,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 5:		/* 8-bit grayscale */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 grayvalue = texsrc[x / 2] >> ((~x & 1) * 8);
+					uint8_t grayvalue = texsrc[x / 2] >> ((~x & 1) * 8);
 					alpha &= dest[x] = MAKE_ARGB(0xff, grayvalue, grayvalue, grayvalue);
 				}
 				break;
@@ -642,7 +642,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 6:		/* 4-bit grayscale in high nibble */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT8 grayvalue = pal4bit(texsrc[x] >> 12);
+					uint8_t grayvalue = pal4bit(texsrc[x] >> 12);
 					alpha &= dest[x] = MAKE_ARGB(0xff, grayvalue, grayvalue, grayvalue);
 				}
 				break;
@@ -650,7 +650,7 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 			case 7:		/* 4-4-4-4 ARGB */
 				for (x = 0; x < pixwidth; x++)
 				{
-					UINT16 pixdata = texsrc[x];
+					uint16_t pixdata = texsrc[x];
 					alpha &= dest[x] = MAKE_ARGB(pal4bit(pixdata >> 0), pal4bit(pixdata >> 12), pal4bit(pixdata >> 8), pal4bit(pixdata >> 4));
 				}
 				break;
@@ -678,24 +678,24 @@ static cached_texture *get_texture(running_machine *machine, int page, int texx,
 WRITE64_HANDLER( real3d_display_list_w )
 {
 	if(ACCESSING_BITS_32_63) {
-		display_list_ram[offset*2] = BYTE_REVERSE32((UINT32)(data >> 32));
+		display_list_ram[offset*2] = BYTE_REVERSE32((uint32_t)(data >> 32));
 	}
 	if(ACCESSING_BITS_0_31) {
-		display_list_ram[(offset*2)+1] = BYTE_REVERSE32((UINT32)(data));
+		display_list_ram[(offset*2)+1] = BYTE_REVERSE32((uint32_t)(data));
 	}
 }
 
 WRITE64_HANDLER( real3d_polygon_ram_w )
 {
 	if(ACCESSING_BITS_32_63) {
-		polygon_ram[offset*2] = BYTE_REVERSE32((UINT32)(data >> 32));
+		polygon_ram[offset*2] = BYTE_REVERSE32((uint32_t)(data >> 32));
 	}
 	if(ACCESSING_BITS_0_31) {
-		polygon_ram[(offset*2)+1] = BYTE_REVERSE32((UINT32)(data));
+		polygon_ram[(offset*2)+1] = BYTE_REVERSE32((uint32_t)(data));
 	}
 }
 
-static const UINT8 texture_decode[64] =
+static const uint8_t texture_decode[64] =
 {
 	 0,  1,  4,  5,  8,  9, 12, 13,
 	 2,  3,  6,  7, 10, 11, 14, 15,
@@ -707,7 +707,7 @@ static const UINT8 texture_decode[64] =
 	50, 51, 54, 55, 58, 59, 62, 63
 };
 
-INLINE void write_texture16(int xpos, int ypos, int width, int height, int page, UINT16 *data)
+INLINE void write_texture16(int xpos, int ypos, int width, int height, int page, uint16_t *data)
 {
 	int x,y,i,j;
 
@@ -715,7 +715,7 @@ INLINE void write_texture16(int xpos, int ypos, int width, int height, int page,
 	{
 		for(x=xpos; x < xpos+width; x+=8)
 		{
-			UINT16 *texture = &texture_ram[page][y*2048+x];
+			uint16_t *texture = &texture_ram[page][y*2048+x];
 			int b = 0;
 			for(j=y; j < y+8; j++) {
 				for(i=x; i < x+8; i++) {
@@ -730,16 +730,16 @@ INLINE void write_texture16(int xpos, int ypos, int width, int height, int page,
 }
 
 #ifdef UNUSED_FUNCTION
-INLINE void write_texture8(int xpos, int ypos, int width, int height, int page, UINT16 *data)
+INLINE void write_texture8(int xpos, int ypos, int width, int height, int page, uint16_t *data)
 {
 	int x,y,i,j;
-	UINT16 color = 0x7c00;
+	uint16_t color = 0x7c00;
 
 	for(y=ypos; y < ypos+(height/2); y+=4)
 	{
 		for(x=xpos; x < xpos+width; x+=8)
 		{
-			UINT16 *texture = &texture_ram[page][y*2048+x];
+			uint16_t *texture = &texture_ram[page][y*2048+x];
 			for(j=y; j < y+4; j++) {
 				for(i=x; i < x+8; i++) {
 					*texture = color;
@@ -752,7 +752,7 @@ INLINE void write_texture8(int xpos, int ypos, int width, int height, int page, 
 }
 #endif
 
-static void real3d_upload_texture(running_machine *machine, UINT32 header, UINT32 *data)
+static void real3d_upload_texture(running_machine *machine, uint32_t header, uint32_t *data)
 {
 	int width	= 32 << ((header >> 14) & 0x7);
 	int height	= 32 << ((header >> 17) & 0x7);
@@ -765,22 +765,22 @@ static void real3d_upload_texture(running_machine *machine, UINT32 header, UINT3
 	{
 		case 0x00:		/* Texture with mipmaps */
 //          if(bitdepth) {
-				write_texture16(xpos, ypos, width, height, page, (UINT16*)data);
+				write_texture16(xpos, ypos, width, height, page, (uint16_t*)data);
 				invalidate_texture(machine, page, header & 0x3f, (header >> 7) & 0x1f, (header >> 14) & 0x7, (header >> 17) & 0x7);
 //          } else {
 				/* TODO: 8-bit textures are weird. need to figure out some additional bits */
 				//logerror("W: %d, H: %d, X: %d, Y: %d, P: %d, Bit: %d, : %08X, %08X\n", width, height, xpos, ypos, page, bitdepth, header & 0x00681040, header);
-				//write_texture8(xpos, ypos, width, height, page, (UINT16*)data);
+				//write_texture8(xpos, ypos, width, height, page, (uint16_t*)data);
 //          }
 			break;
 		case 0x01:		/* Texture without mipmaps */
 //          if(bitdepth) {
-				write_texture16(xpos, ypos, width, height, page, (UINT16*)data);
+				write_texture16(xpos, ypos, width, height, page, (uint16_t*)data);
 				invalidate_texture(machine, page, header & 0x3f, (header >> 7) & 0x1f, (header >> 14) & 0x7, (header >> 17) & 0x7);
 //          } else {
 				/* TODO: 8-bit textures are weird. need to figure out some additional bits */
 				//logerror("W: %d, H: %d, X: %d, Y: %d, P: %d, Bit: %d, : %08X, %08X\n", width, height, xpos, ypos, page, bitdepth, header & 0x00681040, header);
-				//write_texture8(xpos, ypos, width, height, page, (UINT16*)data);
+				//write_texture8(xpos, ypos, width, height, page, (uint16_t*)data);
 //          }
 			break;
 		case 0x02:		/* Only mipmaps */
@@ -802,7 +802,7 @@ void real3d_display_list_end(running_machine *machine)
 		while(i < texture_fifo_pos)
 		{
 			int length = (texture_fifo[i] / 2) + 2;
-			UINT32 header = texture_fifo[i+1];
+			uint32_t header = texture_fifo[i+1];
 			real3d_upload_texture(machine, header, &texture_fifo[i+2]);
 			i += length;
 		};
@@ -814,12 +814,12 @@ void real3d_display_list_end(running_machine *machine)
 //  real3d_display_list = 1;
 }
 
-void real3d_display_list1_dma(const address_space *space, UINT32 src, UINT32 dst, int length, int byteswap)
+void real3d_display_list1_dma(const address_space *space, uint32_t src, uint32_t dst, int length, int byteswap)
 {
 	int i;
 	int d = (dst & 0xffffff) / 4;
 	for(i=0; i < length; i+=4) {
-		UINT32 w;
+		uint32_t w;
 		if (byteswap) {
 			w = BYTE_REVERSE32(memory_read_dword(space, src));
 		} else {
@@ -830,12 +830,12 @@ void real3d_display_list1_dma(const address_space *space, UINT32 src, UINT32 dst
 	}
 }
 
-void real3d_display_list2_dma(const address_space *space, UINT32 src, UINT32 dst, int length, int byteswap)
+void real3d_display_list2_dma(const address_space *space, uint32_t src, uint32_t dst, int length, int byteswap)
 {
 	int i;
 	int d = (dst & 0xffffff) / 4;
 	for(i=0; i < length; i+=4) {
-		UINT32 w;
+		uint32_t w;
 		if (byteswap) {
 			w = BYTE_REVERSE32(memory_read_dword(space, src));
 		} else {
@@ -846,11 +846,11 @@ void real3d_display_list2_dma(const address_space *space, UINT32 src, UINT32 dst
 	}
 }
 
-void real3d_vrom_texture_dma(const address_space *space, UINT32 src, UINT32 dst, int length, int byteswap)
+void real3d_vrom_texture_dma(const address_space *space, uint32_t src, uint32_t dst, int length, int byteswap)
 {
 	if((dst & 0xff) == 0) {
 
-		UINT32 address, header;
+		uint32_t address, header;
 
 		if (byteswap) {
 			address = BYTE_REVERSE32(memory_read_dword(space, (src+0)));
@@ -859,15 +859,15 @@ void real3d_vrom_texture_dma(const address_space *space, UINT32 src, UINT32 dst,
 			address = memory_read_dword(space, (src+0));
 			header = memory_read_dword(space, (src+4));
 		}
-		real3d_upload_texture(space->machine, header, (UINT32*)&model3_vrom[address]);
+		real3d_upload_texture(space->machine, header, (uint32_t*)&model3_vrom[address]);
 	}
 }
 
-void real3d_texture_fifo_dma(const address_space *space, UINT32 src, int length, int byteswap)
+void real3d_texture_fifo_dma(const address_space *space, uint32_t src, int length, int byteswap)
 {
 	int i;
 	for(i=0; i < length; i+=4) {
-		UINT32 w;
+		uint32_t w;
 		if (byteswap) {
 			w = BYTE_REVERSE32(memory_read_dword(space, src));
 		} else {
@@ -879,12 +879,12 @@ void real3d_texture_fifo_dma(const address_space *space, UINT32 src, int length,
 	}
 }
 
-void real3d_polygon_ram_dma(const address_space *space, UINT32 src, UINT32 dst, int length, int byteswap)
+void real3d_polygon_ram_dma(const address_space *space, uint32_t src, uint32_t dst, int length, int byteswap)
 {
 	int i;
 	int d = (dst & 0xffffff) / 4;
 	for(i=0; i < length; i+=4) {
-		UINT32 w;
+		uint32_t w;
 		if (byteswap) {
 			w = BYTE_REVERSE32(memory_read_dword(space, src));
 		} else {
@@ -1116,10 +1116,10 @@ static void render_one(running_machine *machine, TRIANGLE *tri)
 	}
 }
 
-static void draw_model(running_machine *machine, UINT32 addr)
+static void draw_model(running_machine *machine, uint32_t addr)
 {
-	UINT32 *model = (addr >= 0x100000) ? &model3_vrom[addr] :  &polygon_ram[addr];
-	UINT32 header[7];
+	uint32_t *model = (addr >= 0x100000) ? &model3_vrom[addr] :  &polygon_ram[addr];
+	uint32_t header[7];
 	int index = 0;
 	int last_polygon = FALSE, back_face = FALSE;
 	int num_vertices;
@@ -1149,7 +1149,7 @@ static void draw_model(running_machine *machine, UINT32 addr)
 	while (!last_polygon)
 	{
 		float texture_coord_scale;
-		UINT16 color;
+		uint16_t color;
 		VECTOR3 normal;
 		VECTOR3 sn;
 		VECTOR p[4];
@@ -1173,9 +1173,9 @@ static void draw_model(running_machine *machine, UINT32 addr)
 		texture_coord_scale = (header[1] & 0x40) ? 1.0f : (1.0f / 8.0f);
 
 		/* polygon normal (sign + 1.22 fixed-point) */
-		normal[0] = (float)((INT32)header[1] >> 8) * (1.0f / 4194304.0f);
-		normal[1] = (float)((INT32)header[2] >> 8) * (1.0f / 4194304.0f);
-		normal[2] = (float)((INT32)header[3] >> 8) * (1.0f / 4194304.0f);
+		normal[0] = (float)((int32_t)header[1] >> 8) * (1.0f / 4194304.0f);
+		normal[1] = (float)((int32_t)header[2] >> 8) * (1.0f / 4194304.0f);
+		normal[2] = (float)((int32_t)header[3] >> 8) * (1.0f / 4194304.0f);
 
 		/* load reused vertices */
 		vi = 0;
@@ -1186,11 +1186,11 @@ static void draw_model(running_machine *machine, UINT32 addr)
 		/* load new vertices */
 		for ( ; vi < num_vertices; vi++)
 		{
-			vertex[vi].x = (float)((INT32)model[index++]) * fixed_point_fraction;
-			vertex[vi].y = (float)((INT32)model[index++]) * fixed_point_fraction;
-			vertex[vi].pz = (float)((INT32)model[index++]) * fixed_point_fraction;
-			vertex[vi].pu = (UINT16)(model[index] >> 16);
-			vertex[vi].pv = (UINT16)(model[index++]);
+			vertex[vi].x = (float)((int32_t)model[index++]) * fixed_point_fraction;
+			vertex[vi].y = (float)((int32_t)model[index++]) * fixed_point_fraction;
+			vertex[vi].pz = (float)((int32_t)model[index++]) * fixed_point_fraction;
+			vertex[vi].pu = (uint16_t)(model[index] >> 16);
+			vertex[vi].pv = (uint16_t)(model[index++]);
 		}
 
 		/* Copy current vertices as previous vertices */
@@ -1312,7 +1312,7 @@ static void draw_model(running_machine *machine, UINT32 addr)
 /*****************************************************************************/
 /* display list parser */
 
-static UINT32 *get_memory_pointer(UINT32 address)
+static uint32_t *get_memory_pointer(uint32_t address)
 {
 	if (address & 0x800000)
 	{
@@ -1340,18 +1340,18 @@ static void load_matrix(int matrix_num, MATRIX *out)
 	(*out)[3][0] = matrix[0];	(*out)[3][1] = matrix[1];	(*out)[3][2] = matrix[2];	(*out)[3][3] = 1.0f;
 }
 
-static void traverse_list4(running_machine *machine, int lod_num, UINT32 address)
+static void traverse_list4(running_machine *machine, int lod_num, uint32_t address)
 {
 	/* does something with the LOD selection */
-	UINT32 *list = get_memory_pointer(address);
-	UINT32 link = list[0];
+	uint32_t *list = get_memory_pointer(address);
+	uint32_t link = list[0];
 
 	draw_model(machine, link & 0xffffff);
 }
 
-static void traverse_list(running_machine *machine, UINT32 address)
+static void traverse_list(running_machine *machine, uint32_t address)
 {
-	UINT32 *list = get_memory_pointer(address);
+	uint32_t *list = get_memory_pointer(address);
 	int list_ptr = 0;
 
 	if (list_depth > 2)
@@ -1384,7 +1384,7 @@ static void traverse_list(running_machine *machine, UINT32 address)
 	list_depth--;
 }
 
-INLINE void process_link(running_machine *machine, UINT32 address, UINT32 link)
+INLINE void process_link(running_machine *machine, uint32_t address, uint32_t link)
 {
 	if (link != 0 && link != 0x0fffffff && link != 0x00800800 && link != 0x01000000)
 	{
@@ -1410,10 +1410,10 @@ INLINE void process_link(running_machine *machine, UINT32 address, UINT32 link)
 	}
 }
 
-static void draw_block(running_machine *machine, UINT32 address)
+static void draw_block(running_machine *machine, uint32_t address)
 {
-	const UINT32 *node = get_memory_pointer(address);
-	UINT32 link;
+	const uint32_t *node = get_memory_pointer(address);
+	uint32_t link;
 	int node_matrix;
 	float x, y, z;
 	MATRIX matrix;
@@ -1451,10 +1451,10 @@ static void draw_block(running_machine *machine, UINT32 address)
 	process_link(machine, address, link);
 }
 
-static void draw_viewport(running_machine *machine, int pri, UINT32 address)
+static void draw_viewport(running_machine *machine, int pri, uint32_t address)
 {
-	const UINT32 *node = get_memory_pointer(address);
-	UINT32 link_address;
+	const uint32_t *node = get_memory_pointer(address);
+	uint32_t link_address;
 	float /*viewport_left, viewport_right, */viewport_top, viewport_bottom;
 	float /*fov_x,*/ fov_y;
 
@@ -1503,7 +1503,7 @@ static void draw_viewport(running_machine *machine, int pri, UINT32 address)
 	parallel_light[1] = *(float *)&node[6];
 	parallel_light[2] = *(float *)&node[4];
 	parallel_light_intensity = *(float *)&node[7];
-	ambient_light_intensity = (UINT8)(node[36] >> 8) / 256.0f;
+	ambient_light_intensity = (uint8_t)(node[36] >> 8) / 256.0f;
 
 	/* set coordinate system matrix */
 	load_matrix(0, &coordinate_system);

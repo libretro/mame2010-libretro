@@ -12,8 +12,8 @@ public:
 	flkatck_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    k007121_ram;
-//  UINT8 *    paletteram;  // this currently uses generic palette handling
+	uint8_t *    k007121_ram;
+//  uint8_t *    paletteram;  // this currently uses generic palette handling
 
 	/* video-related */
 	tilemap_t    *k007121_tilemap[2];

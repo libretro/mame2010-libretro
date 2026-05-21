@@ -15,7 +15,7 @@
 /***************************************************************************/
 
 // K055550/K053990 protection chips, perform simple memset() and other game logic operations
-static UINT16 prot_data[0x20];
+static uint16_t prot_data[0x20];
 
 static WRITE32_HANDLER(fantjour_dma_w);
 
@@ -26,7 +26,7 @@ READ16_HANDLER( K055550_word_r )
 
 WRITE16_HANDLER( K055550_word_w )
 {
-	UINT32 adr, bsize, count, i, lim;
+	uint32_t adr, bsize, count, i, lim;
 	int src, tgt, srcend, tgtend, skip, cx1, sx1, wx1, cy1, sy1, wy1, cz1, sz1, wz1, c2, s2, w2;
 	int dx, dy, angle;
 
@@ -155,7 +155,7 @@ WRITE16_HANDLER( K053990_martchmp_word_w )
 	int dst_addr, /*dst_count,*/ dst_skip;
 	int mod_addr, mod_count, mod_skip, mod_offs;
 	int mode, i, element_size = 1;
-	UINT16 mod_val, mod_data;
+	uint16_t mod_val, mod_data;
 
 	COMBINE_DATA(prot_data+offset);
 
@@ -234,11 +234,11 @@ WRITE16_HANDLER( K053990_martchmp_word_w )
 	}
 }
 
-void konamigx_esc_alert(UINT32 *srcbase, int srcoffs, int count, int mode) // (WARNING: assumed big endianess)
+void konamigx_esc_alert(uint32_t *srcbase, int srcoffs, int count, int mode) // (WARNING: assumed big endianess)
 {
 
 // hand-filled but should be close
-static const UINT8 ztable[7][8] =
+static const uint8_t ztable[7][8] =
 {
 	{5,4,3,2,1,7,6,0},
 	{4,3,2,1,0,7,6,5},
@@ -249,7 +249,7 @@ static const UINT8 ztable[7][8] =
 	{5,4,3,2,1,7,6,0}
 };
 
-static const UINT8 ptable[7][8] =
+static const uint8_t ptable[7][8] =
 {
 	{0x00,0x00,0x00,0x10,0x20,0x00,0x00,0x30},
 	{0x20,0x20,0x20,0x20,0x20,0x00,0x20,0x20},
@@ -260,10 +260,10 @@ static const UINT8 ptable[7][8] =
 	{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10}
 };
 
-	INT32 data1, data2, i, j, vpos, hpos, voffs, hoffs, vcorr, hcorr, vmask, hmask, magicid;
-	UINT32 *src, *srcend, *obj, *objend;
-	UINT16 *dst;
-	const UINT8  *zcode, *pcode;
+	int32_t data1, data2, i, j, vpos, hpos, voffs, hoffs, vcorr, hcorr, vmask, hmask, magicid;
+	uint32_t *src, *srcend, *obj, *objend;
+	uint16_t *dst;
+	const uint8_t  *zcode, *pcode;
 
 	if (!count || !srcbase) return;
 
@@ -437,7 +437,7 @@ if((data1=obj[0])&0x80000000)\
 #undef EXTRACT_EVEN
 }
 
-static UINT32 fantjour_dma[8];
+static uint32_t fantjour_dma[8];
 
 void fantjour_dma_install(running_machine *machine)
 {
@@ -450,20 +450,20 @@ static WRITE32_HANDLER(fantjour_dma_w)
 {
 	COMBINE_DATA(fantjour_dma + offset);
 	if(!offset && ACCESSING_BITS_24_31) {
-		UINT32 sa = fantjour_dma[1];
-		//      UINT16 ss = (fantjour_dma[2] & 0xffff0000) >> 16;
-		//      UINT32 sb = ((fantjour_dma[2] & 0xffff) << 16) | ((fantjour_dma[3] & 0xffff0000) >> 16);
+		uint32_t sa = fantjour_dma[1];
+		//      uint16_t ss = (fantjour_dma[2] & 0xffff0000) >> 16;
+		//      uint32_t sb = ((fantjour_dma[2] & 0xffff) << 16) | ((fantjour_dma[3] & 0xffff0000) >> 16);
 
-		UINT32 da = ((fantjour_dma[3] & 0xffff) << 16) | ((fantjour_dma[4] & 0xffff0000) >> 16);
-		//      UINT16 ds = fantjour_dma[4] & 0xffff;
-		UINT32 db = fantjour_dma[5];
+		uint32_t da = ((fantjour_dma[3] & 0xffff) << 16) | ((fantjour_dma[4] & 0xffff0000) >> 16);
+		//      uint16_t ds = fantjour_dma[4] & 0xffff;
+		uint32_t db = fantjour_dma[5];
 
-		//      UINT8 sz1 = fantjour_dma[0] >> 8;
-		UINT8 sz2 = fantjour_dma[0] >> 16;
-		UINT8 mode = fantjour_dma[0] >> 24;
+		//      uint8_t sz1 = fantjour_dma[0] >> 8;
+		uint8_t sz2 = fantjour_dma[0] >> 16;
+		uint8_t mode = fantjour_dma[0] >> 24;
 
-		UINT32 x   = fantjour_dma[6];
-		UINT32 i1, i2;
+		uint32_t x   = fantjour_dma[6];
+		uint32_t i1, i2;
 
 		if(mode == 0x93)
 			for(i1=0; i1 <= sz2; i1++)

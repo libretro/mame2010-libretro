@@ -48,18 +48,18 @@ typedef struct _noise_state
 	{
 		struct
 		{
-			UINT8 vcf;
-			UINT8 vcq;
-			UINT8 vca;
-			UINT8 pan;
+			uint8_t vcf;
+			uint8_t vcq;
+			uint8_t vca;
+			uint8_t pan;
 		};
-		UINT8 dac[4];
+		uint8_t dac[4];
 	};
 
 	float				gain;
-	UINT32				noise_shift;
-	UINT8				noise_state;
-	UINT8				noise_subcount;
+	uint32_t				noise_shift;
+	uint8_t				noise_state;
+	uint8_t				noise_subcount;
 
 	filter_state		noise_filters[4];
 	lp_filter			filter;
@@ -179,7 +179,7 @@ static void recompute_filter(lp_filter *iir, double k, double q, double fc)
 	iir->coef[0] = k;
 }
 
-void micro3d_noise_sh_w(running_machine *machine, UINT8 data)
+void micro3d_noise_sh_w(running_machine *machine, uint8_t data)
 {
 	micro3d_state *state = (micro3d_state*)machine->driver_data;
 

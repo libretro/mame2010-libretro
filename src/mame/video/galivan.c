@@ -82,7 +82,7 @@ PALETTE_INIT( galivan )
 	/* pens 0-7; the top two bits for pens 8-15. */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (i & 0x08)
 			ctabentry = 0xc0 | (i & 0x0f) | ((i & 0xc0) >> 2);
@@ -99,7 +99,7 @@ PALETTE_INIT( galivan )
 	/* 8-15 (like for tiles). */
 	for (i = 0; i < 0x1000; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 		int i_swapped = ((i & 0x0f) << 8) | ((i & 0xff0) >> 4);
 
 		if (i & 0x80)
@@ -121,7 +121,7 @@ PALETTE_INIT( galivan )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *BGROM = memory_region(machine, "gfx4");
+	uint8_t *BGROM = memory_region(machine, "gfx4");
 	int attr = BGROM[tile_index + 0x4000];
 	int code = BGROM[tile_index] | ((attr & 0x03) << 8);
 	SET_TILE_INFO(
@@ -146,7 +146,7 @@ static TILE_GET_INFO( get_tx_tile_info )
 
 static TILE_GET_INFO( ninjemak_get_bg_tile_info )
 {
-	UINT8 *BGROM = memory_region(machine, "gfx4");
+	uint8_t *BGROM = memory_region(machine, "gfx4");
 	int attr = BGROM[tile_index + 0x4000];
 	int code = BGROM[tile_index] | ((attr & 0x03) << 8);
 	SET_TILE_INFO(
@@ -341,8 +341,8 @@ WRITE8_HANDLER( ninjemak_scrolly_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	galivan_state *state = (galivan_state *)machine->driver_data;
-	const UINT8 *spritepalettebank = memory_region(machine, "user1");
-	UINT8 *spriteram = state->spriteram;
+	const uint8_t *spritepalettebank = memory_region(machine, "user1");
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	/* draw the sprites */

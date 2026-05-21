@@ -22,11 +22,11 @@
  *
  *************************************/
 
-UINT8 *tempest_colorram;
-UINT8 *mhavoc_colorram;
-UINT16 *quantum_colorram;
+uint8_t *tempest_colorram;
+uint8_t *mhavoc_colorram;
+uint16_t *quantum_colorram;
 
-UINT16 *quantum_vectorram;
+uint16_t *quantum_vectorram;
 
 
 
@@ -72,50 +72,50 @@ struct _vgdata
 {
 	running_machine *machine;
 
-	UINT16 pc;
-	UINT8 sp;
-	UINT16 dvx;
-	UINT16 dvy;
-	UINT8 dvy12;
-	UINT16 timer;
-	UINT16 stack[4];
-	UINT16 data;
+	uint16_t pc;
+	uint8_t sp;
+	uint16_t dvx;
+	uint16_t dvy;
+	uint8_t dvy12;
+	uint16_t timer;
+	uint16_t stack[4];
+	uint16_t data;
 
-	UINT8 state_latch;
-	UINT8 int_latch;
-	UINT8 scale;
-	UINT8 bin_scale;
-	UINT8 intensity;
-	UINT8 color;
-	UINT8 enspkl;
-	UINT8 spkl_shift;
-	UINT8 map;
+	uint8_t state_latch;
+	uint8_t int_latch;
+	uint8_t scale;
+	uint8_t bin_scale;
+	uint8_t intensity;
+	uint8_t color;
+	uint8_t enspkl;
+	uint8_t spkl_shift;
+	uint8_t map;
 
-	UINT16 hst;
-	UINT16 lst;
-	UINT16 izblank;
+	uint16_t hst;
+	uint16_t lst;
+	uint16_t izblank;
 
-	UINT8 op;
-	UINT8 halt;
-	UINT8 sync_halt;
+	uint8_t op;
+	uint8_t halt;
+	uint8_t sync_halt;
 
-	UINT16 xdac_xor;
-	UINT16 ydac_xor;
+	uint16_t xdac_xor;
+	uint16_t ydac_xor;
 
-	INT32 xpos;
-	INT32 ypos;
+	int32_t xpos;
+	int32_t ypos;
 
-	INT32 clipx_min;
-	INT32 clipy_min;
-	INT32 clipx_max;
-	INT32 clipy_max;
+	int32_t clipx_min;
+	int32_t clipy_min;
+	int32_t clipx_max;
+	int32_t clipy_max;
 };
 
 typedef struct _vgconf vgconf;
 struct _vgconf
 {
 	int (*handler[8])(vgdata *);
-	UINT8 (*state_addr)(vgdata *);
+	uint8_t (*state_addr)(vgdata *);
 	void (*update_databus)(vgdata *);
 	void (*vggo)(vgdata *);
 	void (*vgrst)(vgdata *);
@@ -232,9 +232,9 @@ static void dvg_data(vgdata *vg)
 	vg->data = vectorram[(vg->pc << 1) | (vg->state_latch & 1)];
 }
 
-static UINT8 dvg_state_addr(vgdata *vg)
+static uint8_t dvg_state_addr(vgdata *vg)
 {
-	UINT8 addr;
+	uint8_t addr;
 
 	addr =((((vg->state_latch >> 4) ^ 1) & 1) << 7) | (vg->state_latch & 0xf);
 
@@ -479,7 +479,7 @@ static void quantum_data(vgdata *vg)
 
 static void mhavoc_data(vgdata *vg)
 {
-	UINT8 *bank;
+	uint8_t *bank;
 
 	if (vg->pc & 0x2000)
 	{
@@ -492,7 +492,7 @@ static void mhavoc_data(vgdata *vg)
 	}
 }
 
-static UINT8 avg_state_addr(vgdata *vg)
+static uint8_t avg_state_addr(vgdata *vg)
 {
 	return (((vg->state_latch >> 4) ^ 1) << 7)
 		| (vg->op << 4)
@@ -956,7 +956,7 @@ static int bzone_strobe3(vgdata *vg)
 static int tempest_strobe3(vgdata *vg)
 {
 	int cycles, r, g, b, bit0, bit1, bit2, bit3, x, y;
-	UINT8 data;
+	uint8_t data;
 
 	cycles = avg_common_strobe3(vg);
 
@@ -989,7 +989,7 @@ static int mhavoc_strobe3(vgdata *vg)
 {
 	int cycles, r, g, b, bit0, bit1, bit2, bit3, dx, dy, i;
 
-	UINT8 data;
+	uint8_t data;
 
 	vg->halt = OP0;
 	cycles = 0;
@@ -1088,7 +1088,7 @@ static int quantum_strobe3(vgdata *vg)
 {
 	int cycles=0, r, g, b, bit0, bit1, bit2, bit3, x, y;
 
-	UINT16 data;
+	uint16_t data;
 
 	vg->halt = OP0;
 
@@ -1205,7 +1205,7 @@ static TIMER_CALLBACK( vg_set_halt_callback )
 static TIMER_CALLBACK( run_state_machine )
 {
 	int cycles = 0;
-	UINT8 *state_prom = memory_region(machine, "user1");
+	uint8_t *state_prom = memory_region(machine, "user1");
 
 	while (cycles < VGSLICE)
 	{

@@ -1,13 +1,13 @@
 /*----------- defined in video/argus.c -----------*/
 
-extern UINT8 *argus_paletteram;
-extern UINT8 *argus_txram;
-extern UINT8 *argus_bg0_scrollx;
-extern UINT8 *argus_bg0_scrolly;
-extern UINT8 *argus_bg1ram;
-extern UINT8 *argus_bg1_scrollx;
-extern UINT8 *argus_bg1_scrolly;
-extern UINT8 *butasan_bg1ram;
+extern uint8_t *argus_paletteram;
+extern uint8_t *argus_txram;
+extern uint8_t *argus_bg0_scrollx;
+extern uint8_t *argus_bg0_scrolly;
+extern uint8_t *argus_bg1ram;
+extern uint8_t *argus_bg1_scrollx;
+extern uint8_t *argus_bg1_scrolly;
+extern uint8_t *butasan_bg1ram;
 
 VIDEO_START( argus );
 VIDEO_START( valtric );

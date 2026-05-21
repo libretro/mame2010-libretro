@@ -28,5 +28,5 @@ extern VIDEO_UPDATE( robokid );
 extern VIDEO_UPDATE( omegaf );
 extern VIDEO_EOF( ninjakd2 );
 
-extern UINT8* ninjakd2_bg_videoram;
-extern UINT8* ninjakd2_fg_videoram;
+extern uint8_t* ninjakd2_bg_videoram;
+extern uint8_t* ninjakd2_fg_videoram;

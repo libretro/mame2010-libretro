@@ -13,22 +13,22 @@
 
 static int HuC6270_registers[20];
 static int VDC_register,vram_ptr;
-static UINT8 *HuC6270_vram,*vram_dirty;
+static uint8_t *HuC6270_vram,*vram_dirty;
 static bitmap_t *tile_bitmap,*front_bitmap;
-static UINT32 tile_dirtyseq;
+static uint32_t tile_dirtyseq;
 
 static int current_scanline,inc_value;
 static int irq_enable,rcr_enable,sb_enable,bb_enable,bldwolf_vblank;
 
-static UINT8 blank_tile[32];
+static uint8_t blank_tile[32];
 
 
 /******************************************************************************/
 
 VIDEO_START( battlera )
 {
-	HuC6270_vram=auto_alloc_array(machine, UINT8, 0x20000);
-	vram_dirty=auto_alloc_array(machine, UINT8, 0x1000);
+	HuC6270_vram=auto_alloc_array(machine, uint8_t, 0x20000);
+	vram_dirty=auto_alloc_array(machine, uint8_t, 0x1000);
 
 	memset(HuC6270_vram,0,0x20000);
 	memset(vram_dirty,1,0x1000);

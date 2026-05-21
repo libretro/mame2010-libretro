@@ -24,21 +24,21 @@ public:
 	psikyosh_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT32 *       bgram;
-	UINT32 *       zoomram;
-	UINT32 *       vidregs;
-	UINT32 *       ram;
-	UINT32 *       paletteram;
-//  UINT32 *       spriteram;   // currently this uses generic buffered spriteram
+	uint32_t *       bgram;
+	uint32_t *       zoomram;
+	uint32_t *       vidregs;
+	uint32_t *       ram;
+	uint32_t *       paletteram;
+//  uint32_t *       spriteram;   // currently this uses generic buffered spriteram
 //  size_t         spriteram_size;
 
 	/* video-related */
 	bitmap_t       *zoom_bitmap, *z_bitmap, *bg_bitmap;
-	UINT16         *bg_zoom;
-//  UINT8          *alphatable;
+	uint16_t         *bg_zoom;
+//  uint8_t          *alphatable;
 
 	/* misc */
-	UINT32         sample_offs;	// only used if ROMTEST = 1
+	uint32_t         sample_offs;	// only used if ROMTEST = 1
 
 	/* devices */
 	running_device *maincpu;

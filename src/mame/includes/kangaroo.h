@@ -14,13 +14,13 @@ public:
 	kangaroo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *      video_control;
+	uint8_t *      video_control;
 
 	/* video-related */
-	UINT32       *videoram;
+	uint32_t       *videoram;
 
 	/* misc */
-	UINT8        clock;
+	uint8_t        clock;
 };
 
 

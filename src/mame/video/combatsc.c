@@ -47,7 +47,7 @@ PALETTE_INIT( combatsc )
 
 		for (i = 0; i < 0x100; i++)
 		{
-			UINT8 ctabentry;
+			uint8_t ctabentry;
 
 			if (((pal & 0x01) == 0) && (color_prom[(clut << 8) | i] == 0))
 				ctabentry = 0;
@@ -73,7 +73,7 @@ PALETTE_INIT( combatscb )
 
 		for (i = 0; i < 0x100; i++)
 		{
-			UINT8 ctabentry;
+			uint8_t ctabentry;
 
 			if ((pal & 1) == 0)
 				/* sprites */
@@ -95,7 +95,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x100; i += 2)
 	{
-		UINT16 data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
+		uint16_t data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 
@@ -114,8 +114,8 @@ static void set_pens( running_machine *machine )
 static TILE_GET_INFO( get_tile_info0 )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
-	UINT8 attributes = state->page[0][tile_index];
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_1, 6);
+	uint8_t attributes = state->page[0][tile_index];
 	int bank = 4 * ((state->vreg & 0x0f) - 1);
 	int number, color;
 
@@ -149,8 +149,8 @@ static TILE_GET_INFO( get_tile_info0 )
 static TILE_GET_INFO( get_tile_info1 )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
-	UINT8 attributes = state->page[1][tile_index];
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121_2, 6);
+	uint8_t attributes = state->page[1][tile_index];
 	int bank = 4 * ((state->vreg >> 4) - 1);
 	int number, color;
 
@@ -184,7 +184,7 @@ static TILE_GET_INFO( get_tile_info1 )
 static TILE_GET_INFO( get_text_info )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 attributes = state->page[0][tile_index + 0x800];
+	uint8_t attributes = state->page[0][tile_index + 0x800];
 	int number = state->page[0][tile_index + 0xc00];
 	int color = 16 + (attributes & 0x0f);
 
@@ -199,7 +199,7 @@ static TILE_GET_INFO( get_text_info )
 static TILE_GET_INFO( get_tile_info0_bootleg )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 attributes = state->page[0][tile_index];
+	uint8_t attributes = state->page[0][tile_index];
 	int bank = 4 * ((state->vreg & 0x0f) - 1);
 	int number, pal, color;
 
@@ -232,7 +232,7 @@ static TILE_GET_INFO( get_tile_info0_bootleg )
 static TILE_GET_INFO( get_tile_info1_bootleg )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 attributes = state->page[1][tile_index];
+	uint8_t attributes = state->page[1][tile_index];
 	int bank = 4*((state->vreg >> 4) - 1);
 	int number, pal, color;
 
@@ -265,7 +265,7 @@ static TILE_GET_INFO( get_tile_info1_bootleg )
 static TILE_GET_INFO( get_text_info_bootleg )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-//  UINT8 attributes = state->page[0][tile_index + 0x800];
+//  uint8_t attributes = state->page[0][tile_index + 0x800];
 	int number = state->page[0][tile_index + 0xc00];
 	int color = 16;// + (attributes & 0x0f);
 
@@ -290,8 +290,8 @@ VIDEO_START( combatsc )
 	state->bg_tilemap[1] = tilemap_create(machine, get_tile_info1, tilemap_scan_rows, 8, 8, 32, 32);
 	state->textlayer =  tilemap_create(machine, get_text_info, tilemap_scan_rows, 8, 8, 32, 32);
 
-	state->spriteram[0] = auto_alloc_array_clear(machine, UINT8, 0x800);
-	state->spriteram[1] = auto_alloc_array_clear(machine, UINT8, 0x800);
+	state->spriteram[0] = auto_alloc_array_clear(machine, uint8_t, 0x800);
+	state->spriteram[1] = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	tilemap_set_transparent_pen(state->bg_tilemap[0], 0);
 	tilemap_set_transparent_pen(state->bg_tilemap[1], 0);
@@ -311,8 +311,8 @@ VIDEO_START( combatscb )
 	state->bg_tilemap[1] = tilemap_create(machine, get_tile_info1_bootleg, tilemap_scan_rows, 8, 8, 32, 32);
 	state->textlayer = tilemap_create(machine, get_text_info_bootleg, tilemap_scan_rows, 8, 8, 32, 32);
 
-	state->spriteram[0] = auto_alloc_array_clear(machine, UINT8, 0x800);
-	state->spriteram[1] = auto_alloc_array_clear(machine, UINT8, 0x800);
+	state->spriteram[0] = auto_alloc_array_clear(machine, uint8_t, 0x800);
+	state->spriteram[1] = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	tilemap_set_transparent_pen(state->bg_tilemap[0], 0);
 	tilemap_set_transparent_pen(state->bg_tilemap[1], 0);
@@ -393,7 +393,7 @@ WRITE8_HANDLER( combatsc_scrollram_w )
 
 ***************************************************************************/
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *source, int circuit, UINT32 pri_mask )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *source, int circuit, uint32_t pri_mask )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
 	running_device *k007121 = circuit ? state->k007121_2 : state->k007121_1;
@@ -515,13 +515,13 @@ byte #4:
 
 ***************************************************************************/
 
-static void bootleg_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *source, int circuit )
+static void bootleg_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *source, int circuit )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	const gfx_element *gfx = machine->gfx[circuit + 2];
 
 	int limit = circuit ? (memory_read_byte(space, 0xc2) * 256 + memory_read_byte(space, 0xc3)) : (memory_read_byte(space, 0xc0) * 256 + memory_read_byte(space, 0xc1));
-	const UINT8 *finish;
+	const uint8_t *finish;
 
 	source += 0x1000;
 	finish = source;
@@ -533,12 +533,12 @@ static void bootleg_draw_sprites( running_machine *machine, bitmap_t *bitmap, co
 
 	while (source > finish)
 	{
-		UINT8 attributes = source[3]; /* PBxF ?xxX */
+		uint8_t attributes = source[3]; /* PBxF ?xxX */
 		{
 			int number = source[0];
 			int x = source[2] - 71 + (attributes & 0x01)*256;
 			int y = 242 - source[1];
-			UINT8 color = source[4]; /* CCCC xxBB */
+			uint8_t color = source[4]; /* CCCC xxBB */
 
 			int bank = (color & 0x03) | ((attributes & 0x40) >> 4);
 

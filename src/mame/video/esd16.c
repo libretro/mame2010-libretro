@@ -53,7 +53,7 @@ Note:   if MAME_DEBUG is defined, pressing Z with:
 static TILE_GET_INFO( get_tile_info_0 )
 {
 	esd16_state *state = (esd16_state *)machine->driver_data;
-	UINT16 code = state->vram_0[tile_index];
+	uint16_t code = state->vram_0[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -64,7 +64,7 @@ static TILE_GET_INFO( get_tile_info_0 )
 static TILE_GET_INFO( get_tile_info_0_16x16 )
 {
 	esd16_state *state = (esd16_state *)machine->driver_data;
-	UINT16 code = state->vram_0[tile_index];
+	uint16_t code = state->vram_0[tile_index];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -76,7 +76,7 @@ static TILE_GET_INFO( get_tile_info_0_16x16 )
 static TILE_GET_INFO( get_tile_info_1 )
 {
 	esd16_state *state = (esd16_state *)machine->driver_data;
-	UINT16 code = state->vram_1[tile_index];
+	uint16_t code = state->vram_1[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -87,7 +87,7 @@ static TILE_GET_INFO( get_tile_info_1 )
 static TILE_GET_INFO( get_tile_info_1_16x16 )
 {
 	esd16_state *state = (esd16_state *)machine->driver_data;
-	UINT16 code = state->vram_1[tile_index];
+	uint16_t code = state->vram_1[tile_index];
 	SET_TILE_INFO(
 			2,
 			code,

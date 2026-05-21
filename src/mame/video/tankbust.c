@@ -8,12 +8,12 @@
 *   variables
 */
 
-UINT8 * tankbust_videoram;
-UINT8 * tankbust_colorram;
+uint8_t * tankbust_videoram;
+uint8_t * tankbust_colorram;
 static tilemap_t *bg_tilemap;
 
 static tilemap_t *txt_tilemap;
-UINT8 * tankbust_txtram;
+uint8_t * tankbust_txtram;
 
 /***************************************************************************
 
@@ -133,7 +133,7 @@ READ8_HANDLER( tankbust_txtram_r )
 }
 
 
-static UINT8 xscroll[2];
+static uint8_t xscroll[2];
 
 WRITE8_HANDLER( tankbust_xscroll_w )
 {
@@ -150,7 +150,7 @@ WRITE8_HANDLER( tankbust_xscroll_w )
 //popmessage("x=%02x %02x", xscroll[0], xscroll[1]);
 }
 
-static UINT8 yscroll[2];
+static uint8_t yscroll[2];
 
 WRITE8_HANDLER( tankbust_yscroll_w )
 {
@@ -189,7 +189,7 @@ spriteram format (4 bytes per sprite):
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0; offs < machine->generic.spriteram_size; offs += 4)

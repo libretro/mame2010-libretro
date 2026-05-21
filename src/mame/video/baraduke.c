@@ -1,6 +1,6 @@
 #include "emu.h"
 
-UINT8 *baraduke_textram, *baraduke_videoram, *baraduke_spriteram;
+uint8_t *baraduke_textram, *baraduke_videoram, *baraduke_spriteram;
 
 static tilemap_t *tx_tilemap, *bg_tilemap[2];
 static int xscroll[2], yscroll[2];
@@ -216,8 +216,8 @@ WRITE8_HANDLER( baraduke_spriteram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int sprite_priority)
 {
-	const UINT8 *source = &machine->generic.spriteram.u8[0];
-	const UINT8 *finish = &machine->generic.spriteram.u8[0x0800-16];	/* the last is NOT a sprite */
+	const uint8_t *source = &machine->generic.spriteram.u8[0];
+	const uint8_t *finish = &machine->generic.spriteram.u8[0x0800-16];	/* the last is NOT a sprite */
 
 	int sprite_xoffs = machine->generic.spriteram.u8[0x07f5] - 256 * (machine->generic.spriteram.u8[0x07f4] & 1);
 	int sprite_yoffs = machine->generic.spriteram.u8[0x07f7];

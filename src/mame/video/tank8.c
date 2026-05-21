@@ -8,11 +8,11 @@ Atari Tank 8 video emulation
 #include "includes/tank8.h"
 
 
-UINT8 *tank8_video_ram;
-UINT8 *tank8_pos_h_ram;
-UINT8 *tank8_pos_v_ram;
-UINT8 *tank8_pos_d_ram;
-UINT8 *tank8_team;
+uint8_t *tank8_video_ram;
+uint8_t *tank8_pos_h_ram;
+uint8_t *tank8_pos_v_ram;
+uint8_t *tank8_pos_d_ram;
+uint8_t *tank8_team;
 
 static tilemap_t *tank8_tilemap;
 
@@ -85,7 +85,7 @@ WRITE8_HANDLER( tank8_video_ram_w )
 
 static TILE_GET_INFO( tank8_get_tile_info )
 {
-	UINT8 code = tank8_video_ram[tile_index];
+	uint8_t code = tank8_video_ram[tile_index];
 
 	int color = 0;
 
@@ -145,7 +145,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	for (i = 0; i < 8; i++)
 	{
-		UINT8 code = ~tank8_pos_d_ram[i];
+		uint8_t code = ~tank8_pos_d_ram[i];
 
 		int x = get_x_pos(i);
 		int y = get_y_pos(i);
@@ -228,16 +228,16 @@ VIDEO_EOF( tank8 )
 	{
 		int state = 0;
 
-		const UINT16* p1 = BITMAP_ADDR16(helper1, y, 0);
-		const UINT16* p2 = BITMAP_ADDR16(helper2, y, 0);
-		const UINT16* p3 = BITMAP_ADDR16(helper3, y, 0);
+		const uint16_t* p1 = BITMAP_ADDR16(helper1, y, 0);
+		const uint16_t* p2 = BITMAP_ADDR16(helper2, y, 0);
+		const uint16_t* p3 = BITMAP_ADDR16(helper3, y, 0);
 
 		if (y % 2 != machine->primary_screen->frame_number() % 2)
 			continue; /* video display is interlaced */
 
 		for (x = visarea.min_x; x <= visarea.max_x; x++)
 		{
-			UINT8 index;
+			uint8_t index;
 
 			/* neither wall nor mine */
 			if ((p1[x] != 0x11) && (p1[x] != 0x13))

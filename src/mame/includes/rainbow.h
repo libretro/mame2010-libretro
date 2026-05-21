@@ -12,21 +12,21 @@ public:
 	rainbow_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
-	UINT16      sprite_ctrl;
-	UINT16      sprites_flipscreen;
+	uint16_t      sprite_ctrl;
+	uint16_t      sprites_flipscreen;
 
 	/* misc */
-	UINT8       jumping_latch;
+	uint8_t       jumping_latch;
 
 	/* c-chip */
-	UINT8       *CRAM[8];
+	uint8_t       *CRAM[8];
 	int         extra_version;
-	UINT8       current_bank;
+	uint8_t       current_bank;
 
 	/* devices */
 	running_device *maincpu;

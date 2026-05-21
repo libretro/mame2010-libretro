@@ -21,8 +21,8 @@ VIDEO_START( changela )
 {
 	changela_state *state = (changela_state *)machine->driver_data;
 
-	state->memory_devices = auto_alloc_array(machine, UINT8, 4 * 0x800); /* 0 - not connected, 1,2,3 - RAMs*/
-	state->tree_ram = auto_alloc_array(machine, UINT8, 2 * 0x20);
+	state->memory_devices = auto_alloc_array(machine, uint8_t, 4 * 0x800); /* 0 - not connected, 1,2,3 - RAMs*/
+	state->tree_ram = auto_alloc_array(machine, uint8_t, 2 * 0x20);
 
 	state->obj0_bitmap  = machine->primary_screen->alloc_compatible_bitmap();
 	state->river_bitmap = machine->primary_screen->alloc_compatible_bitmap();
@@ -47,26 +47,26 @@ static void draw_obj0( running_machine *machine, bitmap_t *bitmap, int sy )
 	changela_state *state = (changela_state *)machine->driver_data;
 	int sx, i;
 
-	UINT8* ROM = memory_region(machine, "user1");
-	UINT8* RAM = state->spriteram;
+	uint8_t* ROM = memory_region(machine, "user1");
+	uint8_t* RAM = state->spriteram;
 
 	for (sx = 0; sx < 256; sx++)
 	{
 		int vr = (RAM[sx * 4 + 0] & 0x80) >> 7;
 		int hr = (RAM[sx * 4 + 0] & 0x40) >> 6;
 		int hs = (RAM[sx * 4 + 0] & 0x20) >> 5;
-		UINT32 vsize = RAM[sx * 4 + 0] & 0x1f;
-		UINT8 ypos = ~RAM[sx * 4 + 1];
-		UINT8 tile = RAM[sx * 4 + 2];
-		UINT8 xpos = RAM[sx * 4 + 3];
+		uint32_t vsize = RAM[sx * 4 + 0] & 0x1f;
+		uint8_t ypos = ~RAM[sx * 4 + 1];
+		uint8_t tile = RAM[sx * 4 + 2];
+		uint8_t xpos = RAM[sx * 4 + 3];
 
 		if (sy - ypos <= vsize)
 		{
 			for (i = 0; i < 16; i++)
 			{
-				UINT32 A7, A8, rom_addr;
-				UINT8 counter, data;
-				UINT8 sum = sy - ypos;
+				uint32_t A7, A8, rom_addr;
+				uint8_t counter, data;
+				uint8_t sum = sy - ypos;
 
 				counter = i;
 				if (hr) counter ^= 0x0f;
@@ -110,13 +110,13 @@ static void draw_obj1( running_machine *machine, bitmap_t *bitmap )
 	changela_state *state = (changela_state *)machine->driver_data;
 	int sx, sy;
 
-	UINT8* ROM = memory_region(machine, "gfx2");
-	UINT8* RAM = state->videoram;
+	uint8_t* ROM = memory_region(machine, "gfx2");
+	uint8_t* RAM = state->videoram;
 
-	UINT8 reg[4] = { 0 }; /* 4x4-bit registers (U58, U59) */
+	uint8_t reg[4] = { 0 }; /* 4x4-bit registers (U58, U59) */
 
-	UINT8 tile;
-	UINT8 attrib = 0;
+	uint8_t tile;
+	uint8_t attrib = 0;
 
 	for (sy = 0; sy < 256; sy++)
 	{
@@ -175,22 +175,22 @@ static void draw_river( running_machine *machine, bitmap_t *bitmap, int sy )
 	changela_state *state = (changela_state *)machine->driver_data;
 	int sx, i, j;
 
-	UINT8* ROM = memory_region(machine, "user2");
-	UINT8* RAM = state->memory_devices + 0x800;
-	UINT8* TILE_ROM = memory_region(machine, "gfx1");
-	UINT8* TILE_RAM = state->memory_devices + 0x1000;
-	UINT8* PROM = memory_region(machine, "proms");
+	uint8_t* ROM = memory_region(machine, "user2");
+	uint8_t* RAM = state->memory_devices + 0x800;
+	uint8_t* TILE_ROM = memory_region(machine, "gfx1");
+	uint8_t* TILE_RAM = state->memory_devices + 0x1000;
+	uint8_t* PROM = memory_region(machine, "proms");
 
 	int preload = ((sy < 32) ? 1 : 0);
 
-	UINT8 math_train[10] = { 0 };
-	UINT8 pre_train[3] = { 0 };
+	uint8_t math_train[10] = { 0 };
+	uint8_t pre_train[3] = { 0 };
 
-	UINT8 curr_state = 0;
-	UINT8 prev_state = 0;
+	uint8_t curr_state = 0;
+	uint8_t prev_state = 0;
 
-	UINT8 ram_count = 0;
-	UINT8 rom_count = 0;
+	uint8_t ram_count = 0;
+	uint8_t rom_count = 0;
 
 	int hosc = 0;
 	int carry = 0;
@@ -355,26 +355,26 @@ static void draw_tree( running_machine *machine, bitmap_t *bitmap, int sy, int t
 	int sx, i, j;
 
 	/* State machine */
-	UINT8* ROM = memory_region(machine, "user2");
-	UINT8* RAM = state->memory_devices + 0x840 + 0x40 * tree_num;
-	UINT8* PROM = memory_region(machine, "proms");
+	uint8_t* ROM = memory_region(machine, "user2");
+	uint8_t* RAM = state->memory_devices + 0x840 + 0x40 * tree_num;
+	uint8_t* PROM = memory_region(machine, "proms");
 
 	/* Tree Data */
-	UINT8* RAM2 = state->tree_ram + 0x20 * tree_num;
-	UINT8* TILE_ROM = (tree_num ? (memory_region(machine, "user3") + 0x1000) : (memory_region(machine, "gfx1") + 0x2000));
-	UINT8* TILE_RAM = (tree_num ? (memory_region(machine, "user3")) : (state->memory_devices + 0x1800));
+	uint8_t* RAM2 = state->tree_ram + 0x20 * tree_num;
+	uint8_t* TILE_ROM = (tree_num ? (memory_region(machine, "user3") + 0x1000) : (memory_region(machine, "gfx1") + 0x2000));
+	uint8_t* TILE_RAM = (tree_num ? (memory_region(machine, "user3")) : (state->memory_devices + 0x1800));
 
 	int preload = ((sy < 32) ? 1 : 0);
 
-	UINT8 math_train[10] = { 0 };
-	UINT8 pre_train[3] = { 0 };
-	UINT8 tree_train[3] = { 0 };
+	uint8_t math_train[10] = { 0 };
+	uint8_t pre_train[3] = { 0 };
+	uint8_t tree_train[3] = { 0 };
 
-	UINT8 curr_state = 0;
-	UINT8 prev_state = 0;
+	uint8_t curr_state = 0;
+	uint8_t prev_state = 0;
 
-	UINT8 ram_count = 0;
-	UINT8 rom_count = 0;
+	uint8_t ram_count = 0;
+	uint8_t rom_count = 0;
 
 	int hosc = 0;
 	int carry = 0;
@@ -751,10 +751,10 @@ WRITE8_HANDLER( changela_colors_w )
         111     |   3.819   (2.2k)
     Which were normalized to produce the following table: */
 
-	static const UINT8 color_table[8] = { 0, 7, 18, 31, 58, 88, 146, 255 };
+	static const uint8_t color_table[8] = { 0, 7, 18, 31, 58, 88, 146, 255 };
 
 	int r, g, b;
-	UINT32 c, color_index;
+	uint32_t c, color_index;
 
 	c = (data) | ((offset & 0x01) << 8); /* a0 used as D8 bit input */
 

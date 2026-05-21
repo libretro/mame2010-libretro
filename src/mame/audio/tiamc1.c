@@ -42,15 +42,15 @@ static sound_stream *channel;
 static int timer1_divider;
 
 struct timer8253chan {
-	UINT16 count;
-	UINT16 cnval;
-	UINT8 bcdMode;
-	UINT8 cntMode;
-	UINT8 valMode;
-	UINT8 gate;
-	UINT8 output;
-	UINT8 loadCnt;
-	UINT8 enable;
+	uint16_t count;
+	uint16_t cnval;
+	uint8_t bcdMode;
+	uint8_t cntMode;
+	uint8_t valMode;
+	uint8_t gate;
+	uint8_t output;
+	uint8_t loadCnt;
+	uint8_t enable;
 };
 
 struct timer8253struct {
@@ -109,7 +109,7 @@ static void timer8253_tick(struct timer8253struct *t,int chn) {
 
 
 
-static void timer8253_wr(struct timer8253struct *t, int reg, UINT8 val)
+static void timer8253_wr(struct timer8253struct *t, int reg, uint8_t val)
 {
 	int chn;
 
@@ -213,7 +213,7 @@ static void timer8253_wr(struct timer8253struct *t, int reg, UINT8 val)
 	}
 }
 
-static void timer8253_set_gate(struct timer8253struct *t, int chn, UINT8 gate)
+static void timer8253_set_gate(struct timer8253struct *t, int chn, uint8_t gate)
 {
 	t->channel[chn].gate = gate;
 }

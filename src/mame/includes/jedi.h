@@ -22,27 +22,27 @@ public:
 	jedi_state(running_machine &machine) { }
 
 	/* machine state */
-	UINT8  a2d_select;
-	UINT8  nvram_enabled;
+	uint8_t  a2d_select;
+	uint8_t  nvram_enabled;
 	emu_timer *interrupt_timer;
 
 	/* video state */
-	UINT8 *foregroundram;
-	UINT8 *backgroundram;
-	UINT8 *spriteram;
-	UINT8 *paletteram;
-	UINT8 *foreground_bank;
-	UINT8 *video_off;
-	UINT8 *smoothing_table;
-	UINT32 vscroll;
-	UINT32 hscroll;
+	uint8_t *foregroundram;
+	uint8_t *backgroundram;
+	uint8_t *spriteram;
+	uint8_t *paletteram;
+	uint8_t *foreground_bank;
+	uint8_t *video_off;
+	uint8_t *smoothing_table;
+	uint32_t vscroll;
+	uint32_t hscroll;
 
 	/* audio state */
-	UINT8  audio_latch;
-	UINT8  audio_ack_latch;
-	UINT8 *audio_comm_stat;
-	UINT8 *speech_data;
-	UINT8  speech_strobe_state;
+	uint8_t  audio_latch;
+	uint8_t  audio_ack_latch;
+	uint8_t *audio_comm_stat;
+	uint8_t *speech_data;
+	uint8_t  speech_strobe_state;
 };
 
 

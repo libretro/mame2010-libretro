@@ -6,11 +6,11 @@ public:
 
 	mugsmash_state(running_machine &machine) { }
 
-	UINT16 *videoram1;
-	UINT16 *videoram2;
-	UINT16 *spriteram;
-	UINT16 *regs1;
-	UINT16 *regs2;
+	uint16_t *videoram1;
+	uint16_t *videoram2;
+	uint16_t *spriteram;
+	uint16_t *regs1;
+	uint16_t *regs2;
 
 	tilemap_t *tilemap1;
 	tilemap_t *tilemap2;

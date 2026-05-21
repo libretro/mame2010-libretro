@@ -10,11 +10,11 @@
 
 #include "emu.h"
 
-UINT16 *tecmo16_videoram;
-UINT16 *tecmo16_colorram;
-UINT16 *tecmo16_videoram2;
-UINT16 *tecmo16_colorram2;
-UINT16 *tecmo16_charram;
+uint16_t *tecmo16_videoram;
+uint16_t *tecmo16_colorram;
+uint16_t *tecmo16_videoram2;
+uint16_t *tecmo16_colorram2;
+uint16_t *tecmo16_charram;
 
 static tilemap_t *fg_tilemap,*bg_tilemap,*tx_tilemap;
 static bitmap_t *sprite_bitmap, *tile_bitmap_bg, *tile_bitmap_fg;
@@ -177,42 +177,42 @@ WRITE16_HANDLER( tecmo16_flipscreen_w )
 
 WRITE16_HANDLER( tecmo16_scroll_x_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(fg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_y_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(fg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll2_x_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll2_y_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(bg_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_char_x_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(tx_tilemap,0,scroll);
 }
 
 WRITE16_HANDLER( tecmo16_scroll_char_y_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrolly(tx_tilemap,0,scroll-16);
 }
@@ -249,17 +249,17 @@ static void blendbitmaps(running_machine *machine,
 
 	{
 		const pen_t *paldata = machine->pens;
-		UINT32 *end;
+		uint32_t *end;
 
-		UINT16 *sd1 = (UINT16 *)src1->base;												/* source data   */
-		UINT16 *sd2 = (UINT16 *)src2->base;
-		UINT16 *sd3 = (UINT16 *)src3->base;
+		uint16_t *sd1 = (uint16_t *)src1->base;												/* source data   */
+		uint16_t *sd2 = (uint16_t *)src2->base;
+		uint16_t *sd3 = (uint16_t *)src3->base;
 
 		int sw = ex-sx+1;														/* source width  */
 		int sh = ey-sy+1;														/* source height */
 		int sm = src1->rowpixels;												/* source modulo */
 
-		UINT32 *dd = BITMAP_ADDR32(dest, sy, sx);								/* dest data     */
+		uint32_t *dd = BITMAP_ADDR32(dest, sy, sx);								/* dest data     */
 		int dm = dest->rowpixels;												/* dest modulo   */
 
 		sd1 += (sx-ox);
@@ -331,9 +331,9 @@ static void blendbitmaps(running_machine *machine,
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap_bg, bitmap_t *bitmap_fg, bitmap_t *bitmap_sp, const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},

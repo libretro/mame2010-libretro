@@ -15,16 +15,16 @@
 
 static struct
 {
-	UINT16	cpulatch;
-	UINT16	promaddr;
-	UINT16	inslatch;
-	UINT32	mux;
-	UINT16	ppshift;
-	UINT32	i0ff;
+	uint16_t	cpulatch;
+	uint16_t	promaddr;
+	uint16_t	inslatch;
+	uint32_t	mux;
+	uint16_t	ppshift;
+	uint32_t	i0ff;
 
-	UINT16	retval;
+	uint16_t	retval;
 
-	UINT16  muxlatch;	// TX-1
+	uint16_t  muxlatch;	// TX-1
 
 	int dbgaddr;
 	int dbgpc;
@@ -34,11 +34,11 @@ static struct
     Helper functions
 */
 #define INC_PROM_ADDR		( math.promaddr = (math.promaddr + 1) & 0x1ff )
-#define ROR16(val, shift)	( ((UINT16)val >> shift) | ((UINT16)val << (16 - shift)) )
-#define ROL16(val, shift)	( ((UINT16)val << shift) | ((UINT16)val >> (16 - shift)) )
-#define SWAP16(val)			( (((UINT16)val << 8) & 0xff00) | ((UINT16)val >> 8) )
+#define ROR16(val, shift)	( ((uint16_t)val >> shift) | ((uint16_t)val << (16 - shift)) )
+#define ROL16(val, shift)	( ((uint16_t)val << shift) | ((uint16_t)val >> (16 - shift)) )
+#define SWAP16(val)			( (((uint16_t)val << 8) & 0xff00) | ((uint16_t)val >> 8) )
 
-INLINE UINT8 reverse_nibble(UINT8 nibble)
+INLINE uint8_t reverse_nibble(uint8_t nibble)
 {
 	return	(nibble & 1) << 3 |
 			(nibble & 2) << 1 |
@@ -52,17 +52,17 @@ INLINE UINT8 reverse_nibble(UINT8 nibble)
 */
 static struct
 {
-	INT16	X;
-	INT16	Y;
+	int16_t	X;
+	int16_t	Y;
 
 	union
 	{
 	#ifdef MSB_FIRST
-		struct { INT16 Z; UINT16 W; };
+		struct { int16_t Z; uint16_t W; };
 	#else
-		struct { UINT16 W; INT16 Z; };
+		struct { uint16_t W; int16_t Z; };
 	#endif
-		INT32 ZW32;
+		int32_t ZW32;
 	} ZW;
 
 	int		code;
@@ -77,7 +77,7 @@ static struct
     there are no states between final input and
     multiplication/division.
 */
-static const UINT8 state_table[16][8] =
+static const uint8_t state_table[16][8] =
 {
 	{  4,  4,  4,  4,  5,  1,  1,  0 },
 	{  4,  4,  4,  4,  5,  5,  3,  0 },
@@ -168,13 +168,13 @@ static void sn_multiply(void)
 
 static void sn_divide(running_machine *machine)
 {
-	INT32 Z = 0;
-	INT32 W = 0;
+	int32_t Z = 0;
+	int32_t W = 0;
 
 	if (SN74S516.X == 0)
 	{
 		mame_printf_debug("%s:SN74S516 tried to divide by zero\n", cpuexec_describe_context(machine));
-		SN74S516.ZW.Z = (INT16)0xffff;
+		SN74S516.ZW.Z = (int16_t)0xffff;
 		SN74S516.ZW.W = 0xffff;
 		SN74S516.ZWfl = 0;
 		return;
@@ -231,7 +231,7 @@ static void sn74s516_update(running_machine *machine, int ins)
 	}
 }
 
-static void kick_sn74s516(running_machine *machine, UINT16 *data, const int ins)
+static void kick_sn74s516(running_machine *machine, uint16_t *data, const int ins)
 {
 
 #define LOAD_X		(SN74S516.X = *data)
@@ -433,9 +433,9 @@ enum
 
 #define TX1_SET_INS0_BIT	do { if (!(ins & 0x4) && math.i0ff) ins |= math.i0ff; } while(0)
 
-INLINE UINT16 get_tx1_datarom_addr(void)
+INLINE uint16_t get_tx1_datarom_addr(void)
 {
-	UINT16 addr;
+	uint16_t addr;
 
 	addr = ((math.inslatch & 0x1c00) << 1) | (math.ppshift & 0xff);
 
@@ -453,7 +453,7 @@ static void tx1_update_state(running_machine *machine)
 #define LLOEN(a)	!(a & 0x40)
 #define GO_EN(a)	!(a & 0x4000)
 
-	const UINT16 *prom = (UINT16*)memory_region(machine, "au_data") + (0x8000 >> 1);
+	const uint16_t *prom = (uint16_t*)memory_region(machine, "au_data") + (0x8000 >> 1);
 
 	for (;;)
 	{
@@ -496,7 +496,7 @@ static void tx1_update_state(running_machine *machine)
 				int		tfad = (math.inslatch & 0x1c00) << 1;
 				int		sd   = math.ppshift;
 				int		o4;
-				UINT16	data;
+				uint16_t	data;
 
 				o4 =
 					(!BIT(sd, 9) && !BIT(sd,10)) ||
@@ -511,8 +511,8 @@ static void tx1_update_state(running_machine *machine)
 					data = math.muxlatch;
 				else if (dsel == 1)
 				{
-					UINT16 *romdata = (UINT16*)memory_region(machine, "au_data");
-					UINT16 addr = get_tx1_datarom_addr();
+					uint16_t *romdata = (uint16_t*)memory_region(machine, "au_data");
+					uint16_t addr = get_tx1_datarom_addr();
 					data = romdata[addr];
 				}
 				else if (dsel == 2)
@@ -534,7 +534,7 @@ static void tx1_update_state(running_machine *machine)
             */
 			else if (LHIEN(math.inslatch) || LLOEN(math.inslatch))
 			{
-				UINT16 data;
+				uint16_t data;
 
 				kick_sn74s516(machine, &data, ins);
 
@@ -615,7 +615,7 @@ static void tx1_update_state(running_machine *machine)
 				else
 				{
 					/* Bus pullups give 0xffff */
-					UINT16 data = 0xffff;
+					uint16_t data = 0xffff;
 					kick_sn74s516(machine, &data, ins);
 				}
 			}
@@ -687,8 +687,8 @@ READ16_HANDLER( tx1_math_r )
                 TODO make this constant somewhere
                 e.g. math.retval =  math.romptr[ get_tx1_datarom_addr() ];
             */
-			UINT16 *romdata = (UINT16*)memory_region(space->machine, "au_data");
-			UINT16 addr = get_tx1_datarom_addr();
+			uint16_t *romdata = (uint16_t*)memory_region(space->machine, "au_data");
+			uint16_t addr = get_tx1_datarom_addr();
 			math.retval = romdata[addr];
 		}
 		else if (dsel == 2)
@@ -780,7 +780,7 @@ WRITE16_HANDLER( tx1_math_w )
 		//if (((math.inslatch >> 8) & TX1_DSEL) == 3 )
 		{
 			int shift;
-			UINT16 val = math.ppshift;
+			uint16_t val = math.ppshift;
 
 			if (math.cpulatch & 0x3800)
 			{
@@ -833,7 +833,7 @@ WRITE16_HANDLER( tx1_math_w )
 
 READ16_HANDLER( tx1_spcs_rom_r )
 {
-	math.cpulatch = *(UINT16*)((UINT8*)memory_region(space->machine, "math_cpu") + 0xfc000 + 0x1000 + offset*2);
+	math.cpulatch = *(uint16_t*)((uint8_t*)memory_region(space->machine, "math_cpu") + 0xfc000 + 0x1000 + offset*2);
 
 	if (math.mux == TX1_SEL_ILDEN)
 	{
@@ -855,7 +855,7 @@ READ16_HANDLER( tx1_spcs_rom_r )
 			//if ( ((math.inslatch >> 8) & TX1_DSEL) == 3 )
 		{
 			int shift;
-			UINT16 val = math.ppshift;
+			uint16_t val = math.ppshift;
 
 			if (math.cpulatch & 0x3800)
 			{
@@ -918,7 +918,7 @@ READ16_HANDLER( tx1_spcs_ram_r )
 	else if (math.mux == TX1_SEL_PSSEN)
 	{
 		int shift;
-		UINT16 val = math.ppshift;
+		uint16_t val = math.ppshift;
 
 		if (math.cpulatch & 0x3800)
 		{
@@ -986,9 +986,9 @@ enum
 
 #define BB_SET_INS0_BIT	do { if (!(ins & 0x4) && math.i0ff) ins |= math.i0ff;} while(0)
 
-INLINE UINT16 get_bb_datarom_addr(void)
+INLINE uint16_t get_bb_datarom_addr(void)
 {
-	UINT16 addr;
+	uint16_t addr;
 
 	addr = ((math.inslatch & 0x1c00) << 1) | (math.ppshift & 0xff);
 
@@ -1010,7 +1010,7 @@ static void buggyboy_update_state(running_machine *machine)
 #define LLOEN(a)	!(a & 0x40)
 #define GO_EN(a)	!(a & 0x4000)
 
-	const UINT16 *prom = (UINT16*)memory_region(machine, "au_data") + (0x8000 >> 1);
+	const uint16_t *prom = (uint16_t*)memory_region(machine, "au_data") + (0x8000 >> 1);
 
 	for (;;)
 	{
@@ -1043,8 +1043,8 @@ static void buggyboy_update_state(running_machine *machine)
 
 			if (math.mux == BB_MUX_DPROE)
 			{
-				UINT16 *romdata = (UINT16*)memory_region(machine, "au_data");
-				UINT16 addr = get_bb_datarom_addr();
+				uint16_t *romdata = (uint16_t*)memory_region(machine, "au_data");
+				uint16_t addr = get_bb_datarom_addr();
 				kick_sn74s516(machine, &romdata[addr], ins);
 			}
 			else if (math.mux == BB_MUX_PPOE)
@@ -1056,7 +1056,7 @@ static void buggyboy_update_state(running_machine *machine)
 			/* What if /LHIEN and /LLOEN? */
 			else if (LHIEN(math.inslatch) || LLOEN(math.inslatch))
 			{
-				UINT16 data;
+				uint16_t data;
 
 				kick_sn74s516(machine, &data, ins);
 
@@ -1100,7 +1100,7 @@ static void buggyboy_update_state(running_machine *machine)
 				else
 				{
 					/* Bus pullups give 0xffff */
-					UINT16 data = 0xffff;
+					uint16_t data = 0xffff;
 					kick_sn74s516(machine, &data, ins);
 				}
 			}
@@ -1158,8 +1158,8 @@ READ16_HANDLER( buggyboy_math_r )
 	/* /DPROE */
 	else if ((offset & 0xc00) == 0xc00)
 	{
-		UINT16 *romdata = (UINT16*)memory_region(space->machine, "au_data");
-		UINT16 addr = get_bb_datarom_addr();
+		uint16_t *romdata = (uint16_t*)memory_region(space->machine, "au_data");
+		uint16_t addr = get_bb_datarom_addr();
 
 		math.retval = romdata[addr];
 
@@ -1234,7 +1234,7 @@ WRITE16_HANDLER( buggyboy_math_w )
 		if (((math.inslatch >> 8) & BB_DSEL) == 3)
 		{
 			int shift;
-			UINT16 val = math.ppshift;
+			uint16_t val = math.ppshift;
 
 			if (math.cpulatch & 0x3800)
 			{
@@ -1289,7 +1289,7 @@ WRITE16_HANDLER( buggyboy_math_w )
 */
 READ16_HANDLER( buggyboy_spcs_rom_r )
 {
-	math.cpulatch = *(UINT16*)((UINT8*)memory_region(space->machine, "math_cpu") + 0xfc000 + 0x1000 + offset*2);
+	math.cpulatch = *(uint16_t*)((uint8_t*)memory_region(space->machine, "math_cpu") + 0xfc000 + 0x1000 + offset*2);
 
 	if (math.mux == BB_MUX_ILDEN)
 	{
@@ -1311,7 +1311,7 @@ READ16_HANDLER( buggyboy_spcs_rom_r )
 		if (((math.inslatch >> 8) & BB_DSEL) == 3)
 		{
 			int shift;
-			UINT16 val = math.ppshift;
+			uint16_t val = math.ppshift;
 
 			if (math.cpulatch & 0x3800)
 			{
@@ -1379,7 +1379,7 @@ READ16_HANDLER( buggyboy_spcs_ram_r )
 		if (((math.inslatch >> 8) & BB_DSEL) == 3)
 		{
 			int shift;
-			UINT16 val = math.ppshift;
+			uint16_t val = math.ppshift;
 
 			if (math.cpulatch & 0x3800)
 			{

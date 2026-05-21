@@ -27,7 +27,7 @@ static bitmap_t *tilemap_bitmapflags_higher;
 
 
 /* draws ROZ with linescroll OR columnscroll to 16-bit indexed bitmap */
-static void suprnova_draw_roz(bitmap_t* bitmap, bitmap_t* bitmapflags, const rectangle *cliprect, tilemap_t *tmap, UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy, int wraparound, int columnscroll, UINT32* scrollram)
+static void suprnova_draw_roz(bitmap_t* bitmap, bitmap_t* bitmapflags, const rectangle *cliprect, tilemap_t *tmap, uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy, int wraparound, int columnscroll, uint32_t* scrollram)
 {
 	//bitmap_t *destbitmap = bitmap;
 	bitmap_t *srcbitmap = tilemap_get_pixmap(tmap);
@@ -36,18 +36,18 @@ static void suprnova_draw_roz(bitmap_t* bitmap, bitmap_t* bitmapflags, const rec
 	const int ymask = srcbitmap->height-1;
 	const int widthshifted = srcbitmap->width << 16;
 	const int heightshifted = srcbitmap->height << 16;
-	UINT32 cx;
-	UINT32 cy;
+	uint32_t cx;
+	uint32_t cy;
 	int x;
 	int sx;
 	int sy;
 	int ex;
 	int ey;
-	UINT16 *dest;
-	UINT8* destflags;
-//  UINT8 *pri;
-	//const UINT16 *src;
-	//const UINT8 *maskptr;
+	uint16_t *dest;
+	uint8_t* destflags;
+//  uint8_t *pri;
+	//const uint16_t *src;
+	//const uint8_t *maskptr;
 	//int destadvance = destbitmap->bpp / 8;
 
 	/* pre-advance based on the cliprect */
@@ -111,19 +111,19 @@ static void suprnova_draw_roz(bitmap_t* bitmap, bitmap_t* bitmapflags, const rec
 
 #define SUPRNOVA_DECODE_BUFFER_SIZE 0x2000
 
-static UINT8 decodebuffer[SUPRNOVA_DECODE_BUFFER_SIZE];
+static uint8_t decodebuffer[SUPRNOVA_DECODE_BUFFER_SIZE];
 static int depthA=0;
 static int depthB=0;
 
 static int sprite_kludge_x=0, sprite_kludge_y=0;
 static int use_spc_bright, use_v3_bright; // makes sarukani rather dark, but should be default..
-static UINT8 bright_spc_b=0x00, bright_spc_g=0x00, bright_spc_r=0x00;
+static uint8_t bright_spc_b=0x00, bright_spc_g=0x00, bright_spc_r=0x00;
 
-static UINT8 bright_spc_b_trans=0x00, bright_spc_g_trans=0x00, bright_spc_r_trans=0x00;
+static uint8_t bright_spc_b_trans=0x00, bright_spc_g_trans=0x00, bright_spc_r_trans=0x00;
 
 
-static UINT8 bright_v3_b=0x00,  bright_v3_g=0x00,  bright_v3_r=0x00;
-static UINT8 bright_v3_b_trans = 0x00, bright_v3_g_trans = 0x00, bright_v3_r_trans = 0x00;
+static uint8_t bright_v3_b=0x00,  bright_v3_g=0x00,  bright_v3_r=0x00;
+static uint8_t bright_v3_b_trans = 0x00, bright_v3_g_trans = 0x00, bright_v3_r_trans = 0x00;
 
 // This ignores the alpha values atm.
 static int spc_changed=0, v3_changed=0, palette_updated=0;
@@ -260,7 +260,7 @@ WRITE32_HANDLER ( skns_palette_ram_w )
 }
 
 
-static void palette_set_rgb_brightness (running_machine *machine, int offset, UINT8 brightness_r, UINT8 brightness_g, UINT8 brightness_b)
+static void palette_set_rgb_brightness (running_machine *machine, int offset, uint8_t brightness_r, uint8_t brightness_g, uint8_t brightness_b)
 {
 	int use_bright, r, g, b/*, alpha*/;
 
@@ -311,15 +311,15 @@ static void palette_update(running_machine *machine)
 }
 
 
-static int skns_rle_decode ( running_machine *machine, int romoffset, int size, UINT8*gfx_source, size_t gfx_length )
+static int skns_rle_decode ( running_machine *machine, int romoffset, int size, uint8_t*gfx_source, size_t gfx_length )
 {
-	UINT8 *src = gfx_source;
+	uint8_t *src = gfx_source;
 	size_t srcsize = gfx_length;
-	UINT8 *dst = decodebuffer;
+	uint8_t *dst = decodebuffer;
 	int decodeoffset = 0;
 
 	while(size>0) {
-		UINT8 code = src[(romoffset++)%srcsize];
+		uint8_t code = src[(romoffset++)%srcsize];
 		size -= (code & 0x7f) + 1;
 		if(code & 0x80) { /* (code & 0x7f) normal values will follow */
 			code &= 0x7f;
@@ -328,7 +328,7 @@ static int skns_rle_decode ( running_machine *machine, int romoffset, int size, 
 				code--;
 			} while(code != 0xff);
 		} else {  /* repeat next value (code & 0x7f) times */
-			UINT8 val = src[(romoffset++)%srcsize];
+			uint8_t val = src[(romoffset++)%srcsize];
 			do {
 				dst[(decodeoffset++)%SUPRNOVA_DECODE_BUFFER_SIZE] = val;
 				code--;
@@ -348,10 +348,10 @@ void skns_sprite_kludge(int x, int y)
 /* We are working in .6 fixed point if you hadn't guessed */
 
 #define z_decls(step)				\
-	UINT16 zxs = 0x40-(zx_m>>2);			\
-	UINT16 zxd = 0x40-(zx_s>>2);		\
-	UINT16 zys = 0x40-(zy_m>>2);			\
-	UINT16 zyd = 0x40-(zy_s>>2);		\
+	uint16_t zxs = 0x40-(zx_m>>2);			\
+	uint16_t zxd = 0x40-(zx_s>>2);		\
+	uint16_t zys = 0x40-(zy_m>>2);			\
+	uint16_t zyd = 0x40-(zy_s>>2);		\
 	int xs, ys, xd, yd, old, old2;		\
 	int step_spr = step;				\
 	int bxs = 0, bys = 0;				\
@@ -420,7 +420,7 @@ void skns_sprite_kludge(int x, int y)
 	while(ys < sy && yd >= clip.min_y)
 
 #define z_draw_pixel()				\
-	UINT8 val = src[xs >> 6];			\
+	uint8_t val = src[xs >> 6];			\
 	if(val)					\
 		*BITMAP_ADDR16(bitmap, yd>>6, xd>>6) = val + colour;
 
@@ -443,7 +443,7 @@ void skns_sprite_kludge(int x, int y)
 		old2 += 0x40;				\
 	}
 
-static void blit_nf_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx_m, UINT16 zx_s, UINT16 zy_m, UINT16 zy_s, int colour)
+static void blit_nf_z(bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx_m, uint16_t zx_s, uint16_t zy_m, uint16_t zy_s, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_min();
@@ -457,7 +457,7 @@ static void blit_nf_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *
 	}
 }
 
-static void blit_fy_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx_m, UINT16 zx_s, UINT16 zy_m, UINT16 zy_s, int colour)
+static void blit_fy_z(bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx_m, uint16_t zx_s, uint16_t zy_m, uint16_t zy_s, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_min();
@@ -471,7 +471,7 @@ static void blit_fy_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *
 	}
 }
 
-static void blit_fx_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx_m, UINT16 zx_s, UINT16 zy_m, UINT16 zy_s, int colour)
+static void blit_fx_z(bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx_m, uint16_t zx_s, uint16_t zy_m, uint16_t zy_s, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_max();
@@ -485,7 +485,7 @@ static void blit_fx_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *
 	}
 }
 
-static void blit_fxy_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx_m, UINT16 zx_s, UINT16 zy_m, UINT16 zy_s, int colour)
+static void blit_fxy_z(bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx_m, uint16_t zx_s, uint16_t zy_m, uint16_t zy_s, int colour)
 {
 	z_decls(sx);
 	z_clamp_x_max();
@@ -499,14 +499,14 @@ static void blit_fxy_z(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 
 	}
 }
 
-static void (*const blit_z[4])(bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *src, int x, int y, int sx, int sy, UINT16 zx_m, UINT16 zx_s, UINT16 zy_m, UINT16 zy_s, int colour) = {
+static void (*const blit_z[4])(bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *src, int x, int y, int sx, int sy, uint16_t zx_m, uint16_t zx_s, uint16_t zy_m, uint16_t zy_s, int colour) = {
 	blit_nf_z,
 	blit_fy_z,
 	blit_fx_z,
 	blit_fxy_z,
 };
 
-void skns_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32* spriteram_source, size_t spriteram_size, UINT8* gfx_source, size_t gfx_length, UINT32* sprite_regs)
+void skns_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t* spriteram_source, size_t spriteram_size, uint8_t* gfx_source, size_t gfx_length, uint32_t* sprite_regs)
 {
 	/*- SPR RAM Format -**
 
@@ -545,8 +545,8 @@ void skns_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectang
 	//printf ("addr %08x\n", (sprite_regs[0x14/4]));
 
 
-	UINT32 *source = spriteram_source;
-	UINT32 *finish = source + spriteram_size/4;
+	uint32_t *source = spriteram_source;
+	uint32_t *finish = source + spriteram_size/4;
 
 	int group_x_offset[4];
 	int group_y_offset[4];
@@ -560,7 +560,7 @@ void skns_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectang
 	int sx,sy;
 	int endromoffs=0, gfxlen;
 	int grow;
-	UINT16 zoomx_m, zoomx_s, zoomy_m, zoomy_s;
+	uint16_t zoomx_m, zoomx_s, zoomy_m, zoomy_s;
 
 
 	if ((!disabled) && suprnova_alt_enable_sprites){
@@ -953,7 +953,7 @@ static void supernova_draw_a( bitmap_t *bitmap, bitmap_t* bitmap_flags, const re
 	int nowrap_a = (skns_v3_regs[0x10/4] >> 0) & 0x0004;
 
 
-	UINT32 startx,starty;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 	int columnscroll;
 
@@ -983,7 +983,7 @@ static void supernova_draw_b( bitmap_t *bitmap, bitmap_t* bitmap_flags, const re
 	int nowrap_b = (skns_v3_regs[0x34/4] >> 0) & 0x0004;
 
 
-	UINT32 startx,starty;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 	int columnscroll;
 
@@ -1033,11 +1033,11 @@ VIDEO_UPDATE(skns)
 
 		{
 			int x,y;
-			UINT8* srcflags, *src2flags;
-			UINT16* src, *src2, *src3;
-			UINT32* dst;
-			UINT16 pri, pri2, pri3;
-			UINT16 bgpri;
+			uint8_t* srcflags, *src2flags;
+			uint16_t* src, *src2, *src3;
+			uint32_t* dst;
+			uint16_t pri, pri2, pri3;
+			uint16_t bgpri;
 			const pen_t *clut = &screen->machine->pens[0];
 //          int drawpri;
 
@@ -1057,12 +1057,12 @@ VIDEO_UPDATE(skns)
 
 				for (x=0;x<320;x++)
 				{
-					UINT16 pendata  = src[x]&0x7fff;
-					UINT16 pendata2 = src2[x]&0x7fff;
-					UINT16 bgpendata;
-					UINT16 pendata3 = src3[x]&0x3fff;
+					uint16_t pendata  = src[x]&0x7fff;
+					uint16_t pendata2 = src2[x]&0x7fff;
+					uint16_t bgpendata;
+					uint16_t pendata3 = src3[x]&0x3fff;
 
-					UINT32 coldat;
+					uint32_t coldat;
 
 					pri = ((srcflags[x] & 0x07)<<1) | (supernova_pri_b);
 					pri2= ((src2flags[x] & 0x07)<<1) | (supernova_pri_a);
@@ -1119,14 +1119,14 @@ VIDEO_UPDATE(skns)
 						if (pendata3&0xff)
 						{
 
-							UINT16 palvalue = skns_palette_ram[pendata3];
+							uint16_t palvalue = skns_palette_ram[pendata3];
 
 							coldat = clut[pendata3];
 
 							if (palvalue&0x8000)
 							{
-								UINT32 srccolour = clut[bgpendata&0x7fff];
-								UINT32 dstcolour = clut[pendata3&0x3fff];
+								uint32_t srccolour = clut[bgpendata&0x7fff];
+								uint32_t dstcolour = clut[pendata3&0x3fff];
 
 								int r,g,b;
 								int r2,g2,b2;

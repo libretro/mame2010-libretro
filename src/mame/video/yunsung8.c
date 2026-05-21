@@ -71,7 +71,7 @@ WRITE8_HANDLER( yunsung8_videoram_w )
 	if (offset < 0x0800)		// c000-c7ff    Banked Palette RAM
 	{
 		int bank = state->videobank & 2;
-		UINT8 *RAM;
+		uint8_t *RAM;
 		int color;
 
 		if (bank)

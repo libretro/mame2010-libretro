@@ -47,13 +47,13 @@ static STATE_POSTLOAD( gtia_state_postload );
  * set left color clock for one color
  **********************************************/
 #define SETCOL_L(o,d) \
-	*((UINT8*)&antic.color_lookup[o] + 0) = d
+	*((uint8_t*)&antic.color_lookup[o] + 0) = d
 
 /**********************************************
  * set right color clock for one color
  **********************************************/
 #define SETCOL_R(o,d) \
-	*((UINT8*)&antic.color_lookup[o] + 1) = d
+	*((uint8_t*)&antic.color_lookup[o] + 1) = d
 
 
 
@@ -384,10 +384,10 @@ static void recalc_m3(void)
 WRITE8_HANDLER( atari_gtia_w )
 {
 	/* used for mixing hue/lum of different colors */
-	static UINT8 lumpm0=0,lumpm1=0,lumpm2=0,lumpm3=0,lumpm4=0;
-	static UINT8 lumpf1=0,lumpf2=0,lumbk= 0;
-	static UINT8 huepm0=0,huepm1=0,huepm2=0,huepm3=0,huepm4=0;
-	static UINT8 huepf1=0,huepf2=0,huebk= 0;
+	static uint8_t lumpm0=0,lumpm1=0,lumpm2=0,lumpm3=0,lumpm4=0;
+	static uint8_t lumpf1=0,lumpf2=0,lumbk= 0;
+	static uint8_t huepm0=0,huepm1=0,huepm2=0,huepm3=0,huepm4=0;
+	static uint8_t huepf1=0,huepf2=0,huebk= 0;
 
     switch (offset & 31)
     {
@@ -773,7 +773,7 @@ static STATE_POSTLOAD( gtia_state_postload )
 
 
 
-static const UINT8 pf_collision[256] = {
+static const uint8_t pf_collision[256] = {
 	0,1,2,0,4,0,0,0,8,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -813,7 +813,7 @@ static const int	pf_prioindex[256] = {
 };
 
 #define RENDER_PLAYER(player,color) 			\
-static void render_##player##_w1(UINT8 *dst)	\
+static void render_##player##_w1(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##player & 0x80 )			\
 		dst[0] |= color;						\
@@ -832,7 +832,7 @@ static void render_##player##_w1(UINT8 *dst)	\
 	if( gtia.h.graf##player & 0x01 )			\
 		dst[7] |= color;						\
 }												\
-static void render_##player##_w2(UINT8 *dst)	\
+static void render_##player##_w2(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##player & 0x80 )			\
 	{											\
@@ -875,7 +875,7 @@ static void render_##player##_w2(UINT8 *dst)	\
 		dst[15] |= color;						\
 	}											\
 }												\
-static void render_##player##_w4(UINT8 *dst)	\
+static void render_##player##_w4(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##player & 0x80 )			\
 	{											\
@@ -934,7 +934,7 @@ static void render_##player##_w4(UINT8 *dst)	\
 		dst[31] |= color;						\
 	}											\
 }												\
-static void (*const render_##player[4])(UINT8 *dst)={ \
+static void (*const render_##player[4])(uint8_t *dst)={ \
 	render_##player##_w1,						\
 	render_##player##_w2,						\
 	render_##player##_w2,						\
@@ -942,14 +942,14 @@ static void (*const render_##player[4])(UINT8 *dst)={ \
 }
 
 #define RENDER_MISSILE(missile,color)			\
-static void render_##missile##_w1(UINT8 *dst)	\
+static void render_##missile##_w1(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##missile & 0x80 )			\
 		dst[0] |= color;						\
 	if( gtia.h.graf##missile & 0x40 )			\
 		dst[1] |= color;						\
 }												\
-static void render_##missile##_w2(UINT8 *dst)	\
+static void render_##missile##_w2(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##missile & 0x80 )			\
 	{											\
@@ -962,7 +962,7 @@ static void render_##missile##_w2(UINT8 *dst)	\
 		dst[ 3] |= color;						\
 	}											\
 }												\
-static void render_##missile##_w4(UINT8 *dst)	\
+static void render_##missile##_w4(uint8_t *dst)	\
 {												\
 	if( gtia.h.graf##missile & 0x80 )			\
 	{											\
@@ -979,7 +979,7 @@ static void render_##missile##_w4(UINT8 *dst)	\
 		dst[ 7] |= color;						\
 	}											\
 }												\
-static void (*const render_##missile[4])(UINT8 *dst) = { \
+static void (*const render_##missile[4])(uint8_t *dst) = { \
 	render_##missile##_w1,						\
 	render_##missile##_w2,						\
 	render_##missile##_w2,						\
@@ -999,8 +999,8 @@ RENDER_MISSILE(m3,M3);
 void gtia_render(VIDEO *video)
 {
 	int x;
-	UINT8 *prio = antic.prio_table[gtia.w.prior & 0x3f];
-	UINT8 *src, *dst;
+	uint8_t *prio = antic.prio_table[gtia.w.prior & 0x3f];
+	uint8_t *src, *dst;
 
 	if( antic.scanline < VBL_END || antic.scanline >= 256 )
         return;
@@ -1034,7 +1034,7 @@ void gtia_render(VIDEO *video)
 
 	for( x = 0; x < HWIDTH*4; x++, src++, dst++ )
 	{
-		UINT8 pm, pc, pf;
+		uint8_t pm, pc, pf;
 		if( !*src )
 			continue;
 		/* get the player/missile combination bits and reset the buffer */

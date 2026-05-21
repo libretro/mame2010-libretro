@@ -43,7 +43,7 @@ VIDEO_START( fgoal )
 VIDEO_UPDATE( fgoal )
 {
 	fgoal_state *state = (fgoal_state *)screen->machine->driver_data;
-	const UINT8* VRAM = state->video_ram;
+	const uint8_t* VRAM = state->video_ram;
 
 	int x;
 	int y;
@@ -101,14 +101,14 @@ VIDEO_UPDATE( fgoal )
 
 	for (y = 0; y < 256; y++)
 	{
-		UINT16* p = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* p = BITMAP_ADDR16(bitmap, y, 0);
 
-		const UINT16* FG = BITMAP_ADDR16(state->fgbitmap, y, 0);
-		const UINT16* BG = BITMAP_ADDR16(state->bgbitmap, y, 0);
+		const uint16_t* FG = BITMAP_ADDR16(state->fgbitmap, y, 0);
+		const uint16_t* BG = BITMAP_ADDR16(state->bgbitmap, y, 0);
 
 		for (x = 0; x < 256; x += 8)
 		{
-			UINT8 v = *VRAM++;
+			uint8_t v = *VRAM++;
 
 			for (n = 0; n < 8; n++)
 			{

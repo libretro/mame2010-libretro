@@ -26,8 +26,8 @@ struct _ticket_state
 	int ticketdispensed;
 	int ticketnotdispensed;
 
-	UINT8 status;
-	UINT8 power;
+	uint8_t status;
+	uint8_t power;
 	emu_timer *timer;
 };
 

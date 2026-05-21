@@ -5,8 +5,8 @@ public:
 
 	sbugger_state(running_machine &machine) { }
 
-	UINT8 *videoram;
-	UINT8 *videoram_attr;
+	uint8_t *videoram;
+	uint8_t *videoram_attr;
 
 	tilemap_t *tilemap;
 };

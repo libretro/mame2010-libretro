@@ -13,6 +13,6 @@ READ8_HANDLER(t5182_sharedram_semaphore_snd_r);
 WRITE8_HANDLER(t5182_sharedram_semaphore_main_acquire_w);
 WRITE8_HANDLER(t5182_sharedram_semaphore_main_release_w);
 
-extern UINT8 *t5182_sharedram;
+extern uint8_t *t5182_sharedram;
 
 extern const ym2151_interface t5182_ym2151_interface;

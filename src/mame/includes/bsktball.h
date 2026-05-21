@@ -21,14 +21,14 @@ public:
 	bsktball_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  motion;
+	uint8_t *  videoram;
+	uint8_t *  motion;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* misc */
-	UINT32   nmi_on;
+	uint32_t   nmi_on;
 	int      i256v;
 
 	/* input-related */

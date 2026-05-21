@@ -15,9 +15,9 @@ int vb_scrollx_lo=0;
 int vb_scrolly_hi=0;
 int vb_scrollx[256];
 
-UINT8 *vb_scrolly_lo;
-UINT8 *vb_videoram;
-UINT8 *vb_attribram;
+uint8_t *vb_scrolly_lo;
+uint8_t *vb_videoram;
+uint8_t *vb_attribram;
 int vball_gfxset=0;
 static int vb_bgprombank;
 static int vb_spprombank;
@@ -38,8 +38,8 @@ static TILEMAP_MAPPER( background_scan )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 code = vb_videoram[tile_index];
-	UINT8 attr = vb_attribram[tile_index];
+	uint8_t code = vb_videoram[tile_index];
+	uint8_t attr = vb_attribram[tile_index];
 	SET_TILE_INFO(
 			0,
 			code + ((attr & 0x1f) << 8) + (vball_gfxset<<8),
@@ -79,7 +79,7 @@ WRITE8_HANDLER( vb_attrib_w )
 void vb_bgprombank_w( running_machine *machine, int bank )
 {
 	int i;
-	UINT8* color_prom;
+	uint8_t* color_prom;
 
 	if (bank==vb_bgprombank) return;
 
@@ -95,7 +95,7 @@ void vb_spprombank_w( running_machine *machine, int bank )
 {
 
 	int i;
-	UINT8* color_prom;
+	uint8_t* color_prom;
 
 	if (bank==vb_spprombank) return;
 
@@ -119,7 +119,7 @@ void vb_mark_all_dirty( void )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	const gfx_element *gfx = machine->gfx[1];
-	UINT8 *src = machine->generic.spriteram.u8;
+	uint8_t *src = machine->generic.spriteram.u8;
 	int i;
 
 /*  240-Y    S|X|CLR|WCH WHICH    240-X

@@ -4,7 +4,7 @@
 #include "cpu/z80/z80.h"
 
 static tilemap_t *background;
-UINT8 *shangkid_videoreg;
+uint8_t *shangkid_videoreg;
 int shangkid_gfx_type;
 
 
@@ -59,7 +59,7 @@ WRITE8_HANDLER( shangkid_videoram_w )
 	tilemap_mark_tile_dirty( background, offset&0x7ff );
 }
 
-static void draw_sprite(running_machine *machine, const UINT8 *source, bitmap_t *bitmap, const rectangle *cliprect ){
+static void draw_sprite(running_machine *machine, const uint8_t *source, bitmap_t *bitmap, const rectangle *cliprect ){
 	const gfx_element *gfx;
 	int transparent_pen;
 	int bank_index;
@@ -153,7 +153,7 @@ static void draw_sprite(running_machine *machine, const UINT8 *source, bitmap_t 
 
 static void shangkid_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	const UINT8 *source, *finish;
+	const uint8_t *source, *finish;
 
 	finish = machine->generic.spriteram.u8;
 	source = machine->generic.spriteram.u8+0x200;
@@ -187,7 +187,7 @@ PALETTE_INIT( dynamski )
 	/* create a lookup table for the palette */
 	for (i = 0; i < 0x20; i++)
 	{
-		UINT16 data = (color_prom[i | 0x20] << 8) | color_prom[i];
+		uint16_t data = (color_prom[i | 0x20] << 8) | color_prom[i];
 		rgb_t color = MAKE_RGB(pal5bit(data >> 1), pal5bit(data >> 6), pal5bit(data >> 11));
 
 		colortable_palette_set_color(machine->colortable, i, color);
@@ -199,14 +199,14 @@ PALETTE_INIT( dynamski )
 	/* characters */
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites */
 	for (i = 0x40; i < 0x80; i++)
 	{
-		UINT8 ctabentry = (color_prom[(i - 0x40) + 0x100] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[(i - 0x40) + 0x100] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

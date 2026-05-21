@@ -59,9 +59,9 @@ MACHINE_START( harddriv )
 	atarigen_init(machine);
 
 	/* predetermine memory regions */
-	state->sim_memory = (UINT16 *)memory_region(machine, "user1");
+	state->sim_memory = (uint16_t *)memory_region(machine, "user1");
 	state->sim_memory_size = memory_region_length(machine, "user1") / 2;
-	state->adsp_pgm_memory_word = (UINT16 *)((UINT8 *)state->adsp_pgm_memory + 1);
+	state->adsp_pgm_memory_word = (uint16_t *)((uint8_t *)state->adsp_pgm_memory + 1);
 }
 
 
@@ -163,7 +163,7 @@ void hdmsp_irq_gen(running_device *device, int irqstate)
 READ16_HANDLER( hd68k_gsp_io_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 result;
+	uint16_t result;
 	offset = (offset / 2) ^ 1;
 	state->hd34010_host_access = TRUE;
 	result = tms34010_host_r(state->gsp, offset);
@@ -192,7 +192,7 @@ WRITE16_HANDLER( hd68k_gsp_io_w )
 READ16_HANDLER( hd68k_msp_io_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 result;
+	uint16_t result;
 	offset = (offset / 2) ^ 1;
 	state->hd34010_host_access = TRUE;
 	result = (state->msp != NULL) ? tms34010_host_r(state->msp, offset) : 0xffff;
@@ -248,8 +248,8 @@ READ16_HANDLER( hd68k_port0_r )
 READ16_HANDLER( hdc68k_port1_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 result = input_port_read(space->machine, "a80000");
-	UINT16 diff = result ^ state->hdc68k_last_port1;
+	uint16_t result = input_port_read(space->machine, "a80000");
+	uint16_t diff = result ^ state->hdc68k_last_port1;
 
 	/* if a new shifter position is selected, use it */
 	/* if it's the same shifter position as last time, go back to neutral */
@@ -277,7 +277,7 @@ READ16_HANDLER( hdc68k_port1_r )
 READ16_HANDLER( hda68k_port1_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 result = input_port_read(space->machine, "a80000");
+	uint16_t result = input_port_read(space->machine, "a80000");
 
 	/* merge in the wheel edge latch bit */
 	if (state->hdc68k_wheel_edge)
@@ -292,7 +292,7 @@ READ16_HANDLER( hdc68k_wheel_r )
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 
 	/* grab the new wheel value and upconvert to 12 bits */
-	UINT16 new_wheel = input_port_read(space->machine, "12BADC0") << 4;
+	uint16_t new_wheel = input_port_read(space->machine, "12BADC0") << 4;
 
 	/* hack to display the wheel position */
 	if (input_code_pressed(space->machine, KEYCODE_LSHIFT))
@@ -636,7 +636,7 @@ WRITE16_HANDLER( hdgsp_io_w )
 	/* detect an enabling of the shift register and force yielding */
 	if (offset == REG_DPYCTL)
 	{
-		UINT8 new_shiftreg = (data >> 11) & 1;
+		uint8_t new_shiftreg = (data >> 11) & 1;
 		if (new_shiftreg != state->last_gsp_shiftreg)
 		{
 			state->last_gsp_shiftreg = new_shiftreg;
@@ -683,16 +683,16 @@ static TIMER_CALLBACK( stmsp_sync_update )
 	harddriv_state *state = (harddriv_state *)machine->driver_data;
 	int which = param >> 28;
 	offs_t offset = (param >> 16) & 0xfff;
-	UINT16 data = param;
+	uint16_t data = param;
 	state->stmsp_sync[which][offset] = data;
 	cpu_triggerint(state->msp);
 }
 
 
-INLINE void stmsp_sync_w(const address_space *space, offs_t offset, UINT16 data, UINT16 mem_mask, int which)
+INLINE void stmsp_sync_w(const address_space *space, offs_t offset, uint16_t data, uint16_t mem_mask, int which)
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 newdata = state->stmsp_sync[which][offset];
+	uint16_t newdata = state->stmsp_sync[which][offset];
 	COMBINE_DATA(&newdata);
 
 	/* if being written from the 68000, synchronize on it */
@@ -738,7 +738,7 @@ WRITE16_HANDLER( stmsp_sync2_w )
 READ16_HANDLER( hd68k_adsp_program_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 word = state->adsp_pgm_memory[offset/2];
+	uint32_t word = state->adsp_pgm_memory[offset/2];
 	return (!(offset & 1)) ? (word >> 16) : (word & 0xffff);
 }
 
@@ -746,9 +746,9 @@ READ16_HANDLER( hd68k_adsp_program_r )
 WRITE16_HANDLER( hd68k_adsp_program_w )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 *base = &state->adsp_pgm_memory[offset/2];
-	UINT32 oldword = *base;
-	UINT16 temp;
+	uint32_t *base = &state->adsp_pgm_memory[offset/2];
+	uint32_t oldword = *base;
+	uint16_t temp;
 
 	if (!(offset & 1))
 	{
@@ -836,10 +836,10 @@ static TIMER_CALLBACK( deferred_adsp_bank_switch )
 		if (!commands) commands = fopen("commands.log", "w");
 		if (commands)
 		{
-			INT16 *base = (INT16 *)&state->som_memory[param * 0x2000];
-			INT16 *end = base + (UINT16)*base;
-			INT16 *current = base + 1;
-			INT16 *table = base + 1 + (UINT16)*current++;
+			int16_t *base = (int16_t *)&state->som_memory[param * 0x2000];
+			int16_t *end = base + (uint16_t)*base;
+			int16_t *current = base + 1;
+			int16_t *table = base + 1 + (uint16_t)*current++;
 
 			fprintf(commands, "\n---------------\n");
 
@@ -853,15 +853,15 @@ static TIMER_CALLBACK( deferred_adsp_bank_switch )
 				fprintf(commands, "Cmd @ %04X = %04X  %d-%d @ %d\n", offset, c1, c2, c3, c4);
 				while (current < table)
 				{
-					UINT32 rslope, lslope;
-					rslope = (UINT16)*current++,
+					uint32_t rslope, lslope;
+					rslope = (uint16_t)*current++,
 					rslope |= *current++ << 16;
 					if (rslope == 0xffffffff)
 					{
 						fprintf(commands, "  (end)\n");
 						break;
 					}
-					lslope = (UINT16)*current++,
+					lslope = (uint16_t)*current++,
 					lslope |= *current++ << 16;
 					fprintf(commands, "  L=%08X R=%08X count=%d\n",
 							(int)lslope, (int)rslope, (int)*current++);
@@ -1153,12 +1153,12 @@ READ16_HANDLER( hd68k_ds3_gdata_r )
 	if (space->cpu == state->maincpu && pc == state->ds3_transfer_pc &&
 		!(!state->ds3_g68flag && state->ds3_g68irqs) && !(state->ds3_gflag && state->ds3_gfirqs))
 	{
-		UINT32 destaddr = state->maincpu->state(M68K_A1);
-		UINT16 count68k = state->maincpu->state(M68K_D1);
-		UINT16 mstat = state->adsp->state(ADSP2100_MSTAT);
-		UINT16 i6 = state->adsp->state((mstat & 1) ? ADSP2100_MR0 : ADSP2100_MR0_SEC);
-		UINT16 l6 = state->adsp->state(ADSP2100_L6) - 1;
-		UINT16 m7 = state->adsp->state(ADSP2100_M7);
+		uint32_t destaddr = state->maincpu->state(M68K_A1);
+		uint16_t count68k = state->maincpu->state(M68K_D1);
+		uint16_t mstat = state->adsp->state(ADSP2100_MSTAT);
+		uint16_t i6 = state->adsp->state((mstat & 1) ? ADSP2100_MR0 : ADSP2100_MR0_SEC);
+		uint16_t l6 = state->adsp->state(ADSP2100_L6) - 1;
+		uint16_t m7 = state->adsp->state(ADSP2100_M7);
 
 		logerror("%06X:optimizing 68k transfer, %d words\n", state->maincpu->pcbase(), count68k);
 
@@ -1331,8 +1331,8 @@ WRITE16_HANDLER( hdds3_control_w )
 READ16_HANDLER( hd68k_ds3_program_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 *base = &state->adsp_pgm_memory[offset & 0x1fff];
-	UINT32 word = *base;
+	uint32_t *base = &state->adsp_pgm_memory[offset & 0x1fff];
+	uint32_t word = *base;
 	return (!(offset & 0x2000)) ? (word >> 8) : (word & 0xff);
 }
 
@@ -1340,9 +1340,9 @@ READ16_HANDLER( hd68k_ds3_program_r )
 WRITE16_HANDLER( hd68k_ds3_program_w )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT32 *base = &state->adsp_pgm_memory[offset & 0x1fff];
-	UINT32 oldword = *base;
-	UINT16 temp;
+	uint32_t *base = &state->adsp_pgm_memory[offset & 0x1fff];
+	uint32_t oldword = *base;
+	uint16_t temp;
 
 	if (!(offset & 0x2000))
 	{
@@ -1372,7 +1372,7 @@ WRITE16_HANDLER( hd68k_ds3_program_w )
  *
  *************************************/
 
-void hddsk_update_pif(running_device *device, UINT32 pins)
+void hddsk_update_pif(running_device *device, uint32_t pins)
 {
 	atarigen_state *atarigen = (atarigen_state *)device->machine->driver_data;
 	atarigen->sound_int_state = ((pins & DSP32_OUTPUT_PIF) != 0);
@@ -1489,7 +1489,7 @@ WRITE16_HANDLER( hd68k_dsk_dsp32_w )
 READ16_HANDLER( hd68k_dsk_dsp32_r )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT16 result;
+	uint16_t result;
 	state->dsk_pio_access = TRUE;
 	result = dsp32c_pio_r(state->dsp32, offset);
 	state->dsk_pio_access = FALSE;
@@ -1515,8 +1515,8 @@ WRITE32_HANDLER( rddsp32_sync0_w )
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 	if (state->dsk_pio_access)
 	{
-		UINT32 *dptr = &state->rddsp32_sync[0][offset];
-		UINT32 newdata = *dptr;
+		uint32_t *dptr = &state->rddsp32_sync[0][offset];
+		uint32_t newdata = *dptr;
 		COMBINE_DATA(&newdata);
 		state->dataptr[state->next_msp_sync % MAX_MSP_SYNC] = dptr;
 		state->dataval[state->next_msp_sync % MAX_MSP_SYNC] = newdata;
@@ -1532,8 +1532,8 @@ WRITE32_HANDLER( rddsp32_sync1_w )
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 	if (state->dsk_pio_access)
 	{
-		UINT32 *dptr = &state->rddsp32_sync[1][offset];
-		UINT32 newdata = *dptr;
+		uint32_t *dptr = &state->rddsp32_sync[1][offset];
+		uint32_t newdata = *dptr;
 		COMBINE_DATA(&newdata);
 		state->dataptr[state->next_msp_sync % MAX_MSP_SYNC] = dptr;
 		state->dataval[state->next_msp_sync % MAX_MSP_SYNC] = newdata;

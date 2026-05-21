@@ -5,7 +5,7 @@
 static TILE_GET_INFO( glfgreat_get_roz_tile_info )
 {
 	tmnt_state *state = (tmnt_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 	int code;
 
 	tile_index += 0x40000 * state->glfgreat_roz_rom_bank;
@@ -17,7 +17,7 @@ static TILE_GET_INFO( glfgreat_get_roz_tile_info )
 
 static TILE_GET_INFO( prmrsocr_get_roz_tile_info )
 {
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 	int code = rom[tile_index + 0x20000] + 256 * rom[tile_index];
 
 	SET_TILE_INFO(0, code & 0x1fff, code >> 13, 0);
@@ -424,7 +424,7 @@ READ16_HANDLER( glfgreat_rom_r )
 		return memory_region(space->machine, "gfx3")[state->glfgreat_roz_char_bank * 0x80000 + offset];
 	else if (offset < 0x40000)
 	{
-		UINT8 *usr = memory_region(space->machine, "user1");
+		uint8_t *usr = memory_region(space->machine, "user1");
 		return usr[offset + 0x80000 + state->glfgreat_roz_rom_bank * 0x40000] + 256 * usr[offset + state->glfgreat_roz_rom_bank * 0x40000];
 	}
 	else
@@ -535,7 +535,7 @@ READ16_HANDLER( prmrsocr_rom_r )
 		return memory_region(space->machine, "gfx3")[offset];
 	else
 	{
-		UINT8 *usr = memory_region(space->machine, "user1");
+		uint8_t *usr = memory_region(space->machine, "user1");
 		return 256 * usr[offset] + usr[offset + 0x020000];
 	}
 }

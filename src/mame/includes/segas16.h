@@ -8,77 +8,77 @@ public:
 		: interrupt_timer(machine.device<timer_device>("int_timer")) { }
 
 	/* memory pointers */
-//  UINT16 *  workram;  // this is used in the nvram handler, hence it cannot be added here
-//  UINT16 *  paletteram;   // this is used in the segaic16 mapper, hence it cannot be added here (yet)
-//  UINT16 *  tileram_0;    // this is used in the segaic16 mapper, hence it cannot be added here (yet)
-//  UINT16 *  textram_0;    // this is used in the segaic16 mapper, hence it cannot be added here (yet)
-//  UINT16 *  spriteram_0;  // this is used in the segaic16 mapper, hence it cannot be added here (yet)
+//  uint16_t *  workram;  // this is used in the nvram handler, hence it cannot be added here
+//  uint16_t *  paletteram;   // this is used in the segaic16 mapper, hence it cannot be added here (yet)
+//  uint16_t *  tileram_0;    // this is used in the segaic16 mapper, hence it cannot be added here (yet)
+//  uint16_t *  textram_0;    // this is used in the segaic16 mapper, hence it cannot be added here (yet)
+//  uint16_t *  spriteram_0;  // this is used in the segaic16 mapper, hence it cannot be added here (yet)
 
 	/* misc video */
-	UINT8 road_priority;		// segaxbd
+	uint8_t road_priority;		// segaxbd
 	bitmap_t *tmp_bitmap;		// segaybd & segas18
-	UINT8 grayscale_enable;		// segas18
-	UINT8 vdp_enable;			// segas18
-	UINT8 vdp_mixing;			// segas18
+	uint8_t grayscale_enable;		// segas18
+	uint8_t vdp_enable;			// segas18
+	uint8_t vdp_mixing;			// segas18
 
 	/* misc common */
-	UINT8 rom_board;			// segas16b
-	UINT8 mj_input_num;		// segas16a & segas16b
-	UINT8 mj_last_val;		// segas16b
-	UINT8 adc_select;			// segahang & segaorun
-	UINT8 timer_irq_state;		// segaxbd & segaybd
-	UINT8 vblank_irq_state;		// segaorun, segaxbd & segaybd
-	UINT8 misc_io_data[0x10];	// system18 & segaybd
+	uint8_t rom_board;			// segas16b
+	uint8_t mj_input_num;		// segas16a & segas16b
+	uint8_t mj_last_val;		// segas16b
+	uint8_t adc_select;			// segahang & segaorun
+	uint8_t timer_irq_state;		// segaxbd & segaybd
+	uint8_t vblank_irq_state;		// segaorun, segaxbd & segaybd
+	uint8_t misc_io_data[0x10];	// system18 & segaybd
 
 	void (*i8751_vblank_hook)(running_machine *machine);
-	const UINT8 *i8751_initial_config;
+	const uint8_t *i8751_initial_config;
 
 	read16_space_func custom_io_r;
 	write16_space_func custom_io_w;
 
 	/* misc system 16b */
-	UINT8 atomicp_sound_divisor;
-	UINT8 atomicp_sound_count;
-	UINT8 disable_screen_blanking;
-	UINT8 hwc_input_value;
+	uint8_t atomicp_sound_divisor;
+	uint8_t atomicp_sound_count;
+	uint8_t disable_screen_blanking;
+	uint8_t hwc_input_value;
 
 
 	/* misc system 16a */
-	UINT8 video_control;
-	UINT8 mcu_control;
-	UINT8 n7751_command;
-	UINT32 n7751_rom_address;
-	UINT8 last_buttons1;
-	UINT8 last_buttons2;
+	uint8_t video_control;
+	uint8_t mcu_control;
+	uint8_t n7751_command;
+	uint32_t n7751_rom_address;
+	uint8_t last_buttons1;
+	uint8_t last_buttons2;
 	int read_port;
 
-	void (*lamp_changed_w)(running_machine *machine, UINT8 changed, UINT8 newval);
+	void (*lamp_changed_w)(running_machine *machine, uint8_t changed, uint8_t newval);
 
 	/* misc system 18 */
-	UINT8 mcu_data;
+	uint8_t mcu_data;
 
-	UINT8 wwally_last_x[3], wwally_last_y[3];
-	UINT8 lghost_value, lghost_select;
+	uint8_t wwally_last_x[3], wwally_last_y[3];
+	uint8_t lghost_value, lghost_select;
 
 	/* misc segaorun */
-	UINT8 irq2_state;
-	const UINT8 *custom_map;
+	uint8_t irq2_state;
+	const uint8_t *custom_map;
 
 	/* misc yboard */
-	UINT8 analog_data[4];
+	uint8_t analog_data[4];
 	int irq2_scanline;
 
 	/* misc xboard */
-	UINT8 iochip_regs[2][8];
-	UINT8 iochip_force_input;
+	uint8_t iochip_regs[2][8];
+	uint8_t iochip_force_input;
 
-	UINT8 (*iochip_custom_io_r[2])(offs_t offset, UINT8 portdata);	// currently unused
-	void (*iochip_custom_io_w[2])(offs_t offset, UINT8 data);	// currently unused
+	uint8_t (*iochip_custom_io_r[2])(offs_t offset, uint8_t portdata);	// currently unused
+	void (*iochip_custom_io_w[2])(offs_t offset, uint8_t data);	// currently unused
 
-	UINT8 adc_reverse[8];
+	uint8_t adc_reverse[8];
 
-	UINT8 gprider_hack;
-	UINT16 *loffire_sync;
+	uint8_t gprider_hack;
+	uint16_t *loffire_sync;
 
 
 	/* devices */
@@ -148,4 +148,4 @@ VIDEO_UPDATE( yboard );
 
 void *fd1094_get_decrypted_base(void);
 void fd1094_machine_init(running_device *device);
-void fd1094_driver_init(running_machine *machine, const char* tag, void (*set_decrypted)(running_machine *, UINT8 *));
+void fd1094_driver_init(running_machine *machine, const char* tag, void (*set_decrypted)(running_machine *, uint8_t *));

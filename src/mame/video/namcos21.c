@@ -11,18 +11,18 @@ Namco System 21 Video Hardware
 #include "includes/namcoic.h"
 #include "includes/namcos21.h"
 
-#define FRAMEBUFFER_SIZE_IN_BYTES (sizeof(UINT16)*NAMCOS21_POLY_FRAME_WIDTH*NAMCOS21_POLY_FRAME_HEIGHT)
+#define FRAMEBUFFER_SIZE_IN_BYTES (sizeof(uint16_t)*NAMCOS21_POLY_FRAME_WIDTH*NAMCOS21_POLY_FRAME_HEIGHT)
 
 /* work (hidden) framebuffer */
-static UINT16 *mpPolyFrameBufferPens;
-static UINT16 *mpPolyFrameBufferZ;
+static uint16_t *mpPolyFrameBufferPens;
+static uint16_t *mpPolyFrameBufferZ;
 
 /* visible framebuffer */
-static UINT16 *mpPolyFrameBufferPens2;
-static UINT16 *mpPolyFrameBufferZ2;
+static uint16_t *mpPolyFrameBufferPens2;
+static uint16_t *mpPolyFrameBufferZ2;
 
-static UINT16 winrun_color;
-static UINT16 winrun_gpu_register[0x10/2];
+static uint16_t winrun_color;
+static uint16_t winrun_gpu_register[0x10/2];
 
 READ16_HANDLER(winrun_gpu_color_r)
 {
@@ -66,11 +66,11 @@ READ16_HANDLER( winrun_gpu_videoram_r )
 static void
 AllocatePolyFrameBuffer( running_machine *machine )
 {
-	mpPolyFrameBufferZ     = auto_alloc_array(machine, UINT16, FRAMEBUFFER_SIZE_IN_BYTES/2 );
-	mpPolyFrameBufferPens  = auto_alloc_array(machine, UINT16, FRAMEBUFFER_SIZE_IN_BYTES/2 );
+	mpPolyFrameBufferZ     = auto_alloc_array(machine, uint16_t, FRAMEBUFFER_SIZE_IN_BYTES/2 );
+	mpPolyFrameBufferPens  = auto_alloc_array(machine, uint16_t, FRAMEBUFFER_SIZE_IN_BYTES/2 );
 
-	mpPolyFrameBufferZ2    = auto_alloc_array(machine, UINT16, FRAMEBUFFER_SIZE_IN_BYTES/2 );
-	mpPolyFrameBufferPens2 = auto_alloc_array(machine, UINT16, FRAMEBUFFER_SIZE_IN_BYTES/2 );
+	mpPolyFrameBufferZ2    = auto_alloc_array(machine, uint16_t, FRAMEBUFFER_SIZE_IN_BYTES/2 );
+	mpPolyFrameBufferPens2 = auto_alloc_array(machine, uint16_t, FRAMEBUFFER_SIZE_IN_BYTES/2 );
 
 	namcos21_ClearPolyFrameBuffer();
 	namcos21_ClearPolyFrameBuffer();
@@ -80,7 +80,7 @@ void
 namcos21_ClearPolyFrameBuffer( void )
 {
 	int i;
-	UINT16 *temp2;
+	uint16_t *temp2;
 
 	/* swap work and visible framebuffers */
 	temp2 = mpPolyFrameBufferZ;
@@ -104,9 +104,9 @@ CopyVisiblePolyFrameBuffer( bitmap_t *bitmap, const rectangle *clip, int zlo, in
 	int sy;
 	for( sy=clip->min_y; sy<=clip->max_y; sy++ )
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, sy, 0);
-		const UINT16 *pPen = mpPolyFrameBufferPens2+NAMCOS21_POLY_FRAME_WIDTH*sy;
-		const UINT16 *pZ = mpPolyFrameBufferZ2+NAMCOS21_POLY_FRAME_WIDTH*sy;
+		uint16_t *dest = BITMAP_ADDR16(bitmap, sy, 0);
+		const uint16_t *pPen = mpPolyFrameBufferPens2+NAMCOS21_POLY_FRAME_WIDTH*sy;
+		const uint16_t *pZ = mpPolyFrameBufferZ2+NAMCOS21_POLY_FRAME_WIDTH*sy;
 		int sx;
 		for( sx=clip->min_x; sx<=clip->max_x; sx++ )
 		{
@@ -129,7 +129,7 @@ VIDEO_START( namcos21 )
 {
 	if( namcos2_gametype == NAMCOS21_WINRUN91 )
 	{
-		machine->generic.videoram.u8 = auto_alloc_array(machine, UINT8, 0x80000);
+		machine->generic.videoram.u8 = auto_alloc_array(machine, uint8_t, 0x80000);
 	}
 	AllocatePolyFrameBuffer(machine);
 	namco_obj_init(machine,
@@ -142,7 +142,7 @@ static void
 update_palette( running_machine *machine )
 {
 	int i;
-	INT16 data1,data2;
+	int16_t data1,data2;
 	int r,g,b;
 
 	/*
@@ -210,13 +210,13 @@ VIDEO_UPDATE( namcos21 )
 	}
 	else
 	{ /* winrun bitmap layer */
-		int yscroll = -cliprect->min_y+(INT16)winrun_gpu_register[0x2/2];
+		int yscroll = -cliprect->min_y+(int16_t)winrun_gpu_register[0x2/2];
 		int base = 0x1000+0x100*(winrun_color&0xf);
 		int sx,sy;
 		for( sy=cliprect->min_y; sy<=cliprect->max_y; sy++ )
 		{
-			const UINT8 *pSource = &screen->machine->generic.videoram.u8[((yscroll+sy)&0x3ff)*0x200];
-			UINT16 *pDest = BITMAP_ADDR16(bitmap, sy, 0);
+			const uint8_t *pSource = &screen->machine->generic.videoram.u8[((yscroll+sy)&0x3ff)*0x200];
+			uint16_t *pDest = BITMAP_ADDR16(bitmap, sy, 0);
 			for( sx=cliprect->min_x; sx<=cliprect->max_x; sx++ )
 			{
 				int pen = pSource[sx];
@@ -265,8 +265,8 @@ renderscanline_flat( const edge *e1, const edge *e2, int sy, unsigned color, int
 	}
 
 	{
-		UINT16 *pDest = mpPolyFrameBufferPens + sy*NAMCOS21_POLY_FRAME_WIDTH;
-		UINT16 *pZBuf = mpPolyFrameBufferZ    + sy*NAMCOS21_POLY_FRAME_WIDTH;
+		uint16_t *pDest = mpPolyFrameBufferPens + sy*NAMCOS21_POLY_FRAME_WIDTH;
+		uint16_t *pZBuf = mpPolyFrameBufferZ    + sy*NAMCOS21_POLY_FRAME_WIDTH;
 		int x0 = (int)e1->x;
 		int x1 = (int)e2->x;
 		int w = x1-x0;
@@ -288,7 +288,7 @@ renderscanline_flat( const edge *e1, const edge *e2, int sy, unsigned color, int
 
 			for( x=x0; x<x1; x++ )
 			{
-				UINT16 zz = (UINT16)z;
+				uint16_t zz = (uint16_t)z;
 				if( zz<pZBuf[x] )
 				{
 					int pen = color;

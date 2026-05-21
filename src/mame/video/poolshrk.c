@@ -7,9 +7,9 @@ Atari Poolshark video emulation
 #include "emu.h"
 #include "includes/poolshrk.h"
 
-UINT8* poolshrk_playfield_ram;
-UINT8* poolshrk_hpos_ram;
-UINT8* poolshrk_vpos_ram;
+uint8_t* poolshrk_playfield_ram;
+uint8_t* poolshrk_hpos_ram;
+uint8_t* poolshrk_vpos_ram;
 
 static tilemap_t* bg_tilemap;
 

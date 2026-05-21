@@ -11,9 +11,9 @@
 
 #include "emu.h"
 
-UINT16 *thoop2_vregs;
-UINT16 *thoop2_videoram;
-UINT16 *thoop2_spriteram;
+uint16_t *thoop2_vregs;
+uint16_t *thoop2_videoram;
+uint16_t *thoop2_spriteram;
 
 static int sprite_count[5];
 static int *sprite_table[5];

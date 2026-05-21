@@ -55,8 +55,8 @@ Newer version of the I/O chip ?
 typedef struct _tc0220ioc_state tc0220ioc_state;
 struct _tc0220ioc_state
 {
-	UINT8      regs[8];
-	UINT8      port;
+	uint8_t      regs[8];
+	uint8_t      port;
 
 	devcb_resolved_read8	read_0;
 	devcb_resolved_read8	read_1;
@@ -213,7 +213,7 @@ static DEVICE_RESET( tc0220ioc )
 typedef struct _tc0510nio_state tc0510nio_state;
 struct _tc0510nio_state
 {
-	UINT8   regs[8];
+	uint8_t   regs[8];
 
 	devcb_resolved_read8	read_0;
 	devcb_resolved_read8	read_1;
@@ -364,7 +364,7 @@ static DEVICE_RESET( tc0510nio )
 typedef struct _tc0640fio_state tc0640fio_state;
 struct _tc0640fio_state
 {
-	UINT8   regs[8];
+	uint8_t   regs[8];
 
 	devcb_resolved_read8	read_0;
 	devcb_resolved_read8	read_1;

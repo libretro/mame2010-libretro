@@ -12,11 +12,11 @@ public:
 	yunsung8_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     videoram;
+	uint8_t *     videoram;
 
 	/* video-related */
 	tilemap_t     *tilemap_0, *tilemap_1;
-	UINT8       *videoram_0, *videoram_1;
+	uint8_t       *videoram_0, *videoram_1;
 	int         layers_ctrl;
 	int         videobank;
 

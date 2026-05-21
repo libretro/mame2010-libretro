@@ -24,7 +24,7 @@
 void hdsnd_init(running_machine *machine)
 {
 	harddriv_state *state = (harddriv_state *)machine->driver_data;
-	state->rombase = (UINT8 *)memory_region(machine, "serialroms");
+	state->rombase = (uint8_t *)memory_region(machine, "serialroms");
 	state->romsize = memory_region_length(machine, "serialroms");
 }
 
@@ -288,8 +288,8 @@ WRITE16_HANDLER( hdsnd68k_320com_w )
 READ16_HANDLER( hdsnddsp_get_bio )
 {
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
-	UINT64 cycles_since_last_bio = state->sounddsp->total_cycles() - state->last_bio_cycles;
-	INT32 cycles_until_bio = CYCLES_PER_BIO - cycles_since_last_bio;
+	uint64_t cycles_since_last_bio = state->sounddsp->total_cycles() - state->last_bio_cycles;
+	int32_t cycles_until_bio = CYCLES_PER_BIO - cycles_since_last_bio;
 
 	/* if we're not at the next BIO yet, advance us there */
 	if (cycles_until_bio > 0)

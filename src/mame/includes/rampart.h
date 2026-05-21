@@ -15,8 +15,8 @@ public:
 	rampart_state(running_machine &machine) { }
 
 	atarigen_state	atarigen;
-	UINT16 *		bitmap;
-	UINT8			has_mo;
+	uint16_t *		bitmap;
+	uint8_t			has_mo;
 };
 
 

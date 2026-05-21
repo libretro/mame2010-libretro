@@ -12,15 +12,15 @@ public:
 	contra_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        spriteram;
-	UINT8 *        spriteram_2;
-	UINT8 *        paletteram;
-	UINT8 *        bg_vram;
-	UINT8 *        bg_cram;
-	UINT8 *        fg_vram;
-	UINT8 *        fg_cram;
-	UINT8 *        tx_vram;
-	UINT8 *        tx_cram;
+	uint8_t *        spriteram;
+	uint8_t *        spriteram_2;
+	uint8_t *        paletteram;
+	uint8_t *        bg_vram;
+	uint8_t *        bg_cram;
+	uint8_t *        fg_vram;
+	uint8_t *        fg_cram;
+	uint8_t *        tx_vram;
+	uint8_t *        tx_cram;
 	// this driver also uses a large generic spriteram region...
 
 	/* video-related */

@@ -25,10 +25,10 @@ static int mjsikaku_screen_refresh;
 static int mjsikaku_gfxmode;
 
 static bitmap_t *mjsikaku_tmpbitmap;
-static UINT16 *mjsikaku_videoram;
-static UINT8 *nbmj8688_clut;
+static uint16_t *mjsikaku_videoram;
+static uint8_t *nbmj8688_clut;
 
-static UINT8 *HD61830B_ram[2];
+static uint8_t *HD61830B_ram[2];
 static int HD61830B_instr[2];
 static int HD61830B_addr[2];
 
@@ -250,7 +250,7 @@ void mjsikaku_vramflip(void)
 {
 	static int mjsikaku_flipscreen_old = 0;
 	int x, y;
-	UINT16 color1, color2;
+	uint16_t color1, color2;
 
 	if (mjsikaku_flipscreen == mjsikaku_flipscreen_old) return;
 
@@ -297,7 +297,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void mbmj8688_gfxdraw(running_machine *machine, int gfxtype)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 
 	int x, y;
 	int dx1, dx2, dy;
@@ -306,7 +306,7 @@ static void mbmj8688_gfxdraw(running_machine *machine, int gfxtype)
 	int skipx, skipy;
 	int ctrx, ctry;
 	int gfxaddr, gfxlen;
-	UINT16 color, color1, color2;
+	uint16_t color, color1, color2;
 
 	if (gfxtype == GFXTYPE_PURE_12BIT)
 	{
@@ -562,8 +562,8 @@ static void mbmj8688_gfxdraw(running_machine *machine, int gfxtype)
 static void common_video_start(running_machine *machine)
 {
 	mjsikaku_tmpbitmap = auto_bitmap_alloc(machine, 512, 256, machine->primary_screen->format());
-	mjsikaku_videoram = auto_alloc_array_clear(machine, UINT16, 512 * 256);
-	nbmj8688_clut = auto_alloc_array(machine, UINT8, 0x20);
+	mjsikaku_videoram = auto_alloc_array_clear(machine, uint16_t, 512 * 256);
+	nbmj8688_clut = auto_alloc_array(machine, uint8_t, 0x20);
 
 	mjsikaku_scrolly = 0;	// reset because crystalg/crystal2 don't write to this register
 }
@@ -602,8 +602,8 @@ VIDEO_START( mbmj8688_pure_16bit_LCD )
 {
 	mjsikaku_gfxmode = GFXTYPE_PURE_16BIT;
 
-	HD61830B_ram[0] = auto_alloc_array(machine, UINT8, 0x10000);
-	HD61830B_ram[1] = auto_alloc_array(machine, UINT8, 0x10000);
+	HD61830B_ram[0] = auto_alloc_array(machine, uint8_t, 0x10000);
+	HD61830B_ram[1] = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	common_video_start(machine);
 }

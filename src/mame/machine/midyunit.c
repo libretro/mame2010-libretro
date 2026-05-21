@@ -22,28 +22,28 @@
 /* protection data types */
 struct protection_data
 {
-	UINT16	reset_sequence[3];
-	UINT16	data_sequence[100];
+	uint16_t	reset_sequence[3];
+	uint16_t	data_sequence[100];
 };
 static const struct protection_data *prot_data;
-static UINT16 prot_result;
-static UINT16 prot_sequence[3];
-static UINT8 prot_index;
+static uint16_t prot_result;
+static uint16_t prot_sequence[3];
+static uint8_t prot_index;
 
 
 /* input-related variables */
-static UINT8	term2_analog_select;
+static uint8_t	term2_analog_select;
 
 /* CMOS-related variables */
-       UINT16 *midyunit_cmos_ram;
-       UINT32	midyunit_cmos_page;
-static UINT8	cmos_w_enable;
+       uint16_t *midyunit_cmos_ram;
+       uint32_t	midyunit_cmos_page;
+static uint8_t	cmos_w_enable;
 
 /* sound-related variables */
-static UINT8	chip_type;
+static uint8_t	chip_type;
 
 /* hack-related variables */
-static UINT16 *t2_hack_mem;
+static uint16_t *t2_hack_mem;
 
 
 
@@ -259,7 +259,7 @@ static WRITE16_HANDLER( term2la1_hack_w )
  *
  *************************************/
 
-static UINT8 *cvsd_protection_base;
+static uint8_t *cvsd_protection_base;
 static WRITE8_HANDLER( cvsd_protection_w )
 {
 	/* because the entire CVSD ROM is banked, we have to make sure that writes */
@@ -273,8 +273,8 @@ static WRITE8_HANDLER( cvsd_protection_w )
 static void init_generic(running_machine *machine, int bpp, int sound, int prot_start, int prot_end)
 {
 	offs_t gfx_chunk = midyunit_gfx_rom_size / 4;
-	UINT8 d1, d2, d3, d4, d5, d6;
-	UINT8 *base;
+	uint8_t d1, d2, d3, d4, d5, d6;
+	uint8_t *base;
 	int i;
 
 	/* load graphics ROMs */

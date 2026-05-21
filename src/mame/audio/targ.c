@@ -24,15 +24,15 @@
 
 static int max_freq;
 
-static UINT8 port_1_last;
-static UINT8 port_2_last;
+static uint8_t port_1_last;
+static uint8_t port_2_last;
 
-static UINT8 tone_freq;
-static UINT8 tone_active;
-static UINT8 tone_pointer;
+static uint8_t tone_freq;
+static uint8_t tone_active;
+static uint8_t tone_pointer;
 
 
-static const INT16 sine_wave[32] =
+static const int16_t sine_wave[32] =
 {
 	 0x0f0f,  0x0f0f,  0x0f0f,  0x0606,  0x0606,  0x0909,  0x0909,  0x0606,  0x0606,  0x0909,  0x0606,  0x0d0d,  0x0f0f,  0x0f0f,  0x0d0d,  0x0000,
 	-0x191a, -0x2122, -0x1e1f, -0x191a, -0x1314, -0x191a, -0x1819, -0x1819, -0x1819, -0x1314, -0x1314, -0x1314, -0x1819, -0x1e1f, -0x1e1f, -0x1819
@@ -45,7 +45,7 @@ static const INT16 sine_wave[32] =
 
 
 
-static void adjust_sample(running_device *samples, UINT8 freq)
+static void adjust_sample(running_device *samples, uint8_t freq)
 {
 	tone_freq = freq;
 
@@ -115,7 +115,7 @@ WRITE8_HANDLER( targ_audio_2_w )
 	if ((data & 0x01) && !(port_2_last & 0x01))
 	{
 		running_device *samples = space->machine->device("samples");
-		UINT8 *prom = memory_region(space->machine, "targ");
+		uint8_t *prom = memory_region(space->machine, "targ");
 
 		tone_pointer = (tone_pointer + 1) & 0x0f;
 

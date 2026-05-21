@@ -18,7 +18,7 @@ char atari_frame_message[64+1];
 int atari_frame_counter;
 
 /* flag for displaying television artifacts in ANTIC mode F (15) */
-static UINT32 tv_artifacts = 0;
+static uint32_t tv_artifacts = 0;
 
 /*************************************************************************
  * The priority tables tell which playfield, player or missile colors
@@ -83,7 +83,7 @@ static UINT32 tv_artifacts = 0;
  * player/missile colors calculated for the first part (00-1F).
  * The priorities of combining priority bits (which games use!) are:
  ************************************************************************/
-static const UINT8 _pm_colors[32][8*2*8] = {
+static const uint8_t _pm_colors[32][8*2*8] = {
 	{
 		M0, PL0,P0, PL0,M1, PL1,P1, PL1,M2, PL2,P2, PL2,M3, PL3,P3, PL3,  // 00
 		M0, PL0,P0, PL0,M1, PL1,P1, PL1,M2, PL2,P2, PL2,M3, PL3,P3, PL3,
@@ -413,7 +413,7 @@ static const UINT8 _pm_colors[32][8*2*8] = {
 static void prio_init(void)
 {
 	int i, j, pm, p, c;
-	const UINT8 * prio;
+	const uint8_t * prio;
 
 	/* 32 priority bit combinations */
 	for( i = 0; i < 32; i++ )
@@ -450,37 +450,37 @@ static void prio_init(void)
  ************************************************************************/
 static void cclk_init(void)
 {
-	static const UINT8 _pf_21[4] =   {T00,T01,T10,T11};
-	static const UINT8 _pf_1b[4] =   {G00,G01,G10,G11};
-	static const UINT8 _pf_210b[4] = {PBK,PF0,PF1,PF2};
-	static const UINT8 _pf_310b[4] = {PBK,PF0,PF1,PF3};
+	static const uint8_t _pf_21[4] =   {T00,T01,T10,T11};
+	static const uint8_t _pf_1b[4] =   {G00,G01,G10,G11};
+	static const uint8_t _pf_210b[4] = {PBK,PF0,PF1,PF2};
+	static const uint8_t _pf_310b[4] = {PBK,PF0,PF1,PF3};
 	int i;
-	UINT8 * dst;
+	uint8_t * dst;
 
 	/* setup color translation for the ANTIC modes */
     for( i = 0; i < 256; i++ )
     {
         /****** text mode (2,3) **********/
-		dst = (UINT8 *)&antic.pf_21[0x000+i];
+		dst = (uint8_t *)&antic.pf_21[0x000+i];
 		*dst++ = _pf_21[(i>>6)&3];
 		*dst++ = _pf_21[(i>>4)&3];
 		*dst++ = _pf_21[(i>>2)&3];
 		*dst++ = _pf_21[(i>>0)&3];
 
         /****** 4 color text (4,5) with pf2, D, E **********/
-		dst = (UINT8 *)&antic.pf_x10b[0x000+i];
+		dst = (uint8_t *)&antic.pf_x10b[0x000+i];
 		*dst++ = _pf_210b[(i>>6)&3];
 		*dst++ = _pf_210b[(i>>4)&3];
 		*dst++ = _pf_210b[(i>>2)&3];
 		*dst++ = _pf_210b[(i>>0)&3];
-		dst = (UINT8 *)&antic.pf_x10b[0x100+i];
+		dst = (uint8_t *)&antic.pf_x10b[0x100+i];
 		*dst++ = _pf_310b[(i>>6)&3];
 		*dst++ = _pf_310b[(i>>4)&3];
 		*dst++ = _pf_310b[(i>>2)&3];
 		*dst++ = _pf_310b[(i>>0)&3];
 
         /****** pf0 color text (6,7), 9, B, C **********/
-		dst = (UINT8 *)&antic.pf_3210b2[0x000+i*2];
+		dst = (uint8_t *)&antic.pf_3210b2[0x000+i*2];
 		*dst++ = (i&0x80)?PF0:PBK;
 		*dst++ = (i&0x40)?PF0:PBK;
 		*dst++ = (i&0x20)?PF0:PBK;
@@ -491,7 +491,7 @@ static void cclk_init(void)
 		*dst++ = (i&0x01)?PF0:PBK;
 
         /****** pf1 color text (6,7), 9, B, C **********/
-		dst = (UINT8 *)&antic.pf_3210b2[0x200+i*2];
+		dst = (uint8_t *)&antic.pf_3210b2[0x200+i*2];
 		*dst++ = (i&0x80)?PF1:PBK;
 		*dst++ = (i&0x40)?PF1:PBK;
 		*dst++ = (i&0x20)?PF1:PBK;
@@ -502,7 +502,7 @@ static void cclk_init(void)
 		*dst++ = (i&0x01)?PF1:PBK;
 
         /****** pf2 color text (6,7), 9, B, C **********/
-		dst = (UINT8 *)&antic.pf_3210b2[0x400+i*2];
+		dst = (uint8_t *)&antic.pf_3210b2[0x400+i*2];
 		*dst++ = (i&0x80)?PF2:PBK;
 		*dst++ = (i&0x40)?PF2:PBK;
 		*dst++ = (i&0x20)?PF2:PBK;
@@ -513,7 +513,7 @@ static void cclk_init(void)
 		*dst++ = (i&0x01)?PF2:PBK;
 
         /****** pf3 color text (6,7), 9, B, C **********/
-		dst = (UINT8 *)&antic.pf_3210b2[0x600+i*2];
+		dst = (uint8_t *)&antic.pf_3210b2[0x600+i*2];
 		*dst++ = (i&0x80)?PF3:PBK;
 		*dst++ = (i&0x40)?PF3:PBK;
 		*dst++ = (i&0x20)?PF3:PBK;
@@ -524,7 +524,7 @@ static void cclk_init(void)
 		*dst++ = (i&0x01)?PF3:PBK;
 
         /****** 4 color graphics 4 cclks (8) **********/
-		dst = (UINT8 *)&antic.pf_210b4[i*4];
+		dst = (uint8_t *)&antic.pf_210b4[i*4];
 		*dst++ = _pf_210b[(i>>6)&3];
 		*dst++ = _pf_210b[(i>>6)&3];
 		*dst++ = _pf_210b[(i>>6)&3];
@@ -543,7 +543,7 @@ static void cclk_init(void)
 		*dst++ = _pf_210b[(i>>0)&3];
 
         /****** 4 color graphics 2 cclks (A) **********/
-		dst = (UINT8 *)&antic.pf_210b2[i*2];
+		dst = (uint8_t *)&antic.pf_210b2[i*2];
 		*dst++ = _pf_210b[(i>>6)&3];
 		*dst++ = _pf_210b[(i>>6)&3];
 		*dst++ = _pf_210b[(i>>4)&3];
@@ -554,28 +554,28 @@ static void cclk_init(void)
 		*dst++ = _pf_210b[(i>>0)&3];
 
         /****** high resolution graphics (F) **********/
-		dst = (UINT8 *)&antic.pf_1b[i];
+		dst = (uint8_t *)&antic.pf_1b[i];
 		*dst++ = _pf_1b[(i>>6)&3];
 		*dst++ = _pf_1b[(i>>4)&3];
 		*dst++ = _pf_1b[(i>>2)&3];
 		*dst++ = _pf_1b[(i>>0)&3];
 
         /****** gtia mode 1 **********/
-		dst = (UINT8 *)&antic.pf_gtia1[i];
+		dst = (uint8_t *)&antic.pf_gtia1[i];
 		*dst++ = GT1+((i>>4)&15);
 		*dst++ = GT1+((i>>4)&15);
 		*dst++ = GT1+(i&15);
 		*dst++ = GT1+(i&15);
 
         /****** gtia mode 2 **********/
-		dst = (UINT8 *)&antic.pf_gtia2[i];
+		dst = (uint8_t *)&antic.pf_gtia2[i];
 		*dst++ = GT2+((i>>4)&15);
 		*dst++ = GT2+((i>>4)&15);
 		*dst++ = GT2+(i&15);
 		*dst++ = GT2+(i&15);
 
         /****** gtia mode 3 **********/
-		dst = (UINT8 *)&antic.pf_gtia3[i];
+		dst = (uint8_t *)&antic.pf_gtia3[i];
 		*dst++ = GT3+((i>>4)&15);
 		*dst++ = GT3+((i>>4)&15);
 		*dst++ = GT3+(i&15);
@@ -714,7 +714,7 @@ VIDEO_START( atari )
     memset(&antic, 0, sizeof(antic));
 
 	antic.renderer = antic_mode_0_xx;
-	antic.cclk_expand = auto_alloc_array(machine, UINT32, 21 * 256);
+	antic.cclk_expand = auto_alloc_array(machine, uint32_t, 21 * 256);
 
 	antic.pf_21 	  = &antic.cclk_expand[ 0 * 256];
 	antic.pf_x10b	  = &antic.cclk_expand[ 1 * 256];
@@ -726,9 +726,9 @@ VIDEO_START( atari )
 	antic.pf_gtia2	  = &antic.cclk_expand[19 * 256];
 	antic.pf_gtia3	  = &antic.cclk_expand[20 * 256];
 
-	antic.used_colors = auto_alloc_array(machine, UINT8, 21 * 256);
+	antic.used_colors = auto_alloc_array(machine, uint8_t, 21 * 256);
 
-	memset(antic.used_colors, 0, 21 * 256 * sizeof(UINT8));
+	memset(antic.used_colors, 0, 21 * 256 * sizeof(uint8_t));
 
 	antic.uc_21 	  = &antic.used_colors[ 0 * 256];
 	antic.uc_x10b	  = &antic.used_colors[ 1 * 256];
@@ -749,7 +749,7 @@ VIDEO_START( atari )
 
 	for( i = 0; i < 64; i++ )
     {
-		antic.prio_table[i] = auto_alloc_array(machine, UINT8, 8*256);
+		antic.prio_table[i] = auto_alloc_array(machine, uint8_t, 8*256);
     }
 
 	LOG(("atari prio_init\n"));
@@ -770,7 +770,7 @@ VIDEO_START( atari )
  ************************************************************************/
 VIDEO_UPDATE( atari )
 {
-	UINT32 new_tv_artifacts;
+	uint32_t new_tv_artifacts;
 
 	VIDEO_UPDATE_CALL(generic_bitmapped);
 
@@ -789,16 +789,16 @@ VIDEO_UPDATE( atari )
 	return 0;
 }
 
-static void artifacts_gfx(UINT8 *src, UINT8 *dst, int width)
+static void artifacts_gfx(uint8_t *src, uint8_t *dst, int width)
 {
 	int x;
-	UINT8 n, bits = 0;
-	UINT8 b = gtia.w.colbk & 0xf0;
-	UINT8 c = gtia.w.colpf1 & 0x0f;
-	UINT8 atari_A = ((b+0x30)&0xf0)+c;
-	UINT8 atari_B = ((b+0x70)&0xf0)+c;
-	UINT8 atari_C = b+c;
-	UINT8 atari_D = gtia.w.colbk;
+	uint8_t n, bits = 0;
+	uint8_t b = gtia.w.colbk & 0xf0;
+	uint8_t c = gtia.w.colpf1 & 0x0f;
+	uint8_t atari_A = ((b+0x30)&0xf0)+c;
+	uint8_t atari_B = ((b+0x70)&0xf0)+c;
+	uint8_t atari_C = b+c;
+	uint8_t atari_D = gtia.w.colbk;
 
 	for( x = 0; x < width * 4; x++ )
 	{
@@ -863,16 +863,16 @@ static void artifacts_gfx(UINT8 *src, UINT8 *dst, int width)
     }
 }
 
-static void artifacts_txt(UINT8 * src, UINT8 * dst, int width)
+static void artifacts_txt(uint8_t * src, uint8_t * dst, int width)
 {
 	int x;
-	UINT8 n, bits = 0;
-	UINT8 b = gtia.w.colpf2 & 0xf0;
-	UINT8 c = gtia.w.colpf1 & 0x0f;
-	UINT8 atari_A = ((b+0x30)&0xf0)+c;
-	UINT8 atari_B = ((b+0x70)&0xf0)+c;
-	UINT8 atari_C = b+c;
-	UINT8 atari_D = gtia.w.colpf2;
+	uint8_t n, bits = 0;
+	uint8_t b = gtia.w.colpf2 & 0xf0;
+	uint8_t c = gtia.w.colpf1 & 0x0f;
+	uint8_t atari_A = ((b+0x30)&0xf0)+c;
+	uint8_t atari_B = ((b+0x70)&0xf0)+c;
+	uint8_t atari_C = b+c;
+	uint8_t atari_D = gtia.w.colpf2;
 
 	for( x = 0; x < width * 4; x++ )
 	{
@@ -941,9 +941,9 @@ static void artifacts_txt(UINT8 * src, UINT8 * dst, int width)
 static void antic_linerefresh(running_machine *machine)
 {
 	int x, y;
-	UINT8 *src;
-	UINT32 *dst;
-	UINT32 scanline[4 + (HCHARS * 2) + 4];
+	uint8_t *src;
+	uint32_t *dst;
+	uint32_t scanline[4 + (HCHARS * 2) + 4];
 
 	/* increment the scanline */
     if( ++antic.scanline == machine->primary_screen->height() )
@@ -966,13 +966,13 @@ static void antic_linerefresh(running_machine *machine)
 	{
 		if( (antic.cmd & 0x0f) == 2 || (antic.cmd & 0x0f) == 3 )
 		{
-			artifacts_txt(src, (UINT8*)(dst + 3), HCHARS);
+			artifacts_txt(src, (uint8_t*)(dst + 3), HCHARS);
 			return;
 		}
 		else
 		if( (antic.cmd & 0x0f) == 15 )
 		{
-			artifacts_gfx(src, (UINT8*)(dst + 3), HCHARS);
+			artifacts_gfx(src, (uint8_t*)(dst + 3), HCHARS);
 			return;
 		}
 	}
@@ -1043,7 +1043,7 @@ static void antic_linerefresh(running_machine *machine)
 	dst[2] = antic.color_lookup[PBK] | antic.color_lookup[PBK] << 16;
 	dst[3] = antic.color_lookup[PBK] | antic.color_lookup[PBK] << 16;
 
-	draw_scanline8(machine->generic.tmpbitmap, 12, y, MIN(machine->generic.tmpbitmap->width - 12, sizeof(scanline)), (const UINT8 *) scanline, NULL);
+	draw_scanline8(machine->generic.tmpbitmap, 12, y, MIN(machine->generic.tmpbitmap->width - 12, sizeof(scanline)), (const uint8_t *) scanline, NULL);
 }
 
 static int cycle(running_machine *machine)
@@ -1280,8 +1280,8 @@ static void antic_scanline_dma(running_machine *machine, int param)
 			if( antic.modelines <= 0 )
 			{
 				int h = 0, w = antic.w.dmactl & 3;
-				UINT8 vscrol_subtract = 0;
-				UINT8 new_cmd;
+				uint8_t vscrol_subtract = 0;
+				uint8_t new_cmd;
 
 				new_cmd = RDANTIC(space);
 				antic.doffs = (antic.doffs + 1) & DOFFS;

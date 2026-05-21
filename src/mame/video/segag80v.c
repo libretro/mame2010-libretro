@@ -111,18 +111,18 @@ INLINE int adjust_xy(int rawx, int rawy, int *outx, int *outy)
 
 static void sega_generate_vector_list(running_machine *machine)
 {
-	UINT8 *sintable = memory_region(machine, "proms");
+	uint8_t *sintable = memory_region(machine, "proms");
 	double total_time = 1.0 / (double)IRQ_CLOCK;
-	UINT16 symaddr = 0;
+	uint16_t symaddr = 0;
 
 	vector_clear_list();
 
 	/* Loop until we run out of time. */
 	while (total_time > 0)
 	{
-		UINT16 curx, cury, xaccum, yaccum;
-		UINT16 vecaddr, symangle;
-		UINT8 scale, draw;
+		uint16_t curx, cury, xaccum, yaccum;
+		uint16_t vecaddr, symangle;
+		uint8_t scale, draw;
 
 		/* The "draw" flag is clocked at the end of phase 0. */
 		draw = vectorram[symaddr++ & 0xfff];
@@ -183,9 +183,9 @@ static void sega_generate_vector_list(running_machine *machine)
 			/* Loop until we run out of time. */
 			while (total_time > 0)
 			{
-				UINT16 vecangle, length, deltax, deltay;
-				UINT8 attrib, intensity;
-				UINT32 color;
+				uint16_t vecangle, length, deltax, deltay;
+				uint8_t attrib, intensity;
+				uint32_t color;
 
 				/* The 'attribute' byte is latched at the end of phase 10 into */
 				/* the tri-state flip flop at U2. The low bit controls whether */

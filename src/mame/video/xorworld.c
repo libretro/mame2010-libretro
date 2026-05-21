@@ -93,7 +93,7 @@ VIDEO_START( xorworld )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int i;
 
 	for (i = 0; i < 0x40; i += 2)

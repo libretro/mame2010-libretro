@@ -2,8 +2,8 @@
 
 /*----------- defined in audio/gomoku.c -----------*/
 
-extern UINT8 *gomoku_soundregs1;
-extern UINT8 *gomoku_soundregs2;
+extern uint8_t *gomoku_soundregs1;
+extern uint8_t *gomoku_soundregs2;
 
 WRITE8_HANDLER( gomoku_sound1_w );
 WRITE8_HANDLER( gomoku_sound2_w );
@@ -13,9 +13,9 @@ DECLARE_LEGACY_SOUND_DEVICE(GOMOKU, gomoku_sound);
 
 /*----------- defined in video/gomoku.c -----------*/
 
-extern UINT8 *gomoku_videoram;
-extern UINT8 *gomoku_colorram;
-extern UINT8 *gomoku_bgram;
+extern uint8_t *gomoku_videoram;
+extern uint8_t *gomoku_colorram;
+extern uint8_t *gomoku_bgram;
 
 PALETTE_INIT( gomoku );
 VIDEO_START( gomoku );

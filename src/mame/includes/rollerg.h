@@ -12,7 +12,7 @@ public:
 	rollerg_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        sprite_colorbase, zoom_colorbase;

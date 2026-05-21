@@ -16,11 +16,11 @@
  *************************************/
 
 /* Spy Hunter hardware extras */
-UINT8 spyhunt_sprite_color_mask;
-INT16 spyhunt_scrollx, spyhunt_scrolly;
-INT16 spyhunt_scroll_offset;
+uint8_t spyhunt_sprite_color_mask;
+int16_t spyhunt_scrollx, spyhunt_scrolly;
+int16_t spyhunt_scroll_offset;
 
-UINT8 *spyhunt_alpharam;
+uint8_t *spyhunt_alpharam;
 //size_t spyhunt_alpharam_size;
 
 
@@ -194,7 +194,7 @@ WRITE8_HANDLER( spyhunt_alpharam_w )
 
 static void mcr3_update_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int color_mask, int code_xor, int dx, int dy)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	bitmap_fill(machine->priority_bitmap, cliprect, 1);

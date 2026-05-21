@@ -9,10 +9,10 @@
 
 size_t gsword_spritexy_size;
 
-//UINT8 *gsword_scrolly_ram;
-UINT8 *gsword_spritexy_ram;
-UINT8 *gsword_spritetile_ram;
-UINT8 *gsword_spriteattrib_ram;
+//uint8_t *gsword_scrolly_ram;
+uint8_t *gsword_spritexy_ram;
+uint8_t *gsword_spritetile_ram;
+uint8_t *gsword_spriteattrib_ram;
 
 static int charbank, charpalbank, flipscreen;
 
@@ -30,7 +30,7 @@ static PALETTE_INIT( common )
 	/* sprites */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = (BITSWAP8(color_prom[i - 0x100],7,6,5,4,0,1,2,3) & 0x0f) | 0x80;
+		uint8_t ctabentry = (BITSWAP8(color_prom[i - 0x100],7,6,5,4,0,1,2,3) & 0x0f) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

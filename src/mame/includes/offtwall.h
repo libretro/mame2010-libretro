@@ -15,12 +15,12 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *bankswitch_base;
-	UINT16 *bankrom_base;
-	UINT32 bank_offset;
+	uint16_t *bankswitch_base;
+	uint16_t *bankrom_base;
+	uint32_t bank_offset;
 
-	UINT16 *spritecache_count;
-	UINT16 *unknown_verify_base;
+	uint16_t *spritecache_count;
+	uint16_t *unknown_verify_base;
 };
 
 

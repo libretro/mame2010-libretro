@@ -12,12 +12,12 @@ public:
 	airbustr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    videoram2;
-	UINT8 *    colorram;
-	UINT8 *    colorram2;
-	UINT8 *    paletteram;
-	UINT8 *    devram;
+	uint8_t *    videoram;
+	uint8_t *    videoram2;
+	uint8_t *    colorram;
+	uint8_t *    colorram2;
+	uint8_t *    paletteram;
+	uint8_t *    devram;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap, *fg_tilemap;

@@ -5,15 +5,15 @@
 namespace N64
 {
 
-bool RDP::Blender::Blend(void* in_fb, UINT8* hb, RDP::Color c1, RDP::Color c2, int dith)
+bool RDP::Blender::Blend(void* in_fb, uint8_t* hb, RDP::Color c1, RDP::Color c2, int dith)
 {
 	switch(m_misc_state->m_fb_size)
 	{
 		case PIXEL_SIZE_16BIT:
-			return Blend16Bit((UINT16*)in_fb, hb, c1, c2, dith);
+			return Blend16Bit((uint16_t*)in_fb, hb, c1, c2, dith);
 
 		case PIXEL_SIZE_32BIT:
-			return Blend32Bit((UINT32*)in_fb, c1, c2);
+			return Blend32Bit((uint32_t*)in_fb, c1, c2);
 
 		default:
 			fatalerror("Unsupported bit depth: %d\n", m_misc_state->m_fb_size);
@@ -23,7 +23,7 @@ bool RDP::Blender::Blend(void* in_fb, UINT8* hb, RDP::Color c1, RDP::Color c2, i
 	return false;
 }
 
-bool RDP::Blender::Blend16Bit(UINT16* fb, UINT8* hb, RDP::Color c1, RDP::Color c2, int dith)
+bool RDP::Blender::Blend16Bit(uint16_t* fb, uint8_t* hb, RDP::Color c1, RDP::Color c2, int dith)
 {
 	switch(m_other_modes->cycle_type)
 	{
@@ -41,10 +41,10 @@ bool RDP::Blender::Blend16Bit(UINT16* fb, UINT8* hb, RDP::Color c1, RDP::Color c
 	return false;
 }
 
-bool RDP::Blender::Blend16Bit1Cycle(UINT16* fb, UINT8* hb, RDP::Color c, int dith)
+bool RDP::Blender::Blend16Bit1Cycle(uint16_t* fb, uint8_t* hb, RDP::Color c, int dith)
 {
-	UINT16 mem = *fb;
-	UINT32 memory_cvg = 7;
+	uint16_t mem = *fb;
+	uint32_t memory_cvg = 7;
 	if(m_other_modes->image_read_en)
 	{
 		memory_cvg = ((mem & 1) << 2) + (*hb & 3);
@@ -132,10 +132,10 @@ bool RDP::Blender::Blend16Bit1Cycle(UINT16* fb, UINT8* hb, RDP::Color c, int dit
     return m_rdp->GetFramebuffer()->Write(fb, hb, r, g, b);
 }
 
-bool RDP::Blender::Blend16Bit2Cycle(UINT16* fb, UINT8* hb, RDP::Color c1, RDP::Color c2, int dith)
+bool RDP::Blender::Blend16Bit2Cycle(uint16_t* fb, uint8_t* hb, RDP::Color c1, RDP::Color c2, int dith)
 {
-	UINT16 mem = *fb;
-	UINT32 memory_cvg = 7;
+	uint16_t mem = *fb;
+	uint32_t memory_cvg = 7;
 	if(m_other_modes->image_read_en)
 	{
 		memory_cvg = ((mem & 1) << 2) + (*hb & 3);
@@ -239,7 +239,7 @@ bool RDP::Blender::Blend16Bit2Cycle(UINT16* fb, UINT8* hb, RDP::Color c1, RDP::C
     return m_rdp->GetFramebuffer()->Write(fb, hb, r, g, b);
 }
 
-bool RDP::Blender::Blend32Bit(UINT32* fb, RDP::Color c1, RDP::Color c2)
+bool RDP::Blender::Blend32Bit(uint32_t* fb, RDP::Color c1, RDP::Color c2)
 {
 	switch(m_other_modes->cycle_type)
 	{
@@ -257,9 +257,9 @@ bool RDP::Blender::Blend32Bit(UINT32* fb, RDP::Color c1, RDP::Color c2)
 	return false;
 }
 
-bool RDP::Blender::Blend32Bit1Cycle(UINT32* fb, RDP::Color c)
+bool RDP::Blender::Blend32Bit1Cycle(uint32_t* fb, RDP::Color c)
 {
-	UINT32 mem = *fb;
+	uint32_t mem = *fb;
 	int r, g, b;
 
 	// Alpha compare
@@ -315,9 +315,9 @@ bool RDP::Blender::Blend32Bit1Cycle(UINT32* fb, RDP::Color c)
     return m_rdp->GetFramebuffer()->Write(fb, NULL, r, g, b);
 }
 
-bool RDP::Blender::Blend32Bit2Cycle(UINT32* fb, RDP::Color c1, RDP::Color c2)
+bool RDP::Blender::Blend32Bit2Cycle(uint32_t* fb, RDP::Color c1, RDP::Color c2)
 {
-	UINT32 mem = *fb;
+	uint32_t mem = *fb;
 	int r, g, b;
 
 	// Alpha compare
@@ -392,7 +392,7 @@ bool RDP::Blender::Blend32Bit2Cycle(UINT32* fb, RDP::Color c1, RDP::Color c2)
     return m_rdp->GetFramebuffer()->Write(fb, NULL, r, g, b);
 }
 
-void RDP::Blender::BlendEquation0Force(INT32* r, INT32* g, INT32* b, int bsel_special)
+void RDP::Blender::BlendEquation0Force(int32_t* r, int32_t* g, int32_t* b, int bsel_special)
 {
 	int blend1a = *m_rdp->GetColorInputs()->blender1b_a[0];
 	if (bsel_special)
@@ -400,35 +400,35 @@ void RDP::Blender::BlendEquation0Force(INT32* r, INT32* g, INT32* b, int bsel_sp
 		blend1a &= 0xe0;
 	}
 
-	INT32 tr = ((int)(*m_rdp->GetColorInputs()->blender1a_r[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_r[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_r[0]) << (3 + bsel_special))) >> 8;
-	INT32 tg = ((int)(*m_rdp->GetColorInputs()->blender1a_g[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_g[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_g[0]) << (3 + bsel_special))) >> 8;
-	INT32 tb = ((int)(*m_rdp->GetColorInputs()->blender1a_b[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_b[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_b[0]) << (3 + bsel_special))) >> 8;
+	int32_t tr = ((int)(*m_rdp->GetColorInputs()->blender1a_r[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_r[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_r[0]) << (3 + bsel_special))) >> 8;
+	int32_t tg = ((int)(*m_rdp->GetColorInputs()->blender1a_g[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_g[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_g[0]) << (3 + bsel_special))) >> 8;
+	int32_t tb = ((int)(*m_rdp->GetColorInputs()->blender1a_b[0]) * blend1a + (int)(*m_rdp->GetColorInputs()->blender2a_b[0]) * *m_rdp->GetColorInputs()->blender2b_a[0] + ((int)(*m_rdp->GetColorInputs()->blender2a_b[0]) << (3 + bsel_special))) >> 8;
 
 	if (tr > 255) *r = 255; else *r = tr;
 	if (tg > 255) *g = 255; else *g = tg;
 	if (tb > 255) *b = 255; else *b = tb;
 }
 
-void RDP::Blender::BlendEquation0NoForce(INT32* r, INT32* g, INT32* b, int bsel_special)
+void RDP::Blender::BlendEquation0NoForce(int32_t* r, int32_t* g, int32_t* b, int bsel_special)
 {
-	UINT8 blend1a = *m_rdp->GetColorInputs()->blender1b_a[0];
-	UINT8 blend2a = *m_rdp->GetColorInputs()->blender2b_a[0];
+	uint8_t blend1a = *m_rdp->GetColorInputs()->blender1b_a[0];
+	uint8_t blend2a = *m_rdp->GetColorInputs()->blender2b_a[0];
 	if (bsel_special)
 	{
 		blend1a &= 0xe0;
 	}
 
-	UINT32 sum = (((blend1a >> 5) + (blend2a >> 5) + 1) & 0xf) << 5;
+	uint32_t sum = (((blend1a >> 5) + (blend2a >> 5) + 1) & 0xf) << 5;
 
-	INT32 tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[0]) * (int)(blend1a))) +
+	int32_t tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[0]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_r[0]) * (int)(blend2a)));
 	tr += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_r[0])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_r[0])) << 3);
 
-	INT32 tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[0]) * (int)(blend1a))) +
+	int32_t tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[0]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_g[0]) * (int)(blend2a)));
 	tg += (bsel_special) ? ((int)((*m_rdp->GetColorInputs()->blender2a_g[0])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_g[0])) << 3);
 
-	INT32 tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[0]) * (int)(blend1a))) +
+	int32_t tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[0]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_b[0]) * (int)(blend2a)));
 	tb += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_b[0])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_b[0])) << 3);
 
@@ -449,24 +449,24 @@ void RDP::Blender::BlendEquation0NoForce(INT32* r, INT32* g, INT32* b, int bsel_
 	if (tb > 255) *b = 255; else *b = tb;
 }
 
-void RDP::Blender::BlendEquation1Force(INT32* r, INT32* g, INT32* b, int bsel_special)
+void RDP::Blender::BlendEquation1Force(int32_t* r, int32_t* g, int32_t* b, int bsel_special)
 {
-	UINT8 blend1a = *m_rdp->GetColorInputs()->blender1b_a[1];
-	UINT8 blend2a = *m_rdp->GetColorInputs()->blender2b_a[1];
+	uint8_t blend1a = *m_rdp->GetColorInputs()->blender1b_a[1];
+	uint8_t blend2a = *m_rdp->GetColorInputs()->blender2b_a[1];
 	if (bsel_special)
 	{
 		blend1a &= 0xe0;
 	}
 
-	INT32 tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[1]) * (int)(blend1a))) +
+	int32_t tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_r[1]) * (int)(blend2a)));
 	tr += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_r[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_r[1])) << 3);
 
-	INT32 tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[1]) * (int)(blend1a))) +
+	int32_t tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_g[1]) * (int)(blend2a)));
 	tg += (bsel_special) ? ((int)((*m_rdp->GetColorInputs()->blender2a_g[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_g[1])) << 3);
 
-	INT32 tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[1]) * (int)(blend1a))) +
+	int32_t tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_b[1]) * (int)(blend2a)));
 	tb += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_b[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_b[1])) << 3);
 
@@ -479,26 +479,26 @@ void RDP::Blender::BlendEquation1Force(INT32* r, INT32* g, INT32* b, int bsel_sp
 	if (tb > 255) *b = 255; else *b = tb;
 }
 
-void RDP::Blender::BlendEquation1NoForce(INT32* r, INT32* g, INT32* b, int bsel_special)
+void RDP::Blender::BlendEquation1NoForce(int32_t* r, int32_t* g, int32_t* b, int bsel_special)
 {
-	UINT8 blend1a = *m_rdp->GetColorInputs()->blender1b_a[1];
-	UINT8 blend2a = *m_rdp->GetColorInputs()->blender2b_a[1];
+	uint8_t blend1a = *m_rdp->GetColorInputs()->blender1b_a[1];
+	uint8_t blend2a = *m_rdp->GetColorInputs()->blender2b_a[1];
 	if (bsel_special)
 	{
 		blend1a &= 0xe0;
 	}
 
-	UINT32 sum = (((blend1a >> 5) + (blend2a >> 5) + 1) & 0xf) << 5;
+	uint32_t sum = (((blend1a >> 5) + (blend2a >> 5) + 1) & 0xf) << 5;
 
-	INT32 tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[1]) * (int)(blend1a))) +
+	int32_t tr = (((int)(*m_rdp->GetColorInputs()->blender1a_r[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_r[1]) * (int)(blend2a)));
 	tr += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_r[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_r[1])) << 3);
 
-	INT32 tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[1]) * (int)(blend1a))) +
+	int32_t tg = (((int)(*m_rdp->GetColorInputs()->blender1a_g[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_g[1]) * (int)(blend2a)));
 	tg += (bsel_special) ? ((int)((*m_rdp->GetColorInputs()->blender2a_g[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_g[1])) << 3);
 
-	INT32 tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[1]) * (int)(blend1a))) +
+	int32_t tb = (((int)(*m_rdp->GetColorInputs()->blender1a_b[1]) * (int)(blend1a))) +
 		(((int)(*m_rdp->GetColorInputs()->blender2a_b[1]) * (int)(blend2a)));
 	tb += (bsel_special) ? (((int)(*m_rdp->GetColorInputs()->blender2a_b[1])) << 5) : (((int)(*m_rdp->GetColorInputs()->blender2a_b[1])) << 3);
 
@@ -519,7 +519,7 @@ void RDP::Blender::BlendEquation1NoForce(INT32* r, INT32* g, INT32* b, int bsel_
 	if (tb > 255) *b = 255; else *b = tb;
 }
 
-bool RDP::Blender::AlphaCompare(UINT8 alpha)
+bool RDP::Blender::AlphaCompare(uint8_t alpha)
 {
 	if(m_other_modes->alpha_compare_en)
 	{
@@ -535,7 +535,7 @@ bool RDP::Blender::AlphaCompare(UINT8 alpha)
 	return true;
 }
 
-void RDP::Blender::DitherRGB(INT32 *r, INT32 *g, INT32 *b, int dith)
+void RDP::Blender::DitherRGB(int32_t *r, int32_t *g, int32_t *b, int dith)
 {
 	if ((*r & 7) > dith)
 	{

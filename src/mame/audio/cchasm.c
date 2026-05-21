@@ -36,7 +36,7 @@ INPUT_CHANGED( cchasm_set_coin_flag )
 
 READ8_HANDLER( cchasm_coin_sound_r )
 {
-	UINT8 coin = (input_port_read(space->machine, "IN3") >> 4) & 0x7;
+	uint8_t coin = (input_port_read(space->machine, "IN3") >> 4) & 0x7;
 	return sound_flags | (coin_flag << 3) | coin;
 }
 

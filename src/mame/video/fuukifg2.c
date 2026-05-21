@@ -49,8 +49,8 @@
 static TILE_GET_INFO( get_tile_info_##_N_ ) \
 { \
 	fuuki16_state *state = (fuuki16_state *)machine->driver_data; \
-	UINT16 code = state->vram_##_N_[2 * tile_index + 0]; \
-	UINT16 attr = state->vram_##_N_[2 * tile_index + 1]; \
+	uint16_t code = state->vram_##_N_[2 * tile_index + 0]; \
+	uint16_t attr = state->vram_##_N_[2 * tile_index + 1]; \
 	SET_TILE_INFO(1 + _N_, code, attr & 0x3f, TILE_FLIPYX((attr >> 6) & 3)); \
 } \
 \
@@ -139,7 +139,7 @@ static void draw_sprites( screen_device &screen, bitmap_t *bitmap, const rectang
 	const gfx_element *gfx = screen.machine->gfx[0];
 	bitmap_t *priority_bitmap = screen.machine->priority_bitmap;
 	const rectangle &visarea = screen.visible_area();
-	UINT16 *spriteram16 = state->spriteram;
+	uint16_t *spriteram16 = state->spriteram;
 	int max_x =	visarea.max_x + 1;
 	int max_y =	visarea.max_y + 1;
 
@@ -282,10 +282,10 @@ static void fuuki16_draw_layer( running_machine *machine, bitmap_t *bitmap, cons
 VIDEO_UPDATE( fuuki16 )
 {
 	fuuki16_state *state = (fuuki16_state *)screen->machine->driver_data;
-	UINT16 layer0_scrollx, layer0_scrolly;
-	UINT16 layer1_scrollx, layer1_scrolly;
-	UINT16 layer2_scrollx, layer2_scrolly;
-	UINT16 scrollx_offs, scrolly_offs;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
+	uint16_t layer2_scrollx, layer2_scrolly;
+	uint16_t scrollx_offs, scrolly_offs;
 
 	/*
     It's not independent bits causing layers to switch, that wouldn't make sense with 3 bits.

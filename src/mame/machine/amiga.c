@@ -62,13 +62,13 @@ struct _autoconfig_device
  *
  *************************************/
 
-UINT16 *amiga_chip_ram;
-UINT32 *amiga_chip_ram32;
+uint16_t *amiga_chip_ram;
+uint32_t *amiga_chip_ram32;
 size_t amiga_chip_ram_size;
 
-UINT16 *amiga_custom_regs;
-UINT16 *amiga_expansion_ram;
-UINT16 *amiga_autoconfig_mem;
+uint16_t *amiga_custom_regs;
+uint16_t *amiga_expansion_ram;
+uint16_t *amiga_autoconfig_mem;
 
 static const amiga_machine_interface *amiga_intf;
 
@@ -183,24 +183,24 @@ static TIMER_CALLBACK( scanline_callback );
  *
  *************************************/
 
-UINT16 (*amiga_chip_ram_r)(offs_t offset);
-void (*amiga_chip_ram_w)(offs_t offset, UINT16 data);
+uint16_t (*amiga_chip_ram_r)(offs_t offset);
+void (*amiga_chip_ram_w)(offs_t offset, uint16_t data);
 
-static UINT16 amiga_chip_ram16_r(offs_t offset)
+static uint16_t amiga_chip_ram16_r(offs_t offset)
 {
 	extern const amiga_machine_interface *amiga_intf;
 	offset &= amiga_intf->chip_ram_mask;
 	return (offset < amiga_chip_ram_size) ? amiga_chip_ram[offset/2] : 0xffff;
 }
 
-static UINT16 amiga_chip_ram32_r(offs_t offset)
+static uint16_t amiga_chip_ram32_r(offs_t offset)
 {
 	extern const amiga_machine_interface *amiga_intf;
 	offset &= amiga_intf->chip_ram_mask;
 
 	if ( offset < amiga_chip_ram_size )
 	{
-		UINT32	dat = amiga_chip_ram32[offset / 4];
+		uint32_t	dat = amiga_chip_ram32[offset / 4];
 
 		if ( offset & 2 )
 			return (dat & 0xffff);
@@ -211,7 +211,7 @@ static UINT16 amiga_chip_ram32_r(offs_t offset)
 	return 0xffff;
 }
 
-static void amiga_chip_ram16_w(offs_t offset, UINT16 data)
+static void amiga_chip_ram16_w(offs_t offset, uint16_t data)
 {
 	extern const amiga_machine_interface *amiga_intf;
 	offset &= amiga_intf->chip_ram_mask;
@@ -220,14 +220,14 @@ static void amiga_chip_ram16_w(offs_t offset, UINT16 data)
 		amiga_chip_ram[offset/2] = data;
 }
 
-static void amiga_chip_ram32_w(offs_t offset, UINT16 data)
+static void amiga_chip_ram32_w(offs_t offset, uint16_t data)
 {
 	extern const amiga_machine_interface *amiga_intf;
 	offset &= amiga_intf->chip_ram_mask;
 
 	if ( offset < amiga_chip_ram_size )
 	{
-		UINT32	dat = amiga_chip_ram32[offset / 4];
+		uint32_t	dat = amiga_chip_ram32[offset / 4];
 
 		if ( offset & 2 )
 		{
@@ -237,7 +237,7 @@ static void amiga_chip_ram32_w(offs_t offset, UINT16 data)
 		else
 		{
 			dat &= 0x0000ffff;
-			dat |= ((UINT32)data) << 16;
+			dat |= ((uint32_t)data) << 16;
 		}
 
 		amiga_chip_ram32[offset / 4] = dat;
@@ -245,9 +245,9 @@ static void amiga_chip_ram32_w(offs_t offset, UINT16 data)
 }
 
 
-void amiga_chip_ram_w8(offs_t offset, UINT8 data)
+void amiga_chip_ram_w8(offs_t offset, uint8_t data)
 {
-	UINT16 dat;
+	uint16_t dat;
 
 	dat = amiga_chip_ram_r(offset);
 	if (offset & 0x01)
@@ -258,7 +258,7 @@ void amiga_chip_ram_w8(offs_t offset, UINT8 data)
 	else
 	{
 		dat &= 0x00ff;
-		dat |= ((UINT16)data) << 8;
+		dat |= ((uint16_t)data) << 8;
 	}
 	amiga_chip_ram_w(offset,dat);
 }
@@ -439,7 +439,7 @@ static TIMER_CALLBACK( amiga_irq_proc )
 
 CUSTOM_INPUT( amiga_joystick_convert )
 {
-	UINT8 bits = input_port_read(field->port->machine, (const char *)param);
+	uint8_t bits = input_port_read(field->port->machine, (const char *)param);
 	int up = (bits >> 0) & 1;
 	int down = (bits >> 1) & 1;
 	int left = (bits >> 2) & 1;
@@ -459,15 +459,15 @@ CUSTOM_INPUT( amiga_joystick_convert )
  *
  *************************************/
 
-static UINT32 blit_ascending(void)
+static uint32_t blit_ascending(void)
 {
-	UINT32 shifta = (CUSTOM_REG(REG_BLTCON0) >> 12) & 0xf;
-	UINT32 shiftb = (CUSTOM_REG(REG_BLTCON1) >> 12) & 0xf;
-	UINT32 height = CUSTOM_REG(REG_BLTSIZV);
-	UINT32 width = CUSTOM_REG(REG_BLTSIZH);
-	UINT32 acca = 0, accb = 0;
-	UINT32 blitsum = 0;
-	UINT32 x, y;
+	uint32_t shifta = (CUSTOM_REG(REG_BLTCON0) >> 12) & 0xf;
+	uint32_t shiftb = (CUSTOM_REG(REG_BLTCON1) >> 12) & 0xf;
+	uint32_t height = CUSTOM_REG(REG_BLTSIZV);
+	uint32_t width = CUSTOM_REG(REG_BLTSIZH);
+	uint32_t acca = 0, accb = 0;
+	uint32_t blitsum = 0;
+	uint32_t x, y;
 
 	/* iterate over the height */
 	for (y = 0; y < height; y++)
@@ -475,9 +475,9 @@ static UINT32 blit_ascending(void)
 		/* iterate over the width */
 		for (x = 0; x < width; x++)
 		{
-			UINT16 abc0, abc1, abc2, abc3;
-			UINT32 tempa, tempd = 0;
-			UINT32 b;
+			uint16_t abc0, abc1, abc2, abc3;
+			uint32_t tempa, tempd = 0;
+			uint32_t b;
 
 			/* fetch data for A */
 			if (CUSTOM_REG(REG_BLTCON0) & 0x0800)
@@ -520,7 +520,7 @@ static UINT32 blit_ascending(void)
 			/* now loop over bits and compute the destination value */
 			for (b = 0; b < 4; b++)
 			{
-				UINT32 bit;
+				uint32_t bit;
 
 				/* shift previous data up 4 bits */
 				tempd <<= 4;
@@ -580,29 +580,29 @@ static UINT32 blit_ascending(void)
  *
  *************************************/
 
-static UINT32 blit_descending(void)
+static uint32_t blit_descending(void)
 {
-	UINT32 fill_exclusive = (CUSTOM_REG(REG_BLTCON1) >> 4);
-	UINT32 fill_inclusive = (CUSTOM_REG(REG_BLTCON1) >> 3);
-	UINT32 shifta = (CUSTOM_REG(REG_BLTCON0) >> 12) & 0xf;
-	UINT32 shiftb = (CUSTOM_REG(REG_BLTCON1) >> 12) & 0xf;
-	UINT32 height = CUSTOM_REG(REG_BLTSIZV);
-	UINT32 width = CUSTOM_REG(REG_BLTSIZH);
-	UINT32 acca = 0, accb = 0;
-	UINT32 blitsum = 0;
-	UINT32 x, y;
+	uint32_t fill_exclusive = (CUSTOM_REG(REG_BLTCON1) >> 4);
+	uint32_t fill_inclusive = (CUSTOM_REG(REG_BLTCON1) >> 3);
+	uint32_t shifta = (CUSTOM_REG(REG_BLTCON0) >> 12) & 0xf;
+	uint32_t shiftb = (CUSTOM_REG(REG_BLTCON1) >> 12) & 0xf;
+	uint32_t height = CUSTOM_REG(REG_BLTSIZV);
+	uint32_t width = CUSTOM_REG(REG_BLTSIZH);
+	uint32_t acca = 0, accb = 0;
+	uint32_t blitsum = 0;
+	uint32_t x, y;
 
 	/* iterate over the height */
 	for (y = 0; y < height; y++)
 	{
-		UINT32 fill_state = (CUSTOM_REG(REG_BLTCON1) >> 2) & 1;
+		uint32_t fill_state = (CUSTOM_REG(REG_BLTCON1) >> 2) & 1;
 
 		/* iterate over the width */
 		for (x = 0; x < width; x++)
 		{
-			UINT16 abc0, abc1, abc2, abc3;
-			UINT32 tempa, tempd = 0;
-			UINT32 b;
+			uint16_t abc0, abc1, abc2, abc3;
+			uint32_t tempa, tempd = 0;
+			uint32_t b;
 
 			/* fetch data for A */
 			if (CUSTOM_REG(REG_BLTCON0) & 0x0800)
@@ -645,8 +645,8 @@ static UINT32 blit_descending(void)
 			/* now loop over bits and compute the destination value */
 			for (b = 0; b < 4; b++)
 			{
-				UINT32 prev_fill_state;
-				UINT32 bit;
+				uint32_t prev_fill_state;
+				uint32_t bit;
 
 				/* shift previous data up 4 bits */
 				tempd >>= 4;
@@ -761,12 +761,12 @@ static UINT32 blit_descending(void)
     BLTAMOD = 4 * (dy - dx) and BLTBMOD = 4 * dy.
 */
 
-static UINT32 blit_line(void)
+static uint32_t blit_line(void)
 {
-	UINT32 singlemode = (CUSTOM_REG(REG_BLTCON1) & 0x0002) ? 0x0000 : 0xffff;
-	UINT32 singlemask = 0xffff;
-	UINT32 blitsum = 0;
-	UINT32 height;
+	uint32_t singlemode = (CUSTOM_REG(REG_BLTCON1) & 0x0002) ? 0x0000 : 0xffff;
+	uint32_t singlemask = 0xffff;
+	uint32_t blitsum = 0;
+	uint32_t height;
 
 	/* see if folks are breaking the rules */
 	if (CUSTOM_REG(REG_BLTSIZH) != 0x0002)
@@ -780,8 +780,8 @@ static UINT32 blit_line(void)
 	/* iterate over the line height */
 	while (height--)
 	{
-		UINT16 abc0, abc1, abc2, abc3;
-		UINT32 tempa, tempb, tempd = 0;
+		uint16_t abc0, abc1, abc2, abc3;
+		uint32_t tempa, tempb, tempd = 0;
 		int b, dx, dy;
 
 		/* fetch data for C */
@@ -807,7 +807,7 @@ static UINT32 blit_line(void)
 		/* now loop over bits and compute the destination value */
 		for (b = 0; b < 4; b++)
 		{
-			UINT32 bit;
+			uint32_t bit;
 
 			/* shift previous data up 4 bits */
 			tempd <<= 4;
@@ -872,7 +872,7 @@ static UINT32 blit_line(void)
 		if (dx)
 		{
 			/* adjust the A shift value */
-			UINT32 temp = CUSTOM_REG(REG_BLTCON0) + (INT32)(dx << 12);
+			uint32_t temp = CUSTOM_REG(REG_BLTCON0) + (int32_t)(dx << 12);
 			CUSTOM_REG(REG_BLTCON0) = temp;
 
 			/* if we went from 0xf to 0x0 or vice-versa, adjust the actual pointers */
@@ -887,8 +887,8 @@ static UINT32 blit_line(void)
 		if (dy)
 		{
 			/* BLTCMOD seems to be used for both C and D pointers */
-			CUSTOM_REG_LONG(REG_BLTCPTH) += dy * (INT16)(CUSTOM_REG_SIGNED(REG_BLTCMOD) & ~1);
-			CUSTOM_REG_LONG(REG_BLTDPTH) += dy * (INT16)(CUSTOM_REG_SIGNED(REG_BLTCMOD) & ~1);
+			CUSTOM_REG_LONG(REG_BLTCPTH) += dy * (int16_t)(CUSTOM_REG_SIGNED(REG_BLTCMOD) & ~1);
+			CUSTOM_REG_LONG(REG_BLTDPTH) += dy * (int16_t)(CUSTOM_REG_SIGNED(REG_BLTCMOD) & ~1);
 
 			/* reset the single mask since we're on a new line */
 			singlemask = 0xffff;
@@ -914,7 +914,7 @@ static UINT32 blit_line(void)
 
 static TIMER_CALLBACK( amiga_blitter_proc )
 {
-	UINT32 blitsum = 0;
+	uint32_t blitsum = 0;
 
 	/* logging */
 	if (LOG_BLITS)
@@ -1039,7 +1039,7 @@ static void blitter_setup(const address_space *space)
 
 READ16_HANDLER( amiga_cia_r )
 {
-	UINT8 data;
+	uint8_t data;
 	int shift;
 	running_device *cia;
 
@@ -1100,7 +1100,7 @@ WRITE16_HANDLER( amiga_cia_w )
 	}
 
 	/* handle the writes */
-	mos6526_w(cia, offset >> 7, (UINT8) data);
+	mos6526_w(cia, offset >> 7, (uint8_t) data);
 }
 
 
@@ -1133,7 +1133,7 @@ void amiga_cia_1_irq(running_device *device, int state)
 static void custom_reset(running_machine *machine)
 {
 	int clock = cputag_get_clock(machine, "maincpu");
-	UINT16	vidmode = (clock == AMIGA_68000_NTSC_CLOCK || clock == AMIGA_68EC020_NTSC_CLOCK ) ? 0x1000 : 0x0000; /* NTSC or PAL? */
+	uint16_t	vidmode = (clock == AMIGA_68000_NTSC_CLOCK || clock == AMIGA_68EC020_NTSC_CLOCK ) ? 0x1000 : 0x0000; /* NTSC or PAL? */
 
 	CUSTOM_REG(REG_DDFSTRT) = 0x18;
 	CUSTOM_REG(REG_DDFSTOP) = 0xd8;
@@ -1170,7 +1170,7 @@ static void custom_reset(running_machine *machine)
 
 READ16_HANDLER( amiga_custom_r )
 {
-	UINT16 temp;
+	uint16_t temp;
 
 	switch (offset & 0xff)
 	{
@@ -1283,7 +1283,7 @@ WRITE16_HANDLER( amiga_custom_w )
 {
 	running_device *cia_0;
 	running_device *cia_1;
-	UINT16 temp;
+	uint16_t temp;
 	offset &= 0xff;
 
 	if (LOG_CUSTOM)
@@ -1533,7 +1533,7 @@ WRITE16_HANDLER( amiga_custom_w )
  *
  *************************************/
 
-void amiga_serial_in_w(running_machine *machine, UINT16 data)
+void amiga_serial_in_w(running_machine *machine, uint16_t data)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	int mask = (CUSTOM_REG(REG_SERPER) & 0x8000) ? 0x1ff : 0xff;
@@ -1556,9 +1556,9 @@ void amiga_serial_in_w(running_machine *machine, UINT16 data)
 
 attotime amiga_get_serial_char_period(running_machine *machine)
 {
-	UINT32 divisor = (CUSTOM_REG(REG_SERPER) & 0x7fff) + 1;
-	UINT32 baud = cputag_get_clock(machine, "maincpu") / 2 / divisor;
-	UINT32 numbits = 2 + ((CUSTOM_REG(REG_SERPER) & 0x8000) ? 9 : 8);
+	uint32_t divisor = (CUSTOM_REG(REG_SERPER) & 0x7fff) + 1;
+	uint32_t baud = cputag_get_clock(machine, "maincpu") / 2 / divisor;
+	uint32_t numbits = 2 + ((CUSTOM_REG(REG_SERPER) & 0x8000) ? 9 : 8);
 	return attotime_mul(ATTOTIME_IN_HZ(baud), numbits);
 }
 
@@ -1623,7 +1623,7 @@ static void autoconfig_reset(running_machine *machine)
 
 READ16_HANDLER( amiga_autoconfig_r )
 {
-	UINT8 byte;
+	uint8_t byte;
 	int i;
 
 	/* if nothing present, just return */

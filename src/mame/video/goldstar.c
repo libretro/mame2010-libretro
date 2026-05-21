@@ -426,8 +426,8 @@ VIDEO_UPDATE( goldstar )
 		if (memory_region(screen->machine,"user1"))
 		{
 			const gfx_element *gfx = screen->machine->gfx[2];
-			int girlyscroll = (INT8)((state->cm_girl_scroll & 0xf0));
-			int girlxscroll = (INT8)((state->cm_girl_scroll & 0x0f)<<4);
+			int girlyscroll = (int8_t)((state->cm_girl_scroll & 0xf0));
+			int girlxscroll = (int8_t)((state->cm_girl_scroll & 0x0f)<<4);
 
 			drawgfxzoom_transpen(bitmap,cliprect,gfx,state->cmaster_girl_num,state->cmaster_girl_pal,0,0,-(girlxscroll*2),-(girlyscroll), 0x20000, 0x10000,0);
 		}

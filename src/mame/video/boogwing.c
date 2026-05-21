@@ -2,12 +2,12 @@
 #include "includes/boogwing.h"
 #include "video/deco16ic.h"
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16* spriteram_base, int gfx_region )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t* spriteram_base, int gfx_region )
 {
 	boogwing_state *state = (boogwing_state *)machine->driver_data;
 	int offs;
 	int flipscreen = !flip_screen_get(machine);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	for (offs = 0x400 - 4; offs >= 0; offs -= 4)
 	{
@@ -140,8 +140,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 VIDEO_UPDATE( boogwing )
 {
 	boogwing_state *state = (boogwing_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

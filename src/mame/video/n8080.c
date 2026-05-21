@@ -116,7 +116,7 @@ VIDEO_START( sheriff )
 VIDEO_START( helifire )
 {
 	n8080_state *state = (n8080_state *)machine->driver_data;
-	UINT8 data = 0;
+	uint8_t data = 0;
 	int i;
 
 	state_save_register_global(machine, state->helifire_mv);
@@ -142,29 +142,29 @@ VIDEO_START( helifire )
 VIDEO_UPDATE( spacefev )
 {
 	n8080_state *state = (n8080_state *)screen->machine->driver_data;
-	UINT8 mask = flip_screen_get(screen->machine) ? 0xff : 0x00;
+	uint8_t mask = flip_screen_get(screen->machine) ? 0xff : 0x00;
 
 	int x;
 	int y;
 
-	const UINT8* pRAM = state->videoram;
-	const UINT8* pPROM = memory_region(screen->machine, "proms");
+	const uint8_t* pRAM = state->videoram;
+	const uint8_t* pPROM = memory_region(screen->machine, "proms");
 
 	for (y = 0; y < 256; y++)
 	{
-		UINT16* pLine = BITMAP_ADDR16(bitmap, y ^ mask, 0);
+		uint16_t* pLine = BITMAP_ADDR16(bitmap, y ^ mask, 0);
 
 		for (x = 0; x < 256; x += 8)
 		{
 			int n;
 
-			UINT8 color = 0;
+			uint8_t color = 0;
 
 			if (state->spacefev_red_screen)
 				color = 1;
 			else
 			{
-				UINT8 val = pPROM[x >> 3];
+				uint8_t val = pPROM[x >> 3];
 
 				if ((x >> 3) == 0x06)
 				{
@@ -173,7 +173,7 @@ VIDEO_UPDATE( spacefev )
 
 				if ((x >> 3) == 0x1b)
 				{
-					static const UINT8 ufo_color[] =
+					static const uint8_t ufo_color[] =
 					{
 						1, /* red     */
 						2, /* green   */
@@ -212,24 +212,24 @@ VIDEO_UPDATE( spacefev )
 VIDEO_UPDATE( sheriff )
 {
 	n8080_state *state = (n8080_state *)screen->machine->driver_data;
-	UINT8 mask = flip_screen_get(screen->machine) ? 0xff : 0x00;
+	uint8_t mask = flip_screen_get(screen->machine) ? 0xff : 0x00;
 
-	const UINT8* pPROM = memory_region(screen->machine, "proms");
+	const uint8_t* pPROM = memory_region(screen->machine, "proms");
 
 	int x;
 	int y;
 
-	const UINT8* pRAM = state->videoram;
+	const uint8_t* pRAM = state->videoram;
 
 	for (y = 0; y < 256; y++)
 	{
-		UINT16* pLine = BITMAP_ADDR16(bitmap, y ^ mask, 0);
+		uint16_t* pLine = BITMAP_ADDR16(bitmap, y ^ mask, 0);
 
 		for (x = 0; x < 256; x += 8)
 		{
 			int n;
 
-			UINT8 color = pPROM[32 * (y >> 3) + (x >> 3)];
+			uint8_t color = pPROM[32 * (y >> 3) + (x >> 3)];
 
 			if (state->sheriff_color_mode == 1 && !(color & 8))
 				color = state->sheriff_color_data ^ 7;
@@ -268,7 +268,7 @@ VIDEO_UPDATE( helifire )
 
 	for (y = 0; y < 256; y++)
 	{
-		UINT16* pLine = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* pLine = BITMAP_ADDR16(bitmap, y, 0);
 
 		int level = 120 + wave[state->helifire_mv & 7];
 

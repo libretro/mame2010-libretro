@@ -9,29 +9,29 @@
 #include "machine/rescap.h"
 #include "video/resnet.h"
 
-UINT8 segag80r_background_pcb;
+uint8_t segag80r_background_pcb;
 
 static double rweights[3], gweights[3], bweights[2];
 
-static UINT8 video_control;
-static UINT8 video_flip;
-static UINT8 vblank_latch;
+static uint8_t video_control;
+static uint8_t video_flip;
+static uint8_t vblank_latch;
 
 static tilemap_t *spaceod_bg_htilemap;
 static tilemap_t *spaceod_bg_vtilemap;
-static UINT16 spaceod_hcounter;
-static UINT16 spaceod_vcounter;
-static UINT8 spaceod_fixed_color;
-static UINT8 spaceod_bg_control;
-static UINT8 spaceod_bg_detect;
-static const UINT8 spaceod_bg_detect_tile_color = 1;
+static uint16_t spaceod_hcounter;
+static uint16_t spaceod_vcounter;
+static uint8_t spaceod_fixed_color;
+static uint8_t spaceod_bg_control;
+static uint8_t spaceod_bg_detect;
+static const uint8_t spaceod_bg_detect_tile_color = 1;
 
 static tilemap_t *bg_tilemap;
-static UINT8 bg_enable;
-static UINT8 bg_char_bank;
-static UINT16 bg_scrollx, bg_scrolly;
+static uint8_t bg_enable;
+static uint8_t bg_char_bank;
+static uint16_t bg_scrollx, bg_scrolly;
 
-static UINT8 pignewt_bg_color_offset;
+static uint8_t pignewt_bg_color_offset;
 
 
 
@@ -87,7 +87,7 @@ INTERRUPT_GEN( sindbadm_vblank_start )
  *
  *************************************/
 
-static void g80_set_palette_entry(running_machine *machine, int entry, UINT8 data)
+static void g80_set_palette_entry(running_machine *machine, int entry, uint8_t data)
 {
 	int bit0, bit1, bit2;
 	int r, g, b;
@@ -211,7 +211,7 @@ VIDEO_START( segag80r )
 	gfx_element_set_source(machine->gfx[0], &machine->generic.videoram.u8[0x800]);
 
 	/* allocate paletteram */
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x80);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x80);
 
 	/* initialize the particulars for each type of background PCB */
 	switch (segag80r_background_pcb)
@@ -641,7 +641,7 @@ WRITE8_HANDLER( sindbadm_back_port_w )
  *
  *************************************/
 
-static void draw_videoram(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *transparent_pens)
+static void draw_videoram(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *transparent_pens)
 {
 	int flipmask = video_flip ? 0x1f : 0x00;
 	int x, y;
@@ -653,7 +653,7 @@ static void draw_videoram(running_machine *machine, bitmap_t *bitmap, const rect
 		for (x = cliprect->min_x / 8; x <= cliprect->max_x / 8; x++)
 		{
 			int offs = effy * 32 + (x ^ flipmask);
-			UINT8 tile = machine->generic.videoram.u8[offs];
+			uint8_t tile = machine->generic.videoram.u8[offs];
 
 			/* draw the tile */
 			drawgfx_transmask(bitmap, cliprect, machine->gfx[0], tile, tile >> 4, video_flip, video_flip, x*8, y*8, transparent_pens[tile >> 4]);
@@ -688,15 +688,15 @@ static void draw_background_spaceod(running_machine *machine, bitmap_t *bitmap, 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int effy = (y + spaceod_vcounter + 22) ^ flipmask;
-		UINT16 *src = (UINT16 *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
-		UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *src = (uint16_t *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* loop over horizontal pixels */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
 			int effx = ((x + spaceod_hcounter) ^ flipmask) + xoffset;
-			UINT8 fgpix = machine->generic.paletteram.u8[dst[x]];
-			UINT8 bgpix = src[effx & xmask] & 0x3f;
+			uint8_t fgpix = machine->generic.paletteram.u8[dst[x]];
+			uint8_t bgpix = src[effx & xmask] & 0x3f;
 
 			/* the background detect flag is set if:
                 - bgpix != 0 AND
@@ -745,8 +745,8 @@ static void draw_background_page_scroll(bitmap_t *bitmap, const rectangle *clipr
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int effy = bg_scrolly + (((y ^ flipmask) + (flipmask & 0xe0)) & 0xff);
-		UINT16 *src = (UINT16 *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
-		UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *src = (uint16_t *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* loop over horizontal pixels */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
@@ -785,8 +785,8 @@ static void draw_background_full_scroll(bitmap_t *bitmap, const rectangle *clipr
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int effy = (y + bg_scrolly) ^ flipmask;
-		UINT16 *src = (UINT16 *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
-		UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *src = (uint16_t *)pixmap->base + (effy & ymask) * pixmap->rowpixels;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* loop over horizontal pixels */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
@@ -807,7 +807,7 @@ static void draw_background_full_scroll(bitmap_t *bitmap, const rectangle *clipr
 
 VIDEO_UPDATE( segag80r )
 {
-	UINT8 transparent_pens[16];
+	uint8_t transparent_pens[16];
 
 	switch (segag80r_background_pcb)
 	{

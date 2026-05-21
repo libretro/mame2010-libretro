@@ -4,8 +4,8 @@
 extern int darkmist_hw;
 
 
-UINT8 *darkmist_scroll;
-UINT8 *darkmist_spritebank;
+uint8_t *darkmist_scroll;
+uint8_t *darkmist_spritebank;
 
 /* vis. flags */
 
@@ -131,7 +131,7 @@ VIDEO_START(darkmist)
 
 VIDEO_UPDATE( darkmist)
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 
 #define DM_GETSCROLL(n) (((darkmist_scroll[(n)]<<1)&0xff) + ((darkmist_scroll[(n)]&0x80)?1:0) +( ((darkmist_scroll[(n)-1]<<4) | (darkmist_scroll[(n)-1]<<12) )&0xff00))
 

@@ -9,9 +9,9 @@
 
 
 static tilemap_t *bg_tilemap;
-UINT8 centiped_flipscreen, *bullsdrt_tiles_bankram;
-static UINT8 bullsdrt_sprites_bank;
-static UINT8 penmask[64];
+uint8_t centiped_flipscreen, *bullsdrt_tiles_bankram;
+static uint8_t bullsdrt_sprites_bank;
+static uint8_t penmask[64];
 
 
 
@@ -68,7 +68,7 @@ static void init_penmask(void)
 
 	for (i = 0; i < 64; i++)
 	{
-		UINT8 mask = 1;
+		uint8_t mask = 1;
 		if (((i >> 0) & 3) == 0) mask |= 2;
 		if (((i >> 2) & 3) == 0) mask |= 4;
 		if (((i >> 4) & 3) == 0) mask |= 8;
@@ -276,7 +276,7 @@ PALETTE_INIT( warlords )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT8 pen;
+		uint8_t pen;
 		int r, g, b;
 
 		if (i < 0x20)
@@ -329,7 +329,7 @@ PALETTE_INIT( warlords )
 
 ***************************************************************************/
 
-static void melliped_mazeinv_set_color(running_machine *machine, offs_t offset, UINT8 data)
+static void melliped_mazeinv_set_color(running_machine *machine, offs_t offset, uint8_t data)
 {
 	rgb_t color;
 	int bit0, bit1, bit2;
@@ -409,7 +409,7 @@ WRITE8_HANDLER( mazeinv_paletteram_w )
 
 VIDEO_UPDATE( centiped )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	rectangle spriteclip = *cliprect;
 	int offs;
 
@@ -440,7 +440,7 @@ VIDEO_UPDATE( centiped )
 
 VIDEO_UPDATE( warlords )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	int upright_mode = input_port_read(screen->machine, "IN0") & 0x80;
 	int offs;
 
@@ -485,7 +485,7 @@ VIDEO_UPDATE( warlords )
 
 VIDEO_UPDATE( bullsdrt )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	rectangle spriteclip = *cliprect;
 
 	int offs;
@@ -519,7 +519,7 @@ VIDEO_UPDATE( bullsdrt )
  */
 VIDEO_UPDATE( milliped )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	rectangle spriteclip = *cliprect;
 	int offs;
 

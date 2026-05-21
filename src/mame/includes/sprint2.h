@@ -42,4 +42,4 @@ VIDEO_UPDATE( sprint2 );
 VIDEO_START( sprint2 );
 VIDEO_EOF( sprint2 );
 
-extern UINT8* sprint2_video_ram;
+extern uint8_t* sprint2_video_ram;

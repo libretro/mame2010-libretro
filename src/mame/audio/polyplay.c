@@ -19,7 +19,7 @@
 
 static int freq1, freq2, channel_playing1, channel_playing2;
 
-static INT16 backgroundwave[SAMPLE_LENGTH];
+static int16_t backgroundwave[SAMPLE_LENGTH];
 
 SAMPLES_START( polyplay_sh_start )
 {

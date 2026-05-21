@@ -13,7 +13,7 @@
 #include "emu.h"
 #include "includes/m10.h"
 
-static UINT32 extyoffs[32 * 8];	// FIXME: this should be moved to m10_state, but backlayout would have problems
+static uint32_t extyoffs[32 * 8];	// FIXME: this should be moved to m10_state, but backlayout would have problems
 
 
 static const gfx_layout backlayout =
@@ -39,7 +39,7 @@ static const gfx_layout charlayout =
 	8*8	/* every char takes 8 consecutive bytes */
 };
 
-static UINT32 tilemap_scan( UINT32 col, UINT32 row, UINT32 num_cols, UINT32 num_rows )
+static uint32_t tilemap_scan( uint32_t col, uint32_t row, uint32_t num_cols, uint32_t num_rows )
 {
 	return (31 - col) * 32 + row;
 }

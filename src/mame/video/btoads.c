@@ -22,22 +22,22 @@
  *
  *************************************/
 
-UINT16 *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
-UINT16 *btoads_vram_bg0, *btoads_vram_bg1;
-UINT16 *btoads_sprite_scale;
-UINT16 *btoads_sprite_control;
+uint16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
+uint16_t *btoads_vram_bg0, *btoads_vram_bg1;
+uint16_t *btoads_sprite_scale;
+uint16_t *btoads_sprite_control;
 
-static UINT8 *vram_fg_draw, *vram_fg_display;
+static uint8_t *vram_fg_draw, *vram_fg_display;
 
-static INT32 xscroll0, yscroll0;
-static INT32 xscroll1, yscroll1;
-static UINT8 screen_control;
+static int32_t xscroll0, yscroll0;
+static int32_t xscroll1, yscroll1;
+static uint8_t screen_control;
 
-static UINT16 sprite_source_offs;
-static UINT8 *sprite_dest_base;
-static UINT16 sprite_dest_offs;
+static uint16_t sprite_source_offs;
+static uint8_t *sprite_dest_base;
+static uint16_t sprite_dest_offs;
 
-static UINT16 misc_control;
+static uint16_t misc_control;
 
 
 
@@ -50,8 +50,8 @@ static UINT16 misc_control;
 VIDEO_START( btoads )
 {
 	/* initialize the swapped pointers */
-	vram_fg_draw = (UINT8 *)btoads_vram_fg0;
-	vram_fg_display = (UINT8 *)btoads_vram_fg1;
+	vram_fg_draw = (uint8_t *)btoads_vram_fg0;
+	vram_fg_display = (uint8_t *)btoads_vram_fg1;
 
 	state_save_register_global(machine, xscroll0);
 	state_save_register_global(machine, xscroll1);
@@ -93,13 +93,13 @@ WRITE16_HANDLER( btoads_display_control_w )
 		/* bit 15 controls which page is rendered and which page is displayed */
 		if (data & 0x8000)
 		{
-			vram_fg_draw = (UINT8 *)btoads_vram_fg1;
-			vram_fg_display = (UINT8 *)btoads_vram_fg0;
+			vram_fg_draw = (uint8_t *)btoads_vram_fg1;
+			vram_fg_display = (uint8_t *)btoads_vram_fg0;
 		}
 		else
 		{
-			vram_fg_draw = (UINT8 *)btoads_vram_fg0;
-			vram_fg_display = (UINT8 *)btoads_vram_fg1;
+			vram_fg_draw = (uint8_t *)btoads_vram_fg0;
+			vram_fg_display = (uint8_t *)btoads_vram_fg1;
 		}
 
 		/* stash the remaining data for later */
@@ -231,7 +231,7 @@ READ16_HANDLER( btoads_vram_fg_draw_r )
  *
  *************************************/
 
-static void render_sprite_row(UINT16 *sprite_source, UINT32 address)
+static void render_sprite_row(uint16_t *sprite_source, uint32_t address)
 {
 	int flipxor = ((*btoads_sprite_control >> 10) & 1) ? 0xffff : 0x0000;
 	int width = (~*btoads_sprite_control & 0x1ff) + 2;
@@ -247,7 +247,7 @@ static void render_sprite_row(UINT16 *sprite_source, UINT32 address)
 	{
 		for ( ; srcoffs < srcend; srcoffs += srcstep, dstoffs += dststep)
 		{
-			UINT16 src = sprite_source[(srcoffs >> 10) & 0x1ff];
+			uint16_t src = sprite_source[(srcoffs >> 10) & 0x1ff];
 			if (src)
 			{
 				src = (src >> (((srcoffs ^ flipxor) >> 6) & 0x0c)) & 0x0f;
@@ -262,7 +262,7 @@ static void render_sprite_row(UINT16 *sprite_source, UINT32 address)
 	{
 		for ( ; srcoffs < srcend; srcoffs += srcstep, dstoffs += dststep)
 		{
-			UINT16 src = sprite_source[(srcoffs >> 10) & 0x1ff];
+			uint16_t src = sprite_source[(srcoffs >> 10) & 0x1ff];
 			if (src)
 			{
 				src = (src >> (((srcoffs ^ flipxor) >> 6) & 0x0c)) & 0x0f;
@@ -284,7 +284,7 @@ static void render_sprite_row(UINT16 *sprite_source, UINT32 address)
  *
  *************************************/
 
-void btoads_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+void btoads_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	address &= ~0x40000000;
 
@@ -311,7 +311,7 @@ void btoads_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shif
 }
 
 
-void btoads_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+void btoads_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	address &= ~0x40000000;
 
@@ -345,11 +345,11 @@ void btoads_from_shiftreg(const address_space *space, UINT32 address, UINT16 *sh
 
 void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
-	UINT32 fulladdr = ((params->rowaddr << 16) | params->coladdr) >> 4;
-	UINT16 *bg0_base = &btoads_vram_bg0[(fulladdr + (yscroll0 << 10)) & 0x3fc00];
-	UINT16 *bg1_base = &btoads_vram_bg1[(fulladdr + (yscroll1 << 10)) & 0x3fc00];
-	UINT8 *spr_base = &vram_fg_display[fulladdr & 0x3fc00];
-	UINT32 *dst = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint32_t fulladdr = ((params->rowaddr << 16) | params->coladdr) >> 4;
+	uint16_t *bg0_base = &btoads_vram_bg0[(fulladdr + (yscroll0 << 10)) & 0x3fc00];
+	uint16_t *bg1_base = &btoads_vram_bg1[(fulladdr + (yscroll1 << 10)) & 0x3fc00];
+	uint8_t *spr_base = &vram_fg_display[fulladdr & 0x3fc00];
+	uint32_t *dst = BITMAP_ADDR32(bitmap, scanline, 0);
 	const rgb_t *pens = tlc34076_get_pens();
 	int coladdr = fulladdr & 0x3ff;
 	int x;
@@ -368,7 +368,7 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 		case 0:
 			for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 			{
-				UINT8 sprpix = spr_base[coladdr & 0xff];
+				uint8_t sprpix = spr_base[coladdr & 0xff];
 
 				if (sprpix && !(sprpix & 0x80))
 				{
@@ -377,9 +377,9 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 				}
 				else
 				{
-					UINT16 bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
-					UINT16 bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
-					UINT8 sprpix = spr_base[coladdr & 0xff];
+					uint16_t bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
+					uint16_t bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
+					uint8_t sprpix = spr_base[coladdr & 0xff];
 
 					if (bg1pix & 0x80)
 						dst[x + 0] = pens[bg1pix & 0xff];
@@ -413,7 +413,7 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 		case 1:
 			for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 			{
-				UINT8 sprpix = spr_base[coladdr & 0xff];
+				uint8_t sprpix = spr_base[coladdr & 0xff];
 
 				if (sprpix && !(sprpix & 0x80))
 				{
@@ -422,8 +422,8 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 				}
 				else
 				{
-					UINT16 bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
-					UINT16 bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
+					uint16_t bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
+					uint16_t bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
 
 					if (bg0pix & 0xff)
 						dst[x + 0] = pens[bg0pix & 0xff];
@@ -455,7 +455,7 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 		case 2:
 			for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 			{
-				UINT8 sprpix = spr_base[coladdr & 0xff];
+				uint8_t sprpix = spr_base[coladdr & 0xff];
 
 				if (sprpix)
 				{
@@ -464,8 +464,8 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 				}
 				else
 				{
-					UINT16 bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
-					UINT16 bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
+					uint16_t bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
+					uint16_t bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
 
 					if (bg1pix & 0xff)
 						dst[x + 0] = pens[bg1pix & 0xff];
@@ -491,9 +491,9 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 		case 3:
 			for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 			{
-				UINT16 bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
-				UINT16 bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
-				UINT8 sprpix = spr_base[coladdr & 0xff];
+				uint16_t bg0pix = bg0_base[(coladdr + xscroll0) & 0xff];
+				uint16_t bg1pix = bg1_base[(coladdr + xscroll1) & 0xff];
+				uint8_t sprpix = spr_base[coladdr & 0xff];
 
 				if (bg1pix & 0x80)
 					dst[x + 0] = pens[bg1pix & 0xff];
@@ -539,17 +539,17 @@ void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 
 		for (i = 0; i < 3; i++)
 		{
-			UINT16 *base = (i == 0) ? (UINT16 *)vram_fg_display : (i == 1) ? btoads_vram_bg0 : btoads_vram_bg1;
+			uint16_t *base = (i == 0) ? (uint16_t *)vram_fg_display : (i == 1) ? btoads_vram_bg0 : btoads_vram_bg1;
 			int xscr = (i == 0) ? 0 : (i == 1) ? xscroll0 : xscroll1;
 			int yscr = (i == 0) ? 0 : (i == 1) ? yscroll0 : yscroll1;
 			int y;
 
 			for (y = 0; y < 224; y++)
 			{
-				UINT32 offs = ((y + yscr) & 0xff) * TOWORD(0x4000);
+				uint32_t offs = ((y + yscr) & 0xff) * TOWORD(0x4000);
 				for (x = 0; x < 256; x++)
 				{
-					UINT16 pix = base[offs + ((x + xscr) & 0xff)];
+					uint16_t pix = base[offs + ((x + xscr) & 0xff)];
 					fprintf(f, "%02X%02X", pix & 0xff, pix >> 8);
 					if (x % 16 == 15) fprintf(f, " ");
 				}

@@ -9,32 +9,32 @@
 
 
 /* globally-accessible storage */
-UINT8 *victory_videoram;
-UINT8 *victory_charram;
+uint8_t *victory_videoram;
+uint8_t *victory_charram;
 
 /* local allocated storage */
-static UINT16 victory_paletteram[0x40];	/* 9 bits used */
-static UINT8 *bgbitmap;
-static UINT8 *fgbitmap;
-static UINT8 *rram, *gram, *bram;
+static uint16_t victory_paletteram[0x40];	/* 9 bits used */
+static uint8_t *bgbitmap;
+static uint8_t *fgbitmap;
+static uint8_t *rram, *gram, *bram;
 
 /* interrupt, collision, and control states */
-static UINT8 vblank_irq;
-static UINT8 fgcoll, fgcollx, fgcolly;
-static UINT8 bgcoll, bgcollx, bgcolly;
-static UINT8 scrollx, scrolly;
-static UINT8 video_control;
+static uint8_t vblank_irq;
+static uint8_t fgcoll, fgcollx, fgcolly;
+static uint8_t bgcoll, bgcollx, bgcolly;
+static uint8_t scrollx, scrolly;
+static uint8_t video_control;
 
 /* microcode state */
 static struct
 {
-	UINT16		i;
-	UINT16		pc;
-	UINT8		r,g,b;
-	UINT8		x,xp,y,yp;
-	UINT8		cmd,cmdlo;
+	uint16_t		i;
+	uint16_t		pc;
+	uint8_t		r,g,b;
+	uint8_t		x,xp,y,yp;
+	uint8_t		cmd,cmdlo;
 	emu_timer *	timer;
-	UINT8		timer_active;
+	uint8_t		timer_active;
 	attotime	endtime;
 } micro;
 
@@ -71,13 +71,13 @@ static int command7(running_machine *machine);
 VIDEO_START( victory )
 {
 	/* allocate bitmapram */
-	rram = auto_alloc_array(machine, UINT8, 0x4000);
-	gram = auto_alloc_array(machine, UINT8, 0x4000);
-	bram = auto_alloc_array(machine, UINT8, 0x4000);
+	rram = auto_alloc_array(machine, uint8_t, 0x4000);
+	gram = auto_alloc_array(machine, uint8_t, 0x4000);
+	bram = auto_alloc_array(machine, uint8_t, 0x4000);
 
 	/* allocate bitmaps */
-	bgbitmap = auto_alloc_array(machine, UINT8, 256 * 256);
-	fgbitmap = auto_alloc_array(machine, UINT8, 256 * 256);
+	bgbitmap = auto_alloc_array(machine, uint8_t, 256 * 256);
+	fgbitmap = auto_alloc_array(machine, uint8_t, 256 * 256);
 
 	/* reset globals */
 	vblank_irq = 0;
@@ -136,7 +136,7 @@ static void set_palette(running_machine *machine)
 
 	for (offs = 0; offs < 0x40; offs++)
 	{
-		UINT16 data = victory_paletteram[offs];
+		uint16_t data = victory_paletteram[offs];
 
 		palette_set_color_rgb(machine, offs, pal3bit(data >> 6), pal3bit(data >> 0), pal3bit(data >> 3));
 	}
@@ -621,7 +621,7 @@ static int command3(running_machine *machine)
 		{
 			int srcoffs = micro.i++ & 0x3fff;
 			int dstoffs = (sy++ & 0xff) * 32 + micro.xp / 8;
-			UINT8 src;
+			uint8_t src;
 
 			/* non-collision-detect case */
 			if (!(micro.cmd & 0x08) || fgcoll)
@@ -786,7 +786,7 @@ static int command5(running_machine *machine)
         case 7: 1011 -> X++, Y      1111 -> X++, Y++
 
 */
-	static const INT8 inctable[8][4] =
+	static const int8_t inctable[8][4] =
 	{
 		{  1, 0, 1,-1 },
 		{  0,-1, 1,-1 },
@@ -802,8 +802,8 @@ static int command5(running_machine *machine)
 	int yinc = inctable[(micro.cmd >> 4) & 7][1];
 	int xincc = inctable[(micro.cmd >> 4) & 7][2];
 	int yincc = inctable[(micro.cmd >> 4) & 7][3];
-	UINT8 x = micro.xp;
-	UINT8 y = micro.yp;
+	uint8_t x = micro.xp;
+	uint8_t y = micro.yp;
 	int acc = 0x80;
 	int i = micro.i >> 8;
 	int c;
@@ -1029,10 +1029,10 @@ static void update_background(void)
 
 			for (row = 0; row < 8; row++)
 			{
-				UINT8 pix2 = victory_charram[0x0000 + 8 * code + row];
-				UINT8 pix1 = victory_charram[0x0800 + 8 * code + row];
-				UINT8 pix0 = victory_charram[0x1000 + 8 * code + row];
-				UINT8 *dst = &bgbitmap[(y * 8 + row) * 256 + x * 8];
+				uint8_t pix2 = victory_charram[0x0000 + 8 * code + row];
+				uint8_t pix1 = victory_charram[0x0800 + 8 * code + row];
+				uint8_t pix0 = victory_charram[0x1000 + 8 * code + row];
+				uint8_t *dst = &bgbitmap[(y * 8 + row) * 256 + x * 8];
 
 				*dst++ = ((pix2 & 0x80) >> 5) | ((pix1 & 0x80) >> 6) | ((pix0 & 0x80) >> 7);
 				*dst++ = ((pix2 & 0x40) >> 4) | ((pix1 & 0x40) >> 5) | ((pix0 & 0x40) >> 6);
@@ -1059,14 +1059,14 @@ static void update_foreground(void)
 
 	for (y = 0; y < 256; y++)
 	{
-		UINT8 *dst = &fgbitmap[y * 256];
+		uint8_t *dst = &fgbitmap[y * 256];
 
 		/* assemble the RGB bits for each 8-pixel chunk */
 		for (x = 0; x < 256; x += 8)
 		{
-			UINT8 g = gram[y * 32 + x / 8];
-			UINT8 b = bram[y * 32 + x / 8];
-			UINT8 r = rram[y * 32 + x / 8];
+			uint8_t g = gram[y * 32 + x / 8];
+			uint8_t b = bram[y * 32 + x / 8];
+			uint8_t r = rram[y * 32 + x / 8];
 
 			*dst++ = ((r & 0x80) >> 5) | ((b & 0x80) >> 6) | ((g & 0x80) >> 7);
 			*dst++ = ((r & 0x40) >> 4) | ((b & 0x40) >> 5) | ((g & 0x40) >> 6);
@@ -1113,10 +1113,10 @@ VIDEO_UPDATE( victory )
 	/* blend the bitmaps and do collision detection */
 	for (y = 0; y < 256; y++)
 	{
-		UINT16 *scanline = BITMAP_ADDR16(bitmap, y, 0);
-		UINT8 sy = scrolly + y;
-		UINT8 *fg = &fgbitmap[y * 256];
-		UINT8 *bg = &bgbitmap[sy * 256];
+		uint16_t *scanline = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t sy = scrolly + y;
+		uint8_t *fg = &fgbitmap[y * 256];
+		uint8_t *bg = &bgbitmap[sy * 256];
 
 		/* do the blending */
 		for (x = 0; x < 256; x++)

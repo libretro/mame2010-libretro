@@ -39,10 +39,10 @@ void dc_update_interrupt_status(running_machine *machine);
 
 INPUT_CHANGED( dc_coin_slots_callback );
 
-extern UINT32 dc_sysctrl_regs[0x200/4];
-extern UINT32 dc_coin_counts[2];
-extern UINT8 maple0x86data1[0x80];
-extern UINT32 g1bus_regs[0x100/4];
+extern uint32_t dc_sysctrl_regs[0x200/4];
+extern uint32_t dc_coin_counts[2];
+extern uint8_t maple0x86data1[0x80];
+extern uint32_t g1bus_regs[0x100/4];
 
 /*--------- Ch2-DMA Control Registers ----------*/
 #define SB_C2DSTAT	((0x005f6800-0x005f6800)/4)
@@ -205,9 +205,9 @@ extern UINT32 g1bus_regs[0x100/4];
 
 /*----------- defined in video/dc.c -----------*/
 
-extern UINT32 pvrctrl_regs[0x100/4];
-extern UINT64 *dc_texture_ram;
-extern UINT64 *dc_framebuffer_ram;
+extern uint32_t pvrctrl_regs[0x100/4];
+extern uint64_t *dc_texture_ram;
+extern uint64_t *dc_framebuffer_ram;
 
 void dc_vblank( running_machine *machine );
 

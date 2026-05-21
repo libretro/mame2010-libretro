@@ -13,12 +13,12 @@
 
 struct i8279_state
 {
-	UINT8		command;
-	UINT8		mode;
-	UINT8		prescale;
-	UINT8		inhibit;
-	UINT8		clear;
-	UINT8		ram[16];
+	uint8_t		command;
+	uint8_t		mode;
+	uint8_t		prescale;
+	uint8_t		inhibit;
+	uint8_t		clear;
+	uint8_t		ram[16];
 };
 
 
@@ -30,41 +30,41 @@ public:
 	turbo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *		videoram;
-	UINT8 *		spriteram;
-	UINT8 *		sprite_position;
-	UINT8 *		buckrog_bitmap_ram;
+	uint8_t *		videoram;
+	uint8_t *		spriteram;
+	uint8_t *		sprite_position;
+	uint8_t *		buckrog_bitmap_ram;
 
 	/* machine states */
 	i8279_state	i8279;
 
 	/* sound state */
-	UINT8		turbo_osel, turbo_bsel;
-	UINT8		sound_state[3];
+	uint8_t		turbo_osel, turbo_bsel;
+	uint8_t		sound_state[3];
 
 	/* video state */
 	tilemap_t *	fg_tilemap;
 
 	/* Turbo-specific states */
-	UINT8		turbo_opa, turbo_opb, turbo_opc;
-	UINT8		turbo_ipa, turbo_ipb, turbo_ipc;
-	UINT8		turbo_fbpla, turbo_fbcol;
-	UINT8		turbo_speed;
-	UINT8		turbo_collision;
-	UINT8		turbo_last_analog;
-	UINT8		turbo_accel;
+	uint8_t		turbo_opa, turbo_opb, turbo_opc;
+	uint8_t		turbo_ipa, turbo_ipb, turbo_ipc;
+	uint8_t		turbo_fbpla, turbo_fbcol;
+	uint8_t		turbo_speed;
+	uint8_t		turbo_collision;
+	uint8_t		turbo_last_analog;
+	uint8_t		turbo_accel;
 
 	/* Subroc-specific states */
-	UINT8		subroc3d_col, subroc3d_ply, subroc3d_flip;
-	UINT8		subroc3d_mdis, subroc3d_mdir;
-	UINT8		subroc3d_tdis, subroc3d_tdir;
-	UINT8		subroc3d_fdis, subroc3d_fdir;
-	UINT8		subroc3d_hdis, subroc3d_hdir;
+	uint8_t		subroc3d_col, subroc3d_ply, subroc3d_flip;
+	uint8_t		subroc3d_mdis, subroc3d_mdir;
+	uint8_t		subroc3d_tdis, subroc3d_tdir;
+	uint8_t		subroc3d_fdis, subroc3d_fdir;
+	uint8_t		subroc3d_hdis, subroc3d_hdir;
 
 	/* Buck Rogers-specific states */
-	UINT8		buckrog_fchg, buckrog_mov, buckrog_obch;
-	UINT8		buckrog_command;
-	UINT8		buckrog_myship;
+	uint8_t		buckrog_fchg, buckrog_mov, buckrog_obch;
+	uint8_t		buckrog_command;
+	uint8_t		buckrog_myship;
 };
 
 

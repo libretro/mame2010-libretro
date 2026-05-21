@@ -8,10 +8,10 @@
 
 /*----------- defined in video/btoads.c -----------*/
 
-extern UINT16 *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
-extern UINT16 *btoads_vram_bg0, *btoads_vram_bg1;
-extern UINT16 *btoads_sprite_scale;
-extern UINT16 *btoads_sprite_control;
+extern uint16_t *btoads_vram_fg0, *btoads_vram_fg1, *btoads_vram_fg_data;
+extern uint16_t *btoads_vram_bg0, *btoads_vram_bg1;
+extern uint16_t *btoads_sprite_scale;
+extern uint16_t *btoads_sprite_control;
 
 VIDEO_START( btoads );
 
@@ -34,7 +34,7 @@ WRITE16_HANDLER( btoads_vram_fg_draw_w );
 READ16_HANDLER( btoads_vram_fg_display_r );
 READ16_HANDLER( btoads_vram_fg_draw_r );
 
-void btoads_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
-void btoads_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg);
+void btoads_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
+void btoads_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg);
 
 void btoads_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params);

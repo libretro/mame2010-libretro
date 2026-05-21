@@ -16,7 +16,7 @@ public:
 	atarigen_state	atarigen;
 	int 			screen_intensity;
 	int 			video_disable;
-	UINT16 *		sync_data;
+	uint16_t *		sync_data;
 };
 
 

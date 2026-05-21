@@ -10,16 +10,16 @@
 #include "video/resnet.h"
 #include "includes/phoenix.h"
 
-static UINT8 *videoram_pg[2];
-static UINT8 videoram_pg_index;
-static UINT8 palette_bank;
-static UINT8 cocktail_mode;
-static UINT8 pleiads_protection_question;
-static UINT8 survival_protection_value;
+static uint8_t *videoram_pg[2];
+static uint8_t videoram_pg_index;
+static uint8_t palette_bank;
+static uint8_t cocktail_mode;
+static uint8_t pleiads_protection_question;
+static uint8_t survival_protection_value;
 static int survival_sid_value;
 static tilemap_t *fg_tilemap, *bg_tilemap;
-static UINT8 survival_input_latches[2];
-static UINT8 survival_input_readc;
+static uint8_t survival_input_latches[2];
+static uint8_t survival_input_readc;
 
 
 /***************************************************************************
@@ -178,8 +178,8 @@ static TILE_GET_INFO( get_bg_tile_info )
 
 VIDEO_START( phoenix )
 {
-	videoram_pg[0] = auto_alloc_array(machine, UINT8, 0x1000);
-	videoram_pg[1] = auto_alloc_array(machine, UINT8, 0x1000);
+	videoram_pg[0] = auto_alloc_array(machine, uint8_t, 0x1000);
+	videoram_pg[1] = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	memory_configure_bank(machine, "bank1", 0, 1, videoram_pg[0], 0);
 	memory_configure_bank(machine, "bank1", 1, 1, videoram_pg[1], 0);
@@ -229,7 +229,7 @@ VIDEO_START( phoenix )
 
 WRITE8_HANDLER( phoenix_videoram_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 	videoram_pg[videoram_pg_index][offset] = data;
 
@@ -368,7 +368,7 @@ CUSTOM_INPUT( pleiads_protection_r )
 #define REMAP_JS(js) ((ret & 0xf) | ( (js & 0xf)  << 4))
 READ8_HANDLER( survival_input_port_0_r )
 {
-	UINT8 ret = ~input_port_read(space->machine, "IN0");
+	uint8_t ret = ~input_port_read(space->machine, "IN0");
 
 	if( survival_input_readc++ == 2 )
 	{

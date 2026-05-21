@@ -502,10 +502,10 @@ The data bus is 16 bits wide.
 /* These scanline drawing routines lifted from Taito F3: optimise / merge ? */
 
 INLINE void taitoic_drawscanline( bitmap_t *bitmap, const rectangle *cliprect, int x, int y,
-		const UINT16 *src, int transparent, UINT32 orient, bitmap_t *priority, int pri)
+		const uint16_t *src, int transparent, uint32_t orient, bitmap_t *priority, int pri)
 {
-	UINT16 *dsti = BITMAP_ADDR16(bitmap, y, x);
-	UINT8 *dstp = BITMAP_ADDR8(priority, y, x);
+	uint16_t *dsti = BITMAP_ADDR16(bitmap, y, x);
+	uint8_t *dstp = BITMAP_ADDR8(priority, y, x);
 	int length = cliprect->max_x - cliprect->min_x + 1;
 
 	src += cliprect->min_x;
@@ -515,7 +515,7 @@ INLINE void taitoic_drawscanline( bitmap_t *bitmap, const rectangle *cliprect, i
 	{
 		while (length--)
 		{
-			UINT32 spixel = *src++;
+			uint32_t spixel = *src++;
 
 			if (spixel < 0x7fff)
 			{
@@ -547,11 +547,11 @@ INLINE void taitoic_drawscanline( bitmap_t *bitmap, const rectangle *cliprect, i
 typedef struct _pc080sn_state pc080sn_state;
 struct _pc080sn_state
 {
-	UINT16         ctrl[8];
+	uint16_t         ctrl[8];
 
-	UINT16 *       ram;
-	UINT16 *       bg_ram[2];
-	UINT16 *       bgscroll_ram[2];
+	uint16_t *       ram;
+	uint16_t *       bg_ram[2];
+	uint16_t *       bgscroll_ram[2];
 
 	int            bgscrollx[2], bgscrolly[2];
 	int            xoffs, yoffs;
@@ -586,10 +586,10 @@ INLINE const pc080sn_interface *pc080sn_get_interface( running_device *device )
     DEVICE HANDLERS
 *****************************************************************************/
 
-INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
-	UINT16 code, attr;
+	uint16_t code, attr;
 
 	if (!pc080sn->dblwidth)
 	{
@@ -609,10 +609,10 @@ INLINE void common_get_pc080sn_bg_tile_info( running_device *device, tile_data *
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-INLINE void common_get_pc080sn_fg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_pc080sn_fg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
-	UINT16 code,attr;
+	uint16_t code,attr;
 
 	if (!pc080sn->dblwidth)
 	{
@@ -785,9 +785,9 @@ void pc080sn_tilemap_update( running_device *device )
 }
 
 
-static UINT16 topspeed_get_road_pixel_color( UINT16 pixel, UINT16 color )
+static uint16_t topspeed_get_road_pixel_color( uint16_t pixel, uint16_t color )
 {
-	UINT16 road_body_color, off_road_color, pixel_type;
+	uint16_t road_body_color, off_road_color, pixel_type;
 
 	/* Color changes based on screenshots from game flyer */
 	pixel_type = (pixel % 0x10);
@@ -835,17 +835,17 @@ static UINT16 topspeed_get_road_pixel_color( UINT16 pixel, UINT16 color )
 
 
 static void topspeed_custom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags,
-							UINT32 priority, UINT16 *color_ctrl_ram )
+							uint32_t priority, uint16_t *color_ctrl_ram )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
-	UINT16 *dst16, *src16;
-	UINT8 *tsrc;
-	UINT16 scanline[1024];	/* won't be called by a wide-screen game, but just in case... */
+	uint16_t *dst16, *src16;
+	uint8_t *tsrc;
+	uint16_t scanline[1024];	/* won't be called by a wide-screen game, but just in case... */
 
 	bitmap_t *srcbitmap = tilemap_get_pixmap(pc080sn->tilemap[layer]);
 	bitmap_t *flagsbitmap = tilemap_get_flagsmap(pc080sn->tilemap[layer]);
 
-	UINT16 a, color;
+	uint16_t a, color;
 	int sx, x_index;
 	int i, y, y_index, src_y_index, row_index;
 
@@ -928,13 +928,13 @@ static void topspeed_custom_draw( running_device *device, bitmap_t *bitmap, cons
 	while ((!machine_flip && y <= max_y) || (machine_flip && y >= min_y));
 }
 
-void pc080sn_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+void pc080sn_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
 	tilemap_draw(bitmap, cliprect, pc080sn->tilemap[layer], flags, priority);
 }
 
-void pc080sn_tilemap_draw_offset( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority, int xoffs, int yoffs )
+void pc080sn_tilemap_draw_offset( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority, int xoffs, int yoffs )
 {
 	pc080sn_state *pc080sn = pc080sn_get_safe_token(device);
 	int basedx = -16 - pc080sn->xoffs;
@@ -949,7 +949,7 @@ void pc080sn_tilemap_draw_offset( running_device *device, bitmap_t *bitmap, cons
 	tilemap_set_scrolldy(pc080sn->tilemap[layer], basedy, basedyflip);
 }
 
-void pc080sn_tilemap_draw_special( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority, UINT16 *ram )
+void pc080sn_tilemap_draw_special( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority, uint16_t *ram )
 {
 	topspeed_custom_draw(device, bitmap, cliprect, layer, flags, priority, ram);
 }
@@ -1012,7 +1012,7 @@ static DEVICE_START( pc080sn )
 		tilemap_set_scroll_rows(pc080sn->tilemap[1], 512);
 	}
 
-	pc080sn->ram = auto_alloc_array_clear(device->machine, UINT16, PC080SN_RAM_SIZE / 2);
+	pc080sn->ram = auto_alloc_array_clear(device->machine, uint16_t, PC080SN_RAM_SIZE / 2);
 
 	pc080sn->bg_ram[0]       = pc080sn->ram + 0x0000 /2;
 	pc080sn->bg_ram[1]       = pc080sn->ram + 0x8000 /2;
@@ -1044,11 +1044,11 @@ struct _pc090oj_state
 
 */
 
-	UINT16     ctrl, buffer, gfxnum;
-	UINT16     sprite_ctrl;
+	uint16_t     ctrl, buffer, gfxnum;
+	uint16_t     sprite_ctrl;
 
-	UINT16 *   ram;
-	UINT16 *   ram_buffered;
+	uint16_t *   ram;
+	uint16_t *   ram_buffered;
 
 	int        xoffs, yoffs;
 };
@@ -1079,7 +1079,7 @@ INLINE const pc090oj_interface *pc090oj_get_interface( running_device *device )
     DEVICE HANDLERS
 *****************************************************************************/
 
-void pc090oj_set_sprite_ctrl( running_device *device, UINT16 sprctrl )
+void pc090oj_set_sprite_ctrl( running_device *device, uint16_t sprctrl )
 {
 	pc090oj_state *pc090oj = pc090oj_get_safe_token(device);
 	pc090oj->sprite_ctrl = sprctrl;
@@ -1202,8 +1202,8 @@ static DEVICE_START( pc090oj )
 	pc090oj->buffer = intf->use_buffer;
 
 
-	pc090oj->ram = auto_alloc_array_clear(device->machine, UINT16, PC090OJ_RAM_SIZE / 2);
-	pc090oj->ram_buffered = auto_alloc_array_clear(device->machine, UINT16, PC090OJ_RAM_SIZE / 2);
+	pc090oj->ram = auto_alloc_array_clear(device->machine, uint16_t, PC090OJ_RAM_SIZE / 2);
+	pc090oj->ram_buffered = auto_alloc_array_clear(device->machine, uint16_t, PC090OJ_RAM_SIZE / 2);
 
 	state_save_register_device_item_pointer(device, 0, pc090oj->ram, PC090OJ_RAM_SIZE / 2);
 	state_save_register_device_item_pointer(device, 0, pc090oj->ram_buffered, PC090OJ_RAM_SIZE / 2);
@@ -1228,27 +1228,27 @@ static DEVICE_RESET( pc090oj )
 typedef struct _tc0080vco_state tc0080vco_state;
 struct _tc0080vco_state
 {
-	UINT16 *       ram;
-	UINT16 *       bg0_ram_0;
-	UINT16 *       bg0_ram_1;
-	UINT16 *       bg1_ram_0;
-	UINT16 *       bg1_ram_1;
-	UINT16 *       tx_ram_0;
-	UINT16 *       tx_ram_1;
-	UINT16 *       char_ram;
-	UINT16 *       bgscroll_ram;
+	uint16_t *       ram;
+	uint16_t *       bg0_ram_0;
+	uint16_t *       bg0_ram_1;
+	uint16_t *       bg1_ram_0;
+	uint16_t *       bg1_ram_1;
+	uint16_t *       tx_ram_0;
+	uint16_t *       tx_ram_1;
+	uint16_t *       char_ram;
+	uint16_t *       bgscroll_ram;
 
 /* FIXME: This sprite related stuff still needs to be accessed in
    video/taito_h */
-	UINT16 *       chain_ram_0;
-	UINT16 *       chain_ram_1;
-	UINT16 *       spriteram;
-	UINT16 *       scroll_ram;
+	uint16_t *       chain_ram_0;
+	uint16_t *       chain_ram_1;
+	uint16_t *       spriteram;
+	uint16_t *       scroll_ram;
 
-	UINT16         bg0_scrollx;
-	UINT16         bg0_scrolly;
-	UINT16         bg1_scrollx;
-	UINT16         bg1_scrolly;
+	uint16_t         bg0_scrollx;
+	uint16_t         bg0_scrolly;
+	uint16_t         bg1_scrollx;
+	uint16_t         bg1_scrolly;
 
 	tilemap_t        *tilemap[3];
 
@@ -1256,7 +1256,7 @@ struct _tc0080vco_state
 	int            bg_xoffs, bg_yoffs;
 	int            bg_flip_yoffs;
 
-	INT32          flipscreen;
+	int32_t          flipscreen;
 	int            has_tx;
 };
 
@@ -1529,10 +1529,10 @@ void tc0080vco_tilemap_update( running_device *device )
 
 /* NB: orientation_flipx code in following routine has not been tested */
 
-static void tc0080vco_bg0_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority )
+static void tc0080vco_bg0_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority )
 {
 	tc0080vco_state *tc0080vco = tc0080vco_get_safe_token(device);
-	UINT16 zoom = tc0080vco->scroll_ram[6];
+	uint16_t zoom = tc0080vco->scroll_ram[6];
 	int zx, zy;
 
 	zx = (zoom & 0xff00) >> 8;
@@ -1544,9 +1544,9 @@ static void tc0080vco_bg0_tilemap_draw( running_device *device, bitmap_t *bitmap
 	}
 	else		/* zoom + rowscroll = custom draw routine */
 	{
-		UINT16 *dst16, *src16;
-		UINT8 *tsrc;
-		UINT16 scanline[512];
+		uint16_t *dst16, *src16;
+		uint8_t *tsrc;
+		uint16_t scanline[512];
 		bitmap_t *srcbitmap = tilemap_get_pixmap(tc0080vco->tilemap[0]);
 		bitmap_t *flagsbitmap = tilemap_get_flagsmap(tc0080vco->tilemap[0]);
 
@@ -1673,7 +1673,7 @@ static void tc0080vco_bg0_tilemap_draw( running_device *device, bitmap_t *bitmap
 #define PIXEL_OP_COPY_TRANS0_SET_PRIORITY(DEST, PRIORITY, SOURCE)					\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != 0)																\
 	{																				\
 		(DEST) = SOURCE;															\
@@ -1682,11 +1682,11 @@ do																					\
 }																					\
 while (0)																			\
 
-static void tc0080vco_bg1_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority )
+static void tc0080vco_bg1_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority )
 {
 	tc0080vco_state *tc0080vco = tc0080vco_get_safe_token(device);
-	UINT8 layer = 1;
-	UINT16 zoom = tc0080vco->scroll_ram[6 + layer];
+	uint8_t layer = 1;
+	uint16_t zoom = tc0080vco->scroll_ram[6 + layer];
 	int min_x = cliprect->min_x;
 	int max_x = cliprect->max_x;
 	int min_y = cliprect->min_y;
@@ -1749,26 +1749,26 @@ static void tc0080vco_bg1_tilemap_draw( running_device *device, bitmap_t *bitmap
 		{
 			bitmap_t *dest = bitmap;
 			bitmap_t *src = srcbitmap;
-			INT32 startx = sx;
-			INT32 starty = sy;
-			INT32 incxx = zx;
-			INT32 incxy = 0;
-			INT32 incyx = 0;
-			INT32 incyy = zy;
+			int32_t startx = sx;
+			int32_t starty = sy;
+			int32_t incxx = zx;
+			int32_t incxy = 0;
+			int32_t incyx = 0;
+			int32_t incyy = zy;
 			int wraparound = 0;
-			UINT32 privalue = priority;
+			uint32_t privalue = priority;
 			bitmap_t *priority = device->machine->priority_bitmap;
 
 			if (dest->bpp == 16)
-				COPYROZBITMAP_CORE(UINT16, PIXEL_OP_COPY_TRANS0_SET_PRIORITY, UINT8);
+				COPYROZBITMAP_CORE(uint16_t, PIXEL_OP_COPY_TRANS0_SET_PRIORITY, uint8_t);
 			else
-				COPYROZBITMAP_CORE(UINT32, PIXEL_OP_COPY_TRANS0_SET_PRIORITY, UINT8);
+				COPYROZBITMAP_CORE(uint32_t, PIXEL_OP_COPY_TRANS0_SET_PRIORITY, uint8_t);
 		}
 	}
 }
 
 
-void tc0080vco_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+void tc0080vco_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	tc0080vco_state *tc0080vco = tc0080vco_get_safe_token(device);
 	int disable = 0x00;	/* possibly layer disable bits do exist ?? */
@@ -1885,7 +1885,7 @@ static DEVICE_START( tc0080vco )
 
 	tilemap_set_transparent_pen(tc0080vco->tilemap[2], 0);
 
-	tc0080vco->ram = auto_alloc_array_clear(device->machine, UINT16, TC0080VCO_RAM_SIZE / 2);
+	tc0080vco->ram = auto_alloc_array_clear(device->machine, uint16_t, TC0080VCO_RAM_SIZE / 2);
 
 	tc0080vco->char_ram      = tc0080vco->ram + 0x00000 / 2;	/* continues at +0x10000 */
 	tc0080vco->tx_ram_0      = tc0080vco->ram + 0x01000 / 2;
@@ -1904,7 +1904,7 @@ static DEVICE_START( tc0080vco )
 	tc0080vco->scroll_ram    = tc0080vco->ram + 0x20800 / 2;
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	device->machine->gfx[tc0080vco->tx_gfx] = gfx_element_alloc(device->machine, &tc0080vco_charlayout, (UINT8 *)tc0080vco->char_ram, 64, 0);
+	device->machine->gfx[tc0080vco->tx_gfx] = gfx_element_alloc(device->machine, &tc0080vco_charlayout, (uint8_t *)tc0080vco->char_ram, 64, 0);
 
 	state_save_register_device_item_pointer(device, 0, tc0080vco->ram, TC0080VCO_RAM_SIZE / 2);
 	state_save_register_postload(device->machine, tc0080vco_postload, tc0080vco);
@@ -1919,16 +1919,16 @@ static DEVICE_START( tc0080vco )
 typedef struct _tc0100scn_state tc0100scn_state;
 struct _tc0100scn_state
 {
-	UINT16       ctrl[8];
+	uint16_t       ctrl[8];
 
-	UINT16 *     ram;
-	UINT16 *     bg_ram;
-	UINT16 *     fg_ram;
-	UINT16 *     tx_ram;
-	UINT16 *     char_ram;
-	UINT16 *     bgscroll_ram;
-	UINT16 *     fgscroll_ram;
-	UINT16 *     colscroll_ram;
+	uint16_t *     ram;
+	uint16_t *     bg_ram;
+	uint16_t *     fg_ram;
+	uint16_t *     tx_ram;
+	uint16_t *     char_ram;
+	uint16_t *     bgscroll_ram;
+	uint16_t *     fgscroll_ram;
+	uint16_t *     colscroll_ram;
 
 	int          bgscrollx, bgscrolly, fgscrollx, fgscrolly;
 
@@ -1938,8 +1938,8 @@ struct _tc0100scn_state
 
 	int          bg_gfx, tx_gfx;
 	int          bg_col_mult, bg_tilemask, tx_col_mult;
-	INT32        gfxbank, colbank;
-	INT32        bg0_colbank, bg1_colbank, tx_colbank;
+	int32_t        gfxbank, colbank;
+	int32_t        bg0_colbank, bg1_colbank, tx_colbank;
 	int          dblwidth;
 
 	screen_device *screen;
@@ -1971,7 +1971,7 @@ INLINE const tc0100scn_interface *tc0100scn_get_interface( running_device *devic
     DEVICE HANDLERS
 *****************************************************************************/
 
-INLINE void common_get_bg0_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_bg0_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int code, attr;
@@ -1995,7 +1995,7 @@ INLINE void common_get_bg0_tile_info( running_device *device, tile_data *tileinf
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-INLINE void common_get_bg1_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_bg1_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int code, attr;
@@ -2019,7 +2019,7 @@ INLINE void common_get_bg1_tile_info( running_device *device, tile_data *tileinf
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-INLINE void common_get_tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum, int colbank, int dblwidth )
+INLINE void common_get_tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum, int colbank, int dblwidth )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int attr = ram[tile_index];
@@ -2250,7 +2250,7 @@ WRITE16_DEVICE_HANDLER( tc0100scn_ctrl_word_w )
 				tc0100scn_dirty_tilemaps(device);
 
 				/* reset the pointer to the text characters (and dirty them all) */
-				gfx_element_set_source(device->machine->gfx[tc0100scn->tx_gfx], (UINT8 *)tc0100scn->char_ram);
+				gfx_element_set_source(device->machine->gfx[tc0100scn->tx_gfx], (uint8_t *)tc0100scn->char_ram);
 			}
 
 			break;
@@ -2330,7 +2330,7 @@ void tc0100scn_tilemap_update( running_device *device )
 		tilemap_set_scrollx(tc0100scn->tilemap[1][tc0100scn->dblwidth], (j + tc0100scn->fgscrolly) & 0x1ff, tc0100scn->fgscrollx - tc0100scn->fgscroll_ram[j]);
 }
 
-static void tc0100scn_tilemap_draw_fg( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, tilemap_t* tmap, int flags, UINT32 priority )
+static void tc0100scn_tilemap_draw_fg( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, tilemap_t* tmap, int flags, uint32_t priority )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	const bitmap_t *src_bitmap = tilemap_get_pixmap(tmap);
@@ -2366,7 +2366,7 @@ static void tc0100scn_tilemap_draw_fg( running_device *device, bitmap_t *bitmap,
 				*BITMAP_ADDR16(bitmap, y, x + cliprect->min_x) = p;
 				if (device->machine->priority_bitmap)
 				{
-					UINT8 *pri = BITMAP_ADDR8(device->machine->priority_bitmap, y, 0);
+					uint8_t *pri = BITMAP_ADDR8(device->machine->priority_bitmap, y, 0);
 					pri[x + cliprect->min_x] |= priority;
 				}
 			}
@@ -2376,7 +2376,7 @@ static void tc0100scn_tilemap_draw_fg( running_device *device, bitmap_t *bitmap,
 	}
 }
 
-int tc0100scn_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+int tc0100scn_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	tc0100scn_state *tc0100scn = tc0100scn_get_safe_token(device);
 	int disable = tc0100scn->ctrl[6] & 0xf7;
@@ -2503,7 +2503,7 @@ static DEVICE_START( tc0100scn )
 
 //logerror("TC0100SCN bg gfx granularity %04x: multiplier %04x\n", device->machine->gfx[intf->gfxnum]->color_granularity, tc0100scn->tx_col_mult);
 
-	tc0100scn->ram = auto_alloc_array_clear(device->machine, UINT16, TC0100SCN_RAM_SIZE / 2);
+	tc0100scn->ram = auto_alloc_array_clear(device->machine, uint16_t, TC0100SCN_RAM_SIZE / 2);
 
 	tc0100scn_set_layer_ptrs(tc0100scn);
 
@@ -2511,7 +2511,7 @@ static DEVICE_START( tc0100scn )
 									/* we call this here, so that they can be modified at VIDEO_START*/
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	device->machine->gfx[tc0100scn->tx_gfx] = gfx_element_alloc(device->machine, &tc0100scn_charlayout, (UINT8 *)tc0100scn->char_ram, 64, 0);
+	device->machine->gfx[tc0100scn->tx_gfx] = gfx_element_alloc(device->machine, &tc0100scn_charlayout, (uint8_t *)tc0100scn->char_ram, 64, 0);
 
 	state_save_register_device_item_pointer(device, 0, tc0100scn->ram, TC0100SCN_RAM_SIZE / 2);
 	state_save_register_device_item_array(device, 0, tc0100scn->ctrl);
@@ -2544,11 +2544,11 @@ static DEVICE_RESET( tc0100scn )
 typedef struct _tc0280grd_state tc0280grd_state;
 struct _tc0280grd_state
 {
-	UINT16 *       ram;
+	uint16_t *       ram;
 
 	tilemap_t      *tilemap;
 
-	UINT16         ctrl[8];
+	uint16_t         ctrl[8];
 	int            gfxnum, base_color;
 };
 
@@ -2637,10 +2637,10 @@ void tc0430grw_tilemap_update( running_device *device, int base_color )
 	tc0280grd_tilemap_update(device, base_color);
 }
 
-static void zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, UINT32 priority, int xmultiply )
+static void zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, uint32_t priority, int xmultiply )
 {
 	tc0280grd_state *tc0280grd = tc0280grd_get_safe_token(device);
-	UINT32 startx, starty;
+	uint32_t startx, starty;
 	int incxx, incxy, incyx, incyy;
 
 	/* 24-bit signed */
@@ -2649,9 +2649,9 @@ static void zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle
 	if (startx & 0x800000)
 		startx -= 0x1000000;
 
-	incxx = (INT16)tc0280grd->ctrl[2];
+	incxx = (int16_t)tc0280grd->ctrl[2];
 	incxx *= xmultiply;
-	incyx = (INT16)tc0280grd->ctrl[3];
+	incyx = (int16_t)tc0280grd->ctrl[3];
 
 	/* 24-bit signed */
 	starty = ((tc0280grd->ctrl[4] & 0xff) << 16) + tc0280grd->ctrl[5];
@@ -2659,9 +2659,9 @@ static void zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle
 	if (starty & 0x800000)
 		starty -= 0x1000000;
 
-	incxy = (INT16)tc0280grd->ctrl[6];
+	incxy = (int16_t)tc0280grd->ctrl[6];
 	incxy *= xmultiply;
-	incyy = (INT16)tc0280grd->ctrl[7];
+	incyy = (int16_t)tc0280grd->ctrl[7];
 
 	startx -= xoffset * incxx + yoffset * incyx;
 	starty -= xoffset * incxy + yoffset * incyy;
@@ -2672,12 +2672,12 @@ static void zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle
 			0, priority);
 }
 
-void tc0280grd_zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, UINT32 priority )
+void tc0280grd_zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, uint32_t priority )
 {
 	zoom_draw(device, bitmap, cliprect, xoffset, yoffset, priority, 2);
 }
 
-void tc0430grw_zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, UINT32 priority )
+void tc0430grw_zoom_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, uint32_t priority )
 {
 	zoom_draw(device, bitmap, cliprect, xoffset, yoffset, priority, 1);
 }
@@ -2696,7 +2696,7 @@ static DEVICE_START( tc0280grd )
 	tc0280grd->tilemap = tilemap_create_device(device, tc0280grd_get_tile_info, tilemap_scan_rows, 8, 8, 64, 64);
 	tilemap_set_transparent_pen(tc0280grd->tilemap, 0);
 
-	tc0280grd->ram = auto_alloc_array(device->machine, UINT16, TC0280GRD_RAM_SIZE / 2);
+	tc0280grd->ram = auto_alloc_array(device->machine, uint16_t, TC0280GRD_RAM_SIZE / 2);
 
 	state_save_register_device_item_pointer(device, 0, tc0280grd->ram, TC0280GRD_RAM_SIZE / 2);
 	state_save_register_device_item_array(device, 0, tc0280grd->ctrl);
@@ -2721,7 +2721,7 @@ static DEVICE_RESET( tc0280grd )
 typedef struct _tc0360pri_state tc0360pri_state;
 struct _tc0360pri_state
 {
-	UINT8   regs[16];
+	uint8_t   regs[16];
 };
 
 /*****************************************************************************
@@ -2791,15 +2791,15 @@ static DEVICE_RESET( tc0360pri )
 typedef struct _tc0480scp_state tc0480scp_state;
 struct _tc0480scp_state
 {
-	UINT16           ctrl[0x18];
+	uint16_t           ctrl[0x18];
 
-	UINT16 *         ram;
-	UINT16 *         bg_ram[4];
-	UINT16 *         tx_ram;
-	UINT16 *         char_ram;
-	UINT16 *         bgscroll_ram[4];
-	UINT16 *         rowzoom_ram[4];
-	UINT16 *         bgcolumn_ram[4];
+	uint16_t *         ram;
+	uint16_t *         bg_ram[4];
+	uint16_t *         tx_ram;
+	uint16_t *         char_ram;
+	uint16_t *         bgscroll_ram[4];
+	uint16_t *         rowzoom_ram[4];
+	uint16_t *         bgcolumn_ram[4];
 	int              bgscrollx[4];
 	int              bgscrolly[4];
 	int              pri_reg;
@@ -2807,7 +2807,7 @@ struct _tc0480scp_state
 	/* We keep two tilemaps for each of the 5 actual tilemaps: one at standard width, one double */
 	tilemap_t         *tilemap[5][2];
 	int             bg_gfx, tx_gfx;
-	INT32           tile_colbase, dblwidth;
+	int32_t           tile_colbase, dblwidth;
 	int             x_offs, y_offs;
 	int             text_xoffs, text_yoffs;
 	int             flip_xoffs, flip_yoffs;
@@ -2840,7 +2840,7 @@ INLINE const tc0480scp_interface *tc0480scp_get_interface( running_device *devic
 *****************************************************************************/
 
 
-INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 	int code = ram[2 * tile_index + 1] & 0x7fff;
@@ -2852,7 +2852,7 @@ INLINE void common_get_tc0480bg_tile_info( running_device *device, tile_data *ti
 			TILE_FLIPYX((attr & 0xc000) >> 14));
 }
 
-INLINE void common_get_tc0480tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void common_get_tc0480tx_tile_info( running_device *device, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 	int attr = ram[tile_index];
@@ -3240,7 +3240,7 @@ Historical Issues
 
 **********************************************************************/
 
-static void tc0480scp_bg01_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+static void tc0480scp_bg01_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	/* X-axis zoom offers expansion only: 0 = no zoom, 0xff = max
        Y-axis zoom offers expansion/compression: 0x7f = no zoom, 0xff = max
@@ -3257,10 +3257,10 @@ static void tc0480scp_bg01_draw( running_device *device, bitmap_t *bitmap, const
 	}
 	else	/* zoom */
 	{
-		UINT16 *dst16, *src16;
-		UINT8 *tsrc;
-		UINT16 scanline[512];
-		UINT32 sx;
+		uint16_t *dst16, *src16;
+		uint8_t *tsrc;
+		uint16_t scanline[512];
+		uint32_t sx;
 		bitmap_t *srcbitmap = tilemap_get_pixmap(tc0480scp->tilemap[layer][tc0480scp->dblwidth]);
 		bitmap_t *flagsbitmap = tilemap_get_flagsmap(tc0480scp->tilemap[layer][tc0480scp->dblwidth]);
 		int flip = tc0480scp->pri_reg & 0x40;
@@ -3268,9 +3268,9 @@ static void tc0480scp_bg01_draw( running_device *device, bitmap_t *bitmap, const
 		int x_index, x_step;
 		int machine_flip = 0;	/* for  ROT 180 ? */
 
-		UINT16 screen_width = 512; //cliprect->max_x - cliprect->min_x + 1;
-		UINT16 min_y = cliprect->min_y;
-		UINT16 max_y = cliprect->max_y;
+		uint16_t screen_width = 512; //cliprect->max_x - cliprect->min_x + 1;
+		uint16_t min_y = cliprect->min_y;
+		uint16_t max_y = cliprect->max_y;
 
 		int width_mask = 0x1ff;
 		if (tc0480scp->dblwidth)
@@ -3389,24 +3389,24 @@ flipscreen.
 
 ****************************************************************/
 
-static void tc0480scp_bg23_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+static void tc0480scp_bg23_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 	bitmap_t *srcbitmap = tilemap_get_pixmap(tc0480scp->tilemap[layer][tc0480scp->dblwidth]);
 	bitmap_t *flagsbitmap = tilemap_get_flagsmap(tc0480scp->tilemap[layer][tc0480scp->dblwidth]);
 
-	UINT16 *dst16, *src16;
-	UINT8 *tsrc;
+	uint16_t *dst16, *src16;
+	uint8_t *tsrc;
 	int i, y, y_index, src_y_index, row_index, row_zoom;
 	int sx, x_index, x_step;
-	UINT32 zoomx, zoomy;
-	UINT16 scanline[512];
+	uint32_t zoomx, zoomy;
+	uint16_t scanline[512];
 	int flipscreen = tc0480scp->pri_reg & 0x40;
 	int machine_flip = 0;	/* for  ROT 180 ? */
 
-	UINT16 screen_width = 512; //cliprect->max_x - cliprect->min_x + 1;
-	UINT16 min_y = cliprect->min_y;
-	UINT16 max_y = cliprect->max_y;
+	uint16_t screen_width = 512; //cliprect->max_x - cliprect->min_x + 1;
+	uint16_t min_y = cliprect->min_y;
+	uint16_t max_y = cliprect->max_y;
 
 	int width_mask = 0x1ff;
 	if (tc0480scp->dblwidth)
@@ -3511,7 +3511,7 @@ static void tc0480scp_bg23_draw( running_device *device, bitmap_t *bitmap, const
 }
 
 
-void tc0480scp_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+void tc0480scp_tilemap_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	tc0480scp_state *tc0480scp = tc0480scp_get_safe_token(device);
 
@@ -3538,7 +3538,7 @@ void tc0480scp_tilemap_draw( running_device *device, bitmap_t *bitmap, const rec
 
 /* For evidence table of TC0480SCP bg layer priorities, refer to mame55 source */
 
-static const UINT16 tc0480scp_bg_pri_lookup[8] =
+static const uint16_t tc0480scp_bg_pri_lookup[8] =
 {
 	0x0123,
 	0x1230,
@@ -3717,12 +3717,12 @@ static DEVICE_START( tc0480scp )
 		tilemap_set_scroll_rows(tc0480scp->tilemap[3][i], 512);
 	}
 
-	tc0480scp->ram = auto_alloc_array_clear(device->machine, UINT16, TC0480SCP_RAM_SIZE / 2);
+	tc0480scp->ram = auto_alloc_array_clear(device->machine, uint16_t, TC0480SCP_RAM_SIZE / 2);
 
 	tc0480scp_set_layer_ptrs(tc0480scp);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	device->machine->gfx[tc0480scp->tx_gfx] = gfx_element_alloc(device->machine, &tc0480scp_charlayout, (UINT8 *)tc0480scp->char_ram, 64, 0);
+	device->machine->gfx[tc0480scp->tx_gfx] = gfx_element_alloc(device->machine, &tc0480scp_charlayout, (uint8_t *)tc0480scp->char_ram, 64, 0);
 
 	state_save_register_device_item_pointer(device, 0, tc0480scp->ram, TC0480SCP_RAM_SIZE / 2);
 	state_save_register_device_item_array(device, 0, tc0480scp->ctrl);
@@ -3751,7 +3751,7 @@ static DEVICE_RESET( tc0480scp )
 typedef struct _tc0150rod_state tc0150rod_state;
 struct _tc0150rod_state
 {
-	UINT16 *        ram;
+	uint16_t *        ram;
 
 	const char      *gfx_region;	/* gfx region for the road */
 };
@@ -3956,7 +3956,7 @@ lookup table from rom for the TaitoZ sprites.
 
 ******************************************************************************/
 
-void tc0150rod_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int y_offs, int palette_offs, int type, int road_trans, UINT32 low_priority, UINT32 high_priority )
+void tc0150rod_draw( running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int y_offs, int palette_offs, int type, int road_trans, uint32_t low_priority, uint32_t high_priority )
 {
 	tc0150rod_state *tc0150rod = tc0150rod_get_safe_token(device);
 
@@ -3965,17 +3965,17 @@ void tc0150rod_draw( running_device *device, bitmap_t *bitmap, const rectangle *
 #endif
 
 	int x_offs = 0xa7;	/* Increasing this shifts road to right */
-	UINT16 scanline[512];
-	UINT16 roada_line[512], roadb_line[512];
-	UINT16 *dst16;
-	UINT16 *roada, *roadb;
-	UINT16 *roadgfx = (UINT16 *)memory_region(device->machine, tc0150rod->gfx_region);
+	uint16_t scanline[512];
+	uint16_t roada_line[512], roadb_line[512];
+	uint16_t *dst16;
+	uint16_t *roada, *roadb;
+	uint16_t *roadgfx = (uint16_t *)memory_region(device->machine, tc0150rod->gfx_region);
 
-	UINT16 pixel, color, gfx_word;
-	UINT16 roada_clipl, roada_clipr, roada_bodyctrl;
-	UINT16 roadb_clipl, roadb_clipr, roadb_bodyctrl;
-	UINT16 pri, pixpri;
-	UINT8 priorities[6];
+	uint16_t pixel, color, gfx_word;
+	uint16_t roada_clipl, roada_clipr, roada_bodyctrl;
+	uint16_t roadb_clipl, roadb_clipr, roadb_bodyctrl;
+	uint16_t pri, pixpri;
+	uint8_t priorities[6];
 	int x_index, roadram_index, roadram2_index, i;
 	int xoffset, paloffs, palloffs, palroffs;
 	int road_gfx_tilenum, colbank, road_center;
@@ -4544,7 +4544,7 @@ static DEVICE_START( tc0150rod )
 
 	tc0150rod->gfx_region = intf->gfx_region;
 
-	tc0150rod->ram = auto_alloc_array(device->machine, UINT16, TC0150ROD_RAM_SIZE / 2);
+	tc0150rod->ram = auto_alloc_array(device->machine, uint16_t, TC0150ROD_RAM_SIZE / 2);
 
 	state_save_register_device_item_pointer(device, 0, tc0150rod->ram, TC0150ROD_RAM_SIZE / 2);
 
@@ -4560,7 +4560,7 @@ static DEVICE_START( tc0150rod )
 typedef struct _tc0110pcr_state tc0110pcr_state;
 struct _tc0110pcr_state
 {
-	UINT16 *     ram;
+	uint16_t *     ram;
 	int          type;
 	int          addr;
 	int          pal_offs;
@@ -4756,7 +4756,7 @@ static DEVICE_START( tc0110pcr )
 
 	tc0110pcr->pal_offs = intf->pal_offs;
 
-	tc0110pcr->ram = auto_alloc_array(device->machine, UINT16, TC0110PCR_RAM_SIZE);
+	tc0110pcr->ram = auto_alloc_array(device->machine, uint16_t, TC0110PCR_RAM_SIZE);
 
 	state_save_register_device_item_pointer(device, 0, tc0110pcr->ram, TC0110PCR_RAM_SIZE);
 	state_save_register_device_item(device, 0, tc0110pcr->type);
@@ -4779,16 +4779,16 @@ static DEVICE_RESET( tc0110pcr )
 typedef struct _tc0180vcu_state tc0180vcu_state;
 struct _tc0180vcu_state
 {
-	UINT16         ctrl[0x10];
+	uint16_t         ctrl[0x10];
 
-	UINT16 *       ram;
-	UINT16 *       scrollram;
+	uint16_t *       ram;
+	uint16_t *       scrollram;
 
 	tilemap_t        *tilemap[3];
 
-	UINT16         bg_rambank[2], fg_rambank[2], tx_rambank;
-	UINT8          framebuffer_page;
-	UINT8          video_control;
+	uint16_t         bg_rambank[2], fg_rambank[2], tx_rambank;
+	uint8_t          framebuffer_page;
+	uint8_t          video_control;
 
 	int            bg_color_base;
 	int            fg_color_base;
@@ -4882,7 +4882,7 @@ READ8_DEVICE_HANDLER( tc0180vcu_get_videoctrl )
 	return tc0180vcu->video_control;
 }
 
-static void tc0180vcu_video_control( running_device *device, UINT8 data )
+static void tc0180vcu_video_control( running_device *device, uint8_t data )
 {
 	tc0180vcu_state *tc0180vcu = tc0180vcu_get_safe_token(device);
 #if 0
@@ -4907,7 +4907,7 @@ READ16_DEVICE_HANDLER( tc0180vcu_ctrl_r )
 WRITE16_DEVICE_HANDLER( tc0180vcu_ctrl_w )
 {
 	tc0180vcu_state *tc0180vcu = tc0180vcu_get_safe_token(device);
-	UINT16 oldword = tc0180vcu->ctrl[offset];
+	uint16_t oldword = tc0180vcu->ctrl[offset];
 
 	COMBINE_DATA (&tc0180vcu->ctrl[offset]);
 
@@ -5090,8 +5090,8 @@ static DEVICE_START( tc0180vcu )
 	tilemap_set_scrolldx(tc0180vcu->tilemap[1], 0, 24 * 8);
 	tilemap_set_scrolldx(tc0180vcu->tilemap[2], 0, 24 * 8);
 
-	tc0180vcu->ram = auto_alloc_array_clear(device->machine, UINT16, TC0180VCU_RAM_SIZE / 2);
-	tc0180vcu->scrollram = auto_alloc_array_clear(device->machine, UINT16, TC0180VCU_SCROLLRAM_SIZE / 2);
+	tc0180vcu->ram = auto_alloc_array_clear(device->machine, uint16_t, TC0180VCU_RAM_SIZE / 2);
+	tc0180vcu->scrollram = auto_alloc_array_clear(device->machine, uint16_t, TC0180VCU_SCROLLRAM_SIZE / 2);
 
 	state_save_register_device_item_pointer(device, 0, tc0180vcu->ram, TC0180VCU_RAM_SIZE / 2);
 	state_save_register_device_item_pointer(device, 0, tc0180vcu->scrollram, TC0180VCU_SCROLLRAM_SIZE / 2);

@@ -6,7 +6,7 @@
 
 /*----------- defined in machine/kaneko16.c -----------*/
 
-extern UINT16 *kaneko16_mcu_ram; /* for calc3 and toybox */
+extern uint16_t *kaneko16_mcu_ram; /* for calc3 and toybox */
 
 READ16_HANDLER( galpanib_calc_r );
 WRITE16_HANDLER( galpanib_calc_w );
@@ -34,7 +34,7 @@ void bonkadv_mcu_run(running_machine *machine);
 void gtmr_mcu_run(running_machine *machine);
 void calc3_mcu_run(running_machine *machine);
 
-void toxboy_handle_04_subcommand(running_machine* machine,UINT8 mcu_subcmd, UINT16*mcu_ram);
+void toxboy_handle_04_subcommand(running_machine* machine,uint8_t mcu_subcmd, uint16_t*mcu_ram);
 
 DRIVER_INIT( decrypt_toybox_rom );
 DRIVER_INIT( decrypt_toybox_rom_alt );
@@ -52,10 +52,10 @@ WRITE16_HANDLER( kaneko16_display_enable );
 
 /* Tile Layers: */
 
-extern UINT16 *kaneko16_vram_0,    *kaneko16_vram_1,    *kaneko16_layers_0_regs;
-extern UINT16 *kaneko16_vscroll_0, *kaneko16_vscroll_1;
-extern UINT16 *kaneko16_vram_2,    *kaneko16_vram_3,    *kaneko16_layers_1_regs;
-extern UINT16 *kaneko16_vscroll_2, *kaneko16_vscroll_3;
+extern uint16_t *kaneko16_vram_0,    *kaneko16_vram_1,    *kaneko16_layers_0_regs;
+extern uint16_t *kaneko16_vscroll_0, *kaneko16_vscroll_1;
+extern uint16_t *kaneko16_vram_2,    *kaneko16_vram_3,    *kaneko16_layers_1_regs;
+extern uint16_t *kaneko16_vscroll_2, *kaneko16_vscroll_3;
 
 WRITE16_HANDLER( kaneko16_vram_0_w );
 WRITE16_HANDLER( kaneko16_vram_1_w );
@@ -70,9 +70,9 @@ WRITE16_HANDLER( kaneko16_layers_1_regs_w );
 
 extern int kaneko16_sprite_type;
 extern int kaneko16_sprite_fliptype;
-extern UINT16 kaneko16_sprite_xoffs, kaneko16_sprite_flipx;
-extern UINT16 kaneko16_sprite_yoffs, kaneko16_sprite_flipy;
-extern UINT16 *kaneko16_sprites_regs;
+extern uint16_t kaneko16_sprite_xoffs, kaneko16_sprite_flipx;
+extern uint16_t kaneko16_sprite_yoffs, kaneko16_sprite_flipy;
+extern uint16_t *kaneko16_sprites_regs;
 
 READ16_HANDLER ( kaneko16_sprites_regs_r );
 WRITE16_HANDLER( kaneko16_sprites_regs_w );
@@ -81,7 +81,7 @@ void kaneko16_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rec
 
 /* Pixel Layer: */
 
-extern UINT16 *kaneko16_bg15_select, *kaneko16_bg15_reg;
+extern uint16_t *kaneko16_bg15_select, *kaneko16_bg15_reg;
 
 READ16_HANDLER ( kaneko16_bg15_select_r );
 WRITE16_HANDLER( kaneko16_bg15_select_w );
@@ -122,18 +122,18 @@ VIDEO_UPDATE( jchan_view2 );
 VIDEO_START( galsnew );
 VIDEO_UPDATE( galsnew );
 
-extern UINT16* galsnew_bg_pixram;
-extern UINT16* galsnew_fg_pixram;
+extern uint16_t* galsnew_bg_pixram;
+extern uint16_t* galsnew_fg_pixram;
 
 
 /*----------- defined in video/galpani2.c -----------*/
 
-extern UINT16 *galpani2_bg8_0,         *galpani2_bg8_1;
-extern UINT16 *galpani2_palette_0,     *galpani2_palette_1;
-extern UINT16 *galpani2_bg8_0_scrollx, *galpani2_bg8_1_scrollx;
-extern UINT16 *galpani2_bg8_0_scrolly, *galpani2_bg8_1_scrolly;
+extern uint16_t *galpani2_bg8_0,         *galpani2_bg8_1;
+extern uint16_t *galpani2_palette_0,     *galpani2_palette_1;
+extern uint16_t *galpani2_bg8_0_scrollx, *galpani2_bg8_1_scrollx;
+extern uint16_t *galpani2_bg8_0_scrolly, *galpani2_bg8_1_scrolly;
 
-extern UINT16 *galpani2_bg15;
+extern uint16_t *galpani2_bg15;
 
 PALETTE_INIT( galpani2 );
 VIDEO_START( galpani2 );

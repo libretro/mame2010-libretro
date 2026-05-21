@@ -12,11 +12,11 @@ public:
 	ginganin_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    fgram;
-	UINT16 *    txtram;
-	UINT16 *    vregs;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    fgram;
+	uint16_t *    txtram;
+	uint16_t *    vregs;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
@@ -26,10 +26,10 @@ public:
 	int         posx, posy;
 #endif
 	/* sound-related */
-	UINT8       MC6840_index0;
-	UINT8       MC6840_register0;
-	UINT8       MC6840_index1;
-	UINT8       MC6840_register1;
+	uint8_t       MC6840_index0;
+	uint8_t       MC6840_register0;
+	uint8_t       MC6840_index1;
+	uint8_t       MC6840_register1;
 	int         S_TEMPO;
 	int         S_TEMPO_OLD;
 	int         MC6809_CTR;

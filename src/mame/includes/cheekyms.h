@@ -13,9 +13,9 @@ public:
 	cheekyms_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
-	UINT8 *        spriteram;
-	UINT8 *        port_80;
+	uint8_t *        videoram;
+	uint8_t *        spriteram;
+	uint8_t *        port_80;
 
 	/* video-related */
 	tilemap_t        *cm_tilemap;

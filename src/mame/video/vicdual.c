@@ -8,7 +8,7 @@
 #include "includes/vicdual.h"
 
 
-static UINT8 palette_bank;
+static uint8_t palette_bank;
 
 
 static const pen_t pens_from_color_prom[] =
@@ -33,9 +33,9 @@ WRITE8_HANDLER( vicdual_palette_bank_w )
 
 VIDEO_UPDATE( vicdual_bw )
 {
-	UINT8 x = 0;
-	UINT8 y = cliprect->min_y;
-	UINT8 video_data = 0;
+	uint8_t x = 0;
+	uint8_t y = cliprect->min_y;
+	uint8_t video_data = 0;
 
 	while (1)
 	{
@@ -44,7 +44,7 @@ VIDEO_UPDATE( vicdual_bw )
 		if ((x & 0x07) == 0)
 		{
 			offs_t offs;
-			UINT8 char_code;
+			uint8_t char_code;
 
 			/* read the character code */
 			offs = (y >> 3 << 5) | (x >> 3);
@@ -83,10 +83,10 @@ VIDEO_UPDATE( vicdual_bw )
 
 VIDEO_UPDATE( vicdual_color )
 {
-	UINT8 *color_prom = (UINT8 *)memory_region(screen->machine, "proms");
-	UINT8 x = 0;
-	UINT8 y = cliprect->min_y;
-	UINT8 video_data = 0;
+	uint8_t *color_prom = (uint8_t *)memory_region(screen->machine, "proms");
+	uint8_t x = 0;
+	uint8_t y = cliprect->min_y;
+	uint8_t video_data = 0;
 	pen_t back_pen = 0;
 	pen_t fore_pen = 0;
 
@@ -97,7 +97,7 @@ VIDEO_UPDATE( vicdual_color )
 		if ((x & 0x07) == 0)
 		{
 			offs_t offs;
-			UINT8 char_code;
+			uint8_t char_code;
 
 			/* read the character code */
 			offs = (y >> 3 << 5) | (x >> 3);

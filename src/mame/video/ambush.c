@@ -57,7 +57,7 @@ static void draw_chars( running_machine *machine, bitmap_t *bitmap, const rectan
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
 		int code, sx, sy, col;
-		UINT8 scroll;
+		uint8_t scroll;
 
 		sy = (offs / 32);
 		sx = (offs % 32);

@@ -1,14 +1,14 @@
 #include "emu.h"
 #include "includes/deco32.h"
 
-UINT32 *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
-UINT32 *deco32_pf12_control,*deco32_pf34_control;
-UINT32 *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
-UINT32 *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
-UINT32 *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
-UINT32 *deco32_ace_ram;
+uint32_t *deco32_pf1_data,*deco32_pf2_data,*deco32_pf3_data,*deco32_pf4_data;
+uint32_t *deco32_pf12_control,*deco32_pf34_control;
+uint32_t *deco32_pf1_rowscroll,*deco32_pf2_rowscroll,*deco32_pf3_rowscroll,*deco32_pf4_rowscroll;
+uint32_t *dragngun_sprite_layout_0_ram, *dragngun_sprite_layout_1_ram;
+uint32_t *dragngun_sprite_lookup_0_ram, *dragngun_sprite_lookup_1_ram;
+uint32_t *deco32_ace_ram;
 
-static UINT8 *dirty_palette;
+static uint8_t *dirty_palette;
 static tilemap_t *pf1_tilemap,*pf1a_tilemap,*pf2_tilemap,*pf3_tilemap,*pf4_tilemap;
 static int deco32_pf1_bank,deco32_pf2_bank,deco32_pf3_bank,deco32_pf4_bank;
 static int deco32_pf1_flip,deco32_pf2_flip,deco32_pf3_flip,deco32_pf4_flip;
@@ -16,11 +16,11 @@ static int deco32_pf2_colourbank,deco32_pf4_colourbank,deco32_pri;
 
 static bitmap_t *sprite0_mix_bitmap, *sprite1_mix_bitmap, *tilemap_alpha_bitmap;
 
-static UINT32 dragngun_sprite_ctrl;
+static uint32_t dragngun_sprite_ctrl;
 static int deco32_ace_ram_dirty, has_ace_ram;
 
 int deco32_raster_display_position;
-UINT16 *deco32_raster_display_list;
+uint16_t *deco32_raster_display_list;
 
 /******************************************************************************
 
@@ -39,14 +39,14 @@ static void deco16_clear_sprite_priority_bitmap(void)
 /* A special pdrawgfx z-buffered sprite renderer that is needed to properly draw multiple sprite sources with alpha */
 static void deco16_pdrawgfx(
 		bitmap_t *dest,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
-		int transparent_color,UINT32 pri_mask,UINT32 sprite_mask,UINT8 write_pri,UINT8 alpha)
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
+		int transparent_color,uint32_t pri_mask,uint32_t sprite_mask,uint8_t write_pri,uint8_t alpha)
 {
 	int ox,oy,cx,cy;
 	int x_index,y_index,x,y;
 	bitmap_t *priority_bitmap = gfx->machine->priority_bitmap;
 	const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-	const UINT8 *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+	const uint8_t *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 	/* check bounds */
 	ox = sx;
@@ -66,10 +66,10 @@ static void deco16_pdrawgfx(
 
 	for( y=0; y<16-cy; y++ )
 	{
-		const UINT8 *source = code_base + (y_index * gfx->line_modulo);
-		UINT32 *destb = BITMAP_ADDR32(dest, sy, 0);
-		UINT8 *pri = BITMAP_ADDR8(priority_bitmap, sy, 0);
-		UINT8 *spri = BITMAP_ADDR8(sprite_priority_bitmap, sy, 0);
+		const uint8_t *source = code_base + (y_index * gfx->line_modulo);
+		uint32_t *destb = BITMAP_ADDR32(dest, sy, 0);
+		uint8_t *pri = BITMAP_ADDR8(priority_bitmap, sy, 0);
+		uint8_t *spri = BITMAP_ADDR8(sprite_priority_bitmap, sy, 0);
 
 		if (sy >= 0 && sy < 248)
 		{
@@ -190,13 +190,13 @@ WRITE32_HANDLER( deco32_ace_ram_w )
 static void updateAceRam(running_machine* machine)
 {
 	int r,g,b,i;
-	UINT8 fadeptr=deco32_ace_ram[0x20];
-	UINT8 fadeptg=deco32_ace_ram[0x21];
-	UINT8 fadeptb=deco32_ace_ram[0x22];
-	UINT8 fadepsr=deco32_ace_ram[0x23];
-	UINT8 fadepsg=deco32_ace_ram[0x24];
-	UINT8 fadepsb=deco32_ace_ram[0x25];
-//  UINT8 mode=deco32_ace_ram[0x26];
+	uint8_t fadeptr=deco32_ace_ram[0x20];
+	uint8_t fadeptg=deco32_ace_ram[0x21];
+	uint8_t fadeptb=deco32_ace_ram[0x22];
+	uint8_t fadepsr=deco32_ace_ram[0x23];
+	uint8_t fadepsg=deco32_ace_ram[0x24];
+	uint8_t fadepsb=deco32_ace_ram[0x25];
+//  uint8_t mode=deco32_ace_ram[0x26];
 
 	deco32_ace_ram_dirty=0;
 
@@ -210,9 +210,9 @@ static void updateAceRam(running_machine* machine)
 		if (i>255) /* Screenshots seem to suggest ACE fades do not affect playfield 1 palette (0-255) */
 		{
 			/* Yeah, this should really be fixed point, I know */
-			b = (UINT8)((float)b + (((float)fadeptb - (float)b) * (float)fadepsb/255.0f));
-			g = (UINT8)((float)g + (((float)fadeptg - (float)g) * (float)fadepsg/255.0f));
-			r = (UINT8)((float)r + (((float)fadeptr - (float)r) * (float)fadepsr/255.0f));
+			b = (uint8_t)((float)b + (((float)fadeptb - (float)b) * (float)fadepsb/255.0f));
+			g = (uint8_t)((float)g + (((float)fadeptg - (float)g) * (float)fadepsg/255.0f));
+			r = (uint8_t)((float)r + (((float)fadeptr - (float)r) * (float)fadepsr/255.0f));
 		}
 
 		palette_set_color(machine,i,MAKE_RGB(r,g,b));
@@ -270,7 +270,7 @@ WRITE32_HANDLER( deco32_palette_dma_w )
 
 /******************************************************************************/
 
-static void captaven_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT32 *spritedata, int gfxbank)
+static void captaven_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const uint32_t *spritedata, int gfxbank)
 {
 	int offs;
 
@@ -376,7 +376,7 @@ static void captaven_draw_sprites(running_machine* machine, bitmap_t *bitmap, co
 	}
 }
 
-static void fghthist_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT32 *spritedata, int gfxbank, int mask, int colourmask)
+static void fghthist_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const uint32_t *spritedata, int gfxbank, int mask, int colourmask)
 {
 	int offs;
 
@@ -443,9 +443,9 @@ static void fghthist_draw_sprites(running_machine* machine, bitmap_t *bitmap, co
     colour/alpha/priority.
 */
 static void deco32_draw_sprite(bitmap_t *dest,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 priority,int flipx,int flipy,int sx,int sy)
+		uint32_t code,uint32_t priority,int flipx,int flipy,int sx,int sy)
 {
-	const UINT8 *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+	const uint8_t *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 	int ox,oy,cx,cy;
 	int x_index,y_index,x,y;
 
@@ -467,8 +467,8 @@ static void deco32_draw_sprite(bitmap_t *dest,const rectangle *clip,const gfx_el
 
 	for( y=0; y<16-cy; y++ )
 	{
-		const UINT8 *source = code_base + y_index * gfx->line_modulo;
-		UINT16 *destb = BITMAP_ADDR16(dest, sy, 0);
+		const uint8_t *source = code_base + y_index * gfx->line_modulo;
+		uint16_t *destb = BITMAP_ADDR16(dest, sy, 0);
 
 		if (flipx) { source+=15-(sx-ox); x_index=-1; } else { x_index=1; source+=(sx-ox); }
 
@@ -489,7 +489,7 @@ static void deco32_draw_sprite(bitmap_t *dest,const rectangle *clip,const gfx_el
 }
 
 // Merge with Tattass & Fghthist sprite routines later
-static void nslasher_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT32 *spritedata, int gfxbank)
+static void nslasher_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const uint32_t *spritedata, int gfxbank)
 {
 	int offs;
 
@@ -552,9 +552,9 @@ static void nslasher_draw_sprites(running_machine* machine, bitmap_t *bitmap, co
 
 INLINE void dragngun_drawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
 		int transparent_color,
-		int scalex, int scaley,bitmap_t *pri_buffer,UINT32 pri_mask, int sprite_screen_width, int  sprite_screen_height, UINT8 alpha )
+		int scalex, int scaley,bitmap_t *pri_buffer,uint32_t pri_mask, int sprite_screen_width, int  sprite_screen_height, uint8_t alpha )
 {
 	rectangle myclip;
 
@@ -587,7 +587,7 @@ INLINE void dragngun_drawgfxzoom(
 		if( gfx )
 		{
 			const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-			const UINT8 *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+			const uint8_t *code_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 			if (sprite_screen_width && sprite_screen_height)
 			{
@@ -659,9 +659,9 @@ INLINE void dragngun_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-								UINT8 *pri = BITMAP_ADDR8(pri_buffer, y, 0);
+								const uint8_t *source = code_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								uint8_t *pri = BITMAP_ADDR8(pri_buffer, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -683,8 +683,8 @@ INLINE void dragngun_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = code_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -706,9 +706,9 @@ INLINE void dragngun_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-								UINT8 *pri = BITMAP_ADDR8(pri_buffer, y, 0);
+								const uint8_t *source = code_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								uint8_t *pri = BITMAP_ADDR8(pri_buffer, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -730,8 +730,8 @@ INLINE void dragngun_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = code_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -751,10 +751,10 @@ INLINE void dragngun_drawgfxzoom(
 	}
 }
 
-static void dragngun_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT32 *spritedata)
+static void dragngun_draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, const uint32_t *spritedata)
 {
-	const UINT32 *layout_ram;
-	const UINT32 *lookup_ram;
+	const uint32_t *layout_ram;
+	const uint32_t *lookup_ram;
 	int offs;
 
 	/*
@@ -928,7 +928,7 @@ static void dragngun_draw_sprites(running_machine* machine, bitmap_t *bitmap, co
 
 /******************************************************************************/
 
-static UINT32 deco16_scan_rows(UINT32 col,UINT32 row,UINT32 num_cols,UINT32 num_rows)
+static uint32_t deco16_scan_rows(uint32_t col,uint32_t row,uint32_t num_cols,uint32_t num_rows)
 {
 	/* logical (col,row) -> memory offset */
 	return (col & 0x1f) + ((row & 0x1f) << 5) + ((col & 0x20) << 5);
@@ -949,9 +949,9 @@ static TILE_GET_INFO( get_pf1a_tile_info )
 
 static TILE_GET_INFO( get_pf2_tile_info )
 {
-	UINT32 tile=deco32_pf2_data[tile_index];
-	UINT8	colour=(tile>>12)&0xf;
-	UINT8 flags=0;
+	uint32_t tile=deco32_pf2_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf12_control[6]>>8)&0x01) {
@@ -969,9 +969,9 @@ static TILE_GET_INFO( get_pf2_tile_info )
 
 static TILE_GET_INFO( get_pf3_tile_info )
 {
-	UINT32 tile=deco32_pf3_data[tile_index];
-	UINT8	colour=(tile>>12)&0xf;
-	UINT8 flags=0;
+	uint32_t tile=deco32_pf3_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>0)&0x01) {
@@ -989,9 +989,9 @@ static TILE_GET_INFO( get_pf3_tile_info )
 
 static TILE_GET_INFO( get_pf4_tile_info )
 {
-	UINT32 tile=deco32_pf4_data[tile_index];
-	UINT8	colour=(tile>>12)&0xf;
-	UINT8 flags=0;
+	uint32_t tile=deco32_pf4_data[tile_index];
+	uint8_t	colour=(tile>>12)&0xf;
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>8)&0x01) {
@@ -1016,8 +1016,8 @@ static TILE_GET_INFO( get_ca_pf3_tile_info )
 
 static TILE_GET_INFO( get_ll_pf3_tile_info )
 {
-	UINT32 tile=deco32_pf3_data[tile_index];
-	UINT8 flags=0;
+	uint32_t tile=deco32_pf3_data[tile_index];
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>0)&0x01)
@@ -1031,8 +1031,8 @@ static TILE_GET_INFO( get_ll_pf3_tile_info )
 
 static TILE_GET_INFO( get_ll_pf4_tile_info )
 {
-	UINT32 tile=deco32_pf4_data[tile_index];
-	UINT8 flags=0;
+	uint32_t tile=deco32_pf4_data[tile_index];
+	uint8_t flags=0;
 
 	if (tile&0x8000) {
 		if ((deco32_pf34_control[6]>>8)&0x01)
@@ -1068,7 +1068,7 @@ VIDEO_START( fghthist )
 	pf3_tilemap = tilemap_create(machine, get_pf3_tile_info, deco16_scan_rows, 16,16,64,32);
 	pf4_tilemap = tilemap_create(machine, get_pf4_tile_info, deco16_scan_rows, 16,16,64,32);
 	pf1a_tilemap =0;
-	dirty_palette = auto_alloc_array(machine, UINT8, 4096);
+	dirty_palette = auto_alloc_array(machine, uint8_t, 4096);
 
 	/* Allow sprite bitmap */
 	int width = machine->primary_screen->width();
@@ -1090,8 +1090,8 @@ VIDEO_START( dragngun )
 	pf3_tilemap = tilemap_create(machine, get_ll_pf3_tile_info, deco16_scan_rows,16,16,64,32);
 	pf4_tilemap = tilemap_create(machine, get_ll_pf4_tile_info, deco16_scan_rows,     16,16,64,32);
 	pf1a_tilemap =tilemap_create(machine, get_pf1a_tile_info,   deco16_scan_rows,16,16,64,32);
-	dirty_palette = auto_alloc_array(machine, UINT8, 4096);
-	deco32_raster_display_list = auto_alloc_array(machine, UINT16, 10 * 256 / 2);
+	dirty_palette = auto_alloc_array(machine, uint8_t, 4096);
+	deco32_raster_display_list = auto_alloc_array(machine, uint16_t, 10 * 256 / 2);
 
 	tilemap_set_transparent_pen(pf1_tilemap,0);
 	tilemap_set_transparent_pen(pf2_tilemap,0);
@@ -1112,8 +1112,8 @@ VIDEO_START( lockload )
 	pf3_tilemap = tilemap_create(machine, get_ll_pf3_tile_info, deco16_scan_rows,16,16,32,32);
 	pf4_tilemap = tilemap_create(machine, get_ll_pf4_tile_info, deco16_scan_rows,     16,16,32,32);
 	pf1a_tilemap =tilemap_create(machine, get_pf1a_tile_info,   deco16_scan_rows,16,16,64,32);
-	dirty_palette = auto_alloc_array(machine, UINT8, 4096);
-	deco32_raster_display_list = auto_alloc_array(machine, UINT16, 10 * 256 / 2);
+	dirty_palette = auto_alloc_array(machine, uint8_t, 4096);
+	deco32_raster_display_list = auto_alloc_array(machine, uint16_t, 10 * 256 / 2);
 	memset(deco32_raster_display_list, 0, 10 * 256);
 
 	tilemap_set_transparent_pen(pf1_tilemap,0);
@@ -1137,7 +1137,7 @@ VIDEO_START( nslasher )
 	pf3_tilemap = tilemap_create(machine, get_pf3_tile_info, deco16_scan_rows,16,16,64,32);
 	pf4_tilemap = tilemap_create(machine, get_pf4_tile_info, deco16_scan_rows,     16,16,64,32);
 	pf1a_tilemap =0;
-	dirty_palette = auto_alloc_array(machine, UINT8, 4096);
+	dirty_palette = auto_alloc_array(machine, uint8_t, 4096);
 
 	width = machine->primary_screen->width();
 	height = machine->primary_screen->height();
@@ -1187,7 +1187,7 @@ static void print_debug_info(bitmap_t *bitmap)
 
 #endif
 
-static void deco32_setup_scroll(tilemap_t *pf_tilemap, UINT16 height, UINT8 control0, UINT8 control1, UINT16 sy, UINT16 sx, UINT32 *rowdata, UINT32 *coldata)
+static void deco32_setup_scroll(tilemap_t *pf_tilemap, uint16_t height, uint8_t control0, uint8_t control1, uint16_t sy, uint16_t sx, uint32_t *rowdata, uint32_t *coldata)
 {
 	int rows,offs;
 
@@ -1236,16 +1236,16 @@ static void combined_tilemap_draw(running_machine* machine, bitmap_t *bitmap, co
 	const bitmap_t *bitmap1 = tilemap_get_pixmap(pf4_tilemap);
 	int x,y,p;
 
-	const UINT16 width_mask=0x3ff;
-	const UINT16 height_mask=0x1ff;
-	const UINT16 y_src=deco32_pf34_control[2];
-//  const UINT32 *rows=deco32_pf3_rowscroll;
+	const uint16_t width_mask=0x3ff;
+	const uint16_t height_mask=0x1ff;
+	const uint16_t y_src=deco32_pf34_control[2];
+//  const uint32_t *rows=deco32_pf3_rowscroll;
 
-	const UINT16 *bitmap0_y;
-	const UINT16 *bitmap1_y;
-	UINT32 *bitmap2_y;
+	const uint16_t *bitmap0_y;
+	const uint16_t *bitmap1_y;
+	uint32_t *bitmap2_y;
 
-	UINT16 x_src;
+	uint16_t x_src;
 
 	for (y=8; y<248; y++) {
 		const int py=(y_src+y)&height_mask;
@@ -1492,20 +1492,20 @@ static void mixDualAlphaSprites(bitmap_t *bitmap, const rectangle *cliprect, con
 
 	/* Mix sprites into main bitmap, based on priority & alpha */
 	for (y=8; y<248; y++) {
-		UINT8* tilemapPri=BITMAP_ADDR8(machine->priority_bitmap, y, 0);
-		UINT16* sprite0=BITMAP_ADDR16(sprite0_mix_bitmap, y, 0);
-		UINT16* sprite1=BITMAP_ADDR16(sprite1_mix_bitmap, y, 0);
-		UINT32* destLine=BITMAP_ADDR32(bitmap, y, 0);
-		UINT16* alphaTilemap=BITMAP_ADDR16(tilemap_alpha_bitmap, y, 0);
+		uint8_t* tilemapPri=BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+		uint16_t* sprite0=BITMAP_ADDR16(sprite0_mix_bitmap, y, 0);
+		uint16_t* sprite1=BITMAP_ADDR16(sprite1_mix_bitmap, y, 0);
+		uint32_t* destLine=BITMAP_ADDR32(bitmap, y, 0);
+		uint16_t* alphaTilemap=BITMAP_ADDR16(tilemap_alpha_bitmap, y, 0);
 
 		for (x=0; x<320; x++) {
-			UINT16 priColAlphaPal0=sprite0[x];
-			UINT16 priColAlphaPal1=sprite1[x];
-			UINT16 pri0=(priColAlphaPal0&0x6000)>>13;
-			UINT16 pri1=(priColAlphaPal1&0x6000)>>13;
-			UINT16 col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->total_colors;
-			UINT16 col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->total_colors;
-			UINT16 alpha1=priColAlphaPal1&0x8000;
+			uint16_t priColAlphaPal0=sprite0[x];
+			uint16_t priColAlphaPal1=sprite1[x];
+			uint16_t pri0=(priColAlphaPal0&0x6000)>>13;
+			uint16_t pri1=(priColAlphaPal1&0x6000)>>13;
+			uint16_t col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->total_colors;
+			uint16_t col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->total_colors;
+			uint16_t alpha1=priColAlphaPal1&0x8000;
 
 			// Apply sprite bitmap 0 according to priority rules
 			if ((priColAlphaPal0&0xff)!=0)
@@ -1590,7 +1590,7 @@ static void mixDualAlphaSprites(bitmap_t *bitmap, const rectangle *cliprect, con
 			/* Optionally mix in alpha tilemap */
 			if (mixAlphaTilemap)
 			{
-				UINT16 p=alphaTilemap[x];
+				uint16_t p=alphaTilemap[x];
 				if (p&0xf)
 				{
 					/* Alpha tilemap under top two sprite 0 priorities */

@@ -10,10 +10,10 @@
 #include "includes/wwfwfest.h"
 
 static tilemap_t *fg0_tilemap, *bg0_tilemap, *bg1_tilemap;
-UINT16 wwfwfest_pri;
-UINT16 wwfwfest_bg0_scrollx, wwfwfest_bg0_scrolly, wwfwfest_bg1_scrollx, wwfwfest_bg1_scrolly;
-UINT16 *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
-static UINT16 sprite_xoff, bg0_dx, bg1_dx[2];
+uint16_t wwfwfest_pri;
+uint16_t wwfwfest_bg0_scrollx, wwfwfest_bg0_scrolly, wwfwfest_bg1_scrollx, wwfwfest_bg1_scrolly;
+uint16_t *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
+static uint16_t sprite_xoff, bg0_dx, bg1_dx[2];
 
 /*******************************************************************************
  Write Handlers
@@ -68,7 +68,7 @@ static TILE_GET_INFO( get_fg0_tile_info )
 
     **- End of Comments -*/
 
-	UINT16 *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 	tilebase =  &wwfwfest_fg0_videoram[tile_index*2];
@@ -98,7 +98,7 @@ static TILE_GET_INFO( get_bg0_tile_info )
 
     **- End of Comments -*/
 
-	UINT16 *tilebase;
+	uint16_t *tilebase;
 	int tileno,colbank;
 
 	tilebase =  &wwfwfest_bg0_videoram[tile_index*2];
@@ -124,7 +124,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 
     **- End of Comments -*/
 
-	UINT16 *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 	tilebase =  &wwfwfest_bg1_videoram[tile_index];
@@ -165,10 +165,10 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
     **- End of Comments -*/
 
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT16 *source = buffered_spriteram16;
-	UINT16 *finish = source + 0x2000/2;
+	uint16_t *source = buffered_spriteram16;
+	uint16_t *finish = source + 0x2000/2;
 
 	while( source<finish )
 	{

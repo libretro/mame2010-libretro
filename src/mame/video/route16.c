@@ -10,14 +10,14 @@
 #include "sound/sn76477.h"
 
 
-UINT8 *route16_videoram1;
-UINT8 *route16_videoram2;
+uint8_t *route16_videoram1;
+uint8_t *route16_videoram2;
 size_t route16_videoram_size;
 //int route16_hardware;
 
-static UINT8 flipscreen;
-static UINT8 palette_1;
-static UINT8 palette_2;
+static uint8_t flipscreen;
+static uint8_t palette_1;
+static uint8_t palette_2;
 
 
 
@@ -50,7 +50,7 @@ WRITE8_HANDLER( route16_out1_w )
  *
  *************************************/
 
-static pen_t route16_make_pen(UINT8 color)
+static pen_t route16_make_pen(uint8_t color)
 {
 	return MAKE_RGB(pal1bit((color >> 0) & 0x01),
 					pal1bit((color >> 1) & 0x01),
@@ -59,7 +59,7 @@ static pen_t route16_make_pen(UINT8 color)
 }
 
 
-static pen_t ttmajng_make_pen(UINT8 color)
+static pen_t ttmajng_make_pen(uint8_t color)
 {
 	return MAKE_RGB(pal1bit((color >> 2) & 0x01),
 					pal1bit((color >> 1) & 0x01),
@@ -82,34 +82,34 @@ VIDEO_UPDATE( route16 )
 {
 	offs_t offs;
 
-	UINT8 *color_prom1 = &memory_region(screen->machine, "proms")[0x000];
-	UINT8 *color_prom2 = &memory_region(screen->machine, "proms")[0x100];
+	uint8_t *color_prom1 = &memory_region(screen->machine, "proms")[0x000];
+	uint8_t *color_prom2 = &memory_region(screen->machine, "proms")[0x100];
 
 	for (offs = 0; offs < route16_videoram_size; offs++)
 	{
 		int i;
 
-		UINT8 y = offs >> 6;
-		UINT8 x = offs << 2;
+		uint8_t y = offs >> 6;
+		uint8_t x = offs << 2;
 
-		UINT8 data1 = route16_videoram1[offs];
-		UINT8 data2 = route16_videoram2[offs];
+		uint8_t data1 = route16_videoram1[offs];
+		uint8_t data2 = route16_videoram2[offs];
 
 		for (i = 0; i < 4; i++)
 		{
-			UINT8 color1 = color_prom1[((palette_1 << 6) & 0x80) |
+			uint8_t color1 = color_prom1[((palette_1 << 6) & 0x80) |
 									    (palette_1 << 2) |
 										((data1 >> 3) & 0x02) |
 										((data1 >> 0) & 0x01)];
 
 			/* bit 7 of the 2nd color is the OR of the 1st color bits 0 and 1 - this is a guess */
-			UINT8 color2 = color_prom2[((palette_2 << 6) & 0x80) | (((color1 << 6) & 0x80) | ((color1 << 7) & 0x80)) |
+			uint8_t color2 = color_prom2[((palette_2 << 6) & 0x80) | (((color1 << 6) & 0x80) | ((color1 << 7) & 0x80)) |
 										(palette_2 << 2) |
 										((data2 >> 3) & 0x02) |
 										((data2 >> 0) & 0x01)];
 
 			/* the final color is the OR of the two colors (verified) */
-			UINT8 final_color = color1 | color2;
+			uint8_t final_color = color1 | color2;
 
 			pen_t pen = route16_make_pen(final_color);
 
@@ -134,37 +134,37 @@ VIDEO_UPDATE( route16 )
 
 static int video_update_stratvox_ttmahjng(running_machine *machine, bitmap_t *bitmap,
 										  const rectangle *cliprect,
-										  pen_t (*make_pen)(UINT8))
+										  pen_t (*make_pen)(uint8_t))
 {
 	offs_t offs;
 
-	UINT8 *color_prom1 = &memory_region(machine, "proms")[0x000];
-	UINT8 *color_prom2 = &memory_region(machine, "proms")[0x100];
+	uint8_t *color_prom1 = &memory_region(machine, "proms")[0x000];
+	uint8_t *color_prom2 = &memory_region(machine, "proms")[0x100];
 
 	for (offs = 0; offs < route16_videoram_size; offs++)
 	{
 		int i;
 
-		UINT8 y = offs >> 6;
-		UINT8 x = offs << 2;
+		uint8_t y = offs >> 6;
+		uint8_t x = offs << 2;
 
-		UINT8 data1 = route16_videoram1[offs];
-		UINT8 data2 = route16_videoram2[offs];
+		uint8_t data1 = route16_videoram1[offs];
+		uint8_t data2 = route16_videoram2[offs];
 
 		for (i = 0; i < 4; i++)
 		{
-			UINT8 color1 = color_prom1[(palette_1 << 2) |
+			uint8_t color1 = color_prom1[(palette_1 << 2) |
 									   ((data1 >> 3) & 0x02) |
 									   ((data1 >> 0) & 0x01)];
 
 			/* bit 7 of the 2nd color is the OR of the 1st color bits 0 and 1 (verified) */
-			UINT8 color2 = color_prom2[(((data1 << 3) & 0x80) | ((data1 << 7) & 0x80)) |
+			uint8_t color2 = color_prom2[(((data1 << 3) & 0x80) | ((data1 << 7) & 0x80)) |
 									   (palette_2 << 2) |
 									   ((data2 >> 3) & 0x02) |
 									   ((data2 >> 0) & 0x01)];
 
 			/* the final color is the OR of the two colors */
-			UINT8 final_color = color1 | color2;
+			uint8_t final_color = color1 | color2;
 
 			pen_t pen = make_pen(final_color);
 

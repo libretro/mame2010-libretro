@@ -11,8 +11,8 @@
 #define LOW_BYTE(x) ((x) & 0xff)
 
 
-UINT8 mcr68_sprite_clip;
-INT8 mcr68_sprite_xoffset;
+uint8_t mcr68_sprite_clip;
+int8_t mcr68_sprite_xoffset;
 
 static tilemap_t *bg_tilemap;
 static tilemap_t *fg_tilemap;
@@ -70,11 +70,11 @@ VIDEO_START( mcr68 )
 
 VIDEO_START( zwackery )
 {
-	const UINT8 *colordatabase = (const UINT8 *)memory_region(machine, "gfx3");
+	const uint8_t *colordatabase = (const uint8_t *)memory_region(machine, "gfx3");
 	gfx_element *gfx0 = machine->gfx[0];
 	gfx_element *gfx2 = machine->gfx[2];
-	UINT8 *srcdata0, *dest0;
-	UINT8 *srcdata2, *dest2;
+	uint8_t *srcdata0, *dest0;
+	uint8_t *srcdata2, *dest2;
 	int code, y, x;
 
 	/* initialize the background tilemap */
@@ -85,23 +85,23 @@ VIDEO_START( zwackery )
 	tilemap_set_transparent_pen(fg_tilemap, 0);
 
 	/* allocate memory for the assembled gfx data */
-	srcdata0 = auto_alloc_array(machine, UINT8, gfx0->total_elements * gfx0->width * gfx0->height);
-	srcdata2 = auto_alloc_array(machine, UINT8, gfx2->total_elements * gfx2->width * gfx2->height);
+	srcdata0 = auto_alloc_array(machine, uint8_t, gfx0->total_elements * gfx0->width * gfx0->height);
+	srcdata2 = auto_alloc_array(machine, uint8_t, gfx2->total_elements * gfx2->width * gfx2->height);
 
 	/* "colorize" each code */
 	dest0 = srcdata0;
 	dest2 = srcdata2;
 	for (code = 0; code < gfx0->total_elements; code++)
 	{
-		const UINT8 *coldata = colordatabase + code * 32;
-		const UINT8 *gfxdata0 = gfx_element_get_data(gfx0, code);
-		const UINT8 *gfxdata2 = gfx_element_get_data(gfx2, code);
+		const uint8_t *coldata = colordatabase + code * 32;
+		const uint8_t *gfxdata0 = gfx_element_get_data(gfx0, code);
+		const uint8_t *gfxdata2 = gfx_element_get_data(gfx2, code);
 
 		/* assume 16 rows */
 		for (y = 0; y < 16; y++)
 		{
-			const UINT8 *gd0 = gfxdata0;
-			const UINT8 *gd2 = gfxdata2;
+			const uint8_t *gd0 = gfxdata0;
+			const uint8_t *gd2 = gfxdata2;
 
 			/* 16 columns */
 			for (x = 0; x < 16; x++, gd0++, gd2++)
@@ -210,7 +210,7 @@ WRITE16_HANDLER( zwackery_spriteram_w )
 static void mcr68_update_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
 	rectangle sprite_clip = machine->primary_screen->visible_area();
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	/* adjust for clipping */
@@ -262,7 +262,7 @@ static void mcr68_update_sprites(running_machine *machine, bitmap_t *bitmap, con
 
 static void zwackery_update_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	bitmap_fill(machine->priority_bitmap,cliprect,1);

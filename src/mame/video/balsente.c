@@ -126,14 +126,14 @@ WRITE8_HANDLER( shrike_sprite_select_w )
  *
  *************************************/
 
-static void draw_one_sprite(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *sprite)
+static void draw_one_sprite(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *sprite)
 {
 	balsente_state *state = (balsente_state *)machine->driver_data;
 	int flags = sprite[0];
 	int image = sprite[1] | ((flags & 7) << 8);
 	int ypos = sprite[2] + 17 + BALSENTE_VBEND;
 	int xpos = sprite[3];
-	UINT8 *src;
+	uint8_t *src;
 	int x, y;
 
 	/* get a pointer to the source image */
@@ -146,7 +146,7 @@ static void draw_one_sprite(running_machine *machine, bitmap_t *bitmap, const re
 		if (ypos >= (16 + BALSENTE_VBEND) && ypos >= cliprect->min_y && ypos <= cliprect->max_y)
 		{
 			const pen_t *pens = &machine->pens[state->palettebank_vis * 256];
-			UINT8 *old = &state->videoram[(ypos - BALSENTE_VBEND) * 256 + xpos];
+			uint8_t *old = &state->videoram[(ypos - BALSENTE_VBEND) * 256 + xpos];
 			int currx = xpos;
 
 			/* standard case */

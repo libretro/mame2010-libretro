@@ -14,14 +14,14 @@ public:
 	dribling_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
 
 	/* misc */
-	UINT8    abca;
-	UINT8    dr, ds, sh;
-	UINT8    input_mux;
-	UINT8    di;
+	uint8_t    abca;
+	uint8_t    dr, ds, sh;
+	uint8_t    input_mux;
+	uint8_t    di;
 
 	/* devices */
 	running_device *maincpu;

@@ -35,8 +35,8 @@ enum
 
 static int color_mode;
 static rgb_t vector_color;
-static INT16 lastx, lasty;
-static UINT8 last_control;
+static int16_t lastx, lasty;
+static uint8_t last_control;
 
 
 
@@ -46,7 +46,7 @@ static UINT8 last_control;
  *
  *************************************/
 
-void cinemat_vector_callback(running_device *device, INT16 sx, INT16 sy, INT16 ex, INT16 ey, UINT8 shift)
+void cinemat_vector_callback(running_device *device, int16_t sx, int16_t sy, int16_t ex, int16_t ey, uint8_t shift)
 {
 	const rectangle &visarea = device->machine->primary_screen->visible_area();
 	int intensity = 0xff;

@@ -22,28 +22,28 @@
 #define SOUND2_SPEECH_CLOCK	XTAL_3_12MHz
 
 
-static UINT8 votrax_queue[100];
-static UINT8 votrax_queuepos;
+static uint8_t votrax_queue[100];
+static uint8_t votrax_queuepos;
 
 
 static emu_timer *nmi_timer;
-static UINT8 nmi_rate;
-static UINT8 nmi_state;
+static uint8_t nmi_rate;
+static uint8_t nmi_state;
 
-static UINT8 speech_control;
-static UINT8 last_command;
+static uint8_t speech_control;
+static uint8_t last_command;
 
-static UINT8 *dac_data;
-static UINT8 *psg_latch;
-static UINT8 *sp0250_latch;
+static uint8_t *dac_data;
+static uint8_t *psg_latch;
+static uint8_t *sp0250_latch;
 
 static int score_sample;
 static int random_offset;
 
 
-static void gottlieb1_sh_w(running_device *riot, UINT8 data);
-static void gottlieb2_sh_w(const address_space *space, UINT8 data);
-static void trigger_sample(running_device *samples, UINT8 data);
+static void gottlieb1_sh_w(running_device *riot, uint8_t data);
+static void gottlieb2_sh_w(const address_space *space, uint8_t data);
+static void trigger_sample(running_device *samples, uint8_t data);
 
 
 
@@ -72,7 +72,7 @@ WRITE8_HANDLER( gottlieb_sh_w )
  *
  *************************************/
 
-static void gottlieb1_sh_w(running_device *riot, UINT8 data)
+static void gottlieb1_sh_w(running_device *riot, uint8_t data)
 {
 	running_device *samples = riot->machine->device("samples");
 	int pa7 = (data & 0x0f) != 0xf;
@@ -141,7 +141,7 @@ static void play_sample(running_device *samples, const char *phonemes)
 }
 
 
-static void trigger_sample(running_device *samples, UINT8 data)
+static void trigger_sample(running_device *samples, uint8_t data)
 {
 	/* Reactor samples */
 	if (strcmp(samples->machine->gamedrv->name, "reactor") == 0)
@@ -369,7 +369,7 @@ INPUT_PORTS_END
  *
  *************************************/
 
-static void gottlieb2_sh_w(const address_space *space, UINT8 data)
+static void gottlieb2_sh_w(const address_space *space, uint8_t data)
 {
 	/* when data is not 0xff, the transparent latch at A3 allows it to pass through unmolested */
 	if (data != 0xff)
@@ -484,7 +484,7 @@ static WRITE8_DEVICE_HANDLER( gottlieb_dac_w )
 
 static WRITE8_HANDLER( speech_control_w )
 {
-	UINT8 previous = speech_control;
+	uint8_t previous = speech_control;
 	speech_control = data;
 
 	/* bit 0 enables/disables the NMI line */

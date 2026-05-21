@@ -398,9 +398,9 @@ READ8_HANDLER( qix_68705_portA_r )
 {
 	qix_state *state = (qix_state *)space->machine->driver_data;
 
-	UINT8 ddr = state->_68705_ddr[0];
-	UINT8 out = state->_68705_port_out[0];
-	UINT8 in = state->_68705_port_in[0];
+	uint8_t ddr = state->_68705_ddr[0];
+	uint8_t out = state->_68705_port_out[0];
+	uint8_t in = state->_68705_port_in[0];
 	logerror("68705:portA_r = %02X (%02X)\n", (out & ddr) | (in & ~ddr), in);
 	return (out & ddr) | (in & ~ddr);
 }
@@ -410,9 +410,9 @@ READ8_HANDLER( qix_68705_portB_r )
 {
 	qix_state *state = (qix_state *)space->machine->driver_data;
 
-	UINT8 ddr = state->_68705_ddr[1];
-	UINT8 out = state->_68705_port_out[1];
-	UINT8 in = (input_port_read(space->machine, "COIN") & 0x0f) | ((input_port_read(space->machine, "COIN") & 0x80) >> 3);
+	uint8_t ddr = state->_68705_ddr[1];
+	uint8_t out = state->_68705_port_out[1];
+	uint8_t in = (input_port_read(space->machine, "COIN") & 0x0f) | ((input_port_read(space->machine, "COIN") & 0x80) >> 3);
 	return (out & ddr) | (in & ~ddr);
 }
 
@@ -421,9 +421,9 @@ READ8_HANDLER( qix_68705_portC_r )
 {
 	qix_state *state = (qix_state *)space->machine->driver_data;
 
-	UINT8 ddr = state->_68705_ddr[2];
-	UINT8 out = state->_68705_port_out[2];
-	UINT8 in = (state->coinctrl & 0x08) | ((input_port_read(space->machine, "COIN") & 0x70) >> 4);
+	uint8_t ddr = state->_68705_ddr[2];
+	uint8_t out = state->_68705_port_out[2];
+	uint8_t in = (state->coinctrl & 0x08) | ((input_port_read(space->machine, "COIN") & 0x70) >> 4);
 	return (out & ddr) | (in & ~ddr);
 }
 

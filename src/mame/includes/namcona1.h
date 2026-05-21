@@ -17,9 +17,9 @@ enum
 
 #define NA1_NVRAM_SIZE (0x800)
 
-extern UINT16 *namcona1_workram;
-extern UINT16 *namcona1_vreg;
-extern UINT16 *namcona1_scroll;
+extern uint16_t *namcona1_workram;
+extern uint16_t *namcona1_vreg;
+extern uint16_t *namcona1_scroll;
 
 extern WRITE16_HANDLER( namcona1_videoram_w );
 extern READ16_HANDLER( namcona1_videoram_r );

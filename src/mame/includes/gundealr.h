@@ -12,16 +12,16 @@ public:
 	gundealr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    bg_videoram;
-	UINT8 *    fg_videoram;
-	UINT8 *    rambase;
-	UINT8 *    paletteram;
+	uint8_t *    bg_videoram;
+	uint8_t *    fg_videoram;
+	uint8_t *    rambase;
+	uint8_t *    paletteram;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;
 	tilemap_t    *fg_tilemap;
 	int        flipscreen;
-	UINT8      scroll[4];
+	uint8_t      scroll[4];
 
 	/* misc */
 	int        input_ports_hack;

@@ -11,7 +11,7 @@
 
 /*----------- defined in drivers/bzone.c -----------*/
 
-extern UINT8 rb_input_select;
+extern uint8_t rb_input_select;
 
 
 /*----------- defined in audio/bzone.c -----------*/

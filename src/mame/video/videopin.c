@@ -7,7 +7,7 @@
 #include "emu.h"
 #include "includes/videopin.h"
 
-UINT8* videopin_video_ram;
+uint8_t* videopin_video_ram;
 
 static int ball_x;
 static int ball_y;
@@ -23,7 +23,7 @@ static TILEMAP_MAPPER( get_memory_offset )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code = videopin_video_ram[tile_index];
+	uint8_t code = videopin_video_ram[tile_index];
 
 	SET_TILE_INFO(0, code, 0, (code & 0x40) ? TILE_FLIPY : 0);
 }
@@ -48,7 +48,7 @@ VIDEO_UPDATE( videopin )
 	{
 		for (col = 0; col < 48; col++)
 		{
-			UINT32 offset = get_memory_offset(col, row, 48, 32);
+			uint32_t offset = get_memory_offset(col, row, 48, 32);
 
 			if (videopin_video_ram[offset] & 0x80)   /* ball bit found */
 			{

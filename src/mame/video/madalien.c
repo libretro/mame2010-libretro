@@ -14,15 +14,15 @@
 #define PIXEL_CLOCK (MADALIEN_MAIN_CLOCK / 2)
 
 
-UINT8 *madalien_videoram;
-UINT8 *madalien_charram;
+uint8_t *madalien_videoram;
+uint8_t *madalien_charram;
 
-UINT8 *madalien_video_flags;
-UINT8 *madalien_video_control;	/* bit #0 is set during player 2's turn, bit #3 is set during CRTC initialization */
-UINT8 *madalien_scroll;
-UINT8 *madalien_edge1_pos;
-UINT8 *madalien_edge2_pos;
-UINT8 *madalien_headlight_pos;
+uint8_t *madalien_video_flags;
+uint8_t *madalien_video_control;	/* bit #0 is set during player 2's turn, bit #3 is set during CRTC initialization */
+uint8_t *madalien_scroll;
+uint8_t *madalien_edge1_pos;
+uint8_t *madalien_edge2_pos;
+uint8_t *madalien_headlight_pos;
 
 static tilemap_t *tilemap_fg;
 
@@ -66,7 +66,7 @@ static PALETTE_INIT( madalien )
 
 	for (i = 0x10; i < 0x20; i++)
 	{
-		UINT8 ctabentry = i - 0x10;
+		uint8_t ctabentry = i - 0x10;
 
 		if (BIT((i - 0x10), 1))
 			ctabentry = ctabentry ^ 0x06;
@@ -108,7 +108,7 @@ static TILEMAP_MAPPER( scan_mode3 )
 
 static TILE_GET_INFO( get_tile_info_BG_1 )
 {
-	UINT8 *map = memory_region(machine, "user1") + ((*madalien_video_flags & 0x08) << 6);
+	uint8_t *map = memory_region(machine, "user1") + ((*madalien_video_flags & 0x08) << 6);
 
 	SET_TILE_INFO(1, map[tile_index], BIT(*madalien_video_flags, 2) ? 2 : 0, 0);
 }
@@ -116,7 +116,7 @@ static TILE_GET_INFO( get_tile_info_BG_1 )
 
 static TILE_GET_INFO( get_tile_info_BG_2 )
 {
-	UINT8 *map = memory_region(machine, "user1") + ((*madalien_video_flags & 0x08) << 6) + 0x80;
+	uint8_t *map = memory_region(machine, "user1") + ((*madalien_video_flags & 0x08) << 6) + 0x80;
 
 	SET_TILE_INFO(1, map[tile_index], BIT(*madalien_video_flags, 2) ? 2 : 0, 0);
 }
@@ -215,12 +215,12 @@ static void draw_headlight(bitmap_t *bitmap, const rectangle *cliprect, int flip
 {
 	if (BIT(*madalien_video_flags, 0))
 	{
-		UINT8 y;
+		uint8_t y;
 
 		for (y = 0; y < 0x80; y++)
 		{
-			UINT8 x;
-			UINT8 hy = y - *madalien_headlight_pos;
+			uint8_t x;
+			uint8_t hy = y - *madalien_headlight_pos;
 
 			if (flip)
 				hy = ~hy;
@@ -230,7 +230,7 @@ static void draw_headlight(bitmap_t *bitmap, const rectangle *cliprect, int flip
 
 			for (x = 0; x < 0x80; x++)
 			{
-				UINT8 hx = x;
+				uint8_t hx = x;
 
 				if (flip)
 					hx = ~hx;
@@ -312,7 +312,7 @@ static VIDEO_UPDATE( madalien )
 }
 
 
-static const UINT32 headlight_xoffset[] =
+static const uint32_t headlight_xoffset[] =
 {
 	STEP8(0x78, 1),
 	STEP8(0x70, 1),
@@ -332,7 +332,7 @@ static const UINT32 headlight_xoffset[] =
 	STEP8(0x00, 1),
 };
 
-static const UINT32 headlight_yoffset[] =
+static const uint32_t headlight_yoffset[] =
 {
 	STEP32(0x0000, 0x80), STEP32(0x1000, 0x80)
 };

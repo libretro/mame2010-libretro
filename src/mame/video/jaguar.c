@@ -190,17 +190,17 @@ enum
  *************************************/
 
 /* blitter variables */
-static UINT32 blitter_regs[BLITTER_REGS];
-static UINT16 gpu_regs[GPU_REGS];
+static uint32_t blitter_regs[BLITTER_REGS];
+static uint16_t gpu_regs[GPU_REGS];
 
 static emu_timer *object_timer;
-static UINT8 cpu_irq_state;
+static uint8_t cpu_irq_state;
 
 static bitmap_t *screen_bitmap;
 
 static pen_t *pen_table;
 
-UINT8 blitter_status;
+uint8_t blitter_status;
 
 
 /*************************************
@@ -211,20 +211,20 @@ UINT8 blitter_status;
 
 /* from jagobj.c */
 static void jagobj_init(running_machine *machine);
-static void process_object_list(running_machine *machine, int vc, UINT16 *_scanline);
+static void process_object_list(running_machine *machine, int vc, uint16_t *_scanline);
 
 /* from jagblit.c */
-static void generic_blitter(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_09800001_010020_010020(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_09800009_000020_000020(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_01800009_000028_000028(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_01800001_000018_000018(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_01c00001_000018_000018(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
+static void generic_blitter(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_09800001_010020_010020(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_09800009_000020_000020(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_01800009_000028_000028(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_01800001_000018_000018(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_01c00001_000018_000018(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
 
 #ifdef MESS
-static void blitter_00010000_xxxxxx_xxxxxx(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_01800001_xxxxxx_xxxxxx(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
-static void blitter_x1800x01_xxxxxx_xxxxxx(running_machine *machine, UINT32 command, UINT32 a1flags, UINT32 a2flags);
+static void blitter_00010000_xxxxxx_xxxxxx(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_01800001_xxxxxx_xxxxxx(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
+static void blitter_x1800x01_xxxxxx_xxxxxx(running_machine *machine, uint32_t command, uint32_t a1flags, uint32_t a2flags);
 #endif
 
 
@@ -356,9 +356,9 @@ void jaguar_dsp_cpu_int(running_device *device)
  *
  *************************************/
 
-static void jaguar_set_palette(UINT16 vmode)
+static void jaguar_set_palette(uint16_t vmode)
 {
-	static const UINT8 red_lookup[256] =
+	static const uint8_t red_lookup[256] =
 	{
 		  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 		 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 19,  0,
@@ -378,7 +378,7 @@ static void jaguar_set_palette(UINT16 vmode)
 		255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
 	};
 
-	static const UINT8 grn_lookup[256] =
+	static const uint8_t grn_lookup[256] =
 	{
 		  0, 17, 34, 51, 68, 85,102,119,136,153,170,187,204,221,238,255,
 		  0, 19, 38, 57, 77, 96,115,134,154,173,182,211,231,250,255,255,
@@ -398,7 +398,7 @@ static void jaguar_set_palette(UINT16 vmode)
 		  0, 17, 34, 51, 68, 85,102,119,136,153,170,187,204,221,238,255
 	};
 
-	static const UINT8 blu_lookup[256] =
+	static const uint8_t blu_lookup[256] =
 	{
 		255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
 		255,255,255,255,255,255,255,255,255,255,255,255,255,255,240,221,
@@ -429,9 +429,9 @@ static void jaguar_set_palette(UINT16 vmode)
 		case 0x002:
 			for (i = 0; i < 65536; i++)
 			{
-				UINT8 r = (red_lookup[i >> 8] * (i & 0xff)) >> 8;
-				UINT8 g = (grn_lookup[i >> 8] * (i & 0xff)) >> 8;
-				UINT8 b = (blu_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t r = (red_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t g = (grn_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t b = (blu_lookup[i >> 8] * (i & 0xff)) >> 8;
 				pen_table[i] = MAKE_RGB(r, g, b);
 			}
 			break;
@@ -440,9 +440,9 @@ static void jaguar_set_palette(UINT16 vmode)
 		case 0x100:
 			for (i = 0; i < 65536; i++)
 			{
-				UINT8 r = (red_lookup[i >> 8] * (i & 0xff)) >> 8;
-				UINT8 g = (grn_lookup[i >> 8] * (i & 0xff)) >> 8;
-				UINT8 b = (blu_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t r = (red_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t g = (grn_lookup[i >> 8] * (i & 0xff)) >> 8;
+				uint8_t b = (blu_lookup[i >> 8] * (i & 0xff)) >> 8;
 
 				/* if the low bit is set, treat it as 5-5-5 RGB instead */
 				if (i & 1)
@@ -491,10 +491,10 @@ static void jaguar_set_palette(UINT16 vmode)
  *
  *************************************/
 
-static UINT8 *get_jaguar_memory(running_machine *machine, UINT32 offset)
+static uint8_t *get_jaguar_memory(running_machine *machine, uint32_t offset)
 {
 	const address_space *space = cputag_get_address_space(machine, "gpu", ADDRESS_SPACE_PROGRAM);
-	return (UINT8 *)memory_get_read_ptr(space, offset);
+	return (uint8_t *)memory_get_read_ptr(space, offset);
 }
 
 
@@ -507,9 +507,9 @@ static UINT8 *get_jaguar_memory(running_machine *machine, UINT32 offset)
 
 static void blitter_run(running_machine *machine)
 {
-	UINT32 command = blitter_regs[B_CMD] & STATIC_COMMAND_MASK;
-	UINT32 a1flags = blitter_regs[A1_FLAGS] & STATIC_FLAGS_MASK;
-	UINT32 a2flags = blitter_regs[A2_FLAGS] & STATIC_FLAGS_MASK;
+	uint32_t command = blitter_regs[B_CMD] & STATIC_COMMAND_MASK;
+	uint32_t a1flags = blitter_regs[A1_FLAGS] & STATIC_FLAGS_MASK;
+	uint32_t a2flags = blitter_regs[A2_FLAGS] & STATIC_FLAGS_MASK;
 
 	profiler_mark_start(PROFILER_USER1);
 
@@ -567,8 +567,8 @@ static void blitter_run(running_machine *machine)
 
 if (LOG_BLITTER_STATS)
 {
-static UINT32 blitter_stats[1000][4];
-static UINT64 blitter_pixels[1000];
+static uint32_t blitter_stats[1000][4];
+static uint64_t blitter_pixels[1000];
 static int blitter_count = 0;
 static int reps = 0;
 int i;
@@ -594,7 +594,7 @@ if (++reps % 100 == 99)
 	for (i = 0; i < blitter_count; i++)
 		mame_printf_debug("  CMD=%08X A1=%08X A2=%08X %6d times, %08X%08X pixels\n",
 				blitter_stats[i][0], blitter_stats[i][1], blitter_stats[i][2],
-				blitter_stats[i][3], (UINT32)(blitter_pixels[i] >> 32), (UINT32)(blitter_pixels[i]));
+				blitter_stats[i][3], (uint32_t)(blitter_pixels[i] >> 32), (uint32_t)(blitter_pixels[i]));
 	mame_printf_debug("---\n");
 }
 }
@@ -659,7 +659,7 @@ READ16_HANDLER( jaguar_tom_regs_r )
 
 		case VC:
 		{
-			UINT8 half_line;
+			uint8_t half_line;
 
 			if(space->machine->primary_screen->hpos() >= (space->machine->primary_screen->width() / 2))
 				half_line = 1;
@@ -690,7 +690,7 @@ static TIMER_CALLBACK( jaguar_pit )
 
 WRITE16_HANDLER( jaguar_tom_regs_w )
 {
-	UINT32 reg_store = gpu_regs[offset];
+	uint32_t reg_store = gpu_regs[offset];
 //  attotime sample_period;
 	if (offset < GPU_REGS)
 	{
@@ -837,11 +837,11 @@ static TIMER_CALLBACK( cojag_scanline_update )
 	/* only run if video is enabled and we are past the "display begin" */
 	if ((gpu_regs[VMODE] & 1) && vc >= (gpu_regs[VDB] & 0x7ff))
 	{
-		UINT32 *dest = BITMAP_ADDR32(screen_bitmap, vc >> 1, 0);
+		uint32_t *dest = BITMAP_ADDR32(screen_bitmap, vc >> 1, 0);
 		int maxx = visarea.max_x;
 		int hde = effective_hvalue(gpu_regs[HDE]) >> 1;
-		UINT16 x,scanline[760];
-		UINT8 y,pixel_width = ((gpu_regs[VMODE]>>10)&3)+1;
+		uint16_t x,scanline[760];
+		uint8_t y,pixel_width = ((gpu_regs[VMODE]>>10)&3)+1;
 
 		/* if we are first on this scanline, clear to the border color */
 		if (ENABLE_BORDERS && vc % 2 == 0)
@@ -860,9 +860,9 @@ static TIMER_CALLBACK( cojag_scanline_update )
 			for (x = 0; x < 760 && hdb <= maxx && hdb < hde; x+=2)
 				for (y = 0; y < pixel_width; y++)
 				{
-					UINT8 r = pen_table[(scanline[x]&0xff)|256];
-					UINT8 g = pen_table[(scanline[x]>>8)|512];
-					UINT8 b = pen_table[scanline[x+1]&0xff];
+					uint8_t r = pen_table[(scanline[x]&0xff)|256];
+					uint8_t g = pen_table[(scanline[x]>>8)|512];
+					uint8_t b = pen_table[scanline[x+1]&0xff];
 					dest[hdb++] = MAKE_RGB(r, g, b);
 				}
 		}

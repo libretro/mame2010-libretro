@@ -5,9 +5,9 @@
 
 #define MAKE_MAME_REEEEAAALLLL_SLOW 0
 
-static UINT8 additive_tilemap_debug;
+static uint8_t additive_tilemap_debug;
 
-UINT32* hng64_videoram;
+uint32_t* hng64_videoram;
 static tilemap_t *hng64_tilemap0_8x8;
 static tilemap_t *hng64_tilemap1_8x8;
 static tilemap_t *hng64_tilemap2_8x8;
@@ -23,18 +23,18 @@ static tilemap_t *hng64_tilemap1_16x16_alt;
 static tilemap_t *hng64_tilemap2_16x16_alt;
 static tilemap_t *hng64_tilemap3_16x16_alt;
 
-UINT32 *hng64_spriteram;
-UINT32 *hng64_videoregs;
-UINT32 *hng64_spriteregs;
-UINT32 *hng64_3dregs;
-UINT32 *hng64_tcram;
+uint32_t *hng64_spriteram;
+uint32_t *hng64_videoregs;
+uint32_t *hng64_spriteregs;
+uint32_t *hng64_3dregs;
+uint32_t *hng64_tcram;
 
-UINT8 hng64_screen_dis;
+uint8_t hng64_screen_dis;
 
 // 3d display buffers
 // (Temporarily global - someday they will live with the proper bit-depth in the memory map)
 static float* depthBuffer3d;
-static UINT32* colorBuffer3d;
+static uint32_t* colorBuffer3d;
 static void clear3d(running_machine *machine);	// TODO: Inline
 
 
@@ -98,14 +98,14 @@ static void hng64_mark_tile_dirty( int tilemap, int tile_index )
 #define PIXEL_OP_REMAP_TRANSPEN_PRIORITY_ADDIIVE32(DEST, PRIORITY, SOURCE)					\
 do																					\
 {																					\
-	UINT32 srcdata = (SOURCE);														\
+	uint32_t srcdata = (SOURCE);														\
 	if (srcdata != transpen)														\
 	{																				\
 		if (((1 << ((PRIORITY) & 0x1f)) & pmask) == 0)								\
 		{																			\
-			UINT32 srcdata2 = paldata[srcdata];										\
+			uint32_t srcdata2 = paldata[srcdata];										\
 																					\
-			UINT32 add;                                                             \
+			uint32_t add;                                                             \
 			add = (srcdata2 & 0x00ff0000) + (DEST & 0x00ff0000);                    \
 			if (add & 0x01000000) DEST = (DEST & 0xff00ffff) | (0x00ff0000);        \
 			else DEST = (DEST & 0xff00ffff) | (add & 0x00ff0000);                   \
@@ -123,8 +123,8 @@ while (0)																			\
 
 
 static void pdrawgfx_transpen_additive(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		bitmap_t *priority, UINT32 pmask, UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transpen)
 {
 	const pen_t *paldata;
 
@@ -140,7 +140,7 @@ static void pdrawgfx_transpen_additive(bitmap_t *dest, const rectangle *cliprect
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -151,14 +151,14 @@ static void pdrawgfx_transpen_additive(bitmap_t *dest, const rectangle *cliprect
 	pmask |= 1 << 31;
 
 	/* render based on dest bitmap depth */
-	DRAWGFX_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_PRIORITY_ADDIIVE32, UINT8);
+	DRAWGFX_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY_ADDIIVE32, uint8_t);
 }
 
 
 static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *cliprect, const gfx_element *gfx,
-		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty,
-		UINT32 scalex, UINT32 scaley, bitmap_t *priority, UINT32 pmask,
-		UINT32 transpen)
+		uint32_t code, uint32_t color, int flipx, int flipy, int32_t destx, int32_t desty,
+		uint32_t scalex, uint32_t scaley, bitmap_t *priority, uint32_t pmask,
+		uint32_t transpen)
 {
 	const pen_t *paldata;
 
@@ -182,7 +182,7 @@ static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *clip
 	/* use pen usage to optimize */
 	if (gfx->pen_usage != NULL && !gfx->dirty[code])
 	{
-		UINT32 usage = gfx->pen_usage[code];
+		uint32_t usage = gfx->pen_usage[code];
 
 		/* fully transparent; do nothing */
 		if ((usage & ~(1 << transpen)) == 0)
@@ -192,7 +192,7 @@ static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *clip
 	/* high bit of the mask is implicitly on */
 	pmask |= 1 << 31;
 
-	DRAWGFXZOOM_CORE(UINT32, PIXEL_OP_REMAP_TRANSPEN_PRIORITY_ADDIIVE32, UINT8);
+	DRAWGFXZOOM_CORE(uint32_t, PIXEL_OP_REMAP_TRANSPEN_PRIORITY_ADDIIVE32, uint8_t);
 }
 
 
@@ -200,7 +200,7 @@ static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *clip
  * Sprite Format
  * ------------------
  *
- * UINT32 | Bits                                    | Use
+ * uint32_t | Bits                                    | Use
  *        | 3322 2222 2222 1111 1111 11             |
  * -------+-1098-7654-3210-9876-5432-1098-7654-3210-+----------------
  *   0    | yyyy yyyy yyyy yyyy xxxx xxxx xxxx xxxx | x/y position
@@ -219,7 +219,7 @@ static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *clip
  * Sprite Global Registers
  * -----------------------
  *
- * UINT32 | Bits                                    | Use
+ * uint32_t | Bits                                    | Use
  *        | 3322 2222 2222 1111 1111 11             |
  * -------+-1098-7654-3210-9876-5432-1098-7654-3210-+----------------
  *   0    | ---- z--- b--- ---- ---- ---- ---- ---- | zooming mode, bpp select
@@ -240,8 +240,8 @@ static void pdrawgfxzoom_transpen_additive(bitmap_t *dest, const rectangle *clip
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	const gfx_element *gfx;
-	UINT32 *source = hng64_spriteram;
-	UINT32 *finish = hng64_spriteram + 0xc000/4;
+	uint32_t *source = hng64_spriteram;
+	uint32_t *finish = hng64_spriteram + 0xc000/4;
 
 	// global offsets in sprite regs
 	int	spriteoffsx = (hng64_spriteregs[1]>>0)&0xffff;
@@ -256,11 +256,11 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	{
 		int tileno,chainx,chainy,xflip;
 		int pal,xinc,yinc,yflip;
-		UINT16 xpos, ypos;
+		uint16_t xpos, ypos;
 		int xdrw,ydrw;
 		int chaini;
 		int zbuf;
-		UINT32 zoomx,zoomy;
+		uint32_t zoomx,zoomy;
 		float foomX, foomY;
 		int blend;
 		int disable;
@@ -369,8 +369,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 		{
 			for(xdrw=0;xdrw<=chainx;xdrw++)
 			{
-				INT16 drawx = xpos+(xinc*xdrw);
-				INT16 drawy = ypos+(yinc*ydrw);
+				int16_t drawx = xpos+(xinc*xdrw);
+				int16_t drawy = ypos+(yinc*ydrw);
 
 				// 0x3ff (0x200 sign bit) based on sams64_2 char select
 				drawx &= 0x3ff;
@@ -418,7 +418,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 /* Transition Control Video Registers
  * ----------------------------------
  *
- * UINT32 | Bits                                    | Use
+ * uint32_t | Bits                                    | Use
  *        | 3322 2222 2222 1111 1111 11             |
  * -------+-1098-7654-3210-9876-5432-1098-7654-3210-+----------------
  *      0 |                                         |
@@ -463,31 +463,31 @@ static void transition_control(bitmap_t *bitmap, const rectangle *cliprect)
 
 //  float colorScaleR, colorScaleG, colorScaleB;
 //  float finR, finG, finB;
-	INT32 finR, finG, finB;
+	int32_t finR, finG, finB;
 
-	INT32 darkR, darkG, darkB;
-	INT32 brigR, brigG, brigB;
+	int32_t darkR, darkG, darkB;
+	int32_t brigR, brigG, brigB;
 
 	// If either of the fading memory regions is non-zero...
 	if (hng64_tcram[0x00000007] != 0x00000000 || hng64_tcram[0x0000000a] != 0x00000000)
 	{
-		darkR = (INT32)( hng64_tcram[0x00000007]        & 0xff);
-		darkG = (INT32)((hng64_tcram[0x00000007] >> 8)  & 0xff);
-		darkB = (INT32)((hng64_tcram[0x00000007] >> 16) & 0xff);
+		darkR = (int32_t)( hng64_tcram[0x00000007]        & 0xff);
+		darkG = (int32_t)((hng64_tcram[0x00000007] >> 8)  & 0xff);
+		darkB = (int32_t)((hng64_tcram[0x00000007] >> 16) & 0xff);
 
-		brigR = (INT32)( hng64_tcram[0x0000000a]        & 0xff);
-		brigG = (INT32)((hng64_tcram[0x0000000a] >> 8)  & 0xff);
-		brigB = (INT32)((hng64_tcram[0x0000000a] >> 16) & 0xff);
+		brigR = (int32_t)( hng64_tcram[0x0000000a]        & 0xff);
+		brigG = (int32_t)((hng64_tcram[0x0000000a] >> 8)  & 0xff);
+		brigB = (int32_t)((hng64_tcram[0x0000000a] >> 16) & 0xff);
 
 		for (i = cliprect->min_x; i < cliprect->max_x; i++)
 		{
 			for (j = cliprect->min_y; j < cliprect->max_y; j++)
 			{
-				UINT32* thePixel = BITMAP_ADDR32(bitmap, j, i);
+				uint32_t* thePixel = BITMAP_ADDR32(bitmap, j, i);
 
-				finR = (INT32)RGB_RED(*thePixel);
-				finG = (INT32)RGB_GREEN(*thePixel);
-				finB = (INT32)RGB_BLUE(*thePixel);
+				finR = (int32_t)RGB_RED(*thePixel);
+				finG = (int32_t)RGB_GREEN(*thePixel);
+				finB = (int32_t)RGB_BLUE(*thePixel);
 
 				/*
                 // Apply the darkening pass (0x07)...
@@ -543,7 +543,7 @@ static void transition_control(bitmap_t *bitmap, const rectangle *cliprect)
 				if (finG < 0) finG = 0;
 				if (finB < 0) finB = 0;
 
-				*thePixel = MAKE_ARGB(255, (UINT8)finR, (UINT8)finG, (UINT8)finB);
+				*thePixel = MAKE_ARGB(255, (uint8_t)finR, (uint8_t)finG, (uint8_t)finB);
 			}
 		}
 	}
@@ -553,7 +553,7 @@ static void transition_control(bitmap_t *bitmap, const rectangle *cliprect)
 // pppppppp ff--atttt tttttttt tttttttt
 #define HNG64_GET_TILE_INFO                                                    \
 {                                                                              \
-	UINT16 tilemapinfo = (hng64_videoregs[reg]>>shift)&0xffff;                 \
+	uint16_t tilemapinfo = (hng64_videoregs[reg]>>shift)&0xffff;                 \
 	int tileno,pal, flip;                                                      \
                                                                                \
 	tileno = hng64_videoram[tile_index+(offset/4)];                            \
@@ -717,16 +717,16 @@ struct _blit_parameters
 {
 	bitmap_t *			bitmap;
 	rectangle			cliprect;
-	UINT32				tilemap_priority_code;
-	UINT8				mask;
-	UINT8				value;
-	UINT8				alpha;
+	uint32_t				tilemap_priority_code;
+	uint8_t				mask;
+	uint8_t				value;
+	uint8_t				alpha;
 	hng64trans_t		drawformat;
 };
 
 
 
-static void hng64_configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, UINT32 flags, UINT8 priority, UINT8 priority_mask, hng64trans_t drawformat)
+static void hng64_configure_blit_parameters(blit_parameters *blit, tilemap_t *tmap, bitmap_t *dest, const rectangle *cliprect, uint32_t flags, uint8_t priority, uint8_t priority_mask, hng64trans_t drawformat)
 {
 	/* start with nothing */
 	memset(blit, 0, sizeof(*blit));
@@ -779,9 +779,9 @@ static void hng64_configure_blit_parameters(blit_parameters *blit, tilemap_t *tm
 	}
 }
 
-INLINE UINT32 alpha_additive_r32(UINT32 d, UINT32 s, UINT8 level)
+INLINE uint32_t alpha_additive_r32(uint32_t d, uint32_t s, uint8_t level)
 {
-	UINT32 add;
+	uint32_t add;
 	add = (s & 0x00ff0000) + (d & 0x00ff0000);
 	if (add & 0x01000000) d = (d & 0xff00ffff) | (0x00ff0000);
 	else d = (d & 0xff00ffff) | (add & 0x00ff0000);
@@ -804,15 +804,15 @@ INLINE UINT32 alpha_additive_r32(UINT32 d, UINT32 s, UINT8 level)
 #define HNG64_ROZ_PLOT_PIXEL(INPUT_VAL)											        \
 do {																		        \
 	if (blit->drawformat == HNG64_TILEMAP_NORMAL)									\
-		*(UINT32 *)dest = clut[INPUT_VAL];									        \
+		*(uint32_t *)dest = clut[INPUT_VAL];									        \
 	else if (blit->drawformat == HNG64_TILEMAP_ADDITIVE)			                \
-		*(UINT32 *)dest = alpha_additive_r32(*(UINT32 *)dest, clut[INPUT_VAL], alpha);	\
+		*(uint32_t *)dest = alpha_additive_r32(*(uint32_t *)dest, clut[INPUT_VAL], alpha);	\
 	else if (blit->drawformat == HNG64_TILEMAP_ALPHA)		                        \
-		*(UINT32 *)dest = alpha_blend_r32(*(UINT32 *)dest, clut[INPUT_VAL], alpha);	\
+		*(uint32_t *)dest = alpha_blend_r32(*(uint32_t *)dest, clut[INPUT_VAL], alpha);	\
 } while (0)
 
 static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tmap, const blit_parameters *blit,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy, int wraparound)
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy, int wraparound)
 {
 	const pen_t *clut = &machine->pens[blit->tilemap_priority_code >> 16];
 	bitmap_t *priority_bitmap = machine->priority_bitmap;
@@ -823,21 +823,21 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 	const int ymask = srcbitmap->height-1;
 	const int widthshifted = srcbitmap->width << 16;
 	const int heightshifted = srcbitmap->height << 16;
-	UINT32 priority = blit->tilemap_priority_code;
-	UINT8 mask = blit->mask;
-	UINT8 value = blit->value;
-	UINT8 alpha = blit->alpha;
-	UINT32 cx;
-	UINT32 cy;
+	uint32_t priority = blit->tilemap_priority_code;
+	uint8_t mask = blit->mask;
+	uint8_t value = blit->value;
+	uint8_t alpha = blit->alpha;
+	uint32_t cx;
+	uint32_t cy;
 	int x;
 	int sx;
 	int sy;
 	int ex;
 	int ey;
 	void *dest;
-	UINT8 *pri;
-	const UINT16 *src;
-	const UINT8 *maskptr;
+	uint8_t *pri;
+	const uint16_t *src;
+	const uint8_t *maskptr;
 	int destadvance = destbitmap->bpp / 8;
 
 	/* pre-advance based on the cliprect */
@@ -879,7 +879,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 				pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 				src = BITMAP_ADDR16(srcbitmap, cy, 0);
 				maskptr = BITMAP_ADDR8(flagsmap, cy, 0);
-				dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+				dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 
 				/* loop over columns */
 				while (x <= ex && cx < widthshifted)
@@ -894,7 +894,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 					/* advance in X */
 					cx += incxx;
 					x++;
-					dest = (UINT8 *)dest + destadvance;
+					dest = (uint8_t *)dest + destadvance;
 					pri++;
 				}
 			}
@@ -917,7 +917,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 			cy = starty;
 
 			/* get dest and priority pointers */
-			dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+			dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 			pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 
 			/* loop over columns */
@@ -934,7 +934,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 				cx += incxx;
 				cy += incxy;
 				x++;
-				dest = (UINT8 *)dest + destadvance;
+				dest = (uint8_t *)dest + destadvance;
 				pri++;
 			}
 
@@ -957,7 +957,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 			cy = starty;
 
 			/* get dest and priority pointers */
-			dest = (UINT8 *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
+			dest = (uint8_t *)destbitmap->base + (destbitmap->rowpixels * sy + sx) * destadvance;
 			pri = BITMAP_ADDR8(priority_bitmap, sy, sx);
 
 			/* loop over columns */
@@ -975,7 +975,7 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 				cx += incxx;
 				cy += incxy;
 				x++;
-				dest = (UINT8 *)dest + destadvance;
+				dest = (uint8_t *)dest + destadvance;
 				pri++;
 			}
 
@@ -990,13 +990,13 @@ static void hng64_tilemap_draw_roz_core(running_machine* machine, tilemap_t *tma
 
 
 static void hng64_tilemap_draw_roz_primask(running_machine* machine, bitmap_t *dest, const rectangle *cliprect, tilemap_t *tmap,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy,
-		int wraparound, UINT32 flags, UINT8 priority, UINT8 priority_mask, hng64trans_t drawformat)
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy,
+		int wraparound, uint32_t flags, uint8_t priority, uint8_t priority_mask, hng64trans_t drawformat)
 {
 	blit_parameters blit;
 
 /* notes:
-   - startx and starty MUST be UINT32 for calculations to work correctly
+   - startx and starty MUST be uint32_t for calculations to work correctly
    - srcbitmap->width and height are assumed to be a power of 2 to speed up wraparound
    */
 
@@ -1018,8 +1018,8 @@ profiler_mark_end();
 
 
 INLINE void hng64_tilemap_draw_roz(running_machine* machine, bitmap_t *dest, const rectangle *cliprect, tilemap_t *tmap,
-		UINT32 startx, UINT32 starty, int incxx, int incxy, int incyx, int incyy,
-		int wraparound, UINT32 flags, UINT8 priority, hng64trans_t drawformat)
+		uint32_t startx, uint32_t starty, int incxx, int incxy, int incyx, int incyy,
+		int wraparound, uint32_t flags, uint8_t priority, hng64trans_t drawformat)
 {
 	hng64_tilemap_draw_roz_primask(machine, dest, cliprect, tmap, startx, starty, incxx, incxy, incyx, incyy, wraparound, flags, priority, 0xff, drawformat);
 }
@@ -1029,10 +1029,10 @@ INLINE void hng64_tilemap_draw_roz(running_machine* machine, bitmap_t *dest, con
 static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect, int tm )
 {
 	tilemap_t* tilemap = 0;
-	UINT32 scrollbase = 0;
-	UINT32 tileregs = 0;
+	uint32_t scrollbase = 0;
+	uint32_t tileregs = 0;
 	int transmask;
-	UINT32 global_tileregs = hng64_videoregs[0x00];
+	uint32_t global_tileregs = hng64_videoregs[0x00];
 
 	int debug_blend_enabled = 0;
 
@@ -1133,8 +1133,8 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 		//}
 		int line;
 		rectangle clip;
-		INT32 xtopleft,xmiddle;
-		INT32 ytopleft,ymiddle;
+		int32_t xtopleft,xmiddle;
+		int32_t ytopleft,ymiddle;
 		int xinc,yinc;
 
 		const rectangle &visarea = machine->primary_screen->visible_area();
@@ -1222,8 +1222,8 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 
             */
 
-			INT32 xtopleft,xmiddle, xalt;
-			INT32 ytopleft,ymiddle, yalt;
+			int32_t xtopleft,xmiddle, xalt;
+			int32_t ytopleft,ymiddle, yalt;
 			int xinc, xinc2, yinc, yinc2;
 
 			if (0)
@@ -1262,8 +1262,8 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 				int bmheight = bm->height;
 				int bmwidth = bm->width;
 				const pen_t *paldata = machine->pens;
-				UINT32* dstptr;
-				UINT16* srcptr;
+				uint32_t* dstptr;
+				uint16_t* srcptr;
 				int xx,yy;
 
 
@@ -1283,7 +1283,7 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 					{
 						int realsrcx = (xtopleft>>16)&(bmwidth-1);
 						int realsrcy = (ytopleft>>16)&(bmheight-1);
-						UINT16 pen;
+						uint16_t pen;
 
 						srcptr = BITMAP_ADDR16(bm, realsrcy, 0);
 
@@ -1316,8 +1316,8 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 			/* in this mode they can only specify the top left and middle screen points for each tilemap,
                this allows simple zooming, but not rotation */
 
-			INT32 xtopleft,xmiddle;
-			INT32 ytopleft,ymiddle;
+			int32_t xtopleft,xmiddle;
+			int32_t ytopleft,ymiddle;
 			int xinc,yinc;
 
 			if (0)
@@ -1360,8 +1360,8 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 				int bmheight = bm->height;
 				int bmwidth = bm->width;
 				const pen_t *paldata = machine->pens;
-				UINT32* dstptr;
-				UINT16* srcptr;
+				uint32_t* dstptr;
+				uint16_t* srcptr;
 				int xx,yy;
 
 				int tmp = xtopleft;
@@ -1381,7 +1381,7 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 					{
 						int realsrcx = (xtopleft>>16)&(bmwidth-1);
 
-						UINT16 pen;
+						uint16_t pen;
 
 						pen = srcptr[realsrcx];
 
@@ -1412,7 +1412,7 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
  * Video Regs Format
  * ------------------
  *
- * UINT32 | Bits                                    | Use
+ * uint32_t | Bits                                    | Use
  *        | 3322 2222 2222 1111 1111 11             |
  * -------+-1098-7654-3210-9876-5432-1098-7654-3210-+----------------
  *   0    | ---- -C-- ---- -??Z ---- ---- ---- ---- | unknown (scroll control?) C = Global Complex zoom, ? = Always Set?, Z = Global Zoom Disable?
@@ -1462,21 +1462,21 @@ static void hng64_drawtilemap(running_machine* machine, bitmap_t *bitmap, const 
 
 
 
-static UINT32 old_animmask = -1;
-static UINT32 old_animbits = -1;
-static UINT16 old_tileflags0 = -1;
-static UINT16 old_tileflags1 = -1;
-static UINT16 old_tileflags2 = -1;
-static UINT16 old_tileflags3 = -1;
+static uint32_t old_animmask = -1;
+static uint32_t old_animbits = -1;
+static uint16_t old_tileflags0 = -1;
+static uint16_t old_tileflags1 = -1;
+static uint16_t old_tileflags2 = -1;
+static uint16_t old_tileflags3 = -1;
 
 #define IMPORTANT_DIRTY_TILEFLAG_MASK (0x0600)
 
 VIDEO_UPDATE( hng64 )
 {
-	UINT32 animmask;
-	UINT32 animbits;
-	UINT16 tileflags0, tileflags1;
-	UINT16 tileflags2, tileflags3;
+	uint32_t animmask;
+	uint32_t animbits;
+	uint16_t tileflags0, tileflags1;
+	uint16_t tileflags2, tileflags3;
 
 #if 0
 	// press in sams64_2 attract mode for a nice debug screen from the game
@@ -1574,8 +1574,8 @@ VIDEO_UPDATE( hng64 )
 		// Blit the color buffer into the primary bitmap
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT32 *src = &colorBuffer3d[y * (cliprect->max_x-cliprect->min_x)];
-			UINT32 *dst = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
+			uint32_t *src = &colorBuffer3d[y * (cliprect->max_x-cliprect->min_x)];
+			uint32_t *dst = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
 
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
@@ -1717,14 +1717,14 @@ VIDEO_START( hng64 )
 
 	// 3d Buffer Allocation
 	depthBuffer3d = auto_alloc_array(machine, float,  (visarea.max_x)*(visarea.max_y));
-	colorBuffer3d = auto_alloc_array(machine, UINT32, (visarea.max_x)*(visarea.max_y));
+	colorBuffer3d = auto_alloc_array(machine, uint32_t, (visarea.max_x)*(visarea.max_y));
 }
 
 
 ///////////////
 // 3d Engine //
 ///////////////
-static UINT32 hng64_dls[2][0x81];
+static uint32_t hng64_dls[2][0x81];
 
 // 3d State
 static int paletteState3d = 0x00;
@@ -1755,16 +1755,16 @@ struct polygon
 	float faceNormal[4];		// Normal of the face overall - for calculating visibility and flat-shading...
 	int visible;				// Polygon visibility in scene
 
-	UINT8 texIndex;				// Which texture to draw from (0x00-0x0f)
-	UINT8 texType;				// How to index into the texture
-	UINT8 texPageSmall;         // Does this polygon use 'small' texture pages?
-	UINT8 texPageHorizOffset;   // If it does use small texture pages, how far is this page horizontally offset?
-	UINT8 texPageVertOffset;    // If it does use small texture pages, how far is this page vertically offset?
+	uint8_t texIndex;				// Which texture to draw from (0x00-0x0f)
+	uint8_t texType;				// How to index into the texture
+	uint8_t texPageSmall;         // Does this polygon use 'small' texture pages?
+	uint8_t texPageHorizOffset;   // If it does use small texture pages, how far is this page horizontally offset?
+	uint8_t texPageVertOffset;    // If it does use small texture pages, how far is this page vertically offset?
 
-	UINT32 palOffset;			// The base offset where this object's palette starts.
-	UINT32 palPageSize;			// The size of the palette page that is being pointed to.
+	uint32_t palOffset;			// The base offset where this object's palette starts.
+	uint32_t palPageSize;			// The size of the palette page that is being pointed to.
 
-	UINT32 debugColor;			// Will go away someday.  Used to explicitly color polygons for debugging.
+	uint32_t debugColor;			// Will go away someday.  Used to explicitly color polygons for debugging.
 };
 
 static void setIdentity(float *matrix);
@@ -1775,18 +1775,18 @@ static void normalize(float* x);
 
 static void performFrustumClip(struct polygon *p);
 static void drawShaded(running_machine *machine, struct polygon *p);
-//static void plot(running_machine *machine, INT32 x, INT32 y, UINT32 color);
-//static void drawline2d(running_machine *machine, INT32 x0, INT32 y0, INT32 x1, INT32 y1, UINT32 color);
+//static void plot(running_machine *machine, int32_t x, int32_t y, uint32_t color);
+//static void drawline2d(running_machine *machine, int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color);
 //static void DrawWireframe(running_machine *machine, struct polygon *p);
 
-static float uToF(UINT16 input);
+static float uToF(uint16_t input);
 
 
 ////////////////////
 // 3d 'Functions' //
 ////////////////////
 
-static void printPacket(const UINT16* packet, int hex)
+static void printPacket(const uint16_t* packet, int hex)
 {
 	if (hex)
 	{
@@ -1816,7 +1816,7 @@ static void printPacket(const UINT16* packet, int hex)
 
 // Operation 0001
 // Camera transformation.
-static void setCameraTransformation(const UINT16* packet)
+static void setCameraTransformation(const uint16_t* packet)
 {
 	/*//////////////
     // PACKET FORMAT
@@ -1861,7 +1861,7 @@ static void setCameraTransformation(const UINT16* packet)
 
 // Operation 0010
 // Lighting information
-static void setLighting(const UINT16* packet)
+static void setLighting(const uint16_t* packet)
 {
 	/*//////////////
     // PACKET FORMAT
@@ -1893,7 +1893,7 @@ static void setLighting(const UINT16* packet)
 
 // Operation 0011
 // Palette / Model flags?
-static void set3dFlags(const UINT16* packet)
+static void set3dFlags(const uint16_t* packet)
 {
 	/*//////////////
     // PACKET FORMAT
@@ -1919,7 +1919,7 @@ static void set3dFlags(const UINT16* packet)
 
 // Operation 0012
 // Projection Matrix.
-static void setCameraProjectionMatrix(const UINT16* packet)
+static void setCameraProjectionMatrix(const uint16_t* packet)
 {
 	/*//////////////
     // PACKET FORMAT
@@ -1975,7 +1975,7 @@ static void setCameraProjectionMatrix(const UINT16* packet)
 
 // Operation 0100
 // Polygon rasterization.
-static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, struct polygon* polys, int* numPolys)
+static void recoverPolygonBlock(running_machine* machine, const uint16_t* packet, struct polygon* polys, int* numPolys)
 {
 	/*//////////////
     // PACKET FORMAT
@@ -2011,9 +2011,9 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
     // [14] - xxxx ... Transformation matrix
     // [15] - xxxx ... Transformation matrix
     ////////////*/
-	UINT32 size[4];
-	UINT32 address[4];
-	UINT32 megaOffset;
+	uint32_t size[4];
+	uint32_t address[4];
+	uint32_t megaOffset;
 	float eyeCoords[4];		// ObjectCoords transformed by the modelViewMatrix
 //  float clipCoords[4];    // EyeCoords transformed by the projectionMatrix
 	float ndCoords[4];		// Normalized device coordinates/clipCoordinates (x/w, y/w, z/w)
@@ -2080,9 +2080,9 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
     //////////////////////////////////////////////*/
 
 	// 3d ROM Offset
-	UINT16* threeDRoms = (UINT16*)(memory_region(machine, "verts"));
-	UINT32  threeDOffset = (((UINT32)packet[2]) << 16) | ((UINT32)packet[3]);
-	UINT16* threeDPointer = &threeDRoms[threeDOffset * 3];
+	uint16_t* threeDRoms = (uint16_t*)(memory_region(machine, "verts"));
+	uint32_t  threeDOffset = (((uint32_t)packet[2]) << 16) | ((uint32_t)packet[3]);
+	uint16_t* threeDPointer = &threeDRoms[threeDOffset * 3];
 
 	if (threeDOffset >= memory_region_length(machine, "verts"))
 	{
@@ -2138,7 +2138,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 	address[3] |= (megaOffset << 16);
 
 	// Debug - ajg
-	//UINT32 tdColor = 0xff000000;
+	//uint32_t tdColor = 0xff000000;
 	//if (threeDPointer[14] & 0x0002) tdColor |= 0x00ff0000;
 	//if (threeDPointer[14] & 0x0001) tdColor |= 0x0000ff00;
 	//if (threeDPointer[14] & 0x0000) tdColor |= 0x000000ff;
@@ -2146,7 +2146,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 	/* For all 4 polygon chunks */
 	for (int k = 0; k < 4; k++)
 	{
-		UINT16* chunkOffset = &threeDRoms[address[k] * 3];
+		uint16_t* chunkOffset = &threeDRoms[address[k] * 3];
 		for (int l = 0; l < size[k]; l++)
 		{
 			////////////////////////////////////////////
@@ -2173,7 +2173,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 			//                           000? = ???]
 			// [2] ---? - ???
 			//////////////////////////
-			UINT8 chunkType = chunkOffset[0] & 0x00ff;
+			uint8_t chunkType = chunkOffset[0] & 0x00ff;
 
 			// Debug - ajg
 			if (chunkOffset[0] & 0xff00)
@@ -2191,7 +2191,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 			//break;
 
 			// TEXTURE
-			/* There may be more than just high & low res texture types, so I'm keeping texType as a UINT8. */
+			/* There may be more than just high & low res texture types, so I'm keeping texType as a uint8_t. */
 			if (chunkOffset[1] & 0x1000) polys[*numPolys].texType = 0x1;
 			else						 polys[*numPolys].texType = 0x0;
 
@@ -2215,9 +2215,9 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 					polys[*numPolys].palOffset += 0x800;
 			}
 
-			//UINT16 explicitPaletteValue0 = ((chunkOffset[?] & 0x????) >> ?) * 0x800;
-			UINT16 explicitPaletteValue1 = ((chunkOffset[1] & 0x0f00) >> 8) * 0x080;
-			UINT16 explicitPaletteValue2 = ((chunkOffset[1] & 0x00f0) >> 4) * 0x008;
+			//uint16_t explicitPaletteValue0 = ((chunkOffset[?] & 0x????) >> ?) * 0x800;
+			uint16_t explicitPaletteValue1 = ((chunkOffset[1] & 0x0f00) >> 8) * 0x080;
+			uint16_t explicitPaletteValue2 = ((chunkOffset[1] & 0x00f0) >> 4) * 0x008;
 
 			// The presence of 0x00f0 *probably* sets 0x10-sized palette addressing.
 			if (explicitPaletteValue2) polys[*numPolys].palPageSize = 0x10;
@@ -2233,7 +2233,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 
 
 
-			UINT8 chunkLength = 0;
+			uint8_t chunkLength = 0;
 			switch(chunkType)
 			{
 			/*/////////////////////////
@@ -2538,7 +2538,7 @@ static void recoverPolygonBlock(running_machine* machine, const UINT16* packet, 
 	}
 }
 
-void hng64_command3d(running_machine* machine, const UINT16* packet)
+void hng64_command3d(running_machine* machine, const uint16_t* packet)
 {
 	/* A temporary place to put some polygons.  This will optimize away if the compiler's any good. */
 	int numPolys = 0;
@@ -2589,15 +2589,15 @@ void hng64_command3d(running_machine* machine, const UINT16* packet)
 		}
 
 		// Split the packet and call recoverPolygonBlock on each half.
-		UINT16 miniPacket[16];
-		memset(miniPacket, 0, sizeof(UINT16)*16);
+		uint16_t miniPacket[16];
+		memset(miniPacket, 0, sizeof(uint16_t)*16);
 		for (int i = 0; i < 7; i++) miniPacket[i] = packet[i];
 		miniPacket[7] = 0x7fff;
 		miniPacket[11] = 0x7fff;
 		miniPacket[15] = 0x7fff;
 		recoverPolygonBlock(machine, miniPacket, polys, &numPolys);
 
-		memset(miniPacket, 0, sizeof(UINT16)*16);
+		memset(miniPacket, 0, sizeof(uint16_t)*16);
 		for (int i = 0; i < 7; i++) miniPacket[i] = packet[i+8];
 		miniPacket[7] = 0x7fff;
 		miniPacket[11] = 0x7fff;
@@ -2660,7 +2660,7 @@ static void clear3d(running_machine *machine)
 /* 3D/framebuffer video registers
  * ------------------------------
  *
- * UINT32 | Bits                                    | Use
+ * uint32_t | Bits                                    | Use
  *        | 3322 2222 2222 1111 1111 11             |
  * -------+-1098-7654-3210-9876-5432-1098-7654-3210-+----------------
  *      0 | ???? ???? ???? ???? ccc? ???? ???? ???? | framebuffer color base, 0x311800 in Fatal Fury WA, 0x313800 in Buriki One
@@ -2724,17 +2724,17 @@ static void setIdentity(float *matrix)
 	matrix[0] = matrix[5] = matrix[10] = matrix[15] = 1.0f;
 }
 
-static float uToF(UINT16 input)
+static float uToF(uint16_t input)
 {
 	float retVal;
-	retVal = (float)((INT16)input) / 32768.0f;
+	retVal = (float)((int16_t)input) / 32768.0f;
 	return retVal;
 
 /*
-    if ((INT16)input < 0)
-        retVal = (float)((INT16)input) / 32768.0f;
+    if ((int16_t)input < 0)
+        retVal = (float)((int16_t)input) / 32768.0f;
     else
-        retVal = (float)((INT16)input) / 32767.0f;
+        retVal = (float)((int16_t)input) / 32767.0f;
 */
 }
 
@@ -2910,27 +2910,27 @@ static void performFrustumClip(struct polygon *p)
 // wireframe rendering //
 /////////////////////////
 #ifdef UNUSED_FUNCTION
-static void plot(running_machine *machine, INT32 x, INT32 y, UINT32 color)
+static void plot(running_machine *machine, int32_t x, int32_t y, uint32_t color)
 {
-	UINT32* cb = &(colorBuffer3d[(y * machine->primary_screen->visible_area().max_x) + x]);
+	uint32_t* cb = &(colorBuffer3d[(y * machine->primary_screen->visible_area().max_x) + x]);
 	*cb = color;
 }
 
 // Stolen from http://en.wikipedia.org/wiki/Bresenham's_line_algorithm (no copyright denoted) - the non-optimized version
-static void drawline2d(running_machine *machine, INT32 x0, INT32 y0, INT32 x1, INT32 y1, UINT32 color)
+static void drawline2d(running_machine *machine, int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color)
 {
 #define SWAP(a,b) tmpswap = a; a = b; b = tmpswap;
 
-	INT32 i;
-	INT32 steep = 1;
-	INT32 sx, sy;  /* step positive or negative (1 or -1) */
-	INT32 dx, dy;  /* delta (difference in X and Y between points) */
-	INT32 e;
+	int32_t i;
+	int32_t steep = 1;
+	int32_t sx, sy;  /* step positive or negative (1 or -1) */
+	int32_t dx, dy;  /* delta (difference in X and Y between points) */
+	int32_t e;
 
 	/*
     * inline swap. On some architectures, the XOR trick may be faster
     */
-	INT32 tmpswap;
+	int32_t tmpswap;
 
 	/*
     * optimize for vertical and horizontal lines here
@@ -2980,7 +2980,7 @@ static void DrawWireframe(running_machine *machine, struct polygon *p)
 	{
 		// mame_printf_debug("now drawing : %f %f %f, %f %f %f\n", p->vert[j].clipCoords[0], p->vert[j].clipCoords[1], p->vert[j].clipCoords[2], p->vert[(j+1)%p->n].clipCoords[0], p->vert[(j+1)%p->n].clipCoords[1], p->vert[(j+1)%p->n].clipCoords[2]);
 		// mame_printf_debug("%f %f %f %f\n", p->vert[j].clipCoords[0], p->vert[j].clipCoords[1], p->vert[(j+1)%p->n].clipCoords[0], p->vert[(j+1)%p->n].clipCoords[1]);
-		UINT32 color = MAKE_ARGB((UINT8)255, (UINT8)255, (UINT8)0, (UINT8)0);
+		uint32_t color = MAKE_ARGB((uint8_t)255, (uint8_t)255, (uint8_t)0, (uint8_t)0);
 		drawline2d(machine, p->vert[j].clipCoords[0], p->vert[j].clipCoords[1], p->vert[(j+1)%p->n].clipCoords[0], p->vert[(j+1)%p->n].clipCoords[1], color);
 	}
 
@@ -3002,11 +3002,11 @@ static void DrawWireframe(running_machine *machine, struct polygon *p)
 
 struct polygonRasterOptions
 {
-	UINT8 texType;
-	UINT8 texIndex;
-	UINT8 texPageSmall;
-	UINT8 texPageHorizOffset;
-	UINT8 texPageVertOffset;
+	uint8_t texType;
+	uint8_t texIndex;
+	uint8_t texPageSmall;
+	uint8_t texPageHorizOffset;
+	uint8_t texPageVertOffset;
 	int palOffset;
 	int palPageSize;
 	int debugColor;
@@ -3029,12 +3029,12 @@ INLINE void FillSmoothTexPCHorizontalLine(running_machine *machine,
 										  float s_start, float s_delta, float t_start, float t_delta)
 {
 	float*  db = &(depthBuffer3d[(y * machine->primary_screen->visible_area().max_x) + x_start]);
-	UINT32* cb = &(colorBuffer3d[(y * machine->primary_screen->visible_area().max_x) + x_start]);
+	uint32_t* cb = &(colorBuffer3d[(y * machine->primary_screen->visible_area().max_x) + x_start]);
 
-	UINT8 paletteEntry = 0;
+	uint8_t paletteEntry = 0;
 	float t_coord, s_coord;
-	const UINT8 *gfx = memory_region(machine, "textures");
-	const UINT8 *textureOffset = &gfx[prOptions.texIndex * 1024 * 1024];
+	const uint8_t *gfx = memory_region(machine, "textures");
+	const uint8_t *textureOffset = &gfx[prOptions.texIndex * 1024 * 1024];
 
 	for (; x_start <= x_end; x_start++)
 	{
@@ -3047,13 +3047,13 @@ INLINE void FillSmoothTexPCHorizontalLine(running_machine *machine,
 			if ((prOptions.debugColor & 0xff000000) == 0x01000000)
 			{
 				// UV COLOR MODE
-				*cb = MAKE_ARGB(255, (UINT8)(s_coord*255.0f), (UINT8)(t_coord*255.0f), (UINT8)(0));
+				*cb = MAKE_ARGB(255, (uint8_t)(s_coord*255.0f), (uint8_t)(t_coord*255.0f), (uint8_t)(0));
 				*db = z_start;
 			}
 			else if ((prOptions.debugColor & 0xff000000) == 0x02000000)
 			{
 				// Lit
-				*cb = MAKE_ARGB(255, (UINT8)(r_start/w_start), (UINT8)(g_start/w_start), (UINT8)(b_start/w_start));
+				*cb = MAKE_ARGB(255, (uint8_t)(r_start/w_start), (uint8_t)(g_start/w_start), (uint8_t)(b_start/w_start));
 				*db = z_start;
 			}
 			else if ((prOptions.debugColor & 0xff000000) == 0xff000000)
@@ -3095,7 +3095,7 @@ INLINE void FillSmoothTexPCHorizontalLine(running_machine *machine,
 				{
 					// The color out of the texture
 					paletteEntry %= prOptions.palPageSize;
-					UINT32 color = machine->pens[prOptions.palOffset + paletteEntry];
+					uint32_t color = machine->pens[prOptions.palOffset + paletteEntry];
 
 					// Apply the lighting
 					float rIntensity = (r_start/w_start) / 255.0f;
@@ -3114,7 +3114,7 @@ INLINE void FillSmoothTexPCHorizontalLine(running_machine *machine,
 					if (green >= 255) green = 255;
 					if (blue >= 255) blue = 255;
 
-					color = MAKE_ARGB(255, (UINT8)red, (UINT8)green, (UINT8)blue);
+					color = MAKE_ARGB(255, (uint8_t)red, (uint8_t)green, (uint8_t)blue);
 
 					*cb = color;
 					*db = z_start;

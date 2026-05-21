@@ -15,8 +15,8 @@
 
 /* Perform basic machine initialisation */
 
-UINT8 namcond1_h8_irq5_enabled;
-UINT8 namcond1_gfxbank;
+uint8_t namcond1_h8_irq5_enabled;
+uint8_t namcond1_gfxbank;
 
 MACHINE_START( namcond1 )
 {
@@ -27,8 +27,8 @@ MACHINE_START( namcond1 )
 MACHINE_RESET( namcond1 )
 {
 #ifdef MAME_DEBUG
-    /*UINT8   *ROM = memory_region(machine, REGION_CPU1);*/
-    /*UINT32 debug_trigger_addr;*/
+    /*uint8_t   *ROM = memory_region(machine, REGION_CPU1);*/
+    /*uint32_t debug_trigger_addr;*/
     /*int             i;*/
 
 #if 0
@@ -52,7 +52,7 @@ MACHINE_RESET( namcond1 )
 }
 
 // instance of the shared ram pointer
-UINT16 *namcond1_shared_ram;
+uint16_t *namcond1_shared_ram;
 
 READ16_HANDLER( namcond1_shared_ram_r )
 {

@@ -154,16 +154,16 @@ PALETTE_INIT( arabian )
 VIDEO_START( arabian )
 {
 	arabian_state *state = (arabian_state *)machine->driver_data;
-	UINT8 *gfxbase = memory_region(machine, "gfx1");
+	uint8_t *gfxbase = memory_region(machine, "gfx1");
 	int offs;
 
 	/* allocate a common bitmap to use for both planes */
 	/* plane A (top plane with motion objects) is in the upper 4 bits */
 	/* plane B (bottom plane with playfield) is in the lower 4 bits */
-	state->main_bitmap = auto_alloc_array(machine, UINT8, BITMAP_WIDTH * BITMAP_HEIGHT);
+	state->main_bitmap = auto_alloc_array(machine, uint8_t, BITMAP_WIDTH * BITMAP_HEIGHT);
 
 	/* allocate memory for the converted graphics data */
-	state->converted_gfx = auto_alloc_array(machine, UINT8, 0x8000 * 2);
+	state->converted_gfx = auto_alloc_array(machine, uint8_t, 0x8000 * 2);
 
 	/*--------------------------------------------------
         transform graphics data into more usable format
@@ -220,21 +220,21 @@ VIDEO_START( arabian )
  *
  *************************************/
 
-static void blit_area( running_machine *machine, UINT8 plane, UINT16 src, UINT8 x, UINT8 y, UINT8 sx, UINT8 sy )
+static void blit_area( running_machine *machine, uint8_t plane, uint16_t src, uint8_t x, uint8_t y, uint8_t sx, uint8_t sy )
 {
 	arabian_state *state = (arabian_state *)machine->driver_data;
-	UINT8 *srcdata = &state->converted_gfx[src * 4];
+	uint8_t *srcdata = &state->converted_gfx[src * 4];
 	int i,j;
 
 	/* loop over X, then Y */
 	for (i = 0; i <= sx; i++, x += 4)
 		for (j = 0; j <= sy; j++)
 		{
-			UINT8 p1 = *srcdata++;
-			UINT8 p2 = *srcdata++;
-			UINT8 p3 = *srcdata++;
-			UINT8 p4 = *srcdata++;
-			UINT8 *base;
+			uint8_t p1 = *srcdata++;
+			uint8_t p2 = *srcdata++;
+			uint8_t p3 = *srcdata++;
+			uint8_t p4 = *srcdata++;
+			uint8_t *base;
 
 			/* get a pointer to the bitmap */
 			base = &state->main_bitmap[((y + j) & 0xff) * BITMAP_WIDTH + (x & 0xff)];
@@ -301,8 +301,8 @@ WRITE8_HANDLER( arabian_blitter_w )
 WRITE8_HANDLER( arabian_videoram_w )
 {
 	arabian_state *state = (arabian_state *)space->machine->driver_data;
-	UINT8 *base;
-	UINT8 x, y;
+	uint8_t *base;
+	uint8_t x, y;
 
 	/* determine X/Y */
 	x = (offset >> 8) << 2;
@@ -384,7 +384,7 @@ VIDEO_UPDATE( arabian )
 		/* flipped case */
 		else
 		{
-			UINT8 scanline[BITMAP_WIDTH];
+			uint8_t scanline[BITMAP_WIDTH];
 			int x;
 			for (x = 0; x < BITMAP_WIDTH; x++)
 				scanline[BITMAP_WIDTH - 1 - x] = state->main_bitmap[y * BITMAP_WIDTH + x];

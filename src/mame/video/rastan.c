@@ -184,7 +184,7 @@ the Y settings are active low.
 VIDEO_UPDATE( jumping )
 {
 	rainbow_state *state = (rainbow_state *)screen->machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, layer[2];
 	int sprite_colbank = (state->sprite_ctrl & 0xe0) >> 1;
 

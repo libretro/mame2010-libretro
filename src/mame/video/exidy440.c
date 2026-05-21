@@ -27,22 +27,22 @@
 
 
 /* globals */
-UINT8 *exidy440_scanline;
-UINT8 *exidy440_imageram;
-UINT8  exidy440_firq_vblank;
-UINT8  exidy440_firq_beam;
-UINT8 *topsecex_yscroll;
+uint8_t *exidy440_scanline;
+uint8_t *exidy440_imageram;
+uint8_t  exidy440_firq_vblank;
+uint8_t  exidy440_firq_beam;
+uint8_t *topsecex_yscroll;
 
 /* local allocated storage */
-static UINT8 exidy440_latched_x;
-static UINT8 *local_videoram;
-static UINT8 *local_paletteram;
+static uint8_t exidy440_latched_x;
+static uint8_t *local_videoram;
+static uint8_t *local_paletteram;
 
 /* local variables */
-static UINT8 firq_enable;
-static UINT8 firq_select;
-static UINT8 palettebank_io;
-static UINT8 palettebank_vis;
+static uint8_t firq_enable;
+static uint8_t firq_select;
+static uint8_t palettebank_io;
+static uint8_t palettebank_vis;
 
 /* function prototypes */
 static void exidy440_update_firq(running_machine *machine);
@@ -66,11 +66,11 @@ static VIDEO_START( exidy440 )
 	exidy440_firq_beam = 0;
 
 	/* allocate a buffer for VRAM */
-	local_videoram = auto_alloc_array(machine, UINT8, 256 * 256 * 2);
+	local_videoram = auto_alloc_array(machine, uint8_t, 256 * 256 * 2);
 	memset(local_videoram, 0, 256 * 256 * 2);
 
 	/* allocate a buffer for palette RAM */
-	local_paletteram = auto_alloc_array(machine, UINT8, 512 * 2);
+	local_paletteram = auto_alloc_array(machine, uint8_t, 512 * 2);
 	memset(local_paletteram, 0, 512 * 2);
 }
 
@@ -92,7 +92,7 @@ static VIDEO_START( topsecex )
 
 READ8_HANDLER( exidy440_videoram_r )
 {
-	UINT8 *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
+	uint8_t *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
 
 	/* combine the two pixel values into one byte */
 	return (base[0] << 4) | base[1];
@@ -101,7 +101,7 @@ READ8_HANDLER( exidy440_videoram_r )
 
 WRITE8_HANDLER( exidy440_videoram_w )
 {
-	UINT8 *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
+	uint8_t *base = &local_videoram[(*exidy440_scanline * 256 + offset) * 2];
 
 	/* expand the two pixel values into two bytes */
 	base[0] = (data >> 4) & 15;
@@ -312,11 +312,11 @@ static void draw_sprites(screen_device &screen, bitmap_t *bitmap, const rectangl
 	int i;
 
 	/* get a pointer to the palette to look for collision flags */
-	UINT8 *palette = &local_paletteram[palettebank_vis * 512];
+	uint8_t *palette = &local_paletteram[palettebank_vis * 512];
 	int count = 0;
 
 	/* draw the sprite images, checking for collisions along the way */
-	UINT8 *sprite = screen.machine->generic.spriteram.u8 + (SPRITE_COUNT - 1) * 4;
+	uint8_t *sprite = screen.machine->generic.spriteram.u8 + (SPRITE_COUNT - 1) * 4;
 
 	for (i = 0; i < SPRITE_COUNT; i++, sprite -= 4)
 	{
@@ -324,7 +324,7 @@ static void draw_sprites(screen_device &screen, bitmap_t *bitmap, const rectangl
 		int xoffs = (~((sprite[1] << 8) | sprite[2]) & 0x1ff);
 		int yoffs = (~sprite[0] & 0xff) + 1;
 		int x, y, sy;
-		UINT8 *src;
+		uint8_t *src;
 
 		/* skip if out of range */
 		if (yoffs < cliprect->min_y || yoffs >= cliprect->max_y + 16)
@@ -354,7 +354,7 @@ static void draw_sprites(screen_device &screen, bitmap_t *bitmap, const rectangl
 			/* only draw scanlines that are in this cliprect */
 			if (yoffs <= cliprect->max_y)
 			{
-				UINT8 *old = &local_videoram[sy * 512 + xoffs];
+				uint8_t *old = &local_videoram[sy * 512 + xoffs];
 				int currx = xoffs;
 
 				/* loop over x */

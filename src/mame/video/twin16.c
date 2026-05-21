@@ -15,15 +15,15 @@
 #include "emu.h"
 #include "includes/twin16.h"
 
-static UINT16 twin16_sprite_buffer[0x800];
+static uint16_t twin16_sprite_buffer[0x800];
 static TIMER_CALLBACK( twin16_sprite_tick );
 static emu_timer *twin16_sprite_timer;
 static int twin16_sprite_busy;
 
 static int need_process_spriteram;
-static UINT16 gfx_bank;
-static UINT16 scrollx[3], scrolly[3];
-static UINT16 video_register;
+static uint16_t gfx_bank;
+static uint16_t scrollx[3], scrolly[3];
+static uint16_t video_register;
 
 enum
 {
@@ -163,25 +163,25 @@ static int twin16_set_sprite_timer( running_machine *machine )
 
 void twin16_spriteram_process( running_machine *machine )
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
-	UINT16 dx = scrollx[0];
-	UINT16 dy = scrolly[0];
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t dx = scrollx[0];
+	uint16_t dy = scrolly[0];
 
-	const UINT16 *source = &spriteram16[0x0000];
-	const UINT16 *finish = &spriteram16[0x1800];
+	const uint16_t *source = &spriteram16[0x0000];
+	const uint16_t *finish = &spriteram16[0x1800];
 
 	twin16_set_sprite_timer(machine);
-	memset(&spriteram16[0x1800],0xff,0x800*sizeof(UINT16));
+	memset(&spriteram16[0x1800],0xff,0x800*sizeof(uint16_t));
 
 	while( source<finish )
 	{
-		UINT16 priority = source[0];
+		uint16_t priority = source[0];
 		if( priority & 0x8000 )
 		{
-			UINT16 *dest = &spriteram16[0x1800|(priority&0xff)<<2];
+			uint16_t *dest = &spriteram16[0x1800|(priority&0xff)<<2];
 
-			UINT32 xpos = (0x10000*source[4])|source[5];
-			UINT32 ypos = (0x10000*source[6])|source[7];
+			uint32_t xpos = (0x10000*source[4])|source[5];
+			uint32_t ypos = (0x10000*source[6])|source[7];
 
 			/* notes on uncertain attributes:
             shadows: pen $F only (like other Konami hw), used in devilw, fround,
@@ -207,7 +207,7 @@ void twin16_spriteram_process( running_machine *machine )
             fround, hpuncher, miaj, cuebrickj, don't use the preprocessor. all sprites are expected
             to be high priority, and shadows are enabled
             */
-			UINT16 attributes = 0x8000|	// enabled
+			uint16_t attributes = 0x8000|	// enabled
 				(source[2]&0x03ff)|	// scale,size,color
 				(source[2]&0x4000)>>4|	// no-shadow? (gradius2 level 7 boss sets this bit and appears to expect pen $F to be solid)
 				(priority&0x200)<<5;	// sprite-background priority?
@@ -224,13 +224,13 @@ void twin16_spriteram_process( running_machine *machine )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap )
 {
-	const UINT16 *source = 0x1800+machine->generic.buffered_spriteram.u16 + 0x800 - 4;
-	const UINT16 *finish = 0x1800+machine->generic.buffered_spriteram.u16;
+	const uint16_t *source = 0x1800+machine->generic.buffered_spriteram.u16 + 0x800 - 4;
+	const uint16_t *finish = 0x1800+machine->generic.buffered_spriteram.u16;
 
 	for (; source >= finish; source -= 4)
 	{
-		UINT16 attributes = source[3];
-		UINT16 code = source[0];
+		uint16_t attributes = source[3];
+		uint16_t code = source[0];
 
 		if((code!=0xffff) && (attributes&0x8000))
 		{
@@ -241,7 +241,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap )
 			int pal_base = ((attributes&0xf)+0x10)*16;
 			int height	= 16<<((attributes>>6)&0x3);
 			int width	= 16<<((attributes>>4)&0x3);
-			const UINT16 *pen_data = 0;
+			const uint16_t *pen_data = 0;
 			int flipy = attributes&0x0200;
 			int flipx = attributes&0x0100;
 			int priority = (attributes&0x4000)?TWIN16_SPRITE_PRI_L1:TWIN16_SPRITE_PRI_L2;
@@ -303,15 +303,15 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap )
 				int sy = (flipy)?(ypos+height-1-y):(ypos+y);
 				if( sy>=16 && sy<256-16 )
 				{
-					UINT16 *dest = BITMAP_ADDR16(bitmap, sy, 0);
-					UINT8 *pdest = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
+					uint16_t *dest = BITMAP_ADDR16(bitmap, sy, 0);
+					uint8_t *pdest = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
 
 					for( x=0; x<width; x++ )
 					{
 						int sx = (flipx)?(xpos+width-1-x):(xpos+x);
 						if( sx>=0 && sx<320 )
 						{
-							UINT16 pen = pen_data[x>>2]>>((~x&3)<<2)&0xf;
+							uint16_t pen = pen_data[x>>2]>>((~x&3)<<2)&0xf;
 
 							if( pen )
 							{
@@ -346,8 +346,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap )
 
 static void draw_layer( running_machine *machine, bitmap_t *bitmap, int opaque )
 {
-	const UINT16 *gfx_base;
-	const UINT16 *source = machine->generic.videoram.u16;
+	const uint16_t *gfx_base;
+	const uint16_t *source = machine->generic.videoram.u16;
 	int i, xxor, yxor;
 	int bank_table[4];
 	int dx, dy, palette;
@@ -426,7 +426,7 @@ static void draw_layer( running_machine *machine, bitmap_t *bitmap, int opaque )
                ---xx----------- tile bank
                -----xxxxxxxxxxx tile number
             */
-			const UINT16 *gfx_data = gfx_base + (code&0x7ff)*16 + bank_table[(code>>11)&0x3]*0x8000;
+			const uint16_t *gfx_data = gfx_base + (code&0x7ff)*16 + bank_table[(code>>11)&0x3]*0x8000;
 			int color = (code>>13);
 			int pal_base = 16*(0x20+color+8*palette);
 			int x, y;
@@ -435,14 +435,14 @@ static void draw_layer( running_machine *machine, bitmap_t *bitmap, int opaque )
 			{
 				for (y = y1; y <= y2; y++)
 				{
-					const UINT16 *gfxptr = gfx_data + ((y - ypos) ^ yxor) * 2;
-					UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-					UINT8 *pdest = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+					const uint16_t *gfxptr = gfx_data + ((y - ypos) ^ yxor) * 2;
+					uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+					uint8_t *pdest = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
 
 					for (x = x1; x <= x2; x++)
 					{
 						int effx = (x - xpos) ^ xxor;
-						UINT16 data = gfxptr[effx / 4];
+						uint16_t data = gfxptr[effx / 4];
 						dest[x] = pal_base + ((data >> 4*(~effx & 3)) & 0x0f);
 						pdest[x] |= TWIN16_BG_LAYER1;
 					}
@@ -452,15 +452,15 @@ static void draw_layer( running_machine *machine, bitmap_t *bitmap, int opaque )
 			{
 				for (y = y1; y <= y2; y++)
 				{
-					const UINT16 *gfxptr = gfx_data + ((y - ypos) ^ yxor) * 2;
-					UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-					UINT8 *pdest = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+					const uint16_t *gfxptr = gfx_data + ((y - ypos) ^ yxor) * 2;
+					uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+					uint8_t *pdest = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
 
 					for (x = x1; x <= x2; x++)
 					{
 						int effx = (x - xpos) ^ xxor;
-						UINT16 data = gfxptr[effx / 4];
-						UINT8 pen = (data >> 4*(~effx & 3)) & 0x0f;
+						uint16_t data = gfxptr[effx / 4];
+						uint8_t pen = (data >> 4*(~effx & 3)) & 0x0f;
 						if (pen)
 						{
 							dest[x] = pal_base + pen;
@@ -475,7 +475,7 @@ static void draw_layer( running_machine *machine, bitmap_t *bitmap, int opaque )
 
 static TILE_GET_INFO( get_text_tile_info )
 {
-	const UINT16 *source = twin16_text_ram;
+	const uint16_t *source = twin16_text_ram;
 	int attr = source[tile_index];
 	/* fedcba9876543210
        -x-------------- yflip
@@ -500,7 +500,7 @@ VIDEO_START( twin16 )
 
 	palette_set_shadow_factor(machine,0.4); // screenshots estimate
 
-	memset(twin16_sprite_buffer,0xff,0x800*sizeof(UINT16));
+	memset(twin16_sprite_buffer,0xff,0x800*sizeof(uint16_t));
 	twin16_sprite_busy = 0;
 	twin16_sprite_timer = timer_alloc(machine, twin16_sprite_tick, NULL);
 	timer_adjust_oneshot(twin16_sprite_timer, attotime_never, 0);
@@ -543,8 +543,8 @@ VIDEO_EOF( twin16 )
 		/* if the sprite preprocessor is used, sprite ram is copied to an external buffer first,
         as evidenced by 1-frame sprite lag in gradius2 and devilw otherwise, though there's probably
         more to it than that */
-		memcpy(&machine->generic.buffered_spriteram.u16[0x1800],twin16_sprite_buffer,0x800*sizeof(UINT16));
-		memcpy(twin16_sprite_buffer,&machine->generic.spriteram.u16[0x1800],0x800*sizeof(UINT16));
+		memcpy(&machine->generic.buffered_spriteram.u16[0x1800],twin16_sprite_buffer,0x800*sizeof(uint16_t));
+		memcpy(twin16_sprite_buffer,&machine->generic.spriteram.u16[0x1800],0x800*sizeof(uint16_t));
 	}
 	else {
 		const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);

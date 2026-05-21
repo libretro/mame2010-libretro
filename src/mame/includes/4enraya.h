@@ -12,7 +12,7 @@ public:
 	_4enraya_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
+	uint8_t *    videoram;
 	size_t     videoram_size;
 
 	/* video-related */

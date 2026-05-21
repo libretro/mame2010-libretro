@@ -50,8 +50,8 @@ static TILEMAP_MAPPER( yunsun16_tilemap_scan_pages )
 static TILE_GET_INFO( get_tile_info_0 )
 {
 	yunsun16_state *state = (yunsun16_state *)machine->driver_data;
-	UINT16 code = state->vram_0[2 * tile_index + 0];
-	UINT16 attr = state->vram_0[2 * tile_index + 1];
+	uint16_t code = state->vram_0[2 * tile_index + 0];
+	uint16_t attr = state->vram_0[2 * tile_index + 1];
 	SET_TILE_INFO(
 			TMAP_GFX,
 			code,
@@ -62,8 +62,8 @@ static TILE_GET_INFO( get_tile_info_0 )
 static TILE_GET_INFO( get_tile_info_1 )
 {
 	yunsun16_state *state = (yunsun16_state *)machine->driver_data;
-	UINT16 code = state->vram_1[2 * tile_index + 0];
-	UINT16 attr = state->vram_1[2 * tile_index + 1];
+	uint16_t code = state->vram_1[2 * tile_index + 0];
+	uint16_t attr = state->vram_1[2 * tile_index + 1];
 	SET_TILE_INFO(
 			TMAP_GFX,
 			code,

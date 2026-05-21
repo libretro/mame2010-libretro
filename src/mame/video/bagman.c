@@ -11,10 +11,10 @@
 #include "includes/bagman.h"
 
 
-UINT8 *bagman_video_enable;
+uint8_t *bagman_video_enable;
 
-UINT8 *bagman_videoram;
-UINT8 *bagman_colorram;
+uint8_t *bagman_videoram;
+uint8_t *bagman_colorram;
 static tilemap_t *bg_tilemap;
 
 
@@ -112,7 +112,7 @@ VIDEO_START( bagman )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4;offs >= 0;offs -= 4)

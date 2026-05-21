@@ -24,11 +24,11 @@ WRITE8_HANDLER ( pce_joystick_w );
 
 struct pce_struct
 {
-	UINT8 io_port_options; /*driver-specific options for the PCE*/
+	uint8_t io_port_options; /*driver-specific options for the PCE*/
 };
 extern struct pce_struct pce;
 DRIVER_INIT( pce );
 MACHINE_RESET( pce );
 
-void pce_set_joystick_readinputport_callback( UINT8 (*joy_read)(running_machine *));
+void pce_set_joystick_readinputport_callback( uint8_t (*joy_read)(running_machine *));
 #endif

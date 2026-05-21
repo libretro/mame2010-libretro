@@ -15,7 +15,7 @@ static TILEMAP_MAPPER( background_scan_rows )
 
 static TILE_GET_INFO( get_back_tile_info )
 {
-	UINT8 *bg_map = memory_region(machine, "gfx4");
+	uint8_t *bg_map = memory_region(machine, "gfx4");
 	int tile;
 
 	tile = bg_map[tile_index << 1] + (bg_map[(tile_index << 1) + 1] << 8);
@@ -88,7 +88,7 @@ WRITE16_HANDLER( pushman_videoram_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	pushman_state *state = (pushman_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, x, y, color, sprite, flipx, flipy;
 
 	for (offs = 0x0800 - 4; offs >=0; offs -= 4)

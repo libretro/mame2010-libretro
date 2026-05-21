@@ -93,7 +93,7 @@ PALETTE_INIT( quasar )
 VIDEO_START( quasar )
 {
 	cvs_state *state = (cvs_state *)machine->driver_data;
-	state->effectram = auto_alloc_array(machine, UINT8, 0x400);
+	state->effectram = auto_alloc_array(machine, uint8_t, 0x400);
 
 	/* create helper bitmap */
 	state->collision_background = machine->primary_screen->alloc_compatible_bitmap();
@@ -113,9 +113,9 @@ VIDEO_UPDATE( quasar )
 	for (offs = 0; offs < 0x0400; offs++)
 	{
 		int ox, oy;
-		UINT8 code = state->video_ram[offs];
-		UINT8 x = (offs & 0x1f) << 3;
-		UINT8 y = (offs >> 5) << 3;
+		uint8_t code = state->video_ram[offs];
+		uint8_t x = (offs & 0x1f) << 3;
+		uint8_t y = (offs >> 5) << 3;
 
 		// While we have the current character code, draw the effects layer
 		// intensity / on and off controlled by latch

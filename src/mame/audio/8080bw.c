@@ -32,7 +32,7 @@ MACHINE_START( extra_8080bw_sh )
 WRITE8_HANDLER( invadpt2_sh_port_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	sn76477_enable_w(state->sn, !(data & 0x01));			/* SAUCER SOUND */
 
@@ -59,7 +59,7 @@ WRITE8_HANDLER( invadpt2_sh_port_2_w )
        D3 = 100K */
 
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 4, 3, 0);		/* FLEET */
 	if (rising_bits & 0x02) sample_start(state->samples, 4, 4, 0);		/* FLEET */
@@ -82,7 +82,7 @@ WRITE8_HANDLER( invadpt2_sh_port_2_w )
 WRITE8_HANDLER( spcewars_sh_port_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	sn76477_enable_w(state->sn, !(data & 0x01));			/* Saucer Sound */
 
@@ -126,7 +126,7 @@ const samples_interface lrescue_samples_interface =
 WRITE8_HANDLER( lrescue_sh_port_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 3, 0);		/* Thrust */
 	if (rising_bits & 0x02) sample_start(state->samples, 1, 2, 0);		/* Shot Sound */
@@ -144,7 +144,7 @@ WRITE8_HANDLER( lrescue_sh_port_1_w )
 WRITE8_HANDLER( lrescue_sh_port_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 1, 8, 0);		/* Footstep high tone */
 	if (rising_bits & 0x02) sample_start(state->samples, 1, 7, 0);		/* Footstep low tone */
@@ -184,7 +184,7 @@ WRITE8_HANDLER( cosmo_sh_port_2_w )
 WRITE8_HANDLER( ballbomb_sh_port_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 1, 2, 0);		/* Hit a balloon */
 	if (rising_bits & 0x02) sample_start(state->samples, 2, 0, 0);		/* Shot Sound */
@@ -202,7 +202,7 @@ WRITE8_HANDLER( ballbomb_sh_port_1_w )
 WRITE8_HANDLER( ballbomb_sh_port_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (data & 0x01) sample_start(state->samples, 0, 7, 0);		/* Indicates plane will drop bombs */
 	if (data & 0x04) sample_start(state->samples, 0, 4, 0);		/* Plane is dropping new balloons at start of level */
@@ -261,7 +261,7 @@ WRITE8_HANDLER( indianbt_sh_port_1_w )
 {
 	/* bit 4 occurs every 5.25 seconds during gameplay */
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 1, 7, 0);		/* Death */
 	if (rising_bits & 0x02) sample_start(state->samples, 0, 1, 0);		/* Shot Sound */
@@ -278,7 +278,7 @@ WRITE8_HANDLER( indianbt_sh_port_1_w )
 WRITE8_HANDLER( indianbt_sh_port_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 4, 0, 0);		/* Bird dropped an egg, Lasso used */
 	if (rising_bits & 0x02) sample_start(state->samples, 4, 2, 0);		/* Egg hatches, egg shot */
@@ -951,7 +951,7 @@ MACHINE_RESET( schaser_sh )
 WRITE8_HANDLER( rollingc_sh_port_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_3_last_extra;
+	uint8_t rising_bits = data & ~state->port_3_last_extra;
 
 	if (rising_bits & 0x02) sample_start(state->samples, 4, 0, 0);	/* Steering */
 	if (rising_bits & 0x04) sample_start(state->samples, 0, 1, 0);	/* Collision */
@@ -1020,7 +1020,7 @@ WRITE8_HANDLER( invrvnge_sh_port_w )
 WRITE8_HANDLER( lupin3_sh_port_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 6, 0);		/* Walking, get money */
 
@@ -1036,7 +1036,7 @@ WRITE8_HANDLER( lupin3_sh_port_1_w )
 WRITE8_HANDLER( lupin3_sh_port_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 3, 0);		/* Lands on top of building, wife kicks man */
 	if (rising_bits & 0x02) sample_start(state->samples, 1, 2, 0);		/* deposit money, start intermission, end game */
@@ -1065,7 +1065,7 @@ WRITE8_HANDLER( schasercv_sh_port_1_w )
        Death is a stream of ff's with some fe's thrown in */
 
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x02) sample_start(state->samples, 1, 6, 0);		/* Ran over a dot */
 	if (rising_bits & 0x10) sample_start(state->samples, 0, 1, 0);		/* Death */
@@ -1093,7 +1093,7 @@ WRITE8_HANDLER( schasercv_sh_port_2_w )
 WRITE8_HANDLER( yosakdon_sh_port_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 3, 0);			/* Game Over */
 	if (rising_bits & 0x02) sample_start(state->samples, 2, 0, 0);			/* Bird dead */
@@ -1109,7 +1109,7 @@ WRITE8_HANDLER( yosakdon_sh_port_1_w )
 WRITE8_HANDLER( yosakdon_sh_port_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last_extra;
+	uint8_t rising_bits = data & ~state->port_2_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 1, 6, 0);			/* Ready? , Game Over */
 	if (rising_bits & 0x04) sample_start(state->samples, 3, 7, 0);			/* Big bird dead */
@@ -1133,7 +1133,7 @@ WRITE8_HANDLER( shuttlei_sh_port_1_w )
 {
 	/* bit 3 is high while you are alive and playing */
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last_extra;
+	uint8_t rising_bits = data & ~state->port_1_last_extra;
 
 	if (rising_bits & 0x01) sample_start(state->samples, 4, 4, 0);			/* Fleet move */
 	if (rising_bits & 0x02) sample_start(state->samples, 5, 8, 0);			/* Extra Tank */

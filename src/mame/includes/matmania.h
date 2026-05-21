@@ -7,16 +7,16 @@ public:
 	matmania_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *         videoram;
-	UINT8 *         videoram2;
-	UINT8 *         videoram3;
-	UINT8 *         colorram;
-	UINT8 *         colorram2;
-	UINT8 *         colorram3;
-	UINT8 *         scroll;
-	UINT8 *         pageselect;
-	UINT8 *         spriteram;
-	UINT8 *         paletteram;
+	uint8_t *         videoram;
+	uint8_t *         videoram2;
+	uint8_t *         videoram3;
+	uint8_t *         colorram;
+	uint8_t *         colorram2;
+	uint8_t *         colorram3;
+	uint8_t *         scroll;
+	uint8_t *         pageselect;
+	uint8_t *         spriteram;
+	uint8_t *         paletteram;
 	size_t          videoram_size;
 	size_t          videoram2_size;
 	size_t          videoram3_size;
@@ -28,10 +28,10 @@ public:
 
 	/* mcu */
 	/* maniach 68705 protection */
-	UINT8           port_a_in, port_a_out, ddr_a;
-	UINT8           port_b_in, port_b_out, ddr_b;
-	UINT8           port_c_in, port_c_out, ddr_c;
-	UINT8           from_main, from_mcu;
+	uint8_t           port_a_in, port_a_out, ddr_a;
+	uint8_t           port_b_in, port_b_out, ddr_b;
+	uint8_t           port_c_in, port_c_out, ddr_c;
+	uint8_t           from_main, from_mcu;
 	int             mcu_sent, main_sent;
 
 	/* devices */

@@ -18,19 +18,19 @@ public:
 	mystston_state(running_machine &machine) { }
 
 	/* machine state */
-	UINT8 *ay8910_data;
-	UINT8 *ay8910_select;
+	uint8_t *ay8910_data;
+	uint8_t *ay8910_select;
 
 	/* video state */
 	tilemap_t *fg_tilemap;
 	tilemap_t *bg_tilemap;
 	emu_timer *interrupt_timer;
-	UINT8 *bg_videoram;
-	UINT8 *fg_videoram;
-	UINT8 *spriteram;
-	UINT8 *paletteram;
-	UINT8 *scroll;
-	UINT8 *video_control;
+	uint8_t *bg_videoram;
+	uint8_t *fg_videoram;
+	uint8_t *spriteram;
+	uint8_t *paletteram;
+	uint8_t *scroll;
+	uint8_t *video_control;
 };
 
 

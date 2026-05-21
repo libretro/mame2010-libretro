@@ -12,9 +12,9 @@ public:
 	spy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    ram;
-	UINT8 *    pmcram;
-//  UINT8 *    paletteram;    // currently this uses generic palette handling
+	uint8_t *    ram;
+	uint8_t *    pmcram;
+//  uint8_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        layer_colorbase[3], sprite_colorbase;

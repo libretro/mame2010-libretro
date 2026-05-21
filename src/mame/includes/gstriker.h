@@ -3,7 +3,7 @@
 
 /*----------- defined in video/gstriker.c -----------*/
 
-extern UINT16 *gstriker_lineram;
+extern uint16_t *gstriker_lineram;
 
 /*** VS920A **********************************************/
 
@@ -12,9 +12,9 @@ extern UINT16 *gstriker_lineram;
 typedef struct
 {
 	tilemap_t* tmap;
-	UINT16* vram;
-	UINT16 pal_base;
-	UINT8 gfx_region;
+	uint16_t* vram;
+	uint16_t pal_base;
+	uint8_t gfx_region;
 } sVS920A;
 
 extern sVS920A VS920A[MAX_VS920A];
@@ -34,11 +34,11 @@ extern WRITE16_HANDLER( VS920A_1_vram_w );
 typedef struct
 {
 	tilemap_t* tmap;
-	UINT16* vram;
-	UINT16 regs[8];
-	UINT8 bank[8];
-	UINT16 pal_base;
-	UINT8 gfx_region;
+	uint16_t* vram;
+	uint16_t regs[8];
+	uint8_t bank[8];
+	uint16_t pal_base;
+	uint8_t gfx_region;
 
 } tMB60553;
 
@@ -60,10 +60,10 @@ extern WRITE16_HANDLER(MB60553_1_vram_w);
 
 typedef struct
 {
-	UINT16* vram;
-	UINT16 pal_base;
-	UINT8 gfx_region;
-	UINT8 transpen;
+	uint16_t* vram;
+	uint16_t pal_base;
+	uint8_t gfx_region;
+	uint8_t transpen;
 
 } tCG10103;
 

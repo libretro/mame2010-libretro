@@ -54,17 +54,17 @@ To do:
 static pen_t aga_palette[256];
 
 /* AGA bpldat registers */
-static UINT64 aga_bpldat[8];
+static uint64_t aga_bpldat[8];
 
 /* sprite states */
-static UINT8 sprite_comparitor_enable_mask;
-static UINT8 sprite_dma_reload_mask;
-static UINT8 sprite_dma_live_mask;
-static UINT8 sprite_ctl_written;
-static UINT32 sprite_shiftreg[8];
-static UINT8 sprite_remain[8];
-static UINT16 aga_sprdata[8][4];
-static UINT16 aga_sprdatb[8][4];
+static uint8_t sprite_comparitor_enable_mask;
+static uint8_t sprite_dma_reload_mask;
+static uint8_t sprite_dma_live_mask;
+static uint8_t sprite_ctl_written;
+static uint32_t sprite_shiftreg[8];
+static uint8_t sprite_remain[8];
+static uint16_t aga_sprdata[8][4];
+static uint16_t aga_sprdatb[8][4];
 static int aga_sprite_fetched_words;
 static int aga_sprite_dma_used_words[8];
 
@@ -74,16 +74,16 @@ static pen_t ham_color;
 static int diwhigh_written;
 
 /* copper states */
-static UINT32 copper_pc;
-static UINT8 copper_waiting;
-static UINT8 copper_waitblit;
-static UINT16 copper_waitval;
-static UINT16 copper_waitmask;
-static UINT16 copper_pending_offset;
-static UINT16 copper_pending_data;
+static uint32_t copper_pc;
+static uint8_t copper_waiting;
+static uint8_t copper_waitblit;
+static uint16_t copper_waitval;
+static uint16_t copper_waitmask;
+static uint16_t copper_pending_offset;
+static uint16_t copper_pending_data;
 
 /* misc states */
-static UINT16 genlock_color;
+static uint16_t genlock_color;
 
 #if GUESS_COPPER_OFFSET
 static int wait_offset = 3;
@@ -98,7 +98,7 @@ static int wait_offset = 3;
  *************************************/
 
 /* expand an 8-bit bit pattern into 16 bits, every other bit */
-static const UINT16 expand_byte[256] =
+static const uint16_t expand_byte[256] =
 {
 	0x0000, 0x0001, 0x0004, 0x0005, 0x0010, 0x0011, 0x0014, 0x0015,
 	0x0040, 0x0041, 0x0044, 0x0045, 0x0050, 0x0051, 0x0054, 0x0055,
@@ -136,7 +136,7 @@ static const UINT16 expand_byte[256] =
 };
 
 /* separate 6 in-order bitplanes into 2 x 3-bit bitplanes in two nibbles */
-static UINT8 separate_bitplanes[2][64];
+static uint8_t separate_bitplanes[2][64];
 
 /*************************************
  *
@@ -144,7 +144,7 @@ static UINT8 separate_bitplanes[2][64];
  *
  *************************************/
 
-void aga_palette_write(int color_reg, UINT16 data)
+void aga_palette_write(int color_reg, uint16_t data)
 {
 	int r,g,b;
 	int cr,cg,cb;
@@ -208,10 +208,10 @@ VIDEO_START( amiga_aga )
  *
  *************************************/
 
-UINT32 amiga_aga_gethvpos(screen_device &screen)
+uint32_t amiga_aga_gethvpos(screen_device &screen)
 {
-	UINT32 hvpos = (last_scanline << 8) | (screen.hpos() >> 2);
-	UINT32 latchedpos = input_port_read_safe(screen.machine, "HVPOS", 0);
+	uint32_t hvpos = (last_scanline << 8) | (screen.hpos() >> 2);
+	uint32_t latchedpos = input_port_read_safe(screen.machine, "HVPOS", 0);
 
 	/* if there's no latched position, or if we are in the active display area */
 	/* but before the latching point, return the live HV position */
@@ -230,7 +230,7 @@ UINT32 amiga_aga_gethvpos(screen_device &screen)
  *
  *************************************/
 
-void amiga_aga_set_genlock_color(UINT16 color)
+void amiga_aga_set_genlock_color(uint16_t color)
 {
 	genlock_color = color;
 }
@@ -243,7 +243,7 @@ void amiga_aga_set_genlock_color(UINT16 color)
  *
  *************************************/
 
-void aga_copper_setpc(UINT32 pc)
+void aga_copper_setpc(uint32_t pc)
 {
 	if (LOG_COPPER)
 		logerror("copper_setpc(%06x)\n", pc);
@@ -545,7 +545,7 @@ static void update_sprite_dma(int scanline)
  *
  *************************************/
 
-INLINE UINT32 interleave_sprite_data(UINT16 lobits, UINT16 hibits)
+INLINE uint32_t interleave_sprite_data(uint16_t lobits, uint16_t hibits)
 {
 	return (expand_byte[lobits & 0xff] << 0) | (expand_byte[lobits >> 8] << 16) |
 		   (expand_byte[hibits & 0xff] << 1) | (expand_byte[hibits >> 8] << 17);
@@ -595,12 +595,12 @@ static int get_sprite_pixel(int x)
 	/* if we have pixels, determine the actual color and get out */
 	if (pixels)
 	{
-		static const UINT16 ormask[16] =
+		static const uint16_t ormask[16] =
 		{
 			0x0000, 0x000c, 0x00c0, 0x00cc, 0x0c00, 0x0c0c, 0x0cc0, 0x0ccc,
 			0xc000, 0xc00c, 0xc0c0, 0xc0cc, 0xcc00, 0xcc0c, 0xccc0, 0xcccc
 		};
-		static const UINT16 spritecollide[16] =
+		static const uint16_t spritecollide[16] =
 		{
 			0x0000, 0x0000, 0x0000, 0x0200, 0x0000, 0x0400, 0x1000, 0x1600,
 			0x0000, 0x0800, 0x2000, 0x2a00, 0x4000, 0x4c00, 0x7000, 0x7e00
@@ -658,9 +658,9 @@ static int get_sprite_pixel(int x)
  *
  *************************************/
 
-INLINE UINT8 assemble_odd_bitplanes(int planes, int obitoffs)
+INLINE uint8_t assemble_odd_bitplanes(int planes, int obitoffs)
 {
-	UINT8 pix = (aga_bpldat[0] >> obitoffs) & 1;
+	uint8_t pix = (aga_bpldat[0] >> obitoffs) & 1;
 	if (planes >= 3)
 	{
 		pix |= ((aga_bpldat[2] >> obitoffs) & 1) << 2;
@@ -675,9 +675,9 @@ INLINE UINT8 assemble_odd_bitplanes(int planes, int obitoffs)
 }
 
 
-INLINE UINT8 assemble_even_bitplanes(int planes, int ebitoffs)
+INLINE uint8_t assemble_even_bitplanes(int planes, int ebitoffs)
 {
-	UINT8 pix = 0;
+	uint8_t pix = 0;
 	if (planes >= 2)
 	{
 		pix |= ((aga_bpldat[1] >> ebitoffs) & 1) << 1;
@@ -700,24 +700,24 @@ INLINE void fetch_bitplane_data(int plane)
 	switch (CUSTOM_REG(REG_FMODE) & 0x03)
 	{
 		case 0:
-			aga_bpldat[plane] = (UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2));
+			aga_bpldat[plane] = (uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2));
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
 			break;
 		case 1:
 		case 2:
-			aga_bpldat[plane] = (UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)) << 16;
+			aga_bpldat[plane] = (uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)) << 16;
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
-			aga_bpldat[plane] |= ((UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)));
+			aga_bpldat[plane] |= ((uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)));
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
 			break;
 		case 3:
-			aga_bpldat[plane] = (UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)) << 48;
+			aga_bpldat[plane] = (uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2)) << 48;
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
-			aga_bpldat[plane] |= ((UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2))) << 32;
+			aga_bpldat[plane] |= ((uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2))) << 32;
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
-			aga_bpldat[plane] |= ((UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2))) << 16;
+			aga_bpldat[plane] |= ((uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2))) << 16;
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
-			aga_bpldat[plane] |= (UINT64)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2));
+			aga_bpldat[plane] |= (uint64_t)amiga_chip_ram_r(CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2));
 			CUSTOM_REG_LONG(REG_BPL1PTH + plane * 2) += 2;
 			break;
 	}
@@ -767,7 +767,7 @@ INLINE int update_ham(int newpix)
 
 void amiga_aga_render_scanline(running_machine *machine, bitmap_t *bitmap, int scanline)
 {
-	UINT16 save_color0 = CUSTOM_REG(REG_COLOR00);
+	uint16_t save_color0 = CUSTOM_REG(REG_COLOR00);
 	int ddf_start_pixel = 0, ddf_stop_pixel = 0;
 	int hires = 0, dualpf = 0, lace = 0, ham = 0;
 	int hstart = 0, hstop = 0;
@@ -776,7 +776,7 @@ void amiga_aga_render_scanline(running_machine *machine, bitmap_t *bitmap, int s
 	int planes = 0;
 
 	int x;
-	UINT32 *dst = NULL;
+	uint32_t *dst = NULL;
 	int ebitoffs = 0, obitoffs = 0;
 	int ecolmask = 0, ocolmask = 0;
 	int edelay = 0, odelay = 0;

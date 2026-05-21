@@ -12,17 +12,17 @@ public:
 	jackal_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoctrl;
-	UINT8 *  scrollram;
-	UINT8 *  paletteram;
+	uint8_t *  videoctrl;
+	uint8_t *  scrollram;
+	uint8_t *  paletteram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* misc */
 	int      irq_enable;
-	UINT8    *rambank;
-	UINT8    *spritebank;
+	uint8_t    *rambank;
+	uint8_t    *spritebank;
 
 	/* devices */
 	running_device *mastercpu;

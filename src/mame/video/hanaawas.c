@@ -57,7 +57,7 @@ PALETTE_INIT( hanaawas )
 	for (i = 0; i < 0x100; i++)
 	{
 		int swapped_i = BITSWAP8(i,2,7,6,5,4,3,1,0);
-		UINT8 ctabentry = color_prom[swapped_i] & 0x0f;
+		uint8_t ctabentry = color_prom[swapped_i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

@@ -10,14 +10,14 @@
 #include "machine/segacrpt.h"
 #include "includes/senjyo.h"
 
-UINT8 *senjyo_fgscroll;
-UINT8 *senjyo_scrollx1,*senjyo_scrolly1;
-UINT8 *senjyo_scrollx2,*senjyo_scrolly2;
-UINT8 *senjyo_scrollx3,*senjyo_scrolly3;
-UINT8 *senjyo_fgvideoram,*senjyo_fgcolorram;
-UINT8 *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
-UINT8 *senjyo_radarram;
-UINT8 *senjyo_bgstripesram;
+uint8_t *senjyo_fgscroll;
+uint8_t *senjyo_scrollx1,*senjyo_scrolly1;
+uint8_t *senjyo_scrollx2,*senjyo_scrolly2;
+uint8_t *senjyo_scrollx3,*senjyo_scrolly3;
+uint8_t *senjyo_fgvideoram,*senjyo_fgcolorram;
+uint8_t *senjyo_bg1videoram,*senjyo_bg2videoram,*senjyo_bg3videoram;
+uint8_t *senjyo_radarram;
+uint8_t *senjyo_bgstripesram;
 
 static tilemap_t *fg_tilemap,*bg1_tilemap,*bg2_tilemap,*bg3_tilemap;
 
@@ -35,7 +35,7 @@ static int senjyo_bgstripes;
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
-	UINT8 attr = senjyo_fgcolorram[tile_index];
+	uint8_t attr = senjyo_fgcolorram[tile_index];
 	int flags = (attr & 0x80) ? TILE_FLIPY : 0;
 
 	if (is_senjyo && (tile_index & 0x1f) >= 32-8)
@@ -50,7 +50,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 
 static TILE_GET_INFO( senjyo_bg1_tile_info )
 {
-	UINT8 code = senjyo_bg1videoram[tile_index];
+	uint8_t code = senjyo_bg1videoram[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -63,7 +63,7 @@ static TILE_GET_INFO( starforc_bg1_tile_info )
 	/* Star Force has more tiles in bg1, so to get a uniform color code spread */
 	/* they wired bit 7 of the tile code in place of bit 4 to get the color code */
 	static const int colormap[8] = { 0,2,4,6,1,3,5,7 };
-	UINT8 code = senjyo_bg1videoram[tile_index];
+	uint8_t code = senjyo_bg1videoram[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -73,7 +73,7 @@ static TILE_GET_INFO( starforc_bg1_tile_info )
 
 static TILE_GET_INFO( get_bg2_tile_info )
 {
-	UINT8 code = senjyo_bg2videoram[tile_index];
+	uint8_t code = senjyo_bg2videoram[tile_index];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -83,7 +83,7 @@ static TILE_GET_INFO( get_bg2_tile_info )
 
 static TILE_GET_INFO( get_bg3_tile_info )
 {
-	UINT8 code = senjyo_bg3videoram[tile_index];
+	uint8_t code = senjyo_bg3videoram[tile_index];
 	SET_TILE_INFO(
 			3,
 			code,
@@ -229,7 +229,7 @@ static void draw_radar(running_machine *machine,bitmap_t *bitmap,const rectangle
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int priority)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 

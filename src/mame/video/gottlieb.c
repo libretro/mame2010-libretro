@@ -9,14 +9,14 @@
 #include "machine/laserdsc.h"
 #include "video/resnet.h"
 
-UINT8 *gottlieb_charram;
+uint8_t *gottlieb_charram;
 
-UINT8 gottlieb_gfxcharlo;
-UINT8 gottlieb_gfxcharhi;
+uint8_t gottlieb_gfxcharlo;
+uint8_t gottlieb_gfxcharhi;
 
-static UINT8 background_priority = 0;
-static UINT8 spritebank;
-static UINT8 transparent0;
+static uint8_t background_priority = 0;
+static uint8_t spritebank;
+static uint8_t transparent0;
 
 static tilemap_t *bg_tilemap;
 static double weights[4];
@@ -215,7 +215,7 @@ VIDEO_START( screwloo )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	rectangle clip = *cliprect;
     int offs;
 

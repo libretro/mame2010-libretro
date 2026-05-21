@@ -11,8 +11,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 {
 	silkroad_state *state = (silkroad_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	UINT32 *source = state->sprram;
-	UINT32 *finish = source + 0x1000/4;
+	uint32_t *source = state->sprram;
+	uint32_t *finish = source + 0x1000/4;
 
 	while( source < finish )
 	{

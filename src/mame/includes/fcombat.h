@@ -30,16 +30,16 @@ public:
 	fcombat_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    spriteram;
+	uint8_t *    videoram;
+	uint8_t *    spriteram;
 	size_t     videoram_size;
 	size_t     spriteram_size;
 
 	/* video-related */
 	tilemap_t    *bgmap;
-	UINT8      cocktail_flip;
-	UINT8      char_palette, sprite_palette;
-	UINT8      char_bank;
+	uint8_t      cocktail_flip;
+	uint8_t      char_palette, sprite_palette;
+	uint8_t      char_bank;
 
 	/* misc */
 	int        fcombat_sh;

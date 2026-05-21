@@ -22,8 +22,8 @@ WRITE32_HANDLER( deco16_146_fghthist_prot_w );
 
 void decoprot_reset(running_machine *machine);
 
-extern UINT16 *deco16_prot_ram;
-extern UINT32 *deco32_prot_ram;
+extern uint16_t *deco16_prot_ram;
+extern uint32_t *deco32_prot_ram;
 
 READ16_HANDLER( dietgo_104_prot_r );
 WRITE16_HANDLER( dietgo_104_prot_w );

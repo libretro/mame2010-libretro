@@ -1,7 +1,7 @@
 #include "emu.h"
 
-UINT8 *rollrace_videoram;
-UINT8 *rollrace_colorram;
+uint8_t *rollrace_videoram;
+uint8_t *rollrace_colorram;
 
 static int ra_charbank[2] = { 0,0 };
 static int ra_bkgpage = 0;
@@ -61,12 +61,12 @@ WRITE8_HANDLER( rollrace_flipx_w )
 
 VIDEO_UPDATE( rollrace )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	int offs;
 	int sx, sy;
 	int scroll;
 	int col;
-	const UINT8 *mem = memory_region(screen->machine, "user1");
+	const uint8_t *mem = memory_region(screen->machine, "user1");
 
 	/* fill in background colour*/
 	bitmap_fill(bitmap,cliprect,ra_bkgpen);

@@ -9,7 +9,7 @@
 #include "sound/discrete.h"
 
 
-UINT8 *skydiver_videoram;
+uint8_t *skydiver_videoram;
 
 static tilemap_t *bg_tilemap;
 static int width = 0;
@@ -43,7 +43,7 @@ MACHINE_RESET( skydiver )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code = skydiver_videoram[tile_index];
+	uint8_t code = skydiver_videoram[tile_index];
 	SET_TILE_INFO(0, code & 0x3f, code >> 6, 0);
 }
 

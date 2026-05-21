@@ -18,13 +18,13 @@
 #define SERIAL_TYPE_ENCRYPT		3
 #define SERIAL_TYPE_ENCRYPT_XOR	4
 
-extern UINT8 leland_dac_control;
+extern uint8_t leland_dac_control;
 extern void (*leland_update_master_bank)(running_machine *machine);
 
 READ8_HANDLER( cerberus_dial_1_r );
 READ8_HANDLER( cerberus_dial_2_r );
 
-extern UINT8 *alleymas_kludge_mem;
+extern uint8_t *alleymas_kludge_mem;
 WRITE8_HANDLER( alleymas_joystick_kludge );
 
 READ8_HANDLER( dangerz_input_y_r );
@@ -63,8 +63,8 @@ void viper_bankswitch(running_machine *machine);
 void offroad_bankswitch(running_machine *machine);
 void ataxx_bankswitch(running_machine *machine);
 
-void leland_init_eeprom(running_machine *machine, UINT8 default_val, const UINT16 *data, UINT8 serial_offset, UINT8 serial_type);
-void ataxx_init_eeprom(running_machine *machine, const UINT16 *data);
+void leland_init_eeprom(running_machine *machine, uint8_t default_val, const uint16_t *data, uint8_t serial_offset, uint8_t serial_type);
+void ataxx_init_eeprom(running_machine *machine, const uint16_t *data);
 
 READ8_DEVICE_HANDLER( ataxx_eeprom_r );
 WRITE8_DEVICE_HANDLER( ataxx_eeprom_w );
@@ -104,7 +104,7 @@ DECLARE_LEGACY_SOUND_DEVICE(LELAND, leland_sound);
 DECLARE_LEGACY_SOUND_DEVICE(LELAND_80186, leland_80186_sound);
 DECLARE_LEGACY_SOUND_DEVICE(REDLINE_80186, redline_80186_sound);
 
-void leland_dac_update(int dacnum, UINT8 sample);
+void leland_dac_update(int dacnum, uint8_t sample);
 
 void leland_80186_sound_init(void);
 
@@ -123,7 +123,7 @@ ADDRESS_MAP_EXTERN(ataxx_80186_map_io, 16);
 
 /*----------- defined in video/leland.c -----------*/
 
-extern UINT8 *ataxx_qram;
+extern uint8_t *ataxx_qram;
 
 WRITE8_HANDLER( leland_scroll_w );
 WRITE8_DEVICE_HANDLER( leland_gfx_port_w );

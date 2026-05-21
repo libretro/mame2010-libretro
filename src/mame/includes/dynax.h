@@ -14,16 +14,16 @@ public:
 	dynax_state(running_machine &machine) { }
 
 	// up to 8 layers, 2 images per layer (interleaved on screen)
-	UINT8 *  pixmap[8][2];
-	UINT8 *  ddenlovr_pixmap[8];
+	uint8_t *  pixmap[8][2];
+	uint8_t *  ddenlovr_pixmap[8];
 
 	/* irq */
 	void (*update_irq_func)(running_machine *machine);	// some games trigger IRQ at blitter end, some don't
-	UINT8 sound_irq;
-	UINT8 vblank_irq;
-	UINT8 blitter_irq, blitter2_irq;
-	UINT8 soundlatch_irq;
-	UINT8 sound_vblank_irq;
+	uint8_t sound_irq;
+	uint8_t vblank_irq;
+	uint8_t blitter_irq, blitter2_irq;
+	uint8_t soundlatch_irq;
+	uint8_t sound_vblank_irq;
 
 	/* blitters */
 	int blit_scroll_x, blit2_scroll_x;
@@ -76,44 +76,44 @@ public:
 	int ddenlovr_blit_regs[2];
 
 	/* input */
-	UINT8 input_sel, dsw_sel, keyb, coins, hopper;
+	uint8_t input_sel, dsw_sel, keyb, coins, hopper;
 
 	/* misc */
 	int hnoridur_bank;
-	UINT8 palette_ram[16*256*2];
+	uint8_t palette_ram[16*256*2];
 	int palbank;
 	int msm5205next;
 	int resetkludge;
 	int toggle, toggle_cpu1;
 	int yarunara_clk_toggle;
-	UINT8 soundlatch_ack;
-	UINT8 soundlatch_full;
-	UINT8 latch;
+	uint8_t soundlatch_ack;
+	uint8_t soundlatch_full;
+	uint8_t latch;
 	int rombank;
-	UINT8 tenkai_p5_val;
+	uint8_t tenkai_p5_val;
 	int tenkai_6c, tenkai_70;
-	UINT8 gekisha_val[2];
-	UINT8 gekisha_rom_enable;
-	UINT8 *romptr;
+	uint8_t gekisha_val[2];
+	uint8_t gekisha_rom_enable;
+	uint8_t *romptr;
 
 	/* ddenlovr misc (TODO: merge with the above, where possible) */
-	UINT8 palram[0x200];
+	uint8_t palram[0x200];
 	int okibank;
-	UINT8 rongrong_blitter_busy_select;
+	uint8_t rongrong_blitter_busy_select;
 
-	UINT16 *dsw_sel16;
-	UINT16 *protection1, *protection2;
-	UINT8 prot_val;
-	UINT16 prot_16;
-	UINT16 quiz365_protection[2];
+	uint16_t *dsw_sel16;
+	uint16_t *protection1, *protection2;
+	uint8_t prot_val;
+	uint16_t prot_16;
+	uint16_t quiz365_protection[2];
 
-	UINT16 mmpanic_leds;	/* A led for each of the 9 buttons */
-	UINT8 funkyfig_lockout;
-	UINT8 romdata[2];
+	uint16_t mmpanic_leds;	/* A led for each of the 9 buttons */
+	uint8_t funkyfig_lockout;
+	uint8_t romdata[2];
 	int palette_index;
-	UINT8 hginga_rombank;
-	UINT8 mjflove_irq_cause;
-	UINT8 daimyojn_palette_sel;
+	uint8_t hginga_rombank;
+	uint8_t mjflove_irq_cause;
+	uint8_t daimyojn_palette_sel;
 
 	int irq_count;
 

@@ -25,14 +25,14 @@
 
 
 
-UINT16 *midvunit_videoram;
-UINT32 *midvunit_textureram;
+uint16_t *midvunit_videoram;
+uint32_t *midvunit_textureram;
 
-static UINT16 video_regs[16];
-static UINT16 dma_data[16];
-static UINT8 dma_data_index;
-static UINT16 page_control;
-static UINT8 video_changed;
+static uint16_t video_regs[16];
+static uint16_t dma_data[16];
+static uint8_t dma_data_index;
+static uint16_t page_control;
+static uint8_t video_changed;
 
 static emu_timer *scanline_timer;
 static poly_manager *poly;
@@ -40,9 +40,9 @@ static poly_manager *poly;
 typedef struct _poly_extra_data poly_extra_data;
 struct _poly_extra_data
 {
-	UINT8 *		texbase;
-	UINT16		pixdata;
-	UINT8		dither;
+	uint8_t *		texbase;
+	uint16_t		pixdata;
+	uint8_t		dither;
 };
 
 
@@ -95,12 +95,12 @@ VIDEO_START( midvunit )
  *
  *************************************/
 
-static void render_flat(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_flat(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
-	UINT16 pixdata = extra->pixdata;
+	uint16_t pixdata = extra->pixdata;
 	int xstep = extra->dither + 1;
-	UINT16 *dest = (UINT16 *)destbase + scanline * 512;
+	uint16_t *dest = (uint16_t *)destbase + scanline * 512;
 	int startx = extent->startx;
 	int x;
 
@@ -127,19 +127,19 @@ static void render_flat(void *destbase, INT32 scanline, const poly_extent *exten
  *
  *************************************/
 
-static void render_tex(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_tex(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
-	UINT16 pixdata = extra->pixdata & 0xff00;
-	const UINT8 *texbase = extra->texbase;
+	uint16_t pixdata = extra->pixdata & 0xff00;
+	const uint8_t *texbase = extra->texbase;
 	int xstep = extra->dither + 1;
-	UINT16 *dest = (UINT16 *)destbase + scanline * 512;
+	uint16_t *dest = (uint16_t *)destbase + scanline * 512;
 	int startx = extent->startx;
 	int stopx = extent->stopx;
-	INT32 u = extent->param[0].start;
-	INT32 v = extent->param[1].start;
-	INT32 dudx = extent->param[0].dpdx;
-	INT32 dvdx = extent->param[1].dpdx;
+	int32_t u = extent->param[0].start;
+	int32_t v = extent->param[1].start;
+	int32_t dudx = extent->param[0].dpdx;
+	int32_t dvdx = extent->param[1].dpdx;
 	int x;
 
 	/* if dithering, we advance by 2x; also ensure that we start on an appropriate pixel */
@@ -165,19 +165,19 @@ static void render_tex(void *destbase, INT32 scanline, const poly_extent *extent
 }
 
 
-static void render_textrans(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_textrans(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
-	UINT16 pixdata = extra->pixdata & 0xff00;
-	const UINT8 *texbase = extra->texbase;
+	uint16_t pixdata = extra->pixdata & 0xff00;
+	const uint8_t *texbase = extra->texbase;
 	int xstep = extra->dither + 1;
-	UINT16 *dest = (UINT16 *)destbase + scanline * 512;
+	uint16_t *dest = (uint16_t *)destbase + scanline * 512;
 	int startx = extent->startx;
 	int stopx = extent->stopx;
-	INT32 u = extent->param[0].start;
-	INT32 v = extent->param[1].start;
-	INT32 dudx = extent->param[0].dpdx;
-	INT32 dvdx = extent->param[1].dpdx;
+	int32_t u = extent->param[0].start;
+	int32_t v = extent->param[1].start;
+	int32_t dudx = extent->param[0].dpdx;
+	int32_t dvdx = extent->param[1].dpdx;
 	int x;
 
 	/* if dithering, we advance by 2x; also ensure that we start on an appropriate pixel */
@@ -196,7 +196,7 @@ static void render_textrans(void *destbase, INT32 scanline, const poly_extent *e
 	/* general case; render every non-zero texel */
 	for (x = startx; x < stopx; x += xstep)
 	{
-		UINT8 pix = texbase[((v >> 8) & 0xff00) + (u >> 16)];
+		uint8_t pix = texbase[((v >> 8) & 0xff00) + (u >> 16)];
 		if (pix != 0)
 			dest[x] = pixdata | pix;
 		u += dudx;
@@ -205,19 +205,19 @@ static void render_textrans(void *destbase, INT32 scanline, const poly_extent *e
 }
 
 
-static void render_textransmask(void *destbase, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_textransmask(void *destbase, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;
-	UINT16 pixdata = extra->pixdata;
-	const UINT8 *texbase = extra->texbase;
+	uint16_t pixdata = extra->pixdata;
+	const uint8_t *texbase = extra->texbase;
 	int xstep = extra->dither + 1;
-	UINT16 *dest = (UINT16 *)destbase + scanline * 512;
+	uint16_t *dest = (uint16_t *)destbase + scanline * 512;
 	int startx = extent->startx;
 	int stopx = extent->stopx;
-	INT32 u = extent->param[0].start;
-	INT32 v = extent->param[1].start;
-	INT32 dudx = extent->param[0].dpdx;
-	INT32 dvdx = extent->param[1].dpdx;
+	int32_t u = extent->param[0].start;
+	int32_t v = extent->param[1].start;
+	int32_t dudx = extent->param[0].dpdx;
+	int32_t dvdx = extent->param[1].dpdx;
 	int x;
 
 	/* if dithering, we advance by 2x; also ensure that we start on an appropriate pixel */
@@ -236,7 +236,7 @@ static void render_textransmask(void *destbase, INT32 scanline, const poly_exten
 	/* general case; every non-zero texel renders pixdata */
 	for (x = startx; x < stopx; x += xstep)
 	{
-		UINT8 pix = texbase[((v >> 8) & 0xff00) + (u >> 16)];
+		uint8_t pix = texbase[((v >> 8) & 0xff00) + (u >> 16)];
 		if (pix != 0)
 			dest[x] = pixdata;
 		u += dudx;
@@ -254,7 +254,7 @@ static void render_textransmask(void *destbase, INT32 scanline, const poly_exten
 
 static void make_vertices_inclusive(poly_vertex *vert)
 {
-	UINT8 rmask = 0, bmask = 0, eqmask = 0;
+	uint8_t rmask = 0, bmask = 0, eqmask = 0;
 	int vnum;
 
 	/* build up a mask of right and bottom points */
@@ -303,7 +303,7 @@ static void make_vertices_inclusive(poly_vertex *vert)
 static void process_dma_queue(running_machine *machine)
 {
 	poly_extra_data *extra = (poly_extra_data *)poly_get_extra_data(poly);
-	UINT16 *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
+	uint16_t *dest = &midvunit_videoram[(page_control & 4) ? 0x40000 : 0x00000];
 	int textured = ((dma_data[0] & 0x300) == 0x100);
 	poly_draw_scanline_func callback;
 	poly_vertex vert[4];
@@ -313,14 +313,14 @@ static void process_dma_queue(running_machine *machine)
 		video_changed = TRUE;
 
 	/* fill in the vertex data */
-	vert[0].x = (float)(INT16)dma_data[2] + 0.5f;
-	vert[0].y = (float)(INT16)dma_data[3] + 0.5f;
-	vert[1].x = (float)(INT16)dma_data[4] + 0.5f;
-	vert[1].y = (float)(INT16)dma_data[5] + 0.5f;
-	vert[2].x = (float)(INT16)dma_data[6] + 0.5f;
-	vert[2].y = (float)(INT16)dma_data[7] + 0.5f;
-	vert[3].x = (float)(INT16)dma_data[8] + 0.5f;
-	vert[3].y = (float)(INT16)dma_data[9] + 0.5f;
+	vert[0].x = (float)(int16_t)dma_data[2] + 0.5f;
+	vert[0].y = (float)(int16_t)dma_data[3] + 0.5f;
+	vert[1].x = (float)(int16_t)dma_data[4] + 0.5f;
+	vert[1].y = (float)(int16_t)dma_data[5] + 0.5f;
+	vert[2].x = (float)(int16_t)dma_data[6] + 0.5f;
+	vert[2].y = (float)(int16_t)dma_data[7] + 0.5f;
+	vert[3].x = (float)(int16_t)dma_data[8] + 0.5f;
+	vert[3].y = (float)(int16_t)dma_data[9] + 0.5f;
 
 	/* make the vertices inclusive of right/bottom points */
 	make_vertices_inclusive(vert);
@@ -360,7 +360,7 @@ static void process_dma_queue(running_machine *machine)
 	}
 
 	/* set up the extra data for this triangle */
-	extra->texbase = (UINT8 *)midvunit_textureram + (dma_data[14] * 256);
+	extra->texbase = (uint8_t *)midvunit_textureram + (dma_data[14] * 256);
 	extra->pixdata = dma_data[1] | (dma_data[0] & 0x00ff);
 	extra->dither = ((dma_data[0] & 0x2000) != 0);
 
@@ -441,7 +441,7 @@ READ32_HANDLER( midvunit_page_control_r )
 
 WRITE32_HANDLER( midvunit_video_control_w )
 {
-	UINT16 old = video_regs[offset];
+	uint16_t old = video_regs[offset];
 
 	/* update the data */
 	COMBINE_DATA(&video_regs[offset]);
@@ -524,7 +524,7 @@ WRITE32_HANDLER( midvunit_paletteram_w )
 
 WRITE32_HANDLER( midvunit_textureram_w )
 {
-	UINT8 *base = (UINT8 *)midvunit_textureram;
+	uint8_t *base = (uint8_t *)midvunit_textureram;
 	poly_wait(poly, "Texture RAM write");
 	base[offset * 2] = data;
 	base[offset * 2 + 1] = data >> 8;
@@ -533,7 +533,7 @@ WRITE32_HANDLER( midvunit_textureram_w )
 
 READ32_HANDLER( midvunit_textureram_r )
 {
-	UINT8 *base = (UINT8 *)midvunit_textureram;
+	uint8_t *base = (uint8_t *)midvunit_textureram;
 	return (base[offset * 2 + 1] << 8) | base[offset * 2];
 }
 
@@ -549,7 +549,7 @@ READ32_HANDLER( midvunit_textureram_r )
 VIDEO_UPDATE( midvunit )
 {
 	int x, y, width, xoffs;
-	UINT32 offset;
+	uint32_t offset;
 
 	poly_wait(poly, "Refresh Time");
 
@@ -576,7 +576,7 @@ VIDEO_UPDATE( midvunit )
 	/* loop over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels + cliprect->min_x;
 		for (x = 0; x < width; x++)
 			*dest++ = midvunit_videoram[offset + x] & 0x7fff;
 		offset += 512;

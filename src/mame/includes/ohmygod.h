@@ -13,14 +13,14 @@ public:
 
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    spriteram;
+	uint16_t *    videoram;
+	uint16_t *    spriteram;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;
 	int spritebank;
-	UINT16 scrollx, scrolly;
+	uint16_t scrollx, scrolly;
 
 	/* misc */
 	int adpcm_bank_shift;

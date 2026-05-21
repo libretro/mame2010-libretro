@@ -24,7 +24,7 @@
 static TILE_GET_INFO( get_tile_info )
 {
 	aeroboto_state *state = (aeroboto_state *)machine->driver_data;
-	UINT8 code = state->videoram[tile_index];
+	uint8_t code = state->videoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			code + (state->charbank << 8),
@@ -57,10 +57,10 @@ VIDEO_START( aeroboto )
 
 	#if STARS_LAYOUT
 	{
-		UINT8 *temp;
+		uint8_t *temp;
 		int i;
 
-		temp = auto_alloc_array(machine, UINT8, state->stars_length);
+		temp = auto_alloc_array(machine, uint8_t, state->stars_length);
 		memcpy(temp, state->stars_rom, state->stars_length);
 
 		for (i = 0; i < state->stars_length; i++)
@@ -160,7 +160,7 @@ VIDEO_UPDATE( aeroboto )
 
 	static const rectangle splitrect1 = { 0, 255, 0, 39 };
 	static const rectangle splitrect2 = { 0, 255, 40, 255 };
-	UINT8 *src_base, *src_colptr, *src_rowptr;
+	uint8_t *src_base, *src_colptr, *src_rowptr;
 	int src_offsx, src_colmask, sky_color, star_color, x, y, i, j, pen;
 
 	sky_color = star_color = *state->bgcolor << 2;

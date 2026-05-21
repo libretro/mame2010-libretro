@@ -18,10 +18,10 @@
  *************************************/
 
 static sound_stream *stream;
-static UINT32 freq_to_step;
-static UINT32 step0;
-static UINT32 step1;
-static UINT32 step2;
+static uint32_t freq_to_step;
+static uint32_t step0;
+static uint32_t step1;
+static uint32_t step2;
 
 
 /*************************************
@@ -34,11 +34,11 @@ static struct
 	union
 	{
 #ifdef MSB_FIRST
-		struct { UINT8 MSB; UINT8 LSB; };
+		struct { uint8_t MSB; uint8_t LSB; };
 #else
-		struct { UINT8 LSB; UINT8 MSB; };
+		struct { uint8_t LSB; uint8_t MSB; };
 #endif
-		UINT16 val;
+		uint16_t val;
 	} counts[3];
 
 	int idx[3];
@@ -121,8 +121,8 @@ static const double tx1_engine_gains[16] =
 	-( 1.0/(1.0/TX1_R + 1.0/TX1_SHUNT + 1.0/TX1_R2 + 1.0/TX1_R1 + 1.0/TX1_R0) )/TX1_RI
 };
 
-static UINT8 ay_outputa;
-static UINT8 ay_outputb;
+static uint8_t ay_outputa;
+static uint8_t ay_outputb;
 
 static double weights0[4], weights1[3], weights2[3];
 static int eng0[4];
@@ -213,7 +213,7 @@ INLINE void update_engine (int eng[4])
 
 static STREAM_UPDATE( tx1_stream_update )
 {
-	UINT32 step_0, step_1, step_2;
+	uint32_t step_0, step_1, step_2;
 	double /*gain_0, gain_1,*/ gain_2, gain_3;
 
 	stream_sample_t *fl = &outputs[0][0];
@@ -334,10 +334,10 @@ static int noise_lfsrb;
 static int noise_lfsrc;
 static int noise_lfsrd;
 static int noise_counter;
-static UINT8 ym1_outputa;
-static UINT8 ym2_outputa;
-static UINT8 ym2_outputb;
-static UINT16 buggyboy_eng_voltages[16];
+static uint8_t ym1_outputa;
+static uint8_t ym2_outputa;
+static uint8_t ym2_outputb;
+static uint16_t buggyboy_eng_voltages[16];
 
 static const double bb_engine_gains[16] =
 {
@@ -448,7 +448,7 @@ WRITE8_DEVICE_HANDLER( bb_ym2_b_w )
 /* This is admittedly a bit of a hack job... */
 static STREAM_UPDATE( buggyboy_stream_update )
 {
-	UINT32 step_0, step_1;
+	uint32_t step_0, step_1;
 	int n1_en, n2_en;
 	double gain0, gain1_l, gain1_r;
 

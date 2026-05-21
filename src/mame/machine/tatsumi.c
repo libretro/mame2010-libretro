@@ -3,15 +3,15 @@
 #include "sound/2151intf.h"
 #include "sound/okim6295.h"
 
-UINT16 tatsumi_control_word=0;
-static UINT16 tatsumi_last_control=0;
-static UINT8 apache3_adc;
-UINT16 apache3_rotate_ctrl[12];
+uint16_t tatsumi_control_word=0;
+static uint16_t tatsumi_last_control=0;
+static uint8_t apache3_adc;
+uint16_t apache3_rotate_ctrl[12];
 static int apache3_rot_idx;
 
 
-UINT16 *tatsumi_68k_ram;
-UINT8 *apache3_z80_ram;
+uint16_t *tatsumi_68k_ram;
+uint8_t *apache3_z80_ram;
 
 /******************************************************************************/
 
@@ -120,7 +120,7 @@ READ8_HANDLER( apache3_adc_r )
 		case 1: return input_port_read(space->machine, "STICK_Y");
 		case 2: return 0; // VSP1
 		case 3: return 0;
-		case 4: return (UINT8)((255./100) * (100 - input_port_read(space->machine, "VR1")));
+		case 4: return (uint8_t)((255./100) * (100 - input_port_read(space->machine, "VR1")));
 		case 5: return input_port_read(space->machine, "THROTTLE");
 		case 6: return 0; // RPSNC
 		case 7: return 0; // LPSNC
@@ -301,7 +301,7 @@ WRITE16_HANDLER(cyclwarr_control_w)
 
 READ16_HANDLER( tatsumi_v30_68000_r )
 {
-	const UINT16* rom=(UINT16*)memory_region(space->machine, "sub");
+	const uint16_t* rom=(uint16_t*)memory_region(space->machine, "sub");
 
 logerror("%05X:68000_r(%04X),cw=%04X\n", cpu_get_pc(space->cpu), offset*2, tatsumi_control_word);
 	/* Read from 68k RAM */
@@ -310,7 +310,7 @@ logerror("%05X:68000_r(%04X),cw=%04X\n", cpu_get_pc(space->cpu), offset*2, tatsu
 		// hack to make roundup 5 boot
 		if (cpu_get_pc(space->cpu)==0xec575)
 		{
-			UINT8 *dst = memory_region(space->machine, "maincpu");
+			uint8_t *dst = memory_region(space->machine, "maincpu");
 			dst[BYTE_XOR_LE(0xec57a)]=0x46;
 			dst[BYTE_XOR_LE(0xec57b)]=0x46;
 

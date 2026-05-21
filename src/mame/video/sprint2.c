@@ -7,7 +7,7 @@
 #include "emu.h"
 #include "includes/sprint2.h"
 
-UINT8* sprint2_video_ram;
+uint8_t* sprint2_video_ram;
 
 static tilemap_t* bg_tilemap;
 static bitmap_t* helper;
@@ -43,7 +43,7 @@ PALETTE_INIT( sprint2 )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code = sprint2_video_ram[tile_index];
+	uint8_t code = sprint2_video_ram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, code >> 7, 0);
 }
@@ -84,9 +84,9 @@ WRITE8_HANDLER( sprint2_video_ram_w )
 }
 
 
-static UINT8 collision_check(colortable_t *colortable, rectangle* rect)
+static uint8_t collision_check(colortable_t *colortable, rectangle* rect)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	int x;
 	int y;
@@ -94,7 +94,7 @@ static UINT8 collision_check(colortable_t *colortable, rectangle* rect)
 	for (y = rect->min_y; y <= rect->max_y; y++)
 		for (x = rect->min_x; x <= rect->max_x; x++)
 		{
-			UINT16 a = colortable_entry_get_value(colortable, *BITMAP_ADDR16(helper, y, x));
+			uint16_t a = colortable_entry_get_value(colortable, *BITMAP_ADDR16(helper, y, x));
 
 			if (a == 0)
 				data |= 0x40;

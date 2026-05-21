@@ -7,15 +7,15 @@ public:
 	mcatadv_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     videoram1;
-	UINT16 *     videoram2;
-	UINT16 *     scroll1;
-	UINT16 *     scroll2;
-	UINT16 *     spriteram;
-	UINT16 *     spriteram_old;
-	UINT16 *     vidregs;
-	UINT16 *     vidregs_old;
-//  UINT16 *     paletteram;    // this currently uses generic palette handlers
+	uint16_t *     videoram1;
+	uint16_t *     videoram2;
+	uint16_t *     scroll1;
+	uint16_t *     scroll2;
+	uint16_t *     spriteram;
+	uint16_t *     spriteram_old;
+	uint16_t *     vidregs;
+	uint16_t *     vidregs_old;
+//  uint16_t *     paletteram;    // this currently uses generic palette handlers
 	size_t       spriteram_size;
 
 	/* video-related */

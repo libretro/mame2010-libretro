@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	gauntlet_state *state = (gauntlet_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = ((data >> 10) & 0x0f) | ((data >> 9) & 0x20);
 	int opaque = data & 0x8000;
@@ -30,7 +30,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	gauntlet_state *state = (gauntlet_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = ((state->playfield_tile_bank * 0x1000) + (data & 0xfff)) ^ 0x800;
 	int color = 0x10 + (state->playfield_color_bank * 8) + ((data >> 12) & 7);
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -84,7 +84,7 @@ VIDEO_START( gauntlet )
 	};
 
 	gauntlet_state *state = (gauntlet_state *)machine->driver_data;
-	UINT16 *codelookup;
+	uint16_t *codelookup;
 	int i, size;
 
 	/* initialize the playfield */
@@ -121,7 +121,7 @@ VIDEO_START( gauntlet )
 WRITE16_HANDLER( gauntlet_xscroll_w )
 {
 	gauntlet_state *state = (gauntlet_state *)space->machine->driver_data;
-	UINT16 oldxscroll = *state->atarigen.xscroll;
+	uint16_t oldxscroll = *state->atarigen.xscroll;
 	COMBINE_DATA(state->atarigen.xscroll);
 
 	/* if something changed, force a partial update */
@@ -146,7 +146,7 @@ WRITE16_HANDLER( gauntlet_xscroll_w )
 WRITE16_HANDLER( gauntlet_yscroll_w )
 {
 	gauntlet_state *state = (gauntlet_state *)space->machine->driver_data;
-	UINT16 oldyscroll = *state->atarigen.yscroll;
+	uint16_t oldyscroll = *state->atarigen.yscroll;
 	COMBINE_DATA(state->atarigen.yscroll);
 
 	/* if something changed, force a partial update */
@@ -190,8 +190,8 @@ VIDEO_UPDATE( gauntlet )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

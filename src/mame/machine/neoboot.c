@@ -23,8 +23,8 @@ void neogeo_bootleg_cx_decrypt( running_machine *machine )
 {
 	int i;
 	int cx_size = memory_region_length( machine, "sprites" );
-	UINT8 *rom = memory_region( machine, "sprites" );
-	UINT8 *buf = auto_alloc_array(machine, UINT8, cx_size );
+	uint8_t *rom = memory_region( machine, "sprites" );
+	uint8_t *buf = auto_alloc_array(machine, uint8_t, cx_size );
 
 	memcpy( buf, rom, cx_size );
 
@@ -39,12 +39,12 @@ void neogeo_bootleg_cx_decrypt( running_machine *machine )
 void neogeo_bootleg_sx_decrypt( running_machine *machine, int value )
 {
 	int sx_size = memory_region_length( machine, "fixed" );
-	UINT8 *rom = memory_region( machine, "fixed" );
+	uint8_t *rom = memory_region( machine, "fixed" );
 	int i;
 
 	if (value == 1)
 	{
-		UINT8 *buf = auto_alloc_array(machine, UINT8, sx_size );
+		uint8_t *buf = auto_alloc_array(machine, uint8_t, sx_size );
 		memcpy( buf, rom, sx_size );
 
 		for( i = 0; i < sx_size; i += 0x10 )
@@ -71,9 +71,9 @@ void neogeo_bootleg_sx_decrypt( running_machine *machine, int value )
 void kog_px_decrypt( running_machine *machine )
 {
 	/* the protection chip does some *very* strange things to the rom */
-	UINT8 *src = memory_region(machine, "maincpu");
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x600000 );
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint8_t *src = memory_region(machine, "maincpu");
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x600000 );
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	int i;
 	static const int sec[] = { 0x3, 0x8, 0x7, 0xC, 0x1, 0xA, 0x6, 0xD };
 
@@ -137,11 +137,11 @@ void kog_px_decrypt( running_machine *machine )
   is incomplete, at the moment the S data is copied from the program rom on
   start-up instead */
 
-static UINT16 kof10thExtraRAMB[0x01000];
+static uint16_t kof10thExtraRAMB[0x01000];
 
-static void kof10thBankswitch(const address_space *space, UINT16 nBank)
+static void kof10thBankswitch(const address_space *space, uint16_t nBank)
 {
-	UINT32 bank = 0x100000 + ((nBank & 7) << 20);
+	uint32_t bank = 0x100000 + ((nBank & 7) << 20);
 	if (bank >= 0x700000)
 		bank = 0x100000;
 	neogeo_set_main_cpu_bank_address(space, bank);
@@ -155,10 +155,10 @@ static READ16_HANDLER( kof10th_RAMB_r )
 static WRITE16_HANDLER( kof10th_custom_w )
 {
 	if (!kof10thExtraRAMB[0xFFE]) { // Write to RAM bank A
-		UINT16 *prom = (UINT16*)memory_region( space->machine, "maincpu" );
+		uint16_t *prom = (uint16_t*)memory_region( space->machine, "maincpu" );
 		COMBINE_DATA(&prom[(0xE0000/2) + (offset & 0xFFFF)]);
 	} else { // Write S data on-the-fly
-		UINT8 *srom = memory_region( space->machine, "fixed" );
+		uint8_t *srom = memory_region( space->machine, "fixed" );
 		srom[offset] = BITSWAP8(data,7,6,0,4,3,2,1,5);
 	}
 }
@@ -169,7 +169,7 @@ static WRITE16_HANDLER( kof10th_bankswitch_w )
 		if (offset == 0x5FFF8) { // Standard bankswitch
 			kof10thBankswitch(space, data);
 		} else if (offset == 0x5FFFC && kof10thExtraRAMB[0xFFC] != data) { // Special bankswitch
-			UINT8 *src = memory_region( space->machine, "maincpu" );
+			uint8_t *src = memory_region( space->machine, "maincpu" );
 			memcpy (src + 0x10000,  src + ((data & 1) ? 0x810000 : 0x710000), 0xcffff);
 		}
 		COMBINE_DATA(&kof10thExtraRAMB[offset & 0xFFF]);
@@ -186,8 +186,8 @@ void install_kof10th_protection ( running_machine *machine )
 void decrypt_kof10th(running_machine *machine)
 {
 	int i, j;
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x900000);
-	UINT8 *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x900000);
+	uint8_t *src = memory_region( machine, "maincpu" );
 
 	memcpy(dst + 0x000000, src + 0x700000, 0x100000); // Correct (Verified in Uni-bios)
 	memcpy(dst + 0x100000, src + 0x000000, 0x800000);
@@ -200,12 +200,12 @@ void decrypt_kof10th(running_machine *machine)
 	auto_free(machine, dst);
 
 	// Altera protection chip patches these over P ROM
-	((UINT16*)src)[0x0124/2] = 0x000d; // Enables XOR for RAM moves, forces SoftDIPs, and USA region
-	((UINT16*)src)[0x0126/2] = 0xf7a8;
+	((uint16_t*)src)[0x0124/2] = 0x000d; // Enables XOR for RAM moves, forces SoftDIPs, and USA region
+	((uint16_t*)src)[0x0126/2] = 0xf7a8;
 
-	((UINT16*)src)[0x8bf4/2] = 0x4ef9; // Run code to change "S" data
-	((UINT16*)src)[0x8bf6/2] = 0x000d;
-	((UINT16*)src)[0x8bf8/2] = 0xf980;
+	((uint16_t*)src)[0x8bf4/2] = 0x4ef9; // Run code to change "S" data
+	((uint16_t*)src)[0x8bf6/2] = 0x000d;
+	((uint16_t*)src)[0x8bf8/2] = 0xf980;
 }
 
 
@@ -215,13 +215,13 @@ void decrypt_kof10th(running_machine *machine)
 void decrypt_kf10thep(running_machine *machine)
 {
 	int i;
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
-	UINT8  *src = memory_region(machine, "maincpu");
-	UINT16 *buf = (UINT16*)memory_region(machine, "audiocrypt");
-	UINT8 *srom = (UINT8*)memory_region(machine, "fixed");
-	UINT8 *sbuf = auto_alloc_array(machine, UINT8, 0x20000);
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
+	uint8_t  *src = memory_region(machine, "maincpu");
+	uint16_t *buf = (uint16_t*)memory_region(machine, "audiocrypt");
+	uint8_t *srom = (uint8_t*)memory_region(machine, "fixed");
+	uint8_t *sbuf = auto_alloc_array(machine, uint8_t, 0x20000);
 
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x200000);
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x200000);
 
 	memcpy(dst,buf,0x200000);
 	memcpy(src+0x000000,dst+0x060000,0x20000);
@@ -256,8 +256,8 @@ void decrypt_kf10thep(running_machine *machine)
 static void kf2k5uni_px_decrypt( running_machine *machine )
 {
 	int i, j, ofst;
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x80);
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x80);
 
 	for (i = 0; i < 0x800000; i+=0x80)
 	{
@@ -276,7 +276,7 @@ static void kf2k5uni_px_decrypt( running_machine *machine )
 static void kf2k5uni_sx_decrypt( running_machine *machine )
 {
 	int i;
-	UINT8 *srom = memory_region( machine, "fixed" );
+	uint8_t *srom = memory_region( machine, "fixed" );
 
 	for (i = 0; i < 0x20000; i++)
 		srom[i] = BITSWAP8(srom[i], 4, 5, 6, 7, 0, 1, 2, 3);
@@ -285,7 +285,7 @@ static void kf2k5uni_sx_decrypt( running_machine *machine )
 static void kf2k5uni_mx_decrypt( running_machine *machine )
 {
 	int i;
-	UINT8 *mrom = memory_region( machine, "audiocpu" );
+	uint8_t *mrom = memory_region( machine, "audiocpu" );
 
 	for (i = 0; i < 0x30000; i++)
 		mrom[i] = BITSWAP8(mrom[i], 4, 5, 6, 7, 0, 1, 2, 3);
@@ -303,7 +303,7 @@ void decrypt_kf2k5uni( running_machine *machine )
 
 
 // Thanks to IQ_132 for the info
-void kof2002b_gfx_decrypt(running_machine *machine, UINT8 *src, int size)
+void kof2002b_gfx_decrypt(running_machine *machine, uint8_t *src, int size)
 {
 	int i, j;
 	int t[ 8 ][ 10 ] =
@@ -318,7 +318,7 @@ void kof2002b_gfx_decrypt(running_machine *machine, UINT8 *src, int size)
 		{ 8, 0, 7, 3, 4, 5, 6, 2, 1 },
 	};
 
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  0x10000 );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  0x10000 );
 
 	for ( i = 0; i < size; i+=0x10000 )
 	{
@@ -343,8 +343,8 @@ void kf2k2mp_decrypt( running_machine *machine )
 {
 	int i,j;
 
-	UINT8 *src = memory_region(machine, "maincpu");
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x80);
+	uint8_t *src = memory_region(machine, "maincpu");
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x80);
 
 	memmove(src, src + 0x300000, 0x500000);
 
@@ -366,8 +366,8 @@ void kf2k2mp_decrypt( running_machine *machine )
 
 void kf2k2mp2_px_decrypt( running_machine *machine )
 {
-	UINT8 *src = memory_region(machine, "maincpu");
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x600000);
+	uint8_t *src = memory_region(machine, "maincpu");
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x600000);
 
 	memcpy (dst + 0x000000, src + 0x1C0000, 0x040000);
 	memcpy (dst + 0x040000, src + 0x140000, 0x080000);
@@ -387,8 +387,8 @@ static void cthd2003_neogeo_gfx_address_fix_do(running_machine *machine, int sta
 	int i,j;
 	int tilesize=128;
 
-	UINT8* rom = auto_alloc_array(machine, UINT8, 16*tilesize);	// 16 tiles buffer
-	UINT8* realrom = memory_region(machine, "sprites") + start*tilesize;
+	uint8_t* rom = auto_alloc_array(machine, uint8_t, 16*tilesize);	// 16 tiles buffer
+	uint8_t* realrom = memory_region(machine, "sprites") + start*tilesize;
 
 	for (i = 0; i < (end-start)/16; i++) {
 		for (j = 0; j < 16; j++) {
@@ -441,8 +441,8 @@ static void cthd2003_c(running_machine *machine, int pow)
 
 void decrypt_cthd2003( running_machine *machine )
 {
-	UINT8 *romdata = memory_region(machine, "fixed");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, 8*128*128);
+	uint8_t *romdata = memory_region(machine, "fixed");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, 8*128*128);
 
 	memcpy(tmp+8*0*128, romdata+8*0*128, 8*32*128);
 	memcpy(tmp+8*32*128, romdata+8*64*128, 8*32*128);
@@ -482,7 +482,7 @@ void patch_cthd2003( running_machine *machine )
 {
 	/* patches thanks to razoola */
 	int i;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 
 	/* special ROM banking handler */
 	memory_install_write16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x2ffff0, 0x2fffff, 0, 0, cthd2003_bankswitch_w);
@@ -526,8 +526,8 @@ void patch_cthd2003( running_machine *machine )
 static void ct2k3sp_sx_decrypt( running_machine *machine )
 {
 	int rom_size = memory_region_length( machine, "fixed" );
-	UINT8 *rom = memory_region( machine, "fixed" );
-	UINT8 *buf = auto_alloc_array(machine, UINT8,  rom_size );
+	uint8_t *rom = memory_region( machine, "fixed" );
+	uint8_t *buf = auto_alloc_array(machine, uint8_t,  rom_size );
 	int i;
 	int ofst;
 
@@ -555,8 +555,8 @@ static void ct2k3sp_sx_decrypt( running_machine *machine )
 
 void decrypt_ct2k3sp( running_machine *machine )
 {
-	UINT8 *romdata = memory_region(machine, "audiocpu")+0x10000;
-	UINT8*tmp = auto_alloc_array(machine, UINT8, 8*128*128);
+	uint8_t *romdata = memory_region(machine, "audiocpu")+0x10000;
+	uint8_t*tmp = auto_alloc_array(machine, uint8_t, 8*128*128);
 	memcpy(tmp+8*0*128, romdata+8*0*128, 8*32*128);
 	memcpy(tmp+8*32*128, romdata+8*64*128, 8*32*128);
 	memcpy(tmp+8*64*128, romdata+8*32*128, 8*32*128);
@@ -575,8 +575,8 @@ void decrypt_ct2k3sp( running_machine *machine )
 
 void decrypt_ct2k3sa( running_machine *machine )
 {
-	UINT8 *romdata = memory_region(machine, "audiocpu")+0x10000;
-	UINT8*tmp = auto_alloc_array(machine, UINT8, 8*128*128);
+	uint8_t *romdata = memory_region(machine, "audiocpu")+0x10000;
+	uint8_t*tmp = auto_alloc_array(machine, uint8_t, 8*128*128);
 	memcpy(tmp+8*0*128, romdata+8*0*128, 8*32*128);
 	memcpy(tmp+8*32*128, romdata+8*64*128, 8*32*128);
 	memcpy(tmp+8*64*128, romdata+8*32*128, 8*32*128);
@@ -592,7 +592,7 @@ void patch_ct2k3sa( running_machine *machine )
 {
 	/* patches thanks to razoola - same as for cthd2003*/
 	int i;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 
 	// theres still a problem on the character select screen but it seems to be related to cpu core timing issues,
 	// overclocking the 68k prevents it.
@@ -633,8 +633,8 @@ void patch_ct2k3sa( running_machine *machine )
 
 void decrypt_kof2k4se_68k( running_machine *machine )
 {
-	UINT8 *src = memory_region(machine, "maincpu")+0x100000;
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x400000);
+	uint8_t *src = memory_region(machine, "maincpu")+0x100000;
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x400000);
 	int i;
 	static const int sec[] = {0x300000,0x200000,0x100000,0x000000};
 	memcpy(dst,src,0x400000);
@@ -653,7 +653,7 @@ void decrypt_kof2k4se_68k( running_machine *machine )
 void lans2004_vx_decrypt( running_machine *machine )
 {
 	int i;
-	UINT8 *rom = memory_region( machine, "ymsnd" );
+	uint8_t *rom = memory_region( machine, "ymsnd" );
 	for (i = 0; i < 0xA00000; i++)
 		rom[i] = BITSWAP8(rom[i], 0, 1, 5, 4, 3, 2, 6, 7);
 }
@@ -662,9 +662,9 @@ void lans2004_decrypt_68k( running_machine *machine )
 {
 	/* Descrambling P ROMs - Thanks to Razoola for the info */
 	int i;
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT16 *rom = (UINT16*)memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8, 0x600000);
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint16_t *rom = (uint16_t*)memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, 0x600000);
 
 	{
 		static const int sec[] = { 0x3, 0x8, 0x7, 0xC, 0x1, 0xA, 0x6, 0xD };
@@ -738,13 +738,13 @@ void install_ms5plus_protection(running_machine *machine)
 
 void svcboot_px_decrypt( running_machine *machine )
 {
-	static const UINT8 sec[] = {
+	static const uint8_t sec[] = {
 		0x06, 0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00
 	};
 	int i;
 	int size = memory_region_length( machine, "maincpu" );
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  size );
 	int ofst;
 	for( i = 0; i < size / 0x100000; i++ ){
 		memcpy( &dst[ i * 0x100000 ], &src[ sec[ i ] * 0x100000 ], 0x100000 );
@@ -759,10 +759,10 @@ void svcboot_px_decrypt( running_machine *machine )
 
 void svcboot_cx_decrypt( running_machine *machine )
 {
-	static const UINT8 idx_tbl[ 0x10 ] = {
+	static const uint8_t idx_tbl[ 0x10 ] = {
 		0, 1, 0, 1, 2, 3, 2, 3, 3, 4, 3, 4, 4, 5, 4, 5,
 	};
-	static const UINT8 bitswap4_tbl[ 6 ][ 4 ] = {
+	static const uint8_t bitswap4_tbl[ 6 ][ 4 ] = {
 		{ 3, 0, 1, 2 },
 		{ 2, 3, 0, 1 },
 		{ 1, 2, 3, 0 },
@@ -772,8 +772,8 @@ void svcboot_cx_decrypt( running_machine *machine )
 	};
 	int i;
 	int size = memory_region_length( machine, "sprites" );
-	UINT8 *src = memory_region( machine, "sprites" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *src = memory_region( machine, "sprites" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  size );
 	int ofst;
 	memcpy( dst, src, size );
 	for( i = 0; i < size / 0x80; i++ ){
@@ -799,8 +799,8 @@ void svcplus_px_decrypt( running_machine *machine )
 		0x00, 0x03, 0x02, 0x05, 0x04, 0x01
 	};
 	int size = memory_region_length( machine, "maincpu" );
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  size );
 	int i;
 	int ofst;
 	memcpy( dst, src, size );
@@ -822,7 +822,7 @@ void svcplus_px_decrypt( running_machine *machine )
 void svcplus_px_hack( running_machine *machine )
 {
 	/* patched by the protection chip? */
-	UINT8 *src = memory_region( machine, "maincpu" );
+	uint8_t *src = memory_region( machine, "maincpu" );
 	src[ 0x0f8010 ] = 0x40;
 	src[ 0x0f8011 ] = 0x04;
 	src[ 0x0f8012 ] = 0x00;
@@ -844,8 +844,8 @@ void svcplusa_px_decrypt( running_machine *machine )
 		0x01, 0x02, 0x03, 0x04, 0x05, 0x00
 	};
 	int size = memory_region_length( machine, "maincpu" );
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  size );
 	memcpy( dst, src, size );
 	for( i = 0; i < 6; i++ ){
 		memcpy( &src[ i * 0x100000 ], &dst[ sec[ i ] * 0x100000 ], 0x100000 );
@@ -863,8 +863,8 @@ void svcsplus_px_decrypt( running_machine *machine )
 		0x06, 0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x00
 	};
 	int size = memory_region_length( machine, "maincpu" );
-	UINT8 *src = memory_region( machine, "maincpu" );
-	UINT8 *dst = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *src = memory_region( machine, "maincpu" );
+	uint8_t *dst = auto_alloc_array(machine, uint8_t,  size );
 	int i;
 	int ofst;
 	memcpy( dst, src, size );
@@ -882,7 +882,7 @@ void svcsplus_px_decrypt( running_machine *machine )
 void svcsplus_px_hack( running_machine *machine )
 {
 	/* patched by the protection chip? */
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 	mem16[0x9e90/2] = 0x000f;
 	mem16[0x9e92/2] = 0xc9c0;
 	mem16[0xa10c/2] = 0x4eb9;
@@ -891,7 +891,7 @@ void svcsplus_px_hack( running_machine *machine )
 }
 
 #ifdef UNUSED_FUNCTION
-static UINT16 mv0_bank_ram[ 0x10/2 ];
+static uint16_t mv0_bank_ram[ 0x10/2 ];
 
 static READ16_HANDLER( mv0_bankswitch_r )
 {
@@ -900,7 +900,7 @@ static READ16_HANDLER( mv0_bankswitch_r )
 
 static WRITE16_HANDLER( mv0_bankswitch_w )
 {
-    UINT32 bankaddress = (mv0_bank_ram[ 0 ] >> 8) + (mv0_bank_ram[ 1 ] << 8) + 0x100000;
+    uint32_t bankaddress = (mv0_bank_ram[ 0 ] >> 8) + (mv0_bank_ram[ 1 ] << 8) + 0x100000;
 	COMBINE_DATA( &mv0_bank_ram[ offset ] );
     neogeo_set_main_cpu_bank_address( space, bankaddress );
 }
@@ -910,7 +910,7 @@ static WRITE16_HANDLER( mv0_bankswitch_w )
 /* The King of Fighters 2003 (bootleg set 1) */
 
 
-static UINT16 kof2003_tbl[4096];
+static uint16_t kof2003_tbl[4096];
 
 static READ16_HANDLER( kof2003_r)
 {
@@ -921,10 +921,10 @@ static WRITE16_HANDLER( kof2003_w )
 {
 	data = COMBINE_DATA(&kof2003_tbl[offset]);
 	if (offset == 0x1ff0/2 || offset == 0x1ff2/2) {
-		UINT8* cr = (UINT8 *)kof2003_tbl;
-		UINT32 address = (cr[BYTE_XOR_LE(0x1ff3)]<<16)|(cr[BYTE_XOR_LE(0x1ff2)]<<8)|cr[BYTE_XOR_LE(0x1ff1)];
-		UINT8 prt = cr[BYTE_XOR_LE(0x1ff2)];
-		UINT8* mem = (UINT8 *)memory_region(space->machine, "maincpu");
+		uint8_t* cr = (uint8_t *)kof2003_tbl;
+		uint32_t address = (cr[BYTE_XOR_LE(0x1ff3)]<<16)|(cr[BYTE_XOR_LE(0x1ff2)]<<8)|cr[BYTE_XOR_LE(0x1ff1)];
+		uint8_t prt = cr[BYTE_XOR_LE(0x1ff2)];
+		uint8_t* mem = (uint8_t *)memory_region(space->machine, "maincpu");
 
 		cr[BYTE_XOR_LE(0x1ff0)] =  0xa0;
 		cr[BYTE_XOR_LE(0x1ff1)] &= 0xfe;
@@ -939,10 +939,10 @@ static WRITE16_HANDLER( kof2003p_w )
 {
 	data = COMBINE_DATA(&kof2003_tbl[offset]);
 	if (offset == 0x1ff0/2 || offset == 0x1ff2/2) {
-		UINT8* cr = (UINT8 *)kof2003_tbl;
-		UINT32 address = (cr[BYTE_XOR_LE(0x1ff3)]<<16)|(cr[BYTE_XOR_LE(0x1ff2)]<<8)|cr[BYTE_XOR_LE(0x1ff0)];
-		UINT8 prt = cr[BYTE_XOR_LE(0x1ff2)];
-		UINT8* mem = (UINT8 *)memory_region(space->machine, "maincpu");
+		uint8_t* cr = (uint8_t *)kof2003_tbl;
+		uint32_t address = (cr[BYTE_XOR_LE(0x1ff3)]<<16)|(cr[BYTE_XOR_LE(0x1ff2)]<<8)|cr[BYTE_XOR_LE(0x1ff0)];
+		uint8_t prt = cr[BYTE_XOR_LE(0x1ff2)];
+		uint8_t* mem = (uint8_t *)memory_region(space->machine, "maincpu");
 
 		cr[BYTE_XOR_LE(0x1ff0)] &= 0xfe;
 		cr[BYTE_XOR_LE(0x1ff3)] &= 0x7f;
@@ -955,13 +955,13 @@ static WRITE16_HANDLER( kof2003p_w )
 void kf2k3bl_px_decrypt( running_machine *machine )
 {
 	int i;
-	static const UINT8 sec[] = {
+	static const uint8_t sec[] = {
 		0x07, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06
 	};
 
     int rom_size = 0x800000;
-    UINT8 *rom = memory_region( machine, "maincpu" );
-    UINT8 *buf = auto_alloc_array(machine, UINT8,  rom_size );
+    uint8_t *rom = memory_region( machine, "maincpu" );
+    uint8_t *buf = auto_alloc_array(machine, uint8_t,  rom_size );
     memcpy( buf, rom, rom_size );
 
     for( i = 0; i < rom_size / 0x100000; i++ ){
@@ -981,8 +981,8 @@ void kf2k3bl_install_protection(running_machine *machine)
 
 void kf2k3pl_px_decrypt( running_machine *machine )
 {
-	UINT16*tmp = auto_alloc_array(machine, UINT16, 0x100000/2);
-	UINT16*rom = (UINT16*)memory_region( machine, "maincpu" );
+	uint16_t*tmp = auto_alloc_array(machine, uint16_t, 0x100000/2);
+	uint16_t*rom = (uint16_t*)memory_region( machine, "maincpu" );
 	int j;
 	int i;
 
@@ -1010,7 +1010,7 @@ void kf2k3pl_install_protection(running_machine *machine)
 void kf2k3upl_px_decrypt( running_machine *machine )
 {
 	{
-		UINT8 *src = memory_region(machine, "maincpu");
+		uint8_t *src = memory_region(machine, "maincpu");
 		memmove(src+0x100000, src, 0x600000);
 		memmove(src, src+0x700000, 0x100000);
 	}
@@ -1019,8 +1019,8 @@ void kf2k3upl_px_decrypt( running_machine *machine )
 
 		int ofst;
 		int i;
-		UINT8 *rom = memory_region( machine, "maincpu" ) + 0xfe000;
-		UINT8 *buf = memory_region( machine, "maincpu" ) + 0xd0610;
+		uint8_t *rom = memory_region( machine, "maincpu" ) + 0xfe000;
+		uint8_t *buf = memory_region( machine, "maincpu" ) + 0xd0610;
 
 		for( i = 0; i < 0x2000 / 2; i++ ){
 			ofst = (i & 0xff00) + BITSWAP8( (i & 0x00ff), 7, 6, 0, 4, 3, 2, 1, 5 );
@@ -1041,8 +1041,8 @@ void kf2k3upl_install_protection(running_machine *machine)
 void samsho5b_px_decrypt( running_machine *machine )
 {
 	int px_size = memory_region_length( machine, "maincpu" );
-	UINT8 *rom = memory_region( machine, "maincpu" );
-	UINT8 *buf = auto_alloc_array(machine, UINT8,  px_size );
+	uint8_t *rom = memory_region( machine, "maincpu" );
+	uint8_t *buf = auto_alloc_array(machine, uint8_t,  px_size );
 	int ofst;
 	int i;
 
@@ -1068,7 +1068,7 @@ void samsho5b_px_decrypt( running_machine *machine )
 void samsho5b_vx_decrypt( running_machine *machine )
 {
 	int vx_size = memory_region_length( machine, "ymsnd" );
-	UINT8 *rom = memory_region( machine, "ymsnd" );
+	uint8_t *rom = memory_region( machine, "ymsnd" );
 	int i;
 
 	for( i = 0; i < vx_size; i++ )
@@ -1084,8 +1084,8 @@ void samsho5b_vx_decrypt( running_machine *machine )
 void matrimbl_decrypt( running_machine *machine )
 {
 	/* decrypt Z80 */
-	UINT8 *rom = memory_region( machine, "audiocpu" )+0x10000;
-	UINT8 *buf = auto_alloc_array(machine, UINT8,  0x20000 );
+	uint8_t *rom = memory_region( machine, "audiocpu" )+0x10000;
+	uint8_t *buf = auto_alloc_array(machine, uint8_t,  0x20000 );
 	int i, j=0;
 	memcpy( buf, rom, 0x20000 );
 	for( i=0x00000; i<0x20000; i++ )

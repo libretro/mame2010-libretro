@@ -19,8 +19,8 @@ static int pastelg_flipscreen;
 static int blitter_direction_x, blitter_direction_y;
 static int pastelg_palbank;
 
-static UINT8 *pastelg_videoram;
-static UINT8 *pastelg_clut;
+static uint8_t *pastelg_videoram;
+static uint8_t *pastelg_clut;
 
 
 static void pastelg_vramflip(running_machine *machine);
@@ -110,7 +110,7 @@ WRITE8_HANDLER( threeds_output_w )
 
 READ8_HANDLER( threeds_rom_readback_r )
 {
-	UINT8 *GFX = memory_region(space->machine, "gfx1");
+	uint8_t *GFX = memory_region(space->machine, "gfx1");
 
 	return GFX[(blitter_src_addr | (pastelg_gfxrom << 16)) & 0x3ffff];
 }
@@ -140,7 +140,7 @@ static void pastelg_vramflip(running_machine *machine)
 {
 	static int pastelg_flipscreen_old = 0;
 	int x, y;
-	UINT8 color1, color2;
+	uint8_t color1, color2;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
@@ -167,7 +167,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void pastelg_gfxdraw(running_machine *machine)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 	int width = machine->primary_screen->width();
 
 	int x, y;
@@ -179,7 +179,7 @@ static void pastelg_gfxdraw(running_machine *machine)
 	int readflag;
 	int gfxaddr, gfxlen;
 	int count;
-	UINT8 color;
+	uint8_t color;
 
 	nb1413m3_busyctr = 0;
 
@@ -297,8 +297,8 @@ VIDEO_START( pastelg )
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
-	pastelg_videoram = auto_alloc_array_clear(machine, UINT8, width * height);
-	pastelg_clut = auto_alloc_array(machine, UINT8, 0x10);
+	pastelg_videoram = auto_alloc_array_clear(machine, uint8_t, width * height);
+	pastelg_clut = auto_alloc_array(machine, uint8_t, 0x10);
 }
 
 /******************************************************************************

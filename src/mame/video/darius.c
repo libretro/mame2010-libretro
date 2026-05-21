@@ -4,10 +4,10 @@
 
 /***************************************************************************/
 
-INLINE void actual_get_fg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, UINT16 *ram, int gfxnum )
+INLINE void actual_get_fg_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, uint16_t *ram, int gfxnum )
 {
-	UINT16 code = (ram[tile_index + 0x2000] & 0x7ff);
-	UINT16 attr = ram[tile_index];
+	uint16_t code = (ram[tile_index + 0x2000] & 0x7ff);
+	uint16_t attr = ram[tile_index];
 
 	SET_TILE_INFO(
 			gfxnum,
@@ -49,10 +49,10 @@ WRITE16_HANDLER( darius_fg_layer_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int primask, int x_offs, int y_offs )
 {
 	darius_state *state = (darius_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, curx, cury;
-	UINT16 code, data, sx, sy;
-	UINT8 flipx, flipy, color, priority;
+	uint16_t code, data, sx, sy;
+	uint8_t flipx, flipy, color, priority;
 
 	for (offs = state->spriteram_size / 2 - 4; offs >= 0; offs -= 4)
 	{

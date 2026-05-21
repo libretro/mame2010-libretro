@@ -16,7 +16,7 @@
 
 
 /* each palette entry contains a fourth 'alpha' value */
-UINT8 *jal_blend_table;
+uint8_t *jal_blend_table;
 
 /*
  * 'Alpha' Format
@@ -31,7 +31,7 @@ UINT8 *jal_blend_table;
  */
 
 /* basically an add/subtract function with clamping */
-rgb_t jal_blend_func(rgb_t dest, rgb_t addMe, UINT8 alpha)
+rgb_t jal_blend_func(rgb_t dest, rgb_t addMe, uint8_t alpha)
 {
 	int r, g, b;
 	int ir, ig, ib;
@@ -61,7 +61,7 @@ rgb_t jal_blend_func(rgb_t dest, rgb_t addMe, UINT8 alpha)
 }
 
 void jal_blend_drawgfx(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-							UINT32 code,UINT32 color,int flipx,int flipy,int offsx,int offsy,
+							uint32_t code,uint32_t color,int flipx,int flipy,int offsx,int offsy,
 							int transparent_color)
 {
 	if (jal_blend_table == NULL)
@@ -74,8 +74,8 @@ void jal_blend_drawgfx(bitmap_t *dest_bmp,const rectangle *clip,const gfx_elemen
 	if (gfx)
 	{
 		const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-		const UINT8 *alpha = &jal_blend_table[gfx->color_granularity * (color % gfx->total_colors)];
-		const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+		const uint8_t *alpha = &jal_blend_table[gfx->color_granularity * (color % gfx->total_colors)];
+		const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 		int x_index_base, y_index, sx, sy, ex, ey;
 		int xinc, yinc;
 
@@ -128,8 +128,8 @@ void jal_blend_drawgfx(bitmap_t *dest_bmp,const rectangle *clip,const gfx_elemen
 				/* taken from case 7: TRANSPARENCY_ALPHARANGE */
 				for (y = sy; y < ey; y++)
 				{
-					const UINT8 *source = source_base + y_index*gfx->line_modulo;
-					UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+					const uint8_t *source = source_base + y_index*gfx->line_modulo;
+					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 					int x_index = x_index_base;
 					for (x = sx; x < ex; x++)
 					{
@@ -159,8 +159,8 @@ void jal_blend_drawgfx(bitmap_t *dest_bmp,const rectangle *clip,const gfx_elemen
 				/* taken from case 7: TRANSPARENCY_ALPHARANGE */
 				for (y = sy; y < ey; y++)
 				{
-					const UINT8 *source = source_base + y_index*gfx->line_modulo;
-					UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+					const uint8_t *source = source_base + y_index*gfx->line_modulo;
+					uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
 					int x_index = x_index_base;
 					for (x = sx; x < ex; x++)
 					{

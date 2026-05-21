@@ -2,16 +2,16 @@
 #include "includes/wc90.h"
 
 
-UINT8 *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
+uint8_t *wc90_fgvideoram,*wc90_bgvideoram,*wc90_txvideoram;
 
 
-UINT8 *wc90_scroll0xlo, *wc90_scroll0xhi;
-UINT8 *wc90_scroll1xlo, *wc90_scroll1xhi;
-UINT8 *wc90_scroll2xlo, *wc90_scroll2xhi;
+uint8_t *wc90_scroll0xlo, *wc90_scroll0xhi;
+uint8_t *wc90_scroll1xlo, *wc90_scroll1xhi;
+uint8_t *wc90_scroll2xlo, *wc90_scroll2xhi;
 
-UINT8 *wc90_scroll0ylo, *wc90_scroll0yhi;
-UINT8 *wc90_scroll1ylo, *wc90_scroll1yhi;
-UINT8 *wc90_scroll2ylo, *wc90_scroll2yhi;
+uint8_t *wc90_scroll0ylo, *wc90_scroll0yhi;
+uint8_t *wc90_scroll1ylo, *wc90_scroll1yhi;
+uint8_t *wc90_scroll2ylo, *wc90_scroll2yhi;
 
 
 static tilemap_t *tx_tilemap,*fg_tilemap,*bg_tilemap;
@@ -323,7 +323,7 @@ static const draw_sprites_func draw_sprites_proc[16] = {
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs, sx,sy, flags, which;
 
 	/* draw all visible sprites of specified priority */

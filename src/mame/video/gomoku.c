@@ -17,9 +17,9 @@ static int gomoku_bg_dispsw;
 static tilemap_t *fg_tilemap;
 static bitmap_t *gomoku_bg_bitmap;
 
-UINT8 *gomoku_videoram;
-UINT8 *gomoku_colorram;
-UINT8 *gomoku_bgram;
+uint8_t *gomoku_videoram;
+uint8_t *gomoku_colorram;
+uint8_t *gomoku_bgram;
 
 
 /******************************************************************************
@@ -113,9 +113,9 @@ WRITE8_HANDLER( gomoku_bg_dispsw_w )
 
 VIDEO_START( gomoku )
 {
-	UINT8 *GOMOKU_BG_X = memory_region( machine, "user1" );
-	UINT8 *GOMOKU_BG_Y = memory_region( machine, "user2" );
-	UINT8 *GOMOKU_BG_D = memory_region( machine, "user3" );
+	uint8_t *GOMOKU_BG_X = memory_region( machine, "user1" );
+	uint8_t *GOMOKU_BG_Y = memory_region( machine, "user2" );
+	uint8_t *GOMOKU_BG_D = memory_region( machine, "user3" );
 	int x, y;
 	int bgdata;
 	int color;
@@ -155,9 +155,9 @@ VIDEO_START( gomoku )
 
 VIDEO_UPDATE( gomoku )
 {
-	UINT8 *GOMOKU_BG_X = memory_region( screen->machine, "user1" );
-	UINT8 *GOMOKU_BG_Y = memory_region( screen->machine, "user2" );
-	UINT8 *GOMOKU_BG_D = memory_region( screen->machine, "user3" );
+	uint8_t *GOMOKU_BG_X = memory_region( screen->machine, "user1" );
+	uint8_t *GOMOKU_BG_Y = memory_region( screen->machine, "user2" );
+	uint8_t *GOMOKU_BG_D = memory_region( screen->machine, "user3" );
 	int x, y;
 	int bgram;
 	int bgoffs;

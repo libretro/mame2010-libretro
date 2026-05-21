@@ -7,33 +7,33 @@ public:
 	bigevglf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  paletteram;
-	UINT8 *  spriteram1;
-	UINT8 *  spriteram2;
+	uint8_t *  paletteram;
+	uint8_t *  spriteram1;
+	uint8_t *  spriteram2;
 
 	/* video-related */
 	bitmap_t *tmp_bitmap[4];
-	UINT8    *vidram;
-	UINT32   vidram_bank, plane_selected, plane_visible;
+	uint8_t    *vidram;
+	uint32_t   vidram_bank, plane_selected, plane_visible;
 
 	/* sound-related */
 	int      sound_nmi_enable, pending_nmi;
-	UINT8    for_sound;
-	UINT8    from_sound;
-	UINT8    sound_state;
+	uint8_t    for_sound;
+	uint8_t    from_sound;
+	uint8_t    sound_state;
 
 	/* MCU related */
-	UINT8    from_mcu;
+	uint8_t    from_mcu;
 	int      mcu_sent, main_sent;
-	UINT8    port_a_in, port_a_out, ddr_a;
-	UINT8    port_b_in, port_b_out, ddr_b;
-	UINT8    port_c_in, port_c_out, ddr_c;
+	uint8_t    port_a_in, port_a_out, ddr_a;
+	uint8_t    port_b_in, port_b_out, ddr_b;
+	uint8_t    port_c_in, port_c_out, ddr_c;
 	int      mcu_coin_bit5;
 
 	/* misc */
-	UINT32   beg_bank;
-	UINT8    beg13_ls74[2];
-	UINT8    port_select;     /* for muxed controls */
+	uint32_t   beg_bank;
+	uint8_t    beg13_ls74[2];
+	uint8_t    port_select;     /* for muxed controls */
 
 	/* devices */
 	running_device *audiocpu;

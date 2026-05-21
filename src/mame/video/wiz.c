@@ -21,17 +21,17 @@ static const rectangle spritevisibleareaflipx =
 	2*8, 30*8-1
 };
 
-UINT8 *wiz_videoram2;
-UINT8 *wiz_colorram2;
-UINT8 *wiz_attributesram;
-UINT8 *wiz_attributesram2;
+uint8_t *wiz_videoram2;
+uint8_t *wiz_colorram2;
+uint8_t *wiz_attributesram;
+uint8_t *wiz_attributesram2;
 
-static INT32 flipx, flipy;
-static INT32 bgpen;
+static int32_t flipx, flipy;
+static int32_t bgpen;
 
-UINT8 *wiz_sprite_bank;
-static UINT8 char_bank[2];
-static UINT8 palbank[2];
+uint8_t *wiz_sprite_bank;
+static uint8_t char_bank[2];
+static uint8_t palbank[2];
 static int palette_bank;
 
 
@@ -194,7 +194,7 @@ static void draw_foreground(running_machine *machine, bitmap_t *bitmap, const re
 }
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,
-						 const rectangle *cliprect, UINT8* sprite_ram,
+						 const rectangle *cliprect, uint8_t* sprite_ram,
                          int bank)
 {
 	int offs;

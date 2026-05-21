@@ -104,7 +104,7 @@ VIDEO_UPDATE( metlhawk );
 VIDEO_START( sgunner );
 VIDEO_UPDATE( sgunner );
 
-extern UINT16 *namcos2_sprite_ram;
+extern uint16_t *namcos2_sprite_ram;
 WRITE16_HANDLER( namcos2_sprite_ram_w );
 READ16_HANDLER( namcos2_sprite_ram_r );
 
@@ -120,7 +120,7 @@ READ16_HANDLER( namcos2_68k_video_palette_r );
 WRITE16_HANDLER( namcos2_68k_video_palette_w );
 
 #define VIRTUAL_PALETTE_BANKS 30
-extern UINT16 *namcos2_68k_palette_ram;
+extern uint16_t *namcos2_68k_palette_ram;
 extern size_t namcos2_68k_palette_size;
 
 /**************************************************************/
@@ -132,7 +132,7 @@ READ16_HANDLER( namcos2_68k_roz_ctrl_r );
 
 WRITE16_HANDLER( namcos2_68k_roz_ram_w );
 READ16_HANDLER( namcos2_68k_roz_ram_r );
-extern UINT16 *namcos2_68k_roz_ram;
+extern uint16_t *namcos2_68k_roz_ram;
 
 /*----------- defined in machine/namcos2.c -----------*/
 
@@ -165,7 +165,7 @@ WRITE16_HANDLER( namcos2_68k_serial_comms_ram_w );
 READ16_HANDLER( namcos2_68k_serial_comms_ctrl_r );
 WRITE16_HANDLER( namcos2_68k_serial_comms_ctrl_w );
 
-extern UINT16 *namcos2_68k_serial_comms_ram;
+extern uint16_t *namcos2_68k_serial_comms_ram;
 
 /**************************************************************/
 /* Shared protection/random number generator                  */

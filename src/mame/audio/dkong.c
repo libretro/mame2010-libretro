@@ -1197,7 +1197,7 @@ static READ8_DEVICE_HANDLER( dkong_voice_status_r )
 static READ8_DEVICE_HANDLER( dkong_tune_r )
 {
 	dkong_state *state = (dkong_state *)device->machine->driver_data;
-	UINT8 page = latch8_r(state->dev_vp2,0) & 0x47;
+	uint8_t page = latch8_r(state->dev_vp2,0) & 0x47;
 
 	if ( page & 0x40 )
 	{

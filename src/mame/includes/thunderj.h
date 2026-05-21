@@ -14,7 +14,7 @@ public:
 	thunderj_state(running_machine &machine) { }
 
 	atarigen_state	atarigen;
-	UINT8			alpha_tile_bank;
+	uint8_t			alpha_tile_bank;
 };
 
 
@@ -23,4 +23,4 @@ public:
 VIDEO_START( thunderj );
 VIDEO_UPDATE( thunderj );
 
-void thunderj_mark_high_palette(bitmap_t *bitmap, UINT16 *pf, UINT16 *mo, int x, int y);
+void thunderj_mark_high_palette(bitmap_t *bitmap, uint16_t *pf, uint16_t *mo, int x, int y);

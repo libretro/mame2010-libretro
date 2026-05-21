@@ -9,7 +9,7 @@
 
 static struct
 {
-	UINT8	type,				// type of alpha display
+	uint8_t	type,				// type of alpha display
 
 			changed,			// flag <>0, if contents are changed
 			window_start,		// display window start pos 0-15
@@ -17,23 +17,23 @@ static struct
 			window_size,		// window  size
 			pad;				// unused align byte
 
-	INT8	pcursor_pos,		// previous cursor pos
+	int8_t	pcursor_pos,		// previous cursor pos
 			cursor_pos;			// current cursor pos
 
-	UINT16  user_def,			// user defined character state
+	uint16_t  user_def,			// user defined character state
 			user_data;			// user defined character data (16 bit)
 
-	UINT8	scroll_active,		// flag <>0, scrolling active
+	uint8_t	scroll_active,		// flag <>0, scrolling active
 			display_mode,		// display scroll   mode, 0/1/2/3
 			display_blanking,	// display blanking mode, 0/1/2/3
 			flash_rate,			// flash rate 0-F
 			flash_control;		// flash control 0/1/2/3
 
-	UINT8	string[18];			// text buffer
-	UINT32  segments[16],		// segments
+	uint8_t	string[18];			// text buffer
+	uint32_t  segments[16],		// segments
 			outputs[16];		// standardised outputs
 
-	UINT8	count,				// bit counter
+	uint8_t	count,				// bit counter
 			data;				// receive register
 
 } bd1[MAX_BD1];
@@ -71,7 +71,7 @@ static const char BD1ASCII[] =
 
   */
 
-static const UINT16 BD1charset[]=
+static const uint16_t BD1charset[]=
 {           // FEDC BA98 7654 3210
 	0xA626, // 1010 0110 0010 0110 @.
 	0xE027, // 1110 0000 0010 0111 A.
@@ -165,21 +165,21 @@ void BFM_BD1_reset(int id)
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *BFM_BD1_get_segments(int id)
+uint32_t *BFM_BD1_get_segments(int id)
 {
 	return bd1[id].segments;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *BFM_BD1_get_outputs(int id)
+uint32_t *BFM_BD1_get_outputs(int id)
 {
 	return bd1[id].outputs;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *BFM_BD1_set_outputs(int id)
+uint32_t *BFM_BD1_set_outputs(int id)
 {
 	int cursor;
 	for (cursor = 0; cursor < 16; cursor++)

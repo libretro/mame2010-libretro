@@ -222,7 +222,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	lastduel_state *state = (lastduel_state *)machine->driver_data;
 
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	if (!state->sprite_pri_mask)

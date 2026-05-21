@@ -209,7 +209,7 @@ WRITE16_HANDLER( bionicc_gfxctrl_w )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 //  bionicc_state *state = (bionicc_state *)machine->driver_data;
 	int offs;
 	const gfx_element *gfx = machine->gfx[3];
@@ -223,8 +223,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 			int color = (attr & 0x3c) >> 2;
 			int flipx = attr & 0x02;
 			int flipy = 0;
-			int sx = (INT16)buffered_spriteram[offs + 3];	/* signed */
-			int sy = (INT16)buffered_spriteram[offs + 2];	/* signed */
+			int sx = (int16_t)buffered_spriteram[offs + 3];	/* signed */
+			int sy = (int16_t)buffered_spriteram[offs + 2];	/* signed */
 
 			if (sy > 512 - 16)
 				sy -= 512;

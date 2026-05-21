@@ -12,15 +12,15 @@ public:
 	ikki_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    spriteram;
-	UINT8 *    scroll;
+	uint8_t *    videoram;
+	uint8_t *    spriteram;
+	uint8_t *    scroll;
 	size_t     videoram_size;
 	size_t     spriteram_size;
 
 	/* video-related */
 	bitmap_t   *sprite_bitmap;
-	UINT8      flipscreen;
+	uint8_t      flipscreen;
 	int        punch_through_pen;
 };
 

@@ -2,7 +2,7 @@
 #include "emu.h"
 
 static tilemap_t *bg_layer,*fg_layer,*tx_layer;
-UINT16 *raiden_back_data,*raiden_fore_data,*raiden_scroll_ram;
+uint16_t *raiden_back_data,*raiden_fore_data,*raiden_scroll_ram;
 
 static int flipscreen,alternate;
 
@@ -113,7 +113,7 @@ WRITE16_HANDLER( raidena_control_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int pri_mask)
 {
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite;
 
 	for (offs = 0x1000/2-4;offs >= 0;offs -= 4)

@@ -76,7 +76,7 @@ WRITE8_DEVICE_HANDLER( turbo_sound_a_w )
 	running_device *samples = device->machine->device("samples");
 #endif
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[0];
+	uint8_t diff = data ^ state->sound_state[0];
 	state->sound_state[0] = data;
 
 #if (!DISCRETE_TEST)
@@ -125,7 +125,7 @@ WRITE8_DEVICE_HANDLER( turbo_sound_b_w )
 {
 	running_device *samples = device->machine->device("samples");
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[1];
+	uint8_t diff = data ^ state->sound_state[1];
 	state->sound_state[1] = data;
 
 	/* ACC0-ACC5 */
@@ -305,7 +305,7 @@ WRITE8_DEVICE_HANDLER( subroc3d_sound_a_w )
 }
 
 
-INLINE void subroc3d_update_volume(running_device *samples, int leftchan, UINT8 dis, UINT8 dir)
+INLINE void subroc3d_update_volume(running_device *samples, int leftchan, uint8_t dis, uint8_t dir)
 {
 	float volume = (float)(15 - dis) / 16.0f;
 	float lvol, rvol;
@@ -329,7 +329,7 @@ WRITE8_DEVICE_HANDLER( subroc3d_sound_b_w )
 {
 	running_device *samples = device->machine->device("samples");
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[1];
+	uint8_t diff = data ^ state->sound_state[1];
 	state->sound_state[1] = data;
 
 	/* bit 0 latches direction/volume for missile */
@@ -385,7 +385,7 @@ WRITE8_DEVICE_HANDLER( subroc3d_sound_c_w )
 {
 	running_device *samples = device->machine->device("samples");
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[2];
+	uint8_t diff = data ^ state->sound_state[2];
 	state->sound_state[2] = data;
 
 	/* /FIRE TRIG */
@@ -510,7 +510,7 @@ WRITE8_DEVICE_HANDLER( buckrog_sound_a_w )
 {
 	running_device *samples = device->machine->device("samples");
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[0];
+	uint8_t diff = data ^ state->sound_state[0];
 	state->sound_state[0] = data;
 
 	/* clock HIT DIS from bits 0-2 */
@@ -536,7 +536,7 @@ WRITE8_DEVICE_HANDLER( buckrog_sound_b_w )
 {
 	running_device *samples = device->machine->device("samples");
 	turbo_state *state = (turbo_state *)device->machine->driver_data;
-	UINT8 diff = data ^ state->sound_state[1];
+	uint8_t diff = data ^ state->sound_state[1];
 	state->sound_state[1] = data;
 
 	/* /ALARM3: channel 0 */

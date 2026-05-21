@@ -18,9 +18,9 @@ public:
 	double			rweights[3];
 	double			gweights[3];
 	double			bweights[2];
-	UINT8			playfield_flip;
+	uint8_t			playfield_flip;
 
-	UINT8			whichport;
+	uint8_t			whichport;
 };
 
 

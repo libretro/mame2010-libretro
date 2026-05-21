@@ -9,13 +9,13 @@
 #include "video/resnet.h"
 
 
-UINT8 *spacefb_videoram;
+uint8_t *spacefb_videoram;
 size_t spacefb_videoram_size;
 
-static UINT8 *object_present_map;
-static UINT8 port_0;
-static UINT8 port_2;
-static UINT32 star_shift_reg;
+static uint8_t *object_present_map;
+static uint8_t port_0;
+static uint8_t port_2;
+static uint32_t star_shift_reg;
 
 static double color_weights_rg[3], color_weights_b[2];
 
@@ -92,7 +92,7 @@ VIDEO_START( spacefb )
 
 	width = machine->primary_screen->width();
 	height = machine->primary_screen->height();
-	object_present_map = auto_alloc_array(machine, UINT8, width * height);
+	object_present_map = auto_alloc_array(machine, uint8_t, width * height);
 
 	/* this start value positions the stars to match the flyer screen shot,
        but most likely, the actual star position is random as the hardware
@@ -131,16 +131,16 @@ static void get_starfield_pens(pen_t *pens)
 
 	for (i = 0; i < NUM_STARFIELD_PENS; i++)
 	{
-		UINT8 gb =  ((i >> 0) & 0x01) && color_contrast_g && !disable_star_field;
-		UINT8 ga =  ((i >> 1) & 0x01) && !disable_star_field;
-		UINT8 bb =  ((i >> 2) & 0x01) && color_contrast_b && !disable_star_field;
-		UINT8 ba = (((i >> 3) & 0x01) || background_blue) && !disable_star_field;
-		UINT8 ra = (((i >> 4) & 0x01) || background_red) && !disable_star_field;
-		UINT8 rb =  ((i >> 5) & 0x01) && color_contrast_r && !disable_star_field;
+		uint8_t gb =  ((i >> 0) & 0x01) && color_contrast_g && !disable_star_field;
+		uint8_t ga =  ((i >> 1) & 0x01) && !disable_star_field;
+		uint8_t bb =  ((i >> 2) & 0x01) && color_contrast_b && !disable_star_field;
+		uint8_t ba = (((i >> 3) & 0x01) || background_blue) && !disable_star_field;
+		uint8_t ra = (((i >> 4) & 0x01) || background_red) && !disable_star_field;
+		uint8_t rb =  ((i >> 5) & 0x01) && color_contrast_r && !disable_star_field;
 
-		UINT8 r = combine_3_weights(color_weights_rg, 0, rb, ra);
-		UINT8 g = combine_3_weights(color_weights_rg, 0, gb, ga);
-		UINT8 b = combine_2_weights(color_weights_b,     bb, ba);
+		uint8_t r = combine_3_weights(color_weights_rg, 0, rb, ra);
+		uint8_t g = combine_3_weights(color_weights_rg, 0, gb, ga);
+		uint8_t b = combine_2_weights(color_weights_b,     bb, ba);
 
 		pens[i] = MAKE_RGB(r, g, b);
 	}
@@ -218,27 +218,27 @@ static void draw_starfield(screen_device &screen, bitmap_t *bitmap, const rectan
 static void get_sprite_pens(running_machine *machine, pen_t *pens)
 {
 	static const double fade_weights[] = { 1.0, 1.5, 2.5, 4.0 };
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 	int i;
 
 	for (i = 0; i < NUM_SPRITE_PENS; i++)
 	{
-		UINT8 data = prom[((port_0 & 0x40) >> 2) | (i & 0x0f)];
+		uint8_t data = prom[((port_0 & 0x40) >> 2) | (i & 0x0f)];
 
-		UINT8 r0 = (data >> 0) & 0x01;
-		UINT8 r1 = (data >> 1) & 0x01;
-		UINT8 r2 = (data >> 2) & 0x01;
+		uint8_t r0 = (data >> 0) & 0x01;
+		uint8_t r1 = (data >> 1) & 0x01;
+		uint8_t r2 = (data >> 2) & 0x01;
 
-		UINT8 g0 = (data >> 3) & 0x01;
-		UINT8 g1 = (data >> 4) & 0x01;
-		UINT8 g2 = (data >> 5) & 0x01;
+		uint8_t g0 = (data >> 3) & 0x01;
+		uint8_t g1 = (data >> 4) & 0x01;
+		uint8_t g2 = (data >> 5) & 0x01;
 
-		UINT8 b1 = (data >> 6) & 0x01;
-		UINT8 b2 = (data >> 7) & 0x01;
+		uint8_t b1 = (data >> 6) & 0x01;
+		uint8_t b2 = (data >> 7) & 0x01;
 
-		UINT8 r = combine_3_weights(color_weights_rg, r0, r1, r2);
-		UINT8 g = combine_3_weights(color_weights_rg, g0, g1, g2);
-		UINT8 b = combine_2_weights(color_weights_b,      b1, b2);
+		uint8_t r = combine_3_weights(color_weights_rg, r0, r1, r2);
+		uint8_t g = combine_3_weights(color_weights_rg, g0, g1, g2);
+		uint8_t b = combine_2_weights(color_weights_b,      b1, b2);
 
 		if (i >> 4)
 		{
@@ -257,19 +257,19 @@ static void get_sprite_pens(running_machine *machine, pen_t *pens)
 
 static void draw_bullet(running_machine *machine, offs_t offs, pen_t pen, bitmap_t *bitmap, const rectangle *cliprect, int flip)
 {
-	UINT8 sy;
+	uint8_t sy;
 
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t *gfx = memory_region(machine, "gfx2");
 
-	UINT8 code = spacefb_videoram[offs + 0x0200] & 0x3f;
-	UINT8 y = ~spacefb_videoram[offs + 0x0100] - 2;
+	uint8_t code = spacefb_videoram[offs + 0x0200] & 0x3f;
+	uint8_t y = ~spacefb_videoram[offs + 0x0100] - 2;
 
 	for (sy = 0; sy < 4; sy++)
 	{
-		UINT8 sx, dy;
+		uint8_t sx, dy;
 
-		UINT8 data = gfx[(code << 2) | sy];
-		UINT8 x = spacefb_videoram[offs + 0x0000];
+		uint8_t data = gfx[(code << 2) | sy];
+		uint8_t x = spacefb_videoram[offs + 0x0000];
 
 		if (flip)
 			dy = ~y;
@@ -282,7 +282,7 @@ static void draw_bullet(running_machine *machine, offs_t offs, pen_t pen, bitmap
 			{
 				if (data & 0x01)
 				{
-					UINT16 dx;
+					uint16_t dx;
 
 					if (flip)
 						dx = (255 - x) * 2;
@@ -308,22 +308,22 @@ static void draw_bullet(running_machine *machine, offs_t offs, pen_t pen, bitmap
 
 static void draw_sprite(running_machine *machine, offs_t offs, pen_t *pens, bitmap_t *bitmap, const rectangle *cliprect, int flip)
 {
-	UINT8 sy;
+	uint8_t sy;
 
-	UINT8 *gfx = memory_region(machine, "gfx1");
+	uint8_t *gfx = memory_region(machine, "gfx1");
 
-	UINT8 code = ~spacefb_videoram[offs + 0x0200];
-	UINT8 color_base = (~spacefb_videoram[offs + 0x0300] & 0x0f) << 2;
-	UINT8 y = ~spacefb_videoram[offs + 0x0100] - 2;
+	uint8_t code = ~spacefb_videoram[offs + 0x0200];
+	uint8_t color_base = (~spacefb_videoram[offs + 0x0300] & 0x0f) << 2;
+	uint8_t y = ~spacefb_videoram[offs + 0x0100] - 2;
 
 	for (sy = 0; sy < 8; sy++)
 	{
-		UINT8 sx, dy;
+		uint8_t sx, dy;
 
-		UINT8 data1 = gfx[0x0000 | (code << 3) | (sy ^ 0x07)];
-		UINT8 data2 = gfx[0x0800 | (code << 3) | (sy ^ 0x07)];
+		uint8_t data1 = gfx[0x0000 | (code << 3) | (sy ^ 0x07)];
+		uint8_t data2 = gfx[0x0800 | (code << 3) | (sy ^ 0x07)];
 
-		UINT8 x = spacefb_videoram[offs + 0x0000] - 3;
+		uint8_t x = spacefb_videoram[offs + 0x0000] - 3;
 
 		if (flip)
 			dy = ~y;
@@ -334,8 +334,8 @@ static void draw_sprite(running_machine *machine, offs_t offs, pen_t *pens, bitm
 		{
 			for (sx = 0; sx < 8; sx++)
 			{
-				UINT16 dx;
-				UINT8 data;
+				uint16_t dx;
+				uint8_t data;
 				pen_t pen;
 
 				if (flip)

@@ -7,22 +7,22 @@ public:
 	taitob_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *      spriteram;
-	UINT16 *      pixelram;
-//  UINT16 *      paletteram;   // this currently uses generic palette handlers
+	uint16_t *      spriteram;
+	uint16_t *      pixelram;
+//  uint16_t *      paletteram;   // this currently uses generic palette handlers
 
 	/* video-related */
 	/* framebuffer is a raw bitmap, remapped as a last step */
 	bitmap_t      *framebuffer[2], *pixel_bitmap;
 
-	UINT16        pixel_scroll[2];
+	uint16_t        pixel_scroll[2];
 
 	int           b_fg_color_base;
 	int           b_sp_color_base;
 
 	/* misc */
-	UINT16        eep_latch;
-	UINT16        coin_word;
+	uint16_t        eep_latch;
+	uint16_t        coin_word;
 
 	/* devices */
 	running_device *maincpu;

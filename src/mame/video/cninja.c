@@ -24,7 +24,7 @@ VIDEO_START( stoneage )
 
 static void cninja_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	for (offs = 0x400 - 4; offs >=0 ; offs -= 4)
@@ -101,7 +101,7 @@ static void cninja_draw_sprites( running_machine *machine, bitmap_t *bitmap, con
 /* The bootleg sprites are in a different format! */
 static void cninjabl_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 	int endoffs;
 
@@ -198,7 +198,7 @@ static void cninjabl_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 
 static void robocop2_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	for (offs = 0x400 - 4; offs >=0 ; offs -= 4)
@@ -270,7 +270,7 @@ static void robocop2_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 	}
 }
 
-static void mutantf_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT16 *spriteptr, int gfxbank )
+static void mutantf_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint16_t *spriteptr, int gfxbank )
 {
 	int offs, end, inc;
 
@@ -392,7 +392,7 @@ static void mutantf_draw_sprites( running_machine *machine, bitmap_t *bitmap, co
 VIDEO_UPDATE( cninja )
 {
 	cninja_state *state = (cninja_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);
@@ -413,7 +413,7 @@ VIDEO_UPDATE( cninja )
 VIDEO_UPDATE( cninjabl )
 {
 	cninja_state *state = (cninja_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);
@@ -434,7 +434,7 @@ VIDEO_UPDATE( cninjabl )
 VIDEO_UPDATE( edrandy )
 {
 	cninja_state *state = (cninja_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);
@@ -453,8 +453,8 @@ VIDEO_UPDATE( edrandy )
 VIDEO_UPDATE( robocop2 )
 {
 	cninja_state *state = (cninja_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	/* One of the tilemap chips can switch between 2 tilemaps at 4bpp, or 1 at 8bpp */
 	if (priority & 4)
@@ -504,8 +504,8 @@ VIDEO_UPDATE( robocop2 )
 VIDEO_UPDATE( mutantf )
 {
 	cninja_state *state = (cninja_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

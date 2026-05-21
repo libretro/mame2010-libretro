@@ -7,5 +7,5 @@
 
 extern int hng64_mcu_type;
 
-void hng64_command3d(running_machine* machine, const UINT16* packet);
+void hng64_command3d(running_machine* machine, const uint16_t* packet);
 

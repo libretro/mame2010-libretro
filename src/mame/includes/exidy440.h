@@ -9,24 +9,24 @@
 
 /*----------- defined in drivers/exidy440.c -----------*/
 
-void exidy440_bank_select(running_machine *machine, UINT8 bank);
+void exidy440_bank_select(running_machine *machine, uint8_t bank);
 
 
 /*----------- defined in audio/exidy440.c -----------*/
 
-extern UINT8 exidy440_sound_command;
-extern UINT8 exidy440_sound_command_ack;
+extern uint8_t exidy440_sound_command;
+extern uint8_t exidy440_sound_command_ack;
 
 MACHINE_DRIVER_EXTERN( exidy440_audio );
 
 
 /*----------- defined in video/exidy440.c -----------*/
 
-extern UINT8 *exidy440_imageram;
-extern UINT8 *exidy440_scanline;
-extern UINT8  exidy440_firq_vblank;
-extern UINT8  exidy440_firq_beam;
-extern UINT8 *topsecex_yscroll;
+extern uint8_t *exidy440_imageram;
+extern uint8_t *exidy440_scanline;
+extern uint8_t  exidy440_firq_vblank;
+extern uint8_t  exidy440_firq_beam;
+extern uint8_t *topsecex_yscroll;
 
 INTERRUPT_GEN( exidy440_vblank_interrupt );
 

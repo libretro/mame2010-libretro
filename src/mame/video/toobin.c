@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	toobin_state *state = (toobin_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = (data >> 12) & 0x0f;
 	SET_TILE_INFO(2, code, color, (data >> 10) & 1);
@@ -29,8 +29,8 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	toobin_state *state = (toobin_state *)machine->driver_data;
-	UINT16 data1 = state->atarigen.playfield[tile_index * 2];
-	UINT16 data2 = state->atarigen.playfield[tile_index * 2 + 1];
+	uint16_t data1 = state->atarigen.playfield[tile_index * 2];
+	uint16_t data2 = state->atarigen.playfield[tile_index * 2 + 1];
 	int code = data2 & 0x3fff;
 	int color = data1 & 0x0f;
 	SET_TILE_INFO(0, code, color, TILE_FLIPYX(data2 >> 14));
@@ -161,8 +161,8 @@ WRITE16_HANDLER( toobin_intensity_w )
 WRITE16_HANDLER( toobin_xscroll_w )
 {
 	toobin_state *state = (toobin_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.xscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.xscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */
@@ -181,8 +181,8 @@ WRITE16_HANDLER( toobin_xscroll_w )
 WRITE16_HANDLER( toobin_yscroll_w )
 {
 	toobin_state *state = (toobin_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.yscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.yscroll;
+	uint16_t newscroll = oldscroll;
 	COMBINE_DATA(&newscroll);
 
 	/* if anything has changed, force a partial update */
@@ -247,13 +247,13 @@ VIDEO_UPDATE( toobin )
 	mobitmap = atarimo_render(0, cliprect, &rectlist);
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
-		UINT16 *mo = BITMAP_ADDR16(mobitmap, y, 0);
-		UINT16 *pf = BITMAP_ADDR16(state->pfbitmap, y, 0);
-		UINT8 *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint16_t *mo = BITMAP_ADDR16(mobitmap, y, 0);
+		uint16_t *pf = BITMAP_ADDR16(state->pfbitmap, y, 0);
+		uint8_t *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT16 pix = pf[x];
+			uint16_t pix = pf[x];
 			if (mo[x])
 			{
 				/* not verified: logic is all controlled in a PAL

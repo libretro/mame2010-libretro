@@ -26,23 +26,23 @@ public:
 	exerion_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  main_ram;
-	UINT8 *  videoram;
-	UINT8 *  spriteram;
+	uint8_t *  main_ram;
+	uint8_t *  videoram;
+	uint8_t *  spriteram;
 	size_t   videoram_size;
 	size_t   spriteram_size;
 
 	/* video-related */
-	UINT8    cocktail_flip;
-	UINT8    char_palette, sprite_palette;
-	UINT8    char_bank;
-	UINT16   *background_gfx[4];
-	UINT8    *background_mixer;
-	UINT8    background_latches[13];
+	uint8_t    cocktail_flip;
+	uint8_t    char_palette, sprite_palette;
+	uint8_t    char_bank;
+	uint16_t   *background_gfx[4];
+	uint8_t    *background_mixer;
+	uint8_t    background_latches[13];
 
 	/* protection? */
-	UINT8 porta;
-	UINT8 portb;
+	uint8_t porta;
+	uint8_t portb;
 
 	/* devices */
 	running_device *maincpu;

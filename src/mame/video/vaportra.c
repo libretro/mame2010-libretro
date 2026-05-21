@@ -25,7 +25,7 @@ WRITE16_HANDLER( vaportra_priority_w )
 
 static void update_24bitcol( running_machine *machine, int offset )
 {
-	UINT8 r, g, b;
+	uint8_t r, g, b;
 
 	r = (machine->generic.paletteram.u16[offset] >> 0) & 0xff;
 	g = (machine->generic.paletteram.u16[offset] >> 8) & 0xff;
@@ -51,7 +51,7 @@ WRITE16_HANDLER( vaportra_palette_24bit_b_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri )
 {
 	vaportra_state *state = (vaportra_state *)machine->driver_data;
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 	int priority_value = state->priority[1];
 
@@ -125,7 +125,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 VIDEO_UPDATE( vaportra )
 {
 	vaportra_state *state = (vaportra_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 	int pri = state->priority[0] & 0x03;
 
 	flip_screen_set(screen->machine, !BIT(flip, 7));

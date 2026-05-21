@@ -21,13 +21,13 @@ WRITE16_HANDLER( rohga_buffer_spriteram16_w )
 VIDEO_START( rohga )
 {
 	rohga_state *state = (rohga_state *)machine->driver_data;
-	state->spriteram = auto_alloc_array(machine, UINT16, 0x800/2);
+	state->spriteram = auto_alloc_array(machine, uint16_t, 0x800/2);
 	state_save_register_global_pointer(machine, state->spriteram, 0x800/2);
 }
 
 /******************************************************************************/
 
-static void rohga_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT16 *spriteptr, int is_schmeisr )
+static void rohga_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint16_t *spriteptr, int is_schmeisr )
 {
 	int offs;
 
@@ -109,7 +109,7 @@ static void rohga_draw_sprites( running_machine *machine, bitmap_t *bitmap, cons
 	}
 }
 
-static void wizdfire_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16 *spriteptr, int mode, int bank )
+static void wizdfire_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t *spriteptr, int mode, int bank )
 {
 	int offs;
 
@@ -211,11 +211,11 @@ static void wizdfire_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 	}
 }
 
-static void nitrobal_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT16 *spriteptr, int gfxbank )
+static void nitrobal_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint16_t *spriteptr, int gfxbank )
 {
 	rohga_state *state = (rohga_state *)machine->driver_data;
 	int offs, end, inc;
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	/*
         Alternate format from most 16 bit games - same as Captain America and Mutant Fighter
@@ -422,8 +422,8 @@ sprite 2:
 static void update_rohga( running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, int is_schmeisr )
 {
 	rohga_state *state = (rohga_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	/* Update playfields */
 	flip_screen_set(screen->machine, BIT(flip, 7));
@@ -483,8 +483,8 @@ VIDEO_UPDATE( schmeisr )
 VIDEO_UPDATE( wizdfire )
 {
 	rohga_state *state = (rohga_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
-	UINT16 priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t priority = deco16ic_priority_r(state->deco16ic, 0, 0xffff);
 
 	/* Update playfields */
 	flip_screen_set(screen->machine, BIT(flip, 7));
@@ -516,7 +516,7 @@ VIDEO_UPDATE( wizdfire )
 VIDEO_UPDATE( nitrobal )
 {
 	rohga_state *state = (rohga_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	/* Update playfields */
 	flip_screen_set(screen->machine, BIT(flip, 7));

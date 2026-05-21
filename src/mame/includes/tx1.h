@@ -32,7 +32,7 @@
 
 
 /*----------- defined in drivers/tx1.c -----------*/
-extern UINT16 *tx1_math_ram;
+extern uint16_t *tx1_math_ram;
 
 /*----------- defined in machine/tx1.c -----------*/
 READ16_HANDLER( tx1_spcs_rom_r );
@@ -71,9 +71,9 @@ DECLARE_LEGACY_SOUND_DEVICE(TX1, tx1_sound);
 READ16_HANDLER( tx1_crtc_r );
 WRITE16_HANDLER( tx1_crtc_w );
 
-extern UINT16 *tx1_vram;
-extern UINT16 *tx1_objram;
-extern UINT16 *tx1_rcram;
+extern uint16_t *tx1_vram;
+extern uint16_t *tx1_objram;
+extern uint16_t *tx1_rcram;
 extern size_t tx1_objram_size;
 PALETTE_INIT( tx1 );
 VIDEO_START( tx1 );
@@ -85,9 +85,9 @@ WRITE16_HANDLER( tx1_scolst_w );
 WRITE16_HANDLER( tx1_bankcs_w );
 WRITE16_HANDLER( tx1_flgcs_w );
 
-extern UINT16 *buggyboy_objram;
-extern UINT16 *buggyboy_rcram;
-extern UINT16 *buggyboy_vram;
+extern uint16_t *buggyboy_objram;
+extern uint16_t *buggyboy_rcram;
+extern uint16_t *buggyboy_vram;
 extern size_t buggyboy_objram_size;
 extern size_t buggyboy_rcram_size;
 PALETTE_INIT( buggyboy );

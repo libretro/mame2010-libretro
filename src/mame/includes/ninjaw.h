@@ -12,12 +12,12 @@ public:
 	ninjaw_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   spriteram;
+	uint16_t *   spriteram;
 	size_t     spriteram_size;
 
 	/* misc */
-	UINT16     cpua_ctrl;
-	INT32      banknum;
+	uint16_t     cpua_ctrl;
+	int32_t      banknum;
 	int        pandata[4];
 
 	/* devices */

@@ -63,7 +63,7 @@ static void cosmo_get_pens( pen_t *pens )
 }
 
 
-INLINE void set_pixel( running_machine *machine, bitmap_t *bitmap, UINT8 y, UINT8 x, pen_t *pens, UINT8 color )
+INLINE void set_pixel( running_machine *machine, bitmap_t *bitmap, uint8_t y, uint8_t x, pen_t *pens, uint8_t color )
 {
 	mw8080bw_state *state = (mw8080bw_state *)machine->driver_data;
 
@@ -77,7 +77,7 @@ INLINE void set_pixel( running_machine *machine, bitmap_t *bitmap, UINT8 y, UINT
 }
 
 
-INLINE void set_8_pixels( running_machine *machine, bitmap_t *bitmap, UINT8 y, UINT8 x, UINT8 data, pen_t *pens, UINT8 fore_color, UINT8 back_color )
+INLINE void set_8_pixels( running_machine *machine, bitmap_t *bitmap, uint8_t y, uint8_t x, uint8_t data, pen_t *pens, uint8_t fore_color, uint8_t back_color )
 {
 	int i;
 
@@ -92,14 +92,14 @@ INLINE void set_8_pixels( running_machine *machine, bitmap_t *bitmap, UINT8 y, U
 
 
 /* this is needed as this driver doesn't emulate the shift register like mw8080bw does */
-static void clear_extra_columns( running_machine *machine, bitmap_t *bitmap, pen_t *pens, UINT8 color )
+static void clear_extra_columns( running_machine *machine, bitmap_t *bitmap, pen_t *pens, uint8_t color )
 {
 	mw8080bw_state *state = (mw8080bw_state *)machine->driver_data;
-	UINT8 x;
+	uint8_t x;
 
 	for (x = 0; x < 4; x++)
 	{
-		UINT8 y;
+		uint8_t y;
 
 		for (y = MW8080BW_VCOUNTER_START_NO_VBLANK; y != 0; y++)
 		{
@@ -117,8 +117,8 @@ VIDEO_UPDATE( invadpt2 )
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *prom;
-	UINT8 *color_map_base;
+	uint8_t *prom;
+	uint8_t *color_map_base;
 
 	invadpt2_get_pens(pens);
 
@@ -127,13 +127,13 @@ VIDEO_UPDATE( invadpt2 )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		offs_t color_address = (offs >> 8 << 5) | (offs & 0x1f);
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->screen_red ? 1 : color_map_base[color_address] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->screen_red ? 1 : color_map_base[color_address] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}
@@ -149,8 +149,8 @@ VIDEO_UPDATE( ballbomb )
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *color_map_base;
-	UINT8 *prom;
+	uint8_t *color_map_base;
+	uint8_t *prom;
 
 	invadpt2_get_pens(pens);
 
@@ -159,13 +159,13 @@ VIDEO_UPDATE( ballbomb )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		offs_t color_address = (offs >> 8 << 5) | (offs & 0x1f);
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->screen_red ? 1 : color_map_base[color_address] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->screen_red ? 1 : color_map_base[color_address] & 0x07;
 
 		/* blue background */
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 2);
@@ -182,7 +182,7 @@ VIDEO_UPDATE( schaser )
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *background_map_base;
+	uint8_t *background_map_base;
 
 	invadpt2_get_pens(pens);
 
@@ -190,19 +190,19 @@ VIDEO_UPDATE( schaser )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 back_color = 0;
+		uint8_t back_color = 0;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->colorram[offs & 0x1f9f] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->colorram[offs & 0x1f9f] & 0x07;
 
 		if (!state->schaser_background_disable)
 		{
 			offs_t back_address = (offs >> 8 << 5) | (offs & 0x1f);
 
-			UINT8 back_data = background_map_base[back_address];
+			uint8_t back_data = background_map_base[back_address];
 
 			/* the equations derived from the schematics don't appear to produce
                the right colors, but this one does, at least for this PROM */
@@ -228,11 +228,11 @@ VIDEO_UPDATE( schasercv )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->colorram[offs & 0x1f9f] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->colorram[offs & 0x1f9f] & 0x07;
 
 		/* blue background */
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 2);
@@ -254,11 +254,11 @@ VIDEO_UPDATE( rollingc )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->colorram[offs & 0x1f1f] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->colorram[offs & 0x1f1f] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}
@@ -274,8 +274,8 @@ VIDEO_UPDATE( polaris )
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *color_map_base;
-	UINT8 *cloud_gfx;
+	uint8_t *color_map_base;
+	uint8_t *cloud_gfx;
 
 	invadpt2_get_pens(pens);
 
@@ -284,10 +284,10 @@ VIDEO_UPDATE( polaris )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
+		uint8_t data = state->main_ram[offs];
 
 		offs_t color_address = (offs >> 8 << 5) | (offs & 0x1f);
 
@@ -297,10 +297,10 @@ VIDEO_UPDATE( polaris )
            by screenshots.  Bit 3 is connected to cloud enable, while
            bits 1 and 2 are marked 'not use' (sic) */
 
-		UINT8 back_color = (color_map_base[color_address] & 0x01) ? 6 : 2;
-		UINT8 fore_color = ~state->colorram[offs & 0x1f9f] & 0x07;
+		uint8_t back_color = (color_map_base[color_address] & 0x01) ? 6 : 2;
+		uint8_t fore_color = ~state->colorram[offs & 0x1f9f] & 0x07;
 
-		UINT8 cloud_y = y - state->polaris_cloud_pos;
+		uint8_t cloud_y = y - state->polaris_cloud_pos;
 
 		if ((color_map_base[color_address] & 0x08) || (cloud_y >= 64))
 		{
@@ -313,7 +313,7 @@ VIDEO_UPDATE( polaris )
 
 			for (i = 0; i < 8; i++)
 			{
-				UINT8 color;
+				uint8_t color;
 
 				if (data & 0x01)
 				{
@@ -351,11 +351,11 @@ VIDEO_UPDATE( lupin3 )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = ~state->colorram[offs & 0x1f9f] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = ~state->colorram[offs & 0x1f9f] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}
@@ -376,13 +376,13 @@ VIDEO_UPDATE( cosmo )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		offs_t color_address = (offs >> 8 << 5) | (offs & 0x1f);
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->colorram[color_address] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->colorram[color_address] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}
@@ -398,8 +398,8 @@ VIDEO_UPDATE( indianbt )
 	mw8080bw_state *state = (mw8080bw_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *color_map_base;
-	UINT8 *prom;
+	uint8_t *color_map_base;
+	uint8_t *prom;
 
 	cosmo_get_pens(pens);
 
@@ -408,13 +408,13 @@ VIDEO_UPDATE( indianbt )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		offs_t color_address = (offs >> 8 << 5) | (offs & 0x1f);
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = color_map_base[color_address] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = color_map_base[color_address] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}
@@ -435,10 +435,10 @@ VIDEO_UPDATE( shuttlei )
 	{
 		int i;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
+		uint8_t data = state->main_ram[offs];
 
 		for (i = 0; i < 8; i++)
 		{
@@ -466,11 +466,11 @@ VIDEO_UPDATE( sflush )
 
 	for (offs = 0; offs < state->main_ram_size; offs++)
 	{
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data = state->main_ram[offs];
-		UINT8 fore_color = state->colorram[offs & 0x1f9f] & 0x07;
+		uint8_t data = state->main_ram[offs];
+		uint8_t fore_color = state->colorram[offs & 0x1f9f] & 0x07;
 
 		set_8_pixels(screen->machine, bitmap, y, x, data, pens, fore_color, 0);
 	}

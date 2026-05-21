@@ -44,7 +44,7 @@ PALETTE_INIT( sidepckt )
 static TILE_GET_INFO( get_tile_info )
 {
 	sidepckt_state *state = (sidepckt_state *)machine->driver_data;
-	UINT8 attr = state->colorram[tile_index];
+	uint8_t attr = state->colorram[tile_index];
 	SET_TILE_INFO(
 			0,
 			state->videoram[tile_index] + ((attr & 0x07) << 8),
@@ -110,7 +110,7 @@ WRITE8_HANDLER( sidepckt_flipscreen_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	sidepckt_state *state = (sidepckt_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0;offs < state->spriteram_size; offs += 4)

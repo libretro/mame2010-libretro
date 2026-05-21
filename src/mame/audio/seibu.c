@@ -69,7 +69,7 @@
 */
 
 
-static UINT8 decrypt_data(int a,int src)
+static uint8_t decrypt_data(int a,int src)
 {
 	if ( BIT(a,9)  &  BIT(a,8))             src ^= 0x80;
 	if ( BIT(a,11) &  BIT(a,4) &  BIT(a,1)) src ^= 0x40;
@@ -83,7 +83,7 @@ static UINT8 decrypt_data(int a,int src)
 	return src;
 }
 
-static UINT8 decrypt_opcode(int a,int src)
+static uint8_t decrypt_opcode(int a,int src)
 {
 	if ( BIT(a,9)  &  BIT(a,8))             src ^= 0x80;
 	if ( BIT(a,11) &  BIT(a,4) &  BIT(a,1)) src ^= 0x40;
@@ -105,15 +105,15 @@ static UINT8 decrypt_opcode(int a,int src)
 void seibu_sound_decrypt(running_machine *machine,const char *cpu,int length)
 {
 	const address_space *space = cputag_get_address_space(machine, cpu, ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, length);
-	UINT8 *rom = memory_region(machine, cpu);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, length);
+	uint8_t *rom = memory_region(machine, cpu);
 	int i;
 
 	memory_set_decrypted_region(space, 0x0000, (length < 0x10000) ? (length - 1) : 0x1fff, decrypt);
 
 	for (i = 0;i < length;i++)
 	{
-		UINT8 src = rom[i];
+		uint8_t src = rom[i];
 
 		rom[i]      = decrypt_data(i,src);
 		decrypt[i]  = decrypt_opcode(i,src);
@@ -135,11 +135,11 @@ struct _seibu_adpcm_state
 {
 	adpcm_state adpcm;
 	sound_stream *stream;
-	UINT32 current, end;
-	UINT8 nibble;
-	UINT8 playing;
-	UINT8 allocated;
-	UINT8 *base;
+	uint32_t current, end;
+	uint8_t nibble;
+	uint8_t playing;
+	uint8_t allocated;
+	uint8_t *base;
 };
 
 static STREAM_UPDATE( seibu_adpcm_callback )
@@ -203,7 +203,7 @@ DEVICE_GET_INFO( seibu_adpcm )
 
 void seibu_adpcm_decrypt(running_machine *machine, const char *region)
 {
-	UINT8 *ROM = memory_region(machine, region);
+	uint8_t *ROM = memory_region(machine, region);
 	int len = memory_region_length(machine, region);
 	int i;
 
@@ -333,7 +333,7 @@ void seibu_ym2203_irqhandler(running_device *device, int linestate)
 MACHINE_RESET( seibu_sound )
 {
 	int romlength = memory_region_length(machine, "audiocpu");
-	UINT8 *rom = memory_region(machine, "audiocpu");
+	uint8_t *rom = memory_region(machine, "audiocpu");
 
 	sound_cpu = machine->device("audiocpu");
 	update_irq_lines(machine, VECTOR_INIT);
@@ -347,7 +347,7 @@ MACHINE_RESET( seibu_sound )
 
 /***************************************************************************/
 
-static UINT8 main2sub[2],sub2main[2];
+static uint8_t main2sub[2],sub2main[2];
 static int main2sub_pending,sub2main_pending;
 
 WRITE8_HANDLER( seibu_bank_w )

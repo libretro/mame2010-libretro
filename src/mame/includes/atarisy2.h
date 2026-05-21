@@ -15,29 +15,29 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *		slapstic_base;
+	uint16_t *		slapstic_base;
 
-	UINT8			interrupt_enable;
-	UINT16 *		bankselect;
+	uint8_t			interrupt_enable;
+	uint16_t *		bankselect;
 
-	INT8			pedal_count;
+	int8_t			pedal_count;
 
-	UINT8			has_tms5220;
+	uint8_t			has_tms5220;
 
-	UINT8			which_adc;
+	uint8_t			which_adc;
 
-	UINT8			p2portwr_state;
-	UINT8			p2portrd_state;
+	uint8_t			p2portwr_state;
+	uint8_t			p2portrd_state;
 
-	UINT16 *		rombank1;
-	UINT16 *		rombank2;
+	uint16_t *		rombank1;
+	uint16_t *		rombank2;
 
-	UINT8			sound_reset_state;
+	uint8_t			sound_reset_state;
 
 	emu_timer *		yscroll_reset_timer;
-	UINT32			playfield_tile_bank[2];
-	UINT32			videobank;
-	UINT16			vram[0x8000/2];
+	uint32_t			playfield_tile_bank[2];
+	uint32_t			videobank;
+	uint16_t			vram[0x8000/2];
 };
 
 

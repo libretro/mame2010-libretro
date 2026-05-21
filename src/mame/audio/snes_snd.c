@@ -168,7 +168,7 @@ typedef enum                        /* ADSR state type              */
 
 typedef struct                      /* Voice state type             */
 {
-	UINT16          mem_ptr;        /* Sample data memory pointer   */
+	uint16_t          mem_ptr;        /* Sample data memory pointer   */
 	int             end;            /* End or loop after block      */
 	int             envcnt;         /* Counts to envelope update    */
 	env_state_t32   envstate;       /* Current envelope state       */
@@ -180,7 +180,7 @@ typedef struct                      /* Voice state type             */
 	int             on_cnt;         /* Is it time to turn on yet?   */
 	int             pitch;          /* Sample pitch (4096->32000Hz) */
 	int             range;          /* Last header's range          */
-	UINT32          samp_id;        /* Sample ID#                   */
+	uint32_t          samp_id;        /* Sample ID#                   */
 	int             sampptr;        /* Where in sampbuf we are      */
 	signed long     smp1;           /* Last sample (for BRR filter) */
 	signed long     smp2;           /* Second-to-last sample decoded*/
@@ -189,18 +189,18 @@ typedef struct                      /* Voice state type             */
 
 typedef struct                      /* Source directory entry       */
 {
-	UINT16  vptr;           /* Ptr to start of sample data  */
-	UINT16  lptr;           /* Loop pointer in sample data  */
+	uint16_t  vptr;           /* Ptr to start of sample data  */
+	uint16_t  lptr;           /* Loop pointer in sample data  */
 } src_dir_type;
 
 
 typedef struct _snes_sound_state  snes_sound_state;
 struct _snes_sound_state
 {
-	UINT8                   *ram;
+	uint8_t                   *ram;
 	sound_stream            *channel;
-	UINT8                   dsp_regs[256];		/* DSP registers */
-	UINT8                   ipl_region[64];		/* SPC top 64 bytes */
+	uint8_t                   dsp_regs[256];		/* DSP registers */
+	uint8_t                   ipl_region[64];		/* SPC top 64 bytes */
 
 	int                     keyed_on;
 	int                     keys;   			/* 8-bits for 8 voices */
@@ -220,12 +220,12 @@ struct _snes_sound_state
 
 	/* timers */
 	emu_timer               *timer[3];
-	UINT8                   enabled[3];
-	UINT16                  counter[3];
+	uint8_t                   enabled[3];
+	uint16_t                  counter[3];
 
 	/* IO ports */
-	UINT8                   port_in[4];			/* SPC input ports */
-	UINT8                   port_out[4];		/* SPC output ports */
+	uint8_t                   port_in[4];			/* SPC input ports */
+	uint8_t                   port_out[4];		/* SPC output ports */
 };
 
 /*****************************************************************************
@@ -362,7 +362,7 @@ static void dsp_update( running_device *device, short *sound_ptr )
 			spc700->keys       |= m;
 			spc700->keyed_on   |= m;
 			vl          = spc700->dsp_regs[(v << 4) + 4];
-			vp->samp_id = *( UINT32 * )&sd[vl];
+			vp->samp_id = *( uint32_t * )&sd[vl];
 			vp->mem_ptr = LEtoME16(sd[vl].vptr);
 
 #ifdef DBG_KEY
@@ -415,7 +415,7 @@ static void dsp_update( running_device *device, short *sound_ptr )
 			continue;
 		}
 
-		vp->pitch = LEtoME16(*((UINT16 *)&spc700->dsp_regs[V + 2])) & 0x3fff;
+		vp->pitch = LEtoME16(*((uint16_t *)&spc700->dsp_regs[V + 2])) & 0x3fff;
 
 #ifndef NO_PMOD
 		/* Pitch mod uses OUTX from last voice for this one.  Luckily we haven't
@@ -478,7 +478,7 @@ static void dsp_update( running_device *device, short *sound_ptr )
 					}
 
 					vp->header_cnt = 8;
-					vl = (UINT8)spc700->ram[vp->mem_ptr++];
+					vl = (uint8_t)spc700->ram[vp->mem_ptr++];
 					vp->range  = vl >> 4;
 					vp->end    = vl & 3;
 					vp->filter = (vl & 12) >> 2;
@@ -525,7 +525,7 @@ static void dsp_update( running_device *device, short *sound_ptr )
 				}
 
 #ifdef DBG_BRR
-				logerror("V%d: shifted delta=%04X\n", v, (UINT16)outx);
+				logerror("V%d: shifted delta=%04X\n", v, (uint16_t)outx);
 #endif
 
 				switch (vp->filter)
@@ -557,7 +557,7 @@ static void dsp_update( running_device *device, short *sound_ptr )
 				}
 
 #ifdef DBG_BRR
-				logerror("V%d: filter + delta=%04X\n", v, (UINT16)outx);
+				logerror("V%d: filter + delta=%04X\n", v, (uint16_t)outx);
 #endif
 
 				vp->smp2 = (signed short)vp->smp1;
@@ -650,8 +650,8 @@ static void dsp_update( running_device *device, short *sound_ptr )
 #endif
 
 	echo_base = ((spc700->dsp_regs[0x6d] << 8) + spc700->echo_ptr) & 0xffff;
-	spc700->fir_lbuf[spc700->fir_ptr] = (signed short)LEtoME16(*(UINT16 *)&spc700->ram[echo_base]);
-	spc700->fir_rbuf[spc700->fir_ptr] = (signed short)LEtoME16(*(UINT16 *)&spc700->ram[echo_base + sizeof(short)]);
+	spc700->fir_lbuf[spc700->fir_ptr] = (signed short)LEtoME16(*(uint16_t *)&spc700->ram[echo_base]);
+	spc700->fir_rbuf[spc700->fir_ptr] = (signed short)LEtoME16(*(uint16_t *)&spc700->ram[echo_base + sizeof(short)]);
 
 	/* Now, evaluate the FIR filter, and add the results into the final output. */
 	vl = spc700->fir_lbuf[spc700->fir_ptr] * (signed char)spc700->dsp_regs[0x7f];
@@ -712,11 +712,11 @@ static void dsp_update( running_device *device, short *sound_ptr )
 			echor = -32768;
 
 #ifdef DBG_ECHO
-		logerror("Echo: Writing %04X,%04X at location %04X\n", (UINT16)echol, (UINT16)echor, echo_base);
+		logerror("Echo: Writing %04X,%04X at location %04X\n", (uint16_t)echol, (uint16_t)echor, echo_base);
 #endif
 
-		*(UINT16 *)&spc700->ram[echo_base]                 = MEtoLE16((UINT16)echol);
-		*(UINT16 *)&spc700->ram[echo_base + sizeof(short)] = MEtoLE16((UINT16)echor);
+		*(uint16_t *)&spc700->ram[echo_base]                 = MEtoLE16((uint16_t)echol);
+		*(uint16_t *)&spc700->ram[echo_base + sizeof(short)] = MEtoLE16((uint16_t)echor);
 	}
 
 	spc700->echo_ptr += 2 * sizeof(short);
@@ -1123,7 +1123,7 @@ READ8_DEVICE_HANDLER( spc_io_r )
 		case 0xe:		/* Counter 1 */
 		case 0xf:		/* Counter 2 */
 		{
-			UINT8 value = spc700->ram[0xf0 + offset] & 0x0f;
+			uint8_t value = spc700->ram[0xf0 + offset] & 0x0f;
 			spc700->ram[0xf0 + offset] = 0;
 			return value;
 		}
@@ -1246,7 +1246,7 @@ WRITE8_DEVICE_HANDLER( spc_port_in )
 	spc700->port_in[offset] = data;
 }
 
-UINT8 *spc_get_ram( running_device *device )
+uint8_t *spc_get_ram( running_device *device )
 {
 	snes_sound_state *spc700 = get_safe_token(device);
 
@@ -1312,7 +1312,7 @@ static DEVICE_START( snes_sound )
 
 	spc700->channel = stream_create(device, 0, 2, 32000, 0, snes_sh_update);
 
-	spc700->ram = auto_alloc_array_clear(device->machine, UINT8, SNES_SPCRAM_SIZE);
+	spc700->ram = auto_alloc_array_clear(device->machine, uint8_t, SNES_SPCRAM_SIZE);
 
 	/* default to ROM visible */
 	spc700->ram[0xf1] = 0x80;

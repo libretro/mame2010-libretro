@@ -11,8 +11,8 @@ Video hardware driver by Uki
 #include "emu.h"
 
 
-UINT8 *strnskil_xscroll;
-static UINT8 strnskil_scrl_ctrl;
+uint8_t *strnskil_xscroll;
+static uint8_t strnskil_scrl_ctrl;
 
 static tilemap_t *bg_tilemap;
 
@@ -40,7 +40,7 @@ PALETTE_INIT( strnskil )
 	/* sprites lookup table */
 	for (i = 0; i < 0x400; i++)
 	{
-		UINT8 ctabentry = color_prom[i];
+		uint8_t ctabentry = color_prom[i];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -82,7 +82,7 @@ VIDEO_START( strnskil )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0x60; offs < 0x100; offs += 4)
@@ -124,7 +124,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 VIDEO_UPDATE( strnskil )
 {
 	int row;
-	const UINT8 *usr1 = memory_region(screen->machine, "user1");
+	const uint8_t *usr1 = memory_region(screen->machine, "user1");
 
 	for (row = 0; row < 32; row++)
 	{

@@ -101,10 +101,10 @@ For now I'm writing this function with a command basis so I can work better with
 #include "emu.h"
 #include "stvprot.h"
 
-static UINT32 a_bus[4];
-static UINT32 ctrl_index;
-static UINT32 internal_counter;
-static UINT8 char_offset; //helper to jump the decoding of the NULL chars.
+static uint32_t a_bus[4];
+static uint32_t ctrl_index;
+static uint32_t internal_counter;
+static uint8_t char_offset; //helper to jump the decoding of the NULL chars.
 
 /************************
 *
@@ -114,7 +114,7 @@ static UINT8 char_offset; //helper to jump the decoding of the NULL chars.
 
 static READ32_HANDLER( twcup98_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(a_bus[0] & 0x00010000)//protection calculation is activated
 	{
@@ -173,7 +173,7 @@ void install_twcup98_protection(running_machine *machine)
 
 static READ32_HANDLER( sss_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(a_bus[0] & 0x00010000)//protection calculation is activated
 	{
@@ -238,7 +238,7 @@ void install_sss_protection(running_machine *machine)
 
 static READ32_HANDLER( rsgun_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(a_bus[0] & 0x00010000)//protection calculation is activated
 	{
@@ -251,7 +251,7 @@ static READ32_HANDLER( rsgun_prot_r )
 			switch(a_bus[3])
 			{
 				case 0x77770000: {//rsgun
-					UINT32 val =
+					uint32_t val =
 						((ctrl_index & 0xff)<<24) |
 						(((ctrl_index+1) & 0xff)<<16) |
 						(((ctrl_index+2) & 0xff)<<8) |
@@ -313,7 +313,7 @@ void install_rsgun_protection(running_machine *machine)
 
 static READ32_HANDLER( elandore_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(a_bus[0] & 0x00010000)//protection calculation is activated
 	{
@@ -415,12 +415,12 @@ Wrong vectors (at least not where I tested it):
 0x060427FC (1st) (resets the sh2)
 0x0603B1B2 (1st) (crashes the sh2)
 */
-static const UINT32 vector_prot[] = { 0x0603B1B2,0x234 };
+static const uint32_t vector_prot[] = { 0x0603B1B2,0x234 };
 
 
 static READ32_HANDLER( ffreveng_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(a_bus[0] & 0x00010000)//protection calculation is activated
 	{
@@ -484,8 +484,8 @@ static READ32_HANDLER(astrass_prot_r)
 {
 	if ( offset == 3 && ctrl_index != -1 )
 	{
-		UINT32 data = 0;
-		UINT32 *prot_data = (UINT32 *)memory_region(space->machine, "user2");
+		uint32_t data = 0;
+		uint32_t *prot_data = (uint32_t *)memory_region(space->machine, "user2");
 
 		data = prot_data[ctrl_index++];
 
@@ -521,23 +521,23 @@ void install_astrass_protection(running_machine *machine)
 **************************/
 
 /* Decathlete seems to be a variation on this ... not understood */
-static UINT32 decathlt_protregs[4];
-static UINT32 decathlt_lastcount = 0;
-static UINT32 decathlt_part;
-static UINT32 decathlt_prot_uploadmode=0;
-static UINT32 decathlt_prot_uploadoffset=0;
-static UINT16 decathlt_prottable1[24];
-static UINT16 decathlt_prottable2[128];
+static uint32_t decathlt_protregs[4];
+static uint32_t decathlt_lastcount = 0;
+static uint32_t decathlt_part;
+static uint32_t decathlt_prot_uploadmode=0;
+static uint32_t decathlt_prot_uploadoffset=0;
+static uint16_t decathlt_prottable1[24];
+static uint16_t decathlt_prottable2[128];
 
 static READ32_HANDLER( decathlt_prot_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if (offset==2)
 	{
-		//UINT32 retval;
+		//uint32_t retval;
 		/* I think the address and data are scrambled.. */
-		UINT32 retvalue = /*rand() | (rand()<<16);*/ ROM[(decathlt_protregs[0])];
+		uint32_t retvalue = /*rand() | (rand()<<16);*/ ROM[(decathlt_protregs[0])];
 		decathlt_protregs[0]++;
 		decathlt_lastcount++;
 		return retvalue; // reads this, then the game writes it to vram...

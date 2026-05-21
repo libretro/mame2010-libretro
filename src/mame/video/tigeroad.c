@@ -66,8 +66,8 @@ WRITE16_HANDLER( tigeroad_scroll_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
-	UINT16 *source = &machine->generic.buffered_spriteram.u16[machine->generic.spriteram_size/2] - 4;
-	UINT16 *finish = machine->generic.buffered_spriteram.u16;
+	uint16_t *source = &machine->generic.buffered_spriteram.u16[machine->generic.spriteram_size/2] - 4;
+	uint16_t *finish = machine->generic.buffered_spriteram.u16;
 
 	// TODO: The Track Map should probably be drawn on top of the background tilemap...
 	//       Also convert the below into a for loop!
@@ -110,7 +110,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx4");
+	uint8_t *tilerom = memory_region(machine, "gfx4");
 
 	int data = tilerom[tile_index];
 	int attr = tilerom[tile_index + 1];

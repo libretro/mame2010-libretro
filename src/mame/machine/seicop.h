@@ -1,4 +1,4 @@
-extern UINT16* cop_mcu_ram;
+extern uint16_t* cop_mcu_ram;
 
 READ16_HANDLER( copdxbl_0_r );
 WRITE16_HANDLER( copdxbl_0_w );

@@ -44,80 +44,80 @@ public:
 	}
 
 	/* global data */
-	UINT8 shooter;
-	UINT8 shooter_x;
-	UINT8 shooter_y;
-	UINT8 adc_shift;
-	UINT16 *shrike_shared;
-	UINT16 *shrike_io;
+	uint8_t shooter;
+	uint8_t shooter_x;
+	uint8_t shooter_y;
+	uint8_t adc_shift;
+	uint16_t *shrike_shared;
+	uint16_t *shrike_io;
 
 	/* 8253 counter state */
 	struct
 	{
 		timer_device *timer;
-		UINT8 timer_active;
-		INT32 initial;
-		INT32 count;
-		UINT8 gate;
-		UINT8 out;
-		UINT8 mode;
-		UINT8 readbyte;
-		UINT8 writebyte;
+		uint8_t timer_active;
+		int32_t initial;
+		int32_t count;
+		uint8_t gate;
+		uint8_t out;
+		uint8_t mode;
+		uint8_t readbyte;
+		uint8_t writebyte;
 	} counter[3];
 
 	timer_device *scanline_timer;
 
 	/* manually clocked counter 0 states */
-	UINT8 counter_control;
-	UINT8 counter_0_ff;
+	uint8_t counter_control;
+	uint8_t counter_0_ff;
 	timer_device *counter_0_timer;
-	UINT8 counter_0_timer_active;
+	uint8_t counter_0_timer_active;
 
 	/* random number generator states */
-	UINT8 poly17[POLY17_SIZE + 1];
-	UINT8 rand17[POLY17_SIZE + 1];
+	uint8_t poly17[POLY17_SIZE + 1];
+	uint8_t rand17[POLY17_SIZE + 1];
 
 	/* ADC I/O states */
-	INT8 analog_input_data[4];
-	UINT8 adc_value;
+	int8_t analog_input_data[4];
+	uint8_t adc_value;
 
 	/* CEM3394 DAC control states */
-	UINT16 dac_value;
-	UINT8 dac_register;
-	UINT8 chip_select;
+	uint16_t dac_value;
+	uint8_t dac_register;
+	uint8_t chip_select;
 
 	/* main CPU 6850 states */
-	UINT8 m6850_status;
-	UINT8 m6850_control;
-	UINT8 m6850_input;
-	UINT8 m6850_output;
-	UINT8 m6850_data_ready;
+	uint8_t m6850_status;
+	uint8_t m6850_control;
+	uint8_t m6850_input;
+	uint8_t m6850_output;
+	uint8_t m6850_data_ready;
 
 	/* sound CPU 6850 states */
-	UINT8 m6850_sound_status;
-	UINT8 m6850_sound_control;
-	UINT8 m6850_sound_input;
-	UINT8 m6850_sound_output;
+	uint8_t m6850_sound_status;
+	uint8_t m6850_sound_control;
+	uint8_t m6850_sound_input;
+	uint8_t m6850_sound_output;
 
 	/* noise generator states */
-	UINT32 noise_position[6];
+	uint32_t noise_position[6];
 	cem3394_sound_device *cem_device[6];
 
 	/* game-specific states */
-	UINT8 nstocker_bits;
-	UINT8 spiker_expand_color;
-	UINT8 spiker_expand_bgcolor;
-	UINT8 spiker_expand_bits;
-	UINT8 grudge_steering_result;
-	UINT8 grudge_last_steering[3];
+	uint8_t nstocker_bits;
+	uint8_t spiker_expand_color;
+	uint8_t spiker_expand_bgcolor;
+	uint8_t spiker_expand_bits;
+	uint8_t grudge_steering_result;
+	uint8_t grudge_last_steering[3];
 
 	/* video data */
-	UINT8 videoram[256 * 256];
-	UINT8 *sprite_data;
-	UINT32 sprite_mask;
-	UINT8 *sprite_bank[2];
+	uint8_t videoram[256 * 256];
+	uint8_t *sprite_data;
+	uint32_t sprite_mask;
+	uint8_t *sprite_bank[2];
 
-	UINT8 palettebank_vis;
+	uint8_t palettebank_vis;
 };
 
 

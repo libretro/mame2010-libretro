@@ -106,8 +106,8 @@ VIDEO_START( lkage )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	lkage_state *state = (lkage_state *)machine->driver_data;
-	const UINT8 *source = state->spriteram;
-	const UINT8 *finish = source + 0x60;
+	const uint8_t *source = state->spriteram;
+	const uint8_t *finish = source + 0x60;
 
 	while (source < finish)
 	{

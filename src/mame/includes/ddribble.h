@@ -12,13 +12,13 @@ public:
 	ddribble_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     sharedram;
-	UINT8 *     snd_sharedram;
-	UINT8 *     spriteram_1;
-	UINT8 *     spriteram_2;
-	UINT8 *     bg_videoram;
-	UINT8 *     fg_videoram;
-	UINT8 *     paletteram;
+	uint8_t *     sharedram;
+	uint8_t *     snd_sharedram;
+	uint8_t *     spriteram_1;
+	uint8_t *     spriteram_2;
+	uint8_t *     bg_videoram;
+	uint8_t *     fg_videoram;
+	uint8_t *     paletteram;
 
 	/* video-related */
 	tilemap_t     *fg_tilemap,*bg_tilemap;

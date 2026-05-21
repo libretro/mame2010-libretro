@@ -16,7 +16,7 @@ PALETTE_INIT( rockrage )
 	/* characters */
 	for (i = 0x40; i < 0x140; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		ctabentry = (color_prom[(i - 0x40) + 0x000] & 0x0f) | 0x00;
 		colortable_entry_set_value(machine->colortable, i + 0x000, ctabentry);
@@ -34,7 +34,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x80; i += 2)
 	{
-		UINT16 data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
+		uint16_t data = state->paletteram[i] | (state->paletteram[i | 1] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 

@@ -14,9 +14,9 @@ static void blendbitmaps(running_machine *machine,
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 *dd  = BITMAP_ADDR32(dest, y, 0);
-		UINT16 *sd1 = BITMAP_ADDR16(src1, y, 0);
-		UINT16 *sd2 = BITMAP_ADDR16(src2, y, 0);
+		uint32_t *dd  = BITMAP_ADDR32(dest, y, 0);
+		uint16_t *sd1 = BITMAP_ADDR16(src1, y, 0);
+		uint16_t *sd2 = BITMAP_ADDR16(src2, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
@@ -37,7 +37,7 @@ static void blendbitmaps(running_machine *machine,
 /* from gals pinball (which was in turn from ninja gaiden) */
 static int draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},
@@ -140,7 +140,7 @@ VIDEO_UPDATE( spbactn )
 					screen->machine->gfx[1]->color_base + color * screen->machine->gfx[1]->color_granularity,
 					0, 0,
 					16 * sx, 8 * sy,
-					(UINT32)-1);
+					(uint32_t)-1);
 
 		sx++;
 		if (sx > 63)

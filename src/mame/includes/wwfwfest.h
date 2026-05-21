@@ -1,8 +1,8 @@
 /*----------- defined in video/wwfwfest.c -----------*/
 
-extern UINT16 *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
-extern UINT16 wwfwfest_pri;
-extern UINT16 wwfwfest_bg0_scrollx, wwfwfest_bg0_scrolly, wwfwfest_bg1_scrollx, wwfwfest_bg1_scrolly;
+extern uint16_t *wwfwfest_fg0_videoram, *wwfwfest_bg0_videoram, *wwfwfest_bg1_videoram;
+extern uint16_t wwfwfest_pri;
+extern uint16_t wwfwfest_bg0_scrollx, wwfwfest_bg0_scrolly, wwfwfest_bg1_scrollx, wwfwfest_bg1_scrolly;
 
 VIDEO_START( wwfwfest );
 VIDEO_START( wwfwfstb );

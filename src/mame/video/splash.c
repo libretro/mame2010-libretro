@@ -8,11 +8,11 @@
 
 #include "emu.h"
 
-UINT16 *splash_vregs;
-UINT16 *splash_videoram;
-UINT16 *splash_spriteram;
-UINT16 *splash_pixelram;
-UINT16 *roldfrog_bitmap_mode;
+uint16_t *splash_vregs;
+uint16_t *splash_videoram;
+uint16_t *splash_spriteram;
+uint16_t *splash_pixelram;
+uint16_t *roldfrog_bitmap_mode;
 int splash_bitmap_type;
 int splash_sprite_attr2_shift;
 static tilemap_t *bg_tilemap[2];

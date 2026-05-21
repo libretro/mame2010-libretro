@@ -11,10 +11,10 @@ Functions to emulate the video hardware of the machine.
 #include "emu.h"
 
 
-UINT8 *exzisus_videoram0;
-UINT8 *exzisus_videoram1;
-UINT8 *exzisus_objectram0;
-UINT8 *exzisus_objectram1;
+uint8_t *exzisus_videoram0;
+uint8_t *exzisus_videoram1;
+uint8_t *exzisus_objectram0;
+uint8_t *exzisus_objectram1;
 size_t  exzisus_objectram_size0;
 size_t  exzisus_objectram_size1;
 
@@ -92,7 +92,7 @@ VIDEO_UPDATE( exzisus )
 		int height;
 
 		/* Skip empty sprites. */
-		if ( !(*(UINT32 *)(&exzisus_objectram0[offs])) )
+		if ( !(*(uint32_t *)(&exzisus_objectram0[offs])) )
 		{
 			continue;
 		}
@@ -162,7 +162,7 @@ VIDEO_UPDATE( exzisus )
 		int height;
 
 		/* Skip empty sprites. */
-		if ( !(*(UINT32 *)(&exzisus_objectram1[offs])) )
+		if ( !(*(uint32_t *)(&exzisus_objectram1[offs])) )
 		{
 			continue;
 		}

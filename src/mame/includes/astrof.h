@@ -12,25 +12,25 @@ public:
 	astrof_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8 *    videoram;
+	uint8_t *    videoram;
 	size_t     videoram_size;
 
-	UINT8 *    colorram;
-	UINT8 *    tomahawk_protection;
+	uint8_t *    colorram;
+	uint8_t *    tomahawk_protection;
 
-	UINT8 *    astrof_color;
-	UINT8      astrof_palette_bank;
-	UINT8      red_on;
-	UINT8      flipscreen;
-	UINT8      screen_off;
-	UINT16     abattle_count;
+	uint8_t *    astrof_color;
+	uint8_t      astrof_palette_bank;
+	uint8_t      red_on;
+	uint8_t      flipscreen;
+	uint8_t      screen_off;
+	uint16_t     abattle_count;
 
 	/* sound-related */
-	UINT8      port_1_last;
-	UINT8      port_2_last;
-	UINT8      astrof_start_explosion;
-	UINT8      astrof_death_playing;
-	UINT8      astrof_bosskill_playing;
+	uint8_t      port_1_last;
+	uint8_t      port_2_last;
+	uint8_t      astrof_start_explosion;
+	uint8_t      astrof_death_playing;
+	uint8_t      astrof_bosskill_playing;
 
 	/* devices */
 	running_device *maincpu;

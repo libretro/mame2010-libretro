@@ -3,7 +3,7 @@
 #include "includes/retofinv.h"
 
 
-static UINT8 from_main,from_mcu;
+static uint8_t from_main,from_mcu;
 static int mcu_sent = 0,main_sent = 0;
 
 
@@ -13,7 +13,7 @@ static int mcu_sent = 0,main_sent = 0;
 
 ***************************************************************************/
 
-static UINT8 portA_in,portA_out,ddrA;
+static uint8_t portA_in,portA_out,ddrA;
 
 READ8_HANDLER( retofinv_68705_portA_r )
 {
@@ -43,7 +43,7 @@ WRITE8_HANDLER( retofinv_68705_ddrA_w )
  *  2   W  loads latch to Z80
  */
 
-static UINT8 portB_in,portB_out,ddrB;
+static uint8_t portB_in,portB_out,ddrB;
 
 READ8_HANDLER( retofinv_68705_portB_r )
 {
@@ -86,7 +86,7 @@ WRITE8_HANDLER( retofinv_68705_ddrB_w )
  *  1   R  0 when pending command 68705->Z80
  */
 
-static UINT8 portC_in,portC_out,ddrC;
+static uint8_t portC_in,portC_out,ddrC;
 
 READ8_HANDLER( retofinv_68705_portC_r )
 {

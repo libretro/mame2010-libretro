@@ -60,9 +60,9 @@ List of default vregs (title screen):
 #include "includes/sei_crtc.h"
 
 static tilemap_t *sc0_tilemap,*sc2_tilemap,*sc1_tilemap,*sc3_tilemap_0,*sc3_tilemap_1;
-UINT16 *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
-UINT16 *seibucrtc_vregs;
-UINT16 seibucrtc_sc0bank;
+uint16_t *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
+uint16_t *seibucrtc_vregs;
+uint16_t seibucrtc_sc0bank;
 
 /*******************************
 *
@@ -164,7 +164,7 @@ WRITE16_HANDLER( seibucrtc_vregs_w )
 }
 
 /* Actually external from the CRTC */
-void seibucrtc_sc0bank_w(UINT16 data)
+void seibucrtc_sc0bank_w(uint16_t data)
 {
 	seibucrtc_sc0bank = data & 1;
 	tilemap_mark_all_tiles_dirty(sc0_tilemap);
@@ -208,7 +208,7 @@ static TILE_GET_INFO( seibucrtc_sc3_tile_info )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,int pri)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite;
 	int dx,dy,ax,ay;
 

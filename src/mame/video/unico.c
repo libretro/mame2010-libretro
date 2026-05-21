@@ -41,10 +41,10 @@ Note:   if MAME_DEBUG is defined, pressing Z with:
 
 /* Variables needed by drivers: */
 
-UINT16 *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
-UINT16 *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
-UINT16 *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
-UINT32 *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
+uint16_t *unico_vram_0,   *unico_scrollx_0, *unico_scrolly_0;
+uint16_t *unico_vram_1,   *unico_scrollx_1, *unico_scrolly_1;
+uint16_t *unico_vram_2,   *unico_scrollx_2, *unico_scrolly_2;
+uint32_t *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
 
 
 /***************************************************************************
@@ -60,7 +60,7 @@ UINT32 *unico_vram32_0, *unico_vram32_1, *unico_vram32_2, *unico_scroll32;
 
 WRITE16_HANDLER( unico_palette_w )
 {
-	UINT16 data1, data2;
+	uint16_t data1, data2;
 	COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 	data1 = space->machine->generic.paletteram.u16[offset & ~1];
 	data2 = space->machine->generic.paletteram.u16[offset |  1];
@@ -72,7 +72,7 @@ WRITE16_HANDLER( unico_palette_w )
 
 WRITE32_HANDLER( unico_palette32_w )
 {
-	UINT32 rgb0 = COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
+	uint32_t rgb0 = COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
 	palette_set_color_rgb( space->machine,offset,
 		 (rgb0 >> 24) & 0xFC,
 		 (rgb0 >> 16) & 0xFC,
@@ -99,14 +99,14 @@ static tilemap_t *tilemap_##_N_; \
 \
 static TILE_GET_INFO( get_tile_info_##_N_ ) \
 { \
-	UINT16 code = unico_vram_##_N_[ 2 * tile_index + 0 ]; \
-	UINT16 attr = unico_vram_##_N_[ 2 * tile_index + 1 ]; \
+	uint16_t code = unico_vram_##_N_[ 2 * tile_index + 0 ]; \
+	uint16_t attr = unico_vram_##_N_[ 2 * tile_index + 1 ]; \
 	SET_TILE_INFO(1, code, attr & 0x1f, TILE_FLIPYX( attr >> 5 )); \
 } \
 \
 static TILE_GET_INFO( get_tile_info32_##_N_ ) \
 { \
-	UINT32 code = unico_vram32_##_N_[tile_index]; \
+	uint32_t code = unico_vram32_##_N_[tile_index]; \
 	SET_TILE_INFO(1, code >> 16, code & 0x1f, TILE_FLIPYX( code >> 5 )); \
 } \
 \
@@ -218,7 +218,7 @@ VIDEO_START( zeropnt2 )
 
 static void unico_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	/* Draw them backwards, for pdrawgfx */
@@ -272,7 +272,7 @@ static void unico_draw_sprites(running_machine *machine, bitmap_t *bitmap,const 
 
 static void zeropnt2_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT32 *spriteram32 = machine->generic.spriteram.u32;
+	uint32_t *spriteram32 = machine->generic.spriteram.u32;
 	int offs;
 
 	/* Draw them backwards, for pdrawgfx */

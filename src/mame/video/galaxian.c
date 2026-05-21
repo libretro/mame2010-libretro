@@ -243,10 +243,10 @@ galaxian_extend_tile_info_func galaxian_extend_tile_info_ptr;
 galaxian_extend_sprite_info_func galaxian_extend_sprite_info_ptr;
 
 /* global tweaks */
-UINT8 galaxian_frogger_adjust;
-UINT8 galaxian_sfx_tilemap;
-UINT8 galaxian_sprite_clip_start;
-UINT8 galaxian_sprite_clip_end;
+uint8_t galaxian_frogger_adjust;
+uint8_t galaxian_sfx_tilemap;
+uint8_t galaxian_sprite_clip_start;
+uint8_t galaxian_sprite_clip_end;
 
 
 
@@ -258,24 +258,24 @@ UINT8 galaxian_sprite_clip_end;
 
 static tilemap_t *bg_tilemap;
 
-static UINT8 flipscreen_x;
-static UINT8 flipscreen_y;
+static uint8_t flipscreen_x;
+static uint8_t flipscreen_y;
 
-static UINT8 background_enable;
-static UINT8 background_red;
-static UINT8 background_green;
-static UINT8 background_blue;
+static uint8_t background_enable;
+static uint8_t background_red;
+static uint8_t background_green;
+static uint8_t background_blue;
 
-static UINT32 star_rng_origin;
-static UINT32 star_rng_origin_frame;
+static uint32_t star_rng_origin;
+static uint32_t star_rng_origin_frame;
 static rgb_t star_color[64];
-static UINT8 *stars;
-static UINT8 stars_enabled;
-static UINT8 stars_blink_state;
+static uint8_t *stars;
+static uint8_t stars_enabled;
+static uint8_t stars_blink_state;
 
 static rgb_t bullet_color[8];
 
-static UINT8 gfxbank[5];
+static uint8_t gfxbank[5];
 
 
 
@@ -288,13 +288,13 @@ static UINT8 gfxbank[5];
 static void state_save_register(running_machine *machine);
 static TILE_GET_INFO( bg_get_tile_info );
 
-static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *spritebase);
+static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *spritebase);
 
 static void stars_init(running_machine *machine);
 static void stars_update_origin(running_machine *machine);
-static void stars_draw_row(bitmap_t *bitmap, int maxx, int y, UINT32 star_offs, UINT8 starmask);
+static void stars_draw_row(bitmap_t *bitmap, int maxx, int y, uint32_t star_offs, uint8_t starmask);
 
-static void bullets_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *base);
+static void bullets_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *base);
 
 
 
@@ -309,7 +309,7 @@ PALETTE_INIT( galaxian )
 	static const int rgb_resistances[3] = { 1000, 470, 220 };
 	double rweights[3], gweights[3], bweights[2];
 	int i, minval, midval, maxval, len;
-	UINT8 starmap[4];
+	uint8_t starmap[4];
 
 	/*
         Sprite/tilemap colors are mapped through a color PROM as follows:
@@ -346,7 +346,7 @@ PALETTE_INIT( galaxian )
 	len = memory_region_length(machine, "proms");
 	for (i = 0; i < len; i++)
 	{
-		UINT8 bit0, bit1, bit2, r, g, b;
+		uint8_t bit0, bit1, bit2, r, g, b;
 
 		/* red component */
 		bit0 = BIT(color_prom[i],0);
@@ -396,7 +396,7 @@ PALETTE_INIT( galaxian )
 	/* generate the colors for the stars */
 	for (i = 0; i < 64; i++)
 	{
-		UINT8 bit0, bit1, r, g, b;
+		uint8_t bit0, bit1, r, g, b;
 
 		/* bit 5 = red @ 150 Ohm, bit 4 = red @ 100 Ohm */
 		bit0 = BIT(i,5);
@@ -528,11 +528,11 @@ VIDEO_UPDATE( galaxian )
 
 static TILE_GET_INFO( bg_get_tile_info )
 {
-	UINT8 x = tile_index & 0x1f;
+	uint8_t x = tile_index & 0x1f;
 
-	UINT16 code = machine->generic.videoram.u8[tile_index];
-	UINT8 attrib = machine->generic.spriteram.u8[x*2+1];
-	UINT8 color = attrib & 7;
+	uint16_t code = machine->generic.videoram.u8[tile_index];
+	uint8_t attrib = machine->generic.spriteram.u8[x*2+1];
+	uint8_t color = attrib & 7;
 
 	if (galaxian_extend_tile_info_ptr != NULL)
 		(*galaxian_extend_tile_info_ptr)(&code, &color, attrib, x);
@@ -592,7 +592,7 @@ WRITE8_HANDLER( galaxian_objram_w )
  *
  *************************************/
 
-static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *spritebase)
+static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *spritebase)
 {
 	rectangle clip = *cliprect;
 	int sprnum;
@@ -610,16 +610,16 @@ static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const recta
 	/* have priority over higher numbered sprites. */
 	for (sprnum = 7; sprnum >= 0; sprnum--)
 	{
-		const UINT8 *base = &spritebase[sprnum * 4];
+		const uint8_t *base = &spritebase[sprnum * 4];
 		/* Frogger: top and bottom 4 bits swapped entering the adder */
-		UINT8 base0 = galaxian_frogger_adjust ? ((base[0] >> 4) | (base[0] << 4)) : base[0];
+		uint8_t base0 = galaxian_frogger_adjust ? ((base[0] >> 4) | (base[0] << 4)) : base[0];
 		/* the first three sprites match against y-1 */
-		UINT8 sy = 240 - (base0 - (sprnum < 3));
-		UINT16 code = base[1] & 0x3f;
-		UINT8 flipx = base[1] & 0x40;
-		UINT8 flipy = base[1] & 0x80;
-		UINT8 color = base[2] & 7;
-		UINT8 sx = base[3];
+		uint8_t sy = 240 - (base0 - (sprnum < 3));
+		uint16_t code = base[1] & 0x3f;
+		uint8_t flipx = base[1] & 0x40;
+		uint8_t flipy = base[1] & 0x80;
+		uint8_t color = base[2] & 7;
+		uint8_t sx = base[3];
 
 		/* extend the sprite information */
 		if (galaxian_extend_sprite_info_ptr != NULL)
@@ -656,27 +656,27 @@ static void sprites_draw(running_machine *machine, bitmap_t *bitmap, const recta
  *
  *************************************/
 
-static void bullets_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT8 *base)
+static void bullets_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint8_t *base)
 {
 	int y;
 
 	/* iterate over scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT8 shell = 0xff, missile = 0xff;
-		UINT8 effy;
+		uint8_t shell = 0xff, missile = 0xff;
+		uint8_t effy;
 		int which;
 
 		/* the first 3 entries match Y-1 */
 		effy = flipscreen_y ? ((y - 1) ^ 255) : (y - 1);
 		for (which = 0; which < 3; which++)
-			if ((UINT8)(base[which*4+1] + effy) == 0xff)
+			if ((uint8_t)(base[which*4+1] + effy) == 0xff)
 				shell = which;
 
 		/* remaining entries match Y */
 		effy = flipscreen_y ? (y ^ 255) : y;
 		for (which = 3; which < 8; which++)
-			if ((UINT8)(base[which*4+1] + effy) == 0xff)
+			if ((uint8_t)(base[which*4+1] + effy) == 0xff)
 			{
 				if (which != 7)
 					shell = which;
@@ -811,7 +811,7 @@ WRITE8_HANDLER( galaxian_gfxbank_w )
 
 static void stars_init(running_machine *machine)
 {
-	UINT32 shiftreg;
+	uint32_t shiftreg;
 	int i;
 
 	/* reset the blink and enabled states */
@@ -819,7 +819,7 @@ static void stars_init(running_machine *machine)
 	stars_blink_state = 0;
 
 	/* precalculate the RNG */
-	stars = auto_alloc_array(machine, UINT8, STAR_RNG_PERIOD);
+	stars = auto_alloc_array(machine, uint8_t, STAR_RNG_PERIOD);
 	shiftreg = 0;
 	for (i = 0; i < STAR_RNG_PERIOD; i++)
 	{
@@ -892,7 +892,7 @@ TIMER_CALLBACK( galaxian_stars_blink_timer )
  *
  *************************************/
 
-static void stars_draw_row(bitmap_t *bitmap, int maxx, int y, UINT32 star_offs, UINT8 starmask)
+static void stars_draw_row(bitmap_t *bitmap, int maxx, int y, uint32_t star_offs, uint8_t starmask)
 {
 	int x;
 
@@ -904,7 +904,7 @@ static void stars_draw_row(bitmap_t *bitmap, int maxx, int y, UINT32 star_offs, 
 	{
 		/* stars are suppressed unless V1 ^ H8 == 1 */
 		int enable_star = (y ^ (x >> 3)) & 1;
-		UINT8 star;
+		uint8_t star;
 
 		/*
             The RNG clock is the master clock (18MHz) ANDed with the pixel clock (6MHz).
@@ -986,7 +986,7 @@ void galaxian_draw_background(running_machine *machine, bitmap_t *bitmap, const 
 		/* iterate over scanlines */
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT32 star_offs = star_rng_origin + y * 512;
+			uint32_t star_offs = star_rng_origin + y * 512;
 			stars_draw_row(bitmap, 256, y, star_offs, 0xff);
 		}
 	}
@@ -1032,7 +1032,7 @@ void frogger_draw_background(running_machine *machine, bitmap_t *bitmap, const r
 #ifdef UNUSED_FUNCTION
 void amidar_draw_background(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	const UINT8 *prom = memory_region(machine, "user1");
+	const uint8_t *prom = memory_region(machine, "user1");
 	rectangle draw;
 	int x;
 
@@ -1053,9 +1053,9 @@ void amidar_draw_background(running_machine *machine, bitmap_t *bitmap, const re
                     GREEN - 560 ohm resistor
                     BLUE  - 470 ohm resistor
             */
-			UINT8 red = ((~prom[x] & 0x02) && background_red) ? 0x7c : 0x00;
-			UINT8 green = ((~prom[x] & 0x02) && background_green) ? 0x3c : 0x00;
-			UINT8 blue = ((~prom[x] & 0x01) && background_blue) ? 0x47 : 0x00;
+			uint8_t red = ((~prom[x] & 0x02) && background_red) ? 0x7c : 0x00;
+			uint8_t green = ((~prom[x] & 0x02) && background_green) ? 0x3c : 0x00;
+			uint8_t blue = ((~prom[x] & 0x01) && background_blue) ? 0x47 : 0x00;
 			bitmap_fill(bitmap, &draw, MAKE_RGB(red, green, blue));
 		}
 }
@@ -1096,7 +1096,7 @@ void scramble_draw_background(running_machine *machine, bitmap_t *bitmap, const 
 			if (blink_state != 2 || (y & 2) != 0)
 			{
 				/* blink states 0 and 1 suppress stars when certain bits of the color == 0 */
-				static const UINT8 colormask_table[4] = { 0x20, 0x08, 0xff, 0xff };
+				static const uint8_t colormask_table[4] = { 0x20, 0x08, 0xff, 0xff };
 				stars_draw_row(bitmap, 256, y, y * 512, colormask_table[blink_state]);
 			}
 		}
@@ -1125,7 +1125,7 @@ void jumpbug_draw_background(running_machine *machine, bitmap_t *bitmap, const r
 			if (blink_state != 2 || (y & 2) != 0)
 			{
 				/* blink states 0 and 1 suppress stars when certain bits of the color == 0 */
-				static const UINT8 colormask_table[4] = { 0x20, 0x08, 0xff, 0xff };
+				static const uint8_t colormask_table[4] = { 0x20, 0x08, 0xff, 0xff };
 				stars_draw_row(bitmap, 240, y, y * 512, colormask_table[blink_state]);
 			}
 		}
@@ -1235,14 +1235,14 @@ void theend_draw_bullet(running_machine *machine, bitmap_t *bitmap, const rectan
  *
  *************************************/
 
-void upper_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void upper_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	/* tiles are in the upper half of a larger ROM */
 	*code += 0x100;
 }
 
 
-void upper_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void upper_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	/* sprites are in the upper half of a larger ROM */
 	*code += 0x40;
@@ -1256,12 +1256,12 @@ void upper_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *fl
  *
  *************************************/
 
-void frogger_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void frogger_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	*color = ((*color >> 1) & 0x03) | ((*color << 2) & 0x04);
 }
 
-void frogger_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void frogger_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	*color = ((*color >> 1) & 0x03) | ((*color << 2) & 0x04);
 }
@@ -1274,13 +1274,13 @@ void frogger_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *
  *
  *************************************/
 
-void gmgalax_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void gmgalax_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	*code |= gfxbank[0] << 9;
 //  *color |= gfxbank[0] << 3;
 }
 
-void gmgalax_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void gmgalax_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	*code |= (gfxbank[0] << 7) | 0x40;
 	*color |= gfxbank[0] << 3;
@@ -1294,12 +1294,12 @@ void gmgalax_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *
  *
  *************************************/
 
-void pisces_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void pisces_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	*code |= gfxbank[0] << 8;
 }
 
-void pisces_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void pisces_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	*code |= gfxbank[0] << 6;
 }
@@ -1312,7 +1312,7 @@ void pisces_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *f
  *
  *************************************/
 
-void batman2_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void batman2_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	if (*code & 0x80)
 		*code |= gfxbank[0] << 8;
@@ -1326,13 +1326,13 @@ void batman2_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
  *
  *************************************/
 
-void mooncrst_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void mooncrst_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	if (gfxbank[2] && (*code & 0xc0) == 0x80)
 		*code = (*code & 0x3f) | (gfxbank[0] << 6) | (gfxbank[1] << 7) | 0x0100;
 }
 
-void mooncrst_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void mooncrst_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	if (gfxbank[2] && (*code & 0x30) == 0x20)
 		*code = (*code & 0x0f) | (gfxbank[0] << 4) | (gfxbank[1] << 5) | 0x40;
@@ -1346,12 +1346,12 @@ void mooncrst_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 
  *
  *************************************/
 
-void moonqsr_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void moonqsr_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	*code |= (attrib & 0x20) << 3;
 }
 
-void moonqsr_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void moonqsr_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	*code |= (base[2] & 0x20) << 1;
 }
@@ -1364,12 +1364,12 @@ void moonqsr_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *
  *
  *************************************/
 
-void mshuttle_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void mshuttle_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	*code |= (attrib & 0x30) << 4;
 }
 
-void mshuttle_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void mshuttle_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	*code |= (base[2] & 0x30) << 2;
 }
@@ -1381,7 +1381,7 @@ void mshuttle_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 
  *
  *************************************/
 
-void calipso_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void calipso_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	/* same as the others, but no sprite flipping, but instead the bits are used
        as extra sprite code bits, giving 256 sprite images */
@@ -1397,7 +1397,7 @@ void calipso_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *
  *
  *************************************/
 
-void jumpbug_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
+void jumpbug_extend_tile_info(uint16_t *code, uint8_t *color, uint8_t attrib, uint8_t x)
 {
 	if ((*code & 0xc0) == 0x80 && (gfxbank[2] & 0x01))
 		*code += 128 + (( gfxbank[0] & 0x01) << 6) +
@@ -1405,7 +1405,7 @@ void jumpbug_extend_tile_info(UINT16 *code, UINT8 *color, UINT8 attrib, UINT8 x)
 					   ((~gfxbank[4] & 0x01) << 8);
 }
 
-void jumpbug_extend_sprite_info(const UINT8 *base, UINT8 *sx, UINT8 *sy, UINT8 *flipx, UINT8 *flipy, UINT16 *code, UINT8 *color)
+void jumpbug_extend_sprite_info(const uint8_t *base, uint8_t *sx, uint8_t *sy, uint8_t *flipx, uint8_t *flipy, uint16_t *code, uint8_t *color)
 {
 	if ((*code & 0x30) == 0x20 && (gfxbank[2] & 0x01) != 0)
 	{

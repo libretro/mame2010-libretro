@@ -14,7 +14,7 @@
 static TILE_GET_INFO( get_tile_info )
 {
 	tail2nos_state *state = (tail2nos_state *)machine->driver_data;
-	UINT16 code = state->bgvideoram[tile_index];
+	uint16_t code = state->bgvideoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x1fff) + (state->charbank << 13),
@@ -62,7 +62,7 @@ VIDEO_START( tail2nos )
 
 	tilemap_set_transparent_pen(state->bg_tilemap, 15);
 
-	state->zoomdata = (UINT16 *)memory_region(machine, "gfx3");
+	state->zoomdata = (uint16_t *)memory_region(machine, "gfx3");
 
 	state_save_register_global_pointer(machine, state->zoomdata, 0x20000 / 2);
 	state_save_register_postload(machine, tail2nos_postload, NULL);
@@ -149,7 +149,7 @@ WRITE16_HANDLER( tail2nos_gfxbank_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	tail2nos_state *state = (tail2nos_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 

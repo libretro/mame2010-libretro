@@ -12,22 +12,22 @@ public:
 	ashnojoe_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    tileram;
-	UINT16 *    tileram_1;
-	UINT16 *    tileram_2;
-	UINT16 *    tileram_3;
-	UINT16 *    tileram_4;
-	UINT16 *    tileram_5;
-	UINT16 *    tileram_6;
-	UINT16 *    tileram_7;
-	UINT16 *    tilemap_reg;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    tileram;
+	uint16_t *    tileram_1;
+	uint16_t *    tileram_2;
+	uint16_t *    tileram_3;
+	uint16_t *    tileram_4;
+	uint16_t *    tileram_5;
+	uint16_t *    tileram_6;
+	uint16_t *    tileram_7;
+	uint16_t *    tilemap_reg;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t     *joetilemap, *joetilemap2, *joetilemap3, *joetilemap4, *joetilemap5, *joetilemap6, *joetilemap7;
 
 	/* sound-related */
-	UINT8       adpcm_byte;
+	uint8_t       adpcm_byte;
 	int         soundlatch_status;
 	int         msm5205_vclk_toggle;
 

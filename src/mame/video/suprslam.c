@@ -32,13 +32,13 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 
 	suprslam_state *state = (suprslam_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT16 *source = state->spriteram;
-	UINT16 *source2 = state->spriteram;
-	UINT16 *finish = source + 0x2000/2;
+	uint16_t *source = state->spriteram;
+	uint16_t *source2 = state->spriteram;
+	uint16_t *finish = source + 0x2000/2;
 
 	while (source < finish)
 	{
-		UINT32 sprnum = source[0] & 0x03ff;
+		uint32_t sprnum = source[0] & 0x03ff;
 		if (source[0] == 0x4000) break;
 
 		sprnum *= 4;
@@ -170,7 +170,7 @@ VIDEO_UPDATE( suprslam )
 WRITE16_HANDLER (suprslam_bank_w)
 {
 	suprslam_state *state = (suprslam_state *)space->machine->driver_data;
-	UINT16 old_screen_bank, old_bg_bank;
+	uint16_t old_screen_bank, old_bg_bank;
 	old_screen_bank = state->screen_bank;
 	old_bg_bank = state->bg_bank;
 

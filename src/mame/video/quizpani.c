@@ -6,8 +6,8 @@
 
 #include "emu.h"
 
-UINT16 *quizpani_bg_videoram, *quizpani_txt_videoram;
-UINT16 *quizpani_scrollreg;
+uint16_t *quizpani_bg_videoram, *quizpani_txt_videoram;
+uint16_t *quizpani_scrollreg;
 
 static tilemap_t *bg_tilemap, *txt_tilemap;
 

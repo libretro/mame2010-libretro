@@ -1,7 +1,7 @@
 #include "emu.h"
 #include "kan_pand.h"
 
-UINT16 *galpanic_bgvideoram,*galpanic_fgvideoram;
+uint16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
 size_t galpanic_fgvideoram_size;
 
 static bitmap_t *sprites_bitmap;
@@ -48,7 +48,7 @@ WRITE16_HANDLER( galpanic_paletteram_w )
 
 static void comad_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 	int sx=0, sy=0;
 

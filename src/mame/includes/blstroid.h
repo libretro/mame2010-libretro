@@ -15,7 +15,7 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *		priorityram;
+	uint16_t *		priorityram;
 };
 
 

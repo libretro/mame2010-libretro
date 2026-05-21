@@ -113,7 +113,7 @@ PALETTE_INIT( mrdo )
 	/* sprites */
 	for (i = 0x100; i < 0x140; i++)
 	{
-		UINT8 ctabentry = color_prom[(i - 0x100) & 0x1f];
+		uint8_t ctabentry = color_prom[(i - 0x100) & 0x1f];
 
 		if ((i - 0x100) & 0x20)
 			ctabentry >>= 4;		/* high 4 bits are for sprite color n + 8 */
@@ -135,7 +135,7 @@ PALETTE_INIT( mrdo )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	mrdo_state *state = (mrdo_state *)machine->driver_data;
-	UINT8 attr = state->bgvideoram[tile_index];
+	uint8_t attr = state->bgvideoram[tile_index];
 	SET_TILE_INFO(
 			1,
 			state->bgvideoram[tile_index + 0x400] + ((attr & 0x80) << 1),
@@ -146,7 +146,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	mrdo_state *state = (mrdo_state *)machine->driver_data;
-	UINT8 attr = state->fgvideoram[tile_index];
+	uint8_t attr = state->fgvideoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			state->fgvideoram[tile_index+0x400] + ((attr & 0x80) << 1),
@@ -245,7 +245,7 @@ WRITE8_HANDLER( mrdo_flipscreen_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	mrdo_state *state = (mrdo_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 4; offs >= 0; offs -= 4)

@@ -16,10 +16,10 @@ WRITE8_DEVICE_HANDLER( stfight_adpcm_control_w );
 
 /*----------- defined in video/stfight.c -----------*/
 
-extern UINT8 *stfight_text_char_ram;
-extern UINT8 *stfight_text_attr_ram;
-extern UINT8 *stfight_vh_latch_ram;
-extern UINT8 *stfight_sprite_ram;
+extern uint8_t *stfight_text_char_ram;
+extern uint8_t *stfight_text_attr_ram;
+extern uint8_t *stfight_vh_latch_ram;
+extern uint8_t *stfight_sprite_ram;
 
 PALETTE_INIT( stfight );
 WRITE8_HANDLER( stfight_text_char_w );

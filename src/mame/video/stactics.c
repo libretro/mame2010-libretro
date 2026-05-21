@@ -217,10 +217,10 @@ static void update_beam(stactics_state *state)
  *
  *************************************/
 
-INLINE int get_pixel_on_plane(UINT8 *videoram, UINT8 y, UINT8 x, UINT8 y_scroll)
+INLINE int get_pixel_on_plane(uint8_t *videoram, uint8_t y, uint8_t x, uint8_t y_scroll)
 {
-	UINT8 code;
-	UINT8 gfx;
+	uint8_t code;
+	uint8_t gfx;
 
 	/* compute effective row */
 	y = y - y_scroll;
@@ -257,7 +257,7 @@ static void draw_background(stactics_state *state, bitmap_t *bitmap, const recta
 			int pixel_f = get_pixel_on_plane(state->videoram_f, y, x, state->y_scroll_f);
 
 			/* get the color for this pixel */
-			UINT8 color = state->videoram_b[((y >> 3) << 5) | (x >> 3)] >> 4;
+			uint8_t color = state->videoram_b[((y >> 3) << 5) | (x >> 3)] >> 4;
 
 			/* assemble the pen index */
 			int pen = color |
@@ -312,7 +312,7 @@ static void set_indicator_leds(int data, const char *output_name, int base_index
 static void update_artwork(running_machine *machine, stactics_state *state)
 {
 	int i;
-	UINT8 *beam_region = memory_region(machine, "user1");
+	uint8_t *beam_region = memory_region(machine, "user1");
 
 	/* set the lamps first */
 	output_set_indexed_value("base_lamp", 4, state->lamps[0] & 0x01);
@@ -327,7 +327,7 @@ static void update_artwork(running_machine *machine, stactics_state *state)
 	for (i = 0; i < 0x40; i++)
 	{
 		offs_t beam_data_offs = ((i & 0x08) << 7) | ((i & 0x30) << 4) | state->beam_state;
-		UINT8 beam_data = beam_region[beam_data_offs];
+		uint8_t beam_data = beam_region[beam_data_offs];
 		int on = (beam_data >> (i & 0x07)) & 0x01;
 
 		output_set_indexed_value("beam_led_left", i, on);

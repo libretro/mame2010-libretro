@@ -224,7 +224,7 @@ WRITE16_HANDLER( armedf_mcu_cmd )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	armedf_state *state = (armedf_state *)machine->driver_data;
 	int offs;
 

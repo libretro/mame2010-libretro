@@ -16,8 +16,8 @@
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
-	UINT16 *videoram1 = &state->videoram3[0x0800];
-	UINT16 *videoram2 = state->videoram3;
+	uint16_t *videoram1 = &state->videoram3[0x0800];
+	uint16_t *videoram2 = state->videoram3;
 	SET_TILE_INFO(
 			1,
 			videoram1[tile_index] & 0x0fff,
@@ -28,8 +28,8 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
-	UINT16 *videoram1 = &state->videoram2[0x0800];
-	UINT16 *videoram2 = state->videoram2;
+	uint16_t *videoram1 = &state->videoram2[0x0800];
+	uint16_t *videoram2 = state->videoram2;
 	SET_TILE_INFO(
 			2,
 			videoram1[tile_index] & 0x0fff,
@@ -40,8 +40,8 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info_raiga )
 {
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
-	UINT16 *videoram1 = &state->videoram2[0x0800];
-	UINT16 *videoram2 = state->videoram2;
+	uint16_t *videoram1 = &state->videoram2[0x0800];
+	uint16_t *videoram2 = state->videoram2;
 
 	/* bit 3 controls blending */
 	tileinfo->category = (videoram2[tile_index] & 0x08) >> 3;
@@ -56,8 +56,8 @@ static TILE_GET_INFO( get_fg_tile_info_raiga )
 static TILE_GET_INFO( get_tx_tile_info )
 {
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
-	UINT16 *videoram1 = &state->videoram[0x0400];
-	UINT16 *videoram2 = state->videoram;
+	uint16_t *videoram1 = &state->videoram[0x0400];
+	uint16_t *videoram2 = state->videoram;
 	SET_TILE_INFO(
 			0,
 			videoram1[tile_index] & 0x07ff,
@@ -310,10 +310,10 @@ static void blendbitmaps(running_machine *machine,
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 *dd  = BITMAP_ADDR32(dest, y, 0);
-		UINT16 *sd1 = BITMAP_ADDR16(src1, y, 0);
-		UINT16 *sd2 = BITMAP_ADDR16(src2, y, 0);
-		UINT16 *sd3 = BITMAP_ADDR16(src3, y, 0);
+		uint32_t *dd  = BITMAP_ADDR32(dest, y, 0);
+		uint16_t *sd1 = BITMAP_ADDR16(src1, y, 0);
+		uint16_t *sd2 = BITMAP_ADDR16(src2, y, 0);
+		uint16_t *sd3 = BITMAP_ADDR16(src3, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
@@ -361,7 +361,7 @@ static void blendbitmaps(running_machine *machine,
 
 static void gaiden_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, bitmap_t *bitmap_fg, bitmap_t *bitmap_sp, const rectangle *cliprect )
 {
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},
@@ -375,28 +375,28 @@ static void gaiden_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, 
 
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[3];
-	const UINT16 *source = (NUM_SPRITES - 1) * 8 + state->spriteram;
+	const uint16_t *source = (NUM_SPRITES - 1) * 8 + state->spriteram;
 	int count = NUM_SPRITES;
 
 	/* draw all sprites from front to back */
 	while (count--)
 	{
-		UINT32 attributes = source[0];
-		UINT32 priority_mask;
+		uint32_t attributes = source[0];
+		uint32_t priority_mask;
 		int col,row;
 
 		if (attributes & 0x04)
 		{
-			UINT32 priority = (attributes >> 6) & 3;
-			UINT32 flipx = (attributes & 1);
-			UINT32 flipy = (attributes & 2);
+			uint32_t priority = (attributes >> 6) & 3;
+			uint32_t flipx = (attributes & 1);
+			uint32_t flipy = (attributes & 2);
 
-			UINT32 color = source[2];
-			UINT32 sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
-			UINT32 sizey = 1 << ((color >> state->sprite_sizey) & 3);	/* 1,2,4,8 */
+			uint32_t color = source[2];
+			uint32_t sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
+			uint32_t sizey = 1 << ((color >> state->sprite_sizey) & 3);	/* 1,2,4,8 */
 
 			/* raiga needs something like this */
-			UINT32 number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
+			uint32_t number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
 
 			int ypos = (source[3] + state->spr_offset_y) & 0x01ff;
 			int xpos = source[4] & 0x01ff;
@@ -483,7 +483,7 @@ static void gaiden_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, 
 
 static void raiga_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, bitmap_t *bitmap_fg, bitmap_t *bitmap_sp, const rectangle *cliprect )
 {
-	static const UINT8 layout[8][8] =
+	static const uint8_t layout[8][8] =
 	{
 		{ 0, 1, 4, 5,16,17,20,21},
 		{ 2, 3, 6, 7,18,19,22,23},
@@ -497,28 +497,28 @@ static void raiga_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, b
 
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[3];
-	const UINT16 *source = (NUM_SPRITES - 1) * 8 + state->spriteram;
+	const uint16_t *source = (NUM_SPRITES - 1) * 8 + state->spriteram;
 	int count = NUM_SPRITES;
 
 	/* draw all sprites from front to back */
 	while (count--)
 	{
-		UINT32 attributes = source[0];
-		UINT32 priority_mask;
+		uint32_t attributes = source[0];
+		uint32_t priority_mask;
 		int col,row;
 
 		if (attributes & 0x04)
 		{
-			UINT32 priority = (attributes >> 6) & 3;
-			UINT32 flipx = (attributes & 1);
-			UINT32 flipy = (attributes & 2);
+			uint32_t priority = (attributes >> 6) & 3;
+			uint32_t flipx = (attributes & 1);
+			uint32_t flipy = (attributes & 2);
 
-			UINT32 color = source[2];
-			UINT32 sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
-			UINT32 sizey = 1 << ((color >> state->sprite_sizey) & 3);	/* 1,2,4,8 */
+			uint32_t color = source[2];
+			uint32_t sizex = 1 << ((color >> 0) & 3);						/* 1,2,4,8 */
+			uint32_t sizey = 1 << ((color >> state->sprite_sizey) & 3);	/* 1,2,4,8 */
 
 			/* raiga needs something like this */
-			UINT32 number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
+			uint32_t number = (source[1] & (sizex > 2 ? 0x7ff8 : 0x7ffc));
 
 			int ypos = (source[3] + state->spr_offset_y) & 0x01ff;
 			int xpos = source[4] & 0x01ff;
@@ -624,7 +624,7 @@ static void raiga_draw_sprites( running_machine *machine, bitmap_t *bitmap_bg, b
 static void drgnbowl_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	gaiden_state *state = (gaiden_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int i, code, color, x, y, flipx, flipy, priority_mask;
 
 	for( i = 0; i < 0x800/2; i += 4 )

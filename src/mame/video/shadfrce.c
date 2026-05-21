@@ -79,7 +79,7 @@ VIDEO_START( shadfrce )
 
 	state->bg1tilemap = tilemap_create(machine, get_shadfrce_bg1tile_info,tilemap_scan_rows, 16, 16,32,32);
 
-	state->spvideoram_old = auto_alloc_array(machine, UINT16, state->spvideoram_size/2);
+	state->spvideoram_old = auto_alloc_array(machine, uint16_t, state->spvideoram_size/2);
 }
 
 WRITE16_HANDLER ( shadfrce_bg0scrollx_w )
@@ -132,8 +132,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	shadfrce_state *state = (shadfrce_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT16 *finish = state->spvideoram_old;
-	UINT16 *source = finish + 0x2000/2 - 8;
+	uint16_t *finish = state->spvideoram_old;
+	uint16_t *source = finish + 0x2000/2 - 8;
 	int hcount;
 	while( source>=finish )
 	{

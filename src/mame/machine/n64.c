@@ -8,15 +8,15 @@
 #include "sound/dmadac.h"
 #include "profiler.h"
 
-UINT32 *rdram;
-UINT32 *rsp_imem;
-UINT32 *rsp_dmem;
+uint32_t *rdram;
+uint32_t *rsp_imem;
+uint32_t *rsp_dmem;
 
 // Memory Interface
-static UINT32 mi_version = 0;
-static UINT32 mi_interrupt = 0;
-static UINT32 mi_intr_mask = 0;
-static UINT32 mi_mode = 0;
+static uint32_t mi_version = 0;
+static uint32_t mi_interrupt = 0;
+static uint32_t mi_intr_mask = 0;
+static uint32_t mi_mode = 0;
 
 // Memory Interface (MI)
 
@@ -157,7 +157,7 @@ void clear_rcp_interrupt(running_machine *machine, int interrupt)
 	}
 }
 
-static UINT8 is64_buffer[0x10000];
+static uint8_t is64_buffer[0x10000];
 
 READ32_HANDLER( n64_is64_r )
 {
@@ -212,7 +212,7 @@ WRITE32_HANDLER( n64_is64_w )
 
 READ32_HANDLER( n64_open_r )
 {
-    UINT32 retval = (offset << 2) & 0x0000ffff;
+    uint32_t retval = (offset << 2) & 0x0000ffff;
     retval = (retval << 16) | retval;
     return retval;
 }
@@ -223,16 +223,16 @@ WRITE32_HANDLER( n64_open_w )
 }
 
 // RDRAM registers
-static UINT32 rdram_config;
-static UINT32 rdram_device_id;
-static UINT32 rdram_delay;
-static UINT32 rdram_mode;
-static UINT32 rdram_ref_interval;
-static UINT32 rdram_ref_row;
-static UINT32 rdram_ras_interval;
-static UINT32 rdram_min_interval;
-static UINT32 rdram_addr_select;
-static UINT32 rdram_device_manuf;
+static uint32_t rdram_config;
+static uint32_t rdram_device_id;
+static uint32_t rdram_delay;
+static uint32_t rdram_mode;
+static uint32_t rdram_ref_interval;
+static uint32_t rdram_ref_row;
+static uint32_t rdram_ras_interval;
+static uint32_t rdram_min_interval;
+static uint32_t rdram_addr_select;
+static uint32_t rdram_device_manuf;
 
 READ32_HANDLER( n64_rdram_reg_r )
 {
@@ -328,17 +328,17 @@ WRITE32_HANDLER( n64_rdram_reg_w )
 
 // RSP Interface
 
-static UINT32 sp_mem_addr;
-static UINT32 sp_dram_addr;
+static uint32_t sp_mem_addr;
+static uint32_t sp_dram_addr;
 static int sp_dma_length;
 static int sp_dma_count;
 static int sp_dma_skip;
-static UINT32 sp_semaphore;
-static UINT32 dp_clock = 0;
+static uint32_t sp_semaphore;
+static uint32_t dp_clock = 0;
 
 static void sp_dma(int direction)
 {
-	UINT8 *src, *dst;
+	uint8_t *src, *dst;
 	int i, c;
 
 	if (sp_dma_length == 0)
@@ -388,8 +388,8 @@ static void sp_dma(int direction)
 	{
         for (c=0; c <= sp_dma_count; c++)
         {
-            src = (UINT8*)&rdram[sp_dram_addr / 4];
-            dst = (sp_mem_addr & 0x1000) ? (UINT8*)&rsp_imem[(sp_mem_addr & 0xfff) / 4] : (UINT8*)&rsp_dmem[(sp_mem_addr & 0xfff) / 4];
+            src = (uint8_t*)&rdram[sp_dram_addr / 4];
+            dst = (sp_mem_addr & 0x1000) ? (uint8_t*)&rsp_imem[(sp_mem_addr & 0xfff) / 4] : (uint8_t*)&rsp_dmem[(sp_mem_addr & 0xfff) / 4];
 
             for (i=0; i < sp_dma_length; i++)
             {
@@ -406,8 +406,8 @@ static void sp_dma(int direction)
 	{
         for (c=0; c <= sp_dma_count; c++)
         {
-            src = (sp_mem_addr & 0x1000) ? (UINT8*)&rsp_imem[(sp_mem_addr & 0xfff) / 4] : (UINT8*)&rsp_dmem[(sp_mem_addr & 0xfff) / 4];
-            dst = (UINT8*)&rdram[sp_dram_addr / 4];
+            src = (sp_mem_addr & 0x1000) ? (uint8_t*)&rsp_imem[(sp_mem_addr & 0xfff) / 4] : (uint8_t*)&rsp_dmem[(sp_mem_addr & 0xfff) / 4];
+            dst = (uint8_t*)&rdram[sp_dram_addr / 4];
 
             for (i=0; i < sp_dma_length; i++)
             {
@@ -422,7 +422,7 @@ static void sp_dma(int direction)
 	}
 }
 
-static void sp_set_status(running_device *device, UINT32 status)
+static void sp_set_status(running_device *device, uint32_t status)
 {
 	if (status & 0x1)
 	{
@@ -532,8 +532,8 @@ WRITE32_DEVICE_HANDLER( n64_sp_reg_w )
 
             case 0x10/4:        // RSP_STATUS_REG
             {
-            	UINT32 oldstatus = cpu_get_reg(device, RSP_SR);
-            	UINT32 newstatus = oldstatus;
+            	uint32_t oldstatus = cpu_get_reg(device, RSP_SR);
+            	uint32_t newstatus = oldstatus;
 
                 // printf( "RSP_STATUS_REG Write; %08x\n", data );
                 if (data & 0x00000001)      // clear halt
@@ -772,7 +772,7 @@ WRITE32_DEVICE_HANDLER( n64_dp_reg_w )
 
 		case 0x0c/4:		// DP_STATUS_REG
 		{
-			UINT32 current_status = state->m_rdp.GetStatusReg();
+			uint32_t current_status = state->m_rdp.GetStatusReg();
 			if (data & 0x00000001)	current_status &= ~DP_STATUS_XBUS_DMA;
 			if (data & 0x00000002)	current_status |= DP_STATUS_XBUS_DMA;
 			if (data & 0x00000004)	current_status &= ~DP_STATUS_FREEZE;
@@ -801,16 +801,16 @@ const rsp_config n64_rsp_config =
 
 
 // Video Interface
-UINT32 n64_vi_width;
-UINT32 n64_vi_origin;
-UINT32 n64_vi_control;
-UINT32 n64_vi_blank;
-UINT32 n64_vi_hstart;
-UINT32 n64_vi_vstart;
-UINT32 n64_vi_xscale;
-UINT32 n64_vi_yscale;
-static UINT32 n64_vi_burst, n64_vi_vsync,  n64_vi_hsync,  n64_vi_leap;
-static UINT32 n64_vi_intr,  n64_vi_vburst;
+uint32_t n64_vi_width;
+uint32_t n64_vi_origin;
+uint32_t n64_vi_control;
+uint32_t n64_vi_blank;
+uint32_t n64_vi_hstart;
+uint32_t n64_vi_vstart;
+uint32_t n64_vi_xscale;
+uint32_t n64_vi_yscale;
+static uint32_t n64_vi_burst, n64_vi_vsync,  n64_vi_hsync,  n64_vi_leap;
+static uint32_t n64_vi_intr,  n64_vi_vburst;
 
 
 static void n64_vi_recalculate_resolution(running_machine *machine)
@@ -999,12 +999,12 @@ WRITE32_HANDLER( n64_vi_reg_w )
 
 
 // Audio Interface
-static UINT32 ai_dram_addr;
-static UINT32 ai_len;
-static UINT32 ai_control = 0;
+static uint32_t ai_dram_addr;
+static uint32_t ai_len;
+static uint32_t ai_control = 0;
 static int ai_dacrate;
 static int ai_bitrate;
-static UINT32 ai_status = 0;
+static uint32_t ai_status = 0;
 
 static emu_timer *audio_timer;
 
@@ -1014,8 +1014,8 @@ static void start_audio_dma(running_machine *machine);
 
 typedef struct
 {
-    UINT32 address;
-    UINT32 length;
+    uint32_t address;
+    uint32_t length;
 } AUDIO_DMA;
 
 static AUDIO_DMA audio_fifo[AUDIO_DMA_DEPTH];
@@ -1023,7 +1023,7 @@ static int audio_fifo_wpos = 0;
 static int audio_fifo_rpos = 0;
 static int audio_fifo_num = 0;
 
-static void audio_fifo_push(running_machine *machine, UINT32 address, UINT32 length)
+static void audio_fifo_push(running_machine *machine, uint32_t address, uint32_t length)
 {
     AUDIO_DMA *current;
 
@@ -1094,7 +1094,7 @@ static AUDIO_DMA *audio_fifo_get_top(void)
 
 static void start_audio_dma(running_machine *machine)
 {
-    INT16 *ram = (INT16*)rdram;
+    int16_t *ram = (int16_t*)rdram;
     AUDIO_DMA *current = audio_fifo_get_top();
     attotime period;
 
@@ -1168,7 +1168,7 @@ READ32_HANDLER( n64_ai_reg_r )
 
 WRITE32_HANDLER( n64_ai_reg_w )
 {
-//  UINT16 *ram = (UINT16*)rdram;
+//  uint16_t *ram = (uint16_t*)rdram;
 
     switch (offset)
     {
@@ -1213,19 +1213,19 @@ WRITE32_HANDLER( n64_ai_reg_w )
 
 // Peripheral Interface
 
-static UINT32 pi_dram_addr, pi_cart_addr;
-static UINT32 pi_first_dma = 1;
-static UINT32 pi_rd_len = 0;
-static UINT32 pi_wr_len = 0;
-static UINT32 pi_status = 0;
-static UINT32 pi_bsd_dom1_lat = 0;
-static UINT32 pi_bsd_dom1_pwd = 0;
-static UINT32 pi_bsd_dom1_pgs = 0;
-static UINT32 pi_bsd_dom1_rls = 0;
-static UINT32 pi_bsd_dom2_lat = 0;
-static UINT32 pi_bsd_dom2_pwd = 0;
-static UINT32 pi_bsd_dom2_pgs = 0;
-static UINT32 pi_bsd_dom2_rls = 0;
+static uint32_t pi_dram_addr, pi_cart_addr;
+static uint32_t pi_first_dma = 1;
+static uint32_t pi_rd_len = 0;
+static uint32_t pi_wr_len = 0;
+static uint32_t pi_status = 0;
+static uint32_t pi_bsd_dom1_lat = 0;
+static uint32_t pi_bsd_dom1_pwd = 0;
+static uint32_t pi_bsd_dom1_pgs = 0;
+static uint32_t pi_bsd_dom1_rls = 0;
+static uint32_t pi_bsd_dom2_lat = 0;
+static uint32_t pi_bsd_dom2_pwd = 0;
+static uint32_t pi_bsd_dom2_pgs = 0;
+static uint32_t pi_bsd_dom2_rls = 0;
 
 READ32_HANDLER( n64_pi_reg_r )
 {
@@ -1290,7 +1290,7 @@ WRITE32_HANDLER( n64_pi_reg_w )
 		case 0x08/4:		// PI_RD_LEN_REG
 		{
 			int i;
-			UINT32 dma_length = (data + 1);
+			uint32_t dma_length = (data + 1);
             pi_rd_len = data;
 
 			/*if (dma_length & 3)
@@ -1304,7 +1304,7 @@ WRITE32_HANDLER( n64_pi_reg_w )
 			{
 				for (i=0; i < dma_length; i++)
 				{
-					UINT8 b = memory_read_byte(space, pi_dram_addr);
+					uint8_t b = memory_read_byte(space, pi_dram_addr);
 					memory_write_byte(space, pi_cart_addr & 0x1fffffff, b);
 					pi_cart_addr += 1;
 					pi_dram_addr += 1;
@@ -1318,7 +1318,7 @@ WRITE32_HANDLER( n64_pi_reg_w )
 		case 0x0c/4:		// PI_WR_LEN_REG
 		{
 			int i;
-			UINT32 dma_length = (data + 1);
+			uint32_t dma_length = (data + 1);
             pi_wr_len = data;
 
 			if (dma_length & 3)
@@ -1332,12 +1332,12 @@ WRITE32_HANDLER( n64_pi_reg_w )
 			{
 				for (i=0; i < dma_length; i++)
 				{
-					/*UINT32 d = memory_read_dword(space, pi_cart_addr);
+					/*uint32_t d = memory_read_dword(space, pi_cart_addr);
                     memory_write_dword(space, pi_dram_addr, d);
                     pi_cart_addr += 4;
                     pi_dram_addr += 4;*/
 
-					UINT8 b = memory_read_byte(space, pi_cart_addr);
+					uint8_t b = memory_read_byte(space, pi_cart_addr);
 					memory_write_byte(space, pi_dram_addr & 0x1fffffff, b);
 					pi_cart_addr += 1;
 					pi_dram_addr += 1;
@@ -1404,14 +1404,14 @@ WRITE32_HANDLER( n64_pi_reg_w )
 }
 
 // RDRAM Interface
-static UINT32 ri_mode = 0;
-static UINT32 ri_config = 0;
-static UINT32 ri_current_load = 0;
-static UINT32 ri_select = 0;
-static UINT32 ri_count = 0;
-static UINT32 ri_latency = 0;
-static UINT32 ri_rerror = 0;
-static UINT32 ri_werror = 0;
+static uint32_t ri_mode = 0;
+static uint32_t ri_config = 0;
+static uint32_t ri_current_load = 0;
+static uint32_t ri_select = 0;
+static uint32_t ri_count = 0;
+static uint32_t ri_latency = 0;
+static uint32_t ri_rerror = 0;
+static uint32_t ri_werror = 0;
 
 READ32_HANDLER( n64_ri_reg_r )
 {
@@ -1494,22 +1494,22 @@ WRITE32_HANDLER( n64_ri_reg_w )
 }
 
 // Serial Interface
-static UINT8 pif_ram[0x40];
-static UINT8 pif_cmd[0x40];
-static UINT32 si_dram_addr = 0;
-static UINT32 si_pif_addr = 0;
-static UINT32 si_pif_addr_rd64b = 0;
-static UINT32 si_pif_addr_wr64b = 0;
-static UINT32 rsi_status = 0;	
+static uint8_t pif_ram[0x40];
+static uint8_t pif_cmd[0x40];
+static uint32_t si_dram_addr = 0;
+static uint32_t si_pif_addr = 0;
+static uint32_t si_pif_addr_rd64b = 0;
+static uint32_t si_pif_addr_wr64b = 0;
+static uint32_t rsi_status = 0;	
 
-static UINT8 eeprom[512];
-static UINT8 mempack[0x8000];
+static uint8_t eeprom[512];
+static uint8_t mempack[0x8000];
 
-static UINT8 calc_mempack_crc(UINT8 *buffer, int length)
+static uint8_t calc_mempack_crc(uint8_t *buffer, int length)
 {
 	int i, j;
-	UINT32 crc = 0;
-	UINT32 temp2 = 0;
+	uint32_t crc = 0;
+	uint32_t temp2 = 0;
 
 	for (i=0; i <= length; i++)
 	{
@@ -1545,10 +1545,10 @@ static UINT8 calc_mempack_crc(UINT8 *buffer, int length)
 	return crc;
 }
 
-static int pif_channel_handle_command(running_machine *machine, int channel, int slength, UINT8 *sdata, int rlength, UINT8 *rdata)
+static int pif_channel_handle_command(running_machine *machine, int channel, int slength, uint8_t *sdata, int rlength, uint8_t *rdata)
 {
 	int i;
-	UINT8 command = sdata[0];
+	uint8_t command = sdata[0];
 
 	switch (command)
 	{
@@ -1598,8 +1598,8 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 
 		case 0x01:		// Read button values
 		{
-			UINT16 buttons = 0;
-			INT8 x = 0, y = 0;
+			uint16_t buttons = 0;
+			int8_t x = 0, y = 0;
 			/* add here tags for P3 and P4 when implemented */
 			static const char *const portnames[] = { "P1", "P1_ANALOG_X", "P1_ANALOG_Y", "P2", "P2_ANALOG_X", "P2_ANALOG_Y" };
 
@@ -1619,8 +1619,8 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 
 					rdata[0] = (buttons >> 8) & 0xff;
 					rdata[1] = (buttons >> 0) & 0xff;
-					rdata[2] = (UINT8)(x);
-					rdata[3] = (UINT8)(y);
+					rdata[2] = (uint8_t)(x);
+					rdata[3] = (uint8_t)(y);
 					return 0;
 				}
 				case 2:
@@ -1636,7 +1636,7 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 
 		case 0x02:
 		{
-			UINT32 address, checksum;
+			uint32_t address, checksum;
 
 			/*mame_printf_debug("Read from mempack, rlength = %d, slength = %d\n", rlength, slength);
             for (i=0; i < slength; i++)
@@ -1673,7 +1673,7 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 		}
 		case 0x03:
 		{
-			UINT32 address, checksum;
+			uint32_t address, checksum;
 			int i;
 			/*mame_printf_debug("Write to mempack, rlength = %d, slength = %d\n", rlength, slength);
             for (i=0; i < slength; i++)
@@ -1705,7 +1705,7 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 
 		case 0x04:		// Read from EEPROM
 		{
-			UINT8 block_offset;
+			uint8_t block_offset;
 
 			if (channel != 4)
 			{
@@ -1730,7 +1730,7 @@ static int pif_channel_handle_command(running_machine *machine, int channel, int
 
 		case 0x05:		// Write to EEPROM
 		{
-			UINT8 block_offset;
+			uint8_t block_offset;
 
 			if (channel != 4)
 			{
@@ -1799,8 +1799,8 @@ static void handle_pif(running_machine *machine)
 
 		while (cmd_ptr < 0x3f && !end)
 		{
-			UINT8 bytes_to_send;
-			INT8 bytes_to_recv;
+			uint8_t bytes_to_send;
+			int8_t bytes_to_recv;
 
 			bytes_to_send = pif_cmd[cmd_ptr++];
 
@@ -1817,8 +1817,8 @@ static void handle_pif(running_machine *machine)
 				if (bytes_to_send > 0 && (bytes_to_send & 0xc0) == 0)
 				{
 					int res;
-					UINT8 recv_buffer[0x40];
-					UINT8 send_buffer[0x40];
+					uint8_t recv_buffer[0x40];
+					uint8_t send_buffer[0x40];
 
 					bytes_to_recv = pif_cmd[cmd_ptr++];
 
@@ -1870,7 +1870,7 @@ static void handle_pif(running_machine *machine)
 static void pif_dma(running_machine *machine, int direction)
 {
 	int i;
-	UINT32 *src, *dst;
+	uint32_t *src, *dst;
 
 	if (si_dram_addr & 0x3)
 	{
@@ -1879,11 +1879,11 @@ static void pif_dma(running_machine *machine, int direction)
 
 	if (direction)		// RDRAM -> PIF RAM
 	{
-		src = (UINT32*)&rdram[(si_dram_addr & 0x1fffffff) / 4];
+		src = (uint32_t*)&rdram[(si_dram_addr & 0x1fffffff) / 4];
 
 		for (i=0; i < 64; i+=4)
 		{
-			UINT32 d = *src++;
+			uint32_t d = *src++;
 			pif_ram[i+0] = (d >> 24) & 0xff;
 			pif_ram[i+1] = (d >> 16) & 0xff;
 			pif_ram[i+2] = (d >>  8) & 0xff;
@@ -1896,11 +1896,11 @@ static void pif_dma(running_machine *machine, int direction)
 	{
 		handle_pif(machine);
 
-		dst = (UINT32*)&rdram[(si_dram_addr & 0x1fffffff) / 4];
+		dst = (uint32_t*)&rdram[(si_dram_addr & 0x1fffffff) / 4];
 
 		for (i=0; i < 64; i+=4)
 		{
-			UINT32 d = 0;
+			uint32_t d = 0;
 			d |= pif_ram[i+0] << 24;
 			d |= pif_ram[i+1] << 16;
 			d |= pif_ram[i+2] <<  8;
@@ -1961,7 +1961,7 @@ WRITE32_HANDLER( n64_si_reg_w )
 	}
 }
 
-static UINT32 cic_status = 0x00000000;
+static uint32_t cic_status = 0x00000000;
 
 READ32_HANDLER( n64_pif_ram_r )
 {
@@ -2003,7 +2003,7 @@ WRITE32_HANDLER( n64_pif_ram_w )
     signal_rcp_interrupt(space->machine, SI_INTERRUPT);
 }
 
-//static UINT16 crc_seed = 0x3f;
+//static uint16_t crc_seed = 0x3f;
 
 MACHINE_START( n64 )
 {
@@ -2023,9 +2023,9 @@ MACHINE_START( n64 )
 MACHINE_RESET( n64 )
 {
 	int i;
-	//UINT32 *pif_rom   = (UINT32*)memory_region(machine, "user1");
-	UINT32 *cart = (UINT32*)memory_region(machine, "user2");
-	UINT64 boot_checksum;
+	//uint32_t *pif_rom   = (uint32_t*)memory_region(machine, "user1");
+	uint32_t *cart = (uint32_t*)memory_region(machine, "user2");
+	uint64_t boot_checksum;
 
 	mi_version = 0;
 	mi_interrupt = 0;
@@ -2137,6 +2137,6 @@ MACHINE_RESET( n64 )
     }
     else
     {
-        printf("Unknown BootCode Checksum %08X%08X\n", (UINT32)(boot_checksum>>32),(UINT32)(boot_checksum));
+        printf("Unknown BootCode Checksum %08X%08X\n", (uint32_t)(boot_checksum>>32),(uint32_t)(boot_checksum));
     }
 }

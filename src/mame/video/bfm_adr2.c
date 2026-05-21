@@ -115,17 +115,17 @@ static int adder2_rx;
 static int adder_vbl_triggered;			  // flag <>0, VBL IRQ triggered
 int adder2_acia_triggered;		  // flag <>0, ACIA receive IRQ
 
-static UINT8 adder_ram[0xE80];				// normal RAM
-static UINT8 adder_screen_ram[2][0x1180];	// paged  display RAM
+static uint8_t adder_ram[0xE80];				// normal RAM
+static uint8_t adder_screen_ram[2][0x1180];	// paged  display RAM
 
 static tilemap_t *tilemap0;  // tilemap screen0
 static tilemap_t *tilemap1;  // timemap screen1
 
-UINT8 adder2_data_from_sc2;
-UINT8 adder2_data_to_sc2;
+uint8_t adder2_data_from_sc2;
+uint8_t adder2_data_to_sc2;
 
-UINT8 adder2_data;
-UINT8 adder2_sc2data;
+uint8_t adder2_data;
+uint8_t adder2_sc2data;
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -186,7 +186,7 @@ VIDEO_RESET( adder2 )
 	adder2_data_to_sc2       = 0;
 
 	{
-		UINT8 *rom = memory_region(machine, "adder2");
+		uint8_t *rom = memory_region(machine, "adder2");
 
 		memory_configure_bank(machine, "bank2", 0, 4, &rom[0x00000], 0x08000);
 
@@ -282,7 +282,7 @@ static WRITE8_HANDLER( screen_ram_w )
 	if ( offset > 102 && offset < 102+1+16 )
 	{ // format xxxrrggb ////////////////////////////////////////////////////
 		int pal;
-		UINT8 r,g,b;
+		uint8_t r,g,b;
 
 		pal = offset-102-1;
 
@@ -424,15 +424,15 @@ static READ8_HANDLER( adder2_irq_r )
 
 void adder2_decode_char_roms(running_machine *machine)
 {
-	UINT8 *p;
+	uint8_t *p;
 
 	p = memory_region(machine, "gfx1");
 
 	if ( p )
 	{
-		UINT8 *s;
+		uint8_t *s;
 
-		s = auto_alloc_array(machine, UINT8, 0x40000 );
+		s = auto_alloc_array(machine, uint8_t, 0x40000 );
 		{
 			int x, y;
 
@@ -445,7 +445,7 @@ void adder2_decode_char_roms(running_machine *machine)
 				x = 0;
 				while ( x < 64 )
 				{
-					UINT8 *src = s + (y*256*8)+(x*4);
+					uint8_t *src = s + (y*256*8)+(x*4);
 
 					*p++ = src[0*256+0];*p++ = src[0*256+1];*p++ = src[0*256+2];*p++ = src[0*256+3];
 					*p++ = src[1*256+0];*p++ = src[1*256+1];*p++ = src[1*256+2];*p++ = src[1*256+3];

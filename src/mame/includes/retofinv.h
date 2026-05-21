@@ -16,9 +16,9 @@ READ8_HANDLER( retofinv_mcu_status_r );
 
 /*----------- defined in video/retofinv.c -----------*/
 
-extern UINT8 *retofinv_fg_videoram;
-extern UINT8 *retofinv_bg_videoram;
-extern UINT8 *retofinv_sharedram;
+extern uint8_t *retofinv_fg_videoram;
+extern uint8_t *retofinv_bg_videoram;
+extern uint8_t *retofinv_sharedram;
 
 VIDEO_START( retofinv );
 PALETTE_INIT( retofinv );

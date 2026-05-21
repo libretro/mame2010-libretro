@@ -97,7 +97,7 @@
 #include "video/resnet.h"
 
 
-UINT8 *lucky74_fg_videoram, *lucky74_fg_colorram, *lucky74_bg_videoram, *lucky74_bg_colorram;
+uint8_t *lucky74_fg_videoram, *lucky74_fg_colorram, *lucky74_bg_videoram, *lucky74_bg_colorram;
 static tilemap_t *fg_tilemap, *bg_tilemap;
 
 

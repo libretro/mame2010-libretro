@@ -7,9 +7,9 @@ public:
 
 	tilemap_t *background;
 	tilemap_t *foreground;
-	UINT8 *spriteram;
-	UINT8 *videoram;
-	UINT8 *textram;
+	uint8_t *spriteram;
+	uint8_t *videoram;
+	uint8_t *textram;
 };
 
 

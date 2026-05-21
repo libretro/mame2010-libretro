@@ -13,26 +13,26 @@
 // the larger tilemaps on macross2, rapid hero and thunder dragon 2 appear to act like 4 'banks'
 // of the smaller tilemaps, rather than being able to scroll into each other (not verified on real hw,
 // but see raphero intro / 1st level cases)
-UINT16 *nmk_bgvideoram0;
-UINT16 *nmk_bgvideoram1;
-UINT16 *nmk_bgvideoram2;
-UINT16 *nmk_bgvideoram3;
+uint16_t *nmk_bgvideoram0;
+uint16_t *nmk_bgvideoram1;
+uint16_t *nmk_bgvideoram2;
+uint16_t *nmk_bgvideoram3;
 
 static int nmk16_simple_scroll;
 
-UINT16 *nmk_fgvideoram,*nmk_txvideoram;
-UINT16 *gunnail_scrollram, *gunnail_scrollramy;
-UINT16 *afega_scroll_0;
-UINT16 *afega_scroll_1;
+uint16_t *nmk_fgvideoram,*nmk_txvideoram;
+uint16_t *gunnail_scrollram, *gunnail_scrollramy;
+uint16_t *afega_scroll_0;
+uint16_t *afega_scroll_1;
 
 
 static int redraw_bitmap;
 
-static UINT16 *spriteram_old,*spriteram_old2;
+static uint16_t *spriteram_old,*spriteram_old2;
 static int bgbank;
 static int videoshift;
 static int bioship_background_bank;
-static UINT8 bioship_scroll[4];
+static uint8_t bioship_scroll[4];
 
 static tilemap_t *bg_tilemap0;
 static tilemap_t *bg_tilemap1;
@@ -103,7 +103,7 @@ static TILE_GET_INFO( bjtwin_get_bg_tile_info )
 
 static TILE_GET_INFO( get_tile_info_0_8bit )
 {
-	UINT16 code = nmk_bgvideoram0[tile_index];
+	uint16_t code = nmk_bgvideoram0[tile_index];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -120,8 +120,8 @@ static TILE_GET_INFO( get_tile_info_0_8bit )
 
 static void nmk16_video_init(running_machine *machine)
 {
-	spriteram_old = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
-	spriteram_old2 = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
+	spriteram_old = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
+	spriteram_old2 = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
 
 	videoshift = 0;		/* 256x224 screen, no shift */
 	background_bitmap = NULL;
@@ -268,7 +268,7 @@ WRITE16_HANDLER( mustang_scroll_w )
 
 WRITE16_HANDLER( bioshipbg_scroll_w )
 {
-	static UINT8 scroll[4];
+	static uint8_t scroll[4];
 
 	if (ACCESSING_BITS_8_15)
 	{
@@ -285,7 +285,7 @@ WRITE16_HANDLER( nmk_scroll_w )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		static UINT8 scroll[4];
+		static uint8_t scroll[4];
 
 		scroll[offset] = data & 0xff;
 
@@ -300,7 +300,7 @@ WRITE16_HANDLER( nmk_scroll_2_w )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		static UINT8 scroll[4];
+		static uint8_t scroll[4];
 
 		scroll[offset] = data & 0xff;
 
@@ -313,7 +313,7 @@ WRITE16_HANDLER( nmk_scroll_2_w )
 
 WRITE16_HANDLER( vandyke_scroll_w )
 {
-	static UINT16 scroll[4];
+	static uint16_t scroll[4];
 
 	scroll[offset] = data;
 
@@ -323,7 +323,7 @@ WRITE16_HANDLER( vandyke_scroll_w )
 
 WRITE16_HANDLER( vandykeb_scroll_w )
 {
-	static UINT16 scroll[8];
+	static uint16_t scroll[8];
 
 	COMBINE_DATA(&scroll[offset]);
 
@@ -565,7 +565,7 @@ VIDEO_UPDATE( manybloc )
 VIDEO_UPDATE( tharrier )
 {
 	/* I think the protection device probably copies this to the regs... */
-	UINT16 tharrier_scroll = nmk16_mainram[0x9f00/2];
+	uint16_t tharrier_scroll = nmk16_mainram[0x9f00/2];
 
 	tilemap_set_scrollx(tx_tilemap,0,-videoshift);
 	tilemap_set_scrollx(bg_tilemap0,0,tharrier_scroll);
@@ -624,8 +624,8 @@ VIDEO_UPDATE( gunnail )
 	}
 	else
 	{
-		UINT16 yscroll = ((gunnail_scrollram[2]&0xff)<<8) | ((gunnail_scrollram[3]&0xff)<<0);
-		UINT16 xscroll = ((gunnail_scrollram[0]&0xff)<<8) | ((gunnail_scrollram[1]&0xff)<<0);
+		uint16_t yscroll = ((gunnail_scrollram[2]&0xff)<<8) | ((gunnail_scrollram[3]&0xff)<<0);
+		uint16_t xscroll = ((gunnail_scrollram[0]&0xff)<<8) | ((gunnail_scrollram[1]&0xff)<<0);
 		int tilemap_bank_select;
 		tilemap_t* bg_tilemap = bg_tilemap0;
 
@@ -660,7 +660,7 @@ VIDEO_UPDATE( gunnail )
 
 VIDEO_UPDATE( bioship )
 {
-	UINT16 *tilerom = (UINT16 *)memory_region(screen->machine, "gfx5");
+	uint16_t *tilerom = (uint16_t *)memory_region(screen->machine, "gfx5");
 	int scrollx=-(bioship_scroll[1] + bioship_scroll[0]*256);
 	int scrolly=-(bioship_scroll[3] + bioship_scroll[2]*256);
 
@@ -674,7 +674,7 @@ VIDEO_UPDATE( bioship )
 
 		/* Draw background from tile rom */
 		for (offs = 0;offs <0x1000;offs++) {
-				UINT16 data = tilerom[offs+bank];
+				uint16_t data = tilerom[offs+bank];
 				int numtile = data&0xfff;
 				int color = (data&0xf000)>>12;
 
@@ -777,8 +777,8 @@ VIDEO_EOF( strahl )
 
 VIDEO_START( afega )
 {
-	spriteram_old = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
-	spriteram_old2 = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
+	spriteram_old = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
+	spriteram_old2 = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
 
 	bg_tilemap0 = tilemap_create(	machine, macross_get_bg0_tile_info, afega_tilemap_scan_pages,
 
@@ -796,8 +796,8 @@ VIDEO_START( afega )
 
 VIDEO_START( grdnstrm )
 {
-	spriteram_old = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
-	spriteram_old2 = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
+	spriteram_old = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
+	spriteram_old2 = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
 
 
 	bg_tilemap0 = tilemap_create(	machine, get_tile_info_0_8bit, afega_tilemap_scan_pages,
@@ -816,8 +816,8 @@ VIDEO_START( grdnstrm )
 
 VIDEO_START( firehawk )
 {
-	spriteram_old = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
-	spriteram_old2 = auto_alloc_array_clear(machine, UINT16, 0x1000/2);
+	spriteram_old = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
+	spriteram_old2 = auto_alloc_array_clear(machine, uint16_t, 0x1000/2);
 
 
 	bg_tilemap0 = tilemap_create(	machine, get_tile_info_0_8bit, afega_tilemap_scan_pages,

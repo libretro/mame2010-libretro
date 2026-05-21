@@ -166,7 +166,7 @@ MACHINE_DRIVER_END
 WRITE8_HANDLER( seawolf_audio_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last;
+	uint8_t rising_bits = data & ~state->port_1_last;
 
 	/* if (data & 0x01)  enable SHIP HIT sound */
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 0, 0);
@@ -577,7 +577,7 @@ MACHINE_DRIVER_START( maze_audio )
 MACHINE_DRIVER_END
 
 
-void maze_write_discrete(running_device *device, UINT8 maze_tone_timing_state)
+void maze_write_discrete(running_device *device, uint8_t maze_tone_timing_state)
 {
 	/* controls need to be active low */
 	int controls = ~input_port_read(device->machine, "IN0") & 0xff;
@@ -1594,7 +1594,7 @@ WRITE8_HANDLER( gmissile_audio_1_w )
        ours is right */
 
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last;
+	uint8_t rising_bits = data & ~state->port_1_last;
 
 	/* D0 and D1 are not connected */
 
@@ -1689,7 +1689,7 @@ MACHINE_DRIVER_END
 WRITE8_HANDLER( m4_audio_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last;
+	uint8_t rising_bits = data & ~state->port_1_last;
 
 	/* D0 and D1 are not connected */
 
@@ -1716,7 +1716,7 @@ WRITE8_HANDLER( m4_audio_1_w )
 WRITE8_HANDLER( m4_audio_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last;
+	uint8_t rising_bits = data & ~state->port_2_last;
 
 	/* if (data & 0x01)  enable LEFT PLAYER EXPLOSION sound via 510K res (goes to left speaker) */
 	if (rising_bits & 0x01) sample_start(state->samples1, 1, 1, 0);
@@ -1962,7 +1962,7 @@ WRITE8_HANDLER( clowns_audio_1_w )
 WRITE8_DEVICE_HANDLER( clowns_audio_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)device->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last;
+	uint8_t rising_bits = data & ~state->port_2_last;
 
 	discrete_sound_w(device, CLOWNS_POP_BOTTOM_EN, (data >> 0) & 0x01);
 
@@ -3235,7 +3235,7 @@ MACHINE_DRIVER_END
 WRITE8_HANDLER( phantom2_audio_1_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_1_last;
+	uint8_t rising_bits = data & ~state->port_1_last;
 
 	/* if (data & 0x01)  enable PLAYER SHOT sound */
 	if (rising_bits & 0x01) sample_start(state->samples, 0, 0, 0);
@@ -3257,7 +3257,7 @@ WRITE8_HANDLER( phantom2_audio_1_w )
 WRITE8_HANDLER( phantom2_audio_2_w )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 rising_bits = data & ~state->port_2_last;
+	uint8_t rising_bits = data & ~state->port_2_last;
 
 	/* D0-D2 are not connected */
 

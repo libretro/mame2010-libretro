@@ -15,12 +15,12 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT8			pedal_value[2];
+	uint8_t			pedal_value[2];
 
-	UINT8 *			bank_base;
-	UINT8 *			bank_source_data;
+	uint8_t *			bank_base;
+	uint8_t *			bank_source_data;
 
-	UINT8			playfield_tile_bank;
+	uint8_t			playfield_tile_bank;
 };
 
 

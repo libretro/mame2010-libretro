@@ -9,11 +9,11 @@
 #include "emu.h"
 #include "includes/slapfght.h"
 
-UINT8 *slapfight_videoram;
-UINT8 *slapfight_colorram;
-UINT8 *slapfight_fixvideoram;
-UINT8 *slapfight_fixcolorram;
-UINT8 *slapfight_scrollx_lo,*slapfight_scrollx_hi,*slapfight_scrolly;
+uint8_t *slapfight_videoram;
+uint8_t *slapfight_colorram;
+uint8_t *slapfight_fixvideoram;
+uint8_t *slapfight_fixcolorram;
+uint8_t *slapfight_scrollx_lo,*slapfight_scrollx_hi,*slapfight_scrolly;
 static int flipscreen, slapfight_palette_bank = 0;
 
 static tilemap_t *pf1_tilemap,*fix_tilemap;
@@ -154,7 +154,7 @@ static void slapfght_log_vram(running_machine *machine)
 ***************************************************************************/
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority_to_display )
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 4)
@@ -208,7 +208,7 @@ VIDEO_UPDATE( perfrman )
 
 VIDEO_UPDATE( slapfight )
 {
-	UINT8 *buffered_spriteram = screen->machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = screen->machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	tilemap_set_flip_all(screen->machine,flipscreen ? (TILEMAP_FLIPY | TILEMAP_FLIPX) : 0);

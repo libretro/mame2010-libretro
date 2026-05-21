@@ -126,30 +126,30 @@
  *
  *************************************/
 
-UINT16 *itech32_video;
-UINT32 *drivedge_zbuf_control;
-UINT8 itech32_planes;
-UINT16 itech32_vram_height;
+uint16_t *itech32_video;
+uint32_t *drivedge_zbuf_control;
+uint8_t itech32_planes;
+uint16_t itech32_vram_height;
 
-static UINT16 xfer_xcount, xfer_ycount;
-static UINT16 xfer_xcur, xfer_ycur;
+static uint16_t xfer_xcount, xfer_ycount;
+static uint16_t xfer_xcur, xfer_ycur;
 
 static rectangle clip_rect, scaled_clip_rect;
 static rectangle clip_save;
 
 static emu_timer *scanline_timer;
 
-static UINT8 *grom_base;
-static UINT32 grom_size;
-static UINT32 grom_bank;
-static UINT32 grom_bank_mask;
+static uint8_t *grom_base;
+static uint32_t grom_size;
+static uint32_t grom_bank;
+static uint32_t grom_bank_mask;
 
-static UINT16 color_latch[2];
-static UINT8 enable_latch[2];
+static uint16_t color_latch[2];
+static uint8_t enable_latch[2];
 
-static UINT16 *videoplane[2];
-static UINT32 vram_mask;
-static UINT32 vram_xmask, vram_ymask;
+static uint16_t *videoplane[2];
+static uint32_t vram_mask;
+static uint32_t vram_xmask, vram_ymask;
 
 static int is_drivedge;
 
@@ -204,7 +204,7 @@ VIDEO_START( itech32 )
 	int i;
 
 	/* allocate memory */
-	machine->generic.videoram.u16 = auto_alloc_array(machine, UINT16, VRAM_WIDTH * (itech32_vram_height + 16) * 2);
+	machine->generic.videoram.u16 = auto_alloc_array(machine, uint16_t, VRAM_WIDTH * (itech32_vram_height + 16) * 2);
 	memset(machine->generic.videoram.u16, 0xff, VRAM_WIDTH * (itech32_vram_height + 16) * 2 * 2);
 
 	/* videoplane[0] is the foreground; videoplane[1] is the background */
@@ -496,9 +496,9 @@ static TIMER_CALLBACK( scanline_interrupt )
  *
  *************************************/
 
-static void draw_raw(UINT16 *base, UINT16 color)
+static void draw_raw(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH << 8;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT) << 8;
@@ -527,7 +527,7 @@ static void draw_raw(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y += ysrcstep, sy += ydststep)
 	{
-		UINT8 *rowsrc = &src[(y >> 8) * (width >> 8)];
+		uint8_t *rowsrc = &src[(y >> 8) * (width >> 8)];
 
 		/* simpler case: VIDEO_YSTEP_PER_X is zero */
 		if (VIDEO_YSTEP_PER_X == 0)
@@ -535,7 +535,7 @@ static void draw_raw(UINT16 *base, UINT16 color)
 			/* clip in the Y direction */
 			if (sy >= scaled_clip_rect.min_y && sy < scaled_clip_rect.max_y)
 			{
-				UINT32 dstoffs;
+				uint32_t dstoffs;
 
 				/* direction matters here */
 				sx = startx;
@@ -605,9 +605,9 @@ static void draw_raw(UINT16 *base, UINT16 color)
 }
 
 
-static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
+static void draw_raw_drivedge(uint16_t *base, uint16_t *zbase, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH << 8;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT) << 8;
@@ -617,9 +617,9 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 	int startx = ((VIDEO_TRANSFER_X & 0xfff) << 8) + 0x80;
 	int xdststep = 0x100;
 	int ydststep = VIDEO_DST_YSTEP;
-	INT32 z0 = drivedge_zbuf_control[2] & 0x7ff00;
-	INT32 zmatch = (drivedge_zbuf_control[2] & 0x1f) << 11;
-	INT32 srcdelta = 0;
+	int32_t z0 = drivedge_zbuf_control[2] & 0x7ff00;
+	int32_t zmatch = (drivedge_zbuf_control[2] & 0x1f) << 11;
+	int32_t srcdelta = 0;
 	int x, y;
 
 	/* adjust for (lack of) clipping */
@@ -639,7 +639,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y += ysrcstep, sy += ydststep)
 	{
-		UINT8 *rowsrc = src + (srcdelta >> 8);
+		uint8_t *rowsrc = src + (srcdelta >> 8);
 
 		/* in the polygon case, we don't factor in the Y */
 		if (VIDEO_TRANSFER_FLAGS != 0x5490)
@@ -653,8 +653,8 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 			/* clip in the Y direction */
 			if (sy >= scaled_clip_rect.min_y && sy < scaled_clip_rect.max_y)
 			{
-				UINT32 dstoffs, zbufoffs;
-				INT32 z = z0;
+				uint32_t dstoffs, zbufoffs;
+				int32_t z = z0;
 
 				/* direction matters here */
 				sx = startx;
@@ -662,7 +662,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 				{
 					/* skip left pixels */
 					for (x = 0; x < width && sx < scaled_clip_rect.min_x; x += xsrcstep, sx += xdststep)
-						z += (INT32)drivedge_zbuf_control[0];
+						z += (int32_t)drivedge_zbuf_control[0];
 
 					/* compute the address */
 					dstoffs = compute_safe_address(sx >> 8, sy >> 8) - (sx >> 8);
@@ -679,7 +679,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
 								zbase[(zbufoffs + (sx >> 8)) & vram_mask] = (z >> 8) | zmatch;
 							}
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 					else if (drivedge_zbuf_control[3] & 0x4000)
@@ -689,7 +689,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 							int pixel = rowsrc[x >> 8];
 							if (pixel != transparent_pen && zmatch == (zbase[(zbufoffs + (sx >> 8)) & vram_mask] & (0x1f << 11)))
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 					else
@@ -702,7 +702,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
 								zbase[(zbufoffs + (sx >> 8)) & vram_mask] = (z >> 8) | zmatch;
 							}
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 				}
@@ -710,7 +710,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 				{
 					/* skip right pixels */
 					for (x = 0; x < width && sx >= scaled_clip_rect.max_x; x += xsrcstep, sx += xdststep)
-						z += (INT32)drivedge_zbuf_control[0];
+						z += (int32_t)drivedge_zbuf_control[0];
 
 					/* compute the address */
 					dstoffs = compute_safe_address(sx >> 8, sy >> 8) - (sx >> 8);
@@ -727,7 +727,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
 								zbase[(zbufoffs + (sx >> 8)) & vram_mask] = (z >> 8) | zmatch;
 							}
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 					else if (drivedge_zbuf_control[3] & 0x4000)
@@ -737,7 +737,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 							int pixel = rowsrc[x >> 8];
 							if (pixel != transparent_pen && zmatch == (zbase[(zbufoffs + (sx >> 8)) & vram_mask] & (0x1f << 11)))
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 					else
@@ -750,7 +750,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 								base[(dstoffs + (sx >> 8)) & vram_mask] = pixel | color;
 								zbase[(zbufoffs + (sx >> 8)) & vram_mask] = (z >> 8) | zmatch;
 							}
-							z += (INT32)drivedge_zbuf_control[0];
+							z += (int32_t)drivedge_zbuf_control[0];
 						}
 					}
 				}
@@ -762,7 +762,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 		{
 			int ystep = (VIDEO_TRANSFER_FLAGS & XFERFLAG_DYDXSIGN) ? -VIDEO_YSTEP_PER_X : VIDEO_YSTEP_PER_X;
 			int ty = sy;
-			INT32 z = z0;
+			int32_t z = z0;
 
 			/* render all pixels */
 			sx = startx;
@@ -778,7 +778,7 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 							base[compute_safe_address(sx >> 8, ty >> 8)] = pixel | color;
 							zbase[compute_safe_address(sx >> 8, ty >> 8)] = (z >> 8) | zmatch;
 						}
-						z += (INT32)drivedge_zbuf_control[0];
+						z += (int32_t)drivedge_zbuf_control[0];
 					}
 			}
 			else if (drivedge_zbuf_control[3] & 0x4000)
@@ -788,13 +788,13 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 						sx >= scaled_clip_rect.min_x && sx < scaled_clip_rect.max_x)
 					{
 						int pixel = rowsrc[x >> 8];
-						UINT16 *zbuf = &zbase[compute_safe_address(sx >> 8, ty >> 8)];
+						uint16_t *zbuf = &zbase[compute_safe_address(sx >> 8, ty >> 8)];
 						if (pixel != transparent_pen && zmatch == (*zbuf & (0x1f << 11)))
 						{
 							base[compute_safe_address(sx >> 8, ty >> 8)] = pixel | color;
 							*zbuf = (z >> 8) | zmatch;
 						}
-						z += (INT32)drivedge_zbuf_control[0];
+						z += (int32_t)drivedge_zbuf_control[0];
 					}
 			}
 			else
@@ -804,13 +804,13 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 						sx >= scaled_clip_rect.min_x && sx < scaled_clip_rect.max_x)
 					{
 						int pixel = rowsrc[x >> 8];
-						UINT16 *zbuf = &zbase[compute_safe_address(sx >> 8, ty >> 8)];
+						uint16_t *zbuf = &zbase[compute_safe_address(sx >> 8, ty >> 8)];
 						if (pixel != transparent_pen && ((z >> 8) <= (*zbuf & 0x7ff)))
 						{
 							base[compute_safe_address(sx >> 8, ty >> 8)] = pixel | color;
 							*zbuf = (z >> 8) | zmatch;
 						}
-						z += (INT32)drivedge_zbuf_control[0];
+						z += (int32_t)drivedge_zbuf_control[0];
 					}
 			}
 		}
@@ -824,11 +824,11 @@ static void draw_raw_drivedge(UINT16 *base, UINT16 *zbase, UINT16 color)
 		/* update the per-scanline parameters */
 		if (VIDEO_TRANSFER_FLAGS == 0x5490)
 		{
-			startx += (INT32)((VIDEO_LEFTSTEPHI << 16) | VIDEO_LEFTSTEPLO);
-			scaled_clip_rect.max_x += (INT32)((VIDEO_RIGHTSTEPHI << 16) | VIDEO_RIGHTSTEPLO);
-			srcdelta += (INT16)VIDEO_STARTSTEP;
+			startx += (int32_t)((VIDEO_LEFTSTEPHI << 16) | VIDEO_LEFTSTEPLO);
+			scaled_clip_rect.max_x += (int32_t)((VIDEO_RIGHTSTEPHI << 16) | VIDEO_RIGHTSTEPLO);
+			srcdelta += (int16_t)VIDEO_STARTSTEP;
 		}
-		z0 += (INT32)drivedge_zbuf_control[1];
+		z0 += (int32_t)drivedge_zbuf_control[1];
 	}
 
 	/* restore cliprects */
@@ -890,9 +890,9 @@ do {												\
  *
  *************************************/
 
-INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
+INLINE void draw_rle_fast(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -917,7 +917,7 @@ INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT32 dstoffs;
+		uint32_t dstoffs;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -967,9 +967,9 @@ INLINE void draw_rle_fast(UINT16 *base, UINT16 color)
 }
 
 
-INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
+INLINE void draw_rle_fast_xflip(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -994,7 +994,7 @@ INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT32 dstoffs;
+		uint32_t dstoffs;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -1051,9 +1051,9 @@ INLINE void draw_rle_fast_xflip(UINT16 *base, UINT16 color)
  *
  *************************************/
 
-INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
+INLINE void draw_rle_slow(uint16_t *base, uint16_t color)
 {
-	UINT8 *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
+	uint8_t *src = &grom_base[(grom_bank | ((VIDEO_TRANSFER_ADDRHI & 0xff) << 16) | VIDEO_TRANSFER_ADDRLO) % grom_size];
 	int transparent_pen = (VIDEO_TRANSFER_FLAGS & XFERFLAG_TRANSPARENT) ? 0xff : -1;
 	int width = VIDEO_TRANSFER_WIDTH;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
@@ -1076,7 +1076,7 @@ INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
 	/* loop over Y in src pixels */
 	for (y = 0; y < height; y++, sy += ydststep)
 	{
-		UINT32 dstoffs;
+		uint32_t dstoffs;
 
 		/* clip in the Y direction */
 		if (sy < scaled_clip_rect.min_y || sy >= scaled_clip_rect.max_y)
@@ -1129,7 +1129,7 @@ INLINE void draw_rle_slow(UINT16 *base, UINT16 color)
 
 
 
-static void draw_rle(UINT16 *base, UINT16 color)
+static void draw_rle(uint16_t *base, uint16_t color)
 {
 	/* adjust for (lack of) clipping */
 	if (!(VIDEO_TRANSFER_FLAGS & XFERFLAG_CLIP))
@@ -1158,13 +1158,13 @@ static void draw_rle(UINT16 *base, UINT16 color)
  *
  *************************************/
 
-static void shiftreg_clear(UINT16 *base, UINT16 *zbase)
+static void shiftreg_clear(uint16_t *base, uint16_t *zbase)
 {
 	int ydir = (VIDEO_TRANSFER_FLAGS & XFERFLAG_YFLIP) ? -1 : 1;
 	int height = ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT);
 	int sx = VIDEO_TRANSFER_X & 0xfff;
 	int sy = VIDEO_TRANSFER_Y & 0xfff;
-	UINT16 *src;
+	uint16_t *src;
 	int y;
 
 	/* first line is the source */
@@ -1177,8 +1177,8 @@ static void shiftreg_clear(UINT16 *base, UINT16 *zbase)
 		memcpy(&base[compute_safe_address(sx, sy)], src, 512*2);
 		if (zbase)
 		{
-			UINT16 zval = ((drivedge_zbuf_control[2] >> 8) & 0x7ff) | ((drivedge_zbuf_control[2] & 0x1f) << 11);
-			UINT16 *dst = &zbase[compute_safe_address(sx, sy)];
+			uint16_t zval = ((drivedge_zbuf_control[2] >> 8) & 0x7ff) | ((drivedge_zbuf_control[2] & 0x1f) << 11);
+			uint16_t *dst = &zbase[compute_safe_address(sx, sy)];
 			int x;
 			for (x = 0; x < 512; x++)
 				*dst++ = zval;
@@ -1456,19 +1456,19 @@ VIDEO_UPDATE( itech32 )
 	/* loop over height */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
+		uint16_t *src1 = &videoplane[0][compute_safe_address(VIDEO_DISPLAY_XORIGIN1, VIDEO_DISPLAY_YORIGIN1 + y)];
 
 		/* handle multi-plane case */
 		if (itech32_planes > 1)
 		{
-			UINT16 *src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
-			UINT16 scanline[384];
+			uint16_t *src2 = &videoplane[1][compute_safe_address(VIDEO_DISPLAY_XORIGIN2 + VIDEO_DISPLAY_XSCROLL2, VIDEO_DISPLAY_YORIGIN2 + VIDEO_DISPLAY_YSCROLL2 + y)];
+			uint16_t scanline[384];
 			int x;
 
 			/* blend the pixels in the scanline; color xxFF is transparent */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT16 pixel = src1[x];
+				uint16_t pixel = src1[x];
 				if ((pixel & 0xff) == 0xff)
 					pixel = src2[x];
 				scanline[x] = pixel;

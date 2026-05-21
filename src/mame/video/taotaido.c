@@ -11,17 +11,17 @@ zooming might be wrong (only used on title logo?)
 #include "emu.h"
 #include "includes/taotaido.h"
 
-UINT16 *taotaido_spriteram;
-UINT16 *taotaido_spriteram2;
-UINT16 *taotaido_scrollram;
-UINT16 *taotaido_bgram;
+uint16_t *taotaido_spriteram;
+uint16_t *taotaido_spriteram2;
+uint16_t *taotaido_scrollram;
+uint16_t *taotaido_bgram;
 
-static UINT16 taotaido_sprite_character_bank_select[8];
-static UINT16 taotaido_video_bank_select[8];
+static uint16_t taotaido_sprite_character_bank_select[8];
+static uint16_t taotaido_video_bank_select[8];
 static tilemap_t *bg_tilemap;
 
-static UINT16 *taotaido_spriteram_old, *taotaido_spriteram_older;
-static UINT16 *taotaido_spriteram2_old, *taotaido_spriteram2_older;
+static uint16_t *taotaido_spriteram_old, *taotaido_spriteram_older;
+static uint16_t *taotaido_spriteram2_old, *taotaido_spriteram2_older;
 
 /* sprite tile codes 0x4000 - 0x7fff get remapped according to the content of these registers */
 WRITE16_HANDLER( taotaido_sprite_character_bank_select_w )
@@ -35,7 +35,7 @@ WRITE16_HANDLER( taotaido_sprite_character_bank_select_w )
 /* sprites are like the other video system / psikyo games, we can merge this with aerofgt and plenty of other
    things eventually */
 
-static void draw_sprite(running_machine *machine, UINT16 spriteno, bitmap_t *bitmap, const rectangle *cliprect )
+static void draw_sprite(running_machine *machine, uint16_t spriteno, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	/*- SPR RAM Format -**
 
@@ -50,7 +50,7 @@ static void draw_sprite(running_machine *machine, UINT16 spriteno, bitmap_t *bit
 
 	int x,y;
 
-	UINT16 *source = &taotaido_spriteram_older[spriteno*4];
+	uint16_t *source = &taotaido_spriteram_older[spriteno*4];
 	const gfx_element *gfx = machine->gfx[0];
 
 
@@ -121,8 +121,8 @@ static void draw_sprite(running_machine *machine, UINT16 spriteno, bitmap_t *bit
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	/* first part of sprite ram is the list of sprites to draw, terminated with 0x4000 */
-	UINT16 *source = taotaido_spriteram_older;
-	UINT16 *finish = taotaido_spriteram_older + 0x2000/2;
+	uint16_t *source = taotaido_spriteram_older;
+	uint16_t *finish = taotaido_spriteram_older + 0x2000/2;
 
 	while( source<finish )
 	{
@@ -193,11 +193,11 @@ VIDEO_START(taotaido)
 {
 	bg_tilemap = tilemap_create(machine, taotaido_bg_tile_info,taotaido_tilemap_scan_rows,     16,16,128,64);
 
-	taotaido_spriteram_old = auto_alloc_array(machine, UINT16, 0x2000/2);
-	taotaido_spriteram_older = auto_alloc_array(machine, UINT16, 0x2000/2);
+	taotaido_spriteram_old = auto_alloc_array(machine, uint16_t, 0x2000/2);
+	taotaido_spriteram_older = auto_alloc_array(machine, uint16_t, 0x2000/2);
 
-	taotaido_spriteram2_old = auto_alloc_array(machine, UINT16, 0x10000/2);
-	taotaido_spriteram2_older = auto_alloc_array(machine, UINT16, 0x10000/2);
+	taotaido_spriteram2_old = auto_alloc_array(machine, uint16_t, 0x10000/2);
+	taotaido_spriteram2_older = auto_alloc_array(machine, uint16_t, 0x10000/2);
 }
 
 

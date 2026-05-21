@@ -44,7 +44,7 @@ typedef struct m6844_channel_data
 	int active;
 	int address;
 	int counter;
-	UINT8 control;
+	uint8_t control;
 	int start_address;
 	int start_counter;
 } m6844_channel_data;
@@ -53,7 +53,7 @@ typedef struct m6844_channel_data
 /* channel_data structure holds info about each active sound channel */
 typedef struct sound_channel_data
 {
-	INT16 *base;
+	int16_t *base;
 	int offset;
 	int remaining;
 } sound_channel_data;
@@ -67,30 +67,30 @@ typedef struct sound_cache_entry
 	int length;
 	int bits;
 	int frequency;
-	INT16 data[1];
+	int16_t data[1];
 } sound_cache_entry;
 
 
 
 /* globals */
-UINT8 exidy440_sound_command;
-UINT8 exidy440_sound_command_ack;
+uint8_t exidy440_sound_command;
+uint8_t exidy440_sound_command_ack;
 
 /* local allocated storage */
-static UINT8 *sound_banks;
-static UINT8 *m6844_data;
-static UINT8 *sound_volume;
-static INT32 *mixer_buffer_left;
-static INT32 *mixer_buffer_right;
+static uint8_t *sound_banks;
+static uint8_t *m6844_data;
+static uint8_t *sound_volume;
+static int32_t *mixer_buffer_left;
+static int32_t *mixer_buffer_right;
 static sound_cache_entry *sound_cache;
 static sound_cache_entry *sound_cache_end;
 static sound_cache_entry *sound_cache_max;
 
 /* 6844 description */
 static m6844_channel_data m6844_channel[4];
-static UINT8 m6844_priority;
-static UINT8 m6844_interrupt;
-static UINT8 m6844_chain;
+static uint8_t m6844_priority;
+static uint8_t m6844_interrupt;
+static uint8_t m6844_chain;
 
 /* sound interface parameters */
 static sound_stream *stream;
@@ -117,11 +117,11 @@ static void play_cvsd(running_machine *machine, int ch);
 static void stop_cvsd(int ch);
 
 static void reset_sound_cache(void);
-static INT16 *add_to_sound_cache(UINT8 *input, int address, int length, int bits, int frequency);
-static INT16 *find_or_add_to_sound_cache(running_machine *machine, int address, int length, int bits, int frequency);
+static int16_t *add_to_sound_cache(uint8_t *input, int address, int length, int bits, int frequency);
+static int16_t *find_or_add_to_sound_cache(running_machine *machine, int address, int length, int bits, int frequency);
 
-static void decode_and_filter_cvsd(UINT8 *data, int bytes, int maskbits, int frequency, INT16 *dest);
-static void fir_filter(INT32 *input, INT16 *output, int count);
+static void decode_and_filter_cvsd(uint8_t *data, int bytes, int maskbits, int frequency, int16_t *dest);
+static void fir_filter(int32_t *input, int16_t *output, int count);
 
 
 
@@ -166,14 +166,14 @@ static DEVICE_START( exidy440_sound )
 
 	/* allocate the sample cache */
 	length = memory_region_length(machine, "cvsd") * 16 + MAX_CACHE_ENTRIES * sizeof(sound_cache_entry);
-	sound_cache = (sound_cache_entry *)auto_alloc_array(machine, UINT8, length);
+	sound_cache = (sound_cache_entry *)auto_alloc_array(machine, uint8_t, length);
 
 	/* determine the hard end of the cache and reset */
-	sound_cache_max = (sound_cache_entry *)((UINT8 *)sound_cache + length);
+	sound_cache_max = (sound_cache_entry *)((uint8_t *)sound_cache + length);
 	reset_sound_cache();
 
 	/* allocate the mixer buffer */
-	mixer_buffer_left = auto_alloc_array(machine, INT32, 2 * device->clock());
+	mixer_buffer_left = auto_alloc_array(machine, int32_t, 2 * device->clock());
 	mixer_buffer_right = mixer_buffer_left + device->clock();
 
 	if (SOUND_LOG)
@@ -202,10 +202,10 @@ static DEVICE_STOP( exidy440_sound )
  *
  *************************************/
 
-static void add_and_scale_samples(int ch, INT32 *dest, int samples, int volume)
+static void add_and_scale_samples(int ch, int32_t *dest, int samples, int volume)
 {
 	sound_channel_data *channel = &sound_channel[ch];
-	INT16 *srcdata;
+	int16_t *srcdata;
 	int i;
 
 	/* channels 2 and 3 are half-rate samples */
@@ -223,7 +223,7 @@ static void add_and_scale_samples(int ch, INT32 *dest, int samples, int volume)
 		/* copy 1 for 2 to the destination */
 		for (i = 0; i < samples; i += 2)
 		{
-			INT16 sample = *srcdata++ * volume / 256;
+			int16_t sample = *srcdata++ * volume / 256;
 			*dest++ += sample;
 			*dest++ += sample;
 		}
@@ -248,14 +248,14 @@ static void add_and_scale_samples(int ch, INT32 *dest, int samples, int volume)
 
 static void mix_to_16(int length, stream_sample_t *dest_left, stream_sample_t *dest_right)
 {
-	INT32 *mixer_left = mixer_buffer_left;
-	INT32 *mixer_right = mixer_buffer_right;
+	int32_t *mixer_left = mixer_buffer_left;
+	int32_t *mixer_right = mixer_buffer_right;
 	int i, clippers = 0;
 
 	for (i = 0; i < length; i++)
 	{
-		INT32 sample_left = *mixer_left++;
-		INT32 sample_right = *mixer_right++;
+		int32_t sample_left = *mixer_left++;
+		int32_t sample_right = *mixer_right++;
 
 		if (sample_left < -32768) { sample_left = -32768; clippers++; }
 		else if (sample_left > 32767) { sample_left = 32767; clippers++; }
@@ -280,8 +280,8 @@ static STREAM_UPDATE( channel_update )
 	int ch;
 
 	/* reset the mixer buffers */
-	memset(mixer_buffer_left, 0, samples * sizeof(INT32));
-	memset(mixer_buffer_right, 0, samples * sizeof(INT32));
+	memset(mixer_buffer_left, 0, samples * sizeof(int32_t));
+	memset(mixer_buffer_right, 0, samples * sizeof(int32_t));
 
 	/* loop over channels */
 	for (ch = 0; ch < 4; ch++)
@@ -617,12 +617,12 @@ static void reset_sound_cache(void)
 }
 
 
-static INT16 *add_to_sound_cache(UINT8 *input, int address, int length, int bits, int frequency)
+static int16_t *add_to_sound_cache(uint8_t *input, int address, int length, int bits, int frequency)
 {
 	sound_cache_entry *current = sound_cache_end;
 
 	/* compute where the end will be once we add this entry */
-	sound_cache_end = (sound_cache_entry *)((UINT8 *)current + sizeof(sound_cache_entry) + length * 16);
+	sound_cache_end = (sound_cache_entry *)((uint8_t *)current + sizeof(sound_cache_entry) + length * 16);
 
 	/* if this will overflow the cache, reset and re-add */
 	if (sound_cache_end > sound_cache_max)
@@ -644,7 +644,7 @@ static INT16 *add_to_sound_cache(UINT8 *input, int address, int length, int bits
 }
 
 
-static INT16 *find_or_add_to_sound_cache(running_machine *machine, int address, int length, int bits, int frequency)
+static int16_t *find_or_add_to_sound_cache(running_machine *machine, int address, int length, int bits, int frequency)
 {
 	sound_cache_entry *current;
 
@@ -668,7 +668,7 @@ static void play_cvsd(running_machine *machine, int ch)
 	sound_channel_data *channel = &sound_channel[ch];
 	int address = m6844_channel[ch].address;
 	int length = m6844_channel[ch].counter;
-	INT16 *base;
+	int16_t *base;
 
 	/* add the bank number to the address */
 	if (sound_banks[ch] & 1)
@@ -728,11 +728,11 @@ static void stop_cvsd(int ch)
  *
  *************************************/
 
-static void fir_filter(INT32 *input, INT16 *output, int count)
+static void fir_filter(int32_t *input, int16_t *output, int count)
 {
 	while (count--)
 	{
-		INT32 result = (input[-1] - input[-8] - input[-48] + input[-55]) << 2;
+		int32_t result = (input[-1] - input[-8] - input[-48] + input[-55]) << 2;
 		result += (input[0] + input[-18] + input[-38] + input[-56]) << 3;
 		result += (-input[-2] - input[-4] + input[-5] + input[-51] - input[-52] - input[-54]) << 4;
 		result += (-input[-3] - input[-11] - input[-45] - input[-53]) << 5;
@@ -763,9 +763,9 @@ static void fir_filter(INT32 *input, INT16 *output, int count)
  *
  *************************************/
 
-static void decode_and_filter_cvsd(UINT8 *input, int bytes, int maskbits, int frequency, INT16 *output)
+static void decode_and_filter_cvsd(uint8_t *input, int bytes, int maskbits, int frequency, int16_t *output)
 {
-	INT32 buffer[SAMPLE_BUFFER_LENGTH + FIR_HISTORY_LENGTH];
+	int32_t buffer[SAMPLE_BUFFER_LENGTH + FIR_HISTORY_LENGTH];
 	int total_samples = bytes * 8;
 	int mask = (1 << maskbits) - 1;
 	double filter, integrator, leak;
@@ -782,7 +782,7 @@ static void decode_and_filter_cvsd(UINT8 *input, int bytes, int maskbits, int fr
 	gain = SAMPLE_GAIN;
 
 	/* clear the history words for a start */
-	memset(&buffer[0], 0, FIR_HISTORY_LENGTH * sizeof(INT32));
+	memset(&buffer[0], 0, FIR_HISTORY_LENGTH * sizeof(int32_t));
 
 	/* initialize the CVSD decoder */
 	steps = 0xaa;
@@ -792,7 +792,7 @@ static void decode_and_filter_cvsd(UINT8 *input, int bytes, int maskbits, int fr
 	/* loop over chunks */
 	for (chunk_start = 0; chunk_start < total_samples; chunk_start += SAMPLE_BUFFER_LENGTH)
 	{
-		INT32 *bufptr = &buffer[FIR_HISTORY_LENGTH];
+		int32_t *bufptr = &buffer[FIR_HISTORY_LENGTH];
 		int chunk_bytes;
 		int ind;
 
@@ -865,13 +865,13 @@ static void decode_and_filter_cvsd(UINT8 *input, int bytes, int maskbits, int fr
 		fir_filter(&buffer[FIR_HISTORY_LENGTH], &output[chunk_start], chunk_bytes * 8);
 
 		/* copy the last few input samples down to the start for a new history */
-		memcpy(&buffer[0], &buffer[SAMPLE_BUFFER_LENGTH], FIR_HISTORY_LENGTH * sizeof(INT32));
+		memcpy(&buffer[0], &buffer[SAMPLE_BUFFER_LENGTH], FIR_HISTORY_LENGTH * sizeof(int32_t));
 	}
 
 	/* make sure the volume goes smoothly to 0 over the last 512 samples */
 	if (FADE_TO_ZERO)
 	{
-		INT16 *data;
+		int16_t *data;
 
 		chunk_start = (total_samples > 512) ? total_samples - 512 : 0;
 		data = output + chunk_start;

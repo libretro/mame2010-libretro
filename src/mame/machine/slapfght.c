@@ -17,23 +17,23 @@ static int getstar_sh_intenabled;
 
 static int slapfight_status_state;
 
-static UINT8 mcu_val;
+static uint8_t mcu_val;
 
 
 /* used for MCU simulation of 'getstar' and its clones */
-static UINT8 getstar_cmd;
+static uint8_t getstar_cmd;
 /* copy of some Z80 registers for 'getstar' and its clones */
-static UINT8 gs_a, gs_d, gs_e;
+static uint8_t gs_a, gs_d, gs_e;
 
 /* used for MCU simulation of 'tigerhb1' */
-static UINT8 tigerhb_cmd;
+static uint8_t tigerhb_cmd;
 
 
-static UINT8 from_main, from_mcu;
+static uint8_t from_main, from_mcu;
 static int mcu_sent = 0, main_sent = 0;
-static UINT8 portA_in, portA_out, ddrA;
-static UINT8 portB_in, portB_out, ddrB;
-static UINT8 portC_in, portC_out, ddrC;
+static uint8_t portA_in, portA_out, ddrA;
+static uint8_t portB_in, portB_out, ddrB;
+static uint8_t portC_in, portC_out, ddrC;
 
 
 /* Perform basic machine initialisation */
@@ -87,14 +87,14 @@ WRITE8_HANDLER( slapfight_port_07_w )
 
 WRITE8_HANDLER( slapfight_port_08_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	memory_set_bankptr(space->machine, "bank1",&RAM[0x10000]);
 }
 
 WRITE8_HANDLER( slapfight_port_09_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	memory_set_bankptr(space->machine, "bank1",&RAM[0x14000]);
 }
@@ -221,11 +221,11 @@ READ8_HANDLER( slapfight_mcu_status_r )
 
 READ8_HANDLER( getstar_e803_r )
 {
-	UINT16 tmp = 0;  /* needed for values computed on 16 bits */
-	UINT8 getstar_val = 0;
-	UINT8 phase_lookup_table[] = {0x00, 0x01, 0x03, 0xff, 0xff, 0x02, 0x05, 0xff, 0xff, 0x05}; /* table at 0x0e05 in 'gtstarb1' */
-	UINT8 lives_lookup_table[] = {0x03, 0x05, 0x01, 0x02};                                     /* table at 0x0e62 in 'gtstarb1' */
-	UINT8 lgsb2_lookup_table[] = {0x00, 0x03, 0x04, 0x05};                                     /* fake tanle for "test mode" in 'gtstarb2' */
+	uint16_t tmp = 0;  /* needed for values computed on 16 bits */
+	uint8_t getstar_val = 0;
+	uint8_t phase_lookup_table[] = {0x00, 0x01, 0x03, 0xff, 0xff, 0x02, 0x05, 0xff, 0xff, 0x05}; /* table at 0x0e05 in 'gtstarb1' */
+	uint8_t lives_lookup_table[] = {0x03, 0x05, 0x01, 0x02};                                     /* table at 0x0e62 in 'gtstarb1' */
+	uint8_t lgsb2_lookup_table[] = {0x00, 0x03, 0x04, 0x05};                                     /* fake tanle for "test mode" in 'gtstarb2' */
 
 	switch (getstar_id)
 	{
@@ -893,7 +893,7 @@ READ8_HANDLER( tigerh_mcu_status_r )
 
 READ8_HANDLER( tigerhb_e803_r )
 {
-	UINT8 tigerhb_val = 0;
+	uint8_t tigerhb_val = 0;
 	switch (tigerhb_cmd)
 	{
 		case 0x73:  /* avoid "BAD HW" message */

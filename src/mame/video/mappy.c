@@ -77,14 +77,14 @@ PALETTE_INIT( superpac )
 	/* characters map to the upper 16 palette entries */
 	for (i = 0; i < 64*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, (ctabentry ^ 15) + 0x10);
 	}
 
 	/* sprites map to the lower 16 palette entries */
 	for (i = 64*4; i < 128*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -136,14 +136,14 @@ PALETTE_INIT( mappy )
 	/* characters map to the upper 16 palette entries */
 	for (i = 0*4; i < 64*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry + 0x10);
 	}
 
 	/* sprites map to the lower 16 palette entries */
 	for (i = 64*4; i < machine->total_colors(); i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -211,14 +211,14 @@ PALETTE_INIT( phozon )
 	/* characters map to the lower 16 palette entries */
 	for (i = 0; i < 64*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites map to the upper 16 palette entries */
 	for (i = 64*4; i < 128*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry + 0x10);
 	}
 }
@@ -271,7 +271,7 @@ static TILEMAP_MAPPER( mappy_tilemap_scan )
 static TILE_GET_INFO( superpac_get_tile_info )
 {
 	mappy_state *state = (mappy_state *)machine->driver_data;
-	UINT8 attr = state->videoram[tile_index + 0x400];
+	uint8_t attr = state->videoram[tile_index + 0x400];
 
 	tileinfo->category = (attr & 0x40) >> 6;
 	tileinfo->group = attr & 0x3f;
@@ -285,7 +285,7 @@ static TILE_GET_INFO( superpac_get_tile_info )
 static TILE_GET_INFO( phozon_get_tile_info )
 {
 	mappy_state *state = (mappy_state *)machine->driver_data;
-	UINT8 attr = state->videoram[tile_index + 0x400];
+	uint8_t attr = state->videoram[tile_index + 0x400];
 
 	tileinfo->category = (attr & 0x40) >> 6;
 	tileinfo->group = attr & 0x3f;
@@ -299,7 +299,7 @@ static TILE_GET_INFO( phozon_get_tile_info )
 static TILE_GET_INFO( mappy_get_tile_info )
 {
 	mappy_state *state = (mappy_state *)machine->driver_data;
-	UINT8 attr = state->videoram[tile_index + 0x800];
+	uint8_t attr = state->videoram[tile_index + 0x800];
 
 	tileinfo->category = (attr & 0x40) >> 6;
 	tileinfo->group = attr & 0x3f;
@@ -400,11 +400,11 @@ WRITE8_HANDLER( mappy_scroll_w )
 ***************************************************************************/
 
 /* also used by toypop.c */
-void mappy_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *spriteram_base, int xoffs, int yoffs, int transcolor)
+void mappy_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *spriteram_base, int xoffs, int yoffs, int transcolor)
 {
-	UINT8 *spriteram = spriteram_base + 0x780;
-	UINT8 *spriteram_2 = spriteram + 0x800;
-	UINT8 *spriteram_3 = spriteram_2 + 0x800;
+	uint8_t *spriteram = spriteram_base + 0x780;
+	uint8_t *spriteram_2 = spriteram + 0x800;
+	uint8_t *spriteram_3 = spriteram_2 + 0x800;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)
@@ -412,7 +412,7 @@ void mappy_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectan
 		/* is it on? */
 		if ((spriteram_3[offs+1] & 2) == 0)
 		{
-			static const UINT8 gfx_offs[2][2] =
+			static const uint8_t gfx_offs[2][2] =
 			{
 				{ 0, 1 },
 				{ 2, 3 }
@@ -478,11 +478,11 @@ spriteram_3
 1   -------x  X position MSB
 */
 
-static void phozon_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *spriteram_base )
+static void phozon_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *spriteram_base )
 {
-	UINT8 *spriteram = spriteram_base + 0x780;
-	UINT8 *spriteram_2 = spriteram + 0x800;
-	UINT8 *spriteram_3 = spriteram_2 + 0x800;
+	uint8_t *spriteram = spriteram_base + 0x780;
+	uint8_t *spriteram_2 = spriteram + 0x800;
+	uint8_t *spriteram_3 = spriteram_2 + 0x800;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)
@@ -490,8 +490,8 @@ static void phozon_draw_sprites(running_machine *machine, bitmap_t *bitmap, cons
 		/* is it on? */
 		if ((spriteram_3[offs+1] & 2) == 0)
 		{
-			static const UINT8 size[4] = { 1, 0, 3, 0 };	/* 16, 8, 32 pixels; fourth combination unused? */
-			static const UINT8 gfx_offs[4][4] =
+			static const uint8_t size[4] = { 1, 0, 3, 0 };	/* 16, 8, 32 pixels; fourth combination unused? */
+			static const uint8_t gfx_offs[4][4] =
 			{
 				{ 0, 1, 4, 5 },
 				{ 2, 3, 6, 7 },

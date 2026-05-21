@@ -10,7 +10,7 @@
 #include "sound/samples.h"
 #include "includes/suna8.h"
 
-static INT16 *samplebuf;
+static int16_t *samplebuf;
 static int sample;
 
 WRITE8_DEVICE_HANDLER( suna8_play_samples_w )
@@ -49,10 +49,10 @@ SAMPLES_START( suna8_sh_start )
 {
 	running_machine *machine = device->machine;
 	int i, len = memory_region_length(machine, "samples");
-	UINT8 *ROM = memory_region(machine, "samples");
+	uint8_t *ROM = memory_region(machine, "samples");
 
-	samplebuf = auto_alloc_array(machine, INT16, len);
+	samplebuf = auto_alloc_array(machine, int16_t, len);
 
 	for(i=0;i<len;i++)
-		samplebuf[i] = (INT8)(ROM[i] ^ 0x80) * 256;
+		samplebuf[i] = (int8_t)(ROM[i] ^ 0x80) * 256;
 }

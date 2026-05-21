@@ -1,7 +1,7 @@
 /*----------- defined in drivers/dec0.c -----------*/
 
-extern UINT16 *dec0_ram;
-extern UINT8 *robocop_shared_ram;
+extern uint16_t *dec0_ram;
+extern uint8_t *robocop_shared_ram;
 
 /*----------- defined in video/dec0.c -----------*/
 
@@ -16,9 +16,9 @@ VIDEO_UPDATE( hippodrm );
 VIDEO_UPDATE( slyspy );
 VIDEO_UPDATE( midres );
 
-extern UINT16 *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
-extern UINT16 *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
-extern UINT16 *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
+extern uint16_t *dec0_pf1_rowscroll,*dec0_pf2_rowscroll,*dec0_pf3_rowscroll;
+extern uint16_t *dec0_pf1_colscroll,*dec0_pf2_colscroll,*dec0_pf3_colscroll;
+extern uint16_t *dec0_pf1_data,*dec0_pf2_data,*dec0_pf3_data;
 
 WRITE16_HANDLER( dec0_pf1_control_0_w );
 WRITE16_HANDLER( dec0_pf1_control_1_w );

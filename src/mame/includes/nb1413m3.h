@@ -158,5 +158,5 @@ extern int nb1413m3_sndrombank2;
 extern int nb1413m3_busyctr;
 extern int nb1413m3_busyflag;
 extern int nb1413m3_inputport;
-extern UINT8 *nb1413m3_nvram;
+extern uint8_t *nb1413m3_nvram;
 extern size_t nb1413m3_nvram_size;

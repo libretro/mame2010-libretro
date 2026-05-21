@@ -102,8 +102,8 @@ WRITE16_HANDLER( stlforce_tx_videoram_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	stlforce_state *state = (stlforce_state *)machine->driver_data;
-	const UINT16 *source = state->spriteram+0x0;
-	const UINT16 *finish = state->spriteram+0x800;
+	const uint16_t *source = state->spriteram+0x0;
+	const uint16_t *finish = state->spriteram+0x800;
 	const gfx_element *gfx = machine->gfx[2];
 	int ypos, xpos, attr, num;
 

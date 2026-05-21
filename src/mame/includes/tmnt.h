@@ -7,13 +7,13 @@ public:
 	tmnt_state(running_machine &machine) { }
 
 	/* memory pointers */
-	INT16 *    sampledata;
-	UINT16 *   tmnt2_1c0800;
-	UINT16 *   sunset_104000;
-	UINT16 *   tmnt2_rom;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
-//  UINT8 *     nvram;    // currently cuebrick uses generic nvram handling
-//  UINT8 *     cuebrick_nvram;
+	int16_t *    sampledata;
+	uint16_t *   tmnt2_1c0800;
+	uint16_t *   sunset_104000;
+	uint16_t *   tmnt2_rom;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
+//  uint8_t *     nvram;    // currently cuebrick uses generic nvram handling
+//  uint8_t *     cuebrick_nvram;
 
 	/* video-related */
 	int        layer_colorbase[3], sprite_colorbase;

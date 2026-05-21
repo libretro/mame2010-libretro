@@ -37,14 +37,14 @@
 
 static const int page_sizes[4] = { 4096, 8192, 16384, 32768 };
 
-UINT32 *archimedes_memc_physmem;
-static UINT32 memc_pagesize;
+uint32_t *archimedes_memc_physmem;
+static uint32_t memc_pagesize;
 static int memc_latchrom;
-static INT16 memc_pages[(32*1024*1024)/(4096)];	// the logical RAM area is 32 megs, and the smallest page size is 4k
-static UINT32 vidc_regs[256];
-static UINT8 ioc_regs[0x80/4];
-static UINT32 ioc_timercnt[4], ioc_timerout[4];
-static UINT32 vidc_sndstart, vidc_sndend, vidc_sndcur;
+static int16_t memc_pages[(32*1024*1024)/(4096)];	// the logical RAM area is 32 megs, and the smallest page size is 4k
+static uint32_t vidc_regs[256];
+static uint8_t ioc_regs[0x80/4];
+static uint32_t ioc_timercnt[4], ioc_timerout[4];
+static uint32_t vidc_sndstart, vidc_sndend, vidc_sndcur;
 
 static emu_timer *vbl_timer, *timer[4], *snd_timer;
 
@@ -177,14 +177,14 @@ void archimedes_init(running_machine *machine)
 
 READ32_HANDLER(archimedes_memc_logical_r)
 {
-	UINT32 page, poffs;
+	uint32_t page, poffs;
 
 	// are we mapping in the boot ROM?
 	if (memc_latchrom)
 	{
-		UINT32 *rom;
+		uint32_t *rom;
 
-		rom = (UINT32 *)memory_region(space->machine, "maincpu");
+		rom = (uint32_t *)memory_region(space->machine, "maincpu");
 
 		return rom[offset & 0x1fffff];
 	}
@@ -211,7 +211,7 @@ READ32_HANDLER(archimedes_memc_logical_r)
 
 WRITE32_HANDLER(archimedes_memc_logical_w)
 {
-	UINT32 page, poffs;
+	uint32_t page, poffs;
 
 	// if the boot ROM is mapped, ignore writes
 	if (memc_latchrom)
@@ -255,12 +255,12 @@ static DIRECT_UPDATE_HANDLER( a310_setopbase )
 	}
 	else	// executing from logical memory
 	{
-		UINT32 page = address / page_sizes[memc_pagesize];
+		uint32_t page = address / page_sizes[memc_pagesize];
 
 		direct->bytemask = page_sizes[memc_pagesize]-1;
 		direct->bytestart = page * page_sizes[memc_pagesize];
 		direct->byteend = direct->bytestart + direct->bytemask;
-		direct->raw = direct->decrypted = (UINT8 *)&archimedes_memc_physmem[(memc_pages[page] * page_sizes[memc_pagesize])>>2];
+		direct->raw = direct->decrypted = (uint8_t *)&archimedes_memc_physmem[(memc_pages[page] * page_sizes[memc_pagesize])>>2];
 	}
 
 	return ~0;
@@ -311,7 +311,7 @@ static void latch_timer_cnt(int tmr)
 {
 	double time = attotime_to_double(timer_timeelapsed(timer[tmr]));
 	time *= 2000000.0;	// find out how many 2 MHz ticks have gone by
-	ioc_timerout[tmr] = ioc_timercnt[tmr] - (UINT32)time;
+	ioc_timerout[tmr] = ioc_timercnt[tmr] - (uint32_t)time;
 }
 
 READ32_HANDLER(archimedes_ioc_r)
@@ -499,8 +499,8 @@ READ32_HANDLER(archimedes_vidc_r)
 
 WRITE32_HANDLER(archimedes_vidc_w)
 {
-	UINT32 reg = data>>24;
-	UINT32 val = data & 0xffffff;
+	uint32_t reg = data>>24;
+	uint32_t val = data & 0xffffff;
 	#ifdef DEBUG
 	static const char *const vrnames[] =
 	{
@@ -640,7 +640,7 @@ The physical page is encoded differently depending on the page size :
 
 WRITE32_HANDLER(archimedes_memc_page_w)
 {
-	UINT32 log, phys, memc, perms;
+	uint32_t log, phys, memc, perms;
 
 	perms = (data & 0x300)>>8;
 	log = phys = memc = 0;

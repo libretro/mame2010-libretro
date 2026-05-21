@@ -9,7 +9,7 @@
 #define NUM_SPRITES	(0x800 / 16)
 #define NUM_LAYERS	2
 
-UINT32 *djmain_obj_ram;
+uint32_t *djmain_obj_ram;
 
 
 static void draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect)
@@ -57,8 +57,8 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap, const recta
 		flipy = (djmain_obj_ram[offs] >> 11) & 1;
 		size = sizetab[(djmain_obj_ram[offs] >> 8) & 3];
 
-		ox = (INT16)(djmain_obj_ram[offs + 1] & 0xffff);
-		oy = (INT16)(djmain_obj_ram[offs + 1] >> 16);
+		ox = (int16_t)(djmain_obj_ram[offs + 1] & 0xffff);
+		oy = (int16_t)(djmain_obj_ram[offs + 1] >> 16);
 
 		xscale = djmain_obj_ram[offs + 2] >> 16;
 		yscale = djmain_obj_ram[offs + 2] & 0xffff;

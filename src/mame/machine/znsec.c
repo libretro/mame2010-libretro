@@ -86,9 +86,9 @@
 #include "znsec.h"
 
 typedef struct {
-	const UINT8 *transform;
-	UINT8 state;
-	UINT8 bit;
+	const uint8_t *transform;
+	uint8_t state;
+	uint8_t bit;
 } znsec_state;
 
 static znsec_state zns[2];
@@ -97,10 +97,10 @@ static znsec_state zns[2];
 // Given the value for x7..x0 and linear transform coefficients a7..a0
 // compute the value of the transform
 #if 0
-static int c_linear(UINT8 x, UINT8 a)
+static int c_linear(uint8_t x, uint8_t a)
 {
 	int i;
-	UINT8 r;
+	uint8_t r;
 	x &= a;
 	r = 0;
 	for(i=0; i<8; i++)
@@ -111,9 +111,9 @@ static int c_linear(UINT8 x, UINT8 a)
 #endif
 
 // Derive the sbox xor mask for a given input and select bit
-static UINT8 compute_sbox_coef(int chip, int sel, int bit)
+static uint8_t compute_sbox_coef(int chip, int sel, int bit)
 {
-	UINT8 r;
+	uint8_t r;
 	if(!sel)
 		return zns[chip].transform[bit];
 	r = compute_sbox_coef(chip, (sel-1) & 7, (bit-1) & 7);
@@ -125,10 +125,10 @@ static UINT8 compute_sbox_coef(int chip, int sel, int bit)
 }
 
 // Apply the sbox for a input 0 bit
-static UINT8 apply_bit_sbox(int chip, UINT8 state, int sel)
+static uint8_t apply_bit_sbox(int chip, uint8_t state, int sel)
 {
 	int i;
-	UINT8 r = 0;
+	uint8_t r = 0;
 	for(i=0; i<8; i++)
 		if(state & (1<<i))
 			r ^= compute_sbox_coef(chip, sel, i);
@@ -136,17 +136,17 @@ static UINT8 apply_bit_sbox(int chip, UINT8 state, int sel)
 }
 
 // Apply a sbox
-static UINT8 apply_sbox(UINT8 state, const UINT8 *sbox)
+static uint8_t apply_sbox(uint8_t state, const uint8_t *sbox)
 {
 	int i;
-	UINT8 r = 0;
+	uint8_t r = 0;
 	for(i=0; i<8; i++)
 		if(state & (1<<i))
 			r ^= sbox[i];
 	return r;
 }
 
-void znsec_init(int chip, const UINT8 *transform)
+void znsec_init(int chip, const uint8_t *transform)
 {
 	zns[chip].transform = transform;
 	zns[chip].state = 0xfc;
@@ -159,10 +159,10 @@ void znsec_start(int chip)
 	zns[chip].bit = 0;
 }
 
-UINT8 znsec_step(int chip, UINT8 input)
+uint8_t znsec_step(int chip, uint8_t input)
 {
-	UINT8 res;
-	static const UINT8 initial_sbox[8] = { 0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x7f };
+	uint8_t res;
+	static const uint8_t initial_sbox[8] = { 0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x7f };
 
 	if (zns[chip].bit==0)
 	{

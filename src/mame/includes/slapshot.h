@@ -22,24 +22,24 @@ public:
 	slapshot_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    color_ram;
-	UINT16 *    spriteram;
-	UINT16 *    spriteext;
-	UINT16 *    spriteram_buffered, *spriteram_delayed;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    color_ram;
+	uint16_t *    spriteram;
+	uint16_t *    spriteext;
+	uint16_t *    spriteram_buffered, *spriteram_delayed;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      spriteext_size;
 	size_t      spriteram_size;
 
 	/* video-related */
 	struct      slapshot_tempsprite *spritelist;
-	INT32       sprites_disabled, sprites_active_area, sprites_master_scrollx, sprites_master_scrolly;
+	int32_t       sprites_disabled, sprites_active_area, sprites_master_scrollx, sprites_master_scrolly;
 	int         sprites_flipscreen;
 	int         prepare_sprites;
 
-	UINT16      spritebank[8];
+	uint16_t      spritebank[8];
 
 	/* misc */
-	INT32      banknum;
+	int32_t      banknum;
 
 	/* devices */
 	running_device *maincpu;

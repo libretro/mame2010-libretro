@@ -62,7 +62,7 @@ VIDEO_START( homerun )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	homerun_state *state = (homerun_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = state->spriteram_size - 4; offs >=0; offs -= 4)

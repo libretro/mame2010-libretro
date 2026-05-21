@@ -49,14 +49,14 @@ static struct {
 	running_machine *machine;
 	void (*int_cb)(running_machine *, int);
 	emu_timer *timer;
-	UINT8 data;
+	uint8_t data;
 	int on;
 	int self_test;
 } pc_keyb;
 
 
 
-void init_pc_common(running_machine *machine, UINT32 flags, void (*set_keyb_int_func)(running_machine *, int))
+void init_pc_common(running_machine *machine, uint32_t flags, void (*set_keyb_int_func)(running_machine *, int))
 {
 	/* PC-XT keyboard */
 	if (flags & PCCOMMON_KEYBOARD_AT)
@@ -71,7 +71,7 @@ void init_pc_common(running_machine *machine, UINT32 flags, void (*set_keyb_int_
 	pc_keyb.timer = timer_alloc(machine, pc_keyb_timer, NULL);
 }
 
-UINT8 pc_keyb_read(void)
+uint8_t pc_keyb_read(void)
 {
 	return pc_keyb.data;
 }
@@ -146,8 +146,8 @@ DMA8237 Controller
 ******************/
 
 static int dma_channel;
-static UINT8 dma_offset[2][4];
-static UINT8 at_pages[0x10];
+static uint8_t dma_offset[2][4];
+static uint8_t at_pages[0x10];
 
 static WRITE_LINE_DEVICE_HANDLER( pc_dma_hrq_changed )
 {
@@ -177,7 +177,7 @@ static WRITE8_HANDLER( pc_dma_write_byte )
 
 static READ8_HANDLER(dma_page_select_r)
 {
-	UINT8 data = at_pages[offset % 0x10];
+	uint8_t data = at_pages[offset % 0x10];
 
 	switch(offset % 8)
 	{

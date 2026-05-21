@@ -197,8 +197,8 @@ actual code sent to the hardware.
 /* Variables defined here, that have to be shared: */
 tilemap_t *megasys1_tmap[3];
 
-UINT16 *megasys1_scrollram[3];
-UINT16 *megasys1_objectram, *megasys1_vregs, *megasys1_ram;
+uint16_t *megasys1_scrollram[3];
+uint16_t *megasys1_objectram, *megasys1_vregs, *megasys1_ram;
 
 int megasys1_scrollx[3], megasys1_scrolly[3];
 int megasys1_active_layers;
@@ -216,7 +216,7 @@ static int hardware_type_z;
 
 static void create_tilemaps(running_machine *machine);
 
-static UINT16 *megasys1_buffer_objectram,*megasys1_buffer2_objectram,*megasys1_buffer_spriteram16,*megasys1_buffer2_spriteram16;
+static uint16_t *megasys1_buffer_objectram,*megasys1_buffer2_objectram,*megasys1_buffer_spriteram16,*megasys1_buffer2_spriteram16;
 
 
 
@@ -249,10 +249,10 @@ VIDEO_START( megasys1 )
 
 	machine->generic.spriteram.u16 = &megasys1_ram[0x8000/2];
 
-	megasys1_buffer_objectram = auto_alloc_array(machine, UINT16, 0x2000);
-	megasys1_buffer_spriteram16 = auto_alloc_array(machine, UINT16, 0x2000);
-	megasys1_buffer2_objectram = auto_alloc_array(machine, UINT16, 0x2000);
-	megasys1_buffer2_spriteram16 = auto_alloc_array(machine, UINT16, 0x2000);
+	megasys1_buffer_objectram = auto_alloc_array(machine, uint16_t, 0x2000);
+	megasys1_buffer_spriteram16 = auto_alloc_array(machine, uint16_t, 0x2000);
+	megasys1_buffer2_objectram = auto_alloc_array(machine, uint16_t, 0x2000);
+	megasys1_buffer2_spriteram16 = auto_alloc_array(machine, uint16_t, 0x2000);
 
 	create_tilemaps(machine);
 	megasys1_tmap[0] = megasys1_tilemap[0][0][0];
@@ -313,7 +313,7 @@ VIDEO_START( megasys1 )
 #define TILES_PER_PAGE_Y (0x20)
 #define TILES_PER_PAGE (TILES_PER_PAGE_X * TILES_PER_PAGE_Y)
 
-INLINE void scrollram_w(int which, offs_t offset, UINT16 data, UINT16 mem_mask)
+INLINE void scrollram_w(int which, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	COMBINE_DATA(&megasys1_scrollram[which][offset]);
 	if (offset < 0x40000/2 && megasys1_tmap[which])
@@ -373,14 +373,14 @@ static TILEMAP_MAPPER( megasys1_scan_16x16 )
 static TILE_GET_INFO( megasys1_get_scroll_tile_info_8x8 )
 {
 	int tmap = (FPTR)param;
-	UINT16 code = megasys1_scrollram[tmap][tile_index];
+	uint16_t code = megasys1_scrollram[tmap][tile_index];
 	SET_TILE_INFO(tmap, (code & 0xfff) * megasys1_8x8_scroll_factor[tmap], code >> (16 - megasys1_bits_per_color_code), 0);
 }
 
 static TILE_GET_INFO( megasys1_get_scroll_tile_info_16x16 )
 {
 	int tmap = (FPTR)param;
-	UINT16 code = megasys1_scrollram[tmap][tile_index/4];
+	uint16_t code = megasys1_scrollram[tmap][tile_index/4];
 	SET_TILE_INFO(tmap, (code & 0xfff) * megasys1_16x16_scroll_factor[tmap] + (tile_index & 3), code >> (16 - megasys1_bits_per_color_code), 0);
 }
 
@@ -434,7 +434,7 @@ void megasys1_set_vreg_flag(int which, int data)
 /* Used by MS1-A/Z, B */
 WRITE16_HANDLER( megasys1_vregs_A_w )
 {
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -488,7 +488,7 @@ READ16_HANDLER( megasys1_vregs_C_r )
 
 WRITE16_HANDLER( megasys1_vregs_C_w )
 {
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -529,7 +529,7 @@ WRITE16_HANDLER( megasys1_vregs_C_w )
 /* Used by MS1-D only */
 WRITE16_HANDLER( megasys1_vregs_D_w )
 {
-	UINT16 new_data = COMBINE_DATA(&megasys1_vregs[offset]);
+	uint16_t new_data = COMBINE_DATA(&megasys1_vregs[offset]);
 
 	switch (offset)
 	{
@@ -597,8 +597,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 		{
 			for (sprite = 0; sprite < 4 ; sprite ++)
 			{
-				UINT16 *objectdata = &megasys1_buffer2_objectram[offs + (0x800/2) * sprite];
-				UINT16 *spritedata = &megasys1_buffer2_spriteram16[ (objectdata[ 0 ] & 0x7f) * 0x10/2];
+				uint16_t *objectdata = &megasys1_buffer2_objectram[offs + (0x800/2) * sprite];
+				uint16_t *spritedata = &megasys1_buffer2_spriteram16[ (objectdata[ 0 ] & 0x7f) * 0x10/2];
 
 				attr = spritedata[ 8/2 ];
 				if (((attr & 0xc0)>>6) != sprite)	continue;	// flipping
@@ -636,13 +636,13 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 	}	/* non Z hw */
 	else
 	{
-		UINT16 *spriteram16 = machine->generic.spriteram.u16;
+		uint16_t *spriteram16 = machine->generic.spriteram.u16;
 
 		/* MS1-Z just draws Sprite Data, and in reverse order */
 
 		for (sprite = 0x80-1;sprite >= 0;sprite--)
 		{
-			UINT16 *spritedata = &spriteram16[ sprite * 0x10/2];
+			uint16_t *spritedata = &spriteram16[ sprite * 0x10/2];
 
 			attr = spritedata[ 8/2 ];
 

@@ -1,15 +1,15 @@
 #include "emu.h"
 #include "includes/pk8000.h"
 
-static UINT8 pk8000_text_start;
-static UINT8 pk8000_chargen_start;
-static UINT8 pk8000_video_start;
-static UINT8 pk8000_color_start;
+static uint8_t pk8000_text_start;
+static uint8_t pk8000_chargen_start;
+static uint8_t pk8000_video_start;
+static uint8_t pk8000_color_start;
 
-UINT8 pk8000_video_mode;
-static UINT8 pk8000_video_color;
-static UINT8 pk8000_color[32];
-UINT8 pk8000_video_enable;
+uint8_t pk8000_video_mode;
+static uint8_t pk8000_video_color;
+static uint8_t pk8000_color[32];
+uint8_t pk8000_video_enable;
 
 READ8_HANDLER(pk8000_video_color_r)
 {
@@ -95,10 +95,10 @@ PALETTE_INIT( pk8000 )
 	palette_set_colors(machine, 0, pk8000_palette, ARRAY_LENGTH(pk8000_palette));
 }
 
-UINT32 pk8000_video_update(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *videomem)
+uint32_t pk8000_video_update(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *videomem)
 {
 	int x,y,j,b;
-	UINT16 offset = (pk8000_video_mode & 0xc0) << 8;
+	uint16_t offset = (pk8000_video_mode & 0xc0) << 8;
 	rectangle my_rect;
 	my_rect.min_x = 0;
 	my_rect.max_x = 256+32-1;
@@ -116,14 +116,14 @@ UINT32 pk8000_video_update(running_device *screen, bitmap_t *bitmap, const recta
 				{
 					for (x = 0; x < 32; x++)
 					{
-						UINT8 chr  = videomem[x +(y*32) + ((pk8000_text_start & 0x0f) << 10)+offset] ;
-						UINT8 color= pk8000_color[chr>>3];
+						uint8_t chr  = videomem[x +(y*32) + ((pk8000_text_start & 0x0f) << 10)+offset] ;
+						uint8_t color= pk8000_color[chr>>3];
 						for (j = 0; j < 8; j++) {
-							UINT8 code = videomem[((chr<<3) + j) + ((pk8000_chargen_start & 0x0e) << 10)+offset];
+							uint8_t code = videomem[((chr<<3) + j) + ((pk8000_chargen_start & 0x0e) << 10)+offset];
 
 							for (b = 0; b < 8; b++)
 							{
-								UINT8 col = (code >> b) & 0x01 ? (color & 0x0f) : ((color>>4) & 0x0f);
+								uint8_t col = (code >> b) & 0x01 ? (color & 0x0f) : ((color>>4) & 0x0f);
 								*BITMAP_ADDR16(bitmap, (y*8)+j+16, x*8+(7-b)+16) =  col;
 							}
 						}
@@ -135,12 +135,12 @@ UINT32 pk8000_video_update(running_device *screen, bitmap_t *bitmap, const recta
 				{
 					for (x = 0; x < 42; x++)
 					{
-						UINT8 chr = videomem[x +(y*64) + ((pk8000_text_start & 0x0e) << 10)+offset] ;
+						uint8_t chr = videomem[x +(y*64) + ((pk8000_text_start & 0x0e) << 10)+offset] ;
 						for (j = 0; j < 8; j++) {
-							UINT8 code = videomem[((chr<<3) + j) + ((pk8000_chargen_start  & 0x0e) << 10)+offset];
+							uint8_t code = videomem[((chr<<3) + j) + ((pk8000_chargen_start  & 0x0e) << 10)+offset];
 							for (b = 2; b < 8; b++)
 							{
-								UINT8 col = ((code >> b) & 0x01) ? (pk8000_video_color) & 0x0f : (pk8000_video_color>>4) & 0x0f;
+								uint8_t col = ((code >> b) & 0x01) ? (pk8000_video_color) & 0x0f : (pk8000_video_color>>4) & 0x0f;
 								*BITMAP_ADDR16(bitmap, (y*8)+j+16, x*6+(7-b)+16+8) =  col;
 							}
 						}
@@ -151,18 +151,18 @@ UINT32 pk8000_video_update(running_device *screen, bitmap_t *bitmap, const recta
 			//Graphics
 			for (y = 0; y < 24; y++)
 			{
-				UINT16 off_color = (((~pk8000_color_start) & 0x08) << 10)+offset + ((y>>3)<<11);
-				UINT16 off_code  = (((~pk8000_video_start) & 0x08) << 10)+offset + ((y>>3)<<11);
+				uint16_t off_color = (((~pk8000_color_start) & 0x08) << 10)+offset + ((y>>3)<<11);
+				uint16_t off_code  = (((~pk8000_video_start) & 0x08) << 10)+offset + ((y>>3)<<11);
 				for (x = 0; x < 32; x++)
 				{
-					UINT8 chr  = videomem[x +(y*32) + ((pk8000_chargen_start & 0x0e) << 10)+offset] ;
+					uint8_t chr  = videomem[x +(y*32) + ((pk8000_chargen_start & 0x0e) << 10)+offset] ;
 					for (j = 0; j < 8; j++) {
-						UINT8 color= videomem[((chr<<3) + j)+off_color];
-						UINT8 code = videomem[((chr<<3) + j)+off_code];
+						uint8_t color= videomem[((chr<<3) + j)+off_color];
+						uint8_t code = videomem[((chr<<3) + j)+off_code];
 
 						for (b = 0; b < 8; b++)
 						{
-							UINT8 col = (code >> b) & 0x01 ? (color & 0x0f) : ((color>>4) & 0x0f);
+							uint8_t col = (code >> b) & 0x01 ? (color & 0x0f) : ((color>>4) & 0x0f);
 							*BITMAP_ADDR16(bitmap, (y*8)+j+16, x*8+(7-b)+16) =  col;
 						}
 					}

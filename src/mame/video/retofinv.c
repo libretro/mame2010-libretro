@@ -9,9 +9,9 @@
 #include "emu.h"
 #include "includes/retofinv.h"
 
-UINT8 *retofinv_bg_videoram;
-UINT8 *retofinv_fg_videoram;
-UINT8 *retofinv_sharedram;
+uint8_t *retofinv_bg_videoram;
+uint8_t *retofinv_fg_videoram;
+uint8_t *retofinv_sharedram;
 
 static int fg_bank,bg_bank;
 static tilemap_t *bg_tilemap,*fg_tilemap;
@@ -42,7 +42,7 @@ PALETTE_INIT( retofinv )
 	/* fg chars (1bpp) */
 	for (i = 0; i < 0x200; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (i & 0x01)
 			ctabentry = i >> 1;
@@ -55,7 +55,7 @@ PALETTE_INIT( retofinv )
 	/* sprites and bg tiles */
 	for (i = 0; i < 0x800; i++)
 	{
-		UINT8 ctabentry = BITSWAP8(color_prom[i],4,5,6,7,3,2,1,0);
+		uint8_t ctabentry = BITSWAP8(color_prom[i],4,5,6,7,3,2,1,0);
 		colortable_entry_set_value(machine->colortable, i + 0x200, ctabentry);
 	}
 }
@@ -173,9 +173,9 @@ WRITE8_HANDLER( retofinv_gfx_ctrl_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap)
 {
-	UINT8 *spriteram = retofinv_sharedram + 0x0780;
-	UINT8 *spriteram_2 = retofinv_sharedram + 0x0f80;
-	UINT8 *spriteram_3 = retofinv_sharedram + 0x1780;
+	uint8_t *spriteram = retofinv_sharedram + 0x0780;
+	uint8_t *spriteram_2 = retofinv_sharedram + 0x0f80;
+	uint8_t *spriteram_3 = retofinv_sharedram + 0x1780;
 	int offs;
 	static const rectangle spritevisiblearea =
 	{

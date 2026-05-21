@@ -7,8 +7,8 @@ public:
 	fromanc2_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16   *paletteram[2];
-	UINT16   *videoram[2][4];
+	uint16_t   *paletteram[2];
+	uint16_t   *videoram[2][4];
 
 	/* video-related */
 	tilemap_t  *tilemap[2][4];
@@ -17,9 +17,9 @@ public:
 
 	/* misc */
 	int      portselect;
-	UINT8    subcpu_int_flag, subcpu_nmi_flag, sndcpu_nmi_flag;
-	UINT16   datalatch1;
-	UINT8    datalatch_2h, datalatch_2l;
+	uint8_t    subcpu_int_flag, subcpu_nmi_flag, sndcpu_nmi_flag;
+	uint16_t   datalatch1;
+	uint8_t    datalatch_2h, datalatch_2l;
 
 	/* devices */
 	running_device *audiocpu;

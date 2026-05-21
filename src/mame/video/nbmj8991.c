@@ -23,8 +23,8 @@ static int nbmj8991_clutsel;
 static int nbmj8991_screen_refresh;
 
 static bitmap_t *nbmj8991_tmpbitmap;
-static UINT8 *nbmj8991_videoram;
-static UINT8 *nbmj8991_clut;
+static uint8_t *nbmj8991_videoram;
+static uint8_t *nbmj8991_clut;
 
 
 static void nbmj8991_vramflip(running_machine *machine);
@@ -154,7 +154,7 @@ static void nbmj8991_vramflip(running_machine *machine)
 {
 	static int nbmj8991_flipscreen_old = 0;
 	int x, y;
-	UINT8 color1, color2;
+	uint8_t color1, color2;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
@@ -183,7 +183,7 @@ static void nbmj8991_vramflip(running_machine *machine)
 
 static void update_pixel(running_machine *machine, int x, int y)
 {
-	UINT8 color = nbmj8991_videoram[(y * machine->primary_screen->width()) + x];
+	uint8_t color = nbmj8991_videoram[(y * machine->primary_screen->width()) + x];
 	*BITMAP_ADDR16(nbmj8991_tmpbitmap, y, x) = color;
 }
 
@@ -194,7 +194,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void nbmj8991_gfxdraw(running_machine *machine)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 	int width = machine->primary_screen->width();
 
 	int x, y;
@@ -203,7 +203,7 @@ static void nbmj8991_gfxdraw(running_machine *machine)
 	int sizex, sizey;
 	int skipx, skipy;
 	int ctrx, ctry;
-	UINT8 color, color1, color2;
+	uint8_t color, color1, color2;
 	int gfxaddr, gfxlen;
 
 	nb1413m3_busyctr = 0;
@@ -307,9 +307,9 @@ VIDEO_START( nbmj8991 )
 	int height = machine->primary_screen->height();
 
 	nbmj8991_tmpbitmap = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj8991_videoram = auto_alloc_array(machine, UINT8, width * height);
-	nbmj8991_clut = auto_alloc_array(machine, UINT8, 0x800);
-	memset(nbmj8991_videoram, 0x00, (width * height * sizeof(UINT8)));
+	nbmj8991_videoram = auto_alloc_array(machine, uint8_t, width * height);
+	nbmj8991_clut = auto_alloc_array(machine, uint8_t, 0x800);
+	memset(nbmj8991_videoram, 0x00, (width * height * sizeof(uint8_t)));
 }
 
 VIDEO_UPDATE( nbmj8991_type1 )

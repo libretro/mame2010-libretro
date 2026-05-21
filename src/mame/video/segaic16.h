@@ -7,14 +7,14 @@
 #include "devcb.h"
 
 /* globals */
-extern UINT8 segaic16_display_enable;
-extern UINT16 *segaic16_tileram_0;
-extern UINT16 *segaic16_textram_0;
-extern UINT16 *segaic16_spriteram_0;
-extern UINT16 *segaic16_spriteram_1;
-extern UINT16 *segaic16_roadram_0;
-extern UINT16 *segaic16_rotateram_0;
-extern UINT16 *segaic16_paletteram;
+extern uint8_t segaic16_display_enable;
+extern uint16_t *segaic16_tileram_0;
+extern uint16_t *segaic16_textram_0;
+extern uint16_t *segaic16_spriteram_0;
+extern uint16_t *segaic16_spriteram_1;
+extern uint16_t *segaic16_roadram_0;
+extern uint16_t *segaic16_rotateram_0;
+extern uint16_t *segaic16_paletteram;
 
 /* misc functions */
 void segaic16_set_display_enable(running_machine *machine, int enable);
@@ -94,76 +94,76 @@ READ16_HANDLER( segaic16_rotate_control_0_r );
 
 struct tilemap_callback_info
 {
-	UINT16 *		rambase;						/* base of RAM for this tilemap page */
-	const UINT8 *	bank;							/* pointer to bank array */
-	UINT16			banksize;						/* size of banks */
+	uint16_t *		rambase;						/* base of RAM for this tilemap page */
+	const uint8_t *	bank;							/* pointer to bank array */
+	uint16_t			banksize;						/* size of banks */
 };
 
 
 struct tilemap_info
 {
-	UINT8			index;							/* index of this structure */
-	UINT8			type;							/* type of tilemap (see segaic16.h for details) */
-	UINT8			numpages;						/* number of allocated pages */
-	UINT8			flip;							/* screen flip? */
-	UINT8			rowscroll, colscroll;			/* are rowscroll/colscroll enabled (if external enables are used) */
-	UINT8			bank[8];						/* indexes of the tile banks */
-	UINT16			banksize;						/* number of tiles per bank */
-	UINT16			latched_xscroll[4];				/* latched X scroll values */
-	UINT16			latched_yscroll[4];				/* latched Y scroll values */
-	UINT16			latched_pageselect[4];			/* latched page select values */
-	INT32			xoffs;							/* X scroll offset */
+	uint8_t			index;							/* index of this structure */
+	uint8_t			type;							/* type of tilemap (see segaic16.h for details) */
+	uint8_t			numpages;						/* number of allocated pages */
+	uint8_t			flip;							/* screen flip? */
+	uint8_t			rowscroll, colscroll;			/* are rowscroll/colscroll enabled (if external enables are used) */
+	uint8_t			bank[8];						/* indexes of the tile banks */
+	uint16_t			banksize;						/* number of tiles per bank */
+	uint16_t			latched_xscroll[4];				/* latched X scroll values */
+	uint16_t			latched_yscroll[4];				/* latched Y scroll values */
+	uint16_t			latched_pageselect[4];			/* latched page select values */
+	int32_t			xoffs;							/* X scroll offset */
 	tilemap_t *		tilemaps[16];					/* up to 16 tilemap pages */
 	tilemap_t *		textmap;						/* a single text tilemap */
 	struct tilemap_callback_info tmap_info[16];		/* callback info for 16 tilemap pages */
 	struct tilemap_callback_info textmap_info;		/* callback info for a single textmap page */
 	void			(*reset)(running_machine *machine, struct tilemap_info *info);/* reset callback */
 	void			(*draw_layer)(running_machine *machine, struct tilemap_info *info, bitmap_t *bitmap, const rectangle *cliprect, int which, int flags, int priority);
-	UINT16 *		textram;						/* pointer to textram pointer */
-	UINT16 *		tileram;						/* pointer to tileram pointer */
+	uint16_t *		textram;						/* pointer to textram pointer */
+	uint16_t *		tileram;						/* pointer to tileram pointer */
 };
 
 struct road_info
 {
-	UINT8			index;							/* index of this structure */
-	UINT8			type;							/* type of road system (see segaic16.h for details) */
-	UINT8			control;						/* control register value */
-	UINT16			colorbase1;						/* color base for road ROM data */
-	UINT16			colorbase2;						/* color base for road background data */
-	UINT16			colorbase3;						/* color base for sky data */
-	INT32			xoffs;							/* X scroll offset */
+	uint8_t			index;							/* index of this structure */
+	uint8_t			type;							/* type of road system (see segaic16.h for details) */
+	uint8_t			control;						/* control register value */
+	uint16_t			colorbase1;						/* color base for road ROM data */
+	uint16_t			colorbase2;						/* color base for road background data */
+	uint16_t			colorbase3;						/* color base for sky data */
+	int32_t			xoffs;							/* X scroll offset */
 	void			(*draw)(struct road_info *info, bitmap_t *bitmap, const rectangle *cliprect, int priority);
-	UINT16 *		roadram;						/* pointer to roadram pointer */
-	UINT16 *		buffer;							/* buffered roadram pointer */
-	UINT8 *			gfx;							/* expanded road graphics */
+	uint16_t *		roadram;						/* pointer to roadram pointer */
+	uint16_t *		buffer;							/* buffered roadram pointer */
+	uint8_t *			gfx;							/* expanded road graphics */
 };
 
 struct palette_info
 {
-	INT32			entries;						/* number of entries (not counting shadows) */
-	UINT8			normal[32];						/* RGB translations for normal pixels */
-	UINT8			shadow[32];						/* RGB translations for shadowed pixels */
-	UINT8			hilight[32];					/* RGB translations for hilighted pixels */
+	int32_t			entries;						/* number of entries (not counting shadows) */
+	uint8_t			normal[32];						/* RGB translations for normal pixels */
+	uint8_t			shadow[32];						/* RGB translations for shadowed pixels */
+	uint8_t			hilight[32];					/* RGB translations for hilighted pixels */
 };
 
 struct rotate_info
 {
-	UINT8			index;							/* index of this structure */
-	UINT8			type;							/* type of rotate system (see segaic16.h for details) */
-	UINT16			colorbase;						/* base color index */
-	INT32			ramsize;						/* size of rotate RAM */
-	UINT16 *		rotateram;						/* pointer to rotateram pointer */
-	UINT16 *		buffer;							/* buffered data */
+	uint8_t			index;							/* index of this structure */
+	uint8_t			type;							/* type of rotate system (see segaic16.h for details) */
+	uint16_t			colorbase;						/* base color index */
+	int32_t			ramsize;						/* size of rotate RAM */
+	uint16_t *		rotateram;						/* pointer to rotateram pointer */
+	uint16_t *		buffer;							/* buffered data */
 };
 
 /* interface */
 typedef struct _sega16sp_interface sega16sp_interface;
 struct _sega16sp_interface
 {
-	UINT8			which;							/* which sprite RAM */
-	UINT16			colorbase;						/* base color index */
-	INT32			ramsize;						/* size of sprite RAM */
-	INT32			xoffs;							/* X scroll offset */
+	uint8_t			which;							/* which sprite RAM */
+	uint16_t			colorbase;						/* base color index */
+	int32_t			ramsize;						/* size of sprite RAM */
+	int32_t			xoffs;							/* X scroll offset */
 	void			(*draw)(running_machine *machine, running_device* device, bitmap_t *bitmap, const rectangle *cliprect);
 	int				buffer;							/* should ram be buffered? */
 };
@@ -175,16 +175,16 @@ struct _sega16sp_interface
 typedef struct _sega16sp_state sega16sp_state;
 struct _sega16sp_state
 {
-	UINT8			which;							/* which sprite RAM */
-	UINT8			flip;							/* screen flip? */
-	UINT8			shadow;							/* shadow or hilight? */
-	UINT8			bank[16];						/* banking redirection */
-	UINT16			colorbase;						/* base color index */
-	INT32			ramsize;						/* size of sprite RAM */
-	INT32			xoffs;							/* X scroll offset */
+	uint8_t			which;							/* which sprite RAM */
+	uint8_t			flip;							/* screen flip? */
+	uint8_t			shadow;							/* shadow or hilight? */
+	uint8_t			bank[16];						/* banking redirection */
+	uint16_t			colorbase;						/* base color index */
+	int32_t			ramsize;						/* size of sprite RAM */
+	int32_t			xoffs;							/* X scroll offset */
 	void			(*draw)(running_machine *machine, running_device* device, bitmap_t *bitmap, const rectangle *cliprect);
-	UINT16 *		spriteram;						/* pointer to spriteram pointer */
-	UINT16 *		buffer;							/* buffered spriteram for those that use it */
+	uint16_t *		spriteram;						/* pointer to spriteram pointer */
+	uint16_t *		buffer;							/* buffered spriteram for those that use it */
 
 };
 

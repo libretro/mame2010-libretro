@@ -48,9 +48,9 @@ static const double r_filt_total = 1.0 / (1.0/RES_K(4.7) + 1.0/RES_K(7.5) + 1.0/
 /************************************/
 static STREAM_UPDATE( engine_sound_update )
 {
-	static UINT32 current_position;
-	UINT32 step, clock, slot;
-	UINT8 *base;
+	static uint32_t current_position;
+	uint32_t step, clock, slot;
+	uint8_t *base;
 	double volume, i_total;
 	stream_sample_t *buffer = outputs[0];
 	int loop;

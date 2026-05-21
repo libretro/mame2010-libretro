@@ -26,9 +26,9 @@ INPUT_PORTS_EXTERN( gottlieb2_sound );
 
 /*----------- defined in video/gottlieb.c -----------*/
 
-extern UINT8 gottlieb_gfxcharlo;
-extern UINT8 gottlieb_gfxcharhi;
-extern UINT8 *gottlieb_charram;
+extern uint8_t gottlieb_gfxcharlo;
+extern uint8_t gottlieb_gfxcharhi;
+extern uint8_t *gottlieb_charram;
 
 extern WRITE8_HANDLER( gottlieb_videoram_w );
 extern WRITE8_HANDLER( gottlieb_charram_w );

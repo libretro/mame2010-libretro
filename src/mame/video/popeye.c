@@ -8,21 +8,21 @@
 
 #include "emu.h"
 
-UINT8 *popeye_videoram;
-UINT8 *popeye_colorram;
-UINT8 *popeye_background_pos;
-UINT8 *popeye_palettebank;
-static UINT8 *popeye_bitmapram;
+uint8_t *popeye_videoram;
+uint8_t *popeye_colorram;
+uint8_t *popeye_background_pos;
+uint8_t *popeye_palettebank;
+static uint8_t *popeye_bitmapram;
 static const size_t popeye_bitmapram_size = 0x2000;
 
 static bitmap_t *tmpbitmap2;
-static UINT8 invertmask;
-static UINT8 bitmap_type;
+static uint8_t invertmask;
+static uint8_t bitmap_type;
 enum { TYPE_SKYSKIPR, TYPE_POPEYE };
 
 static tilemap_t *fg_tilemap;
 
-static UINT8 lastflip;
+static uint8_t lastflip;
 
 /***************************************************************************
 
@@ -58,7 +58,7 @@ static UINT8 lastflip;
   The bootleg is the same, but the outputs are not inverted.
 
 ***************************************************************************/
-static void convert_color_prom(running_machine *machine,const UINT8 *color_prom)
+static void convert_color_prom(running_machine *machine,const uint8_t *color_prom)
 {
 	int i;
 
@@ -138,7 +138,7 @@ PALETTE_INIT( popeyebl )
 static void set_background_palette(running_machine *machine,int bank)
 {
 	int i;
-	UINT8 *color_prom = memory_region(machine, "proms") + 16 * bank;
+	uint8_t *color_prom = memory_region(machine, "proms") + 16 * bank;
 
 	for (i = 0;i < 16;i++)
 	{
@@ -246,7 +246,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 
 VIDEO_START( skyskipr )
 {
-	popeye_bitmapram = auto_alloc_array(machine, UINT8, popeye_bitmapram_size);
+	popeye_bitmapram = auto_alloc_array(machine, uint8_t, popeye_bitmapram_size);
 	tmpbitmap2 = auto_bitmap_alloc(machine,1024,1024,machine->primary_screen->format());	/* actually 1024x512 but not rolling over vertically? */
 
 	bitmap_type = TYPE_SKYSKIPR;
@@ -263,7 +263,7 @@ VIDEO_START( skyskipr )
 
 VIDEO_START( popeye )
 {
-	popeye_bitmapram = auto_alloc_array(machine, UINT8, popeye_bitmapram_size);
+	popeye_bitmapram = auto_alloc_array(machine, uint8_t, popeye_bitmapram_size);
 	tmpbitmap2 = auto_bitmap_alloc(machine,512,512,machine->primary_screen->format());
 
 	bitmap_type = TYPE_POPEYE;
@@ -317,7 +317,7 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 4)

@@ -166,9 +166,9 @@ static void draw_fg( running_machine *machine, bitmap_t *bitmap, const rectangle
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	buggychl_state *state = (buggychl_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
-	const UINT8 *gfx;
+	const uint8_t *gfx;
 
 	profiler_mark_start(PROFILER_USER1);
 
@@ -176,8 +176,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	for (offs = 0; offs < state->spriteram_size; offs += 4)
 	{
 		int sx, sy, flipy, zoom, ch, x, px, y;
-		const UINT8 *lookup;
-		const UINT8 *zoomx_rom, *zoomy_rom;
+		const uint8_t *lookup;
+		const uint8_t *zoomx_rom, *zoomy_rom;
 
 		sx = spriteram[offs + 3] - ((spriteram[offs + 2] & 0x80) << 1);
 		sy = 256 - 64 - spriteram[offs] + ((spriteram[offs + 1] & 0x80) << 1);
@@ -205,7 +205,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 				for (ch = 0; ch < 4; ch++)
 				{
 					int pos, code, realflipy;
-					const UINT8 *pendata;
+					const uint8_t *pendata;
 
 					pos = base_pos + 2 * ch;
 					code = 8 * (lookup[pos] | ((lookup[pos + 1] & 0x07) << 8));

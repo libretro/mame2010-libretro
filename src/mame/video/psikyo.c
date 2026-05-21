@@ -74,7 +74,7 @@ Offset:
 static TILE_GET_INFO( get_tile_info_0 )
 {
 	psikyo_state *state = (psikyo_state *)machine->driver_data;
-	UINT16 code = ((UINT16 *)state->vram_0)[BYTE_XOR_BE(tile_index)];
+	uint16_t code = ((uint16_t *)state->vram_0)[BYTE_XOR_BE(tile_index)];
 	SET_TILE_INFO(
 			1,
 			(code & 0x1fff) + 0x2000 * state->tilemap_0_bank,
@@ -85,7 +85,7 @@ static TILE_GET_INFO( get_tile_info_0 )
 static TILE_GET_INFO( get_tile_info_1 )
 {
 	psikyo_state *state = (psikyo_state *)machine->driver_data;
-	UINT16 code = ((UINT16 *)state->vram_1)[BYTE_XOR_BE(tile_index)];
+	uint16_t code = ((uint16_t *)state->vram_1)[BYTE_XOR_BE(tile_index)];
 	SET_TILE_INFO(
 			1,
 			(code & 0x1fff) + 0x2000 * state->tilemap_1_bank,
@@ -178,8 +178,8 @@ VIDEO_START( psikyo )
 	state->tilemap_1_size2 = tilemap_create(machine, get_tile_info_1, tilemap_scan_rows, 16, 16, 0x80, 0x20);
 	state->tilemap_1_size3 = tilemap_create(machine, get_tile_info_1, tilemap_scan_rows, 16, 16, 0x100, 0x10);
 
-	state->spritebuf1 = auto_alloc_array(machine, UINT32, 0x2000 / 4);
-	state->spritebuf2 = auto_alloc_array(machine, UINT32, 0x2000 / 4);
+	state->spritebuf1 = auto_alloc_array(machine, uint32_t, 0x2000 / 4);
+	state->spritebuf2 = auto_alloc_array(machine, uint32_t, 0x2000 / 4);
 
 	tilemap_set_scroll_rows(state->tilemap_0_size0, 0x80 * 16);	// line scrolling
 	tilemap_set_scroll_cols(state->tilemap_0_size0, 1);
@@ -270,8 +270,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	/* tile layers 0 & 1 have priorities 1 & 2 */
 	static const int pri[] = { 0, 0xfc, 0xff, 0xff };
 	int offs;
-	UINT16 *spritelist = (UINT16 *)(state->spritebuf2 + 0x1800 / 4);
-	UINT8 *TILES = memory_region(machine, "spritelut");	// Sprites LUT
+	uint16_t *spritelist = (uint16_t *)(state->spritebuf2 + 0x1800 / 4);
+	uint8_t *TILES = memory_region(machine, "spritelut");	// Sprites LUT
 	int TILES_LEN = memory_region_length(machine, "spritelut");
 
 	int width = machine->primary_screen->width();
@@ -283,7 +283,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	/* Look for "end of sprites" marker in the sprites list */
 	for (offs = 0/2 ; offs < (0x800 - 2)/2 ; offs += 2/2)	// skip last "sprite"
 	{
-		UINT16 sprite = spritelist[BYTE_XOR_BE(offs)];
+		uint16_t sprite = spritelist[BYTE_XOR_BE(offs)];
 		if (sprite == 0xffff)
 			break;
 	}
@@ -293,7 +293,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	//  fprintf(stderr, "\n");
 	for ( ; offs >= 0/2 ; offs -= 2/2)
 	{
-		UINT32 *source;
+		uint32_t *source;
 		int sprite;
 
 		int x, y, attr, code, flipx, flipy, nx, ny, zoomx, zoomy;
@@ -390,10 +390,10 @@ static void draw_sprites_bootleg( running_machine *machine, bitmap_t *bitmap, co
 	static const int pri[] = { 0, 0xfc, 0xff, 0xff };
 	int offs;
 
-//  UINT16 *spritelist  =   (UINT16 *)(machine->generic.spriteram.u32 + 0x1800/4);
-	UINT16 *spritelist = (UINT16 *)(state->spritebuf2 + 0x1800 / 4);
+//  uint16_t *spritelist  =   (uint16_t *)(machine->generic.spriteram.u32 + 0x1800/4);
+	uint16_t *spritelist = (uint16_t *)(state->spritebuf2 + 0x1800 / 4);
 
-	UINT8 *TILES = memory_region(machine, "spritelut");	// Sprites LUT
+	uint8_t *TILES = memory_region(machine, "spritelut");	// Sprites LUT
 	int TILES_LEN = memory_region_length(machine, "spritelut");
 
 	int width = machine->primary_screen->width();
@@ -406,7 +406,7 @@ static void draw_sprites_bootleg( running_machine *machine, bitmap_t *bitmap, co
 	/* Look for "end of sprites" marker in the sprites list */
 	for (offs = 0/2 ; offs < (0x800 - 2)/2 ; offs += 2/2)	// skip last "sprite"
 	{
-		UINT16 sprite = spritelist[BYTE_XOR_BE(offs)];
+		uint16_t sprite = spritelist[BYTE_XOR_BE(offs)];
 		if (sprite == 0xffff)
 			break;
 	}
@@ -416,7 +416,7 @@ static void draw_sprites_bootleg( running_machine *machine, bitmap_t *bitmap, co
 	//  fprintf(stderr, "\n");
 	for ( ; offs >= 0/2 ; offs -= 2/2)
 	{
-		UINT32 *source;
+		uint32_t *source;
 		int sprite;
 
 		int x, y, attr, code, flipx, flipy, nx, ny, zoomx, zoomy;
@@ -529,13 +529,13 @@ VIDEO_UPDATE( psikyo )
 	psikyo_state *state = (psikyo_state *)screen->machine->driver_data;
 	int i, layers_ctrl = -1;
 
-	UINT32 tm0size, tm1size;
+	uint32_t tm0size, tm1size;
 
-	UINT32 layer0_scrollx, layer0_scrolly;
-	UINT32 layer1_scrollx, layer1_scrolly;
-	UINT32 layer0_ctrl = state->vregs[0x412 / 4];
-	UINT32 layer1_ctrl = state->vregs[0x416 / 4];
-	UINT32 spr_ctrl = state->spritebuf2[0x1ffe / 4];
+	uint32_t layer0_scrollx, layer0_scrolly;
+	uint32_t layer1_scrollx, layer1_scrolly;
+	uint32_t layer0_ctrl = state->vregs[0x412 / 4];
+	uint32_t layer1_ctrl = state->vregs[0x416 / 4];
+	uint32_t spr_ctrl = state->spritebuf2[0x1ffe / 4];
 
 	tilemap_t *tmptilemap0, *tmptilemap1;
 
@@ -635,10 +635,10 @@ VIDEO_UPDATE( psikyo )
 		{
 			if (layer0_ctrl & 0x0200)
 				/* per-tile rowscroll */
-				x0 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x000/2 + i/16)];
+				x0 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x000/2 + i/16)];
 			else
 				/* per-line rowscroll */
-				x0 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x000/2 + i)];
+				x0 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x000/2 + i)];
 		}
 
 		tilemap_set_scrollx(
@@ -652,10 +652,10 @@ VIDEO_UPDATE( psikyo )
 		{
 			if (layer1_ctrl & 0x0200)
 				/* per-tile rowscroll */
-				x1 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x200/2 + i/16)];
+				x1 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x200/2 + i/16)];
 			else
 				/* per-line rowscroll */
-				x1 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x200/2 + i)];
+				x1 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x200/2 + i)];
 		}
 
 		tilemap_set_scrollx(
@@ -703,13 +703,13 @@ VIDEO_UPDATE( psikyo_bootleg )
 	psikyo_state *state = (psikyo_state *)screen->machine->driver_data;
 	int i, layers_ctrl = -1;
 
-	UINT32 tm0size, tm1size;
+	uint32_t tm0size, tm1size;
 
-	UINT32 layer0_scrollx, layer0_scrolly;
-	UINT32 layer1_scrollx, layer1_scrolly;
-	UINT32 layer0_ctrl = state->vregs[0x412 / 4];
-	UINT32 layer1_ctrl = state->vregs[0x416 / 4];
-	UINT32 spr_ctrl = state->spritebuf2[0x1ffe / 4];
+	uint32_t layer0_scrollx, layer0_scrolly;
+	uint32_t layer1_scrollx, layer1_scrolly;
+	uint32_t layer0_ctrl = state->vregs[0x412 / 4];
+	uint32_t layer1_ctrl = state->vregs[0x416 / 4];
+	uint32_t spr_ctrl = state->spritebuf2[0x1ffe / 4];
 
 	tilemap_t *tmptilemap0, *tmptilemap1;
 
@@ -809,10 +809,10 @@ VIDEO_UPDATE( psikyo_bootleg )
 		{
 			if (layer0_ctrl & 0x0200)
 				/* per-tile rowscroll */
-				x0 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x000/2 + i/16)];
+				x0 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x000/2 + i/16)];
 			else
 				/* per-line rowscroll */
-				x0 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x000/2 + i)];
+				x0 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x000/2 + i)];
 		}
 
 		tilemap_set_scrollx(
@@ -826,10 +826,10 @@ VIDEO_UPDATE( psikyo_bootleg )
 		{
 			if (layer1_ctrl & 0x0200)
 				/* per-tile rowscroll */
-				x1 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x200/2 + i/16)];
+				x1 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x200/2 + i/16)];
 			else
 				/* per-line rowscroll */
-				x1 = ((UINT16 *)state->vregs)[BYTE_XOR_BE(0x200/2 + i)];
+				x1 = ((uint16_t *)state->vregs)[BYTE_XOR_BE(0x200/2 + i)];
 		}
 
 		tilemap_set_scrollx(

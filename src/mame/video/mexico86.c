@@ -43,9 +43,9 @@ VIDEO_UPDATE( mexico86 )
 			continue;
 
 		/* skip empty sprites */
-		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
+		/* this is dword aligned so the uint32_t * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&state->objectram[offs]) == 0)
+		if (*(uint32_t *)(&state->objectram[offs]) == 0)
 			continue;
 
 		gfx_num = state->objectram[offs + 1];
@@ -113,7 +113,7 @@ VIDEO_UPDATE( kikikai )
 	sx = 0;
 	for (offs = 0; offs < state->objectram_size; offs += 4)
 	{
-		if (*(UINT32*)(state->objectram + offs) == 0)
+		if (*(uint32_t*)(state->objectram + offs) == 0)
 			continue;
 
 		ty = state->objectram[offs];

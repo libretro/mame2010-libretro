@@ -54,28 +54,28 @@ PALETTE_INIT( exedexes )
 	/* characters use colors 0xc0-0xcf */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | 0xc0;
+		uint8_t ctabentry = color_prom[i] | 0xc0;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* 32x32 tiles use colors 0-0x0f */
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = color_prom[i];
+		uint8_t ctabentry = color_prom[i];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* 16x16 tiles use colors 0x40-0x4f */
 	for (i = 0x200; i < 0x300; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | 0x40;
+		uint8_t ctabentry = color_prom[i] | 0x40;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites use colors 0x80-0xbf in four banks */
 	for (i = 0x300; i < 0x400; i++)
 	{
-		UINT8 ctabentry = color_prom[i] | (color_prom[i + 0x100] << 4) | 0x80;
+		uint8_t ctabentry = color_prom[i] | (color_prom[i + 0x100] << 4) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -132,7 +132,7 @@ WRITE8_HANDLER( exedexes_gfxctrl_w )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *tilerom = memory_region(machine, "gfx5");
+	uint8_t *tilerom = memory_region(machine, "gfx5");
 
 	int attr = tilerom[tile_index];
 	int code = attr & 0x3f;
@@ -187,7 +187,7 @@ VIDEO_START( exedexes )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
 	exedexes_state *state = (exedexes_state *)machine->driver_data;
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	if (!state->objon)

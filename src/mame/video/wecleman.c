@@ -23,7 +23,7 @@
 
 struct sprite
 {
-	UINT8 *pen_data;	/* points to top left corner of tile data */
+	uint8_t *pen_data;	/* points to top left corner of tile data */
 	int line_offset;
 
 	const pen_t *pal_data;
@@ -40,8 +40,8 @@ struct sprite
 extern int wecleman_selected_ip, wecleman_irqctrl;
 
 /* Variables that driver has acces to: */
-UINT16 *wecleman_videostatus;
-UINT16 *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
+uint16_t *wecleman_videostatus;
+uint16_t *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
 size_t wecleman_roadram_size;
 static int wecleman_bgpage[4], wecleman_fgpage[4];
 static const int *wecleman_gfx_bank;
@@ -53,7 +53,7 @@ static struct sprite *sprite_list;
 static struct sprite **spr_ptr_list;
 static int *spr_idx_list, *spr_pri_list, *t32x32pm;
 static int gameid, spr_offsx, spr_offsy, spr_count;
-static UINT16 *rgb_half;
+static uint16_t *rgb_half;
 
 static int cloud_blend, cloud_ds, cloud_visible;
 static pen_t black_pen;
@@ -97,10 +97,10 @@ static pen_t black_pen;
 static void get_sprite_info(running_machine *machine)
 {
 	const pen_t *base_pal = machine->pens;
-	UINT8 *base_gfx = memory_region(machine, "gfx1");
+	uint8_t *base_gfx = memory_region(machine, "gfx1");
 	int gfx_max     = memory_region_length(machine, "gfx1");
 
-	UINT16 *source = machine->generic.spriteram.u16;
+	uint16_t *source = machine->generic.spriteram.u16;
 
 	struct sprite *sprite = sprite_list;
 	struct sprite *finish = sprite_list + NUM_SPRITES;
@@ -274,12 +274,12 @@ static void do_blit_zoom32(bitmap_t *bitmap, const rectangle *cliprect, struct s
 
 	for (sy = y1; sy != y2; sy += dy)
 	{
-		UINT8 *row_base = sprite->pen_data + (src_f0y>>PRECISION_Y) * sprite->line_offset;
+		uint8_t *row_base = sprite->pen_data + (src_f0y>>PRECISION_Y) * sprite->line_offset;
 		src_fpx = src_f0x;
 
 		if (bitmap->format == BITMAP_FORMAT_RGB32)	// Wec Le Mans
 		{
-			UINT32 *dst_ptr = BITMAP_ADDR32(bitmap, sy, 0);
+			uint32_t *dst_ptr = BITMAP_ADDR32(bitmap, sy, 0);
 
 			if (!sprite->shadow_mode)
 			{
@@ -311,7 +311,7 @@ static void do_blit_zoom32(bitmap_t *bitmap, const rectangle *cliprect, struct s
 		}
 		else	// Hot Chase
 		{
-			UINT16 *dst_ptr = BITMAP_ADDR16(bitmap, sy, 0);
+			uint16_t *dst_ptr = BITMAP_ADDR16(bitmap, sy, 0);
 			pen_t base = sprite->pal_base;
 
 			if (!sprite->shadow_mode)
@@ -444,8 +444,8 @@ static TILE_GET_INFO( wecleman_get_txt_tile_info )
 
 WRITE16_HANDLER( wecleman_txtram_w )
 {
-	UINT16 old_data = wecleman_txtram[offset];
-	UINT16 new_data = COMBINE_DATA(&wecleman_txtram[offset]);
+	uint16_t old_data = wecleman_txtram[offset];
+	uint16_t new_data = COMBINE_DATA(&wecleman_txtram[offset]);
 
 	if ( old_data != new_data )
 	{
@@ -578,7 +578,7 @@ static void wecleman_draw_road(running_machine *machine, bitmap_t *bitmap, const
 	};
 
 
-	const UINT8 *src_ptr;
+	const uint8_t *src_ptr;
 	const pen_t *pal_ptr, *rgb_ptr;
 
 	int scrollx, sy, sx;
@@ -591,9 +591,9 @@ static void wecleman_draw_road(running_machine *machine, bitmap_t *bitmap, const
 		// draw sky; each scanline is assumed to be dword aligned
 		for (sy=cliprect->min_y-BMP_PAD; sy<DST_HEIGHT; sy++)
 		{
-			UINT32 *dst = BITMAP_ADDR32(bitmap, sy+BMP_PAD, BMP_PAD);
-			UINT32 pix;
-			UINT16 road;
+			uint32_t *dst = BITMAP_ADDR32(bitmap, sy+BMP_PAD, BMP_PAD);
+			uint32_t pix;
+			uint16_t road;
 
 			road = wecleman_roadram[sy];
 			if ((road>>8) != 0x02) continue;
@@ -617,9 +617,9 @@ static void wecleman_draw_road(running_machine *machine, bitmap_t *bitmap, const
 
 		for (sy=cliprect->min_y-BMP_PAD; sy<DST_HEIGHT; sy++)
 		{
-			UINT32 *dst = BITMAP_ADDR32(bitmap, sy+BMP_PAD, BMP_PAD);
-			UINT32 pix;
-			UINT16 road;
+			uint32_t *dst = BITMAP_ADDR32(bitmap, sy+BMP_PAD, BMP_PAD);
+			uint32_t pix;
+			uint16_t road;
 
 			road = wecleman_roadram[sy];
 			if ((road>>8) != 0x04) continue;
@@ -672,16 +672,16 @@ static void wecleman_draw_road(running_machine *machine, bitmap_t *bitmap, const
 // blends two 8x8x16bpp direct RGB tilemaps
 static void draw_cloud(bitmap_t *bitmap,
 				 const gfx_element *gfx,
-				 UINT16 *tm_base,
+				 uint16_t *tm_base,
 				 int x0, int y0,				// target coordinate
 				 int xcount, int ycount,		// number of tiles to draw in x and y
 				 int scrollx, int scrolly,		// tilemap scroll position
 				 int tmw_l2, int tmh_l2,		// tilemap width and height in log(2)
 				 int alpha, int pal_offset )	// alpha(0-3f), # of color codes to shift
 {
-	const UINT8 *src_ptr;
-	UINT16 *tmap_ptr;
-	UINT32 *dst_base, *dst_ptr;
+	const uint8_t *src_ptr;
+	uint16_t *tmap_ptr;
+	uint32_t *dst_base, *dst_ptr;
 	const pen_t *pal_base, *pal_ptr;
 
 	int tilew, tileh;
@@ -719,13 +719,13 @@ static void draw_cloud(bitmap_t *bitmap,
 
 		for (j = 0; j < xcount; j++)
 		{
-			UINT16 tiledata = tmap_ptr[tmscanx++ & tmmaskx];
+			uint16_t tiledata = tmap_ptr[tmscanx++ & tmmaskx];
 
 			// Wec Le Mans specific: decodes tile index in EBX
-			UINT16 tile_index = tiledata & 0xfff;
+			uint16_t tile_index = tiledata & 0xfff;
 
 			// Wec Le Mans specific: decodes tile color in EAX
-			UINT16 tile_color = ((tiledata >> 5) & 0x78) + (tiledata >> 12);
+			uint16_t tile_color = ((tiledata >> 5) & 0x78) + (tiledata >> 12);
 
 			src_ptr = gfx_element_get_data(gfx, tile_index);
 			pal_ptr = pal_base + tile_color * gfx->color_granularity;
@@ -738,9 +738,9 @@ static void draw_cloud(bitmap_t *bitmap,
 				{
 					for (tx = 0; tx < tilew; tx++)
 					{
-						UINT8 srcpix = *src_ptr++;
+						uint8_t srcpix = *src_ptr++;
 						pen_t srcrgb = pal_ptr[srcpix];
-						UINT32 dstrgb = dst_ptr[tx];
+						uint32_t dstrgb = dst_ptr[tx];
 						int sr, sg, sb, dr, dg, db;
 
 						sr = (srcrgb >> 3) & 0x1f;
@@ -908,11 +908,11 @@ VIDEO_START( wecleman )
 		8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15
 	};
 
-	UINT8 *buffer;
+	uint8_t *buffer;
 	int i, j;
 
 	assert(machine->primary_screen->format() == BITMAP_FORMAT_RGB32);
-	buffer = auto_alloc_array(machine, UINT8, 0x12c00);	// working buffer for sprite operations
+	buffer = auto_alloc_array(machine, uint8_t, 0x12c00);	// working buffer for sprite operations
 
 	gameid = 0;
 	wecleman_gfx_bank = bank;
@@ -923,7 +923,7 @@ VIDEO_START( wecleman )
 	cloud_visible = 0;
 	black_pen = get_black_pen(machine);
 
-	rgb_half     =          (UINT16*)(buffer + 0x00000);
+	rgb_half     =          (uint16_t*)(buffer + 0x00000);
 	t32x32pm     =             (int*)(buffer + 0x10020);
 	spr_ptr_list = (struct sprite **)(buffer + 0x12000);
 	spr_idx_list =            (int *)(buffer + 0x12400);
@@ -1010,9 +1010,9 @@ VIDEO_START( hotchase )
 		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 	};
 
-	UINT8 *buffer;
+	uint8_t *buffer;
 
-	buffer = auto_alloc_array(machine, UINT8, 0x400);	// reserve 1k for sprite list
+	buffer = auto_alloc_array(machine, uint8_t, 0x400);	// reserve 1k for sprite list
 
 	gameid = 1;
 	wecleman_gfx_bank = bank;

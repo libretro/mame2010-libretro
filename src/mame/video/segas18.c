@@ -124,13 +124,13 @@ static void draw_vdp(running_device *screen, bitmap_t *bitmap, const rectangle *
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *src = BITMAP_ADDR16(state->tmp_bitmap, y, 0);
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
-		UINT8 *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+		uint16_t *src = BITMAP_ADDR16(state->tmp_bitmap, y, 0);
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT16 pix = src[x];
+			uint16_t pix = src[x];
 			if (pix != 0xffff)
 			{
 				dst[x] = pix;

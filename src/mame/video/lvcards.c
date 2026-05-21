@@ -8,8 +8,8 @@
 
 #include "emu.h"
 
-UINT8 *lvcards_videoram;
-UINT8 *lvcards_colorram;
+uint8_t *lvcards_videoram;
+uint8_t *lvcards_colorram;
 static tilemap_t *bg_tilemap;
 
 PALETTE_INIT( ponttehk )

@@ -8,15 +8,15 @@ public:
 	fuuki16_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    vram_0;
-	UINT16 *    vram_1;
-	UINT16 *    vram_2;
-	UINT16 *    vram_3;
-	UINT16 *    vregs;
-	UINT16 *    priority;
-	UINT16 *    unknown;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    vram_0;
+	uint16_t *    vram_1;
+	uint16_t *    vram_2;
+	uint16_t *    vram_3;
+	uint16_t *    vregs;
+	uint16_t *    priority;
+	uint16_t *    unknown;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */

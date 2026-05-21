@@ -39,9 +39,9 @@ public:
 	int cdp1869_prd;
 	int cdp1869_pcb;
 
-	UINT8 *pageram;
-	UINT8 *pcbram;
-	UINT8 *charram;
+	uint8_t *pageram;
+	uint8_t *pcbram;
+	uint8_t *charram;
 
 	/* sound state */
 	int draco_sound;

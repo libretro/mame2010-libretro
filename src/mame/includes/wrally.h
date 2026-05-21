@@ -10,9 +10,9 @@ WRITE16_HANDLER( wrally_coin_lockout_w );
 
 extern tilemap_t *wrally_pant[2];
 
-extern UINT16 *wrally_vregs;
-extern UINT16 *wrally_videoram;
-extern UINT16 *wrally_spriteram;
+extern uint16_t *wrally_vregs;
+extern uint16_t *wrally_videoram;
+extern uint16_t *wrally_spriteram;
 
 VIDEO_START( wrally );
 VIDEO_UPDATE( wrally );

@@ -10,16 +10,16 @@ public:
 	tilemap_t *mhigh_tilemap;
 	tilemap_t *tx_tilemap;
 
-	UINT16 *bg_videoram;
-	UINT16 *mlow_videoram;
-	UINT16 *mhigh_videoram;
-	UINT16 *tx_videoram;
-	UINT16 *bg_scrollram;
-	UINT16 *mlow_scrollram;
-	UINT16 *mhigh_scrollram;
-	UINT16 *vidattrram;
+	uint16_t *bg_videoram;
+	uint16_t *mlow_videoram;
+	uint16_t *mhigh_videoram;
+	uint16_t *tx_videoram;
+	uint16_t *bg_scrollram;
+	uint16_t *mlow_scrollram;
+	uint16_t *mhigh_scrollram;
+	uint16_t *vidattrram;
 
-	UINT16 *spriteram;
+	uint16_t *spriteram;
 
 	int sprxoffs;
 };

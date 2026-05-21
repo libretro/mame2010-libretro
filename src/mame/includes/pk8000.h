@@ -13,9 +13,9 @@ WRITE8_HANDLER(pk8000_color_start_w);
 READ8_HANDLER(pk8000_color_r);
 WRITE8_HANDLER(pk8000_color_w);
 
-extern UINT8 pk8000_video_mode;
-extern UINT8 pk8000_video_enable;
+extern uint8_t pk8000_video_mode;
+extern uint8_t pk8000_video_enable;
 
 PALETTE_INIT( pk8000 );
 
-UINT32 pk8000_video_update(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *videomem);
+uint32_t pk8000_video_update(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *videomem);

@@ -18,8 +18,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	bigstrkb_state *state = (bigstrkb_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[2];
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = source + 0x800/2;
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = source + 0x800/2;
 
 	while( source<finish )
 	{

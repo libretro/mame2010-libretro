@@ -10,7 +10,7 @@
 static TILE_GET_INFO( get_pspikes_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg1videoram[tile_index];
+	uint16_t code = state->bg1videoram[tile_index];
 	int bank = (code & 0x1000) >> 12;
 	SET_TILE_INFO(
 			0,
@@ -22,7 +22,7 @@ static TILE_GET_INFO( get_pspikes_tile_info )
 static TILE_GET_INFO( karatblz_bg1_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg1videoram[tile_index];
+	uint16_t code = state->bg1videoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x1fff) + (state->gfxbank[0] << 13),
@@ -34,7 +34,7 @@ static TILE_GET_INFO( karatblz_bg1_tile_info )
 static TILE_GET_INFO( karatblz_bg2_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg2videoram[tile_index];
+	uint16_t code = state->bg2videoram[tile_index];
 	SET_TILE_INFO(
 			1,
 			(code & 0x1fff) + (state->gfxbank[1] << 13),
@@ -45,7 +45,7 @@ static TILE_GET_INFO( karatblz_bg2_tile_info )
 static TILE_GET_INFO( spinlbrk_bg1_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg1videoram[tile_index];
+	uint16_t code = state->bg1videoram[tile_index];
 	SET_TILE_INFO(
 			0,
 			(code & 0x0fff) + (state->gfxbank[0] << 12),
@@ -56,7 +56,7 @@ static TILE_GET_INFO( spinlbrk_bg1_tile_info )
 static TILE_GET_INFO( get_bg1_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg1videoram[tile_index];
+	uint16_t code = state->bg1videoram[tile_index];
 	int bank = (code & 0x1800) >> 11;
 	SET_TILE_INFO(
 			0,
@@ -68,7 +68,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 static TILE_GET_INFO( get_bg2_tile_info )
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
-	UINT16 code = state->bg2videoram[tile_index];
+	uint16_t code = state->bg2videoram[tile_index];
 	int bank = 4 + ((code & 0x1800) >> 11);
 	SET_TILE_INFO(
 			1,
@@ -139,7 +139,7 @@ VIDEO_START( spinlbrk )
 	/* sprite maps are hardcoded in this game */
 
 	/* enemy sprites use ROM instead of RAM */
-	state->spriteram2 = (UINT16 *)memory_region(machine, "gfx5");
+	state->spriteram2 = (uint16_t *)memory_region(machine, "gfx5");
 	state->spriteram2_size = 0x20000;
 
 	/* front sprites are direct maps */
@@ -697,7 +697,7 @@ static void spikes91_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 {
 	aerofgt_state *state = (aerofgt_state *)machine->driver_data;
 	int i;
-	UINT8 *lookup;
+	uint8_t *lookup;
 	lookup = memory_region(machine, "user1");
 	state->spritepalettebank = 1;
 
@@ -897,8 +897,8 @@ VIDEO_UPDATE( spikes91 )
 	{
 		for (x = 0; x < 64; x++)
 		{
-			UINT16 tileno = state->tx_tilemap_ram[count] & 0x1fff;
-			UINT16 colour = state->tx_tilemap_ram[count] & 0xe000;
+			uint16_t tileno = state->tx_tilemap_ram[count] & 0x1fff;
+			uint16_t colour = state->tx_tilemap_ram[count] & 0xe000;
 			drawgfx_transpen(bitmap,cliprect,gfx,
 					tileno,
 					colour>>13,

@@ -20,21 +20,21 @@
 
 /*----------- defined in drivers/speglsht.c -----------*/
 
-extern UINT32 *speglsht_framebuffer;
-extern UINT32  speglsht_videoreg;
+extern uint32_t *speglsht_framebuffer;
+extern uint32_t  speglsht_videoreg;
 
 
 /*----------- defined in drivers/st0016.c -----------*/
 
-extern UINT32 st0016_rom_bank;
+extern uint32_t st0016_rom_bank;
 WRITE8_HANDLER	(st0016_rom_bank_w);
 
 
 /*----------- defined in video/st0016.c -----------*/
 
-extern UINT8 *st0016_charram;
+extern uint8_t *st0016_charram;
 
-extern UINT8 *macs_ram1,*macs_ram2;
+extern uint8_t *macs_ram1,*macs_ram2;
 
 READ8_HANDLER(st0016_dma_r);
 WRITE8_HANDLER	(st0016_sprite_bank_w);
@@ -54,6 +54,6 @@ WRITE8_HANDLER	(st0016_vregs_w);
 VIDEO_START(st0016);
 VIDEO_UPDATE(st0016);
 
-extern UINT32 st0016_game;
+extern uint32_t st0016_game;
 
 void st0016_save_init(running_machine *machine);

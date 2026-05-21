@@ -36,26 +36,26 @@
 static cpu_device *cage_cpu;
 static attotime cage_cpu_h1_clock_period;
 
-static UINT8 cpu_to_cage_ready;
-static UINT8 cage_to_cpu_ready;
+static uint8_t cpu_to_cage_ready;
+static uint8_t cage_to_cpu_ready;
 
 static void (*cage_irqhandler)(running_machine *, int);
 
 static attotime serial_period_per_word;
 
-static UINT8 dma_enabled;
-static UINT8 dma_timer_enabled;
+static uint8_t dma_enabled;
+static uint8_t dma_timer_enabled;
 static timer_device *dma_timer;
 
-static UINT8 cage_timer_enabled[2];
+static uint8_t cage_timer_enabled[2];
 static timer_device *timer[2];
 
-static UINT32 *tms32031_io_regs;
+static uint32_t *tms32031_io_regs;
 
-static UINT16 cage_from_main;
-static UINT16 cage_control;
+static uint16_t cage_from_main;
+static uint16_t cage_control;
 
-static UINT32 *speedup_ram;
+static uint32_t *speedup_ram;
 
 static dmadac_sound_device *dmadac[DAC_BUFFER_CHANNELS];
 
@@ -245,8 +245,8 @@ static void update_dma_state(const address_space *space)
 	/* see if we turned on */
 	if (enabled && !dma_enabled)
 	{
-		INT16 sound_data[STACK_SOUND_BUFSIZE];
-		UINT32 addr, inc;
+		int16_t sound_data[STACK_SOUND_BUFSIZE];
+		uint32_t addr, inc;
 		int i;
 
 		/* make sure our assumptions are correct */
@@ -346,7 +346,7 @@ static void update_timer(int which)
 static void update_serial(running_machine *machine)
 {
 	attotime serial_clock_period, bit_clock_period;
-	UINT32 freq;
+	uint32_t freq;
 
 	/* we start out at half the H1 frequency (or 2x the H1 period) */
 	serial_clock_period = attotime_mul(cage_cpu_h1_clock_period, 2);
@@ -380,7 +380,7 @@ static void update_serial(running_machine *machine)
 
 static READ32_HANDLER( tms32031_io_r )
 {
-	UINT16 result = tms32031_io_regs[offset];
+	uint16_t result = tms32031_io_regs[offset];
 
 	switch (offset)
 	{
@@ -517,7 +517,7 @@ static READ32_HANDLER( cage_io_status_r )
 }
 
 
-UINT16 main_from_cage_r(const address_space *space)
+uint16_t main_from_cage_r(const address_space *space)
 {
 	if (LOG_COMM)
 		logerror("%s:main read data = %04X\n", cpuexec_describe_context(space->machine), soundlatch_word_r(space, 0, 0));
@@ -536,7 +536,7 @@ static TIMER_CALLBACK( deferred_cage_w )
 }
 
 
-void main_to_cage_w(UINT16 data)
+void main_to_cage_w(uint16_t data)
 {
 	running_machine *machine = cage_cpu->machine;
 	if (LOG_COMM)
@@ -545,9 +545,9 @@ void main_to_cage_w(UINT16 data)
 }
 
 
-UINT16 cage_control_r(void)
+uint16_t cage_control_r(void)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 
 	if (cpu_to_cage_ready)
 		result |= 2;
@@ -558,7 +558,7 @@ UINT16 cage_control_r(void)
 }
 
 
-void cage_control_w(running_machine *machine, UINT16 data)
+void cage_control_w(running_machine *machine, uint16_t data)
 {
 	cage_control = data;
 

@@ -12,7 +12,7 @@
 
 #define xxxx 0x00
 
-static const UINT8 ga2_v25_opcode_table[256] = {
+static const uint8_t ga2_v25_opcode_table[256] = {
      xxxx,xxxx,0xEA,xxxx,xxxx,0x8B,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,
      xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,0xFA,
      xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,xxxx,0x49,xxxx,xxxx,xxxx,
@@ -37,9 +37,9 @@ static void nec_v25_cpu_decrypt(running_machine *machine)
 {
 	int i;
 	const address_space *space = cputag_get_address_space(machine, "mcu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "mcu");
-	UINT8* decrypted = auto_alloc_array(machine, UINT8, 0x100000);
-	UINT8* temp = auto_alloc_array(machine, UINT8, 0x100000);
+	uint8_t *rom = memory_region(machine, "mcu");
+	uint8_t* decrypted = auto_alloc_array(machine, uint8_t, 0x100000);
+	uint8_t* temp = auto_alloc_array(machine, uint8_t, 0x100000);
 
 	// set CPU3 opcode base
 	memory_set_decrypted_region(space, 0x00000, 0xfffff, decrypted);
@@ -84,7 +84,7 @@ READ16_HANDLER( ga2_dpram_r )
 #if 0 // simulation
 READ16_HANDLER(ga2_sprite_protection_r)
 {
-	static const UINT16 prot[16] =
+	static const uint16_t prot[16] =
 	{
 		0x0a, 0,
 		0xc5, 0,
@@ -123,7 +123,7 @@ READ16_HANDLER(ga2_wakeup_protection_r)
 
 WRITE16_HANDLER(sonic_level_load_protection)
 {
-	UINT16 level;
+	uint16_t level;
 //Perform write
 	system32_workram[CLEARED_LEVELS / 2] = (data & mem_mask) | (system32_workram[CLEARED_LEVELS / 2] & ~mem_mask);
 
@@ -134,7 +134,7 @@ WRITE16_HANDLER(sonic_level_load_protection)
 		}
 		else
 		{
-			const UINT8 *ROM = memory_region(space->machine, "maincpu");
+			const uint8_t *ROM = memory_region(space->machine, "maincpu");
 			level =  *((ROM + LEVEL_ORDER_ARRAY) + (system32_workram[CLEARED_LEVELS / 2] * 2) - 1);
 			level |= *((ROM + LEVEL_ORDER_ARRAY) + (system32_workram[CLEARED_LEVELS / 2] * 2) - 2) << 8;
 		}
@@ -184,7 +184,7 @@ WRITE16_HANDLER(brival_protection_w)
 	};
 	char ret[32];
 	int curProtType;
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	switch (offset)
 	{
@@ -364,7 +364,7 @@ WRITE16_HANDLER( jleague_protection_w )
     99.99% of the dsp code is unused because the V60 ROM is hardcoded as part of a twin set,
     maybe the standalone board was for dev only? nop the 3 bytes at 0x06023A for standalone. (centred intro text)
 */
-static UINT16 arescue_dsp_io[6] = {0,0,0,0,0,0};
+static uint16_t arescue_dsp_io[6] = {0,0,0,0,0,0};
 
 READ16_HANDLER( arescue_dsp_r )
 {

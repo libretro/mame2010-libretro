@@ -14,21 +14,21 @@ public:
 	atarigx2_state(running_machine &machine) { }
 
 	atarigen_state	atarigen;
-	UINT16			playfield_base;
-	UINT16			motion_object_base;
-	UINT16			motion_object_mask;
+	uint16_t			playfield_base;
+	uint16_t			motion_object_base;
+	uint16_t			motion_object_mask;
 
-	UINT32 *		mo_command;
-	UINT32 *		protection_base;
+	uint32_t *		mo_command;
+	uint32_t *		protection_base;
 
-	UINT16			current_control;
-	UINT8			playfield_tile_bank;
-	UINT8			playfield_color_bank;
-	UINT16			playfield_xscroll;
-	UINT16			playfield_yscroll;
+	uint16_t			current_control;
+	uint8_t			playfield_tile_bank;
+	uint8_t			playfield_color_bank;
+	uint16_t			playfield_xscroll;
+	uint16_t			playfield_yscroll;
 
-	UINT16			last_write;
-	UINT16			last_write_offset;
+	uint16_t			last_write;
+	uint16_t			last_write_offset;
 };
 
 

@@ -25,9 +25,9 @@
  *************************************/
 
 /* tone variables */
-static UINT32 tone_step;
-static UINT32 tone_fraction;
-static UINT8 tone_volume;
+static uint32_t tone_step;
+static uint32_t tone_fraction;
+static uint8_t tone_volume;
 
 /* sound streaming variables */
 static sound_stream *gridlee_stream;
@@ -90,7 +90,7 @@ DEVICE_GET_INFO( gridlee_sound )
 
 WRITE8_HANDLER( gridlee_sound_w )
 {
-	static UINT8 sound_data[24];
+	static uint8_t sound_data[24];
 	running_device *samples = space->machine->device("samples");
 
 	stream_update(gridlee_stream);

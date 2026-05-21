@@ -7,11 +7,11 @@ public:
 
 	int gameid;
 
-	UINT8 *videoram;
-	UINT8 *colorram;
-	UINT8 *bg_scrollx;
-	UINT8 *bg_scrolly;
-	UINT8 *tilerom;
+	uint8_t *videoram;
+	uint8_t *colorram;
+	uint8_t *bg_scrollx;
+	uint8_t *bg_scrolly;
+	uint8_t *tilerom;
 	tilemap_t *bg_tilemap;
 	tilemap_t *fg_tilemap;
 
@@ -21,10 +21,10 @@ public:
 	int charon;
 	int flipon;
 
-	UINT32 hflop_74a_n;
-	UINT32 hcount_191;
-	UINT32 vcount_191;
-	UINT32 latch_374;
+	uint32_t hflop_74a_n;
+	uint32_t hcount_191;
+	uint32_t vcount_191;
+	uint32_t latch_374;
 };
 
 /*----------- defined in video/sidearms.c -----------*/

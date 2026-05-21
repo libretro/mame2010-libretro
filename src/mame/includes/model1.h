@@ -27,8 +27,8 @@ void model1_tgp_reset(running_machine *machine, int swa);
 
 /*----------- defined in video/model1.c -----------*/
 
-extern UINT16 *model1_display_list0, *model1_display_list1;
-extern UINT16 *model1_color_xlat;
+extern uint16_t *model1_display_list0, *model1_display_list1;
+extern uint16_t *model1_color_xlat;
 
 VIDEO_START(model1);
 VIDEO_UPDATE(model1);

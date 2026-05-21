@@ -16,13 +16,13 @@ public:
 	cosmic_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
-	UINT8 *        spriteram;
+	uint8_t *        videoram;
+	uint8_t *        spriteram;
 	size_t         videoram_size;
 	size_t         spriteram_size;
 
 	/* video-related */
-	pen_t          (*map_color)(running_machine *machine, UINT8 x, UINT8 y);
+	pen_t          (*map_color)(running_machine *machine, uint8_t x, uint8_t y);
 	int            color_registers[3];
 	int            background_enable;
 	int            magspot_pen_mask;
@@ -32,7 +32,7 @@ public:
 	int            march_select, gun_die_select, dive_bomb_b_select;
 
 	/* misc */
-	UINT32         pixel_clock;
+	uint32_t         pixel_clock;
 
 	/* devices */
 	running_device *samples;

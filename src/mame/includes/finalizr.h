@@ -12,13 +12,13 @@ public:
 	finalizr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *       videoram;
-	UINT8 *       colorram;
-	UINT8 *       videoram2;
-	UINT8 *       colorram2;
-	UINT8 *       scroll;
-	UINT8 *       spriteram;
-	UINT8 *       spriteram_2;
+	uint8_t *       videoram;
+	uint8_t *       colorram;
+	uint8_t *       videoram2;
+	uint8_t *       colorram2;
+	uint8_t *       scroll;
+	uint8_t *       spriteram;
+	uint8_t *       spriteram_2;
 	size_t        videoram_size;
 	size_t        spriteram_size;
 
@@ -28,7 +28,7 @@ public:
 
 	/* misc */
 	int           T1_line;
-	UINT8         nmi_enable, irq_enable;
+	uint8_t         nmi_enable, irq_enable;
 
 	/* devices */
 	running_device *audio_cpu;

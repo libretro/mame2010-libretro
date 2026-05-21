@@ -53,7 +53,7 @@ WRITE8_HANDLER( himesiki_flip_w )
 static void himesiki_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	himesiki_state *state = (himesiki_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0x100; offs < 0x160; offs += 4)

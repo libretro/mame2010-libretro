@@ -9,18 +9,18 @@
 #include "emu.h"
 
 
-UINT8 *thepit_videoram;
-UINT8 *thepit_colorram;
-UINT8 *thepit_attributesram;
-UINT8 *thepit_spriteram;
+uint8_t *thepit_videoram;
+uint8_t *thepit_colorram;
+uint8_t *thepit_attributesram;
+uint8_t *thepit_spriteram;
 size_t thepit_spriteram_size;
 
-static UINT8 graphics_bank;
-static UINT8 thepit_flip_screen_x;
-static UINT8 thepit_flip_screen_y;
+static uint8_t graphics_bank;
+static uint8_t thepit_flip_screen_x;
+static uint8_t thepit_flip_screen_y;
 static tilemap_t *thepit_solid_tilemap;
 static tilemap_t *thepit_tilemap;
-static UINT8 *dummy_tile;
+static uint8_t *dummy_tile;
 
 
 static const rectangle spritevisiblearea =
@@ -99,9 +99,9 @@ PALETTE_INIT( suprmous )
 
 	for (i = 0; i < 32; i++)
 	{
-		UINT8 b = BITSWAP8(color_prom[i + 0x00], 0, 1, 2, 3, 4, 5, 6, 7);
-		UINT8 g = BITSWAP8(color_prom[i + 0x20], 0, 1, 2, 3, 4, 5, 6, 7);
-		UINT8 r = (b>>5&7)<<2 | (g>>6&3);
+		uint8_t b = BITSWAP8(color_prom[i + 0x00], 0, 1, 2, 3, 4, 5, 6, 7);
+		uint8_t g = BITSWAP8(color_prom[i + 0x20], 0, 1, 2, 3, 4, 5, 6, 7);
+		uint8_t r = (b>>5&7)<<2 | (g>>6&3);
 
 		palette_set_color_rgb(machine, i, pal5bit(r), pal5bit(g), pal4bit(b));
 	}
@@ -122,7 +122,7 @@ PALETTE_INIT( suprmous )
 
 static TILE_GET_INFO( solid_get_tile_info )
 {
-	UINT8 back_color = (thepit_colorram[tile_index] & 0x70) >> 4;
+	uint8_t back_color = (thepit_colorram[tile_index] & 0x70) >> 4;
 	int priority = (back_color != 0) && ((thepit_colorram[tile_index] & 0x80) == 0);
 	tileinfo->pen_data = dummy_tile;
 	tileinfo->palette_base = back_color + 32;
@@ -132,8 +132,8 @@ static TILE_GET_INFO( solid_get_tile_info )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 fore_color = thepit_colorram[tile_index] % machine->gfx[0]->total_colors;
-	UINT8 code = thepit_videoram[tile_index];
+	uint8_t fore_color = thepit_colorram[tile_index] % machine->gfx[0]->total_colors;
+	uint8_t code = thepit_videoram[tile_index];
 	SET_TILE_INFO(2 * graphics_bank, code, fore_color, 0);
 }
 
@@ -155,7 +155,7 @@ VIDEO_START( thepit )
 	tilemap_set_scroll_cols(thepit_solid_tilemap, 32);
 	tilemap_set_scroll_cols(thepit_tilemap, 32);
 
-	dummy_tile = auto_alloc_array_clear(machine, UINT8, 8*8);
+	dummy_tile = auto_alloc_array_clear(machine, uint8_t, 8*8);
 
 	graphics_bank = 0;	/* only used in intrepid */
 }
@@ -259,7 +259,7 @@ static void draw_sprites(running_machine *machine,
 	{
 		if (((thepit_spriteram[offs + 2] & 0x08) >> 3) == priority_to_draw)
 		{
-			UINT8 y, x, flipx, flipy;
+			uint8_t y, x, flipx, flipy;
 
 			if ((thepit_spriteram[offs + 0] == 0) || (thepit_spriteram[offs + 3] == 0))
 			{

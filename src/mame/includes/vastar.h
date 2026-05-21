@@ -5,22 +5,22 @@ public:
 
 	vastar_state(running_machine &machine) { }
 
-	UINT8 *spriteram1;
-	UINT8 *spriteram2;
-	UINT8 *spriteram3;
+	uint8_t *spriteram1;
+	uint8_t *spriteram2;
+	uint8_t *spriteram3;
 
-	UINT8 *bg1videoram;
-	UINT8 *bg2videoram;
-	UINT8 *fgvideoram;
-	UINT8 *bg1_scroll;
-	UINT8 *bg2_scroll;
-	UINT8 *sprite_priority;
+	uint8_t *bg1videoram;
+	uint8_t *bg2videoram;
+	uint8_t *fgvideoram;
+	uint8_t *bg1_scroll;
+	uint8_t *bg2_scroll;
+	uint8_t *sprite_priority;
 
 	tilemap_t *fg_tilemap;
 	tilemap_t *bg1_tilemap;
 	tilemap_t *bg2_tilemap;
 
-	UINT8 *sharedram;
+	uint8_t *sharedram;
 };
 
 

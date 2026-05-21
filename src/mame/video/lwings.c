@@ -63,7 +63,7 @@ static TILE_GET_INFO( get_bg2_tile_info )
 {
 	lwings_state *state = (lwings_state *)machine->driver_data;
 	int code, color;
-	UINT8 *rom = memory_region(machine, "gfx5");
+	uint8_t *rom = memory_region(machine, "gfx5");
 	int mask = memory_region_length(machine, "gfx5") - 1;
 
 	tile_index = (tile_index + state->bg2_image * 0x20) & mask;
@@ -174,7 +174,7 @@ WRITE8_HANDLER( trojan_bg2_image_w )
 
 ***************************************************************************/
 
-INLINE int is_sprite_on( UINT8 *buffered_spriteram, int offs )
+INLINE int is_sprite_on( uint8_t *buffered_spriteram, int offs )
 {
 	int sx, sy;
 
@@ -186,7 +186,7 @@ INLINE int is_sprite_on( UINT8 *buffered_spriteram, int offs )
 
 static void lwings_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4; offs >= 0; offs -= 4)
@@ -223,7 +223,7 @@ static void lwings_draw_sprites( running_machine *machine, bitmap_t *bitmap, con
 static void trojan_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	lwings_state *state = (lwings_state *)machine->driver_data;
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4; offs >= 0; offs -= 4)

@@ -7,18 +7,18 @@ public:
 	paradise_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  vram_0;
-	UINT8 *  vram_1;
-	UINT8 *  vram_2;
-	UINT8 *  videoram;
-	UINT8 *  paletteram;
-	UINT8 *  spriteram;
+	uint8_t *  vram_0;
+	uint8_t *  vram_1;
+	uint8_t *  vram_2;
+	uint8_t *  videoram;
+	uint8_t *  paletteram;
+	uint8_t *  spriteram;
 	size_t   spriteram_size;
 
 	/* video-related */
 	tilemap_t *tilemap_0, *tilemap_1, *tilemap_2;
 	bitmap_t *tmpbitmap;
-	UINT8 palbank, priority;
+	uint8_t palbank, priority;
 	int sprite_inc;
 };
 

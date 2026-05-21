@@ -27,9 +27,9 @@ static int screen_height;
 static int screen_width;
 
 static bitmap_t *nbmj8900_tmpbitmap0, *nbmj8900_tmpbitmap1;
-static UINT8 *nbmj8900_videoram0, *nbmj8900_videoram1;
-static UINT8 *nbmj8900_palette;
-static UINT8 *nbmj8900_clut;
+static uint8_t *nbmj8900_videoram0, *nbmj8900_videoram1;
+static uint8_t *nbmj8900_palette;
+static uint8_t *nbmj8900_clut;
 
 
 static void nbmj8900_vramflip(running_machine *machine, int vram);
@@ -212,13 +212,13 @@ void nbmj8900_vramflip(running_machine *machine, int vram)
 
 static void update_pixel0(running_machine *machine, int x, int y)
 {
-	UINT8 color = nbmj8900_videoram0[(y * screen_width) + x];
+	uint8_t color = nbmj8900_videoram0[(y * screen_width) + x];
 	*BITMAP_ADDR16(nbmj8900_tmpbitmap0, y, x) = machine->pens[color];
 }
 
 static void update_pixel1(running_machine *machine, int x, int y)
 {
-	UINT8 color = nbmj8900_videoram1[(y * screen_width) + x];
+	uint8_t color = nbmj8900_videoram1[(y * screen_width) + x];
 	*BITMAP_ADDR16(nbmj8900_tmpbitmap1, y, x) = machine->pens[color];
 }
 
@@ -389,12 +389,12 @@ VIDEO_START( nbmj8900_2layer )
 
 	nbmj8900_tmpbitmap0 = machine->primary_screen->alloc_compatible_bitmap();
 	nbmj8900_tmpbitmap1 = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj8900_videoram0 = auto_alloc_array(machine, UINT8, screen_width * screen_height);
-	nbmj8900_videoram1 = auto_alloc_array(machine, UINT8, screen_width * screen_height);
-	nbmj8900_palette = auto_alloc_array(machine, UINT8, 0x200);
-	nbmj8900_clut = auto_alloc_array(machine, UINT8, 0x800);
-	memset(nbmj8900_videoram0, 0xff, (screen_width * screen_height * sizeof(UINT8)));
-	memset(nbmj8900_videoram1, 0xff, (screen_width * screen_height * sizeof(UINT8)));
+	nbmj8900_videoram0 = auto_alloc_array(machine, uint8_t, screen_width * screen_height);
+	nbmj8900_videoram1 = auto_alloc_array(machine, uint8_t, screen_width * screen_height);
+	nbmj8900_palette = auto_alloc_array(machine, uint8_t, 0x200);
+	nbmj8900_clut = auto_alloc_array(machine, uint8_t, 0x800);
+	memset(nbmj8900_videoram0, 0xff, (screen_width * screen_height * sizeof(uint8_t)));
+	memset(nbmj8900_videoram1, 0xff, (screen_width * screen_height * sizeof(uint8_t)));
 //  machine->pens[0x07f] = 0xff;    /* palette_transparent_pen */
 	gfxdraw_mode = 1;
 }

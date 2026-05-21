@@ -12,15 +12,15 @@ public:
 	sf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    objectram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    videoram;
+	uint16_t *    objectram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      videoram_size;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap, *fg_tilemap, *tx_tilemap;
 	int         sf_active;
-	UINT16      bgscroll, fgscroll;
+	uint16_t      bgscroll, fgscroll;
 
 	/* devices */
 	running_device *maincpu;

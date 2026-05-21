@@ -32,13 +32,13 @@ PALETTE_INIT( finalizr )
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0x10;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0x10;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -101,7 +101,7 @@ VIDEO_UPDATE( finalizr )
 		const gfx_element *gfx1 = screen->machine->gfx[1];
 		const gfx_element *gfx2 = screen->machine->gfx[2];
 
-		UINT8 *sr = state->spriterambank ? state->spriteram_2 : state->spriteram;
+		uint8_t *sr = state->spriterambank ? state->spriteram_2 : state->spriteram;
 
 
 		for (offs = 0; offs <= state->spriteram_size - 5; offs += 5)

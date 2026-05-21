@@ -12,12 +12,12 @@ this could get messy if games change their own code after initial loading as we'
 
 #define S16_NUMCACHE 8
 
-static UINT8 *s24_fd1094_key; // the memory region containing key
-static UINT16 *s24_fd1094_cpuregion; // the CPU region with encrypted code
-static UINT32  s24_fd1094_cpuregionsize; // the size of this region in bytes
+static uint8_t *s24_fd1094_key; // the memory region containing key
+static uint16_t *s24_fd1094_cpuregion; // the CPU region with encrypted code
+static uint32_t  s24_fd1094_cpuregionsize; // the size of this region in bytes
 
-static UINT16* s24_fd1094_userregion; // a user region where the current decrypted state is put and executed from
-static UINT16* s24_fd1094_cacheregion[S16_NUMCACHE]; // a cache region where S16_NUMCACHE states are stored to improve performance
+static uint16_t* s24_fd1094_userregion; // a user region where the current decrypted state is put and executed from
+static uint16_t* s24_fd1094_cacheregion[S16_NUMCACHE]; // a cache region where S16_NUMCACHE states are stored to improve performance
 static int fd1094_cached_states[S16_NUMCACHE]; // array of cached state numbers
 static int fd1094_current_cacheposition; // current position in cache array
 
@@ -31,7 +31,7 @@ static int fd1094_selected_state;
 static void s24_fd1094_setstate_and_decrypt(running_machine *machine, int state)
 {
 	int i;
-	UINT32 addr;
+	uint32_t addr;
 
 	switch (state & 0x300)
 	{
@@ -69,7 +69,7 @@ static void s24_fd1094_setstate_and_decrypt(running_machine *machine, int state)
 
 	for (addr = 0; addr < s24_fd1094_cpuregionsize / 2; addr++)
 	{
-		UINT16 dat;
+		uint16_t dat;
 		dat = fd1094_decode(addr, s24_fd1094_cpuregion[addr], s24_fd1094_key, 0);
 		s24_fd1094_cacheregion[fd1094_current_cacheposition][addr] = dat;
 	}
@@ -89,7 +89,7 @@ static void s24_fd1094_setstate_and_decrypt(running_machine *machine, int state)
 }
 
 /* Callback for CMP.L instructions (state change) */
-static void s24_fd1094_cmp_callback(running_device *device, UINT32 val, UINT8 reg)
+static void s24_fd1094_cmp_callback(running_device *device, uint32_t val, uint8_t reg)
 {
 	if (reg == 0 && (val & 0x0000ffff) == 0x0000ffff) // ?
 	{
@@ -156,7 +156,7 @@ void s24_fd1094_driver_init(running_machine *machine)
 {
 	int i;
 
-	s24_fd1094_cpuregion = (UINT16*)s24_mainram1;
+	s24_fd1094_cpuregion = (uint16_t*)s24_mainram1;
 	s24_fd1094_cpuregionsize = 0x40000;
 	s24_fd1094_key = memory_region(machine, "fd1094key");
 
@@ -166,7 +166,7 @@ void s24_fd1094_driver_init(running_machine *machine)
 
 	for (i=0;i<S16_NUMCACHE;i++)
 	{
-		s24_fd1094_cacheregion[i]=auto_alloc_array(machine, UINT16, s24_fd1094_cpuregionsize/2);
+		s24_fd1094_cacheregion[i]=auto_alloc_array(machine, uint16_t, s24_fd1094_cpuregionsize/2);
 	}
 
 	/* flush the cached state array */

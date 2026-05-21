@@ -11,10 +11,10 @@
 #include "emu.h"
 
 //extern int mlc_raster_table[9][256];
-//extern UINT32 mlc_clipper[32];
+//extern uint32_t mlc_clipper[32];
 //static bitmap_t *temp_bitmap;
-static UINT32 colour_mask, *mlc_buffered_spriteram;
-UINT32 *mlc_vram, *mlc_clip_ram;
+static uint32_t colour_mask, *mlc_buffered_spriteram;
+uint32_t *mlc_vram, *mlc_clip_ram;
 
 /******************************************************************************/
 
@@ -28,7 +28,7 @@ VIDEO_START( mlc )
 		colour_mask=0x1f;
 
 //  temp_bitmap = auto_bitmap_alloc( machine, 512, 512, BITMAP_FORMAT_RGB32 );
-	mlc_buffered_spriteram = auto_alloc_array(machine, UINT32, 0x3000/4);
+	mlc_buffered_spriteram = auto_alloc_array(machine, uint32_t, 0x3000/4);
 }
 
 #ifdef UNUSED_FUNCTION
@@ -37,9 +37,9 @@ static void blitRaster(running_machine *machine, bitmap_t *bitmap, int rasterMod
 	int x,y;
 	for (y=0; y<256; y++) //todo
 	{
-		UINT32* src=BITMAP_ADDR32(temp_bitmap, y&0x1ff, 0);
-		UINT32* dst=BITMAP_ADDR32(bitmap, y, 0);
-		UINT32 xptr=(mlc_raster_table[0][y]<<13);
+		uint32_t* src=BITMAP_ADDR32(temp_bitmap, y&0x1ff, 0);
+		uint32_t* dst=BITMAP_ADDR32(bitmap, y, 0);
+		uint32_t xptr=(mlc_raster_table[0][y]<<13);
 
 		if (input_code_pressed(machine, KEYCODE_X))
 			xptr=0;
@@ -62,7 +62,7 @@ static void blitRaster(running_machine *machine, bitmap_t *bitmap, int rasterMod
 
 static void mlc_drawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code1,UINT32 code2, UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code1,uint32_t code2, uint32_t color,int flipx,int flipy,int sx,int sy,
 		int transparent_color,int use8bpp,
 		int scalex, int scaley,int alpha)
 {
@@ -97,8 +97,8 @@ static void mlc_drawgfxzoom(
 		if( gfx )
 		{
 			const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-			const UINT8 *code_base1 = gfx_element_get_data(gfx, code1 % gfx->total_elements);
-			const UINT8 *code_base2 = gfx_element_get_data(gfx, code2 % gfx->total_elements);
+			const uint8_t *code_base1 = gfx_element_get_data(gfx, code1 % gfx->total_elements);
+			const uint8_t *code_base2 = gfx_element_get_data(gfx, code2 % gfx->total_elements);
 
 			int sprite_screen_height = (scaley*gfx->height+(sy&0xffff))>>16;
 			int sprite_screen_width = (scalex*gfx->width+(sx&0xffff))>>16;
@@ -175,9 +175,9 @@ static void mlc_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source1 = code_base1 + (y_index>>16) * gfx->line_modulo;
-								const UINT8 *source2 = code_base2 + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source1 = code_base1 + (y_index>>16) * gfx->line_modulo;
+								const uint8_t *source2 = code_base2 + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 
@@ -203,8 +203,8 @@ static void mlc_drawgfxzoom(
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base1 + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = code_base1 + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -226,11 +226,11 @@ static void mlc_drawgfxzoom(
 
 static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT32 *index_ptr=0;
+	uint32_t *index_ptr=0;
 	int offs,fx=0,fy=0,x,y,color,colorOffset,sprite,indx,h,w,bx,by,fx1,fy1;
 	int xoffs,yoffs;
-	UINT8 *rom = memory_region(machine, "gfx2") + 0x20000, *index_ptr8;
-	UINT8 *rawrom = memory_region(machine, "gfx2");
+	uint8_t *rom = memory_region(machine, "gfx2") + 0x20000, *index_ptr8;
+	uint8_t *rawrom = memory_region(machine, "gfx2");
 	int blockIsTilemapIndex=0;
 	int sprite2=0,indx2=0,use8bppMode=0;
 	int yscale,xscale;
@@ -244,7 +244,7 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectan
 //  int rasterDirty=0;
 	int clipper=0;
 	rectangle user_clip;
-	UINT32* mlc_spriteram=mlc_buffered_spriteram; // spriteram32
+	uint32_t* mlc_spriteram=mlc_buffered_spriteram; // spriteram32
 
 	for (offs = (0x3000/4)-8; offs>=0; offs-=8)
 	{
@@ -349,7 +349,7 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectan
 			sprite |= (index_ptr8[4]&3)<<16;
 
 			if (use8bppMode) {
-				UINT8* index_ptr28=rom + indx2*8;
+				uint8_t* index_ptr28=rom + indx2*8;
 				sprite2=(index_ptr28[7]<<8)|index_ptr28[6];
 			}
 			//unused byte 5
@@ -378,7 +378,7 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectan
 			if (!w) w=16;
 
 			if (use8bppMode) {
-				UINT32* index_ptr2=mlc_vram + ((indx2*4)&0x7fff);
+				uint32_t* index_ptr2=mlc_vram + ((indx2*4)&0x7fff);
 				sprite2=((index_ptr2[2]&0x3)<<16) | (index_ptr2[3]&0xffff);
 			}
 
@@ -431,11 +431,11 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectan
 				if (blockIsTilemapIndex) {
 					if (useIndicesInRom)
 					{
-						const UINT8* ptr=rawrom+(sprite*2);
+						const uint8_t* ptr=rawrom+(sprite*2);
 						tile=(*ptr) + ((*(ptr+1))<<8);
 
 						if (use8bppMode) {
-							const UINT8* ptr2=rawrom+(sprite2*2);
+							const uint8_t* ptr2=rawrom+(sprite2*2);
 							tile2=(*ptr2) + ((*(ptr2+1))<<8);
 						}
 						else
@@ -458,7 +458,7 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap,const rectan
 					}
 					else
 					{
-						const UINT32* ptr=mlc_vram + ((sprite)&0x7fff);
+						const uint32_t* ptr=mlc_vram + ((sprite)&0x7fff);
 						tile=(*ptr)&0xffff;
 
 						if (tileFormat)

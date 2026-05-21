@@ -40,8 +40,8 @@
  *
  *************************************/
 
-static UINT8 ay8910_latch_1;
-static UINT8 ay8910_latch_2;
+static uint8_t ay8910_latch_1;
+static uint8_t ay8910_latch_2;
 
 
 

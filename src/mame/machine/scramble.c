@@ -12,9 +12,9 @@
 #include "machine/8255ppi.h"
 #include "includes/galaxold.h"
 
-static UINT8 cavelon_bank;
+static uint8_t cavelon_bank;
 
-static UINT8 security_2B_counter;
+static uint8_t security_2B_counter;
 
 MACHINE_RESET( scramble )
 {
@@ -28,7 +28,7 @@ MACHINE_RESET( scramble )
 
 MACHINE_RESET( explorer )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	RAM[0x47ff] = 0; /* If not set, it doesn't reset after the 1st time */
 
 	MACHINE_RESET_CALL(galaxold);
@@ -37,7 +37,7 @@ MACHINE_RESET( explorer )
 
 CUSTOM_INPUT( darkplnt_custom_r )
 {
-	static const UINT8 remap[] = {0x03, 0x02, 0x00, 0x01, 0x21, 0x20, 0x22, 0x23,
+	static const uint8_t remap[] = {0x03, 0x02, 0x00, 0x01, 0x21, 0x20, 0x22, 0x23,
 							  0x33, 0x32, 0x30, 0x31, 0x11, 0x10, 0x12, 0x13,
 							  0x17, 0x16, 0x14, 0x15, 0x35, 0x34, 0x36, 0x37,
 							  0x3f, 0x3e, 0x3c, 0x3d, 0x1d, 0x1c, 0x1e, 0x1f,
@@ -45,13 +45,13 @@ CUSTOM_INPUT( darkplnt_custom_r )
 							  0x2b, 0x2a, 0x28, 0x29, 0x09, 0x08, 0x0a, 0x0b,
 							  0x0f, 0x0e, 0x0c, 0x0d, 0x2d, 0x2c, 0x2e, 0x2f,
 							  0x27, 0x26, 0x24, 0x25, 0x05, 0x04, 0x06, 0x07 };
-	UINT8 val = input_port_read(field->port->machine, (const char *)param);
+	uint8_t val = input_port_read(field->port->machine, (const char *)param);
 
 	return remap[val >> 2];
 }
 
 /* state of the security PAL (6J) */
-static UINT8 xb;
+static uint8_t xb;
 
 static WRITE8_DEVICE_HANDLER( scramble_protection_w )
 {
@@ -257,7 +257,7 @@ DRIVER_INIT( mariner )
 DRIVER_INIT( frogger )
 {
 	offs_t A;
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 	/* the first ROM of the second CPU has data lines D0 and D1 swapped. Decode it. */
 	ROM = memory_region(machine, "audiocpu");
@@ -273,7 +273,7 @@ DRIVER_INIT( frogger )
 DRIVER_INIT( froggers )
 {
 	offs_t A;
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 	/* the first ROM of the second CPU has data lines D0 and D1 swapped. Decode it. */
 	ROM = memory_region(machine, "audiocpu");
@@ -285,7 +285,7 @@ DRIVER_INIT( froggers )
 DRIVER_INIT( devilfsh )
 {
 	offs_t i;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	/* Address lines are scrambled on the main CPU */
 
@@ -298,7 +298,7 @@ DRIVER_INIT( devilfsh )
 	for (i = 0; i < 0x10000; i += 16)
 	{
 		offs_t j;
-		UINT8 swapbuffer[16];
+		uint8_t swapbuffer[16];
 
 		for (j = 0; j < 16; j++)
 		{
@@ -325,7 +325,7 @@ DRIVER_INIT( hotshock )
 
 DRIVER_INIT( cavelon )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* banked ROM */
 	memory_install_read_bank(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x0000, 0x3fff, 0, 0, "bank1");
@@ -350,7 +350,7 @@ DRIVER_INIT( darkplnt )
 
 DRIVER_INIT( mimonkey )
 {
-	static const UINT8 xortable[16][16] =
+	static const uint8_t xortable[16][16] =
 	{
 		{ 0x03,0x03,0x05,0x07,0x85,0x00,0x85,0x85,0x80,0x80,0x06,0x03,0x03,0x00,0x00,0x81 },
 		{ 0x83,0x87,0x03,0x87,0x06,0x00,0x06,0x04,0x02,0x00,0x84,0x84,0x04,0x00,0x01,0x83 },
@@ -370,7 +370,7 @@ DRIVER_INIT( mimonkey )
 		{ 0x80,0x87,0x81,0x87,0x83,0x00,0x84,0x01,0x01,0x86,0x86,0x80,0x86,0x00,0x86,0x86 }
 	};
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int A, ctr = 0, line, col;
 
 	for( A = 0; A < 0x4000; A++ )
@@ -405,8 +405,8 @@ static int bit(int i,int n)
 DRIVER_INIT( anteater )
 {
 	offs_t i, len;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	DRIVER_INIT_CALL(scobra);
@@ -419,7 +419,7 @@ DRIVER_INIT( anteater )
 	RAM = memory_region(machine, "gfx1");
 	len = memory_region_length(machine, "gfx1");
 
-	scratch = alloc_array_or_die(UINT8, len);
+	scratch = alloc_array_or_die(uint8_t, len);
 
 		memcpy(scratch, RAM, len);
 
@@ -443,8 +443,8 @@ DRIVER_INIT( anteater )
 DRIVER_INIT( rescue )
 {
 	offs_t i, len;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	DRIVER_INIT_CALL(scobra);
@@ -457,7 +457,7 @@ DRIVER_INIT( rescue )
 	RAM = memory_region(machine, "gfx1");
 	len = memory_region_length(machine, "gfx1");
 
-	scratch = auto_alloc_array(machine, UINT8, len);
+	scratch = auto_alloc_array(machine, uint8_t, len);
 
 	memcpy(scratch, RAM, len);
 
@@ -480,8 +480,8 @@ DRIVER_INIT( rescue )
 DRIVER_INIT( minefld )
 {
 	offs_t i, len;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	DRIVER_INIT_CALL(scobra);
@@ -493,7 +493,7 @@ DRIVER_INIT( minefld )
 	RAM = memory_region(machine, "gfx1");
 	len = memory_region_length(machine, "gfx1");
 
-	scratch = auto_alloc_array(machine, UINT8, len);
+	scratch = auto_alloc_array(machine, uint8_t, len);
 
 	memcpy(scratch, RAM, len);
 
@@ -518,8 +518,8 @@ DRIVER_INIT( minefld )
 DRIVER_INIT( losttomb )
 {
 	offs_t i, len;
-	UINT8 *RAM;
-	UINT8 *scratch;
+	uint8_t *RAM;
+	uint8_t *scratch;
 
 
 	DRIVER_INIT_CALL(scramble);
@@ -532,7 +532,7 @@ DRIVER_INIT( losttomb )
 	RAM = memory_region(machine, "gfx1");
 	len = memory_region_length(machine, "gfx1");
 
-	scratch = alloc_array_or_die(UINT8, len);
+	scratch = alloc_array_or_die(uint8_t, len);
 
 		memcpy(scratch, RAM, len);
 
@@ -556,12 +556,12 @@ DRIVER_INIT( losttomb )
 DRIVER_INIT( hustler )
 {
 	offs_t A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x4000;A++)
 	{
-		UINT8 xormask;
+		uint8_t xormask;
 		int bits[8];
 		int i;
 
@@ -595,12 +595,12 @@ DRIVER_INIT( hustler )
 DRIVER_INIT( billiard )
 {
 	offs_t A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x4000;A++)
 	{
-		UINT8 xormask;
+		uint8_t xormask;
 		int bits[8];
 		int i;
 
@@ -652,9 +652,9 @@ DRIVER_INIT( mrkougb )
 
 DRIVER_INIT( ad2083 )
 {
-	UINT8 c;
+	uint8_t c;
 	int i, len = memory_region_length(machine, "maincpu");
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (i=0; i<len; i++)
 	{

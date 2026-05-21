@@ -20,19 +20,19 @@
 #include "includes/pacman.h"
 #include "video/resnet.h"
 
-UINT8 *pacman_videoram;
-UINT8 *pacman_colorram;
+uint8_t *pacman_videoram;
+uint8_t *pacman_colorram;
 static tilemap_t *bg_tilemap;
-static UINT8 charbank;
-static UINT8 spritebank;
-static UINT8 palettebank;
-static UINT8 colortablebank;
-static UINT8 flipscreen;
-static UINT8 bgpriority;
+static uint8_t charbank;
+static uint8_t spritebank;
+static uint8_t palettebank;
+static uint8_t colortablebank;
+static uint8_t flipscreen;
+static uint8_t bgpriority;
 
 static int xoffsethack;
-UINT8 *s2650games_spriteram;
-UINT8 *s2650games_tileram;
+uint8_t *s2650games_spriteram;
+uint8_t *s2650games_tileram;
 
 static const rectangle spritevisiblearea =
 {
@@ -128,7 +128,7 @@ PALETTE_INIT( pacman )
 	/* allocate the colortable */
 	for (i = 0; i < 64*4; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 
 		/* first palette bank */
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
@@ -226,8 +226,8 @@ VIDEO_UPDATE( pacman )
 
 	if( screen->machine->generic.spriteram_size )
 	{
-		UINT8 *spriteram = screen->machine->generic.spriteram.u8;
-		UINT8 *spriteram_2 = screen->machine->generic.spriteram2.u8;
+		uint8_t *spriteram = screen->machine->generic.spriteram.u8;
+		uint8_t *spriteram_2 = screen->machine->generic.spriteram2.u8;
 		int offs;
 
 		rectangle spriteclip = spritevisiblearea;
@@ -395,8 +395,8 @@ VIDEO_START( s2650games )
 
 VIDEO_UPDATE( s2650games )
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
-	UINT8 *spriteram_2 = screen->machine->generic.spriteram2.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram_2 = screen->machine->generic.spriteram2.u8;
 	int offs;
 
 	tilemap_draw(bitmap,cliprect,bg_tilemap,0,0);

@@ -26,17 +26,17 @@
 
 struct cchip_mapping
 {
-	UINT16 xmin;
-	UINT16 xmax;
-	UINT16 ymin;
-	UINT16 ymax;
-	UINT16 sx;
-	UINT16 sy;
-	UINT16 px;
-	UINT16 py;
+	uint16_t xmin;
+	uint16_t xmax;
+	uint16_t ymin;
+	uint16_t ymax;
+	uint16_t sx;
+	uint16_t sy;
+	uint16_t px;
+	uint16_t py;
 };
 
-static const UINT16 CLEV[][13] =
+static const uint16_t CLEV[][13] =
 {
 /*    map start       player start    player y-range  player x-range  map y-range     map x-range     time   */
 	{ 0x0000, 0x0018, 0x0020, 0x0030, 0x0028, 0x00D0, 0x0050, 0x0090, 0x0000, 0x0118, 0x0000, 0x0C90, 0x3800 },
@@ -309,7 +309,7 @@ static void WriteLevelData( running_machine *machine )
 
 	for (i = 0; i < 13; i++)
 	{
-		UINT16 v = CLEV[state->current_round][i];
+		uint16_t v = CLEV[state->current_round][i];
 
 		state->cval[2 * i + 0] = v & 0xff;
 		state->cval[2 * i + 1] = v >> 8;

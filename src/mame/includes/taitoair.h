@@ -7,7 +7,7 @@
 enum { TAITOAIR_FRAC_SHIFT = 16, TAITOAIR_POLY_MAX_PT = 16 };
 
 struct taitoair_spoint {
-	INT32 x, y;
+	int32_t x, y;
 };
 
 struct taitoair_poly {
@@ -25,17 +25,17 @@ public:
 	taitoair_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *      m68000_mainram;
-	UINT16 *      line_ram;
-	UINT16 *      dsp_ram;	/* Shared 68000/TMS32025 RAM */
-	UINT16 *      paletteram;
+	uint16_t *      m68000_mainram;
+	uint16_t *      line_ram;
+	uint16_t *      dsp_ram;	/* Shared 68000/TMS32025 RAM */
+	uint16_t *      paletteram;
 
 	/* video-related */
 	taitoair_poly  q;
 
 	/* misc */
 	int           dsp_hold_signal;
-	INT32         banknum;
+	int32_t         banknum;
 
 	/* devices */
 	running_device *audiocpu;

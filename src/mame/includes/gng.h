@@ -12,16 +12,16 @@ public:
 	gng_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    bgvideoram;
-	UINT8 *    fgvideoram;
-//  UINT8 *    paletteram;  // currently this uses generic palette handling
-//  UINT8 *    paletteram2; // currently this uses generic palette handling
-//  UINT8 *    spriteram;   // currently this uses generic buffered spriteram
+	uint8_t *    bgvideoram;
+	uint8_t *    fgvideoram;
+//  uint8_t *    paletteram;  // currently this uses generic palette handling
+//  uint8_t *    paletteram2; // currently this uses generic palette handling
+//  uint8_t *    spriteram;   // currently this uses generic buffered spriteram
 
 	/* video-related */
 	tilemap_t    *bg_tilemap, *fg_tilemap;
-	UINT8      scrollx[2];
-	UINT8      scrolly[2];
+	uint8_t      scrollx[2];
+	uint8_t      scrolly[2];
 };
 
 

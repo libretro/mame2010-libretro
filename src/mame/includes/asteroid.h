@@ -23,7 +23,7 @@ WRITE8_HANDLER( astdelux_led_w );
 
 MACHINE_RESET( asteroid );
 
-extern UINT8 *asteroid_ram1, *asteroid_ram2;
+extern uint8_t *asteroid_ram1, *asteroid_ram2;
 
 /*----------- defined in audio/asteroid.c -----------*/
 

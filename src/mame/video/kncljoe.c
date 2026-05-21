@@ -67,7 +67,7 @@ PALETTE_INIT( kncljoe )
 	/* sprite lookup table */
 	for (i = 0x80; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
+		uint8_t ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -183,7 +183,7 @@ WRITE8_HANDLER( kncljoe_scroll_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	kncljoe_state *state = (kncljoe_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	rectangle clip = *cliprect;
 	const gfx_element *gfx = machine->gfx[1 + state->sprite_bank];
 	int i, j;

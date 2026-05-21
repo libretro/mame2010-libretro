@@ -22,9 +22,9 @@
 #define OUTPUT_RATE		(48000)
 
 /* Statics */
-static INT16 *vol_lookup = NULL;
+static int16_t *vol_lookup = NULL;
 
-static INT16 vol_crash[16];
+static int16_t vol_crash[16];
 
 static sound_stream *channel;
 static int latch;
@@ -173,9 +173,9 @@ static DEVICE_START( redbaron_sound )
 {
 	int i;
 
-	vol_lookup = auto_alloc_array(device->machine, INT16, 32768);
+	vol_lookup = auto_alloc_array(device->machine, int16_t, 32768);
 	for( i = 0; i < 0x8000; i++ )
-		vol_lookup[0x7fff-i] = (INT16) (0x7fff/exp(1.0*i/4096));
+		vol_lookup[0x7fff-i] = (int16_t) (0x7fff/exp(1.0*i/4096));
 
 	for( i = 0; i < 16; i++ )
 	{

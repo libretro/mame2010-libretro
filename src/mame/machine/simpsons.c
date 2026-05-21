@@ -82,9 +82,9 @@ MACHINE_START( simpsons )
 {
 	simpsons_state *state = (simpsons_state *)machine->driver_data;
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x1000);
-	state->xtraram = auto_alloc_array_clear(machine, UINT8, 0x1000);
-	state->spriteram = auto_alloc_array_clear(machine, UINT16, 0x1000 / 2);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x1000);
+	state->xtraram = auto_alloc_array_clear(machine, uint8_t, 0x1000);
+	state->spriteram = auto_alloc_array_clear(machine, uint16_t, 0x1000 / 2);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");

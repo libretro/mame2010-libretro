@@ -10,8 +10,8 @@
 #include "includes/gaplus.h"
 
 
-UINT8 *gaplus_videoram;
-UINT8 *gaplus_spriteram;
+uint8_t *gaplus_videoram;
+uint8_t *gaplus_spriteram;
 
 static tilemap_t *bg_tilemap;
 
@@ -102,7 +102,7 @@ static TILEMAP_MAPPER( tilemap_scan )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 attr = gaplus_videoram[tile_index + 0x400];
+	uint8_t attr = gaplus_videoram[tile_index + 0x400];
 	tileinfo->category = (attr & 0x40) >> 6;
 	tileinfo->group = attr & 0x3f;
 	SET_TILE_INFO(
@@ -138,7 +138,7 @@ struct star {
 };
 static struct star stars[MAX_STARS];
 
-static UINT8 gaplus_starfield_control[4];
+static uint8_t gaplus_starfield_control[4];
 static int total_stars;
 
 static void starfield_init(running_machine *machine)
@@ -263,9 +263,9 @@ static void starfield_render(running_machine *machine, bitmap_t *bitmap)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = gaplus_spriteram + 0x780;
-	UINT8 *spriteram_2 = spriteram + 0x800;
-	UINT8 *spriteram_3 = spriteram_2 + 0x800;
+	uint8_t *spriteram = gaplus_spriteram + 0x780;
+	uint8_t *spriteram_2 = spriteram + 0x800;
+	uint8_t *spriteram_3 = spriteram_2 + 0x800;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)

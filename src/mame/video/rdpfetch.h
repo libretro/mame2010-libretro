@@ -19,7 +19,7 @@ class TexFetch
 	public:
 		TexFetch() { }
 
-		UINT32				Fetch(UINT32 s, UINT32 t, Tile* tile);
+		uint32_t				Fetch(uint32_t s, uint32_t t, Tile* tile);
 
 		void				SetMachine(running_machine* machine);
 
@@ -30,11 +30,11 @@ class TexFetch
 		MiscState*			m_misc_state;
 		Tile*				m_tiles;
 
-		UINT32				FetchRGBA(UINT32 s, UINT32 t, Tile* tile);
-		UINT32				FetchYUV(UINT32 s, UINT32 t, Tile* tile);
-		UINT32				FetchCI(UINT32 s, UINT32 t, Tile* tile);
-		UINT32				FetchIA(UINT32 s, UINT32 t, Tile* tile);
-		UINT32				FetchI(UINT32 s, UINT32 t, Tile* tile);
+		uint32_t				FetchRGBA(uint32_t s, uint32_t t, Tile* tile);
+		uint32_t				FetchYUV(uint32_t s, uint32_t t, Tile* tile);
+		uint32_t				FetchCI(uint32_t s, uint32_t t, Tile* tile);
+		uint32_t				FetchIA(uint32_t s, uint32_t t, Tile* tile);
+		uint32_t				FetchI(uint32_t s, uint32_t t, Tile* tile);
 };
 
 } // namespace RDP

@@ -41,7 +41,7 @@
 typedef struct atarirle_entry atarirle_entry;
 struct atarirle_entry
 {
-	UINT16			data[8];
+	uint16_t			data[8];
 };
 
 /* description of the motion objects */
@@ -49,12 +49,12 @@ typedef struct atarirle_desc atarirle_desc;
 struct atarirle_desc
 {
 	const char *	region;				/* region where the GFX data lives */
-	UINT16			spriteramentries;	/* number of entries in sprite RAM */
-	UINT16			leftclip;			/* left clip coordinate */
-	UINT16			rightclip;			/* right clip coordinate */
+	uint16_t			spriteramentries;	/* number of entries in sprite RAM */
+	uint16_t			leftclip;			/* left clip coordinate */
+	uint16_t			rightclip;			/* right clip coordinate */
 
-	UINT16			palettebase;		/* base palette entry */
-	UINT16			maxcolors;			/* maximum number of colors */
+	uint16_t			palettebase;		/* base palette entry */
+	uint16_t			maxcolors;			/* maximum number of colors */
 
 	atarirle_entry	codemask;			/* mask for the code index */
 	atarirle_entry	colormask;			/* mask for the color */
@@ -77,8 +77,8 @@ struct atarirle_desc
 void atarirle_init(running_machine *machine, int map, const atarirle_desc *desc);
 
 /* control handlers */
-void atarirle_control_w(running_machine *machine, int map, UINT8 bits);
-void atarirle_command_w(int map, UINT8 command);
+void atarirle_control_w(running_machine *machine, int map, uint8_t bits);
+void atarirle_command_w(int map, uint8_t command);
 VIDEO_EOF( atarirle );
 
 /* write handlers */
@@ -94,7 +94,7 @@ bitmap_t *atarirle_get_vram(int map, int idx);
     GLOBAL VARIABLES
 ***************************************************************************/
 
-extern UINT16 *atarirle_0_spriteram;
-extern UINT32 *atarirle_0_spriteram32;
+extern uint16_t *atarirle_0_spriteram;
+extern uint32_t *atarirle_0_spriteram32;
 
 #endif

@@ -57,7 +57,7 @@ static void draw_status( running_machine *machine, bitmap_t *bitmap, const recta
 	for (row = 0; row < 4; row++)
 	{
 		int sy, sx = (row & 1) * 8;
-		const UINT8 *source = state->status_vram + (~row & 1) * 32;
+		const uint8_t *source = state->status_vram + (~row & 1) * 32;
 		if (row <= 1)
 		{
 			source += 2 * 32;
@@ -83,7 +83,7 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
     the tiles in ROM B2.2B
 */
 	munchmo_state *state = (munchmo_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "gfx2");
+	uint8_t *rom = memory_region(machine, "gfx2");
 	const gfx_element *gfx = machine->gfx[1];
 	int offs;
 

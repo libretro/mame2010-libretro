@@ -17,19 +17,19 @@
 
 static struct
 {
-	UINT8 *colour_buf;
-	UINT8 *intensity_buf;
-	UINT8 *priority_buf;
+	uint8_t *colour_buf;
+	uint8_t *intensity_buf;
+	uint8_t *priority_buf;
 } line_buffer[2];
 
 static emu_timer *hblank_end_timer;
 static emu_timer *hblank_start_timer;
 
-static UINT8 *fig_scale_table;
-static UINT8 *scale_table;
+static uint8_t *fig_scale_table;
+static uint8_t *scale_table;
 
 static int video_firq;
-static UINT8 bg_intensity;
+static uint8_t bg_intensity;
 
 
 /*************************************
@@ -42,7 +42,7 @@ int esripsys_hblank;
 int esripsys_video_firq_en;
 int esripsys_frame_vbl;
 int esripsys__12sel;
-UINT8 *esripsys_pal_ram;
+uint8_t *esripsys_pal_ram;
 
 
 INTERRUPT_GEN( esripsys_vblank_irq )
@@ -95,13 +95,13 @@ VIDEO_START( esripsys )
 	int i;
 
 	/* Allocate memory for the two 512-pixel line buffers */
-	line_buffer[0].colour_buf = auto_alloc_array(machine, UINT8, 512);
-	line_buffer[0].intensity_buf = auto_alloc_array(machine, UINT8, 512);
-	line_buffer[0].priority_buf = auto_alloc_array(machine, UINT8, 512);
+	line_buffer[0].colour_buf = auto_alloc_array(machine, uint8_t, 512);
+	line_buffer[0].intensity_buf = auto_alloc_array(machine, uint8_t, 512);
+	line_buffer[0].priority_buf = auto_alloc_array(machine, uint8_t, 512);
 
-	line_buffer[1].colour_buf = auto_alloc_array(machine, UINT8, 512);
-	line_buffer[1].intensity_buf = auto_alloc_array(machine, UINT8, 512);
-	line_buffer[1].priority_buf = auto_alloc_array(machine, UINT8, 512);
+	line_buffer[1].colour_buf = auto_alloc_array(machine, uint8_t, 512);
+	line_buffer[1].intensity_buf = auto_alloc_array(machine, uint8_t, 512);
+	line_buffer[1].priority_buf = auto_alloc_array(machine, uint8_t, 512);
 
 	/* Create and initialise the HBLANK timers */
 	hblank_start_timer = timer_alloc(machine, hblank_start_callback, NULL);
@@ -109,7 +109,7 @@ VIDEO_START( esripsys )
 	timer_adjust_oneshot(hblank_start_timer, machine->primary_screen->time_until_pos(0, ESRIPSYS_HBLANK_START), 0);
 
 	/* Create the sprite scaling table */
-	scale_table = auto_alloc_array(machine, UINT8, 64 * 64);
+	scale_table = auto_alloc_array(machine, uint8_t, 64 * 64);
 
 	for (i = 0; i < 64; ++i)
 	{
@@ -142,7 +142,7 @@ VIDEO_START( esripsys )
 	}
 
 	/* Now create a lookup table for scaling the sprite 'fig' value */
-	fig_scale_table = auto_alloc_array(machine, UINT8, 1024 * 64);
+	fig_scale_table = auto_alloc_array(machine, uint8_t, 1024 * 64);
 
 	for (i = 0; i < 1024; ++i)
 	{
@@ -186,13 +186,13 @@ VIDEO_UPDATE( esripsys )
 {
 	int x, y;
 
-	UINT8 *colour_buf = line_buffer[esripsys__12sel ? 0 : 1].colour_buf;
-	UINT8 *intensity_buf = line_buffer[esripsys__12sel ? 0 : 1].intensity_buf;
-	UINT8 *priority_buf = line_buffer[esripsys__12sel ? 0 : 1].priority_buf;
+	uint8_t *colour_buf = line_buffer[esripsys__12sel ? 0 : 1].colour_buf;
+	uint8_t *intensity_buf = line_buffer[esripsys__12sel ? 0 : 1].intensity_buf;
+	uint8_t *priority_buf = line_buffer[esripsys__12sel ? 0 : 1].priority_buf;
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
 
 		for (x = 0; x < 512; ++x)
 		{
@@ -222,13 +222,13 @@ WRITE8_HANDLER( esripsys_bg_intensity_w )
 /* Draw graphics to a line buffer */
 int esripsys_draw(running_machine *machine, int l, int r, int fig, int attr, int addr, int col, int x_scale, int bank)
 {
-	UINT8 *colour_buf = line_buffer[esripsys__12sel ? 1 : 0].colour_buf;
-	UINT8 *intensity_buf = line_buffer[esripsys__12sel ? 1 : 0].intensity_buf;
-	UINT8 *priority_buf = line_buffer[esripsys__12sel ? 1 : 0].priority_buf;
+	uint8_t *colour_buf = line_buffer[esripsys__12sel ? 1 : 0].colour_buf;
+	uint8_t *intensity_buf = line_buffer[esripsys__12sel ? 1 : 0].intensity_buf;
+	uint8_t *priority_buf = line_buffer[esripsys__12sel ? 1 : 0].priority_buf;
 
-	UINT8 pri = attr & 0xff;
-	UINT8 iny = (attr >> 8) & 0xf;
-	UINT8 pal = col << 4;
+	uint8_t pri = attr & 0xff;
+	uint8_t iny = (attr >> 8) & 0xf;
+	uint8_t pal = col << 4;
 	int x_flip = x_scale & 0x80;
 	int xs_typ = x_scale & 0x40;
 	int xs_val = x_scale & 0x3f;
@@ -245,10 +245,10 @@ int esripsys_draw(running_machine *machine, int l, int r, int fig, int attr, int
 	{
 		int ptr = 0;
 		int cnt;
-		UINT8 *rom_l;
-		UINT8 *rom_r;
-		UINT32 lpos = l;
-		UINT32 rpos = r;
+		uint8_t *rom_l;
+		uint8_t *rom_r;
+		uint32_t lpos = l;
+		uint32_t rpos = r;
 
 		if (x_flip)
 		{
@@ -263,9 +263,9 @@ int esripsys_draw(running_machine *machine, int l, int r, int fig, int attr, int
 
 		for (cnt = 0; cnt <= fig; cnt++)
 		{
-			UINT32 rom_addr = (ptr * 0x10000) + addr;
-			UINT8 pix1 = rom_l[rom_addr];
-			UINT8 pix2 = rom_r[rom_addr];
+			uint32_t rom_addr = (ptr * 0x10000) + addr;
+			uint8_t pix1 = rom_l[rom_addr];
+			uint8_t pix2 = rom_r[rom_addr];
 
 			if (lpos < 512)
 			{
@@ -321,17 +321,17 @@ int esripsys_draw(running_machine *machine, int l, int r, int fig, int attr, int
 	/* 4bpp case */
 	else
 	{
-		const UINT8* const rom = memory_region(machine, "4bpp");
+		const uint8_t* const rom = memory_region(machine, "4bpp");
 		int ptr = 0;
 		int cnt;
-		UINT32 lpos = l;
-		UINT32 rpos = r;
+		uint32_t lpos = l;
+		uint32_t rpos = r;
 
 		for (cnt = 0; cnt <= fig; cnt++)
 		{
-			UINT8 px8 = rom[(ptr * 0x10000) + addr];
-			UINT8 px1;
-			UINT8 px2;
+			uint8_t px8 = rom[(ptr * 0x10000) + addr];
+			uint8_t px1;
+			uint8_t px2;
 
 			if (x_flip)
 			{

@@ -36,14 +36,14 @@ static void setup_system16_bootleg_spritebanking( running_machine* machine )
 
 	if (state->spritebank_type == 1)
 	{
-		static const UINT8 default_banklist[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		static const uint8_t default_banklist[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 		int i;
 		for (i = 0; i < 16; i++)
 			segaic16_sprites_set_bank(machine, 0, i, default_banklist[i]);
 	}
 	else
 	{
-		static const UINT8 alternate_banklist[] = { 0,255,255,255, 255,255,255,3, 255,255,255,2, 255,1,0,255 };
+		static const uint8_t alternate_banklist[] = { 0,255,255,255, 255,255,255,3, 255,255,255,2, 255,1,0,255 };
 		int i;
 		for (i = 0; i < 16; i++)
 			segaic16_sprites_set_bank(machine, 0, i, alternate_banklist[i]);
@@ -113,7 +113,7 @@ static const int resistances_sh[6] = {3900, 2000, 1000, 1000/2, 1000/4, 470};
 WRITE16_HANDLER( sys16_paletteram_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT16 newword;
+	uint16_t newword;
 
 	COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 	newword = space->machine->generic.paletteram.u16[offset];
@@ -239,7 +239,7 @@ static void update_page( running_machine *machine )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	const UINT16 *source = 64 * 32 * state->bg_page[tile_index / (64 * 32)] + state->tileram;
+	const uint16_t *source = 64 * 32 * state->bg_page[tile_index / (64 * 32)] + state->tileram;
 	int data = source[tile_index%(64*32)];
 	int tile_number = (data & 0xfff) + 0x1000 * ((data & state->tilebank_switch) ? state->tile_bank1 : state->tile_bank0);
 
@@ -253,7 +253,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	const UINT16 *source = 64 * 32 * state->fg_page[tile_index / (64 * 32)] + state->tileram;
+	const uint16_t *source = 64 * 32 * state->fg_page[tile_index / (64 * 32)] + state->tileram;
 	int data = source[tile_index % (64 * 32)];
 	int tile_number = (data & 0xfff) + 0x1000 * ((data & state->tilebank_switch) ? state->tile_bank1 : state->tile_bank0);
 
@@ -267,7 +267,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg2_tile_info )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	const UINT16 *source = 64 * 32 * state->bg2_page[tile_index / (64 * 32)] + state->tileram;
+	const uint16_t *source = 64 * 32 * state->bg2_page[tile_index / (64 * 32)] + state->tileram;
 	int data = source[tile_index % (64 * 32)];
 	int tile_number = (data & 0xfff) + 0x1000 * ((data & 0x1000) ? state->tile_bank1 : state->tile_bank0);
 
@@ -281,7 +281,7 @@ static TILE_GET_INFO( get_bg2_tile_info )
 static TILE_GET_INFO( get_fg2_tile_info )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	const UINT16 *source = 64 * 32 * state->fg2_page[tile_index / (64 * 32)] + state->tileram;
+	const uint16_t *source = 64 * 32 * state->fg2_page[tile_index / (64 * 32)] + state->tileram;
 	int data = source[tile_index % (64 * 32)];
 	int tile_number = (data & 0xfff) + 0x1000 * ((data & 0x1000) ? state->tile_bank1 : state->tile_bank0);
 
@@ -295,7 +295,7 @@ static TILE_GET_INFO( get_fg2_tile_info )
 WRITE16_HANDLER( sys16_tileram_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT16 oldword = state->tileram[offset];
+	uint16_t oldword = state->tileram[offset];
 
 	COMBINE_DATA(&state->tileram[offset]);
 
@@ -334,7 +334,7 @@ WRITE16_HANDLER( sys16_tileram_w )
 static TILE_GET_INFO( get_text_tile_info )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	const UINT16 *source = state->textram;
+	const uint16_t *source = state->textram;
 	int tile_number = source[tile_index];
 	int pri = tile_number >> 8;
 

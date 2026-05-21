@@ -1,9 +1,9 @@
 /*----------- defined in video/taotaido.c -----------*/
 
-extern UINT16 *taotaido_spriteram;
-extern UINT16 *taotaido_spriteram2;
-extern UINT16 *taotaido_scrollram;
-extern UINT16 *taotaido_bgram;
+extern uint16_t *taotaido_spriteram;
+extern uint16_t *taotaido_spriteram2;
+extern uint16_t *taotaido_scrollram;
+extern uint16_t *taotaido_bgram;
 
 WRITE16_HANDLER( taotaido_sprite_character_bank_select_w );
 WRITE16_HANDLER( taotaido_tileregs_w );

@@ -28,10 +28,10 @@ static int nb19010_busyctr;
 static int nb19010_busyflag;
 
 static bitmap_t *niyanpai_tmpbitmap[VRAM_MAX];
-static UINT16 *niyanpai_videoram[VRAM_MAX];
-static UINT16 *niyanpai_videoworkram[VRAM_MAX];
-static UINT16 *niyanpai_palette;
-static UINT8 *niyanpai_clut[VRAM_MAX];
+static uint16_t *niyanpai_videoram[VRAM_MAX];
+static uint16_t *niyanpai_videoworkram[VRAM_MAX];
+static uint16_t *niyanpai_palette;
+static uint8_t *niyanpai_clut[VRAM_MAX];
 
 
 static void niyanpai_vramflip(running_machine *machine, int vram);
@@ -51,8 +51,8 @@ WRITE16_HANDLER( niyanpai_palette_w )
 {
 	int r, g, b;
 	int offs_h, offs_l;
-	UINT16 oldword = niyanpai_palette[offset];
-	UINT16 newword;
+	uint16_t oldword = niyanpai_palette[offset];
+	uint16_t newword;
 
 	COMBINE_DATA(&niyanpai_palette[offset]);
 	newword = niyanpai_palette[offset];
@@ -89,7 +89,7 @@ WRITE16_HANDLER( niyanpai_palette_w )
 static int niyanpai_blitter_r(running_machine *machine, int vram, int offset)
 {
 	int ret;
-	UINT8 *GFXROM = memory_region(machine, "gfx1");
+	uint8_t *GFXROM = memory_region(machine, "gfx1");
 
 	switch (offset)
 	{
@@ -152,7 +152,7 @@ static void niyanpai_vramflip(running_machine *machine, int vram)
 {
 	static int niyanpai_flipscreen_old[VRAM_MAX] = { 0, 0, 0 };
 	int x, y;
-	UINT16 color1, color2;
+	uint16_t color1, color2;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
@@ -186,7 +186,7 @@ static void niyanpai_vramflip(running_machine *machine, int vram)
 
 static void update_pixel(running_machine *machine, int vram, int x, int y)
 {
-	UINT16 color = niyanpai_videoram[vram][(y * machine->primary_screen->width()) + x];
+	uint16_t color = niyanpai_videoram[vram][(y * machine->primary_screen->width()) + x];
 	*BITMAP_ADDR16(niyanpai_tmpbitmap[vram], y, x) = color;
 }
 
@@ -197,7 +197,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void niyanpai_gfxdraw(running_machine *machine, int vram)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 	int width = machine->primary_screen->width();
 
 	int x, y;
@@ -206,7 +206,7 @@ static void niyanpai_gfxdraw(running_machine *machine, int vram)
 	int sizex, sizey;
 	int skipx, skipy;
 	int ctrx, ctry;
-	UINT16 color, color1, color2;
+	uint16_t color, color1, color2;
 	int gfxaddr, gfxlen;
 
 	nb19010_busyctr = 0;
@@ -382,16 +382,16 @@ VIDEO_START( niyanpai )
 	niyanpai_tmpbitmap[0] = machine->primary_screen->alloc_compatible_bitmap();
 	niyanpai_tmpbitmap[1] = machine->primary_screen->alloc_compatible_bitmap();
 	niyanpai_tmpbitmap[2] = machine->primary_screen->alloc_compatible_bitmap();
-	niyanpai_videoram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_videoram[1] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_videoram[2] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_videoworkram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_videoworkram[1] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_videoworkram[2] = auto_alloc_array_clear(machine, UINT16, width * height);
-	niyanpai_palette = auto_alloc_array(machine, UINT16, 0x480);
-	niyanpai_clut[0] = auto_alloc_array(machine, UINT8, 0x1000);
-	niyanpai_clut[1] = auto_alloc_array(machine, UINT8, 0x1000);
-	niyanpai_clut[2] = auto_alloc_array(machine, UINT8, 0x1000);
+	niyanpai_videoram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_videoram[1] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_videoram[2] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_videoworkram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_videoworkram[1] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_videoworkram[2] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	niyanpai_palette = auto_alloc_array(machine, uint16_t, 0x480);
+	niyanpai_clut[0] = auto_alloc_array(machine, uint8_t, 0x1000);
+	niyanpai_clut[1] = auto_alloc_array(machine, uint8_t, 0x1000);
+	niyanpai_clut[2] = auto_alloc_array(machine, uint8_t, 0x1000);
 	nb19010_busyflag = 1;
 }
 

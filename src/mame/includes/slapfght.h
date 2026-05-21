@@ -83,11 +83,11 @@ INTERRUPT_GEN( getstar_interrupt );
 
 /*----------- defined in video/slapfght.c -----------*/
 
-extern UINT8 *slapfight_videoram;
-extern UINT8 *slapfight_colorram;
-extern UINT8 *slapfight_fixvideoram;
-extern UINT8 *slapfight_fixcolorram;
-extern UINT8 *slapfight_scrollx_lo,*slapfight_scrollx_hi,*slapfight_scrolly;
+extern uint8_t *slapfight_videoram;
+extern uint8_t *slapfight_colorram;
+extern uint8_t *slapfight_fixvideoram;
+extern uint8_t *slapfight_fixcolorram;
+extern uint8_t *slapfight_scrollx_lo,*slapfight_scrollx_hi,*slapfight_scrolly;
 
 VIDEO_UPDATE( slapfight );
 VIDEO_UPDATE( perfrman );

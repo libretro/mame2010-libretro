@@ -19,9 +19,9 @@ void TexFetch::SetMachine(running_machine *machine)
 	m_tiles = m_rdp->GetTiles();
 }
 
-UINT32 TexFetch::Fetch(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::Fetch(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 tformat = tile->format;
+	uint32_t tformat = tile->format;
 
 	if (t < 0) t = 0;
 	if (s < 0) s = 0;
@@ -51,20 +51,20 @@ UINT32 TexFetch::Fetch(UINT32 s, UINT32 t, Tile* tile)
 	return 0;
 }
 
-UINT32 TexFetch::FetchRGBA(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::FetchRGBA(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 twidth	= tile->line;
-	UINT32 tbase =	tile->tmem;
-	UINT32 tpal	= tile->palette & 0xf;
+	uint32_t twidth	= tile->line;
+	uint32_t tbase =	tile->tmem;
+	uint32_t tpal	= tile->palette & 0xf;
 
 	switch (tile->size)
 	{
 		case PIXEL_SIZE_4BIT:
 		{
-			UINT8 *tc = (UINT8*)m_rdp->GetTMEM();
+			uint8_t *tc = (uint8_t*)m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s) / 2)) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0x7ff;
-			UINT8 p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
-			UINT16 c = m_rdp->GetTLUT()[(((tpal << 4) | p) ^ WORD_ADDR_XOR) << 2];
+			uint8_t p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
+			uint16_t c = m_rdp->GetTLUT()[(((tpal << 4) | p) ^ WORD_ADDR_XOR) << 2];
 
 			if (m_other_modes->en_tlut)
 			{
@@ -85,10 +85,10 @@ UINT32 TexFetch::FetchRGBA(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_8BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s))) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0x7ff;
-			UINT8 p = tc[taddr ^ BYTE_ADDR_XOR];
-			UINT16 c = m_rdp->GetTLUT()[(p ^ WORD_ADDR_XOR) << 2];
+			uint8_t p = tc[taddr ^ BYTE_ADDR_XOR];
+			uint16_t c = m_rdp->GetTLUT()[(p ^ WORD_ADDR_XOR) << 2];
 
 			if (m_other_modes->en_tlut)
 			{
@@ -109,9 +109,9 @@ UINT32 TexFetch::FetchRGBA(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_16BIT:
 		{
-			UINT16 *tc = m_rdp->GetTMEM16();
+			uint16_t *tc = m_rdp->GetTMEM16();
 			int taddr = ((tbase>>1) + ((t) * (twidth>>1)) + (s))  ^ ((t & 1) ? XOR_SWAP_WORD : 0);
-			UINT16 c = tc[(taddr & 0x7ff) ^ WORD_ADDR_XOR]; // PGA European Tour (U)
+			uint16_t c = tc[(taddr & 0x7ff) ^ WORD_ADDR_XOR]; // PGA European Tour (U)
 
 			if (!m_other_modes->en_tlut)
 			{
@@ -132,7 +132,7 @@ UINT32 TexFetch::FetchRGBA(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_32BIT:
 		{
-			UINT32 *tc = m_rdp->GetTMEM32();
+			uint32_t *tc = m_rdp->GetTMEM32();
 			int xorval = (m_misc_state->m_fb_size == PIXEL_SIZE_16BIT) ? XOR_SWAP_WORD : XOR_SWAP_DWORD; // Conker's Bad Fur Day, Jet Force Gemini, Super Smash Bros., Mickey's Speedway USA, Ogre Battle, Wave Race, Gex 3, South Park Rally
 			int taddr = (((tbase >> 2) + ((t) * (twidth >> 1)) + (s)) ^ ((t & 1) ? xorval : 0)) & 0x3ff;
 
@@ -159,25 +159,25 @@ UINT32 TexFetch::FetchRGBA(UINT32 s, UINT32 t, Tile* tile)
 	}
 }
 
-UINT32 TexFetch::FetchYUV(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::FetchYUV(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 twidth	= tile->line;
-	UINT32 tsize =	tile->size;
-	UINT32 tbase =	tile->tmem;
+	uint32_t twidth	= tile->line;
+	uint32_t tsize =	tile->size;
+	uint32_t tbase =	tile->tmem;
 	Color out;
 
 	out.c = 0;
 
 	if(tsize == PIXEL_SIZE_16BIT)
 	{
-		INT32 newr = 0;
-		INT32 newg = 0;
-		INT32 newb = 0;
-		UINT16 *tc = m_rdp->GetTMEM16();
+		int32_t newr = 0;
+		int32_t newg = 0;
+		int32_t newb = 0;
+		uint16_t *tc = m_rdp->GetTMEM16();
 		int taddr = ((tbase >> 1) + ((t) * (twidth)) + (s)) ^ ((t & 1) ? XOR_SWAP_WORD : 0);
-		UINT16 c1, c2;
-		INT32 y;
-		INT32 u, v;
+		uint16_t c1, c2;
+		int32_t y;
+		int32_t u, v;
 		c1 = tc[taddr ^ WORD_ADDR_XOR];
 		c2 = tc[taddr]; // other word
 
@@ -211,21 +211,21 @@ UINT32 TexFetch::FetchYUV(UINT32 s, UINT32 t, Tile* tile)
 	return out.c;
 }
 
-UINT32 TexFetch::FetchCI(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::FetchCI(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 twidth = tile->line;
-	UINT32 tsize =	tile->size;
-	UINT32 tbase =	tile->tmem;
-	UINT32 tpal	= tile->palette & 0xf;
+	uint32_t twidth = tile->line;
+	uint32_t tsize =	tile->size;
+	uint32_t tbase =	tile->tmem;
+	uint32_t tpal	= tile->palette & 0xf;
 
 	switch (tsize)
 	{
 		case PIXEL_SIZE_4BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s) / 2)) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0x7ff;
-			UINT8 p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
-			UINT16 c = m_rdp->GetTLUT()[((tpal << 4) | p) << 2];
+			uint8_t p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
+			uint16_t c = m_rdp->GetTLUT()[((tpal << 4) | p) << 2];
 
 			if (m_other_modes->en_tlut)
 			{
@@ -246,10 +246,10 @@ UINT32 TexFetch::FetchCI(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_8BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s))) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0x7ff;
-			UINT8 p = tc[taddr ^ BYTE_ADDR_XOR];
-			UINT16 c = m_rdp->GetTLUT()[p << 2];
+			uint8_t p = tc[taddr ^ BYTE_ADDR_XOR];
+			uint16_t c = m_rdp->GetTLUT()[p << 2];
 
 			if (m_other_modes->en_tlut)
 			{
@@ -271,9 +271,9 @@ UINT32 TexFetch::FetchCI(UINT32 s, UINT32 t, Tile* tile)
 		case PIXEL_SIZE_16BIT:
 		{
 			// 16-bit CI is a "valid" mode; some games use it, it behaves the same as 16-bit RGBA
-			UINT16 *tc = m_rdp->GetTMEM16();
+			uint16_t *tc = m_rdp->GetTMEM16();
 			int taddr = ((tbase>>1) + ((t) * (twidth>>1)) + (s))  ^ ((t & 1) ? XOR_SWAP_WORD : 0);
-			UINT16 c = tc[(taddr & 0x7ff) ^ WORD_ADDR_XOR]; // PGA European Tour (U)
+			uint16_t c = tc[(taddr & 0x7ff) ^ WORD_ADDR_XOR]; // PGA European Tour (U)
 
 			if (!m_other_modes->en_tlut)
 			{
@@ -301,21 +301,21 @@ UINT32 TexFetch::FetchCI(UINT32 s, UINT32 t, Tile* tile)
 	return 0;
 }
 
-UINT32 TexFetch::FetchIA(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::FetchIA(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 twidth = tile->line;
-	UINT32 tsize =	tile->size;
-	UINT32 tbase =	tile->tmem;
-	UINT32 tpal	= tile->palette & 0xf;
+	uint32_t twidth = tile->line;
+	uint32_t tsize =	tile->size;
+	uint32_t tbase =	tile->tmem;
+	uint32_t tpal	= tile->palette & 0xf;
 
 	switch (tsize)
 	{
 		case PIXEL_SIZE_4BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = (tbase + ((t) * twidth) + (s >> 1)) ^ ((t & 1) ? XOR_SWAP_BYTE : 0);
-			UINT8 p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
-			UINT8 i = ((p & 0xe) << 4) | ((p & 0xe) << 1) | (p & 0xe >> 2);
+			uint8_t p = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
+			uint8_t i = ((p & 0xe) << 4) | ((p & 0xe) << 1) | (p & 0xe >> 2);
 
 			if (!m_other_modes->en_tlut)
 			{
@@ -323,7 +323,7 @@ UINT32 TexFetch::FetchIA(UINT32 s, UINT32 t, Tile* tile)
 			}
 			else
 			{
-				UINT16 c = m_rdp->GetTLUT()[((tpal << 4) | p) << 2];
+				uint16_t c = m_rdp->GetTLUT()[((tpal << 4) | p) << 2];
 				if (!m_other_modes->tlut_type)
 				{
 					return m_rdp->LookUp16To32(c);
@@ -337,18 +337,18 @@ UINT32 TexFetch::FetchIA(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_8BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s))) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0xfff;
-			UINT8 p = tc[taddr ^ BYTE_ADDR_XOR];
+			uint8_t p = tc[taddr ^ BYTE_ADDR_XOR];
 
 			if (!m_other_modes->en_tlut)
 			{
-				UINT8 i = (p >> 4) | (p & 0xf0);
+				uint8_t i = (p >> 4) | (p & 0xf0);
 				return (i * 0x01010100) | ((p & 0xf) | ((p << 4) & 0xf0));
 			}
 			else
 			{
-				UINT16 c = m_rdp->GetTLUT()[p << 2];
+				uint16_t c = m_rdp->GetTLUT()[p << 2];
 				if (!m_other_modes->tlut_type)
 				{
 					return m_rdp->LookUp16To32(c);
@@ -362,9 +362,9 @@ UINT32 TexFetch::FetchIA(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_16BIT:
 		{
-			UINT16 *tc = m_rdp->GetTMEM16();
+			uint16_t *tc = m_rdp->GetTMEM16();
 			int taddr = ((tbase >> 1) + ((t) * (twidth >> 1)) + (s)) ^ ((t & 1) ? XOR_SWAP_WORD : 0);
-			UINT16 c = tc[taddr ^ WORD_ADDR_XOR];
+			uint16_t c = tc[taddr ^ WORD_ADDR_XOR];
 
 			if (m_other_modes->en_tlut)
 			{
@@ -394,20 +394,20 @@ UINT32 TexFetch::FetchIA(UINT32 s, UINT32 t, Tile* tile)
 	return 0;
 }
 
-UINT32 TexFetch::FetchI(UINT32 s, UINT32 t, Tile* tile)
+uint32_t TexFetch::FetchI(uint32_t s, uint32_t t, Tile* tile)
 {
-	UINT32 twidth = tile->line;
-	UINT32 tsize =	tile->size;
-	UINT32 tbase =	tile->tmem;
-	UINT32 tpal	= tile->palette & 0xf;
+	uint32_t twidth = tile->line;
+	uint32_t tsize =	tile->size;
+	uint32_t tbase =	tile->tmem;
+	uint32_t tpal	= tile->palette & 0xf;
 
 	switch (tsize)
 	{
 		case PIXEL_SIZE_4BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s) / 2)) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0xfff;
-			UINT8 c = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
+			uint8_t c = ((s) & 1) ? (tc[taddr ^ BYTE_ADDR_XOR] & 0xf) : (tc[taddr ^ BYTE_ADDR_XOR] >> 4);
 			c |= (c << 4);
 
 			if (!m_other_modes->en_tlut)
@@ -416,7 +416,7 @@ UINT32 TexFetch::FetchI(UINT32 s, UINT32 t, Tile* tile)
 			}
 			else
 			{
-				UINT16 k = m_rdp->GetTLUT()[((tpal << 4) | c) << 2];
+				uint16_t k = m_rdp->GetTLUT()[((tpal << 4) | c) << 2];
 				if (!m_other_modes->tlut_type)
 				{
 					return m_rdp->LookUp16To32(k);
@@ -430,9 +430,9 @@ UINT32 TexFetch::FetchI(UINT32 s, UINT32 t, Tile* tile)
 		}
 		case PIXEL_SIZE_8BIT:
 		{
-			UINT8 *tc = m_rdp->GetTMEM();
+			uint8_t *tc = m_rdp->GetTMEM();
 			int taddr = ((tbase + ((t) * twidth) + ((s))) ^ ((t & 1) ? XOR_SWAP_BYTE : 0)) & 0xfff;
-			UINT8 c = tc[taddr ^ BYTE_ADDR_XOR];
+			uint8_t c = tc[taddr ^ BYTE_ADDR_XOR];
 
 			if (!m_other_modes->en_tlut)
 			{
@@ -440,7 +440,7 @@ UINT32 TexFetch::FetchI(UINT32 s, UINT32 t, Tile* tile)
 			}
 			else
 			{
-				UINT16 k = m_rdp->GetTLUT()[ c << 2];
+				uint16_t k = m_rdp->GetTLUT()[ c << 2];
 				if (!m_other_modes->tlut_type)
 				{
 					return m_rdp->LookUp16To32(k);

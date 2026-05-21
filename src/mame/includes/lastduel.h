@@ -12,15 +12,15 @@ public:
 	lastduel_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    vram;
-	UINT16 *    scroll1;
-	UINT16 *    scroll2;
-//  UINT16 *    spriteram;  // this currently uses generic buffered spriteram
-	UINT16 *    paletteram;
+	uint16_t *    vram;
+	uint16_t *    scroll1;
+	uint16_t *    scroll2;
+//  uint16_t *    spriteram;  // this currently uses generic buffered spriteram
+	uint16_t *    paletteram;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap, *fg_tilemap, *tx_tilemap;
-	UINT16      scroll[8];
+	uint16_t      scroll[8];
 	int         sprite_flipy_mask, sprite_pri_mask, tilemap_priority;
 
 	/* devices */

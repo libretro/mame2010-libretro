@@ -9,14 +9,14 @@ public:
 	taitol_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *       rambanks;
-	UINT8 *       palette_ram;
-	UINT8 *       empty_ram;
-	UINT8 *       shared_ram;
+	uint8_t *       rambanks;
+	uint8_t *       palette_ram;
+	uint8_t *       empty_ram;
+	uint8_t *       shared_ram;
 
 	/* video-related */
 	tilemap_t *bg18_tilemap, *bg19_tilemap, *ch1a_tilemap;
-	UINT8 buff_spriteram[TAITOL_SPRITERAM_SIZE];
+	uint8_t buff_spriteram[TAITOL_SPRITERAM_SIZE];
 	int cur_ctrl;
 	int horshoes_gfxbank;
 	int bankc[4];
@@ -24,7 +24,7 @@ public:
 
 	/* misc */
 	void (*current_notifier[4])(running_machine *, int);
-	UINT8 *current_base[4];
+	uint8_t *current_base[4];
 
 	int cur_rombank, cur_rombank2, cur_rambank[4];
 	int irq_adr_table[3];
@@ -40,7 +40,7 @@ public:
 	int last_data_adr, last_data;
 	int cur_bank;
 
-	const UINT8 *mcu_reply;
+	const uint8_t *mcu_reply;
 	int mcu_pos, mcu_reply_len;
 
 	const char *porte0_tag;

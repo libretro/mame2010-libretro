@@ -20,8 +20,8 @@ static TILE_GET_INFO( get_tile_info )
 {
 	espial_state *state = (espial_state *)machine->driver_data;
 
-	UINT8 code = state->videoram[tile_index];
-	UINT8 col = state->colorram[tile_index];
+	uint8_t code = state->videoram[tile_index];
+	uint8_t col = state->colorram[tile_index];
 
 	SET_TILE_INFO(0,
 				  code | ((col & 0xc0) << 2),
@@ -86,7 +86,7 @@ WRITE8_HANDLER( marineb_column_scroll_w )
 WRITE8_HANDLER( marineb_palette_bank_0_w )
 {
 	espial_state *state = (espial_state *)space->machine->driver_data;
-	UINT8 old = state->palette_bank;
+	uint8_t old = state->palette_bank;
 
 	state->palette_bank = (state->palette_bank & 0x02) | (data & 0x01);
 
@@ -100,7 +100,7 @@ WRITE8_HANDLER( marineb_palette_bank_0_w )
 WRITE8_HANDLER( marineb_palette_bank_1_w )
 {
 	espial_state *state = (espial_state *)space->machine->driver_data;
-	UINT8 old = state->palette_bank;
+	uint8_t old = state->palette_bank;
 
 	state->palette_bank = (state->palette_bank & 0x01) | ((data & 0x01) << 1);
 

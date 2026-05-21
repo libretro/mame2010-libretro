@@ -17,26 +17,26 @@ public:
 	fuuki32_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT32 *    vram_0;
-	UINT32 *    vram_1;
-	UINT32 *    vram_2;
-	UINT32 *    vram_3;
-	UINT32 *    vregs;
-	UINT32 *    priority;
-	UINT32 *    tilebank;
-	UINT32 *    spriteram;
-	UINT32 *    buf_spriteram;
-	UINT32 *    buf_spriteram2;
-	UINT32 *    paletteram;
+	uint32_t *    vram_0;
+	uint32_t *    vram_1;
+	uint32_t *    vram_2;
+	uint32_t *    vram_3;
+	uint32_t *    vregs;
+	uint32_t *    priority;
+	uint32_t *    tilebank;
+	uint32_t *    spriteram;
+	uint32_t *    buf_spriteram;
+	uint32_t *    buf_spriteram2;
+	uint32_t *    paletteram;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t     *tilemap_0, *tilemap_1, *tilemap_2, *tilemap_3;
-	UINT32      spr_buffered_tilebank[2];
+	uint32_t      spr_buffered_tilebank[2];
 
 	/* misc */
 	emu_timer   *raster_interrupt_timer;
-	UINT8       shared_ram[16];
+	uint8_t       shared_ram[16];
 
 	/* devices */
 	running_device *maincpu;

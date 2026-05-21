@@ -8,13 +8,13 @@
 
 #include "emu.h"
 
-UINT8 *tecfri_videoram;
-UINT8 *tecfri_colorram;
-UINT8 *tecfri_videoram2;
-UINT8 *tecfri_colorram2;
+uint8_t *tecfri_videoram;
+uint8_t *tecfri_colorram;
+uint8_t *tecfri_videoram2;
+uint8_t *tecfri_colorram2;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
-static UINT8 palette_bank;
+static uint8_t palette_bank;
 
 /* General */
 
@@ -98,7 +98,7 @@ VIDEO_START( sauro )
 
 static void sauro_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs,code,sx,sy,color,flipx;
 
 	for (offs = 3;offs < machine->generic.spriteram_size - 1;offs += 4)
@@ -160,7 +160,7 @@ VIDEO_START( trckydoc )
 
 static void trckydoc_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs,code,sy,color,flipx,sx;
 
 	/* Weird, sprites entries don't start on DWORD boundary */

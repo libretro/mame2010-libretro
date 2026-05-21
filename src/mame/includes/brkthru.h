@@ -12,9 +12,9 @@ public:
 	brkthru_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * videoram;
-	UINT8 * spriteram;
-	UINT8 * fg_videoram;
+	uint8_t * videoram;
+	uint8_t * spriteram;
+	uint8_t * fg_videoram;
 	size_t  videoram_size;
 	size_t  spriteram_size;
 	size_t  fg_videoram_size;
@@ -24,7 +24,7 @@ public:
 	int     bgscroll;
 	int     bgbasecolor;
 	int     flipscreen;
-	//UINT8 *brkthru_nmi_enable; /* needs to be tracked down */
+	//uint8_t *brkthru_nmi_enable; /* needs to be tracked down */
 
 	/* devices */
 	running_device *maincpu;

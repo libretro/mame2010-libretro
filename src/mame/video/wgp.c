@@ -8,8 +8,8 @@
 INLINE void common_get_piv_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int num )
 {
 	wgp_state *state = (wgp_state *)machine->driver_data;
-	UINT16 tilenum = state->pivram[tile_index + num * 0x1000];	/* 3 blocks of $2000 */
-	UINT16 attr = state->pivram[tile_index + num * 0x1000 + 0x8000];	/* 3 blocks of $2000 */
+	uint16_t tilenum = state->pivram[tile_index + num * 0x1000];	/* 3 blocks of $2000 */
+	uint16_t attr = state->pivram[tile_index + num * 0x1000 + 0x8000];	/* 3 blocks of $2000 */
 
 	SET_TILE_INFO(
 			2,
@@ -157,7 +157,7 @@ READ16_HANDLER( wgp_piv_ctrl_word_r )
 WRITE16_HANDLER( wgp_piv_ctrl_word_w )
 {
 	wgp_state *state = (wgp_state *)space->machine->driver_data;
-	UINT16 a, b;
+	uint16_t a, b;
 
 	COMBINE_DATA(&state->piv_ctrlram[offset]);
 	data = state->piv_ctrlram[offset];
@@ -334,13 +334,13 @@ Memory Map
    structure for each big sprite: the hardware is probably
    constructing each 4x4 sprite from 4 2x2 sprites... */
 
-static const UINT8 xlookup[16] =
+static const uint8_t xlookup[16] =
 	{ 0, 1, 0, 1,
 	  2, 3, 2, 3,
 	  0, 1, 0, 1,
 	  2, 3, 2, 3 };
 
-static const UINT8 ylookup[16] =
+static const uint8_t ylookup[16] =
 	{ 0, 0, 1, 1,
 	  0, 0, 1, 1,
 	  2, 2, 3, 3,
@@ -349,14 +349,14 @@ static const UINT8 ylookup[16] =
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int y_offs )
 {
 	wgp_state *state = (wgp_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, i, j, k;
 	int x, y, curx, cury;
 	int zx, zy, zoomx, zoomy, priority = 0;
-	UINT8 small_sprite, col, flipx, flipy;
-	UINT16 code, bigsprite, map_index;
-	UINT16 rotate = 0;
-	UINT16 tile_mask = (machine->gfx[0]->total_elements) - 1;
+	uint8_t small_sprite, col, flipx, flipy;
+	uint16_t code, bigsprite, map_index;
+	uint16_t rotate = 0;
+	uint16_t tile_mask = (machine->gfx[0]->total_elements) - 1;
 	static const int primasks[2] = {0x0, 0xfffc};	/* fff0 => under rhs of road only */
 
 	for (offs = 0x1ff; offs >= 0; offs--)
@@ -487,16 +487,16 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 *********************************************************/
 
 INLINE void bryan2_drawscanline( bitmap_t *bitmap, int x, int y, int length,
-		const UINT16 *src, int transparent, UINT32 orient, bitmap_t *priority, int pri )
+		const uint16_t *src, int transparent, uint32_t orient, bitmap_t *priority, int pri )
 {
-	UINT16 *dsti = BITMAP_ADDR16(bitmap, y, x);
-	UINT8 *dstp = BITMAP_ADDR8(priority, y, x);
+	uint16_t *dsti = BITMAP_ADDR16(bitmap, y, x);
+	uint8_t *dstp = BITMAP_ADDR8(priority, y, x);
 
 	if (transparent)
 	{
 		while (length--)
 		{
-			UINT32 spixel = *src++;
+			uint32_t spixel = *src++;
 			if (spixel < 0x7fff)
 			{
 				*dsti = spixel;
@@ -518,29 +518,29 @@ INLINE void bryan2_drawscanline( bitmap_t *bitmap, int x, int y, int length,
 
 
 
-static void wgp_piv_layer_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority )
+static void wgp_piv_layer_draw( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority )
 {
 	wgp_state *state = (wgp_state *)machine->driver_data;
 	bitmap_t *srcbitmap = tilemap_get_pixmap(state->piv_tilemap[layer]);
 	bitmap_t *flagsbitmap = tilemap_get_flagsmap(state->piv_tilemap[layer]);
 
-	UINT16 *dst16,*src16;
-	UINT8 *tsrc;
+	uint16_t *dst16,*src16;
+	uint8_t *tsrc;
 	int i, y, y_index, src_y_index, row_index, row_zoom;
 
-	/* I have a fairly strong feeling these should be UINT32's, x_index is
+	/* I have a fairly strong feeling these should be uint32_t's, x_index is
        falling through from max +ve to max -ve quite a lot in this routine */
 	int sx, x_index, x_step;
 
-	UINT32 zoomx, zoomy;
-	UINT16 scanline[512];
-	UINT16 row_colbank, row_scroll;
+	uint32_t zoomx, zoomy;
+	uint16_t scanline[512];
+	uint16_t row_colbank, row_scroll;
 	int flipscreen = 0;	/* n/a */
 	int machine_flip = 0;	/* for  ROT 180 ? */
 
-	UINT16 screen_width = cliprect->max_x - cliprect->min_x + 1;
-	UINT16 min_y = cliprect->min_y;
-	UINT16 max_y = cliprect->max_y;
+	uint16_t screen_width = cliprect->max_x - cliprect->min_x + 1;
+	uint16_t min_y = cliprect->min_y;
+	uint16_t max_y = cliprect->max_y;
 
 	int width_mask = 0x3ff;
 
@@ -647,10 +647,10 @@ VIDEO_UPDATE( wgp )
 {
 	wgp_state *state = (wgp_state *)screen->machine->driver_data;
 	int i;
-	UINT8 layer[3];
+	uint8_t layer[3];
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[4];
+	static uint8_t dislayer[4];
 #endif
 
 #ifdef MAME_DEBUG

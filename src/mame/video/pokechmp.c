@@ -35,7 +35,7 @@ VIDEO_START( pokechmp )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 4)

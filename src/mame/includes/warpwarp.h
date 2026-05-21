@@ -2,7 +2,7 @@
 
 /*----------- defined in video/warpwarp.c -----------*/
 
-extern UINT8 *geebee_videoram,*warpwarp_videoram;
+extern uint8_t *geebee_videoram,*warpwarp_videoram;
 extern int geebee_bgw;
 extern int warpwarp_ball_on;
 extern int warpwarp_ball_h, warpwarp_ball_v;

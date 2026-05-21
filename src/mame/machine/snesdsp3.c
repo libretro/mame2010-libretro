@@ -16,68 +16,68 @@ static void dsp3_Command(void);
 
 struct _snes_dsp3_state
 {
-	UINT16  DR;
-	UINT16  SR;
-	UINT16  MemoryIndex;
+	uint16_t  DR;
+	uint16_t  SR;
+	uint16_t  MemoryIndex;
 
-	INT16   AddLo;
-	INT16   AddHi;
-	INT16   WinLo;
-	INT16   WinHi;
-	UINT16  Codewords;
-	UINT16  Outwords;
-	UINT16  Symbol;
-	UINT16  BitCount;
-	UINT16  Index;
-	UINT16  Codes[512];
-	UINT16  BitsLeft;
-	UINT16  ReqBits;
-	UINT16  ReqData;
-	UINT16  BitCommand;
-	UINT8   BaseLength;
-	UINT16  BaseCodes;
-	UINT16  BaseCode;
-	UINT8   CodeLengths[8];
-	UINT16  CodeOffsets[8];
-	UINT16  LZCode;
-	UINT8   LZLength;
+	int16_t   AddLo;
+	int16_t   AddHi;
+	int16_t   WinLo;
+	int16_t   WinHi;
+	uint16_t  Codewords;
+	uint16_t  Outwords;
+	uint16_t  Symbol;
+	uint16_t  BitCount;
+	uint16_t  Index;
+	uint16_t  Codes[512];
+	uint16_t  BitsLeft;
+	uint16_t  ReqBits;
+	uint16_t  ReqData;
+	uint16_t  BitCommand;
+	uint8_t   BaseLength;
+	uint16_t  BaseCodes;
+	uint16_t  BaseCode;
+	uint8_t   CodeLengths[8];
+	uint16_t  CodeOffsets[8];
+	uint16_t  LZCode;
+	uint8_t   LZLength;
 
-	UINT16  X;
-	UINT16  Y;
+	uint16_t  X;
+	uint16_t  Y;
 
-	UINT8   Bitmap[8];
-	UINT8   Bitplane[8];
-	UINT16  BMIndex;
-	UINT16  BPIndex;
-	UINT16  Count;
+	uint8_t   Bitmap[8];
+	uint8_t   Bitplane[8];
+	uint16_t  BMIndex;
+	uint16_t  BPIndex;
+	uint16_t  Count;
 
-	INT16 op3e_x;
-	INT16 op3e_y;
+	int16_t op3e_x;
+	int16_t op3e_y;
 
-	INT16 op1e_terrain[0x2000];
-	INT16 op1e_cost[0x2000];
-	INT16 op1e_weight[0x2000];
+	int16_t op1e_terrain[0x2000];
+	int16_t op1e_cost[0x2000];
+	int16_t op1e_weight[0x2000];
 
-	INT16 op1e_cell;
-	INT16 op1e_turn;
-	INT16 op1e_search;
+	int16_t op1e_cell;
+	int16_t op1e_turn;
+	int16_t op1e_search;
 
-	INT16 op1e_x;
-	INT16 op1e_y;
+	int16_t op1e_x;
+	int16_t op1e_y;
 
-	INT16 op1e_min_radius;
-	INT16 op1e_max_radius;
+	int16_t op1e_min_radius;
+	int16_t op1e_max_radius;
 
-	INT16 op1e_max_search_radius;
-	INT16 op1e_max_path_radius;
+	int16_t op1e_max_search_radius;
+	int16_t op1e_max_path_radius;
 
-	INT16 op1e_lcv_radius;
-	INT16 op1e_lcv_steps;
-	INT16 op1e_lcv_turns;
+	int16_t op1e_lcv_radius;
+	int16_t op1e_lcv_steps;
+	int16_t op1e_lcv_turns;
 
 	void(*SetDSP3)(void);
 
-	UINT16 DataROM[1024];
+	uint16_t DataROM[1024];
 };
 
 static struct _snes_dsp3_state  dsp3_state;
@@ -120,31 +120,31 @@ static void dsp3_MemoryDump(void)
 
 static void dsp3_OP06(void)
 {
-	dsp3_state.WinLo = (UINT8)(dsp3_state.DR);
-	dsp3_state.WinHi = (UINT8)(dsp3_state.DR >> 8);
+	dsp3_state.WinLo = (uint8_t)(dsp3_state.DR);
+	dsp3_state.WinHi = (uint8_t)(dsp3_state.DR >> 8);
 	dsp3_Reset();
 }
 
 static void dsp3_OP03(void)
 {
-	INT16 Lo = (UINT8)(dsp3_state.DR);
-	INT16 Hi = (UINT8)(dsp3_state.DR >> 8);
-	INT16 Ofs = (dsp3_state.WinLo * Hi << 1) + (Lo << 1);
+	int16_t Lo = (uint8_t)(dsp3_state.DR);
+	int16_t Hi = (uint8_t)(dsp3_state.DR >> 8);
+	int16_t Ofs = (dsp3_state.WinLo * Hi << 1) + (Lo << 1);
 	dsp3_state.DR = Ofs >> 1;
 	dsp3_state.SetDSP3 = &dsp3_Reset;
 }
 
 static void dsp3_OP07_B(void)
 {
-	INT16 Ofs = (dsp3_state.WinLo * dsp3_state.AddHi << 1) + (dsp3_state.AddLo << 1);
+	int16_t Ofs = (dsp3_state.WinLo * dsp3_state.AddHi << 1) + (dsp3_state.AddLo << 1);
 	dsp3_state.DR = Ofs >> 1;
 	dsp3_state.SetDSP3 = &dsp3_Reset;
 }
 
 static void dsp3_OP07_A(void)
 {
-	INT16 Lo = (UINT8)(dsp3_state.DR);
-	INT16 Hi = (UINT8)(dsp3_state.DR >> 8);
+	int16_t Lo = (uint8_t)(dsp3_state.DR);
+	int16_t Hi = (uint8_t)(dsp3_state.DR >> 8);
 
 	if (Lo & 1)
 		Hi += (dsp3_state.AddLo & 1);
@@ -168,7 +168,7 @@ static void dsp3_OP07_A(void)
 
 static void dsp3_OP07(void)
 {
-	UINT32 dataOfs = ((dsp3_state.DR << 1) + 0x03b2) & 0x03ff;
+	uint32_t dataOfs = ((dsp3_state.DR << 1) + 0x03b2) & 0x03ff;
 
 	dsp3_state.AddHi = dsp3_state.DataROM[dataOfs];
 	dsp3_state.AddLo = dsp3_state.DataROM[dataOfs + 1];
@@ -208,8 +208,8 @@ static void dsp3_Convert_A(void)
 {
 	if (dsp3_state.BMIndex < 8)
 	{
-		dsp3_state.Bitmap[dsp3_state.BMIndex++] = (UINT8) (dsp3_state.DR);
-		dsp3_state.Bitmap[dsp3_state.BMIndex++] = (UINT8) (dsp3_state.DR >> 8);
+		dsp3_state.Bitmap[dsp3_state.BMIndex++] = (uint8_t) (dsp3_state.DR);
+		dsp3_state.Bitmap[dsp3_state.BMIndex++] = (uint8_t) (dsp3_state.DR >> 8);
 
 		if (dsp3_state.BMIndex == 8)
 		{
@@ -249,7 +249,7 @@ static void dsp3_Convert(void)
 	dsp3_state.SetDSP3 = &dsp3_Convert_A;
 }
 
-static UINT8 dsp3_GetBits(UINT8 Count)
+static uint8_t dsp3_GetBits(uint8_t Count)
 {
 	if (!dsp3_state.BitsLeft)
 	{
@@ -380,7 +380,7 @@ static void dsp3_Decode_Tree(void)
 
 		dsp3_state.ReqBits++;
 
-		dsp3_state.CodeLengths[dsp3_state.Index] = (UINT8) dsp3_state.ReqBits;
+		dsp3_state.CodeLengths[dsp3_state.Index] = (uint8_t) dsp3_state.ReqBits;
 		dsp3_state.CodeOffsets[dsp3_state.Index] = dsp3_state.Symbol;
 		dsp3_state.Index++;
 
@@ -475,8 +475,8 @@ static void dsp3_Decode(void)
 
 static void dsp3_OP3E(void)
 {
-	dsp3_state.op3e_x = (UINT8)(dsp3_state.DR & 0x00ff);
-	dsp3_state.op3e_y = (UINT8)((dsp3_state.DR & 0xff00) >> 8);
+	dsp3_state.op3e_x = (uint8_t)(dsp3_state.DR & 0x00ff);
+	dsp3_state.op3e_y = (uint8_t)((dsp3_state.DR & 0xff00) >> 8);
 
 	dsp3_OP03();
 
@@ -501,15 +501,15 @@ static void dsp3_OP1E_C(void);
 static void dsp3_OP1E_C1(void);
 static void dsp3_OP1E_C2(void);
 
-static void dsp3_OP1E_D(INT16, INT16 *, INT16 *);
-static void dsp3_OP1E_D1(INT16 move, INT16 *lo, INT16 *hi);
+static void dsp3_OP1E_D(int16_t, int16_t *, int16_t *);
+static void dsp3_OP1E_D1(int16_t move, int16_t *lo, int16_t *hi);
 
 static void dsp3_OP1E(void)
 {
 	int lcv;
 
-	dsp3_state.op1e_min_radius = (UINT8)(dsp3_state.DR & 0x00ff);
-	dsp3_state.op1e_max_radius = (UINT8)((dsp3_state.DR & 0xff00)>>8);
+	dsp3_state.op1e_min_radius = (uint8_t)(dsp3_state.DR & 0x00ff);
+	dsp3_state.op1e_max_radius = (uint8_t)((dsp3_state.DR & 0xff00)>>8);
 
 	if (dsp3_state.op1e_min_radius == 0)
 		dsp3_state.op1e_min_radius++;
@@ -575,7 +575,7 @@ static void dsp3_OP1E_A(void)
 		return;
 	}
 
-	dsp3_state.DR = (UINT8)(dsp3_state.op1e_x) | ((UINT8)(dsp3_state.op1e_y) << 8);
+	dsp3_state.DR = (uint8_t)(dsp3_state.op1e_x) | ((uint8_t)(dsp3_state.op1e_y) << 8);
 	dsp3_OP03();
 
 	dsp3_state.op1e_cell = dsp3_state.DR;
@@ -592,7 +592,7 @@ static void dsp3_OP1E_A1(void)
 
 static void dsp3_OP1E_A2(void)
 {
-	dsp3_state.op1e_terrain[dsp3_state.op1e_cell] = (UINT8)(dsp3_state.DR & 0x00ff);
+	dsp3_state.op1e_terrain[dsp3_state.op1e_cell] = (uint8_t)(dsp3_state.DR & 0x00ff);
 
 	dsp3_state.SR = 0x0084;
 	dsp3_state.SetDSP3 = &dsp3_OP1E_A3;
@@ -600,7 +600,7 @@ static void dsp3_OP1E_A2(void)
 
 static void dsp3_OP1E_A3(void)
 {
-	dsp3_state.op1e_cost[dsp3_state.op1e_cell] = (UINT8)(dsp3_state.DR & 0x00ff);
+	dsp3_state.op1e_cost[dsp3_state.op1e_cell] = (uint8_t)(dsp3_state.DR & 0x00ff);
 
 	if (dsp3_state.op1e_lcv_radius == 1)
 	{
@@ -618,7 +618,7 @@ static void dsp3_OP1E_A3(void)
 		dsp3_state.op1e_weight[dsp3_state.op1e_cell] = 0xff;
 	}
 
-	dsp3_OP1E_D((INT16)(dsp3_state.op1e_turn + 2), &dsp3_state.op1e_x, &dsp3_state.op1e_y);
+	dsp3_OP1E_D((int16_t)(dsp3_state.op1e_turn + 2), &dsp3_state.op1e_x, &dsp3_state.op1e_y);
 	dsp3_state.op1e_lcv_steps--;
 
 	dsp3_state.SR = 0x0080;
@@ -660,7 +660,7 @@ static void dsp3_OP1E_B1(void)
 				if (0 <= dsp3_state.op1e_y && dsp3_state.op1e_y < dsp3_state.WinHi &&
 						0 <= dsp3_state.op1e_x && dsp3_state.op1e_x < dsp3_state.WinLo )
 				{
-					dsp3_state.DR = (UINT8)(dsp3_state.op1e_x) | ((UINT8)(dsp3_state.op1e_y) << 8);
+					dsp3_state.DR = (uint8_t)(dsp3_state.op1e_x) | ((uint8_t)(dsp3_state.op1e_y) << 8);
 					dsp3_OP03();
 
 					dsp3_state.op1e_cell = dsp3_state.DR;
@@ -687,10 +687,10 @@ static void dsp3_OP1E_B1(void)
 
 static void dsp3_OP1E_B2(void)
 {
-	INT16 cell;
-	INT16 path;
-	INT16 x,y;
-	INT16 lcv_turns;
+	int16_t cell;
+	int16_t path;
+	int16_t x,y;
+	int16_t lcv_turns;
 
 	path = 0xff;
 	lcv_turns = 6;
@@ -702,7 +702,7 @@ static void dsp3_OP1E_B2(void)
 
 		dsp3_OP1E_D1(lcv_turns, &x, &y);
 
-		dsp3_state.DR = (UINT8)(x) | ((UINT8)(y)<<8);
+		dsp3_state.DR = (uint8_t)(x) | ((uint8_t)(y)<<8);
 		dsp3_OP03();
 
 		cell = dsp3_state.DR;
@@ -728,8 +728,8 @@ static void dsp3_OP1E_C(void)
 {
 	int lcv;
 
-	dsp3_state.op1e_min_radius = (UINT8)(dsp3_state.DR & 0x00ff);
-	dsp3_state.op1e_max_radius = (UINT8)((dsp3_state.DR & 0xff00) >> 8);
+	dsp3_state.op1e_min_radius = (uint8_t)(dsp3_state.DR & 0x00ff);
+	dsp3_state.op1e_max_radius = (uint8_t)((dsp3_state.DR & 0xff00) >> 8);
 
 	if (dsp3_state.op1e_min_radius == 0)
 		dsp3_state.op1e_min_radius++;
@@ -796,7 +796,7 @@ static void dsp3_OP1E_C1(void)
 		return;
 	}
 
-	dsp3_state.DR = (UINT8)(dsp3_state.op1e_x) | ((UINT8)(dsp3_state.op1e_y) << 8);
+	dsp3_state.DR = (uint8_t)(dsp3_state.op1e_x) | ((uint8_t)(dsp3_state.op1e_y) << 8);
 	dsp3_OP03();
 
 	dsp3_state.op1e_cell = dsp3_state.DR;
@@ -810,7 +810,7 @@ static void dsp3_OP1E_C2(void)
 {
 	dsp3_state.DR = dsp3_state.op1e_weight[dsp3_state.op1e_cell];
 
-	dsp3_OP1E_D((INT16)(dsp3_state.op1e_turn + 2), &dsp3_state.op1e_x, &dsp3_state.op1e_y);
+	dsp3_OP1E_D((int16_t)(dsp3_state.op1e_turn + 2), &dsp3_state.op1e_x, &dsp3_state.op1e_y);
 	dsp3_state.op1e_lcv_steps--;
 
 	dsp3_state.SR = 0x0084;
@@ -818,17 +818,17 @@ static void dsp3_OP1E_C2(void)
 }
 
 
-static void dsp3_OP1E_D( INT16 move, INT16 *lo, INT16 *hi )
+static void dsp3_OP1E_D( int16_t move, int16_t *lo, int16_t *hi )
 {
-	UINT32 dataOfs = ((move << 1) + 0x03b2) & 0x03ff;
-	INT16 Lo;
-	INT16 Hi;
+	uint32_t dataOfs = ((move << 1) + 0x03b2) & 0x03ff;
+	int16_t Lo;
+	int16_t Hi;
 
 	dsp3_state.AddHi = dsp3_state.DataROM[dataOfs];
 	dsp3_state.AddLo = dsp3_state.DataROM[dataOfs + 1];
 
-	Lo = (UINT8)(*lo);
-	Hi = (UINT8)(*hi);
+	Lo = (uint8_t)(*lo);
+	Hi = (uint8_t)(*hi);
 
 	if (Lo & 1)	Hi += (dsp3_state.AddLo & 1);
 
@@ -850,11 +850,11 @@ static void dsp3_OP1E_D( INT16 move, INT16 *lo, INT16 *hi )
 }
 
 
-static void dsp3_OP1E_D1( INT16 move, INT16 *lo, INT16 *hi )
+static void dsp3_OP1E_D1( int16_t move, int16_t *lo, int16_t *hi )
 {
-	//UINT32 dataOfs = ((move << 1) + 0x03b2) & 0x03ff;
-	INT16 Lo;
-	INT16 Hi;
+	//uint32_t dataOfs = ((move << 1) + 0x03b2) & 0x03ff;
+	int16_t Lo;
+	int16_t Hi;
 
 	const unsigned short HiAdd[] = {
 		0x00, 0xFF, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00,
@@ -870,8 +870,8 @@ static void dsp3_OP1E_D1( INT16 move, INT16 *lo, INT16 *hi )
 		dsp3_state.AddHi = HiAdd[move + 0];
 	dsp3_state.AddLo = LoAdd[move];
 
-	Lo = (UINT8)(*lo);
-	Hi = (UINT8)(*hi);
+	Lo = (uint8_t)(*lo);
+	Hi = (uint8_t)(*hi);
 
 	if (Lo & 1)
 		Hi += (dsp3_state.AddLo & 1);
@@ -977,7 +977,7 @@ static void dsp3_Command(void)
 }
 
 
-static void dsp3_write( UINT16 dsp3_address, UINT8 dsp3_byte )
+static void dsp3_write( uint16_t dsp3_address, uint8_t dsp3_byte )
 {
 	if (dsp3_address < 0xC000)
 	{
@@ -1001,14 +1001,14 @@ static void dsp3_write( UINT16 dsp3_address, UINT8 dsp3_byte )
 	}
 }
 
-static UINT8 dsp3_read( UINT16 dsp3_address )
+static uint8_t dsp3_read( uint16_t dsp3_address )
 {
-	UINT8 value;
+	uint8_t value;
 	if (dsp3_address < 0xC000)
 	{
 		if (dsp3_state.SR & 0x04)
 		{
-			value = (UINT8) dsp3_state.DR;
+			value = (uint8_t) dsp3_state.DR;
 			(*dsp3_state.SetDSP3)();
 		}
 		else
@@ -1016,10 +1016,10 @@ static UINT8 dsp3_read( UINT16 dsp3_address )
 			dsp3_state.SR ^= 0x10;
 
 			if (dsp3_state.SR & 0x10)
-				value = (UINT8) (dsp3_state.DR);
+				value = (uint8_t) (dsp3_state.DR);
 			else
 			{
-				value = (UINT8) (dsp3_state.DR >> 8);
+				value = (uint8_t) (dsp3_state.DR >> 8);
 				(*dsp3_state.SetDSP3)();
 			}
 		}
@@ -1027,7 +1027,7 @@ static UINT8 dsp3_read( UINT16 dsp3_address )
 	}
 	else
 	{
-		value = (UINT8) dsp3_state.SR;
+		value = (uint8_t) dsp3_state.SR;
 	}
 
 	return value;
@@ -1098,8 +1098,8 @@ static void dsp3_register_save( running_machine *machine )
 
 static void dsp3_init( running_machine *machine )
 {
-	UINT32 i;
-	UINT8 *dspin = memory_region(machine, "addons");
+	uint32_t i;
+	uint8_t *dspin = memory_region(machine, "addons");
 
 	dsp3_Reset();
 

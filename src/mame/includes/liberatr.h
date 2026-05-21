@@ -6,13 +6,13 @@
 
 /*----------- defined in video/liberatr.c -----------*/
 
-extern UINT8 *liberatr_base_ram;
-extern UINT8 *liberatr_planet_frame;
-extern UINT8 *liberatr_planet_select;
-extern UINT8 *liberatr_x;
-extern UINT8 *liberatr_y;
-extern UINT8 *liberatr_bitmapram;
-extern UINT8 *liberatr_colorram;
+extern uint8_t *liberatr_base_ram;
+extern uint8_t *liberatr_planet_frame;
+extern uint8_t *liberatr_planet_select;
+extern uint8_t *liberatr_x;
+extern uint8_t *liberatr_y;
+extern uint8_t *liberatr_bitmapram;
+extern uint8_t *liberatr_colorram;
 
 VIDEO_START( liberatr );
 VIDEO_UPDATE( liberatr );

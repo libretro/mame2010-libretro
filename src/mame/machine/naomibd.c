@@ -197,34 +197,34 @@ struct _naomibd_config_table
 	const char *name;
 	int reverse_bytes;
 	int live_key;
-	UINT32	transtbl[MAX_PROT_REGIONS*3];
+	uint32_t	transtbl[MAX_PROT_REGIONS*3];
 };
 
 typedef struct _naomibd_state naomibd_state;
 struct _naomibd_state
 {
-	UINT8				index;					/* index of board */
-	UINT8				type;
+	uint8_t				index;					/* index of board */
+	uint8_t				type;
 	running_device *device;				/* pointer to our containing device */
 
-	UINT8 *				memory;
-	UINT8 *				protdata;
+	uint8_t *				memory;
+	uint8_t *				protdata;
 	chd_file *			gdromchd;
-	UINT8 *				picdata;
-	UINT32				rom_offset, rom_offset_flags, dma_count;
-	UINT32				dma_offset, dma_offset_flags;
-	UINT32				prot_offset, prot_key;
-	UINT32				aw_offset, aw_file_base, aw_file_offset;
+	uint8_t *				picdata;
+	uint32_t				rom_offset, rom_offset_flags, dma_count;
+	uint32_t				dma_offset, dma_offset_flags;
+	uint32_t				prot_offset, prot_key;
+	uint32_t				aw_offset, aw_file_base, aw_file_offset;
 
-	INT32				prot_sum;
+	int32_t				prot_sum;
 
-	const UINT32			*prot_translate;
+	const uint32_t			*prot_translate;
 	int				prot_reverse_bytes;
 
 	// live decrypt vars
-	UINT32				dc_gamekey, dc_seqkey, dc_seed;
-	UINT8				dc_cart_ram[128*1024];	// internal cartridge RAM
-	INT32				dc_m3_ptr, dc_m2_ptr, dc_readback;
+	uint32_t				dc_gamekey, dc_seqkey, dc_seed;
+	uint8_t				dc_cart_ram[128*1024];	// internal cartridge RAM
+	int32_t				dc_m3_ptr, dc_m2_ptr, dc_readback;
 
 	#if NAOMIBD_PRINTF_PROTECTION
 	int				prot_pio_count;
@@ -291,8 +291,8 @@ static const naomibd_config_table naomibd_translate_tbl[] =
 };
 
 // forward declaration for decrypt function
-static void stream_decrypt(UINT32 game_key, UINT32 sequence_key, UINT16 seed, UINT8* ciphertext, UINT8* plaintext, int length);
-static UINT16 block_decrypt(UINT32 game_key, UINT16 sequence_key, UINT16 counter, UINT16 data);
+static void stream_decrypt(uint32_t game_key, uint32_t sequence_key, uint16_t seed, uint8_t* ciphertext, uint8_t* plaintext, int length);
+static uint16_t block_decrypt(uint32_t game_key, uint16_t sequence_key, uint16_t counter, uint16_t data);
 
 /***************************************************************************
     INLINE FUNCTIONS
@@ -446,7 +446,7 @@ static void soft_reset(naomibd_state *v)
 READ64_DEVICE_HANDLER( naomibd_r )
 {
 	naomibd_state *v = get_safe_token(device);
-	UINT8 *ROM = (UINT8 *)v->memory;
+	uint8_t *ROM = (uint8_t *)v->memory;
 
 	// AW board is different, shouldn't ever be read
 	if (v->type == AW_ROM_BOARD)
@@ -458,22 +458,22 @@ READ64_DEVICE_HANDLER( naomibd_r )
 	// ROM_DATA
 	if ((offset == 1) && ACCESSING_BITS_0_15)
 	{
-		UINT64 ret = 0;
+		uint64_t ret = 0;
 
 		if (v->rom_offset_flags & NAOMIBD_FLAG_SPECIAL_MODE)
 		{
 			// can we live-decrypt this game?
 			if (v->dc_gamekey != -1)
 			{
-				ret = (UINT64)(v->dc_cart_ram[v->dc_readback+1] | (v->dc_cart_ram[v->dc_readback]<<8));
+				ret = (uint64_t)(v->dc_cart_ram[v->dc_readback+1] | (v->dc_cart_ram[v->dc_readback]<<8));
 				v->dc_readback += 2;
 			}
 			else
 			{
 				if (v->rom_offset == 0x1fffe)
 				{
-					UINT8 *prot = (UINT8 *)v->protdata;
-					UINT32 byte_offset = v->prot_offset*2;
+					uint8_t *prot = (uint8_t *)v->protdata;
+					uint32_t byte_offset = v->prot_offset*2;
 
 					// this is a good time to clear the prot_sum
 					v->prot_sum = 0;
@@ -494,11 +494,11 @@ READ64_DEVICE_HANDLER( naomibd_r )
 
 					if (v->prot_reverse_bytes)
 					{
-						ret = (UINT64)(prot[byte_offset+1] | (prot[byte_offset]<<8));
+						ret = (uint64_t)(prot[byte_offset+1] | (prot[byte_offset]<<8));
 					}
 					else
 					{
-						ret = (UINT64)(prot[byte_offset] | (prot[byte_offset+1]<<8));
+						ret = (uint64_t)(prot[byte_offset] | (prot[byte_offset+1]<<8));
 					}
 
 					v->prot_offset++;
@@ -513,7 +513,7 @@ READ64_DEVICE_HANDLER( naomibd_r )
 		}
 		else
 		{
-			ret = (UINT64)(ROM[v->rom_offset] | (ROM[v->rom_offset+1]<<8));
+			ret = (uint64_t)(ROM[v->rom_offset] | (ROM[v->rom_offset+1]<<8));
 		}
 
 		if (v->rom_offset_flags & NAOMIBD_FLAG_AUTO_ADVANCE)
@@ -534,14 +534,14 @@ READ64_DEVICE_HANDLER( naomibd_r )
 		//  (certain bios / board combinations will also cause this, so it is
 		//   important that we mirror the data in the rom loading using ROM_COPY)
 
-		//return (UINT64)0xffff << 32;
-		return (UINT64)actel_id << 32;
+		//return (uint64_t)0xffff << 32;
+		return (uint64_t)actel_id << 32;
 	}
 	else if ((offset == 7) && ACCESSING_BITS_32_47)
 	{
 		// 5f703c
 		mame_printf_verbose("ROM: read 5f703c\n");
-		return (UINT64)0xffff << 32;
+		return (uint64_t)0xffff << 32;
 	}
 	else if ((offset == 8) && ACCESSING_BITS_0_15)
 	{
@@ -565,11 +565,11 @@ READ64_DEVICE_HANDLER( naomibd_r )
 	{
 		// 5f704c
 		mame_printf_verbose("ROM: read 5f704c\n");
-		return (UINT64)1 << 32;
+		return (uint64_t)1 << 32;
 	}
 	else if ((offset == 15) && ACCESSING_BITS_32_47) // boardid read
 	{
-		UINT64 ret;
+		uint64_t ret;
 
 		ret = x76f100_sda_read( device->machine, 0 ) << 15;
 
@@ -602,7 +602,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 					v->aw_offset &= 0xffff0000;
 					v->aw_offset |= (data & 0xffff);
 					v->dma_offset = v->aw_offset*2;
-					//printf("EPR_OFFSETL = %x, dma_offset %x\n", (UINT32)data, v->dma_offset);
+					//printf("EPR_OFFSETL = %x, dma_offset %x\n", (uint32_t)data, v->dma_offset);
 				}
 				else if(ACCESSING_BITS_32_47 || ACCESSING_BITS_32_63)
 				{
@@ -611,7 +611,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 					v->aw_offset |= ((data>>16) & 0xffff0000);
 					v->dma_offset = v->aw_offset*2;
 					v->dma_offset_flags = NAOMIBD_FLAG_ADDRESS_SHUFFLE|NAOMIBD_FLAG_AUTO_ADVANCE;	// force normal DMA mode
-					//printf("EPR_OFFSETH = %x, dma_offset %x\n", (UINT32)(data>>32), v->dma_offset);
+					//printf("EPR_OFFSETH = %x, dma_offset %x\n", (uint32_t)(data>>32), v->dma_offset);
 				}
 
 			}
@@ -622,7 +622,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 				if(ACCESSING_BITS_32_47 || ACCESSING_BITS_32_63)
 				{
 					// MPR_RECORD_INDEX
-					//printf("%x to RECORD_INDEX\n", (UINT32)(data>>32));
+					//printf("%x to RECORD_INDEX\n", (uint32_t)(data>>32));
 					v->dma_offset = 0x1000000 + (0x40 * (data>>32));
 				}
 			}
@@ -632,14 +632,14 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 			{
 				if(ACCESSING_BITS_0_15)
 				{
-					UINT8 *ROM = (UINT8 *)v->memory;
-					UINT32 base;
+					uint8_t *ROM = (uint8_t *)v->memory;
+					uint32_t base;
 
 					// MPR_FIRST_FILE_INDEX (usually 3)
 					base = data * 64;
 					v->aw_file_base = ROM[0x100000b+base]<<24 | ROM[0x100000a+base]<<16 | ROM[0x1000009+base]<<8 | ROM[0x1000008+base];
 					v->aw_file_base += 0x1000000;
-					//printf("%x to FIRST_FILE_INDEX, file_base = %x\n", (UINT32)data, v->aw_file_base);
+					//printf("%x to FIRST_FILE_INDEX, file_base = %x\n", (uint32_t)data, v->aw_file_base);
 				}
 				else if(ACCESSING_BITS_32_47 || ACCESSING_BITS_32_63)
 				{
@@ -647,7 +647,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 					v->aw_file_offset &= 0xffff0000;
 					v->aw_file_offset |= (data>>32) & 0xffff;
 					v->dma_offset = v->aw_file_base + (v->aw_file_offset*2);
-					//printf("%x to FILE_OFFSETL, file_offset %x, dma_offset %x\n", (UINT32)(data>>32), v->aw_file_offset, v->dma_offset);
+					//printf("%x to FILE_OFFSETL, file_offset %x, dma_offset %x\n", (uint32_t)(data>>32), v->aw_file_offset, v->dma_offset);
 				}
 			}
 			break;
@@ -660,7 +660,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 					v->aw_file_offset &= 0xffff;
 					v->aw_file_offset |= (data & 0xffff)<<16;
 					v->dma_offset = v->aw_file_base + (v->aw_file_offset*2);
-					//printf("%x to FILE_OFFSETH, file_offset %x, dma_offset %x\n", (UINT32)data, v->aw_file_offset, v->dma_offset);
+					//printf("%x to FILE_OFFSETH, file_offset %x, dma_offset %x\n", (uint32_t)data, v->aw_file_offset, v->dma_offset);
 				}
 			}
 			break;
@@ -712,12 +712,12 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 				{
 					case 0x1fff8:	// offset low
 						v->prot_offset &= 0xffff0000;
-						v->prot_offset |= (UINT32)data;
+						v->prot_offset |= (uint32_t)data;
 						break;
 
 					case 0x1fffa:	// offset high
 						v->prot_offset &= 0xffff;
-						v->prot_offset |= (UINT32)data<<16;
+						v->prot_offset |= (uint32_t)data<<16;
 						break;
 
 					case 0x1fffc:	// decryption key
@@ -732,8 +732,8 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 						// if dc_gamekey isn't -1, we can live-decrypt this one
 						if (v->dc_gamekey != -1)
 						{
-							UINT8 temp_ram[128*1024];
-							UINT8 *ROM = (UINT8 *)v->memory;
+							uint8_t temp_ram[128*1024];
+							uint8_t *ROM = (uint8_t *)v->memory;
 
 							v->dc_seed = 0;
 							v->dc_readback = 0;
@@ -835,9 +835,9 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 					case 0x2000000:
 					case 0x2020000:
 						#if NAOMIBD_PRINTF_PROTECTION
-						printf("Protection write %04x to upload @ %x\n", (UINT32)(data&0xffff), v->dc_m3_ptr);
+						printf("Protection write %04x to upload @ %x\n", (uint32_t)(data&0xffff), v->dc_m3_ptr);
 						#endif
-						v->prot_sum += (INT16)(data&0xffff);
+						v->prot_sum += (int16_t)(data&0xffff);
 
 						v->dc_cart_ram[v->dc_m3_ptr] = (data&0xff);
 						v->dc_cart_ram[v->dc_m3_ptr+1] = (data>>8)&0xff;
@@ -846,7 +846,7 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 
 					default:
 						#if NAOMIBD_PRINTF_PROTECTION
-						printf("naomibd: unknown protection write %x @ %x\n", (UINT32)data, v->rom_offset);
+						printf("naomibd: unknown protection write %x @ %x\n", (uint32_t)data, v->rom_offset);
 						#endif
 						break;
 				}
@@ -922,15 +922,15 @@ WRITE64_DEVICE_HANDLER( naomibd_w )
 
 static void load_rom_gdrom(running_machine* machine, naomibd_state *v)
 {
-	UINT32 result;
+	uint32_t result;
 	cdrom_file *gdromfile;
-	UINT8 buffer[2048];
-	UINT8 *ptr;
-	UINT32 start,size,sectors,dir;
+	uint8_t buffer[2048];
+	uint8_t *ptr;
+	uint32_t start,size,sectors,dir;
 	int pos,len,a;
 	char name[128];
-	UINT64 key;
-	UINT8* realpic; // todo, add to device
+	uint64_t key;
+	uint8_t* realpic; // todo, add to device
 
 	memset(name,'\0',128);
 
@@ -1103,24 +1103,24 @@ static void load_rom_gdrom(running_machine* machine, naomibd_state *v)
 		key = 0;
 		for (i=0;i<7;i++)
 		{
-			key |= (UINT64)realpic[0x780+i*2] << (56 - i*8);
+			key |= (uint64_t)realpic[0x780+i*2] << (56 - i*8);
 		}
 
-		key |= (UINT64)realpic[0x7a0];
+		key |= (uint64_t)realpic[0x7a0];
 	}
 	else
 	{
-		key =(((UINT64)v->picdata[0x31] << 56) |
-			  ((UINT64)v->picdata[0x32] << 48) |
-			  ((UINT64)v->picdata[0x33] << 40) |
-			  ((UINT64)v->picdata[0x34] << 32) |
-			  ((UINT64)v->picdata[0x35] << 24) |
-			  ((UINT64)v->picdata[0x36] << 16) |
-			  ((UINT64)v->picdata[0x37] << 8)  |
-			  ((UINT64)v->picdata[0x29] << 0));
+		key =(((uint64_t)v->picdata[0x31] << 56) |
+			  ((uint64_t)v->picdata[0x32] << 48) |
+			  ((uint64_t)v->picdata[0x33] << 40) |
+			  ((uint64_t)v->picdata[0x34] << 32) |
+			  ((uint64_t)v->picdata[0x35] << 24) |
+			  ((uint64_t)v->picdata[0x36] << 16) |
+			  ((uint64_t)v->picdata[0x37] << 8)  |
+			  ((uint64_t)v->picdata[0x29] << 0));
 	}
 
-	logerror("key is %08x%08x\n", (UINT32)((key & 0xffffffff00000000ULL)>>32), (UINT32)(key & 0x00000000ffffffffULL));
+	logerror("key is %08x%08x\n", (uint32_t)((key & 0xffffffff00000000ULL)>>32), (uint32_t)(key & 0x00000000ffffffffULL));
 
 	// decrypt loaded data
 	naomi_game_decrypt(machine, key, v->memory, size);
@@ -1201,7 +1201,7 @@ carts will be using the same decompression algorithm seen in M2&M3 ones.
 
 struct sbox
 {
-    UINT8 table[64];
+    uint8_t table[64];
     int inputs[6];      // positions of the inputs bits, -1 means no input except from key
     int outputs[2];     // positions of the output bits
 };
@@ -1546,7 +1546,7 @@ static const int fn2_sequence_key_scheduling[16] = {77,34,8,42,36,27,69,66,13,9,
 
 static const int fn2_middle_result_scheduling[16] = {1,10,44,68,74,78,81,95,2,4,30,40,41,51,53,58};
 
-static int feistel_function(int input, const struct sbox* sboxes, UINT32 subkeys)
+static int feistel_function(int input, const struct sbox* sboxes, uint32_t subkeys)
 {
     int k,m;
     int aux;
@@ -1583,18 +1583,18 @@ noticing that the weak key-scheduling would allow to create some pregenerated lo
 of the function. Even so, it would still be pretty slow, so caching techniques could be a wiser option here.
 **************************/
 
-static UINT16 block_decrypt(UINT32 game_key, UINT16 sequence_key, UINT16 counter, UINT16 data)
+static uint16_t block_decrypt(uint32_t game_key, uint16_t sequence_key, uint16_t counter, uint16_t data)
 {
     int j;
     int aux,aux2;
     int A,B;
     int middle_result;
-    UINT32 fn1_subkeys[4];
-    UINT32 fn2_subkeys[4];
+    uint32_t fn1_subkeys[4];
+    uint32_t fn2_subkeys[4];
 
     /* Game-key scheduling; this could be done just once per game at initialization time */
-    memset(fn1_subkeys,0,sizeof(UINT32)*4);
-    memset(fn2_subkeys,0,sizeof(UINT32)*4);
+    memset(fn1_subkeys,0,sizeof(uint32_t)*4);
+    memset(fn2_subkeys,0,sizeof(uint32_t)*4);
 
     for (j=0; j<30; ++j)
     {
@@ -1699,14 +1699,14 @@ static UINT16 block_decrypt(UINT32 game_key, UINT16 sequence_key, UINT16 counter
     return aux;
 }
 
-static void stream_decrypt(UINT32 game_key, UINT32 sequence_key, UINT16 seed, UINT8* ciphertext, UINT8* plaintext, int length)
+static void stream_decrypt(uint32_t game_key, uint32_t sequence_key, uint16_t seed, uint8_t* ciphertext, uint8_t* plaintext, int length)
 {
-    UINT16 counter = seed;
-    UINT16 last_word;
-    UINT16 plain_word;
-    UINT16 aux_word;
+    uint16_t counter = seed;
+    uint16_t last_word;
+    uint16_t plain_word;
+    uint16_t aux_word;
     int control_bits;
-    UINT16 heading_word;
+    uint16_t heading_word;
 
     last_word = block_decrypt(game_key, sequence_key, counter, *ciphertext<<8 | *(ciphertext+1));
     control_bits = last_word&3;
@@ -1763,7 +1763,7 @@ static DEVICE_START( naomibd )
 	v->device = device;
 
 	/* find the protection address translation for this game */
-	v->prot_translate = (UINT32 *)0;
+	v->prot_translate = (uint32_t *)0;
 	#if NAOMIBD_PRINTF_PROTECTION
 	v->prot_pio_count = 0;
 	#endif
@@ -1782,18 +1782,18 @@ static DEVICE_START( naomibd )
 	switch (config->type)
 	{
 		case ROM_BOARD:
-			v->memory = (UINT8 *)memory_region(device->machine, config->regiontag);
-			v->protdata = (UINT8 *)memory_region(device->machine, "naomibd_prot");
+			v->memory = (uint8_t *)memory_region(device->machine, config->regiontag);
+			v->protdata = (uint8_t *)memory_region(device->machine, "naomibd_prot");
 			break;
 
 		case AW_ROM_BOARD:
-			v->memory = (UINT8 *)memory_region(device->machine, config->regiontag);
+			v->memory = (uint8_t *)memory_region(device->machine, config->regiontag);
 			break;
 
 		case DIMM_BOARD:
-			v->memory = (UINT8 *)auto_alloc_array_clear(device->machine, UINT8, 0x40000000); // 0x40000000 is needed for some Chihiro sets, Naomi should be less, we should pass as device param
+			v->memory = (uint8_t *)auto_alloc_array_clear(device->machine, uint8_t, 0x40000000); // 0x40000000 is needed for some Chihiro sets, Naomi should be less, we should pass as device param
 			v->gdromchd = get_disk_handle(device->machine, config->gdromregiontag);
-			v->picdata = (UINT8 *)memory_region(device->machine, config->picregiontag);
+			v->picdata = (uint8_t *)memory_region(device->machine, config->picregiontag);
 			if (v->memory != NULL && v->gdromchd != NULL && v->picdata != NULL)
 				load_rom_gdrom(device->machine, v);
 			break;
@@ -1852,14 +1852,14 @@ static DEVICE_RESET( naomibd )
 static DEVICE_NVRAM( naomibd )
 {
 	//naomibd_state *v = get_safe_token(device);
-	static const UINT8 eeprom_romboard[20+48] =
+	static const uint8_t eeprom_romboard[20+48] =
 	{
 		0x19,0x00,0xaa,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x69,0x79,0x68,0x6b,0x74,0x6d,0x68,0x6d,
 		0xa1,0x09,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
 		0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
 		0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30,0x30
 	};
-	UINT8 *games_contents;
+	uint8_t *games_contents;
 
 	if (read_or_write)
 		/*eeprom_save(file)*/;
@@ -1876,7 +1876,7 @@ static DEVICE_NVRAM( naomibd )
 		}
 		else
 		{
-			UINT8 *eeprom = auto_alloc_array_clear(device->machine, UINT8, 0x84);
+			uint8_t *eeprom = auto_alloc_array_clear(device->machine, uint8_t, 0x84);
 			memcpy(eeprom, eeprom_romboard, sizeof(eeprom_romboard));
 			x76f100_init( device->machine, 0, eeprom );
 		}

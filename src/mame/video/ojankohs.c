@@ -196,7 +196,7 @@ void ojankoc_flipscreen( const address_space *space, int data )
 {
 	ojankohs_state *state = (ojankohs_state *)space->machine->driver_data;
 	int x, y;
-	UINT8 color1, color2;
+	uint8_t color1, color2;
 
 	state->flipscreen = BIT(data, 7);
 
@@ -226,8 +226,8 @@ WRITE8_HANDLER( ojankoc_videoram_w )
 {
 	ojankohs_state *state = (ojankohs_state *)space->machine->driver_data;
 	int i;
-	UINT8 x, y, xx, px, py ;
-	UINT8 color, color1, color2;
+	uint8_t x, y, xx, px, py ;
+	uint8_t color, color1, color2;
 
 	state->videoram[offset] = data;
 
@@ -271,9 +271,9 @@ VIDEO_START( ojankohs )
 	ojankohs_state *state = (ojankohs_state *)machine->driver_data;
 
 	state->tilemap = tilemap_create(machine, ojankohs_get_tile_info, tilemap_scan_rows,  8, 4, 64, 64);
-	state->videoram = auto_alloc_array(machine, UINT8, 0x2000);
-	state->colorram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->paletteram = auto_alloc_array(machine, UINT8, 0x800);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x2000);
+	state->colorram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->paletteram = auto_alloc_array(machine, uint8_t, 0x800);
 
 	state_save_register_global_pointer(machine, state->videoram, 0x2000);
 	state_save_register_global_pointer(machine, state->colorram, 0x1000);
@@ -285,9 +285,9 @@ VIDEO_START( ojankoy )
 	ojankohs_state *state = (ojankohs_state *)machine->driver_data;
 
 	state->tilemap = tilemap_create(machine, ojankoy_get_tile_info, tilemap_scan_rows,  8, 4, 64, 64);
-	state->videoram = auto_alloc_array(machine, UINT8, 0x2000);
-	state->colorram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->paletteram = auto_alloc_array(machine, UINT8, 0x800);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x2000);
+	state->colorram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->paletteram = auto_alloc_array(machine, uint8_t, 0x800);
 
 	state_save_register_global_pointer(machine, state->videoram, 0x2000);
 	state_save_register_global_pointer(machine, state->colorram, 0x1000);
@@ -299,8 +299,8 @@ VIDEO_START( ojankoc )
 	ojankohs_state *state = (ojankohs_state *)machine->driver_data;
 
 	state->tmpbitmap = machine->primary_screen->alloc_compatible_bitmap();
-	state->videoram = auto_alloc_array(machine, UINT8, 0x8000);
-	state->paletteram = auto_alloc_array(machine, UINT8, 0x20);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x8000);
+	state->paletteram = auto_alloc_array(machine, uint8_t, 0x20);
 
 	state_save_register_global_pointer(machine, state->videoram, 0x8000);
 	state_save_register_global_pointer(machine, state->paletteram, 0x20);

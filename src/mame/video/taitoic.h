@@ -180,18 +180,18 @@ WRITE16_DEVICE_HANDLER( pc080sn_ctrl_word_w );
 void pc080sn_set_scroll(running_device *device, int tilemap_num, int scrollx, int scrolly);
 void pc080sn_set_trans_pen(running_device *device, int tilemap_num, int pen);
 void pc080sn_tilemap_update(running_device *device);
-void pc080sn_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority);
-void pc080sn_tilemap_draw_offset(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority, int xoffs, int yoffs);
+void pc080sn_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority);
+void pc080sn_tilemap_draw_offset(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority, int xoffs, int yoffs);
 
 /* For Topspeed */
-void pc080sn_tilemap_draw_special(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority, UINT16 *ram);
+void pc080sn_tilemap_draw_special(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority, uint16_t *ram);
 
 
 /**  PC090OJ  **/
 READ16_DEVICE_HANDLER( pc090oj_word_r );
 WRITE16_DEVICE_HANDLER( pc090oj_word_w );
 
-void pc090oj_set_sprite_ctrl(running_device *device, UINT16 sprctrl);
+void pc090oj_set_sprite_ctrl(running_device *device, uint16_t sprctrl);
 void pc090oj_eof_callback(running_device *device);
 void pc090oj_draw_sprites(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int pri_type);
 
@@ -201,7 +201,7 @@ READ16_DEVICE_HANDLER( tc0080vco_word_r );
 WRITE16_DEVICE_HANDLER( tc0080vco_word_w );
 
 void tc0080vco_tilemap_update(running_device *device);
-void tc0080vco_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority);
+void tc0080vco_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority);
 
 READ16_DEVICE_HANDLER( tc0080vco_cram_0_r );
 READ16_DEVICE_HANDLER( tc0080vco_cram_1_r );
@@ -239,7 +239,7 @@ READ32_DEVICE_HANDLER( tc0100scn_ctrl_long_r );
 WRITE32_DEVICE_HANDLER( tc0100scn_ctrl_long_w );
 
 void tc0100scn_tilemap_update(running_device *device);
-int tc0100scn_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority);
+int tc0100scn_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority);
 
 /* returns 0 or 1 depending on the lowest priority tilemap set in the internal
    register. Use this function to draw tilemaps in the correct order. */
@@ -251,13 +251,13 @@ READ16_DEVICE_HANDLER( tc0280grd_word_r );
 WRITE16_DEVICE_HANDLER( tc0280grd_word_w );
 WRITE16_DEVICE_HANDLER( tc0280grd_ctrl_word_w );
 void tc0280grd_tilemap_update(running_device *device, int base_color);
-void tc0280grd_zoom_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, UINT32 priority);
+void tc0280grd_zoom_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, uint32_t priority);
 
 READ16_DEVICE_HANDLER( tc0430grw_word_r );
 WRITE16_DEVICE_HANDLER( tc0430grw_word_w );
 WRITE16_DEVICE_HANDLER( tc0430grw_ctrl_word_w );
 void tc0430grw_tilemap_update(running_device *device, int base_color);
-void tc0430grw_zoom_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, UINT32 priority);
+void tc0430grw_zoom_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int xoffset, int yoffset, uint32_t priority);
 
 
 /** TC0360PRI **/
@@ -282,7 +282,7 @@ READ32_DEVICE_HANDLER( tc0480scp_ctrl_long_r );
 WRITE32_DEVICE_HANDLER( tc0480scp_ctrl_long_w );
 
 void tc0480scp_tilemap_update(running_device *device);
-void tc0480scp_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, UINT32 priority);
+void tc0480scp_tilemap_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int layer, int flags, uint32_t priority);
 
 /* Returns the priority order of the bg tilemaps set in the internal
    register. The order in which the four layers should be drawn is
@@ -296,7 +296,7 @@ READ8_DEVICE_HANDLER( tc0480scp_pri_reg_r );
 /** TC0150ROD **/
 READ16_DEVICE_HANDLER( tc0150rod_word_r );
 WRITE16_DEVICE_HANDLER( tc0150rod_word_w );
-void tc0150rod_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int y_offs, int palette_offs, int type, int road_trans, UINT32 low_priority, UINT32 high_priority);
+void tc0150rod_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int y_offs, int palette_offs, int type, int road_trans, uint32_t low_priority, uint32_t high_priority);
 
 
 /** TC0110PCR **/

@@ -32,18 +32,18 @@ gladiatr and Great Swordsman set.
 #define CMD_4a 2
 
 typedef struct TAITO8741_status{
-	UINT8 toData;    /* to host data      */
-	UINT8 fromData;  /* from host data    */
-	UINT8 fromCmd;   /* from host command */
-	UINT8 status;    /* b0 = rd ready,b1 = wd full,b2 = cmd ?? */
-	UINT8 mode;
-	UINT8 phase;
-	UINT8 txd[8];
-	UINT8 rxd[8];
-	UINT8 parallelselect;
-	UINT8 txpoint;
+	uint8_t toData;    /* to host data      */
+	uint8_t fromData;  /* from host data    */
+	uint8_t fromCmd;   /* from host command */
+	uint8_t status;    /* b0 = rd ready,b1 = wd full,b2 = cmd ?? */
+	uint8_t mode;
+	uint8_t phase;
+	uint8_t txd[8];
+	uint8_t rxd[8];
+	uint8_t parallelselect;
+	uint8_t txpoint;
 	int connect;
-	UINT8 pending4a;
+	uint8_t pending4a;
 	int serial_out;
 	int coins;
 	read8_space_func portHandler;
@@ -80,7 +80,7 @@ static int taito8741_hostcmd_r(I8741 *st)
 
 /* TAITO8741 I8741 emulation */
 
-static void taito8741_serial_rx(I8741 *st,UINT8 *data)
+static void taito8741_serial_rx(I8741 *st,uint8_t *data)
 {
 	memcpy(st->rxd,data,8);
 }
@@ -381,14 +381,14 @@ joshi Vollyball set.
 int josvolly_nmi_enable;
 
 typedef struct josvolly_8741_struct {
-	UINT8 cmd;
-	UINT8 sts;
-	UINT8 txd;
-	UINT8 outport;
-	UINT8 rxd;
-	UINT8 connect;
+	uint8_t cmd;
+	uint8_t sts;
+	uint8_t txd;
+	uint8_t outport;
+	uint8_t rxd;
+	uint8_t connect;
 
-	UINT8 rst;
+	uint8_t rst;
 
 	const char *initReadPort;
 }JV8741;
@@ -507,7 +507,7 @@ static void josvolly_8741_w(const address_space *space, int num, int offset, int
 	josvolly_8741_do(space->machine, num);
 }
 
-static INT8 josvolly_8741_r(const address_space *space,int num,int offset)
+static int8_t josvolly_8741_r(const address_space *space,int num,int offset)
 {
 	JV8741 *mcu = &i8741[num];
 	int ret;
@@ -537,9 +537,9 @@ READ8_HANDLER( josvolly_8741_1_r ) { return josvolly_8741_r(space,1,offset); }
 
 static struct
 {
-	UINT8 rxd;
-	UINT8 txd;
-	UINT8 rst;
+	uint8_t rxd;
+	uint8_t txd;
+	uint8_t rst;
 }cyclemb_mcu;
 
 void cyclemb_8741_reset(running_machine *machine)
@@ -590,7 +590,7 @@ static void cyclemb_8741_w(const address_space *space, int num, int offset, int 
 	}
 }
 
-static INT8 cyclemb_8741_r(const address_space *space,int num,int offset)
+static int8_t cyclemb_8741_r(const address_space *space,int num,int offset)
 {
 	if(offset == 1) //status port
 	{
@@ -611,7 +611,7 @@ static INT8 cyclemb_8741_r(const address_space *space,int num,int offset)
 				case 0x760: cyclemb_mcu.rxd = ((input_port_read(space->machine,"DSW1") & 0x1f) << 2); break;
 				case 0x35c:
 				{
-					static UINT8 mux_r;
+					static uint8_t mux_r;
 					mux_r^=0x20;
 					if(mux_r & 0x20)
 						cyclemb_mcu.rxd = ((input_port_read(space->machine,"DSW3")) & 0x9f) | (mux_r) | (mame_rand(space->machine) & 0x40);

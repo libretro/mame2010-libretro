@@ -12,7 +12,7 @@
 
 
 
-static UINT8 spacefb_sound_latch;
+static uint8_t spacefb_sound_latch;
 
 
 

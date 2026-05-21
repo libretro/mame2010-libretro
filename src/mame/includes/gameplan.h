@@ -29,16 +29,16 @@ public:
 	gameplan_state(running_machine &machine) { }
 
 	/* machine state */
-	UINT8   current_port;
-	UINT8   *trvquest_question;
+	uint8_t   current_port;
+	uint8_t   *trvquest_question;
 
 	/* video state */
-	UINT8   *videoram;
+	uint8_t   *videoram;
 	size_t   videoram_size;
-	UINT8    video_x;
-	UINT8    video_y;
-	UINT8    video_command;
-	UINT8    video_data;
+	uint8_t    video_x;
+	uint8_t    video_y;
+	uint8_t    video_command;
+	uint8_t    video_data;
 	emu_timer *via_0_ca1_timer;
 
 	/* devices */

@@ -42,17 +42,17 @@ WRITE8_HANDLER( victory_sound_command_w );
 
 /*----------- defined in video/exidy.c -----------*/
 
-extern UINT8 *exidy_videoram;
-extern UINT8 *exidy_characterram;
-extern UINT8 *exidy_color_latch;
-extern UINT8 *exidy_sprite1_xpos;
-extern UINT8 *exidy_sprite1_ypos;
-extern UINT8 *exidy_sprite2_xpos;
-extern UINT8 *exidy_sprite2_ypos;
-extern UINT8 *exidy_spriteno;
-extern UINT8 *exidy_sprite_enable;
+extern uint8_t *exidy_videoram;
+extern uint8_t *exidy_characterram;
+extern uint8_t *exidy_color_latch;
+extern uint8_t *exidy_sprite1_xpos;
+extern uint8_t *exidy_sprite1_ypos;
+extern uint8_t *exidy_sprite2_xpos;
+extern uint8_t *exidy_sprite2_ypos;
+extern uint8_t *exidy_spriteno;
+extern uint8_t *exidy_sprite_enable;
 
-void exidy_video_config(UINT8 _collision_mask, UINT8 _collision_invert, int _is_2bpp);
+void exidy_video_config(uint8_t _collision_mask, uint8_t _collision_invert, int _is_2bpp);
 VIDEO_START( exidy );
 VIDEO_UPDATE( exidy );
 

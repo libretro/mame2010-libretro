@@ -22,7 +22,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	cyberbal_state *state = (cyberbal_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x07;
 	SET_TILE_INFO(2, code, color, (data >> 15) & 1);
@@ -32,7 +32,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_alpha2_tile_info )
 {
 	cyberbal_state *state = (cyberbal_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha2[tile_index];
+	uint16_t data = state->atarigen.alpha2[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x07;
 	SET_TILE_INFO(2, code, 0x80 | color, (data >> 15) & 1);
@@ -42,7 +42,7 @@ static TILE_GET_INFO( get_alpha2_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	cyberbal_state *state = (cyberbal_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = data & 0x1fff;
 	int color = (data >> 11) & 0x0f;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -52,7 +52,7 @@ static TILE_GET_INFO( get_playfield_tile_info )
 static TILE_GET_INFO( get_playfield2_tile_info )
 {
 	cyberbal_state *state = (cyberbal_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield2[tile_index];
+	uint16_t data = state->atarigen.playfield2[tile_index];
 	int code = data & 0x1fff;
 	int color = (data >> 11) & 0x0f;
 	SET_TILE_INFO(0, code, 0x80 | color, (data >> 15) & 1);
@@ -207,7 +207,7 @@ VIDEO_START( cyberbal2p )
  *
  *************************************/
 
-INLINE void set_palette_entry(running_machine *machine, int entry, UINT16 value)
+INLINE void set_palette_entry(running_machine *machine, int entry, uint16_t value)
 {
 	int r, g, b;
 
@@ -270,8 +270,8 @@ void cyberbal_scanline_update(screen_device &screen, int scanline)
 	/* loop over screens */
 	for (i = 0, update_screen = screen_first(*screen.machine); update_screen != NULL; i++, update_screen = screen_next(update_screen))
 	{
-		UINT16 *vram = i ? state->atarigen.alpha2 : state->atarigen.alpha;
-		UINT16 *base = &vram[((scanline - 8) / 8) * 64 + 47];
+		uint16_t *vram = i ? state->atarigen.alpha2 : state->atarigen.alpha;
+		uint16_t *base = &vram[((scanline - 8) / 8) * 64 + 47];
 
 		/* keep in range */
 		if (base < vram)
@@ -366,8 +366,8 @@ static void update_one_screen(screen_device &screen, bitmap_t *bitmap, const rec
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y + mooffset;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y + mooffset;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{

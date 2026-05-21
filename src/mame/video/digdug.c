@@ -89,7 +89,7 @@ static TILEMAP_MAPPER( tilemap_scan )
 
 static TILE_GET_INFO( bg_get_tile_info )
 {
-	UINT8 *rom = memory_region(machine, "gfx4");
+	uint8_t *rom = memory_region(machine, "gfx4");
 	_galaga_state *state = (_galaga_state *) machine->driver_data;
 
 	int code = rom[tile_index | (state->bg_select << 10)];
@@ -109,7 +109,7 @@ static TILE_GET_INFO( bg_get_tile_info )
 static TILE_GET_INFO( tx_get_tile_info )
 {
 	_galaga_state *state = (_galaga_state *) machine->driver_data;
-	UINT8 code = state->videoram[tile_index];
+	uint8_t code = state->videoram[tile_index];
 	int color;
 
 	/* the hardware has two ways to pick the color, either straight from the
@@ -249,9 +249,9 @@ static const rectangle spritevisiblearea =
 static void draw_sprites(running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	_galaga_state *state = (_galaga_state *) machine->driver_data;
-	UINT8 *spriteram = state->digdug_objram + 0x380;
-	UINT8 *spriteram_2 = state->digdug_posram + 0x380;
-	UINT8 *spriteram_3 = state->digdug_flpram + 0x380;
+	uint8_t *spriteram = state->digdug_objram + 0x380;
+	uint8_t *spriteram_2 = state->digdug_posram + 0x380;
+	uint8_t *spriteram_3 = state->digdug_flpram + 0x380;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)
@@ -287,7 +287,7 @@ static void draw_sprites(running_machine* machine, bitmap_t *bitmap, const recta
 		{
 			for (x = 0;x <= size;x++)
 			{
-				UINT32 transmask = colortable_get_transpen_mask(machine->colortable, machine->gfx[1], color, 0x1f);
+				uint32_t transmask = colortable_get_transpen_mask(machine->colortable, machine->gfx[1], color, 0x1f);
 				drawgfx_transmask(bitmap,&spritevisiblearea,machine->gfx[1],
 					sprite + gfx_offs[y ^ (size * flipy)][x ^ (size * flipx)],
 					color,

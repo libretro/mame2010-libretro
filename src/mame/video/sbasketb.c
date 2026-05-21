@@ -77,7 +77,7 @@ PALETTE_INIT( sbasketb )
 	/* characters use colors 0xf0-0xff */
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x0f) | 0xf0;
+		uint8_t ctabentry = (color_prom[i] & 0x0f) | 0xf0;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -88,7 +88,7 @@ PALETTE_INIT( sbasketb )
 
 		for (j = 0; j < 0x10; j++)
 		{
-			UINT8 ctabentry = (j << 4) | (color_prom[i + 0x100] & 0x0f);
+			uint8_t ctabentry = (j << 4) | (color_prom[i + 0x100] & 0x0f);
 			colortable_entry_set_value(machine->colortable, 0x100 + ((j << 8) | i), ctabentry);
 		}
 	}
@@ -138,7 +138,7 @@ VIDEO_START( sbasketb )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	trackfld_state *state = (trackfld_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs = (*state->spriteram_select & 0x01) * 0x100;
 	int i;
 

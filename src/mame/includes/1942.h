@@ -12,15 +12,15 @@ public:
 	_1942_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * fg_videoram;
-	UINT8 * bg_videoram;
-	UINT8 * spriteram;
+	uint8_t * fg_videoram;
+	uint8_t * bg_videoram;
+	uint8_t * spriteram;
 	size_t  spriteram_size;
 
 	/* video-related */
 	tilemap_t *fg_tilemap, *bg_tilemap;
 	int palette_bank;
-	UINT8 scroll[2];
+	uint8_t scroll[2];
 
 	/* devices */
 	running_device *audiocpu;

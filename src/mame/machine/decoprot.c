@@ -76,15 +76,15 @@
 
 #define DECO_PORT(p) (prot_ram[p/2])
 
-static UINT8 decoprot_buffer_ram_selected=0;
-static UINT16 deco16_xor=0;
-static UINT16 deco16_mask;
+static uint8_t decoprot_buffer_ram_selected=0;
+static uint16_t deco16_xor=0;
+static uint16_t deco16_mask;
 static int decoprot_last_write=0, decoprot_last_write_val=0;
-static UINT16 decoprot_buffer_ram[0x800];
-static UINT16 decoprot_buffer_ram2[0x800];
+static uint16_t decoprot_buffer_ram[0x800];
+static uint16_t decoprot_buffer_ram2[0x800];
 
-UINT16 *deco16_prot_ram;
-UINT32 *deco32_prot_ram;
+uint16_t *deco16_prot_ram;
+uint32_t *deco32_prot_ram;
 
 /***************************************************************************/
 
@@ -856,7 +856,7 @@ WRITE16_HANDLER( deco16_104_rohga_prot_w )
 
 READ16_HANDLER( deco16_104_rohga_prot_r )
 {
-	const UINT16* prot_ram=decoprot_buffer_ram_selected ? decoprot_buffer_ram : deco16_prot_ram;
+	const uint16_t* prot_ram=decoprot_buffer_ram_selected ? decoprot_buffer_ram : deco16_prot_ram;
 
 //  if (offset!=0x88/2 && offset!=0x44c/2 && offset!=0x36c/2 && offset!=0x292/2)
 //      logerror("Protection PC %06x: warning - read prot address %04x\n",cpu_get_pc(space->cpu),offset<<1);
@@ -1240,9 +1240,9 @@ static WRITE16_HANDLER( deco16_146_core_prot_w )
 
 static READ16_HANDLER( deco16_146_core_prot_r )
 {
-//  const UINT16* prot_ram=decoprot_buffer_ram;
-	UINT16 val;
-	const UINT16* prot_ram=decoprot_buffer_ram_selected ? decoprot_buffer_ram2 : decoprot_buffer_ram;
+//  const uint16_t* prot_ram=decoprot_buffer_ram;
+	uint16_t val;
+	const uint16_t* prot_ram=decoprot_buffer_ram_selected ? decoprot_buffer_ram2 : decoprot_buffer_ram;
 
 	switch (offset)
 	{
@@ -1642,7 +1642,7 @@ static READ16_HANDLER( deco16_146_core_prot_r )
 
 WRITE32_HANDLER( deco16_146_fghthist_prot_w )
 {
-	UINT16 addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 1, 9, 2, 8, 3, 7, 4, 6, 5, 0);
+	uint16_t addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 1, 9, 2, 8, 3, 7, 4, 6, 5, 0);
 
 	decoprot_last_write = addr;
 	decoprot_last_write_val = data >> 16;
@@ -1652,8 +1652,8 @@ WRITE32_HANDLER( deco16_146_fghthist_prot_w )
 
 READ32_HANDLER( deco16_146_fghthist_prot_r )
 {
-	UINT16 addr=BITSWAP16(offset<<1, 0, 0, 0, 0, 0, 10, 1, 9, 2, 8, 3, 7, 4, 6, 5, 0);
-	UINT16 val;
+	uint16_t addr=BITSWAP16(offset<<1, 0, 0, 0, 0, 0, 10, 1, 9, 2, 8, 3, 7, 4, 6, 5, 0);
+	uint16_t val;
 
 	/* Special case inputs, because this is the only game with an eprom */
 	switch (addr)
@@ -1718,13 +1718,13 @@ READ32_HANDLER( deco16_146_fghthist_prot_r )
 
 WRITE16_HANDLER( deco16_146_nitroball_prot_w )
 {
-	UINT16 addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
+	uint16_t addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
 	deco16_146_core_prot_w(space, addr, data, mem_mask);
 }
 
 READ16_HANDLER( deco16_146_nitroball_prot_r )
 {
-	UINT16 addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
+	uint16_t addr = BITSWAP16(offset << 1, 0, 0, 0, 0, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
 	return deco16_146_core_prot_r(space, addr, mem_mask);
 }
 
@@ -1759,7 +1759,7 @@ WRITE16_HANDLER( dietgo_104_prot_w )
 
 READ16_HANDLER( deco16_104_pktgaldx_prot_r )
 {
-	const UINT16* prot_ram=deco16_prot_ram;
+	const uint16_t* prot_ram=deco16_prot_ram;
 	switch (offset * 2)
 	{
 	case 0x5b2: return input_port_read(space->machine, "SYSTEM");

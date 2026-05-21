@@ -97,13 +97,13 @@ void Span::Draw(int index, int tilenum, bool shade, bool texture, bool zbuffer, 
 	SpanParam t = m_t;
 	SpanParam w = m_w;
 
-	UINT16 *fb = (UINT16*)&rdram[m_misc_state->m_fb_address / 4];
-	UINT16 *zb = (UINT16*)&rdram[m_misc_state->m_zb_address / 4];
-	UINT8 *hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
-	UINT8 *zhb = &m_rdp->GetHiddenBits()[m_misc_state->m_zb_address >> 1];
+	uint16_t *fb = (uint16_t*)&rdram[m_misc_state->m_fb_address / 4];
+	uint16_t *zb = (uint16_t*)&rdram[m_misc_state->m_zb_address / 4];
+	uint8_t *hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
+	uint8_t *zhb = &m_rdp->GetHiddenBits()[m_misc_state->m_zb_address >> 1];
 
-	UINT32 prim_tile = tilenum;
-	UINT32 tilenum2 = 0;
+	uint32_t prim_tile = tilenum;
+	uint32_t tilenum2 = 0;
 
 	int dzpix = m_dzpix;
 	int drinc = flip ? (m_dr.w) : -m_dr.w;
@@ -183,7 +183,7 @@ void Span::Draw(int index, int tilenum, bool shade, bool texture, bool zbuffer, 
 
 			if (m_other_modes->z_source_sel)
 			{
-				sz = (((UINT32)m_misc_state->m_primitive_z) << 3) & 0x3ffff;
+				sz = (((uint32_t)m_misc_state->m_primitive_z) << 3) & 0x3ffff;
 				dzpix = m_misc_state->m_primitive_delta_z;
 			}
 		}
@@ -197,10 +197,10 @@ void Span::Draw(int index, int tilenum, bool shade, bool texture, bool zbuffer, 
 			if (m_misc_state->m_curpixel_cvg)
 			{
 				int curpixel = fb_index + x;
-				UINT16* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
-				UINT16* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
-				UINT8* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
-				UINT8* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
+				uint16_t* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
+				uint16_t* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
+				uint8_t* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
+				uint8_t* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
 
 				if(texture)
 				{
@@ -229,8 +229,8 @@ void Span::Draw(int index, int tilenum, bool shade, bool texture, bool zbuffer, 
 							nextt = (t.w + dtinc)>>16;
 						}
 
-						INT32 horstep = SIGN17(nexts & 0x1ffff) - SIGN17(sss & 0x1ffff);
-						INT32 vertstep = SIGN17(nextt & 0x1ffff) - SIGN17(sst & 0x1ffff);
+						int32_t horstep = SIGN17(nexts & 0x1ffff) - SIGN17(sss & 0x1ffff);
+						int32_t vertstep = SIGN17(nextt & 0x1ffff) - SIGN17(sst & 0x1ffff);
 						if (horstep & 0x20000)
 						{
 							horstep = ~horstep & 0x1ffff;
@@ -253,7 +253,7 @@ void Span::Draw(int index, int tilenum, bool shade, bool texture, bool zbuffer, 
 						}
 
 						bool magnify = (LOD < 32);
-						INT32 l_tile = m_rdp->GetLog2((LOD >> 5) & 0xff);
+						int32_t l_tile = m_rdp->GetLog2((LOD >> 5) & 0xff);
 						bool distant = ((LOD & 0x6000) || (l_tile >= m_misc_state->m_max_level));
 
 						m_rdp->SetLODFrac(((LOD << 3) >> l_tile) & 0xff);

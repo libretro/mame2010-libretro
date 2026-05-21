@@ -36,10 +36,10 @@ static int nb19010_busyctr;
 static int nb19010_busyflag;
 
 static bitmap_t *nbmj9195_tmpbitmap[VRAM_MAX];
-static UINT16 *nbmj9195_videoram[VRAM_MAX];
-static UINT16 *nbmj9195_videoworkram[VRAM_MAX];
-static UINT8 *nbmj9195_palette, *nbmj9195_nb22090_palette;
-static UINT8 *nbmj9195_clut[VRAM_MAX];
+static uint16_t *nbmj9195_videoram[VRAM_MAX];
+static uint16_t *nbmj9195_videoworkram[VRAM_MAX];
+static uint8_t *nbmj9195_palette, *nbmj9195_nb22090_palette;
+static uint8_t *nbmj9195_clut[VRAM_MAX];
 
 
 static void nbmj9195_vramflip(running_machine *machine, int vram);
@@ -102,7 +102,7 @@ WRITE8_HANDLER( nbmj9195_nb22090_palette_w )
 static int nbmj9195_blitter_r(running_machine *machine, int vram, int offset)
 {
 	int ret;
-	UINT8 *GFXROM = memory_region(machine, "gfx1");
+	uint8_t *GFXROM = memory_region(machine, "gfx1");
 
 	switch (offset)
 	{
@@ -184,7 +184,7 @@ static void nbmj9195_vramflip(running_machine *machine, int vram)
 {
 	static int nbmj9195_flipscreen_old[VRAM_MAX] = { 0, 0 };
 	int x, y;
-	UINT16 color1, color2;
+	uint16_t color1, color2;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
@@ -221,7 +221,7 @@ static void nbmj9195_vramflip(running_machine *machine, int vram)
 
 static void update_pixel(running_machine *machine, int vram, int x, int y)
 {
-	UINT16 color = nbmj9195_videoram[vram][(y * machine->primary_screen->width()) + x];
+	uint16_t color = nbmj9195_videoram[vram][(y * machine->primary_screen->width()) + x];
 	*BITMAP_ADDR16(nbmj9195_tmpbitmap[vram], y, x) = color;
 }
 
@@ -232,7 +232,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void nbmj9195_gfxdraw(running_machine *machine, int vram)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 	int width = machine->primary_screen->width();
 
 	int x, y;
@@ -241,7 +241,7 @@ static void nbmj9195_gfxdraw(running_machine *machine, int vram)
 	int sizex, sizey;
 	int skipx, skipy;
 	int ctrx, ctry;
-	UINT16 color, color1, color2;
+	uint16_t color, color1, color2;
 	int gfxaddr, gfxlen;
 
 	nb19010_busyctr = 0;
@@ -413,9 +413,9 @@ VIDEO_START( nbmj9195_1layer )
 	int height = machine->primary_screen->height();
 
 	nbmj9195_tmpbitmap[0] = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_palette = auto_alloc_array(machine, UINT8, 0x200);
-	nbmj9195_clut[0] = auto_alloc_array(machine, UINT8, 0x1000);
+	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_palette = auto_alloc_array(machine, uint8_t, 0x200);
+	nbmj9195_clut[0] = auto_alloc_array(machine, uint8_t, 0x1000);
 	nbmj9195_scanline[0] = nbmj9195_scanline[1] = SCANLINE_MIN;
 	nb19010_busyflag = 1;
 	gfxdraw_mode = 0;
@@ -428,11 +428,11 @@ VIDEO_START( nbmj9195_2layer )
 
 	nbmj9195_tmpbitmap[0] = machine->primary_screen->alloc_compatible_bitmap();
 	nbmj9195_tmpbitmap[1] = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_videoram[1] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_palette = auto_alloc_array(machine, UINT8, 0x200);
-	nbmj9195_clut[0] = auto_alloc_array(machine, UINT8, 0x1000);
-	nbmj9195_clut[1] = auto_alloc_array(machine, UINT8, 0x1000);
+	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_videoram[1] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_palette = auto_alloc_array(machine, uint8_t, 0x200);
+	nbmj9195_clut[0] = auto_alloc_array(machine, uint8_t, 0x1000);
+	nbmj9195_clut[1] = auto_alloc_array(machine, uint8_t, 0x1000);
 	nbmj9195_scanline[0] = nbmj9195_scanline[1] = SCANLINE_MIN;
 	nb19010_busyflag = 1;
 	gfxdraw_mode = 1;
@@ -445,13 +445,13 @@ VIDEO_START( nbmj9195_nb22090 )
 
 	nbmj9195_tmpbitmap[0] = machine->primary_screen->alloc_compatible_bitmap();
 	nbmj9195_tmpbitmap[1] = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_videoram[1] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_videoworkram[0] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_videoworkram[1] = auto_alloc_array_clear(machine, UINT16, width * height);
-	nbmj9195_nb22090_palette = auto_alloc_array(machine, UINT8, 0xc00);
-	nbmj9195_clut[0] = auto_alloc_array(machine, UINT8, 0x1000);
-	nbmj9195_clut[1] = auto_alloc_array(machine, UINT8, 0x1000);
+	nbmj9195_videoram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_videoram[1] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_videoworkram[0] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_videoworkram[1] = auto_alloc_array_clear(machine, uint16_t, width * height);
+	nbmj9195_nb22090_palette = auto_alloc_array(machine, uint8_t, 0xc00);
+	nbmj9195_clut[0] = auto_alloc_array(machine, uint8_t, 0x1000);
+	nbmj9195_clut[1] = auto_alloc_array(machine, uint8_t, 0x1000);
 	nbmj9195_scanline[0] = nbmj9195_scanline[1] = SCANLINE_MIN;
 	nb19010_busyflag = 1;
 	gfxdraw_mode = 2;

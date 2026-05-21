@@ -12,7 +12,7 @@ public:
 	ultraman_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *   paletteram;    // currently this uses generic palette handling
+//  uint16_t *   paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        sprite_colorbase, zoom_colorbase[3];

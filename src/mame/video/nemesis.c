@@ -10,9 +10,9 @@
 
 static const struct
 {
-	UINT8 width;
-	UINT8 height;
-	UINT8 char_type;
+	uint8_t width;
+	uint8_t height;
+	uint8_t char_type;
 }
 sprite_data[8] =
 {
@@ -139,7 +139,7 @@ WRITE16_HANDLER( salamand_control_port_word_w )
 
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT8 accessing_bits = data ^ state->irq_port_last;
+		uint8_t accessing_bits = data ^ state->irq_port_last;
 
 		state->irq_on = data & 0x01;
 		state->irq2_on = data & 0x02;
@@ -265,7 +265,7 @@ WRITE16_HANDLER( nemesis_colorram2_word_w )
 WRITE16_HANDLER( nemesis_charram_word_w )
 {
 	nemesis_state *state = (nemesis_state *)space->machine->driver_data;
-	UINT16 oldword = state->charram[offset];
+	uint16_t oldword = state->charram[offset];
 
 	COMBINE_DATA(state->charram + offset);
 	data = state->charram[offset];
@@ -320,14 +320,14 @@ VIDEO_START( nemesis )
 	memset(state->charram, 0, state->charram_size);
 	memset(state->blank_tile, 0, ARRAY_LENGTH(state->blank_tile));
 
-	gfx_element_set_source(machine->gfx[0], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[1], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[2], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[3], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[4], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[5], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[6], (UINT8 *)state->charram);
-	gfx_element_set_source(machine->gfx[7], (UINT8 *)state->charram);
+	gfx_element_set_source(machine->gfx[0], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[1], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[2], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[3], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[4], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[5], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[6], (uint8_t *)state->charram);
+	gfx_element_set_source(machine->gfx[7], (uint8_t *)state->charram);
 
 	/* Set up save state */
 	state_save_register_postload(machine, nemesis_postload, NULL);
@@ -352,7 +352,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
      */
 
 	nemesis_state *state = (nemesis_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int adress;	/* start of sprite in spriteram */
 	int sx;	/* sprite X-pos */
 	int sy;	/* sprite Y-pos */

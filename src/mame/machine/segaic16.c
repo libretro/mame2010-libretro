@@ -32,11 +32,11 @@
 
 struct memory_mapper_chip
 {
-	UINT8	regs[0x20];
+	uint8_t	regs[0x20];
 	running_device *cpu;
 	const segaic16_memory_map_entry *map;
-	void	(*sound_w)(running_machine *, UINT8);
-	UINT8	(*sound_r)(running_machine *);
+	void	(*sound_w)(running_machine *, uint8_t);
+	uint8_t	(*sound_r)(running_machine *);
 };
 
 
@@ -66,8 +66,8 @@ static void update_memory_mapping(running_machine *machine, struct memory_mapper
 
 READ16_HANDLER( segaic16_open_bus_r )
 {
-	static UINT8 recurse = 0;
-	UINT16 result;
+	static uint8_t recurse = 0;
+	uint16_t result;
 
 	/* Unmapped memory returns the last word on the data bus, which is almost always the opcode */
 	/* of the next instruction due to prefetch; however, since we may be encrypted, we actually */
@@ -96,7 +96,7 @@ READ16_HANDLER( segaic16_open_bus_r )
  *
  *************************************/
 
-void segaic16_memory_mapper_init(running_device *cpu, const segaic16_memory_map_entry *entrylist, void (*sound_w_callback)(running_machine *, UINT8), UINT8 (*sound_r_callback)(running_machine *))
+void segaic16_memory_mapper_init(running_device *cpu, const segaic16_memory_map_entry *entrylist, void (*sound_w_callback)(running_machine *, uint8_t), uint8_t (*sound_r_callback)(running_machine *))
 {
 	struct memory_mapper_chip *chip = &memory_mapper;
 
@@ -123,7 +123,7 @@ void segaic16_memory_mapper_reset(running_machine *machine)
 }
 
 
-void segaic16_memory_mapper_config(running_machine *machine, const UINT8 *map_data)
+void segaic16_memory_mapper_config(running_machine *machine, const uint8_t *map_data)
 {
 	struct memory_mapper_chip *chip = &memory_mapper;
 
@@ -133,7 +133,7 @@ void segaic16_memory_mapper_config(running_machine *machine, const UINT8 *map_da
 }
 
 
-void segaic16_memory_mapper_set_decrypted(running_machine *machine, UINT8 *decrypted)
+void segaic16_memory_mapper_set_decrypted(running_machine *machine, uint8_t *decrypted)
 {
 	struct memory_mapper_chip *chip = &memory_mapper;
 	offs_t romsize = chip->cpu->region()->bytes();
@@ -163,9 +163,9 @@ void segaic16_memory_mapper_set_decrypted(running_machine *machine, UINT8 *decry
 }
 
 
-static void memory_mapper_w(const address_space *space, struct memory_mapper_chip *chip, offs_t offset, UINT8 data)
+static void memory_mapper_w(const address_space *space, struct memory_mapper_chip *chip, offs_t offset, uint8_t data)
 {
-	UINT8 oldval;
+	uint8_t oldval;
 
 	/* wraps every 32 bytes */
 	offset &= 0x1f;
@@ -220,7 +220,7 @@ static void memory_mapper_w(const address_space *space, struct memory_mapper_chi
 			{
 				const address_space *targetspace = cpu_get_address_space(chip->cpu, ADDRESS_SPACE_PROGRAM);
 				offs_t addr = (chip->regs[0x07] << 17) | (chip->regs[0x08] << 9) | (chip->regs[0x09] << 1);
-				UINT16 result;
+				uint16_t result;
 				result = memory_read_word(targetspace, addr);
 				chip->regs[0x00] = result >> 8;
 				chip->regs[0x01] = result;
@@ -254,7 +254,7 @@ static void memory_mapper_w(const address_space *space, struct memory_mapper_chi
 }
 
 
-static UINT16 memory_mapper_r(struct memory_mapper_chip *chip, offs_t offset, UINT16 unmapped_val)
+static uint16_t memory_mapper_r(struct memory_mapper_chip *chip, offs_t offset, uint16_t unmapped_val)
 {
 	/* wraps every 32 bytes */
 	offset &= 0x1f;
@@ -351,13 +351,13 @@ static void update_memory_mapping(running_machine *machine, struct memory_mapper
 			}
 			else if (rgn->romoffset != ~0)
 			{
-				UINT8 *decrypted = NULL;
+				uint8_t *decrypted = NULL;
 
 				if (decrypt)
 				{
-					decrypted = (UINT8 *)fd1094_get_decrypted_base();
+					decrypted = (uint8_t *)fd1094_get_decrypted_base();
 					if (!decrypted)
-						decrypted = (UINT8 *)fd1089_get_decrypted_base();
+						decrypted = (uint8_t *)fd1089_get_decrypted_base();
 				}
 
 				memory_configure_bank(machine, readbank, 0, 1, chip->cpu->region()->base() + region_start, 0);
@@ -407,7 +407,7 @@ WRITE16_HANDLER( segaic16_memory_mapper_lsb_w )
 typedef struct _ic_315_5248_state ic_315_5248_state ;
 struct _ic_315_5248_state
 {
-	UINT16	regs[4];
+	uint16_t	regs[4];
 };
 
 /*****************************************************************************
@@ -435,8 +435,8 @@ READ16_DEVICE_HANDLER ( segaic16_multiply_r )
 	{
 		case 0:	return ic_315_5248->regs[0];
 		case 1:	return ic_315_5248->regs[1];
-		case 2:	return ((INT16)ic_315_5248->regs[0] * (INT16)ic_315_5248->regs[1]) >> 16;
-		case 3:	return ((INT16)ic_315_5248->regs[0] * (INT16)ic_315_5248->regs[1]) & 0xffff;
+		case 2:	return ((int16_t)ic_315_5248->regs[0] * (int16_t)ic_315_5248->regs[1]) >> 16;
+		case 3:	return ((int16_t)ic_315_5248->regs[0] * (int16_t)ic_315_5248->regs[1]) & 0xffff;
 	}
 	return 0xffff;
 }
@@ -485,7 +485,7 @@ static DEVICE_RESET( ic_315_5248 )
 typedef struct _ic_315_5249_state ic_315_5249_state ;
 struct _ic_315_5249_state
 {
-	UINT16	regs[8];
+	uint16_t	regs[8];
 };
 
 /*****************************************************************************
@@ -514,14 +514,14 @@ static void update_divide( running_device *device, int mode )
 	/* if mode 0, store quotient/remainder */
 	if (mode == 0)
 	{
-		INT32 dividend = (INT32)((ic_315_5249->regs[0] << 16) | ic_315_5249->regs[1]);
-		INT32 divisor = (INT16)ic_315_5249->regs[2];
-		INT32 quotient, remainder;
+		int32_t dividend = (int32_t)((ic_315_5249->regs[0] << 16) | ic_315_5249->regs[1]);
+		int32_t divisor = (int16_t)ic_315_5249->regs[2];
+		int32_t quotient, remainder;
 
 		/* perform signed divide */
 		if (divisor == 0)
 		{
-			quotient = dividend;//((INT32)(dividend ^ divisor) < 0) ? 0x8000 : 0x7fff;
+			quotient = dividend;//((int32_t)(dividend ^ divisor) < 0) ? 0x8000 : 0x7fff;
 			ic_315_5249->regs[6] |= 0x4000;
 		}
 		else
@@ -549,9 +549,9 @@ static void update_divide( running_device *device, int mode )
 	/* if mode 1, store 32-bit quotient */
 	else
 	{
-		UINT32 dividend = (UINT32)((ic_315_5249->regs[0] << 16) | ic_315_5249->regs[1]);
-		UINT32 divisor = (UINT16)ic_315_5249->regs[2];
-		UINT32 quotient;
+		uint32_t dividend = (uint32_t)((ic_315_5249->regs[0] << 16) | ic_315_5249->regs[1]);
+		uint32_t divisor = (uint16_t)ic_315_5249->regs[2];
+		uint32_t quotient;
 
 		/* perform unsigned divide */
 		if (divisor == 0)
@@ -639,9 +639,9 @@ static DEVICE_RESET( ic_315_5249 )
 typedef struct _ic_315_5250_state ic_315_5250_state ;
 struct _ic_315_5250_state
 {
-	UINT16	regs[16];
-	UINT16	counter;
-	UINT8	      bit;
+	uint16_t	regs[16];
+	uint16_t	counter;
+	uint8_t	      bit;
 	_315_5250_sound_callback       sound_w;
 	_315_5250_timer_ack_callback   timer_ack;
 };
@@ -692,9 +692,9 @@ int segaic16_compare_timer_clock( running_device *device )
 static void update_compare( running_device *device, int update_history )
 {
 	ic_315_5250_state *ic_315_5250 = _315_5250_get_safe_token(device);
-	int bound1 = (INT16)ic_315_5250->regs[0];
-	int bound2 = (INT16)ic_315_5250->regs[1];
-	int value = (INT16)ic_315_5250->regs[2];
+	int bound1 = (int16_t)ic_315_5250->regs[0];
+	int bound2 = (int16_t)ic_315_5250->regs[1];
+	int value = (int16_t)ic_315_5250->regs[2];
 	int min = (bound1 < bound2) ? bound1 : bound2;
 	int max = (bound1 > bound2) ? bound1 : bound2;
 

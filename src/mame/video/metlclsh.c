@@ -118,8 +118,8 @@ WRITE8_HANDLER( metlclsh_bgram_w )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	metlclsh_state *state = (metlclsh_state *)machine->driver_data;
-	UINT8 code = state->fgram[tile_index + 0x000];
-	UINT8 attr = state->fgram[tile_index + 0x400];
+	uint8_t code = state->fgram[tile_index + 0x000];
+	uint8_t attr = state->fgram[tile_index + 0x400];
 	SET_TILE_INFO(2, code + ((attr & 0x03) << 8), (attr >> 5) & 3, 0);
 	tileinfo->category = ((attr & 0x80) ? 1 : 2);
 }
@@ -142,7 +142,7 @@ VIDEO_START( metlclsh )
 {
 	metlclsh_state *state = (metlclsh_state *)machine->driver_data;
 
-	state->otherram = auto_alloc_array(machine, UINT8, 0x800);	// banked ram
+	state->otherram = auto_alloc_array(machine, uint8_t, 0x800);	// banked ram
 
 	state->bg_tilemap = tilemap_create(machine, get_bg_tile_info, metlclsh_bgtilemap_scan, 16, 16, 32, 16);
 	state->fg_tilemap = tilemap_create(machine, get_fg_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
@@ -177,7 +177,7 @@ VIDEO_START( metlclsh )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	metlclsh_state *state = (metlclsh_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	gfx_element *gfx = machine->gfx[0];
 	int offs;
 

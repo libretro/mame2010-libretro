@@ -11,7 +11,7 @@
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	cbasebal_state *state = (cbasebal_state *)machine->driver_data;
-	UINT8 attr = state->scrollram[2 * tile_index + 1];
+	uint8_t attr = state->scrollram[2 * tile_index + 1];
 	SET_TILE_INFO(
 			1,
 			state->scrollram[2 * tile_index] + ((attr & 0x07) << 8) + 0x800 * state->tilebank,
@@ -22,7 +22,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	cbasebal_state *state = (cbasebal_state *)machine->driver_data;
-	UINT8 attr = state->textram[tile_index + 0x800];
+	uint8_t attr = state->textram[tile_index + 0x800];
 	SET_TILE_INFO(
 			0,
 			state->textram[tile_index] + ((attr & 0xf0) << 4),
@@ -42,8 +42,8 @@ VIDEO_START( cbasebal )
 {
 	cbasebal_state *state = (cbasebal_state *)machine->driver_data;
 
-	state->textram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->scrollram = auto_alloc_array(machine, UINT8, 0x1000);
+	state->textram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->scrollram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	state->bg_tilemap = tilemap_create(machine, get_bg_tile_info, tilemap_scan_rows, 16, 16, 64, 32);
 	state->fg_tilemap = tilemap_create(machine, get_fg_tile_info, tilemap_scan_rows, 8, 8, 64, 32);
@@ -147,7 +147,7 @@ WRITE8_HANDLER( cbasebal_scrolly_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	cbasebal_state *state = (cbasebal_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs, sx, sy;
 
 	/* the last entry is not a sprite, we skip it otherwise spang shows a bubble */

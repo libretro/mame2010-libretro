@@ -38,7 +38,7 @@ x = xpos
  its the same sprite chip Data East used on many, many 16-bit era titles */
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
-	UINT32 *spriteram = machine->generic.spriteram.u32;
+	uint32_t *spriteram = machine->generic.spriteram.u32;
 	int offs;
 
 	//FIXME: flip_screen_x should not be written!
@@ -122,9 +122,9 @@ VIDEO_START( simpl156 )
 	simpl156_state *state = (simpl156_state *)machine->driver_data;
 
 	/* allocate the ram as 16-bit (we do it here because the CPU is 32-bit) */
-	state->pf1_rowscroll = auto_alloc_array(machine, UINT16, 0x800/2);
-	state->pf2_rowscroll = auto_alloc_array(machine, UINT16, 0x800/2);
-	machine->generic.paletteram.u16 =  auto_alloc_array(machine, UINT16, 0x1000/2);
+	state->pf1_rowscroll = auto_alloc_array(machine, uint16_t, 0x800/2);
+	state->pf2_rowscroll = auto_alloc_array(machine, uint16_t, 0x800/2);
+	machine->generic.paletteram.u16 =  auto_alloc_array(machine, uint16_t, 0x1000/2);
 
 	/* and register the allocated ram so that save states still work */
 	state_save_register_global_pointer(machine, state->pf1_rowscroll, 0x800/2);

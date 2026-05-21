@@ -118,45 +118,45 @@ BG0 palette intensity ( $C47F, $C4FF )
 #include "includes/argus.h"
 
 
-UINT8 *argus_paletteram;
-UINT8 *argus_txram;
-UINT8 *argus_bg0_scrollx;
-UINT8 *argus_bg0_scrolly;
-UINT8 *argus_bg1ram;
-UINT8 *argus_bg1_scrollx;
-UINT8 *argus_bg1_scrolly;
-UINT8 *butasan_bg1ram;
+uint8_t *argus_paletteram;
+uint8_t *argus_txram;
+uint8_t *argus_bg0_scrollx;
+uint8_t *argus_bg0_scrolly;
+uint8_t *argus_bg1ram;
+uint8_t *argus_bg1_scrollx;
+uint8_t *argus_bg1_scrolly;
+uint8_t *butasan_bg1ram;
 
 static int bg0_scrollx, bg0_scrolly;
 static int bg1_scrollx, bg1_scrolly;
 
-static UINT8 *argus_dummy_bg0ram;
-static UINT8 *butasan_txram;
-static UINT8 *butasan_bg0ram;
-static UINT8 *butasan_bg0backram;
-static UINT8 *butasan_txbackram;
-static UINT8 *butasan_pagedram[2];
-static UINT8 butasan_page_latch;
+static uint8_t *argus_dummy_bg0ram;
+static uint8_t *butasan_txram;
+static uint8_t *butasan_bg0ram;
+static uint8_t *butasan_bg0backram;
+static uint8_t *butasan_txbackram;
+static uint8_t *butasan_pagedram[2];
+static uint8_t butasan_page_latch;
 
 static tilemap_t *tx_tilemap  = NULL;
 static tilemap_t *bg0_tilemap = NULL;
 static tilemap_t *bg1_tilemap = NULL;
 
-static UINT8 argus_bg_status;
-static UINT8 butasan_bg1_status;
-static UINT8 argus_flipscreen;
+static uint8_t argus_bg_status;
+static uint8_t butasan_bg1_status;
+static uint8_t argus_flipscreen;
 
-static UINT16 argus_palette_intensity;
+static uint16_t argus_palette_intensity;
 
 /* VROM scroll related for Argus */
 static int lowbitscroll;
 static int prvscrollx;
 
-static UINT8 valtric_mosaic;
+static uint8_t valtric_mosaic;
 static bitmap_t *mosaicbitmap;
 
-static UINT8 valtric_unknown;
-static UINT8 butasan_unknown;
+static uint8_t valtric_unknown;
+static uint8_t butasan_unknown;
 
 
 /***************************************************************************
@@ -165,7 +165,7 @@ static UINT8 butasan_unknown;
 
 static TILE_GET_INFO( argus_get_tx_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index <<= 1;
 
@@ -181,7 +181,7 @@ static TILE_GET_INFO( argus_get_tx_tile_info )
 
 static TILE_GET_INFO( argus_get_bg0_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index <<= 1;
 
@@ -197,7 +197,7 @@ static TILE_GET_INFO( argus_get_bg0_tile_info )
 
 static TILE_GET_INFO( argus_get_bg1_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index <<= 1;
 
@@ -213,7 +213,7 @@ static TILE_GET_INFO( argus_get_bg1_tile_info )
 
 static TILE_GET_INFO( valtric_get_tx_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index <<= 1;
 
@@ -229,7 +229,7 @@ static TILE_GET_INFO( valtric_get_tx_tile_info )
 
 static TILE_GET_INFO( valtric_get_bg_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index <<= 1;
 
@@ -245,7 +245,7 @@ static TILE_GET_INFO( valtric_get_bg_tile_info )
 
 static TILE_GET_INFO( butasan_get_tx_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 
 	tile_index ^= 0x3e0;
 	tile_index <<= 1;
@@ -262,7 +262,7 @@ static TILE_GET_INFO( butasan_get_tx_tile_info )
 
 static TILE_GET_INFO( butasan_get_bg0_tile_info )
 {
-	UINT8 hi, lo;
+	uint8_t hi, lo;
 	int attrib;
 
 	attrib = (tile_index & 0x00f) | ((tile_index & 0x3e0) >> 1) | ((tile_index & 0x010) << 5);
@@ -321,9 +321,9 @@ VIDEO_START( argus )
 	tilemap_set_transparent_pen(tx_tilemap,  15);
 
 	/* dummy RAM for back ground */
-	argus_dummy_bg0ram = auto_alloc_array(machine, UINT8, 0x800);
+	argus_dummy_bg0ram = auto_alloc_array(machine, uint8_t, 0x800);
 
-	jal_blend_table = auto_alloc_array(machine, UINT8, 0xc00);
+	jal_blend_table = auto_alloc_array(machine, uint8_t, 0xc00);
 }
 
 VIDEO_RESET( argus )
@@ -346,7 +346,7 @@ VIDEO_START( valtric )
 
 	mosaicbitmap = machine->primary_screen->alloc_compatible_bitmap();
 
-	jal_blend_table = auto_alloc_array(machine, UINT8, 0xc00);
+	jal_blend_table = auto_alloc_array(machine, uint8_t, 0xc00);
 }
 
 VIDEO_RESET( valtric )
@@ -365,15 +365,15 @@ VIDEO_START( butasan )
 	tilemap_set_transparent_pen(bg1_tilemap, 15);
 	tilemap_set_transparent_pen(tx_tilemap,  15);
 
-	butasan_pagedram[0] = auto_alloc_array(machine, UINT8, 0x1000);
-	butasan_pagedram[1] = auto_alloc_array(machine, UINT8, 0x1000);
+	butasan_pagedram[0] = auto_alloc_array(machine, uint8_t, 0x1000);
+	butasan_pagedram[1] = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	butasan_bg0ram     = &butasan_pagedram[0][0x000];
 	butasan_bg0backram = &butasan_pagedram[0][0x800];
 	butasan_txram      = &butasan_pagedram[1][0x000];
 	butasan_txbackram  = &butasan_pagedram[1][0x800];
 
-	jal_blend_table = auto_alloc_array(machine, UINT8, 0xc00);
+	jal_blend_table = auto_alloc_array(machine, uint8_t, 0xc00);
 	//jal_blend_table = NULL;
 }
 
@@ -398,8 +398,8 @@ static void argus_write_dummy_rams(running_machine *machine, int dramoffs, int v
 	int voffs;
 	int offs;
 
-	UINT8 *VROM1 = memory_region(machine, "user1");		/* "ag_15.bin" */
-	UINT8 *VROM2 = memory_region(machine, "user2");		/* "ag_16.bin" */
+	uint8_t *VROM1 = memory_region(machine, "user1");		/* "ag_15.bin" */
+	uint8_t *VROM2 = memory_region(machine, "user2");		/* "ag_16.bin" */
 
 	/* offset in pattern data */
 	offs = VROM1[vromoffs] | (VROM1[vromoffs + 1] << 8);
@@ -418,15 +418,15 @@ static void argus_write_dummy_rams(running_machine *machine, int dramoffs, int v
 
 static void argus_change_palette(running_machine *machine, int color, int lo_offs, int hi_offs)
 {
-	UINT8 lo = argus_paletteram[lo_offs];
-	UINT8 hi = argus_paletteram[hi_offs];
+	uint8_t lo = argus_paletteram[lo_offs];
+	uint8_t hi = argus_paletteram[hi_offs];
 	if (jal_blend_table != NULL) jal_blend_table[color] = hi & 0x0f;
 	palette_set_color_rgb(machine, color, pal4bit(lo >> 4), pal4bit(lo), pal4bit(hi >> 4));
 }
 
 static void argus_change_bg_palette(running_machine *machine, int color, int lo_offs, int hi_offs)
 {
-	UINT8 r,g,b,lo,hi,ir,ig,ib,ix;
+	uint8_t r,g,b,lo,hi,ir,ig,ib,ix;
 	rgb_t rgb,irgb;
 
 	/* red,green,blue intensities */
@@ -448,7 +448,7 @@ static void argus_change_bg_palette(running_machine *machine, int color, int lo_
 	/* Grey background enable */
 	if (argus_bg_status & 2)
 	{
-		UINT8 val = (r + g + b) / 3;
+		uint8_t val = (r + g + b) / 3;
 		rgb = MAKE_RGB(val,val,val);
 	}
 	else
@@ -873,7 +873,7 @@ static void argus_bg0_scroll_handle(running_machine *machine)
 
 static void argus_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	/* Draw the sprites */
@@ -931,7 +931,7 @@ static void valtric_draw_mosaic(screen_device &screen, bitmap_t *bitmap, const r
 		tilemap_draw(mosaicbitmap, cliprect, bg1_tilemap, 0, 0);
 		{
 			int step=mosaic;
-			UINT32 *dest;
+			uint32_t *dest;
 			int x,y,xx,yy;
 			int width = screen.width();
 			int height = screen.height();
@@ -974,7 +974,7 @@ static void valtric_draw_mosaic(screen_device &screen, bitmap_t *bitmap, const r
 	{
 		tilemap_draw(mosaicbitmap, cliprect, bg1_tilemap, 0, 0);
 		{
-			UINT32 *dest;
+			uint32_t *dest;
 			int x,y,xx,yy;
 			int width = screen.width();
 			int height = screen.height();
@@ -1008,7 +1008,7 @@ static void valtric_draw_mosaic(screen_device &screen, bitmap_t *bitmap, const r
 
 static void valtric_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	/* Draw the sprites */
@@ -1047,7 +1047,7 @@ static void valtric_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 
 static void butasan_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	/* Draw the sprites */
@@ -1162,7 +1162,7 @@ static void butasan_log_vram(running_machine *machine)
 
 	if (input_code_pressed(machine, KEYCODE_M))
 	{
-		UINT8 *spriteram = machine->generic.spriteram.u8;
+		uint8_t *spriteram = machine->generic.spriteram.u8;
 		int i;
 		logerror("\nSprite RAM\n");
 		logerror("---------------------------------------\n");

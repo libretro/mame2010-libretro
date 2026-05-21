@@ -25,20 +25,20 @@ public:
 	qix_state(running_machine &machine) { }
 
 	/* machine state */
-	UINT8 *_68705_port_out;
-	UINT8 *_68705_ddr;
-	UINT8  _68705_port_in[3];
-	UINT8  coinctrl;
+	uint8_t *_68705_port_out;
+	uint8_t *_68705_ddr;
+	uint8_t  _68705_port_in[3];
+	uint8_t  coinctrl;
 
 	/* video state */
-	UINT8 *videoram;
-	UINT8 *videoram_address;
-	UINT8 *videoram_mask;
-	UINT8 *paletteram;
-	UINT8  flip;
-	UINT8  palette_bank;
-	UINT8  leds;
-	UINT8 *scanline_latch;
+	uint8_t *videoram;
+	uint8_t *videoram_address;
+	uint8_t *videoram_mask;
+	uint8_t *paletteram;
+	uint8_t  flip;
+	uint8_t  palette_bank;
+	uint8_t  leds;
+	uint8_t *scanline_latch;
 };
 
 

@@ -7,10 +7,10 @@ Atari Starship 1 video emulation
 #include "emu.h"
 #include "includes/starshp1.h"
 
-UINT8 *starshp1_playfield_ram;
-UINT8 *starshp1_hpos_ram;
-UINT8 *starshp1_vpos_ram;
-UINT8 *starshp1_obj_ram;
+uint8_t *starshp1_playfield_ram;
+uint8_t *starshp1_hpos_ram;
+uint8_t *starshp1_vpos_ram;
+uint8_t *starshp1_obj_ram;
 
 int starshp1_ship_explode;
 int starshp1_ship_picture;
@@ -30,7 +30,7 @@ int starshp1_collision_latch;
 int starshp1_mux;
 int starshp1_inverse;
 
-static UINT16 *LSFR;
+static uint16_t *LSFR;
 
 static bitmap_t *helper;
 
@@ -54,7 +54,7 @@ PALETTE_INIT( starshp1 )
 {
 	int i;
 
-	static const UINT16 colortable_source[] =
+	static const uint16_t colortable_source[] =
 	{
 		0, 3,       /* 0x00 - 0x01 - alpha numerics */
 		0, 2,       /* 0x02 - 0x03 - sprites (Z=0) */
@@ -76,7 +76,7 @@ PALETTE_INIT( starshp1 )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT8 code = starshp1_playfield_ram[tile_index];
+	uint8_t code = starshp1_playfield_ram[tile_index];
 
 	SET_TILE_INFO(0, code & 0x3f, 0, 0);
 }
@@ -84,7 +84,7 @@ static TILE_GET_INFO( get_tile_info )
 
 VIDEO_START( starshp1 )
 {
-	UINT16 val = 0;
+	uint16_t val = 0;
 
 	int i;
 
@@ -94,7 +94,7 @@ VIDEO_START( starshp1 )
 
 	tilemap_set_scrollx(bg_tilemap, 0, -8);
 
-	LSFR = auto_alloc_array(machine, UINT16, 0x10000);
+	LSFR = auto_alloc_array(machine, uint16_t, 0x10000);
 
 	for (i = 0; i < 0x10000; i++)
 	{
@@ -126,7 +126,7 @@ READ8_HANDLER( starshp1_rng_r )
 	if (y > height - 1)
 		y = height - 1;
 
-	return LSFR[x + (UINT16) (512 * y)];
+	return LSFR[x + (uint16_t) (512 * y)];
 }
 
 
@@ -183,9 +183,9 @@ static void draw_starfield(bitmap_t* bitmap)
 
 	for (y = 0; y < bitmap->height; y++)
 	{
-		const UINT16* p = LSFR + (UINT16) (512 * y);
+		const uint16_t* p = LSFR + (uint16_t) (512 * y);
 
-		UINT16* pLine = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* pLine = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x = 0; x < bitmap->width; x++)
 			if ((p[x] & 0x5b56) == 0x5b44)
@@ -280,9 +280,9 @@ static void draw_circle_line(bitmap_t *bitmap, int x, int y, int l)
 {
 	if (y >= 0 && y <= bitmap->height - 1)
 	{
-		const UINT16* p = LSFR + (UINT16) (512 * y);
+		const uint16_t* p = LSFR + (uint16_t) (512 * y);
 
-		UINT16* pLine = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* pLine = BITMAP_ADDR16(bitmap, y, 0);
 
 		int h1 = x - 2 * l;
 		int h2 = x + 2 * l;
@@ -340,7 +340,7 @@ static int spaceship_collision(bitmap_t *bitmap, const rectangle *rect)
 
 	for (y = rect->min_y; y <= rect->max_y; y++)
 	{
-		const UINT16* pLine = BITMAP_ADDR16(helper, y, 0);
+		const uint16_t* pLine = BITMAP_ADDR16(helper, y, 0);
 
 		for (x = rect->min_x; x <= rect->max_x; x++)
 			if (pLine[x] != 0)

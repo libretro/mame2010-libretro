@@ -63,7 +63,7 @@ struct GOURAUDTEXTUREDVERTEX
 
 static union
 {
-	UINT32 n_entry[ 16 ];
+	uint32_t n_entry[ 16 ];
 
 	struct
 	{
@@ -155,43 +155,43 @@ static union
 
 static struct PSXGPU
 {
-	INT32 n_tx;
-	INT32 n_ty;
-	INT32 n_abr;
-	INT32 n_tp;
-	INT32 n_ix;
-	INT32 n_iy;
-	INT32 n_ti;
+	int32_t n_tx;
+	int32_t n_ty;
+	int32_t n_abr;
+	int32_t n_tp;
+	int32_t n_ix;
+	int32_t n_iy;
+	int32_t n_ti;
 } psxgpu;
 
-static UINT16 *m_p_vram;
-static UINT32 m_n_vram_size;
-static UINT32 m_n_gpu_buffer_offset;
-static UINT32 m_n_vramx;
-static UINT32 m_n_vramy;
-static UINT32 m_n_twy;
-static UINT32 m_n_twx;
-static UINT32 m_n_twh;
-static UINT32 m_n_tww;
-static UINT32 m_n_drawarea_x1;
-static UINT32 m_n_drawarea_y1;
-static UINT32 m_n_drawarea_x2;
-static UINT32 m_n_drawarea_y2;
-static UINT32 m_n_horiz_disstart;
-static UINT32 m_n_horiz_disend;
-static UINT32 m_n_vert_disstart;
-static UINT32 m_n_vert_disend;
-static UINT32 m_b_reverseflag;
-static INT32 m_n_drawoffset_x;
-static INT32 m_n_drawoffset_y;
-static UINT32 m_n_displaystartx;
-static UINT32 m_n_displaystarty;
-static UINT32 m_n_gpustatus;
-static UINT32 m_n_gpuinfo;
-static UINT32 m_n_lightgun_x;
-static UINT32 m_n_lightgun_y;
-static UINT32 m_n_screenwidth;
-static UINT32 m_n_screenheight;
+static uint16_t *m_p_vram;
+static uint32_t m_n_vram_size;
+static uint32_t m_n_gpu_buffer_offset;
+static uint32_t m_n_vramx;
+static uint32_t m_n_vramy;
+static uint32_t m_n_twy;
+static uint32_t m_n_twx;
+static uint32_t m_n_twh;
+static uint32_t m_n_tww;
+static uint32_t m_n_drawarea_x1;
+static uint32_t m_n_drawarea_y1;
+static uint32_t m_n_drawarea_x2;
+static uint32_t m_n_drawarea_y2;
+static uint32_t m_n_horiz_disstart;
+static uint32_t m_n_horiz_disend;
+static uint32_t m_n_vert_disstart;
+static uint32_t m_n_vert_disend;
+static uint32_t m_b_reverseflag;
+static int32_t m_n_drawoffset_x;
+static int32_t m_n_drawoffset_y;
+static uint32_t m_n_displaystartx;
+static uint32_t m_n_displaystarty;
+static uint32_t m_n_gpustatus;
+static uint32_t m_n_gpuinfo;
+static uint32_t m_n_lightgun_x;
+static uint32_t m_n_lightgun_y;
+static uint32_t m_n_screenwidth;
+static uint32_t m_n_screenheight;
 
 #define MAX_LEVEL ( 32 )
 #define MID_LEVEL ( ( MAX_LEVEL / 2 ) << 8 )
@@ -200,64 +200,64 @@ static UINT32 m_n_screenheight;
 
 static int m_n_gputype;
 
-static UINT16 *m_p_p_vram[ 1024 ];
+static uint16_t *m_p_p_vram[ 1024 ];
 
-static UINT16 m_p_n_redshade[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_greenshade[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_blueshade[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_redlevel[ 0x10000 ];
-static UINT16 m_p_n_greenlevel[ 0x10000 ];
-static UINT16 m_p_n_bluelevel[ 0x10000 ];
+static uint16_t m_p_n_redshade[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_greenshade[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_blueshade[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_redlevel[ 0x10000 ];
+static uint16_t m_p_n_greenlevel[ 0x10000 ];
+static uint16_t m_p_n_bluelevel[ 0x10000 ];
 
-static UINT16 m_p_n_f025[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_f05[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_f1[ MAX_LEVEL * MAX_SHADE ];
-static UINT16 m_p_n_redb05[ 0x10000 ];
-static UINT16 m_p_n_greenb05[ 0x10000 ];
-static UINT16 m_p_n_blueb05[ 0x10000 ];
-static UINT16 m_p_n_redb1[ 0x10000 ];
-static UINT16 m_p_n_greenb1[ 0x10000 ];
-static UINT16 m_p_n_blueb1[ 0x10000 ];
-static UINT16 m_p_n_redaddtrans[ MAX_LEVEL * MAX_LEVEL ];
-static UINT16 m_p_n_greenaddtrans[ MAX_LEVEL * MAX_LEVEL ];
-static UINT16 m_p_n_blueaddtrans[ MAX_LEVEL * MAX_LEVEL ];
-static UINT16 m_p_n_redsubtrans[ MAX_LEVEL * MAX_LEVEL ];
-static UINT16 m_p_n_greensubtrans[ MAX_LEVEL * MAX_LEVEL ];
-static UINT16 m_p_n_bluesubtrans[ MAX_LEVEL * MAX_LEVEL ];
-static const UINT16 m_p_n_nextpointlist4[] = { 1, 3, 0, 2 };
-static const UINT16 m_p_n_prevpointlist4[] = { 2, 0, 3, 1 };
-static const UINT16 m_p_n_nextpointlist4b[] = { 0, 3, 1, 2 };
-static const UINT16 m_p_n_prevpointlist4b[] = { 0, 2, 3, 1 };
-static const UINT16 m_p_n_nextpointlist3[] = { 1, 2, 0 };
-static const UINT16 m_p_n_prevpointlist3[] = { 2, 0, 1 };
+static uint16_t m_p_n_f025[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_f05[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_f1[ MAX_LEVEL * MAX_SHADE ];
+static uint16_t m_p_n_redb05[ 0x10000 ];
+static uint16_t m_p_n_greenb05[ 0x10000 ];
+static uint16_t m_p_n_blueb05[ 0x10000 ];
+static uint16_t m_p_n_redb1[ 0x10000 ];
+static uint16_t m_p_n_greenb1[ 0x10000 ];
+static uint16_t m_p_n_blueb1[ 0x10000 ];
+static uint16_t m_p_n_redaddtrans[ MAX_LEVEL * MAX_LEVEL ];
+static uint16_t m_p_n_greenaddtrans[ MAX_LEVEL * MAX_LEVEL ];
+static uint16_t m_p_n_blueaddtrans[ MAX_LEVEL * MAX_LEVEL ];
+static uint16_t m_p_n_redsubtrans[ MAX_LEVEL * MAX_LEVEL ];
+static uint16_t m_p_n_greensubtrans[ MAX_LEVEL * MAX_LEVEL ];
+static uint16_t m_p_n_bluesubtrans[ MAX_LEVEL * MAX_LEVEL ];
+static const uint16_t m_p_n_nextpointlist4[] = { 1, 3, 0, 2 };
+static const uint16_t m_p_n_prevpointlist4[] = { 2, 0, 3, 1 };
+static const uint16_t m_p_n_nextpointlist4b[] = { 0, 3, 1, 2 };
+static const uint16_t m_p_n_prevpointlist4b[] = { 0, 2, 3, 1 };
+static const uint16_t m_p_n_nextpointlist3[] = { 1, 2, 0 };
+static const uint16_t m_p_n_prevpointlist3[] = { 2, 0, 1 };
 
-static UINT16 m_p_n_g0r0[ 0x10000 ];
-static UINT16 m_p_n_b0[ 0x10000 ];
-static UINT16 m_p_n_r1[ 0x10000 ];
-static UINT16 m_p_n_b1g1[ 0x10000 ];
+static uint16_t m_p_n_g0r0[ 0x10000 ];
+static uint16_t m_p_n_b0[ 0x10000 ];
+static uint16_t m_p_n_r1[ 0x10000 ];
+static uint16_t m_p_n_b1g1[ 0x10000 ];
 
 static int need_sianniv_vblank_hack;
 
-#define SINT11( x ) ( ( (INT32)( x ) << 21 ) >> 21 )
+#define SINT11( x ) ( ( (int32_t)( x ) << 21 ) >> 21 )
 
 #define ADJUST_COORD( a ) \
 	a.w.l = COORD_X( a ) + m_n_drawoffset_x; \
 	a.w.h = COORD_Y( a ) + m_n_drawoffset_y;
 
-#define COORD_X( a ) ( (INT16)a.w.l )
-#define COORD_Y( a ) ( (INT16)a.w.h )
+#define COORD_X( a ) ( (int16_t)a.w.l )
+#define COORD_Y( a ) ( (int16_t)a.w.h )
 #define SIZE_W( a ) ( a.w.l )
 #define SIZE_H( a ) ( a.w.h )
 #define BGR_C( a ) ( a.b.h3 )
 #define BGR_B( a ) ( a.b.h2 )
 #define BGR_G( a ) ( a.b.h )
 #define BGR_R( a ) ( a.b.l )
-#define TEXTURE_V( a ) ( (UINT8)a.b.h )
-#define TEXTURE_U( a ) ( (UINT8)a.b.l )
+#define TEXTURE_V( a ) ( (uint8_t)a.b.h )
+#define TEXTURE_U( a ) ( (uint8_t)a.b.l )
 
 PALETTE_INIT( psx )
 {
-	UINT32 n_colour;
+	uint32_t n_colour;
 
 	for( n_colour = 0; n_colour < 0x10000; n_colour++ )
 	{
@@ -347,15 +347,15 @@ static void DebugMesh( int n_coordx, int n_coordy )
 	{
 		PAIR n_x;
 		PAIR n_y;
-		INT32 n_xstart;
-		INT32 n_ystart;
-		INT32 n_xend;
-		INT32 n_yend;
-		INT32 n_xlen;
-		INT32 n_ylen;
-		INT32 n_len;
-		INT32 n_dx;
-		INT32 n_dy;
+		int32_t n_xstart;
+		int32_t n_ystart;
+		int32_t n_xend;
+		int32_t n_yend;
+		int32_t n_xlen;
+		int32_t n_ylen;
+		int32_t n_len;
+		int32_t n_dx;
+		int32_t n_dy;
 
 		n_xstart = m_debug.n_coordx[ n_coord ];
 		n_xend = n_coordx;
@@ -396,14 +396,14 @@ static void DebugMesh( int n_coordx, int n_coordy )
 			n_len = 1;
 		}
 
-		n_dx = (INT32)( ( n_xend << 16 ) - n_x.d ) / n_len;
-		n_dy = (INT32)( ( n_yend << 16 ) - n_y.d ) / n_len;
+		n_dx = (int32_t)( ( n_xend << 16 ) - n_x.d ) / n_len;
+		n_dy = (int32_t)( ( n_yend << 16 ) - n_y.d ) / n_len;
 		while( n_len > 0 )
 		{
-			if( (INT16)n_x.w.h >= 0 &&
-				(INT16)n_y.w.h >= 0 &&
-				(INT16)n_x.w.h <= width - 1 &&
-				(INT16)n_y.w.h <= height - 1 )
+			if( (int16_t)n_x.w.h >= 0 &&
+				(int16_t)n_y.w.h >= 0 &&
+				(int16_t)n_x.w.h <= width - 1 &&
+				(int16_t)n_y.w.h <= height - 1 )
 			{
 				if( *BITMAP_ADDR16(m_debug.mesh, n_y.w.h, n_x.w.h) != 0xffff )
 					*BITMAP_ADDR16(m_debug.mesh, n_y.w.h, n_x.w.h) = n_colour;
@@ -508,7 +508,7 @@ static int DebugMeshDisplay( bitmap_t *bitmap, const rectangle *cliprect )
 
 static int DebugTextureDisplay( running_machine *machine, bitmap_t *bitmap )
 {
-	UINT32 n_y;
+	uint32_t n_y;
 
 	if( m_debug.b_texture )
 	{
@@ -520,7 +520,7 @@ static int DebugTextureDisplay( running_machine *machine, bitmap_t *bitmap )
 			int n_x;
 			int n_xi;
 			int n_yi;
-			UINT16 p_n_interleave[ 1024 ];
+			uint16_t p_n_interleave[ 1024 ];
 
 			for( n_x = 0; n_x < width; n_x++ )
 			{
@@ -642,7 +642,7 @@ static void psx_gpu_init( running_machine *machine )
 	m_n_lightgun_y = 0;
 
 	m_n_vram_size = width * height;
-	m_p_vram = auto_alloc_array_clear(machine, UINT16, m_n_vram_size );
+	m_p_vram = auto_alloc_array_clear(machine, uint16_t, m_n_vram_size );
 
 	for( n_line = 0; n_line < 1024; n_line++ )
 	{
@@ -741,7 +741,7 @@ static void psx_gpu_init( running_machine *machine )
 	}
 
 	// icky!!!
-	state_save_register_memory( machine, "globals", NULL, 0, "m_packet", (UINT8 *)&m_packet, 1, sizeof( m_packet ), __FILE__, __LINE__ );
+	state_save_register_memory( machine, "globals", NULL, 0, "m_packet", (uint8_t *)&m_packet, 1, sizeof( m_packet ), __FILE__, __LINE__ );
 
 	state_save_register_global_pointer(machine,  m_p_vram, m_n_vram_size );
 	state_save_register_global(machine,  m_n_gpu_buffer_offset );
@@ -792,8 +792,8 @@ VIDEO_START( psx_type2 )
 
 VIDEO_UPDATE( psx )
 {
-	UINT32 n_x;
-	UINT32 n_y;
+	uint32_t n_x;
+	uint32_t n_y;
 	int n_top;
 	int n_line;
 	int n_lines;
@@ -846,8 +846,8 @@ VIDEO_UPDATE( psx )
 			n_overscanleft = 0x260;
 		}
 
-		n_top = (INT32)m_n_vert_disstart - n_overscantop;
-		n_lines = (INT32)m_n_vert_disend - (INT32)m_n_vert_disstart;
+		n_top = (int32_t)m_n_vert_disstart - n_overscantop;
+		n_lines = (int32_t)m_n_vert_disend - (int32_t)m_n_vert_disstart;
 		if( n_top < 0 )
 		{
 			n_y = -n_top;
@@ -872,8 +872,8 @@ VIDEO_UPDATE( psx )
 			/* todo: draw bottom border */
 		}
 
-		n_left = ( ( (INT32)m_n_horiz_disstart - n_overscanleft ) * (INT32)m_n_screenwidth ) / 2560;
-		n_columns = ( ( ( (INT32)m_n_horiz_disend - m_n_horiz_disstart ) * (INT32)m_n_screenwidth ) / 2560 );
+		n_left = ( ( (int32_t)m_n_horiz_disstart - n_overscanleft ) * (int32_t)m_n_screenwidth ) / 2560;
+		n_columns = ( ( ( (int32_t)m_n_horiz_disend - m_n_horiz_disstart ) * (int32_t)m_n_screenwidth ) / 2560 );
 		
 		// MAMEFX 2022-11-26 fix for screen cut off on the left (MT02957) (mame PR#7624)- hack by leejeonghun
 		// added by chamcham425 aka Zansword(2023-04-02)
@@ -906,15 +906,15 @@ VIDEO_UPDATE( psx )
 			n_line = n_lines;
 			while( n_line > 0 )
 			{
-				UINT16 *p_n_src = m_p_p_vram[ n_y + m_n_displaystarty ] + n_x + n_displaystartx;
-				UINT16 *p_n_dest = BITMAP_ADDR16(bitmap, n_y + n_top, n_x + n_left);
+				uint16_t *p_n_src = m_p_p_vram[ n_y + m_n_displaystarty ] + n_x + n_displaystartx;
+				uint16_t *p_n_dest = BITMAP_ADDR16(bitmap, n_y + n_top, n_x + n_left);
 
 				n_column = n_columns;
 				while( n_column > 0 )
 				{
-					UINT32 n_g0r0 = *( p_n_src++ );
-					UINT32 n_r1b0 = *( p_n_src++ );
-					UINT32 n_b1g1 = *( p_n_src++ );
+					uint32_t n_g0r0 = *( p_n_src++ );
+					uint32_t n_r1b0 = *( p_n_src++ );
+					uint32_t n_b1g1 = *( p_n_src++ );
 
 					*( p_n_dest++ ) = m_p_n_g0r0[ n_g0r0 ] | m_p_n_b0[ n_r1b0 ];
 					n_column--;
@@ -957,7 +957,7 @@ f  e| d  c| b| a  9| 8  7| 6  5| 4| 3  2  1  0
     |iy|ix|ty|     |   tp|  abr|ty|         tx
 */
 
-INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxgpu, UINT32 tpage )
+INLINE void decode_tpage( running_machine *machine, struct PSXGPU *p_psxgpu, uint32_t tpage )
 {
 	if( m_n_gputype == 2 )
 	{
@@ -1188,7 +1188,7 @@ INLINE int CullVertex( int a, int b )
 	n_b.d += n_db;
 
 #define SOLIDFILL( PIXELUPDATE ) \
-	if( n_distance > ( (INT32)m_n_drawarea_x2 - n_x ) + 1 ) \
+	if( n_distance > ( (int32_t)m_n_drawarea_x2 - n_x ) + 1 ) \
 	{ \
 		n_distance = ( m_n_drawarea_x2 - n_x ) + 1; \
 	} \
@@ -1320,7 +1320,7 @@ INLINE int CullVertex( int a, int b )
 	TEXTURE_ENDLOOP
 
 #define TEXTUREFILL( PIXELUPDATE, TXU, TXV ) \
-	if( n_distance > ( (INT32)m_n_drawarea_x2 - n_x ) + 1 ) \
+	if( n_distance > ( (int32_t)m_n_drawarea_x2 - n_x ) + 1 ) \
 	{ \
 		n_distance = ( m_n_drawarea_x2 - n_x ) + 1; \
 	} \
@@ -1538,36 +1538,36 @@ INLINE int CullVertex( int a, int b )
 
 static void FlatPolygon( running_machine *machine, int n_points )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
 	PAIR n_cx1;
 	PAIR n_cx2;
-	INT32 n_dx1;
-	INT32 n_dx2;
+	int32_t n_dx1;
+	int32_t n_dx2;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	INT32 n_distance;
+	int32_t n_distance;
 
-	UINT16 n_point;
-	UINT16 n_rightpoint;
-	UINT16 n_leftpoint;
-	const UINT16 *p_n_rightpointlist;
-	const UINT16 *p_n_leftpointlist;
+	uint16_t n_point;
+	uint16_t n_rightpoint;
+	uint16_t n_leftpoint;
+	const uint16_t *p_n_rightpointlist;
+	const uint16_t *p_n_leftpointlist;
 
-	UINT16 *p_vram;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 1 )
@@ -1618,7 +1618,7 @@ static void FlatPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx1 = (INT32)( ( COORD_X( m_packet.FlatPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
+			n_dx1 = (int32_t)( ( COORD_X( m_packet.FlatPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
 		}
 		if( n_y == COORD_Y( m_packet.FlatPolygon.vertex[ n_rightpoint ].n_coord ) )
 		{
@@ -1637,22 +1637,22 @@ static void FlatPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx2 = (INT32)( ( COORD_X( m_packet.FlatPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
+			n_dx2 = (int32_t)( ( COORD_X( m_packet.FlatPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
 		}
-		if( (INT16)n_cx1.w.h != (INT16)n_cx2.w.h && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_cx1.w.h != (int16_t)n_cx2.w.h && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( (INT16)n_cx1.w.h < (INT16)n_cx2.w.h )
+			if( (int16_t)n_cx1.w.h < (int16_t)n_cx2.w.h )
 			{
 				n_x = n_cx1.w.h;
-				n_distance = (INT16)n_cx2.w.h - n_x;
+				n_distance = (int16_t)n_cx2.w.h - n_x;
 			}
 			else
 			{
 				n_x = n_cx2.w.h;
-				n_distance = (INT16)n_cx1.w.h - n_x;
+				n_distance = (int16_t)n_cx1.w.h - n_x;
 			}
 
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_distance -= ( m_n_drawarea_x1 - n_x );
 				n_x = m_n_drawarea_x1;
@@ -1667,23 +1667,23 @@ static void FlatPolygon( running_machine *machine, int n_points )
 
 static void FlatTexturedPolygon( running_machine *machine, int n_points )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 	int n_tx;
 	int n_ty;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT32 n_clutx;
-	UINT32 n_cluty;
+	uint32_t n_clutx;
+	uint32_t n_cluty;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
@@ -1697,24 +1697,24 @@ static void FlatTexturedPolygon( running_machine *machine, int n_points )
 	PAIR n_cv1;
 	PAIR n_cu2;
 	PAIR n_cv2;
-	INT32 n_du;
-	INT32 n_dv;
-	INT32 n_dx1;
-	INT32 n_dx2;
-	INT32 n_du1;
-	INT32 n_dv1;
-	INT32 n_du2;
-	INT32 n_dv2;
+	int32_t n_du;
+	int32_t n_dv;
+	int32_t n_dx1;
+	int32_t n_dx2;
+	int32_t n_du1;
+	int32_t n_dv1;
+	int32_t n_du2;
+	int32_t n_dv2;
 
-	INT32 n_distance;
-	UINT16 n_point;
-	UINT16 n_rightpoint;
-	UINT16 n_leftpoint;
-	const UINT16 *p_n_rightpointlist;
-	const UINT16 *p_n_leftpointlist;
-	UINT16 *p_clut;
-	UINT16 *p_vram;
-	UINT32 n_bgr;
+	int32_t n_distance;
+	uint16_t n_point;
+	uint16_t n_rightpoint;
+	uint16_t n_leftpoint;
+	const uint16_t *p_n_rightpointlist;
+	const uint16_t *p_n_leftpointlist;
+	uint16_t *p_clut;
+	uint16_t *p_vram;
+	uint32_t n_bgr;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 2 )
@@ -1792,9 +1792,9 @@ static void FlatTexturedPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx1 = (INT32)( ( COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
-			n_du1 = (INT32)( ( TEXTURE_U( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cu1.d ) / n_distance;
-			n_dv1 = (INT32)( ( TEXTURE_V( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cv1.d ) / n_distance;
+			n_dx1 = (int32_t)( ( COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
+			n_du1 = (int32_t)( ( TEXTURE_U( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cu1.d ) / n_distance;
+			n_dv1 = (int32_t)( ( TEXTURE_V( m_packet.FlatTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cv1.d ) / n_distance;
 		}
 		if( n_y == COORD_Y( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_coord ) )
 		{
@@ -1815,34 +1815,34 @@ static void FlatTexturedPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx2 = (INT32)( ( COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
-			n_du2 = (INT32)( ( TEXTURE_U( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cu2.d ) / n_distance;
-			n_dv2 = (INT32)( ( TEXTURE_V( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cv2.d ) / n_distance;
+			n_dx2 = (int32_t)( ( COORD_X( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
+			n_du2 = (int32_t)( ( TEXTURE_U( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cu2.d ) / n_distance;
+			n_dv2 = (int32_t)( ( TEXTURE_V( m_packet.FlatTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cv2.d ) / n_distance;
 		}
-		if( (INT16)n_cx1.w.h != (INT16)n_cx2.w.h && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_cx1.w.h != (int16_t)n_cx2.w.h && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( (INT16)n_cx1.w.h < (INT16)n_cx2.w.h )
+			if( (int16_t)n_cx1.w.h < (int16_t)n_cx2.w.h )
 			{
 				n_x = n_cx1.w.h;
-				n_distance = (INT16)n_cx2.w.h - n_x;
+				n_distance = (int16_t)n_cx2.w.h - n_x;
 
 				n_u.d = n_cu1.d;
 				n_v.d = n_cv1.d;
-				n_du = (INT32)( n_cu2.d - n_cu1.d ) / n_distance;
-				n_dv = (INT32)( n_cv2.d - n_cv1.d ) / n_distance;
+				n_du = (int32_t)( n_cu2.d - n_cu1.d ) / n_distance;
+				n_dv = (int32_t)( n_cv2.d - n_cv1.d ) / n_distance;
 			}
 			else
 			{
 				n_x = n_cx2.w.h;
-				n_distance = (INT16)n_cx1.w.h - n_x;
+				n_distance = (int16_t)n_cx1.w.h - n_x;
 
 				n_u.d = n_cu2.d;
 				n_v.d = n_cv2.d;
-				n_du = (INT32)( n_cu1.d - n_cu2.d ) / n_distance;
-				n_dv = (INT32)( n_cv1.d - n_cv2.d ) / n_distance;
+				n_du = (int32_t)( n_cu1.d - n_cu2.d ) / n_distance;
+				n_dv = (int32_t)( n_cv1.d - n_cv2.d ) / n_distance;
 			}
 
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_u.d += n_du * ( m_n_drawarea_x1 - n_x );
 				n_v.d += n_dv * ( m_n_drawarea_x1 - n_x );
@@ -1863,18 +1863,18 @@ static void FlatTexturedPolygon( running_machine *machine, int n_points )
 
 static void GouraudPolygon( running_machine *machine, int n_points )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
 	PAIR n_r;
 	PAIR n_g;
@@ -1887,27 +1887,27 @@ static void GouraudPolygon( running_machine *machine, int n_points )
 	PAIR n_cr2;
 	PAIR n_cg2;
 	PAIR n_cb2;
-	INT32 n_dr;
-	INT32 n_dg;
-	INT32 n_db;
-	INT32 n_dx1;
-	INT32 n_dx2;
-	INT32 n_dr1;
-	INT32 n_dg1;
-	INT32 n_db1;
-	INT32 n_dr2;
-	INT32 n_dg2;
-	INT32 n_db2;
+	int32_t n_dr;
+	int32_t n_dg;
+	int32_t n_db;
+	int32_t n_dx1;
+	int32_t n_dx2;
+	int32_t n_dr1;
+	int32_t n_dg1;
+	int32_t n_db1;
+	int32_t n_dr2;
+	int32_t n_dg2;
+	int32_t n_db2;
 
-	INT32 n_distance;
+	int32_t n_distance;
 
-	UINT16 n_point;
-	UINT16 n_rightpoint;
-	UINT16 n_leftpoint;
-	const UINT16 *p_n_rightpointlist;
-	const UINT16 *p_n_leftpointlist;
+	uint16_t n_point;
+	uint16_t n_rightpoint;
+	uint16_t n_leftpoint;
+	const uint16_t *p_n_rightpointlist;
+	const uint16_t *p_n_leftpointlist;
 
-	UINT16 *p_vram;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 3 )
@@ -1969,10 +1969,10 @@ static void GouraudPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx1 = (INT32)( ( COORD_X( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
-			n_dr1 = (INT32)( ( BGR_R( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cr1.d ) / n_distance;
-			n_dg1 = (INT32)( ( BGR_G( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cg1.d ) / n_distance;
-			n_db1 = (INT32)( ( BGR_B( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cb1.d ) / n_distance;
+			n_dx1 = (int32_t)( ( COORD_X( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
+			n_dr1 = (int32_t)( ( BGR_R( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cr1.d ) / n_distance;
+			n_dg1 = (int32_t)( ( BGR_G( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cg1.d ) / n_distance;
+			n_db1 = (int32_t)( ( BGR_B( m_packet.GouraudPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cb1.d ) / n_distance;
 		}
 		if( n_y == COORD_Y( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_coord ) )
 		{
@@ -1994,39 +1994,39 @@ static void GouraudPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx2 = (INT32)( ( COORD_X( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
-			n_dr2 = (INT32)( ( BGR_R( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cr2.d ) / n_distance;
-			n_dg2 = (INT32)( ( BGR_G( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cg2.d ) / n_distance;
-			n_db2 = (INT32)( ( BGR_B( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cb2.d ) / n_distance;
+			n_dx2 = (int32_t)( ( COORD_X( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
+			n_dr2 = (int32_t)( ( BGR_R( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cr2.d ) / n_distance;
+			n_dg2 = (int32_t)( ( BGR_G( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cg2.d ) / n_distance;
+			n_db2 = (int32_t)( ( BGR_B( m_packet.GouraudPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cb2.d ) / n_distance;
 		}
-		if( (INT16)n_cx1.w.h != (INT16)n_cx2.w.h && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_cx1.w.h != (int16_t)n_cx2.w.h && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( (INT16)n_cx1.w.h < (INT16)n_cx2.w.h )
+			if( (int16_t)n_cx1.w.h < (int16_t)n_cx2.w.h )
 			{
 				n_x = n_cx1.w.h;
-				n_distance = (INT16)n_cx2.w.h - n_x;
+				n_distance = (int16_t)n_cx2.w.h - n_x;
 
 				n_r.d = n_cr1.d;
 				n_g.d = n_cg1.d;
 				n_b.d = n_cb1.d;
-				n_dr = (INT32)( n_cr2.d - n_cr1.d ) / n_distance;
-				n_dg = (INT32)( n_cg2.d - n_cg1.d ) / n_distance;
-				n_db = (INT32)( n_cb2.d - n_cb1.d ) / n_distance;
+				n_dr = (int32_t)( n_cr2.d - n_cr1.d ) / n_distance;
+				n_dg = (int32_t)( n_cg2.d - n_cg1.d ) / n_distance;
+				n_db = (int32_t)( n_cb2.d - n_cb1.d ) / n_distance;
 			}
 			else
 			{
 				n_x = n_cx2.w.h;
-				n_distance = (INT16)n_cx1.w.h - n_x;
+				n_distance = (int16_t)n_cx1.w.h - n_x;
 
 				n_r.d = n_cr2.d;
 				n_g.d = n_cg2.d;
 				n_b.d = n_cb2.d;
-				n_dr = (INT32)( n_cr1.d - n_cr2.d ) / n_distance;
-				n_dg = (INT32)( n_cg1.d - n_cg2.d ) / n_distance;
-				n_db = (INT32)( n_cb1.d - n_cb2.d ) / n_distance;
+				n_dr = (int32_t)( n_cr1.d - n_cr2.d ) / n_distance;
+				n_dg = (int32_t)( n_cg1.d - n_cg2.d ) / n_distance;
+				n_db = (int32_t)( n_cb1.d - n_cb2.d ) / n_distance;
 			}
 
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_r.d += n_dr * ( m_n_drawarea_x1 - n_x );
 				n_g.d += n_dg * ( m_n_drawarea_x1 - n_x );
@@ -2050,23 +2050,23 @@ static void GouraudPolygon( running_machine *machine, int n_points )
 
 static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 	int n_tx;
 	int n_ty;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT32 n_clutx;
-	UINT32 n_cluty;
+	uint32_t n_clutx;
+	uint32_t n_cluty;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
@@ -2086,33 +2086,33 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 	PAIR n_cr2;
 	PAIR n_cg2;
 	PAIR n_cb2;
-	INT32 n_dr;
-	INT32 n_dg;
-	INT32 n_db;
-	INT32 n_du;
-	INT32 n_dv;
-	INT32 n_dx1;
-	INT32 n_dx2;
-	INT32 n_dr1;
-	INT32 n_dg1;
-	INT32 n_db1;
-	INT32 n_dr2;
-	INT32 n_dg2;
-	INT32 n_db2;
-	INT32 n_du1;
-	INT32 n_dv1;
-	INT32 n_du2;
-	INT32 n_dv2;
+	int32_t n_dr;
+	int32_t n_dg;
+	int32_t n_db;
+	int32_t n_du;
+	int32_t n_dv;
+	int32_t n_dx1;
+	int32_t n_dx2;
+	int32_t n_dr1;
+	int32_t n_dg1;
+	int32_t n_db1;
+	int32_t n_dr2;
+	int32_t n_dg2;
+	int32_t n_db2;
+	int32_t n_du1;
+	int32_t n_dv1;
+	int32_t n_du2;
+	int32_t n_dv2;
 
-	INT32 n_distance;
-	UINT16 n_point;
-	UINT16 n_rightpoint;
-	UINT16 n_leftpoint;
-	const UINT16 *p_n_rightpointlist;
-	const UINT16 *p_n_leftpointlist;
-	UINT16 *p_clut;
-	UINT16 *p_vram;
-	UINT32 n_bgr;
+	int32_t n_distance;
+	uint16_t n_point;
+	uint16_t n_rightpoint;
+	uint16_t n_leftpoint;
+	const uint16_t *p_n_rightpointlist;
+	const uint16_t *p_n_leftpointlist;
+	uint16_t *p_clut;
+	uint16_t *p_vram;
+	uint32_t n_bgr;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 4 )
@@ -2198,13 +2198,13 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx1 = (INT32)( ( COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
+			n_dx1 = (int32_t)( ( COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_coord ) << 16 ) - n_cx1.d ) / n_distance;
 			switch( n_cmd & 0x01 )
 			{
 			case 0x00:
-				n_dr1 = (INT32)( ( BGR_R( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cr1.d ) / n_distance;
-				n_dg1 = (INT32)( ( BGR_G( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cg1.d ) / n_distance;
-				n_db1 = (INT32)( ( BGR_B( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cb1.d ) / n_distance;
+				n_dr1 = (int32_t)( ( BGR_R( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cr1.d ) / n_distance;
+				n_dg1 = (int32_t)( ( BGR_G( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cg1.d ) / n_distance;
+				n_db1 = (int32_t)( ( BGR_B( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_bgr ) << 16 ) - n_cb1.d ) / n_distance;
 				break;
 			case 0x01:
 				n_dr1 = 0;
@@ -2212,8 +2212,8 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 				n_db1 = 0;
 				break;
 			}
-			n_du1 = (INT32)( ( TEXTURE_U( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cu1.d ) / n_distance;
-			n_dv1 = (INT32)( ( TEXTURE_V( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cv1.d ) / n_distance;
+			n_du1 = (int32_t)( ( TEXTURE_U( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cu1.d ) / n_distance;
+			n_dv1 = (int32_t)( ( TEXTURE_V( m_packet.GouraudTexturedPolygon.vertex[ n_leftpoint ].n_texture ) << 16 ) - n_cv1.d ) / n_distance;
 		}
 		if( n_y == COORD_Y( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_coord ) )
 		{
@@ -2247,13 +2247,13 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 			{
 				break;
 			}
-			n_dx2 = (INT32)( ( COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
+			n_dx2 = (int32_t)( ( COORD_X( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_coord ) << 16 ) - n_cx2.d ) / n_distance;
 			switch( n_cmd & 0x01 )
 			{
 			case 0x00:
-				n_dr2 = (INT32)( ( BGR_R( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cr2.d ) / n_distance;
-				n_dg2 = (INT32)( ( BGR_G( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cg2.d ) / n_distance;
-				n_db2 = (INT32)( ( BGR_B( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cb2.d ) / n_distance;
+				n_dr2 = (int32_t)( ( BGR_R( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cr2.d ) / n_distance;
+				n_dg2 = (int32_t)( ( BGR_G( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cg2.d ) / n_distance;
+				n_db2 = (int32_t)( ( BGR_B( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_bgr ) << 16 ) - n_cb2.d ) / n_distance;
 				break;
 			case 0x01:
 				n_dr2 = 0;
@@ -2261,45 +2261,45 @@ static void GouraudTexturedPolygon( running_machine *machine, int n_points )
 				n_db2 = 0;
 				break;
 			}
-			n_du2 = (INT32)( ( TEXTURE_U( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cu2.d ) / n_distance;
-			n_dv2 = (INT32)( ( TEXTURE_V( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cv2.d ) / n_distance;
+			n_du2 = (int32_t)( ( TEXTURE_U( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cu2.d ) / n_distance;
+			n_dv2 = (int32_t)( ( TEXTURE_V( m_packet.GouraudTexturedPolygon.vertex[ n_rightpoint ].n_texture ) << 16 ) - n_cv2.d ) / n_distance;
 		}
-		if( (INT16)n_cx1.w.h != (INT16)n_cx2.w.h && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_cx1.w.h != (int16_t)n_cx2.w.h && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( (INT16)n_cx1.w.h < (INT16)n_cx2.w.h )
+			if( (int16_t)n_cx1.w.h < (int16_t)n_cx2.w.h )
 			{
 				n_x = n_cx1.w.h;
-				n_distance = (INT16)n_cx2.w.h - n_x;
+				n_distance = (int16_t)n_cx2.w.h - n_x;
 
 				n_r.d = n_cr1.d;
 				n_g.d = n_cg1.d;
 				n_b.d = n_cb1.d;
 				n_u.d = n_cu1.d;
 				n_v.d = n_cv1.d;
-				n_dr = (INT32)( n_cr2.d - n_cr1.d ) / n_distance;
-				n_dg = (INT32)( n_cg2.d - n_cg1.d ) / n_distance;
-				n_db = (INT32)( n_cb2.d - n_cb1.d ) / n_distance;
-				n_du = (INT32)( n_cu2.d - n_cu1.d ) / n_distance;
-				n_dv = (INT32)( n_cv2.d - n_cv1.d ) / n_distance;
+				n_dr = (int32_t)( n_cr2.d - n_cr1.d ) / n_distance;
+				n_dg = (int32_t)( n_cg2.d - n_cg1.d ) / n_distance;
+				n_db = (int32_t)( n_cb2.d - n_cb1.d ) / n_distance;
+				n_du = (int32_t)( n_cu2.d - n_cu1.d ) / n_distance;
+				n_dv = (int32_t)( n_cv2.d - n_cv1.d ) / n_distance;
 			}
 			else
 			{
 				n_x = n_cx2.w.h;
-				n_distance = (INT16)n_cx1.w.h - n_x;
+				n_distance = (int16_t)n_cx1.w.h - n_x;
 
 				n_r.d = n_cr2.d;
 				n_g.d = n_cg2.d;
 				n_b.d = n_cb2.d;
 				n_u.d = n_cu2.d;
 				n_v.d = n_cv2.d;
-				n_dr = (INT32)( n_cr1.d - n_cr2.d ) / n_distance;
-				n_dg = (INT32)( n_cg1.d - n_cg2.d ) / n_distance;
-				n_db = (INT32)( n_cb1.d - n_cb2.d ) / n_distance;
-				n_du = (INT32)( n_cu1.d - n_cu2.d ) / n_distance;
-				n_dv = (INT32)( n_cv1.d - n_cv2.d ) / n_distance;
+				n_dr = (int32_t)( n_cr1.d - n_cr2.d ) / n_distance;
+				n_dg = (int32_t)( n_cg1.d - n_cg2.d ) / n_distance;
+				n_db = (int32_t)( n_cb1.d - n_cb2.d ) / n_distance;
+				n_du = (int32_t)( n_cu1.d - n_cu2.d ) / n_distance;
+				n_dv = (int32_t)( n_cv1.d - n_cv2.d ) / n_distance;
 			}
 
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_r.d += n_dr * ( m_n_drawarea_x1 - n_x );
 				n_g.d += n_dg * ( m_n_drawarea_x1 - n_x );
@@ -2331,22 +2331,22 @@ static void MonochromeLine( void )
 {
 	PAIR n_x;
 	PAIR n_y;
-	INT32 n_dx;
-	INT32 n_dy;
-	INT32 n_dr;
-	INT32 n_dg;
-	INT32 n_db;
-	INT32 n_len;
-	INT32 n_xlen;
-	INT32 n_ylen;
-	INT32 n_xstart;
-	INT32 n_ystart;
-	INT32 n_xend;
-	INT32 n_yend;
-	UINT32 n_r;
-	UINT32 n_g;
-	UINT32 n_b;
-	UINT16 *p_vram;
+	int32_t n_dx;
+	int32_t n_dy;
+	int32_t n_dr;
+	int32_t n_dg;
+	int32_t n_db;
+	int32_t n_len;
+	int32_t n_xlen;
+	int32_t n_ylen;
+	int32_t n_xstart;
+	int32_t n_ystart;
+	int32_t n_xend;
+	int32_t n_yend;
+	uint32_t n_r;
+	uint32_t n_g;
+	uint32_t n_b;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 5 )
@@ -2402,18 +2402,18 @@ static void MonochromeLine( void )
 	n_x.w.h = n_xstart; n_x.w.l = 0;
 	n_y.w.h = n_ystart; n_y.w.l = 0;
 
-	n_dx = (INT32)( ( n_xend << 16 ) - n_x.d ) / n_len;
-	n_dy = (INT32)( ( n_yend << 16 ) - n_y.d ) / n_len;
+	n_dx = (int32_t)( ( n_xend << 16 ) - n_x.d ) / n_len;
+	n_dy = (int32_t)( ( n_yend << 16 ) - n_y.d ) / n_len;
 	n_dr = 0;
 	n_dg = 0;
 	n_db = 0;
 
 	while( n_len > 0 )
 	{
-		if( (INT16)n_x.w.h >= (INT32)m_n_drawarea_x1 &&
-			(INT16)n_y.w.h >= (INT32)m_n_drawarea_y1 &&
-			(INT16)n_x.w.h <= (INT32)m_n_drawarea_x2 &&
-			(INT16)n_y.w.h <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_x.w.h >= (int32_t)m_n_drawarea_x1 &&
+			(int16_t)n_y.w.h >= (int32_t)m_n_drawarea_y1 &&
+			(int16_t)n_x.w.h <= (int32_t)m_n_drawarea_x2 &&
+			(int16_t)n_y.w.h <= (int32_t)m_n_drawarea_y2 )
 		{
 			p_vram = m_p_p_vram[ n_y.w.h ] + n_x.w.h;
 			WRITE_PIXEL(
@@ -2431,18 +2431,18 @@ static void GouraudLine( void )
 {
 	PAIR n_x;
 	PAIR n_y;
-	INT32 n_dx;
-	INT32 n_dy;
-	INT32 n_dr;
-	INT32 n_dg;
-	INT32 n_db;
-	INT32 n_distance;
-	INT32 n_xlen;
-	INT32 n_ylen;
-	INT32 n_xstart;
-	INT32 n_ystart;
-	INT32 n_xend;
-	INT32 n_yend;
+	int32_t n_dx;
+	int32_t n_dy;
+	int32_t n_dr;
+	int32_t n_dg;
+	int32_t n_db;
+	int32_t n_distance;
+	int32_t n_xlen;
+	int32_t n_ylen;
+	int32_t n_xstart;
+	int32_t n_ystart;
+	int32_t n_xend;
+	int32_t n_yend;
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
@@ -2452,7 +2452,7 @@ static void GouraudLine( void )
 	PAIR n_cr2;
 	PAIR n_cg2;
 	PAIR n_cb2;
-	UINT16 *p_vram;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 6 )
@@ -2514,18 +2514,18 @@ static void GouraudLine( void )
 		n_distance = 1;
 	}
 
-	n_dx = (INT32)( ( n_xend << 16 ) - n_x.d ) / n_distance;
-	n_dy = (INT32)( ( n_yend << 16 ) - n_y.d ) / n_distance;
-	n_dr = (INT32)( n_cr2.d - n_cr1.d ) / n_distance;
-	n_dg = (INT32)( n_cg2.d - n_cg1.d ) / n_distance;
-	n_db = (INT32)( n_cb2.d - n_cb1.d ) / n_distance;
+	n_dx = (int32_t)( ( n_xend << 16 ) - n_x.d ) / n_distance;
+	n_dy = (int32_t)( ( n_yend << 16 ) - n_y.d ) / n_distance;
+	n_dr = (int32_t)( n_cr2.d - n_cr1.d ) / n_distance;
+	n_dg = (int32_t)( n_cg2.d - n_cg1.d ) / n_distance;
+	n_db = (int32_t)( n_cb2.d - n_cb1.d ) / n_distance;
 
 	while( n_distance > 0 )
 	{
-		if( (INT16)n_x.w.h >= (INT32)m_n_drawarea_x1 &&
-			(INT16)n_y.w.h >= (INT32)m_n_drawarea_y1 &&
-			(INT16)n_x.w.h <= (INT32)m_n_drawarea_x2 &&
-			(INT16)n_y.w.h <= (INT32)m_n_drawarea_y2 )
+		if( (int16_t)n_x.w.h >= (int32_t)m_n_drawarea_x1 &&
+			(int16_t)n_y.w.h >= (int32_t)m_n_drawarea_y1 &&
+			(int16_t)n_x.w.h <= (int32_t)m_n_drawarea_x2 &&
+			(int16_t)n_y.w.h <= (int32_t)m_n_drawarea_y2 )
 		{
 			p_vram = m_p_p_vram[ n_y.w.h ] + n_x.w.h;
 			WRITE_PIXEL(
@@ -2547,11 +2547,11 @@ static void FrameBufferRectangleDraw( void )
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
-	INT32 n_distance;
-	INT32 n_h;
-	INT16 n_y;
-	INT16 n_x;
-	UINT16 *p_vram;
+	int32_t n_distance;
+	int32_t n_h;
+	int16_t n_y;
+	int16_t n_x;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 7 )
@@ -2594,26 +2594,26 @@ static void FrameBufferRectangleDraw( void )
 
 static void FlatRectangle( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
 
-	INT32 n_distance;
-	INT32 n_h;
-	UINT16 *p_vram;
+	int32_t n_distance;
+	int32_t n_h;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 8 )
@@ -2643,9 +2643,9 @@ static void FlatRectangle( running_machine *machine )
 		n_x = COORD_X( m_packet.FlatRectangle.n_coord ) + m_n_drawoffset_x;
 
 		n_distance = SIZE_W( m_packet.FlatRectangle.n_size );
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_distance -= ( m_n_drawarea_x1 - n_x );
 				n_x = m_n_drawarea_x1;
@@ -2659,26 +2659,26 @@ static void FlatRectangle( running_machine *machine )
 
 static void FlatRectangle8x8( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
 
-	INT32 n_distance;
-	INT32 n_h;
-	UINT16 *p_vram;
+	int32_t n_distance;
+	int32_t n_h;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 9 )
@@ -2708,9 +2708,9 @@ static void FlatRectangle8x8( running_machine *machine )
 		n_x = COORD_X( m_packet.FlatRectangle8x8.n_coord ) + m_n_drawoffset_x;
 
 		n_distance = 8;
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_distance -= ( m_n_drawarea_x1 - n_x );
 				n_x = m_n_drawarea_x1;
@@ -2724,26 +2724,26 @@ static void FlatRectangle8x8( running_machine *machine )
 
 static void FlatRectangle16x16( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
 
-	INT32 n_distance;
-	INT32 n_h;
-	UINT16 *p_vram;
+	int32_t n_distance;
+	int32_t n_h;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 10 )
@@ -2773,9 +2773,9 @@ static void FlatRectangle16x16( running_machine *machine )
 		n_x = COORD_X( m_packet.FlatRectangle16x16.n_coord ) + m_n_drawoffset_x;
 
 		n_distance = 16;
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_distance -= ( m_n_drawarea_x1 - n_x );
 				n_x = m_n_drawarea_x1;
@@ -2789,37 +2789,37 @@ static void FlatRectangle16x16( running_machine *machine )
 
 static void FlatTexturedRectangle( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 	int n_tx;
 	int n_ty;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT32 n_clutx;
-	UINT32 n_cluty;
+	uint32_t n_clutx;
+	uint32_t n_cluty;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
-	UINT8 n_u;
-	UINT8 n_v;
+	uint8_t n_u;
+	uint8_t n_v;
 	int n_du;
 	int n_dv;
 
-	INT16 n_distance;
-	UINT32 n_h;
-	UINT16 *p_vram;
-	UINT16 *p_clut;
-	UINT16 n_bgr;
+	int16_t n_distance;
+	uint32_t n_h;
+	uint16_t *p_vram;
+	uint16_t *p_clut;
+	uint16_t n_bgr;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 11 )
@@ -2869,9 +2869,9 @@ static void FlatTexturedRectangle( running_machine *machine )
 		n_u = TEXTURE_U( m_packet.FlatTexturedRectangle.n_texture );
 
 		n_distance = SIZE_W( m_packet.FlatTexturedRectangle.n_size );
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_u += ( m_n_drawarea_x1 - n_x ) * n_du;
 				n_distance -= ( m_n_drawarea_x1 - n_x );
@@ -2887,37 +2887,37 @@ static void FlatTexturedRectangle( running_machine *machine )
 
 static void Sprite8x8( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 	int n_tx;
 	int n_ty;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT32 n_clutx;
-	UINT32 n_cluty;
+	uint32_t n_clutx;
+	uint32_t n_cluty;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
-	UINT8 n_u;
-	UINT8 n_v;
+	uint8_t n_u;
+	uint8_t n_v;
 	int n_du;
 	int n_dv;
 
-	INT16 n_distance;
-	UINT32 n_h;
-	UINT16 *p_vram;
-	UINT16 *p_clut;
-	UINT16 n_bgr;
+	int16_t n_distance;
+	uint32_t n_h;
+	uint16_t *p_vram;
+	uint16_t *p_clut;
+	uint16_t n_bgr;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 12 )
@@ -2967,9 +2967,9 @@ static void Sprite8x8( running_machine *machine )
 		n_u = TEXTURE_U( m_packet.Sprite8x8.n_texture );
 
 		n_distance = 8;
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_u += ( m_n_drawarea_x1 - n_x ) * n_du;
 				n_distance -= ( m_n_drawarea_x1 - n_x );
@@ -2985,37 +2985,37 @@ static void Sprite8x8( running_machine *machine )
 
 static void Sprite16x16( running_machine *machine )
 {
-	INT16 n_y;
-	INT16 n_x;
+	int16_t n_y;
+	int16_t n_x;
 	int n_tx;
 	int n_ty;
 
-	UINT8 n_cmd;
+	uint8_t n_cmd;
 
-	UINT32 n_clutx;
-	UINT32 n_cluty;
+	uint32_t n_clutx;
+	uint32_t n_cluty;
 
-	UINT16 *p_n_f;
-	UINT16 *p_n_redb;
-	UINT16 *p_n_greenb;
-	UINT16 *p_n_blueb;
-	UINT16 *p_n_redtrans;
-	UINT16 *p_n_greentrans;
-	UINT16 *p_n_bluetrans;
+	uint16_t *p_n_f;
+	uint16_t *p_n_redb;
+	uint16_t *p_n_greenb;
+	uint16_t *p_n_blueb;
+	uint16_t *p_n_redtrans;
+	uint16_t *p_n_greentrans;
+	uint16_t *p_n_bluetrans;
 
 	PAIR n_r;
 	PAIR n_g;
 	PAIR n_b;
-	UINT8 n_u;
-	UINT8 n_v;
+	uint8_t n_u;
+	uint8_t n_v;
 	int n_du;
 	int n_dv;
 
-	INT16 n_distance;
-	UINT32 n_h;
-	UINT16 *p_vram;
-	UINT16 *p_clut;
-	UINT16 n_bgr;
+	int16_t n_distance;
+	uint32_t n_h;
+	uint16_t *p_vram;
+	uint16_t *p_clut;
+	uint16_t n_bgr;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 13 )
@@ -3065,9 +3065,9 @@ static void Sprite16x16( running_machine *machine )
 		n_u = TEXTURE_U( m_packet.Sprite16x16.n_texture );
 
 		n_distance = 16;
-		if( n_distance > 0 && n_y >= (INT32)m_n_drawarea_y1 && n_y <= (INT32)m_n_drawarea_y2 )
+		if( n_distance > 0 && n_y >= (int32_t)m_n_drawarea_y1 && n_y <= (int32_t)m_n_drawarea_y2 )
 		{
-			if( ( (INT32)m_n_drawarea_x1 - n_x ) > 0 )
+			if( ( (int32_t)m_n_drawarea_x1 - n_x ) > 0 )
 			{
 				n_u += ( m_n_drawarea_x1 - n_x ) * n_du;
 				n_distance -= ( m_n_drawarea_x1 - n_x );
@@ -3083,12 +3083,12 @@ static void Sprite16x16( running_machine *machine )
 
 static void Dot( void )
 {
-	INT32 n_x;
-	INT32 n_y;
-	UINT32 n_r;
-	UINT32 n_g;
-	UINT32 n_b;
-	UINT16 *p_vram;
+	int32_t n_x;
+	int32_t n_y;
+	uint32_t n_r;
+	uint32_t n_g;
+	uint32_t n_b;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 14 )
@@ -3105,10 +3105,10 @@ static void Dot( void )
 	n_x = COORD_X( m_packet.Dot.vertex.n_coord ) + m_n_drawoffset_x;
 	n_y = COORD_Y( m_packet.Dot.vertex.n_coord ) + m_n_drawoffset_y;
 
-	if( (INT16)n_x >= (INT32)m_n_drawarea_x1 &&
-		(INT16)n_y >= (INT32)m_n_drawarea_y1 &&
-		(INT16)n_x <= (INT32)m_n_drawarea_x2 &&
-		(INT16)n_y <= (INT32)m_n_drawarea_y2 )
+	if( (int16_t)n_x >= (int32_t)m_n_drawarea_x1 &&
+		(int16_t)n_y >= (int32_t)m_n_drawarea_y1 &&
+		(int16_t)n_x <= (int32_t)m_n_drawarea_x2 &&
+		(int16_t)n_y <= (int32_t)m_n_drawarea_y2 )
 	{
 		p_vram = m_p_p_vram[ n_y ] + n_x;
 		WRITE_PIXEL(
@@ -3120,13 +3120,13 @@ static void Dot( void )
 
 static void MoveImage( void )
 {
-	INT16 n_w;
-	INT16 n_h;
-	INT16 n_srcx;
-	INT16 n_srcy;
-	INT16 n_dsty;
-	INT16 n_dstx;
-	UINT16 *p_vram;
+	int16_t n_w;
+	int16_t n_h;
+	int16_t n_srcx;
+	int16_t n_srcy;
+	int16_t n_dsty;
+	int16_t n_dstx;
+	uint16_t *p_vram;
 
 #if defined( MAME_DEBUG )
 	if( m_debug.n_skip == 15 )
@@ -3163,11 +3163,11 @@ static void MoveImage( void )
 	}
 }
 
-void psx_gpu_write( running_machine *machine, UINT32 *p_ram, INT32 n_size )
+void psx_gpu_write( running_machine *machine, uint32_t *p_ram, int32_t n_size )
 {
 	while( n_size > 0 )
 	{
-		UINT32 data = *( p_ram );
+		uint32_t data = *( p_ram );
 
 		verboselog( machine, 2, "PSX Packet #%u %08x\n", m_n_gpu_buffer_offset, data );
 		m_packet.n_entry[ m_n_gpu_buffer_offset ] = data;
@@ -3405,8 +3405,8 @@ void psx_gpu_write( running_machine *machine, UINT32 *p_ram, INT32 n_size )
 			{
 				verboselog( machine, 1, "%02x: rectangle %d,%d %d,%d\n",
 					m_packet.n_entry[ 0 ] >> 24,
-					(INT16)( m_packet.n_entry[ 1 ] & 0xffff ), (INT16)( m_packet.n_entry[ 1 ] >> 16 ),
-					(INT16)( m_packet.n_entry[ 2 ] & 0xffff ), (INT16)( m_packet.n_entry[ 2 ] >> 16 ) );
+					(int16_t)( m_packet.n_entry[ 1 ] & 0xffff ), (int16_t)( m_packet.n_entry[ 1 ] >> 16 ),
+					(int16_t)( m_packet.n_entry[ 2 ] & 0xffff ), (int16_t)( m_packet.n_entry[ 2 ] >> 16 ) );
 				FlatRectangle(machine);
 				m_n_gpu_buffer_offset = 0;
 			}
@@ -3423,7 +3423,7 @@ void psx_gpu_write( running_machine *machine, UINT32 *p_ram, INT32 n_size )
 			{
 				verboselog( machine, 1, "%02x: sprite %d,%d %u,%u %08x, %08x\n",
 					m_packet.n_entry[ 0 ] >> 24,
-					(INT16)( m_packet.n_entry[ 1 ] & 0xffff ), (INT16)( m_packet.n_entry[ 1 ] >> 16 ),
+					(int16_t)( m_packet.n_entry[ 1 ] & 0xffff ), (int16_t)( m_packet.n_entry[ 1 ] >> 16 ),
 					m_packet.n_entry[ 3 ] & 0xffff, m_packet.n_entry[ 3 ] >> 16,
 					m_packet.n_entry[ 0 ], m_packet.n_entry[ 2 ] );
 				FlatTexturedRectangle(machine);
@@ -3440,7 +3440,7 @@ void psx_gpu_write( running_machine *machine, UINT32 *p_ram, INT32 n_size )
 			{
 				verboselog( machine, 1, "%02x: dot %d,%d %08x\n",
 					m_packet.n_entry[ 0 ] >> 24,
-					(INT16)( m_packet.n_entry[ 1 ] & 0xffff ), (INT16)( m_packet.n_entry[ 1 ] >> 16 ),
+					(int16_t)( m_packet.n_entry[ 1 ] & 0xffff ), (int16_t)( m_packet.n_entry[ 1 ] >> 16 ),
 					m_packet.n_entry[ 0 ] & 0xffffff );
 				Dot();
 				m_n_gpu_buffer_offset = 0;
@@ -3527,10 +3527,10 @@ void psx_gpu_write( running_machine *machine, UINT32 *p_ram, INT32 n_size )
 			}
 			else
 			{
-				UINT32 n_pixel;
+				uint32_t n_pixel;
 				for( n_pixel = 0; n_pixel < 2; n_pixel++ )
 				{
-					UINT16 *p_vram;
+					uint16_t *p_vram;
 
 					verboselog( machine, 2, "send image to framebuffer ( pixel %u,%u = %u )\n",
 						( m_n_vramx + m_packet.n_entry[ 1 ] ) & 1023,
@@ -3815,13 +3815,13 @@ WRITE32_HANDLER( psx_gpu_w )
 }
 
 
-void psx_gpu_read( running_machine *machine, UINT32 *p_ram, INT32 n_size )
+void psx_gpu_read( running_machine *machine, uint32_t *p_ram, int32_t n_size )
 {
 	while( n_size > 0 )
 	{
 		if( ( m_n_gpustatus & ( 1L << 0x1b ) ) != 0 )
 		{
-			UINT32 n_pixel;
+			uint32_t n_pixel;
 			PAIR data;
 
 			verboselog( machine, 2, "copy image from frame buffer ( %d, %d )\n", m_n_vramx, m_n_vramy );
@@ -3865,7 +3865,7 @@ void psx_gpu_read( running_machine *machine, UINT32 *p_ram, INT32 n_size )
 
 READ32_HANDLER( psx_gpu_r )
 {
-	UINT32 data;
+	uint32_t data;
 
 	switch( offset )
 	{
@@ -3894,7 +3894,7 @@ INTERRUPT_GEN( psx_vblank )
 
 	if(need_sianniv_vblank_hack)
 	{
-		UINT32 pc = cpu_get_pc(device);
+		uint32_t pc = cpu_get_pc(device);
 		if((pc >= 0x80010018 && pc <= 0x80010028) || pc == 0x8002a4f0)
 			return;
 	}

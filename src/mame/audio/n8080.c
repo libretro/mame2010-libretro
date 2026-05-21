@@ -167,7 +167,7 @@ static void spacefev_sound_pins_changed( running_machine *machine )
 {
 	running_device *sn = machine->device("snsnd");
 	n8080_state *state = (n8080_state *)machine->driver_data;
-	UINT16 changes = ~state->curr_sound_pins & state->prev_sound_pins;
+	uint16_t changes = ~state->curr_sound_pins & state->prev_sound_pins;
 
 	if (changes & (1 << 0x3))
 	{
@@ -200,7 +200,7 @@ static void sheriff_sound_pins_changed( running_machine *machine )
 {
 	running_device *sn = machine->device("snsnd");
 	n8080_state *state = (n8080_state *)machine->driver_data;
-	UINT16 changes = ~state->curr_sound_pins & state->prev_sound_pins;
+	uint16_t changes = ~state->curr_sound_pins & state->prev_sound_pins;
 
 	if (changes & (1 << 0x6))
 	{
@@ -224,7 +224,7 @@ static void sheriff_sound_pins_changed( running_machine *machine )
 static void helifire_sound_pins_changed( running_machine *machine )
 {
 	n8080_state *state = (n8080_state *)machine->driver_data;
-	UINT16 changes = ~state->curr_sound_pins & state->prev_sound_pins;
+	uint16_t changes = ~state->curr_sound_pins & state->prev_sound_pins;
 
 	/* ((state->curr_sound_pins >> 0xa) & 1) not emulated */
 	/* ((state->curr_sound_pins >> 0xb) & 1) not emulated */
@@ -341,7 +341,7 @@ WRITE8_HANDLER( n8080_sound_2_w )
 static READ8_HANDLER( n8080_8035_p1_r )
 {
 	n8080_state *state = (n8080_state *)space->machine->driver_data;
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if ((state->curr_sound_pins >> 0xb) & 1) val |= 0x01;
 	if ((state->curr_sound_pins >> 0xa) & 1) val |= 0x02;
@@ -383,7 +383,7 @@ static READ8_HANDLER( helifire_8035_t1_r )
 static READ8_HANDLER( helifire_8035_external_ram_r )
 {
 	n8080_state *state = (n8080_state *)space->machine->driver_data;
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if ((state->curr_sound_pins >> 0x7) & 1) val |= 0x01;
 	if ((state->curr_sound_pins >> 0x8) & 1) val |= 0x02;

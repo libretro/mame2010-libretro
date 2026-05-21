@@ -7,19 +7,19 @@ public:
 	lemmings_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  pixel_0_data;
-	UINT16 *  pixel_1_data;
-	UINT16 *  vram_data;
-	UINT16 *  control_data;
-	UINT16 *  paletteram;
-//  UINT16 *  spriteram;    // this currently uses generic buffered spriteram
-//  UINT16 *  spriteram2;   // this currently uses generic buffered spriteram
+	uint16_t *  pixel_0_data;
+	uint16_t *  pixel_1_data;
+	uint16_t *  vram_data;
+	uint16_t *  control_data;
+	uint16_t *  paletteram;
+//  uint16_t *  spriteram;    // this currently uses generic buffered spriteram
+//  uint16_t *  spriteram2;   // this currently uses generic buffered spriteram
 
 	/* video-related */
 	bitmap_t *bitmap0;
 	tilemap_t *vram_tilemap;
-	UINT16 *sprite_triple_buffer_0,*sprite_triple_buffer_1;
-	UINT8 *vram_buffer;
+	uint16_t *sprite_triple_buffer_0,*sprite_triple_buffer_1;
+	uint8_t *vram_buffer;
 
 	/* devices */
 	running_device *audiocpu;

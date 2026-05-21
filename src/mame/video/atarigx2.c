@@ -34,7 +34,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarigx2_state *state = (atarigx2_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = state->atarigen.alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	int opaque = data & 0x8000;
@@ -45,7 +45,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarigx2_state *state = (atarigx2_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = state->atarigen.playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = (state->playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (state->playfield_base >> 5) + ((state->playfield_color_bank << 3) & 0x18) + ((data >> 12) & 7);
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -139,7 +139,7 @@ WRITE16_HANDLER( atarigx2_mo_control_w )
 void atarigx2_scanline_update(screen_device &screen, int scanline)
 {
 	atarigx2_state *state = (atarigx2_state *)screen.machine->driver_data;
-	UINT32 *base = &state->atarigen.alpha32[(scanline / 8) * 32 + 24];
+	uint32_t *base = &state->atarigen.alpha32[(scanline / 8) * 32 + 24];
 	int i;
 
 	if (scanline == 0) logerror("-------\n");
@@ -151,7 +151,7 @@ void atarigx2_scanline_update(screen_device &screen, int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		UINT32 word = *base++;
+		uint32_t word = *base++;
 
 		if (word & 0x80000000)
 		{
@@ -231,9 +231,9 @@ VIDEO_UPDATE( atarigx2 )
 		/* now blend with the playfield */
 		for (y = top; y < bottom; y++)
 		{
-			UINT16 *pf = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
-			UINT16 *mo = (UINT16 *)mo_bitmap->base + y * mo_bitmap->rowpixels;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + y * priority_bitmap->rowpixels;
+			uint16_t *pf = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
+			uint16_t *mo = (uint16_t *)mo_bitmap->base + y * mo_bitmap->rowpixels;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + y * priority_bitmap->rowpixels;
 			for (x = left; x < right; x++)
 				if (mo[x] && (mo[x] >> ATARIRLE_PRIORITY_SHIFT) >= pri[x])
 					pf[x] = mo[x] & ATARIRLE_DATA_MASK;

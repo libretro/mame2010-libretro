@@ -1,9 +1,9 @@
 #include "emu.h"
 
-UINT8 *solomon_videoram;
-UINT8 *solomon_colorram;
-UINT8 *solomon_videoram2;
-UINT8 *solomon_colorram2;
+uint8_t *solomon_videoram;
+uint8_t *solomon_colorram;
+uint8_t *solomon_videoram2;
+uint8_t *solomon_colorram2;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
@@ -72,7 +72,7 @@ VIDEO_START( solomon )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = machine->generic.spriteram_size - 4; offs >= 0; offs -= 4)

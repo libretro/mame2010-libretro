@@ -17,13 +17,13 @@
 
 struct _snes_st010_state
 {
-	INT16 x1, y1, quadrant, theta, o1;
-	UINT8 *ram;
+	int16_t x1, y1, quadrant, theta, o1;
+	uint8_t *ram;
 };
 
 static _snes_st010_state st010_state;
 
-static const INT16 st010_sin_table[256] = {
+static const int16_t st010_sin_table[256] = {
    0x0000,  0x0324,  0x0648,  0x096a,  0x0c8c,  0x0fab,  0x12c8,  0x15e2,
    0x18f9,  0x1c0b,  0x1f1a,  0x2223,  0x2528,  0x2826,  0x2b1f,  0x2e11,
    0x30fb,  0x33df,  0x36ba,  0x398c,  0x3c56,  0x3f17,  0x41ce,  0x447a,
@@ -58,7 +58,7 @@ static const INT16 st010_sin_table[256] = {
   -0x18f8, -0x15e2, -0x12c8, -0x0fab, -0x0c8b, -0x096a, -0x0647, -0x0324
 };
 
-static const INT16 st010_mode7_scale[176] = {
+static const int16_t st010_mode7_scale[176] = {
   0x0380,  0x0325,  0x02da,  0x029c,  0x0268,  0x023b,  0x0215,  0x01f3,
   0x01d5,  0x01bb,  0x01a3,  0x018e,  0x017b,  0x016a,  0x015a,  0x014b,
   0x013e,  0x0132,  0x0126,  0x011c,  0x0112,  0x0109,  0x0100,  0x00f8,
@@ -83,7 +83,7 @@ static const INT16 st010_mode7_scale[176] = {
   0x002d,  0x002c,  0x002c,  0x002c,  0x002c,  0x002b,  0x002b,  0x002b
 };
 
-static const UINT8 st010_arctan[32][32] = {
+static const uint8_t st010_arctan[32][32] = {
   { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80 },
   { 0x80, 0xa0, 0xad, 0xb3, 0xb6, 0xb8, 0xb9, 0xba, 0xbb, 0xbb, 0xbc, 0xbc, 0xbd, 0xbd, 0xbd, 0xbd,
@@ -151,27 +151,27 @@ static const UINT8 st010_arctan[32][32] = {
 };
 
 
-static INT16 st010_sin( INT16 theta )
+static int16_t st010_sin( int16_t theta )
 {
 	return st010_sin_table[(theta >> 8) & 0xff];
 }
 
-static INT16 st010_cos( INT16 theta )
+static int16_t st010_cos( int16_t theta )
 {
 	return st010_sin_table[((theta + 0x4000) >> 8) & 0xff];
 }
 
-static UINT8 st010_readb( UINT16 address )
+static uint8_t st010_readb( uint16_t address )
 {
 	return st010_state.ram[address & 0xfff];
 }
 
-static UINT16 st010_readw( UINT16 address )
+static uint16_t st010_readw( uint16_t address )
 {
 	return (st010_readb(address + 0) <<  0) | (st010_readb(address + 1) <<  8);
 }
 
-static UINT32 st010_readd( UINT16 address )
+static uint32_t st010_readd( uint16_t address )
 {
 	return (st010_readb(address + 0) <<  0) |
 			(st010_readb(address + 1) <<  8) |
@@ -179,18 +179,18 @@ static UINT32 st010_readd( UINT16 address )
 			(st010_readb(address + 3) << 24);
 }
 
-static void st010_writeb( UINT16 address, UINT8 data )
+static void st010_writeb( uint16_t address, uint8_t data )
 {
 	st010_state.ram[address & 0xfff] = data;
 }
 
-static void st010_writew( UINT16 address, UINT16 data )
+static void st010_writew( uint16_t address, uint16_t data )
 {
 	st010_writeb(address + 0, data >> 0);
 	st010_writeb(address + 1, data >> 8);
 }
 
-static void st010_writed( UINT16 address, UINT32 data )
+static void st010_writed( uint16_t address, uint32_t data )
 {
 	st010_writeb(address + 0, data >>  0);
 	st010_writeb(address + 1, data >>  8);
@@ -200,7 +200,7 @@ static void st010_writed( UINT16 address, UINT32 data )
 
 //
 
-static void st010_op_01_do_work( INT16 x0, INT16 y0 )
+static void st010_op_01_do_work( int16_t x0, int16_t y0 )
 {
 	if ((x0 < 0) && (y0 < 0))
 	{
@@ -245,8 +245,8 @@ static void st010_op_01_do_work( INT16 x0, INT16 y0 )
 
 static void st010_op_01( void )
 {
-	INT16 x0 = st010_readw(0x0000);
-	INT16 y0 = st010_readw(0x0002);
+	int16_t x0 = st010_readw(0x0000);
+	int16_t y0 = st010_readw(0x0002);
 
 	st010_op_01_do_work(x0, y0);
 
@@ -259,12 +259,12 @@ static void st010_op_01( void )
 
 static void st010_op_02( void )
 {
-	INT16 positions = st010_readw(0x0024);
-	UINT16 *places  = (UINT16*)(st010_state.ram + 0x0040);
-	UINT16 *drivers = (UINT16*)(st010_state.ram + 0x0080);
+	int16_t positions = st010_readw(0x0024);
+	uint16_t *places  = (uint16_t*)(st010_state.ram + 0x0040);
+	uint16_t *drivers = (uint16_t*)(st010_state.ram + 0x0080);
 
-	UINT8 sorted;
-	UINT16 temp;
+	uint8_t sorted;
+	uint16_t temp;
 	int i;
 
 	if (positions > 1)
@@ -294,10 +294,10 @@ static void st010_op_02( void )
 
 static void st010_op_03( void )
 {
-	INT16 x0 = st010_readw(0x0000);
-	INT16 y0 = st010_readw(0x0002);
-	INT16 multiplier = st010_readw(0x0004);
-	INT32 x1, y1;
+	int16_t x0 = st010_readw(0x0000);
+	int16_t y0 = st010_readw(0x0002);
+	int16_t multiplier = st010_readw(0x0004);
+	int32_t x1, y1;
 
 	x1 = x0 * multiplier << 1;
 	y1 = y0 * multiplier << 1;
@@ -308,9 +308,9 @@ static void st010_op_03( void )
 
 static void st010_op_04( void )
 {
-	INT16 x = st010_readw(0x0000);
-	INT16 y = st010_readw(0x0002);
-	INT16 square;
+	int16_t x = st010_readw(0x0000);
+	int16_t y = st010_readw(0x0002);
+	int16_t square;
 	//calculate the vector length of (x,y)
 	square = sqrt((double)(y * y + x * x));
 
@@ -318,9 +318,9 @@ static void st010_op_04( void )
 }
 
 // same as op_01_do_work, but we are only interested in the angle!
-static void st010_op_05_do_work( INT16 x0, INT16 y0 )
+static void st010_op_05_do_work( int16_t x0, int16_t y0 )
 {
-	INT16 x1, y1, quadrant;
+	int16_t x1, y1, quadrant;
 	if ((x0 < 0) && (y0 < 0))
 	{
 		x1 = -x0;
@@ -362,32 +362,32 @@ static void st010_op_05_do_work( INT16 x0, INT16 y0 )
 
 static void st010_op_05( void )
 {
-	INT32 dx, dy;
-	UINT16 o1 = 0;
-	UINT8 wrap = 0;
+	int32_t dx, dy;
+	uint16_t o1 = 0;
+	uint8_t wrap = 0;
 
 	//target (x,y) coordinates
-	INT16 ypos_max = st010_readw(0x00c0);
-	INT16 xpos_max = st010_readw(0x00c2);
+	int16_t ypos_max = st010_readw(0x00c0);
+	int16_t xpos_max = st010_readw(0x00c2);
 
 	//current coordinates and direction
-	INT32 ypos = st010_readd(0x00c4);
-	INT32 xpos = st010_readd(0x00c8);
-	UINT16 rot = st010_readw(0x00cc);
+	int32_t ypos = st010_readd(0x00c4);
+	int32_t xpos = st010_readd(0x00c8);
+	uint16_t rot = st010_readw(0x00cc);
 
 	//physics
-	UINT16 speed = st010_readw(0x00d4);
-	UINT16 accel = st010_readw(0x00d6);
-	UINT16 speed_max = st010_readw(0x00d8);
-	UINT16 old_speed;
+	uint16_t speed = st010_readw(0x00d4);
+	uint16_t accel = st010_readw(0x00d6);
+	uint16_t speed_max = st010_readw(0x00d8);
+	uint16_t old_speed;
 
 	//special condition acknowledgement
-	INT16 system = st010_readw(0x00da);
-	INT16 flags = st010_readw(0x00dc);
+	int16_t system = st010_readw(0x00da);
+	int16_t flags = st010_readw(0x00dc);
 
 	//new target coordinates
-	INT16 ypos_new = st010_readw(0x00de);
-	INT16 xpos_new = st010_readw(0x00e0);
+	int16_t ypos_new = st010_readw(0x00de);
+	int16_t xpos_new = st010_readw(0x00e0);
 
 	//mask upper bit
 	xpos_new &= 0x7fff;
@@ -402,7 +402,7 @@ static void st010_op_05( void )
 
 	//grab the target angle
 	st010_op_05_do_work(dy, dx);
-	o1 = (UINT16)st010_state.o1;
+	o1 = (uint16_t)st010_state.o1;
 
 	//check for wrapping
 	if (abs(o1 - rot) > 0x8000)
@@ -422,7 +422,7 @@ static void st010_op_05( void )
 	//slow down for sharp curves
 	else if (abs(o1 - rot) >= 0x1000)
 	{
-		UINT32 slow = abs(o1 - rot);
+		uint32_t slow = abs(o1 - rot);
 		slow >>= 4;  //scaling
 		speed -= slow;
 	}
@@ -491,9 +491,9 @@ static void st010_op_05( void )
 
 static void st010_op_06( void )
 {
-	INT16 multiplicand = st010_readw(0x0000);
-	INT16 multiplier = st010_readw(0x0002);
-	INT32 product;
+	int16_t multiplicand = st010_readw(0x0000);
+	int16_t multiplier = st010_readw(0x0002);
+	int32_t product;
 
 	product = multiplicand * multiplier << 1;
 
@@ -502,9 +502,9 @@ static void st010_op_06( void )
 
 static void st010_op_07( void )
 {
-	INT16 theta = st010_readw(0x0000);
+	int16_t theta = st010_readw(0x0000);
 
-	INT16 data;
+	int16_t data;
 	int i, offset;
 	for (i = 0, offset = 0; i < 176; i++)
 	{
@@ -525,10 +525,10 @@ static void st010_op_07( void )
 
 static void st010_op_08( void )
 {
-	INT16 x0 = st010_readw(0x0000);
-	INT16 y0 = st010_readw(0x0002);
-	INT16 theta = st010_readw(0x0004);
-	INT16 x1, y1;
+	int16_t x0 = st010_readw(0x0000);
+	int16_t y0 = st010_readw(0x0002);
+	int16_t theta = st010_readw(0x0004);
+	int16_t x1, y1;
 
 	x1 = (y0 * st010_sin(theta) >> 15) + (x0 * st010_cos(theta) >> 15);
 	y1 = (y0 * st010_cos(theta) >> 15) - (x0 * st010_sin(theta) >> 15);
@@ -539,12 +539,12 @@ static void st010_op_08( void )
 
 // init, reset & handlers
 
-static UINT8 st010_read( UINT16 address )
+static uint8_t st010_read( uint16_t address )
 {
 	return st010_readb(address);
 }
 
-static void st010_write( UINT16 address, UINT8 data )
+static void st010_write( uint16_t address, uint8_t data )
 {
 	st010_writeb(address, data);
 
@@ -569,7 +569,7 @@ static void st010_write( UINT16 address, UINT8 data )
 
 static void st010_init( running_machine* machine )
 {
-	st010_state.ram = (UINT8*)auto_alloc_array_clear(machine, UINT8, 0x1000);
+	st010_state.ram = (uint8_t*)auto_alloc_array_clear(machine, uint8_t, 0x1000);
 
 	state_save_register_global(machine, st010_state.x1);
 	state_save_register_global(machine, st010_state.y1);

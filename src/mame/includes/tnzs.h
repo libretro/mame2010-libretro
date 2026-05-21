@@ -23,18 +23,18 @@ public:
 	tnzs_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  objram;
-	UINT8 *  vdcram;
-	UINT8 *  scrollram;
-	UINT8 *  objctrl;
-	UINT8 *  bg_flag;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  objram;
+	uint8_t *  vdcram;
+	uint8_t *  scrollram;
+	uint8_t *  objctrl;
+	uint8_t *  bg_flag;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int      screenflip;
 
 	/* sound-related */
-	INT16    *sampledata[MAX_SAMPLES];
+	int16_t    *sampledata[MAX_SAMPLES];
 	int      samplesize[MAX_SAMPLES];
 
 	/* misc / mcu */
@@ -44,17 +44,17 @@ public:
 	int      mcu_initializing, mcu_coinage_init, mcu_command, mcu_readcredits;
 	int      mcu_reportcoin;
 	int      insertcoin;
-	UINT8    mcu_coinage[4];
-	UINT8    mcu_coins_a, mcu_coins_b, mcu_credits;
+	uint8_t    mcu_coinage[4];
+	uint8_t    mcu_coins_a, mcu_coins_b, mcu_credits;
 	int      bank1;
 	int      bank2;
 
 	/* game-specific */
 	// champbwl
-	UINT8    last_trackball_val[2];
-//  UINT8 *  nvram; // currently this uses generic_nvram
+	uint8_t    last_trackball_val[2];
+//  uint8_t *  nvram; // currently this uses generic_nvram
 	// cchance
-	UINT8    hop_io, bell_io;
+	uint8_t    hop_io, bell_io;
 
 
 	/* devices */

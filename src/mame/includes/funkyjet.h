@@ -12,10 +12,10 @@ public:
 	funkyjet_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT16 *  spriteram;
-//  UINT16 *  paletteram;    // currently this uses generic palette handling (in deco16ic.c)
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint16_t *  spriteram;
+//  uint16_t *  paletteram;    // currently this uses generic palette handling (in deco16ic.c)
 	size_t    spriteram_size;
 
 	/* devices */

@@ -112,7 +112,7 @@ WRITE8_HANDLER( holeland_flipscreen_w )
 static void holeland_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	holeland_state *state = (holeland_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs, code, sx, sy, color, flipx, flipy;
 
 	/* Weird, sprites entries don't start on DWORD boundary */
@@ -152,7 +152,7 @@ static void holeland_draw_sprites( running_machine *machine, bitmap_t *bitmap, c
 static void crzrally_draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	holeland_state *state = (holeland_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs, code, sx, sy, color, flipx, flipy;
 
 	/* Weird, sprites entries don't start on DWORD boundary */

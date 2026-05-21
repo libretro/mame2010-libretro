@@ -12,9 +12,9 @@ public:
 	gijoe_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    workram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    workram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int         avac_bits[4], avac_occupancy[4];
@@ -22,7 +22,7 @@ public:
 	int         avac_vrc, sprite_colorbase;
 
 	/* misc */
-	UINT16  	cur_control2;
+	uint16_t  	cur_control2;
 	emu_timer	*dmadelay_timer;
 
 	/* devices */

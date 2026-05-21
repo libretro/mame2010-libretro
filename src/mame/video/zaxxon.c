@@ -68,7 +68,7 @@ PALETTE_INIT( zaxxon )
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	const UINT8 *source = memory_region(machine, "tilemap_dat");
+	const uint8_t *source = memory_region(machine, "tilemap_dat");
 	int size = memory_region_length(machine, "tilemap_dat") / 2;
 	int eff_index = tile_index & (size - 1);
 	int code = source[eff_index] + 256 * (source[eff_index + size] & 3);
@@ -164,7 +164,7 @@ VIDEO_START( congo )
 	zaxxon_state *state = (zaxxon_state *)machine->driver_data;
 
 	/* allocate our own spriteram since it is not accessible by the main CPU */
-	state->spriteram = auto_alloc_array(machine, UINT8, 0x100);
+	state->spriteram = auto_alloc_array(machine, uint8_t, 0x100);
 
 	/* register for save states */
 	state_save_register_global(machine, state->congo_fg_bank);
@@ -288,14 +288,14 @@ WRITE8_HANDLER( congo_colorram_w )
 WRITE8_HANDLER( congo_sprite_custom_w )
 {
 	zaxxon_state *state = (zaxxon_state *)space->machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 
 	state->congo_custom[offset] = data;
 
 	/* seems to trigger on a write of 1 to the 4th byte */
 	if (offset == 3 && data == 0x01)
 	{
-		UINT16 saddr = state->congo_custom[0] | (state->congo_custom[1] << 8);
+		uint16_t saddr = state->congo_custom[0] | (state->congo_custom[1] << 8);
 		int count = state->congo_custom[2];
 
 		/* count cycles (just a guess) */
@@ -304,7 +304,7 @@ WRITE8_HANDLER( congo_sprite_custom_w )
 		/* this is just a guess; the chip is hardwired to the spriteram */
 		while (count-- >= 0)
 		{
-			UINT8 daddr = memory_read_byte(space, saddr + 0) * 4;
+			uint8_t daddr = memory_read_byte(space, saddr + 0) * 4;
 			spriteram[(daddr + 0) & 0xff] = memory_read_byte(space, saddr + 1);
 			spriteram[(daddr + 1) & 0xff] = memory_read_byte(space, saddr + 2);
 			spriteram[(daddr + 2) & 0xff] = memory_read_byte(space, saddr + 3);
@@ -347,9 +347,9 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 		/* loop over visible rows */
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
-			UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+			uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 			int srcx, srcy, vf;
-			UINT16 *src;
+			uint16_t *src;
 
 			/* VF = flipped V signals */
 			vf = y ^ flipmask;
@@ -357,7 +357,7 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 			/* base of the source row comes from VF plus the scroll value */
 			/* this is done by the 3 4-bit adders at U56, U74, U75 */
 			srcy = vf + ((state->bg_position << 1) ^ 0xfff) + 1;
-			src = (UINT16 *)pixmap->base + (srcy & ymask) * pixmap->rowpixels;
+			src = (uint16_t *)pixmap->base + (srcy & ymask) * pixmap->rowpixels;
 
 			/* loop over visible colums */
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
@@ -395,7 +395,7 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
  *
  *************************************/
 
-INLINE int find_minimum_y(UINT8 value, int flip)
+INLINE int find_minimum_y(uint8_t value, int flip)
 {
 	int flipmask = flip ? 0xff : 0x00;
 	int flipconst = flip ? 0xef : 0xf1;
@@ -426,7 +426,7 @@ INLINE int find_minimum_y(UINT8 value, int flip)
 }
 
 
-INLINE int find_minimum_x(UINT8 value, int flip)
+INLINE int find_minimum_x(uint8_t value, int flip)
 {
 	int flipmask = flip ? 0xff : 0x00;
 	int x;
@@ -440,10 +440,10 @@ INLINE int find_minimum_x(UINT8 value, int flip)
 }
 
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT16 flipxmask, UINT16 flipymask)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint16_t flipxmask, uint16_t flipymask)
 {
 	zaxxon_state *state = (zaxxon_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	const gfx_element *gfx = machine->gfx[2];
 	int flip = flip_screen_get(machine);
 	int flipmask = flip ? 0xff : 0x00;

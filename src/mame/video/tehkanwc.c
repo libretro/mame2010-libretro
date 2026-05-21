@@ -13,11 +13,11 @@ robbiex@rocketmail.com
 
 #include "emu.h"
 
-UINT8 *tehkanwc_videoram;
-UINT8 *tehkanwc_colorram;
-UINT8 *tehkanwc_videoram2;
-static UINT8 scroll_x[2];
-static UINT8 led0,led1;
+uint8_t *tehkanwc_videoram;
+uint8_t *tehkanwc_colorram;
+uint8_t *tehkanwc_videoram2;
+static uint8_t scroll_x[2];
+static uint8_t led0,led1;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
@@ -119,7 +119,7 @@ VIDEO_START( tehkanwc )
    bit 7 = enable (0 = display off)
  */
 
-static void gridiron_draw_led(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 led,int player)
+static void gridiron_draw_led(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t led,int player)
 {
 	if (led&0x80)
 		output_set_digit_value(player, led&0x7f);
@@ -129,7 +129,7 @@ static void gridiron_draw_led(running_machine *machine, bitmap_t *bitmap, const 
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 4)

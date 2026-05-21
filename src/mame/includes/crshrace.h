@@ -7,11 +7,11 @@ public:
 	crshrace_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  videoram1;
-	UINT16 *  videoram2;
-//  UINT16 *  spriteram1;   // currently this uses generic buffered spriteram
-//  UINT16 *  spriteram2;   // currently this uses generic buffered spriteram
-//      UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  videoram1;
+	uint16_t *  videoram2;
+//  uint16_t *  spriteram1;   // currently this uses generic buffered spriteram
+//  uint16_t *  spriteram2;   // currently this uses generic buffered spriteram
+//      uint16_t *  paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t   *tilemap1, *tilemap2;

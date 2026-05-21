@@ -41,14 +41,14 @@ void TexRectangle::Draw()
 
 void TexRectangle::DrawDefault()
 {
-	UINT16 *fb = (UINT16*)&rdram[(m_misc_state->m_fb_address / 4)];
-	UINT8 *hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
-	UINT16 *zb = (UINT16*)&rdram[m_misc_state->m_zb_address / 4];
-	UINT8 *zhb = &m_rdp->GetHiddenBits()[m_misc_state->m_zb_address >> 1];
+	uint16_t *fb = (uint16_t*)&rdram[(m_misc_state->m_fb_address / 4)];
+	uint8_t *hb = &m_rdp->GetHiddenBits()[m_misc_state->m_fb_address >> 1];
+	uint16_t *zb = (uint16_t*)&rdram[m_misc_state->m_zb_address / 4];
+	uint8_t *zhb = &m_rdp->GetHiddenBits()[m_misc_state->m_zb_address >> 1];
 
-	UINT32 tilenum = m_tilenum;
+	uint32_t tilenum = m_tilenum;
 	N64::RDP::Tile *tex_tile = &m_rdp->GetTiles()[m_tilenum];
-	UINT32 tilenum2 = 0;
+	uint32_t tilenum2 = 0;
 	N64::RDP::Tile *tex_tile2 = NULL;
 
 	int x1 = m_xh >> 2;
@@ -133,10 +133,10 @@ void TexRectangle::DrawDefault()
 				N64::RDP::Color c2;
 				int dith = 0;
 				int curpixel = fb_index + i;
-				UINT16* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
-				UINT8* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
-				UINT16* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
-				UINT8* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
+				uint16_t* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
+				uint8_t* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
+				uint16_t* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
+				uint8_t* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
 
 				m_misc_state->m_curpixel_cvg = 8;
 
@@ -218,7 +218,7 @@ void TexRectangle::DrawDefault()
 				bool z_compare_result = true;
 				if(m_other_modes->z_compare_en)
 				{
-					z_compare_result = m_rdp->ZCompare(fbcur, hbcur, zbcur, zhbcur, ((UINT32)m_misc_state->m_primitive_z)<<3, m_misc_state->m_primitive_delta_z);
+					z_compare_result = m_rdp->ZCompare(fbcur, hbcur, zbcur, zhbcur, ((uint32_t)m_misc_state->m_primitive_z)<<3, m_misc_state->m_primitive_delta_z);
 				}
 
 				if(z_compare_result)
@@ -227,7 +227,7 @@ void TexRectangle::DrawDefault()
 
 					if(m_other_modes->z_update_en && rendered)
 					{
-						m_rdp->ZStore(zbcur, zhbcur, ((UINT32)m_misc_state->m_primitive_z) << 3, m_misc_state->m_primitive_delta_z);
+						m_rdp->ZStore(zbcur, zhbcur, ((uint32_t)m_misc_state->m_primitive_z) << 3, m_misc_state->m_primitive_delta_z);
 					}
 				}
 
@@ -255,10 +255,10 @@ void TexRectangle::DrawDefault()
 				N64::RDP::Color c2;
 				int dith = 0;
 				int curpixel = fb_index + i;
-				UINT16* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
-				UINT8* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
-				UINT16* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
-				UINT8* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
+				uint16_t* fbcur = &fb[curpixel ^ WORD_ADDR_XOR];
+				uint8_t* hbcur = &hb[curpixel ^ BYTE_ADDR_XOR];
+				uint16_t* zbcur = &zb[curpixel ^ WORD_ADDR_XOR];
+				uint8_t* zhbcur = &zhb[curpixel ^ BYTE_ADDR_XOR];
 
 				m_misc_state->m_curpixel_cvg = 8;
 
@@ -340,7 +340,7 @@ void TexRectangle::DrawDefault()
 				bool z_compare_result = true;
 				if(m_other_modes->z_compare_en)
 				{
-					z_compare_result = m_rdp->ZCompare(fbcur, hbcur, zbcur, zhbcur, ((UINT32)m_misc_state->m_primitive_z)<<3, m_misc_state->m_primitive_delta_z);
+					z_compare_result = m_rdp->ZCompare(fbcur, hbcur, zbcur, zhbcur, ((uint32_t)m_misc_state->m_primitive_z)<<3, m_misc_state->m_primitive_delta_z);
 				}
 
 				if(z_compare_result)
@@ -349,7 +349,7 @@ void TexRectangle::DrawDefault()
 
 					if(m_other_modes->z_update_en && rendered)
 					{
-						m_rdp->ZStore(zbcur, zhbcur, ((UINT32)m_misc_state->m_primitive_z) << 3, m_misc_state->m_primitive_delta_z);
+						m_rdp->ZStore(zbcur, zhbcur, ((uint32_t)m_misc_state->m_primitive_z) << 3, m_misc_state->m_primitive_delta_z);
 					}
 				}
 
@@ -362,7 +362,7 @@ void TexRectangle::DrawDefault()
 
 void TexRectangle::DrawCopy()
 {
-	UINT16 *fb = (UINT16*)&rdram[(m_misc_state->m_fb_address / 4)];
+	uint16_t *fb = (uint16_t*)&rdram[(m_misc_state->m_fb_address / 4)];
 
 	N64::RDP::Tile *tex_tile = &m_rdp->GetTiles()[m_tilenum];
 

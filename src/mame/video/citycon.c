@@ -35,7 +35,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	citycon_state *state = (citycon_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "gfx4");
+	uint8_t *rom = memory_region(machine, "gfx4");
 	int code = rom[0x1000 * state->bg_image + tile_index];
 	SET_TILE_INFO(
 			3 + state->bg_image,

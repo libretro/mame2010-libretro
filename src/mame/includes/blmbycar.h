@@ -12,19 +12,19 @@ public:
 	blmbycar_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    vram_0;
-	UINT16 *    scroll_0;
-	UINT16 *    vram_1;
-	UINT16 *    scroll_1;
-	UINT16 *    spriteram;
-	UINT16 *    paletteram;
+	uint16_t *    vram_0;
+	uint16_t *    scroll_0;
+	uint16_t *    vram_1;
+	uint16_t *    scroll_1;
+	uint16_t *    spriteram;
+	uint16_t *    paletteram;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t     *tilemap_0, *tilemap_1;
 
 	/* input-related */
-	UINT8       pot_wheel;	// blmbycar
+	uint8_t       pot_wheel;	// blmbycar
 	int         old_val;	// blmbycar
 	int         retvalue;	// waterball
 };

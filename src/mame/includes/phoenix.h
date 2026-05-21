@@ -39,8 +39,8 @@ DECLARE_LEGACY_SOUND_DEVICE(POPFLAME, popflame_sound);
 
 /*----------- defined in video/naughtyb.c -----------*/
 
-extern UINT8 *naughtyb_videoram2;
-extern UINT8 *naughtyb_scrollreg;
+extern uint8_t *naughtyb_videoram2;
+extern uint8_t *naughtyb_scrollreg;
 extern int naughtyb_cocktail;
 
 WRITE8_HANDLER( naughtyb_videoreg_w );

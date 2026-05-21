@@ -19,7 +19,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarig1_state *state = (atarig1_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	int opaque = data & 0x8000;
@@ -30,7 +30,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarig1_state *state = (atarig1_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = (state->playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (data >> 12) & 7;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -134,7 +134,7 @@ WRITE16_HANDLER( atarig1_mo_control_w )
 void atarig1_scanline_update(screen_device &screen, int scanline)
 {
 	atarig1_state *state = (atarig1_state *)screen.machine->driver_data;
-	UINT16 *base = &state->atarigen.alpha[(scanline / 8) * 64 + 48];
+	uint16_t *base = &state->atarigen.alpha[(scanline / 8) * 64 + 48];
 	int i;
 
 	//if (scanline == 0) logerror("-------\n");
@@ -147,7 +147,7 @@ void atarig1_scanline_update(screen_device &screen, int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		UINT16 word;
+		uint16_t word;
 
 		/* first word controls horizontal scroll */
 		word = *base++;

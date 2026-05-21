@@ -56,14 +56,14 @@ WRITE16_HANDLER( mcatadv_videoram2_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	mcatadv_state *state = (mcatadv_state *)machine->driver_data;
-	UINT16 *source = state->spriteram_old;
-	UINT16 *finish = source + (state->spriteram_size / 2) / 2;
+	uint16_t *source = state->spriteram_old;
+	uint16_t *finish = source + (state->spriteram_size / 2) / 2;
 	int global_x = state->vidregs[0] - 0x184;
 	int global_y = state->vidregs[1] - 0x1f1;
 
-	UINT16 *destline;
-	UINT8 *priline;
-	UINT8 *sprdata = memory_region(machine, "gfx1");
+	uint16_t *destline;
+	uint8_t *priline;
+	uint8_t *sprdata = memory_region(machine, "gfx1");
 
 	int xstart, xend, xinc;
 	int ystart, yend, yinc;
@@ -156,10 +156,10 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	}
 }
 
-static void mcatadv_draw_tilemap_part( UINT16* current_scroll, UINT16* current_videoram1, int i, tilemap_t* current_tilemap, bitmap_t *bitmap, const rectangle *cliprect )
+static void mcatadv_draw_tilemap_part( uint16_t* current_scroll, uint16_t* current_videoram1, int i, tilemap_t* current_tilemap, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	int flip;
-	UINT32 drawline;
+	uint32_t drawline;
 	rectangle clip;
 
 	clip.min_x = cliprect->min_x;
@@ -259,8 +259,8 @@ VIDEO_START( mcatadv )
 	state->tilemap2 = tilemap_create(machine, get_mcatadv_tile_info2, tilemap_scan_rows, 16, 16, 32, 32);
 	tilemap_set_transparent_pen(state->tilemap2, 0);
 
-	state->spriteram_old = auto_alloc_array_clear(machine, UINT16, state->spriteram_size / 2);
-	state->vidregs_old = auto_alloc_array(machine, UINT16, (0x0f + 1) / 2);
+	state->spriteram_old = auto_alloc_array_clear(machine, uint16_t, state->spriteram_size / 2);
+	state->vidregs_old = auto_alloc_array(machine, uint16_t, (0x0f + 1) / 2);
 
 	state->palette_bank1 = 0;
 	state->palette_bank2 = 0;

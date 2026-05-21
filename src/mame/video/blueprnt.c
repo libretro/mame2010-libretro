@@ -26,7 +26,7 @@ PALETTE_INIT( blueprnt )
 
 	for (i = 0; i < machine->total_colors(); i++)
 	{
-		UINT8 pen;
+		uint8_t pen;
 		int r, g, b;
 
 		if (i < 0x200)

@@ -27,35 +27,35 @@ public:
 	timeplt_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;	// timeplt, tutankham, junofrst, rocnrope, pooyan, rallyx
-	UINT8 *  colorram;	// timeplt, rocnrope, pooyan
-	UINT8 *  spriteram;	// timeplt, rocnrope, pooyan, rallyx
-	UINT8 *  spriteram2;	// timeplt, rocnrope, pooyan, rallyx
-	UINT8 *  paletteram;	// tutankham, junofrst
-	UINT8 *  scroll;		// tutankham, junofrst
-	UINT8 *  radarattr;	// jungler
-	UINT8 *  radarx;	// jungler
-	UINT8 *  radary;	// jungler
-//  UINT8 *  namco_soundregs;   // rallyx - these are dealt with in emu/sound/namco.c
+	uint8_t *  videoram;	// timeplt, tutankham, junofrst, rocnrope, pooyan, rallyx
+	uint8_t *  colorram;	// timeplt, rocnrope, pooyan
+	uint8_t *  spriteram;	// timeplt, rocnrope, pooyan, rallyx
+	uint8_t *  spriteram2;	// timeplt, rocnrope, pooyan, rallyx
+	uint8_t *  paletteram;	// tutankham, junofrst
+	uint8_t *  scroll;		// tutankham, junofrst
+	uint8_t *  radarattr;	// jungler
+	uint8_t *  radarx;	// jungler
+	uint8_t *  radary;	// jungler
+//  uint8_t *  namco_soundregs;   // rallyx - these are dealt with in emu/sound/namco.c
 	size_t   videoram_size;	// tutankham, junofrst
 	size_t   spriteram_size;	// rocnrope
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 	tilemap_t  *fg_tilemap;		// jungler
-	UINT8     blitterdata[4];	// junofrst
-	UINT8     flip_x, flip_y;	// tutankham, junofrst
+	uint8_t     blitterdata[4];	// junofrst
+	uint8_t     flip_x, flip_y;	// tutankham, junofrst
 
 	/* sound-related */
-	UINT8    last_irq_state;
+	uint8_t    last_irq_state;
 
 	/* misc */
-	UINT8    nmi_enable;	// timeplt
-	UINT8    irq_toggle, irq_enable;	// tutankham, pooyan
+	uint8_t    nmi_enable;	// timeplt
+	uint8_t    irq_toggle, irq_enable;	// tutankham, pooyan
 	int      i8039_status, last_irq;	// junofrst
 	int      last_bang;	// jungler
 	int      spriteram_base, stars_enable, total_stars;	// jungler
-	UINT8    drawmode_table[4];	// jungler
+	uint8_t    drawmode_table[4];	// jungler
 	struct jungler_star stars[JUNGLER_MAX_STARS];	// jungler
 
 	/* devices */

@@ -2,7 +2,7 @@
 
 static tilemap_t *pf3_layer,*pf2_layer,*pf1_layer,*text_layer;
 static int deadangle_tilebank, deadangle_oldtilebank;
-UINT16 *deadang_video_data,*deadang_scroll_ram;
+uint16_t *deadang_video_data,*deadang_scroll_ram;
 
 /******************************************************************************/
 
@@ -40,14 +40,14 @@ static TILEMAP_MAPPER( bg_scan )
 
 static TILE_GET_INFO( get_pf3_tile_info )
 {
-	const UINT16 *bgMap = (const UINT16 *)memory_region(machine, "gfx6");
+	const uint16_t *bgMap = (const uint16_t *)memory_region(machine, "gfx6");
 	int code= bgMap[tile_index];
 	SET_TILE_INFO(4,code&0x7ff,code>>12,0);
 }
 
 static TILE_GET_INFO( get_pf2_tile_info )
 {
-	const UINT16 *bgMap = (const UINT16 *)memory_region(machine, "gfx7");
+	const uint16_t *bgMap = (const uint16_t *)memory_region(machine, "gfx7");
 	int code= bgMap[tile_index];
 	SET_TILE_INFO(3,code&0x7ff,code>>12,0);
 }
@@ -83,7 +83,7 @@ VIDEO_START( deadang )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs,fx,fy,x,y,color,sprite,pri;
 
 	for (offs = 0; offs<0x800/2; offs+=4)

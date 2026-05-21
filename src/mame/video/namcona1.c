@@ -12,15 +12,15 @@ TODO:
 #define NAMCONA1_NUM_TILEMAPS 4
 
 /* public variables */
-UINT16 *namcona1_vreg;
-UINT16 *namcona1_scroll;
-UINT16 *namcona1_workram;
-//UINT16 *namcona1_sparevram;
-//UINT16 *namcona1_pixmap;
+uint16_t *namcona1_vreg;
+uint16_t *namcona1_scroll;
+uint16_t *namcona1_workram;
+//uint16_t *namcona1_sparevram;
+//uint16_t *namcona1_pixmap;
 
 /* private variables */
-static UINT16 *shaperam;
-static UINT16 *cgram;
+static uint16_t *shaperam;
+static uint16_t *cgram;
 static tilemap_t *roz_tilemap;
 static int roz_palette;
 static tilemap_t *bg_tilemap[NAMCONA1_NUM_TILEMAPS];
@@ -31,12 +31,12 @@ static void tilemap_get_info(
 	running_machine *machine,
 	tile_data *tileinfo,
 	int tile_index,
-	const UINT16 *tilemap_videoram,
+	const uint16_t *tilemap_videoram,
 	int tilemap_color,
 	int use_4bpp_gfx )
 {
-	UINT16 *source;
-	static UINT8 mask_data[8];
+	uint16_t *source;
+	static uint8_t mask_data[8];
 
 	int data = tilemap_videoram[tile_index];
 	int tile = data&0xfff;
@@ -61,7 +61,7 @@ static void tilemap_get_info(
 	{
 		SET_TILE_INFO( gfx,tile,tilemap_color,0 );
 		if (ENDIANNESS_NATIVE == ENDIANNESS_BIG)
-			tileinfo->mask_data = (UINT8 *)(shaperam+4*tile);
+			tileinfo->mask_data = (uint8_t *)(shaperam+4*tile);
 		else
 		{
 			source = shaperam+4*tile;
@@ -104,12 +104,12 @@ static TILE_GET_INFO( roz_get_info )
 	}
 	else
 	{
-		UINT8 *mask_data = (UINT8 *)(shaperam+4*tile);
+		uint8_t *mask_data = (uint8_t *)(shaperam+4*tile);
 
 		if (ENDIANNESS_NATIVE == ENDIANNESS_LITTLE)
 		{
-			UINT16 *source = (UINT16 *)mask_data;
-			static UINT8 conv_data[9];
+			uint16_t *source = (uint16_t *)mask_data;
+			static uint8_t conv_data[9];
 			conv_data[0] = source[0]>>8;
 			conv_data[1] = source[0]&0xff;
 			conv_data[2] = source[1]>>8;
@@ -150,7 +150,7 @@ READ16_HANDLER( namcona1_videoram_r )
 static void
 UpdatePalette(running_machine *machine, int offset )
 {
-	UINT16 data = machine->generic.paletteram.u16[offset]; /* -RRRRRGG GGGBBBBB */
+	uint16_t data = machine->generic.paletteram.u16[offset]; /* -RRRRRGG GGGBBBBB */
 	/**
      * sprites can be configured to use an alternate interpretation of palette ram
      * (used in-game in Emeraldia)
@@ -222,7 +222,7 @@ static const gfx_layout cg_layout_4bpp =
 
 READ16_HANDLER( namcona1_gfxram_r )
 {
-	UINT16 type = namcona1_vreg[0x0c/2];
+	uint16_t type = namcona1_vreg[0x0c/2];
 	if( type == 0x03 )
 	{
 		if( offset<0x4000 )
@@ -239,8 +239,8 @@ READ16_HANDLER( namcona1_gfxram_r )
 
 WRITE16_HANDLER( namcona1_gfxram_w )
 {
-	UINT16 type = namcona1_vreg[0x0c/2];
-	UINT16 old_word;
+	uint16_t type = namcona1_vreg[0x0c/2];
+	uint16_t old_word;
 
 	if( type == 0x03 )
 	{
@@ -282,12 +282,12 @@ VIDEO_START( namcona1 )
 		tilemap_palette_bank[i] = -1;
 	}
 
-	shaperam		     = auto_alloc_array(machine, UINT16, 0x2000*4/2 );
-	cgram			     = auto_alloc_array(machine, UINT16, 0x1000*0x40/2 );
+	shaperam		     = auto_alloc_array(machine, uint16_t, 0x2000*4/2 );
+	cgram			     = auto_alloc_array(machine, uint16_t, 0x1000*0x40/2 );
 
-	machine->gfx[0] = gfx_element_alloc( machine, &cg_layout_8bpp, (UINT8 *)cgram, machine->total_colors()/256, 0 );
-	machine->gfx[1] = gfx_element_alloc( machine, &cg_layout_4bpp, (UINT8 *)cgram, machine->total_colors()/16, 0 );
-	machine->gfx[2] = gfx_element_alloc( machine, &shape_layout, (UINT8 *)shaperam, machine->total_colors()/2, 0 );
+	machine->gfx[0] = gfx_element_alloc( machine, &cg_layout_8bpp, (uint8_t *)cgram, machine->total_colors()/256, 0 );
+	machine->gfx[1] = gfx_element_alloc( machine, &cg_layout_4bpp, (uint8_t *)cgram, machine->total_colors()/16, 0 );
+	machine->gfx[2] = gfx_element_alloc( machine, &shape_layout, (uint8_t *)shaperam, machine->total_colors()/2, 0 );
 
 } /* namcona1_vh_start */
 
@@ -296,7 +296,7 @@ VIDEO_START( namcona1 )
 static void pdraw_tile(running_machine *machine,
 		bitmap_t *dest_bmp,
 		const rectangle *clip,
-		UINT32 code,
+		uint32_t code,
 		int color,
 		int sx, int sy,
 		int flipx, int flipy,
@@ -309,8 +309,8 @@ static void pdraw_tile(running_machine *machine,
 	const gfx_element *mask = machine->gfx[2];
 
 	int pal_base = gfx->color_base + gfx->color_granularity * (color % gfx->total_colors);
-	const UINT8 *source_base = gfx_element_get_data(gfx, (code % gfx->total_elements));
-	const UINT8 *mask_base = gfx_element_get_data(mask, (code % mask->total_elements));
+	const uint8_t *source_base = gfx_element_get_data(gfx, (code % gfx->total_elements));
+	const uint8_t *mask_base = gfx_element_get_data(mask, (code % mask->total_elements));
 
 	int sprite_screen_height = ((1<<16)*gfx->height+0x8000)>>16;
 	int sprite_screen_width  = ((1<<16)*gfx->width+0x8000)>>16;
@@ -380,10 +380,10 @@ static void pdraw_tile(running_machine *machine,
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-				const UINT8 *mask_addr = mask_base + (y_index>>16) * mask->line_modulo;
-				UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-				UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+				const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+				const uint8_t *mask_addr = mask_base + (y_index>>16) * mask->line_modulo;
+				uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+				uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
 
 				int x, x_index = x_index_base;
 				for( x=sx; x<ex; x++ )
@@ -442,9 +442,9 @@ static void pdraw_tile(running_machine *machine,
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	int which;
-	const UINT16 *source = machine->generic.spriteram.u16;
-	UINT16 sprite_control;
-	UINT16 ypos,tile,color,xpos;
+	const uint16_t *source = machine->generic.spriteram.u16;
+	uint16_t sprite_control;
+	uint16_t ypos,tile,color,xpos;
 	int priority;
 	int width,height;
 	int flipy,flipx;
@@ -522,12 +522,12 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	}
 } /* draw_sprites */
 
-static void draw_pixel_line( UINT16 *pDest, UINT8 *pPri, UINT16 *pSource, const pen_t *paldata )
+static void draw_pixel_line( uint16_t *pDest, uint8_t *pPri, uint16_t *pSource, const pen_t *paldata )
 {
 	int x;
 	for( x=0; x<38*8; x+=2 )
 	{
-		UINT16 data = *pSource++;
+		uint16_t data = *pSource++;
 		pPri[x+0] = 0xff;
 		pPri[x+1] = 0xff;
 		pDest[x+0] = paldata[data>>8];
@@ -544,9 +544,9 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
      *  tmap3   ffec00  ffee00
      */
 	int xadjust = 0x3a - which*2;
-	const UINT16 *scroll = namcona1_scroll+0x200*which;
+	const uint16_t *scroll = namcona1_scroll+0x200*which;
 	int line;
-	UINT16 xdata, ydata;
+	uint16_t xdata, ydata;
 	int scrollx, scrolly;
 	rectangle clip;
 	const pen_t *paldata;
@@ -594,16 +594,16 @@ static void draw_background(running_machine *machine, bitmap_t *bitmap, const re
 			{
 				if(which == NAMCONA1_NUM_TILEMAPS )
 				{
-					int incxx = ((INT16)namcona1_vreg[0xc0/2])<<8;
-					int incxy = ((INT16)namcona1_vreg[0xc2/2])<<8;
-					int incyx = ((INT16)namcona1_vreg[0xc4/2])<<8;
-					int incyy = ((INT16)namcona1_vreg[0xc6/2])<<8;
-					INT16 xoffset = namcona1_vreg[0xc8/2];
-					INT16 yoffset = namcona1_vreg[0xca/2];
+					int incxx = ((int16_t)namcona1_vreg[0xc0/2])<<8;
+					int incxy = ((int16_t)namcona1_vreg[0xc2/2])<<8;
+					int incyx = ((int16_t)namcona1_vreg[0xc4/2])<<8;
+					int incyy = ((int16_t)namcona1_vreg[0xc6/2])<<8;
+					int16_t xoffset = namcona1_vreg[0xc8/2];
+					int16_t yoffset = namcona1_vreg[0xca/2];
 					int dx = 46; /* horizontal adjust */
 					int dy = -8; /* vertical adjust */
-					UINT32 startx = (xoffset<<12)+incxx*dx+incyx*dy;
-					UINT32 starty = (yoffset<<12)+incxy*dx+incyy*dy;
+					uint32_t startx = (xoffset<<12)+incxx*dx+incyx*dy;
+					uint32_t starty = (yoffset<<12)+incxy*dx+incyy*dy;
 					tilemap_draw_roz_primask(bitmap, &clip, roz_tilemap,
 						startx, starty, incxx, incxy, incyx, incyy, 0, 0, primask, 0);
 				}

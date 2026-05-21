@@ -26,13 +26,13 @@
 typedef struct _tc0140syt_state tc0140syt_state;
 struct _tc0140syt_state
 {
-	UINT8     slavedata[4];  /* Data on master->slave port (4 nibbles) */
-	UINT8     masterdata[4]; /* Data on slave->master port (4 nibbles) */
-	UINT8     mainmode;      /* Access mode on master cpu side */
-	UINT8     submode;       /* Access mode on slave cpu side */
-	UINT8     status;        /* Status data */
-	UINT8     nmi_enabled;   /* 1 if slave cpu has nmi's enabled */
-	UINT8     nmi_req;       /* 1 if slave cpu has a pending nmi */
+	uint8_t     slavedata[4];  /* Data on master->slave port (4 nibbles) */
+	uint8_t     masterdata[4]; /* Data on slave->master port (4 nibbles) */
+	uint8_t     mainmode;      /* Access mode on master cpu side */
+	uint8_t     submode;       /* Access mode on slave cpu side */
+	uint8_t     status;        /* Status data */
+	uint8_t     nmi_enabled;   /* 1 if slave cpu has nmi's enabled */
+	uint8_t     nmi_req;       /* 1 if slave cpu has a pending nmi */
 
 	running_device *mastercpu;	/* this is the maincpu */
 	running_device *slavecpu;	/* this is the audiocpu */
@@ -239,7 +239,7 @@ WRITE8_DEVICE_HANDLER( tc0140syt_slave_comm_w )
 READ8_DEVICE_HANDLER( tc0140syt_slave_comm_r )
 {
 	tc0140syt_state *tc0140syt = get_safe_token(device);
-	UINT8 res = 0;
+	uint8_t res = 0;
 
 	switch ( tc0140syt->submode )
 	{

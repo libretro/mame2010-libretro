@@ -29,12 +29,12 @@
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	topspeed_state *state = (topspeed_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs, map_offset, x, y, curx, cury, sprite_chunk;
-	UINT16 *spritemap = state->spritemap;
-	UINT16 data, tilenum, code, color;
-	UINT8 flipx, flipy, priority, bad_chunks;
-	UINT8 j, k, px, py, zx, zy, zoomx, zoomy;
+	uint16_t *spritemap = state->spritemap;
+	uint16_t data, tilenum, code, color;
+	uint8_t flipx, flipy, priority, bad_chunks;
+	uint8_t j, k, px, py, zx, zy, zoomx, zoomy;
 	static const int primasks[2] = { 0xff00, 0xfffc };	/* Sprites are over bottom layer or under top layer */
 
 	/* Most of spriteram is not used by the 68000: rest is scratch space for the h/w perhaps ? */
@@ -112,10 +112,10 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 VIDEO_UPDATE( topspeed )
 {
 	topspeed_state *state = (topspeed_state *)screen->machine->driver_data;
-	UINT8 layer[4];
+	uint8_t layer[4];
 
 #ifdef MAME_DEBUG
-	static UINT8 dislayer[5];
+	static uint8_t dislayer[5];
 #endif
 
 #ifdef MAME_DEBUG

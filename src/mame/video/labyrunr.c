@@ -26,7 +26,7 @@ PALETTE_INIT( labyrunr )
 
 			for (i = 0; i < 0x100; i++)
 			{
-				UINT8 ctabentry;
+				uint8_t ctabentry;
 
 				if (color_prom[i] == 0)
 					ctabentry = 0;
@@ -47,7 +47,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x100; i += 2)
 	{
-		UINT16 data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
+		uint16_t data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 
@@ -66,10 +66,10 @@ static void set_pens( running_machine *machine )
 static TILE_GET_INFO( get_tile_info0 )
 {
 	labyrunr_state *state = (labyrunr_state *)machine->driver_data;
-	UINT8 ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
-	UINT8 ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121, 6);
+	uint8_t ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
+	uint8_t ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121, 6);
 	int attr = state->videoram1[tile_index];
 	int code = state->videoram1[tile_index + 0x400];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
@@ -96,10 +96,10 @@ static TILE_GET_INFO( get_tile_info0 )
 static TILE_GET_INFO( get_tile_info1 )
 {
 	labyrunr_state *state = (labyrunr_state *)machine->driver_data;
-	UINT8 ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
-	UINT8 ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
-	UINT8 ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
-	UINT8 ctrl_6 = k007121_ctrlram_r(state->k007121, 6);
+	uint8_t ctrl_3 = k007121_ctrlram_r(state->k007121, 3);
+	uint8_t ctrl_4 = k007121_ctrlram_r(state->k007121, 4);
+	uint8_t ctrl_5 = k007121_ctrlram_r(state->k007121, 5);
+	uint8_t ctrl_6 = k007121_ctrlram_r(state->k007121, 6);
 	int attr = state->videoram2[tile_index];
 	int code = state->videoram2[tile_index + 0x400];
 	int bit0 = (ctrl_5 >> 0) & 0x03;
@@ -183,7 +183,7 @@ WRITE8_HANDLER( labyrunr_vram2_w )
 VIDEO_UPDATE( labyrunr )
 {
 	labyrunr_state *state = (labyrunr_state *)screen->machine->driver_data;
-	UINT8 ctrl_0 = k007121_ctrlram_r(state->k007121, 0);
+	uint8_t ctrl_0 = k007121_ctrlram_r(state->k007121, 0);
 	rectangle finalclip0, finalclip1;
 
 	set_pens(screen->machine);

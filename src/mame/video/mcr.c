@@ -8,8 +8,8 @@
 #include "includes/mcr.h"
 
 
-INT8 mcr12_sprite_xoffs;
-INT8 mcr12_sprite_xoffs_flip;
+int8_t mcr12_sprite_xoffs;
+int8_t mcr12_sprite_xoffs_flip;
 
 static tilemap_t *bg_tilemap;
 
@@ -241,7 +241,7 @@ WRITE8_HANDLER( mcr_91490_videoram_w )
 
 static void render_sprites_91399(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	const gfx_element *gfx = machine->gfx[1];
 	int offs;
 
@@ -276,9 +276,9 @@ static void render_sprites_91399(running_machine *machine, bitmap_t *bitmap, con
 		for (y = 0; y < 32; y++, sy = (sy + 1) & 0x1ff)
 			if (sy >= cliprect->min_y && sy <= cliprect->max_y)
 			{
-				const UINT8 *src = gfx_element_get_data(gfx, code) + gfx->line_modulo * (y ^ vflip);
-				UINT16 *dst = BITMAP_ADDR16(bitmap, sy, 0);
-				UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
+				const uint8_t *src = gfx_element_get_data(gfx, code) + gfx->line_modulo * (y ^ vflip);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, sy, 0);
+				uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
 
 				/* loop over columns */
 				for (x = 0; x < 32; x++)
@@ -313,7 +313,7 @@ static void render_sprites_91399(running_machine *machine, bitmap_t *bitmap, con
 
 static void render_sprites_91464(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int primask, int sprmask, int colormask)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	const gfx_element *gfx = machine->gfx[1];
 	int offs;
 
@@ -347,9 +347,9 @@ static void render_sprites_91464(running_machine *machine, bitmap_t *bitmap, con
 		for (y = 0; y < 32; y++, sy = (sy + 1) & 0x1ff)
 			if (sy >= 2 && sy >= cliprect->min_y && sy <= cliprect->max_y)
 			{
-				const UINT8 *src = gfx_element_get_data(gfx, code) + gfx->line_modulo * (y ^ vflip);
-				UINT16 *dst = BITMAP_ADDR16(bitmap, sy, 0);
-				UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
+				const uint8_t *src = gfx_element_get_data(gfx, code) + gfx->line_modulo * (y ^ vflip);
+				uint16_t *dst = BITMAP_ADDR16(bitmap, sy, 0);
+				uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, sy, 0);
 
 				/* loop over columns */
 				for (x = 0; x < 32; x++)

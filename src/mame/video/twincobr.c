@@ -19,32 +19,32 @@
 
 static STATE_POSTLOAD( twincobr_restore_screen );
 
-INT32 twincobr_fg_rom_bank;
-INT32 twincobr_bg_ram_bank;
-INT32 wardner_sprite_hack;	/* Required for weird sprite priority in wardner */
+int32_t twincobr_fg_rom_bank;
+int32_t twincobr_bg_ram_bank;
+int32_t wardner_sprite_hack;	/* Required for weird sprite priority in wardner */
 							/* when hero is in shop. Hero should cover shop owner */
 
-static UINT16 *twincobr_bgvideoram16;
-static UINT16 *twincobr_fgvideoram16;
-static UINT16 *twincobr_txvideoram16;
+static uint16_t *twincobr_bgvideoram16;
+static uint16_t *twincobr_fgvideoram16;
+static uint16_t *twincobr_txvideoram16;
 
 static size_t twincobr_bgvideoram_size;
 static size_t twincobr_fgvideoram_size;
 static size_t twincobr_txvideoram_size;
 
-static INT32 txscrollx;
-static INT32 txscrolly;
-static INT32 fgscrollx;
-static INT32 fgscrolly;
-static INT32 bgscrollx;
-static INT32 bgscrolly;
-static INT32 txoffs;
-static INT32 fgoffs;
-static INT32 bgoffs;
-static INT32 scroll_x;
-static INT32 scroll_y;
-static INT32 twincobr_display_on;
-static INT32 twincobr_flip_screen;
+static int32_t txscrollx;
+static int32_t txscrolly;
+static int32_t fgscrollx;
+static int32_t fgscrolly;
+static int32_t bgscrollx;
+static int32_t bgscrolly;
+static int32_t txoffs;
+static int32_t fgoffs;
+static int32_t bgoffs;
+static int32_t scroll_x;
+static int32_t scroll_y;
+static int32_t twincobr_display_on;
+static int32_t twincobr_flip_screen;
 
 static tilemap_t *bg_tilemap, *fg_tilemap, *tx_tilemap;
 
@@ -135,9 +135,9 @@ VIDEO_START( toaplan0 )
 
 	twincobr_create_tilemaps(machine);
 
-	twincobr_txvideoram16 = auto_alloc_array_clear(machine, UINT16, twincobr_txvideoram_size);
-	twincobr_fgvideoram16 = auto_alloc_array_clear(machine, UINT16, twincobr_fgvideoram_size);
-	twincobr_bgvideoram16 = auto_alloc_array_clear(machine, UINT16, twincobr_bgvideoram_size);
+	twincobr_txvideoram16 = auto_alloc_array_clear(machine, uint16_t, twincobr_txvideoram_size);
+	twincobr_fgvideoram16 = auto_alloc_array_clear(machine, uint16_t, twincobr_fgvideoram_size);
+	twincobr_bgvideoram16 = auto_alloc_array_clear(machine, uint16_t, twincobr_bgvideoram_size);
 
 	twincobr_display_on = 0;
 	twincobr_display(twincobr_display_on);
@@ -363,7 +363,7 @@ READ8_HANDLER( wardner_sprite_r )
 
 WRITE8_HANDLER( wardner_sprite_w )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
 	if (offset & 1)
 		spriteram16[offset/2] = (spriteram16[offset/2] & 0x00ff) | (data << 8);
 	else
@@ -379,7 +379,7 @@ WRITE8_HANDLER( wardner_sprite_w )
 static void wardner_sprite_priority_hack(running_machine *machine)
 {
 	if (fgscrollx != bgscrollx) {
-		UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+		uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 		if ((fgscrollx==0x1c9) || (twincobr_flip_screen && (fgscrollx==0x17a))) {	/* in the shop ? */
 			int wardner_hack = buffered_spriteram16[0x0b04/2];
 		/* sprite position 0x6300 to 0x8700 -- hero on shop keeper (normal) */
@@ -453,7 +453,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	if (twincobr_display_on)
 	{
-		UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+		uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 		for (offs = 0;offs < machine->generic.spriteram_size/2;offs += 4)
 		{
 			int attribute,sx,sy,flipx,flipy;

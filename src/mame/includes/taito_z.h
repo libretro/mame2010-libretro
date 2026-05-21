@@ -13,8 +13,8 @@ public:
 	taitoz_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	offs_t      spriteram_size;
 
 	/* video-related */
@@ -23,14 +23,14 @@ public:
 
 	/* misc */
 	int         chasehq_lamps;
-	INT32       banknum;
-	UINT16      cpua_ctrl;
-	INT32       sci_int6;
-	INT32       dblaxle_int6;
-	INT32       ioc220_port;
-	UINT16      eep_latch;
+	int32_t       banknum;
+	uint16_t      cpua_ctrl;
+	int32_t       sci_int6;
+	int32_t       dblaxle_int6;
+	int32_t       ioc220_port;
+	uint16_t      eep_latch;
 
-//  UINT8       pandata[4];
+//  uint8_t       pandata[4];
 
 	/* devices */
 	running_device *maincpu;

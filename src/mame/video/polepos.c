@@ -1,10 +1,10 @@
 #include "emu.h"
 #include "includes/polepos.h"
 
-UINT16 *polepos_view16_memory;
-UINT16 *polepos_road16_memory;
-UINT16 *polepos_sprite16_memory;
-UINT16 *polepos_alpha16_memory;
+uint16_t *polepos_view16_memory;
+uint16_t *polepos_road16_memory;
+uint16_t *polepos_sprite16_memory;
+uint16_t *polepos_alpha16_memory;
 
 /* modified vertical position built from three nibbles (12 bit)
  * of ROMs 136014-142, 136014-143, 136014-144
@@ -12,9 +12,9 @@ UINT16 *polepos_alpha16_memory;
  * to this value and the upper 10 bits of the result are used to
  * address the playfield video memory (AB0 - AB9).
  */
-static UINT16 polepos_vertical_position_modifier[256];
+static uint16_t polepos_vertical_position_modifier[256];
 
-static UINT16 road16_vscroll;
+static uint16_t road16_vscroll;
 
 static tilemap_t *bg_tilemap,*tx_tilemap;
 static int polepos_chacl;
@@ -154,7 +154,7 @@ PALETTE_INIT( polepos )
 
 static TILE_GET_INFO( bg_get_tile_info )
 {
-	UINT16 word = polepos_view16_memory[tile_index];
+	uint16_t word = polepos_view16_memory[tile_index];
 	int code = (word & 0xff) | ((word & 0x4000) >> 6);
 	int color = (word & 0x3f00) >> 8;
 	SET_TILE_INFO(
@@ -166,7 +166,7 @@ static TILE_GET_INFO( bg_get_tile_info )
 
 static TILE_GET_INFO( tx_get_tile_info )
 {
-	UINT16 word = polepos_alpha16_memory[tile_index];
+	uint16_t word = polepos_alpha16_memory[tile_index];
 	int code = (word & 0xff) | ((word & 0x4000) >> 6);
 	int color = (word & 0x3f00) >> 8;
 
@@ -298,7 +298,7 @@ WRITE8_HANDLER( polepos_view_w )
 
 WRITE16_HANDLER( polepos_view16_hscroll_w )
 {
-	static UINT16 scroll;
+	static uint16_t scroll;
 
 	COMBINE_DATA(&scroll);
 	tilemap_set_scrollx(bg_tilemap,0,scroll);
@@ -352,17 +352,17 @@ WRITE8_HANDLER( polepos_alpha_w )
 
 static void draw_road(running_machine *machine, bitmap_t *bitmap)
 {
-	const UINT8 *road_control = memory_region(machine, "gfx5");
-	const UINT8 *road_bits1 = road_control + 0x2000;
-	const UINT8 *road_bits2 = road_control + 0x4000;
+	const uint8_t *road_control = memory_region(machine, "gfx5");
+	const uint8_t *road_bits1 = road_control + 0x2000;
+	const uint8_t *road_bits2 = road_control + 0x4000;
 	int x, y, i;
 
 	/* loop over the lower half of the screen */
 	for (y = 128; y < 256; y++)
 	{
 		int xoffs, yoffs, xscroll, roadpal;
-		UINT16 scanline[256 + 8];
-		UINT16 *dest = scanline;
+		uint16_t scanline[256 + 8];
+		uint16_t *dest = scanline;
 		pen_t pen_base;
 
 		/* first add the vertical position modifier and the vertical scroll */
@@ -426,13 +426,13 @@ static void draw_road(running_machine *machine, bitmap_t *bitmap)
 }
 
 static void zoom_sprite(running_machine *machine, bitmap_t *bitmap,int big,
-		UINT32 code,UINT32 color,int flipx,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int sx,int sy,
 		int sizex,int sizey)
 {
 	const gfx_element *gfx = machine->gfx[big ? 3 : 2];
-	const UINT8 *gfxdata = gfx_element_get_data(gfx, code % gfx->total_elements);
-	UINT8 *scaling_rom = memory_region(machine, "gfx6");
-	UINT32 transmask = colortable_get_transpen_mask(machine->colortable, gfx, color, 0x1f);
+	const uint8_t *gfxdata = gfx_element_get_data(gfx, code % gfx->total_elements);
+	uint8_t *scaling_rom = memory_region(machine, "gfx6");
+	uint32_t transmask = colortable_get_transpen_mask(machine->colortable, gfx, color, 0x1f);
 	int coloroffs = gfx->color_base + color * gfx->color_granularity;
 	int x,y;
 
@@ -449,7 +449,7 @@ static void zoom_sprite(running_machine *machine, bitmap_t *bitmap,int big,
 			int xx = sx & 0x3ff;
 			int siz = 0;
 			int offs = 0;
-			const UINT8 *src;
+			const uint8_t *src;
 
 			if (!big) dy >>= 1;
 			src = gfxdata + dy * gfx->line_modulo;
@@ -478,8 +478,8 @@ static void zoom_sprite(running_machine *machine, bitmap_t *bitmap,int big,
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT16 *posmem = &polepos_sprite16_memory[0x380];
-	UINT16 *sizmem = &polepos_sprite16_memory[0x780];
+	uint16_t *posmem = &polepos_sprite16_memory[0x380];
+	uint16_t *sizmem = &polepos_sprite16_memory[0x780];
 	int i;
 
 	for (i = 0; i < 64; i++, posmem += 2, sizmem += 2)

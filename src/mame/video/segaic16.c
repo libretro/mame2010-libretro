@@ -375,12 +375,12 @@ Quick review of the system16 hardware:
  *
  *************************************/
 
-UINT8 segaic16_display_enable;
-UINT16 *segaic16_tileram_0;
-UINT16 *segaic16_textram_0;
-UINT16 *segaic16_roadram_0;
-UINT16 *segaic16_rotateram_0;
-UINT16 *segaic16_paletteram;
+uint8_t segaic16_display_enable;
+uint16_t *segaic16_tileram_0;
+uint16_t *segaic16_textram_0;
+uint16_t *segaic16_roadram_0;
+uint16_t *segaic16_rotateram_0;
+uint16_t *segaic16_paletteram;
 
 struct palette_info segaic16_palette;
 struct rotate_info segaic16_rotate[SEGAIC16_MAX_ROTATE];
@@ -487,7 +487,7 @@ void segaic16_palette_init(int entries)
 
 WRITE16_HANDLER( segaic16_paletteram_w )
 {
-	UINT16 newval;
+	uint16_t newval;
 	int r, g, b;
 	struct palette_info *info = &segaic16_palette;
 
@@ -518,7 +518,7 @@ WRITE16_HANDLER( segaic16_paletteram_w )
  *
  *************************************/
 
-static void segaic16_draw_virtual_tilemap(running_machine *machine, struct tilemap_info *info, bitmap_t *bitmap, const rectangle *cliprect, UINT16 pages, UINT16 xscroll, UINT16 yscroll, UINT32 flags, UINT32 priority)
+static void segaic16_draw_virtual_tilemap(running_machine *machine, struct tilemap_info *info, bitmap_t *bitmap, const rectangle *cliprect, uint16_t pages, uint16_t xscroll, uint16_t yscroll, uint32_t flags, uint32_t priority)
 {
 	int leftmin = -1, leftmax = -1, rightmin = -1, rightmax = -1;
 	int topmin = -1, topmax = -1, bottommin = -1, bottommax = -1;
@@ -723,7 +723,7 @@ static void segaic16_draw_virtual_tilemap(running_machine *machine, struct tilem
 static TILE_GET_INFO( segaic16_tilemap_16a_tile_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int code = ((data >> 1) & 0x1000) | (data & 0xfff);
 	int color = (data >> 5) & 0x7f;
 
@@ -735,7 +735,7 @@ static TILE_GET_INFO( segaic16_tilemap_16a_tile_info )
 static TILE_GET_INFO( segaic16_tilemap_16a_text_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int color = (data >> 8) & 0x07;
 	int code = data & 0xff;
 
@@ -746,13 +746,13 @@ static TILE_GET_INFO( segaic16_tilemap_16a_text_info )
 
 static void segaic16_tilemap_16a_draw_layer(running_machine *machine, struct tilemap_info *info, bitmap_t *bitmap, const rectangle *cliprect, int which, int flags, int priority)
 {
-	UINT16 *textram = info->textram;
+	uint16_t *textram = info->textram;
 
 	/* note that the scrolling for these games can only scroll as much as the top-left */
 	/* page; in order to scroll beyond that they swap pages and reset the scroll value */
-	UINT16 xscroll = textram[0xff8/2 + which] & 0x1ff;
-	UINT16 yscroll = textram[0xf24/2 + which] & 0x0ff;
-	UINT16 pages = textram[(info->flip ? 0xe8e/2 : 0xe9e/2) - which];
+	uint16_t xscroll = textram[0xff8/2 + which] & 0x1ff;
+	uint16_t yscroll = textram[0xf24/2 + which] & 0x0ff;
+	uint16_t pages = textram[(info->flip ? 0xe8e/2 : 0xe9e/2) - which];
 	int x, y;
 
 	/* pages are swapped along the X direction, and there are only 8 of them */
@@ -778,7 +778,7 @@ static void segaic16_tilemap_16a_draw_layer(running_machine *machine, struct til
 			/* loop over column chunks */
 			for (x = cliprect->min_x & ~15; x <= cliprect->max_x; x += 16)
 			{
-				UINT16 effxscroll, effyscroll;
+				uint16_t effxscroll, effyscroll;
 
 				/* adjust to clip this column only */
 				rowcolclip.min_x = (x < cliprect->min_x) ? cliprect->min_x : x;
@@ -807,7 +807,7 @@ static void segaic16_tilemap_16a_draw_layer(running_machine *machine, struct til
 		for (x = cliprect->min_x & ~15; x <= cliprect->max_x; x += 16)
 		{
 			rectangle colclip = *cliprect;
-			UINT16 effxscroll, effyscroll;
+			uint16_t effxscroll, effyscroll;
 
 			/* adjust to clip this row only */
 			colclip.min_x = (x < cliprect->min_x) ? cliprect->min_x : x;
@@ -836,7 +836,7 @@ static void segaic16_tilemap_16a_draw_layer(running_machine *machine, struct til
 		{
 			int rowscrollindex = (info->flip ? (216 - y) : y) / 8;
 			rectangle rowclip = *cliprect;
-			UINT16 effxscroll, effyscroll;
+			uint16_t effxscroll, effyscroll;
 
 			/* adjust to clip this row only */
 			rowclip.min_y = (y < cliprect->min_y) ? cliprect->min_y : y;
@@ -935,7 +935,7 @@ static void segaic16_tilemap_16a_draw_layer(running_machine *machine, struct til
 static TILE_GET_INFO( segaic16_tilemap_16b_tile_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int color = (data >> 6) & 0x7f;
 	int code = data & 0x1fff;
 
@@ -949,7 +949,7 @@ static TILE_GET_INFO( segaic16_tilemap_16b_tile_info )
 static TILE_GET_INFO( segaic16_tilemap_16b_text_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int bank = info->bank[0];
 	int color = (data >> 9) & 0x07;
 	int code = data & 0x1ff;
@@ -962,7 +962,7 @@ static TILE_GET_INFO( segaic16_tilemap_16b_text_info )
 static TILE_GET_INFO( segaic16_tilemap_16b_alt_tile_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int color = (data >> 5) & 0x7f;
 	int code = data & 0x1fff;
 
@@ -976,7 +976,7 @@ static TILE_GET_INFO( segaic16_tilemap_16b_alt_tile_info )
 static TILE_GET_INFO( segaic16_tilemap_16b_alt_text_info )
 {
 	const struct tilemap_callback_info *info = (const struct tilemap_callback_info *)param;
-	UINT16 data = info->rambase[tile_index];
+	uint16_t data = info->rambase[tile_index];
 	int bank = info->bank[0];
 	int color = (data >> 8) & 0x07;
 	int code = data & 0xff;
@@ -988,8 +988,8 @@ static TILE_GET_INFO( segaic16_tilemap_16b_alt_text_info )
 
 static void segaic16_tilemap_16b_draw_layer(running_machine *machine, struct tilemap_info *info, bitmap_t *bitmap, const rectangle *cliprect, int which, int flags, int priority)
 {
-	UINT16 *textram = info->textram;
-	UINT16 xscroll, yscroll, pages;
+	uint16_t *textram = info->textram;
+	uint16_t xscroll, yscroll, pages;
 	int x, y;
 
 	/* get global values */
@@ -1015,8 +1015,8 @@ static void segaic16_tilemap_16b_draw_layer(running_machine *machine, struct til
 			/* loop over column chunks */
 			for (x = ((cliprect->min_x + 8) & ~15) - 8; x <= cliprect->max_x; x += 16)
 			{
-				UINT16 effxscroll, effyscroll, rowscroll;
-				UINT16 effpages = pages;
+				uint16_t effxscroll, effyscroll, rowscroll;
+				uint16_t effpages = pages;
 
 				/* adjust to clip this column only */
 				rowcolclip.min_x = (x < cliprect->min_x) ? cliprect->min_x : x;
@@ -1051,8 +1051,8 @@ static void segaic16_tilemap_16b_draw_layer(running_machine *machine, struct til
 		{
 			int rowscrollindex = (info->flip ? (216 - y) : y) / 8;
 			rectangle rowclip = *cliprect;
-			UINT16 effxscroll, effyscroll, rowscroll;
-			UINT16 effpages = pages;
+			uint16_t effxscroll, effyscroll, rowscroll;
+			uint16_t effpages = pages;
 
 			/* adjust to clip this row only */
 			rowclip.min_y = (y < cliprect->min_y) ? cliprect->min_y : y;
@@ -1083,7 +1083,7 @@ static void segaic16_tilemap_16b_draw_layer(running_machine *machine, struct til
 static TIMER_CALLBACK( segaic16_tilemap_16b_latch_values )
 {
 	struct tilemap_info *info = &bg_tilemap[param];
-	UINT16 *textram = info->textram;
+	uint16_t *textram = info->textram;
 	int i;
 
 	/* latch the scroll and page select values */
@@ -1408,17 +1408,17 @@ WRITE16_HANDLER( segaic16_textram_0_w )
 static void segaic16_road_hangon_decode(running_machine *machine, struct road_info *info)
 {
 	int x, y;
-	const UINT8 *gfx = memory_region(machine, "gfx3");
+	const uint8_t *gfx = memory_region(machine, "gfx3");
 	int len = memory_region_length(machine, "gfx3");
 
 	/* allocate memory for the unpacked road data */
-	info->gfx = auto_alloc_array(machine, UINT8, 256 * 512);
+	info->gfx = auto_alloc_array(machine, uint8_t, 256 * 512);
 
 	/* loop over rows */
 	for (y = 0; y < 256; y++)
 	{
-		const UINT8 *src = gfx + ((y & 0xff) * 0x40) % len;
-		UINT8 *dst = info->gfx + y * 512;
+		const uint8_t *src = gfx + ((y & 0xff) * 0x40) % len;
+		uint8_t *dst = info->gfx + y * 512;
 
 		/* loop over columns */
 		for (x = 0; x < 512; x++)
@@ -1429,19 +1429,19 @@ static void segaic16_road_hangon_decode(running_machine *machine, struct road_in
 
 static void segaic16_road_hangon_draw(struct road_info *info, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
-	UINT16 *roadram = info->roadram;
+	uint16_t *roadram = info->roadram;
 	int x, y;
 
 	/* loop over scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 		int control = roadram[0x000 + y];
 		int hpos = roadram[0x100 + (control & 0xff)];
 		int color0 = roadram[0x200 + (control & 0xff)];
 		int color1 = roadram[0x300 + (control & 0xff)];
 		int ff9j1, ff9j2, ctr9m, ctr9n9p, ctr9n9p_ena, ss8j, plycont;
-		UINT8 *src;
+		uint8_t *src;
 
 		/* the PLYCONT signal controls the road layering */
 		plycont = (control >> 10) & 3;
@@ -1669,17 +1669,17 @@ static void segaic16_road_hangon_draw(struct road_info *info, bitmap_t *bitmap, 
 static void segaic16_road_outrun_decode(running_machine *machine, struct road_info *info)
 {
 	int x, y;
-	const UINT8 *gfx = memory_region(machine, "gfx3");
+	const uint8_t *gfx = memory_region(machine, "gfx3");
 	int len = memory_region_length(machine, "gfx3");
 
 	/* allocate memory for the unpacked road data */
-	info->gfx = auto_alloc_array(machine, UINT8, (256 * 2 + 1) * 512);
+	info->gfx = auto_alloc_array(machine, uint8_t, (256 * 2 + 1) * 512);
 
 	/* loop over rows */
 	for (y = 0; y < 256 * 2; y++)
 	{
-		const UINT8 *src = gfx + ((y & 0xff) * 0x40 + (y >> 8) * 0x8000) % len;
-		UINT8 *dst = info->gfx + y * 512;
+		const uint8_t *src = gfx + ((y & 0xff) * 0x40 + (y >> 8) * 0x8000) % len;
+		uint8_t *dst = info->gfx + y * 512;
 
 		/* loop over columns */
 		for (x = 0; x < 512; x++)
@@ -1699,13 +1699,13 @@ static void segaic16_road_outrun_decode(running_machine *machine, struct road_in
 
 static void segaic16_road_outrun_draw(struct road_info *info, bitmap_t *bitmap, const rectangle *cliprect, int priority)
 {
-	UINT16 *roadram = info->buffer;
+	uint16_t *roadram = info->buffer;
 	int x, y;
 
 	/* loop over scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		static const UINT8 priority_map[2][8] =
+		static const uint8_t priority_map[2][8] =
 		{
 			{ 0x80,0x81,0x81,0x87,0,0,0,0x00 },
 			{ 0x81,0x81,0x81,0x8f,0,0,0,0x80 }
@@ -1714,7 +1714,7 @@ static void segaic16_road_outrun_draw(struct road_info *info, bitmap_t *bitmap, 
 //          { 0x80,0x81,0x81,0x83,0,0,0,0x00 },
 //          { 0x81,0x87,0x87,0x8f,0,0,0,0x00 }
 		};
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 		int data0 = roadram[0x000 + y];
 		int data1 = roadram[0x100 + y];
 
@@ -1765,9 +1765,9 @@ static void segaic16_road_outrun_draw(struct road_info *info, bitmap_t *bitmap, 
 		{
 			int hpos0, hpos1, color0, color1;
 			int control = info->control & 3;
-			UINT16 color_table[32];
-			UINT8 *src0, *src1;
-			UINT8 bgcolor;
+			uint16_t color_table[32];
+			uint8_t *src0, *src1;
+			uint8_t bgcolor;
 
 			/* if both roads are low priority, skip */
 			if ((data0 & 0x800) && (data1 & 0x800))
@@ -1905,7 +1905,7 @@ void segaic16_road_init(running_machine *machine, int which, int type, int color
 
 		case SEGAIC16_ROAD_OUTRUN:
 		case SEGAIC16_ROAD_XBOARD:
-			info->buffer = auto_alloc_array(machine, UINT16, 0x1000/2);
+			info->buffer = auto_alloc_array(machine, uint16_t, 0x1000/2);
 			info->draw = segaic16_road_outrun_draw;
 			segaic16_road_outrun_decode(machine, info);
 			break;
@@ -1943,14 +1943,14 @@ READ16_HANDLER( segaic16_road_control_0_r )
 
 	if (info->buffer)
 	{
-		UINT32 *src = (UINT32 *)info->roadram;
-		UINT32 *dst = (UINT32 *)info->buffer;
+		uint32_t *src = (uint32_t *)info->roadram;
+		uint32_t *dst = (uint32_t *)info->buffer;
 		int i;
 
 		/* swap the halves of the road RAM */
 		for (i = 0; i < 0x1000/4; i++)
 		{
-			UINT32 temp = *src;
+			uint32_t temp = *src;
 			*src++ = *dst;
 			*dst++ = temp;
 		}
@@ -2011,10 +2011,10 @@ void segaic16_rotate_init(running_machine *machine, int which, int type, int col
 	}
 
 	/* allocate a buffer for swapping */
-	info->buffer = auto_alloc_array(machine, UINT16, info->ramsize/2);
+	info->buffer = auto_alloc_array(machine, uint16_t, info->ramsize/2);
 
 	state_save_register_item(machine, "segaic16_rot", NULL, which, info->colorbase);
-	state_save_register_item_pointer(machine, "segaic16_rot", NULL, which, ((UINT8 *) info->buffer), info->ramsize);
+	state_save_register_item_pointer(machine, "segaic16_rot", NULL, which, ((uint8_t *) info->buffer), info->ramsize);
 }
 
 
@@ -2028,12 +2028,12 @@ void segaic16_rotate_init(running_machine *machine, int which, int type, int col
 void segaic16_rotate_draw(running_machine *machine, int which, bitmap_t *bitmap, const rectangle *cliprect, bitmap_t *srcbitmap)
 {
 	struct rotate_info *info = &segaic16_rotate[which];
-	INT32 currx = (info->buffer[0x3f0] << 16) | info->buffer[0x3f1];
-	INT32 curry = (info->buffer[0x3f2] << 16) | info->buffer[0x3f3];
-	INT32 dyy = (info->buffer[0x3f4] << 16) | info->buffer[0x3f5];
-	INT32 dxx = (info->buffer[0x3f6] << 16) | info->buffer[0x3f7];
-	INT32 dxy = (info->buffer[0x3f8] << 16) | info->buffer[0x3f9];
-	INT32 dyx = (info->buffer[0x3fa] << 16) | info->buffer[0x3fb];
+	int32_t currx = (info->buffer[0x3f0] << 16) | info->buffer[0x3f1];
+	int32_t curry = (info->buffer[0x3f2] << 16) | info->buffer[0x3f3];
+	int32_t dyy = (info->buffer[0x3f4] << 16) | info->buffer[0x3f5];
+	int32_t dxx = (info->buffer[0x3f6] << 16) | info->buffer[0x3f7];
+	int32_t dxy = (info->buffer[0x3f8] << 16) | info->buffer[0x3f9];
+	int32_t dyx = (info->buffer[0x3fa] << 16) | info->buffer[0x3fb];
 	int x, y;
 
 	/* advance forward based on the clip rect */
@@ -2043,11 +2043,11 @@ void segaic16_rotate_draw(running_machine *machine, int which, bitmap_t *bitmap,
 	/* loop over screen Y coordinates */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16 *src = (UINT16 *)srcbitmap->base;
-		UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
-		INT32 tx = currx;
-		INT32 ty = curry;
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *src = (uint16_t *)srcbitmap->base;
+		uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+		int32_t tx = currx;
+		int32_t ty = curry;
 
 		/* loop over screen X coordinates */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
@@ -2094,14 +2094,14 @@ READ16_HANDLER( segaic16_rotate_control_0_r )
 
 	if (info->buffer)
 	{
-		UINT32 *src = (UINT32 *)info->rotateram;
-		UINT32 *dst = (UINT32 *)info->buffer;
+		uint32_t *src = (uint32_t *)info->rotateram;
+		uint32_t *dst = (uint32_t *)info->buffer;
 		int i;
 
 		/* swap the halves of the rotation RAM */
 		for (i = 0; i < info->ramsize/4; i++)
 		{
-			UINT32 temp = *src;
+			uint32_t temp = *src;
 			*src++ = *dst;
 			*dst++ = temp;
 		}

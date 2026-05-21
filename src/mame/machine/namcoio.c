@@ -119,18 +119,18 @@ TODO:
 typedef struct _namcoio_state namcoio_state;
 struct _namcoio_state
 {
-	UINT8          ram[16];
+	uint8_t          ram[16];
 
 	devcb_resolved_read8    in[4];
 	devcb_resolved_write8   out[2];
 
 	int            reset;
-	INT32          lastcoins, lastbuttons;
-	INT32          credits;
-	INT32          coins[2];
-	INT32          coins_per_cred[2];
-	INT32          creds_per_coin[2];
-	INT32          in_count;
+	int32_t          lastcoins, lastbuttons;
+	int32_t          credits;
+	int32_t          coins[2];
+	int32_t          coins_per_cred[2];
+	int32_t          creds_per_coin[2];
+	int32_t          in_count;
 
 	running_device *device;
 };

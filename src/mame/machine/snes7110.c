@@ -15,9 +15,9 @@
 ***************************************************************************/
 
 
-static const UINT32 spc7110_decomp_buffer_size = 64;
+static const uint32_t spc7110_decomp_buffer_size = 64;
 
-static const UINT8 spc7110_evolution_table[53][4] =
+static const uint8_t spc7110_evolution_table[53][4] =
 {
 	{ 0x5a,  1,  1, 1 },
 	{ 0x25,  6,  2, 0 },
@@ -78,7 +78,7 @@ static const UINT8 spc7110_evolution_table[53][4] =
 	{ 0x37, 51, 43, 0 },
 };
 
-static const UINT8 spc7110_mode2_context_table[32][2] =
+static const uint8_t spc7110_mode2_context_table[32][2] =
 {
 	{  1,  2 },
 
@@ -122,47 +122,47 @@ typedef struct
 {
 	running_machine *machine;
 
-	UINT32 decomp_mode;
-	UINT32 decomp_offset;
+	uint32_t decomp_mode;
+	uint32_t decomp_offset;
 
-	UINT8 *decomp_buffer;
-	UINT32 decomp_buffer_rdoffset;
-	UINT32 decomp_buffer_wroffset;
-	UINT32 decomp_buffer_length;
+	uint8_t *decomp_buffer;
+	uint32_t decomp_buffer_rdoffset;
+	uint32_t decomp_buffer_wroffset;
+	uint32_t decomp_buffer_length;
 
 	struct ContextState
 	{
-		UINT8 index;
-		UINT8 invert;
+		uint8_t index;
+		uint8_t invert;
 	} context[32];
 
-	UINT32 morton16[2][256];
-	UINT32 morton32[4][256];
+	uint32_t morton16[2][256];
+	uint32_t morton32[4][256];
 
-	UINT32 rom_size;
+	uint32_t rom_size;
 } SPC7110Decomp;
 
-static SPC7110Decomp* SPC7110Decomp_ctor(running_machine *machine, UINT32 size);
+static SPC7110Decomp* SPC7110Decomp_ctor(running_machine *machine, uint32_t size);
 static void SPC7110Decomp_reset(SPC7110Decomp *thisptr);
-static void SPC7110Decomp_init(SPC7110Decomp *thisptr, running_machine *machine, UINT32 mode, UINT32 offset, UINT32 index);
-static UINT8 SPC7110Decomp_read(SPC7110Decomp *thisptr);
-static void SPC7110Decomp_write(SPC7110Decomp *thisptr, UINT8 data);
-static UINT8 SPC7110Decomp_dataread(SPC7110Decomp *thisptr);
-static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, UINT8 init);
-static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, UINT8 init);
-static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init);
-static UINT8 SPC7110Decomp_probability(SPC7110Decomp *thisptr, UINT32 n);
-static UINT8 SPC7110Decomp_next_lps(SPC7110Decomp *thisptr, UINT32 n);
-static UINT8 SPC7110Decomp_next_mps(SPC7110Decomp *thisptr, UINT32 n);
-static UINT8 SPC7110Decomp_toggle_invert(SPC7110Decomp *thisptr, UINT32 n);
-static UINT32 SPC7110Decomp_morton_2x8(SPC7110Decomp *thisptr, UINT32 data);
-static UINT32 SPC7110Decomp_morton_4x8(SPC7110Decomp *thisptr, UINT32 data);
+static void SPC7110Decomp_init(SPC7110Decomp *thisptr, running_machine *machine, uint32_t mode, uint32_t offset, uint32_t index);
+static uint8_t SPC7110Decomp_read(SPC7110Decomp *thisptr);
+static void SPC7110Decomp_write(SPC7110Decomp *thisptr, uint8_t data);
+static uint8_t SPC7110Decomp_dataread(SPC7110Decomp *thisptr);
+static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, uint8_t init);
+static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, uint8_t init);
+static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, uint8_t init);
+static uint8_t SPC7110Decomp_probability(SPC7110Decomp *thisptr, uint32_t n);
+static uint8_t SPC7110Decomp_next_lps(SPC7110Decomp *thisptr, uint32_t n);
+static uint8_t SPC7110Decomp_next_mps(SPC7110Decomp *thisptr, uint32_t n);
+static uint8_t SPC7110Decomp_toggle_invert(SPC7110Decomp *thisptr, uint32_t n);
+static uint32_t SPC7110Decomp_morton_2x8(SPC7110Decomp *thisptr, uint32_t data);
+static uint32_t SPC7110Decomp_morton_4x8(SPC7110Decomp *thisptr, uint32_t data);
 
-static SPC7110Decomp* SPC7110Decomp_ctor(running_machine *machine, UINT32 size)
+static SPC7110Decomp* SPC7110Decomp_ctor(running_machine *machine, uint32_t size)
 {
-	UINT32 i;
-	SPC7110Decomp* newclass = (SPC7110Decomp*)auto_alloc_array(machine, UINT8, sizeof(SPC7110Decomp));
-	newclass->decomp_buffer = (UINT8*)auto_alloc_array(machine, UINT8, spc7110_decomp_buffer_size);
+	uint32_t i;
+	SPC7110Decomp* newclass = (SPC7110Decomp*)auto_alloc_array(machine, uint8_t, sizeof(SPC7110Decomp));
+	newclass->decomp_buffer = (uint8_t*)auto_alloc_array(machine, uint8_t, spc7110_decomp_buffer_size);
 	SPC7110Decomp_reset(newclass);
 
 	for(i = 0; i < 256; i++)
@@ -201,9 +201,9 @@ static void SPC7110Decomp_reset(SPC7110Decomp *thisptr)
 	thisptr->decomp_buffer_length   = 0;
 }
 
-static void SPC7110Decomp_init(SPC7110Decomp *thisptr, running_machine *machine, UINT32 mode, UINT32 offset, UINT32 index)
+static void SPC7110Decomp_init(SPC7110Decomp *thisptr, running_machine *machine, uint32_t mode, uint32_t offset, uint32_t index)
 {
-	UINT32 i;
+	uint32_t i;
 
 	thisptr->machine = machine;
 
@@ -235,9 +235,9 @@ static void SPC7110Decomp_init(SPC7110Decomp *thisptr, running_machine *machine,
 	}
 }
 
-static UINT8 SPC7110Decomp_read(SPC7110Decomp *thisptr)
+static uint8_t SPC7110Decomp_read(SPC7110Decomp *thisptr)
 {
-	UINT8 data;
+	uint8_t data;
 
 	if(thisptr->decomp_buffer_length == 0) {
 		//decompress at least (spc7110_decomp_buffer_size / 2) bytes to the buffer
@@ -265,17 +265,17 @@ static UINT8 SPC7110Decomp_read(SPC7110Decomp *thisptr)
 	return data;
 }
 
-static void SPC7110Decomp_write(SPC7110Decomp *thisptr, UINT8 data)
+static void SPC7110Decomp_write(SPC7110Decomp *thisptr, uint8_t data)
 {
 	thisptr->decomp_buffer[thisptr->decomp_buffer_wroffset++] = data;
 	thisptr->decomp_buffer_wroffset &= spc7110_decomp_buffer_size - 1;
 	thisptr->decomp_buffer_length++;
 }
 
-static UINT8 SPC7110Decomp_dataread(SPC7110Decomp *thisptr)
+static uint8_t SPC7110Decomp_dataread(SPC7110Decomp *thisptr)
 {
-	UINT8 *ROM = memory_region(thisptr->machine, "cart");
-	UINT32 size = thisptr->rom_size - 0x100000;
+	uint8_t *ROM = memory_region(thisptr->machine, "cart");
+	uint32_t size = thisptr->rom_size - 0x100000;
 	while(thisptr->decomp_offset >= size)
 	{
 		thisptr->decomp_offset -= size;
@@ -283,10 +283,10 @@ static UINT8 SPC7110Decomp_dataread(SPC7110Decomp *thisptr)
 	return ROM[0x100000 + thisptr->decomp_offset++];
 }
 
-static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, UINT8 init)
+static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, uint8_t init)
 {
-	static UINT8 val, in, span;
-	static INT32 out, inverts, lps, in_count;
+	static uint8_t val, in, span;
+	static int32_t out, inverts, lps, in_count;
 
 	if(init == 1)
 	{
@@ -300,14 +300,14 @@ static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, UINT8 init)
 
 	while(thisptr->decomp_buffer_length < (spc7110_decomp_buffer_size >> 1))
 	{
-		UINT32 bit;
+		uint32_t bit;
 		for(bit = 0; bit < 8; bit++)
 		{
 			//get context
-			UINT8 mask = (1 << (bit & 3)) - 1;
-			UINT8 con = mask + ((inverts & mask) ^ (lps & mask));
-			UINT32 prob, mps, flag_lps;
-			UINT32 shift = 0;
+			uint8_t mask = (1 << (bit & 3)) - 1;
+			uint8_t con = mask + ((inverts & mask) ^ (lps & mask));
+			uint32_t prob, mps, flag_lps;
+			uint32_t shift = 0;
 			if(bit > 3)
 			{
 				con += 15;
@@ -372,15 +372,15 @@ static void SPC7110Decomp_mode0(SPC7110Decomp *thisptr, UINT8 init)
 	}
 }
 
-static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, UINT8 init)
+static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, uint8_t init)
 {
-	static INT32 pixelorder[4], realorder[4];
-	static UINT8 in, val, span;
-	static INT32 out, inverts, lps, in_count;
+	static int32_t pixelorder[4], realorder[4];
+	static uint8_t in, val, span;
+	static int32_t out, inverts, lps, in_count;
 
 	if(init == 1)
 	{
-		UINT32 i;
+		uint32_t i;
 		for(i = 0; i < 4; i++)
 		{
 			pixelorder[i] = i;
@@ -395,19 +395,19 @@ static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, UINT8 init)
 
 	while(thisptr->decomp_buffer_length < (spc7110_decomp_buffer_size >> 1))
 	{
-		UINT16 data;
-		UINT32 pixel;
+		uint16_t data;
+		uint32_t pixel;
 		for(pixel = 0; pixel < 8; pixel++)
 		{
 			//get first symbol context
-			UINT32 a = ((out >> (1 * 2)) & 3);
-			UINT32 b = ((out >> (7 * 2)) & 3);
-			UINT32 c = ((out >> (8 * 2)) & 3);
-			UINT32 con = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
-			UINT32 bit;
+			uint32_t a = ((out >> (1 * 2)) & 3);
+			uint32_t b = ((out >> (7 * 2)) & 3);
+			uint32_t c = ((out >> (8 * 2)) & 3);
+			uint32_t con = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
+			uint32_t bit;
 
 			//update pixel order
-			UINT32 m, n;
+			uint32_t m, n;
 			for(m = 0; m < 4; m++)
 			{
 				if(pixelorder[m] == a)
@@ -473,11 +473,11 @@ static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, UINT8 init)
 			for(bit = 0; bit < 2; bit++)
 			{
 				//get prob
-				UINT32 prob = SPC7110Decomp_probability(thisptr, con);
-				UINT32 shift = 0;
+				uint32_t prob = SPC7110Decomp_probability(thisptr, con);
+				uint32_t shift = 0;
 
 				//get symbol
-				UINT32 flag_lps;
+				uint32_t flag_lps;
 				if(val <= span - prob) //mps
 				{
 					span = span - prob;
@@ -540,16 +540,16 @@ static void SPC7110Decomp_mode1(SPC7110Decomp *thisptr, UINT8 init)
 	}
 }
 
-static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init)
+static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, uint8_t init)
 {
-	static INT32 pixelorder[16], realorder[16];
-	static UINT8 bitplanebuffer[16], buffer_index;
-	static UINT8 in, val, span;
-	static INT32 out0, out1, inverts, lps, in_count;
+	static int32_t pixelorder[16], realorder[16];
+	static uint8_t bitplanebuffer[16], buffer_index;
+	static uint8_t in, val, span;
+	static int32_t out0, out1, inverts, lps, in_count;
 
 	if(init == 1)
 	{
-		UINT32 i;
+		uint32_t i;
 		for(i = 0; i < 16; i++)
 		{
 			pixelorder[i] = i;
@@ -565,20 +565,20 @@ static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init)
 
 	while(thisptr->decomp_buffer_length < (spc7110_decomp_buffer_size >> 1))
 	{
-		UINT32 data;
-		UINT32 pixel;
+		uint32_t data;
+		uint32_t pixel;
 		for(pixel = 0; pixel < 8; pixel++)
 		{
 			//get first symbol context
-			UINT32 a = ((out0 >> (0 * 4)) & 15);
-			UINT32 b = ((out0 >> (7 * 4)) & 15);
-			UINT32 c = ((out1 >> (0 * 4)) & 15);
-			UINT32 con = 0;
-			UINT32 refcon = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
-			UINT32 bit;
+			uint32_t a = ((out0 >> (0 * 4)) & 15);
+			uint32_t b = ((out0 >> (7 * 4)) & 15);
+			uint32_t c = ((out1 >> (0 * 4)) & 15);
+			uint32_t con = 0;
+			uint32_t refcon = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
+			uint32_t bit;
 
 			//update pixel order
-			UINT32 m, n;
+			uint32_t m, n;
 			for(m = 0; m < 16; m++)
 			{
 				if(pixelorder[m] == a)
@@ -643,13 +643,13 @@ static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init)
 			//get 4 symbols
 			for(bit = 0; bit < 4; bit++)
 			{
-				UINT32 invertbit, shift;
+				uint32_t invertbit, shift;
 
 				//get prob
-				UINT32 prob = SPC7110Decomp_probability(thisptr, con);
+				uint32_t prob = SPC7110Decomp_probability(thisptr, con);
 
 				//get symbol
-				UINT32 flag_lps;
+				uint32_t flag_lps;
 				if(val <= span - prob) //mps
 				{
 					span = span - prob;
@@ -717,7 +717,7 @@ static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init)
 
 		if(buffer_index == 16)
 		{
-			UINT32 i;
+			uint32_t i;
 			for(i = 0; i < 16; i++)
 			{
 				SPC7110Decomp_write(thisptr, bitplanebuffer[i]);
@@ -727,27 +727,27 @@ static void SPC7110Decomp_mode2(SPC7110Decomp *thisptr, UINT8 init)
 	}
 }
 
-static UINT8 SPC7110Decomp_probability(SPC7110Decomp *thisptr, UINT32 n)
+static uint8_t SPC7110Decomp_probability(SPC7110Decomp *thisptr, uint32_t n)
 {
 	return spc7110_evolution_table[thisptr->context[n].index][0];
 }
 
-static UINT8 SPC7110Decomp_next_lps(SPC7110Decomp *thisptr, UINT32 n)
+static uint8_t SPC7110Decomp_next_lps(SPC7110Decomp *thisptr, uint32_t n)
 {
 	return spc7110_evolution_table[thisptr->context[n].index][1];
 }
 
-static UINT8 SPC7110Decomp_next_mps(SPC7110Decomp *thisptr, UINT32 n)
+static uint8_t SPC7110Decomp_next_mps(SPC7110Decomp *thisptr, uint32_t n)
 {
 	return spc7110_evolution_table[thisptr->context[n].index][2];
 }
 
-static UINT8 SPC7110Decomp_toggle_invert(SPC7110Decomp *thisptr, UINT32 n)
+static uint8_t SPC7110Decomp_toggle_invert(SPC7110Decomp *thisptr, uint32_t n)
 {
 	return spc7110_evolution_table[thisptr->context[n].index][3];
 }
 
-static UINT32 SPC7110Decomp_morton_2x8(SPC7110Decomp *thisptr, UINT32 data)
+static uint32_t SPC7110Decomp_morton_2x8(SPC7110Decomp *thisptr, uint32_t data)
 {
   //reverse morton lookup: de-interleave two 8-bit values
   //15, 13, 11,  9,  7,  5,  3,  1 -> 15- 8
@@ -755,7 +755,7 @@ static UINT32 SPC7110Decomp_morton_2x8(SPC7110Decomp *thisptr, UINT32 data)
   return thisptr->morton16[0][(data >>  0) & 255] + thisptr->morton16[1][(data >>  8) & 255];
 }
 
-static UINT32 SPC7110Decomp_morton_4x8(SPC7110Decomp *thisptr, UINT32 data)
+static uint32_t SPC7110Decomp_morton_4x8(SPC7110Decomp *thisptr, uint32_t data)
 {
   //reverse morton lookup: de-interleave four 8-bit values
   //31, 27, 23, 19, 15, 11,  7,  3 -> 31-24
@@ -766,9 +766,9 @@ static UINT32 SPC7110Decomp_morton_4x8(SPC7110Decomp *thisptr, UINT32 data)
        + thisptr->morton32[2][(data >> 16) & 255] + thisptr->morton32[3][(data >> 24) & 255];
 }
 
-static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data);
-static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr);
-static void spc7110_update_time(running_machine *machine, UINT8 offset);
+static void spc7110_mmio_write(running_machine *machine, uint32_t addr, uint8_t data);
+static uint8_t spc7110_mmio_read(const address_space *space, uint32_t addr);
+static void spc7110_update_time(running_machine *machine, uint8_t offset);
 
 enum RTC_State
 {
@@ -784,91 +784,91 @@ enum RTC_Mode
 	RTCM_Indexed = 0x0c
 };
 
-static const UINT32 spc7110_months[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+static const uint32_t spc7110_months[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 typedef struct
 {
 	//==================
 	//decompression unit
 	//==================
-	UINT8 r4801;		// compression table low
-	UINT8 r4802;		// compression table high
-	UINT8 r4803;		// compression table bank
-	UINT8 r4804;		// compression table index
-	UINT8 r4805;		// decompression buffer index low
-	UINT8 r4806;		// decompression buffer index high
-	UINT8 r4807;		// ???
-	UINT8 r4808;		// ???
-	UINT8 r4809;		// compression length low
-	UINT8 r480a;		// compression length high
-	UINT8 r480b;		// decompression control register
-	UINT8 r480c;		// decompression status
+	uint8_t r4801;		// compression table low
+	uint8_t r4802;		// compression table high
+	uint8_t r4803;		// compression table bank
+	uint8_t r4804;		// compression table index
+	uint8_t r4805;		// decompression buffer index low
+	uint8_t r4806;		// decompression buffer index high
+	uint8_t r4807;		// ???
+	uint8_t r4808;		// ???
+	uint8_t r4809;		// compression length low
+	uint8_t r480a;		// compression length high
+	uint8_t r480b;		// decompression control register
+	uint8_t r480c;		// decompression status
 
 	SPC7110Decomp* decomp;
 
-	UINT8 r4811;		// data pointer low
-	UINT8 r4812;		// data pointer high
-	UINT8 r4813;		// data pointer bank
-	UINT8 r4814;		// data adjust low
-	UINT8 r4815;		// data adjust high
-	UINT8 r4816;		// data increment low
-	UINT8 r4817;		// data increment high
-	UINT8 r4818;		// data port control register
+	uint8_t r4811;		// data pointer low
+	uint8_t r4812;		// data pointer high
+	uint8_t r4813;		// data pointer bank
+	uint8_t r4814;		// data adjust low
+	uint8_t r4815;		// data adjust high
+	uint8_t r4816;		// data increment low
+	uint8_t r4817;		// data increment high
+	uint8_t r4818;		// data port control register
 
-	UINT8 r481x;
+	uint8_t r481x;
 
-	UINT8 r4814_latch;
-	UINT8 r4815_latch;
+	uint8_t r4814_latch;
+	uint8_t r4815_latch;
 
 	//=========
 	//math unit
 	//=========
-	UINT8 r4820;		// 16-bit multiplicand B0, 32-bit dividend B0
-	UINT8 r4821;		// 16-bit multiplicand B1, 32-bit dividend B1
-	UINT8 r4822;		// 32-bit dividend B2
-	UINT8 r4823;		// 32-bit dividend B3
-	UINT8 r4824;		// 16-bit multiplier B0
-	UINT8 r4825;		// 16-bit multiplier B1
-	UINT8 r4826;		// 16-bit divisor B0
-	UINT8 r4827;		// 16-bit divisor B1
-	UINT8 r4828;		// 32-bit product B0, 32-bit quotient B0
-	UINT8 r4829;		// 32-bit product B1, 32-bit quotient B1
-	UINT8 r482a;		// 32-bit product B2, 32-bit quotient B2
-	UINT8 r482b;		// 32-bit product B3, 32-bit quotient B3
-	UINT8 r482c;		// 16-bit remainder B0
-	UINT8 r482d;		// 16-bit remainder B1
-	UINT8 r482e;		// math control register
-	UINT8 r482f;		// math status
+	uint8_t r4820;		// 16-bit multiplicand B0, 32-bit dividend B0
+	uint8_t r4821;		// 16-bit multiplicand B1, 32-bit dividend B1
+	uint8_t r4822;		// 32-bit dividend B2
+	uint8_t r4823;		// 32-bit dividend B3
+	uint8_t r4824;		// 16-bit multiplier B0
+	uint8_t r4825;		// 16-bit multiplier B1
+	uint8_t r4826;		// 16-bit divisor B0
+	uint8_t r4827;		// 16-bit divisor B1
+	uint8_t r4828;		// 32-bit product B0, 32-bit quotient B0
+	uint8_t r4829;		// 32-bit product B1, 32-bit quotient B1
+	uint8_t r482a;		// 32-bit product B2, 32-bit quotient B2
+	uint8_t r482b;		// 32-bit product B3, 32-bit quotient B3
+	uint8_t r482c;		// 16-bit remainder B0
+	uint8_t r482d;		// 16-bit remainder B1
+	uint8_t r482e;		// math control register
+	uint8_t r482f;		// math status
 
 	//===================
 	//memory mapping unit
 	//===================
-	UINT8 r4830;		// SRAM write enable
-	UINT8 r4831;		// $[d0-df]:[0000-ffff] mapping
-	UINT8 r4832;		// $[e0-ef]:[0000-ffff] mapping
-	UINT8 r4833;		// $[f0-ff]:[0000-ffff] mapping
-	UINT8 r4834;		// ???
+	uint8_t r4830;		// SRAM write enable
+	uint8_t r4831;		// $[d0-df]:[0000-ffff] mapping
+	uint8_t r4832;		// $[e0-ef]:[0000-ffff] mapping
+	uint8_t r4833;		// $[f0-ff]:[0000-ffff] mapping
+	uint8_t r4834;		// ???
 
-	UINT32 dx_offset;
-	UINT32 ex_offset;
-	UINT32 fx_offset;
+	uint32_t dx_offset;
+	uint32_t ex_offset;
+	uint32_t fx_offset;
 
 	//====================
 	//real-time clock unit
 	//====================
-	UINT8 r4840;		// RTC latch
-	UINT8 r4841;		// RTC index/data port
-	UINT8 r4842;		// RTC status
+	uint8_t r4840;		// RTC latch
+	uint8_t r4841;		// RTC index/data port
+	uint8_t r4842;		// RTC status
 
-	UINT32 rtc_state;
-	UINT32 rtc_mode;
-	UINT32 rtc_index;
+	uint32_t rtc_state;
+	uint32_t rtc_mode;
+	uint32_t rtc_index;
 
-	UINT64 rtc_offset;
+	uint64_t rtc_offset;
 
-	UINT8 rtc_ram[16];	// 0-12 secs, min, hrs, etc.; 13-14-15 control registers
+	uint8_t rtc_ram[16];	// 0-12 secs, min, hrs, etc.; 13-14-15 control registers
 
-	UINT32 size;
+	uint32_t size;
 } _snes_spc7110_t;
 
 static _snes_spc7110_t snes_spc7110;
@@ -948,9 +948,9 @@ static void spc7110rtc_init(running_machine* machine)
 	spc7110_update_time(machine, 0);
 }
 
-static UINT32 spc7110_datarom_addr(UINT32 addr)
+static uint32_t spc7110_datarom_addr(uint32_t addr)
 {
-	UINT32 size = snes_spc7110.size - 0x100000;
+	uint32_t size = snes_spc7110.size - 0x100000;
 	while(addr >= size)
 	{
 		addr -= size;
@@ -958,29 +958,29 @@ static UINT32 spc7110_datarom_addr(UINT32 addr)
 	return addr + 0x100000;
 }
 
-static UINT32 spc7110_data_pointer(void)
+static uint32_t spc7110_data_pointer(void)
 {
 	return snes_spc7110.r4811 + (snes_spc7110.r4812 << 8) + (snes_spc7110.r4813 << 16);
 }
 
-static UINT32 spc7110_data_adjust(void)
+static uint32_t spc7110_data_adjust(void)
 {
 	return snes_spc7110.r4814 + (snes_spc7110.r4815 << 8);
 }
 
-static UINT32 spc7110_data_increment(void)
+static uint32_t spc7110_data_increment(void)
 {
 	return snes_spc7110.r4816 + (snes_spc7110.r4817 << 8);
 }
 
-static void spc7110_set_data_pointer(UINT32 addr)
+static void spc7110_set_data_pointer(uint32_t addr)
 {
 	snes_spc7110.r4811 = addr;
 	snes_spc7110.r4812 = addr >> 8;
 	snes_spc7110.r4813 = addr >> 16;
 }
 
-static void spc7110_set_data_adjust(UINT32 addr)
+static void spc7110_set_data_adjust(uint32_t addr)
 {
 	snes_spc7110.r4814 = addr;
 	snes_spc7110.r4815 = addr >> 8;
@@ -990,7 +990,7 @@ static void spc7110_set_data_adjust(UINT32 addr)
 // we should probably keep track internally of the time rather than updating
 // to the system time at each call with a "offset" tracking as we do now...
 // (and indeed current code fails to pass Tengai Makyou Zero tests)
-static void spc7110_update_time(running_machine *machine, UINT8 offset)
+static void spc7110_update_time(running_machine *machine, uint8_t offset)
 {
 	system_time curtime, *systime = &curtime;
 	machine->current_datetime(curtime);
@@ -1008,10 +1008,10 @@ static void spc7110_update_time(running_machine *machine, UINT8 offset)
 	if (update)
 	{
 		/* update time with offset, assuming offset < 3600s */
-		UINT8 second = systime->local_time.second;
-		UINT8 minute = systime->local_time.minute;
-		UINT8 hour = systime->local_time.hour;
-		UINT8 mday = systime->local_time.mday;
+		uint8_t second = systime->local_time.second;
+		uint8_t minute = systime->local_time.minute;
+		uint8_t hour = systime->local_time.hour;
+		uint8_t mday = systime->local_time.mday;
 
 		while (snes_spc7110.rtc_offset >= 3600)
 		{
@@ -1066,10 +1066,10 @@ static void spc7110_update_time(running_machine *machine, UINT8 offset)
 	}
 }
 
-static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
+static uint8_t spc7110_mmio_read(const address_space *space, uint32_t addr)
 {
 	running_machine *machine = space->machine;
-	UINT8 *ROM = memory_region(machine, "cart");
+	uint8_t *ROM = memory_region(machine, "cart");
 
 	addr &= 0xffff;
 
@@ -1081,7 +1081,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 
 	case 0x4800:
 		{
-			UINT16 counter = (snes_spc7110.r4809 + (snes_spc7110.r480a << 8));
+			uint16_t counter = (snes_spc7110.r4809 + (snes_spc7110.r480a << 8));
 			counter--;
 			snes_spc7110.r4809 = counter;
 			snes_spc7110.r480a = counter >> 8;
@@ -1100,7 +1100,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 	case 0x480b: return snes_spc7110.r480b;
 	case 0x480c:
 		{
-			UINT8 status = snes_spc7110.r480c;
+			uint8_t status = snes_spc7110.r480c;
 			snes_spc7110.r480c &= 0x7f;
 			return status;
 		}
@@ -1111,8 +1111,8 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 
 	case 0x4810:
 		{
-			UINT8 data;
-			UINT32 address, adjust, adjustaddr;
+			uint8_t data;
+			uint32_t address, adjust, adjustaddr;
 
 			if(snes_spc7110.r481x != 0x07) return 0x00;
 
@@ -1120,7 +1120,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 			adjust = spc7110_data_adjust();
 			if(snes_spc7110.r4818 & 8)
 			{
-				adjust = (INT16)adjust;  //16-bit sign extend
+				adjust = (int16_t)adjust;  //16-bit sign extend
 			}
 
 			adjustaddr = address;
@@ -1133,10 +1133,10 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 			data = ROM[spc7110_datarom_addr(adjustaddr)];
 			if(!(snes_spc7110.r4818 & 2))
 			{
-				UINT32 increment = (snes_spc7110.r4818 & 1) ? spc7110_data_increment() : 1;
+				uint32_t increment = (snes_spc7110.r4818 & 1) ? spc7110_data_increment() : 1;
 				if(snes_spc7110.r4818 & 4)
 				{
-					increment = (INT16)increment;  //16-bit sign extend
+					increment = (int16_t)increment;  //16-bit sign extend
 				}
 
 				if((snes_spc7110.r4818 & 16) == 0)
@@ -1161,8 +1161,8 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 	case 0x4818: return snes_spc7110.r4818;
 	case 0x481a:
 		{
-			UINT8 data;
-			UINT32 address, adjust;
+			uint8_t data;
+			uint32_t address, adjust;
 			if(snes_spc7110.r481x != 0x07)
 			{
 				return 0x00;
@@ -1172,7 +1172,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 			adjust = spc7110_data_adjust();
 			if(snes_spc7110.r4818 & 8)
 			{
-				adjust = (INT16)adjust;  //16-bit sign extend
+				adjust = (int16_t)adjust;  //16-bit sign extend
 			}
 
 			data = ROM[spc7110_datarom_addr(address + adjust)];
@@ -1212,7 +1212,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 	case 0x482e: return snes_spc7110.r482e;
 	case 0x482f:
 		{
-			UINT8 status = snes_spc7110.r482f;
+			uint8_t status = snes_spc7110.r482f;
 			snes_spc7110.r482f &= 0x7f;
 			return status;
 		}
@@ -1233,7 +1233,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 	case 0x4840: return snes_spc7110.r4840;
 	case 0x4841:
 		{
-			UINT8 data = 0;
+			uint8_t data = 0;
 			if (snes_spc7110.rtc_state == RTCS_Inactive || snes_spc7110.rtc_state == RTCS_ModeSelect)
 				return 0x00;
 
@@ -1244,7 +1244,7 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 		}
 	case 0x4842:
 		{
-			UINT8 status = snes_spc7110.r4842;
+			uint8_t status = snes_spc7110.r4842;
 			snes_spc7110.r4842 &= 0x7f;
 			return status;
 		}
@@ -1253,9 +1253,9 @@ static UINT8 spc7110_mmio_read(const address_space *space, UINT32 addr)
 	return snes_open_bus_r(space, 0);
 }
 
-static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data)
+static void spc7110_mmio_write(running_machine *machine, uint32_t addr, uint8_t data)
 {
-	UINT8 *ROM = memory_region(machine, "cart");
+	uint8_t *ROM = memory_region(machine, "cart");
 
 	addr &= 0xffff;
 
@@ -1272,7 +1272,7 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 	case 0x4805: snes_spc7110.r4805 = data; break;
 	case 0x4806:
 		{
-			UINT32 table, index, length, address, mode, offset;
+			uint32_t table, index, length, address, mode, offset;
 			snes_spc7110.r4806 = data;
 
 			table   = (snes_spc7110.r4801 + (snes_spc7110.r4802 << 8) + (snes_spc7110.r4803 << 16));
@@ -1321,19 +1321,19 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 
 			if((snes_spc7110.r4818 & 0x60) == 0x20)
 			{
-				UINT32 increment = spc7110_data_adjust() & 0xff;
+				uint32_t increment = spc7110_data_adjust() & 0xff;
 				if(snes_spc7110.r4818 & 8)
 				{
-					increment = (INT8)increment;  //8-bit sign extend
+					increment = (int8_t)increment;  //8-bit sign extend
 				}
 				spc7110_set_data_pointer(spc7110_data_pointer() + increment);
 			}
 			else if((snes_spc7110.r4818 & 0x60) == 0x40)
 			{
-				UINT32 increment = spc7110_data_adjust();
+				uint32_t increment = spc7110_data_adjust();
 				if(snes_spc7110.r4818 & 8)
 				{
-					increment = (INT16)increment;  //16-bit sign extend
+					increment = (int16_t)increment;  //16-bit sign extend
 				}
 				spc7110_set_data_pointer(spc7110_data_pointer() + increment);
 			}
@@ -1359,19 +1359,19 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 
 			if((snes_spc7110.r4818 & 0x60) == 0x20)
 			{
-				UINT32 increment = spc7110_data_adjust() & 0xff;
+				uint32_t increment = spc7110_data_adjust() & 0xff;
 				if(snes_spc7110.r4818 & 8)
 				{
-					increment = (INT8)increment;  //8-bit sign extend
+					increment = (int8_t)increment;  //8-bit sign extend
 				}
 				spc7110_set_data_pointer(spc7110_data_pointer() + increment);
 			}
 			else if((snes_spc7110.r4818 & 0x60) == 0x40)
 			{
-				UINT32 increment = spc7110_data_adjust();
+				uint32_t increment = spc7110_data_adjust();
 				if(snes_spc7110.r4818 & 8)
 				{
-					increment = (INT16)increment;  //16-bit sign extend
+					increment = (int16_t)increment;  //16-bit sign extend
 				}
 				spc7110_set_data_pointer(spc7110_data_pointer() + increment);
 			}
@@ -1406,10 +1406,10 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
     			if(snes_spc7110.r482e & 1)
 			{
     				//signed 16-bit x 16-bit multiplication
-    				INT16 r0 = (INT16)(snes_spc7110.r4824 + (snes_spc7110.r4825 << 8));
-    				INT16 r1 = (INT16)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8));
+    				int16_t r0 = (int16_t)(snes_spc7110.r4824 + (snes_spc7110.r4825 << 8));
+    				int16_t r1 = (int16_t)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8));
 
-	    			INT32 result = r0 * r1;
+	    			int32_t result = r0 * r1;
 	    			snes_spc7110.r4828 = result;
 	    			snes_spc7110.r4829 = result >> 8;
 	    			snes_spc7110.r482a = result >> 16;
@@ -1418,10 +1418,10 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 			else
 			{
 	    			//unsigned 16-bit x 16-bit multiplication
-	    			UINT16 r0 = (UINT16)(snes_spc7110.r4824 + (snes_spc7110.r4825 << 8));
-	    			UINT16 r1 = (UINT16)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8));
+	    			uint16_t r0 = (uint16_t)(snes_spc7110.r4824 + (snes_spc7110.r4825 << 8));
+	    			uint16_t r1 = (uint16_t)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8));
 
-	    			UINT32 result = r0 * r1;
+	    			uint32_t result = r0 * r1;
     				snes_spc7110.r4828 = result;
     				snes_spc7110.r4829 = result >> 8;
     				snes_spc7110.r482a = result >> 16;
@@ -1440,16 +1440,16 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 			if(snes_spc7110.r482e & 1)
 			{
 				//signed 32-bit x 16-bit division
-				INT32 dividend = (INT32)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8) + (snes_spc7110.r4822 << 16) + (snes_spc7110.r4823 << 24));
-				INT16 divisor  = (INT16)(snes_spc7110.r4826 + (snes_spc7110.r4827 << 8));
+				int32_t dividend = (int32_t)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8) + (snes_spc7110.r4822 << 16) + (snes_spc7110.r4823 << 24));
+				int16_t divisor  = (int16_t)(snes_spc7110.r4826 + (snes_spc7110.r4827 << 8));
 
-				INT32 quotient;
-				INT16 remainder;
+				int32_t quotient;
+				int16_t remainder;
 
 				if(divisor)
 				{
-					quotient  = (INT32)(dividend / divisor);
-					remainder = (INT32)(dividend % divisor);
+					quotient  = (int32_t)(dividend / divisor);
+					remainder = (int32_t)(dividend % divisor);
 				}
 				else
 				{
@@ -1469,16 +1469,16 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 			else
 			{
 				//unsigned 32-bit x 16-bit division
-				UINT32 dividend = (UINT32)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8) + (snes_spc7110.r4822 << 16) + (snes_spc7110.r4823 << 24));
-				UINT16 divisor  = (UINT16)(snes_spc7110.r4826 + (snes_spc7110.r4827 << 8));
+				uint32_t dividend = (uint32_t)(snes_spc7110.r4820 + (snes_spc7110.r4821 << 8) + (snes_spc7110.r4822 << 16) + (snes_spc7110.r4823 << 24));
+				uint16_t divisor  = (uint16_t)(snes_spc7110.r4826 + (snes_spc7110.r4827 << 8));
 
-				UINT32 quotient;
-				UINT16 remainder;
+				uint32_t quotient;
+				uint16_t remainder;
 
 				if(divisor)
 				{
-					quotient  = (UINT32)(dividend / divisor);
-					remainder = (UINT16)(dividend % divisor);
+					quotient  = (uint32_t)(dividend / divisor);
+					remainder = (uint16_t)(dividend % divisor);
 				}
 				else
 				{
@@ -1602,7 +1602,7 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 					{
 						spc7110_update_time(machine, 0);
 
-						UINT8 second = snes_spc7110.rtc_ram[0] + snes_spc7110.rtc_ram[1] * 10;
+						uint8_t second = snes_spc7110.rtc_ram[0] + snes_spc7110.rtc_ram[1] * 10;
 						//clear seconds
 						snes_spc7110.rtc_ram[0] = 0;
 						snes_spc7110.rtc_ram[1] = 0;
@@ -1639,10 +1639,10 @@ static void spc7110_mmio_write(running_machine *machine, UINT32 addr, UINT8 data
 	}
 }
 
-static UINT8 spc7110_bank7_read(const address_space *space, UINT32 offset)
+static uint8_t spc7110_bank7_read(const address_space *space, uint32_t offset)
 {
-	UINT8 *ROM = memory_region(space->machine, "cart");
-	UINT32 addr = offset & 0x0fffff;
+	uint8_t *ROM = memory_region(space->machine, "cart");
+	uint32_t addr = offset & 0x0fffff;
 
 	switch (offset & 0xf00000)
 	{

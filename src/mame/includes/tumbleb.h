@@ -7,13 +7,13 @@ public:
 	tumbleb_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    pf1_data;
-	UINT16 *    pf2_data;
-	UINT16 *    mainram;
-	UINT16 *    spriteram;
-	UINT16 *    control;
+	uint16_t *    pf1_data;
+	uint16_t *    pf2_data;
+	uint16_t *    mainram;
+	uint16_t *    spriteram;
+	uint16_t *    control;
 	size_t      spriteram_size;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* misc */
 	int         music_command;
@@ -22,9 +22,9 @@ public:
 
 	/* video-related */
 	tilemap_t   *pf1_tilemap,*pf1_alt_tilemap,*pf2_tilemap,*pf2_alt_tilemap;
-	UINT16      control_0[8];
+	uint16_t      control_0[8];
 	int         flipscreen;
-	UINT16      tilebank;
+	uint16_t      tilebank;
 	int         sprite_xoffset;
 	int         sprite_yoffset;
 

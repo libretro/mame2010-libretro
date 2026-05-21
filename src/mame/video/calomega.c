@@ -15,8 +15,8 @@
 
 #include "emu.h"
 
-UINT8 *calomega_videoram;
-UINT8 *calomega_colorram;
+uint8_t *calomega_videoram;
+uint8_t *calomega_colorram;
 static tilemap_t *bg_tilemap;
 
 WRITE8_HANDLER( calomega_videoram_w )

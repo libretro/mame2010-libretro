@@ -6,27 +6,27 @@ static tilemap_t *back_layer;
 static tilemap_t *mid_layer;
 static tilemap_t *fore_layer;
 
-UINT32 *spi_scrollram;
+uint32_t *spi_scrollram;
 
-static UINT32 layer_bank;
-static UINT32 layer_enable;
-static UINT32 video_dma_length;
-static UINT32 video_dma_address;
-static UINT32 sprite_dma_length;
+static uint32_t layer_bank;
+static uint32_t layer_enable;
+static uint32_t video_dma_length;
+static uint32_t video_dma_address;
+static uint32_t sprite_dma_length;
 
 static int rf2_layer_bank[3];
-static UINT32 *tilemap_ram;
-static UINT32 *palette_ram;
-static UINT32 *sprite_ram;
+static uint32_t *tilemap_ram;
+static uint32_t *palette_ram;
+static uint32_t *sprite_ram;
 
 static int mid_layer_offset;
 static int fore_layer_offset;
 static int text_layer_offset;
 
-static UINT32 bg_fore_layer_position;
+static uint32_t bg_fore_layer_position;
 
-static UINT8 alpha_table[8192];
-static UINT8 sprite_bpp;
+static uint8_t alpha_table[8192];
+static uint8_t sprite_bpp;
 
 READ32_HANDLER( spi_layer_bank_r )
 {
@@ -96,7 +96,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 		{
 			/* back layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i] != tile) {
 					tilemap_ram[i] = tile;
 					tilemap_mark_tile_dirty( back_layer, (i * 2) );
@@ -111,7 +111,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* fore layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+fore_layer_offset] != tile) {
 					tilemap_ram[i+fore_layer_offset] = tile;
 					tilemap_mark_tile_dirty( fore_layer, (i * 2) );
@@ -126,7 +126,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* mid layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+mid_layer_offset] != tile) {
 					tilemap_ram[i+mid_layer_offset] = tile;
 					tilemap_mark_tile_dirty( mid_layer, (i * 2) );
@@ -141,7 +141,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* text layer */
 			for (i=0; i < 0x1000/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+text_layer_offset] != tile) {
 					tilemap_ram[i+text_layer_offset] = tile;
 					tilemap_mark_tile_dirty( text_layer, (i * 2) );
@@ -154,7 +154,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 		{
 			/* back layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i] != tile) {
 					tilemap_ram[i] = tile;
 					tilemap_mark_tile_dirty( back_layer, (i * 2) );
@@ -165,7 +165,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* fore layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+fore_layer_offset] != tile) {
 					tilemap_ram[i+fore_layer_offset] = tile;
 					tilemap_mark_tile_dirty( fore_layer, (i * 2) );
@@ -176,7 +176,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* mid layer */
 			for (i=0; i < 0x800/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+mid_layer_offset] != tile) {
 					tilemap_ram[i+mid_layer_offset] = tile;
 					tilemap_mark_tile_dirty( mid_layer, (i * 2) );
@@ -187,7 +187,7 @@ WRITE32_HANDLER( tilemap_dma_start_w )
 
 			/* text layer */
 			for (i=0; i < 0x1000/4; i++) {
-				UINT32 tile = spimainram[index];
+				uint32_t tile = spimainram[index];
 				if (tilemap_ram[i+text_layer_offset] != tile) {
 					tilemap_ram[i+text_layer_offset] = tile;
 					tilemap_mark_tile_dirty( text_layer, (i * 2) );
@@ -206,7 +206,7 @@ WRITE32_HANDLER( palette_dma_start_w )
 		int i;
 		for (i=0; i < ((video_dma_length+1) * 2) / 4; i++)
 		{
-			UINT32 color = spimainram[(video_dma_address / 4) + i - 0x200];
+			uint32_t color = spimainram[(video_dma_address / 4) + i - 0x200];
 			if (palette_ram[i] != color) {
 				palette_ram[i] = color;
 				palette_set_color_rgb( space->machine, (i * 2), pal5bit(palette_ram[i] >> 0), pal5bit(palette_ram[i] >> 5), pal5bit(palette_ram[i] >> 10) );
@@ -234,10 +234,10 @@ WRITE32_HANDLER( video_dma_address_w )
 	COMBINE_DATA( &video_dma_address );
 }
 
-static void drawgfx_blend(bitmap_t *bitmap, const rectangle *cliprect, const gfx_element *gfx, UINT32 code, UINT32 color, int flipx, int flipy, int sx, int sy)
+static void drawgfx_blend(bitmap_t *bitmap, const rectangle *cliprect, const gfx_element *gfx, uint32_t code, uint32_t color, int flipx, int flipy, int sx, int sy)
 {
 	const pen_t *pens = &gfx->machine->pens[gfx->color_base];
-	const UINT8 *dp;
+	const uint8_t *dp;
 	int i, j;
 	int x1, x2;
 	int y1, y2;
@@ -321,18 +321,18 @@ static void drawgfx_blend(bitmap_t *bitmap, const rectangle *cliprect, const gfx
 	// draw
 	for (j=y1; j <= y2; j++)
 	{
-		UINT32 *p = BITMAP_ADDR32(bitmap, j, 0);
-		UINT8 trans_pen = (1 << sprite_bpp) - 1;
+		uint32_t *p = BITMAP_ADDR32(bitmap, j, 0);
+		uint8_t trans_pen = (1 << sprite_bpp) - 1;
 		int dp_i = (py * width) + px;
 		py += yd;
 
 		for (i=x1; i <= x2; i++)
 		{
-			UINT8 pen = dp[dp_i];
+			uint8_t pen = dp[dp_i];
 			if (pen != trans_pen)
 			{
 				int global_pen = pen + (color << sprite_bpp);
-				UINT8 alpha = alpha_table[global_pen];
+				uint8_t alpha = alpha_table[global_pen];
 				if (alpha)
 				{
 					p[i] = alpha_blend_r32(p[i], pens[global_pen], 0x7f);
@@ -360,7 +360,7 @@ static const int sprite_ytable[2][8] =
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri_mask)
 {
-	INT16 xpos, ypos;
+	int16_t xpos, ypos;
 	int tile_num, color;
 	int width, height;
 	int flip_x = 0, flip_y = 0;
@@ -494,9 +494,9 @@ VIDEO_START( spi )
 	tilemap_set_transparent_pen(mid_layer, 63);
 	tilemap_set_transparent_pen(fore_layer, 63);
 
-	tilemap_ram = auto_alloc_array_clear(machine, UINT32, 0x4000/4);
-	palette_ram = auto_alloc_array_clear(machine, UINT32, 0x3000/4);
-	sprite_ram = auto_alloc_array_clear(machine, UINT32, 0x1000/4);
+	tilemap_ram = auto_alloc_array_clear(machine, uint32_t, 0x4000/4);
+	palette_ram = auto_alloc_array_clear(machine, uint32_t, 0x3000/4);
+	sprite_ram = auto_alloc_array_clear(machine, uint32_t, 0x1000/4);
 
 	sprite_bpp = 6;
 	sprite_dma_length = 0x1000;
@@ -505,7 +505,7 @@ VIDEO_START( spi )
 		palette_set_color(machine, i, MAKE_RGB(0, 0, 0));
 	}
 
-	memset(alpha_table, 0, 6144 * sizeof(UINT8));
+	memset(alpha_table, 0, 6144 * sizeof(uint8_t));
 
 	// sprites
 	//for (i = 1792; i < 1808; i++) { alpha_table[i] = 1; } // breaks rdft
@@ -543,7 +543,7 @@ VIDEO_START( spi )
 }
 
 #ifdef UNUSED_FUNCTION
-static void set_rowscroll(tilemap_t *layer, int scroll, INT16* rows)
+static void set_rowscroll(tilemap_t *layer, int scroll, int16_t* rows)
 {
 	int i;
 	int x = spi_scrollram[scroll] & 0xffff;
@@ -565,13 +565,13 @@ static void set_scroll(tilemap_t *layer, int scroll)
 #endif
 
 
-static void combine_tilemap(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, tilemap_t *tile, int x, int y, int opaque, INT16 *rowscroll)
+static void combine_tilemap(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, tilemap_t *tile, int x, int y, int opaque, int16_t *rowscroll)
 {
 	int i,j;
-	UINT16 *s;
-	UINT32 *d;
-	UINT8 *t;
-	UINT32 xscroll_mask, yscroll_mask;
+	uint16_t *s;
+	uint32_t *d;
+	uint8_t *t;
+	uint32_t xscroll_mask, yscroll_mask;
 	bitmap_t *pen_bitmap;
 	bitmap_t *flags_bitmap;
 
@@ -595,8 +595,8 @@ static void combine_tilemap(running_machine *machine, bitmap_t *bitmap, const re
 		{
 			if (opaque || (t[i & xscroll_mask] & (TILEMAP_PIXEL_LAYER0 | TILEMAP_PIXEL_LAYER1)))
 			{
-				UINT16 pen = s[i & xscroll_mask];
-				UINT8 alpha = alpha_table[pen];
+				uint16_t pen = s[i & xscroll_mask];
+				uint8_t alpha = alpha_table[pen];
 				if (alpha)
 				{
 					*d = alpha_blend_r32(*d, machine->pens[pen], 0x7f);
@@ -615,11 +615,11 @@ static void combine_tilemap(running_machine *machine, bitmap_t *bitmap, const re
 
 VIDEO_UPDATE( spi )
 {
-	INT16 *back_rowscroll, *mid_rowscroll, *fore_rowscroll;
+	int16_t *back_rowscroll, *mid_rowscroll, *fore_rowscroll;
 	if( layer_bank & 0x80000000 ) {
-		back_rowscroll	= (INT16*)&tilemap_ram[0x200];
-		mid_rowscroll	= (INT16*)&tilemap_ram[0x600];
-		fore_rowscroll	= (INT16*)&tilemap_ram[0xa00];
+		back_rowscroll	= (int16_t*)&tilemap_ram[0x200];
+		mid_rowscroll	= (int16_t*)&tilemap_ram[0x600];
+		fore_rowscroll	= (int16_t*)&tilemap_ram[0xa00];
 	} else {
 		back_rowscroll	= NULL;
 		mid_rowscroll	= NULL;
@@ -660,8 +660,8 @@ VIDEO_START( sys386f2 )
 {
 	int i;
 
-	palette_ram = auto_alloc_array_clear(machine, UINT32, 0x4000/4);
-	sprite_ram = auto_alloc_array_clear(machine, UINT32, 0x2000/4);
+	palette_ram = auto_alloc_array_clear(machine, uint32_t, 0x4000/4);
+	sprite_ram = auto_alloc_array_clear(machine, uint32_t, 0x2000/4);
 
 	sprite_bpp = 8;
 	sprite_dma_length = 0x2000;
@@ -671,7 +671,7 @@ VIDEO_START( sys386f2 )
 		palette_set_color(machine, i, MAKE_RGB(0, 0, 0));
 	}
 
-	memset(alpha_table, 0, 8192 * sizeof(UINT8));
+	memset(alpha_table, 0, 8192 * sizeof(uint8_t));
 }
 
 VIDEO_UPDATE( sys386f2 )

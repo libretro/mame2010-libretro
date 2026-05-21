@@ -18,7 +18,7 @@
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	foodf_state *state = (foodf_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = (data & 0xff) | ((data >> 7) & 0x100);
 	int color = (data >> 8) & 0x3f;
 	SET_TILE_INFO(0, code, color, state->playfield_flip ? (TILE_FLIPX | TILE_FLIPY) : 0);
@@ -120,7 +120,7 @@ VIDEO_UPDATE( foodf )
 	int offs;
 	const gfx_element *gfx = screen->machine->gfx[1];
 	bitmap_t *priority_bitmap = screen->machine->priority_bitmap;
-	UINT16 *spriteram16 = screen->machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = screen->machine->generic.spriteram.u16;
 
 	/* first draw the playfield opaquely */
 	tilemap_draw(bitmap, cliprect, state->atarigen.playfield_tilemap, TILEMAP_DRAW_OPAQUE, 0);

@@ -1,15 +1,15 @@
 #include "emu.h"
 
 
-UINT8 *wc90b_fgvideoram,*wc90b_bgvideoram,*wc90b_txvideoram;
+uint8_t *wc90b_fgvideoram,*wc90b_bgvideoram,*wc90b_txvideoram;
 
-UINT8 *wc90b_scroll1x;
-UINT8 *wc90b_scroll2x;
+uint8_t *wc90b_scroll1x;
+uint8_t *wc90b_scroll2x;
 
-UINT8 *wc90b_scroll1y;
-UINT8 *wc90b_scroll2y;
+uint8_t *wc90b_scroll1y;
+uint8_t *wc90b_scroll2y;
 
-UINT8 *wc90b_scroll_x_lo;
+uint8_t *wc90b_scroll_x_lo;
 
 static tilemap_t *tx_tilemap,*fg_tilemap,*bg_tilemap;
 
@@ -107,7 +107,7 @@ WRITE8_HANDLER( wc90b_txvideoram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs, sx, sy;
 
 	/* draw all visible sprites of specified priority */

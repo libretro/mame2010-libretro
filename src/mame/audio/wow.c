@@ -112,7 +112,7 @@ READ8_HANDLER( wow_speech_r )
 	int Phoneme/*, Intonation*/;
 	int i = 0;
 
-	UINT8 data = offset >> 8;
+	uint8_t data = offset >> 8;
 	offset &= 0xff;
 
 	totalword_ptr = totalword;

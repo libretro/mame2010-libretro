@@ -4,21 +4,21 @@
 #include "emu.h"
 #include "includes/naomi.h"
 
-static UINT32 des_subkeys[32];
+static uint32_t des_subkeys[32];
 
-static const UINT32 DES_LEFTSWAP[] =
+static const uint32_t DES_LEFTSWAP[] =
 {
   0x00000000, 0x00000001, 0x00000100, 0x00000101, 0x00010000, 0x00010001, 0x00010100, 0x00010101,
   0x01000000, 0x01000001, 0x01000100, 0x01000101, 0x01010000, 0x01010001, 0x01010100, 0x01010101
 };
 
-static const UINT32 DES_RIGHTSWAP[] =
+static const uint32_t DES_RIGHTSWAP[] =
 {
   0x00000000, 0x01000000, 0x00010000, 0x01010000, 0x00000100, 0x01000100, 0x00010100, 0x01010100,
   0x00000001, 0x01000001, 0x00010001, 0x01010001, 0x00000101, 0x01000101, 0x00010101, 0x01010101,
 };
 
-static const UINT32 DES_SBOX1[] =
+static const uint32_t DES_SBOX1[] =
 {
   0x00808200, 0x00000000, 0x00008000, 0x00808202, 0x00808002, 0x00008202, 0x00000002, 0x00008000,
   0x00000200, 0x00808200, 0x00808202, 0x00000200, 0x00800202, 0x00808002, 0x00800000, 0x00000002,
@@ -30,7 +30,7 @@ static const UINT32 DES_SBOX1[] =
   0x00000202, 0x00800200, 0x00800200, 0x00000000, 0x00008002, 0x00008200, 0x00000000, 0x00808002
 };
 
-static const UINT32 DES_SBOX2[] =
+static const uint32_t DES_SBOX2[] =
 {
   0x40084010, 0x40004000, 0x00004000, 0x00084010, 0x00080000, 0x00000010, 0x40080010, 0x40004010,
   0x40000010, 0x40084010, 0x40084000, 0x40000000, 0x40004000, 0x00080000, 0x00000010, 0x40080010,
@@ -42,7 +42,7 @@ static const UINT32 DES_SBOX2[] =
   0x00084000, 0x00000000, 0x40004000, 0x00004010, 0x40000000, 0x40080010, 0x40084010, 0x00084000
 };
 
-static const UINT32 DES_SBOX3[] =
+static const uint32_t DES_SBOX3[] =
 {
   0x00000104, 0x04010100, 0x00000000, 0x04010004, 0x04000100, 0x00000000, 0x00010104, 0x04000100,
   0x00010004, 0x04000004, 0x04000004, 0x00010000, 0x04010104, 0x00010004, 0x04010000, 0x00000104,
@@ -54,7 +54,7 @@ static const UINT32 DES_SBOX3[] =
   0x04010000, 0x04000104, 0x00000104, 0x04010000, 0x00010104, 0x00000004, 0x04010004, 0x00010100
 };
 
-static const UINT32 DES_SBOX4[] =
+static const uint32_t DES_SBOX4[] =
 {
   0x80401000, 0x80001040, 0x80001040, 0x00000040, 0x00401040, 0x80400040, 0x80400000, 0x80001000,
   0x00000000, 0x00401000, 0x00401000, 0x80401040, 0x80000040, 0x00000000, 0x00400040, 0x80400000,
@@ -66,7 +66,7 @@ static const UINT32 DES_SBOX4[] =
   0x80001000, 0x00001040, 0x00400000, 0x80401000, 0x00000040, 0x00400000, 0x00001000, 0x00401040
 };
 
-static const UINT32 DES_SBOX5[] =
+static const uint32_t DES_SBOX5[] =
 {
   0x00000080, 0x01040080, 0x01040000, 0x21000080, 0x00040000, 0x00000080, 0x20000000, 0x01040000,
   0x20040080, 0x00040000, 0x01000080, 0x20040080, 0x21000080, 0x21040000, 0x00040080, 0x20000000,
@@ -78,7 +78,7 @@ static const UINT32 DES_SBOX5[] =
   0x00040080, 0x01000080, 0x20000080, 0x00040000, 0x00000000, 0x20040000, 0x01040080, 0x20000080
 };
 
-static const UINT32 DES_SBOX6[] =
+static const uint32_t DES_SBOX6[] =
 {
   0x10000008, 0x10200000, 0x00002000, 0x10202008, 0x10200000, 0x00000008, 0x10202008, 0x00200000,
   0x10002000, 0x00202008, 0x00200000, 0x10000008, 0x00200008, 0x10002000, 0x10000000, 0x00002008,
@@ -90,7 +90,7 @@ static const UINT32 DES_SBOX6[] =
   0x00002000, 0x00200008, 0x10002008, 0x00000000, 0x10202000, 0x10000000, 0x00200008, 0x10002008
 };
 
-static const UINT32 DES_SBOX7[] =
+static const uint32_t DES_SBOX7[] =
 {
   0x00100000, 0x02100001, 0x02000401, 0x00000000, 0x00000400, 0x02000401, 0x00100401, 0x02100400,
   0x02100401, 0x00100000, 0x00000000, 0x02000001, 0x00000001, 0x02000000, 0x02100001, 0x00000401,
@@ -102,7 +102,7 @@ static const UINT32 DES_SBOX7[] =
   0x00000000, 0x00100401, 0x02100000, 0x00000400, 0x02000001, 0x02000400, 0x00000400, 0x00100001
 };
 
-static const UINT32 DES_SBOX8[] =
+static const uint32_t DES_SBOX8[] =
 {
   0x08000820, 0x00000800, 0x00020000, 0x08020820, 0x08000000, 0x08000820, 0x00000020, 0x08000000,
   0x00020020, 0x08020000, 0x08020820, 0x00020800, 0x08020800, 0x00020820, 0x00000800, 0x00000020,
@@ -114,7 +114,7 @@ static const UINT32 DES_SBOX8[] =
   0x08020820, 0x00020800, 0x00020800, 0x00000820, 0x00000820, 0x00020020, 0x08000000, 0x08020800
 };
 
-static const UINT32 DES_MASK_TABLE[] =
+static const uint32_t DES_MASK_TABLE[] =
 {
 	0x24000000, 0x10000000, 0x08000000, 0x02080000, 0x01000000,
 	0x00200000, 0x00100000, 0x00040000, 0x00020000, 0x00010000,
@@ -127,24 +127,24 @@ static const UINT32 DES_MASK_TABLE[] =
 	0x00000020, 0x00000011, 0x00000004, 0x00000002
 };
 
-static const UINT8 DES_ROTATE_TABLE[16] =
+static const uint8_t DES_ROTATE_TABLE[16] =
 {
   1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
 };
 
 
-INLINE void permutate(UINT32*a, UINT32*b, UINT32 m, int shift)
+INLINE void permutate(uint32_t*a, uint32_t*b, uint32_t m, int shift)
 {
-	UINT32 temp;
+	uint32_t temp;
     temp = ((*a>>shift) ^ *b) & m;
     *a ^= temp<<shift;
     *b ^= temp;
 }
 
 
-static void des_generate_subkeys(const UINT64 key, UINT32 *subkeys)
+static void des_generate_subkeys(const uint64_t key, uint32_t *subkeys)
 {
-	UINT32 l, r;
+	uint32_t l, r;
 	int round;
 
 	l  = (key & 0xffffffff00000000ULL)>>32;
@@ -231,10 +231,10 @@ static void des_generate_subkeys(const UINT64 key, UINT32 *subkeys)
 }
 
 
-static UINT64 des_encrypt_decrypt(int decrypt, UINT64 ret)
+static uint64_t des_encrypt_decrypt(int decrypt, uint64_t ret)
 {
-	UINT32 l;
-	UINT32 r;
+	uint32_t l;
+	uint32_t r;
 	int i;
 	int subkey;
 
@@ -252,7 +252,7 @@ static UINT64 des_encrypt_decrypt(int decrypt, UINT64 ret)
 
 	for (i = 0; i < 32 ; i+=4)
 	{
-		UINT32 temp;
+		uint32_t temp;
 
     	temp = ((r<<1) | (r>>31)) ^ des_subkeys[subkey];
     	l ^= DES_SBOX8[ (temp>>0)  & 0x3f ];
@@ -291,12 +291,12 @@ static UINT64 des_encrypt_decrypt(int decrypt, UINT64 ret)
 	permutate(&r, &l,  0x0000ffff, 16);
 	permutate(&r, &l,  0x0f0f0f0f, 4);
 
-	return ((UINT64)r << 32) | ((UINT64)l);
+	return ((uint64_t)r << 32) | ((uint64_t)l);
 }
 
-static UINT64 rev64(UINT64 src)
+static uint64_t rev64(uint64_t src)
 {
-	UINT64 ret;
+	uint64_t ret;
 
 	ret = ((src & 0x00000000000000ffULL) << 56)
 	    | ((src & 0x000000000000ff00ULL) << 40)
@@ -310,22 +310,22 @@ static UINT64 rev64(UINT64 src)
 	return ret;
 }
 
-static UINT64 read_to_qword(UINT8* region)
+static uint64_t read_to_qword(uint8_t* region)
 {
 	int i;
-	UINT64 ret = 0;
+	uint64_t ret = 0;
 
 	for (i=0;i<8;i++)
 	{
-		UINT8 byte = region[i];
-		ret += (UINT64)byte << (56-(8*i));
+		uint8_t byte = region[i];
+		ret += (uint64_t)byte << (56-(8*i));
 	}
 
 	return ret;
 }
 
 
-static void write_from_qword(UINT8* region, UINT64 qword)
+static void write_from_qword(uint8_t* region, uint64_t qword)
 {
 	int i;
 	for (i=0;i<8;i++)
@@ -334,7 +334,7 @@ static void write_from_qword(UINT8* region, UINT64 qword)
 	}
 }
 
-void naomi_game_decrypt(running_machine* machine, UINT64 key, UINT8* region, int length)
+void naomi_game_decrypt(running_machine* machine, uint64_t key, uint8_t* region, int length)
 {
 	int i;
 
@@ -357,7 +357,7 @@ void naomi_game_decrypt(running_machine* machine, UINT64 key, UINT8* region, int
 
 	for(i=0;i<length;i+=8)
 	{
-		UINT64 ret;
+		uint64_t ret;
 		ret = read_to_qword(region+i);
 		ret = rev64(ret);
 		ret = des_encrypt_decrypt(1, ret);

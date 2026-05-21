@@ -107,7 +107,7 @@ PALETTE_INIT( travrusa )
 	/* sprites */
 	for (i = 0x80; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
+		uint8_t ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -182,7 +182,7 @@ PALETTE_INIT( shtrider )
 	/* sprites */
 	for (i = 0x80; i < 0x100; i++)
 	{
-		UINT8 ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
+		uint8_t ctabentry = (color_prom[i - 0x80] & 0x0f) | 0x80;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -198,7 +198,7 @@ PALETTE_INIT( shtrider )
 static TILE_GET_INFO( get_tile_info )
 {
 	irem_z80_state *state = (irem_z80_state *)machine->driver_data;
-	UINT8 attr = state->videoram[2 * tile_index + 1];
+	uint8_t attr = state->videoram[2 * tile_index + 1];
 	int flags = TILE_FLIPXY((attr & 0x30) >> 4);
 
 	tileinfo->group = ((attr & 0x0f) == 0x0f) ? 1 : 0;	/* tunnels */

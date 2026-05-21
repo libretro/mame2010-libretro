@@ -8,11 +8,11 @@ Atari Triple Hunt video emulation
 #include "includes/triplhnt.h"
 
 
-UINT8* triplhnt_playfield_ram;
-UINT8* triplhnt_hpos_ram;
-UINT8* triplhnt_vpos_ram;
-UINT8* triplhnt_code_ram;
-UINT8* triplhnt_orga_ram;
+uint8_t* triplhnt_playfield_ram;
+uint8_t* triplhnt_hpos_ram;
+uint8_t* triplhnt_vpos_ram;
+uint8_t* triplhnt_code_ram;
+uint8_t* triplhnt_orga_ram;
 
 int triplhnt_sprite_zoom;
 int triplhnt_sprite_bank;

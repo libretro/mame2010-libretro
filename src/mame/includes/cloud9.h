@@ -12,26 +12,26 @@ public:
 	cloud9_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     videoram;
-	UINT8 *     spriteram;
-	UINT8 *     paletteram;
-//  UINT8 *     nvram_stage;    // currently this uses generic nvram handlers
-//  UINT8 *     nvram;      // currently this uses generic nvram handlers
+	uint8_t *     videoram;
+	uint8_t *     spriteram;
+	uint8_t *     paletteram;
+//  uint8_t *     nvram_stage;    // currently this uses generic nvram handlers
+//  uint8_t *     nvram;      // currently this uses generic nvram handlers
 
 	/* video-related */
-	const UINT8 *syncprom;
-	const UINT8 *wpprom;
-	const UINT8 *priprom;
+	const uint8_t *syncprom;
+	const uint8_t *wpprom;
+	const uint8_t *priprom;
 	bitmap_t    *spritebitmap;
 	double      rweights[3], gweights[3], bweights[3];
-	UINT8       video_control[8];
-	UINT8       bitmode_addr[2];
+	uint8_t       video_control[8];
+	uint8_t       bitmode_addr[2];
 
 	/* misc */
 	int         vblank_start;
 	int         vblank_end;
 	emu_timer   *irq_timer;
-	UINT8       irq_state;
+	uint8_t       irq_state;
 
 	/* devices */
 	running_device *maincpu;

@@ -8,21 +8,21 @@
 
 #define MAX_CG_BOARDS	2
 
-static UINT32 dsp_comm_ppc[MAX_CG_BOARDS][2];
-static UINT32 dsp_comm_sharc[MAX_CG_BOARDS][2];
-static UINT8 dsp_shared_ram_bank[MAX_CG_BOARDS];
+static uint32_t dsp_comm_ppc[MAX_CG_BOARDS][2];
+static uint32_t dsp_comm_sharc[MAX_CG_BOARDS][2];
+static uint8_t dsp_shared_ram_bank[MAX_CG_BOARDS];
 
-static INT32 cgboard_id;
-static INT32 cgboard_type;
-static INT32 num_cgboards;
+static int32_t cgboard_id;
+static int32_t cgboard_type;
+static int32_t num_cgboards;
 
-static UINT32 *dsp_shared_ram[MAX_CG_BOARDS];
+static uint32_t *dsp_shared_ram[MAX_CG_BOARDS];
 
 #define DSP_BANK_SIZE			0x10000
 #define DSP_BANK_SIZE_WORD		(DSP_BANK_SIZE / 4)
 
-static UINT32 dsp_state[MAX_CG_BOARDS];
-static UINT32 nwk_device_sel[MAX_CG_BOARDS];
+static uint32_t dsp_state[MAX_CG_BOARDS];
+static uint32_t nwk_device_sel[MAX_CG_BOARDS];
 static const char *texture_bank[MAX_CG_BOARDS];
 
 static int nwk_fifo_half_full_r;
@@ -31,11 +31,11 @@ static int nwk_fifo_full;
 static int nwk_fifo_mask;
 
 
-static UINT32 *nwk_fifo[MAX_CG_BOARDS];
-static INT32 nwk_fifo_read_ptr[MAX_CG_BOARDS];
-static INT32 nwk_fifo_write_ptr[MAX_CG_BOARDS];
+static uint32_t *nwk_fifo[MAX_CG_BOARDS];
+static int32_t nwk_fifo_read_ptr[MAX_CG_BOARDS];
+static int32_t nwk_fifo_write_ptr[MAX_CG_BOARDS];
 
-static UINT32 *nwk_ram[MAX_CG_BOARDS];
+static uint32_t *nwk_ram[MAX_CG_BOARDS];
 
 /*****************************************************************************/
 
@@ -47,7 +47,7 @@ void init_konami_cgboard(running_machine *machine, int num_boards, int type)
 	for (i=0; i < num_boards; i++)
 	{
 		dsp_comm_ppc[i][0] = 0x00;
-		dsp_shared_ram[i] = auto_alloc_array(machine, UINT32, DSP_BANK_SIZE * 2/4);
+		dsp_shared_ram[i] = auto_alloc_array(machine, uint32_t, DSP_BANK_SIZE * 2/4);
 		dsp_shared_ram_bank[i] = 0;
 
 		dsp_state[i] = 0x80;
@@ -57,8 +57,8 @@ void init_konami_cgboard(running_machine *machine, int num_boards, int type)
 		nwk_fifo_read_ptr[i] = 0;
 		nwk_fifo_write_ptr[i] = 0;
 
-		nwk_fifo[i] = auto_alloc_array(machine, UINT32, 0x800);
-		nwk_ram[i] = auto_alloc_array(machine, UINT32, 0x2000);
+		nwk_fifo[i] = auto_alloc_array(machine, uint32_t, 0x800);
+		nwk_ram[i] = auto_alloc_array(machine, uint32_t, 0x2000);
 
 		state_save_register_item_array(machine, "konppc", NULL, i, dsp_comm_ppc[i]);
 		state_save_register_item_array(machine, "konppc", NULL, i, dsp_comm_sharc[i]);
@@ -114,7 +114,7 @@ int get_cgboard_id(void)
 	}
 }
 
-void set_cgboard_texture_bank(running_machine *machine, int board, const char *bank, UINT8 *rom)
+void set_cgboard_texture_bank(running_machine *machine, int board, const char *bank, uint8_t *rom)
 {
 	texture_bank[board] = bank;
 
@@ -207,12 +207,12 @@ WRITE32_HANDLER( cgboard_dsp_shared_w_ppc )
 
 /* CG Board DSP interface for SHARC */
 
-static UINT32 dsp_comm_sharc_r(int board, int offset)
+static uint32_t dsp_comm_sharc_r(int board, int offset)
 {
 	return dsp_comm_ppc[board][offset];
 }
 
-static void dsp_comm_sharc_w(const address_space *space, int board, int offset, UINT32 data)
+static void dsp_comm_sharc_w(const address_space *space, int board, int offset, uint32_t data)
 {
 	if (offset >= 2)
 	{
@@ -280,9 +280,9 @@ static void dsp_comm_sharc_w(const address_space *space, int board, int offset, 
 	dsp_comm_sharc[board][offset] = data;
 }
 
-static UINT32 dsp_shared_ram_r_sharc(int board, int offset)
+static uint32_t dsp_shared_ram_r_sharc(int board, int offset)
 {
-//  printf("dsp_shared_r: (board %d) %08X, (%08X, %08X)\n", cgboard_id, offset, (UINT32)dsp_shared_ram[(offset >> 1)], (UINT32)dsp_shared_ram[offset]);
+//  printf("dsp_shared_r: (board %d) %08X, (%08X, %08X)\n", cgboard_id, offset, (uint32_t)dsp_shared_ram[(offset >> 1)], (uint32_t)dsp_shared_ram[offset]);
 
 	if (offset & 0x1)
 	{
@@ -294,7 +294,7 @@ static UINT32 dsp_shared_ram_r_sharc(int board, int offset)
 	}
 }
 
-static void dsp_shared_ram_w_sharc(int board, int offset, UINT32 data)
+static void dsp_shared_ram_w_sharc(int board, int offset, uint32_t data)
 {
 //  printf("dsp_shared_w: (board %d) %08X, %08X\n", cgboard_id, offset, data);
 	if (offset & 0x1)
@@ -351,11 +351,11 @@ WRITE32_HANDLER( cgboard_1_shared_sharc_w )
 
 /*****************************************************************************/
 
-static UINT32 nwk_fifo_r(const address_space *space, int board)
+static uint32_t nwk_fifo_r(const address_space *space, int board)
 {
 	const char *dsptag = (board == 0) ? "dsp" : "dsp2";
 	running_device *device = space->machine->device(dsptag);
-	UINT32 data;
+	uint32_t data;
 
 	if (nwk_fifo_read_ptr[board] < nwk_fifo_half_full_r)
 	{
@@ -382,7 +382,7 @@ static UINT32 nwk_fifo_r(const address_space *space, int board)
 	return data;
 }
 
-static void nwk_fifo_w(running_machine *machine, int board, UINT32 data)
+static void nwk_fifo_w(running_machine *machine, int board, uint32_t data)
 {
 	const char *dsptag = (board == 0) ? "dsp" : "dsp2";
 	running_device *device = machine->device(dsptag);
@@ -535,7 +535,7 @@ WRITE32_DEVICE_HANDLER(nwk_voodoo_1_w)
 
 #define LED_ON		0xff00ff00
 
-void draw_7segment_led(bitmap_t *bitmap, int x, int y, UINT8 value)
+void draw_7segment_led(bitmap_t *bitmap, int x, int y, uint8_t value)
 {
 	if ((value & 0x7f) == 0x7f)
 	{

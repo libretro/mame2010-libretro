@@ -56,7 +56,7 @@ VIDEO_START( chqflag )
 {
 	chqflag_state *state = (chqflag_state *)machine->driver_data;
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x800);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x800);
 
 	state->sprite_colorbase = 0;
 	state->zoom_colorbase[0] = 0x10;

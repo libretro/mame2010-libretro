@@ -16,16 +16,16 @@ public:
 	trackfld_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;	// trackfld, hyperspt, yiear, sbasketb
-	UINT8 *  colorram;	// trackfld, hyperspt, sbasketb
-	UINT8 *  scroll;		// trackfld, hyperspt
-	UINT8 *  scroll2;		// trackfld
-	UINT8 *  spriteram;
-	UINT8 *  spriteram2;
-//  UINT8 *  nvram;     // currently this uses generic nvram handling (trackfld & hyperspt)
+	uint8_t *  videoram;	// trackfld, hyperspt, yiear, sbasketb
+	uint8_t *  colorram;	// trackfld, hyperspt, sbasketb
+	uint8_t *  scroll;		// trackfld, hyperspt
+	uint8_t *  scroll2;		// trackfld
+	uint8_t *  spriteram;
+	uint8_t *  spriteram2;
+//  uint8_t *  nvram;     // currently this uses generic nvram handling (trackfld & hyperspt)
 	size_t   spriteram_size;
-	UINT8 *  palettebank;		// sbasketb
-	UINT8 *  spriteram_select;	// sbasketb
+	uint8_t *  palettebank;		// sbasketb
+	uint8_t *  spriteram_select;	// sbasketb
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
@@ -39,9 +39,9 @@ public:
 	int      last_irq;
 
 	/* game specific */
-	UINT8    hyprolyb_adpcm_ready;	// only bootlegs
-	UINT8    hyprolyb_adpcm_busy;
-	UINT8    hyprolyb_vck_ready;
+	uint8_t    hyprolyb_adpcm_ready;	// only bootlegs
+	uint8_t    hyprolyb_adpcm_busy;
+	uint8_t    hyprolyb_vck_ready;
 	int      yiear_nmi_enable;		// yiear
 
 	/* devices */

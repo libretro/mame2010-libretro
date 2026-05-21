@@ -5,11 +5,11 @@ public:
 
 	silkroad_state(running_machine &machine) { }
 
-	UINT32 *vidram;
-	UINT32 *vidram2;
-	UINT32 *vidram3;
-	UINT32 *sprram;
-	UINT32 *regs;
+	uint32_t *vidram;
+	uint32_t *vidram2;
+	uint32_t *vidram3;
+	uint32_t *sprram;
+	uint32_t *regs;
 	tilemap_t *fg_tilemap;
 	tilemap_t *fg2_tilemap;
 	tilemap_t *fg3_tilemap;

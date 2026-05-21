@@ -1,9 +1,9 @@
 #include "emu.h"
 
 
-UINT16 *pirates_tx_tileram, *pirates_spriteram;
-UINT16 *pirates_fg_tileram,  *pirates_bg_tileram;
-UINT16 *pirates_scroll;
+uint16_t *pirates_tx_tileram, *pirates_spriteram;
+uint16_t *pirates_fg_tileram,  *pirates_bg_tileram;
+uint16_t *pirates_scroll;
 
 static tilemap_t *tx_tilemap, *fg_tilemap, *bg_tilemap;
 
@@ -75,8 +75,8 @@ WRITE16_HANDLER( pirates_bg_tileram_w )
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	const gfx_element *gfx = machine->gfx[1];
-	UINT16 *source = pirates_spriteram + 4;
-	UINT16 *finish = source + 0x800/2-4;
+	uint16_t *source = pirates_spriteram + 4;
+	uint16_t *finish = source + 0x800/2-4;
 
 	while( source<finish )
 	{

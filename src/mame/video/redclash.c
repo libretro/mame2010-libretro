@@ -78,14 +78,14 @@ PALETTE_INIT( redclash )
 	/* characters */
 	for (i = 0; i < 0x20; i++)
 	{
-		UINT8 ctabentry = ((i << 3) & 0x18) | ((i >> 2) & 0x07);
+		uint8_t ctabentry = ((i << 3) & 0x18) | ((i >> 2) & 0x07);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
 	/* sprites */
 	for (i = 0x20; i < 0x40; i++)
 	{
-		UINT8 ctabentry = color_prom[(i - 0x20) >> 1];
+		uint8_t ctabentry = color_prom[(i - 0x20) >> 1];
 
 		ctabentry = BITSWAP8((color_prom[i - 0x20] >> 0) & 0x0f, 7,6,5,4,0,1,2,3);
 		colortable_entry_set_value(machine->colortable, i + 0x00, ctabentry);
@@ -123,8 +123,8 @@ WRITE8_HANDLER( redclash_flipscreen_w )
 	flip_screen_set(space->machine, data & 0x01);
 }
 
-void redclash_set_stars_enable( running_machine *machine, UINT8 on ); //temp
-void redclash_set_stars_speed( running_machine *machine, UINT8 speed );  //temp
+void redclash_set_stars_enable( running_machine *machine, uint8_t on ); //temp
+void redclash_set_stars_speed( running_machine *machine, uint8_t speed );  //temp
 
 /*
 star_speed:
@@ -186,7 +186,7 @@ VIDEO_START( redclash )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	ladybug_state *state = (ladybug_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int i, offs;
 
 	for (offs = state->spriteram_size - 0x20; offs >= 0; offs -= 0x20)
@@ -303,7 +303,7 @@ static void draw_bullets( running_machine *machine, bitmap_t *bitmap, const rect
  */
 
 /* This line can reset the LFSR to zero and disables the star generator */
-void redclash_set_stars_enable( running_machine *machine, UINT8 on )
+void redclash_set_stars_enable( running_machine *machine, uint8_t on )
 {	ladybug_state *state = (ladybug_state *)machine->driver_data;
 
 	if ((state->stars_enable == 0) && (on == 1))
@@ -349,7 +349,7 @@ void redclash_update_stars_state( running_machine *machine )
  * 7 right/up fast     (+5/2 pix per frame)
  */
 
-void redclash_set_stars_speed( running_machine *machine, UINT8 speed )
+void redclash_set_stars_speed( running_machine *machine, uint8_t speed )
 {
 	ladybug_state *state = (ladybug_state *)machine->driver_data;
 	state->stars_speed = speed;
@@ -360,13 +360,13 @@ void redclash_set_stars_speed( running_machine *machine, UINT8 speed )
 /* Space Raider doesn't use the Va bit, and it is also set up to */
 /* window the stars to a certain x range */
 
-void redclash_draw_stars( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 palette_offset, UINT8 sraider, UINT8 firstx, UINT8 lastx )
+void redclash_draw_stars( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t palette_offset, uint8_t sraider, uint8_t firstx, uint8_t lastx )
 {
 	ladybug_state *redclash = (ladybug_state *)machine->driver_data;
 	int i;
-	UINT8 tempbit, feedback, star_color, xloc, yloc;
-	UINT32 state;
-	UINT8 hcond, vcond;
+	uint8_t tempbit, feedback, star_color, xloc, yloc;
+	uint32_t state;
+	uint8_t hcond, vcond;
 
 	if (redclash->stars_enable == 0)
 		return;

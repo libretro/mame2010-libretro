@@ -6,7 +6,7 @@
 
 /*----------- defined in machine/segag80.c -----------*/
 
-extern UINT8 (*sega_decrypt)(offs_t, UINT8);
+extern uint8_t (*sega_decrypt)(offs_t, uint8_t);
 
 void sega_security(int chip);
 
@@ -31,7 +31,7 @@ WRITE8_HANDLER( spaceod_sound_w );
 #define G80_BACKGROUND_PIGNEWT		3
 #define G80_BACKGROUND_SINDBADM		4
 
-extern UINT8 segag80r_background_pcb;
+extern uint8_t segag80r_background_pcb;
 
 INTERRUPT_GEN( segag80r_vblank_start );
 

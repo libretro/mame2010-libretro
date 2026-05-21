@@ -189,8 +189,8 @@ static void draw_sprites(running_machine *machine, grchamp_state *state, bitmap_
 {
 	const gfx_element *gfx = machine->gfx[5];
 	int bank = (state->cpu0_out[0] & 0x20) ? 0x40 : 0x00;
-	const UINT8 *source = state->spriteram + 0x40;
-	const UINT8 *finish = source + 0x40;
+	const uint8_t *source = state->spriteram + 0x40;
+	const uint8_t *finish = source + 0x40;
 
 	while (source < finish)
 	{
@@ -211,7 +211,7 @@ static void draw_sprites(running_machine *machine, grchamp_state *state, bitmap_
 #endif
 
 
-static void draw_objects(running_machine *machine, grchamp_state *state, int y, UINT8 *objdata)
+static void draw_objects(running_machine *machine, grchamp_state *state, int y, uint8_t *objdata)
 {
 /*
     CPU 5/7:
@@ -248,7 +248,7 @@ static void draw_objects(running_machine *machine, grchamp_state *state, int y, 
 
 
 */
-	const UINT8 *prom = memory_region(machine, "proms") + 0x20;
+	const uint8_t *prom = memory_region(machine, "proms") + 0x20;
 	const gfx_element *gfx;
 	int change = (state->cpu0_out[0] & 0x20) << 3;
 	int num;
@@ -281,7 +281,7 @@ static void draw_objects(running_machine *machine, grchamp_state *state, int y, 
 			int code = (codeflip & 0x3f) + (change >> 2);
 			int yflip = (codeflip & 0x80) ? 0x0f : 0x00;
 			int xflip = (codeflip & 0x40) ? 0x0f : 0x00;
-			const UINT8 *src = gfx_element_get_data(gfx, code) + ((dy ^ yflip) & 15) * gfx->line_modulo;
+			const uint8_t *src = gfx_element_get_data(gfx, code) + ((dy ^ yflip) & 15) * gfx->line_modulo;
 
 			/* the third byte is: color in bits 0-2 */
 			int color = (state->spriteram[0x42 + (dataoffs & ~0x20)] & 0x07) << 2;
@@ -325,7 +325,7 @@ static void draw_objects(running_machine *machine, grchamp_state *state, int y, 
 		int dy = sy + ~y;
 		int color = (state->spriteram[0x01 + dataoffs] & 0x07) << 2;
 		int code = state->videoram[hprime | ((dy & 0xf8) << 2)] + change;
-		const UINT8 *src = gfx_element_get_data(gfx, code) + (dy & 7) * gfx->line_modulo;
+		const uint8_t *src = gfx_element_get_data(gfx, code) + (dy & 7) * gfx->line_modulo;
 		int x;
 
 		/* draw 8 pixels */
@@ -367,9 +367,9 @@ VIDEO_UPDATE( grchamp )
 	};
 
 	grchamp_state *state = (grchamp_state *)screen->machine->driver_data;
-	const UINT8 *amedata = memory_region(screen->machine, "gfx5");
-	const UINT8 *headdata = memory_region(screen->machine, "gfx6");
-	const UINT8 *pldata = memory_region(screen->machine, "gfx7");
+	const uint8_t *amedata = memory_region(screen->machine, "gfx5");
+	const uint8_t *headdata = memory_region(screen->machine, "gfx6");
+	const uint8_t *pldata = memory_region(screen->machine, "gfx7");
 	bitmap_t *lpixmap = tilemap_get_pixmap(state->left_tilemap);
 	bitmap_t *rpixmap = tilemap_get_pixmap(state->right_tilemap);
 	bitmap_t *cpixmap = tilemap_get_pixmap(state->center_tilemap);
@@ -403,10 +403,10 @@ VIDEO_UPDATE( grchamp )
 
 		/* get source/dest pointers */
 		/* the Y counter starts counting when VBLANK goes to 0, which is at Y=16 */
-		UINT16 *lrsrc = (UINT16 *)lrpixmap->base + ((lryscroll + y - 16) & 0xff) * lrpixmap->rowpixels;
-		UINT16 *csrc = (UINT16 *)cpixmap->base + ((cyscroll + y - 16) & 0xff) * cpixmap->rowpixels;
-		UINT32 *dest = (UINT32 *)bitmap->base + y * bitmap->rowpixels;
-		UINT8 objdata[256];
+		uint16_t *lrsrc = (uint16_t *)lrpixmap->base + ((lryscroll + y - 16) & 0xff) * lrpixmap->rowpixels;
+		uint16_t *csrc = (uint16_t *)cpixmap->base + ((cyscroll + y - 16) & 0xff) * cpixmap->rowpixels;
+		uint32_t *dest = (uint32_t *)bitmap->base + y * bitmap->rowpixels;
+		uint8_t objdata[256];
 
 		/* draw the objects for this scanline */
 		draw_objects(screen->machine, state, y, objdata);

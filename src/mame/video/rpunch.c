@@ -20,17 +20,17 @@
  *
  *************************************/
 
-UINT16 *rpunch_bitmapram;
+uint16_t *rpunch_bitmapram;
 size_t rpunch_bitmapram_size;
 
 int rpunch_sprite_palette;
 
 static tilemap_t *background[2];
 
-static UINT16 videoflags;
-static UINT8 crtc_register;
+static uint16_t videoflags;
+static uint8_t crtc_register;
 static emu_timer *crtc_timer;
-static UINT8 bins, gins;
+static uint8_t bins, gins;
 
 
 /*************************************
@@ -208,7 +208,7 @@ WRITE16_HANDLER( rpunch_ins_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int start, int stop)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	start *= 4;

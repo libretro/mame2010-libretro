@@ -56,7 +56,7 @@ void generate_key(int seed)
     {
         if ("we must encrypt this data table position")
         {
-            UINT8 byteval;
+            uint8_t byteval;
 
             do
             {
@@ -78,7 +78,7 @@ void generate_key(int seed)
     {
         if ("we mustn't encrypt this data table position")
         {
-            UINT8 byteval;
+            uint8_t byteval;
 
             do
             {
@@ -129,7 +129,7 @@ struct parameters
 	int s7,s6,s5,s4,s3,s2,s1,s0;
 };
 
-static const UINT8 basetable_fd1089[0x100] =
+static const uint8_t basetable_fd1089[0x100] =
 {
 	0x00,0x1c,0x76,0x6a,0x5e,0x42,0x24,0x38,0x4b,0x67,0xad,0x81,0xe9,0xc5,0x03,0x2f,
 	0x45,0x69,0xaf,0x83,0xe7,0xcb,0x01,0x2d,0x02,0x1e,0x78,0x64,0x5c,0x40,0x2a,0x36,
@@ -171,7 +171,7 @@ static const struct parameters addr_params[16] =
 	{ 0x5b, 0,7,5,3,1,4,2,6 },
 };
 
-static UINT8 rearrange_key(UINT8 table, int opcode)
+static uint8_t rearrange_key(uint8_t table, int opcode)
 {
 	if (opcode == 0)
 	{
@@ -366,7 +366,7 @@ enum
 	FD1089B
 };
 
-static UINT16 fd1089_decrypt(offs_t addr,UINT16 val,const UINT8 *key,int opcode,int cputype)
+static uint16_t fd1089_decrypt(offs_t addr,uint16_t val,const uint8_t *key,int opcode,int cputype)
 {
 	int tbl_num,src;
 
@@ -395,27 +395,27 @@ static UINT16 fd1089_decrypt(offs_t addr,UINT16 val,const UINT8 *key,int opcode,
 	return (val & ~0xfc48) | src;
 }
 
-static UINT16 *decrypted;
+static uint16_t *decrypted;
 
 static void clear_decrypted(running_machine &machine)
 {
 	decrypted = NULL;
 }
 
-static void sys16_decrypt(running_machine *machine, const UINT8 *key,int cputype)
+static void sys16_decrypt(running_machine *machine, const uint8_t *key,int cputype)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
 	int A;
-	decrypted = auto_alloc_array(machine, UINT16, size/2);
+	decrypted = auto_alloc_array(machine, uint16_t, size/2);
 
 	machine->add_notifier(MACHINE_NOTIFY_EXIT, clear_decrypted);
 	memory_set_decrypted_region(space, 0x000000, size - 1, decrypted);
 
 	for (A = 0;A < size;A+=2)
 	{
-		UINT16 src = rom[A/2];
+		uint16_t src = rom[A/2];
 
 		/* decode the opcodes */
 		decrypted[A/2] = fd1089_decrypt(A,src,key,1,cputype);

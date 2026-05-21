@@ -29,14 +29,14 @@ static TILE_GET_INFO( get_bg_tile_info )
 	blktiger_state *state = (blktiger_state *)machine->driver_data;
 	/* the tile priority table is a guess compiled by looking at the game. It
        was not derived from a PROM so it could be wrong. */
-	static const UINT8 split_table[16] =
+	static const uint8_t split_table[16] =
 	{
 		3,3,0,0,
 		0,0,0,0,
 		0,0,0,0,
 		0,0,0,0
 	};
-	UINT8 attr = state->scroll_ram[2 * tile_index + 1];
+	uint8_t attr = state->scroll_ram[2 * tile_index + 1];
 	int color = (attr & 0x78) >> 3;
 	SET_TILE_INFO(
 			1,
@@ -49,7 +49,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_tx_tile_info )
 {
 	blktiger_state *state = (blktiger_state *)machine->driver_data;
-	UINT8 attr = state->txvideoram[tile_index + 0x400];
+	uint8_t attr = state->txvideoram[tile_index + 0x400];
 	SET_TILE_INFO(
 			0,
 			state->txvideoram[tile_index] + ((attr & 0xe0) << 3),
@@ -68,7 +68,7 @@ VIDEO_START( blktiger )
 {
 	blktiger_state *state = (blktiger_state *)machine->driver_data;
 
-	state->scroll_ram = auto_alloc_array(machine, UINT8, BGRAM_BANK_SIZE * BGRAM_BANKS);
+	state->scroll_ram = auto_alloc_array(machine, uint8_t, BGRAM_BANK_SIZE * BGRAM_BANKS);
 
 	state->tx_tilemap =    tilemap_create(machine, get_tx_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 	state->bg_tilemap8x4 = tilemap_create(machine, get_bg_tile_info, bg8x4_scan, 16, 16, 128, 64);
@@ -197,7 +197,7 @@ WRITE8_HANDLER( blktiger_screen_layout_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 //  blktiger_state *state = (blktiger_state *)machine->driver_data;
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	int offs;
 
 	/* Draw the sprites. */

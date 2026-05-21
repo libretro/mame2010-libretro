@@ -12,13 +12,13 @@ public:
 	blockout_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 * videoram;
-	UINT16 * frontvideoram;
-	UINT16 * paletteram;
+	uint16_t * videoram;
+	uint16_t * frontvideoram;
+	uint16_t * paletteram;
 
 	/* video-related */
 	bitmap_t *tmpbitmap;
-	UINT16   color;
+	uint16_t   color;
 
 	/* devices */
 	running_device *audiocpu;

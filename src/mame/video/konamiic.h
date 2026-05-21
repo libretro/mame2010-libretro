@@ -7,14 +7,14 @@ void konami_rom_deinterleave_4(running_machine *machine, const char *mem_region)
 
 
 #define MAX_K007121 2
-extern UINT8 K007121_ctrlram[MAX_K007121][8];
+extern uint8_t K007121_ctrlram[MAX_K007121][8];
 
 void K007121_ctrl_w(running_machine *machine, int chip,int offset,int data);
 WRITE8_HANDLER( K007121_ctrl_0_w );
 WRITE8_HANDLER( K007121_ctrl_1_w );
 void K007121_sprites_draw(int chip,bitmap_t *bitmap,const rectangle *cliprect, gfx_element **gfxs, colortable_t *ctable,
-						  const UINT8 *source,int base_color,
-						  int global_x_offset,int bank_base, UINT32 pri_mask);
+						  const uint8_t *source,int base_color,
+						  int global_x_offset,int bank_base, uint32_t pri_mask);
 
 
 void K007342_vh_start(running_machine *machine, int gfx_index, void (*callback)(int layer,int bank,int *code,int *color,int *flags));
@@ -25,7 +25,7 @@ WRITE8_HANDLER( K007342_scroll_w );
 void K007342_tilemap_update(void);
 WRITE8_HANDLER( K007342_vreg_w );
 void K007342_tilemap_set_enable(int layer, int enable);
-void K007342_tilemap_draw(bitmap_t *bitmap,const rectangle *cliprect,int num,int flags,UINT32 priority);
+void K007342_tilemap_draw(bitmap_t *bitmap,const rectangle *cliprect,int num,int flags,uint32_t priority);
 int K007342_is_INT_enabled(void);
 
 
@@ -179,7 +179,7 @@ void K053247_set_SpriteOffset(int offsx, int offsy);
 void K053247_wraparound_enable(int status);
 void K05324x_set_z_rejection(int zcode); // common to K053245/6/7
 #endif
-void K053247_export_config(UINT16 **ram, gfx_element **gfx, void (**callback)(int *, int *, int *), int *dx, int *dy);
+void K053247_export_config(uint16_t **ram, gfx_element **gfx, void (**callback)(int *, int *, int *), int *dx, int *dy);
 
 #ifdef UNUSED_FUNCTION
 READ8_HANDLER( K053246_r );
@@ -229,19 +229,19 @@ READ8_HANDLER( K051316_rom_2_r );
 WRITE8_HANDLER( K051316_ctrl_0_w );
 WRITE8_HANDLER( K051316_ctrl_1_w );
 WRITE8_HANDLER( K051316_ctrl_2_w );
-void K051316_zoom_draw_0(bitmap_t *bitmap,const rectangle *cliprect,int flags,UINT32 priority);
-void K051316_zoom_draw_1(bitmap_t *bitmap,const rectangle *cliprect,int flags,UINT32 priority);
-void K051316_zoom_draw_2(bitmap_t *bitmap,const rectangle *cliprect,int flags,UINT32 priority);
+void K051316_zoom_draw_0(bitmap_t *bitmap,const rectangle *cliprect,int flags,uint32_t priority);
+void K051316_zoom_draw_1(bitmap_t *bitmap,const rectangle *cliprect,int flags,uint32_t priority);
+void K051316_zoom_draw_2(bitmap_t *bitmap,const rectangle *cliprect,int flags,uint32_t priority);
 void K051316_wraparound_enable(int chip, int status);
 void K051316_set_offset(int chip, int xoffs, int yoffs);
 #endif
 
 
-extern UINT16 *K053936_0_ctrl,*K053936_0_linectrl;
-extern UINT16 *K053936_1_ctrl,*K053936_1_linectrl;
-void K053936_0_zoom_draw(bitmap_t *bitmap,const rectangle *cliprect,tilemap_t *tmap,int flags,UINT32 priority, int glfgreat_hack);
+extern uint16_t *K053936_0_ctrl,*K053936_0_linectrl;
+extern uint16_t *K053936_1_ctrl,*K053936_1_linectrl;
+void K053936_0_zoom_draw(bitmap_t *bitmap,const rectangle *cliprect,tilemap_t *tmap,int flags,uint32_t priority, int glfgreat_hack);
 #ifdef UNUSED_FUNCTION
-void K053936_1_zoom_draw(bitmap_t *bitmap,const rectangle *cliprect,tilemap_t *tmap,int flags,UINT32 priority, int glfgreat_hack);
+void K053936_1_zoom_draw(bitmap_t *bitmap,const rectangle *cliprect,tilemap_t *tmap,int flags,uint32_t priority, int glfgreat_hack);
 #endif
 void K053936_wraparound_enable(int chip, int status);
 void K053936_set_offset(int chip, int xoffs, int yoffs);
@@ -316,9 +316,9 @@ WRITE8_HANDLER( K056832_b_w );
 #endif
 void K056832_mark_plane_dirty(int num);
 void K056832_MarkAllTilemapsDirty(void);
-void K056832_tilemap_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int num, UINT32 flags, UINT32 priority);
+void K056832_tilemap_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int num, uint32_t flags, uint32_t priority);
 #ifdef UNUSED_FUNCTION
-void K056832_tilemap_draw_dj(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, UINT32 flags, UINT32 priority);
+void K056832_tilemap_draw_dj(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, uint32_t flags, uint32_t priority);
 void K056832_set_LayerAssociation(int status);
 #endif
 int  K056832_get_LayerAssociation(void);
@@ -355,7 +355,7 @@ WRITE32_HANDLER( K056832_b_long_w );
 #define K056832_BPP_8TASMAN 6
 
 void K055555_vh_start(running_machine *machine); // "PCU2"
-void K055555_write_reg(UINT8 regnum, UINT8 regdat);
+void K055555_write_reg(uint8_t regnum, uint8_t regdat);
 WRITE16_HANDLER( K055555_word_w );
 WRITE32_HANDLER( K055555_long_w );
 int K055555_read_register(int regnum);

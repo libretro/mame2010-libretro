@@ -12,20 +12,20 @@ public:
 	angelkds_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    paletteram;
-	UINT8 *    spriteram;
-	UINT8 *    txvideoram;
-	UINT8 *    bgtopvideoram;
-	UINT8 *    bgbotvideoram;
+	uint8_t *    paletteram;
+	uint8_t *    spriteram;
+	uint8_t *    txvideoram;
+	uint8_t *    bgtopvideoram;
+	uint8_t *    bgbotvideoram;
 
 	tilemap_t    *tx_tilemap, *bgbot_tilemap, *bgtop_tilemap;
 	int        txbank;
 	int        bgbotbank;
 	int        bgtopbank;
 
-	UINT8      sound[4];
-	UINT8      sound2[4];
-	UINT8      layer_ctrl;
+	uint8_t      sound[4];
+	uint8_t      sound2[4];
+	uint8_t      layer_ctrl;
 
 	/* devices */
 	running_device *subcpu;

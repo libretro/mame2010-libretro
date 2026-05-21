@@ -50,7 +50,7 @@ WRITE8_HANDLER( exprraid_scrolly_w )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	exprraid_state *state = (exprraid_state *)machine->driver_data;
-	UINT8 *tilerom = memory_region(machine, "gfx4");
+	uint8_t *tilerom = memory_region(machine, "gfx4");
 
 	int data, attr, bank, code, color, flags;
 	int quadrant = 0, offs;

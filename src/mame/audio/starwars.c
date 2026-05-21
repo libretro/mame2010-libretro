@@ -13,8 +13,8 @@
 #include "includes/starwars.h"
 
 
-static UINT8 sound_data;	/* data for the sound cpu */
-static UINT8 main_data;		/* data for the main  cpu */
+static uint8_t sound_data;	/* data for the sound cpu */
+static uint8_t main_data;		/* data for the main  cpu */
 
 static running_device *riot;
 
@@ -44,7 +44,7 @@ static READ8_DEVICE_HANDLER( r6532_porta_r )
 	/* d1 (out) TMS5220 Not Read        */
 	/* d0 (out) TMS5220 Not Write       */
 	/* Note: bit 4 is always set to avoid sound self test */
-	UINT8 olddata = riot6532_porta_in_get(device);
+	uint8_t olddata = riot6532_porta_in_get(device);
 
 	return (olddata & 0xc0) | 0x10 | (tms5220_readyq_r(device->machine->device("tms")) << 2);
 }

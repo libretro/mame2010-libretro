@@ -12,19 +12,19 @@ public:
 	volfied_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    video_ram;
-	UINT8  *    cchip_ram;
-//  UINT16 *    paletteram; // this currently uses generic palette handlers
+	uint16_t *    video_ram;
+	uint8_t  *    cchip_ram;
+//  uint16_t *    paletteram; // this currently uses generic palette handlers
 
 	/* video-related */
-	UINT16      video_ctrl;
-	UINT16      video_mask;
+	uint16_t      video_ctrl;
+	uint16_t      video_mask;
 
 	/* c-chip */
-	UINT8       current_bank;
-	UINT8       current_flag;
-	UINT8       cc_port;
-	UINT8       current_cmd;
+	uint8_t       current_bank;
+	uint8_t       current_flag;
+	uint8_t       cc_port;
+	uint8_t       current_cmd;
 
 	/* devices */
 	running_device *maincpu;

@@ -61,18 +61,18 @@ extern void rdp_process_list(running_machine *machine);
 
 extern const rsp_config n64_rsp_config;
 
-extern UINT32 *rdram;
-extern UINT32 *rsp_imem;
-extern UINT32 *rsp_dmem;
+extern uint32_t *rdram;
+extern uint32_t *rsp_imem;
+extern uint32_t *rsp_dmem;
 
-extern UINT32 n64_vi_width;
-extern UINT32 n64_vi_origin;
-extern UINT32 n64_vi_control;
-extern UINT32 n64_vi_blank;
-extern UINT32 n64_vi_hstart;
-extern UINT32 n64_vi_vstart;
-extern UINT32 n64_vi_xscale;
-extern UINT32 n64_vi_yscale;
+extern uint32_t n64_vi_width;
+extern uint32_t n64_vi_origin;
+extern uint32_t n64_vi_control;
+extern uint32_t n64_vi_blank;
+extern uint32_t n64_vi_hstart;
+extern uint32_t n64_vi_vstart;
+extern uint32_t n64_vi_xscale;
+extern uint32_t n64_vi_yscale;
 
 extern void dp_full_sync(running_machine *machine);
 extern void signal_rcp_interrupt(running_machine *machine, int interrupt);

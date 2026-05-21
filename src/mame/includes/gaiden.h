@@ -12,19 +12,19 @@ public:
 	gaiden_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-	UINT16 *    videoram2;
-	UINT16 *    videoram3;
-	UINT16 *    spriteram;
+	uint16_t *    videoram;
+	uint16_t *    videoram2;
+	uint16_t *    videoram3;
+	uint16_t *    spriteram;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t   *text_layer,*foreground,*background;
 	bitmap_t    *sprite_bitmap, *tile_bitmap_bg, *tile_bitmap_fg;
-	UINT16      tx_scroll_x, tx_scroll_y;
-	UINT16      bg_scroll_x, bg_scroll_y;
-	UINT16      fg_scroll_x, fg_scroll_y;
-	INT8		tx_offset_y, bg_offset_y, fg_offset_y, spr_offset_y;
+	uint16_t      tx_scroll_x, tx_scroll_y;
+	uint16_t      bg_scroll_x, bg_scroll_y;
+	uint16_t      fg_scroll_x, fg_scroll_y;
+	int8_t		tx_offset_y, bg_offset_y, fg_offset_y, spr_offset_y;
 
 	/* misc */
 	int         sprite_sizey;

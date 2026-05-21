@@ -14,19 +14,19 @@ public:
 	arabian_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  blitter;
-	UINT8 *  custom_cpu_ram;
+	uint8_t *  blitter;
+	uint8_t *  custom_cpu_ram;
 
-	UINT8 *  main_bitmap;
-	UINT8 *  converted_gfx;
+	uint8_t *  main_bitmap;
+	uint8_t *  converted_gfx;
 
 	/* video-related */
-	UINT8    video_control;
-	UINT8    flip_screen;
+	uint8_t    video_control;
+	uint8_t    flip_screen;
 
 	/* misc */
-	UINT8    custom_cpu_reset;
-	UINT8    custom_cpu_busy;
+	uint8_t    custom_cpu_reset;
+	uint8_t    custom_cpu_busy;
 };
 
 

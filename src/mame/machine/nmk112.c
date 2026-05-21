@@ -17,12 +17,12 @@ typedef struct _nmk112_state nmk112_state;
 struct _nmk112_state
 {
 	/* which chips have their sample address table divided into pages */
-	UINT8 page_mask;
+	uint8_t page_mask;
 
-	UINT8 current_bank[8];
-	UINT8 last_bank[2];
+	uint8_t current_bank[8];
+	uint8_t last_bank[2];
 
-	UINT8 *rom0, *rom1;
+	uint8_t *rom0, *rom1;
 	int   size0, size1;
 };
 
@@ -56,7 +56,7 @@ WRITE8_DEVICE_HANDLER( nmk112_okibank_w )
 	int banknum = offset & 3;
 	int paged = (nmk112->page_mask & (1 << chip));
 
-	UINT8 *rom = chip ? nmk112->rom1 : nmk112->rom0;
+	uint8_t *rom = chip ? nmk112->rom1 : nmk112->rom0;
 	int size = chip ? nmk112->size1 : nmk112->size0;
 	int bankaddr = (data * BANKSIZE) % size;
 
@@ -99,7 +99,7 @@ static STATE_POSTLOAD( nmk112_postload_bankswitch )
 		int banknum = nmk112->last_bank[i];
 		int paged = (nmk112->page_mask & (1 << i));
 
-		UINT8 *rom = i ? nmk112->rom1 : nmk112->rom0;
+		uint8_t *rom = i ? nmk112->rom1 : nmk112->rom0;
 		int size = i ? nmk112->size1 : nmk112->size0;
 		int bankaddr = (nmk112->current_bank[nmk112->last_bank[i] + i * 4] * BANKSIZE) % size;
 

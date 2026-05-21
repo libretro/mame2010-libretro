@@ -1,9 +1,9 @@
 #include "emu.h"
 #include "includes/gstriker.h"
 
-//UINT16 *gs_videoram3;
-//UINT16 *gs_mixer_regs;
-UINT16 *gstriker_lineram;
+//uint16_t *gs_videoram3;
+//uint16_t *gs_mixer_regs;
+uint16_t *gstriker_lineram;
 
 
 /*** VS920A (score tilemap) **********************************************/
@@ -254,9 +254,9 @@ static void MB60553_draw(running_machine *machine, int numchip, bitmap_t* screen
 //      int scrollx;
 //      int scrolly;
 
-		UINT32 startx,starty;
+		uint32_t startx,starty;
 
-		UINT32 incxx,incyy;
+		uint32_t incxx,incyy;
 
 		startx = MB60553_cur_chip->regs[0];
 		starty = MB60553_cur_chip->regs[1];
@@ -289,7 +289,7 @@ static tilemap_t* MB60553_get_tilemap(int numchip)
 
 WRITE16_HANDLER(MB60553_0_regs_w)
 {
-	UINT16 oldreg = MB60553[0].regs[offset];
+	uint16_t oldreg = MB60553[0].regs[offset];
 
 	COMBINE_DATA(&MB60553[0].regs[offset]);
 
@@ -299,7 +299,7 @@ WRITE16_HANDLER(MB60553_0_regs_w)
 
 WRITE16_HANDLER(MB60553_1_regs_w)
 {
-	UINT16 oldreg = MB60553[1].regs[offset];
+	uint16_t oldreg = MB60553[1].regs[offset];
 
 	COMBINE_DATA(&MB60553[1].regs[offset]);
 
@@ -382,11 +382,11 @@ Abstracts the VS9210
 tCG10103 CG10103[MAX_CG10103];
 static tCG10103* CG10103_cur_chip;
 
-static void CG10103_draw_sprite(running_machine *machine, bitmap_t* screen, const rectangle* cliprect, UINT16* spr, int drawpri)
+static void CG10103_draw_sprite(running_machine *machine, bitmap_t* screen, const rectangle* cliprect, uint16_t* spr, int drawpri)
 {
 	int ypos = spr[0] & 0x1FF;
 	int xpos = (spr[1] & 0x1FF);
-	UINT32 tile = (spr[3] & 0xFFFF) | ((spr[2] & 1) << 16);
+	uint32_t tile = (spr[3] & 0xFFFF) | ((spr[2] & 1) << 16);
 	int ynum = (spr[0] >> 9) & 0x7;
 	int xnum = (spr[1] >> 9) & 0x7;
 	int color = (spr[2] >> 8) & 0x1F;
@@ -460,7 +460,7 @@ static void CG10103_draw_sprite(running_machine *machine, bitmap_t* screen, cons
 
 static void CG10103_draw(running_machine *machine, int numchip, bitmap_t* screen, const rectangle* cliprect, int priority)
 {
-	UINT16* splist;
+	uint16_t* splist;
 	int i;
 
 	CG10103_cur_chip = &CG10103[numchip];
@@ -470,7 +470,7 @@ static void CG10103_draw(running_machine *machine, int numchip, bitmap_t* screen
 	// Parse the sorting list
 	for (i=0;i<0x400;i++)
 	{
-		UINT16 cmd = *splist++;
+		uint16_t cmd = *splist++;
 
 		// End of list
 		if (cmd & 0x4000)
@@ -546,15 +546,15 @@ VIDEO_UPDATE(gstriker)
 
 #if 0
 	popmessage("%04x %04x %04x %04x %04x %04x %04x %04x",
-		(UINT16)MB60553[0].regs[0], (UINT16)MB60553[0].regs[1], (UINT16)MB60553[0].regs[2], (UINT16)MB60553[0].regs[3],
-		(UINT16)MB60553[0].regs[4], (UINT16)MB60553[0].regs[5], (UINT16)MB60553[0].regs[6], (UINT16)MB60553[0].regs[7]
+		(uint16_t)MB60553[0].regs[0], (uint16_t)MB60553[0].regs[1], (uint16_t)MB60553[0].regs[2], (uint16_t)MB60553[0].regs[3],
+		(uint16_t)MB60553[0].regs[4], (uint16_t)MB60553[0].regs[5], (uint16_t)MB60553[0].regs[6], (uint16_t)MB60553[0].regs[7]
 	);
 #endif
 
 #if 0
 	popmessage("%04x %04x %04x %04x %04x %04x %04x %04x",
-		(UINT16)gs_mixer_regs[8], (UINT16)gs_mixer_regs[9], (UINT16)gs_mixer_regs[10], (UINT16)gs_mixer_regs[11],
-		(UINT16)gs_mixer_regs[12], (UINT16)gs_mixer_regs[13], (UINT16)gs_mixer_regs[14], (UINT16)gs_mixer_regs[15]
+		(uint16_t)gs_mixer_regs[8], (uint16_t)gs_mixer_regs[9], (uint16_t)gs_mixer_regs[10], (uint16_t)gs_mixer_regs[11],
+		(uint16_t)gs_mixer_regs[12], (uint16_t)gs_mixer_regs[13], (uint16_t)gs_mixer_regs[14], (uint16_t)gs_mixer_regs[15]
 	);
 #endif
 	return 0;

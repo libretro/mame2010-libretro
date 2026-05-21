@@ -181,7 +181,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	}
 }
 
-static void fill_slope( bitmap_t *bitmap, const rectangle *cliprect, int color, INT32 x1, INT32 x2, INT32 sl1, INT32 sl2, INT32 y1, INT32 y2, INT32 *nx1, INT32 *nx2 )
+static void fill_slope( bitmap_t *bitmap, const rectangle *cliprect, int color, int32_t x1, int32_t x2, int32_t sl1, int32_t sl2, int32_t y1, int32_t y2, int32_t *nx1, int32_t *nx2 )
 {
 	if (y1 > cliprect->max_y)
 		return;
@@ -210,7 +210,7 @@ static void fill_slope( bitmap_t *bitmap, const rectangle *cliprect, int color, 
 
 	if (x1 > x2 || (x1==x2 && sl1 > sl2))
 	{
-		INT32 t, *tp;
+		int32_t t, *tp;
 		t = x1;
 		x1 = x2;
 		x2 = t;
@@ -253,7 +253,7 @@ static void fill_slope( bitmap_t *bitmap, const rectangle *cliprect, int color, 
 
 static void fill_poly( bitmap_t *bitmap, const rectangle *cliprect, const struct taitoair_poly *q )
 {
-	INT32 sl1, sl2, cury, limy, x1, x2;
+	int32_t sl1, sl2, cury, limy, x1, x2;
 	int pmin, pmax, i, ps1, ps2;
 	struct taitoair_spoint p[TAITOAIR_POLY_MAX_PT * 2];
 	int color = q->col;

@@ -13,15 +13,15 @@ public:
 	int track;
 	int snd_bank;
 
-	UINT16 *bg_tileram;
-	UINT16 *tx_tileram;
-	UINT16 *md_tileram;
-	UINT16 *spriteram;
-	UINT16 *regs;
+	uint16_t *bg_tileram;
+	uint16_t *tx_tileram;
+	uint16_t *md_tileram;
+	uint16_t *spriteram;
+	uint16_t *regs;
 
-	UINT8 oki_control;
-	UINT8 oki_command;
-	UINT8 oki_bank;
+	uint8_t oki_control;
+	uint8_t oki_command;
+	uint8_t oki_bank;
 
 	tilemap_t *bg_tilemap;
 	tilemap_t *tx_tilemap;

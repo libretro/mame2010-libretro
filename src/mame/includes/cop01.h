@@ -12,14 +12,14 @@ public:
 	cop01_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        bgvideoram;
-	UINT8 *        fgvideoram;
-	UINT8 *        spriteram;
+	uint8_t *        bgvideoram;
+	uint8_t *        fgvideoram;
+	uint8_t *        spriteram;
 	size_t         spriteram_size;
 
 	/* video-related */
 	tilemap_t        *bg_tilemap, *fg_tilemap;
-	UINT8          vreg[4];
+	uint8_t          vreg[4];
 
 	/* sound-related */
 	int            pulse;

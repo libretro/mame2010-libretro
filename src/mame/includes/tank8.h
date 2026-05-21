@@ -42,9 +42,9 @@ VIDEO_UPDATE( tank8 );
 
 WRITE8_HANDLER( tank8_video_ram_w );
 
-extern UINT8 *tank8_video_ram;
-extern UINT8 *tank8_pos_h_ram;
-extern UINT8 *tank8_pos_v_ram;
-extern UINT8 *tank8_pos_d_ram;
-extern UINT8 *tank8_team;
+extern uint8_t *tank8_video_ram;
+extern uint8_t *tank8_pos_h_ram;
+extern uint8_t *tank8_pos_v_ram;
+extern uint8_t *tank8_pos_d_ram;
+extern uint8_t *tank8_team;
 

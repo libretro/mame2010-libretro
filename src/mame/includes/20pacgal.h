@@ -15,24 +15,24 @@ public:
 	_20pacgal_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *char_gfx_ram;
-	UINT8 *sprite_gfx_ram;
-	UINT8 *video_ram;
-	UINT8 *sprite_ram;
-	UINT8 *sprite_color_lookup;
-	UINT8 *flip;
-	UINT8 *stars_seed;
-	UINT8 *stars_ctrl;
+	uint8_t *char_gfx_ram;
+	uint8_t *sprite_gfx_ram;
+	uint8_t *video_ram;
+	uint8_t *sprite_ram;
+	uint8_t *sprite_color_lookup;
+	uint8_t *flip;
+	uint8_t *stars_seed;
+	uint8_t *stars_ctrl;
 
 	/* machine state */
-	UINT8 game_selected;	/* 0 = Ms. Pac-Man, 1 = Galaga */
+	uint8_t game_selected;	/* 0 = Ms. Pac-Man, 1 = Galaga */
 
 	/* devices */
 	running_device *maincpu;
 	running_device *eeprom;
 
 	/* bank support */
-	UINT8 *ram_48000;
+	uint8_t *ram_48000;
 };
 
 

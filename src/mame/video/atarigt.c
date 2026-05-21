@@ -45,7 +45,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarigt_state *state = (atarigt_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = state->atarigen.alpha32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	SET_TILE_INFO(1, code, color, 0);
@@ -55,7 +55,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarigt_state *state = (atarigt_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
+	uint16_t data = state->atarigen.playfield32[tile_index / 2] >> (16 * (~tile_index & 1));
 	int code = (state->playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (data >> 12) & 7;
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -148,9 +148,9 @@ VIDEO_START( atarigt )
  *
  *************************************/
 
-void atarigt_colorram_w(atarigt_state *state, offs_t address, UINT16 data, UINT16 mem_mask)
+void atarigt_colorram_w(atarigt_state *state, offs_t address, uint16_t data, uint16_t mem_mask)
 {
-	UINT16 olddata;
+	uint16_t olddata;
 
 	/* update the raw data */
 	address = (address & 0x7ffff) / 2;
@@ -172,7 +172,7 @@ void atarigt_colorram_w(atarigt_state *state, offs_t address, UINT16 data, UINT1
 }
 
 
-UINT16 atarigt_colorram_r(atarigt_state *state, offs_t address)
+uint16_t atarigt_colorram_r(atarigt_state *state, offs_t address)
 {
 	address &= 0x7ffff;
 	return state->colorram[address / 2];
@@ -189,7 +189,7 @@ UINT16 atarigt_colorram_r(atarigt_state *state, offs_t address)
 void atarigt_scanline_update(screen_device &screen, int scanline)
 {
 	atarigt_state *state = (atarigt_state *)screen.machine->driver_data;
-	UINT32 *base = &state->atarigen.alpha32[(scanline / 8) * 32 + 24];
+	uint32_t *base = &state->atarigen.alpha32[(scanline / 8) * 32 + 24];
 	int i;
 
 	/* keep in range */
@@ -199,7 +199,7 @@ void atarigt_scanline_update(screen_device &screen, int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		UINT32 word = *base++;
+		uint32_t word = *base++;
 
 		if (word & 0x80000000)
 		{
@@ -532,9 +532,9 @@ VIDEO_UPDATE( atarigt )
 	atarigt_state *state = (atarigt_state *)screen->machine->driver_data;
 	bitmap_t *mo_bitmap = atarirle_get_vram(0, 0);
 	bitmap_t *tm_bitmap = atarirle_get_vram(0, 1);
-	UINT16 *cram, *tram;
+	uint16_t *cram, *tram;
 	int color_latch;
-	UINT32 *mram;
+	uint32_t *mram;
 	int x, y;
 
 	/* draw the playfield */
@@ -545,29 +545,29 @@ VIDEO_UPDATE( atarigt )
 
 	/* cache pointers */
 	color_latch = state->colorram[0x30000/2];
-	cram = (UINT16 *)&state->colorram[0x00000/2] + 0x2000 * ((color_latch >> 3) & 1);
-	tram = (UINT16 *)&state->colorram[0x20000/2] + 0x1000 * ((color_latch >> 4) & 3);
+	cram = (uint16_t *)&state->colorram[0x00000/2] + 0x2000 * ((color_latch >> 3) & 1);
+	tram = (uint16_t *)&state->colorram[0x20000/2] + 0x1000 * ((color_latch >> 4) & 3);
 	mram = state->expanded_mram + 0x2000 * ((color_latch >> 6) & 3);
 
 	/* now do the nasty blend */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *an = (UINT16 *)state->an_bitmap->base + y * state->an_bitmap->rowpixels;
-		UINT16 *pf = (UINT16 *)state->pf_bitmap->base + y * state->pf_bitmap->rowpixels;
-		UINT16 *mo = (UINT16 *)mo_bitmap->base + y * mo_bitmap->rowpixels;
-		UINT16 *tm = (UINT16 *)tm_bitmap->base + y * tm_bitmap->rowpixels;
-		UINT32 *dst = (UINT32 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *an = (uint16_t *)state->an_bitmap->base + y * state->an_bitmap->rowpixels;
+		uint16_t *pf = (uint16_t *)state->pf_bitmap->base + y * state->pf_bitmap->rowpixels;
+		uint16_t *mo = (uint16_t *)mo_bitmap->base + y * mo_bitmap->rowpixels;
+		uint16_t *tm = (uint16_t *)tm_bitmap->base + y * tm_bitmap->rowpixels;
+		uint32_t *dst = (uint32_t *)bitmap->base + y * bitmap->rowpixels;
 
 		/* Primal Rage: no TRAM, slightly different priorities */
 		if (state->is_primrage)
 		{
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT8 pfpri = (pf[x] >> 10) & 7;
-				UINT8 mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
-				UINT8 mgep = (mopri >= pfpri) && !(pfpri & 4);
-				UINT16 cra;
-				UINT32 rgb;
+				uint8_t pfpri = (pf[x] >> 10) & 7;
+				uint8_t mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
+				uint8_t mgep = (mopri >= pfpri) && !(pfpri & 4);
+				uint16_t cra;
+				uint32_t rgb;
 
 				/* compute CRA -- unlike T-Mek, MVID11 enforces MO priority and is ignored */
 				if (an[x] & 0x8f)
@@ -597,12 +597,12 @@ VIDEO_UPDATE( atarigt )
 		{
 			for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 			{
-				UINT8 pfpri = (pf[x] >> 10) & 7;
-				UINT8 mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
-				UINT8 mgep = (mopri >= pfpri) && !(pfpri & 4);
+				uint8_t pfpri = (pf[x] >> 10) & 7;
+				uint8_t mopri = mo[x] >> ATARIRLE_PRIORITY_SHIFT;
+				uint8_t mgep = (mopri >= pfpri) && !(pfpri & 4);
 				int no_tra = 0, no_cra = 0;
-				UINT16 cra, tra, mra;
-				UINT32 rgb;
+				uint16_t cra, tra, mra;
+				uint32_t rgb;
 
 				/* compute CRA/TRA */
 				if (an[x] & 0x8f)

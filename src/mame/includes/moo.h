@@ -12,9 +12,9 @@ public:
 	moo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    workram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    workram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int         sprite_colorbase;
@@ -23,8 +23,8 @@ public:
 
 	/* misc */
 	int         game_type;
-	UINT16      protram[16];
-	UINT16      cur_control2;
+	uint16_t      protram[16];
+	uint16_t      cur_control2;
 
 	/* devices */
 	running_device *maincpu;

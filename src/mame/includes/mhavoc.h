@@ -47,4 +47,4 @@ WRITE8_HANDLER( alphaone_out_0_w );
 WRITE8_HANDLER( mhavoc_out_1_w );
 
 
-extern UINT8 *mhavoc_zram0, *mhavoc_zram1;
+extern uint8_t *mhavoc_zram0, *mhavoc_zram1;

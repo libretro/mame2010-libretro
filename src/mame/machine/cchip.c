@@ -32,14 +32,14 @@ This code requires that the player & coin inputs be in input ports 2-4.
 #include "emu.h"
 #include "includes/cchip.h"
 
-static UINT16 current_bank = 0;
+static uint16_t current_bank = 0;
 
-static UINT8 cc_port = 0;
+static uint8_t cc_port = 0;
 
 /* This code for sound communication is a hack, it will not be
    identical to the code derived from the real c-chip */
 
-static const UINT8 superman_code[40] =
+static const uint8_t superman_code[40] =
 {
 	0x48, 0xe7, 0x80, 0x80,	            /* MOVEM.L  D0/A0,-(A7)   ( Preserve Regs ) */
 	0x20, 0x6d, 0x1c, 0x40,             /* MOVEA.L  ($1C40,A5),A0 ( Load sound pointer in A0 ) */

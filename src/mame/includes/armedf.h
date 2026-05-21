@@ -10,19 +10,19 @@ public:
 	armedf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  text_videoram;
-	UINT16 *  bg_videoram;
-	UINT16 *  fg_videoram;
-	UINT16 *  legion_cmd;	// legion only!
-//  UINT16 *  spriteram;    // currently this uses generic buffered_spriteram
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  text_videoram;
+	uint16_t *  bg_videoram;
+	uint16_t *  fg_videoram;
+	uint16_t *  legion_cmd;	// legion only!
+//  uint16_t *  spriteram;    // currently this uses generic buffered_spriteram
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap, *tx_tilemap;
-	UINT16   scroll_msb;
-	UINT16   vreg;
-	UINT16   fg_scrollx, fg_scrolly;
-	UINT16   bg_scrollx, bg_scrolly;
+	uint16_t   scroll_msb;
+	uint16_t   vreg;
+	uint16_t   fg_scrollx, fg_scrolly;
+	uint16_t   bg_scrollx, bg_scrolly;
 	int      scroll_type, sprite_offy, mcu_mode, old_mcu_mode;
 	int      waiting_msb;
 };

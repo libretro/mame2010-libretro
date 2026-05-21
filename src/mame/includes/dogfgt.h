@@ -11,16 +11,16 @@ public:
 	dogfgt_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    bgvideoram;
-	UINT8 *    spriteram;
-	UINT8 *    sharedram;
-//  UINT8 *    paletteram;  // currently this uses generic palette handling
+	uint8_t *    bgvideoram;
+	uint8_t *    spriteram;
+	uint8_t *    sharedram;
+//  uint8_t *    paletteram;  // currently this uses generic palette handling
 	size_t     spriteram_size;
 
 	/* video-related */
 	bitmap_t  *pixbitmap;
 	tilemap_t   *bg_tilemap;
-	UINT8     *bitmapram;
+	uint8_t     *bitmapram;
 	int       bm_plane, pixcolor;
 	int       scroll[4];
 	int       lastflip, lastpixcolor;

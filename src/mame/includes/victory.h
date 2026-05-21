@@ -10,8 +10,8 @@
 
 /*----------- defined in video/victory.c -----------*/
 
-extern UINT8 *victory_videoram;
-extern UINT8 *victory_charram;
+extern uint8_t *victory_videoram;
+extern uint8_t *victory_charram;
 
 VIDEO_START( victory );
 VIDEO_UPDATE( victory );

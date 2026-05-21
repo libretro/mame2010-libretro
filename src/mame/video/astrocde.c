@@ -31,56 +31,56 @@
  *************************************/
 
 /* video configuration */
-UINT8 astrocade_video_config;
-UINT8 astrocade_sparkle[4];
+uint8_t astrocade_video_config;
+uint8_t astrocade_sparkle[4];
 
 /* palette/sparkle/star */
-static UINT8 *sparklestar;
+static uint8_t *sparklestar;
 
 /* Astrocade interrupts */
-static UINT8 interrupt_enable;
-static UINT8 interrupt_vector;
-static UINT8 interrupt_scanline;
-static UINT8 vertical_feedback;
-static UINT8 horizontal_feedback;
+static uint8_t interrupt_enable;
+static uint8_t interrupt_vector;
+static uint8_t interrupt_scanline;
+static uint8_t vertical_feedback;
+static uint8_t horizontal_feedback;
 
 /* Astrocade video parameters */
 static emu_timer *scanline_timer;
-static UINT8 colors[8];
-static UINT8 colorsplit;
-static UINT8 bgdata;
-static UINT8 vblank;
-static UINT8 video_mode;
+static uint8_t colors[8];
+static uint8_t colorsplit;
+static uint8_t bgdata;
+static uint8_t vblank;
+static uint8_t video_mode;
 
 /* Astrocade function generator */
-static UINT8 funcgen_expand_color[2];
-static UINT8 funcgen_control;
-static UINT8 funcgen_expand_count;
-static UINT8 funcgen_rotate_count;
-static UINT8 funcgen_rotate_data[4];
-static UINT8 funcgen_shift_prev_data;
-static UINT8 funcgen_intercept;
+static uint8_t funcgen_expand_color[2];
+static uint8_t funcgen_control;
+static uint8_t funcgen_expand_count;
+static uint8_t funcgen_rotate_count;
+static uint8_t funcgen_rotate_data[4];
+static uint8_t funcgen_shift_prev_data;
+static uint8_t funcgen_intercept;
 
 /* pattern board registers */
-static UINT16 pattern_source;
-static UINT8 pattern_mode;
-static UINT16 pattern_dest;
-static UINT8 pattern_skip;
-static UINT8 pattern_width;
-static UINT8 pattern_height;
+static uint16_t pattern_source;
+static uint8_t pattern_mode;
+static uint16_t pattern_dest;
+static uint8_t pattern_skip;
+static uint8_t pattern_width;
+static uint8_t pattern_height;
 
 /* 16-color board registers and video RAM */
-static UINT16 *profpac_videoram;
-static UINT16 profpac_palette[16];
-static UINT8 profpac_colormap[4];
-static UINT8 profpac_intercept;
-static UINT8 profpac_vispage;
-static UINT8 profpac_readpage;
-static UINT8 profpac_readshift;
-static UINT8 profpac_writepage;
-static UINT8 profpac_writemode;
-static UINT16 profpac_writemask;
-static UINT8 profpac_vw;
+static uint16_t *profpac_videoram;
+static uint16_t profpac_palette[16];
+static uint8_t profpac_colormap[4];
+static uint8_t profpac_intercept;
+static uint8_t profpac_vispage;
+static uint8_t profpac_readpage;
+static uint8_t profpac_readshift;
+static uint8_t profpac_writepage;
+static uint8_t profpac_writemode;
+static uint16_t profpac_writemask;
+static uint8_t profpac_vw;
 
 
 
@@ -241,7 +241,7 @@ VIDEO_START( profpac )
 	timer_adjust_oneshot(scanline_timer, machine->primary_screen->time_until_pos(1), 1);
 
 	/* allocate videoram */
-	profpac_videoram = auto_alloc_array(machine, UINT16, 0x4000 * 4);
+	profpac_videoram = auto_alloc_array(machine, uint16_t, 0x4000 * 4);
 
 	/* register for save states */
 	init_savestate(machine);
@@ -304,7 +304,7 @@ static void init_savestate(running_machine *machine)
 VIDEO_UPDATE( astrocde )
 {
 	int xystep = 2 - video_mode;
-	UINT32 sparklebase = 0;
+	uint32_t sparklebase = 0;
 	int y;
 
 	/* compute the starting point of sparkle for the current frame */
@@ -312,15 +312,15 @@ VIDEO_UPDATE( astrocde )
 	int height = screen->height();
 
 	if (astrocade_video_config & AC_STARS)
-		sparklebase = (screen->frame_number() * (UINT64)(width * height)) % RNG_PERIOD;
+		sparklebase = (screen->frame_number() * (uint64_t)(width * height)) % RNG_PERIOD;
 
 	/* iterate over scanlines */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 		int effy = mame_vpos_to_astrocade_vpos(y);
-		UINT16 offset = (effy / xystep) * (80 / xystep);
-		UINT32 sparkleoffs = 0, staroffs = 0;
+		uint16_t offset = (effy / xystep) * (80 / xystep);
+		uint32_t sparkleoffs = 0, staroffs = 0;
 		int x;
 
 		/* compute the star and sparkle offset at the start of this line */
@@ -336,8 +336,8 @@ VIDEO_UPDATE( astrocde )
 		for (x = 0; x < 456/4; x += xystep)
 		{
 			int effx = x - HORZ_OFFSET/4;
-			const UINT8 *colorbase = &colors[(effx < colorsplit) ? 4 : 0];
-			UINT8 data;
+			const uint8_t *colorbase = &colors[(effx < colorsplit) ? 4 : 0];
+			uint8_t data;
 			int xx;
 
 			/* select either video data or background data */
@@ -346,7 +346,7 @@ VIDEO_UPDATE( astrocde )
 			/* iterate over the 4 pixels */
 			for (xx = 0; xx < 4; xx++)
 			{
-				UINT8 pixdata = (data >> 6) & 3;
+				uint8_t pixdata = (data >> 6) & 3;
 				int coldata = colorbase[pixdata] << 1;
 				int luma = coldata & 0x0f;
 				rgb_t color;
@@ -392,8 +392,8 @@ VIDEO_UPDATE( profpac )
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		int effy = mame_vpos_to_astrocade_vpos(y);
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16 offset = profpac_vispage * 0x4000 + effy * 80;
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t offset = profpac_vispage * 0x4000 + effy * 80;
 		int x;
 
 		/* star with black */
@@ -404,7 +404,7 @@ VIDEO_UPDATE( profpac )
 			int effx = x - HORZ_OFFSET/4;
 
 			/* select either video data or background data */
-			UINT16 data = (effx >= 0 && effx < 80 && effy >= 0 && effy < vblank) ? profpac_videoram[offset++] : 0;
+			uint16_t data = (effx >= 0 && effx < 80 && effy >= 0 && effy < vblank) ? profpac_videoram[offset++] : 0;
 
 			/* iterate over the 4 pixels */
 			*dest++ = profpac_palette[(data >> 12) & 0x0f];
@@ -431,7 +431,7 @@ static TIMER_CALLBACK( interrupt_off )
 }
 
 
-static void astrocade_trigger_lightpen(running_machine *machine, UINT8 vfeedback, UINT8 hfeedback)
+static void astrocade_trigger_lightpen(running_machine *machine, uint8_t vfeedback, uint8_t hfeedback)
 {
 	/* both bits 1 and 4 enable lightpen interrupts; bit 4 enables them even in horizontal */
 	/* blanking regions; we treat them both the same here */
@@ -513,7 +513,7 @@ static TIMER_CALLBACK( scanline_callback )
 
 READ8_HANDLER( astrocade_data_chip_register_r )
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	/* these are the core registers */
 	switch (offset & 0xff)
@@ -666,7 +666,7 @@ WRITE8_HANDLER( astrocade_data_chip_register_w )
 
 WRITE8_HANDLER( astrocade_funcgen_w )
 {
-	UINT8 prev_data;
+	uint8_t prev_data;
 
 	/* control register:
         bit 0 = shift amount LSB
@@ -706,7 +706,7 @@ WRITE8_HANDLER( astrocade_funcgen_w )
 		/* second 4 writes actually write it */
 		else
 		{
-			UINT8 shift = 2 * (~funcgen_rotate_count++ & 3);
+			uint8_t shift = 2 * (~funcgen_rotate_count++ & 3);
 			data =	(((funcgen_rotate_data[3] >> shift) & 3) << 6) |
 					(((funcgen_rotate_data[2] >> shift) & 3) << 4) |
 					(((funcgen_rotate_data[1] >> shift) & 3) << 2) |
@@ -716,7 +716,7 @@ WRITE8_HANDLER( astrocade_funcgen_w )
 	else
 	{
 		/* shift */
-		UINT8 shift = 2 * (funcgen_control & 0x03);
+		uint8_t shift = 2 * (funcgen_control & 0x03);
 		data = (data >> shift) | (prev_data << (8 - shift));
 	}
 
@@ -727,7 +727,7 @@ WRITE8_HANDLER( astrocade_funcgen_w )
 	/* OR/XOR */
 	if (funcgen_control & 0x30)
 	{
-		UINT8 olddata = memory_read_byte(space, 0x4000 + offset);
+		uint8_t olddata = memory_read_byte(space, 0x4000 + offset);
 
 		/* compute any intercepts */
 		funcgen_intercept &= 0x0f;
@@ -759,7 +759,7 @@ WRITE8_HANDLER( astrocade_funcgen_w )
  *
  *************************************/
 
-INLINE void increment_source(UINT8 curwidth, UINT8 *u13ff)
+INLINE void increment_source(uint8_t curwidth, uint8_t *u13ff)
 {
 	/* if the flip-flop at U13 is high and mode.d2 is 1 we can increment */
 	/* however, if mode.d3 is set and we're on the last byte of a row, the increment is suppressed */
@@ -772,7 +772,7 @@ INLINE void increment_source(UINT8 curwidth, UINT8 *u13ff)
 }
 
 
-INLINE void increment_dest(UINT8 curwidth)
+INLINE void increment_dest(uint8_t curwidth)
 {
 	/* increment is suppressed for the last byte in a row */
 	if (curwidth != 0)
@@ -807,8 +807,8 @@ static void execute_blit(const address_space *space)
             d5 = dest direction (0 = increment dest, 1 = decrement dest)
     */
 
-	UINT8 curwidth;	/* = counter set U33/U42 */
-	UINT8 u13ff;	/* = flip-flop at U13 */
+	uint8_t curwidth;	/* = counter set U33/U42 */
+	uint8_t u13ff;	/* = flip-flop at U13 */
 	int cycles = 0;
 
 /*  logerror("Blit: src=%04X mode=%02X dest=%04X skip=%02X width=%02X height=%02X\n",
@@ -824,14 +824,14 @@ static void execute_blit(const address_space *space)
 	/* loop over height */
 	do
 	{
-		UINT16 carry;
+		uint16_t carry;
 
 		/* loop over width */
 		curwidth = pattern_width;
 		do
 		{
-			UINT16 busaddr;
-			UINT8 busdata;
+			uint16_t busaddr;
+			uint8_t busdata;
 
 			/* ----- read phase ----- */
 
@@ -959,19 +959,19 @@ WRITE8_HANDLER( astrocade_pattern_board_w )
 
 static void init_sparklestar(running_machine *machine)
 {
-	UINT32 shiftreg;
+	uint32_t shiftreg;
 	int i;
 
 	/* reset global sparkle state */
 	astrocade_sparkle[0] = astrocade_sparkle[1] = astrocade_sparkle[2] = astrocade_sparkle[3] = 0;
 
 	/* allocate memory for the sparkle/star array */
-	sparklestar = auto_alloc_array(machine, UINT8, RNG_PERIOD);
+	sparklestar = auto_alloc_array(machine, uint8_t, RNG_PERIOD);
 
 	/* generate the data for the sparkle/star array */
 	for (shiftreg = i = 0; i < RNG_PERIOD; i++)
 	{
-		UINT8 newbit;
+		uint8_t newbit;
 
 		/* clock the shift register */
 		newbit = ((shiftreg >> 12) ^ ~shiftreg) & 1;
@@ -1056,7 +1056,7 @@ WRITE8_HANDLER( profpac_screenram_ctrl_w )
 
 READ8_HANDLER( profpac_videoram_r )
 {
-	UINT16 temp = profpac_videoram[profpac_readpage * 0x4000 + offset] >> profpac_readshift;
+	uint16_t temp = profpac_videoram[profpac_readpage * 0x4000 + offset] >> profpac_readshift;
 	return ((temp >> 6) & 0xc0) | ((temp >> 4) & 0x30) | ((temp >> 2) & 0x0c) | ((temp >> 0) & 0x03);
 }
 
@@ -1064,8 +1064,8 @@ READ8_HANDLER( profpac_videoram_r )
 /* All this information comes from decoding the PLA at U39 on the screen ram board */
 WRITE8_HANDLER( profpac_videoram_w )
 {
-	UINT16 oldbits = profpac_videoram[profpac_writepage * 0x4000 + offset];
-	UINT16 newbits, result = 0;
+	uint16_t oldbits = profpac_videoram[profpac_writepage * 0x4000 + offset];
+	uint16_t newbits, result = 0;
 
 	/* apply the 2->4 bit expansion first */
 	newbits = (profpac_colormap[(data >> 6) & 3] << 12) |

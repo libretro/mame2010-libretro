@@ -12,27 +12,27 @@ public:
 	wgp_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    spritemap;
-	UINT16 *    spriteram;
-	UINT16 *    pivram;
-	UINT16 *    piv_ctrlram;
-	UINT16 *    sharedram;
-//  UINT16 *    paletteram;    // currently this uses generic palette handling
+	uint16_t *    spritemap;
+	uint16_t *    spriteram;
+	uint16_t *    pivram;
+	uint16_t *    piv_ctrlram;
+	uint16_t *    sharedram;
+//  uint16_t *    paletteram;    // currently this uses generic palette handling
 	size_t      sharedram_size;
 	size_t      spritemap_size;
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t   *piv_tilemap[3];
-	UINT16      piv_ctrl_reg;
-	UINT16      piv_zoom[3], piv_scrollx[3], piv_scrolly[3];
-	UINT16      rotate_ctrl[8];
+	uint16_t      piv_ctrl_reg;
+	uint16_t      piv_zoom[3], piv_scrollx[3], piv_scrolly[3];
+	uint16_t      rotate_ctrl[8];
 	int         piv_xoffs, piv_yoffs;
 
 	/* misc */
-	UINT16      cpua_ctrl;
-	UINT16      port_sel;
-	INT32       banknum;
+	uint16_t      cpua_ctrl;
+	uint16_t      port_sel;
+	int32_t       banknum;
 
 	/* devices */
 	running_device *maincpu;

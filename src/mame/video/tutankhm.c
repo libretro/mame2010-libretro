@@ -46,7 +46,7 @@ static void get_pens( running_machine *machine, pen_t *pens )
 
 	for (i = 0; i < NUM_PENS; i++)
 	{
-		UINT8 data = state->paletteram[i];
+		uint8_t data = state->paletteram[i];
 
 		pens[i] = MAKE_RGB(pal3bit(data >> 0), pal3bit(data >> 3), pal2bit(data >> 6));
 	}
@@ -71,15 +71,15 @@ VIDEO_UPDATE( tutankhm )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 *dst = BITMAP_ADDR32(bitmap, y, 0);
+		uint32_t *dst = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT8 effx = x ^ xorx;
-			UINT8 yscroll = (effx < 192) ? *state->scroll : 0;
-			UINT8 effy = (y ^ xory) + yscroll;
-			UINT8 vrambyte = state->videoram[effy * 128 + effx / 2];
-			UINT8 shifted = vrambyte >> (4 * (effx % 2));
+			uint8_t effx = x ^ xorx;
+			uint8_t yscroll = (effx < 192) ? *state->scroll : 0;
+			uint8_t effy = (y ^ xory) + yscroll;
+			uint8_t vrambyte = state->videoram[effy * 128 + effx / 2];
+			uint8_t shifted = vrambyte >> (4 * (effx % 2));
 			dst[x] = pens[shifted & 0x0f];
 		}
 	}
@@ -116,7 +116,7 @@ WRITE8_HANDLER( junofrst_blitter_w )
 	if (offset == 3)
 	{
 		int i;
-		UINT8 *gfx_rom = memory_region(space->machine, "gfx1");
+		uint8_t *gfx_rom = memory_region(space->machine, "gfx1");
 
 		offs_t src = ((state->blitterdata[2] << 8) | state->blitterdata[3]) & 0xfffc;
 		offs_t dest = (state->blitterdata[0] << 8) | state->blitterdata[1];
@@ -130,7 +130,7 @@ WRITE8_HANDLER( junofrst_blitter_w )
 
 			for (j = 0; j < 16; j++)
 			{
-				UINT8 data;
+				uint8_t data;
 
 				if (src & 1)
 					data = gfx_rom[src >> 1] & 0x0f;

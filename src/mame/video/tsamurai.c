@@ -8,9 +8,9 @@
 /*
 ** variables
 */
-UINT8 *tsamurai_videoram;
-UINT8 *tsamurai_colorram;
-UINT8 *tsamurai_bg_videoram;
+uint8_t *tsamurai_videoram;
+uint8_t *tsamurai_colorram;
+uint8_t *tsamurai_bg_videoram;
 static int bgcolor;
 static int textbank1, textbank2;
 
@@ -25,7 +25,7 @@ static tilemap_t *background, *foreground;
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 attributes = tsamurai_bg_videoram[2*tile_index+1];
+	uint8_t attributes = tsamurai_bg_videoram[2*tile_index+1];
 	int tile_number = tsamurai_bg_videoram[2*tile_index];
 	tile_number += (( attributes & 0xc0 ) >> 6 ) * 256;	 /* legacy */
 	tile_number += (( attributes & 0x20 ) >> 5 ) * 1024; /* Mission 660 add-on*/
@@ -139,10 +139,10 @@ WRITE8_HANDLER( tsamurai_fg_colorram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	gfx_element *gfx = machine->gfx[2];
-	const UINT8 *source = spriteram+32*4-4;
-	const UINT8 *finish = spriteram; /* ? */
+	const uint8_t *source = spriteram+32*4-4;
+	const uint8_t *finish = spriteram; /* ? */
 	static int flicker;
 	flicker = 1-flicker;
 

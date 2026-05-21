@@ -1378,7 +1378,7 @@ CPS1 VIDEO RENDERER
 #define CPS2_OBJ_YOFFS	0x0a	/* Y offset (always 0x0010) */
 
 
-static void cps1_build_palette(running_machine *machine, const UINT16* const palette_base);
+static void cps1_build_palette(running_machine *machine, const uint16_t* const palette_base);
 
 
 static MACHINE_RESET( cps )
@@ -1416,14 +1416,14 @@ static MACHINE_RESET( cps )
 	if (strcmp(gamename, "sf2rb") == 0)
 	{
 		/* Patch out protection check */
-		UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 		rom[0xe5464 / 2] = 0x6012;
 	}
 
 	if (strcmp(gamename, "sf2rb2") == 0)
 	{
 		/* Patch out protection check */
-		UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 		rom[0xe5332 / 2] = 0x6014;
 	}
 
@@ -1434,13 +1434,13 @@ static MACHINE_RESET( cps )
            by the cpu core as a 32-bit branch. This branch would make the
            game crash (address error, since it would branch to an odd address)
            if location 180ca6 (outside ROM space) isn't 0. Protection check? */
-		UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 		rom[0x11756 / 2] = 0x4e71;
 	}
 	else if (strcmp(gamename, "ghouls") == 0)
 	{
 		/* Patch out self-test... it takes forever */
-		UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 		rom[0x61964 / 2] = 0x4ef9;
 		rom[0x61966 / 2] = 0x0000;
 		rom[0x61968 / 2] = 0x0400;
@@ -1449,7 +1449,7 @@ static MACHINE_RESET( cps )
 }
 
 
-INLINE UINT16 *cps1_base( running_machine *machine, int offset, int boundary )
+INLINE uint16_t *cps1_base( running_machine *machine, int offset, int boundary )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int base = state->cps_a_regs[offset] * 256;
@@ -1617,19 +1617,19 @@ static void cps1_gfx_decode( running_machine *machine )
 {
 	int size = memory_region_length(machine, "gfx");
 	int i, j, gfxsize;
-	UINT8 *cps1_gfx = memory_region(machine, "gfx");
+	uint8_t *cps1_gfx = memory_region(machine, "gfx");
 
 	gfxsize = size / 4;
 
 	for (i = 0; i < gfxsize; i++)
 	{
-		UINT32 src = cps1_gfx[4 * i] + (cps1_gfx[4 * i + 1] << 8) + (cps1_gfx[4 * i + 2] << 16) + (cps1_gfx[4 * i + 3] << 24);
-		UINT32 dwval = 0;
+		uint32_t src = cps1_gfx[4 * i] + (cps1_gfx[4 * i + 1] << 8) + (cps1_gfx[4 * i + 2] << 16) + (cps1_gfx[4 * i + 3] << 24);
+		uint32_t dwval = 0;
 
 		for (j = 0; j < 8; j++)
 		{
 			int n = 0;
-			UINT32 mask = (0x80808080 >> j) & src;
+			uint32_t mask = (0x80808080 >> j) & src;
 
 			if (mask & 0x000000ff) n |= 1;
 			if (mask & 0x0000ff00) n |= 2;
@@ -1645,10 +1645,10 @@ static void cps1_gfx_decode( running_machine *machine )
 	}
 }
 
-static void unshuffle( UINT64 *buf, int len )
+static void unshuffle( uint64_t *buf, int len )
 {
 	int i;
-	UINT64 t;
+	uint64_t t;
 
 	if (len == 2)
 		return;
@@ -1675,7 +1675,7 @@ static void cps2_gfx_decode( running_machine *machine )
 	int i;
 
 	for (i = 0; i < size; i += banksize)
-		unshuffle((UINT64 *)(memory_region(machine, "gfx") + i), banksize / 8);
+		unshuffle((uint64_t *)(memory_region(machine, "gfx") + i), banksize / 8);
 
 	cps1_gfx_decode(machine);
 }
@@ -2020,10 +2020,10 @@ static VIDEO_START( cps )
 	for (i = 0; i < cps1_palette_entries * 16; i++)
 		palette_set_color(machine, i, MAKE_RGB(0,0,0));
 
-	state->buffered_obj = auto_alloc_array_clear(machine, UINT16, state->obj_size / 2);
+	state->buffered_obj = auto_alloc_array_clear(machine, uint16_t, state->obj_size / 2);
 
 	if (state->cps_version == 2)
-		state->cps2_buffered_obj = auto_alloc_array_clear(machine, UINT16, state->cps2_obj_size / 2);
+		state->cps2_buffered_obj = auto_alloc_array_clear(machine, uint16_t, state->cps2_obj_size / 2);
 
 	/* clear RAM regions */
 	memset(state->gfxram, 0, state->gfxram_size);   /* Clear GFX RAM */
@@ -2112,11 +2112,11 @@ VIDEO_START( cps2 )
 
 ***************************************************************************/
 
-static void cps1_build_palette( running_machine *machine, const UINT16* const palette_base )
+static void cps1_build_palette( running_machine *machine, const uint16_t* const palette_base )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int offset, page;
-	const UINT16 *palette_ram = palette_base;
+	const uint16_t *palette_ram = palette_base;
 	int ctrl = state->cps_b_regs[state->game_config->palette_control/2];
 
 	/*
@@ -2236,7 +2236,7 @@ static void cps1_render_sprites( running_machine *machine, bitmap_t *bitmap, con
 
 
 	int i, baseadd;
-	UINT16 *base = state->buffered_obj;
+	uint16_t *base = state->buffered_obj;
 
 	/* some sf2 hacks draw the sprites in reverse order */
 	if (state->game_config->bootleg_kludge == 1)
@@ -2415,7 +2415,7 @@ WRITE16_HANDLER( cps2_objram2_w )
 		COMBINE_DATA(&state->objram2[offset]);
 }
 
-static UINT16 *cps2_objbase( running_machine *machine )
+static uint16_t *cps2_objbase( running_machine *machine )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int baseptr;
@@ -2437,7 +2437,7 @@ static void cps2_find_last_sprite( running_machine *machine )    /* Find the off
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int offset = 0;
-	UINT16 *base = state->cps2_buffered_obj;
+	uint16_t *base = state->cps2_buffered_obj;
 
 	/* Locate the end of table marker */
 	while (offset < state->cps2_obj_size / 2)
@@ -2478,7 +2478,7 @@ static void cps2_render_sprites( running_machine *machine, bitmap_t *bitmap, con
 }
 
 	int i;
-	UINT16 *base = state->cps2_buffered_obj;
+	uint16_t *base = state->cps2_buffered_obj;
 	int xoffs = 64 - cps2_port(machine, CPS2_OBJ_XOFFS);
 	int yoffs = 16 - cps2_port(machine, CPS2_OBJ_YOFFS);
 
@@ -2608,7 +2608,7 @@ static void cps1_render_stars( screen_device *screen, bitmap_t *bitmap, const re
 {
 	cps_state *state = (cps_state *)screen->machine->driver_data;
 	int offs;
-	UINT8 *stars_rom = memory_region(screen->machine, "stars");
+	uint8_t *stars_rom = memory_region(screen->machine, "stars");
 
 	if (!stars_rom && (state->stars_enabled[0] || state->stars_enabled[1]))
 	{

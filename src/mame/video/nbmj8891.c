@@ -25,9 +25,9 @@ static int nbmj8891_screen_refresh;
 static int gfxdraw_mode;
 
 static bitmap_t *nbmj8891_tmpbitmap0, *nbmj8891_tmpbitmap1;
-static UINT8 *nbmj8891_videoram0, *nbmj8891_videoram1;
-static UINT8 *nbmj8891_palette;
-static UINT8 *nbmj8891_clut;
+static uint8_t *nbmj8891_videoram0, *nbmj8891_videoram1;
+static uint8_t *nbmj8891_palette;
+static uint8_t *nbmj8891_clut;
 
 
 static void nbmj8891_vramflip(running_machine *machine, int vram);
@@ -293,8 +293,8 @@ void nbmj8891_vramflip(running_machine *machine, int vram)
 {
 	static int nbmj8891_flipscreen_old = 0;
 	int x, y;
-	UINT8 color1, color2;
-	UINT8 *vidram;
+	uint8_t color1, color2;
+	uint8_t *vidram;
 
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
@@ -321,13 +321,13 @@ void nbmj8891_vramflip(running_machine *machine, int vram)
 
 static void update_pixel0(running_machine *machine, int x, int y)
 {
-	UINT8 color = nbmj8891_videoram0[(y * machine->primary_screen->width()) + x];
+	uint8_t color = nbmj8891_videoram0[(y * machine->primary_screen->width()) + x];
 	*BITMAP_ADDR16(nbmj8891_tmpbitmap0, y, x) = color;
 }
 
 static void update_pixel1(running_machine *machine, int x, int y)
 {
-	UINT8 color = nbmj8891_videoram1[(y * machine->primary_screen->width()) + x];
+	uint8_t color = nbmj8891_videoram1[(y * machine->primary_screen->width()) + x];
 	*BITMAP_ADDR16(nbmj8891_tmpbitmap1, y, x) = (color == 0x7f) ? 0xff : color;
 }
 
@@ -338,7 +338,7 @@ static TIMER_CALLBACK( blitter_timer_callback )
 
 static void nbmj8891_gfxdraw(running_machine *machine)
 {
-	UINT8 *GFX = memory_region(machine, "gfx1");
+	uint8_t *GFX = memory_region(machine, "gfx1");
 	int width = machine->primary_screen->width();
 
 	int x, y;
@@ -347,7 +347,7 @@ static void nbmj8891_gfxdraw(running_machine *machine)
 	int sizex, sizey;
 	int skipx, skipy;
 	int ctrx, ctry;
-	UINT8 color, color1, color2;
+	uint8_t color, color1, color2;
 	int gfxaddr, gfxlen;
 
 	nb1413m3_busyctr = 0;
@@ -495,15 +495,15 @@ static void nbmj8891_gfxdraw(running_machine *machine)
 ******************************************************************************/
 VIDEO_START( nbmj8891_1layer )
 {
-	UINT8 *CLUT = memory_region(machine, "protection");
+	uint8_t *CLUT = memory_region(machine, "protection");
 	int i;
 	int width = machine->primary_screen->width();
 	int height = machine->primary_screen->height();
 
 	nbmj8891_tmpbitmap0 = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj8891_videoram0 = auto_alloc_array(machine, UINT8, width * height);
-	nbmj8891_palette = auto_alloc_array(machine, UINT8, 0x200);
-	nbmj8891_clut = auto_alloc_array(machine, UINT8, 0x800);
+	nbmj8891_videoram0 = auto_alloc_array(machine, uint8_t, width * height);
+	nbmj8891_palette = auto_alloc_array(machine, uint8_t, 0x200);
+	nbmj8891_clut = auto_alloc_array(machine, uint8_t, 0x800);
 	memset(nbmj8891_videoram0, 0xff, (width * height * sizeof(char)));
 	gfxdraw_mode = 0;
 
@@ -518,12 +518,12 @@ VIDEO_START( nbmj8891_2layer )
 
 	nbmj8891_tmpbitmap0 = machine->primary_screen->alloc_compatible_bitmap();
 	nbmj8891_tmpbitmap1 = machine->primary_screen->alloc_compatible_bitmap();
-	nbmj8891_videoram0 = auto_alloc_array(machine, UINT8, width * height);
-	nbmj8891_videoram1 = auto_alloc_array(machine, UINT8, width * height);
-	nbmj8891_palette = auto_alloc_array(machine, UINT8, 0x200);
-	nbmj8891_clut = auto_alloc_array(machine, UINT8, 0x800);
-	memset(nbmj8891_videoram0, 0xff, (width * height * sizeof(UINT8)));
-	memset(nbmj8891_videoram1, 0xff, (width * height * sizeof(UINT8)));
+	nbmj8891_videoram0 = auto_alloc_array(machine, uint8_t, width * height);
+	nbmj8891_videoram1 = auto_alloc_array(machine, uint8_t, width * height);
+	nbmj8891_palette = auto_alloc_array(machine, uint8_t, 0x200);
+	nbmj8891_clut = auto_alloc_array(machine, uint8_t, 0x800);
+	memset(nbmj8891_videoram0, 0xff, (width * height * sizeof(uint8_t)));
+	memset(nbmj8891_videoram1, 0xff, (width * height * sizeof(uint8_t)));
 	gfxdraw_mode = 1;
 }
 

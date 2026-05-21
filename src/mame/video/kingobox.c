@@ -23,7 +23,7 @@
 
 ***************************************************************************/
 
-static void palette_init_common( running_machine *machine, const UINT8 *color_prom, void (*get_rgb_data)(const UINT8 *, int, int *, int *, int *) )
+static void palette_init_common( running_machine *machine, const uint8_t *color_prom, void (*get_rgb_data)(const uint8_t *, int, int *, int *, int *) )
 {
 	static const int resistances[4] = { 1500, 750, 360, 180 };
 	static const int resistances_fg[1] = { 51 };
@@ -99,13 +99,13 @@ static void palette_init_common( running_machine *machine, const UINT8 *color_pr
 
 	for (i = 0x101; i < 0x110; i += 2)
 	{
-		UINT16 ctabentry = ((i - 0x101) >> 1) | 0x100;
+		uint16_t ctabentry = ((i - 0x101) >> 1) | 0x100;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
 
 
-static void kingofb_get_rgb_data( const UINT8 *color_prom, int i, int *r_data, int *g_data, int *b_data )
+static void kingofb_get_rgb_data( const uint8_t *color_prom, int i, int *r_data, int *g_data, int *b_data )
 {
 	*r_data = color_prom[i + 0x000] & 0x0f;
 	*g_data = color_prom[i + 0x100] & 0x0f;
@@ -113,7 +113,7 @@ static void kingofb_get_rgb_data( const UINT8 *color_prom, int i, int *r_data, i
 }
 
 
-static void ringking_get_rgb_data( const UINT8 *color_prom, int i, int *r_data, int *g_data, int *b_data )
+static void ringking_get_rgb_data( const uint8_t *color_prom, int i, int *r_data, int *g_data, int *b_data )
 {
 	*r_data = (color_prom[i + 0x000] >> 4) & 0x0f;
 	*g_data = (color_prom[i + 0x000] >> 0) & 0x0f;
@@ -211,7 +211,7 @@ VIDEO_START( kingofb )
 static void kingofb_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
 	kingofb_state *state = (kingofb_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size; offs += 4)
@@ -280,7 +280,7 @@ VIDEO_START( ringking )
 static void ringking_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	kingofb_state *state = (kingofb_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size; offs += 4)

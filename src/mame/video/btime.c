@@ -301,17 +301,17 @@ WRITE8_HANDLER( disco_video_control_w )
 }
 
 
-static void draw_chars( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 transparency, UINT8 color, int priority )
+static void draw_chars( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t transparency, uint8_t color, int priority )
 {
 	btime_state *state = (btime_state *)machine->driver_data;
 	offs_t offs;
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 x = 31 - (offs / 32);
-		UINT8 y = offs % 32;
+		uint8_t x = 31 - (offs / 32);
+		uint8_t y = offs % 32;
 
-		UINT16 code = state->videoram[offs] + 256 * (state->colorram[offs] & 3);
+		uint16_t code = state->videoram[offs] + 256 * (state->colorram[offs] & 3);
 
 		/* check priority */
 		if ((priority != -1) && (priority != ((code >> 7) & 0x01)))
@@ -332,9 +332,9 @@ static void draw_chars( running_machine *machine, bitmap_t *bitmap, const rectan
 	}
 }
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 color,
-						 UINT8 sprite_y_adjust, UINT8 sprite_y_adjust_flip_screen,
-						 UINT8 *sprite_ram, offs_t interleave )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t color,
+						 uint8_t sprite_y_adjust, uint8_t sprite_y_adjust_flip_screen,
+						 uint8_t *sprite_ram, offs_t interleave )
 {
 	int i;
 	offs_t offs;
@@ -343,7 +343,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	for (i = 0, offs = 0; i < 8; i++, offs += 4 * interleave)
 	{
 		int x, y;
-		UINT8 flipx, flipy;
+		uint8_t flipx, flipy;
 
 		if (!(sprite_ram[offs + 0] & 0x01)) continue;
 
@@ -382,11 +382,11 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 }
 
 
-static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8* tmap, UINT8 color )
+static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t* tmap, uint8_t color )
 {
 	btime_state *state = (btime_state *)machine->driver_data;
 	int i;
-	const UINT8 *gfx = memory_region(machine, "bg_map");
+	const uint8_t *gfx = memory_region(machine, "bg_map");
 	int scroll = -(state->bnj_scroll2 | ((state->bnj_scroll1 & 0x03) << 8));
 
 	// One extra iteration for wrap around

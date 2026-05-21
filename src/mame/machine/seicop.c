@@ -1365,26 +1365,26 @@ hardware, but the game never writes directly to it.
 
 #define seibu_cop_log logerror
 
-UINT16 *cop_mcu_ram;
+uint16_t *cop_mcu_ram;
 
-static UINT16 copd2_table[0x100];
-static UINT16 copd2_table_2[0x100/8];
-static UINT16 copd2_table_3[0x100/8];
-static UINT16 copd2_table_4[0x100/8];
+static uint16_t copd2_table[0x100];
+static uint16_t copd2_table_2[0x100/8];
+static uint16_t copd2_table_3[0x100/8];
+static uint16_t copd2_table_4[0x100/8];
 
-static UINT16 cop_438;
-static UINT16 cop_43a;
-static UINT16 cop_43c;
+static uint16_t cop_438;
+static uint16_t cop_43a;
+static uint16_t cop_43c;
 
-static UINT16 cop_clearfill_address[0x200];
-static UINT16 cop_clearfill_length[0x200];
-static UINT16 cop_clearfill_value[0x200];
-static UINT16 cop_clearfill_lasttrigger = 0;
+static uint16_t cop_clearfill_address[0x200];
+static uint16_t cop_clearfill_length[0x200];
+static uint16_t cop_clearfill_value[0x200];
+static uint16_t cop_clearfill_lasttrigger = 0;
 
 
-static UINT16 copd2_offs = 0;
+static uint16_t copd2_offs = 0;
 
-static void copd2_set_tableoffset(running_machine *machine, UINT16 data)
+static void copd2_set_tableoffset(running_machine *machine, uint16_t data)
 {
 	//logerror("mcu_offs %04x\n", data);
 	copd2_offs = data;
@@ -1456,7 +1456,7 @@ static void copd2_set_tableoffset(running_machine *machine, UINT16 data)
 
 }
 
-static void copd2_set_tabledata(running_machine *machine, UINT16 data)
+static void copd2_set_tabledata(running_machine *machine, uint16_t data)
 {
 	copd2_table[copd2_offs] = data;
 	//logerror("mcu_data %04x\n", data);
@@ -1477,15 +1477,15 @@ static void copd2_set_tabledata(running_machine *machine, UINT16 data)
 
 
 /*Movement protection*//*Legionnaire,Heated Barrel*/
-static UINT32 cop_register[6];
+static uint32_t cop_register[6];
 /*Sprite DMA protection*//*SD Gundam*/
-static UINT8 dma_status;
-static UINT32 dma_src;
-static UINT16 prot_data[2],dma_size;
+static uint8_t dma_status;
+static uint32_t dma_src;
+static uint16_t prot_data[2],dma_size;
 /*Number protection*//*Heated Barrel,SD Gundam,Godzilla,Denjin Makai*/
-//static UINT32 prot_bcd[4];
+//static uint32_t prot_bcd[4];
 /*Hit check protection*//*Legionnaire,Heated Barrel,SD Gundam*/
-static UINT8 xy_check;
+static uint8_t xy_check;
 
 
 
@@ -1505,9 +1505,9 @@ static UINT8 xy_check;
 /*      -the second value should be end of calculation (in other words,check everything between the two values) */
 #define PLAYER 0
 #define ENEMY 1
-static void protection_move_jsr(const address_space *space,UINT32 work_ram,UINT8 k)
+static void protection_move_jsr(const address_space *space,uint32_t work_ram,uint8_t k)
 {
-	static UINT32 move_data,x_data,y_data;
+	static uint32_t move_data,x_data,y_data;
 	/*Read the movement data to execute*/
 	move_data = ((memory_read_word(space, work_ram+0x34)<<16) & 0xffff0000) |
 	             (memory_read_word(space, work_ram+0x36) & 0xffff);
@@ -1561,9 +1561,9 @@ static void protection_move_jsr(const address_space *space,UINT32 work_ram,UINT8
 }
 
 
-static UINT16 hit_check;
+static uint16_t hit_check;
 
-static void protection_hit_jsr(const address_space *space,UINT32 work_ram1,UINT32 work_ram2)
+static void protection_hit_jsr(const address_space *space,uint32_t work_ram1,uint32_t work_ram2)
 {
 	int x1,y1,x2,y2/*,hit1,hit2*/;
 	x1 = (memory_read_word(space, work_ram1+0x8));
@@ -1587,8 +1587,8 @@ static void protection_hit_jsr(const address_space *space,UINT32 work_ram1,UINT3
 /*directional movement protection*/
 static void moveprot_jsr(const address_space *space)
 {
-	static INT16 x_axis,y_axis;
-	static UINT16 move_data,distance,move_type;
+	static int16_t x_axis,y_axis;
+	static uint16_t move_data,distance,move_type;
 	move_data = memory_read_word(space, cop_register[0]+0x36);
 	x_axis = memory_read_word(space, cop_register[0]+0x08);
 	y_axis = memory_read_word(space, cop_register[0]+0x04);
@@ -1653,7 +1653,7 @@ static void moveprot_jsr(const address_space *space)
 /*sprite "look" protection*/
 static void move2prot_jsr(const address_space *space)
 {
-	static INT16 x_pl,y_pl,x_en,y_en,res;
+	static int16_t x_pl,y_pl,x_en,y_en,res;
 	x_pl = memory_read_word(space, cop_register[1]+0x8);
 	y_pl = memory_read_word(space, cop_register[1]+0x4);
 	x_en = memory_read_word(space, cop_register[0]+0x8);
@@ -1676,7 +1676,7 @@ static void move2prot_jsr(const address_space *space)
 /*"To point" movement protection*/
 static void move3x_prot_jsr(const address_space *space)
 {
-	static INT16 x_pl,x_en,x_dis;
+	static int16_t x_pl,x_en,x_dis;
 	x_pl = memory_read_word(space, cop_register[1]+0x8);
 	x_en = memory_read_word(space, cop_register[0]+0x8);
 	x_dis = ((memory_read_word(space, cop_register[0]+0x34) & 0xf0) >> 4);
@@ -1690,7 +1690,7 @@ static void move3x_prot_jsr(const address_space *space)
 
 static void move3y_prot_jsr(const address_space *space)
 {
-	static INT16 y_pl,y_en,y_dis;
+	static int16_t y_pl,y_en,y_dis;
 	y_pl = memory_read_word(space, cop_register[1]+0x4);
 	y_en = memory_read_word(space, cop_register[0]+0x4);
 	y_dis = (memory_read_word(space, cop_register[0]+0x34) & 0xf);
@@ -1802,13 +1802,13 @@ x/y check [2]
 
 */
 
-static UINT16 s_i;
+static uint16_t s_i;
 
 static void dma_transfer(const address_space *space)
 {
-	static UINT16 rel_xy;
-	static UINT16 abs_x,abs_y;
-	static UINT16 param;
+	static uint16_t rel_xy;
+	static uint16_t abs_x,abs_y;
+	static uint16_t param;
 
 	//for(s_i = dma_size;s_i > 0;s_i--)
 	{
@@ -1847,9 +1847,9 @@ static void dma_transfer(const address_space *space)
         case 0xac: xparam = 0x04/2;
     }
 */
-static UINT16 check_calc(UINT16 param)
+static uint16_t check_calc(uint16_t param)
 {
-	UINT16 num,i;
+	uint16_t num,i;
 
 	i = param;
 	i-=0xac;
@@ -1861,9 +1861,9 @@ static UINT16 check_calc(UINT16 param)
 	return num;
 }
 
-static UINT16 hit_check_jsr(const address_space *space)
+static uint16_t hit_check_jsr(const address_space *space)
 {
-	static INT16 xsrc,xdst,ysrc,ydst,xparam,yparam;
+	static int16_t xsrc,xdst,ysrc,ydst,xparam,yparam;
 	xsrc = (memory_read_word(space, 0x110008));
 	ysrc = (memory_read_word(space, 0x110004));
 	xdst = (memory_read_word(space, 0x110048));
@@ -1899,10 +1899,10 @@ static UINT16 hit_check_jsr(const address_space *space)
 /*command 0x8900 will check the "point" movement*/
 static void cop2_move3_prot(const address_space *space)
 {
-	static INT16 x_pl,x_en;
-	static INT16 y_pl,y_en;
-	static INT16 x_dis,y_dis;
-	static INT16 dir,dis;
+	static int16_t x_pl,x_en;
+	static int16_t y_pl,y_en;
+	static int16_t x_dis,y_dis;
+	static int16_t dir,dis;
 	x_pl = memory_read_word(space, cop_register[1]+0x8);
 	x_en = memory_read_word(space, cop_register[0]+0x8);
 	dis = ((memory_read_word(space, cop_register[0]+0x34) & 0xf0) >> 4);
@@ -1975,13 +1975,13 @@ static void cop2_move3_prot(const address_space *space)
 }
 
 /**/
-static UINT16 cop2_hit_prot(const address_space *space)
+static uint16_t cop2_hit_prot(const address_space *space)
 {
-	static INT16 xsrc,xdst;
-	static INT16 ysrc,ydst;
-	static INT16 xp,yp;
-	static INT16 param1,param2;
-	static INT16 val;
+	static int16_t xsrc,xdst;
+	static int16_t ysrc,ydst;
+	static int16_t xp,yp;
+	static int16_t param1,param2;
+	static int16_t val;
 
 	param1 = memory_read_word(space, cop_register[2]);
 	param2 = memory_read_word(space, cop_register[3]);
@@ -2016,8 +2016,8 @@ static UINT16 cop2_hit_prot(const address_space *space)
 
 static void cop2_move2_prot(const address_space *space)
 {
-	static INT16 xsrc,ysrc;
-	static INT16 param2;
+	static int16_t xsrc,ysrc;
+	static int16_t param2;
 
 	xsrc = memory_read_word(space, cop_register[0]+0x14);
 	ysrc = memory_read_word(space, cop_register[0]+0x10);
@@ -2051,7 +2051,7 @@ static void cop2_move2_prot(const address_space *space)
 
 READ16_HANDLER( copdxbl_0_r )
 {
-	UINT16 retvalue = cop_mcu_ram[offset];
+	uint16_t retvalue = cop_mcu_ram[offset];
 
 	switch(offset)
 	{
@@ -2215,15 +2215,15 @@ WRITE16_HANDLER( copdxbl_0_w )
 typedef struct _cop_state cop_state;
 struct _cop_state
 {
-	UINT16		offset;						/* last write offset */
-	UINT16		ram[0x200/2];				/* RAM from 0x400-0x5ff */
+	uint16_t		offset;						/* last write offset */
+	uint16_t		ram[0x200/2];				/* RAM from 0x400-0x5ff */
 
-	UINT32		reg[4];						/* registers */
+	uint32_t		reg[4];						/* registers */
 
-	UINT16		func_trigger[0x100/8];		/* function trigger */
-	UINT16		func_value[0x100/8];		/* function value (?) */
-	UINT16		func_mask[0x100/8];			/* function mask (?) */
-	UINT16		program[0x100];				/* program "code" */
+	uint16_t		func_trigger[0x100/8];		/* function trigger */
+	uint16_t		func_value[0x100/8];		/* function value (?) */
+	uint16_t		func_mask[0x100/8];			/* function mask (?) */
+	uint16_t		program[0x100];				/* program "code" */
 };
 
 static cop_state cop_data;
@@ -2234,23 +2234,23 @@ static cop_state cop_data;
 
 
 
-INLINE UINT16 cop_ram_r(cop_state *cop, UINT16 offset)
+INLINE uint16_t cop_ram_r(cop_state *cop, uint16_t offset)
 {
 	return cop->ram[(offset - 0x400) / 2];
 }
 
-INLINE void cop_ram_w(cop_state *cop, UINT16 offset, UINT16 data)
+INLINE void cop_ram_w(cop_state *cop, uint16_t offset, uint16_t data)
 {
 	cop->ram[(offset - 0x400) / 2] = data;
 }
 
-INLINE UINT32 r32(offs_t address)
+INLINE uint32_t r32(offs_t address)
 {
 	return	(memory_read_word(space, address + 0) << 0) |
 			(memory_read_word(space, address + 2) << 16);
 }
 
-INLINE void w32(offs_t address, UINT32 data)
+INLINE void w32(offs_t address, uint32_t data)
 {
 	memory_write_word(space, address + 0, data >> 0);
 	memory_write_word(space, address + 2, data >> 16);
@@ -2265,8 +2265,8 @@ void cop_init(void)
 WRITE16_HANDLER( raiden2_cop2_w )
 {
 	cop_state *cop = &cop_data;
-	UINT32 temp32;
-	UINT8 regnum;
+	uint32_t temp32;
+	uint8_t regnum;
 	int func;
 
 	/* all COP data writes are word-length (?) */
@@ -2321,7 +2321,7 @@ WRITE16_HANDLER( raiden2_cop2_w )
 		case 0x47a/2:		/* clear RAM */
 			if (cop_ram_r(cop, 0x47e) == 0x118)
 			{
-				UINT32 addr = cop_ram_r(cop, 0x478) << 6;
+				uint32_t addr = cop_ram_r(cop, 0x478) << 6;
 				int count = (cop_ram_r(cop, 0x47a) + 1) << 5;
 				COP_LOG(("%05X:COP RAM clear from %05X to %05X\n", cpu_get_pc(space->cpu), addr, addr + count));
 				while (count--)
@@ -2416,7 +2416,7 @@ READ16_HANDLER( raiden2_cop2_r )
 
 static READ16_HANDLER( generic_cop_r )
 {
-	UINT16 retvalue;
+	uint16_t retvalue;
 	retvalue = cop_mcu_ram[offset];
 
 
@@ -2430,7 +2430,7 @@ static READ16_HANDLER( generic_cop_r )
 
 static WRITE16_HANDLER( generic_cop_w )
 {
-	static UINT32 temp32;
+	static uint32_t temp32;
 
 	switch (offset)
 	{
@@ -2571,7 +2571,7 @@ static WRITE16_HANDLER( generic_cop_w )
 			/* do the fill  */
 			if (cop_clearfill_value[cop_clearfill_lasttrigger]==0x0000)
 			{
-				UINT32 length, address;
+				uint32_t length, address;
 				int i;
 				address = cop_clearfill_address[cop_clearfill_lasttrigger] << 6;
 				length = (cop_clearfill_length[cop_clearfill_lasttrigger]+1) << 5;
@@ -2762,24 +2762,24 @@ WRITE16_HANDLER( cupsoc_mcu_w )
 				/*???*/
 				case 0x8100:
 				{
-					UINT32 src = cop_register[0];
+					uint32_t src = cop_register[0];
 					memory_write_word(space, src+0x36,0xffc0);
 					break;
 				}
 				case 0x8900:
 				{
-					UINT32 src = cop_register[0];
+					uint32_t src = cop_register[0];
 					memory_write_word(space, src+0x36,0xff80);
 					break;
 				}
 				/*Right*/
 				case 0x0205:
 				{
-					UINT32 src = cop_register[0];
-					INT16 y = memory_read_word(space, src+0x4);
-					INT16 x = memory_read_word(space, src+0x8);
-					INT16 y_rel = memory_read_word(space, src+0x10);
-					INT16 x_rel = memory_read_word(space, src+0x14);
+					uint32_t src = cop_register[0];
+					int16_t y = memory_read_word(space, src+0x4);
+					int16_t x = memory_read_word(space, src+0x8);
+					int16_t y_rel = memory_read_word(space, src+0x10);
+					int16_t x_rel = memory_read_word(space, src+0x14);
 					memory_write_word(space, src+0x4,(y+y_rel));
 					memory_write_word(space, src+0x8,(x+x_rel));
 					/*logerror("%08x %08x %08x %08x %08x\n",cop_register[0],
@@ -2792,8 +2792,8 @@ WRITE16_HANDLER( cupsoc_mcu_w )
 				/*???*/
 				case 0x3bb0:
 				{
-					//UINT32 dst = cop_register[0];
-					//UINT32 dst = cop_register[1];
+					//uint32_t dst = cop_register[0];
+					//uint32_t dst = cop_register[1];
 					//memory_write_word(space, dst,  mame_rand(space->machine)/*memory_read_word(space, src)*/);
 					//memory_write_word(space, dst+2,mame_rand(space->machine)/*memory_read_word(space, src+2)*/);
 					//memory_write_word(space, dst+4,mame_rand(space->machine)/*memory_read_word(space, src+4)*/);
@@ -3235,8 +3235,8 @@ WRITE16_HANDLER( legionna_mcu_w )
 			/*Movement protection*/
 			if(cop_mcu_ram[offset] == 0x8900 || cop_mcu_ram[offset] == 0x0205)
 			{
-				static UINT16 xy_data[2];
-				static UINT8 k;
+				static uint16_t xy_data[2];
+				static uint8_t k;
 				xy_data[0] = memory_read_word(space, cop_register[2]);
 				xy_data[1] = memory_read_word(space, cop_register[3]);
 				k = (cop_mcu_ram[offset] == 0x0205) ? ENEMY : PLAYER;

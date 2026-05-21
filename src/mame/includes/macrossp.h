@@ -12,19 +12,19 @@ public:
 	macrossp_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT32 *         mainram;
-	UINT32 *         scra_videoram;
-	UINT32 *         scra_videoregs;
-	UINT32 *         scrb_videoram;
-	UINT32 *         scrb_videoregs;
-	UINT32 *         scrc_videoram;
-	UINT32 *         scrc_videoregs;
-	UINT32 *         text_videoram;
-	UINT32 *         text_videoregs;
-	UINT32 *         spriteram;
-	UINT32 *         spriteram_old;
-	UINT32 *         spriteram_old2;
-	UINT32 *         paletteram;
+	uint32_t *         mainram;
+	uint32_t *         scra_videoram;
+	uint32_t *         scra_videoregs;
+	uint32_t *         scrb_videoram;
+	uint32_t *         scrb_videoregs;
+	uint32_t *         scrc_videoram;
+	uint32_t *         scrc_videoregs;
+	uint32_t *         text_videoram;
+	uint32_t *         text_videoregs;
+	uint32_t *         spriteram;
+	uint32_t *         spriteram_old;
+	uint32_t *         spriteram_old2;
+	uint32_t *         paletteram;
 	size_t           spriteram_size;
 
 	/* video-related */
@@ -33,7 +33,7 @@ public:
 	/* misc */
 	int              sndpending;
 	int              snd_toggle;
-	INT32            fade_effect, old_fade;
+	int32_t            fade_effect, old_fade;
 
 	/* devices */
 	running_device *maincpu;

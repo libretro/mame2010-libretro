@@ -8,7 +8,7 @@
 #include "includes/irobot.h"
 
 #define BITMAP_WIDTH	256
-static UINT8 *polybitmap1,*polybitmap2;
+static uint8_t *polybitmap1,*polybitmap2;
 
 static int ir_xmin, ir_ymin, ir_xmax, ir_ymax; /* clipping area */
 
@@ -65,7 +65,7 @@ WRITE8_HANDLER( irobot_paletteram_w )
 {
     int r,g,b;
 	int bits,intensity;
-    UINT32 color;
+    uint32_t color;
 
     color = ((data << 1) | (offset & 0x01)) ^ 0x1ff;
     intensity = color & 0x07;
@@ -79,14 +79,14 @@ WRITE8_HANDLER( irobot_paletteram_w )
 }
 
 
-static void _irobot_poly_clear(running_machine *machine, UINT8 *bitmap_base)
+static void _irobot_poly_clear(running_machine *machine, uint8_t *bitmap_base)
 {
 	memset(bitmap_base, 0, BITMAP_WIDTH * machine->primary_screen->height());
 }
 
 void irobot_poly_clear(running_machine *machine)
 {
-	UINT8 *bitmap_base = irobot_bufsel ? polybitmap2 : polybitmap1;
+	uint8_t *bitmap_base = irobot_bufsel ? polybitmap2 : polybitmap1;
 	_irobot_poly_clear(machine, bitmap_base);
 }
 
@@ -100,8 +100,8 @@ VIDEO_START( irobot )
 {
 	/* Setup 2 bitmaps for the polygon generator */
 	int height = machine->primary_screen->height();
-	polybitmap1 = auto_alloc_array(machine, UINT8, BITMAP_WIDTH * height);
-	polybitmap2 = auto_alloc_array(machine, UINT8, BITMAP_WIDTH * height);
+	polybitmap1 = auto_alloc_array(machine, uint8_t, BITMAP_WIDTH * height);
+	polybitmap2 = auto_alloc_array(machine, uint8_t, BITMAP_WIDTH * height);
 
 	/* clear the bitmaps so we start with valid palette look-up values for drawing */
 	_irobot_poly_clear(machine, polybitmap1);
@@ -164,7 +164,7 @@ VIDEO_START( irobot )
      modified from a routine written by Andrew Caldwell
  */
 
-static void draw_line (UINT8 *polybitmap, int x1, int y1, int x2, int y2, int col)
+static void draw_line (uint8_t *polybitmap, int x1, int y1, int x2, int y2, int col)
 {
     int dx,dy,sx,sy,cx,cy;
 
@@ -214,14 +214,14 @@ static void draw_line (UINT8 *polybitmap, int x1, int y1, int x2, int y2, int co
 
 void irobot_run_video(void)
 {
-	UINT8 *polybitmap;
-	UINT16 *combase16 = (UINT16 *)irobot_combase;
+	uint8_t *polybitmap;
+	uint16_t *combase16 = (uint16_t *)irobot_combase;
 	int sx,sy,ex,ey,sx2,ey2;
 	int color;
-	UINT32 d1;
+	uint32_t d1;
 	int lpnt,spnt,spnt2;
 	int shp;
-	INT32 word1,word2;
+	int32_t word1,word2;
 
 	logerror("Starting Polygon Generator, Clear=%d\n",irobot_vg_clear);
 
@@ -267,7 +267,7 @@ void irobot_run_video(void)
 				color = sy & 0x3f;
 				sy = ROUND_TO_PIXEL(sy);
 				sx = combase16[spnt+3];
-				word1 = (INT16)combase16[spnt+2];
+				word1 = (int16_t)combase16[spnt+2];
 				ex = sx + word1 * (ey - sy + 1);
 				draw_line(polybitmap, ROUND_TO_PIXEL(sx),sy,ROUND_TO_PIXEL(ex),ey,color);
 				spnt+=4;
@@ -286,7 +286,7 @@ void irobot_run_video(void)
 			sy = ROUND_TO_PIXEL(sy);
 			spnt+=4;
 
-			word1 = (INT16)combase16[spnt];
+			word1 = (int16_t)combase16[spnt];
 			ey = combase16[spnt+1];
 			if (word1 != -1 || ey != 0xffff)
 			{
@@ -295,7 +295,7 @@ void irobot_run_video(void)
 
 			//  sx += word1;
 
-				word2 = (INT16)combase16[spnt2];
+				word2 = (int16_t)combase16[spnt2];
 				ey2 = ROUND_TO_PIXEL(combase16[spnt2+1]);
 				spnt2+=2;
 
@@ -319,7 +319,7 @@ void irobot_run_video(void)
 
 					if (sy > ey)
 					{
-						word1 = (INT16)combase16[spnt];
+						word1 = (int16_t)combase16[spnt];
 						ey = combase16[spnt+1];
 						if (word1 == -1 && ey == 0xffff)
 							break;
@@ -331,7 +331,7 @@ void irobot_run_video(void)
 
 					if (sy > ey2)
 					{
-						word2 = (INT16)combase16[spnt2];
+						word2 = (int16_t)combase16[spnt2];
 						ey2 = ROUND_TO_PIXEL(combase16[spnt2+1]);
 						spnt2+=2;
 					}
@@ -348,7 +348,7 @@ void irobot_run_video(void)
 
 VIDEO_UPDATE( irobot )
 {
-	UINT8 *bitmap_base = irobot_bufsel ? polybitmap1 : polybitmap2;
+	uint8_t *bitmap_base = irobot_bufsel ? polybitmap1 : polybitmap2;
 	int x, y, offs;
 
 	/* copy the polygon bitmap */

@@ -60,11 +60,11 @@ static void init_common( running_machine *machine )
 	fromance_state *state = (fromance_state *)machine->driver_data;
 
 	/* allocate local videoram */
-	state->local_videoram[0] = auto_alloc_array(machine, UINT8, 0x1000 * 3);
-	state->local_videoram[1] = auto_alloc_array(machine, UINT8, 0x1000 * 3);
+	state->local_videoram[0] = auto_alloc_array(machine, uint8_t, 0x1000 * 3);
+	state->local_videoram[1] = auto_alloc_array(machine, uint8_t, 0x1000 * 3);
 
 	/* allocate local palette RAM */
-	state->local_paletteram = auto_alloc_array(machine, UINT8, 0x800 * 2);
+	state->local_paletteram = auto_alloc_array(machine, uint8_t, 0x800 * 2);
 
 	/* configure tilemaps */
 	tilemap_set_transparent_pen(state->fg_tilemap, 15);
@@ -306,9 +306,9 @@ WRITE8_HANDLER( fromance_crtc_register_w )
 static void draw_sprites( screen_device &screen, bitmap_t *bitmap, const rectangle *cliprect, int draw_priority )
 {
 	fromance_state *state = (fromance_state *)screen.machine->driver_data;
-	static const UINT8 zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
+	static const uint8_t zoomtable[16] = { 0,7,14,20,25,30,34,38,42,46,49,52,54,57,59,61 };
 	const rectangle &visarea = screen.visible_area();
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	/* draw the sprites */

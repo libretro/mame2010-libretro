@@ -24,9 +24,9 @@ READ16_HANDLER(namcoc7x_soundram16_r);
 WRITE32_HANDLER(namcoc7x_soundram32_w);
 READ32_HANDLER(namcoc7x_soundram32_r);
 
-void namcoc7x_sound_write16(UINT16 command, UINT32 offset);
+void namcoc7x_sound_write16(uint16_t command, uint32_t offset);
 void namcoc7x_on_driver_init(running_machine *machine);
-void namcoc7x_set_host_ram(UINT32 *hostram);
+void namcoc7x_set_host_ram(uint32_t *hostram);
 
 /* BIOS from Prop Cycle used as a substitute until we can trojan the real BIOSes for these games */
 #define NAMCO_C7X_BIOS	\

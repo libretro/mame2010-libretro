@@ -11,10 +11,10 @@
 SAMPLES_START( meadows_sh_start );
 void meadows_sh_dac_w(running_machine *machine, int data);
 void meadows_sh_update(running_machine *machine);
-extern UINT8 meadows_0c00;
-extern UINT8 meadows_0c01;
-extern UINT8 meadows_0c02;
-extern UINT8 meadows_0c03;
+extern uint8_t meadows_0c00;
+extern uint8_t meadows_0c01;
+extern uint8_t meadows_0c02;
+extern uint8_t meadows_0c03;
 
 
 /*----------- defined in video/meadows.c -----------*/

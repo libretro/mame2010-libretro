@@ -35,11 +35,11 @@ Encryption PAL 16R4 on CPU board
 
 */
 
-static UINT8 *decrypt;
+static uint8_t *decrypt;
 static int adpcm_data_offs;
 static int adpcm_data_end;
 static int toggle;
-static UINT8 fm_data;
+static uint8_t fm_data;
 
 static int coin_mech_latch[2];
 static int stfight_coin_mech_query_active = 0;
@@ -50,15 +50,15 @@ static int stfight_coin_mech_query;
 DRIVER_INIT( empcity )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
-	decrypt = auto_alloc_array(machine, UINT8, 0x8000);
+	decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
 
 	for (A = 0;A < 0x8000;A++)
 	{
-		UINT8 src = rom[A];
+		uint8_t src = rom[A];
 
 		// decode opcode
 		decrypt[A] =
@@ -111,7 +111,7 @@ MACHINE_RESET( stfight )
 // - in fact I don't even know how/where it's switched in!
 static WRITE8_HANDLER( stfight_bank_w )
 {
-	UINT8   *ROM2 = memory_region(space->machine, "maincpu") + 0x10000;
+	uint8_t   *ROM2 = memory_region(space->machine, "maincpu") + 0x10000;
 
 	memory_set_bankptr(space->machine,  "bank1", &ROM2[data<<14] );
 }
@@ -199,7 +199,7 @@ static const int sampleLimits[] =
 
 void stfight_adpcm_int(running_device *device)
 {
-	UINT8 *SAMPLES = memory_region(device->machine, "adpcm");
+	uint8_t *SAMPLES = memory_region(device->machine, "adpcm");
 	int adpcm_data = SAMPLES[adpcm_data_offs & 0x7fff];
 
     // finished playing sample?

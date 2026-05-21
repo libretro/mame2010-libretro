@@ -30,14 +30,14 @@ extern const z80ctc_interface mcr_ctc_intf;
 extern const z80ctc_interface nflfoot_ctc_intf;
 extern const z80pio_interface nflfoot_pio_intf;
 extern const z80sio_interface nflfoot_sio_intf;
-extern UINT8 mcr_cocktail_flip;
+extern uint8_t mcr_cocktail_flip;
 
 extern const gfx_layout mcr_bg_layout;
 extern const gfx_layout mcr_sprite_layout;
 
-extern UINT32 mcr_cpu_board;
-extern UINT32 mcr_sprite_board;
-extern UINT32 mcr_ssio_board;
+extern uint32_t mcr_cpu_board;
+extern uint32_t mcr_sprite_board;
+extern uint32_t mcr_ssio_board;
 
 extern const pia6821_interface zwackery_pia0_intf;
 extern const pia6821_interface zwackery_pia1_intf;
@@ -71,8 +71,8 @@ WRITE8_HANDLER( mcr_ipu_watchdog_w );
 
 /*----------- defined in video/mcr.c -----------*/
 
-extern INT8 mcr12_sprite_xoffs;
-extern INT8 mcr12_sprite_xoffs_flip;
+extern int8_t mcr12_sprite_xoffs;
+extern int8_t mcr12_sprite_xoffs_flip;
 
 VIDEO_START( mcr );
 
@@ -89,11 +89,11 @@ VIDEO_UPDATE( mcr );
 
 /*----------- defined in video/mcr3.c -----------*/
 
-extern UINT8 spyhunt_sprite_color_mask;
-extern INT16 spyhunt_scrollx, spyhunt_scrolly;
-extern INT16 spyhunt_scroll_offset;
+extern uint8_t spyhunt_sprite_color_mask;
+extern int16_t spyhunt_scrollx, spyhunt_scrolly;
+extern int16_t spyhunt_scroll_offset;
 
-extern UINT8 *spyhunt_alpharam;
+extern uint8_t *spyhunt_alpharam;
 
 WRITE8_HANDLER( mcr3_paletteram_w );
 WRITE8_HANDLER( mcr3_videoram_w );
@@ -111,8 +111,8 @@ VIDEO_UPDATE( spyhunt );
 
 /*----------- defined in video/mcr68.c -----------*/
 
-extern UINT8 mcr68_sprite_clip;
-extern INT8 mcr68_sprite_xoffset;
+extern uint8_t mcr68_sprite_clip;
+extern int8_t mcr68_sprite_xoffset;
 
 WRITE16_HANDLER( mcr68_paletteram_w );
 WRITE16_HANDLER( mcr68_videoram_w );

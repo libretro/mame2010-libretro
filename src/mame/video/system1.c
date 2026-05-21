@@ -81,19 +81,19 @@
 #include "emu.h"
 #include "system1.h"
 
-static UINT8 *mix_collide;
-static UINT8 mix_collide_summary;
-static UINT8 *sprite_collide;
-static UINT8 sprite_collide_summary;
+static uint8_t *mix_collide;
+static uint8_t mix_collide_summary;
+static uint8_t *sprite_collide;
+static uint8_t sprite_collide_summary;
 
 static bitmap_t *sprite_bitmap;
 
-static UINT8 system1_video_mode;
+static uint8_t system1_video_mode;
 
-static UINT8 videoram_bank;
+static uint8_t videoram_bank;
 
 static tilemap_t *tilemap_page[8];
-static UINT8 tilemap_pages;
+static uint8_t tilemap_pages;
 
 
 
@@ -105,10 +105,10 @@ static UINT8 tilemap_pages;
 
 static TILE_GET_INFO( tile_get_info )
 {
-	const UINT8 *rambase = (const UINT8 *)param;
-	UINT32 tiledata = rambase[tile_index*2+0] | (rambase[tile_index*2+1] << 8);
-	UINT32 code = ((tiledata >> 4) & 0x800) | (tiledata & 0x7ff);
-	UINT32 color = (tiledata >> 5) & 0xff;
+	const uint8_t *rambase = (const uint8_t *)param;
+	uint32_t tiledata = rambase[tile_index*2+0] | (rambase[tile_index*2+1] << 8);
+	uint32_t code = ((tiledata >> 4) & 0x800) | (tiledata & 0x7ff);
+	uint32_t color = (tiledata >> 5) & 0xff;
 
 	SET_TILE_INFO(0, code, color, 0);
 }
@@ -126,12 +126,12 @@ static void video_start_common(running_machine *machine, int pagecount)
 	int pagenum;
 
 	/* allocate memory for the collision arrays */
-	mix_collide = auto_alloc_array_clear(machine, UINT8, 64);
-	sprite_collide = auto_alloc_array_clear(machine, UINT8, 1024);
+	mix_collide = auto_alloc_array_clear(machine, uint8_t, 64);
+	sprite_collide = auto_alloc_array_clear(machine, uint8_t, 1024);
 
 	/* allocate memory for videoram */
 	tilemap_pages = pagecount;
-	machine->generic.videoram.u8 = auto_alloc_array_clear(machine, UINT8, 0x800 * pagecount);
+	machine->generic.videoram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x800 * pagecount);
 
 	/* create the tilemap pages */
 	for (pagenum = 0; pagenum < pagecount; pagenum++)
@@ -252,9 +252,9 @@ INLINE void videoram_wait_states(cpu_device *cpu)
 
 	/* this assumes 4 5MHz pixel clocks per FIXST, or 8*4 20MHz CPU clocks,
        and is based on a dump of 315-5137 */
-	const UINT32 cpu_cycles_per_fixst = 4 * 4;
-	const UINT32 fixst_offset = 2 * 4;
-	UINT32 cycles_until_next_fixst = cpu_cycles_per_fixst - ((cpu->total_cycles() - fixst_offset) % cpu_cycles_per_fixst);
+	const uint32_t cpu_cycles_per_fixst = 4 * 4;
+	const uint32_t fixst_offset = 2 * 4;
+	uint32_t cycles_until_next_fixst = cpu_cycles_per_fixst - ((cpu->total_cycles() - fixst_offset) % cpu_cycles_per_fixst);
 
 	cpu_adjust_icount(cpu, -cycles_until_next_fixst);
 }
@@ -294,7 +294,7 @@ WRITE8_DEVICE_HANDLER( system1_videoram_bank_w )
 
 WRITE8_HANDLER( system1_paletteram_w )
 {
-	const UINT8 *color_prom = memory_region(space->machine, "palette");
+	const uint8_t *color_prom = memory_region(space->machine, "palette");
 	int val,r,g,b;
 
 	/*
@@ -365,24 +365,24 @@ WRITE8_HANDLER( system1_paletteram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int xoffset)
 {
-	UINT32 gfxbanks = memory_region_length(machine, "sprites") / 0x8000;
-	const UINT8 *gfxbase = memory_region(machine, "sprites");
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint32_t gfxbanks = memory_region_length(machine, "sprites") / 0x8000;
+	const uint8_t *gfxbase = memory_region(machine, "sprites");
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int flipscreen = flip_screen_get(machine);
 	int spritenum;
 
 	/* up to 32 sprites total */
 	for (spritenum = 0; spritenum < 32; spritenum++)
 	{
-		const UINT8 *spritedata = &spriteram[spritenum * 0x10];
-		UINT16 srcaddr = spritedata[6] + (spritedata[7] << 8);
-		UINT16 stride = spritedata[4] + (spritedata[5] << 8);
-		UINT8 bank = ((spritedata[3] & 0x80) >> 7) | ((spritedata[3] & 0x40) >> 5) | ((spritedata[3] & 0x20) >> 3);
+		const uint8_t *spritedata = &spriteram[spritenum * 0x10];
+		uint16_t srcaddr = spritedata[6] + (spritedata[7] << 8);
+		uint16_t stride = spritedata[4] + (spritedata[5] << 8);
+		uint8_t bank = ((spritedata[3] & 0x80) >> 7) | ((spritedata[3] & 0x40) >> 5) | ((spritedata[3] & 0x20) >> 3);
 		int xstart = ((spritedata[2] + (spritedata[3] << 8)) & 0x1ff) / 2 + xoffset;
 		int bottom = spritedata[1] + 1;
 		int top = spritedata[0] + 1;
-		UINT16 palettebase = spritenum * 0x10;
-		const UINT8 *gfxbankbase;
+		uint16_t palettebase = spritenum * 0x10;
+		const uint8_t *gfxbankbase;
 		int x, y;
 
 		/* writing an 0xff into the first byte of sprite RAM seems to disable all sprites;
@@ -406,8 +406,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 		/* iterate over all rows of the sprite */
 		for (y = top; y < bottom; y++)
 		{
-			UINT16 *destbase = BITMAP_ADDR16(bitmap, y, 0);
-			UINT16 curaddr;
+			uint16_t *destbase = BITMAP_ADDR16(bitmap, y, 0);
+			uint16_t curaddr;
 			int addrdelta;
 
 			/* advance by the row counter */
@@ -421,8 +421,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 			addrdelta = (srcaddr & 0x8000) ? -1 : 1;
 			for (x = xstart, curaddr = srcaddr; ; x += 2, curaddr += addrdelta)
 			{
-				UINT8 color1, color2;
-				UINT8 data;
+				uint8_t color1, color2;
+				uint8_t data;
 
 				data = gfxbankbase[curaddr & 0x7fff];
 
@@ -488,7 +488,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 static void video_update_common(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect, bitmap_t *fgpixmap, bitmap_t **bgpixmaps, const int *bgrowscroll, int bgyscroll, int spritexoffs)
 {
-	const UINT8 *lookup = memory_region(screen->machine, "proms");
+	const uint8_t *lookup = memory_region(screen->machine, "proms");
 	int x, y;
 
 	/* first clear the sprite bitmap and draw sprites within this area */
@@ -498,12 +498,12 @@ static void video_update_common(running_device *screen, bitmap_t *bitmap, const 
 	/* iterate over rows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *fgbase = BITMAP_ADDR16(fgpixmap, y & 0xff, 0);
-		UINT16 *sprbase = BITMAP_ADDR16(sprite_bitmap, y & 0xff, 0);
-		UINT16 *dstbase = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *fgbase = BITMAP_ADDR16(fgpixmap, y & 0xff, 0);
+		uint16_t *sprbase = BITMAP_ADDR16(sprite_bitmap, y & 0xff, 0);
+		uint16_t *dstbase = BITMAP_ADDR16(bitmap, y, 0);
 		int bgy = (y + bgyscroll) & 0x1ff;
 		int bgxscroll = bgrowscroll[y / 8];
-		UINT16 *bgbase[2];
+		uint16_t *bgbase[2];
 
 		/* get the base of the left and right pixmaps for the effective background Y */
 		bgbase[0] = BITMAP_ADDR16(bgpixmaps[(bgy >> 8) * 2 + 0], bgy & 0xff, 0);
@@ -513,11 +513,11 @@ static void video_update_common(running_device *screen, bitmap_t *bitmap, const 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
 			int bgx = (x - bgxscroll) & 0x1ff;
-			UINT16 fgpix = fgbase[x];
-			UINT16 bgpix = bgbase[bgx >> 8][bgx & 0xff];
-			UINT16 sprpix = sprbase[x];
-			UINT8 lookup_index;
-			UINT8 lookup_value;
+			uint16_t fgpix = fgbase[x];
+			uint16_t bgpix = bgbase[bgx >> 8][bgx & 0xff];
+			uint16_t sprpix = sprbase[x];
+			uint8_t lookup_index;
+			uint8_t lookup_value;
 
 			/* using the sprite, background, and foreground pixels, look up the color behavior */
 			lookup_index =	(((sprpix & 0xf) == 0) << 0) |

@@ -12,11 +12,11 @@ public:
 	ladyfrog_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    spriteram;
-	UINT8 *    scrlram;
-//      UINT8 *    paletteram;    // currently this uses generic palette handling
-//      UINT8 *    paletteram2;   // currently this uses generic palette handling
+	uint8_t *    videoram;
+	uint8_t *    spriteram;
+	uint8_t *    scrlram;
+//      uint8_t *    paletteram;    // currently this uses generic palette handling
+//      uint8_t *    paletteram2;   // currently this uses generic palette handling
 	size_t     videoram_size;
 
 	/* video-related */
@@ -27,7 +27,7 @@ public:
 	/* misc */
 	int        sound_nmi_enable, pending_nmi;
 	int        snd_flag;
-	UINT8      snd_data;
+	uint8_t      snd_data;
 
 	/* devices */
 	running_device *audiocpu;

@@ -7,9 +7,9 @@ public:
 	lsasquad_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *      scrollram;
-	UINT8 *      videoram;
-	UINT8 *      spriteram;
+	uint8_t *      scrollram;
+	uint8_t *      videoram;
+	uint8_t *      spriteram;
 	size_t       spriteram_size;
 	size_t       videoram_size;
 
@@ -18,10 +18,10 @@ public:
 	int sound_nmi_enable, pending_nmi, sound_cmd, sound_result;
 
 	/* mcu */
-	UINT8 from_main, from_mcu;
+	uint8_t from_main, from_mcu;
 	int mcu_sent, main_sent;
-	UINT8 port_a_in, port_a_out, ddr_a;
-	UINT8 port_b_in, port_b_out, ddr_b;
+	uint8_t port_a_in, port_a_out, ddr_a;
+	uint8_t port_b_in, port_b_out, ddr_b;
 
 	/* devices */
 	running_device *maincpu;

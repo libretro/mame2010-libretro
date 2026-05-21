@@ -5,10 +5,10 @@
 
 #define NAMCOS1_MAX_BANK 0x400
 
-UINT8 *namcos1_paletteram;
+uint8_t *namcos1_paletteram;
 
-static UINT8 *namcos1_triram;
-static UINT8 *s1ram;
+static uint8_t *namcos1_triram;
+static uint8_t *s1ram;
 
 
 /*******************************************************************************
@@ -23,7 +23,7 @@ typedef struct
 	read8_space_func bank_handler_r;
 	write8_space_func bank_handler_w;
 	int           bank_offset;
-	UINT8 *bank_pointer;
+	uint8_t *bank_pointer;
 } bankhandler;
 
 /* hardware elements of 1Mbytes physical memory space */
@@ -92,7 +92,7 @@ static WRITE8_HANDLER( namcos1_3dcs_w )
 
 static int key_id, key_reg, key_rng, key_swap4_arg, key_swap4, key_bottom4, key_top4;
 static unsigned int key_quotient, key_reminder, key_numerator_high_word;
-static UINT8 key[8];
+static uint8_t key[8];
 
 // used by faceoff and tankforce 4 player (input multiplex)
 static READ8_HANDLER( faceoff_inputs_r );
@@ -559,7 +559,7 @@ static WRITE8_HANDLER( key_type3_w )
 
 WRITE8_HANDLER( namcos1_sound_bankswitch_w )
 {
-	UINT8 *rom = memory_region(space->machine, "audiocpu") + 0xc000;
+	uint8_t *rom = memory_region(space->machine, "audiocpu") + 0xc000;
 
 	int bank = (data & 0x70) >> 4;
 	memory_set_bankptr(space->machine, "bank17",rom + 0x4000 * bank);
@@ -716,7 +716,7 @@ static void set_bank(running_machine *machine, int banknum, const bankhandler *h
 	namcos1_active_bank[banknum] = *handler;
 }
 
-static void namcos1_bankswitch(running_machine *machine, int cpu, offs_t offset, UINT8 data)
+static void namcos1_bankswitch(running_machine *machine, int cpu, offs_t offset, uint8_t data)
 {
 	int bank = (cpu*8) + (( offset >> 9) & 0x07);
 
@@ -765,7 +765,7 @@ WRITE8_HANDLER( namcos1_subcpu_bank_w )
 *******************************************************************************/
 
 static void namcos1_install_bank(int start,int end,read8_space_func hr,write8_space_func hw,
-			  int offset,UINT8 *pointer)
+			  int offset,uint8_t *pointer)
 {
 	int i;
 	for(i=start;i<=end;i++)
@@ -786,7 +786,7 @@ static void namcos1_build_banks(running_machine *machine,read8_space_func key_r,
 	int i;
 
 	/**** kludge alert ****/
-	UINT8 *dummyrom = auto_alloc_array(machine, UINT8, 0x2000);
+	uint8_t *dummyrom = auto_alloc_array(machine, uint8_t, 0x2000);
 
 	/* when the games want to reset because the test switch has been flipped (or
        because the protection checks failed!) they just set the top bits of bank #7
@@ -827,7 +827,7 @@ static void namcos1_build_banks(running_machine *machine,read8_space_func key_r,
 
 	/* PRG0-PRG7 */
 	{
-		UINT8 *rom = memory_region(machine, "user1");
+		uint8_t *rom = memory_region(machine, "user1");
 
 		namcos1_install_bank(0x200,0x3ff,0,rom_w,0,rom);
 
@@ -836,7 +836,7 @@ static void namcos1_build_banks(running_machine *machine,read8_space_func key_r,
 		{
 			if ((i & 0x010000) == 0)
 			{
-				UINT8 t = rom[i];
+				uint8_t t = rom[i];
 				rom[i] = rom[i + 0x010000];
 				rom[i + 0x010000] = t;
 			}
@@ -985,9 +985,9 @@ static void namcos1_driver_init( running_machine *machine, const struct namcos1_
 	key_top4      = specific->key_reg6;
 
 	/* S1 RAM pointer set */
-	s1ram = auto_alloc_array(machine, UINT8, 0x8000);
-	namcos1_triram = auto_alloc_array(machine, UINT8, 0x800);
-	namcos1_paletteram = auto_alloc_array(machine, UINT8, 0x8000);
+	s1ram = auto_alloc_array(machine, uint8_t, 0x8000);
+	namcos1_triram = auto_alloc_array(machine, uint8_t, 0x800);
+	namcos1_paletteram = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	/* Register volatile user memory for save state */
 	state_save_register_global_pointer(machine, s1ram, 0x8000);
@@ -1121,8 +1121,8 @@ DRIVER_INIT( bakutotu )
 #if 0
 	// resolves CPU deadlocks caused by sloppy coding(see driver\namcos1.c)
 	{
-		static const UINT8 target[8] = {0x34,0x37,0x35,0x37,0x96,0x00,0x2e,0xed};
-		UINT8 *rombase, *srcptr, *endptr, *scanptr;
+		static const uint8_t target[8] = {0x34,0x37,0x35,0x37,0x96,0x00,0x2e,0xed};
+		uint8_t *rombase, *srcptr, *endptr, *scanptr;
 
 		rombase = memory_region(machine, "user1");
 		srcptr = rombase + 0x1e000;

@@ -34,7 +34,7 @@
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarig42_state *state = (atarig42_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0xfff;
 	int color = (data >> 12) & 0x0f;
 	int opaque = data & 0x8000;
@@ -45,7 +45,7 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarig42_state *state = (atarig42_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
+	uint16_t data = state->atarigen.playfield[tile_index];
 	int code = (state->playfield_tile_bank << 12) | (data & 0xfff);
 	int color = (state->playfield_base >> 5) + ((state->playfield_color_bank << 3) & 0x18) + ((data >> 12) & 7);
 	SET_TILE_INFO(0, code, color, (data >> 15) & 1);
@@ -139,7 +139,7 @@ WRITE16_HANDLER( atarig42_mo_control_w )
 void atarig42_scanline_update(screen_device &screen, int scanline)
 {
 	atarig42_state *state = (atarig42_state *)screen.machine->driver_data;
-	UINT16 *base = &state->atarigen.alpha[(scanline / 8) * 64 + 48];
+	uint16_t *base = &state->atarigen.alpha[(scanline / 8) * 64 + 48];
 	int i;
 
 	if (scanline == 0) logerror("-------\n");
@@ -151,7 +151,7 @@ void atarig42_scanline_update(screen_device &screen, int scanline)
 	/* update the playfield scrolls */
 	for (i = 0; i < 8; i++)
 	{
-		UINT16 word;
+		uint16_t word;
 
 		word = *base++;
 		if (word & 0x8000)
@@ -233,9 +233,9 @@ VIDEO_UPDATE( atarig42 )
 		/* now blend with the playfield */
 		for (y = top; y < bottom; y++)
 		{
-			UINT16 *pf = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
-			UINT16 *mo = (UINT16 *)mo_bitmap->base + y * mo_bitmap->rowpixels;
-			UINT8 *pri = (UINT8 *)priority_bitmap->base + priority_bitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
+			uint16_t *mo = (uint16_t *)mo_bitmap->base + y * mo_bitmap->rowpixels;
+			uint8_t *pri = (uint8_t *)priority_bitmap->base + priority_bitmap->rowpixels * y;
 			for (x = left; x < right; x++)
 				if (mo[x])
 				{

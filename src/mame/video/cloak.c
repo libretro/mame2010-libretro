@@ -11,14 +11,14 @@
 
 #define NUM_PENS	(0x40)
 
-static UINT8 bitmap_videoram_selected;
-static UINT8 bitmap_videoram_address_x;
-static UINT8 bitmap_videoram_address_y;
-static UINT8 *bitmap_videoram1;
-static UINT8 *bitmap_videoram2;
-static UINT8 *current_bitmap_videoram_accessed;
-static UINT8 *current_bitmap_videoram_displayed;
-static UINT16 *palette_ram;
+static uint8_t bitmap_videoram_selected;
+static uint8_t bitmap_videoram_address_x;
+static uint8_t bitmap_videoram_address_y;
+static uint8_t *bitmap_videoram1;
+static uint8_t *bitmap_videoram2;
+static uint8_t *current_bitmap_videoram_accessed;
+static uint8_t *current_bitmap_videoram_displayed;
+static uint16_t *palette_ram;
 
 static tilemap_t *bg_tilemap;
 
@@ -126,7 +126,7 @@ static void adjust_xy(int offset)
 
 READ8_HANDLER( graph_processor_r )
 {
-	UINT8 ret = current_bitmap_videoram_displayed[(bitmap_videoram_address_y << 8) | bitmap_videoram_address_x];
+	uint8_t ret = current_bitmap_videoram_displayed[(bitmap_videoram_address_y << 8) | bitmap_videoram_address_x];
 
 	adjust_xy(offset);
 
@@ -174,9 +174,9 @@ VIDEO_START( cloak )
 {
 	bg_tilemap = tilemap_create(machine, get_bg_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 
-	bitmap_videoram1 = auto_alloc_array(machine, UINT8, 256*256);
-	bitmap_videoram2 = auto_alloc_array(machine, UINT8, 256*256);
-	palette_ram = auto_alloc_array(machine, UINT16, NUM_PENS);
+	bitmap_videoram1 = auto_alloc_array(machine, uint8_t, 256*256);
+	bitmap_videoram2 = auto_alloc_array(machine, uint8_t, 256*256);
+	palette_ram = auto_alloc_array(machine, uint16_t, NUM_PENS);
 
 	set_current_bitmap_videoram_pointer();
 
@@ -205,7 +205,7 @@ static void draw_bitmap(bitmap_t *bitmap, const rectangle *cliprect)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs;
 
 	for (offs = (machine->generic.spriteram_size / 4) - 1; offs >= 0; offs--)

@@ -36,17 +36,17 @@ To Do:
 
 /* Variables needed by driver: */
 
-UINT16 *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
-UINT16 *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
-UINT16 *tetrisp2_vram_rot, *tetrisp2_rotregs;
+uint16_t *tetrisp2_vram_bg, *tetrisp2_scroll_bg;
+uint16_t *tetrisp2_vram_fg, *tetrisp2_scroll_fg;
+uint16_t *tetrisp2_vram_rot, *tetrisp2_rotregs;
 
-UINT8 *tetrisp2_priority;
+uint8_t *tetrisp2_priority;
 
-UINT16 *rocknms_sub_vram_bg, *rocknms_sub_scroll_bg;
-UINT16 *rocknms_sub_vram_fg, *rocknms_sub_scroll_fg;
-UINT16 *rocknms_sub_vram_rot, *rocknms_sub_rotregs;
+uint16_t *rocknms_sub_vram_bg, *rocknms_sub_scroll_bg;
+uint16_t *rocknms_sub_vram_fg, *rocknms_sub_scroll_fg;
+uint16_t *rocknms_sub_vram_rot, *rocknms_sub_rotregs;
 
-UINT16 *rocknms_sub_priority;
+uint16_t *rocknms_sub_priority;
 
 static int flipscreen_old;
 
@@ -142,8 +142,8 @@ static tilemap_t *tilemap_sub_bg, *tilemap_sub_fg, *tilemap_sub_rot;
 
 static TILE_GET_INFO( get_tile_info_bg )
 {
-	UINT16 code_hi = tetrisp2_vram_bg[ 2 * tile_index + 0];
-	UINT16 code_lo = tetrisp2_vram_bg[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_bg[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_bg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			1,
 			code_hi,
@@ -164,8 +164,8 @@ WRITE16_HANDLER( tetrisp2_vram_bg_w )
 
 static TILE_GET_INFO( get_tile_info_fg )
 {
-	UINT16 code_hi = tetrisp2_vram_fg[ 2 * tile_index + 0];
-	UINT16 code_lo = tetrisp2_vram_fg[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_fg[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_fg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			3,
 			code_hi,
@@ -182,8 +182,8 @@ WRITE16_HANDLER( tetrisp2_vram_fg_w )
 
 static TILE_GET_INFO( get_tile_info_rot )
 {
-	UINT16 code_hi = tetrisp2_vram_rot[ 2 * tile_index + 0];
-	UINT16 code_lo = tetrisp2_vram_rot[ 2 * tile_index + 1];
+	uint16_t code_hi = tetrisp2_vram_rot[ 2 * tile_index + 0];
+	uint16_t code_lo = tetrisp2_vram_rot[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			2,
 			code_hi,
@@ -199,8 +199,8 @@ WRITE16_HANDLER( tetrisp2_vram_rot_w )
 
 static TILE_GET_INFO( get_tile_info_rocknms_sub_bg )
 {
-	UINT16 code_hi = rocknms_sub_vram_bg[ 2 * tile_index + 0];
-	UINT16 code_lo = rocknms_sub_vram_bg[ 2 * tile_index + 1];
+	uint16_t code_hi = rocknms_sub_vram_bg[ 2 * tile_index + 0];
+	uint16_t code_lo = rocknms_sub_vram_bg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			5,
 			code_hi,
@@ -217,8 +217,8 @@ WRITE16_HANDLER( rocknms_sub_vram_bg_w )
 
 static TILE_GET_INFO( get_tile_info_rocknms_sub_fg )
 {
-	UINT16 code_hi = rocknms_sub_vram_fg[ 2 * tile_index + 0];
-	UINT16 code_lo = rocknms_sub_vram_fg[ 2 * tile_index + 1];
+	uint16_t code_hi = rocknms_sub_vram_fg[ 2 * tile_index + 0];
+	uint16_t code_lo = rocknms_sub_vram_fg[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			7,
 			code_hi,
@@ -235,8 +235,8 @@ WRITE16_HANDLER( rocknms_sub_vram_fg_w )
 
 static TILE_GET_INFO( get_tile_info_rocknms_sub_rot )
 {
-	UINT16 code_hi = rocknms_sub_vram_rot[ 2 * tile_index + 0];
-	UINT16 code_lo = rocknms_sub_vram_rot[ 2 * tile_index + 1];
+	uint16_t code_hi = rocknms_sub_vram_rot[ 2 * tile_index + 0];
+	uint16_t code_lo = rocknms_sub_vram_rot[ 2 * tile_index + 1];
 	SET_TILE_INFO(
 			6,
 			code_hi,
@@ -275,7 +275,7 @@ VIDEO_START( tetrisp2 )
 	tilemap_set_transparent_pen(tilemap_rot,0);
 
 	// should be smaller and mirrored like m32 I guess
-	tetrisp2_priority = auto_alloc_array(machine, UINT8, 0x40000);
+	tetrisp2_priority = auto_alloc_array(machine, uint8_t, 0x40000);
 	ms32_rearrange_sprites(machine, "gfx1");
 }
 
@@ -306,7 +306,7 @@ VIDEO_START( rockntread )
 	tilemap_set_transparent_pen(tilemap_rot, 0);
 
 	// should be smaller and mirrored like m32 I guess
-	tetrisp2_priority = auto_alloc_array(machine, UINT8, 0x40000);
+	tetrisp2_priority = auto_alloc_array(machine, uint8_t, 0x40000);
 	ms32_rearrange_sprites(machine, "gfx1");
 }
 
@@ -378,19 +378,19 @@ VIDEO_START( rocknms )
 /* sprites should be able to create shadows too, how?
   -- it appears that sprites which should be shadows are often rendered *UNDER* the tilemaps, maybe related?
 */
-void tetrisp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, bitmap_t *bitmap_pri, const rectangle *cliprect, UINT8* priram, UINT16 *sprram_top, size_t sprram_size, int gfxnum, int reverseorder, int flip, int allowzoom)
+void tetrisp2_draw_sprites(running_machine *machine, bitmap_t *bitmap, bitmap_t *bitmap_pri, const rectangle *cliprect, uint8_t* priram, uint16_t *sprram_top, size_t sprram_size, int gfxnum, int reverseorder, int flip, int allowzoom)
 {
 	int tx, ty, sx, sy, flipx, flipy;
 	int xsize, ysize;
 	int code, attr, color, size;
 	int pri;
 	int xzoom, yzoom;
-	UINT32 primask;
-	UINT8 *priority_ram;
+	uint32_t primask;
+	uint8_t *priority_ram;
 	gfx_element *gfx = machine->gfx[gfxnum];
 
-	UINT16		*source	=	sprram_top;
-	UINT16	*finish	=	sprram_top + (sprram_size - 0x10) / 2;
+	uint16_t		*source	=	sprram_top;
+	uint16_t	*finish	=	sprram_top + (sprram_size - 0x10) / 2;
 
 	if (reverseorder == 1)
 	{

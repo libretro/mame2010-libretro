@@ -19,20 +19,20 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT16 *		bankselect;
+	uint16_t *		bankselect;
 
-	UINT8			joystick_type;
-	UINT8			trackball_type;
+	uint8_t			joystick_type;
+	uint8_t			trackball_type;
 
 	timer_device *	joystick_timer;
-	UINT8			joystick_int;
-	UINT8			joystick_int_enable;
-	UINT8			joystick_value;
+	uint8_t			joystick_int;
+	uint8_t			joystick_int_enable;
+	uint8_t			joystick_value;
 
 	/* playfield parameters */
-	UINT16			playfield_lookup[256];
-	UINT8			playfield_tile_bank;
-	UINT16			playfield_priority_pens;
+	uint16_t			playfield_lookup[256];
+	uint8_t			playfield_tile_bank;
+	uint16_t			playfield_priority_pens;
 	timer_device *	yscroll_reset_timer;
 
 	/* INT3 tracking */
@@ -41,8 +41,8 @@ public:
 	timer_device *	int3off_timer;
 
 	/* graphics bank tracking */
-	UINT8			bank_gfx[3][8];
-	UINT8			bank_color_shift[MAX_GFX_ELEMENTS];
+	uint8_t			bank_gfx[3][8];
+	uint8_t			bank_color_shift[MAX_GFX_ELEMENTS];
 };
 
 

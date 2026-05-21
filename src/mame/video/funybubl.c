@@ -13,7 +13,7 @@ WRITE8_HANDLER ( funybubl_paldatawrite )
 {
 	funybubl_state *state = (funybubl_state *)space->machine->driver_data;
 	int colchanged ;
-	UINT32 coldat;
+	uint32_t coldat;
 
 	state->paletteram[offset] = data;
 	colchanged = offset >> 2;
@@ -31,8 +31,8 @@ VIDEO_START(funybubl)
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	funybubl_state *state = (funybubl_state *)machine->driver_data;
-	UINT8 *source = &state->banked_vram[0x2000 - 0x20];
-	UINT8 *finish = source - 0x1000;
+	uint8_t *source = &state->banked_vram[0x2000 - 0x20];
+	uint8_t *finish = source - 0x1000;
 
 	while (source > finish)
 	{

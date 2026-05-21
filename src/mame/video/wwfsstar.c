@@ -53,7 +53,7 @@ static TILE_GET_INFO( get_fg0_tile_info )
     **- End of Comments -*/
 
 	wwfsstar_state *state = (wwfsstar_state *)machine->driver_data;
-	UINT16 *tilebase;
+	uint16_t *tilebase;
 	int tileno;
 	int colbank;
 
@@ -91,7 +91,7 @@ static TILE_GET_INFO( get_bg0_tile_info )
     **- End of Comments -*/
 
 	wwfsstar_state *state = (wwfsstar_state *)machine->driver_data;
-	UINT16 *tilebase;
+	uint16_t *tilebase;
 	int tileno, colbank, flipx;
 
 	tilebase =  &state->bg0_videoram[tile_index*2];
@@ -136,8 +136,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 	wwfsstar_state *state = (wwfsstar_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[1];
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = source + 0x3ff/2;
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = source + 0x3ff/2;
 
 	while (source < finish)
 	{

@@ -23,8 +23,8 @@ enum {
 	TOAPLAN1_REGION_OTHER
 };
 
-static UINT8 toaplan1_coins_for_credit[TOAPLAN1_REGION_OTHER+1][2][4];
-static UINT8 toaplan1_credits_for_coin[TOAPLAN1_REGION_OTHER+1][2][4];
+static uint8_t toaplan1_coins_for_credit[TOAPLAN1_REGION_OTHER+1][2][4];
+static uint8_t toaplan1_credits_for_coin[TOAPLAN1_REGION_OTHER+1][2][4];
 
 
 static int toaplan1_coin_count; /* coin count increments on startup ? , so dont count it */
@@ -33,17 +33,17 @@ static int toaplan1_intenable;
 static int demonwld_dsp_on;
 static int demonwld_dsp_BIO;
 static int dsp_execute;                 /* Demon world */
-static UINT32 dsp_addr_w, main_ram_seg; /* Demon world */
+static uint32_t dsp_addr_w, main_ram_seg; /* Demon world */
 
 /*
-static UINT8 vimana_coins[2];
-static UINT8 vimana_credits;
-static UINT8 vimana_latch;
+static uint8_t vimana_coins[2];
+static uint8_t vimana_credits;
+static uint8_t vimana_latch;
 */
 
 int toaplan1_unk_reset_port;
 
-UINT8 *toaplan1_sharedram;
+uint8_t *toaplan1_sharedram;
 
 
 
@@ -82,7 +82,7 @@ READ16_HANDLER( demonwld_dsp_r )
 	/* DSP can read data from main CPU RAM via DSP IO port 1 */
 
 	const address_space *mainspace;
-	UINT16 input_data = 0;
+	uint16_t input_data = 0;
 	switch (main_ram_seg) {
 		case 0xc00000:	mainspace = cputag_get_address_space(space->machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 						input_data = memory_read_word(mainspace, main_ram_seg + dsp_addr_w);

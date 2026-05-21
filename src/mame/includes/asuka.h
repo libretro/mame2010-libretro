@@ -12,19 +12,19 @@ public:
 	asuka_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *    paletteram; // this currently uses generic palette handlers
+//  uint16_t *    paletteram; // this currently uses generic palette handlers
 
 	/* video-related */
-	UINT16      video_ctrl;
-	UINT16      video_mask;
+	uint16_t      video_ctrl;
+	uint16_t      video_mask;
 
 	/* c-chip */
 	int         current_round;
 	int         current_bank;
 
-	UINT8       cval[26];
-	UINT8       cc_port;
-	UINT8       restart_status;
+	uint8_t       cval[26];
+	uint8_t       cc_port;
+	uint8_t       restart_status;
 
 	/* misc */
 	int         adpcm_pos;

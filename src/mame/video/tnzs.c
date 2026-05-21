@@ -43,12 +43,12 @@ PALETTE_INIT( arknoid2 )
 
 
 
-static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT8 *m )
+static void draw_background( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint8_t *m )
 {
 	tnzs_state *state = (tnzs_state *)machine->driver_data;
 	int x, y, column, tot, transpen;
 	int scrollx, scrolly;
-	UINT32 upperbits;
+	uint32_t upperbits;
 	int ctrl2 = state->objctrl[1];
 
 
@@ -127,7 +127,7 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 
 
 static void draw_foreground( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect,
-							 UINT8 *char_pointer, UINT8 *x_pointer, UINT8 *y_pointer, UINT8 *ctrl_pointer, UINT8 *color_pointer)
+							 uint8_t *char_pointer, uint8_t *x_pointer, uint8_t *y_pointer, uint8_t *ctrl_pointer, uint8_t *color_pointer)
 {
 	tnzs_state *state = (tnzs_state *)machine->driver_data;
 	int i;

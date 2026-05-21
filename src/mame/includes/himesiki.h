@@ -12,9 +12,9 @@ public:
 	himesiki_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    bg_ram;
-	UINT8 *    spriteram;
-//  UINT8 *    paletteram;  // currently this uses generic palette handling
+	uint8_t *    bg_ram;
+	uint8_t *    spriteram;
+//  uint8_t *    paletteram;  // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;

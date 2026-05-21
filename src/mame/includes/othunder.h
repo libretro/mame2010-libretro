@@ -23,7 +23,7 @@ public:
 	othunder_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   spriteram;
+	uint16_t *   spriteram;
 	size_t     spriteram_size;
 
 	/* video-related */
@@ -31,7 +31,7 @@ public:
 
 	/* misc */
 	int        vblank_irq, ad_irq;
-	INT32      banknum;
+	int32_t      banknum;
 	int        pan[4];
 
 	/* devices */

@@ -81,7 +81,7 @@ WRITE8_HANDLER( sidearms_gfxctrl_w )
 WRITE8_HANDLER( sidearms_star_scrollx_w )
 {
 	sidearms_state *state = (sidearms_state *)space->machine->driver_data;
-	UINT32 last_state = state->hcount_191;
+	uint32_t last_state = state->hcount_191;
 
 	state->hcount_191++;
 	state->hcount_191 &= 0x1ff;
@@ -176,7 +176,7 @@ VIDEO_START( sidearms )
 
 static void draw_sprites_region(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int start_offset, int end_offset )
 {
-	UINT8 *buffered_spriteram = machine->generic.buffered_spriteram.u8;
+	uint8_t *buffered_spriteram = machine->generic.buffered_spriteram.u8;
 	const gfx_element *gfx = machine->gfx[2];
 	int offs, attr, color, code, x, y, flipx, flipy;
 	sidearms_state *state = (sidearms_state *)machine->driver_data;
@@ -210,9 +210,9 @@ static void draw_sprites_region(running_machine *machine, bitmap_t *bitmap, cons
 static void sidearms_draw_starfield( running_machine *machine, bitmap_t *bitmap )
 {
 	int x, y, i;
-	UINT32 hadd_283, vadd_283, _hflop_74a_n, _hcount_191, _vcount_191;
-	UINT8 *sf_rom;
-	UINT16 *lineptr;
+	uint32_t hadd_283, vadd_283, _hflop_74a_n, _hcount_191, _vcount_191;
+	uint8_t *sf_rom;
+	uint16_t *lineptr;
 	int pixadv, lineadv;
 	sidearms_state *state = (sidearms_state *)machine->driver_data;
 
@@ -273,7 +273,7 @@ static void sidearms_draw_starfield( running_machine *machine, bitmap_t *bitmap 
 
 			if ((~((latch_374^hadd_283)^1) & 0x1f)) continue; // logic rejection 3
 
-			*lineptr = (UINT16)(latch_374>>5 | 0x378); // to color mixer
+			*lineptr = (uint16_t)(latch_374>>5 | 0x378); // to color mixer
 		}
 		lineptr += lineadv;
 	}
@@ -324,7 +324,7 @@ static void sidearms_draw_starfield( running_machine *machine, bitmap_t *bitmap 
 
 			if ((~((state->latch_374^hadd_283)^1) & 0x1f)) continue; // logic rejection 3
 
-			*lineptr = (UINT16)(state->latch_374>>5 | 0x378); // to color mixer
+			*lineptr = (uint16_t)(state->latch_374>>5 | 0x378); // to color mixer
 		}
 		lineptr += lineadv;
 	}

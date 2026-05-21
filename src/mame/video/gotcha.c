@@ -12,10 +12,10 @@ static TILEMAP_MAPPER( gotcha_tilemap_scan )
 	return (col & 0x1f) | (row << 5) | ((col & 0x20) << 5);
 }
 
-INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index ,UINT16 *vram, int color_offs)
+INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index ,uint16_t *vram, int color_offs)
 {
 	gotcha_state *state = (gotcha_state *)machine->driver_data;
-	UINT16 data = vram[tile_index];
+	uint16_t data = vram[tile_index];
 	int code = (data & 0x3ff) | (state->gfxbank[(data & 0x0c00) >> 10] << 10);
 
 	SET_TILE_INFO(0, code, (data >> 12) + color_offs, 0);
@@ -108,7 +108,7 @@ WRITE16_HANDLER( gotcha_scroll_w )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	gotcha_state *state = (gotcha_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size / 2; offs += 4)

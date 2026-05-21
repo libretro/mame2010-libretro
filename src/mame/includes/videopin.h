@@ -22,7 +22,7 @@ DISCRETE_SOUND_EXTERN( videopin );
 
 /*----------- defined in video/videopin.c -----------*/
 
-extern UINT8* videopin_video_ram;
+extern uint8_t* videopin_video_ram;
 
 WRITE8_HANDLER( videopin_video_ram_w );
 WRITE8_HANDLER( videopin_ball_w );

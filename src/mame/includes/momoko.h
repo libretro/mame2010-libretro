@@ -12,25 +12,25 @@ public:
 	momoko_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        bg_scrollx;
-	UINT8 *        bg_scrolly;
-	UINT8 *        videoram;
-	UINT8 *        spriteram;
-//  UINT8 *        paletteram;    // currently this uses generic palette handling
+	uint8_t *        bg_scrollx;
+	uint8_t *        bg_scrolly;
+	uint8_t *        videoram;
+	uint8_t *        spriteram;
+//  uint8_t *        paletteram;    // currently this uses generic palette handling
 	size_t         spriteram_size;
 	size_t         videoram_size;
 
 	/* video-related */
-	UINT8          fg_scrollx;
-	UINT8          fg_scrolly;
-	UINT8          fg_select;
-	UINT8          text_scrolly;
-	UINT8          text_mode;
-	UINT8          bg_select;
-	UINT8          bg_priority;
-	UINT8          bg_mask;
-	UINT8          fg_mask;
-	UINT8          flipscreen;
+	uint8_t          fg_scrollx;
+	uint8_t          fg_scrolly;
+	uint8_t          fg_select;
+	uint8_t          text_scrolly;
+	uint8_t          text_mode;
+	uint8_t          bg_select;
+	uint8_t          bg_priority;
+	uint8_t          bg_mask;
+	uint8_t          fg_mask;
+	uint8_t          flipscreen;
 };
 
 

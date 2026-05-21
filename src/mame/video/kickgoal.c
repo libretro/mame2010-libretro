@@ -95,7 +95,7 @@ VIDEO_START( kickgoal )
 static void kickgoal_draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	kickgoal_state *state = (kickgoal_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	const gfx_element *gfx = machine->gfx[1];
 	int offs;
 
@@ -228,7 +228,7 @@ VIDEO_START( actionhw )
 static void actionhw_draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	kickgoal_state *state = (kickgoal_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	const gfx_element *gfx = machine->gfx[1];
 	int offs;
 

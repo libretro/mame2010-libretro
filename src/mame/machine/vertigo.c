@@ -38,10 +38,10 @@ static WRITE_LINE_DEVICE_HANDLER( v_irq3_w );
 static attotime irq4_time;
 
 /* State of the priority encoder output */
-static UINT8 irq_state;
+static uint8_t irq_state;
 
 /* Result of the last ADC channel sampled */
-static UINT8 adc_result;
+static uint8_t adc_result;
 
 /* 8254 timer config */
 const struct pit8253_config vertigo_pit8254_config =

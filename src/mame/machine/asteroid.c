@@ -12,7 +12,7 @@
 #include "video/avgdvg.h"
 #include "includes/asteroid.h"
 
-UINT8 *asteroid_ram1, *asteroid_ram2;
+uint8_t *asteroid_ram1, *asteroid_ram2;
 
 INTERRUPT_GEN( asteroid_interrupt )
 {

@@ -13,14 +13,14 @@
 
 /* dongle type #1: jumpers C and D assignments */
 #define MAKE_MAP(m0,m1,m2,m3,m4,m5,m6,m7)	\
-	((UINT32)(m0)) | \
-	((UINT32)(m1) << 3) | \
-	((UINT32)(m2) << 6) | \
-	((UINT32)(m3) << 9) | \
-	((UINT32)(m4) << 12) | \
-	((UINT32)(m5) << 15) | \
-	((UINT32)(m6) << 18) | \
-	((UINT32)(m7) << 21)
+	((uint32_t)(m0)) | \
+	((uint32_t)(m1) << 3) | \
+	((uint32_t)(m2) << 6) | \
+	((uint32_t)(m3) << 9) | \
+	((uint32_t)(m4) << 12) | \
+	((uint32_t)(m5) << 15) | \
+	((uint32_t)(m6) << 18) | \
+	((uint32_t)(m7) << 21)
 
 #define MAP0(m) ((m)&7)
 #define MAP1(m) (((m)>>3)&7)
@@ -47,9 +47,9 @@ enum {
 
 
 
-static UINT8 tape_get_status_bits(running_device *device);
-static UINT8 tape_is_present(running_device *device);
-static void tape_change_speed(running_device *device, INT8 newspeed);
+static uint8_t tape_get_status_bits(running_device *device);
+static uint8_t tape_is_present(running_device *device);
+static void tape_change_speed(running_device *device, int8_t newspeed);
 
 
 WRITE8_HANDLER( decocass_coin_counter_w )
@@ -69,7 +69,7 @@ WRITE8_HANDLER( decocass_sound_command_w )
 
 READ8_HANDLER( decocass_sound_data_r )
 {
-	UINT8 data = soundlatch2_r(space, 0);
+	uint8_t data = soundlatch2_r(space, 0);
 	LOG(2,("CPU %s sound data    <- $%02x\n", space->cpu->tag(), data));
 	return data;
 }
@@ -77,7 +77,7 @@ READ8_HANDLER( decocass_sound_data_r )
 READ8_HANDLER( decocass_sound_ack_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data = state->sound_ack;	/* D6+D7 */
+	uint8_t data = state->sound_ack;	/* D6+D7 */
 	LOG(4,("CPU %s sound ack     <- $%02x\n", space->cpu->tag(), data));
 	return data;
 }
@@ -93,7 +93,7 @@ WRITE8_HANDLER( decocass_sound_data_w )
 READ8_HANDLER( decocass_sound_command_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data = soundlatch_r(space, 0);
+	uint8_t data = soundlatch_r(space, 0);
 	LOG(4,("CPU %s sound command <- $%02x\n", space->cpu->tag(), data));
 	cpu_set_input_line(state->audiocpu, M6502_IRQ_LINE, CLEAR_LINE);
 	state->sound_ack &= ~0x80;
@@ -126,7 +126,7 @@ READ8_HANDLER( decocass_sound_nmi_enable_r )
 READ8_HANDLER( decocass_sound_data_ack_reset_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	LOG(2,("CPU %s sound ack rst <- $%02x\n", space->cpu->tag(), data));
 	state->sound_ack &= ~0x40;
 	return data;
@@ -173,7 +173,7 @@ WRITE8_HANDLER( decocass_adc_w )
 READ8_HANDLER( decocass_input_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	static const char *const portnames[] = { "IN0", "IN1", "IN2" };
 
 	switch (offset & 7)
@@ -227,7 +227,7 @@ WRITE8_HANDLER( decocass_reset_w )
 
 
 #ifdef MAME_DEBUG
-static void decocass_fno( running_machine *machine, offs_t offset, UINT8 data )
+static void decocass_fno( running_machine *machine, offs_t offset, uint8_t data )
 {
 	decocass_state *state = (decocass_state *)machine->driver_data;
 	/* 8041ENA/ and is this a FNO write (function number)? */
@@ -277,7 +277,7 @@ static void decocass_fno( running_machine *machine, offs_t offset, UINT8 data )
 static READ8_HANDLER( decocass_type1_latch_26_pass_3_inv_2_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -295,8 +295,8 @@ static READ8_HANDLER( decocass_type1_latch_26_pass_3_inv_2_r )
 	else
 	{
 		offs_t promaddr;
-		UINT8 save;
-		UINT8 *prom = memory_region(space->machine, "dongle");
+		uint8_t save;
+		uint8_t *prom = memory_region(space->machine, "dongle");
 
 		if (state->firsttime)
 		{
@@ -357,7 +357,7 @@ static READ8_HANDLER( decocass_type1_latch_26_pass_3_inv_2_r )
 static READ8_HANDLER( decocass_type1_pass_136_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -375,8 +375,8 @@ static READ8_HANDLER( decocass_type1_pass_136_r )
 	else
 	{
 		offs_t promaddr;
-		UINT8 save;
-		UINT8 *prom = memory_region(space->machine, "dongle");
+		uint8_t save;
+		uint8_t *prom = memory_region(space->machine, "dongle");
 
 		if (state->firsttime)
 		{
@@ -437,7 +437,7 @@ static READ8_HANDLER( decocass_type1_pass_136_r )
 static READ8_HANDLER( decocass_type1_latch_27_pass_3_inv_2_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -455,8 +455,8 @@ static READ8_HANDLER( decocass_type1_latch_27_pass_3_inv_2_r )
 	else
 	{
 		offs_t promaddr;
-		UINT8 save;
-		UINT8 *prom = memory_region(space->machine, "dongle");
+		uint8_t save;
+		uint8_t *prom = memory_region(space->machine, "dongle");
 
 		if (state->firsttime)
 		{
@@ -517,7 +517,7 @@ static READ8_HANDLER( decocass_type1_latch_27_pass_3_inv_2_r )
 static READ8_HANDLER( decocass_type1_latch_26_pass_5_inv_2_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -535,8 +535,8 @@ static READ8_HANDLER( decocass_type1_latch_26_pass_5_inv_2_r )
 	else
 	{
 		offs_t promaddr;
-		UINT8 save;
-		UINT8 *prom = memory_region(space->machine, "dongle");
+		uint8_t save;
+		uint8_t *prom = memory_region(space->machine, "dongle");
 
 		if (state->firsttime)
 		{
@@ -599,7 +599,7 @@ static READ8_HANDLER( decocass_type1_latch_26_pass_5_inv_2_r )
 static READ8_HANDLER( decocass_type1_latch_16_pass_3_inv_1_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -617,8 +617,8 @@ static READ8_HANDLER( decocass_type1_latch_16_pass_3_inv_1_r )
 	else
 	{
 		offs_t promaddr;
-		UINT8 save;
-		UINT8 *prom = memory_region(space->machine, "dongle");
+		uint8_t save;
+		uint8_t *prom = memory_region(space->machine, "dongle");
 
 		if (state->firsttime)
 		{
@@ -680,13 +680,13 @@ static READ8_HANDLER( decocass_type1_latch_16_pass_3_inv_1_r )
 static READ8_HANDLER( decocass_type2_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == state->type2_xx_latch)
 	{
 		if (1 == (offset & 1))
 		{
-			UINT8 *prom = memory_region(space->machine, "dongle");
+			uint8_t *prom = memory_region(space->machine, "dongle");
 			data = prom[256 * state->type2_d2_latch + state->type2_promaddr];
 			LOG(3,("%10s 6502-PC: %04x decocass_type2_r(%02x): $%02x <- prom[%03x]\n", attotime_string(timer_get_time(space->machine), 6), cpu_get_previouspc(space->cpu), offset, data, 256 * state->type2_d2_latch + state->type2_promaddr));
 		}
@@ -762,13 +762,13 @@ static WRITE8_HANDLER( decocass_type2_w )
 static READ8_HANDLER( decocass_type3_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data, save;
+	uint8_t data, save;
 
 	if (1 == (offset & 1))
 	{
 		if (1 == state->type3_pal_19)
 		{
-			UINT8 *prom = memory_region(space->machine, "dongle");
+			uint8_t *prom = memory_region(space->machine, "dongle");
 			data = prom[state->type3_ctrs];
 			LOG(3,("%10s 6502-PC: %04x decocass_type3_r(%02x): $%02x <- prom[$%03x]\n", attotime_string(timer_get_time(space->machine), 6), cpu_get_previouspc(space->cpu), offset, data, state->type3_ctrs));
 			if (++state->type3_ctrs == 4096)
@@ -990,7 +990,7 @@ static WRITE8_HANDLER( decocass_type3_w )
 static READ8_HANDLER( decocass_type4_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -1009,7 +1009,7 @@ static READ8_HANDLER( decocass_type4_r )
 	{
 		if (state->type4_latch)
 		{
-			UINT8 *prom = memory_region(space->machine, "dongle");
+			uint8_t *prom = memory_region(space->machine, "dongle");
 
 			data = prom[state->type4_ctrs];
 			LOG(3,("%10s 6502-PC: %04x decocass_type4_r(%02x): $%02x '%c' <- PROM[%04x]\n", attotime_string(timer_get_time(space->machine), 6), cpu_get_previouspc(space->cpu), offset, data, (data >= 32) ? data : '.', state->type4_ctrs));
@@ -1075,7 +1075,7 @@ static WRITE8_HANDLER( decocass_type4_w )
 static READ8_HANDLER( decocass_type5_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -1153,7 +1153,7 @@ static WRITE8_HANDLER( decocass_type5_w )
 static READ8_HANDLER( decocass_nodong_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	if (1 == (offset & 1))
 	{
@@ -1194,12 +1194,12 @@ static READ8_HANDLER( decocass_nodong_r )
 READ8_HANDLER( decocass_e5xx_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	/* E5x2-E5x3 and mirrors */
 	if (2 == (offset & E5XX_MASK))
 	{
-		UINT8 bot_eot = (tape_get_status_bits(state->cassette) >> 5) & 1;
+		uint8_t bot_eot = (tape_get_status_bits(state->cassette) >> 5) & 1;
 
 		data =
 			(BIT(state->i8041_p1, 7)	  << 0) |	/* D0 = P17 - REQ/ */
@@ -1669,7 +1669,7 @@ MACHINE_RESET( cflyball )
 MACHINE_RESET( czeroize )
 {
 	decocass_state *state = (decocass_state *)machine->driver_data;
-	UINT8 *mem = memory_region(machine, "dongle");
+	uint8_t *mem = memory_region(machine, "dongle");
 	decocass_reset_common(machine);
 	LOG(0,("dongle type #3 (PAL)\n"));
 	state->dongle_r = decocass_type3_r;
@@ -1734,7 +1734,7 @@ WRITE8_HANDLER( i8041_p1_w )
 READ8_HANDLER( i8041_p1_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data = state->i8041_p1;
+	uint8_t data = state->i8041_p1;
 
 	if (data != state->i8041_p1_read_latch)
 	{
@@ -1780,7 +1780,7 @@ WRITE8_HANDLER( i8041_p2_w )
 READ8_HANDLER( i8041_p2_r )
 {
 	decocass_state *state = (decocass_state *)space->machine->driver_data;
-	UINT8 data;
+	uint8_t data;
 
 	data = (state->i8041_p2 & ~0xe0) | tape_get_status_bits(state->cassette);
 
@@ -1853,13 +1853,13 @@ struct _tape_state
 {
 	running_machine *	machine;			/* pointer back to the machine */
 	emu_timer *			timer;				/* timer for running the tape */
-	INT8				speed;				/* speed: <-1=fast rewind, -1=reverse, 0=stopped, 1=normal, >1=fast forward */
+	int8_t				speed;				/* speed: <-1=fast rewind, -1=reverse, 0=stopped, 1=normal, >1=fast forward */
 	tape_region			region;				/* current region */
 	tape_byte			bytenum;			/* byte number within a datablock */
-	UINT8				bitnum;				/* bit number within a byte */
-	UINT32				clockpos;			/* the current clock position of the tape */
-	UINT32				numclocks;			/* total number of clocks on the entire tape */
-	UINT16				crc16[256];			/* CRC16 for each block */
+	uint8_t				bitnum;				/* bit number within a byte */
+	uint32_t				clockpos;			/* the current clock position of the tape */
+	uint32_t				numclocks;			/* total number of clocks on the entire tape */
+	uint16_t				crc16[256];			/* CRC16 for each block */
 };
 
 
@@ -1920,7 +1920,7 @@ INLINE tape_state *get_safe_token(running_device *device)
     CRC data
 -------------------------------------------------*/
 
-static UINT16 tape_crc16_byte(UINT16 crc, UINT8 data)
+static uint16_t tape_crc16_byte(uint16_t crc, uint8_t data)
 {
 	int bit;
 
@@ -1992,7 +1992,7 @@ static const char *tape_describe_state(tape_state *tape)
 
 		/* in the main data area, the clock alternates at the clock rate */
 		if (tape->bytenum >= BYTE_LEADIN && tape->bytenum <= BYTE_LEADOUT)
-			clk = ((UINT32)(tape->clockpos - REGION_BOT_GAP_END_CLOCK) & 1) ? 0 : 1;
+			clk = ((uint32_t)(tape->clockpos - REGION_BOT_GAP_END_CLOCK) & 1) ? 0 : 1;
 		else if (tape->bytenum == BYTE_LONGCLOCK)
 			clk = 1;
 		else
@@ -2045,7 +2045,7 @@ static TIMER_CALLBACK( tape_clock_callback )
 	/* everything else is data */
 	else
 	{
-		UINT32 dataclock = tape->clockpos - REGION_BOT_GAP_END_CLOCK;
+		uint32_t dataclock = tape->clockpos - REGION_BOT_GAP_END_CLOCK;
 
 		/* compute the block number */
 		tape->region = (tape_region)(REGION_DATA_BLOCK_0 + dataclock / (TAPE_CLOCKS_PER_BYTE * BYTE_BLOCK_TOTAL));
@@ -2070,10 +2070,10 @@ static TIMER_CALLBACK( tape_clock_callback )
     bits from the tape
 -------------------------------------------------*/
 
-static UINT8 tape_get_status_bits(running_device *device)
+static uint8_t tape_get_status_bits(running_device *device)
 {
 	tape_state *tape = get_safe_token(device);
-	UINT8 tape_bits = 0;
+	uint8_t tape_bits = 0;
 
 	/* bit 0x20 is the BOT/EOT signal, which is also set in the leader/trailer area */
 	if (tape->region == REGION_LEADER || tape->region == REGION_BOT || tape->region == REGION_EOT || tape->region == REGION_TRAILER)
@@ -2084,11 +2084,11 @@ static UINT8 tape_get_status_bits(running_device *device)
 	if (tape->region >= REGION_DATA_BLOCK_0 && tape->region <= REGION_DATA_BLOCK_255)
 	{
 		int blocknum = tape->region - REGION_DATA_BLOCK_0;
-		UINT8 byteval = 0x00;
+		uint8_t byteval = 0x00;
 
 		/* in the main data area, the clock alternates at the clock rate */
 		if (tape->bytenum >= BYTE_LEADIN && tape->bytenum <= BYTE_LEADOUT)
-			tape_bits |= ((UINT32)(tape->clockpos - REGION_BOT_GAP_END_CLOCK) & 1) ? 0x00 : 0x40;
+			tape_bits |= ((uint32_t)(tape->clockpos - REGION_BOT_GAP_END_CLOCK) & 1) ? 0x00 : 0x40;
 
 		/* in the longclock area, the clock holds high */
 		else if (tape->bytenum == BYTE_LONGCLOCK)
@@ -2104,7 +2104,7 @@ static UINT8 tape_get_status_bits(running_device *device)
 
 		/* data block bytes are data */
 		else if (tape->bytenum >= BYTE_DATA_0 && tape->bytenum <= BYTE_DATA_255)
-			byteval = static_cast<UINT8 *>(*device->region())[blocknum * 256 + (tape->bytenum - BYTE_DATA_0)];
+			byteval = static_cast<uint8_t *>(*device->region())[blocknum * 256 + (tape->bytenum - BYTE_DATA_0)];
 
 		/* CRC MSB */
 		else if (tape->bytenum == BYTE_CRC16_MSB)
@@ -2127,7 +2127,7 @@ static UINT8 tape_get_status_bits(running_device *device)
     present
 -------------------------------------------------*/
 
-static UINT8 tape_is_present(running_device *device)
+static uint8_t tape_is_present(running_device *device)
 {
 	return device->region() != NULL;
 }
@@ -2138,11 +2138,11 @@ static UINT8 tape_is_present(running_device *device)
     playback
 -------------------------------------------------*/
 
-static void tape_change_speed(running_device *device, INT8 newspeed)
+static void tape_change_speed(running_device *device, int8_t newspeed)
 {
 	tape_state *tape = get_safe_token(device);
 	attotime newperiod;
-	INT8 absnewspeed;
+	int8_t absnewspeed;
 
 	/* do nothing if speed has not changed */
 	if (tape->speed == newspeed)
@@ -2181,7 +2181,7 @@ static DEVICE_START( decocass_tape )
 	tape->timer = timer_alloc(device->machine, tape_clock_callback, (void *)device);
 	if (device->region() == NULL)
 		return;
-	UINT8 *regionbase = *device->region();
+	uint8_t *regionbase = *device->region();
 
 	/* scan for the first non-empty block in the image */
 	for (offs = device->region()->bytes() - 1; offs >= 0; offs--)
@@ -2196,7 +2196,7 @@ static DEVICE_START( decocass_tape )
 	/* compute CRCs for each block */
 	for (curblock = 0; curblock < numblocks; curblock++)
 	{
-		UINT16 crc = 0;
+		uint16_t crc = 0;
 		int testval;
 
 		/* first CRC the 256 bytes of data */

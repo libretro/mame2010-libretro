@@ -76,7 +76,7 @@ Note:   if MAME_DEBUG is defined, pressing Z with:
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT8 *gfx = memory_region(machine, "gfx5");
+	uint8_t *gfx = memory_region(machine, "gfx5");
 	int code = gfx[2 * tile_index + 0] * 256 + gfx[2 * tile_index + 1];
 	SET_TILE_INFO(
 			BG_GFX,
@@ -95,7 +95,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	ginganin_state *state = (ginganin_state *)machine->driver_data;
-	UINT16 code = state->fgram[tile_index];
+	uint16_t code = state->fgram[tile_index];
 	SET_TILE_INFO(
 			FG_GFX,
 			code,
@@ -120,7 +120,7 @@ WRITE16_HANDLER( ginganin_fgram16_w )
 static TILE_GET_INFO( get_txt_tile_info )
 {
 	ginganin_state *state = (ginganin_state *)machine->driver_data;
-	UINT16 code = state->txtram[tile_index];
+	uint16_t code = state->txtram[tile_index];
 	SET_TILE_INFO(
 			TXT_GFX,
 			code,
@@ -212,7 +212,7 @@ Offset:         Values:         Format:
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
 	ginganin_state *state = (ginganin_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < (state->spriteram_size >> 1); offs += 4)

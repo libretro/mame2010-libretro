@@ -23,10 +23,10 @@ static void gaelco2_ROM16_split_gfx(running_machine *machine, const char *src_re
 	int i;
 
 	/* get a pointer to the source data */
-	UINT8 *src = (UINT8 *)memory_region(machine, src_reg);
+	uint8_t *src = (uint8_t *)memory_region(machine, src_reg);
 
 	/* get a pointer to the destination data */
-	UINT8 *dst = (UINT8 *)memory_region(machine, dst_reg);
+	uint8_t *dst = (uint8_t *)memory_region(machine, dst_reg);
 
 	/* fill destination areas with the proper data */
 	for (i = 0; i < length/2; i++){
@@ -218,7 +218,7 @@ INTERRUPT_GEN( bang_interrupt )
 
 ***************************************************************************/
 
-static UINT8 analog_ports[2];
+static uint8_t analog_ports[2];
 
 CUSTOM_INPUT( wrally2_analog_bit_r )
 {
@@ -288,7 +288,7 @@ WRITE16_DEVICE_HANDLER( gaelco2_eeprom_data_w )
 
 ***************************************************************************/
 
-UINT16 *snowboar_protection;
+uint16_t *snowboar_protection;
 
 /*
     The game writes 2 values and then reads from a memory address.

@@ -24,9 +24,9 @@
 
 
 /* -- Globals -- */
-UINT8  *snes_ram = NULL;		/* 65816 ram */
+uint8_t  *snes_ram = NULL;		/* 65816 ram */
 
-static void snes_dma(const address_space *space, UINT8 channels);
+static void snes_dma(const address_space *space, uint8_t channels);
 static void snes_hdma_init(const address_space *space);
 static void snes_hdma(const address_space *space);
 
@@ -252,7 +252,7 @@ first, since using 16 produces bugs (see e.g. Triforce pieces in Zelda 3 intro) 
 
 static TIMER_CALLBACK(snes_div_callback)
 {
-	UINT16 value, dividend, remainder;
+	uint16_t value, dividend, remainder;
 	dividend = remainder = 0;
 	value = (snes_ram[WRDIVH] << 8) + snes_ram[WRDIVL];
 	if (snes_ram[WRDVDD] > 0)
@@ -274,7 +274,7 @@ static TIMER_CALLBACK(snes_div_callback)
 
 static TIMER_CALLBACK(snes_mult_callback)
 {
-	UINT32 c = snes_ram[WRMPYA] * snes_ram[WRMPYB];
+	uint32_t c = snes_ram[WRMPYA] * snes_ram[WRMPYB];
 	snes_ram[RDMPYL] = c & 0xff;
 	snes_ram[RDMPYH] = (c >> 8) & 0xff;
 }
@@ -288,8 +288,8 @@ static TIMER_CALLBACK(snes_mult_callback)
 
 READ8_HANDLER( snes_open_bus_r )
 {
-	static UINT8 recurse = 0;
-	UINT16 result;
+	static uint8_t recurse = 0;
+	uint16_t result;
 
 	/* prevent recursion */
 	if (recurse)
@@ -419,7 +419,7 @@ static WRITE8_HANDLER( snes_io_dma_w )
 READ8_HANDLER( snes_r_io )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0;
+	uint8_t value = 0;
 
 	// PPU accesses are from 2100 to 213f
 	if (offset >= INIDISP && offset < APU00)
@@ -451,7 +451,7 @@ READ8_HANDLER( snes_r_io )
 	{
 		if (offset >= 0x4800 && offset < 0x4808)
 		{
-			return sdd1_mmio_read(space, (UINT32)offset);
+			return sdd1_mmio_read(space, (uint32_t)offset);
 		}
 		if (offset < 0x80)
 		{
@@ -460,7 +460,7 @@ READ8_HANDLER( snes_r_io )
 	}
 	else if (state->has_addon_chip == HAS_SPC7110 || state->has_addon_chip == HAS_SPC7110_RTC)
 	{
-		UINT16 limit = (state->has_addon_chip == HAS_SPC7110_RTC) ? 0x4842 : 0x483f;
+		uint16_t limit = (state->has_addon_chip == HAS_SPC7110_RTC) ? 0x4842 : 0x483f;
 		if (offset >= 0x4800 && offset <= limit)
 		{
 			return spc7110_mmio_read(space, offset);
@@ -597,7 +597,7 @@ WRITE8_HANDLER( snes_w_io )
 		if ((offset >= 0x4300 && offset < 0x4380) ||
 		   (offset >= 0x4800 && offset < 0x4808))
 		{
-			sdd1_mmio_write(space, (UINT32)offset, data);
+			sdd1_mmio_write(space, (uint32_t)offset, data);
 			return;
 		}
 		if (offset < 0x80)
@@ -607,10 +607,10 @@ WRITE8_HANDLER( snes_w_io )
 	}
 	else if (state->has_addon_chip == HAS_SPC7110 || state->has_addon_chip == HAS_SPC7110_RTC)
 	{
-		UINT16 limit = (state->has_addon_chip == HAS_SPC7110_RTC) ? 0x4842 : 0x483f;
+		uint16_t limit = (state->has_addon_chip == HAS_SPC7110_RTC) ? 0x4842 : 0x483f;
 		if (offset >= 0x4800 && offset <= limit)
 		{
-			spc7110_mmio_write(space->machine, (UINT32)offset, data);
+			spc7110_mmio_write(space->machine, (uint32_t)offset, data);
 			return;
 		}
 	}
@@ -669,7 +669,7 @@ WRITE8_HANDLER( snes_w_io )
 			snes_ram[WRMPYB] = data;
 //          timer_adjust_oneshot(state->mult_timer, state->maincpu->cycles_to_attotime(8), 0);
 			{
-				UINT32 c = snes_ram[WRMPYA] * snes_ram[WRMPYB];
+				uint32_t c = snes_ram[WRMPYA] * snes_ram[WRMPYB];
 				snes_ram[RDMPYL] = c & 0xff;
 				snes_ram[RDMPYH] = (c >> 8) & 0xff;
 			}
@@ -681,7 +681,7 @@ WRITE8_HANDLER( snes_w_io )
 			snes_ram[WRDVDD] = data;
 //          timer_adjust_oneshot(state->div_timer, state->maincpu->cycles_to_attotime(16), 0);
 			{
-				UINT16 value, dividend, remainder;
+				uint16_t value, dividend, remainder;
 				dividend = remainder = 0;
 				value = (snes_ram[WRDIVH] << 8) + snes_ram[WRDIVL];
 				if (snes_ram[WRDVDD] > 0)
@@ -845,7 +845,7 @@ address               |         |          |       |     |         |        |   
 */
 
 /*FIXME: missing work RAM access steal / we need to do this less "aggressive" otherwise we lose too much CPU horsepower, why? */
-static int snes_bank_0x00_0x3f_cycles(running_machine *machine,UINT32 offset)
+static int snes_bank_0x00_0x3f_cycles(running_machine *machine,uint32_t offset)
 {
 /*
  $00-$3F | $0000-$1FFF | Slow  | Address Bus A + /WRAM (mirror $7E:0000-$1FFF)
@@ -873,7 +873,7 @@ static int snes_bank_0x00_0x3f_cycles(running_machine *machine,UINT32 offset)
 	return 0; //TODO: 6
 }
 
-static int snes_bank_0x80_0xbf_cycles(running_machine *machine,UINT32 offset)
+static int snes_bank_0x80_0xbf_cycles(running_machine *machine,uint32_t offset)
 {
 /*
  $80-$BF | $0000-$1FFF | Slow  | Address Bus A + /WRAM (mirror $7E:0000-$1FFF)
@@ -910,8 +910,8 @@ static int snes_bank_0x80_0xbf_cycles(running_machine *machine,UINT32 offset)
 READ8_HANDLER( snes_r_bank1 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0xff;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0xff;
+	uint16_t address = offset & 0xffff;
 
 	if (address < 0x2000)											/* Mirror of Low RAM */
 		value = memory_read_byte(space, 0x7e0000 + address);
@@ -967,8 +967,8 @@ READ8_HANDLER( snes_r_bank1 )
 READ8_HANDLER( snes_r_bank2 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0xff;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0xff;
+	uint16_t address = offset & 0xffff;
 
 	if (address < 0x2000)											/* Mirror of Low RAM */
 		value = memory_read_byte(space, 0x7e0000 + address);
@@ -1030,8 +1030,8 @@ READ8_HANDLER( snes_r_bank2 )
 READ8_HANDLER( snes_r_bank3 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0xff;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0xff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX && state->superfx != NULL)
 	{
@@ -1039,7 +1039,7 @@ READ8_HANDLER( snes_r_bank3 )
 			value = snes_ram[0x400000 + offset];
 		else
 		{
-			static const UINT8 sfx_data[16] = {
+			static const uint8_t sfx_data[16] = {
 				0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
 				0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01,
 			};
@@ -1071,8 +1071,8 @@ READ8_HANDLER( snes_r_bank3 )
 READ8_HANDLER( snes_r_bank4 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0xff;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0xff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX && state->superfx != NULL)
 	{
@@ -1109,8 +1109,8 @@ READ8_HANDLER( snes_r_bank4 )
 READ8_HANDLER( snes_r_bank5 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value;
-	UINT16 address = offset & 0xffff;
+	uint8_t value;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX && state->superfx != NULL)
 	{
@@ -1145,8 +1145,8 @@ READ8_HANDLER( snes_r_bank5 )
 READ8_HANDLER( snes_r_bank6 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX)
 		value = memory_read_byte(space, offset);
@@ -1193,8 +1193,8 @@ READ8_HANDLER( snes_r_bank6 )
 READ8_HANDLER( snes_r_bank7 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT8 value = 0;
-	UINT16 address = offset & 0xffff;
+	uint8_t value = 0;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX && state->superfx != NULL)
 	{
@@ -1204,7 +1204,7 @@ READ8_HANDLER( snes_r_bank7 )
 				value = snes_ram[0xc00000 + offset];
 			else
 			{
-				static const UINT8 sfx_data[16] = {
+				static const uint8_t sfx_data[16] = {
 					0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
 					0x00, 0x01, 0x08, 0x01, 0x00, 0x01, 0x0c, 0x01,
 				};
@@ -1247,7 +1247,7 @@ READ8_HANDLER( snes_r_bank7 )
 WRITE8_HANDLER( snes_w_bank1 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (address < 0x2000)							/* Mirror of Low RAM */
 		memory_write_byte(space, 0x7e0000 + address, data);
@@ -1298,7 +1298,7 @@ WRITE8_HANDLER( snes_w_bank1 )
 WRITE8_HANDLER( snes_w_bank2 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (address < 0x2000)							/* Mirror of Low RAM */
 		memory_write_byte(space, 0x7e0000 + address, data);
@@ -1355,7 +1355,7 @@ WRITE8_HANDLER( snes_w_bank2 )
 WRITE8_HANDLER( snes_w_bank4 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX)
 		snes_ram[0xe00000 + offset] = data;
@@ -1381,7 +1381,7 @@ WRITE8_HANDLER( snes_w_bank4 )
 WRITE8_HANDLER( snes_w_bank5 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX)
 		snes_ram[0xf00000 + offset] = data;
@@ -1407,7 +1407,7 @@ WRITE8_HANDLER( snes_w_bank5 )
 WRITE8_HANDLER( snes_w_bank6 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX)
 		memory_write_byte(space, offset, data);
@@ -1455,7 +1455,7 @@ WRITE8_HANDLER( snes_w_bank6 )
 WRITE8_HANDLER( snes_w_bank7 )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 address = offset & 0xffff;
+	uint16_t address = offset & 0xffff;
 
 	if (state->has_addon_chip == HAS_SUPERFX)
 	{
@@ -1543,10 +1543,10 @@ static void nss_io_read( running_machine *machine )
 
 }
 
-static UINT8 nss_oldjoy1_read( running_machine *machine )
+static uint8_t nss_oldjoy1_read( running_machine *machine )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
-	UINT8 res;
+	uint8_t res;
 
 	if (state->read_idx[0] >= 16)
 		res = 0x01;
@@ -1556,10 +1556,10 @@ static UINT8 nss_oldjoy1_read( running_machine *machine )
 	return res;
 }
 
-static UINT8 nss_oldjoy2_read( running_machine *machine )
+static uint8_t nss_oldjoy2_read( running_machine *machine )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
-	UINT8 res;
+	uint8_t res;
 
 	if (state->read_idx[1] >= 16)
 		res = 0x01;
@@ -1837,11 +1837,11 @@ DRIVER_INIT( snes )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 total_blocks, read_blocks;
-	UINT8 *rom;
+	uint16_t total_blocks, read_blocks;
+	uint8_t *rom;
 
 	rom = memory_region(machine, "user3");
-	snes_ram = auto_alloc_array_clear(machine, UINT8, 0x1400000);
+	snes_ram = auto_alloc_array_clear(machine, uint8_t, 0x1400000);
 
 	/* all NSS games seem to use MODE 20 */
 	state->cart[0].mode = SNES_MODE_20;
@@ -1903,11 +1903,11 @@ DRIVER_INIT( snes_hirom )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 total_blocks, read_blocks;
-	UINT8  *rom;
+	uint16_t total_blocks, read_blocks;
+	uint8_t  *rom;
 
 	rom = memory_region(machine, "user3");
-	snes_ram = auto_alloc_array(machine, UINT8, 0x1400000);
+	snes_ram = auto_alloc_array(machine, uint8_t, 0x1400000);
 	memset(snes_ram, 0, 0x1400000);
 
 	state->cart[0].mode = SNES_MODE_21;
@@ -1966,7 +1966,7 @@ DRIVER_INIT( snes_hirom )
 
 *************************************/
 
-INLINE int dma_abus_valid( UINT32 address )
+INLINE int dma_abus_valid( uint32_t address )
 {
 	if((address & 0x40ff00) == 0x2100) return 0;  //$[00-3f|80-bf]:[2100-21ff]
 	if((address & 0x40fe00) == 0x4000) return 0;  //$[00-3f|80-bf]:[4000-41ff]
@@ -1976,7 +1976,7 @@ INLINE int dma_abus_valid( UINT32 address )
 	return 1;
 }
 
-INLINE UINT8 snes_abus_read( const address_space *space, UINT32 abus )
+INLINE uint8_t snes_abus_read( const address_space *space, uint32_t abus )
 {
 	if (!dma_abus_valid(abus))
 		return 0;
@@ -1984,7 +1984,7 @@ INLINE UINT8 snes_abus_read( const address_space *space, UINT32 abus )
 	return memory_read_byte(space, abus);
 }
 
-INLINE void snes_dma_transfer( const address_space *space, UINT8 dma, UINT32 abus, UINT16 bbus )
+INLINE void snes_dma_transfer( const address_space *space, uint8_t dma, uint32_t abus, uint16_t bbus )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
 
@@ -2028,13 +2028,13 @@ INLINE void snes_dma_transfer( const address_space *space, UINT8 dma, UINT32 abu
 
 /* WIP: These have the advantage to automatically update the address, but then we would need to
 check again if the transfer is direct/indirect at each step... is it worth? */
-INLINE UINT32 snes_get_hdma_addr( running_machine *machine, int dma )
+INLINE uint32_t snes_get_hdma_addr( running_machine *machine, int dma )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
 	return (state->dma_channel[dma].bank << 16) | (state->dma_channel[dma].hdma_addr++);
 }
 
-INLINE UINT32 snes_get_hdma_iaddr( running_machine *machine, int dma )
+INLINE uint32_t snes_get_hdma_iaddr( running_machine *machine, int dma )
 {
 	snes_state *state = (snes_state *)machine->driver_data;
 	return (state->dma_channel[dma].ibank << 16) | (state->dma_channel[dma].trans_size++);
@@ -2058,7 +2058,7 @@ INLINE int is_last_active_channel( running_machine *machine, int dma )
 static void snes_hdma_update( const address_space *space, int dma )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT32 abus = snes_get_hdma_addr(space->machine, dma);
+	uint32_t abus = snes_get_hdma_addr(space->machine, dma);
 
 	state->dma_channel[dma].hdma_line_counter = snes_abus_read(space, abus);
 
@@ -2105,8 +2105,8 @@ static void snes_hdma_init( const address_space *space )
 static void snes_hdma( const address_space *space )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
-	UINT16 bbus;
-	UINT32 abus;
+	uint16_t bbus;
+	uint32_t abus;
 	int i;
 
 	for (i = 0; i < 8; i++)
@@ -2186,14 +2186,14 @@ static void snes_hdma( const address_space *space )
 	}
 }
 
-static void snes_dma( const address_space *space, UINT8 channels )
+static void snes_dma( const address_space *space, uint8_t channels )
 {
 	snes_state *state = (snes_state *)space->machine->driver_data;
 	int i;
-	INT8 increment;
-	UINT16 bbus;
-	UINT32 abus, abus_bank;
-	UINT16 length;
+	int8_t increment;
+	uint16_t bbus;
+	uint32_t abus, abus_bank;
+	uint16_t length;
 
 	/* FIXME: we also need to round to the nearest 8 master cycles */
 

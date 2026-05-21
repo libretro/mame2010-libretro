@@ -35,28 +35,28 @@
 #include "includes/kaneko16.h"
 #include "kan_pand.h"
 
-static UINT16 kaneko16_disp_enable;
+static uint16_t kaneko16_disp_enable;
 
 
 static tilemap_t *kaneko16_tmap_0, *kaneko16_tmap_1;
 static tilemap_t *kaneko16_tmap_2, *kaneko16_tmap_3;
-UINT16 *kaneko16_vram_0,    *kaneko16_vram_1,    *kaneko16_layers_0_regs;
-UINT16 *kaneko16_vscroll_0, *kaneko16_vscroll_1;
-UINT16 *kaneko16_vram_2,    *kaneko16_vram_3,    *kaneko16_layers_1_regs;
-UINT16 *kaneko16_vscroll_2, *kaneko16_vscroll_3;
+uint16_t *kaneko16_vram_0,    *kaneko16_vram_1,    *kaneko16_layers_0_regs;
+uint16_t *kaneko16_vscroll_0, *kaneko16_vscroll_1;
+uint16_t *kaneko16_vram_2,    *kaneko16_vram_3,    *kaneko16_layers_1_regs;
+uint16_t *kaneko16_vscroll_2, *kaneko16_vscroll_3;
 
-UINT16* galsnew_bg_pixram;
-UINT16* galsnew_fg_pixram;
+uint16_t* galsnew_bg_pixram;
+uint16_t* galsnew_fg_pixram;
 
 int kaneko16_sprite_type;
 int kaneko16_sprite_fliptype;
 static int kaneko16_keep_sprites;
-UINT16 kaneko16_sprite_xoffs, kaneko16_sprite_flipx;
-UINT16 kaneko16_sprite_yoffs, kaneko16_sprite_flipy;
-UINT16 *kaneko16_sprites_regs;
+uint16_t kaneko16_sprite_xoffs, kaneko16_sprite_flipx;
+uint16_t kaneko16_sprite_yoffs, kaneko16_sprite_flipy;
+uint16_t *kaneko16_sprites_regs;
 
 
-UINT16 *kaneko16_bg15_select, *kaneko16_bg15_reg;
+uint16_t *kaneko16_bg15_select, *kaneko16_bg15_reg;
 static bitmap_t *kaneko16_bg15_bitmap;
 static bitmap_t *sprites_bitmap; /* bitmap used for to keep sprites on screen (mgcrystl 1st boss) */
 
@@ -105,8 +105,8 @@ Offset:
 #define KANEKO16_LAYER(_N_) \
 static TILE_GET_INFO( get_tile_info_##_N_ ) \
 { \
-	UINT16 code_hi = kaneko16_vram_##_N_[ 2 * tile_index + 0]; \
-	UINT16 code_lo = kaneko16_vram_##_N_[ 2 * tile_index + 1]; \
+	uint16_t code_hi = kaneko16_vram_##_N_[ 2 * tile_index + 0]; \
+	uint16_t code_lo = kaneko16_vram_##_N_[ 2 * tile_index + 1]; \
 	SET_TILE_INFO(1 + _N_/2, code_lo, (code_hi >> 2) & 0x3f, TILE_FLIPXY( code_hi & 3 )); \
 	tileinfo->category	=	(code_hi >> 8) & 7; \
 } \
@@ -258,7 +258,7 @@ PALETTE_INIT( berlwall )
 VIDEO_START( berlwall )
 {
 	int sx, x,y;
-	UINT8 *RAM	=	memory_region(machine, "gfx3");
+	uint8_t *RAM	=	memory_region(machine, "gfx3");
 
 	/* Render the hi-color static backgrounds held in the ROMs */
 
@@ -390,7 +390,7 @@ Offset:         Format:                     Value:
 
 static int kaneko16_parse_sprite_type012(running_machine *machine, int i, struct tempsprite *s)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int attr, xoffs, offs;
 
 	if (kaneko16_sprite_type == 2)	offs = i * 16/2 + 0x8/2;
@@ -440,11 +440,11 @@ else
 
 // custom function to draw a single sprite. needed to keep correct sprites - sprites and sprites - tilemaps priorities
 static void kaneko16_draw_sprites_custom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
 		int priority)
 {
 	pen_t pen_base = gfx->color_base + gfx->color_granularity * (color % gfx->total_colors);
-	const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+	const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 	bitmap_t *priority_bitmap = gfx->machine->priority_bitmap;
 	int sprite_screen_height = ((1<<16)*gfx->height+0x8000)>>16;
 	int sprite_screen_width = ((1<<16)*gfx->width+0x8000)>>16;
@@ -514,9 +514,9 @@ static void kaneko16_draw_sprites_custom(bitmap_t *dest_bmp,const rectangle *cli
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-				UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-				UINT8 *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+				const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+				uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+				uint8_t *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
 
 				int x, x_index = x_index_base;
 				for( x=sx; x<ex; x++ )
@@ -656,7 +656,7 @@ void kaneko16_draw_sprites(running_machine *machine, bitmap_t *bitmap, const rec
 	{
 		int curr_pri = s->priority;
 
-		UINT32 primask = kaneko16_priority.sprite[curr_pri];
+		uint32_t primask = kaneko16_priority.sprite[curr_pri];
 
 		kaneko16_draw_sprites_custom(
 										bitmap,cliprect,machine->gfx[0],
@@ -745,7 +745,7 @@ READ16_HANDLER( kaneko16_sprites_regs_r )
 
 WRITE16_HANDLER( kaneko16_sprites_regs_w )
 {
-	UINT16 new_data;
+	uint16_t new_data;
 
 	COMBINE_DATA(&kaneko16_sprites_regs[offset]);
 	new_data  = kaneko16_sprites_regs[offset];
@@ -869,8 +869,8 @@ static void kaneko16_prepare_first_tilemap_chip(running_machine *machine, bitmap
 {
 	/* Set Up FIRST Tilemap chip */
 	int layers_flip_0;
-	UINT16 layer0_scrollx, layer0_scrolly;
-	UINT16 layer1_scrollx, layer1_scrolly;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
 	int i;
 
 	layers_flip_0 = kaneko16_layers_0_regs[ 4 ];
@@ -896,7 +896,7 @@ static void kaneko16_prepare_first_tilemap_chip(running_machine *machine, bitmap
 
 	for (i=0; i<0x200; i++)
 	{
-		UINT16 scroll;
+		uint16_t scroll;
 		scroll = (layers_flip_0 & 0x0800) ? kaneko16_vscroll_0[i] : 0;
 		tilemap_set_scrollx(kaneko16_tmap_0,i,(layer0_scrollx + scroll) >> 6 );
 		scroll = (layers_flip_0 & 0x0008) ? kaneko16_vscroll_1[i] : 0;
@@ -909,8 +909,8 @@ static void kaneko16_prepare_second_tilemap_chip(running_machine *machine, bitma
 {
 	/* Set Up SECOND Tilemap chip */
 	int layers_flip_1 = 0;
-	UINT16 layer0_scrollx, layer0_scrolly;
-	UINT16 layer1_scrollx, layer1_scrolly;
+	uint16_t layer0_scrollx, layer0_scrolly;
+	uint16_t layer1_scrollx, layer1_scrolly;
 	int i;
 
 	if (kaneko16_tmap_2)
@@ -935,7 +935,7 @@ static void kaneko16_prepare_second_tilemap_chip(running_machine *machine, bitma
 
 		for (i=0; i<0x200; i++)
 		{
-			UINT16 scroll;
+			uint16_t scroll;
 			scroll = (layers_flip_1 & 0x0800) ? kaneko16_vscroll_2[i] : 0;
 			tilemap_set_scrollx(kaneko16_tmap_2,i,(layer0_scrollx + scroll) >> 6 );
 			scroll = (layers_flip_1 & 0x0008) ? kaneko16_vscroll_3[i] : 0;
@@ -1081,11 +1081,11 @@ VIDEO_UPDATE( galsnew )
 	count = 0;
 	for (y=0;y<256;y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
-			UINT16 dat = (galsnew_fg_pixram[count] & 0xfffe)>>1;
+			uint16_t dat = (galsnew_fg_pixram[count] & 0xfffe)>>1;
 			dat+=2048;
 			dest[x] = dat;
 			count++;
@@ -1095,11 +1095,11 @@ VIDEO_UPDATE( galsnew )
 	count = 0;
 	for (y=0;y<256;y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
-			UINT16 dat = (galsnew_bg_pixram[count]);
+			uint16_t dat = (galsnew_bg_pixram[count]);
 			//dat &=0x3ff;
 			if (dat)
 				dest[x] = dat;

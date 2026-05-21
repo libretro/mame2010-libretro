@@ -103,7 +103,7 @@ PALETTE_INIT( rallyx )
 	/* character/sprites lookup table */
 	for (i = 0x000; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -192,7 +192,7 @@ PALETTE_INIT( jungler )
 	/* character/sprites lookup table */
 	for (i = 0x000; i < 0x100; i++)
 	{
-		UINT8 ctabentry = color_prom[i] & 0x0f;
+		uint8_t ctabentry = color_prom[i] & 0x0f;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 
@@ -223,7 +223,7 @@ static TILEMAP_MAPPER( fg_tilemap_scan )
 INLINE void rallyx_get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, int ram_offs)
 {
 	timeplt_state *state = (timeplt_state *)machine->driver_data;
-	UINT8 attr = state->videoram[ram_offs + tile_index + 0x800];
+	uint8_t attr = state->videoram[ram_offs + tile_index + 0x800];
 	tileinfo->category = (attr & 0x20) >> 5;
 	SET_TILE_INFO(
 			0,
@@ -246,7 +246,7 @@ static TILE_GET_INFO( rallyx_fg_get_tile_info )
 INLINE void locomotn_get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,int ram_offs)
 {
 	timeplt_state *state = (timeplt_state *)machine->driver_data;
-	UINT8 attr = state->videoram[ram_offs + tile_index + 0x800];
+	uint8_t attr = state->videoram[ram_offs + tile_index + 0x800];
 	int code = state->videoram[ram_offs + tile_index];
 	code = (code & 0x7f) + 2 * (attr & 0x40) + 2 * (code & 0x80);
 	tileinfo->category = (attr & 0x20) >> 5;
@@ -481,8 +481,8 @@ static void draw_stars( running_machine *machine, bitmap_t *bitmap, const rectan
 static void rallyx_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int displacement )
 {
 	timeplt_state *state = (timeplt_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *spriteram_2 = state->spriteram2;
 	int offs;
 
 	for (offs = 0x20 - 2; offs >= state->spriteram_base; offs -= 2)
@@ -508,8 +508,8 @@ static void rallyx_draw_sprites( running_machine *machine, bitmap_t *bitmap, con
 static void locomotn_draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int displacement )
 {
 	timeplt_state *state = (timeplt_state *)machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
-	UINT8 *spriteram_2 = state->spriteram2;
+	uint8_t *spriteram = state->spriteram;
+	uint8_t *spriteram_2 = state->spriteram2;
 	int offs;
 
 	for (offs = 0x20 - 2; offs >= state->spriteram_base; offs -= 2)

@@ -9,8 +9,8 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	aquarium_state *state = (aquarium_state *)machine->driver_data;
 	int offs, chain_pos;
 	int x, y, curx, cury;
-	UINT8 col, flipx, flipy, chain;
-	UINT16 code;
+	uint8_t col, flipx, flipy, chain;
+	uint16_t code;
 
 	for (offs = 0; offs < state->spriteram_size / 2; offs += 8)
 	{

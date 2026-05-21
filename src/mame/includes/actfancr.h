@@ -12,16 +12,16 @@ public:
 	actfancr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        pf1_data;
-	UINT8 *        pf2_data;
-	UINT8 *        pf1_rowscroll_data;
-	UINT8 *        main_ram;
-//  UINT8 *        spriteram;   // currently this uses buffered_spriteram
-//  UINT8 *        paletteram;  // currently this uses generic palette handling
+	uint8_t *        pf1_data;
+	uint8_t *        pf2_data;
+	uint8_t *        pf1_rowscroll_data;
+	uint8_t *        main_ram;
+//  uint8_t *        spriteram;   // currently this uses buffered_spriteram
+//  uint8_t *        paletteram;  // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t        *pf1_tilemap, *pf1_alt_tilemap, *pf2_tilemap;
-	UINT8          control_1[0x20], control_2[0x20];
+	uint8_t          control_1[0x20], control_2[0x20];
 	int            flipscreen;
 
 	/* misc */

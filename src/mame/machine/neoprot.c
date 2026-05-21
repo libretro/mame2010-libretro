@@ -25,7 +25,7 @@
 static READ16_HANDLER( fatfury2_protection_16_r )
 {
 	neogeo_state *state = (neogeo_state *)space->machine->driver_data;
-	UINT16 res = state->fatfury2_prot_data >> 24;
+	uint16_t res = state->fatfury2_prot_data >> 24;
 
 	switch (offset)
 	{
@@ -119,7 +119,7 @@ void fatfury2_install_protection( running_machine *machine )
 static WRITE16_HANDLER ( kof98_prot_w )
 {
 	/* info from razoola */
-	UINT16* mem16 = (UINT16*)memory_region(space->machine, "maincpu");
+	uint16_t* mem16 = (uint16_t*)memory_region(space->machine, "maincpu");
 
 	switch (data)
 	{
@@ -160,7 +160,7 @@ void install_kof98_protection( running_machine *machine )
 void mslugx_install_protection( running_machine *machine )
 {
 	int i;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 
 	for (i = 0;i < (0x100000/2) - 4;i++)
 	{
@@ -376,9 +376,9 @@ static READ16_HANDLER( prot_9a37_r )
 static READ16_HANDLER( sma_random_r )
 {
 	neogeo_state *state = (neogeo_state *)space->machine->driver_data;
-	UINT16 old = state->neogeo_rng;
+	uint16_t old = state->neogeo_rng;
 
-	UINT16 newbit = ((state->neogeo_rng >> 2) ^
+	uint16_t newbit = ((state->neogeo_rng >> 2) ^
 					 (state->neogeo_rng >> 3) ^
 					 (state->neogeo_rng >> 5) ^
 					 (state->neogeo_rng >> 6) ^
@@ -460,23 +460,23 @@ void kof2000_install_protection( running_machine *machine )
   mslug5, svcchaos, kof2003
 ***************************************************************/
 
-static void pvc_w8( running_machine *machine, offs_t offset, UINT8 data )
+static void pvc_w8( running_machine *machine, offs_t offset, uint8_t data )
 {
 	neogeo_state *state = (neogeo_state *)machine->driver_data;
-	*(((UINT8*)state->pvc_cartridge_ram) + BYTE_XOR_LE(offset)) = data;
+	*(((uint8_t*)state->pvc_cartridge_ram) + BYTE_XOR_LE(offset)) = data;
 }
 
 
-static UINT8 pvc_r8( running_machine *machine, offs_t offset )
+static uint8_t pvc_r8( running_machine *machine, offs_t offset )
 {
 	neogeo_state *state = (neogeo_state *)machine->driver_data;
-	return *(((UINT8*)state->pvc_cartridge_ram) + BYTE_XOR_LE(offset));
+	return *(((uint8_t*)state->pvc_cartridge_ram) + BYTE_XOR_LE(offset));
 }
 
 
 static void pvc_prot1( running_machine *machine )
 {
-	UINT8 b1, b2;
+	uint8_t b1, b2;
 
 	b1 = pvc_r8(machine, 0x1fe1);
 	b2 = pvc_r8(machine, 0x1fe0);
@@ -489,7 +489,7 @@ static void pvc_prot1( running_machine *machine )
 
 static void pvc_prot2( running_machine *machine ) // on writes to e8/e9/ea/eb
 {
-	UINT8 b1, b2, b3, b4;
+	uint8_t b1, b2, b3, b4;
 
 	b1 = pvc_r8(machine, 0x1fe9);
 	b2 = pvc_r8(machine, 0x1fe8);
@@ -503,12 +503,12 @@ static void pvc_prot2( running_machine *machine ) // on writes to e8/e9/ea/eb
 static void pvc_write_bankswitch( const address_space *space )
 {
 	neogeo_state *state = (neogeo_state *)space->machine->driver_data;
-	UINT32 bankaddress;
+	uint32_t bankaddress;
 
 	bankaddress = ((state->pvc_cartridge_ram[0xff8] >> 8)|(state->pvc_cartridge_ram[0xff9] << 8));
-	*(((UINT8 *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff0)) = 0xa0;
-	*(((UINT8 *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff1)) &= 0xfe;
-	*(((UINT8 *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff3)) &= 0x7f;
+	*(((uint8_t *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff0)) = 0xa0;
+	*(((uint8_t *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff1)) &= 0xfe;
+	*(((uint8_t *)state->pvc_cartridge_ram) + BYTE_XOR_LE(0x1ff3)) &= 0x7f;
 	neogeo_set_main_cpu_bank_address(space, bankaddress + 0x100000);
 }
 
@@ -537,7 +537,7 @@ static WRITE16_HANDLER( pvc_prot_w )
 void install_pvc_protection( running_machine *machine )
 {
 	neogeo_state *state = (neogeo_state *)machine->driver_data;
-	state->pvc_cartridge_ram = auto_alloc_array(machine, UINT16, 0x2000 / 2);
+	state->pvc_cartridge_ram = auto_alloc_array(machine, uint16_t, 0x2000 / 2);
 	state_save_register_global_pointer(machine, state->pvc_cartridge_ram, 0x2000 / 2);
 
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x2fe000, 0x2fffff, 0, 0, pvc_prot_r, pvc_prot_w);

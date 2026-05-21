@@ -17,7 +17,7 @@ PALETTE_INIT( bladestl )
 	/* sprites use pens 0x20-0x2f */
 	for (i = 0x20; i < 0x120; i++)
 	{
-		UINT8 ctabentry = (color_prom[i - 0x20] & 0x0f) | 0x20;
+		uint8_t ctabentry = (color_prom[i - 0x20] & 0x0f) | 0x20;
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }
@@ -30,7 +30,7 @@ static void set_pens( running_machine *machine )
 
 	for (i = 0x00; i < 0x60; i += 2)
 	{
-		UINT16 data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
+		uint16_t data = state->paletteram[i | 1] | (state->paletteram[i] << 8);
 
 		rgb_t color = MAKE_RGB(pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 

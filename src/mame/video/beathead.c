@@ -91,8 +91,8 @@ WRITE32_HANDLER( beathead_vram_copy_w )
 WRITE32_HANDLER( beathead_finescroll_w )
 {
 	beathead_state *state = (beathead_state *)space->machine->driver_data;
-	UINT32 oldword = state->finescroll;
-	UINT32 newword = COMBINE_DATA(&state->finescroll);
+	uint32_t oldword = state->finescroll;
+	uint32_t newword = COMBINE_DATA(&state->finescroll);
 
 	/* if VBLANK is going off on a scanline other than the last, suspend time */
 	if ((oldword & 8) && !(newword & 8) && space->machine->primary_screen->vpos() != 261)
@@ -170,14 +170,14 @@ WRITE32_HANDLER( beathead_hsync_ram_w )
 VIDEO_UPDATE( beathead )
 {
 	beathead_state *state = (beathead_state *)screen->machine->driver_data;
-	UINT8 *videoram = screen->machine->generic.videoram.u8;
+	uint8_t *videoram = screen->machine->generic.videoram.u8;
 	int x, y;
 
 	/* generate the final screen */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
 		pen_t pen_base = (*state->palette_select & 0x7f) * 256;
-		UINT16 scanline[336];
+		uint16_t scanline[336];
 
 		/* blanking */
 		if (state->finescroll & 8)

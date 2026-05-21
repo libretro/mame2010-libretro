@@ -7,34 +7,34 @@ public:
 	pgm_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *      mainram;  // currently this is also used by nvram handler
-	UINT16 *      bg_videoram;
-	UINT16 *      tx_videoram;
-	UINT16 *      videoregs;
-	UINT16 *      rowscrollram;
-	UINT16 *      videoram;
-	UINT8  *      z80_mainram;
-	UINT32 *      arm7_shareram;
-	UINT32 *      svg_shareram[2];	//for 5585G MACHINE
-	UINT16 *      sharedprotram;		// killbld & olds
-	UINT8  *      sprite_a_region;
+//  uint16_t *      mainram;  // currently this is also used by nvram handler
+	uint16_t *      bg_videoram;
+	uint16_t *      tx_videoram;
+	uint16_t *      videoregs;
+	uint16_t *      rowscrollram;
+	uint16_t *      videoram;
+	uint8_t  *      z80_mainram;
+	uint32_t *      arm7_shareram;
+	uint32_t *      svg_shareram[2];	//for 5585G MACHINE
+	uint16_t *      sharedprotram;		// killbld & olds
+	uint8_t  *      sprite_a_region;
 	size_t        sprite_a_region_size;
-	UINT16 *      spritebufferram; // buffered spriteram
-//  UINT16 *      paletteram;    // currently this uses generic palette handling
+	uint16_t *      spritebufferram; // buffered spriteram
+//  uint16_t *      paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t       *bg_tilemap, *tx_tilemap;
-	UINT16        *sprite_temp_render;
+	uint16_t        *sprite_temp_render;
 	bitmap_t      *tmppgmbitmap;
 
 	/* misc */
 	// kov2
-	UINT32        kov2_latchdata_68k_w;
-	UINT32        kov2_latchdata_arm_w;
+	uint32_t        kov2_latchdata_68k_w;
+	uint32_t        kov2_latchdata_arm_w;
 	// kovsh
-	UINT16        kovsh_highlatch_arm_w, kovsh_lowlatch_arm_w;
-	UINT16        kovsh_highlatch_68k_w, kovsh_lowlatch_68k_w;
-	UINT32        kovsh_counter;
+	uint16_t        kovsh_highlatch_arm_w, kovsh_lowlatch_arm_w;
+	uint16_t        kovsh_highlatch_68k_w, kovsh_lowlatch_68k_w;
+	uint32_t        kovsh_counter;
 	// svg
 	int           svg_ram_sel;
 	// killbld & olds
@@ -42,27 +42,27 @@ public:
 	int           kb_reg;
 	int           kb_ptr;
 	int			  kb_region_sequence_position;
-	UINT32        kb_regs[0x10];
-	UINT16        olds_bs, olds_cmd3;
+	uint32_t        kb_regs[0x10];
+	uint16_t        olds_bs, olds_cmd3;
 	// pstars
-	UINT16        pstars_key;
-	UINT16        pstars_int[2];
-	UINT32        pstars_regs[16];
-	UINT32        pstars_val;
-	UINT16        pstar_e7, pstar_b1, pstar_ce;
-	UINT16        pstar_ram[3];
+	uint16_t        pstars_key;
+	uint16_t        pstars_int[2];
+	uint32_t        pstars_regs[16];
+	uint32_t        pstars_val;
+	uint16_t        pstar_e7, pstar_b1, pstar_ce;
+	uint16_t        pstar_ram[3];
 	// ASIC 3 (oriental legends protection)
-	UINT8         asic3_reg, asic3_latch[3], asic3_x, asic3_y, asic3_z, asic3_h1, asic3_h2;
-	UINT16        asic3_hold;
+	uint8_t         asic3_reg, asic3_latch[3], asic3_x, asic3_y, asic3_z, asic3_h1, asic3_h2;
+	uint16_t        asic3_hold;
 	// ASIC28
-	UINT16        asic28_key;
-	UINT16        asic28_regs[10];
-	UINT16        asic_params[256];
-	UINT16        asic28_rcnt;
-	UINT32        eoregs[16];
+	uint16_t        asic28_key;
+	uint16_t        asic28_regs[10];
+	uint16_t        asic_params[256];
+	uint16_t        asic28_rcnt;
+	uint32_t        eoregs[16];
 
 	/* calendar */
-	UINT8        cal_val, cal_mask, cal_com, cal_cnt;
+	uint8_t        cal_val, cal_mask, cal_com, cal_cnt;
 	system_time  systime;
 
 	/* devices */
@@ -71,7 +71,7 @@ public:
 	running_device *ics;
 };
 
-extern UINT16 *pgm_mainram;	// used by nvram handler, we cannot move it to driver data struct
+extern uint16_t *pgm_mainram;	// used by nvram handler, we cannot move it to driver data struct
 
 /*----------- defined in machine/pgmcrypt.c -----------*/
 

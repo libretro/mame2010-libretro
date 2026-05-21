@@ -12,12 +12,12 @@ public:
 	zerozone_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    videoram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    videoram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      videoram_size;
 
 	/* video-related */
-	UINT16      tilebank;
+	uint16_t      tilebank;
 	tilemap_t     *zz_tilemap;
 
 	/* devices */

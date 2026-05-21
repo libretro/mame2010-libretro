@@ -5,7 +5,7 @@ public:
 
 	xyonix_state(running_machine &machine) { }
 
-	UINT8 *vidram;
+	uint8_t *vidram;
 	tilemap_t *tilemap;
 
 	int e0_data;

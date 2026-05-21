@@ -19,10 +19,10 @@ void itech32_update_interrupts(running_machine *machine, int vint, int xint, int
 
 /*----------- defined in video/itech32.c -----------*/
 
-extern UINT16 *itech32_video;
-extern UINT32 *drivedge_zbuf_control;
-extern UINT8 itech32_planes;
-extern UINT16 itech32_vram_height;
+extern uint16_t *itech32_video;
+extern uint32_t *drivedge_zbuf_control;
+extern uint8_t itech32_planes;
+extern uint16_t itech32_vram_height;
 
 VIDEO_START( itech32 );
 

@@ -12,7 +12,7 @@ public:
 	rockrage_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    paletteram;
+	uint8_t *    paletteram;
 
 	/* video-related */
 	int        layer_colorbase[2];

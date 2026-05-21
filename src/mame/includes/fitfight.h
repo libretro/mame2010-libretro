@@ -7,24 +7,24 @@ public:
 	fitfight_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  fof_100000;
-	UINT16 *  fof_600000;
-	UINT16 *  fof_700000;
-	UINT16 *  fof_800000;
-	UINT16 *  fof_900000;
-	UINT16 *  fof_a00000;
-	UINT16 *  fof_bak_tileram;
-	UINT16 *  fof_mid_tileram;
-	UINT16 *  fof_txt_tileram;
-	UINT16 *  spriteram;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  fof_100000;
+	uint16_t *  fof_600000;
+	uint16_t *  fof_700000;
+	uint16_t *  fof_800000;
+	uint16_t *  fof_900000;
+	uint16_t *  fof_a00000;
+	uint16_t *  fof_bak_tileram;
+	uint16_t *  fof_mid_tileram;
+	uint16_t *  fof_txt_tileram;
+	uint16_t *  spriteram;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *fof_bak_tilemap, *fof_mid_tilemap, *fof_txt_tilemap;
 
 	/* misc */
 	int      bbprot_kludge;
-	UINT16   fof_700000_data;
+	uint16_t   fof_700000_data;
 };
 
 

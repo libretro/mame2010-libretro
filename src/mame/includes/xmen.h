@@ -7,7 +7,7 @@ public:
 	xmen_state(running_machine &machine) { }
 
 	/* memory pointers */
-//  UINT16 *   paletteram;    // currently this uses generic palette handling
+//  uint16_t *   paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	int        layer_colorbase[3], sprite_colorbase;
@@ -16,15 +16,15 @@ public:
 	/* for xmen6p */
 	bitmap_t   *screen_right;
 	bitmap_t   *screen_left;
-	UINT16 *   xmen6p_spriteramleft;
-	UINT16 *   xmen6p_spriteramright;
-	UINT16 *   xmen6p_tilemapleft;
-	UINT16 *   xmen6p_tilemapright;
-	UINT16 *   k053247_ram;
-	UINT16     current_frame;
+	uint16_t *   xmen6p_spriteramleft;
+	uint16_t *   xmen6p_spriteramright;
+	uint16_t *   xmen6p_tilemapleft;
+	uint16_t *   xmen6p_tilemapright;
+	uint16_t *   k053247_ram;
+	uint16_t     current_frame;
 
 	/* misc */
-	UINT8       sound_curbank;
+	uint8_t       sound_curbank;
 
 	/* devices */
 	running_device *maincpu;

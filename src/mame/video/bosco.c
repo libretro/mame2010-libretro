@@ -95,7 +95,7 @@ INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_
 {
 	_galaga_state *state = (_galaga_state *) machine->driver_data;
 
-	UINT8 attr = state->videoram[ram_offs + tile_index + 0x800];
+	uint8_t attr = state->videoram[ram_offs + tile_index + 0x800];
 	tileinfo->category = (attr & 0x20) >> 5;
 	tileinfo->group = attr & 0x3f;
 	SET_TILE_INFO(
@@ -192,8 +192,8 @@ WRITE8_HANDLER( bosco_starclr_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
-	UINT8 *spriteram_2 = machine->generic.spriteram2.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram_2 = machine->generic.spriteram2.u8;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size;offs += 2)

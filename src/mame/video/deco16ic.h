@@ -94,16 +94,16 @@ READ16_DEVICE_HANDLER( deco16ic_71_r );
 
 void deco16ic_print_debug_info(running_device *device, bitmap_t *bitmap);
 
-void deco16ic_pf12_update(running_device *device, const UINT16 *rowscroll_1_ptr, const UINT16 *rowscroll_2_ptr);
-void deco16ic_pf34_update(running_device *device, const UINT16 *rowscroll_1_ptr, const UINT16 *rowscroll_2_ptr);
+void deco16ic_pf12_update(running_device *device, const uint16_t *rowscroll_1_ptr, const uint16_t *rowscroll_2_ptr);
+void deco16ic_pf34_update(running_device *device, const uint16_t *rowscroll_1_ptr, const uint16_t *rowscroll_2_ptr);
 
-void deco16ic_tilemap_1_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority);
-void deco16ic_tilemap_2_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority);
-void deco16ic_tilemap_3_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority);
-void deco16ic_tilemap_4_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority);
+void deco16ic_tilemap_1_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority);
+void deco16ic_tilemap_2_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority);
+void deco16ic_tilemap_3_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority);
+void deco16ic_tilemap_4_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority);
 
 /* used by boogwing, nitrobal */
-void deco16ic_tilemap_34_combine_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, UINT32 priority);
+void deco16ic_tilemap_34_combine_draw(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, int flags, uint32_t priority);
 
 
 /* used by boogwing, dassault, nitrobal */
@@ -111,8 +111,8 @@ void deco16ic_clear_sprite_priority_bitmap(running_device *device);
 void deco16ic_pdrawgfx(
 		running_device *device,
 		bitmap_t *dest,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
-		int transparent_color,UINT32 pri_mask,UINT32 sprite_mask,UINT8 write_pri,UINT8 alpha);
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
+		int transparent_color,uint32_t pri_mask,uint32_t sprite_mask,uint8_t write_pri,uint8_t alpha);
 
 /* used by robocop2 */
 void deco16ic_set_tilemap_colour_mask(running_device *device, int tmap, int mask);

@@ -6,7 +6,7 @@
 
 #include "emu.h"
 
-UINT8 *gladiatr_videoram, *gladiatr_colorram, *gladiatr_textram;
+uint8_t *gladiatr_videoram, *gladiatr_colorram, *gladiatr_textram;
 
 static int video_attributes;
 static int fg_scrollx, fg_scrolly, bg_scrollx, bg_scrolly;
@@ -25,7 +25,7 @@ static int fg_tile_bank, bg_tile_bank;
 
 static TILE_GET_INFO( bg_get_tile_info )
 {
-	UINT8 attr = gladiatr_colorram[tile_index];
+	uint8_t attr = gladiatr_colorram[tile_index];
 
 	SET_TILE_INFO(
 			1,
@@ -209,7 +209,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 			{0x0,0x1},
 			{0x2,0x3},
 		};
-		UINT8 *src = &machine->generic.spriteram.u8[offs + (sprite_buffer << 7)];
+		uint8_t *src = &machine->generic.spriteram.u8[offs + (sprite_buffer << 7)];
 		int attributes = src[0x800];
 		int size = (attributes & 0x10) >> 4;
 		int bank = (attributes & 0x01) + ((attributes & 0x02) ? sprite_bank : 0);
@@ -267,7 +267,7 @@ VIDEO_UPDATE( ppking )
 			int x = sx;
 			int y = (sy + fg_scrolly) & 0x1ff;
 
-			UINT16 *dest = BITMAP_ADDR16(bitmap, sy, sx);
+			uint16_t *dest = BITMAP_ADDR16(bitmap, sy, sx);
 			while( x <= cliprect->max_x )
 			{
 				if( *BITMAP_ADDR8(flagsbitmap, y, x)&TILEMAP_PIXEL_LAYER0 )

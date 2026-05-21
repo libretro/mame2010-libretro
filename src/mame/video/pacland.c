@@ -27,17 +27,17 @@ sprite color 0x7f will erase the tilemap and force it to be transparent.
 #include "emu.h"
 
 
-UINT8 *pacland_videoram,*pacland_videoram2,*pacland_spriteram;
+uint8_t *pacland_videoram,*pacland_videoram2,*pacland_spriteram;
 
-static UINT8 palette_bank;
-static const UINT8 *pacland_color_prom;
+static uint8_t palette_bank;
+static const uint8_t *pacland_color_prom;
 
 static tilemap_t *bg_tilemap, *fg_tilemap;
 static bitmap_t *fg_bitmap;
 
-static UINT32 *transmask[3];
+static uint32_t *transmask[3];
 
-static UINT16 scroll0,scroll1;
+static uint16_t scroll0,scroll1;
 
 /***************************************************************************
 
@@ -69,7 +69,7 @@ static UINT16 scroll0,scroll1;
 static void switch_palette(running_machine *machine)
 {
 	int i;
-	const UINT8 *color_prom = pacland_color_prom + 256 * palette_bank;
+	const uint8_t *color_prom = pacland_color_prom + 256 * palette_bank;
 
 	for (i = 0;i < 256;i++)
 	{
@@ -125,9 +125,9 @@ PALETTE_INIT( pacland )
 	switch_palette(machine);
 
 	/* precalculate transparency masks for sprites */
-	transmask[0] = auto_alloc_array(machine, UINT32, 64);
-	transmask[1] = auto_alloc_array(machine, UINT32, 64);
-	transmask[2] = auto_alloc_array(machine, UINT32, 64);
+	transmask[0] = auto_alloc_array(machine, uint32_t, 64);
+	transmask[1] = auto_alloc_array(machine, uint32_t, 64);
+	transmask[2] = auto_alloc_array(machine, uint32_t, 64);
 	for (i = 0; i < 64; i++)
 	{
 		int palentry;
@@ -138,7 +138,7 @@ PALETTE_INIT( pacland )
 		/* iterate over all palette entries except the last one */
 		for (palentry = 0; palentry < 0x100; palentry++)
 		{
-			UINT32 mask = colortable_get_transpen_mask(machine->colortable, machine->gfx[2], i, palentry);
+			uint32_t mask = colortable_get_transpen_mask(machine->colortable, machine->gfx[2], i, palentry);
 
 			/* transmask[0] is a mask that is used to draw only high priority sprite pixels; thus, pens
                $00-$7F are opaque, and others are transparent */
@@ -215,7 +215,7 @@ VIDEO_START( pacland )
 	assert(machine->gfx[0]->total_colors <= TILEMAP_NUM_GROUPS);
 	for (color = 0; color < machine->gfx[0]->total_colors; color++)
 	{
-		UINT32 mask = colortable_get_transpen_mask(machine->colortable, machine->gfx[0], color, 0x7f);
+		uint32_t mask = colortable_get_transpen_mask(machine->colortable, machine->gfx[0], color, 0x7f);
 		mask |= colortable_get_transpen_mask(machine->colortable, machine->gfx[0], color, 0xff);
 		tilemap_set_transmask(fg_tilemap, color, mask, 0);
 	}
@@ -258,7 +258,7 @@ WRITE8_HANDLER( pacland_scroll1_w )
 WRITE8_HANDLER( pacland_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	bankaddress = 0x10000 + ((data & 0x07) << 13);
 	memory_set_bankptr(space->machine, "bank1",&RAM[bankaddress]);
@@ -283,9 +283,9 @@ WRITE8_HANDLER( pacland_bankswitch_w )
 /* the sprite generator IC is the same as Mappy */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int whichmask)
 {
-	UINT8 *spriteram = pacland_spriteram + 0x780;
-	UINT8 *spriteram_2 = spriteram + 0x800;
-	UINT8 *spriteram_3 = spriteram_2 + 0x800;
+	uint8_t *spriteram = pacland_spriteram + 0x780;
+	uint8_t *spriteram_2 = spriteram + 0x800;
+	uint8_t *spriteram_3 = spriteram_2 + 0x800;
 	int offs;
 
 	for (offs = 0;offs < 0x80;offs += 2)
@@ -352,15 +352,15 @@ static void draw_fg(running_machine *machine, bitmap_t *bitmap, const rectangle 
 	/* now copy the fg_bitmap to the destination wherever the sprite pixel allows */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		const UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
-		UINT16 *src = BITMAP_ADDR16(fg_bitmap, y, 0);
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		const uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, y, 0);
+		uint16_t *src = BITMAP_ADDR16(fg_bitmap, y, 0);
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 
 		/* only copy if the priority bitmap is 0 (no high priority sprite) and the
            source pixel is not the invalid pen; also clear to 0xffff when finished */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT16 pix = src[x];
+			uint16_t pix = src[x];
 			if (pix != 0xffff)
 			{
 				src[x] = 0xffff;

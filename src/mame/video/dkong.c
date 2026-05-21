@@ -559,7 +559,7 @@ WRITE8_HANDLER( dkong_spritebank_w )
 
 ***************************************************************************/
 
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 mask_bank, UINT32 shift_bits)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t mask_bank, uint32_t shift_bits)
 {
 	dkong_state *state = (dkong_state *)machine->driver_data;
 	int offs;
@@ -709,7 +709,7 @@ INLINE double CD4049(running_machine *machine, double x)
 #define RC32	((18e3 + 68e3) * 33e-6)
 #define RC4		(90e3 * 0.47e-6)
 #define dt		(1./60./(double) VTOTAL)
-#define period2 (((INT64)(PIXEL_CLOCK) * ( 33L * 68L )) / (INT32)10000000L / 3)  /*  period/2 in pixel ... */
+#define period2 (((int64_t)(PIXEL_CLOCK) * ( 33L * 68L )) / (int32_t)10000000L / 3)  /*  period/2 in pixel ... */
 
 static void radarscp_step(running_machine *machine, int line_cnt)
 {
@@ -809,10 +809,10 @@ static void radarscp_step(running_machine *machine, int line_cnt)
 
 static void radarscp_draw_background(running_machine *machine, dkong_state *state, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	const UINT8 	*htable = NULL;
+	const uint8_t 	*htable = NULL;
 	int 			x,y;
-	UINT8			draw_ok;
-	UINT16			*pixel;
+	uint8_t			draw_ok;
+	uint16_t			*pixel;
 
 	if (state->hardware_type == HARDWARE_TRS01)
 		htable = state->gfx4;
@@ -838,10 +838,10 @@ static void radarscp_draw_background(running_machine *machine, dkong_state *stat
 static void radarscp_scanline(running_machine *machine, int scanline)
 {
 	dkong_state *state = (dkong_state *)machine->driver_data;
-	const UINT8 *table = state->gfx3;
+	const uint8_t *table = state->gfx3;
 	int 		table_len = state->gfx3_len;
 	int 			x,y,offset;
-	UINT16			*pixel;
+	uint16_t			*pixel;
 	static int		counter=0;
 	const rectangle &visarea = machine->primary_screen->visible_area();
 
@@ -900,7 +900,7 @@ static void check_palette(running_machine *machine)
 		newset = input_port_read_direct(port);
 		if (newset != state->vidhw)
 		{
-			const UINT8 *color_prom;
+			const uint8_t *color_prom;
 			state->vidhw = newset;
 			switch (newset)
 			{

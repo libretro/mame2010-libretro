@@ -123,7 +123,7 @@ static void draw_background( running_machine *machine, bitmap_t *bitmap, const r
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	karnov_state *state = (karnov_state *)machine->driver_data;
-	UINT16 *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram16 = machine->generic.buffered_spriteram.u16;
 	int offs;
 
 	for (offs = 0; offs <0x800; offs += 4)

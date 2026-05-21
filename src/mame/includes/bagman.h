@@ -28,9 +28,9 @@ WRITE8_HANDLER( bagman_pal16r6_w );
 
 /*----------- defined in video/bagman.c -----------*/
 
-extern UINT8 *bagman_videoram;
-extern UINT8 *bagman_colorram;
-extern UINT8 *bagman_video_enable;
+extern uint8_t *bagman_videoram;
+extern uint8_t *bagman_colorram;
+extern uint8_t *bagman_video_enable;
 
 WRITE8_HANDLER( bagman_videoram_w );
 WRITE8_HANDLER( bagman_colorram_w );

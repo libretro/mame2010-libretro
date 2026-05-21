@@ -26,7 +26,7 @@ System 24      68000x2  315-5292   315-5293  315-5294  315-5242        ym2151 da
 #include "segaic24.h"
 
 
-static void set_color(running_machine *machine, int color, UINT8 r, UINT8 g, UINT8 b, int highlight)
+static void set_color(running_machine *machine, int color, uint8_t r, uint8_t g, uint8_t b, int highlight)
 {
 	palette_set_color (machine, color, MAKE_RGB(r, g, b));
 
@@ -79,8 +79,8 @@ WRITE16_HANDLER (system24temp_sys16_paletteram1_w)
 
 enum {SYS24_TILES = 0x4000};
 
-static UINT16 *sys24_char_ram, *sys24_tile_ram;
-static UINT16 sys24_tile_mask;
+static uint16_t *sys24_char_ram, *sys24_tile_ram;
+static uint16_t sys24_tile_mask;
 static int sys24_char_gfx_index;
 static tilemap_t *sys24_tile_layer[4];
 
@@ -98,33 +98,33 @@ static const gfx_layout sys24_char_layout = {
 
 static TILE_GET_INFO( sys24_tile_info_0s )
 {
-	UINT16 val = sys24_tile_ram[tile_index];
+	uint16_t val = sys24_tile_ram[tile_index];
 	tileinfo->category = (val & 0x8000) != 0;
 	SET_TILE_INFO(sys24_char_gfx_index, val & sys24_tile_mask, (val >> 7) & 0xff, 0);
 }
 
 static TILE_GET_INFO( sys24_tile_info_0w )
 {
-	UINT16 val = sys24_tile_ram[tile_index|0x1000];
+	uint16_t val = sys24_tile_ram[tile_index|0x1000];
 	tileinfo->category = (val & 0x8000) != 0;
 	SET_TILE_INFO(sys24_char_gfx_index, val & sys24_tile_mask, (val >> 7) & 0xff, 0);
 }
 
 static TILE_GET_INFO( sys24_tile_info_1s )
 {
-	UINT16 val = sys24_tile_ram[tile_index|0x2000];
+	uint16_t val = sys24_tile_ram[tile_index|0x2000];
 	tileinfo->category = (val & 0x8000) != 0;
 	SET_TILE_INFO(sys24_char_gfx_index, val & sys24_tile_mask, (val >> 7) & 0xff, 0);
 }
 
 static TILE_GET_INFO( sys24_tile_info_1w )
 {
-	UINT16 val = sys24_tile_ram[tile_index|0x3000];
+	uint16_t val = sys24_tile_ram[tile_index|0x3000];
 	tileinfo->category = (val & 0x8000) != 0;
 	SET_TILE_INFO(sys24_char_gfx_index, val & sys24_tile_mask, (val >> 7) & 0xff, 0);
 }
 
-void sys24_tile_vh_start(running_machine *machine, UINT16 tile_mask)
+void sys24_tile_vh_start(running_machine *machine, uint16_t tile_mask)
 {
 	sys24_tile_mask = tile_mask;
 
@@ -133,9 +133,9 @@ void sys24_tile_vh_start(running_machine *machine, UINT16 tile_mask)
 			break;
 	assert(sys24_char_gfx_index != MAX_GFX_ELEMENTS);
 
-	sys24_char_ram = auto_alloc_array(machine, UINT16, 0x80000/2);
+	sys24_char_ram = auto_alloc_array(machine, uint16_t, 0x80000/2);
 
-	sys24_tile_ram = auto_alloc_array(machine, UINT16, 0x10000/2);
+	sys24_tile_ram = auto_alloc_array(machine, uint16_t, 0x10000/2);
 
 	sys24_tile_layer[0] = tilemap_create(machine, sys24_tile_info_0s, tilemap_scan_rows,  8, 8, 64, 64);
 	sys24_tile_layer[1] = tilemap_create(machine, sys24_tile_info_0w, tilemap_scan_rows,  8, 8, 64, 64);
@@ -150,20 +150,20 @@ void sys24_tile_vh_start(running_machine *machine, UINT16 tile_mask)
 	memset(sys24_char_ram, 0, 0x80000);
 	memset(sys24_tile_ram, 0, 0x10000);
 
-	machine->gfx[sys24_char_gfx_index] = gfx_element_alloc(machine, &sys24_char_layout, (UINT8 *)sys24_char_ram, machine->total_colors() / 16, 0);
+	machine->gfx[sys24_char_gfx_index] = gfx_element_alloc(machine, &sys24_char_layout, (uint8_t *)sys24_char_ram, machine->total_colors() / 16, 0);
 
 	state_save_register_global_pointer(machine, sys24_tile_ram, 0x10000/2);
 	state_save_register_global_pointer(machine, sys24_char_ram, 0x80000/2);
 }
 
-static void sys24_tile_draw_rect(running_machine *machine, bitmap_t *bm, bitmap_t *tm, bitmap_t *dm, const UINT16 *mask,
-								 UINT16 tpri, UINT8 lpri, int win, int sx, int sy, int xx1, int yy1, int xx2, int yy2)
+static void sys24_tile_draw_rect(running_machine *machine, bitmap_t *bm, bitmap_t *tm, bitmap_t *dm, const uint16_t *mask,
+								 uint16_t tpri, uint8_t lpri, int win, int sx, int sy, int xx1, int yy1, int xx2, int yy2)
 {
 	int y;
-	const UINT16 *source  = ((UINT16 *)bm->base) + sx + sy*bm->rowpixels;
-	const UINT8  *trans = ((UINT8 *) tm->base) + sx + sy*tm->rowpixels;
-	UINT8        *prib = (UINT8 *)machine->priority_bitmap->base;
-	UINT16       *dest = (UINT16 *)dm->base;
+	const uint16_t *source  = ((uint16_t *)bm->base) + sx + sy*bm->rowpixels;
+	const uint8_t  *trans = ((uint8_t *) tm->base) + sx + sy*tm->rowpixels;
+	uint8_t        *prib = (uint8_t *)machine->priority_bitmap->base;
+	uint16_t       *dest = (uint16_t *)dm->base;
 
 	tpri |= TILEMAP_PIXEL_LAYER0;
 
@@ -179,16 +179,16 @@ static void sys24_tile_draw_rect(running_machine *machine, bitmap_t *bm, bitmap_
 	}
 
 	for(y=0; y<yy2; y++) {
-		const UINT16 *src   = source;
-		const UINT8  *srct  = trans;
-		UINT16 *dst         = dest;
-		UINT8 *pr           = prib;
-		const UINT16 *mask1 = mask;
+		const uint16_t *src   = source;
+		const uint8_t  *srct  = trans;
+		uint16_t *dst         = dest;
+		uint8_t *pr           = prib;
+		const uint16_t *mask1 = mask;
 		int llx = xx2;
 		int cur_x = xx1;
 
 		while(llx > 0) {
-			UINT16 m = *mask1++;
+			uint16_t m = *mask1++;
 
 			if(win)
 				m = ~m;
@@ -290,13 +290,13 @@ static void sys24_tile_draw_rect(running_machine *machine, bitmap_t *bm, bitmap_
 // about sprite priority hence the lack of support for the
 // machine->priority_bitmap
 
-static void sys24_tile_draw_rect_rgb(running_machine *machine, bitmap_t *bm, bitmap_t *tm, bitmap_t *dm, const UINT16 *mask,
-									 UINT16 tpri, UINT8 lpri, int win, int sx, int sy, int xx1, int yy1, int xx2, int yy2)
+static void sys24_tile_draw_rect_rgb(running_machine *machine, bitmap_t *bm, bitmap_t *tm, bitmap_t *dm, const uint16_t *mask,
+									 uint16_t tpri, uint8_t lpri, int win, int sx, int sy, int xx1, int yy1, int xx2, int yy2)
 {
 	int y;
-	const UINT16 *source  = ((UINT16 *)bm->base) + sx + sy*bm->rowpixels;
-	const UINT8  *trans = ((UINT8 *) tm->base) + sx + sy*tm->rowpixels;
-	UINT16       *dest = (UINT16 *)dm->base;
+	const uint16_t *source  = ((uint16_t *)bm->base) + sx + sy*bm->rowpixels;
+	const uint8_t  *trans = ((uint8_t *) tm->base) + sx + sy*tm->rowpixels;
+	uint16_t       *dest = (uint16_t *)dm->base;
 	const pen_t  *pens   = machine->pens;
 
 	tpri |= TILEMAP_PIXEL_LAYER0;
@@ -312,15 +312,15 @@ static void sys24_tile_draw_rect_rgb(running_machine *machine, bitmap_t *bm, bit
 	}
 
 	for(y=0; y<yy2; y++) {
-		const UINT16 *src   = source;
-		const UINT8  *srct  = trans;
-		UINT16 *dst         = dest;
-		const UINT16 *mask1 = mask;
+		const uint16_t *src   = source;
+		const uint8_t  *srct  = trans;
+		uint16_t *dst         = dest;
+		const uint16_t *mask1 = mask;
 		int llx = xx2;
 		int cur_x = xx1;
 
 		while(llx > 0) {
-			UINT16 m = *mask1++;
+			uint16_t m = *mask1++;
 
 			if(win)
 				m = ~m;
@@ -404,11 +404,11 @@ static void sys24_tile_draw_rect_rgb(running_machine *machine, bitmap_t *bm, bit
 
 void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int layer, int lpri, int flags)
 {
-	UINT16 hscr = sys24_tile_ram[0x5000+(layer >> 1)];
-	UINT16 vscr = sys24_tile_ram[0x5004+(layer >> 1)];
-	UINT16 ctrl = sys24_tile_ram[0x5004+((layer >> 1) & 2)];
-	UINT16 *mask = sys24_tile_ram + (layer & 4 ? 0x6800 : 0x6000);
-	UINT16 tpri = layer & 1;
+	uint16_t hscr = sys24_tile_ram[0x5000+(layer >> 1)];
+	uint16_t vscr = sys24_tile_ram[0x5004+(layer >> 1)];
+	uint16_t ctrl = sys24_tile_ram[0x5004+((layer >> 1) & 2)];
+	uint16_t *mask = sys24_tile_ram + (layer & 4 ? 0x6800 : 0x6000);
+	uint16_t tpri = layer & 1;
 
 	lpri = 1 << lpri;
 	layer >>= 1;
@@ -426,16 +426,16 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 		tilemap_set_scrolly(sys24_tile_layer[layer|1], 0, vscr & 0x1ff);
 
 		if(hscr & 0x8000) {
-			UINT16 *hscrtb = sys24_tile_ram + 0x4000 + 0x200*layer;
+			uint16_t *hscrtb = sys24_tile_ram + 0x4000 + 0x200*layer;
 
 			switch((ctrl & 0x6000) >> 13) {
 			case 1: {
 				int y;
-				UINT16 v = (-vscr) & 0x1ff;
+				uint16_t v = (-vscr) & 0x1ff;
 				if(!((-vscr) & 0x200))
 					layer ^= 1;
 				for(y=cliprect->min_y; y<=cliprect->max_y; y++) {
-					UINT16 h;
+					uint16_t h;
 					rectangle c = *cliprect;
 					int l1 = layer;
 					if(y >= v)
@@ -454,7 +454,7 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 			case 2: case 3: {
 				int y;
 				for(y=cliprect->min_y; y<=cliprect->max_y; y++) {
-					UINT16 h;
+					uint16_t h;
 					rectangle c1 = *cliprect;
 					rectangle c2 = *cliprect;
 					int l1 = layer;
@@ -489,7 +489,7 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 			case 1: {
 				rectangle c1 = *cliprect;
 				rectangle c2 = *cliprect;
-				UINT16 v;
+				uint16_t v;
 				v = (-vscr) & 0x1ff;
 				if(c1.max_y >= v)
 					c1.max_y = v-1;
@@ -505,7 +505,7 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 			case 2: case 3: {
 				rectangle c1 = *cliprect;
 				rectangle c2 = *cliprect;
-				UINT16 h;
+				uint16_t h;
 				h = (+hscr) & 0x1ff;
 				if(c1.max_x >= h)
 					c1.max_x = h-1;
@@ -523,8 +523,8 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 
 	} else {
 		bitmap_t *bm, *tm;
-		void (*draw)(running_machine *machine, bitmap_t *, bitmap_t *, bitmap_t *, const UINT16 *,
-					 UINT16, UINT8, int, int, int, int, int, int, int);
+		void (*draw)(running_machine *machine, bitmap_t *, bitmap_t *, bitmap_t *, const uint16_t *,
+					 uint16_t, uint8_t, int, int, int, int, int, int, int);
 		int win = layer & 1;
 
 		if(bitmap->format != BITMAP_FORMAT_INDEXED16)
@@ -537,7 +537,7 @@ void sys24_tile_draw(running_machine *machine, bitmap_t *bitmap, const rectangle
 
 		if(hscr & 0x8000) {
 			int y;
-			UINT16 *hscrtb = sys24_tile_ram + 0x4000 + 0x200*layer;
+			uint16_t *hscrtb = sys24_tile_ram + 0x4000 + 0x200*layer;
 			vscr &= 0x1ff;
 
 			for(y=0; y<384; y++) {
@@ -604,7 +604,7 @@ WRITE16_HANDLER(sys24_tile_w)
 
 WRITE16_HANDLER(sys24_char_w)
 {
-	UINT16 old = sys24_char_ram[offset];
+	uint16_t old = sys24_char_ram[offset];
 	COMBINE_DATA(sys24_char_ram + offset);
 	if(old != sys24_char_ram[offset]) {
 		gfx_element_mark_dirty(space->machine->gfx[sys24_char_gfx_index], offset / 16);
@@ -635,11 +635,11 @@ WRITE32_HANDLER(sys24_char32_w)
 
 // - System 24
 
-static UINT16 *sys24_sprite_ram;
+static uint16_t *sys24_sprite_ram;
 
 void sys24_sprite_vh_start(running_machine *machine)
 {
-	sys24_sprite_ram = auto_alloc_array(machine, UINT16, 0x40000/2);
+	sys24_sprite_ram = auto_alloc_array(machine, uint16_t, 0x40000/2);
 
 	state_save_register_global_pointer(machine, sys24_sprite_ram, 0x40000/2);
 	//  kc = 0;
@@ -671,20 +671,20 @@ void sys24_sprite_vh_start(running_machine *machine)
 
 void sys24_sprite_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const int *spri)
 {
-	UINT16 curspr = 0;
+	uint16_t curspr = 0;
 	int countspr = 0;
 	int seen;
-	UINT8 pmt[4];
+	uint8_t pmt[4];
 	int i;
-	UINT16 *sprd[0x2000], *clip[0x2000];
-	UINT16 *cclip = 0;
+	uint16_t *sprd[0x2000], *clip[0x2000];
+	uint16_t *cclip = 0;
 
 	for(i=0; i<4; i++)
 		pmt[i] = 0xff << (1+spri[3-i]);
 
 	for(seen = 0; seen < 0x2000; seen++) {
-		UINT16 *source;
-		UINT16 type;
+		uint16_t *source;
+		uint16_t type;
 
 		source = sys24_sprite_ram + (curspr << 3);
 
@@ -715,20 +715,20 @@ void sys24_sprite_draw(running_machine *machine, bitmap_t *bitmap, const rectang
 	}
 
 	for(countspr--; countspr >= 0; countspr--) {
-		UINT16 *source, *pix;
+		uint16_t *source, *pix;
 		int x, y, sx, sy;
 		int px, py;
-		UINT16 colors[16];
+		uint16_t colors[16];
 		int flipx, flipy;
 		int zoomx, zoomy;
-		UINT8 pm[16];
+		uint8_t pm[16];
 		//      int dump;
 		int xmod, ymod;
 		int min_x, min_y, max_x, max_y;
 
-		UINT32 addoffset;
-		UINT32 newoffset;
-		UINT32 offset;
+		uint32_t addoffset;
+		uint32_t newoffset;
+		uint32_t offset;
 
 		source = sprd[countspr];
 		cclip = clip[countspr];
@@ -829,13 +829,13 @@ void sys24_sprite_draw(running_machine *machine, bitmap_t *bitmap, const rectang
 								while(xmod2 >= 0x40) {
 									if(xpos2 >= min_x && xpos2 <= max_x) {
 										int zx1 = flipx ? 7-zx : zx;
-										UINT32 neweroffset = (newoffset+(zx1>>2))&0x1ffff; // crackdown sometimes attempts to use data past the end of spriteram
+										uint32_t neweroffset = (newoffset+(zx1>>2))&0x1ffff; // crackdown sometimes attempts to use data past the end of spriteram
 										int c = (sys24_sprite_ram[neweroffset] >> (((~zx1) & 3) << 2)) & 0xf;
-										UINT8 *pri = BITMAP_ADDR8(machine->priority_bitmap, ypos1, xpos2);
+										uint8_t *pri = BITMAP_ADDR8(machine->priority_bitmap, ypos1, xpos2);
 										if(!(*pri & pm[c])) {
 											c = colors[c];
 											if(c) {
-												UINT16 *dst = BITMAP_ADDR16(bitmap, ypos1, xpos2);
+												uint16_t *dst = BITMAP_ADDR16(bitmap, ypos1, xpos2);
 												if(c==1)
 													*dst = (*dst) | 0x2000;
 												else
@@ -881,7 +881,7 @@ READ16_HANDLER(sys24_sprite_r)
 // Programmable mixers
 //   System 24
 
-static UINT16 sys24_mixer_reg[0x10];
+static uint16_t sys24_mixer_reg[0x10];
 
 void sys24_mixer_vh_start(running_machine *machine)
 {

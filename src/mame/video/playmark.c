@@ -11,8 +11,8 @@
 static TILE_GET_INFO( bigtwin_get_tx_tile_info )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 code = state->videoram1[2 * tile_index];
-	UINT16 color = state->videoram1[2 * tile_index + 1];
+	uint16_t code = state->videoram1[2 * tile_index];
+	uint16_t color = state->videoram1[2 * tile_index + 1];
 	SET_TILE_INFO(
 			2,
 			code,
@@ -23,8 +23,8 @@ static TILE_GET_INFO( bigtwin_get_tx_tile_info )
 static TILE_GET_INFO( bigtwin_get_fg_tile_info )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 code = state->videoram2[2 * tile_index];
-	UINT16 color = state->videoram2[2 * tile_index + 1];
+	uint16_t code = state->videoram2[2 * tile_index];
+	uint16_t color = state->videoram2[2 * tile_index + 1];
 	SET_TILE_INFO(
 			1,
 			code,
@@ -35,8 +35,8 @@ static TILE_GET_INFO( bigtwin_get_fg_tile_info )
 static TILE_GET_INFO( wbeachvl_get_tx_tile_info )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 code = state->videoram1[2 * tile_index];
-	UINT16 color = state->videoram1[2 * tile_index + 1];
+	uint16_t code = state->videoram1[2 * tile_index];
+	uint16_t color = state->videoram1[2 * tile_index + 1];
 
 	SET_TILE_INFO(
 			2,
@@ -48,8 +48,8 @@ static TILE_GET_INFO( wbeachvl_get_tx_tile_info )
 static TILE_GET_INFO( wbeachvl_get_fg_tile_info )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 code = state->videoram2[2 * tile_index];
-	UINT16 color = state->videoram2[2 * tile_index + 1];
+	uint16_t code = state->videoram2[2 * tile_index];
+	uint16_t color = state->videoram2[2 * tile_index + 1];
 
 	SET_TILE_INFO(
 			1,
@@ -61,8 +61,8 @@ static TILE_GET_INFO( wbeachvl_get_fg_tile_info )
 static TILE_GET_INFO( wbeachvl_get_bg_tile_info )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 code = state->videoram3[2 * tile_index];
-	UINT16 color = state->videoram3[2 * tile_index + 1];
+	uint16_t code = state->videoram3[2 * tile_index];
+	uint16_t color = state->videoram3[2 * tile_index + 1];
 
 	SET_TILE_INFO(
 			1,
@@ -370,7 +370,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 	int offs, start_offset = state->spriteram_size / 2 - 4;
 	int height = machine->gfx[0]->height;
 	int colordiv = machine->gfx[0]->color_granularity / 16;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 
 	// find the "end of list" to draw the sprites in reverse order
 	for (offs = 4; offs < state->spriteram_size / 2; offs += 4)
@@ -412,7 +412,7 @@ static void draw_bitmap( running_machine *machine, bitmap_t *bitmap, const recta
 	playmark_state *state = (playmark_state *)machine->driver_data;
 	int x, y, count;
 	int color;
-	UINT8 *pri;
+	uint8_t *pri;
 
 	count = 0;
 	for (y = 0; y < 512; y++)

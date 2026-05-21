@@ -18,7 +18,7 @@ INTERRUPT_GEN( aztarac_snd_timed_irq );
 
 /*----------- defined in video/aztarac.c -----------*/
 
-extern UINT16 *aztarac_vectorram;
+extern uint16_t *aztarac_vectorram;
 
 WRITE16_HANDLER( aztarac_ubr_w );
 

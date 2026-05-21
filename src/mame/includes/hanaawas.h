@@ -12,8 +12,8 @@ public:
 	hanaawas_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-	UINT8 *    colorram;
+	uint8_t *    videoram;
+	uint8_t *    colorram;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;

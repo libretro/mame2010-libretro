@@ -15,26 +15,26 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT32 *		vram_bulk_latch;
-	UINT32 *		palette_select;
+	uint32_t *		vram_bulk_latch;
+	uint32_t *		palette_select;
 
-	UINT32			finescroll;
+	uint32_t			finescroll;
 	offs_t			vram_latch_offset;
 
 	offs_t			hsyncram_offset;
 	offs_t			hsyncram_start;
-	UINT8			hsyncram[0x800];
+	uint8_t			hsyncram[0x800];
 
-	UINT32 *		ram_base;
-	UINT32 *		rom_base;
+	uint32_t *		ram_base;
+	uint32_t *		rom_base;
 
 	double			hblank_offset;
 
-	UINT8			irq_line_state;
-	UINT8			irq_enable[3];
-	UINT8			irq_state[3];
+	uint8_t			irq_line_state;
+	uint8_t			irq_enable[3];
+	uint8_t			irq_state[3];
 
-	UINT8			eeprom_enabled;
+	uint8_t			eeprom_enabled;
 };
 
 

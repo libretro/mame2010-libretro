@@ -13,25 +13,25 @@ public:
 
 	grchamp_state(running_machine &machine) { }
 
-	UINT8		cpu0_out[16];
-	UINT8		cpu1_out[16];
+	uint8_t		cpu0_out[16];
+	uint8_t		cpu1_out[16];
 
-	UINT8		comm_latch;
-	UINT8		comm_latch2[4];
+	uint8_t		comm_latch;
+	uint8_t		comm_latch2[4];
 
-	UINT16		ledlatch;
-	UINT8		ledaddr;
-	UINT16		ledram[8];
+	uint16_t		ledlatch;
+	uint8_t		ledaddr;
+	uint16_t		ledram[8];
 
-	UINT16		collide;
-	UINT8		collmode;
+	uint16_t		collide;
+	uint8_t		collmode;
 
-	UINT8 *		radarram;
-	UINT8 *		videoram;
-	UINT8 *		leftram;
-	UINT8 *		centerram;
-	UINT8 *		rightram;
-	UINT8 *		spriteram;
+	uint8_t *		radarram;
+	uint8_t *		videoram;
+	uint8_t *		leftram;
+	uint8_t *		centerram;
+	uint8_t *		rightram;
+	uint8_t *		spriteram;
 
 	bitmap_t *	work_bitmap;
 	tilemap_t *	text_tilemap;

@@ -44,7 +44,7 @@ extern void wardner_driver_savestate(running_machine *machine);
 extern int toaplan_main_cpu;	/* Main CPU type.  0 = 68000, 1 = Z80 */
 extern int wardner_membank;
 
-extern UINT8 *twincobr_sharedram;
+extern uint8_t *twincobr_sharedram;
 
 
 /*----------- defined in video/twincobr.c -----------*/
@@ -78,9 +78,9 @@ WRITE8_HANDLER( wardner_exscroll_w );
 READ8_HANDLER(  wardner_sprite_r );
 WRITE8_HANDLER( wardner_sprite_w );
 
-extern INT32 twincobr_fg_rom_bank;
-extern INT32 twincobr_bg_ram_bank;
-extern INT32 wardner_sprite_hack;
+extern int32_t twincobr_fg_rom_bank;
+extern int32_t twincobr_bg_ram_bank;
+extern int32_t wardner_sprite_hack;
 
 VIDEO_START( toaplan0 );
 VIDEO_UPDATE( toaplan0 );

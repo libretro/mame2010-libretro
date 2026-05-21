@@ -783,14 +783,14 @@ static const struct slapstic_data *const slapstic_table[] =
  *
  *************************************/
 
-static UINT8 state;
-static UINT8 current_bank;
-static UINT8 access_68k;
+static uint8_t state;
+static uint8_t current_bank;
+static uint8_t access_68k;
 
-static UINT8 alt_bank;
-static UINT8 bit_bank;
-static UINT8 add_bank;
-static UINT8 bit_xor;
+static uint8_t alt_bank;
+static uint8_t bit_bank;
+static uint8_t add_bank;
+static uint8_t bit_xor;
 
 static struct slapstic_data slapstic;
 
@@ -879,12 +879,12 @@ static int alt2_kludge(const address_space *space, offs_t offset)
 		if (MATCHES_MASK_VALUE(cpu_get_pc(space->cpu) >> 1, slapstic.alt1))
 		{
 			/* now look for a move.w (An),(An) or cmpm.w (An)+,(An)+ */
-			UINT16 opcode = memory_decrypted_read_word(space, cpu_get_previouspc(space->cpu) & 0xffffff);
+			uint16_t opcode = memory_decrypted_read_word(space, cpu_get_previouspc(space->cpu) & 0xffffff);
 			if ((opcode & 0xf1f8) == 0x3090 || (opcode & 0xf1f8) == 0xb148)
 			{
 				/* fetch the value of the register for the second operand, and see */
 				/* if it matches the third alternate */
-				UINT32 regval = cpu_get_reg(space->cpu, M68K_A0 + ((opcode >> 9) & 7)) >> 1;
+				uint32_t regval = cpu_get_reg(space->cpu, M68K_A0 + ((opcode >> 9) & 7)) >> 1;
 				if (MATCHES_MASK_VALUE(regval, slapstic.alt3))
 				{
 					alt_bank = (regval >> slapstic.altshift) & 3;

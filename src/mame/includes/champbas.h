@@ -16,15 +16,15 @@ public:
 	champbas_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        bg_videoram;
-	UINT8 *        spriteram;
-	UINT8 *        spriteram_2;
+	uint8_t *        bg_videoram;
+	uint8_t *        spriteram;
+	uint8_t *        spriteram_2;
 	size_t         spriteram_size;
 
 	/* video-related */
 	tilemap_t        *bg_tilemap;
-	UINT8          gfx_bank;
-	UINT8          palette_bank;
+	uint8_t          gfx_bank;
+	uint8_t          palette_bank;
 
 	/* misc */
 	int            watchdog_count;

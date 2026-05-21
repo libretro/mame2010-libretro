@@ -1,7 +1,7 @@
 /*----------- defined in drivers/stv.c -----------*/
 
-extern UINT32 *stv_workram_h;
-extern UINT32 *stv_workram_l;
+extern uint32_t *stv_workram_h;
+extern uint32_t *stv_workram_l;
 
 extern int stv_enable_slave_sh2;
 
@@ -60,11 +60,11 @@ DRIVER_INIT(nameclv3);
 
 /*----------- defined in video/stvvdp1.c -----------*/
 
-extern UINT32* stv_vdp1_vram;
-extern UINT16	**stv_framebuffer_display_lines;
+extern uint32_t* stv_vdp1_vram;
+extern uint16_t	**stv_framebuffer_display_lines;
 extern int stv_framebuffer_double_interlace;
 extern int stv_framebuffer_mode;
-extern UINT8* stv_vdp1_gfx_decode;
+extern uint8_t* stv_vdp1_gfx_decode;
 
 int stv_vdp1_start ( running_machine *machine );
 void video_update_vdp1(running_machine *machine);
@@ -79,12 +79,12 @@ READ32_HANDLER ( stv_vdp1_framebuffer0_r );
 
 /*----------- defined in video/stvvdp2.c -----------*/
 
-extern UINT32* stv_vdp2_regs;
-extern UINT32* stv_vdp2_vram;
+extern uint32_t* stv_vdp2_regs;
+extern uint32_t* stv_vdp2_vram;
 extern int stv_vblank,stv_hblank;
-extern UINT32* stv_vdp2_cram;
+extern uint32_t* stv_vdp2_cram;
 
-UINT8 stv_get_vblank(running_machine *machine);
+uint8_t stv_get_vblank(running_machine *machine);
 
 WRITE32_HANDLER ( stv_vdp2_vram_w );
 READ32_HANDLER ( stv_vdp2_vram_r );

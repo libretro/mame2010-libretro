@@ -15,9 +15,9 @@ public:
 
 	atarigen_state	atarigen;
 
-	UINT8			ym2413_volume;
-	UINT8			overall_volume;
-	UINT32			adpcm_bank_base;
+	uint8_t			ym2413_volume;
+	uint8_t			overall_volume;
+	uint32_t			adpcm_bank_base;
 };
 
 

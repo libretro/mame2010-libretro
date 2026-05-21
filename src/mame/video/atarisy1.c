@@ -80,8 +80,8 @@ static const gfx_layout objlayout_6bpp =
  *************************************/
 
 static void update_timers(running_machine *machine, int scanline);
-static void decode_gfx(running_machine *machine, UINT16 *pflookup, UINT16 *molookup);
-static int get_bank(running_machine *machine, UINT8 prom1, UINT8 prom2, int bpp);
+static void decode_gfx(running_machine *machine, uint16_t *pflookup, uint16_t *molookup);
+static int get_bank(running_machine *machine, uint8_t prom1, uint8_t prom2, int bpp);
 
 
 
@@ -94,7 +94,7 @@ static int get_bank(running_machine *machine, UINT8 prom1, UINT8 prom2, int bpp)
 static TILE_GET_INFO( get_alpha_tile_info )
 {
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	UINT16 data = state->atarigen.alpha[tile_index];
+	uint16_t data = state->atarigen.alpha[tile_index];
 	int code = data & 0x3ff;
 	int color = (data >> 10) & 0x07;
 	int opaque = data & 0x2000;
@@ -105,8 +105,8 @@ static TILE_GET_INFO( get_alpha_tile_info )
 static TILE_GET_INFO( get_playfield_tile_info )
 {
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	UINT16 data = state->atarigen.playfield[tile_index];
-	UINT16 lookup = state->playfield_lookup[((data >> 8) & 0x7f) | (state->playfield_tile_bank << 7)];
+	uint16_t data = state->atarigen.playfield[tile_index];
+	uint16_t lookup = state->playfield_lookup[((data >> 8) & 0x7f) | (state->playfield_tile_bank << 7)];
 	int gfxindex = (lookup >> 8) & 15;
 	int code = ((lookup & 0xff) << 8) | (data & 0xff);
 	int color = 0x20 + (((lookup >> 12) & 15) << state->bank_color_shift[gfxindex]);
@@ -161,9 +161,9 @@ VIDEO_START( atarisy1 )
 	};
 
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	UINT16 motable[256];
-	UINT16 *codelookup;
-	UINT8 *colorlookup, *gfxlookup;
+	uint16_t motable[256];
+	uint16_t *codelookup;
+	uint8_t *colorlookup, *gfxlookup;
 	int i, size;
 
 	/* first decode the graphics */
@@ -214,8 +214,8 @@ VIDEO_START( atarisy1 )
 WRITE16_HANDLER( atarisy1_bankselect_w )
 {
 	atarisy1_state *state = (atarisy1_state *)space->machine->driver_data;
-	UINT16 oldselect = *state->bankselect;
-	UINT16 newselect = oldselect, diff;
+	uint16_t oldselect = *state->bankselect;
+	uint16_t newselect = oldselect, diff;
 	int scanline = space->machine->primary_screen->vpos();
 
 	/* update memory */
@@ -259,8 +259,8 @@ WRITE16_HANDLER( atarisy1_bankselect_w )
 WRITE16_HANDLER( atarisy1_priority_w )
 {
 	atarisy1_state *state = (atarisy1_state *)space->machine->driver_data;
-	UINT16 oldpens = state->playfield_priority_pens;
-	UINT16 newpens = oldpens;
+	uint16_t oldpens = state->playfield_priority_pens;
+	uint16_t newpens = oldpens;
 
 	/* force a partial update in case this changes mid-screen */
 	COMBINE_DATA(&newpens);
@@ -280,8 +280,8 @@ WRITE16_HANDLER( atarisy1_priority_w )
 WRITE16_HANDLER( atarisy1_xscroll_w )
 {
 	atarisy1_state *state = (atarisy1_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.xscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.xscroll;
+	uint16_t newscroll = oldscroll;
 
 	/* force a partial update in case this changes mid-screen */
 	COMBINE_DATA(&newscroll);
@@ -313,8 +313,8 @@ TIMER_DEVICE_CALLBACK( atarisy1_reset_yscroll_callback )
 WRITE16_HANDLER( atarisy1_yscroll_w )
 {
 	atarisy1_state *state = (atarisy1_state *)space->machine->driver_data;
-	UINT16 oldscroll = *state->atarigen.yscroll;
-	UINT16 newscroll = oldscroll;
+	uint16_t oldscroll = *state->atarigen.yscroll;
+	uint16_t newscroll = oldscroll;
 	int scanline = space->machine->primary_screen->vpos();
 	int adjusted_scroll;
 
@@ -434,9 +434,9 @@ READ16_HANDLER( atarisy1_int3state_r )
 static void update_timers(running_machine *machine, int scanline)
 {
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	UINT16 *base = &atarimo_0_spriteram[atarimo_get_bank(0) * 64 * 4];
+	uint16_t *base = &atarimo_0_spriteram[atarimo_get_bank(0) * 64 * 4];
 	int link = 0, best = scanline, found = 0;
-	UINT8 spritevisit[64];
+	uint8_t spritevisit[64];
 
 	/* track which ones we've visited */
 	memset(spritevisit, 0, sizeof(spritevisit));
@@ -512,8 +512,8 @@ VIDEO_UPDATE( atarisy1 )
 	for (r = 0; r < rectlist.numrects; r++, rectlist.rect++)
 		for (y = rectlist.rect->min_y; y <= rectlist.rect->max_y; y++)
 		{
-			UINT16 *mo = (UINT16 *)mobitmap->base + mobitmap->rowpixels * y;
-			UINT16 *pf = (UINT16 *)bitmap->base + bitmap->rowpixels * y;
+			uint16_t *mo = (uint16_t *)mobitmap->base + mobitmap->rowpixels * y;
+			uint16_t *pf = (uint16_t *)bitmap->base + bitmap->rowpixels * y;
 			for (x = rectlist.rect->min_x; x <= rectlist.rect->max_x; x++)
 				if (mo[x])
 				{
@@ -551,11 +551,11 @@ VIDEO_UPDATE( atarisy1 )
  *
  *************************************/
 
-static void decode_gfx(running_machine *machine, UINT16 *pflookup, UINT16 *molookup)
+static void decode_gfx(running_machine *machine, uint16_t *pflookup, uint16_t *molookup)
 {
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	UINT8 *prom1 = &machine->region("proms")->u8(0x000);
-	UINT8 *prom2 = &machine->region("proms")->u8(0x200);
+	uint8_t *prom1 = &machine->region("proms")->u8(0x000);
+	uint8_t *prom2 = &machine->region("proms")->u8(0x200);
 	int obj, i;
 
 	/* reset the globals */
@@ -614,10 +614,10 @@ static void decode_gfx(running_machine *machine, UINT16 *pflookup, UINT16 *moloo
  *
  *************************************/
 
-static int get_bank(running_machine *machine, UINT8 prom1, UINT8 prom2, int bpp)
+static int get_bank(running_machine *machine, uint8_t prom1, uint8_t prom2, int bpp)
 {
 	atarisy1_state *state = (atarisy1_state *)machine->driver_data;
-	const UINT8 *srcdata;
+	const uint8_t *srcdata;
 	int bank_index, gfx_index;
 
 	/* determine the bank index */

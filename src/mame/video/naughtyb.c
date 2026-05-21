@@ -10,13 +10,13 @@
 #include "video/resnet.h"
 #include "includes/phoenix.h"
 
-UINT8 *naughtyb_videoram2;
+uint8_t *naughtyb_videoram2;
 
 /* use these to draw charset B */
-UINT8 *naughtyb_scrollreg;
+uint8_t *naughtyb_scrollreg;
 
 /* use this to select palette */
-static UINT8 palreg;
+static uint8_t palreg;
 
 /* used in Naughty Boy to select video bank */
 static int bankreg;

@@ -17,12 +17,12 @@ make more configurable (select caches per game?)
 
 #define CACHE_ENTRIES	8
 
-static UINT8 *fd1094_key; // the memory region containing key
-static UINT16 *fd1094_cpuregion; // the CPU region with encrypted code
-static UINT32  fd1094_cpuregionsize; // the size of this region in bytes
+static uint8_t *fd1094_key; // the memory region containing key
+static uint16_t *fd1094_cpuregion; // the CPU region with encrypted code
+static uint32_t  fd1094_cpuregionsize; // the size of this region in bytes
 
-static UINT16 *fd1094_userregion; // a user region where the current decrypted state is put and executed from
-static UINT16 *fd1094_cacheregion[CACHE_ENTRIES]; // a cache region where CACHE_ENTRIES states are stored to improve performance
+static uint16_t *fd1094_userregion; // a user region where the current decrypted state is put and executed from
+static uint16_t *fd1094_cacheregion[CACHE_ENTRIES]; // a cache region where CACHE_ENTRIES states are stored to improve performance
 static int fd1094_cached_states[CACHE_ENTRIES]; // array of cached state numbers
 static int fd1094_current_cacheposition; // current position in cache array
 
@@ -31,7 +31,7 @@ static int fd1094_selected_state;
 
 static char fd1094_cputag[64];
 
-static void (*fd1094_set_decrypted)(running_machine *, UINT8 *);
+static void (*fd1094_set_decrypted)(running_machine *, uint8_t *);
 
 void *fd1094_get_decrypted_base(void)
 {
@@ -43,7 +43,7 @@ void *fd1094_get_decrypted_base(void)
 static void set_decrypted_region(running_machine *machine)
 {
 	if (fd1094_set_decrypted != NULL)
-		(*fd1094_set_decrypted)(machine, (UINT8 *)fd1094_userregion);
+		(*fd1094_set_decrypted)(machine, (uint8_t *)fd1094_userregion);
 	else
 		memory_set_decrypted_region(cputag_get_address_space(machine, fd1094_cputag, ADDRESS_SPACE_PROGRAM), 0, fd1094_cpuregionsize - 1, fd1094_userregion);
 }
@@ -55,7 +55,7 @@ static void set_decrypted_region(running_machine *machine)
 static void fd1094_setstate_and_decrypt(running_machine *machine, int state)
 {
 	int i;
-	UINT32 addr;
+	uint32_t addr;
 
 	switch (state & 0x300)
 	{
@@ -91,7 +91,7 @@ static void fd1094_setstate_and_decrypt(running_machine *machine, int state)
 
 	for (addr = 0; addr < fd1094_cpuregionsize / 2; addr++)
 	{
-		UINT16 dat;
+		uint16_t dat;
 		dat = fd1094_decode(addr,fd1094_cpuregion[addr],fd1094_key,0);
 		fd1094_cacheregion[fd1094_current_cacheposition][addr]=dat;
 	}
@@ -111,7 +111,7 @@ static void fd1094_setstate_and_decrypt(running_machine *machine, int state)
 }
 
 /* Callback for CMP.L instructions (state change) */
-static void fd1094_cmp_callback(running_device *device, UINT32 val, UINT8 reg)
+static void fd1094_cmp_callback(running_device *device, uint32_t val, uint8_t reg)
 {
 	if (reg == 0 && (val & 0x0000ffff) == 0x0000ffff) // ?
 	{
@@ -181,7 +181,7 @@ static void key_changed(running_machine *machine)
 	/* re-decode the against the current parameter into cache entry 0 */
 	for (addr = 0; addr < fd1094_cpuregionsize / 2; addr++)
 	{
-		UINT16 dat;
+		uint16_t dat;
 		dat = fd1094_decode(addr, fd1094_cpuregion[addr], fd1094_key, 0);
 		fd1094_cacheregion[0][addr]=dat;
 	}
@@ -197,13 +197,13 @@ static void key_changed(running_machine *machine)
 
 
 /* startup function, to be called from DRIVER_INIT (once on startup) */
-void fd1094_driver_init(running_machine *machine, const char* tag, void (*set_decrypted)(running_machine *, UINT8 *))
+void fd1094_driver_init(running_machine *machine, const char* tag, void (*set_decrypted)(running_machine *, uint8_t *))
 {
 	int i;
 
 	strcpy(fd1094_cputag, tag);
 
-	fd1094_cpuregion = (UINT16*)memory_region(machine, fd1094_cputag);
+	fd1094_cpuregion = (uint16_t*)memory_region(machine, fd1094_cputag);
 	fd1094_cpuregionsize = memory_region_length(machine, fd1094_cputag);
 	fd1094_key = memory_region(machine, "user1");
 	fd1094_set_decrypted = set_decrypted;
@@ -214,7 +214,7 @@ void fd1094_driver_init(running_machine *machine, const char* tag, void (*set_de
 
 	for (i = 0; i < CACHE_ENTRIES; i++)
 	{
-		fd1094_cacheregion[i] = auto_alloc_array(machine, UINT16, fd1094_cpuregionsize / 2);
+		fd1094_cacheregion[i] = auto_alloc_array(machine, uint16_t, fd1094_cpuregionsize / 2);
 		fd1094_cached_states[i] = -1;
 	}
 	fd1094_current_cacheposition = 0;

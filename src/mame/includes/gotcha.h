@@ -12,16 +12,16 @@ public:
 	gotcha_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    fgvideoram;
-	UINT16 *    bgvideoram;
-	UINT16 *    spriteram;
-//  UINT16 *    paletteram; // currently this uses generic palette handling
+	uint16_t *    fgvideoram;
+	uint16_t *    bgvideoram;
+	uint16_t *    spriteram;
+//  uint16_t *    paletteram; // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t     *bg_tilemap, *fg_tilemap;
 	int         banksel, gfxbank[4];
-	UINT16      scroll[4];
+	uint16_t      scroll[4];
 
 	/* devices */
 	running_device *audiocpu;
