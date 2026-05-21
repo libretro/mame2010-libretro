@@ -877,7 +877,7 @@ ROM_END
 
 static DRIVER_INIT( rainbow )
 {
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0xc000], 0x4000);
 
@@ -886,7 +886,7 @@ static DRIVER_INIT( rainbow )
 
 static DRIVER_INIT( rainbowe )
 {
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0xc000], 0x4000);
 
@@ -897,7 +897,7 @@ static DRIVER_INIT( jumping )
 {
 	rainbow_state *state = (rainbow_state *)machine->driver_data;
 	int i, len = memory_region_length(machine, "gfx2");
-	UINT8 *rom = memory_region(machine, "gfx2");
+	uint8_t *rom = memory_region(machine, "gfx2");
 
 	/* Sprite colour map is reversed - switch to normal */
 

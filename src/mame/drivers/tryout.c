@@ -24,7 +24,7 @@ $208 strikes count
 #include "cpu/m6502/m6502.h"
 #include "sound/2203intf.h"
 
-extern UINT8 *tryout_gfx_control;
+extern uint8_t *tryout_gfx_control;
 
 extern READ8_HANDLER( tryout_vram_r );
 extern WRITE8_HANDLER( tryout_videoram_w );
@@ -56,7 +56,7 @@ static WRITE8_HANDLER( tryout_sound_irq_ack_w )
 
 static WRITE8_HANDLER( tryout_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bankaddress;
 
 	bankaddress = 0x10000 + (data & 0x01) * 0x2000;

@@ -18,7 +18,7 @@ Notes:
 #include "cpu/m6800/m6800.h"
 #include "sound/namco.h"
 
-extern UINT8 *skykid_textram, *skykid_videoram, *skykid_spriteram;
+extern uint8_t *skykid_textram, *skykid_videoram, *skykid_spriteram;
 
 /* from video/skykid.c */
 VIDEO_START( skykid );
@@ -33,7 +33,7 @@ VIDEO_UPDATE( skykid );
 PALETTE_INIT( skykid );
 
 
-static UINT8 inputport_selected;
+static uint8_t inputport_selected;
 
 static WRITE8_HANDLER( inputport_select_w )
 {
@@ -633,7 +633,7 @@ ROM_END
 
 static DRIVER_INIT( skykid )
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i;
 
 	/* unpack the third sprite ROM */

@@ -55,17 +55,17 @@
 #include "sound/2151intf.h"
 #include "sound/okim6295.h"
 
-static UINT16 *tiles = NULL, *wram;
-static UINT32 *tiles32 = NULL, *wram32;
+static uint16_t *tiles = NULL, *wram;
+static uint32_t *tiles32 = NULL, *wram32;
 static int flip_bit, flipscreen = 0;
 static int palshift;
 
 static int semicom_prot_idx;
 static int semicom_prot_which = 0;
-static UINT16 semicom_prot_data[2];
+static uint16_t semicom_prot_data[2];
 
-static UINT16 finalgdr_backupram_bank;
-static UINT8 *finalgdr_backupram;
+static uint16_t finalgdr_backupram_bank;
+static uint8_t *finalgdr_backupram;
 
 static READ16_DEVICE_HANDLER( oki_r )
 {
@@ -141,7 +141,7 @@ static WRITE16_HANDLER( jmpbreak_flipscreen_w )
 
 static WRITE32_HANDLER( paletteram32_w )
 {
-	UINT16 paldata;
+	uint16_t paldata;
 
 	COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
 
@@ -392,7 +392,7 @@ Offset+3
 static void draw_sprites(screen_device *screen, bitmap_t *bitmap)
 {
 	const gfx_element *gfx = screen->machine->gfx[0];
-	UINT32 cnt;
+	uint32_t cnt;
 	int block, offs;
 	int code,color,x,y,fx,fy;
 	rectangle clip;
@@ -465,7 +465,7 @@ static void draw_sprites(screen_device *screen, bitmap_t *bitmap)
 static void draw_sprites_aoh(screen_device *screen, bitmap_t *bitmap)
 {
 	const gfx_element *gfx = screen->machine->gfx[0];
-	UINT32 cnt;
+	uint32_t cnt;
 	int block, offs;
 	int code,color,x,y,fx,fy;
 	rectangle clip;
@@ -1623,7 +1623,7 @@ ROM_END
 
 static int irq_active(const address_space *space)
 {
-	UINT32 FCR = cpu_get_reg(space->cpu, 27);
+	uint32_t FCR = cpu_get_reg(space->cpu, 27);
 	if( !(FCR&(1<<29)) ) // int 2 (irq 4)
 		return 1;
 	else
@@ -1893,7 +1893,7 @@ static DRIVER_INIT( wyvernwg )
 static DRIVER_INIT( finalgdr )
 {
 	finalgdr_backupram_bank = 1;
-	finalgdr_backupram = auto_alloc_array(machine, UINT8, 0x80*0x100);
+	finalgdr_backupram = auto_alloc_array(machine, uint8_t, 0x80*0x100);
 	memory_install_read32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x005e874, 0x005e877, 0, 0, finalgdr_speedup_r );
 
 	palshift = 0;
@@ -1907,7 +1907,7 @@ static DRIVER_INIT( finalgdr )
 static DRIVER_INIT( mrkicker )
 {
 	finalgdr_backupram_bank = 1;
-	finalgdr_backupram = auto_alloc_array(machine, UINT8, 0x80*0x100);
+	finalgdr_backupram = auto_alloc_array(machine, uint8_t, 0x80*0x100);
 //  memory_install_read32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x005e874, 0x005e877, 0, 0, mrkicker_speedup_r );
 
 	palshift = 0;

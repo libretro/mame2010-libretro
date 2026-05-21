@@ -50,7 +50,7 @@ static WRITE8_HANDLER( thedeep_sound_w )
 	cputag_set_input_line(space->machine, "audiocpu", INPUT_LINE_NMI, PULSE_LINE);
 }
 
-static UINT8 protection_command, protection_data;
+static uint8_t protection_command, protection_data;
 static int protection_index, protection_irq;
 static int rombank;
 
@@ -85,7 +85,7 @@ static WRITE8_HANDLER( thedeep_protection_w )
 		case 0x32:
 		case 0x33:
 		{
-			UINT8 *rom;
+			uint8_t *rom;
 			int new_rombank = protection_command & 3;
 			if (rombank == new_rombank)	break;
 			rombank = new_rombank;

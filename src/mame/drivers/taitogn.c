@@ -335,7 +335,7 @@ static int locked;
 
 static unsigned char rf5c296_reg = 0;
 
-static void rf5c296_reg_w(ATTR_UNUSED running_machine *machine, UINT8 reg, UINT8 data)
+static void rf5c296_reg_w(ATTR_UNUSED running_machine *machine, uint8_t reg, uint8_t data)
 {
 	//  fprintf(stderr, "rf5c296_reg_w %02x, %02x (%s)\n", reg, data, cpuexec_describe_context(machine));
 	switch (reg)
@@ -356,7 +356,7 @@ static void rf5c296_reg_w(ATTR_UNUSED running_machine *machine, UINT8 reg, UINT8
 	}
 }
 
-static UINT8 rf5c296_reg_r(ATTR_UNUSED running_machine *machine, UINT8 reg)
+static uint8_t rf5c296_reg_r(ATTR_UNUSED running_machine *machine, uint8_t reg)
 {
 	//  fprintf(stderr, "rf5c296_reg_r %02x (%s)\n", reg, cpuexec_describe_context(machine));
 	return 0x00;
@@ -385,7 +385,7 @@ static READ32_HANDLER(rf5c296_io_r)
 	offset *= 4;
 
 	if(offset == 0x3e0/4) {
-		UINT32 res = 0xffff0000;
+		uint32_t res = 0xffff0000;
 		if(ACCESSING_BITS_0_7)
 			res |= rf5c296_reg;
 		if(ACCESSING_BITS_8_15)
@@ -415,9 +415,9 @@ static READ32_HANDLER(rf5c296_mem_r)
 static WRITE32_HANDLER(rf5c296_mem_w)
 {
 	if(offset >= 0x140 && offset <= 0x144) {
-		UINT8 key[5];
+		uint8_t key[5];
 		int pos = (offset - 0x140)*2;
-		UINT8 v, k;
+		uint8_t v, k;
 		if(ACCESSING_BITS_16_23) {
 			v = data >> 16;
 			pos++;
@@ -438,9 +438,9 @@ static WRITE32_HANDLER(rf5c296_mem_w)
 
 // Flash handling
 
-static UINT32 gen_flash_r(running_machine *machine, int chip, offs_t offset, UINT32 mem_mask)
+static uint32_t gen_flash_r(running_machine *machine, int chip, offs_t offset, uint32_t mem_mask)
 {
-	UINT32 res = 0;
+	uint32_t res = 0;
 	offset *= 2;
 	if(ACCESSING_BITS_0_15)
 		res |= intelflash_read(chip, offset);
@@ -449,7 +449,7 @@ static UINT32 gen_flash_r(running_machine *machine, int chip, offs_t offset, UIN
 	return res;
 }
 
-static void gen_flash_w(running_machine *machine, int chip, offs_t offset, UINT32 data, UINT32 mem_mask)
+static void gen_flash_w(running_machine *machine, int chip, offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	offset *= 2;
 	if(ACCESSING_BITS_0_15)
@@ -531,7 +531,7 @@ static void install_handlers(running_machine *machine, int mode)
 
 // Misc. controls
 
-static UINT32 control = 0, control2 = 0, control3;
+static uint32_t control = 0, control2 = 0, control3;
 
 static READ32_HANDLER(control_r)
 {
@@ -547,7 +547,7 @@ static WRITE32_HANDLER(control_w)
 	// According to the rom code, bits 1-0 may be part of the bank
 	// selection too, but they're always 0.
 
-	UINT32 p = control;
+	uint32_t p = control;
 	running_device *mb3773 = space->machine->device("mb3773");
 
 	COMBINE_DATA(&control);
@@ -616,11 +616,11 @@ static READ32_HANDLER(hack1_r)
 
 // Lifted from zn.c
 
-static const UINT8 tt10[ 8 ] = { 0x80, 0x20, 0x38, 0x08, 0xf1, 0x03, 0xfe, 0xfc };
-static const UINT8 tt16[ 8 ] = { 0xc0, 0x04, 0xf9, 0xe1, 0x60, 0x70, 0xf2, 0x02 };
+static const uint8_t tt10[ 8 ] = { 0x80, 0x20, 0x38, 0x08, 0xf1, 0x03, 0xfe, 0xfc };
+static const uint8_t tt16[ 8 ] = { 0xc0, 0x04, 0xf9, 0xe1, 0x60, 0x70, 0xf2, 0x02 };
 
-static UINT32 m_n_znsecsel;
-static UINT32 m_b_znsecport;
+static uint32_t m_n_znsecsel;
+static uint32_t m_b_znsecport;
 static int m_n_dip_bit;
 static int m_b_lastclock;
 static emu_timer *dip_timer;
@@ -760,7 +760,7 @@ static READ32_HANDLER( boardconfig_r )
 }
 
 
-static UINT32 coin_info;
+static uint32_t coin_info;
 
 static WRITE32_HANDLER( coin_w )
 {
@@ -781,7 +781,7 @@ static READ32_HANDLER( coin_r )
 /* mahjong panel handler (for Usagi & Mahjong Oh) */
 static READ32_HANDLER( gnet_mahjong_panel_r )
 {
-	static UINT32 mux_data;
+	static uint32_t mux_data;
 
 	mux_data = coin_info;
 	mux_data &= 0xcc;
@@ -903,7 +903,7 @@ static ADDRESS_MAP_START( zn_map, ADDRESS_SPACE_PROGRAM, 32 )
 ADDRESS_MAP_END
 
 
-static void psx_spu_irq(running_device *device, UINT32 data)
+static void psx_spu_irq(running_device *device, uint32_t data)
 {
 	psx_irq_set(device->machine, data);
 }

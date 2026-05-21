@@ -42,8 +42,8 @@ is a YM2413 compatible chip.
 #include "video/v9938.h"
 #include "sound/2413intf.h"
 
-static UINT8* sangho_ram;
-static UINT8 sexyboom_bank[8];
+static uint8_t* sangho_ram;
+static uint8_t sexyboom_bank[8];
 
 static WRITE8_HANDLER(sangho_ram_w)
 {
@@ -74,7 +74,7 @@ static WRITE8_HANDLER(pzlestar_bank_w)
 
 static void sexyboom_map_bank(running_machine *machine, int bank)
 {
-	UINT8 banknum, banktype;
+	uint8_t banknum, banktype;
 	char read_bank_name[6], write_bank_name[6];
 
 	banknum = sexyboom_bank[bank*2];
@@ -373,7 +373,7 @@ ROM_END
 
 static DRIVER_INIT(sangho)
 {
-	sangho_ram = auto_alloc_array(machine, UINT8, 0x20000);
+	sangho_ram = auto_alloc_array(machine, uint8_t, 0x20000);
 }
 
 GAME( 1991, pzlestar,  0,    pzlestar, sangho, sangho, ROT270, "Sang Ho Soft", "Puzzle Star (Sang Ho Soft)", GAME_NOT_WORKING )

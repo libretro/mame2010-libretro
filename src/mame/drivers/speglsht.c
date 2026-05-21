@@ -110,10 +110,10 @@ Notes:
 #include "includes/st0016.h"
 
 READ8_HANDLER(st0016_dma_r);
-static UINT8 *shared;
+static uint8_t *shared;
 
-UINT32 *speglsht_framebuffer;
-UINT32  speglsht_videoreg;
+uint32_t *speglsht_framebuffer;
+uint32_t  speglsht_videoreg;
 
 static ADDRESS_MAP_START( st0016_mem, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x0000, 0x7fff) AM_ROM
@@ -155,7 +155,7 @@ static WRITE32_HANDLER(videoreg_w)
 	COMBINE_DATA(&speglsht_videoreg);
 }
 
-static UINT32 *cop_ram;
+static uint32_t *cop_ram;
 
 static WRITE32_HANDLER(cop_w)
 {
@@ -170,12 +170,12 @@ static WRITE32_HANDLER(cop_w)
 //matrix * vector
 static READ32_HANDLER(cop_r)
 {
-	INT32 *cop=(INT32*)&cop_ram[0];
+	int32_t *cop=(int32_t*)&cop_ram[0];
 
 	union
 	{
-		INT32  a;
-		UINT32 b;
+		int32_t  a;
+		uint32_t b;
 	}temp;
 
 	switch (offset)

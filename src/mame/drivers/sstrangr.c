@@ -21,9 +21,9 @@ public:
 
 	sstrangr_state(running_machine &machine) { }
 
-	UINT8 *ram;
-	UINT8 flip_screen;
-	UINT8 *proms;
+	uint8_t *ram;
+	uint8_t flip_screen;
+	uint8_t *proms;
 };
 
 
@@ -43,9 +43,9 @@ static VIDEO_UPDATE( sstrangr )
 	{
 		int i;
 
-		UINT8 x = offs << 3;
+		uint8_t x = offs << 3;
 		int y = offs >> 5;
-		UINT8 data = state->ram[offs];
+		uint8_t data = state->ram[offs];
 
 		for (i = 0; i < 8; i++)
 		{
@@ -88,7 +88,7 @@ static VIDEO_UPDATE( sstrngr2 )
 	sstrangr_state *state = (sstrangr_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	UINT8 *color_map_base;
+	uint8_t *color_map_base;
 
 	get_pens(pens);
 
@@ -98,17 +98,17 @@ static VIDEO_UPDATE( sstrngr2 )
 	{
 		int i;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		offs_t color_address = (offs >> 9 << 5) | (offs & 0x1f);
 
-		UINT8 data = state->ram[offs];
-		UINT8 fore_color = color_map_base[color_address] & 0x07;
+		uint8_t data = state->ram[offs];
+		uint8_t fore_color = color_map_base[color_address] & 0x07;
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 color;
+			uint8_t color;
 
 			if (state->flip_screen)
 			{

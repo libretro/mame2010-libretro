@@ -22,8 +22,8 @@
 #include "cpu/z80/z80.h"
 
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *tmap;
 
 static TILE_GET_INFO( get_tile_info )
@@ -225,7 +225,7 @@ ROM_END
 static DRIVER_INIT(tattack)
 {
 
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	rom[0x1b4]=0;
 	rom[0x1b5]=0;

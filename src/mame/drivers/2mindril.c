@@ -57,18 +57,18 @@ public:
 	_2mindril_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *      map1ram;
-	UINT16 *      map2ram;
-	UINT16 *      map3ram;
-	UINT16 *      map4ram;
-	UINT16 *      charram;
-	UINT16 *      textram;
-	UINT16 *      unkram;
-//  UINT16 *      paletteram;   // currently this uses generic palette handling
-	UINT16 *      iodata;
+	uint16_t *      map1ram;
+	uint16_t *      map2ram;
+	uint16_t *      map3ram;
+	uint16_t *      map4ram;
+	uint16_t *      charram;
+	uint16_t *      textram;
+	uint16_t *      unkram;
+//  uint16_t *      paletteram;   // currently this uses generic palette handling
+	uint16_t *      iodata;
 
 	/* input-related */
-	UINT16        defender_sensor, shutter_sensor;
+	uint16_t        defender_sensor, shutter_sensor;
 
 	/* devices */
 	running_device *maincpu;
@@ -81,14 +81,14 @@ public:
 				for (y = 0; y < 16; y++) \
 					for (x = 0; x < 128; x++) \
 					{ \
-						UINT16 data0 = map[y * 128 + x * 2]; \
-						UINT16 data1 = map[y * 128 + x * 2 + 1]; \
+						uint16_t data0 = map[y * 128 + x * 2]; \
+						uint16_t data1 = map[y * 128 + x * 2 + 1]; \
 						drawgfx_transpen(bitmap, \
 							cliprect,screen->machine->gfx[0], data1, \
 							data0 & 0xff, \
 							data0 & 0x4000, data0 & 0x8000, \
-							x * 16 - 512 /*+(((INT16)(state->unkram[0x60000 / 2 + num])) / 32)*/, \
-							y * 16 /*+(((INT16)(state->unkram[0x60008 / 2 + num])) / 32)*/,0); \
+							x * 16 - 512 /*+(((int16_t)(state->unkram[0x60000 / 2 + num])) / 32)*/, \
+							y * 16 /*+(((int16_t)(state->unkram[0x60008 / 2 + num])) / 32)*/,0); \
 					}	\
 			}
 
@@ -126,7 +126,7 @@ static VIDEO_START( drill )
 	_2mindril_state *state = (_2mindril_state *)machine->driver_data;
 
 	machine->gfx[0]->color_granularity = 16;
-	gfx_element_set_source(machine->gfx[1], (UINT8 *)state->charram);
+	gfx_element_set_source(machine->gfx[1], (uint8_t *)state->charram);
 }
 
 static READ16_HANDLER( drill_io_r )
@@ -495,14 +495,14 @@ ROM_END
 static DRIVER_INIT( drill )
 {
 	// rearrange gfx roms to something we can decode, two of the roms form 4bpp of the graphics, the third forms another 2bpp but is in a different format
-	UINT32 *src = (UINT32*)memory_region( machine, "gfx2" );
-	UINT32 *dst = (UINT32*)memory_region( machine, "gfx1" );// + 0x400000;
-//  UINT8 *rom = memory_region( machine, "maincpu" );
+	uint32_t *src = (uint32_t*)memory_region( machine, "gfx2" );
+	uint32_t *dst = (uint32_t*)memory_region( machine, "gfx1" );// + 0x400000;
+//  uint8_t *rom = memory_region( machine, "maincpu" );
 	int i;
 
 	for (i = 0; i < 0x400000 / 4; i++)
 	{
-		UINT32 dat1 = src[i];
+		uint32_t dat1 = src[i];
 		dat1 = BITSWAP32(dat1, 3, 11, 19, 27, 2, 10, 18, 26, 1, 9, 17, 25, 0, 8, 16, 24, 7, 15, 23, 31, 6, 14, 22, 30, 5, 13, 21, 29, 4, 12, 20, 28 );
 		dst[(0x400000 / 4) + i] = dat1;
 	}

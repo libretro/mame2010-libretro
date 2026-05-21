@@ -78,15 +78,15 @@ public:
 
 	srmp6_state(running_machine &machine) { }
 
-	UINT16* tileram;
-	UINT16* dmaram;
+	uint16_t* tileram;
+	uint16_t* dmaram;
 
-	UINT16 *sprram;
-	UINT16 *sprram_old;
+	uint16_t *sprram;
+	uint16_t *sprram_old;
 
 	int brightness;
-	UINT16 input_select;
-	UINT16 *video_regs;
+	uint16_t input_select;
+	uint16_t *video_regs;
 
 	unsigned short lastb;
 	unsigned short lastb2;
@@ -110,7 +110,7 @@ static const gfx_layout tiles8x8_layout =
 static void update_palette(running_machine *machine)
 {
 	srmp6_state *state = (srmp6_state *)machine->driver_data;
-	INT8 r, g ,b;
+	int8_t r, g ,b;
 	int brg = state->brightness - 0x60;
 	int i;
 
@@ -144,12 +144,12 @@ static VIDEO_START(srmp6)
 {
 	srmp6_state *state = (srmp6_state *)machine->driver_data;
 
-	state->tileram = auto_alloc_array_clear(machine, UINT16, 0x100000*16/2);
-	state->dmaram = auto_alloc_array(machine, UINT16, 0x100/2);
-	state->sprram_old = auto_alloc_array_clear(machine, UINT16, 0x80000/2);
+	state->tileram = auto_alloc_array_clear(machine, uint16_t, 0x100000*16/2);
+	state->dmaram = auto_alloc_array(machine, uint16_t, 0x100/2);
+	state->sprram_old = auto_alloc_array_clear(machine, uint16_t, 0x80000/2);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[0] = gfx_element_alloc(machine, &tiles8x8_layout, (UINT8*)state->tileram, machine->total_colors() / 256, 0);
+	machine->gfx[0] = gfx_element_alloc(machine, &tiles8x8_layout, (uint8_t*)state->tileram, machine->total_colors() / 256, 0);
 	machine->gfx[0]->color_granularity=256;
 
 	state->brightness = 0x60;
@@ -164,13 +164,13 @@ static VIDEO_UPDATE(srmp6)
 	srmp6_state *state = (srmp6_state *)screen->machine->driver_data;
 	int alpha;
 	int x,y,tileno,height,width,xw,yw,sprite,xb,yb;
-	UINT16 *sprite_list = state->sprram_old;
-	UINT16 mainlist_offset = 0;
+	uint16_t *sprite_list = state->sprram_old;
+	uint16_t mainlist_offset = 0;
 
 	union
 	{
-		INT16  a;
-		UINT16 b;
+		int16_t  a;
+		uint16_t b;
 	} temp;
 
 	bitmap_fill(bitmap,cliprect,0);
@@ -194,10 +194,10 @@ static VIDEO_UPDATE(srmp6)
 	while (mainlist_offset<0x2000/2)
 	{
 
-		UINT16 *sprite_sublist = &state->sprram_old[sprite_list[mainlist_offset+1]<<3];
-		UINT16 sublist_length=sprite_list[mainlist_offset+0]&0x7fff; //+1 ?
-		INT16 global_x,global_y, flip_x, flip_y;
-		UINT16 global_pal;
+		uint16_t *sprite_sublist = &state->sprram_old[sprite_list[mainlist_offset+1]<<3];
+		uint16_t sublist_length=sprite_list[mainlist_offset+0]&0x7fff; //+1 ?
+		int16_t global_x,global_y, flip_x, flip_y;
+		uint16_t global_pal;
 
 		/* end of list marker */
 		if (sprite_list[mainlist_offset+0] == 0x8000)
@@ -325,7 +325,7 @@ static WRITE16_HANDLER( video_regs_w )
 		case 0x5e/2: // bank switch, used by ROM check
 			LOG(("%x\n",data));
 
-			memory_set_bankptr(space->machine, "bank1",(UINT16 *)(memory_region(space->machine, "nile") + (data & 0x0f)*0x200000));
+			memory_set_bankptr(space->machine, "bank1",(uint16_t *)(memory_region(space->machine, "nile") + (data & 0x0f)*0x200000));
 			break;
 
 		// set by IT4
@@ -365,12 +365,12 @@ static READ16_HANDLER( video_regs_r )
 
 
 /* DMA RLE stuff - the same as CPS3 */
-static UINT32 process(running_machine *machine,UINT8 b,UINT32 dst_offset)
+static uint32_t process(running_machine *machine,uint8_t b,uint32_t dst_offset)
 {
 	srmp6_state *state = (srmp6_state *)machine->driver_data;
 	int l=0;
 
-	UINT8 *tram=(UINT8*)state->tileram;
+	uint8_t *tram=(uint8_t*)state->tileram;
 
 	if (state->lastb == state->lastb2)	//rle
 	{
@@ -404,15 +404,15 @@ static UINT32 process(running_machine *machine,UINT8 b,UINT32 dst_offset)
 static WRITE16_HANDLER(srmp6_dma_w)
 {
 	srmp6_state *state = (srmp6_state *)space->machine->driver_data;
-	UINT16* dmaram = state->dmaram;
+	uint16_t* dmaram = state->dmaram;
 
 	COMBINE_DATA(&dmaram[offset]);
 	if (offset==13 && dmaram[offset]==0x40)
 	{
-		const UINT8 *rom = memory_region(space->machine, "nile");
-		UINT32 srctab=2*((((UINT32)dmaram[5])<<16)|dmaram[4]);
-		UINT32 srcdata=2*((((UINT32)dmaram[11])<<16)|dmaram[10]);
-		UINT32 len=4*(((((UINT32)dmaram[7]&3)<<16)|dmaram[6])+1); //??? WRONG!
+		const uint8_t *rom = memory_region(space->machine, "nile");
+		uint32_t srctab=2*((((uint32_t)dmaram[5])<<16)|dmaram[4]);
+		uint32_t srcdata=2*((((uint32_t)dmaram[11])<<16)|dmaram[10]);
+		uint32_t len=4*(((((uint32_t)dmaram[7]&3)<<16)|dmaram[6])+1); //??? WRONG!
 		int tempidx=0;
 
 		/* show params */
@@ -440,16 +440,16 @@ static WRITE16_HANDLER(srmp6_dma_w)
 		while(1)
 		{
 			int i;
-			UINT8 ctrl=rom[srcdata];
+			uint8_t ctrl=rom[srcdata];
 			++srcdata;
 
 			for(i=0;i<8;++i)
 			{
-				UINT8 p=rom[srcdata];
+				uint8_t p=rom[srcdata];
 
 				if(ctrl&0x80)
 				{
-					UINT8 real_byte;
+					uint8_t real_byte;
 					real_byte = rom[srctab+p*2];
 					tempidx+=process(space->machine,real_byte,tempidx);
 					real_byte = rom[srctab+p*2+1];//px[DMA_XOR((current_table_address+p*2+1))];
@@ -483,7 +483,7 @@ static READ16_HANDLER(tileram_r)
 
 static WRITE16_HANDLER(tileram_w)
 {
-	//UINT16 tmp;
+	//uint16_t tmp;
 	//COMBINE_DATA(&state->tileram[offset]);
 
 	/* are the DMA registers enabled some other way, or always mapped here, over RAM? */
@@ -497,7 +497,7 @@ static WRITE16_HANDLER(tileram_w)
 static WRITE16_HANDLER(paletteram_w)
 {
 	srmp6_state *state = (srmp6_state *)space->machine->driver_data;
-	INT8 r, g, b;
+	int8_t r, g, b;
 	int brg = state->brightness - 0x60;
 
 	paletteram16_xBBBBBGGGGGRRRRR_word_w(space, offset, data, mem_mask);

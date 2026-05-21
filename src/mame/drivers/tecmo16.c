@@ -30,11 +30,11 @@ Notes:
 #include "sound/okim6295.h"
 
 
-extern UINT16 *tecmo16_videoram;
-extern UINT16 *tecmo16_colorram;
-extern UINT16 *tecmo16_videoram2;
-extern UINT16 *tecmo16_colorram2;
-extern UINT16 *tecmo16_charram;
+extern uint16_t *tecmo16_videoram;
+extern uint16_t *tecmo16_colorram;
+extern uint16_t *tecmo16_videoram2;
+extern uint16_t *tecmo16_colorram2;
+extern uint16_t *tecmo16_charram;
 
 WRITE16_HANDLER( tecmo16_videoram_w );
 WRITE16_HANDLER( tecmo16_colorram_w );

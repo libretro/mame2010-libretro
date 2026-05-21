@@ -14,8 +14,8 @@
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 
-static UINT8 *poker72_vram,*poker72_pal;
-static UINT8 tile_bank;
+static uint8_t *poker72_vram,*poker72_pal;
+static uint8_t tile_bank;
 
 static VIDEO_START(poker72)
 {
@@ -62,7 +62,7 @@ static WRITE8_HANDLER( poker72_paletteram_w )
 
 static WRITE8_HANDLER( output_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	printf("%02x\n",data);
 
@@ -324,7 +324,7 @@ static const ay8910_interface ay8910_config =
 
 static MACHINE_RESET( poker72 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_set_bankptr(machine, "bank1", &ROM[0]);
 }
@@ -379,7 +379,7 @@ ROM_END
 
 static DRIVER_INIT( poker72 )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	rom[0x4a9] = 0x28;
 }

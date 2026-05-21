@@ -95,15 +95,15 @@ Noted added by ClawGrip 28-Mar-2008:
 #define YM2203_CLOCK XTAL_20MHz/16
 #define MSM5205_CLOCK XTAL_384kHz
 
-extern UINT8 *wc90b_fgvideoram,*wc90b_bgvideoram,*wc90b_txvideoram;
+extern uint8_t *wc90b_fgvideoram,*wc90b_bgvideoram,*wc90b_txvideoram;
 
-extern UINT8 *wc90b_scroll1x;
-extern UINT8 *wc90b_scroll2x;
+extern uint8_t *wc90b_scroll1x;
+extern uint8_t *wc90b_scroll2x;
 
-extern UINT8 *wc90b_scroll1y;
-extern UINT8 *wc90b_scroll2y;
+extern uint8_t *wc90b_scroll1y;
+extern uint8_t *wc90b_scroll2y;
 
-extern UINT8 *wc90b_scroll_x_lo;
+extern uint8_t *wc90b_scroll_x_lo;
 
 VIDEO_START( wc90b );
 WRITE8_HANDLER( wc90b_bgvideoram_w );
@@ -116,7 +116,7 @@ static int msm5205next;
 static WRITE8_HANDLER( wc90b_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	bankaddress = 0x10000 + ((data & 0xf8) << 8);
 	memory_set_bankptr(space->machine, "bank1",&ROM[bankaddress]);
@@ -125,7 +125,7 @@ static WRITE8_HANDLER( wc90b_bankswitch_w )
 static WRITE8_HANDLER( wc90b_bankswitch1_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "sub");
+	uint8_t *ROM = memory_region(space->machine, "sub");
 
 	bankaddress = 0x10000 + ((data & 0xf8) << 8);
 	memory_set_bankptr(space->machine, "bank2",&ROM[bankaddress]);
@@ -140,7 +140,7 @@ static WRITE8_HANDLER( wc90b_sound_command_w )
 static WRITE8_DEVICE_HANDLER( adpcm_control_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(device->machine, "audiocpu");
+	uint8_t *ROM = memory_region(device->machine, "audiocpu");
 
 	/* the code writes either 2 or 3 in the bottom two bits */
 	bankaddress = 0x10000 + (data & 0x01) * 0x4000;

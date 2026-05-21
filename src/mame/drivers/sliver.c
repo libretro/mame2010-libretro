@@ -83,14 +83,14 @@ public:
 
 	sliver_state(running_machine &machine) { }
 
-	UINT16 io_offset;
-	UINT16 io_reg[IO_SIZE];
-	UINT16 fifo[FIFO_SIZE];
-	UINT16 fptr;
+	uint16_t io_offset;
+	uint16_t io_reg[IO_SIZE];
+	uint16_t fifo[FIFO_SIZE];
+	uint16_t fptr;
 
 	int jpeg_addr;
-	UINT16 jpeg1;
-	UINT16 jpeg2;
+	uint16_t jpeg1;
+	uint16_t jpeg2;
 	int jpeg_h;
 	int jpeg_w;
 	int jpeg_x;
@@ -98,11 +98,11 @@ public:
 	int tmp_counter;
 	int clr_offset;
 
-	UINT8 *colorram;
+	uint8_t *colorram;
 	bitmap_t *bitmap_fg;
 	bitmap_t *bitmap_bg;
 
-	UINT16 tempbuf[8];
+	uint16_t tempbuf[8];
 };
 
 static const int gfxlookup[][4]=
@@ -201,9 +201,9 @@ static WRITE16_HANDLER( sliver_RAMDAC_color_w )
 	state->clr_offset=(state->clr_offset+1)%768;
 }
 
-static void plot_pixel_rgb(sliver_state *state, int x, int y, UINT32 r, UINT32 g, UINT32 b)
+static void plot_pixel_rgb(sliver_state *state, int x, int y, uint32_t r, uint32_t g, uint32_t b)
 {
-	UINT16 color;
+	uint16_t color;
 
 	if (y < 0 || x < 0 || x > 383 || y > 255)
 		return;
@@ -225,8 +225,8 @@ static void plot_pixel_rgb(sliver_state *state, int x, int y, UINT32 r, UINT32 g
 static void plot_pixel_pal(running_machine *machine, int x, int y, int addr)
 {
 	sliver_state *state = (sliver_state *)machine->driver_data;
-	UINT32 r,g,b;
-	UINT16 color;
+	uint32_t r,g,b;
+	uint16_t color;
 
 	if (y < 0 || x < 0 || x > 383 || y > 255)
 		return;
@@ -279,7 +279,7 @@ static void blit_gfx(running_machine *machine)
 {
 	sliver_state *state = (sliver_state *)machine->driver_data;
 	int tmpptr=0;
-	const UINT8 *rom = memory_region(machine, "user1");
+	const uint8_t *rom = memory_region(machine, "user1");
 
 	while (tmpptr < state->fptr)
 	{
@@ -336,7 +336,7 @@ static void render_jpeg(running_machine *machine)
 	sliver_state *state = (sliver_state *)machine->driver_data;
 	int x, y;
 	int addr = state->jpeg_addr;
-	UINT8 *rom;
+	uint8_t *rom;
 
 	bitmap_fill(state->bitmap_bg, 0, 0);
 	if (addr < 0)
@@ -460,7 +460,7 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER(oki_setbank)
 {
-	UINT8 *sound = memory_region(space->machine, "oki");
+	uint8_t *sound = memory_region(space->machine, "oki");
 	int bank=(data^0xff)&3; //xor or not ?
 	memcpy(sound+0x20000, sound+0x100000+0x20000*bank, 0x20000);
 }
@@ -631,7 +631,7 @@ static DRIVER_INIT(sliver)
 	sliver_state *state = (sliver_state *)machine->driver_data;
 
 	state->jpeg_addr = -1;
-	state->colorram=auto_alloc_array(machine, UINT8, 256*3);
+	state->colorram=auto_alloc_array(machine, uint8_t, 256*3);
 }
 
 GAME( 1996, sliver, 0,        sliver, sliver, sliver, ROT0,  "Hollow Corp", "Sliver", GAME_IMPERFECT_GRAPHICS )

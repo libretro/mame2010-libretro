@@ -231,7 +231,7 @@ static void simpsons_objdma( running_machine *machine )
 {
 	simpsons_state *state = (simpsons_state *)machine->driver_data;
 	int counter, num_inactive;
-	UINT16 *src, *dst;
+	uint16_t *src, *dst;
 
 	k053247_get_ram(state->k053246, &dst);
 	counter = k053247_get_dy(state->k053246);

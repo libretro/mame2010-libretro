@@ -35,7 +35,7 @@ Notes:
 #include "sound/sn76496.h"
 #include "includes/retofinv.h"
 
-static UINT8 cpu2_m6000=0;
+static uint8_t cpu2_m6000=0;
 
 
 static WRITE8_HANDLER( cpu1_reset_w )

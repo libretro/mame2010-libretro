@@ -77,7 +77,7 @@ ROM_END
 
 // code for converting the ASCII dump..
 #if 0
-UINT8 ascii_to_bin( UINT8 ascii )
+uint8_t ascii_to_bin( uint8_t ascii )
 {
 
 	if (ascii>=0x30 && ascii <= 0x39)
@@ -96,8 +96,8 @@ UINT8 ascii_to_bin( UINT8 ascii )
 
 DRIVER_INIT(vegaa)
 {
-	UINT8* buf = (UINT8*)malloc(0x10000);
-	UINT8* rom = memory_region(machine,"maincpu");
+	uint8_t* buf = (uint8_t*)malloc(0x10000);
+	uint8_t* rom = memory_region(machine,"maincpu");
 	int i;
 	int count = 0;
 	// last 0xc bytes of file are just some settings, ignore
@@ -108,9 +108,9 @@ DRIVER_INIT(vegaa)
 		int j;
 		for (j=0xa; j<0x2a;j+=2)
 		{
-			UINT8 l=rom[i+j+0];
-			UINT8 r=rom[i+j+1];
-			UINT8 num;
+			uint8_t l=rom[i+j+0];
+			uint8_t r=rom[i+j+1];
+			uint8_t num;
 
 			l = ascii_to_bin(l);
 			r = ascii_to_bin(r);

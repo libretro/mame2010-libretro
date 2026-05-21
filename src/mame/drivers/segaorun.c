@@ -294,8 +294,8 @@ Notes:
  *
  *************************************/
 
-static UINT16 *workram;
-static UINT16 *cpu1ram, *cpu1rom;
+static uint16_t *workram;
+static uint16_t *cpu1ram, *cpu1rom;
 
 /*************************************
  *
@@ -372,7 +372,7 @@ static TIMER_CALLBACK( delayed_sound_data_w )
 }
 
 
-static void sound_data_w(running_machine *machine, UINT8 data)
+static void sound_data_w(running_machine *machine, uint8_t data)
 {
 	timer_call_after_resynch(machine, NULL, data, delayed_sound_data_w);
 }
@@ -393,11 +393,11 @@ static void outrun_generic_init(running_machine *machine)
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 
 	/* allocate memory for regions not automatically assigned */
-	segaic16_spriteram_0 = auto_alloc_array(machine, UINT16, 0x01000/2);
-	segaic16_paletteram  = auto_alloc_array(machine, UINT16, 0x02000/2);
-	segaic16_tileram_0   = auto_alloc_array(machine, UINT16, 0x10000/2);
-	segaic16_textram_0   = auto_alloc_array(machine, UINT16, 0x01000/2);
-	workram              = auto_alloc_array(machine, UINT16, 0x08000/2);
+	segaic16_spriteram_0 = auto_alloc_array(machine, uint16_t, 0x01000/2);
+	segaic16_paletteram  = auto_alloc_array(machine, uint16_t, 0x02000/2);
+	segaic16_tileram_0   = auto_alloc_array(machine, uint16_t, 0x10000/2);
+	segaic16_textram_0   = auto_alloc_array(machine, uint16_t, 0x01000/2);
+	workram              = auto_alloc_array(machine, uint16_t, 0x08000/2);
 
 	/* init the memory mapper */
 	segaic16_memory_mapper_init(machine->device("maincpu"), outrun_info, sound_data_w, NULL);
@@ -553,7 +553,7 @@ static void log_unknown_ppi_read( running_machine *machine, unsigned port )
 }
 
 
-static void log_unknown_ppi_write( running_machine *machine, unsigned port, UINT8 data )
+static void log_unknown_ppi_write( running_machine *machine, unsigned port, uint8_t data )
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	static const char ports[] = "ABC";
@@ -2162,9 +2162,9 @@ static DRIVER_INIT( outrun )
 static DRIVER_INIT( outrunb )
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
-	static const UINT8 memory_map[] = { 0x02,0x00,0x0d,0x10,0x00,0x12,0x0c,0x13,0x08,0x14,0x0f,0x20,0x00,0x00,0x00,0x00 };
-	UINT16 *word;
-	UINT8 *byte;
+	static const uint8_t memory_map[] = { 0x02,0x00,0x0d,0x10,0x00,0x12,0x0c,0x13,0x08,0x14,0x0f,0x20,0x00,0x00,0x00,0x00 };
+	uint16_t *word;
+	uint8_t *byte;
 	int i, length;
 
 	outrun_generic_init(machine);
@@ -2173,13 +2173,13 @@ static DRIVER_INIT( outrunb )
 	state->custom_io_w = outrun_custom_io_w;
 
 	/* main CPU: swap bits 11,12 and 6,7 */
-	word = (UINT16 *)memory_region(machine, "maincpu");
+	word = (uint16_t *)memory_region(machine, "maincpu");
 	length = memory_region_length(machine, "maincpu") / 2;
 	for (i = 0; i < length; i++)
 		word[i] = BITSWAP16(word[i], 15,14,11,12,13,10,9,8,6,7,5,4,3,2,1,0);
 
 	/* sub CPU: swap bits 14,15 and 2,3 */
-	word = (UINT16 *)memory_region(machine, "sub");
+	word = (uint16_t *)memory_region(machine, "sub");
 	length = memory_region_length(machine, "sub") / 2;
 	for (i = 0; i < length; i++)
 		word[i] = BITSWAP16(word[i], 14,15,13,12,11,10,9,8,7,6,5,4,2,3,1,0);

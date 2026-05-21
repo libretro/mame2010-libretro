@@ -61,18 +61,18 @@ static CUSTOM_INPUT( get_collision )
 static TIMER_CALLBACK( nmi_callback	)
 {
 	int scanline = param;
-	static UINT8 last_wheel[4];
+	static uint8_t last_wheel[4];
 
 	/* MAME updates controls only once per frame but the game checks them on every NMI */
 
-	UINT8 wheel[4] =
+	uint8_t wheel[4] =
 	{
 		input_port_read(machine, "WHEEL1"),
 		input_port_read(machine, "WHEEL2"),
 		input_port_read(machine, "WHEEL3"),
 		input_port_read(machine, "WHEEL4")
 	};
-	UINT8 lever[4] =
+	uint8_t lever[4] =
 	{
 		input_port_read(machine, "LEVER1"),
 		input_port_read(machine, "LEVER2"),

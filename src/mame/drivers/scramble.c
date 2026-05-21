@@ -1206,7 +1206,7 @@ static GFXDECODE_START( scramble )
 GFXDECODE_END
 
 
-static UINT8 *scramble_soundram;
+static uint8_t *scramble_soundram;
 
 static READ8_HANDLER(scramble_soundram_r)
 {

@@ -200,13 +200,13 @@ VIDEO_START( undrfire );
 VIDEO_UPDATE( undrfire );
 VIDEO_UPDATE( cbombers );
 
-static UINT16 coin_word;
-static UINT16 port_sel = 0;
-extern UINT16 undrfire_rotate_ctrl[8];
+static uint16_t coin_word;
+static uint16_t port_sel = 0;
+extern uint16_t undrfire_rotate_ctrl[8];
 static int frame_counter=0;
 
-static UINT32 *undrfire_ram;	/* will be read in video for gun target calcs */
-static UINT32 *shared_ram;
+static uint32_t *undrfire_ram;	/* will be read in video for gun target calcs */
+static uint32_t *shared_ram;
 
 /***********************************************************
                 COLOR RAM
@@ -965,8 +965,8 @@ ROM_END
 
 static DRIVER_INIT( undrfire )
 {
-	UINT32 offset,i;
-	UINT8 *gfx = memory_region(machine, "gfx3");
+	uint32_t offset,i;
+	uint8_t *gfx = memory_region(machine, "gfx3");
 	int size=memory_region_length(machine, "gfx3");
 	int data;
 
@@ -994,8 +994,8 @@ static DRIVER_INIT( undrfire )
 
 static DRIVER_INIT( cbombers )
 {
-	UINT32 offset,i;
-	UINT8 *gfx = memory_region(machine, "gfx3");
+	uint32_t offset,i;
+	uint8_t *gfx = memory_region(machine, "gfx3");
 	int size=memory_region_length(machine, "gfx3");
 	int data;
 

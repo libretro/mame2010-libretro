@@ -468,7 +468,7 @@ $a00000 checks have been seen on the Final Lap boards.
 /* 68000/6809/63705 Shared memory area - DUAL PORT Memory    */
 /*************************************************************/
 
-static UINT8 *namcos2_dpram;	/* 2Kx8 */
+static uint8_t *namcos2_dpram;	/* 2Kx8 */
 
 static void
 GollyGhostUpdateLED_c4( int data )
@@ -5036,14 +5036,14 @@ static DRIVER_INIT( metlhawk )
 {
 	/* unscramble sprites */
 	int i, j, k, l;
-	UINT8 *data = memory_region(machine, "gfx1");
+	uint8_t *data = memory_region(machine, "gfx1");
 	for(i=0; i<0x200000; i+=32*32)
 	{
 		for(j=0; j<32*32; j+=32*4)
 		{
 			for(k=0; k<32; k+=4)
 			{
-				UINT8 v;
+				uint8_t v;
 				int a;
 
 				a = i+j+k+32;
@@ -5153,7 +5153,7 @@ static DRIVER_INIT( bubbletr ){
 
 
 static DRIVER_INIT( luckywld ){
-	UINT8 *pData = (UINT8 *)memory_region( machine, "gfx5" );
+	uint8_t *pData = (uint8_t *)memory_region( machine, "gfx5" );
 	int i;
 	for( i=0; i<32*0x4000; i++ )
 	{ /* unscramble gfx mask */

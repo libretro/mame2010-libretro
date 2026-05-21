@@ -1544,7 +1544,7 @@ static const gfx_layout spritelayout168 =
 
 };
 
-static const UINT32 spritelayout6464_xoffset[64] =
+static const uint32_t spritelayout6464_xoffset[64] =
 {
 	XOR(0*4), XOR(1*4), XOR(2*4), XOR(3*4), XOR(4*4), XOR(5*4), XOR(6*4), XOR(7*4),
 	XOR(8*4), XOR(9*4), XOR(10*4), XOR(11*4), XOR(12*4), XOR(13*4), XOR(14*4), XOR(15*4),
@@ -1556,7 +1556,7 @@ static const UINT32 spritelayout6464_xoffset[64] =
 	XOR(56*4),XOR(57*4), XOR(58*4), XOR(59*4), XOR(60*4), XOR(61*4), XOR(62*4), XOR(63*4)
 };
 
-static const UINT32 spritelayout6464_yoffset[64] =
+static const uint32_t spritelayout6464_yoffset[64] =
 {
 	0*256, 1*256, 2*256, 3*256, 4*256, 5*256, 6*256, 7*256,
 	8*256, 9*256, 10*256, 11*256, 12*256, 13*256, 14*256, 15*256,

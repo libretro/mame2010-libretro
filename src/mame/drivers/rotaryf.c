@@ -15,7 +15,7 @@ driver by Barry Rodewald
 #include "cpu/i8085/i8085.h"
 
 
-static UINT8 *rotaryf_videoram;
+static uint8_t *rotaryf_videoram;
 static size_t rotaryf_videoram_size;
 
 
@@ -53,9 +53,9 @@ static VIDEO_UPDATE( rotaryf )
 	{
 		int i;
 
-		UINT8 x = offs << 3;
+		uint8_t x = offs << 3;
 		int y = offs >> 5;
-		UINT8 data = rotaryf_videoram[offs];
+		uint8_t data = rotaryf_videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{

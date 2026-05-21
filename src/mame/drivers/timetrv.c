@@ -26,7 +26,7 @@ CPU is an Intel 80188
 #include "emu.h"
 #include "cpu/i86/i86.h"
 
-static UINT8 *led_vram_lo,*led_vram_hi;
+static uint8_t *led_vram_lo,*led_vram_hi;
 
 static VIDEO_START( timetrv )
 {

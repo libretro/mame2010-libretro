@@ -449,10 +449,10 @@
 #include "sound/ay8910.h"
 #include "sound/okim6295.h"
 
-static UINT8 main_latch_d800;
-static UINT8 snd_latch_0800;
-static UINT8 snd_latch_0a02;
-static UINT8 ay8910_addr;
+static uint8_t main_latch_d800;
+static uint8_t snd_latch_0800;
+static uint8_t snd_latch_0a02;
+static uint8_t ay8910_addr;
 static running_device *ay8910;
 
 
@@ -460,8 +460,8 @@ static running_device *ay8910;
 *     Video Hardware     *
 *************************/
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
 
 
@@ -1179,7 +1179,7 @@ static DRIVER_INIT( fclown )
     /* Decrypting main program */
 
 	int x;
-	UINT8 *src = memory_region( machine, "maincpu" );
+	uint8_t *src = memory_region( machine, "maincpu" );
 
 	for (x = 0x0000; x < 0x10000; x++)
 	{
@@ -1189,8 +1189,8 @@ static DRIVER_INIT( fclown )
 
     /* Decrypting GFX by segments */
 
-	UINT8 *gfx1_src = memory_region( machine, "gfx1" );
-	UINT8 *gfx2_src = memory_region( machine, "gfx2" );
+	uint8_t *gfx1_src = memory_region( machine, "gfx1" );
+	uint8_t *gfx2_src = memory_region( machine, "gfx2" );
 
 	for (x = 0x2000; x < 0x3000; x++)
 	{
@@ -1210,7 +1210,7 @@ static DRIVER_INIT( fclown )
 
     /* Decrypting sound samples */
 
-	UINT8 *samples_src = memory_region( machine, "oki6295" );
+	uint8_t *samples_src = memory_region( machine, "oki6295" );
 
 	for (x = 0x0000; x < 0x10000; x++)
 	{

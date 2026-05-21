@@ -26,7 +26,7 @@ blocken:
 #include "sound/okim6295.h"
 #include "sound/2612intf.h"
 
-extern UINT16 *shangha3_ram;
+extern uint16_t *shangha3_ram;
 extern size_t shangha3_ram_size;
 extern int shangha3_do_shadows;
 
@@ -68,7 +68,7 @@ static WRITE16_HANDLER( shangha3_prot_w )
 
 static READ16_HANDLER( heberpop_gfxrom_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "gfx1");
+	uint8_t *ROM = memory_region(space->machine, "gfx1");
 
 	return ROM[2*offset] | (ROM[2*offset+1] << 8);
 }

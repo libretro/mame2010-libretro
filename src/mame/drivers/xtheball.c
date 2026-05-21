@@ -20,8 +20,8 @@
  *
  *************************************/
 
-static UINT16 *vram_bg, *vram_fg;
-static UINT8 bitvals[32];
+static uint16_t *vram_bg, *vram_fg;
+static uint8_t bitvals[32];
 
 
 
@@ -46,8 +46,8 @@ static MACHINE_RESET( xtheball )
 
 static void xtheball_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
-	UINT16 *srcbg = &vram_bg[(params->rowaddr << 8) & 0xff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *srcbg = &vram_bg[(params->rowaddr << 8) & 0xff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	const rgb_t *pens = tlc34076_get_pens();
 	int coladdr = params->coladdr;
 	int x;
@@ -56,12 +56,12 @@ static void xtheball_scanline_update(screen_device &screen, bitmap_t *bitmap, in
 	if (!bitvals[0x13])
 	{
 		/* mode 0: foreground is the same as background */
-		UINT16 *srcfg = &vram_fg[(params->rowaddr << 8) & 0xff00];
+		uint16_t *srcfg = &vram_fg[(params->rowaddr << 8) & 0xff00];
 
 		for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 		{
-			UINT16 fgpix = srcfg[coladdr & 0xff];
-			UINT16 bgpix = srcbg[coladdr & 0xff];
+			uint16_t fgpix = srcfg[coladdr & 0xff];
+			uint16_t bgpix = srcbg[coladdr & 0xff];
 
 			dest[x + 0] = pens[((fgpix & 0x00ff) != 0) ? (fgpix & 0xff) : (bgpix & 0xff)];
 			dest[x + 1] = pens[((fgpix & 0xff00) != 0) ? (fgpix >> 8) : (bgpix >> 8)];
@@ -71,12 +71,12 @@ static void xtheball_scanline_update(screen_device &screen, bitmap_t *bitmap, in
 	{
 		/* mode 1: foreground is half background resolution in */
 		/* X and supports two pages */
-		UINT16 *srcfg = &vram_fg[(params->rowaddr << 7) & 0xff00];
+		uint16_t *srcfg = &vram_fg[(params->rowaddr << 7) & 0xff00];
 
 		for (x = params->heblnk; x < params->hsblnk; x += 2, coladdr++)
 		{
-			UINT16 fgpix = srcfg[(coladdr >> 1) & 0xff] >> (8 * (coladdr & 1));
-			UINT16 bgpix = srcbg[coladdr & 0xff];
+			uint16_t fgpix = srcfg[(coladdr >> 1) & 0xff] >> (8 * (coladdr & 1));
+			uint16_t bgpix = srcbg[coladdr & 0xff];
 
 			dest[x + 0] = pens[((fgpix & 0x00ff) != 0) ? (fgpix & 0xff) : (bgpix & 0xff)];
 			dest[x + 1] = pens[((fgpix & 0x00ff) != 0) ? (fgpix & 0xff) : (bgpix >> 8)];
@@ -93,7 +93,7 @@ static void xtheball_scanline_update(screen_device &screen, bitmap_t *bitmap, in
  *
  *************************************/
 
-static void xtheball_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void xtheball_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	if (address >= 0x01000000 && address <= 0x010fffff)
 		memcpy(shiftreg, &vram_bg[TOWORD(address & 0xff000)], TOBYTE(0x1000));
@@ -104,7 +104,7 @@ static void xtheball_to_shiftreg(const address_space *space, UINT32 address, UIN
 }
 
 
-static void xtheball_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void xtheball_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	if (address >= 0x01000000 && address <= 0x010fffff)
 		memcpy(&vram_bg[TOWORD(address & 0xff000)], shiftreg, TOBYTE(0x1000));

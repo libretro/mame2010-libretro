@@ -67,7 +67,7 @@ static const eeprom_interface eeprom_intf =
 static READ16_HANDLER( rng_sysregs_r )
 {
 	rungun_state *state = (rungun_state *)space->machine->driver_data;
-	UINT16 data = 0;
+	uint16_t data = 0;
 
 	switch (offset)
 	{
@@ -362,7 +362,7 @@ static const k053247_interface rng_k055673_intf =
 static MACHINE_START( rng )
 {
 	rungun_state *state = (rungun_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "soundcpu");
+	uint8_t *ROM = memory_region(machine, "soundcpu");
 
 	memory_configure_bank(machine, "bank2", 0, 8, &ROM[0x10000], 0x4000);
 

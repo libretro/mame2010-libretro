@@ -56,8 +56,8 @@ c1  ??
 #include "sound/3812intf.h"
 
 
-extern UINT8 *speedbal_background_videoram;
-extern UINT8 *speedbal_foreground_videoram;
+extern uint8_t *speedbal_background_videoram;
+extern uint8_t *speedbal_foreground_videoram;
 
 VIDEO_START( speedbal );
 VIDEO_UPDATE( speedbal );

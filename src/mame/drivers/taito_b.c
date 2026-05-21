@@ -3035,7 +3035,7 @@ MACHINE_DRIVER_END
 #if 0
 static void ryujin_patch(void)
 {
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 	rom[ 0x62/2 ] = 1;
 	//0 (already in rom) - Taito Corporation 1993
 	//1 - Taito America corp with blue FBI logo
@@ -3094,7 +3094,7 @@ MACHINE_DRIVER_END
 #if 0
 static void sbm_patch(void)
 {
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 	rom[ 0x7ffff/2 ] = 2; //US version
 }
 #endif

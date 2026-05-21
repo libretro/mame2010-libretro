@@ -102,7 +102,7 @@ static WRITE8_HANDLER( quasar_video_w )
 static READ8_HANDLER( quasar_IO_r )
 {
 	cvs_state *state = (cvs_state *)space->machine->driver_data;
-	UINT8 ans = 0;
+	uint8_t ans = 0;
 
 	switch (state->io_page)
 	{

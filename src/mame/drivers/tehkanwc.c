@@ -94,9 +94,9 @@ TO DO :
 #include "sound/msm5205.h"
 #include "../lh/gridiron.lh"
 
-extern UINT8 *tehkanwc_videoram;
-extern UINT8 *tehkanwc_colorram;
-extern UINT8 *tehkanwc_videoram2;
+extern uint8_t *tehkanwc_videoram;
+extern uint8_t *tehkanwc_colorram;
+extern uint8_t *tehkanwc_videoram2;
 
 extern WRITE8_HANDLER( tehkanwc_videoram_w );
 extern WRITE8_HANDLER( tehkanwc_colorram_w );
@@ -212,7 +212,7 @@ static void tehkanwc_adpcm_int(running_device *device)
 {
 	static int toggle;
 
-	UINT8 *SAMPLES = memory_region(device->machine, "adpcm");
+	uint8_t *SAMPLES = memory_region(device->machine, "adpcm");
 	int msm_data = SAMPLES[msm_data_offs & 0x7fff];
 
 	if (toggle == 0)
@@ -725,7 +725,7 @@ static DRIVER_INIT( teedoff )
         023A: 00          nop
     */
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0x0238] = 0x00;
 	ROM[0x0239] = 0x00;

@@ -136,10 +136,10 @@ HT-01B
 
 
 
-extern UINT8 *thepit_videoram;
-extern UINT8 *thepit_colorram;
-extern UINT8 *thepit_attributesram;
-extern UINT8 *thepit_spriteram;
+extern uint8_t *thepit_videoram;
+extern uint8_t *thepit_colorram;
+extern uint8_t *thepit_attributesram;
+extern uint8_t *thepit_spriteram;
 extern size_t thepit_spriteram_size;
 
 PALETTE_INIT( thepit );
@@ -1052,7 +1052,7 @@ static READ8_HANDLER( rtriv_question_r )
 	// Read the actual byte from question roms
 	else if((offset & 0xc00) == 0xc00)
 	{
-		UINT8 *ROM = memory_region(space->machine, "user1");
+		uint8_t *ROM = memory_region(space->machine, "user1");
 		int real_address;
 
 		real_address = (0x8000 * question_rom) | question_address | (offset & 0x3f0) | remap_address[offset & 0x0f];

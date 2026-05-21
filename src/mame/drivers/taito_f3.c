@@ -42,8 +42,8 @@
 #include "audio/taito_en.h"
 #include "sound/okim6295.h"
 
-static UINT32 coin_word[2], *f3_ram;
-UINT32 *f3_shared_ram;
+static uint32_t coin_word[2], *f3_ram;
+uint32_t *f3_shared_ram;
 int f3_game;
 
 
@@ -52,7 +52,7 @@ int f3_game;
 static CUSTOM_INPUT( f3_analog_r )
 {
 	const char *tag = (const char *)param;
-	UINT32 ipt = 0;
+	uint32_t ipt = 0;
 
 	ipt = ((input_port_read(field->port->machine, tag) & 0xf)<<12) | ((input_port_read(field->port->machine, tag) & 0xff0)>>4);
 
@@ -129,8 +129,8 @@ static WRITE32_HANDLER( f3_sound_reset_1_w )
 static WRITE32_HANDLER( f3_sound_bankswitch_w )
 {
 	if (f3_game==KIRAMEKI) {
-		UINT16 *rom = (UINT16 *)memory_region(space->machine, "audiocpu");
-		UINT32 idx;
+		uint16_t *rom = (uint16_t *)memory_region(space->machine, "audiocpu");
+		uint32_t idx;
 
 		idx = (offset << 1) & 0x1e;
 		if (ACCESSING_BITS_0_15)
@@ -373,7 +373,7 @@ static SOUND_RESET( f3 )
 }
 
 
-static const UINT8 recalh_eeprom[128] =	{
+static const uint8_t recalh_eeprom[128] =	{
 	0x85,0x54,0x00,0x00,0x30,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xf3,0x35,
 	0x00,0x01,0x86,0xa0,0x00,0x13,0x04,0x13,0x00,0x00,0xc3,0x50,0x00,0x19,0x00,0x0a,
 	0x00,0x00,0x4e,0x20,0x00,0x03,0x18,0x0d,0x00,0x00,0x27,0x10,0x00,0x05,0x14,0x18,
@@ -3473,9 +3473,9 @@ ROM_END
 
 static void tile_decode(running_machine *machine)
 {
-	UINT8 lsb,msb;
-	UINT32 offset,i;
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t lsb,msb;
+	uint32_t offset,i;
+	uint8_t *gfx = memory_region(machine, "gfx2");
 	int size=memory_region_length(machine, "gfx2");
 	int data;
 
@@ -3581,7 +3581,7 @@ static DRIVER_INIT( trstaroj )
 
 static DRIVER_INIT( scfinals )
 {
-	UINT32 *RAM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *RAM = (uint32_t *)memory_region(machine, "maincpu");
 
 	/* Doesn't boot without this - eprom related? */
     RAM[0x5af0/4]=0x4e710000|(RAM[0x5af0/4]&0xffff);
@@ -3659,7 +3659,7 @@ static WRITE32_DEVICE_HANDLER( bubsympb_oki_w )
 	//if (mem_mask==0x000000ff) okim6295_w(device,0,data&0xff);
 	if (ACCESSING_BITS_16_23)
 	{
-		UINT8 *snd = memory_region(device->machine, "oki");
+		uint8_t *snd = memory_region(device->machine, "oki");
 		int bank = (data & 0x000f0000) >> 16;
 		// almost certainly wrong
 		memcpy(snd+0x30000, snd+0x80000+0x30000+bank*0x10000, 0x10000);
@@ -3680,11 +3680,11 @@ static DRIVER_INIT( bubsympb )
 	/* expand gfx rom */
 	{
 		int i;
-		UINT8 *gfx = memory_region(machine, "gfx2");
+		uint8_t *gfx = memory_region(machine, "gfx2");
 
 		for (i=0x200000;i<0x400000; i+=4)
 		{
-			UINT8 byte = gfx[i];
+			uint8_t byte = gfx[i];
 			gfx[i+0] = (byte & 0x80)? 1<<4 : 0<<4;
 			gfx[i+0]|= (byte & 0x40)? 1<<0 : 0<<0;
 			gfx[i+1] = (byte & 0x20)? 1<<4 : 0<<4;
@@ -3727,7 +3727,7 @@ static DRIVER_INIT( landmakr )
 
 static DRIVER_INIT( landmkrp )
 {
-	UINT32 *RAM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *RAM = (uint32_t *)memory_region(machine, "maincpu");
 
 	/* For some reason the least significant byte in the last 2 long words of
     ROM is swapped.  As the roms have been verified ok, I assume this is some
@@ -3770,7 +3770,7 @@ static DRIVER_INIT( pbobbl2p )
 	// which eventually causes the game to crash
 	//  -- protection check?? or some kind of checksum fail?
 
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	/* protection? */
     ROM[0x40090/4]=0x00004e71|(ROM[0x40090/4]&0xffff0000);

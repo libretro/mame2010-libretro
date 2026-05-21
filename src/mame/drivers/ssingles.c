@@ -157,14 +157,14 @@ public:
 
 	ssingles_state(running_machine &machine) { }
 
-	UINT8 *videoram;
-	UINT8 *colorram;
-	UINT8 prot_data;
+	uint8_t *videoram;
+	uint8_t *colorram;
+	uint8_t prot_data;
 	pen_t pens[NUM_PENS];
 };
 
 //fake palette
-static const UINT8 ssingles_colors[NUM_PENS*3]=
+static const uint8_t ssingles_colors[NUM_PENS*3]=
 {
 	0x00,0x00,0x00,	0xff,0xff,0xff, 0xff,0x00,0x00,	0x80,0x00,0x00,
 	0x00,0x00,0x00,	0xf0,0xf0,0xf0,	0xff,0xff,0x00, 0x40,0x40,0x40,
@@ -180,10 +180,10 @@ static MC6845_UPDATE_ROW( update_row )
 {
 	ssingles_state *state = (ssingles_state *)device->machine->driver_data;
 	int cx,x;
-	UINT32 tile_address;
-	UINT16 cell,palette;
-	UINT8 b0,b1;
-	const UINT8 *gfx = memory_region(device->machine, "gfx1");
+	uint32_t tile_address;
+	uint16_t cell,palette;
+	uint8_t b0,b1;
+	const uint8_t *gfx = memory_region(device->machine, "gfx1");
 
 	for(cx=0;cx<x_count;++cx)
 	{
@@ -553,8 +553,8 @@ static DRIVER_INIT(ssingles)
 {
 	ssingles_state *state = (ssingles_state *)machine->driver_data;
 
-	state->videoram=auto_alloc_array_clear(machine, UINT8, VMEM_SIZE);
-	state->colorram=auto_alloc_array_clear(machine, UINT8, VMEM_SIZE);
+	state->videoram=auto_alloc_array_clear(machine, uint8_t, VMEM_SIZE);
+	state->colorram=auto_alloc_array_clear(machine, uint8_t, VMEM_SIZE);
 	state_save_register_global_pointer(machine, state->videoram, VMEM_SIZE);
 	state_save_register_global_pointer(machine, state->colorram, VMEM_SIZE);
 }

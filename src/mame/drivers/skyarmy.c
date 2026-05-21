@@ -36,10 +36,10 @@ public:
 
 	skyarmy_state(running_machine &machine) { }
 
-	UINT8 *spriteram;
-	UINT8 *videoram;
-	UINT8 *colorram;
-	UINT8 *scrollram;
+	uint8_t *spriteram;
+	uint8_t *videoram;
+	uint8_t *colorram;
+	uint8_t *scrollram;
 	tilemap_t* tilemap;
 	int nmi;
 };
@@ -119,7 +119,7 @@ static VIDEO_START( skyarmy )
 static VIDEO_UPDATE( skyarmy )
 {
 	skyarmy_state *state = (skyarmy_state *)screen->machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int sx, sy, flipx, flipy, offs,pal;
 	int i;
 

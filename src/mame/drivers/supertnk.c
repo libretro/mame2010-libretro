@@ -112,9 +112,9 @@ public:
 
 	supertnk_state(running_machine &machine) { }
 
-	UINT8 *videoram[3];
-	UINT8 rom_bank;
-	UINT8 bitplane_select;
+	uint8_t *videoram[3];
+	uint8_t rom_bank;
+	uint8_t bitplane_select;
 	pen_t pens[NUM_PENS];
 };
 
@@ -183,18 +183,18 @@ static VIDEO_START( supertnk )
 {
 	supertnk_state *state = (supertnk_state *)machine->driver_data;
 	offs_t i;
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 
 	for (i = 0; i < NUM_PENS; i++)
 	{
-		UINT8 data = prom[i];
+		uint8_t data = prom[i];
 
 		state->pens[i] = MAKE_RGB(pal1bit(data >> 2), pal1bit(data >> 5), pal1bit(data >> 6));
 	}
 
-	state->videoram[0] = auto_alloc_array(machine, UINT8, 0x2000);
-	state->videoram[1] = auto_alloc_array(machine, UINT8, 0x2000);
-	state->videoram[2] = auto_alloc_array(machine, UINT8, 0x2000);
+	state->videoram[0] = auto_alloc_array(machine, uint8_t, 0x2000);
+	state->videoram[1] = auto_alloc_array(machine, uint8_t, 0x2000);
+	state->videoram[2] = auto_alloc_array(machine, uint8_t, 0x2000);
 }
 
 
@@ -218,7 +218,7 @@ static WRITE8_HANDLER( supertnk_videoram_w )
 static READ8_HANDLER( supertnk_videoram_r )
 {
 	supertnk_state *state = (supertnk_state *)space->machine->driver_data;
-	UINT8 ret = 0x00;
+	uint8_t ret = 0x00;
 
 	if (state->bitplane_select < 3)
 		ret = state->videoram[state->bitplane_select][offset];
@@ -252,16 +252,16 @@ static VIDEO_UPDATE( supertnk )
 	{
 		int i;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data0 = state->videoram[0][offs];
-		UINT8 data1 = state->videoram[1][offs];
-		UINT8 data2 = state->videoram[2][offs];
+		uint8_t data0 = state->videoram[0][offs];
+		uint8_t data1 = state->videoram[1][offs];
+		uint8_t data2 = state->videoram[2][offs];
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 color = ((data0 & 0x80) >> 5) | ((data1 & 0x80) >> 6) | ((data2 & 0x80) >> 7);
+			uint8_t color = ((data0 & 0x80) >> 5) | ((data1 & 0x80) >> 6) | ((data2 & 0x80) >> 7);
 			*BITMAP_ADDR32(bitmap, y, x) = state->pens[color];
 
 			data0 = data0 << 1;
@@ -492,7 +492,7 @@ static DRIVER_INIT( supertnk )
 {
 	/* decode the TMS9980 ROMs */
 	offs_t offs;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	size_t len = memory_region_length(machine, "maincpu");
 
 	for (offs = 0; offs < len; offs++)

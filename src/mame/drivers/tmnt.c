@@ -80,7 +80,7 @@ Updates:
 #include "includes/tmnt.h"
 #include "includes/konamipt.h"
 
-static UINT16 cuebrick_nvram[0x400 * 0x20];	// 32k paged in a 1k window
+static uint16_t cuebrick_nvram[0x400 * 0x20];	// 32k paged in a 1k window
 
 static READ16_HANDLER( k052109_word_noA12_r )
 {
@@ -300,9 +300,9 @@ static SAMPLES_START( tmnt_decode_sample )
 	running_machine *machine = device->machine;
 	tmnt_state *state = (tmnt_state *)machine->driver_data;
 	int i;
-	UINT8 *source = memory_region(machine, "title");
+	uint8_t *source = memory_region(machine, "title");
 
-	state->sampledata = auto_alloc_array(machine, INT16, 0x40000);
+	state->sampledata = auto_alloc_array(machine, int16_t, 0x40000);
 	state_save_register_global_pointer(machine, state->sampledata, 0x40000);
 
 	/*  Sound sample for TMNT.D05 is stored in the following mode (ym3012 format):
@@ -403,7 +403,7 @@ static READ16_HANDLER( ssriders_protection_r )
 
 		default:
 			popmessage("%06x: unknown protection read",cpu_get_pc(space->cpu));
-			logerror("%06x: read 1c0800 (D7=%02x 1058fc=%02x 105a0a=%02x)\n",cpu_get_pc(space->cpu),(UINT32)cpu_get_reg(space->cpu, M68K_D7),cmd,data);
+			logerror("%06x: read 1c0800 (D7=%02x 1058fc=%02x 105a0a=%02x)\n",cpu_get_pc(space->cpu),(uint32_t)cpu_get_reg(space->cpu, M68K_D7),cmd,data);
 			return 0xffff;
     }
 }
@@ -793,7 +793,7 @@ ADDRESS_MAP_END
 
 
 #if 1
-INLINE UINT32 tmnt2_get_word( running_machine *machine, UINT32 addr )
+INLINE uint32_t tmnt2_get_word( running_machine *machine, uint32_t addr )
 {
 	tmnt_state *state = (tmnt_state *)machine->driver_data;
 
@@ -806,11 +806,11 @@ INLINE UINT32 tmnt2_get_word( running_machine *machine, UINT32 addr )
 	return 0;
 }
 
-static void tmnt2_put_word( const address_space *space, UINT32 addr, UINT16 data )
+static void tmnt2_put_word( const address_space *space, uint32_t addr, uint16_t data )
 {
 	tmnt_state *state = (tmnt_state *)space->machine->driver_data;
 
-	UINT32 offs;
+	uint32_t offs;
 	if (addr >= 0x180000 / 2 && addr <= 0x183fff / 2)
 	{
 		space->machine->generic.spriteram.u16[addr - 0x180000 / 2] = data;
@@ -828,11 +828,11 @@ static void tmnt2_put_word( const address_space *space, UINT32 addr, UINT16 data
 static WRITE16_HANDLER( tmnt2_1c0800_w )
 {
 	tmnt_state *state = (tmnt_state *)space->machine->driver_data;
-	UINT32 src_addr, dst_addr, mod_addr, attr1, code, attr2, cbase, cmod, color;
+	uint32_t src_addr, dst_addr, mod_addr, attr1, code, attr2, cbase, cmod, color;
 	int xoffs, yoffs, xmod, ymod, zmod, xzoom, yzoom, i;
-	UINT16 *mcu;
-	UINT16 src[4], mod[24];
-	UINT8 keepaspect, xlock, ylock, zlock;
+	uint16_t *mcu;
+	uint16_t src[4], mod[24];
+	uint8_t keepaspect, xlock, ylock, zlock;
 
 	COMBINE_DATA(state->tmnt2_1c0800 + offset);
 
@@ -862,8 +862,8 @@ static WRITE16_HANDLER( tmnt2_1c0800_w )
 	cmod  = mod[0x2a / 2] >> 8;
 	color = (cbase != 0x0f && cmod <= 0x1f && !zlock) ? cmod : cbase;
 
-	xoffs = (INT16)src[2];	// local x
-	yoffs = (INT16)src[3];	// local y
+	xoffs = (int16_t)src[2];	// local x
+	yoffs = (int16_t)src[3];	// local y
 
 	i = mod[0];
 	attr2 |= i & 0x0060;	// priority
@@ -873,9 +873,9 @@ static WRITE16_HANDLER( tmnt2_1c0800_w )
 //  if (i & 0x????) { attr1 ^= 0x2000; yoffs = -yoffs; }    // flip y (not used?)
 	if (i & 0x4000) { attr1 ^= 0x1000; xoffs = -xoffs; }	// flip x
 
-	xmod = (INT16)mod[6];	// global x
-	ymod = (INT16)mod[7];	// global y
-	zmod = (INT16)mod[8];	// global z
+	xmod = (int16_t)mod[6];	// global x
+	ymod = (int16_t)mod[7];	// global y
+	zmod = (int16_t)mod[8];	// global z
 	xzoom = mod[0x1c / 2];
 	yzoom = (keepaspect) ? xzoom : mod[0x1e / 2];
 
@@ -941,8 +941,8 @@ static WRITE16_HANDLER( tmnt2_1c0800_w )
 
 	tmnt2_put_word(space, dst_addr +  0, attr1);
 	tmnt2_put_word(space, dst_addr +  2, code);
-	tmnt2_put_word(space, dst_addr +  4, (UINT32)yoffs);
-	tmnt2_put_word(space, dst_addr +  6, (UINT32)xoffs);
+	tmnt2_put_word(space, dst_addr +  4, (uint32_t)yoffs);
+	tmnt2_put_word(space, dst_addr +  6, (uint32_t)xoffs);
 	tmnt2_put_word(space, dst_addr + 12, attr2 | color);
 }
 #else // for reference; do not remove
@@ -952,9 +952,9 @@ static WRITE16_HANDLER( tmnt2_1c0800_w )
 	COMBINE_DATA(state->tmnt2_1c0800 + offset);
 	if (offset == 0x0008 && (state->tmnt2_1c0800[0x8] & 0xff00) == 0x8200)
 	{
-		UINT32 CellSrc;
-		UINT32 CellVar;
-		UINT16 *src;
+		uint32_t CellSrc;
+		uint32_t CellVar;
+		uint16_t *src;
 		int dst;
 		int x,y;
 
@@ -963,7 +963,7 @@ static WRITE16_HANDLER( tmnt2_1c0800_w )
 		CellSrc = state->tmnt2_1c0800[0x00] | (state->tmnt2_1c0800[0x01] << 16 );
 //        if (CellDest >= 0x180000 && CellDest < 0x183fe0) {
 		CellVar -= 0x104000;
-		src = (UINT16 *)(memory_region(space->machine, "maincpu") + CellSrc);
+		src = (uint16_t *)(memory_region(space->machine, "maincpu") + CellSrc);
 
 		CellVar >>= 1;
 
@@ -2656,7 +2656,7 @@ static const k054539_interface k054539_config =
 static MACHINE_START( prmrsocr )
 {
 	MACHINE_START_CALL(common);
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x4000);
 }
 
@@ -4123,11 +4123,11 @@ ROM_END
 
 static DRIVER_INIT( mia )
 {
-	UINT8 *gfxdata;
+	uint8_t *gfxdata;
 	int len;
 	int i, j, k, A, B;
 	int bits[32];
-	UINT8 *temp;
+	uint8_t *temp;
 
 	/*
         along with the normal byte reordering, TMNT also needs the bits to
@@ -4171,7 +4171,7 @@ static DRIVER_INIT( mia )
 		}
 	}
 
-	temp = auto_alloc_array(machine, UINT8, len);
+	temp = auto_alloc_array(machine, uint8_t, len);
 	memcpy(temp, gfxdata, len);
 	for (A = 0; A < len / 4; A++)
 	{
@@ -4215,12 +4215,12 @@ static DRIVER_INIT( mia )
 
 static DRIVER_INIT( tmnt )
 {
-	UINT8 *gfxdata;
-	const UINT8 *code_conv_table;
+	uint8_t *gfxdata;
+	const uint8_t *code_conv_table;
 	int len;
 	int i, j, k, A, B, entry;
 	int bits[32];
-	UINT8 *temp;
+	uint8_t *temp;
 
 	/*
         along with the normal byte reordering, TMNT also needs the bits to
@@ -4264,7 +4264,7 @@ static DRIVER_INIT( tmnt )
 		}
 	}
 
-	temp = auto_alloc_array(machine, UINT8, len);
+	temp = auto_alloc_array(machine, uint8_t, len);
 	memcpy(temp, gfxdata, len);
 	code_conv_table = &memory_region(machine, "proms")[0x0000];
 	for (A = 0; A < len / 4; A++)
@@ -4284,7 +4284,7 @@ static DRIVER_INIT( tmnt )
 		/* 9 low bits of the sprite line address, which bit to pick it from. */
 		/* For example, when the PROM contains 4, which applies to 4x2 sprites, */
 		/* bit OA1 comes from CA5, OA2 from CA0, and so on. */
-		static const UINT8 bit_pick_table[10][8] =
+		static const uint8_t bit_pick_table[10][8] =
 		{
 			/*0(1x1) 1(2x1) 2(1x2) 3(2x2) 4(4x2) 5(2x4) 6(4x4) 7(8x8) */
 			{ CA3,   CA3,   CA3,   CA3,   CA3,   CA3,   CA3,   CA3 },	/* CA3 */
@@ -4321,7 +4321,7 @@ static DRIVER_INIT( tmnt )
 
 static DRIVER_INIT( cuebrick )
 {
-	machine->generic.nvram.u8 = (UINT8 *)cuebrick_nvram;
+	machine->generic.nvram.u8 = (uint8_t *)cuebrick_nvram;
 	machine->generic.nvram_size = 0x400 * 0x20;
 }
 

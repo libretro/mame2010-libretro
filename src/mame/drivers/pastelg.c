@@ -55,7 +55,7 @@ static DRIVER_INIT( pastelg )
 
 static READ8_HANDLER( pastelg_sndrom_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "voice");
+	uint8_t *ROM = memory_region(space->machine, "voice");
 
 	return ROM[pastelg_blitter_src_addr_r() & 0x7fff];
 }
@@ -87,7 +87,7 @@ static ADDRESS_MAP_START( pastelg_io_map, ADDRESS_SPACE_IO, 8 )
 	AM_RANGE(0xe0, 0xe0) AM_READ_PORT("DSWC")
 ADDRESS_MAP_END
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 static READ8_HANDLER( threeds_inputport1_r )
 {

@@ -141,7 +141,7 @@ static void set_bankptr(running_machine *machine)
 	_20pacgal_state *state = (_20pacgal_state *) machine->driver_data;
 	if (state->game_selected == 0)
 	{
-		UINT8 *rom = memory_region(machine, "maincpu");
+		uint8_t *rom = memory_region(machine, "maincpu");
 		memory_set_bankptr(machine, "bank1", rom + 0x08000);
 	}
 	else
@@ -374,7 +374,7 @@ static DRIVER_INIT(20pacgal)
 {
 	_20pacgal_state *state = (_20pacgal_state *)machine->driver_data;
 
-	state->ram_48000 = auto_alloc_array(machine, UINT8, 0x2000);
+	state->ram_48000 = auto_alloc_array(machine, uint8_t, 0x2000);
 }
 
 

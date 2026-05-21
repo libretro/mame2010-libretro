@@ -90,7 +90,7 @@ DM81LS95 = TriState buffer
 
 extern PALETTE_INIT(portrait);
 
-extern UINT8 *portrait_bgvideoram,*portrait_fgvideoram;
+extern uint8_t *portrait_bgvideoram,*portrait_fgvideoram;
 
 extern int portrait_scroll;
 

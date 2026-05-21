@@ -90,23 +90,23 @@ Custom: Imagetek 15000 (2ch video & 2ch sound)
 #define VERBOSE_AUDIO_LOG (0)	// enable to show audio writes (very noisy when music is playing)
 
 /* debug */
-static UINT32 *rabbit_viewregs0;
-static UINT32 *rabbit_viewregs6;
-static UINT32 *rabbit_viewregs7;
-static UINT32 *rabbit_viewregs9;
-static UINT32 *rabbit_viewregs10;
+static uint32_t *rabbit_viewregs0;
+static uint32_t *rabbit_viewregs6;
+static uint32_t *rabbit_viewregs7;
+static uint32_t *rabbit_viewregs9;
+static uint32_t *rabbit_viewregs10;
 
-static UINT32 *rabbit_tilemap_regs[4];
-static UINT32 *rabbit_spriteregs;
-static UINT32 *rabbit_blitterregs;
+static uint32_t *rabbit_tilemap_regs[4];
+static uint32_t *rabbit_spriteregs;
+static uint32_t *rabbit_blitterregs;
 static bitmap_t *rabbit_sprite_bitmap;
 static rectangle rabbit_sprite_clip;
 
 static int rabbit_vblirqlevel, rabbit_bltirqlevel, rabbit_banking;
 
-static UINT32 *rabbit_tilemap_ram[4];
+static uint32_t *rabbit_tilemap_ram[4];
 
-static UINT32 *rabbit_spriteram;
+static uint32_t *rabbit_spriteram;
 static tilemap_t *rabbit_tilemap[4];
 
 /* call with tilesize = 0 for 8x8 or 1 for 16x16 */
@@ -226,8 +226,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	const gfx_element *gfx = machine->gfx[1];
 	int todraw = (rabbit_spriteregs[5]&0x0fff0000)>>16; // how many sprites to draw (start/end reg..) what is the other half?
 
-	UINT32 *source = (rabbit_spriteram+ (todraw*2))-2;
-	UINT32 *finish = rabbit_spriteram;
+	uint32_t *source = (rabbit_spriteram+ (todraw*2))-2;
+	uint32_t *finish = rabbit_spriteram;
 
 //  bitmap_fill(rabbit_sprite_bitmap, &rabbit_sprite_clip, 0x0); // sloooow
 
@@ -263,7 +263,7 @@ static void rabbit_clearspritebitmap( bitmap_t *bitmap, const rectangle *cliprec
 	int startx, starty;
 	int y;
 	int amountx,amounty;
-	UINT16 *dstline;
+	uint16_t *dstline;
 
 	/* clears a *sensible* amount of the sprite bitmap */
 	startx = (rabbit_spriteregs[0]&0x00000fff);
@@ -288,13 +288,13 @@ static void rabbit_clearspritebitmap( bitmap_t *bitmap, const rectangle *cliprec
 static void draw_sprite_bitmap( bitmap_t *bitmap, const rectangle *cliprect )
 {
 
-	UINT32 x,y;
-	UINT16 *srcline;
-	UINT16 *dstline;
-	UINT16 pixdata;
-	UINT32 xsize, ysize;
-	UINT32 xdrawpos, ydrawpos;
-	UINT32 xstep,ystep;
+	uint32_t x,y;
+	uint16_t *srcline;
+	uint16_t *dstline;
+	uint16_t pixdata;
+	uint32_t xsize, ysize;
+	uint32_t xdrawpos, ydrawpos;
+	uint32_t xstep,ystep;
 
 	int startx, starty;
 	startx = ((rabbit_spriteregs[0]&0x00000fff));
@@ -342,10 +342,10 @@ static VIDEO_START(rabbit)
 {
 	/* the tilemaps are bigger than the regions the cpu can see, need to allocate the ram here */
 	/* or maybe not for this game/hw .... */
-	rabbit_tilemap_ram[0] = auto_alloc_array_clear(machine, UINT32, 0x20000/4);
-	rabbit_tilemap_ram[1] = auto_alloc_array_clear(machine, UINT32, 0x20000/4);
-	rabbit_tilemap_ram[2] = auto_alloc_array_clear(machine, UINT32, 0x20000/4);
-	rabbit_tilemap_ram[3] = auto_alloc_array_clear(machine, UINT32, 0x20000/4);
+	rabbit_tilemap_ram[0] = auto_alloc_array_clear(machine, uint32_t, 0x20000/4);
+	rabbit_tilemap_ram[1] = auto_alloc_array_clear(machine, uint32_t, 0x20000/4);
+	rabbit_tilemap_ram[2] = auto_alloc_array_clear(machine, uint32_t, 0x20000/4);
+	rabbit_tilemap_ram[3] = auto_alloc_array_clear(machine, uint32_t, 0x20000/4);
 
 	rabbit_tilemap[0] = tilemap_create(machine, get_rabbit_tilemap0_tile_info,tilemap_scan_rows,16, 16, 128,32);
 	rabbit_tilemap[1] = tilemap_create(machine, get_rabbit_tilemap1_tile_info,tilemap_scan_rows,16, 16, 128,32);
@@ -393,7 +393,7 @@ each line represents the differences on each tilemap for unknown variables
 
 static void rabbit_drawtilemap( bitmap_t *bitmap, const rectangle *cliprect, int whichtilemap )
 {
-	INT32 startx, starty, incxx, incxy, incyx, incyy, tran;
+	int32_t startx, starty, incxx, incxy, incyx, incyy, tran;
 
 	startx=((rabbit_tilemap_regs[whichtilemap][1]&0x0000ffff));  // >>4 for nonzoomed pixel scroll value
 	starty=((rabbit_tilemap_regs[whichtilemap][1]&0xffff0000)>>16); // >> 20 for nonzoomed pixel scroll value
@@ -492,7 +492,7 @@ static READ32_HANDLER( randomrabbits )
 /* rom bank is used when testing roms, not currently hooked up */
 static WRITE32_HANDLER ( rabbit_rombank_w )
 {
-	UINT8 *dataroms = memory_region(space->machine, "gfx1");
+	uint8_t *dataroms = memory_region(space->machine, "gfx1");
 #if 0
 	int bank;
 	printf("rabbit rombank %08x\n",data);
@@ -591,7 +591,7 @@ static TIMER_CALLBACK( rabbit_blit_done )
 
 static void rabbit_do_blit(running_machine *machine)
 {
-	UINT8 *blt_data = memory_region(machine, "gfx1");
+	uint8_t *blt_data = memory_region(machine, "gfx1");
 	int blt_source = (rabbit_blitterregs[0]&0x000fffff)>>0;
 	int blt_column = (rabbit_blitterregs[1]&0x00ff0000)>>16;
 	int blt_line   = (rabbit_blitterregs[1]&0x000000ff);

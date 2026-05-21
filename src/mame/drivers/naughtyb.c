@@ -140,7 +140,7 @@ static READ8_HANDLER( dsw0_port_r )
    Paul Priest: tourniquet@mameworld.net */
 
 //static int popflame_prot_count = 0;
-static UINT8 popflame_prot_seed;
+static uint8_t popflame_prot_seed;
 static int r_index;
 
 static READ8_HANDLER( popflame_protection_r ) /* Not used by bootleg/hack */
@@ -148,7 +148,7 @@ static READ8_HANDLER( popflame_protection_r ) /* Not used by bootleg/hack */
 	static const int seed00[4] = { 0x78, 0x68, 0x48, 0x38|0x80 };
 	static const int seed10[4] = { 0x68, 0x60, 0x68, 0x60|0x80 };
 	static int count;
-	static UINT8 seedxx;
+	static uint8_t seedxx;
 
 	seedxx = (r_index < 0x89) ? 1 : 0;
 

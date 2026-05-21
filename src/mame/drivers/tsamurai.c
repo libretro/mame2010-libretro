@@ -47,9 +47,9 @@ TODO:
 #include "sound/ay8910.h"
 #include "sound/dac.h"
 
-extern UINT8 *tsamurai_videoram;
-extern UINT8 *tsamurai_colorram;
-extern UINT8 *tsamurai_bg_videoram;
+extern uint8_t *tsamurai_videoram;
+extern uint8_t *tsamurai_colorram;
+extern uint8_t *tsamurai_bg_videoram;
 
 WRITE8_HANDLER( vsgongf_color_w );
 

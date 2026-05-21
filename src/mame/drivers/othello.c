@@ -55,7 +55,7 @@ public:
 	othello_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 
 	/* video-related */
 	int    tile_bank;
@@ -63,8 +63,8 @@ public:
 	/* misc */
 	int   ay_select;
 	int   ack_data;
-	UINT8 n7751_command;
-//  UINT32 n7751_rom_address;
+	uint8_t n7751_command;
+//  uint32_t n7751_rom_address;
 	int sound_addr;
 	int n7751_busy;
 
@@ -81,10 +81,10 @@ static MC6845_UPDATE_ROW( update_row )
 {
 	othello_state *state = (othello_state *)device->machine->driver_data;
 	int cx, x;
-	UINT32 data_address;
-	UINT32 tmp;
+	uint32_t data_address;
+	uint32_t tmp;
 
-	const UINT8 *gfx = memory_region(device->machine, "gfx");
+	const uint8_t *gfx = memory_region(device->machine, "gfx");
 
 	for(cx = 0; cx < x_count; ++cx)
 	{

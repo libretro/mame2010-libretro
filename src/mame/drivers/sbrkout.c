@@ -60,9 +60,9 @@ static emu_timer *pot_timer;
 
 static tilemap_t *bg_tilemap;
 
-static UINT8 sync2_value;
-static UINT8 pot_mask[2];
-static UINT8 pot_trigger[2];
+static uint8_t sync2_value;
+static uint8_t pot_mask[2];
+static uint8_t pot_trigger[2];
 
 
 
@@ -125,7 +125,7 @@ static TIMER_CALLBACK( scanline_callback )
 	/* on the VBLANK, read the pot and schedule an interrupt time for it */
 	if (scanline == machine->primary_screen->visible_area().max_y + 1)
 	{
-		UINT8 potvalue = input_port_read(machine, "PADDLE");
+		uint8_t potvalue = input_port_read(machine, "PADDLE");
 		timer_adjust_oneshot(pot_timer, machine->primary_screen->time_until_pos(56 + (potvalue / 2), (potvalue % 2) * 128), 0);
 	}
 
@@ -152,7 +152,7 @@ static WRITE8_HANDLER( irq_ack_w )
 
 static READ8_HANDLER( switches_r )
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	/* DIP switches are selected by ADR0+ADR1 if ADR3 == 0 */
 	if ((offset & 0x0b) == 0x00)

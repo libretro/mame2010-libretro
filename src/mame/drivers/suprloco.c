@@ -18,8 +18,8 @@ TODO:
 #include "machine/segacrpt.h"
 #include "sound/sn76496.h"
 
-extern UINT8 *suprloco_videoram;
-extern UINT8 *suprloco_scrollram;
+extern uint8_t *suprloco_videoram;
+extern uint8_t *suprloco_scrollram;
 
 PALETTE_INIT( suprloco );
 VIDEO_START( suprloco );
@@ -270,7 +270,7 @@ static DRIVER_INIT( suprloco )
 	/* convert graphics to 4bpp from 3bpp */
 
 	int i, j, k, color_source, color_dest;
-	UINT8 *source, *dest, *lookup;
+	uint8_t *source, *dest, *lookup;
 
 	source = memory_region(machine, "gfx1");
 	dest   = source + 0x6000;

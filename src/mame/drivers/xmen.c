@@ -312,7 +312,7 @@ static STATE_POSTLOAD( xmen_postload )
 static MACHINE_START( xmen )
 {
 	xmen_state *state = (xmen_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank4", 0, 8, &ROM[0x10000], 0x4000);
 	memory_set_bank(machine, "bank4", 0);

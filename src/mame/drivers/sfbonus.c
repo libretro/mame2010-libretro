@@ -280,20 +280,20 @@ static tilemap_t *sfbonus_reel_tilemap;
 static tilemap_t *sfbonus_reel2_tilemap;
 static tilemap_t *sfbonus_reel3_tilemap;
 static tilemap_t *sfbonus_reel4_tilemap;
-static UINT8 *sfbonus_tilemap_ram;
-static UINT8 *sfbonus_reel_ram;
-static UINT8 *sfbonus_reel2_ram;
-static UINT8 *sfbonus_reel3_ram;
-static UINT8 *sfbonus_reel4_ram;
-static UINT8* sfbonus_videoram;
-static UINT8 *sfbonus_vregs;
-static UINT8 *nvram;
+static uint8_t *sfbonus_tilemap_ram;
+static uint8_t *sfbonus_reel_ram;
+static uint8_t *sfbonus_reel2_ram;
+static uint8_t *sfbonus_reel3_ram;
+static uint8_t *sfbonus_reel4_ram;
+static uint8_t* sfbonus_videoram;
+static uint8_t *sfbonus_vregs;
+static uint8_t *nvram;
 static size_t nvram_size;
-static UINT8* sfbonus_1800_regs;
-static UINT8* sfbonus_3800_regs;
-static UINT8* sfbonus_3000_regs;
-static UINT8* sfbonus_2801_regs;
-static UINT8* sfbonus_2c01_regs;
+static uint8_t* sfbonus_1800_regs;
+static uint8_t* sfbonus_3800_regs;
+static uint8_t* sfbonus_3000_regs;
+static uint8_t* sfbonus_2801_regs;
+static uint8_t* sfbonus_2c01_regs;
 
 
 /* 8-liners input define */
@@ -772,9 +772,9 @@ static void sfbonus_draw_reel_layer(screen_device *screen, bitmap_t *bitmap, con
 	int i;
 	int startclipmin;
 	const rectangle &visarea = screen->visible_area();
-	UINT8* selectbase = &sfbonus_videoram[0x600];
-	UINT8* bg_scroll = &sfbonus_videoram[0x000];
-	UINT8* reels_rowscroll = &sfbonus_videoram[0x400];
+	uint8_t* selectbase = &sfbonus_videoram[0x600];
+	uint8_t* bg_scroll = &sfbonus_videoram[0x000];
+	uint8_t* reels_rowscroll = &sfbonus_videoram[0x400];
 	int globalyscrollreels = (sfbonus_vregs[6] | sfbonus_vregs[7]<<8);
 	int globalxscrollreels = (sfbonus_vregs[4] | sfbonus_vregs[5]<<8);
 	globalyscrollreels += 8;
@@ -909,7 +909,7 @@ static VIDEO_UPDATE(sfbonus)
 
 	int globalyscroll = (sfbonus_vregs[2] | sfbonus_vregs[3]<<8);
 	int globalxscroll = (sfbonus_vregs[0] | sfbonus_vregs[1]<<8);
-	UINT8* front_rowscroll = &sfbonus_videoram[0x200];
+	uint8_t* front_rowscroll = &sfbonus_videoram[0x200];
 	const input_port_token *ipt;
 	int i;
 
@@ -930,8 +930,8 @@ static VIDEO_UPDATE(sfbonus)
 		{
 			for (x=0;x<512;x++)
 			{
-				UINT16* src = BITMAP_ADDR16(temp_reel_bitmap, y, x);
-				UINT16* dst = BITMAP_ADDR16(bitmap, y, x);
+				uint16_t* src = BITMAP_ADDR16(temp_reel_bitmap, y, x);
+				uint16_t* dst = BITMAP_ADDR16(bitmap, y, x);
 
 				if ((src[0]&0x100)==0x000)
 					dst[0] = src[0];
@@ -956,8 +956,8 @@ static VIDEO_UPDATE(sfbonus)
 		{
 			for (x=0;x<512;x++)
 			{
-				UINT16* src = BITMAP_ADDR16(temp_reel_bitmap, y, x);
-				UINT16* dst = BITMAP_ADDR16(bitmap, y, x);
+				uint16_t* src = BITMAP_ADDR16(temp_reel_bitmap, y, x);
+				uint16_t* dst = BITMAP_ADDR16(bitmap, y, x);
 
 				if ((src[0]&0x100)==0x100)
 					dst[0] = src[0]-0x100;
@@ -1085,8 +1085,8 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER( sfbonus_bank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
-	UINT8 bank;
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
+	uint8_t bank;
 
 	bank = data & 7;
 
@@ -1217,7 +1217,7 @@ GFXDECODE_END
 
 static MACHINE_RESET( sfbonus )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_set_bankptr(machine, "bank1", &ROM[0]);
 }
@@ -1235,7 +1235,7 @@ static NVRAM_HANDLER( sfbonus )
 		}
 		else
 		{
-			UINT8* defaultram = memory_region(machine, "defaults");
+			uint8_t* defaultram = memory_region(machine, "defaults");
 			memset(nvram,0x00,nvram_size);
 
 			if (defaultram)
@@ -5424,30 +5424,30 @@ ROM_END
 
 static DRIVER_INIT( sfbonus_common)
 {
-	sfbonus_tilemap_ram = auto_alloc_array(machine, UINT8, 0x4000);
+	sfbonus_tilemap_ram = auto_alloc_array(machine, uint8_t, 0x4000);
 	memset(sfbonus_tilemap_ram, 0xff, 0x4000);
 	state_save_register_global_pointer(machine, sfbonus_tilemap_ram , 0x4000);
 
-	sfbonus_reel_ram = auto_alloc_array(machine, UINT8, 0x0800);
+	sfbonus_reel_ram = auto_alloc_array(machine, uint8_t, 0x0800);
 	memset(sfbonus_reel_ram, 0xff ,0x0800);
 	state_save_register_global_pointer(machine, sfbonus_reel_ram , 0x0800);
 
-	sfbonus_reel2_ram = auto_alloc_array(machine, UINT8, 0x0800);
+	sfbonus_reel2_ram = auto_alloc_array(machine, uint8_t, 0x0800);
 	memset(sfbonus_reel2_ram, 0xff, 0x0800);
 	state_save_register_global_pointer(machine, sfbonus_reel2_ram , 0x0800);
 
-	sfbonus_reel3_ram = auto_alloc_array(machine, UINT8, 0x0800);
+	sfbonus_reel3_ram = auto_alloc_array(machine, uint8_t, 0x0800);
 	memset(sfbonus_reel3_ram, 0xff, 0x0800);
 	state_save_register_global_pointer(machine, sfbonus_reel3_ram , 0x0800);
 
-	sfbonus_reel4_ram = auto_alloc_array(machine, UINT8, 0x0800);
+	sfbonus_reel4_ram = auto_alloc_array(machine, uint8_t, 0x0800);
 	memset(sfbonus_reel4_ram, 0xff, 0x0800);
 	state_save_register_global_pointer(machine, sfbonus_reel4_ram , 0x0800);
 
 	// hack, because the debugger is broken
 	sfbonus_videoram = memory_region(machine, "debugram");
 	if (!sfbonus_videoram)
-		sfbonus_videoram = auto_alloc_array(machine, UINT8, 0x10000);
+		sfbonus_videoram = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	memset(sfbonus_videoram, 0xff, 0x10000);
 
@@ -5455,9 +5455,9 @@ static DRIVER_INIT( sfbonus_common)
 
 	// dummy.rom helper
 	{
-		UINT8 *ROM = memory_region(machine, "maincpu");
+		uint8_t *ROM = memory_region(machine, "maincpu");
 		int length = memory_region_length(machine, "maincpu");
-		UINT8* ROM2 = memory_region(machine, "user1");
+		uint8_t* ROM2 = memory_region(machine, "user1");
 
 		if (ROM2)
 		{
@@ -5496,22 +5496,22 @@ static DRIVER_INIT( sfbonus_common)
 }
 
 static void sfbonus_bitswap( running_machine* machine,
-						UINT8 xor0, UINT8 b00, UINT8 b01, UINT8 b02, UINT8 b03, UINT8 b04, UINT8 b05, UINT8 b06,UINT8 b07,
-                        UINT8 xor1, UINT8 b10, UINT8 b11, UINT8 b12, UINT8 b13, UINT8 b14, UINT8 b15, UINT8 b16,UINT8 b17,
-	                    UINT8 xor2, UINT8 b20, UINT8 b21, UINT8 b22, UINT8 b23, UINT8 b24, UINT8 b25, UINT8 b26,UINT8 b27,
-		                UINT8 xor3, UINT8 b30, UINT8 b31, UINT8 b32, UINT8 b33, UINT8 b34, UINT8 b35, UINT8 b36,UINT8 b37,
-			            UINT8 xor4, UINT8 b40, UINT8 b41, UINT8 b42, UINT8 b43, UINT8 b44, UINT8 b45, UINT8 b46,UINT8 b47,
-				        UINT8 xor5, UINT8 b50, UINT8 b51, UINT8 b52, UINT8 b53, UINT8 b54, UINT8 b55, UINT8 b56,UINT8 b57,
-				        UINT8 xor6, UINT8 b60, UINT8 b61, UINT8 b62, UINT8 b63, UINT8 b64, UINT8 b65, UINT8 b66,UINT8 b67,
-				        UINT8 xor7, UINT8 b70, UINT8 b71, UINT8 b72, UINT8 b73, UINT8 b74, UINT8 b75, UINT8 b76,UINT8 b77 )
+						uint8_t xor0, uint8_t b00, uint8_t b01, uint8_t b02, uint8_t b03, uint8_t b04, uint8_t b05, uint8_t b06,uint8_t b07,
+                        uint8_t xor1, uint8_t b10, uint8_t b11, uint8_t b12, uint8_t b13, uint8_t b14, uint8_t b15, uint8_t b16,uint8_t b17,
+	                    uint8_t xor2, uint8_t b20, uint8_t b21, uint8_t b22, uint8_t b23, uint8_t b24, uint8_t b25, uint8_t b26,uint8_t b27,
+		                uint8_t xor3, uint8_t b30, uint8_t b31, uint8_t b32, uint8_t b33, uint8_t b34, uint8_t b35, uint8_t b36,uint8_t b37,
+			            uint8_t xor4, uint8_t b40, uint8_t b41, uint8_t b42, uint8_t b43, uint8_t b44, uint8_t b45, uint8_t b46,uint8_t b47,
+				        uint8_t xor5, uint8_t b50, uint8_t b51, uint8_t b52, uint8_t b53, uint8_t b54, uint8_t b55, uint8_t b56,uint8_t b57,
+				        uint8_t xor6, uint8_t b60, uint8_t b61, uint8_t b62, uint8_t b63, uint8_t b64, uint8_t b65, uint8_t b66,uint8_t b67,
+				        uint8_t xor7, uint8_t b70, uint8_t b71, uint8_t b72, uint8_t b73, uint8_t b74, uint8_t b75, uint8_t b76,uint8_t b77 )
 {
 
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for(i = 0; i < memory_region_length(machine, "maincpu"); i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 7)
 		{

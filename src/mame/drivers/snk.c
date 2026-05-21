@@ -89,7 +89,7 @@ Notes:
   a bug. The service mode functionality is very limited anyway. To get past the
   failed ROM test and see the service mode, use this ROM patch:
 
-    UINT8 *mem = memory_region(machine, "maincpu");
+    uint8_t *mem = memory_region(machine, "maincpu");
     mem[0x3a5d] = mem[0x3a5e] = mem[0x3a5f] = 0;
 
 - The "SNK Wave" custom sound circuitry is only actually used by marvins and
@@ -578,7 +578,7 @@ static WRITE8_HANDLER( hardflags_scroll_msb_w )
 
 static int hardflags_check(running_machine *machine, int num)
 {
-	const UINT8 *sr = &machine->generic.spriteram.u8[0x800 + 4*num];
+	const uint8_t *sr = &machine->generic.spriteram.u8[0x800 + 4*num];
 	int x = sr[2] + ((sr[3] & 0x80) << 1);
 	int y = sr[0] + ((sr[3] & 0x10) << 4);
 
@@ -671,7 +671,7 @@ static WRITE8_HANDLER( turbocheck_msb_w )
 
 static int turbofront_check(running_machine *machine, int small, int num)
 {
-	const UINT8 *sr = &machine->generic.spriteram.u8[0x800*small + 4*num];
+	const uint8_t *sr = &machine->generic.spriteram.u8[0x800*small + 4*num];
 	int x = sr[2] + ((sr[3] & 0x80) << 1);
 	int y = sr[0] + ((sr[3] & 0x10) << 4);
 

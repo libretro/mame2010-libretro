@@ -195,10 +195,10 @@ Notes:
 
 ***************************************************************************/
 
-static UINT8 requested_int;
-static UINT16 *ssv_irq_vectors;
-static UINT16 irq_enable;
-static UINT16 *ssv_mainram;
+static uint8_t requested_int;
+static uint16_t *ssv_irq_vectors;
+static uint16_t irq_enable;
+static uint16_t *ssv_mainram;
 
 /* Update the IRQ state based on all possible causes */
 static void update_irq_state(running_machine *machine)
@@ -213,7 +213,7 @@ static IRQ_CALLBACK(ssv_irq_callback)
 	{
 		if (requested_int & (1 << i))
 		{
-			UINT16 vector = ssv_irq_vectors[i * (16/2)] & 7;
+			uint16_t vector = ssv_irq_vectors[i * (16/2)] & 7;
 			return vector;
 		}
 	}
@@ -352,7 +352,7 @@ static MACHINE_RESET( ssv )
 
 ***************************************************************************/
 
-static UINT16 *ssv_nvram;
+static uint16_t *ssv_nvram;
 static size_t    ssv_nvram_size;
 
 static NVRAM_HANDLER( ssv )
@@ -373,7 +373,7 @@ static NVRAM_HANDLER( ssv )
 ***************************************************************************/
 
 
-static UINT16 *dsp_ram;
+static uint16_t *dsp_ram;
 
 static WRITE16_HANDLER( dsp_w )
 {
@@ -381,7 +381,7 @@ static WRITE16_HANDLER( dsp_w )
 	if(offset == 0x21 && dsp_ram[0x21]) {
 		switch(dsp_ram[0x20]) {
 		case 0x0001:
-			dsp_ram[0x11] = (UINT8)(128*atan2((double)(dsp_ram[0] - dsp_ram[1]), (double)(dsp_ram[2] - dsp_ram[3]))/M_PI) ^ 0x80;
+			dsp_ram[0x11] = (uint8_t)(128*atan2((double)(dsp_ram[0] - dsp_ram[1]), (double)(dsp_ram[2] - dsp_ram[3]))/M_PI) ^ 0x80;
 			dsp_ram[0x21] = 0;
 			break;
 		default:
@@ -430,7 +430,7 @@ static READ16_HANDLER( fake_r )   {   return ssv_scroll[offset];  }
 //AM_RANGE(0x990000, 0x99007f) AM_READ(fake_r)
 
 
-static UINT16 *ssv_input_sel;
+static uint16_t *ssv_input_sel;
 
 /***************************************************************************
                                 Drift Out '94
@@ -459,7 +459,7 @@ ADDRESS_MAP_END
 ***************************************************************************/
 
 static int gdfs_gfxram_bank, gdfs_lightgun_select;
-static UINT16 *gdfs_blitram;
+static uint16_t *gdfs_blitram;
 
 static READ16_DEVICE_HANDLER( gdfs_eeprom_r )
 {
@@ -470,7 +470,7 @@ static READ16_DEVICE_HANDLER( gdfs_eeprom_r )
 
 static WRITE16_DEVICE_HANDLER( gdfs_eeprom_w )
 {
-	static UINT16 data_old;
+	static uint16_t data_old;
 
 	if (data & ~0x7b00)
 		logerror("%s - Unknown EEPROM bit written %04X\n",cpuexec_describe_context(device->machine),data);
@@ -547,11 +547,11 @@ static WRITE16_HANDLER( gdfs_blitram_w )
 
 		case 0xca/2:
 		{
-			UINT32 src	=	(gdfs_blitram[0xc0/2] + (gdfs_blitram[0xc2/2] << 16)) << 1;
-			UINT32 dst	=	(gdfs_blitram[0xc4/2] + (gdfs_blitram[0xc6/2] << 16)) << 4;
-			UINT32 len	=	(gdfs_blitram[0xc8/2]) << 4;
+			uint32_t src	=	(gdfs_blitram[0xc0/2] + (gdfs_blitram[0xc2/2] << 16)) << 1;
+			uint32_t dst	=	(gdfs_blitram[0xc4/2] + (gdfs_blitram[0xc6/2] << 16)) << 4;
+			uint32_t len	=	(gdfs_blitram[0xc8/2]) << 4;
 
-			UINT8 *rom	=	memory_region(space->machine, "gfx2");
+			uint8_t *rom	=	memory_region(space->machine, "gfx2");
 			size_t size	=	memory_region_length(space->machine, "gfx2");
 
 			if ( (src+len <= size) && (dst+len <= 4 * 0x100000) )
@@ -608,7 +608,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( hypreact_input_r )
 {
-	UINT16 input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0001)	return input_port_read(space->machine, "KEY0");
 	if (input_sel & 0x0002)	return input_port_read(space->machine, "KEY1");
 	if (input_sel & 0x0004)	return input_port_read(space->machine, "KEY2");
@@ -730,7 +730,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( srmp4_input_r )
 {
-	UINT16 input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0002)	return input_port_read(space->machine, "KEY0");
 	if (input_sel & 0x0004)	return input_port_read(space->machine, "KEY1");
 	if (input_sel & 0x0008)	return input_port_read(space->machine, "KEY2");
@@ -767,7 +767,7 @@ static WRITE16_HANDLER( srmp7_sound_bank_w )
 	if (ACCESSING_BITS_0_7)
 	{
 		running_device *device = space->machine->device("ensoniq");
-		int bank = 0x400000/2 * (data & 1);	// UINT16 address
+		int bank = 0x400000/2 * (data & 1);	// uint16_t address
 		int voice;
 		for (voice = 0; voice < 32; voice++)
 			es5506_voice_bank_w(device, voice, bank);
@@ -777,7 +777,7 @@ static WRITE16_HANDLER( srmp7_sound_bank_w )
 
 static READ16_HANDLER( srmp7_input_r )
 {
-	UINT16 input_sel = *ssv_input_sel;
+	uint16_t input_sel = *ssv_input_sel;
 	if (input_sel & 0x0002)	return input_port_read(space->machine, "KEY0");
 	if (input_sel & 0x0004)	return input_port_read(space->machine, "KEY1");
 	if (input_sel & 0x0008)	return input_port_read(space->machine, "KEY2");
@@ -821,7 +821,7 @@ ADDRESS_MAP_END
                             Pachinko Sexy Reaction
 ***************************************************************************/
 
-static UINT16 serial;
+static uint16_t serial;
 
 static READ16_HANDLER( sxyreact_ballswitch_r )
 {
@@ -899,7 +899,7 @@ ADDRESS_MAP_END
 
 /* from st0016.c */
 
-static UINT32 latches[8];
+static uint32_t latches[8];
 
 static READ32_HANDLER(latch32_r)
 {
@@ -953,11 +953,11 @@ ADDRESS_MAP_END
   Eagle Shot Golf
 ***************************************************************************/
 
-static UINT8 trackball_select, gfxrom_select;
+static uint8_t trackball_select, gfxrom_select;
 
 static READ16_HANDLER( eaglshot_gfxrom_r )
 {
-	UINT8 *rom	=	memory_region(space->machine, "gfx1");
+	uint8_t *rom	=	memory_region(space->machine, "gfx1");
 	size_t size	=	memory_region_length(space->machine, "gfx1");
 
 	offset = offset * 2 + gfxrom_select * 0x200000;
@@ -2639,7 +2639,7 @@ static DRIVER_INIT( meosism )		{	init_ssv(+0, +0xe8, +0, -0xef);	}
 static DRIVER_INIT( mslider )		{	init_ssv(-16,+0xf0, +8, -0xf1);	}
 static DRIVER_INIT( ryorioh )		{	init_ssv(+0, +0xe8, +0, -0xf0);	}
 static DRIVER_INIT( srmp4 )			{	init_ssv(-8, +0xf0, +0, -0xf0);
-//  ((UINT16 *)memory_region(machine, "user1"))[0x2b38/2] = 0x037a;   /* patch to see gal test mode */
+//  ((uint16_t *)memory_region(machine, "user1"))[0x2b38/2] = 0x037a;   /* patch to see gal test mode */
 }
 static DRIVER_INIT( srmp7 )		{	init_ssv(+0, -0x0f, +0, -0xf0);	}
 static DRIVER_INIT( stmblade )		{	init_ssv(-8, +0xef, +0, -0xf0);	}

@@ -31,10 +31,10 @@
 
 static pen_t pens[NUM_PENS];
 
-static UINT8 *ram_attr;
-static UINT8 *ram_video;
-static UINT8 *ram_palette;
-static UINT8 *backup_ram;
+static uint8_t *ram_attr;
+static uint8_t *ram_video;
+static uint8_t *ram_palette;
+static uint8_t *backup_ram;
 
 /*
 
@@ -91,10 +91,10 @@ static MC6845_UPDATE_ROW( update_row )
 	int lscnblk = 0; // not used?
 
 
-	UINT8 cx;
+	uint8_t cx;
 	pen_t *pens = (pen_t *)param;
-	UINT8 *gfx[2];
-	UINT16 x = 0;
+	uint8_t *gfx[2];
+	uint16_t x = 0;
 	int rlen;
 
 	gfx[0] = memory_region(device->machine, "gfx1");
@@ -109,7 +109,7 @@ static MC6845_UPDATE_ROW( update_row )
 		int region = (attr & 0x40) >> 6;
 		int addr = ((ram_video[ma & 0x7ff] | ((attr & 0x80) << 1) | (extra_video_bank_bit)) << 4) | (ra & 0x0f);
 		int colour = (attr & 0x7f) << 3;
-		UINT8	*data;
+		uint8_t	*data;
 
 		addr &= (rlen-1);
 		data = gfx[region];
@@ -534,7 +534,7 @@ static VIDEO_UPDATE( slotcarn )
 
 static MACHINE_START(merit)
 {
-	ram_palette = auto_alloc_array(machine, UINT8, RAM_PALETTE_SIZE);
+	ram_palette = auto_alloc_array(machine, uint8_t, RAM_PALETTE_SIZE);
 	state_save_register_global_pointer(machine, ram_palette, RAM_PALETTE_SIZE);
 }
 

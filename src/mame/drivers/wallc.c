@@ -236,10 +236,10 @@ GFXDECODE_END
 
 static DRIVER_INIT( wallc )
 {
-	UINT8 c;
-	UINT32 i;
+	uint8_t c;
+	uint32_t i;
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (i=0; i<0x2000*2; i++)
 	{
@@ -251,10 +251,10 @@ static DRIVER_INIT( wallc )
 
 static DRIVER_INIT( wallca )
 {
-	UINT8 c;
-	UINT32 i;
+	uint8_t c;
+	uint32_t i;
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (i=0; i<0x4000; i++)
 	{

@@ -102,7 +102,7 @@ Notes:
    The sequencing of the music tracks are handled in the second table below.
 */
 
-static const UINT8 sslam_snd_cmd[64] =
+static const uint8_t sslam_snd_cmd[64] =
 {
 /*00*/	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 /*08*/	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x70, 0x71,
@@ -126,7 +126,7 @@ static const UINT8 sslam_snd_cmd[64] =
      If the last byte is 0xff, the track should loop by restarting at the first sample in the second column
 */
 
-static const UINT8 sslam_snd_loop[8][20] =
+static const uint8_t sslam_snd_loop[8][20] =
 {
 /*NA*/	{  0,  0x00, 0x00 },	/* Not a loop - just a park position */
 /*60*/	{  9,  0x60, 0x60, 0x61, 0x61, 0x60, 0x60, 0x61, 0x62, 0xff },
@@ -435,7 +435,7 @@ ADDRESS_MAP_END
 static READ8_HANDLER( playmark_snd_command_r )
 {
 	sslam_state *state = (sslam_state *)space->machine->driver_data;
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	if ((state->oki_control & 0x38) == 0x30) {
 		data = soundlatch_r(space,0);

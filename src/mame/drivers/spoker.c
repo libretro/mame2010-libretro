@@ -25,17 +25,17 @@ public:
 
 	spoker_state(running_machine &machine) { }
 
-	UINT8   *bg_tile_ram;
+	uint8_t   *bg_tile_ram;
 	tilemap_t *bg_tilemap;
 
-	UINT8 *fg_tile_ram;
-	UINT8 *fg_color_ram;
+	uint8_t *fg_tile_ram;
+	uint8_t *fg_color_ram;
 	tilemap_t *fg_tilemap;
 
 	int video_enable;
 	int nmi_enable, hopper;
-	UINT8 igs_magic[2];
-	UINT8 out[3];
+	uint8_t igs_magic[2];
+	uint8_t out[3];
 };
 
 static WRITE8_HANDLER( bg_tile_w )
@@ -108,7 +108,7 @@ static CUSTOM_INPUT( hopper_r )
 	return input_code_pressed(machine, KEYCODE_H);
 }
 
-static void show_out(UINT8 *out)
+static void show_out(uint8_t *out)
 {
 #ifdef MAME_DEBUG
 	popmessage("%02x %02x %02x", out[0], out[1], out[2]);
@@ -426,7 +426,7 @@ MACHINE_DRIVER_END
 static DRIVER_INIT( spk116it )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x10000;A++)

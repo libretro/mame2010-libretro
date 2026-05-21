@@ -34,11 +34,11 @@ extern void qdrmfgp_tile_callback(running_machine *machine, int layer, int *code
 extern void qdrmfgp2_tile_callback(running_machine *machine, int layer, int *code, int *color, int *flags);
 
 
-static UINT8 *sndram;
-static UINT16 *workram;
-static UINT16 control;
-static INT32 qdrmfgp_pal;
-static INT32 gp2_irq_control;
+static uint8_t *sndram;
+static uint16_t *workram;
+static uint16_t control;
+static int32_t qdrmfgp_pal;
+static int32_t gp2_irq_control;
 
 /*************************************
  *
@@ -131,7 +131,7 @@ static WRITE16_HANDLER( gp2_control_w )
 static READ16_HANDLER( v_rom_r )
 {
 	running_device *k056832 = space->machine->device("k056832");
-	UINT8 *mem8 = memory_region(space->machine, "gfx1");
+	uint8_t *mem8 = memory_region(space->machine, "gfx1");
 	int bank = k056832_word_r(k056832, 0x34/2, 0xffff);
 
 	offset += bank * 0x800 * 4;

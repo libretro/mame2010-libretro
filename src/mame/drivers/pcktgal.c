@@ -29,7 +29,7 @@ extern VIDEO_UPDATE( pcktgal );
 
 static WRITE8_HANDLER( pcktgal_bank_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	if (data & 1) { memory_set_bankptr(space->machine, "bank1", &RAM[0x4000]); }
 	else { memory_set_bankptr(space->machine, "bank1", &RAM[0x10000]); }
@@ -415,8 +415,8 @@ static DRIVER_INIT( deco222 )
 {
 	int A;
 	const address_space *space = cputag_get_address_space(machine, "audiocpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8 *rom = memory_region(machine, "audiocpu");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t *rom = memory_region(machine, "audiocpu");
 
 	memory_set_decrypted_region(space, 0x8000, 0xffff, decrypted);
 
@@ -430,7 +430,7 @@ static DRIVER_INIT( deco222 )
 
 static DRIVER_INIT( graphics )
 {
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int len = memory_region_length(machine, "gfx1");
 	int i,j,temp[16];
 

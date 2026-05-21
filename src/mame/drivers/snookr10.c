@@ -368,8 +368,8 @@
 
 
 /* from video */
-extern UINT8 *snookr10_videoram;
-extern UINT8 *snookr10_colorram;
+extern uint8_t *snookr10_videoram;
+extern uint8_t *snookr10_colorram;
 
 WRITE8_HANDLER( snookr10_videoram_w );
 WRITE8_HANDLER( snookr10_colorram_w );

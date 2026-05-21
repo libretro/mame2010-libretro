@@ -48,12 +48,12 @@ Known games currently not dumped:
  *
  *************************************/
 
-static UINT16 *backupram;
+static uint16_t *backupram;
 
 /* callbacks to handle output */
-typedef void (*yboard_output_callback)(UINT16 data);
+typedef void (*yboard_output_callback)(uint16_t data);
 static yboard_output_callback ybd_output_cb1, ybd_output_cb2;
-static UINT16 pdrift_bank;
+static uint16_t pdrift_bank;
 
 
 /*************************************
@@ -316,7 +316,7 @@ static READ16_HANDLER( io_chip_r )
 static WRITE16_HANDLER( io_chip_w )
 {
 	segas1x_state *state = (segas1x_state *)space->machine->driver_data;
-	UINT8 old;
+	uint8_t old;
 
 	/* generic implementation */
 	offset &= 0x1f/2;
@@ -2007,7 +2007,7 @@ ROM_END
  *      switches we need to fix
  *************************************/
 
-static void pdrift_output_cb1( UINT16 data )
+static void pdrift_output_cb1( uint16_t data )
 {
 	/* Note:  this is an approximation to get a relatively accurate bank value.  It is obviously not 100% */
 
@@ -2163,7 +2163,7 @@ static void pdrift_output_cb1( UINT16 data )
 	}
 }
 
-static void gloc_output_cb1( UINT16 data )
+static void gloc_output_cb1( uint16_t data )
 {
 	if ((data < 32))
 	{
@@ -2191,25 +2191,25 @@ static void gloc_output_cb1( UINT16 data )
 		output_set_value("left_motor_speed", data - 96);
 }
 
-static void pdrift_output_cb2( UINT16 data )
+static void pdrift_output_cb2( uint16_t data )
 {
 	output_set_value("start_lamp", BIT(data, 2));
 	output_set_value("upright_wheel_motor", BIT(data, 1));
 }
 
-static void gforce2_output_cb2( UINT16 data )
+static void gforce2_output_cb2( uint16_t data )
 {
 	output_set_value("start_lamp", BIT(data, 2));
 }
 
-static void gloc_output_cb2( UINT16 data )
+static void gloc_output_cb2( uint16_t data )
 {
 	output_set_value("start_lamp", BIT(data, 2));
 	output_set_value("danger_lamp", BIT(data, 5));
 	output_set_value("crash_lamp", BIT(data, 6));
 }
 
-static void r360_output_cb2( UINT16 data )
+static void r360_output_cb2( uint16_t data )
 {
 	/* r360 cabinet */
 	output_set_value("start_lamp", BIT(data, 2));
@@ -2217,7 +2217,7 @@ static void r360_output_cb2( UINT16 data )
 	output_set_value("emergency_stop_lamp", BIT(data, 2));
 }
 
-static void rchase_output_cb2( UINT16 data )
+static void rchase_output_cb2( uint16_t data )
 {
 	output_set_value("left_start_lamp", BIT(data, 2));
 	output_set_value("right_start_lamp", BIT(data, 1));

@@ -236,12 +236,12 @@ Notes:
 #include "sound/cdda.h"
 #include "sound/rf5c400.h"
 
-static UINT16 twinkle_spu_ctrl;		// SPU board control register
-static UINT8 twinkle_spu_shared[0x400];	// SPU/PSX shared dual-ported RAM
+static uint16_t twinkle_spu_ctrl;		// SPU board control register
+static uint8_t twinkle_spu_shared[0x400];	// SPU/PSX shared dual-ported RAM
 
 /* RTC */
 
-static UINT32 twinkle_unknown;
+static uint32_t twinkle_unknown;
 
 static WRITE32_HANDLER( twinkle_unknown_w )
 {
@@ -252,7 +252,7 @@ static WRITE32_HANDLER( twinkle_unknown_w )
 
 static READ32_HANDLER( twinkle_unknown_r )
 {
-	UINT32 data = twinkle_unknown;
+	uint32_t data = twinkle_unknown;
 
 /*  printf( "get unknown data=%08x\n", data ); */
 
@@ -287,7 +287,7 @@ static int last_io_offset;
 //   D2  D1
 
 
-static const UINT16 asciicharset[]=
+static const uint16_t asciicharset[]=
 {
 	LED_A1 | LED_A2 | LED_B | LED_C | LED_D1 | LED_D2 | LED_E | LED_F | LED_J | LED_M, // 0
 	LED_B | LED_C, // 1
@@ -489,7 +489,7 @@ static WRITE32_HANDLER( twinkle_io_w )
 
 static READ32_HANDLER(twinkle_io_r)
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	if( ACCESSING_BITS_0_7 )
 	{
@@ -598,7 +598,7 @@ static WRITE32_HANDLER(shared_psx_w)
 
 static READ32_HANDLER(shared_psx_r)
 {
-	UINT32 result;
+	uint32_t result;
 
 	result = twinkle_spu_shared[offset*2] | twinkle_spu_shared[(offset*2)+1]<<16;
 
@@ -716,14 +716,14 @@ static WRITE16_HANDLER( twinkle_spu_ctrl_w )
 
 static READ16_HANDLER( twinkle_waveram_r )
 {
-	UINT16 *waveram = (UINT16 *)memory_region(space->machine, "rfsnd");
+	uint16_t *waveram = (uint16_t *)memory_region(space->machine, "rfsnd");
 
 	return waveram[offset];
 }
 
 static WRITE16_HANDLER( twinkle_waveram_w )
 {
-	UINT16 *waveram = (UINT16 *)memory_region(space->machine, "rfsnd");
+	uint16_t *waveram = (uint16_t *)memory_region(space->machine, "rfsnd");
 
 	COMBINE_DATA(&waveram[offset]);
 }
@@ -759,9 +759,9 @@ ADDRESS_MAP_END
 
 /* SCSI */
 
-static UINT8 sector_buffer[ 4096 ];
+static uint8_t sector_buffer[ 4096 ];
 
-static void scsi_dma_read( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void scsi_dma_read( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	int i;
 	int n_this;
@@ -804,7 +804,7 @@ static void scsi_dma_read( running_machine *machine, UINT32 n_address, INT32 n_s
 	}
 }
 
-static void scsi_dma_write( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void scsi_dma_write( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	int i;
 	int n_this;
@@ -878,7 +878,7 @@ static MACHINE_RESET( twinkle )
 	cdda_set_cdrom(machine->device("cdda"), am53cf96_get_device(SCSI_ID_4));
 }
 
-static void spu_irq(running_device *device, UINT32 data)
+static void spu_irq(running_device *device, uint32_t data)
 {
 	psx_irq_set(device->machine, data);
 }

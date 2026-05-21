@@ -43,7 +43,7 @@ static int nbmj9195_outcoin_flag;
 static int mscoutm_inputport;
 
 
-static UINT8 *nbmj9195_nvram;
+static uint8_t *nbmj9195_nvram;
 static size_t nbmj9195_nvram_size;
 
 
@@ -61,7 +61,7 @@ static NVRAM_HANDLER( nbmj9195 )
 
 static WRITE8_HANDLER( nbmj9195_soundbank_w )
 {
-	UINT8 *SNDROM = memory_region(space->machine, "audiocpu");
+	uint8_t *SNDROM = memory_region(space->machine, "audiocpu");
 
 	memory_set_bankptr(space->machine, "bank1", &SNDROM[0x08000 + (0x8000 * (data & 0x03))]);
 }
@@ -147,7 +147,7 @@ static READ8_HANDLER( mscoutm_dipsw_1_r )
 
 /* TMPZ84C011 PIO emulation */
 
-static UINT8 pio_dir[5 * 2], pio_latch[5 * 2];
+static uint8_t pio_dir[5 * 2], pio_latch[5 * 2];
 
 static READ8_HANDLER( tmpz84c011_pio_r )
 {
@@ -510,7 +510,7 @@ static MACHINE_RESET( sailorws )
 static DRIVER_INIT( nbmj9195 )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	// sound program patch
 	ROM[0x0213] = 0x00;			// DI -> NOP

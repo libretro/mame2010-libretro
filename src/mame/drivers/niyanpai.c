@@ -59,7 +59,7 @@ static int musobana_outcoin_flag;
 
 static void niyanpai_soundbank_w(running_machine *machine, int data)
 {
-	UINT8 *SNDROM = memory_region(machine, "audiocpu");
+	uint8_t *SNDROM = memory_region(machine, "audiocpu");
 
 	memory_set_bankptr(machine, "bank1", &SNDROM[0x08000 + (0x8000 * (data & 0x03))]);
 }
@@ -81,7 +81,7 @@ static WRITE8_HANDLER( niyanpai_soundclr_w )
 
 
 /* TMPZ84C011 PIO emulation */
-static UINT8 pio_dir[5], pio_latch[5];
+static uint8_t pio_dir[5], pio_latch[5];
 
 static READ8_HANDLER( tmpz84c011_pio_r )
 {
@@ -189,8 +189,8 @@ static MACHINE_RESET( niyanpai )
 
 static DRIVER_INIT( niyanpai )
 {
-	UINT8 *MAINROM = memory_region(machine, "maincpu");
-	UINT8 *SNDROM = memory_region(machine, "audiocpu");
+	uint8_t *MAINROM = memory_region(machine, "maincpu");
+	uint8_t *SNDROM = memory_region(machine, "audiocpu");
 
 	// main program patch (USR0 -> IRQ LEVEL1)
 	MAINROM[(25 * 4) + 0] = MAINROM[(64 * 4) + 0];
@@ -211,7 +211,7 @@ static DRIVER_INIT( niyanpai )
 
 static READ16_HANDLER( niyanpai_dipsw_r )
 {
-	UINT8 dipsw_a, dipsw_b;
+	uint8_t dipsw_a, dipsw_b;
 
 	dipsw_a = (((input_port_read(space->machine, "DSWA") & 0x01) << 7) | ((input_port_read(space->machine, "DSWA") & 0x02) << 5) |
 			   ((input_port_read(space->machine, "DSWA") & 0x04) << 3) | ((input_port_read(space->machine, "DSWA") & 0x08) << 1) |

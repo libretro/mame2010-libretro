@@ -13,7 +13,7 @@
 #include "includes/88games.h"
 
 
-static UINT8 *paletteram_1000;
+static uint8_t *paletteram_1000;
 
 
 /*************************************
@@ -274,7 +274,7 @@ INPUT_PORTS_END
 static KONAMI_SETLINES_CALLBACK( k88games_banking )
 {
 	_88games_state *state = (_88games_state *)device->machine->driver_data;
-	UINT8 *RAM = memory_region(device->machine, "maincpu");
+	uint8_t *RAM = memory_region(device->machine, "maincpu");
 	int offs;
 
 	logerror("%04x: bank select %02x\n", cpu_get_pc(device), lines);

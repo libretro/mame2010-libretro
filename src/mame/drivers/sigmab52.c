@@ -543,7 +543,7 @@ static MACHINE_START(jwildb52)
 */
 
 	{
-		UINT16 *rom = (UINT16*)memory_region(machine, "gfx1");
+		uint16_t *rom = (uint16_t*)memory_region(machine, "gfx1");
 		int i;
 
 		running_device *hd63484 = machine->device("hd63484");

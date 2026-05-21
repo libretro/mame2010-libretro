@@ -13,7 +13,7 @@
 
 #include "../lh/tinv2650.lh"
 
-extern UINT8 *zac2650_s2636_0_ram;
+extern uint8_t *zac2650_s2636_0_ram;
 WRITE8_HANDLER( tinvader_videoram_w );
 static WRITE8_HANDLER( tinvader_sound_w );
 READ8_HANDLER( zac_s2636_r );

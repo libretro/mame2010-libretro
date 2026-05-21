@@ -48,19 +48,19 @@ Notes:
                                 Video Hardware
 ***************************************************************************/
 
-static UINT8   *bg_ram,  *fg_ram;
+static uint8_t   *bg_ram,  *fg_ram;
 static tilemap_t *bg_tmap, *fg_tmap;
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
-	UINT16 code = bg_ram[ tile_index * 2 ] + bg_ram[ tile_index * 2 + 1 ] * 256;
+	uint16_t code = bg_ram[ tile_index * 2 ] + bg_ram[ tile_index * 2 + 1 ] * 256;
 	SET_TILE_INFO(0, code, 0, 0);
 }
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
-	UINT16 code  = fg_ram[ tile_index * 4 ] + fg_ram[ tile_index * 4 + 1 ] * 256;
-	UINT8  color = fg_ram[ tile_index * 4 + 2 ];
+	uint16_t code  = fg_ram[ tile_index * 4 ] + fg_ram[ tile_index * 4 + 1 ] * 256;
+	uint8_t  color = fg_ram[ tile_index * 4 + 2 ];
 	SET_TILE_INFO(1, code, color & 0x0f, 0);
 }
 
@@ -150,7 +150,7 @@ static void log_protection( const address_space *space, const char *warning )
 
 static READ8_HANDLER( quizpun2_protection_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	switch ( prot.state )
 	{
@@ -183,7 +183,7 @@ static READ8_HANDLER( quizpun2_protection_r )
 
 		case STATE_EEPROM_R:		// EEPROM read
 		{
-			UINT8 *eeprom = memory_region(space->machine, "eeprom");
+			uint8_t *eeprom = memory_region(space->machine, "eeprom");
 			ret = eeprom[prot.addr];
 			break;
 		}
@@ -208,7 +208,7 @@ static WRITE8_HANDLER( quizpun2_protection_w )
 	{
 		case STATE_EEPROM_W:
 		{
-			UINT8 *eeprom = memory_region(space->machine, "eeprom");
+			uint8_t *eeprom = memory_region(space->machine, "eeprom");
 			eeprom[prot.addr] = data;
 			prot.addr++;
 			if ((prot.addr % 8) == 0)
@@ -275,7 +275,7 @@ static WRITE8_HANDLER( quizpun2_protection_w )
 
 static WRITE8_HANDLER( quizpun2_rombank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 	memory_set_bankptr(space->machine,  "bank1", &ROM[ 0x10000 + 0x2000 * (data & 0x1f) ] );
 }
 

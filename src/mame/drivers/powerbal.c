@@ -390,7 +390,7 @@ static TILE_GET_INFO( powerbal_get_bg_tile_info )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 	int height = machine->gfx[0]->height;
 

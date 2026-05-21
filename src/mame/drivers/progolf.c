@@ -55,22 +55,22 @@ Twenty four 8116 rams.
 #include "sound/ay8910.h"
 #include "video/mc6845.h"
 
-static UINT8 char_pen,char_pen_vreg;
-static UINT8 *progolf_fg_fb;
-static UINT8 *progolf_fbram;
-static UINT8 scrollx_hi;
-static UINT8 scrollx_lo;
-static UINT8 progolf_gfx_switch;
+static uint8_t char_pen,char_pen_vreg;
+static uint8_t *progolf_fg_fb;
+static uint8_t *progolf_fbram;
+static uint8_t scrollx_hi;
+static uint8_t scrollx_lo;
+static uint8_t progolf_gfx_switch;
 
-static UINT8 sound_cmd;
+static uint8_t sound_cmd;
 
 static VIDEO_START( progolf )
 {
 	scrollx_hi = 0;
 	scrollx_lo = 0;
 
-	progolf_fg_fb = auto_alloc_array(machine, UINT8, 0x2000*8);
-	machine->generic.videoram.u8 = auto_alloc_array(machine, UINT8, 0x1000);
+	progolf_fg_fb = auto_alloc_array(machine, uint8_t, 0x2000*8);
+	machine->generic.videoram.u8 = auto_alloc_array(machine, uint8_t, 0x1000);
 }
 
 
@@ -185,7 +185,7 @@ static READ8_HANDLER( audio_command_r )
 
 static READ8_HANDLER( progolf_videoram_r )
 {
-	UINT8 *gfx_rom = memory_region(space->machine, "gfx1");
+	uint8_t *gfx_rom = memory_region(space->machine, "gfx1");
 
 	if (offset >= 0x0800)
 	{
@@ -512,8 +512,8 @@ static DRIVER_INIT( progolf )
 {
 	int A;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8* decrypted = auto_alloc_array(machine, UINT8, 0x10000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t* decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	memory_set_decrypted_region(space,0x0000,0xffff, decrypted);
 
@@ -526,8 +526,8 @@ static DRIVER_INIT( progolfa )
 {
 	int A;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8* decrypted = auto_alloc_array(machine, UINT8, 0x10000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t* decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	memory_set_decrypted_region(space,0x0000,0xffff, decrypted);
 

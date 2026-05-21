@@ -36,13 +36,13 @@
 #include "rendlay.h"
 
 
-static UINT32 *tmmjprd_tilemap_regs[4];
-static UINT32 *tmmjprd_spriteregs;
-//static UINT32 *tmmjprd_blitterregs;
+static uint32_t *tmmjprd_tilemap_regs[4];
+static uint32_t *tmmjprd_spriteregs;
+//static uint32_t *tmmjprd_blitterregs;
 
-static UINT32 *tmmjprd_tilemap_ram[4];
+static uint32_t *tmmjprd_tilemap_ram[4];
 
-static UINT32 *tmmjprd_spriteram;
+static uint32_t *tmmjprd_spriteram;
 
 static WRITE32_HANDLER( tmmjprd_tilemap0_w )
 {
@@ -73,11 +73,11 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	int xoffs;
 	//  int todraw = (tmmjprd_spriteregs[5]&0x0fff0000)>>16; // how many sprites to draw (start/end reg..) what is the other half?
 
-//  UINT32 *source = (tmmjprd_spriteram+ (todraw*2))-2;
-//  UINT32 *finish = tmmjprd_spriteram;
+//  uint32_t *source = (tmmjprd_spriteram+ (todraw*2))-2;
+//  uint32_t *finish = tmmjprd_spriteram;
 
-	UINT32 *source = tmmjprd_spriteram+(0xc000/4)-2;
-	UINT32 *finish = tmmjprd_spriteram;
+	uint32_t *source = tmmjprd_spriteram+(0xc000/4)-2;
+	uint32_t *finish = tmmjprd_spriteram;
 	xoffs = (screen & 1)*320;
 
 	for(;source>finish;source-=2)
@@ -95,8 +95,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 		}
 		else
 		{
-			UINT32 *calc_abs;
-			UINT8 calc_abs_helper;
+			uint32_t *calc_abs;
+			uint8_t calc_abs_helper;
 			int abs_x = 0,abs_y = 0;
 
 			calc_abs = source-2;
@@ -142,7 +142,7 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	}
 }
 
-static void ttmjprd_draw_tile(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int x,int y,int sizex,int sizey, UINT32 tiledata, UINT8* rom)
+static void ttmjprd_draw_tile(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int x,int y,int sizex,int sizey, uint32_t tiledata, uint8_t* rom)
 {
 	/* note, it's tile address _NOT_ tile number, 'sub-tile' access is possible, hence using the custom rendering */
 	int tileaddr = (tiledata&0x000fffff)>>0;
@@ -174,8 +174,8 @@ static void ttmjprd_draw_tile(running_machine *machine, bitmap_t *bitmap, const 
 	{
 		for (drawx=x;drawx<x+sizex;drawx++)
 		{
-			UINT16 dat;
-			UINT16* dst;
+			uint16_t dat;
+			uint16_t* dst;
 
 			if (!depth)
 			{
@@ -221,7 +221,7 @@ static void ttmjprd_draw_tile(running_machine *machine, bitmap_t *bitmap, const 
 	}
 }
 
-static void ttmjprd_draw_tilemap(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32*tileram, UINT32*tileregs, UINT8*rom )
+static void ttmjprd_draw_tilemap(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t*tileram, uint32_t*tileregs, uint8_t*rom )
 {
 	int y,x;
 	int count;
@@ -253,7 +253,7 @@ static void ttmjprd_draw_tilemap(running_machine *machine, bitmap_t *bitmap, con
 	{
 		for (x=0;x<tilemap_sizex;x++)
 		{
-			UINT32 tiledata = tileram[count];
+			uint32_t tiledata = tileram[count];
 			// todo: handle wraparound
 			ttmjprd_draw_tile(machine,bitmap,cliprect,(x*tile_sizex)-scrollx,(y*tile_sizey)-scrolly,tile_sizex,tile_sizey, tiledata, rom);
 			count++;
@@ -264,7 +264,7 @@ static void ttmjprd_draw_tilemap(running_machine *machine, bitmap_t *bitmap, con
 
 static VIDEO_UPDATE( tmmjprd )
 {
-	UINT8* gfxroms = memory_region(screen->machine,"gfx2");
+	uint8_t* gfxroms = memory_region(screen->machine,"gfx2");
 	running_device *left_screen  = screen->machine->device("lscreen");
 	running_device *right_screen = screen->machine->device("rscreen");
 
@@ -311,10 +311,10 @@ static VIDEO_START(tmmjprd)
 {
 	/* the tilemaps are bigger than the regions the cpu can see, need to allocate the ram here */
 	/* or maybe not for this game/hw .... */
-	tmmjprd_tilemap_ram[0] = auto_alloc_array_clear(machine, UINT32, 0x8000);
-	tmmjprd_tilemap_ram[1] = auto_alloc_array_clear(machine, UINT32, 0x8000);
-	tmmjprd_tilemap_ram[2] = auto_alloc_array_clear(machine, UINT32, 0x8000);
-	tmmjprd_tilemap_ram[3] = auto_alloc_array_clear(machine, UINT32, 0x8000);
+	tmmjprd_tilemap_ram[0] = auto_alloc_array_clear(machine, uint32_t, 0x8000);
+	tmmjprd_tilemap_ram[1] = auto_alloc_array_clear(machine, uint32_t, 0x8000);
+	tmmjprd_tilemap_ram[2] = auto_alloc_array_clear(machine, uint32_t, 0x8000);
+	tmmjprd_tilemap_ram[3] = auto_alloc_array_clear(machine, uint32_t, 0x8000);
 }
 
 static READ32_HANDLER( tmmjprd_tilemap0_r )
@@ -354,7 +354,7 @@ static TIMER_CALLBACK( tmmjprd_blit_done )
 
 static void tmmjprd_do_blit(running_machine *machine)
 {
-	UINT8 *blt_data = memory_region(machine, "gfx1");
+	uint8_t *blt_data = memory_region(machine, "gfx1");
 	int blt_source = (tmmjprd_blitterregs[0]&0x000fffff)>>0;
 	int blt_column = (tmmjprd_blitterregs[1]&0x00ff0000)>>16;
 	int blt_line   = (tmmjprd_blitterregs[1]&0x000000ff);
@@ -458,7 +458,7 @@ static WRITE32_HANDLER( tmmjprd_blitter_w )
 }
 #endif
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 static WRITE32_DEVICE_HANDLER( tmmjprd_eeprom_write )
 {
@@ -482,7 +482,7 @@ static WRITE32_DEVICE_HANDLER( tmmjprd_eeprom_write )
 
 static READ32_HANDLER( tmmjprd_mux_r )
 {
-	static UINT8 system_in;
+	static uint8_t system_in;
 
 	system_in = input_port_read(space->machine, "SYSTEM");
 

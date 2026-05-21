@@ -54,7 +54,7 @@ Games by Nihon Game/Culture Brain:
 #include "sound/dac.h"
 
 /* from video/shangkid.c */
-extern UINT8 *shangkid_videoreg;
+extern uint8_t *shangkid_videoreg;
 extern int shangkid_gfx_type;
 
 VIDEO_START( shangkid );
@@ -66,8 +66,8 @@ VIDEO_UPDATE( dynamski );
 
 /***************************************************************************************/
 
-static UINT8 bbx_sound_enable;
-static UINT8 sound_latch;
+static uint8_t bbx_sound_enable;
+static uint8_t sound_latch;
 
 /***************************************************************************************/
 

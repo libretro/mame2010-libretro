@@ -10,10 +10,10 @@ driver by Mirko Buffoni
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 
-extern UINT8 *solomon_videoram;
-extern UINT8 *solomon_colorram;
-extern UINT8 *solomon_videoram2;
-extern UINT8 *solomon_colorram2;
+extern uint8_t *solomon_videoram;
+extern uint8_t *solomon_colorram;
+extern uint8_t *solomon_videoram2;
+extern uint8_t *solomon_colorram2;
 
 extern WRITE8_HANDLER( solomon_videoram_w );
 extern WRITE8_HANDLER( solomon_colorram_w );

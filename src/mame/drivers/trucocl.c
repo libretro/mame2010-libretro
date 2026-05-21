@@ -37,8 +37,8 @@ Daughterboard: Custom made, plugged in the 2 roms and Z80 mainboard sockets.
 #include "sound/dac.h"
 
 /* from video */
-extern UINT8 *trucocl_videoram;
-extern UINT8 *trucocl_colorram;
+extern uint8_t *trucocl_videoram;
+extern uint8_t *trucocl_colorram;
 
 WRITE8_HANDLER( trucocl_videoram_w );
 WRITE8_HANDLER( trucocl_colorram_w );
@@ -62,7 +62,7 @@ static TIMER_CALLBACK( dac_irq )
 
 static WRITE8_DEVICE_HANDLER( audio_dac_w )
 {
-	UINT8 *rom = memory_region(device->machine, "maincpu");
+	uint8_t *rom = memory_region(device->machine, "maincpu");
 	int	dac_address = ( data & 0xf0 ) << 8;
 	int	sel = ( ( (~data) >> 1 ) & 2 ) | ( data & 1 );
 

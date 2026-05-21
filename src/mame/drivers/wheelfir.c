@@ -221,7 +221,7 @@ static const int NUM_COLORS=256;
 
 struct scroll_info
 {
-	 INT32 x,y,unkbits;
+	 int32_t x,y,unkbits;
 };
 
 
@@ -240,30 +240,30 @@ public:
 	running_device *screen;
 	running_device *eeprom;
 
-	INT32 *zoom_table;
-	UINT16 *blitter_data;
+	int32_t *zoom_table;
+	uint16_t *blitter_data;
 
-	UINT8 *palette;
-	INT32 palpos;
+	uint8_t *palette;
+	int32_t palpos;
 
-	INT32 current_scanline;
+	int32_t current_scanline;
 	scroll_info *scanlines;
 
-	INT32 soundlatch;
+	int32_t soundlatch;
 
-	INT32 direct_write_x0;
-	INT32 direct_write_x1;
-	INT32 direct_write_y0;
-	INT32 direct_write_y1;
-	INT32 direct_write_idx;
+	int32_t direct_write_x0;
+	int32_t direct_write_x1;
+	int32_t direct_write_y0;
+	int32_t direct_write_y1;
+	int32_t direct_write_idx;
 
-	INT32 toggle_bit;
-	INT16 scanline_cnt;
+	int32_t toggle_bit;
+	int16_t scanline_cnt;
 
 
 	bitmap_t *tmp_bitmap[2];
 
-	INT32 get_scale(INT32 index)
+	int32_t get_scale(int32_t index)
 	{
 		while(index<ZOOM_TABLE_SIZE)
 		{
@@ -376,7 +376,7 @@ static WRITE16_HANDLER(wheelfir_blit_w)
 		cputag_set_input_line(space->machine, "maincpu", 1, HOLD_LINE);
 
 		{
-			UINT8 *rom = memory_region(space->machine, "gfx1");
+			uint8_t *rom = memory_region(space->machine, "gfx1");
 
 			int width = space->machine->primary_screen->width();
 			int height = space->machine->primary_screen->height();
@@ -577,8 +577,8 @@ static VIDEO_UPDATE(wheelfir)
 
 	for(int y=0;y<NUM_SCANLINES;++y)
 	{
-		UINT16 *source = BITMAP_ADDR16(state->tmp_bitmap[LAYER_BG],( (state->scanlines[y].y)&511), 0);
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *source = BITMAP_ADDR16(state->tmp_bitmap[LAYER_BG],( (state->scanlines[y].y)&511), 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (int x=0;x<336;x++)
 		{
@@ -776,11 +776,11 @@ static MACHINE_START( wheelfir )
 	state->screen = machine->device(  "screen");
 	state->eeprom = machine->device(  "eeprom");
 
-	state->zoom_table = auto_alloc_array(machine, INT32, ZOOM_TABLE_SIZE);
-	state->blitter_data = auto_alloc_array(machine, UINT16, 16);
+	state->zoom_table = auto_alloc_array(machine, int32_t, ZOOM_TABLE_SIZE);
+	state->blitter_data = auto_alloc_array(machine, uint16_t, 16);
 
-	state->scanlines = reinterpret_cast<scroll_info*>(auto_alloc_array(machine, UINT8, sizeof(scroll_info)*(NUM_SCANLINES+NUM_VBLANK_LINES)));
-	state->palette=auto_alloc_array(machine, UINT8, NUM_COLORS*3);
+	state->scanlines = reinterpret_cast<scroll_info*>(auto_alloc_array(machine, uint8_t, sizeof(scroll_info)*(NUM_SCANLINES+NUM_VBLANK_LINES)));
+	state->palette=auto_alloc_array(machine, uint8_t, NUM_COLORS*3);
 
 
 	for(int i=0;i<(ZOOM_TABLE_SIZE);++i)
@@ -788,7 +788,7 @@ static MACHINE_START( wheelfir )
 		state->zoom_table[i]=-1;
 	}
 
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	for(int j=0;j<400;++j)
 	{
@@ -874,7 +874,7 @@ ROM_END
 
 static DRIVER_INIT(wheelfir)
 {
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[0xdd3da/2] = 0x4e71; //hack
 }
 

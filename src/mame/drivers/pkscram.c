@@ -17,12 +17,12 @@ driver by David Haywood and few bits by Pierpaolo Prazzoli
 
 static int interrupt_scanline=192;
 
-static UINT16	out = 0;
-static UINT8	interrupt_line_active=0;
+static uint16_t	out = 0;
+static uint8_t	interrupt_line_active=0;
 
-static UINT16* pkscramble_fgtilemap_ram;
-static UINT16* pkscramble_mdtilemap_ram;
-static UINT16* pkscramble_bgtilemap_ram;
+static uint16_t* pkscramble_fgtilemap_ram;
+static uint16_t* pkscramble_mdtilemap_ram;
+static uint16_t* pkscramble_bgtilemap_ram;
 
 static tilemap_t *fg_tilemap, *md_tilemap, *bg_tilemap;
 

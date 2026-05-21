@@ -95,9 +95,9 @@ static MACHINE_RESET( sandscrp )
 
 /* Sand Scorpion */
 
-static UINT8 sprite_irq;
-static UINT8 unknown_irq;
-static UINT8 vblank_irq;
+static uint8_t sprite_irq;
+static uint8_t unknown_irq;
+static uint8_t vblank_irq;
 
 
 /* Update the IRQ state based on all possible causes */
@@ -167,8 +167,8 @@ static WRITE16_HANDLER( sandscrp_coin_counter_w )
 	}
 }
 
-static UINT8 latch1_full;
-static UINT8 latch2_full;
+static uint8_t latch1_full;
+static uint8_t latch2_full;
 
 static READ16_HANDLER( sandscrp_latchstatus_word_r )
 {
@@ -234,7 +234,7 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER( sandscrp_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bank = data & 0x07;
 
 	if ( bank != data )	logerror("CPU #1 - PC %04X: Bank %02X\n",cpu_get_pc(space->cpu),data);

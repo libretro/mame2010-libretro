@@ -34,8 +34,8 @@ TODO:
 #include "sound/msm5205.h"
 
 static int gfxbank;
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
 
 static WRITE8_HANDLER( rmhaihai_videoram_w )
@@ -159,7 +159,7 @@ static WRITE8_HANDLER( ctrl_w )
 
 static WRITE8_HANDLER( themj_rombank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu") + 0x10000;
+	uint8_t *rom = memory_region(space->machine, "maincpu") + 0x10000;
 	int bank = data & 0x03;
 logerror("banksw %d\n",bank);
 	memory_set_bankptr(space->machine, "bank1", rom + bank*0x4000);
@@ -645,7 +645,7 @@ ROM_END
 
 static DRIVER_INIT( rmhaihai )
 {
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int size = memory_region_length(machine, "gfx1");
 	int a,b;
 

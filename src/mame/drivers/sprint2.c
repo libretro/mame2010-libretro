@@ -50,7 +50,7 @@ static DRIVER_INIT( dominos )
 
 static int service_mode(running_machine *machine)
 {
-	UINT8 v = input_port_read(machine, "INB");
+	uint8_t v = input_port_read(machine, "INB");
 
 	if (GAME_IS_SPRINT1)
 	{
@@ -72,7 +72,7 @@ static int service_mode(running_machine *machine)
 static INTERRUPT_GEN( sprint2 )
 {
 	running_device *discrete = device->machine->device("discrete");
-	static UINT8 dial[2];
+	static uint8_t dial[2];
 
 	/* handle steering wheels */
 
@@ -132,7 +132,7 @@ static READ8_HANDLER( sprint2_dip_r )
 
 static READ8_HANDLER( sprint2_input_A_r )
 {
-	UINT8 val = input_port_read(space->machine, "INA");
+	uint8_t val = input_port_read(space->machine, "INA");
 
 	if (GAME_IS_SPRINT2)
 	{
@@ -150,7 +150,7 @@ static READ8_HANDLER( sprint2_input_A_r )
 
 static READ8_HANDLER( sprint2_input_B_r )
 {
-	UINT8 val = input_port_read(space->machine, "INB");
+	uint8_t val = input_port_read(space->machine, "INB");
 
 	if (GAME_IS_SPRINT1)
 	{
@@ -165,7 +165,7 @@ static READ8_HANDLER( sprint2_input_B_r )
 
 static READ8_HANDLER( sprint2_sync_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if (attract != 0)
 		val |= 0x10;

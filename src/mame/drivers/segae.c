@@ -308,7 +308,7 @@ covert megatech / megaplay drivers to use new code etc. etc.
 
 ****************************************************************************************/
 
-static UINT8 f7_bank_value;
+static uint8_t f7_bank_value;
 
 /* we have to fill in the ROM addresses for systeme due to the encrypted games */
 static ADDRESS_MAP_START( systeme_map, ADDRESS_SPACE_PROGRAM, 8 )
@@ -396,7 +396,7 @@ static void init_systeme_map(running_machine *machine)
 	memory_install_write8_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x8000, 0xbfff, 0, 0, segasyse_videoram_w);
 
 	/* main ram area */
-	sms_mainram = (UINT8 *)memory_install_ram(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xc000, 0xffff, 0, 0, NULL);
+	sms_mainram = (uint8_t *)memory_install_ram(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xc000, 0xffff, 0, 0, NULL);
 	memset(sms_mainram,0x00,0x4000);
 
 	init_ports_systeme(machine);
@@ -901,11 +901,11 @@ MACHINE_DRIVER_END
 
 
 /*- Hang On Jr. Specific -*/
-static UINT8 port_fa_last;		/* Last thing written to port 0xfa (control related) */
+static uint8_t port_fa_last;		/* Last thing written to port 0xfa (control related) */
 
 static READ8_HANDLER (segae_hangonjr_port_f8_r)
 {
-	UINT8 temp;
+	uint8_t temp;
 
 	temp = 0;
 

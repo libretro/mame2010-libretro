@@ -281,17 +281,17 @@ TODO:
 #include "../lh/wecleman.lh"
 
 /* Variables only used here: */
-static UINT16 *blitter_regs;
+static uint16_t *blitter_regs;
 static int multiply_reg[2];
-static UINT16 *wecleman_protection_ram;
+static uint16_t *wecleman_protection_ram;
 static int spr_color_offs;
 
 /* Variables that video has acces to: */
 int wecleman_selected_ip, wecleman_irqctrl;
 
 /* Variables defined in video: */
-extern UINT16 *wecleman_videostatus;
-extern UINT16 *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
+extern uint16_t *wecleman_videostatus;
+extern uint16_t *wecleman_pageram, *wecleman_txtram, *wecleman_roadram;
 extern size_t wecleman_roadram_size;
 
 /* Functions defined in video: */
@@ -967,7 +967,7 @@ static const gfx_layout wecleman_bg_layout =
 	8*8
 };
 
-static const UINT32 wecleman_road_layout_xoffset[64] =
+static const uint32_t wecleman_road_layout_xoffset[64] =
 {
 	 0,7,6,5,4,3,2,1,
 	 8,15,14,13,12,11,10,9,
@@ -1005,7 +1005,7 @@ GFXDECODE_END
                             Hot Chase Graphics Layout
 ***************************************************************************/
 
-static const UINT32 hotchase_road_layout_xoffset[64] =
+static const uint32_t hotchase_road_layout_xoffset[64] =
 {
 	  0*4,0*4,1*4,1*4,2*4,2*4,3*4,3*4,4*4,4*4,5*4,5*4,6*4,6*4,7*4,7*4,
 	  8*4,8*4,9*4,9*4,10*4,10*4,11*4,11*4,12*4,12*4,13*4,13*4,14*4,14*4,15*4,15*4,
@@ -1234,22 +1234,22 @@ static void wecleman_unpack_sprites(running_machine *machine)
 {
 	const char *region       = "gfx1";	// sprites
 
-	const UINT32 len = memory_region_length(machine, region);
-	UINT8 *src     = memory_region(machine, region) + len / 2 - 1;
-	UINT8 *dst     = memory_region(machine, region) + len - 1;
+	const uint32_t len = memory_region_length(machine, region);
+	uint8_t *src     = memory_region(machine, region) + len / 2 - 1;
+	uint8_t *dst     = memory_region(machine, region) + len - 1;
 
 	while(dst > src)
 	{
-		UINT8 data = *src--;
+		uint8_t data = *src--;
 		if( (data&0xf0) == 0xf0 ) data &= 0x0f;
 		if( (data&0x0f) == 0x0f ) data &= 0xf0;
 		*dst-- = data & 0xF;    *dst-- = data >> 4;
 	}
 }
 
-static void bitswap(running_machine *machine,UINT8 *src,size_t len,int _14,int _13,int _12,int _11,int _10,int _f,int _e,int _d,int _c,int _b,int _a,int _9,int _8,int _7,int _6,int _5,int _4,int _3,int _2,int _1,int _0)
+static void bitswap(running_machine *machine,uint8_t *src,size_t len,int _14,int _13,int _12,int _11,int _10,int _f,int _e,int _d,int _c,int _b,int _a,int _9,int _8,int _7,int _6,int _5,int _4,int _3,int _2,int _1,int _0)
 {
-	UINT8 *buffer = auto_alloc_array(machine, UINT8, len);
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t, len);
 	int i;
 
 	memcpy(buffer,src,len);
@@ -1265,8 +1265,8 @@ static void bitswap(running_machine *machine,UINT8 *src,size_t len,int _14,int _
 static DRIVER_INIT( wecleman )
 {
 	int i, len;
-	UINT8 *RAM;
-//  UINT16 *RAM1 = (UINT16 *) memory_region(machine, "maincpu");   /* Main CPU patches */
+	uint8_t *RAM;
+//  uint16_t *RAM1 = (uint16_t *) memory_region(machine, "maincpu");   /* Main CPU patches */
 //  RAM1[0x08c2/2] = 0x601e;    // faster self test
 
 	/* Decode GFX Roms - Compensate for the address lines scrambling */
@@ -1359,20 +1359,20 @@ ROM_END
 
 static void hotchase_sprite_decode( running_machine *machine, int num16_banks, int bank_size )
 {
-	UINT8 *base, *temp;
+	uint8_t *base, *temp;
 	int i;
 
 	base = memory_region(machine, "gfx1");	// sprites
-	temp = auto_alloc_array(machine, UINT8,  bank_size );
+	temp = auto_alloc_array(machine, uint8_t,  bank_size );
 
 	for( i = num16_banks; i >0; i-- ){
-		UINT8 *finish   = base + 2*bank_size*i;
-		UINT8 *dest     = finish - 2*bank_size;
+		uint8_t *finish   = base + 2*bank_size*i;
+		uint8_t *dest     = finish - 2*bank_size;
 
-		UINT8 *p1 = temp;
-		UINT8 *p2 = temp+bank_size/2;
+		uint8_t *p1 = temp;
+		uint8_t *p2 = temp+bank_size/2;
 
-		UINT8 data;
+		uint8_t data;
 
 		memcpy (temp, base+bank_size*(i-1), bank_size);
 
@@ -1407,10 +1407,10 @@ static void hotchase_sprite_decode( running_machine *machine, int num16_banks, i
 /* Unpack sprites data and do some patching */
 static DRIVER_INIT( hotchase )
 {
-//  UINT16 *RAM1 = (UINT16) memory_region(machine, "maincpu"); /* Main CPU patches */
+//  uint16_t *RAM1 = (uint16_t) memory_region(machine, "maincpu"); /* Main CPU patches */
 //  RAM[0x1140/2] = 0x0015; RAM[0x195c/2] = 0x601A; // faster self test
 
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	/* Decode GFX Roms */
 

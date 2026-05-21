@@ -49,12 +49,12 @@ TS 2006.12.22:
 #include "sound/msm5205.h"
 
 
-extern UINT16 *splash_vregs;
-extern UINT16 *splash_videoram;
-extern UINT16 *splash_spriteram;
-extern UINT16 *splash_pixelram;
-extern UINT16 *roldfrog_bitmap_mode;
-static UINT16 *roldfrog_protdata;
+extern uint16_t *splash_vregs;
+extern uint16_t *splash_videoram;
+extern uint16_t *splash_spriteram;
+extern uint16_t *splash_pixelram;
+extern uint16_t *roldfrog_bitmap_mode;
+static uint16_t *roldfrog_protdata;
 static int adpcm_data;
 static int ret;
 
@@ -867,7 +867,7 @@ static DRIVER_INIT( roldfrog )
 
 static DRIVER_INIT( rebus )
 {
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 	splash_bitmap_type = 1;
 	splash_sprite_attr2_shift = 0;
 
@@ -895,7 +895,7 @@ static DRIVER_INIT( rebus )
 
 static DRIVER_INIT( funystrp )
 {
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	splash_bitmap_type = 0;
 	splash_sprite_attr2_shift = 0;

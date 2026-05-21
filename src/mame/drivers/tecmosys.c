@@ -190,22 +190,22 @@ ae500w07.ad1 - M6295 Samples (23c4001)
 #include "sound/262intf.h"
 #include "sound/ymz280b.h"
 
-static UINT16* tecmosys_spriteram;
-static UINT16* tilemap_paletteram16;
-static UINT16* bg2tilemap_ram;
-static UINT16* bg1tilemap_ram;
-static UINT16* bg0tilemap_ram;
-static UINT16* fgtilemap_ram;
-static UINT16* bg0tilemap_lineram;
-static UINT16* bg1tilemap_lineram;
-static UINT16* bg2tilemap_lineram;
+static uint16_t* tecmosys_spriteram;
+static uint16_t* tilemap_paletteram16;
+static uint16_t* bg2tilemap_ram;
+static uint16_t* bg1tilemap_ram;
+static uint16_t* bg0tilemap_ram;
+static uint16_t* fgtilemap_ram;
+static uint16_t* bg0tilemap_lineram;
+static uint16_t* bg1tilemap_lineram;
+static uint16_t* bg2tilemap_lineram;
 
-static UINT16* tecmosys_a80000regs;
-static UINT16* tecmosys_b00000regs;
+static uint16_t* tecmosys_a80000regs;
+static uint16_t* tecmosys_b00000regs;
 
-static UINT16* tecmosys_c00000regs;
-static UINT16* tecmosys_c80000regs;
-static UINT16* tecmosys_880000regs;
+static uint16_t* tecmosys_c00000regs;
+static uint16_t* tecmosys_c80000regs;
+static uint16_t* tecmosys_880000regs;
 static int tecmosys_spritelist;
 
 static bitmap_t *sprite_bitmap;
@@ -341,7 +341,7 @@ static WRITE16_HANDLER( unk880000_w )
 
 static READ16_HANDLER( unk880000_r )
 {
-	//UINT16 ret = tecmosys_880000regs[offset];
+	//uint16_t ret = tecmosys_880000regs[offset];
 
 	logerror( "unk880000_r( %06x ) @ %06x = %04x\n", (offset * 2 ) +0x880000, cpu_get_pc(space->cpu), tecmosys_880000regs[offset] );
 
@@ -376,7 +376,7 @@ static WRITE16_DEVICE_HANDLER( eeprom_w )
 }
 
 
-INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> rshift), pal5bit(data >> gshift), pal5bit(data >> bshift));
 }
@@ -529,9 +529,9 @@ static WRITE8_HANDLER( deroon_bankswitch_w )
 
 static WRITE8_HANDLER( tecmosys_oki_bank_w )
 {
-	UINT8 upperbank = (data & 0x30) >> 4;
-	UINT8 lowerbank = (data & 0x03) >> 0;
-	UINT8* region = memory_region(space->machine, "oki");
+	uint8_t upperbank = (data & 0x30) >> 4;
+	uint8_t lowerbank = (data & 0x03) >> 0;
+	uint8_t* region = memory_region(space->machine, "oki");
 
 	memcpy( region+0x00000, region+0x80000 + lowerbank * 0x20000, 0x20000  );
 	memcpy( region+0x20000, region+0x80000 + upperbank * 0x20000, 0x20000  );
@@ -581,9 +581,9 @@ static VIDEO_START(deroon)
 
 }
 
-static void tecmosys_render_sprites_to_bitmap(running_machine *machine, bitmap_t *bitmap, UINT16 extrax, UINT16 extray )
+static void tecmosys_render_sprites_to_bitmap(running_machine *machine, bitmap_t *bitmap, uint16_t extrax, uint16_t extray )
 {
-	UINT8 *gfxsrc    = memory_region       ( machine, "gfx1" );
+	uint8_t *gfxsrc    = memory_region       ( machine, "gfx1" );
 	int i;
 
 	/* render sprites (with priority information) to temp bitmap */
@@ -593,7 +593,7 @@ static void tecmosys_render_sprites_to_bitmap(running_machine *machine, bitmap_t
 	{
 		int xcnt,ycnt;
 		int drawx, drawy;
-		UINT16* dstptr;
+		uint16_t* dstptr;
 
 		int x, y;
 		int address;
@@ -658,7 +658,7 @@ static void tecmosys_render_sprites_to_bitmap(running_machine *machine, bitmap_t
 
 				if ((drawx>=0 && drawx<320) && (drawy>=0 && drawy<240))
 				{
-					UINT8 data;
+					uint8_t data;
 
 					dstptr = BITMAP_ADDR16(sprite_bitmap, drawy, drawx);
 
@@ -679,11 +679,11 @@ static void tecmosys_render_sprites_to_bitmap(running_machine *machine, bitmap_t
 	}
 }
 
-static void tecmosys_tilemap_copy_to_compose(UINT16 pri)
+static void tecmosys_tilemap_copy_to_compose(uint16_t pri)
 {
 	int y,x;
-	UINT16 *srcptr;
-	UINT16 *dstptr;
+	uint16_t *srcptr;
+	uint16_t *dstptr;
 	for (y=0;y<240;y++)
 	{
 		srcptr = BITMAP_ADDR16(tmp_tilemap_renderbitmap, y, 0);
@@ -700,9 +700,9 @@ static void tecmosys_do_final_mix(running_machine *machine, bitmap_t* bitmap)
 {
 	const pen_t *paldata = machine->pens;
 	int y,x;
-	UINT16 *srcptr;
-	UINT16 *srcptr2;
-	UINT32 *dstptr;
+	uint16_t *srcptr;
+	uint16_t *srcptr2;
+	uint32_t *dstptr;
 
 
 	for (y=0;y<240;y++)
@@ -715,11 +715,11 @@ static void tecmosys_do_final_mix(running_machine *machine, bitmap_t* bitmap)
 		dstptr = BITMAP_ADDR32(bitmap, y, 0);
 		for (x=0;x<320;x++)
 		{
-			UINT16 pri, pri2;
-			UINT16 penvalue;
-			UINT16 penvalue2;
-			UINT32 colour;
-			UINT32 colour2;
+			uint16_t pri, pri2;
+			uint16_t penvalue;
+			uint16_t penvalue2;
+			uint32_t colour;
+			uint32_t colour2;
 
 			pri = srcptr[x] & 0xc000;
 			pri2 = srcptr2[x] & 0xc000;
@@ -1056,13 +1056,13 @@ ROM_END
 
 static void tecmosys_decramble(running_machine *machine)
 {
-	UINT8 *gfxsrc    = memory_region       ( machine, "gfx1" );
+	uint8_t *gfxsrc    = memory_region       ( machine, "gfx1" );
 	size_t  srcsize = memory_region_length( machine, "gfx1" );
 	int i;
 
 	for (i=0; i < srcsize; i+=4)
 	{
-		UINT8 tmp[4];
+		uint8_t tmp[4];
 
 		tmp[2] = ((gfxsrc[i+0]&0xf0)>>0) | ((gfxsrc[i+1]&0xf0)>>4); //  0,1,2,3  8,9,10, 11
 		tmp[3] = ((gfxsrc[i+0]&0x0f)<<4) | ((gfxsrc[i+1]&0x0f)<<0); // 4,5,6,7, 12,13,14,15

@@ -57,8 +57,8 @@
  *
  *************************************/
 
-static UINT16 *workram;
-static UINT16 has_guns;
+static uint16_t *workram;
+static uint16_t has_guns;
 
 
 /*************************************
@@ -136,7 +136,7 @@ static const segaic16_memory_map_entry *const region_info_list[] =
  *
  *************************************/
 
-static void sound_w(running_machine *machine, UINT8 data)
+static void sound_w(running_machine *machine, uint8_t data)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
@@ -145,7 +145,7 @@ static void sound_w(running_machine *machine, UINT8 data)
 	cpu_set_input_line(state->soundcpu, INPUT_LINE_NMI, PULSE_LINE);
 }
 
-static UINT8 sound_r(running_machine *machine)
+static uint8_t sound_r(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	return state->mcu_data;
@@ -159,11 +159,11 @@ static void system18_generic_init(running_machine *machine, int _rom_board)
 	state->rom_board = _rom_board;
 
 	/* allocate memory for regions not autmatically assigned */
-	segaic16_spriteram_0 = auto_alloc_array(machine, UINT16, 0x00800/2);
-	segaic16_paletteram  = auto_alloc_array(machine, UINT16, 0x04000/2);
-	segaic16_tileram_0   = auto_alloc_array(machine, UINT16, 0x10000/2);
-	segaic16_textram_0   = auto_alloc_array(machine, UINT16, 0x01000/2);
-	workram              = auto_alloc_array(machine, UINT16, 0x04000/2);
+	segaic16_spriteram_0 = auto_alloc_array(machine, uint16_t, 0x00800/2);
+	segaic16_paletteram  = auto_alloc_array(machine, uint16_t, 0x04000/2);
+	segaic16_tileram_0   = auto_alloc_array(machine, uint16_t, 0x10000/2);
+	segaic16_textram_0   = auto_alloc_array(machine, uint16_t, 0x01000/2);
+	workram              = auto_alloc_array(machine, uint16_t, 0x04000/2);
 
 	/* init the memory mapper */
 	segaic16_memory_mapper_init(machine->device("maincpu"), region_info_list[state->rom_board], sound_w, sound_r);
@@ -278,7 +278,7 @@ static READ16_HANDLER( io_chip_r )
 static WRITE16_HANDLER( io_chip_w )
 {
 	segas1x_state *state = (segas1x_state *)space->machine->driver_data;
-	UINT8 old;
+	uint8_t old;
 
 	/* generic implementation */
 	offset &= 0x1f/2;
@@ -469,7 +469,7 @@ static READ16_HANDLER( ddcrew_custom_io_r )
 static READ16_HANDLER( lghost_custom_io_r )
 {
 	segas1x_state *state = (segas1x_state *)space->machine->driver_data;
-	UINT16 result;
+	uint16_t result;
 	switch (offset)
 	{
 		case 0x3010/2:

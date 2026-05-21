@@ -52,7 +52,7 @@ f80b      ????
 
 
 extern int tecmo_video_type;
-extern UINT8 *tecmo_txvideoram,*tecmo_fgvideoram,*tecmo_bgvideoram;
+extern uint8_t *tecmo_txvideoram,*tecmo_fgvideoram,*tecmo_bgvideoram;
 
 WRITE8_HANDLER( tecmo_txvideoram_w );
 WRITE8_HANDLER( tecmo_fgvideoram_w );
@@ -71,7 +71,7 @@ static int adpcm_data;
 static WRITE8_HANDLER( tecmo_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 
 	bankaddress = 0x10000 + ((data & 0xf8) << 8);
@@ -109,7 +109,7 @@ static void tecmo_adpcm_int(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm");
+		uint8_t *ROM = memory_region(device->machine, "adpcm");
 
 		adpcm_data = ROM[adpcm_pos++];
 		msm5205_data_w(device,adpcm_data >> 4);
@@ -119,28 +119,28 @@ static void tecmo_adpcm_int(running_device *device)
 /* the 8-bit dipswitches are split across addresses */
 static READ8_HANDLER( tecmo_dswa_l_r )
 {
-	UINT8 port = input_port_read(space->machine, "DSWA");
+	uint8_t port = input_port_read(space->machine, "DSWA");
 	port &= 0x0f;
 	return port;
 }
 
 static READ8_HANDLER( tecmo_dswa_h_r )
 {
-	UINT8 port = input_port_read(space->machine, "DSWA");
+	uint8_t port = input_port_read(space->machine, "DSWA");
 	port &= 0xf0;
 	return port>>4;
 }
 
 static READ8_HANDLER( tecmo_dswb_l_r )
 {
-	UINT8 port = input_port_read(space->machine, "DSWB");
+	uint8_t port = input_port_read(space->machine, "DSWB");
 	port &= 0x0f;
 	return port;
 }
 
 static READ8_HANDLER( tecmo_dswb_h_r )
 {
-	UINT8 port = input_port_read(space->machine, "DSWB");
+	uint8_t port = input_port_read(space->machine, "DSWB");
 	port &= 0xf0;
 	return port>>4;
 }

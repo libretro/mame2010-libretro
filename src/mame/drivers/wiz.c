@@ -163,11 +163,11 @@ Stephh's notes (based on the games Z80 code and some tests) :
 #include "sound/ay8910.h"
 #include "sound/discrete.h"
 
-extern UINT8 *wiz_videoram2;
-extern UINT8 *wiz_colorram2;
-extern UINT8 *wiz_attributesram;
-extern UINT8 *wiz_attributesram2;
-extern UINT8 *wiz_sprite_bank;
+extern uint8_t *wiz_videoram2;
+extern uint8_t *wiz_colorram2;
+extern uint8_t *wiz_attributesram;
+extern uint8_t *wiz_attributesram2;
+extern uint8_t *wiz_sprite_bank;
 
 WRITE8_HANDLER( wiz_char_bank_select_w );
 WRITE8_HANDLER( wiz_palettebank_w );
@@ -1042,7 +1042,7 @@ ROM_END
 
 static DRIVER_INIT( stinger )
 {
-	static const UINT8 swap_xor_table[4][4] =
+	static const uint8_t swap_xor_table[4][4] =
 	{
 		{ 7,3,5, 0xa0 },
 		{ 3,7,5, 0x88 },
@@ -1050,18 +1050,18 @@ static DRIVER_INIT( stinger )
 		{ 5,7,3, 0x28 }
 	};
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, size);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, size);
 	int A;
-	const UINT8 *tbl;
+	const uint8_t *tbl;
 
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypt);
 
 	for (A = 0x0000;A < 0x10000;A++)
 	{
 		int row;
-		UINT8 src;
+		uint8_t src;
 
 
 		if (A & 0x2040)

@@ -188,8 +188,8 @@ this is the data written to internal ram on startup:
 static void run_collisions( running_machine *machine, int s0, int e0, int s1, int e1, int cm, int hm )
 {
 	thunderx_state *state = (thunderx_state *)machine->driver_data;
-	UINT8* p0;
-	UINT8* p1;
+	uint8_t* p0;
+	uint8_t* p1;
 	int ii, jj;
 
 	p0 = &state->pmcram[16 + 5 * s0];
@@ -322,7 +322,7 @@ static WRITE8_HANDLER( thunderx_1f98_w )
 static WRITE8_HANDLER( scontra_bankswitch_w )
 {
 	thunderx_state *state = (thunderx_state *)space->machine->driver_data;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int offs;
 
 //logerror("%04x: bank switch %02x\n",cpu_get_pc(space->cpu),data);
@@ -629,7 +629,7 @@ static MACHINE_START( scontra )
 {
 	thunderx_state *state = (thunderx_state *)machine->driver_data;
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x800);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");
@@ -648,13 +648,13 @@ static MACHINE_START( scontra )
 static MACHINE_START( thunderx )
 {
 	thunderx_state *state = (thunderx_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 12, &ROM[0x10000], 0x2000);
 	memory_configure_bank(machine, "bank1", 12, 4, &ROM[0x08000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
-	state->pmcram = auto_alloc_array_clear(machine, UINT8, 0x800);
+	state->pmcram = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	MACHINE_START_CALL(scontra);
 

@@ -24,11 +24,11 @@ public:
 
 	skeetsht_state(running_machine &machine) { }
 
-	UINT16 *tms_vram;
-	UINT8 porta_latch;
-	UINT8 ay_sel;
-	UINT8 lastdataw;
-	UINT16 lastdatar;
+	uint16_t *tms_vram;
+	uint8_t porta_latch;
+	uint8_t ay_sel;
+	uint8_t lastdataw;
+	uint16_t lastdatar;
 	running_device *ay;
 	running_device *tms;
 };
@@ -66,14 +66,14 @@ static void skeetsht_scanline_update(screen_device &screen, bitmap_t *bitmap, in
 {
 	skeetsht_state *state = (skeetsht_state *)screen.machine->driver_data;
 	const rgb_t *const pens = tlc34076_get_pens();
-	UINT16 *vram = &state->tms_vram[(params->rowaddr << 8) & 0x3ff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *vram = &state->tms_vram[(params->rowaddr << 8) & 0x3ff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	int coladdr = params->coladdr;
 	int x;
 
 	for (x = params->heblnk; x < params->hsblnk; x += 2)
 	{
-		UINT16 pixels = vram[coladdr++ & 0xff];
+		uint16_t pixels = vram[coladdr++ & 0xff];
 		dest[x + 0] = pens[pixels & 0xff];
 		dest[x + 1] = pens[pixels >> 8];
 	}

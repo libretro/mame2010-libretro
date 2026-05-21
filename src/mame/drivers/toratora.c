@@ -31,13 +31,13 @@ public:
 	toratora_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
+	uint8_t *    videoram;
 	size_t     videoram_size;
 
 	/* video-related */
 	int        timer;
-	UINT8      last;
-	UINT8      clear_tv;
+	uint8_t      last;
+	uint8_t      clear_tv;
 
 	/* devices */
 	running_device *maincpu;
@@ -75,9 +75,9 @@ static VIDEO_UPDATE( toratora )
 	{
 		int i;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
-		UINT8 data = state->videoram[offs];
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
+		uint8_t data = state->videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{

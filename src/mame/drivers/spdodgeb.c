@@ -28,7 +28,7 @@ Notes:
 #include "sound/3812intf.h"
 #include "sound/msm5205.h"
 
-extern UINT8 *spdodgeb_videoram;
+extern uint8_t *spdodgeb_videoram;
 
 PALETTE_INIT( spdodgeb );
 VIDEO_START( spdodgeb );
@@ -46,9 +46,9 @@ static int adpcm_data[2];
 static int mcu63701_command;
 static int inputs[4];
 
-static UINT8 tapc[4] = {0,0,0,0};	// R1, R2, L1, L2
-static UINT8 last_port[2] = {0,0};
-static UINT8 last_dash[2] = {0,0};
+static uint8_t tapc[4] = {0,0,0,0};	// R1, R2, L1, L2
+static uint8_t last_port[2] = {0,0};
+static uint8_t last_dash[2] = {0,0};
 /* end of private globals */
 
 
@@ -100,7 +100,7 @@ static void spd_adpcm_int(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm") + 0x10000 * chip;
+		uint8_t *ROM = memory_region(device->machine, "adpcm") + 0x10000 * chip;
 
 		adpcm_data[chip] = ROM[adpcm_pos[chip]++];
 		msm5205_data_w(device,adpcm_data[chip] >> 4);
@@ -183,8 +183,8 @@ static void mcu63705_update_inputs(running_machine *machine)
 #define A 0x10
 #define D 0x20
 
-	UINT8 curr_port[2];
-	UINT8 curr_dash[2];
+	uint8_t curr_port[2];
+	uint8_t curr_dash[2];
 	int p;
 
 	for (p=0; p<=1; p++)

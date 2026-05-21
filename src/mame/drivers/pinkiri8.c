@@ -35,13 +35,13 @@ Dumped by Chackn
 #include "sound/okim6295.h"
 #include "video/generic.h"
 
-static UINT8* janshi_vram1;
-static UINT8* janshi_vram2;
-static UINT8* janshi_back_vram;
-static UINT8* janshi_crtc_regs;
-static UINT8* janshi_unk1;
-static UINT8* janshi_widthflags;
-static UINT8* janshi_unk2;
+static uint8_t* janshi_vram1;
+static uint8_t* janshi_vram2;
+static uint8_t* janshi_back_vram;
+static uint8_t* janshi_crtc_regs;
+static uint8_t* janshi_unk1;
+static uint8_t* janshi_widthflags;
+static uint8_t* janshi_unk2;
 
 static ADDRESS_MAP_START( janshi_vdp_map8, 0, 8 )
 
@@ -68,9 +68,9 @@ class janshi_vdp_device_config : public device_config,
 								 public device_config_memory_interface
 {
 	friend class janshi_vdp_device;
-	janshi_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	janshi_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 public:
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 protected:
 	virtual void device_config_complete();
@@ -93,14 +93,14 @@ protected:
 
 const device_type JANSHIVDP = janshi_vdp_device_config::static_alloc_device_config;
 
-janshi_vdp_device_config::janshi_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+janshi_vdp_device_config::janshi_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "JANSHIVDP", tag, owner, clock),
 	  device_config_memory_interface(mconfig, *this),
 	  m_space_config("janshi_vdp", ENDIANNESS_LITTLE, 8,24, 0, NULL, *ADDRESS_MAP_NAME(janshi_vdp_map8))
 {
 }
 
-device_config *janshi_vdp_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *janshi_vdp_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(janshi_vdp_device_config(mconfig, tag, owner, clock));
 }
@@ -149,7 +149,7 @@ void janshi_vdp_device::device_reset()
 
 
 
-static UINT32 vram_addr;
+static uint32_t vram_addr;
 
 static VIDEO_START( pinkiri8 )
 {
@@ -443,7 +443,7 @@ static WRITE8_HANDLER( pinkiri8_vram_w )
 	}
 }
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 static WRITE8_HANDLER( mux_w )
 {
@@ -1188,7 +1188,7 @@ ROM_START( ronjan )
 	ROM_LOAD( "eagle.6", 0x00000, 0x40000, CRC(8197034d) SHA1(b501dc7a27b1faad1361c309afd726da14b8b5f5) )
 ROM_END
 
-static UINT8 prot_read_index;
+static uint8_t prot_read_index;
 
 static READ8_HANDLER( ronjan_prot_r )
 {
@@ -1204,7 +1204,7 @@ static READ8_HANDLER( ronjan_prot_r )
 
 static WRITE8_HANDLER( ronjan_prot_w )
 {
-	static UINT8 prot_char[6],prot_index;
+	static uint8_t prot_char[6],prot_index;
 
 	if(data == 0)
 	{

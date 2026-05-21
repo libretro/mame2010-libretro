@@ -207,7 +207,7 @@ ADDRESS_MAP_END
 static READ16_HANDLER( passht4b_service_r )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT16 val = input_port_read(space->machine, "SERVICE");
+	uint16_t val = input_port_read(space->machine, "SERVICE");
 
 	if(!(input_port_read(space->machine, "P1") & 0x40)) val &= 0xef;
 	if(!(input_port_read(space->machine, "P2") & 0x40)) val &= 0xdf;
@@ -400,7 +400,7 @@ static READ8_HANDLER( tturfbl_soundbank_r )
 static WRITE8_HANDLER( tturfbl_soundbank_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT8 *mem = memory_region(space->machine, "soundcpu");
+	uint8_t *mem = memory_region(space->machine, "soundcpu");
 
 	switch(data)
 	{
@@ -658,7 +658,7 @@ ADDRESS_MAP_END
 static void datsu_set_pages( running_machine *machine )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	UINT16 page;
+	uint16_t page;
 
 	page = ((state->datsu_page[0] & 0x00f0) >>0) |
 		   ((state->datsu_page[1] & 0x00f0) >>4) |
@@ -803,7 +803,7 @@ static WRITE16_HANDLER( goldnaxeb2_bgscrolly_w )
 static WRITE16_HANDLER( goldnaxeb2_fgpage_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT16 page;
+	uint16_t page;
 
 	COMBINE_DATA(&state->goldnaxeb2_fgpage[offset]);
 
@@ -819,7 +819,7 @@ static WRITE16_HANDLER( goldnaxeb2_fgpage_w )
 static WRITE16_HANDLER( goldnaxeb2_bgpage_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT16 page;
+	uint16_t page;
 
 	COMBINE_DATA(&state->goldnaxeb2_bgpage[offset]);
 
@@ -1070,7 +1070,7 @@ ADDRESS_MAP_END
 static WRITE8_HANDLER( sys18_soundbank_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT8 *mem = memory_region(space->machine, "soundcpu");
+	uint8_t *mem = memory_region(space->machine, "soundcpu");
 	int rom = (data >> 6) & 3;
 	int bank = (data & 0x3f);
 	int mask = state->sound_info[rom * 2 + 0];
@@ -1238,7 +1238,7 @@ static READ8_HANDLER( shdancbl_soundbank_r )
 static WRITE8_HANDLER( shdancbl_bankctrl_w )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)space->machine->driver_data;
-	UINT8 *mem = memory_region(space->machine, "soundcpu");
+	uint8_t *mem = memory_region(space->machine, "soundcpu");
 
 	switch (data)
 	{
@@ -3353,10 +3353,10 @@ static DRIVER_INIT( goldnaxeb1 )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
-	UINT8 *KEY = memory_region(machine, "decryption");
+	uint8_t *ROM = memory_region(machine, "maincpu");
+	uint8_t *KEY = memory_region(machine, "decryption");
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 data[0x1000];
+	uint8_t data[0x1000];
 
 	// the decryption key is in a rom (part of an MSDOS executable...)
 	for (i = 0; i < 0x800; i++)
@@ -3366,7 +3366,7 @@ static DRIVER_INIT( goldnaxeb1 )
 		data[(i * 2) + 1] = ((KEY[i] & 0x08) << 3) | ((KEY[i] & 0x04) << 2) | ((KEY[i] & 0x02) << 1) | ((KEY[i] & 0x01) << 0);
 	}
 
-	state->decrypted_region = auto_alloc_array(machine, UINT8, 0xc0000);
+	state->decrypted_region = auto_alloc_array(machine, uint8_t, 0xc0000);
 	memcpy(state->decrypted_region, ROM, 0xc0000);
 
 	for (i = 0; i < 0x40000; i++)
@@ -3391,14 +3391,14 @@ static DRIVER_INIT( bayrouteb1 )
 	// for now we use the code which is present in the unprotected bootleg set
 	// and modify the rom to use it
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	UINT16 *ROM2;
-	UINT16 *decrypted_region2;
+	uint16_t *ROM2;
+	uint16_t *decrypted_region2;
 
 	// decrypt
 	DRIVER_INIT_CALL( goldnaxeb1 );
 
-	ROM2 = (UINT16*)memory_region(machine, "maincpu");
-	decrypted_region2 = (UINT16*)state->decrypted_region;
+	ROM2 = (uint16_t*)memory_region(machine, "maincpu");
+	decrypted_region2 = (uint16_t*)state->decrypted_region;
 
 	// patch interrupt vector
 	ROM2[0x0070/2] = 0x000b;
@@ -3412,7 +3412,7 @@ static DRIVER_INIT( bayrouteb1 )
 
 static DRIVER_INIT( bayrouteb2 )
 {
-	UINT8 *mem = memory_region(machine, "soundcpu");
+	uint8_t *mem = memory_region(machine, "soundcpu");
 
 	memcpy(mem, mem + 0x10000, 0x8000);
 
@@ -3430,7 +3430,7 @@ static DRIVER_INIT( goldnaxeb2 )
 
 static DRIVER_INIT( tturfbl )
 {
-	UINT8 *mem = memory_region(machine, "soundcpu");
+	uint8_t *mem = memory_region(machine, "soundcpu");
 
 	memcpy(mem, mem + 0x10000, 0x8000);
 
@@ -3466,7 +3466,7 @@ static DRIVER_INIT( fpointbl )
 /* Tetris-based */
 static DRIVER_INIT( beautyb )
 {
-	UINT16*rom = (UINT16*)memory_region( machine, "maincpu" );
+	uint16_t*rom = (uint16_t*)memory_region( machine, "maincpu" );
 	int x;
 
 	for (x = 0; x < 0x8000; x++)
@@ -3485,7 +3485,7 @@ static DRIVER_INIT( beautyb )
 static DRIVER_INIT( shdancbl )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	UINT8 *mem = memory_region(machine, "soundcpu");;
+	uint8_t *mem = memory_region(machine, "soundcpu");;
 
 	/* Copy first 32K of IC45 to Z80 address space */
 	memcpy(mem, mem + 0x10000, 0x8000);
@@ -3500,7 +3500,7 @@ static DRIVER_INIT( shdancbl )
 static DRIVER_INIT( mwalkbl )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	UINT8 *RAM =  memory_region(machine, "soundcpu");
+	uint8_t *RAM =  memory_region(machine, "soundcpu");
 	static const int mwalk_sound_info[]  =
 	{
 		0x0f, 0x00000, // ROM #1 = 128K
@@ -3522,7 +3522,7 @@ static DRIVER_INIT( mwalkbl )
 static DRIVER_INIT( astormbl )
 {
 	segas1x_bootleg_state *state = (segas1x_bootleg_state *)machine->driver_data;
-	UINT8 *RAM =  memory_region(machine, "soundcpu");
+	uint8_t *RAM =  memory_region(machine, "soundcpu");
 	static const int astormbl_sound_info[]  =
 	{
 		0x0f, 0x00000, // ROM #1 = 128K

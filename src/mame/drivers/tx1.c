@@ -57,11 +57,11 @@
  *
  *************************************/
 
-UINT16 *tx1_math_ram;
-static UINT8  *z80_ram;
-static UINT8  tx1_ppi_latch_a;
-static UINT8  tx1_ppi_latch_b;
-static UINT32 ts;
+uint16_t *tx1_math_ram;
+static uint8_t  *z80_ram;
+static uint8_t  tx1_ppi_latch_a;
+static uint8_t  tx1_ppi_latch_b;
+static uint32_t ts;
 
 
 /*************************************
@@ -444,7 +444,7 @@ static READ8_DEVICE_HANDLER( tx1_ppi_portb_r )
 }
 
 
-static UINT8 bit_reverse8(UINT8 val)
+static uint8_t bit_reverse8(uint8_t val)
 {
 	val = ((val & 0xF0) >>  4) | ((val & 0x0F) <<  4);
 	val = ((val & 0xCC) >>  2) | ((val & 0x33) <<  2);

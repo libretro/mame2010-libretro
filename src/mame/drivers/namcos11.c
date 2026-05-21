@@ -291,8 +291,8 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine *machine, int n_level, 
 	}
 }
 
-static UINT32 *namcos11_sharedram;
-static UINT32 *namcos11_keycus;
+static uint32_t *namcos11_sharedram;
+static uint32_t *namcos11_keycus;
 static size_t namcos11_keycus_size;
 
 static WRITE32_HANDLER( keycus_w )
@@ -305,7 +305,7 @@ static WRITE32_HANDLER( keycus_w )
 static READ32_HANDLER( keycus_c406_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 	switch( offset )
@@ -326,7 +326,7 @@ static READ32_HANDLER( keycus_c406_r )
 static READ32_HANDLER( keycus_c409_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 	switch( offset )
@@ -342,8 +342,8 @@ static READ32_HANDLER( keycus_c409_r )
 /* dunk mania */
 static READ32_HANDLER( keycus_c410_r )
 {
-	UINT32 data;
-	UINT32 n_value;
+	uint32_t data;
+	uint32_t n_value;
 
 	if( ( namcos11_keycus[ 0 ] & 0x0000ffff ) != 0xfffe )
 	{
@@ -376,8 +376,8 @@ static READ32_HANDLER( keycus_c410_r )
 /* prime goal ex */
 static READ32_HANDLER( keycus_c411_r )
 {
-	UINT32 data;
-	UINT32 n_value;
+	uint32_t data;
+	uint32_t n_value;
 
 	data = namcos11_keycus[ offset ];
 	if( ( namcos11_keycus[ 1 ] & 0x0000ffff ) == 0x00007256 )
@@ -409,8 +409,8 @@ static READ32_HANDLER( keycus_c411_r )
 /* xevious 3d/g */
 static READ32_HANDLER( keycus_c430_r )
 {
-	UINT32 data;
-	UINT16 n_value;
+	uint32_t data;
+	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 2 ] & 0x0000ffff ) == 0x0000e296 )
 	{
@@ -443,8 +443,8 @@ static READ32_HANDLER( keycus_c430_r )
 /* dancing eyes */
 static READ32_HANDLER( keycus_c431_r )
 {
-	UINT32 data;
-	UINT16 n_value;
+	uint32_t data;
+	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 0 ] & 0x0000ffff ) == 0x00009e61 )
 	{
@@ -475,8 +475,8 @@ static READ32_HANDLER( keycus_c431_r )
 /* pocket racer */
 static READ32_HANDLER( keycus_c432_r )
 {
-	UINT32 data;
-	UINT16 n_value;
+	uint32_t data;
+	uint16_t n_value;
 
 	if( ( namcos11_keycus[ 3 ] & 0x0000ffff ) == 0x00002f15 )
 	{
@@ -509,7 +509,7 @@ static READ32_HANDLER( keycus_c432_r )
 static READ32_HANDLER( keycus_c442_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 
@@ -530,7 +530,7 @@ static READ32_HANDLER( keycus_c442_r )
 static READ32_HANDLER( keycus_c443_r )
 {
 	/* todo: verify behaviour */
-	UINT32 data;
+	uint32_t data;
 
 	data = namcos11_keycus[ offset ];
 
@@ -576,7 +576,7 @@ static INTERRUPT_GEN( namcos11_vblank )
 	psx_vblank(device);
 }
 
-static UINT32 m_n_bankoffset;
+static uint32_t m_n_bankoffset;
 
 INLINE void bankswitch_rom8( const address_space *space, const char *bank, int n_data )
 {
@@ -652,7 +652,7 @@ static WRITE32_HANDLER( lightgun_w )
 
 static READ32_HANDLER( lightgun_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 	switch( offset )
 	{
 	case 0:
@@ -705,19 +705,19 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( c76_shared_r )
 {
-	UINT16 *share16 = (UINT16 *)namcos11_sharedram;
+	uint16_t *share16 = (uint16_t *)namcos11_sharedram;
 
 	return share16[offset];
 }
 
 static WRITE16_HANDLER( c76_shared_w )
 {
-	UINT16 *share16 = (UINT16 *)namcos11_sharedram;
+	uint16_t *share16 = (uint16_t *)namcos11_sharedram;
 
 	COMBINE_DATA(&share16[offset]);
 }
 
-static UINT8 su_83;
+static uint8_t su_83;
 
 static READ16_HANDLER( c76_speedup_r )
 {
@@ -906,8 +906,8 @@ static DRIVER_INIT( namcos11 )
 			if( namcos11_config_table[ n_game ].n_daughterboard != 0 )
 			{
 				int bank;
-				UINT32 len = memory_region_length( machine, "user2" );
-				UINT8 *rgn = memory_region( machine, "user2" );
+				uint32_t len = memory_region_length( machine, "user2" );
+				uint8_t *rgn = memory_region( machine, "user2" );
 
 				memory_install_read_bank(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x1f000000, 0x1f0fffff, 0, 0, "bank1" );
 				memory_install_read_bank(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x1f100000, 0x1f1fffff, 0, 0, "bank2" );

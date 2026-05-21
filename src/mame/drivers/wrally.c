@@ -100,7 +100,7 @@ produces a high clock frequency, slow movements a low freq.
 #include "sound/okim6295.h"
 #include "includes/wrally.h"
 
-static UINT16 *wrally_shareram;
+static uint16_t *wrally_shareram;
 
 static ADDRESS_MAP_START( wrally_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x000000, 0x0fffff) AM_ROM															/* ROM */
@@ -125,14 +125,14 @@ ADDRESS_MAP_END
 
 static READ8_HANDLER( dallas_share_r )
 {
-	UINT8 *shareram = (UINT8 *)wrally_shareram;
+	uint8_t *shareram = (uint8_t *)wrally_shareram;
 
 	return shareram[BYTE_XOR_LE(offset) ^ 1];
 }
 
 static WRITE8_HANDLER( dallas_share_w )
 {
-	UINT8 *shareram = (UINT8 *)wrally_shareram;
+	uint8_t *shareram = (uint8_t *)wrally_shareram;
 
 	shareram[BYTE_XOR_LE(offset) ^ 1] = data;
 }

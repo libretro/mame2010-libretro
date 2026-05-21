@@ -32,19 +32,19 @@ public:
 	suprgolf_state(running_machine &machine) { }
 
 	tilemap_t *tilemap;
-	UINT8 *videoram;
-	UINT8 *paletteram;
-	UINT8 *bg_vram;
-	UINT16 *bg_fb;
-	UINT16 *fg_fb;
+	uint8_t *videoram;
+	uint8_t *paletteram;
+	uint8_t *bg_vram;
+	uint16_t *bg_fb;
+	uint16_t *fg_fb;
 	int rom_bank;
-	UINT8 bg_bank;
-	UINT8 vreg_bank;
-	UINT8 msm5205next;
-	UINT8 msm_nmi_mask;
-	UINT8 vreg_pen;
-	UINT8 palette_switch;
-	UINT8 bg_vreg_test;
+	uint8_t bg_bank;
+	uint8_t vreg_bank;
+	uint8_t msm5205next;
+	uint8_t msm_nmi_mask;
+	uint8_t vreg_pen;
+	uint8_t palette_switch;
+	uint8_t bg_vreg_test;
 	int toggle;
 };
 
@@ -66,10 +66,10 @@ static VIDEO_START( suprgolf )
 	suprgolf_state *state = (suprgolf_state *)machine->driver_data;
 
 	state->tilemap = tilemap_create( machine, get_tile_info,tilemap_scan_rows,8,8,32,32 );
-	state->paletteram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->bg_vram = auto_alloc_array(machine, UINT8, 0x2000*0x20);
-	state->bg_fb = auto_alloc_array(machine, UINT16, 0x2000*0x20);
-	state->fg_fb = auto_alloc_array(machine, UINT16, 0x2000*0x20);
+	state->paletteram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->bg_vram = auto_alloc_array(machine, uint8_t, 0x2000*0x20);
+	state->bg_fb = auto_alloc_array(machine, uint16_t, 0x2000*0x20);
+	state->fg_fb = auto_alloc_array(machine, uint16_t, 0x2000*0x20);
 
 	tilemap_set_transparent_pen(state->tilemap,15);
 }
@@ -185,8 +185,8 @@ static READ8_HANDLER( suprgolf_bg_vram_r )
 static WRITE8_HANDLER( suprgolf_bg_vram_w )
 {
 	suprgolf_state *state = (suprgolf_state *)space->machine->driver_data;
-	UINT8 hi_nibble,lo_nibble;
-	UINT8 hi_dirty_dot,lo_dirty_dot; // helpers
+	uint8_t hi_nibble,lo_nibble;
+	uint8_t hi_dirty_dot,lo_dirty_dot; // helpers
 
 	hi_nibble = data & 0xf0;
 	lo_nibble = data & 0x0f;
@@ -252,7 +252,7 @@ static READ8_HANDLER( rom_bank_select_r )
 static WRITE8_HANDLER( rom_bank_select_w )
 {
 	suprgolf_state *state = (suprgolf_state *)space->machine->driver_data;
-	UINT8 *region_base = memory_region(space->machine, "user1");
+	uint8_t *region_base = memory_region(space->machine, "user1");
 
 	state->rom_bank = data;
 
@@ -267,7 +267,7 @@ static WRITE8_HANDLER( rom_bank_select_w )
 
 static WRITE8_HANDLER( rom2_bank_select_w )
 {
-	UINT8 *region_base = memory_region(space->machine, "user2");
+	uint8_t *region_base = memory_region(space->machine, "user2");
 	mame_printf_debug("ROM_BANK 0x4000 - %X @%X\n",data,cpu_get_previouspc(space->cpu));
 
 	memory_set_bankptr(space->machine, "bank1", region_base + (data&0x0f ) * 0x4000);
@@ -278,7 +278,7 @@ static WRITE8_HANDLER( rom2_bank_select_w )
 
 static READ8_HANDLER( pedal_extra_bits_r )
 {
-	UINT8 p1_sht_sw,p2_sht_sw;
+	uint8_t p1_sht_sw,p2_sht_sw;
 
 	p1_sht_sw = (input_port_read(space->machine, "P1_RELEASE") & 0x80)>>7;
 	p2_sht_sw = (input_port_read(space->machine, "P2_RELEASE") & 0x80)>>6;
@@ -585,7 +585,7 @@ ROM_END
 
 static DRIVER_INIT( suprgolf )
 {
-	UINT8 *ROM = memory_region(machine, "user2");
+	uint8_t *ROM = memory_region(machine, "user2");
 
 	ROM[0x74f4-0x4000] = 0x00;
 	ROM[0x74f5-0x4000] = 0x00;

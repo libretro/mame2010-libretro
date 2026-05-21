@@ -84,10 +84,10 @@ public:
 	pasha2_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     bitmap0;
-	UINT16 *     bitmap1;
-	UINT16 *     paletteram;
-	UINT16 *     wram;
+	uint16_t *     bitmap0;
+	uint16_t *     bitmap1;
+	uint16_t *     paletteram;
+	uint16_t *     wram;
 
 	/* video-related */
 	int vbuffer;
@@ -340,8 +340,8 @@ INPUT_PORTS_END
 static VIDEO_START( pasha2 )
 {
 	pasha2_state *state = (pasha2_state *)machine->driver_data;
-	state->bitmap0 = auto_alloc_array(machine, UINT16, 0x40000/2);
-	state->bitmap1 = auto_alloc_array(machine, UINT16, 0x40000/2);
+	state->bitmap0 = auto_alloc_array(machine, uint16_t, 0x40000/2);
+	state->bitmap1 = auto_alloc_array(machine, uint16_t, 0x40000/2);
 
 	state_save_register_global_pointer(machine, state->bitmap0, 0x40000/2);
 	state_save_register_global_pointer(machine, state->bitmap1, 0x40000/2);

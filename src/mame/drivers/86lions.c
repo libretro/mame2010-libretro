@@ -33,7 +33,7 @@ Changes 02/06/2009 - Palindrome
 #include "sound/ay8910.h"
 #include "machine/6522via.h"
 
-static UINT8 *lions_vram;
+static uint8_t *lions_vram;
 
 static VIDEO_START(lions)
 {

@@ -20,11 +20,11 @@ Might be some priority glitches
 
 static int adpcm_pos[2],adpcm_end[2];
 static int adpcm_data[2];
-static UINT8 *shared_ram;
+static uint8_t *shared_ram;
 
 /* in video/tbowl.c */
-extern UINT8 *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
-extern UINT8 *tbowl_spriteram;
+extern uint8_t *tbowl_txvideoram, *tbowl_bgvideoram, *tbowl_bg2videoram;
+extern uint8_t *tbowl_spriteram;
 
 WRITE8_HANDLER (tbowl_bg2videoram_w);
 WRITE8_HANDLER (tbowl_bgvideoram_w);
@@ -52,7 +52,7 @@ note: check this, its borrowed from tecmo.c / wc90.c at the moment and could wel
 static WRITE8_HANDLER( tbowlb_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 
 	bankaddress = 0x10000 + ((data & 0xf8) << 8);
@@ -62,7 +62,7 @@ static WRITE8_HANDLER( tbowlb_bankswitch_w )
 static WRITE8_HANDLER( tbowlc_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "sub");
+	uint8_t *RAM = memory_region(space->machine, "sub");
 
 
 	bankaddress = 0x10000 + ((data & 0xf8) << 8);
@@ -192,7 +192,7 @@ static void tbowl_adpcm_int(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm") + 0x10000 * num;
+		uint8_t *ROM = memory_region(device->machine, "adpcm") + 0x10000 * num;
 
 		adpcm_data[num] = ROM[adpcm_pos[num]++];
 		msm5205_data_w(device,adpcm_data[num] >> 4);

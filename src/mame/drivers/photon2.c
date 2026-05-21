@@ -19,11 +19,11 @@
  *
  *************************************/
 
-static UINT8 *spectrum_video_ram;
+static uint8_t *spectrum_video_ram;
 static int spectrum_frame_number;    /* Used for handling FLASH 1 */
 static int spectrum_flash_invert;
-static UINT8 spectrum_port_fe;
-static UINT8 nmi_enable = 0;
+static uint8_t spectrum_port_fe;
+static uint8_t nmi_enable = 0;
 
 
 /*************************************
@@ -104,9 +104,9 @@ static VIDEO_EOF( spectrum )
     }
 }
 
-INLINE void spectrum_plot_pixel(bitmap_t *bitmap, int x, int y, UINT32 color)
+INLINE void spectrum_plot_pixel(bitmap_t *bitmap, int x, int y, uint32_t color)
 {
-	*BITMAP_ADDR16(bitmap, y, x) = (UINT16)color;
+	*BITMAP_ADDR16(bitmap, y, x) = (uint16_t)color;
 }
 
 static VIDEO_UPDATE( spectrum )

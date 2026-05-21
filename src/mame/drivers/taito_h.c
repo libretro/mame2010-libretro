@@ -184,7 +184,7 @@ static READ8_HANDLER( syvalion_input_bypass_r )
 	/* Bypass TC0220IOC controller for analog input */
 
 	taitoh_state *state = (taitoh_state *)space->machine->driver_data;
-	UINT8	port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
+	uint8_t	port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
 
 	switch( port )
 	{
@@ -525,7 +525,7 @@ static MACHINE_RESET( taitoh )
 static MACHINE_START( taitoh )
 {
 	taitoh_state *state = (taitoh_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0xc000], 0x4000);
 

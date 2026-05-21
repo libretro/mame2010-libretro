@@ -45,8 +45,8 @@ Other bits from DSW2 (but bit 5) don't seem to be read / tested at all ...
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 
-static UINT8 *poo_vram, *poo_scrolly, *poo_sprites;
-static UINT8 vram_colbank;
+static uint8_t *poo_vram, *poo_scrolly, *poo_sprites;
+static uint8_t vram_colbank;
 
 static VIDEO_START(unclepoo)
 {

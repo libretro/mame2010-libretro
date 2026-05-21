@@ -145,9 +145,9 @@
  *
  *************************************/
 
-extern UINT8 (*sega_decrypt)(offs_t, UINT8);
+extern uint8_t (*sega_decrypt)(offs_t, uint8_t);
 
-static UINT8 *mainram;
+static uint8_t *mainram;
 
 
 
@@ -188,7 +188,7 @@ static offs_t decrypt_offset(const address_space *space, offs_t offset)
 {
 	/* ignore anything but accesses via opcode $32 (LD $(XXYY),A) */
 	offs_t pc = cpu_get_previouspc(space->cpu);
-	if ((UINT16)pc == 0xffff || memory_read_byte(space, pc) != 0x32)
+	if ((uint16_t)pc == 0xffff || memory_read_byte(space, pc) != 0x32)
 		return offset;
 
 	/* fetch the low byte of the address and munge it */
@@ -210,7 +210,7 @@ static WRITE8_HANDLER( usb_ram_w )         { sega_usb_ram_w(space, decrypt_offse
  *
  *************************************/
 
-INLINE UINT8 demangle(UINT8 d7d6, UINT8 d5d4, UINT8 d3d2, UINT8 d1d0)
+INLINE uint8_t demangle(uint8_t d7d6, uint8_t d5d4, uint8_t d3d2, uint8_t d1d0)
 {
 	return ((d7d6 << 7) & 0x80) | ((d7d6 << 2) & 0x40) |
 		   ((d5d4 << 5) & 0x20) | ((d5d4 << 0) & 0x10) |
@@ -226,10 +226,10 @@ static READ8_HANDLER( mangled_ports_r )
 	/* read as two bits from each of 4 ports. For this reason, the input   */
 	/* ports have been organized logically, and are demangled at runtime.  */
 	/* 4 input ports each provide 8 bits of information. */
-	UINT8 d7d6 = input_port_read(space->machine, "D7D6");
-	UINT8 d5d4 = input_port_read(space->machine, "D5D4");
-	UINT8 d3d2 = input_port_read(space->machine, "D3D2");
-	UINT8 d1d0 = input_port_read(space->machine, "D1D0");
+	uint8_t d7d6 = input_port_read(space->machine, "D7D6");
+	uint8_t d5d4 = input_port_read(space->machine, "D5D4");
+	uint8_t d3d2 = input_port_read(space->machine, "D3D2");
+	uint8_t d1d0 = input_port_read(space->machine, "D1D0");
 	int shift = offset & 3;
 	return demangle(d7d6 >> shift, d5d4 >> shift, d3d2 >> shift, d1d0 >> shift);
 }
@@ -241,17 +241,17 @@ static READ8_HANDLER( spaceod_mangled_ports_r )
 	/* versus cocktail cabinets; we fix this here. The input ports are */
 	/* coded for cocktail mode; for upright mode, we manually shuffle the */
 	/* bits around. */
-	UINT8 d7d6 = input_port_read(space->machine, "D7D6");
-	UINT8 d5d4 = input_port_read(space->machine, "D5D4");
-	UINT8 d3d2 = input_port_read(space->machine, "D3D2");
-	UINT8 d1d0 = input_port_read(space->machine, "D1D0");
+	uint8_t d7d6 = input_port_read(space->machine, "D7D6");
+	uint8_t d5d4 = input_port_read(space->machine, "D5D4");
+	uint8_t d3d2 = input_port_read(space->machine, "D3D2");
+	uint8_t d1d0 = input_port_read(space->machine, "D1D0");
 	int shift = offset & 3;
 
 	/* tweak bits for the upright case */
-	UINT8 upright = d3d2 & 0x04;
+	uint8_t upright = d3d2 & 0x04;
 	if (upright)
 	{
-		UINT8 fc = input_port_read(space->machine, "FC");
+		uint8_t fc = input_port_read(space->machine, "FC");
 		d7d6 |= 0x60;
 		d5d4 = (d5d4 & ~0x1c) |
 				((~fc & 0x20) >> 3) | /* IPT_BUTTON2 */
@@ -265,8 +265,8 @@ static READ8_HANDLER( spaceod_mangled_ports_r )
 
 static READ8_HANDLER( spaceod_port_fc_r )
 {
-	UINT8 upright = input_port_read(space->machine, "D3D2") & 0x04;
-	UINT8 fc = input_port_read(space->machine, "FC");
+	uint8_t upright = input_port_read(space->machine, "D3D2") & 0x04;
+	uint8_t fc = input_port_read(space->machine, "FC");
 
 	/* tweak bits for the upright case */
 	if (upright)
@@ -1420,13 +1420,13 @@ ROM_END
 
 static void monsterb_expand_gfx(running_machine *machine, const char *region)
 {
-	UINT8 *temp, *dest;
+	uint8_t *temp, *dest;
 	int i;
 
 	/* expand the background ROMs; A11/A12 of each ROM is independently controlled via */
 	/* banking */
 	dest = memory_region(machine, region);
-	temp = auto_alloc_array(machine, UINT8, 0x4000);
+	temp = auto_alloc_array(machine, uint8_t, 0x4000);
 	memcpy(temp, dest, 0x4000);
 
 	/* 16 effective total banks */

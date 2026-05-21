@@ -271,23 +271,23 @@ To Do / Unknowns:
 #define CPU_2_V25		0xff
 
 /************ Machine RAM related values ************/
-static UINT8 *toaplan2_shared_ram;
-static UINT8 *raizing_shared_ram;		/* Shared ram used in Shippumd and Mahoudai */
-static UINT16 *toaplan2_shared_ram16;	/* Really 8bit RAM connected to Z180 */
+static uint8_t *toaplan2_shared_ram;
+static uint8_t *raizing_shared_ram;		/* Shared ram used in Shippumd and Mahoudai */
+static uint16_t *toaplan2_shared_ram16;	/* Really 8bit RAM connected to Z180 */
 #ifndef USE_ENCRYPTED_V25S
-static UINT16 *V25_shared_ram;			/* Really 8bit RAM connected to Z180 */
+static uint16_t *V25_shared_ram;			/* Really 8bit RAM connected to Z180 */
 #endif
-static UINT16 *fixeight_sec_cpu_mem;
+static uint16_t *fixeight_sec_cpu_mem;
 
 /********** Status related values **********/
 int toaplan2_sub_cpu = 0;
-static UINT16 mcu_data = 0;
-static UINT16 video_status;
-static INT8 old_p1_paddle_h;		/* For Ghox */
-static INT8 old_p2_paddle_h;
-static INT8 current_bank;			/* Z80 bank used in Battle Garegga and Batrider */
+static uint16_t mcu_data = 0;
+static uint16_t video_status;
+static int8_t old_p1_paddle_h;		/* For Ghox */
+static int8_t old_p2_paddle_h;
+static int8_t current_bank;			/* Z80 bank used in Battle Garegga and Batrider */
 static int raizing_sndirq_line;		/* IRQ4 for batrider, IRQ2 for bbakraid */
-static UINT16 raizing_Z80_busreq;
+static uint16_t raizing_Z80_busreq;
 static int bbakraid_unlimited_ver;
 
 static MACHINE_RESET(batsugun);
@@ -343,7 +343,7 @@ static MACHINE_RESET( vfive )
 
 static MACHINE_RESET( bgaregga )
 {
-	UINT8 *Z80 = (UINT8 *)memory_region(machine, "audiocpu");
+	uint8_t *Z80 = (uint8_t *)memory_region(machine, "audiocpu");
 
 	// Set Z80 bank switch - default bank is 2
 	current_bank = 4;
@@ -408,7 +408,7 @@ static DRIVER_INIT( fixeight )
 
 static DRIVER_INIT( fixeighb )
 {
-	UINT16 *bgdata = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *bgdata = (uint16_t *)memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &bgdata[0x40000]); /* $80000 - $fffff */
 
 	toaplan2_sub_cpu = CPU_2_NONE;
@@ -420,7 +420,7 @@ static DRIVER_INIT( pipibibi )
 	int A;
 	int oldword, newword;
 
-	UINT16 *pipibibi_68k_rom = (UINT16 *)(memory_region(machine, "maincpu"));
+	uint16_t *pipibibi_68k_rom = (uint16_t *)(memory_region(machine, "maincpu"));
 
 	/* unscramble the 68K ROM data. */
 
@@ -728,7 +728,7 @@ static WRITE16_HANDLER( pipibibi_z80_task_w )
 
 static READ16_HANDLER( ghox_p1_h_analog_r )
 {
-	INT8 value, new_value;
+	int8_t value, new_value;
 
 	new_value = input_port_read(space->machine, "PAD1");
 	if (new_value == old_p1_paddle_h) return 0;
@@ -739,7 +739,7 @@ static READ16_HANDLER( ghox_p1_h_analog_r )
 
 static READ16_HANDLER( ghox_p2_h_analog_r )
 {
-	INT8 value, new_value;
+	int8_t value, new_value;
 
 	new_value = input_port_read(space->machine, "PAD2");
 	if (new_value == old_p2_paddle_h) return 0;
@@ -1011,7 +1011,7 @@ static WRITE16_DEVICE_HANDLER( fixeighb_oki_bankswitch_w )
 		data &= 7;
 		if (data <= 4)
 		{
-			UINT8 *fixeighb_oki = memory_region(device->machine, "oki");
+			uint8_t *fixeighb_oki = memory_region(device->machine, "oki");
 			memcpy(&fixeighb_oki[0x30000], &fixeighb_oki[(data * 0x10000) + 0x40000], 0x10000);
 		}
 	}
@@ -1151,7 +1151,7 @@ static WRITE16_HANDLER( batrider_z80_busreq_w )
 
 static READ16_HANDLER( raizing_z80rom_r )
 {
-	UINT8 *Z80_ROM_test = (UINT8 *)memory_region(space->machine, "audiocpu");
+	uint8_t *Z80_ROM_test = (uint8_t *)memory_region(space->machine, "audiocpu");
 
 	if (offset < 0x8000)
 		return Z80_ROM_test[offset] & 0xff;
@@ -1212,7 +1212,7 @@ static WRITE8_HANDLER( raizing_clear_nmi_w )
 /*###################### Battle Bakraid ##############################*/
 
 /* EEPROM contents with Battle Bakraid Unlimited version features unlocked */
-static const UINT8 bbakraid_unlim_default[512] = {
+static const uint8_t bbakraid_unlim_default[512] = {
 	0xc2,0x49,0x00,0x07,0xa1,0x20,0x2a,0x2a,0x2a,0x90,0x90,0x90,0x00,0x00,0x00,0x00,
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x06,0x1a,0x80,0x2a,0x2a,0x2a,0x94,
 	0x94,0x94,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x04,
@@ -1600,9 +1600,9 @@ static ADDRESS_MAP_START( vfive_68k_mem, ADDRESS_SPACE_PROGRAM, 16 )
 ADDRESS_MAP_END
 
 
-static UINT8* batsugun_share;
+static uint8_t* batsugun_share;
 #ifdef USE_ENCRYPTED_V25S
-static UINT8* batsugun_share2;
+static uint8_t* batsugun_share2;
 #endif
 
 static READ16_HANDLER( batsugun_share_r )
@@ -3860,7 +3860,7 @@ MACHINE_DRIVER_END
 
 /* x = modified to match batsugun 'unencrypted' code */
 
-static const UINT8 ts002mach_decryption_table[256] = {
+static const uint8_t ts002mach_decryption_table[256] = {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f, /* 00 */
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f, /* 10 */
 	0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27, 0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f, /* 20 */
@@ -3927,7 +3927,7 @@ MACHINE_DRIVER_END
   '!' = code stops being the same as batsugun at this point, might be wrong
   - they seem to have mostly mapped extra opcodes for common ones, eg. mov
 */
-static const UINT8 ts004dash_decryption_table[256] = {
+static const uint8_t ts004dash_decryption_table[256] = {
 	0x00,0x01,0x02,0x03,0x8c,0x05,0x06,0x07, 0x08,0x09,0x36,0x0b,0x0c,0x0d,0x8c,0x0f, /* 00 */
 	                    /*?*/                          /*?*/               /*?*/
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x8e,0x1f, /* 10 */
@@ -4202,7 +4202,7 @@ MACHINE_DRIVER_END
 
 /* x = modified to match batsugun 'unencrypted' code - '?' likewise, but not so sure about them */
 /* this one seems more different to the other tables */
-static const UINT8 ts001turbo_decryption_table[256] = {
+static const uint8_t ts001turbo_decryption_table[256] = {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f, /* 00 */
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f, /* 10 */
 	0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27, 0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f, /* 20 */
@@ -4309,7 +4309,7 @@ MACHINE_DRIVER_END
     - note, the basic startup code remapping seems identical between all games, so they
       probably use a common remap with some per-game changes which supports the above theory
    */
-static const UINT8 ts007spy_vfive_decryption_table[256] = {
+static const uint8_t ts007spy_vfive_decryption_table[256] = {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f, /* 00 */
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f, /* 10 */
 	0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27, 0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f, /* 20 */
@@ -4390,7 +4390,7 @@ static const ym2151_interface batsugun_ym2151_interface =
 
 /* the batsugun cpu is mostly non-encrypted, from a glance over the code it seems they
    only encrypted a few opcodes used in the interrupt routine, the rest is a 1:1 mapping */
-static const UINT8 ts007spy_decryption_table[256] = {
+static const uint8_t ts007spy_decryption_table[256] = {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f, /* 00 */
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f, /* 10 */
 	0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27, 0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f, /* 20 */

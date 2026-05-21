@@ -1151,37 +1151,37 @@ enum namcos22_gametype namcos22_gametype; /* TBR: used for game-specific hacks *
 
 static int mbSuperSystem22; /* used to dispatch Sys22/SuperSys22 differences */
 static int mbEnableDspIrqs;
-static UINT32 *namcos22_shareram;
-static UINT32 *namcos22_system_controller;
-static UINT32 *namcos22_nvmem;
+static uint32_t *namcos22_shareram;
+static uint32_t *namcos22_system_controller;
+static uint32_t *namcos22_nvmem;
 static size_t namcos22_nvmem_size;
-static UINT16 mMasterBIOZ;
-static UINT32 *mpPointRAM;
-static UINT32 old_coin_state, credits1, credits2;
-static UINT16 *mpSlaveExternalRAM;
+static uint16_t mMasterBIOZ;
+static uint32_t *mpPointRAM;
+static uint32_t old_coin_state, credits1, credits2;
+static uint16_t *mpSlaveExternalRAM;
 
-static UINT32 mPointAddr;
-static UINT32 mPointData;
-static UINT16 *mpMasterExternalRAM;
+static uint32_t mPointAddr;
+static uint32_t mPointData;
+static uint16_t *mpMasterExternalRAM;
 
-static UINT16 mSerialDataSlaveToMasterNext;
-static UINT16 mSerialDataSlaveToMasterCurrent;
+static uint16_t mSerialDataSlaveToMasterNext;
+static uint16_t mSerialDataSlaveToMasterCurrent;
 
 #define MAX_RENDER_CMD_SEQ 0x1c
 static int mRenderBufSize;
-static UINT16 mRenderBufData[MAX_RENDER_CMD_SEQ];
+static uint16_t mRenderBufData[MAX_RENDER_CMD_SEQ];
 
-static UINT32 mSys22PortBits;
+static uint32_t mSys22PortBits;
 
 static int mFrameCount;
 
-static UINT8 stick_input, prev_stick_state;
+static uint8_t stick_input, prev_stick_state;
 
 /**
  * helper function used to read a byte from a chunk of 32 bit memory
  */
-static UINT8
-nthbyte( const UINT32 *pSource, int offs )
+static uint8_t
+nthbyte( const uint32_t *pSource, int offs )
 {
 	pSource += offs/4;
 	return (pSource[0]<<((offs&3)*8))>>24;
@@ -1200,7 +1200,7 @@ nthbyte( const UINT32 *pSource, int offs )
 
 /* TODO: REMOVE (THIS IS HANDLED BY "SUBCPU") */
 static void
-ReadAnalogDrivingPorts( running_machine *machine, UINT16 *gas, UINT16 *brake, UINT16 *steer )
+ReadAnalogDrivingPorts( running_machine *machine, uint16_t *gas, uint16_t *brake, uint16_t *steer )
 {
 	*gas   = input_port_read(machine, "GAS");
 	*brake = input_port_read(machine, "BRAKE");
@@ -1208,13 +1208,13 @@ ReadAnalogDrivingPorts( running_machine *machine, UINT16 *gas, UINT16 *brake, UI
 }
 
 /* TODO: REMOVE (THIS IS HANDLED BY "SUBCPU") */
-static UINT16
+static uint16_t
 AnalogAsDigital( running_machine *machine )
 {
-	UINT16 stick = input_port_read_safe(machine, "INPUTS", 0);
-	UINT16 gas   = input_port_read_safe(machine, "GAS", 0);
-	UINT16 steer = input_port_read_safe(machine, "STEER", 0);
-	UINT16 result = 0xffff;
+	uint16_t stick = input_port_read_safe(machine, "INPUTS", 0);
+	uint16_t gas   = input_port_read_safe(machine, "GAS", 0);
+	uint16_t steer = input_port_read_safe(machine, "STEER", 0);
+	uint16_t result = 0xffff;
 
 	switch( namcos22_gametype )
 	{
@@ -1262,8 +1262,8 @@ AnalogAsDigital( running_machine *machine )
 static void
 HandleCoinage(running_machine *machine, int slots)
 {
-	UINT16 *share16 = (UINT16 *)namcos22_shareram;
-	UINT32 coin_state;
+	uint16_t *share16 = (uint16_t *)namcos22_shareram;
+	uint32_t coin_state;
 
 	coin_state = input_port_read(machine, "INPUTS") & 0x1200;
 
@@ -1293,8 +1293,8 @@ HandleDrivingIO( running_machine *machine )
 {
 	if( nthbyte(namcos22_system_controller, 0x18) != 0 )
 	{
-		UINT16 flags = input_port_read(machine, "INPUTS");
-		UINT16 gas, brake, steer;
+		uint16_t flags = input_port_read(machine, "INPUTS");
+		uint16_t gas, brake, steer;
 		ReadAnalogDrivingPorts( machine, &gas, &brake, &steer );
 
 		HandleCoinage(machine, 2);
@@ -1349,12 +1349,12 @@ HandleCyberCommandoIO( running_machine *machine )
 {
 	if( nthbyte(namcos22_system_controller, 0x18) != 0 )
 	{
-		UINT16 flags = input_port_read(machine, "INPUTS");
+		uint16_t flags = input_port_read(machine, "INPUTS");
 
-		UINT16 volume0 = input_port_read(machine, "STICKY1") * 0x10;
-		UINT16 volume1 = input_port_read(machine, "STICKY2") * 0x10;
-		UINT16 volume2 = input_port_read(machine, "STICKX1") * 0x10;
-		UINT16 volume3 = input_port_read(machine, "STICKX2") * 0x10;
+		uint16_t volume0 = input_port_read(machine, "STICKY1") * 0x10;
+		uint16_t volume1 = input_port_read(machine, "STICKY2") * 0x10;
+		uint16_t volume2 = input_port_read(machine, "STICKX1") * 0x10;
+		uint16_t volume3 = input_port_read(machine, "STICKX2") * 0x10;
 
 		namcos22_shareram[0x030/4] = (flags<<16) | volume0;
 		namcos22_shareram[0x034/4] = (volume1<<16) | volume2;
@@ -1381,7 +1381,7 @@ static READ16_HANDLER( pdp_status_r )
 } /* pdp_status_r */
 
 static void
-WriteToPointRAM( offs_t offs, UINT32 data )
+WriteToPointRAM( offs_t offs, uint32_t data )
 {
 	offs &= 0xffffff; /* 24 bit addressing */
 	if( mbSuperSystem22 )
@@ -1400,7 +1400,7 @@ WriteToPointRAM( offs_t offs, UINT32 data )
 	}
 } /* WriteToPointRAM */
 
-static UINT32
+static uint32_t
 ReadFromPointRAM( offs_t offs )
 {
 	offs &= 0xffffff; /* 24 bit addressing */
@@ -1421,14 +1421,14 @@ ReadFromPointRAM( offs_t offs )
 	return namcos22_point_rom_r(offs);
 } /* ReadFromPointRAM */
 
-static UINT32
+static uint32_t
 ReadFromCommRAM( offs_t offs )
 {
 	return namcos22_polygonram[offs&0x7fff];
 } /* ReadFromCommRAM */
 
 static void
-WriteToCommRAM( offs_t offs, UINT32 data )
+WriteToCommRAM( offs_t offs, uint32_t data )
 {
 	namcos22_polygonram[offs&0x7fff] = data;
 } /* WriteToCommRAM */
@@ -1438,16 +1438,16 @@ static READ16_HANDLER( pdp_begin_r )
 	/* this feature appears to be only used on Super System22 hardware */
 	if( mbSuperSystem22 )
 	{
-		UINT16 offs = namcos22_polygonram[0x20000/4-1];
+		uint16_t offs = namcos22_polygonram[0x20000/4-1];
 		mMasterBIOZ = 1;
 		for(;;)
 		{
-			UINT16 start = offs;
-			UINT16 cmd = ReadFromCommRAM(offs++);
-			UINT32 srcAddr;
-			UINT32 dstAddr;
-			UINT32 numWords;
-			UINT32 data;
+			uint16_t start = offs;
+			uint16_t cmd = ReadFromCommRAM(offs++);
+			uint32_t srcAddr;
+			uint32_t dstAddr;
+			uint32_t numWords;
+			uint32_t data;
 			switch( cmd )
 			{
 			case 0xfff0:
@@ -1936,12 +1936,12 @@ ADDRESS_MAP_END
 static NVRAM_HANDLER( namcos22 )
 {
 	int i;
-	UINT8 data[4];
+	uint8_t data[4];
 	if( read_or_write )
 	{
 		for( i=0; i<namcos22_nvmem_size/4; i++ )
 		{
-			UINT32 dword = namcos22_nvmem[i];
+			uint32_t dword = namcos22_nvmem[i];
 			data[0] = dword>>24;
 			data[1] = (dword&0x00ff0000)>>16;
 			data[2] = (dword&0x0000ff00)>>8;
@@ -1964,7 +1964,7 @@ static NVRAM_HANDLER( namcos22 )
 			memset( namcos22_nvmem, 0x00, namcos22_nvmem_size );
 			if (memory_region_length(machine, "nvram") == namcos22_nvmem_size)
 			{
-				UINT8* nvram = memory_region(machine,"nvram");
+				uint8_t* nvram = memory_region(machine,"nvram");
 
 				for( i=0; i<namcos22_nvmem_size/4; i++ )
 				{
@@ -2147,8 +2147,8 @@ static WRITE32_HANDLER( namcos22_system_controller_w )
 
 	if( 0 )
 	{ /* trace use of these registers */
-		UINT32 mask = mem_mask;
-		UINT32 dat = data;
+		uint32_t mask = mem_mask;
+		uint32_t dat = data;
 		int i;
 		for( i=0; i<4; i++ )
 		{
@@ -2305,7 +2305,7 @@ static READ32_HANDLER( namcos22_keycus_r )
  */
 static READ32_HANDLER( namcos22_portbit_r )
 {
-	UINT32 data = mSys22PortBits;
+	uint32_t data = mSys22PortBits;
 	mSys22PortBits>>=1;
 	return data&0x10001;
 }
@@ -2344,7 +2344,7 @@ static struct
 {
 	int portR; /* next address for read */
 	int portW; /* next address for write */
-	UINT16 *RAM;//[SPOTRAM_SIZE];
+	uint16_t *RAM;//[SPOTRAM_SIZE];
 } mSpotRAM;
 
 static READ32_HANDLER( spotram_r )
@@ -2404,7 +2404,7 @@ static READ32_HANDLER( namcos22_gun_r )
 	}
 } /* namcos22_gun_r */
 
-static UINT32 mAlpineSurferProtData;
+static uint32_t mAlpineSurferProtData;
 
 static READ32_HANDLER( alpinesa_prot_r )
 {
@@ -2473,14 +2473,14 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( s22mcu_shared_r )
 {
-	UINT16 *share16 = (UINT16 *)namcos22_shareram;
+	uint16_t *share16 = (uint16_t *)namcos22_shareram;
 
 	return share16[BYTE_XOR_BE(offset)];
 }
 
 static WRITE16_HANDLER( s22mcu_shared_w )
 {
-	UINT16 *share16 = (UINT16 *)namcos22_shareram;
+	uint16_t *share16 = (uint16_t *)namcos22_shareram;
 
 	COMBINE_DATA(&share16[BYTE_XOR_BE(offset)]);
 }
@@ -2618,7 +2618,7 @@ static READ8_HANDLER( mcu_port7_r )
 // H+L = horizontal, 1 H+L = vertical
 static READ8_HANDLER( propcycle_mcu_adc_r )
 {
-	static UINT16 ddx, ddy;
+	static uint16_t ddx, ddy;
 
 	ddx = input_port_read(space->machine, "STICKX")^0xff;
 	if (ddx > 0) ddx -= 1;
@@ -2663,8 +2663,8 @@ static READ8_HANDLER( propcycle_mcu_adc_r )
 // 0 H+L = swing, 1 H+L = edge
 static READ8_HANDLER( alpineracer_mcu_adc_r )
 {
-	UINT16 swing = (0xff - input_port_read(space->machine, "SWING"))<<2;
-	UINT16 edge = (0xff - input_port_read(space->machine, "EDGE"))<<2;
+	uint16_t swing = (0xff - input_port_read(space->machine, "SWING"))<<2;
+	uint16_t edge = (0xff - input_port_read(space->machine, "EDGE"))<<2;
 
 	// fake out the centering a bit
 	if (input_port_read(space->machine, "SWING") == 0x80) swing = 0x200;
@@ -2691,7 +2691,7 @@ static READ8_HANDLER( alpineracer_mcu_adc_r )
 
 static READ8_HANDLER( cybrcycc_mcu_adc_r )
 {
-	UINT16 gas,brake,steer;
+	uint16_t gas,brake,steer;
 	ReadAnalogDrivingPorts( space->machine, &gas, &brake, &steer );
 
 	gas <<= 2;
@@ -2725,7 +2725,7 @@ static READ8_HANDLER( cybrcycc_mcu_adc_r )
 
 static READ8_HANDLER( tokyowar_mcu_adc_r )
 {
-	UINT16 gas,brake,steer;
+	uint16_t gas,brake,steer;
 	ReadAnalogDrivingPorts( space->machine, &gas, &brake, &steer );
 
 	gas <<= 2;
@@ -2759,7 +2759,7 @@ static READ8_HANDLER( tokyowar_mcu_adc_r )
 
 static READ8_HANDLER( aquajet_mcu_adc_r )
 {
-	UINT16 gas, steer, ddy;
+	uint16_t gas, steer, ddy;
 
 	gas   = input_port_read(space->machine, "GAS") ^ 0x7f;
 	steer = input_port_read(space->machine, "STEER") ^ 0xff;
@@ -2804,7 +2804,7 @@ static READ8_HANDLER( aquajet_mcu_adc_r )
 
 static READ8_HANDLER( airco22_mcu_adc_r )
 {
-	UINT16 pedal, x, y;
+	uint16_t pedal, x, y;
 
 	pedal = input_port_read(space->machine, "PEDAL")<<2;
 	x = input_port_read(space->machine, "STICKX")<<2;
@@ -5735,7 +5735,7 @@ INPUT_PORTS_END /* Rave Racer */
 /*****************************************************************************************************/
 
 // MCU speed cheats (every bit helps with these games)
-static UINT16 su_82;
+static uint16_t su_82;
 
 // for MCU BIOS v1.41
 static READ16_HANDLER( mcu141_speedup_r )
@@ -5795,13 +5795,13 @@ static void install_141_speedup(running_machine *machine)
 static void namcos22_init( running_machine *machine, enum namcos22_gametype game_type )
 {
 	namcos22_gametype = game_type;
-	mpPointRAM = auto_alloc_array(machine, UINT32, 0x20000);
+	mpPointRAM = auto_alloc_array(machine, uint32_t, 0x20000);
 }
 
 static void namcos22s_init( running_machine *machine, enum namcos22_gametype game_type )
 {
 	namcos22_init(machine, game_type);
-	mSpotRAM.RAM = auto_alloc_array(machine, UINT16, SPOTRAM_SIZE);
+	mSpotRAM.RAM = auto_alloc_array(machine, uint16_t, SPOTRAM_SIZE);
 }
 
 static DRIVER_INIT( alpiner )
@@ -5840,7 +5840,7 @@ static DRIVER_INIT( airco22 )
 
 static DRIVER_INIT( propcycl )
 {
-   UINT32 *pROM = (UINT32 *)memory_region(machine, "maincpu");
+   uint32_t *pROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	/* patch out strange routine (uninitialized-eprom related?) */
 	pROM[0x1992C/4] = 0x4E754E75;
@@ -5921,7 +5921,7 @@ static DRIVER_INIT( raveracw )
 
 static DRIVER_INIT( cybrcomm )
 {
-	UINT32 *pROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *pROM = (uint32_t *)memory_region(machine, "maincpu");
 	pROM[0x18ade8/4] = 0x4e714e71;
 	pROM[0x18ae38/4] = 0x4e714e71;
 	pROM[0x18ae80/4] = 0x4e714e71;
@@ -5939,7 +5939,7 @@ static DRIVER_INIT( cybrcomm )
 static DRIVER_INIT( cybrcyc )
 {
 	/* patch DSP RAM test */
-	UINT32 *pROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *pROM = (uint32_t *)memory_region(machine, "maincpu");
 	pROM[0x355C/4] &= 0x0000ffff;
 	pROM[0x355C/4] |= 0x4e710000;
 

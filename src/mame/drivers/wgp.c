@@ -1274,7 +1274,7 @@ static DRIVER_INIT( wgp )
 #if 0
 	/* Patch for coding error that causes corrupt data in
        sprite tilemapping area from $4083c0-847f */
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 	ROM[0x25dc / 2] = 0x0602;	// faulty value is 0x0206
 #endif
 }
@@ -1282,7 +1282,7 @@ static DRIVER_INIT( wgp )
 static DRIVER_INIT( wgp2 )
 {
 	/* Code patches to prevent failure in memory checks */
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "sub");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "sub");
 	ROM[0x8008 / 2] = 0x0;
 	ROM[0x8010 / 2] = 0x0;
 }

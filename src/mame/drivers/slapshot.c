@@ -749,8 +749,8 @@ ROM_END
 
 static DRIVER_INIT( slapshot )
 {
-	UINT32 offset,i;
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint32_t offset,i;
+	uint8_t *gfx = memory_region(machine, "gfx2");
 	int size = memory_region_length(machine, "gfx2");
 	int data;
 

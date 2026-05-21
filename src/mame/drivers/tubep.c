@@ -108,9 +108,9 @@ TP-S.1 TP-S.2 TP-S.3 TP-B.1  8212 TP-B.2 TP-B.3          TP-B.4
 #include "includes/tubep.h"
 
 /* Global variables */
-static UINT8 sound_latch;
-static UINT8 ls74 = 0;
-static UINT8 ls377 = 0;
+static uint8_t sound_latch;
+static uint8_t ls74 = 0;
+static uint8_t ls377 = 0;
 
 static emu_timer *interrupt_timer;
 

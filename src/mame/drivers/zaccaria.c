@@ -47,7 +47,7 @@ Notes:
 #include "sound/tms5220.h"
 
 
-extern UINT8 *zaccaria_videoram,*zaccaria_attributesram;
+extern uint8_t *zaccaria_videoram,*zaccaria_attributesram;
 
 PALETTE_INIT( zaccaria );
 VIDEO_START( zaccaria );

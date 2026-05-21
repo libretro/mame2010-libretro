@@ -100,8 +100,8 @@ static READ16_HANDLER( leta_r )
 	/* when reading the even ports, do a real analog port update */
 	if (which == 0)
 	{
-		int dx = (INT8)input_port_read(space->machine, "TRACKX");
-		int dy = (INT8)input_port_read(space->machine, "TRACKY");
+		int dx = (int8_t)input_port_read(space->machine, "TRACKX");
+		int dy = (int8_t)input_port_read(space->machine, "TRACKY");
 
 		cur[0] = dx + dy;
 		cur[1] = dx - dy;

@@ -57,7 +57,7 @@ extern WRITE8_HANDLER( nbmj8900_clut_w );
 static DRIVER_INIT( ohpaipee )
 {
 #if 0
-	UINT8 *prot = memory_region(machine, "protdata");
+	uint8_t *prot = memory_region(machine, "protdata");
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the
@@ -90,7 +90,7 @@ static DRIVER_INIT( ohpaipee )
 static DRIVER_INIT( togenkyo )
 {
 #if 0
-	UINT8 *prot = memory_region(machine, "protdata");
+	uint8_t *prot = memory_region(machine, "protdata");
 	int i;
 
 	/* this is one possible way to rearrange the protection ROM data to get the

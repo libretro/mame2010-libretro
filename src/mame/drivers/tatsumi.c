@@ -151,15 +151,15 @@
 #define CLOCK_1		XTAL_16MHz
 #define CLOCK_2		XTAL_50MHz
 
-static UINT16 *cyclwarr_cpua_ram, *cyclwarr_cpub_ram;
-UINT16 *apache3_g_ram;
-UINT16 *roundup5_d0000_ram, *roundup5_e0000_ram;
-UINT8 *tatsumi_rom_sprite_lookup1, *tatsumi_rom_sprite_lookup2;
-UINT8 *tatsumi_rom_clut0, *tatsumi_rom_clut1;
-UINT16 *roundup5_unknown0, *roundup5_unknown1, *roundup5_unknown2;
-static UINT16 bigfight_a20000[8];
-UINT16 bigfight_a40000[2];
-static UINT16 bigfight_a60000[2];
+static uint16_t *cyclwarr_cpua_ram, *cyclwarr_cpub_ram;
+uint16_t *apache3_g_ram;
+uint16_t *roundup5_d0000_ram, *roundup5_e0000_ram;
+uint8_t *tatsumi_rom_sprite_lookup1, *tatsumi_rom_sprite_lookup2;
+uint8_t *tatsumi_rom_clut0, *tatsumi_rom_clut1;
+uint16_t *roundup5_unknown0, *roundup5_unknown1, *roundup5_unknown2;
+static uint16_t bigfight_a20000[8];
+uint16_t bigfight_a40000[2];
+static uint16_t bigfight_a60000[2];
 
 /***************************************************************************/
 
@@ -1274,9 +1274,9 @@ ROM_END
 
 static DRIVER_INIT( apache3 )
 {
-	UINT8 *dst = memory_region(machine, "gfx1");
-	UINT8 *src1 = memory_region(machine, "gfx2");
-	UINT8 *src2 = memory_region(machine, "gfx3");
+	uint8_t *dst = memory_region(machine, "gfx1");
+	uint8_t *src1 = memory_region(machine, "gfx2");
+	uint8_t *src2 = memory_region(machine, "gfx3");
 	int i;
 
 	for (i=0; i<0x100000; i+=32) {
@@ -1301,9 +1301,9 @@ static DRIVER_INIT( apache3 )
 
 static DRIVER_INIT( roundup5 )
 {
-	UINT8 *dst = memory_region(machine, "gfx1");
-	UINT8 *src1 = memory_region(machine, "gfx2");
-	UINT8 *src2 = memory_region(machine, "gfx3");
+	uint8_t *dst = memory_region(machine, "gfx1");
+	uint8_t *src1 = memory_region(machine, "gfx2");
+	uint8_t *src2 = memory_region(machine, "gfx3");
 	int i;
 
 	for (i=0; i<0xc0000; i+=32) {
@@ -1326,10 +1326,10 @@ static DRIVER_INIT( roundup5 )
 
 static DRIVER_INIT( cyclwarr )
 {
-	UINT8 *dst = memory_region(machine, "gfx1");
-	UINT8 *src1 = memory_region(machine, "gfx2");
+	uint8_t *dst = memory_region(machine, "gfx1");
+	uint8_t *src1 = memory_region(machine, "gfx2");
 	int len1 = memory_region_length(machine, "gfx2");
-	UINT8 *src2 = memory_region(machine, "gfx3");
+	uint8_t *src2 = memory_region(machine, "gfx3");
 	int len2 = memory_region_length(machine, "gfx3");
 	int i;
 	for (i=0; i<len1; i+=32) {

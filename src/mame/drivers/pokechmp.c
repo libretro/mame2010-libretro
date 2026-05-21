@@ -59,7 +59,7 @@ extern VIDEO_UPDATE( pokechmp );
 
 static WRITE8_HANDLER( pokechmp_bank_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	if (data == 0x00)
 	{
@@ -98,7 +98,7 @@ static WRITE8_HANDLER( pokechmp_sound_w )
 }
 
 
-INLINE void pokechmp_set_color(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void pokechmp_set_color(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> rshift), pal5bit(data >> gshift), pal5bit(data >> bshift));
 }

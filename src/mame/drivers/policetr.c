@@ -95,19 +95,19 @@ PC5380-9651            5380-JY3306A           5380-N1045503A
 
 
 /* global variables */
-UINT32 *	policetr_rambase;
+uint32_t *	policetr_rambase;
 
 
 /* local variables */
-static UINT32 control_data;
+static uint32_t control_data;
 
-static UINT32 bsmt_reg;
-static UINT32 bsmt_data_bank;
-static UINT32 bsmt_data_offset;
+static uint32_t bsmt_reg;
+static uint32_t bsmt_data_bank;
+static uint32_t bsmt_data_offset;
 
-static UINT32 *speedup_data;
-static UINT64 last_cycles;
-static UINT32 loop_count;
+static uint32_t *speedup_data;
+static uint64_t last_cycles;
+static uint32_t loop_count;
 
 static offs_t speedup_pc;
 
@@ -141,7 +141,7 @@ static INTERRUPT_GEN( irq4_gen )
 
 static WRITE32_HANDLER( control_w )
 {
-	UINT32 old = control_data;
+	uint32_t old = control_data;
 
 	// bit $80000000 = BSMT access/ROM read
 	// bit $20000000 = toggled every 64 IRQ4's
@@ -220,7 +220,7 @@ static WRITE32_HANDLER( speedup_w )
 	/* see if the PC matches */
 	if ((cpu_get_previouspc(space->cpu) & 0x1fffffff) == speedup_pc)
 	{
-		UINT64 curr_cycles = space->machine->firstcpu->total_cycles();
+		uint64_t curr_cycles = space->machine->firstcpu->total_cycles();
 
 		/* if less than 50 cycles from the last time, count it */
 		if (curr_cycles - last_cycles < 50)

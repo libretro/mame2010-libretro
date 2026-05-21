@@ -364,19 +364,19 @@ static WRITE8_HANDLER( nss_eeprom_w )
 //  printf("EEPROM write %02x\n",data);
 }
 
-static UINT8 m50458_rom_bank;
+static uint8_t m50458_rom_bank;
 
 static READ8_HANDLER( m50458_r )
 {
 	if(m50458_rom_bank)
 	{
-		UINT8 *gfx_rom = memory_region(space->machine, "m50458_gfx");
+		uint8_t *gfx_rom = memory_region(space->machine, "m50458_gfx");
 
 		return gfx_rom[offset & 0x7ff];
 	}
 	else
 	{
-		UINT8 *gfx_ram = memory_region(space->machine, "m50458_vram");
+		uint8_t *gfx_ram = memory_region(space->machine, "m50458_vram");
 
 		return gfx_ram[offset & 0x7ff];
 	}
@@ -390,7 +390,7 @@ static WRITE8_HANDLER( m50458_w )
 		logerror("Warning: write to M50458 GFX ROM!\n");
 	else
 	{
-		UINT8 *gfx_ram = memory_region(space->machine, "m50458_vram");
+		uint8_t *gfx_ram = memory_region(space->machine, "m50458_vram");
 
 		gfx_ram[offset & 0x7ff] = data;
 	}
@@ -413,7 +413,7 @@ static READ8_HANDLER( port00_r )
     -x-- ---- almost certainly tied to the vblank signal
     */
 
-	static UINT8 vblank_bit;
+	static uint8_t vblank_bit;
 
 	vblank_bit^=0x40;
 
@@ -484,7 +484,7 @@ ADDRESS_MAP_END
 
 static MACHINE_START( nss )
 {
-	UINT8 *ROM = memory_region(machine, "bios");
+	uint8_t *ROM = memory_region(machine, "bios");
 
 	memory_configure_bank(machine, "bank1", 0, 2, &ROM[0x10000], 0x8000);
 	memory_set_bank(machine, "bank1", 0);

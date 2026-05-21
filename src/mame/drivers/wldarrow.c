@@ -27,9 +27,9 @@ todo:
 #define NUM_PENS	(8)
 
 
-static UINT8 *wldarrow_videoram_0;
-static UINT8 *wldarrow_videoram_1;
-static UINT8 *wldarrow_videoram_2;
+static uint8_t *wldarrow_videoram_0;
+static uint8_t *wldarrow_videoram_1;
+static uint8_t *wldarrow_videoram_2;
 static size_t wldarrow_videoram_size;
 
 
@@ -62,22 +62,22 @@ static VIDEO_UPDATE( wldarrow )
 	{
 		int i;
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
-		UINT8 data0 = wldarrow_videoram_0[offs];
-		UINT8 data1 = wldarrow_videoram_1[offs];
-		UINT8 data2 = wldarrow_videoram_2[offs];
+		uint8_t data0 = wldarrow_videoram_0[offs];
+		uint8_t data1 = wldarrow_videoram_1[offs];
+		uint8_t data2 = wldarrow_videoram_2[offs];
 
 		/* weird equations, but it matches every flyer screenshot -
            perhaphs they used a look-up PROM? */
-		UINT8 data_r = data0;
-		UINT8 data_g = (data2 & ~data0) | (data2 & data1) | (~data2 & ~data1 & data0);
-		UINT8 data_b = data0 ^ data1;
+		uint8_t data_r = data0;
+		uint8_t data_g = (data2 & ~data0) | (data2 & data1) | (~data2 & ~data1 & data0);
+		uint8_t data_b = data0 ^ data1;
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 color = ((data_r >> 5) & 0x04) |
+			uint8_t color = ((data_r >> 5) & 0x04) |
 						  ((data_g >> 6) & 0x02) |
 						  ((data_b >> 7) & 0x01);
 
@@ -476,7 +476,7 @@ ROM_END
 static DRIVER_INIT( wldarrow )
 {
 	offs_t i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (i = 0; i < 0x3800; i++)
 		rom[i] ^= 0xff;

@@ -345,8 +345,8 @@ To Do:
 #include "includes/toaplan1.h"
 #include "sound/3812intf.h"
 
-static UINT8 to_mcu;
-static UINT8 cmdavailable;
+static uint8_t to_mcu;
+static uint8_t cmdavailable;
 static WRITE16_HANDLER( samesame_mcu_w );
 static READ8_HANDLER( samesame_soundlatch_r );
 static WRITE8_HANDLER( samesame_sound_done_w );

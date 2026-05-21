@@ -120,14 +120,14 @@
 VIDEO_START( rpunch );
 VIDEO_UPDATE( rpunch );
 
-extern UINT16 *rpunch_bitmapram;
+extern uint16_t *rpunch_bitmapram;
 extern size_t rpunch_bitmapram_size;
 extern int rpunch_sprite_palette;
 
-static UINT8 sound_data;
-static UINT8 sound_busy;
-static UINT8 ym2151_irq;
-static UINT8 upd_rom_bank;
+static uint8_t sound_data;
+static uint8_t sound_busy;
+static uint8_t ym2151_irq;
+static uint8_t upd_rom_bank;
 
 WRITE16_HANDLER( rpunch_videoram_w );
 WRITE16_HANDLER( rpunch_videoreg_w );
@@ -153,7 +153,7 @@ static void ym2151_irq_gen(running_device *device, int state)
 
 static MACHINE_RESET( rpunch )
 {
-	UINT8 *snd = memory_region(machine, "upd");
+	uint8_t *snd = memory_region(machine, "upd");
 	memcpy(snd, snd + 0x20000, 0x20000);
 }
 
@@ -217,7 +217,7 @@ static WRITE8_DEVICE_HANDLER( upd_control_w )
 {
 	if ((data & 1) != upd_rom_bank)
 	{
-		UINT8 *snd = memory_region(device->machine, "upd");
+		uint8_t *snd = memory_region(device->machine, "upd");
 		upd_rom_bank = data & 1;
 		memcpy(snd, snd + 0x20000 * (upd_rom_bank + 1), 0x20000);
 	}

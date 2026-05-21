@@ -19,8 +19,8 @@
 static attotime time_pushed;
 static attotime time_released;
 
-static UINT8 prev = 0;
-static UINT8 mask = 0;
+static uint8_t prev = 0;
+static uint8_t mask = 0;
 
 static WRITE8_DEVICE_HANDLER(videopin_out1_w);
 static WRITE8_DEVICE_HANDLER(videopin_out2_w);
@@ -28,7 +28,7 @@ static WRITE8_DEVICE_HANDLER(videopin_out2_w);
 
 static void update_plunger(running_machine *machine)
 {
-	UINT8 val = input_port_read(machine, "IN2");
+	uint8_t val = input_port_read(machine, "IN2");
 
 	if (prev != val)
 	{
@@ -96,7 +96,7 @@ static READ8_HANDLER( videopin_misc_r )
 	// signals received. This results in the MPU displaying the
 	// ball being shot onto the playfield at a certain speed.
 
-	UINT8 val = input_port_read(space->machine, "IN1");
+	uint8_t val = input_port_read(space->machine, "IN1");
 
 	if (plunger >= 0.000 && plunger <= 0.001)
 	{

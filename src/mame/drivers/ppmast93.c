@@ -137,7 +137,7 @@ Dip locations added based on the notes above.
 
 
 static tilemap_t *ppmast93_fg_tilemap, *ppmast93_bg_tilemap;
-static UINT8 *ppmast93_fgram, *ppmast93_bgram;
+static uint8_t *ppmast93_fgram, *ppmast93_bgram;
 
 static WRITE8_HANDLER( ppmast93_fgram_w )
 {
@@ -153,7 +153,7 @@ static WRITE8_HANDLER( ppmast93_bgram_w )
 
 static WRITE8_HANDLER( ppmast93_port4_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int bank;
 
 	coin_counter_w(space->machine, 0, data & 0x08);

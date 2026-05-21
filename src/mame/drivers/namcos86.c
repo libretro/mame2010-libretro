@@ -181,7 +181,7 @@ TODO:
 #include "sound/namco.h"
 #include "sound/n63701x.h"
 
-extern UINT8 *rthunder_videoram1, *rthunder_videoram2, *rthunder_spriteram;
+extern uint8_t *rthunder_videoram1, *rthunder_videoram2, *rthunder_spriteram;
 
 PALETTE_INIT( namcos86 );
 VIDEO_START( namcos86 );
@@ -203,7 +203,7 @@ WRITE8_HANDLER( rthunder_spriteram_w );
 
 static WRITE8_HANDLER( bankswitch1_w )
 {
-	UINT8 *base = memory_region(space->machine, "cpu1") + 0x10000;
+	uint8_t *base = memory_region(space->machine, "cpu1") + 0x10000;
 
 	/* if the ROM expansion module is available, don't do anything. This avoids conflict */
 	/* with bankswitch1_ext_w() in wndrmomo */
@@ -214,7 +214,7 @@ static WRITE8_HANDLER( bankswitch1_w )
 
 static WRITE8_HANDLER( bankswitch1_ext_w )
 {
-	UINT8 *base = memory_region(space->machine, "user1");
+	uint8_t *base = memory_region(space->machine, "user1");
 
 	if (base == 0) return;
 
@@ -223,7 +223,7 @@ static WRITE8_HANDLER( bankswitch1_ext_w )
 
 static WRITE8_HANDLER( bankswitch2_w )
 {
-	UINT8 *base = memory_region(space->machine, "cpu2") + 0x10000;
+	uint8_t *base = memory_region(space->machine, "cpu2") + 0x10000;
 
 	memory_set_bankptr(space->machine, "bank2",base + ((data & 0x03) * 0x2000));
 }
@@ -345,7 +345,7 @@ static WRITE8_HANDLER( cus115_w )
 
 static MACHINE_RESET( namco86 )
 {
-	UINT8 *base = memory_region(machine, "cpu1") + 0x10000;
+	uint8_t *base = memory_region(machine, "cpu1") + 0x10000;
 
 	memory_set_bankptr(machine, "bank1",base);
 }
@@ -1499,26 +1499,26 @@ ROM_END
 static DRIVER_INIT( namco86 )
 {
 	int size;
-	UINT8 *gfx;
-	UINT8 *buffer;
+	uint8_t *gfx;
+	uint8_t *buffer;
 
 	/* shuffle tile ROMs so regular gfx unpack routines can be used */
 	gfx = memory_region(machine, "gfx1");
 	size = memory_region_length(machine, "gfx1") * 2 / 3;
-	buffer = auto_alloc_array(machine, UINT8,  size );
+	buffer = auto_alloc_array(machine, uint8_t,  size );
 
 	{
-		UINT8 *dest1 = gfx;
-		UINT8 *dest2 = gfx + ( size / 2 );
-		UINT8 *mono = gfx + size;
+		uint8_t *dest1 = gfx;
+		uint8_t *dest2 = gfx + ( size / 2 );
+		uint8_t *mono = gfx + size;
 		int i;
 
 		memcpy( buffer, gfx, size );
 
 		for ( i = 0; i < size; i += 2 )
 		{
-			UINT8 data1 = buffer[i];
-			UINT8 data2 = buffer[i+1];
+			uint8_t data1 = buffer[i];
+			uint8_t data2 = buffer[i+1];
 			*dest1++ = ( data1 << 4 ) | ( data2 & 0xf );
 			*dest2++ = ( data1 & 0xf0 ) | ( data2 >> 4 );
 
@@ -1530,20 +1530,20 @@ static DRIVER_INIT( namco86 )
 
 	gfx = memory_region(machine, "gfx2");
 	size = memory_region_length(machine, "gfx2") * 2 / 3;
-	buffer = auto_alloc_array(machine, UINT8,  size );
+	buffer = auto_alloc_array(machine, uint8_t,  size );
 
 	{
-		UINT8 *dest1 = gfx;
-		UINT8 *dest2 = gfx + ( size / 2 );
-		UINT8 *mono = gfx + size;
+		uint8_t *dest1 = gfx;
+		uint8_t *dest2 = gfx + ( size / 2 );
+		uint8_t *mono = gfx + size;
 		int i;
 
 		memcpy( buffer, gfx, size );
 
 		for ( i = 0; i < size; i += 2 )
 		{
-			UINT8 data1 = buffer[i];
-			UINT8 data2 = buffer[i+1];
+			uint8_t data1 = buffer[i];
+			uint8_t data2 = buffer[i+1];
 			*dest1++ = ( data1 << 4 ) | ( data2 & 0xf );
 			*dest2++ = ( data1 & 0xf0 ) | ( data2 >> 4 );
 

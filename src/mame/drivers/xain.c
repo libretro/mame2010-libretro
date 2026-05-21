@@ -160,14 +160,14 @@ WRITE8_HANDLER( xain_bgram0_w );
 WRITE8_HANDLER( xain_bgram1_w );
 WRITE8_HANDLER( xain_flipscreen_w );
 
-extern UINT8 *xain_charram, *xain_bgram0, *xain_bgram1, xain_pri;
+extern uint8_t *xain_charram, *xain_bgram0, *xain_bgram1, xain_pri;
 
 /* MCU */
 static int from_main;
 static int from_mcu;
-static UINT8 ddr_a, ddr_b, ddr_c;
-static UINT8 port_a_out, port_b_out, port_c_out;
-static UINT8 port_a_in, port_b_in, port_c_in;
+static uint8_t ddr_a, ddr_b, ddr_c;
+static uint8_t port_a_out, port_b_out, port_c_out;
+static uint8_t port_a_in, port_b_in, port_c_in;
 static int _mcu_ready;
 static int _mcu_accept;
 
@@ -376,7 +376,7 @@ WRITE8_HANDLER( xain_68705_ddr_c_w )
 
 static CUSTOM_INPUT( mcu_status_r )
 {
-	UINT8 res = 0;
+	uint8_t res = 0;
 
 	if (field->port->machine->device("mcu") != NULL)
 	{

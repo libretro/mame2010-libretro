@@ -475,7 +475,7 @@ static READ8_HANDLER( pbactio3_prot_kludge_r )
 static DRIVER_INIT( pbactio3 )
 {
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* first of all, do a simple bitswap */
 	for (i = 0; i < 0xc000; i++)

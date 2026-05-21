@@ -53,10 +53,10 @@ not handled commands with reg[3] & 0xc0 == 0x00
 
 #define VIDEOBUF_SIZE 256*256
 
-static UINT8 reg[0x10];
-static UINT8 *videobuf;
+static uint8_t reg[0x10];
+static uint8_t *videobuf;
 
-static UINT8 lamp_old = 0;
+static uint8_t lamp_old = 0;
 
 static PALETTE_INIT( roul )
 {
@@ -180,7 +180,7 @@ ADDRESS_MAP_END
 
 static VIDEO_START(roul)
 {
-	videobuf = auto_alloc_array_clear(machine, UINT8, VIDEOBUF_SIZE);
+	videobuf = auto_alloc_array_clear(machine, uint8_t, VIDEOBUF_SIZE);
 }
 
 static VIDEO_UPDATE(roul)

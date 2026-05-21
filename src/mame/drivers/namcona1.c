@@ -165,13 +165,13 @@ Notes:
 #include "sound/c140.h"
 #include "cpu/m37710/m37710.h"
 
-static UINT16 *mpBank0, *mpBank1;
+static uint16_t *mpBank0, *mpBank1;
 static int mEnableInterrupts;
 static int namcona1_gametype;
 
 /*************************************************************************/
 
-static const UINT8 ExvaniaDefaultNvMem[] =
+static const uint8_t ExvaniaDefaultNvMem[] =
 {
 /* This data oughtn't be necessary; when Exbania's EPROM area is uninitialized,
  * the game software automatically writes these values there, but then jumps
@@ -182,7 +182,7 @@ static const UINT8 ExvaniaDefaultNvMem[] =
 	0x00,0x01,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x02
 }; /* ExvaniaDefaultNvMem */
 
-static const UINT8 QuiztouDefaultNvMem[] =
+static const uint8_t QuiztouDefaultNvMem[] =
 {
 /* This data oughtn't be necessary; when QuiztouDefaultNvMem's EPROM area is uninitialized,
  * the game software automatically writes these values there, but then jumps
@@ -193,7 +193,7 @@ static const UINT8 QuiztouDefaultNvMem[] =
 	0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02
 }; /* QuiztouDefaultNvMem */
 
-static const UINT8 CgangpzlDefaultNvMem[] =
+static const uint8_t CgangpzlDefaultNvMem[] =
 {
 /* This data oughtn't be necessary; when Cgangpzl's EPROM area is uninitialized,
  * the game software automatically writes these values there, but then hangs.
@@ -203,7 +203,7 @@ static const UINT8 CgangpzlDefaultNvMem[] =
 	0x00,0x02,0x00,0x00,0x00,0x01
 }; /* CgangpzlDefaultNvMem */
 
-static UINT8 namcona1_nvmem[NA1_NVRAM_SIZE];
+static uint8_t namcona1_nvmem[NA1_NVRAM_SIZE];
 
 static NVRAM_HANDLER( namcosna1 )
 {
@@ -381,7 +381,7 @@ static void simulate_mcu( running_machine *machine )
  */
 static void write_version_info( void )
 {
-	static const UINT16 source[0x8] =
+	static const uint16_t source[0x8] =
 	{ /* "NSA-BIOS ver"... */
 		0x534e,0x2d41,0x4942,0x534f,0x7620,0x7265,0x2e31,0x3133
 	};
@@ -403,8 +403,8 @@ static void write_version_info( void )
  */
 static READ16_HANDLER( custom_key_r )
 {
-	static UINT16 count;
-	static UINT32 keyval;
+	static uint16_t count;
+	static uint32_t keyval;
 	int old_count;
 
 	old_count = count;
@@ -462,7 +462,7 @@ static READ16_HANDLER( custom_key_r )
 		if( offset==4 ) keyval = 0;
 		if( offset==3 )
 		{
-			UINT16 res;
+			uint16_t res;
 			res = BITSWAP16(keyval, 22,26,31,23,18,20,16,30,24,21,25,19,17,29,28,27);
 
 			keyval >>= 1;
@@ -496,9 +496,9 @@ static READ16_HANDLER( namcona1_vreg_r )
 	return namcona1_vreg[offset];
 } /* namcona1_vreg_r */
 
-static int transfer_dword( running_machine *machine, UINT32 dest, UINT32 source )
+static int transfer_dword( running_machine *machine, uint32_t dest, uint32_t source )
 {
-	UINT16 data;
+	uint16_t data;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
 	if( source>=0x400000 && source<0xc00000 )
@@ -626,8 +626,8 @@ static void namcona1_blit( running_machine *machine )
 	int gfxbank = namcona1_vreg[0x6];
 
 	/* dest and source are provided as dword offsets */
-	UINT32 src_baseaddr	= 2*(0xffffff&((namcona1_vreg[0x7]<<16)|namcona1_vreg[0x8]));
-	UINT32 dst_baseaddr	= 2*(0xffffff&((namcona1_vreg[0x9]<<16)|namcona1_vreg[0xa]));
+	uint32_t src_baseaddr	= 2*(0xffffff&((namcona1_vreg[0x7]<<16)|namcona1_vreg[0x8]));
+	uint32_t dst_baseaddr	= 2*(0xffffff&((namcona1_vreg[0x9]<<16)|namcona1_vreg[0xa]));
 
 	int num_bytes = namcona1_vreg[0xb];
 
@@ -711,7 +711,7 @@ static WRITE16_HANDLER( namcona1_vreg_w )
 /***************************************************************/
 
 // MCU "mailslot" handler - has 8 16-bit slots mirrored
-static UINT16 mcu_mailbox[8];
+static uint16_t mcu_mailbox[8];
 
 static READ16_HANDLER( mcu_mailbox_r )
 {
@@ -784,7 +784,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( na1mcu_shared_r )
 {
-	UINT16 data;
+	uint16_t data;
 
 	data = namcona1_workram[offset];
 
@@ -835,7 +835,7 @@ static ADDRESS_MAP_START( namcona1_mcu_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x200000, 0x27ffff) AM_READWRITE(na1mcu_shared_r, na1mcu_shared_w)	// shared work RAM
 ADDRESS_MAP_END
 
-static UINT8 mcu_port4, mcu_port5, mcu_port6, mcu_port8;
+static uint8_t mcu_port4, mcu_port5, mcu_port6, mcu_port8;
 
 // port 4: bit 3 (0x08) enables the 68000 (see the 68k launch code at c604 in swcourt's BIOS)
 static READ8_HANDLER( port4_r )
@@ -942,8 +942,8 @@ static MACHINE_RESET( namcona1_mcu )
 // bit 7 => port 7
 static READ8_HANDLER( portana_r )
 {
-	static const UINT8 bitnum[8] = { 0x40, 0x20, 0x10, 0x01, 0x02, 0x04, 0x08, 0x80 };
-	UINT8 port = input_port_read(space->machine, "P3");
+	static const uint8_t bitnum[8] = { 0x40, 0x20, 0x10, 0x01, 0x02, 0x04, 0x08, 0x80 };
+	uint8_t port = input_port_read(space->machine, "P3");
 
 	return (port & bitnum[offset>>1]) ? 0xff : 0x00;
 }
@@ -1069,7 +1069,7 @@ MACHINE_DRIVER_END
 
 static void init_namcona1( running_machine *machine, int gametype )
 {
-	UINT16 *pMem = (UINT16 *)memory_region( machine, "maincpu" );
+	uint16_t *pMem = (uint16_t *)memory_region( machine, "maincpu" );
 
 	namcona1_gametype = gametype;
 	mpBank0 = &pMem[0x80000/2];

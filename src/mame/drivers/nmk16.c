@@ -169,11 +169,11 @@ Afega stands for "Art-Fiction Electronic Game"
 
 **********************************************************/
 
-UINT16* nmk16_mainram;
+uint16_t* nmk16_mainram;
 
 static WRITE16_HANDLER( nmk16_mainram_strange_w )
 {
-	UINT16* dstram;
+	uint16_t* dstram;
 
 	dstram = nmk16_mainram;
 
@@ -215,7 +215,7 @@ static WRITE16_HANDLER ( ssmissin_sound_w )
 
 static WRITE8_HANDLER ( ssmissin_soundbank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "oki1");
+	uint8_t *rom = memory_region(space->machine, "oki1");
 	int bank;
 
 	bank = data & 0x3;
@@ -239,7 +239,7 @@ static READ16_HANDLER( tharrier_mcu_r )
         all word accesses are to the input port */
 	if (ACCESSING_BITS_8_15 && !ACCESSING_BITS_0_7)
 	{
-		static const UINT8 to_main[] =
+		static const uint8_t to_main[] =
 		{
 			0x82,0xc7,0x00,0x2c,0x6c,0x00,0x9f,0xc7,0x00,0x29,0x69,0x00,0x8b,0xc7,0x00
 		};
@@ -277,14 +277,14 @@ static WRITE16_HANDLER( macross2_sound_command_w )
 
 static WRITE8_HANDLER( macross2_sound_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "audiocpu") + 0x10000;
+	uint8_t *rom = memory_region(space->machine, "audiocpu") + 0x10000;
 
 	memory_set_bankptr(space->machine, "bank1",rom + (data & 0x07) * 0x4000);
 }
 
 static WRITE8_HANDLER( tharrier_oki6295_bankswitch_0_w )
 {
-	UINT8 *rom = memory_region(space->machine, "oki1");
+	uint8_t *rom = memory_region(space->machine, "oki1");
 
 	data &= 3;
 	if (data != 3)
@@ -293,7 +293,7 @@ static WRITE8_HANDLER( tharrier_oki6295_bankswitch_0_w )
 
 static WRITE8_HANDLER( tharrier_oki6295_bankswitch_1_w )
 {
-	UINT8 *rom = memory_region(space->machine, "oki2");
+	uint8_t *rom = memory_region(space->machine, "oki2");
 
 	data &= 3;
 	if (data != 3)
@@ -730,14 +730,14 @@ static WRITE16_HANDLER( tdragon_mainram_w )
 }
 
 /*coin setting MCU simulation*/
-static void mcu_run(running_machine *machine, UINT8 dsw_setting)
+static void mcu_run(running_machine *machine, uint8_t dsw_setting)
 {
-	static UINT8 input_pressed;
-	static UINT16 coin_input;
-	UINT8 dsw[2];
-	static UINT8 start_helper = 0;
-	static UINT8 coin_count[2],coin_count_frac[2];
-	static UINT8 i;
+	static uint8_t input_pressed;
+	static uint16_t coin_input;
+	uint8_t dsw[2];
+	static uint8_t start_helper = 0;
+	static uint8_t coin_count[2],coin_count_frac[2];
+	static uint8_t i;
 
 	/*Accept the start button but needs some m68k processing first,otherwise you can't start a play with 1 credit inserted*/
 	if(start_helper & 1 && nmk16_mainram[0x9000/2] & 0x0200) /*start 1 */
@@ -4348,9 +4348,9 @@ static MACHINE_DRIVER_START( bjtwin )
 MACHINE_DRIVER_END
 
 
-static UINT8 decode_byte(UINT8 src, const UINT8 *bitp)
+static uint8_t decode_byte(uint8_t src, const uint8_t *bitp)
 {
-	UINT8 ret, i;
+	uint8_t ret, i;
 
 	ret = 0;
 	for (i=0; i<8; i++)
@@ -4359,15 +4359,15 @@ static UINT8 decode_byte(UINT8 src, const UINT8 *bitp)
 	return ret;
 }
 
-static UINT32 bjtwin_address_map_bg0(UINT32 addr)
+static uint32_t bjtwin_address_map_bg0(uint32_t addr)
 {
    return ((addr&0x00004)>> 2) | ((addr&0x00800)>> 10) | ((addr&0x40000)>>16);
 }
 
 
-static UINT16 decode_word(UINT16 src, const UINT8 *bitp)
+static uint16_t decode_word(uint16_t src, const uint8_t *bitp)
 {
-	UINT16 ret, i;
+	uint16_t ret, i;
 
 	ret=0;
 	for (i=0; i<16; i++)
@@ -4377,7 +4377,7 @@ static UINT16 decode_word(UINT16 src, const UINT8 *bitp)
 }
 
 
-static UINT32 bjtwin_address_map_sprites(UINT32 addr)
+static uint32_t bjtwin_address_map_sprites(uint32_t addr)
 {
    return ((addr&0x00010)>> 4) | ((addr&0x20000)>>16) | ((addr&0x100000)>>18);
 }
@@ -4386,10 +4386,10 @@ static UINT32 bjtwin_address_map_sprites(UINT32 addr)
 static void decode_gfx(running_machine *machine)
 {
 	/* GFX are scrambled.  We decode them here.  (BIG Thanks to Antiriad for descrambling info) */
-	UINT8 *rom;
+	uint8_t *rom;
 	int A, len;
 
-	static const UINT8 decode_data_bg[8][8] =
+	static const uint8_t decode_data_bg[8][8] =
 	{
 		{0x3,0x0,0x7,0x2,0x5,0x1,0x4,0x6},
 		{0x1,0x2,0x6,0x5,0x4,0x0,0x3,0x7},
@@ -4401,7 +4401,7 @@ static void decode_gfx(running_machine *machine)
 		{0x3,0x4,0x7,0x6,0x2,0x0,0x5,0x1},
 	};
 
-	static const UINT8 decode_data_sprite[8][16] =
+	static const uint8_t decode_data_sprite[8][16] =
 	{
 		{0x9,0x3,0x4,0x5,0x7,0x1,0xb,0x8,0x0,0xd,0x2,0xc,0xe,0x6,0xf,0xa},
 		{0x1,0x3,0xc,0x4,0x0,0xf,0xb,0xa,0x8,0x5,0xe,0x6,0xd,0x2,0x7,0x9},
@@ -4428,7 +4428,7 @@ static void decode_gfx(running_machine *machine)
 	len = memory_region_length(machine, "gfx3");
 	for (A = 0;A < len;A += 2)
 	{
-		UINT16 tmp = decode_word( rom[A+1]*256 + rom[A], decode_data_sprite[bjtwin_address_map_sprites(A)]);
+		uint16_t tmp = decode_word( rom[A+1]*256 + rom[A], decode_data_sprite[bjtwin_address_map_sprites(A)]);
 		rom[A+1] = tmp >> 8;
 		rom[A] = tmp & 0xff;
 	}
@@ -4439,17 +4439,17 @@ static void decode_tdragonb(running_machine *machine)
 	/* Descrambling Info Again Taken from Raine, Huge Thanks to Antiriad and the Raine Team for
        going Open Source, best of luck in future development. */
 
-	UINT8 *rom;
+	uint8_t *rom;
 	int A, len;
 
 	/* The Main 68k Program of the Bootleg is Bitswapped */
-	static const UINT8 decode_data_tdragonb[1][16] =
+	static const uint8_t decode_data_tdragonb[1][16] =
 	{
 		{0xe,0xc,0xa,0x8,0x7,0x5,0x3,0x1,0xf,0xd,0xb,0x9,0x6,0x4,0x2,0x0},
 	};
 
 	/* Graphic Roms Could Also Do With Rearranging to make things simpler */
-	static const UINT8 decode_data_tdragonbgfx[1][8] =
+	static const uint8_t decode_data_tdragonbgfx[1][8] =
 	{
 		{0x7,0x6,0x5,0x3,0x4,0x2,0x1,0x0},
 	};
@@ -4459,7 +4459,7 @@ static void decode_tdragonb(running_machine *machine)
 	for (A = 0;A < len;A += 2)
 	{
 		int h = A+NATIVE_ENDIAN_VALUE_LE_BE(1,0), l = A+NATIVE_ENDIAN_VALUE_LE_BE(0,1);
-		UINT16 tmp = decode_word( rom[h]*256 + rom[l], decode_data_tdragonb[0]);
+		uint16_t tmp = decode_word( rom[h]*256 + rom[l], decode_data_tdragonb[0]);
 		rom[h] = tmp >> 8;
 		rom[l] = tmp & 0xff;
 	}
@@ -4482,11 +4482,11 @@ static void decode_tdragonb(running_machine *machine)
 static void decode_ssmissin(running_machine *machine)
 {
 	/* Like Thunder Dragon Bootleg without the Program Rom Swapping */
-	UINT8 *rom;
+	uint8_t *rom;
 	int A, len;
 
 	/* Graphic Roms Could Also Do With Rearranging to make things simpler */
-	static const UINT8 decode_data_tdragonbgfx[1][8] =
+	static const uint8_t decode_data_tdragonbgfx[1][8] =
 	{
 		{0x7,0x6,0x5,0x3,0x4,0x2,0x1,0x0},
 	};
@@ -4514,7 +4514,7 @@ static DRIVER_INIT( nmk )
 
 static DRIVER_INIT( hachamf )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	//rom[0x0006/2] = 0x7dc2;   /* replace reset vector with the "real" one */
 
@@ -4525,7 +4525,7 @@ static DRIVER_INIT( hachamf )
 
 static DRIVER_INIT( tdragonb )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	decode_tdragonb(machine);
 
@@ -4536,7 +4536,7 @@ static DRIVER_INIT( tdragonb )
 
 static DRIVER_INIT( tdragon )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	//rom[0x94b0/2] = 0; /* Patch out JMP to shared memory (protection) */
 	//rom[0x94b2/2] = 0x92f4;
@@ -4570,7 +4570,7 @@ static DRIVER_INIT( bjtwin )
  *  008F7E: 207C 000F 9000           movea.l #$f9000, A0
  */
 #if 0
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	rom[0x09172/2] = 0x6006;    /* patch checksum error */
 	rom[0x08f74/2] = 0x4e71;
 #endif
@@ -4986,9 +4986,9 @@ static void decryptcode( running_machine *machine, int a23, int a22, int a21, in
 	int a11, int a10, int a9, int a8, int a7, int a6, int a5, int a4, int a3, int a2, int a1, int a0 )
 {
 	int i;
-	UINT8 *RAM = memory_region( machine, "maincpu" );
+	uint8_t *RAM = memory_region( machine, "maincpu" );
 	size_t  size = memory_region_length( machine, "maincpu" );
-	UINT8 *buffer = auto_alloc_array(machine, UINT8,  size );
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t,  size );
 
 	memcpy( buffer, RAM, size );
 	for( i = 0; i < size; i++ )

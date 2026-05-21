@@ -1167,40 +1167,40 @@ Notes:
 #define S23_MODECLOCK	(130205)
 
 static tilemap_t *bgtilemap;
-static UINT32 *namcos23_textram, *namcos23_shared_ram, *gmen_sh2_shared;
-static UINT32 *namcos23_charram;
-static UINT8 namcos23_jvssense;
-static INT32 has_jvsio;
+static uint32_t *namcos23_textram, *namcos23_shared_ram, *gmen_sh2_shared;
+static uint32_t *namcos23_charram;
+static uint8_t namcos23_jvssense;
+static int32_t has_jvsio;
 
 static bool ctl_vbl_active;
-static UINT8 ctl_led;
-static UINT16 ctl_inp_buffer[2];
+static uint8_t ctl_led;
+static uint16_t ctl_inp_buffer[2];
 
-static UINT16 c417_ram[0x10000], c417_adr = 0;
-static UINT32 c417_pointrom_adr = 0;
+static uint16_t c417_ram[0x10000], c417_adr = 0;
+static uint32_t c417_pointrom_adr = 0;
 
-static UINT16 c412_sdram_a[0x100000]; // Framebuffers, probably
-static UINT16 c412_sdram_b[0x100000];
-static UINT16 c412_sram[0x20000];     // Ram-based tiles for rendering
-static UINT16 c412_pczram[0x200];     // Ram-based tilemap for rendering, or something else
-static UINT32 c412_adr = 0;
+static uint16_t c412_sdram_a[0x100000]; // Framebuffers, probably
+static uint16_t c412_sdram_b[0x100000];
+static uint16_t c412_sram[0x20000];     // Ram-based tiles for rendering
+static uint16_t c412_pczram[0x200];     // Ram-based tilemap for rendering, or something else
+static uint32_t c412_adr = 0;
 
-static UINT16 c421_dram_a[0x40000];
-static UINT16 c421_dram_b[0x40000];
-static UINT16 c421_sram[0x8000];
-static UINT32 c421_adr = 0;
+static uint16_t c421_dram_a[0x40000];
+static uint16_t c421_dram_b[0x40000];
+static uint16_t c421_sram[0x8000];
+static uint32_t c421_adr = 0;
 
-static INT16 s23_c422_regs[0x10];
+static int16_t s23_c422_regs[0x10];
 static int s23_subcpu_running;
 
 static emu_timer *c361_timer;
 
-static UINT32 p3d_address, p3d_size;
+static uint32_t p3d_address, p3d_size;
 
-static const UINT32 *ptrom;
-static const UINT16 *tmlrom;
-static const UINT8  *tmhrom, *texrom;
-static UINT32 tileid_mask, tile_mask, ptrom_limit;
+static const uint32_t *ptrom;
+static const uint16_t *tmlrom;
+static const uint8_t  *tmhrom, *texrom;
+static uint32_t tileid_mask, tile_mask, ptrom_limit;
 
 // It may only be 128
 // At 0x1e bytes per slot, rounded up to 0x20, that's 0x1000 to 0x2000 bytes.
@@ -1210,13 +1210,13 @@ static UINT32 tileid_mask, tile_mask, ptrom_limit;
 // Matrices are stored in signed 2.14 fixed point
 // Vectors are stored in signed 10.14 fixed point
 
-static INT16 matrices[256][9];
-static INT32 vectors[256][3];
-static INT32 light_vector[3];
-static UINT16 scaling;
+static int16_t matrices[256][9];
+static int32_t vectors[256][3];
+static int32_t light_vector[3];
+static uint16_t scaling;
 
 
-static UINT16 nthword( const UINT32 *pSource, int offs )
+static uint16_t nthword( const uint32_t *pSource, int offs )
 {
 	pSource += offs/2;
 	return (pSource[0]<<((offs&1)*16))>>16;
@@ -1224,7 +1224,7 @@ static UINT16 nthword( const UINT32 *pSource, int offs )
 
 static TILE_GET_INFO( TextTilemapGetInfo )
 {
-	UINT16 data = nthword( namcos23_textram,tile_index );
+	uint16_t data = nthword( namcos23_textram,tile_index );
   /**
     * x---.----.----.---- blend
     * xxxx.----.----.---- palette select
@@ -1247,7 +1247,7 @@ static WRITE32_HANDLER( s23_txtchar_w )
 	gfx_element_mark_dirty(space->machine->gfx[0], offset/32);
 }
 
-static UINT8 nthbyte( const UINT32 *pSource, int offs )
+static uint8_t nthbyte( const uint32_t *pSource, int offs )
 {
 	pSource += offs/4;
 	return (pSource[0]<<((offs&3)*8))>>24;
@@ -1491,7 +1491,7 @@ static READ16_HANDLER(s23_ctl_r)
 		// 0100 set freezes gorgon (polygon fifo flag)
 	case 1: return 0x0000 | input_port_read(space->machine, "DSW");
 	case 2: case 3: {
-		UINT16 res = ctl_inp_buffer[offset-2] & 0x800 ? 0xffff : 0x0000;
+		uint16_t res = ctl_inp_buffer[offset-2] & 0x800 ? 0xffff : 0x0000;
 		ctl_inp_buffer[offset-2] = (ctl_inp_buffer[offset-2] << 1) | 1;
 		return res;
 	}
@@ -1648,9 +1648,9 @@ struct namcos23_render_entry {
 
 	union {
 		struct {
-			UINT16 model;
-			INT16 m[9];
-			INT32 v[3];
+			uint16_t model;
+			int16_t m[9];
+			int32_t v[3];
 			float scaling;
 		} model;
 	};
@@ -1658,7 +1658,7 @@ struct namcos23_render_entry {
 
 struct namcos23_render_data {
 	const pen_t *pens;
-	UINT32 (*texture_lookup)(const pen_t *pens, float x, float y);
+	uint32_t (*texture_lookup)(const pen_t *pens, float x, float y);
 };
 
 struct namcos23_poly_entry {
@@ -1676,45 +1676,45 @@ static int render_poly_order[POLY_MAX_ENTRIES];
 static int render_count[2], render_cur, render_poly_count;
 static poly_manager *polymgr;
 
-static inline INT32 u32_to_s24(UINT32 v)
+static inline int32_t u32_to_s24(uint32_t v)
 {
   return v & 0x800000 ? v | 0xff000000 : v & 0xffffff;
 }
 
-static inline INT32 u32_to_s10(UINT32 v)
+static inline int32_t u32_to_s10(uint32_t v)
 {
 	return v & 0x200 ? v | 0xfffffe00 : v & 0x1ff;
 }
 
 
-static inline UINT8 light(UINT8 c, float l)
+static inline uint8_t light(uint8_t c, float l)
 {
   if(l < 1)
     l = l*c;
   else
     l = 255 - (255-c)/l;
-  return UINT8(l);
+  return uint8_t(l);
 }
 
-static UINT32 texture_lookup_nocache_point(const pen_t *pens, float x, float y)
+static uint32_t texture_lookup_nocache_point(const pen_t *pens, float x, float y)
 {
-	UINT32 xx = UINT32(x);
-	UINT32 yy = UINT32(y);
-	UINT32 tileid = ((xx >> 4) & 0xff) | ((yy << 4) & tileid_mask);
-	UINT8 attr = tmhrom[tileid >> 1];
+	uint32_t xx = uint32_t(x);
+	uint32_t yy = uint32_t(y);
+	uint32_t tileid = ((xx >> 4) & 0xff) | ((yy << 4) & tileid_mask);
+	uint8_t attr = tmhrom[tileid >> 1];
 	if(tileid & 1)
 		attr &= 15;
 	else
 		attr >>= 4;
-	UINT32 tile = (tmlrom[tileid] | (attr << 16)) & tile_mask;
+	uint32_t tile = (tmlrom[tileid] | (attr << 16)) & tile_mask;
 
 	// Probably swapx/swapy to add on bits 2-3 of attr
 	// Bits used by motoxgo at least
-	UINT8 color = texrom[(tile << 8) | ((yy << 4) & 0xf0) | (xx & 0x0f)];
+	uint8_t color = texrom[(tile << 8) | ((yy << 4) & 0xf0) | (xx & 0x0f)];
 	return pens[color];
 }
 
-static void render_scanline(void *dest, INT32 scanline, const poly_extent *extent, const void *extradata, int threadid)
+static void render_scanline(void *dest, int32_t scanline, const poly_extent *extent, const void *extradata, int threadid)
 {
 	const namcos23_render_data *rd = (const namcos23_render_data *)extradata;
 
@@ -1727,11 +1727,11 @@ static void render_scanline(void *dest, INT32 scanline, const poly_extent *exten
 	float dv = extent->param[2].dpdx;
 	float dl = extent->param[3].dpdx;
 	bitmap_t *bitmap = (bitmap_t *)dest;
-	UINT32 *img = BITMAP_ADDR32(bitmap, scanline, extent->startx);
+	uint32_t *img = BITMAP_ADDR32(bitmap, scanline, extent->startx);
 
 	for(int x = extent->startx; x < extent->stopx; x++) {
 		float z = w ? 1/w : 0;
-		UINT32 pcol = rd->texture_lookup(rd->pens, u*z, v*z);
+		uint32_t pcol = rd->texture_lookup(rd->pens, u*z, v*z);
 		float ll = l*z;
 		*img = (light(pcol >> 16, ll) << 16) | (light(pcol >> 8, ll) << 8) | light(pcol, ll);
 
@@ -1743,9 +1743,9 @@ static void render_scanline(void *dest, INT32 scanline, const poly_extent *exten
 	}
 }
 
-static INT32 *p3d_getv(UINT16 id)
+static int32_t *p3d_getv(uint16_t id)
 {
-	static INT32 sp[3];
+	static int32_t sp[3];
 	if(id == 0x8000)
 		return light_vector;
 	if(id >= 0x100) {
@@ -1755,9 +1755,9 @@ static INT32 *p3d_getv(UINT16 id)
 	return vectors[id];
 }
 
-static INT16 *p3d_getm(UINT16 id)
+static int16_t *p3d_getm(uint16_t id)
 {
-	static INT16 sp[3];
+	static int16_t sp[3];
 	if(id >= 0x100) {
 		memset(sp, 0, sizeof(sp));
 		return sp;
@@ -1765,31 +1765,31 @@ static INT16 *p3d_getm(UINT16 id)
 	return matrices[id];
 }
 
-static void p3d_matrix_set(const UINT16 *p, int size)
+static void p3d_matrix_set(const uint16_t *p, int size)
 {
 	if(size != 10) {
 		logerror("WARNING: p3d_matrix_set with size %d\n", size);
 		return;
 	}
-	INT16 *t = p3d_getm(*p++);
+	int16_t *t = p3d_getm(*p++);
 	for(int i=0; i<9; i++)
 		t[i] = *p++;
 }
 
-static void p3d_vector_set(const UINT16 *p, int size)
+static void p3d_vector_set(const uint16_t *p, int size)
 {
 	if(size != 7) {
 		logerror("WARNING: p3d_vector_set with size %d\n", size);
 		return;
 	}
-	INT32 *t = p3d_getv(*p++);
+	int32_t *t = p3d_getv(*p++);
 	for(int i=0; i<3; i++) {
 		t[i] = u32_to_s24((p[0] << 16) | p[1]);
 		p += 2;
 	}
 }
 
-static void p3d_scaling_set(const UINT16 *p, int size)
+static void p3d_scaling_set(const uint16_t *p, int size)
 {
 	if(size != 1) {
 		logerror("WARNING: p3d_scaling_set with size %d\n", size);
@@ -1798,7 +1798,7 @@ static void p3d_scaling_set(const UINT16 *p, int size)
 	scaling = *p;
 }
 
-static void p3d_vector_matrix_mul(const UINT16 *p, int size)
+static void p3d_vector_matrix_mul(const uint16_t *p, int size)
 {
 	if(size != 4) {
 		logerror("WARNING: p3d_vector_matrix_mul with size %d\n", size);
@@ -1807,16 +1807,16 @@ static void p3d_vector_matrix_mul(const UINT16 *p, int size)
 	if(p[2] != 0xffff)
 		logerror("WARNING: p3d_vector_matrix_mul with +2=%04x\n", p[2]);
 
-	INT32 *t       = p3d_getv(p[0]);
-	const INT16 *m = p3d_getm(p[1]);
-	const INT32 *v = p3d_getv(p[3]);
+	int32_t *t       = p3d_getv(p[0]);
+	const int16_t *m = p3d_getm(p[1]);
+	const int32_t *v = p3d_getv(p[3]);
 
-	t[0] = INT32((m[0]*INT64(v[0]) + m[3]*INT64(v[1]) + m[6]*INT64(v[2])) >> 14);
-	t[1] = INT32((m[1]*INT64(v[0]) + m[4]*INT64(v[1]) + m[7]*INT64(v[2])) >> 14);
-	t[2] = INT32((m[2]*INT64(v[0]) + m[5]*INT64(v[1]) + m[8]*INT64(v[2])) >> 14);
+	t[0] = int32_t((m[0]*int64_t(v[0]) + m[3]*int64_t(v[1]) + m[6]*int64_t(v[2])) >> 14);
+	t[1] = int32_t((m[1]*int64_t(v[0]) + m[4]*int64_t(v[1]) + m[7]*int64_t(v[2])) >> 14);
+	t[2] = int32_t((m[2]*int64_t(v[0]) + m[5]*int64_t(v[1]) + m[8]*int64_t(v[2])) >> 14);
 }
 
-static void p3d_matrix_vector_mul(const UINT16 *p, int size)
+static void p3d_matrix_vector_mul(const uint16_t *p, int size)
 {
 	if(size != 4) {
 		logerror("WARNING: p3d_matrix_vector_mul with size %d\n", size);
@@ -1825,17 +1825,17 @@ static void p3d_matrix_vector_mul(const UINT16 *p, int size)
 	if(p[2] != 0xffff)
 		logerror("WARNING: p3d_matrix_vector_mul with +2=%04x\n", p[2]);
 
-	INT32 *t       = p3d_getv(p[0]);
-	const INT16 *m = p3d_getm(p[1]);
-	const INT32 *v = p3d_getv(p[3]);
+	int32_t *t       = p3d_getv(p[0]);
+	const int16_t *m = p3d_getm(p[1]);
+	const int32_t *v = p3d_getv(p[3]);
 
-	t[0] = INT32((m[0]*INT64(v[0]) + m[1]*INT64(v[1]) + m[2]*INT64(v[2])) >> 14);
-	t[1] = INT32((m[3]*INT64(v[0]) + m[4]*INT64(v[1]) + m[7]*INT64(v[2])) >> 14);
-	t[2] = INT32((m[6]*INT64(v[0]) + m[7]*INT64(v[1]) + m[8]*INT64(v[2])) >> 14);
+	t[0] = int32_t((m[0]*int64_t(v[0]) + m[1]*int64_t(v[1]) + m[2]*int64_t(v[2])) >> 14);
+	t[1] = int32_t((m[3]*int64_t(v[0]) + m[4]*int64_t(v[1]) + m[7]*int64_t(v[2])) >> 14);
+	t[2] = int32_t((m[6]*int64_t(v[0]) + m[7]*int64_t(v[1]) + m[8]*int64_t(v[2])) >> 14);
 }
 
 
-static void p3d_matrix_matrix_mul(const UINT16 *p, int size)
+static void p3d_matrix_matrix_mul(const uint16_t *p, int size)
 {
 	if(size != 4) {
 		logerror("WARNING: p3d_matrix_matrix_mul with size %d\n", size);
@@ -1844,22 +1844,22 @@ static void p3d_matrix_matrix_mul(const UINT16 *p, int size)
 	if(p[2] != 0xffff)
 		logerror("WARNING: p3d_matrix_matrix_mul with +2=%04x\n", p[2]);
 
-	INT16 *t        = p3d_getm(p[0]);
-	const INT16 *m1 = p3d_getm(p[1]);
-	const INT16 *m2 = p3d_getm(p[3]);
+	int16_t *t        = p3d_getm(p[0]);
+	const int16_t *m1 = p3d_getm(p[1]);
+	const int16_t *m2 = p3d_getm(p[3]);
 
-	t[0] = INT16((m1[0]*m2[0] + m1[1]*m2[3] + m1[2]*m2[6]) >> 14);
-	t[1] = INT16((m1[0]*m2[1] + m1[1]*m2[4] + m1[2]*m2[7]) >> 14);
-	t[2] = INT16((m1[0]*m2[2] + m1[1]*m2[5] + m1[2]*m2[8]) >> 14);
-	t[3] = INT16((m1[3]*m2[0] + m1[4]*m2[3] + m1[5]*m2[6]) >> 14);
-	t[4] = INT16((m1[3]*m2[1] + m1[4]*m2[4] + m1[5]*m2[7]) >> 14);
-	t[5] = INT16((m1[3]*m2[2] + m1[4]*m2[5] + m1[5]*m2[8]) >> 14);
-	t[6] = INT16((m1[6]*m2[0] + m1[7]*m2[3] + m1[8]*m2[6]) >> 14);
-	t[7] = INT16((m1[6]*m2[1] + m1[7]*m2[4] + m1[8]*m2[7]) >> 14);
-	t[8] = INT16((m1[6]*m2[2] + m1[7]*m2[5] + m1[8]*m2[8]) >> 14);
+	t[0] = int16_t((m1[0]*m2[0] + m1[1]*m2[3] + m1[2]*m2[6]) >> 14);
+	t[1] = int16_t((m1[0]*m2[1] + m1[1]*m2[4] + m1[2]*m2[7]) >> 14);
+	t[2] = int16_t((m1[0]*m2[2] + m1[1]*m2[5] + m1[2]*m2[8]) >> 14);
+	t[3] = int16_t((m1[3]*m2[0] + m1[4]*m2[3] + m1[5]*m2[6]) >> 14);
+	t[4] = int16_t((m1[3]*m2[1] + m1[4]*m2[4] + m1[5]*m2[7]) >> 14);
+	t[5] = int16_t((m1[3]*m2[2] + m1[4]*m2[5] + m1[5]*m2[8]) >> 14);
+	t[6] = int16_t((m1[6]*m2[0] + m1[7]*m2[3] + m1[8]*m2[6]) >> 14);
+	t[7] = int16_t((m1[6]*m2[1] + m1[7]*m2[4] + m1[8]*m2[7]) >> 14);
+	t[8] = int16_t((m1[6]*m2[2] + m1[7]*m2[5] + m1[8]*m2[8]) >> 14);
 }
 
-static void p3d_render(const UINT16 *p, int size, bool use_scaling)
+static void p3d_render(const uint16_t *p, int size, bool use_scaling)
 {
 	if(size != 3) {
 		logerror("WARNING: p3d_render with size %d\n", size);
@@ -1878,8 +1878,8 @@ static void p3d_render(const UINT16 *p, int size, bool use_scaling)
 	}
 
 	// Vector and matrix may be inverted
-	const INT16 *m = p3d_getm(p[1]);
-	const INT32 *v = p3d_getv(p[2]);
+	const int16_t *m = p3d_getm(p[1]);
+	const int32_t *v = p3d_getv(p[2]);
 
 	namcos23_render_entry *re = render_entries[render_cur] + render_count[render_cur];
 	re->type = MODEL;
@@ -1899,7 +1899,7 @@ static void p3d_render(const UINT16 *p, int size, bool use_scaling)
 }
 
 
-static void p3d_flush(const UINT16 *p, int size)
+static void p3d_flush(const uint16_t *p, int size)
 {
 	if(size != 0) {
 		logerror("WARNING: p3d_flush with size %d\n", size);
@@ -1911,17 +1911,17 @@ static void p3d_flush(const UINT16 *p, int size)
 	render_count[render_cur]++;
 }
 
-static void p3d_dma(const address_space *space, UINT32 adr, UINT32 size)
+static void p3d_dma(const address_space *space, uint32_t adr, uint32_t size)
 {
 	adr &= 0x1fffffff;
-	UINT16 buffer[256];
+	uint16_t buffer[256];
 	int pos = 0;
 	while(pos < size) {
-		UINT16 h = memory_read_word(space, adr+pos);
+		uint16_t h = memory_read_word(space, adr+pos);
 
 		pos += 2;
 
-		UINT16 h1;
+		uint16_t h1;
 		int psize;
 		if(h & 0x4000) {
 			h1 = h & 0xff00;
@@ -1991,14 +1991,14 @@ static WRITE32_HANDLER( p3d_w)
 	logerror("p3d_w %02x, %08x @ %08x (%08x, %08x)\n", offset, data, mem_mask, cpu_get_pc(space->cpu), (unsigned int)cpu_get_reg(space->cpu, MIPS3_R31));
 }
 
-static void render_apply_transform(INT32 xi, INT32 yi, INT32 zi, const namcos23_render_entry *re, poly_vertex &pv)
+static void render_apply_transform(int32_t xi, int32_t yi, int32_t zi, const namcos23_render_entry *re, poly_vertex &pv)
 {
-	pv.x =    (INT32((re->model.m[0]*INT64(xi) + re->model.m[3]*INT64(yi) + re->model.m[6]*INT64(zi)) >> 14)*re->model.scaling + re->model.v[0])/16384.0;
-	pv.y =    (INT32((re->model.m[1]*INT64(xi) + re->model.m[4]*INT64(yi) + re->model.m[7]*INT64(zi)) >> 14)*re->model.scaling + re->model.v[1])/16384.0;
-	pv.p[0] = (INT32((re->model.m[2]*INT64(xi) + re->model.m[5]*INT64(yi) + re->model.m[8]*INT64(zi)) >> 14)*re->model.scaling + re->model.v[2])/16384.0;
+	pv.x =    (int32_t((re->model.m[0]*int64_t(xi) + re->model.m[3]*int64_t(yi) + re->model.m[6]*int64_t(zi)) >> 14)*re->model.scaling + re->model.v[0])/16384.0;
+	pv.y =    (int32_t((re->model.m[1]*int64_t(xi) + re->model.m[4]*int64_t(yi) + re->model.m[7]*int64_t(zi)) >> 14)*re->model.scaling + re->model.v[1])/16384.0;
+	pv.p[0] = (int32_t((re->model.m[2]*int64_t(xi) + re->model.m[5]*int64_t(yi) + re->model.m[8]*int64_t(zi)) >> 14)*re->model.scaling + re->model.v[2])/16384.0;
 }
 
-static void render_apply_matrot(INT32 xi, INT32 yi, INT32 zi, const namcos23_render_entry *re, INT32 &x, INT32 &y, INT32 &z)
+static void render_apply_matrot(int32_t xi, int32_t yi, int32_t zi, const namcos23_render_entry *re, int32_t &x, int32_t &y, int32_t &z)
 {
 	x = (re->model.m[0]*xi + re->model.m[3]*yi + re->model.m[6]*zi) >> 14;
 	y = (re->model.m[1]*xi + re->model.m[4]*yi + re->model.m[7]*zi) >> 14;
@@ -2020,7 +2020,7 @@ static void render_project(poly_vertex &pv)
 
 static void render_one_model(running_machine *machine, const namcos23_render_entry *re)
 {
-	UINT32 adr = ptrom[re->model.model];
+	uint32_t adr = ptrom[re->model.model];
 	if(adr >= ptrom_limit) {
 		logerror("WARNING: model %04x base address %08x out-of-bounds - pointram?\n", re->model.model, adr);
 		return;
@@ -2029,12 +2029,12 @@ static void render_one_model(running_machine *machine, const namcos23_render_ent
 	while(adr < ptrom_limit) {
 		poly_vertex pv[15];
 
-		UINT32 type = ptrom[adr++];
-		UINT32 h    = ptrom[adr++];
+		uint32_t type = ptrom[adr++];
+		uint32_t h    = ptrom[adr++];
 
 
 		float tbase = (type >> 24) << 12;
-		UINT8 color = (h >> 24) & 0x7f;
+		uint8_t color = (h >> 24) & 0x7f;
 		int lmode = (type >> 19) & 3;
 		int ne = (type >> 8) & 15;
 
@@ -2042,8 +2042,8 @@ static void render_one_model(running_machine *machine, const namcos23_render_ent
 		if(type & 0x00001000)
 			adr++;
 
-		UINT32 light = 0;
-		UINT32 extptr = 0;
+		uint32_t light = 0;
+		uint32_t extptr = 0;
 
 		if(lmode == 3) {
 			extptr = adr;
@@ -2055,9 +2055,9 @@ static void render_one_model(running_machine *machine, const namcos23_render_ent
 		float maxz = FLT_MIN;
 
 		for(int i=0; i<ne; i++) {
-			UINT32 v1 = ptrom[adr++];
-			UINT32 v2 = ptrom[adr++];
-			UINT32 v3 = ptrom[adr++];
+			uint32_t v1 = ptrom[adr++];
+			uint32_t v2 = ptrom[adr++];
+			uint32_t v3 = ptrom[adr++];
 
 			render_apply_transform(u32_to_s24(v1), u32_to_s24(v2), u32_to_s24(v3), re, pv[i]);
 			pv[i].p[1] = (((v1 >> 20) & 0xf00) | ((v2 >> 24 & 0xff))) + 0.5;
@@ -2076,11 +2076,11 @@ static void render_one_model(running_machine *machine, const namcos23_render_ent
 				pv[i].p[3] = 1.0;
 				break;
 			case 3: {
-				UINT32 norm = ptrom[extptr++];
-				INT32 nx = u32_to_s10(norm >> 20);
-				INT32 ny = u32_to_s10(norm >> 10);
-				INT32 nz = u32_to_s10(norm);
-				INT32 nrx, nry, nrz;
+				uint32_t norm = ptrom[extptr++];
+				int32_t nx = u32_to_s10(norm >> 20);
+				int32_t ny = u32_to_s10(norm >> 10);
+				int32_t nz = u32_to_s10(norm);
+				int32_t nrx, nry, nrz;
 				render_apply_matrot(nx, ny, nz, re, nrx, nry, nrz);
 
 				float lsi = float(nrx*light_vector[0] + nry*light_vector[1] + nrz*light_vector[2])/4194304.0;
@@ -2173,7 +2173,7 @@ static void render_run(running_machine *machine, bitmap_t *bitmap)
 
 static VIDEO_START( ss23 )
 {
-	gfx_element_set_source(machine->gfx[0], (UINT8 *)namcos23_charram);
+	gfx_element_set_source(machine->gfx[0], (uint8_t *)namcos23_charram);
 	bgtilemap = tilemap_create(machine, TextTilemapGetInfo, tilemap_scan_rows, 16, 16, 64, 64);
 	tilemap_set_transparent_pen(bgtilemap, 0xf);
 
@@ -2316,7 +2316,7 @@ static MACHINE_RESET(gmen)
 
 static WRITE16_HANDLER( sharedram_sub_w )
 {
-	UINT16 *shared16 = (UINT16 *)namcos23_shared_ram;
+	uint16_t *shared16 = (uint16_t *)namcos23_shared_ram;
 
 	// fake that an I/O board is connected for games w/o a dump or that aren't properly communicating with it yet
 	if (!has_jvsio)
@@ -2332,7 +2332,7 @@ static WRITE16_HANDLER( sharedram_sub_w )
 
 static READ16_HANDLER( sharedram_sub_r )
 {
-	UINT16 *shared16 = (UINT16 *)namcos23_shared_ram;
+	uint16_t *shared16 = (uint16_t *)namcos23_shared_ram;
 
 	return shared16[BYTE_XOR_BE(offset)];
 }
@@ -2388,14 +2388,14 @@ static WRITE8_HANDLER( s23_mcu_pa_w )
 	s23_porta = data;
 }
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ((data / 10) << 4) | (data % 10);
 }
 
 static READ8_HANDLER( s23_mcu_rtc_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 	system_time systime;
 	static const int weekday[7] = { 7, 1, 2, 3, 4, 5, 6 };
 
@@ -2477,12 +2477,12 @@ static WRITE8_HANDLER( s23_mcu_settings_w )
 	s23_setstate ^= 1;
 }
 
-static UINT8 maintoio[128], mi_rd, mi_wr;
-static UINT8 iotomain[128], im_rd, im_wr;
+static uint8_t maintoio[128], mi_rd, mi_wr;
+static uint8_t iotomain[128], im_rd, im_wr;
 
 static READ8_HANDLER( s23_mcu_iob_r )
 {
-	UINT8 ret = iotomain[im_rd];
+	uint8_t ret = iotomain[im_rd];
 
 	im_rd++;
 	im_rd &= 0x7f;
@@ -2721,7 +2721,7 @@ ADDRESS_MAP_END
 
 static READ8_HANDLER( s23_iob_mcu_r )
 {
-	UINT8 ret = maintoio[mi_rd];
+	uint8_t ret = maintoio[mi_rd];
 
 	mi_rd++;
 	mi_rd &= 0x7f;
@@ -2742,7 +2742,7 @@ static WRITE8_HANDLER( s23_iob_mcu_w )
 	cputag_set_input_line(space->machine, "audiocpu", H8_SCI_0_RX, ASSERT_LINE);
 }
 
-static UINT8 s23_tssio_port_4 = 0;
+static uint8_t s23_tssio_port_4 = 0;
 
 static READ8_HANDLER( s23_iob_p4_r )
 {
@@ -2804,8 +2804,8 @@ ADDRESS_MAP_END
 
 static DRIVER_INIT(ss23)
 {
-	ptrom  = (const UINT32 *)memory_region(machine, "pointrom");
-	tmlrom = (const UINT16 *)memory_region(machine, "textilemapl");
+	ptrom  = (const uint32_t *)memory_region(machine, "pointrom");
+	tmlrom = (const uint16_t *)memory_region(machine, "textilemapl");
 	tmhrom = memory_region(machine, "textilemaph");
 	texrom = memory_region(machine, "textile");
 

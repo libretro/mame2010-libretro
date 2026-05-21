@@ -283,7 +283,7 @@ Stephh's notes (based on the games M6502 code and some tests) :
 
 
 /* binary counter (1.4MHz update) */
-static UINT8 sasuke_counter;
+static uint8_t sasuke_counter;
 
 static TIMER_DEVICE_CALLBACK( sasuke_update_counter )
 {
@@ -721,7 +721,7 @@ static INTERRUPT_GEN( satansat_interrupt )
 {
 	if (cpu_getiloops(device) != 0)
 	{
-		UINT8 val = input_port_read(device->machine, "IN2");
+		uint8_t val = input_port_read(device->machine, "IN2");
 
 		coin_counter_w(device->machine, 0, val & 1);
 
@@ -737,7 +737,7 @@ static INTERRUPT_GEN( snk6502_interrupt )
 {
 	if (cpu_getiloops(device) != 0)
 	{
-		UINT8 val = input_port_read(device->machine, "IN2");
+		uint8_t val = input_port_read(device->machine, "IN2");
 
 		coin_counter_w(device->machine, 0, val & 1);
 		coin_counter_w(device->machine, 1, val & 2);

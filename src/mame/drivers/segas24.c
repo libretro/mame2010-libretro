@@ -344,14 +344,14 @@ Notes:
 #define VIDEO_CLOCK			XTAL_32MHz
 
 
-UINT16* s24_mainram1;
+uint16_t* s24_mainram1;
 
 
 // Floppy Fisk Controller
 
 static int fdc_status, fdc_track, fdc_sector, fdc_data;
 static int fdc_phys_track, fdc_irq, fdc_drq, fdc_span, fdc_index_count;
-static UINT8 *fdc_pt;
+static uint8_t *fdc_pt;
 static int track_size;
 
 static void fdc_init(void)
@@ -503,7 +503,7 @@ static WRITE16_HANDLER( fdc_ctrl_w )
 
 // I/O Mappers
 
-static UINT8 hotrod_io_r(running_machine *machine, int port)
+static uint8_t hotrod_io_r(running_machine *machine, int port)
 {
 	switch(port)
 	{
@@ -527,13 +527,13 @@ static UINT8 hotrod_io_r(running_machine *machine, int port)
 	return 0x00;
 }
 
-static UINT8 dcclub_io_r(running_machine *machine, int port)
+static uint8_t dcclub_io_r(running_machine *machine, int port)
 {
 	switch(port)
 	{
 	case 0:
 	{
-		static const UINT8 pos[16] = { 0, 1, 3, 2, 6, 4, 12, 8, 9 };
+		static const uint8_t pos[16] = { 0, 1, 3, 2, 6, 4, 12, 8, 9 };
 		return (input_port_read(machine, "P1") & 0xf) | ((~pos[input_port_read(machine, "PADDLE")>>4]<<4) & 0xf0);
 	}
 	case 1:
@@ -556,7 +556,7 @@ static UINT8 dcclub_io_r(running_machine *machine, int port)
 
 static int cur_input_line;
 
-static UINT8 mahmajn_io_r(running_machine *machine, int port)
+static uint8_t mahmajn_io_r(running_machine *machine, int port)
 {
 	static const char *const keynames[] = { "MJ0", "MJ1", "MJ2", "MJ3", "MJ4", "MJ5", "P1", "P2" };
 
@@ -582,7 +582,7 @@ static UINT8 mahmajn_io_r(running_machine *machine, int port)
 	return 0x00;
 }
 
-static void mahmajn_io_w(running_machine *machine, int port, UINT8 data)
+static void mahmajn_io_w(running_machine *machine, int port, uint8_t data)
 {
 	switch(port)
 	{
@@ -598,7 +598,7 @@ static void mahmajn_io_w(running_machine *machine, int port, UINT8 data)
 	}
 }
 
-static void hotrod_io_w(running_machine *machine, int port, UINT8 data)
+static void hotrod_io_w(running_machine *machine, int port, uint8_t data)
 {
 	switch(port)
 	{
@@ -612,7 +612,7 @@ static void hotrod_io_w(running_machine *machine, int port, UINT8 data)
 	}
 }
 
-static UINT8 hotrod_ctrl_cur;
+static uint8_t hotrod_ctrl_cur;
 
 static WRITE16_HANDLER( hotrod3_ctrl_w )
 {
@@ -675,7 +675,7 @@ static WRITE16_HANDLER( iod_w )
 
 // Cpu #1 reset control
 
-static UINT8 resetcontrol, prev_resetcontrol;
+static uint8_t resetcontrol, prev_resetcontrol;
 
 static void reset_reset(running_machine *machine)
 {
@@ -696,7 +696,7 @@ static void reset_reset(running_machine *machine)
 	prev_resetcontrol = resetcontrol;
 }
 
-static void resetcontrol_w(const address_space *space, UINT8 data)
+static void resetcontrol_w(const address_space *space, uint8_t data)
 {
 	resetcontrol = data;
 	logerror("Reset control %02x ('%s':%x)\n", resetcontrol, space->cpu->tag(), cpu_get_pc(space->cpu));
@@ -706,7 +706,7 @@ static void resetcontrol_w(const address_space *space, UINT8 data)
 
 // Rom board bank access
 
-static UINT8 curbank;
+static uint8_t curbank;
 
 static void reset_bank(running_machine *machine)
 {
@@ -734,16 +734,16 @@ static WRITE16_HANDLER( curbank_w )
 
 // Protection magic latch
 
-static const UINT8  mahmajn_mlt[8] = { 5, 1, 6, 2, 3, 7, 4, 0 };
-static const UINT8 mahmajn2_mlt[8] = { 6, 0, 5, 3, 1, 4, 2, 7 };
-static const UINT8      qgh_mlt[8] = { 3, 7, 4, 0, 2, 6, 5, 1 };
-static const UINT8 bnzabros_mlt[8] = { 2, 4, 0, 5, 7, 3, 1, 6 };
-static const UINT8   qrouka_mlt[8] = { 1, 6, 4, 7, 0, 5, 3, 2 };
-static const UINT8 quizmeku_mlt[8] = { 0, 3, 2, 4, 6, 1, 7, 5 };
-static const UINT8   dcclub_mlt[8] = { 4, 7, 3, 0, 2, 6, 5, 1 };
+static const uint8_t  mahmajn_mlt[8] = { 5, 1, 6, 2, 3, 7, 4, 0 };
+static const uint8_t mahmajn2_mlt[8] = { 6, 0, 5, 3, 1, 4, 2, 7 };
+static const uint8_t      qgh_mlt[8] = { 3, 7, 4, 0, 2, 6, 5, 1 };
+static const uint8_t bnzabros_mlt[8] = { 2, 4, 0, 5, 7, 3, 1, 6 };
+static const uint8_t   qrouka_mlt[8] = { 1, 6, 4, 7, 0, 5, 3, 2 };
+static const uint8_t quizmeku_mlt[8] = { 0, 3, 2, 4, 6, 1, 7, 5 };
+static const uint8_t   dcclub_mlt[8] = { 4, 7, 3, 0, 2, 6, 5, 1 };
 
-static UINT8 mlatch;
-static const UINT8 *mlatch_table;
+static uint8_t mlatch;
+static const uint8_t *mlatch_table;
 
 static READ16_HANDLER( mlatch_r )
 {
@@ -754,7 +754,7 @@ static WRITE16_HANDLER( mlatch_w )
 {
 	if(ACCESSING_BITS_0_7) {
 		int i;
-		UINT8 mxor = 0;
+		uint8_t mxor = 0;
 		if(!mlatch_table) {
 			logerror("Protection: magic latch accessed but no table loaded (%s:%x)\n", space->cpu->tag(), cpu_get_pc(space->cpu));
 			return;
@@ -785,9 +785,9 @@ enum {
 	IRQ_SPRITE = 4
 };
 
-static UINT16 irq_timera;
-static UINT8  irq_timerb;
-static UINT8  irq_allow0, irq_allow1;
+static uint16_t irq_timera;
+static uint8_t  irq_timerb;
+static uint8_t  irq_allow0, irq_allow1;
 static int    irq_timer_pend0, irq_timer_pend1, irq_yms, irq_vblank, irq_sprite;
 static timer_device *irq_timer, *irq_timer_clear;
 
@@ -836,7 +836,7 @@ static WRITE16_HANDLER(irq_w)
 {
 	switch(offset) {
 	case 0: {
-		UINT16 old_ta = irq_timera;
+		uint16_t old_ta = irq_timera;
 		COMBINE_DATA(&irq_timera);
 		if(old_ta != irq_timera)
 			irq_timer_reset();
@@ -844,7 +844,7 @@ static WRITE16_HANDLER(irq_w)
 	}
 	case 1:
 		if(ACCESSING_BITS_0_7) {
-			UINT8 old_tb = irq_timerb;
+			uint8_t old_tb = irq_timerb;
 			irq_timerb = data;
 			if(old_tb != irq_timerb)
 				irq_timer_reset();
@@ -1078,7 +1078,7 @@ static NVRAM_HANDLER(system24)
 
 static MACHINE_START( system24 )
 {
-	UINT8 *usr1 = memory_region(machine, "romboard");
+	uint8_t *usr1 = memory_region(machine, "romboard");
 	if (usr1)
 	{
 		memory_configure_bank(machine, "bank1", 0, 16, usr1, 0x40000);

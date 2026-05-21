@@ -20,15 +20,15 @@
 extern const char layout_dlair[];
 
 static running_device *laserdisc;
-static UINT8 laserdisc_data;
+static uint8_t laserdisc_data;
 
 static int rx_bit;
 static int keylatch;
 
-static UINT8 cop_data_latch;
+static uint8_t cop_data_latch;
 static int cop_data_latch_enable;
-static UINT8 cop_l;
-static UINT8 cop_cmd_latch;
+static uint8_t cop_l;
+static uint8_t cop_cmd_latch;
 
 static int timer_int;
 static int data_rdy_int;
@@ -37,7 +37,7 @@ static int ssi_data_request;
 static int cart_present;
 static int pr7820_enter;
 
-static const UINT8 led_map[16] = { 0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7c, 0x07, 0x7f, 0x67, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x00 };
+static const uint8_t led_map[16] = { 0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7c, 0x07, 0x7f, 0x67, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x00 };
 
 /* Interrupts */
 
@@ -244,7 +244,7 @@ static READ8_HANDLER(cop_si_r)
 	case 7:
 	case 8:
 		{
-			UINT8 data;
+			uint8_t data;
 			char port[4];
 
 			sprintf(port, "R%d", keylatch);
@@ -421,15 +421,15 @@ static const char SSI263_PHONEMES[0x40][5] =
 
 static struct SSI263
 {
-	UINT8 dr;
-	UINT8 p;
-	UINT16 i;
-	UINT8 r;
-	UINT8 t;
-	UINT8 c;
-	UINT8 a;
-	UINT8 f;
-	UINT8 mode;
+	uint8_t dr;
+	uint8_t p;
+	uint16_t i;
+	uint8_t r;
+	uint8_t t;
+	uint8_t c;
+	uint8_t a;
+	uint8_t f;
+	uint8_t mode;
 } ssi263;
 
 static TIMER_CALLBACK( ssi263_phoneme_tick )

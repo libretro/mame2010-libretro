@@ -1188,18 +1188,18 @@ Notes:
 #include "includes/dc.h"
 
 #define CPU_CLOCK (200000000)
-static UINT32 *dc_sound_ram;
+static uint32_t *dc_sound_ram;
                                              /* MD2 MD1 MD0 MD6 MD4 MD3 MD5 MD7 MD8 */
 static const struct sh4_config sh4cpu_config = {  1,  0,  1,  0,  0,  0,  1,  1,  0, CPU_CLOCK };
 
 static READ64_HANDLER( naomi_arm_r )
 {
-	return *((UINT64 *)dc_sound_ram+offset);
+	return *((uint64_t *)dc_sound_ram+offset);
 }
 
 static WRITE64_HANDLER( naomi_arm_w )
 {
-	COMBINE_DATA((UINT64 *)dc_sound_ram + offset);
+	COMBINE_DATA((uint64_t *)dc_sound_ram + offset);
 }
 
 static READ64_HANDLER( naomi_unknown1_r )
@@ -1221,7 +1221,7 @@ static WRITE64_HANDLER( naomi_unknown1_w )
 static const struct
 {
 	const char *name;
-	const UINT8 eeprom[128];
+	const uint8_t eeprom[128];
 }
 jvseeprom_default_game[] =
 {
@@ -1271,7 +1271,7 @@ static NVRAM_HANDLER( naomi_eeproms )
 		}
     	else
 		{
-			const UINT8* jvseeprom_default = NULL;
+			const uint8_t* jvseeprom_default = NULL;
 			int i;
 
 			// some games require defaults to boot (vertical, 1 player etc.)
@@ -1463,18 +1463,18 @@ ADDRESS_MAP_END
 
 static READ64_HANDLER( aw_flash_r )
 {
-	return (UINT64)intelflash_read(0, offset*8) | (UINT64)intelflash_read(0, (offset*8)+1)<<8 | (UINT64)intelflash_read(0, (offset*8)+2)<<16 | (UINT64)intelflash_read(0, (offset*8)+3)<<24 |
-	       (UINT64)intelflash_read(0, (offset*8)+4)<<32 | (UINT64)intelflash_read(0, (offset*8)+5)<<40 | (UINT64)intelflash_read(0, (offset*8)+6)<<48 | (UINT64)intelflash_read(0, (offset*8)+7)<<56;
+	return (uint64_t)intelflash_read(0, offset*8) | (uint64_t)intelflash_read(0, (offset*8)+1)<<8 | (uint64_t)intelflash_read(0, (offset*8)+2)<<16 | (uint64_t)intelflash_read(0, (offset*8)+3)<<24 |
+	       (uint64_t)intelflash_read(0, (offset*8)+4)<<32 | (uint64_t)intelflash_read(0, (offset*8)+5)<<40 | (uint64_t)intelflash_read(0, (offset*8)+6)<<48 | (uint64_t)intelflash_read(0, (offset*8)+7)<<56;
 }
 
 static WRITE64_HANDLER( aw_flash_w )
 {
 	int i;
-	UINT32 addr = offset * 8;
+	uint32_t addr = offset * 8;
 
 	for (i = 0; i < 8; i++)
 	{
-		if (mem_mask & ((UINT64)0xff)<< (i*8))
+		if (mem_mask & ((uint64_t)0xff)<< (i*8))
 		{
 			addr += i;
 			break;
@@ -1486,7 +1486,7 @@ static WRITE64_HANDLER( aw_flash_w )
 	intelflash_write(0, addr, data);
 }
 
-INLINE int decode_reg32_64(running_machine *machine, UINT32 offset, UINT64 mem_mask, UINT64 *shift)
+INLINE int decode_reg32_64(running_machine *machine, uint32_t offset, uint64_t mem_mask, uint64_t *shift)
 {
 	int reg = offset * 2;
 
@@ -1511,13 +1511,13 @@ INLINE int decode_reg32_64(running_machine *machine, UINT32 offset, UINT64 mem_m
 static READ64_HANDLER( aw_modem_r )
 {
 	int reg;
-	UINT64 shift;
+	uint64_t shift;
 
 	reg = decode_reg32_64(space->machine, offset, mem_mask, &shift);
 
 	if (reg == 0x280/4)
 	{
-		UINT32 coins = input_port_read(space->machine, "COINS");
+		uint32_t coins = input_port_read(space->machine, "COINS");
 
 		if (coins & 0x01)
 		{
@@ -1538,11 +1538,11 @@ static READ64_HANDLER( aw_modem_r )
 static WRITE64_HANDLER( aw_modem_w )
 {
 	int reg;
-	UINT64 shift;
-	UINT32 dat;
+	uint64_t shift;
+	uint32_t dat;
 
 	reg = decode_reg32_64(space->machine, offset, mem_mask, &shift);
-	dat = (UINT32)(data >> shift);
+	dat = (uint32_t)(data >> shift);
 	mame_printf_verbose("MODEM: [%08x=%x] write %" I64FMT "x to %x, mask %" I64FMT "x\n", 0x600000+reg*4, dat, data, offset, mem_mask);
 }
 
@@ -4506,7 +4506,7 @@ time to go to sleep
 void naomi_write_keyfile(void)
 q{
 	// default key structure
-	UINT8 response[10][8] = {
+	uint8_t response[10][8] = {
 	{ ':', 0x70, 0x1f, 0x71, 0x1f, 0x00, 0x00, 0x00 }, // response to kayjyo!?
 	{ '8', 'V',  'E',  'R',  '0',  '0',  '0',  '1'  }, // response to bsec_ver
 	{ '7', 'T',  'E',  'S',  'T',  '_',  'O',  'K'  }, // response to atestpic
@@ -4524,7 +4524,7 @@ q{
 	char picname[256];
 
 	// ######### edit this ###########
-	UINT64 key = 0x4FF16D1A9E0BFBCDULL;
+	uint64_t key = 0x4FF16D1A9E0BFBCDULL;
 
 	memset(bootname,0x00,14);
 	memset(picname,0x00,256);
@@ -4547,7 +4547,7 @@ q{
 
 	for (i=0;i<8;i++)
 	{
-		UINT8 keybyte = (key>>(7-i)*8)&0xff;
+		uint8_t keybyte = (key>>(7-i)*8)&0xff;
 
 		if (i<7)
 		{
@@ -6307,7 +6307,7 @@ static const sbox_set sboxes_table[4] =
     },
 };
 
-static UINT16 atomiswave_decrypt(UINT16 cipherText, int address, const UINT32 key)
+static uint16_t atomiswave_decrypt(uint16_t cipherText, int address, const uint32_t key)
 {
     int b0,b1,b2,b3;
     int aux;
@@ -6346,27 +6346,27 @@ These subfields could be differing from the "real" ones in the following ways:
 */
 
 
-static const UINT32 sprtshot_key = 0x00000;
-static const UINT32 rangrmsn_key = 0x50000;
-static const UINT32 fotns_key    = 0x93627;
-static const UINT32 xtrmhunt_key = 0x80000;
-static const UINT32 xtrmhnt2_key = 0xc194f;
-static const UINT32 dolphin_key  = 0x1a1e8;
-static const UINT32 demofist_key = 0x60000;
-static const UINT32 rumblef_key  = 0x4194f;
-static const UINT32 ngbc_key     = 0x42255;
-static const UINT32 kofnw_key    = 0x6b3bf;
-static const UINT32 kov7sprt_key = 0xf0000;
-static const UINT32 ggisuka_key  = 0x8b10a;
-static const UINT32 vfurlong_key = 0xa547a;
-static const UINT32 salmankt_key = 0x34b74;
+static const uint32_t sprtshot_key = 0x00000;
+static const uint32_t rangrmsn_key = 0x50000;
+static const uint32_t fotns_key    = 0x93627;
+static const uint32_t xtrmhunt_key = 0x80000;
+static const uint32_t xtrmhnt2_key = 0xc194f;
+static const uint32_t dolphin_key  = 0x1a1e8;
+static const uint32_t demofist_key = 0x60000;
+static const uint32_t rumblef_key  = 0x4194f;
+static const uint32_t ngbc_key     = 0x42255;
+static const uint32_t kofnw_key    = 0x6b3bf;
+static const uint32_t kov7sprt_key = 0xf0000;
+static const uint32_t ggisuka_key  = 0x8b10a;
+static const uint32_t vfurlong_key = 0xa547a;
+static const uint32_t salmankt_key = 0x34b74;
 
 
 static DRIVER_INIT( atomiswave )
 {
-	UINT64 *ROM = (UINT64 *)memory_region(machine, "maincpu");
+	uint64_t *ROM = (uint64_t *)memory_region(machine, "maincpu");
 #if 0
-	UINT8 *dcdata = (UINT8 *)memory_region(machine, "user1");
+	uint8_t *dcdata = (uint8_t *)memory_region(machine, "user1");
 	FILE *f;
 
 	f = fopen("aw.bin", "wb");
@@ -6374,7 +6374,7 @@ static DRIVER_INIT( atomiswave )
 	fclose(f);
 #endif
 	// patch out long startup delay
-	ROM[0x98e/8] = (ROM[0x98e/8] & U64(0xffffffffffff)) | (UINT64)0x0009<<48;
+	ROM[0x98e/8] = (ROM[0x98e/8] & U64(0xffffffffffff)) | (uint64_t)0x0009<<48;
 
 	intelflash_init(machine, 0, FLASH_MACRONIX_29L001MC, memory_region(machine, "maincpu"));
 }
@@ -6383,7 +6383,7 @@ static DRIVER_INIT( atomiswave )
 static DRIVER_INIT(DRIVER)	\
 {	\
 	int i;	\
-	UINT16 *src = (UINT16 *)(memory_region(machine, "user1"));	\
+	uint16_t *src = (uint16_t *)(memory_region(machine, "user1"));	\
 	int rom_size = memory_region_length(machine, "user1");	\
 	for(i=0; i<rom_size/2; i++)	\
 	{	\

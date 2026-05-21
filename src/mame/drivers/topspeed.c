@@ -326,7 +326,7 @@ static INTERRUPT_GEN( topspeed_cpub_interrupt )
 static READ8_HANDLER( topspeed_input_bypass_r )
 {
 	topspeed_state *state = (topspeed_state *)space->machine->driver_data;
-	UINT8 port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
+	uint8_t port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
 	int steer = 0;
 	int analogue_steer = input_port_read_safe(space->machine, STEER_PORT_TAG, 0x00);
 	int fake = input_port_read_safe(space->machine, FAKE_PORT_TAG, 0x00);

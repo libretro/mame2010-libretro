@@ -61,7 +61,7 @@ static INTERRUPT_GEN( orbit_interrupt )
  *
  *************************************/
 
-static void update_misc_flags(running_machine *machine, UINT8 val)
+static void update_misc_flags(running_machine *machine, uint8_t val)
 {
 	orbit_state *state = (orbit_state *)machine->driver_data;
 
@@ -89,7 +89,7 @@ static void update_misc_flags(running_machine *machine, UINT8 val)
 static WRITE8_HANDLER( orbit_misc_w )
 {
 	orbit_state *state = (orbit_state *)space->machine->driver_data;
-	UINT8 bit = offset >> 1;
+	uint8_t bit = offset >> 1;
 
 	if (offset & 1)
 		update_misc_flags(space->machine, state->misc_flags | (1 << bit));

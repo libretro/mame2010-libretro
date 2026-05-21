@@ -79,10 +79,10 @@ PS / PD :  key matrix
 #include "sound/ay8910.h"
 #include "video/mc6845.h"
 
-extern UINT8 *speedatk_videoram;
-extern UINT8 *speedatk_colorram;
-static UINT8 mux_data;
-static UINT8 km_status,coin_settings;
+extern uint8_t *speedatk_videoram;
+extern uint8_t *speedatk_colorram;
+static uint8_t mux_data;
+static uint8_t km_status,coin_settings;
 
 #define MASTER_CLOCK XTAL_12MHz
 
@@ -98,7 +98,7 @@ extern VIDEO_UPDATE( speedatk );
  * it handles the multiplexer device between player one and two.                       */
 static READ8_HANDLER( key_matrix_r )
 {
-	static UINT8 coin_impulse;
+	static uint8_t coin_impulse;
 
 	if(coin_impulse > 0)
 	{

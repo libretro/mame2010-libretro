@@ -98,7 +98,7 @@ static VIDEO_EOF( snowbros )
 }
 
 
-static UINT16 *hyperpac_ram;
+static uint16_t *hyperpac_ram;
 static int sb3_music_is_playing;
 static int sb3_music;
 
@@ -208,7 +208,7 @@ static READ8_HANDLER( prot_io_r )
 	return 0x00;
 }
 
-static UINT8 semicom_prot_offset = 0x00;
+static uint8_t semicom_prot_offset = 0x00;
 
 // probably not endian safe
 static WRITE8_HANDLER( prot_io_w )
@@ -217,7 +217,7 @@ static WRITE8_HANDLER( prot_io_w )
 	{
 		case 0x00:
 		{
-			UINT16 word = hyperpac_ram[(0xe000/2)+semicom_prot_offset];
+			uint16_t word = hyperpac_ram[(0xe000/2)+semicom_prot_offset];
 			word = (word & 0xff00) | (data << 0);
 			hyperpac_ram[(0xe000/2)+semicom_prot_offset] = word;
 			break;
@@ -225,7 +225,7 @@ static WRITE8_HANDLER( prot_io_w )
 
 		case 0x01:
 		{
-			UINT16 word = hyperpac_ram[(0xe000/2)+semicom_prot_offset];
+			uint16_t word = hyperpac_ram[(0xe000/2)+semicom_prot_offset];
 			word = (word & 0x00ff) | (data << 8);
 			hyperpac_ram[(0xe000/2)+semicom_prot_offset] = word;
 			break;
@@ -387,7 +387,7 @@ static READ16_HANDLER( sb3_sound_r )
 
 static void sb3_play_music(running_machine *machine, int data)
 {
-	UINT8 *snd;
+	uint8_t *snd;
 
 	/* sample is actually played in interrupt function so it loops */
 	sb3_music = data;
@@ -1422,7 +1422,7 @@ static const ym2151_interface ym2151_config =
 
 static MACHINE_RESET (semiprot)
 {
-	UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+	uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 	int i;
 
 	for (i = 0;i < 0x200/2;i++)
@@ -1431,7 +1431,7 @@ static MACHINE_RESET (semiprot)
 
 static MACHINE_RESET (finalttr)
 {
-	UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+	uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 	int i;
 
 	for (i = 0;i < 0x200/2;i++)
@@ -2252,7 +2252,7 @@ static READ16_HANDLER ( moremorp_0a_read )
 
 static DRIVER_INIT( moremorp )
 {
-//  UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+//  uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 //  int i;
 
 //  for (i = 0;i < 0x200/2;i++)
@@ -2265,15 +2265,15 @@ static DRIVER_INIT( moremorp )
 
 static DRIVER_INIT( cookbib2 )
 {
-//  UINT16 *HCROM = (UINT16*)memory_region(machine, "maincpu");
-//  UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+//  uint16_t *HCROM = (uint16_t*)memory_region(machine, "maincpu");
+//  uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 //  int i;
 //  hyperpac_ram[0xf000/2] = 0x46fc;
 //  hyperpac_ram[0xf002/2] = 0x2700;
 
 // verified on real hardware, need to move this to a file really
 
-//  static UINT16 cookbib2_mcu68k[] =
+//  static uint16_t cookbib2_mcu68k[] =
 //  {
 //      // moved to protdata.bin
 //  };
@@ -2629,12 +2629,12 @@ static READ16_HANDLER ( _4in1_02_read )
 
 static DRIVER_INIT(4in1boot)
 {
-	UINT8 *buffer;
-	UINT8 *src = memory_region(machine, "maincpu");
+	uint8_t *buffer;
+	uint8_t *src = memory_region(machine, "maincpu");
 	int len = memory_region_length(machine, "maincpu");
 
 	/* strange order */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)
@@ -2649,7 +2649,7 @@ static DRIVER_INIT(4in1boot)
 	len = memory_region_length(machine, "soundcpu");
 
 	/* strange order */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)
@@ -2662,12 +2662,12 @@ static DRIVER_INIT(4in1boot)
 
 static DRIVER_INIT(snowbro3)
 {
-	UINT8 *buffer;
-	UINT8 *src = memory_region(machine, "maincpu");
+	uint8_t *buffer;
+	uint8_t *src = memory_region(machine, "maincpu");
 	int len = memory_region_length(machine, "maincpu");
 
 	/* strange order */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)

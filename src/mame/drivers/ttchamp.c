@@ -44,7 +44,7 @@ The PCB is Spanish and manufacured by Gamart.
 #include "emu.h"
 #include "cpu/nec/nec.h"
 
-static UINT16 *peno_vram;
+static uint16_t *peno_vram;
 
 
 static VIDEO_START(ttchamp)
@@ -75,14 +75,14 @@ static VIDEO_UPDATE(ttchamp)
 	{
 		for(x=0;x<xxx;x++)
 		{
-			/*if(hotblock_port0&0x40)*/*BITMAP_ADDR16(bitmap, y, x) = ((UINT8 *)peno_vram)[BYTE_XOR_LE(count)]+0x300;
+			/*if(hotblock_port0&0x40)*/*BITMAP_ADDR16(bitmap, y, x) = ((uint8_t *)peno_vram)[BYTE_XOR_LE(count)]+0x300;
             count++;
         }
     }
     return 0;
 }
 
-static UINT16 paloff;
+static uint16_t paloff;
 
 static WRITE16_HANDLER( paloff_w )
 {
@@ -93,7 +93,7 @@ static WRITE16_HANDLER( paloff_w )
 static WRITE16_HANDLER( pcup_prgbank_w )
 {
     int bank;
-    UINT8 *ROM1 = memory_region(space->machine, "user1");
+    uint8_t *ROM1 = memory_region(space->machine, "user1");
 
     if (ACCESSING_BITS_0_7)
     {
@@ -322,7 +322,7 @@ ROM_END
 
 static DRIVER_INIT (ttchamp)
 {
-	UINT8 *ROM1 = memory_region(machine, "user1");
+	uint8_t *ROM1 = memory_region(machine, "user1");
 	memory_set_bankptr(machine, "bank1",&ROM1[0x120000]);
 	memory_set_bankptr(machine, "bank2",&ROM1[0x180000]);
 }

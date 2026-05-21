@@ -22,7 +22,7 @@ extern READ16_HANDLER( prehisle_control16_r );
 extern VIDEO_START( prehisle );
 extern VIDEO_UPDATE( prehisle );
 
-extern UINT16 *prehisle_bg_videoram16;
+extern uint16_t *prehisle_bg_videoram16;
 
 /******************************************************************************/
 

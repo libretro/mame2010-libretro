@@ -46,10 +46,10 @@
  *
  *************************************/
 
-static UINT8 prev_cia1_porta;
-static UINT8 parallel_data;
-static UINT8 nvram_address_latch;
-static UINT8 nvram_data_latch;
+static uint8_t prev_cia1_porta;
+static uint8_t parallel_data;
+static uint8_t nvram_address_latch;
+static uint8_t nvram_data_latch;
 
 
 
@@ -392,7 +392,7 @@ static DRIVER_INIT( upscope )
 
 	/* allocate NVRAM */
 	machine->generic.nvram_size = 0x100;
-	machine->generic.nvram.u8 = auto_alloc_array(machine, UINT8, machine->generic.nvram_size);
+	machine->generic.nvram.u8 = auto_alloc_array(machine, uint8_t, machine->generic.nvram_size);
 
 	/* set up memory */
 	memory_configure_bank(machine, "bank1", 0, 1, amiga_chip_ram, 0);

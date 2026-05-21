@@ -61,12 +61,12 @@ Notes:
 
 static DRIVER_INIT( hardhead )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] =
+		static const uint8_t swaptable[8] =
 		{
 			1,1,0,1,1,1,1,0,
 		};
@@ -93,12 +93,12 @@ static DRIVER_INIT( hardhedb )
 
 /* !! BRICKZN3 !! */
 
-static UINT8 *brickzn_decrypt(running_machine *machine)
+static uint8_t *brickzn_decrypt(running_machine *machine)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
 	size_t	size	=	memory_region_length(machine, "maincpu");
-	UINT8   *decrypt = auto_alloc_array(machine, UINT8, size);
+	uint8_t   *decrypt = auto_alloc_array(machine, uint8_t, size);
 	int i;
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
@@ -106,17 +106,17 @@ static UINT8 *brickzn_decrypt(running_machine *machine)
 	/* Opcodes and data */
 	for (i = 0; i < 0x50000; i++)
 	{
-		static const UINT8 opcode_swaptable[8] =
+		static const uint8_t opcode_swaptable[8] =
 		{
 			1,1,1,0,0,1,1,0,
 		};
-		static const UINT8 data_swaptable[16] =
+		static const uint8_t data_swaptable[16] =
 		{
 			1,1,1,0,0,1,1,1,1,0,1,1,1,1,1,1,
 		};
 		int opcode_swap = opcode_swaptable[((i & 0x00c) >> 2) | ((i & 0x040) >> 4)];
 		int data_swap = (i >= 0x8000) ? 0 : data_swaptable[(i & 0x003) | ((i & 0x008) >> 1) | ((i & 0x400) >> 7)];
-		UINT8 x = RAM[i];
+		uint8_t x = RAM[i];
 
 		if (data_swap)
 		{
@@ -138,8 +138,8 @@ static UINT8 *brickzn_decrypt(running_machine *machine)
 
 static DRIVER_INIT( brickzn )
 {
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
-	UINT8   *decrypt = brickzn_decrypt(machine);
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t   *decrypt = brickzn_decrypt(machine);
 	int i;
 
 	// restore opcodes which for some reason shouldn't be decrypted... */
@@ -169,8 +169,8 @@ static DRIVER_INIT( brickzn )
 
 static DRIVER_INIT( brickzn3 )
 {
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
-	UINT8   *decrypt = brickzn_decrypt(machine);
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t   *decrypt = brickzn_decrypt(machine);
 	int i;
 
 	// restore opcodes which for some reason shouldn't be decrypted... */
@@ -206,10 +206,10 @@ static DRIVER_INIT( brickzn3 )
 static DRIVER_INIT( hardhea2 )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
 	size_t	size	=	memory_region_length(machine, "maincpu");
-	UINT8   *decrypt =	auto_alloc_array(machine, UINT8, size);
-	UINT8 x;
+	uint8_t   *decrypt =	auto_alloc_array(machine, uint8_t, size);
+	uint8_t x;
 	int i;
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
@@ -232,7 +232,7 @@ rom13:  0?, 1y, 2n, 3n      ?,?,?,? (palettes)
         8?, 9n?,an, bn      y,y,?,? (player anims)
         cn, dy, en, fn      y,y,n,n
 */
-		static const UINT8 swaptable[80] =
+		static const uint8_t swaptable[80] =
 		{
 			1,1,1,1,0,0,1,1,    0,0,0,0,0,0,0,0,	// 8000-ffff not used
 			1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,
@@ -251,12 +251,12 @@ rom13:  0?, 1y, 2n, 3n      ?,?,?,? (palettes)
 	/* Opcodes */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[32] =
+		static const uint8_t swaptable[32] =
 		{
 			1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,
 			1,1,0,1,1,1,1,1,1,1,1,1,0,1,0,0,
 		};
-		static const UINT8 xortable[32] =
+		static const uint8_t xortable[32] =
 		{
 			0x04,0x04,0x00,0x04,0x00,0x04,0x00,0x00,0x04,0x45,0x00,0x04,0x00,0x04,0x00,0x00,
 			0x04,0x45,0x00,0x04,0x00,0x04,0x00,0x00,0x04,0x04,0x00,0x04,0x00,0x04,0x00,0x00,
@@ -275,14 +275,14 @@ rom13:  0?, 1y, 2n, 3n      ?,?,?,? (palettes)
 	/* Data */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] = { 1,1,0,1,0,1,1,0 };
+		static const uint8_t swaptable[8] = { 1,1,0,1,0,1,1,0 };
 
 		if (swaptable[(i & 0x7000) >> 12])
 			RAM[i] = BITSWAP8(RAM[i], 5,6,7,4,3,2,1,0) ^ 0x41;
 	}
 
 	memory_configure_bank(machine, "bank1", 0, 16, memory_region(machine, "maincpu") + 0x10000, 0x4000);
-	memory_configure_bank(machine, "bank2", 0, 2, auto_alloc_array(machine, UINT8, 0x2000 * 2), 0x2000);
+	memory_configure_bank(machine, "bank2", 0, 2, auto_alloc_array(machine, uint8_t, 0x2000 * 2), 0x2000);
 }
 
 
@@ -293,10 +293,10 @@ rom13:  0?, 1y, 2n, 3n      ?,?,?,? (palettes)
 static DRIVER_INIT( starfigh )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
 	size_t	size	=	memory_region_length(machine, "maincpu");
-	UINT8   *decrypt =	auto_alloc_array(machine, UINT8, size);
-	UINT8 x;
+	uint8_t   *decrypt =	auto_alloc_array(machine, uint8_t, size);
+	uint8_t x;
 	int i;
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
@@ -305,7 +305,7 @@ static DRIVER_INIT( starfigh )
 	memcpy(decrypt, RAM, size);
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] =
+		static const uint8_t swaptable[8] =
 		{
 			1,1,1,1,1,1,0,0,
 		};
@@ -320,12 +320,12 @@ static DRIVER_INIT( starfigh )
 	/* Opcodes */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[32] =
+		static const uint8_t swaptable[32] =
 		{
 			0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
 			0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		};
-		static const UINT8 xortable[32] =
+		static const uint8_t xortable[32] =
 		{
 			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x41,0x01,0x00,0x00,0x00,0x00,
 			0x01,0x01,0x41,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -344,7 +344,7 @@ static DRIVER_INIT( starfigh )
 	/* Data */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] = { 1,1,0,1,0,1,1,0 };
+		static const uint8_t swaptable[8] = { 1,1,0,1,0,1,1,0 };
 
 		if (swaptable[(i & 0x7000) >> 12])
 			RAM[i] = BITSWAP8(RAM[i], 5,6,7,4,3,2,1,0) ^ 0x45;
@@ -361,10 +361,10 @@ static DRIVER_INIT( starfigh )
 static DRIVER_INIT( sparkman )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8	*RAM	=	memory_region(machine, "maincpu");
+	uint8_t	*RAM	=	memory_region(machine, "maincpu");
 	size_t	size	=	memory_region_length(machine, "maincpu");
-	UINT8   *decrypt =	auto_alloc_array(machine, UINT8, size);
-	UINT8 x;
+	uint8_t   *decrypt =	auto_alloc_array(machine, uint8_t, size);
+	uint8_t x;
 	int i;
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
@@ -373,7 +373,7 @@ static DRIVER_INIT( sparkman )
 	memcpy(decrypt, RAM, size);
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] =
+		static const uint8_t swaptable[8] =
 		{
 			1,1,1,1,0,0,1,1,
 		};
@@ -388,12 +388,12 @@ static DRIVER_INIT( sparkman )
 	/* Opcodes */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[32] =
+		static const uint8_t swaptable[32] =
 		{
 			0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,
 			0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
 		};
-		static const UINT8 xortable[32] =
+		static const uint8_t xortable[32] =
 		{
 			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 			0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x40,0x00,0x00,0x00,0x00,0x00,
@@ -412,7 +412,7 @@ static DRIVER_INIT( sparkman )
 	/* Data */
 	for (i = 0; i < 0x8000; i++)
 	{
-		static const UINT8 swaptable[8] = { 1,1,1,0,1,1,0,1 };
+		static const uint8_t swaptable[8] = { 1,1,1,0,1,1,0,1 };
 
 		if (swaptable[(i & 0x7000) >> 12])
 			RAM[i] = BITSWAP8(RAM[i], 5,6,7,4,3,2,1,0) ^ 0x44;
@@ -433,7 +433,7 @@ static DRIVER_INIT( sparkman )
                                 Hard Head
 ***************************************************************************/
 
-static UINT8 protection_val;
+static uint8_t protection_val;
 
 static READ8_HANDLER( hardhead_protection_r )
 {
@@ -465,7 +465,7 @@ static WRITE8_HANDLER( hardhead_protection_w )
                                 Hard Head
 ***************************************************************************/
 
-static UINT8 *hardhead_ip;
+static uint8_t *hardhead_ip;
 
 static READ8_HANDLER( hardhead_ip_r )
 {
@@ -677,7 +677,7 @@ ADDRESS_MAP_END
                                 Hard Head 2
 ***************************************************************************/
 
-static UINT8 suna8_nmi_enable;
+static uint8_t suna8_nmi_enable;
 
 /* Probably wrong: */
 static WRITE8_HANDLER( hardhea2_nmi_w )
@@ -793,7 +793,7 @@ ADDRESS_MAP_END
                                 Star Fighter
 ***************************************************************************/
 
-static UINT8 spritebank_latch;
+static uint8_t spritebank_latch;
 static WRITE8_HANDLER( starfigh_spritebank_latch_w )
 {
 	spritebank_latch = (data >> 2) & 1;
@@ -847,7 +847,7 @@ Thrash protection code snippet:
 
 */
 
-static UINT8 suna8_trash_prot, *suna8_wram;
+static uint8_t suna8_trash_prot, *suna8_wram;
 
 /* This is a command-based protection. */
 static WRITE8_HANDLER( sparkman_cmd_prot_w )

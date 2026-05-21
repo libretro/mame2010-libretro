@@ -545,7 +545,7 @@ static MACHINE_START( paradise )
 {
 	paradise_state *state = (paradise_state *)machine->driver_data;
 	int bank_n = memory_region_length(machine, "maincpu") / 0x4000 - 1;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 3, &ROM[0x00000], 0x4000);
 	memory_configure_bank(machine, "bank1", 3, bank_n - 3, &ROM[0x10000], 0x4000);

@@ -294,28 +294,28 @@
 
 #define DATA_NVRAM_SIZE     0x100
 
-static UINT8 data_ram[0x100];
-static UINT8 video_ram[0x0400];
-static UINT8 color_ram[0x0400];
-static UINT16 p1, p2;
-static UINT8 t0_latch;
-static UINT16 n_offs;
+static uint8_t data_ram[0x100];
+static uint8_t video_ram[0x0400];
+static uint8_t color_ram[0x0400];
+static uint16_t p1, p2;
+static uint8_t t0_latch;
+static uint16_t n_offs;
 
-static UINT8 vp_sound_p2;
-static UINT8 p24_data;
-static UINT8 sound_latch;
-static UINT8 baby_latch;
-static UINT8 sound_ant;
-static UINT8 dc_4020;
-static UINT8 dc_40103;
-static UINT8 te_40103;
-static UINT8 ld_40103;
+static uint8_t vp_sound_p2;
+static uint8_t p24_data;
+static uint8_t sound_latch;
+static uint8_t baby_latch;
+static uint8_t sound_ant;
+static uint8_t dc_4020;
+static uint8_t dc_40103;
+static uint8_t te_40103;
+static uint8_t ld_40103;
 
-static UINT8 ant_jckp, jckp, ant_cio, c_io, hp_1, hp_2, bell, aux3, dvrt;
+static uint8_t ant_jckp, jckp, ant_cio, c_io, hp_1, hp_2, bell, aux3, dvrt;
 static unsigned long count0, count1, count2, count3, count4;
 
 /* Baby vars */
-static UINT8 sbp0, sbp2, sbp3;
+static uint8_t sbp0, sbp2, sbp3;
 
 
 /*************************
@@ -325,9 +325,9 @@ static UINT8 sbp0, sbp2, sbp3;
 static tilemap_t *bg_tilemap;
 
 /* BCD to Seven Segment Decoder */
-static UINT8 dec_7seg(int data)
+static uint8_t dec_7seg(int data)
 {
-	UINT8 segment;
+	uint8_t segment;
 	switch (data)
 	{
 		case 0: segment = 0x3f; break;
@@ -347,9 +347,9 @@ static UINT8 dec_7seg(int data)
 }
 
 /* Display a seven digit counter on layout - Index points to less significant digit*/
-static void count_7dig(unsigned long data, UINT8 index)
+static void count_7dig(unsigned long data, uint8_t index)
 {
-	UINT8 i;
+	uint8_t i;
 	char strn[8];
 	sprintf(strn,"%7lu",data);
 
@@ -518,9 +518,9 @@ static NVRAM_HANDLER( videopkr )
 
 static READ8_HANDLER( videopkr_io_r )
 {
-	UINT8 valor = 0, hf, co;
+	uint8_t valor = 0, hf, co;
 
-	UINT16 kbdin;
+	uint16_t kbdin;
 
 	switch (p2)
 	{
@@ -881,7 +881,7 @@ static READ8_DEVICE_HANDLER(baby_sound_p3_r)
 
 static WRITE8_DEVICE_HANDLER(baby_sound_p3_w)
 {
-	UINT8 lmp_ports, ay_intf;
+	uint8_t lmp_ports, ay_intf;
 	sbp3 = data;
 	lmp_ports = sbp3 >> 1 & 0x07;
 

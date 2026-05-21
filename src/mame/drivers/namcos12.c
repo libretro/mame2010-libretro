@@ -950,7 +950,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine *machine, int n_level, 
 	}
 }
 
-static UINT32 *namcos12_sharedram;
+static uint32_t *namcos12_sharedram;
 
 static WRITE32_HANDLER( sharedram_w )
 {
@@ -966,19 +966,19 @@ static READ32_HANDLER( sharedram_r )
 
 static WRITE16_HANDLER( sharedram_sub_w )
 {
-	UINT16 *shared16 = (UINT16 *)namcos12_sharedram;
+	uint16_t *shared16 = (uint16_t *)namcos12_sharedram;
 
 	COMBINE_DATA(&shared16[BYTE_XOR_LE(offset)]);
 }
 
 static READ16_HANDLER( sharedram_sub_r )
 {
-	UINT16 *shared16 = (UINT16 *)namcos12_sharedram;
+	uint16_t *shared16 = (uint16_t *)namcos12_sharedram;
 
 	return shared16[BYTE_XOR_LE(offset)];
 }
 
-static UINT32 m_n_bankoffset;
+static uint32_t m_n_bankoffset;
 
 static WRITE32_HANDLER( bankoffset_w )
 {
@@ -1005,9 +1005,9 @@ static WRITE32_HANDLER( bankoffset_w )
 	verboselog( space->machine, 1, "bankoffset_w( %08x, %08x, %08x ) %08x\n", offset, data, mem_mask, m_n_bankoffset );
 }
 
-static UINT32 m_n_dmaoffset;
-static UINT32 m_n_dmabias;
-static UINT32 m_n_tektagdmaoffset;
+static uint32_t m_n_dmaoffset;
+static uint32_t m_n_dmabias;
+static uint32_t m_n_tektagdmaoffset;
 static int has_tektagt_dma;
 
 static WRITE32_HANDLER( dmaoffset_w )
@@ -1023,16 +1023,16 @@ static WRITE32_HANDLER( dmaoffset_w )
 	verboselog( space->machine, 1, "dmaoffset_w( %08x, %08x, %08x ) %08x\n", offset, data, mem_mask, m_n_dmaoffset );
 }
 
-static void namcos12_rom_read( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void namcos12_rom_read( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	const char *n_region;
 	int n_offset;
 
-	INT32 n_ramleft;
-	INT32 n_romleft;
+	int32_t n_ramleft;
+	int32_t n_romleft;
 
-	UINT16 *source;
-	UINT16 *destination;
+	uint16_t *source;
+	uint16_t *destination;
 
 	if(has_tektagt_dma && !m_n_dmaoffset)
 	{
@@ -1053,7 +1053,7 @@ static void namcos12_rom_read( running_machine *machine, UINT32 n_address, INT32
 		verboselog( machine, 1, "namcos12_rom_read( %08x, %08x ) game %08x\n", n_address, n_size, n_offset );
 	}
 
-	source = (UINT16 *) memory_region( machine, n_region );
+	source = (uint16_t *) memory_region( machine, n_region );
 	n_romleft = ( memory_region_length( machine, n_region ) - n_offset ) / 4;
 	if( n_size > n_romleft )
 	{
@@ -1061,7 +1061,7 @@ static void namcos12_rom_read( running_machine *machine, UINT32 n_address, INT32
 		n_size = n_romleft;
 	}
 
-	destination = (UINT16 *) g_p_n_psxram;
+	destination = (uint16_t *) g_p_n_psxram;
 	n_ramleft = ( g_n_psxramsize - n_address ) / 4;
 	if( n_size > n_ramleft )
 	{
@@ -1147,7 +1147,7 @@ static WRITE32_HANDLER( system11gun_w )
 
 static READ32_HANDLER( system11gun_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 	switch( offset )
 	{
 	case 0:
@@ -1173,7 +1173,7 @@ static void system11gun_install( running_machine *machine )
 	memory_install_read32_handler (cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x1f780000, 0x1f78000f, 0, 0, system11gun_r );
 }
 
-static UINT8 kcram[ 12 ];
+static uint8_t kcram[ 12 ];
 
 static WRITE32_HANDLER( kcoff_w )
 {
@@ -1186,7 +1186,7 @@ static WRITE32_HANDLER( kcon_w )
 }
 
 static int ttt_cnt;
-static UINT32 ttt_val[2];
+static uint32_t ttt_val[2];
 
 static WRITE32_HANDLER( tektagt_protection_1_w )
 {
@@ -1210,7 +1210,7 @@ static WRITE32_HANDLER( tektagt_protection_2_w )
 
 static READ32_HANDLER( tektagt_protection_2_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	if(((ttt_val[0] >> 16) & 0xff) == 0x6d)
 		data |= 0x000036e2;
@@ -1321,14 +1321,14 @@ static WRITE8_HANDLER( s12_mcu_pa_w )
 	s12_porta = data;
 }
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ((data / 10) << 4) | (data % 10);
 }
 
 static READ8_HANDLER( s12_mcu_rtc_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 	system_time systime;
 	static const int weekday[7] = { 7, 1, 2, 3, 4, 5, 6 };
 
@@ -1499,7 +1499,7 @@ static DRIVER_INIT( ptblank2 )
 	DRIVER_INIT_CALL(namcos12);
 
 	/* patch out wait for dma 5 to complete */
-	*( (UINT32 *)( memory_region( machine, "user1" ) + 0x331c4 ) ) = 0;
+	*( (uint32_t *)( memory_region( machine, "user1" ) + 0x331c4 ) ) = 0;
 
 	system11gun_install(machine);
 }

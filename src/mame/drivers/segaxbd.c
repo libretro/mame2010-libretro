@@ -252,7 +252,7 @@ Notes:
  *
  *************************************/
 
-static UINT16 *backupram1, *backupram2;
+static uint16_t *backupram1, *backupram2;
 
 /*************************************
  *
@@ -393,7 +393,7 @@ static TIMER_CALLBACK( delayed_sound_data_w )
 }
 
 
-static void sound_data_w(running_machine *machine, UINT8 data)
+static void sound_data_w(running_machine *machine, uint8_t data)
 {
 	timer_call_after_resynch(machine, NULL, data, delayed_sound_data_w);
 }
@@ -475,10 +475,10 @@ static WRITE16_HANDLER( adc_w )
 }
 
 
-INLINE UINT16 iochip_r(running_machine *machine, int which, int port, int inputval)
+INLINE uint16_t iochip_r(running_machine *machine, int which, int port, int inputval)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
-	UINT16 result = state->iochip_regs[which][port];
+	uint16_t result = state->iochip_regs[which][port];
 
 	/* if there's custom I/O, do that to get the input value */
 	if (state->iochip_custom_io_r[which])
@@ -547,7 +547,7 @@ static READ16_HANDLER( iochip_0_r )
 static WRITE16_HANDLER( iochip_0_w )
 {
 	segas1x_state *state = (segas1x_state *)space->machine->driver_data;
-	UINT8 oldval;
+	uint8_t oldval;
 
 	/* access is via the low 8 bits */
 	if (!ACCESSING_BITS_0_7)

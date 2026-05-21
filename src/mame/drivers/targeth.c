@@ -13,9 +13,9 @@ The DS5002FP has 32KB undumped gameplay code making the game unplayable :_(
 #include "cpu/m68000/m68000.h"
 #include "sound/okim6295.h"
 
-extern UINT16 *targeth_vregs;
-extern UINT16 *targeth_videoram;
-extern UINT16 *targeth_spriteram;
+extern uint16_t *targeth_vregs;
+extern uint16_t *targeth_videoram;
+extern uint16_t *targeth_spriteram;
 
 /* from video/targeth.c */
 WRITE16_HANDLER( targeth_vram_w );
@@ -56,7 +56,7 @@ static INTERRUPT_GEN(targeth_interrupt )
 
 static WRITE16_HANDLER( OKIM6295_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "oki");
+	uint8_t *RAM = memory_region(space->machine, "oki");
 
 	if (ACCESSING_BITS_0_7){
 		memcpy(&RAM[0x30000], &RAM[0x40000 + (data & 0x0f)*0x10000], 0x10000);

@@ -906,7 +906,7 @@ CPU  - 317-0092  |--------------------------------------------------------------
  *
  *************************************/
 
-static UINT16 *workram;
+static uint16_t *workram;
 
 
 /*************************************
@@ -1019,7 +1019,7 @@ static const segaic16_memory_map_entry *const region_info_list[] =
  *
  *************************************/
 
-static void sound_w(running_machine *machine, UINT8 data)
+static void sound_w(running_machine *machine, uint8_t data)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 
@@ -1040,11 +1040,11 @@ static void system16b_generic_init(running_machine *machine, int _rom_board)
 	state->rom_board = _rom_board;
 
 	/* allocate memory for regions not autmatically assigned */
-	segaic16_spriteram_0 = auto_alloc_array(machine, UINT16, 0x00800 / 2);
-	segaic16_paletteram  = auto_alloc_array(machine, UINT16, 0x01000 / 2);
-	segaic16_tileram_0   = auto_alloc_array(machine, UINT16, 0x10000 / 2);
-	segaic16_textram_0   = auto_alloc_array(machine, UINT16, 0x01000 / 2);
-	workram              = auto_alloc_array(machine, UINT16, 0x04000 / 2);
+	segaic16_spriteram_0 = auto_alloc_array(machine, uint16_t, 0x00800 / 2);
+	segaic16_paletteram  = auto_alloc_array(machine, uint16_t, 0x01000 / 2);
+	segaic16_tileram_0   = auto_alloc_array(machine, uint16_t, 0x10000 / 2);
+	segaic16_textram_0   = auto_alloc_array(machine, uint16_t, 0x01000 / 2);
+	workram              = auto_alloc_array(machine, uint16_t, 0x04000 / 2);
 
 	/* init the memory mapper */
 	segaic16_memory_mapper_init(machine->device("maincpu"), region_info_list[state->rom_board], sound_w, NULL);
@@ -1103,8 +1103,8 @@ static TIMER_CALLBACK( boost_interleave )
 static MACHINE_RESET( system16b )
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
-	static const UINT8 default_banklist[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-	static const UINT8 alternate_banklist[] = { 0,255,255,255, 255,255,255,3, 255,255,255,2, 255,1,0,255 };
+	static const uint8_t default_banklist[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	static const uint8_t alternate_banklist[] = { 0,255,255,255, 255,255,255,3, 255,255,255,2, 255,1,0,255 };
 	int i;
 
 	segaic16_memory_mapper_reset(machine);
@@ -1418,7 +1418,7 @@ static void altbeast_common_i8751_sim(running_machine *machine, offs_t soundoffs
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT16 temp;
+	uint16_t temp;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -1458,7 +1458,7 @@ static void ddux_i8751_sim(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT16 temp;
+	uint16_t temp;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -1476,9 +1476,9 @@ static void ddux_i8751_sim(running_machine *machine)
 static void goldnaxe_i8751_init(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
-	static const UINT8 memory_control_5704[0x10] =
+	static const uint8_t memory_control_5704[0x10] =
 		{ 0x02,0x00, 0x02,0x08, 0x00,0x1f, 0x00,0xff, 0x00,0x20, 0x01,0x10, 0x00,0x14, 0x00,0xc4 };
-	static const UINT8 memory_control_5797[0x10] =
+	static const uint8_t memory_control_5797[0x10] =
 		{ 0x02,0x00, 0x00,0x1f, 0x00,0x1e, 0x00,0xff, 0x00,0x20, 0x01,0x10, 0x00,0x14, 0x00,0xc4 };
 
 	switch (state->rom_board)
@@ -1496,7 +1496,7 @@ static void goldnaxe_i8751_sim(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT16 temp;
+	uint16_t temp;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -1528,7 +1528,7 @@ static void tturf_i8751_sim(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT16 temp;
+	uint16_t temp;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -1552,7 +1552,7 @@ static void wb3_i8751_sim(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT16 temp;
+	uint16_t temp;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -1627,7 +1627,7 @@ static READ16_HANDLER( dunkshot_custom_io_r )
 static READ16_HANDLER( hwchamp_custom_io_r )
 {
 	segas1x_state *state = (segas1x_state *)space->machine->driver_data;
-	UINT16 result;
+	uint16_t result;
 
 	switch (offset & (0x3000/2))
 	{

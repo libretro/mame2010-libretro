@@ -24,21 +24,21 @@ Todo:
 
 #define SCHEMATIC_CLOCK (20000000)
 
-static UINT8 nmi_enable = 0;
+static uint8_t nmi_enable = 0;
 
-static UINT8* obj_RAM;
-static UINT8* color_RAM;
-static UINT8* fix_RAM;
-static UINT8* out_RAM;
+static uint8_t* obj_RAM;
+static uint8_t* color_RAM;
+static uint8_t* fix_RAM;
+static uint8_t* out_RAM;
 
 static running_device *laserdisc;
-static UINT8 ldv1000_input_latch;
-static UINT8 ldv1000_output_latch;
+static uint8_t ldv1000_input_latch;
+static uint8_t ldv1000_output_latch;
 
 /* VIDEO GOODS */
 static void astron_draw_characters(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 characterX, characterY;
+	uint8_t characterX, characterY;
 
 	for (characterX = 0; characterX < 32; characterX++)
 	{
@@ -54,14 +54,14 @@ static void astron_draw_characters(running_machine *machine, bitmap_t *bitmap,co
 static void astron_draw_sprites(bitmap_t *bitmap, const rectangle *cliprect)
 {
 	/* Heisted from Daphne */
-	const UINT8 SPR_Y_TOP     = 0;
-/*  const UINT8 SPR_Y_BOTTOM  = 1;*/
-	const UINT8 SPR_X_LO      = 2;
-/*  const UINT8 SPR_X_HI      = 3;*/
-/*  const UINT8 SPR_SKIP_LO   = 4;*/
-/*  const UINT8 SPR_SKIP_HI   = 5;*/
-/*  const UINT8 SPR_GFXOFS_LO = 6;*/
-/*  const UINT8 SPR_GFXOFS_HI = 7;*/
+	const uint8_t SPR_Y_TOP     = 0;
+/*  const uint8_t SPR_Y_BOTTOM  = 1;*/
+	const uint8_t SPR_X_LO      = 2;
+/*  const uint8_t SPR_X_HI      = 3;*/
+/*  const uint8_t SPR_SKIP_LO   = 4;*/
+/*  const uint8_t SPR_SKIP_HI   = 5;*/
+/*  const uint8_t SPR_GFXOFS_LO = 6;*/
+/*  const uint8_t SPR_GFXOFS_HI = 7;*/
 
 	int sx,sy;
 	int spr_number;
@@ -177,9 +177,9 @@ static WRITE8_HANDLER( astron_OBJ_write )
 
 static WRITE8_HANDLER( astron_COLOR_write )
 {
-	UINT8 r, g, b, a;
-	UINT8 highBits, lowBits;
-	const UINT8 palIndex = offset >> 1;
+	uint8_t r, g, b, a;
+	uint8_t highBits, lowBits;
+	const uint8_t palIndex = offset >> 1;
 
 	/* Combine */
 	color_RAM[offset] = data;
@@ -567,7 +567,7 @@ ROM_END
 
 static DRIVER_INIT( astron )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 2, &ROM[0x8000], 0x4000);
 }
 

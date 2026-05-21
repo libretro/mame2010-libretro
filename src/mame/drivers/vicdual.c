@@ -66,7 +66,7 @@
 
 #define COIN_PORT_TAG		"COIN"
 
-static UINT32 coin_status;
+static uint32_t coin_status;
 
 
 static TIMER_CALLBACK( clear_coin_status )
@@ -189,8 +189,8 @@ int vicdual_is_cabinet_color(running_machine *machine)
  *
  *************************************/
 
-static UINT8 *vicdual_videoram;
-static UINT8 *vicdual_characterram;
+static uint8_t *vicdual_videoram;
+static uint8_t *vicdual_characterram;
 
 
 static WRITE8_HANDLER( vicdual_videoram_w )
@@ -200,7 +200,7 @@ static WRITE8_HANDLER( vicdual_videoram_w )
 }
 
 
-UINT8 vicdual_videoram_r(offs_t offset)
+uint8_t vicdual_videoram_r(offs_t offset)
 {
 	return vicdual_videoram[offset];
 }
@@ -213,7 +213,7 @@ static WRITE8_HANDLER( vicdual_characterram_w )
 }
 
 
-UINT8 vicdual_characterram_r(offs_t offset)
+uint8_t vicdual_characterram_r(offs_t offset)
 {
 	return vicdual_characterram[offset];
 }
@@ -248,7 +248,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( depthch_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x08)  ret = input_port_read(space->machine, "IN1");
@@ -330,7 +330,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( safari_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x08)  ret = input_port_read(space->machine, "IN1");
@@ -414,7 +414,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( frogs_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x08)  ret = input_port_read(space->machine, "IN1");
@@ -522,7 +522,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( headon_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x08)  ret = input_port_read(space->machine, "IN1");
@@ -533,7 +533,7 @@ static READ8_HANDLER( headon_io_r )
 
 static READ8_HANDLER( sspaceat_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x04)  ret = input_port_read(space->machine, "IN1");
@@ -732,7 +732,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( headon2_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x02)  /* schematics show this as in input port, but never read from */
@@ -2002,7 +2002,7 @@ MACHINE_DRIVER_END
  *
  *************************************/
 
-static UINT8 samurai_protection_data;
+static uint8_t samurai_protection_data;
 
 
 static WRITE8_HANDLER( samurai_protection_w )
@@ -2014,7 +2014,7 @@ static WRITE8_HANDLER( samurai_protection_w )
 static CUSTOM_INPUT( samurai_protection_r )
 {
 	int offset = (FPTR)param;
-	UINT32 answer = 0;
+	uint32_t answer = 0;
 
 	if (samurai_protection_data == 0xab)
 		answer = 0x02;
@@ -2134,7 +2134,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( nsub_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x08)  ret = input_port_read(space->machine, "IN1");
@@ -2229,7 +2229,7 @@ MACHINE_DRIVER_END
 
 static READ8_HANDLER( invinco_io_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (offset & 0x01)  ret = input_port_read(space->machine, "IN0");
 	if (offset & 0x02)  ret = input_port_read(space->machine, "IN1");

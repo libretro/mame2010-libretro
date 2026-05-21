@@ -395,7 +395,7 @@ static WRITE16_HANDLER( kyustrkr_input_w )
 
 /**************************************************************************/
 
-static INT32 banknum;
+static int32_t banknum;
 
 static void reset_sound_region(running_machine *machine)
 {

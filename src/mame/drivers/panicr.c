@@ -70,8 +70,8 @@ D.9B         [f99cac4b] /
 #define TC15_CLOCK		XTAL_12MHz
 
 static tilemap_t *bgtilemap, *txttilemap;
-static UINT8 *scrollram;
-static UINT8 *mainram;
+static uint8_t *scrollram;
+static uint8_t *mainram;
 
 static PALETTE_INIT( panicr )
 {
@@ -96,7 +96,7 @@ static PALETTE_INIT( panicr )
 	// txt lookup table
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (color_prom[i] & 0x40)
 			ctabentry = 0;
@@ -109,7 +109,7 @@ static PALETTE_INIT( panicr )
 	// tile lookup table
 	for (i = 0x100; i < 0x200; i++)
 	{
-		UINT8 ctabentry = (color_prom[i] & 0x3f) | 0x00;
+		uint8_t ctabentry = (color_prom[i] & 0x3f) | 0x00;
 
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
@@ -117,7 +117,7 @@ static PALETTE_INIT( panicr )
 	// sprite lookup table
 	for (i = 0x200; i < 0x300; i++)
 	{
-		UINT8 ctabentry;
+		uint8_t ctabentry;
 
 		if (color_prom[i] & 0x40)
 			ctabentry = 0;
@@ -202,7 +202,7 @@ static VIDEO_START( panicr )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect )
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int offs,fx,fy,x,y,color,sprite;
 
 	for (offs = 0; offs<0x1000; offs+=16)
@@ -439,8 +439,8 @@ ROM_END
 
 static DRIVER_INIT( panicr )
 {
-	UINT8 *buf = auto_alloc_array(machine, UINT8, 0x80000);
-	UINT8 *rom;
+	uint8_t *buf = auto_alloc_array(machine, uint8_t, 0x80000);
+	uint8_t *rom;
 	int size;
 	int i;
 

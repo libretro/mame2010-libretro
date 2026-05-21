@@ -5572,9 +5572,9 @@ ROM_END
 static DRIVER_INIT( finalb )
 {
 	int i;
-	UINT8 data;
-	UINT32 offset;
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t data;
+	uint32_t offset;
+	uint8_t *gfx = memory_region(machine, "gfx2");
 
 	offset = 0x100000;
 	for (i = 0x180000; i < 0x200000; i++)
@@ -5611,7 +5611,7 @@ static DRIVER_INIT( mjnquest )
 {
 	taitof2_state *state = (taitof2_state *)machine->driver_data;
 	int i, len = memory_region_length(machine, "gfx2");
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t *gfx = memory_region(machine, "gfx2");
 
 	/* the bytes in each longword are in reversed order, put them in the
        order used by the other games. */

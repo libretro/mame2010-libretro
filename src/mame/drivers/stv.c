@@ -183,30 +183,30 @@ ToDo / Notes:
 /**************************************************************************************/
 /*to be added into a stv Header file,remember to remove all the static...*/
 
-static UINT8 *smpc_ram;
+static uint8_t *smpc_ram;
 //static void stv_dump_ram(void);
 
-UINT32* stv_workram_l;
-UINT32* stv_workram_h;
+uint32_t* stv_workram_l;
+uint32_t* stv_workram_h;
 cpu_device *stv_maincpu;
 cpu_device *stv_slave;
 cpu_device *stv_audiocpu;
-static UINT32* stv_backupram;
-static UINT32* ioga;
-static UINT16* scsp_regs;
-static UINT16* sound_ram;
+static uint32_t* stv_backupram;
+static uint32_t* ioga;
+static uint16_t* scsp_regs;
+static uint16_t* sound_ram;
 
 int stv_enable_slave_sh2;
 /*VDP2 stuff*/
 /*SMPC stuff*/
-static UINT8 NMI_reset;
+static uint8_t NMI_reset;
 static void system_reset(void);
-static UINT8 en_68k;
+static uint8_t en_68k;
 /*SCU stuff*/
 static int	  timer_0;			/* Counter for Timer 0 irq*/
 static int    timer_1;          /* Counter for Timer 1 irq*/
 /*Maybe add these in a struct...*/
-static UINT32 scu_src_0,		/* Source DMA lv 0 address*/
+static uint32_t scu_src_0,		/* Source DMA lv 0 address*/
 			  scu_src_1,		/* lv 1*/
 			  scu_src_2,		/* lv 2*/
 			  scu_dst_0,		/* Destination DMA lv 0 address*/
@@ -218,25 +218,25 @@ static UINT32 scu_src_0,		/* Source DMA lv 0 address*/
 			  scu_dst_add_0,	/* Destination Addition for DMA lv 0*/
 			  scu_dst_add_1,	/* lv 1*/
 			  scu_dst_add_2;	/* lv 2*/
-static INT32  scu_size_0,		/* Transfer DMA size lv 0*/
+static int32_t  scu_size_0,		/* Transfer DMA size lv 0*/
 			  scu_size_1,		/* lv 1*/
 			  scu_size_2;		/* lv 2*/
 
 static struct
 {
-	UINT8 vblank_out;
-	UINT8 vblank_in;
-	UINT8 hblank_in;
-	UINT8 timer_0;
-	UINT8 timer_1;
-	UINT8 dsp_end;
-	UINT8 sound_req;
-	UINT8 smpc;
-	UINT8 pad;
-	UINT8 dma_end[3];
-	UINT8 dma_ill;
-	UINT8 vdp1_end;
-	UINT8 abus;
+	uint8_t vblank_out;
+	uint8_t vblank_in;
+	uint8_t hblank_in;
+	uint8_t timer_0;
+	uint8_t timer_1;
+	uint8_t dsp_end;
+	uint8_t sound_req;
+	uint8_t smpc;
+	uint8_t pad;
+	uint8_t dma_end[3];
+	uint8_t dma_ill;
+	uint8_t vdp1_end;
+	uint8_t abus;
 }stv_irq;
 
 static void dma_direct_lv0(const address_space *space);	/*DMA level 0 direct transfer function*/
@@ -435,12 +435,12 @@ static int DectoBCD(int num)
 7e
 7f -w EXLE2/1
 */
-static UINT8 IOSEL1;
-static UINT8 IOSEL2;
-static UINT8 EXLE1;
-static UINT8 EXLE2;
-static UINT8 PDR1;
-static UINT8 PDR2;
+static uint8_t IOSEL1;
+static uint8_t IOSEL2;
+static uint8_t EXLE1;
+static uint8_t EXLE2;
+static uint8_t PDR1;
+static uint8_t PDR2;
 
 #define SH2_DIRECT_MODE_PORT_1 IOSEL1 = 1
 #define SH2_DIRECT_MODE_PORT_2 IOSEL2 = 1
@@ -463,7 +463,7 @@ static void system_reset()
 	/*Order is surely wrong but whatever...*/
 }
 
-static UINT8 stv_SMPC_r8 (const address_space *space, int offset)
+static uint8_t stv_SMPC_r8 (const address_space *space, int offset)
 {
 	int return_data;
 
@@ -490,7 +490,7 @@ static UINT8 stv_SMPC_r8 (const address_space *space, int offset)
 	return return_data;
 }
 
-static void stv_SMPC_w8 (const address_space *space, int offset, UINT8 data)
+static void stv_SMPC_w8 (const address_space *space, int offset, uint8_t data)
 {
 	system_time systime;
 
@@ -783,12 +783,12 @@ offsets:
     7h
     7l PORT-AD
 */
-static const UINT8 port_ad[] =
+static const uint8_t port_ad[] =
 {
 	0xcc,0xb2,0x99,0x7f,0x66,0x4c,0x33,0x19
 };
 
-static UINT8 port_sel,mux_data;
+static uint8_t port_sel,mux_data;
 static int port_i;
 
 static READ32_HANDLER ( stv_io_r32 )
@@ -1067,10 +1067,10 @@ DMA TODO:
 #define D1MV_0	if(DMA_STATUS & 0x100)	    DMA_STATUS^=0x100
 #define D2MV_0	if(DMA_STATUS & 0x1000)     DMA_STATUS^=0x1000
 
-static UINT32 scu_index_0,scu_index_1,scu_index_2;
-static UINT8 scsp_to_main_irq;
+static uint32_t scu_index_0,scu_index_1,scu_index_2;
+static uint8_t scsp_to_main_irq;
 
-static UINT32 scu_add_tmp;
+static uint32_t scu_add_tmp;
 
 /*For area checking*/
 #define ABUS(_lv_)       ((scu_##_lv_ & 0x07ffffff) >= 0x02000000) && ((scu_##_lv_ & 0x07ffffff) <= 0x04ffffff)
@@ -1434,7 +1434,7 @@ static TIMER_CALLBACK( dma_lv2_ended )
 
 static void dma_direct_lv0(const address_space *space)
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	if(LOG_SCU) logerror("DMA lv 0 transfer START\n"
 			             "Start %08x End %08x Size %04x\n",scu_src_0,scu_dst_0,scu_size_0);
 	if(LOG_SCU) logerror("Start Add %04x Destination Add %04x\n",scu_src_add_0,scu_dst_add_0);
@@ -1543,7 +1543,7 @@ static void dma_direct_lv0(const address_space *space)
 
 static void dma_direct_lv1(const address_space *space)
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	if(LOG_SCU) logerror("DMA lv 1 transfer START\n"
 			 "Start %08x End %08x Size %04x\n",scu_src_1,scu_dst_1,scu_size_1);
 	if(LOG_SCU) logerror("Start Add %04x Destination Add %04x\n",scu_src_add_1,scu_dst_add_1);
@@ -1644,7 +1644,7 @@ static void dma_direct_lv1(const address_space *space)
 
 static void dma_direct_lv2(const address_space *space)
 {
-	static UINT32 tmp_src,tmp_dst,tmp_size;
+	static uint32_t tmp_src,tmp_dst,tmp_size;
 	if(LOG_SCU) logerror("DMA lv 2 transfer START\n"
 			 "Start %08x End %08x Size %04x\n",scu_src_2,scu_dst_2,scu_size_2);
 	if(LOG_SCU) logerror("Start Add %04x Destination Add %04x\n",scu_src_add_2,scu_dst_add_2);
@@ -1746,9 +1746,9 @@ static void dma_direct_lv2(const address_space *space)
 static void dma_indirect_lv0(const address_space *space)
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	D0MV_1;
 
@@ -1814,9 +1814,9 @@ static void dma_indirect_lv0(const address_space *space)
 static void dma_indirect_lv1(const address_space *space)
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	D1MV_1;
 
@@ -1883,9 +1883,9 @@ static void dma_indirect_lv1(const address_space *space)
 static void dma_indirect_lv2(const address_space *space)
 {
 	/*Helper to get out of the cycle*/
-	UINT8 job_done = 0;
+	uint8_t job_done = 0;
 	/*temporary storage for the transfer data*/
-	UINT32 tmp_src;
+	uint32_t tmp_src;
 
 	D2MV_1;
 
@@ -2346,9 +2346,9 @@ DRIVER_INIT ( stv )
 	minit_boost_timeslice = attotime_zero;
 	sinit_boost_timeslice = attotime_zero;
 
-	smpc_ram = auto_alloc_array(machine, UINT8, 0x80);
-	stv_scu = auto_alloc_array(machine, UINT32, 0x100/4);
-	scsp_regs = auto_alloc_array(machine, UINT16, 0x1000/2);
+	smpc_ram = auto_alloc_array(machine, uint8_t, 0x80);
+	stv_scu = auto_alloc_array(machine, uint32_t, 0x100/4);
+	scsp_regs = auto_alloc_array(machine, uint16_t, 0x1000/2);
 
 	install_stvbios_speedups(machine);
 
@@ -2385,10 +2385,10 @@ DRIVER_INIT ( stv )
 #ifdef UNUSED_FUNCTION
 static void print_game_info(void)
 {
-	UINT8 *ROM = memory_region(machine, "user1");
+	uint8_t *ROM = memory_region(machine, "user1");
 	static FILE *print_file = NULL;
-	UINT8 STR[0x100];
-	UINT32 src_i,dst_i;
+	uint8_t STR[0x100];
+	uint32_t src_i,dst_i;
 
 	if(print_file == NULL)
 		print_file = fopen( "stvinfo.txt", "a" );
@@ -2521,7 +2521,7 @@ static const scsp_interface scsp_config =
 
 static TIMER_CALLBACK(stv_rtc_increment)
 {
-	static const UINT8 dpm[12] = { 0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31 };
+	static const uint8_t dpm[12] = { 0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31 };
 	static int year_num, year_count;
 
 	/*
@@ -4015,7 +4015,7 @@ by Sega titles,and this is a Sunsoft game)It's likely to be a left-over...
 
 static DRIVER_INIT( sanjeon )
 {
-	UINT8 *src    = memory_region       ( machine, "user1" );
+	uint8_t *src    = memory_region       ( machine, "user1" );
 	int x;
 
 	for (x=0;x<0x3000000;x++)

@@ -159,17 +159,17 @@
  *
  *************************************/
 
-extern UINT8 (*sega_decrypt)(offs_t, UINT8);
+extern uint8_t (*sega_decrypt)(offs_t, uint8_t);
 
-static UINT8 *mainram;
-static UINT8 has_usb;
+static uint8_t *mainram;
+static uint8_t has_usb;
 
-static UINT8 mult_data[2];
-static UINT16 mult_result;
+static uint8_t mult_data[2];
+static uint16_t mult_result;
 
-static UINT8 spinner_select;
-static UINT8 spinner_sign;
-static UINT8 spinner_count;
+static uint8_t spinner_select;
+static uint8_t spinner_sign;
+static uint8_t spinner_count;
 
 
 
@@ -217,7 +217,7 @@ static offs_t decrypt_offset(const address_space *space, offs_t offset)
 {
 	/* ignore anything but accesses via opcode $32 (LD $(XXYY),A) */
 	offs_t pc = cpu_get_previouspc(space->cpu);
-	if ((UINT16)pc == 0xffff || memory_read_byte(space, pc) != 0x32)
+	if ((uint16_t)pc == 0xffff || memory_read_byte(space, pc) != 0x32)
 		return offset;
 
 	/* fetch the low byte of the address and munge it */
@@ -236,7 +236,7 @@ static WRITE8_HANDLER( vectorram_w ) { vectorram[decrypt_offset(space, offset)] 
  *
  *************************************/
 
-INLINE UINT8 demangle(UINT8 d7d6, UINT8 d5d4, UINT8 d3d2, UINT8 d1d0)
+INLINE uint8_t demangle(uint8_t d7d6, uint8_t d5d4, uint8_t d3d2, uint8_t d1d0)
 {
 	return ((d7d6 << 7) & 0x80) | ((d7d6 << 2) & 0x40) |
 		   ((d5d4 << 5) & 0x20) | ((d5d4 << 0) & 0x10) |
@@ -252,10 +252,10 @@ static READ8_HANDLER( mangled_ports_r )
 	/* read as two bits from each of 4 ports. For this reason, the input   */
 	/* ports have been organized logically, and are demangled at runtime.  */
 	/* 4 input ports each provide 8 bits of information. */
-	UINT8 d7d6 = input_port_read(space->machine, "D7D6");
-	UINT8 d5d4 = input_port_read(space->machine, "D5D4");
-	UINT8 d3d2 = input_port_read(space->machine, "D3D2");
-	UINT8 d1d0 = input_port_read(space->machine, "D1D0");
+	uint8_t d7d6 = input_port_read(space->machine, "D7D6");
+	uint8_t d5d4 = input_port_read(space->machine, "D5D4");
+	uint8_t d3d2 = input_port_read(space->machine, "D3D2");
+	uint8_t d1d0 = input_port_read(space->machine, "D1D0");
 	int shift = offset & 3;
 	return demangle(d7d6 >> shift, d5d4 >> shift, d3d2 >> shift, d1d0 >> shift);
 }
@@ -276,7 +276,7 @@ static WRITE8_HANDLER( spinner_select_w )
 
 static READ8_HANDLER( spinner_input_r )
 {
-	INT8 delta;
+	int8_t delta;
 
 	if (spinner_select & 1)
 		return input_port_read(space->machine, "FC");
@@ -314,7 +314,7 @@ static CUSTOM_INPUT( elim4_joint_coin_r )
 
 static READ8_HANDLER( elim4_input_r )
 {
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	/* bit 3 enables demux */
 	if (spinner_select & 8)
@@ -355,7 +355,7 @@ static WRITE8_HANDLER( multiply_w )
 
 static READ8_HANDLER( multiply_r )
 {
-	UINT8 result = mult_result;
+	uint8_t result = mult_result;
 	mult_result >>= 8;
 	return result;
 }

@@ -234,19 +234,19 @@ public:
 	nmg5_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *    fg_videoram;
-	UINT16 *    bg_videoram;
-	UINT16 *    scroll_ram;
-	UINT16 *    bitmap;
-	UINT16 *    spriteram;
-//  UINT16 *  paletteram;    // currently this uses generic palette handling
+	uint16_t *    fg_videoram;
+	uint16_t *    bg_videoram;
+	uint16_t *    scroll_ram;
+	uint16_t *    bitmap;
+	uint16_t *    spriteram;
+//  uint16_t *  paletteram;    // currently this uses generic palette handling
 	size_t      spriteram_size;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap, *fg_tilemap;
 
 	/* misc */
-	UINT8 prot_val, input_data, priority_reg, gfx_bank;
+	uint8_t prot_val, input_data, priority_reg, gfx_bank;
 
 	/* devices */
 	running_device *maincpu;
@@ -824,7 +824,7 @@ static INPUT_PORTS_START( wondstck )
 INPUT_PORTS_END
 
 
-INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, UINT16 *vram, int color )
+INLINE void get_tile_info( running_machine *machine, tile_data *tileinfo, int tile_index, uint16_t *vram, int color )
 {
 	nmg5_state *state = (nmg5_state *)machine->driver_data;
 	SET_TILE_INFO(0, vram[tile_index] | (state->gfx_bank << 16), color, 0);
@@ -845,7 +845,7 @@ static VIDEO_START( nmg5 )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	nmg5_state *state = (nmg5_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < state->spriteram_size / 2; offs += 4)
@@ -883,7 +883,7 @@ static void draw_bitmap( running_machine *machine, bitmap_t *bitmap )
 	nmg5_state *state = (nmg5_state *)machine->driver_data;
 	int yyy = 256;
 	int xxx = 512 / 4;
-	UINT16 x, y, count;
+	uint16_t x, y, count;
 	int xoff = -12;
 	int yoff = -9;
 	int pix;

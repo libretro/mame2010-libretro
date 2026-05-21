@@ -17,9 +17,9 @@
 #include "includes/segamsys.h"
 
 
-//static UINT8* sms_rom;
-UINT8* sms_mainram;
-UINT8* smsgg_backupram = 0;
+//static uint8_t* sms_rom;
+uint8_t* sms_mainram;
+uint8_t* smsgg_backupram = 0;
 static TIMER_CALLBACK( sms_scanline_timer_callback );
 static struct sms_vdp *vdp2;
 static struct sms_vdp *vdp1;
@@ -79,7 +79,7 @@ INPUT_PORTS_END
 
 /* Precalculated tables for H/V counters.  Note the position the counter 'jumps' is marked with with
    an empty comment */
-static const UINT8 hc_256[] =
+static const uint8_t hc_256[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,    0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19,    0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -106,7 +106,7 @@ static const UINT8 hc_256[] =
 };
 
 
-static const UINT8 vc_ntsc_192[] =
+static const uint8_t vc_ntsc_192[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,    0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,    0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -127,7 +127,7 @@ static const UINT8 vc_ntsc_192[] =
     0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
 };
 
-static const UINT8 vc_ntsc_224[] =
+static const uint8_t vc_ntsc_224[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,    0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,    0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -148,7 +148,7 @@ static const UINT8 vc_ntsc_224[] =
     0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
 };
 
-static const UINT8 vc_ntsc_240[] =
+static const uint8_t vc_ntsc_240[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -171,7 +171,7 @@ static const UINT8 vc_ntsc_240[] =
 
 
 
-static const UINT8 vc_pal_192[] =
+static const uint8_t vc_pal_192[] =
 {
     0x00, 0x01, 0x02,    0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12,    0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -196,7 +196,7 @@ static const UINT8 vc_pal_192[] =
 };
 
 
-static const UINT8 vc_pal_224[] =
+static const uint8_t vc_pal_224[] =
 {
     0x00, 0x01, 0x02,    0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12,    0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -220,7 +220,7 @@ static const UINT8 vc_pal_224[] =
     0xf7, 0xf8, 0xf9,    0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
 };
 
-static const UINT8 vc_pal_240[] =
+static const uint8_t vc_pal_240[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,    0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,    0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -246,12 +246,12 @@ static const UINT8 vc_pal_240[] =
 
 static const struct
 {
-	UINT8 sms2_name[40];
+	uint8_t sms2_name[40];
 	int sms2_valid;
 	int sms2_height;
 	int sms2_tilemap_height;
-	const UINT8* sms_vcounter_table;
-	const UINT8* sms_hcounter_table;
+	const uint8_t* sms_vcounter_table;
+	const uint8_t* sms_hcounter_table;
 
 } sms_mode_table[] =
 {
@@ -341,43 +341,43 @@ static int sms_vdp_cpu2_irq_callback(running_machine *machine, int status)
 
 struct sms_vdp
 {
-	UINT8 chip_id;
+	uint8_t chip_id;
 
-	UINT8  cmd_pend;
-	UINT8  cmd_part1;
-	UINT8  cmd_part2;
-	UINT16 addr_reg;
-	UINT8  cmd_reg;
-	UINT8  regs[0x10];
-	UINT8  readbuf;
-	UINT8* vram;
-	UINT8* cram;
-	UINT8  writemode;
+	uint8_t  cmd_pend;
+	uint8_t  cmd_part1;
+	uint8_t  cmd_part2;
+	uint16_t addr_reg;
+	uint8_t  cmd_reg;
+	uint8_t  regs[0x10];
+	uint8_t  readbuf;
+	uint8_t* vram;
+	uint8_t* cram;
+	uint8_t  writemode;
 	bitmap_t* r_bitmap;
-	UINT8* tile_renderline;
-	UINT8* sprite_renderline;
+	uint8_t* tile_renderline;
+	uint8_t* sprite_renderline;
 
-	UINT8 sprite_collision;
-	UINT8 sprite_overflow;
+	uint8_t sprite_collision;
+	uint8_t sprite_overflow;
 
-	UINT8  yscroll;
-	UINT8  hint_counter;
+	uint8_t  yscroll;
+	uint8_t  hint_counter;
 
-	UINT8 frame_irq_pending;
-	UINT8 line_irq_pending;
+	uint8_t frame_irq_pending;
+	uint8_t line_irq_pending;
 
-	UINT8 vdp_type;
+	uint8_t vdp_type;
 
-	UINT8 gg_cram_latch; // gamegear specific.
+	uint8_t gg_cram_latch; // gamegear specific.
 
 	/* below are MAME specific, to make things easier */
-	UINT8 screen_mode;
-	UINT8 is_pal;
+	uint8_t screen_mode;
+	uint8_t is_pal;
 	int sms_scanline_counter;
 	int sms_total_scanlines;
 	int sms_framerate;
 	emu_timer* sms_scanline_timer;
-	UINT16* cram_mamecolours; // for use on RGB_DIRECT screen
+	uint16_t* cram_mamecolours; // for use on RGB_DIRECT screen
 	int	 (*set_irq)(running_machine *machine, int state);
 
 };
@@ -413,26 +413,26 @@ static void *start_vdp(running_machine *machine, int type)
 	chip->regs[0xa] = 0;
 	/* b-f don't matter */
 	chip->readbuf = 0;
-	chip->vram = auto_alloc_array_clear(machine, UINT8, 0x4000);
+	chip->vram = auto_alloc_array_clear(machine, uint8_t, 0x4000);
 
 	//printf("%d\n", (*chip->set_irq)(machine, 200));
 
 	if (chip->vdp_type==GG_VDP)
 	{
-		chip->cram = auto_alloc_array_clear(machine, UINT8, 0x0040);
-		chip->cram_mamecolours = auto_alloc_array_clear(machine, UINT16, 0x0080/2);
+		chip->cram = auto_alloc_array_clear(machine, uint8_t, 0x0040);
+		chip->cram_mamecolours = auto_alloc_array_clear(machine, uint16_t, 0x0080/2);
 		chip->gg_cram_latch = 0;
 	}
 	else
 	{
-		chip->cram = auto_alloc_array_clear(machine, UINT8, 0x0020);
-		chip->cram_mamecolours = auto_alloc_array(machine, UINT16, 0x0040/2);
+		chip->cram = auto_alloc_array_clear(machine, uint8_t, 0x0020);
+		chip->cram_mamecolours = auto_alloc_array(machine, uint16_t, 0x0040/2);
 	}
 
-	chip->tile_renderline = auto_alloc_array(machine, UINT8, 256+8);
+	chip->tile_renderline = auto_alloc_array(machine, uint8_t, 256+8);
 	memset(chip->tile_renderline,0x00,256+8);
 
-	chip->sprite_renderline = auto_alloc_array(machine, UINT8, 256+32);
+	chip->sprite_renderline = auto_alloc_array(machine, uint8_t, 256+32);
 	memset(chip->sprite_renderline,0x00,256+32);
 
 	chip->writemode = 0;
@@ -464,10 +464,10 @@ static WRITE8_HANDLER( z80_unmapped_w )
 }
 #endif
 
-static UINT8 vcounter_r(struct sms_vdp *chip)
+static uint8_t vcounter_r(struct sms_vdp *chip)
 {
 //  return vc_pal_224[sms_scanline_counter%(sizeof vc_pal_224)];
-	UINT8 retvalue;
+	uint8_t retvalue;
 	int scanline = chip->sms_scanline_counter%chip->sms_total_scanlines;
 
 	retvalue = sms_mode_table[chip->screen_mode].sms_vcounter_table[scanline];
@@ -477,15 +477,15 @@ static UINT8 vcounter_r(struct sms_vdp *chip)
 }
 
 
-static UINT8 vdp_data_r(struct sms_vdp *chip)
+static uint8_t vdp_data_r(struct sms_vdp *chip)
 {
-	UINT8 retdata = chip->readbuf;
+	uint8_t retdata = chip->readbuf;
 	chip->readbuf = SMS_VDP_VRAM(chip->addr_reg);
 	chip->addr_reg++; chip->addr_reg&=0x3fff;
 	return retdata;
 }
 
-static void vdp_data_w(const address_space *space, UINT8 data, struct sms_vdp* chip)
+static void vdp_data_w(const address_space *space, uint8_t data, struct sms_vdp* chip)
 {
 	/* data writes clear the pending flag */
 	chip->cmd_pend = 0;
@@ -511,8 +511,8 @@ static void vdp_data_w(const address_space *space, UINT8 data, struct sms_vdp* c
 
 				/* Set Colour */
 				{
-					UINT16 palword;
-					UINT8 r,g,b;
+					uint16_t palword;
+					uint8_t r,g,b;
 
 					palword = ((chip->cram[(chip->addr_reg&0x3e)+1])<<8)|(chip->cram[(chip->addr_reg&0x3e)+0]);
 
@@ -532,7 +532,7 @@ static void vdp_data_w(const address_space *space, UINT8 data, struct sms_vdp* c
 
 			/* Set Colour */
 			{
-				UINT8 r,g,b;
+				uint8_t r,g,b;
 				r = (data & 0x03)>>0;
 				g = (data & 0x0c)>>2;
 				b = (data & 0x30)>>4;
@@ -549,9 +549,9 @@ static void vdp_data_w(const address_space *space, UINT8 data, struct sms_vdp* c
 
 }
 
-static UINT8 vdp_ctrl_r(const address_space *space, struct sms_vdp *chip)
+static uint8_t vdp_ctrl_r(const address_space *space, struct sms_vdp *chip)
 {
-	UINT8 retvalue;
+	uint8_t retvalue;
 
 	retvalue = (chip->frame_irq_pending<<7) |
 		       (chip->sprite_overflow<<6) |
@@ -578,7 +578,7 @@ static void vdp_update_code_addr_regs(struct sms_vdp *chip)
 
 static void vdp_set_register(running_machine *machine, struct sms_vdp *chip)
 {
-	UINT8 reg = chip->cmd_part2&0x0f;
+	uint8_t reg = chip->cmd_part2&0x0f;
 	chip->regs[reg] = chip->cmd_part1;
 
 	//if(reg==0) printf("setting reg 0 to %02x\n",chip->cmd_part1);
@@ -613,7 +613,7 @@ static void vdp_set_register(running_machine *machine, struct sms_vdp *chip)
 //  printf("VDP: setting register %01x to %02x\n",reg, chip->cmd_part1);
 }
 
-static void vdp_ctrl_w(const address_space *space, UINT8 data, struct sms_vdp *chip)
+static void vdp_ctrl_w(const address_space *space, uint8_t data, struct sms_vdp *chip)
 {
 	if (chip->cmd_pend)
 	{ /* Part 2 of a command word write */
@@ -706,15 +706,15 @@ WRITE8_HANDLER( sms_vdp_ctrl_w )
 	vdp_ctrl_w(space, data, vdp1);
 }
 
-static void draw_tile_line(int drawxpos, int tileline, UINT16 tiledata, UINT8* linebuf, struct sms_vdp* chip)
+static void draw_tile_line(int drawxpos, int tileline, uint16_t tiledata, uint8_t* linebuf, struct sms_vdp* chip)
 {
 	int xx;
-	UINT32 gfxdata;
-	UINT16 gfx_base = (tiledata & 0x01ff)<<5;
-	UINT8  flipx = (tiledata & 0x0200)>>9;
-	UINT8  flipy = (tiledata & 0x0400)>>10;
-	UINT8  pal   = (tiledata & 0x0800)>>11;
-	UINT8  pri   = (tiledata & 0x1000)>>12;
+	uint32_t gfxdata;
+	uint16_t gfx_base = (tiledata & 0x01ff)<<5;
+	uint8_t  flipx = (tiledata & 0x0200)>>9;
+	uint8_t  flipy = (tiledata & 0x0400)>>10;
+	uint8_t  pal   = (tiledata & 0x0800)>>11;
+	uint8_t  pri   = (tiledata & 0x1000)>>12;
 
 	if (flipy)
 	{
@@ -729,7 +729,7 @@ static void draw_tile_line(int drawxpos, int tileline, UINT16 tiledata, UINT8* l
 
 	for (xx=0;xx<8;xx++)
 	{
-		UINT8 pixel;
+		uint8_t pixel;
 
 		if (flipx)
 		{
@@ -768,8 +768,8 @@ static void sms_render_spriteline(int scanline, struct sms_vdp* chip)
 	int max_sprites = 8;
 	int visible_line = 0;
 
-	UINT16 table_base = (chip->regs[0x5]&0x7e) << 7;
-	UINT8 pattern_bit = (chip->regs[0x6]&0x04) >> 2; // high bit of the tile # (because spriteram can only contain an 8-bit tile #)
+	uint16_t table_base = (chip->regs[0x5]&0x7e) << 7;
+	uint8_t pattern_bit = (chip->regs[0x6]&0x04) >> 2; // high bit of the tile # (because spriteram can only contain an 8-bit tile #)
 
 
 	memset(chip->sprite_renderline, 0, 256+32);
@@ -844,14 +844,14 @@ static void sms_render_spriteline(int scanline, struct sms_vdp* chip)
 		if (visible_line)
 		{
 			int xx;
-			UINT32 gfxdata;
+			uint32_t gfxdata;
 
 			gfxdata = (SMS_VDP_VRAM(num&0x3fff)<<24)|(SMS_VDP_VRAM((num+1)&0x3fff)<<16)|(SMS_VDP_VRAM((num+2)&0x3fff)<<8)|(SMS_VDP_VRAM((num+3)&0x3fff)<<0);
 
 
 			for (xx=0;xx<8;xx++)
 			{
-				UINT8 pixel = (( (gfxdata>>(0+xx)  ) &0x00000001)<<3)|
+				uint8_t pixel = (( (gfxdata>>(0+xx)  ) &0x00000001)<<3)|
 				              (( (gfxdata>>(8+xx)  ) &0x00000001)<<2)|
 				              (( (gfxdata>>(16+xx) ) &0x00000001)<<1)|
 				              (( (gfxdata>>(24+xx) ) &0x00000001)<<0);
@@ -887,11 +887,11 @@ static void sms_render_tileline(int scanline, struct sms_vdp* chip)
 	int count = 32;
 	int drawxpos;
 
-	UINT8 xscroll = chip->regs[0x8];
-	UINT8 yscroll = chip->yscroll;
-	UINT16 table_base = (chip->regs[0x2]&0x0e)<<10;
-	UINT16 our_base;
-	UINT8  our_line = (scanline+yscroll) & 0x7;
+	uint8_t xscroll = chip->regs[0x8];
+	uint8_t yscroll = chip->yscroll;
+	uint16_t table_base = (chip->regs[0x2]&0x0e)<<10;
+	uint16_t our_base;
+	uint8_t  our_line = (scanline+yscroll) & 0x7;
 
 	/* In 224 and 240 line modes the table base is different */
 	if ((sms_mode_table[chip->screen_mode].sms2_height)!=192)
@@ -919,10 +919,10 @@ static void sms_render_tileline(int scanline, struct sms_vdp* chip)
 
 	do
 	{
-		UINT16 tiledata = (SMS_VDP_VRAM((our_base+(column&0x1f)*2+1)&0x3fff) << 8) |
+		uint16_t tiledata = (SMS_VDP_VRAM((our_base+(column&0x1f)*2+1)&0x3fff) << 8) |
 		                  (SMS_VDP_VRAM((our_base+(column&0x1f)*2+0)&0x3fff) << 0);
 
-//      UINT16 pattern = ((column+((scanline>>3)*32)) & 0x01ff)<<5;
+//      uint16_t pattern = ((column+((scanline>>3)*32)) & 0x01ff)<<5;
 
 		draw_tile_line(drawxpos, our_line, tiledata, chip->tile_renderline, chip);
 
@@ -937,12 +937,12 @@ static void sms_render_tileline(int scanline, struct sms_vdp* chip)
 static void sms_copy_to_renderbuffer(int scanline, struct sms_vdp* chip)
 {
 	int x;
-	UINT16* lineptr = BITMAP_ADDR16(chip->r_bitmap, scanline, 0);
+	uint16_t* lineptr = BITMAP_ADDR16(chip->r_bitmap, scanline, 0);
 
 	for (x=0;x<256;x++)
 	{
-		UINT8 dat = chip->tile_renderline[x];
-		UINT8 col;
+		uint8_t dat = chip->tile_renderline[x];
+		uint8_t col;
 
 
 		col = (chip->regs[0x7]&0x0f)+0x10;
@@ -1071,7 +1071,7 @@ static TIMER_CALLBACK( sms_scanline_timer_callback )
 static void show_tiles(struct sms_vdp* chip)
 {
 	int x,y,xx,yy;
-	UINT16 count = 0;
+	uint16_t count = 0;
 
 	for (y=0;y<16;y++)
 	{
@@ -1080,15 +1080,15 @@ static void show_tiles(struct sms_vdp* chip)
 			for (yy=0;yy<8;yy++)
 			{
 				int drawypos = y*8+yy;
-				UINT16* lineptr = BITMAP_ADDR16(chip->r_bitmap, drawypos, 0);
+				uint16_t* lineptr = BITMAP_ADDR16(chip->r_bitmap, drawypos, 0);
 
-				UINT32 gfxdata = (SMS_VDP_VRAM(count)<<24)|(SMS_VDP_VRAM(count+1)<<16)|(SMS_VDP_VRAM(count+2)<<8)|(SMS_VDP_VRAM(count+3)<<0);
+				uint32_t gfxdata = (SMS_VDP_VRAM(count)<<24)|(SMS_VDP_VRAM(count+1)<<16)|(SMS_VDP_VRAM(count+2)<<8)|(SMS_VDP_VRAM(count+3)<<0);
 
 				for (xx=0;xx<8;xx++)
 				{
 					int drawxpos = x*8+xx;
 
-					UINT8 pixel = (( (gfxdata>>(0+xx)  ) &0x00000001)<<3)|
+					uint8_t pixel = (( (gfxdata>>(0+xx)  ) &0x00000001)<<3)|
 					              (( (gfxdata>>(8+xx)  ) &0x00000001)<<2)|
 					              (( (gfxdata>>(16+xx) ) &0x00000001)<<1)|
 					              (( (gfxdata>>(24+xx) ) &0x00000001)<<0);
@@ -1139,11 +1139,11 @@ static void show_tiles(struct sms_vdp* chip)
 
 static void end_of_frame(running_machine *machine, struct sms_vdp *chip)
 {
-	UINT8 m1 = (chip->regs[0x1]&0x10)>>4;
-	UINT8 m2 = (chip->regs[0x0]&0x02)>>1;
-	UINT8 m3 = (chip->regs[0x1]&0x08)>>3;
-	UINT8 m4 = (chip->regs[0x0]&0x04)>>2;
-	UINT8 m5 = chip->is_pal;
+	uint8_t m1 = (chip->regs[0x1]&0x10)>>4;
+	uint8_t m2 = (chip->regs[0x0]&0x02)>>1;
+	uint8_t m3 = (chip->regs[0x1]&0x08)>>3;
+	uint8_t m4 = (chip->regs[0x0]&0x04)>>2;
+	uint8_t m5 = chip->is_pal;
 	chip->screen_mode = m1|(m2<<1)|(m3<<2)|(m4<<3)|(m5<<4);
 
 	if (chip->vdp_type!=GG_VDP) /* In GG mode the Game Gear resolution is fixed */
@@ -1203,13 +1203,13 @@ MACHINE_RESET(sms)
 
 
 
-UINT8* vdp2_vram_bank0;
-UINT8* vdp2_vram_bank1;
+uint8_t* vdp2_vram_bank0;
+uint8_t* vdp2_vram_bank1;
 
-UINT8* vdp1_vram_bank0;
-UINT8* vdp1_vram_bank1;
+uint8_t* vdp1_vram_bank0;
+uint8_t* vdp1_vram_bank1;
 
-void segae_set_vram_banks(UINT8 data)
+void segae_set_vram_banks(uint8_t data)
 {
 	if (data&0x80)
 	{
@@ -1271,8 +1271,8 @@ VIDEO_UPDATE(megatech_md_sms)
 
 	for (y=0;y<224;y++)
 	{
-		UINT16* lineptr = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16* srcptr =  BITMAP_ADDR16(md_sms_vdp->r_bitmap, y, 0);
+		uint16_t* lineptr = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* srcptr =  BITMAP_ADDR16(md_sms_vdp->r_bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
@@ -1290,8 +1290,8 @@ VIDEO_UPDATE(megatech_bios)
 
 	for (y=0;y<224;y++)
 	{
-		UINT16* lineptr = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
+		uint16_t* lineptr = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
@@ -1308,12 +1308,12 @@ VIDEO_UPDATE(megaplay_bios)
 
 	for (y=0;y<224;y++)
 	{
-		UINT16* lineptr = BITMAP_ADDR16(bitmap, y+16, 32);
-		UINT16* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
+		uint16_t* lineptr = BITMAP_ADDR16(bitmap, y+16, 32);
+		uint16_t* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
-			UINT16 src = srcptr[x]&0x7fff;
+			uint16_t src = srcptr[x]&0x7fff;
 
 			if (src)
 				lineptr[x]=srcptr[x]&0x7fff;
@@ -1330,8 +1330,8 @@ VIDEO_UPDATE(systeme)
 
 	for (y=0;y<192;y++)
 	{
-		UINT16* lineptr = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
+		uint16_t* lineptr = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* srcptr =  BITMAP_ADDR16(vdp1->r_bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
@@ -1342,8 +1342,8 @@ VIDEO_UPDATE(systeme)
 
 	for (y=0;y<192;y++)
 	{
-		UINT16* lineptr = BITMAP_ADDR16(bitmap, y, 0);
-		UINT16* srcptr =  BITMAP_ADDR16(vdp2->r_bitmap, y, 0);
+		uint16_t* lineptr = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t* srcptr =  BITMAP_ADDR16(vdp2->r_bitmap, y, 0);
 
 		for (x=0;x<256;x++)
 		{
@@ -1401,7 +1401,7 @@ DRIVER_INIT( megatech_bios )
 	vdp1->chip_id = 1;
 
 	vdp1_vram_bank0 = vdp1->vram;
-	vdp1_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp1_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 
 	smsgg_backupram = 0;
 }
@@ -1418,7 +1418,7 @@ DRIVER_INIT( smscm )
 	md_sms_vdp->chip_id = 3;
 
 	vdp1_vram_bank0 = md_sms_vdp->vram;
-	vdp1_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp1_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 
 	smsgg_backupram = 0;
 }
@@ -1435,7 +1435,7 @@ DRIVER_INIT( smspal )
 	md_sms_vdp->chip_id = 3;
 
 	vdp1_vram_bank0 = md_sms_vdp->vram;
-	vdp1_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp1_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 
 	smsgg_backupram = 0;
 }
@@ -1452,14 +1452,14 @@ DRIVER_INIT( sms )
 	md_sms_vdp->chip_id = 3;
 
 	vdp1_vram_bank0 = md_sms_vdp->vram;
-	vdp1_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp1_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 
 	smsgg_backupram = 0;
 }
 
-static UINT8 ioport_gg00_r(running_machine* machine)
+static uint8_t ioport_gg00_r(running_machine* machine)
 {
-	UINT8 GG_START_BUTTON = input_port_read_safe(machine,"GGSTART",0x00);
+	uint8_t GG_START_BUTTON = input_port_read_safe(machine,"GGSTART",0x00);
 
 	return (GG_START_BUTTON << 7) |
 		   (0               << 6) |
@@ -1510,7 +1510,7 @@ DRIVER_INIT( hazemd_segasyse )
 	vdp1->chip_id = 1;
 
 	vdp1_vram_bank0 = vdp1->vram;
-	vdp1_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp1_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 
 
 	vdp2 = (struct sms_vdp *)start_vdp(machine, SMS2_VDP);
@@ -1521,7 +1521,7 @@ DRIVER_INIT( hazemd_segasyse )
 	vdp2->chip_id = 2;
 
 	vdp2_vram_bank0 = vdp2->vram;
-	vdp2_vram_bank1 = auto_alloc_array(machine, UINT8, 0x4000);
+	vdp2_vram_bank1 = auto_alloc_array(machine, uint8_t, 0x4000);
 }
 
 /* Functions to set up the Memory Map
@@ -1553,7 +1553,7 @@ static WRITE8_HANDLER( z80_unmapped_w )
 	printf("unmapped z80 write %04x\n",offset);
 }
 
-static UINT8* sms_rom;
+static uint8_t* sms_rom;
 
 
 /* the SMS inputs should be more complex, like the megadrive ones */
@@ -1669,13 +1669,13 @@ void megatech_set_genz80_as_sms_standard_map(running_machine *machine, const cha
 	memory_install_readwrite8_handler(cputag_get_address_space(machine, tag, ADDRESS_SPACE_PROGRAM), 0x0000, 0xffff, 0, 0, z80_unmapped_r, z80_unmapped_w);
 
 	/* main ram area */
-	sms_mainram = (UINT8 *)memory_install_ram(cputag_get_address_space(machine, tag, ADDRESS_SPACE_PROGRAM), 0xc000, 0xdfff, 0, 0x2000, NULL);
+	sms_mainram = (uint8_t *)memory_install_ram(cputag_get_address_space(machine, tag, ADDRESS_SPACE_PROGRAM), 0xc000, 0xdfff, 0, 0x2000, NULL);
 	memset(sms_mainram,0x00,0x2000);
 
 	megatech_set_genz80_as_sms_standard_ports(machine,  tag);
 
 	/* fixed rom bank area */
-	sms_rom = (UINT8 *)memory_install_rom(cputag_get_address_space(machine, tag, ADDRESS_SPACE_PROGRAM), 0x0000, 0xbfff, 0, 0, NULL);
+	sms_rom = (uint8_t *)memory_install_rom(cputag_get_address_space(machine, tag, ADDRESS_SPACE_PROGRAM), 0x0000, 0xbfff, 0, 0, NULL);
 
 	memcpy(sms_rom, memory_region(machine, "maincpu"), 0xc000);
 

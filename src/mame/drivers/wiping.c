@@ -38,7 +38,7 @@ dip: 6.7 7.7
 #include "includes/wiping.h"
 
 
-static UINT8 *sharedram1,*sharedram2;
+static uint8_t *sharedram1,*sharedram2;
 
 static READ8_HANDLER( shared1_r )
 {

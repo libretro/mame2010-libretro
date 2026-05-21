@@ -16,11 +16,11 @@ XX Mission (c) 1986 UPL
 VIDEO_START( xxmissio );
 VIDEO_UPDATE( xxmissio );
 
-extern UINT8 *xxmissio_bgram;
-extern UINT8 *xxmissio_fgram;
-extern UINT8 *xxmissio_spriteram;
+extern uint8_t *xxmissio_bgram;
+extern uint8_t *xxmissio_fgram;
+extern uint8_t *xxmissio_spriteram;
 
-static UINT8 xxmissio_status;
+static uint8_t xxmissio_status;
 
 
 WRITE8_DEVICE_HANDLER( xxmissio_scroll_x_w );

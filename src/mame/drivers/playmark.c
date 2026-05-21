@@ -1448,7 +1448,7 @@ ROM_START( hrdtimesa )
 ROM_END
 
 
-static UINT8 playmark_asciitohex(UINT8 data)
+static uint8_t playmark_asciitohex(uint8_t data)
 {
 	/* Convert ASCII data to HEX */
 
@@ -1463,12 +1463,12 @@ static UINT8 playmark_asciitohex(UINT8 data)
 static DRIVER_INIT( bigtwin )
 {
 	playmark_state *state = (playmark_state *)machine->driver_data;
-	UINT8 *playmark_PICROM_HEX = memory_region(machine, "user1");
-	UINT16 *playmark_PICROM = (UINT16 *)memory_region(machine, "audiocpu");
-	INT32 offs, data;
-	UINT16 src_pos = 0;
-	UINT16 dst_pos = 0;
-	UINT8 data_hi, data_lo;
+	uint8_t *playmark_PICROM_HEX = memory_region(machine, "user1");
+	uint16_t *playmark_PICROM = (uint16_t *)memory_region(machine, "audiocpu");
+	int32_t offs, data;
+	uint16_t src_pos = 0;
+	uint16_t dst_pos = 0;
+	uint8_t data_hi, data_lo;
 
 	state->snd_flag = 0;
 

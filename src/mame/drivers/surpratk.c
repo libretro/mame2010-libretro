@@ -201,13 +201,13 @@ static const k05324x_interface surpratk_k05324x_intf =
 static MACHINE_START( surpratk )
 {
 	surpratk_state *state = (surpratk_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 28, &ROM[0x10000], 0x2000);
 	memory_configure_bank(machine, "bank1", 28, 4, &ROM[0x08000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x1000);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x1000);
 
 	state->maincpu = machine->device("maincpu");
 	state->k053244 = machine->device("k053244");

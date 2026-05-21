@@ -204,16 +204,16 @@ Notes:
 
 
 /* driver config */
-static void (*videomode_custom)(running_machine *machine, UINT8 data, UINT8 prevdata);
-static UINT8 mute_xor;
+static void (*videomode_custom)(running_machine *machine, uint8_t data, uint8_t prevdata);
+static uint8_t mute_xor;
 
-static UINT8 *system1_ram;
-static UINT8 dakkochn_mux_data;
-static UINT8 videomode_prev;
-static UINT8 mcu_control;
-static UINT8 *nob_mcu_status;
-static UINT8 *nob_mcu_latch;
-static UINT8 nob_maincpu_latch;
+static uint8_t *system1_ram;
+static uint8_t dakkochn_mux_data;
+static uint8_t videomode_prev;
+static uint8_t mcu_control;
+static uint8_t *nob_mcu_status;
+static uint8_t *nob_mcu_latch;
+static uint8_t nob_maincpu_latch;
 
 
 
@@ -237,7 +237,7 @@ static UINT8 nob_maincpu_latch;
     each opcode fetch (since the M1 line is low for 2 cycles per byte).
 */
 
-static const UINT8 cc_op[0x100] = {
+static const uint8_t cc_op[0x100] = {
  4*5+1*2,10*5+3*2, 7*5+1*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2, 4*5+1*2,11*5+1*2, 7*5+1*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2,
  8*5+2*2,10*5+3*2, 7*5+1*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2,12*5+2*2,11*5+1*2, 7*5+1*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2,
  7*5+2*2,10*5+3*2,16*5+3*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2, 7*5+2*2,11*5+1*2,16*5+3*2, 6*5+1*2, 4*5+1*2, 4*5+1*2, 7*5+2*2, 4*5+1*2,
@@ -256,7 +256,7 @@ static const UINT8 cc_op[0x100] = {
  5*5+1*2,10*5+1*2,10*5+3*2, 4*5+1*2,10*5+3*2,11*5+1*2, 7*5+2*2,11*5+1*2, 5*5+1*2, 6*5+1*2,10*5+3*2, 4*5+1*2,10*5+3*2, 0*5    , 7*5+2*2,11*5+1*2
 };
 
-static const UINT8 cc_cb[0x100] = {
+static const uint8_t cc_cb[0x100] = {
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2,
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2,
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2,
@@ -275,7 +275,7 @@ static const UINT8 cc_cb[0x100] = {
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,15*5+2*2, 8*5+2*2
 };
 
-static const UINT8 cc_ed[0x100] = {
+static const uint8_t cc_ed[0x100] = {
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2,
@@ -294,7 +294,7 @@ static const UINT8 cc_ed[0x100] = {
  8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2, 8*5+2*2
 };
 
-static const UINT8 cc_xy[0x100] = {
+static const uint8_t cc_xy[0x100] = {
  4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2,15*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2,
  4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2,15*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2,
  4*5+2*2,14*5+4*2,20*5+4*2,10*5+2*2, 9*5+2*2, 9*5+2*2, 9*5+3*2, 4*5+2*2, 4*5+2*2,15*5+2*2,20*5+4*2,10*5+2*2, 9*5+2*2, 9*5+2*2, 9*5+3*2, 4*5+2*2,
@@ -313,7 +313,7 @@ static const UINT8 cc_xy[0x100] = {
  4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2,10*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2, 4*5+2*2
 };
 
-static const UINT8 cc_xycb[0x100] = {
+static const uint8_t cc_xycb[0x100] = {
 23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,
 23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,
 23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,23*5+4*2,
@@ -333,7 +333,7 @@ static const UINT8 cc_xycb[0x100] = {
 };
 
 /* extra cycles if jr/jp/call taken and 'interrupt latency' on rst 0-7 */
-static const UINT8 cc_ex[0x100] = {
+static const uint8_t cc_ex[0x100] = {
  0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5,
  5*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5,	/* DJNZ */
  5*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 5*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5, 0*5,	/* JR NZ/JR Z */
@@ -355,7 +355,7 @@ static const UINT8 cc_ex[0x100] = {
 
 static MACHINE_START( system1 )
 {
-	UINT32 numbanks = (memory_region_length(machine, "maincpu") - 0x10000) / 0x4000;
+	uint32_t numbanks = (memory_region_length(machine, "maincpu") - 0x10000) / 0x4000;
 
 	if (numbanks > 0)
 		memory_configure_bank(machine, "bank1", 0, numbanks, memory_region(machine, "maincpu") + 0x10000, 0x4000);
@@ -394,14 +394,14 @@ static MACHINE_RESET( system1 )
  *
  *************************************/
 
-static void bank44_custom_w(running_machine *machine, UINT8 data, UINT8 prevdata)
+static void bank44_custom_w(running_machine *machine, uint8_t data, uint8_t prevdata)
 {
 	/* bank bits are bits 6 and 2 */
 	memory_set_bank(machine, "bank1", ((data & 0x40) >> 5) | ((data & 0x04) >> 2));
 }
 
 
-static void bank0c_custom_w(running_machine *machine, UINT8 data, UINT8 prevdata)
+static void bank0c_custom_w(running_machine *machine, uint8_t data, uint8_t prevdata)
 {
 	/* bank bits are bits 3 and 2 */
 	memory_set_bank(machine, "bank1", (data & 0x0c) >> 2);
@@ -450,7 +450,7 @@ static CUSTOM_INPUT( dakkochn_mux_status_r )
 }
 
 
-static void dakkochn_custom_w(running_machine *machine, UINT8 data, UINT8 prevdata)
+static void dakkochn_custom_w(running_machine *machine, uint8_t data, uint8_t prevdata)
 {
 	/* bit 1 toggling on clocks the mux; we store the previous state in the high bit of dakkochn_mux_data */
 	if ((data & 0x02) && !(prevdata & 0x02))
@@ -491,7 +491,7 @@ static READ8_HANDLER( sound_data_r )
 	/* if we have an 8255 PPI, get the data from the port and toggle the ack */
 	if (ppi != NULL)
 	{
-		UINT8 initial_value = ppi8255_get_port_c(ppi);
+		uint8_t initial_value = ppi8255_get_port_c(ppi);
 		ppi8255_set_port_c(ppi, initial_value & ~0x40);
 		ppi8255_set_port_c(ppi, initial_value |  0x40);
 		return soundlatch_r(space, offset);
@@ -500,7 +500,7 @@ static READ8_HANDLER( sound_data_r )
 	/* if we have a Z80 PIO, get the data from the port and toggle the strobe */
 	else if (pio != NULL)
 	{
-		UINT8 data = pio->port_read(z80pio_device::PORT_A);
+		uint8_t data = pio->port_read(z80pio_device::PORT_A);
 		pio->strobe(z80pio_device::PORT_A, false);
 		pio->strobe(z80pio_device::PORT_A, true);
 		return data;
@@ -4549,7 +4549,7 @@ static DRIVER_INIT( dakkochn )
 static DRIVER_INIT( myherok )
 {
 	int A;
-	UINT8 *rom;
+	uint8_t *rom;
 
 	DRIVER_INIT_CALL(bank00);
 
@@ -4578,7 +4578,7 @@ static DRIVER_INIT( myherok )
 	for (A = 0;A < 0xc000;A++)
 	{
 		int A1;
-		UINT8 temp;
+		uint8_t temp;
 
 		A1 = (A & 0xffcf) | ((A & 0x0010) << 1) | ((A & 0x0020) >> 1);
 		if (A < A1)
@@ -4620,7 +4620,7 @@ static DRIVER_INIT( nobb )
 	/* Patch to get PRG ROMS ('T', 'R' and 'S) status as "GOOD" in the "test mode" */
 	/* not really needed */
 
-//  UINT8 *ROM = memory_region(machine, "maincpu");
+//  uint8_t *ROM = memory_region(machine, "maincpu");
 
 //  ROM[0x3296] = 0x18;     // 'jr' instead of 'jr z' - 'T' (PRG Main ROM)
 //  ROM[0x32be] = 0x18;     // 'jr' instead of 'jr z' - 'R' (Banked ROM 1)
@@ -4633,7 +4633,7 @@ static DRIVER_INIT( nobb )
 
 	/* Patch to get sound in later levels(the program enters into a tight loop)*/
 	const address_space *iospace = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_IO);
-	UINT8 *ROM2 = memory_region(machine, "soundcpu");
+	uint8_t *ROM2 = memory_region(machine, "soundcpu");
 
 	ROM2[0x02f9] = 0x28;//'jr z' instead of 'jr'
 
@@ -4664,7 +4664,7 @@ static DRIVER_INIT( bootsys2 )
 
 static DRIVER_INIT( choplift )
 {
-	UINT8 *mcurom = memory_region(machine, "mcu");
+	uint8_t *mcurom = memory_region(machine, "mcu");
 
 	/* the ROM dump we have is bad; the following patches make it work */
 	mcurom[0x100] = 0x55;		/* D5 in current dump */

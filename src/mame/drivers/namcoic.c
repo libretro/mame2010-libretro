@@ -7,7 +7,7 @@ static int mPalXOR;		/* XOR'd with palette select register; needed for System21 
 
 static struct
 {
-	UINT16 control[0x40/2];
+	uint16_t control[0x40/2];
 	/**
      * [0x1] 0x02/2 tilemap#0.scrollx
      * [0x3] 0x06/2 tilemap#0.scrolly
@@ -21,10 +21,10 @@ static struct
      * 0x30/2 color
      */
 	tilemap_t *tmap[6];
-	UINT16 *videoram;
+	uint16_t *videoram;
 	int gfxbank;
-	UINT8 *maskBaseAddr;
-	void (*cb)( UINT16 code, int *gfx, int *mask);
+	uint8_t *maskBaseAddr;
+	void (*cb)( uint16_t code, int *gfx, int *mask);
 } mTilemapInfo;
 
 void namco_tilemap_invalidate( void )
@@ -36,7 +36,7 @@ void namco_tilemap_invalidate( void )
 	}
 } /* namco_tilemap_invalidate */
 
-INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,UINT16 *vram)
+INLINE void get_tile_info(running_machine *machine,tile_data *tileinfo,int tile_index,uint16_t *vram)
 {
 	int tile, mask;
 	mTilemapInfo.cb( vram[tile_index], &tile, &mask );
@@ -53,13 +53,13 @@ static TILE_GET_INFO( get_tile_info5 ) { get_tile_info(machine,tileinfo,tile_ind
 
 void
 namco_tilemap_init( running_machine *machine, int gfxbank, void *maskBaseAddr,
-	void (*cb)( UINT16 code, int *gfx, int *mask) )
+	void (*cb)( uint16_t code, int *gfx, int *mask) )
 {
 	int i;
 	mTilemapInfo.gfxbank = gfxbank;
-	mTilemapInfo.maskBaseAddr = (UINT8 *)maskBaseAddr;
+	mTilemapInfo.maskBaseAddr = (uint8_t *)maskBaseAddr;
 	mTilemapInfo.cb = cb;
-	mTilemapInfo.videoram = auto_alloc_array(machine, UINT16,  0x10000 );
+	mTilemapInfo.videoram = auto_alloc_array(machine, uint16_t,  0x10000 );
 
 		/* four scrolling tilemaps */
 		mTilemapInfo.tmap[0] = tilemap_create(machine, get_tile_info0,tilemap_scan_rows,8,8,64,64);
@@ -105,7 +105,7 @@ namco_tilemap_draw( bitmap_t *bitmap, const rectangle *cliprect, int pri )
 } /* namco_tilemap_draw */
 
 static void
-SetTilemapVideoram( int offset, UINT16 newword )
+SetTilemapVideoram( int offset, uint16_t newword )
 {
 	mTilemapInfo.videoram[offset] = newword;
 	if( offset<0x4000 )
@@ -126,7 +126,7 @@ SetTilemapVideoram( int offset, UINT16 newword )
 
 WRITE16_HANDLER( namco_tilemapvideoram16_w )
 {
-	UINT16 newword = mTilemapInfo.videoram[offset];
+	uint16_t newword = mTilemapInfo.videoram[offset];
 	COMBINE_DATA( &newword );
 	SetTilemapVideoram( offset, newword );
 }
@@ -137,7 +137,7 @@ READ16_HANDLER( namco_tilemapvideoram16_r )
 }
 
 static void
-SetTilemapControl( int offset, UINT16 newword )
+SetTilemapControl( int offset, uint16_t newword )
 {
 	mTilemapInfo.control[offset] = newword;
 	if( offset<0x20/2 )
@@ -189,7 +189,7 @@ SetTilemapControl( int offset, UINT16 newword )
 
 WRITE16_HANDLER( namco_tilemapcontrol16_w )
 {
-	UINT16 newword = mTilemapInfo.control[offset];
+	uint16_t newword = mTilemapInfo.control[offset];
 	COMBINE_DATA( &newword );
 	SetTilemapControl( offset, newword );
 }
@@ -207,7 +207,7 @@ READ32_HANDLER( namco_tilemapvideoram32_r )
 
 WRITE32_HANDLER( namco_tilemapvideoram32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (mTilemapInfo.videoram[offset]<<16)|mTilemapInfo.videoram[offset+1];
 	COMBINE_DATA(&v);
@@ -223,7 +223,7 @@ READ32_HANDLER( namco_tilemapcontrol32_r )
 
 WRITE32_HANDLER( namco_tilemapcontrol32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (mTilemapInfo.control[offset]<<16)|mTilemapInfo.control[offset+1];
 	COMBINE_DATA(&v);
@@ -239,7 +239,7 @@ READ32_HANDLER( namco_tilemapcontrol32_le_r )
 
 WRITE32_HANDLER( namco_tilemapcontrol32_le_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (mTilemapInfo.control[offset+1]<<16)|mTilemapInfo.control[offset];
 	COMBINE_DATA(&v);
@@ -255,7 +255,7 @@ READ32_HANDLER( namco_tilemapvideoram32_le_r )
 
 WRITE32_HANDLER( namco_tilemapvideoram32_le_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (mTilemapInfo.videoram[offset+1]<<16)|mTilemapInfo.videoram[offset];
 	COMBINE_DATA(&v);
@@ -267,7 +267,7 @@ WRITE32_HANDLER( namco_tilemapvideoram32_le_w )
 
 static void zdrawgfxzoom(
 		bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
 		int scalex, int scaley, int zpos )
 {
 	if (!scalex || !scaley) return;
@@ -277,7 +277,7 @@ static void zdrawgfxzoom(
 		{
 			int shadow_offset = (gfx->machine->config->m_video_attributes&VIDEO_HAS_SHADOWS)?gfx->machine->total_colors():0;
 			const pen_t *pal = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * (color % gfx->total_colors)];
-			const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+			const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 			int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
 			if (sprite_screen_width && sprite_screen_height)
@@ -346,9 +346,9 @@ static void zdrawgfxzoom(
 					{
 						for( y=sy; y<ey; y++ )
 						{
-							const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-							UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-							UINT8 *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+							const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+							uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+							uint8_t *pri = BITMAP_ADDR8(priority_bitmap, y, 0);
 							int x, x_index = x_index_base;
 							if( mPalXOR )
 							{
@@ -523,7 +523,7 @@ namcos2_draw_sprites_metalhawk(running_machine *machine, bitmap_t *bitmap, const
      *  --------xxxx---- color
      *  x--------------- unknown
      */
-	const UINT16 *pSource = namcos2_sprite_ram;
+	const uint16_t *pSource = namcos2_sprite_ram;
 	rectangle rect;
 	int loop;
 	if( pri==0 )
@@ -624,7 +624,7 @@ namcos2_draw_sprites_metalhawk(running_machine *machine, bitmap_t *bitmap, const
 
 /**************************************************************************************/
 
-static UINT16 mSpritePos[4];
+static uint16_t mSpritePos[4];
 
 WRITE16_HANDLER( namco_spritepos16_w )
 {
@@ -637,7 +637,7 @@ READ16_HANDLER( namco_spritepos16_r )
 
 WRITE32_HANDLER( namco_spritepos32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *= 2;
 	v = (mSpritePos[offset]<<16)|mSpritePos[offset+1];
 	COMBINE_DATA( &v );
@@ -650,10 +650,10 @@ READ32_HANDLER( namco_spritepos32_r )
 	return (mSpritePos[offset]<<16)|mSpritePos[offset+1];
 }
 
-INLINE UINT8
-nth_byte16( const UINT16 *pSource, int which )
+INLINE uint8_t
+nth_byte16( const uint16_t *pSource, int which )
 {
-	UINT16 data = pSource[which/2];
+	uint16_t data = pSource[which/2];
 	if( which&1 )
 	{
 		return data&0xff;
@@ -668,10 +668,10 @@ nth_byte16( const UINT16 *pSource, int which )
  * read from 32-bit aligned memory as if it were an array of 16 bit words.
  */
 #ifdef UNUSED_FUNCTION
-INLINE UINT16
-nth_word32( const UINT32 *pSource, int which )
+INLINE uint16_t
+nth_word32( const uint32_t *pSource, int which )
 {
-	UINT32 data = pSource[which/2];
+	uint32_t data = pSource[which/2];
 	if( which&1 )
 	{
 		return data&0xffff;
@@ -687,10 +687,10 @@ nth_word32( const UINT32 *pSource, int which )
  * read from 32-bit aligned memory as if it were an array of bytes.
  */
 #ifdef UNUSED_FUNCTION
-INLINE UINT8
-nth_byte32( const UINT32 *pSource, int which )
+INLINE uint8_t
+nth_byte32( const uint32_t *pSource, int which )
 {
-		UINT32 data = pSource[which/4];
+		uint32_t data = pSource[which/4];
 		switch( which&3 )
 		{
 		case 0: return data>>24;
@@ -717,30 +717,30 @@ static int mGfxC355;	/* gfx bank for sprites */
  * 0x14000 sprite list (page1)
  */
 static void
-draw_spriteC355(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const UINT16 *pSource, int pri, int zpos )
+draw_spriteC355(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, const uint16_t *pSource, int pri, int zpos )
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	unsigned screen_height_remaining, screen_width_remaining;
 	unsigned source_height_remaining, source_width_remaining;
 	int hpos,vpos;
-	UINT16 hsize,vsize;
-	UINT16 palette;
-	UINT16 linkno;
-	UINT16 offset;
-	UINT16 format;
+	uint16_t hsize,vsize;
+	uint16_t palette;
+	uint16_t linkno;
+	uint16_t offset;
+	uint16_t format;
 	int tile_index;
 	int num_cols,num_rows;
 	int dx,dy;
 	int row,col;
 	int sx,sy,tile;
 	int flipx,flipy;
-	UINT32 zoomx, zoomy;
+	uint32_t zoomx, zoomy;
 	int tile_screen_width;
 	int tile_screen_height;
-	const UINT16 *spriteformat16 = &spriteram16[0x4000/2];
-	const UINT16 *spritetile16   = &spriteram16[0x8000/2];
+	const uint16_t *spriteformat16 = &spriteram16[0x4000/2];
+	const uint16_t *spritetile16   = &spriteram16[0x8000/2];
 	int color;
-	const UINT16 *pWinAttr;
+	const uint16_t *pWinAttr;
 	rectangle clip;
 	int xscroll, yscroll;
 
@@ -766,8 +766,8 @@ draw_spriteC355(running_machine *machine, bitmap_t *bitmap, const rectangle *cli
 
 	if( linkno*4>=0x4000/2 ) return; /* avoid garbage memory reads */
 
-	xscroll = (INT16)mSpritePos[1];
-	yscroll = (INT16)mSpritePos[0];
+	xscroll = (int16_t)mSpritePos[1];
+	yscroll = (int16_t)mSpritePos[0];
 
 //  xscroll &= 0x3ff; if( xscroll & 0x200 ) xscroll |= ~0x3ff;
 	xscroll &= 0x1ff; if( xscroll & 0x100 ) xscroll |= ~0x1ff;
@@ -775,7 +775,7 @@ draw_spriteC355(running_machine *machine, bitmap_t *bitmap, const rectangle *cli
 
 	if( bitmap->width > 384 )
 	{ /* Medium Resolution: System21 adjust */
-			xscroll = (INT16)mSpritePos[1];
+			xscroll = (int16_t)mSpritePos[1];
 			xscroll &= 0x3ff; if( xscroll & 0x200 ) xscroll |= ~0x3ff;
 			if( yscroll<0 )
 			{ /* solvalou */
@@ -918,7 +918,7 @@ namco_obj_init( running_machine *machine, int gfxbank, int palXOR, int (*codeToT
 	{
 		mpCodeToTile = DefaultCodeToTile;
 	}
-	machine->generic.spriteram.u16 = auto_alloc_array(machine, UINT16, 0x20000/2);
+	machine->generic.spriteram.u16 = auto_alloc_array(machine, uint16_t, 0x20000/2);
 	memset( machine->generic.spriteram.u16, 0, 0x20000 ); /* needed for Nebulas Ray */
 	memset( mSpritePos,0x00,sizeof(mSpritePos) );
 } /* namcosC355_init */
@@ -928,14 +928,14 @@ DrawObjectList(running_machine *machine,
 		bitmap_t *bitmap,
 		const rectangle *cliprect,
 		int pri,
-		const UINT16 *pSpriteList16,
-		const UINT16 *pSpriteTable )
+		const uint16_t *pSpriteList16,
+		const uint16_t *pSpriteTable )
 {
 	int i;
 	/* draw the sprites */
 	for( i=0; i<256; i++ )
 	{
-		UINT16 which = pSpriteList16[i];
+		uint16_t which = pSpriteList16[i];
 		draw_spriteC355(machine, bitmap, cliprect, &pSpriteTable[(which&0xff)*8], pri, i );
 		if( which&0x100 ) break;
 	}
@@ -971,8 +971,8 @@ READ16_HANDLER( namco_obj16_r )
 
 WRITE32_HANDLER( namco_obj32_w )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
-	UINT32 v;
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
+	uint32_t v;
 	offset *= 2;
 	v = (spriteram16[offset]<<16)|spriteram16[offset+1];
 	COMBINE_DATA( &v );
@@ -982,15 +982,15 @@ WRITE32_HANDLER( namco_obj32_w )
 
 READ32_HANDLER( namco_obj32_r )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
 	offset *= 2;
 	return (spriteram16[offset]<<16)|spriteram16[offset+1];
 } /* namco_obj32_r */
 
 WRITE32_HANDLER( namco_obj32_le_w )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
-	UINT32 v;
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
+	uint32_t v;
 	offset *= 2;
 	v = (spriteram16[offset+1]<<16)|spriteram16[offset];
 	COMBINE_DATA( &v );
@@ -1000,7 +1000,7 @@ WRITE32_HANDLER( namco_obj32_le_w )
 
 READ32_HANDLER( namco_obj32_le_r )
 {
-	UINT16 *spriteram16 = space->machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = space->machine->generic.spriteram.u16;
 	offset *= 2;
 	return (spriteram16[offset+1]<<16)|spriteram16[offset];
 } /* namco_obj32_r */
@@ -1020,9 +1020,9 @@ READ32_HANDLER( namco_obj32_le_r )
  */
 #define ROZ_TILEMAP_COUNT 2
 static tilemap_t *mRozTilemap[ROZ_TILEMAP_COUNT];
-static UINT16 *rozbank16;
-static UINT16 *rozvideoram16;
-static UINT16 *rozcontrol16;
+static uint16_t *rozbank16;
+static uint16_t *rozvideoram16;
+static uint16_t *rozcontrol16;
 static int mRozGfxBank;
 static const char * mRozMaskRegion;
 
@@ -1032,7 +1032,7 @@ static const char * mRozMaskRegion;
 static void
 roz_get_info( running_machine *machine, tile_data *tileinfo, int tile_index, int which)
 {
-	UINT16 tile = rozvideoram16[tile_index];
+	uint16_t tile = rozvideoram16[tile_index];
 	int bank, mangle;
 
 	switch( namcos2_gametype )
@@ -1091,7 +1091,7 @@ roz_get_info( running_machine *machine, tile_data *tileinfo, int tile_index, int
 		break;
 	}
 	SET_TILE_INFO( mRozGfxBank,mangle,0/*color*/,0/*flag*/ );
-	tileinfo->mask_data = 32*tile + (UINT8 *)memory_region( machine, mRozMaskRegion );
+	tileinfo->mask_data = 32*tile + (uint8_t *)memory_region( machine, mRozMaskRegion );
 } /* roz_get_info */
 
 static
@@ -1130,9 +1130,9 @@ namco_roz_init( running_machine *machine, int gfxbank, const char * maskregion )
 	mRozGfxBank = gfxbank;
 	mRozMaskRegion = maskregion;
 
-	rozbank16 = auto_alloc_array(machine, UINT16, 0x10/2);
-	rozvideoram16 = auto_alloc_array(machine, UINT16, 0x20000/2);
-	rozcontrol16 = auto_alloc_array(machine, UINT16, 0x20/2);
+	rozbank16 = auto_alloc_array(machine, uint16_t, 0x10/2);
+	rozvideoram16 = auto_alloc_array(machine, uint16_t, 0x20000/2);
+	rozcontrol16 = auto_alloc_array(machine, uint16_t, 0x20/2);
 
 		for( i=0; i<ROZ_TILEMAP_COUNT; i++ )
 		{
@@ -1146,14 +1146,14 @@ namco_roz_init( running_machine *machine, int gfxbank, const char * maskregion )
 
 struct RozParam
 {
-	UINT32 left, top, size;
-	UINT32 startx,starty;
+	uint32_t left, top, size;
+	uint32_t startx,starty;
 	int incxx,incxy,incyx,incyy;
 	int color,priority;
 };
 
 static void
-UnpackRozParam( const UINT16 *pSource, struct RozParam *pRozParam )
+UnpackRozParam( const uint16_t *pSource, struct RozParam *pRozParam )
 {
 	const int xoffset = 36, yoffset = 3;
 
@@ -1164,7 +1164,7 @@ UnpackRozParam( const UINT16 *pSource, struct RozParam *pRozParam )
      * --------.xxxx---- priority
      * --------.----xxxx color
      */
-	UINT16 temp = pSource[1];
+	uint16_t temp = pSource[1];
 	pRozParam->size     = 512<<((temp&0x0300)>>8);
 	if ((namcos2_gametype == NAMCOFL_SPEED_RACER) || (namcos2_gametype == NAMCOFL_FINAL_LAP_R))
 	{
@@ -1179,23 +1179,23 @@ UnpackRozParam( const UINT16 *pSource, struct RozParam *pRozParam )
 	temp = pSource[2];
 	pRozParam->left = (temp&0x7000)>>3;
 	if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-	pRozParam->incxx = (INT16)temp;
+	pRozParam->incxx = (int16_t)temp;
 
 	temp = pSource[3];
 	pRozParam->top = (temp&0x7000)>>3;
 	if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-	pRozParam->incxy =  (INT16)temp;
+	pRozParam->incxy =  (int16_t)temp;
 
 	temp = pSource[4];
 	if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-	pRozParam->incyx =  (INT16)temp;
+	pRozParam->incyx =  (int16_t)temp;
 
 	temp = pSource[5];
 	if( temp&0x8000 ) temp |= 0xf000; else temp&=0x0fff; /* sign extend */
-	pRozParam->incyy =  (INT16)temp;
+	pRozParam->incyy =  (int16_t)temp;
 
-	pRozParam->startx = (INT16)pSource[6];
-	pRozParam->starty = (INT16)pSource[7];
+	pRozParam->startx = (int16_t)pSource[6];
+	pRozParam->starty = (int16_t)pSource[7];
 	pRozParam->startx <<= 4;
 	pRozParam->starty <<= 4;
 
@@ -1223,23 +1223,23 @@ DrawRozHelper(
 	    (namcos2_gametype != NAMCOFL_SPEED_RACER) &&
 	    (namcos2_gametype != NAMCOFL_FINAL_LAP_R))
 	{
-		UINT32 size_mask = rozInfo->size-1;
+		uint32_t size_mask = rozInfo->size-1;
 		bitmap_t *srcbitmap = tilemap_get_pixmap( tmap );
 		bitmap_t *flagsbitmap = tilemap_get_flagsmap( tmap );
-		UINT32 startx = rozInfo->startx + clip->min_x * rozInfo->incxx + clip->min_y * rozInfo->incyx;
-		UINT32 starty = rozInfo->starty + clip->min_x * rozInfo->incxy + clip->min_y * rozInfo->incyy;
+		uint32_t startx = rozInfo->startx + clip->min_x * rozInfo->incxx + clip->min_y * rozInfo->incyx;
+		uint32_t starty = rozInfo->starty + clip->min_x * rozInfo->incxy + clip->min_y * rozInfo->incyy;
 		int sx = clip->min_x;
 		int sy = clip->min_y;
 		while( sy <= clip->max_y )
 		{
 			int x = sx;
-			UINT32 cx = startx;
-			UINT32 cy = starty;
-			UINT16 *dest = BITMAP_ADDR16(bitmap, sy, sx);
+			uint32_t cx = startx;
+			uint32_t cy = starty;
+			uint16_t *dest = BITMAP_ADDR16(bitmap, sy, sx);
 			while( x <= clip->max_x )
 			{
-				UINT32 xpos = (((cx>>16)&size_mask) + rozInfo->left)&0xfff;
-				UINT32 ypos = (((cy>>16)&size_mask) + rozInfo->top)&0xfff;
+				uint32_t xpos = (((cx>>16)&size_mask) + rozInfo->left)&0xfff;
+				uint32_t ypos = (((cy>>16)&size_mask) + rozInfo->top)&0xfff;
 				if( *BITMAP_ADDR8(flagsbitmap, ypos, xpos)&TILEMAP_PIXEL_LAYER0 )
 				{
 					*dest = *BITMAP_ADDR16(srcbitmap,ypos,xpos)+rozInfo->color;
@@ -1279,7 +1279,7 @@ DrawRozScanline( bitmap_t *bitmap, int line, int which, int pri, const rectangle
 		rectangle clip;
 		int row = line/8;
 		int offs = row*0x100+(line&7)*0x10 + 0xe080;
-		UINT16 *pSource = &rozvideoram16[offs/2];
+		uint16_t *pSource = &rozvideoram16[offs/2];
 		if( (pSource[1]&0x8000)==0 )
 		{
 			UnpackRozParam( pSource, &rozInfo );
@@ -1313,8 +1313,8 @@ namco_roz_draw( bitmap_t *bitmap, const rectangle *cliprect, int pri )
 
 	for( which=1; which>=0; which-- )
 	{
-		const UINT16 *pSource = &rozcontrol16[which*8];
-		UINT16 attrs = pSource[1];
+		const uint16_t *pSource = &rozcontrol16[which*8];
+		uint16_t attrs = pSource[1];
 		if( (attrs&0x8000)==0 )
 		{ /* layer is enabled */
 			if( which==special && mode==0x8000 )
@@ -1356,7 +1356,7 @@ READ16_HANDLER( namco_rozbank16_r )
 
 WRITE16_HANDLER( namco_rozbank16_w )
 {
-	UINT16 old_data = rozbank16[offset];
+	uint16_t old_data = rozbank16[offset];
 	COMBINE_DATA( &rozbank16[offset] );
 	if( rozbank16[offset]!=old_data )
 	{
@@ -1370,7 +1370,7 @@ WRITE16_HANDLER( namco_rozbank16_w )
 #endif
 
 static void
-writerozvideo( int offset, UINT16 data )
+writerozvideo( int offset, uint16_t data )
 {
 	int i;
 	rozvideoram16[offset] = data;
@@ -1387,7 +1387,7 @@ READ16_HANDLER( namco_rozvideoram16_r )
 
 WRITE16_HANDLER( namco_rozvideoram16_w )
 {
-	UINT16 v = rozvideoram16[offset];
+	uint16_t v = rozvideoram16[offset];
 	COMBINE_DATA( &v );
 	writerozvideo( offset, v );
 } /* namco_rozvideoram16_w */
@@ -1400,7 +1400,7 @@ READ32_HANDLER( namco_rozcontrol32_r )
 
 WRITE32_HANDLER( namco_rozcontrol32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (rozcontrol16[offset]<<16)|rozcontrol16[offset+1];
 	COMBINE_DATA(&v);
@@ -1416,7 +1416,7 @@ READ32_HANDLER( namco_rozcontrol32_le_r )
 
 WRITE32_HANDLER( namco_rozcontrol32_le_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (rozcontrol16[offset+1]<<16)|rozcontrol16[offset];
 	COMBINE_DATA(&v);
@@ -1432,7 +1432,7 @@ READ32_HANDLER( namco_rozbank32_r )
 
 WRITE32_HANDLER( namco_rozbank32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *=2;
 	v = (rozbank16[offset]<<16)|rozbank16[offset+1];
 	COMBINE_DATA(&v);
@@ -1448,7 +1448,7 @@ READ32_HANDLER( namco_rozvideoram32_r )
 
 WRITE32_HANDLER( namco_rozvideoram32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *= 2;
 	v = (rozvideoram16[offset]<<16)|rozvideoram16[offset+1];
 	COMBINE_DATA( &v );
@@ -1464,7 +1464,7 @@ READ32_HANDLER( namco_rozvideoram32_le_r )
 
 WRITE32_HANDLER( namco_rozvideoram32_le_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *= 2;
 	v = (rozvideoram16[offset+1]<<16)|rozvideoram16[offset];
 	COMBINE_DATA( &v );
@@ -1507,7 +1507,7 @@ WRITE32_HANDLER( namco_rozvideoram32_le_w )
  *      0x1fe00..0x1ffdf    ---- --xx xxxx xxxx     zoomx
  *      0x1fffd             always 0xffff 0xffff?
  */
-static UINT16 *mpRoadRAM; /* at 0x880000 in Final Lap; at 0xa00000 in Lucky&Wild */
+static uint16_t *mpRoadRAM; /* at 0x880000 in Final Lap; at 0xa00000 in Lucky&Wild */
 static int mRoadGfxBank;
 static tilemap_t *mpRoadTilemap;
 static pen_t mRoadTransparentColor;
@@ -1541,7 +1541,7 @@ static const gfx_layout RoadTileLayout =
 
 static TILE_GET_INFO( get_road_info )
 {
-	UINT16 data = mpRoadRAM[tile_index];
+	uint16_t data = mpRoadRAM[tile_index];
 	/* ------xx xxxxxxxx tile number
      * xxxxxx-- -------- palette select
      */
@@ -1578,9 +1578,9 @@ namco_road_init(running_machine *machine, int gfxbank )
 	mbRoadNeedTransparent = 0;
 	mRoadGfxBank = gfxbank;
 
-	mpRoadRAM = auto_alloc_array(machine, UINT16, 0x20000/2);
+	mpRoadRAM = auto_alloc_array(machine, uint16_t, 0x20000/2);
 
-	pGfx = gfx_element_alloc( machine, &RoadTileLayout, 0x10000+(UINT8 *)mpRoadRAM, 0x3f, 0xf00);
+	pGfx = gfx_element_alloc( machine, &RoadTileLayout, 0x10000+(uint8_t *)mpRoadRAM, 0x3f, 0xf00);
 
 	machine->gfx[gfxbank] = pGfx;
 	mpRoadTilemap = tilemap_create(machine,
@@ -1601,7 +1601,7 @@ namco_road_set_transparent_color(pen_t pen)
 void
 namco_road_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri )
 {
-	const UINT8 *clut = (const UINT8 *)memory_region(machine, "user3");
+	const uint8_t *clut = (const uint8_t *)memory_region(machine, "user3");
 	bitmap_t *pSourceBitmap;
 	unsigned yscroll;
 	int i;
@@ -1618,11 +1618,11 @@ namco_road_draw(running_machine *machine, bitmap_t *bitmap, const rectangle *cli
 			if( zoomx )
 			{
 				unsigned sourcey = mpRoadRAM[0x1fc00/2+i+15]+yscroll;
-				const UINT16 *pSourceGfx = BITMAP_ADDR16(pSourceBitmap, sourcey&(ROAD_TILEMAP_HEIGHT-1), 0);
+				const uint16_t *pSourceGfx = BITMAP_ADDR16(pSourceBitmap, sourcey&(ROAD_TILEMAP_HEIGHT-1), 0);
 				unsigned dsourcex = (ROAD_TILEMAP_WIDTH<<16)/zoomx;
 				if( dsourcex )
 				{
-					UINT16 *pDest = BITMAP_ADDR16(bitmap, i, 0);
+					uint16_t *pDest = BITMAP_ADDR16(bitmap, i, 0);
 					unsigned sourcex = 0;
 					int numpixels = (44*ROAD_TILE_SIZE<<16)/dsourcex;
 					int clipPixels;

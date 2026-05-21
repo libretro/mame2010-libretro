@@ -149,7 +149,7 @@ Changes:
 /******************************************************************************/
 
 /* local stuff */
-static UINT8 *work_ram, *work_ram_1;
+static uint8_t *work_ram, *work_ram_1;
 static int coin;
 
 static WRITE8_HANDLER( sprite_dma_0_w )

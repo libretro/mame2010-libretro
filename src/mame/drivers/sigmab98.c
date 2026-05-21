@@ -73,8 +73,8 @@ To Do:
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *end		=	machine->generic.spriteram.u8 - 0x10;
-	UINT8 *s		=	end + machine->generic.spriteram_size;
+	uint8_t *end		=	machine->generic.spriteram.u8 - 0x10;
+	uint8_t *s		=	end + machine->generic.spriteram_size;
 
 	for ( ; s != end; s -= 0x10 )
 	{
@@ -162,8 +162,8 @@ static VIDEO_UPDATE(sigmab98)
 
 ***************************************************************************/
 
-static UINT8 reg, rombank;
-static UINT8 reg2, rambank;
+static uint8_t reg, rombank;
+static uint8_t reg2, rambank;
 
 // rombank
 static WRITE8_HANDLER( regs_w )
@@ -253,7 +253,7 @@ static READ8_HANDLER( regs2_r )
 
 // Outputs
 
-static UINT8 c0,c4,c6,c8;
+static uint8_t c0,c4,c6,c8;
 static void show_outputs()
 {
 #ifdef MAME_DEBUG
@@ -542,7 +542,7 @@ ROM_END
 
 static DRIVER_INIT( gegege )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	// Protection?
 	rom[0xbd3] = 0x18;
@@ -566,7 +566,7 @@ static DRIVER_INIT( gegege )
 	memory_set_bank(machine, "rombank", 0);
 
 	// RAM banks
-	UINT8 *bankedram = auto_alloc_array(machine, UINT8, 0x800 * 2);
+	uint8_t *bankedram = auto_alloc_array(machine, uint8_t, 0x800 * 2);
 
 	memory_configure_bank(machine, "rambank", 0, 2, bankedram, 0x800);
 	memory_set_bank(machine, "rambank", 0);

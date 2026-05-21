@@ -36,8 +36,8 @@
 #include "sound/2151intf.h"
 
 static int tomcat_control_num;
-static UINT16 *tomcat_shared_ram;
-static UINT8 *tomcat_nvram;
+static uint16_t *tomcat_shared_ram;
+static uint8_t *tomcat_nvram;
 static int dsp_BIO;
 static int dsp_idle;
 
@@ -58,7 +58,7 @@ static READ16_HANDLER(tomcat_adcread_r)
 
 static READ16_HANDLER(tomcat_inputs_r)
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 	if (ACCESSING_BITS_8_15)
 		result |= input_port_read(space->machine, "IN0") << 8;
 
@@ -257,7 +257,7 @@ static ADDRESS_MAP_START( tomcat_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x40e01a, 0x40e01b) AM_WRITE(tomcat_errh_w)
 	AM_RANGE(0x40e01c, 0x40e01d) AM_WRITE(tomcat_ackh_w)
 	AM_RANGE(0x40e01e, 0x40e01f) AM_WRITE(tomcat_txbuffh_w)
-	AM_RANGE(0x800000, 0x803fff) AM_RAM AM_BASE((UINT16**)&vectorram) AM_SIZE(&vectorram_size)
+	AM_RANGE(0x800000, 0x803fff) AM_RAM AM_BASE((uint16_t**)&vectorram) AM_SIZE(&vectorram_size)
 	AM_RANGE(0xffa000, 0xffbfff) AM_READWRITE(tomcat_shared_ram_r, tomcat_shared_ram_w)
 	AM_RANGE(0xffc000, 0xffcfff) AM_RAM
 	AM_RANGE(0xffd000, 0xffdfff) AM_DEVREADWRITE8("m48t02", timekeeper_r, timekeeper_w, 0xff00)
@@ -327,12 +327,12 @@ ROM_END
 
 static MACHINE_START(tomcat)
 {
-	((UINT16*)tomcat_shared_ram)[0x0000] = 0xf600;
-	((UINT16*)tomcat_shared_ram)[0x0001] = 0x0000;
-	((UINT16*)tomcat_shared_ram)[0x0002] = 0xf600;
-	((UINT16*)tomcat_shared_ram)[0x0003] = 0x0000;
+	((uint16_t*)tomcat_shared_ram)[0x0000] = 0xf600;
+	((uint16_t*)tomcat_shared_ram)[0x0001] = 0x0000;
+	((uint16_t*)tomcat_shared_ram)[0x0002] = 0xf600;
+	((uint16_t*)tomcat_shared_ram)[0x0003] = 0x0000;
 
-	tomcat_nvram = auto_alloc_array(machine, UINT8, 0x800);
+	tomcat_nvram = auto_alloc_array(machine, uint8_t, 0x800);
 
 	state_save_register_global_pointer(machine, tomcat_nvram, 0x800);
 	state_save_register_global(machine, tomcat_control_num);

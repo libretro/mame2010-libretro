@@ -117,9 +117,9 @@ WRITE8_HANDLER( renegade_videoram_w );
 WRITE8_HANDLER( renegade_videoram2_w );
 WRITE8_HANDLER( renegade_flipscreen_w );
 
-extern UINT8 *renegade_videoram2;
+extern uint8_t *renegade_videoram2;
 
-static UINT8 bank;
+static uint8_t bank;
 static int mcu_sim;
 
 /* MCU */
@@ -127,16 +127,16 @@ static int from_main;
 static int from_mcu;
 static int main_sent;
 static int mcu_sent;
-static UINT8 ddr_a, ddr_b, ddr_c;
-static UINT8 port_a_out, port_b_out, port_c_out;
-static UINT8 port_a_in, port_b_in, port_c_in;
+static uint8_t ddr_a, ddr_b, ddr_c;
+static uint8_t port_a_out, port_b_out, port_c_out;
+static uint8_t port_a_in, port_b_in, port_c_in;
 
 /* MCU simulation (Kunio Kun) */
 #define MCU_BUFFER_MAX 6
-static UINT8 mcu_buffer[MCU_BUFFER_MAX];
-static UINT8 mcu_input_size;
-static UINT8 mcu_output_byte;
-static INT8 mcu_key;
+static uint8_t mcu_buffer[MCU_BUFFER_MAX];
+static uint8_t mcu_input_size;
+static uint8_t mcu_output_byte;
+static int8_t mcu_key;
 
 
 /********************************************************************************************/
@@ -145,10 +145,10 @@ static struct renegade_adpcm_state
 {
 	adpcm_state adpcm;
 	sound_stream *stream;
-	UINT32 current, end;
-	UINT8 nibble;
-	UINT8 playing;
-	UINT8 *base;
+	uint32_t current, end;
+	uint8_t nibble;
+	uint8_t playing;
+	uint8_t *base;
 } renegade_adpcm;
 
 static STREAM_UPDATE( renegade_adpcm_callback )
@@ -243,10 +243,10 @@ static WRITE8_HANDLER( sound_w )
 */
 
 static int mcu_checksum;
-static const UINT8 *mcu_encrypt_table;
+static const uint8_t *mcu_encrypt_table;
 static int mcu_encrypt_table_len;
 
-static const UINT8 kuniokun_xor_table[0x2a] =
+static const uint8_t kuniokun_xor_table[0x2a] =
 {
 	0x48, 0x8a, 0x48, 0xa5, 0x01, 0x48, 0xa9, 0x00,
 	0x85, 0x01, 0xa2, 0x10, 0x26, 0x10, 0x26, 0x11,
@@ -258,7 +258,7 @@ static const UINT8 kuniokun_xor_table[0x2a] =
 
 static void setbank(running_machine *machine)
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &RAM[bank ? 0x10000 : 0x4000]);
 }
 
@@ -443,7 +443,7 @@ static void mcu_process_command(void)
 	case 0x26: /* sound code -> sound command */
 		{
 			int sound_code = mcu_buffer[1];
-			static const UINT8 sound_command_table[256] =
+			static const uint8_t sound_command_table[256] =
 			{
 				0xa0, 0xa1, 0xa2, 0x80, 0x81, 0x82, 0x83, 0x84,
 				0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c,
@@ -486,7 +486,7 @@ static void mcu_process_command(void)
 	case 0x33: /* joy bits -> joy dir */
 		{
 			int joy_bits = mcu_buffer[2];
-			static const UINT8 joy_table[0x10] =
+			static const uint8_t joy_table[0x10] =
 			{
 				0, 3, 7, 0, 1, 2, 8, 0, 5, 4, 6, 0, 0, 0, 0, 0
 			};
@@ -499,7 +499,7 @@ static void mcu_process_command(void)
 		{
 			int difficulty = mcu_buffer[2] & 0x3;
 			int stage = mcu_buffer[3];
-			static const UINT8 difficulty_table[4] = { 5, 3, 1, 2 };
+			static const uint8_t difficulty_table[4] = { 5, 3, 1, 2 };
 			int result = difficulty_table[difficulty];
 
 			if (stage == 0)
@@ -516,7 +516,7 @@ static void mcu_process_command(void)
 	case 0x55: /* 0x55, 0x00, 0x00, 0x00, DSW2 -> timer */
 		{
 			int difficulty = mcu_buffer[4] & 0x3;
-			static const UINT16 table[4] =
+			static const uint16_t table[4] =
 			{
 				0x4001, 0x5001, 0x1502, 0x0002
 			};
@@ -615,7 +615,7 @@ static READ8_HANDLER( mcu_r )
 
 static CUSTOM_INPUT( mcu_status_r )
 {
-	UINT8 res = 0;
+	uint8_t res = 0;
 
 	if (mcu_sim == TRUE)
 	{

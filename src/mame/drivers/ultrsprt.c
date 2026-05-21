@@ -17,23 +17,23 @@ TODO:
 #include "sound/k056800.h"
 
 
-static UINT32 *vram;
-static UINT32 *workram;
+static uint32_t *vram;
+static uint32_t *workram;
 
 static VIDEO_UPDATE( ultrsprt )
 {
 	int i, j;
 
-	UINT8 *ram = (UINT8 *)vram;
+	uint8_t *ram = (uint8_t *)vram;
 
 	for (j=0; j < 400; j++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, j, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, j, 0);
 		int fb_index = j * 1024;
 
 		for (i=0; i < 512; i++)
 		{
-			UINT8 p1 = ram[BYTE4_XOR_BE(fb_index + i + 512)];
+			uint8_t p1 = ram[BYTE4_XOR_BE(fb_index + i + 512)];
 			if (p1 == 0)
 				dest[i] = ram[BYTE4_XOR_BE(fb_index + i)];
 			else
@@ -55,7 +55,7 @@ static WRITE32_HANDLER( palette_w )
 
 static READ32_HANDLER( eeprom_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 		r |= input_port_read(space->machine, "SERVICE");
@@ -112,7 +112,7 @@ ADDRESS_MAP_END
 static READ16_HANDLER( K056800_68k_r )
 {
 	running_device *k056800 = space->machine->device("k056800");
-	UINT16 r = 0;
+	uint16_t r = 0;
 
 	if (ACCESSING_BITS_8_15)
 		r |= k056800_sound_r(k056800, (offset*2)+0, 0xffff) << 8;

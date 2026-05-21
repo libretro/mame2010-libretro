@@ -8,9 +8,9 @@ Atari Sky Raider driver
 #include "cpu/m6502/m6502.h"
 #include "includes/skyraid.h"
 
-extern UINT8* skyraid_alpha_num_ram;
-extern UINT8* skyraid_pos_ram;
-extern UINT8* skyraid_obj_ram;
+extern uint8_t* skyraid_alpha_num_ram;
+extern uint8_t* skyraid_pos_ram;
+extern uint8_t* skyraid_obj_ram;
 
 extern int skyraid_scroll;
 
@@ -47,7 +47,7 @@ static PALETTE_INIT( skyraid )
 
 static READ8_HANDLER( skyraid_port_0_r )
 {
-	UINT8 val = input_port_read(space->machine, "LANGUAGE");
+	uint8_t val = input_port_read(space->machine, "LANGUAGE");
 
 	if (input_port_read(space->machine, "STICKY") > analog_range)
 		val |= 0x40;

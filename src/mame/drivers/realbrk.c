@@ -49,12 +49,12 @@ To Do:
 #include "sound/2413intf.h"
 #include "sound/ymz280b.h"
 
-static UINT16 *realbrk_dsw_select;
+static uint16_t *realbrk_dsw_select;
 
 /* Read 4 ten bit dip switches */
 static READ16_HANDLER( realbrk_dsw_r )
 {
-	UINT16 sel = ~realbrk_dsw_select[0];
+	uint16_t sel = ~realbrk_dsw_select[0];
 	if (sel & 0x01)	return	(input_port_read(space->machine, "SW1") & 0x00ff) << 8;		// DSW1 low bits
 	if (sel & 0x02)	return	(input_port_read(space->machine, "SW2") & 0x00ff) << 8;		// DSW2 low bits
 	if (sel & 0x04)	return	(input_port_read(space->machine, "SW3") & 0x00ff) << 8;		// DSW3 low bits
@@ -89,7 +89,7 @@ static READ16_HANDLER( pkgnsh_input_r )
 
 static READ16_HANDLER( pkgnshdx_input_r )
 {
-	UINT16 sel = ~realbrk_dsw_select[0];
+	uint16_t sel = ~realbrk_dsw_select[0];
 
 	switch(offset)
 	{
@@ -120,7 +120,7 @@ static READ16_HANDLER( pkgnshdx_input_r )
 	return 0xffff;
 }
 
-static UINT16 *backup_ram;
+static uint16_t *backup_ram;
 
 static READ16_HANDLER( backup_ram_r )
 {

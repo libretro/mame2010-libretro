@@ -173,9 +173,9 @@ VIDEO_UPDATE( namcofl );
 
 extern WRITE32_HANDLER(namcofl_spritebank_w);
 
-static UINT32 *namcofl_workram;
-static UINT16 *namcofl_shareram;
-static UINT8 mcu_port6;
+static uint32_t *namcofl_workram;
+static uint16_t *namcofl_shareram;
+static uint8_t mcu_port6;
 
 
 static READ32_HANDLER( fl_unk1_r )
@@ -216,8 +216,8 @@ static WRITE32_HANDLER( namcofl_paletteram_w )
 
 	if ((offset == 0x1808/4) && ACCESSING_BITS_16_31)
 	{
-		UINT16 v = space->machine->generic.paletteram.u32[offset] >> 16;
-		UINT16 triggerscanline=(((v>>8)&0xff)|((v&0xff)<<8))-(32+1);
+		uint16_t v = space->machine->generic.paletteram.u32[offset] >> 16;
+		uint16_t triggerscanline=(((v>>8)&0xff)|((v&0xff)<<8))-(32+1);
 
 		timer_adjust_oneshot(raster_interrupt_timer, space->machine->primary_screen->time_until_pos(triggerscanline), 0);
 	}
@@ -809,7 +809,7 @@ ROM_END
 
 static void namcofl_common_init(running_machine *machine)
 {
-	namcofl_workram = auto_alloc_array(machine, UINT32, 0x100000/4);
+	namcofl_workram = auto_alloc_array(machine, uint32_t, 0x100000/4);
 
 	memory_set_bankptr(machine,  "bank1", memory_region(machine, "maincpu") );
 	memory_set_bankptr(machine,  "bank2", namcofl_workram );

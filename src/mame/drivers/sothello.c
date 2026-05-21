@@ -59,7 +59,7 @@ static int msm_data = 0;
 
 static WRITE8_HANDLER(bank_w)
 {
-    UINT8 *RAM = memory_region(space->machine, "maincpu");
+    uint8_t *RAM = memory_region(space->machine, "maincpu");
     int bank=0;
     switch(data^0xff)
     {

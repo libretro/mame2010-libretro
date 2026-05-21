@@ -59,7 +59,7 @@ Notes:
 #include "deprecat.h"
 #include "sound/sn76496.h"
 
-extern UINT8 *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
+extern uint8_t *sprcros2_fgvideoram, *sprcros2_spriteram, *sprcros2_bgvideoram;
 extern size_t sprcros2_spriteram_size;
 
 WRITE8_HANDLER( sprcros2_fgvideoram_w );
@@ -70,14 +70,14 @@ WRITE8_HANDLER( sprcros2_bgscrolly_w );
 PALETTE_INIT( sprcros2 );
 VIDEO_START( sprcros2 );
 VIDEO_UPDATE( sprcros2 );
-UINT8 sprcros2_m_port7 = 0;
-static UINT8 sprcros2_s_port3 = 0;
+uint8_t sprcros2_m_port7 = 0;
+static uint8_t sprcros2_s_port3 = 0;
 
 
 
 static WRITE8_HANDLER( sprcros2_m_port7_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "master");
+	uint8_t *RAM = memory_region(space->machine, "master");
 
 	//76543210
 	//x------- unused
@@ -98,7 +98,7 @@ static WRITE8_HANDLER( sprcros2_m_port7_w )
 
 static WRITE8_HANDLER( sprcros2_s_port3_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "slave");
+	uint8_t *RAM = memory_region(space->machine, "slave");
 
 	//76543210
 	//xxxx---- unused

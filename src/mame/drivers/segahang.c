@@ -39,7 +39,7 @@
  *
  *************************************/
 
-static UINT16 *workram;
+static uint16_t *workram;
 
 /*************************************
  *
@@ -1867,8 +1867,8 @@ static DRIVER_INIT( enduror )
 static DRIVER_INIT( endurobl )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
-	UINT16 *decrypt = auto_alloc_array(machine, UINT16, 0x40000/2);
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
+	uint16_t *decrypt = auto_alloc_array(machine, uint16_t, 0x40000/2);
 
 	hangon_generic_init(machine);
 	memory_set_decrypted_region(space, 0x000000, 0x03ffff, decrypt);
@@ -1881,8 +1881,8 @@ static DRIVER_INIT( endurobl )
 static DRIVER_INIT( endurob2 )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
-	UINT16 *decrypt = auto_alloc_array(machine, UINT16, 0x40000/2);
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
+	uint16_t *decrypt = auto_alloc_array(machine, uint16_t, 0x40000/2);
 
 	hangon_generic_init(machine);
 	memory_set_decrypted_region(space, 0x000000, 0x03ffff, decrypt);

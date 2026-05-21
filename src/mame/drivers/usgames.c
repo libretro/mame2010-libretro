@@ -36,12 +36,12 @@ PALETTE_INIT(usgames);
 VIDEO_UPDATE(usgames);
 
 
-extern UINT8 *usgames_videoram,*usgames_charram;
+extern uint8_t *usgames_videoram,*usgames_charram;
 
 
 static WRITE8_HANDLER( usgames_rombank_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 //  logerror ("BANK WRITE? -%02x-\n",data);
 //popmessage("%02x",data);

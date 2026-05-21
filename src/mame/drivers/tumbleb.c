@@ -496,7 +496,7 @@ static const int tumbleb_sound_lookup[256] = {
 /* we use channels 1,2,3 for sound effects, and channel 4 for music */
 static void tumbleb2_set_music_bank( running_machine *machine, int bank )
 {
-	UINT8 *oki = memory_region(machine, "oki");
+	uint8_t *oki = memory_region(machine, "oki");
 	memcpy(&oki[0x38000], &oki[0x80000 + 0x38000 + 0x8000 * bank], 0x8000);
 }
 
@@ -789,7 +789,7 @@ static WRITE16_HANDLER( semicom_soundcmd_w )
 
 static WRITE8_HANDLER( oki_sound_bank_w )
 {
-	UINT8 *oki = memory_region(space->machine, "oki");
+	uint8_t *oki = memory_region(space->machine, "oki");
 	memcpy(&oki[0x30000], &oki[(data * 0x10000) + 0x40000], 0x10000);
 }
 
@@ -863,8 +863,8 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER( jumpkids_oki_bank_w )
 {
-	UINT8* sound1 = memory_region(space->machine, "oki");
-	UINT8* sound2 = memory_region(space->machine, "oki2");
+	uint8_t* sound1 = memory_region(space->machine, "oki");
+	uint8_t* sound2 = memory_region(space->machine, "oki2");
 	int bank = data & 0x03;
 
 	memcpy(sound1 + 0x20000, sound2 + bank * 0x20000, 0x20000);
@@ -2177,7 +2177,7 @@ static MACHINE_RESET (htchctch)
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
 
 	/* copy protection data every reset */
-	UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+	uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 	int i, len = memory_region_length(machine, "user1");
 
 	for (i = 0; i < len / 2; i++)
@@ -3306,10 +3306,10 @@ ROM_END
 /******************************************************************************/
 
 #if TUMBLEP_HACK
-void tumblepb_patch_code(running_machine *machine, UINT16 offset)
+void tumblepb_patch_code(running_machine *machine, uint16_t offset)
 {
 	/* A hack which enables all Dip Switches effects */
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[(offset + 0)/2] = 0x0240;
 	RAM[(offset + 2)/2] = 0xffff;	// andi.w  #$f3ff, D0
 }
@@ -3318,7 +3318,7 @@ void tumblepb_patch_code(running_machine *machine, UINT16 offset)
 
 static void tumblepb_gfx1_rearrange(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int len = memory_region_length(machine, "gfx1");
 	int i;
 
@@ -3376,7 +3376,7 @@ static DRIVER_INIT( fncywld )
 	#if FNCYWLD_HACK
 	/* This is a hack to allow you to use the extra features
        of the 2 first "Unused" Dip Switch (see notes above). */
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[0x0005fa/2] = 0x4e71;
 	RAM[0x00060a/2] = 0x4e71;
 	#endif
@@ -3402,12 +3402,12 @@ static DRIVER_INIT( htchctch )
 {
 
 	tumbleb_state *state = (tumbleb_state *)machine->driver_data;
-//  UINT16 *HCROM = (UINT16*)memory_region(machine, "maincpu");
-	UINT16 *PROTDATA = (UINT16*)memory_region(machine, "user1");
+//  uint16_t *HCROM = (uint16_t*)memory_region(machine, "maincpu");
+	uint16_t *PROTDATA = (uint16_t*)memory_region(machine, "user1");
 	int i, len = memory_region_length(machine, "user1");
 	/* simulate RAM initialization done by the protection MCU */
 	/* verified on real hardware */
-//  static UINT16 htchctch_mcu68k[] =
+//  static uint16_t htchctch_mcu68k[] =
 //  {
 //      /* moved to protdata.bin file .. */
 //  };
@@ -3656,8 +3656,8 @@ static DRIVER_INIT( htchctch )
 
 static void suprtrio_decrypt_code(running_machine *machine)
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
-	UINT16 *buf = auto_alloc_array(machine, UINT16, 0x80000/2);
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
+	uint16_t *buf = auto_alloc_array(machine, uint16_t, 0x80000/2);
 	int i;
 
 	/* decrypt main ROMs */
@@ -3674,8 +3674,8 @@ static void suprtrio_decrypt_code(running_machine *machine)
 
 static void suprtrio_decrypt_gfx(running_machine *machine)
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "gfx1");
-	UINT16 *buf = auto_alloc_array(machine, UINT16, 0x100000/2);
+	uint16_t *rom = (uint16_t *)memory_region(machine, "gfx1");
+	uint16_t *buf = auto_alloc_array(machine, uint16_t, 0x100000/2);
 	int i;
 
 	/* decrypt tiles */

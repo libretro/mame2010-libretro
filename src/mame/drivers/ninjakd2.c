@@ -143,10 +143,10 @@ TODO:
 //#define NE555_FREQUENCY   (1.0f / (0.693 * (560 + 2*51) * 0.1e-6))    // theoretical: this gives 21.8kHz which is too high
 
 
-static const INT16* ninjakd2_sampledata;
+static const int16_t* ninjakd2_sampledata;
 
-static UINT8 omegaf_io_protection[3];
-static UINT8 omegaf_io_protection_input;
+static uint8_t omegaf_io_protection[3];
+static uint8_t omegaf_io_protection_input;
 static int omegaf_io_protection_tic;
 static void omegaf_io_protection_reset(void);
 
@@ -212,9 +212,9 @@ static WRITE8_HANDLER( ninjakd2_soundreset_w )
 static SAMPLES_START( ninjakd2_init_samples )
 {
 	running_machine *machine = device->machine;
-	const UINT8* const rom = memory_region(machine, "pcm");
+	const uint8_t* const rom = memory_region(machine, "pcm");
 	const int length = memory_region_length(machine, "pcm");
-	INT16* sampledata = auto_alloc_array(machine, INT16, length);
+	int16_t* sampledata = auto_alloc_array(machine, int16_t, length);
 
 	int i;
 
@@ -228,7 +228,7 @@ static SAMPLES_START( ninjakd2_init_samples )
 static WRITE8_HANDLER( ninjakd2_pcm_play_w )
 {
 	running_device *samples = space->machine->device("pcm");
-	const UINT8* const rom = memory_region(space->machine, "pcm");
+	const uint8_t* const rom = memory_region(space->machine, "pcm");
 
 	// only Ninja Kid II uses this
 	if (rom)
@@ -271,7 +271,7 @@ void omegaf_io_protection_reset(void)
 
 static READ8_HANDLER( omegaf_io_protection_r )
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	switch (omegaf_io_protection[1] & 3)
 	{
@@ -1402,9 +1402,9 @@ static void lineswap_gfx_roms(running_machine *machine, const char *region, cons
 {
 	const int length = memory_region_length(machine, region);
 
-	UINT8* const src = memory_region(machine, region);
+	uint8_t* const src = memory_region(machine, region);
 
-	UINT8* const temp = auto_alloc_array(machine, UINT8, length);
+	uint8_t* const temp = auto_alloc_array(machine, uint8_t, length);
 
 	const int mask = (1 << (bit + 1)) - 1;
 

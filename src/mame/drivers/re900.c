@@ -80,8 +80,8 @@
 #include "sound/ay8910.h"
 #include "../lh/re900.lh"
 
-static UINT8 *re900_rom;
-static UINT8 psg_pa, psg_pb, mux_data, ledant, player, stat_a;
+static uint8_t *re900_rom;
+static uint8_t psg_pa, psg_pb, mux_data, ledant, player, stat_a;
 
 
 /****************
@@ -105,7 +105,7 @@ static READ8_DEVICE_HANDLER (re_psg_portA_r)
 
 static READ8_DEVICE_HANDLER (re_psg_portB_r)
 {
-	UINT8 retval = 0xff;
+	uint8_t retval = 0xff;
 	logerror("llamada a re_psg_portB_r\n");
 	/* This is a hack to select the active player due to Keyboard size restrictions  */
 
@@ -171,7 +171,7 @@ static WRITE8_DEVICE_HANDLER (re_mux_port_A_w)
 
 static WRITE8_DEVICE_HANDLER (re_mux_port_B_w)
 {
-	UINT8 led;
+	uint8_t led;
 	psg_pb = data;
 	led = (psg_pa >> 2) & 0x3f;
 

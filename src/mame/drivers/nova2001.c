@@ -132,7 +132,7 @@ e000 - e7ff        R/W      Work RAM
  *
  *************************************/
 
-static UINT8 ninjakun_io_a002_ctrl;
+static uint8_t ninjakun_io_a002_ctrl;
 
 static CUSTOM_INPUT( ninjakun_io_A002_ctrl_r )
 {
@@ -987,9 +987,9 @@ static void lineswap_gfx_roms(running_machine *machine, const char *region, cons
 {
 	const int length = memory_region_length(machine, region);
 
-	UINT8* const src = memory_region(machine, region);
+	uint8_t* const src = memory_region(machine, region);
 
-	UINT8* const temp = auto_alloc_array(machine, UINT8, length);
+	uint8_t* const temp = auto_alloc_array(machine, uint8_t, length);
 
 	const int mask = (1 << (bit + 1)) - 1;
 

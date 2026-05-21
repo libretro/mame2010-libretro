@@ -455,12 +455,12 @@ static const k053247_interface esckids_k053246_intf =
 static MACHINE_START( vendetta )
 {
 	vendetta_state *state = (vendetta_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 28, &ROM[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x1000);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x1000);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");

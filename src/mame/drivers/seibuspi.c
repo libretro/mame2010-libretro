@@ -744,9 +744,9 @@ Notes:
 #include "sound/ymz280b.h"
 #include "includes/seibuspi.h"
 
-UINT32 *spimainram;
+uint32_t *spimainram;
 
-static UINT8 *z80_rom;
+static uint8_t *z80_rom;
 
 /********************************************************************/
 static int z80_prg_fifo_pos = 0;
@@ -754,20 +754,20 @@ static int z80_lastbank;
 
 #define FIFO_SIZE 512
 static int fifoin_rpos, fifoin_wpos;
-static UINT8 fifoin_data[FIFO_SIZE];
+static uint8_t fifoin_data[FIFO_SIZE];
 static int fifoin_read_request = 0;
 
 static int fifoout_rpos, fifoout_wpos;
-static UINT8 fifoout_data[FIFO_SIZE];
+static uint8_t fifoout_data[FIFO_SIZE];
 static int fifoout_read_request = 0;
 
-static UINT8 sb_coin_latch = 0;
+static uint8_t sb_coin_latch = 0;
 
-static UINT8 ejsakura_input_port = 0;
+static uint8_t ejsakura_input_port = 0;
 
-static UINT8 z80_fifoout_pop(const address_space *space)
+static uint8_t z80_fifoout_pop(const address_space *space)
 {
-	UINT8 r;
+	uint8_t r;
 	if (fifoout_wpos == fifoout_rpos)
 	{
 		logerror("Sound FIFOOUT underflow at %08X\n", cpu_get_pc(space->cpu));
@@ -786,7 +786,7 @@ static UINT8 z80_fifoout_pop(const address_space *space)
 	return r;
 }
 
-static void z80_fifoout_push(const address_space *space, UINT8 data)
+static void z80_fifoout_push(const address_space *space, uint8_t data)
 {
 	fifoout_data[fifoout_wpos++] = data;
 	if (fifoout_wpos == FIFO_SIZE)
@@ -801,9 +801,9 @@ static void z80_fifoout_push(const address_space *space, UINT8 data)
 	fifoout_read_request = 1;
 }
 
-static UINT8 z80_fifoin_pop(const address_space *space)
+static uint8_t z80_fifoin_pop(const address_space *space)
 {
-	UINT8 r;
+	uint8_t r;
 	if (fifoin_wpos == fifoin_rpos)
 	{
 		fatalerror("Sound FIFOIN underflow at %08X", cpu_get_pc(space->cpu));
@@ -822,7 +822,7 @@ static UINT8 z80_fifoin_pop(const address_space *space)
 	return r;
 }
 
-static void z80_fifoin_push(const address_space *space, UINT8 data)
+static void z80_fifoin_push(const address_space *space, uint8_t data)
 {
 	fifoin_data[fifoin_wpos++] = data;
 	if(fifoin_wpos == FIFO_SIZE)
@@ -839,7 +839,7 @@ static void z80_fifoin_push(const address_space *space, UINT8 data)
 
 static READ32_HANDLER( sb_coin_r )
 {
-	UINT8 r = sb_coin_latch;
+	uint8_t r = sb_coin_latch;
 
 	sb_coin_latch = 0;
 	return r;
@@ -855,7 +855,7 @@ static WRITE8_HANDLER( sb_coin_w )
 
 static READ32_HANDLER( sound_fifo_r )
 {
-	UINT8 r = z80_fifoout_pop(space);
+	uint8_t r = z80_fifoout_pop(space);
 
 	return r;
 }
@@ -869,7 +869,7 @@ static WRITE32_HANDLER( sound_fifo_w )
 
 static READ32_HANDLER( sound_fifo_status_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	if (fifoout_read_request)
 	{
 		r |= 2;
@@ -972,7 +972,7 @@ static CUSTOM_INPUT( ejsakura_keyboard_r )
 
 static READ8_HANDLER( z80_soundfifo_r )
 {
-	UINT8 r = z80_fifoin_pop(space);
+	uint8_t r = z80_fifoin_pop(space);
 
 	return r;
 }
@@ -984,7 +984,7 @@ static WRITE8_HANDLER( z80_soundfifo_w )
 
 static READ8_HANDLER( z80_soundfifo_status_r )
 {
-	UINT8 r = 0;
+	uint8_t r = 0;
 	if (fifoin_read_request)
 	{
 		r |= 2;
@@ -1013,8 +1013,8 @@ static READ8_HANDLER( z80_coin_r )
 
 static READ32_HANDLER( soundrom_r )
 {
-	UINT8 *sound = (UINT8*)memory_region(space->machine, "user2");
-	UINT16 *sound16 = (UINT16*)memory_region(space->machine, "user2");
+	uint8_t *sound = (uint8_t*)memory_region(space->machine, "user2");
+	uint16_t *sound16 = (uint16_t*)memory_region(space->machine, "user2");
 
 	if (mem_mask == 0x000000ff)
 	{
@@ -1303,7 +1303,7 @@ INPUT_PORTS_END
 
 static CUSTOM_INPUT( ejanhs_encode )
 {
-	static const UINT8 encoding[] = { 0x02, 0x10, 0x03, 0x18, 0x04, 0x20, 0x05, 0x28, 0x06, 0x30, 0x07 };
+	static const uint8_t encoding[] = { 0x02, 0x10, 0x03, 0x18, 0x04, 0x20, 0x05, 0x28, 0x06, 0x30, 0x07 };
 	input_port_value state = input_port_read(field->port->machine, (const char *)param);
 	int bit;
 
@@ -1825,16 +1825,16 @@ static IRQ_CALLBACK(spi_irq_callback)
 
 static MACHINE_START( spi )
 {
-	z80_rom = auto_alloc_array(machine, UINT8, 0x40000);
+	z80_rom = auto_alloc_array(machine, uint8_t, 0x40000);
 }
 
 static MACHINE_RESET( spi )
 {
 	int i;
-	UINT8 *sound = memory_region(machine, "ymf");
+	uint8_t *sound = memory_region(machine, "ymf");
 
-	UINT8 *rombase = memory_region(machine, "user1");
-	UINT8 flash_data = rombase[0x1ffffc];
+	uint8_t *rombase = memory_region(machine, "user1");
+	uint8_t flash_data = rombase[0x1ffffc];
 
 	cputag_set_input_line(machine, "soundcpu", INPUT_LINE_RESET, ASSERT_LINE );
 	cpu_set_irq_callback(machine->device("maincpu"), spi_irq_callback);
@@ -1908,12 +1908,12 @@ MACHINE_DRIVER_END
 
 static MACHINE_START( sxx2f )
 {
-	z80_rom = auto_alloc_array(machine, UINT8, 0x40000);
+	z80_rom = auto_alloc_array(machine, uint8_t, 0x40000);
 }
 
 static MACHINE_RESET( sxx2f )
 {
-	UINT8 *rom = memory_region(machine, "soundcpu");
+	uint8_t *rom = memory_region(machine, "soundcpu");
 
 	memory_set_bankptr(machine, "bank4", z80_rom);
 	memory_set_bankptr(machine, "bank5", z80_rom);
@@ -2071,7 +2071,7 @@ static READ32_HANDLER ( rfjet_speedup_r )
 	/* rfjetus */
 	if (cpu_get_pc(space->cpu)==0x0205b39)
 	{
-		UINT32 r;
+		uint32_t r;
 		cpu_spinuntil_int(space->cpu); // idle
 		// Hack to enter test mode
 		r = spimainram[(0x002894c-0x800)/4] & (~0x400);
@@ -2246,8 +2246,8 @@ MACHINE_DRIVER_END
 static DRIVER_INIT( sys386f2 )
 {
 	int i, j;
-	UINT16 *src = (UINT16 *)memory_region(machine, "gfx3");
-	UINT16 tmp[0x40 / 2], Offset;
+	uint16_t *src = (uint16_t *)memory_region(machine, "gfx3");
+	uint16_t tmp[0x40 / 2], Offset;
 
 	// sprite_reorder() only
 	for(i = 0; i < memory_region_length(machine, "gfx3") / 0x40; i++)

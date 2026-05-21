@@ -237,7 +237,7 @@ static const k051316_interface rollerg_k051316_intf =
 static MACHINE_START( rollerg )
 {
 	rollerg_state *state = (rollerg_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 6, &ROM[0x10000], 0x4000);
 	memory_configure_bank(machine, "bank1", 6, 2, &ROM[0x10000], 0x4000);

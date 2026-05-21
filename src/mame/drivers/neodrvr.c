@@ -8181,7 +8181,7 @@ static DRIVER_INIT( kf2k3pcb )
        incorrect */
 	{
 		int i;
-		UINT8* rom = memory_region(machine, "audiocpu");
+		uint8_t* rom = memory_region(machine, "audiocpu");
 		for (i = 0; i < 0x90000; i++)
 		{
 			rom[i] = BITSWAP8(rom[i], 5, 6, 1, 4, 3, 0, 7, 2);

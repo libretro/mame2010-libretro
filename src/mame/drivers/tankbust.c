@@ -24,9 +24,9 @@ To do:
 VIDEO_START( tankbust );
 VIDEO_UPDATE( tankbust );
 
-extern UINT8 *tankbust_txtram;
-extern UINT8 *tankbust_videoram;
-extern UINT8 *tankbust_colorram;
+extern uint8_t *tankbust_txtram;
+extern uint8_t *tankbust_videoram;
+extern uint8_t *tankbust_colorram;
 
 WRITE8_HANDLER( tankbust_background_videoram_w );
 READ8_HANDLER ( tankbust_background_videoram_r );
@@ -58,7 +58,7 @@ static READ8_DEVICE_HANDLER( tankbust_soundlatch_r )
 }
 
 //port B of ay8910#0
-static UINT32 timer1 = 0;
+static uint32_t timer1 = 0;
 static READ8_DEVICE_HANDLER( tankbust_soundtimer_r )
 {
 	int ret;
@@ -187,7 +187,7 @@ static READ8_HANDLER( read_from_unmapped_memory )
 }
 #endif
 
-static UINT8 variable_data;
+static uint8_t variable_data;
 static READ8_HANDLER( some_changing_input )
 {
 	variable_data += 8;

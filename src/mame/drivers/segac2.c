@@ -92,21 +92,21 @@ static int segac2_enable_display;
 ******************************************************************************/
 
 /* internal states */
-static UINT8		misc_io_data[0x10];	/* holds values written to the I/O chip */
+static uint8_t		misc_io_data[0x10];	/* holds values written to the I/O chip */
 
 /* protection-related tracking */
 static int (*prot_func)(int in);		/* emulation of protection chip */
-static UINT8		prot_write_buf;		/* remembers what was written */
-static UINT8		prot_read_buf;		/* remembers what was returned */
+static uint8_t		prot_write_buf;		/* remembers what was written */
+static uint8_t		prot_read_buf;		/* remembers what was returned */
 
 /* palette-related variables */
-static UINT8		segac2_alt_palette_mode;
-static UINT8		palbank;
-static UINT8		bg_palbase;
-static UINT8		sp_palbase;
+static uint8_t		segac2_alt_palette_mode;
+static uint8_t		palbank;
+static uint8_t		bg_palbase;
+static uint8_t		sp_palbase;
 
 /* sound-related variables */
-static UINT8		sound_banks;		/* number of sound banks */
+static uint8_t		sound_banks;		/* number of sound banks */
 
 
 
@@ -370,8 +370,8 @@ static READ16_HANDLER( io_chip_r )
 
 static WRITE16_HANDLER( io_chip_w )
 {
-	UINT8 newbank;
-	UINT8 old;
+	uint8_t newbank;
+	uint8_t old;
 
 	/* generic implementation */
 	offset &= 0x1f/2;
@@ -1341,10 +1341,10 @@ static VIDEO_START(segac2_new)
 	VIDEO_START_CALL(megadriv);
 
 
-	megadrive_vdp_palette_lookup = auto_alloc_array(machine, UINT16, 0x1000/2);
-	megadrive_vdp_palette_lookup_sprite = auto_alloc_array(machine, UINT16, 0x1000/2);
-	megadrive_vdp_palette_lookup_shadow = auto_alloc_array(machine, UINT16, 0x1000/2);
-	megadrive_vdp_palette_lookup_highlight = auto_alloc_array(machine, UINT16, 0x1000/2);
+	megadrive_vdp_palette_lookup = auto_alloc_array(machine, uint16_t, 0x1000/2);
+	megadrive_vdp_palette_lookup_sprite = auto_alloc_array(machine, uint16_t, 0x1000/2);
+	megadrive_vdp_palette_lookup_shadow = auto_alloc_array(machine, uint16_t, 0x1000/2);
+	megadrive_vdp_palette_lookup_highlight = auto_alloc_array(machine, uint16_t, 0x1000/2);
 }
 
 static VIDEO_UPDATE(segac2_new)
@@ -2156,7 +2156,7 @@ static DRIVER_INIT( ichirjbl )
 {
 
 	/* when did this actually work? - the protection is patched but the new check fails? */
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	rom[0x390/2] = 0x6600;
 
 	segac2_common_init(machine, NULL);

@@ -15,8 +15,8 @@ static int poolshrk_da_latch;
 
 static DRIVER_INIT( poolshrk )
 {
-	UINT8* pSprite = memory_region(machine, "gfx1");
-	UINT8* pOffset = memory_region(machine, "proms");
+	uint8_t* pSprite = memory_region(machine, "gfx1");
+	uint8_t* pOffset = memory_region(machine, "proms");
 
 	int i;
 	int j;
@@ -27,7 +27,7 @@ static DRIVER_INIT( poolshrk )
 	{
 		for (j = 0; j < 16; j++)
 		{
-			UINT16 v =
+			uint16_t v =
 				(pSprite[0] << 0xC) |
 				(pSprite[1] << 0x8) |
 				(pSprite[2] << 0x4) |
@@ -73,7 +73,7 @@ static WRITE8_HANDLER( poolshrk_watchdog_w )
 static READ8_HANDLER( poolshrk_input_r )
 {
 	static const char *const portnames[] = { "IN0", "IN1", "IN2", "IN3" };
-	UINT8 val = input_port_read(space->machine, portnames[offset & 3]);
+	uint8_t val = input_port_read(space->machine, portnames[offset & 3]);
 
 	int x = input_port_read(space->machine, (offset & 1) ? "AN1" : "AN0");
 	int y = input_port_read(space->machine, (offset & 1) ? "AN3" : "AN2");

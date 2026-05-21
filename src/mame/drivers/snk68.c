@@ -46,7 +46,7 @@ Notes:
 #include "sound/3812intf.h"
 #include "sound/upd7759.h"
 
-extern UINT16* pow_fg_videoram;
+extern uint16_t* pow_fg_videoram;
 
 VIDEO_START( pow );
 VIDEO_START( searchar );

@@ -117,14 +117,14 @@ DIP locations verified for:
 
 #include "rendlay.h"
 
-extern UINT8 *punchout_bg_top_videoram;
-extern UINT8 *punchout_bg_bot_videoram;
-extern UINT8 *armwrest_fg_videoram;
-extern UINT8 *punchout_spr1_videoram;
-extern UINT8 *punchout_spr2_videoram;
-extern UINT8 *punchout_spr1_ctrlram;
-extern UINT8 *punchout_spr2_ctrlram;
-extern UINT8 *punchout_palettebank;
+extern uint8_t *punchout_bg_top_videoram;
+extern uint8_t *punchout_bg_bot_videoram;
+extern uint8_t *armwrest_fg_videoram;
+extern uint8_t *punchout_spr1_videoram;
+extern uint8_t *punchout_spr2_videoram;
+extern uint8_t *punchout_spr1_ctrlram;
+extern uint8_t *punchout_spr2_ctrlram;
+extern uint8_t *punchout_palettebank;
 WRITE8_HANDLER( punchout_bg_top_videoram_w );
 WRITE8_HANDLER( punchout_bg_bot_videoram_w );
 WRITE8_HANDLER( armwrest_fg_videoram_w );
@@ -317,7 +317,7 @@ static READ8_HANDLER( spunchout_exp_r )
 	// bit 4 = n.c.
 	// bits 3-0 = D3-D0 from RP5C01
 
-	UINT8 ret = spunchout_rp5c01_r( space, offset >> 4 );
+	uint8_t ret = spunchout_rp5c01_r( space, offset >> 4 );
 
 	// FIXME hack
 	/* PC = 0x0313 */

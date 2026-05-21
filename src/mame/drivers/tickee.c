@@ -31,14 +31,14 @@
 
 
 /* local variables */
-static UINT16 *tickee_control;
-static UINT16 *tickee_vram;
+static uint16_t *tickee_control;
+static uint16_t *tickee_vram;
 static emu_timer *setup_gun_timer;
 
 static int beamxadd;
 static int beamyadd;
 static int palette_bank;
-static UINT8 gunx[2];
+static uint8_t gunx[2];
 
 
 
@@ -132,8 +132,8 @@ static VIDEO_START( tickee )
 
 static void scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
-	UINT16 *src = &tickee_vram[(params->rowaddr << 8) & 0x3ff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *src = &tickee_vram[(params->rowaddr << 8) & 0x3ff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	const rgb_t *pens = tlc34076_get_pens();
 	int coladdr = params->coladdr << 1;
 	int x;
@@ -148,7 +148,7 @@ static void scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 		/* copy the non-blanked portions of this scanline */
 		for (x = params->heblnk; x < params->hsblnk; x += 2)
 		{
-			UINT16 pixels = src[coladdr++ & 0xff];
+			uint16_t pixels = src[coladdr++ & 0xff];
 			dest[x + 0] = pens[pixels & 0xff];
 			dest[x + 1] = pens[pixels >> 8];
 		}
@@ -157,8 +157,8 @@ static void scanline_update(screen_device &screen, bitmap_t *bitmap, int scanlin
 
 static void rapidfir_scanline_update(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params)
 {
-	UINT16 *src = &tickee_vram[(params->rowaddr << 8) & 0x3ff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *src = &tickee_vram[(params->rowaddr << 8) & 0x3ff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	const rgb_t *pens = tlc34076_get_pens();
 	int coladdr = params->coladdr << 1;
 	int x;
@@ -177,7 +177,7 @@ static void rapidfir_scanline_update(screen_device &screen, bitmap_t *bitmap, in
 		/* copy the non-blanked portions of this scanline */
 		for (x = params->heblnk; x < params->hsblnk; x += 2)
 		{
-			UINT16 pixels = src[coladdr++ & 0xff];
+			uint16_t pixels = src[coladdr++ & 0xff];
 			dest[x + 0] = pens[pixels & 0xff];
 			dest[x + 1] = pens[pixels >> 8];
 		}
@@ -226,14 +226,14 @@ static READ16_HANDLER( rapidfir_transparent_r )
 }
 
 
-static void rapidfir_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void rapidfir_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	if (address < 0x800000)
 		memcpy(shiftreg, &tickee_vram[TOWORD(address)], TOBYTE(0x2000));
 }
 
 
-static void rapidfir_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void rapidfir_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	if (address < 0x800000)
 		memcpy(&tickee_vram[TOWORD(address)], shiftreg, TOBYTE(0x2000));
@@ -249,7 +249,7 @@ static void rapidfir_from_shiftreg(const address_space *space, UINT32 address, U
 
 static WRITE16_HANDLER( tickee_control_w )
 {
-	UINT16 olddata = tickee_control[offset];
+	uint16_t olddata = tickee_control[offset];
 
 	/* offsets:
 

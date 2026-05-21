@@ -52,9 +52,9 @@ Electronic Devices was printed on rom labels
 #include "cpu/nec/nec.h"
 #include "sound/ay8910.h"
 
-static UINT16 *twins_videoram;
-static UINT16 *twins_pal;
-static UINT16 paloff = 0;
+static uint16_t *twins_videoram;
+static uint16_t *twins_pal;
+static uint16_t paloff = 0;
 
 /* port 4 is eeprom */
 static READ16_HANDLER( twins_port4_r )
@@ -94,7 +94,7 @@ ADDRESS_MAP_END
 
 static VIDEO_START(twins)
 {
-	twins_pal = auto_alloc_array(machine, UINT16, 0x100);
+	twins_pal = auto_alloc_array(machine, uint16_t, 0x100);
 }
 
 static VIDEO_UPDATE(twins)
@@ -127,7 +127,7 @@ static VIDEO_UPDATE(twins)
 	{
 		for(x=0;x<xxx;x++)
 		{
-			*BITMAP_ADDR16(bitmap, y, x) = ((UINT8 *)twins_videoram)[BYTE_XOR_LE(count)];
+			*BITMAP_ADDR16(bitmap, y, x) = ((uint8_t *)twins_videoram)[BYTE_XOR_LE(count)];
 			count++;
 		}
 	}
@@ -199,7 +199,7 @@ MACHINE_DRIVER_END
 
 static VIDEO_START(twinsa)
 {
-	twins_pal = auto_alloc_array(machine, UINT16, 0x1000);
+	twins_pal = auto_alloc_array(machine, uint16_t, 0x1000);
 }
 
 static VIDEO_UPDATE(twinsa)
@@ -225,7 +225,7 @@ static VIDEO_UPDATE(twinsa)
 	{
 		for(x=0;x<xxx;x++)
 		{
-			*BITMAP_ADDR16(bitmap, y, x) = ((UINT8 *)twins_videoram)[BYTE_XOR_LE(count)];
+			*BITMAP_ADDR16(bitmap, y, x) = ((uint8_t *)twins_videoram)[BYTE_XOR_LE(count)];
 			count++;
 		}
 	}

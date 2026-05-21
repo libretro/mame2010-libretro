@@ -55,7 +55,7 @@ TCH-SS9.u34     "     /               AB2Bh
 ******************************************************************************/
 
 /* in video */
-extern UINT8 *speedspn_attram;
+extern uint8_t *speedspn_attram;
 
 WRITE8_HANDLER( speedspn_vidram_w );
 WRITE8_HANDLER( speedspn_attram_w );
@@ -76,7 +76,7 @@ static WRITE8_HANDLER(speedspn_banked_rom_change)
 {
 	/* is this weird banking some form of protection? */
 
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int addr;
 
 	switch (data)

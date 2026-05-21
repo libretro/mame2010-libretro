@@ -237,9 +237,9 @@ Todo:
 #define POLEPOS_TOGGLE	PORT_TOGGLE
 
 
-static UINT8 steer_last;
-static UINT8 steer_delta;
-static INT16 steer_accum;
+static uint8_t steer_last;
+static uint8_t steer_delta;
+static int16_t steer_accum;
 
 
 /*************************************************************************************/
@@ -250,9 +250,9 @@ static READ16_HANDLER( polepos2_ic25_r )
 {
 	int result;
 	/* protection states */
-	static INT16 last_result;
-	static INT8 last_signed;
-	static UINT8 last_unsigned;
+	static int16_t last_result;
+	static int8_t last_signed;
+	static uint8_t last_unsigned;
 
 	offset = offset & 0x1ff;
 	if (offset < 0x100)
@@ -264,7 +264,7 @@ static READ16_HANDLER( polepos2_ic25_r )
 	{
 		last_unsigned = offset & 0xff;
 		result = (last_result >> 8) & 0xff;
-		last_result = (INT8)last_signed * (UINT8)last_unsigned;
+		last_result = (int8_t)last_signed * (uint8_t)last_unsigned;
 	}
 
 //  logerror("%04X: read IC25 @ %04X = %02X\n", cpu_get_pc(space->cpu), offset, result);
@@ -389,7 +389,7 @@ static const namco_51xx_interface namco_51xx_intf =
 
 static READ8_DEVICE_HANDLER( namco_52xx_rom_r )
 {
-	UINT32 length = memory_region_length(device->machine, "52xx");
+	uint32_t length = memory_region_length(device->machine, "52xx");
 logerror("ROM @ %04X\n", offset);
 	return (offset < length) ? memory_region(device->machine, "52xx")[offset] : 0xff;
 }
@@ -419,8 +419,8 @@ static READ8_DEVICE_HANDLER( namco_53xx_k_r )
 static READ8_DEVICE_HANDLER( steering_changed_r )
 {
 	/* read the current steering value and update our delta */
-	UINT8 steer_new = input_port_read(device->machine, "STEER");
-	steer_accum += (INT8)(steer_new - steer_last) * 2;
+	uint8_t steer_new = input_port_read(device->machine, "STEER");
+	steer_accum += (int8_t)(steer_new - steer_last) * 2;
 	steer_last = steer_new;
 
 	/* if we have delta, clock things */

@@ -13,10 +13,10 @@ Driver by Takahiro Nogi (nogi@kt.rim.or.jp) 1999/10/04
 #include "sound/ay8910.h"
 #include "sound/dac.h"
 
-extern UINT8 *ssozumo_videoram;
-extern UINT8 *ssozumo_colorram;
-extern UINT8 *ssozumo_videoram2;
-extern UINT8 *ssozumo_colorram2;
+extern uint8_t *ssozumo_videoram;
+extern uint8_t *ssozumo_colorram;
+extern uint8_t *ssozumo_videoram2;
+extern uint8_t *ssozumo_colorram2;
 
 extern WRITE8_HANDLER( ssozumo_videoram_w );
 extern WRITE8_HANDLER( ssozumo_colorram_w );

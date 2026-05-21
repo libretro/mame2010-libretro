@@ -31,11 +31,11 @@
 #include "machine/pcecommn.h"
 #include "video/vdc.h"
 
-static UINT8 jamma_if_control_latch = 0;
+static uint8_t jamma_if_control_latch = 0;
 
 static WRITE8_HANDLER( jamma_if_control_latch_w )
 {
-	UINT8 diff = data ^ jamma_if_control_latch;
+	uint8_t diff = data ^ jamma_if_control_latch;
 	jamma_if_control_latch = data;
 
 	sound_global_enable( space->machine, (data >> 7) & 1 );
@@ -57,7 +57,7 @@ static READ8_HANDLER( jamma_if_control_latch_r )
 
 static READ8_HANDLER( jamma_if_read_dsw )
 {
-	UINT8 dsw_val;
+	uint8_t dsw_val;
 
 	dsw_val = input_port_read(space->machine,  "DSW" );
 
@@ -97,7 +97,7 @@ static READ8_HANDLER( jamma_if_read_dsw )
 	return dsw_val & 1;
 }
 
-static UINT8 jamma_if_read_joystick( running_machine *machine )
+static uint8_t jamma_if_read_joystick( running_machine *machine )
 {
 	if ( jamma_if_control_latch & 0x10 )
 	{

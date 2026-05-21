@@ -30,8 +30,8 @@ TODO:
 #include "sound/ay8910.h"
 #include "sound/dac.h"
 
-extern UINT8 *tagteam_videoram;
-extern UINT8 *tagteam_colorram;
+extern uint8_t *tagteam_videoram;
+extern uint8_t *tagteam_colorram;
 
 extern WRITE8_HANDLER( tagteam_videoram_w );
 extern WRITE8_HANDLER( tagteam_colorram_w );

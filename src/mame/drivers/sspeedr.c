@@ -9,8 +9,8 @@ Taito Super Speed Race driver
 #include "../lh/sspeedr.lh"
 #include "includes/sspeedr.h"
 
-static UINT8 led_TIME[2];
-static UINT8 led_SCORE[24];
+static uint8_t led_TIME[2];
+static uint8_t led_SCORE[24];
 
 
 static PALETTE_INIT( sspeedr )
@@ -50,7 +50,7 @@ static WRITE8_HANDLER( sspeedr_lamp_w )
 
 
 /* uses a 7447A, which is equivalent to an LS47/48 */
-static const UINT8 ls48_map[16] =
+static const uint8_t ls48_map[16] =
 	{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67,0x58,0x4c,0x62,0x69,0x78,0x00 };
 
 static WRITE8_HANDLER( sspeedr_time_w )
@@ -110,7 +110,7 @@ static ADDRESS_MAP_START( sspeedr_io_map, ADDRESS_SPACE_IO, 8 )
 ADDRESS_MAP_END
 
 
-static const UINT32 sspeedr_controller_table[] =
+static const uint32_t sspeedr_controller_table[] =
 {
 	0x3f, 0x3e, 0x3c, 0x3d, 0x39, 0x38, 0x3a, 0x3b,
 	0x33, 0x32, 0x30, 0x31, 0x35, 0x34, 0x36, 0x37,

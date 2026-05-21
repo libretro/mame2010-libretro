@@ -1286,7 +1286,7 @@ static DRIVER_INIT( bronx )
 {
 	nycaptor_state *state = (nycaptor_state *)machine->driver_data;
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (i = 0; i < 0x20000; i++)
 		rom[i] = BITSWAP8(rom[i], 0, 1, 2, 3, 4, 5, 6, 7);
@@ -1298,7 +1298,7 @@ static DRIVER_INIT( colt )
 {
 	nycaptor_state *state = (nycaptor_state *)machine->driver_data;
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (i = 0; i < 0x20000; i++)
 		rom[i] = BITSWAP8(rom[i], 0, 1, 2, 3, 4, 5, 6, 7);

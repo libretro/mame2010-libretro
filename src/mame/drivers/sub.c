@@ -119,12 +119,12 @@ public:
 
 	sub_state(running_machine &machine) { }
 
-	UINT8* vid;
-	UINT8* attr;
-	UINT8* scrolly;
-	UINT8* spriteram;
-	UINT8* spriteram2;
-	UINT8 nmi_en;
+	uint8_t* vid;
+	uint8_t* attr;
+	uint8_t* scrolly;
+	uint8_t* spriteram;
+	uint8_t* spriteram2;
+	uint8_t nmi_en;
 };
 
 static VIDEO_START(sub)
@@ -143,9 +143,9 @@ static VIDEO_UPDATE(sub)
 	{
 		for (x=0;x<32;x++)
 		{
-			UINT16 tile = state->vid[count];
-			UINT8 col;
-			UINT8 y_offs = state->scrolly[x];
+			uint16_t tile = state->vid[count];
+			uint8_t col;
+			uint8_t y_offs = state->scrolly[x];
 
 			tile += (state->attr[count]&0xe0)<<3;
 			col = (state->attr[count]&0x1f);
@@ -169,9 +169,9 @@ static VIDEO_UPDATE(sub)
     1 --cc cccc color
     */
 	{
-		UINT8 *spriteram = state->spriteram;
-		UINT8 *spriteram_2 = state->spriteram2;
-		UINT8 x,y,spr_offs,i,col,fx,fy;
+		uint8_t *spriteram = state->spriteram;
+		uint8_t *spriteram_2 = state->spriteram2;
+		uint8_t x,y,spr_offs,i,col,fx,fy;
 
 		for(i=0;i<0x40;i+=2)
 		{
@@ -194,9 +194,9 @@ static VIDEO_UPDATE(sub)
 	{
 		for (x=0;x<32;x++)
 		{
-			UINT16 tile = state->vid[count];
-			UINT8 col;
-			UINT8 y_offs = state->scrolly[x];
+			uint16_t tile = state->vid[count];
+			uint8_t col;
+			uint8_t y_offs = state->scrolly[x];
 
 			tile += (state->attr[count]&0xe0)<<3;
 			col = (state->attr[count]&0x1f);
@@ -382,7 +382,7 @@ GFXDECODE_END
 static PALETTE_INIT( sub )
 {
 	int i;
-	UINT8* lookup = memory_region(machine,"proms2");
+	uint8_t* lookup = memory_region(machine,"proms2");
 
 	/* allocate the colortable */
 	machine->colortable = colortable_alloc(machine, 0x100);
@@ -403,7 +403,7 @@ static PALETTE_INIT( sub )
 
 	for (i = 0;i < 0x400;i++)
 	{
-		UINT8 ctabentry = lookup[i+0x400] | (lookup[i+0x000] << 4);
+		uint8_t ctabentry = lookup[i+0x400] | (lookup[i+0x000] << 4);
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 

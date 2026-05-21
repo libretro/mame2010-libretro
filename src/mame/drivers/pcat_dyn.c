@@ -31,8 +31,8 @@ TODO:
 #include "machine/idectrl.h"
 #include "sound/beep.h"
 
-static UINT32 *vga_vram;
-static UINT8 vga_regs[0x19];
+static uint32_t *vga_vram;
+static uint8_t vga_regs[0x19];
 
 #define SET_VISIBLE_AREA(_x_,_y_) \
 	{ \
@@ -53,9 +53,9 @@ static VIDEO_START(pcat_dyn)
 
 
 
-static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,UINT16 size,UINT32 map_offs,UINT8 gfx_num)
+static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,uint16_t size,uint32_t map_offs,uint8_t gfx_num)
 {
-	static UINT32 offs,x,y,max_x,max_y;
+	static uint32_t offs,x,y,max_x,max_y;
 	int tile,color;
 
 	/*define the visible area*/
@@ -121,13 +121,13 @@ DMA8237 Controller
 ******************/
 
 static int dma_channel;
-static UINT8 dma_offset[2][4];
-static UINT8 at_pages[0x10];
+static uint8_t dma_offset[2][4];
+static uint8_t at_pages[0x10];
 
 
 static READ8_HANDLER(dma_page_select_r)
 {
-	UINT8 data = at_pages[offset % 0x10];
+	uint8_t data = at_pages[offset % 0x10];
 
 	switch(offset % 8)
 	{
@@ -352,7 +352,7 @@ static WRITE32_HANDLER( vga_ramdac_w )
 
 static WRITE32_HANDLER( vga_regs_w )
 {
-	static UINT8 vga_address;
+	static uint8_t vga_address;
 
 	if (ACCESSING_BITS_0_7)
 		vga_address = data;

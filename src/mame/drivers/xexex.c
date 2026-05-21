@@ -122,7 +122,7 @@ static void xexex_objdma( running_machine *machine, int limiter )
 {
 	xexex_state *state = (xexex_state *)machine->driver_data;
 	int counter, num_inactive;
-	UINT16 *src, *dst;
+	uint16_t *src, *dst;
 
 	counter = state->frame;
 	state->frame = machine->primary_screen->frame_number();
@@ -464,7 +464,7 @@ static STATE_POSTLOAD( xexex_postload )
 static MACHINE_START( xexex )
 {
 	xexex_state *state = (xexex_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank2", 0, 8, &ROM[0x10000], 0x4000);
 	memory_set_bank(machine, "bank2", 0);
@@ -697,8 +697,8 @@ static DRIVER_INIT( xexex )
 	if (!strcmp(machine->gamedrv->name, "xexex"))
 	{
 		// Invulnerability
-//      *(UINT16 *)(memory_region(machine, "maincpu") + 0x648d4) = 0x4a79;
-//      *(UINT16 *)(memory_region(machine, "maincpu") + 0x00008) = 0x5500;
+//      *(uint16_t *)(memory_region(machine, "maincpu") + 0x648d4) = 0x4a79;
+//      *(uint16_t *)(memory_region(machine, "maincpu") + 0x00008) = 0x5500;
 		state->strip_0x1a = 1;
 	}
 }

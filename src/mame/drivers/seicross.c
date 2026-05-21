@@ -48,9 +48,9 @@ This info came from http://www.ne.jp/asahi/cc-sakura/akkun/old/fryski.html
 #include "sound/ay8910.h"
 #include "sound/dac.h"
 
-extern UINT8 *seicross_videoram;
-extern UINT8 *seicross_colorram;
-extern UINT8 *seicross_row_scroll;
+extern uint8_t *seicross_videoram;
+extern uint8_t *seicross_colorram;
+extern uint8_t *seicross_row_scroll;
 
 extern WRITE8_HANDLER( seicross_videoram_w );
 extern WRITE8_HANDLER( seicross_colorram_w );
@@ -59,10 +59,10 @@ extern PALETTE_INIT( seicross );
 extern VIDEO_START( seicross );
 extern VIDEO_UPDATE( seicross );
 
-static UINT8 *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 
-static UINT8 portb;
+static uint8_t portb;
 
 
 static NVRAM_HANDLER( seicross )

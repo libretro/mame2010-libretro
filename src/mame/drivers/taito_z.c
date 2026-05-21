@@ -1000,7 +1000,7 @@ static INTERRUPT_GEN( dblaxle_cpub_interrupt )
                               EEPROM
 ******************************************************************/
 
-static const UINT8 spacegun_default_eeprom[128]=
+static const uint8_t spacegun_default_eeprom[128]=
 {
 	0x00,0x00,0x00,0xff,0x00,0x01,0x41,0x41,0x00,0x00,0x00,0xff,0x00,0x00,0xf0,0xf0,
 	0x00,0x00,0x00,0xff,0x00,0x01,0x41,0x41,0x00,0x00,0x00,0xff,0x00,0x00,0xf0,0xf0,
@@ -1067,7 +1067,7 @@ static READ8_HANDLER( contcirc_input_bypass_r )
 	/* Bypass TC0220IOC controller for analog input */
 
 	taitoz_state *state = (taitoz_state *)space->machine->driver_data;
-	UINT8 port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
+	uint8_t port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
 	int steer = 0;
 	int fake = input_port_read(space->machine, "FAKE");
 
@@ -1108,7 +1108,7 @@ static READ8_HANDLER( chasehq_input_bypass_r )
 	/* Bypass TC0220IOC controller for extra inputs */
 
 	taitoz_state *state = (taitoz_state *)space->machine->driver_data;
-	UINT8 port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
+	uint8_t port = tc0220ioc_port_r(state->tc0220ioc, 0);	/* read port number */
 	int steer = 0;
 	int fake = input_port_read(space->machine, "FAKE");
 

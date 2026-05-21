@@ -56,10 +56,10 @@ Notes:
 #include "sound/2151intf.h"
 #include "machine/eeprom.h"
 
-static UINT16 *gms_vidram;
-static UINT16 *gms_vidram2;
+static uint16_t *gms_vidram;
+static uint16_t *gms_vidram2;
 
-static UINT16 tilebank=0;
+static uint16_t tilebank=0;
 
 static READ16_HANDLER( gms_read )
 {
@@ -112,7 +112,7 @@ static ADDRESS_MAP_START( rbmk_mem, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0xC28000, 0xC28001) AM_WRITE(gms_write3)
 ADDRESS_MAP_END
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 static ADDRESS_MAP_START( rbmk_mcu_mem, ADDRESS_SPACE_PROGRAM, 8 )
 //  AM_RANGE(0x0000, 0x0fff) AM_ROM

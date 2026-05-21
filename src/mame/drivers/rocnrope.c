@@ -24,7 +24,7 @@
 /* Roc'n'Rope has the IRQ vectors in RAM. The rom contains $FFFF at this address! */
 static WRITE8_HANDLER( rocnrope_interrupt_vector_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	RAM[0xfff2 + offset] = data;
 }
@@ -296,7 +296,7 @@ ROM_END
 
 static DRIVER_INIT( rocnrope )
 {
-	UINT8 *decrypted = konami1_decode(machine, "maincpu");
+	uint8_t *decrypted = konami1_decode(machine, "maincpu");
 
 	decrypted[0x703d] = 0x98;	/* fix one instruction */
 }

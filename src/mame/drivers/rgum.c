@@ -18,7 +18,7 @@ The ppi at 3000-3003 seems to be a dual port communication thing with the z80.
 #include "machine/8255ppi.h"
 #include "sound/ay8910.h"
 
-static UINT8 *vram, *cram;
+static uint8_t *vram, *cram;
 
 static VIDEO_START(royalgum)
 {
@@ -70,7 +70,7 @@ ADDRESS_MAP_END
 
 static CUSTOM_INPUT( rgum_heartbeat_r )
 {
-	static UINT8 hbeat;
+	static uint8_t hbeat;
 
 	hbeat ^= 1;
 

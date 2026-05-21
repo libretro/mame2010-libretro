@@ -97,21 +97,21 @@ Stephh's notes (based on the games Z80 code and some tests) :
 #include "sound/dac.h"
 
 
-static UINT8 input_port_select, dsw_select, rombank;
+static uint8_t input_port_select, dsw_select, rombank;
 static int palette_base;
 
 
 static PALETTE_INIT( royalmah )
 {
 	offs_t i;
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 	int len = memory_region_length(machine, "proms");
 
 	for (i = 0; i < len; i++)
 	{
-		UINT8 bit0, bit1, bit2, r, g, b;
+		uint8_t bit0, bit1, bit2, r, g, b;
 
-		UINT8 data = prom[i];
+		uint8_t data = prom[i];
 
 		/* red component */
 		bit0 = (data >> 0) & 0x01;
@@ -139,17 +139,17 @@ static PALETTE_INIT( royalmah )
 static PALETTE_INIT( mjderngr )
 {
 	offs_t i;
-	const UINT8 *prom = memory_region(machine, "proms");
+	const uint8_t *prom = memory_region(machine, "proms");
 	int len = memory_region_length(machine, "proms");
 
 	for (i = 0; i < len / 2; i++)
 	{
-		UINT16 data = (prom[i] << 8) | prom[i + 0x200];
+		uint16_t data = (prom[i] << 8) | prom[i + 0x200];
 
 		/* the bits are in reverse order */
-		UINT8 r = BITSWAP8((data >>  0) & 0x1f,7,6,5,0,1,2,3,4 );
-		UINT8 g = BITSWAP8((data >>  5) & 0x1f,7,6,5,0,1,2,3,4 );
-		UINT8 b = BITSWAP8((data >> 10) & 0x1f,7,6,5,0,1,2,3,4 );
+		uint8_t r = BITSWAP8((data >>  0) & 0x1f,7,6,5,0,1,2,3,4 );
+		uint8_t g = BITSWAP8((data >>  5) & 0x1f,7,6,5,0,1,2,3,4 );
+		uint8_t b = BITSWAP8((data >> 10) & 0x1f,7,6,5,0,1,2,3,4 );
 
 		palette_set_color_rgb(machine,i, pal5bit(r), pal5bit(g), pal5bit(b));
 	}
@@ -192,15 +192,15 @@ static VIDEO_UPDATE( royalmah )
 	{
 		int i;
 
-		UINT8 data1 = screen->machine->generic.videoram.u8[offs + 0x0000];
-		UINT8 data2 = screen->machine->generic.videoram.u8[offs + 0x4000];
+		uint8_t data1 = screen->machine->generic.videoram.u8[offs + 0x0000];
+		uint8_t data2 = screen->machine->generic.videoram.u8[offs + 0x4000];
 
-		UINT8 y = 255 - (offs >> 6);
-		UINT8 x = 255 - (offs << 2);
+		uint8_t y = 255 - (offs >> 6);
+		uint8_t x = 255 - (offs << 2);
 
 		for (i = 0; i < 4; i++)
 		{
-			UINT8 pen = ((data2 >> 1) & 0x08) | ((data2 << 2) & 0x04) | ((data1 >> 3) & 0x02) | ((data1 >> 0) & 0x01);
+			uint8_t pen = ((data2 >> 1) & 0x08) | ((data2 << 2) & 0x04) | ((data1 >> 3) & 0x02) | ((data1 >> 0) & 0x01);
 
 			*BITMAP_ADDR16(bitmap, y, x) = (palette_base << 4) | pen;
 
@@ -269,7 +269,7 @@ static READ8_HANDLER ( majs101b_dsw_r )
 }
 
 
-static UINT8 suzume_bank;
+static uint8_t suzume_bank;
 
 static READ8_HANDLER ( suzume_dsw_r )
 {
@@ -291,7 +291,7 @@ static READ8_HANDLER ( suzume_dsw_r )
 
 static WRITE8_HANDLER ( suzume_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int address;
 
 	suzume_bank = data;
@@ -307,7 +307,7 @@ logerror("%04x: bank %02x\n",cpu_get_pc(space->cpu),data);
 
 static WRITE8_HANDLER ( mjapinky_bank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 	rombank = data;
 	memory_set_bankptr(space->machine, "bank1",ROM + 0x10000 + 0x8000 * data);
 }
@@ -328,7 +328,7 @@ static READ8_HANDLER( mjapinky_dsw_r )
 
 static WRITE8_HANDLER ( tontonb_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int address;
 
 logerror("%04x: bank %02x\n",cpu_get_pc(space->cpu),data);
@@ -346,7 +346,7 @@ logerror("%04x: bank %02x\n",cpu_get_pc(space->cpu),data);
 /* bits 5 and 6 seem to affect which Dip Switch to read in 'majs101b' */
 static WRITE8_HANDLER ( dynax_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int address;
 
 //logerror("%04x: bank %02x\n",cpu_get_pc(space->cpu),data);
@@ -375,7 +375,7 @@ static READ8_HANDLER ( daisyari_dsw_r )
 
 static WRITE8_HANDLER ( daisyari_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int address;
 
 	dsw_select = (data & 0xc);
@@ -403,7 +403,7 @@ static READ8_HANDLER ( mjclub_dsw_r )
 
 static WRITE8_HANDLER ( mjclub_bank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	int address;
 
 	dsw_select = data & 0xc0;
@@ -589,10 +589,10 @@ ADDRESS_MAP_END
 ****************************************************************************/
 
 
-static UINT8 gfx_adr_l = 0, gfx_adr_m = 0, gfx_adr_h = 0;
-static UINT32 gfx_adr = 0;
-static UINT8 gfxdata0, gfxdata1;
-static UINT8 jansou_colortable[16];
+static uint8_t gfx_adr_l = 0, gfx_adr_m = 0, gfx_adr_h = 0;
+static uint32_t gfx_adr = 0;
+static uint8_t gfxdata0, gfxdata1;
+static uint8_t jansou_colortable[16];
 
 static WRITE8_HANDLER( jansou_dsw_sel_w )
 {
@@ -636,7 +636,7 @@ static WRITE8_HANDLER( jansou_6402_w )
 
 static READ8_HANDLER( jansou_6403_r )
 {
-	UINT8 *GFXROM = memory_region(space->machine, "gfx1");
+	uint8_t *GFXROM = memory_region(space->machine, "gfx1");
 	int d0 = GFXROM[gfx_adr];
 	int d1 = GFXROM[gfx_adr+1];
 	int c0 = jansou_colortable[d1 & 0x0f] & 0x0f;
@@ -737,7 +737,7 @@ static READ8_HANDLER( janptr96_dsw_r )
 
 static WRITE8_HANDLER( janptr96_rombank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 	memory_set_bankptr(space->machine, "bank1",ROM + 0x10000 + 0x8000 * data);
 }
 
@@ -778,7 +778,7 @@ ADDRESS_MAP_END
                                 Mahjong If
 ****************************************************************************/
 
-static UINT8 mjifb_rom_enable;
+static uint8_t mjifb_rom_enable;
 
 static WRITE8_HANDLER( mjifb_coin_counter_w )
 {
@@ -790,7 +790,7 @@ static WRITE8_HANDLER( mjifb_coin_counter_w )
 static READ8_HANDLER( mjifb_rom_io_r )
 {
 	if (mjifb_rom_enable)
-		return ((UINT8*)(memory_region(space->machine, "maincpu") + 0x10000 + rombank * 0x4000))[offset];
+		return ((uint8_t*)(memory_region(space->machine, "maincpu") + 0x10000 + rombank * 0x4000))[offset];
 
 	offset += 0x8000;
 
@@ -897,7 +897,7 @@ ADDRESS_MAP_END
 static READ8_HANDLER( mjdejavu_rom_io_r )
 {
 	if (mjifb_rom_enable)
-		return ((UINT8*)(memory_region(space->machine, "maincpu") + 0x10000 + rombank * 0x4000))[offset];
+		return ((uint8_t*)(memory_region(space->machine, "maincpu") + 0x10000 + rombank * 0x4000))[offset];
 
 	offset += 0x8000;
 
@@ -4617,7 +4617,7 @@ static DRIVER_INIT( ippatsu )	{	memory_set_bankptr(machine, "bank1", memory_regi
 static DRIVER_INIT( janptr96 )
 {
 	machine->generic.nvram_size = 0x1000 * 9;
-	machine->generic.nvram.u8 = auto_alloc_array(machine, UINT8,  machine->generic.nvram_size );
+	machine->generic.nvram.u8 = auto_alloc_array(machine, uint8_t,  machine->generic.nvram_size );
 
 	memory_set_bankptr(machine, "bank3",machine->generic.nvram.u8);
 }

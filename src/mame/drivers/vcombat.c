@@ -89,12 +89,12 @@ TODO :  This is a partially working driver.  Most of the memory maps for
 #include "sound/dac.h"
 
 
-static UINT16* m68k_framebuffer[2];
-static UINT16* i860_framebuffer[2][2];
-static UINT16* framebuffer_ctrl;
+static uint16_t* m68k_framebuffer[2];
+static uint16_t* i860_framebuffer[2][2];
+static uint16_t* framebuffer_ctrl;
 
-static UINT16* vid_0_shared_RAM;
-static UINT16* vid_1_shared_RAM;
+static uint16_t* vid_0_shared_RAM;
+static uint16_t* vid_1_shared_RAM;
 
 static int crtc_select;
 
@@ -105,8 +105,8 @@ static VIDEO_UPDATE( vcombat )
 	const rgb_t *const pens = tlc34076_get_pens();
 	running_device *aux = screen->machine->device("aux");
 
-	UINT16 *m68k_buf = m68k_framebuffer[(*framebuffer_ctrl & 0x20) ? 1 : 0];
-	UINT16 *i860_buf = i860_framebuffer[(screen == aux) ? 1 : 0][0];
+	uint16_t *m68k_buf = m68k_framebuffer[(*framebuffer_ctrl & 0x20) ? 1 : 0];
+	uint16_t *i860_buf = i860_framebuffer[(screen == aux) ? 1 : 0][0];
 
 	/* TODO: It looks like the leftmost chunk of the ground should really be on the right side? */
 	/*       But the i860 draws the background correctly, so it may be an original game issue. */
@@ -117,15 +117,15 @@ static VIDEO_UPDATE( vcombat )
 	{
 		int x;
 		int src_addr = 256/2 * y;
-		const UINT16 *m68k_src = &m68k_buf[src_addr];
-		const UINT16 *i860_src = &i860_buf[src_addr];
-		UINT32 *dst = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
+		const uint16_t *m68k_src = &m68k_buf[src_addr];
+		const uint16_t *i860_src = &i860_buf[src_addr];
+		uint32_t *dst = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
 			int i;
-			UINT16 m68k_pix = *m68k_src++;
-			UINT16 i860_pix = *i860_src++;
+			uint16_t m68k_pix = *m68k_src++;
+			uint16_t i860_pix = *i860_src++;
 
 			/* Draw two pixels */
 			for (i = 0; i < 2; ++i)
@@ -152,7 +152,7 @@ static VIDEO_UPDATE( vcombat )
 static WRITE16_HANDLER( main_video_write )
 {
 	int fb = (*framebuffer_ctrl & 0x20) ? 0 : 1;
-	UINT16 old_data = m68k_framebuffer[fb][offset];
+	uint16_t old_data = m68k_framebuffer[fb][offset];
 
 	/* Transparency mode? */
 	if (*framebuffer_ctrl & 0x40)
@@ -188,7 +188,7 @@ static READ16_HANDLER( control_3_r )
 	return (input_port_read(space->machine, "IN2") << 8);
 }
 
-static void wiggle_i860_common(running_device *device, UINT16 data)
+static void wiggle_i860_common(running_device *device, uint16_t data)
 {
 	int bus_hold = (data & 0x03) == 0x03;
 	int reset = data & 0x10;
@@ -301,7 +301,7 @@ static WRITE16_HANDLER( crtc_w )
 
 static WRITE16_DEVICE_HANDLER( vcombat_dac_w )
 {
-	INT16 newval = ((INT16)data - 0x6000) << 2;
+	int16_t newval = ((int16_t)data - 0x6000) << 2;
 	dac_signed_data_16_w(device, newval + 0x8000);
 }
 
@@ -399,7 +399,7 @@ static DIRECT_UPDATE_HANDLER( vid_0_direct_handler )
 {
 	if (address >= 0xfffc0000 && address <= 0xffffffff)
 	{
-		direct->raw = direct->decrypted = ((UINT8*)vid_0_shared_RAM) - 0xfffc0000;
+		direct->raw = direct->decrypted = ((uint8_t*)vid_0_shared_RAM) - 0xfffc0000;
 		return ~0;
 	}
 	return address;
@@ -409,7 +409,7 @@ static DIRECT_UPDATE_HANDLER( vid_1_direct_handler )
 {
 	if (address >= 0xfffc0000 && address <= 0xffffffff)
 	{
-		direct->raw = direct->decrypted = ((UINT8*)vid_1_shared_RAM) - 0xfffc0000;
+		direct->raw = direct->decrypted = ((uint8_t*)vid_1_shared_RAM) - 0xfffc0000;
 		return ~0;
 	}
 	return address;
@@ -418,23 +418,23 @@ static DIRECT_UPDATE_HANDLER( vid_1_direct_handler )
 
 static DRIVER_INIT( vcombat )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* The two i860s execute out of RAM */
 	memory_set_direct_update_handler(cputag_get_address_space(machine, "vid_0", ADDRESS_SPACE_PROGRAM), vid_0_direct_handler);
 	memory_set_direct_update_handler(cputag_get_address_space(machine, "vid_1", ADDRESS_SPACE_PROGRAM), vid_1_direct_handler);
 
 	/* Allocate the 68000 framebuffers */
-	m68k_framebuffer[0] = auto_alloc_array(machine, UINT16, 0x8000);
-	m68k_framebuffer[1] = auto_alloc_array(machine, UINT16, 0x8000);
+	m68k_framebuffer[0] = auto_alloc_array(machine, uint16_t, 0x8000);
+	m68k_framebuffer[1] = auto_alloc_array(machine, uint16_t, 0x8000);
 
 	/* First i860 */
-	i860_framebuffer[0][0] = auto_alloc_array(machine, UINT16, 0x8000);
-	i860_framebuffer[0][1] = auto_alloc_array(machine, UINT16, 0x8000);
+	i860_framebuffer[0][0] = auto_alloc_array(machine, uint16_t, 0x8000);
+	i860_framebuffer[0][1] = auto_alloc_array(machine, uint16_t, 0x8000);
 
 	/* Second i860 */
-	i860_framebuffer[1][0] = auto_alloc_array(machine, UINT16, 0x8000);
-	i860_framebuffer[1][1] = auto_alloc_array(machine, UINT16, 0x8000);
+	i860_framebuffer[1][0] = auto_alloc_array(machine, uint16_t, 0x8000);
+	i860_framebuffer[1][1] = auto_alloc_array(machine, uint16_t, 0x8000);
 
 	/* pc==4016 : jump 4038 ... There's something strange about how it waits at 402e (interrupts all masked out)
        I think what is happening here is that M0 snags the first time
@@ -455,12 +455,12 @@ static DRIVER_INIT( vcombat )
 static DRIVER_INIT( shadfgtr )
 {
 	/* Allocate th 68000 frame buffers */
-	m68k_framebuffer[0] = auto_alloc_array(machine, UINT16, 0x8000);
-	m68k_framebuffer[1] = auto_alloc_array(machine, UINT16, 0x8000);
+	m68k_framebuffer[0] = auto_alloc_array(machine, uint16_t, 0x8000);
+	m68k_framebuffer[1] = auto_alloc_array(machine, uint16_t, 0x8000);
 
 	/* Only one i860 */
-	i860_framebuffer[0][0] = auto_alloc_array(machine, UINT16, 0x8000);
-	i860_framebuffer[0][1] = auto_alloc_array(machine, UINT16, 0x8000);
+	i860_framebuffer[0][0] = auto_alloc_array(machine, uint16_t, 0x8000);
+	i860_framebuffer[0][1] = auto_alloc_array(machine, uint16_t, 0x8000);
 	i860_framebuffer[1][0] = NULL;
 	i860_framebuffer[1][1] = NULL;
 

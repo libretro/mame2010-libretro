@@ -644,12 +644,12 @@ static DRIVER_INIT( penta )
     (e.g. 0xc0 is XORed with H)
     therefore in the following tables we only keep track of A, B, C, D, E, F, G and H.
 */
-	static const UINT8 data_xortable[2][8] =
+	static const uint8_t data_xortable[2][8] =
 	{
 		{ 0xa0,0x82,0x28,0x0a,0x82,0xa0,0x0a,0x28 },	/* ...............0 */
 		{ 0x88,0x0a,0x82,0x00,0x88,0x0a,0x82,0x00 }		/* ...............1 */
 	};
-	static const UINT8 opcode_xortable[8][8] =
+	static const uint8_t opcode_xortable[8][8] =
 	{
 		{ 0x02,0x08,0x2a,0x20,0x20,0x2a,0x08,0x02 },	/* ...0...0...0.... */
 		{ 0x88,0x88,0x00,0x00,0x88,0x88,0x00,0x00 },	/* ...0...0...1.... */
@@ -661,8 +661,8 @@ static DRIVER_INIT( penta )
 		{ 0x88,0x0a,0x82,0x00,0xa0,0x22,0xaa,0x28 }		/* ...1...1...1.... */
 	};
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x8000);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
@@ -670,7 +670,7 @@ static DRIVER_INIT( penta )
 	for (A = 0x0000;A < 0x8000;A++)
 	{
 		int i,j;
-		UINT8 src;
+		uint8_t src;
 
 
 		src = rom[A];

@@ -171,8 +171,8 @@ static READ16_HANDLER( bankrom_r )
         ROM bank area, we need to return the correct value to give the proper checksum */
 	if ((offset == 0x3000 || offset == 0x3001) && cpu_get_previouspc(space->cpu) > 0x37000)
 	{
-		UINT32 checksum = (memory_read_word(space, 0x3fd210) << 16) | memory_read_word(space, 0x3fd212);
-		UINT32 us = 0xaaaa5555 - checksum;
+		uint32_t checksum = (memory_read_word(space, 0x3fd210) << 16) | memory_read_word(space, 0x3fd212);
+		uint32_t us = 0xaaaa5555 - checksum;
 		if (offset == 0x3001)
 			return us & 0xffff;
 		else
@@ -210,7 +210,7 @@ static READ16_HANDLER( spritecache_count_r )
 	/* if this read is coming from $99f8 or $9992, it's in the sprite copy loop */
 	if (prevpc == 0x99f8 || prevpc == 0x9992)
 	{
-		UINT16 *data = &state->spritecache_count[-0x100];
+		uint16_t *data = &state->spritecache_count[-0x100];
 		int oldword = state->spritecache_count[0];
 		int count = oldword >> 8;
 		int i, width = 0;
@@ -485,7 +485,7 @@ ROM_END
  *
  *************************************/
 
-static const UINT16 default_eeprom[] =
+static const uint16_t default_eeprom[] =
 {
 	0x0001,0x011A,0x012A,0x0146,0x0100,0x0168,0x0300,0x011E,
 	0x0700,0x0122,0x0600,0x0120,0x0400,0x0102,0x0300,0x017E,

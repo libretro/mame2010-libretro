@@ -419,7 +419,7 @@ ADDRESS_MAP_END
 /***************************************************************************/
 
 
-//static UINT8 adpcm_d[0x08];
+//static uint8_t adpcm_d[0x08];
 //0 - start ROM offset LSB
 //1 - start ROM offset MSB
 //2 - end ROM offset LSB
@@ -992,7 +992,7 @@ ROM_END
 static DRIVER_INIT( opwolf )
 {
 	opwolf_state *state = (opwolf_state *)machine->driver_data;
-	UINT16* rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t* rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	state->opwolf_region = rom[0x03fffe / 2] & 0xff;
 
@@ -1009,7 +1009,7 @@ static DRIVER_INIT( opwolf )
 static DRIVER_INIT( opwolfb )
 {
 	opwolf_state *state = (opwolf_state *)machine->driver_data;
-	UINT16* rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t* rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	state->opwolf_region = rom[0x03fffe / 2] & 0xff;
 

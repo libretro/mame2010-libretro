@@ -31,10 +31,10 @@ Xtals 8MHz, 21.47727MHz
 #define XTAL2	21477270
 
 
-static UINT8 port60;
-static UINT8 port70;
+static uint8_t port60;
+static uint8_t port70;
 
-static const UINT8 rombankLookup[]={ 2, 3, 4, 4, 4, 4, 4, 5, 0, 1};
+static const uint8_t rombankLookup[]={ 2, 3, 4, 4, 4, 4, 4, 5, 0, 1};
 
 static PALETTE_INIT(quizo)
 {
@@ -244,7 +244,7 @@ ROM_END
 
 static DRIVER_INIT(quizo)
 {
-	machine->generic.videoram.u8=auto_alloc_array(machine, UINT8, 0x4000*2);
+	machine->generic.videoram.u8=auto_alloc_array(machine, uint8_t, 0x4000*2);
 }
 
 GAME( 1985, quizo,  0,       quizo,  quizo,  quizo, ROT0, "Seoul Coin Corp.", "Quiz Olympic (set 1)", 0 )

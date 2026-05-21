@@ -171,7 +171,7 @@ TODO:
 #include "includes/taitosj.h"
 
 
-static UINT8 sndnmi_disable;
+static uint8_t sndnmi_disable;
 
 static WRITE8_DEVICE_HANDLER( taitosj_sndnmi_msk_w )
 {
@@ -184,7 +184,7 @@ static WRITE8_HANDLER( taitosj_soundcommand_w )
 	if (!sndnmi_disable) cputag_set_input_line(space->machine, "audiocpu", INPUT_LINE_NMI, PULSE_LINE);
 }
 
-static UINT8 input_port_4_f0;
+static uint8_t input_port_4_f0;
 
 static WRITE8_DEVICE_HANDLER( input_port_4_f0_w )
 {
@@ -278,7 +278,7 @@ ADDRESS_MAP_END
 
 
 /* seems the most logical way to do the gears */
-static UINT8 kikstart_gears[2];
+static uint8_t kikstart_gears[2];
 
 static CUSTOM_INPUT( kikstart_gear_r )
 {
@@ -1712,7 +1712,7 @@ static GFXDECODE_START( taitosj )
 GFXDECODE_END
 
 
-static const UINT8 voltable[256] =
+static const uint8_t voltable[256] =
 {
 	0xff,0xfe,0xfc,0xfb,0xf9,0xf7,0xf6,0xf4,0xf3,0xf2,0xf1,0xef,0xee,0xec,0xeb,0xea,
 	0xe8,0xe7,0xe5,0xe4,0xe2,0xe1,0xe0,0xdf,0xde,0xdd,0xdc,0xdb,0xd9,0xd8,0xd7,0xd6,
@@ -1732,8 +1732,8 @@ static const UINT8 voltable[256] =
 	0x65,0x65,0x65,0x65,0x64,0x64,0x64,0x64,0x64,0x63,0x63,0x63,0x63,0x62,0x62,0x62,
 };
 
-static INT8 dac_out;
-static UINT8 dac_vol;
+static int8_t dac_out;
+static uint8_t dac_vol;
 
 static WRITE8_DEVICE_HANDLER( dac_out_w )
 {

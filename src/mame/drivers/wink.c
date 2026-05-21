@@ -16,9 +16,9 @@
 #include "sound/ay8910.h"
 
 static tilemap_t *bg_tilemap;
-static UINT8 sound_flag;
-static UINT8 tile_bank = 0;
-//static UINT8 player_mux = 0;
+static uint8_t sound_flag;
+static uint8_t tile_bank = 0;
+//static uint8_t player_mux = 0;
 
 static TILE_GET_INFO( get_bg_tile_info )
 {
@@ -383,9 +383,9 @@ ROM_END
 
 static DRIVER_INIT( wink )
 {
-	UINT32 i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
-	UINT8 *buffer = auto_alloc_array(machine, UINT8, 0x8000);
+	uint32_t i;
+	uint8_t *ROM = memory_region(machine, "maincpu");
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	// protection module reverse engineered by HIGHWAYMAN
 

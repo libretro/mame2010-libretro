@@ -38,8 +38,8 @@ TODO:
 /* Variables that video has access to */
 
 /* Variables defined in video */
-extern UINT16 *powerins_vram_0, *powerins_vctrl_0;
-extern UINT16 *powerins_vram_1, *powerins_vctrl_1;
+extern uint16_t *powerins_vram_0, *powerins_vctrl_0;
+extern uint16_t *powerins_vram_1, *powerins_vctrl_1;
 
 /* Functions defined in video */
 
@@ -67,7 +67,7 @@ static WRITE16_HANDLER( powerins_okibank_w )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT8 *RAM = memory_region(space->machine, "oki1");
+		uint8_t *RAM = memory_region(space->machine, "oki1");
 		int new_bank = data & 0x7;
 
 		if (new_bank != oki_bank)

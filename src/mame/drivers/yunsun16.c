@@ -106,8 +106,8 @@ static WRITE16_HANDLER( yunsun16_sound_bank_w )
 	if (ACCESSING_BITS_0_7)
 	{
 		int bank = data & 3;
-		UINT8 *dst	= memory_region(space->machine, "oki");
-		UINT8 *src	= dst + 0x80000 + 0x20000 * bank;
+		uint8_t *dst	= memory_region(space->machine, "oki");
+		uint8_t *src	= dst + 0x80000 + 0x20000 * bank;
 		memcpy(dst + 0x20000, src, 0x20000);
 	}
 }

@@ -146,18 +146,18 @@ Current Problem(s) - in order of priority
 
 
 static tilemap_t *background_layer,*midground_layer,*foreground_layer,*text_layer;
-static UINT16 *back_data,*fore_data,*mid_data, *w1ram;
+static uint16_t *back_data,*fore_data,*mid_data, *w1ram;
 static int bg_bank, fg_bank, mid_bank;
 static int bg_col, fg_col, mid_col;
 
 static int tick;
-static UINT16 *mainram;
+static uint16_t *mainram;
 
 static int c_r[0xc000], c_w[0xc000];
 
-static void combine32(UINT32 *val, int offset, UINT16 data, UINT16 mem_mask)
+static void combine32(uint32_t *val, int offset, uint16_t data, uint16_t mem_mask)
 {
-	UINT16 *dest = (UINT16 *)val + BYTE_XOR_LE(offset);
+	uint16_t *dest = (uint16_t *)val + BYTE_XOR_LE(offset);
 	COMBINE_DATA(dest);
 }
 
@@ -167,8 +167,8 @@ static void combine32(UINT32 *val, int offset, UINT16 data, UINT16 mem_mask)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect ,int pri_mask )
 {
-	const UINT16 *source = machine->generic.spriteram.u16 + 0x1000/2 - 4;
-	const UINT16 *finish = machine->generic.spriteram.u16;
+	const uint16_t *source = machine->generic.spriteram.u16 + 0x1000/2 - 4;
+	const uint16_t *finish = machine->generic.spriteram.u16;
 
 	const gfx_element *gfx = machine->gfx[2];
 
@@ -371,9 +371,9 @@ static VIDEO_UPDATE ( raiden2 )
 	int info_1, info_2, info_3;
 
 #if 0
-	static UINT8 zz[16];
-	static UINT8 zz2[32];
-	static UINT8 zz3[12];
+	static uint8_t zz[16];
+	static uint8_t zz2[32];
+	static uint8_t zz3[12];
 #endif
 
 	info_1 = mainram[0x6cc/2] & 1;
@@ -575,11 +575,11 @@ static INTERRUPT_GEN( raiden2_interrupt )
 
 // Sprite encryption key upload
 
-static UINT32 sprcpt_adr, sprcpt_idx;
+static uint32_t sprcpt_adr, sprcpt_idx;
 
-static UINT16 sprcpt_flags2;
-static UINT32 sprcpt_val[2], sprcpt_flags1;
-static UINT32 sprcpt_data_1[0x100], sprcpt_data_2[0x40], sprcpt_data_3[6], sprcpt_data_4[4];
+static uint16_t sprcpt_flags2;
+static uint32_t sprcpt_val[2], sprcpt_flags1;
+static uint32_t sprcpt_data_1[0x100], sprcpt_data_2[0x40], sprcpt_data_3[6], sprcpt_data_4[4];
 
 static void sprcpt_init(void)
 {
@@ -682,13 +682,13 @@ WRITE16_HANDLER(sprcpt_flags_2_w)
 // XXX
 // write only: 4c0 4c1 500 501 502 503
 
-static UINT16 handle_io_r(const address_space *space, int offset)
+static uint16_t handle_io_r(const address_space *space, int offset)
 {
 	logerror("io_r %04x, %04x (%x)\n", offset*2, mainram[offset], cpu_get_pc(space->cpu));
 	return mainram[offset];
 }
 
-static void handle_io_w(const address_space *space, int offset, UINT16 data, UINT16 mem_mask)
+static void handle_io_w(const address_space *space, int offset, uint16_t data, uint16_t mem_mask)
 {
 	COMBINE_DATA(&mainram[offset]);
 	switch(offset) {
@@ -753,7 +753,7 @@ static WRITE16_HANDLER(w1x)
 }
 
 #ifdef UNUSED_FUNCTION
-static void r2_dt(UINT16 sc, UINT16 cc, UINT16 ent, UINT16 tm, UINT16 x, UINT16 y)
+static void r2_dt(uint16_t sc, uint16_t cc, uint16_t ent, uint16_t tm, uint16_t x, uint16_t y)
 {
 	int bank = mainram[0x704/2];
 
@@ -804,7 +804,7 @@ static void r2_dt(UINT16 sc, UINT16 cc, UINT16 ent, UINT16 tm, UINT16 x, UINT16 
 	//  cpu_setbank(2, memory_region(machine, "user1")+0x20000*bank);
 }
 
-static void r2_6f6c(UINT16 cc, UINT16 v1, UINT16 v2)
+static void r2_6f6c(uint16_t cc, uint16_t v1, uint16_t v2)
 {
 //  int bank = 0;
 	logerror("6f6c: 9800:%04x  %04x %04x\n",
@@ -858,7 +858,7 @@ ADDRESS_MAP_END
 /* new zero team uses the copd3 protection... and uploads a 0x400 byte table, probably the mcu code, encrypted */
 
 
-static UINT16 mcu_prog[0x400];
+static uint16_t mcu_prog[0x400];
 static int mcu_prog_offs = 0;
 
 static WRITE16_HANDLER( mcu_prog_w )
@@ -2151,7 +2151,7 @@ ROM_END
 static DRIVER_INIT (raiden2)
 {
 	/* wrong , there must be some banking this just stops it crashing */
-	UINT8 *RAM = memory_region(machine, "user1");
+	uint8_t *RAM = memory_region(machine, "user1");
 
 	memory_set_bankptr(machine, "bank1",&RAM[0x100000]);
 	memory_set_bankptr(machine, "bank2",&RAM[0x040000]);
@@ -2162,7 +2162,7 @@ static DRIVER_INIT (raiden2)
 static DRIVER_INIT (xsedae)
 {
 	/* wrong , there must be some banking this just stops it crashing */
-	UINT8 *RAM = memory_region(machine, "user1");
+	uint8_t *RAM = memory_region(machine, "user1");
 	memory_set_bankptr(machine, "bank1",&RAM[0x100000]);
 	memory_set_bankptr(machine, "bank2",&RAM[0x040000]);
 }
@@ -2373,7 +2373,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT(rdx_v33)
 {
-	UINT8 *prg = memory_region(machine, "maincpu");
+	uint8_t *prg = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1",&prg[0x020000]);
 	memory_set_bankptr(machine, "bank2",&prg[0x030000]);
 	memory_set_bankptr(machine, "bank3",&prg[0x040000]);

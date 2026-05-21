@@ -415,8 +415,8 @@ static DRIVER_INIT( shootout )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	int length = memory_region_length(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, length - 0x8000);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, length - 0x8000);
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
 	memory_set_decrypted_region(space, 0x8000, 0xffff, decrypt);

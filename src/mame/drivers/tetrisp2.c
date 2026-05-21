@@ -40,12 +40,12 @@ Notes:
 #include "../lh/rocknms.lh"
 #include "includes/tetrisp2.h"
 
-UINT16 tetrisp2_systemregs[0x10];
-static UINT16 rocknms_sub_systemregs[0x10];
+uint16_t tetrisp2_systemregs[0x10];
+static uint16_t rocknms_sub_systemregs[0x10];
 
-static UINT16 rockn_protectdata;
-static UINT16 rockn_adpcmbank;
-static UINT16 rockn_soundvolume;
+static uint16_t rockn_protectdata;
+static uint16_t rockn_adpcmbank;
+static uint16_t rockn_soundvolume;
 
 static emu_timer *rockn_timer_l4;
 static emu_timer *rockn_timer_sub_l4;
@@ -111,7 +111,7 @@ static READ16_HANDLER( rockn_adpcmbank_r )
 
 static WRITE16_HANDLER( rockn_adpcmbank_w )
 {
-	UINT8 *SNDROM = memory_region(space->machine, "ymz");
+	uint8_t *SNDROM = memory_region(space->machine, "ymz");
 	int bank;
 
 	rockn_adpcmbank = data;
@@ -128,7 +128,7 @@ static WRITE16_HANDLER( rockn_adpcmbank_w )
 
 static WRITE16_HANDLER( rockn2_adpcmbank_w )
 {
-	UINT8 *SNDROM = memory_region(space->machine, "ymz");
+	uint8_t *SNDROM = memory_region(space->machine, "ymz");
 	int bank;
 
 	char banktable[9][3]=
@@ -176,7 +176,7 @@ static WRITE16_HANDLER( nndmseal_sound_bank_w )
 
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT8 *rom = memory_region(space->machine, "okisource");
+		uint8_t *rom = memory_region(space->machine, "okisource");
 
 		if (data & 0x04)
 		{
@@ -221,7 +221,7 @@ static READ16_HANDLER( tetrisp2_ip_1_word_r )
 
 ***************************************************************************/
 
-static UINT16 *tetrisp2_nvram;
+static uint16_t *tetrisp2_nvram;
 static size_t tetrisp2_nvram_size;
 
 static NVRAM_HANDLER( tetrisp2 )
@@ -267,8 +267,8 @@ static READ16_HANDLER( rockn_nvram_r )
 
 ***************************************************************************/
 
-static UINT16 rocknms_main2sub;
-static UINT16 rocknms_sub2main;
+static uint16_t rocknms_main2sub;
+static uint16_t rocknms_sub2main;
 
 static READ16_HANDLER( rocknms_main2sub_r )
 {

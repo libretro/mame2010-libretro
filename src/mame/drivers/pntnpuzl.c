@@ -136,7 +136,7 @@ static const eeprom_interface eeprom_intf =
 	"*10011xxxx"	/* unlock command */
 };
 
-static UINT16 pntnpuzl_eeprom;
+static uint16_t pntnpuzl_eeprom;
 
 static READ16_DEVICE_HANDLER( pntnpuzl_eeprom_r )
 {
@@ -160,12 +160,12 @@ static WRITE16_DEVICE_HANDLER( pntnpuzl_eeprom_w )
 
 
 
-static UINT16* pntnpuzl_3a0000ram;
-static UINT16* pntnpuzl_bank;
+static uint16_t* pntnpuzl_3a0000ram;
+static uint16_t* pntnpuzl_bank;
 /* vid */
 static VIDEO_START( pntnpuzl )
 {
-	pntnpuzl_3a0000ram=auto_alloc_array(machine, UINT16, 0x100000/2);
+	pntnpuzl_3a0000ram=auto_alloc_array(machine, uint16_t, 0x100000/2);
 }
 
 static VIDEO_UPDATE( pntnpuzl )
@@ -303,7 +303,7 @@ write                                     read
 01 53 45 32 0d                       ---> 80 0c
 01 03 46 31 38 0d                    ---> 80 0c
 */
-static UINT16 pntpzl_200000, serial, serial_out,read_count;
+static uint16_t pntpzl_200000, serial, serial_out,read_count;
 
 static WRITE16_HANDLER( pntnpuzl_200000_w )
 {
@@ -466,7 +466,7 @@ ROM_END
 
 static DRIVER_INIT(pip)
 {
-//  UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 //  rom[0x2696/2] = 0x4e71;
 //  rom[0x26a0/2] = 0x4e71;
 }

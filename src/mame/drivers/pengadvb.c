@@ -25,9 +25,9 @@ NOTE! switches 1, 3 & 5 must be ON or the game will not boot.
 #include "sound/ay8910.h"
 #include "machine/i8255a.h"
 
-static UINT8 *main_mem = NULL;
-static UINT8 mem_map = 0;
-static UINT8 mem_banks[4];
+static uint8_t *main_mem = NULL;
+static uint8_t mem_map = 0;
+static uint8_t mem_banks[4];
 
 static void mem_map_banks(running_machine *machine)
 {
@@ -287,9 +287,9 @@ MACHINE_DRIVER_END
 
 static void pengadvb_decrypt(running_machine *machine, const char* region)
 {
-	UINT8 *mem = memory_region(machine, region);
+	uint8_t *mem = memory_region(machine, region);
 	int memsize = memory_region_length(machine, region);
-	UINT8 *buf;
+	uint8_t *buf;
 	int i;
 
 	// data lines swap
@@ -299,7 +299,7 @@ static void pengadvb_decrypt(running_machine *machine, const char* region)
 	}
 
 	// address line swap
-	buf = auto_alloc_array(machine, UINT8, memsize);
+	buf = auto_alloc_array(machine, uint8_t, memsize);
 	memcpy(buf, mem, memsize);
 	for ( i = 0; i < memsize; i++ )
 	{
@@ -314,7 +314,7 @@ static DRIVER_INIT(pengadvb)
 	pengadvb_decrypt(machine, "maincpu");
 	pengadvb_decrypt(machine, "game");
 
-	main_mem = auto_alloc_array(machine, UINT8, 0x4000);
+	main_mem = auto_alloc_array(machine, uint8_t, 0x4000);
 }
 
 ROM_START( pengadvb )

@@ -53,20 +53,20 @@ public:
 	sbowling_state(running_machine &machine) { }
 
 	int bgmap;
-	UINT8 *videoram;
+	uint8_t *videoram;
 
 	int sbw_system;
 	tilemap_t *sb_tilemap;
 	bitmap_t *tmpbitmap;
-	UINT32 color_prom_address;
-	UINT8 pix_sh;
-	UINT8 pix[2];
+	uint32_t color_prom_address;
+	uint8_t pix_sh;
+	uint8_t pix[2];
 };
 
 static TILE_GET_INFO( get_sb_tile_info )
 {
 	sbowling_state *state = (sbowling_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 	int tileno = rom[tile_index + state->bgmap * 1024];
 
 	SET_TILE_INFO(0, tileno, 0, 0);
@@ -140,7 +140,7 @@ static WRITE8_HANDLER( pix_data_w )
 static READ8_HANDLER( pix_data_r )
 {
 	sbowling_state *state = (sbowling_state *)space->machine->driver_data;
-	UINT32 p1, p0;
+	uint32_t p1, p0;
 	int res;
 	int sh = state->pix_sh & 7;
 

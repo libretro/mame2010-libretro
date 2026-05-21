@@ -35,19 +35,19 @@ public:
 	nightgal_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    blit_buffer;
+	uint8_t *    blit_buffer;
 
 	/* video-related */
-	UINT8 blit_raw_data[3];
-	UINT8 true_blit[7];
-	UINT8 pen_data[0x10];
-	UINT8 pen_raw_data[0x10];
+	uint8_t blit_raw_data[3];
+	uint8_t true_blit[7];
+	uint8_t pen_data[0x10];
+	uint8_t pen_raw_data[0x10];
 
 	/* misc */
-	UINT8 nsc_latch, z80_latch;
-	UINT8 mux_data;
+	uint8_t nsc_latch, z80_latch;
+	uint8_t mux_data;
 
-	UINT8 *comms_ram;
+	uint8_t *comms_ram;
 
 	/* devices */
 	running_device *maincpu;
@@ -64,7 +64,7 @@ static READ8_HANDLER( blitter_status_r )
 static VIDEO_START( nightgal )
 {
 	nightgal_state *state = (nightgal_state *)machine->driver_data;
-	state->blit_buffer = auto_alloc_array(machine, UINT8, 256*256);
+	state->blit_buffer = auto_alloc_array(machine, uint8_t, 256*256);
 
 	state_save_register_global_pointer(machine, state->blit_buffer, 256*256);
 }
@@ -76,12 +76,12 @@ static VIDEO_UPDATE( nightgal )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT8 *src = &state->blit_buffer[y * 512 / 2 + cliprect->min_x];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
+		uint8_t *src = &state->blit_buffer[y * 512 / 2 + cliprect->min_x];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			UINT32 srcpix = *src++;
+			uint32_t srcpix = *src++;
 			*dst++ = screen->machine->pens[srcpix & 0xf];
 			*dst++ = screen->machine->pens[(srcpix >> 4) & 0xf];
 		}
@@ -91,9 +91,9 @@ static VIDEO_UPDATE( nightgal )
 	return 0;
 }
 
-static UINT8 nightgal_gfx_nibble( running_machine *machine, int niboffset )
+static uint8_t nightgal_gfx_nibble( running_machine *machine, int niboffset )
 {
-	UINT8 *blit_rom = memory_region(machine,"gfx1");
+	uint8_t *blit_rom = memory_region(machine,"gfx1");
 
 	if (niboffset & 1)
 	{
@@ -105,7 +105,7 @@ static UINT8 nightgal_gfx_nibble( running_machine *machine, int niboffset )
 	}
 }
 
-static void plot_nightgal_gfx_pixel( running_machine *machine, UINT8 pix, int x, int y )
+static void plot_nightgal_gfx_pixel( running_machine *machine, uint8_t pix, int x, int y )
 {
 	nightgal_state *state = (nightgal_state *)machine->driver_data;
 	if (y >= 512) return;
@@ -154,9 +154,9 @@ static WRITE8_HANDLER( nsc_true_blitter_w )
 				{
 					int drawx = (x + xcount) & 0xff;
 					int drawy = (y + ycount) & 0xff;
-					UINT8 dat = nightgal_gfx_nibble(space->machine, src + count);
-					UINT8 cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
-					UINT8 cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
+					uint8_t dat = nightgal_gfx_nibble(space->machine, src + count);
+					uint8_t cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
+					uint8_t cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
 
 					dat = cur_pen_lo | (cur_pen_hi << 4);
 
@@ -210,9 +210,9 @@ static WRITE8_HANDLER( sexygal_nsc_true_blitter_w )
 				{
 					int drawx = (x + xcount) & 0xff;
 					int drawy = (y + ycount) & 0xff;
-					UINT8 dat = nightgal_gfx_nibble(space->machine, src + count);
-					UINT8 cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
-					UINT8 cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
+					uint8_t dat = nightgal_gfx_nibble(space->machine, src + count);
+					uint8_t cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
+					uint8_t cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
 
 					dat = cur_pen_lo | cur_pen_hi << 4;
 
@@ -418,7 +418,7 @@ static WRITE8_HANDLER( mux_w )
 static READ8_DEVICE_HANDLER( input_1p_r )
 {
 	nightgal_state *state = (nightgal_state *)device->machine->driver_data;
-	UINT8 cr_clear = input_port_read(device->machine, "CR_CLEAR");
+	uint8_t cr_clear = input_port_read(device->machine, "CR_CLEAR");
 
 	switch (state->mux_data)
 	{
@@ -438,7 +438,7 @@ static READ8_DEVICE_HANDLER( input_1p_r )
 static READ8_DEVICE_HANDLER( input_2p_r )
 {
 	nightgal_state *state = (nightgal_state *)device->machine->driver_data;
-	UINT8 coin_port = input_port_read(device->machine, "COINS");
+	uint8_t coin_port = input_port_read(device->machine, "COINS");
 
 	switch (state->mux_data)
 	{
@@ -1228,7 +1228,7 @@ ROM_END
 
 static DRIVER_INIT( royalqn )
 {
-	UINT8 *ROM = memory_region(machine, "sub");
+	uint8_t *ROM = memory_region(machine, "sub");
 
 	/* patch open bus / protection */
 	ROM[0xc27e] = 0x02;
@@ -1237,7 +1237,7 @@ static DRIVER_INIT( royalqn )
 
 static DRIVER_INIT( ngalsumr )
 {
-	UINT8 *ROM = memory_region(machine, "sub");
+	uint8_t *ROM = memory_region(machine, "sub");
 
 	/* patch protection */
 	ROM[0xd6ce] = 0x02;

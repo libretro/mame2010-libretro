@@ -65,14 +65,14 @@ Technology = NMOS
 #include "sound/ay8910.h"
 
 static tilemap_t *bg_tilemap;
-static UINT8 *trvmadns_gfxram;
-static UINT8 *trvmadns_tileram;
+static uint8_t *trvmadns_gfxram;
+static uint8_t *trvmadns_tileram;
 static int old_data;
 
 static WRITE8_HANDLER( trvmadns_banking_w )
 {
 
-	UINT8 *rom;
+	uint8_t *rom;
 	int address = 0;
 
 	if((data & 0xf0) == 0xa0)

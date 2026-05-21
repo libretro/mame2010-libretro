@@ -65,7 +65,7 @@ static const char * const bankname[] = { "bank2", "bank3", "bank4", "bank5" };
 static const struct
 {
 	void (*notifier)(running_machine *, int);
-	UINT32 offset;
+	uint32_t offset;
 } rambank_modify_notifiers[12] =
 {
 	{ taitol_chardef14_m, 0x0000 },	// 14
@@ -88,9 +88,9 @@ static const struct
 static void palette_notifier(running_machine *machine, int addr)
 {
 	taitol_state *state = (taitol_state *)machine->driver_data;
-	UINT8 *p = state->palette_ram + (addr & ~1);
-	UINT8 byte0 = *p++;
-	UINT8 byte1 = *p;
+	uint8_t *p = state->palette_ram + (addr & ~1);
+	uint8_t byte0 = *p++;
+	uint8_t byte1 = *p;
 
 	//  addr &= 0x1ff;
 
@@ -105,7 +105,7 @@ static void palette_notifier(running_machine *machine, int addr)
 	}
 }
 
-static const UINT8 puzznic_mcu_reply[] = { 0x50, 0x1f, 0xb6, 0xba, 0x06, 0x03, 0x47, 0x05, 0x00 };
+static const uint8_t puzznic_mcu_reply[] = { 0x50, 0x1f, 0xb6, 0xba, 0x06, 0x03, 0x47, 0x05, 0x00 };
 
 static void state_register( running_machine *machine )
 {
@@ -146,9 +146,9 @@ static MACHINE_START( taito_l )
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");
 
-	state->rambanks = auto_alloc_array(machine, UINT8, 0x1000 * 12);
-	state->palette_ram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->empty_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	state->rambanks = auto_alloc_array(machine, uint8_t, 0x1000 * 12);
+	state->palette_ram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->empty_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	state_save_register_global_pointer(machine, state->rambanks, 0x1000 * 12);
 	state_save_register_global_pointer(machine, state->palette_ram, 0x1000);
@@ -456,7 +456,7 @@ static READ8_HANDLER( rambankswitch_r )
 	return state->cur_rambank[offset];
 }
 
-static void bank_w(const address_space *space, offs_t offset, UINT8 data, int banknum )
+static void bank_w(const address_space *space, offs_t offset, uint8_t data, int banknum )
 {
 	taitol_state *state = (taitol_state *)space->machine->driver_data;
 
@@ -775,7 +775,7 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER( sound_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "audiocpu");
+	uint8_t *RAM = memory_region(space->machine, "audiocpu");
 	int banknum = (data - 1) & 3;
 
 	memory_set_bankptr (space->machine, "bank7", &RAM [0x10000 + (banknum * 0x4000)]);
@@ -1953,7 +1953,7 @@ static WRITE8_DEVICE_HANDLER( portA_w )
 	if (state->cur_bank != (data & 0x03))
 	{
 		int bankaddress;
-		UINT8 *RAM = memory_region(device->machine, "audiocpu");
+		uint8_t *RAM = memory_region(device->machine, "audiocpu");
 
 		state->cur_bank = data & 0x03;
 		bankaddress = 0x10000 + (state->cur_bank - 1) * 0x4000;
@@ -2895,8 +2895,8 @@ ROM_END
 // bits 7..0 => bits 0..7
 static DRIVER_INIT( plottinga )
 {
-	UINT8 tab[256];
-	UINT8 *p;
+	uint8_t tab[256];
+	uint8_t *p;
 	int i;
 
 	for (i = 0; i < 256; i++)
@@ -2917,7 +2917,7 @@ static DRIVER_INIT( plottinga )
 
 static DRIVER_INIT( evilston )
 {
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 	ROM[0x72] = 0x45;	/* reti -> retn  ('dead' loop @ $1104 )*/
 	memory_install_write8_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xa7fe, 0xa7fe, 0, 0, evilston_snd_w);
 }

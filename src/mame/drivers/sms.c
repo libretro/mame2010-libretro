@@ -235,8 +235,8 @@ static WRITE8_HANDLER(bankswitch_w)
  *
  *************************************/
 
-static UINT8 communication_port[4];
-static UINT8 communication_port_status = 0;
+static uint8_t communication_port[4];
+static uint8_t communication_port_status = 0;
 
 static READ8_HANDLER(link_r)
 {
@@ -417,7 +417,7 @@ static const ppi8255_interface ppi8255_intf[2] =
 
 static bitmap_t *sms_bitmap;
 
-static UINT8 vid_regs[7];
+static uint8_t vid_regs[7];
 
 static WRITE8_HANDLER(video_w)
 {

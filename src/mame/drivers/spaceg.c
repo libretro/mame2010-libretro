@@ -180,10 +180,10 @@ public:
 
 	spaceg_state(running_machine &machine) { }
 
-	UINT8 *  videoram;
-	UINT8 *  unkram;
-	UINT8 *  io9400;
-	UINT8 *  io9401;
+	uint8_t *  videoram;
+	uint8_t *  unkram;
+	uint8_t *  io9400;
+	uint8_t *  io9401;
 };
 
 /*************************************
@@ -295,10 +295,10 @@ static VIDEO_UPDATE( spaceg )
 	for (offs = 0; offs < 0x2000; offs++)
 	{
 		int i;
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
 		int y = offs & 0xff;
-		UINT8 x = ((offs >> 8) << 3) - ((*state->io9400 & 0xe0) >> 5);
+		uint8_t x = ((offs >> 8) << 3) - ((*state->io9400 & 0xe0) >> 5);
 
 		for (i = 0; i < 8; i++)
 		{

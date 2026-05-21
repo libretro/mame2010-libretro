@@ -300,7 +300,7 @@ Notes:
 #include "cpu/arm7/arm7core.h"
 #include "includes/pgm.h"
 
-UINT16 *pgm_mainram;
+uint16_t *pgm_mainram;
 static void IGS022_reset(running_machine* machine);
 
 static WRITE16_HANDLER( pgm_videoram_w )
@@ -383,7 +383,7 @@ static WRITE16_HANDLER( arm7_latch_68k_w )
 static READ16_HANDLER( arm7_ram_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 *share16 = (UINT16 *)state->arm7_shareram;
+	uint16_t *share16 = (uint16_t *)state->arm7_shareram;
 
 	if (PGMARM7LOGERROR)
 		logerror("M68K: ARM7 Shared RAM Read: %04x = %04x (%08x) (%06x)\n", BYTE_XOR_LE(offset), share16[BYTE_XOR_LE(offset)], mem_mask, cpu_get_pc(space->cpu));
@@ -393,7 +393,7 @@ static READ16_HANDLER( arm7_ram_r )
 static WRITE16_HANDLER( arm7_ram_w )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 *share16 = (UINT16 *)state->arm7_shareram;
+	uint16_t *share16 = (uint16_t *)state->arm7_shareram;
 
 	if (PGMARM7LOGERROR)
 		logerror("M68K: ARM7 Shared RAM Write: %04x = %04x (%04x) (%06x)\n", BYTE_XOR_LE(offset), data, mem_mask, cpu_get_pc(space->cpu));
@@ -483,7 +483,7 @@ static const ics2115_interface pgm_ics2115_interface =
 
 /* Calendar Emulation */
 
-static UINT8 bcd( UINT8 data )
+static uint8_t bcd( uint8_t data )
 {
 	return ((data / 10) << 4) | (data % 10);
 }
@@ -491,7 +491,7 @@ static UINT8 bcd( UINT8 data )
 static READ16_HANDLER( pgm_calendar_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT8 calr = (state->cal_val & state->cal_mask) ? 1 : 0;
+	uint8_t calr = (state->cal_val & state->cal_mask) ? 1 : 0;
 
 	state->cal_mask <<= 1;
 	return calr;
@@ -817,7 +817,7 @@ static WRITE16_HANDLER( kovsh_68k_protlatch_w )
 static READ16_HANDLER( kovsh_arm7_ram_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 *share16 = (UINT16 *)state->arm7_shareram;
+	uint16_t *share16 = (uint16_t *)state->arm7_shareram;
 
 	if (PGMARM7LOGERROR)
 		logerror("M68K: ARM7 Shared RAM Read: %04x = %04x (%08x) (%06x)\n", BYTE_XOR_LE(offset), share16[BYTE_XOR_LE(offset)], mem_mask, cpu_get_pc(space->cpu));
@@ -827,7 +827,7 @@ static READ16_HANDLER( kovsh_arm7_ram_r )
 static WRITE16_HANDLER( kovsh_arm7_ram_w )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 *share16 = (UINT16 *)state->arm7_shareram;
+	uint16_t *share16 = (uint16_t *)state->arm7_shareram;
 
 	if (PGMARM7LOGERROR)
 		logerror("M68K: ARM7 Shared RAM Write: %04x = %04x (%04x) (%06x)\n", BYTE_XOR_LE(offset), data, mem_mask, cpu_get_pc(space->cpu));
@@ -914,7 +914,7 @@ static READ16_HANDLER( svg_m68k_ram_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
 	int ram_sel = (state->svg_ram_sel & 1) ^ 1;
-	UINT16 *share16 = (UINT16 *)(state->svg_shareram[ram_sel & 1]);
+	uint16_t *share16 = (uint16_t *)(state->svg_shareram[ram_sel & 1]);
 
 	return share16[BYTE_XOR_LE(offset)];
 }
@@ -923,7 +923,7 @@ static WRITE16_HANDLER( svg_m68k_ram_w )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
 	int ram_sel = (state->svg_ram_sel & 1) ^ 1;
-	UINT16 *share16 = (UINT16 *)(state->svg_shareram[ram_sel & 1]);
+	uint16_t *share16 = (uint16_t *)(state->svg_shareram[ram_sel & 1]);
 
 	COMBINE_DATA(&share16[BYTE_XOR_LE(offset)]);
 }
@@ -3833,14 +3833,14 @@ ROM_END
 
 static void expand_32x32x5bpp(running_machine *machine)
 {
-	UINT8 *src = memory_region( machine, "tiles" );
+	uint8_t *src = memory_region( machine, "tiles" );
 	gfx_layout glcopy;
 	glcopy = *(&pgm32_charlayout);
 
 	size_t  srcsize = memory_region_length( machine, "tiles" );
 	int cnt, pix;
 	size_t gfx2_size_needed = ((srcsize/5)*8)+0x1000;
-	UINT8 *dst = auto_alloc_array(machine, UINT8, gfx2_size_needed);
+	uint8_t *dst = auto_alloc_array(machine, uint8_t, gfx2_size_needed);
 
 
 	for (cnt = 0; cnt < srcsize/5 ; cnt ++)
@@ -3865,7 +3865,7 @@ static void expand_32x32x5bpp(running_machine *machine)
 
 	glcopy.total = (gfx2_size_needed / glcopy.charincrement)*8;
 
-	machine->gfx[1] = gfx_element_alloc(machine, &glcopy, (UINT8 *)dst, 32, 0x400);
+	machine->gfx[1] = gfx_element_alloc(machine, &glcopy, (uint8_t *)dst, 32, 0x400);
 
 
 }
@@ -3876,7 +3876,7 @@ static void expand_32x32x5bpp(running_machine *machine)
 static void expand_colourdata( running_machine *machine )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT8 *src = memory_region( machine, "sprcol" );
+	uint8_t *src = memory_region( machine, "sprcol" );
 	size_t srcsize = memory_region_length( machine, "sprcol" );
 	int cnt;
 	size_t needed = srcsize / 2 * 3;
@@ -3887,11 +3887,11 @@ static void expand_colourdata( running_machine *machine )
 	while (state->sprite_a_region_size < needed)
 		state->sprite_a_region_size <<= 1;
 
-	state->sprite_a_region = auto_alloc_array(machine, UINT8, state->sprite_a_region_size);
+	state->sprite_a_region = auto_alloc_array(machine, uint8_t, state->sprite_a_region_size);
 
 	for (cnt = 0 ; cnt < srcsize / 2 ; cnt++)
 	{
-		UINT16 colpack;
+		uint16_t colpack;
 
 		colpack = ((src[cnt * 2]) | (src[cnt * 2 + 1] << 8));
 		state->sprite_a_region[cnt * 3 + 0] = (colpack >> 0 ) & 0x1f;
@@ -3903,7 +3903,7 @@ static void expand_colourdata( running_machine *machine )
 static void pgm_basic_init( running_machine *machine )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &ROM[0x100000]);
 
 	expand_32x32x5bpp(machine);
@@ -3965,7 +3965,7 @@ static void drgwld2_common_init(running_machine *machine)
 
 static DRIVER_INIT( drgw2 )
 {	/* incomplete? */
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 	drgwld2_common_init(machine);
 	/* These ROM patches are not hacks, the protection device
        overlays the normal ROM code, this has been confirmed on a real PCB
@@ -3977,7 +3977,7 @@ static DRIVER_INIT( drgw2 )
 
 static DRIVER_INIT( drgw2c )
 {
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 	drgwld2_common_init(machine);
 	/* These ROM patches are not hacks, the protection device
        overlays the normal ROM code, this has been confirmed on a real PCB
@@ -3989,7 +3989,7 @@ static DRIVER_INIT( drgw2c )
 
 static DRIVER_INIT( drgw2j )
 {
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 	drgwld2_common_init(machine);
 	/* These ROM patches are not hacks, the protection device
        overlays the normal ROM code, this has been confirmed on a real PCB
@@ -4133,8 +4133,8 @@ static void svg_basic_init(running_machine *machine)
 	pgm_state *state = (pgm_state *)machine->driver_data;
 
 	pgm_basic_init(machine);
-	state->svg_shareram[0] = auto_alloc_array(machine, UINT32, 0x10000 / 4);
-	state->svg_shareram[1] = auto_alloc_array(machine, UINT32, 0x10000 / 4);
+	state->svg_shareram[0] = auto_alloc_array(machine, uint32_t, 0x10000 / 4);
+	state->svg_shareram[1] = auto_alloc_array(machine, uint32_t, 0x10000 / 4);
 	state->svg_ram_sel = 0;
 
 	state_save_register_global_pointer(machine, state->svg_shareram[0], 0x10000 / 4);
@@ -4181,10 +4181,10 @@ static DRIVER_INIT( dmnfrnt )
 */
 
 
-static void IGS022_do_dma(running_machine* machine, UINT16 src, UINT16 dst, UINT16 size, UINT16 mode)
+static void IGS022_do_dma(running_machine* machine, uint16_t src, uint16_t dst, uint16_t size, uint16_t mode)
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 param;
+	uint16_t param;
 	/*
     P_SRC =0x300290 (offset from prot rom base)
     P_DST =0x300292 (words from 0x300000)
@@ -4255,18 +4255,18 @@ static void IGS022_do_dma(running_machine* machine, UINT16 src, UINT16 dst, UINT
         };
         */
 		int x;
-		UINT16 *PROTROM = (UINT16*)memory_region(machine, "igs022data");
+		uint16_t *PROTROM = (uint16_t*)memory_region(machine, "igs022data");
 
 		for (x = 0; x < size; x++)
 		{
-			//UINT16 *RAMDUMP = (UINT16*)memory_region(space->machine, "user2");
-			//UINT16 dat = RAMDUMP[dst + x];
+			//uint16_t *RAMDUMP = (uint16_t*)memory_region(space->machine, "user2");
+			//uint16_t dat = RAMDUMP[dst + x];
 
-			UINT16 dat2 = PROTROM[src + x];
+			uint16_t dat2 = PROTROM[src + x];
 
-			UINT8 extraoffset = param&0xfe; // the lowest bit changed the table addressing in tests, see 'rawDataOdd' table instead.. it's still related to the main one, not identical
-			UINT8* dectable = (UINT8*)memory_region(machine, "igs022data");//rawDataEven; // the basic decryption table is at the start of the mcu data rom! at least in killbld
-			UINT16 extraxor = ((dectable[((x*2)+0+extraoffset)&0xff]) << 8) | (dectable[((x*2)+1+extraoffset)&0xff] << 0);
+			uint8_t extraoffset = param&0xfe; // the lowest bit changed the table addressing in tests, see 'rawDataOdd' table instead.. it's still related to the main one, not identical
+			uint8_t* dectable = (uint8_t*)memory_region(machine, "igs022data");//rawDataEven; // the basic decryption table is at the start of the mcu data rom! at least in killbld
+			uint16_t extraxor = ((dectable[((x*2)+0+extraoffset)&0xff]) << 8) | (dectable[((x*2)+1+extraoffset)&0xff] << 0);
 
 			dat2 = ((dat2 & 0x00ff)<<8) | ((dat2 & 0xff00)>>8);
 
@@ -4296,10 +4296,10 @@ static void IGS022_do_dma(running_machine* machine, UINT16 src, UINT16 dst, UINT
 	{
 		/* mode 5 seems to be a straight copy */
 		int x;
-		UINT16 *PROTROM = (UINT16*)memory_region(machine, "igs022data");
+		uint16_t *PROTROM = (uint16_t*)memory_region(machine, "igs022data");
 		for (x = 0; x < size; x++)
 		{
-			UINT16 dat = PROTROM[src + x];
+			uint16_t dat = PROTROM[src + x];
 
 
 			state->sharedprotram[dst + x] = dat;
@@ -4309,10 +4309,10 @@ static void IGS022_do_dma(running_machine* machine, UINT16 src, UINT16 dst, UINT
 	{
 		/* mode 6 seems to swap bytes and nibbles */
 		int x;
-		UINT16 *PROTROM = (UINT16*)memory_region(machine, "igs022data");
+		uint16_t *PROTROM = (uint16_t*)memory_region(machine, "igs022data");
 		for (x = 0; x < size; x++)
 		{
-			UINT16 dat = PROTROM[src + x];
+			uint16_t dat = PROTROM[src + x];
 
 			dat = ((dat & 0xf000) >> 12)|
 				  ((dat & 0x0f00) >> 4)|
@@ -4342,19 +4342,19 @@ static void IGS022_do_dma(running_machine* machine, UINT16 src, UINT16 dst, UINT
 static void IGS022_reset(running_machine* machine)
 {
 	int i;
-	UINT16 *PROTROM = (UINT16*)memory_region(machine, "igs022data");
+	uint16_t *PROTROM = (uint16_t*)memory_region(machine, "igs022data");
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 tmp;
+	uint16_t tmp;
 
 	// fill ram with A5 patern
 	for (i = 0; i < 0x4000/2; i++)
 		state->sharedprotram[i] = 0xa55a;
 
 	// the auto-dma
-	UINT16 src = PROTROM[0x100 / 2];
-	UINT32 dst = PROTROM[0x102 / 2];
-	UINT16 size = PROTROM[0x104/ 2];
-	UINT16 mode = PROTROM[0x106 / 2];
+	uint16_t src = PROTROM[0x100 / 2];
+	uint32_t dst = PROTROM[0x102 / 2];
+	uint16_t size = PROTROM[0x104/ 2];
+	uint16_t mode = PROTROM[0x106 / 2];
 
 	src = ((src & 0xff00) >> 8) | ((src & 0x00ff) << 8);
 	dst = ((dst & 0xff00) >> 8) | ((dst & 0x00ff) << 8);
@@ -4377,12 +4377,12 @@ static void IGS022_reset(running_machine* machine)
 static void IGS022_handle_command(running_machine* machine)
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 cmd = state->sharedprotram[0x200/2];
+	uint16_t cmd = state->sharedprotram[0x200/2];
 	//mame_printf_debug("command %04x\n", cmd);
 	if (cmd == 0x6d)	//Store values to asic ram
 	{
-		UINT32 p1 = (state->sharedprotram[0x298/2] << 16) | state->sharedprotram[0x29a/2];
-		UINT32 p2 = (state->sharedprotram[0x29c/2] << 16) | state->sharedprotram[0x29e/2];
+		uint32_t p1 = (state->sharedprotram[0x298/2] << 16) | state->sharedprotram[0x29a/2];
+		uint32_t p2 = (state->sharedprotram[0x29c/2] << 16) | state->sharedprotram[0x29e/2];
 
 		if ((p2 & 0xffff) == 0x9)	//Set value
 		{
@@ -4412,10 +4412,10 @@ static void IGS022_handle_command(running_machine* machine)
 	}
 	if(cmd == 0x4f)	//memcpy with encryption / scrambling
 	{
-		UINT16 src = state->sharedprotram[0x290 / 2] >> 1; // ?
-		UINT32 dst = state->sharedprotram[0x292 / 2];
-		UINT16 size = state->sharedprotram[0x294 / 2];
-		UINT16 mode = state->sharedprotram[0x296 / 2];
+		uint16_t src = state->sharedprotram[0x290 / 2] >> 1; // ?
+		uint32_t dst = state->sharedprotram[0x292 / 2];
+		uint16_t size = state->sharedprotram[0x294 / 2];
+		uint16_t mode = state->sharedprotram[0x296 / 2];
 
 		IGS022_do_dma(machine, src,dst,size,mode);
 	}
@@ -4456,7 +4456,7 @@ static READ16_HANDLER( killbld_igs025_prot_r )
 {
 //  mame_printf_debug("killbld prot w\n");
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 res ;
+	uint16_t res ;
 
 	offset &= 0xf;
 	res = 0;
@@ -4470,8 +4470,8 @@ static READ16_HANDLER( killbld_igs025_prot_r )
 		else if (state->kb_cmd == 5)
 		{
 
-			UINT8 kb_region_sequence[11] = {0x17, 0x14, 0x91, 0x89, 0x21, 0xD5, 0x7C, 0x65, 0x8F, 0x8E, 0xE1};
-			UINT8 ret;
+			uint8_t kb_region_sequence[11] = {0x17, 0x14, 0x91, 0x89, 0x21, 0xD5, 0x7C, 0x65, 0x8F, 0x8E, 0xE1};
+			uint8_t ret;
 
 			// this isn't properly understood.. should be some kind of bitswap / xor / shift..based on values written to 0x22/0x23 etc.?
 			// return hardcoded china sequence results for now, avoids rom patch
@@ -4482,7 +4482,7 @@ static READ16_HANDLER( killbld_igs025_prot_r )
 			}
 			else
 			{
-				UINT32 protvalue = 0x89911400 | input_port_read(space->machine, "Region");
+				uint32_t protvalue = 0x89911400 | input_port_read(space->machine, "Region");
 				ret = (protvalue >> (8 * (state->kb_ptr - 1))) & 0xff;
 			}
 
@@ -4601,7 +4601,7 @@ static int reg;
 static int ptr=0;
 
 #define DW3BITSWAP(s,d,bs,bd)  d=((d&(~(1<<bd)))|(((s>>bs)&1)<<bd))
-static UINT8 dw3_swap;
+static uint8_t dw3_swap;
 static WRITE16_HANDLER( drgw3_igs025_prot_w )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
@@ -4633,7 +4633,7 @@ static READ16_HANDLER( drgw3_igs025_prot_r )
 //  mame_printf_debug("killbld prot w\n");
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
 
-	UINT16 res ;
+	uint16_t res ;
 
 	offset&=0xf;
 	res=0;
@@ -4642,8 +4642,8 @@ static READ16_HANDLER( drgw3_igs025_prot_r )
 	{
 		if(state->kb_cmd==0)	//swap
 		{
-				UINT8 v1=(dw3_swap+1)&0x7F;
-				UINT8 v2=0;
+				uint8_t v1=(dw3_swap+1)&0x7F;
+				uint8_t v2=0;
 				DW3BITSWAP(v1,v2,7,0);
 				DW3BITSWAP(v1,v2,6,1);
 				DW3BITSWAP(v1,v2,5,2);
@@ -4662,7 +4662,7 @@ static READ16_HANDLER( drgw3_igs025_prot_r )
 		}
 		else if(state->kb_cmd==5)
 		{
-			UINT32 protvalue;
+			uint32_t protvalue;
 			protvalue = 0x60000|input_port_read(space->machine, "Region");
 			res=(protvalue>>(8*(ptr-1)))&0xff;
 
@@ -4683,7 +4683,7 @@ static DRIVER_INIT( drgw3 )
 
     {
         int x;
-        UINT16 *RAMDUMP = (UINT16*)memory_region(machine, "user2");
+        uint16_t *RAMDUMP = (uint16_t*)memory_region(machine, "user2");
         for (x=0;x<(0x4000/2);x++)
         {
             state->sharedprotram[x] = RAMDUMP[x];
@@ -4703,7 +4703,7 @@ static DRIVER_INIT( puzzli2 )
      an acts in a similar way to kov etc. */
 
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 
 	pgm_basic_init(machine);
 	kovsh_latch_init(machine);
@@ -4749,7 +4749,7 @@ static DRIVER_INIT( puzzli2 )
 static DRIVER_INIT( dw2001 )
 {
 	//pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 
 	pgm_basic_init(machine);
 	kovsh_latch_init(machine);
@@ -4767,11 +4767,11 @@ static DRIVER_INIT( dw2001 )
 
 }
 
-static UINT32 olds_prot_addr( UINT16 addr )
+static uint32_t olds_prot_addr( uint16_t addr )
 {
-	UINT32 mode = addr & 0xff;
-	UINT32 offset = addr >> 8;
-	UINT32 realaddr;
+	uint32_t mode = addr & 0xff;
+	uint32_t offset = addr >> 8;
+	uint32_t realaddr;
 
 	switch(mode)
 	{
@@ -4816,14 +4816,14 @@ static UINT32 olds_prot_addr( UINT16 addr )
 	return realaddr;
 }
 
-static UINT32 olds_read_reg( running_machine *machine, UINT16 addr )
+static uint32_t olds_read_reg( running_machine *machine, uint16_t addr )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT32 protaddr = (olds_prot_addr(addr) - 0x400000) / 2;
+	uint32_t protaddr = (olds_prot_addr(addr) - 0x400000) / 2;
 	return state->sharedprotram[protaddr] << 16 | state->sharedprotram[protaddr + 1];
 }
 
-static void olds_write_reg( running_machine *machine, UINT16 addr, UINT32 val )
+static void olds_write_reg( running_machine *machine, uint16_t addr, uint32_t val )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
 	state->sharedprotram[(olds_prot_addr(addr) - 0x400000) / 2]     = val >> 16;
@@ -4833,7 +4833,7 @@ static void olds_write_reg( running_machine *machine, UINT16 addr, UINT32 val )
 static MACHINE_RESET( olds )
 {
 	pgm_state *state = (pgm_state *)machine->driver_data;
-	UINT16 *mem16 = (UINT16 *)memory_region(machine, "user2");
+	uint16_t *mem16 = (uint16_t *)memory_region(machine, "user2");
 	int i;
 
 	MACHINE_RESET_CALL(pgm);
@@ -4855,7 +4855,7 @@ static MACHINE_RESET( olds )
 static READ16_HANDLER( olds_r )
 {
 	pgm_state *state = (pgm_state *)space->machine->driver_data;
-	UINT16 res = 0;
+	uint16_t res = 0;
 
 	if (offset == 1)
 	{
@@ -4867,7 +4867,7 @@ static READ16_HANDLER( olds_r )
 			res = state->olds_cmd3;
 		else if (state->kb_cmd == 5)
 		{
-			UINT32 protvalue = 0x900000 | input_port_read(space->machine, "Region"); // region from protection device.
+			uint32_t protvalue = 0x900000 | input_port_read(space->machine, "Region"); // region from protection device.
 			res = (protvalue >> (8 * (state->kb_ptr - 1))) & 0xff; // includes region 1 = taiwan , 2 = china, 3 = japan (title = orlegend special), 4 = korea, 5 = hongkong, 6 = world
 
 		}
@@ -4901,7 +4901,7 @@ static WRITE16_HANDLER( olds_w )
 		}
 		else if (state->kb_cmd == 3)
 		{
-			UINT16 cmd = state->sharedprotram[0x3026 / 2];
+			uint16_t cmd = state->sharedprotram[0x3026 / 2];
 			switch (cmd)
 			{
 				case 0x11:
@@ -4909,8 +4909,8 @@ static WRITE16_HANDLER( olds_w )
 						break;
 				case 0x64:
 					{
-						UINT16 cmd0 = state->sharedprotram[0x3082 / 2];
-						UINT16 val0 = state->sharedprotram[0x3050 / 2];	//CMD_FORMAT
+						uint16_t cmd0 = state->sharedprotram[0x3082 / 2];
+						uint16_t val0 = state->sharedprotram[0x3050 / 2];	//CMD_FORMAT
 						{
 							if ((cmd0 & 0xff) == 0x2)
 								olds_write_reg(space->machine, val0, olds_read_reg(space->machine, val0) + 0x10000);

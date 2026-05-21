@@ -243,7 +243,7 @@ static WRITE8_DEVICE_HANDLER( hyprolyb_msm_data_w )
 static READ8_DEVICE_HANDLER( hyprolyb_msm_vck_r )
 {
 	trackfld_state *state = (trackfld_state *)device->machine->driver_data;
-	UINT8 old = state->hyprolyb_vck_ready;
+	uint8_t old = state->hyprolyb_vck_ready;
 	state->hyprolyb_vck_ready = 0x00;
 	return old;
 }
@@ -1370,8 +1370,8 @@ static DRIVER_INIT( trackfld )
 static DRIVER_INIT( atlantol )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt;
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt;
 	int A;
 
 	/* "konami1" encrypted opcodes */
@@ -1399,7 +1399,7 @@ static DRIVER_INIT( atlantol )
 
 static DRIVER_INIT( mastkin )
 {
-	UINT8 *prom = memory_region(machine, "proms");
+	uint8_t *prom = memory_region(machine, "proms");
 	int i;
 
 	/* build a fake palette so the screen won't be all black */
@@ -1420,7 +1420,7 @@ static DRIVER_INIT( mastkin )
 
 static DRIVER_INIT( wizzquiz )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu") + 0xe000;
+	uint8_t *ROM = memory_region(machine, "maincpu") + 0xe000;
 	int i;
 
 	/* decrypt program rom */

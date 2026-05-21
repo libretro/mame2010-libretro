@@ -1431,13 +1431,13 @@ static void zaxxonj_decode(running_machine *machine, const char *cputag)
     (e.g. 0xc0 is XORed with H)
     therefore in the following tables we only keep track of A, B, C, D, E, F, G and H.
 */
-	static const UINT8 data_xortable[2][8] =
+	static const uint8_t data_xortable[2][8] =
 	{
 		{ 0x0a,0x0a,0x22,0x22,0xaa,0xaa,0x82,0x82 },	/* ...............0 */
 		{ 0xa0,0xaa,0x28,0x22,0xa0,0xaa,0x28,0x22 },	/* ...............1 */
 	};
 
-	static const UINT8 opcode_xortable[8][8] =
+	static const uint8_t opcode_xortable[8][8] =
 	{
 		{ 0x8a,0x8a,0x02,0x02,0x8a,0x8a,0x02,0x02 },	/* .......0...0...0 */
 		{ 0x80,0x80,0x08,0x08,0xa8,0xa8,0x20,0x20 },	/* .......0...0...1 */
@@ -1451,16 +1451,16 @@ static void zaxxonj_decode(running_machine *machine, const char *cputag)
 
 	int A;
 	const address_space *space = cputag_get_address_space(machine, cputag, ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, cputag);
+	uint8_t *rom = memory_region(machine, cputag);
 	int size = memory_region_length(machine, cputag);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, size);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, size);
 
 	memory_set_decrypted_region(space, 0x0000, size - 1, decrypt);
 
 	for (A = 0x0000; A < size; A++)
 	{
 		int i,j;
-		UINT8 src;
+		uint8_t src;
 
 		src = rom[A];
 

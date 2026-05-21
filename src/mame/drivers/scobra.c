@@ -302,7 +302,7 @@ static ADDRESS_MAP_START( anteatgb_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0xfe00, 0xfe03) AM_DEVREADWRITE("ppi8255_1", ppi8255_r, ppi8255_w)
 ADDRESS_MAP_END
 
-static UINT8 *scobra_soundram;
+static uint8_t *scobra_soundram;
 
 static READ8_HANDLER(scobra_soundram_r)
 {

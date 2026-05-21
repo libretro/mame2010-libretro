@@ -327,7 +327,7 @@ VIDEO_RESET( psychic5 );
 VIDEO_UPDATE( psychic5 );
 
 
-extern UINT8 *bombsa_paletteram;
+extern uint8_t *bombsa_paletteram;
 WRITE8_HANDLER( bombsa_paged_ram_w );
 WRITE8_HANDLER( bombsa_unknown_w );
 
@@ -336,7 +336,7 @@ VIDEO_RESET( bombsa );
 VIDEO_UPDATE( bombsa );
 
 
-static UINT8 psychic5_bank_latch;
+static uint8_t psychic5_bank_latch;
 
 static MACHINE_RESET( psychic5 )
 {
@@ -372,7 +372,7 @@ static READ8_HANDLER( psychic5_bankselect_r )
 
 static WRITE8_HANDLER( psychic5_bankselect_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bankaddress;
 
 	if (psychic5_bank_latch != data)
@@ -385,7 +385,7 @@ static WRITE8_HANDLER( psychic5_bankselect_w )
 
 static WRITE8_HANDLER( bombsa_bankselect_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bankaddress;
 
 	if (psychic5_bank_latch != data)

@@ -194,29 +194,29 @@ NEP-16
 
 #define BIOS_SKIP 1 // Skip Bios as it takes too long and doesn't complete atm.
 
-UINT32 *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
-UINT32 *skns_palette_ram;
-UINT32 *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
+uint32_t *skns_tilemapA_ram, *skns_tilemapB_ram, *skns_v3slc_ram;
+uint32_t *skns_palette_ram;
+uint32_t *skns_pal_regs, *skns_v3_regs, *skns_spc_regs;
 
-static UINT32 *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
+static uint32_t *skns_v3t_ram, *skns_main_ram, *skns_cache_ram;
 
 /* hit.c */
 
 static struct {
-	UINT16 x1p, y1p, z1p, x1s, y1s, z1s;
-	UINT16 x2p, y2p, z2p, x2s, y2s, z2s;
-	UINT16 org;
+	uint16_t x1p, y1p, z1p, x1s, y1s, z1s;
+	uint16_t x2p, y2p, z2p, x2s, y2s, z2s;
+	uint16_t org;
 
-	UINT16 x1_p1, x1_p2, y1_p1, y1_p2, z1_p1, z1_p2;
-	UINT16 x2_p1, x2_p2, y2_p1, y2_p2, z2_p1, z2_p2;
-	UINT16 x1tox2, y1toy2, z1toz2;
-	INT16 x_in, y_in, z_in;
-	UINT16 flag;
+	uint16_t x1_p1, x1_p2, y1_p1, y1_p2, z1_p1, z1_p2;
+	uint16_t x2_p1, x2_p2, y2_p1, y2_p2, z2_p1, z2_p2;
+	uint16_t x1tox2, y1toy2, z1toz2;
+	int16_t x_in, y_in, z_in;
+	uint16_t flag;
 
-	UINT8 disconnect;
+	uint8_t disconnect;
 } hit;
 
-static void hit_calc_orig(UINT16 p, UINT16 s, UINT16 org, UINT16 *l, UINT16 *r)
+static void hit_calc_orig(uint16_t p, uint16_t s, uint16_t org, uint16_t *l, uint16_t *r)
 {
 	switch(org & 3) {
 	case 0:
@@ -238,11 +238,11 @@ static void hit_calc_orig(UINT16 p, UINT16 s, UINT16 org, UINT16 *l, UINT16 *r)
 	}
 }
 
-static void hit_calc_axis(UINT16 x1p, UINT16 x1s, UINT16 x2p, UINT16 x2s, UINT16 org,
-			  UINT16 *x1_p1, UINT16 *x1_p2, UINT16 *x2_p1, UINT16 *x2_p2,
-			  INT16 *x_in, UINT16 *x1tox2)
+static void hit_calc_axis(uint16_t x1p, uint16_t x1s, uint16_t x2p, uint16_t x2s, uint16_t org,
+			  uint16_t *x1_p1, uint16_t *x1_p2, uint16_t *x2_p1, uint16_t *x2_p2,
+			  int16_t *x_in, uint16_t *x1tox2)
 {
-	UINT16 x1l=0, x1r=0, x2l=0, x2r=0;
+	uint16_t x1l=0, x1r=0, x2l=0, x2r=0;
 	hit_calc_orig(x1p, x1s, org,      &x1l, &x1r);
 	hit_calc_orig(x2p, x2s, org >> 8, &x2l, &x2r);
 
@@ -287,7 +287,7 @@ static void hit_recalc(void)
 }
 
 static WRITE32_HANDLER ( skns_hit_w )
-//void hit_w(UINT32 adr, UINT32 data, int type)
+//void hit_w(uint32_t adr, uint32_t data, int type)
 {
 	int adr = offset * 4;
 
@@ -358,7 +358,7 @@ static WRITE32_HANDLER ( skns_hit2_w )
 
 
 static READ32_HANDLER( skns_hit_r )
-//UINT32 hit_r(UINT32 adr, int type)
+//uint32_t hit_r(uint32_t adr, int type)
 {
 	int adr = offset *4;
 
@@ -369,15 +369,15 @@ static READ32_HANDLER( skns_hit_r )
 	switch(adr) {
 	case 0x28:
 	case 0x2a:
-		return (UINT16)mame_rand(space->machine);
+		return (uint16_t)mame_rand(space->machine);
 	case 0x00:
 	case 0x10:
-		return (UINT16)hit.x_in;
+		return (uint16_t)hit.x_in;
 	case 0x04:
 	case 0x14:
-		return (UINT16)hit.y_in;
+		return (uint16_t)hit.y_in;
 	case 0x18:
-		return (UINT16)hit.z_in;
+		return (uint16_t)hit.z_in;
 	case 0x08:
 	case 0x1c:
 		return hit.flag;
@@ -462,7 +462,7 @@ static MACHINE_RESET(skns)
 
 static INTERRUPT_GEN(skns_interrupt)
 {
-	UINT8 interrupt = 5;
+	uint8_t interrupt = 5;
 	switch(cpu_getiloops(device))
 	{
 		case 0:
@@ -628,7 +628,7 @@ static INPUT_PORTS_START( vblokbrk )	/* 3 buttons, 2 players, paddle */
 INPUT_PORTS_END
 
 
-static UINT32 timer_0_temp[4];
+static uint32_t timer_0_temp[4];
 
 static WRITE32_HANDLER( skns_msm6242_w )
 {
@@ -746,7 +746,7 @@ static READ32_HANDLER( skns_msm6242_r )
 
 static WRITE32_HANDLER( skns_v3t_w )
 {
-	UINT8 *btiles = memory_region(space->machine, "gfx3");
+	uint8_t *btiles = memory_region(space->machine, "gfx3");
 
 	COMBINE_DATA(&skns_v3t_ram[offset]);
 
@@ -1001,7 +1001,7 @@ static void init_skns(running_machine *machine)
 	memory_install_read32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x6000028, 0x600002b, 0, 0, bios_skip_r );
 }
 
-static void set_drc_pcflush(running_machine *machine, UINT32 addr)
+static void set_drc_pcflush(running_machine *machine, uint32_t addr)
 {
 	sh2drc_add_pcflush(machine->device("maincpu"), addr);
 }

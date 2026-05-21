@@ -813,7 +813,7 @@ static MACHINE_START( common )
 
 static MACHINE_START( ojankohs )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 0x40, &ROM[0x10000], 0x4000);
 
@@ -822,7 +822,7 @@ static MACHINE_START( ojankohs )
 
 static MACHINE_START( ojankoy )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 0x20, &ROM[0x10000], 0x4000);
 
@@ -831,7 +831,7 @@ static MACHINE_START( ojankoy )
 
 static MACHINE_START( ojankoc )
 {
-	UINT8 *ROM = memory_region(machine, "user1");
+	uint8_t *ROM = memory_region(machine, "user1");
 
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x0000], 0x8000);
 

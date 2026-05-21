@@ -84,8 +84,8 @@ static READ16_HANDLER ( varia_crom_read )
 	/* game reads the cgrom, result is 7772, verified to be correct on the real board */
 
 	metro_state *state = (metro_state *)space->machine->driver_data;
-	UINT8 *cgrom = memory_region(space->machine, "gfx1");
-	UINT16 retdat;
+	uint8_t *cgrom = memory_region(space->machine, "gfx1");
+	uint16_t retdat;
 
 	offset = offset << 1;
 	offset |= (state->vmetal_videoregs[0x0ab / 2] & 0x7f) << 16;
@@ -96,11 +96,11 @@ static READ16_HANDLER ( varia_crom_read )
 }
 
 
-static void get_vmetal_tlookup(running_machine *machine, UINT16 data, UINT16 *tileno, UINT16 *color)
+static void get_vmetal_tlookup(running_machine *machine, uint16_t data, uint16_t *tileno, uint16_t *color)
 {
 	metro_state *state = (metro_state *)machine->driver_data;
 	int idx = ((data & 0x7fff) >> 4) * 2;
-	UINT32 lookup = (state->vmetal_tlookup[idx] << 16) | state->vmetal_tlookup[idx + 1];
+	uint32_t lookup = (state->vmetal_tlookup[idx] << 16) | state->vmetal_tlookup[idx + 1];
 
 	*tileno = (data & 0xf) | ((lookup >> 2) & 0xfff0);
 	*color = (lookup >> 20) & 0xff;
@@ -344,10 +344,10 @@ GFXDECODE_END
 static TILE_GET_INFO( get_vmetal_texttilemap_tile_info )
 {
 	metro_state *state = (metro_state *)machine->driver_data;
-	UINT32 tile;
-	UINT16 color, data = state->vmetal_texttileram[tile_index];
+	uint32_t tile;
+	uint16_t color, data = state->vmetal_texttileram[tile_index];
 	int idx = ((data & 0x7fff) >> 4) * 2;
-	UINT32 lookup = (state->vmetal_tlookup[idx] << 16) | state->vmetal_tlookup[idx + 1];
+	uint32_t lookup = (state->vmetal_tlookup[idx] << 16) | state->vmetal_tlookup[idx + 1];
 
 	tile = (data & 0xf) | (lookup & 0x7fff0);
 	color = ((lookup >> 20) & 0x1f) + 0xe0;
@@ -362,7 +362,7 @@ static TILE_GET_INFO( get_vmetal_texttilemap_tile_info )
 static TILE_GET_INFO( get_vmetal_mid1tilemap_tile_info )
 {
 	metro_state *state = (metro_state *)machine->driver_data;
-	UINT16 tile, color, data = state->vmetal_mid1tileram[tile_index];
+	uint16_t tile, color, data = state->vmetal_mid1tileram[tile_index];
 
 	get_vmetal_tlookup(machine, data, &tile, &color);
 
@@ -375,7 +375,7 @@ static TILE_GET_INFO( get_vmetal_mid1tilemap_tile_info )
 static TILE_GET_INFO( get_vmetal_mid2tilemap_tile_info )
 {
 	metro_state *state = (metro_state *)machine->driver_data;
-	UINT16 tile, color, data = state->vmetal_mid2tileram[tile_index];
+	uint16_t tile, color, data = state->vmetal_mid2tileram[tile_index];
 
 	get_vmetal_tlookup(machine, data, &tile, &color);
 

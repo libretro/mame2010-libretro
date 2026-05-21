@@ -58,12 +58,12 @@ Notes:
 static tilemap_t *tilemap1;
 static tilemap_t *tilemap2;
 
-static UINT8 *vram1;
-static UINT8 *vram2;
+static uint8_t *vram1;
+static uint8_t *vram2;
 
-static UINT8 vidctrl;
-static UINT8 *palram;
-static UINT8 toMCU, fromMCU, ddrA;
+static uint8_t vidctrl;
+static uint8_t *palram;
+static uint8_t toMCU, fromMCU, ddrA;
 
 static TILE_GET_INFO( get_tile_info )
 {
@@ -90,7 +90,7 @@ static TILE_GET_INFO( get_tile_info2 )
 
 static VIDEO_START ( pipeline )
 {
-	palram=auto_alloc_array(machine, UINT8, 0x1000);
+	palram=auto_alloc_array(machine, uint8_t, 0x1000);
 	tilemap1 = tilemap_create( machine, get_tile_info,tilemap_scan_rows,8,8,64,32 );
 	tilemap2 = tilemap_create( machine, get_tile_info2,tilemap_scan_rows,8,8,64,32 );
 	tilemap_set_transparent_pen(tilemap2,0);
@@ -342,8 +342,8 @@ static const ym2203_interface ym2203_config =
 static PALETTE_INIT(pipeline)
 {
 	int r,g,b,i,c;
-	UINT8 *prom1 = &memory_region(machine, "proms")[0x000];
-	UINT8 *prom2 = &memory_region(machine, "proms")[0x100];
+	uint8_t *prom1 = &memory_region(machine, "proms")[0x000];
+	uint8_t *prom2 = &memory_region(machine, "proms")[0x100];
 
 	for(i=0;i<0x100;i++)
 	{

@@ -202,12 +202,12 @@
 #define CRTC_CLOCK				(MAIN_CPU_MASTER_CLOCK / 16)
 
 
-static UINT8 *spiders_ram;
-static UINT8 flipscreen;
-static UINT16 gfx_rom_address;
-static UINT8 gfx_rom_ctrl_mode;
-static UINT8 gfx_rom_ctrl_latch;
-static UINT8 gfx_rom_ctrl_data;
+static uint8_t *spiders_ram;
+static uint8_t flipscreen;
+static uint16_t gfx_rom_address;
+static uint8_t gfx_rom_ctrl_mode;
+static uint8_t gfx_rom_ctrl_latch;
+static uint8_t gfx_rom_ctrl_data;
 
 
 
@@ -450,15 +450,15 @@ static MC6845_BEGIN_UPDATE( begin_update )
 
 static MC6845_UPDATE_ROW( update_row )
 {
-	UINT8 cx;
+	uint8_t cx;
 
 	pen_t *pens = (pen_t *)param;
-	UINT8 x = 0;
+	uint8_t x = 0;
 
 	for (cx = 0; cx < x_count; cx++)
 	{
 		int i;
-		UINT8 data1, data2, data3;
+		uint8_t data1, data2, data3;
 
 		/* the memory is hooked up to the MA, RA lines this way */
 		offs_t offs = ((ma << 3) & 0x3f00) |
@@ -474,7 +474,7 @@ static MC6845_UPDATE_ROW( update_row )
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 color;
+			uint8_t color;
 
 			if (flipscreen)
 			{
@@ -555,11 +555,11 @@ static WRITE8_DEVICE_HANDLER( gfx_rom_intf_w )
 
 static READ8_DEVICE_HANDLER( gfx_rom_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	if (gfx_rom_ctrl_mode)
 	{
-		UINT8 *rom = memory_region(device->machine, "gfx1");
+		uint8_t *rom = memory_region(device->machine, "gfx1");
 
 		ret = rom[gfx_rom_address];
 
@@ -567,7 +567,7 @@ static READ8_DEVICE_HANDLER( gfx_rom_r )
 	}
 	else
 	{
-		UINT8 shift_count = gfx_rom_ctrl_latch << 2;
+		uint8_t shift_count = gfx_rom_ctrl_latch << 2;
 		gfx_rom_address = (gfx_rom_address & ~(0x0f << shift_count)) | (gfx_rom_ctrl_data << shift_count);
 
 		ret = 0;

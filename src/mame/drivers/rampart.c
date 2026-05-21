@@ -471,7 +471,7 @@ ROM_END
 
 static DRIVER_INIT( rampart )
 {
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0001,0x01FF,0x0E00,0x01FF,0x0E00,0x01FF,0x0150,0x0101,
 		0x0100,0x0151,0x0300,0x0151,0x0400,0x0150,0x0101,0x01FB,
@@ -496,7 +496,7 @@ static DRIVER_INIT( rampart )
 		0x0000
 	};
 	rampart_state *state = (rampart_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	state->atarigen.eeprom_default = compressed_default_eeprom;
 	memcpy(&rom[0x140000], &rom[0x40000], 0x8000);

@@ -131,7 +131,7 @@ static READ32_HANDLER( simpl156_inputs_read )
 {
 	simpl156_state *state = (simpl156_state *)space->machine->driver_data;
 	int eep = eeprom_read_bit(state->eeprom);
-	UINT32 returndata = input_port_read(space->machine, "IN0") ^ 0xffff0000;
+	uint32_t returndata = input_port_read(space->machine, "IN0") ^ 0xffff0000;
 
 	returndata ^= ((eep << 8));
 	return returndata;
@@ -144,7 +144,7 @@ static READ32_HANDLER( simpl156_palette_r )
 
 static WRITE32_HANDLER( simpl156_palette_w )
 {
-	UINT16 dat;
+	uint16_t dat;
 	int color;
 
 	data &= 0x0000ffff;
@@ -160,7 +160,7 @@ static WRITE32_HANDLER( simpl156_palette_w )
 
 static READ32_HANDLER(  simpl156_system_r )
 {
-	UINT32 returndata;
+	uint32_t returndata;
 
 	returndata = input_port_read(space->machine, "IN1");
 
@@ -1018,16 +1018,16 @@ ROM_END
 
 static DRIVER_INIT( simpl156 )
 {
-	UINT8 *rom = memory_region(machine, "okimusic");
+	uint8_t *rom = memory_region(machine, "okimusic");
 	int length = memory_region_length(machine, "okimusic");
-	UINT8 *buf1 = auto_alloc_array(machine, UINT8, length);
+	uint8_t *buf1 = auto_alloc_array(machine, uint8_t, length);
 
-	UINT32 x;
+	uint32_t x;
 
 	/* hmm low address line goes to banking chip instead? */
 	for (x = 0; x < length; x++)
 	{
-		UINT32 addr;
+		uint32_t addr;
 
 		addr = BITSWAP24 (x,23,22,21,0, 20,
 		                    19,18,17,16,

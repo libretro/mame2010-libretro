@@ -57,10 +57,10 @@ public:
 		  oki2(machine.device<okim6295_device>("oki2")) { }
 
 	/* memory pointers */
-	UINT16 *  spriteram_1;
-	UINT16 *  spriteram_2;
-	UINT16 *  bgram;
-//  UINT16 *  paletteram16; // currently this uses generic palette handling
+	uint16_t *  spriteram_1;
+	uint16_t *  spriteram_2;
+	uint16_t *  bgram;
+//  uint16_t *  paletteram16; // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
@@ -95,9 +95,9 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	k3_state *state = (k3_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	UINT16 *source = state->spriteram_1;
-	UINT16 *source2 = state->spriteram_2;
-	UINT16 *finish = source + 0x1000 / 2;
+	uint16_t *source = state->spriteram_1;
+	uint16_t *source2 = state->spriteram_2;
+	uint16_t *finish = source + 0x1000 / 2;
 
 	while (source < finish)
 	{

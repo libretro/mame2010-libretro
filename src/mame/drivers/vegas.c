@@ -447,36 +447,36 @@
  *
  *************************************/
 
-static UINT32 *rambase, *rombase;
+static uint32_t *rambase, *rombase;
 static size_t ramsize;
 
-static UINT32 *nile_regs;
-static UINT16 nile_irq_state;
-static UINT16 ide_irq_state;
+static uint32_t *nile_regs;
+static uint16_t nile_irq_state;
+static uint16_t ide_irq_state;
 
-static UINT32 pci_bridge_regs[0x40];
-static UINT32 pci_ide_regs[0x40];
-static UINT32 pci_3dfx_regs[0x40];
+static uint32_t pci_bridge_regs[0x40];
+static uint32_t pci_ide_regs[0x40];
+static uint32_t pci_3dfx_regs[0x40];
 
 static emu_timer *timer[4];
 
-static UINT8 vblank_state;
+static uint8_t vblank_state;
 
-static UINT8 sio_data[4];
-static UINT8 sio_irq_clear;
-static UINT8 sio_irq_enable;
-static UINT8 sio_irq_state;
-static UINT8 sio_led_state;
+static uint8_t sio_data[4];
+static uint8_t sio_irq_clear;
+static uint8_t sio_irq_enable;
+static uint8_t sio_irq_state;
+static uint8_t sio_led_state;
 
-static UINT8 pending_analog_read;
+static uint8_t pending_analog_read;
 
-static UINT8 cmos_unlocked;
+static uint8_t cmos_unlocked;
 
-static UINT32 *timekeeper_nvram;
+static uint32_t *timekeeper_nvram;
 static size_t timekeeper_nvram_size;
 
 static running_device *voodoo;
-static UINT8 dcs_idma_cs;
+static uint8_t dcs_idma_cs;
 
 static int dynamic_count;
 static struct dynamic_address
@@ -622,7 +622,7 @@ static WRITE32_HANDLER( timekeeper_w )
 }
 
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ((data / 10) << 4) | (data % 10);
 }
@@ -630,7 +630,7 @@ INLINE UINT8 make_bcd(UINT8 data)
 
 static READ32_HANDLER( timekeeper_r )
 {
-	UINT32 result = timekeeper_nvram[offset];
+	uint32_t result = timekeeper_nvram[offset];
 
 	/* upper bytes are a realtime clock */
 	if ((offset*4) >= 0x7ff0)
@@ -687,7 +687,7 @@ static NVRAM_HANDLER( timekeeper_save )
 
 static READ32_HANDLER( pci_bridge_r )
 {
-	UINT32 result = pci_bridge_regs[offset];
+	uint32_t result = pci_bridge_regs[offset];
 
 	switch (offset)
 	{
@@ -723,7 +723,7 @@ static WRITE32_HANDLER( pci_bridge_w )
 
 static READ32_HANDLER( pci_ide_r )
 {
-	UINT32 result = pci_ide_regs[offset];
+	uint32_t result = pci_ide_regs[offset];
 
 	switch (offset)
 	{
@@ -785,7 +785,7 @@ static WRITE32_HANDLER( pci_ide_w )
 static READ32_HANDLER( pci_3dfx_r )
 {
 	int voodoo_type = voodoo_get_type(voodoo);
-	UINT32 result = pci_3dfx_regs[offset];
+	uint32_t result = pci_3dfx_regs[offset];
 
 	switch (offset)
 	{
@@ -874,9 +874,9 @@ static WRITE32_HANDLER( pci_3dfx_w )
 
 static void update_nile_irqs(running_machine *machine)
 {
-	UINT32 intctll = nile_regs[NREG_INTCTRL+0];
-	UINT32 intctlh = nile_regs[NREG_INTCTRL+1];
-	UINT8 irq[6];
+	uint32_t intctll = nile_regs[NREG_INTCTRL+0];
+	uint32_t intctlh = nile_regs[NREG_INTCTRL+1];
+	uint8_t irq[6];
 	int i;
 
 	/* check for UART transmit IRQ enable and synthsize one */
@@ -939,12 +939,12 @@ static void update_nile_irqs(running_machine *machine)
 static TIMER_CALLBACK( nile_timer_callback )
 {
 	int which = param;
-	UINT32 *regs = &nile_regs[NREG_T0CTRL + which * 4];
+	uint32_t *regs = &nile_regs[NREG_T0CTRL + which * 4];
 	if (LOG_TIMERS) logerror("timer %d fired\n", which);
 
 	/* adjust the timer to fire again */
 	{
-		UINT32 scale = regs[0];
+		uint32_t scale = regs[0];
 		if (regs[1] & 2)
 			logerror("Unexpected value: timer %d is prescaled\n", which);
 		if (scale != 0)
@@ -970,7 +970,7 @@ static TIMER_CALLBACK( nile_timer_callback )
 
 static READ32_HANDLER( nile_r )
 {
-	UINT32 result = nile_regs[offset];
+	uint32_t result = nile_regs[offset];
 	int logit = 1, which;
 
 	switch (offset)
@@ -1082,7 +1082,7 @@ static READ32_HANDLER( nile_r )
 
 static WRITE32_HANDLER( nile_w )
 {
-	UINT32 olddata = nile_regs[offset];
+	uint32_t olddata = nile_regs[offset];
 	int logit = 1, which;
 
 	COMBINE_DATA(&nile_regs[offset]);
@@ -1157,7 +1157,7 @@ static WRITE32_HANDLER( nile_w )
 			/* timer just enabled? */
 			if (!(olddata & 1) && (nile_regs[offset] & 1))
 			{
-				UINT32 scale = nile_regs[offset + 1];
+				uint32_t scale = nile_regs[offset + 1];
 				if (nile_regs[offset] & 2)
 					logerror("Unexpected value: timer %d is prescaled\n", which);
 				if (scale != 0)
@@ -1405,7 +1405,7 @@ static WRITE32_HANDLER( sio_w )
 
 static READ32_HANDLER( sio_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	if (ACCESSING_BITS_0_7) offset += 0;
 	if (ACCESSING_BITS_8_15) offset += 1;
 	if (ACCESSING_BITS_16_23) offset += 2;
@@ -1486,7 +1486,7 @@ static WRITE32_DEVICE_HANDLER( ide_alt_w )
 
 static READ32_DEVICE_HANDLER( ethernet_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	if (ACCESSING_BITS_0_15)
 		result |= smc91c9x_r(device, offset * 2 + 0, mem_mask);
 	if (ACCESSING_BITS_16_31)
@@ -2481,7 +2481,7 @@ static void init_common(running_machine *machine, int ioasic, int serialnum)
 
 	/* allocate RAM for the timekeeper */
 	timekeeper_nvram_size = 0x8000;
-	timekeeper_nvram = auto_alloc_array(machine, UINT32, timekeeper_nvram_size/4);
+	timekeeper_nvram = auto_alloc_array(machine, uint32_t, timekeeper_nvram_size/4);
 }
 
 

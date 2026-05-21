@@ -38,9 +38,9 @@ Stephh's notes (based on the game M6502 code and some tests) :
 #include "sound/2203intf.h"
 #include "includes/konamipt.h"
 
-extern UINT8 *scotrsht_videoram;
-extern UINT8 *scotrsht_colorram;
-extern UINT8 *scotrsht_scroll;
+extern uint8_t *scotrsht_videoram;
+extern uint8_t *scotrsht_colorram;
+extern uint8_t *scotrsht_scroll;
 
 extern WRITE8_HANDLER( scotrsht_videoram_w );
 extern WRITE8_HANDLER( scotrsht_colorram_w );

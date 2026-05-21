@@ -306,7 +306,7 @@ Notes & Todo:
 /******************************************************************************/
 
 /* local stuff */
-static UINT8 *ram_8w, *work_ram;
+static uint8_t *ram_8w, *work_ram;
 static int up_8w;
 
 static WRITE8_HANDLER( up8w_w )
@@ -338,7 +338,7 @@ static WRITE8_HANDLER( sprite_dma_w )
 
 static NVRAM_HANDLER( playch10 )
 {
-	UINT8 *mem = memory_region( machine, "cart" ) + 0x6000;
+	uint8_t *mem = memory_region( machine, "cart" ) + 0x6000;
 
 	if ( read_or_write )
 		mame_fwrite( file, mem, 0x1000 );
@@ -349,7 +349,7 @@ static NVRAM_HANDLER( playch10 )
 }
 
 /* Only used in single monitor bios */
-static UINT8 *timedata;
+static uint8_t *timedata;
 
 static WRITE8_HANDLER( time_w )
 {

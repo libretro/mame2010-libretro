@@ -37,9 +37,9 @@ a000-a3ff   R/W X/Y scroll position of each character (can be scrolled up
 #include "sound/sn76496.h"
 
 
-extern UINT8 *spcforce_videoram;
-extern UINT8 *spcforce_colorram;
-extern UINT8 *spcforce_scrollram;
+extern uint8_t *spcforce_videoram;
+extern uint8_t *spcforce_colorram;
+extern uint8_t *spcforce_scrollram;
 
 WRITE8_HANDLER( spcforce_flip_screen_w );
 VIDEO_UPDATE( spcforce );

@@ -94,10 +94,10 @@ public:
 
 	shougi_state(running_machine &machine) { }
 
-	UINT8 *videoram;
+	uint8_t *videoram;
 	int nmi_enabled;
-	//UINT8 *cpu_sharedram;
-	//UINT8 cpu_sharedram_control_val;
+	//uint8_t *cpu_sharedram;
+	//uint8_t cpu_sharedram_control_val;
 	int r;
 };
 

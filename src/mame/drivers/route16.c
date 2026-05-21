@@ -75,8 +75,8 @@
 #include "sound/ay8910.h"
 
 
-extern UINT8 *route16_videoram1;
-extern UINT8 *route16_videoram2;
+extern uint8_t *route16_videoram1;
+extern uint8_t *route16_videoram2;
 extern size_t route16_videoram_size;
 
 WRITE8_HANDLER( route16_out0_w );
@@ -95,7 +95,7 @@ static READ8_HANDLER( routex_prot_read );
  *
  *************************************/
 
-static UINT8 *sharedram;
+static uint8_t *sharedram;
 
 
 static READ8_HANDLER( sharedram_r )
@@ -160,7 +160,7 @@ static WRITE8_DEVICE_HANDLER( stratvox_sn76477_w )
  *
  *************************************/
 
-static UINT8 ttmahjng_port_select;
+static uint8_t ttmahjng_port_select;
 
 
 static WRITE8_HANDLER( ttmahjng_input_port_matrix_w )
@@ -171,7 +171,7 @@ static WRITE8_HANDLER( ttmahjng_input_port_matrix_w )
 
 static READ8_HANDLER( ttmahjng_input_port_matrix_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	switch (ttmahjng_port_select)
 	{
@@ -957,7 +957,7 @@ static READ8_HANDLER( routex_prot_read )
 
 static DRIVER_INIT( route16 )
 {
-	UINT8 *ROM = memory_region(machine, "cpu1");
+	uint8_t *ROM = memory_region(machine, "cpu1");
 	/* Is this actually a bootleg? some of the protection has
        been removed */
 
@@ -972,7 +972,7 @@ static DRIVER_INIT( route16 )
 
 static DRIVER_INIT( route16a )
 {
-	UINT8 *ROM = memory_region(machine, "cpu1");
+	uint8_t *ROM = memory_region(machine, "cpu1");
 	/* TO DO : Replace these patches with simulation of the protection device */
 
 	/* patch the protection */

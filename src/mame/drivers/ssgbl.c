@@ -25,7 +25,7 @@ static READ16_HANDLER( ssgbl_dsw_r )
 static DRIVER_INIT( ssgbl )
 {
 	int x;
-	UINT8* rom = memory_region(machine, "maincpu");
+	uint8_t* rom = memory_region(machine, "maincpu");
 
 	/* todo, reduce bitswaps to single swap */
 	for (x=0x00001;x<0x40000;x+=2)

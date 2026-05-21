@@ -89,16 +89,16 @@ public:
 	nyny_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram1;
-	UINT8 *  videoram2;
-	UINT8 *  colorram1;
-	UINT8 *  colorram2;
+	uint8_t *  videoram1;
+	uint8_t *  videoram2;
+	uint8_t *  colorram1;
+	uint8_t *  colorram2;
 
 	/* video-related */
 	int      flipscreen;
-	UINT8    star_enable;
-	UINT16   star_delay_counter;
-	UINT16   star_shift_reg;
+	uint8_t    star_enable;
+	uint16_t   star_delay_counter;
+	uint16_t   star_shift_reg;
 
 	/* devices */
 	running_device *maincpu;
@@ -299,14 +299,14 @@ static MC6845_BEGIN_UPDATE( begin_update )
 static MC6845_UPDATE_ROW( update_row )
 {
 	nyny_state *state = (nyny_state *)device->machine->driver_data;
-	UINT8 cx;
+	uint8_t cx;
 	pen_t *pens = (pen_t *)param;
-	UINT8 x = 0;
+	uint8_t x = 0;
 
 	for (cx = 0; cx < x_count; cx++)
 	{
 		int i;
-		UINT8 data1, data2, color1, color2;
+		uint8_t data1, data2, color1, color2;
 
 		/* the memory is hooked up to the MA, RA lines this way */
 		offs_t offs = ((ma << 5) & 0x8000) |
@@ -324,7 +324,7 @@ static MC6845_UPDATE_ROW( update_row )
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 bit1, bit2, color;
+			uint8_t bit1, bit2, color;
 
 			if (state->flipscreen)
 			{
@@ -374,7 +374,7 @@ static MC6845_END_UPDATE( end_update )
 	int y;
 
 	pen_t *pens = (pen_t *)param;
-	UINT16 delay_counter = state->star_delay_counter;
+	uint16_t delay_counter = state->star_delay_counter;
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
@@ -388,7 +388,7 @@ static MC6845_END_UPDATE( end_update )
 			    ((state->star_shift_reg & 0x80ff) == 0x00ff) &&
 			    (((y & 0x01) ^ state->flipscreen) ^ (((x & 0x08) >> 3) ^ state->flipscreen)))
 			{
-				UINT8 color = ((state->star_shift_reg & 0x0100) >>  8) |	/* R */
+				uint8_t color = ((state->star_shift_reg & 0x0100) >>  8) |	/* R */
 							  ((state->star_shift_reg & 0x0400) >>  9) |	/* G */
 							  ((state->star_shift_reg & 0x1000) >> 10);	/* B */
 
@@ -517,7 +517,7 @@ static WRITE8_HANDLER( audio_2_command_w )
 static READ8_HANDLER( nyny_pia_1_2_r )
 {
 	nyny_state *state = (nyny_state *)space->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	/* the address bits are directly connected to the chip selects */
 	if (BIT(offset, 2))  ret = pia6821_r(state->pia1, offset & 0x03);

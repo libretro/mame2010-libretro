@@ -1065,7 +1065,7 @@ ROM_END
  *************************************/
 
 // 99 means the value is unknown
-static const UINT8 xor1_table[] =
+static const uint8_t xor1_table[] =
 {
 	99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
 	99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
@@ -1133,7 +1133,7 @@ static const UINT8 xor1_table[] =
 	99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
 };
 
-static const UINT8 xor2_table[] =
+static const uint8_t xor2_table[] =
 {
 	99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
 	99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,99,
@@ -1213,7 +1213,7 @@ static int kram3_permut1(int idx, int value)
 	}
 }
 
-static int kram3_permut2(int tbl_index, int idx, const UINT8 *xor_table)
+static int kram3_permut2(int tbl_index, int idx, const uint8_t *xor_table)
 {
 	int xorval = 0;
 
@@ -1264,8 +1264,8 @@ static DRIVER_INIT( kram3 )
 {
 	const address_space *mainspace = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	const address_space *videospace = cputag_get_address_space(machine, "videocpu", ADDRESS_SPACE_PROGRAM);
-	//const UINT8 *patch;
-	UINT8 *rom, *decrypted;
+	//const uint8_t *patch;
+	uint8_t *rom, *decrypted;
 	int i;
 
 	/********************************
@@ -1285,7 +1285,7 @@ static DRIVER_INIT( kram3 )
 	i = 0;
 	//patch = memory_region(machine, "user1");
 	rom = memory_region(machine, "maincpu");
-	decrypted = auto_alloc_array(machine, UINT8, 0x6000);
+	decrypted = auto_alloc_array(machine, uint8_t, 0x6000);
 
 	memory_set_decrypted_region(mainspace, 0xa000, 0xffff, decrypted);
 
@@ -1298,7 +1298,7 @@ static DRIVER_INIT( kram3 )
 	i = 0;
 	//patch = memory_region(machine, "user2");
 	rom = memory_region(machine, "videocpu");
-	decrypted = auto_alloc_array(machine, UINT8, 0x6000);
+	decrypted = auto_alloc_array(machine, uint8_t, 0x6000);
 
 	memory_set_decrypted_region(videospace, 0xa000, 0xffff, decrypted);
 

@@ -178,8 +178,8 @@
 #include "sound/ay8910.h"
 
 /* from video */
-extern UINT8 *funworld_videoram;
-extern UINT8 *funworld_colorram;
+extern uint8_t *funworld_videoram;
+extern uint8_t *funworld_colorram;
 
 WRITE8_HANDLER( funworld_videoram_w );
 WRITE8_HANDLER( funworld_colorram_w );

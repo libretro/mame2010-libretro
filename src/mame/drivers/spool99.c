@@ -101,10 +101,10 @@ public:
 
 	spool99_state(running_machine &machine) { }
 
-	UINT8 *main;
+	uint8_t *main;
 	tilemap_t *sc0_tilemap;
-	UINT8 *cram;
-	UINT8 *vram;
+	uint8_t *cram;
+	uint8_t *vram;
 };
 
 static TILE_GET_INFO( get_spool99_tile_info )
@@ -155,7 +155,7 @@ static WRITE8_HANDLER( spool99_cram_w )
 
 static READ8_HANDLER( spool99_io_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 //  if(!(io_switch))
 	{
@@ -222,7 +222,7 @@ ADDRESS_MAP_END
 
 static READ8_HANDLER( vcarn_io_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 //  if(!(io_switch))
 	{
@@ -417,8 +417,8 @@ static DRIVER_INIT( spool99 )
 {
 	spool99_state *state = (spool99_state *)machine->driver_data;
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
-//  vram = auto_alloc_array(machine, UINT8, 0x2000);
+	uint8_t *ROM = memory_region(machine, "maincpu");
+//  vram = auto_alloc_array(machine, uint8_t, 0x2000);
 	memcpy(state->main, ROM, 0x100);
 }
 

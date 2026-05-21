@@ -84,8 +84,8 @@
 #include "includes/suprridr.h"
 #include "sound/ay8910.h"
 
-static UINT8 nmi_enable;
-static UINT8 sound_data;
+static uint8_t nmi_enable;
+static uint8_t sound_data;
 
 
 
@@ -225,7 +225,7 @@ ADDRESS_MAP_END
 
 static CUSTOM_INPUT( suprridr_control_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* screen flip multiplexes controls */
 	if (suprridr_is_screen_flipped())

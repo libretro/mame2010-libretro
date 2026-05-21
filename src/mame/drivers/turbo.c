@@ -452,9 +452,9 @@ static const ppi8255_interface buckrog_8255_intf[2] =
  *
  *************************************/
 
-static void update_outputs(i8279_state *chip, UINT16 which)
+static void update_outputs(i8279_state *chip, uint16_t which)
 {
-	static const UINT8 ls48_map[16] =
+	static const uint8_t ls48_map[16] =
 		{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67,0x58,0x4c,0x62,0x69,0x78,0x00 };
 	int i;
 
@@ -481,8 +481,8 @@ static READ8_HANDLER( turbo_8279_r )
 {
 	turbo_state *state = (turbo_state *)space->machine->driver_data;
 	i8279_state *chip = &state->i8279;
-	UINT8 result = 0xff;
-	UINT8 addr;
+	uint8_t result = 0xff;
+	uint8_t addr;
 
 	/* read data */
 	if ((offset & 1) == 0)
@@ -522,7 +522,7 @@ static WRITE8_HANDLER( turbo_8279_w )
 {
 	turbo_state *state = (turbo_state *)space->machine->driver_data;
 	i8279_state *chip = &state->i8279;
-	UINT8 addr;
+	uint8_t addr;
 
 	/* write data */
 	if ((offset & 1) == 0)
@@ -1666,7 +1666,7 @@ static void turbo_rom_decode(running_machine *machine)
      * F   03 03 03 03 02 02 02 02 01 01 01 01 00 00 00 00
      *
      */
-	static const UINT8 xortable[][32]=
+	static const uint8_t xortable[][32]=
 	{
 		/* Table 0 */
 		/* 0x0000-0x3ff */
@@ -1727,9 +1727,9 @@ static void turbo_rom_decode(running_machine *machine)
 		2,1,2,1	 /* 0x5000-0x5fff */
 	};
 
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	int offs, i, j;
-	UINT8 src;
+	uint8_t src;
 
 	for (offs = 0x0000; offs < 0x6000; offs++)
 	{

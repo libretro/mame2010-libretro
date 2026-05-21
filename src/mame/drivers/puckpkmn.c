@@ -238,7 +238,7 @@ Screenshots available on my site at http://guru.mameworld.info/oldnews2001.html 
 
 static DRIVER_INIT( puckpkmn )
 {
-	UINT8 *rom	=	memory_region(machine, "maincpu");
+	uint8_t *rom	=	memory_region(machine, "maincpu");
 	size_t len		=	memory_region_length(machine, "maincpu");
 	int i;
 

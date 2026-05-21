@@ -52,21 +52,21 @@ Known Issues:
 #include "includes/twin16.h"
 #include "includes/konamipt.h"
 
-UINT16 twin16_custom_video;
-UINT16 *twin16_gfx_rom;
-UINT16 *twin16_sprite_gfx_ram;
-UINT16 *twin16_tile_gfx_ram;
-UINT16 *twin16_text_ram;
+uint16_t twin16_custom_video;
+uint16_t *twin16_gfx_rom;
+uint16_t *twin16_sprite_gfx_ram;
+uint16_t *twin16_tile_gfx_ram;
+uint16_t *twin16_text_ram;
 
-static UINT16 twin16_CPUA_register, twin16_CPUB_register;
+static uint16_t twin16_CPUA_register, twin16_CPUB_register;
 
 #define CPUA_IRQ_ENABLE (twin16_CPUA_register & 0x20)
 #define CPUB_IRQ_ENABLE (twin16_CPUB_register & 0x02)
 
-static UINT16 twin16_sound_command;
+static uint16_t twin16_sound_command;
 
 static int cuebrickj_nvram_bank;
-static UINT16 cuebrickj_nvram[0x400*0x20];	// 32k paged in a 1k window
+static uint16_t cuebrickj_nvram[0x400*0x20];	// 32k paged in a 1k window
 
 
 int twin16_spriteram_process_enable( void )
@@ -93,7 +93,7 @@ static WRITE16_HANDLER( videoram16_w )
 
 static READ16_HANDLER( extra_rom_r )
 {
-	return ((UINT16 *)memory_region(space->machine, "gfx3"))[offset];
+	return ((uint16_t *)memory_region(space->machine, "gfx3"))[offset];
 }
 
 static READ16_HANDLER( twin16_gfx_rom1_r )
@@ -122,7 +122,7 @@ static WRITE16_HANDLER( twin16_CPUA_register_w )
                     X               0->1 trigger IRQ on sound CPU
                         x   x   x   coin counters
     */
-	UINT16 old = twin16_CPUA_register;
+	uint16_t old = twin16_CPUA_register;
 	COMBINE_DATA(&twin16_CPUA_register);
 	if (twin16_CPUA_register != old)
 	{
@@ -149,7 +149,7 @@ static WRITE16_HANDLER( twin16_CPUB_register_w )
                             X       IRQ5 enable
                                 X   0->1 trigger IRQ6 on CPUA
     */
-	UINT16 old = twin16_CPUB_register;
+	uint16_t old = twin16_CPUB_register;
 	COMBINE_DATA(&twin16_CPUB_register);
 	if( twin16_CPUB_register!=old )
 	{
@@ -165,7 +165,7 @@ static WRITE16_HANDLER( fround_CPU_register_w )
                     X               0->1 trigger IRQ on sound CPU
                             x   x   coin counters
     */
-	UINT16 old = twin16_CPUA_register;
+	uint16_t old = twin16_CPUA_register;
 	COMBINE_DATA(&twin16_CPUA_register);
 	if (twin16_CPUA_register != old)
 	{
@@ -1303,9 +1303,9 @@ static void gfx_untangle( running_machine *machine )
 {
 	// sprite, tile data
 	int i;
-	UINT16 *temp = auto_alloc_array(machine, UINT16, 0x200000/2);
+	uint16_t *temp = auto_alloc_array(machine, uint16_t, 0x200000/2);
 
-	twin16_gfx_rom = (UINT16 *)memory_region(machine, "gfx2");
+	twin16_gfx_rom = (uint16_t *)memory_region(machine, "gfx2");
 	memcpy( temp, twin16_gfx_rom, 0x200000 );
 
 	for( i=0; i<0x080000; i++ )
@@ -1332,7 +1332,7 @@ static DRIVER_INIT( cuebrickj )
 {
 	gfx_untangle(machine);
 
-	machine->generic.nvram.u8 = (UINT8 *)cuebrickj_nvram;
+	machine->generic.nvram.u8 = (uint8_t *)cuebrickj_nvram;
 	machine->generic.nvram_size = 0x400*0x20;
 }
 

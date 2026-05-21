@@ -373,9 +373,9 @@ orunners:  Interleaved with the dj and << >> buttons is the data the drives the 
  *
  *************************************/
 
-UINT8 *ga2_dpram;
-UINT16 *system32_workram;
-UINT16 *system32_protram;
+uint8_t *ga2_dpram;
+uint16_t *system32_workram;
+uint16_t *system32_protram;
 
 
 
@@ -385,29 +385,29 @@ UINT16 *system32_protram;
  *
  *************************************/
 
-static UINT8 *z80_shared_ram;
+static uint8_t *z80_shared_ram;
 
 /* V60 interrupt controller */
-static UINT8 v60_irq_control[0x10];
+static uint8_t v60_irq_control[0x10];
 static timer_device *v60_irq_timer[2];
 
 /* sound interrupt controller */
-static UINT8 sound_irq_control[4];
-static UINT8 sound_irq_input;
-static UINT8 sound_dummy_value;
-static UINT16 sound_bank;
+static uint8_t sound_irq_control[4];
+static uint8_t sound_irq_input;
+static uint8_t sound_dummy_value;
+static uint16_t sound_bank;
 
 
 /* I/O chips and custom I/O */
-static UINT8 misc_io_data[2][0x10];
+static uint8_t misc_io_data[2][0x10];
 static read16_space_func custom_io_r[2];
 static write16_space_func custom_io_w[2];
-static UINT8 analog_bank;
-static UINT8 analog_value[4];
-static UINT8 sonic_last[6];
+static uint8_t analog_bank;
+static uint8_t analog_value[4];
+static uint8_t sonic_last[6];
 
 /* callbacks to handle output */
-typedef void (*sys32_output_callback)(int which, UINT16 data);
+typedef void (*sys32_output_callback)(int which, uint16_t data);
 static sys32_output_callback segas32_sw1_output, segas32_sw2_output, segas32_sw3_output;
 
 static void (*system32_prot_vblank)(running_device *device);
@@ -453,7 +453,7 @@ static MACHINE_RESET( system32 )
 
 static void update_irq_state(running_machine *machine)
 {
-	UINT8 effirq = v60_irq_control[7] & ~v60_irq_control[6] & 0x1f;
+	uint8_t effirq = v60_irq_control[7] & ~v60_irq_control[6] & 0x1f;
 	int vector;
 
 	/* loop over interrupt vectors, finding the highest priority one with */
@@ -489,7 +489,7 @@ static TIMER_DEVICE_CALLBACK( signal_v60_irq_callback )
 }
 
 
-static void int_control_w(const address_space *space, int offset, UINT8 data)
+static void int_control_w(const address_space *space, int offset, uint8_t data)
 {
 	int duration;
 
@@ -628,7 +628,7 @@ static INTERRUPT_GEN( start_of_vblank_int )
  *
  *************************************/
 
-static UINT16 common_io_chip_r(const address_space *space, int which, offs_t offset, UINT16 mem_mask)
+static uint16_t common_io_chip_r(const address_space *space, int which, offs_t offset, uint16_t mem_mask)
 {
 	static const char *const portnames[2][8] =
 			{
@@ -679,9 +679,9 @@ static UINT16 common_io_chip_r(const address_space *space, int which, offs_t off
 }
 
 
-static void common_io_chip_w(const address_space *space, int which, offs_t offset, UINT16 data, UINT16 mem_mask)
+static void common_io_chip_w(const address_space *space, int which, offs_t offset, uint16_t data, uint16_t mem_mask)
 {
-	UINT8 old;
+	uint8_t old;
 
 	/* only LSB matters */
 	if (!ACCESSING_BITS_0_7)
@@ -899,7 +899,7 @@ static WRITE32_HANDLER( io_expansion_1_w )
 
 static READ16_HANDLER( analog_custom_io_r )
 {
-	UINT16 result;
+	uint16_t result;
 	switch (offset)
 	{
 		case 0x10/2:
@@ -980,7 +980,7 @@ static READ16_HANDLER( sonic_custom_io_r )
 		case 0x0c/2:
 		case 0x10/2:
 		case 0x14/2:
-			return (UINT8)(input_port_read(space->machine, names[offset/2]) - sonic_last[offset/2]);
+			return (uint8_t)(input_port_read(space->machine, names[offset/2]) - sonic_last[offset/2]);
 	}
 
 	logerror("%06X:unknown sonic_custom_io_r(%X) & %04X\n", cpu_get_pc(space->cpu), offset*2, mem_mask);
@@ -1085,7 +1085,7 @@ static WRITE32_HANDLER( shared_ram_32_w )
 
 static void update_sound_irq_state(running_machine *machine)
 {
-	UINT8 effirq = sound_irq_input & ~sound_irq_control[3] & 0x07;
+	uint8_t effirq = sound_irq_input & ~sound_irq_control[3] & 0x07;
 	int vector;
 
 	/* loop over interrupt vectors, finding the highest priority one with */
@@ -1238,12 +1238,12 @@ static ADDRESS_MAP_START( multi32_map, ADDRESS_SPACE_PROGRAM, 32 )
 	ADDRESS_MAP_GLOBAL_MASK(0xffffff)
 	AM_RANGE(0x000000, 0x1fffff) AM_ROM
 	AM_RANGE(0x200000, 0x21ffff) AM_MIRROR(0x0e0000) AM_RAM
-	AM_RANGE(0x300000, 0x31ffff) AM_MIRROR(0x0e0000) AM_READWRITE(multi32_videoram_r, multi32_videoram_w) AM_BASE((UINT32 **)&system32_videoram)
-	AM_RANGE(0x400000, 0x41ffff) AM_MIRROR(0x0e0000) AM_READWRITE(multi32_spriteram_r, multi32_spriteram_w) AM_BASE((UINT32 **)&system32_spriteram)
+	AM_RANGE(0x300000, 0x31ffff) AM_MIRROR(0x0e0000) AM_READWRITE(multi32_videoram_r, multi32_videoram_w) AM_BASE((uint32_t **)&system32_videoram)
+	AM_RANGE(0x400000, 0x41ffff) AM_MIRROR(0x0e0000) AM_READWRITE(multi32_spriteram_r, multi32_spriteram_w) AM_BASE((uint32_t **)&system32_spriteram)
 	AM_RANGE(0x500000, 0x50000f) AM_MIRROR(0x0ffff0) AM_READWRITE(multi32_sprite_control_r, multi32_sprite_control_w)
-	AM_RANGE(0x600000, 0x60ffff) AM_MIRROR(0x060000) AM_READWRITE(multi32_paletteram_0_r, multi32_paletteram_0_w) AM_BASE((UINT32 **)&system32_paletteram[0])
+	AM_RANGE(0x600000, 0x60ffff) AM_MIRROR(0x060000) AM_READWRITE(multi32_paletteram_0_r, multi32_paletteram_0_w) AM_BASE((uint32_t **)&system32_paletteram[0])
 	AM_RANGE(0x610000, 0x61007f) AM_MIRROR(0x06ff80) AM_WRITE(multi32_mixer_0_w)
-	AM_RANGE(0x680000, 0x68ffff) AM_MIRROR(0x060000) AM_READWRITE(multi32_paletteram_1_r, multi32_paletteram_1_w) AM_BASE((UINT32 **)&system32_paletteram[1])
+	AM_RANGE(0x680000, 0x68ffff) AM_MIRROR(0x060000) AM_READWRITE(multi32_paletteram_1_r, multi32_paletteram_1_w) AM_BASE((uint32_t **)&system32_paletteram[1])
 	AM_RANGE(0x690000, 0x69007f) AM_MIRROR(0x06ff80) AM_WRITE(multi32_mixer_1_w)
 	AM_RANGE(0x700000, 0x701fff) AM_MIRROR(0x0fe000) AM_READWRITE(shared_ram_32_r, shared_ram_32_w)
 	AM_RANGE(0xc00000, 0xc0001f) AM_MIRROR(0x07ff80) AM_READWRITE(io_chip_0_r, io_chip_0_w)
@@ -2153,7 +2153,7 @@ static const ym3438_interface ym3438_config =
 
 // Both arescue and f1en appear to use an identical shared RAM system.
 
-static UINT16* dual_pcb_comms;
+static uint16_t* dual_pcb_comms;
 
 static WRITE16_HANDLER( dual_pcb_comms_w )
 {
@@ -3821,13 +3821,13 @@ static void segas32_common_init(read16_space_func custom_r, write16_space_func c
  *      switches we need to fix
  *************************************/
 
-static void radm_sw1_output( int which, UINT16 data )
+static void radm_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 		output_set_value("Start_lamp", BIT(data, 2));
 }
 
-static void radm_sw2_output( int which, UINT16 data )
+static void radm_sw2_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3836,7 +3836,7 @@ static void radm_sw2_output( int which, UINT16 data )
 	}
 }
 
-static void radr_sw2_output( int which, UINT16 data )
+static void radr_sw2_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3845,7 +3845,7 @@ static void radr_sw2_output( int which, UINT16 data )
 	}
 }
 
-static void alien3_sw1_output( int which, UINT16 data )
+static void alien3_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3854,7 +3854,7 @@ static void alien3_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void arescue_sw1_output( int which, UINT16 data )
+static void arescue_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3863,7 +3863,7 @@ static void arescue_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void f1lap_sw1_output( int which, UINT16 data )
+static void f1lap_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3872,7 +3872,7 @@ static void f1lap_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void jpark_sw1_output( int which, UINT16 data )
+static void jpark_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3881,7 +3881,7 @@ static void jpark_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void orunners_sw1_output( int which, UINT16 data )
+static void orunners_sw1_output( int which, uint16_t data )
 {
 	/* note ma = monitor A and mb = Monitor B */
 	if (which == 0)
@@ -3898,7 +3898,7 @@ static void orunners_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void orunners_sw2_output( int which, UINT16 data )
+static void orunners_sw2_output( int which, uint16_t data )
 {
 	/* note ma = monitor A and mb = Monitor B */
 	/* also note that the remaining bits are for the game's lcd display */
@@ -3915,7 +3915,7 @@ static void orunners_sw2_output( int which, UINT16 data )
 	}
 }
 
-static void harddunk_sw1_output( int which, UINT16 data )
+static void harddunk_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3929,7 +3929,7 @@ static void harddunk_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void harddunk_sw2_output( int which, UINT16 data )
+static void harddunk_sw2_output( int which, uint16_t data )
 {
 	if (which == 0)
 		output_set_value("Left_Winner_lamp", BIT(data, 0));
@@ -3937,13 +3937,13 @@ static void harddunk_sw2_output( int which, UINT16 data )
 		output_set_value("Right_Winner_lamp", BIT(data, 0));
 }
 
-static void harddunk_sw3_output( int which, UINT16 data )
+static void harddunk_sw3_output( int which, uint16_t data )
 {
 	output_set_value("3P_Start_lamp", BIT(data, 4));
 	output_set_value("6P_Start_lamp", BIT(data, 5));
 }
 
-static void titlef_sw1_output( int which, UINT16 data )
+static void titlef_sw1_output( int which, uint16_t data )
 {
 	if (which == 0)
 	{
@@ -3957,7 +3957,7 @@ static void titlef_sw1_output( int which, UINT16 data )
 	}
 }
 
-static void titlef_sw2_output( int which, UINT16 data )
+static void titlef_sw2_output( int which, uint16_t data )
 {
 	if (which == 0)
 		output_set_value("Blue_Corner_lamp", BIT(data, 0));
@@ -3965,7 +3965,7 @@ static void titlef_sw2_output( int which, UINT16 data )
 		output_set_value("Red_Corner_lamp", BIT(data, 0));
 }
 
-static void scross_sw1_output( int which, UINT16 data )
+static void scross_sw1_output( int which, uint16_t data )
 {
 	/* note ma = monitor A and mb = Monitor B */
 	if (which == 0)
@@ -3974,7 +3974,7 @@ static void scross_sw1_output( int which, UINT16 data )
 		output_set_value("MB_Start_lamp", BIT(data, 2));
 }
 
-static void scross_sw2_output( int which, UINT16 data )
+static void scross_sw2_output( int which, uint16_t data )
 {
 	/* Note:  I'm not an expert on digits, so I didn't know the right map to use, I just added it manually and it seems to work fine. */
 	if (which == 0)
@@ -4010,7 +4010,7 @@ static DRIVER_INIT( arescue )
 	segas32_common_init(analog_custom_io_r, analog_custom_io_w);
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xa00000, 0xa00007, 0, 0, arescue_dsp_r, arescue_dsp_w);
 
-	dual_pcb_comms = auto_alloc_array(machine, UINT16, 0x1000/2);
+	dual_pcb_comms = auto_alloc_array(machine, uint16_t, 0x1000/2);
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x810000, 0x810fff, 0, 0, dual_pcb_comms_r, dual_pcb_comms_w);
 	memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x818000, 0x818003, 0, 0, dual_pcb_masterslave);
 
@@ -4036,7 +4036,7 @@ static DRIVER_INIT( brival )
 	segas32_common_init(extra_custom_io_r, NULL);
 
 	/* install protection handlers */
-	system32_protram = auto_alloc_array(machine, UINT16, 0x1000/2);
+	system32_protram = auto_alloc_array(machine, uint16_t, 0x1000/2);
 	memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x20ba00, 0x20ba07, 0, 0, brival_protection_r);
 	memory_install_write16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xa00000, 0xa00fff, 0, 0, brival_protection_w);
 }
@@ -4070,7 +4070,7 @@ static DRIVER_INIT( f1en )
 {
 	segas32_common_init(analog_custom_io_r, analog_custom_io_w);
 
-	dual_pcb_comms = auto_alloc_array(machine, UINT16, 0x1000/2);
+	dual_pcb_comms = auto_alloc_array(machine, uint16_t, 0x1000/2);
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x810000, 0x810fff, 0, 0, dual_pcb_comms_r, dual_pcb_comms_w);
 	memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x818000, 0x818003, 0, 0, dual_pcb_masterslave);
 
@@ -4114,7 +4114,7 @@ static DRIVER_INIT( holo )
 static DRIVER_INIT( jpark )
 {
 	/* Temp. Patch until we emulate the 'Drive Board', thanks to Malice */
-	UINT16 *pROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *pROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	segas32_common_init(analog_custom_io_r, analog_custom_io_w);
 

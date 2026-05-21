@@ -44,7 +44,7 @@ Notes:
 static WRITE8_HANDLER( sidearms_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 
 	/* bits 0 and 1 select the ROM bank */
@@ -124,7 +124,7 @@ ADDRESS_MAP_END
 static WRITE8_HANDLER( whizz_bankswitch_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bank = 0;
 
 	switch (data & 0xC0)

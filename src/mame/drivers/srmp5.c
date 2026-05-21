@@ -69,20 +69,20 @@ public:
 
 	srmp5_state(running_machine &machine) { }
 
-	UINT32 databank;
-	UINT16 *tileram;
-	UINT16 *palram;
-	UINT16 *sprram;
+	uint32_t databank;
+	uint16_t *tileram;
+	uint16_t *palram;
+	uint16_t *sprram;
 
-	UINT8 input_select;
+	uint8_t input_select;
 
-	UINT8 cmd1;
-	UINT8 cmd2;
-	UINT8 cmd_stat;
+	uint8_t cmd1;
+	uint8_t cmd2;
+	uint8_t cmd_stat;
 
-	UINT32 vidregs[0x120 / 4];
+	uint32_t vidregs[0x120 / 4];
 #ifdef DEBUG_CHAR
-	UINT8 tileduty[0x2000];
+	uint8_t tileduty[0x2000];
 #endif
 };
 
@@ -91,25 +91,25 @@ static VIDEO_UPDATE( srmp5 )
 {
 	srmp5_state *state = (srmp5_state *)screen->machine->driver_data;
 	int x,y,address,xs,xs2,ys,ys2,height,width,xw,yw,xb,yb,sizex,sizey;
-	UINT16 *sprite_list=state->sprram;
-	UINT16 *sprite_list_end=&state->sprram[0x4000]; //guess
-	UINT8 *pixels=(UINT8 *)state->tileram;
+	uint16_t *sprite_list=state->sprram;
+	uint16_t *sprite_list_end=&state->sprram[0x4000]; //guess
+	uint8_t *pixels=(uint8_t *)state->tileram;
 	const rectangle &visarea = screen->visible_area();
 
 //Table surface seems to be tiles, but display corrupts when switching the scene if always ON.
 //Currently the tiles are OFF.
 #ifdef BG_ENABLE
-	UINT8 tile_width  = (state->vidregs[2] >> 0) & 0xFF;
-	UINT8 tile_height = (state->vidregs[2] >> 8) & 0xFF;
+	uint8_t tile_width  = (state->vidregs[2] >> 0) & 0xFF;
+	uint8_t tile_height = (state->vidregs[2] >> 8) & 0xFF;
 	if(tile_width && tile_height)
 	{
 		// 16x16 tile
-		UINT16 *map = &sprram[0x2000];
+		uint16_t *map = &sprram[0x2000];
 		for(yw = 0; yw < tile_height; yw++)
 		{
 			for(xw = 0; xw < tile_width; xw++)
 			{
-				UINT16 tile = map[yw * 128 + xw * 2];
+				uint16_t tile = map[yw * 128 + xw * 2];
 				if(tile >= 0x2000) continue;
 
 				address = tile * SPRITE_DATA_GRANULARITY;
@@ -117,10 +117,10 @@ static VIDEO_UPDATE( srmp5 )
 				{
 					for(x = 0; x < 16; x++)
 					{
-						UINT8 pen = pixels[address];
+						uint8_t pen = pixels[address];
 						if(pen)
 						{
-							UINT16 pixdata=state->palram[pen];
+							uint16_t pixdata=state->palram[pen];
 							*BITMAP_ADDR32(bitmap, yw * 16 + y, xw * 16 + x) = ((pixdata&0x7c00)>>7) | ((pixdata&0x3e0)<<6) | ((pixdata&0x1f)<<19);
 						}
 						address++;
@@ -135,18 +135,18 @@ static VIDEO_UPDATE( srmp5 )
 
 	while((sprite_list[SUBLIST_OFFSET]&SPRITE_LIST_END_MARKER)==0 && sprite_list<sprite_list_end)
 	{
-		UINT16 *sprite_sublist=&state->sprram[sprite_list[SUBLIST_OFFSET]<<SUBLIST_OFFSET_SHIFT];
-		UINT16 sublist_length=sprite_list[SUBLIST_LENGTH];
-		INT16 global_x,global_y;
+		uint16_t *sprite_sublist=&state->sprram[sprite_list[SUBLIST_OFFSET]<<SUBLIST_OFFSET_SHIFT];
+		uint16_t sublist_length=sprite_list[SUBLIST_LENGTH];
+		int16_t global_x,global_y;
 
 		if(0!=sprite_list[SUBLIST_OFFSET])
 		{
-			global_x=(INT16)sprite_list[SPRITE_GLOBAL_X];
-			global_y=(INT16)sprite_list[SPRITE_GLOBAL_Y];
+			global_x=(int16_t)sprite_list[SPRITE_GLOBAL_X];
+			global_y=(int16_t)sprite_list[SPRITE_GLOBAL_Y];
 			while(sublist_length)
 			{
-				x=(INT16)sprite_sublist[SPRITE_LOCAL_X]+global_x;
-				y=(INT16)sprite_sublist[SPRITE_LOCAL_Y]+global_y;
+				x=(int16_t)sprite_sublist[SPRITE_LOCAL_X]+global_x;
+				y=(int16_t)sprite_sublist[SPRITE_LOCAL_Y]+global_y;
 				width =(sprite_sublist[SPRITE_SIZE]>> 4)&0xf;
 				height=(sprite_sublist[SPRITE_SIZE]>>12)&0xf;
 
@@ -166,13 +166,13 @@ static VIDEO_UPDATE( srmp5 )
 							ys2 = (sprite_sublist[SPRITE_PALETTE] & 0x4000) ? ys : (sizey - ys);
 							for(xs=0;xs<=sizex;xs++)
 							{
-								UINT8 pen=pixels[address&(0x100000-1)];
+								uint8_t pen=pixels[address&(0x100000-1)];
 								xs2 = (sprite_sublist[SPRITE_PALETTE] & 0x8000) ? (sizex - xs) : xs;
 								if(pen)
 								{
 									if(xb+xs2<=visarea.max_x && xb+xs2>=visarea.min_x && yb+ys2<=visarea.max_y && yb+ys2>=visarea.min_y )
 									{
-										UINT16 pixdata=state->palram[pen+((sprite_sublist[SPRITE_PALETTE]&0xff)<<8)];
+										uint16_t pixdata=state->palram[pen+((sprite_sublist[SPRITE_PALETTE]&0xff)<<8)];
 										*BITMAP_ADDR32(bitmap, yb+ys2, xb+xs2) = ((pixdata&0x7c00)>>7) | ((pixdata&0x3e0)<<6) | ((pixdata&0x1f)<<19);
 									}
 								}
@@ -195,7 +195,7 @@ static VIDEO_UPDATE( srmp5 )
 		{
 			if (state->tileduty[i] == 1)
 			{
-				decodechar(screen->machine->gfx[0], i, (UINT8 *)state->tileram);
+				decodechar(screen->machine->gfx[0], i, (uint8_t *)state->tileram);
 				state->tileduty[i] = 0;
 			}
 		}
@@ -259,8 +259,8 @@ static WRITE32_HANDLER(spr_w)
 static READ32_HANDLER(data_r)
 {
 	srmp5_state *state = (srmp5_state *)space->machine->driver_data;
-	UINT32 data;
-	const UINT8 *usr = memory_region(space->machine, "user2");
+	uint32_t data;
+	const uint8_t *usr = memory_region(space->machine, "user2");
 
 	data=((state->databank>>4)&0xf)*0x100000; //guess
 	data=usr[data+offset*2]+usr[data+offset*2+1]*256;
@@ -277,7 +277,7 @@ static WRITE32_HANDLER(input_select_w)
 static READ32_HANDLER(srmp5_inputs_r)
 {
 	srmp5_state *state = (srmp5_state *)space->machine->driver_data;
-	UINT32 ret = 0;
+	uint32_t ret = 0;
 
 	switch (state->input_select)
 	{
@@ -626,9 +626,9 @@ static DRIVER_INIT(srmp5)
 	srmp5_state *state = (srmp5_state *)machine->driver_data;
 	st0016_game = 9;
 
-	state->tileram = auto_alloc_array(machine, UINT16, 0x100000/2);
-	state->sprram  = auto_alloc_array(machine, UINT16, 0x080000/2);
-	state->palram  = auto_alloc_array(machine, UINT16, 0x040000/2);
+	state->tileram = auto_alloc_array(machine, uint16_t, 0x100000/2);
+	state->sprram  = auto_alloc_array(machine, uint16_t, 0x080000/2);
+	state->palram  = auto_alloc_array(machine, uint16_t, 0x040000/2);
 #ifdef DEBUG_CHAR
 	memset(state->tileduty, 1, 0x2000);
 #endif

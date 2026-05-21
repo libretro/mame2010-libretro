@@ -9,8 +9,8 @@ Ping Pong (c) 1985 Konami
 #include "deprecat.h"
 #include "sound/sn76496.h"
 
-extern UINT8 *pingpong_videoram;
-extern UINT8 *pingpong_colorram;
+extern uint8_t *pingpong_videoram;
+extern uint8_t *pingpong_colorram;
 
 extern WRITE8_HANDLER( pingpong_videoram_w );
 extern WRITE8_HANDLER( pingpong_colorram_w );
@@ -64,7 +64,7 @@ static WRITE8_HANDLER( cashquiz_question_bank_low_w )
 		static const char * const bankname[] = { "bank1", "bank2", "bank3", "bank4", "bank5", "bank6", "bank7", "bank8" };
 		const char *bank = bankname[data & 7];
 		int bankaddr = question_addr_high | ((data - 0x60) * 0x100);
-		UINT8 *questions = memory_region(space->machine, "user1") + bankaddr;
+		uint8_t *questions = memory_region(space->machine, "user1") + bankaddr;
 		memory_set_bankptr(space->machine, bank,questions);
 
 	}
@@ -574,7 +574,7 @@ ROM_END
 
 static DRIVER_INIT( merlinmm )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int i;
 
 	/* decrypt program code */
@@ -584,7 +584,7 @@ static DRIVER_INIT( merlinmm )
 
 static DRIVER_INIT( cashquiz )
 {
-	UINT8 *ROM;
+	uint8_t *ROM;
 	int i;
 
 	/* decrypt program code */

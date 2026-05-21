@@ -509,12 +509,12 @@ static const k051960_interface spy_k051960_intf =
 static MACHINE_START( spy )
 {
 	spy_state *state = (spy_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 12, &ROM[0x10000], 0x2000);
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x800);
-	state->pmcram = auto_alloc_array_clear(machine, UINT8, 0x800);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x800);
+	state->pmcram = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");

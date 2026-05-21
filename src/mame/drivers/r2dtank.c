@@ -47,11 +47,11 @@ RAM = 4116 (x11)
 #define CRTC_CLOCK				(MAIN_CPU_MASTER_CLOCK / 16)
 
 
-static UINT8 *r2dtank_videoram;
-static UINT8 *r2dtank_colorram;
-static UINT8 flipscreen;
-static UINT32 ttl74123_output;
-static UINT8 AY8910_selected;
+static uint8_t *r2dtank_videoram;
+static uint8_t *r2dtank_colorram;
+static uint8_t flipscreen;
+static uint32_t ttl74123_output;
+static uint8_t AY8910_selected;
 
 
 
@@ -91,7 +91,7 @@ static WRITE_LINE_DEVICE_HANDLER( main_cpu_irq )
 
 static READ8_HANDLER( audio_command_r )
 {
-	UINT8 ret = soundlatch_r(space, 0);
+	uint8_t ret = soundlatch_r(space, 0);
 
 if (LOG_AUDIO_COMM) logerror("%08X  CPU#1  Audio Command Read: %x\n", cpu_get_pc(space->cpu), ret);
 
@@ -110,7 +110,7 @@ if (LOG_AUDIO_COMM) logerror("%08X   CPU#0  Audio Command Write: %x\n", cpu_get_
 
 static READ8_HANDLER( audio_answer_r )
 {
-	UINT8 ret = soundlatch2_r(space, 0);
+	uint8_t ret = soundlatch2_r(space, 0);
 if (LOG_AUDIO_COMM) logerror("%08X  CPU#0  Audio Answer Read: %x\n", cpu_get_pc(space->cpu), ret);
 
 	return ret;
@@ -147,7 +147,7 @@ if (LOG_AUDIO_COMM) logerror("%s:  CPU#1  AY8910_select_w: %x\n", cpuexec_descri
 
 static READ8_DEVICE_HANDLER( AY8910_port_r )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if (AY8910_selected & 0x08)
 		ret = ay8910_r(device->machine->device("ay1"), 0);
@@ -313,15 +313,15 @@ static MC6845_BEGIN_UPDATE( begin_update )
 
 static MC6845_UPDATE_ROW( update_row )
 {
-	UINT8 cx;
+	uint8_t cx;
 
 	pen_t *pens = (pen_t *)param;
-	UINT8 x = 0;
+	uint8_t x = 0;
 
 	for (cx = 0; cx < x_count; cx++)
 	{
 		int i;
-		UINT8 data, fore_color;
+		uint8_t data, fore_color;
 
 		/* the memory is hooked up to the MA, RA lines this way */
 		offs_t offs = ((ma << 3) & 0x1f00) |
@@ -336,7 +336,7 @@ static MC6845_UPDATE_ROW( update_row )
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 bit, color;
+			uint8_t bit, color;
 
 			if (flipscreen)
 			{

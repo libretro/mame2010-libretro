@@ -2723,7 +2723,7 @@ static DRIVER_INIT( defender )
 
 static DRIVER_INIT( defndjeu )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	CONFIGURE_BLITTER(WILLIAMS_BLITTER_NONE, 0x0000);

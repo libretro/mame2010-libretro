@@ -294,7 +294,7 @@ Version 1 for Tempest Analog Vector-Generator PCB Assembly A037383-01 or A037383
 #define TEMPEST_BUTTONS_P2_TAG	("BUTTONSP2")
 
 
-static UINT8 tempest_player_select;
+static uint8_t tempest_player_select;
 
 static MACHINE_START( tempest )
 {

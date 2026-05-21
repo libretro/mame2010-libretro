@@ -125,10 +125,10 @@ Stephh's notes (based on the games Z80 code and some tests) :
 #include "sound/3812intf.h"
 #include "sound/sp0256.h"
 
-extern UINT8 *tecfri_videoram;
-extern UINT8 *tecfri_colorram;
-extern UINT8 *tecfri_videoram2;
-extern UINT8 *tecfri_colorram2;
+extern uint8_t *tecfri_videoram;
+extern uint8_t *tecfri_colorram;
+extern uint8_t *tecfri_videoram2;
+extern uint8_t *tecfri_colorram2;
 
 WRITE8_HANDLER( tecfri_videoram_w );
 WRITE8_HANDLER( tecfri_colorram_w );
@@ -539,7 +539,7 @@ static DRIVER_INIT( tecfri )
 	/* This game doesn't like all memory to be initialized to zero, it won't
        initialize the high scores */
 
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	memset(&RAM[0xe000], 0, 0x100);
 	RAM[0xe000] = 1;

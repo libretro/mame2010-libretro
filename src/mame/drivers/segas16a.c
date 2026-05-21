@@ -164,7 +164,7 @@ Tetris         -         -         -         -         EPR12169  EPR12170  -    
  *
  *************************************/
 
-static UINT16 *workram;
+static uint16_t *workram;
 
 
 /*************************************
@@ -551,10 +551,10 @@ static INTERRUPT_GEN( i8751_main_cpu_vblank )
 static void dumpmtmt_i8751_sim(running_machine *machine)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
-	UINT8 flag = workram[0x200/2] >> 8;
-	UINT8 tick = workram[0x200/2] & 0xff;
-	UINT8 sec = workram[0x202/2] >> 8;
-	UINT8 min = workram[0x202/2] & 0xff;
+	uint8_t flag = workram[0x200/2] >> 8;
+	uint8_t tick = workram[0x200/2] & 0xff;
+	uint8_t sec = workram[0x202/2] >> 8;
+	uint8_t min = workram[0x202/2] & 0xff;
 
 	/* signal a VBLANK to the main CPU */
 	cpu_set_input_line(state->maincpu, 4, HOLD_LINE);
@@ -682,9 +682,9 @@ static READ16_HANDLER( mjleague_custom_io_r )
 				/* upper bit of the trackball controls */
 				case 0:
 				{
-					UINT8 buttons = input_port_read(space->machine, "SERVICE");
-					UINT8 analog1 = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY1" : "ANALOGX1");
-					UINT8 analog2 = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY2" : "ANALOGX2");
+					uint8_t buttons = input_port_read(space->machine, "SERVICE");
+					uint8_t analog1 = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY1" : "ANALOGX1");
+					uint8_t analog2 = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY2" : "ANALOGX2");
 					buttons |= (analog1 & 0x80) >> 1;
 					buttons |= (analog2 & 0x80);
 					return buttons;
@@ -694,8 +694,8 @@ static READ16_HANDLER( mjleague_custom_io_r )
 				/* player 1 select switch mapped to bit 7 */
 				case 1:
 				{
-					UINT8 buttons = input_port_read(space->machine, "BUTTONS1");
-					UINT8 analog = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY1" : "ANALOGX1");
+					uint8_t buttons = input_port_read(space->machine, "BUTTONS1");
+					uint8_t analog = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY1" : "ANALOGX1");
 					return (buttons & 0x80) | (analog & 0x7f);
 				}
 
@@ -706,8 +706,8 @@ static READ16_HANDLER( mjleague_custom_io_r )
 						return (input_port_read(space->machine, "ANALOGZ1") >> 4) | (input_port_read(space->machine, "ANALOGZ2") & 0xf0);
 					else
 					{
-						UINT8 buttons1 = input_port_read(space->machine, "BUTTONS1");
-						UINT8 buttons2 = input_port_read(space->machine, "BUTTONS2");
+						uint8_t buttons1 = input_port_read(space->machine, "BUTTONS1");
+						uint8_t buttons2 = input_port_read(space->machine, "BUTTONS2");
 
 						if (!(buttons1 & 0x01))
 							state->last_buttons1 = 0;
@@ -735,8 +735,8 @@ static READ16_HANDLER( mjleague_custom_io_r )
 				/* player 2 select switch mapped to bit 7 */
 				case 3:
 				{
-					UINT8 buttons = input_port_read(space->machine, "BUTTONS2");
-					UINT8 analog = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY2" : "ANALOGX2");
+					uint8_t buttons = input_port_read(space->machine, "BUTTONS2");
+					uint8_t analog = input_port_read(space->machine, (state->video_control & 4) ? "ANALOGY2" : "ANALOGX2");
 					return (buttons & 0x80) | (analog & 0x7f);
 				}
 			}
@@ -839,7 +839,7 @@ static READ16_HANDLER( sjryuko_custom_io_r )
 }
 
 
-static void sjryuko_lamp_changed_w(running_machine *machine, UINT8 changed, UINT8 newval)
+static void sjryuko_lamp_changed_w(running_machine *machine, uint8_t changed, uint8_t newval)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 
@@ -855,14 +855,14 @@ static void sjryuko_lamp_changed_w(running_machine *machine, UINT8 changed, UINT
  *
  *************************************/
 
-INLINE UINT8 maincpu_byte_r(running_machine *machine, offs_t offset)
+INLINE uint8_t maincpu_byte_r(running_machine *machine, offs_t offset)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	return memory_read_byte(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), offset);
 }
 
 
-INLINE void maincpu_byte_w(running_machine *machine, offs_t offset, UINT8 data)
+INLINE void maincpu_byte_w(running_machine *machine, offs_t offset, uint8_t data)
 {
 	segas1x_state *state = (segas1x_state *)machine->driver_data;
 	memory_write_byte(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), offset, data);

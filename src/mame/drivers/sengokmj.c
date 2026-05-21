@@ -57,11 +57,11 @@ RSSENGO2.72   chr.
 #include "sound/3812intf.h"
 #include "includes/sei_crtc.h"
 
-extern UINT16 *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
-extern UINT16 *seibucrtc_vregs;
+extern uint16_t *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
+extern uint16_t *seibucrtc_vregs;
 
-static UINT16 sengokumj_mux_data;
-static UINT8 hopper_io;
+static uint16_t sengokumj_mux_data;
+static uint8_t hopper_io;
 
 /* Multiplexer device for the mahjong panel */
 static READ16_HANDLER( mahjong_panel_r )

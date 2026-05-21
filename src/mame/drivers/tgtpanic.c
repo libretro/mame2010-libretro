@@ -12,8 +12,8 @@
 #include "emu.h"
 #include "cpu/z80/z80.h"
 
-static UINT8 *ram;
-static UINT8 color;
+static uint8_t *ram;
+static uint8_t color;
 
 
 /*************************************
@@ -24,9 +24,9 @@ static UINT8 color;
 
 static VIDEO_UPDATE( tgtpanic )
 {
-	UINT32 colors[4];
-	UINT32 offs;
-	UINT32 x, y;
+	uint32_t colors[4];
+	uint32_t offs;
+	uint32_t x, y;
 
 	colors[0] = 0;
 	colors[1] = 0xffffffff;
@@ -35,7 +35,7 @@ static VIDEO_UPDATE( tgtpanic )
 
 	for (offs = 0; offs < 0x2000; ++offs)
 	{
-		UINT8 val = ram[offs];
+		uint8_t val = ram[offs];
 
 		y = (offs & 0x7f) << 1;
 		x = (offs >> 7) << 2;

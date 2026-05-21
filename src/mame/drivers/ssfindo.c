@@ -207,10 +207,10 @@ enum
 	MAXIO=128
 };
 
-static UINT32 PS7500_IO[MAXIO];
-static UINT32 PS7500_FIFO[256];
-static UINT32 *vram;
-static UINT32 flashAdr,flashOffset,adrLatch,flashType,flashN;
+static uint32_t PS7500_IO[MAXIO];
+static uint32_t PS7500_FIFO[256];
+static uint32_t *vram;
+static uint32_t flashAdr,flashOffset,adrLatch,flashType,flashN;
 
 static void PS7500_startTimer0(void);
 static void PS7500_startTimer1(void);
@@ -356,7 +356,7 @@ static READ32_HANDLER(PS7500_IO_r)
 
 static WRITE32_HANDLER(PS7500_IO_w)
 {
-	UINT32 temp=PS7500_IO[offset];
+	uint32_t temp=PS7500_IO[offset];
 
 	COMBINE_DATA(&temp);
 
@@ -420,7 +420,7 @@ static WRITE32_HANDLER(PS7500_IO_w)
 
 static READ32_HANDLER(io_r)
 {
-	UINT16 *FLASH = (UINT16 *)memory_region(space->machine, "user2"); //16 bit - WORD access
+	uint16_t *FLASH = (uint16_t *)memory_region(space->machine, "user2"); //16 bit - WORD access
 
 	int adr=flashAdr*0x200+(flashOffset);
 
@@ -447,7 +447,7 @@ static READ32_HANDLER(io_r)
 
 static WRITE32_HANDLER(io_w)
 {
-	UINT32 temp = 0;
+	uint32_t temp = 0;
 	COMBINE_DATA(&temp);
 
 #if 0

@@ -27,13 +27,13 @@ public:
 	pzletime_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *       bg_videoram;
-	UINT16 *       mid_videoram;
-	UINT16 *       txt_videoram;
-	UINT16 *       tilemap_regs;
-	UINT16 *       video_regs;
-	UINT16 *       spriteram;
-//  UINT16 *       paletteram;    // currently this uses generic palette handling
+	uint16_t *       bg_videoram;
+	uint16_t *       mid_videoram;
+	uint16_t *       txt_videoram;
+	uint16_t *       tilemap_regs;
+	uint16_t *       video_regs;
+	uint16_t *       spriteram;
+//  uint16_t *       paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t      *mid_tilemap, *txt_tilemap;
@@ -108,7 +108,7 @@ static VIDEO_UPDATE( pzletime )
 	tilemap_draw(bitmap, cliprect, state->mid_tilemap, 0, 0);
 
 	{
-		UINT16 *spriteram = state->spriteram;
+		uint16_t *spriteram = state->spriteram;
 		int offs, spr_offs, colour, sx, sy;
 
 		for(offs = 0; offs < 0x2000 / 2; offs += 4)

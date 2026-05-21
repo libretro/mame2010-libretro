@@ -50,7 +50,7 @@ starfira has one less rom in total than starfire but everything passes as
 
 
 
-static UINT8 fireone_select;
+static uint8_t fireone_select;
 static read8_space_func input_read;
 
 
@@ -118,7 +118,7 @@ static READ8_HANDLER( starfire_input_r )
 
 static READ8_HANDLER( fireone_input_r )
 {
-	static const UINT8 fireone_paddle_map[64] =
+	static const uint8_t fireone_paddle_map[64] =
 	{
 		0x00,0x01,0x03,0x02,0x06,0x07,0x05,0x04,
 		0x0c,0x0d,0x0f,0x0e,0x0a,0x0b,0x09,0x08,

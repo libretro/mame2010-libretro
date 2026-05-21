@@ -34,11 +34,11 @@ public:
 
 	_39in1_state(running_machine &machine) { }
 
-	UINT32 seed;
-	UINT32 magic;
-	UINT32 state;
+	uint32_t seed;
+	uint32_t magic;
+	uint32_t state;
 
-	UINT32* ram;
+	uint32_t* ram;
 
 	PXA255_DMA_Regs dma_regs;
 	PXA255_I2S_Regs i2s_regs;
@@ -49,12 +49,12 @@ public:
 
 	dmadac_sound_device *dmadac[2];
 	eeprom_device *eeprom;
-	UINT32 pxa255_lcd_palette[0x100];
-	UINT8 pxa255_lcd_framebuffer[0x100000];
+	uint32_t pxa255_lcd_palette[0x100];
+	uint8_t pxa255_lcd_framebuffer[0x100000];
 
 	//FILE* audio_dump;
-	UINT32 words[0x800];
-	INT16 samples[0x1000];
+	uint32_t words[0x800];
+	int16_t samples[0x1000];
 };
 
 
@@ -71,14 +71,14 @@ static READ32_HANDLER( pxa255_ostimer_r );
 static WRITE32_HANDLER( pxa255_ostimer_w );
 
 static void pxa255_update_interrupts(running_machine* machine);
-static void pxa255_set_irq_line(running_machine* machine, UINT32 line, int state);
+static void pxa255_set_irq_line(running_machine* machine, uint32_t line, int state);
 static READ32_HANDLER( pxa255_intc_r );
 static WRITE32_HANDLER( pxa255_intc_w );
 
 static READ32_HANDLER( pxa255_gpio_r );
 static WRITE32_HANDLER( pxa255_gpio_w );
 
-static void pxa255_lcd_load_dma_descriptor(const address_space* space, UINT32 address, int channel);
+static void pxa255_lcd_load_dma_descriptor(const address_space* space, uint32_t address, int channel);
 static void pxa255_lcd_irq_check(running_machine* machine);
 static void pxa255_lcd_dma_kickoff(running_machine* machine, int channel);
 static void pxa255_lcd_check_load_next_branch(running_machine* machine, int channel);
@@ -292,13 +292,13 @@ static TIMER_CALLBACK( pxa255_dma_dma_end )
 {
 	_39in1_state *state = (_39in1_state *)machine->driver_data;
 	PXA255_DMA_Regs *dma_regs = &state->dma_regs;
-	UINT32 sadr = dma_regs->dsadr[param];
-	UINT32 tadr = dma_regs->dtadr[param];
-	UINT32 count = dma_regs->dcmd[param] & 0x00001fff;
-	UINT32 index = 0;
-	UINT8 temp8;
-	UINT16 temp16;
-	UINT32 temp32;
+	uint32_t sadr = dma_regs->dsadr[param];
+	uint32_t tadr = dma_regs->dtadr[param];
+	uint32_t count = dma_regs->dcmd[param] & 0x00001fff;
+	uint32_t index = 0;
+	uint8_t temp8;
+	uint16_t temp16;
+	uint32_t temp32;
 
 	switch(param)
 	{
@@ -306,8 +306,8 @@ static TIMER_CALLBACK( pxa255_dma_dma_end )
 			for(index = 0; index < count; index += 4)
 			{
 				state->words[index >> 2] = memory_read_dword_32le(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), sadr);
-				state->samples[(index >> 1) + 0] = (INT16)(state->words[index >> 2] >> 16);
-				state->samples[(index >> 1) + 1] = (INT16)(state->words[index >> 2] & 0xffff);
+				state->samples[(index >> 1) + 0] = (int16_t)(state->words[index >> 2] >> 16);
+				state->samples[(index >> 1) + 1] = (int16_t)(state->words[index >> 2] & 0xffff);
 				sadr += 4;
 			}
 			dmadac_transfer(&state->dmadac[0], 2, 2, 2, count/4, state->samples);
@@ -714,7 +714,7 @@ static void pxa255_update_interrupts(running_machine* machine)
 	cputag_set_input_line(machine, "maincpu", ARM7_IRQ_LINE,  intc_regs->icip ? ASSERT_LINE : CLEAR_LINE);
 }
 
-static void pxa255_set_irq_line(running_machine* machine, UINT32 line, int irq_state)
+static void pxa255_set_irq_line(running_machine* machine, uint32_t line, int irq_state)
 {
 	_39in1_state *state = (_39in1_state *)machine->driver_data;
 	PXA255_INTC_Regs *intc_regs = &state->intc_regs;
@@ -1047,7 +1047,7 @@ static WRITE32_HANDLER( pxa255_gpio_w )
 
 */
 
-static void pxa255_lcd_load_dma_descriptor(const address_space* space, UINT32 address, int channel)
+static void pxa255_lcd_load_dma_descriptor(const address_space* space, uint32_t address, int channel)
 {
 	_39in1_state *state = (_39in1_state *)space->machine->driver_data;
 	PXA255_LCD_Regs *lcd_regs = &state->lcd_regs;
@@ -1104,7 +1104,7 @@ static void pxa255_lcd_dma_kickoff(running_machine* machine, int channel)
 			int index = 0;
 			for(index = 0; index < length; index += 2)
 			{
-				UINT16 color = memory_read_word_32le(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), (lcd_regs->dma[channel].fsadr &~ 1) + index);
+				uint16_t color = memory_read_word_32le(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), (lcd_regs->dma[channel].fsadr &~ 1) + index);
 				state->pxa255_lcd_palette[index >> 1] = (((((color >> 11) & 0x1f) << 3) | (color >> 13)) << 16) | (((((color >> 5) & 0x3f) << 2) | ((color >> 9) & 0x3)) << 8) | (((color & 0x1f) << 3) | ((color >> 2) & 0x7));
 				palette_set_color_rgb(machine, index >> 1, (((color >> 11) & 0x1f) << 3) | (color >> 13), (((color >> 5) & 0x3f) << 2) | ((color >> 9) & 0x3), ((color & 0x1f) << 3) | ((color >> 2) & 0x7));
 			}
@@ -1393,8 +1393,8 @@ static READ32_HANDLER( cpld_r )
 		}
 		else if (state->state == 2)						// 29c0: 53 ac 0c 2b a2 07 e6 be 31
 		{
-			UINT32 seed = state->seed;
-			UINT32 magic = state->magic;
+			uint32_t seed = state->seed;
+			uint32_t magic = state->magic;
 
 			magic = ( (((~(seed >> 16))       ^ (magic >> 1))        & 0x01) |
 				(((~((seed >> 19) << 1))        ^ ((magic >> 5) << 1)) & 0x02) |
@@ -1515,7 +1515,7 @@ static VIDEO_UPDATE( 39in1 )
 
 	for(y = 0; y <= (state->lcd_regs.lccr2 & PXA255_LCCR2_LPP); y++)
 	{
-		UINT32 *d = BITMAP_ADDR32(bitmap, y, 0);
+		uint32_t *d = BITMAP_ADDR32(bitmap, y, 0);
 		for(x = 0; x <= (state->lcd_regs.lccr1 & PXA255_LCCR1_PPL); x++)
 		{
 			d[x] = state->pxa255_lcd_palette[state->pxa255_lcd_framebuffer[y*((state->lcd_regs.lccr1 & PXA255_LCCR1_PPL) + 1) + x]];
@@ -1560,7 +1560,7 @@ static void pxa255_start(running_machine* machine)
 
 static MACHINE_START(39in1)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int i;
 
 	for (i = 0; i < 0x80000; i += 2)

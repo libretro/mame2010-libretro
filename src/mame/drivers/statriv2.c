@@ -78,14 +78,14 @@ quaquiz2 - no inputs, needs NVRAM
 
 
 static tilemap_t *statriv2_tilemap;
-static UINT8 *question_offset;
+static uint8_t *question_offset;
 
-static UINT8 question_offset_low;
-static UINT8 question_offset_mid;
-static UINT8 question_offset_high;
+static uint8_t question_offset_low;
+static uint8_t question_offset_mid;
+static uint8_t question_offset_high;
 
-static UINT8 latched_coin;
-static UINT8 last_coin;
+static uint8_t latched_coin;
+static uint8_t last_coin;
 
 
 
@@ -181,7 +181,7 @@ static VIDEO_UPDATE( statriv2 )
 
 static INTERRUPT_GEN( statriv2_interrupt )
 {
-	UINT8 new_coin = input_port_read(device->machine, "COIN");
+	uint8_t new_coin = input_port_read(device->machine, "COIN");
 
 	/* check the coin inputs once per frame */
 	latched_coin |= new_coin & (new_coin ^ last_coin);
@@ -201,9 +201,9 @@ static INTERRUPT_GEN( statriv2_interrupt )
 
 static READ8_HANDLER( question_data_r )
 {
-	const UINT8 *qrom = memory_region(space->machine, "questions");
-	UINT32 qromsize = memory_region_length(space->machine, "questions");
-	UINT32 address;
+	const uint8_t *qrom = memory_region(space->machine, "questions");
+	uint32_t qromsize = memory_region_length(space->machine, "questions");
+	uint32_t address;
 
 	if (question_offset_high == 0xff)
 		question_offset[question_offset_low]++;
@@ -1073,9 +1073,9 @@ static DRIVER_INIT( addr_lmhe )
     *                                                   *
     \***************************************************/
 
-	UINT8 *qrom = memory_region(machine, "questions");
-	UINT32 length = memory_region_length(machine, "questions");
-	UINT32 address;
+	uint8_t *qrom = memory_region(machine, "questions");
+	uint32_t length = memory_region_length(machine, "questions");
+	uint32_t address;
 
 	for (address = 0; address < length; address++)
 		qrom[address] ^= BITSWAP8(address, 4,3,3,2,2,1,1,0);
@@ -1086,7 +1086,7 @@ static DRIVER_INIT( addr_lmhe )
 
 static READ8_HANDLER( laserdisc_io_r )
 {
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 	if (offset == 1)
 		result = 0x18;
 	mame_printf_debug("%s:ld read ($%02X) = %02X\n", cpuexec_describe_context(space->machine), 0x28 + offset, result);

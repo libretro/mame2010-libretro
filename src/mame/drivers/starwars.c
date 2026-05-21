@@ -35,12 +35,12 @@
 #define MASTER_CLOCK (12096000)
 #define CLOCK_3KHZ  (MASTER_CLOCK / 4096)
 
-UINT8 starwars_is_esb;
+uint8_t starwars_is_esb;
 
 /* Local variables */
-static UINT8 *slapstic_source;
-static UINT8 *slapstic_base;
-static UINT8 slapstic_current_bank;
+static uint8_t *slapstic_source;
+static uint8_t *slapstic_base;
+static uint8_t slapstic_current_bank;
 static offs_t slapstic_last_pc;
 static offs_t slapstic_last_address;
 
@@ -519,7 +519,7 @@ static DRIVER_INIT( starwars )
 
 static DRIVER_INIT( esb )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* init the slapstic */
 	slapstic_init(machine, 101);

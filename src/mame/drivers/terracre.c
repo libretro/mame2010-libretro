@@ -88,11 +88,11 @@ AT-2
 #include "sound/2203intf.h"
 #include "sound/3526intf.h"
 
-static const UINT16 *mpProtData;
-static UINT8 mAmazonProtCmd;
-static UINT8 mAmazonProtReg[6];
+static const uint16_t *mpProtData;
+static uint8_t mAmazonProtCmd;
+static uint8_t mAmazonProtReg[6];
 
-extern UINT16 *amazon_videoram;
+extern uint16_t *amazon_videoram;
 
 PALETTE_INIT( amazon );
 WRITE16_HANDLER( amazon_background_w );
@@ -103,7 +103,7 @@ WRITE16_HANDLER( amazon_flipscreen_w );
 VIDEO_START( amazon );
 VIDEO_UPDATE( amazon );
 
-static const UINT16 mAmazonProtData[] =
+static const uint16_t mAmazonProtData[] =
 {
 	/* default high scores (0x40db4) - wrong data ? */
 	0x0000,0x5000,0x5341,0x4b45,0x5349,0x4755,0x5245,
@@ -117,7 +117,7 @@ static const UINT16 mAmazonProtData[] =
 	0xc800 /* checksum */
 };
 
-static const UINT16 mAmatelasProtData[] =
+static const uint16_t mAmatelasProtData[] =
 {
 	/* default high scores (0x40db4) */
 	0x0000,0x5000,0x5341,0x4b45,0x5349,0x4755,0x5245,
@@ -131,7 +131,7 @@ static const UINT16 mAmatelasProtData[] =
 	0x6100 /* checksum */
 };
 
-static const UINT16 mHoreKidProtData[] =
+static const uint16_t mHoreKidProtData[] =
 {
 	/* N/A */
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
@@ -174,7 +174,7 @@ static READ16_HANDLER( amazon_protection_r )
 	offset = mAmazonProtReg[2];
 	if( offset<=0x56 )
 	{
-		UINT16 data;
+		uint16_t data;
 		data = mpProtData[offset/2];
 		if( offset&1 ) return data&0xff;
 		return data>>8;

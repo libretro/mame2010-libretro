@@ -633,8 +633,8 @@ static SAMPLES_START( kageki_init_samples )
 {
 	running_machine *machine = device->machine;
 	tnzs_state *state = (tnzs_state *)machine->driver_data;
-	UINT8 *scan, *src;
-	INT16 *dest;
+	uint8_t *scan, *src;
+	int16_t *dest;
 	int start, size;
 	int i, n;
 
@@ -655,7 +655,7 @@ static SAMPLES_START( kageki_init_samples )
 		}
 
 		/* 2009-11 FP: should these be saved? */
-		state->sampledata[i] = auto_alloc_array(machine, INT16, size);
+		state->sampledata[i] = auto_alloc_array(machine, int16_t, size);
 		state->samplesize[i] = size;
 
 
@@ -667,7 +667,7 @@ static SAMPLES_START( kageki_init_samples )
 		scan = &src[start];
 		for (n = 0; n < size; n++)
 		{
-			*dest++ = (INT8)((*scan++) ^ 0x80) * 256;
+			*dest++ = (int8_t)((*scan++) ^ 0x80) * 256;
 		}
 	//  logerror("samples num:%02X ofs:%04X lng:%04X\n", i, start, size);
 	}
@@ -869,7 +869,7 @@ ADDRESS_MAP_END
 static WRITE8_HANDLER( jpopnics_palette_w )
 {
 	int r, g, b;
-	UINT16 paldata;
+	uint16_t paldata;
 	space->machine->generic.paletteram.u8[offset] = data;
 
 	offset = offset >> 1;

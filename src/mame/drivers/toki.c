@@ -42,9 +42,9 @@ for now. Even at 12 this slowdown still happens a little.
 #include "sound/msm5205.h"
 #include "sound/3812intf.h"
 
-extern UINT16 *toki_background1_videoram16;
-extern UINT16 *toki_background2_videoram16;
-extern UINT16 *toki_scrollram16;
+extern uint16_t *toki_background1_videoram16;
+extern uint16_t *toki_background2_videoram16;
+extern uint16_t *toki_scrollram16;
 
 VIDEO_START( toki );
 VIDEO_EOF( toki );
@@ -86,7 +86,7 @@ static void toki_adpcm_int (running_device *device)
 static WRITE8_DEVICE_HANDLER( toki_adpcm_control_w )
 {
 	int bankaddress;
-	UINT8 *RAM = memory_region(device->machine, "audiocpu");
+	uint8_t *RAM = memory_region(device->machine, "audiocpu");
 
 
 	/* the code writes either 2 or 3 in the bottom two bits */
@@ -755,8 +755,8 @@ ROM_END
 
 static DRIVER_INIT( toki )
 {
-	UINT8 *ROM = memory_region(machine, "oki");
-	UINT8 *buffer = auto_alloc_array(machine, UINT8, 0x20000);
+	uint8_t *ROM = memory_region(machine, "oki");
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t, 0x20000);
 	int i;
 
 	memcpy(buffer,ROM,0x20000);
@@ -773,9 +773,9 @@ static DRIVER_INIT( toki )
 
 static DRIVER_INIT( tokib )
 {
-	UINT8 *temp = auto_alloc_array(machine, UINT8, 65536 * 2);
+	uint8_t *temp = auto_alloc_array(machine, uint8_t, 65536 * 2);
 	int i, offs, len;
-	UINT8 *rom;
+	uint8_t *rom;
 
 	/* invert the sprite data in the ROMs */
 	len = memory_region_length(machine, "gfx2");
@@ -788,7 +788,7 @@ static DRIVER_INIT( tokib )
 	rom = memory_region(machine, "gfx3");
 	for (offs = 0; offs < len; offs += 0x20000)
 	{
-		UINT8 *base = &rom[offs];
+		uint8_t *base = &rom[offs];
 		memcpy (temp, base, 65536 * 2);
 		for (i = 0; i < 16; i++)
 		{
@@ -802,7 +802,7 @@ static DRIVER_INIT( tokib )
 	rom = memory_region(machine, "gfx4");
 	for (offs = 0; offs < len; offs += 0x20000)
 	{
-		UINT8 *base = &rom[offs];
+		uint8_t *base = &rom[offs];
 		memcpy (temp, base, 65536 * 2);
 		for (i = 0; i < 16; i++)
 		{
@@ -821,7 +821,7 @@ static DRIVER_INIT(jujub)
 	/* Program ROMs are bitswapped */
 	{
 		int i;
-		UINT16 *prgrom = (UINT16*)memory_region(machine, "maincpu");
+		uint16_t *prgrom = (uint16_t*)memory_region(machine, "maincpu");
 
 		for (i = 0; i < 0x60000/2; i++)
 		{
@@ -835,8 +835,8 @@ static DRIVER_INIT(jujub)
 	/* Decrypt data for z80 program */
 	{
 		const address_space *space = cputag_get_address_space(machine, "audiocpu", ADDRESS_SPACE_PROGRAM);
-		UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x20000);
-		UINT8 *rom = memory_region(machine, "audiocpu");
+		uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x20000);
+		uint8_t *rom = memory_region(machine, "audiocpu");
 		int i;
 
 		memcpy(decrypt,rom,0x20000);
@@ -845,14 +845,14 @@ static DRIVER_INIT(jujub)
 
 		for (i = 0;i < 0x2000;i++)
 		{
-			UINT8 src = decrypt[i];
+			uint8_t src = decrypt[i];
 			rom[i] = src^0x55;
 		}
 	}
 
 	{
-		UINT8 *ROM = memory_region(machine, "oki");
-		UINT8 *buffer = auto_alloc_array(machine, UINT8, 0x20000);
+		uint8_t *ROM = memory_region(machine, "oki");
+		uint8_t *buffer = auto_alloc_array(machine, uint8_t, 0x20000);
 		int i;
 
 		memcpy(buffer,ROM,0x20000);

@@ -87,7 +87,7 @@ static int fgpalette=0;
 static int bgcolor=0;
 
 
-static const UINT8 tile_lookup[0x10]=
+static const uint8_t tile_lookup[0x10]=
 {
 	0x00, 0x10, 0x40, 0x50,
 	0x20, 0x30, 0x60, 0x70,
@@ -129,7 +129,7 @@ static VIDEO_START(pturn)
 
 static VIDEO_UPDATE(pturn)
 {
-	UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+	uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 	int offs;
 	int sx, sy;
 	int flipx, flipy;

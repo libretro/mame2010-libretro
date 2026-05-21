@@ -611,7 +611,7 @@ static STATE_POSTLOAD( taitoair_postload )
 static MACHINE_START( taitoair )
 {
 	taitoair_state *state = (taitoair_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 	int i;
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0xc000], 0x4000);

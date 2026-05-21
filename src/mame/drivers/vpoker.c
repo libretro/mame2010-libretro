@@ -84,7 +84,7 @@ mm74c920J/mmc6551j-9    x2
 
 static VIDEO_START( vpoker )
 {
-	machine->generic.videoram.u8 = auto_alloc_array(machine, UINT8, 0x200);
+	machine->generic.videoram.u8 = auto_alloc_array(machine, uint8_t, 0x200);
 }
 
 static VIDEO_UPDATE( vpoker )
@@ -119,7 +119,7 @@ static READ8_HANDLER( blitter_r )
 
 static WRITE8_HANDLER( blitter_w )
 {
-	static UINT8 blit_ram[8];
+	static uint8_t blit_ram[8];
 
 	blit_ram[offset] = data;
 

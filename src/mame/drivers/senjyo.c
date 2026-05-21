@@ -75,7 +75,7 @@ I/O read/write
 #include "machine/segacrpt.h"
 #include "includes/senjyo.h"
 
-extern UINT8 senjyo_sound_cmd;
+extern uint8_t senjyo_sound_cmd;
 static int int_delay_kludge;
 
 static MACHINE_RESET( senjyo )

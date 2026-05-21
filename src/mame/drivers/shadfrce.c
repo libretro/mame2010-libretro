@@ -237,7 +237,7 @@ static WRITE16_HANDLER( shadfrce_flip_screen )
 static READ16_HANDLER( shadfrce_input_ports_r )
 {
 	shadfrce_state *state = (shadfrce_state *)space->machine->driver_data;
-	UINT16 data = 0xffff;
+	uint16_t data = 0xffff;
 
 	switch (offset)
 	{

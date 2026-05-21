@@ -57,14 +57,14 @@ public:
 
 	safarir_state(running_machine &machine) { }
 
-	UINT8 *ram_1, *ram_2;
+	uint8_t *ram_1, *ram_2;
 	size_t ram_size;
-	UINT8 ram_bank;
+	uint8_t ram_bank;
 	tilemap_t *bg_tilemap;
 	tilemap_t *fg_tilemap;
-	UINT8 *bg_scroll;
-	UINT8 port_last;
-	UINT8 port_last2;
+	uint8_t *bg_scroll;
+	uint8_t port_last;
+	uint8_t port_last2;
 	running_device *samples;
 };
 
@@ -146,7 +146,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 {
 	int color;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 code = ram_r(space,tile_index | 0x400);
+	uint8_t code = ram_r(space,tile_index | 0x400);
 
 	if (code & 0x80)
 		color = 6;	/* yellow */
@@ -169,7 +169,7 @@ static TILE_GET_INFO( get_fg_tile_info )
 	int color, flags;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
-	UINT8 code = ram_r(space,tile_index);
+	uint8_t code = ram_r(space,tile_index);
 
 	if (code & 0x80)
 		color = 7;	/* white */
@@ -235,7 +235,7 @@ static WRITE8_HANDLER( safarir_audio_w )
 {
 	safarir_state *state = (safarir_state *)space->machine->driver_data;
 	running_device *samples = state->samples;
-	UINT8 rising_bits = data & ~state->port_last;
+	uint8_t rising_bits = data & ~state->port_last;
 
 	if (rising_bits == 0x12) sample_start(samples, CHANNEL_SOUND1, SAMPLE_SOUND1_1, 0);
 	if (rising_bits == 0x02) sample_start(samples, CHANNEL_SOUND1, SAMPLE_SOUND1_2, 0);
@@ -314,8 +314,8 @@ static MACHINE_START( safarir )
 {
 	safarir_state *state = (safarir_state *)machine->driver_data;
 
-	state->ram_1 = auto_alloc_array(machine, UINT8, state->ram_size);
-	state->ram_2 = auto_alloc_array(machine, UINT8, state->ram_size);
+	state->ram_1 = auto_alloc_array(machine, uint8_t, state->ram_size);
+	state->ram_2 = auto_alloc_array(machine, uint8_t, state->ram_size);
 	state->port_last = 0;
 	state->port_last2 = 0;
 	state->samples = machine->device("samples");

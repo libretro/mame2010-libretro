@@ -13,10 +13,10 @@ driver by Allard Van Der Bas
 
 #define MASTER_CLOCK XTAL_18_432MHz
 
-UINT8 shaolins_nmi_enable;
+uint8_t shaolins_nmi_enable;
 
-extern UINT8 *shaolins_videoram;
-extern UINT8 *shaolins_colorram;
+extern uint8_t *shaolins_videoram;
+extern uint8_t *shaolins_colorram;
 WRITE8_HANDLER( shaolins_videoram_w );
 WRITE8_HANDLER( shaolins_colorram_w );
 WRITE8_HANDLER( shaolins_palettebank_w );

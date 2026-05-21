@@ -21,10 +21,10 @@ Notes:
 #include "sound/ay8910.h"
 
 
-extern UINT8 *popeye_videoram;
-extern UINT8 *popeye_colorram;
-extern UINT8 *popeye_background_pos;
-extern UINT8 *popeye_palettebank;
+extern uint8_t *popeye_videoram;
+extern uint8_t *popeye_colorram;
+extern uint8_t *popeye_background_pos;
+extern uint8_t *popeye_palettebank;
 
 extern WRITE8_HANDLER( popeye_videoram_w );
 extern WRITE8_HANDLER( popeye_colorram_w );
@@ -49,7 +49,7 @@ static INTERRUPT_GEN( popeye_interrupt )
 
 /* the protection device simply returns the last two values written shifted left */
 /* by a variable amount. */
-static UINT8 prot0,prot1,prot_shift;
+static uint8_t prot0,prot1,prot_shift;
 
 static READ8_HANDLER( protection_r )
 {
@@ -639,12 +639,12 @@ ROM_END
 
 static DRIVER_INIT( skyskipr )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int len = 0x10000;
 
 	/* decrypt the program ROMs */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)
@@ -660,12 +660,12 @@ static DRIVER_INIT( skyskipr )
 
 static DRIVER_INIT( popeye )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int len = 0x10000;
 
 	/* decrypt the program ROMs */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)

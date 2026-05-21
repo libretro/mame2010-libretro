@@ -222,21 +222,21 @@
 *                              Video Hardware                              *
 ***************************************************************************/
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *tmap;
 static tilemap_t *reel1_tilemap, *reel2_tilemap, *reel3_tilemap;
 static int tiles_offset;
-static UINT8* reel1_ram;
-static UINT8* reel2_ram;
-static UINT8* reel3_ram;
-static UINT8* reel1_scroll;
-static UINT8* reel2_scroll;
-static UINT8* reel3_scroll;
-static UINT8 subsino_out_c;
-static UINT8* reel1_attr;
-static UINT8* reel2_attr;
-static UINT8* reel3_attr;
+static uint8_t* reel1_ram;
+static uint8_t* reel2_ram;
+static uint8_t* reel3_ram;
+static uint8_t* reel1_scroll;
+static uint8_t* reel2_scroll;
+static uint8_t* reel3_scroll;
+static uint8_t subsino_out_c;
+static uint8_t* reel1_attr;
+static uint8_t* reel2_attr;
+static uint8_t* reel3_attr;
 
 static WRITE8_HANDLER( subsino_tiles_offset_w )
 {
@@ -259,8 +259,8 @@ static WRITE8_HANDLER( subsino_colorram_w )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT16 code = videoram[ tile_index ] + (colorram[ tile_index ] << 8);
-	UINT16 color = (code >> 8) & 0x0f;
+	uint16_t code = videoram[ tile_index ] + (colorram[ tile_index ] << 8);
+	uint16_t color = (code >> 8) & 0x0f;
 	code = ((code & 0xf000) >> 4) + ((code & 0xff) >> 0);
 	code += tiles_offset;
 	SET_TILE_INFO(0, code, color, 0);
@@ -268,7 +268,7 @@ static TILE_GET_INFO( get_tile_info )
 
 static TILE_GET_INFO( get_stisub_tile_info )
 {
-	UINT16 code = videoram[ tile_index ] + (colorram[ tile_index ] << 8);
+	uint16_t code = videoram[ tile_index ] + (colorram[ tile_index ] << 8);
 	code&= 0x3fff;
 	SET_TILE_INFO(0, code, 0, 0);
 }
@@ -837,7 +837,7 @@ For now we'll emulate the bare minimum to let this game to work, obviously we ne
 what it is exactly and what it can possibly do.
 */
 
-static UINT8 flash_val, flash_packet, flash_packet_start;
+static uint8_t flash_val, flash_packet, flash_packet_start;
 
 static READ8_HANDLER( flash_r )
 {
@@ -975,7 +975,7 @@ static ADDRESS_MAP_START( tisub_map, ADDRESS_SPACE_PROGRAM, 8 )
 ADDRESS_MAP_END
 
 static int colordac_offs;
-static UINT8* stisub_colorram;
+static uint8_t* stisub_colorram;
 
 static WRITE8_HANDLER(colordac_w)
 {
@@ -1004,7 +1004,7 @@ static WRITE8_HANDLER(colordac_w)
 	}
 }
 
-static UINT8 stisub_outc;
+static uint8_t stisub_outc;
 
 static WRITE8_HANDLER( stisub_out_c_w )
 {
@@ -2842,7 +2842,7 @@ ROM_END
 
 static DRIVER_INIT( smoto16 )
 {
-	UINT8 *rom = memory_region( machine, "maincpu" );
+	uint8_t *rom = memory_region( machine, "maincpu" );
 	rom[0x12d0] = 0x20;	// "ERROR 951010"
 }
 
@@ -2937,7 +2937,7 @@ ROM_END
 ***************************************************************************/
 
 #if 0
-void dump_decrypted(running_machine* machine, UINT8* decrypt)
+void dump_decrypted(running_machine* machine, uint8_t* decrypt)
 {
     FILE *fp;
     char filename[256];
@@ -2957,7 +2957,7 @@ static const unsigned char crsbingo_xors[8] = { 0xbb, 0xcc, 0xcc, 0xdd, 0xaa, 0x
 static const unsigned char sharkpy_xors[8] =  { 0xcc, 0xaa, 0x66, 0xaa, 0xee, 0x33, 0xff, 0xff };
 
 
-static void victor5_bitswaps(UINT8* decrypt, int i)
+static void victor5_bitswaps(uint8_t* decrypt, int i)
 {
 	if ((i&7) == 0) decrypt[i] = BITSWAP8(decrypt[i],7,2,5,4,3,6,1,0);
 	if ((i&7) == 1) decrypt[i] = BITSWAP8(decrypt[i],7,6,5,0,3,2,1,4);
@@ -2970,7 +2970,7 @@ static void victor5_bitswaps(UINT8* decrypt, int i)
 }
 
 
-static void victor21_bitswaps(UINT8* decrypt, int i)
+static void victor21_bitswaps(uint8_t* decrypt, int i)
 {
 	if ((i&7) == 0) decrypt[i] = BITSWAP8(decrypt[i],7,2,1,0,3,6,5,4);
 	if ((i&7) == 1) decrypt[i] = BITSWAP8(decrypt[i],3,6,1,4,7,2,5,0);
@@ -2982,7 +2982,7 @@ static void victor21_bitswaps(UINT8* decrypt, int i)
 	if ((i&7) == 7) decrypt[i] = BITSWAP8(decrypt[i],3,2,1,4,7,6,5,0);
 }
 
-static void crsbingo_bitswaps(UINT8* decrypt, int i)
+static void crsbingo_bitswaps(uint8_t* decrypt, int i)
 {
 	if ((i&7) == 0) decrypt[i] = BITSWAP8(decrypt[i],7,2,5,4,3,6,1,0);
 	if ((i&7) == 1) decrypt[i] = BITSWAP8(decrypt[i],7,2,1,0,3,6,5,4);
@@ -2994,7 +2994,7 @@ static void crsbingo_bitswaps(UINT8* decrypt, int i)
 	if ((i&7) == 7) decrypt[i] = BITSWAP8(decrypt[i],3,2,1,0,7,6,5,4);
 }
 
-static void sharkpy_bitswaps(UINT8* decrypt, int i)
+static void sharkpy_bitswaps(uint8_t* decrypt, int i)
 {
 	if ((i&7) == 0) decrypt[i] = BITSWAP8(decrypt[i],3,2,1,0,7,6,5,4);
 	if ((i&7) == 1) decrypt[i] = BITSWAP8(decrypt[i],7,2,5,4,3,6,1,0);
@@ -3006,11 +3006,11 @@ static void sharkpy_bitswaps(UINT8* decrypt, int i)
 	if ((i&7) == 7) decrypt[i] = BITSWAP8(decrypt[i],3,6,1,4,7,2,5,0);
 }
 
-static void subsino_decrypt(running_machine* machine, void (*bitswaps)(UINT8* decrypt, int i), const UINT8* xors, int size)
+static void subsino_decrypt(running_machine* machine, void (*bitswaps)(uint8_t* decrypt, int i), const uint8_t* xors, int size)
 {
 	int i;
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8* region = memory_region(machine,"maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t* region = memory_region(machine,"maincpu");
 
 	for (i=0;i<0x10000;i++)
 	{
@@ -3057,13 +3057,13 @@ static DRIVER_INIT( sharkpye )
 
 static DRIVER_INIT( smoto20 )
 {
-	UINT8 *rom = memory_region( machine, "maincpu" );
+	uint8_t *rom = memory_region( machine, "maincpu" );
 	rom[0x12e1] = 0x20;	// "ERROR 951010"
 }
 
 static DRIVER_INIT( tisub )
 {
-	UINT8 *rom = memory_region( machine, "maincpu" );
+	uint8_t *rom = memory_region( machine, "maincpu" );
 
 	DRIVER_INIT_CALL(victor5);
 
@@ -3078,7 +3078,7 @@ static DRIVER_INIT( tisub )
 
 static DRIVER_INIT( tisuba )
 {
-	UINT8 *rom = memory_region( machine, "maincpu" );
+	uint8_t *rom = memory_region( machine, "maincpu" );
 
 	DRIVER_INIT_CALL(victor5);
 
@@ -3093,19 +3093,19 @@ static DRIVER_INIT( tisuba )
 
 static DRIVER_INIT( stisub )
 {
-	UINT8 *rom = memory_region( machine, "maincpu" );
+	uint8_t *rom = memory_region( machine, "maincpu" );
 	rom[0x1005] = 0x1d; //patch protection check
 	rom[0x7ab] = 0x18; //patch "winning protection" check
 	rom[0x957] = 0x18; //patch "losing protection" check
-	stisub_colorram = auto_alloc_array(machine, UINT8, 256*3);
+	stisub_colorram = auto_alloc_array(machine, uint8_t, 256*3);
 
-	reel1_scroll = auto_alloc_array(machine, UINT8, 0x40);
-	reel2_scroll = auto_alloc_array(machine, UINT8, 0x40);
-	reel3_scroll = auto_alloc_array(machine, UINT8, 0x40);
+	reel1_scroll = auto_alloc_array(machine, uint8_t, 0x40);
+	reel2_scroll = auto_alloc_array(machine, uint8_t, 0x40);
+	reel3_scroll = auto_alloc_array(machine, uint8_t, 0x40);
 
-	reel1_attr = auto_alloc_array(machine, UINT8, 0x200);
-	reel2_attr = auto_alloc_array(machine, UINT8, 0x200);
-	reel3_attr = auto_alloc_array(machine, UINT8, 0x200);
+	reel1_attr = auto_alloc_array(machine, uint8_t, 0x200);
+	reel2_attr = auto_alloc_array(machine, uint8_t, 0x200);
+	reel3_attr = auto_alloc_array(machine, uint8_t, 0x200);
 
 }
 

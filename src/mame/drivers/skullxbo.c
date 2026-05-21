@@ -48,7 +48,7 @@ static TIMER_CALLBACK( irq_gen )
 static void alpha_row_update(screen_device &screen, int scanline)
 {
 	skullxbo_state *state = (skullxbo_state *)screen.machine->driver_data;
-	UINT16 *check = &state->atarigen.alpha[(scanline / 8) * 64 + 42];
+	uint16_t *check = &state->atarigen.alpha[(scanline / 8) * 64 + 42];
 
 	/* check for interrupts in the alpha ram */
 	/* the interrupt occurs on the HBLANK of the 6th scanline following */

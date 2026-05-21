@@ -19,7 +19,7 @@ Dips verified for Neratte Chu (nratechu) from manual
 
 
 static int mux_port;
-UINT32 st0016_rom_bank;
+uint32_t st0016_rom_bank;
 
 /*************************************
  *
@@ -99,7 +99,7 @@ ADDRESS_MAP_END
  *
  *************************************/
 
-static UINT32 latches[8];
+static uint32_t latches[8];
 
 static READ32_HANDLER(latch32_r)
 {

@@ -17,9 +17,9 @@ pf: but some gameplay bugs - sprite positioning is incorrect, no enemies, jump a
 #include "cpu/m68000/m68000.h"
 #include "sound/okim6295.h"
 
-extern UINT16 *thoop2_vregs;
-extern UINT16 *thoop2_videoram;
-extern UINT16 *thoop2_spriteram;
+extern uint16_t *thoop2_vregs;
+extern uint16_t *thoop2_videoram;
+extern uint16_t *thoop2_spriteram;
 
 /* from video/thoop2.c */
 WRITE16_HANDLER( thoop2_vram_w );
@@ -60,7 +60,7 @@ GFXDECODE_END
 
 static WRITE16_HANDLER( OKIM6295_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "oki");
+	uint8_t *RAM = memory_region(space->machine, "oki");
 
 	if (ACCESSING_BITS_0_7){
 		memcpy(&RAM[0x30000], &RAM[0x40000 + (data & 0x0f)*0x10000], 0x10000);

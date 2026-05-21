@@ -178,39 +178,39 @@ Stephh's log (2007.11.28) :
 #define MC6845_CLOCK		((MASTER_CLOCK)/8/3)
 #define SOUND_CLOCK			((MASTER_CLOCK)/12)
 
-static UINT16 autohold_addr; /* address to patch in program RAM to enable autohold feature */
+static uint16_t autohold_addr; /* address to patch in program RAM to enable autohold feature */
 
 static tilemap_t *bg_tilemap;
-static UINT8 wingboard;
-static UINT8 jumper_e16_e17; /* Set this to TRUE when CG chips are 27c512 instead of 27c256 */
+static uint8_t wingboard;
+static uint8_t jumper_e16_e17; /* Set this to TRUE when CG chips are 27c512 instead of 27c256 */
 
 /* Pointers to External RAM */
-static UINT8 *program_ram;
-static UINT8 *cmos_ram;
-static UINT8 *s3000_ram;
-static UINT8 *s5000_ram;
-static UINT8 *s7000_ram;
-static UINT8 *sb000_ram;
-static UINT8 *sd000_ram;
-static UINT8 *sf000_ram;
+static uint8_t *program_ram;
+static uint8_t *cmos_ram;
+static uint8_t *s3000_ram;
+static uint8_t *s5000_ram;
+static uint8_t *s7000_ram;
+static uint8_t *sb000_ram;
+static uint8_t *sd000_ram;
+static uint8_t *sf000_ram;
 
 /* Variables used instead of CRTC6845 system */
-static UINT16 vid_address = 0;
+static uint16_t vid_address = 0;
 
 /* Holds upper video address, palette number and jumper_e16_e17 flag */
-static UINT8 *palette_ram;
-static UINT8 *palette_ram2;
+static uint8_t *palette_ram;
+static uint8_t *palette_ram2;
 
 /* IO Ports */
-static UINT8 *io_port;
+static uint8_t *io_port;
 
 /* Coin, Door, Hopper and EEPROM States */
-static UINT64 last_cycles;
-static UINT8 coin_state = 0;
-static UINT64 last_door;
-static UINT8 door_open = 0;
-static UINT64 last_coin_out;
-static UINT8 coin_out_state = 0;
+static uint64_t last_cycles;
+static uint8_t coin_state = 0;
+static uint64_t last_door;
+static uint8_t door_open = 0;
+static uint64_t last_coin_out;
+static uint8_t coin_out_state = 0;
 static int sda_dir = 0;
 
 /* Static Variables */
@@ -248,7 +248,7 @@ static const mc6845_interface mc6845_intf =
 
 static void peplus_load_superdata(running_machine *machine, const char *bank_name)
 {
-    UINT8 *super_data = memory_region(machine, bank_name);
+    uint8_t *super_data = memory_region(machine, bank_name);
 
     /* Distribute Superboard Data */
     memcpy(s3000_ram, &super_data[0x3000], 0x1000);
@@ -547,13 +547,13 @@ static READ8_DEVICE_HANDLER( peplus_input_bank_a_r )
         Bit 6 = LOW BATTERY
         Bit 7 = I2C EEPROM SDA
 */
-	UINT8 bank_a = 0x50; // Turn Off Low Battery and Hopper Full Statuses
-	UINT8 coin_optics = 0x00;
-    UINT8 coin_out = 0x00;
-	UINT64 curr_cycles = device->machine->firstcpu->total_cycles();
-	UINT16 door_wait = 500;
+	uint8_t bank_a = 0x50; // Turn Off Low Battery and Hopper Full Statuses
+	uint8_t coin_optics = 0x00;
+    uint8_t coin_out = 0x00;
+	uint64_t curr_cycles = device->machine->firstcpu->total_cycles();
+	uint16_t door_wait = 500;
 
-	UINT8 sda = 0;
+	uint8_t sda = 0;
 	if(!sda_dir)
 	{
 		sda = i2cmem_sda_read(device);
@@ -664,9 +664,9 @@ static TILE_GET_INFO( get_bg_tile_info )
 static VIDEO_START( peplus )
 {
 	bg_tilemap = tilemap_create(machine, get_bg_tile_info, tilemap_scan_rows, 8, 8, 40, 25);
-	palette_ram = auto_alloc_array(machine, UINT8, 0x3000);
+	palette_ram = auto_alloc_array(machine, uint8_t, 0x3000);
 	memset(palette_ram, 0, 0x3000);
-	palette_ram2 = auto_alloc_array(machine, UINT8, 0x3000);
+	palette_ram2 = auto_alloc_array(machine, uint8_t, 0x3000);
 	memset(palette_ram2, 0, 0x3000);
 }
 
@@ -795,8 +795,8 @@ ADDRESS_MAP_END
 
 static CUSTOM_INPUT( peplus_input_r )
 {
-	UINT8 inp_ret = 0x00;
-	UINT8 inp_read = input_port_read(field->port->machine, (const char *)param);
+	uint8_t inp_ret = 0x00;
+	uint8_t inp_read = input_port_read(field->port->machine, (const char *)param);
 
 	if (inp_read & 0x01) inp_ret = 0x01;
 	if (inp_read & 0x02) inp_ret = 0x02;

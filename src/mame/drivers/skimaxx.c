@@ -46,8 +46,8 @@
  *
  *************************************/
 
-static UINT32 *bg_buffer;	// i.e. background and sprites
-static UINT16 *fg_buffer;	// i.e. text
+static uint32_t *bg_buffer;	// i.e. background and sprites
+static uint16_t *fg_buffer;	// i.e. text
 
 
 /*************************************
@@ -56,21 +56,21 @@ static UINT16 *fg_buffer;	// i.e. text
  *
  *************************************/
 
-static UINT32 *skimaxx_bg_buffer_front;
-static UINT32 *skimaxx_bg_buffer_back;
+static uint32_t *skimaxx_bg_buffer_front;
+static uint32_t *skimaxx_bg_buffer_back;
 
-static UINT32 *skimaxx_blitter_regs;
-static UINT16 *skimaxx_blitter_gfx;
+static uint32_t *skimaxx_blitter_regs;
+static uint16_t *skimaxx_blitter_gfx;
 
-static UINT32 skimaxx_blitter_gfx_len;
+static uint32_t skimaxx_blitter_gfx_len;
 
-static UINT32 skimaxx_blitter_src_x, skimaxx_blitter_src_dx;
-static UINT32 skimaxx_blitter_src_y, skimaxx_blitter_src_dy;
+static uint32_t skimaxx_blitter_src_x, skimaxx_blitter_src_dx;
+static uint32_t skimaxx_blitter_src_y, skimaxx_blitter_src_dy;
 
 // Set up blit parameters
 static WRITE32_HANDLER( skimaxx_blitter_w )
 {
-	UINT32 newdata = COMBINE_DATA( &skimaxx_blitter_regs[offset] );
+	uint32_t newdata = COMBINE_DATA( &skimaxx_blitter_regs[offset] );
 
 	switch (offset)
 	{
@@ -101,11 +101,11 @@ static WRITE32_HANDLER( skimaxx_blitter_w )
 // A read by the 68030 from this area blits one pixel to the back buffer (at the same offset)
 static READ32_HANDLER( skimaxx_blitter_r )
 {
-	UINT32 penaddr = ((skimaxx_blitter_src_x >> 8) & 0x1ff) + ((skimaxx_blitter_src_y >> 8) << 9);
-	UINT16 *src = skimaxx_blitter_gfx + (penaddr % skimaxx_blitter_gfx_len);
-	UINT32 *dst = skimaxx_bg_buffer_back + offset;
+	uint32_t penaddr = ((skimaxx_blitter_src_x >> 8) & 0x1ff) + ((skimaxx_blitter_src_y >> 8) << 9);
+	uint16_t *src = skimaxx_blitter_gfx + (penaddr % skimaxx_blitter_gfx_len);
+	uint32_t *dst = skimaxx_bg_buffer_back + offset;
 
-	UINT16 pen = (*src) & 0x7fff;
+	uint16_t pen = (*src) & 0x7fff;
 
 	if (pen)
 	{
@@ -124,12 +124,12 @@ static READ32_HANDLER( skimaxx_blitter_r )
 
 static VIDEO_START( skimaxx )
 {
-	skimaxx_blitter_gfx = (UINT16 *) memory_region( machine, "blitter" );
+	skimaxx_blitter_gfx = (uint16_t *) memory_region( machine, "blitter" );
 	skimaxx_blitter_gfx_len = memory_region_length( machine, "blitter" ) / 2;
 
-	bg_buffer = auto_alloc_array(machine, UINT32, 0x400 * 0x100 * sizeof(UINT16) / sizeof(UINT32) * 2);	// 2 buffers
-	skimaxx_bg_buffer_back  = bg_buffer + 0x400 * 0x100 * sizeof(UINT16) / sizeof(UINT32) * 0;
-	skimaxx_bg_buffer_front = bg_buffer + 0x400 * 0x100 * sizeof(UINT16) / sizeof(UINT32) * 1;
+	bg_buffer = auto_alloc_array(machine, uint32_t, 0x400 * 0x100 * sizeof(uint16_t) / sizeof(uint32_t) * 2);	// 2 buffers
+	skimaxx_bg_buffer_back  = bg_buffer + 0x400 * 0x100 * sizeof(uint16_t) / sizeof(uint32_t) * 0;
+	skimaxx_bg_buffer_front = bg_buffer + 0x400 * 0x100 * sizeof(uint16_t) / sizeof(uint32_t) * 1;
 	memory_configure_bank(machine, "bank1", 0, 1, skimaxx_bg_buffer_back,  0);
 	memory_configure_bank(machine, "bank1", 1, 1, skimaxx_bg_buffer_front, 0);
 }
@@ -150,14 +150,14 @@ static VIDEO_UPDATE( skimaxx )
  *************************************/
 
 // TODO: Might not be used
-static void skimaxx_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void skimaxx_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(shiftreg, &fg_buffer[TOWORD(address)], 512 * sizeof(UINT16));
+	memcpy(shiftreg, &fg_buffer[TOWORD(address)], 512 * sizeof(uint16_t));
 }
 
-static void skimaxx_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void skimaxx_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
-	memcpy(&fg_buffer[TOWORD(address)], shiftreg, 512 * sizeof(UINT16));
+	memcpy(&fg_buffer[TOWORD(address)], shiftreg, 512 * sizeof(uint16_t));
 }
 
 
@@ -173,10 +173,10 @@ static void skimaxx_scanline_update(screen_device &screen, bitmap_t *bitmap, int
 
 	if (params->rowaddr >= 0x220)
 	{
-		UINT32 rowaddr = (params->rowaddr - 0x220);
-		UINT16 *fg = &fg_buffer[rowaddr << 8];
-		UINT32 *bg = &skimaxx_bg_buffer_front[rowaddr/2 * 1024/2];
-		UINT16 *dest = BITMAP_ADDR16(bitmap, scanline, 0);
+		uint32_t rowaddr = (params->rowaddr - 0x220);
+		uint16_t *fg = &fg_buffer[rowaddr << 8];
+		uint32_t *bg = &skimaxx_bg_buffer_front[rowaddr/2 * 1024/2];
+		uint16_t *dest = BITMAP_ADDR16(bitmap, scanline, 0);
 		//int coladdr = params->coladdr;
 		int x;
 		//coladdr = 0;
@@ -184,7 +184,7 @@ static void skimaxx_scanline_update(screen_device &screen, bitmap_t *bitmap, int
 		dest += params->heblnk;
 		for (x = params->heblnk; x < params->hsblnk; x+=2)
 		{
-			UINT16 tmspix;
+			uint16_t tmspix;
 			tmspix = *fg & 0x7fff;
 			if (tmspix)
 			{
@@ -193,7 +193,7 @@ static void skimaxx_scanline_update(screen_device &screen, bitmap_t *bitmap, int
 			}
 			else
 			{
-				UINT32 data = *bg & 0x7fff7fff;
+				uint32_t data = *bg & 0x7fff7fff;
 				*dest++ = data >> 16;
 				*dest++ = data;
 			}
@@ -236,18 +236,18 @@ static READ32_HANDLER( m68k_tms_r )
   bit 0: bit banging data
 */
 
-static UINT32 *skimaxx_fpga_ctrl;
+static uint32_t *skimaxx_fpga_ctrl;
 static WRITE32_HANDLER( skimaxx_fpga_ctrl_w )
 {
-	UINT32 newdata = COMBINE_DATA( skimaxx_fpga_ctrl );
+	uint32_t newdata = COMBINE_DATA( skimaxx_fpga_ctrl );
 
 	if (ACCESSING_BITS_0_7)
 	{
 		// double buffering
-		UINT8 bank_bg_buffer = (newdata & 0x40) ? 1 : 0;
+		uint8_t bank_bg_buffer = (newdata & 0x40) ? 1 : 0;
 
-		skimaxx_bg_buffer_back  = bg_buffer + 0x400 * 0x100 * sizeof(UINT16) / sizeof(UINT32) * bank_bg_buffer;
-		skimaxx_bg_buffer_front = bg_buffer + 0x400 * 0x100 * sizeof(UINT16) / sizeof(UINT32) * (1 - bank_bg_buffer);
+		skimaxx_bg_buffer_back  = bg_buffer + 0x400 * 0x100 * sizeof(uint16_t) / sizeof(uint32_t) * bank_bg_buffer;
+		skimaxx_bg_buffer_front = bg_buffer + 0x400 * 0x100 * sizeof(uint16_t) / sizeof(uint32_t) * (1 - bank_bg_buffer);
 
 		memory_set_bank(space->machine, "bank1", bank_bg_buffer);
 	}
@@ -379,12 +379,12 @@ ADDRESS_MAP_END
 
 #if 0
 
-static const UINT32 texlayout_xoffset[512] =
+static const uint32_t texlayout_xoffset[512] =
 {
 	STEP512(0,16)
 };
 
-static const UINT32 texlayout_yoffset[128] =
+static const uint32_t texlayout_yoffset[128] =
 {
 	STEP128(0,512*16)
 };

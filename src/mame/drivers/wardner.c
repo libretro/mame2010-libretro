@@ -133,7 +133,7 @@ out:
 
 
 
-static UINT8 *rambase_ae00, *rambase_c000;
+static uint8_t *rambase_ae00, *rambase_c000;
 
 static WRITE8_HANDLER( wardner_ramrom_bank_sw )
 {
@@ -141,7 +141,7 @@ static WRITE8_HANDLER( wardner_ramrom_bank_sw )
 		int bankaddress = 0;
 
 		const address_space *mainspace;
-		UINT8 *RAM = memory_region(space->machine, "maincpu");
+		uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 		mainspace = cputag_get_address_space(space->machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 		wardner_membank = data;

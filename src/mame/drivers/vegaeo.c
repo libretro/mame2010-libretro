@@ -18,8 +18,8 @@
 #include "machine/at28c16.h"
 #include "includes/eolithsp.h"
 
-static UINT32 *vega_vram;
-static UINT8 vega_vbuffer = 0;
+static uint32_t *vega_vram;
+static uint8_t vega_vbuffer = 0;
 
 
 static WRITE32_HANDLER( vega_vram_w )
@@ -59,7 +59,7 @@ static READ32_HANDLER( vega_vram_r )
 
 static WRITE32_HANDLER( vega_palette_w )
 {
-	UINT16 paldata;
+	uint16_t paldata;
 
 	COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
 
@@ -130,7 +130,7 @@ INPUT_PORTS_END
 
 static VIDEO_START( vega )
 {
-	vega_vram = auto_alloc_array(machine, UINT32, 0x14000*2/4);
+	vega_vram = auto_alloc_array(machine, uint32_t, 0x14000*2/4);
 }
 
 static VIDEO_UPDATE( vega )

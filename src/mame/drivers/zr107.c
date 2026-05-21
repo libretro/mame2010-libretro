@@ -176,7 +176,7 @@ Check gticlub.c for details on the bottom board.
 #include "video/konicdev.h"
 #include "video/gticlub.h"
 
-static UINT8 led_reg0, led_reg1;
+static uint8_t led_reg0, led_reg1;
 
 
 
@@ -259,7 +259,7 @@ static VIDEO_UPDATE( zr107 )
 
 static READ8_HANDLER( sysreg_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	static const char *const portnames[] = { "IN0", "IN1", "IN2", "IN3", "IN4" };
 
 	switch (offset)
@@ -345,7 +345,7 @@ static int ccu_vcth = 0;
 static int ccu_vctl = 0;
 static READ32_HANDLER( ccu_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	switch (offset)
 	{
 		case 0x1c/4:
@@ -375,7 +375,7 @@ static WRITE32_HANDLER( ccu_w )
 
 /******************************************************************/
 
-static UINT32 *workram;
+static uint32_t *workram;
 static MACHINE_START( zr107 )
 {
 	/* set conservative DRC options */
@@ -440,7 +440,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( dual539_r )
 {
-	UINT16 ret = 0;
+	uint16_t ret = 0;
 
 	if (ACCESSING_BITS_0_7)
 		ret |= k054539_r(space->machine->device("konami2"), offset);
@@ -474,7 +474,7 @@ static const k054539_interface k054539_config =
 
 /*****************************************************************************/
 
-static UINT32 *sharc_dataram;
+static uint32_t *sharc_dataram;
 
 static READ32_HANDLER( dsp_dataram_r )
 {
@@ -631,7 +631,7 @@ static const sharc_config sharc_cfg =
 
 /* ADC0838 Interface */
 
-static double adc0838_callback( running_device *device, UINT8 input )
+static double adc0838_callback( running_device *device, uint8_t input )
 {
 	switch (input)
 	{
@@ -827,7 +827,7 @@ MACHINE_DRIVER_END
 
 static void init_zr107(running_machine *machine)
 {
-	sharc_dataram = auto_alloc_array(machine, UINT32, 0x100000/4);
+	sharc_dataram = auto_alloc_array(machine, uint32_t, 0x100000/4);
 	led_reg0 = led_reg1 = 0x7f;
 	ccu_vcth = ccu_vctl = 0;
 

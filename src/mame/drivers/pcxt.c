@@ -81,11 +81,11 @@ the main program is 9th October 1990.
 	} \
 
 
-static UINT8 *vga_vram,*work_ram;
-static UINT8 video_regs[0x19];
-static UINT8 *vga_mode;
-static UINT8 hv_blank;
-static UINT8 *vga_bg_bank;
+static uint8_t *vga_vram,*work_ram;
+static uint8_t video_regs[0x19];
+static uint8_t *vga_mode;
+static uint8_t hv_blank;
+static uint8_t *vga_bg_bank;
 
 static int bank;
 static int lastvalue;
@@ -96,7 +96,7 @@ static int lastvalue;
 #define RES_320x200 0
 #define RES_640x200 1
 
-static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,UINT16 size,UINT32 map_offs,UINT8 gfx_num);
+static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,uint16_t size,uint32_t map_offs,uint8_t gfx_num);
 
 static VIDEO_START( filetto )
 {
@@ -113,7 +113,7 @@ static READ8_HANDLER( vga_hvretrace_r )
     ---- x--- Vertical Retrace
     ---- ---x Horizontal Retrace
     */
-	static UINT8 res;
+	static uint8_t res;
 	static int h,w;
 	res = 0;
 	h = space->machine->primary_screen->height();
@@ -132,10 +132,10 @@ static READ8_HANDLER( vga_hvretrace_r )
 
 /*Basic Graphic mode */
 /*TODO: non-black colours should use the bright versions*/
-static void cga_graphic_bitmap(running_machine *machine,bitmap_t *bitmap,const rectangle *cliprect,UINT16 size,UINT32 map_offs)
+static void cga_graphic_bitmap(running_machine *machine,bitmap_t *bitmap,const rectangle *cliprect,uint16_t size,uint32_t map_offs)
 {
-	static UINT16 x,y;
-	static UINT32 offs;
+	static uint16_t x,y;
+	static uint32_t offs;
 
 	SET_VISIBLE_AREA(320,200);
 	offs = map_offs;
@@ -164,9 +164,9 @@ static void cga_graphic_bitmap(running_machine *machine,bitmap_t *bitmap,const r
 
 
 
-static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,UINT16 size,UINT32 map_offs,UINT8 gfx_num)
+static void cga_alphanumeric_tilemap(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect,uint16_t size,uint32_t map_offs,uint8_t gfx_num)
 {
-	static UINT32 offs,x,y,max_x,max_y;
+	static uint32_t offs,x,y,max_x,max_y;
 
 	/*define the visible area*/
 	switch(size)
@@ -238,8 +238,8 @@ static VIDEO_UPDATE( filetto )
 static void vga_bitmap_layer(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
 	int x,y,z;
-	UINT8 *region = memory_region(machine, "user1");
-	static UINT32 cur_bank;
+	uint8_t *region = memory_region(machine, "user1");
+	static uint32_t cur_bank;
 
 	/*TODO: might be a different descramble algorythm plus plain bg bank*/
 	cur_bank = (((8-vga_bg_bank[0]) & 0x1f)*0x10000);
@@ -290,7 +290,7 @@ static READ8_HANDLER( vga_regs_r )
 
 static WRITE8_HANDLER( vga_regs_w )
 {
-	static UINT8 video_index;
+	static uint8_t video_index;
 
 	if(offset == 0)
 	{
@@ -324,7 +324,7 @@ static struct {
 } filetto_devices;
 
 
-static UINT8 disk_data[2];
+static uint8_t disk_data[2];
 
 static READ8_HANDLER( disk_iobank_r )
 {
@@ -413,8 +413,8 @@ static const struct pit8253_config pc_pit8253_config =
 	}
 };
 
-static UINT8 port_b_data;
-static UINT8 wss1_data,wss2_data;
+static uint8_t port_b_data;
+static uint8_t wss1_data,wss2_data;
 
 static READ8_DEVICE_HANDLER( port_a_r )
 {
@@ -501,7 +501,7 @@ static const ppi8255_interface filetto_ppi8255_intf[2] =
 
 /*Floppy Disk Controller 765 device*/
 /*Currently we only emulate it at a point that the BIOS will pass the checks*/
-static UINT8 status;
+static uint8_t status;
 
 #define FDC_BUSY 0x10
 #define FDC_WRITE 0x40
@@ -509,7 +509,7 @@ static UINT8 status;
 
 static READ8_HANDLER( fdc765_status_r )
 {
-	static UINT8 tmp,clr_status;
+	static uint8_t tmp,clr_status;
 //  popmessage("Read FDC status @ PC=%05x",cpu_get_pc(space->cpu));
 	tmp = status | 0x80;
 	clr_status++;
@@ -532,7 +532,7 @@ static WRITE8_HANDLER( fdc765_data_w )
 	status = (FDC_WRITE);
 }
 
-static UINT8 drive_data;
+static uint8_t drive_data;
 
 static WRITE8_HANDLER( drive_selection_w )
 {
@@ -546,8 +546,8 @@ DMA8237 Controller
 ******************/
 
 static int dma_channel;
-static UINT8 dma_offset[2][4];
-static UINT8 at_pages[0x10];
+static uint8_t dma_offset[2][4];
+static uint8_t at_pages[0x10];
 
 static WRITE_LINE_DEVICE_HANDLER( pc_dma_hrq_changed )
 {
@@ -577,7 +577,7 @@ static WRITE8_HANDLER( pc_dma_write_byte )
 
 static READ8_HANDLER(dma_page_select_r)
 {
-	UINT8 data = at_pages[offset % 0x10];
+	uint8_t data = at_pages[offset % 0x10];
 
 	switch(offset % 8) {
 	case 1:
@@ -1060,8 +1060,8 @@ static DRIVER_INIT( tetriskr )
 {
 	int i,j,k;
 	int index=0;
-	UINT8 *region = memory_region(machine, "user1");
-	UINT8 *gfx = memory_region(machine, "gfx2");
+	uint8_t *region = memory_region(machine, "user1");
+	uint8_t *gfx = memory_region(machine, "gfx2");
 
 	for(i=0;i<0x20000;i++)
 	{

@@ -35,10 +35,10 @@ public:
 	superdq_state(running_machine &machine) { }
 
 	running_device *laserdisc;
-	UINT8 ld_in_latch;
-	UINT8 ld_out_latch;
+	uint8_t ld_in_latch;
+	uint8_t ld_out_latch;
 
-	UINT8 *videoram;
+	uint8_t *videoram;
 	tilemap_t *tilemap;
 	int color_bank;
 };
@@ -151,7 +151,7 @@ static WRITE8_HANDLER( superdq_io_w )
 {
 	superdq_state *state = (superdq_state *)space->machine->driver_data;
 	int 			i;
-	static const UINT8 black_color_entries[] = {7,15,16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
+	static const uint8_t black_color_entries[] = {7,15,16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
 
 	if ( data & 0x40 ) /* bit 6 = irqack */
 		cputag_set_input_line(space->machine, "maincpu", 0, CLEAR_LINE);

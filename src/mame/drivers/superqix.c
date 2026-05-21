@@ -113,8 +113,8 @@ DSW2 stored @ $f237
 #include "sound/samples.h"
 
 
-extern UINT8 *superqix_videoram;
-extern UINT8 *superqix_bitmapram,*superqix_bitmapram2;
+extern uint8_t *superqix_videoram;
+extern uint8_t *superqix_bitmapram,*superqix_bitmapram2;
 extern int pbillian_show_power;
 
 
@@ -131,18 +131,18 @@ VIDEO_UPDATE( superqix );
 
 
 /* pbillian sample playback */
-static INT16 *samplebuf;
+static int16_t *samplebuf;
 
 static SAMPLES_START( pbillian_sh_start )
 {
 	running_machine *machine = device->machine;
-	UINT8 *src = memory_region(machine, "samples");
+	uint8_t *src = memory_region(machine, "samples");
 	int i, len = memory_region_length(machine, "samples");
 
 	/* convert 8-bit unsigned samples to 8-bit signed */
-	samplebuf = auto_alloc_array(machine, INT16, len);
+	samplebuf = auto_alloc_array(machine, int16_t, len);
 	for (i = 0;i < len;i++)
-		samplebuf[i] = (INT8)(src[i] ^ 0x80) * 256;
+		samplebuf[i] = (int8_t)(src[i] ^ 0x80) * 256;
 }
 
 static WRITE8_HANDLER( pbillian_sample_trigger_w )
@@ -191,7 +191,7 @@ The MCU acts this way:
 
 **************************************************************************/
 
-static UINT8 port1, port2, port3, port3_latch, from_mcu, from_z80, portb;
+static uint8_t port1, port2, port3, port3_latch, from_mcu, from_z80, portb;
 static int from_mcu_pending, from_z80_pending, invert_coin_lockout;
 
 static READ8_DEVICE_HANDLER( in4_mcu_r )
@@ -422,7 +422,7 @@ logerror("68705 sends answer %02x\n",param);
  *  4-7 W  not used
  */
 
-static UINT8 portA_in, portB_out, portC;
+static uint8_t portA_in, portB_out, portC;
 
 static READ8_HANDLER( hotsmash_68705_portA_r )
 {
@@ -1371,9 +1371,9 @@ static DRIVER_INIT( sqixa )
 
 static DRIVER_INIT( perestro )
 {
-	UINT8 *src;
+	uint8_t *src;
 	int len;
-	UINT8 temp[16];
+	uint8_t temp[16];
 	int i,j;
 
 	/* decrypt program code; the address lines are shuffled around in a non-trivial way */

@@ -365,7 +365,7 @@ static const msm5205_interface msm5205_config =
 static MACHINE_START( rastan )
 {
 	rastan_state *state = (rastan_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 1, &ROM[0x00000], 0x4000);
 	memory_configure_bank(machine, "bank1", 1, 3, &ROM[0x10000], 0x4000);

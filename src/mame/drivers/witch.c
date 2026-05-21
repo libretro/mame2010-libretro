@@ -200,18 +200,18 @@ static tilemap_t *gfx0a_tilemap;
 static tilemap_t *gfx0b_tilemap;
 static tilemap_t *gfx1_tilemap;
 
-static UINT8 *gfx0_cram;
-static UINT8 *gfx0_vram;
+static uint8_t *gfx0_cram;
+static uint8_t *gfx0_vram;
 
-static UINT8 *gfx1_cram;
-static UINT8 *gfx1_vram;
+static uint8_t *gfx1_cram;
+static uint8_t *gfx1_vram;
 
-static UINT8 *sprite_ram;
+static uint8_t *sprite_ram;
 
 static int scrollx=0;
 static int scrolly=0;
 
-static UINT8 reg_a002=0;
+static uint8_t reg_a002=0;
 static int bank;
 
 static TILE_GET_INFO( get_gfx0b_tile_info )
@@ -354,7 +354,7 @@ static WRITE8_HANDLER(write_a00x)
 
 			if(newbank != bank)
 			{
-				UINT8 *ROM = memory_region(space->machine, "maincpu");
+				uint8_t *ROM = memory_region(space->machine, "maincpu");
 				bank = newbank;
 				ROM = &ROM[0x10000+0x8000 * newbank + UNBANKED_SIZE];
 				memory_set_bankptr(space->machine, "bank1",ROM);
@@ -839,7 +839,7 @@ ROM_END
 
 static DRIVER_INIT(witch)
 {
-	UINT8 *ROM = (UINT8 *)memory_region(machine, "maincpu");
+	uint8_t *ROM = (uint8_t *)memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &ROM[0x10000+UNBANKED_SIZE]);
 
 	memory_install_read8_handler(cputag_get_address_space(machine, "sub", ADDRESS_SPACE_PROGRAM), 0x7000, 0x700f, 0, 0, prot_read_700x);

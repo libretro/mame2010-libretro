@@ -92,9 +92,9 @@ Notes:
 #include "machine/eeprom.h"
 #include "sound/okim6295.h"
 
-extern UINT16 *pirates_tx_tileram, *pirates_spriteram;
-extern UINT16 *pirates_fg_tileram,  *pirates_bg_tileram;
-extern UINT16 *pirates_scroll;
+extern uint16_t *pirates_tx_tileram, *pirates_spriteram;
+extern uint16_t *pirates_fg_tileram,  *pirates_bg_tileram;
+extern uint16_t *pirates_scroll;
 
 VIDEO_START(pirates);
 WRITE16_HANDLER( pirates_tx_tileram_w );
@@ -350,20 +350,20 @@ ROM_END
 static void pirates_decrypt_68k(running_machine *machine)
 {
     int rom_size;
-    UINT16 *buf, *rom;
+    uint16_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(machine, "maincpu");
 
-    buf = auto_alloc_array(machine, UINT16, rom_size/2);
+    buf = auto_alloc_array(machine, uint16_t, rom_size/2);
 
-    rom = (UINT16 *)memory_region(machine, "maincpu");
+    rom = (uint16_t *)memory_region(machine, "maincpu");
     memcpy (buf, rom, rom_size);
 
     for (i=0; i<rom_size/2; i++)
     {
         int adrl, adrr;
-        UINT8 vl, vr;
+        uint8_t vl, vr;
 
         adrl = BITSWAP24(i,23,22,21,20,19,18,4,8,3,14,2,15,17,0,9,13,10,5,16,7,12,6,1,11);
         vl = BITSWAP8(buf[adrl],    4,2,7,1,6,5,0,3);
@@ -379,12 +379,12 @@ static void pirates_decrypt_68k(running_machine *machine)
 static void pirates_decrypt_p(running_machine *machine)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(machine, "gfx1");
 
-    buf = auto_alloc_array(machine, UINT8, rom_size);
+    buf = auto_alloc_array(machine, uint8_t, rom_size);
 
     rom = memory_region(machine, "gfx1");
     memcpy (buf, rom, rom_size);
@@ -403,12 +403,12 @@ static void pirates_decrypt_p(running_machine *machine)
 static void pirates_decrypt_s(running_machine *machine)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(machine, "gfx2");
 
-    buf = auto_alloc_array(machine, UINT8, rom_size);
+    buf = auto_alloc_array(machine, uint8_t, rom_size);
 
     rom = memory_region(machine, "gfx2");
     memcpy (buf, rom, rom_size);
@@ -428,12 +428,12 @@ static void pirates_decrypt_s(running_machine *machine)
 static void pirates_decrypt_oki(running_machine *machine)
 {
     int rom_size;
-    UINT8 *buf, *rom;
+    uint8_t *buf, *rom;
     int i;
 
     rom_size = memory_region_length(machine, "oki");
 
-    buf = auto_alloc_array(machine, UINT8, rom_size);
+    buf = auto_alloc_array(machine, uint8_t, rom_size);
 
     rom = memory_region(machine, "oki");
     memcpy (buf, rom, rom_size);
@@ -449,7 +449,7 @@ static void pirates_decrypt_oki(running_machine *machine)
 
 static DRIVER_INIT( pirates )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	pirates_decrypt_68k(machine);
 	pirates_decrypt_p(machine);

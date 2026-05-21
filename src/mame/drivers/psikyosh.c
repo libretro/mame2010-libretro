@@ -389,7 +389,7 @@ static WRITE32_HANDLER( psikyosh_vidregs_w )
 static READ32_HANDLER( psh_sample_r ) /* Send sample data for test */
 {
 	psikyosh_state *state = (psikyosh_state *)space->machine->driver_data;
-	UINT8 *ROM = memory_region(space->machine, "ymf");
+	uint8_t *ROM = memory_region(space->machine, "ymf");
 
 	return ROM[state->sample_offs++] << 16;
 }
@@ -447,8 +447,8 @@ P1KEY11  29|30  P2KEY11
     GND  55|56  GND
 */
 
-	UINT32 controls = input_port_read(space->machine, "CONTROLLER");
-	UINT32 value = input_port_read(space->machine, "INPUTS");
+	uint32_t controls = input_port_read(space->machine, "CONTROLLER");
+	uint32_t value = input_port_read(space->machine, "INPUTS");
 
 	if(controls) {
 		// Clearly has ghosting, game will only recognise one key depressed at once, and keyboard can only represent keys with distinct rows and columns
@@ -470,7 +470,7 @@ P1KEY11  29|30  P2KEY11
 			KEY11 = 0x0800, // JAMMA P1 Button 1
 		}; // Mahjong->JAMMA mapping specific to this game pcb
 
-		UINT16 key_codes[] = { // treated as IP_ACTIVE_LOW, game inverts them upon reading
+		uint16_t key_codes[] = { // treated as IP_ACTIVE_LOW, game inverts them upon reading
 //          ROW (distinct pins for P1 or P2) | COLUMN (shared for P1+P2)
 			KEY4 | KEY3,  // A
 			KEY4 | KEY2,  // B
@@ -493,8 +493,8 @@ P1KEY11  29|30  P2KEY11
 			KEY11 | KEY6, // Ron
 			KEY1 | KEY3   // Start
 		}; // generic Mahjong keyboard encoder, corresponds to ordering in input port
-		UINT32 keys = input_port_read(space->machine, "MAHJONG");
-		UINT32 which_key = 0x1;
+		uint32_t keys = input_port_read(space->machine, "MAHJONG");
+		uint32_t which_key = 0x1;
 		int count = 0;
 
 		// HACK: read IPT_START1 from "INPUTS" to avoid listing it twice or having two independent STARTs listed
@@ -505,7 +505,7 @@ P1KEY11  29|30  P2KEY11
 		do {
 			// since we can't handle multiple keys, just return the first one depressed
 			if((keys & which_key) && (count < sizeof(key_codes)/sizeof(key_codes[0]))) {
-				value &= ~((UINT32)(key_codes[count]) << 16); // mask in selected word as IP_ACTIVE_LOW
+				value &= ~((uint32_t)(key_codes[count]) << 16); // mask in selected word as IP_ACTIVE_LOW
 				break;
 			}
 			which_key <<= 1;
@@ -1206,7 +1206,7 @@ static DRIVER_INIT( s1945ii )
 
 static DRIVER_INIT( daraku )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &RAM[0x100000]);
 	sh2drc_set_options(machine->device("maincpu"), SH2DRC_FASTEST_OPTIONS);
 }
@@ -1218,14 +1218,14 @@ static DRIVER_INIT( sbomberb )
 
 static DRIVER_INIT( gunbird2 )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &RAM[0x100000]);
 	sh2drc_set_options(machine->device("maincpu"), SH2DRC_FASTEST_OPTIONS);
 }
 
 static DRIVER_INIT( s1945iii )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1", &RAM[0x100000]);
 	sh2drc_set_options(machine->device("maincpu"), SH2DRC_FASTEST_OPTIONS);
 }

@@ -39,26 +39,26 @@
 
 static tilemap_t *tmap;
 
-static UINT8 *skylncr_videoram,*skylncr_colorram;
+static uint8_t *skylncr_videoram,*skylncr_colorram;
 
-static UINT8* reeltiles_1_ram;
-static UINT8* reeltiles_2_ram;
-static UINT8* reeltiles_3_ram;
-static UINT8* reeltiles_4_ram;
-static UINT8* reeltileshigh_1_ram;
-static UINT8* reeltileshigh_2_ram;
-static UINT8* reeltileshigh_3_ram;
-static UINT8* reeltileshigh_4_ram;
+static uint8_t* reeltiles_1_ram;
+static uint8_t* reeltiles_2_ram;
+static uint8_t* reeltiles_3_ram;
+static uint8_t* reeltiles_4_ram;
+static uint8_t* reeltileshigh_1_ram;
+static uint8_t* reeltileshigh_2_ram;
+static uint8_t* reeltileshigh_3_ram;
+static uint8_t* reeltileshigh_4_ram;
 static tilemap_t *reel_1_tilemap;
 static tilemap_t *reel_2_tilemap;
 static tilemap_t *reel_3_tilemap;
 static tilemap_t *reel_4_tilemap;
-static UINT8* reelscroll1;
-static UINT8* reelscroll2;
-static UINT8* reelscroll3;
-static UINT8* reelscroll4;
+static uint8_t* reelscroll1;
+static uint8_t* reelscroll2;
+static uint8_t* reelscroll3;
+static uint8_t* reelscroll4;
 
-static UINT8 skylncr_nmi_enable;
+static uint8_t skylncr_nmi_enable;
 
 
 /**************************************
@@ -80,31 +80,31 @@ static WRITE8_HANDLER( skylncr_colorram_w )
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT16 code = skylncr_videoram[ tile_index ] + (skylncr_colorram[ tile_index ] << 8);
+	uint16_t code = skylncr_videoram[ tile_index ] + (skylncr_colorram[ tile_index ] << 8);
 	SET_TILE_INFO(0, code, 0, TILE_FLIPYX( 0 ));
 }
 
 static TILE_GET_INFO( get_reel_1_tile_info )
 {
-	UINT16 code = reeltiles_1_ram[ tile_index ] + (reeltileshigh_1_ram[ tile_index ] << 8);
+	uint16_t code = reeltiles_1_ram[ tile_index ] + (reeltileshigh_1_ram[ tile_index ] << 8);
 	SET_TILE_INFO(1, code, 0, TILE_FLIPYX( 0 ));
 }
 
 static TILE_GET_INFO( get_reel_2_tile_info )
 {
-	UINT16 code = reeltiles_2_ram[ tile_index ] + (reeltileshigh_2_ram[ tile_index ] << 8);
+	uint16_t code = reeltiles_2_ram[ tile_index ] + (reeltileshigh_2_ram[ tile_index ] << 8);
 	SET_TILE_INFO(1, code, 0, TILE_FLIPYX( 0 ));
 }
 
 static TILE_GET_INFO( get_reel_3_tile_info )
 {
-	UINT16 code = reeltiles_3_ram[ tile_index ] + (reeltileshigh_3_ram[ tile_index ] << 8);
+	uint16_t code = reeltiles_3_ram[ tile_index ] + (reeltileshigh_3_ram[ tile_index ] << 8);
 	SET_TILE_INFO(1, code, 0, TILE_FLIPYX( 0 ));
 }
 
 static TILE_GET_INFO( get_reel_4_tile_info )
 {
-	UINT16 code = reeltiles_4_ram[ tile_index ] + (reeltileshigh_4_ram[ tile_index ] << 8);
+	uint16_t code = reeltiles_4_ram[ tile_index ] + (reeltileshigh_4_ram[ tile_index ] << 8);
 	SET_TILE_INFO(1, code, 0, TILE_FLIPYX( 0 ));
 }
 
@@ -824,8 +824,8 @@ ROM_END
 
 static DRIVER_INIT( skylncr )
 {
-	machine->generic.paletteram.u8   = auto_alloc_array(machine, UINT8, 0x100 * 3);
-	machine->generic.paletteram2.u8 = auto_alloc_array(machine, UINT8, 0x100 * 3);
+	machine->generic.paletteram.u8   = auto_alloc_array(machine, uint8_t, 0x100 * 3);
+	machine->generic.paletteram2.u8 = auto_alloc_array(machine, uint8_t, 0x100 * 3);
 }
 
 

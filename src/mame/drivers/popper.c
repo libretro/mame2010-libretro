@@ -123,7 +123,7 @@ Notes:
 //                      -------x  sound
 static READ8_HANDLER( popper_input_ports_r )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 	switch (offset)
 	{
 		//           player inputs        dsw1                           dsw2

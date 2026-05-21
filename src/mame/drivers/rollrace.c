@@ -13,8 +13,8 @@ Issues:
 #include "sound/ay8910.h"
 
 
-extern UINT8 *rollrace_videoram;
-extern UINT8 *rollrace_colorram;
+extern uint8_t *rollrace_videoram;
+extern uint8_t *rollrace_colorram;
 VIDEO_UPDATE( rollrace );
 PALETTE_INIT( wiz );
 

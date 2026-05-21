@@ -71,10 +71,10 @@ public:
 
 	supdrapo_state(running_machine &machine) { }
 
-	UINT8 *char_bank;
-	UINT8 *col_line;
-	UINT8 *videoram;
-	UINT8 wdog;
+	uint8_t *char_bank;
+	uint8_t *col_line;
+	uint8_t *videoram;
+	uint8_t wdog;
 };
 
 

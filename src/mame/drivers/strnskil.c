@@ -28,7 +28,7 @@ PALETTE_INIT( strnskil );
 VIDEO_START( strnskil );
 VIDEO_UPDATE( strnskil );
 
-extern UINT8 *strnskil_xscroll;
+extern uint8_t *strnskil_xscroll;
 
 
 

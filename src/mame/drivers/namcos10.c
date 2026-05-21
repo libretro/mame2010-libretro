@@ -293,7 +293,7 @@ static ADDRESS_MAP_START( namcos10_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0xfffe0130, 0xfffe0133) AM_WRITENOP
 ADDRESS_MAP_END
 
-static void memcpy32le( UINT32 *dst, UINT8 *src, int len )
+static void memcpy32le( uint32_t *dst, uint8_t *src, int len )
 {
 	while( len > 0 )
 	{
@@ -311,11 +311,11 @@ static void memm_driver_init( running_machine *machine )
 
 static void memn_driver_init( running_machine *machine )
 {
-	UINT8 *BIOS = (UINT8 *)memory_region( machine, "user1" );
-	UINT8 *ROM = (UINT8 *)memory_region( machine, "user2" );
+	uint8_t *BIOS = (uint8_t *)memory_region( machine, "user1" );
+	uint8_t *ROM = (uint8_t *)memory_region( machine, "user2" );
 
-	memcpy32le( (UINT32 *)( BIOS + 0x0000000 ), ROM + 0x08000, 0x001c000 );
-	memcpy32le( (UINT32 *)( BIOS + 0x0020000 ), ROM + 0x24000, 0x03dffff );
+	memcpy32le( (uint32_t *)( BIOS + 0x0000000 ), ROM + 0x08000, 0x001c000 );
+	memcpy32le( (uint32_t *)( BIOS + 0x0020000 ), ROM + 0x24000, 0x03dffff );
 
 	psx_driver_init(machine);
 }
@@ -323,7 +323,7 @@ static void memn_driver_init( running_machine *machine )
 static void decrypt_bios( running_machine *machine, int b15, int b14, int b13, int b12, int b11, int b10, int b9, int b8,
 	int b7, int b6, int b5, int b4, int b3, int b2, int b1, int b0 )
 {
-	UINT16 *BIOS = (UINT16 *)memory_region( machine, "user1" );
+	uint16_t *BIOS = (uint16_t *)memory_region( machine, "user1" );
 	int len = memory_region_length( machine, "user1" ) / 2;
 	int i;
 

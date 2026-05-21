@@ -19,7 +19,7 @@
 #include "cpu/m6809/m6809.h"
 #include "sound/dac.h"
 
-static UINT8 *battery_ram;
+static uint8_t *battery_ram;
 
 /* from video */
 VIDEO_UPDATE( truco );

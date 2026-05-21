@@ -225,9 +225,9 @@ Thrill Drive 713A13  -       713A14  -
 #include "video/voodoo.h"
 #include "video/konicdev.h"
 
-static UINT8 led_reg0, led_reg1;
+static uint8_t led_reg0, led_reg1;
 
-static UINT32 *work_ram;
+static uint32_t *work_ram;
 
 
 static WRITE32_HANDLER( paletteram32_w )
@@ -264,7 +264,7 @@ static VIDEO_UPDATE( nwktr )
 static READ32_HANDLER( sysreg_r )
 {
 	running_device *adc12138 = space->machine->device("adc12138");
-	UINT32 r = 0;
+	uint32_t r = 0;
 	if (offset == 0)
 	{
 		if (ACCESSING_BITS_24_31)
@@ -341,14 +341,14 @@ static WRITE32_HANDLER( sysreg_w )
 static int fpga_uploaded = 0;
 static int lanc2_ram_r = 0;
 static int lanc2_ram_w = 0;
-static UINT8 *lanc2_ram;
+static uint8_t *lanc2_ram;
 
 static void lanc2_init(running_machine *machine)
 {
 	fpga_uploaded = 0;
 	lanc2_ram_r = 0;
 	lanc2_ram_w = 0;
-	lanc2_ram = auto_alloc_array(machine, UINT8, 0x8000);
+	lanc2_ram = auto_alloc_array(machine, uint8_t, 0x8000);
 }
 
 static READ32_HANDLER( lanc1_r )
@@ -357,7 +357,7 @@ static READ32_HANDLER( lanc1_r )
 	{
 		case 0x40/4:
 		{
-			UINT32 r = 0;
+			uint32_t r = 0;
 
 			r |= (fpga_uploaded) ? (1 << 6) : 0;
 			r |= 1 << 5;
@@ -380,7 +380,7 @@ static WRITE32_HANDLER( lanc1_w )
 
 static READ32_HANDLER( lanc2_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (offset == 0)
 	{
@@ -414,7 +414,7 @@ static WRITE32_HANDLER( lanc2_w )
 	{
 		if (ACCESSING_BITS_24_31)
 		{
-			UINT8 value = data >> 24;
+			uint8_t value = data >> 24;
 
 			value = ((value >> 7) & 0x01) |
 					((value >> 5) & 0x02) |
@@ -502,7 +502,7 @@ ADDRESS_MAP_END
 
 /*****************************************************************************/
 
-static UINT32 *sharc_dataram;
+static uint32_t *sharc_dataram;
 
 static READ32_HANDLER( dsp_dataram_r )
 {
@@ -596,7 +596,7 @@ static const sharc_config sharc_cfg =
 };
 
 
-static double adc12138_input_callback( running_device *device, UINT8 input )
+static double adc12138_input_callback( running_device *device, uint8_t input )
 {
 	int value = 0;
 	switch (input)
@@ -719,7 +719,7 @@ static DRIVER_INIT(nwktr)
 	init_konami_cgboard(machine, 1, CGBOARD_TYPE_NWKTR);
 	set_cgboard_texture_bank(machine, 0, "bank5", memory_region(machine, "user5"));
 
-	sharc_dataram = auto_alloc_array(machine, UINT32, 0x100000/4);
+	sharc_dataram = auto_alloc_array(machine, uint32_t, 0x100000/4);
 	led_reg0 = led_reg1 = 0x7f;
 
 	lanc2_init(machine);

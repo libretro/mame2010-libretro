@@ -181,12 +181,12 @@ INPUT_PORTS_END
 
 #if USE_MSM
 
-static UINT32 adpcm_pos;
-static UINT8 adpcm_idle=0;
+static uint32_t adpcm_pos;
+static uint8_t adpcm_idle=0;
 
 static void pf_adpcm_int(running_device *device)
 {
-    static UINT8 trigger,adpcm_data;
+    static uint8_t trigger,adpcm_data;
 
     if (adpcm_pos >= 0x4000 || adpcm_idle)
     {
@@ -196,7 +196,7 @@ static void pf_adpcm_int(running_device *device)
     }
     else
     {
-        UINT8 *ROM = memory_region(device->machine, "adpcm");
+        uint8_t *ROM = memory_region(device->machine, "adpcm");
 
         adpcm_data = ((trigger ? (ROM[adpcm_pos] & 0x0f) : (ROM[adpcm_pos] & 0xf0)>>4) );
         msm5205_data_w(device,adpcm_data & 0xf);

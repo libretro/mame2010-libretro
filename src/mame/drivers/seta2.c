@@ -549,7 +549,7 @@ static WRITE16_HANDLER( seta2_sound_bank_w )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT8 *ROM = memory_region( space->machine, "x1snd" );
+		uint8_t *ROM = memory_region( space->machine, "x1snd" );
 		int banks = (memory_region_length( space->machine, "x1snd" ) - 0x100000) / 0x20000;
 		if (data >= banks)
 		{
@@ -748,7 +748,7 @@ ADDRESS_MAP_END
     The offset to use is stored in RAM at address 0x20BA16 */
 static READ16_HANDLER( pzlbowl_protection_r )
 {
-	UINT32 address = (memory_read_word(space, 0x20ba16) << 16) | memory_read_word(space, 0x20ba18);
+	uint32_t address = (memory_read_word(space, 0x20ba16) << 16) | memory_read_word(space, 0x20ba18);
 	return memory_region(space->machine, "maincpu")[address - 2];
 }
 
@@ -861,22 +861,22 @@ ADDRESS_MAP_END
                                   Funcube
 ***************************************************************************/
 
-static UINT8 *funcube_outputs;
-static UINT8 *funcube_leds;
+static uint8_t *funcube_outputs;
+static uint8_t *funcube_leds;
 
-static UINT64 funcube_coin_start_cycles;
-static UINT8 funcube_hopper_motor;
-static UINT8 funcube_press;
+static uint64_t funcube_coin_start_cycles;
+static uint8_t funcube_hopper_motor;
+static uint8_t funcube_press;
 
-static UINT8 funcube_serial_fifo[4];
-static UINT8 funcube_serial_count;
+static uint8_t funcube_serial_fifo[4];
+static uint8_t funcube_serial_count;
 
 // Bus conversion functions:
 
 // RAM shared with the sub CPU
 static READ32_HANDLER( funcube_nvram_dword_r )
 {
-	UINT16 val = space->machine->generic.nvram.u16[offset];
+	uint16_t val = space->machine->generic.nvram.u16[offset];
 	return ((val & 0xff00) << 8) | (val & 0x00ff);
 }
 
@@ -924,7 +924,7 @@ enum {
 	CF_MBSR		=	0x1ec/4
 };
 
-static UINT32 *coldfire_regs;
+static uint32_t *coldfire_regs;
 
 static WRITE32_HANDLER( coldfire_regs_w )
 {
@@ -947,7 +947,7 @@ static READ32_HANDLER( coldfire_regs_r )
 
 static READ32_HANDLER( funcube_debug_r )
 {
-	UINT32 ret = input_port_read(space->machine,"DEBUG");
+	uint32_t ret = input_port_read(space->machine,"DEBUG");
 
 	// This bits let you move the crosshair in the inputs / touch panel test with a joystick
 	if (!(space->machine->primary_screen->frame_number() % 3))
@@ -968,7 +968,7 @@ static ADDRESS_MAP_START( funcube_map, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE( 0x00800000, 0x0083ffff ) AM_READWRITE( spriteram32_dword_r,  spriteram32_dword_w  ) AM_BASE_GENERIC(spriteram) AM_SIZE_GENERIC(spriteram)
 	AM_RANGE( 0x00840000, 0x0084ffff ) AM_READWRITE( paletteram32_dword_r, paletteram32_dword_w ) AM_BASE_GENERIC(paletteram)
-	AM_RANGE( 0x00860000, 0x0086003f ) AM_WRITE( seta2_vregs_dword_w )                            AM_BASE((UINT32**)&seta2_vregs)
+	AM_RANGE( 0x00860000, 0x0086003f ) AM_WRITE( seta2_vregs_dword_w )                            AM_BASE((uint32_t**)&seta2_vregs)
 
 	AM_RANGE( 0x00c00000, 0x00c002ff ) AM_READWRITE( funcube_nvram_dword_r, funcube_nvram_dword_w )
 
@@ -992,17 +992,17 @@ ADDRESS_MAP_END
 
 static READ8_HANDLER( funcube_coins_r )
 {
-	UINT8 ret = input_port_read(space->machine,"SWITCH");
-	UINT8 coin_bit0 = 1;	// active low
-	UINT8 coin_bit1 = 1;
+	uint8_t ret = input_port_read(space->machine,"SWITCH");
+	uint8_t coin_bit0 = 1;	// active low
+	uint8_t coin_bit1 = 1;
 
-	UINT8 hopper_bit = (funcube_hopper_motor && !(space->machine->primary_screen->frame_number()%20)) ? 1 : 0;
+	uint8_t hopper_bit = (funcube_hopper_motor && !(space->machine->primary_screen->frame_number()%20)) ? 1 : 0;
 
-	const UINT64 coin_total_cycles = FUNCUBE_SUB_CPU_CLOCK / (1000/20);
+	const uint64_t coin_total_cycles = FUNCUBE_SUB_CPU_CLOCK / (1000/20);
 
 	if ( funcube_coin_start_cycles )
 	{
-		UINT64 elapsed = downcast<cpu_device *>(space->cpu)->total_cycles() - funcube_coin_start_cycles;
+		uint64_t elapsed = downcast<cpu_device *>(space->cpu)->total_cycles() - funcube_coin_start_cycles;
 
 		if ( elapsed < coin_total_cycles/2 )
 			coin_bit0 = 0;
@@ -1022,7 +1022,7 @@ static READ8_HANDLER( funcube_coins_r )
 
 static READ8_HANDLER( funcube_serial_r )
 {
-	UINT8 ret = 0xff;
+	uint8_t ret = 0xff;
 
 	switch( funcube_serial_count )
 	{
@@ -2419,8 +2419,8 @@ static INTERRUPT_GEN( funcube_sub_timer_irq )
 	}
 	else
 	{
-		UINT8 press   = input_port_read(device->machine,"TOUCH_PRESS");
-		UINT8 release = funcube_press && !press;
+		uint8_t press   = input_port_read(device->machine,"TOUCH_PRESS");
+		uint8_t release = funcube_press && !press;
 
 		if ( press || release )
 		{
@@ -2809,8 +2809,8 @@ ROM_END
 
 static DRIVER_INIT( funcube2 )
 {
-	UINT32 *main_cpu = (UINT32 *) memory_region(machine, "maincpu");
-	UINT16 *sub_cpu  = (UINT16 *) memory_region(machine, "sub");
+	uint32_t *main_cpu = (uint32_t *) memory_region(machine, "maincpu");
+	uint16_t *sub_cpu  = (uint16_t *) memory_region(machine, "sub");
 
 	main_cpu[0x810/4] = 0xe0214e71;
 	main_cpu[0x814/4] = 0x4e71203c;
@@ -2829,8 +2829,8 @@ static DRIVER_INIT( funcube2 )
 // Note: same as funcube2
 static DRIVER_INIT( funcube4 )
 {
-	UINT32 *main_cpu = (UINT32 *) memory_region(machine, "maincpu");
-	UINT16 *sub_cpu  = (UINT16 *) memory_region(machine, "sub");
+	uint32_t *main_cpu = (uint32_t *) memory_region(machine, "maincpu");
+	uint16_t *sub_cpu  = (uint16_t *) memory_region(machine, "sub");
 
 	main_cpu[0x810/4] = 0xe0214e71;
 	main_cpu[0x814/4] = 0x4e71203c;

@@ -178,7 +178,7 @@ Notes:
 #include "sound/namco.h"
 
 
-extern UINT8 *pacland_videoram,*pacland_videoram2,*pacland_spriteram;
+extern uint8_t *pacland_videoram,*pacland_videoram2,*pacland_spriteram;
 
 WRITE8_HANDLER( pacland_videoram_w );
 WRITE8_HANDLER( pacland_videoram2_w );

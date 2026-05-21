@@ -29,13 +29,13 @@ WRITE8_HANDLER( paletteram_xBGR_RRRR_GGGG_BBBB_w );
 
 static WRITE8_HANDLER( quizdna_rombank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 	memory_set_bankptr(space->machine, "bank1",&ROM[0x10000+0x4000*(data & 0x3f)]);
 }
 
 static WRITE8_HANDLER( gekiretu_rombank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 	memory_set_bankptr(space->machine, "bank1",&ROM[0x10000+0x4000*((data & 0x3f) ^ 0x0a)]);
 }
 

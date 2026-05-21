@@ -91,14 +91,14 @@ Smitdogg
 #include "video/pc_vga.h"
 #include "video/pc_video.h"
 
-static void pcat_nit_microtouch_tx_callback(running_machine *machine, UINT8 data)
+static void pcat_nit_microtouch_tx_callback(running_machine *machine, uint8_t data)
 {
 	ins8250_receive(machine->device("ns16450_0"), data);
 };
 
 static INS8250_TRANSMIT( pcat_nit_com_transmit )
 {
-	UINT8 data8 = data;
+	uint8_t data8 = data;
 	microtouch_rx(1, &data8);
 }
 
@@ -381,7 +381,7 @@ ROM_END
 static DRIVER_INIT(pcat_nit)
 {
 	machine->generic.nvram_size = 0x2000;
-	machine->generic.nvram.u8 = auto_alloc_array(machine, UINT8, machine->generic.nvram_size);
+	machine->generic.nvram.u8 = auto_alloc_array(machine, uint8_t, machine->generic.nvram_size);
 
 	pc_vga_init(machine, &vga_interface, NULL);
 }

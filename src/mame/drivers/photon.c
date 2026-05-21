@@ -21,14 +21,14 @@
 #include "machine/i8255a.h"
 #include "sound/speaker.h"
 
-static void pk8000_set_bank(running_machine *machine,UINT8 data)
+static void pk8000_set_bank(running_machine *machine,uint8_t data)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *ram = memory_region(machine, "maincpu");
-	UINT8 block1 = data & 3;
-	UINT8 block2 = (data >> 2) & 3;
-	UINT8 block3 = (data >> 4) & 3;
-	UINT8 block4 = (data >> 6) & 3;
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *ram = memory_region(machine, "maincpu");
+	uint8_t block1 = data & 3;
+	uint8_t block2 = (data >> 2) & 3;
+	uint8_t block3 = (data >> 4) & 3;
+	uint8_t block4 = (data >> 6) & 3;
 
 	switch(block1) {
 		case 0:

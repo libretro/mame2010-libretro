@@ -54,9 +54,9 @@ public:
 	onetwo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  fgram;
-	UINT8 *  paletteram;
-	UINT8 *  paletteram2;
+	uint8_t *  fgram;
+	uint8_t *  paletteram;
+	uint8_t *  paletteram2;
 
 	/* video-related */
 	tilemap_t *fg_tilemap;
@@ -344,7 +344,7 @@ static const ym3812_interface ym3812_config =
 static MACHINE_START( onetwo )
 {
 	onetwo_state *state = (onetwo_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x4000);
 

@@ -1314,9 +1314,9 @@ Note: on screen copyright is (c)1998 Coinmaster.
 
 /* Variables and functions only used here */
 
-static UINT8 port_select;     /* for muxed controls in 'usclssic' */
+static uint8_t port_select;     /* for muxed controls in 'usclssic' */
 
-static UINT8 *sharedram;
+static uint8_t *sharedram;
 
 
 #if __uPD71054_TIMER
@@ -1327,9 +1327,9 @@ static UINT8 *sharedram;
 ------------------------------*/
 static struct st_chip {
 	emu_timer *timer[3];			// Timer
-	UINT16	max[3];				// Max counter
-	UINT16	write_select;		// Max counter write select
-	UINT8	reg[4];				//
+	uint16_t	max[3];				// Max counter
+	uint16_t	write_select;		// Max counter write select
+	uint8_t	reg[4];				//
 } uPD71054;
 
 /*------------------------------
@@ -1337,7 +1337,7 @@ static struct st_chip {
 ------------------------------*/
 static void uPD71054_update_timer( running_machine *machine, running_device *cpu, int no )
 {
-	UINT16 max = uPD71054.max[no]&0xffff;
+	uint16_t max = uPD71054.max[no]&0xffff;
 
 	if( max != 0 ) {
 		attotime period = attotime_mul(ATTOTIME_IN_HZ(cputag_get_clock(machine, "maincpu")), 16 * max);
@@ -1467,7 +1467,7 @@ static const ym3438_interface utoukond_ym3438_intf =
 
 static READ16_HANDLER( sharedram_68000_r )
 {
-	return ((UINT16) sharedram[offset]) & 0xff;
+	return ((uint16_t) sharedram[offset]) & 0xff;
 }
 
 static WRITE16_HANDLER( sharedram_68000_w )
@@ -1516,7 +1516,7 @@ static WRITE16_HANDLER( sub_ctrl_w )
 /* DSW reading for 16 bit CPUs */
 static READ16_HANDLER( seta_dsw_r )
 {
-	UINT16 dsw = input_port_read(space->machine, "DSW");
+	uint16_t dsw = input_port_read(space->machine, "DSW");
 	if (offset == 0)	return (dsw >> 8) & 0xff;
 	else				return (dsw >> 0) & 0xff;
 }
@@ -1542,7 +1542,7 @@ static READ8_DEVICE_HANDLER( dsw2_r )
 */
 static VIDEO_EOF( seta_buffer_sprites )
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int ctrl2	=	spriteram16[ 0x602/2 ];
 	if (~ctrl2 & 0x20)
 	{
@@ -1997,7 +1997,7 @@ ADDRESS_MAP_END
 
 static int keroppi_prize_hop;
 static int keroppi_protection_count;
-static const UINT16 keroppi_protection_word[] = {
+static const uint16_t keroppi_protection_word[] = {
 	0x0000,
 	0x0000, 0x0000, 0x0000,
 	0x2000, 0x2000, 0x2000,
@@ -2009,7 +2009,7 @@ static const UINT16 keroppi_protection_word[] = {
 
 static READ16_HANDLER( keroppi_protection_r )
 {
-	UINT16 result = keroppi_protection_word[keroppi_protection_count];
+	uint16_t result = keroppi_protection_word[keroppi_protection_count];
 
 	keroppi_protection_count++;
 	if (keroppi_protection_count > 15)
@@ -2027,7 +2027,7 @@ static READ16_HANDLER( keroppi_protection_init_r )
 
 static READ16_HANDLER( keroppi_coin_r )
 {
-	UINT16 result = input_port_read(space->machine, "COINS");
+	uint16_t result = input_port_read(space->machine, "COINS");
 
 	if (keroppi_prize_hop == 2)
 	{
@@ -2494,7 +2494,7 @@ ADDRESS_MAP_END
                             Pro Mahjong Kiwame
 ***************************************************************************/
 
-static UINT16 *kiwame_nvram;
+static uint16_t *kiwame_nvram;
 
 static READ16_HANDLER( kiwame_nvram_r )
 {
@@ -2688,8 +2688,8 @@ ADDRESS_MAP_END
                                 Pairs Love
 ***************************************************************************/
 
-static UINT16 pairslove_protram[0x200];
-static UINT16 pairslove_protram_old[0x200];
+static uint16_t pairslove_protram[0x200];
+static uint16_t pairslove_protram_old[0x200];
 
 static READ16_HANDLER( pairlove_prot_r )
 {
@@ -2765,7 +2765,7 @@ static READ16_HANDLER( inttoote_dsw_r )
 			((((input_port_read(space->machine, "DSW2_3") >> (shift+8)) & 0xf)) << 8) ;
 }
 
-static UINT16 *inttoote_key_select;
+static uint16_t *inttoote_key_select;
 static READ16_HANDLER( inttoote_key_r )
 {
 	switch( *inttoote_key_select )
@@ -2780,7 +2780,7 @@ static READ16_HANDLER( inttoote_key_r )
 	return 0xffff;
 }
 
-static UINT16 *inttoote_700000;
+static uint16_t *inttoote_700000;
 static READ16_HANDLER( inttoote_700000_r )
 {
 	return inttoote_700000[offset] & 0x3f;
@@ -2819,7 +2819,7 @@ static ADDRESS_MAP_START( inttoote_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0xffc000, 0xffffff) AM_RAM	// RAM
 ADDRESS_MAP_END
 
-static UINT8 jockeyc_key_select;
+static uint8_t jockeyc_key_select;
 
 static READ16_HANDLER( jockeyc_mux_r )
 {
@@ -2892,7 +2892,7 @@ ADDRESS_MAP_END
 
 static WRITE8_HANDLER( sub_bankswitch_w )
 {
-	UINT8 *rom = memory_region(space->machine, "sub");
+	uint8_t *rom = memory_region(space->machine, "sub");
 	int bank = data >> 4;
 
 	memory_set_bankptr(space->machine, "bank1", &rom[bank * 0x4000 + 0xc000]);
@@ -9797,7 +9797,7 @@ static READ16_HANDLER( twineagl_debug_r )
 
 /* Extra RAM ? Check code at 0x00ba90 */
 /* 2000F8 = A3 enables it, 2000F8 = 00 disables? see downtown too */
-static UINT8 xram[8];
+static uint8_t xram[8];
 static READ16_HANDLER( twineagl_200100_r )
 {
 logerror("%04x: twineagl_200100_r %d\n",cpu_get_pc(space->cpu),offset);
@@ -9821,7 +9821,7 @@ static DRIVER_INIT( twineagl )
 
 
 /* Protection? NVRAM is handled writing commands here */
-static UINT16 downtown_protection[0x200/2];
+static uint16_t downtown_protection[0x200/2];
 static READ16_HANDLER( downtown_protection_r )
 {
 	int job = downtown_protection[0xf8/2] & 0xff;
@@ -9830,7 +9830,7 @@ static READ16_HANDLER( downtown_protection_r )
 	{
 		case 0xa3:
 		{
-			static const UINT8 word[] = "WALTZ0";
+			static const uint8_t word[] = "WALTZ0";
 			if (offset >= 0x100/2 && offset <= 0x10a/2)	return word[offset-0x100/2];
 			else										return 0;
 		}
@@ -9872,7 +9872,7 @@ static DRIVER_INIT( arbalest )
 
 static DRIVER_INIT( metafox )
 {
-	UINT16 *RAM = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *) memory_region(machine, "maincpu");
 
 	/* This game uses the 21c000-21ffff area for protection? */
 //  memory_nop_readwrite(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x21c000, 0x21ffff, 0, 0);
@@ -9888,12 +9888,12 @@ static DRIVER_INIT ( blandia )
 	/* rearrange the gfx data so it can be decoded in the same way as the other set */
 
 	int rom_size;
-	UINT8 *buf;
-	UINT8 *rom;
+	uint8_t *buf;
+	uint8_t *rom;
 	int rpos;
 
 	rom_size = 0x80000;
-	buf = auto_alloc_array(machine, UINT8, rom_size);
+	buf = auto_alloc_array(machine, uint8_t, rom_size);
 
 	rom = memory_region(machine, "gfx2") + 0x40000;
 
@@ -9932,7 +9932,7 @@ static DRIVER_INIT( zombraid )
 
 static DRIVER_INIT( kiwame )
 {
-	UINT16 *RAM = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *) memory_region(machine, "maincpu");
 
 	/* WARNING: This game writes to the interrupt vector
        table. Lev 1 routine address is stored at $100 */
@@ -9949,9 +9949,9 @@ static DRIVER_INIT( rezon )
 
 static DRIVER_INIT(wiggie)
 {
-	UINT8 *src;
+	uint8_t *src;
 	int len;
-	UINT8 temp[16];
+	uint8_t temp[16];
 	int i,j;
 
 	src = memory_region(machine, "maincpu");
@@ -9985,11 +9985,11 @@ static DRIVER_INIT(wiggie)
 static DRIVER_INIT( crazyfgt )
 {
 	// protection check at boot
-	UINT16 *RAM = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *) memory_region(machine, "maincpu");
 	RAM[0x1078/2] = 0x4e71;
 
 	// fixed priorities?
-	seta_vregs = auto_alloc_array(machine, UINT16, 3);
+	seta_vregs = auto_alloc_array(machine, uint16_t, 3);
 	seta_vregs[0] = seta_vregs[1] = seta_vregs[2] = 0;
 
 	DRIVER_INIT_CALL(blandia);
@@ -10001,8 +10001,8 @@ static DRIVER_INIT( crazyfgt )
 
 static DRIVER_INIT( inttoote )
 {
-	UINT16 *ROM = (UINT16 *)memory_region( machine, "maincpu" );
-	static UINT16 seta_vregs_unused[3] = {0,0,0};
+	uint16_t *ROM = (uint16_t *)memory_region( machine, "maincpu" );
+	static uint16_t seta_vregs_unused[3] = {0,0,0};
 
 	// missing / unused video regs
 	seta_vregs = seta_vregs_unused;
@@ -10016,8 +10016,8 @@ static DRIVER_INIT( inttoote )
 
 static DRIVER_INIT( inttootea )
 {
-	//UINT16 *ROM = (UINT16 *)memory_region( machine, "maincpu" );
-	static UINT16 seta_vregs_unused[3] = {0,0,0};
+	//uint16_t *ROM = (uint16_t *)memory_region( machine, "maincpu" );
+	static uint16_t seta_vregs_unused[3] = {0,0,0};
 
 	// missing / unused video regs
 	seta_vregs = seta_vregs_unused;

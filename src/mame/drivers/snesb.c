@@ -142,14 +142,14 @@ Iron PCB (same as Final Fight 2?)
 #include "includes/snes.h"
 #include "audio/snes_snd.h"
 
-static INT8 *shared_ram;
-static UINT8 ffight2b_coins;
+static int8_t *shared_ram;
+static uint8_t ffight2b_coins;
 
 static READ8_HANDLER(sharedram_r)
 {
-	static INT32 oldinput=0;
-	INT32 coincnt;
-	INT32 input = input_port_read(space->machine, "COIN");
+	static int32_t oldinput=0;
+	int32_t coincnt;
+	int32_t input = input_port_read(space->machine, "COIN");
 
 	if(input&3)
 	{
@@ -173,12 +173,12 @@ static WRITE8_HANDLER(sharedram_w)
 
 static READ8_HANDLER(ffight2b_coin_r)
 {
-	static INT32 oldinput=0;
-	INT32 input = input_port_read(space->machine, "COIN");
+	static int32_t oldinput=0;
+	int32_t input = input_port_read(space->machine, "COIN");
 
 	if( ((input&1)==1)&&((oldinput&1)==0))
 	{
-		INT32 coin_cnt=(ffight2b_coins&0xf)+10*(ffight2b_coins>>4);
+		int32_t coin_cnt=(ffight2b_coins&0xf)+10*(ffight2b_coins>>4);
 		if(++coin_cnt>99) coin_cnt=99;
 		ffight2b_coins=(coin_cnt%10)|((coin_cnt/10)<<4);
 	}
@@ -191,7 +191,7 @@ static READ8_HANDLER(ffight2b_coin_r)
 static READ8_HANDLER(sb2b_75bd37_r)
 {
 	/* protection check */
-	static UINT8 cnt=0;
+	static uint8_t cnt=0;
 	return ++cnt;
 }
 
@@ -532,15 +532,15 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT(kinstb)
 {
-	INT32 i;
-	UINT8 *rom = memory_region(machine, "user3");
+	int32_t i;
+	uint8_t *rom = memory_region(machine, "user3");
 
 	for (i = 0; i < 0x400000; i++)
 	{
 		rom[i] = BITSWAP8(rom[i], 5, 0, 6, 1, 7, 4, 3, 2);
 	}
 
-	shared_ram = auto_alloc_array(machine, INT8, 0x100);
+	shared_ram = auto_alloc_array(machine, int8_t, 0x100);
 	memory_install_readwrite8_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x781000, 0x7810ff, 0, 0, sharedram_r, sharedram_w);
 
 	DRIVER_INIT_CALL(snes_hirom);
@@ -548,8 +548,8 @@ static DRIVER_INIT(kinstb)
 
 static DRIVER_INIT( ffight2b )
 {
-	INT32 i;
-	UINT8 *rom = memory_region(machine, "user3");
+	int32_t i;
+	uint8_t *rom = memory_region(machine, "user3");
 
 	for(i = 0; i < 0x200000; i++)
 	{
@@ -588,9 +588,9 @@ static DRIVER_INIT( ffight2b )
 }
 
 
-static const UINT8 data_substitution0[] = {0x88,0x02,0x2a,0x08,0x28,0xaa,0x8a,0x0a,0xa2,0x00,0x80,0xa0,0x22,0xa8,0x82,0x20,};
-static const UINT8 data_substitution1[] = {0x44,0x01,0x51,0x40,0x50,0x55,0x45,0x41,0x15,0x00,0x04,0x14,0x11,0x54,0x05,0x10,};
-static const UINT8 address_substitution_low[] =
+static const uint8_t data_substitution0[] = {0x88,0x02,0x2a,0x08,0x28,0xaa,0x8a,0x0a,0xa2,0x00,0x80,0xa0,0x22,0xa8,0x82,0x20,};
+static const uint8_t data_substitution1[] = {0x44,0x01,0x51,0x40,0x50,0x55,0x45,0x41,0x15,0x00,0x04,0x14,0x11,0x54,0x05,0x10,};
+static const uint8_t address_substitution_low[] =
 {
 	0x32,0x35,0x3a,0x28,0x2a,0x0c,0x36,0x38,0x29,0x39,0x04,0x2c,0x21,0x23,0x3d,0x2d,
 	0x3c,0x02,0x17,0x31,0x00,0x2e,0x0a,0x2f,0x25,0x26,0x27,0x30,0x33,0x01,0x18,0x19,
@@ -598,7 +598,7 @@ static const UINT8 address_substitution_low[] =
 	0x08,0x3b,0x09,0x14,0x15,0x1d,0x0b,0x0f,0x1e,0x1f,0x2b,0x1a,0x03,0x20,0x3f,0x3e,
 };
 
-static const UINT8  address_substitution_high[] =
+static const uint8_t  address_substitution_high[] =
 {
 	0x1b,0x15,0x08,0x1f,0x06,0x02,0x13,0x0a,0x1d,0x04,0x0e,0x00,0x17,0x0c,0x11,0x19,
 	0x16,0x0d,0x1c,0x07,0x10,0x03,0x1a,0x0b,0x12,0x05,0x0f,0x18,0x1e,0x01,0x14,0x09,
@@ -608,8 +608,8 @@ static const UINT8  address_substitution_high[] =
 static DRIVER_INIT( sblast2b )
 {
 	int i, cipherText, plainText, newAddress;
-	UINT8 *src = memory_region(machine, "user7");
-	UINT8 *dst = memory_region(machine, "user3");
+	uint8_t *src = memory_region(machine, "user7");
+	uint8_t *dst = memory_region(machine, "user3");
 
 	for (i =0; i < 0x80000 * 3; i++)
 	{
@@ -656,8 +656,8 @@ static DRIVER_INIT( sblast2b )
 
 static DRIVER_INIT( iron )
 {
-	INT32 i;
-	UINT8 *rom = memory_region(machine, "user3");
+	int32_t i;
+	uint8_t *rom = memory_region(machine, "user3");
 
 	for (i = 0; i < 0x140000; i++)
 	{
@@ -681,8 +681,8 @@ static DRIVER_INIT( iron )
 
 static DRIVER_INIT( endless )
 {
-	INT32 i;
-	UINT8 *rom = memory_region(machine, "user3");
+	int32_t i;
+	uint8_t *rom = memory_region(machine, "user3");
 
 	/* there is more to this, 0x800 based block swaps? */
 	for (i = 0; i < 0x200000; i++)
@@ -695,8 +695,8 @@ static DRIVER_INIT( endless )
 
 static DRIVER_INIT( denseib )
 {
-	UINT8 *rom = memory_region(machine, "user3");
-	INT32 i;
+	uint8_t *rom = memory_region(machine, "user3");
+	int32_t i;
 
 	for (i = 0; i < 0x200000; i++)
 	{
