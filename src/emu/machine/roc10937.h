@@ -22,9 +22,9 @@ void	ROC10937_shift_data(int id, int data);	// clock in a bit of data
 
 int		ROC10937_newdata(   int id, int data);	// clock in 8 bits of data
 
-UINT32	*ROC10937_get_segments(int id);			// get current segments displayed
-UINT32  *ROC10937_set_outputs(int id);			// convert segments to standard for display
-UINT32  *ROC10937_get_outputs(int id);			// get converted segments
+uint32_t	*ROC10937_get_segments(int id);			// get current segments displayed
+uint32_t  *ROC10937_set_outputs(int id);			// convert segments to standard for display
+uint32_t  *ROC10937_get_outputs(int id);			// get converted segments
 
 char	*ROC10937_get_string( int id);			// get current string   displayed (not as accurate)
 

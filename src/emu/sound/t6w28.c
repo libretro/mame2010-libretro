@@ -44,17 +44,17 @@ struct _t6w28_state
 	sound_stream * Channel;
 	int SampleRate;
 	int VolTable[16];	/* volume table         */
-	INT32 Register[16];	/* registers */
-	INT32 LastRegister[2];	/* last register written */
-	INT32 Volume[8];	/* volume of voice 0-2 and noise */
-	UINT32 RNG[2];		/* noise generator      */
-	INT32 NoiseMode[2];	/* active noise mode */
-	INT32 FeedbackMask;     /* mask for feedback */
-	INT32 WhitenoiseTaps;   /* mask for white noise taps */
-	INT32 WhitenoiseInvert; /* white noise invert flag */
-	INT32 Period[8];
-	INT32 Count[8];
-	INT32 Output[8];
+	int32_t Register[16];	/* registers */
+	int32_t LastRegister[2];	/* last register written */
+	int32_t Volume[8];	/* volume of voice 0-2 and noise */
+	uint32_t RNG[2];		/* noise generator      */
+	int32_t NoiseMode[2];	/* active noise mode */
+	int32_t FeedbackMask;     /* mask for feedback */
+	int32_t WhitenoiseTaps;   /* mask for white noise taps */
+	int32_t WhitenoiseInvert; /* white noise invert flag */
+	int32_t Period[8];
+	int32_t Count[8];
+	int32_t Output[8];
 };
 
 

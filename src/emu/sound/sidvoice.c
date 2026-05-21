@@ -5,42 +5,42 @@
 #include "sidw6581.h"
 #include "sidw8580.h"
 
-static UINT8 triangleTable[4096];
-static UINT8 sawtoothTable[4096];
-static UINT8 squareTable[2*4096];
-static const UINT8* waveform30;
-static const UINT8* waveform50;
-static const UINT8* waveform60;
-static const UINT8* waveform70;
+static uint8_t triangleTable[4096];
+static uint8_t sawtoothTable[4096];
+static uint8_t squareTable[2*4096];
+static const uint8_t* waveform30;
+static const uint8_t* waveform50;
+static const uint8_t* waveform60;
+static const uint8_t* waveform70;
 #if defined(LARGE_NOISE_TABLE)
-  static UINT8 noiseTableMSB[1<<8];
-  static UINT8 noiseTableLSB[1L<<16];
+  static uint8_t noiseTableMSB[1<<8];
+  static uint8_t noiseTableLSB[1L<<16];
 #else
-  static UINT8 noiseTableMSB[1<<8];
-  static UINT8 noiseTableMID[1<<8];
-  static UINT8 noiseTableLSB[1<<8];
+  static uint8_t noiseTableMSB[1<<8];
+  static uint8_t noiseTableMID[1<<8];
+  static uint8_t noiseTableLSB[1<<8];
 #endif
 
-static INT8* ampMod1x8;
+static int8_t* ampMod1x8;
 
-static const UINT32 noiseSeed = 0x7ffff8;
+static const uint32_t noiseSeed = 0x7ffff8;
 
 void sidInitMixerEngine(running_machine *machine)
 {
-	UINT16 uk;
-	INT32 si, sj    ;
+	uint16_t uk;
+	int32_t si, sj    ;
 
 	/* 8-bit volume modulation tables. */
 	float filterAmpl = 0.7f;
 
-	ampMod1x8=auto_alloc_array(machine, INT8, 256*256);
+	ampMod1x8=auto_alloc_array(machine, int8_t, 256*256);
 
 	uk = 0;
 	for ( si = 0; si < 256; si++ )
 	{
 		for ( sj = -128; sj < 128; sj++, uk++ )
 		{
-			ampMod1x8[uk] = (INT8)(((si*sj)/255)*filterAmpl);
+			ampMod1x8[uk] = (int8_t)(((si*sj)/255)*filterAmpl);
 		}
 	}
 
@@ -90,7 +90,7 @@ INLINE void noiseAdvance(sidOperator* pVoice)
 
 INLINE void noiseAdvanceHp(sidOperator* pVoice)
 {
-	UINT32 tmp = pVoice->noiseStepAdd;
+	uint32_t tmp = pVoice->noiseStepAdd;
 	while (tmp >= (1L<<20))
 	{
 		tmp -= (1L<<20);
@@ -298,9 +298,9 @@ INLINE void waveCalcCycleLen(sidOperator* pVoice)
 /*  else */
 	{
 #if defined(DIRECT_FIXPOINT)
-		register UINT16 diff = pVoice->cycleLenCount - pVoice->cycleLen.w[HI];
+		register uint16_t diff = pVoice->cycleLenCount - pVoice->cycleLen.w[HI];
 #else
-		register UINT16 diff = pVoice->cycleLenCount - pVoice->cycleLen;
+		register uint16_t diff = pVoice->cycleLenCount - pVoice->cycleLen;
 #endif
 		if ( pVoice->wavePre[diff].len != pVoice->cycleLenCount )
 		{
@@ -337,7 +337,7 @@ INLINE void waveCalcFilter(sidOperator* pVoice)
 				tmp = (float)pVoice->filtIO - pVoice->filtLow;
 				tmp -= pVoice->filtRef * pVoice->sid->filter.ResDy;
 				pVoice->filtRef += ( tmp * (pVoice->sid->filter.Dy) );
-				pVoice->filtIO = (INT8)(pVoice->filtRef-pVoice->filtLow/4);
+				pVoice->filtIO = (int8_t)(pVoice->filtRef-pVoice->filtLow/4);
 			}
 			else if (pVoice->sid->filter.Type == 0x40)
 			{
@@ -351,7 +351,7 @@ INLINE void waveCalcFilter(sidOperator* pVoice)
 					tmp2 = -128;
 				if (tmp2 > 127)
 					tmp2 = 127;
-				pVoice->filtIO = (INT8)tmp2;
+				pVoice->filtIO = (int8_t)tmp2;
 			}
 			else
 			{
@@ -366,23 +366,23 @@ INLINE void waveCalcFilter(sidOperator* pVoice)
 
 				if ( pVoice->sid->filter.Type == 0x10 )
 				{
-					pVoice->filtIO = (INT8)pVoice->filtLow;
+					pVoice->filtIO = (int8_t)pVoice->filtLow;
 				}
 				else if ( pVoice->sid->filter.Type == 0x30 )
 				{
-					pVoice->filtIO = (INT8)pVoice->filtLow;
+					pVoice->filtIO = (int8_t)pVoice->filtLow;
 				}
 				else if ( pVoice->sid->filter.Type == 0x50 )
 				{
-					pVoice->filtIO = (INT8)(sample - (tmp >> 1));
+					pVoice->filtIO = (int8_t)(sample - (tmp >> 1));
 				}
 				else if ( pVoice->sid->filter.Type == 0x60 )
 				{
-					pVoice->filtIO = (INT8)tmp;
+					pVoice->filtIO = (int8_t)tmp;
 				}
 				else if ( pVoice->sid->filter.Type == 0x70 )
 				{
-					pVoice->filtIO = (INT8)(sample - (tmp >> 1));
+					pVoice->filtIO = (int8_t)(sample - (tmp >> 1));
 				}
 			}
 		}
@@ -393,14 +393,14 @@ INLINE void waveCalcFilter(sidOperator* pVoice)
 	}
 }
 
-static INT8 waveCalcMute(sidOperator* pVoice)
+static int8_t waveCalcMute(sidOperator* pVoice)
 {
 	(*pVoice->ADSRproc)(pVoice);  /* just process envelope */
 	return pVoice->filtIO;//&pVoice->outputMask;
 }
 
 
-INT8 sidWaveCalcNormal(sidOperator* pVoice)
+int8_t sidWaveCalcNormal(sidOperator* pVoice)
 {
 	if ( pVoice->cycleLenCount <= 0 )
 	{
@@ -426,7 +426,7 @@ INT8 sidWaveCalcNormal(sidOperator* pVoice)
 }
 
 
-static INT8 waveCalcRangeCheck(sidOperator* pVoice)
+static int8_t waveCalcRangeCheck(sidOperator* pVoice)
 {
 #if defined(DIRECT_FIXPOINT)
 	pVoice->waveStepOld = pVoice->waveStep.w[HI];
@@ -456,10 +456,10 @@ static INT8 waveCalcRangeCheck(sidOperator* pVoice)
 
 void sidEmuSet(sidOperator* pVoice)
 {
-	UINT8 enveTemp, newWave, oldWave;
-	UINT8 ADtemp;
-	UINT8 SRtemp;
-	UINT8 tmpSusVol;
+	uint8_t enveTemp, newWave, oldWave;
+	uint8_t ADtemp;
+	uint8_t SRtemp;
+	uint8_t tmpSusVol;
 
 	pVoice->SIDfreq = pVoice->reg[0]|(pVoice->reg[1]<<8);
 
@@ -711,7 +711,7 @@ void sidEmuSet2(sidOperator* pVoice)
 void sidInitWaveformTables(SIDTYPE type)
 {
 	int i,j;
-	UINT16 k;
+	uint16_t k;
 
 	k = 0;
 	for ( i = 0; i < 256; i++ )
@@ -764,10 +764,10 @@ void sidInitWaveformTables(SIDTYPE type)
 
 	{
 #if defined(LARGE_NOISE_TABLE)
-	UINT32 ni;
+	uint32_t ni;
 	for (ni = 0; ni < sizeof(noiseTableLSB); ni++)
 	{
-		noiseTableLSB[ni] = (UINT8)
+		noiseTableLSB[ni] = (uint8_t)
 			(((ni >> (13-4)) & 0x10) |
 			 ((ni >> (11-3)) & 0x08) |
 			 ((ni >> (7-2)) & 0x04) |
@@ -776,29 +776,29 @@ void sidInitWaveformTables(SIDTYPE type)
 	}
 	for (ni = 0; ni < sizeof(noiseTableMSB); ni++)
 	{
-		noiseTableMSB[ni] = (UINT8)
+		noiseTableMSB[ni] = (uint8_t)
 			(((ni << (7-(22-16))) & 0x80) |
 			 ((ni << (6-(20-16))) & 0x40) |
 			 ((ni << (5-(16-16))) & 0x20));
 	}
 #else
-	UINT32 ni;
+	uint32_t ni;
 	for (ni = 0; ni < sizeof(noiseTableLSB); ni++)
 	{
-		noiseTableLSB[ni] = (UINT8)
+		noiseTableLSB[ni] = (uint8_t)
 			(((ni >> (7-2)) & 0x04) |
 			 ((ni >> (4-1)) & 0x02) |
 			 ((ni >> (2-0)) & 0x01));
 	}
 	for (ni = 0; ni < sizeof(noiseTableMID); ni++)
 	{
-		noiseTableMID[ni] = (UINT8)
+		noiseTableMID[ni] = (uint8_t)
 			(((ni >> (13-8-4)) & 0x10) |
 			 ((ni << (3-(11-8))) & 0x08));
 	}
 	for (ni = 0; ni < sizeof(noiseTableMSB); ni++)
 	{
-		noiseTableMSB[ni] = (UINT8)
+		noiseTableMSB[ni] = (uint8_t)
 			(((ni << (7-(22-16))) & 0x80) |
 			 ((ni << (6-(20-16))) & 0x40) |
 			 ((ni << (5-(16-16))) & 0x20));

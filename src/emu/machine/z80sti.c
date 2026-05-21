@@ -124,7 +124,7 @@ static const int INT_LEVEL_TIMER[] =
 };
 
 // interrupt vectors
-static const UINT8 INT_VECTOR[] =
+static const uint8_t INT_VECTOR[] =
 {
 	0x00, 0x02, 0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e,
 	0x10, 0x12, 0x14, 0x16, 0x18, 0x1a, 0x1c, 0x1e
@@ -143,7 +143,7 @@ static const int PRESCALER[] = { 0, 4, 10, 16, 50, 64, 100, 200 };
 //  z80sti_device_config - constructor
 //-------------------------------------------------
 
-z80sti_device_config::z80sti_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80sti_device_config::z80sti_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Mostek MK3801", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -155,7 +155,7 @@ z80sti_device_config::z80sti_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80sti_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80sti_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80sti_device_config(mconfig, tag, owner, clock));
 }
@@ -337,7 +337,7 @@ int z80sti_device::z80daisy_irq_ack()
 		// find the first channel with an interrupt requested
 		if (m_int_state[i] & Z80_DAISY_INT)
 		{
-			UINT8 vector = (m_pvr & 0xe0) | INT_VECTOR[i];
+			uint8_t vector = (m_pvr & 0xe0) | INT_VECTOR[i];
 
 			// clear interrupt, switch to the IEO state, and update the IRQs
 			m_int_state[i] = Z80_DAISY_IEO;
@@ -454,7 +454,7 @@ void z80sti_device::serial_transmit()
 //  read - register read
 //-------------------------------------------------
 
-UINT8 z80sti_device::read(offs_t offset)
+uint8_t z80sti_device::read(offs_t offset)
 {
 	switch (offset & 0x0f)
 	{
@@ -497,7 +497,7 @@ UINT8 z80sti_device::read(offs_t offset)
 //  write - register write
 //-------------------------------------------------
 
-void z80sti_device::write(offs_t offset, UINT8 data)
+void z80sti_device::write(offs_t offset, uint8_t data)
 {
 	switch (offset & 0x0f)
 	{

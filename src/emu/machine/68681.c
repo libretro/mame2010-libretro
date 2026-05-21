@@ -46,27 +46,27 @@ static const char *const duart68681_reg_write_names[0x10] =
 typedef struct
 {
 	/* Registers */
-	UINT8 CR;  /* Command register */
-	UINT8 CSR; /* Clock select register */
-	UINT8 MR1; /* Mode register 1 */
-	UINT8 MR2; /* Mode register 2 */
-	UINT8 MR_ptr; /* Mode register pointer */
-	UINT8 SR;  /* Status register */
+	uint8_t CR;  /* Command register */
+	uint8_t CSR; /* Clock select register */
+	uint8_t MR1; /* Mode register 1 */
+	uint8_t MR2; /* Mode register 2 */
+	uint8_t MR_ptr; /* Mode register pointer */
+	uint8_t SR;  /* Status register */
 
 	/* State */
 	int   baud_rate;
 
 	/* Receiver */
-	UINT8 rx_enabled;
-	UINT8 rx_fifo[RX_FIFO_SIZE];
+	uint8_t rx_enabled;
+	uint8_t rx_fifo[RX_FIFO_SIZE];
 	int   rx_fifo_read_ptr;
 	int   rx_fifo_write_ptr;
 	int   rx_fifo_num;
 
 	/* Transmitter */
-	UINT8 tx_enabled;
-	UINT8 tx_data;
-	UINT8 tx_ready;
+	uint8_t tx_enabled;
+	uint8_t tx_data;
+	uint8_t tx_ready;
 	emu_timer *tx_timer;
 
 } DUART68681_CHANNEL;
@@ -80,16 +80,16 @@ typedef struct
 	const duart68681_config *duart_config;
 
 	/* registers */
-	UINT8 ACR;  /* Auxiliary Control Register */
-	UINT8 IMR;  /* Interrupt Mask Register */
-	UINT8 ISR;  /* Interrupt Status Register */
-	UINT8 IVR;  /* Interrupt Vector Register */
-	UINT8 OPCR; /* Output Port Conf. Register */
-	UINT8 OPR;  /* Output Port Register */
+	uint8_t ACR;  /* Auxiliary Control Register */
+	uint8_t IMR;  /* Interrupt Mask Register */
+	uint8_t ISR;  /* Interrupt Status Register */
+	uint8_t IVR;  /* Interrupt Vector Register */
+	uint8_t OPCR; /* Output Port Conf. Register */
+	uint8_t OPR;  /* Output Port Register */
 	PAIR  CTR;  /* Counter/Timer Preset Value */
 
 	/* state */
-	UINT8 IP_last_state; /* last state of IP bits */
+	uint8_t IP_last_state; /* last state of IP bits */
 
 	/* timer */
 	emu_timer *duart_timer;
@@ -124,7 +124,7 @@ static void duart68681_update_interrupts(duart68681_state *duart68681)
     ISR: bit 1: RxRDYA/FFULLA: this is handled here; depending on whether MSR1A bit 6 is 0 or 1, this bit holds the state of SRA bit 0 or bit 1 respectively
     ISR: bit 0: TxRDYA: this is handled here; it mirrors SRA bit 2
     */
-	UINT8 ch = 0;
+	uint8_t ch = 0;
 	//logerror("DEBUG: 68681 int check: upon func call, SRA is %02X, SRB is %02X, ISR is %02X\n", duart68681->channel[0].SR, duart68681->channel[1].SR, duart68681->ISR);
 	for (ch = 0; ch < 2; ch++)
 	{
@@ -244,7 +244,7 @@ static TIMER_CALLBACK( duart_timer_callback )
 	duart68681_update_interrupts(duart68681);
 };
 
-static void duart68681_write_MR(duart68681_state *duart68681, int ch, UINT8 data)
+static void duart68681_write_MR(duart68681_state *duart68681, int ch, uint8_t data)
 {
 	if ( duart68681->channel[ch].MR_ptr == 0 )
 	{
@@ -258,7 +258,7 @@ static void duart68681_write_MR(duart68681_state *duart68681, int ch, UINT8 data
 	duart68681_update_interrupts(duart68681);
 };
 
-static void duart68681_write_CSR(duart68681_state *duart68681, int ch, UINT8 data, UINT8 ACR)
+static void duart68681_write_CSR(duart68681_state *duart68681, int ch, uint8_t data, uint8_t ACR)
 {
 	static const int baud_rate_ACR_0[] = { 50, 110, 134, 200, 300, 600, 1200, 1050, 2400, 4800, 7200, 9600, 38400, 0, 0, 0 };
 	static const int baud_rate_ACR_1[] = { 75, 110, 134, 150, 300, 600, 1200, 2000, 2400, 4800, 1800, 9600, 19200, 0, 0, 0 };
@@ -302,7 +302,7 @@ static void duart68681_write_CSR(duart68681_state *duart68681, int ch, UINT8 dat
 	}
 };
 
-static void duart68681_write_CR(duart68681_state *duart68681, int ch, UINT8 data)
+static void duart68681_write_CR(duart68681_state *duart68681, int ch, uint8_t data)
 {
 	duart68681->channel[ch].CR = data;
 	if ( BIT(data,0) )
@@ -371,9 +371,9 @@ static void duart68681_write_CR(duart68681_state *duart68681, int ch, UINT8 data
 	duart68681_update_interrupts(duart68681);
 };
 
-static UINT8 duart68681_read_rx_fifo(duart68681_state *duart68681, int ch)
+static uint8_t duart68681_read_rx_fifo(duart68681_state *duart68681, int ch)
 {
-	UINT8 r;
+	uint8_t r;
 
 	if ( duart68681->channel[ch].rx_fifo_num == 0 )
 	{
@@ -416,7 +416,7 @@ static TIMER_CALLBACK( tx_timer_callback )
 	timer_adjust_oneshot(duart68681->channel[ch].tx_timer, attotime_never, ch);
 };
 
-static void duart68681_write_TX(duart68681_state* duart68681, int ch, UINT8 data)
+static void duart68681_write_TX(duart68681_state* duart68681, int ch, uint8_t data)
 {
 	attotime period;
 
@@ -457,7 +457,7 @@ static void duart68681_write_TX(duart68681_state* duart68681, int ch, UINT8 data
 READ8_DEVICE_HANDLER(duart68681_r)
 {
 	duart68681_state* duart68681 = get_safe_token(device);
-	UINT8 r = 0xff;
+	uint8_t r = 0xff;
 
 	offset &= 0xf;
 
@@ -484,7 +484,7 @@ READ8_DEVICE_HANDLER(duart68681_r)
 			break;
 		case 0x04: /* IPCR */
 			{
-				UINT8 IP;
+				uint8_t IP;
 				if ( duart68681->duart_config->input_port_read != NULL )
 					IP = duart68681->duart_config->input_port_read(duart68681->device);
 				else
@@ -656,7 +656,7 @@ WRITE8_DEVICE_HANDLER(duart68681_w)
 	}
 }
 
-void duart68681_rx_data( running_device* device, int ch, UINT8 data )
+void duart68681_rx_data( running_device* device, int ch, uint8_t data )
 {
 	duart68681_state *duart68681 = get_safe_token(device);
 

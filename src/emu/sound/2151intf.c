@@ -19,7 +19,7 @@ struct _ym2151_state
 	sound_stream *			stream;
 	emu_timer *				timer[2];
 	void *					chip;
-	UINT8					lastreg;
+	uint8_t					lastreg;
 	const ym2151_interface *intf;
 };
 

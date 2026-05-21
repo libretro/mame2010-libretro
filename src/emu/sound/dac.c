@@ -11,9 +11,9 @@ typedef struct _dac_state dac_state;
 struct _dac_state
 {
 	sound_stream	*channel;
-	INT16			output;
-	INT16			UnsignedVolTable[256];
-	INT16			SignedVolTable[256];
+	int16_t			output;
+	int16_t			UnsignedVolTable[256];
+	int16_t			SignedVolTable[256];
 };
 
 
@@ -29,16 +29,16 @@ static STREAM_UPDATE( DAC_update )
 {
 	dac_state *info = (dac_state *)param;
 	stream_sample_t *buffer = outputs[0];
-	INT16 out = info->output;
+	int16_t out = info->output;
 
 	while (samples--) *(buffer++) = out;
 }
 
 
-void dac_data_w(running_device *device, UINT8 data)
+void dac_data_w(running_device *device, uint8_t data)
 {
 	dac_state *info = get_safe_token(device);
-	INT16 out = info->UnsignedVolTable[data];
+	int16_t out = info->UnsignedVolTable[data];
 
 	if (info->output != out)
 	{
@@ -49,10 +49,10 @@ void dac_data_w(running_device *device, UINT8 data)
 }
 
 
-void dac_signed_data_w(running_device *device, UINT8 data)
+void dac_signed_data_w(running_device *device, uint8_t data)
 {
 	dac_state *info = get_safe_token(device);
-	INT16 out = info->SignedVolTable[data];
+	int16_t out = info->SignedVolTable[data];
 
 	if (info->output != out)
 	{
@@ -63,10 +63,10 @@ void dac_signed_data_w(running_device *device, UINT8 data)
 }
 
 
-void dac_data_16_w(running_device *device, UINT16 data)
+void dac_data_16_w(running_device *device, uint16_t data)
 {
 	dac_state *info = get_safe_token(device);
-	INT16 out = data >> 1;		/* range      0..32767 */
+	int16_t out = data >> 1;		/* range      0..32767 */
 
 	if (info->output != out)
 	{
@@ -77,10 +77,10 @@ void dac_data_16_w(running_device *device, UINT16 data)
 }
 
 
-void dac_signed_data_16_w(running_device *device, UINT16 data)
+void dac_signed_data_16_w(running_device *device, uint16_t data)
 {
 	dac_state *info = get_safe_token(device);
-	INT16 out = (INT32)data - (INT32)0x08000;	/* range -32768..32767 */
+	int16_t out = (int32_t)data - (int32_t)0x08000;	/* range -32768..32767 */
 						/* casts avoid potential overflow on some ABIs */
 
 	if (info->output != out)

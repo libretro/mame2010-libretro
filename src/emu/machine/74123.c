@@ -20,9 +20,9 @@ struct _ttl74123_t
 {
 	const ttl74123_config *intf;
 
-	UINT8 a;			/* pin 1/9 */
-	UINT8 b;			/* pin 2/10 */
-	UINT8 clear;		/* pin 3/11 */
+	uint8_t a;			/* pin 1/9 */
+	uint8_t b;			/* pin 2/10 */
+	uint8_t clear;		/* pin 3/11 */
 	emu_timer *timer;
 };
 

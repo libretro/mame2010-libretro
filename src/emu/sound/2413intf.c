@@ -30,7 +30,7 @@ INLINE ym2413_state *get_safe_token(running_device *device)
 #ifdef UNUSED_FUNCTION
 void YM2413DAC_update(int chip,stream_sample_t **inputs, stream_sample_t **_buffer,int length)
 {
-    INT16 *buffer = _buffer[0];
+    int16_t *buffer = _buffer[0];
     static int out = 0;
 
     if ( ym2413[chip].reg[0x0F] & 0x01 )

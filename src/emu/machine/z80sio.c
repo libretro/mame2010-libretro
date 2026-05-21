@@ -157,7 +157,7 @@ const int SIO_RR1_ALL_SENT					= 0x01;		// D0 = All sent
 const int SIO_RR2_VECTOR_MASK				= 0xff;		// D7-D0 = Interrupt vector
 
 
-const UINT8 z80sio_device::k_int_priority[] =
+const uint8_t z80sio_device::k_int_priority[] =
 {
 	INT_CHA_RECEIVE,
 	INT_CHA_TRANSMIT,
@@ -294,7 +294,7 @@ inline attotime z80sio_device::sio_channel::compute_time_per_character()
 //  z80sio_device_config - constructor
 //-------------------------------------------------
 
-z80sio_device_config::z80sio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80sio_device_config::z80sio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Zilog Z80 SIO", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -306,7 +306,7 @@ z80sio_device_config::z80sio_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80sio_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80sio_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80sio_device_config(mconfig, tag, owner, clock));
 }
@@ -546,7 +546,7 @@ void z80sio_device::sio_channel::reset()
 //  control_write - write to a control register
 //-------------------------------------------------
 
-void z80sio_device::sio_channel::control_write(UINT8 data)
+void z80sio_device::sio_channel::control_write(uint8_t data)
 {
 	int regnum = m_regs[0] & 7;
 
@@ -554,7 +554,7 @@ void z80sio_device::sio_channel::control_write(UINT8 data)
 		VPRINTF(("%s:sio_reg_w(%c,%d) = %02X\n", cpuexec_describe_context(&m_device->m_machine), 'A' + m_index, regnum, data));
 
 	// write a new value to the selected register
-	UINT8 old = m_regs[regnum];
+	uint8_t old = m_regs[regnum];
 	m_regs[regnum] = data;
 
 	// clear the register number for the next write
@@ -614,10 +614,10 @@ void z80sio_device::sio_channel::control_write(UINT8 data)
 //  control_read - read from a control register
 //-------------------------------------------------
 
-UINT8 z80sio_device::sio_channel::control_read()
+uint8_t z80sio_device::sio_channel::control_read()
 {
 	int regnum = m_regs[0] & 7;
-	UINT8 result = m_status[regnum];
+	uint8_t result = m_status[regnum];
 
 	// switch off the register for live state changes
 	switch (regnum)
@@ -640,7 +640,7 @@ UINT8 z80sio_device::sio_channel::control_read()
 //  data_write - write to a data register
 //-------------------------------------------------
 
-void z80sio_device::sio_channel::data_write(UINT8 data)
+void z80sio_device::sio_channel::data_write(uint8_t data)
 {
 	VPRINTF(("%s:sio_data_w(%c) = %02X\n", cpuexec_describe_context(&m_device->m_machine), 'A' + m_index, data));
 
@@ -663,7 +663,7 @@ void z80sio_device::sio_channel::data_write(UINT8 data)
 //  data_read - read from a data register
 //-------------------------------------------------
 
-UINT8 z80sio_device::sio_channel::data_read()
+uint8_t z80sio_device::sio_channel::data_read()
 {
 	// update the status register
 	m_status[0] &= ~SIO_RR0_RX_CHAR_AVAILABLE;
@@ -746,7 +746,7 @@ void z80sio_device::sio_channel::change_input_line(int line, int state)
 	VPRINTF(("sio_change_input_line(%c, %s) = %d\n", 'A' + m_index, (line == SIO_RR0_CTS) ? "CTS" : "DCD", state));
 
 	// remember the old value
-	UINT8 old = m_status[0];
+	uint8_t old = m_status[0];
 
 	// set the bit in the status register
 	m_status[0] &= ~line;

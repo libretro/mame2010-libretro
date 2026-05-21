@@ -11,9 +11,9 @@
 #include "emu.h"
 #include "machine/tmp68301.h"
 
-UINT16 *tmp68301_regs;
+uint16_t *tmp68301_regs;
 
-static UINT8 tmp68301_IE[3];		// 3 External Interrupt Lines
+static uint8_t tmp68301_IE[3];		// 3 External Interrupt Lines
 static emu_timer *tmp68301_timer[3];		// 3 Timers
 
 static int tmp68301_irq_vector[8];
@@ -30,10 +30,10 @@ static IRQ_CALLBACK(tmp68301_irq_callback)
 static TIMER_CALLBACK( tmp68301_timer_callback )
 {
 	int i = param;
-	UINT16 TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
-	UINT16 IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
-	UINT16 ICR	=	tmp68301_regs[0x8e/2+i];	// Interrupt Controller Register (ICR7..9)
-	UINT16 IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
+	uint16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
+	uint16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
+	uint16_t ICR	=	tmp68301_regs[0x8e/2+i];	// Interrupt Controller Register (ICR7..9)
+	uint16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
 
 //  logerror("s: callback timer %04X, j = %d\n",cpuexec_describe_context(machine),i,tcount);
 
@@ -63,9 +63,9 @@ static TIMER_CALLBACK( tmp68301_timer_callback )
 
 static void tmp68301_update_timer( running_machine *machine, int i )
 {
-	UINT16 TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
-	UINT16 MAX1	=	tmp68301_regs[(0x204 + i * 0x20)/2];
-	UINT16 MAX2	=	tmp68301_regs[(0x206 + i * 0x20)/2];
+	uint16_t TCR	=	tmp68301_regs[(0x200 + i * 0x20)/2];
+	uint16_t MAX1	=	tmp68301_regs[(0x204 + i * 0x20)/2];
+	uint16_t MAX2	=	tmp68301_regs[(0x206 + i * 0x20)/2];
 
 	int max = 0;
 	attotime duration = attotime_zero;
@@ -130,8 +130,8 @@ static void update_irq_state(running_machine *machine)
 
 	/* Take care of external interrupts */
 
-	UINT16 IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
-	UINT16 IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
+	uint16_t IMR	=	tmp68301_regs[0x94/2];		// Interrupt Mask Register (IMR)
+	uint16_t IVNR	=	tmp68301_regs[0x9a/2];		// Interrupt Vector Number Register (IVNR)
 
 	for (i = 0; i < 3; i++)
 	{
@@ -139,7 +139,7 @@ static void update_irq_state(running_machine *machine)
 				!(IMR & (1<<i))
 			)
 		{
-			UINT16 ICR	=	tmp68301_regs[0x80/2+i];	// Interrupt Controller Register (ICR0..2)
+			uint16_t ICR	=	tmp68301_regs[0x80/2+i];	// Interrupt Controller Register (ICR0..2)
 
 			// Interrupt Controller Register (ICR0..2)
 			int level = ICR & 0x0007;

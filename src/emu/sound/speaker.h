@@ -18,7 +18,7 @@ typedef struct _speaker_interface speaker_interface;
 struct _speaker_interface
 {
 	int num_level;	/* optional: number of levels (if not two) */
-	const INT16 *levels;	/* optional: pointer to level lookup table */
+	const int16_t *levels;	/* optional: pointer to level lookup table */
 };
 
 void speaker_level_w (running_device *device, int new_level);

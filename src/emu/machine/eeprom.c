@@ -74,7 +74,7 @@ ADDRESS_MAP_END
 //  eeprom_device_config - constructor
 //-------------------------------------------------
 
-eeprom_device_config::eeprom_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+eeprom_device_config::eeprom_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "EEPROM", tag, owner, clock),
 	  device_config_memory_interface(mconfig, *this),
 	  device_config_nvram_interface(mconfig, *this),
@@ -90,7 +90,7 @@ eeprom_device_config::eeprom_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *eeprom_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *eeprom_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(eeprom_device_config(mconfig, tag, owner, clock));
 }
@@ -116,7 +116,7 @@ void eeprom_device_config::device_config_complete()
 {
 	// extract inline configuration from raw data
 	const eeprom_interface *intf = reinterpret_cast<const eeprom_interface *>(m_inline_data[INLINE_INTERFACE]);
-	m_default_data = reinterpret_cast<const UINT8 *>(m_inline_data[INLINE_DATAPTR]);
+	m_default_data = reinterpret_cast<const uint8_t *>(m_inline_data[INLINE_DATAPTR]);
 	m_default_data_size = m_inline_data[INLINE_DATASIZE];
 	m_default_value = m_inline_data[INLINE_DEFVALUE];
 
@@ -230,11 +230,11 @@ void eeprom_device::device_reset()
 
 void eeprom_device::nvram_default()
 {
-	UINT32 eeprom_length = 1 << m_config.m_address_bits;
-	UINT32 eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
+	uint32_t eeprom_length = 1 << m_config.m_address_bits;
+	uint32_t eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
 
 	/* initialize to the default value */
-	UINT16 default_value = 0xffff;
+	uint16_t default_value = 0xffff;
 	if (m_config.m_default_value != 0)
 		default_value = m_config.m_default_value;
 	for (offs_t offs = 0; offs < eeprom_length; offs++)
@@ -274,10 +274,10 @@ void eeprom_device::nvram_default()
 
 void eeprom_device::nvram_read(mame_file &file)
 {
-	UINT32 eeprom_length = 1 << m_config.m_address_bits;
-	UINT32 eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
+	uint32_t eeprom_length = 1 << m_config.m_address_bits;
+	uint32_t eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
 
-	UINT8 *buffer = auto_alloc_array(&m_machine, UINT8, eeprom_bytes);
+	uint8_t *buffer = auto_alloc_array(&m_machine, uint8_t, eeprom_bytes);
 	mame_fread(&file, buffer, eeprom_bytes);
 	for (offs_t offs = 0; offs < eeprom_bytes; offs++)
 		memory_write_byte(m_addrspace[0], offs, buffer[offs]);
@@ -292,10 +292,10 @@ void eeprom_device::nvram_read(mame_file &file)
 
 void eeprom_device::nvram_write(mame_file &file)
 {
-	UINT32 eeprom_length = 1 << m_config.m_address_bits;
-	UINT32 eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
+	uint32_t eeprom_length = 1 << m_config.m_address_bits;
+	uint32_t eeprom_bytes = eeprom_length * m_config.m_data_bits / 8;
 
-	UINT8 *buffer = auto_alloc_array(&m_machine, UINT8, eeprom_bytes);
+	uint8_t *buffer = auto_alloc_array(&m_machine, uint8_t, eeprom_bytes);
 	for (offs_t offs = 0; offs < eeprom_bytes; offs++)
 		buffer[offs] = memory_read_byte(m_addrspace[0], offs);
 	mame_fwrite(&file, buffer, eeprom_bytes);

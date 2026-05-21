@@ -23,21 +23,21 @@
 typedef struct _es8712_state es8712_state;
 struct _es8712_state
 {
-	UINT8 playing;			/* 1 if we're actively playing */
+	uint8_t playing;			/* 1 if we're actively playing */
 
-	UINT32 base_offset;		/* pointer to the base memory location */
-	UINT32 sample;			/* current sample number */
-	UINT32 count;			/* total samples to play */
+	uint32_t base_offset;		/* pointer to the base memory location */
+	uint32_t sample;			/* current sample number */
+	uint32_t count;			/* total samples to play */
 
-	UINT32 signal;			/* current ADPCM signal */
-	UINT32 step;			/* current ADPCM step */
+	uint32_t signal;			/* current ADPCM signal */
+	uint32_t step;			/* current ADPCM step */
 
-	UINT32 start;			/* starting address for the next loop */
-	UINT32 end;				/* ending address for the next loop */
-	UINT8  repeat;			/* Repeat current sample when 1 */
+	uint32_t start;			/* starting address for the next loop */
+	uint32_t end;				/* ending address for the next loop */
+	uint8_t  repeat;			/* Repeat current sample when 1 */
 
-	INT32 bank_offset;
-	UINT8 *region_base;		/* pointer to the base of the region */
+	int32_t bank_offset;
+	uint8_t *region_base;		/* pointer to the base of the region */
 	sound_stream *stream;	/* which stream are we playing on? */
 };
 
@@ -106,7 +106,7 @@ static void generate_adpcm(es8712_state *chip, stream_sample_t *buffer, int samp
 	/* if this chip is active */
 	if (chip->playing)
 	{
-		UINT8 *base = chip->region_base + chip->bank_offset + chip->base_offset;
+		uint8_t *base = chip->region_base + chip->bank_offset + chip->base_offset;
 		int sample = chip->sample;
 		int signal = chip->signal;
 		int count = chip->count;

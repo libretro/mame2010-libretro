@@ -45,35 +45,35 @@
 typedef struct _bsmt2000_voice bsmt2000_voice;
 struct _bsmt2000_voice
 {
-	UINT16		pos;					/* current position */
-	UINT16		rate;					/* stepping value */
-	UINT16		loopend;				/* loop end value */
-	UINT16		loopstart;				/* loop start value */
-	UINT16		bank;					/* bank number */
-	UINT16		leftvol;				/* left volume */
-	UINT16		rightvol;				/* right volume */
-	UINT16		fraction;				/* current fractional position */
+	uint16_t		pos;					/* current position */
+	uint16_t		rate;					/* stepping value */
+	uint16_t		loopend;				/* loop end value */
+	uint16_t		loopstart;				/* loop start value */
+	uint16_t		bank;					/* bank number */
+	uint16_t		leftvol;				/* left volume */
+	uint16_t		rightvol;				/* right volume */
+	uint16_t		fraction;				/* current fractional position */
 };
 
 typedef struct _bsmt2000_chip bsmt2000_chip;
 struct _bsmt2000_chip
 {
 	sound_stream *stream;				/* which stream are we using */
-	UINT8		last_register;			/* last register address written */
+	uint8_t		last_register;			/* last register address written */
 
-	INT8 *		region_base;			/* pointer to the base of the region */
+	int8_t *		region_base;			/* pointer to the base of the region */
 	int			total_banks;			/* number of total banks in the region */
 
 	bsmt2000_voice voice[MAX_VOICES];	/* the voices */
-	UINT16 *	regmap[128];			/* mapping of registers to voice params */
+	uint16_t *	regmap[128];			/* mapping of registers to voice params */
 
-	UINT32		clock;					/* original clock on the chip */
-	UINT8		stereo;					/* stereo output? */
-	UINT8		voices;					/* number of voices */
-	UINT8		adpcm;					/* adpcm enabled? */
+	uint32_t		clock;					/* original clock on the chip */
+	uint8_t		stereo;					/* stereo output? */
+	uint8_t		voices;					/* number of voices */
+	uint8_t		adpcm;					/* adpcm enabled? */
 
-	INT32		adpcm_current;			/* current ADPCM sample */
-	INT32		adpcm_delta_n;			/* current ADPCM scale factor */
+	int32_t		adpcm_current;			/* current ADPCM sample */
+	int32_t		adpcm_delta_n;			/* current ADPCM scale factor */
 };
 
 
@@ -87,7 +87,7 @@ static STREAM_UPDATE( bsmt2000_update );
 
 /* local functions */
 static void set_mode(bsmt2000_chip *chip);
-static void set_regmap(bsmt2000_chip *chip, UINT8 posbase, UINT8 ratebase, UINT8 endbase, UINT8 loopbase, UINT8 bankbase, UINT8 rvolbase, UINT8 lvolbase);
+static void set_regmap(bsmt2000_chip *chip, uint8_t posbase, uint8_t ratebase, uint8_t endbase, uint8_t loopbase, uint8_t bankbase, uint8_t rvolbase, uint8_t lvolbase);
 
 
 
@@ -198,20 +198,20 @@ static STREAM_UPDATE( bsmt2000_update )
 		/* compute the region base */
 		if (voice->bank < chip->total_banks)
 		{
-			INT8 *base = &chip->region_base[voice->bank * 0x10000];
-			UINT32 rate = voice->rate;
-			INT32 rvol = voice->rightvol;
-			INT32 lvol = chip->stereo ? voice->leftvol : rvol;
-			UINT16 pos = voice->pos;
-			UINT16 frac = voice->fraction;
+			int8_t *base = &chip->region_base[voice->bank * 0x10000];
+			uint32_t rate = voice->rate;
+			int32_t rvol = voice->rightvol;
+			int32_t lvol = chip->stereo ? voice->leftvol : rvol;
+			uint16_t pos = voice->pos;
+			uint16_t frac = voice->fraction;
 
 			/* loop while we still have samples to generate */
 			for (samp = 0; samp < samples; samp++)
 			{
 #if ENABLE_INTERPOLATION
-				INT32 sample = (base[pos] * (0x800 - frac) + (base[pos + 1] * frac)) >> 11;
+				int32_t sample = (base[pos] * (0x800 - frac) + (base[pos + 1] * frac)) >> 11;
 #else
-				INT32 sample = base[pos];
+				int32_t sample = base[pos];
 #endif
 				/* apply volumes and add */
 				left[samp] += sample * lvol;
@@ -237,11 +237,11 @@ static STREAM_UPDATE( bsmt2000_update )
 	voice = &chip->voice[ADPCM_VOICE];
 	if (chip->adpcm && voice->bank < chip->total_banks && voice->rate)
 	{
-		INT8 *base = &chip->region_base[voice->bank * 0x10000];
-		INT32 rvol = voice->rightvol;
-		INT32 lvol = chip->stereo ? voice->leftvol : rvol;
-		UINT32 pos = voice->pos;
-		UINT32 frac = voice->fraction;
+		int8_t *base = &chip->region_base[voice->bank * 0x10000];
+		int32_t rvol = voice->rightvol;
+		int32_t lvol = chip->stereo ? voice->leftvol : rvol;
+		uint32_t pos = voice->pos;
+		uint32_t frac = voice->fraction;
 
 		/* loop while we still have samples to generate */
 		for (samp = 0; samp < samples && pos < voice->loopend; samp++)
@@ -261,9 +261,9 @@ static STREAM_UPDATE( bsmt2000_update )
 			/* every 3 samples, we update the ADPCM state */
 			if (frac == 1 || frac == 4)
 			{
-				static const UINT8 delta_tab[] = { 58,58,58,58,77,102,128,154 };
+				static const uint8_t delta_tab[] = { 58,58,58,58,77,102,128,154 };
 				int nibble = base[pos] >> ((frac == 1) ? 4 : 0);
-				int value = (INT8)(nibble << 4) >> 4;
+				int value = (int8_t)(nibble << 4) >> 4;
 				int delta;
 
 				/* compute the delta for this sample */
@@ -328,7 +328,7 @@ WRITE16_DEVICE_HANDLER( bsmt2000_data_w )
 	/* update the register */
 	if (offset < 0x80 && chip->regmap[offset] != NULL)
 	{
-		UINT16 *dest = chip->regmap[offset];
+		uint16_t *dest = chip->regmap[offset];
 
 		/* force an update, then write the data */
 		stream_update(chip->stream);
@@ -419,7 +419,7 @@ static void set_mode(bsmt2000_chip *chip)
     set_regmap - initialize the register mapping
 -------------------------------------------------*/
 
-static void set_regmap(bsmt2000_chip *chip, UINT8 posbase, UINT8 ratebase, UINT8 endbase, UINT8 loopbase, UINT8 bankbase, UINT8 rvolbase, UINT8 lvolbase)
+static void set_regmap(bsmt2000_chip *chip, uint8_t posbase, uint8_t ratebase, uint8_t endbase, uint8_t loopbase, uint8_t bankbase, uint8_t rvolbase, uint8_t lvolbase)
 {
 	int voice;
 

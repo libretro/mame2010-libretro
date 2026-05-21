@@ -44,13 +44,13 @@ struct _ins8154_state
 	devcb_resolved_write_line out_irq_func;
 
 	/* registers */
-	UINT8 in_a;  /* Input Latch Port A */
-	UINT8 in_b;  /* Input Latch Port B */
-	UINT8 out_a; /* Output Latch Port A */
-	UINT8 out_b; /* Output Latch Port B */
-	UINT8 mdr;   /* Mode Definition Register */
-	UINT8 odra;  /* Output Definition Register Port A */
-	UINT8 odrb;  /* Output Definition Register Port B */
+	uint8_t in_a;  /* Input Latch Port A */
+	uint8_t in_b;  /* Input Latch Port B */
+	uint8_t out_a; /* Output Latch Port A */
+	uint8_t out_b; /* Output Latch Port B */
+	uint8_t mdr;   /* Mode Definition Register */
+	uint8_t odra;  /* Output Definition Register Port A */
+	uint8_t odrb;  /* Output Definition Register Port B */
 };
 
 
@@ -74,7 +74,7 @@ INLINE ins8154_state *get_safe_token(running_device *device)
 READ8_DEVICE_HANDLER( ins8154_r )
 {
 	ins8154_state *ins8154 = get_safe_token(device);
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	if (offset > 0x24)
 	{

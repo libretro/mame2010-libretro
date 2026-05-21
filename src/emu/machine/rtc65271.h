@@ -19,8 +19,8 @@ struct _rtc65271_config
 	MDRV_DEVICE_CONFIG_DATAPTR(rtc65271_config, interrupt_callback, _callback)
 
 
-UINT8 rtc65271_r(running_device *device, int xramsel, offs_t offset);
-void rtc65271_w(running_device *device, int xramsel, offs_t offset, UINT8 data);
+uint8_t rtc65271_r(running_device *device, int xramsel, offs_t offset);
+void rtc65271_w(running_device *device, int xramsel, offs_t offset, uint8_t data);
 
 READ8_DEVICE_HANDLER( rtc65271_rtc_r );
 READ8_DEVICE_HANDLER( rtc65271_xram_r );

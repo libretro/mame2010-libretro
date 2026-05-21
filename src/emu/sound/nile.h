@@ -5,7 +5,7 @@
 
 #include "devlegcy.h"
 
-extern UINT16 *nile_sound_regs;
+extern uint16_t *nile_sound_regs;
 
 WRITE16_DEVICE_HANDLER( nile_snd_w );
 READ16_DEVICE_HANDLER( nile_snd_r );

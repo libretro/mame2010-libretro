@@ -38,7 +38,7 @@ typedef vector signed short rgbaint;
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
+INLINE void rgb_comp_to_rgbint(rgbint *rgb, int16_t r, int16_t g, int16_t b)
 {
 	rgbint result = { 0, r, g, b, 0, 0, 0, 0 };
 	*rgb = result;
@@ -50,7 +50,7 @@ INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, INT16 a, INT16 r, INT16 g, INT16 b)
+INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, int16_t a, int16_t r, int16_t g, int16_t b)
 {
 	rgbaint result = { a, r, g, b, 0, 0, 0, 0 };
 	*rgb = result;
@@ -228,7 +228,7 @@ extern const struct _rgbvmx_statics
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale)
+INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, uint8_t color1scale)
 {
 	vector signed int temp;
 	*color1 = vec_mergeh(*color1, *color2);
@@ -243,7 +243,7 @@ INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1scale)
+INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, uint8_t color1scale)
 {
 	vector signed int temp;
 	*color1 = vec_mergeh(*color1, *color2);
@@ -259,7 +259,7 @@ INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1sc
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
+INLINE void rgbint_scale_and_clamp(rgbint *color, int16_t colorscale)
 {
 	rgbint splatmap = vec_splat((rgbint)vec_lvsl(0, &colorscale), 0);
 	rgbint vecscale = vec_lde(0, &colorscale);
@@ -278,7 +278,7 @@ INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
+INLINE void rgbaint_scale_and_clamp(rgbaint *color, int16_t colorscale)
 {
 	rgbaint splatmap = vec_splat((rgbaint)vec_lvsl(0, &colorscale), 0);
 	rgbaint vecscale = vec_lde(0, &colorscale);
@@ -296,7 +296,7 @@ INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
     four pixel values
 -------------------------------------------------*/
 
-INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	rgb_t	result;
 	rgbint	color00 = (rgbint)vec_perm((vector signed int)vec_lde(0, &rgb00), vec_splat_s32(0), vec_lvsl(0, &rgb00));
@@ -328,7 +328,7 @@ INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rg
     four pixel values
 -------------------------------------------------*/
 
-INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	rgb_t	result;
 	rgbaint	color00 = (rgbaint)vec_perm((vector signed int)vec_lde(0, &rgb00), vec_splat_s32(0), vec_lvsl(0, &rgb00));
@@ -360,7 +360,7 @@ INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t r
     four pixel values
 -------------------------------------------------*/
 
-INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	rgbint color00 = (rgbint)vec_perm((vector signed int)vec_lde(0, &rgb00), vec_splat_s32(0), vec_lvsl(0, &rgb00));
 	rgbint color01 = (rgbint)vec_perm((vector signed int)vec_lde(0, &rgb01), vec_splat_s32(0), vec_lvsl(0, &rgb01));
@@ -388,7 +388,7 @@ INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_
     four pixel values
 -------------------------------------------------*/
 
-INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	rgbaint color00 = (rgbaint)vec_perm((vector signed int)vec_lde(0, &rgb00), vec_splat_s32(0), vec_lvsl(0, &rgb00));
 	rgbaint color01 = (rgbaint)vec_perm((vector signed int)vec_lde(0, &rgb01), vec_splat_s32(0), vec_lvsl(0, &rgb01));

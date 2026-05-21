@@ -9,15 +9,15 @@ typedef struct _sample_channel sample_channel;
 struct _sample_channel
 {
 	sound_stream *stream;
-	const INT16 *source;
-	INT32		source_length;
-	INT32		source_num;
-	UINT32		pos;
-	UINT32		frac;
-	UINT32		step;
-	UINT32		basefreq;
-	UINT8		loop;
-	UINT8		paused;
+	const int16_t *source;
+	int32_t		source_length;
+	int32_t		source_num;
+	uint32_t		pos;
+	uint32_t		frac;
+	uint32_t		step;
+	uint32_t		basefreq;
+	uint8_t		loop;
+	uint8_t		paused;
 };
 
 
@@ -53,10 +53,10 @@ INLINE samples_info *get_safe_token(running_device *device)
 static int read_wav_sample(running_machine *machine, mame_file *f, loaded_sample *sample)
 {
 	unsigned long offset = 0;
-	UINT32 length, rate, filesize;
-	UINT16 bits, temp16;
+	uint32_t length, rate, filesize;
+	uint16_t bits, temp16;
 	char buf[32];
-	UINT32 sindex;
+	uint32_t sindex;
 
 	/* read the core header and make sure it's a WAVE file */
 	offset += mame_fread(f, buf, 4);
@@ -153,18 +153,18 @@ static int read_wav_sample(running_machine *machine, mame_file *f, loaded_sample
 		unsigned char *tempptr;
 		int sindex;
 
-		sample->data = auto_alloc_array(machine, INT16, length);
+		sample->data = auto_alloc_array(machine, int16_t, length);
 		mame_fread(f, sample->data, length);
 
 		/* convert 8-bit data to signed samples */
 		tempptr = (unsigned char *)sample->data;
 		for (sindex = length - 1; sindex >= 0; sindex--)
-			sample->data[sindex] = (INT8)(tempptr[sindex] ^ 0x80) * 256;
+			sample->data[sindex] = (int8_t)(tempptr[sindex] ^ 0x80) * 256;
 	}
 	else
 	{
 		/* 16-bit data is fine as-is */
-		sample->data = auto_alloc_array(machine, INT16, length/2);
+		sample->data = auto_alloc_array(machine, int16_t, length/2);
 		mame_fread(f, sample->data, length);
 		sample->length /= 2;
 		if (ENDIANNESS_NATIVE != ENDIANNESS_LITTLE)
@@ -201,7 +201,7 @@ loaded_samples *readsamples(running_machine *machine, const char *const *samplen
 		return NULL;
 
 	/* allocate the array */
-	samples = (loaded_samples *)auto_alloc_array_clear(machine, UINT8, sizeof(loaded_samples) + (i-1) * sizeof(loaded_sample));
+	samples = (loaded_samples *)auto_alloc_array_clear(machine, uint8_t, sizeof(loaded_samples) + (i-1) * sizeof(loaded_sample));
 	samples->total = i;
 
 	/* load the samples */
@@ -261,12 +261,12 @@ void sample_start(running_device *device,int channel,int samplenum,int loop)
 	chan->pos = 0;
 	chan->frac = 0;
 	chan->basefreq = sample->frequency;
-	chan->step = ((INT64)chan->basefreq << FRAC_BITS) / info->device->machine->sample_rate;
+	chan->step = ((int64_t)chan->basefreq << FRAC_BITS) / info->device->machine->sample_rate;
 	chan->loop = loop;
 }
 
 
-void sample_start_raw(running_device *device,int channel,const INT16 *sampledata,int samples,int frequency,int loop)
+void sample_start_raw(running_device *device,int channel,const int16_t *sampledata,int samples,int frequency,int loop)
 {
     samples_info *info = get_safe_token(device);
     sample_channel *chan;
@@ -285,7 +285,7 @@ void sample_start_raw(running_device *device,int channel,const INT16 *sampledata
 	chan->pos = 0;
 	chan->frac = 0;
 	chan->basefreq = frequency;
-	chan->step = ((INT64)chan->basefreq << FRAC_BITS) / info->device->machine->sample_rate;
+	chan->step = ((int64_t)chan->basefreq << FRAC_BITS) / info->device->machine->sample_rate;
 	chan->loop = loop;
 }
 
@@ -302,7 +302,7 @@ void sample_set_freq(running_device *device,int channel,int freq)
 	/* force an update before we start */
 	stream_update(chan->stream);
 
-	chan->step = ((INT64)freq << FRAC_BITS) / info->device->machine->sample_rate;
+	chan->step = ((int64_t)freq << FRAC_BITS) / info->device->machine->sample_rate;
 }
 
 
@@ -389,18 +389,18 @@ static STREAM_UPDATE( sample_update_sound )
 	if (chan->source && !chan->paused)
 	{
 		/* load some info locally */
-		UINT32 pos = chan->pos;
-		UINT32 frac = chan->frac;
-		UINT32 step = chan->step;
-		const INT16 *sample = chan->source;
-		UINT32 sample_length = chan->source_length;
+		uint32_t pos = chan->pos;
+		uint32_t frac = chan->frac;
+		uint32_t step = chan->step;
+		const int16_t *sample = chan->source;
+		uint32_t sample_length = chan->source_length;
 
 		while (samples--)
 		{
 			/* do a linear interp on the sample */
-			INT32 sample1 = sample[pos];
-			INT32 sample2 = sample[(pos + 1) % sample_length];
-			INT32 fracmult = frac >> (FRAC_BITS - 14);
+			int32_t sample1 = sample[pos];
+			int32_t sample2 = sample[(pos + 1) % sample_length];
+			int32_t fracmult = frac >> (FRAC_BITS - 14);
 			*buffer++ = ((0x4000 - fracmult) * sample1 + fracmult * sample2) >> 14;
 
 			/* advance */

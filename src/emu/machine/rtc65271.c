@@ -35,19 +35,19 @@ struct _rtc65271_state
 {
 	/* 64 8-bit registers (10 clock registers, 4 control/status registers, and
     50 bytes of user RAM) */
-	UINT8 regs[64];
-	UINT8 cur_reg;
+	uint8_t regs[64];
+	uint8_t cur_reg;
 
 	/* extended RAM: 4kbytes of battery-backed RAM (in pages of 32 bytes) */
-	UINT8 xram[4096];
-	UINT8 cur_xram_page;
+	uint8_t xram[4096];
+	uint8_t cur_xram_page;
 
 	/* update timer: called every second */
 	emu_timer *update_timer;
 
 	/* SQW timer: called every periodic clock half-period */
 	emu_timer *SQW_timer;
-	UINT8 SQW_internal_state;
+	uint8_t SQW_internal_state;
 
 	/* callback called when interrupt pin state changes (may be NULL) */
 	void (*interrupt_callback)(running_device *device, int state);
@@ -129,18 +129,18 @@ static const int SQW_freq_table[16] =
 */
 
 /*
-    Increment a binary-encoded UINT8
+    Increment a binary-encoded uint8_t
 */
-static UINT8 increment_binary(UINT8 data)
+static uint8_t increment_binary(uint8_t data)
 {
 	return data+1;
 }
 
 
 /*
-    Increment a BCD-encoded UINT8
+    Increment a BCD-encoded uint8_t
 */
-static UINT8 increment_BCD(UINT8 data)
+static uint8_t increment_BCD(uint8_t data)
 {
 	if ((data & 0x0f) < 0x09)
 	{
@@ -161,9 +161,9 @@ static UINT8 increment_BCD(UINT8 data)
 
 
 /*
-    Convert a binary-encoded UINT8 to BCD
+    Convert a binary-encoded uint8_t to BCD
 */
-static UINT8 binary_to_BCD(UINT8 data)
+static uint8_t binary_to_BCD(uint8_t data)
 {
 	data %= 100;
 
@@ -172,9 +172,9 @@ static UINT8 binary_to_BCD(UINT8 data)
 
 
 /*
-    Convert a BCD-encoded UINT8 to binary
+    Convert a BCD-encoded uint8_t to binary
 */
-static UINT8 BCD_to_binary(UINT8 data)
+static uint8_t BCD_to_binary(uint8_t data)
 {
 	if ((data & 0x0f) >= 0x0a)
 		data = data - 0x0a + 0x10;
@@ -196,7 +196,7 @@ static UINT8 BCD_to_binary(UINT8 data)
 static int rtc65271_file_load(running_device *device, mame_file *file)
 {
 	rtc65271_state *state = get_safe_token(device);
-	UINT8 buf;
+	uint8_t buf;
 
 
 	/* version flag */
@@ -280,7 +280,7 @@ static int rtc65271_file_load(running_device *device, mame_file *file)
 static int rtc65271_file_save(running_device *device, mame_file *file)
 {
 	rtc65271_state *state = get_safe_token(device);
-	UINT8 buf;
+	uint8_t buf;
 
 
 	/* version flag */
@@ -321,7 +321,7 @@ static int rtc65271_file_save(running_device *device, mame_file *file)
     xramsel: select RTC register if 0, XRAM if 1
     offset: address (A0-A5 pins)
 */
-UINT8 rtc65271_r(running_device *device, int xramsel, offs_t offset)
+uint8_t rtc65271_r(running_device *device, int xramsel, offs_t offset)
 {
 	rtc65271_state *state = get_safe_token(device);
 	int reply;
@@ -379,7 +379,7 @@ READ8_DEVICE_HANDLER( rtc65271_xram_r )
     xramsel: select RTC register if 0, XRAM if 1
     offset: address (A0-A5 pins)
 */
-void rtc65271_w(running_device *device, int xramsel, offs_t offset, UINT8 data)
+void rtc65271_w(running_device *device, int xramsel, offs_t offset, uint8_t data)
 {
 	rtc65271_state *state = get_safe_token(device);
 	if (xramsel)
@@ -539,7 +539,7 @@ static TIMER_CALLBACK( rtc_end_update_callback )
 	};
 	running_device *device = (running_device *)ptr;
 	rtc65271_state *state = get_safe_token(device);
-	UINT8 (*increment)(UINT8 data);
+	uint8_t (*increment)(uint8_t data);
 	int c59, c23, c12, c11, c29;
 
 	if (! (state->regs[reg_A] & reg_A_UIP))

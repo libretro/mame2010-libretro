@@ -21,7 +21,7 @@ DECLARE_LEGACY_DEVICE(F3853, f3853);
 typedef struct _f3853_config f3853_config;
 struct _f3853_config
 {
-    void (*interrupt_request)(running_device *device, UINT16 addr, int level);
+    void (*interrupt_request)(running_device *device, uint16_t addr, int level);
 };
 
 

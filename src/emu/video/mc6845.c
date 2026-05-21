@@ -77,30 +77,30 @@ struct _mc6845_t
 	screen_device *screen;
 
 	/* register file */
-	UINT8	horiz_char_total;	/* 0x00 */
-	UINT8	horiz_disp;			/* 0x01 */
-	UINT8	horiz_sync_pos;		/* 0x02 */
-	UINT8	sync_width;			/* 0x03 */
-	UINT8	vert_char_total;	/* 0x04 */
-	UINT8	vert_total_adj;		/* 0x05 */
-	UINT8	vert_disp;			/* 0x06 */
-	UINT8	vert_sync_pos;		/* 0x07 */
-	UINT8	mode_control;		/* 0x08 */
-	UINT8	max_ras_addr;		/* 0x09 */
-	UINT8	cursor_start_ras;	/* 0x0a */
-	UINT8	cursor_end_ras;		/* 0x0b */
-	UINT16	disp_start_addr;	/* 0x0c/0x0d */
-	UINT16	cursor_addr;		/* 0x0e/0x0f */
-	UINT16	light_pen_addr;		/* 0x10/0x11 */
-	UINT16	update_addr;		/* 0x12/0x13 */
+	uint8_t	horiz_char_total;	/* 0x00 */
+	uint8_t	horiz_disp;			/* 0x01 */
+	uint8_t	horiz_sync_pos;		/* 0x02 */
+	uint8_t	sync_width;			/* 0x03 */
+	uint8_t	vert_char_total;	/* 0x04 */
+	uint8_t	vert_total_adj;		/* 0x05 */
+	uint8_t	vert_disp;			/* 0x06 */
+	uint8_t	vert_sync_pos;		/* 0x07 */
+	uint8_t	mode_control;		/* 0x08 */
+	uint8_t	max_ras_addr;		/* 0x09 */
+	uint8_t	cursor_start_ras;	/* 0x0a */
+	uint8_t	cursor_end_ras;		/* 0x0b */
+	uint16_t	disp_start_addr;	/* 0x0c/0x0d */
+	uint16_t	cursor_addr;		/* 0x0e/0x0f */
+	uint16_t	light_pen_addr;		/* 0x10/0x11 */
+	uint16_t	update_addr;		/* 0x12/0x13 */
 
 	/* other internal state */
-	UINT64	clock;
-	UINT8	register_address_latch;
-	UINT8	hpixels_per_column;
-	UINT8	cursor_state;	/* 0 = off, 1 = on */
-	UINT8	cursor_blink_count;
-	UINT8	update_ready_bit;
+	uint64_t	clock;
+	uint8_t	register_address_latch;
+	uint8_t	hpixels_per_column;
+	uint8_t	cursor_state;	/* 0 = off, 1 = on */
+	uint8_t	cursor_blink_count;
+	uint8_t	update_ready_bit;
 
 	/* timers */
 	emu_timer *de_changed_timer;
@@ -114,16 +114,16 @@ struct _mc6845_t
 	emu_timer *upd_adr_timer;
 
 	/* computed values - do NOT state save these! */
-	UINT16	 horiz_pix_total;
-	UINT16	 vert_pix_total;
-	UINT16	 max_visible_x;
-	UINT16	 max_visible_y;
-	UINT16	 hsync_on_pos;
-	UINT16	 hsync_off_pos;
-	UINT16	 vsync_on_pos;
-	UINT16	 vsync_off_pos;
-	UINT16   current_disp_addr;	/* the display address currently drawn */
-	UINT8	 light_pen_latched;
+	uint16_t	 horiz_pix_total;
+	uint16_t	 vert_pix_total;
+	uint16_t	 max_visible_x;
+	uint16_t	 max_visible_y;
+	uint16_t	 hsync_on_pos;
+	uint16_t	 hsync_off_pos;
+	uint16_t	 vsync_on_pos;
+	uint16_t	 vsync_off_pos;
+	uint16_t   current_disp_addr;	/* the display address currently drawn */
+	uint8_t	 light_pen_latched;
 	attotime upd_time;
 	int		 has_valid_parameters;
 };
@@ -203,7 +203,7 @@ WRITE8_DEVICE_HANDLER( mc6845_address_w )
 READ8_DEVICE_HANDLER( mc6845_status_r )
 {
 	mc6845_t *mc6845 = get_safe_token(device);
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	/* VBLANK bit */
 	if (supports_status_reg_d5[mc6845->device_type] && mc6845->screen->vblank())
@@ -224,7 +224,7 @@ READ8_DEVICE_HANDLER( mc6845_status_r )
 READ8_DEVICE_HANDLER( mc6845_register_r )
 {
 	mc6845_t *mc6845 = get_safe_token(device);
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	switch (mc6845->register_address_latch)
 	{
@@ -341,19 +341,19 @@ static void recompute_parameters(mc6845_t *mc6845, int postload)
 {
 	if (mc6845->intf != NULL)
 	{
-		UINT16 hsync_on_pos, hsync_off_pos, vsync_on_pos, vsync_off_pos;
+		uint16_t hsync_on_pos, hsync_off_pos, vsync_on_pos, vsync_off_pos;
 
 		/* compute the screen sizes */
-		UINT16 horiz_pix_total = (mc6845->horiz_char_total + 1) * mc6845->hpixels_per_column;
-		UINT16 vert_pix_total = (mc6845->vert_char_total + 1) * (mc6845->max_ras_addr + 1) + mc6845->vert_total_adj;
+		uint16_t horiz_pix_total = (mc6845->horiz_char_total + 1) * mc6845->hpixels_per_column;
+		uint16_t vert_pix_total = (mc6845->vert_char_total + 1) * (mc6845->max_ras_addr + 1) + mc6845->vert_total_adj;
 
 		/* determine the visible area, avoid division by 0 */
-		UINT16 max_visible_x = mc6845->horiz_disp * mc6845->hpixels_per_column - 1;
-		UINT16 max_visible_y = mc6845->vert_disp * (mc6845->max_ras_addr + 1) - 1;
+		uint16_t max_visible_x = mc6845->horiz_disp * mc6845->hpixels_per_column - 1;
+		uint16_t max_visible_y = mc6845->vert_disp * (mc6845->max_ras_addr + 1) - 1;
 
 		/* determine the syncing positions */
-		UINT8 horiz_sync_char_width = mc6845->sync_width & 0x0f;
-		UINT8 vert_sync_pix_width = supports_vert_sync_width[mc6845->device_type] ? (mc6845->sync_width >> 4) & 0x0f : 0x10;
+		uint8_t horiz_sync_char_width = mc6845->sync_width & 0x0f;
+		uint8_t vert_sync_pix_width = supports_vert_sync_width[mc6845->device_type] ? (mc6845->sync_width >> 4) & 0x0f : 0x10;
 
 		if (horiz_sync_char_width == 0)
 			horiz_sync_char_width = 0x10;
@@ -443,8 +443,8 @@ static void update_de_changed_timer(mc6845_t *mc6845)
 {
 	if (mc6845->has_valid_parameters && (mc6845->de_changed_timer != NULL))
 	{
-		INT16 next_y;
-		UINT16 next_x;
+		int16_t next_y;
+		uint16_t next_x;
 		attotime duration;
 
 		/* we are in a display region, get the location of the next blanking start */
@@ -497,13 +497,13 @@ static void update_cur_changed_timers(mc6845_t *mc6845)
 {
 	if (mc6845->has_valid_parameters && (mc6845->cur_on_timer != NULL))
 	{
-		UINT16 cur_on_row = ((mc6845->cursor_addr - mc6845->disp_start_addr) / mc6845->horiz_disp) * (mc6845->max_ras_addr + 1);
-		UINT16 cur_on_y = cur_on_row + mc6845->cursor_start_ras;
-		UINT16 cur_off_y = cur_on_row + mc6845->cursor_end_ras;
-		UINT16 cur_on_pos = ((mc6845->cursor_addr - mc6845->disp_start_addr) % mc6845->horiz_disp) * mc6845->intf->hpixels_per_column;
-		UINT16 cur_off_pos = cur_on_pos + mc6845->intf->hpixels_per_column;
-		UINT16 next_y;
-		UINT16 y = mc6845->screen->vpos();
+		uint16_t cur_on_row = ((mc6845->cursor_addr - mc6845->disp_start_addr) / mc6845->horiz_disp) * (mc6845->max_ras_addr + 1);
+		uint16_t cur_on_y = cur_on_row + mc6845->cursor_start_ras;
+		uint16_t cur_off_y = cur_on_row + mc6845->cursor_end_ras;
+		uint16_t cur_on_pos = ((mc6845->cursor_addr - mc6845->disp_start_addr) % mc6845->horiz_disp) * mc6845->intf->hpixels_per_column;
+		uint16_t cur_off_pos = cur_on_pos + mc6845->intf->hpixels_per_column;
+		uint16_t next_y;
+		uint16_t y = mc6845->screen->vpos();
 
 		if ((y >= cur_on_y) && (y < cur_off_y))
 			next_y = y + 1;
@@ -519,7 +519,7 @@ static void update_hsync_changed_timers(mc6845_t *mc6845)
 {
 	if (mc6845->has_valid_parameters && (mc6845->hsync_on_timer != NULL))
 	{
-		UINT16 next_y;
+		uint16_t next_y;
 
 		/* we are before the HSYNC position, we trigger on the current line */
 		if (mc6845->screen->hpos() < mc6845->hsync_on_pos)
@@ -633,9 +633,9 @@ static TIMER_CALLBACK( hsync_off_timer_cb )
 
 
 
-UINT16 mc6845_get_ma(running_device *device)
+uint16_t mc6845_get_ma(running_device *device)
 {
-	UINT16 ret;
+	uint16_t ret;
 	mc6845_t *mc6845 = get_safe_token(device);
 
 	if (mc6845->has_valid_parameters)
@@ -663,9 +663,9 @@ UINT16 mc6845_get_ma(running_device *device)
 }
 
 
-UINT8 mc6845_get_ra(running_device *device)
+uint8_t mc6845_get_ra(running_device *device)
 {
-	UINT8 ret;
+	uint8_t ret;
 	mc6845_t *mc6845 = get_safe_token(device);
 
 	if (mc6845->has_valid_parameters)
@@ -761,7 +761,7 @@ void mc6845_set_hpixels_per_column(running_device *device, int hpixels_per_colum
 static void update_cursor_state(mc6845_t *mc6845)
 {
 	/* save and increment cursor counter */
-	UINT8 last_cursor_blink_count = mc6845->cursor_blink_count;
+	uint8_t last_cursor_blink_count = mc6845->cursor_blink_count;
 	mc6845->cursor_blink_count = mc6845->cursor_blink_count + 1;
 
 	/* switch on cursor blinking mode */
@@ -797,7 +797,7 @@ void mc6845_update(running_device *device, bitmap_t *bitmap, const rectangle *cl
 
 	if (mc6845->has_valid_parameters)
 	{
-		UINT16 y;
+		uint16_t y;
 
 		void *param = NULL;
 
@@ -821,7 +821,7 @@ void mc6845_update(running_device *device, bitmap_t *bitmap, const rectangle *cl
 		for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		{
 			/* compute the current raster line */
-			UINT8 ra = y % (mc6845->max_ras_addr + 1);
+			uint8_t ra = y % (mc6845->max_ras_addr + 1);
 
 			/* check if the cursor is visible and is on this scanline */
 			int cursor_visible = mc6845->cursor_state &&
@@ -831,7 +831,7 @@ void mc6845_update(running_device *device, bitmap_t *bitmap, const rectangle *cl
 								(mc6845->cursor_addr < (mc6845->current_disp_addr + mc6845->horiz_disp));
 
 			/* compute the cursor X position, or -1 if not visible */
-			INT8 cursor_x = cursor_visible ? (mc6845->cursor_addr - mc6845->current_disp_addr) : -1;
+			int8_t cursor_x = cursor_visible ? (mc6845->cursor_addr - mc6845->current_disp_addr) : -1;
 
 			/* call the external system to draw it */
 			mc6845->intf->update_row(device, bitmap, cliprect, mc6845->current_disp_addr, ra, y, mc6845->horiz_disp, cursor_x, param);

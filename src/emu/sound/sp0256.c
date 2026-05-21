@@ -63,12 +63,12 @@
 struct lpc12_t
 {
     int     rpt, cnt;       /* Repeat counter, Period down-counter.         */
-    UINT32  per, rng;       /* Period, Amplitude, Random Number Generator   */
+    uint32_t  per, rng;       /* Period, Amplitude, Random Number Generator   */
     int     amp;
-    INT16   f_coef[6];      /* F0 through F5.                               */
-    INT16   b_coef[6];      /* B0 through B5.                               */
-    INT16   z_data[6][2];   /* Time-delay data for the filter stages.       */
-    UINT8   r[16];          /* The encoded register set.                    */
+    int16_t   f_coef[6];      /* F0 through F5.                               */
+    int16_t   b_coef[6];      /* B0 through B5.                               */
+    int16_t   z_data[6][2];   /* Time-delay data for the filter stages.       */
+    uint8_t   r[16];          /* The encoded register set.                    */
     int     interp;
 };
 
@@ -81,14 +81,14 @@ struct _sp0256_state
 	devcb_resolved_write_line drq;	/* Data request callback                        */
 	devcb_resolved_write_line sby;	/* Standby callback                             */
 	int            sby_line;        /* Standby line state                           */
-    INT16         *cur_buf;         /* Current sound buffer.                        */
+    int16_t         *cur_buf;         /* Current sound buffer.                        */
     int            cur_len;         /* Fullness of current sound buffer.            */
 
     int            silent;          /* Flag: SP0256 is silent.                      */
 
-    INT16         *scratch;         /* Scratch buffer for audio.                    */
-    UINT32         sc_head;         /* Head pointer into scratch circular buf       */
-    UINT32         sc_tail;         /* Tail pointer into scratch circular buf       */
+    int16_t         *scratch;         /* Scratch buffer for audio.                    */
+    uint32_t         sc_head;         /* Head pointer into scratch circular buf       */
+    uint32_t         sc_tail;         /* Tail pointer into scratch circular buf       */
 
     struct lpc12_t filt;            /* 12-pole filter                               */
     int            lrq;             /* Load ReQuest.  == 0 if we can accept a load  */
@@ -97,22 +97,22 @@ struct _sp0256_state
     int            stack;           /* Microcontroller's PC stack.                  */
     int            fifo_sel;        /* True when executing from FIFO.               */
     int            halted;          /* True when CPU is halted.                     */
-    UINT32         mode;            /* Mode register.                               */
-    UINT32         page;            /* Page set by SETPAGE                          */
+    uint32_t         mode;            /* Mode register.                               */
+    uint32_t         page;            /* Page set by SETPAGE                          */
 
-    UINT32         fifo_head;       /* FIFO head pointer (where new data goes).     */
-    UINT32         fifo_tail;       /* FIFO tail pointer (where data comes from).   */
-    UINT32         fifo_bitp;       /* FIFO bit-pointer (for partial decles).       */
-    UINT16         fifo[64];        /* The 64-decle FIFO.                           */
+    uint32_t         fifo_head;       /* FIFO head pointer (where new data goes).     */
+    uint32_t         fifo_tail;       /* FIFO tail pointer (where data comes from).   */
+    uint32_t         fifo_bitp;       /* FIFO bit-pointer (for partial decles).       */
+    uint16_t         fifo[64];        /* The 64-decle FIFO.                           */
 
-    UINT8          *rom;            /* 64K ROM.                                     */
+    uint8_t          *rom;            /* 64K ROM.                                     */
 };
 
 /* ======================================================================== */
 /*  qtbl  -- Coefficient Quantization Table.  This comes from a             */
 /*              SP0250 data sheet, and should be correct for SP0256.        */
 /* ======================================================================== */
-static const INT16 qtbl[128] =
+static const int16_t qtbl[128] =
 {
     0,      9,      17,     25,     33,     41,     49,     57,
     65,     73,     81,     89,     97,     105,    113,    121,
@@ -143,7 +143,7 @@ INLINE sp0256_state *get_safe_token(running_device *device)
 /* ======================================================================== */
 /*  LIMIT            -- Limiter function for digital sample output.         */
 /* ======================================================================== */
-static INT16 limit(INT16 s)
+static int16_t limit(int16_t s)
 {
 #ifdef HIGH_QUALITY /* Higher quality than the original, but who cares? */
     if (s >  8191) return  8191;
@@ -158,10 +158,10 @@ static INT16 limit(INT16 s)
 /* ======================================================================== */
 /*  LPC12_UPDATE     -- Update the 12-pole filter, outputting samples.      */
 /* ======================================================================== */
-static int lpc12_update(struct lpc12_t *f, int num_samp, INT16 *out, UINT32 *optr)
+static int lpc12_update(struct lpc12_t *f, int num_samp, int16_t *out, uint32_t *optr)
 {
     int i, j;
-    INT16 samp;
+    int16_t samp;
     int do_int;
     int oidx = *optr;
 
@@ -353,7 +353,7 @@ static void lpc12_regdec(struct lpc12_t *f)
 
 enum { AM = 0, PR, B0, F0, B1, F1, B2, F2, B3, F3, B4, F4, B5, F5, IA, IP };
 
-static const UINT16 sp0256_datafmt[] =
+static const uint16_t sp0256_datafmt[] =
 {
     /* -------------------------------------------------------------------- */
     /*  OPCODE 1111: PAUSE                                                  */
@@ -627,7 +627,7 @@ static const UINT16 sp0256_datafmt[] =
     /*  176 */  CR( 5,  0,  IP, 0,  0,  0,  0),     /*  Per. Intr.  */
 };
 
-static const INT16 sp0256_df_idx[16 * 8] =
+static const int16_t sp0256_df_idx[16 * 8] =
 {
     /*  OPCODE 0000 */      -1, -1,     -1, -1,     -1, -1,     -1, -1,
     /*  OPCODE 1000 */      -1, -1,     -1, -1,     -1, -1,     -1, -1,
@@ -650,7 +650,7 @@ static const INT16 sp0256_df_idx[16 * 8] =
 /* ======================================================================== */
 /*  BITREV32       -- Bit-reverse a 32-bit number.                            */
 /* ======================================================================== */
-static UINT32 bitrev32(UINT32 val)
+static uint32_t bitrev32(uint32_t val)
 {
     val = ((val & 0xFFFF0000) >> 16) | ((val & 0x0000FFFF) << 16);
     val = ((val & 0xFF00FF00) >>  8) | ((val & 0x00FF00FF) <<  8);
@@ -664,7 +664,7 @@ static UINT32 bitrev32(UINT32 val)
 /* ======================================================================== */
 /*  BITREV8       -- Bit-reverse a 8-bit number.                            */
 /* ======================================================================== */
-static UINT8 bitrev8(UINT8 val)
+static uint8_t bitrev8(uint8_t val)
 {
     val = ((val & 0xF0) >>  4) | ((val & 0x0F) <<  4);
     val = ((val & 0xCC) >>  2) | ((val & 0x33) <<  2);
@@ -676,7 +676,7 @@ static UINT8 bitrev8(UINT8 val)
 /* ======================================================================== */
 /*  BITREVBUFF       -- Bit-reverse a buffer.                               */
 /* ======================================================================== */
-void sp0256_bitrevbuff(UINT8 *buffer, unsigned int start, unsigned int length)
+void sp0256_bitrevbuff(uint8_t *buffer, unsigned int start, unsigned int length)
 {
 	unsigned int i;
 
@@ -687,10 +687,10 @@ void sp0256_bitrevbuff(UINT8 *buffer, unsigned int start, unsigned int length)
 /* ======================================================================== */
 /*  SP0256_GETB  -- Get up to 8 bits at the current PC.                     */
 /* ======================================================================== */
-static UINT32 sp0256_getb(sp0256_state *sp, int len)
+static uint32_t sp0256_getb(sp0256_state *sp, int len)
 {
-    UINT32 data = 0;
-    UINT32 d0, d1;
+    uint32_t data = 0;
+    uint32_t d0, d1;
 
     /* -------------------------------------------------------------------- */
     /*  Fetch data from the FIFO or from the MASK                           */
@@ -749,9 +749,9 @@ static UINT32 sp0256_getb(sp0256_state *sp, int len)
 /* ======================================================================== */
 static void sp0256_micro(sp0256_state *sp)
 {
-    UINT8  immed4;
-    UINT8  opcode;
-    UINT16 cr;
+    uint8_t  immed4;
+    uint8_t  opcode;
+    uint16_t cr;
     int     ctrl_xfer = 0;
     int     repeat    = 0;
     int     i, idx0, idx1;
@@ -829,7 +829,7 @@ static void sp0256_micro(sp0256_state *sp)
                 /*  Otherwise, this is an RTS / HLT.                        */
                 /* -------------------------------------------------------- */
                 {
-                    UINT32 btrg;
+                    uint32_t btrg;
 
                     /* ---------------------------------------------------- */
                     /*  Figure out our branch target.                       */
@@ -975,7 +975,7 @@ static void sp0256_micro(sp0256_state *sp)
         for (i = idx0; i <= idx1; i++)
         {
             int len, shf, delta, field, prm, clra, clr5;
-            INT8 value;
+            int8_t value;
 
             /* ------------------------------------------------------------ */
             /*  Get the control word and pull out some important fields.    */
@@ -1197,7 +1197,7 @@ static DEVICE_START( sp0256 )
     /* -------------------------------------------------------------------- */
     /*  Allocate a scratch buffer for generating ~10kHz samples.             */
     /* -------------------------------------------------------------------- */
-    sp->scratch = auto_alloc_array(device->machine, INT16, SCBUF_SIZE);
+    sp->scratch = auto_alloc_array(device->machine, int16_t, SCBUF_SIZE);
     sp->sc_head = sp->sc_tail = 0;
 
     /* -------------------------------------------------------------------- */

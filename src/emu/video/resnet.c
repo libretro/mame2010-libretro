@@ -467,7 +467,7 @@ int compute_res_net(int inputs, int channel, const res_net_info *di)
 	double vcc = di->vcc;
 	double ttlHRes = 0;
 	double rGnd = di->rgb[channel].rGnd;
-	UINT8  OpenCol = di->OpenCol;
+	uint8_t  OpenCol = di->OpenCol;
 
 	/* Global options */
 
@@ -694,16 +694,16 @@ int compute_res_net(int inputs, int channel, const res_net_info *di)
 	return (int) (v *255 / vcc + 0.4);
 }
 
-rgb_t *compute_res_net_all(running_machine *machine, const UINT8 *prom, const res_net_decode_info *rdi, const res_net_info *di)
+rgb_t *compute_res_net_all(running_machine *machine, const uint8_t *prom, const res_net_decode_info *rdi, const res_net_info *di)
 {
-	UINT8 r,g,b;
+	uint8_t r,g,b;
 	int i,j,k;
 	rgb_t *rgb;
 
 	rgb = auto_alloc_array(machine, rgb_t, rdi->end - rdi->start + 1);
 	for (i=rdi->start; i<=rdi->end; i++)
 	{
-		UINT8 t[3] = {0,0,0};
+		uint8_t t[3] = {0,0,0};
 		int s;
 		for (j=0;j<rdi->numcomp;j++)
 			for (k=0; k<3; k++)

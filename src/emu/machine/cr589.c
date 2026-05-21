@@ -9,16 +9,16 @@
 typedef struct
 {
 	int download;
-	UINT8 buffer[ 65536 ];
+	uint8_t buffer[ 65536 ];
 	int bufferOffset;
 } SCSICr589;
 
 static const int identity_offset = 0x3ab;
 static const char download_identity[] = "MATSHITA CD98Q4 DOWNLOADGS0N";
 
-static int cr589_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
+static int cr589_exec_command( SCSIInstance *scsiInstance, uint8_t *statusCode )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICr589 *our_this = (SCSICr589 *)SCSIThis( &SCSIClassCr589, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -44,9 +44,9 @@ static int cr589_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
 	}
 }
 
-static void cr589_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void cr589_read_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICr589 *our_this = (SCSICr589 *)SCSIThis( &SCSIClassCr589, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -77,9 +77,9 @@ static void cr589_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLe
 	}
 }
 
-static void cr589_write_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void cr589_write_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICr589 *our_this = (SCSICr589 *)SCSIThis( &SCSIClassCr589, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -121,31 +121,31 @@ static void cr589_alloc_instance( SCSIInstance *scsiInstance, const char *diskre
 	state_save_register_item( machine,  "cr589", diskregion, 0, our_this->bufferOffset );
 }
 
-static int cr589_dispatch( int operation, void *file, INT64 intparm, void *ptrparm )
+static int cr589_dispatch( int operation, void *file, int64_t intparm, void *ptrparm )
 {
 	SCSIAllocInstanceParams *params;
 
 	switch( operation )
 	{
 		case SCSIOP_EXEC_COMMAND:
-			return cr589_exec_command( (SCSIInstance *)file, (UINT8 *)ptrparm );
+			return cr589_exec_command( (SCSIInstance *)file, (uint8_t *)ptrparm );
 
 		case SCSIOP_READ_DATA:
-			cr589_read_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			cr589_read_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_WRITE_DATA:
-			cr589_write_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			cr589_write_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_ALLOC_INSTANCE:
 			params = (SCSIAllocInstanceParams *)ptrparm;
-			SCSIBase( &SCSIClassCr589, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+			SCSIBase( &SCSIClassCr589, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 			cr589_alloc_instance( params->instance, params->diskregion );
 			return 0;
 	}
 
-	return SCSIBase( &SCSIClassCr589, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+	return SCSIBase( &SCSIClassCr589, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 }
 
 const SCSIClass SCSIClassCr589 =

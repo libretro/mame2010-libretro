@@ -177,14 +177,14 @@ typedef void (*cmd_handler)(running_machine *machine);
 /* internal controller data definition */
 typedef struct
 {
-	UINT8		sasr;
-	UINT8		regs[WD_AUXILIARY_STATUS+1];
-	UINT8		fifo[FIFO_SIZE];
+	uint8_t		sasr;
+	uint8_t		regs[WD_AUXILIARY_STATUS+1];
+	uint8_t		fifo[FIFO_SIZE];
 	int			fifo_pos;
-	UINT8		*temp_input;
+	uint8_t		*temp_input;
 	int			temp_input_pos;
-	UINT8		busphase;
-	UINT8		identify;
+	uint8_t		busphase;
+	uint8_t		identify;
 	int			read_pending;
 	emu_timer *cmd_timer;
 } _wd33c93_data;
@@ -194,7 +194,7 @@ static _wd33c93_data scsi_data;
 
 
 /* convernience functions */
-static UINT8 wd33c93_getunit( void )
+static uint8_t wd33c93_getunit( void )
 {
 	/* return the destination unit id */
 	return scsi_data.regs[WD_DESTINATION_ID] & SRCID_MASK;
@@ -221,9 +221,9 @@ static int wd33c93_get_xfer_count( void )
 	return count;
 }
 
-static void wd33c93_read_data(int bytes, UINT8 *pData)
+static void wd33c93_read_data(int bytes, uint8_t *pData)
 {
-	UINT8	unit = wd33c93_getunit();
+	uint8_t	unit = wd33c93_getunit();
 
 	if ( devices[unit] )
 	{
@@ -284,7 +284,7 @@ static TIMER_CALLBACK(wd33c93_deassert_cip)
 	scsi_data.regs[WD_AUXILIARY_STATUS] &= ~ASR_CIP;
 }
 
-static void wd33c93_complete_cmd( UINT8 status )
+static void wd33c93_complete_cmd( uint8_t status )
 {
 	/* fire off a timer to complete the command */
 	timer_adjust_oneshot( scsi_data.cmd_timer, ATTOTIME_IN_USEC(1), status );
@@ -330,8 +330,8 @@ static CMD_HANDLER( wd33c93_disconnect_cmd )
 
 static CMD_HANDLER( wd33c93_select_cmd )
 {
-	UINT8	unit = wd33c93_getunit();
-	UINT8	newstatus;
+	uint8_t	unit = wd33c93_getunit();
+	uint8_t	newstatus;
 
 	/* see if we can select that device */
 	if ( devices[unit] )
@@ -366,8 +366,8 @@ static CMD_HANDLER( wd33c93_select_cmd )
 
 static CMD_HANDLER( wd33c93_selectxfer_cmd )
 {
-	UINT8	unit = wd33c93_getunit();
-	UINT8	newstatus;
+	uint8_t	unit = wd33c93_getunit();
+	uint8_t	newstatus;
 
 	/* see if we can select that device */
 	if ( devices[unit] )
@@ -500,7 +500,7 @@ static const cmd_handler wd33c93_cmds[0x22] =
 static void wd33c93_command( running_machine *machine )
 {
 	/* get the command */
-	UINT8 cmd = scsi_data.regs[WD_COMMAND];
+	uint8_t cmd = scsi_data.regs[WD_COMMAND];
 
 	/* check if its within valid bounds */
 	if ( (cmd & 0x7F) > WD_CMD_TRANSFER_PAD )
@@ -587,7 +587,7 @@ WRITE8_HANDLER(wd33c93_w)
 
 							case PHS_COMMAND:
 							{
-								UINT8	unit = wd33c93_getunit();
+								uint8_t	unit = wd33c93_getunit();
 								int		xfercount;
 								int phase;
 
@@ -673,7 +673,7 @@ READ8_HANDLER(wd33c93_r)
 
 		case 1:
 		{
-			UINT8	ret;
+			uint8_t	ret;
 
 			/* if reading status, clear irq flag */
 			if ( scsi_data.sasr == WD_SCSI_STATUS )
@@ -797,7 +797,7 @@ void wd33c93_init( running_machine *machine, const struct WD33C93interface *inte
 	/* allocate a timer for commands */
 	scsi_data.cmd_timer = timer_alloc(machine, wd33c93_complete_cb, NULL);
 
-	scsi_data.temp_input = auto_alloc_array( machine, UINT8, TEMP_INPUT_LEN );
+	scsi_data.temp_input = auto_alloc_array( machine, uint8_t, TEMP_INPUT_LEN );
 
 //  state_save_register_item_array(machine, "wd33c93", NULL, 0, scsi_data);
 }
@@ -812,7 +812,7 @@ void wd33c93_exit( const struct WD33C93interface *interface )
 	}
 }
 
-void wd33c93_get_dma_data( int bytes, UINT8 *pData )
+void wd33c93_get_dma_data( int bytes, uint8_t *pData )
 {
 	int	len = bytes;
 
@@ -837,9 +837,9 @@ void wd33c93_get_dma_data( int bytes, UINT8 *pData )
 	wd33c93_set_xfer_count(len);
 }
 
-void wd33c93_write_data(int bytes, UINT8 *pData)
+void wd33c93_write_data(int bytes, uint8_t *pData)
 {
-	UINT8	unit = wd33c93_getunit();
+	uint8_t	unit = wd33c93_getunit();
 
 	if (devices[unit])
 	{

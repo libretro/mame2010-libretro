@@ -58,29 +58,29 @@
 #include "c6280.h"
 
 typedef struct {
-    UINT16 frequency;
-    UINT8 control;
-    UINT8 balance;
-    UINT8 waveform[32];
-    UINT8 index;
-    INT16 dda;
-    UINT8 noise_control;
-    UINT32 noise_counter;
-    UINT32 counter;
+    uint16_t frequency;
+    uint8_t control;
+    uint8_t balance;
+    uint8_t waveform[32];
+    uint8_t index;
+    int16_t dda;
+    uint8_t noise_control;
+    uint32_t noise_counter;
+    uint32_t counter;
 } t_channel;
 
 typedef struct {
 	sound_stream *stream;
 	running_device *device;
 	running_device *cpudevice;
-    UINT8 select;
-    UINT8 balance;
-    UINT8 lfo_frequency;
-    UINT8 lfo_control;
+    uint8_t select;
+    uint8_t balance;
+    uint8_t lfo_frequency;
+    uint8_t lfo_control;
     t_channel channel[8];
-    INT16 volume_table[32];
-    UINT32 noise_freq_tab[32];
-    UINT32 wave_freq_tab[4096];
+    int16_t volume_table[32];
+    uint32_t noise_freq_tab[32];
+    uint32_t wave_freq_tab[4096];
 } c6280_t;
 
 INLINE c6280_t *get_safe_token(running_device *device)
@@ -116,14 +116,14 @@ static void c6280_init(running_device *device, c6280_t *p, double clk, double ra
     for(i = 0; i < 4096; i += 1)
     {
         step = ((clk / rate) * 4096) / (i+1);
-        p->wave_freq_tab[(1 + i) & 0xFFF] = (UINT32)step;
+        p->wave_freq_tab[(1 + i) & 0xFFF] = (uint32_t)step;
     }
 
     /* Make noise frequency table */
     for(i = 0; i < 32; i += 1)
     {
         step = ((clk / rate) * 32) / (i+1);
-        p->noise_freq_tab[i] = (UINT32)step;
+        p->noise_freq_tab[i] = (uint32_t)step;
     }
 
     /* Make volume table */
@@ -131,7 +131,7 @@ static void c6280_init(running_device *device, c6280_t *p, double clk, double ra
     step = 48.0 / 32.0;
     for(i = 0; i < 31; i++)
     {
-        p->volume_table[i] = (UINT16)level;
+        p->volume_table[i] = (uint16_t)level;
         level /= pow(10.0, step / 20.0);
     }
     p->volume_table[31] = 0;
@@ -271,7 +271,7 @@ static STREAM_UPDATE( c6280_update )
             if((ch >= 4) && (p->channel[ch].noise_control & 0x80))
             {
                 /* Noise mode */
-                UINT32 step = p->noise_freq_tab[(p->channel[ch].noise_control & 0x1F) ^ 0x1F];
+                uint32_t step = p->noise_freq_tab[(p->channel[ch].noise_control & 0x1F) ^ 0x1F];
                 for(i = 0; i < samples; i += 1)
                 {
                     static int data = 0;
@@ -281,8 +281,8 @@ static STREAM_UPDATE( c6280_update )
                         data = (mame_rand(p->device->machine) & 1) ? 0x1F : 0;
                     }
                     p->channel[ch].noise_counter &= 0x7FF;
-                    outputs[0][i] += (INT16)(vll * (data - 16));
-                    outputs[1][i] += (INT16)(vlr * (data - 16));
+                    outputs[0][i] += (int16_t)(vll * (data - 16));
+                    outputs[1][i] += (int16_t)(vlr * (data - 16));
                 }
             }
             else
@@ -291,24 +291,24 @@ static STREAM_UPDATE( c6280_update )
                 /* DDA mode */
                 for(i = 0; i < samples; i++)
                 {
-                    outputs[0][i] += (INT16)(vll * (p->channel[ch].dda - 16));
-                    outputs[1][i] += (INT16)(vlr * (p->channel[ch].dda - 16));
+                    outputs[0][i] += (int16_t)(vll * (p->channel[ch].dda - 16));
+                    outputs[1][i] += (int16_t)(vlr * (p->channel[ch].dda - 16));
                 }
             }
             else
             {
                 /* Waveform mode */
-                UINT32 step = p->wave_freq_tab[p->channel[ch].frequency];
+                uint32_t step = p->wave_freq_tab[p->channel[ch].frequency];
                 for(i = 0; i < samples; i += 1)
                 {
                     int offset;
-                    INT16 data;
+                    int16_t data;
                     offset = (p->channel[ch].counter >> 12) & 0x1F;
                     p->channel[ch].counter += step;
                     p->channel[ch].counter &= 0x1FFFF;
                     data = p->channel[ch].waveform[offset];
-                    outputs[0][i] += (INT16)(vll * (data - 16));
-                    outputs[1][i] += (INT16)(vlr * (data - 16));
+                    outputs[0][i] += (int16_t)(vll * (data - 16));
+                    outputs[1][i] += (int16_t)(vlr * (data - 16));
                 }
             }
         }

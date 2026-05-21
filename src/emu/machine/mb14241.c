@@ -10,8 +10,8 @@
 typedef struct _mb14241_state  mb14241_state;
 struct _mb14241_state
 {
-	UINT16 shift_data;	/* 15 bits only */
-	UINT8 shift_count;	/* 3 bits */
+	uint16_t shift_data;	/* 15 bits only */
+	uint8_t shift_count;	/* 3 bits */
 };
 
 /*****************************************************************************
@@ -39,7 +39,7 @@ WRITE8_DEVICE_HANDLER( mb14241_shift_count_w )
 WRITE8_DEVICE_HANDLER( mb14241_shift_data_w )
 {
 	mb14241_state *mb14241 = get_safe_token(device);
-	mb14241->shift_data = (mb14241->shift_data >> 8) | ((UINT16)data << 7);
+	mb14241->shift_data = (mb14241->shift_data >> 8) | ((uint16_t)data << 7);
 }
 
 READ8_DEVICE_HANDLER( mb14241_shift_result_r )

@@ -20,8 +20,8 @@ struct _upd7759_interface
 
 void upd7759_set_bank_base(running_device *device, offs_t base);
 
-void upd7759_reset_w(running_device *device, UINT8 data);
-void upd7759_start_w(running_device *device, UINT8 data);
+void upd7759_reset_w(running_device *device, uint8_t data);
+void upd7759_start_w(running_device *device, uint8_t data);
 int upd7759_busy_r(running_device *device);
 WRITE8_DEVICE_HANDLER( upd7759_port_w );
 

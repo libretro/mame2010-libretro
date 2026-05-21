@@ -23,8 +23,8 @@ struct _cdp1852_t
 
 	cdp1852_mode mode;				/* operation mode */
 	int new_data;					/* new data written */
-	UINT8 data;						/* data latch */
-	UINT8 next_data;				/* next data*/
+	uint8_t data;						/* data latch */
+	uint8_t next_data;				/* next data*/
 
 	int sr;							/* service request flag */
 	int next_sr;					/* next value of service request flag */

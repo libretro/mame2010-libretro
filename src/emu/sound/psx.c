@@ -39,46 +39,46 @@ struct psxinfo
 	const psx_spu_interface *intf;
 	running_device *device;
 
-	UINT32 *g_p_n_psxram;
-	UINT16 m_n_mainvolumeleft;
-	UINT16 m_n_mainvolumeright;
-	UINT16 m_n_reverberationdepthleft;
-	UINT16 m_n_reverberationdepthright;
-	UINT32 m_n_voiceon;
-	UINT32 m_n_voiceoff;
-	UINT32 m_n_modulationmode;
-	UINT32 m_n_noisemode;
-	UINT32 m_n_reverbmode;
-	UINT32 m_n_channelonoff;
-	UINT16 m_n_reverbworkareastart;
-	UINT16 m_n_irqaddress;
-	UINT32 m_n_spuoffset;
-	UINT16 m_n_spudata;
-	UINT16 m_n_spucontrol;
-	UINT32 m_n_spustatus;
-	UINT16 m_n_cdvolumeleft;
-	UINT16 m_n_cdvolumeright;
-	UINT16 m_n_externalvolumeleft;
-	UINT16 m_n_externalvolumeright;
-	UINT16 m_p_n_volumeleft[ MAX_CHANNEL ];
-	UINT16 m_p_n_volumeright[ MAX_CHANNEL ];
-	UINT16 m_p_n_pitch[ MAX_CHANNEL ];
-	UINT16 m_p_n_address[ MAX_CHANNEL ];
-	UINT16 m_p_n_envelopestate[ MAX_CHANNEL ];
+	uint32_t *g_p_n_psxram;
+	uint16_t m_n_mainvolumeleft;
+	uint16_t m_n_mainvolumeright;
+	uint16_t m_n_reverberationdepthleft;
+	uint16_t m_n_reverberationdepthright;
+	uint32_t m_n_voiceon;
+	uint32_t m_n_voiceoff;
+	uint32_t m_n_modulationmode;
+	uint32_t m_n_noisemode;
+	uint32_t m_n_reverbmode;
+	uint32_t m_n_channelonoff;
+	uint16_t m_n_reverbworkareastart;
+	uint16_t m_n_irqaddress;
+	uint32_t m_n_spuoffset;
+	uint16_t m_n_spudata;
+	uint16_t m_n_spucontrol;
+	uint32_t m_n_spustatus;
+	uint16_t m_n_cdvolumeleft;
+	uint16_t m_n_cdvolumeright;
+	uint16_t m_n_externalvolumeleft;
+	uint16_t m_n_externalvolumeright;
+	uint16_t m_p_n_volumeleft[ MAX_CHANNEL ];
+	uint16_t m_p_n_volumeright[ MAX_CHANNEL ];
+	uint16_t m_p_n_pitch[ MAX_CHANNEL ];
+	uint16_t m_p_n_address[ MAX_CHANNEL ];
+	uint16_t m_p_n_envelopestate[ MAX_CHANNEL ];
 	sound_envstate m_envstate;
-	UINT16 m_p_n_attackdecaysustain[ MAX_CHANNEL ];
-	UINT16 m_p_n_sustainrelease[ MAX_CHANNEL ];
-	UINT16 m_p_n_adsrvolume[ MAX_CHANNEL ];
-	UINT16 m_p_n_repeataddress[ MAX_CHANNEL ];
-	UINT32 m_p_n_effect[ 16 ];
-	UINT16 *m_p_n_spuram;
-	UINT32 m_p_n_blockaddress[ MAX_CHANNEL ];
-	UINT32 m_p_n_blockoffset[ MAX_CHANNEL ];
-	UINT32 m_p_n_blockstatus[ MAX_CHANNEL ];
-	INT16 m_p_n_blockbuffer[ MAX_CHANNEL * SAMPLES_PER_BLOCK ];
-	INT16 m_p_n_s1[ MAX_CHANNEL ];
-	INT16 m_p_n_s2[ MAX_CHANNEL ];
-	UINT32 m_n_loop[ MAX_CHANNEL ];
+	uint16_t m_p_n_attackdecaysustain[ MAX_CHANNEL ];
+	uint16_t m_p_n_sustainrelease[ MAX_CHANNEL ];
+	uint16_t m_p_n_adsrvolume[ MAX_CHANNEL ];
+	uint16_t m_p_n_repeataddress[ MAX_CHANNEL ];
+	uint32_t m_p_n_effect[ 16 ];
+	uint16_t *m_p_n_spuram;
+	uint32_t m_p_n_blockaddress[ MAX_CHANNEL ];
+	uint32_t m_p_n_blockoffset[ MAX_CHANNEL ];
+	uint32_t m_p_n_blockstatus[ MAX_CHANNEL ];
+	int16_t m_p_n_blockbuffer[ MAX_CHANNEL * SAMPLES_PER_BLOCK ];
+	int16_t m_p_n_s1[ MAX_CHANNEL ];
+	int16_t m_p_n_s2[ MAX_CHANNEL ];
+	uint32_t m_n_loop[ MAX_CHANNEL ];
 
 	sound_stream *stream;
 	int installHack;
@@ -95,7 +95,7 @@ INLINE struct psxinfo *get_safe_token(running_device *device)
 #define SPU_REG( a ) ( ( a - 0xc00 ) / 4 )
 #define SPU_CHANNEL_REG( a ) ( a / 4 )
 
-INLINE int volume( UINT16 n_volume )
+INLINE int volume( uint16_t n_volume )
 {
 	if( ( n_volume & 0x8000 ) != 0 )
 	{
@@ -234,7 +234,7 @@ static STREAM_UPDATE( PSXSPU_update )
 	}
 }
 
-static void spu_read( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void spu_read( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	struct psxinfo *chip = get_safe_token(machine->device("spu"));
 	verboselog( machine, 1, "spu_read( %08x, %08x )\n", n_address, n_size );
@@ -253,7 +253,7 @@ static void spu_read( running_machine *machine, UINT32 n_address, INT32 n_size )
 	}
 }
 
-static void spu_write( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void spu_write( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	struct psxinfo *chip = get_safe_token(machine->device("spu"));
 	verboselog( machine, 1, "spu_write( %08x, %08x )\n", n_address, n_size );
@@ -326,7 +326,7 @@ static DEVICE_START( psxspu )
 		chip->m_p_n_effect[ n_effect ] = 0;
 	}
 
-	chip->m_p_n_spuram = auto_alloc_array( device->machine, UINT16, SPU_RAM_SIZE/2 );
+	chip->m_p_n_spuram = auto_alloc_array( device->machine, uint16_t, SPU_RAM_SIZE/2 );
 
 	state_save_register_device_item( device, 0, chip->m_n_mainvolumeleft );
 	state_save_register_device_item( device, 0, chip->m_n_mainvolumeright );
@@ -373,7 +373,7 @@ static DEVICE_START( psxspu )
 }
 
 
-static UINT32 psx_spu_delay = 0;
+static uint32_t psx_spu_delay = 0;
 
 WRITE32_DEVICE_HANDLER( psx_spu_delay_w )
 {

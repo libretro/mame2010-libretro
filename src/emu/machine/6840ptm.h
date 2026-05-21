@@ -45,7 +45,7 @@ struct _ptm6840_interface
 
 int ptm6840_get_status( running_device *device, int clock );	// get whether timer is enabled
 int ptm6840_get_irq( running_device *device );					// get IRQ state
-UINT16 ptm6840_get_count( running_device *device, int counter );// get counter value
+uint16_t ptm6840_get_count( running_device *device, int counter );// get counter value
 void ptm6840_set_ext_clock( running_device *device, int counter, double clock ); // set clock frequency
 int ptm6840_get_ext_clock( running_device *device, int counter );// get clock frequency
 

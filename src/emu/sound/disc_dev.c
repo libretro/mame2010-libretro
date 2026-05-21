@@ -186,8 +186,8 @@ static DISCRETE_STEP(dsd_555_astbl)
 	double	v_cap   = context->cap_voltage;	/* Current voltage on capacitor, before dt */
 	double	v_cap_next = 0;					/* Voltage on capacitor, after dt */
 	double	v_charge, exponent = 0;
-	UINT8	flip_flop = context->flip_flop;
-	UINT8	update_exponent = 0;
+	uint8_t	flip_flop = context->flip_flop;
+	uint8_t	update_exponent = 0;
 
 	/* put commonly used stuff in local variables for speed */
 	double	threshold = context->threshold;
@@ -701,8 +701,8 @@ static DISCRETE_STEP(dsd_555_cc)
 	double	v_vcharge_limit;	/* vIn and the junction voltage limit the max charging voltage from i */
 	double	r_temp;				/* play thing */
 	double	exponent;
-	UINT8	update_exponent, update_t_rc;
-	UINT8	flip_flop = context->flip_flop;
+	uint8_t	update_exponent, update_t_rc;
+	uint8_t	flip_flop = context->flip_flop;
 
 
 	if (UNEXPECTED(DSD_555_CC__RESET))

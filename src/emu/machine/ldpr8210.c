@@ -72,15 +72,15 @@
 typedef struct _pioneer_pia pioneer_pia;
 struct _pioneer_pia
 {
-	UINT8				frame[7];				/* (20-26) 7 characters for the chapter/frame */
-	UINT8				text[17];				/* (20-30) 17 characters for the display */
-	UINT8				control;				/* (40) control lines */
-	UINT8				latchdisplay;			/*   flag: set if the display was latched */
-	UINT8				portb;					/* (60) port B value (LEDs) */
-	UINT8				display;				/* (80) display enable */
-	UINT8				porta;					/* (A0) port A value (from serial decoder) */
-	UINT8				vbi1;					/* (C0) VBI decoding state 1 */
-	UINT8				vbi2;					/* (E0) VBI decoding state 2 */
+	uint8_t				frame[7];				/* (20-26) 7 characters for the chapter/frame */
+	uint8_t				text[17];				/* (20-30) 17 characters for the display */
+	uint8_t				control;				/* (40) control lines */
+	uint8_t				latchdisplay;			/*   flag: set if the display was latched */
+	uint8_t				portb;					/* (60) port B value (LEDs) */
+	uint8_t				display;				/* (80) display enable */
+	uint8_t				porta;					/* (A0) port A value (from serial decoder) */
+	uint8_t				vbi1;					/* (C0) VBI decoding state 1 */
+	uint8_t				vbi2;					/* (E0) VBI decoding state 2 */
 };
 
 
@@ -89,12 +89,12 @@ typedef struct _simutrek_data simutrek_data;
 struct _simutrek_data
 {
 	running_device *cpu;					/* 8748 CPU device */
-	UINT8				audio_squelch;			/* audio squelch value */
-	UINT8				data;					/* parallel data for simutrek */
-	UINT8				data_ready;				/* ready flag for simutrek data */
-	UINT8				port2;					/* 8748 port 2 state */
-	UINT8				controlnext;			/* latch to control next pair of fields */
-	UINT8				controlthis;			/* latched value for our control over the current pair of fields */
+	uint8_t				audio_squelch;			/* audio squelch value */
+	uint8_t				data;					/* parallel data for simutrek */
+	uint8_t				data_ready;				/* ready flag for simutrek data */
+	uint8_t				port2;					/* 8748 port 2 state */
+	uint8_t				controlnext;			/* latch to control next pair of fields */
+	uint8_t				controlthis;			/* latched value for our control over the current pair of fields */
 };
 
 
@@ -102,8 +102,8 @@ struct _simutrek_data
 struct _ldplayer_data
 {
 	/* serial/command interface processing */
-	UINT8				lastcommand;			/* last command seen */
-	UINT16				accumulator;			/* bit accumulator */
+	uint8_t				lastcommand;			/* last command seen */
+	uint16_t				accumulator;			/* bit accumulator */
 	attotime			lastcommandtime;		/* time of the last command */
 	attotime			lastbittime;			/* time of last bit received */
 	attotime			firstbittime;			/* time of first bit in command */
@@ -112,9 +112,9 @@ struct _ldplayer_data
 	running_device *cpu;					/* 8049 CPU device */
 	attotime			slowtrg;				/* time of the last SLOW TRG */
 	pioneer_pia			pia;					/* PIA state */
-	UINT8				vsync;					/* live VSYNC state */
-	UINT8				port1;					/* 8049 port 1 state */
-	UINT8				port2;					/* 8049 port 2 state */
+	uint8_t				vsync;					/* live VSYNC state */
+	uint8_t				port1;					/* 8049 port 1 state */
+	uint8_t				port2;					/* 8049 port 2 state */
 
 	/* Simutrek-specific data */
 	simutrek_data		simutrek;				/* Simutrek-specific data */
@@ -128,9 +128,9 @@ struct _ldplayer_data
 
 static void pr8210_init(laserdisc_state *ld);
 static void pr8210_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static INT32 pr8210_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
+static int32_t pr8210_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
 static void pr8210_overlay(laserdisc_state *ld, bitmap_t *bitmap);
-static void pr8210_control_w(laserdisc_state *ld, UINT8 prev, UINT8 data);
+static void pr8210_control_w(laserdisc_state *ld, uint8_t prev, uint8_t data);
 
 static TIMER_CALLBACK( vsync_off );
 static TIMER_CALLBACK( vbi_data_fetch );
@@ -143,16 +143,16 @@ static WRITE8_HANDLER( pr8210_port2_w );
 static READ8_HANDLER( pr8210_t0_r );
 static READ8_HANDLER( pr8210_t1_r );
 
-static void overlay_draw_group(bitmap_t *bitmap, const UINT8 *text, int count, float xstart);
+static void overlay_draw_group(bitmap_t *bitmap, const uint8_t *text, int count, float xstart);
 static void overlay_erase(bitmap_t *bitmap, float xstart, float xend);
-static void overlay_draw_char(bitmap_t *bitmap, UINT8 ch, float xstart);
+static void overlay_draw_char(bitmap_t *bitmap, uint8_t ch, float xstart);
 
 static void simutrek_init(laserdisc_state *ld);
 static void simutrek_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static INT32 simutrek_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static UINT8 simutrek_ready_r(laserdisc_state *ld);
-static UINT8 simutrek_status_r(laserdisc_state *ld);
-static void simutrek_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data);
+static int32_t simutrek_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
+static uint8_t simutrek_ready_r(laserdisc_state *ld);
+static uint8_t simutrek_status_r(laserdisc_state *ld);
+static void simutrek_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data);
 
 static TIMER_CALLBACK( simutrek_latched_data_w );
 
@@ -168,7 +168,7 @@ static READ8_HANDLER( simutrek_t0_r );
 ***************************************************************************/
 
 /* bitmaps for the characters */
-static const UINT8 text_bitmap[0x40][7] =
+static const uint8_t text_bitmap[0x40][7] =
 {
 	{ 0 },									/* @ */
 	{ 0x20,0x50,0x88,0x88,0xf8,0x88,0x88 },	/* A */
@@ -392,10 +392,10 @@ static void pr8210_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int field
     the first visible line of the frame
 -------------------------------------------------*/
 
-static INT32 pr8210_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
+static int32_t pr8210_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
 {
 	ldplayer_data *player = ld->player;
-	UINT8 spdl_on = !(player->port1 & 0x10);
+	uint8_t spdl_on = !(player->port1 & 0x10);
 
 	/* logging */
 	if (LOG_VBLANK_VBI)
@@ -444,7 +444,7 @@ static void pr8210_overlay(laserdisc_state *ld, bitmap_t *bitmap)
     CONTROL line is toggled
 -------------------------------------------------*/
 
-static void pr8210_control_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
+static void pr8210_control_w(laserdisc_state *ld, uint8_t prev, uint8_t data)
 {
 	ldplayer_data *player = ld->player;
 
@@ -485,7 +485,7 @@ static void pr8210_control_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
 		/* a complete command is 0,0,1 followed by 5 bits, followed by 0,0 */
 		if ((player->accumulator & 0x383) == 0x80)
 		{
-			UINT8 newcommand = (player->accumulator >> 2) & 0x1f;
+			uint8_t newcommand = (player->accumulator >> 2) & 0x1f;
 			attotime rejectuntil;
 
 			/* data is stored to the PIA in bit-reverse order */
@@ -535,10 +535,10 @@ static TIMER_CALLBACK( vbi_data_fetch )
 {
 	laserdisc_state *ld = (laserdisc_state *)ptr;
 	ldplayer_data *player = ld->player;
-	UINT8 focus_on = !(player->port1 & 0x08);
-	UINT8 laser_on = !(player->port2 & 0x01);
-	UINT32 line16 = laserdisc_get_field_code(ld->device, LASERDISC_CODE_LINE16, FALSE);
-	UINT32 line1718 = laserdisc_get_field_code(ld->device, LASERDISC_CODE_LINE1718, FALSE);
+	uint8_t focus_on = !(player->port1 & 0x08);
+	uint8_t laser_on = !(player->port2 & 0x01);
+	uint32_t line16 = laserdisc_get_field_code(ld->device, LASERDISC_CODE_LINE16, FALSE);
+	uint32_t line1718 = laserdisc_get_field_code(ld->device, LASERDISC_CODE_LINE1718, FALSE);
 
 	/* logging */
 	if (LOG_VBLANK_VBI)
@@ -589,7 +589,7 @@ static READ8_HANDLER( pr8210_pia_r )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	switch (offset)
 	{
@@ -640,7 +640,7 @@ static WRITE8_HANDLER( pr8210_pia_w )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 value;
+	uint8_t value;
 
 	switch (offset)
 	{
@@ -725,9 +725,9 @@ static READ8_HANDLER( pr8210_bus_r )
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
 	slider_position sliderpos = ldcore_get_slider_position(ld);
-	UINT8 focus_on = !(player->port1 & 0x08);
-	UINT8 spdl_on = !(player->port1 & 0x10);
-	UINT8 result = 0x00;
+	uint8_t focus_on = !(player->port1 & 0x08);
+	uint8_t spdl_on = !(player->port1 & 0x10);
+	uint8_t result = 0x00;
 
 	/* bus bit 6: slider position limit detector, inside and outside */
 	if (sliderpos != SLIDER_MINIMUM && sliderpos != SLIDER_MAXIMUM)
@@ -772,7 +772,7 @@ static WRITE8_HANDLER( pr8210_port1_w )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->port1;
+	uint8_t prev = player->port1;
 	int direction;
 
 	/* set the new value */
@@ -834,7 +834,7 @@ static WRITE8_HANDLER( pr8210_port2_w )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->port2;
+	uint8_t prev = player->port2;
 
 	/* set the new value */
 	player->port2 = data;
@@ -881,7 +881,7 @@ static READ8_HANDLER( pr8210_t1_r )
     characters
 -------------------------------------------------*/
 
-static void overlay_draw_group(bitmap_t *bitmap, const UINT8 *text, int count, float xstart)
+static void overlay_draw_group(bitmap_t *bitmap, const uint8_t *text, int count, float xstart)
 {
 	int skip = TRUE;
 	int x;
@@ -906,14 +906,14 @@ static void overlay_draw_group(bitmap_t *bitmap, const UINT8 *text, int count, f
 
 static void overlay_erase(bitmap_t *bitmap, float xstart, float xend)
 {
-	UINT32 xmin = (UINT32)(xstart * 256.0f * (float)bitmap->width);
-	UINT32 xmax = (UINT32)(xend * 256.0f * (float)bitmap->width);
-	UINT32 x, y;
+	uint32_t xmin = (uint32_t)(xstart * 256.0f * (float)bitmap->width);
+	uint32_t xmax = (uint32_t)(xend * 256.0f * (float)bitmap->width);
+	uint32_t x, y;
 
 	for (y = OVERLAY_Y; y < (OVERLAY_Y + (OVERLAY_Y_PIXELS + 2) * OVERLAY_PIXEL_HEIGHT); y++)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, xmin >> 8);
-		UINT16 ymin, ymax, yres;
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, xmin >> 8);
+		uint16_t ymin, ymax, yres;
 
 		ymax = *dest >> 8;
 		ymin = ymax * 3 / 8;
@@ -942,27 +942,27 @@ static void overlay_erase(bitmap_t *bitmap, float xstart, float xend)
     of the text overlay
 -------------------------------------------------*/
 
-static void overlay_draw_char(bitmap_t *bitmap, UINT8 ch, float xstart)
+static void overlay_draw_char(bitmap_t *bitmap, uint8_t ch, float xstart)
 {
-	UINT32 xminbase = (UINT32)(xstart * 256.0f * (float)bitmap->width);
-	UINT32 xsize = (UINT32)(OVERLAY_PIXEL_WIDTH * 256.0f * (float)bitmap->width);
-	const UINT8 *chdataptr = &text_bitmap[ch & 0x3f][0];
-	UINT32 x, y, xx, yy;
+	uint32_t xminbase = (uint32_t)(xstart * 256.0f * (float)bitmap->width);
+	uint32_t xsize = (uint32_t)(OVERLAY_PIXEL_WIDTH * 256.0f * (float)bitmap->width);
+	const uint8_t *chdataptr = &text_bitmap[ch & 0x3f][0];
+	uint32_t x, y, xx, yy;
 
 	/* iterate over pixels */
 	for (y = 0; y < OVERLAY_Y_PIXELS; y++)
 	{
-		UINT8 chdata = *chdataptr++;
+		uint8_t chdata = *chdataptr++;
 
 		for (x = 0; x < OVERLAY_X_PIXELS; x++, chdata <<= 1)
 			if (chdata & 0x80)
 			{
-				UINT32 xmin = xminbase + x * xsize;
-				UINT32 xmax = xmin + xsize;
+				uint32_t xmin = xminbase + x * xsize;
+				uint32_t xmax = xmin + xsize;
 				for (yy = 0; yy < OVERLAY_PIXEL_HEIGHT; yy++)
 				{
-					UINT16 *dest = BITMAP_ADDR16(bitmap, OVERLAY_Y + (y + 1) * OVERLAY_PIXEL_HEIGHT + yy, xmin >> 8);
-					UINT16 ymin, ymax, yres;
+					uint16_t *dest = BITMAP_ADDR16(bitmap, OVERLAY_Y + (y + 1) * OVERLAY_PIXEL_HEIGHT + yy, xmin >> 8);
+					uint16_t ymin, ymax, yres;
 
 					ymax = 0xff;
 					ymin = *dest >> 8;
@@ -1130,7 +1130,7 @@ static void simutrek_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fie
     the first visible line of the frame
 -------------------------------------------------*/
 
-static INT32 simutrek_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
+static int32_t simutrek_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
 {
 	return pr8210_update(ld, vbi, fieldnum, curtime);
 }
@@ -1141,7 +1141,7 @@ static INT32 simutrek_update(laserdisc_state *ld, const vbi_metadata *vbi, int f
     READY line is read
 -------------------------------------------------*/
 
-static UINT8 simutrek_ready_r(laserdisc_state *ld)
+static uint8_t simutrek_ready_r(laserdisc_state *ld)
 {
 	return !ld->player->simutrek.data_ready;
 }
@@ -1152,7 +1152,7 @@ static UINT8 simutrek_ready_r(laserdisc_state *ld)
     STATUS line is read
 -------------------------------------------------*/
 
-static UINT8 simutrek_status_r(laserdisc_state *ld)
+static uint8_t simutrek_status_r(laserdisc_state *ld)
 {
 	return ((ld->player->simutrek.port2 & 0x03) == 0x03) ? ASSERT_LINE : CLEAR_LINE;
 }
@@ -1163,7 +1163,7 @@ static UINT8 simutrek_status_r(laserdisc_state *ld)
     parallel data port is written to
 -------------------------------------------------*/
 
-static void simutrek_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
+static void simutrek_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data)
 {
 	timer_call_after_resynch(ld->device->machine, ld, data, simutrek_latched_data_w);
 	if (LOG_SIMUTREK)
@@ -1211,7 +1211,7 @@ static WRITE8_HANDLER( simutrek_port2_w )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->simutrek.port2;
+	uint8_t prev = player->simutrek.port2;
 
 	/* update stat */
 	player->simutrek.port2 = data;

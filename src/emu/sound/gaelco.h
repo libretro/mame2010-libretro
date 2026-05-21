@@ -12,7 +12,7 @@ struct _gaelcosnd_interface
 	int banks[4];			/* start of each ROM bank */
 };
 
-extern UINT16 *gaelco_sndregs;
+extern uint16_t *gaelco_sndregs;
 
 WRITE16_DEVICE_HANDLER( gaelcosnd_w );
 READ16_DEVICE_HANDLER( gaelcosnd_r );

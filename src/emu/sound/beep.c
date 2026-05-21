@@ -25,7 +25,7 @@ struct _beep_state
 	int enable; 			/* enable beep */
 	int frequency;			/* set frequency - this can be changed using the appropiate function */
 	int incr;				/* initial wave state */
-	INT16 signal;			/* current signal */
+	int16_t signal;			/* current signal */
 };
 
 
@@ -48,7 +48,7 @@ static STREAM_UPDATE( beep_sound_update )
 {
 	beep_state *bs = (beep_state *) param;
 	stream_sample_t *buffer = outputs[0];
-	INT16 signal = bs->signal;
+	int16_t signal = bs->signal;
 	int clock = 0, rate = BEEP_RATE / 2;
 
     /* get progress through wave */

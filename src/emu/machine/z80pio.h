@@ -80,11 +80,11 @@ class z80pio_device_config :	public device_config,
 	friend class z80pio_device;
 
 	// construction/destruction
-	z80pio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	z80pio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 protected:
@@ -117,16 +117,16 @@ public:
 	void strobe(int which, bool state) { m_port[which].strobe(state); }
 
 	// control register I/O
-	UINT8 control_read();
-	void control_write(int offset, UINT8 data) { m_port[offset & 1].control_write(data); }
+	uint8_t control_read();
+	void control_write(int offset, uint8_t data) { m_port[offset & 1].control_write(data); }
 
 	// data register I/O
-	UINT8 data_read(int offset) { return m_port[offset & 1].data_read(); }
-	void data_write(int offset, UINT8 data) { m_port[offset & 1].data_write(data); }
+	uint8_t data_read(int offset) { return m_port[offset & 1].data_read(); }
+	void data_write(int offset, uint8_t data) { m_port[offset & 1].data_write(data); }
 
 	// port I/O
-	UINT8 port_read(int offset) { return m_port[offset & 1].read(); }
-	void port_write(int offset, UINT8 data) { m_port[offset & 1].write(data); }
+	uint8_t port_read(int offset) { return m_port[offset & 1].read(); }
+	void port_write(int offset, uint8_t data) { m_port[offset & 1].write(data); }
 
 private:
 	// device-level overrides
@@ -160,13 +160,13 @@ private:
 		void set_mode(int mode);
 		void strobe(bool state);
 
-		UINT8 read();
-		void write(UINT8 data);
+		uint8_t read();
+		void write(uint8_t data);
 
-		void control_write(UINT8 data);
+		void control_write(uint8_t data);
 
-		UINT8 data_read();
-		void data_write(UINT8 data);
+		uint8_t data_read();
+		void data_write(uint8_t data);
 
 	private:
 		void check_interrupts() { m_device->check_interrupts(); }
@@ -180,9 +180,9 @@ private:
 
 		int m_mode;					// mode register
 		int m_next_control_word;	// next control word
-		UINT8 m_input;				// input latch
-		UINT8 m_output;				// output latch
-		UINT8 m_ior;				// input/output register
+		uint8_t m_input;				// input latch
+		uint8_t m_output;				// output latch
+		uint8_t m_ior;				// input/output register
 		bool m_rdy;					// ready
 		bool m_stb;					// strobe
 
@@ -190,9 +190,9 @@ private:
 		bool m_ie;					// interrupt enabled
 		bool m_ip;					// interrupt pending
 		bool m_ius;					// interrupt under service
-		UINT8 m_icw;				// interrupt control word
-		UINT8 m_vector;				// interrupt vector
-		UINT8 m_mask;				// interrupt mask
+		uint8_t m_icw;				// interrupt control word
+		uint8_t m_vector;				// interrupt vector
+		uint8_t m_mask;				// interrupt mask
 		bool m_match;				// logic equation match
 	};
 

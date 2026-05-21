@@ -104,11 +104,11 @@ class z80dart_device_config :	public device_config,
 	friend class z80dart_device;
 
 	// construction/destruction
-	z80dart_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	z80dart_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 protected:
@@ -131,15 +131,15 @@ class z80dart_device :	public device_t,
 
 public:
 	// control register access
-	UINT8 control_read(int which) { return m_channel[which].control_read(); }
-	void control_write(int which, UINT8 data) { return m_channel[which].control_write(data); }
+	uint8_t control_read(int which) { return m_channel[which].control_read(); }
+	void control_write(int which, uint8_t data) { return m_channel[which].control_write(data); }
 
 	// data register access
-	UINT8 data_read(int which) { return m_channel[which].data_read(); }
-	void data_write(int which, UINT8 data) { return m_channel[which].data_write(data); }
+	uint8_t data_read(int which) { return m_channel[which].data_read(); }
+	void data_write(int which, uint8_t data) { return m_channel[which].data_write(data); }
 
 	// put data on the input lines
-	void receive_data(int which, UINT8 data) { m_channel[which].receive_data(data); }
+	void receive_data(int which, uint8_t data) { m_channel[which].receive_data(data); }
 
 	// control line access
 	void cts_w(int which, int state) { m_channel[which].cts_w(state); }
@@ -173,13 +173,13 @@ private:
 		void start(z80dart_device *device, int index, const devcb_read_line &in_rxd, const devcb_write_line &out_txd, const devcb_write_line &out_dtr, const devcb_write_line &out_rts, const devcb_write_line &out_wrdy);
 		void reset();
 
-		UINT8 control_read();
-		void control_write(UINT8 data);
+		uint8_t control_read();
+		void control_write(uint8_t data);
 
-		UINT8 data_read();
-		void data_write(UINT8 data);
+		uint8_t data_read();
+		void data_write(uint8_t data);
 
-		void receive_data(UINT8 data);
+		void receive_data(uint8_t data);
 
 		void cts_w(int state);
 		void dcd_w(int state);
@@ -215,14 +215,14 @@ private:
 		devcb_resolved_write_line	m_out_wrdy_func;
 
 		// register state
-		UINT8 m_rr[3];				// read register
-		UINT8 m_wr[6];				// write register
+		uint8_t m_rr[3];				// read register
+		uint8_t m_wr[6];				// write register
 
 		// receiver state
-		UINT8 m_rx_data_fifo[3];	// receive data FIFO
-		UINT8 m_rx_error_fifo[3];	// receive error FIFO
-		UINT8 m_rx_shift;			// 8-bit receive shift register
-		UINT8 m_rx_error;			// current receive error
+		uint8_t m_rx_data_fifo[3];	// receive data FIFO
+		uint8_t m_rx_error_fifo[3];	// receive error FIFO
+		uint8_t m_rx_shift;			// 8-bit receive shift register
+		uint8_t m_rx_error;			// current receive error
 		int m_rx_fifo;				// receive FIFO pointer
 
 		int m_rx_clock;				// receive clock pulse count
@@ -231,15 +231,15 @@ private:
 		int m_rx_first;				// first character received
 		int m_rx_parity;			// received data parity
 		int m_rx_break;				// receive break condition
-		UINT8 m_rx_rr0_latch;		// read register 0 latched
+		uint8_t m_rx_rr0_latch;		// read register 0 latched
 
 		int m_ri;					// ring indicator latch
 		int m_cts;					// clear to send latch
 		int m_dcd;					// data carrier detect latch
 
 		// transmitter state
-		UINT8 m_tx_data;			// transmit data register
-		UINT8 m_tx_shift;			// transmit shift register
+		uint8_t m_tx_data;			// transmit data register
+		uint8_t m_tx_shift;			// transmit shift register
 
 		int m_tx_clock;				// transmit clock pulse count
 		int m_tx_state;				// transmit state

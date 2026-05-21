@@ -62,27 +62,27 @@ struct _i8237_t
 		devcb_resolved_read8		in_ior_func;
 		devcb_resolved_write8		out_iow_func;
 		devcb_resolved_write_line	out_dack_func;
-		UINT16 base_address;
-		UINT16 base_count;
-		UINT16 address;
-		UINT16 count;
-		UINT8 mode;
+		uint16_t base_address;
+		uint16_t base_count;
+		uint16_t address;
+		uint16_t count;
+		uint8_t mode;
 		int high_address_changed;
 	} chan[4];
 
-	UINT32 msb : 1;
-	UINT32 eop : 1;
-	UINT8 temp;
-	UINT8 temporary_data;
-	UINT8 command;
-	UINT8 drq;
-	UINT8 mask;
-	UINT8 hrq;
-	UINT8 hlda;
+	uint32_t msb : 1;
+	uint32_t eop : 1;
+	uint8_t temp;
+	uint8_t temporary_data;
+	uint8_t command;
+	uint8_t drq;
+	uint8_t mask;
+	uint8_t hrq;
+	uint8_t hlda;
 
 	/* bits  0- 3 :  Terminal count for channels 0-3
      * bits  4- 7 :  Transfer in progress for channels 0-3 */
-	UINT8 status;
+	uint8_t status;
 
 	dma8237_state state;		/* State the device is currently in */
 	int service_channel;		/* Channel we will be servicing */
@@ -245,7 +245,7 @@ static TIMER_CALLBACK( dma8237_timerproc )
 		{
 			/* Bit 6 of the command register determines whether the DREQ signals are active
               high or active low. */
-			UINT16 pending_request = ( ( i8237->command & 0x40 ) ? ~i8237->drq : i8237->drq ) & ~i8237->mask;
+			uint16_t pending_request = ( ( i8237->command & 0x40 ) ? ~i8237->drq : i8237->drq ) & ~i8237->mask;
 
 			if ( pending_request & 0x0f )
 			{
@@ -404,7 +404,7 @@ static TIMER_CALLBACK( dma8237_timerproc )
 READ8_DEVICE_HANDLER( i8237_r )
 {
 	i8237_t	*i8237 = get_safe_token(device);
-	UINT8 data = 0xFF;
+	uint8_t data = 0xFF;
 
 	offset &= 0x0F;
 
@@ -429,7 +429,7 @@ READ8_DEVICE_HANDLER( i8237_r )
 
 	case 8:
 		/* DMA status register */
-		data = (UINT8) i8237->status;
+		data = (uint8_t) i8237->status;
 
 		/* TC bits are cleared on a status read */
 		i8237->status &= 0xF0;

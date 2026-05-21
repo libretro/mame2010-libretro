@@ -32,7 +32,7 @@ enum
 typedef struct _msm6242_t msm6242_t;
 struct _msm6242_t
 {
-	UINT8 reg[3];
+	uint8_t reg[3];
 	system_time hold_time;
 };
 

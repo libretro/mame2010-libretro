@@ -169,28 +169,28 @@ struct _ay8910_context
 	int ready;
 	sound_stream *channel;
 	const ay8910_interface *intf;
-	INT32 register_latch;
-	UINT8 regs[16];
-	INT32 last_enable;
-	INT32 count[NUM_CHANNELS];
-	UINT8 output[NUM_CHANNELS];
-	UINT8 output_noise;
-	INT32 count_noise;
-	INT32 count_env;
-	INT8 env_step;
-	UINT32 env_volume;
-	UINT8 hold,alternate,attack,holding;
-	INT32 rng;
-	UINT8 env_step_mask;
+	int32_t register_latch;
+	uint8_t regs[16];
+	int32_t last_enable;
+	int32_t count[NUM_CHANNELS];
+	uint8_t output[NUM_CHANNELS];
+	uint8_t output_noise;
+	int32_t count_noise;
+	int32_t count_env;
+	int8_t env_step;
+	uint32_t env_volume;
+	uint8_t hold,alternate,attack,holding;
+	int32_t rng;
+	uint8_t env_step_mask;
 	/* init parameters ... */
 	int step;
 	int zero_is_off;
-	UINT8 vol_enabled[NUM_CHANNELS];
+	uint8_t vol_enabled[NUM_CHANNELS];
 	const ay_ym_param *par;
 	const ay_ym_param *par_env;
-	INT32 vol_table[NUM_CHANNELS][16];
-	INT32 env_table[NUM_CHANNELS][32];
-	INT32 vol3d_table[8*32*32*32];
+	int32_t vol_table[NUM_CHANNELS][16];
+	int32_t env_table[NUM_CHANNELS][32];
+	int32_t vol3d_table[8*32*32*32];
 	devcb_resolved_read8 portAread;
 	devcb_resolved_read8 portBread;
 	devcb_resolved_write8 portAwrite;
@@ -337,7 +337,7 @@ static const ay_ym_param ay8910_param =
  *
  *************************************/
 
-INLINE void build_3D_table(double rl, const ay_ym_param *par, const ay_ym_param *par_env, int normalize, double factor, int zero_is_off, INT32 *tab)
+INLINE void build_3D_table(double rl, const ay_ym_param *par, const ay_ym_param *par_env, int normalize, double factor, int zero_is_off, int32_t *tab)
 {
 	int j, j1, j2, j3, e, indx;
 	double rt, rw, n;
@@ -394,7 +394,7 @@ INLINE void build_3D_table(double rl, const ay_ym_param *par, const ay_ym_param 
 	global_free(temp);
 }
 
-INLINE void build_single_table(double rl, const ay_ym_param *par, int normalize, INT32 *tab, int zero_is_off)
+INLINE void build_single_table(double rl, const ay_ym_param *par, int normalize, int32_t *tab, int zero_is_off)
 {
 	int j;
 	double rt, rw = 0;
@@ -432,7 +432,7 @@ INLINE void build_single_table(double rl, const ay_ym_param *par, int normalize,
 
 }
 
-INLINE UINT16 mix_3D(ay8910_context *psg)
+INLINE uint16_t mix_3D(ay8910_context *psg)
 {
 	int indx = 0, chan;
 

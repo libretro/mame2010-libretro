@@ -70,7 +70,7 @@ ADDRESS_MAP_END
 //  i2cmem_device_config - constructor
 //-------------------------------------------------
 
-i2cmem_device_config::i2cmem_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock ) :
+i2cmem_device_config::i2cmem_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock ) :
 	device_config( mconfig, static_alloc_device_config, "I2CMEM", tag, owner, clock),
 	device_config_memory_interface(mconfig, *this),
 	device_config_nvram_interface(mconfig, *this)
@@ -92,7 +92,7 @@ i2cmem_device_config::i2cmem_device_config( const machine_config &mconfig, const
 //  configuration object
 //-------------------------------------------------
 
-device_config *i2cmem_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock )
+device_config *i2cmem_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock )
 {
 	return global_alloc( i2cmem_device_config( mconfig, tag, owner, clock ) );
 }
@@ -185,7 +185,7 @@ i2cmem_device::i2cmem_device( running_machine &_machine, const i2cmem_device_con
 {
 	if( m_page_size > 0 )
 	{
-		m_page = auto_alloc_array( machine, UINT8, m_page_size );
+		m_page = auto_alloc_array( machine, uint8_t, m_page_size );
 	}
 }
 
@@ -230,7 +230,7 @@ void i2cmem_device::nvram_default()
 {
 	int i2cmem_bytes = m_config.m_data_size;
 
-	UINT16 default_value = 0xff;
+	uint16_t default_value = 0xff;
 	for( offs_t offs = 0; offs < i2cmem_bytes; offs++ )
 	{
 		memory_write_byte( m_addrspace[ 0 ], offs, default_value );
@@ -265,7 +265,7 @@ void i2cmem_device::nvram_default()
 void i2cmem_device::nvram_read( mame_file &file )
 {
 	int i2cmem_bytes = m_config.m_data_size;
-	UINT8 *buffer = auto_alloc_array( &m_machine, UINT8, i2cmem_bytes );
+	uint8_t *buffer = auto_alloc_array( &m_machine, uint8_t, i2cmem_bytes );
 
 	mame_fread( &file, buffer, i2cmem_bytes );
 
@@ -285,7 +285,7 @@ void i2cmem_device::nvram_read( mame_file &file )
 void i2cmem_device::nvram_write( mame_file &file )
 {
 	int i2cmem_bytes = m_config.m_data_size;
-	UINT8 *buffer = auto_alloc_array( &m_machine, UINT8, i2cmem_bytes );
+	uint8_t *buffer = auto_alloc_array( &m_machine, uint8_t, i2cmem_bytes );
 
 	for( offs_t offs = 0; offs < i2cmem_bytes; offs++ )
 	{

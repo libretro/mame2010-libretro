@@ -45,8 +45,8 @@
 
 struct eeprom_interface
 {
-	UINT8		m_address_bits;			// EEPROM has 2^address_bits cells
-	UINT8		m_data_bits;			// every cell has this many bits (8 or 16)
+	uint8_t		m_address_bits;			// EEPROM has 2^address_bits cells
+	uint8_t		m_data_bits;			// every cell has this many bits (8 or 16)
 	const char *m_cmd_read;				//   read command string, e.g. "0110"
 	const char *m_cmd_write;			//  write command string, e.g. "0111"
 	const char *m_cmd_erase;			//  erase command string, or 0 if n/a
@@ -69,11 +69,11 @@ class eeprom_device_config :	public device_config,
 	friend class eeprom_device;
 
 	// construction/destruction
-	eeprom_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	eeprom_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 	// inline configuration indexes
@@ -94,9 +94,9 @@ protected:
 	virtual const address_space_config *memory_space_config(int spacenum = 0) const;
 
 	// device-specific configuration
-	const UINT8 *				m_default_data;
+	const uint8_t *				m_default_data;
 	int 						m_default_data_size;
-	UINT32						m_default_value;
+	uint32_t						m_default_value;
 	address_space_config		m_space_config;
 };
 
@@ -139,7 +139,7 @@ protected:
 	const eeprom_device_config &m_config;
 
 	int 		m_serial_count;
-	UINT8		m_serial_buffer[SERIAL_BUFFER_LENGTH];
+	uint8_t		m_serial_buffer[SERIAL_BUFFER_LENGTH];
 	int 		m_data_bits;
 	int 		m_read_address;
 	int 		m_clock_count;

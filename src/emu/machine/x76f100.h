@@ -9,7 +9,7 @@
 
 #define X76F100_MAXCHIP ( 2 )
 
-extern void x76f100_init( running_machine *machine, int chip, UINT8 *data );
+extern void x76f100_init( running_machine *machine, int chip, uint8_t *data );
 extern void x76f100_cs_write( running_machine *machine, int chip, int cs );
 extern void x76f100_rst_write( running_machine *machine, int chip, int rst );
 extern void x76f100_scl_write( running_machine *machine, int chip, int scl );

@@ -32,7 +32,7 @@ struct ds2401_chip
 	int shift;
 	int rx;
 	int tx;
-	const UINT8 *data;
+	const uint8_t *data;
 	emu_timer *timer;
 	emu_timer *reset_timer;
 	attotime t_samp;
@@ -129,7 +129,7 @@ static TIMER_CALLBACK( ds2401_tick )
 	}
 }
 
-void ds2401_init( running_machine *machine, int which, const UINT8 *data )
+void ds2401_init( running_machine *machine, int which, const uint8_t *data )
 {
 	struct ds2401_chip *c = &ds2401[ which ];
 

@@ -34,7 +34,7 @@ struct _rp5h01_state
 	int enabled;		/* chip enable */
 	int old_reset;		/* reset pin state (level-triggered) */
 	int old_clock;		/* clock pin state (level-triggered) */
-	UINT8 *data;
+	uint8_t *data;
 };
 
 /***************************************************************************

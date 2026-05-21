@@ -35,7 +35,7 @@
 #define	LOG1(msg)		do { if (VERBOSE >= 1) logerror msg; } while (0)
 #define	LOG2(msg)		do { if (VERBOSE >= 2) logerror msg; } while (0)
 
-#define	CYCLES_NEVER ((UINT32) -1)
+#define	CYCLES_NEVER ((uint32_t) -1)
 
 /* device types */
 enum {
@@ -63,23 +63,23 @@ struct pit8253_timer
 
 	emu_timer *updatetimer;			/* MAME timer to process updates */
 
-	UINT16 value;					/* current counter value ("CE" in Intel docs) */
-	UINT16 latch;					/* latched counter value ("OL" in Intel docs) */
-	UINT16 count;					/* new counter value ("CR" in Intel docs) */
-	UINT8 control;					/* 6-bit control byte */
-	UINT8 status;					/* status byte - 8254 only */
-	UINT8 lowcount;					/* LSB of new counter value for 16-bit writes */
-	INT32 rmsb;						/* 1 = Next read is MSB of 16-bit value */
-	INT32 wmsb;						/* 1 = Next write is MSB of 16-bit value */
-	INT32 output;						/* 0 = low, 1 = high */
+	uint16_t value;					/* current counter value ("CE" in Intel docs) */
+	uint16_t latch;					/* latched counter value ("OL" in Intel docs) */
+	uint16_t count;					/* new counter value ("CR" in Intel docs) */
+	uint8_t control;					/* 6-bit control byte */
+	uint8_t status;					/* status byte - 8254 only */
+	uint8_t lowcount;					/* LSB of new counter value for 16-bit writes */
+	int32_t rmsb;						/* 1 = Next read is MSB of 16-bit value */
+	int32_t wmsb;						/* 1 = Next write is MSB of 16-bit value */
+	int32_t output;						/* 0 = low, 1 = high */
 
-	INT32 gate;						/* gate input (0 = low, 1 = high) */
-	INT32 latched_count;				/* number of bytes of count latched */
-	INT32 latched_status;				/* 1 = status latched (8254 only) */
-	INT32 null_count;					/* 1 = mode control or count written, 0 = count loaded */
-	INT32 phase;						/* see phase definition tables in simulate2(), below */
+	int32_t gate;						/* gate input (0 = low, 1 = high) */
+	int32_t latched_count;				/* number of bytes of count latched */
+	int32_t latched_status;				/* 1 = status latched (8254 only) */
+	int32_t null_count;					/* 1 = mode control or count written, 0 = count loaded */
+	int32_t phase;						/* see phase definition tables in simulate2(), below */
 
-	UINT32 cycles_to_output;		/* cycles until output callback called */
+	uint32_t cycles_to_output;		/* cycles until output callback called */
 };
 
 typedef struct _pit8253_t	pit8253_t;
@@ -129,7 +129,7 @@ static int pit8253_gate(struct pit8253_timer *timer)
 }
 
 
-INLINE UINT32 decimal_from_bcd(UINT16 val)
+INLINE uint32_t decimal_from_bcd(uint16_t val)
 {
 	/* In BCD mode, a nybble loaded with value A-F counts down the same as in
        binary mode, but wraps around to 9 instead of F after 0, so loading the
@@ -148,7 +148,7 @@ INLINE UINT32 decimal_from_bcd(UINT16 val)
 }
 
 
-static UINT32 adjusted_count(int bcd,UINT16	val)
+static uint32_t adjusted_count(int bcd,uint16_t	val)
 {
 	if (bcd	== 0)
 		return val == 0	? 0x10000 :	val;
@@ -159,9 +159,9 @@ static UINT32 adjusted_count(int bcd,UINT16	val)
 /* This function subtracts 1 from timer->value "cycles" times, taking into
    account binary or BCD operation, and wrapping around from 0 to 0xFFFF or
    0x9999 as necessary. */
-static void	decrease_counter_value(struct pit8253_timer	*timer,UINT64 cycles)
+static void	decrease_counter_value(struct pit8253_timer	*timer,uint64_t cycles)
 {
-	UINT16 value;
+	uint16_t value;
 	int units, tens, hundreds, thousands;
 
 	if (CTRL_BCD(timer->control) ==	0)
@@ -236,9 +236,9 @@ static void	set_output(running_device *device, struct pit8253_timer *timer,int o
 
 /* This emulates timer "timer" for "elapsed_cycles" cycles and assumes no
    callbacks occur during that time. */
-static void	simulate2(running_device *device, struct pit8253_timer *timer, INT64 elapsed_cycles)
+static void	simulate2(running_device *device, struct pit8253_timer *timer, int64_t elapsed_cycles)
 {
-	UINT32 adjusted_value;
+	uint32_t adjusted_value;
 	int	bcd	= CTRL_BCD(timer->control);
 	int	mode = CTRL_MODE(timer->control);
 	int	cycles_to_output = 0;
@@ -639,7 +639,7 @@ static void	simulate2(running_device *device, struct pit8253_timer *timer, INT64
    inaccurate by more than one cycle, and the output changed multiple
    times during the discrepancy. In practice updates should still be O(1).
 */
-static void	simulate(running_device *device, struct pit8253_timer *timer, INT64 elapsed_cycles)
+static void	simulate(running_device *device, struct pit8253_timer *timer, int64_t elapsed_cycles)
 {
 	if ( elapsed_cycles > 0 )
 		simulate2(device, timer, elapsed_cycles);
@@ -656,7 +656,7 @@ static void	update(running_device *device, struct pit8253_timer *timer)
        years of time. Should be enough for now. */
 	attotime now =	timer_get_time(device->machine);
 	attotime elapsed_time = attotime_sub(now,timer->last_updated);
-	INT64 elapsed_cycles =	attotime_to_double(elapsed_time) * timer->clockin;
+	int64_t elapsed_cycles =	attotime_to_double(elapsed_time) * timer->clockin;
 
 	LOG1(("pit8253: update(): timer %d, %" I64FMT "d elapsed_cycles\n", timer->index, elapsed_cycles));
 
@@ -688,7 +688,7 @@ static TIMER_CALLBACK( update_timer_cb )
 /* We recycle bit 0 of timer->value to hold the phase in mode 3 when count is
    odd. Since read commands in mode 3 always return even numbers, we need to
    mask this bit off. */
-static UINT16 masked_value(struct pit8253_timer	*timer)
+static uint16_t masked_value(struct pit8253_timer	*timer)
 {
 	LOG2(("pit8253: masked_value\n"));
 
@@ -706,8 +706,8 @@ READ8_DEVICE_HANDLER( pit8253_r )
 {
 	pit8253_t	*pit8253 = get_safe_token(device);
 	struct pit8253_timer *timer	= get_timer(pit8253,offset);
-	UINT8	data;
-	UINT16 value;
+	uint8_t	data;
+	uint16_t value;
 
 	LOG2(("pit8253_r(): offset %d\n", offset));
 
@@ -773,7 +773,7 @@ READ8_DEVICE_HANDLER( pit8253_r )
 
 
 /* Loads a new value from the bus to the count register (CR) */
-static void	load_count(running_device *device, struct pit8253_timer *timer, UINT16 newcount)
+static void	load_count(running_device *device, struct pit8253_timer *timer, uint16_t newcount)
 {
 	int	mode = CTRL_MODE(timer->control);
 
@@ -808,7 +808,7 @@ static void	load_count(running_device *device, struct pit8253_timer *timer, UINT
 
 static void	readback(running_device *device, struct pit8253_timer *timer,int command)
 {
-	UINT16 value;
+	uint16_t value;
 	update(device, timer);
 
 	if ((command & 1) == 0)

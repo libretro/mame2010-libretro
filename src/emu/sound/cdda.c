@@ -14,12 +14,12 @@ struct _cdda_info
 	sound_stream *		stream;
 	cdrom_file *		disc;
 
-	INT8				audio_playing, audio_pause, audio_ended_normally;
-	UINT32				audio_lba, audio_length;
+	int8_t				audio_playing, audio_pause, audio_ended_normally;
+	uint32_t				audio_lba, audio_length;
 
-	UINT8 *				audio_cache;
-	UINT32				audio_samples;
-	UINT32				audio_bptr;
+	uint8_t *				audio_cache;
+	uint32_t				audio_samples;
+	uint32_t				audio_bptr;
 };
 
 INLINE cdda_info *get_safe_token(running_device *device)
@@ -31,7 +31,7 @@ INLINE cdda_info *get_safe_token(running_device *device)
 
 #define MAX_SECTORS ( 4 )
 
-static void get_audio_data(cdda_info *info, stream_sample_t *bufL, stream_sample_t *bufR, UINT32 samples_wanted);
+static void get_audio_data(cdda_info *info, stream_sample_t *bufL, stream_sample_t *bufR, uint32_t samples_wanted);
 
 
 /*-------------------------------------------------
@@ -55,7 +55,7 @@ static DEVICE_START( cdda )
 	cdda_info *info = get_safe_token(device);
 
 	/* allocate an audio cache */
-	info->audio_cache = auto_alloc_array( device->machine, UINT8, CD_MAX_SECTOR_DATA * MAX_SECTORS );
+	info->audio_cache = auto_alloc_array( device->machine, uint8_t, CD_MAX_SECTOR_DATA * MAX_SECTORS );
 
 	//intf = (const struct CDDAinterface *)device->baseconfig().static_config();
 
@@ -110,7 +110,7 @@ running_device *cdda_from_cdrom(running_machine *machine, void *file)
     Book audio track
 -------------------------------------------------*/
 
-void cdda_start_audio(running_device *device, UINT32 startlba, UINT32 numblocks)
+void cdda_start_audio(running_device *device, uint32_t startlba, uint32_t numblocks)
 {
 	cdda_info *info = get_safe_token(device);
 
@@ -157,7 +157,7 @@ void cdda_pause_audio(running_device *device, int pause)
     (physical sector) during Red Book playback
 -------------------------------------------------*/
 
-UINT32 cdda_get_audio_lba(running_device *device)
+uint32_t cdda_get_audio_lba(running_device *device)
 {
 	cdda_info *info = get_safe_token(device);
 
@@ -210,10 +210,10 @@ int cdda_audio_ended(running_device *device)
     converts it to 2 16-bit 44.1 kHz streams
 -------------------------------------------------*/
 
-static void get_audio_data(cdda_info *info, stream_sample_t *bufL, stream_sample_t *bufR, UINT32 samples_wanted)
+static void get_audio_data(cdda_info *info, stream_sample_t *bufL, stream_sample_t *bufR, uint32_t samples_wanted)
 {
 	int i, sectoread, remaining;
-	INT16 *audio_cache = (INT16 *) info->audio_cache;
+	int16_t *audio_cache = (int16_t *) info->audio_cache;
 
 	/* if no file, audio not playing, audio paused, or out of disc data,
        just zero fill */

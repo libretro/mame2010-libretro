@@ -149,7 +149,7 @@ const int Z80DART_WR5_DTR					= 0x80;
 //  z80dart_device_config - constructor
 //-------------------------------------------------
 
-z80dart_device_config::z80dart_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80dart_device_config::z80dart_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Zilog Z80 DART", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -161,7 +161,7 @@ z80dart_device_config::z80dart_device_config(const machine_config &mconfig, cons
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80dart_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80dart_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80dart_device_config(mconfig, tag, owner, clock));
 }
@@ -499,7 +499,7 @@ void z80dart_device::dart_channel::start(z80dart_device *device, int index, cons
 
 void z80dart_device::dart_channel::take_interrupt(int level)
 {
-	UINT8 vector = m_wr[2];
+	uint8_t vector = m_wr[2];
 	int priority = (m_index << 2) | level;
 
 	LOG(("Z80DART \"%s\" Channel %c : Interrupt Request %u\n", m_device->tag(), 'A' + m_index, level));
@@ -927,9 +927,9 @@ void z80dart_device::dart_channel::transmit()
 //  control_read - read control register
 //-------------------------------------------------
 
-UINT8 z80dart_device::dart_channel::control_read()
+uint8_t z80dart_device::dart_channel::control_read()
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	int reg = m_wr[0] & Z80DART_WR0_REGISTER_MASK;
 
@@ -957,7 +957,7 @@ UINT8 z80dart_device::dart_channel::control_read()
 //  control_write - write control register
 //-------------------------------------------------
 
-void z80dart_device::dart_channel::control_write(UINT8 data)
+void z80dart_device::dart_channel::control_write(uint8_t data)
 {
 	int reg = m_wr[0] & Z80DART_WR0_REGISTER_MASK;
 
@@ -1100,9 +1100,9 @@ void z80dart_device::dart_channel::control_write(UINT8 data)
 //  data_read - read data register
 //-------------------------------------------------
 
-UINT8 z80dart_device::dart_channel::data_read()
+uint8_t z80dart_device::dart_channel::data_read()
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	if (m_rx_fifo >= 0)
 	{
@@ -1132,7 +1132,7 @@ UINT8 z80dart_device::dart_channel::data_read()
 //  data_write - write data register
 //-------------------------------------------------
 
-void z80dart_device::dart_channel::data_write(UINT8 data)
+void z80dart_device::dart_channel::data_write(uint8_t data)
 {
 	m_tx_data = data;
 
@@ -1147,7 +1147,7 @@ void z80dart_device::dart_channel::data_write(UINT8 data)
 //  receive_data - receive data word
 //-------------------------------------------------
 
-void z80dart_device::dart_channel::receive_data(UINT8 data)
+void z80dart_device::dart_channel::receive_data(uint8_t data)
 {
 	LOG(("Z80DART \"%s\" Channel %c : Receive Data Byte '%02x'\n", m_device->tag(), 'A' + m_index, data));
 

@@ -31,9 +31,9 @@ struct _votrax_state
 	sound_stream *	channel;
 
 	loaded_sample *sample;
-	UINT32		pos;
-	UINT32		frac;
-	UINT32		step;
+	uint32_t		pos;
+	uint32_t		frac;
+	uint32_t		step;
 
 	loaded_samples *samples;
 };
@@ -75,18 +75,18 @@ static STREAM_UPDATE( votrax_update_sound )
 	if (info->sample)
 	{
 		/* load some info locally */
-		UINT32 pos = info->pos;
-		UINT32 frac = info->frac;
-		UINT32 step = info->step;
-		UINT32 length = info->sample->length;
-		INT16 *sample = info->sample->data;
+		uint32_t pos = info->pos;
+		uint32_t frac = info->frac;
+		uint32_t step = info->step;
+		uint32_t length = info->sample->length;
+		int16_t *sample = info->sample->data;
 
 		while (length--)
 		{
 			/* do a linear interp on the sample */
-			INT32 sample1 = sample[pos];
-			INT32 sample2 = sample[(pos + 1) % length];
-			INT32 fracmult = frac >> (FRAC_BITS - 14);
+			int32_t sample1 = sample[pos];
+			int32_t sample2 = sample[(pos + 1) % length];
+			int32_t fracmult = frac >> (FRAC_BITS - 14);
 			*buffer++ = ((0x4000 - fracmult) * sample1 + fracmult * sample2) >> 14;
 
 			/* advance */
@@ -145,7 +145,7 @@ WRITE8_DEVICE_HANDLER( votrax_w )
 		info->sample = &info->samples->sample[Phoneme];
 		info->pos = 0;
 		info->frac = 0;
-		info->step = ((INT64)(info->sample->frequency + (256*Intonation)) << FRAC_BITS) / info->device->machine->sample_rate;
+		info->step = ((int64_t)(info->sample->frequency + (256*Intonation)) << FRAC_BITS) / info->device->machine->sample_rate;
 		stream_set_output_gain(info->channel, 0, (info->volume + (8*Intonation)*100/255) / 100.0);
 	}
 }

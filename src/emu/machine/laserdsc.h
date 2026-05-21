@@ -63,14 +63,14 @@ enum
 
 typedef chd_file *(*laserdisc_get_disc_func)(running_device *device);
 
-typedef void (*laserdisc_audio_func)(running_device *device, int samplerate, int samples, const INT16 *ch0, const INT16 *ch1);
+typedef void (*laserdisc_audio_func)(running_device *device, int samplerate, int samples, const int16_t *ch0, const int16_t *ch1);
 
 typedef void (*vp931_data_ready_func)(running_device *device, int state);
 
 typedef struct _laserdisc_config laserdisc_config;
 struct _laserdisc_config
 {
-	UINT32					type;
+	uint32_t					type;
 	laserdisc_get_disc_func	getdisc;
 	laserdisc_audio_func	audio;
 	const char *			sound;
@@ -78,7 +78,7 @@ struct _laserdisc_config
 
 	/* overlay information */
 	video_update_func		overupdate;
-	UINT32					overwidth, overheight, overformat;
+	uint32_t					overwidth, overheight, overformat;
 	rectangle				overclip;
 	float					overposx, overposy;
 	float					overscalex, overscaley;
@@ -154,23 +154,23 @@ struct _laserdisc_config
 int laserdisc_get_video(running_device *device, bitmap_t **bitmap);
 
 /* return the raw philips or white flag codes */
-UINT32 laserdisc_get_field_code(running_device *device, UINT32 code, UINT8 zero_if_squelched);
+uint32_t laserdisc_get_field_code(running_device *device, uint32_t code, uint8_t zero_if_squelched);
 
 
 
 /* ----- input and output ----- */
 
 /* write to the parallel data port of the player */
-void laserdisc_data_w(running_device *device, UINT8 data);
+void laserdisc_data_w(running_device *device, uint8_t data);
 
 /* assert or clear a signal line connected to the player */
-void laserdisc_line_w(running_device *device, UINT8 line, UINT8 newstate);
+void laserdisc_line_w(running_device *device, uint8_t line, uint8_t newstate);
 
 /* read from the parallel data port of the player */
-UINT8 laserdisc_data_r(running_device *device);
+uint8_t laserdisc_data_r(running_device *device);
 
 /* read the state of a signal line connected to the player */
-UINT8 laserdisc_line_r(running_device *device, UINT8 line);
+uint8_t laserdisc_line_r(running_device *device, uint8_t line);
 
 
 

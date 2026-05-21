@@ -10,7 +10,7 @@
 
 static struct
 {
-	UINT8	type,				// type of alpha display
+	uint8_t	type,				// type of alpha display
 
 			reversed,			// Allows for the data being written from right to left, not left to right.
 
@@ -19,16 +19,16 @@ static struct
 			window_end,			// display window end   pos 0-15
 			window_size;		// window  size
 
-	INT8	pcursor_pos,		// previous cursor pos
+	int8_t	pcursor_pos,		// previous cursor pos
 			cursor_pos;			// current cursor pos
 
-	UINT16  brightness;			// display brightness level 0-31 (31=MAX)
+	uint16_t  brightness;			// display brightness level 0-31 (31=MAX)
 
-	UINT8	string[18];			// text buffer
-	UINT32  segments[16],		// segments
+	uint8_t	string[18];			// text buffer
+	uint32_t  segments[16],		// segments
 			outputs[16];		// standardised outputs
 
-	UINT8	count,				// bit counter
+	uint8_t	count,				// bit counter
 			data;				// receive register
 
 } roc10937[MAX_ROCK_ALPHAS];
@@ -65,7 +65,7 @@ we actually have 18 segments, including the semicolon portions.
 This means our segment maths needs to be more than 16-bit to work!
 */
 
-static const UINT32 roc10937charset[]=
+static const uint32_t roc10937charset[]=
 {           // 11 10 FEDC BA98 7654 3210
 	0x0507F, //  0  0 0101 0000 0111 1111 @.
 	0x044CF, //  0  0 0100 0100 1100 1111 A.
@@ -184,21 +184,21 @@ void ROC10937_reset(int id)
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *ROC10937_get_segments(int id)
+uint32_t *ROC10937_get_segments(int id)
 {
 	return roc10937[id].segments;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *ROC10937_get_outputs(int id)
+uint32_t *ROC10937_get_outputs(int id)
 {
 	return roc10937[id].outputs;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-UINT32 *ROC10937_set_outputs(int id)
+uint32_t *ROC10937_set_outputs(int id)
 {
 	int cursor,val;
 	for (cursor = 0; cursor < 16; cursor++)

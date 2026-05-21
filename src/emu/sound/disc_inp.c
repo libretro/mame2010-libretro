@@ -24,8 +24,8 @@
 struct dss_adjustment_context
 {
 	const input_port_config *port;
-	INT32		lastpval;
-	INT32		pmin;
+	int32_t		lastpval;
+	int32_t		pmin;
 	double		pscale;
 	double		min;
 	double		scale;
@@ -36,10 +36,10 @@ struct dss_input_context
 	stream_sample_t *ptr;			/* current in ptr for stream */
 	double		gain;				/* node gain */
 	double		offset;				/* node offset */
-	UINT8		data;				/* data written */
-	UINT8		is_stream;
-	UINT8		is_buffered;
-	UINT32		stream_in_number;
+	uint8_t		data;				/* data written */
+	uint8_t		is_stream;
+	uint8_t		is_buffered;
+	uint32_t		stream_in_number;
 	/* the buffer stream */
 	sound_stream *buffer_stream;
 };
@@ -56,7 +56,7 @@ READ8_DEVICE_HANDLER(discrete_sound_r)
 	discrete_info    *info = get_safe_token(device);
 	node_description *node = discrete_find_node(info, offset);
 
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	/* Read the node input value if allowed */
 	if (node)
@@ -64,7 +64,7 @@ READ8_DEVICE_HANDLER(discrete_sound_r)
 		/* Bring the system up to now */
 		stream_update(info->discrete_stream);
 
-		data = (UINT8) node->output[NODE_CHILD_NODE_NUM(offset)];
+		data = (uint8_t) node->output[NODE_CHILD_NODE_NUM(offset)];
 	}
 	else
 		fatalerror("discrete_sound_r read from non-existent NODE_%02d\n", offset-NODE_00);
@@ -82,7 +82,7 @@ WRITE8_DEVICE_HANDLER(discrete_sound_w)
 	if (node)
 	{
 		struct dss_input_context *context = (struct dss_input_context *)node->context;
-		UINT8 new_data    = 0;
+		uint8_t new_data    = 0;
 
 		switch (node->module->type)
 		{
@@ -150,7 +150,7 @@ static DISCRETE_STEP(dss_adjustment)
 {
 	struct dss_adjustment_context *context = (struct dss_adjustment_context *)node->context;
 
-	INT32  rawportval = input_port_read_direct(context->port);
+	int32_t  rawportval = input_port_read_direct(context->port);
 
 	/* only recompute if the value changed from last time */
 	if (UNEXPECTED(rawportval != context->lastpval))

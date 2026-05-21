@@ -33,22 +33,22 @@ added external port callback, and functions to set the volume of the channels
 
 typedef struct kdacApcm
 {
-	UINT8			vol[KDAC_A_PCM_MAX][2];	/* volume for the left and right channel */
-	UINT32			addr[KDAC_A_PCM_MAX];
-	UINT32			start[KDAC_A_PCM_MAX];
-	UINT32			step[KDAC_A_PCM_MAX];
-	UINT32			bank[KDAC_A_PCM_MAX];
+	uint8_t			vol[KDAC_A_PCM_MAX][2];	/* volume for the left and right channel */
+	uint32_t			addr[KDAC_A_PCM_MAX];
+	uint32_t			start[KDAC_A_PCM_MAX];
+	uint32_t			step[KDAC_A_PCM_MAX];
+	uint32_t			bank[KDAC_A_PCM_MAX];
 	int				play[KDAC_A_PCM_MAX];
 
-	UINT8			wreg[0x10];	/* write data */
-	UINT8 *			pcmbuf[2];	/* Channel A & B pointers */
+	uint8_t			wreg[0x10];	/* write data */
+	uint8_t *			pcmbuf[2];	/* Channel A & B pointers */
 
-	UINT32  		clock;          /* chip clock */
-	UINT32  		pcmlimit;
+	uint32_t  		clock;          /* chip clock */
+	uint32_t  		pcmlimit;
 
 	sound_stream *	stream;
 	const k007232_interface *intf;
-	UINT32			fncode[0x200];
+	uint32_t			fncode[0x200];
 } KDAC_A_PCM;
 
 

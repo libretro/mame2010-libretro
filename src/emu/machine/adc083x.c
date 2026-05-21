@@ -49,20 +49,20 @@ struct _adc0831_state
 {
 	adc083x_input_convert_func input_callback_r;
 
-	INT32 cs;
-	INT32 clk;
-	INT32 di;
-	INT32 se;
-	INT32 sars;
-	INT32 _do;
-	INT32 sgl;
-	INT32 odd;
-	INT32 sel1;
-	INT32 sel0;
-	INT32 state;
-	INT32 bit;
-	INT32 output;
-	INT32 mux_bits;
+	int32_t cs;
+	int32_t clk;
+	int32_t di;
+	int32_t se;
+	int32_t sars;
+	int32_t _do;
+	int32_t sgl;
+	int32_t odd;
+	int32_t sel1;
+	int32_t sel0;
+	int32_t state;
+	int32_t bit;
+	int32_t output;
+	int32_t mux_bits;
 };
 
 
@@ -148,7 +148,7 @@ WRITE_LINE_DEVICE_HANDLER( adc083x_cs_write )
     adc083x_conversion
 -------------------------------------------------*/
 
-static UINT8 adc083x_conversion( running_device *device )
+static uint8_t adc083x_conversion( running_device *device )
 {
 	adc0831_state *adc083x = get_safe_token( device );
 	int result;

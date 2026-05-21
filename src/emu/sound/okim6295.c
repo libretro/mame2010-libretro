@@ -46,13 +46,13 @@
 
 // ADPCM state and tables
 bool adpcm_state::s_tables_computed = false;
-const INT8 adpcm_state::s_index_shift[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
+const int8_t adpcm_state::s_index_shift[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
 int adpcm_state::s_diff_lookup[49*16];
 
 // volume lookup table. The manual lists only 9 steps, ~3dB per step. Given the dB values,
 // that seems to map to a 5-bit volume control. Any volume parameter beyond the 9th index
 // results in silent playback.
-const UINT8 okim6295_device::s_volume_table[16] =
+const uint8_t okim6295_device::s_volume_table[16] =
 {
 	0x20,	//   0 dB
 	0x16,	//  -3.2 dB
@@ -87,7 +87,7 @@ ADDRESS_MAP_END
 //  okim6295_device_config - constructor
 //-------------------------------------------------
 
-okim6295_device_config::okim6295_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+okim6295_device_config::okim6295_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "OKI6295", tag, owner, clock),
 	  device_config_sound_interface(mconfig, *this),
 	  device_config_memory_interface(mconfig, *this),
@@ -101,7 +101,7 @@ okim6295_device_config::okim6295_device_config(const machine_config &mconfig, co
 //  configuration object
 //-------------------------------------------------
 
-device_config *okim6295_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *okim6295_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(okim6295_device_config(mconfig, tag, owner, clock));
 }
@@ -292,9 +292,9 @@ READ8_DEVICE_HANDLER( okim6295_r )
 	return downcast<okim6295_device *>(device)->status_read();
 }
 
-UINT8 okim6295_device::status_read()
+uint8_t okim6295_device::status_read()
 {
-	UINT8 result = 0xf0;	// naname expects bits 4-7 to be 1
+	uint8_t result = 0xf0;	// naname expects bits 4-7 to be 1
 
 	// set the bit to 1 if something is playing on a given channel
 	stream_update(m_stream);
@@ -315,7 +315,7 @@ WRITE8_DEVICE_HANDLER( okim6295_w )
 	downcast<okim6295_device *>(device)->data_write(data);
 }
 
-void okim6295_device::data_write(UINT8 data)
+void okim6295_device::data_write(uint8_t data)
 {
 	// if a command is pending, process the second half
 	if (m_command != -1)
@@ -468,7 +468,7 @@ void adpcm_state::reset()
 //  changes
 //-------------------------------------------------
 
-INT16 adpcm_state::clock(UINT8 nibble)
+int16_t adpcm_state::clock(uint8_t nibble)
 {
 	// update the signal
 	m_signal += s_diff_lookup[m_step * 16 + (nibble & 15)];
@@ -504,7 +504,7 @@ void adpcm_state::compute_tables()
 	s_tables_computed = true;
 
 	// nibble to bit map
-	static const INT8 nbl2bit[16][4] =
+	static const int8_t nbl2bit[16][4] =
 	{
 		{ 1, 0, 0, 0}, { 1, 0, 0, 1}, { 1, 0, 1, 0}, { 1, 0, 1, 1},
 		{ 1, 1, 0, 0}, { 1, 1, 0, 1}, { 1, 1, 1, 0}, { 1, 1, 1, 1},

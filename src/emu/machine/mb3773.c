@@ -23,7 +23,7 @@
 //  mb3773_device_config - constructor
 //-------------------------------------------------
 
-mb3773_device_config::mb3773_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock ) :
+mb3773_device_config::mb3773_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock ) :
 	device_config( mconfig, static_alloc_device_config, "MB3773", tag, owner, clock)
 {
 }
@@ -35,7 +35,7 @@ mb3773_device_config::mb3773_device_config( const machine_config &mconfig, const
 //  configuration object
 //-------------------------------------------------
 
-device_config *mb3773_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock )
+device_config *mb3773_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock )
 {
 	return global_alloc( mb3773_device_config( mconfig, tag, owner, clock ) );
 }

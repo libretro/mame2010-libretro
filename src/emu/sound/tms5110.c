@@ -95,23 +95,23 @@ struct _tms5110_state
 	const struct tms5100_coeffs *coeff;
 
 	/* these contain data that describes the 64 bits FIFO */
-	UINT8 fifo[FIFO_SIZE];
-	UINT8 fifo_head;
-	UINT8 fifo_tail;
-	UINT8 fifo_count;
+	uint8_t fifo[FIFO_SIZE];
+	uint8_t fifo_head;
+	uint8_t fifo_tail;
+	uint8_t fifo_count;
 
 	/* these contain global status bits */
-	UINT8 PDC;
-	UINT8 CTL_pins;
-	UINT8 speaking_now;
-	UINT8 talk_status;
-	UINT8 state;
+	uint8_t PDC;
+	uint8_t CTL_pins;
+	uint8_t speaking_now;
+	uint8_t talk_status;
+	uint8_t state;
 
 	/* Rom interface */
-	UINT32 address;
-	UINT8  next_is_address;
-	UINT8  schedule_dummy_read;
-	UINT8  addr_bit;
+	uint32_t address;
+	uint8_t  next_is_address;
+	uint8_t  schedule_dummy_read;
+	uint8_t  addr_bit;
 
 	/* external callback */
 	int (*M0_callback)(running_device *);
@@ -128,58 +128,58 @@ struct _tms5110_state
 	running_device *device;
 
 	/* these contain data describing the current and previous voice frames */
-	UINT16 old_energy;
-	UINT16 old_pitch;
-	INT32 old_k[10];
+	uint16_t old_energy;
+	uint16_t old_pitch;
+	int32_t old_k[10];
 
-	UINT16 new_energy;
-	UINT16 new_pitch;
-	INT32 new_k[10];
+	uint16_t new_energy;
+	uint16_t new_pitch;
+	int32_t new_k[10];
 
 
 	/* these are all used to contain the current state of the sound generation */
-	UINT16 current_energy;
-	UINT16 current_pitch;
-	INT32 current_k[10];
+	uint16_t current_energy;
+	uint16_t current_pitch;
+	int32_t current_k[10];
 
-	UINT16 target_energy;
-	UINT16 target_pitch;
-	INT32 target_k[10];
+	uint16_t target_energy;
+	uint16_t target_pitch;
+	int32_t target_k[10];
 
-	UINT8 interp_count;       /* number of interp periods (0-7) */
-	UINT8 sample_count;       /* sample number within interp (0-24) */
-	INT32 pitch_count;
+	uint8_t interp_count;       /* number of interp periods (0-7) */
+	uint8_t sample_count;       /* sample number within interp (0-24) */
+	int32_t pitch_count;
 
-	INT32 x[11];
+	int32_t x[11];
 
-	INT32 RNG;	/* the random noise generator configuration is: 1 + x + x^3 + x^4 + x^13 */
+	int32_t RNG;	/* the random noise generator configuration is: 1 + x + x^3 + x^4 + x^13 */
 
 	const tms5110_interface *intf;
-	const UINT8 *table;
+	const uint8_t *table;
 	sound_stream *stream;
-	INT32 speech_rom_bitnum;
+	int32_t speech_rom_bitnum;
 
 	emu_timer *romclk_hack_timer;
-	UINT8 romclk_hack_timer_started;
-	UINT8 romclk_hack_state;
+	uint8_t romclk_hack_timer_started;
+	uint8_t romclk_hack_state;
 };
 
 typedef struct _tmsprom_state tmsprom_state;
 struct _tmsprom_state
 {
 	/* Rom interface */
-	UINT32 address;
+	uint32_t address;
 	/* ctl lines */
-	UINT8  m0;
-	UINT8  enable;
-	UINT32  base_address;
-	UINT8  bit;
+	uint8_t  m0;
+	uint8_t  enable;
+	uint32_t  base_address;
+	uint8_t  bit;
 
 	int prom_cnt;
 
 	int    clock;
-	const UINT8 *rom;
-	const UINT8 *prom;
+	const uint8_t *rom;
+	const uint8_t *prom;
 
 	devcb_resolved_write_line pdc_func;		/* tms pdc func */
 	devcb_resolved_write8 ctl_func;			/* tms ctl func */
@@ -218,7 +218,7 @@ INLINE tmsprom_state *get_safe_token_prom(running_device *device)
 /* Static function prototypes */
 static void tms5110_set_variant(tms5110_state *tms, int variant);
 static void tms5110_PDC_set(tms5110_state *tms, int data);
-static void tms5110_process(tms5110_state *tms, INT16 *buffer, unsigned int size);
+static void tms5110_process(tms5110_state *tms, int16_t *buffer, unsigned int size);
 static void parse_frame(tms5110_state *tms);
 static STREAM_UPDATE( tms5110_update );
 static TIMER_CALLBACK( romclk_hack_timer_cb );
@@ -246,7 +246,7 @@ void tms5110_set_variant(tms5110_state *tms, int variant)
 	tms->variant = variant;
 }
 
-static void new_int_write(tms5110_state *tms, UINT8 rc, UINT8 m0, UINT8 m1, UINT8 addr)
+static void new_int_write(tms5110_state *tms, uint8_t rc, uint8_t m0, uint8_t m1, uint8_t addr)
 {
 	if (tms->m0_func.write)
 		devcb_call_write_line(&tms->m0_func, m0);
@@ -261,7 +261,7 @@ static void new_int_write(tms5110_state *tms, UINT8 rc, UINT8 m0, UINT8 m1, UINT
 	}
 }
 
-static void new_int_write_addr(tms5110_state *tms, UINT8 addr)
+static void new_int_write_addr(tms5110_state *tms, uint8_t addr)
 {
 	new_int_write(tms, 1, 0, 1, addr);
 	new_int_write(tms, 0, 0, 1, addr);
@@ -269,7 +269,7 @@ static void new_int_write_addr(tms5110_state *tms, UINT8 addr)
 	new_int_write(tms, 0, 0, 0, addr);
 }
 
-static UINT8 new_int_read(tms5110_state *tms)
+static uint8_t new_int_read(tms5110_state *tms)
 {
 	new_int_write(tms, 1, 1, 0, 0);
 	new_int_write(tms, 0, 1, 0, 0);
@@ -381,7 +381,7 @@ int i;
 		else
 		{
 			//if (DEBUG_5110) logerror("-->ERROR: TMS5110 missing M0 callback function\n");
-			UINT8 data = new_int_read(tms);
+			uint8_t data = new_int_read(tms);
 			FIFO_data_write(tms, data);
 		}
 	}
@@ -417,11 +417,11 @@ static void perform_dummy_read(tms5110_state *tms)
 
 ***********************************************************************************************/
 
-void tms5110_process(tms5110_state *tms, INT16 *buffer, unsigned int size)
+void tms5110_process(tms5110_state *tms, int16_t *buffer, unsigned int size)
 {
 	int buf_count=0;
 	int i, interp_period, bitout;
-	INT16 Y11, cliptemp;
+	int16_t Y11, cliptemp;
 
 	/* if we're not speaking, fill with nothingness */
 	if (!tms->speaking_now)
@@ -1273,7 +1273,7 @@ int tms5110_ready_r(running_device *device)
 static STREAM_UPDATE( tms5110_update )
 {
 	tms5110_state *tms = (tms5110_state *)param;
-	INT16 sample_data[MAX_SAMPLE_CHUNK];
+	int16_t sample_data[MAX_SAMPLE_CHUNK];
 	stream_sample_t *buffer = outputs[0];
 
 	/* loop while we still have samples to generate */
@@ -1364,7 +1364,7 @@ static void register_for_save_states_prom(tmsprom_state *tms)
 
 static void update_prom_cnt(tmsprom_state *tms)
 {
-	UINT8 prev_val = tms->prom[tms->prom_cnt] | 0x0200;
+	uint8_t prev_val = tms->prom[tms->prom_cnt] | 0x0200;
 	if (tms->enable && (prev_val & (1<<tms->intf->stop_bit)))
 		tms->prom_cnt |= 0x10;
 	else
@@ -1384,7 +1384,7 @@ static TIMER_CALLBACK( tmsprom_step )
      * static const int prom[16] = {0x00, 0x00, 0x02, 0x00, 0x00, 0x02, 0x00, 0x00,
      *              0x02, 0x00, 0x40, 0x00, 0x04, 0x06, 0x04, 0x84 };
      */
-	UINT16 ctrl;
+	uint16_t ctrl;
 
 	update_prom_cnt(tms);
 	ctrl = (tms->prom[tms->prom_cnt] | 0x200);

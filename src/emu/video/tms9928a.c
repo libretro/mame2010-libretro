@@ -108,7 +108,7 @@ static void draw_mode3 (running_device *screen, bitmap_t *bitmap, const rectangl
 static void draw_mode23 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect);
 static void draw_modebogus (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect);
 static void draw_sprites (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect);
-static void change_register (running_machine *machine, int reg, UINT8 data);
+static void change_register (running_machine *machine, int reg, uint8_t data);
 
 static void (*const ModeHandlers[])(running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) = {
         draw_mode0, draw_mode1, draw_mode2,  draw_mode12,
@@ -135,13 +135,13 @@ static void (*const ModeHandlers[])(running_device *screen, bitmap_t *bitmap, co
 
 typedef struct {
     /* TMS9928A internal settings */
-    UINT8 ReadAhead,Regs[8],StatusReg,FirstByte,latch,INT;
-    INT32 Addr;
+    uint8_t ReadAhead,Regs[8],StatusReg,FirstByte,latch,INT;
+    int32_t Addr;
     int colour,pattern,nametbl,spriteattribute,spritepattern;
     int colourmask,patternmask;
     void (*INTCallback)(running_machine *, int);
     /* memory */
-    UINT8 *vMem, *dBackMem;
+    uint8_t *vMem, *dBackMem;
     bitmap_t *tmpbmp;
     int vramsize, model;
     /* emulation settings */
@@ -201,10 +201,10 @@ static void TMS9928A_start (running_machine *machine, const TMS9928a_interface *
 
     /* Video RAM */
     tms.vramsize = intf->vram;
-    tms.vMem = auto_alloc_array_clear(machine, UINT8, intf->vram);
+    tms.vMem = auto_alloc_array_clear(machine, uint8_t, intf->vram);
 
     /* Sprite back buffer */
-    tms.dBackMem = auto_alloc_array(machine, UINT8, IMAGE_SIZE);
+    tms.dBackMem = auto_alloc_array(machine, uint8_t, IMAGE_SIZE);
 
     /* back bitmap */
     tms.tmpbmp = auto_bitmap_alloc (machine, 256, 192, machine->primary_screen->format());
@@ -251,7 +251,7 @@ void TMS9928A_post_load (running_machine *machine) {
 ** The I/O functions.
 */
 READ8_HANDLER (TMS9928A_vram_r) {
-    UINT8 b;
+    uint8_t b;
     b = tms.ReadAhead;
     tms.ReadAhead = tms.vMem[tms.Addr];
     tms.Addr = (tms.Addr + 1) & (tms.vramsize - 1);
@@ -268,7 +268,7 @@ WRITE8_HANDLER (TMS9928A_vram_w) {
 }
 
 READ8_HANDLER (TMS9928A_register_r) {
-    UINT8 b;
+    uint8_t b;
     b = tms.StatusReg;
     tms.StatusReg = 0x1f;
     if (tms.INT) {
@@ -290,7 +290,7 @@ WRITE8_HANDLER (TMS9928A_register_w) {
 	            change_register (space->machine, reg, tms.FirstByte);
         } else {
             /* set read/write address */
-            tms.Addr = ((UINT16)data << 8 | tms.FirstByte) & (tms.vramsize - 1);
+            tms.Addr = ((uint16_t)data << 8 | tms.FirstByte) & (tms.vramsize - 1);
             if ( !(data & 0x40) ) {
 				/* read ahead */
 				TMS9928A_vram_r	(space,0);
@@ -303,8 +303,8 @@ WRITE8_HANDLER (TMS9928A_register_w) {
     }
 }
 
-static void change_register (running_machine *machine, int reg, UINT8 val) {
-    static const UINT8 Mask[8] =
+static void change_register (running_machine *machine, int reg, uint8_t val) {
+    static const uint8_t Mask[8] =
         { 0x03, 0xfb, 0x0f, 0xff, 0x07, 0x7f, 0x07, 0xff };
     static const char *const modes[] = {
         "Mode 0 (GRAPHIC 1)", "Mode 1 (TEXT 1)", "Mode 2 (GRAPHIC 2)",
@@ -312,7 +312,7 @@ static void change_register (running_machine *machine, int reg, UINT8 val) {
         "Mode 1+3 (BOGUS)", "Mode 2+3 (MULTICOLOR variation)",
         "Mode 1+2+3 (BOGUS)"
     };
-    UINT8 b;
+    uint8_t b;
 
     val &= Mask[reg];
     tms.Regs[reg] = val;
@@ -393,7 +393,7 @@ void TMS9928A_set_spriteslimit (int limit) {
 */
 VIDEO_UPDATE( tms9928a )
 {
-    INT32 BackColour = tms.Regs[7] & 15;
+    int32_t BackColour = tms.Regs[7] & 15;
     rgb_t oldcolor = palette_get_color(screen->machine, 0);
 
 	if (!BackColour) BackColour=1;
@@ -453,7 +453,7 @@ int TMS9928A_interrupt(running_machine *machine) {
 
 static void draw_mode1 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int pattern,x,y,yy,xx,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
     rectangle rt;
     const pen_t *pens;
 
@@ -488,7 +488,7 @@ static void draw_mode1 (running_device *screen, bitmap_t *bitmap, const rectangl
 
 static void draw_mode12 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int pattern,x,y,yy,xx,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
     const pen_t *pens;
     rectangle rt;
 
@@ -523,7 +523,7 @@ static void draw_mode12 (running_device *screen, bitmap_t *bitmap, const rectang
 
 static void draw_mode0 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int pattern,x,y,yy,xx,name,charcode,colour;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
     const pen_t *pens;
 
     pens = screen->machine->pens;
@@ -549,9 +549,9 @@ static void draw_mode0 (running_device *screen, bitmap_t *bitmap, const rectangl
 
 static void draw_mode2 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int colour,name,x,y,yy,pattern,xx,charcode;
-    UINT8 fg,bg;
+    uint8_t fg,bg;
     const pen_t *pens;
-    UINT8 *colourptr,*patternptr;
+    uint8_t *colourptr,*patternptr;
 
     pens = screen->machine->pens;
     name = 0;
@@ -579,7 +579,7 @@ static void draw_mode2 (running_device *screen, bitmap_t *bitmap, const rectangl
 
 static void draw_mode3 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int x,y,yy,yyy,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
     const pen_t *pens;
 
     pens = screen->machine->pens;
@@ -609,7 +609,7 @@ static void draw_mode3 (running_device *screen, bitmap_t *bitmap, const rectangl
 
 static void draw_mode23 (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
     int x,y,yy,yyy,name,charcode;
-    UINT8 fg,bg,*patternptr;
+    uint8_t fg,bg,*patternptr;
     const pen_t *pens;
 
     pens = screen->machine->pens;
@@ -639,7 +639,7 @@ static void draw_mode23 (running_device *screen, bitmap_t *bitmap, const rectang
 }
 
 static void draw_modebogus (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
-    UINT8 fg,bg;
+    uint8_t fg,bg;
     int x,y,n,xx;
     const pen_t *pens;
 
@@ -668,10 +668,10 @@ static void draw_modebogus (running_device *screen, bitmap_t *bitmap, const rect
 ** This code should be optimized. One day.
 */
 static void draw_sprites (running_device *screen, bitmap_t *bitmap, const rectangle *cliprect) {
-    UINT8 *attributeptr,*patternptr,c;
+    uint8_t *attributeptr,*patternptr,c;
     int p,x,y,size,i,j,large,yy,xx,limit[192],
         illegalsprite,illegalspriteline;
-    UINT16 line,line2;
+    uint16_t line,line2;
     const pen_t *pens;
 
     pens = screen->machine->pens;

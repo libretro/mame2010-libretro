@@ -8,7 +8,7 @@
 typedef struct _st0016_interface st0016_interface;
 struct _st0016_interface
 {
-	UINT8 **p_soundram;
+	uint8_t **p_soundram;
 };
 
 READ8_DEVICE_HANDLER( st0016_snd_r );

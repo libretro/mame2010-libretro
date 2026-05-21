@@ -82,7 +82,7 @@ struct _pci_bus_state
 	const pci_bus_config *	config;
 	running_device *	device[32];
 	offs_t					address;
-	INT8					devicenum;
+	int8_t					devicenum;
 };
 
 
@@ -109,7 +109,7 @@ INLINE pci_bus_state *get_safe_token(running_device *device)
 READ32_DEVICE_HANDLER( pci_32le_r )
 {
 	pci_bus_state *pcibus = get_safe_token(device);
-	UINT32 result = 0xffffffff;
+	uint32_t result = 0xffffffff;
 	int function, reg;
 
 	offset %= 2;

@@ -60,24 +60,24 @@ struct _ldplayer_data
 	timer_device *		multitimer;			/* multi-jump timer device */
 
 	/* communication status */
-	UINT8				command;				/* command byte to the player */
-	UINT8				status;					/* status byte from the player */
-	UINT8				vsync;					/* VSYNC state */
+	uint8_t				command;				/* command byte to the player */
+	uint8_t				status;					/* status byte from the player */
+	uint8_t				vsync;					/* VSYNC state */
 
 	/* I/O port states */
-	UINT8				counter_start;			/* starting value for counter */
-	UINT8				counter;				/* current counter value */
-	UINT8				portc0;					/* port C on PPI 0 */
-	UINT8				portb1;					/* port B on PPI 1 */
-	UINT8				portc1;					/* port C on PPI 1 */
+	uint8_t				counter_start;			/* starting value for counter */
+	uint8_t				counter;				/* current counter value */
+	uint8_t				portc0;					/* port C on PPI 0 */
+	uint8_t				portb1;					/* port B on PPI 1 */
+	uint8_t				portc1;					/* port C on PPI 1 */
 
 	/* display/decode circuit emulation */
-	UINT8				portselect;				/* selection of which port to access */
-	UINT8				display[2][20];			/* display lines */
-	UINT8				dispindex;				/* index within the display line */
-	UINT8				vbi[7*3];				/* VBI data */
-	UINT8				vbiready;				/* VBI ready flag */
-	UINT8				vbiindex;				/* index within the VBI data */
+	uint8_t				portselect;				/* selection of which port to access */
+	uint8_t				display[2][20];			/* display lines */
+	uint8_t				dispindex;				/* index within the display line */
+	uint8_t				vbi[7*3];				/* VBI data */
+	uint8_t				vbiready;				/* VBI ready flag */
+	uint8_t				vbiindex;				/* index within the VBI data */
 };
 
 
@@ -88,11 +88,11 @@ struct _ldplayer_data
 
 static void ldv1000_init(laserdisc_state *ld);
 static void ldv1000_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static INT32 ldv1000_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static void ldv1000_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data);
-static UINT8 ldv1000_status_strobe_r(laserdisc_state *ld);
-static UINT8 ldv1000_command_strobe_r(laserdisc_state *ld);
-static UINT8 ldv1000_status_r(laserdisc_state *ld);
+static int32_t ldv1000_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
+static void ldv1000_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data);
+static uint8_t ldv1000_status_strobe_r(laserdisc_state *ld);
+static uint8_t ldv1000_command_strobe_r(laserdisc_state *ld);
+static uint8_t ldv1000_status_r(laserdisc_state *ld);
 
 static TIMER_CALLBACK( vsync_off );
 static TIMER_CALLBACK( vbi_data_fetch );
@@ -272,7 +272,7 @@ static void ldv1000_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fiel
     the first visible line of the frame
 -------------------------------------------------*/
 
-static INT32 ldv1000_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
+static int32_t ldv1000_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
 {
 	if (LOG_FRAMES_SEEN)
 	{
@@ -288,7 +288,7 @@ static INT32 ldv1000_update(laserdisc_state *ld, const vbi_metadata *vbi, int fi
     to the LD-V1000
 -------------------------------------------------*/
 
-static void ldv1000_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
+static void ldv1000_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data)
 {
 	ld->player->command = data;
 	if (LOG_COMMANDS)
@@ -301,7 +301,7 @@ static void ldv1000_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
     status strobe
 -------------------------------------------------*/
 
-static UINT8 ldv1000_status_strobe_r(laserdisc_state *ld)
+static uint8_t ldv1000_status_strobe_r(laserdisc_state *ld)
 {
 	return (ld->player->portc1 & 0x20) ? ASSERT_LINE : CLEAR_LINE;
 }
@@ -312,7 +312,7 @@ static UINT8 ldv1000_status_strobe_r(laserdisc_state *ld)
     command strobe
 -------------------------------------------------*/
 
-static UINT8 ldv1000_command_strobe_r(laserdisc_state *ld)
+static uint8_t ldv1000_command_strobe_r(laserdisc_state *ld)
 {
 	return (ld->player->portc1 & 0x10) ? ASSERT_LINE : CLEAR_LINE;
 }
@@ -323,7 +323,7 @@ static UINT8 ldv1000_command_strobe_r(laserdisc_state *ld)
     from the LD-V1000
 -------------------------------------------------*/
 
-static UINT8 ldv1000_status_r(laserdisc_state *ld)
+static uint8_t ldv1000_status_r(laserdisc_state *ld)
 {
 	return ld->player->status;
 }
@@ -352,9 +352,9 @@ static TIMER_CALLBACK( vbi_data_fetch )
 {
 	laserdisc_state *ld = (laserdisc_state *)ptr;
 	ldplayer_data *player = ld->player;
-	UINT8 focus_on = !(player->portb1 & 0x01);
-	UINT8 laser_on = (player->portb1 & 0x40);
-	UINT32 lines[3];
+	uint8_t focus_on = !(player->portb1 & 0x01);
+	uint8_t laser_on = (player->portb1 & 0x40);
+	uint32_t lines[3];
 
 	/* appears to return data in reverse order */
 	lines[0] = laserdisc_get_field_code(ld->device, LASERDISC_CODE_LINE1718, FALSE);
@@ -370,8 +370,8 @@ static TIMER_CALLBACK( vbi_data_fetch )
 		/* loop over lines */
 		for (line = 0; line < 3; line++)
 		{
-			UINT8 *dest = &player->vbi[line * 7];
-			UINT32 data = lines[line];
+			uint8_t *dest = &player->vbi[line * 7];
+			uint32_t data = lines[line];
 
 			/* the logic only processes leadin/leadout/frame number codes */
 			if (data == VBI_CODE_LEADIN || data == VBI_CODE_LEADOUT || (data & VBI_MASK_CAV_PICTURE) == VBI_CODE_CAV_PICTURE)
@@ -469,7 +469,7 @@ static READ8_HANDLER( decoder_display_port_r )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	/* reads from offset 3 constitute actual reads from the display and decoder chips */
 	if (offset == 3)
@@ -495,7 +495,7 @@ static READ8_HANDLER( controller_r )
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 
 	/* note that this is a cheesy implementation; the real thing relies on exquisite timing */
-	UINT8 result = ld->player->command ^ 0xff;
+	uint8_t result = ld->player->command ^ 0xff;
 	ld->player->command = 0xff;
 	return result;
 }
@@ -555,7 +555,7 @@ static READ8_DEVICE_HANDLER( ppi0_portc_r )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(device->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 
 	if (!player->vsync)
 		result |= 0x10;
@@ -581,7 +581,7 @@ static WRITE8_DEVICE_HANDLER( ppi0_portc_w )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(device->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->portc0;
+	uint8_t prev = player->portc0;
 
 	/* set the new value */
 	player->portc0 = data;
@@ -624,9 +624,9 @@ static READ8_DEVICE_HANDLER( ppi1_porta_r )
 	laserdisc_state *ld = ldcore_get_safe_token(device->owner());
 	ldplayer_data *player = ld->player;
 	slider_position sliderpos = ldcore_get_slider_position(ld);
-	UINT8 focus_on = !(player->portb1 & 0x01);
-	UINT8 spdl_on = !(player->portb1 & 0x02);
-	UINT8 result = 0x00;
+	uint8_t focus_on = !(player->portb1 & 0x01);
+	uint8_t spdl_on = !(player->portb1 & 0x02);
+	uint8_t result = 0x00;
 
 	/* bit 0: /FOCUS LOCK */
 	if (!focus_on)
@@ -676,7 +676,7 @@ static WRITE8_DEVICE_HANDLER( ppi1_portb_w )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(device->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->portb1;
+	uint8_t prev = player->portb1;
 	int direction;
 
 	/* set the new value */
@@ -733,7 +733,7 @@ static WRITE8_DEVICE_HANDLER( ppi1_portc_w )
     */
 	laserdisc_state *ld = ldcore_get_safe_token(device->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 prev = player->portc1;
+	uint8_t prev = player->portc1;
 
 	/* set the new value */
 	player->portc1 = data;

@@ -35,7 +35,7 @@
 #define ICLIP16(x) (x<-32768)?-32768:((x>32767)?32767:x)
 
 #define SHIFT	12
-#define FIX(v)	((UINT32) ((float) (1<<SHIFT)*(v)))
+#define FIX(v)	((uint32_t) ((float) (1<<SHIFT)*(v)))
 
 
 #define EG_SHIFT	16
@@ -109,7 +109,7 @@ static const double DRTimes[64]={100000/*infinity*/,100000/*infinity*/,118200.0,
 					14800.0,12700.0,11100.0,8900.0,7400.0,6300.0,5500.0,4400.0,3700.0,3200.0,2800.0,2200.0,1800.0,1600.0,1400.0,1100.0,
 					920.0,790.0,690.0,550.0,460.0,390.0,340.0,270.0,230.0,200.0,170.0,140.0,110.0,98.0,85.0,68.0,57.0,49.0,43.0,34.0,
 					28.0,25.0,22.0,18.0,14.0,12.0,11.0,8.5,7.1,6.1,5.4,4.3,3.6,3.1};
-static INT32 EG_TABLE[0x400];
+static int32_t EG_TABLE[0x400];
 
 typedef enum {ATTACK,DECAY1,DECAY2,RELEASE} _STATE;
 struct _EG
@@ -124,23 +124,23 @@ struct _EG
 	int RR;		//Release
 
 	int DL;		//Decay level
-	UINT8 EGHOLD;
-	UINT8 LPLINK;
+	uint8_t EGHOLD;
+	uint8_t LPLINK;
 };
 
 struct _SLOT
 {
 	union
 	{
-		UINT16 data[0x10];	//only 0x1a bytes used
-		UINT8 datab[0x20];
+		uint16_t data[0x10];	//only 0x1a bytes used
+		uint8_t datab[0x20];
 	} udata;
-	UINT8 Backwards;	//the wave is playing backwards
-	UINT8 active;	//this slot is currently playing
-	UINT8 *base;		//samples base address
-	UINT32 cur_addr;	//current play address (24.8)
-	UINT32 nxt_addr;	//next play address
-	UINT32 step;		//pitch step (24.8)
+	uint8_t Backwards;	//the wave is playing backwards
+	uint8_t active;	//this slot is currently playing
+	uint8_t *base;		//samples base address
+	uint32_t cur_addr;	//current play address (24.8)
+	uint32_t nxt_addr;	//next play address
+	uint32_t step;		//pitch step (24.8)
 	struct _EG EG;			//Envelope
 	struct _LFO PLFO;		//Phase LFO
 	struct _LFO ALFO;		//Amplitude LFO
@@ -180,8 +180,8 @@ struct _SCSP
 {
 	union
 	{
-		UINT16 data[0x30/2];
-		UINT8 datab[0x30];
+		uint16_t data[0x30/2];
+		uint8_t datab[0x30];
 	} udata;
 	struct _SLOT Slots[32];
 	signed short RINGBUF[128];
@@ -191,20 +191,20 @@ struct _SCSP
 	unsigned char DELAYPTR;
 #endif
 	unsigned char *SCSPRAM;
-	UINT32 SCSPRAM_LENGTH;
+	uint32_t SCSPRAM_LENGTH;
 	char Master;
 	void (*Int68kCB)(running_device *device, int irq);
 	sound_stream * stream;
 
-	INT32 *buffertmpl,*buffertmpr;
+	int32_t *buffertmpl,*buffertmpr;
 
-	UINT32 IrqTimA;
-	UINT32 IrqTimBC;
-	UINT32 IrqMidi;
+	uint32_t IrqTimA;
+	uint32_t IrqTimBC;
+	uint32_t IrqMidi;
 
-	UINT8 MidiOutW,MidiOutR;
-	UINT8 MidiStack[32];
-	UINT8 MidiW,MidiR;
+	uint8_t MidiOutW,MidiOutR;
+	uint8_t MidiStack[32];
+	uint8_t MidiW,MidiR;
 
 	int LPANTABLE[0x10000];
 	int RPANTABLE[0x10000];
@@ -216,9 +216,9 @@ struct _SCSP
 	emu_timer *timerA, *timerB, *timerC;
 
 	// DMA stuff
-	UINT32 scsp_dmea;
-	UINT16 scsp_drga;
-	UINT16 scsp_dtlg;
+	uint32_t scsp_dmea;
+	uint16_t scsp_drga;
+	uint16_t scsp_dtlg;
 
 	int ARTABLE[64], DRTABLE[64];
 
@@ -266,8 +266,8 @@ static unsigned char DecodeSCI(struct _SCSP *SCSP,unsigned char irq)
 
 static void CheckPendingIRQ(struct _SCSP *SCSP)
 {
-	UINT32 pend=SCSP->udata.data[0x20/2];
-	UINT32 en=SCSP->udata.data[0x1e/2];
+	uint32_t pend=SCSP->udata.data[0x20/2];
+	uint32_t en=SCSP->udata.data[0x1e/2];
 
 	if(SCSP->MidiW!=SCSP->MidiR)
 	{
@@ -307,7 +307,7 @@ static void CheckPendingIRQ(struct _SCSP *SCSP)
 
 static void ResetInterrupts(struct _SCSP *SCSP)
 {
-	UINT32 reset = SCSP->udata.data[0x22/2];
+	uint32_t reset = SCSP->udata.data[0x22/2];
 
 	if (reset & 0x40)
 	{
@@ -455,10 +455,10 @@ static int EG_Update(struct _SLOT *slot)
 	return (slot->EG.volume>>EG_SHIFT)<<(SHIFT-10);
 }
 
-static UINT32 SCSP_Step(struct _SLOT *slot)
+static uint32_t SCSP_Step(struct _SLOT *slot)
 {
 	int octave=(OCT(slot)^8)-8+SHIFT-10;
-	UINT32 Fn=FNS(slot)+(1 << 10);
+	uint32_t Fn=FNS(slot)+(1 << 10);
 	if (octave >= 0)
 	{
 		Fn<<=octave;
@@ -482,7 +482,7 @@ static void Compute_LFO(struct _SLOT *slot)
 
 static void SCSP_StartSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 {
-	UINT32 start_offset;
+	uint32_t start_offset;
 
 	slot->active=1;
 	start_offset = PCM8B(slot) ? SA(slot) : SA(slot) & 0x7FFFE;
@@ -543,7 +543,7 @@ static void SCSP_Init(running_device *device, struct _SCSP *SCSP, const scsp_int
 	if (SCSP->SCSPRAM)
 	{
 		SCSP->SCSPRAM_LENGTH = device->region()->bytes();
-		SCSP->DSP.SCSPRAM = (UINT16 *)SCSP->SCSPRAM;
+		SCSP->DSP.SCSPRAM = (uint16_t *)SCSP->SCSPRAM;
 		SCSP->DSP.SCSPRAM_LENGTH = SCSP->SCSPRAM_LENGTH/2;
 		SCSP->SCSPRAM += intf->roffset;
 	}
@@ -556,7 +556,7 @@ static void SCSP_Init(running_device *device, struct _SCSP *SCSP, const scsp_int
 	{
 		float envDB=((float)(3*(i-0x3ff)))/32.0f;
 		float scale=(float)(1<<SHIFT);
-		EG_TABLE[i]=(INT32)(pow(10.0,envDB/20.0)*scale);
+		EG_TABLE[i]=(int32_t)(pow(10.0,envDB/20.0)*scale);
 	}
 
 	for(i=0;i<0x10000;++i)
@@ -731,7 +731,7 @@ static void SCSP_UpdateReg(struct _SCSP *SCSP, int reg)
 		case 0x19:
 			if(SCSP->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				SCSP->TimPris[0]=1<<((SCSP->udata.data[0x18/2]>>8)&0x7);
 				SCSP->TimCnt[0]=(SCSP->udata.data[0x18/2]&0xff)<<8;
@@ -750,7 +750,7 @@ static void SCSP_UpdateReg(struct _SCSP *SCSP, int reg)
 		case 0x1b:
 			if(SCSP->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				SCSP->TimPris[1]=1<<((SCSP->udata.data[0x1A/2]>>8)&0x7);
 				SCSP->TimCnt[1]=(SCSP->udata.data[0x1A/2]&0xff)<<8;
@@ -769,7 +769,7 @@ static void SCSP_UpdateReg(struct _SCSP *SCSP, int reg)
 		case 0x1D:
 			if(SCSP->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				SCSP->TimPris[2]=1<<((SCSP->udata.data[0x1C/2]>>8)&0x7);
 				SCSP->TimCnt[2]=(SCSP->udata.data[0x1C/2]&0xff)<<8;
@@ -942,13 +942,13 @@ static unsigned short SCSP_r16(struct _SCSP *SCSP, unsigned int addr)
 
 #define REVSIGN(v) ((~v)+1)
 
-INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
+INLINE int32_t SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 {
-	INT32 sample;
+	int32_t sample;
 	int step=slot->step;
-	UINT32 addr1,addr2,addr_select;                                   // current and next sample addresses
-	UINT32 *addr[2]      = {&addr1, &addr2};                          // used for linear interpolation
-	UINT32 *slot_addr[2] = {&(slot->cur_addr), &(slot->nxt_addr)};    //
+	uint32_t addr1,addr2,addr_select;                                   // current and next sample addresses
+	uint32_t *addr[2]      = {&addr1, &addr2};                          // used for linear interpolation
+	uint32_t *slot_addr[2] = {&(slot->cur_addr), &(slot->nxt_addr)};    //
 
 	if(SSCTL(slot)!=0)	//no FM or noise yet
 		return 0;
@@ -972,7 +972,7 @@ INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 
 	if(MDL(slot)!=0 || MDXSL(slot)!=0 || MDYSL(slot)!=0)
 	{
-		INT32 smp=(SCSP->RINGBUF[(SCSP->BUFPTR+MDXSL(slot))&63]+SCSP->RINGBUF[(SCSP->BUFPTR+MDYSL(slot))&63])/2;
+		int32_t smp=(SCSP->RINGBUF[(SCSP->BUFPTR+MDXSL(slot))&63]+SCSP->RINGBUF[(SCSP->BUFPTR+MDYSL(slot))&63])/2;
 
 		smp<<=0xA; // associate cycle with 1024
 		smp>>=0x1A-MDL(slot); // ex. for MDL=0xF, sample range corresponds to +/- 64 pi (32=2^5 cycles) so shift by 11 (16-5 == 0x1A-0xF)
@@ -983,20 +983,20 @@ INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 
 	if(PCM8B(slot))	//8 bit signed
 	{
-		INT8 *p1=(signed char *) (SCSP->SCSPRAM+BYTE_XOR_BE(((SA(slot)+addr1))&0x7FFFF));
-		INT8 *p2=(signed char *) (SCSP->SCSPRAM+BYTE_XOR_BE(((SA(slot)+addr2))&0x7FFFF));
+		int8_t *p1=(signed char *) (SCSP->SCSPRAM+BYTE_XOR_BE(((SA(slot)+addr1))&0x7FFFF));
+		int8_t *p2=(signed char *) (SCSP->SCSPRAM+BYTE_XOR_BE(((SA(slot)+addr2))&0x7FFFF));
 		//sample=(p[0])<<8;
-		INT32 s;
-		INT32 fpart=slot->cur_addr&((1<<SHIFT)-1);
+		int32_t s;
+		int32_t fpart=slot->cur_addr&((1<<SHIFT)-1);
 		s=(int) (p1[0]<<8)*((1<<SHIFT)-fpart)+(int) (p2[0]<<8)*fpart;
 		sample=(s>>SHIFT);
 	}
 	else	//16 bit signed (endianness?)
 	{
-		INT16 *p1=(signed short *) (SCSP->SCSPRAM+((SA(slot)+addr1)&0x7FFFE));
-		INT16 *p2=(signed short *) (SCSP->SCSPRAM+((SA(slot)+addr2)&0x7FFFE));
-		INT32 s;
-		INT32 fpart=slot->cur_addr&((1<<SHIFT)-1);
+		int16_t *p1=(signed short *) (SCSP->SCSPRAM+((SA(slot)+addr1)&0x7FFFE));
+		int16_t *p2=(signed short *) (SCSP->SCSPRAM+((SA(slot)+addr2)&0x7FFFE));
+		int32_t s;
+		int32_t fpart=slot->cur_addr&((1<<SHIFT)-1);
 		s=(int)(p1[0])*((1<<SHIFT)-fpart)+(int)(p2[0])*fpart;
 		sample=(s>>SHIFT);
 	}
@@ -1004,7 +1004,7 @@ INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 	if(SBCTL(slot)&0x1)
 		sample ^= 0x7FFF;
 	if(SBCTL(slot)&0x2)
-		sample = (INT16)(sample^0x8000);
+		sample = (int16_t)(sample^0x8000);
 
 	if(slot->Backwards)
 		slot->cur_addr-=step;
@@ -1023,7 +1023,7 @@ INLINE INT32 SCSP_UpdateSlot(struct _SCSP *SCSP, struct _SLOT *slot)
 
 	for (addr_select=0;addr_select<2;addr_select++)
 	{
-		INT32 rem_addr;
+		int32_t rem_addr;
 		switch(LPCTL(slot))
 		{
 		case 0:	//no loop
@@ -1111,7 +1111,7 @@ static void SCSP_DoMasterSamples(struct _SCSP *SCSP, int nsamples)
 
 	for(s=0;s<nsamples;++s)
 	{
-		INT32 smpl, smpr;
+		int32_t smpl, smpr;
 
 		smpl = smpr = 0;
 
@@ -1170,9 +1170,9 @@ static void SCSP_DoMasterSamples(struct _SCSP *SCSP, int nsamples)
 
 static void dma_scsp(const address_space *space, struct _SCSP *SCSP)
 {
-	static UINT16 tmp_dma[3], *scsp_regs;
+	static uint16_t tmp_dma[3], *scsp_regs;
 
-	scsp_regs = (UINT16 *)SCSP->udata.datab;
+	scsp_regs = (uint16_t *)SCSP->udata.datab;
 
 	logerror("SCSP: DMA transfer START\n"
 			 "DMEA: %04x DRGA: %04x DTLG: %04x\n"
@@ -1262,7 +1262,7 @@ void scsp_set_ram_base(running_device *device, void *base)
 	if (SCSP)
 	{
 		SCSP->SCSPRAM = (unsigned char *)base;
-		SCSP->DSP.SCSPRAM = (UINT16 *)base;
+		SCSP->DSP.SCSPRAM = (uint16_t *)base;
 		SCSP->SCSPRAM_LENGTH = 0x80000;
 		SCSP->DSP.SCSPRAM_LENGTH = 0x80000/2;
 	}
@@ -1278,12 +1278,12 @@ READ16_DEVICE_HANDLER( scsp_r )
 	return SCSP_r16(SCSP, offset*2);
 }
 
-UINT32* stv_scu;
+uint32_t* stv_scu;
 
 WRITE16_DEVICE_HANDLER( scsp_w )
 {
 	struct _SCSP *SCSP = get_safe_token(device);
-	UINT16 tmp, *scsp_regs;
+	uint16_t tmp, *scsp_regs;
 
 	stream_update(SCSP->stream);
 
@@ -1291,7 +1291,7 @@ WRITE16_DEVICE_HANDLER( scsp_w )
 	COMBINE_DATA(&tmp);
 	SCSP_w16(SCSP,offset*2, tmp);
 
-	scsp_regs = (UINT16 *)SCSP->udata.datab;
+	scsp_regs = (uint16_t *)SCSP->udata.datab;
 
 	switch(offset*2)
 	{

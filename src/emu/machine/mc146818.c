@@ -84,11 +84,11 @@ struct mc146818_chip
 {
 	MC146818_TYPE type;
 
-	UINT8 index;
-	UINT8 data[MC146818_DATA_SIZE];
+	uint8_t index;
+	uint8_t data[MC146818_DATA_SIZE];
 
-	UINT16 eindex;
-	UINT8 edata[0x2000];
+	uint16_t eindex;
+	uint8_t edata[0x2000];
 
 	int updated;  /* update ended interrupt flag */
 
@@ -307,7 +307,7 @@ NVRAM_HANDLER( mc146818 )
 
 READ8_HANDLER(mc146818_port_r)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 	switch (offset) {
 	case 0:
 		data = mc146818->index;

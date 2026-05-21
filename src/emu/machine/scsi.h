@@ -9,7 +9,7 @@
 #define _SCSI_H_
 
 
-typedef int (*pSCSIDispatch)( int operation, void *file, INT64 intparm, void *ptrparm );
+typedef int (*pSCSIDispatch)( int operation, void *file, int64_t intparm, void *ptrparm );
 
 typedef struct _SCSIClass
 {
@@ -89,8 +89,8 @@ extern void SCSIDeleteInstance( SCSIInstance *instance );
 extern void SCSISetDevice( SCSIInstance *instance, void *device );
 extern void SCSIGetDevice( SCSIInstance *instance, void **device );
 extern void SCSIReset( SCSIInstance *instance );
-extern void SCSISetCommand( SCSIInstance *instance, UINT8 *command, int commandLength );
-extern void SCSIGetCommand( SCSIInstance *instance, UINT8 **command, int *commandLength );
+extern void SCSISetCommand( SCSIInstance *instance, uint8_t *command, int commandLength );
+extern void SCSIGetCommand( SCSIInstance *instance, uint8_t **command, int *commandLength );
 extern void SCSIExecCommand( SCSIInstance *instance, int *resultLength );
 extern void SCSIWriteData( SCSIInstance *instance, void *data, int dataLength );
 extern void SCSIReadData( SCSIInstance *instance, void *data, int dataLength );
@@ -98,11 +98,11 @@ extern void SCSISetPhase( SCSIInstance *instance, int phase );
 extern void SCSIGetPhase( SCSIInstance *instance, int *phase );
 
 extern SCSIInstance *SCSIMalloc( running_machine *machine, const SCSIClass *scsiClass );
-extern int SCSIBase( const SCSIClass *scsiClass, int operation, void *file, INT64 intparm, UINT8 *ptrparm );
+extern int SCSIBase( const SCSIClass *scsiClass, int operation, void *file, int64_t intparm, uint8_t *ptrparm );
 extern void *SCSIThis( const SCSIClass *scsiClass, SCSIInstance *instance );
 extern int SCSISizeof( const SCSIClass *scsiClass );
-extern int SCSILengthFromUINT8( UINT8 *length );
-extern int SCSILengthFromUINT16( UINT8 *length );
+extern int SCSILengthFromUINT8( uint8_t *length );
+extern int SCSILengthFromUINT16( uint8_t *length );
 
 #endif
 

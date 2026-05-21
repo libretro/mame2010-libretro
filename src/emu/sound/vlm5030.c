@@ -96,45 +96,45 @@ struct _vlm5030_state
 
 	/* need to save state */
 
-	UINT8 *rom;
+	uint8_t *rom;
 	int address_mask;
-	UINT16 address;
-	UINT8 pin_BSY;
-	UINT8 pin_ST;
-	UINT8 pin_VCU;
-	UINT8 pin_RST;
-	UINT8 latch_data;
-	UINT16 vcu_addr_h;
-	UINT8 parameter;
-	UINT8 phase;
+	uint16_t address;
+	uint8_t pin_BSY;
+	uint8_t pin_ST;
+	uint8_t pin_VCU;
+	uint8_t pin_RST;
+	uint8_t latch_data;
+	uint16_t vcu_addr_h;
+	uint8_t parameter;
+	uint8_t phase;
 
 	/* state of option paramter */
 	int frame_size;
 	int pitch_offset;
-	UINT8 interp_step;
+	uint8_t interp_step;
 
-	UINT8 interp_count;       /* number of interp periods    */
-	UINT8 sample_count;       /* sample number within interp */
-	UINT8 pitch_count;
+	uint8_t interp_count;       /* number of interp periods    */
+	uint8_t sample_count;       /* sample number within interp */
+	uint8_t pitch_count;
 
 	/* these contain data describing the current and previous voice frames */
-	UINT16 old_energy;
-	UINT8 old_pitch;
-	INT16  old_k[10];
-	UINT16 target_energy;
-	UINT8 target_pitch;
-	INT16 target_k[10];
+	uint16_t old_energy;
+	uint8_t old_pitch;
+	int16_t  old_k[10];
+	uint16_t target_energy;
+	uint8_t target_pitch;
+	int16_t target_k[10];
 
-	UINT16 new_energy;
-	UINT8 new_pitch;
-	INT16 new_k[10];
+	uint16_t new_energy;
+	uint8_t new_pitch;
+	int16_t new_k[10];
 
 	/* these are all used to contain the current state of the sound generation */
 	unsigned int current_energy;
 	unsigned int current_pitch;
 	int current_k[10];
 
-	INT32 x[10];
+	int32_t x[10];
 };
 
 /* phase value */
@@ -195,7 +195,7 @@ static const unsigned char pitchtable [0x20]=
    86, 94, 102,110,118,126          /* 26-31 : 8step       */
 };
 
-static const INT16 K1_table[] = {
+static const int16_t K1_table[] = {
   -24898,  -25672,  -26446,  -27091,  -27736,  -28252,  -28768,  -29155,
   -29542,  -29929,  -30316,  -30574,  -30832,  -30961,  -31219,  -31348,
   -31606,  -31735,  -31864,  -31864,  -31993,  -32122,  -32122,  -32251,
@@ -205,17 +205,17 @@ static const INT16 K1_table[] = {
        0,   -1935,   -3999,   -6063,   -7998,   -9804,  -11610,  -13416,
   -15093,  -16642,  -18061,  -19480,  -20770,  -21931,  -22963,  -23995
 };
-static const INT16 K2_table[] = {
+static const int16_t K2_table[] = {
        0,   -3096,   -6321,   -9417,  -12513,  -15351,  -18061,  -20770,
   -23092,  -25285,  -27220,  -28897,  -30187,  -31348,  -32122,  -32638,
        0,   32638,   32122,   31348,   30187,   28897,   27220,   25285,
    23092,   20770,   18061,   15351,   12513,    9417,    6321,    3096
 };
-static const INT16 K3_table[] = {
+static const int16_t K3_table[] = {
        0,   -3999,   -8127,  -12255,  -16384,  -20383,  -24511,  -28639,
    32638,   28639,   24511,   20383,   16254,   12255,    8127,    3999
 };
-static const INT16 K5_table[] = {
+static const int16_t K5_table[] = {
        0,   -8127,  -16384,  -24511,   32638,   24511,   16254,    8127
 };
 
@@ -458,7 +458,7 @@ static void vlm5030_update(vlm5030_state *chip)
 }
 
 /* setup parameteroption when RST=H */
-static void vlm5030_setup_parameter(vlm5030_state *chip, UINT8 param)
+static void vlm5030_setup_parameter(vlm5030_state *chip, uint8_t param)
 {
 	/* latch parameter value */
 	chip->parameter = param;
@@ -533,7 +533,7 @@ static DEVICE_RESET( vlm5030 )
 void vlm5030_set_rom(running_device *device, void *speech_rom)
 {
 	vlm5030_state *chip = get_safe_token(device);
-	chip->rom = (UINT8 *)speech_rom;
+	chip->rom = (uint8_t *)speech_rom;
 }
 
 /* get BSY pin level */
@@ -548,7 +548,7 @@ int vlm5030_bsy(running_device *device)
 WRITE8_DEVICE_HANDLER( vlm5030_data_w )
 {
 	vlm5030_state *chip = get_safe_token(device);
-	chip->latch_data = (UINT8)data;
+	chip->latch_data = (uint8_t)data;
 }
 
 /* set RST pin level : reset / set table address A8-A15 */

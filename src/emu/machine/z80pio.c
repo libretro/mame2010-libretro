@@ -53,7 +53,7 @@ const int ICW_MASK_FOLLOWS	= 0x10;
 //  z80pio_device_config - constructor
 //-------------------------------------------------
 
-z80pio_device_config::z80pio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80pio_device_config::z80pio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Z8420", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -65,7 +65,7 @@ z80pio_device_config::z80pio_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80pio_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80pio_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80pio_device_config(mconfig, tag, owner, clock));
 }
@@ -254,7 +254,7 @@ void z80pio_device::z80daisy_irq_reti()
 //  control_read - control register read
 //-------------------------------------------------
 
-UINT8 z80pio_device::control_read()
+uint8_t z80pio_device::control_read()
 {
 	return (m_port[PORT_A].m_icw & 0xc0) | (m_port[PORT_B].m_icw >> 4);
 }
@@ -382,8 +382,8 @@ bool z80pio_device::pio_port::interrupt_signalled()
 	if (m_mode == MODE_BIT_CONTROL)
 	{
 		// fetch input data (ignore output lines)
-		UINT8 data = (m_input & m_ior) | (m_output & ~m_ior);
-		UINT8 mask = ~m_mask;
+		uint8_t data = (m_input & m_ior) | (m_output & ~m_ior);
+		uint8_t mask = ~m_mask;
 		bool match = false;
 
 		data &= mask;
@@ -568,9 +568,9 @@ void z80pio_device::pio_port::strobe(bool state)
 //  read - port I/O read
 //-------------------------------------------------
 
-UINT8 z80pio_device::pio_port::read()
+uint8_t z80pio_device::pio_port::read()
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	switch (m_mode)
 	{
@@ -596,7 +596,7 @@ UINT8 z80pio_device::pio_port::read()
 //  write - port I/O write
 //-------------------------------------------------
 
-void z80pio_device::pio_port::write(UINT8 data)
+void z80pio_device::pio_port::write(uint8_t data)
 {
 	if (m_mode == MODE_BIT_CONTROL)
 	{
@@ -611,7 +611,7 @@ void z80pio_device::pio_port::write(UINT8 data)
 //  control_write - control register write
 //-------------------------------------------------
 
-void z80pio_device::pio_port::control_write(UINT8 data)
+void z80pio_device::pio_port::control_write(uint8_t data)
 {
 	switch (m_next_control_word)
 	{
@@ -709,9 +709,9 @@ void z80pio_device::pio_port::control_write(UINT8 data)
 //  data_read - data register read
 //-------------------------------------------------
 
-UINT8 z80pio_device::pio_port::data_read()
+uint8_t z80pio_device::pio_port::data_read()
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	switch (m_mode)
 	{
@@ -761,7 +761,7 @@ UINT8 z80pio_device::pio_port::data_read()
 //  data_write - data register write
 //-------------------------------------------------
 
-void z80pio_device::pio_port::data_write(UINT8 data)
+void z80pio_device::pio_port::data_write(uint8_t data)
 {
 	switch (m_mode)
 	{

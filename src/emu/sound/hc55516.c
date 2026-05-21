@@ -28,17 +28,17 @@ struct _hc55516_state
 	sound_stream *channel;
 	int		clock;		/* 0 = software driven, non-0 = oscillator */
 	int		active_clock_hi;
-	UINT8   shiftreg_mask;
+	uint8_t   shiftreg_mask;
 
-	UINT8	last_clock_state;
-	UINT8	digit;
-	UINT8	new_digit;
-	UINT8	shiftreg;
+	uint8_t	last_clock_state;
+	uint8_t	digit;
+	uint8_t	new_digit;
+	uint8_t	shiftreg;
 
-	INT16	curr_sample;
-	INT16	next_sample;
+	int16_t	curr_sample;
+	int16_t	next_sample;
 
-	UINT32	update_count;
+	uint32_t	update_count;
 
 	double	filter;
 	double	integrator;
@@ -62,7 +62,7 @@ INLINE hc55516_state *get_safe_token(running_device *device)
 }
 
 
-static void start_common(running_device *device, UINT8 _shiftreg_mask, int _active_clock_hi)
+static void start_common(running_device *device, uint8_t _shiftreg_mask, int _active_clock_hi)
 {
 	hc55516_state *chip = get_safe_token(device);
 
@@ -133,7 +133,7 @@ INLINE int is_active_clock_transition(hc55516_state *chip, int clock_state)
 
 INLINE int current_clock_state(hc55516_state *chip)
 {
-	return ((UINT64)chip->update_count * chip->clock * 2 / SAMPLE_RATE) & 0x01;
+	return ((uint64_t)chip->update_count * chip->clock * 2 / SAMPLE_RATE) & 0x01;
 }
 
 
@@ -189,7 +189,7 @@ static STREAM_UPDATE( hc55516_update )
 	hc55516_state *chip = (hc55516_state *)param;
 	stream_sample_t *buffer = outputs[0];
 	int i;
-	INT32 sample, slope;
+	int32_t sample, slope;
 
 	/* zero-length? bail */
 	if (samples == 0)
@@ -208,7 +208,7 @@ static STREAM_UPDATE( hc55516_update )
 
 	/* compute the interpolation slope */
 	sample = chip->curr_sample;
-	slope = ((INT32)chip->next_sample - sample) / samples;
+	slope = ((int32_t)chip->next_sample - sample) / samples;
 	chip->curr_sample = chip->next_sample;
 
 	if (is_external_osciallator(chip))
@@ -216,7 +216,7 @@ static STREAM_UPDATE( hc55516_update )
 		/* external oscillator */
 		for (i = 0; i < samples; i++, sample += slope)
 		{
-			UINT8 clock_state;
+			uint8_t clock_state;
 
 			*buffer++ = sample;
 
@@ -246,7 +246,7 @@ static STREAM_UPDATE( hc55516_update )
 void hc55516_clock_w(running_device *device, int state)
 {
 	hc55516_state *chip = get_safe_token(device);
-	UINT8 clock_state = state ? TRUE : FALSE;
+	uint8_t clock_state = state ? TRUE : FALSE;
 
 	/* only makes sense for setups with a software driven clock */
 	assert(!is_external_osciallator(chip));

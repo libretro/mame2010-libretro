@@ -13,13 +13,13 @@
 typedef struct _pcm_channel pcm_channel;
 struct _pcm_channel
 {
-	UINT8		enable;
-	UINT8		env;
-	UINT8		pan;
-	UINT8		start;
-	UINT32		addr;
-	UINT16		step;
-	UINT16		loopst;
+	uint8_t		enable;
+	uint8_t		env;
+	uint8_t		pan;
+	uint8_t		start;
+	uint32_t		addr;
+	uint16_t		step;
+	uint16_t		loopst;
 };
 
 
@@ -28,10 +28,10 @@ struct _rf5c68_state
 {
 	sound_stream *		stream;
 	pcm_channel			chan[NUM_CHANNELS];
-	UINT8				cbank;
-	UINT8				wbank;
-	UINT8				enable;
-	UINT8				data[0x10000];
+	uint8_t				cbank;
+	uint8_t				wbank;
+	uint8_t				enable;
+	uint8_t				data[0x10000];
 	void				(*sample_callback)(running_device* device,int channel);
 	running_device* device;
 };

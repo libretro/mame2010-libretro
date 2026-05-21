@@ -16,7 +16,7 @@
 #define ICLIP16(x) (x<-32768)?-32768:((x>32767)?32767:x)
 
 #define SHIFT	12
-#define FIX(v)	((UINT32) ((float) (1<<SHIFT)*(v)))
+#define FIX(v)	((uint32_t) ((float) (1<<SHIFT)*(v)))
 
 #define EG_SHIFT	16
 
@@ -80,7 +80,7 @@ static const double DRTimes[64]={100000/*infinity*/,100000/*infinity*/,118200.0,
 					14800.0,12700.0,11100.0,8900.0,7400.0,6300.0,5500.0,4400.0,3700.0,3200.0,2800.0,2200.0,1800.0,1600.0,1400.0,1100.0,
 					920.0,790.0,690.0,550.0,460.0,390.0,340.0,270.0,230.0,200.0,170.0,140.0,110.0,98.0,85.0,68.0,57.0,49.0,43.0,34.0,
 					28.0,25.0,22.0,18.0,14.0,12.0,11.0,8.5,7.1,6.1,5.4,4.3,3.6,3.1};
-static INT32 EG_TABLE[0x400];
+static int32_t EG_TABLE[0x400];
 
 typedef enum {ATTACK,DECAY1,DECAY2,RELEASE} _STATE;
 struct _EG
@@ -95,23 +95,23 @@ struct _EG
 	int RR;		//Release
 
 	int DL;		//Decay level
-	UINT8 LPLINK;
+	uint8_t LPLINK;
 };
 
 struct _SLOT
 {
 	union
 	{
-		UINT16 data[0x40];	//only 0x1a bytes used
-		UINT8 datab[0x80];
+		uint16_t data[0x40];	//only 0x1a bytes used
+		uint8_t datab[0x80];
 	} udata;
-	UINT8 active;	//this slot is currently playing
-	UINT8 *base;		//samples base address
-	UINT32 prv_addr;    // previous play address (for ADPCM)
-	UINT32 cur_addr;	//current play address (24.8)
-	UINT32 nxt_addr;	//next play address
-	UINT32 step;		//pitch step (24.8)
-	UINT8 Backwards;	//the wave is playing backwards
+	uint8_t active;	//this slot is currently playing
+	uint8_t *base;		//samples base address
+	uint32_t prv_addr;    // previous play address (for ADPCM)
+	uint32_t cur_addr;	//current play address (24.8)
+	uint32_t nxt_addr;	//next play address
+	uint32_t step;		//pitch step (24.8)
+	uint8_t Backwards;	//the wave is playing backwards
 	struct _EG EG;			//Envelope
 	struct _LFO PLFO;		//Phase LFO
 	struct _LFO ALFO;		//Amplitude LFO
@@ -120,8 +120,8 @@ struct _SLOT
 	int cur_quant;        //current ADPCM step
 	int curstep;
 	int cur_lpquant, cur_lpsample, cur_lpstep;
-	UINT8 *adbase, *adlpbase;
-	UINT8 lpend;
+	uint8_t *adbase, *adlpbase;
+	uint8_t lpend;
 };
 
 
@@ -157,29 +157,29 @@ struct _AICA
 {
 	union
 	{
-		UINT16 data[0xc0/2];
-		UINT8 datab[0xc0];
+		uint16_t data[0xc0/2];
+		uint8_t datab[0xc0];
 	} udata;
-	UINT16 IRQL, IRQR;
-	UINT16 EFSPAN[0x48];
+	uint16_t IRQL, IRQR;
+	uint16_t EFSPAN[0x48];
 	struct _SLOT Slots[64];
 	signed short RINGBUF[64];
 	unsigned char BUFPTR;
 	unsigned char *AICARAM;
-	UINT32 AICARAM_LENGTH, RAM_MASK, RAM_MASK16;
+	uint32_t AICARAM_LENGTH, RAM_MASK, RAM_MASK16;
 	char Master;
 	void (*IntARMCB)(running_device *device, int irq);
 	sound_stream * stream;
 
-	INT32 *buffertmpl, *buffertmpr;
+	int32_t *buffertmpl, *buffertmpr;
 
-	UINT32 IrqTimA;
-	UINT32 IrqTimBC;
-	UINT32 IrqMidi;
+	uint32_t IrqTimA;
+	uint32_t IrqTimBC;
+	uint32_t IrqMidi;
 
-	UINT8 MidiOutW,MidiOutR;
-	UINT8 MidiStack[16];
-	UINT8 MidiW,MidiR;
+	uint8_t MidiOutW,MidiOutR;
+	uint8_t MidiStack[16];
+	uint8_t MidiW,MidiR;
 
 	int LPANTABLE[0x20000];
 	int RPANTABLE[0x20000];
@@ -191,9 +191,9 @@ struct _AICA
 	emu_timer *timerA, *timerB, *timerC;
 
 	// DMA stuff
-	UINT32 aica_dmea;
-	UINT16 aica_drga;
-	UINT16 aica_dtlg;
+	uint32_t aica_dmea;
+	uint16_t aica_drga;
+	uint16_t aica_dtlg;
 
 	int ARTABLE[64], DRTABLE[64];
 
@@ -233,7 +233,7 @@ static unsigned char DecodeSCI(aica_state *AICA, unsigned char irq)
 static void ResetInterrupts(aica_state *AICA)
 {
 #if 0
-	UINT32 reset = AICA->udata.data[0xa4/2];
+	uint32_t reset = AICA->udata.data[0xa4/2];
 
 	if (reset & 0x40)
 		AICA->IntARMCB(AICA->device, -AICA->IrqTimA);
@@ -244,8 +244,8 @@ static void ResetInterrupts(aica_state *AICA)
 
 static void CheckPendingIRQ(aica_state *AICA)
 {
-	UINT32 pend=AICA->udata.data[0xa0/2];
-	UINT32 en=AICA->udata.data[0x9c/2];
+	uint32_t pend=AICA->udata.data[0xa0/2];
+	uint32_t en=AICA->udata.data[0x9c/2];
 
 	if(AICA->MidiW!=AICA->MidiR)
 	{
@@ -405,10 +405,10 @@ static int EG_Update(struct _SLOT *slot)
 	return (slot->EG.volume>>EG_SHIFT)<<(SHIFT-10);
 }
 
-static UINT32 AICA_Step(struct _SLOT *slot)
+static uint32_t AICA_Step(struct _SLOT *slot)
 {
 	int octave=(OCT(slot)^8)-8+SHIFT-10;
-	UINT32 Fn=FNS(slot) + (0x400);
+	uint32_t Fn=FNS(slot) + (0x400);
 	if (octave >= 0)
 		Fn<<=octave;
 	else
@@ -440,7 +440,7 @@ static void InitADPCM(int *PrevSignal, int *PrevQuant)
 INLINE signed short DecodeADPCM(int *PrevSignal, unsigned char Delta, int *PrevQuant)
 {
 	int x = *PrevQuant * quant_mul [Delta & 15];
-        x = *PrevSignal + ((int)(x + ((UINT32)x >> 29)) >> 3);
+        x = *PrevSignal + ((int)(x + ((uint32_t)x >> 29)) >> 3);
 	*PrevSignal=ICLIP16(x);
 	*PrevQuant=(*PrevQuant*TableQuant[Delta&7])>>ADPCMSHIFT;
 	*PrevQuant=(*PrevQuant<0x7f)?0x7f:((*PrevQuant>0x6000)?0x6000:*PrevQuant);
@@ -449,7 +449,7 @@ INLINE signed short DecodeADPCM(int *PrevSignal, unsigned char Delta, int *PrevQ
 
 static void AICA_StartSlot(aica_state *AICA, struct _SLOT *slot)
 {
-	UINT64 start_offset;
+	uint64_t start_offset;
 
 	slot->active=1;
 	slot->Backwards=0;
@@ -513,7 +513,7 @@ static void AICA_Init(running_device *device, aica_state *AICA, const aica_inter
 			AICA->AICARAM_LENGTH = device->region()->bytes();
 			AICA->RAM_MASK = AICA->AICARAM_LENGTH-1;
 			AICA->RAM_MASK16 = AICA->RAM_MASK & 0x7ffffe;
-			AICA->DSP.AICARAM = (UINT16 *)AICA->AICARAM;
+			AICA->DSP.AICARAM = (uint16_t *)AICA->AICARAM;
 			AICA->DSP.AICARAM_LENGTH = AICA->AICARAM_LENGTH/2;
 		}
 	}
@@ -526,7 +526,7 @@ static void AICA_Init(running_device *device, aica_state *AICA, const aica_inter
 	{
 		float envDB=((float)(3*(i-0x3ff)))/32.0;
 		float scale=(float)(1<<SHIFT);
-		EG_TABLE[i]=(INT32)(pow(10.0,envDB/20.0)*scale);
+		EG_TABLE[i]=(int32_t)(pow(10.0,envDB/20.0)*scale);
 	}
 
 	for(i=0;i<0x20000;++i)
@@ -713,7 +713,7 @@ static void AICA_UpdateReg(aica_state *AICA, int reg)
 		case 0x91:
 			if(AICA->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				AICA->TimPris[0]=1<<((AICA->udata.data[0x90/2]>>8)&0x7);
 				AICA->TimCnt[0]=(AICA->udata.data[0x90/2]&0xff)<<8;
@@ -732,7 +732,7 @@ static void AICA_UpdateReg(aica_state *AICA, int reg)
 		case 0x95:
 			if(AICA->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				AICA->TimPris[1]=1<<((AICA->udata.data[0x94/2]>>8)&0x7);
 				AICA->TimCnt[1]=(AICA->udata.data[0x94/2]&0xff)<<8;
@@ -751,7 +751,7 @@ static void AICA_UpdateReg(aica_state *AICA, int reg)
 		case 0x99:
 			if(AICA->Master)
 			{
-				UINT32 time;
+				uint32_t time;
 
 				AICA->TimPris[2]=1<<((AICA->udata.data[0x98/2]>>8)&0x7);
 				AICA->TimCnt[2]=(AICA->udata.data[0x98/2]&0xff)<<8;
@@ -838,8 +838,8 @@ static void AICA_UpdateRegR(aica_state *AICA, int reg)
 				if (!(AFSEL(AICA)))
 				{
 					struct _SLOT *slot=AICA->Slots + MSLC;
-					UINT16 LP;
-					UINT16 SGC;
+					uint16_t LP;
+					uint16_t SGC;
 					int EG;
 
 					LP = slot->lpend ? 0x8000 : 0x0000;
@@ -1008,13 +1008,13 @@ static void AICA_TimersAddTicks(aica_state *AICA, int ticks)
 }
 #endif
 
-INLINE INT32 AICA_UpdateSlot(aica_state *AICA, struct _SLOT *slot)
+INLINE int32_t AICA_UpdateSlot(aica_state *AICA, struct _SLOT *slot)
 {
-	INT32 sample;
+	int32_t sample;
 	int step=slot->step;
-	UINT32 addr1,addr2,addr_select;                                   // current and next sample addresses
-	UINT32 *addr[2]      = {&addr1, &addr2};                          // used for linear interpolation
-	UINT32 *slot_addr[2] = {&(slot->cur_addr), &(slot->nxt_addr)};    //
+	uint32_t addr1,addr2,addr_select;                                   // current and next sample addresses
+	uint32_t *addr[2]      = {&addr1, &addr2};                          // used for linear interpolation
+	uint32_t *slot_addr[2] = {&(slot->cur_addr), &(slot->nxt_addr)};    //
 
 	if(SSCTL(slot)!=0)	//no FM or noise yet
 		return 0;
@@ -1043,30 +1043,30 @@ INLINE INT32 AICA_UpdateSlot(aica_state *AICA, struct _SLOT *slot)
 
 	if(PCMS(slot) == 1)	// 8-bit signed
 	{
-		INT8 *p1=(signed char *) (AICA->AICARAM+(((SA(slot)+addr1))&AICA->RAM_MASK));
-		INT8 *p2=(signed char *) (AICA->AICARAM+(((SA(slot)+addr2))&AICA->RAM_MASK));
-		INT32 s;
-		INT32 fpart=slot->cur_addr&((1<<SHIFT)-1);
+		int8_t *p1=(signed char *) (AICA->AICARAM+(((SA(slot)+addr1))&AICA->RAM_MASK));
+		int8_t *p2=(signed char *) (AICA->AICARAM+(((SA(slot)+addr2))&AICA->RAM_MASK));
+		int32_t s;
+		int32_t fpart=slot->cur_addr&((1<<SHIFT)-1);
 		s=(int) (p1[0]<<8)*((1<<SHIFT)-fpart)+(int) (p2[0]<<8)*fpart;
 		sample=(s>>SHIFT);
 	}
 	else if (PCMS(slot) == 0)	//16 bit signed
 	{
-		UINT8 *p1=(UINT8 *) (AICA->AICARAM+((SA(slot)+addr1)&AICA->RAM_MASK));
-		UINT8 *p2=(UINT8 *) (AICA->AICARAM+((SA(slot)+addr2)&AICA->RAM_MASK));
-		INT32 s;
-		INT32 fpart=slot->cur_addr&((1<<SHIFT)-1);
-		s=(int) ((INT16)(p1[0] | (p1[1]<<8)))*((1<<SHIFT)-fpart)+(int) ((INT16)(p2[0] | (p2[1]<<8)))*fpart;
+		uint8_t *p1=(uint8_t *) (AICA->AICARAM+((SA(slot)+addr1)&AICA->RAM_MASK));
+		uint8_t *p2=(uint8_t *) (AICA->AICARAM+((SA(slot)+addr2)&AICA->RAM_MASK));
+		int32_t s;
+		int32_t fpart=slot->cur_addr&((1<<SHIFT)-1);
+		s=(int) ((int16_t)(p1[0] | (p1[1]<<8)))*((1<<SHIFT)-fpart)+(int) ((int16_t)(p2[0] | (p2[1]<<8)))*fpart;
 		sample=(s>>SHIFT);
 	}
 	else	// 4-bit ADPCM
 	{
-		UINT8 *base= slot->adbase;
-		INT32 s;
+		uint8_t *base= slot->adbase;
+		int32_t s;
 		int cur_sample;       //current ADPCM sample
 		int nxt_sample;       //next ADPCM sample
-		INT32 fpart=slot->cur_addr&((1<<SHIFT)-1);
-		UINT32 steps_to_go = addr2, curstep = slot->curstep;
+		int32_t fpart=slot->cur_addr&((1<<SHIFT)-1);
+		uint32_t steps_to_go = addr2, curstep = slot->curstep;
 
 		if (slot->adbase)
 		{
@@ -1118,7 +1118,7 @@ INLINE INT32 AICA_UpdateSlot(aica_state *AICA, struct _SLOT *slot)
 
 	for (addr_select=0; addr_select<2; addr_select++)
 	{
-		INT32 rem_addr;
+		int32_t rem_addr;
 		switch(LPCTL(slot))
 		{
 		case 0:	//no loop
@@ -1176,7 +1176,7 @@ static void AICA_DoMasterSamples(aica_state *AICA, int nsamples)
 
 	for(s=0;s<nsamples;++s)
 	{
-		INT32 smpl, smpr;
+		int32_t smpl, smpr;
 
 		smpl = smpr = 0;
 
@@ -1272,7 +1272,7 @@ void aica_set_ram_base(running_device *device, void *base, int size)
 		AICA->AICARAM_LENGTH = size;
 		AICA->RAM_MASK = AICA->AICARAM_LENGTH-1;
 		AICA->RAM_MASK16 = AICA->RAM_MASK & 0x7ffffe;
-		AICA->DSP.AICARAM = (UINT16 *)base;
+		AICA->DSP.AICARAM = (uint16_t *)base;
 		AICA->DSP.AICARAM_LENGTH = size;
 	}
 }
@@ -1286,7 +1286,7 @@ READ16_DEVICE_HANDLER( aica_r )
 WRITE16_DEVICE_HANDLER( aica_w )
 {
 	aica_state *AICA = get_safe_token(device);
-	UINT16 tmp;
+	uint16_t tmp;
 
 	tmp = AICA_r16(AICA, offset*2);
 	COMBINE_DATA(&tmp);

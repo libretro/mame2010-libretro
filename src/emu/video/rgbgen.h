@@ -18,10 +18,10 @@
 ***************************************************************************/
 
 /* intermediate RGB values are stored in a struct */
-typedef struct { INT16 dummy, r, g, b; } rgbint;
+typedef struct { int16_t dummy, r, g, b; } rgbint;
 
 /* intermediate RGB values are stored in a struct */
-typedef struct { INT16 a, r, g, b; } rgbaint;
+typedef struct { int16_t a, r, g, b; } rgbaint;
 
 
 
@@ -34,7 +34,7 @@ typedef struct { INT16 a, r, g, b; } rgbaint;
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
+INLINE void rgb_comp_to_rgbint(rgbint *rgb, int16_t r, int16_t g, int16_t b)
 {
 	rgb->r = r;
 	rgb->g = g;
@@ -47,7 +47,7 @@ INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, INT16 a, INT16 r, INT16 g, INT16 b)
+INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, int16_t a, int16_t r, int16_t g, int16_t b)
 {
 	rgb->a = a;
 	rgb->r = r;
@@ -113,9 +113,9 @@ INLINE rgb_t rgbaint_to_rgba(const rgbaint *color)
 
 INLINE rgb_t rgbint_to_rgb_clamp(const rgbint *color)
 {
-	UINT8 r = (color->r < 0) ? 0 : (color->r > 255) ? 255 : color->r;
-	UINT8 g = (color->g < 0) ? 0 : (color->g > 255) ? 255 : color->g;
-	UINT8 b = (color->b < 0) ? 0 : (color->b > 255) ? 255 : color->b;
+	uint8_t r = (color->r < 0) ? 0 : (color->r > 255) ? 255 : color->r;
+	uint8_t g = (color->g < 0) ? 0 : (color->g > 255) ? 255 : color->g;
+	uint8_t b = (color->b < 0) ? 0 : (color->b > 255) ? 255 : color->b;
 	return MAKE_RGB(r, g, b);
 }
 
@@ -128,10 +128,10 @@ INLINE rgb_t rgbint_to_rgb_clamp(const rgbint *color)
 
 INLINE rgb_t rgbaint_to_rgba_clamp(const rgbaint *color)
 {
-	UINT8 a = (color->a < 0) ? 0 : (color->a > 255) ? 255 : color->a;
-	UINT8 r = (color->r < 0) ? 0 : (color->r > 255) ? 255 : color->r;
-	UINT8 g = (color->g < 0) ? 0 : (color->g > 255) ? 255 : color->g;
-	UINT8 b = (color->b < 0) ? 0 : (color->b > 255) ? 255 : color->b;
+	uint8_t a = (color->a < 0) ? 0 : (color->a > 255) ? 255 : color->a;
+	uint8_t r = (color->r < 0) ? 0 : (color->r > 255) ? 255 : color->r;
+	uint8_t g = (color->g < 0) ? 0 : (color->g > 255) ? 255 : color->g;
+	uint8_t b = (color->b < 0) ? 0 : (color->b > 255) ? 255 : color->b;
 	return MAKE_ARGB(a, r, g, b);
 }
 
@@ -223,7 +223,7 @@ INLINE void rgbaint_subr(rgbaint *color1, const rgbaint *color2)
     rgbint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbint_shl(rgbint *color, UINT8 shift)
+INLINE void rgbint_shl(rgbint *color, uint8_t shift)
 {
 	color->r <<= shift;
 	color->g <<= shift;
@@ -236,7 +236,7 @@ INLINE void rgbint_shl(rgbint *color, UINT8 shift)
     rgbaint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbaint_shl(rgbaint *color, UINT8 shift)
+INLINE void rgbaint_shl(rgbaint *color, uint8_t shift)
 {
 	color->r <<= shift;
 	color->g <<= shift;
@@ -250,7 +250,7 @@ INLINE void rgbaint_shl(rgbaint *color, UINT8 shift)
     rgbint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbint_shr(rgbint *color, UINT8 shift)
+INLINE void rgbint_shr(rgbint *color, uint8_t shift)
 {
 	color->r >>= shift;
 	color->g >>= shift;
@@ -263,7 +263,7 @@ INLINE void rgbint_shr(rgbint *color, UINT8 shift)
     rgbaint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbaint_shr(rgbaint *color, UINT8 shift)
+INLINE void rgbaint_shr(rgbaint *color, uint8_t shift)
 {
 	color->r >>= shift;
 	color->g >>= shift;
@@ -282,7 +282,7 @@ INLINE void rgbaint_shr(rgbaint *color, UINT8 shift)
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale)
+INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, uint8_t color1scale)
 {
 	int scale1 = (int)color1scale + 1;
 	int scale2 = 256 - scale1;
@@ -298,7 +298,7 @@ INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1scale)
+INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, uint8_t color1scale)
 {
 	int scale1 = (int)color1scale + 1;
 	int scale2 = 256 - scale1;
@@ -316,14 +316,14 @@ INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1sc
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
+INLINE void rgbint_scale_and_clamp(rgbint *color, int16_t colorscale)
 {
 	color->r = (color->r * colorscale) >> 8;
-	if ((UINT16)color->r > 255) { color->r = (color->r < 0) ? 0 : 255; }
+	if ((uint16_t)color->r > 255) { color->r = (color->r < 0) ? 0 : 255; }
 	color->g = (color->g * colorscale) >> 8;
-	if ((UINT16)color->g > 255) { color->g = (color->g < 0) ? 0 : 255; }
+	if ((uint16_t)color->g > 255) { color->g = (color->g < 0) ? 0 : 255; }
 	color->b = (color->b * colorscale) >> 8;
-	if ((UINT16)color->b > 255) { color->b = (color->b < 0) ? 0 : 255; }
+	if ((uint16_t)color->b > 255) { color->b = (color->b < 0) ? 0 : 255; }
 }
 
 
@@ -333,16 +333,16 @@ INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
+INLINE void rgbaint_scale_and_clamp(rgbaint *color, int16_t colorscale)
 {
 	color->a = (color->a * colorscale) >> 8;
-	if ((UINT16)color->a > 255) { color->a = (color->a < 0) ? 0 : 255; }
+	if ((uint16_t)color->a > 255) { color->a = (color->a < 0) ? 0 : 255; }
 	color->r = (color->r * colorscale) >> 8;
-	if ((UINT16)color->r > 255) { color->r = (color->r < 0) ? 0 : 255; }
+	if ((uint16_t)color->r > 255) { color->r = (color->r < 0) ? 0 : 255; }
 	color->g = (color->g * colorscale) >> 8;
-	if ((UINT16)color->g > 255) { color->g = (color->g < 0) ? 0 : 255; }
+	if ((uint16_t)color->g > 255) { color->g = (color->g < 0) ? 0 : 255; }
 	color->b = (color->b * colorscale) >> 8;
-	if ((UINT16)color->b > 255) { color->b = (color->b < 0) ? 0 : 255; }
+	if ((uint16_t)color->b > 255) { color->b = (color->b < 0) ? 0 : 255; }
 }
 
 
@@ -352,9 +352,9 @@ INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
     code provided by Michael Herf
 -------------------------------------------------*/
 
-INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
-	UINT32 ag0, ag1, rb0, rb1;
+	uint32_t ag0, ag1, rb0, rb1;
 
 	rb0 = (rgb00 & 0x00ff00ff) + ((((rgb01 & 0x00ff00ff) - (rgb00 & 0x00ff00ff)) * u) >> 8);
 	rb1 = (rgb10 & 0x00ff00ff) + ((((rgb11 & 0x00ff00ff) - (rgb10 & 0x00ff00ff)) * u) >> 8);
@@ -374,9 +374,9 @@ INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rg
     code provided by Michael Herf
 -------------------------------------------------*/
 
-INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
-	UINT32 ag0, ag1, rb0, rb1;
+	uint32_t ag0, ag1, rb0, rb1;
 
 	rb0 = (rgb00 & 0x00ff00ff) + ((((rgb01 & 0x00ff00ff) - (rgb00 & 0x00ff00ff)) * u) >> 8);
 	rb1 = (rgb10 & 0x00ff00ff) + ((((rgb11 & 0x00ff00ff) - (rgb10 & 0x00ff00ff)) * u) >> 8);
@@ -400,9 +400,9 @@ INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t r
     code provided by Michael Herf
 -------------------------------------------------*/
 
-INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
-	UINT32 ag0, ag1, rb0, rb1;
+	uint32_t ag0, ag1, rb0, rb1;
 
 	rb0 = (rgb00 & 0x00ff00ff) + ((((rgb01 & 0x00ff00ff) - (rgb00 & 0x00ff00ff)) * u) >> 8);
 	rb1 = (rgb10 & 0x00ff00ff) + ((((rgb11 & 0x00ff00ff) - (rgb10 & 0x00ff00ff)) * u) >> 8);
@@ -424,9 +424,9 @@ INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_
     code provided by Michael Herf
 -------------------------------------------------*/
 
-INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
-	UINT32 ag0, ag1, rb0, rb1;
+	uint32_t ag0, ag1, rb0, rb1;
 
 	rb0 = (rgb00 & 0x00ff00ff) + ((((rgb01 & 0x00ff00ff) - (rgb00 & 0x00ff00ff)) * u) >> 8);
 	rb1 = (rgb10 & 0x00ff00ff) + ((((rgb11 & 0x00ff00ff) - (rgb10 & 0x00ff00ff)) * u) >> 8);

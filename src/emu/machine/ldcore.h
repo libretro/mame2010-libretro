@@ -110,9 +110,9 @@ typedef struct _ldcore_data ldcore_data;
 typedef struct _ldplayer_state ldplayer_state;
 struct _ldplayer_state
 {
-	UINT8					state;					/* current state */
-	INT32					substate;				/* internal sub-state; starts at 0 on any state change */
-	INT32					param;					/* parameter for current state */
+	uint8_t					state;					/* current state */
+	int32_t					substate;				/* internal sub-state; starts at 0 on any state change */
+	int32_t					param;					/* parameter for current state */
 	attotime				endtime;				/* minimum ending time for current state */
 };
 
@@ -134,10 +134,10 @@ struct _laserdisc_state
 /* player-specific callbacks */
 typedef void (*laserdisc_init_func)(laserdisc_state *ld);
 typedef void (*laserdisc_vsync_func)(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-typedef INT32 (*laserdisc_update_func)(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
+typedef int32_t (*laserdisc_update_func)(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
 typedef void (*laserdisc_overlay_func)(laserdisc_state *ld, bitmap_t *bitmap);
-typedef void (*laserdisc_w_func)(laserdisc_state *ld, UINT8 prev, UINT8 newval);
-typedef UINT8 (*laserdisc_r_func)(laserdisc_state *ld);
+typedef void (*laserdisc_w_func)(laserdisc_state *ld, uint8_t prev, uint8_t newval);
+typedef uint8_t (*laserdisc_r_func)(laserdisc_state *ld);
 
 
 /* player configuration */
@@ -187,16 +187,16 @@ extern const ldplayer_interface vp932_interface;
 laserdisc_state *ldcore_get_safe_token(running_device *device);
 
 /* set the left/right audio squelch states */
-void ldcore_set_audio_squelch(laserdisc_state *ld, UINT8 squelchleft, UINT8 squelchright);
+void ldcore_set_audio_squelch(laserdisc_state *ld, uint8_t squelchleft, uint8_t squelchright);
 
 /* set the video squelch state */
-void ldcore_set_video_squelch(laserdisc_state *ld, UINT8 squelch);
+void ldcore_set_video_squelch(laserdisc_state *ld, uint8_t squelch);
 
 /* dynamically change the slider speed */
-void ldcore_set_slider_speed(laserdisc_state *ld, INT32 tracks_per_vsync);
+void ldcore_set_slider_speed(laserdisc_state *ld, int32_t tracks_per_vsync);
 
 /* advance the slider by a certain number of tracks */
-void ldcore_advance_slider(laserdisc_state *ld, INT32 numtracks);
+void ldcore_advance_slider(laserdisc_state *ld, int32_t numtracks);
 
 /* get the current slider position */
 slider_position ldcore_get_slider_position(laserdisc_state *ld);
@@ -206,7 +206,7 @@ slider_position ldcore_get_slider_position(laserdisc_state *ld);
 /* ----- generic implementations ----- */
 
 /* generically update in a way that works for most situations */
-INT32 ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime, ldplayer_state *curstate);
+int32_t ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime, ldplayer_state *curstate);
 
 
 

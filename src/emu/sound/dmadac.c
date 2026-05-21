@@ -45,13 +45,13 @@ struct _dmadac_state
 {
 	/* sound stream and buffers */
 	sound_stream *	channel;
-	INT16 *			buffer;
-	UINT32			bufin;
-	UINT32			bufout;
+	int16_t *			buffer;
+	uint32_t			bufin;
+	uint32_t			bufout;
 
 	/* per-channel parameters */
-	INT16			volume;
-	UINT8			enabled;
+	int16_t			volume;
+	uint8_t			enabled;
 	double			frequency;
 };
 
@@ -74,9 +74,9 @@ static STREAM_UPDATE( dmadac_update )
 {
 	dmadac_state *ch = (dmadac_state *)param;
 	stream_sample_t *output = outputs[0];
-	INT16 *source = ch->buffer;
-	UINT32 curout = ch->bufout;
-	UINT32 curin = ch->bufin;
+	int16_t *source = ch->buffer;
+	uint32_t curout = ch->bufout;
+	uint32_t curin = ch->bufin;
 	int volume = ch->volume;
 
 	/* feed as much as we can */
@@ -107,7 +107,7 @@ static DEVICE_START( dmadac )
 	dmadac_state *info = get_safe_token(device);
 
 	/* allocate a clear a buffer */
-	info->buffer = auto_alloc_array_clear(device->machine, INT16, BUFFER_SIZE);
+	info->buffer = auto_alloc_array_clear(device->machine, int16_t, BUFFER_SIZE);
 
 	/* reset the state */
 	info->volume = 0x100;
@@ -132,7 +132,7 @@ static DEVICE_START( dmadac )
  *
  *************************************/
 
-void dmadac_transfer(dmadac_sound_device **devlist, UINT8 num_channels, offs_t channel_spacing, offs_t frame_spacing, offs_t total_frames, INT16 *data)
+void dmadac_transfer(dmadac_sound_device **devlist, uint8_t num_channels, offs_t channel_spacing, offs_t frame_spacing, offs_t total_frames, int16_t *data)
 {
 	int i, j;
 
@@ -150,7 +150,7 @@ void dmadac_transfer(dmadac_sound_device **devlist, UINT8 num_channels, offs_t c
 		if (ch->enabled)
 		{
 			int maxin = (ch->bufout + BUFFER_SIZE - 1) % BUFFER_SIZE;
-			INT16 *src = data + i * channel_spacing;
+			int16_t *src = data + i * channel_spacing;
 			int curin = ch->bufin;
 
 			/* copy the data */
@@ -179,7 +179,7 @@ void dmadac_transfer(dmadac_sound_device **devlist, UINT8 num_channels, offs_t c
  *
  *************************************/
 
-void dmadac_enable(dmadac_sound_device **devlist, UINT8 num_channels, UINT8 enable)
+void dmadac_enable(dmadac_sound_device **devlist, uint8_t num_channels, uint8_t enable)
 {
 	int i;
 
@@ -202,7 +202,7 @@ void dmadac_enable(dmadac_sound_device **devlist, UINT8 num_channels, UINT8 enab
  *
  *************************************/
 
-void dmadac_set_frequency(dmadac_sound_device **devlist, UINT8 num_channels, double frequency)
+void dmadac_set_frequency(dmadac_sound_device **devlist, uint8_t num_channels, double frequency)
 {
 	int i;
 
@@ -222,7 +222,7 @@ void dmadac_set_frequency(dmadac_sound_device **devlist, UINT8 num_channels, dou
  *
  *************************************/
 
-void dmadac_set_volume(dmadac_sound_device **devlist, UINT8 num_channels, UINT16 volume)
+void dmadac_set_volume(dmadac_sound_device **devlist, uint8_t num_channels, uint16_t volume)
 {
 	int i;
 

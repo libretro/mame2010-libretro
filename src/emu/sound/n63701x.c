@@ -34,7 +34,7 @@ struct _namco_63701x
 {
 	voice voices[2];
 	sound_stream * stream;		/* channel assigned by the mixer */
-	UINT8 *rom;		/* pointer to sample ROM */
+	uint8_t *rom;		/* pointer to sample ROM */
 };
 
 
@@ -67,7 +67,7 @@ static STREAM_UPDATE( namco_63701x_update )
 
 		if (v->playing)
 		{
-			UINT8 *base = chip->rom + v->base_addr;
+			uint8_t *base = chip->rom + v->base_addr;
 			int pos = v->position;
 			int vol = vol_table[v->volume];
 			int p;

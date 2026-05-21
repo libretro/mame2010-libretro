@@ -61,9 +61,9 @@ struct _i8255a_t
 	devcb_resolved_read8		in_port_func[3];
 	devcb_resolved_write8		out_port_func[3];
 
-	UINT8 control;				/* mode control word */
-	UINT8 output[3];			/* output latch */
-	UINT8 input[3];				/* input latch */
+	uint8_t control;				/* mode control word */
+	uint8_t output[3];			/* output latch */
+	uint8_t input[3];				/* input latch */
 
 	int ibf[2];					/* input buffer full flag */
 	int obf[2];					/* output buffer full flag, negative logic */
@@ -143,8 +143,8 @@ INLINE int port_c_upper_mode(i8255a_t *i8255a)
 
 static void output_pc(i8255a_t *i8255a)
 {
-	UINT8 data = 0;
-	UINT8 mask = 0;
+	uint8_t data = 0;
+	uint8_t mask = 0;
 
 	/* PC upper */
 	switch (group_mode(i8255a, GROUP_A))
@@ -310,9 +310,9 @@ static void set_intr(i8255a_t *i8255a, int port, int state)
 	output_pc(i8255a);
 }
 
-static UINT8 read_mode0(i8255a_t *i8255a, int port)
+static uint8_t read_mode0(i8255a_t *i8255a, int port)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	if (port_mode(i8255a, port) == MODE_OUTPUT)
 	{
@@ -328,9 +328,9 @@ static UINT8 read_mode0(i8255a_t *i8255a, int port)
 	return data;
 }
 
-static UINT8 read_mode1(i8255a_t *i8255a, int port)
+static uint8_t read_mode1(i8255a_t *i8255a, int port)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	if (port_mode(i8255a, port) == MODE_OUTPUT)
 	{
@@ -355,9 +355,9 @@ static UINT8 read_mode1(i8255a_t *i8255a, int port)
 	return data;
 }
 
-static UINT8 read_mode2(i8255a_t *i8255a)
+static uint8_t read_mode2(i8255a_t *i8255a)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	/* read data from input latch */
 	data = i8255a->input[PORT_A];
@@ -374,10 +374,10 @@ static UINT8 read_mode2(i8255a_t *i8255a)
 	return data;
 }
 
-static UINT8 read_pc(i8255a_t *i8255a)
+static uint8_t read_pc(i8255a_t *i8255a)
 {
-	UINT8 data = 0;
-	UINT8 mask = 0;
+	uint8_t data = 0;
+	uint8_t mask = 0;
 
 	/* PC upper */
 	switch (group_mode(i8255a, GROUP_A))
@@ -464,7 +464,7 @@ READ8_DEVICE_HANDLER( i8255a_r )
 {
 	i8255a_t *i8255a = get_safe_token(device);
 
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	switch (offset & 0x03)
 	{
@@ -501,7 +501,7 @@ READ8_DEVICE_HANDLER( i8255a_r )
 	return data;
 }
 
-static void write_mode0(i8255a_t *i8255a, int port, UINT8 data)
+static void write_mode0(i8255a_t *i8255a, int port, uint8_t data)
 {
 	if (port_mode(i8255a, port) == MODE_OUTPUT)
 	{
@@ -513,7 +513,7 @@ static void write_mode0(i8255a_t *i8255a, int port, UINT8 data)
 	}
 }
 
-static void write_mode1(i8255a_t *i8255a, int port, UINT8 data)
+static void write_mode1(i8255a_t *i8255a, int port, uint8_t data)
 {
 	if (port_mode(i8255a, port) == MODE_OUTPUT)
 	{
@@ -531,7 +531,7 @@ static void write_mode1(i8255a_t *i8255a, int port, UINT8 data)
 	}
 }
 
-static void write_mode2(i8255a_t *i8255a, UINT8 data)
+static void write_mode2(i8255a_t *i8255a, uint8_t data)
 {
 	/* latch output data */
 	i8255a->output[PORT_A] = data;
@@ -546,7 +546,7 @@ static void write_mode2(i8255a_t *i8255a, UINT8 data)
 	set_intr(i8255a, PORT_A, 0);
 }
 
-static void write_pc(i8255a_t *i8255a, UINT8 data)
+static void write_pc(i8255a_t *i8255a, uint8_t data)
 {
 	int changed = 0;
 
@@ -573,7 +573,7 @@ static void write_pc(i8255a_t *i8255a, UINT8 data)
 	}
 }
 
-static void set_mode(running_device *device, UINT8 data)
+static void set_mode(running_device *device, uint8_t data)
 {
 	i8255a_t *i8255a = get_safe_token(device);
 
@@ -746,7 +746,7 @@ READ8_DEVICE_HANDLER( i8255a_pa_r )
 {
 	i8255a_t *i8255a = get_safe_token(device);
 
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	if (port_mode(i8255a, PORT_A) == MODE_OUTPUT)
 	{
@@ -760,7 +760,7 @@ READ8_DEVICE_HANDLER( i8255a_pb_r )
 {
 	i8255a_t *i8255a = get_safe_token(device);
 
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	if (port_mode(i8255a, PORT_B) == MODE_OUTPUT)
 	{

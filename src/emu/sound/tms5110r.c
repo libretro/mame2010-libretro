@@ -60,8 +60,8 @@ struct tms5100_coeffs
 	unsigned short	energytable[MAX_SCALE];
 	unsigned short	pitchtable[MAX_SCALE];
 	int				ktable[MAX_K][MAX_SCALE];
-	INT16			chirptable[MAX_CHIRP_SIZE];
-	INT8			interp_coeff[8];
+	int16_t			chirptable[MAX_CHIRP_SIZE];
+	int8_t			interp_coeff[8];
 };
 
  /* The following TMS5100/TMC0280/CD2801 coefficients come from US Patent 4,209,836 and several others, and have been verified using derivative analysis to show which values were bad (due to poor quality images or badly typed copies of the tables in the patents, depending on which patent you look at) which were then corrected by figuring out what the tiny remaining marks on the photocopied version of the coefficient sheet COULD have been which would make the derivatives play nice.

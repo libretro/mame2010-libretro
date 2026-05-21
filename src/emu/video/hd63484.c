@@ -31,17 +31,17 @@
 typedef struct _hd63484_state hd63484_state;
 struct _hd63484_state
 {
-	UINT16 *   ram;
-	UINT16 reg[256/2];
+	uint16_t *   ram;
+	uint16_t reg[256/2];
 
 	int          fifo_counter;
-	UINT16       fifo[FIFO_LENGTH];
-	UINT16       readfifo;
+	uint16_t       fifo[FIFO_LENGTH];
+	uint16_t       readfifo;
 
-	UINT16       pattern[16];
+	uint16_t       pattern[16];
 	int          org, org_dpd, rwp;
-	UINT16       cl0, cl1, ccmp, edg, mask, ppy, pzcy, ppx, pzcx, psy, psx, pey, pzy, pex, pzx, xmin, ymin, xmax, ymax, rwp_dn;
-	INT16        cpx, cpy;
+	uint16_t       cl0, cl1, ccmp, edg, mask, ppy, pzcy, ppx, pzcx, psy, psx, pey, pzy, pex, pzx, xmin, ymin, xmax, ymax, rwp_dn;
+	int16_t        cpx, cpy;
 
 	int          regno;
 
@@ -113,10 +113,10 @@ static const char *const instruction_name[64] =
 	"RGCPY","RGCPY","RGCPY","RGCPY" 	/* Fx */
 };
 
-static void doclr16( running_device *device, int opcode, UINT16 fill, int *dst, INT16 _ax, INT16 _ay )
+static void doclr16( running_device *device, int opcode, uint16_t fill, int *dst, int16_t _ax, int16_t _ay )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
-	INT16 ax,ay;
+	int16_t ax,ay;
 
 	ax = _ax;
 	ay = _ay;
@@ -172,7 +172,7 @@ static void doclr16( running_device *device, int opcode, UINT16 fill, int *dst, 
 	}
 }
 
-static void docpy16( running_device *device, int opcode, int src, int *dst, INT16 _ax, INT16 _ay )
+static void docpy16( running_device *device, int opcode, int src, int *dst, int16_t _ax, int16_t _ay )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int dstep1,dstep2;
@@ -325,11 +325,11 @@ static int org_first_pixel( running_device *device, int _org_dpd )
 	}
 }
 
-static void dot( running_device *device, int x, int y, int opm, UINT16 color )
+static void dot( running_device *device, int x, int y, int opm, uint16_t color )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int dst, x_int, x_mod, bpp;
-	UINT16 color_shifted, bitmask, bitmask_shifted;
+	uint16_t color_shifted, bitmask, bitmask_shifted;
 
 	x += org_first_pixel(device, hd63484->org_dpd);
 
@@ -424,7 +424,7 @@ static int get_pixel( running_device *device, int x, int y )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int dst, x_int, x_mod, bpp;
-	UINT16 bitmask, bitmask_shifted;
+	uint16_t bitmask, bitmask_shifted;
 
 	switch ((hd63484->reg[0x02/2] & 0x700) >> 8)
 	{
@@ -480,7 +480,7 @@ static int get_pixel_ptn( running_device *device, int x, int y )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int dst, x_int, x_mod, bpp;
-	UINT16 bitmask, bitmask_shifted;
+	uint16_t bitmask, bitmask_shifted;
 
 	bpp = 1;
 	bitmask = 0x0001;
@@ -510,7 +510,7 @@ static int get_pixel_ptn( running_device *device, int x, int y )
 		return 0;
 }
 
-static void agcpy( running_device *device, int opcode, int src_x, int src_y, int dst_x, int dst_y, INT16 _ax, INT16 _ay )
+static void agcpy( running_device *device, int opcode, int src_x, int src_y, int dst_x, int dst_y, int16_t _ax, int16_t _ay )
 {
 	int dst_step1_x,dst_step1_y,dst_step2_x,dst_step2_y;
 	int src_step1_x,src_step1_y,src_step2_x,src_step2_y;
@@ -670,7 +670,7 @@ static void agcpy( running_device *device, int opcode, int src_x, int src_y, int
 	}
 }
 
-static void ptn( running_device *device, int opcode, int src_x, int src_y, INT16 _ax, INT16 _ay )
+static void ptn( running_device *device, int opcode, int src_x, int src_y, int16_t _ax, int16_t _ay )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int dst_step1_x = 0,dst_step1_y = 0,dst_step2_x = 0,dst_step2_y = 0;
@@ -837,10 +837,10 @@ static void ptn( running_device *device, int opcode, int src_x, int src_y, INT16
 	}
 }
 
-static void line( running_device *device, INT16 sx, INT16 sy, INT16 ex, INT16 ey, INT16 col )
+static void line( running_device *device, int16_t sx, int16_t sy, int16_t ex, int16_t ey, int16_t col )
 {
 	hd63484_state *hd63484 = get_safe_token(device);
-	INT16 ax,ay;
+	int16_t ax,ay;
 
 	int cpx_t = sx;
 	int cpy_t = sy;
@@ -889,7 +889,7 @@ static void line( running_device *device, INT16 sx, INT16 sy, INT16 ex, INT16 ey
 
 }
 
-static void circle( running_device *device, INT16 sx, INT16 sy, UINT16 r, INT16 col )
+static void circle( running_device *device, int16_t sx, int16_t sy, uint16_t r, int16_t col )
 {
 	const float DEG2RAD = 3.14159f/180;
 	hd63484_state *hd63484 = get_safe_token(device);
@@ -1013,7 +1013,7 @@ static void paint( running_device *device, int sx, int sy, int col )
 		}
 }
 
-static void hd63484_command_w(running_device *device, UINT16 cmd)
+static void hd63484_command_w(running_device *device, uint16_t cmd)
 {
 	hd63484_state *hd63484 = get_safe_token(device);
 	int len;
@@ -1230,39 +1230,39 @@ static void hd63484_command_w(running_device *device, UINT16 cmd)
 		}
 		else if (hd63484->fifo[0] == 0x8400)	/* RMOVE */
 		{
-			hd63484->cpx += (INT16)hd63484->fifo[1];
-			hd63484->cpy += (INT16)hd63484->fifo[2];
+			hd63484->cpx += (int16_t)hd63484->fifo[1];
+			hd63484->cpy += (int16_t)hd63484->fifo[2];
 		}
 		else if ((hd63484->fifo[0] & 0xff00) == 0x8800)	/* ALINE */
 		{
 			line(device, hd63484->cpx, hd63484->cpy, hd63484->fifo[1], hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			hd63484->cpx = (INT16)hd63484->fifo[1];
-			hd63484->cpy = (INT16)hd63484->fifo[2];
+			hd63484->cpx = (int16_t)hd63484->fifo[1];
+			hd63484->cpy = (int16_t)hd63484->fifo[2];
 		}
 		else if ((hd63484->fifo[0] & 0xff00) == 0x8c00)	/* RLINE */
 		{
-			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy + (INT16)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			hd63484->cpx += (INT16)hd63484->fifo[1];
-			hd63484->cpy += (INT16)hd63484->fifo[2];
+			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy + (int16_t)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
+			hd63484->cpx += (int16_t)hd63484->fifo[1];
+			hd63484->cpy += (int16_t)hd63484->fifo[2];
 		}
 		else if ((hd63484->fifo[0] & 0xfff8) == 0x9000)	/* ARCT */
 		{
-			line(device, hd63484->cpx, hd63484->cpy, (INT16)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
-			line(device, (INT16)hd63484->fifo[1], hd63484->cpy, (INT16)hd63484->fifo[1], (INT16)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			line(device, (INT16)hd63484->fifo[1], (INT16)hd63484->fifo[2], hd63484->cpx, (INT16)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			line(device, hd63484->cpx, (INT16)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[0] & 0xff);
-			hd63484->cpx = (INT16)hd63484->fifo[1];
-			hd63484->cpy = (INT16)hd63484->fifo[2];
+			line(device, hd63484->cpx, hd63484->cpy, (int16_t)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
+			line(device, (int16_t)hd63484->fifo[1], hd63484->cpy, (int16_t)hd63484->fifo[1], (int16_t)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
+			line(device, (int16_t)hd63484->fifo[1], (int16_t)hd63484->fifo[2], hd63484->cpx, (int16_t)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx, (int16_t)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[0] & 0xff);
+			hd63484->cpx = (int16_t)hd63484->fifo[1];
+			hd63484->cpy = (int16_t)hd63484->fifo[2];
 		}
 		else if ((hd63484->fifo[0] & 0xfff8) == 0x9400)	/* RRCT  added*/
 		{
-			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
-			line(device, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy + (INT16)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			line(device, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy + (INT16)hd63484->fifo[2], hd63484->cpx, hd63484->cpy + (INT16)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
-			line(device, hd63484->cpx, hd63484->cpy + (INT16)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy + (int16_t)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy + (int16_t)hd63484->fifo[2], hd63484->cpx, hd63484->cpy + (int16_t)hd63484->fifo[2], hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx, hd63484->cpy + (int16_t)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[0] & 0xff);
 
-			hd63484->cpx += (INT16)hd63484->fifo[1];
-			hd63484->cpy += (INT16)hd63484->fifo[2];
+			hd63484->cpx += (int16_t)hd63484->fifo[1];
+			hd63484->cpy += (int16_t)hd63484->fifo[2];
 		}
 		else if ((hd63484->fifo[0] & 0xfff8) == 0xa400)	/* RPLG  added*/
 		{
@@ -1271,8 +1271,8 @@ static void hd63484_command_w(running_device *device, UINT16 cmd)
 			sy = hd63484->cpy;
 			for (nseg = 0; nseg < hd63484->fifo[1]; nseg++)
 			{
-				ex = sx + (INT16)hd63484->fifo[2 + nseg * 2];
-				ey = sy + (INT16)hd63484->fifo[2 + nseg * 2 + 1];
+				ex = sx + (int16_t)hd63484->fifo[2 + nseg * 2];
+				ey = sy + (int16_t)hd63484->fifo[2 + nseg * 2 + 1];
 				line(device, sx, sy, ex, ey, hd63484->fifo[0] & 7);
 				sx = ex;
 				sy = ey;
@@ -1285,8 +1285,8 @@ static void hd63484_command_w(running_device *device, UINT16 cmd)
 		}
 		else if ((hd63484->fifo[0] & 0xfff8) == 0xc000)	/* AFRCT */
 		{
-			INT16 pcx, pcy;
-			INT16 ax, ay, xx, yy;
+			int16_t pcx, pcy;
+			int16_t ax, ay, xx, yy;
 
 
 			pcx = hd63484->fifo[1];
@@ -1334,13 +1334,13 @@ static void hd63484_command_w(running_device *device, UINT16 cmd)
 		}
 		else if ((hd63484->fifo[0] & 0xfff8) == 0xc400)	/* RFRCT  added TODO*/
 		{
-			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (INT16)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
+			line(device, hd63484->cpx, hd63484->cpy, hd63484->cpx + (int16_t)hd63484->fifo[1], hd63484->cpy, hd63484->fifo[0] & 0xff);
 			line(device, hd63484->cpx + hd63484->fifo[1], hd63484->cpy, hd63484->cpx + hd63484->fifo[1], hd63484->cpy + hd63484->fifo[2], hd63484->fifo[0] & 0xff);
 			line(device, hd63484->cpx + hd63484->fifo[1], hd63484->cpy + hd63484->fifo[2], hd63484->cpx, hd63484->cpy + hd63484->fifo[2], hd63484->fifo[0] & 0xff);
 			line(device, hd63484->cpx, hd63484->cpy + hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[0] & 0xff);
 
-			hd63484->cpx = hd63484->cpx + (INT16)hd63484->fifo[1];
-			hd63484->cpy = hd63484->cpy + (INT16)hd63484->fifo[2];
+			hd63484->cpx = hd63484->cpx + (int16_t)hd63484->fifo[1];
+			hd63484->cpy = hd63484->cpy + (int16_t)hd63484->fifo[2];
 		}
 		else if (hd63484->fifo[0] == 0xc800)	/* PAINT */
 		{
@@ -1401,7 +1401,7 @@ static void hd63484_command_w(running_device *device, UINT16 cmd)
 		}
 		else if ((hd63484->fifo[0] & 0xf018) == 0xe000)	/* agcpy */
 		{
-			agcpy(device, hd63484->fifo[0], (INT16)hd63484->fifo[1], (INT16)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[3], hd63484->fifo[4]);
+			agcpy(device, hd63484->fifo[0], (int16_t)hd63484->fifo[1], (int16_t)hd63484->fifo[2], hd63484->cpx, hd63484->cpy, hd63484->fifo[3], hd63484->fifo[4]);
 
 			switch (hd63484->fifo[0] & 0x0700)
 			{
@@ -1562,7 +1562,7 @@ static DEVICE_START( hd63484 )
 	const hd63484_interface *intf = get_interface(device);
 
 	hd63484->skattva_hack = intf->skattva_hack;
-	hd63484->ram = auto_alloc_array_clear(device->machine, UINT16, HD63484_RAM_SIZE);
+	hd63484->ram = auto_alloc_array_clear(device->machine, uint16_t, HD63484_RAM_SIZE);
 
 //  state_save_register_device_item(device, 0, hd63484->clear_bitmap);
 //  state_save_register_device_item_pointer(device, 0, hd63484->spriteram, 0x1000);

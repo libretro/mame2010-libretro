@@ -38,7 +38,7 @@ typedef __m128i rgbaint;
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
+INLINE void rgb_comp_to_rgbint(rgbint *rgb, int16_t r, int16_t g, int16_t b)
 {
 	*rgb = _mm_set_epi16(0, 0, 0, 0, 0, r, g, b);
 }
@@ -49,7 +49,7 @@ INLINE void rgb_comp_to_rgbint(rgbint *rgb, INT16 r, INT16 g, INT16 b)
     components to an rgbint type
 -------------------------------------------------*/
 
-INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, INT16 a, INT16 r, INT16 g, INT16 b)
+INLINE void rgba_comp_to_rgbaint(rgbaint *rgb, int16_t a, int16_t r, int16_t g, int16_t b)
 {
 	*rgb = _mm_set_epi16(0, 0, 0, 0, a, r, g, b);
 }
@@ -199,7 +199,7 @@ INLINE void rgbaint_subr(rgbaint *color1, const rgbaint *color2)
     rgbint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbint_shl(rgbint *color, UINT8 shift)
+INLINE void rgbint_shl(rgbint *color, uint8_t shift)
 {
 	*color = _mm_slli_epi16(*color, shift);
 }
@@ -210,7 +210,7 @@ INLINE void rgbint_shl(rgbint *color, UINT8 shift)
     rgbaint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbaint_shl(rgbaint *color, UINT8 shift)
+INLINE void rgbaint_shl(rgbaint *color, uint8_t shift)
 {
 	*color = _mm_slli_epi16(*color, shift);
 }
@@ -221,7 +221,7 @@ INLINE void rgbaint_shl(rgbaint *color, UINT8 shift)
     rgbint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbint_shr(rgbint *color, UINT8 shift)
+INLINE void rgbint_shr(rgbint *color, uint8_t shift)
 {
 	*color = _mm_srli_epi16(*color, shift);
 }
@@ -232,7 +232,7 @@ INLINE void rgbint_shr(rgbint *color, UINT8 shift)
     rgbaint struct by the given number of bits
 -------------------------------------------------*/
 
-INLINE void rgbaint_shr(rgbaint *color, UINT8 shift)
+INLINE void rgbaint_shr(rgbaint *color, uint8_t shift)
 {
 	*color = _mm_srli_epi16(*color, shift);
 }
@@ -246,9 +246,9 @@ INLINE void rgbaint_shr(rgbaint *color, UINT8 shift)
 extern const struct _rgbsse_statics
 {
 	__m128	dummy_for_alignment;
-	INT16	zero[8];
-	INT16	maxbyte[8];
-	INT16	scale_table[256][8];
+	int16_t	zero[8];
+	int16_t	maxbyte[8];
+	int16_t	scale_table[256][8];
 } rgbsse_statics;
 
 
@@ -262,7 +262,7 @@ extern const struct _rgbsse_statics
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale)
+INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, uint8_t color1scale)
 {
 	*color1 = _mm_unpacklo_epi16(*color1, *color2);
 	*color1 = _mm_madd_epi16(*color1, *(__m128i *)&rgbsse_statics.scale_table[color1scale][0]);
@@ -276,7 +276,7 @@ INLINE void rgbint_blend(rgbint *color1, const rgbint *color2, UINT8 color1scale
     scale factor
 -------------------------------------------------*/
 
-INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1scale)
+INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, uint8_t color1scale)
 {
 	rgbint_blend(color1, color2, color1scale);
 }
@@ -288,7 +288,7 @@ INLINE void rgbaint_blend(rgbaint *color1, const rgbaint *color2, UINT8 color1sc
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
+INLINE void rgbint_scale_and_clamp(rgbint *color, int16_t colorscale)
 {
 	__m128i mscale = _mm_set1_epi16(colorscale);
 	*color = _mm_unpacklo_epi16(*color, _mm_setzero_si128());
@@ -305,7 +305,7 @@ INLINE void rgbint_scale_and_clamp(rgbint *color, INT16 colorscale)
     byte values
 -------------------------------------------------*/
 
-INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
+INLINE void rgbaint_scale_and_clamp(rgbaint *color, int16_t colorscale)
 {
 	rgbint_scale_and_clamp(color, colorscale);
 }
@@ -316,7 +316,7 @@ INLINE void rgbaint_scale_and_clamp(rgbaint *color, INT16 colorscale)
     four pixel values
 -------------------------------------------------*/
 
-INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	__m128i color00 = _mm_cvtsi32_si128(rgb00);
 	__m128i color01 = _mm_cvtsi32_si128(rgb01);
@@ -346,7 +346,7 @@ INLINE rgb_t rgb_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rg
     four pixel values
 -------------------------------------------------*/
 
-INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	return rgb_bilinear_filter(rgb00, rgb01, rgb10, rgb11, u, v);
 }
@@ -357,7 +357,7 @@ INLINE rgb_t rgba_bilinear_filter(rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t r
     four pixel values
 -------------------------------------------------*/
 
-INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	__m128i color00 = _mm_cvtsi32_si128(rgb00);
 	__m128i color01 = _mm_cvtsi32_si128(rgb01);
@@ -385,7 +385,7 @@ INLINE void rgbint_bilinear_filter(rgbint *color, rgb_t rgb00, rgb_t rgb01, rgb_
     four pixel values
 -------------------------------------------------*/
 
-INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, UINT8 u, UINT8 v)
+INLINE void rgbaint_bilinear_filter(rgbaint *color, rgb_t rgb00, rgb_t rgb01, rgb_t rgb10, rgb_t rgb11, uint8_t u, uint8_t v)
 {
 	rgbint_bilinear_filter(color, rgb00, rgb01, rgb10, rgb11, u, v);
 }

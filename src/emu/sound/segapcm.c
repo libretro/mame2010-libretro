@@ -9,9 +9,9 @@
 typedef struct _segapcm_state segapcm_state;
 struct _segapcm_state
 {
-	UINT8  *ram;
-	UINT8 low[16];
-	const UINT8 *rom;
+	uint8_t  *ram;
+	uint8_t low[16];
+	const uint8_t *rom;
 	int bankshift;
 	int bankmask;
 	int rgnmask;
@@ -41,21 +41,21 @@ static STREAM_UPDATE( SEGAPCM_update )
 		/* only process active channels */
 		if (!(spcm->ram[0x86+8*ch] & 1))
 		{
-			UINT8 *base = spcm->ram+8*ch;
-			UINT8 flags = base[0x86];
-			const UINT8 *rom = spcm->rom + ((flags & spcm->bankmask) << spcm->bankshift);
-			UINT32 addr = (base[5] << 16) | (base[4] << 8) | spcm->low[ch];
-			UINT16 loop = (base[0x85] << 8) | base[0x84];
-			UINT8 end = base[6] + 1;
-			UINT8 delta = base[7];
-			UINT8 voll = base[2];
-			UINT8 volr = base[3];
+			uint8_t *base = spcm->ram+8*ch;
+			uint8_t flags = base[0x86];
+			const uint8_t *rom = spcm->rom + ((flags & spcm->bankmask) << spcm->bankshift);
+			uint32_t addr = (base[5] << 16) | (base[4] << 8) | spcm->low[ch];
+			uint16_t loop = (base[0x85] << 8) | base[0x84];
+			uint8_t end = base[6] + 1;
+			uint8_t delta = base[7];
+			uint8_t voll = base[2];
+			uint8_t volr = base[3];
 			int i;
 
 			/* loop over samples on this channel */
 			for (i = 0; i < samples; i++)
 			{
-				INT8 v = 0;
+				int8_t v = 0;
 
 				/* handle looping if we've hit the end */
 				if ((addr >> 16) == end)
@@ -93,11 +93,11 @@ static DEVICE_START( segapcm )
 	segapcm_state *spcm = get_safe_token(device);
 
 	spcm->rom = *device->region();
-	spcm->ram = auto_alloc_array(device->machine, UINT8, 0x800);
+	spcm->ram = auto_alloc_array(device->machine, uint8_t, 0x800);
 
 	memset(spcm->ram, 0xff, 0x800);
 
-	spcm->bankshift = (UINT8)(intf->bank);
+	spcm->bankshift = (uint8_t)(intf->bank);
 	mask = intf->bank >> 16;
 	if(!mask)
 		mask = BANK_MASK7>>16;

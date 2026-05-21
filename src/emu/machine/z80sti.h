@@ -99,11 +99,11 @@ class z80sti_device_config :	public device_config,
 	friend class z80sti_device;
 
 	// construction/destruction
-	z80sti_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	z80sti_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 protected:
@@ -125,8 +125,8 @@ class z80sti_device :	public device_t,
 
 public:
 	// I/O accessors
-	UINT8 read(offs_t offset);
-	void write(offs_t offset, UINT8 data);
+	uint8_t read(offs_t offset);
+	void write(offs_t offset, uint8_t data);
 
 	// communication I/O
 	void serial_receive();
@@ -166,31 +166,31 @@ private:
 	devcb_resolved_write_line			m_out_int_func;
 
 	// I/O state
-	UINT8 m_gpip;						// general purpose I/O register
-	UINT8 m_aer;						// active edge register
-	UINT8 m_ddr;						// data direction register
+	uint8_t m_gpip;						// general purpose I/O register
+	uint8_t m_aer;						// active edge register
+	uint8_t m_ddr;						// data direction register
 
 	// interrupt state
-	UINT16 m_ier;						// interrupt enable register
-	UINT16 m_ipr;						// interrupt pending register
-	UINT16 m_isr;						// interrupt in-service register
-	UINT16 m_imr;						// interrupt mask register
-	UINT8 m_pvr;						// interrupt vector register
+	uint16_t m_ier;						// interrupt enable register
+	uint16_t m_ipr;						// interrupt pending register
+	uint16_t m_isr;						// interrupt in-service register
+	uint16_t m_imr;						// interrupt mask register
+	uint8_t m_pvr;						// interrupt vector register
 	int m_int_state[16];				// interrupt state
 
 	// timer state
-	UINT8 m_tabc;						// timer A/B control register
-	UINT8 m_tcdc;						// timer C/D control register
-	UINT8 m_tdr[4];						// timer data registers
-	UINT8 m_tmc[4];						// timer main counters
+	uint8_t m_tabc;						// timer A/B control register
+	uint8_t m_tcdc;						// timer C/D control register
+	uint8_t m_tdr[4];						// timer data registers
+	uint8_t m_tmc[4];						// timer main counters
 	int m_to[4];						// timer out latch
 
 	// serial state
-	UINT8 m_scr;						// synchronous character register
-	UINT8 m_ucr;						// USART control register
-	UINT8 m_tsr;						// transmitter status register
-	UINT8 m_rsr;						// receiver status register
-	UINT8 m_udr;						// USART data register
+	uint8_t m_scr;						// synchronous character register
+	uint8_t m_ucr;						// USART control register
+	uint8_t m_tsr;						// transmitter status register
+	uint8_t m_rsr;						// receiver status register
+	uint8_t m_udr;						// USART data register
 
 	// timers
 	emu_timer *m_timer[4];				// counter timers

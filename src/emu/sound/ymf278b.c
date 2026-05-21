@@ -66,65 +66,65 @@
 
 typedef struct
 {
-	INT16 wave;		/* wavetable number */
-	INT16 FN;		/* f-number */
-	INT8 OCT;		/* octave */
-	INT8 PRVB;		/* pseudo-reverb */
-	INT8 LD;		/* level direct */
-	INT8 TL;		/* total level */
-	INT8 pan;		/* panpot */
-	INT8 lfo;		/* LFO */
-	INT8 vib;		/* vibrato */
-	INT8 AM;		/* AM level */
+	int16_t wave;		/* wavetable number */
+	int16_t FN;		/* f-number */
+	int8_t OCT;		/* octave */
+	int8_t PRVB;		/* pseudo-reverb */
+	int8_t LD;		/* level direct */
+	int8_t TL;		/* total level */
+	int8_t pan;		/* panpot */
+	int8_t lfo;		/* LFO */
+	int8_t vib;		/* vibrato */
+	int8_t AM;		/* AM level */
 
-	INT8 AR;
-	INT8 D1R;
-	INT8 DL;
-	INT8 D2R;
-	INT8 RC;		/* rate correction */
-	INT8 RR;
+	int8_t AR;
+	int8_t D1R;
+	int8_t DL;
+	int8_t D2R;
+	int8_t RC;		/* rate correction */
+	int8_t RR;
 
-	UINT32 step;	/* fixed-point frequency step */
-	UINT32 stepptr;	/* fixed-point pointer into the sample */
+	uint32_t step;	/* fixed-point frequency step */
+	uint32_t stepptr;	/* fixed-point pointer into the sample */
 
-	INT8 active;		/* slot keyed on */
-	INT8 bits;		/* width of the samples */
-	UINT32 startaddr;
-	UINT32 loopaddr;
-	UINT32 endaddr;
+	int8_t active;		/* slot keyed on */
+	int8_t bits;		/* width of the samples */
+	uint32_t startaddr;
+	uint32_t loopaddr;
+	uint32_t endaddr;
 
 	int env_step;
-	UINT32 env_vol;
-	UINT32 env_vol_step;
-	UINT32 env_vol_lim;
+	uint32_t env_vol;
+	uint32_t env_vol_step;
+	uint32_t env_vol_lim;
 } YMF278BSlot;
 
 typedef struct
 {
 	YMF278BSlot slots[24];
-	INT8 lsitest0;
-	INT8 lsitest1;
-	INT8 wavetblhdr;
-	INT8 memmode;
-	INT32 memadr;
+	int8_t lsitest0;
+	int8_t lsitest1;
+	int8_t wavetblhdr;
+	int8_t memmode;
+	int32_t memadr;
 
-	INT32 fm_l, fm_r;
-	INT32 pcm_l, pcm_r;
+	int32_t fm_l, fm_r;
+	int32_t pcm_l, pcm_r;
 
-	UINT8 timer_a_count, timer_b_count, enable, current_irq;
+	uint8_t timer_a_count, timer_b_count, enable, current_irq;
 	emu_timer *timer_a, *timer_b;
 	int irq_line;
 
-	UINT8 port_A, port_B, port_C;
+	uint8_t port_A, port_B, port_C;
 	void (*irq_callback)(running_device *, int);
 	running_device *device;
 
-	const UINT8 *rom;
+	const uint8_t *rom;
 	int clock;
 
-	INT32 volume[256*4];			// precalculated attenuation values with some marging for enveloppe and pan levels
+	int32_t volume[256*4];			// precalculated attenuation values with some marging for enveloppe and pan levels
 	int pan_left[16], pan_right[16];	// pan volume offsets
-	INT32 mix_level[8];
+	int32_t mix_level[8];
 
 	sound_stream * stream;
 } YMF278BChip;
@@ -136,7 +136,7 @@ INLINE YMF278BChip *get_safe_token(running_device *device)
 	return (YMF278BChip *)downcast<legacy_device_base *>(device)->token();
 }
 
-static INT32 *mix;
+static int32_t *mix;
 
 static int ymf278b_compute_rate(YMF278BSlot *slot, int val)
 {
@@ -162,7 +162,7 @@ static int ymf278b_compute_rate(YMF278BSlot *slot, int val)
 	return res;
 }
 
-static UINT32 ymf278_compute_decay_rate(int num)
+static uint32_t ymf278_compute_decay_rate(int num)
 {
 	int samples;
 
@@ -265,10 +265,10 @@ static STREAM_UPDATE( ymf278b_pcm_update )
 	YMF278BChip *chip = (YMF278BChip *)param;
 	int i, j;
 	YMF278BSlot *slot = NULL;
-	INT16 sample = 0;
-	const UINT8 *rombase;
-	INT32 *mixp;
-	INT32 vl, vr;
+	int16_t sample = 0;
+	const uint8_t *rombase;
+	int32_t *mixp;
+	int32_t vl, vr;
 
 	memset(mix, 0, sizeof(mix[0])*samples*2);
 
@@ -326,7 +326,7 @@ static STREAM_UPDATE( ymf278b_pcm_update )
 
 				// update envelope
 				slot->env_vol += slot->env_vol_step;
-				if(((INT32)(slot->env_vol - slot->env_vol_lim)) >= 0)
+				if(((int32_t)(slot->env_vol - slot->env_vol_lim)) >= 0)
 					ymf278b_envelope_next(slot);
 			}
 		}
@@ -400,7 +400,7 @@ static void ymf278b_timer_b_reset(YMF278BChip *chip)
 		timer_adjust_oneshot(chip->timer_b, attotime_never, 0);
 }
 
-static void ymf278b_A_w(running_machine *machine, YMF278BChip *chip, UINT8 reg, UINT8 data)
+static void ymf278b_A_w(running_machine *machine, YMF278BChip *chip, uint8_t reg, uint8_t data)
 {
 	switch(reg)
 	{
@@ -417,7 +417,7 @@ static void ymf278b_A_w(running_machine *machine, YMF278BChip *chip, UINT8 reg, 
 				chip->current_irq = 0;
 			else
 			{
-				UINT8 old_enable = chip->enable;
+				uint8_t old_enable = chip->enable;
 				chip->enable = data;
 				chip->current_irq &= ~data;
 				if((old_enable ^ data) & 1)
@@ -432,12 +432,12 @@ static void ymf278b_A_w(running_machine *machine, YMF278BChip *chip, UINT8 reg, 
 	}
 }
 
-static void ymf278b_B_w(YMF278BChip *chip, UINT8 reg, UINT8 data)
+static void ymf278b_B_w(YMF278BChip *chip, uint8_t reg, uint8_t data)
 {
 	logerror("YMF278B:  Port B write %02x, %02x\n", reg, data);
 }
 
-static void ymf278b_C_w(YMF278BChip *chip, UINT8 reg, UINT8 data)
+static void ymf278b_C_w(YMF278BChip *chip, uint8_t reg, uint8_t data)
 {
 	// Handle slot registers specifically
 	if (reg >= 0x08 && reg <= 0xf7)
@@ -450,7 +450,7 @@ static void ymf278b_C_w(YMF278BChip *chip, UINT8 reg, UINT8 data)
 		{
 			case 0:
 			{
-				const UINT8 *p;
+				const uint8_t *p;
 
 				slot->wave &= 0x100;
 				slot->wave |= data;
@@ -673,7 +673,7 @@ static void ymf278b_init(running_device *device, YMF278BChip *chip, void (*cb)(r
 	chip->irq_line = CLEAR_LINE;
 	chip->clock = device->clock();
 
-	mix = auto_alloc_array(device->machine, INT32, 44100*2);
+	mix = auto_alloc_array(device->machine, int32_t, 44100*2);
 }
 
 static DEVICE_START( ymf278b )

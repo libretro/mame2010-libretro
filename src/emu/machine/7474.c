@@ -49,19 +49,19 @@ struct _ttl7474_state
 	devcb_resolved_write_line comp_output_cb;
 
 	/* inputs */
-	UINT8 clear;			/* pin 1/13 */
-	UINT8 preset;			/* pin 4/10 */
-	UINT8 clock;			/* pin 3/11 */
-	UINT8 d;				/* pin 2/12 */
+	uint8_t clear;			/* pin 1/13 */
+	uint8_t preset;			/* pin 4/10 */
+	uint8_t clock;			/* pin 3/11 */
+	uint8_t d;				/* pin 2/12 */
 
 	/* outputs */
-	UINT8 output;			/* pin 5/9 */
-	UINT8 output_comp;	/* pin 6/8 */
+	uint8_t output;			/* pin 5/9 */
+	uint8_t output_comp;	/* pin 6/8 */
 
 	/* internal */
-	UINT8 last_clock;
-	UINT8 last_output;
-	UINT8 last_output_comp;
+	uint8_t last_clock;
+	uint8_t last_output;
+	uint8_t last_output_comp;
 
 	running_device *device;
 };

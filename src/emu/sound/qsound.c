@@ -43,7 +43,7 @@ Debug defines
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
 
 /* 8 bit source ROM samples */
-typedef INT8 QSOUND_SRC_SAMPLE;
+typedef int8_t QSOUND_SRC_SAMPLE;
 
 
 #define QSOUND_CLOCKDIV 166			 /* Clock divider */
@@ -52,23 +52,23 @@ typedef stream_sample_t QSOUND_SAMPLE;
 
 struct QSOUND_CHANNEL
 {
-	INT32 bank;	   /* bank (x16)    */
-	INT32 address;	/* start address */
-	INT32 pitch;	  /* pitch */
-	INT32 reg3;	   /* unknown (always 0x8000) */
-	INT32 loop;	   /* loop address */
-	INT32 end;		/* end address */
-	INT32 vol;		/* master volume */
-	INT32 pan;		/* Pan value */
-	INT32 reg9;	   /* unknown */
+	int32_t bank;	   /* bank (x16)    */
+	int32_t address;	/* start address */
+	int32_t pitch;	  /* pitch */
+	int32_t reg3;	   /* unknown (always 0x8000) */
+	int32_t loop;	   /* loop address */
+	int32_t end;		/* end address */
+	int32_t vol;		/* master volume */
+	int32_t pan;		/* Pan value */
+	int32_t reg9;	   /* unknown */
 
 	/* Work variables */
-	INT32 key;		/* Key on / key off */
+	int32_t key;		/* Key on / key off */
 
-	INT32 lvol;	   /* left volume */
-	INT32 rvol;	   /* right volume */
-	INT32 lastdt;	 /* last sample value */
-	INT32 offset;	 /* current offset counter */
+	int32_t lvol;	   /* left volume */
+	int32_t rvol;	   /* right volume */
+	int32_t lastdt;	 /* last sample value */
+	int32_t offset;	 /* current offset counter */
 };
 
 typedef struct _qsound_state qsound_state;
@@ -79,7 +79,7 @@ struct _qsound_state
 	struct QSOUND_CHANNEL channel[QSOUND_CHANNELS];
 	int data;				  /* register latch data */
 	QSOUND_SRC_SAMPLE *sample_rom;	/* Q sound sample ROM */
-	UINT32 sample_rom_length;
+	uint32_t sample_rom_length;
 
 	int pan_table[33];		 /* Pan volume table */
 	float frq_ratio;		   /* Frequency ratio */

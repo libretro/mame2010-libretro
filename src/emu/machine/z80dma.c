@@ -141,7 +141,7 @@ const int TM_SEARCH_TRANSFER	= 0x03;
 //  z80dma_device_config - constructor
 //-------------------------------------------------
 
-z80dma_device_config::z80dma_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80dma_device_config::z80dma_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Z8410", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -153,7 +153,7 @@ z80dma_device_config::z80dma_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80dma_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80dma_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80dma_device_config(mconfig, tag, owner, clock));
 }
@@ -420,7 +420,7 @@ void z80dma_device::trigger_interrupt(int level)
 
 void z80dma_device::do_read()
 {
-	UINT8 mode;
+	uint8_t mode;
 
 	mode = TRANSFER_MODE;
 	switch(mode) {
@@ -464,7 +464,7 @@ void z80dma_device::do_read()
 int z80dma_device::do_write()
 {
 	int done;
-	UINT8 mode;
+	uint8_t mode;
 
 	mode = TRANSFER_MODE;
 	if (m_count == 0x0000)
@@ -499,7 +499,7 @@ int z80dma_device::do_write()
 
 		case TM_SEARCH:
 			{
-				UINT8 load_byte,match_byte;
+				uint8_t load_byte,match_byte;
 				load_byte = m_latch | MASK_BYTE;
 				match_byte = MATCH_BYTE | MASK_BYTE;
 				//if (LOG) logerror("%02x %02x\n",load_byte,match_byte));
@@ -585,7 +585,7 @@ void z80dma_device::timerproc()
 
 void z80dma_device::update_status()
 {
-	UINT16 pending_transfer;
+	uint16_t pending_transfer;
 	attotime next;
 
 	// no transfer is active right now; is there a transfer pending right now?
@@ -625,9 +625,9 @@ void z80dma_device::update_status()
 //  read - register read
 //-------------------------------------------------
 
-UINT8 z80dma_device::read()
+uint8_t z80dma_device::read()
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = m_read_regs_follow[m_read_cur_follow];
 	m_read_cur_follow++;
@@ -643,7 +643,7 @@ UINT8 z80dma_device::read()
 //  write - register write
 //-------------------------------------------------
 
-void z80dma_device::write(UINT8 data)
+void z80dma_device::write(uint8_t data)
 {
 	if (m_num_follow == 0)
 	{
@@ -733,7 +733,7 @@ void z80dma_device::write(UINT8 data)
 					m_force_ready = 0;
 					// Needs six reset commands to reset the DMA
 					{
-						UINT8 WRi;
+						uint8_t WRi;
 
 						for(WRi=0;WRi<7;WRi++)
 							REG(WRi,m_reset_pointer) = 0;

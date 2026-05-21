@@ -56,44 +56,44 @@ struct _via6522_t
 	devcb_resolved_write_line out_cb2_func;
 	devcb_resolved_write_line irq_func;
 
-	UINT8 in_a;
-	UINT8 in_ca1;
-	UINT8 in_ca2;
-	UINT8 out_a;
-	UINT8 out_ca2;
-	UINT8 ddr_a;
+	uint8_t in_a;
+	uint8_t in_ca1;
+	uint8_t in_ca2;
+	uint8_t out_a;
+	uint8_t out_ca2;
+	uint8_t ddr_a;
 
-	UINT8 in_b;
-	UINT8 in_cb1;
-	UINT8 in_cb2;
-	UINT8 out_b;
-	UINT8 out_cb2;
-	UINT8 ddr_b;
+	uint8_t in_b;
+	uint8_t in_cb1;
+	uint8_t in_cb2;
+	uint8_t out_b;
+	uint8_t out_cb2;
+	uint8_t ddr_b;
 
-	UINT8 t1cl;
-	UINT8 t1ch;
-	UINT8 t1ll;
-	UINT8 t1lh;
-	UINT8 t2cl;
-	UINT8 t2ch;
-	UINT8 t2ll;
-	UINT8 t2lh;
+	uint8_t t1cl;
+	uint8_t t1ch;
+	uint8_t t1ll;
+	uint8_t t1lh;
+	uint8_t t2cl;
+	uint8_t t2ch;
+	uint8_t t2ll;
+	uint8_t t2lh;
 
-	UINT8 sr;
-	UINT8 pcr;
-	UINT8 acr;
-	UINT8 ier;
-	UINT8 ifr;
+	uint8_t sr;
+	uint8_t pcr;
+	uint8_t acr;
+	uint8_t ier;
+	uint8_t ifr;
 
 	emu_timer *t1;
 	attotime time1;
-	UINT8 t1_active;
+	uint8_t t1_active;
 	emu_timer *t2;
 	attotime time2;
-	UINT8 t2_active;
+	uint8_t t2_active;
 
 	emu_timer *shift_timer;
-	UINT8 shift_counter;
+	uint8_t shift_counter;
 };
 
 
@@ -202,16 +202,16 @@ INLINE attotime v_cycles_to_time(running_device *device, int c)
 }
 
 
-INLINE UINT32 v_time_to_cycles(running_device *device, attotime t)
+INLINE uint32_t v_time_to_cycles(running_device *device, attotime t)
 {
 	return attotime_to_double(attotime_mul(t, device->clock()));
 }
 
 
-INLINE UINT16 v_get_counter1_value(running_device *device)
+INLINE uint16_t v_get_counter1_value(running_device *device)
 {
 	via6522_t *v = get_token(device);
-	UINT16 val;
+	uint16_t val;
 
 	if (v->t1_active) {
 		val = v_time_to_cycles(device, timer_timeleft(v->t1)) - IFR_DELAY;
@@ -439,7 +439,7 @@ static TIMER_CALLBACK( via_t1_timeout )
     }
 	if (v->ddr_b)
 	{
-		UINT8 write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
+		uint8_t write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
 		devcb_call_write8(&v->out_b_func, 0, write_data);
 	}
 
@@ -684,7 +684,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 		if (v->ddr_b)
 		{
-			UINT8 write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
+			uint8_t write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
 			devcb_call_write8(&v->out_b_func, 0, write_data);
 		}
 
@@ -710,7 +710,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 		if (v->ddr_a)
 		{
-			UINT8 write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
+			uint8_t write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
 			devcb_call_write8(&v->out_a_func, 0, write_data);
 		}
 
@@ -746,7 +746,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 		if (v->ddr_a)
 		{
-			UINT8 write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
+			uint8_t write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
 			devcb_call_write8(&v->out_a_func, 0, write_data);
 		}
 
@@ -760,7 +760,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 			//if (v->ddr_b)
 			{
-				UINT8 write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
+				uint8_t write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
 				devcb_call_write8(&v->out_b_func, 0, write_data);
 			}
 		}
@@ -774,7 +774,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 			//if (v->ddr_a)
 			{
-				UINT8 write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
+				uint8_t write_data = (v->out_a & v->ddr_a) | (v->ddr_a ^ 0xff);
 				devcb_call_write8(&v->out_a_func, 0, write_data);
 			}
 		}
@@ -802,7 +802,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 			//if (v->ddr_b)
 			{
-				UINT8 write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
+				uint8_t write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
 				devcb_call_write8(&v->out_b_func, 0, write_data);
 			}
 		}
@@ -862,7 +862,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
     case VIA_ACR:
 		{
-			UINT16 counter1 = v_get_counter1_value(device);
+			uint16_t counter1 = v_get_counter1_value(device);
 			v->acr = data;
 			if (T1_SET_PB7(v->acr))
 			{
@@ -873,7 +873,7 @@ WRITE8_DEVICE_HANDLER(via_w)
 
 				//if (v->ddr_b)
 				{
-					UINT8 write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
+					uint8_t write_data = (v->out_b & v->ddr_b) | (v->ddr_b ^ 0xff);
 					devcb_call_write8(&v->out_b_func, 0, write_data);
 				}
 			}

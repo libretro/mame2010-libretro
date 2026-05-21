@@ -36,10 +36,10 @@
 
 typedef struct
 {
-	UINT16 divisor;
-	UINT8 reg[8];
-	UINT8 rx_fifo[16];
-	UINT8 tx_fifo[16];
+	uint16_t divisor;
+	uint8_t reg[8];
+	uint8_t rx_fifo[16];
+	uint8_t tx_fifo[16];
 	int pending_interrupt;
 	int rx_fifo_read_ptr;
 	int rx_fifo_write_ptr;
@@ -55,7 +55,7 @@ typedef struct
 	PC16552D_CHANNEL ch[2];
 	int frequency;
 	void (* irq_handler)(running_machine *machine, int channel, int value);
-	void (* tx_callback)(int channel, int count, UINT8* data);
+	void (* tx_callback)(int channel, int count, uint8_t* data);
 } PC16552D_REGS;
 
 #define MAX_PC16552D_CHIPS		4
@@ -89,7 +89,7 @@ static void check_interrupts(running_machine *machine, int chip, int channel)
 	}
 }
 
-static void duart_push_rx_fifo(running_machine *machine, int chip, int channel, UINT8 data)
+static void duart_push_rx_fifo(running_machine *machine, int chip, int channel, uint8_t data)
 {
 	PC16552D_CHANNEL *ch = &duart[chip].ch[channel];
 
@@ -114,9 +114,9 @@ static void duart_push_rx_fifo(running_machine *machine, int chip, int channel, 
 	}
 }
 
-static UINT8 duart_pop_rx_fifo(running_machine *machine, int chip, int channel)
+static uint8_t duart_pop_rx_fifo(running_machine *machine, int chip, int channel)
 {
-	UINT8 r;
+	uint8_t r;
 	PC16552D_CHANNEL *ch = &duart[chip].ch[channel];
 
 	if (ch->rx_fifo_num == 0)
@@ -162,7 +162,7 @@ static TIMER_CALLBACK( tx_fifo_timer_callback )
 	timer_adjust_oneshot(duart[chip].ch[channel].tx_fifo_timer, attotime_never, (chip * 2) + channel);
 }
 
-static void duart_push_tx_fifo(int chip, int channel, UINT8 data)
+static void duart_push_tx_fifo(int chip, int channel, uint8_t data)
 {
 	attotime period;
 	PC16552D_CHANNEL *ch = &duart[chip].ch[channel];
@@ -176,14 +176,14 @@ static void duart_push_tx_fifo(int chip, int channel, UINT8 data)
 }
 
 #ifdef UNUSED_FUNCTION
-static UINT8 duart_pop_tx_fifo(int chip, int channel, UINT8 data)
+static uint8_t duart_pop_tx_fifo(int chip, int channel, uint8_t data)
 {
 	return 0;
 }
 #endif
 
 
-static UINT8 duart_r(running_machine *machine, int chip, int reg)
+static uint8_t duart_r(running_machine *machine, int chip, int reg)
 {
 	int channel = (reg >> 3) & 1;
 	PC16552D_CHANNEL *ch = &duart[chip].ch[channel];
@@ -234,7 +234,7 @@ static UINT8 duart_r(running_machine *machine, int chip, int reg)
 			{
 				// Interrupt Identification Register
 				int i;
-				UINT8 r = 0x01;
+				uint8_t r = 0x01;
 
 				for (i=0; i < 5; i++)
 				{
@@ -264,7 +264,7 @@ static UINT8 duart_r(running_machine *machine, int chip, int reg)
 
 		case 5:		// Line Status Register
 		{
-			UINT8 r = 0;
+			uint8_t r = 0;
 
 			// set Data Ready flag
 			if (ch->rx_fifo_num > 0)
@@ -291,7 +291,7 @@ static UINT8 duart_r(running_machine *machine, int chip, int reg)
 	return ch->reg[reg];
 }
 
-static void duart_w(running_machine *machine, int chip, int reg, UINT8 data)
+static void duart_w(running_machine *machine, int chip, int reg, uint8_t data)
 {
 	int channel = (reg >> 3) & 1;
 	PC16552D_CHANNEL *ch = &duart[chip].ch[channel];
@@ -387,7 +387,7 @@ static void duart_w(running_machine *machine, int chip, int reg, UINT8 data)
 
 /*****************************************************************************/
 
-void pc16552d_init(running_machine *machine, int chip, int frequency, void (* irq_handler)(running_machine *machine, int channel, int value), void (* tx_callback)(int channel, int count, UINT8* data))
+void pc16552d_init(running_machine *machine, int chip, int frequency, void (* irq_handler)(running_machine *machine, int channel, int value), void (* tx_callback)(int channel, int count, uint8_t* data))
 {
 	memset(&duart[chip], 0, sizeof(PC16552D_REGS));
 
@@ -407,7 +407,7 @@ void pc16552d_init(running_machine *machine, int chip, int frequency, void (* ir
 	timer_adjust_oneshot(duart[chip].ch[1].tx_fifo_timer, attotime_never, (chip * 2) + 1);
 }
 
-void pc16552d_rx_data(running_machine *machine, int chip, int channel, UINT8 data)
+void pc16552d_rx_data(running_machine *machine, int chip, int channel, uint8_t data)
 {
 	if (duart[chip].ch[channel].reg[REG_FIFO_CTRL] & 0x01)	// RCVR & XMIT FIFO enable
 	{

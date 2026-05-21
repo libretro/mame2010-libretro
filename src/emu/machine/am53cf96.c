@@ -12,7 +12,7 @@
 #include "emu.h"
 #include "am53cf96.h"
 
-static UINT8 scsi_regs[32], fifo[16], fptr = 0, xfer_state, last_id;
+static uint8_t scsi_regs[32], fifo[16], fptr = 0, xfer_state, last_id;
 static const struct AM53CF96interface *intf;
 
 static SCSIInstance *devices[8];	// SCSI IDs 0-7
@@ -242,7 +242,7 @@ void am53cf96_exit( const struct AM53CF96interface *interface )
 }
 
 // retrieve data from the SCSI controller
-void am53cf96_read_data(int bytes, UINT8 *pData)
+void am53cf96_read_data(int bytes, uint8_t *pData)
 {
 	scsi_regs[REG_STATUS] |= 0x10;	// indicate DMA finished
 
@@ -257,7 +257,7 @@ void am53cf96_read_data(int bytes, UINT8 *pData)
 }
 
 // write data to the SCSI controller
-void am53cf96_write_data(int bytes, UINT8 *pData)
+void am53cf96_write_data(int bytes, uint8_t *pData)
 {
 //  int i;
 

@@ -16,9 +16,9 @@ interrupts
 typedef struct _vr0_state vr0_state;
 struct _vr0_state
 {
-	UINT32 *TexBase;
-	UINT32 *FBBase;
-	UINT32 SOUNDREGS[0x10000/4];
+	uint32_t *TexBase;
+	uint32_t *FBBase;
+	uint32_t SOUNDREGS[0x10000/4];
 	vr0_interface Intf;
 	sound_stream * stream;
 };
@@ -94,7 +94,7 @@ static const unsigned short ULawTo16[]=
 #define LOOPEND(chan)   (GETSOUNDREG32(chan,0x10)&0x3fffff)
 #define ENVVOL(chan)    (GETSOUNDREG32(chan,0x04)&0xffffff)
 */
-void vr0_snd_set_areas(running_device *device,UINT32 *texture,UINT32 *frame)
+void vr0_snd_set_areas(running_device *device,uint32_t *texture,uint32_t *frame)
 {
 	vr0_state *VR0 = get_safe_token(device);
 	VR0->TexBase=texture;
@@ -124,7 +124,7 @@ WRITE32_DEVICE_HANDLER(vr0_snd_write)
 		data&=0xffff;
 		if(data&0x8000)
 		{
-			UINT32 c=data&0x1f;
+			uint32_t c=data&0x1f;
 			STATUS|=1<<c;
 			CURSADDR(c)=0;
 		}
@@ -149,21 +149,21 @@ READ32_DEVICE_HANDLER(vr0_snd_read)
 
 static void VR0_RenderAudio(vr0_state *VR0, int nsamples,stream_sample_t *l,stream_sample_t *r)
 {
-	INT16 *SAMPLES;
-	UINT32 st=STATUS;
+	int16_t *SAMPLES;
+	uint32_t st=STATUS;
 	signed int lsample=0,rsample=0;
-	UINT32 CLK=(VR0->SOUNDREGS[0x600/4]>>0)&0xff;
-	UINT32 NCH=(VR0->SOUNDREGS[0x600/4]>>8)&0xff;
-	UINT32 CT1=(VR0->SOUNDREGS[0x600/4]>>16)&0xff;
-	UINT32 CT2=(VR0->SOUNDREGS[0x600/4]>>24)&0xff;
+	uint32_t CLK=(VR0->SOUNDREGS[0x600/4]>>0)&0xff;
+	uint32_t NCH=(VR0->SOUNDREGS[0x600/4]>>8)&0xff;
+	uint32_t CT1=(VR0->SOUNDREGS[0x600/4]>>16)&0xff;
+	uint32_t CT2=(VR0->SOUNDREGS[0x600/4]>>24)&0xff;
 	int div;
 	int s;
 
 
 	if(CT1&0x20)
-		SAMPLES=(INT16 *)VR0->TexBase;
+		SAMPLES=(int16_t *)VR0->TexBase;
 	else
-		SAMPLES=(INT16 *)VR0->FBBase;
+		SAMPLES=(int16_t *)VR0->FBBase;
 
 	if(CLK)
 		div=((30<<16)|0x8000)/(CLK+1);
@@ -177,20 +177,20 @@ static void VR0_RenderAudio(vr0_state *VR0, int nsamples,stream_sample_t *l,stre
 		for(i=0;i<=NCH;++i)
 		{
 			signed int sample;
-			UINT32 cur=CURSADDR(i);
-			UINT32 a=LOOPBEGIN(i)+(cur>>10);
-			UINT8 Mode=VR0->SOUNDREGS[(0x20/4)*i+0x8/4]>>24;
+			uint32_t cur=CURSADDR(i);
+			uint32_t a=LOOPBEGIN(i)+(cur>>10);
+			uint8_t Mode=VR0->SOUNDREGS[(0x20/4)*i+0x8/4]>>24;
 			signed int LVOL=VR0->SOUNDREGS[(0x20/4)*i+0xc/4]>>24;
 			signed int RVOL=VR0->SOUNDREGS[(0x20/4)*i+0x10/4]>>24;
 
-			INT32 DSADD=(DSADDR(i)*div)>>16;
+			int32_t DSADD=(DSADDR(i)*div)>>16;
 
 			if(!(st&(1<<i)) || !(CT2&0x80))
 				continue;
 
 			if(Mode&0x10)		//u-law
 			{
-				UINT16 s=SAMPLES[a];
+				uint16_t s=SAMPLES[a];
 				if((cur&0x200))
 					s>>=8;
 				sample=(signed short)ULawTo16[s&0xff];
@@ -199,7 +199,7 @@ static void VR0_RenderAudio(vr0_state *VR0, int nsamples,stream_sample_t *l,stre
 			{
 				if(Mode&0x20)	//8bit
 				{
-					UINT16 s=SAMPLES[a];
+					uint16_t s=SAMPLES[a];
 					if((cur&0x200))
 						s>>=8;
 					sample=(signed short) (((signed char) (s&0xff))<<8);
@@ -221,7 +221,7 @@ static void VR0_RenderAudio(vr0_state *VR0, int nsamples,stream_sample_t *l,stre
 					break;
 				}
 			}
-//          UINT32 v=(ENVVOL(i))>>8;
+//          uint32_t v=(ENVVOL(i))>>8;
 //          sample=(sample*v)>>16;
 			lsample+=(sample*LVOL)>>8;
 			rsample+=(sample*RVOL)>>8;

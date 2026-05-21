@@ -22,27 +22,27 @@
 typedef struct _rf5c400_channel rf5c400_channel;
 struct _rf5c400_channel
 {
-	UINT16	startH;
-	UINT16	startL;
-	UINT16	freq;
-	UINT16	endL;
-	UINT16	endHloopH;
-	UINT16	loopL;
-	UINT16	pan;
-	UINT16	effect;
-	UINT16	volume;
+	uint16_t	startH;
+	uint16_t	startL;
+	uint16_t	freq;
+	uint16_t	endL;
+	uint16_t	endHloopH;
+	uint16_t	loopL;
+	uint16_t	pan;
+	uint16_t	effect;
+	uint16_t	volume;
 
-	UINT16	attack;
-	UINT16	decay;
-	UINT16	release;
+	uint16_t	attack;
+	uint16_t	decay;
+	uint16_t	release;
 
-	UINT16	cutoff;
+	uint16_t	cutoff;
 
-	UINT64 pos;
-	UINT64 step;
-	UINT16 keyon;
+	uint64_t pos;
+	uint64_t step;
+	uint16_t keyon;
 
-	UINT8 env_phase;
+	uint8_t env_phase;
 	double env_level;
 	double env_step;
 	double env_scale;
@@ -51,8 +51,8 @@ struct _rf5c400_channel
 typedef struct _rf5c400_state rf5c400_state;
 struct _rf5c400_state
 {
-	INT16 *rom;
-	UINT32 rom_length;
+	int16_t *rom;
+	uint32_t rom_length;
 
 	sound_stream *stream;
 
@@ -104,7 +104,7 @@ INLINE rf5c400_state *get_safe_token(running_device *device)
 
 /*****************************************************************************/
 
-static UINT8 decode80(UINT8 val)
+static uint8_t decode80(uint8_t val)
 {
 	if (val & 0x80)
 	{
@@ -118,11 +118,11 @@ static STREAM_UPDATE( rf5c400_update )
 {
 	int i, ch;
 	rf5c400_state *info = (rf5c400_state *)param;
-	INT16 *rom = info->rom;
-	UINT32 start, end, loop;
-	UINT64 pos;
-	UINT8 vol, lvol, rvol, type;
-	UINT8 env_phase;
+	int16_t *rom = info->rom;
+	uint32_t start, end, loop;
+	uint64_t pos;
+	uint8_t vol, lvol, rvol, type;
+	uint8_t env_phase;
 	double env_level, env_step, env_rstep;
 
 	memset(outputs[0], 0, samples * sizeof(*outputs[0]));
@@ -150,8 +150,8 @@ static STREAM_UPDATE( rf5c400_update )
 
 		for (i=0; i < samples; i++)
 		{
-			INT16 tmp;
-			INT32 sample;
+			int16_t tmp;
+			int32_t sample;
 
 			if (env_phase == PHASE_NONE) break;
 
@@ -162,10 +162,10 @@ static STREAM_UPDATE( rf5c400_update )
 					sample = tmp;
 					break;
 				case TYPE_8LOW:
-					sample = (INT16)(tmp << 8);
+					sample = (int16_t)(tmp << 8);
 					break;
 				case TYPE_8HIGH:
-					sample = (INT16)(tmp & 0xFF00);
+					sample = (int16_t)(tmp & 0xFF00);
 					break;
 				default:
 					sample = 0;
@@ -249,7 +249,7 @@ static void rf5c400_init_chip(running_device *device, rf5c400_state *info)
 	{
 		double max=255.0;
 		for (i = 0; i < 256; i++) {
-			volume_table[i]=(UINT16)max;
+			volume_table[i]=(uint16_t)max;
 			max /= pow(10.0,(double)((4.5/(256.0/16.0))/20));
 		}
 		for(i = 0; i < 0x48; i++) {
@@ -359,7 +359,7 @@ static DEVICE_START( rf5c400 )
 
 /*****************************************************************************/
 
-static UINT16 rf5c400_status = 0;
+static uint16_t rf5c400_status = 0;
 READ16_DEVICE_HANDLER( rf5c400_r )
 {
 	switch(offset)

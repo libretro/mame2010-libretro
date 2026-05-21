@@ -3800,7 +3800,7 @@ struct _discrete_task
 {
 	const linked_list_entry *list;
 
-	volatile INT32			threadid;
+	volatile int32_t			threadid;
 	volatile int			samples;
 
 	/* list of source nodes */
@@ -3861,8 +3861,8 @@ struct _discrete_info
 	osd_work_queue		*queue;
 
 	/* profiling */
-	UINT64				total_samples;
-	UINT64				total_stream_updates;
+	uint64_t				total_samples;
+	uint64_t				total_stream_updates;
 };
 
 
@@ -3897,7 +3897,7 @@ struct _discrete_lfsr_desc
 typedef struct _discrete_op_amp_osc_info discrete_op_amp_osc_info;
 struct _discrete_op_amp_osc_info
 {
-	UINT32	type;
+	uint32_t	type;
 	double	r1;
 	double	r2;
 	double	r3;
@@ -3953,7 +3953,7 @@ struct _discrete_dac_r1_ladder
 typedef struct _discrete_integrate_info discrete_integrate_info;
 struct _discrete_integrate_info
 {
-	UINT32	type;
+	uint32_t	type;
 	double	r1;		// r1a + r1b
 	double	r2;		// r2a + r2b
 	double	r3;		// r3a + r3b
@@ -3986,7 +3986,7 @@ struct _discrete_mixer_desc
 typedef struct _discrete_op_amp_info discrete_op_amp_info;
 struct _discrete_op_amp_info
 {
-	UINT32	type;
+	uint32_t	type;
 	double	r1;
 	double	r2;
 	double	r3;
@@ -4000,7 +4000,7 @@ struct _discrete_op_amp_info
 typedef struct _discrete_op_amp_1sht_info discrete_op_amp_1sht_info;
 struct _discrete_op_amp_1sht_info
 {
-	UINT32	type;
+	uint32_t	type;
 	double	r1;
 	double	r2;
 	double	r3;

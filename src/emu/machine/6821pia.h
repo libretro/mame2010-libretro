@@ -62,13 +62,13 @@ WRITE8_DEVICE_HANDLER( pia6821_w );
 READ8_DEVICE_HANDLER( pia6821_alt_r );
 WRITE8_DEVICE_HANDLER( pia6821_alt_w );
 
-UINT8 pia6821_get_port_b_z_mask(running_device *device);  /* see first note */
-void pia6821_set_port_a_z_mask(running_device *device, UINT8 data);  /* see second note */
+uint8_t pia6821_get_port_b_z_mask(running_device *device);  /* see first note */
+void pia6821_set_port_a_z_mask(running_device *device, uint8_t data);  /* see second note */
 
 READ8_DEVICE_HANDLER( pia6821_porta_r );
 WRITE8_DEVICE_HANDLER( pia6821_porta_w );
-void pia6821_set_input_a(running_device *device, UINT8 data, UINT8 z_mask);
-UINT8 pia6821_get_output_a(running_device *device);
+void pia6821_set_input_a(running_device *device, uint8_t data, uint8_t z_mask);
+uint8_t pia6821_get_output_a(running_device *device);
 
 READ_LINE_DEVICE_HANDLER( pia6821_ca1_r );
 WRITE_LINE_DEVICE_HANDLER( pia6821_ca1_w );
@@ -80,7 +80,7 @@ int pia6821_get_output_ca2_z(running_device *device);
 
 READ8_DEVICE_HANDLER( pia6821_portb_r );
 WRITE8_DEVICE_HANDLER( pia6821_portb_w );
-UINT8 pia6821_get_output_b(running_device *device);
+uint8_t pia6821_get_output_b(running_device *device);
 
 READ_LINE_DEVICE_HANDLER( pia6821_cb1_r );
 WRITE_LINE_DEVICE_HANDLER( pia6821_cb1_w );

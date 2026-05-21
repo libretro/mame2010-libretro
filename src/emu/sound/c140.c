@@ -51,19 +51,19 @@ Unmapped registers:
 
 struct voice_registers
 {
-	UINT8 volume_right;
-	UINT8 volume_left;
-	UINT8 frequency_msb;
-	UINT8 frequency_lsb;
-	UINT8 bank;
-	UINT8 mode;
-	UINT8 start_msb;
-	UINT8 start_lsb;
-	UINT8 end_msb;
-	UINT8 end_lsb;
-	UINT8 loop_msb;
-	UINT8 loop_lsb;
-	UINT8 reserved[4];
+	uint8_t volume_right;
+	uint8_t volume_left;
+	uint8_t frequency_msb;
+	uint8_t frequency_lsb;
+	uint8_t bank;
+	uint8_t mode;
+	uint8_t start_msb;
+	uint8_t start_lsb;
+	uint8_t end_msb;
+	uint8_t end_lsb;
+	uint8_t loop_msb;
+	uint8_t loop_lsb;
+	uint8_t reserved[4];
 };
 
 typedef struct
@@ -94,14 +94,14 @@ struct _c140_state
 	sound_stream *stream;
 	int banking_type;
 	/* internal buffers */
-	INT16 *mixer_buffer_left;
-	INT16 *mixer_buffer_right;
+	int16_t *mixer_buffer_left;
+	int16_t *mixer_buffer_right;
 
 	int baserate;
 	void *pRom;
-	UINT8 REG[0x200];
+	uint8_t REG[0x200];
 
-	INT16 pcmtbl[8];		//2000.06.26 CAB
+	int16_t pcmtbl[8];		//2000.06.26 CAB
 
 	VOICE voi[MAX_VOICE];
 };
@@ -146,7 +146,7 @@ static long find_sample(c140_state *info, long adrs, long bank, int voice)
 {
 	long newadr = 0;
 
-	static const INT16 asic219banks[4] = { 0x1f7, 0x1f1, 0x1f3, 0x1f5 };
+	static const int16_t asic219banks[4] = { 0x1f7, 0x1f1, 0x1f3, 0x1f5 };
 
 	adrs=(bank<<16)+adrs;
 
@@ -260,7 +260,7 @@ void c140_set_base(running_device *device, void *base)
 	info->pRom = base;
 }
 
-INLINE int limit(INT32 in)
+INLINE int limit(int32_t in)
 {
 	if(in>0x7fff)		return 0x7fff;
 	else if(in<-0x8000)	return -0x8000;
@@ -272,24 +272,24 @@ static STREAM_UPDATE( update_stereo )
 	c140_state *info = (c140_state *)param;
 	int		i,j;
 
-	INT32	rvol,lvol;
-	INT32	dt;
-	INT32	sdt;
-	INT32	st,ed,sz;
+	int32_t	rvol,lvol;
+	int32_t	dt;
+	int32_t	sdt;
+	int32_t	st,ed,sz;
 
-	INT8	*pSampleData;
-	INT32	frequency,delta,offset,pos;
-	INT32	cnt, voicecnt;
-	INT32	lastdt,prevdt,dltdt;
+	int8_t	*pSampleData;
+	int32_t	frequency,delta,offset,pos;
+	int32_t	cnt, voicecnt;
+	int32_t	lastdt,prevdt,dltdt;
 	float	pbase=(float)info->baserate*2.0 / (float)info->sample_rate;
 
-	INT16	*lmix, *rmix;
+	int16_t	*lmix, *rmix;
 
 	if(samples>info->sample_rate) samples=info->sample_rate;
 
 	/* zap the contents of the mixer buffer */
-	memset(info->mixer_buffer_left, 0, samples * sizeof(INT16));
-	memset(info->mixer_buffer_right, 0, samples * sizeof(INT16));
+	memset(info->mixer_buffer_left, 0, samples * sizeof(int16_t));
+	memset(info->mixer_buffer_right, 0, samples * sizeof(int16_t));
 
 	/* get the number of voices to update */
 	voicecnt = (info->banking_type == C140_TYPE_ASIC219) ? 16 : 24;
@@ -478,7 +478,7 @@ static DEVICE_START( c140 )
 	/* make decompress pcm table */		//2000.06.26 CAB
 	{
 		int i;
-		INT32 segbase=0;
+		int32_t segbase=0;
 		for(i=0;i<8;i++)
 		{
 			info->pcmtbl[i]=segbase;	//segment base value
@@ -493,7 +493,7 @@ static DEVICE_START( c140 )
 	}
 
 	/* allocate a pair of buffers to mix into - 1 second's worth should be more than enough */
-	info->mixer_buffer_left = auto_alloc_array(device->machine, INT16, 2 * info->sample_rate);
+	info->mixer_buffer_left = auto_alloc_array(device->machine, int16_t, 2 * info->sample_rate);
 	info->mixer_buffer_right = info->mixer_buffer_left + info->sample_rate;
 }
 

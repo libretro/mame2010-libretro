@@ -19,7 +19,7 @@
 struct dso_csvlog_context
 {
 	FILE *csv_file;
-	INT64 sample_num;
+	int64_t sample_num;
 	char name[32];
 };
 
@@ -237,13 +237,13 @@ static DISCRETE_STEP( dso_wavelog )
 {
 	struct dso_wavelog_context *context = (struct dso_wavelog_context *) node->context;
 	double val;
-	INT16 wave_data_l, wave_data_r;
+	int16_t wave_data_l, wave_data_r;
 
 	/* Dump any wave logs */
 	/* get nodes to be logged and apply gain, then clip to 16 bit */
 	val = DISCRETE_INPUT(0) * DISCRETE_INPUT(1);
 	val = (val < -32768) ? -32768 : (val > 32767) ? 32767 : val;
-	wave_data_l = (INT16)val;
+	wave_data_l = (int16_t)val;
 	if (node->active_inputs == 2)
 	{
 		/* DISCRETE_WAVELOG1 */
@@ -254,7 +254,7 @@ static DISCRETE_STEP( dso_wavelog )
 		/* DISCRETE_WAVELOG2 */
 		val = DISCRETE_INPUT(2) * DISCRETE_INPUT(3);
 		val = (val < -32768) ? -32768 : (val > 32767) ? 32767 : val;
-		wave_data_r = (INT16)val;
+		wave_data_r = (int16_t)val;
 
 		wav_add_data_16lr(context->wavfile, &wave_data_l, &wave_data_r, 1);
 	}

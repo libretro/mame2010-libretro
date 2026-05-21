@@ -32,12 +32,12 @@ typedef struct _ds1302_state ds1302_state;
 struct _ds1302_state
 {
 
-	UINT32 shift_in;
-	UINT8  shift_out;
-	UINT8  icount;
-	UINT8  last_clk;
-	UINT8  last_cmd;
-	UINT8  sram[0x20];
+	uint32_t shift_in;
+	uint8_t  shift_out;
+	uint8_t  icount;
+	uint8_t  last_clk;
+	uint8_t  last_cmd;
+	uint8_t  sram[0x20];
 };
 
 /***************************************************************************
@@ -51,7 +51,7 @@ INLINE ds1302_state *get_safe_token(running_device *device)
 	return (ds1302_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-INLINE UINT8 convert_to_bcd(int val)
+INLINE uint8_t convert_to_bcd(int val)
 {
 	return ((val / 10) << 4) | (val % 10);
 }
@@ -129,7 +129,7 @@ WRITE8_DEVICE_HANDLER( ds1302_clk_w )
 
 			if(ds1302->icount == 17 && !(ds1302->last_cmd & 1))
 			{
-				UINT8 val = (ds1302->shift_in >> 9) & 0xff;
+				uint8_t val = (ds1302->shift_in >> 9) & 0xff;
 
 				switch(ds1302->last_cmd)
 				{

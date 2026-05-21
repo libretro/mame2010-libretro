@@ -10,11 +10,11 @@
 #include "emu.h"
 #include "tlc34076.h"
 
-static UINT8 local_paletteram[0x300];
-static UINT8 regs[0x10];
-static UINT8 palettedata[3];
-static UINT8 writeindex, readindex;
-static UINT8 dacbits;
+static uint8_t local_paletteram[0x300];
+static uint8_t regs[0x10];
+static uint8_t palettedata[3];
+static uint8_t writeindex, readindex;
+static uint8_t dacbits;
 
 static rgb_t pens[0x100];
 
@@ -125,7 +125,7 @@ void tlc34076_state_save(running_machine *machine)
 
 READ8_HANDLER( tlc34076_r )
 {
-	UINT8 result;
+	uint8_t result;
 
 	/* keep in range */
 	offset &= 0x0f;
@@ -163,7 +163,7 @@ READ8_HANDLER( tlc34076_r )
 
 WRITE8_HANDLER( tlc34076_w )
 {
-	UINT8 oldval;
+	uint8_t oldval;
 
 	/* keep in range */
 	offset &= 0x0f;

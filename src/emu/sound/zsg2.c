@@ -51,16 +51,16 @@
 typedef struct _zchan zchan;
 struct _zchan
 {
-	UINT16 v[16];
+	uint16_t v[16];
 };
 
 typedef struct _zsg2_state zsg2_state;
 struct _zsg2_state
 {
 	zchan zc[48];
-	UINT16 act[3];
-	UINT16 alow, ahigh;
-	UINT8 *bank_samples;
+	uint16_t act[3];
+	uint16_t alow, ahigh;
+	uint8_t *bank_samples;
 
 	int sample_rate;
 	sound_stream *stream;
@@ -83,13 +83,13 @@ static STREAM_UPDATE( update_stereo )
 	memset(dest2, 0, sizeof(stream_sample_t) * samples);
 }
 
-static void chan_w(zsg2_state *info, int chan, int reg, UINT16 data)
+static void chan_w(zsg2_state *info, int chan, int reg, uint16_t data)
 {
   info->zc[chan].v[reg] = data;
   //  log_event("ZOOMCHAN", "chan %02x reg %x = %04x", chan, reg, data);
 }
 
-static UINT16 chan_r(zsg2_state *info, int chan, int reg)
+static uint16_t chan_r(zsg2_state *info, int chan, int reg)
 {
   //  log_event("ZOOMCHAN", "chan %02x read reg %x: %04x", chan, reg, zc[chan].v[reg]);
   return info->zc[chan].v[reg];
@@ -112,7 +112,7 @@ static void keyon(zsg2_state *info, int chan)
 #endif
 }
 
-static void control_w(zsg2_state *info, int reg, UINT16 data)
+static void control_w(zsg2_state *info, int reg, uint16_t data)
 {
 	switch(reg)
 	{
@@ -153,7 +153,7 @@ static void control_w(zsg2_state *info, int reg, UINT16 data)
 	}
 }
 
-static UINT16 control_r(zsg2_state *info, int reg)
+static uint16_t control_r(zsg2_state *info, int reg)
 {
 	switch(reg)
 	{
@@ -162,8 +162,8 @@ static UINT16 control_r(zsg2_state *info, int reg)
 
 		case 0x3c: case 0x3e:
 		{
-			UINT32 adr = (info->ahigh << 16) | info->alow;
-			UINT32 val = *(unsigned int *)(info->bank_samples+adr);
+			uint32_t adr = (info->ahigh << 16) | info->alow;
+			uint32_t val = *(unsigned int *)(info->bank_samples+adr);
 //          log_event("ZOOMCTRL", "rom read.%c %06x = %08x", reg == 0x3e ? 'h' : 'l', adr, val);
 			return (reg == 0x3e) ? (val >> 16) : val;
 		}

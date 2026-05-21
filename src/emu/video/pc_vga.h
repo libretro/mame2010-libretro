@@ -35,7 +35,7 @@ struct pc_svga_interface
 	int seq_regcount;
 	int gc_regcount;
 	int crtc_regcount;
-	pc_video_update_proc (*choosevideomode)(const UINT8 *sequencer, const UINT8 *crtc, const UINT8 *gc, int *width, int *height);
+	pc_video_update_proc (*choosevideomode)(const uint8_t *sequencer, const uint8_t *crtc, const uint8_t *gc, int *width, int *height);
 };
 
 void pc_vga_init(running_machine *machine, const struct pc_vga_interface *vga_intf, const struct pc_svga_interface *svga_intf);
@@ -103,8 +103,8 @@ WRITE16_HANDLER( vga_port16le_03d0_w );
 */
 #if 0
         int i;
-        UINT8 *memory=memory_region(machine, "maincpu")+0xc0000;
-        UINT8 chksum;
+        uint8_t *memory=memory_region(machine, "maincpu")+0xc0000;
+        uint8_t chksum;
 
 		/* oak vga */
         /* plausibility check of retrace signals goes wrong */

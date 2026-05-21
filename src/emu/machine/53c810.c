@@ -8,57 +8,57 @@
 
 static SCSIInstance *devices[8];	/* SCSI IDs 0-7 */
 static const struct LSI53C810interface *intf;
-static UINT8 last_id;
+static uint8_t last_id;
 
 static struct {
-	UINT8 scntl0;
-	UINT8 scntl1;
-	UINT8 scntl2;
-	UINT8 scntl3;
-	UINT8 scid;
-	UINT8 sxfer;
-	UINT8 socl;
-	UINT8 istat;
-	UINT8 dstat;
-	UINT8 sstat0;
-	UINT8 sstat1;
-	UINT8 sstat2;
-	UINT8 dien;
-	UINT8 dcntl;
-	UINT8 dmode;
-	UINT32 temp;
-	UINT32 dsa;
-	UINT32 dsp;
-	UINT32 dsps;
-	UINT32 dcmd;
-	UINT8 sien0;
-	UINT8 sien1;
-	UINT8 stime0;
-	UINT8 respid;
-	UINT8 stest1;
-	UINT8 scratch_a[4];
-	UINT8 scratch_b[4];
+	uint8_t scntl0;
+	uint8_t scntl1;
+	uint8_t scntl2;
+	uint8_t scntl3;
+	uint8_t scid;
+	uint8_t sxfer;
+	uint8_t socl;
+	uint8_t istat;
+	uint8_t dstat;
+	uint8_t sstat0;
+	uint8_t sstat1;
+	uint8_t sstat2;
+	uint8_t dien;
+	uint8_t dcntl;
+	uint8_t dmode;
+	uint32_t temp;
+	uint32_t dsa;
+	uint32_t dsp;
+	uint32_t dsps;
+	uint32_t dcmd;
+	uint8_t sien0;
+	uint8_t sien1;
+	uint8_t stime0;
+	uint8_t respid;
+	uint8_t stest1;
+	uint8_t scratch_a[4];
+	uint8_t scratch_b[4];
 	int dma_icount;
 	int halted;
 	int carry;
-	UINT32 (* fetch)(UINT32 dsp);
+	uint32_t (* fetch)(uint32_t dsp);
 	void (* irq_callback)(running_machine *machine);
-	void (* dma_callback)(UINT32, UINT32, int, int);
+	void (* dma_callback)(uint32_t, uint32_t, int, int);
 } lsi810;
 
 typedef void (*opcode_handler)(running_machine *machine);
 #define OPCODE_HANDLER(name) void name(running_machine *machine)
 static opcode_handler dma_opcode[256];
 
-INLINE UINT32 FETCH(running_machine *machine)
+INLINE uint32_t FETCH(running_machine *machine)
 {
-	UINT32 r = intf->fetch(machine, lsi810.dsp);
+	uint32_t r = intf->fetch(machine, lsi810.dsp);
 	lsi810.dsp += 4;
 	return r;
 }
 
 #ifdef UNUSED_FUNCTION
-static UINT32 sign_extend24(UINT32 val)
+static uint32_t sign_extend24(uint32_t val)
 {
 	if (val & 0x00800000)
 		val |= 0xFF000000;
@@ -75,8 +75,8 @@ static OPCODE_HANDLER( dmaop_invalid )
 
 static OPCODE_HANDLER( dmaop_move_memory )
 {
-	UINT32 src = FETCH(machine);
-	UINT32 dst = FETCH(machine);
+	uint32_t src = FETCH(machine);
+	uint32_t dst = FETCH(machine);
 	int count;
 
 	count = lsi810.dcmd & 0xffffff;
@@ -104,9 +104,9 @@ static OPCODE_HANDLER( dmaop_interrupt )
 
 static OPCODE_HANDLER( dmaop_block_move )
 {
-	UINT32 address;
-	UINT32 count;
-	INT32 dsps;
+	uint32_t address;
+	uint32_t count;
+	int32_t dsps;
 
 	address = FETCH(machine);
 	count = lsi810.dcmd & 0x00ffffff;
@@ -118,7 +118,7 @@ static OPCODE_HANDLER( dmaop_block_move )
 	// table indirect
 	if (lsi810.dcmd & 0x10000000)
 	{
-		dsps = (INT32)address&0xffffff;
+		dsps = (int32_t)address&0xffffff;
 		// sign extend
 		if (dsps & 0x00800000)
 		{
@@ -148,7 +148,7 @@ static OPCODE_HANDLER( dmaop_block_move )
 
 static OPCODE_HANDLER( dmaop_select )
 {
-	UINT32 operand;
+	uint32_t operand;
 
 	operand = FETCH(machine);
 
@@ -173,7 +173,7 @@ static OPCODE_HANDLER( dmaop_select )
 
 static OPCODE_HANDLER( dmaop_wait_disconnect )
 {
-	UINT32 operand;
+	uint32_t operand;
 
 	operand = FETCH(machine);
 
@@ -191,7 +191,7 @@ static OPCODE_HANDLER( dmaop_wait_disconnect )
 
 static OPCODE_HANDLER( dmaop_wait_reselect )
 {
-	UINT32 operand;
+	uint32_t operand;
 
 	operand = FETCH(machine);
 
@@ -209,7 +209,7 @@ static OPCODE_HANDLER( dmaop_wait_reselect )
 
 static OPCODE_HANDLER( dmaop_set )
 {
-	UINT32 operand;
+	uint32_t operand;
 
 	operand = FETCH(machine);
 
@@ -238,7 +238,7 @@ static OPCODE_HANDLER( dmaop_set )
 
 static OPCODE_HANDLER( dmaop_clear )
 {
-	UINT32 operand;
+	uint32_t operand;
 
 	operand = FETCH(machine);
 
@@ -340,10 +340,10 @@ static int scripts_compute_branch(void)
 	return passed;
 }
 
-static UINT32 scripts_get_jump_dest(running_machine *machine)
+static uint32_t scripts_get_jump_dest(running_machine *machine)
 {
-	INT32 dsps;
-	UINT32 dest;
+	int32_t dsps;
+	uint32_t dest;
 
 	dsps = FETCH(machine);
 
@@ -360,7 +360,7 @@ static UINT32 scripts_get_jump_dest(running_machine *machine)
 		dsps += lsi810.dsp;
 	}
 
-	dest = (UINT32)dsps;
+	dest = (uint32_t)dsps;
 
 	logerror("cur DSP %x, dest %x\n", lsi810.dsp, dest);
 
@@ -662,7 +662,7 @@ WRITE8_HANDLER( lsi53c810_reg_w )
 	}
 }
 
-static void add_opcode(UINT8 op, UINT8 mask, opcode_handler handler)
+static void add_opcode(uint8_t op, uint8_t mask, opcode_handler handler)
 {
 	int i;
 	for(i=0; i < 256; i++) {
@@ -721,7 +721,7 @@ void lsi53c810_exit(const struct LSI53C810interface *interface)
 	}
 }
 
-void lsi53c810_read_data(int bytes, UINT8 *pData)
+void lsi53c810_read_data(int bytes, uint8_t *pData)
 {
 	if (devices[last_id])
 	{
@@ -733,7 +733,7 @@ void lsi53c810_read_data(int bytes, UINT8 *pData)
 	}
 }
 
-void lsi53c810_write_data(int bytes, UINT8 *pData)
+void lsi53c810_write_data(int bytes, uint8_t *pData)
 {
 	if (devices[last_id])
 	{
@@ -766,17 +766,17 @@ void *lsi53c810_get_device(int id)
  *
  *************************************/
 
-static UINT32 lsi53c810_dasm_fetch(running_machine *machine, UINT32 pc)
+static uint32_t lsi53c810_dasm_fetch(running_machine *machine, uint32_t pc)
 {
 	return intf->fetch(machine, pc);
 }
 
-unsigned lsi53c810_dasm(running_machine *machine, char *buf, UINT32 pc)
+unsigned lsi53c810_dasm(running_machine *machine, char *buf, uint32_t pc)
 {
 	unsigned result = 0;
 	const char *op_mnemonic = NULL;
-	UINT32 op = lsi53c810_dasm_fetch(machine, pc);
-	UINT32 dest;
+	uint32_t op = lsi53c810_dasm_fetch(machine, pc);
+	uint32_t dest;
 	int i;
 
 	static const char *const phases[] =
@@ -802,7 +802,7 @@ unsigned lsi53c810_dasm(running_machine *machine, char *buf, UINT32 pc)
 	{
 		static const struct
 		{
-			UINT32 flag;
+			uint32_t flag;
 			const char *text;
 		} flags[] =
 		{

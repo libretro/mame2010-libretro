@@ -109,25 +109,25 @@ typedef struct {
 	const ins8250_interface *interface;
 	int	device_type;
 
-	UINT8 thr;  /* 0 -W transmitter holding register */
-	UINT8 rbr; /* 0 R- receiver buffer register */
-	UINT8 ier;  /* 1 RW interrupt enable register */
-	UINT8 dll;  /* 0 RW divisor latch lsb (if DLAB = 1) */
-	UINT8 dlm;  /* 1 RW divisor latch msb (if DLAB = 1) */
-	UINT8 iir;  /* 2 R- interrupt identification register */
-	UINT8 lcr;  /* 3 RW line control register (bit 7: DLAB) */
-	UINT8 mcr;  /* 4 RW modem control register */
-	UINT8 lsr;  /* 5 R- line status register */
-	UINT8 msr;  /* 6 R- modem status register */
-	UINT8 scr;  /* 7 RW scratch register */
+	uint8_t thr;  /* 0 -W transmitter holding register */
+	uint8_t rbr; /* 0 R- receiver buffer register */
+	uint8_t ier;  /* 1 RW interrupt enable register */
+	uint8_t dll;  /* 0 RW divisor latch lsb (if DLAB = 1) */
+	uint8_t dlm;  /* 1 RW divisor latch msb (if DLAB = 1) */
+	uint8_t iir;  /* 2 R- interrupt identification register */
+	uint8_t lcr;  /* 3 RW line control register (bit 7: DLAB) */
+	uint8_t mcr;  /* 4 RW modem control register */
+	uint8_t lsr;  /* 5 R- line status register */
+	uint8_t msr;  /* 6 R- modem status register */
+	uint8_t scr;  /* 7 RW scratch register */
 
 /* holds int pending state for com */
-	UINT8 int_pending;
+	uint8_t int_pending;
 
 	// sending circuit
 	struct {
 		int active;
-		UINT8 data;
+		uint8_t data;
 		double time;
 	} send;
 } ins8250_t;

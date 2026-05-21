@@ -76,7 +76,7 @@ const int WAITING_FOR_TRIG	= 0x100;
 //  z80ctc_device_config - constructor
 //-------------------------------------------------
 
-z80ctc_device_config::z80ctc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+z80ctc_device_config::z80ctc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "Zilog Z80 CTC", tag, owner, clock),
 	  device_config_z80daisy_interface(mconfig, *this)
 {
@@ -88,7 +88,7 @@ z80ctc_device_config::z80ctc_device_config(const machine_config &mconfig, const 
 //  configuration object
 //-------------------------------------------------
 
-device_config *z80ctc_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+device_config *z80ctc_device_config::static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 {
 	return global_alloc(z80ctc_device_config(mconfig, tag, owner, clock));
 }
@@ -379,7 +379,7 @@ attotime z80ctc_device::ctc_channel::period() const
 //  read - read the channel's state
 //-------------------------------------------------
 
-UINT8 z80ctc_device::ctc_channel::read()
+uint8_t z80ctc_device::ctc_channel::read()
 {
 	// if we're in counter mode, just return the count
 	if ((m_mode & MODE) == MODE_COUNTER || (m_mode & WAITING_FOR_TRIG))
@@ -404,7 +404,7 @@ UINT8 z80ctc_device::ctc_channel::read()
 //  write - handle writes to a channel
 //-------------------------------------------------
 
-void z80ctc_device::ctc_channel::write(UINT8 data)
+void z80ctc_device::ctc_channel::write(uint8_t data)
 {
 	// if we're waiting for a time constant, this is it
 	if ((m_mode & CONSTANT) == CONSTANT_LOAD)
@@ -479,7 +479,7 @@ void z80ctc_device::ctc_channel::write(UINT8 data)
 //  side-effects
 //-------------------------------------------------
 
-void z80ctc_device::ctc_channel::trigger(UINT8 data)
+void z80ctc_device::ctc_channel::trigger(uint8_t data)
 {
 	// normalize data
 	data = data ? 1 : 0;

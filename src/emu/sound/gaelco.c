@@ -49,7 +49,7 @@ Registers per channel:
 #define GAELCO_NUM_CHANNELS 	0x07
 #define VOLUME_LEVELS			0x10
 
-UINT16 *gaelco_sndregs;
+uint16_t *gaelco_sndregs;
 
 /* this structure defines a channel */
 typedef struct _gaelco_sound_channel gaelco_sound_channel;
@@ -65,12 +65,12 @@ typedef struct _gaelco_sound_state gaelco_sound_state;
 struct _gaelco_sound_state
 {
 	sound_stream *stream;									/* our stream */
-	UINT8 *snd_data;										/* PCM data */
+	uint8_t *snd_data;										/* PCM data */
 	int banks[4];											/* start of each ROM bank */
 	gaelco_sound_channel channel[GAELCO_NUM_CHANNELS];	/* 7 stereo channels */
 
 	/* table for converting from 8 to 16 bits with volume control */
-	INT16 volume_table[VOLUME_LEVELS][256];
+	int16_t volume_table[VOLUME_LEVELS][256];
 };
 
 static wav_file *	wavraw;					/* raw waveform */
@@ -259,7 +259,7 @@ static DEVICE_START( gaelco )
 		info->banks[j] = intf->banks[j];
 	}
 	info->stream = stream_create(device, 0, 2, 8000, info, gaelco_update);
-	info->snd_data = (UINT8 *)memory_region(device->machine, intf->gfxregion);
+	info->snd_data = (uint8_t *)memory_region(device->machine, intf->gfxregion);
 	if (info->snd_data == NULL)
 		info->snd_data = *device->region();
 

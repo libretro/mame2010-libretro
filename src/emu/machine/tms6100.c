@@ -77,17 +77,17 @@ typedef struct _tms6100_state tms6100_state;
 struct _tms6100_state
 {
 	/* Rom interface */
-	UINT32 address;
-	UINT32 address_latch;
-	UINT8  loadptr;
-	UINT8  m0;
-	UINT8  m1;
-	UINT8  addr_bits;
-	UINT8  clock;
-	UINT8  data;
-	UINT8  state;
+	uint32_t address;
+	uint32_t address_latch;
+	uint8_t  loadptr;
+	uint8_t  m0;
+	uint8_t  m1;
+	uint8_t  addr_bits;
+	uint8_t  clock;
+	uint8_t  data;
+	uint8_t  state;
 
-	const UINT8 *rom;
+	const uint8_t *rom;
 
 	running_device *device;
 

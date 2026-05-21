@@ -59,7 +59,7 @@ struct _sp0256_interface
 	devcb_write_line sby_callback;
 };
 
-void sp0256_bitrevbuff(UINT8 *buffer, unsigned int start, unsigned int length);
+void sp0256_bitrevbuff(uint8_t *buffer, unsigned int start, unsigned int length);
 
 WRITE8_DEVICE_HANDLER( sp0256_ALD_w );
 

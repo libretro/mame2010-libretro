@@ -26,8 +26,8 @@ READ8_DEVICE_HANDLER( namcos1_cus30_r );
 
 WRITE8_DEVICE_HANDLER( _20pacgal_wavedata_w );
 
-extern UINT8 *namco_soundregs;
-extern UINT8 *namco_wavedata;
+extern uint8_t *namco_soundregs;
+extern uint8_t *namco_wavedata;
 
 #define pacman_soundregs namco_soundregs
 #define polepos_soundregs namco_soundregs

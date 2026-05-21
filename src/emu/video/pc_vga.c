@@ -223,45 +223,45 @@ static PALETTE_INIT( vga )
 		palette_set_color_rgb(machine, i, 0, 0, 0);
 }
 
-static UINT8 color_bitplane_to_packed[4/*plane*/][8/*pixel*/][256];
+static uint8_t color_bitplane_to_packed[4/*plane*/][8/*pixel*/][256];
 
 static struct
 {
 	struct pc_vga_interface vga_intf;
 	struct pc_svga_interface svga_intf;
 
-	UINT8 *memory;
-	UINT8 *fontdirty;
-	UINT16 pens[16]; /* the current 16 pens */
+	uint8_t *memory;
+	uint8_t *fontdirty;
+	uint16_t pens[16]; /* the current 16 pens */
 
-	UINT8 miscellaneous_output;
-	UINT8 feature_control;
-	UINT16 line_compare;  // for split-screen use.
+	uint8_t miscellaneous_output;
+	uint8_t feature_control;
+	uint16_t line_compare;  // for split-screen use.
 
 	struct
 	{
-		UINT8 index;
-		UINT8 *data;
+		uint8_t index;
+		uint8_t *data;
 	} sequencer;
 	struct
 	{
-		UINT8 index;
-		UINT8 *data;
+		uint8_t index;
+		uint8_t *data;
 	} crtc;
 	struct
 	{
-		UINT8 index;
-		UINT8 *data;
-		UINT8 latch[4];
+		uint8_t index;
+		uint8_t *data;
+		uint8_t latch[4];
 	} gc;
-	struct { UINT8 index, data[0x15]; int state; } attribute;
+	struct { uint8_t index, data[0x15]; int state; } attribute;
 
 
 	struct {
-		UINT8 read_index, write_index, mask;
+		uint8_t read_index, write_index, mask;
 		int read;
 		int state;
-		struct { UINT8 red, green, blue; } color[0x100];
+		struct { uint8_t red, green, blue; } color[0x100];
 		int dirty;
 	} dac;
 
@@ -284,7 +284,7 @@ static struct
 	} monitor;
 
 	/* oak vga */
-	struct { UINT8 reg; } oak;
+	struct { uint8_t reg; } oak;
 
 	int log;
 } vga;
@@ -350,7 +350,7 @@ static struct
 #define CRTC6845_CURSOR_TOP	(REG(0xa)&0x1f)
 #define CRTC6845_CURSOR_BOTTOM REG(0xb)
 
-INLINE UINT8 rotate_right(UINT8 val, UINT8 rot)
+INLINE uint8_t rotate_right(uint8_t val, uint8_t rot)
 {
 	return (val >> rot) | (val << (8 - rot));
 }
@@ -462,7 +462,7 @@ static WRITE8_HANDLER(vga_text_w)
 	vga_dirty_w(space, ((offset&~1)<<1)|(offset&1),data);
 }
 
-INLINE UINT8 ega_bitplane_to_packed(UINT8 *latch, int number)
+INLINE uint8_t ega_bitplane_to_packed(uint8_t *latch, int number)
 {
 	return color_bitplane_to_packed[0][number][latch[0]]
 		|color_bitplane_to_packed[1][number][latch[1]]
@@ -494,7 +494,7 @@ static READ8_HANDLER(vga_ega_r)
 	return data;
 }
 
-INLINE UINT8 vga_latch_helper(UINT8 cpu, UINT8 latch, UINT8 mask)
+INLINE uint8_t vga_latch_helper(uint8_t cpu, uint8_t latch, uint8_t mask)
 {
 	switch (vga.gc.data[3] & 0x18)
 	{
@@ -510,7 +510,7 @@ INLINE UINT8 vga_latch_helper(UINT8 cpu, UINT8 latch, UINT8 mask)
 	return 0; /* must not be reached, suppress compiler warning */
 }
 
-INLINE UINT8 vga_latch_write(int offs, UINT8 data)
+INLINE uint8_t vga_latch_write(int offs, uint8_t data)
 {
 	switch (vga.gc.data[5]&3) {
 	case 0:
@@ -606,7 +606,7 @@ static void vga_cpu_interface(running_machine *machine)
 	write32_space_func write_handler32;
 	read64_space_func read_handler64;
 	write64_space_func write_handler64;
-	UINT8 sel;
+	uint8_t sel;
 	int buswidth;
 
 	if ((gc==vga.gc.data[6])&&(sequencer==vga.sequencer.data[4])) return;
@@ -763,7 +763,7 @@ static void vga_cpu_interface(running_machine *machine)
 
 static READ8_HANDLER(vga_crtc_r)
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	switch (offset) {
 	case 4:
@@ -868,7 +868,7 @@ static WRITE8_HANDLER(vga_crtc_w)
 
 READ8_HANDLER( vga_port_03b0_r )
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	if (CRTC_PORT_ADDR==0x3b0)
 		data=vga_crtc_r(space, offset);
 	return data;
@@ -878,7 +878,7 @@ READ8_HANDLER( vga_port_03b0_r )
 
 READ8_HANDLER( ega_port_03c0_r)
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	switch (offset) {
 	case 2: data=0xff;/*!*/break;
 	}
@@ -887,7 +887,7 @@ READ8_HANDLER( ega_port_03c0_r)
 
 READ8_HANDLER( vga_port_03c0_r )
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 
 	switch (offset)
 	{
@@ -1000,7 +1000,7 @@ READ8_HANDLER( vga_port_03c0_r )
 
 READ8_HANDLER(vga_port_03d0_r)
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	if (CRTC_PORT_ADDR == 0x3d0)
 		data = vga_crtc_r(space, offset);
 	return data;
@@ -1139,7 +1139,7 @@ WRITE8_HANDLER(vga_port_03d0_w)
 
 READ8_HANDLER( paradise_ega_03c0_r )
 {
-	UINT8 data = vga_port_03c0_r(space, offset);
+	uint8_t data = vga_port_03c0_r(space, offset);
 
 	if (offset == 2)
 	{
@@ -1254,11 +1254,11 @@ void pc_vga_init(running_machine *machine, const struct pc_vga_interface *vga_in
 		vga.svga_intf.crtc_regcount = 0x19;
 	}
 
-	vga.memory			= auto_alloc_array(machine, UINT8, vga.svga_intf.vram_size);
-	vga.fontdirty		= auto_alloc_array(machine, UINT8, 0x800);
-	vga.sequencer.data	= auto_alloc_array(machine, UINT8, vga.svga_intf.seq_regcount);
-	vga.crtc.data		= auto_alloc_array(machine, UINT8, vga.svga_intf.crtc_regcount);
-	vga.gc.data			= auto_alloc_array(machine, UINT8, vga.svga_intf.gc_regcount);
+	vga.memory			= auto_alloc_array(machine, uint8_t, vga.svga_intf.vram_size);
+	vga.fontdirty		= auto_alloc_array(machine, uint8_t, 0x800);
+	vga.sequencer.data	= auto_alloc_array(machine, uint8_t, vga.svga_intf.seq_regcount);
+	vga.crtc.data		= auto_alloc_array(machine, uint8_t, vga.svga_intf.crtc_regcount);
+	vga.gc.data			= auto_alloc_array(machine, uint8_t, vga.svga_intf.gc_regcount);
 	memset(vga.memory, '\0', vga.svga_intf.vram_size);
 	memset(vga.fontdirty, '\0', 0x800);
 	memset(vga.sequencer.data, '\0', vga.svga_intf.seq_regcount);
@@ -1351,10 +1351,10 @@ static VIDEO_RESET( vga )
 
 static void vga_vh_text(bitmap_t *bitmap)
 {
-	UINT8 ch, attr;
-	UINT8 bits;
-	UINT8 *font;
-	UINT16 *bitmapline;
+	uint8_t ch, attr;
+	uint8_t bits;
+	uint8_t *font;
+	uint16_t *bitmapline;
 	int width=CHAR_WIDTH, height=CRTC6845_CHAR_HEIGHT;
 	int pos, line, column, mask, w, h, addr;
 	pen_t pen;
@@ -1420,8 +1420,8 @@ static void vga_vh_ega(bitmap_t *bitmap)
 {
 	int pos, line, column, c, addr, i;
 	int height = CRTC6845_CHAR_HEIGHT;
-	UINT16 *bitmapline;
-	UINT16 *newbitmapline;
+	uint16_t *bitmapline;
+	uint16_t *newbitmapline;
 	pen_t pen;
 
 	for (addr=EGA_START_ADDRESS, pos=0, line=0; line<LINES;
@@ -1456,7 +1456,7 @@ static void vga_vh_ega(bitmap_t *bitmap)
 				break;
 
 			newbitmapline = BITMAP_ADDR16(bitmap, line+i, 0);
-			memcpy(newbitmapline, bitmapline, EGA_COLUMNS * 8 * sizeof(UINT16));
+			memcpy(newbitmapline, bitmapline, EGA_COLUMNS * 8 * sizeof(uint16_t));
 		}
 	}
 }
@@ -1464,7 +1464,7 @@ static void vga_vh_ega(bitmap_t *bitmap)
 static void vga_vh_vga(bitmap_t *bitmap)
 {
 	int pos, line, column, c, addr, curr_addr;
-	UINT16 *bitmapline;
+	uint16_t *bitmapline;
 
 	curr_addr = 0;
 	if(vga.sequencer.data[4] & 0x08)

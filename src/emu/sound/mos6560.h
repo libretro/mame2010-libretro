@@ -15,10 +15,10 @@
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef UINT8 (*mos6560_lightpen_x_callback)(running_machine *machine);
-typedef UINT8 (*mos6560_lightpen_y_callback)(running_machine *machine);
-typedef UINT8 (*mos6560_lightpen_button_callback)(running_machine *machine);
-typedef UINT8 (*mos6560_paddle_callback)(running_machine *machine);
+typedef uint8_t (*mos6560_lightpen_x_callback)(running_machine *machine);
+typedef uint8_t (*mos6560_lightpen_y_callback)(running_machine *machine);
+typedef uint8_t (*mos6560_lightpen_button_callback)(running_machine *machine);
+typedef uint8_t (*mos6560_paddle_callback)(running_machine *machine);
 
 typedef int (*mos6560_dma_read)(running_machine *machine, int);
 typedef int (*mos6560_dma_read_color)(running_machine *machine, int);
@@ -108,7 +108,7 @@ WRITE8_DEVICE_HANDLER( mos6560_port_w );
 READ8_DEVICE_HANDLER( mos6560_port_r );
 
 void mos6560_raster_interrupt_gen( running_device *device );
-UINT32 mos6560_video_update( running_device *device, bitmap_t *bitmap, const rectangle *cliprect );
+uint32_t mos6560_video_update( running_device *device, bitmap_t *bitmap, const rectangle *cliprect );
 
 
 #endif /* __MOS6560_H__ */

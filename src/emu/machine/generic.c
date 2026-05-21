@@ -32,17 +32,17 @@ static void interrupt_reset(running_machine &machine);
 struct _generic_machine_private
 {
 	/* tickets and coin counters */
-	UINT32		dispensed_tickets;
-	UINT32		coin_count[COIN_COUNTERS];
-	UINT32		coinlockedout[COIN_COUNTERS];
-	UINT32		lastcoin[COIN_COUNTERS];
+	uint32_t		dispensed_tickets;
+	uint32_t		coin_count[COIN_COUNTERS];
+	uint32_t		coinlockedout[COIN_COUNTERS];
+	uint32_t		lastcoin[COIN_COUNTERS];
 
 	/* memory card status */
 	int 		memcard_inserted;
 
 	/* interrupt status for up to 8 CPUs */
 	device_t *	interrupt_device[8];
-	UINT8		interrupt_enable[8];
+	uint8_t		interrupt_enable[8];
 };
 
 
@@ -319,7 +319,7 @@ void coin_lockout_global_w(running_machine *machine, int on)
     nvram_fopen - open an NVRAM file directly
 -------------------------------------------------*/
 
-mame_file *nvram_fopen(running_machine *machine, UINT32 openflags)
+mame_file *nvram_fopen(running_machine *machine, uint32_t openflags)
 {
 	file_error filerr;
 	mame_file *file;
@@ -455,7 +455,7 @@ NVRAM_HANDLER( generic_randfill )
 		memcpy(machine->generic.nvram.v, region->base(), machine->generic.nvram_size);
 	else
 	{
-		UINT8 *nvram = (UINT8 *)machine->generic.nvram.v;
+		uint8_t *nvram = (uint8_t *)machine->generic.nvram.v;
 		int i;
 		for (i = 0; i < machine->generic.nvram_size; i++)
 			nvram[i] = mame_rand(machine);

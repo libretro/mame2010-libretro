@@ -38,9 +38,9 @@ enum
 typedef struct _riot6532_port riot6532_port;
 struct _riot6532_port
 {
-	UINT8					in;
-	UINT8					out;
-	UINT8					ddr;
+	uint8_t					in;
+	uint8_t					out;
+	uint8_t					ddr;
 	devcb_resolved_read8	in_func;
 	devcb_resolved_write8	out_func;
 };
@@ -57,14 +57,14 @@ struct _riot6532_state
 
 	devcb_resolved_write_line	irq_func;
 
-	UINT8			irqstate;
-	UINT8			irqenable;
+	uint8_t			irqstate;
+	uint8_t			irqenable;
 
-	UINT8			pa7dir;		/* 0x80 = high-to-low, 0x00 = low-to-high */
-	UINT8			pa7prev;
+	uint8_t			pa7dir;		/* 0x80 = high-to-low, 0x00 = low-to-high */
+	uint8_t			pa7prev;
 
-	UINT8			timershift;
-	UINT8			timerstate;
+	uint8_t			timershift;
+	uint8_t			timerstate;
 	emu_timer *		timer;
 };
 
@@ -109,7 +109,7 @@ INLINE void update_irqstate(running_device *device)
     according to the DDR
 -------------------------------------------------*/
 
-INLINE UINT8 apply_ddr(const riot6532_port *port)
+INLINE uint8_t apply_ddr(const riot6532_port *port)
 {
 	return (port->out & port->ddr) | (port->in & ~port->ddr);
 }
@@ -123,7 +123,7 @@ INLINE UINT8 apply_ddr(const riot6532_port *port)
 INLINE void update_pa7_state(running_device *device)
 {
 	riot6532_state *riot = get_safe_token(device);
-	UINT8 data = apply_ddr(&riot->port[0]) & 0x80;
+	uint8_t data = apply_ddr(&riot->port[0]) & 0x80;
 
 	/* if the state changed in the correct direction, set the PA7 flag and update IRQs */
 	if ((riot->pa7prev ^ data) && (riot->pa7dir ^ data) == 0)
@@ -139,7 +139,7 @@ INLINE void update_pa7_state(running_device *device)
     get_timer - return the current timer value
 -------------------------------------------------*/
 
-INLINE UINT8 get_timer(riot6532_state *riot)
+INLINE uint8_t get_timer(riot6532_state *riot)
 {
 	/* if idle, return 0 */
 	if (riot->timerstate == TIMER_IDLE)
@@ -207,9 +207,9 @@ WRITE8_DEVICE_HANDLER( riot6532_w )
 	/* if A4 == 1 and A2 == 1, we are writing to the timer */
 	if ((offset & 0x14) == 0x14)
 	{
-		static const UINT8 timershift[4] = { 0, 3, 6, 10 };
+		static const uint8_t timershift[4] = { 0, 3, 6, 10 };
 		attotime curtime = timer_get_time(device->machine);
-		INT64 target;
+		int64_t target;
 
 		/* A0-A1 contain the timer divisor */
 		riot->timershift = timershift[offset & 3];
@@ -278,7 +278,7 @@ WRITE8_DEVICE_HANDLER( riot6532_w )
 READ8_DEVICE_HANDLER( riot6532_r )
 {
 	riot6532_state *riot = get_safe_token(device);
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	/* if A2 == 1 and A0 == 1, we are reading interrupt flags */
 	if ((offset & 0x05) == 0x05)
@@ -345,7 +345,7 @@ READ8_DEVICE_HANDLER( riot6532_r )
     value
 -------------------------------------------------*/
 
-void riot6532_porta_in_set(running_device *device, UINT8 data, UINT8 mask)
+void riot6532_porta_in_set(running_device *device, uint8_t data, uint8_t mask)
 {
 	riot6532_state *riot = get_safe_token(device);
 	riot->port[0].in = (riot->port[0].in & ~mask) | (data & mask);
@@ -358,7 +358,7 @@ void riot6532_porta_in_set(running_device *device, UINT8 data, UINT8 mask)
     value
 -------------------------------------------------*/
 
-void riot6532_portb_in_set(running_device *device, UINT8 data, UINT8 mask)
+void riot6532_portb_in_set(running_device *device, uint8_t data, uint8_t mask)
 {
 	riot6532_state *riot = get_safe_token(device);
 	riot->port[1].in = (riot->port[1].in & ~mask) | (data & mask);
@@ -370,7 +370,7 @@ void riot6532_portb_in_set(running_device *device, UINT8 data, UINT8 mask)
     value
 -------------------------------------------------*/
 
-UINT8 riot6532_porta_in_get(running_device *device)
+uint8_t riot6532_porta_in_get(running_device *device)
 {
 	riot6532_state *riot = get_safe_token(device);
 	return riot->port[0].in;
@@ -382,7 +382,7 @@ UINT8 riot6532_porta_in_get(running_device *device)
     value
 -------------------------------------------------*/
 
-UINT8 riot6532_portb_in_get(running_device *device)
+uint8_t riot6532_portb_in_get(running_device *device)
 {
 	riot6532_state *riot = get_safe_token(device);
 	return riot->port[1].in;
@@ -394,7 +394,7 @@ UINT8 riot6532_portb_in_get(running_device *device)
     value
 -------------------------------------------------*/
 
-UINT8 riot6532_porta_out_get(running_device *device)
+uint8_t riot6532_porta_out_get(running_device *device)
 {
 	riot6532_state *riot = get_safe_token(device);
 	return riot->port[0].out;
@@ -406,7 +406,7 @@ UINT8 riot6532_porta_out_get(running_device *device)
     value
 -------------------------------------------------*/
 
-UINT8 riot6532_portb_out_get(running_device *device)
+uint8_t riot6532_portb_out_get(running_device *device)
 {
 	riot6532_state *riot = get_safe_token(device);
 	return riot->port[1].out;

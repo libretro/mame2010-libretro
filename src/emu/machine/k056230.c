@@ -14,7 +14,7 @@
 typedef struct _k056230_state k056230_state;
 struct _k056230_state
 {
-	UINT32  *    ram;
+	uint32_t  *    ram;
 	int          is_thunderh;
 
 	running_device *cpu;
@@ -125,7 +125,7 @@ static DEVICE_START( k056230 )
 	k056230->cpu = device->machine->device(intf->cpu);
 	k056230->is_thunderh = intf->is_thunderh;
 
-	k056230->ram = auto_alloc_array(device->machine, UINT32, 0x2000);
+	k056230->ram = auto_alloc_array(device->machine, uint32_t, 0x2000);
 
 	state_save_register_device_item_pointer(device, 0, k056230->ram, 0x2000);
 }

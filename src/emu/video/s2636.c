@@ -98,7 +98,7 @@ static const int sprite_offsets[4] = { 0x00, 0x10, 0x20, 0x40 };
 typedef struct _s2636_state  s2636_state;
 struct _s2636_state
 {
-	UINT8     *work_ram;
+	uint8_t     *work_ram;
 	int       work_ram_size;
 	int       y_offset;
 	int       x_offset;
@@ -135,7 +135,7 @@ INLINE const s2636_interface *get_interface( running_device *device )
  *
  *************************************/
 
-static void draw_sprite( UINT8 *gfx, int color, int y, int x, int expand, int or_mode, bitmap_t *bitmap, const rectangle *cliprect )
+static void draw_sprite( uint8_t *gfx, int color, int y, int x, int expand, int or_mode, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	int sy;
 
@@ -194,8 +194,8 @@ static int check_collision( running_device *device, int spriteno1, int spriteno2
 	s2636_state *s2636 = get_safe_token(device);
 	int checksum = 0;
 
-	UINT8* attr1 = &s2636->work_ram[sprite_offsets[spriteno1]];
-	UINT8* attr2 = &s2636->work_ram[sprite_offsets[spriteno2]];
+	uint8_t* attr1 = &s2636->work_ram[sprite_offsets[spriteno1]];
+	uint8_t* attr2 = &s2636->work_ram[sprite_offsets[spriteno2]];
 
 	/* TODO: does not check shadow sprites yet */
 
@@ -256,7 +256,7 @@ static int check_collision( running_device *device, int spriteno1, int spriteno2
 bitmap_t *s2636_update( running_device *device, const rectangle *cliprect )
 {
 	s2636_state *s2636 = get_safe_token(device);
-	UINT8 collision = 0;
+	uint8_t collision = 0;
 	int spriteno;
 
 	bitmap_fill(s2636->bitmap, cliprect, 0);
@@ -264,7 +264,7 @@ bitmap_t *s2636_update( running_device *device, const rectangle *cliprect )
 	for (spriteno = 0; spriteno < 4; spriteno++)
 	{
 		int color, expand, x, y;
-		UINT8* attr = &s2636->work_ram[sprite_offsets[spriteno]];
+		uint8_t* attr = &s2636->work_ram[sprite_offsets[spriteno]];
 
 		/* get out if sprite is turned off */
 		if (attr[0x0a] == 0xff)
@@ -349,7 +349,7 @@ static DEVICE_START( s2636 )
 	s2636->x_offset = intf->x_offset;
 	s2636->y_offset = intf->y_offset;
 
-	s2636->work_ram = auto_alloc_array(device->machine, UINT8, intf->work_ram_size);
+	s2636->work_ram = auto_alloc_array(device->machine, uint8_t, intf->work_ram_size);
 	s2636->bitmap = auto_bitmap_alloc(device->machine, width, height, BITMAP_FORMAT_INDEXED16);
 	s2636->collision_bitmap = auto_bitmap_alloc(device->machine, width, height, BITMAP_FORMAT_INDEXED16);
 

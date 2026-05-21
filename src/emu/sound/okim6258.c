@@ -25,19 +25,19 @@ static const int dividers[4] = { 1024, 768, 512, 512 };
 typedef struct _okim6258_state okim6258_state;
 struct _okim6258_state
 {
-	UINT8  status;
+	uint8_t  status;
 
-	UINT32 master_clock;	/* master clock frequency */
-	UINT32 divider;			/* master clock divider */
-	UINT8 adpcm_type;		/* 3/4 bit ADPCM select */
-	UINT8 data_in;			/* ADPCM data-in register */
-	UINT8 nibble_shift;		/* nibble select */
+	uint32_t master_clock;	/* master clock frequency */
+	uint32_t divider;			/* master clock divider */
+	uint8_t adpcm_type;		/* 3/4 bit ADPCM select */
+	uint8_t data_in;			/* ADPCM data-in register */
+	uint8_t nibble_shift;		/* nibble select */
 	sound_stream *stream;	/* which stream are we playing on? */
 
-	UINT8 output_bits;
+	uint8_t output_bits;
 
-	INT32 signal;
-	INT32 step;
+	int32_t signal;
+	int32_t step;
 };
 
 /* step size index shift table */
@@ -96,10 +96,10 @@ static void compute_tables(void)
 }
 
 
-static INT16 clock_adpcm(okim6258_state *chip, UINT8 nibble)
+static int16_t clock_adpcm(okim6258_state *chip, uint8_t nibble)
 {
-	INT32 max = (1 << (chip->output_bits - 1)) - 1;
-	INT32 min = -(1 << (chip->output_bits - 1));
+	int32_t max = (1 << (chip->output_bits - 1)) - 1;
+	int32_t min = -(1 << (chip->output_bits - 1));
 
 	chip->signal += diff_lookup[chip->step * 16 + (nibble & 15)];
 
@@ -143,7 +143,7 @@ static STREAM_UPDATE( okim6258_update )
 			int nibble = (chip->data_in >> nibble_shift) & 0xf;
 
 			/* Output to the buffer */
-			INT16 sample = clock_adpcm(chip, nibble);
+			int16_t sample = clock_adpcm(chip, nibble);
 
 			nibble_shift ^= 4;
 

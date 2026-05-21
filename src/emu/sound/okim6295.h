@@ -58,13 +58,13 @@ public:
 	adpcm_state() { compute_tables(); reset(); }
 
 	void reset();
-	INT16 clock(UINT8 nibble);
+	int16_t clock(uint8_t nibble);
 
-	INT32	m_signal;
-	INT32	m_step;
+	int32_t	m_signal;
+	int32_t	m_step;
 
 private:
-	static const INT8 s_index_shift[8];
+	static const int8_t s_index_shift[8];
 	static int s_diff_lookup[49*16];
 
 	static void compute_tables();
@@ -82,11 +82,11 @@ class okim6295_device_config :	public device_config,
 	friend class okim6295_device;
 
 	// construction/destruction
-	okim6295_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	okim6295_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 	// inline configuration indexes
@@ -102,7 +102,7 @@ protected:
 
 	// internal state
 	const address_space_config  m_space_config;
-	UINT8						m_pin7;
+	uint8_t						m_pin7;
 };
 
 
@@ -122,8 +122,8 @@ public:
 	void set_bank_base(offs_t base);
 	void set_pin7(int pin7);
 
-	UINT8 status_read();
-	void data_write(UINT8 data);
+	uint8_t status_read();
+	void data_write(uint8_t data);
 
 protected:
 	// device-level overrides
@@ -146,9 +146,9 @@ protected:
 		adpcm_state m_adpcm;			// current ADPCM state
 		bool		m_playing;
 		offs_t		m_base_offset;		// pointer to the base memory location
-		UINT32		m_sample;			// current sample number
-		UINT32		m_count;			// total samples to play
-		INT8		m_volume;			// output volume
+		uint32_t		m_sample;			// current sample number
+		uint32_t		m_count;			// total samples to play
+		int8_t		m_volume;			// output volume
 	};
 
 	// internal state
@@ -157,13 +157,13 @@ protected:
 	const okim6295_device_config &m_config;
 
 	okim_voice		m_voice[OKIM6295_VOICES];
-	INT32			m_command;
+	int32_t			m_command;
 	bool			m_bank_installed;
 	offs_t			m_bank_offs;
 	sound_stream *	m_stream;
-	UINT8			m_pin7_state;
+	uint8_t			m_pin7_state;
 
-	static const UINT8 s_volume_table[16];
+	static const uint8_t s_volume_table[16];
 };
 
 

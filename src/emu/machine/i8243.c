@@ -20,11 +20,11 @@
 typedef struct _i8243_state i8243_state;
 struct _i8243_state
 {
-	UINT8		p[4];				/* 4 ports' worth of data */
-	UINT8		p2out;				/* port 2 bits that will be returned */
-	UINT8		p2;					/* most recent port 2 value */
-	UINT8		opcode;				/* latched opcode */
-	UINT8		prog;				/* previous PROG state */
+	uint8_t		p[4];				/* 4 ports' worth of data */
+	uint8_t		p2out;				/* port 2 bits that will be returned */
+	uint8_t		p2;					/* most recent port 2 value */
+	uint8_t		opcode;				/* latched opcode */
+	uint8_t		prog;				/* previous PROG state */
 };
 
 

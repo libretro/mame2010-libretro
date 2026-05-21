@@ -54,11 +54,11 @@ class i2cmem_device_config :
 	friend class i2cmem_device;
 
 	// construction/destruction
-	i2cmem_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	i2cmem_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 	virtual device_t *alloc_device( running_machine &machine ) const;
 
 	// inline configuration indexes
@@ -133,7 +133,7 @@ protected:
 	int m_shift;
 	int m_devsel;
 	int m_byteaddr;
-	UINT8 *m_page;
+	uint8_t *m_page;
 	int m_page_offset;
 	int m_page_size;
 };

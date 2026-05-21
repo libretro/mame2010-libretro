@@ -36,5 +36,5 @@
 void TTL74181_config(running_machine *machine, int chip, void *interface);
 void TTL74181_reset(int chip);
 
-void TTL74181_write(int chip, int startline, int lines, UINT8 data);
-UINT8 TTL74181_read(int chip, int startline, int lines);
+void TTL74181_write(int chip, int startline, int lines, uint8_t data);
+uint8_t TTL74181_read(int chip, int startline, int lines);

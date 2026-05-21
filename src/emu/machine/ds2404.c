@@ -19,13 +19,13 @@ typedef enum {
 
 typedef struct _ds2404_state ds2404_state;
 struct _ds2404_state {
-	UINT16 address;
-	UINT16 offset;
-	UINT16 end_offset;
-	UINT8 a1, a2;
-	UINT8 sram[512];	/* 4096 bits */
-	UINT8 ram[32];		/* scratchpad ram, 256 bits */
-	UINT8 rtc[5];		/* 40-bit RTC counter */
+	uint16_t address;
+	uint16_t offset;
+	uint16_t end_offset;
+	uint8_t a1, a2;
+	uint8_t sram[512];	/* 4096 bits */
+	uint8_t ram[32];		/* scratchpad ram, 256 bits */
+	uint8_t rtc[5];		/* 40-bit RTC counter */
 	DS2404_STATE state[8];
 	int state_ptr;
 };
@@ -39,7 +39,7 @@ INLINE ds2404_state *get_safe_token(running_device *device)
 }
 
 
-static void ds2404_rom_cmd(ds2404_state *state, UINT8 cmd)
+static void ds2404_rom_cmd(ds2404_state *state, uint8_t cmd)
 {
 	switch(cmd)
 	{
@@ -54,7 +54,7 @@ static void ds2404_rom_cmd(ds2404_state *state, UINT8 cmd)
 	}
 }
 
-static void ds2404_cmd(ds2404_state *state, UINT8 cmd)
+static void ds2404_cmd(ds2404_state *state, uint8_t cmd)
 {
 	switch(cmd)
 	{
@@ -89,7 +89,7 @@ static void ds2404_cmd(ds2404_state *state, UINT8 cmd)
 	}
 }
 
-static UINT8 ds2404_readmem(ds2404_state *state)
+static uint8_t ds2404_readmem(ds2404_state *state)
 {
 	if( state->address < 0x200 )
 	{
@@ -102,7 +102,7 @@ static UINT8 ds2404_readmem(ds2404_state *state)
 	return 0;
 }
 
-static void ds2404_writemem(ds2404_state *state, UINT8 value)
+static void ds2404_writemem(ds2404_state *state, uint8_t value)
 {
 	if( state->address < 0x200 )
 	{
@@ -131,7 +131,7 @@ WRITE8_DEVICE_HANDLER( ds2404_3w_reset_w )
 READ8_DEVICE_HANDLER( ds2404_data_r )
 {
 	ds2404_state *state = get_safe_token(device);
-	UINT8 value;
+	uint8_t value;
 	switch( state->state[state->state_ptr] )
 	{
 		case DS2404_STATE_IDLE:

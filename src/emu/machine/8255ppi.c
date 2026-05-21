@@ -103,29 +103,29 @@ struct _ppi8255
 	devcb_resolved_write8 port_write[3];
 
 	/* mode flags */
-	UINT8 group_a_mode;
-	UINT8 group_b_mode;
-	UINT8 port_a_dir;
-	UINT8 port_b_dir;
-	UINT8 port_ch_dir;
-	UINT8 port_cl_dir;
+	uint8_t group_a_mode;
+	uint8_t group_b_mode;
+	uint8_t port_a_dir;
+	uint8_t port_b_dir;
+	uint8_t port_ch_dir;
+	uint8_t port_cl_dir;
 
 	/* handshake signals (1=asserted; 0=non-asserted) */
-	UINT8 obf_a;
-	UINT8 obf_b;
-	UINT8 ibf_a;
-	UINT8 ibf_b;
-	UINT8 inte_a;
-	UINT8 inte_b;
-	UINT8 inte_1;
-	UINT8 inte_2;
+	uint8_t obf_a;
+	uint8_t obf_b;
+	uint8_t ibf_a;
+	uint8_t ibf_b;
+	uint8_t inte_a;
+	uint8_t inte_b;
+	uint8_t inte_1;
+	uint8_t inte_2;
 
-	UINT8 in_mask[3];	/* input mask */
-	UINT8 out_mask[3];	/* output mask */
-	UINT8 read[3];		/* data read from ports */
-	UINT8 latch[3];		/* data written to ports */
-	UINT8 output[3];	/* actual output data */
-	UINT8 control;		/* mode control word */
+	uint8_t in_mask[3];	/* input mask */
+	uint8_t out_mask[3];	/* output mask */
+	uint8_t read[3];		/* data read from ports */
+	uint8_t latch[3];		/* data written to ports */
+	uint8_t output[3];	/* actual output data */
+	uint8_t control;		/* mode control word */
 };
 
 
@@ -140,10 +140,10 @@ INLINE ppi8255_t *get_safe_token(running_device *device) {
 }
 
 
-INLINE void ppi8255_get_handshake_signals(ppi8255_t *ppi8255, int is_read, UINT8 *result)
+INLINE void ppi8255_get_handshake_signals(ppi8255_t *ppi8255, int is_read, uint8_t *result)
 {
-	UINT8 handshake = 0x00;
-	UINT8 mask = 0x00;
+	uint8_t handshake = 0x00;
+	uint8_t mask = 0x00;
 
 	/* group A */
 	if (ppi8255->group_a_mode == 1)
@@ -192,7 +192,7 @@ INLINE void ppi8255_get_handshake_signals(ppi8255_t *ppi8255, int is_read, UINT8
 
 
 
-static void ppi8255_input(running_device *device, int port, UINT8 data)
+static void ppi8255_input(running_device *device, int port, uint8_t data)
 {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
 	int changed = 0;
@@ -249,10 +249,10 @@ static void ppi8255_input(running_device *device, int port, UINT8 data)
 
 
 
-static UINT8 ppi8255_read_port(running_device *device, int port)
+static uint8_t ppi8255_read_port(running_device *device, int port)
 {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 
 	if (ppi8255->in_mask[port])
 	{
@@ -289,7 +289,7 @@ static UINT8 ppi8255_read_port(running_device *device, int port)
 READ8_DEVICE_HANDLER( ppi8255_r )
 {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
-	UINT8 result = 0;
+	uint8_t result = 0;
 
 	offset %= 4;
 
@@ -314,7 +314,7 @@ READ8_DEVICE_HANDLER( ppi8255_r )
 static void ppi8255_write_port(running_device *device, int port)
 {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
-	UINT8 write_data;
+	uint8_t write_data;
 
 	write_data = ppi8255->latch[port] & ppi8255->out_mask[port];
 	write_data |= 0xFF & ~ppi8255->out_mask[port];
@@ -540,23 +540,23 @@ static void set_mode(running_device *device, int data, int call_handlers)
 }
 
 
-void ppi8255_set_port_a( running_device *device, UINT8 data ) { ppi8255_input(device, 0, data); }
-void ppi8255_set_port_b( running_device *device, UINT8 data ) { ppi8255_input(device, 1, data); }
-void ppi8255_set_port_c( running_device *device, UINT8 data ) { ppi8255_input(device, 2, data); }
+void ppi8255_set_port_a( running_device *device, uint8_t data ) { ppi8255_input(device, 0, data); }
+void ppi8255_set_port_b( running_device *device, uint8_t data ) { ppi8255_input(device, 1, data); }
+void ppi8255_set_port_c( running_device *device, uint8_t data ) { ppi8255_input(device, 2, data); }
 
-UINT8 ppi8255_get_port_a( running_device *device ) {
+uint8_t ppi8255_get_port_a( running_device *device ) {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
 
 	return ppi8255->output[0];
 }
 
-UINT8 ppi8255_get_port_b( running_device *device ) {
+uint8_t ppi8255_get_port_b( running_device *device ) {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
 
 	return ppi8255->output[1];
 }
 
-UINT8 ppi8255_get_port_c( running_device *device ) {
+uint8_t ppi8255_get_port_c( running_device *device ) {
 	ppi8255_t	*ppi8255 = get_safe_token(device);
 
 	return ppi8255->output[2];

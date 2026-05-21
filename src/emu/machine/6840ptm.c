@@ -83,26 +83,26 @@ struct _ptm6840_state
 	devcb_resolved_write8 out_func[3];	// function to call when output[idx] changes
 	devcb_resolved_write_line irq_func;	// function called if IRQ line changes
 
-	UINT8 control_reg[3];
-	UINT8 output[3]; /* Output states */
-	UINT8 gate[3];   /* Input gate states */
-	UINT8 clock[3];  /* Clock states */
-	UINT8 enabled[3];
-	UINT8 mode[3];
-	UINT8 fired[3];
-	UINT8 t3_divisor;
-	UINT8 t3_scaler;
-	UINT8 IRQ;
-	UINT8 status_reg;
-	UINT8 status_read_since_int;
-	UINT8 lsb_buffer;
-	UINT8 msb_buffer;
+	uint8_t control_reg[3];
+	uint8_t output[3]; /* Output states */
+	uint8_t gate[3];   /* Input gate states */
+	uint8_t clock[3];  /* Clock states */
+	uint8_t enabled[3];
+	uint8_t mode[3];
+	uint8_t fired[3];
+	uint8_t t3_divisor;
+	uint8_t t3_scaler;
+	uint8_t IRQ;
+	uint8_t status_reg;
+	uint8_t status_read_since_int;
+	uint8_t lsb_buffer;
+	uint8_t msb_buffer;
 
 	/* Each PTM has 3 timers */
 	emu_timer *timer[3];
 
-	UINT16 latch[3];
-	UINT16 counter[3];
+	uint16_t latch[3];
+	uint16_t counter[3];
 };
 
 
@@ -280,7 +280,7 @@ INLINE void update_interrupts( running_device *device )
     compute_counter - Compute Counter
 -------------------------------------------------*/
 
-static UINT16 compute_counter( running_device *device, int counter )
+static uint16_t compute_counter( running_device *device, int counter )
 {
 	ptm6840_state *ptm6840 = get_safe_token(device);
 	double clock;
@@ -462,7 +462,7 @@ WRITE8_DEVICE_HANDLER( ptm6840_write )
 	ptm6840_state *ptm6840 = get_safe_token(device);
 	int idx;
 	int i;
-	UINT8 diffs;
+	uint8_t diffs;
 
 	switch ( offset )
 	{
@@ -689,7 +689,7 @@ WRITE8_DEVICE_HANDLER( ptm6840_set_c3 )
     ptm6840_get_count - get count value
 -------------------------------------------------*/
 
-UINT16 ptm6840_get_count( running_device *device, int counter )
+uint16_t ptm6840_get_count( running_device *device, int counter )
 {
 	return compute_counter(device, counter);
 }

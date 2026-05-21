@@ -74,7 +74,7 @@
 #include "streams.h"
 #include "speaker.h"
 
-static const INT16 default_levels[2] = {0, 32767};
+static const int16_t default_levels[2] = {0, 32767};
 
 /* Filter properties shared by all speaker devices:
  */
@@ -89,7 +89,7 @@ typedef struct _speaker_state speaker_state;
 struct _speaker_state
 {
 	sound_stream *channel;
-	const INT16 *levels;
+	const int16_t *levels;
 	int num_levels;
 	int level;
 

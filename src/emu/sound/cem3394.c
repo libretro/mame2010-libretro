@@ -113,28 +113,28 @@ struct _cem3394_state
 	double filter_zero_freq;		/* frequency of filter at 0.0V */
 
 	double values[8];				/* raw values of registers */
-	UINT8 wave_select;				/* flags which waveforms are enabled */
+	uint8_t wave_select;				/* flags which waveforms are enabled */
 
-	UINT32 volume;					/* linear overall volume (0-256) */
-	UINT32 mixer_internal;			/* linear internal volume (0-256) */
-	UINT32 mixer_external;			/* linear external volume (0-256) */
+	uint32_t volume;					/* linear overall volume (0-256) */
+	uint32_t mixer_internal;			/* linear internal volume (0-256) */
+	uint32_t mixer_external;			/* linear external volume (0-256) */
 
-	UINT32 position;				/* current VCO frequency position (0.FRACTION_BITS) */
-	UINT32 step;					/* per-sample VCO step (0.FRACTION_BITS) */
+	uint32_t position;				/* current VCO frequency position (0.FRACTION_BITS) */
+	uint32_t step;					/* per-sample VCO step (0.FRACTION_BITS) */
 
-	UINT32 filter_position;			/* current filter frequency position (0.FRACTION_BITS) */
-	UINT32 filter_step;				/* per-sample filter step (0.FRACTION_BITS) */
-	UINT32 modulation_depth;		/* fraction of total by which we modulate (0.FRACTION_BITS) */
-	INT16 last_ext;					/* last external sample we read */
+	uint32_t filter_position;			/* current filter frequency position (0.FRACTION_BITS) */
+	uint32_t filter_step;				/* per-sample filter step (0.FRACTION_BITS) */
+	uint32_t modulation_depth;		/* fraction of total by which we modulate (0.FRACTION_BITS) */
+	int16_t last_ext;					/* last external sample we read */
 
-	UINT32 pulse_width;				/* fractional pulse width (0.FRACTION_BITS) */
+	uint32_t pulse_width;				/* fractional pulse width (0.FRACTION_BITS) */
 
 	double inv_sample_rate;
 	int sample_rate;
 	running_device *device;
 
-	INT16 *mixer_buffer;
-	INT16 *external_buffer;
+	int16_t *mixer_buffer;
+	int16_t *external_buffer;
 };
 
 
@@ -152,9 +152,9 @@ static STREAM_UPDATE( cem3394_update )
 	cem3394_state *chip = (cem3394_state *)param;
 	int int_volume = (chip->volume * chip->mixer_internal) / 256;
 	int ext_volume = (chip->volume * chip->mixer_external) / 256;
-	UINT32 step = chip->step, position, end_position = 0;
+	uint32_t step = chip->step, position, end_position = 0;
 	stream_sample_t *buffer = outputs[0];
-	INT16 *mix, *ext;
+	int16_t *mix, *ext;
 	int i;
 
 	/* external volume is effectively 0 if no external function */
@@ -175,8 +175,8 @@ static STREAM_UPDATE( cem3394_update )
 	/* if there's external stuff, fetch and process it now */
 	if (ext_volume != 0)
 	{
-		UINT32 fposition = chip->filter_position, fstep = chip->filter_step, depth;
-		INT16 last_ext = chip->last_ext;
+		uint32_t fposition = chip->filter_position, fstep = chip->filter_step, depth;
+		int16_t last_ext = chip->last_ext;
 
 		/* fetch the external data */
 		(*chip->external)(chip->device, samples, chip->external_buffer);
@@ -192,8 +192,8 @@ static STREAM_UPDATE( cem3394_update )
            external sample to filter_freq by allowing only 2 transitions for every cycle */
 		for (i = 0, ext = chip->external_buffer, position = chip->position; i < samples; i++, ext++)
 		{
-			UINT32 newposition;
-			INT32 stepadjust;
+			uint32_t newposition;
+			int32_t stepadjust;
 
 			/* update the position and compute the adjustment from a triangle wave */
 			if (position & (1 << (FRACTION_BITS - 1)))
@@ -227,7 +227,7 @@ static STREAM_UPDATE( cem3394_update )
 		/* odd value for volume) */
 		if (ENABLE_PULSE && (chip->wave_select & WAVE_PULSE))
 		{
-			UINT32 pulse_width = chip->pulse_width;
+			uint32_t pulse_width = chip->pulse_width;
 
 			/* if the width is wider than the step, we're guaranteed to hit it once per cycle */
 			if (pulse_width >= step)
@@ -245,10 +245,10 @@ static STREAM_UPDATE( cem3394_update )
 			/* otherwise, we compute a volume and watch for cycle boundary crossings */
 			else
 			{
-				INT16 volume = 0x1932 * pulse_width / step;
+				int16_t volume = 0x1932 * pulse_width / step;
 				for (i = 0, mix = chip->mixer_buffer, position = chip->position; i < samples; i++, mix++)
 				{
-					UINT32 newposition = position + step;
+					uint32_t newposition = position + step;
 					if ((newposition ^ position) & ~FRACTION_MASK)
 						*mix = volume;
 					else
@@ -261,7 +261,7 @@ static STREAM_UPDATE( cem3394_update )
 
 		/* otherwise, clear the mixing buffer */
 		else
-			memset(chip->mixer_buffer, 0, sizeof(INT16) * samples);
+			memset(chip->mixer_buffer, 0, sizeof(int16_t) * samples);
 
 		/* handle the sawtooth component; it maxes out at 0x2000, which is 27% larger */
 		/* than the pulse */
@@ -282,7 +282,7 @@ static STREAM_UPDATE( cem3394_update )
 		{
 			for (i = 0, mix = chip->mixer_buffer, position = chip->position; i < samples; i++, mix++)
 			{
-				INT16 value;
+				int16_t value;
 				if (position & (1 << (FRACTION_BITS - 1)))
 					value = 0x2000 - ((position >> (FRACTION_BITS - 14)) & 0x1fff);
 				else
@@ -341,8 +341,8 @@ static DEVICE_START( cem3394 )
 	chip->filter_zero_freq = intf->filter_zero_freq;
 
 	/* allocate memory for a mixer buffer and external buffer (1 second should do it!) */
-	chip->mixer_buffer = auto_alloc_array(device->machine, INT16, chip->sample_rate);
-	chip->external_buffer = auto_alloc_array(device->machine, INT16, chip->sample_rate);
+	chip->mixer_buffer = auto_alloc_array(device->machine, int16_t, chip->sample_rate);
+	chip->external_buffer = auto_alloc_array(device->machine, int16_t, chip->sample_rate);
 
 	state_save_register_device_item_array(device, 0, chip->values);
 	state_save_register_device_item(device, 0, chip->wave_select);
@@ -385,7 +385,7 @@ INLINE double compute_db(double voltage)
 }
 
 
-INLINE UINT32 compute_db_volume(double voltage)
+INLINE uint32_t compute_db_volume(double voltage)
 {
 	double temp;
 
@@ -411,7 +411,7 @@ INLINE UINT32 compute_db_volume(double voltage)
 	}
 
 	/* convert from dB to volume and return */
-	return (UINT32)(256.0 * pow(0.891251, temp));
+	return (uint32_t)(256.0 * pow(0.891251, temp));
 }
 
 
@@ -434,7 +434,7 @@ void cem3394_set_voltage(running_device *device, int input, double voltage)
 		/* frequency varies from -4.0 to +4.0, at 0.75V/octave */
 		case CEM3394_VCO_FREQUENCY:
 			temp = chip->vco_zero_freq * pow(2.0, -voltage * (1.0 / 0.75));
-			chip->step = (UINT32)(temp * chip->inv_sample_rate * FRACTION_ONE_D);
+			chip->step = (uint32_t)(temp * chip->inv_sample_rate * FRACTION_ONE_D);
 			break;
 
 		/* wave select determines triangle/sawtooth enable */
@@ -460,7 +460,7 @@ void cem3394_set_voltage(running_device *device, int input, double voltage)
 				temp = voltage * 0.5;
 				if (LIMIT_WIDTH)
 					temp = MINIMUM_WIDTH + (MAXIMUM_WIDTH - MINIMUM_WIDTH) * temp;
-				chip->pulse_width = (UINT32)(temp * FRACTION_ONE_D);
+				chip->pulse_width = (uint32_t)(temp * FRACTION_ONE_D);
 				chip->wave_select |= WAVE_PULSE;
 			}
 			break;
@@ -488,18 +488,18 @@ void cem3394_set_voltage(running_device *device, int input, double voltage)
 		/* filter frequency varies from -4.0 to +4.0, at 0.375V/octave */
 		case CEM3394_FILTER_FREQENCY:
 			temp = chip->filter_zero_freq * pow(2.0, -voltage * (1.0 / 0.375));
-			chip->filter_step = (UINT32)(temp * chip->inv_sample_rate * FRACTION_ONE_D);
+			chip->filter_step = (uint32_t)(temp * chip->inv_sample_rate * FRACTION_ONE_D);
 			break;
 
 		/* modulation depth is 0.01 at 0V and 2.0 at 3.5V; how it grows from one to the other */
 		/* is still unclear at this point */
 		case CEM3394_MODULATION_AMOUNT:
 			if (voltage < 0.0)
-				chip->modulation_depth = (UINT32)(0.01 * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(0.01 * FRACTION_ONE_D);
 			else if (voltage > 3.5)
-				chip->modulation_depth = (UINT32)(2.00 * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(2.00 * FRACTION_ONE_D);
 			else
-				chip->modulation_depth = (UINT32)(((voltage * (1.0 / 3.5)) * 1.99 + 0.01) * FRACTION_ONE_D);
+				chip->modulation_depth = (uint32_t)(((voltage * (1.0 / 3.5)) * 1.99 + 0.01) * FRACTION_ONE_D);
 			break;
 
 		/* this is not yet implemented */

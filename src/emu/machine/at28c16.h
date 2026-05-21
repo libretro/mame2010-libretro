@@ -42,11 +42,11 @@ class at28c16_device_config :
 	friend class at28c16_device;
 
 	// construction/destruction
-	at28c16_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	at28c16_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 	virtual device_t *alloc_device( running_machine &machine ) const;
 
 	// inline configuration indexes
@@ -82,8 +82,8 @@ class at28c16_device :
 
 public:
 	// I/O operations
-	void write( offs_t offset, UINT8 data );
-	UINT8 read( offs_t offset );
+	void write( offs_t offset, uint8_t data );
+	uint8_t read( offs_t offset );
 	void set_a9_12v( int state );
 	void set_oe_12v( int state );
 

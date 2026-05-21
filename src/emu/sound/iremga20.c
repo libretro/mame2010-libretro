@@ -34,25 +34,25 @@ Revisions:
 
 struct IremGA20_channel_def
 {
-	UINT32 rate;
-	UINT32 size;
-	UINT32 start;
-	UINT32 pos;
-	UINT32 frac;
-	UINT32 end;
-	UINT32 volume;
-	UINT32 pan;
-	UINT32 effect;
-	UINT32 play;
+	uint32_t rate;
+	uint32_t size;
+	uint32_t start;
+	uint32_t pos;
+	uint32_t frac;
+	uint32_t end;
+	uint32_t volume;
+	uint32_t pan;
+	uint32_t effect;
+	uint32_t play;
 };
 
 typedef struct _ga20_state ga20_state;
 struct _ga20_state
 {
-	UINT8 *rom;
-	INT32 rom_size;
+	uint8_t *rom;
+	int32_t rom_size;
 	sound_stream * stream;
-	UINT16 regs[0x40];
+	uint16_t regs[0x40];
 	struct IremGA20_channel_def channel[4];
 };
 
@@ -68,8 +68,8 @@ INLINE ga20_state *get_safe_token(running_device *device)
 static STREAM_UPDATE( IremGA20_update )
 {
 	ga20_state *chip = (ga20_state *)param;
-	UINT32 rate[4], pos[4], frac[4], end[4], vol[4], play[4];
-	UINT8 *pSamples;
+	uint32_t rate[4], pos[4], frac[4], end[4], vol[4], play[4];
+	uint8_t *pSamples;
 	stream_sample_t *outL, *outR;
 	int i, sampleout;
 

@@ -553,10 +553,10 @@ static DEVICE_START( discrete )
  *
  *************************************/
 
-static UINT64 list_run_time(const linked_list_entry *list)
+static uint64_t list_run_time(const linked_list_entry *list)
 {
 	const linked_list_entry *entry;
-	UINT64 total = 0;
+	uint64_t total = 0;
 
 	for (entry = list; entry != NULL; entry = entry->next)
 	{
@@ -570,8 +570,8 @@ static UINT64 list_run_time(const linked_list_entry *list)
 static void display_profiling(const discrete_info *info)
 {
 	int count;
-	UINT64 total;
-	UINT64 tresh;
+	uint64_t total;
+	uint64_t tresh;
 	double tt;
 	linked_list_entry *entry;
 
@@ -680,7 +680,7 @@ static void *task_callback(void *param, int threadid)
 		for (entry = list; entry != 0; entry = entry->next)
 		{
 			discrete_task		*task = (discrete_task *) entry->ptr;
-			INT32				prev_id;
+			int32_t				prev_id;
 
 			/* try to lock */
 			prev_id = compare_exchange32(&task->threadid, -1, threadid);
@@ -870,7 +870,7 @@ static void init_nodes(discrete_info *info, const linked_list_entry *block_list,
 
 		/* allocate memory if necessary */
 		if (node->module->contextsize)
-			node->context = auto_alloc_array_clear(device->machine, UINT8, node->module->contextsize);
+			node->context = auto_alloc_array_clear(device->machine, uint8_t, node->module->contextsize);
 
 		/* keep track of special nodes */
 		if (block->node == NODE_SPECIAL)

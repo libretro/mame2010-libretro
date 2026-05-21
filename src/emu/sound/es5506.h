@@ -18,7 +18,7 @@ struct _es5505_interface
 	const char * region0;						/* memory region where the sample ROM lives */
 	const char * region1;						/* memory region where the sample ROM lives */
 	void (*irq_callback)(running_device *device, int state);	/* irq callback */
-	UINT16 (*read_port)(running_device *device);			/* input port read */
+	uint16_t (*read_port)(running_device *device);			/* input port read */
 };
 
 READ16_DEVICE_HANDLER( es5505_r );
@@ -36,7 +36,7 @@ struct _es5506_interface
 	const char * region2;						/* memory region where the sample ROM lives */
 	const char * region3;						/* memory region where the sample ROM lives */
 	void (*irq_callback)(running_device *device, int state);	/* irq callback */
-	UINT16 (*read_port)(running_device *device);			/* input port read */
+	uint16_t (*read_port)(running_device *device);			/* input port read */
 };
 
 READ8_DEVICE_HANDLER( es5506_r );

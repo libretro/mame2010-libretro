@@ -115,23 +115,23 @@ typedef struct _sn76496_state sn76496_state;
 struct _sn76496_state
 {
 	sound_stream * Channel;
-	INT32 VolTable[16];	/* volume table (for 4-bit to db conversion)*/
-	INT32 Register[8];	/* registers */
-	INT32 LastRegister;	/* last register written */
-	INT32 Volume[4];	/* db volume of voice 0-2 and noise */
-	UINT32 RNG;			/* noise generator LFSR*/
-	INT32 ClockDivider;	/* clock divider */
-	INT32 CurrentClock;
-	INT32 FeedbackMask;	/* mask for feedback */
-	INT32 WhitenoiseTap1;	/* mask for white noise tap 1 (higher one, usually bit 14) */
-	INT32 WhitenoiseTap2;	/* mask for white noise tap 2 (lower one, usually bit 13)*/
-	INT32 Negate;		/* output negate flag */
-	INT32 Stereo;		/* whether we're dealing with stereo or not */
-	INT32 StereoMask;	/* the stereo output mask */
-	INT32 Period[4];	/* Length of 1/2 of waveform */
-	INT32 Count[4];		/* Position within the waveform */
-	INT32 Output[4];	/* 1-bit output of each channel, pre-volume */
-	INT32 CyclestoREADY;/* number of cycles until the READY line goes active */
+	int32_t VolTable[16];	/* volume table (for 4-bit to db conversion)*/
+	int32_t Register[8];	/* registers */
+	int32_t LastRegister;	/* last register written */
+	int32_t Volume[4];	/* db volume of voice 0-2 and noise */
+	uint32_t RNG;			/* noise generator LFSR*/
+	int32_t ClockDivider;	/* clock divider */
+	int32_t CurrentClock;
+	int32_t FeedbackMask;	/* mask for feedback */
+	int32_t WhitenoiseTap1;	/* mask for white noise tap 1 (higher one, usually bit 14) */
+	int32_t WhitenoiseTap2;	/* mask for white noise tap 2 (lower one, usually bit 13)*/
+	int32_t Negate;		/* output negate flag */
+	int32_t Stereo;		/* whether we're dealing with stereo or not */
+	int32_t StereoMask;	/* the stereo output mask */
+	int32_t Period[4];	/* Length of 1/2 of waveform */
+	int32_t Count[4];		/* Position within the waveform */
+	int32_t Output[4];	/* 1-bit output of each channel, pre-volume */
+	int32_t CyclestoREADY;/* number of cycles until the READY line goes active */
 };
 
 
@@ -236,8 +236,8 @@ static STREAM_UPDATE( SN76496Update )
 	sn76496_state *R = (sn76496_state *)param;
 	stream_sample_t *lbuffer = outputs[0];
 	stream_sample_t *rbuffer = (R->Stereo)?outputs[1]:NULL;
-	INT16 out = 0;
-	INT16 out2 = 0;
+	int16_t out = 0;
+	int16_t out2 = 0;
 
 	while (samples > 0)
 	{

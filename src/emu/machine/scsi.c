@@ -51,7 +51,7 @@ void SCSIExecCommand( SCSIInstance *instance, int *resultLength )
 	}
 }
 
-void SCSISetCommand( SCSIInstance *instance, UINT8 *command, int commandLength )
+void SCSISetCommand( SCSIInstance *instance, uint8_t *command, int commandLength )
 {
 	if (instance)
 	{
@@ -59,7 +59,7 @@ void SCSISetCommand( SCSIInstance *instance, UINT8 *command, int commandLength )
 	}
 }
 
-void SCSIGetCommand( SCSIInstance *instance, UINT8 **command, int *commandLength )
+void SCSIGetCommand( SCSIInstance *instance, uint8_t **command, int *commandLength )
 {
 	if (instance)
 	{
@@ -99,14 +99,14 @@ void SCSIGetPhase( SCSIInstance *instance, int *phase )
 	}
 }
 
-int SCSIBase( const SCSIClass *scsiClass, int operation, void *file, INT64 intparm, UINT8 *ptrparm )
+int SCSIBase( const SCSIClass *scsiClass, int operation, void *file, int64_t intparm, uint8_t *ptrparm )
 {
 	return scsiClass->baseClass->dispatch( operation, file, intparm, ptrparm );
 }
 
 SCSIInstance *SCSIMalloc( running_machine *machine, const SCSIClass *scsiClass )
 {
-	SCSIInstance *scsiInstance = (SCSIInstance *)auto_alloc_array(machine, UINT8, SCSISizeof( scsiClass ));
+	SCSIInstance *scsiInstance = (SCSIInstance *)auto_alloc_array(machine, uint8_t, SCSISizeof( scsiClass ));
 	scsiInstance->scsiClass = scsiClass;
 	scsiInstance->machine = machine;
 	return scsiInstance;
@@ -124,7 +124,7 @@ void *SCSIThis( const SCSIClass *scsiClass, SCSIInstance *instance )
 			sizeofBase += scsiClass->sizeofData;
 		}
 
-		return ( (UINT8*)instance ) + sizeofBase;
+		return ( (uint8_t*)instance ) + sizeofBase;
 	}
 
 	return NULL;
@@ -143,7 +143,7 @@ int SCSISizeof( const SCSIClass *scsiClass )
 	return sizeofData;
 }
 
-int SCSILengthFromUINT8( UINT8 *length )
+int SCSILengthFromUINT8( uint8_t *length )
 {
 	if( *length == 0 )
 	{
@@ -153,7 +153,7 @@ int SCSILengthFromUINT8( UINT8 *length )
 	return *length;
 }
 
-int SCSILengthFromUINT16( UINT8 *length )
+int SCSILengthFromUINT16( uint8_t *length )
 {
 	return ( *(length) << 8 ) | *(length + 1 );
 }

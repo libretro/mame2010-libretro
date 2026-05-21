@@ -6,7 +6,7 @@ MACHINE_START( tmp68301 );
 MACHINE_RESET( tmp68301 );
 
 // Hardware Registers
-extern UINT16 *tmp68301_regs;
+extern uint16_t *tmp68301_regs;
 WRITE16_HANDLER( tmp68301_regs_w );
 
 // Interrupts

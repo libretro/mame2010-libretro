@@ -16,8 +16,8 @@
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef UINT32 (*pci_read_func)(running_device *pcibus, running_device *device, int function, int reg, UINT32 mem_mask);
-typedef void (*pci_write_func)(running_device *pcibus, running_device *device, int function, int reg, UINT32 data, UINT32 mem_mask);
+typedef uint32_t (*pci_read_func)(running_device *pcibus, running_device *device, int function, int reg, uint32_t mem_mask);
+typedef void (*pci_write_func)(running_device *pcibus, running_device *device, int function, int reg, uint32_t data, uint32_t mem_mask);
 
 typedef struct _pci_device_entry pci_device_entry;
 struct _pci_device_entry
@@ -30,7 +30,7 @@ struct _pci_device_entry
 typedef struct _pci_bus_config pci_bus_config;
 struct _pci_bus_config
 {
-	UINT8				busnum;
+	uint8_t				busnum;
 	pci_device_entry	device[32];
 };
 

@@ -242,27 +242,27 @@ typedef struct
 {
 	sound_stream * stream;
 
-	UINT8 WordInput; // value on word input bus
-	UINT8 LatchedWord; // value latched from input bus
-	UINT16 SyllableAddress; // address read from word table
-	UINT16 PhoneAddress; // starting/current phone address from syllable table
-	UINT8 PlayParams; // playback parameters from syllable table
-	UINT8 PhoneOffset; // offset within phone
-	UINT8 LengthCounter; // 4-bit counter which holds the inverted length of the word in phones, leftshifted by 1
-	UINT8 RepeatCounter; // 3-bit counter which holds the inverted number of repeats per phone, leftshifted by 1
-	UINT8 OutputCounter; // 2-bit counter to determine forward/backward and output/silence state.
-	UINT8 machineState; // chip state machine state
-	UINT8 nextstate; // chip state machine's new state
-	UINT8 laststate; // chip state machine's previous state, needed for mirror increment masking
-	UINT8 resetState; // reset line state
-	UINT8 oddeven; // odd versus even cycle toggle
-	UINT8 GlobalSilenceState; // same as above but for silent syllables instead of silent portions of mirrored syllables
-	UINT8 OldDelta; // 2-bit old delta value
-	UINT8 DACOutput; // 4-bit DAC Accumulator/output
-	UINT8 audioout; // filtered audio output
-	UINT8 *SpeechRom; // array to hold rom contents, mame will not need this, will use a pointer
-	INT16 filtervals[8];
-	UINT8 VSU1000_amp; // amplitude setting on VSU-1000 board
+	uint8_t WordInput; // value on word input bus
+	uint8_t LatchedWord; // value latched from input bus
+	uint16_t SyllableAddress; // address read from word table
+	uint16_t PhoneAddress; // starting/current phone address from syllable table
+	uint8_t PlayParams; // playback parameters from syllable table
+	uint8_t PhoneOffset; // offset within phone
+	uint8_t LengthCounter; // 4-bit counter which holds the inverted length of the word in phones, leftshifted by 1
+	uint8_t RepeatCounter; // 3-bit counter which holds the inverted number of repeats per phone, leftshifted by 1
+	uint8_t OutputCounter; // 2-bit counter to determine forward/backward and output/silence state.
+	uint8_t machineState; // chip state machine state
+	uint8_t nextstate; // chip state machine's new state
+	uint8_t laststate; // chip state machine's previous state, needed for mirror increment masking
+	uint8_t resetState; // reset line state
+	uint8_t oddeven; // odd versus even cycle toggle
+	uint8_t GlobalSilenceState; // same as above but for silent syllables instead of silent portions of mirrored syllables
+	uint8_t OldDelta; // 2-bit old delta value
+	uint8_t DACOutput; // 4-bit DAC Accumulator/output
+	uint8_t audioout; // filtered audio output
+	uint8_t *SpeechRom; // array to hold rom contents, mame will not need this, will use a pointer
+	int16_t filtervals[8];
+	uint8_t VSU1000_amp; // amplitude setting on VSU-1000 board
 } S14001AChip;
 
 INLINE S14001AChip *get_safe_token(running_device *device)
@@ -285,7 +285,7 @@ INLINE S14001AChip *get_safe_token(running_device *device)
 #define REPEATCOUNT ((chip->PlayParams<<1)&0x6) // remember: its 3 bits and the bottom bit is always zero!
 #define LOCALSILENCESTATE ((chip->OutputCounter & 0x2) && (MIRRORMODE)) // 1 when silent output, 0 when DAC output.
 
-static const INT8 DeltaTable[4][4] =
+static const int8_t DeltaTable[4][4] =
 {
 	{ -3, -3, -1, -1, },
 	{ -1, -1,  0,  0, },
@@ -294,19 +294,19 @@ static const INT8 DeltaTable[4][4] =
 };
 
 #ifdef ACCURATE_SQUEAL
-static INT16 audiofilter(S14001AChip *chip) /* rewrite me to better match the real filter! */
+static int16_t audiofilter(S14001AChip *chip) /* rewrite me to better match the real filter! */
 {
-	UINT8 temp1;
-        INT16 temp2 = 0;
+	uint8_t temp1;
+        int16_t temp2 = 0;
 	/* mean averaging filter! 1/n exponential *would* be somewhat better, but I'm lazy... */
 	for (temp1 = 0; temp1 < 8; temp1++) { temp2 += chip->filtervals[temp1]; }
 	temp2 >>= 3;
 	return temp2;
 }
 
-static void shiftIntoFilter(S14001AChip *chip, INT16 inputvalue)
+static void shiftIntoFilter(S14001AChip *chip, int16_t inputvalue)
 {
-	UINT8 temp1;
+	uint8_t temp1;
 	for (temp1 = 7; temp1 > 0; temp1--)
 	{
 		chip->filtervals[temp1] = chip->filtervals[(temp1 - 1)];
@@ -406,7 +406,7 @@ static void PostPhoneme(S14001AChip *chip) /* figure out what the heck to do aft
 
 static void s14001a_clock(S14001AChip *chip) /* called once per clock */
 {
-	UINT8 CurDelta; // Current delta
+	uint8_t CurDelta; // Current delta
 
 	/* on even clocks, audio output is floating, /romen is low so rom data bus is driven
          * on odd clocks, audio output is driven, /romen is high, state machine 2 is clocked
@@ -549,8 +549,8 @@ static void s14001a_clock(S14001AChip *chip) /* called once per clock */
 
 static STREAM_UPDATE( s14001a_pcm_update )
 {
-	INT32 mix[48000];
-	//INT32 *mixp;
+	int32_t mix[48000];
+	//int32_t *mixp;
 	S14001AChip *chip = (S14001AChip *)param;
 	int i;
 
@@ -568,9 +568,9 @@ static STREAM_UPDATE( s14001a_pcm_update )
 		}
 		else // normal, dac-driven output
 		{
-			shiftIntoFilter(chip, ((((INT16)chip->audioout)-8)<<9)); // shift over the previous outputs and stick in audioout 4 times. note <<9 instead of <<10, to prevent clipping, and to simulate that the filtered output normally has a somewhat lower amplitude than the driven one.
+			shiftIntoFilter(chip, ((((int16_t)chip->audioout)-8)<<9)); // shift over the previous outputs and stick in audioout 4 times. note <<9 instead of <<10, to prevent clipping, and to simulate that the filtered output normally has a somewhat lower amplitude than the driven one.
 #endif
-			outputs[0][i] = ((((INT16)chip->audioout)-8)<<10)*chip->VSU1000_amp;
+			outputs[0][i] = ((((int16_t)chip->audioout)-8)<<10)*chip->VSU1000_amp;
 #ifdef ACCURATE_SQUEAL
 		}
 #endif

@@ -47,9 +47,9 @@ typedef struct _voodoo_config voodoo_config;
 struct _voodoo_config
 {
 	int					type;
-	UINT8				fbmem;
-	UINT8				tmumem0;
-	UINT8				tmumem1;
+	uint8_t				fbmem;
+	uint8_t				tmumem0;
+	uint8_t				tmumem1;
 	const char *		screen;
 	const char *		cputag;
 	voodoo_vblank_func	vblank;
@@ -104,7 +104,7 @@ struct _voodoo_config
 int voodoo_update(running_device *device, bitmap_t *bitmap, const rectangle *cliprect);
 int voodoo_get_type(running_device *device);
 int voodoo_is_stalled(running_device *device);
-void voodoo_set_init_enable(running_device *device, UINT32 newval);
+void voodoo_set_init_enable(running_device *device, uint32_t newval);
 
 READ32_DEVICE_HANDLER( voodoo_r );
 WRITE32_DEVICE_HANDLER( voodoo_w );

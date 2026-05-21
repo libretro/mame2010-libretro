@@ -10,7 +10,7 @@ struct _loaded_sample
 {
     int         length;         /* length in samples */
     int         frequency;      /* frequency of the sample */
-    INT16 *     data;           /* 16-bit signed data */
+    int16_t *     data;           /* 16-bit signed data */
 };
 
 typedef struct _loaded_samples loaded_samples;
@@ -32,7 +32,7 @@ struct _samples_interface
 
 
 void sample_start(running_device *device,int channel,int samplenum,int loop);
-void sample_start_raw(running_device *device,int channel,const INT16 *sampledata,int samples,int frequency,int loop);
+void sample_start_raw(running_device *device,int channel,const int16_t *sampledata,int samples,int frequency,int loop);
 void sample_set_freq(running_device *device,int channel,int freq);
 void sample_set_volume(running_device *device,int channel,float volume);
 void sample_set_pause(running_device *device,int channel,int pause);

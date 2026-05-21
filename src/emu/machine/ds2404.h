@@ -6,9 +6,9 @@
 typedef struct _ds2404_config ds2404_config;
 struct _ds2404_config
 {
-	UINT32	ref_year;
-	UINT8	ref_month;
-	UINT8	ref_day;
+	uint32_t	ref_year;
+	uint8_t	ref_month;
+	uint8_t	ref_day;
 };
 
 

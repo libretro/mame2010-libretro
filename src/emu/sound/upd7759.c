@@ -151,42 +151,42 @@ struct _upd7759_state
 	sound_stream *channel;					/* stream channel for playback */
 
 	/* internal clock to output sample rate mapping */
-	UINT32		pos;						/* current output sample position */
-	UINT32		step;						/* step value per output sample */
+	uint32_t		pos;						/* current output sample position */
+	uint32_t		step;						/* step value per output sample */
 	attotime	clock_period;				/* clock period */
 	emu_timer *timer;						/* timer */
 
 	/* I/O lines */
-	UINT8		fifo_in;					/* last data written to the sound chip */
-	UINT8		reset;						/* current state of the RESET line */
-	UINT8		start;						/* current state of the START line */
-	UINT8		drq;						/* current state of the DRQ line */
+	uint8_t		fifo_in;					/* last data written to the sound chip */
+	uint8_t		reset;						/* current state of the RESET line */
+	uint8_t		start;						/* current state of the START line */
+	uint8_t		drq;						/* current state of the DRQ line */
 	void (*drqcallback)(running_device *device, int param);			/* drq callback */
 
 	/* internal state machine */
-	INT8		state;						/* current overall chip state */
-	INT32		clocks_left;				/* number of clocks left in this state */
-	UINT16		nibbles_left;				/* number of ADPCM nibbles left to process */
-	UINT8		repeat_count;				/* number of repeats remaining in current repeat block */
-	INT8		post_drq_state;				/* state we will be in after the DRQ line is dropped */
-	INT32		post_drq_clocks;			/* clocks that will be left after the DRQ line is dropped */
-	UINT8		req_sample;					/* requested sample number */
-	UINT8		last_sample;				/* last sample number available */
-	UINT8		block_header;				/* header byte */
-	UINT8		sample_rate;				/* number of UPD clocks per ADPCM nibble */
-	UINT8		first_valid_header;			/* did we get our first valid header yet? */
-	UINT32		offset;						/* current ROM offset */
-	UINT32		repeat_offset;				/* current ROM repeat offset */
+	int8_t		state;						/* current overall chip state */
+	int32_t		clocks_left;				/* number of clocks left in this state */
+	uint16_t		nibbles_left;				/* number of ADPCM nibbles left to process */
+	uint8_t		repeat_count;				/* number of repeats remaining in current repeat block */
+	int8_t		post_drq_state;				/* state we will be in after the DRQ line is dropped */
+	int32_t		post_drq_clocks;			/* clocks that will be left after the DRQ line is dropped */
+	uint8_t		req_sample;					/* requested sample number */
+	uint8_t		last_sample;				/* last sample number available */
+	uint8_t		block_header;				/* header byte */
+	uint8_t		sample_rate;				/* number of UPD clocks per ADPCM nibble */
+	uint8_t		first_valid_header;			/* did we get our first valid header yet? */
+	uint32_t		offset;						/* current ROM offset */
+	uint32_t		repeat_offset;				/* current ROM repeat offset */
 
 	/* ADPCM processing */
-	INT8		adpcm_state;				/* ADPCM state index */
-	UINT8		adpcm_data;					/* current byte of ADPCM data */
-	INT16		sample;						/* current sample value */
+	int8_t		adpcm_state;				/* ADPCM state index */
+	uint8_t		adpcm_data;					/* current byte of ADPCM data */
+	int16_t		sample;						/* current sample value */
 
 	/* ROM access */
-	UINT8 *		rom;						/* pointer to ROM data or NULL for slave mode */
-	UINT8 *		rombase;					/* pointer to ROM data or NULL for slave mode */
-	UINT32		romoffset;					/* ROM offset to make save/restore easier */
+	uint8_t *		rom;						/* pointer to ROM data or NULL for slave mode */
+	uint8_t *		rombase;					/* pointer to ROM data or NULL for slave mode */
+	uint32_t		romoffset;					/* ROM offset to make save/restore easier */
 };
 
 
@@ -470,10 +470,10 @@ static void advance_state(upd7759_state *chip)
 static STREAM_UPDATE( upd7759_update )
 {
 	upd7759_state *chip = (upd7759_state *)param;
-	INT32 clocks_left = chip->clocks_left;
-	INT16 sample = chip->sample;
-	UINT32 step = chip->step;
-	UINT32 pos = chip->pos;
+	int32_t clocks_left = chip->clocks_left;
+	int16_t sample = chip->sample;
+	uint32_t step = chip->step;
+	uint32_t pos = chip->pos;
 	stream_sample_t *buffer = outputs[0];
 
 	/* loop until done */
@@ -533,7 +533,7 @@ static STREAM_UPDATE( upd7759_update )
 static TIMER_CALLBACK( upd7759_slave_update )
 {
 	upd7759_state *chip = (upd7759_state *)ptr;
-	UINT8 olddrq = chip->drq;
+	uint8_t olddrq = chip->drq;
 
 	/* update the stream */
 	stream_update(chip->channel);
@@ -679,11 +679,11 @@ static DEVICE_START( upd7759 )
 
 *************************************************************/
 
-void upd7759_reset_w(running_device *device, UINT8 data)
+void upd7759_reset_w(running_device *device, uint8_t data)
 {
 	/* update the reset value */
 	upd7759_state *chip = get_safe_token(device);
-	UINT8 oldreset = chip->reset;
+	uint8_t oldreset = chip->reset;
 	chip->reset = (data != 0);
 
 	/* update the stream first */
@@ -694,11 +694,11 @@ void upd7759_reset_w(running_device *device, UINT8 data)
 		upd7759_reset(chip);
 }
 
-void upd7759_start_w(running_device *device, UINT8 data)
+void upd7759_start_w(running_device *device, uint8_t data)
 {
 	/* update the start value */
 	upd7759_state *chip = get_safe_token(device);
-	UINT8 oldstart = chip->start;
+	uint8_t oldstart = chip->start;
 	chip->start = (data != 0);
 
 	logerror("upd7759_start_w: %d->%d\n", oldstart, chip->start);
@@ -734,7 +734,7 @@ int upd7759_busy_r(running_device *device)
 }
 
 
-void upd7759_set_bank_base(running_device *device, UINT32 base)
+void upd7759_set_bank_base(running_device *device, uint32_t base)
 {
 	upd7759_state *chip = get_safe_token(device);
 	chip->rom = chip->rombase + base;

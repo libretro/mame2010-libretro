@@ -41,17 +41,17 @@ typedef struct
 {
 	void *chip;
 
-	UINT16 freq;
-	UINT16 wtsize;
-	UINT8  control;
-	UINT8  vol;
-	UINT8  data;
-	UINT32 wavetblpointer;
-	UINT8  wavetblsize;
-	UINT8  resolution;
+	uint16_t freq;
+	uint16_t wtsize;
+	uint8_t  control;
+	uint8_t  vol;
+	uint8_t  data;
+	uint32_t wavetblpointer;
+	uint8_t  wavetblsize;
+	uint8_t  resolution;
 
-	UINT32 accumulator;
-	UINT8  irqpend;
+	uint32_t accumulator;
+	uint8_t  irqpend;
 	emu_timer *timer;
 } ES5503Osc;
 
@@ -59,7 +59,7 @@ typedef struct
 {
 	ES5503Osc oscillators[32];
 
-	UINT8 *docram;
+	uint8_t *docram;
 
 	sound_stream * stream;
 
@@ -67,12 +67,12 @@ typedef struct
 
 	read8_device_func adc_read;		// callback for the 5503's built-in analog to digital converter
 
-	INT8  oscsenabled;		// # of oscillators enabled
+	int8_t  oscsenabled;		// # of oscillators enabled
 
 	int   rege0;			// contents of register 0xe0
 
-	UINT32 clock;
-	UINT32 output_rate;
+	uint32_t clock;
+	uint32_t output_rate;
 	running_device *device;
 } ES5503Chip;
 
@@ -83,9 +83,9 @@ INLINE ES5503Chip *get_safe_token(running_device *device)
 	return (ES5503Chip *)downcast<legacy_device_base *>(device)->token();
 }
 
-static const UINT16 wavesizes[8] = { 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
-static const UINT32 wavemasks[8] = { 0x1ff00, 0x1fe00, 0x1fc00, 0x1f800, 0x1f000, 0x1e000, 0x1c000, 0x18000 };
-static const UINT32 accmasks[8]  = { 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff };
+static const uint16_t wavesizes[8] = { 256, 512, 1024, 2048, 4096, 8192, 16384, 32768 };
+static const uint32_t wavemasks[8] = { 0x1ff00, 0x1fe00, 0x1fc00, 0x1f800, 0x1f000, 0x1e000, 0x1c000, 0x18000 };
+static const uint32_t accmasks[8]  = { 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff };
 static const int    resshifts[8] = { 9, 10, 11, 12, 13, 14, 15, 16 };
 
 enum
@@ -100,7 +100,7 @@ enum
 // chip = chip ptr
 // onum = oscillator #
 // type = 1 for 0 found in sample data, 0 for hit end of table size
-static void es5503_halt_osc(ES5503Chip *chip, int onum, int type, UINT32 *accumulator)
+static void es5503_halt_osc(ES5503Chip *chip, int onum, int type, uint32_t *accumulator)
 {
 	ES5503Osc *pOsc = &chip->oscillators[onum];
 	ES5503Osc *pPartner = &chip->oscillators[onum^1];
@@ -146,10 +146,10 @@ static TIMER_CALLBACK( es5503_timer_cb )
 
 static STREAM_UPDATE( es5503_pcm_update )
 {
-	INT32 mix[48000*2];
-	INT32 *mixp;
+	int32_t mix[48000*2];
+	int32_t *mixp;
 	int osc, snum, i;
-	UINT32 ramptr;
+	uint32_t ramptr;
 	ES5503Chip *chip = (ES5503Chip *)param;
 
 	memset(mix, 0, sizeof(mix));
@@ -162,15 +162,15 @@ static STREAM_UPDATE( es5503_pcm_update )
 
 		if (!(pOsc->control & 1))
 		{
-			UINT32 wtptr = pOsc->wavetblpointer & wavemasks[pOsc->wavetblsize], altram;
-			UINT32 acc = pOsc->accumulator;
-			UINT16 wtsize = pOsc->wtsize - 1;
-			UINT8 ctrl = pOsc->control;
-			UINT16 freq = pOsc->freq;
-			INT16 vol = pOsc->vol;
-			INT8 data = -128;
+			uint32_t wtptr = pOsc->wavetblpointer & wavemasks[pOsc->wavetblsize], altram;
+			uint32_t acc = pOsc->accumulator;
+			uint16_t wtsize = pOsc->wtsize - 1;
+			uint8_t ctrl = pOsc->control;
+			uint16_t freq = pOsc->freq;
+			int16_t vol = pOsc->vol;
+			int8_t data = -128;
 			int resshift = resshifts[pOsc->resolution] - pOsc->wavetblsize;
-			UINT32 sizemask = accmasks[pOsc->wavetblsize];
+			uint32_t sizemask = accmasks[pOsc->wavetblsize];
 
 			for (snum = 0; snum < samples; snum++)
 			{
@@ -179,7 +179,7 @@ static STREAM_UPDATE( es5503_pcm_update )
 
 				acc += freq;
 
-				data = (INT32)chip->docram[ramptr + wtptr] ^ 0x80;
+				data = (int32_t)chip->docram[ramptr + wtptr] ^ 0x80;
 
 				if (chip->docram[ramptr + wtptr] == 0x00)
 				{
@@ -272,7 +272,7 @@ static DEVICE_START( es5503 )
 
 READ8_DEVICE_HANDLER( es5503_r )
 {
-	UINT8 retval;
+	uint8_t retval;
 	int i;
 	ES5503Chip *chip = get_safe_token(device);
 
@@ -414,15 +414,15 @@ WRITE8_DEVICE_HANDLER( es5503_w )
 					// if this voice generates interrupts, set a timer to make sure we service it on time
 					if (((data & 0x09) == 0x08) && (chip->oscillators[osc].freq > 0))
 					{
-						UINT32 length, run;
-						UINT32 wtptr = chip->oscillators[osc].wavetblpointer & wavemasks[chip->oscillators[osc].wavetblsize];
-						UINT32 acc = 0;
-						UINT16 wtsize = chip->oscillators[osc].wtsize-1;
-						UINT16 freq = chip->oscillators[osc].freq;
-						INT8 data = -128;
+						uint32_t length, run;
+						uint32_t wtptr = chip->oscillators[osc].wavetblpointer & wavemasks[chip->oscillators[osc].wavetblsize];
+						uint32_t acc = 0;
+						uint16_t wtsize = chip->oscillators[osc].wtsize-1;
+						uint16_t freq = chip->oscillators[osc].freq;
+						int8_t data = -128;
 						int resshift = resshifts[chip->oscillators[osc].resolution] - chip->oscillators[osc].wavetblsize;
-						UINT32 sizemask = accmasks[chip->oscillators[osc].wavetblsize];
-						UINT32 ramptr, altram;
+						uint32_t sizemask = accmasks[chip->oscillators[osc].wavetblsize];
+						uint32_t ramptr, altram;
 						attotime period;
 
 						run = 1;
@@ -432,7 +432,7 @@ WRITE8_DEVICE_HANDLER( es5503_w )
 							ramptr = (acc >> resshift) & sizemask;
 							altram = (acc >> resshift);
 							acc += freq;
-							data = (INT32)chip->docram[ramptr + wtptr];
+							data = (int32_t)chip->docram[ramptr + wtptr];
 
 							if ((data == 0) || (altram >= wtsize))
 							{
@@ -495,7 +495,7 @@ WRITE8_DEVICE_HANDLER( es5503_w )
 	}
 }
 
-void es5503_set_base(running_device *device, UINT8 *wavemem)
+void es5503_set_base(running_device *device, uint8_t *wavemem)
 {
 	ES5503Chip *chip = get_safe_token(device);
 

@@ -49,24 +49,24 @@ struct _astrocade_state
 {
 	sound_stream *stream;		/* sound stream */
 
-	UINT8		reg[8];			/* 8 control registers */
+	uint8_t		reg[8];			/* 8 control registers */
 
-	UINT8		master_count;	/* current master oscillator count */
-	UINT16		vibrato_clock;	/* current vibrato clock */
+	uint8_t		master_count;	/* current master oscillator count */
+	uint16_t		vibrato_clock;	/* current vibrato clock */
 
-	UINT8		noise_clock;	/* current noise generator clock */
-	UINT16		noise_state;	/* current noise LFSR state */
+	uint8_t		noise_clock;	/* current noise generator clock */
+	uint16_t		noise_state;	/* current noise LFSR state */
 
-	UINT8		a_count;		/* current tone generator A count */
-	UINT8		a_state;		/* current tone generator A state */
+	uint8_t		a_count;		/* current tone generator A count */
+	uint8_t		a_state;		/* current tone generator A state */
 
-	UINT8		b_count;		/* current tone generator B count */
-	UINT8		b_state;		/* current tone generator B state */
+	uint8_t		b_count;		/* current tone generator B count */
+	uint8_t		b_state;		/* current tone generator B state */
 
-	UINT8		c_count;		/* current tone generator C count */
-	UINT8		c_state;		/* current tone generator C state */
+	uint8_t		c_count;		/* current tone generator C count */
+	uint8_t		c_state;		/* current tone generator C state */
 
-	UINT8		bitswap[256];	/* bitswap table */
+	uint8_t		bitswap[256];	/* bitswap table */
 };
 
 
@@ -89,9 +89,9 @@ static STREAM_UPDATE( astrocade_update )
 {
 	astrocade_state *chip = (astrocade_state *)param;
 	stream_sample_t *dest = outputs[0];
-	UINT16 noise_state;
-	UINT8 master_count;
-	UINT8 noise_clock;
+	uint16_t noise_state;
+	uint8_t master_count;
+	uint8_t noise_clock;
 
 	/* load some locals */
 	master_count = chip->master_count;

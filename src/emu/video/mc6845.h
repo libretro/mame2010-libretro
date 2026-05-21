@@ -31,11 +31,11 @@ typedef void * (*mc6845_begin_update_func)(running_device *device, bitmap_t *bit
 #define MC6845_BEGIN_UPDATE(name)	void *name(running_device *device, bitmap_t *bitmap, const rectangle *cliprect)
 
 typedef void (*mc6845_update_row_func)(running_device *device, bitmap_t *bitmap,
-									   const rectangle *cliprect, UINT16 ma, UINT8 ra,
-									   UINT16 y, UINT8 x_count, INT8 cursor_x, void *param);
+									   const rectangle *cliprect, uint16_t ma, uint8_t ra,
+									   uint16_t y, uint8_t x_count, int8_t cursor_x, void *param);
 #define MC6845_UPDATE_ROW(name)		void name(running_device *device, bitmap_t *bitmap,	\
-											  const rectangle *cliprect, UINT16 ma, UINT8 ra,	\
-											  UINT16 y, UINT8 x_count, INT8 cursor_x, void *param)
+											  const rectangle *cliprect, uint16_t ma, uint8_t ra,	\
+											  uint16_t y, uint8_t x_count, int8_t cursor_x, void *param)
 
 typedef void (*mc6845_end_update_func)(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, void *param);
 #define MC6845_END_UPDATE(name)		void name(running_device *device, bitmap_t *bitmap, const rectangle *cliprect, void *param)
@@ -99,10 +99,10 @@ READ8_DEVICE_HANDLER( mc6845_register_r );
 WRITE8_DEVICE_HANDLER( mc6845_register_w );
 
 /* return the current value on the MA0-MA13 pins */
-UINT16 mc6845_get_ma(running_device *device);
+uint16_t mc6845_get_ma(running_device *device);
 
 /* return the current value on the RA0-RA4 pins */
-UINT8 mc6845_get_ra(running_device *device);
+uint8_t mc6845_get_ra(running_device *device);
 
 /* simulates the LO->HI clocking of the light pen pin (pin 3) */
 void mc6845_assert_light_pen_input(running_device *device);

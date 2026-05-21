@@ -76,8 +76,8 @@ struct _mb87078_state
 {
 	int          gain[4];		/* gain index 0-63,64,65 */
 	int          channel_latch;	/* current channel */
-	UINT8        latch[2][4];	/* 6bit+3bit 4 data latches */
-	UINT8        reset_comp;
+	uint8_t        latch[2][4];	/* 6bit+3bit 4 data latches */
+	uint8_t        reset_comp;
 
 	mb87078_gain_changed_cb   gain_changed_cb;
 };

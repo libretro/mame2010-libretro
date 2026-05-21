@@ -110,7 +110,7 @@ struct dst_rcfilter_context
 	double	vCap;
 	double	rc;
 	double	exponent;
-	UINT8	has_rc_nodes;
+	uint8_t	has_rc_nodes;
 };
 
 struct dst_rcfilter_sw_context

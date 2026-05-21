@@ -15,17 +15,17 @@
 
 typedef struct
 {
-	UINT32 lba;
-	UINT32 blocks;
+	uint32_t lba;
+	uint32_t blocks;
 	hard_disk_file *disk;
 } SCSIHd;
 
 
 // scsihd_exec_command
 
-static int scsihd_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
+static int scsihd_exec_command( SCSIInstance *scsiInstance, uint8_t *statusCode )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSIHd *our_this = (SCSIHd *)SCSIThis( &SCSIClassHARDDISK, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -108,10 +108,10 @@ static int scsihd_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
 	}
 }
 
-static void scsihd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void scsihd_read_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
 	int i;
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSIHd *our_this = (SCSIHd *)SCSIThis( &SCSIClassHARDDISK, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -180,7 +180,7 @@ static void scsihd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataL
 		case 0x25: // READ CAPACITY
 			{
 				hard_disk_info *info;
-				UINT32 temp;
+				uint32_t temp;
 
 				info = hard_disk_get_info(our_this->disk);
 
@@ -207,9 +207,9 @@ static void scsihd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataL
 	}
 }
 
-static void scsihd_write_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void scsihd_write_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSIHd *our_this = (SCSIHd *)SCSIThis( &SCSIClassHARDDISK, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -293,26 +293,26 @@ static void scsihd_set_device( SCSIInstance *scsiInstance, hard_disk_file *disk 
 	our_this->disk = disk;
 }
 
-static int scsihd_dispatch(int operation, void *file, INT64 intparm, void *ptrparm)
+static int scsihd_dispatch(int operation, void *file, int64_t intparm, void *ptrparm)
 {
 	SCSIAllocInstanceParams *params;
 
 	switch (operation)
 	{
 		case SCSIOP_EXEC_COMMAND:
-			return scsihd_exec_command( (SCSIInstance *)file, (UINT8 *)ptrparm );
+			return scsihd_exec_command( (SCSIInstance *)file, (uint8_t *)ptrparm );
 
 		case SCSIOP_READ_DATA:
-			scsihd_read_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			scsihd_read_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_WRITE_DATA:
-			scsihd_write_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			scsihd_write_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_ALLOC_INSTANCE:
 			params = (SCSIAllocInstanceParams *)ptrparm;
-			SCSIBase( &SCSIClassHARDDISK, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+			SCSIBase( &SCSIClassHARDDISK, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 			scsihd_alloc_instance( params->instance, params->diskregion );
 			return 0;
 
@@ -329,7 +329,7 @@ static int scsihd_dispatch(int operation, void *file, INT64 intparm, void *ptrpa
 			return 0;
 	}
 
-	return SCSIBase( &SCSIClassHARDDISK, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+	return SCSIBase( &SCSIClassHARDDISK, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 }
 
 const SCSIClass SCSIClassHARDDISK =

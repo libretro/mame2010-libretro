@@ -108,9 +108,9 @@ DECLARE_LEGACY_SOUND_DEVICE(CDP1869, cdp1869);
 #define CDP1869_INTERFACE(_name) \
 	const cdp1869_interface (_name) =
 
-#define CDP1869_CHAR_RAM_READ(name) UINT8 name(running_device *device, UINT16 pma, UINT8 cma)
-#define CDP1869_CHAR_RAM_WRITE(name) void name(running_device *device, UINT16 pma, UINT8 cma, UINT8 data)
-#define CDP1869_PCB_READ(name) int name(running_device *device, UINT16 pma, UINT8 cma)
+#define CDP1869_CHAR_RAM_READ(name) uint8_t name(running_device *device, uint16_t pma, uint8_t cma)
+#define CDP1869_CHAR_RAM_WRITE(name) void name(running_device *device, uint16_t pma, uint8_t cma, uint8_t data)
+#define CDP1869_PCB_READ(name) int name(running_device *device, uint16_t pma, uint8_t cma)
 
 #define CDP1869_PAL \
 	DEVCB_LINE_VCC
@@ -122,9 +122,9 @@ DECLARE_LEGACY_SOUND_DEVICE(CDP1869, cdp1869);
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef UINT8 (*cdp1869_char_ram_read_func)(running_device *device, UINT16 pma, UINT8 cma);
-typedef void (*cdp1869_char_ram_write_func)(running_device *device, UINT16 pma, UINT8 cma, UINT8 data);
-typedef int (*cdp1869_pcb_read_func)(running_device *device, UINT16 pma, UINT8 cma);
+typedef uint8_t (*cdp1869_char_ram_read_func)(running_device *device, uint16_t pma, uint8_t cma);
+typedef void (*cdp1869_char_ram_write_func)(running_device *device, uint16_t pma, uint8_t cma, uint8_t data);
+typedef int (*cdp1869_pcb_read_func)(running_device *device, uint16_t pma, uint8_t cma);
 
 /* interface */
 typedef struct _cdp1869_interface cdp1869_interface;

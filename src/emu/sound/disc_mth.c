@@ -128,12 +128,12 @@ struct dst_samphold_context
 struct dst_shift_context
 {
 	double	t_left;		/* time unused during last sample in seconds */
-	UINT32	shift_data;
-	UINT32	bit_mask;
-	UINT8	clock_type;
-	UINT8	reset_on_high;
-	UINT8	shift_r;
-	UINT8	last;
+	uint32_t	shift_data;
+	uint32_t	bit_mask;
+	uint8_t	clock_type;
+	uint8_t	reset_on_high;
+	uint8_t	shift_r;
+	uint8_t	last;
 };
 
 struct dst_size_context
@@ -143,9 +143,9 @@ struct dst_size_context
 
 struct dst_op_amp_context
 {
-	UINT8	has_cap;
-	UINT8	has_r1;
-	UINT8	has_r4;
+	uint8_t	has_cap;
+	uint8_t	has_r1;
+	uint8_t	has_r4;
 	double	v_max;
 	double	i_fixed;
 	double	v_cap;
@@ -181,8 +181,8 @@ struct dst_tvca_op_amp_context
 	double	v_cap3;			/* charge on cap c3 */
 	double	v_cap4;			/* charge on cap c4 */
 	double	r67;			/* = r6 + r7 (for easy use later) */
-	UINT8	has_c4;
-	UINT8	has_r4;
+	uint8_t	has_c4;
+	uint8_t	has_r4;
 };
 
 

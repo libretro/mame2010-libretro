@@ -28,11 +28,11 @@ class mb3773_device_config :
 	friend class mb3773_device;
 
 	// construction/destruction
-	mb3773_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	mb3773_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock );
+	static device_config *static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock );
 	virtual device_t *alloc_device( running_machine &machine ) const;
 
 protected:

@@ -21,15 +21,15 @@
 /* struct describing a single playing ADPCM voice */
 struct ADPCMVoice
 {
-	UINT8 playing;			/* 1 if we are actively playing */
+	uint8_t playing;			/* 1 if we are actively playing */
 
-	UINT32 base_offset;		/* pointer to the base memory location */
-	UINT32 sample;			/* current sample number */
-	UINT32 count;			/* total samples to play */
+	uint32_t base_offset;		/* pointer to the base memory location */
+	uint32_t sample;			/* current sample number */
+	uint32_t count;			/* total samples to play */
 
-	UINT32 volume;			/* output volume */
-	INT32 signal;
-	INT32 step;
+	uint32_t volume;			/* output volume */
+	int32_t signal;
+	int32_t step;
 };
 
 typedef struct _okim6376_state okim6376_state;
@@ -37,10 +37,10 @@ struct _okim6376_state
 {
 	#define OKIM6376_VOICES		2
 	struct ADPCMVoice voice[OKIM6376_VOICES];
-	INT32 command;
-	UINT8 *region_base;		/* pointer to the base of the region */
+	int32_t command;
+	uint8_t *region_base;		/* pointer to the base of the region */
 	sound_stream *stream;	/* which stream are we playing on? */
-	UINT32 master_clock;	/* master clock frequency */
+	uint32_t master_clock;	/* master clock frequency */
 };
 
 /* step size index shift table */
@@ -138,7 +138,7 @@ static void reset_adpcm(struct ADPCMVoice *voice)
 
 ***********************************************************************************************/
 
-static INT16 clock_adpcm(struct ADPCMVoice *voice, UINT8 nibble)
+static int16_t clock_adpcm(struct ADPCMVoice *voice, uint8_t nibble)
 {
 	voice->signal += diff_lookup[voice->step * 16 + (nibble & 15)];
 
@@ -167,12 +167,12 @@ static INT16 clock_adpcm(struct ADPCMVoice *voice, UINT8 nibble)
 
 ***********************************************************************************************/
 
-static void generate_adpcm(okim6376_state *chip, struct ADPCMVoice *voice, INT16 *buffer, int samples)
+static void generate_adpcm(okim6376_state *chip, struct ADPCMVoice *voice, int16_t *buffer, int samples)
 {
 	/* if this voice is active */
 	if (voice->playing)
 	{
-		UINT8 *base = chip->region_base + voice->base_offset;
+		uint8_t *base = chip->region_base + voice->base_offset;
 		int sample = voice->sample;
 		int count = voice->count;
 
@@ -240,7 +240,7 @@ static STREAM_UPDATE( okim6376_update )
 	{
 		struct ADPCMVoice *voice = &chip->voice[i];
 		stream_sample_t *buffer = outputs[0];
-		INT16 sample_data[MAX_SAMPLE_CHUNK];
+		int16_t sample_data[MAX_SAMPLE_CHUNK];
 		int remaining = samples;
 
 		/* loop while we have samples remaining */

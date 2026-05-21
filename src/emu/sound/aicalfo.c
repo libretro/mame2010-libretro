@@ -12,7 +12,7 @@
 struct _LFO
 {
     unsigned short phase;
-    UINT32 phase_step;
+    uint32_t phase_step;
     int *table;
     int *scale;
 };
@@ -128,7 +128,7 @@ INLINE signed int AICAALFO_Step(struct _LFO *LFO)
 	return p<<(SHIFT-LFO_SHIFT);
 }
 
-static void AICALFO_ComputeStep(struct _LFO *LFO,UINT32 LFOF,UINT32 LFOWS,UINT32 LFOS,int ALFO)
+static void AICALFO_ComputeStep(struct _LFO *LFO,uint32_t LFOF,uint32_t LFOWS,uint32_t LFOS,int ALFO)
 {
     float step=(float) LFOFreq[LFOF]*256.0/(float)44100.0;
     LFO->phase_step=(unsigned int) ((float) (1<<LFO_SHIFT)*step);

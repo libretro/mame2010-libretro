@@ -20,7 +20,7 @@ typedef struct _f3853 f3853_t;
 struct _f3853 {
     const f3853_config *config;
 
-    UINT8 high,low; // bit 7 set to 0 for timer interrupt, to 1 for external interrupt
+    uint8_t high,low; // bit 7 set to 0 for timer interrupt, to 1 for external interrupt
     int external_enable;
     int timer_enable;
 
@@ -38,7 +38,7 @@ struct _f3853 {
    interrupt at 0xfe
    0xff stops register (0xfe never reached!)
 */
-static UINT8 f3853_value_to_cycle[0x100];
+static uint8_t f3853_value_to_cycle[0x100];
 
 
 static TIMER_CALLBACK( f3853_timer_callback );
@@ -70,7 +70,7 @@ static void f3853_set_interrupt_request_line(running_device *device)
 }
 
 
-static void f3853_timer_start(running_device *device, UINT8 value)
+static void f3853_timer_start(running_device *device, uint8_t value)
 {
 	f3853_t	*f3853 = get_safe_token( device );
 
@@ -117,7 +117,7 @@ void f3853_set_priority_in_line(running_device *device, int level)
 READ8_DEVICE_HANDLER(f3853_r)
 {
 	f3853_t	*f3853 = get_safe_token( device );
-    UINT8 data=0;
+    uint8_t data=0;
 
     switch (offset)
 	{
@@ -163,7 +163,7 @@ WRITE8_DEVICE_HANDLER(f3853_w)
 static DEVICE_START( f3853 )
 {
 	f3853_t *f3853 = get_safe_token( device );
-	UINT8 reg=0xfe;
+	uint8_t reg=0xfe;
 	int i;
 
 	f3853->config = (const f3853_config *)device->baseconfig().static_config();

@@ -66,7 +66,7 @@ struct _cdp1864_t
 	/* sound state */
 	int aoe;						/* audio on */
 	int latch;						/* sound latch */
-	INT16 signal;					/* current signal */
+	int16_t signal;					/* current signal */
 	int incr;						/* initial wave state */
 
 	/* timers */
@@ -358,7 +358,7 @@ static STREAM_UPDATE( cdp1864_stream_update )
 {
 	cdp1864_t *cdp1864 = get_safe_token(device);
 
-	INT16 signal = cdp1864->signal;
+	int16_t signal = cdp1864->signal;
 	stream_sample_t *buffer = outputs[0];
 
 	memset( buffer, 0, samples * sizeof(*buffer) );

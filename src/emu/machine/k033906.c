@@ -15,8 +15,8 @@
 typedef struct _k033906_state k033906_state;
 struct _k033906_state
 {
-	UINT32 *     reg;
-	UINT32 *     ram;
+	uint32_t *     reg;
+	uint32_t *     ram;
 
 	int          reg_set;	// 1 = access reg / 0 = access ram
 
@@ -52,7 +52,7 @@ WRITE_LINE_DEVICE_HANDLER( k033906_set_reg )
 	k033906->reg_set = state & 1;
 }
 
-static UINT32 k033906_reg_r( running_device *device, int reg )
+static uint32_t k033906_reg_r( running_device *device, int reg )
 {
 	k033906_state *k033906 = k033906_get_safe_token(device);
 
@@ -69,7 +69,7 @@ static UINT32 k033906_reg_r( running_device *device, int reg )
 	return 0;
 }
 
-static void k033906_reg_w( running_device *device, int reg, UINT32 data )
+static void k033906_reg_w( running_device *device, int reg, uint32_t data )
 {
 	k033906_state *k033906 = k033906_get_safe_token(device);
 
@@ -146,8 +146,8 @@ static DEVICE_START( k033906 )
 
 	k033906->voodoo = device->machine->device(intf->voodoo);
 
-	k033906->reg = auto_alloc_array(device->machine, UINT32, 256);
-	k033906->ram = auto_alloc_array(device->machine, UINT32, 32768);
+	k033906->reg = auto_alloc_array(device->machine, uint32_t, 256);
+	k033906->ram = auto_alloc_array(device->machine, uint32_t, 32768);
 
 	k033906->reg_set = 0;
 

@@ -44,24 +44,24 @@ enum {
 
 typedef struct
 {
-	UINT8	vol_l;
-	UINT8	vol_r;
-	UINT8	vol_l2;
-	UINT8	vol_r2;
-	UINT8	bank;
-	INT16	noise;
-	INT16   noisebuf;
-	UINT16  noisecnt;
-	UINT16	pitch;
-	UINT16	start_addr;
-	UINT16	end_addr;
-	UINT16	repeat_addr;
-	UINT32	flag;
+	uint8_t	vol_l;
+	uint8_t	vol_r;
+	uint8_t	vol_l2;
+	uint8_t	vol_r2;
+	uint8_t	bank;
+	int16_t	noise;
+	int16_t   noisebuf;
+	uint16_t  noisecnt;
+	uint16_t	pitch;
+	uint16_t	start_addr;
+	uint16_t	end_addr;
+	uint16_t	repeat_addr;
+	uint32_t	flag;
 
-	UINT16	start;
-	UINT16	repeat;
-	UINT32	current_addr;
-	UINT32	pos;
+	uint16_t	start;
+	uint16_t	repeat;
+	uint32_t	current_addr;
+	uint32_t	pos;
 } c352_ch_t;
 
 typedef struct _c352_state c352_state;
@@ -70,7 +70,7 @@ struct _c352_state
 	sound_stream *stream;
 	c352_ch_t c352_ch[32];
 	unsigned char *c352_rom_samples;
-	UINT32 c352_rom_length;
+	uint32_t c352_rom_length;
 	int sample_rate_base;
 
 	long	channel_l[2048*2];
@@ -116,10 +116,10 @@ static void c352_mix_one_channel(c352_state *info, unsigned long ch, long sample
 
 	signed short sample, nextsample;
 	signed short noisebuf;
-	UINT16 noisecnt;
-	INT32 frequency, delta, offset, cnt, flag;
-	UINT32 bank;
-	UINT32 pos, len;
+	uint16_t noisecnt;
+	int32_t frequency, delta, offset, cnt, flag;
+	uint32_t bank;
+	uint32_t pos, len;
 
 	frequency = info->c352_ch[ch].pitch;
 	delta=frequency;

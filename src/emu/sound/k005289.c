@@ -51,8 +51,8 @@ struct _k005289_state
 	int mclock,rate;
 
 	/* mixer tables and internal buffers */
-	INT16 *mixer_table;
-	INT16 *mixer_lookup;
+	int16_t *mixer_table;
+	int16_t *mixer_lookup;
 	short *mixer_buffer;
 
 	int k005289_A_frequency,k005289_B_frequency;
@@ -76,7 +76,7 @@ static void make_mixer_table(running_machine *machine, k005289_state *info, int 
 	int gain = 16;
 
 	/* allocate memory */
-	info->mixer_table = auto_alloc_array(machine, INT16, 256 * voices);
+	info->mixer_table = auto_alloc_array(machine, int16_t, 256 * voices);
 
 	/* find the middle of the table */
 	info->mixer_lookup = info->mixer_table + (128 * voices);
@@ -102,7 +102,7 @@ static STREAM_UPDATE( K005289_update )
 	int i,v,f;
 
 	/* zap the contents of the mixer buffer */
-	memset(info->mixer_buffer, 0, samples * sizeof(INT16));
+	memset(info->mixer_buffer, 0, samples * sizeof(int16_t));
 
 	v=voice[0].volume;
 	f=voice[0].frequency;

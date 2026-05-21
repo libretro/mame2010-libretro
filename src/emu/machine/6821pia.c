@@ -28,48 +28,48 @@ struct _pia6821_state
 	devcb_resolved_write_line irq_a_func;
 	devcb_resolved_write_line irq_b_func;
 
-	UINT8 in_a;
-	UINT8 in_ca1;
-	UINT8 in_ca2;
-	UINT8 out_a;
-	UINT8 out_ca2;
-	UINT8 port_a_z_mask;
-	UINT8 ddr_a;
-	UINT8 ctl_a;
-	UINT8 irq_a1;
-	UINT8 irq_a2;
-	UINT8 irq_a_state;
+	uint8_t in_a;
+	uint8_t in_ca1;
+	uint8_t in_ca2;
+	uint8_t out_a;
+	uint8_t out_ca2;
+	uint8_t port_a_z_mask;
+	uint8_t ddr_a;
+	uint8_t ctl_a;
+	uint8_t irq_a1;
+	uint8_t irq_a2;
+	uint8_t irq_a_state;
 
-	UINT8 in_b;
-	UINT8 in_cb1;
-	UINT8 in_cb2;
-	UINT8 out_b;
-	UINT8 out_cb2;
-	UINT8 last_out_cb2_z;
-	UINT8 ddr_b;
-	UINT8 ctl_b;
-	UINT8 irq_b1;
-	UINT8 irq_b2;
-	UINT8 irq_b_state;
+	uint8_t in_b;
+	uint8_t in_cb1;
+	uint8_t in_cb2;
+	uint8_t out_b;
+	uint8_t out_cb2;
+	uint8_t last_out_cb2_z;
+	uint8_t ddr_b;
+	uint8_t ctl_b;
+	uint8_t irq_b1;
+	uint8_t irq_b2;
+	uint8_t irq_b_state;
 
 	/* variables that indicate if access a line externally -
        used to for logging purposes ONLY */
-	UINT8 in_a_pushed;
-	UINT8 out_a_needs_pulled;
-	UINT8 in_ca1_pushed;
-	UINT8 in_ca2_pushed;
-	UINT8 out_ca2_needs_pulled;
-	UINT8 in_b_pushed;
-	UINT8 out_b_needs_pulled;
-	UINT8 in_cb1_pushed;
-	UINT8 in_cb2_pushed;
-	UINT8 out_cb2_needs_pulled;
-	UINT8 logged_port_a_not_connected;
-	UINT8 logged_port_b_not_connected;
-	UINT8 logged_ca1_not_connected;
-	UINT8 logged_ca2_not_connected;
-	UINT8 logged_cb1_not_connected;
-	UINT8 logged_cb2_not_connected;
+	uint8_t in_a_pushed;
+	uint8_t out_a_needs_pulled;
+	uint8_t in_ca1_pushed;
+	uint8_t in_ca2_pushed;
+	uint8_t out_ca2_needs_pulled;
+	uint8_t in_b_pushed;
+	uint8_t out_b_needs_pulled;
+	uint8_t in_cb1_pushed;
+	uint8_t in_cb2_pushed;
+	uint8_t out_cb2_needs_pulled;
+	uint8_t logged_port_a_not_connected;
+	uint8_t logged_port_b_not_connected;
+	uint8_t logged_ca1_not_connected;
+	uint8_t logged_ca2_not_connected;
+	uint8_t logged_cb1_not_connected;
+	uint8_t logged_cb2_not_connected;
 };
 
 
@@ -281,11 +281,11 @@ static void update_interrupts(running_device *device)
     get_in_a_value
 -------------------------------------------------*/
 
-static UINT8 get_in_a_value(running_device *device)
+static uint8_t get_in_a_value(running_device *device)
 {
 	pia6821_state *p = get_token(device);
-	UINT8 port_a_data = 0;
-	UINT8 ret;
+	uint8_t port_a_data = 0;
+	uint8_t ret;
 
 	/* update the input */
 	if (p->in_a_func.read != NULL)
@@ -322,17 +322,17 @@ static UINT8 get_in_a_value(running_device *device)
     get_in_b_value
 -------------------------------------------------*/
 
-static UINT8 get_in_b_value(running_device *device)
+static uint8_t get_in_b_value(running_device *device)
 {
 	pia6821_state *p = get_token(device);
-	UINT8 ret;
+	uint8_t ret;
 
 	if (p->ddr_b == 0xff)
 		/* all output, just return buffer */
 		ret = p->out_b;
 	else
 	{
-		UINT8 port_b_data;
+		uint8_t port_b_data;
 
 		/* update the input */
 		if (p->in_b_func.read != NULL)
@@ -366,10 +366,10 @@ static UINT8 get_in_b_value(running_device *device)
     get_out_a_value
 -------------------------------------------------*/
 
-static UINT8 get_out_a_value(running_device *device)
+static uint8_t get_out_a_value(running_device *device)
 {
 	pia6821_state *p = get_token(device);
-	UINT8 ret;
+	uint8_t ret;
 
 	if (p->ddr_a == 0xff)
 		/* all output */
@@ -386,7 +386,7 @@ static UINT8 get_out_a_value(running_device *device)
     get_out_b_value
 -------------------------------------------------*/
 
-static UINT8 get_out_b_value(running_device *device)
+static uint8_t get_out_b_value(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
@@ -454,11 +454,11 @@ static void set_out_cb2(running_device *device, int data)
     port_a_r
 -------------------------------------------------*/
 
-static UINT8 port_a_r(running_device *device)
+static uint8_t port_a_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
-	UINT8 ret = get_in_a_value(device);
+	uint8_t ret = get_in_a_value(device);
 
 	/* IRQ flags implicitly cleared by a read */
 	p->irq_a1 = FALSE;
@@ -486,11 +486,11 @@ static UINT8 port_a_r(running_device *device)
     ddr_a_r
 -------------------------------------------------*/
 
-static UINT8 ddr_a_r(running_device *device)
+static uint8_t ddr_a_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
-	UINT8 ret = p->ddr_a;
+	uint8_t ret = p->ddr_a;
 
 	LOG(("PIA #%s: DDR A read = %02X\n", device->tag(), ret));
 
@@ -502,11 +502,11 @@ static UINT8 ddr_a_r(running_device *device)
     port_b_r
 -------------------------------------------------*/
 
-static UINT8 port_b_r(running_device *device)
+static uint8_t port_b_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
-	UINT8 ret = get_in_b_value(device);
+	uint8_t ret = get_in_b_value(device);
 
 	/* This read will implicitly clear the IRQ B1 flag.  If CB2 is in write-strobe
        mode with CB1 restore, and a CB1 active transition set the flag,
@@ -530,11 +530,11 @@ static UINT8 port_b_r(running_device *device)
     ddr_b_r
 -------------------------------------------------*/
 
-static UINT8 ddr_b_r(running_device *device)
+static uint8_t ddr_b_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
-	UINT8 ret = p->ddr_b;
+	uint8_t ret = p->ddr_b;
 
 	LOG(("PIA #%s: DDR B read = %02X\n", device->tag(), ret));
 
@@ -546,10 +546,10 @@ static UINT8 ddr_b_r(running_device *device)
     control_a_r
 -------------------------------------------------*/
 
-static UINT8 control_a_r(running_device *device)
+static uint8_t control_a_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
-	UINT8 ret;
+	uint8_t ret;
 
 	/* update CA1 & CA2 if callback exists, these in turn may update IRQ's */
 	if (p->in_ca1_func.read != NULL)
@@ -588,10 +588,10 @@ static UINT8 control_a_r(running_device *device)
     control_b_r
 -------------------------------------------------*/
 
-static UINT8 control_b_r(running_device *device)
+static uint8_t control_b_r(running_device *device)
 {
 	pia6821_state *p = get_token(device);
-	UINT8 ret;
+	uint8_t ret;
 
 	/* update CB1 & CB2 if callback exists, these in turn may update IRQ's */
 	if (p->in_cb1_func.read != NULL)
@@ -633,7 +633,7 @@ static UINT8 control_b_r(running_device *device)
 READ8_DEVICE_HANDLER( pia6821_r )
 {
 	pia6821_state *p = get_token(device);
-	UINT8 ret;
+	uint8_t ret;
 
 	switch (offset & 0x03)
 	{
@@ -679,7 +679,7 @@ READ8_DEVICE_HANDLER( pia6821_alt_r )
     pia6821_get_port_b_z_mask
 -------------------------------------------------*/
 
-UINT8 pia6821_get_port_b_z_mask(running_device *device)
+uint8_t pia6821_get_port_b_z_mask(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 	return ~p->ddr_b;
@@ -695,7 +695,7 @@ static void send_to_out_a_func(running_device *device, const char* message)
 	pia6821_state *p = get_token(device);
 
 	/* input pins are pulled high */
-	UINT8 data = get_out_a_value(device);
+	uint8_t data = get_out_a_value(device);
 
 	LOG(("PIA #%s: %s = %02X\n", device->tag(), message, data));
 
@@ -720,7 +720,7 @@ static void send_to_out_b_func(running_device *device, const char* message)
 	pia6821_state *p = get_token(device);
 
 	/* input pins are high-impedance - we just send them as zeros for backwards compatibility */
-	UINT8 data = get_out_b_value(device);
+	uint8_t data = get_out_b_value(device);
 
 	LOG(("PIA #%s: %s = %02X\n", device->tag(), message, data));
 
@@ -740,7 +740,7 @@ static void send_to_out_b_func(running_device *device, const char* message)
     port_a_w
 -------------------------------------------------*/
 
-static void port_a_w(running_device *device, UINT8 data)
+static void port_a_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -755,7 +755,7 @@ static void port_a_w(running_device *device, UINT8 data)
     ddr_a_w
 -------------------------------------------------*/
 
-static void ddr_a_w(running_device *device, UINT8 data)
+static void ddr_a_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -780,7 +780,7 @@ static void ddr_a_w(running_device *device, UINT8 data)
     port_b_w
 -------------------------------------------------*/
 
-static void port_b_w(running_device *device, UINT8 data)
+static void port_b_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -806,7 +806,7 @@ static void port_b_w(running_device *device, UINT8 data)
     ddr_b_w
 -------------------------------------------------*/
 
-static void ddr_b_w(running_device *device, UINT8 data)
+static void ddr_b_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -831,7 +831,7 @@ static void ddr_b_w(running_device *device, UINT8 data)
     control_a_w
 -------------------------------------------------*/
 
-static void control_a_w(running_device *device, UINT8 data)
+static void control_a_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -867,7 +867,7 @@ static void control_a_w(running_device *device, UINT8 data)
     control_b_w
 -------------------------------------------------*/
 
-static void control_b_w(running_device *device, UINT8 data)
+static void control_b_w(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 	int temp;
@@ -944,7 +944,7 @@ WRITE8_DEVICE_HANDLER( pia6821_alt_w )
     pia6821_set_port_a_z_mask
 -------------------------------------------------*/
 
-void pia6821_set_port_a_z_mask(running_device *device, UINT8 data)
+void pia6821_set_port_a_z_mask(running_device *device, uint8_t data)
 {
 	pia6821_state *p = get_token(device);
 
@@ -968,7 +968,7 @@ READ8_DEVICE_HANDLER( pia6821_porta_r )
     pia6821_set_input_a
 -------------------------------------------------*/
 
-void pia6821_set_input_a(running_device *device, UINT8 data, UINT8 z_mask)
+void pia6821_set_input_a(running_device *device, uint8_t data, uint8_t z_mask)
 {
 	pia6821_state *p = get_token(device);
 
@@ -996,7 +996,7 @@ WRITE8_DEVICE_HANDLER( pia6821_porta_w )
     pia6821_get_output_a
 -------------------------------------------------*/
 
-UINT8 pia6821_get_output_a(running_device *device)
+uint8_t pia6821_get_output_a(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 
@@ -1159,7 +1159,7 @@ WRITE8_DEVICE_HANDLER( pia6821_portb_w )
     pia6821_get_output_b
 -------------------------------------------------*/
 
-UINT8 pia6821_get_output_b(running_device *device)
+uint8_t pia6821_get_output_b(running_device *device)
 {
 	pia6821_state *p = get_token(device);
 

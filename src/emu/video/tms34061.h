@@ -38,8 +38,8 @@ enum
 struct tms34061_interface
 {
 	const char	*screen_tag;	/* the screen we are acting on */
-	UINT8		rowshift;		/* VRAM address is (row << rowshift) | col */
-	UINT32		vramsize;		/* size of video RAM */
+	uint8_t		rowshift;		/* VRAM address is (row << rowshift) | col */
+	uint32_t		vramsize;		/* size of video RAM */
 	void		(*interrupt)(running_machine *machine, int state);	/* interrupt gen callback */
 };
 
@@ -47,10 +47,10 @@ struct tms34061_interface
 /* display state structure */
 struct tms34061_display
 {
-	UINT8	blanked;		/* true if blanked */
-	UINT8	*vram;			/* base of VRAM */
-	UINT8	*latchram;		/* base of latch RAM */
-	UINT16	*regs;			/* pointer to array of registers */
+	uint8_t	blanked;		/* true if blanked */
+	uint8_t	*vram;			/* base of VRAM */
+	uint8_t	*latchram;		/* base of latch RAM */
+	uint16_t	*regs;			/* pointer to array of registers */
 	offs_t	dispstart;		/* display start */
 };
 
@@ -59,8 +59,8 @@ struct tms34061_display
 void tms34061_start(running_machine *machine, const struct tms34061_interface *interface);
 
 /* reads/writes to the 34061 */
-UINT8 tms34061_r(const address_space *space, int col, int row, int func);
-void tms34061_w(const address_space *space, int col, int row, int func, UINT8 data);
+uint8_t tms34061_r(const address_space *space, int col, int row, int func);
+void tms34061_w(const address_space *space, int col, int row, int func, uint8_t data);
 
 /* latch settings */
 READ8_HANDLER( tms34061_latch_r );

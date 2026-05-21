@@ -66,7 +66,7 @@ struct _EG
 struct _LFO
 {
 	unsigned short phase;
-	UINT32 phase_step;
+	uint32_t phase_step;
 	int *table;
 	int *scale;
 };
@@ -100,7 +100,7 @@ struct _MultiPCM
 	unsigned int Address;
 	unsigned int BankR,BankL;
 	float Rate;
-	INT8 *ROM;
+	int8_t *ROM;
 	//I include these in the chip because they depend on the chip clock
 	unsigned int ARStep[0x40],DRStep[0x40];	//Envelope step table
 	unsigned int FNS_Table[0x400];		//Frequency step table
@@ -109,7 +109,7 @@ struct _MultiPCM
 
 static signed int LPANTABLE[0x800],RPANTABLE[0x800];
 
-#define FIX(v)	((UINT32) ((float) (1<<SHIFT)*(v)))
+#define FIX(v)	((uint32_t) ((float) (1<<SHIFT)*(v)))
 
 static const int val2chan[] =
 {
@@ -302,7 +302,7 @@ INLINE signed int ALFO_Step(struct _LFO *LFO)
 	return p<<(SHIFT-LFO_SHIFT);
 }
 
-static void LFO_ComputeStep(MultiPCM *ptChip,struct _LFO *LFO,UINT32 LFOF,UINT32 LFOS,int ALFO)
+static void LFO_ComputeStep(MultiPCM *ptChip,struct _LFO *LFO,uint32_t LFOF,uint32_t LFOS,int ALFO)
 {
 	float step=(float) LFOFreq[LFOF]*256.0/(float) ptChip->Rate;
 	LFO->phase_step=(unsigned int) ((float) (1<<LFO_SHIFT)*step);
@@ -592,7 +592,7 @@ static DEVICE_START( multipcm )
 
 	for(i=0;i<512;++i)
 	{
-		UINT8 *ptSample=(UINT8 *) ptChip->ROM+i*12;
+		uint8_t *ptSample=(uint8_t *) ptChip->ROM+i*12;
 		ptChip->Samples[i].Start=(ptSample[0]<<16)|(ptSample[1]<<8)|(ptSample[2]<<0);
 		ptChip->Samples[i].Loop=(ptSample[3]<<8)|(ptSample[4]<<0);
 		ptChip->Samples[i].End=0xffff-((ptSample[5]<<8)|(ptSample[6]<<0));
@@ -665,7 +665,7 @@ WRITE8_DEVICE_HANDLER( multipcm_w )
 
 /* MAME/M1 access functions */
 
-void multipcm_set_bank(running_device *device, UINT32 leftoffs, UINT32 rightoffs)
+void multipcm_set_bank(running_device *device, uint32_t leftoffs, uint32_t rightoffs)
 {
 	MultiPCM *ptChip = get_safe_token(device);
 	ptChip->BankL = leftoffs;

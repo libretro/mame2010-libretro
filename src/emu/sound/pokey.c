@@ -158,22 +158,22 @@
 typedef struct _pokey_state pokey_state;
 struct _pokey_state
 {
-	INT32 counter[4];		/* channel counter */
-	INT32 divisor[4];		/* channel divisor (modulo value) */
-	UINT32 volume[4];		/* channel volume - derived */
-	UINT8 output[4];		/* channel output signal (1 active, 0 inactive) */
-	UINT8 audible[4];		/* channel plays an audible tone/effect */
-	UINT32 samplerate_24_8; /* sample rate in 24.8 format */
-	UINT32 samplepos_fract; /* sample position fractional part */
-	UINT32 samplepos_whole; /* sample position whole part */
-	UINT32 polyadjust;		/* polynome adjustment */
-	UINT32 p4;              /* poly4 index */
-	UINT32 p5;              /* poly5 index */
-	UINT32 p9;              /* poly9 index */
-	UINT32 p17;             /* poly17 index */
-	UINT32 r9;				/* rand9 index */
-	UINT32 r17;             /* rand17 index */
-	UINT32 clockmult;		/* clock multiplier */
+	int32_t counter[4];		/* channel counter */
+	int32_t divisor[4];		/* channel divisor (modulo value) */
+	uint32_t volume[4];		/* channel volume - derived */
+	uint8_t output[4];		/* channel output signal (1 active, 0 inactive) */
+	uint8_t audible[4];		/* channel plays an audible tone/effect */
+	uint32_t samplerate_24_8; /* sample rate in 24.8 format */
+	uint32_t samplepos_fract; /* sample position fractional part */
+	uint32_t samplepos_whole; /* sample position whole part */
+	uint32_t polyadjust;		/* polynome adjustment */
+	uint32_t p4;              /* poly4 index */
+	uint32_t p5;              /* poly5 index */
+	uint32_t p9;              /* poly9 index */
+	uint32_t p17;             /* poly17 index */
+	uint32_t r9;				/* rand9 index */
+	uint32_t r17;             /* rand17 index */
+	uint32_t clockmult;		/* clock multiplier */
 	running_device *device;
 	sound_stream * channel; /* streams channel */
 	emu_timer *timer[3];	/* timers for channel 1,2 and 4 events */
@@ -186,31 +186,31 @@ struct _pokey_state
 	devcb_resolved_read8 serin_r;
 	devcb_resolved_write8 serout_w;
 	void (*interrupt_cb)(running_device *device, int mask);
-	UINT8 AUDF[4];          /* AUDFx (D200, D202, D204, D206) */
-	UINT8 AUDC[4];			/* AUDCx (D201, D203, D205, D207) */
-	UINT8 POTx[8];			/* POTx   (R/D200-D207) */
-	UINT8 AUDCTL;			/* AUDCTL (W/D208) */
-	UINT8 ALLPOT;			/* ALLPOT (R/D208) */
-	UINT8 KBCODE;			/* KBCODE (R/D209) */
-	UINT8 RANDOM;			/* RANDOM (R/D20A) */
-	UINT8 SERIN;			/* SERIN  (R/D20D) */
-	UINT8 SEROUT;			/* SEROUT (W/D20D) */
-	UINT8 IRQST;			/* IRQST  (R/D20E) */
-	UINT8 IRQEN;			/* IRQEN  (W/D20E) */
-	UINT8 SKSTAT;			/* SKSTAT (R/D20F) */
-	UINT8 SKCTL;			/* SKCTL  (W/D20F) */
+	uint8_t AUDF[4];          /* AUDFx (D200, D202, D204, D206) */
+	uint8_t AUDC[4];			/* AUDCx (D201, D203, D205, D207) */
+	uint8_t POTx[8];			/* POTx   (R/D200-D207) */
+	uint8_t AUDCTL;			/* AUDCTL (W/D208) */
+	uint8_t ALLPOT;			/* ALLPOT (R/D208) */
+	uint8_t KBCODE;			/* KBCODE (R/D209) */
+	uint8_t RANDOM;			/* RANDOM (R/D20A) */
+	uint8_t SERIN;			/* SERIN  (R/D20D) */
+	uint8_t SEROUT;			/* SEROUT (W/D20D) */
+	uint8_t IRQST;			/* IRQST  (R/D20E) */
+	uint8_t IRQEN;			/* IRQEN  (W/D20E) */
+	uint8_t SKSTAT;			/* SKSTAT (R/D20F) */
+	uint8_t SKCTL;			/* SKCTL  (W/D20F) */
 	pokey_interface intf;
 	attotime clock_period;
 	attotime ad_time_fast;
 	attotime ad_time_slow;
 
-	UINT8 poly4[0x0f];
-	UINT8 poly5[0x1f];
-	UINT8 poly9[0x1ff];
-	UINT8 poly17[0x1ffff];
+	uint8_t poly4[0x0f];
+	uint8_t poly5[0x1f];
+	uint8_t poly9[0x1ff];
+	uint8_t poly17[0x1ffff];
 
-	UINT8 rand9[0x1ff];
-	UINT8 rand17[0x1ffff];
+	uint8_t rand9[0x1ff];
+	uint8_t rand17[0x1ffff];
 };
 
 
@@ -346,7 +346,7 @@ static TIMER_CALLBACK( pokey_pot_trigger );
  */
 
 #define PROCESS_POKEY(chip) 											\
-	UINT32 sum = 0; 													\
+	uint32_t sum = 0; 													\
 	if( chip->output[CHAN1] )											\
 		sum += chip->volume[CHAN1];										\
 	if( chip->output[CHAN2] )											\
@@ -365,24 +365,24 @@ static TIMER_CALLBACK( pokey_pot_trigger );
 				{														\
 					if( chip->counter[CHAN4] < chip->counter[CHAN3] )	\
 					{													\
-						UINT32 event = chip->counter[CHAN4];			\
+						uint32_t event = chip->counter[CHAN4];			\
                         PROCESS_CHANNEL(chip,CHAN4);                    \
 					}													\
 					else												\
 					{													\
-						UINT32 event = chip->counter[CHAN3];			\
+						uint32_t event = chip->counter[CHAN3];			\
                         PROCESS_CHANNEL(chip,CHAN3);                    \
 					}													\
 				}														\
 				else													\
 				if( chip->counter[CHAN4] < chip->counter[CHAN2] )		\
 				{														\
-					UINT32 event = chip->counter[CHAN4];				\
+					uint32_t event = chip->counter[CHAN4];				\
                     PROCESS_CHANNEL(chip,CHAN4);                        \
 				}														\
                 else                                                    \
 				{														\
-					UINT32 event = chip->counter[CHAN2];				\
+					uint32_t event = chip->counter[CHAN2];				\
                     PROCESS_CHANNEL(chip,CHAN2);                        \
 				}														\
             }                                                           \
@@ -391,24 +391,24 @@ static TIMER_CALLBACK( pokey_pot_trigger );
 			{															\
 				if( chip->counter[CHAN4] < chip->counter[CHAN3] )		\
 				{														\
-					UINT32 event = chip->counter[CHAN4];				\
+					uint32_t event = chip->counter[CHAN4];				\
                     PROCESS_CHANNEL(chip,CHAN4);                        \
 				}														\
                 else                                                    \
 				{														\
-					UINT32 event = chip->counter[CHAN3];				\
+					uint32_t event = chip->counter[CHAN3];				\
                     PROCESS_CHANNEL(chip,CHAN3);                        \
 				}														\
             }                                                           \
 			else														\
 			if( chip->counter[CHAN4] < chip->counter[CHAN1] )			\
 			{															\
-				UINT32 event = chip->counter[CHAN4];					\
+				uint32_t event = chip->counter[CHAN4];					\
                 PROCESS_CHANNEL(chip,CHAN4);                            \
 			}															\
             else                                                        \
 			{															\
-				UINT32 event = chip->counter[CHAN1];					\
+				uint32_t event = chip->counter[CHAN1];					\
                 PROCESS_CHANNEL(chip,CHAN1);                            \
 			}															\
 		}																\
@@ -419,24 +419,24 @@ static TIMER_CALLBACK( pokey_pot_trigger );
 			{															\
 				if( chip->counter[CHAN4] < chip->counter[CHAN3] )		\
 				{														\
-					UINT32 event = chip->counter[CHAN4];				\
+					uint32_t event = chip->counter[CHAN4];				\
                     PROCESS_CHANNEL(chip,CHAN4);                        \
 				}														\
 				else													\
 				{														\
-					UINT32 event = chip->counter[CHAN3];				\
+					uint32_t event = chip->counter[CHAN3];				\
                     PROCESS_CHANNEL(chip,CHAN3);                        \
 				}														\
 			}															\
 			else														\
 			if( chip->counter[CHAN4] < chip->counter[CHAN2] )			\
 			{															\
-				UINT32 event = chip->counter[CHAN4];					\
+				uint32_t event = chip->counter[CHAN4];					\
                 PROCESS_CHANNEL(chip,CHAN4);                            \
 			}															\
 			else														\
 			{															\
-				UINT32 event = chip->counter[CHAN2];					\
+				uint32_t event = chip->counter[CHAN2];					\
                 PROCESS_CHANNEL(chip,CHAN2);                            \
 			}															\
 		}																\
@@ -445,24 +445,24 @@ static TIMER_CALLBACK( pokey_pot_trigger );
         {                                                               \
 			if( chip->counter[CHAN4] < chip->counter[CHAN3] )			\
 			{															\
-				UINT32 event = chip->counter[CHAN4];					\
+				uint32_t event = chip->counter[CHAN4];					\
                 PROCESS_CHANNEL(chip,CHAN4);                            \
 			}															\
 			else														\
 			{															\
-				UINT32 event = chip->counter[CHAN3];					\
+				uint32_t event = chip->counter[CHAN3];					\
                 PROCESS_CHANNEL(chip,CHAN3);                            \
 			}															\
 		}																\
 		else															\
 		if( chip->counter[CHAN4] < chip->samplepos_whole )				\
 		{																\
-			UINT32 event = chip->counter[CHAN4];						\
+			uint32_t event = chip->counter[CHAN4];						\
             PROCESS_CHANNEL(chip,CHAN4);                                \
         }                                                               \
 		else															\
 		{																\
-			UINT32 event = chip->samplepos_whole;						\
+			uint32_t event = chip->samplepos_whole;						\
 			PROCESS_SAMPLE(chip);										\
 		}																\
 	}																	\
@@ -475,7 +475,7 @@ static TIMER_CALLBACK( pokey_pot_trigger );
  */
 
 #define PROCESS_POKEY(chip)                                             \
-	UINT32 sum = 0; 													\
+	uint32_t sum = 0; 													\
 	if( chip->output[CHAN1] )											\
 		sum += chip->volume[CHAN1];										\
 	if( chip->output[CHAN2] )											\
@@ -486,8 +486,8 @@ static TIMER_CALLBACK( pokey_pot_trigger );
         sum += chip->volume[CHAN4];                                     \
 	while( samples > 0 )                                                 \
 	{																	\
-		UINT32 event = chip->samplepos_whole;							\
-		UINT32 channel = SAMPLE;										\
+		uint32_t event = chip->samplepos_whole;							\
+		uint32_t channel = SAMPLE;										\
 		if( chip->counter[CHAN1] < event )								\
         {                                                               \
 			event = chip->counter[CHAN1];								\
@@ -538,7 +538,7 @@ static STREAM_UPDATE( pokey_update )
 }
 
 
-static void poly_init(UINT8 *poly, int size, int left, int right, int add)
+static void poly_init(uint8_t *poly, int size, int left, int right, int add)
 {
 	int mask = (1 << size) - 1;
     int i, x = 0;
@@ -553,7 +553,7 @@ static void poly_init(UINT8 *poly, int size, int left, int right, int add)
 	}
 }
 
-static void rand_init(UINT8 *rng, int size, int left, int right, int add)
+static void rand_init(uint8_t *rng, int size, int left, int right, int add)
 {
     int mask = (1 << size) - 1;
     int i, x = 0;
@@ -821,7 +821,7 @@ READ8_DEVICE_HANDLER( pokey_r )
 {
 	pokey_state *p = get_safe_token(device);
 	int data = 0, pot;
-	UINT32 adjust = 0;
+	uint32_t adjust = 0;
 
 	switch (offset & 15)
 	{

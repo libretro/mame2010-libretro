@@ -11,8 +11,8 @@
 #include "tms9927.h"
 
 
-static const UINT8 chars_per_row_value[8] = { 20, 32, 40, 64, 72, 80, 96, 132 };
-static const UINT8 skew_bits_value[4] = { 0, 1, 2, 2 };
+static const uint8_t chars_per_row_value[8] = { 20, 32, 40, 64, 72, 80, 96, 132 };
+static const uint8_t skew_bits_value[4] = { 0, 1, 2, 2 };
 
 
 #define HCOUNT(t)				((t)->reg[0] + 1)
@@ -36,19 +36,19 @@ struct _tms9927_state
 	/* driver-controlled state */
 	const tms9927_interface *intf;
 	screen_device *screen;
-	const UINT8 *selfload;
+	const uint8_t *selfload;
 
 	/* live state */
-	UINT32	clock;
-	UINT8	reg[9];
-	UINT8	start_datarow;
-	UINT8	reset;
-	UINT8	hpixels_per_column;
+	uint32_t	clock;
+	uint8_t	reg[9];
+	uint8_t	start_datarow;
+	uint8_t	reset;
+	uint8_t	hpixels_per_column;
 
 	/* derived state; no need to save */
-	UINT8	valid_config;
-	UINT16	total_hpix, total_vpix;
-	UINT16	visible_hpix, visible_vpix;
+	uint8_t	valid_config;
+	uint16_t	total_hpix, total_vpix;
+	uint16_t	visible_hpix, visible_vpix;
 };
 
 
@@ -205,7 +205,7 @@ int tms9927_cursor_bounds(running_device *device, rectangle *bounds)
 
 static void recompute_parameters(tms9927_state *tms, int postload)
 {
-	UINT16 offset_hpix, offset_vpix;
+	uint16_t offset_hpix, offset_vpix;
 	attoseconds_t refresh;
 	rectangle visarea;
 

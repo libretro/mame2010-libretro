@@ -26,7 +26,7 @@ WRITE16_DEVICE_HANDLER( scsp_w );
 WRITE16_DEVICE_HANDLER( scsp_midi_in );
 READ16_DEVICE_HANDLER( scsp_midi_out_r );
 
-extern UINT32* stv_scu;
+extern uint32_t* stv_scu;
 
 DECLARE_LEGACY_SOUND_DEVICE(SCSP, scsp);
 

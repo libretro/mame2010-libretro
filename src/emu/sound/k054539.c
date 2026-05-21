@@ -59,10 +59,10 @@ CHANNEL_DEBUG enables the following keys:
 
 typedef struct _k054539_channel k054539_channel;
 struct _k054539_channel {
-	UINT32 pos;
-	UINT32 pfrac;
-	INT32 val;
-	INT32 pval;
+	uint32_t pos;
+	uint32_t pfrac;
+	int32_t val;
+	int32_t pval;
 };
 
 typedef struct _k054539_state k054539_state;
@@ -73,19 +73,19 @@ struct _k054539_state {
 	double pantab[0xf];
 
 	double k054539_gain[8];
-	UINT8 k054539_posreg_latch[8][3];
+	uint8_t k054539_posreg_latch[8][3];
 	int k054539_flags;
 
 	unsigned char regs[0x230];
 	unsigned char *ram;
 	int reverb_pos;
 
-	INT32 cur_ptr;
+	int32_t cur_ptr;
 	int cur_limit;
 	unsigned char *cur_zone;
 	unsigned char *rom;
-	UINT32 rom_size;
-	UINT32 rom_mask;
+	uint32_t rom_size;
+	uint32_t rom_mask;
 	sound_stream * stream;
 
 	k054539_channel channels[8];
@@ -135,7 +135,7 @@ static STREAM_UPDATE( k054539_update )
 	k054539_state *info = (k054539_state *)param;
 #define VOL_CAP 1.80
 
-	static const INT16 dpcm[16] = {
+	static const int16_t dpcm[16] = {
 		0<<8, 1<<8, 4<<8, 9<<8, 16<<8, 25<<8, 36<<8, 49<<8,
 		-64<<8, -49<<8, -36<<8, -25<<8, -16<<8, -9<<8, -4<<8, -1<<8
 	};
@@ -143,7 +143,7 @@ static STREAM_UPDATE( k054539_update )
 	int ch, reverb_pos;
 	short *rbase;
 	unsigned char *rom;
-	UINT32 rom_mask;
+	uint32_t rom_mask;
 
 	unsigned char *base1, *base2;
 	k054539_channel *chan;
@@ -236,9 +236,9 @@ else
 
 #define UPDATE_CHANNELS																	\
 			do {																		\
-				*bufl++ += (INT16)(cur_val*lvol);										\
-				*bufr++ += (INT16)(cur_val*rvol);										\
-				rbase[rdelta++] += (INT16)(cur_val*rbvol);										\
+				*bufl++ += (int16_t)(cur_val*lvol);										\
+				*bufr++ += (int16_t)(cur_val*rvol);										\
+				rbase[rdelta++] += (int16_t)(cur_val*rbvol);										\
 				rdelta &= 0x3fff;										\
 			} while(0)
 
@@ -251,12 +251,12 @@ else
 						cur_pos += pdelta;
 
 						cur_pval = cur_val;
-						cur_val = (INT16)(rom[cur_pos] << 8);
-						if(cur_val == (INT16)0x8000) {
+						cur_val = (int16_t)(rom[cur_pos] << 8);
+						if(cur_val == (int16_t)0x8000) {
 							if(base2[1] & 1) {
 								cur_pos = (base1[0x08] | (base1[0x09] << 8) | (base1[0x0a] << 16)) & rom_mask;
-								cur_val = (INT16)(rom[cur_pos] << 8);
-								if(cur_val != (INT16)0x8000)
+								cur_val = (int16_t)(rom[cur_pos] << 8);
+								if(cur_val != (int16_t)0x8000)
 									continue;
 							}
 							k054539_keyoff(info, ch);
@@ -279,12 +279,12 @@ else
 						cur_pos += pdelta;
 
 						cur_pval = cur_val;
-						cur_val = (INT16)(rom[cur_pos] | rom[cur_pos+1]<<8);
-						if(cur_val == (INT16)0x8000) {
+						cur_val = (int16_t)(rom[cur_pos] | rom[cur_pos+1]<<8);
+						if(cur_val == (int16_t)0x8000) {
 							if(base2[1] & 1) {
 								cur_pos = (base1[0x08] | (base1[0x09] << 8) | (base1[0x0a] << 16)) & rom_mask;
-								cur_val = (INT16)(rom[cur_pos] | rom[cur_pos+1]<<8);
-								if(cur_val != (INT16)0x8000)
+								cur_val = (int16_t)(rom[cur_pos] | rom[cur_pos+1]<<8);
+								if(cur_val != (int16_t)0x8000)
 									continue;
 							}
 							k054539_keyoff(info, ch);
@@ -509,7 +509,7 @@ WRITE8_DEVICE_HANDLER( k054539_w )
 #endif
 
 	int latch, offs, ch, pan;
-	UINT8 *regbase, *regptr, *posptr;
+	uint8_t *regbase, *regptr, *posptr;
 
 	regbase = info->regs;
 	latch = (info->k054539_flags & K054539_UPDATE_AT_KEYON) && (regbase[0x22f] & 1);
@@ -621,7 +621,7 @@ READ8_DEVICE_HANDLER( k054539_r )
 	switch(offset) {
 	case 0x22d:
 		if(info->regs[0x22f] & 0x10) {
-			UINT8 res = info->cur_zone[info->cur_ptr];
+			uint8_t res = info->cur_zone[info->cur_ptr];
 			info->cur_ptr++;
 			if(info->cur_ptr == info->cur_limit)
 				info->cur_ptr = 0;

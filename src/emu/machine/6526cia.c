@@ -51,23 +51,23 @@ typedef struct _cia_state cia_state;
 
 struct _cia_timer
 {
-	UINT16		latch;
-	UINT16		count;
-	UINT8		mode;
-	UINT8		irq;
+	uint16_t		latch;
+	uint16_t		count;
+	uint8_t		mode;
+	uint8_t		irq;
 	emu_timer *timer;
 	cia_state *	cia;
 };
 
 struct _cia_port
 {
-	UINT8		ddr;
-	UINT8		latch;
-	UINT8		in;
-	UINT8		out;
+	uint8_t		ddr;
+	uint8_t		latch;
+	uint8_t		in;
+	uint8_t		out;
 	devcb_resolved_read8	read;
 	devcb_resolved_write8	write;
-	UINT8		mask_value; /* in READ operation the value can be forced by a extern electric circuit */
+	uint8_t		mask_value; /* in READ operation the value can be forced by a extern electric circuit */
 };
 
 struct _cia_state
@@ -82,25 +82,25 @@ struct _cia_state
 	cia_timer		timer[2];
 
 	/* Time Of the Day clock (TOD) */
-	UINT32			tod;
-	UINT32			tod_latch;
-	UINT8			tod_latched;
-	UINT8			tod_running;
-	UINT32			alarm;
+	uint32_t			tod;
+	uint32_t			tod_latch;
+	uint8_t			tod_latched;
+	uint8_t			tod_running;
+	uint32_t			alarm;
 
 	/* Interrupts */
-	UINT8			icr;
-	UINT8			ics;
-	UINT8			irq;
+	uint8_t			icr;
+	uint8_t			ics;
+	uint8_t			irq;
 	int				flag;
 
 	/* Serial */
-	UINT8			loaded;
-	UINT8			sdr;
-	UINT8			sp;
-	UINT8			cnt;
-	UINT8			shift;
-	UINT8			serial;
+	uint8_t			loaded;
+	uint8_t			sdr;
+	uint8_t			sp;
+	uint8_t			cnt;
+	uint8_t			shift;
+	uint8_t			serial;
 };
 
 /***************************************************************************
@@ -228,7 +228,7 @@ static void cia_update_pc(running_device *device)
 
 static void cia_update_interrupts(running_device *device)
 {
-	UINT8 new_irq;
+	uint8_t new_irq;
 	cia_state *cia = get_token(device);
 
 	/* always update the high bit of ICS */
@@ -261,7 +261,7 @@ static int is_timer_active(emu_timer *timer)
     emu_timer for a given CIA timer
 -------------------------------------------------*/
 
-static void cia_timer_update(cia_timer *timer, INT32 new_count)
+static void cia_timer_update(cia_timer *timer, int32_t new_count)
 {
 	int which = timer - timer->cia->timer;
 
@@ -271,7 +271,7 @@ static void cia_timer_update(cia_timer *timer, INT32 new_count)
 	/* update the timer count, if necessary */
 	if ((new_count == -1) && is_timer_active(timer->timer))
 	{
-		UINT16 current_count = attotime_to_double(attotime_mul(timer_timeelapsed(timer->timer), timer->cia->device->clock()));
+		uint16_t current_count = attotime_to_double(attotime_mul(timer_timeelapsed(timer->timer), timer->cia->device->clock()));
 		timer->count = timer->count - MIN(timer->count, current_count);
 	}
 
@@ -298,13 +298,13 @@ static void cia_timer_update(cia_timer *timer, INT32 new_count)
     for a given CIA timer
 -------------------------------------------------*/
 
-static UINT16 cia_get_timer(cia_timer *timer)
+static uint16_t cia_get_timer(cia_timer *timer)
 {
-	UINT16 count;
+	uint16_t count;
 
 	if (is_timer_active(timer->timer))
 	{
-		UINT16 current_count = attotime_to_double(attotime_mul(timer_timeelapsed(timer->timer), timer->cia->device->clock()));
+		uint16_t current_count = attotime_to_double(attotime_mul(timer_timeelapsed(timer->timer), timer->cia->device->clock()));
 		count = timer->count - MIN(timer->count, current_count);
 	}
 	else
@@ -426,7 +426,7 @@ static TIMER_CALLBACK( cia_timer_proc )
     bcd_increment
 -------------------------------------------------*/
 
-static UINT8 bcd_increment(UINT8 value)
+static uint8_t bcd_increment(uint8_t value)
 {
 	value++;
 	if ((value & 0x0f) >= 0x0a)
@@ -441,10 +441,10 @@ static UINT8 bcd_increment(UINT8 value)
 static void cia6526_increment(cia_state *cia)
 {
 	/* break down TOD value into components */
-	UINT8 subsecond	= (UINT8) (cia->tod >>  0);
-	UINT8 second	= (UINT8) (cia->tod >>  8);
-	UINT8 minute	= (UINT8) (cia->tod >> 16);
-	UINT8 hour		= (UINT8) (cia->tod >> 24);
+	uint8_t subsecond	= (uint8_t) (cia->tod >>  0);
+	uint8_t second	= (uint8_t) (cia->tod >>  8);
+	uint8_t minute	= (uint8_t) (cia->tod >> 16);
+	uint8_t hour		= (uint8_t) (cia->tod >> 24);
 
 	subsecond = bcd_increment(subsecond);
 	if (subsecond >= 0x10)
@@ -473,10 +473,10 @@ static void cia6526_increment(cia_state *cia)
 	}
 
 	/* update the TOD with new value */
-	cia->tod = (((UINT32) subsecond)	<<  0)
-			 | (((UINT32) second)		<<  8)
-			 | (((UINT32) minute)		<< 16)
-			 | (((UINT32) hour)			<< 24);
+	cia->tod = (((uint32_t) subsecond)	<<  0)
+			 | (((uint32_t) second)		<<  8)
+			 | (((uint32_t) minute)		<< 16)
+			 | (((uint32_t) hour)			<< 24);
 }
 
 /*-------------------------------------------------
@@ -628,7 +628,7 @@ READ8_DEVICE_HANDLER( mos6526_r )
 	cia_timer *timer;
 	cia_state *cia;
 	cia_port *port;
-	UINT8 data = 0x00;
+	uint8_t data = 0x00;
 
 	cia = get_token(device);
 	offset &= 0x0F;

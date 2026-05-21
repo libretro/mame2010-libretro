@@ -52,15 +52,15 @@ enum
 
 
 
-UINT16 *nile_sound_regs;
+uint16_t *nile_sound_regs;
 
 typedef struct _nile_state nile_state;
 struct _nile_state
 {
 	sound_stream * stream;
-	UINT8 *sound_ram;
+	uint8_t *sound_ram;
 	int vpos[NILE_VOICES], frac[NILE_VOICES], lponce[NILE_VOICES];
-	UINT16 ctrl;
+	uint16_t ctrl;
 };
 
 INLINE nile_state *get_safe_token(running_device *device)
@@ -74,7 +74,7 @@ INLINE nile_state *get_safe_token(running_device *device)
 WRITE16_DEVICE_HANDLER( nile_sndctrl_w )
 {
 	nile_state *info = get_safe_token(device);
-	UINT16 ctrl=info->ctrl;
+	uint16_t ctrl=info->ctrl;
 
 	stream_update(info->stream);
 
@@ -141,12 +141,12 @@ WRITE16_DEVICE_HANDLER( nile_snd_w )
 static STREAM_UPDATE( nile_update )
 {
 	nile_state *info = (nile_state *)param;
-	UINT8 *sound_ram = info->sound_ram;
+	uint8_t *sound_ram = info->sound_ram;
 	int v, i, snum;
-	UINT16 *slot;
-	INT32 mix[48000*2];
-	INT32 *mixp;
-	INT16 sample;
+	uint16_t *slot;
+	int32_t mix[48000*2];
+	int32_t *mixp;
+	int16_t sample;
 	int sptr, eptr, freq, lsptr, leptr;
 
 	lsptr=leptr=0;
@@ -172,8 +172,8 @@ static STREAM_UPDATE( nile_update )
 			{
 				sample = sound_ram[sptr + info->vpos[v]]<<8;
 
-				*mixp++ += (sample * (INT32)slot[NILE_REG_VOL_R]) >> 16;
-				*mixp++ += (sample * (INT32)slot[NILE_REG_VOL_L]) >> 16;
+				*mixp++ += (sample * (int32_t)slot[NILE_REG_VOL_R]) >> 16;
+				*mixp++ += (sample * (int32_t)slot[NILE_REG_VOL_L]) >> 16;
 
 				info->frac[v] += freq;
 				info->vpos[v] += info->frac[v]>>16;

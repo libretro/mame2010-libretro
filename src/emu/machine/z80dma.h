@@ -82,11 +82,11 @@ class z80dma_device_config :	public device_config,
 	friend class z80dma_device;
 
 	// construction/destruction
-	z80dma_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	z80dma_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 protected:
@@ -107,8 +107,8 @@ class z80dma_device :	public device_t,
 	z80dma_device(running_machine &_machine, const z80dma_device_config &_config);
 
 public:
-	UINT8 read();
-	void write(UINT8 data);
+	uint8_t read();
+	void write(uint8_t data);
 
 	void rdy_w(int state);
 	void wait_w(int state);
@@ -152,32 +152,32 @@ private:
 
 	emu_timer *m_timer;
 
-	UINT16	m_regs[(6<<3)+1+1];
-	UINT8	m_num_follow;
-	UINT8	m_cur_follow;
-	UINT8	m_regs_follow[4];
-	UINT8	m_read_num_follow;
-	UINT8	m_read_cur_follow;
-	UINT8	m_read_regs_follow[7];
-	UINT8	m_status;
-	UINT8	m_dma_enabled;
+	uint16_t	m_regs[(6<<3)+1+1];
+	uint8_t	m_num_follow;
+	uint8_t	m_cur_follow;
+	uint8_t	m_regs_follow[4];
+	uint8_t	m_read_num_follow;
+	uint8_t	m_read_cur_follow;
+	uint8_t	m_read_regs_follow[7];
+	uint8_t	m_status;
+	uint8_t	m_dma_enabled;
 
-	UINT16 m_addressA;
-	UINT16 m_addressB;
-	UINT16 m_count;
+	uint16_t m_addressA;
+	uint16_t m_addressB;
+	uint16_t m_count;
 
 	int m_rdy;
 	int m_force_ready;
-	UINT8 m_reset_pointer;
+	uint8_t m_reset_pointer;
 
 	bool m_is_read;
-	UINT8 m_cur_cycle;
-	UINT8 m_latch;
+	uint8_t m_cur_cycle;
+	uint8_t m_latch;
 
 	// interrupts
 	int m_ip;					// interrupt pending
 	int m_ius;					// interrupt under service
-	UINT8 m_vector;				// interrupt vector
+	uint8_t m_vector;				// interrupt vector
 };
 
 

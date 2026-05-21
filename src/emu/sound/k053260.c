@@ -17,14 +17,14 @@
 typedef struct _k053260_channel k053260_channel;
 struct _k053260_channel
 {
-	UINT32		rate;
-	UINT32		size;
-	UINT32		start;
-	UINT32		bank;
-	UINT32		volume;
+	uint32_t		rate;
+	uint32_t		size;
+	uint32_t		start;
+	uint32_t		bank;
+	uint32_t		volume;
 	int					play;
-	UINT32		pan;
-	UINT32		pos;
+	uint32_t		pan;
+	uint32_t		pos;
 	int					loop;
 	int					ppcm; /* packed PCM ( 4 bit signed ) */
 	int					ppcm_data;
@@ -35,9 +35,9 @@ struct _k053260_state {
 	sound_stream *					channel;
 	int								mode;
 	int								regs[0x30];
-	UINT8					*rom;
+	uint8_t					*rom;
 	int								rom_size;
-	UINT32					*delta_table;
+	uint32_t					*delta_table;
 	k053260_channel		channels[4];
 	const k053260_interface			*intf;
 	running_device *device;
@@ -55,7 +55,7 @@ static void InitDeltaTable( k053260_state *ic, int rate, int clock ) {
 	int		i;
 	double	base = ( double )rate;
 	double	max = (double)(clock); /* Hz */
-	UINT32 val;
+	uint32_t val;
 
 	for( i = 0; i < 0x1000; i++ ) {
 		double v = ( double )( 0x1000 - i );
@@ -64,7 +64,7 @@ static void InitDeltaTable( k053260_state *ic, int rate, int clock ) {
 
 		if ( target && base ) {
 			target = fixed / ( base / target );
-			val = ( UINT32 )target;
+			val = ( uint32_t )target;
 			if ( val == 0 )
 				val = 1;
 		} else
@@ -110,7 +110,7 @@ static STREAM_UPDATE( k053260_update ) {
 
 	int i, j, lvol[4], rvol[4], play[4], loop[4], ppcm_data[4], ppcm[4];
 	unsigned char *rom[4];
-	UINT32 delta[4], end[4], pos[4];
+	uint32_t delta[4], end[4], pos[4];
 	int dataL, dataR;
 	signed char d;
 	k053260_state *ic = (k053260_state *)param;
@@ -227,7 +227,7 @@ static DEVICE_START( k053260 )
 	for ( i = 0; i < 0x30; i++ )
 		ic->regs[i] = 0;
 
-	ic->delta_table = auto_alloc_array( device->machine, UINT32, 0x1000 );
+	ic->delta_table = auto_alloc_array( device->machine, uint32_t, 0x1000 );
 
 	ic->channel = stream_create( device, 0, 2, rate, ic, k053260_update );
 
@@ -395,7 +395,7 @@ READ8_DEVICE_HANDLER( k053260_r )
 		case 0x2e: /* read rom */
 			if ( ic->mode & 1 )
 			{
-				UINT32 offs = ic->channels[0].start + ( ic->channels[0].pos >> BASE_SHIFT ) + ( ic->channels[0].bank << 16 );
+				uint32_t offs = ic->channels[0].start + ( ic->channels[0].pos >> BASE_SHIFT ) + ( ic->channels[0].bank << 16 );
 
 				ic->channels[0].pos += ( 1 << 16 );
 

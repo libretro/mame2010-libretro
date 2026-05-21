@@ -39,34 +39,34 @@ struct pic8259
 
 	pic8259_state_t state;
 
-	UINT8 irq_lines;
-	UINT8 esr;
-	UINT8 isr;
-	UINT8 irr;
-	UINT8 prio;
-	UINT8 imr;
+	uint8_t irq_lines;
+	uint8_t esr;
+	uint8_t isr;
+	uint8_t irr;
+	uint8_t prio;
+	uint8_t imr;
 
-	UINT8 input;
-	UINT8 ocw3;
+	uint8_t input;
+	uint8_t ocw3;
 
 	/* ICW1 state */
-	UINT32 level_trig_mode : 1;
-	UINT32 vector_size : 1;
-	UINT32 cascade : 1;
-	UINT32 icw4_needed : 1;
-	UINT32 vector_addr_low;
+	uint32_t level_trig_mode : 1;
+	uint32_t vector_size : 1;
+	uint32_t cascade : 1;
+	uint32_t icw4_needed : 1;
+	uint32_t vector_addr_low;
 	/* ICW2 state */
-	UINT8 base;
-	UINT8 vector_addr_high;
+	uint8_t base;
+	uint8_t vector_addr_high;
 
 	/* ICW3 state */
-	UINT8 slave;
+	uint8_t slave;
 
 	/* ICW4 state */
-	UINT32 nested : 1;
-	UINT32 mode : 2;
-	UINT32 auto_eoi : 1;
-	UINT32 is_x86 : 1;
+	uint32_t nested : 1;
+	uint32_t mode : 2;
+	uint32_t auto_eoi : 1;
+	uint32_t is_x86 : 1;
 };
 
 
@@ -82,7 +82,7 @@ static TIMER_CALLBACK( pic8259_timerproc )
 	running_device *device = (running_device *)ptr;
 	pic8259_t	*pic8259 = get_safe_token(device);
 	int irq;
-	UINT8 mask;
+	uint8_t mask;
 
 	/* check the various IRQs */
 	for (irq = 0; irq < IRQ_COUNT; irq++)
@@ -121,7 +121,7 @@ INLINE void pic8259_set_timer(pic8259_t *pic8259)
 static void pic8259_set_irq_line(running_device *device, int irq, int state)
 {
 	pic8259_t	*pic8259 = get_safe_token(device);
-	UINT8		old_irq_lines = pic8259->irq_lines;
+	uint8_t		old_irq_lines = pic8259->irq_lines;
 
 	if (state)
 	{
@@ -160,7 +160,7 @@ WRITE_LINE_DEVICE_HANDLER( pic8259_ir7_w ) { pic8259_set_irq_line(device, 7, sta
 int pic8259_acknowledge(running_device *device)
 {
 	pic8259_t	*pic8259 = get_safe_token(device);
-	UINT8 mask;
+	uint8_t mask;
 	int irq;
 
 	for (irq = 0; irq < IRQ_COUNT; irq++)
@@ -196,7 +196,7 @@ READ8_DEVICE_HANDLER( pic8259_r )
 	pic8259_t	*pic8259 = get_safe_token(device);
 
 	/* NPW 18-May-2003 - Changing 0xFF to 0x00 as per Ruslan */
-	UINT8 data = 0x00;
+	uint8_t data = 0x00;
 
 	switch(offset)
 	{
@@ -283,7 +283,7 @@ WRITE8_DEVICE_HANDLER( pic8259_w )
 				else if ((data & 0x18) == 0x00)
 				{
 					int n = data & 7;
-					UINT8 mask = 1 << n;
+					uint8_t mask = 1 << n;
 
 					/* write OCW2 */
 					if (LOG_OCW)

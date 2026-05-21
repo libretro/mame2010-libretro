@@ -59,8 +59,8 @@ struct _upd4990a_state
 	int year;		/* year    BCD */
 	int weekday;	/* weekday BCD */
 
-	UINT32 shiftlo;
-	UINT32 shifthi;
+	uint32_t shiftlo;
+	uint32_t shifthi;
 
 	int retraces;	/* Assumes 60 retraces a second */
 	int testwaits;
@@ -69,8 +69,8 @@ struct _upd4990a_state
 
 	int outputbit;
 	int bitno;
-	INT8 reading;
-	INT8 writing;
+	int8_t reading;
+	int8_t writing;
 
 	int clock_line;
 	int command_line;	//??
@@ -89,7 +89,7 @@ INLINE upd4990a_state *get_safe_token(running_device *device)
 	return (upd4990a_state *)downcast<legacy_device_base *>(device)->token();
 }
 
-INLINE UINT8 convert_to_bcd(int val)
+INLINE uint8_t convert_to_bcd(int val)
 {
 	return ((val / 10) << 4) | (val % 10);
 }
@@ -312,7 +312,7 @@ static void upd4990a_resetbitstream( running_device *device )
     upd4990a_writebit
 -------------------------------------------------*/
 
-static void upd4990a_writebit( running_device *device , UINT8 bit )
+static void upd4990a_writebit( running_device *device , uint8_t bit )
 {
 	upd4990a_state *upd4990a = get_safe_token(device);
 	if (upd4990a->bitno <= 31)	//low part
@@ -345,7 +345,7 @@ static void upd4990a_nextbit( running_device *device )
     upd4990a_getcommand
 -------------------------------------------------*/
 
-static UINT8 upd4990a_getcommand( running_device *device )
+static uint8_t upd4990a_getcommand( running_device *device )
 {
 	upd4990a_state *upd4990a = get_safe_token(device);
 	//Warning: problems if the 4 bits are in different
@@ -411,7 +411,7 @@ static void upd4990a_process_command( running_device *device )
     upd4990a_serial_control
 -------------------------------------------------*/
 
-static void upd4990a_serial_control( running_device *device, UINT8 data )
+static void upd4990a_serial_control( running_device *device, uint8_t data )
 {
 	upd4990a_state *upd4990a = get_safe_token(device);
 

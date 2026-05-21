@@ -25,12 +25,12 @@ struct _snkwave_state
 	int sample_rate;
 
 	/* data about the sound system */
-	UINT32 frequency;
-	UINT32 counter;
+	uint32_t frequency;
+	uint32_t counter;
 	int waveform_position;
 
 	/* decoded waveform table */
-	INT16 waveform[WAVEFORM_LENGTH];
+	int16_t waveform[WAVEFORM_LENGTH];
 };
 
 INLINE snkwave_state *get_safe_token(running_device *device)
@@ -49,7 +49,7 @@ INLINE snkwave_state *get_safe_token(running_device *device)
    So the sequence 01234567 will play as
    89ABCDEF76543210
 */
-static void update_waveform(snkwave_state *chip, unsigned int offset, UINT8 data)
+static void update_waveform(snkwave_state *chip, unsigned int offset, uint8_t data)
 {
 	assert(offset < WAVEFORM_LENGTH/4);
 
@@ -80,7 +80,7 @@ static STREAM_UPDATE( snkwave_update )
 	while (samples-- > 0)
 	{
 		int loops;
-		INT16 out = 0;
+		int16_t out = 0;
 
 		loops = 1 << CLOCK_SHIFT;
 		while (loops > 0)

@@ -12,11 +12,11 @@
 typedef struct _k056800_state k056800_state;
 struct _k056800_state
 {
-	UINT8                host_reg[8];
-	UINT8                sound_reg[8];
+	uint8_t                host_reg[8];
+	uint8_t                sound_reg[8];
 
 	emu_timer            *sound_cpu_timer;
-	UINT8                sound_cpu_irq1_enable;
+	uint8_t                sound_cpu_irq1_enable;
 	k056800_irq_cb       irq_cb;
 };
 
@@ -44,17 +44,17 @@ INLINE const k056800_interface *k056800_get_interface( running_device *device )
 *****************************************************************************/
 
 
-static UINT8 k056800_host_reg_r( running_device *device, int reg )
+static uint8_t k056800_host_reg_r( running_device *device, int reg )
 {
 	k056800_state *k056800 = k056800_get_safe_token(device);
-	UINT8 value = k056800->host_reg[reg];
+	uint8_t value = k056800->host_reg[reg];
 	if (reg == 2)
 		value &= ~3; // suppress VOLWR busy flags
 
 	return value;
 }
 
-static void k056800_host_reg_w( running_device *device, int reg, UINT8 data )
+static void k056800_host_reg_w( running_device *device, int reg, uint8_t data )
 {
 	k056800_state *k056800 = k056800_get_safe_token(device);
 
@@ -64,13 +64,13 @@ static void k056800_host_reg_w( running_device *device, int reg, UINT8 data )
 		k056800->irq_cb(device->machine, 1);
 }
 
-static UINT8 k056800_sound_reg_r( running_device *device, int reg )
+static uint8_t k056800_sound_reg_r( running_device *device, int reg )
 {
 	k056800_state *k056800 = k056800_get_safe_token(device);
 	return k056800->sound_reg[reg];
 }
 
-static void k056800_sound_reg_w( running_device *device, int reg, UINT8 data )
+static void k056800_sound_reg_w( running_device *device, int reg, uint8_t data )
 {
 	k056800_state *k056800 = k056800_get_safe_token(device);
 
@@ -90,7 +90,7 @@ static TIMER_CALLBACK( k056800_sound_cpu_timer_tick )
 
 READ32_DEVICE_HANDLER( k056800_host_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 		r |= k056800_host_reg_r(device, (offset * 4) + 0) << 24;

@@ -295,7 +295,7 @@ enum
  *
  *************************************/
 
-static const UINT8 register_alias_map[0x40] =
+static const uint8_t register_alias_map[0x40] =
 {
 	status,		0x004/4,	vertexAx,	vertexAy,
 	vertexBx,	vertexBy,	vertexCx,	vertexCy,
@@ -324,7 +324,7 @@ static const UINT8 register_alias_map[0x40] =
  *
  *************************************/
 
-static const UINT8 voodoo_register_access[0x100] =
+static const uint8_t voodoo_register_access[0x100] =
 {
 	/* 0x000 */
 	REG_RP,		0,			REG_WPF,	REG_WPF,
@@ -415,7 +415,7 @@ static const UINT8 voodoo_register_access[0x100] =
 };
 
 
-static const UINT8 voodoo2_register_access[0x100] =
+static const uint8_t voodoo2_register_access[0x100] =
 {
 	/* 0x000 */
 	REG_RP,		REG_RWPT,	REG_WPF,	REG_WPF,
@@ -506,7 +506,7 @@ static const UINT8 voodoo2_register_access[0x100] =
 };
 
 
-static const UINT8 banshee_register_access[0x100] =
+static const uint8_t banshee_register_access[0x100] =
 {
 	/* 0x000 */
 	REG_RP,		REG_RWPT,	REG_WPF,	REG_WPF,
@@ -965,7 +965,7 @@ static const char *const banshee_agp_reg_name[] =
  *
  *************************************/
 
-static const UINT8 dither_matrix_4x4[16] =
+static const uint8_t dither_matrix_4x4[16] =
 {
 	 0,  8,  2, 10,
 	12,  4, 14,  6,
@@ -973,7 +973,7 @@ static const UINT8 dither_matrix_4x4[16] =
 	15,  7, 13,  5
 };
 
-static const UINT8 dither_matrix_2x2[16] =
+static const uint8_t dither_matrix_2x2[16] =
 {
 	 2, 10,  2, 10,
 	14,  6, 14,  6,
@@ -1005,7 +1005,7 @@ static const UINT8 dither_matrix_2x2[16] =
 	(c) = (((val) << 2) & 0xf8) | (((val) >> 3) & 0x07);	\
 
 #define EXTRACT_1555_TO_8888(val, a, b, c, d)				\
-	(a) = ((INT16)(val) >> 15) & 0xff;						\
+	(a) = ((int16_t)(val) >> 15) & 0xff;						\
 	EXTRACT_x555_TO_888(val, b, c, d)						\
 
 #define EXTRACT_5551_TO_8888(val, a, b, c, d)				\
@@ -1340,9 +1340,9 @@ typedef struct _rgba rgba;
 struct _rgba
 {
 #ifdef MSB_FIRST
-	UINT8				a, r, g, b;
+	uint8_t				a, r, g, b;
 #else
-	UINT8				b, g, r, a;
+	uint8_t				b, g, r, a;
 #endif
 };
 
@@ -1350,8 +1350,8 @@ struct _rgba
 typedef union _voodoo_reg voodoo_reg;
 union _voodoo_reg
 {
-	INT32				i;
-	UINT32				u;
+	int32_t				i;
+	uint32_t				u;
 	float				f;
 	rgba				rgb;
 };
@@ -1363,25 +1363,25 @@ typedef voodoo_reg rgb_union;
 typedef struct _voodoo_stats voodoo_stats;
 struct _voodoo_stats
 {
-	UINT8				lastkey;				/* last key state */
-	UINT8				display;				/* display stats? */
-	INT32				swaps;					/* total swaps */
-	INT32				stalls;					/* total stalls */
-	INT32				total_triangles;		/* total triangles */
-	INT32				total_pixels_in;		/* total pixels in */
-	INT32				total_pixels_out;		/* total pixels out */
-	INT32				total_chroma_fail;		/* total chroma fail */
-	INT32				total_zfunc_fail;		/* total z func fail */
-	INT32				total_afunc_fail;		/* total a func fail */
-	INT32				total_clipped;			/* total clipped */
-	INT32				total_stippled;			/* total stippled */
-	INT32				lfb_writes;				/* LFB writes */
-	INT32				lfb_reads;				/* LFB reads */
-	INT32				reg_writes;				/* register writes */
-	INT32				reg_reads;				/* register reads */
-	INT32				tex_writes;				/* texture writes */
-	INT32				texture_mode[16];		/* 16 different texture modes */
-	UINT8				render_override;		/* render override */
+	uint8_t				lastkey;				/* last key state */
+	uint8_t				display;				/* display stats? */
+	int32_t				swaps;					/* total swaps */
+	int32_t				stalls;					/* total stalls */
+	int32_t				total_triangles;		/* total triangles */
+	int32_t				total_pixels_in;		/* total pixels in */
+	int32_t				total_pixels_out;		/* total pixels out */
+	int32_t				total_chroma_fail;		/* total chroma fail */
+	int32_t				total_zfunc_fail;		/* total z func fail */
+	int32_t				total_afunc_fail;		/* total a func fail */
+	int32_t				total_clipped;			/* total clipped */
+	int32_t				total_stippled;			/* total stippled */
+	int32_t				lfb_writes;				/* LFB writes */
+	int32_t				lfb_reads;				/* LFB reads */
+	int32_t				reg_writes;				/* register writes */
+	int32_t				reg_reads;				/* register reads */
+	int32_t				tex_writes;				/* texture writes */
+	int32_t				texture_mode[16];		/* 16 different texture modes */
+	uint8_t				render_override;		/* render override */
 	char				buffer[1024];			/* string */
 };
 
@@ -1390,39 +1390,39 @@ struct _voodoo_stats
 typedef struct _stats_block stats_block;
 struct _stats_block
 {
-	INT32				pixels_in;				/* pixels in statistic */
-	INT32				pixels_out;				/* pixels out statistic */
-	INT32				chroma_fail;			/* chroma test fail statistic */
-	INT32				zfunc_fail;				/* z function test fail statistic */
-	INT32				afunc_fail;				/* alpha function test fail statistic */
-	INT32				clip_fail;				/* clipping fail statistic */
-	INT32				stipple_count;			/* stipple statistic */
-	INT32				filler[64/4 - 7];		/* pad this structure to 64 bytes */
+	int32_t				pixels_in;				/* pixels in statistic */
+	int32_t				pixels_out;				/* pixels out statistic */
+	int32_t				chroma_fail;			/* chroma test fail statistic */
+	int32_t				zfunc_fail;				/* z function test fail statistic */
+	int32_t				afunc_fail;				/* alpha function test fail statistic */
+	int32_t				clip_fail;				/* clipping fail statistic */
+	int32_t				stipple_count;			/* stipple statistic */
+	int32_t				filler[64/4 - 7];		/* pad this structure to 64 bytes */
 };
 
 
 typedef struct _fifo_state fifo_state;
 struct _fifo_state
 {
-	UINT32 *			base;					/* base of the FIFO */
-	INT32				size;					/* size of the FIFO */
-	INT32				in;						/* input pointer */
-	INT32				out;					/* output pointer */
+	uint32_t *			base;					/* base of the FIFO */
+	int32_t				size;					/* size of the FIFO */
+	int32_t				in;						/* input pointer */
+	int32_t				out;					/* output pointer */
 };
 
 
 typedef struct _cmdfifo_info cmdfifo_info;
 struct _cmdfifo_info
 {
-	UINT8				enable;					/* enabled? */
-	UINT8				count_holes;			/* count holes? */
-	UINT32				base;					/* base address in framebuffer RAM */
-	UINT32				end;					/* end address in framebuffer RAM */
-	UINT32				rdptr;					/* current read pointer */
-	UINT32				amin;					/* minimum address */
-	UINT32				amax;					/* maximum address */
-	UINT32				depth;					/* current depth */
-	UINT32				holes;					/* number of holes */
+	uint8_t				enable;					/* enabled? */
+	uint8_t				count_holes;			/* count holes? */
+	uint32_t				base;					/* base address in framebuffer RAM */
+	uint32_t				end;					/* end address in framebuffer RAM */
+	uint32_t				rdptr;					/* current read pointer */
+	uint32_t				amin;					/* minimum address */
+	uint32_t				amax;					/* maximum address */
+	uint32_t				depth;					/* current depth */
+	uint32_t				holes;					/* number of holes */
 };
 
 
@@ -1430,24 +1430,24 @@ typedef struct _pci_state pci_state;
 struct _pci_state
 {
 	fifo_state			fifo;					/* PCI FIFO */
-	UINT32				init_enable;			/* initEnable value */
-	UINT8				stall_state;			/* state of the system if we're stalled */
+	uint32_t				init_enable;			/* initEnable value */
+	uint8_t				stall_state;			/* state of the system if we're stalled */
 	voodoo_stall_func	stall_callback; 		/* callback for stalling/unstalling */
-	UINT8				op_pending;				/* true if an operation is pending */
+	uint8_t				op_pending;				/* true if an operation is pending */
 	attotime			op_end_time;			/* time when the pending operation ends */
 	emu_timer *			continue_timer;			/* timer to use to continue processing */
-	UINT32				fifo_mem[64*2];			/* memory backing the PCI FIFO */
+	uint32_t				fifo_mem[64*2];			/* memory backing the PCI FIFO */
 };
 
 
 typedef struct _ncc_table ncc_table;
 struct _ncc_table
 {
-	UINT8				dirty;					/* is the texel lookup dirty? */
+	uint8_t				dirty;					/* is the texel lookup dirty? */
 	voodoo_reg *		reg;					/* pointer to our registers */
-	INT32				ir[4], ig[4], ib[4];	/* I values for R,G,B */
-	INT32				qr[4], qg[4], qb[4];	/* Q values for R,G,B */
-	INT32				y[16];					/* Y values */
+	int32_t				ir[4], ig[4], ib[4];	/* I values for R,G,B */
+	int32_t				qr[4], qg[4], qb[4];	/* Q values for R,G,B */
+	int32_t				y[16];					/* Y values */
 	rgb_t *				palette;				/* pointer to associated RGB palette */
 	rgb_t *				palettea;				/* pointer to associated ARGB palette */
 	rgb_t				texel[256];				/* texel lookup */
@@ -1457,33 +1457,33 @@ struct _ncc_table
 typedef struct _tmu_state tmu_state;
 struct _tmu_state
 {
-	UINT8 *				ram;					/* pointer to our RAM */
-	UINT32				mask;					/* mask to apply to pointers */
+	uint8_t *				ram;					/* pointer to our RAM */
+	uint32_t				mask;					/* mask to apply to pointers */
 	voodoo_reg *		reg;					/* pointer to our register base */
-	UINT32				regdirty;				/* true if the LOD/mode/base registers have changed */
+	uint32_t				regdirty;				/* true if the LOD/mode/base registers have changed */
 
-	UINT32				texaddr_mask;			/* mask for texture address */
-	UINT8				texaddr_shift;			/* shift for texture address */
+	uint32_t				texaddr_mask;			/* mask for texture address */
+	uint8_t				texaddr_shift;			/* shift for texture address */
 
-	INT64				starts, startt;			/* starting S,T (14.18) */
-	INT64				startw;					/* starting W (2.30) */
-	INT64				dsdx, dtdx;				/* delta S,T per X */
-	INT64				dwdx;					/* delta W per X */
-	INT64				dsdy, dtdy;				/* delta S,T per Y */
-	INT64				dwdy;					/* delta W per Y */
+	int64_t				starts, startt;			/* starting S,T (14.18) */
+	int64_t				startw;					/* starting W (2.30) */
+	int64_t				dsdx, dtdx;				/* delta S,T per X */
+	int64_t				dwdx;					/* delta W per X */
+	int64_t				dsdy, dtdy;				/* delta S,T per Y */
+	int64_t				dwdy;					/* delta W per Y */
 
-	INT32				lodmin, lodmax;			/* min, max LOD values */
-	INT32				lodbias;				/* LOD bias */
-	UINT32				lodmask;				/* mask of available LODs */
-	UINT32				lodoffset[9];			/* offset of texture base for each LOD */
-	INT32				detailmax;				/* detail clamp */
-	INT32				detailbias;				/* detail bias */
-	UINT8				detailscale;			/* detail scale */
+	int32_t				lodmin, lodmax;			/* min, max LOD values */
+	int32_t				lodbias;				/* LOD bias */
+	uint32_t				lodmask;				/* mask of available LODs */
+	uint32_t				lodoffset[9];			/* offset of texture base for each LOD */
+	int32_t				detailmax;				/* detail clamp */
+	int32_t				detailbias;				/* detail bias */
+	uint8_t				detailscale;			/* detail scale */
 
-	UINT32				wmask;					/* mask for the current texture width */
-	UINT32				hmask;					/* mask for the current texture height */
+	uint32_t				wmask;					/* mask for the current texture width */
+	uint32_t				hmask;					/* mask for the current texture height */
 
-	UINT32				bilinear_mask;			/* mask for bilinear resolution (0xf0 for V1, 0xff for V2) */
+	uint32_t				bilinear_mask;			/* mask for bilinear resolution (0xf0 for V1, 0xff for V2) */
 
 	ncc_table			ncc[2];					/* two NCC tables */
 
@@ -1523,77 +1523,77 @@ struct _setup_vertex
 typedef struct _fbi_state fbi_state;
 struct _fbi_state
 {
-	UINT8 *				ram;					/* pointer to frame buffer RAM */
-	UINT32				mask;					/* mask to apply to pointers */
-	UINT32				rgboffs[3];				/* word offset to 3 RGB buffers */
-	UINT32				auxoffs;				/* word offset to 1 aux buffer */
+	uint8_t *				ram;					/* pointer to frame buffer RAM */
+	uint32_t				mask;					/* mask to apply to pointers */
+	uint32_t				rgboffs[3];				/* word offset to 3 RGB buffers */
+	uint32_t				auxoffs;				/* word offset to 1 aux buffer */
 
-	UINT8				frontbuf;				/* front buffer index */
-	UINT8				backbuf;				/* back buffer index */
-	UINT8				swaps_pending;			/* number of pending swaps */
-	UINT8				video_changed;			/* did the frontbuffer video change? */
+	uint8_t				frontbuf;				/* front buffer index */
+	uint8_t				backbuf;				/* back buffer index */
+	uint8_t				swaps_pending;			/* number of pending swaps */
+	uint8_t				video_changed;			/* did the frontbuffer video change? */
 
-	UINT32				yorigin;				/* Y origin subtract value */
-	UINT32				lfb_base;				/* base of LFB in memory */
-	UINT8				lfb_stride;				/* stride of LFB accesses in bits */
+	uint32_t				yorigin;				/* Y origin subtract value */
+	uint32_t				lfb_base;				/* base of LFB in memory */
+	uint8_t				lfb_stride;				/* stride of LFB accesses in bits */
 
-	UINT32				width;					/* width of current frame buffer */
-	UINT32				height;					/* height of current frame buffer */
-	UINT32				xoffs;					/* horizontal offset (back porch) */
-	UINT32				yoffs;					/* vertical offset (back porch) */
-	UINT32				vsyncscan;				/* vertical sync scanline */
-	UINT32				rowpixels;				/* pixels per row */
-	UINT32				tile_width;				/* width of video tiles */
-	UINT32				tile_height;			/* height of video tiles */
-	UINT32				x_tiles;				/* number of tiles in the X direction */
+	uint32_t				width;					/* width of current frame buffer */
+	uint32_t				height;					/* height of current frame buffer */
+	uint32_t				xoffs;					/* horizontal offset (back porch) */
+	uint32_t				yoffs;					/* vertical offset (back porch) */
+	uint32_t				vsyncscan;				/* vertical sync scanline */
+	uint32_t				rowpixels;				/* pixels per row */
+	uint32_t				tile_width;				/* width of video tiles */
+	uint32_t				tile_height;			/* height of video tiles */
+	uint32_t				x_tiles;				/* number of tiles in the X direction */
 
 	emu_timer *			vblank_timer;			/* VBLANK timer */
-	UINT8				vblank;					/* VBLANK state */
-	UINT8				vblank_count;			/* number of VBLANKs since last swap */
-	UINT8				vblank_swap_pending;	/* a swap is pending, waiting for a vblank */
-	UINT8				vblank_swap;			/* swap when we hit this count */
-	UINT8				vblank_dont_swap;		/* don't actually swap when we hit this point */
+	uint8_t				vblank;					/* VBLANK state */
+	uint8_t				vblank_count;			/* number of VBLANKs since last swap */
+	uint8_t				vblank_swap_pending;	/* a swap is pending, waiting for a vblank */
+	uint8_t				vblank_swap;			/* swap when we hit this count */
+	uint8_t				vblank_dont_swap;		/* don't actually swap when we hit this point */
 	voodoo_vblank_func	vblank_client;			/* client callback */
 
 	/* triangle setup info */
-	UINT8				cheating_allowed;		/* allow cheating? */
-	INT32				sign;					/* triangle sign */
-	INT16				ax, ay;					/* vertex A x,y (12.4) */
-	INT16				bx, by;					/* vertex B x,y (12.4) */
-	INT16				cx, cy;					/* vertex C x,y (12.4) */
-	INT32				startr, startg, startb, starta; /* starting R,G,B,A (12.12) */
-	INT32				startz;					/* starting Z (20.12) */
-	INT64				startw;					/* starting W (16.32) */
-	INT32				drdx, dgdx, dbdx, dadx;	/* delta R,G,B,A per X */
-	INT32				dzdx;					/* delta Z per X */
-	INT64				dwdx;					/* delta W per X */
-	INT32				drdy, dgdy, dbdy, dady;	/* delta R,G,B,A per Y */
-	INT32				dzdy;					/* delta Z per Y */
-	INT64				dwdy;					/* delta W per Y */
+	uint8_t				cheating_allowed;		/* allow cheating? */
+	int32_t				sign;					/* triangle sign */
+	int16_t				ax, ay;					/* vertex A x,y (12.4) */
+	int16_t				bx, by;					/* vertex B x,y (12.4) */
+	int16_t				cx, cy;					/* vertex C x,y (12.4) */
+	int32_t				startr, startg, startb, starta; /* starting R,G,B,A (12.12) */
+	int32_t				startz;					/* starting Z (20.12) */
+	int64_t				startw;					/* starting W (16.32) */
+	int32_t				drdx, dgdx, dbdx, dadx;	/* delta R,G,B,A per X */
+	int32_t				dzdx;					/* delta Z per X */
+	int64_t				dwdx;					/* delta W per X */
+	int32_t				drdy, dgdy, dbdy, dady;	/* delta R,G,B,A per Y */
+	int32_t				dzdy;					/* delta Z per Y */
+	int64_t				dwdy;					/* delta W per Y */
 
 	stats_block			lfb_stats;				/* LFB-access statistics */
 
-	UINT8				sverts;					/* number of vertices ready */
+	uint8_t				sverts;					/* number of vertices ready */
 	setup_vertex		svert[3];				/* 3 setup vertices */
 
 	fifo_state			fifo;					/* framebuffer memory fifo */
 	cmdfifo_info		cmdfifo[2];				/* command FIFOs */
 
-	UINT8				fogblend[64];			/* 64-entry fog table */
-	UINT8				fogdelta[64];			/* 64-entry fog table */
-	UINT8				fogdelta_mask;			/* mask for for delta (0xff for V1, 0xfc for V2) */
+	uint8_t				fogblend[64];			/* 64-entry fog table */
+	uint8_t				fogdelta[64];			/* 64-entry fog table */
+	uint8_t				fogdelta_mask;			/* mask for for delta (0xff for V1, 0xfc for V2) */
 
 	rgb_t				pen[65536];				/* mapping from pixels to pens */
 	rgb_t				clut[512];				/* clut gamma data */
-	UINT8				clut_dirty;				/* do we need to recompute? */
+	uint8_t				clut_dirty;				/* do we need to recompute? */
 };
 
 
 typedef struct _dac_state dac_state;
 struct _dac_state
 {
-	UINT8				reg[8];					/* 8 registers */
-	UINT8				read_result;			/* pending read result */
+	uint8_t				reg[8];					/* 8 registers */
+	uint8_t				read_result;			/* pending read result */
 };
 
 
@@ -1602,16 +1602,16 @@ struct _raster_info
 {
 	struct _raster_info *next;					/* pointer to next entry with the same hash */
 	poly_draw_scanline_func callback;			/* callback pointer */
-	UINT8				is_generic;				/* TRUE if this is one of the generic rasterizers */
-	UINT8				display;				/* display index */
-	UINT32				hits;					/* how many hits (pixels) we've used this for */
-	UINT32				polys;					/* how many polys we've used this for */
-	UINT32				eff_color_path;			/* effective fbzColorPath value */
-	UINT32				eff_alpha_mode;			/* effective alphaMode value */
-	UINT32				eff_fog_mode;			/* effective fogMode value */
-	UINT32				eff_fbz_mode;			/* effective fbzMode value */
-	UINT32				eff_tex_mode_0;			/* effective textureMode value for TMU #0 */
-	UINT32				eff_tex_mode_1;			/* effective textureMode value for TMU #1 */
+	uint8_t				is_generic;				/* TRUE if this is one of the generic rasterizers */
+	uint8_t				display;				/* display index */
+	uint32_t				hits;					/* how many hits (pixels) we've used this for */
+	uint32_t				polys;					/* how many polys we've used this for */
+	uint32_t				eff_color_path;			/* effective fbzColorPath value */
+	uint32_t				eff_alpha_mode;			/* effective alphaMode value */
+	uint32_t				eff_fog_mode;			/* effective fogMode value */
+	uint32_t				eff_fbz_mode;			/* effective fbzMode value */
+	uint32_t				eff_tex_mode_0;			/* effective textureMode value for TMU #0 */
+	uint32_t				eff_tex_mode_1;			/* effective textureMode value for TMU #1 */
 };
 
 
@@ -1620,69 +1620,69 @@ struct _poly_extra_data
 	voodoo_state *		state;					/* pointer back to the voodoo state */
 	raster_info *		info;					/* pointer to rasterizer information */
 
-	INT16				ax, ay;					/* vertex A x,y (12.4) */
-	INT32				startr, startg, startb, starta; /* starting R,G,B,A (12.12) */
-	INT32				startz;					/* starting Z (20.12) */
-	INT64				startw;					/* starting W (16.32) */
-	INT32				drdx, dgdx, dbdx, dadx;	/* delta R,G,B,A per X */
-	INT32				dzdx;					/* delta Z per X */
-	INT64				dwdx;					/* delta W per X */
-	INT32				drdy, dgdy, dbdy, dady;	/* delta R,G,B,A per Y */
-	INT32				dzdy;					/* delta Z per Y */
-	INT64				dwdy;					/* delta W per Y */
+	int16_t				ax, ay;					/* vertex A x,y (12.4) */
+	int32_t				startr, startg, startb, starta; /* starting R,G,B,A (12.12) */
+	int32_t				startz;					/* starting Z (20.12) */
+	int64_t				startw;					/* starting W (16.32) */
+	int32_t				drdx, dgdx, dbdx, dadx;	/* delta R,G,B,A per X */
+	int32_t				dzdx;					/* delta Z per X */
+	int64_t				dwdx;					/* delta W per X */
+	int32_t				drdy, dgdy, dbdy, dady;	/* delta R,G,B,A per Y */
+	int32_t				dzdy;					/* delta Z per Y */
+	int64_t				dwdy;					/* delta W per Y */
 
-	INT64				starts0, startt0;		/* starting S,T (14.18) */
-	INT64				startw0;				/* starting W (2.30) */
-	INT64				ds0dx, dt0dx;			/* delta S,T per X */
-	INT64				dw0dx;					/* delta W per X */
-	INT64				ds0dy, dt0dy;			/* delta S,T per Y */
-	INT64				dw0dy;					/* delta W per Y */
-	INT32				lodbase0;				/* used during rasterization */
+	int64_t				starts0, startt0;		/* starting S,T (14.18) */
+	int64_t				startw0;				/* starting W (2.30) */
+	int64_t				ds0dx, dt0dx;			/* delta S,T per X */
+	int64_t				dw0dx;					/* delta W per X */
+	int64_t				ds0dy, dt0dy;			/* delta S,T per Y */
+	int64_t				dw0dy;					/* delta W per Y */
+	int32_t				lodbase0;				/* used during rasterization */
 
-	INT64				starts1, startt1;		/* starting S,T (14.18) */
-	INT64				startw1;				/* starting W (2.30) */
-	INT64				ds1dx, dt1dx;			/* delta S,T per X */
-	INT64				dw1dx;					/* delta W per X */
-	INT64				ds1dy, dt1dy;			/* delta S,T per Y */
-	INT64				dw1dy;					/* delta W per Y */
-	INT32				lodbase1;				/* used during rasterization */
+	int64_t				starts1, startt1;		/* starting S,T (14.18) */
+	int64_t				startw1;				/* starting W (2.30) */
+	int64_t				ds1dx, dt1dx;			/* delta S,T per X */
+	int64_t				dw1dx;					/* delta W per X */
+	int64_t				ds1dy, dt1dy;			/* delta S,T per Y */
+	int64_t				dw1dy;					/* delta W per Y */
+	int32_t				lodbase1;				/* used during rasterization */
 
-	UINT16				dither[16];				/* dither matrix, for fastfill */
+	uint16_t				dither[16];				/* dither matrix, for fastfill */
 };
 
 
 typedef struct _banshee_info banshee_info;
 struct _banshee_info
 {
-	UINT32				io[0x40];				/* I/O registers */
-	UINT32				agp[0x80];				/* AGP registers */
-	UINT8				vga[0x20];				/* VGA registers */
-	UINT8				crtc[0x27];				/* VGA CRTC registers */
-	UINT8				seq[0x05];				/* VGA sequencer registers */
-	UINT8				gc[0x05];				/* VGA graphics controller registers */
-	UINT8				att[0x15];				/* VGA attribute registers */
-	UINT8				attff;					/* VGA attribute flip-flop */
+	uint32_t				io[0x40];				/* I/O registers */
+	uint32_t				agp[0x80];				/* AGP registers */
+	uint8_t				vga[0x20];				/* VGA registers */
+	uint8_t				crtc[0x27];				/* VGA CRTC registers */
+	uint8_t				seq[0x05];				/* VGA sequencer registers */
+	uint8_t				gc[0x05];				/* VGA graphics controller registers */
+	uint8_t				att[0x15];				/* VGA attribute registers */
+	uint8_t				attff;					/* VGA attribute flip-flop */
 };
 
 
 /* typedef struct _voodoo_state voodoo_state; -- declared above */
 struct _voodoo_state
 {
-	UINT8				index;					/* index of board */
+	uint8_t				index;					/* index of board */
 	running_device *device;				/* pointer to our containing device */
 	screen_device *screen;				/* the screen we are acting on */
 	running_device *cpu;					/* the CPU we interact with */
-	UINT8				type;					/* type of system */
-	UINT8				chipmask;				/* mask for which chips are available */
-	UINT32				freq;					/* operating frequency */
+	uint8_t				type;					/* type of system */
+	uint8_t				chipmask;				/* mask for which chips are available */
+	uint32_t				freq;					/* operating frequency */
 	attoseconds_t		attoseconds_per_cycle;	/* attoseconds per cycle */
-	UINT32				extra_cycles;			/* extra cycles not yet accounted for */
+	uint32_t				extra_cycles;			/* extra cycles not yet accounted for */
 	int					trigger;				/* trigger used for stalling */
 
 	voodoo_reg			reg[0x400];				/* raw registers */
-	const UINT8 *		regaccess;				/* register access array */
+	const uint8_t *		regaccess;				/* register access array */
 	const char *const *	regnames;				/* register names array */
-	UINT8				alt_regmap;				/* enable alternate register map? */
+	uint8_t				alt_regmap;				/* enable alternate register map? */
 
 	pci_state			pci;					/* PCI state */
 	dac_state			dac;					/* DAC state */
@@ -1698,7 +1698,7 @@ struct _voodoo_state
 	voodoo_stats		stats;					/* internal statistics */
 
 	offs_t				last_status_pc;			/* PC of last status description (for logging) */
-	UINT32				last_status_value;		/* value of last status read (for logging) */
+	uint32_t				last_status_value;		/* value of last status read (for logging) */
 
 	int					next_rasterizer;		/* next rasterizer index */
 	raster_info			rasterizer[MAX_RASTERIZERS]; /* array of rasterizers */
@@ -1719,9 +1719,9 @@ INLINE void fifo_reset(fifo_state *f)
 }
 
 
-INLINE void fifo_add(fifo_state *f, UINT32 data)
+INLINE void fifo_add(fifo_state *f, uint32_t data)
 {
-	INT32 next_in;
+	int32_t next_in;
 
 	/* compute the value of 'in' after we add this item */
 	next_in = f->in + 1;
@@ -1737,14 +1737,14 @@ INLINE void fifo_add(fifo_state *f, UINT32 data)
 }
 
 
-INLINE UINT32 fifo_remove(fifo_state *f)
+INLINE uint32_t fifo_remove(fifo_state *f)
 {
-	UINT32 data = 0xffffffff;
+	uint32_t data = 0xffffffff;
 
 	/* as long as we have data, we can do it */
 	if (f->out != f->in)
 	{
-		INT32 next_out;
+		int32_t next_out;
 
 		/* fetch the data */
 		data = f->base[f->out];
@@ -1759,7 +1759,7 @@ INLINE UINT32 fifo_remove(fifo_state *f)
 }
 
 
-INLINE UINT32 fifo_peek(fifo_state *f)
+INLINE uint32_t fifo_peek(fifo_state *f)
 {
 	return f->base[f->out];
 }
@@ -1777,18 +1777,18 @@ INLINE int fifo_full(fifo_state *f)
 }
 
 
-INLINE INT32 fifo_items(fifo_state *f)
+INLINE int32_t fifo_items(fifo_state *f)
 {
-	INT32 items = f->in - f->out;
+	int32_t items = f->in - f->out;
 	if (items < 0)
 		items += f->size;
 	return items;
 }
 
 
-INLINE INT32 fifo_space(fifo_state *f)
+INLINE int32_t fifo_space(fifo_state *f)
 {
-	INT32 items = f->in - f->out;
+	int32_t items = f->in - f->out;
 	if (items < 0)
 		items += f->size;
 	return f->size - 1 - items;
@@ -1815,12 +1815,12 @@ INLINE INT32 fifo_space(fifo_state *f)
  *
  *************************************/
 
-INLINE INT32 fast_reciplog(INT64 value, INT32 *log2)
+INLINE int32_t fast_reciplog(int64_t value, int32_t *log2)
 {
-	extern UINT32 voodoo_reciplog[];
-	UINT32 temp, recip, rlog;
-	UINT32 interp;
-	UINT32 *table;
+	extern uint32_t voodoo_reciplog[];
+	uint32_t temp, recip, rlog;
+	uint32_t interp;
+	uint32_t *table;
 	int neg = FALSE;
 	int lz, exp = 0;
 
@@ -1834,11 +1834,11 @@ INLINE INT32 fast_reciplog(INT64 value, INT32 *log2)
 	/* if we've spilled out of 32 bits, push it down under 32 */
 	if (value & U64(0xffff00000000))
 	{
-		temp = (UINT32)(value >> 16);
+		temp = (uint32_t)(value >> 16);
 		exp -= 16;
 	}
 	else
-		temp = (UINT32)value;
+		temp = (uint32_t)value;
 
 	/* if the resulting value is 0, the reciprocal is infinite */
 	if (UNEXPECTED(temp == 0))
@@ -1854,7 +1854,7 @@ INLINE INT32 fast_reciplog(INT64 value, INT32 *log2)
 
 	/* compute a pointer to the table entries we want */
 	/* math is a bit funny here because we shift one less than we need to in order */
-	/* to account for the fact that there are two UINT32's per table entry */
+	/* to account for the fact that there are two uint32_t's per table entry */
 	table = &voodoo_reciplog[(temp >> (31 - RECIPLOG_LOOKUP_BITS - 1)) & ((2 << RECIPLOG_LOOKUP_BITS) - 2)];
 
 	/* compute the interpolation value */
@@ -1893,10 +1893,10 @@ INLINE INT32 fast_reciplog(INT64 value, INT32 *log2)
  *
  *************************************/
 
-INLINE INT32 float_to_int32(UINT32 data, int fixedbits)
+INLINE int32_t float_to_int32(uint32_t data, int fixedbits)
 {
 	int exponent = ((data >> 23) & 0xff) - 127 - 23 + fixedbits;
-	INT32 result = (data & 0x7fffff) | 0x800000;
+	int32_t result = (data & 0x7fffff) | 0x800000;
 	if (exponent < 0)
 	{
 		if (exponent > -32)
@@ -1917,10 +1917,10 @@ INLINE INT32 float_to_int32(UINT32 data, int fixedbits)
 }
 
 
-INLINE INT64 float_to_int64(UINT32 data, int fixedbits)
+INLINE int64_t float_to_int64(uint32_t data, int fixedbits)
 {
 	int exponent = ((data >> 23) & 0xff) - 127 - 23 + fixedbits;
-	INT64 result = (data & 0x7fffff) | 0x800000;
+	int64_t result = (data & 0x7fffff) | 0x800000;
 	if (exponent < 0)
 	{
 		if (exponent > -64)
@@ -1948,7 +1948,7 @@ INLINE INT64 float_to_int64(UINT32 data, int fixedbits)
  *
  *************************************/
 
-INLINE UINT32 normalize_color_path(UINT32 eff_color_path)
+INLINE uint32_t normalize_color_path(uint32_t eff_color_path)
 {
 	/* ignore the subpixel adjust and texture enable flags */
 	eff_color_path &= ~((1 << 26) | (1 << 27));
@@ -1957,7 +1957,7 @@ INLINE UINT32 normalize_color_path(UINT32 eff_color_path)
 }
 
 
-INLINE UINT32 normalize_alpha_mode(UINT32 eff_alpha_mode)
+INLINE uint32_t normalize_alpha_mode(uint32_t eff_alpha_mode)
 {
 	/* always ignore alpha ref value */
 	eff_alpha_mode &= ~(0xff << 24);
@@ -1974,7 +1974,7 @@ INLINE UINT32 normalize_alpha_mode(UINT32 eff_alpha_mode)
 }
 
 
-INLINE UINT32 normalize_fog_mode(UINT32 eff_fog_mode)
+INLINE uint32_t normalize_fog_mode(uint32_t eff_fog_mode)
 {
 	/* if not doing fogging, ignore all the other fog bits */
 	if (!FOGMODE_ENABLE_FOG(eff_fog_mode))
@@ -1984,7 +1984,7 @@ INLINE UINT32 normalize_fog_mode(UINT32 eff_fog_mode)
 }
 
 
-INLINE UINT32 normalize_fbz_mode(UINT32 eff_fbz_mode)
+INLINE uint32_t normalize_fbz_mode(uint32_t eff_fbz_mode)
 {
 	/* ignore the draw buffer */
 	eff_fbz_mode &= ~(3 << 14);
@@ -1993,7 +1993,7 @@ INLINE UINT32 normalize_fbz_mode(UINT32 eff_fbz_mode)
 }
 
 
-INLINE UINT32 normalize_tex_mode(UINT32 eff_tex_mode)
+INLINE uint32_t normalize_tex_mode(uint32_t eff_tex_mode)
 {
 	/* ignore the NCC table and seq_8_downld flags */
 	eff_tex_mode &= ~((1 << 5) | (1 << 31));
@@ -2010,9 +2010,9 @@ INLINE UINT32 normalize_tex_mode(UINT32 eff_tex_mode)
 }
 
 
-INLINE UINT32 compute_raster_hash(const raster_info *info)
+INLINE uint32_t compute_raster_hash(const raster_info *info)
 {
-	UINT32 hash;
+	uint32_t hash;
 
 	/* make a hash */
 	hash = info->eff_color_path;
@@ -2044,9 +2044,9 @@ INLINE UINT32 compute_raster_hash(const raster_info *info)
 #define DITHER_G(val,dith)	((((val) << 2) - ((val) >> 4) + ((val) >> 6) + (dith)) >> 2)
 
 #define DECLARE_DITHER_POINTERS 												\
-	const UINT8 *dither_lookup = NULL;											\
-	const UINT8 *dither4 = NULL;												\
-	const UINT8 *dither = NULL													\
+	const uint8_t *dither_lookup = NULL;											\
+	const uint8_t *dither4 = NULL;												\
+	const uint8_t *dither = NULL													\
 
 #define COMPUTE_DITHER_POINTERS(FBZMODE, YY)									\
 do																				\
@@ -2076,7 +2076,7 @@ do																				\
 	if (FBZMODE_ENABLE_DITHERING(FBZMODE))										\
 	{																			\
 		/* look up the dither value from the appropriate matrix */				\
-		const UINT8 *dith = &DITHER_LOOKUP[((XX) & 3) << 1];					\
+		const uint8_t *dith = &DITHER_LOOKUP[((XX) & 3) << 1];					\
 																				\
 		/* apply dithering to R,G,B */											\
 		(RR) = dith[((RR) << 3) + 0];											\
@@ -2103,10 +2103,10 @@ while (0)
 #define CLAMPED_ARGB(ITERR, ITERG, ITERB, ITERA, FBZCP, RESULT)					\
 do																				\
 {																				\
-	INT32 r = (INT32)(ITERR) >> 12;												\
-	INT32 g = (INT32)(ITERG) >> 12;												\
-	INT32 b = (INT32)(ITERB) >> 12;												\
-	INT32 a = (INT32)(ITERA) >> 12;												\
+	int32_t r = (int32_t)(ITERR) >> 12;												\
+	int32_t g = (int32_t)(ITERG) >> 12;												\
+	int32_t b = (int32_t)(ITERB) >> 12;												\
+	int32_t a = (int32_t)(ITERA) >> 12;												\
 																				\
 	if (FBZCP_RGBZW_CLAMP(FBZCP) == 0)											\
 	{																			\
@@ -2152,7 +2152,7 @@ while (0)
 #define CLAMPED_Z(ITERZ, FBZCP, RESULT)											\
 do																				\
 {																				\
-	(RESULT) = (INT32)(ITERZ) >> 12;											\
+	(RESULT) = (int32_t)(ITERZ) >> 12;											\
 	if (FBZCP_RGBZW_CLAMP(FBZCP) == 0)											\
 	{																			\
 		(RESULT) &= 0xfffff;													\
@@ -2174,7 +2174,7 @@ while (0)
 #define CLAMPED_W(ITERW, FBZCP, RESULT)											\
 do																				\
 {																				\
-	(RESULT) = (INT16)((ITERW) >> 32);											\
+	(RESULT) = (int16_t)((ITERW) >> 32);											\
 	if (FBZCP_RGBZW_CLAMP(FBZCP) == 0)											\
 	{																			\
 		(RESULT) &= 0xffff;														\
@@ -2217,7 +2217,7 @@ do																				\
 		/* tricky range version */												\
 		else																	\
 		{																		\
-			INT32 low, high, test;												\
+			int32_t low, high, test;												\
 			int results = 0;													\
 																				\
 			/* check blue */													\
@@ -2300,7 +2300,7 @@ do																				\
 {																				\
 	if (ALPHAMODE_ALPHATEST(ALPHAMODE))											\
 	{																			\
-		UINT8 alpharef = (VV)->reg[alphaMode].rgb.a;							\
+		uint8_t alpharef = (VV)->reg[alphaMode].rgb.a;							\
 		switch (ALPHAMODE_ALPHAFUNCTION(ALPHAMODE))								\
 		{																		\
 			case 0:		/* alphaOP = never */									\
@@ -2541,7 +2541,7 @@ do																				\
 	if (FOGMODE_ENABLE_FOG(FOGMODE))											\
 	{																			\
 		rgb_union fogcolor = (VV)->reg[fogColor];								\
-		INT32 fr, fg, fb;														\
+		int32_t fr, fg, fb;														\
 																				\
 		/* constant fog bypasses everything else */								\
 		if (FOGMODE_FOG_CONSTANT(FOGMODE))										\
@@ -2554,7 +2554,7 @@ do																				\
 		/* non-constant fog comes from several sources */						\
 		else																	\
 		{																		\
-			INT32 fogblend = 0;													\
+			int32_t fogblend = 0;													\
 																				\
 			/* if fog_add is zero, we start with the fog color */				\
 			if (FOGMODE_FOG_ADD(FOGMODE) == 0)									\
@@ -2579,8 +2579,8 @@ do																				\
 			{																	\
 				case 0:		/* fog table */										\
 				{																\
-					INT32 delta = (VV)->fbi.fogdelta[wfloat >> 10];				\
-					INT32 deltaval;												\
+					int32_t delta = (VV)->fbi.fogdelta[wfloat >> 10];				\
+					int32_t deltaval;												\
 																				\
 					/* perform the multiply against lower 8 bits of wfloat */	\
 					deltaval = (delta & (VV)->fbi.fogdelta_mask) *				\
@@ -2657,19 +2657,19 @@ while (0)
 #define TEXTURE_PIPELINE(TT, XX, DITHER4, TEXMODE, COTHER, LOOKUP, LODBASE, ITERS, ITERT, ITERW, RESULT) \
 do																				\
 {																				\
-	INT32 blendr, blendg, blendb, blenda;										\
-	INT32 tr, tg, tb, ta;														\
-	INT32 oow, s, t, lod, ilod;													\
-	INT32 smax, tmax;															\
-	UINT32 texbase;																\
+	int32_t blendr, blendg, blendb, blenda;										\
+	int32_t tr, tg, tb, ta;														\
+	int32_t oow, s, t, lod, ilod;													\
+	int32_t smax, tmax;															\
+	uint32_t texbase;																\
 	rgb_union c_local;															\
 																				\
 	/* determine the S/T/LOD values for this texture */							\
 	if (TEXMODE_ENABLE_PERSPECTIVE(TEXMODE))									\
 	{																			\
 		oow = fast_reciplog((ITERW), &lod);										\
-		s = ((INT64)oow * (ITERS)) >> 29;										\
-		t = ((INT64)oow * (ITERT)) >> 29;										\
+		s = ((int64_t)oow * (ITERS)) >> 29;										\
+		t = ((int64_t)oow * (ITERT)) >> 29;										\
 		lod += (LODBASE);														\
 	}																			\
 	else																		\
@@ -2710,7 +2710,7 @@ do																				\
 	{																			\
 		/* point sampled */														\
 																				\
-		UINT32 texel0;															\
+		uint32_t texel0;															\
 																				\
 		/* adjust S/T for the LOD and strip off the fractions */				\
 		s >>= ilod + 18;														\
@@ -2728,12 +2728,12 @@ do																				\
 		/* fetch texel data */													\
 		if (TEXMODE_FORMAT(TEXMODE) < 8)										\
 		{																		\
-			texel0 = *(UINT8 *)&(TT)->ram[(texbase + t + s) & (TT)->mask];		\
+			texel0 = *(uint8_t *)&(TT)->ram[(texbase + t + s) & (TT)->mask];		\
 			c_local.u = (LOOKUP)[texel0];										\
 		}																		\
 		else																	\
 		{																		\
-			texel0 = *(UINT16 *)&(TT)->ram[(texbase + 2*(t + s)) & (TT)->mask];	\
+			texel0 = *(uint16_t *)&(TT)->ram[(texbase + 2*(t + s)) & (TT)->mask];	\
 			if (TEXMODE_FORMAT(TEXMODE) >= 10 && TEXMODE_FORMAT(TEXMODE) <= 12)	\
 				c_local.u = (LOOKUP)[texel0];									\
 			else																\
@@ -2745,9 +2745,9 @@ do																				\
 	{																			\
 		/* bilinear filtered */													\
 																				\
-		UINT32 texel0, texel1, texel2, texel3;									\
-		UINT32 sfrac, tfrac;													\
-		INT32 s1, t1;															\
+		uint32_t texel0, texel1, texel2, texel3;									\
+		uint32_t sfrac, tfrac;													\
+		int32_t s1, t1;															\
 																				\
 		/* adjust S/T for the LOD and strip off all but the low 8 bits of */	\
 		/* the fraction */														\
@@ -2789,10 +2789,10 @@ do																				\
 		/* fetch texel data */													\
 		if (TEXMODE_FORMAT(TEXMODE) < 8)										\
 		{																		\
-			texel0 = *(UINT8 *)&(TT)->ram[(texbase + t + s) & (TT)->mask];		\
-			texel1 = *(UINT8 *)&(TT)->ram[(texbase + t + s1) & (TT)->mask];		\
-			texel2 = *(UINT8 *)&(TT)->ram[(texbase + t1 + s) & (TT)->mask];		\
-			texel3 = *(UINT8 *)&(TT)->ram[(texbase + t1 + s1) & (TT)->mask];	\
+			texel0 = *(uint8_t *)&(TT)->ram[(texbase + t + s) & (TT)->mask];		\
+			texel1 = *(uint8_t *)&(TT)->ram[(texbase + t + s1) & (TT)->mask];		\
+			texel2 = *(uint8_t *)&(TT)->ram[(texbase + t1 + s) & (TT)->mask];		\
+			texel3 = *(uint8_t *)&(TT)->ram[(texbase + t1 + s1) & (TT)->mask];	\
 			texel0 = (LOOKUP)[texel0];											\
 			texel1 = (LOOKUP)[texel1];											\
 			texel2 = (LOOKUP)[texel2];											\
@@ -2800,10 +2800,10 @@ do																				\
 		}																		\
 		else																	\
 		{																		\
-			texel0 = *(UINT16 *)&(TT)->ram[(texbase + 2*(t + s)) & (TT)->mask];	\
-			texel1 = *(UINT16 *)&(TT)->ram[(texbase + 2*(t + s1)) & (TT)->mask];\
-			texel2 = *(UINT16 *)&(TT)->ram[(texbase + 2*(t1 + s)) & (TT)->mask];\
-			texel3 = *(UINT16 *)&(TT)->ram[(texbase + 2*(t1 + s1)) & (TT)->mask];\
+			texel0 = *(uint16_t *)&(TT)->ram[(texbase + 2*(t + s)) & (TT)->mask];	\
+			texel1 = *(uint16_t *)&(TT)->ram[(texbase + 2*(t + s1)) & (TT)->mask];\
+			texel2 = *(uint16_t *)&(TT)->ram[(texbase + 2*(t1 + s)) & (TT)->mask];\
+			texel3 = *(uint16_t *)&(TT)->ram[(texbase + 2*(t1 + s1)) & (TT)->mask];\
 			if (TEXMODE_FORMAT(TEXMODE) >= 10 && TEXMODE_FORMAT(TEXMODE) <= 12)	\
 			{																	\
 				texel0 = (LOOKUP)[texel0];										\
@@ -2996,9 +2996,9 @@ while (0)
 #define PIXEL_PIPELINE_BEGIN(VV, STATS, XX, YY, FBZCOLORPATH, FBZMODE, ITERZ, ITERW)	\
 do																				\
 {																				\
-	INT32 depthval, wfloat;														\
-	INT32 prefogr, prefogg, prefogb;											\
-	INT32 r, g, b, a;															\
+	int32_t depthval, wfloat;														\
+	int32_t prefogr, prefogg, prefogb;											\
+	int32_t r, g, b, a;															\
 																				\
 	(STATS)->pixels_in++;														\
 																				\
@@ -3036,7 +3036,7 @@ do																				\
 		wfloat = 0x0000;														\
 	else																		\
 	{																			\
-		UINT32 temp = (UINT32)(ITERW);											\
+		uint32_t temp = (uint32_t)(ITERW);											\
 		if ((temp & 0xffff0000) == 0)											\
 			wfloat = 0xffff;													\
 		else																	\
@@ -3057,7 +3057,7 @@ do																				\
 			depthval = 0x0000;													\
 		else																	\
 		{																		\
-			UINT32 temp = (ITERZ) << 4;											\
+			uint32_t temp = (ITERZ) << 4;											\
 			if ((temp & 0xffff0000) == 0)										\
 				depthval = 0xffff;												\
 			else																\
@@ -3071,21 +3071,21 @@ do																				\
 	/* add the bias */															\
 	if (FBZMODE_ENABLE_DEPTH_BIAS(FBZMODE))										\
 	{																			\
-		depthval += (INT16)(VV)->reg[zaColor].u;								\
+		depthval += (int16_t)(VV)->reg[zaColor].u;								\
 		CLAMP(depthval, 0, 0xffff);												\
 	}																			\
 																				\
 	/* handle depth buffer testing */											\
 	if (FBZMODE_ENABLE_DEPTHBUF(FBZMODE))										\
 	{																			\
-		INT32 depthsource;														\
+		int32_t depthsource;														\
 																				\
 		/* the source depth is either the iterated W/Z+bias or a */				\
 		/* constant value */													\
 		if (FBZMODE_DEPTH_SOURCE_COMPARE(FBZMODE) == 0)							\
 			depthsource = depthval;												\
 		else																	\
-			depthsource = (UINT16)(VV)->reg[zaColor].u;							\
+			depthsource = (uint16_t)(VV)->reg[zaColor].u;							\
 																				\
 		/* test against the depth buffer */										\
 		switch (FBZMODE_DEPTH_FUNCTION(FBZMODE))								\
@@ -3231,12 +3231,12 @@ while (0)
 /*
     Expects the following declarations to be outside of this scope:
 
-    INT32 r, g, b, a;
+    int32_t r, g, b, a;
 */
 #define COLORPATH_PIPELINE(VV, STATS, FBZCOLORPATH, FBZMODE, ALPHAMODE, TEXELARGB, ITERZ, ITERW, ITERARGB) \
 do																				\
 {																				\
-	INT32 blendr, blendg, blendb, blenda;										\
+	int32_t blendr, blendg, blendb, blenda;										\
 	rgb_union c_other;															\
 	rgb_union c_local;															\
 																				\
@@ -3321,7 +3321,7 @@ do																				\
 		{																		\
 			int temp;															\
 			CLAMPED_Z(ITERZ, FBZCOLORPATH, temp);								\
-			c_local.rgb.a = (UINT8)temp;										\
+			c_local.rgb.a = (uint8_t)temp;										\
 			break;																\
 		}																		\
 																				\
@@ -3329,7 +3329,7 @@ do																				\
 		{																		\
 			int temp;															\
 			CLAMPED_W(ITERW, FBZCOLORPATH, temp);			/* Voodoo 2 only */	\
-			c_local.rgb.a = (UINT8)temp;										\
+			c_local.rgb.a = (uint8_t)temp;										\
 			break;																\
 		}																		\
 	}																			\
@@ -3490,24 +3490,24 @@ while (0)
 
 #define RASTERIZER(name, TMUS, FBZCOLORPATH, FBZMODE, ALPHAMODE, FOGMODE, TEXMODE0, TEXMODE1) \
 																				\
-static void raster_##name(void *destbase, INT32 y, const poly_extent *extent, const void *extradata, int threadid) \
+static void raster_##name(void *destbase, int32_t y, const poly_extent *extent, const void *extradata, int threadid) \
 {																				\
 	const poly_extra_data *extra = (const poly_extra_data *)extradata;			\
 	voodoo_state *v = extra->state;												\
 	stats_block *stats = &v->thread_stats[threadid];							\
 	DECLARE_DITHER_POINTERS;													\
-	INT32 startx = extent->startx;												\
-	INT32 stopx = extent->stopx;												\
-	INT32 iterr, iterg, iterb, itera;											\
-	INT32 iterz;																\
-	INT64 iterw, iterw0 = 0, iterw1 = 0;										\
-	INT64 iters0 = 0, iters1 = 0;												\
-	INT64 itert0 = 0, itert1 = 0;												\
-	UINT16 *depth;																\
-	UINT16 *dest;																\
-	INT32 dx, dy;																\
-	INT32 scry;																	\
-	INT32 x;																	\
+	int32_t startx = extent->startx;												\
+	int32_t stopx = extent->stopx;												\
+	int32_t iterr, iterg, iterb, itera;											\
+	int32_t iterz;																\
+	int64_t iterw, iterw0 = 0, iterw1 = 0;										\
+	int64_t iters0 = 0, iters1 = 0;												\
+	int64_t itert0 = 0, itert1 = 0;												\
+	uint16_t *depth;																\
+	uint16_t *dest;																\
+	int32_t dx, dy;																\
+	int32_t scry;																	\
+	int32_t x;																	\
 																				\
 	/* determine the screen Y */												\
 	scry = y;																	\
@@ -3520,7 +3520,7 @@ static void raster_##name(void *destbase, INT32 y, const poly_extent *extent, co
 	/* apply clipping */														\
 	if (FBZMODE_ENABLE_CLIPPING(FBZMODE))										\
 	{																			\
-		INT32 tempclip;															\
+		int32_t tempclip;															\
 																				\
 		/* Y clipping buys us the whole scanline */								\
 		if (scry < ((v->reg[clipLowYHighY].u >> 16) & 0x3ff) ||					\
@@ -3549,8 +3549,8 @@ static void raster_##name(void *destbase, INT32 y, const poly_extent *extent, co
 	}																			\
 																				\
 	/* get pointers to the target buffer and depth buffer */					\
-	dest = (UINT16 *)destbase + scry * v->fbi.rowpixels;						\
-	depth = (v->fbi.auxoffs != ~0) ? ((UINT16 *)(v->fbi.ram + v->fbi.auxoffs) + scry * v->fbi.rowpixels) : NULL; \
+	dest = (uint16_t *)destbase + scry * v->fbi.rowpixels;						\
+	depth = (v->fbi.auxoffs != ~0) ? ((uint16_t *)(v->fbi.ram + v->fbi.auxoffs) + scry * v->fbi.rowpixels) : NULL; \
 																				\
 	/* compute the starting parameters */										\
 	dx = startx - (extra->ax >> 4);												\

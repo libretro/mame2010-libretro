@@ -54,20 +54,20 @@ struct _dma8257_t
 	emu_timer *timer;
 	emu_timer *msbflip_timer;
 
-	UINT16 registers[I8257_NUM_CHANNELS*2];
+	uint16_t registers[I8257_NUM_CHANNELS*2];
 
-	UINT16 address[I8257_NUM_CHANNELS];
-	UINT16 count[I8257_NUM_CHANNELS];
-	UINT8  rwmode[I8257_NUM_CHANNELS];
+	uint16_t address[I8257_NUM_CHANNELS];
+	uint16_t count[I8257_NUM_CHANNELS];
+	uint8_t  rwmode[I8257_NUM_CHANNELS];
 
-	UINT8 mode;
-	UINT8 rr;
+	uint8_t mode;
+	uint8_t rr;
 
-	UINT8 msb;
-	UINT8 drq;
+	uint8_t msb;
+	uint8_t drq;
 
 	/* bits  0- 3 :  Terminal count for channels 0-3 */
-	UINT8 status;
+	uint8_t status;
 };
 
 #define DMA_MODE_AUTOLOAD(mode)		((mode) & 0x80)
@@ -93,8 +93,8 @@ static int dma8257_do_operation(running_device *device, int channel)
 {
 	i8257_t *i8257 = get_safe_token(device);
 	int done;
-	UINT8 data;
-	UINT8 mode;
+	uint8_t data;
+	uint8_t mode;
 
 	mode = i8257->rwmode[channel];
 	if (i8257->count[channel] == 0x0000)
@@ -209,7 +209,7 @@ static TIMER_CALLBACK( dma8257_msbflip_timerproc )
 static void dma8257_update_status(running_device *device)
 {
 	i8257_t *i8257 = get_safe_token(device);
-	UINT16 pending_transfer;
+	uint16_t pending_transfer;
 	attotime next;
 
 	/* no transfer is active right now; is there a transfer pending right now? */
@@ -248,7 +248,7 @@ static void prepare_msb_flip(i8257_t *i8257)
 READ8_DEVICE_HANDLER( i8257_r )
 {
 	i8257_t *i8257 = get_safe_token(device);
-	UINT8 data = 0xFF;
+	uint8_t data = 0xFF;
 
 	switch(offset) {
 	case 0:
@@ -266,7 +266,7 @@ READ8_DEVICE_HANDLER( i8257_r )
 
 	case 8:
 		/* DMA status register */
-		data = (UINT8) i8257->status;
+		data = (uint8_t) i8257->status;
 		/* read resets status ! */
 		i8257->status &= 0xF0;
 
@@ -297,7 +297,7 @@ WRITE8_DEVICE_HANDLER( i8257_w )
 	case 7:
 		/* DMA address/count register */
 		if (i8257->msb)
-			i8257->registers[offset] |= ((UINT16) data) << 8;
+			i8257->registers[offset] |= ((uint16_t) data) << 8;
 		else
 			i8257->registers[offset] = data;
 
@@ -308,7 +308,7 @@ WRITE8_DEVICE_HANDLER( i8257_w )
 				case 4:
 				case 5:
 					if (i8257->msb)
-						i8257->registers[offset+2] |= ((UINT16) data) << 8;
+						i8257->registers[offset+2] |= ((uint16_t) data) << 8;
 					else
 						i8257->registers[offset+2] = data;
 			}

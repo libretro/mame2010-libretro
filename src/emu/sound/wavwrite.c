@@ -4,16 +4,16 @@
 struct _wav_file
 {
 	FILE *file;
-	UINT32 total_offs;
-	UINT32 data_offs;
+	uint32_t total_offs;
+	uint32_t data_offs;
 };
 
 
 wav_file *wav_open(const char *filename, int sample_rate, int channels)
 {
 	wav_file *wav;
-	UINT32 bps, temp32;
-	UINT16 align, temp16;
+	uint32_t bps, temp32;
+	uint16_t align, temp16;
 
 	/* allocate memory for the wav struct */
 	wav = (wav_file *) osd_malloc(sizeof(struct _wav_file));
@@ -86,8 +86,8 @@ wav_file *wav_open(const char *filename, int sample_rate, int channels)
 
 void wav_close(wav_file *wav)
 {
-	UINT32 total = ftell(wav->file);
-	UINT32 temp32;
+	uint32_t total = ftell(wav->file);
+	uint32_t temp32;
 
 	if (!wav) return;
 
@@ -108,7 +108,7 @@ void wav_close(wav_file *wav)
 }
 
 
-void wav_add_data_16(wav_file *wav, INT16 *data, int samples)
+void wav_add_data_16(wav_file *wav, int16_t *data, int samples)
 {
 	if (!wav) return;
 
@@ -118,15 +118,15 @@ void wav_add_data_16(wav_file *wav, INT16 *data, int samples)
 }
 
 
-void wav_add_data_32(wav_file *wav, INT32 *data, int samples, int shift)
+void wav_add_data_32(wav_file *wav, int32_t *data, int samples, int shift)
 {
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	if (!wav) return;
 
 	/* allocate temp memory */
-	temp = (INT16 *)osd_malloc(samples * sizeof(temp[0]));
+	temp = (int16_t *)osd_malloc(samples * sizeof(temp[0]));
 	if (!temp)
 		return;
 
@@ -146,15 +146,15 @@ void wav_add_data_32(wav_file *wav, INT32 *data, int samples, int shift)
 }
 
 
-void wav_add_data_16lr(wav_file *wav, INT16 *left, INT16 *right, int samples)
+void wav_add_data_16lr(wav_file *wav, int16_t *left, int16_t *right, int samples)
 {
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	if (!wav) return;
 
 	/* allocate temp memory */
-	temp = (INT16 *)osd_malloc(samples * 2 * sizeof(temp[0]));
+	temp = (int16_t *)osd_malloc(samples * 2 * sizeof(temp[0]));
 	if (!temp)
 		return;
 
@@ -171,15 +171,15 @@ void wav_add_data_16lr(wav_file *wav, INT16 *left, INT16 *right, int samples)
 }
 
 
-void wav_add_data_32lr(wav_file *wav, INT32 *left, INT32 *right, int samples, int shift)
+void wav_add_data_32lr(wav_file *wav, int32_t *left, int32_t *right, int samples, int shift)
 {
-	INT16 *temp;
+	int16_t *temp;
 	int i;
 
 	if (!wav) return;
 
 	/* allocate temp memory */
-	temp = (INT16 *)osd_malloc(samples * 2 * sizeof(temp[0]));
+	temp = (int16_t *)osd_malloc(samples * 2 * sizeof(temp[0]));
 	if (!temp)
 		return;
 

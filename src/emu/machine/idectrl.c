@@ -109,60 +109,60 @@ struct _ide_state
 {
 	running_device *device;
 
-	UINT8			adapter_control;
-	UINT8			status;
-	UINT8			error;
-	UINT8			command;
-	UINT8			interrupt_pending;
-	UINT8			precomp_offset;
+	uint8_t			adapter_control;
+	uint8_t			status;
+	uint8_t			error;
+	uint8_t			command;
+	uint8_t			interrupt_pending;
+	uint8_t			precomp_offset;
 
-	UINT8			buffer[IDE_DISK_SECTOR_SIZE];
-	UINT8			features[IDE_DISK_SECTOR_SIZE];
-	UINT16			buffer_offset;
-	UINT16			sector_count;
+	uint8_t			buffer[IDE_DISK_SECTOR_SIZE];
+	uint8_t			features[IDE_DISK_SECTOR_SIZE];
+	uint16_t			buffer_offset;
+	uint16_t			sector_count;
 
-	UINT16			block_count;
-	UINT16			sectors_until_int;
-	UINT8			verify_only;
+	uint16_t			block_count;
+	uint16_t			sectors_until_int;
+	uint8_t			verify_only;
 
-	UINT8			dma_active;
+	uint8_t			dma_active;
 	const address_space *dma_space;
-	UINT8			dma_address_xor;
-	UINT8			dma_last_buffer;
+	uint8_t			dma_address_xor;
+	uint8_t			dma_last_buffer;
 	offs_t			dma_address;
 	offs_t			dma_descriptor;
-	UINT32			dma_bytes_left;
+	uint32_t			dma_bytes_left;
 
-	UINT8			bus_master_command;
-	UINT8			bus_master_status;
-	UINT32			bus_master_descriptor;
+	uint8_t			bus_master_command;
+	uint8_t			bus_master_status;
+	uint32_t			bus_master_descriptor;
 
-	UINT16			cur_cylinder;
-	UINT8			cur_sector;
-	UINT8			cur_head;
-	UINT8			cur_head_reg;
+	uint16_t			cur_cylinder;
+	uint8_t			cur_sector;
+	uint8_t			cur_head;
+	uint8_t			cur_head_reg;
 
-	UINT32			cur_lba;
+	uint32_t			cur_lba;
 
-	UINT16			num_cylinders;
-	UINT8			num_sectors;
-	UINT8			num_heads;
+	uint16_t			num_cylinders;
+	uint8_t			num_sectors;
+	uint8_t			num_heads;
 
-	UINT8			config_unknown;
-	UINT8			config_register[IDE_CONFIG_REGISTERS];
-	UINT8			config_register_num;
+	uint8_t			config_unknown;
+	uint8_t			config_register[IDE_CONFIG_REGISTERS];
+	uint8_t			config_register_num;
 
 	chd_file       *handle;
 	hard_disk_file *disk;
 	emu_timer *		last_status_timer;
 	emu_timer *		reset_timer;
 
-	UINT8			master_password_enable;
-	UINT8			user_password_enable;
-	const UINT8 *	master_password;
-	const UINT8 *	user_password;
+	uint8_t			master_password_enable;
+	uint8_t			user_password_enable;
+	const uint8_t *	master_password;
+	const uint8_t *	user_password;
 
-	UINT8			gnetreadlock;
+	uint8_t			gnetreadlock;
 };
 
 
@@ -181,8 +181,8 @@ static TIMER_CALLBACK( read_sector_done_callback );
 static void read_first_sector(ide_state *ide);
 static void read_next_sector(ide_state *ide);
 
-static UINT32 ide_controller_read(running_device *device, int bank, offs_t offset, int size);
-static void ide_controller_write(running_device *device, int bank, offs_t offset, int size, UINT32 data);
+static uint32_t ide_controller_read(running_device *device, int bank, offs_t offset, int size);
+static void ide_controller_write(running_device *device, int bank, offs_t offset, int size, uint32_t data);
 
 
 
@@ -272,19 +272,19 @@ INLINE void signal_delayed_interrupt(ide_state *ide, attotime time, int buffer_r
     INITIALIZATION AND RESET
 ***************************************************************************/
 
-UINT8 *ide_get_features(running_device *device)
+uint8_t *ide_get_features(running_device *device)
 {
 	ide_state *ide = get_safe_token(device);
 	return ide->features;
 }
 
-void ide_set_gnet_readlock(running_device *device, const UINT8 onoff)
+void ide_set_gnet_readlock(running_device *device, const uint8_t onoff)
 {
 	ide_state *ide = get_safe_token(device);
 	ide->gnetreadlock = onoff;
 }
 
-void ide_set_master_password(running_device *device, const UINT8 *password)
+void ide_set_master_password(running_device *device, const uint8_t *password)
 {
 	ide_state *ide = get_safe_token(device);
 
@@ -293,7 +293,7 @@ void ide_set_master_password(running_device *device, const UINT8 *password)
 }
 
 
-void ide_set_user_password(running_device *device, const UINT8 *password)
+void ide_set_user_password(running_device *device, const uint8_t *password)
 {
 	ide_state *ide = get_safe_token(device);
 
@@ -316,7 +316,7 @@ static TIMER_CALLBACK( reset_callback )
  *
  *************************************/
 
-INLINE int convert_to_offset_and_size32(offs_t *offset, UINT32 mem_mask)
+INLINE int convert_to_offset_and_size32(offs_t *offset, uint32_t mem_mask)
 {
 	int size = 4;
 
@@ -345,7 +345,7 @@ INLINE int convert_to_offset_and_size32(offs_t *offset, UINT32 mem_mask)
 	return size;
 }
 
-INLINE int convert_to_offset_and_size16(offs_t *offset, UINT32 mem_mask)
+INLINE int convert_to_offset_and_size16(offs_t *offset, uint32_t mem_mask)
 {
 	int size = 2;
 
@@ -367,7 +367,7 @@ INLINE int convert_to_offset_and_size16(offs_t *offset, UINT32 mem_mask)
  *
  *************************************/
 
-INLINE UINT32 lba_address(ide_state *ide)
+INLINE uint32_t lba_address(ide_state *ide)
 {
 	/* LBA direct? */
 	if (ide->cur_head_reg & 0x40)
@@ -429,7 +429,7 @@ INLINE void next_sector(ide_state *ide)
  *
  *************************************/
 
-static void swap_strncpy(UINT8 *dst, const char *src, int field_size_in_words)
+static void swap_strncpy(uint8_t *dst, const char *src, int field_size_in_words)
 {
 	int i;
 
@@ -675,7 +675,7 @@ static void continue_read(ide_state *ide)
 static void write_buffer_to_dma(ide_state *ide)
 {
 	int bytesleft = IDE_DISK_SECTOR_SIZE;
-	UINT8 *data = ide->buffer;
+	uint8_t *data = ide->buffer;
 
 //  LOG(("Writing sector to %08X\n", ide->dma_address));
 
@@ -879,7 +879,7 @@ static void continue_write(ide_state *ide)
 static void read_buffer_from_dma(ide_state *ide)
 {
 	int bytesleft = IDE_DISK_SECTOR_SIZE;
-	UINT8 *data = ide->buffer;
+	uint8_t *data = ide->buffer;
 
 //  LOG(("Reading sector from %08X\n", ide->dma_address));
 
@@ -1001,9 +1001,9 @@ static TIMER_CALLBACK( write_sector_done_callback )
  *
  *************************************/
 
-static void handle_command(ide_state *ide, UINT8 command)
+static void handle_command(ide_state *ide, uint8_t command)
 {
-	UINT8 key[5];
+	uint8_t key[5];
 
 	/* implicitly clear interrupts here */
 	clear_interrupt(ide);
@@ -1214,7 +1214,7 @@ static void handle_command(ide_state *ide, UINT8 command)
 
 			/* key check */
 			chd_get_metadata (ide->handle, HARD_DISK_KEY_METADATA_TAG, 0, key, 5, 0, 0, 0);
-			if ((ide->precomp_offset == key[0]) && (ide->sector_count == key[1]) && (ide->cur_sector == key[2]) && (ide->cur_cylinder == (((UINT16)key[4]<<8)|key[3])))
+			if ((ide->precomp_offset == key[0]) && (ide->sector_count == key[1]) && (ide->cur_sector == key[2]) && (ide->cur_cylinder == (((uint16_t)key[4]<<8)|key[3])))
 			{
 				ide->gnetreadlock= 0;
 			}
@@ -1240,10 +1240,10 @@ static void handle_command(ide_state *ide, UINT8 command)
  *
  *************************************/
 
-static UINT32 ide_controller_read(running_device *device, int bank, offs_t offset, int size)
+static uint32_t ide_controller_read(running_device *device, int bank, offs_t offset, int size)
 {
 	ide_state *ide = get_safe_token(device);
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	/* logit */
 //  if (BANK(bank, offset) != IDE_BANK0_DATA && BANK(bank, offset) != IDE_BANK0_STATUS_COMMAND && BANK(bank, offset) != IDE_BANK1_STATUS_CONTROL)
@@ -1349,7 +1349,7 @@ static UINT32 ide_controller_read(running_device *device, int bank, offs_t offse
  *
  *************************************/
 
-static void ide_controller_write(running_device *device, int bank, offs_t offset, int size, UINT32 data)
+static void ide_controller_write(running_device *device, int bank, offs_t offset, int size, uint32_t data)
 {
 	ide_state *ide = get_safe_token(device);
 
@@ -1432,7 +1432,7 @@ static void ide_controller_write(running_device *device, int bank, offs_t offset
 					}
 					else if (ide->command == IDE_COMMAND_TAITO_GNET_UNLOCK_2)
 					{
-						UINT8 key[5] = { 0, 0, 0, 0, 0 };
+						uint8_t key[5] = { 0, 0, 0, 0, 0 };
 						int i, bad = 0;
 						chd_get_metadata (ide->handle, HARD_DISK_KEY_METADATA_TAG, 0, key, 5, 0, 0, 0);
 
@@ -1517,7 +1517,7 @@ static void ide_controller_write(running_device *device, int bank, offs_t offset
  *
  *************************************/
 
-static UINT32 ide_bus_master_read(running_device *device, offs_t offset, int size)
+static uint32_t ide_bus_master_read(running_device *device, offs_t offset, int size)
 {
 	ide_state *ide = get_safe_token(device);
 
@@ -1546,7 +1546,7 @@ static UINT32 ide_bus_master_read(running_device *device, offs_t offset, int siz
  *
  *************************************/
 
-static void ide_bus_master_write(running_device *device, offs_t offset, int size, UINT32 data)
+static void ide_bus_master_write(running_device *device, offs_t offset, int size, uint32_t data)
 {
 	ide_state *ide = get_safe_token(device);
 
@@ -1555,8 +1555,8 @@ static void ide_bus_master_write(running_device *device, offs_t offset, int size
 	/* command register */
 	if (offset == 0)
 	{
-		UINT8 old = ide->bus_master_command;
-		UINT8 val = data & 0xff;
+		uint8_t old = ide->bus_master_command;
+		uint8_t val = data & 0xff;
 
 		/* save the read/write bit and the start/stop bit */
 		ide->bus_master_command = (old & 0xf6) | (val & 0x09);
@@ -1587,8 +1587,8 @@ static void ide_bus_master_write(running_device *device, offs_t offset, int size
 	/* status register */
 	if (offset <= 2 && offset + size > 2)
 	{
-		UINT8 old = ide->bus_master_status;
-		UINT8 val = data >> (8 * (2 - offset));
+		uint8_t old = ide->bus_master_status;
+		uint8_t val = data >> (8 * (2 - offset));
 
 		/* save the DMA capable bits */
 		ide->bus_master_status = (old & 0x9f) | (val & 0x60);
@@ -1643,7 +1643,7 @@ void ide_bus_w(running_device *device, int select, int offset, int data)
 		ide_controller_write(device, select ? 1 : 0, offset, 1, data & 0xff);
 }
 
-UINT32 ide_controller_r(running_device *device, int reg, int size)
+uint32_t ide_controller_r(running_device *device, int reg, int size)
 {
 	if (reg >= 0x1f0 && reg < 0x1f8)
 		return ide_controller_read(device, 0, reg & 7, size);
@@ -1654,7 +1654,7 @@ UINT32 ide_controller_r(running_device *device, int reg, int size)
 	return 0xffffffff;
 }
 
-void ide_controller_w(running_device *device, int reg, int size, UINT32 data)
+void ide_controller_w(running_device *device, int reg, int size, uint32_t data)
 {
 	if (reg >= 0x1f0 && reg < 0x1f8)
 		ide_controller_write(device, 0, reg & 7, size, data);
@@ -1697,7 +1697,7 @@ WRITE32_DEVICE_HANDLER( ide_controller32_w )
 READ32_DEVICE_HANDLER( ide_controller32_pcmcia_r )
 {
 	int size;
-	UINT32 res = 0xffffffff;
+	uint32_t res = 0xffffffff;
 
 	offset *= 4;
 	size = convert_to_offset_and_size32(&offset, mem_mask);

@@ -33,10 +33,10 @@ struct dss_counter_context
 	int		clock_type;
 	int		out_type;
 	int		is_7492;
-	UINT32	last;		/* Last clock state */
-	UINT32	min;
-	UINT32	max;
-	UINT32	diff;
+	uint32_t	last;		/* Last clock state */
+	uint32_t	min;
+	uint32_t	max;
+	uint32_t	diff;
 	double	t_left;		/* time unused during last sample in seconds */
 };
 
@@ -65,10 +65,10 @@ struct dss_lfsr_context
 	double			t_left;		/* time unused during last sample in seconds */
 	double			sample_step;
 	double			t;
-	UINT8			reset_on_high;
-	UINT8			invert_output;
-	UINT8			out_is_f0;
-	UINT8			out_lfsr_reg;
+	uint8_t			reset_on_high;
+	uint8_t			invert_output;
+	uint8_t			out_is_f0;
+	uint8_t			out_lfsr_reg;
 };
 
 struct dss_noise_context
@@ -100,10 +100,10 @@ struct dss_op_amp_osc_context
 	const double *r7;
 	const double *r8;
 	int		type;
-	UINT8	flip_flop;		/* flip/flop output state */
-	UINT8	flip_flop_xor;	/* flip_flop ^ flip_flop_xor, 0 = discharge, 1 = charge */
-	UINT8	output_type;
-	UINT8	has_enable;
+	uint8_t	flip_flop;		/* flip/flop output state */
+	uint8_t	flip_flop_xor;	/* flip_flop ^ flip_flop_xor, 0 = discharge, 1 = charge */
+	uint8_t	output_type;
+	uint8_t	has_enable;
 	double	v_out_high;
 	double	threshold_low;	/* falling threshold */
 	double	threshold_high;	/* rising threshold */
@@ -135,7 +135,7 @@ struct dss_schmitt_osc_context
 	double	exponent;
 	int		state;				/* state of the output */
 	int		enable_type;
-	UINT8	input_is_voltage;
+	uint8_t	input_is_voltage;
 };
 
 struct dss_sinewave_context
@@ -197,7 +197,7 @@ static DISCRETE_STEP(dss_counter)
 	double	ds_clock;
 	int		clock = 0, last_count, inc = 0;
 	double	x_time = 0;
-	UINT32	count = node->output[0];
+	uint32_t	count = node->output[0];
 
 	ds_clock = DSS_COUNTER__CLOCK;
 	if (UNEXPECTED(context->clock_type == DISC_CLK_IS_FREQ))
@@ -776,10 +776,10 @@ static DISCRETE_STEP(dss_op_amp_osc)
 	double charge[2]  = {0};
 	double x_time  = 0;		/* time since change happened */
 	double exponent;
-	UINT8 force_charge = 0;
-	UINT8 enable = DSS_OP_AMP_OSC__ENABLE;
-	UINT8 update_exponent = 0;
-	UINT8 flip_flop = context->flip_flop;
+	uint8_t force_charge = 0;
+	uint8_t enable = DSS_OP_AMP_OSC__ENABLE;
+	uint8_t update_exponent = 0;
+	uint8_t flip_flop = context->flip_flop;
 	int count_f = 0;
 	int count_r = 0;
 

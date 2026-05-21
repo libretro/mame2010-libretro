@@ -51,9 +51,9 @@ static STREAM_UPDATE( wave_sound_update )
 
 		for (i = samples - 1; i >= 0; i--)
 		{
-			left_buffer[i] = ((INT16 *) left_buffer)[i];
+			left_buffer[i] = ((int16_t *) left_buffer)[i];
 			if (speakers > 1)
-				right_buffer[i] = ((INT16 *) right_buffer)[i];
+				right_buffer[i] = ((int16_t *) right_buffer)[i];
 		}
 	}
 	else

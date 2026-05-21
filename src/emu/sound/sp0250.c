@@ -36,15 +36,15 @@ should be 312, but 312 = 39*8 so it doesn't look right because a divider by 39 i
 typedef struct _sp0250_state sp0250_state;
 struct _sp0250_state
 {
-	INT16 amp;
-	UINT8 pitch;
-	UINT8 repeat;
+	int16_t amp;
+	uint8_t pitch;
+	uint8_t repeat;
 	int pcount, rcount;
 	int playing;
-	UINT32 RNG;
+	uint32_t RNG;
 	sound_stream * stream;
 	int voiced;
-	UINT8 fifo[15];
+	uint8_t fifo[15];
 	int fifo_pos;
 
 	running_device *device;
@@ -52,8 +52,8 @@ struct _sp0250_state
 
 	struct
 	{
-		INT16 F, B;
-		INT16 z1, z2;
+		int16_t F, B;
+		int16_t z1, z2;
 	} filter[6];
 };
 
@@ -65,15 +65,15 @@ INLINE sp0250_state *get_safe_token(running_device *device)
 }
 
 
-static UINT16 sp0250_ga(UINT8 v)
+static uint16_t sp0250_ga(uint8_t v)
 {
 	return (v & 0x1f) << (v>>5);
 }
 
-static INT16 sp0250_gc(UINT8 v)
+static int16_t sp0250_gc(uint8_t v)
 {
 	// Internal ROM to the chip, cf. manual
-	static const UINT16 coefs[128] =
+	static const uint16_t coefs[128] =
 	{
 		  0,   9,  17,  25,  33,  41,  49,  57,  65,  73,  81,  89,  97, 105, 113, 121,
 		129, 137, 145, 153, 161, 169, 177, 185, 193, 201, 203, 217, 225, 233, 241, 249,
@@ -84,7 +84,7 @@ static INT16 sp0250_gc(UINT8 v)
 		479, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495,
 		496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511
 	};
-	INT16 res = coefs[v & 0x7f];
+	int16_t res = coefs[v & 0x7f];
 
 	if (!(v & 0x80))
 		res = -res;
@@ -140,7 +140,7 @@ static STREAM_UPDATE( sp0250_update )
 	{
 		if (sp->playing)
 		{
-			INT16 z0;
+			int16_t z0;
 			int f;
 
 			if (sp->voiced)
@@ -231,7 +231,7 @@ WRITE8_DEVICE_HANDLER( sp0250_w )
 }
 
 
-UINT8 sp0250_drq_r(running_device *device)
+uint8_t sp0250_drq_r(running_device *device)
 {
 	sp0250_state *sp = get_safe_token(device);
 	stream_update(sp->stream);

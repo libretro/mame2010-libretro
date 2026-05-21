@@ -51,11 +51,11 @@ class z80sio_device_config :	public device_config,
 	friend class z80sio_device;
 
 	// construction/destruction
-	z80sio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	z80sio_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 
 public:
 	// allocators
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 	virtual device_t *alloc_device(running_machine &machine) const;
 
 protected:
@@ -77,12 +77,12 @@ class z80sio_device :	public device_t,
 
 public:
 	// control register I/O
-	UINT8 control_read(int ch) { return m_channel[ch].control_read(); }
-	void control_write(int ch, UINT8 data) { m_channel[ch].control_write(data); }
+	uint8_t control_read(int ch) { return m_channel[ch].control_read(); }
+	void control_write(int ch, uint8_t data) { m_channel[ch].control_write(data); }
 
 	// data register I/O
-	UINT8 data_read(int ch) { return m_channel[ch].data_read(); }
-	void data_write(int ch, UINT8 data) { m_channel[ch].data_write(data); }
+	uint8_t data_read(int ch) { return m_channel[ch].data_read(); }
+	void data_write(int ch, uint8_t data) { m_channel[ch].data_write(data); }
 
 	// communication line I/O
 	int dtr(int ch) { return m_channel[ch].dtr(); }
@@ -113,10 +113,10 @@ private:
 		void start(z80sio_device *device, int index);
 		void reset();
 
-		UINT8 control_read();
-		UINT8 data_read();
-		void control_write(UINT8 data);
-		void data_write(UINT8 data);
+		uint8_t control_read();
+		uint8_t data_read();
+		void control_write(uint8_t data);
+		void data_write(uint8_t data);
 
 		int dtr();
 		int rts();
@@ -136,27 +136,27 @@ private:
 		void serial_callback();
 
 	public:
-		UINT8		m_regs[8];				// 8 writeable registers
+		uint8_t		m_regs[8];				// 8 writeable registers
 
 	private:
 		z80sio_device *m_device;			// pointer back to our device
 		int			m_index;				// our channel index
-		UINT8		m_status[4];			// 3 readable registers
+		uint8_t		m_status[4];			// 3 readable registers
 		int			m_inbuf;				// input buffer
 		int			m_outbuf;				// output buffer
 		bool		m_int_on_next_rx;		// interrupt on next rx?
 		emu_timer *	m_receive_timer;		// timer to clock data in
-		UINT8		m_receive_buffer[16];	// buffer for incoming data
-		UINT8		m_receive_inptr;		// index of data coming in
-		UINT8		m_receive_outptr;		// index of data going out
+		uint8_t		m_receive_buffer[16];	// buffer for incoming data
+		uint8_t		m_receive_inptr;		// index of data coming in
+		uint8_t		m_receive_outptr;		// index of data going out
 	};
 
 	// internal state
 	const z80sio_device_config &m_config;
 	sio_channel					m_channel[2];			// 2 channels
-	UINT8						m_int_state[8];			// interrupt states
+	uint8_t						m_int_state[8];			// interrupt states
 
-	static const UINT8 k_int_priority[];
+	static const uint8_t k_int_priority[];
 };
 
 

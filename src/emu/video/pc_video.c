@@ -23,7 +23,7 @@ static pc_video_update_proc (*pc_choosevideomode)(running_machine *machine, int 
 static int pc_anythingdirty;
 static int pc_current_height;
 static int pc_current_width;
-static const UINT16 dummy_palette[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+static const uint16_t dummy_palette[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 
 
@@ -62,7 +62,7 @@ void pc_video_start(running_machine *machine,
 
 VIDEO_UPDATE( pc_video )
 {
-	UINT32 rc = 0;
+	uint32_t rc = 0;
 	int w = 0, h = 0;
 	pc_video_update_proc video_update;
 

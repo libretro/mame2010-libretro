@@ -58,7 +58,7 @@ DECLARE_LEGACY_DEVICE(ADC0838, adc0838);
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef double (*adc083x_input_convert_func)(running_device *device, UINT8 input);
+typedef double (*adc083x_input_convert_func)(running_device *device, uint8_t input);
 
 typedef struct _adc083x_interface adc083x_interface;
 struct _adc083x_interface

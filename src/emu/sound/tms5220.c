@@ -314,7 +314,7 @@ device), PES Speech adapter (serial port connection)
 
 #define TMS5220_IS_TMC0285	TMS5220_IS_5200
 
-static const UINT8 reload_table[4] = { 0, 2, 4, 6 }; //sample count reload for 5220c only; 5200 and 5220 always reload with 0; keep in mind this is loaded on IP=0 PC=12 subcycle=1 so it immediately will increment after one sample, effectively being 1,3,5,7 as in the comments above.
+static const uint8_t reload_table[4] = { 0, 2, 4, 6 }; //sample count reload for 5220c only; 5200 and 5220 always reload with 0; keep in mind this is loaded on IP=0 PC=12 subcycle=1 so it immediately will increment after one sample, effectively being 1,3,5,7 as in the comments above.
 
 typedef struct _tms5220_state tms5220_state;
 struct _tms5220_state
@@ -330,93 +330,93 @@ struct _tms5220_state
 	devcb_resolved_write_line	readyq_func;
 
 	/* these contain data that describes the 128-bit data FIFO */
-	UINT8 fifo[FIFO_SIZE];
-	UINT8 fifo_head;
-	UINT8 fifo_tail;
-	UINT8 fifo_count;
-	UINT8 fifo_bits_taken;
+	uint8_t fifo[FIFO_SIZE];
+	uint8_t fifo_head;
+	uint8_t fifo_tail;
+	uint8_t fifo_count;
+	uint8_t fifo_bits_taken;
 
 
 	/* these contain global status bits */
-	UINT8 speaking_now;		/* True only if actual speech is being generated right now. Is set when a speak vsm command happens OR when speak external happens and buffer low becomes nontrue; Is cleared when speech halts after the last stop frame or the last frame after talk status is otherwise cleared.*/
-	UINT8 speak_external;	/* If 1, DDIS is 1, i.e. Speak External command in progress, writes go to FIFO. */
-	UINT8 talk_status;		/* If 1, TS status bit is 1, i.e. speak or speak external is in progress and we have not encountered a stop frame yet; talk_status differs from speaking_now in that speaking_now is set as soon as a speak or speak external command is started; talk_status does NOT go active until after 8 bytes are written to the fifo on a speak external command, otherwise the two are the same. TS is cleared by 3 things: 1. when a STOP command has just been processed as a new frame in the speech stream; 2. if the fifo runs out in speak external mode; 3. on power-up/during a reset command; When it gets cleared, speak_external is also cleared, an interrupt is generated, and speaking_now will be cleared when the next frame starts. */
-	UINT8 buffer_low;		/* If 1, FIFO has less than 8 bytes in it */
-	UINT8 buffer_empty;		/* If 1, FIFO is empty */
-	UINT8 irq_pin;			/* state of the IRQ pin (output) */
-	UINT8 ready_pin;		/* state of the READY pin (output) */
+	uint8_t speaking_now;		/* True only if actual speech is being generated right now. Is set when a speak vsm command happens OR when speak external happens and buffer low becomes nontrue; Is cleared when speech halts after the last stop frame or the last frame after talk status is otherwise cleared.*/
+	uint8_t speak_external;	/* If 1, DDIS is 1, i.e. Speak External command in progress, writes go to FIFO. */
+	uint8_t talk_status;		/* If 1, TS status bit is 1, i.e. speak or speak external is in progress and we have not encountered a stop frame yet; talk_status differs from speaking_now in that speaking_now is set as soon as a speak or speak external command is started; talk_status does NOT go active until after 8 bytes are written to the fifo on a speak external command, otherwise the two are the same. TS is cleared by 3 things: 1. when a STOP command has just been processed as a new frame in the speech stream; 2. if the fifo runs out in speak external mode; 3. on power-up/during a reset command; When it gets cleared, speak_external is also cleared, an interrupt is generated, and speaking_now will be cleared when the next frame starts. */
+	uint8_t buffer_low;		/* If 1, FIFO has less than 8 bytes in it */
+	uint8_t buffer_empty;		/* If 1, FIFO is empty */
+	uint8_t irq_pin;			/* state of the IRQ pin (output) */
+	uint8_t ready_pin;		/* state of the READY pin (output) */
 
 	/* these contain data describing the current and previous voice frames */
 #define OLD_FRAME_SILENCE_FLAG tms->OLDE // 1 if E=0, 0 otherwise.
 #define OLD_FRAME_UNVOICED_FLAG tms->OLDP // 1 if P=0 (unvoiced), 0 if voiced
-	UINT8 OLDE;
-	UINT8 OLDP;
+	uint8_t OLDE;
+	uint8_t OLDP;
 
 #define NEW_FRAME_STOP_FLAG (tms->new_frame_energy_idx == 0xF) // 1 if this is a stop (Energy = 0xF) frame
 #define NEW_FRAME_SILENCE_FLAG (tms->new_frame_energy_idx == 0) // ditto as above
 #define NEW_FRAME_UNVOICED_FLAG (tms->new_frame_pitch_idx == 0) // ditto as above
-	UINT8 new_frame_energy_idx;
-	UINT8 new_frame_pitch_idx;
-	UINT8 new_frame_k_idx[10];
+	uint8_t new_frame_energy_idx;
+	uint8_t new_frame_pitch_idx;
+	uint8_t new_frame_k_idx[10];
 
 
 	/* these are all used to contain the current state of the sound generation */
 #ifndef PERFECT_INTERPOLATION_HACK
-	INT16 current_energy;
-	INT16 current_pitch;
-	INT16 current_k[10];
+	int16_t current_energy;
+	int16_t current_pitch;
+	int16_t current_k[10];
 
-	INT16 target_energy;
-	INT16 target_pitch;
-	INT16 target_k[10];
+	int16_t target_energy;
+	int16_t target_pitch;
+	int16_t target_k[10];
 #else
-	UINT8 old_frame_energy_idx;
-	UINT8 old_frame_pitch_idx;
-	UINT8 old_frame_k_idx[10];
+	uint8_t old_frame_energy_idx;
+	uint8_t old_frame_pitch_idx;
+	uint8_t old_frame_k_idx[10];
 
-	INT32 current_energy;
-	INT32 current_pitch;
-	INT32 current_k[10];
+	int32_t current_energy;
+	int32_t current_pitch;
+	int32_t current_k[10];
 
-	INT32 target_energy;
-	INT32 target_pitch;
-	INT32 target_k[10];
+	int32_t target_energy;
+	int32_t target_pitch;
+	int32_t target_k[10];
 #endif
 
-	UINT16 previous_energy;	/* needed for lattice filter to match patent */
+	uint16_t previous_energy;	/* needed for lattice filter to match patent */
 
-	UINT8 subcycle;			/* contains the current subcycle for a given PC: 0 is A' (only used on SPKSLOW mode on 51xx), 1 is A, 2 is B */
-	UINT8 subc_reload;		/* contains 1 for normal speech, 0 when SPKSLOW is active */
-	UINT8 PC;				/* current parameter counter (what param is being interpolated), ranges from 0 to 12 */
+	uint8_t subcycle;			/* contains the current subcycle for a given PC: 0 is A' (only used on SPKSLOW mode on 51xx), 1 is A, 2 is B */
+	uint8_t subc_reload;		/* contains 1 for normal speech, 0 when SPKSLOW is active */
+	uint8_t PC;				/* current parameter counter (what param is being interpolated), ranges from 0 to 12 */
 	/* TODO/NOTE: the current interpolation period, counts 1,2,3,4,5,6,7,0 for divide by 8,8,8,4,4,4,2,1 */
-	UINT8 interp_period;		/* the current interpolation period */
-	UINT8 inhibit;			/* If 1, interpolation is inhibited until the DIV1 period */
-	UINT8 tms5220c_rate;	/* only relevant for tms5220C's multi frame rate feature; is the actual 4 bit value written on a 0x2* or 0x0* command */
-	UINT16 pitch_count;		/* pitch counter; provides chirp rom address */
+	uint8_t interp_period;		/* the current interpolation period */
+	uint8_t inhibit;			/* If 1, interpolation is inhibited until the DIV1 period */
+	uint8_t tms5220c_rate;	/* only relevant for tms5220C's multi frame rate feature; is the actual 4 bit value written on a 0x2* or 0x0* command */
+	uint16_t pitch_count;		/* pitch counter; provides chirp rom address */
 
-	INT32 u[11];
-	INT32 x[10];
+	int32_t u[11];
+	int32_t x[10];
 
-	UINT16 RNG;      /* the random noise generator configuration is: 1 + x + x^3 + x^4 + x^13 */
-	INT16 excitation_data;
+	uint16_t RNG;      /* the random noise generator configuration is: 1 + x + x^3 + x^4 + x^13 */
+	int16_t excitation_data;
 
 	/* R Nabet : These have been added to emulate speech Roms */
-	UINT8 schedule_dummy_read;			/* set after each load address, so that next read operation is preceded by a dummy read */
-	UINT8 data_register;				/* data register, used by read command */
-	UINT8 RDB_flag;					/* whether we should read data register or status register */
+	uint8_t schedule_dummy_read;			/* set after each load address, so that next read operation is preceded by a dummy read */
+	uint8_t data_register;				/* data register, used by read command */
+	uint8_t RDB_flag;					/* whether we should read data register or status register */
 
 	/* io_ready: page 3 of the datasheet specifies that READY will be asserted until
      * data is available or processed by the system.
      */
-	UINT8 io_ready;
+	uint8_t io_ready;
 
 	/* flag for "true" timing involving rs/ws */
-	UINT8 true_timing;
+	uint8_t true_timing;
 
 	/* rsws - state, rs bit 1, ws bit 0 */
-	UINT8 rs_ws;
-	UINT8 read_latch;
-	UINT8 write_latch;
+	uint8_t rs_ws;
+	uint8_t read_latch;
+	uint8_t write_latch;
 
     /* The TMS52xx has two different ways of providing output data: the
        analog speaker pin (which was usually used) and the Digital I/O pin.
@@ -425,7 +425,7 @@ struct _tms5220_state
        resolution of the output data.
        TODO: add a way to set/reset this other than the FORCE_DIGITAL define
      */
-	UINT8 digital_select;
+	uint8_t digital_select;
 	running_device *device;
 
 	const tms5220_interface *intf;
@@ -453,8 +453,8 @@ static void process_command(tms5220_state *tms, unsigned char data);
 static void parse_frame(tms5220_state *tms);
 static void update_status_and_ints(tms5220_state *tms);
 static void set_interrupt_state(tms5220_state *tms, int state);
-static INT32 lattice_filter(tms5220_state *tms);
-static INT16 clip_analog(INT16 clip);
+static int32_t lattice_filter(tms5220_state *tms);
+static int16_t clip_analog(int16_t clip);
 static void update_ready_state(tms5220_state *tms);
 static STREAM_UPDATE( tms5220_update );
 
@@ -852,11 +852,11 @@ static int tms5220_int_read(tms5220_state *tms)
 
 ***********************************************************************************************/
 
-static void tms5220_process(tms5220_state *tms, INT16 *buffer, unsigned int size)
+static void tms5220_process(tms5220_state *tms, int16_t *buffer, unsigned int size)
 {
     int buf_count=0;
     int i, bitout, zpar;
-    INT32 this_sample;
+    int32_t this_sample;
 
     /* if we're empty and still not speaking, fill with nothingness */
 	if (!tms->speaking_now)
@@ -1135,7 +1135,7 @@ empty:
 
 ***********************************************************************************************/
 
-static INT16 clip_analog(INT16 cliptemp)
+static int16_t clip_analog(int16_t cliptemp)
 {
     /* clipping, just like the patent shows:
        the top 10 bits of this result are visible on the digital output IO pin.
@@ -1175,9 +1175,9 @@ static INT16 clip_analog(INT16 cliptemp)
      output is 14 bits, but note the result LSB bit is always 1. (or is it?)
 
 **********************************************************************************************/
-static INT32 matrix_multiply(INT32 a, INT32 b)
+static int32_t matrix_multiply(int32_t a, int32_t b)
 {
-	INT32 result;
+	int32_t result;
 	while (a>511) { a-=1024; }
 	while (a<-512) { a+=1024; }
 	while (b>16383) { b-=32768; }
@@ -1198,7 +1198,7 @@ static INT32 matrix_multiply(INT32 a, INT32 b)
 
 ***********************************************************************************************/
 
-static INT32 lattice_filter(tms5220_state *tms)
+static int32_t lattice_filter(tms5220_state *tms)
 {
    /* Lattice filter here */
    /* Aug/05/07: redone as unrolled loop, for clarity - LN*/
@@ -1655,7 +1655,7 @@ static TIMER_CALLBACK( io_ready_cb )
 WRITE_LINE_DEVICE_HANDLER( tms5220_rsq_w )
 {
 	tms5220_state *tms = get_safe_token(device);
-	UINT8 new_val;
+	uint8_t new_val;
 
 	tms->true_timing = 1;
 	state &= 0x01;
@@ -1708,7 +1708,7 @@ WRITE_LINE_DEVICE_HANDLER( tms5220_rsq_w )
 WRITE_LINE_DEVICE_HANDLER( tms5220_wsq_w )
 {
 	tms5220_state *tms = get_safe_token(device);
-	UINT8 new_val;
+	uint8_t new_val;
 
 	tms->true_timing = 1;
 	state &= 0x01;
@@ -1886,7 +1886,7 @@ READ_LINE_DEVICE_HANDLER( tms5220_intq_r )
 static STREAM_UPDATE( tms5220_update )
 {
 	tms5220_state *tms = (tms5220_state *)param;
-	INT16 sample_data[MAX_SAMPLE_CHUNK];
+	int16_t sample_data[MAX_SAMPLE_CHUNK];
 	stream_sample_t *buffer = outputs[0];
 
 	/* loop while we still have samples to generate */

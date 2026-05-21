@@ -43,24 +43,24 @@ struct _ics2115_state
 {
 	const ics2115_interface *intf;
 	running_device *device;
-	UINT8 *rom;
-	INT16 *ulaw;
+	uint8_t *rom;
+	int16_t *ulaw;
 
 	struct {
-		UINT16 fc, addrh, addrl, strth, endh, volacc;
-		UINT8 strtl, endl, saddr, pan, conf, ctl;
-		UINT8 vstart, vend, vctl;
-		UINT8 state;
+		uint16_t fc, addrh, addrl, strth, endh, volacc;
+		uint8_t strtl, endl, saddr, pan, conf, ctl;
+		uint8_t vstart, vend, vctl;
+		uint8_t state;
 	} voice[32];
 
 	struct {
-		UINT8 scale, preset;
+		uint8_t scale, preset;
 		emu_timer *timer;
-		UINT64 period;	/* in nsec */
+		uint64_t period;	/* in nsec */
 	} timer[2];
 
-	UINT8 reg, osc;
-	UINT8 irq_en, irq_pend;
+	uint8_t reg, osc;
+	uint8_t irq_en, irq_pend;
 	int irq_on;
 	sound_stream * stream;
 };
@@ -102,13 +102,13 @@ static STREAM_UPDATE( update )
 	for (osc = 0; osc < 32; osc++)
 		if (chip->voice[osc].state & V_ON)
 		{
-			UINT32 adr = (chip->voice[osc].addrh << 16) | chip->voice[osc].addrl;
-			UINT32 end = (chip->voice[osc].endh << 16) | (chip->voice[osc].endl << 8);
-			UINT32 loop = (chip->voice[osc].strth << 16) | (chip->voice[osc].strtl << 8);
-			UINT32 badr = (chip->voice[osc].saddr << 20) & 0xffffff;
-			UINT32 delta = chip->voice[osc].fc << 2;
-			UINT8 conf = chip->voice[osc].conf;
-			INT32 vol = chip->voice[osc].volacc;
+			uint32_t adr = (chip->voice[osc].addrh << 16) | chip->voice[osc].addrl;
+			uint32_t end = (chip->voice[osc].endh << 16) | (chip->voice[osc].endl << 8);
+			uint32_t loop = (chip->voice[osc].strth << 16) | (chip->voice[osc].strtl << 8);
+			uint32_t badr = (chip->voice[osc].saddr << 20) & 0xffffff;
+			uint32_t delta = chip->voice[osc].fc << 2;
+			uint8_t conf = chip->voice[osc].conf;
+			int32_t vol = chip->voice[osc].volacc;
 			vol = (((vol & 0xff0)|0x1000)<<(vol>>12))>>12;
 
 			if (ICS2115LOGERROR) logerror("ICS2115: KEYRUN %02d adr=%08x end=%08x delta=%08x\n",
@@ -116,11 +116,11 @@ static STREAM_UPDATE( update )
 
 			for (i = 0; i < samples; i++)
 			{
-				INT32 v = chip->rom[badr|(adr >> 12)];
+				int32_t v = chip->rom[badr|(adr >> 12)];
 				if (conf & 1)
 					v = chip->ulaw[v];
 				else
-					v = ((INT8)v) << 6;
+					v = ((int8_t)v) << 6;
 
 				v = (v*vol)>>(16+5);
 				outputs[0][i] += v;
@@ -177,7 +177,7 @@ static TIMER_CALLBACK( timer_cb_1 )
 
 static void recalc_timer(ics2115_state *chip, int timer)
 {
-	UINT64 period = 1000000000 * chip->timer[timer].scale*chip->timer[timer].preset / 33868800;
+	uint64_t period = 1000000000 * chip->timer[timer].scale*chip->timer[timer].preset / 33868800;
 	if (period)
 		period = 1000000000/62.8206;
 
@@ -201,7 +201,7 @@ static void recalc_timer(ics2115_state *chip, int timer)
 }
 
 
-static void ics2115_reg_w(ics2115_state *chip, UINT8 reg, UINT8 data, int msb)
+static void ics2115_reg_w(ics2115_state *chip, uint8_t reg, uint8_t data, int msb)
 {
 	running_machine *machine = chip->device->machine;
 
@@ -404,7 +404,7 @@ static void ics2115_reg_w(ics2115_state *chip, UINT8 reg, UINT8 data, int msb)
 	}
 }
 
-static UINT16 ics2115_reg_r(ics2115_state *chip, UINT8 reg)
+static uint16_t ics2115_reg_r(ics2115_state *chip, uint8_t reg)
 {
 	running_machine *machine = chip->device->machine;
 
@@ -419,7 +419,7 @@ static UINT16 ics2115_reg_r(ics2115_state *chip, UINT8 reg)
 
 	case 0x0f:{// [osc] Interrupt source/oscillator
 		int osc;
-		UINT8 res = 0xff;
+		uint8_t res = 0xff;
 		for (osc = 0; osc < 32; osc++)
 			if (chip->voice[osc].state & V_DONE)
 			{
@@ -478,12 +478,12 @@ static DEVICE_START( ics2115 )
 	chip->rom = *device->region();
 	chip->timer[0].timer = timer_alloc(device->machine, timer_cb_0, chip);
 	chip->timer[1].timer = timer_alloc(device->machine, timer_cb_1, chip);
-	chip->ulaw = auto_alloc_array(device->machine, INT16, 256);
+	chip->ulaw = auto_alloc_array(device->machine, int16_t, 256);
 	chip->stream = stream_create(device, 0, 2, 33075, chip, update);
 
 	for (i = 0; i < 256; i++)
 	{
-		UINT8 c = ~i;
+		uint8_t c = ~i;
 		int v;
 		v = ((c & 15) << 1) + 33;
 		v <<= ((c & 0x70) >> 4);
@@ -533,7 +533,7 @@ READ8_DEVICE_HANDLER( ics2115_r )
 	{
 	case 0:
 		{
-		UINT8 res = 0;
+		uint8_t res = 0;
 		if (chip->irq_on)
 		{
 			int i;

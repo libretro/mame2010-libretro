@@ -239,25 +239,25 @@ complete set of waveforms is repeated R times.
 
 
 typedef struct {
-	const UINT8 *rom;
+	const uint8_t *rom;
 	running_device *device;
 	sound_stream *stream;
 
 	// Port/lines state
-	UINT8 data, cs, cms, wr, intr;
+	uint8_t data, cs, cms, wr, intr;
 
 	// Current decoding state
-	UINT16 bpos, apos;
-	UINT8 mode, cur_segment, cur_repeat, segments, repeats;
-	UINT8 prev_pitch, pitch, pitch_pos;
-	UINT8 stop_after, cur_dac, cur_bits;
+	uint16_t bpos, apos;
+	uint8_t mode, cur_segment, cur_repeat, segments, repeats;
+	uint8_t prev_pitch, pitch, pitch_pos;
+	uint8_t stop_after, cur_dac, cur_bits;
 
 	// Zero-range size
-	UINT32 zero_count; // 0 for done
+	uint32_t zero_count; // 0 for done
 
 	// Waveform and current index in it
-	UINT8 dac_index; // 128 for done
-	INT16 dac[128];
+	uint8_t dac_index; // 128 for done
+	int16_t dac[128];
 
 } digitalker;
 
@@ -293,9 +293,9 @@ INLINE digitalker *get_safe_token(running_device *device)
 }
 
 
-static void digitalker_write(digitalker *dg, UINT8 *adr, UINT8 vol, INT8 dac)
+static void digitalker_write(digitalker *dg, uint8_t *adr, uint8_t vol, int8_t dac)
 {
-	INT16 v;
+	int16_t v;
 	dac &= 15;
 	if(dac >= 9)
 		v = -pcm_levels[vol][15-dac];
@@ -306,7 +306,7 @@ static void digitalker_write(digitalker *dg, UINT8 *adr, UINT8 vol, INT8 dac)
 	dg->dac[(*adr)++] = v;
 }
 
-static UINT8 digitalker_pitch_next(UINT8 val, UINT8 prev, int step)
+static uint8_t digitalker_pitch_next(uint8_t val, uint8_t prev, int step)
 {
 	int delta, nv;
 
@@ -324,12 +324,12 @@ static UINT8 digitalker_pitch_next(UINT8 val, UINT8 prev, int step)
 	return nv;
 }
 
-static void digitalker_set_intr(digitalker *dg, UINT8 intr)
+static void digitalker_set_intr(digitalker *dg, uint8_t intr)
 {
 	dg->intr = intr;
 }
 
-static void digitalker_start_command(digitalker *dg, UINT8 cmd)
+static void digitalker_start_command(digitalker *dg, uint8_t cmd)
 {
 	dg->bpos = ((dg->rom[cmd*2] << 8) | dg->rom[cmd*2+1]) & 0x3fff;
 	dg->cur_segment = dg->segments = dg->cur_repeat = dg->repeats = 0;
@@ -340,13 +340,13 @@ static void digitalker_start_command(digitalker *dg, UINT8 cmd)
 
 static void digitalker_step_mode_0(digitalker *dg)
 {
-	INT8 dac = 0;
+	int8_t dac = 0;
 	int i, k, l;
-	UINT8 wpos = 0;
-	UINT8 h = dg->rom[dg->apos];
-	UINT16 bits = 0x80;
-	UINT8 vol = h >> 5;
-	UINT8 pitch_id = dg->cur_segment ? digitalker_pitch_next(h, dg->prev_pitch, dg->cur_repeat) : h & 0x1f;
+	uint8_t wpos = 0;
+	uint8_t h = dg->rom[dg->apos];
+	uint16_t bits = 0x80;
+	uint8_t vol = h >> 5;
+	uint8_t pitch_id = dg->cur_segment ? digitalker_pitch_next(h, dg->prev_pitch, dg->cur_repeat) : h & 0x1f;
 
 	dg->pitch = pitch_vals[pitch_id];
 
@@ -393,13 +393,13 @@ static void digitalker_step_mode_1(digitalker *dg)
 
 static void digitalker_step_mode_2(digitalker *dg)
 {
-	INT8 dac = 0;
+	int8_t dac = 0;
 	int k, l;
-	UINT8 wpos=0;
-	UINT8 h = dg->rom[dg->apos];
-	UINT16 bits = 0x80;
-	UINT8 vol = h >> 5;
-	UINT8 pitch_id = dg->cur_segment ? digitalker_pitch_next(h, dg->prev_pitch, dg->cur_repeat) : h & 0x1f;
+	uint8_t wpos=0;
+	uint8_t h = dg->rom[dg->apos];
+	uint16_t bits = 0x80;
+	uint8_t vol = h >> 5;
+	uint8_t pitch_id = dg->cur_segment ? digitalker_pitch_next(h, dg->prev_pitch, dg->cur_repeat) : h & 0x1f;
 
 	dg->pitch = pitch_vals[pitch_id];
 
@@ -457,10 +457,10 @@ static void digitalker_step_mode_2(digitalker *dg)
 
 static void digitalker_step_mode_3(digitalker *dg)
 {
-	UINT8 h = dg->rom[dg->apos];
-	UINT8 vol = h >> 5;
-	UINT16 bits;
-	UINT8 dac, apos, wpos;
+	uint8_t h = dg->rom[dg->apos];
+	uint8_t vol = h >> 5;
+	uint16_t bits;
+	uint8_t dac, apos, wpos;
 	int k, l;
 
 	dg->pitch = pitch_vals[h & 0x1f];
@@ -498,9 +498,9 @@ static void digitalker_step(digitalker *dg)
 		if(dg->stop_after == 0 && dg->bpos == 0xffff)
 			return;
 		if(dg->stop_after == 0) {
-			UINT8 v1 = dg->rom[dg->bpos++];
-			UINT8 v2 = dg->rom[dg->bpos++];
-			UINT8 v3 = dg->rom[dg->bpos++];
+			uint8_t v1 = dg->rom[dg->bpos++];
+			uint8_t v2 = dg->rom[dg->bpos++];
+			uint8_t v3 = dg->rom[dg->bpos++];
 			dg->apos = v2 | ((v3 << 8) & 0x3f00);
 			dg->segments = (v1 & 15) + 1;
 			dg->repeats = ((v1 >> 4) & 7) + 1;
@@ -582,7 +582,7 @@ static STREAM_UPDATE(digitalker_update)
 
 static void digitalker_cs_w(digitalker *dg, int line)
 {
-	UINT8 cs = line == ASSERT_LINE ? 1 : 0;
+	uint8_t cs = line == ASSERT_LINE ? 1 : 0;
 	if(cs == dg->cs)
 		return;
 	dg->cs = cs;
@@ -603,7 +603,7 @@ static void digitalker_cms_w(digitalker *dg, int line)
 
 static void digitalker_wr_w(digitalker *dg, int line)
 {
-	UINT8 wr = line == ASSERT_LINE ? 1 : 0;
+	uint8_t wr = line == ASSERT_LINE ? 1 : 0;
 	if(wr == dg->wr)
 		return;
 	dg->wr = wr;

@@ -40,13 +40,13 @@ struct _saa5050_state
 	int         size;
 	int         rev;
 
-	UINT8 *     videoram;
-	UINT16      flags;
-	UINT8	      forecol;
-	UINT8	      backcol;
-	UINT8	      prvcol;
-	UINT8	      prvchr;
-	INT8        frame_count;
+	uint8_t *     videoram;
+	uint16_t      flags;
+	uint8_t	      forecol;
+	uint8_t	      backcol;
+	uint8_t	      prvcol;
+	uint8_t	      prvchr;
+	int8_t        frame_count;
 };
 
 
@@ -126,7 +126,7 @@ GFXDECODE_END
  *
  *************************************/
 
-static const UINT8 saa5050_colors[8 * 3] =
+static const uint8_t saa5050_colors[8 * 3] =
 {
 	0x00, 0x00, 0x00,	/* black */
 	0xff, 0x00, 0x00,	/* red */
@@ -138,7 +138,7 @@ static const UINT8 saa5050_colors[8 * 3] =
 	0xff, 0xff, 0xff	/* white */
 };
 
-static const UINT16 saa5050_palette[64 * 2] =	/* bgnd, fgnd */
+static const uint16_t saa5050_palette[64 * 2] =	/* bgnd, fgnd */
 {
 	0,1, 0,1, 0,2, 0,3, 0,4, 0,5, 0,6, 0,7,
 	1,0, 1,1, 1,2, 1,3, 1,4, 1,5, 1,6, 1,7,
@@ -152,7 +152,7 @@ static const UINT16 saa5050_palette[64 * 2] =	/* bgnd, fgnd */
 
 PALETTE_INIT( saa5050 )
 {
-	UINT8 i, r, g, b;
+	uint8_t i, r, g, b;
 
 	machine->colortable = colortable_alloc(machine, 8);
 
@@ -353,7 +353,7 @@ static DEVICE_START( saa5050 )
 	saa5050->size = intf->size;
 	saa5050->rev = intf->rev;
 
-	saa5050->videoram = auto_alloc_array(device->machine, UINT8, 0x800);
+	saa5050->videoram = auto_alloc_array(device->machine, uint8_t, 0x800);
 
 	state_save_register_device_item_pointer(device, 0, saa5050->videoram, 0x800);
 	state_save_register_device_item(device, 0, saa5050->flags);

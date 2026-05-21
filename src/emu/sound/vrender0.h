@@ -9,10 +9,10 @@
 typedef struct _vr0_interface vr0_interface;
 struct _vr0_interface
 {
-	UINT32 RegBase;
+	uint32_t RegBase;
 };
 
-void vr0_snd_set_areas(running_device *device,UINT32 *texture,UINT32 *frame);
+void vr0_snd_set_areas(running_device *device,uint32_t *texture,uint32_t *frame);
 
 READ32_DEVICE_HANDLER( vr0_snd_read );
 WRITE32_DEVICE_HANDLER( vr0_snd_write );

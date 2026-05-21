@@ -6,18 +6,18 @@
 
 #if (V9938_WIDTH < 512)
 	#if (V9938_BPP == 8)
-		#define PEN_TYPE	UINT8
+		#define PEN_TYPE	uint8_t
 		#define FNAME(name)	v9938_##name##_8s
 	#else
-		#define PEN_TYPE	UINT16
+		#define PEN_TYPE	uint16_t
 		#define FNAME(name)	v9938_##name##_16s
 	#endif
 #else
 	#if (V9938_BPP == 8)
-		#define PEN_TYPE	UINT8
+		#define PEN_TYPE	uint8_t
 		#define FNAME(name)	v9938_##name##_8
 	#else
-		#define PEN_TYPE	UINT16
+		#define PEN_TYPE	uint16_t
 		#define FNAME(name)	v9938_##name##_16
 	#endif
 #endif
@@ -30,7 +30,7 @@
 	static void FNAME (name) (const pen_t *pens, PEN_TYPE *ln, int line)
 
 #define V9938_SPRITE_FUNC(name)		\
-	static void FNAME (name) (const pen_t *pens, PEN_TYPE *ln, UINT8 *col)
+	static void FNAME (name) (const pen_t *pens, PEN_TYPE *ln, uint8_t *col)
 
 V9938_BORDER_FUNC (default_border)
     {
@@ -79,7 +79,7 @@ V9938_MODE_FUNC (mode_text1)
 	{
 	int pattern, x, xx, name, xxx;
 	PEN_TYPE fg, bg, pen;
-	UINT8 *nametbl, *patterntbl;
+	uint8_t *nametbl, *patterntbl;
 
 	patterntbl = vdp->vram + (vdp->contReg[4] << 11);
 	nametbl = vdp->vram + (vdp->contReg[2] << 10);
@@ -125,7 +125,7 @@ V9938_MODE_FUNC (mode_text2)
 	{
 	int pattern, x, charcode, name, xxx, patternmask, colourmask;
 	PEN_TYPE fg, bg, fg0, bg0, pen;
-	UINT8 *nametbl, *patterntbl, *colourtbl;
+	uint8_t *nametbl, *patterntbl, *colourtbl;
 
 	patterntbl = vdp->vram + (vdp->contReg[4] << 11);
 	colourtbl = vdp->vram + ((vdp->contReg[3] & 0xf8) << 6) + (vdp->contReg[10] << 14);
@@ -209,7 +209,7 @@ V9938_MODE_FUNC (mode_text2)
 
 V9938_MODE_FUNC (mode_multi)
 	{
-	UINT8 *nametbl, *patterntbl, colour;
+	uint8_t *nametbl, *patterntbl, colour;
 	int name, line2, x, xx;
 	PEN_TYPE pen, pen_bg;
 
@@ -268,7 +268,7 @@ V9938_MODE_FUNC (mode_multi)
 V9938_MODE_FUNC (mode_graphic1)
 	{
 	PEN_TYPE fg, bg, pen;
-	UINT8 *nametbl, *patterntbl, *colourtbl;
+	uint8_t *nametbl, *patterntbl, *colourtbl;
 	int pattern, x, xx, line2, name, charcode, colour, xxx;
 
 	nametbl = vdp->vram + (vdp->contReg[2] << 10);
@@ -317,7 +317,7 @@ V9938_MODE_FUNC (mode_graphic1)
 V9938_MODE_FUNC (mode_graphic23)
 	{
 	PEN_TYPE fg, bg, pen;
-	UINT8 *nametbl, *patterntbl, *colourtbl;
+	uint8_t *nametbl, *patterntbl, *colourtbl;
 	int pattern, x, xx, line2, name, charcode,
 		colour, colourmask, patternmask, xxx;
 
@@ -367,7 +367,7 @@ V9938_MODE_FUNC (mode_graphic23)
 
 V9938_MODE_FUNC (mode_graphic4)
 	{
-	UINT8 *nametbl, colour;
+	uint8_t *nametbl, colour;
 	int line2, linemask, x, xx;
 	PEN_TYPE pen, pen_bg;
 
@@ -412,7 +412,7 @@ V9938_MODE_FUNC (mode_graphic4)
 
 V9938_MODE_FUNC (mode_graphic5)
 	{
-	UINT8 *nametbl, colour;
+	uint8_t *nametbl, colour;
 	int line2, linemask, x, xx;
 	PEN_TYPE pen_bg0[4];
 #if (V9938_WIDTH > 512)
@@ -483,7 +483,7 @@ V9938_MODE_FUNC (mode_graphic5)
 
 V9938_MODE_FUNC (mode_graphic6)
 	{
-    UINT8 colour;
+    uint8_t colour;
     int line2, linemask, x, xx, nametbl;
     PEN_TYPE pen_bg, fg0;
 #if (V9938_WIDTH > 512)
@@ -551,7 +551,7 @@ V9938_MODE_FUNC (mode_graphic6)
 
 V9938_MODE_FUNC (mode_graphic7)
 	{
-    UINT8 colour;
+    uint8_t colour;
     int line2, linemask, x, xx, nametbl;
     PEN_TYPE pen, pen_bg;
 
@@ -699,7 +699,7 @@ V9938_SPRITE_FUNC (graphic5_draw_sprite)
 
 V9938_SPRITE_FUNC (graphic7_draw_sprite)
 	{
-	static const UINT16 g7_ind16[16] = {
+	static const uint16_t g7_ind16[16] = {
 		0, 2, 192, 194, 48, 50, 240, 242,
 		482, 7, 448, 455, 56, 63, 504, 511  };
 	int i;

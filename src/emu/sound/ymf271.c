@@ -36,56 +36,56 @@
 
 typedef struct
 {
-	INT8  extout;
-	UINT8 lfoFreq;
-	INT8  lfowave;
-	INT8  pms, ams;
-	INT8  detune;
-	INT8  multiple;
-	INT8  tl;
-	INT8  keyscale;
-	INT8  ar;
-	INT8  decay1rate, decay2rate;
-	INT8  decay1lvl;
-	INT8  relrate;
-	INT32 fns;
-	INT8  block;
-	INT8  feedback;
-	INT8  waveform;
-	INT8  accon;
-	INT8  algorithm;
-	INT8  ch0_level, ch1_level, ch2_level, ch3_level;
+	int8_t  extout;
+	uint8_t lfoFreq;
+	int8_t  lfowave;
+	int8_t  pms, ams;
+	int8_t  detune;
+	int8_t  multiple;
+	int8_t  tl;
+	int8_t  keyscale;
+	int8_t  ar;
+	int8_t  decay1rate, decay2rate;
+	int8_t  decay1lvl;
+	int8_t  relrate;
+	int32_t fns;
+	int8_t  block;
+	int8_t  feedback;
+	int8_t  waveform;
+	int8_t  accon;
+	int8_t  algorithm;
+	int8_t  ch0_level, ch1_level, ch2_level, ch3_level;
 
-	UINT32 startaddr;
-	UINT32 loopaddr;
-	UINT32 endaddr;
-	INT8   fs, srcnote, srcb;
+	uint32_t startaddr;
+	uint32_t loopaddr;
+	uint32_t endaddr;
+	int8_t   fs, srcnote, srcb;
 
-	INT64 step;
-	INT64 stepptr;
+	int64_t step;
+	int64_t stepptr;
 
-	INT8 active;
-	INT8 bits;
+	int8_t active;
+	int8_t bits;
 
 	// envelope generator
-	INT32 volume;
-	INT32 env_state;
-	INT32 env_attack_step;		// volume increase step in attack state
-	INT32 env_decay1_step;
-	INT32 env_decay2_step;
-	INT32 env_release_step;
+	int32_t volume;
+	int32_t env_state;
+	int32_t env_attack_step;		// volume increase step in attack state
+	int32_t env_decay1_step;
+	int32_t env_decay2_step;
+	int32_t env_release_step;
 
-	INT64 feedback_modulation0;
-	INT64 feedback_modulation1;
+	int64_t feedback_modulation0;
+	int64_t feedback_modulation1;
 
-	INT32 lfo_phase, lfo_step;
-	INT32 lfo_amplitude;
+	int32_t lfo_phase, lfo_step;
+	int32_t lfo_amplitude;
 	double lfo_phasemod;
 } YMF271Slot;
 
 typedef struct
 {
-	INT8 sync, pfm;
+	int8_t sync, pfm;
 } YMF271Group;
 
 typedef struct
@@ -93,24 +93,24 @@ typedef struct
 	YMF271Slot slots[48];
 	YMF271Group groups[12];
 
-	INT32 timerA, timerB;
-	INT32 timerAVal, timerBVal;
-	INT32 irqstate;
-	INT8  status;
-	INT8  enable;
+	int32_t timerA, timerB;
+	int32_t timerAVal, timerBVal;
+	int32_t irqstate;
+	int8_t  status;
+	int8_t  enable;
 
 	emu_timer *timA, *timB;
 
-	INT8  reg0, reg1, reg2, reg3, pcmreg, timerreg;
-	UINT32 ext_address;
-	UINT8 ext_read;
+	int8_t  reg0, reg1, reg2, reg3, pcmreg, timerreg;
+	uint32_t ext_address;
+	uint8_t ext_read;
 
-	const UINT8 *rom;
+	const uint8_t *rom;
 	devcb_resolved_read8 ext_mem_read;
 	devcb_resolved_write8 ext_mem_write;
 	void (*irq_callback)(running_device *, int);
 
-	UINT32 clock;
+	uint32_t clock;
 	sound_stream * stream;
 	running_device *device;
 } YMF271Chip;
@@ -119,10 +119,10 @@ typedef struct
 static const int fm_tab[] = { 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11, -1 };
 static const int pcm_tab[] = { 0, 4, 8, -1, 12, 16, 20, -1, 24, 28, 32, -1, 36, 40, 44, -1 };
 
-static INT16 *wavetable[8];
+static int16_t *wavetable[8];
 static double plfo_table[4][8][LFO_LENGTH];
 static int alfo_table[4][LFO_LENGTH];
-static INT32 *mix;
+static int32_t *mix;
 
 #define ENV_ATTACK		0
 #define ENV_DECAY1		1
@@ -363,7 +363,7 @@ INLINE void calculate_step(YMF271Slot *slot)
 
 		st /= (double)(524288/65536);		// pre-multiply with 65536
 
-		slot->step = (UINT64)st;
+		slot->step = (uint64_t)st;
 	}
 	else						// internal waveform (FM)
 	{
@@ -375,7 +375,7 @@ INLINE void calculate_step(YMF271Slot *slot)
 
 		st /= (double)(536870912/65536);	// pre-multiply with 65536
 
-		slot->step = (UINT64)st;
+		slot->step = (uint64_t)st;
 	}
 }
 
@@ -453,28 +453,28 @@ static void init_envelope(YMF271Slot *slot)
 	rate = GET_KEYSCALED_RATE(slot->ar * 2, keycode, slot->keyscale);
 	time = ARTime[rate];
 
-	attack_length = (UINT32)((time * 44100.0) / 1000.0);		// attack end time in samples
+	attack_length = (uint32_t)((time * 44100.0) / 1000.0);		// attack end time in samples
 	slot->env_attack_step = (int)(((double)(160-0) / (double)(attack_length)) * 65536.0);
 
 	// init decay1 state
 	rate = GET_KEYSCALED_RATE(slot->decay1rate * 2, keycode, slot->keyscale);
 	time = DCTime[rate];
 
-	decay1_length = (UINT32)((time * 44100.0) / 1000.0);
+	decay1_length = (uint32_t)((time * 44100.0) / 1000.0);
 	slot->env_decay1_step = (int)(((double)(255-decay_level) / (double)(decay1_length)) * 65536.0);
 
 	// init decay2 state
 	rate = GET_KEYSCALED_RATE(slot->decay2rate * 2, keycode, slot->keyscale);
 	time = DCTime[rate];
 
-	decay2_length = (UINT32)((time * 44100.0) / 1000.0);
+	decay2_length = (uint32_t)((time * 44100.0) / 1000.0);
 	slot->env_decay2_step = (int)(((double)(255-0) / (double)(decay2_length)) * 65536.0);
 
 	// init release state
 	rate = GET_KEYSCALED_RATE(slot->relrate * 4, keycode, slot->keyscale);
 	time = ARTime[rate];
 
-	release_length = (UINT32)((time * 44100.0) / 1000.0);
+	release_length = (uint32_t)((time * 44100.0) / 1000.0);
 	slot->env_release_step = (int)(((double)(255-0) / (double)(release_length)) * 65536.0);
 
 	slot->volume = (255-160) << ENV_VOLUME_SHIFT;		// -60db
@@ -502,32 +502,32 @@ INLINE void update_lfo(YMF271Slot *slot)
 
 INLINE int calculate_slot_volume(YMF271Slot *slot)
 {
-	UINT64 volume;
-	UINT64 env_volume;
-	UINT64 lfo_volume = 65536;
+	uint64_t volume;
+	uint64_t env_volume;
+	uint64_t lfo_volume = 65536;
 
 	switch (slot->ams)
 	{
 		case 0: lfo_volume = 65536; break;	// 0dB
-		case 1: lfo_volume = 65536 - (((UINT64)slot->lfo_amplitude * 33124) >> 16); break;	// 5.90625dB
-		case 2: lfo_volume = 65536 - (((UINT64)slot->lfo_amplitude * 16742) >> 16); break;	// 11.8125dB
-		case 3: lfo_volume = 65536 - (((UINT64)slot->lfo_amplitude * 4277) >> 16); break;	// 23.625dB
+		case 1: lfo_volume = 65536 - (((uint64_t)slot->lfo_amplitude * 33124) >> 16); break;	// 5.90625dB
+		case 2: lfo_volume = 65536 - (((uint64_t)slot->lfo_amplitude * 16742) >> 16); break;	// 11.8125dB
+		case 3: lfo_volume = 65536 - (((uint64_t)slot->lfo_amplitude * 4277) >> 16); break;	// 23.625dB
 	}
 
-	env_volume = ((UINT64)env_volume_table[255 - (slot->volume >> ENV_VOLUME_SHIFT)] * (UINT64)lfo_volume) >> 16;
+	env_volume = ((uint64_t)env_volume_table[255 - (slot->volume >> ENV_VOLUME_SHIFT)] * (uint64_t)lfo_volume) >> 16;
 
-	volume = ((UINT64)env_volume * (UINT64)total_level[slot->tl]) >> 16;
+	volume = ((uint64_t)env_volume * (uint64_t)total_level[slot->tl]) >> 16;
 
 	return volume;
 }
 
-static void update_pcm(YMF271Chip *chip, int slotnum, INT32 *mixp, int length)
+static void update_pcm(YMF271Chip *chip, int slotnum, int32_t *mixp, int length)
 {
 	int i;
 	int final_volume;
-	INT16 sample;
-	INT64 ch0_vol, ch1_vol, ch2_vol, ch3_vol;
-	const UINT8 *rombase;
+	int16_t sample;
+	int64_t ch0_vol, ch1_vol, ch2_vol, ch3_vol;
+	const uint8_t *rombase;
 
 	YMF271Slot *slot = &chip->slots[slotnum];
 	rombase = chip->rom;
@@ -561,10 +561,10 @@ static void update_pcm(YMF271Chip *chip, int slotnum, INT32 *mixp, int length)
 
 		final_volume = calculate_slot_volume(slot);
 
-		ch0_vol = ((UINT64)final_volume * (UINT64)channel_attenuation[slot->ch0_level]) >> 16;
-		ch1_vol = ((UINT64)final_volume * (UINT64)channel_attenuation[slot->ch1_level]) >> 16;
-		ch2_vol = ((UINT64)final_volume * (UINT64)channel_attenuation[slot->ch2_level]) >> 16;
-		ch3_vol = ((UINT64)final_volume * (UINT64)channel_attenuation[slot->ch3_level]) >> 16;
+		ch0_vol = ((uint64_t)final_volume * (uint64_t)channel_attenuation[slot->ch0_level]) >> 16;
+		ch1_vol = ((uint64_t)final_volume * (uint64_t)channel_attenuation[slot->ch1_level]) >> 16;
+		ch2_vol = ((uint64_t)final_volume * (uint64_t)channel_attenuation[slot->ch2_level]) >> 16;
+		ch3_vol = ((uint64_t)final_volume * (uint64_t)channel_attenuation[slot->ch3_level]) >> 16;
 
 		if (ch0_vol > 65536) ch0_vol = 65536;
 		if (ch1_vol > 65536) ch1_vol = 65536;
@@ -585,14 +585,14 @@ static void update_pcm(YMF271Chip *chip, int slotnum, INT32 *mixp, int length)
 // calculates 2 operator FM using algorithm 0
 // <--------|
 // +--[S1]--+--[S3]-->
-INLINE INT32 calculate_2op_fm_0(YMF271Chip *chip, int slotnum1, int slotnum2)
+INLINE int32_t calculate_2op_fm_0(YMF271Chip *chip, int slotnum1, int slotnum2)
 {
 	YMF271Slot *slot1 = &chip->slots[slotnum1];
 	YMF271Slot *slot2 = &chip->slots[slotnum2];
-	INT64 env1, env2;
-	INT64 slot1_output, slot2_output;
-	INT64 phase_mod;
-	INT64 feedback;
+	int64_t env1, env2;
+	int64_t slot1_output, slot2_output;
+	int64_t phase_mod;
+	int64_t feedback;
 
 	update_envelope(slot1);
 	update_lfo(slot1);
@@ -622,14 +622,14 @@ INLINE INT32 calculate_2op_fm_0(YMF271Chip *chip, int slotnum1, int slotnum2)
 // calculates 2 operator FM using algorithm 1
 // <-----------------|
 // +--[S1]--+--[S3]--|-->
-INLINE INT32 calculate_2op_fm_1(YMF271Chip *chip, int slotnum1, int slotnum2)
+INLINE int32_t calculate_2op_fm_1(YMF271Chip *chip, int slotnum1, int slotnum2)
 {
 	YMF271Slot *slot1 = &chip->slots[slotnum1];
 	YMF271Slot *slot2 = &chip->slots[slotnum2];
-	INT64 env1, env2;
-	INT64 slot1_output, slot2_output;
-	INT64 phase_mod;
-	INT64 feedback;
+	int64_t env1, env2;
+	int64_t slot1_output, slot2_output;
+	int64_t phase_mod;
+	int64_t feedback;
 
 	update_envelope(slot1);
 	update_lfo(slot1);
@@ -657,12 +657,12 @@ INLINE INT32 calculate_2op_fm_1(YMF271Chip *chip, int slotnum1, int slotnum2)
 }
 
 // calculates the output of one FM operator
-INLINE INT32 calculate_1op_fm_0(YMF271Chip *chip, int slotnum, int phase_modulation)
+INLINE int32_t calculate_1op_fm_0(YMF271Chip *chip, int slotnum, int phase_modulation)
 {
 	YMF271Slot *slot = &chip->slots[slotnum];
-	INT64 env;
-	INT64 slot_output;
-	INT64 phase_mod = phase_modulation;
+	int64_t env;
+	int64_t slot_output;
+	int64_t phase_mod = phase_modulation;
 
 	update_envelope(slot);
 	update_lfo(slot);
@@ -681,12 +681,12 @@ INLINE INT32 calculate_1op_fm_0(YMF271Chip *chip, int slotnum, int phase_modulat
 // calculates the output of one FM operator with feedback modulation
 // <--------|
 // +--[S1]--|
-INLINE INT32 calculate_1op_fm_1(YMF271Chip *chip, int slotnum)
+INLINE int32_t calculate_1op_fm_1(YMF271Chip *chip, int slotnum)
 {
 	YMF271Slot *slot = &chip->slots[slotnum];
-	INT64 env;
-	INT64 slot_output;
-	INT64 feedback;
+	int64_t env;
+	int64_t slot_output;
+	int64_t feedback;
 
 	update_envelope(slot);
 	update_lfo(slot);
@@ -708,7 +708,7 @@ static STREAM_UPDATE( ymf271_update )
 {
 	int i, j;
 	int op;
-	INT32 *mixp;
+	int32_t *mixp;
 	YMF271Chip *chip = (YMF271Chip *)param;
 
 	memset(mix, 0, sizeof(mix[0])*samples*2);
@@ -738,7 +738,7 @@ static STREAM_UPDATE( ymf271_update )
 				{
 					for (i = 0; i < samples; i++)
 					{
-						INT64 output1 = 0, output2 = 0, output3 = 0, output4 = 0, phase_mod1 = 0, phase_mod2 = 0;
+						int64_t output1 = 0, output2 = 0, output3 = 0, output4 = 0, phase_mod1 = 0, phase_mod2 = 0;
 						switch (chip->slots[slot1].algorithm)
 						{
 							// <--------|
@@ -924,7 +924,7 @@ static STREAM_UPDATE( ymf271_update )
 					{
 						for (i = 0; i < samples; i++)
 						{
-							INT64 output1 = 0, output2 = 0, phase_mod = 0;
+							int64_t output1 = 0, output2 = 0, phase_mod = 0;
 							switch (chip->slots[slot1].algorithm & 3)
 							{
 								// <--------|
@@ -977,7 +977,7 @@ static STREAM_UPDATE( ymf271_update )
 				{
 					for (i = 0; i < samples; i++)
 					{
-						INT64 output1 = 0, output2 = 0, output3 = 0, phase_mod = 0;
+						int64_t output1 = 0, output2 = 0, output3 = 0, phase_mod = 0;
 						switch (chip->slots[slot1].algorithm & 7)
 						{
 							// <--------|
@@ -1401,7 +1401,7 @@ static TIMER_CALLBACK( ymf271_timer_b_tick )
 	}
 }
 
-static UINT8 ymf271_read_ext_memory(YMF271Chip *chip, UINT32 address)
+static uint8_t ymf271_read_ext_memory(YMF271Chip *chip, uint32_t address)
 {
 	if( chip->ext_mem_read.read ) {
 		return devcb_call_read8(&chip->ext_mem_read, address);
@@ -1412,7 +1412,7 @@ static UINT8 ymf271_read_ext_memory(YMF271Chip *chip, UINT32 address)
 	return 0xff;
 }
 
-static void ymf271_write_ext_memory(YMF271Chip *chip, UINT32 address, UINT8 data)
+static void ymf271_write_ext_memory(YMF271Chip *chip, uint32_t address, uint8_t data)
 {
 	devcb_call_write8(&chip->ext_mem_write, address, data);
 }
@@ -1570,7 +1570,7 @@ WRITE8_DEVICE_HANDLER( ymf271_w )
 
 READ8_DEVICE_HANDLER( ymf271_r )
 {
-	UINT8 value;
+	uint8_t value;
 	YMF271Chip *chip = get_safe_token(device);
 
 	switch(offset)
@@ -1593,7 +1593,7 @@ static void init_tables(running_machine *machine)
 
 	for (i=0; i < ARRAY_LENGTH(wavetable); i++)
 	{
-		wavetable[i] = auto_alloc_array(machine, INT16, SIN_LEN);
+		wavetable[i] = auto_alloc_array(machine, int16_t, SIN_LEN);
 	}
 
 	for (i=0; i < SIN_LEN; i++)
@@ -1602,25 +1602,25 @@ static void init_tables(running_machine *machine)
 		double m2 = sin( ((i*4)+1) * M_PI / SIN_LEN );
 
 		// Waveform 0: sin(wt)    (0 <= wt <= 2PI)
-		wavetable[0][i] = (INT16)(m * MAXOUT);
+		wavetable[0][i] = (int16_t)(m * MAXOUT);
 
 		// Waveform 1: sin?(wt)   (0 <= wt <= PI)     -sin?(wt)  (PI <= wt <= 2PI)
-		wavetable[1][i] = (i < (SIN_LEN/2)) ? (INT16)((m * m) * MAXOUT) : (INT16)((m * m) * MINOUT);
+		wavetable[1][i] = (i < (SIN_LEN/2)) ? (int16_t)((m * m) * MAXOUT) : (int16_t)((m * m) * MINOUT);
 
 		// Waveform 2: sin(wt)    (0 <= wt <= PI)     -sin(wt)   (PI <= wt <= 2PI)
-		wavetable[2][i] = (i < (SIN_LEN/2)) ? (INT16)(m * MAXOUT) : (INT16)(-m * MAXOUT);
+		wavetable[2][i] = (i < (SIN_LEN/2)) ? (int16_t)(m * MAXOUT) : (int16_t)(-m * MAXOUT);
 
 		// Waveform 3: sin(wt)    (0 <= wt <= PI)     0
-		wavetable[3][i] = (i < (SIN_LEN/2)) ? (INT16)(m * MAXOUT) : 0;
+		wavetable[3][i] = (i < (SIN_LEN/2)) ? (int16_t)(m * MAXOUT) : 0;
 
 		// Waveform 4: sin(2wt)   (0 <= wt <= PI)     0
-		wavetable[4][i] = (i < (SIN_LEN/2)) ? (INT16)(m2 * MAXOUT) : 0;
+		wavetable[4][i] = (i < (SIN_LEN/2)) ? (int16_t)(m2 * MAXOUT) : 0;
 
 		// Waveform 5: |sin(2wt)| (0 <= wt <= PI)     0
-		wavetable[5][i] = (i < (SIN_LEN/2)) ? (INT16)(fabs(m2) * MAXOUT) : 0;
+		wavetable[5][i] = (i < (SIN_LEN/2)) ? (int16_t)(fabs(m2) * MAXOUT) : 0;
 
 		// Waveform 6:     1      (0 <= wt <= 2PI)
-		wavetable[6][i] = (INT16)(1 * MAXOUT);
+		wavetable[6][i] = (int16_t)(1 * MAXOUT);
 
 		wavetable[7][i] = 0;
 	}
@@ -1672,7 +1672,7 @@ static void init_tables(running_machine *machine)
 		alfo_table[3][i] = (i < (LFO_LENGTH/2)) ? ALFO_MAX-tri_wave : tri_wave;
 	}
 
-	mix = auto_alloc_array(machine, INT32, 48000*2);
+	mix = auto_alloc_array(machine, int32_t, 48000*2);
 }
 
 static void init_state(YMF271Chip *chip, running_device *device)
@@ -1750,7 +1750,7 @@ static void init_state(YMF271Chip *chip, running_device *device)
 	state_save_register_device_item(device, 0, chip->ext_read);
 }
 
-static void ymf271_init(running_device *device, YMF271Chip *chip, UINT8 *rom, void (*cb)(running_device *,int), const devcb_read8 *ext_read, const devcb_write8 *ext_write)
+static void ymf271_init(running_device *device, YMF271Chip *chip, uint8_t *rom, void (*cb)(running_device *,int), const devcb_read8 *ext_read, const devcb_write8 *ext_write)
 {
 	chip->timA = timer_alloc(device->machine, ymf271_timer_a_tick, chip);
 	chip->timB = timer_alloc(device->machine, ymf271_timer_b_tick, chip);

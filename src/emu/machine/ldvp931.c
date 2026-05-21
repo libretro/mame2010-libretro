@@ -54,29 +54,29 @@ struct _ldplayer_data
 	vp931_data_ready_func data_ready_cb;		/* data ready callback */
 
 	/* I/O port states */
-	UINT8				out0;					/* output 0 state */
-	UINT8				out1;					/* output 1 state */
-	UINT8				port1;					/* port 1 state */
+	uint8_t				out0;					/* output 0 state */
+	uint8_t				out1;					/* output 1 state */
+	uint8_t				port1;					/* port 1 state */
 
 	/* DATIC circuit implementation */
-	UINT8				daticval;				/* latched DATIC value */
-	UINT8				daticerp;				/* /ERP value from DATIC */
-	UINT8				datastrobe;				/* DATA STROBE line from DATIC */
+	uint8_t				daticval;				/* latched DATIC value */
+	uint8_t				daticerp;				/* /ERP value from DATIC */
+	uint8_t				datastrobe;				/* DATA STROBE line from DATIC */
 
 	/* communication status */
-	UINT8				fromcontroller;			/* command byte from the controller */
-	UINT8				fromcontroller_pending;	/* TRUE if data is pending */
-	UINT8				tocontroller;			/* command byte to the controller */
-	UINT8				tocontroller_pending;	/* TRUE if data is pending */
+	uint8_t				fromcontroller;			/* command byte from the controller */
+	uint8_t				fromcontroller_pending;	/* TRUE if data is pending */
+	uint8_t				tocontroller;			/* command byte to the controller */
+	uint8_t				tocontroller_pending;	/* TRUE if data is pending */
 
 	/* tracking */
-	INT8				trackdir;				/* direction of tracking */
-	UINT8				trackstate;				/* state of tracking */
+	int8_t				trackdir;				/* direction of tracking */
+	uint8_t				trackstate;				/* state of tracking */
 
 	/* debugging */
-	UINT8				cmdbuf[3];				/* 3 bytes worth of commands */
-	UINT8				cmdcount;				/* number of command bytes seen */
-	INT16				advanced;				/* number of frames advanced */
+	uint8_t				cmdbuf[3];				/* 3 bytes worth of commands */
+	uint8_t				cmdcount;				/* number of command bytes seen */
+	int16_t				advanced;				/* number of frames advanced */
 };
 
 
@@ -87,11 +87,11 @@ struct _ldplayer_data
 
 static void vp931_init(laserdisc_state *ld);
 static void vp931_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static INT32 vp931_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
-static void vp931_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data);
-static UINT8 vp931_data_r(laserdisc_state *ld);
-static UINT8 vp931_ready(laserdisc_state *ld);
-static UINT8 vp931_data_ready(laserdisc_state *ld);
+static int32_t vp931_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime);
+static void vp931_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data);
+static uint8_t vp931_data_r(laserdisc_state *ld);
+static uint8_t vp931_ready(laserdisc_state *ld);
+static uint8_t vp931_data_ready(laserdisc_state *ld);
 
 static TIMER_CALLBACK( vbi_data_fetch );
 static TIMER_CALLBACK( deferred_data_w );
@@ -242,7 +242,7 @@ static void vp931_vsync(laserdisc_state *ld, const vbi_metadata *vbi, int fieldn
     the first visible line of the frame
 -------------------------------------------------*/
 
-static INT32 vp931_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
+static int32_t vp931_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime)
 {
 	/* set the first VBI timer to go at the start of line 16 */
 	timer_set(ld->device->machine, ld->screen->time_until_pos(16*2), ld, LASERDISC_CODE_LINE16 << 2, vbi_data_fetch);
@@ -257,7 +257,7 @@ static INT32 vp931_update(laserdisc_state *ld, const vbi_metadata *vbi, int fiel
     to the 22VP931
 -------------------------------------------------*/
 
-static void vp931_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
+static void vp931_data_w(laserdisc_state *ld, uint8_t prev, uint8_t data)
 {
 	/* set a timer to synchronize execution before sending the data */
 	timer_call_after_resynch(ld->device->machine, ld, data, deferred_data_w);
@@ -269,7 +269,7 @@ static void vp931_data_w(laserdisc_state *ld, UINT8 prev, UINT8 data)
     from the 22VP931
 -------------------------------------------------*/
 
-static UINT8 vp931_data_r(laserdisc_state *ld)
+static uint8_t vp931_data_r(laserdisc_state *ld)
 {
 	ldplayer_data *player = ld->player;
 
@@ -293,7 +293,7 @@ static UINT8 vp931_data_r(laserdisc_state *ld)
     command)
 -------------------------------------------------*/
 
-static UINT8 vp931_ready(laserdisc_state *ld)
+static uint8_t vp931_ready(laserdisc_state *ld)
 {
 	/* if data is pending, we are not ready */
 	ldplayer_data *player = ld->player;
@@ -306,7 +306,7 @@ static UINT8 vp931_ready(laserdisc_state *ld)
     "data available" to the caller
 -------------------------------------------------*/
 
-static UINT8 vp931_data_ready(laserdisc_state *ld)
+static uint8_t vp931_data_ready(laserdisc_state *ld)
 {
 	ldplayer_data *player = ld->player;
 	return player->tocontroller_pending ? ASSERT_LINE : CLEAR_LINE;
@@ -325,7 +325,7 @@ static TIMER_CALLBACK( vbi_data_fetch )
 	ldplayer_data *player = ld->player;
 	int which = param & 3;
 	int line = param >> 2;
-	UINT32 code = 0;
+	uint32_t code = 0;
 
 	/* fetch the code and compute the DATIC latched value */
 	if (line >= LASERDISC_CODE_LINE16 && line <= LASERDISC_CODE_LINE18)
@@ -486,7 +486,7 @@ static WRITE8_HANDLER( output1_w )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	INT32 speed = 0;
+	int32_t speed = 0;
 
 	/*
         $80 = n/c
@@ -628,7 +628,7 @@ static READ8_HANDLER( port1_r )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 
 	/*
         $80 = P17 = (in) unsure
@@ -725,7 +725,7 @@ static READ8_HANDLER( port2_r )
 {
 	laserdisc_state *ld = ldcore_get_safe_token(space->cpu->owner());
 	ldplayer_data *player = ld->player;
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 
 	/*
         $80 = P27 = (in) set/reset latch; set by FOC LS, reset by IGR

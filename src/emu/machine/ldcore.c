@@ -60,8 +60,8 @@ struct _frame_data
 {
 	bitmap_t *			bitmap;					/* cached bitmap */
 	bitmap_t *			visbitmap;				/* wrapper around bitmap with only visible lines */
-	UINT8				numfields;				/* number of fields in this frame */
-	INT32				lastfield;				/* last absolute field number */
+	uint8_t				numfields;				/* number of fields in this frame */
+	int32_t				lastfield;				/* last absolute field number */
 };
 
 
@@ -74,53 +74,53 @@ struct _ldcore_data
 
 	/* disc parameters */
 	chd_file *			disc;					/* handle to the disc itself */
-	UINT8 *				vbidata;				/* pointer to precomputed VBI data */
+	uint8_t *				vbidata;				/* pointer to precomputed VBI data */
 	int					width;					/* width of video */
 	int					height;					/* height of video */
-	UINT32				fps_times_1million;		/* frame rate of video */
+	uint32_t				fps_times_1million;		/* frame rate of video */
 	int					samplerate;				/* audio samplerate */
 	chd_error			readresult;				/* result of the most recent read */
-	UINT32				chdtracks;				/* number of tracks in the CHD */
+	uint32_t				chdtracks;				/* number of tracks in the CHD */
 	av_codec_decompress_config avconfig;		/* decompression configuration */
 
 	/* core states */
-	UINT8				audiosquelch;			/* audio squelch state: bit 0 = audio 1, bit 1 = audio 2 */
-	UINT8				videosquelch;			/* video squelch state: bit 0 = on/off */
-	UINT8				fieldnum;				/* field number (0 or 1) */
-	INT32				curtrack;				/* current track at this end of this vsync */
-	UINT32				maxtrack;				/* maximum track number */
+	uint8_t				audiosquelch;			/* audio squelch state: bit 0 = audio 1, bit 1 = audio 2 */
+	uint8_t				videosquelch;			/* video squelch state: bit 0 = on/off */
+	uint8_t				fieldnum;				/* field number (0 or 1) */
+	int32_t				curtrack;				/* current track at this end of this vsync */
+	uint32_t				maxtrack;				/* maximum track number */
 	attoseconds_t		attospertrack;			/* attoseconds per track, or 0 if not moving */
 	attotime			sliderupdate;			/* time of last slider update */
 
 	/* video data */
 	frame_data			frame[3];				/* circular list of frames */
-	UINT8				videoindex;				/* index of the current video buffer */
+	uint8_t				videoindex;				/* index of the current video buffer */
 	bitmap_t			videotarget;			/* fake target bitmap for decompression */
 	bitmap_t *			emptyframe;				/* blank frame */
 
 	/* audio data */
-	INT16 *				audiobuffer[2];			/* buffer for audio samples */
-	UINT32				audiobufsize;			/* size of buffer */
-	UINT32				audiobufin;				/* input index */
-	UINT32				audiobufout;			/* output index */
-	UINT32				audiocursamples;		/* current samples this track */
-	UINT32				audiomaxsamples;		/* maximum samples per track */
+	int16_t *				audiobuffer[2];			/* buffer for audio samples */
+	uint32_t				audiobufsize;			/* size of buffer */
+	uint32_t				audiobufin;				/* input index */
+	uint32_t				audiobufout;			/* output index */
+	uint32_t				audiocursamples;		/* current samples this track */
+	uint32_t				audiomaxsamples;		/* maximum samples per track */
 	running_device *audiocustom;			/* custom sound device */
 
 	/* metadata */
 	vbi_metadata		metadata[2];			/* metadata parsed from the stream, for each field */
 
 	/* I/O data */
-	UINT8				datain;					/* current input data value */
-	UINT8				linein[LASERDISC_INPUT_LINES]; /* current input line state */
-	UINT8				dataout;				/* current output data value */
-	UINT8				lineout[LASERDISC_OUTPUT_LINES]; /* current output line state */
+	uint8_t				datain;					/* current input data value */
+	uint8_t				linein[LASERDISC_INPUT_LINES]; /* current input line state */
+	uint8_t				dataout;				/* current output data value */
+	uint8_t				lineout[LASERDISC_OUTPUT_LINES]; /* current output line state */
 
 	/* video updating */
-	UINT8				videoenable;			/* is video enabled? */
+	uint8_t				videoenable;			/* is video enabled? */
 	render_texture *	videotex;				/* texture for the video */
 	palette_t *			videopalette;			/* palette for the video */
-	UINT8				overenable;				/* is the overlay enabled? */
+	uint8_t				overenable;				/* is the overlay enabled? */
 	bitmap_t *			overbitmap[2];			/* overlay bitmaps */
 	int					overindex;				/* index of the overlay bitmap */
 	render_texture *	overtex;				/* texture for the overlay */
@@ -209,7 +209,7 @@ INLINE void update_audio(laserdisc_state *ld)
     values
 -------------------------------------------------*/
 
-INLINE void add_and_clamp_track(ldcore_data *ldcore, INT32 delta)
+INLINE void add_and_clamp_track(ldcore_data *ldcore, int32_t delta)
 {
 	ldcore->curtrack += delta;
 	ldcore->curtrack = MAX(ldcore->curtrack, 1);
@@ -222,16 +222,16 @@ INLINE void add_and_clamp_track(ldcore_data *ldcore, INT32 delta)
     given color pattern
 -------------------------------------------------*/
 
-INLINE void fillbitmap_yuy16(bitmap_t *bitmap, UINT8 yval, UINT8 cr, UINT8 cb)
+INLINE void fillbitmap_yuy16(bitmap_t *bitmap, uint8_t yval, uint8_t cr, uint8_t cb)
 {
-	UINT16 color0 = (yval << 8) | cb;
-	UINT16 color1 = (yval << 8) | cr;
+	uint16_t color0 = (yval << 8) | cb;
+	uint16_t color1 = (yval << 8) | cr;
 	int x, y;
 
 	/* write 32 bits of color (2 pixels at a time) */
 	for (y = 0; y < bitmap->height; y++)
 	{
-		UINT16 *dest = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *dest = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 		for (x = 0; x < bitmap->width / 2; x++)
 		{
 			*dest++ = color0;
@@ -262,7 +262,7 @@ static void update_slider_pos(ldcore_data *ldcore, attotime curtime)
 	else
 	{
 		attoseconds_t delta = attotime_to_attoseconds(attotime_sub(curtime, ldcore->sliderupdate));
-		INT32 tracks_covered;
+		int32_t tracks_covered;
 
 		/* determine how many tracks we covered and advance */
 		if (ldcore->attospertrack >= 0)
@@ -346,11 +346,11 @@ static TIMER_CALLBACK( perform_player_update )
     laserdisc player
 -------------------------------------------------*/
 
-void laserdisc_data_w(running_device *device, UINT8 data)
+void laserdisc_data_w(running_device *device, uint8_t data)
 {
 	laserdisc_state *ld = get_safe_token(device);
 	ldcore_data *ldcore = ld->core;
-	UINT8 prev = ldcore->datain;
+	uint8_t prev = ldcore->datain;
 	ldcore->datain = data;
 
 	/* call through to the player-specific write handler */
@@ -363,7 +363,7 @@ void laserdisc_data_w(running_device *device, UINT8 data)
     laserdisc_line_w - control an input line
 -------------------------------------------------*/
 
-void laserdisc_line_w(running_device *device, UINT8 line, UINT8 newstate)
+void laserdisc_line_w(running_device *device, uint8_t line, uint8_t newstate)
 {
 	laserdisc_state *ld = get_safe_token(device);
 	ldcore_data *ldcore = ld->core;
@@ -402,11 +402,11 @@ void laserdisc_line_w(running_device *device, UINT8 line, UINT8 newstate)
     data byte
 -------------------------------------------------*/
 
-UINT8 laserdisc_data_r(running_device *device)
+uint8_t laserdisc_data_r(running_device *device)
 {
 	laserdisc_state *ld = get_safe_token(device);
 	ldcore_data *ldcore = ld->core;
-	UINT8 result = ldcore->dataout;
+	uint8_t result = ldcore->dataout;
 
 	/* call through to the player-specific data handler */
 	if (ldcore->intf.readdata != NULL)
@@ -421,11 +421,11 @@ UINT8 laserdisc_data_r(running_device *device)
     of an output line
 -------------------------------------------------*/
 
-UINT8 laserdisc_line_r(running_device *device, UINT8 line)
+uint8_t laserdisc_line_r(running_device *device, uint8_t line)
 {
 	laserdisc_state *ld = get_safe_token(device);
 	ldcore_data *ldcore = ld->core;
-	UINT8 result;
+	uint8_t result;
 
 	assert(line < LASERDISC_OUTPUT_LINES);
 	result = ldcore->lineout[line];
@@ -474,7 +474,7 @@ int laserdisc_get_video(running_device *device, bitmap_t **bitmap)
     information read from the disc
 -------------------------------------------------*/
 
-UINT32 laserdisc_get_field_code(running_device *device, UINT32 code, UINT8 zero_if_squelched)
+uint32_t laserdisc_get_field_code(running_device *device, uint32_t code, uint8_t zero_if_squelched)
 {
 	laserdisc_state *ld = get_safe_token(device);
 	ldcore_data *ldcore = ld->core;
@@ -527,7 +527,7 @@ laserdisc_state *ldcore_get_safe_token(running_device *device)
     audio squelch states
 -------------------------------------------------*/
 
-void ldcore_set_audio_squelch(laserdisc_state *ld, UINT8 squelchleft, UINT8 squelchright)
+void ldcore_set_audio_squelch(laserdisc_state *ld, uint8_t squelchleft, uint8_t squelchright)
 {
 	update_audio(ld);
 	ld->core->audiosquelch = (squelchleft ? 1 : 0) | (squelchright ? 2 : 0);
@@ -539,7 +539,7 @@ void ldcore_set_audio_squelch(laserdisc_state *ld, UINT8 squelchleft, UINT8 sque
     squelch state
 -------------------------------------------------*/
 
-void ldcore_set_video_squelch(laserdisc_state *ld, UINT8 squelch)
+void ldcore_set_video_squelch(laserdisc_state *ld, uint8_t squelch)
 {
 	ld->core->videosquelch = squelch;
 }
@@ -550,7 +550,7 @@ void ldcore_set_video_squelch(laserdisc_state *ld, UINT8 squelch)
     the slider speed
 -------------------------------------------------*/
 
-void ldcore_set_slider_speed(laserdisc_state *ld, INT32 tracks_per_vsync)
+void ldcore_set_slider_speed(laserdisc_state *ld, int32_t tracks_per_vsync)
 {
 	ldcore_data *ldcore = ld->core;
 	attotime vsyncperiod = ld->screen->frame_period();
@@ -579,7 +579,7 @@ void ldcore_set_slider_speed(laserdisc_state *ld, INT32 tracks_per_vsync)
     a certain number of tracks
 -------------------------------------------------*/
 
-void ldcore_advance_slider(laserdisc_state *ld, INT32 numtracks)
+void ldcore_advance_slider(laserdisc_state *ld, int32_t numtracks)
 {
 	ldcore_data *ldcore = ld->core;
 
@@ -628,9 +628,9 @@ slider_position ldcore_get_slider_position(laserdisc_state *ld)
     a way that works for most situations
 -------------------------------------------------*/
 
-INT32 ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime, ldplayer_state *newstate)
+int32_t ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fieldnum, attotime curtime, ldplayer_state *newstate)
 {
-	INT32 advanceby = 0;
+	int32_t advanceby = 0;
 	int frame;
 
 	/* start by assuming the state doesn't change */
@@ -766,7 +766,7 @@ INT32 ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fi
 			/* otherwise, if we got frame data from the VBI, update our seeking logic */
 			else if (ld->state.substate == 0 && frame != FRAME_NOT_PRESENT)
 			{
-				INT32 delta = (ld->state.param - 2) - frame;
+				int32_t delta = (ld->state.param - 2) - frame;
 
 				/* if we're within a couple of frames, just play until we hit it */
 				if (delta >= 0 && delta <= 2)
@@ -804,13 +804,13 @@ INT32 ldcore_generic_update(laserdisc_state *ld, const vbi_metadata *vbi, int fi
 static void read_track_data(laserdisc_state *ld)
 {
 	ldcore_data *ldcore = ld->core;
-	UINT32 tracknum = ldcore->curtrack;
-	UINT32 fieldnum = ldcore->fieldnum;
+	uint32_t tracknum = ldcore->curtrack;
+	uint32_t fieldnum = ldcore->fieldnum;
 	vbi_metadata vbidata = { 0 };
 	frame_data *frame;
-	UINT32 vbiframe;
-	UINT32 readhunk;
-	INT32 chdtrack;
+	uint32_t vbiframe;
+	uint32_t readhunk;
+	int32_t chdtrack;
 
 	/* compute the chdhunk number we are going to read */
 	chdtrack = tracknum - 1 - VIRTUAL_LEAD_IN_TRACKS;
@@ -1004,7 +1004,7 @@ static STREAM_UPDATE( custom_stream_callback )
 	ldcore_data *ldcore = ld->core;
 	stream_sample_t *dst0 = outputs[0];
 	stream_sample_t *dst1 = outputs[1];
-	INT16 leftand, rightand;
+	int16_t leftand, rightand;
 	int samples_avail = 0;
 
 	/* compute AND values based on the squelch */
@@ -1029,8 +1029,8 @@ static STREAM_UPDATE( custom_stream_callback )
 	/* otherwise, stream from our buffer */
 	else
 	{
-		INT16 *buffer0 = ldcore->audiobuffer[0];
-		INT16 *buffer1 = ldcore->audiobuffer[1];
+		int16_t *buffer0 = ldcore->audiobuffer[0];
+		int16_t *buffer1 = ldcore->audiobuffer[1];
 		int sampout = ldcore->audiobufout;
 
 		/* copy samples, clearing behind us as we go */
@@ -1345,10 +1345,10 @@ static void init_disc(running_device *device)
 	ldcore->maxtrack = VIRTUAL_LEAD_IN_TRACKS + MAX_TOTAL_TRACKS + VIRTUAL_LEAD_OUT_TRACKS;
 	if (ldcore->disc != NULL)
 	{
-		UINT32 totalhunks = chd_get_header(ldcore->disc)->totalhunks;
+		uint32_t totalhunks = chd_get_header(ldcore->disc)->totalhunks;
 		int fps, fpsfrac, interlaced, channels;
 		char metadata[256];
-		UINT32 vbilength;
+		uint32_t vbilength;
 
 		/* require the A/V codec */
 		if (chd_get_header(ldcore->disc)->compression != CHDCOMPRESSION_AV)
@@ -1373,7 +1373,7 @@ static void init_disc(running_device *device)
 		ldcore->chdtracks = totalhunks / 2;
 
 		/* allocate memory for the precomputed per-frame metadata */
-		ldcore->vbidata = auto_alloc_array(device->machine, UINT8, totalhunks * VBI_PACKED_BYTES);
+		ldcore->vbidata = auto_alloc_array(device->machine, uint8_t, totalhunks * VBI_PACKED_BYTES);
 		err = chd_get_metadata(ldcore->disc, AV_LD_METADATA_TAG, 0, ldcore->vbidata, totalhunks * VBI_PACKED_BYTES, &vbilength, NULL, NULL);
 		if (err != CHDERR_NONE || vbilength != totalhunks * VBI_PACKED_BYTES)
 			fatalerror("Precomputed VBI metadata missing or incorrect size");
@@ -1456,10 +1456,10 @@ static void init_audio(running_device *device)
 	ldcore->audiocustom = device->machine->device(ldcore->config.sound);
 
 	/* allocate audio buffers */
-	ldcore->audiomaxsamples = ((UINT64)ldcore->samplerate * 1000000 + ldcore->fps_times_1million - 1) / ldcore->fps_times_1million;
+	ldcore->audiomaxsamples = ((uint64_t)ldcore->samplerate * 1000000 + ldcore->fps_times_1million - 1) / ldcore->fps_times_1million;
 	ldcore->audiobufsize = ldcore->audiomaxsamples * 4;
-	ldcore->audiobuffer[0] = auto_alloc_array(device->machine, INT16, ldcore->audiobufsize);
-	ldcore->audiobuffer[1] = auto_alloc_array(device->machine, INT16, ldcore->audiobufsize);
+	ldcore->audiobuffer[0] = auto_alloc_array(device->machine, int16_t, ldcore->audiobufsize);
+	ldcore->audiobuffer[1] = auto_alloc_array(device->machine, int16_t, ldcore->audiobufsize);
 }
 
 
@@ -1505,7 +1505,7 @@ static DEVICE_START( laserdisc )
 	statesize = 0;
 	for (index = 0; index < ARRAY_LENGTH(player_interfaces); index++)
 		statesize = MAX(statesize, player_interfaces[index]->statesize);
-	ld->player = (ldplayer_data *)auto_alloc_array_clear(device->machine, UINT8, statesize);
+	ld->player = (ldplayer_data *)auto_alloc_array_clear(device->machine, uint8_t, statesize);
 
 	/* copy config data to the live state */
 	ldcore->config = *config;

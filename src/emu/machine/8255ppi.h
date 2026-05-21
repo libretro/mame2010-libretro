@@ -57,12 +57,12 @@ void ppi8255_set_port_a_write( running_device *device, const devcb_write8 *confi
 void ppi8255_set_port_b_write( running_device *device, const devcb_write8 *config );
 void ppi8255_set_port_c_write( running_device *device, const devcb_write8 *config );
 
-void ppi8255_set_port_a( running_device *device, UINT8 data );
-void ppi8255_set_port_b( running_device *device, UINT8 data );
-void ppi8255_set_port_c( running_device *device, UINT8 data );
+void ppi8255_set_port_a( running_device *device, uint8_t data );
+void ppi8255_set_port_b( running_device *device, uint8_t data );
+void ppi8255_set_port_c( running_device *device, uint8_t data );
 
-UINT8 ppi8255_get_port_a( running_device *device );
-UINT8 ppi8255_get_port_b( running_device *device );
-UINT8 ppi8255_get_port_c( running_device *device );
+uint8_t ppi8255_get_port_a( running_device *device );
+uint8_t ppi8255_get_port_b( running_device *device );
+uint8_t ppi8255_get_port_c( running_device *device );
 
 #endif /* __8255PPI_H_ */

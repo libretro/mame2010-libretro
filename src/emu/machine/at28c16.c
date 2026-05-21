@@ -35,7 +35,7 @@ ADDRESS_MAP_END
 //  at28c16_device_config - constructor
 //-------------------------------------------------
 
-at28c16_device_config::at28c16_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock ) :
+at28c16_device_config::at28c16_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock ) :
 	device_config( mconfig, static_alloc_device_config, "AT28C16", tag, owner, clock),
 	device_config_memory_interface(mconfig, *this),
 	device_config_nvram_interface(mconfig, *this)
@@ -49,7 +49,7 @@ at28c16_device_config::at28c16_device_config( const machine_config &mconfig, con
 //  configuration object
 //-------------------------------------------------
 
-device_config *at28c16_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock )
+device_config *at28c16_device_config::static_alloc_device_config( const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock )
 {
 	return global_alloc( at28c16_device_config( mconfig, tag, owner, clock ) );
 }
@@ -152,7 +152,7 @@ void at28c16_device::device_reset()
 
 void at28c16_device::nvram_default()
 {
-	UINT16 default_value = 0xff;
+	uint16_t default_value = 0xff;
 	for( offs_t offs = 0; offs < AT28C16_TOTAL_BYTES; offs++ )
 	{
 		memory_write_byte( m_addrspace[ 0 ], offs, default_value );
@@ -186,7 +186,7 @@ void at28c16_device::nvram_default()
 
 void at28c16_device::nvram_read( mame_file &file )
 {
-	UINT8 *buffer = auto_alloc_array( &m_machine, UINT8, AT28C16_TOTAL_BYTES );
+	uint8_t *buffer = auto_alloc_array( &m_machine, uint8_t, AT28C16_TOTAL_BYTES );
 
 	mame_fread( &file, buffer, AT28C16_TOTAL_BYTES );
 
@@ -205,7 +205,7 @@ void at28c16_device::nvram_read( mame_file &file )
 
 void at28c16_device::nvram_write( mame_file &file )
 {
-	UINT8 *buffer = auto_alloc_array( &m_machine, UINT8, AT28C16_TOTAL_BYTES );
+	uint8_t *buffer = auto_alloc_array( &m_machine, uint8_t, AT28C16_TOTAL_BYTES );
 
 	for( offs_t offs = 0; offs < AT28C16_TOTAL_BYTES; offs++ )
 	{
@@ -228,7 +228,7 @@ WRITE8_DEVICE_HANDLER( at28c16_w )
 	downcast<at28c16_device *>( device )->write( offset, data );
 }
 
-void at28c16_device::write( offs_t offset, UINT8 data )
+void at28c16_device::write( offs_t offset, uint8_t data )
 {
 	if( m_last_write >= 0 )
 	{
@@ -271,11 +271,11 @@ READ8_DEVICE_HANDLER( at28c16_r )
 	return downcast<at28c16_device *>( device )->read( offset );
 }
 
-UINT8 at28c16_device::read( offs_t offset )
+uint8_t at28c16_device::read( offs_t offset )
 {
 	if( m_last_write >= 0 )
 	{
-		UINT8 data = m_last_write ^ 0x80;
+		uint8_t data = m_last_write ^ 0x80;
 //      logerror( "%s: AT28C16: read( %04x ) write status %02x\n", cpuexec_describe_context(machine), offset, data );
 		return data;
 	}
@@ -286,7 +286,7 @@ UINT8 at28c16_device::read( offs_t offset )
 			offset += AT28C16_ID_BYTES;
 		}
 
-		UINT8 data = memory_read_byte( m_addrspace[ 0 ], offset );
+		uint8_t data = memory_read_byte( m_addrspace[ 0 ], offset );
 //      logerror( "%s: AT28C16: read( %04x ) data %02x\n", cpuexec_describe_context(machine), offset, data );
 		return data;
 	}

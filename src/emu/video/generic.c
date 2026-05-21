@@ -118,7 +118,7 @@ const gfx_layout gfx_16x16x4_planar =
     palette RAM referenced by offset
 -------------------------------------------------*/
 
-INLINE UINT16 paletteram16_le(running_machine *machine, offs_t offset)
+INLINE uint16_t paletteram16_le(running_machine *machine, offs_t offset)
 {
 	return machine->generic.paletteram.u8[offset & ~1] | (machine->generic.paletteram.u8[offset | 1] << 8);
 }
@@ -130,7 +130,7 @@ INLINE UINT16 paletteram16_le(running_machine *machine, offs_t offset)
     palette RAM referenced by offset
 -------------------------------------------------*/
 
-INLINE UINT16 paletteram16_be(running_machine *machine, offs_t offset)
+INLINE uint16_t paletteram16_be(running_machine *machine, offs_t offset)
 {
 	return machine->generic.paletteram.u8[offset | 1] | (machine->generic.paletteram.u8[offset & ~1] << 8);
 }
@@ -142,7 +142,7 @@ INLINE UINT16 paletteram16_be(running_machine *machine, offs_t offset)
     RAM referenced by offset
 -------------------------------------------------*/
 
-INLINE UINT16 paletteram16_split(running_machine *machine, offs_t offset)
+INLINE uint16_t paletteram16_split(running_machine *machine, offs_t offset)
 {
 	return machine->generic.paletteram.u8[offset] | (machine->generic.paletteram2.u8[offset] << 8);
 }
@@ -154,7 +154,7 @@ INLINE UINT16 paletteram16_split(running_machine *machine, offs_t offset)
     palette RAM referenced by offset
 -------------------------------------------------*/
 
-INLINE UINT32 paletteram32_be(running_machine *machine, offs_t offset)
+INLINE uint32_t paletteram32_be(running_machine *machine, offs_t offset)
 {
 	return machine->generic.paletteram.u16[offset | 1] | (machine->generic.paletteram.u16[offset & ~1] << 16);
 }
@@ -166,7 +166,7 @@ INLINE UINT32 paletteram32_be(running_machine *machine, offs_t offset)
     shift values
 -------------------------------------------------*/
 
-INLINE void set_color_444(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void set_color_444(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal4bit(data >> rshift), pal4bit(data >> gshift), pal4bit(data >> bshift));
 }
@@ -178,9 +178,9 @@ INLINE void set_color_444(running_machine *machine, pen_t color, int rshift, int
     shift values
 -------------------------------------------------*/
 
-INLINE void set_color_4444(running_machine *machine, pen_t color, int ishift, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void set_color_4444(running_machine *machine, pen_t color, int ishift, int rshift, int gshift, int bshift, uint16_t data)
 {
-	static const UINT8 ztable[16] =
+	static const uint8_t ztable[16] =
 		{ 0x0, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf, 0x10, 0x11 };
 	int i, r, g, b;
 
@@ -199,7 +199,7 @@ INLINE void set_color_4444(running_machine *machine, pen_t color, int ishift, in
     shift values
 -------------------------------------------------*/
 
-INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> rshift), pal5bit(data >> gshift), pal5bit(data >> bshift));
 }
@@ -211,7 +211,7 @@ INLINE void set_color_555(running_machine *machine, pen_t color, int rshift, int
     shift values
 -------------------------------------------------*/
 
-INLINE void set_color_888(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT32 data)
+INLINE void set_color_888(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint32_t data)
 {
 	palette_set_color_rgb(machine, color, (data >> rshift) & 0xff, (data >> gshift) & 0xff, (data >> bshift) & 0xff);
 }
@@ -311,7 +311,7 @@ equal to the size of normal spriteram.
     Then the video driver must draw the sprites from the buffered_spriteram
 pointer.  The function buffer_spriteram_w() is used to simulate hardware
 which buffers the spriteram from a memory location write.  The function
-buffer_spriteram(UINT8 *ptr, int length) can be used where
+buffer_spriteram(uint8_t *ptr, int length) can be used where
 more control is needed over what is buffered.
 
     For examples see darkseal.c, contra.c, lastduel.c, bionicc.c etc.
@@ -366,12 +366,12 @@ WRITE32_HANDLER( buffer_spriteram32_2_w )
     spriteram
 -------------------------------------------------*/
 
-void buffer_spriteram(running_machine *machine, UINT8 *ptr, int length)
+void buffer_spriteram(running_machine *machine, uint8_t *ptr, int length)
 {
 	memcpy(machine->generic.buffered_spriteram.u8, ptr, length);
 }
 
-void buffer_spriteram_2(running_machine *machine, UINT8 *ptr, int length)
+void buffer_spriteram_2(running_machine *machine, uint8_t *ptr, int length)
 {
 	memcpy(machine->generic.buffered_spriteram2.u8, ptr, length);
 }

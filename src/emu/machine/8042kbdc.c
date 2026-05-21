@@ -208,7 +208,7 @@ static struct
 	void (*keyboard_interrupt)(running_machine *machine, int state);
 	int (*get_out2)(running_machine *machine);
 
-	UINT8 inport, outport, data, command;
+	uint8_t inport, outport, data, command;
 
 	struct {
 		int received;
@@ -244,9 +244,9 @@ static void at_8042_check_keyboard(running_machine *machine);
 
 ***************************************************************************/
 
-static void at_8042_set_outport(running_machine *machine, UINT8 data, int initial)
+static void at_8042_set_outport(running_machine *machine, uint8_t data, int initial)
 {
-	UINT8 change;
+	uint8_t change;
 	change = initial ? 0xFF : (kbdc8042.outport ^ data);
 	kbdc8042.outport = data;
 	if (change & 0x02)
@@ -282,7 +282,7 @@ void kbdc8042_init(running_machine *machine, const struct kbdc8042_interface *in
 	timer_pulse(machine, ATTOTIME_IN_HZ(60), NULL, 0, kbdc8042_time);
 }
 
-static void at_8042_receive(running_machine *machine, UINT8 data)
+static void at_8042_receive(running_machine *machine, uint8_t data)
 {
 	if (LOG_KEYBOARD)
 		logerror("at_8042_receive Received 0x%02x\n", data);
@@ -350,7 +350,7 @@ static void at_8042_clear_keyboard_received(void)
 
 READ8_HANDLER(kbdc8042_8_r)
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	switch (offset) {
 	case 0:

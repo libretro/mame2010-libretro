@@ -34,15 +34,15 @@ struct _msm5205_state
 	const msm5205_interface *intf;
 	running_device *device;
 	sound_stream * stream;  /* number of stream system      */
-	INT32 clock;				/* clock rate */
+	int32_t clock;				/* clock rate */
 	emu_timer *timer;        /* VCLK callback timer          */
-	INT32 data;               /* next adpcm data              */
-	INT32 vclk;               /* vclk signal (external mode)  */
-	INT32 reset;              /* reset pin signal             */
-	INT32 prescaler;          /* prescaler selector S1 and S2 */
-	INT32 bitwidth;           /* bit width selector -3B/4B    */
-	INT32 signal;             /* current ADPCM signal         */
-	INT32 step;               /* current ADPCM step           */
+	int32_t data;               /* next adpcm data              */
+	int32_t vclk;               /* vclk signal (external mode)  */
+	int32_t reset;              /* reset pin signal             */
+	int32_t prescaler;          /* prescaler selector S1 and S2 */
+	int32_t bitwidth;           /* bit width selector -3B/4B    */
+	int32_t signal;             /* current ADPCM signal         */
+	int32_t step;               /* current ADPCM step           */
 	int diff_lookup[49*16];
 };
 

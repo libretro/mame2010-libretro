@@ -15,13 +15,13 @@
 
 typedef struct
 {
-	UINT32 lba;
-	UINT32 blocks;
-	UINT32 last_lba;
-	UINT32 bytes_per_sector;
-	UINT32 num_subblocks;
-	UINT32 cur_subblock;
-	UINT32 play_err_flag;
+	uint32_t lba;
+	uint32_t blocks;
+	uint32_t last_lba;
+	uint32_t bytes_per_sector;
+	uint32_t num_subblocks;
+	uint32_t cur_subblock;
+	uint32_t play_err_flag;
 	cdrom_file *cdrom;
 } SCSICd;
 
@@ -38,9 +38,9 @@ static void phys_frame_to_msf(int phys_frame, int *m, int *s, int *f)
 //
 // Execute a SCSI command.
 
-static int scsicd_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
+static int scsicd_exec_command( SCSIInstance *scsiInstance, uint8_t *statusCode )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICd *our_this = (SCSICd *)SCSIThis( &SCSIClassCDROM, scsiInstance );
 
@@ -306,17 +306,17 @@ static int scsicd_exec_command( SCSIInstance *scsiInstance, UINT8 *statusCode )
 //
 // Read data from the device resulting from the execution of a command
 
-static void scsicd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void scsicd_read_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICd *our_this = (SCSICd *)SCSIThis( &SCSIClassCDROM, scsiInstance );
 
 	int i;
-	UINT32 last_phys_frame;
+	uint32_t last_phys_frame;
 	cdrom_file *cdrom = our_this->cdrom;
-	UINT32 temp;
-	UINT8 tmp_buffer[2048];
+	uint32_t temp;
+	uint8_t tmp_buffer[2048];
 	running_device *cdda;
 
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -527,7 +527,7 @@ static void scsicd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataL
 						int len;
 						int in_len;
 						int dptr;
-						UINT32 tstart;
+						uint32_t tstart;
 
 						start_trk = command[6];
 						if( start_trk == 0 )
@@ -625,9 +625,9 @@ static void scsicd_read_data( SCSIInstance *scsiInstance, UINT8 *data, int dataL
 //
 // Write data to the CD-ROM device as part of the execution of a command
 
-static void scsicd_write_data( SCSIInstance *scsiInstance, UINT8 *data, int dataLength )
+static void scsicd_write_data( SCSIInstance *scsiInstance, uint8_t *data, int dataLength )
 {
-	UINT8 *command;
+	uint8_t *command;
 	int commandLength;
 	SCSICd *our_this = (SCSICd *)SCSIThis( &SCSIClassCDROM, scsiInstance );
 	SCSIGetCommand( scsiInstance, &command, &commandLength );
@@ -727,26 +727,26 @@ static void scsicd_set_device( SCSIInstance *scsiInstance, cdrom_file *cdrom )
 	our_this->cdrom = cdrom;
 }
 
-static int scsicd_dispatch(int operation, void *file, INT64 intparm, void *ptrparm)
+static int scsicd_dispatch(int operation, void *file, int64_t intparm, void *ptrparm)
 {
 	SCSIAllocInstanceParams *params;
 
 	switch (operation)
 	{
 		case SCSIOP_EXEC_COMMAND:
-			return scsicd_exec_command( (SCSIInstance *)file, (UINT8 *)ptrparm );
+			return scsicd_exec_command( (SCSIInstance *)file, (uint8_t *)ptrparm );
 
 		case SCSIOP_READ_DATA:
-			scsicd_read_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			scsicd_read_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_WRITE_DATA:
-			scsicd_write_data( (SCSIInstance *)file, (UINT8 *)ptrparm, intparm );
+			scsicd_write_data( (SCSIInstance *)file, (uint8_t *)ptrparm, intparm );
 			return 0;
 
 		case SCSIOP_ALLOC_INSTANCE:
 			params = (SCSIAllocInstanceParams *)ptrparm;
-			SCSIBase( &SCSIClassCDROM, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+			SCSIBase( &SCSIClassCDROM, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 			scsicd_alloc_instance( params->instance, params->diskregion );
 			return 0;
 
@@ -763,7 +763,7 @@ static int scsicd_dispatch(int operation, void *file, INT64 intparm, void *ptrpa
 			return 0;
 	}
 
-	return SCSIBase( &SCSIClassCDROM, operation, (SCSIInstance *)file, intparm, (UINT8 *)ptrparm );
+	return SCSIBase( &SCSIClassCDROM, operation, (SCSIInstance *)file, intparm, (uint8_t *)ptrparm );
 }
 
 const SCSIClass SCSIClassCDROM =

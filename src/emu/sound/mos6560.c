@@ -71,7 +71,7 @@ struct _mos6560_state
 
 	screen_device *screen;
 
-	UINT8 reg[16];
+	uint8_t reg[16];
 
 	bitmap_t *bitmap;
 
@@ -84,10 +84,10 @@ struct _mos6560_state
 	int chargenaddr, videoaddr;
 
 	/* values in videoformat */
-	UINT16 backgroundcolor, framecolor, helpercolor;
+	uint16_t backgroundcolor, framecolor, helpercolor;
 
 	/* arrays for bit to color conversion without condition checking */
-	UINT16 mono[2], monoinverted[2], multi[4], multiinverted[4];
+	uint16_t mono[2], monoinverted[2], multi[4], multiinverted[4];
 
 	/* video chip settings */
 	int total_xsize, total_ysize, total_lines, total_vretracerate;
@@ -112,8 +112,8 @@ struct _mos6560_state
 	noisesamples;	  /* count of samples to give out per tone */
 
 	sound_stream *channel;
-	INT16 *tone;
-	INT8 *noise;
+	int16_t *tone;
+	int8_t *noise;
 };
 
 /*****************************************************************************
@@ -208,7 +208,7 @@ static void mos6560_soundport_w( running_device *device, int offset, int data );
  mos6560_draw_character
 -------------------------------------------------*/
 
-static void mos6560_draw_character( running_device *device, int ybegin, int yend, int ch, int yoff, int xoff, UINT16 *color )
+static void mos6560_draw_character( running_device *device, int ybegin, int yend, int ch, int yoff, int xoff, uint16_t *color )
 {
 	mos6560_state *mos6560 = get_safe_token(device);
 	int y, code;
@@ -232,7 +232,7 @@ static void mos6560_draw_character( running_device *device, int ybegin, int yend
  mos6560_draw_character_multi
 -------------------------------------------------*/
 
-static void mos6560_draw_character_multi( running_device *device, int ybegin, int yend, int ch, int yoff, int xoff, UINT16 *color )
+static void mos6560_draw_character_multi( running_device *device, int ybegin, int yend, int ch, int yoff, int xoff, uint16_t *color )
 {
 	mos6560_state *mos6560 = get_safe_token(device);
 	int y, code;
@@ -510,7 +510,7 @@ void mos6560_raster_interrupt_gen( running_device *device )
      main screen bitmap
 -------------------------------------------------*/
 
-UINT32 mos6560_video_update( running_device *device, bitmap_t *bitmap, const rectangle *cliprect )
+uint32_t mos6560_video_update( running_device *device, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	mos6560_state *mos6560 = get_safe_token(device);
 
@@ -744,7 +744,7 @@ static void mos6560_sound_start( running_device *device )
 
 	/* buffer for fastest played sample for 5 second so we have enough data for min 5 second */
 	mos6560->noisesize = NOISE_FREQUENCY_MAX * NOISE_BUFFER_SIZE_SEC;
-	mos6560->noise = auto_alloc_array(device->machine, INT8, mos6560->noisesize);
+	mos6560->noise = auto_alloc_array(device->machine, int8_t, mos6560->noisesize);
 	{
 		int noiseshift = 0x7ffff8;
 		char data;
@@ -779,11 +779,11 @@ static void mos6560_sound_start( running_device *device )
 
 	if (mos6560->tonesize > 0)
 	{
-		mos6560->tone = auto_alloc_array(device->machine, INT16, mos6560->tonesize);
+		mos6560->tone = auto_alloc_array(device->machine, int16_t, mos6560->tonesize);
 
 		for (i = 0; i < mos6560->tonesize; i++)
 		{
-			mos6560->tone[i] = (INT16)(sin (2 * M_PI * i / mos6560->tonesize) * 127 + 0.5);
+			mos6560->tone[i] = (int16_t)(sin (2 * M_PI * i / mos6560->tonesize) * 127 + 0.5);
 		}
 	}
 	else

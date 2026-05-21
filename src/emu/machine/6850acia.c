@@ -58,16 +58,16 @@ struct _acia6850_t
 	devcb_resolved_read_line	in_dcd_func;
 	devcb_resolved_write_line	out_irq_func;
 
-	UINT8		ctrl;
-	UINT8		status;
+	uint8_t		ctrl;
+	uint8_t		status;
 
-	UINT8		tdr;
-	UINT8		rdr;
-	UINT8		rx_shift;
-	UINT8		tx_shift;
+	uint8_t		tdr;
+	uint8_t		rdr;
+	uint8_t		rx_shift;
+	uint8_t		tx_shift;
 
-	UINT8		rx_counter;
-	UINT8		tx_counter;
+	uint8_t		rx_counter;
+	uint8_t		tx_counter;
 
 	int			rx_clock;
 	int			tx_clock;
@@ -259,7 +259,7 @@ static DEVICE_START( acia6850 )
 
 READ8_DEVICE_HANDLER( acia6850_stat_r )
 {
-	UINT8 status;
+	uint8_t status;
 
 	acia6850_t *acia_p = get_token(device);
 

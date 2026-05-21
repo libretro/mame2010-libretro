@@ -71,15 +71,15 @@ typedef struct _tmsprom_interface tmsprom_interface;
 struct _tmsprom_interface
 {
 	const char *prom_region;		/* prom memory region - sound region is automatically assigned */
-	UINT32 rom_size;				/* individual rom_size */
-	UINT8 pdc_bit;					/* bit # of pdc line */
+	uint32_t rom_size;				/* individual rom_size */
+	uint8_t pdc_bit;					/* bit # of pdc line */
 	/* virtual bit 8: constant 0, virtual bit 9:constant 1 */
-	UINT8 ctl1_bit;					/* bit # of ctl1 line */
-	UINT8 ctl2_bit;					/* bit # of ctl2 line */
-	UINT8 ctl4_bit;					/* bit # of ctl4 line */
-	UINT8 ctl8_bit;					/* bit # of ctl8 line */
-	UINT8 reset_bit;				/* bit # of rom reset */
-	UINT8 stop_bit;					/* bit # of stop */
+	uint8_t ctl1_bit;					/* bit # of ctl1 line */
+	uint8_t ctl2_bit;					/* bit # of ctl2 line */
+	uint8_t ctl4_bit;					/* bit # of ctl4 line */
+	uint8_t ctl8_bit;					/* bit # of ctl8 line */
+	uint8_t reset_bit;				/* bit # of rom reset */
+	uint8_t stop_bit;					/* bit # of stop */
 	devcb_write_line pdc_func;		/* tms pdc func */
 	devcb_write8 ctl_func;			/* tms ctl func */
 };

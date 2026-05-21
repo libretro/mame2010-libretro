@@ -113,23 +113,23 @@ struct _smc91c9x_state
 	smc91c9x_irq_func irq_handler;
 
 	/* raw register data and masks */
-	UINT16			reg[64];
-	UINT16			regmask[64];
+	uint16_t			reg[64];
+	uint16_t			regmask[64];
 
 	/* IRQ information */
-	UINT8			irq_state;
+	uint8_t			irq_state;
 
 	/* allocate information */
-	UINT8			alloc_count;
+	uint8_t			alloc_count;
 
 	/* transmit/receive FIFOs */
-	UINT8			fifo_count;
-	UINT8			rx[ETHER_BUFFER_SIZE * ETHER_RX_BUFFERS];
-	UINT8			tx[ETHER_BUFFER_SIZE];
+	uint8_t			fifo_count;
+	uint8_t			rx[ETHER_BUFFER_SIZE * ETHER_RX_BUFFERS];
+	uint8_t			tx[ETHER_BUFFER_SIZE];
 
 	/* counters */
-	UINT32			sent;
-	UINT32			recd;
+	uint32_t			sent;
+	uint32_t			recd;
 };
 
 
@@ -171,8 +171,8 @@ INLINE smc91c9x_state *get_safe_token(running_device *device)
 
 static void update_ethernet_irq(smc91c9x_state *smc)
 {
-	UINT8 mask = smc->reg[EREG_INTERRUPT] >> 8;
-	UINT8 state = smc->reg[EREG_INTERRUPT] & 0xff;
+	uint8_t mask = smc->reg[EREG_INTERRUPT] >> 8;
+	uint8_t state = smc->reg[EREG_INTERRUPT] & 0xff;
 
 	/* update the IRQ state */
 	smc->irq_state = ((mask & state) != 0);
@@ -220,7 +220,7 @@ static void finish_enqueue(smc91c9x_state *smc, int param)
 		if (smc->fifo_count < ETHER_RX_BUFFERS)
 		{
 			int buffer_len = ((smc->tx[3] << 8) | smc->tx[2]) & 0x7ff;
-			UINT8 *packet = &smc->rx[smc->fifo_count++ * ETHER_BUFFER_SIZE];
+			uint8_t *packet = &smc->rx[smc->fifo_count++ * ETHER_BUFFER_SIZE];
 			int packet_len;
 
 			/* compute the packet length */
@@ -264,7 +264,7 @@ static void finish_enqueue(smc91c9x_state *smc, int param)
     process_command - handle MMU commands
 -------------------------------------------------*/
 
-static void process_command(smc91c9x_state *smc, UINT16 data)
+static void process_command(smc91c9x_state *smc, uint16_t data)
 {
 	switch ((data >> 5) & 7)
 	{
@@ -343,7 +343,7 @@ static void process_command(smc91c9x_state *smc, UINT16 data)
 READ16_DEVICE_HANDLER( smc91c9x_r )
 {
 	smc91c9x_state *smc = get_safe_token(device);
-	UINT32 result = ~0;
+	uint32_t result = ~0;
 
 	/* determine the effective register */
 	offset %= 8;
@@ -364,7 +364,7 @@ READ16_DEVICE_HANDLER( smc91c9x_r )
 		case EREG_DATA_0:	/* data register */
 		case EREG_DATA_1:	/* data register */
 		{
-			UINT8 *buffer = (smc->reg[EREG_POINTER] & 0x8000) ? smc->rx : smc->tx;
+			uint8_t *buffer = (smc->reg[EREG_POINTER] & 0x8000) ? smc->rx : smc->tx;
 			int addr = smc->reg[EREG_POINTER] & 0x7ff;
 			result = buffer[addr++];
 			if (ACCESSING_BITS_8_15)
@@ -388,7 +388,7 @@ READ16_DEVICE_HANDLER( smc91c9x_r )
 WRITE16_DEVICE_HANDLER( smc91c9x_w )
 {
 	smc91c9x_state *smc = get_safe_token(device);
-	UINT16 olddata;
+	uint16_t olddata;
 
 	/* determine the effective register */
 	offset %= 8;
@@ -480,7 +480,7 @@ WRITE16_DEVICE_HANDLER( smc91c9x_w )
 		case EREG_DATA_0:	/* data register */
 		case EREG_DATA_1:	/* data register */
 		{
-			UINT8 *buffer = (smc->reg[EREG_POINTER] & 0x8000) ? smc->rx : smc->tx;
+			uint8_t *buffer = (smc->reg[EREG_POINTER] & 0x8000) ? smc->rx : smc->tx;
 			int addr = smc->reg[EREG_POINTER] & 0x7ff;
 			buffer[addr++] = data;
 			if (ACCESSING_BITS_8_15)

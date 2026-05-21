@@ -26,14 +26,14 @@ typedef struct {
 	int offset_x, offset_y, visible_y, mode;
 	/* palette */
 	int	pal_write_first, cmd_write_first;
-	UINT8 pal_write, cmd_write;
-	UINT8 palReg[32], statReg[10], contReg[48], read_ahead;
+	uint8_t pal_write, cmd_write;
+	uint8_t palReg[32], statReg[10], contReg[48], read_ahead;
 	/* memory */
-	UINT16 address_latch;
-	UINT8 *vram, *vram_exp;
+	uint16_t address_latch;
+	uint8_t *vram, *vram_exp;
 	int vram_size;
     /* interrupt */
-    UINT8 INT;
+    uint8_t INT;
     void (*INTCallback)(running_machine *, int);
 	int scanline;
     /* blinking */
@@ -43,12 +43,12 @@ typedef struct {
 	/* size */
 	int size, size_old, size_auto, size_now;
 	/* mouse */
-	UINT8 mx_delta, my_delta;
+	uint8_t mx_delta, my_delta;
 	/* mouse & lightpen */
-	UINT8 button_state;
+	uint8_t button_state;
 	/* palette */
-	UINT16 pal_ind16[16];
-	UINT16 pal_ind256[256];
+	uint16_t pal_ind16[16];
+	uint16_t pal_ind256[256];
 	/* render screen */
 	screen_device *screen;
 	/* render bitmap */
@@ -61,16 +61,16 @@ typedef struct {
 		int NX,NY;
 		int MX;
 		int ASX,ADX,ANX;
-		UINT8 CL;
-		UINT8 LO;
-		UINT8 CM;
-		UINT8 MXS, MXD;
+		uint8_t CL;
+		uint8_t LO;
+		uint8_t CM;
+		uint8_t MXS, MXD;
 	} MMC;
 	int  VdpOpsCnt;
 	void (*VdpEngine)(void);
 } V9938;
 
-static UINT16 *pal_indYJK;
+static uint16_t *pal_indYJK;
 
 static V9938 vdps[2];
 static V9938 *vdp = NULL;
@@ -96,9 +96,9 @@ static const char *const v9938_modes[] = {
 
 static void v9938_register_write (running_machine *machine, int reg, int data);
 static void v9938_update_command (void);
-static void v9938_cpu_to_vdp (UINT8 V);
-static UINT8 v9938_command_unit_w (UINT8 Op);
-static UINT8 v9938_vdp_to_cpu (void);
+static void v9938_cpu_to_vdp (uint8_t V);
+static uint8_t v9938_command_unit_w (uint8_t Op);
+static uint8_t v9938_vdp_to_cpu (void);
 static void v9938_set_mode (void);
 static void v9938_refresh_line (running_machine *machine, bitmap_t *bmp, int line);
 
@@ -159,13 +159,13 @@ to emulate this. Also it keeps the palette a reasonable size. :)
 PALETTE_INIT( v9958 )
 {
 	int r,g,b,y,j,k,i,k0,j0,n;
-	UINT8 pal[19268*3];
+	uint8_t pal[19268*3];
 
 	/* init v9938 512-color palette */
 	PALETTE_INIT_CALL(v9938);
 
 	/* set up YJK table */
-	pal_indYJK = auto_alloc_array(machine, UINT16, 0x20000);
+	pal_indYJK = auto_alloc_array(machine, uint16_t, 0x20000);
 
 	LOG(("Building YJK table for V9958 screens, may take a while ... \n"));
 	i = 0;
@@ -235,7 +235,7 @@ pixel3 = *(data+3) & 8 ? pal_ind16[*(data+3) >> 4] : pal_indYJK[ind | *(data+3) 
 
 */
 
-static void v9938_palette_w(UINT8 data)
+static void v9938_palette_w(uint8_t data)
 	{
 	int indexp;
 
@@ -275,7 +275,7 @@ WRITE8_HANDLER( v9938_1_palette_w )
 static void v9938_reset_palette (void)
 	{
 	/* taken from V9938 Technical Data book, page 148. it's in G-R-B format */
-	static const UINT8 pal16[16*3] = {
+	static const uint8_t pal16[16*3] = {
 		0, 0, 0, /* 0: black/transparent */
 		0, 0, 0, /* 1: black */
 		6, 1, 1, /* 2: medium green */
@@ -347,7 +347,7 @@ static int v9938_vram_read (int offset)
 		return vdp->vram[offset];
 	}
 
-static void v9938_vram_w( UINT8 data )
+static void v9938_vram_w( uint8_t data )
 	{
 	int address;
 
@@ -388,9 +388,9 @@ WRITE8_HANDLER (v9938_1_vram_w)
 	v9938_vram_w( data );
 }
 
-static UINT8 v9938_vram_r(void)
+static uint8_t v9938_vram_r(void)
 	{
-	UINT8 ret;
+	uint8_t ret;
 	int address;
 
 	address = ((int)vdp->contReg[14] << 14) | vdp->address_latch;
@@ -435,7 +435,7 @@ READ8_HANDLER (v9938_1_vram_r)
 	return v9938_vram_r();
 }
 
-static void v9938_command_w(running_machine *machine, UINT8 data)
+static void v9938_command_w(running_machine *machine, uint8_t data)
 	{
 	if (vdp->cmd_write_first)
 		{
@@ -447,7 +447,7 @@ static void v9938_command_w(running_machine *machine, UINT8 data)
 		else
 			{
 			vdp->address_latch =
-				(((UINT16)data << 8) | vdp->cmd_write) & 0x3fff;
+				(((uint16_t)data << 8) | vdp->cmd_write) & 0x3fff;
 			if ( !(data & 0x40) ) v9938_vram_r (); /* read ahead! */
 			}
 
@@ -495,7 +495,7 @@ void v9938_init (running_machine *machine, int which, screen_device &screen, bit
 	vdp->size_old = -1;
 
 	/* allocate VRAM */
-	vdp->vram = auto_alloc_array_clear(machine, UINT8, 0x20000);
+	vdp->vram = auto_alloc_array_clear(machine, uint8_t, 0x20000);
 	if (vdp->vram_size < 0x20000)
 	{
 		/* set unavailable RAM to 0xff */
@@ -504,7 +504,7 @@ void v9938_init (running_machine *machine, int which, screen_device &screen, bit
 
 	/* do we have expanded memory? */
 	if (vdp->vram_size > 0x20000)
-		vdp->vram_exp = auto_alloc_array_clear(machine, UINT8, 0x10000);
+		vdp->vram_exp = auto_alloc_array_clear(machine, uint8_t, 0x10000);
 	else
 		vdp->vram_exp = NULL;
 
@@ -580,7 +580,7 @@ void v9938_reset (int which)
 
 static void v9938_check_int (running_machine *machine)
 	{
-	UINT8 n;
+	uint8_t n;
 
 	n = ( (vdp->contReg[1] & 0x20) && (vdp->statReg[0] & 0x80) /*&& vdp->vblank_int*/) ||
 		( (vdp->statReg[1] & 0x01) && (vdp->contReg[0] & 0x10) );
@@ -632,7 +632,7 @@ void v9938_set_resolution (int which, int i)
 
 ***************************************************************************/
 
-static void v9938_register_w(running_machine *machine, UINT8 data)
+static void v9938_register_w(running_machine *machine, uint8_t data)
 {
 	int reg;
 
@@ -658,7 +658,7 @@ WRITE8_HANDLER (v9938_1_register_w)
 
 static void v9938_register_write (running_machine *machine, int reg, int data)
 {
-	static UINT8 const reg_mask[] =
+	static uint8_t const reg_mask[] =
 	{
 		0x7e, 0x7b, 0x7f, 0xff, 0x3f, 0xff, 0x3f, 0xff,
 		0xfb, 0xbf, 0x07, 0x03, 0xff, 0xff, 0x07, 0x0f,
@@ -744,10 +744,10 @@ static void v9938_register_write (running_machine *machine, int reg, int data)
 	vdp->contReg[reg] = data;
 }
 
-static UINT8 v9938_status_r(running_machine *machine)
+static uint8_t v9938_status_r(running_machine *machine)
 	{
 	int reg;
-	UINT8 ret;
+	uint8_t ret;
 
 	vdp->cmd_write_first = 0;
 
@@ -844,9 +844,9 @@ READ8_HANDLER( v9938_1_status_r )
 #undef	V9938_WIDTH
 #undef	V9938_BPP
 
-static void v9938_sprite_mode1 (int line, UINT8 *col)
+static void v9938_sprite_mode1 (int line, uint8_t *col)
 	{
-	UINT8	*attrtbl, *patterntbl, *patternptr;
+	uint8_t	*attrtbl, *patterntbl, *patternptr;
 	int x, y, p, height, c, p2, i, n, pattern;
 
 	memset (col, 0, 256);
@@ -966,7 +966,7 @@ static void v9938_sprite_mode1 (int line, UINT8 *col)
 		vdp->statReg[0] = (vdp->statReg[0] & 0xa0) | p;
 	}
 
-static void v9938_sprite_mode2 (int line, UINT8 *col)
+static void v9938_sprite_mode2 (int line, uint8_t *col)
 	{
 	int attrtbl, patterntbl, patternptr, colourtbl;
 	int x, i, y, p, height, c, p2, n, pattern, colourmask, first_cc_seen;
@@ -1097,14 +1097,14 @@ skip_first_cc_set:
 	}
 
 typedef struct {
-	UINT8 m;
-	void (*visible_16)(const pen_t *, UINT16*, int);
-	void (*visible_16s)(const pen_t *, UINT16*, int);
-	void (*border_16)(const pen_t *, UINT16*);
-	void (*border_16s)(const pen_t *, UINT16*);
-	void (*sprites)(int, UINT8*);
-	void (*draw_sprite_16)(const pen_t *, UINT16*, UINT8*);
-	void (*draw_sprite_16s)(const pen_t *, UINT16*, UINT8*);
+	uint8_t m;
+	void (*visible_16)(const pen_t *, uint16_t*, int);
+	void (*visible_16s)(const pen_t *, uint16_t*, int);
+	void (*border_16)(const pen_t *, uint16_t*);
+	void (*border_16s)(const pen_t *, uint16_t*);
+	void (*sprites)(int, uint8_t*);
+	void (*draw_sprite_16)(const pen_t *, uint16_t*, uint8_t*);
+	void (*draw_sprite_16s)(const pen_t *, uint16_t*, uint8_t*);
 } V9938_MODE;
 
 static const V9938_MODE modes[] = {
@@ -1214,8 +1214,8 @@ static void v9938_refresh_16 (running_machine *machine, bitmap_t *bmp, int line)
 	{
 	const pen_t *pens = machine->pens;
 	int i, double_lines;
-	UINT8 col[256];
-	UINT16 *ln, *ln2 = NULL;
+	uint8_t col[256];
+	uint16_t *ln, *ln2 = NULL;
 
 	double_lines = 0;
 
@@ -1651,31 +1651,31 @@ void v9938_update_mouse_state(int which, int mx_delta, int my_delta, int button_
 /*************************************************************/
 /** Function prototypes                                     **/
 /*************************************************************/
-static UINT8 *VDPVRMP(register UINT8 M, register int MX, register int X, register int Y);
+static uint8_t *VDPVRMP(register uint8_t M, register int MX, register int X, register int Y);
 
-static UINT8 VDPpoint5(register int MXS, register int SX, register int SY);
-static UINT8 VDPpoint6(register int MXS, register int SX, register int SY);
-static UINT8 VDPpoint7(register int MXS, register int SX, register int SY);
-static UINT8 VDPpoint8(register int MXS, register int SX, register int SY);
+static uint8_t VDPpoint5(register int MXS, register int SX, register int SY);
+static uint8_t VDPpoint6(register int MXS, register int SX, register int SY);
+static uint8_t VDPpoint7(register int MXS, register int SX, register int SY);
+static uint8_t VDPpoint8(register int MXS, register int SX, register int SY);
 
-static UINT8 VDPpoint(register UINT8 SM, register int MXS,
+static uint8_t VDPpoint(register uint8_t SM, register int MXS,
                      register int SX, register int SY);
 
-static void VDPpsetlowlevel(register UINT8 *P, register UINT8 CL,
-                            register UINT8 M, register UINT8 OP);
+static void VDPpsetlowlevel(register uint8_t *P, register uint8_t CL,
+                            register uint8_t M, register uint8_t OP);
 
 static void VDPpset5(register int MXD, register int DX, register int DY,
-                     register UINT8 CL, register UINT8 OP);
+                     register uint8_t CL, register uint8_t OP);
 static void VDPpset6(register int MXD, register int DX, register int DY,
-                     register UINT8 CL, register UINT8 OP);
+                     register uint8_t CL, register uint8_t OP);
 static void VDPpset7(register int MXD, register int DX, register int DY,
-                     register UINT8 CL, register UINT8 OP);
+                     register uint8_t CL, register uint8_t OP);
 static void VDPpset8(register int MXD, register int DX, register int DY,
-                     register UINT8 CL, register UINT8 OP);
+                     register uint8_t CL, register uint8_t OP);
 
-static void VDPpset(register UINT8 SM, register int MXD,
+static void VDPpset(register uint8_t SM, register int MXD,
                     register int DX, register int DY,
-                    register UINT8 CL, register UINT8 OP);
+                    register uint8_t CL, register uint8_t OP);
 
 static int GetVdpTimingValue(register const int *);
 
@@ -1690,12 +1690,12 @@ static void HmmmEngine(void);
 static void YmmmEngine(void);
 static void HmmcEngine(void);
 
-static void ReportVdpCommand(register UINT8 Op);
+static void ReportVdpCommand(register uint8_t Op);
 
 /*************************************************************/
 /** Variables visible only in this module                   **/
 /*************************************************************/
-static const UINT8 Mask[4] = { 0x0F,0x03,0x0F,0xFF };
+static const uint8_t Mask[4] = { 0x0F,0x03,0x0F,0xFF };
 static const int  PPB[4]  = { 2,4,2,1 };
 static const int  PPL[4]  = { 256,512,512,256 };
 
@@ -1733,7 +1733,7 @@ static const int lmmm_timing[8]={
 /** VDPVRMP() **********************************************/
 /** Calculate addr of a pixel in vram                       **/
 /*************************************************************/
-INLINE UINT8 *VDPVRMP(UINT8 M,int MX,int X,int Y)
+INLINE uint8_t *VDPVRMP(uint8_t M,int MX,int X,int Y)
 {
   switch(M)
   {
@@ -1749,7 +1749,7 @@ INLINE UINT8 *VDPVRMP(UINT8 M,int MX,int X,int Y)
 /** VDPpoint5() ***********************************************/
 /** Get a pixel on screen 5                                 **/
 /*************************************************************/
-INLINE UINT8 VDPpoint5(int MXS, int SX, int SY)
+INLINE uint8_t VDPpoint5(int MXS, int SX, int SY)
 {
   return (*VDP_VRMP5(MXS, SX, SY) >>
           (((~SX)&1)<<2)
@@ -1759,7 +1759,7 @@ INLINE UINT8 VDPpoint5(int MXS, int SX, int SY)
 /** VDPpoint6() ***********************************************/
 /** Get a pixel on screen 6                                 **/
 /*************************************************************/
-INLINE UINT8 VDPpoint6(int MXS, int SX, int SY)
+INLINE uint8_t VDPpoint6(int MXS, int SX, int SY)
 {
   return (*VDP_VRMP6(MXS, SX, SY) >>
           (((~SX)&3)<<1)
@@ -1769,7 +1769,7 @@ INLINE UINT8 VDPpoint6(int MXS, int SX, int SY)
 /** VDPpoint7() ***********************************************/
 /** Get a pixel on screen 7                                 **/
 /*************************************************************/
-INLINE UINT8 VDPpoint7(int MXS, int SX, int SY)
+INLINE uint8_t VDPpoint7(int MXS, int SX, int SY)
 {
   return (*VDP_VRMP7(MXS, SX, SY) >>
           (((~SX)&1)<<2)
@@ -1779,7 +1779,7 @@ INLINE UINT8 VDPpoint7(int MXS, int SX, int SY)
 /** VDPpoint8() ***********************************************/
 /** Get a pixel on screen 8                                 **/
 /*************************************************************/
-INLINE UINT8 VDPpoint8(int MXS, int SX, int SY)
+INLINE uint8_t VDPpoint8(int MXS, int SX, int SY)
 {
   return *VDP_VRMP8(MXS, SX, SY);
 }
@@ -1787,7 +1787,7 @@ INLINE UINT8 VDPpoint8(int MXS, int SX, int SY)
 /** VDPpoint() ************************************************/
 /** Get a pixel on a screen                                 **/
 /*************************************************************/
-INLINE UINT8 VDPpoint(UINT8 SM, int MXS, int SX, int SY)
+INLINE uint8_t VDPpoint(uint8_t SM, int MXS, int SX, int SY)
 {
   switch(SM)
   {
@@ -1804,7 +1804,7 @@ INLINE UINT8 VDPpoint(UINT8 SM, int MXS, int SX, int SY)
 /** Low level function to set a pixel on a screen           **/
 /** Make it inline to make it fast                          **/
 /*************************************************************/
-INLINE void VDPpsetlowlevel(UINT8 *P, UINT8 CL, UINT8 M, UINT8 OP)
+INLINE void VDPpsetlowlevel(uint8_t *P, uint8_t CL, uint8_t M, uint8_t OP)
 {
   switch (OP)
   {
@@ -1824,9 +1824,9 @@ INLINE void VDPpsetlowlevel(UINT8 *P, UINT8 CL, UINT8 M, UINT8 OP)
 /** VDPpset5() ***********************************************/
 /** Set a pixel on screen 5                                 **/
 /*************************************************************/
-INLINE void VDPpset5(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
+INLINE void VDPpset5(int MXD, int DX, int DY, uint8_t CL, uint8_t OP)
 {
-  register UINT8 SH = ((~DX)&1)<<2;
+  register uint8_t SH = ((~DX)&1)<<2;
 
   VDPpsetlowlevel(VDP_VRMP5(MXD, DX, DY),
                   CL << SH, ~(15<<SH), OP);
@@ -1835,9 +1835,9 @@ INLINE void VDPpset5(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
 /** VDPpset6() ***********************************************/
 /** Set a pixel on screen 6                                 **/
 /*************************************************************/
-INLINE void VDPpset6(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
+INLINE void VDPpset6(int MXD, int DX, int DY, uint8_t CL, uint8_t OP)
 {
-  register UINT8 SH = ((~DX)&3)<<1;
+  register uint8_t SH = ((~DX)&3)<<1;
 
   VDPpsetlowlevel(VDP_VRMP6(MXD, DX, DY),
                   CL << SH, ~(3<<SH), OP);
@@ -1846,9 +1846,9 @@ INLINE void VDPpset6(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
 /** VDPpset7() ***********************************************/
 /** Set a pixel on screen 7                                 **/
 /*************************************************************/
-INLINE void VDPpset7(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
+INLINE void VDPpset7(int MXD, int DX, int DY, uint8_t CL, uint8_t OP)
 {
-  register UINT8 SH = ((~DX)&1)<<2;
+  register uint8_t SH = ((~DX)&1)<<2;
 
   VDPpsetlowlevel(VDP_VRMP7(MXD, DX, DY),
                   CL << SH, ~(15<<SH), OP);
@@ -1857,7 +1857,7 @@ INLINE void VDPpset7(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
 /** VDPpset8() ***********************************************/
 /** Set a pixel on screen 8                                 **/
 /*************************************************************/
-INLINE void VDPpset8(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
+INLINE void VDPpset8(int MXD, int DX, int DY, uint8_t CL, uint8_t OP)
 {
   VDPpsetlowlevel(VDP_VRMP8(MXD, DX, DY),
                   CL, 0, OP);
@@ -1866,7 +1866,7 @@ INLINE void VDPpset8(int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
 /** VDPpset() ************************************************/
 /** Set a pixel on a screen                                 **/
 /*************************************************************/
-INLINE void VDPpset(UINT8 SM, int MXD, int DX, int DY, UINT8 CL, UINT8 OP)
+INLINE void VDPpset(uint8_t SM, int MXD, int DX, int DY, uint8_t CL, uint8_t OP)
 {
   switch (SM) {
     case 0: VDPpset5(MXD, DX, DY, CL, OP); break;
@@ -1893,7 +1893,7 @@ void SrchEngine(void)
   register int SY=vdp->MMC.SY;
   register int TX=vdp->MMC.TX;
   register int ANX=vdp->MMC.ANX;
-  register UINT8 CL=vdp->MMC.CL;
+  register uint8_t CL=vdp->MMC.CL;
   register int MXD = vdp->MMC.MXD;
   register int cnt;
   register int delta;
@@ -1953,8 +1953,8 @@ void LineEngine(void)
   register int NY=vdp->MMC.NY;
   register int ASX=vdp->MMC.ASX;
   register int ADX=vdp->MMC.ADX;
-  register UINT8 CL=vdp->MMC.CL;
-  register UINT8 LO=vdp->MMC.LO;
+  register uint8_t CL=vdp->MMC.CL;
+  register uint8_t LO=vdp->MMC.LO;
   register int MXD = vdp->MMC.MXD;
   register int cnt;
   register int delta;
@@ -2039,8 +2039,8 @@ void LmmvEngine(void)
   register int NY=vdp->MMC.NY;
   register int ADX=vdp->MMC.ADX;
   register int ANX=vdp->MMC.ANX;
-  register UINT8 CL=vdp->MMC.CL;
-  register UINT8 LO=vdp->MMC.LO;
+  register uint8_t CL=vdp->MMC.CL;
+  register uint8_t LO=vdp->MMC.LO;
   register int MXD = vdp->MMC.MXD;
   register int cnt;
   register int delta;
@@ -2095,7 +2095,7 @@ void LmmmEngine(void)
   register int ASX=vdp->MMC.ASX;
   register int ADX=vdp->MMC.ADX;
   register int ANX=vdp->MMC.ANX;
-  register UINT8 LO=vdp->MMC.LO;
+  register uint8_t LO=vdp->MMC.LO;
   register int MXS = vdp->MMC.MXS;
   register int MXD = vdp->MMC.MXD;
   register int cnt;
@@ -2180,7 +2180,7 @@ void LmcmEngine(void)
 void LmmcEngine(void)
 {
   if ((VDPStatus[2]&0x80)!=0x80) {
-    register UINT8 SM=((ScrMode >= 5) && (ScrMode <= 8)) ? (ScrMode-5) : 0;
+    register uint8_t SM=((ScrMode >= 5) && (ScrMode <= 8)) ? (ScrMode-5) : 0;
 
     VDPStatus[7]=VDP[44]&=Mask[SM];
     VDP_PSET(SM, vdp->MMC.MXD, vdp->MMC.ADX, vdp->MMC.DY, VDP[44], vdp->MMC.LO);
@@ -2219,7 +2219,7 @@ void HmmvEngine(void)
   register int NY=vdp->MMC.NY;
   register int ADX=vdp->MMC.ADX;
   register int ANX=vdp->MMC.ANX;
-  register UINT8 CL=vdp->MMC.CL;
+  register uint8_t CL=vdp->MMC.CL;
   register int MXD = vdp->MMC.MXD;
   register int cnt;
   register int delta;
@@ -2412,7 +2412,7 @@ void HmmcEngine(void)
 /** VDPWrite() ***********************************************/
 /** Use this function to transfer pixel(s) from CPU to vdp-> **/
 /*************************************************************/
-static void v9938_cpu_to_vdp (UINT8 V)
+static void v9938_cpu_to_vdp (uint8_t V)
 {
   VDPStatus[2]&=0x7F;
   VDPStatus[7]=VDP[44]=V;
@@ -2422,7 +2422,7 @@ static void v9938_cpu_to_vdp (UINT8 V)
 /** VDPRead() ************************************************/
 /** Use this function to transfer pixel(s) from VDP to CPU. **/
 /*************************************************************/
-static UINT8 v9938_vdp_to_cpu (void)
+static uint8_t v9938_vdp_to_cpu (void)
 {
   VDPStatus[2]&=0x7F;
   if(vdp->VdpEngine&&(vdp->VdpOpsCnt>0)) vdp->VdpEngine();
@@ -2432,7 +2432,7 @@ static UINT8 v9938_vdp_to_cpu (void)
 /** ReportVdpCommand() ***************************************/
 /** Report VDP Command to be executed                       **/
 /*************************************************************/
-static void ReportVdpCommand(register UINT8 Op)
+static void ReportVdpCommand(register uint8_t Op)
 {
 	static const char *const Ops[16] =
 	{
@@ -2445,7 +2445,7 @@ static void ReportVdpCommand(register UINT8 Op)
 		" LMMV"," LMMM"," LMCM"," LMMC"," HMMV"," HMMM"," YMMM"," HMMC"
 	};
 
-	register UINT8 CL, CM, LO;
+	register uint8_t CL, CM, LO;
 	register int SX,SY, DX,DY, NX,NY;
 
 	/* Fetch arguments */
@@ -2470,7 +2470,7 @@ static void ReportVdpCommand(register UINT8 Op)
 /** VDPDraw() ************************************************/
 /** Perform a given V9938 operation Op.                     **/
 /*************************************************************/
-static UINT8 v9938_command_unit_w (UINT8 Op)
+static uint8_t v9938_command_unit_w (uint8_t Op)
 {
   register int SM;
 
@@ -2558,7 +2558,7 @@ static UINT8 v9938_command_unit_w (UINT8 Op)
   vdp->MMC.MXS = (VDP[45] & 0x10) != 0;
   vdp->MMC.MXD = (VDP[45] & 0x20) != 0;
 
-  /* Argument depends on UINT8 or dot operation */
+  /* Argument depends on uint8_t or dot operation */
   if ((vdp->MMC.CM & 0x0C) == 0x0C) {
     vdp->MMC.TX = VDP[45]&0x04? -PPB[SM]:PPB[SM];
     vdp->MMC.NX = ((VDP[40]+((int)VDP[41]<<8)) & 1023)/PPB[SM];

@@ -16,12 +16,12 @@
 
 static struct
 {
-	UINT8		rx_buffer[16];
+	uint8_t		rx_buffer[16];
 	int			rx_buffer_ptr;
 	emu_timer*	timer;
-	UINT8		tx_buffer[16];
-	UINT8		tx_buffer_num;
-	UINT8		tx_buffer_ptr;
+	uint8_t		tx_buffer[16];
+	uint8_t		tx_buffer_num;
+	uint8_t		tx_buffer_ptr;
 	int			reset_done;
 	int			format_tablet;
 	int			format_decimal;
@@ -35,7 +35,7 @@ static struct
 } microtouch;
 
 
-static int microtouch_check_command( const char* commandtocheck, int command_len, UINT8* command_data )
+static int microtouch_check_command( const char* commandtocheck, int command_len, uint8_t* command_data )
 {
 	if ( (command_len == (strlen(commandtocheck) + 2)) &&
 		 (command_data[0] == 0x01) &&
@@ -50,7 +50,7 @@ static int microtouch_check_command( const char* commandtocheck, int command_len
 	}
 }
 
-static void microtouch_send_format_table_packet(UINT8 flag, int x, int y)
+static void microtouch_send_format_table_packet(uint8_t flag, int x, int y)
 {
 	microtouch.tx_buffer[microtouch.tx_buffer_num++] = flag;
 	// lower byte (7bits) of x coordinate
@@ -179,7 +179,7 @@ void microtouch_init(running_machine *machine, microtouch_tx_func tx_cb, microto
 };
 
 
-void microtouch_rx(int count, UINT8* data)
+void microtouch_rx(int count, uint8_t* data)
 {
 	int i;
 

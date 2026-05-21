@@ -15,10 +15,10 @@ typedef struct _latch8_t latch8_t;
 struct _latch8_t
 {
 	latch8_config	*intf;
-	UINT8			 value;
-	UINT8			 has_node_map;
-	UINT8			 has_devread;
-	UINT8			 has_read;
+	uint8_t			 value;
+	uint8_t			 has_node_map;
+	uint8_t			 has_devread;
+	uint8_t			 has_read;
 	running_device	*devices[8];
 };
 
@@ -30,18 +30,18 @@ INLINE latch8_t *get_safe_token(running_device *device) {
 	return ( latch8_t * ) downcast<legacy_device_base *>(device)->token();
 }
 
-static void update(running_device *device, UINT8 new_val, UINT8 mask)
+static void update(running_device *device, uint8_t new_val, uint8_t mask)
 {
 	/*  temporary hack until the discrete system is a device */
 	latch8_t *latch8 = get_safe_token(device);
-	UINT8 old_val = latch8->value;
+	uint8_t old_val = latch8->value;
 
 	latch8->value = (latch8->value & ~mask) | (new_val & mask);
 
 	if (latch8->has_node_map)
 	{
 		int i;
-		UINT8 changed = old_val ^ latch8->value;
+		uint8_t changed = old_val ^ latch8->value;
 		for (i=0; i<8; i++)
 			if (((changed & (1<<i)) != 0) && latch8->intf->node_map[i] != 0)
 				discrete_sound_w(device->machine->device(latch8->intf->node_device[i]), latch8->intf->node_map[i] , (latch8->value >> i) & 1);
@@ -51,8 +51,8 @@ static void update(running_device *device, UINT8 new_val, UINT8 mask)
 static TIMER_CALLBACK( latch8_timerproc )
 {
 	running_device *device = (running_device *)ptr;
-	UINT8 new_val = param & 0xFF;
-	UINT8 mask = param >> 8;
+	uint8_t new_val = param & 0xFF;
+	uint8_t mask = param >> 8;
 
 	update(device, new_val, mask);
 }
@@ -62,7 +62,7 @@ static TIMER_CALLBACK( latch8_timerproc )
 READ8_DEVICE_HANDLER( latch8_r )
 {
 	latch8_t *latch8 = get_safe_token(device);
-	UINT8 res;
+	uint8_t res;
 
 	assert(offset == 0);
 
@@ -123,7 +123,7 @@ WRITE8_DEVICE_HANDLER( latch8_reset)
 /* read bit x                 */
 /* return (latch >> x) & 0x01 */
 
-INLINE UINT8 latch8_bitx_r(running_device *device, offs_t offset, int bit)
+INLINE uint8_t latch8_bitx_r(running_device *device, offs_t offset, int bit)
 {
 	latch8_t *latch8 = get_safe_token(device);
 
@@ -153,11 +153,11 @@ READ8_DEVICE_HANDLER( latch8_bit7_q_r) { return latch8_bitx_r(device, offset, 7)
 /* write bit x from data into bit determined by offset */
 /* latch = (latch & ~(1<<offset)) | (((data >> x) & 0x01) << offset) */
 
-INLINE void latch8_bitx_w(running_device *device, int bit, offs_t offset, UINT8 data)
+INLINE void latch8_bitx_w(running_device *device, int bit, offs_t offset, uint8_t data)
 {
 	latch8_t *latch8 = get_safe_token(device);
-	UINT8 mask = (1<<offset);
-	UINT8 masked_data = (((data >> bit) & 0x01) << offset);
+	uint8_t mask = (1<<offset);
+	uint8_t masked_data = (((data >> bit) & 0x01) << offset);
 
 	assert( offset < 8);
 

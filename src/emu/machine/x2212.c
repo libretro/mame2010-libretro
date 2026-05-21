@@ -12,9 +12,9 @@
 
 typedef struct
 {
-	UINT8 *sram;
-	UINT8 *e2prom;
-	UINT8 *default_data;
+	uint8_t *sram;
+	uint8_t *e2prom;
+	uint8_t *default_data;
 	int store;
 	int array_recall;
 } x2212_state;
@@ -88,8 +88,8 @@ static DEVICE_START(x2212)
 	assert(device->machine != NULL);
 	assert(device->machine->config != NULL);
 
-	c->sram = auto_alloc_array( device->machine, UINT8, SIZE_DATA );
-	c->e2prom = auto_alloc_array( device->machine, UINT8, SIZE_DATA );
+	c->sram = auto_alloc_array( device->machine, uint8_t, SIZE_DATA );
+	c->e2prom = auto_alloc_array( device->machine, uint8_t, SIZE_DATA );
 	c->store = 1;
 	c->array_recall = 1;
 

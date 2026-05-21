@@ -14,9 +14,9 @@ typedef struct _st0016_state st0016_state;
 struct _st0016_state
 {
 	sound_stream * stream;
-	UINT8 **sound_ram;
+	uint8_t **sound_ram;
 	int vpos[8], frac[8], lponce[8];
-	UINT8 regs[0x100];
+	uint8_t regs[0x100];
 };
 
 INLINE st0016_state *get_safe_token(running_device *device)
@@ -63,12 +63,12 @@ WRITE8_DEVICE_HANDLER( st0016_snd_w )
 static STREAM_UPDATE( st0016_update )
 {
 	st0016_state *info = (st0016_state *)param;
-	UINT8 *sound_ram = *info->sound_ram;
+	uint8_t *sound_ram = *info->sound_ram;
 	int v, i, snum;
 	unsigned char *slot;
-	INT32 mix[48000*2];
-	INT32 *mixp;
-	INT16 sample;
+	int32_t mix[48000*2];
+	int32_t *mixp;
+	int16_t sample;
 	int sptr, eptr, freq, lsptr, leptr;
 
 	memset(mix, 0, sizeof(mix[0])*samples*2);

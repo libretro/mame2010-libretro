@@ -14,17 +14,17 @@
 
 typedef struct
 {
-	UINT8 control;
-	UINT8 seconds;
-	UINT8 minutes;
-	UINT8 hours;
-	UINT8 day;
-	UINT8 date;
-	UINT8 month;
-	UINT8 year;
-	UINT8 century;
-	UINT8 *data;
-	UINT8 *default_data;
+	uint8_t control;
+	uint8_t seconds;
+	uint8_t minutes;
+	uint8_t hours;
+	uint8_t day;
+	uint8_t date;
+	uint8_t month;
+	uint8_t year;
+	uint8_t century;
+	uint8_t *data;
+	uint8_t *default_data;
 	running_device *device;
 	int size;
 	int offset_control;
@@ -64,17 +64,17 @@ typedef struct
 
 #define FLAGS_BL ( 0x10 ) /* MK48T08: not emulated */
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ( ( ( data / 10 ) % 10 ) << 4 ) + ( data % 10 );
 }
 
-INLINE UINT8 from_bcd( UINT8 data )
+INLINE uint8_t from_bcd( uint8_t data )
 {
 	return ( ( ( data >> 4 ) & 15 ) * 10 ) + ( data & 15 );
 }
 
-static int inc_bcd( UINT8 *data, int mask, int min, int max )
+static int inc_bcd( uint8_t *data, int mask, int min, int max )
 {
 	int bcd;
 	int carry;
@@ -97,7 +97,7 @@ static int inc_bcd( UINT8 *data, int mask, int min, int max )
 	return carry;
 }
 
-static void counter_to_ram( UINT8 *data, int offset, int counter )
+static void counter_to_ram( uint8_t *data, int offset, int counter )
 {
 	if( offset >= 0 )
 	{
@@ -118,7 +118,7 @@ static void counters_to_ram( timekeeper_state *c )
 	counter_to_ram( c->data, c->offset_century, c->century );
 }
 
-static int counter_from_ram( UINT8 *data, int offset )
+static int counter_from_ram( uint8_t *data, int offset )
 {
 	if( offset >= 0 )
 	{
@@ -164,10 +164,10 @@ static TIMER_CALLBACK( timekeeper_tick )
 
 	if( carry )
 	{
-		UINT8 month;
-		UINT8 year;
-		UINT8 maxdays;
-		static const UINT8 daysinmonth[] = { 0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31 };
+		uint8_t month;
+		uint8_t year;
+		uint8_t maxdays;
+		static const uint8_t daysinmonth[] = { 0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31 };
 
 		inc_bcd( &c->day, MASK_DAY, 0x01, 0x07 );
 
@@ -272,7 +272,7 @@ WRITE8_DEVICE_HANDLER( timekeeper_w )
 READ8_DEVICE_HANDLER( timekeeper_r )
 {
 	timekeeper_state *c = get_safe_token(device);
-	UINT8 data = c->data[ offset ];
+	uint8_t data = c->data[ offset ];
 //  logerror( "%s: timekeeper_read( %s, %04x ) %02x\n", cpuexec_describe_context(machine), c->device->tag, offset, data );
 	return data;
 }
@@ -307,7 +307,7 @@ static DEVICE_START(timekeeper)
 	c->month = make_bcd( systime.local_time.month + 1 );
 	c->year = make_bcd( systime.local_time.year % 100 );
 	c->century = make_bcd( systime.local_time.year / 100 );
-	c->data = auto_alloc_array( device->machine, UINT8, c->size );
+	c->data = auto_alloc_array( device->machine, uint8_t, c->size );
 
 	c->default_data = *device->region();
 	if (c->default_data)

@@ -25,14 +25,14 @@
 
 struct tms34061_data
 {
-	UINT16				regs[TMS34061_REGCOUNT];
-	UINT16				xmask;
-	UINT8				yshift;
-	UINT32				vrammask;
-	UINT8 *				vram;
-	UINT8 *				latchram;
-	UINT8				latchdata;
-	UINT8 *				shiftreg;
+	uint16_t				regs[TMS34061_REGCOUNT];
+	uint16_t				xmask;
+	uint8_t				yshift;
+	uint32_t				vrammask;
+	uint8_t *				vram;
+	uint8_t *				latchram;
+	uint8_t				latchdata;
+	uint8_t *				shiftreg;
 	emu_timer *			timer;
 	struct tms34061_interface intf;
 	screen_device *screen;
@@ -84,12 +84,12 @@ void tms34061_start(running_machine *machine, const struct tms34061_interface *i
 	tms34061.vrammask = tms34061.intf.vramsize - 1;
 
 	/* allocate memory for VRAM */
-	tms34061.vram = auto_alloc_array_clear(machine, UINT8, tms34061.intf.vramsize + 256 * 2);
+	tms34061.vram = auto_alloc_array_clear(machine, uint8_t, tms34061.intf.vramsize + 256 * 2);
 	/* not really a save state, just there for debugging purposes */
 	state_save_register_global_pointer(machine, tms34061.vram, tms34061.intf.vramsize);
 
 	/* allocate memory for latch RAM */
-	tms34061.latchram = auto_alloc_array_clear(machine, UINT8, tms34061.intf.vramsize + 256 * 2);
+	tms34061.latchram = auto_alloc_array_clear(machine, uint8_t, tms34061.intf.vramsize + 256 * 2);
 
 	/* add some buffer space for VRAM and latch RAM */
 	tms34061.vram += 256;
@@ -164,7 +164,7 @@ static TIMER_CALLBACK( tms34061_interrupt )
  *
  *************************************/
 
-static void register_w(const address_space *space, offs_t offset, UINT8 data)
+static void register_w(const address_space *space, offs_t offset, uint8_t data)
 {
 	int scanline;
 	int regnum = offset >> 2;
@@ -235,10 +235,10 @@ static void register_w(const address_space *space, offs_t offset, UINT8 data)
  *
  *************************************/
 
-static UINT8 register_r(const address_space *space, offs_t offset)
+static uint8_t register_r(const address_space *space, offs_t offset)
 {
 	int regnum = offset >> 2;
-	UINT16 result;
+	uint16_t result;
 
 	/* extract the correct portion of the register */
 	if (regnum < ARRAY_LENGTH(tms34061.regs))
@@ -357,7 +357,7 @@ INLINE void adjust_xyaddress(int offset)
 }
 
 
-static void xypixel_w(const address_space *space, int offset, UINT8 data)
+static void xypixel_w(const address_space *space, int offset, uint8_t data)
 {
 	/* determine the offset, then adjust it */
 	offs_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
@@ -377,7 +377,7 @@ static void xypixel_w(const address_space *space, int offset, UINT8 data)
 }
 
 
-static UINT8 xypixel_r(const address_space *space, int offset)
+static uint8_t xypixel_r(const address_space *space, int offset)
 {
 	/* determine the offset, then adjust it */
 	offs_t pixeloffs = tms34061.regs[TMS34061_XYADDRESS];
@@ -402,7 +402,7 @@ static UINT8 xypixel_r(const address_space *space, int offset)
  *
  *************************************/
 
-void tms34061_w(const address_space *space, int col, int row, int func, UINT8 data)
+void tms34061_w(const address_space *space, int col, int row, int func, uint8_t data)
 {
 	offs_t offs;
 
@@ -464,7 +464,7 @@ void tms34061_w(const address_space *space, int col, int row, int func, UINT8 da
 }
 
 
-UINT8 tms34061_r(const address_space *space, int col, int row, int func)
+uint8_t tms34061_r(const address_space *space, int col, int row, int func)
 {
 	int result = 0;
 	offs_t offs;

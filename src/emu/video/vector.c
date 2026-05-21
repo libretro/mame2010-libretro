@@ -107,12 +107,12 @@ static render_texture *get_vector_texture(float dx, float dy, float intensity)
 
 		for (y = 0; y < height; y++)
 		{
-			UINT32 *pix;
+			uint32_t *pix;
 
-			pix = (UINT32 *)bitmap->base + y * bitmap->rowpixels + x;
+			pix = (uint32_t *)bitmap->base + y * bitmap->rowpixels + x;
 			*pix = MAKE_ARGB((RGB_ALPHA(*pix) * intensity) >> 8,0xff,0xff,0xff);
 
-			pix = (UINT32 *)bitmap->base + y * bitmap->rowpixels + (TEXTURE_WIDTH - 1 - x);
+			pix = (uint32_t *)bitmap->base + y * bitmap->rowpixels + (TEXTURE_WIDTH - 1 - x);
 			*pix = MAKE_ARGB((RGB_ALPHA(*pix) * intensity) >> 8,0xff,0xff,0xff);
 		}
 	}
@@ -139,7 +139,7 @@ typedef struct
 
 
 
-UINT8 *vectorram;
+uint8_t *vectorram;
 size_t vectorram_size;
 
 static int flicker;                              /* beam flicker value     */
@@ -259,7 +259,7 @@ void vector_clear_list (void)
 
 VIDEO_UPDATE( vector )
 {
-	UINT32 flags = PRIMFLAG_ANTIALIAS(options_get_bool(screen->machine->options(), OPTION_ANTIALIAS) ? 1 : 0) | PRIMFLAG_BLENDMODE(BLENDMODE_ADD);
+	uint32_t flags = PRIMFLAG_ANTIALIAS(options_get_bool(screen->machine->options(), OPTION_ANTIALIAS) ? 1 : 0) | PRIMFLAG_BLENDMODE(BLENDMODE_ADD);
 	const rectangle &visarea = screen->visible_area();
 	float xscale = 1.0f / (65536 * (visarea.max_x - visarea.min_x));
 	float yscale = 1.0f / (65536 * (visarea.max_y - visarea.min_y));

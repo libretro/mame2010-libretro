@@ -70,24 +70,24 @@ struct _cdp1869_t
 	int line16;						/* 16-line hi-res mode */
 	int line9;						/* 9 line mode */
 	int cfc;						/* color format control */
-	UINT8 col;						/* character color control */
-	UINT8 bkg;						/* background color */
-	UINT16 pma;						/* page memory address */
-	UINT16 hma;						/* home memory address */
+	uint8_t col;						/* character color control */
+	uint8_t bkg;						/* background color */
+	uint16_t pma;						/* page memory address */
+	uint16_t hma;						/* home memory address */
 
 	/* video timer */
 	emu_timer *prd_changed_timer;	/* predisplay changed timer */
 
 	/* sound state */
-	INT16 signal;					/* current signal */
+	int16_t signal;					/* current signal */
 	int incr;						/* initial wave state */
 	int toneoff;					/* tone off */
 	int wnoff;						/* white noise off */
-	UINT8 tonediv;					/* tone divisor */
-	UINT8 tonefreq;					/* tone range select */
-	UINT8 toneamp;					/* tone output amplitude */
-	UINT8 wnfreq;					/* white noise range select */
-	UINT8 wnamp;					/* white noise output amplitude */
+	uint8_t tonediv;					/* tone divisor */
+	uint8_t tonefreq;					/* tone range select */
+	uint8_t toneamp;					/* tone output amplitude */
+	uint8_t wnfreq;					/* white noise range select */
+	uint8_t wnamp;					/* white noise output amplitude */
 };
 
 /***************************************************************************
@@ -186,7 +186,7 @@ static STATE_POSTLOAD( cdp1869_state_save_postload )
     cdp1802_get_r_x - get CDP1802 R(X) value
 -------------------------------------------------*/
 
-static UINT16 cdp1802_get_r_x(cdp1869_t *cdp1869)
+static uint16_t cdp1802_get_r_x(cdp1869_t *cdp1869)
 {
 	return cpu_get_reg(cdp1869->cpu, CDP1802_R0 + cpu_get_reg(cdp1869->cpu, CDP1802_X));
 }
@@ -238,7 +238,7 @@ static int get_lines(running_device *device)
     get_pmemsize - get page memory size
 -------------------------------------------------*/
 
-static UINT16 get_pmemsize(running_device *device, int cols, int rows)
+static uint16_t get_pmemsize(running_device *device, int cols, int rows)
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
@@ -254,7 +254,7 @@ static UINT16 get_pmemsize(running_device *device, int cols, int rows)
     get_pma - get page memory address
 -------------------------------------------------*/
 
-static UINT16 get_pma(running_device *device)
+static uint16_t get_pma(running_device *device)
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
@@ -361,15 +361,15 @@ static void draw_line(running_device *device, bitmap_t *bitmap, int x, int y, in
     draw_char - draw character
 -------------------------------------------------*/
 
-static void draw_char(running_device *device, bitmap_t *bitmap, int x, int y, UINT16 pma, const rectangle *screenrect)
+static void draw_char(running_device *device, bitmap_t *bitmap, int x, int y, uint16_t pma, const rectangle *screenrect)
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
-	UINT8 cma = 0;
+	uint8_t cma = 0;
 
 	for (cma = 0; cma < get_lines(device); cma++)
 	{
-		UINT8 data = cdp1869->intf->char_ram_r(device, pma, cma);
+		uint8_t data = cdp1869->intf->char_ram_r(device, pma, cma);
 
 		int ccb0 = BIT(data, CCB0);
 		int ccb1 = BIT(data, CCB1);
@@ -469,7 +469,7 @@ WRITE8_DEVICE_HANDLER( cdp1869_out4_w )
     */
 
 	cdp1869_t *cdp1869 = get_safe_token(device);
-	UINT16 word = cdp1802_get_r_x(cdp1869);
+	uint16_t word = cdp1802_get_r_x(cdp1869);
 
 	cdp1869->toneamp = word & 0x0f;
 	cdp1869->tonefreq = (word & 0x70) >> 4;
@@ -505,7 +505,7 @@ WRITE8_DEVICE_HANDLER( cdp1869_out5_w )
     */
 
 	cdp1869_t *cdp1869 = get_safe_token(device);
-	UINT16 word = cdp1802_get_r_x(cdp1869);
+	uint16_t word = cdp1802_get_r_x(cdp1869);
 
 	cdp1869->cmem = BIT(word, 0);
 	cdp1869->line9 = BIT(word, 3);
@@ -560,7 +560,7 @@ WRITE8_DEVICE_HANDLER( cdp1869_out6_w )
     */
 
 	cdp1869_t *cdp1869 = get_safe_token(device);
-	UINT16 word = cdp1802_get_r_x(cdp1869);
+	uint16_t word = cdp1802_get_r_x(cdp1869);
 
 	cdp1869->pma = word & 0x7ff;
 }
@@ -593,7 +593,7 @@ WRITE8_DEVICE_HANDLER( cdp1869_out7_w )
     */
 
 	cdp1869_t *cdp1869 = get_safe_token(device);
-	UINT16 word = cdp1802_get_r_x(cdp1869);
+	uint16_t word = cdp1802_get_r_x(cdp1869);
 
 	cdp1869->hma = word & 0x7fc;
 }
@@ -606,7 +606,7 @@ READ8_DEVICE_HANDLER( cdp1869_pageram_r )
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
-	UINT16 pma;
+	uint16_t pma;
 
 	if (cdp1869->cmem)
 	{
@@ -628,7 +628,7 @@ WRITE8_DEVICE_HANDLER( cdp1869_pageram_w )
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
-	UINT16 pma;
+	uint16_t pma;
 
 	if (cdp1869->cmem)
 	{
@@ -650,8 +650,8 @@ READ8_DEVICE_HANDLER( cdp1869_charram_r )
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
-	UINT8 cma = offset & 0x0f;
-	UINT16 pma;
+	uint8_t cma = offset & 0x0f;
+	uint16_t pma;
 
 	if (cdp1869->cmem)
 	{
@@ -678,8 +678,8 @@ WRITE8_DEVICE_HANDLER( cdp1869_charram_w )
 {
 	cdp1869_t *cdp1869 = get_safe_token(device);
 
-	UINT8 cma = offset & 0x0f;
-	UINT16 pma;
+	uint8_t cma = offset & 0x0f;
+	uint16_t pma;
 
 	if (cdp1869->cmem)
 	{
@@ -751,7 +751,7 @@ void cdp1869_update(running_device *device, bitmap_t *bitmap, const rectangle *c
 	if (!cdp1869->dispoff)
 	{
 		int sx, sy, rows, cols, width, height;
-		UINT16 addr, pmemsize;
+		uint16_t addr, pmemsize;
 
 		width = CDP1869_CHAR_WIDTH;
 		height = get_lines(device);
@@ -797,7 +797,7 @@ void cdp1869_update(running_device *device, bitmap_t *bitmap, const rectangle *c
 static STREAM_UPDATE( cdp1869_stream_update )
 {
 	cdp1869_t *cdp1869 = (cdp1869_t *)param;
-	INT16 signal = cdp1869->signal;
+	int16_t signal = cdp1869->signal;
 	stream_sample_t *buffer = outputs[0];
 
 	memset( buffer, 0, samples * sizeof(*buffer) );

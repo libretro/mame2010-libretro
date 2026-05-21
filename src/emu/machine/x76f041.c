@@ -44,13 +44,13 @@ struct x76f041_chip
 	int byte;
 	int command;
 	int address;
-	UINT8 write_buffer[ SIZE_WRITE_BUFFER ];
-	UINT8 *response_to_reset;
-	UINT8 *write_password;
-	UINT8 *read_password;
-	UINT8 *configuration_password;
-	UINT8 *configuration_registers;
-	UINT8 *data;
+	uint8_t write_buffer[ SIZE_WRITE_BUFFER ];
+	uint8_t *response_to_reset;
+	uint8_t *write_password;
+	uint8_t *read_password;
+	uint8_t *configuration_password;
+	uint8_t *configuration_registers;
+	uint8_t *data;
 };
 
 #define SIZE_RESPONSE_TO_RESET ( 4 )
@@ -100,7 +100,7 @@ static struct x76f041_chip x76f041[ X76F041_MAXCHIP ];
 #define STATE_READ_CONFIGURATION_REGISTERS ( 8 )
 #define STATE_WRITE_CONFIGURATION_REGISTERS ( 9 )
 
-void x76f041_init( running_machine *machine, int chip, UINT8 *data )
+void x76f041_init( running_machine *machine, int chip, uint8_t *data )
 {
 	int offset;
 	struct x76f041_chip *c;
@@ -115,7 +115,7 @@ void x76f041_init( running_machine *machine, int chip, UINT8 *data )
 
 	if( data == NULL )
 	{
-		data = auto_alloc_array( machine, UINT8,
+		data = auto_alloc_array( machine, uint8_t,
 			SIZE_RESPONSE_TO_RESET +
 			SIZE_READ_PASSWORD +
 			SIZE_WRITE_PASSWORD +
@@ -222,7 +222,7 @@ void x76f041_rst_write( running_machine *machine, int chip, int rst )
 	c->rst = rst;
 }
 
-static UINT8 *x76f041_password( struct x76f041_chip *c )
+static uint8_t *x76f041_password( struct x76f041_chip *c )
 {
 	switch( c->command & 0xe0 )
 	{

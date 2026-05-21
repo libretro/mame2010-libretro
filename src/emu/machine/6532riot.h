@@ -44,14 +44,14 @@ struct _riot6532_interface
 READ8_DEVICE_HANDLER( riot6532_r );
 WRITE8_DEVICE_HANDLER( riot6532_w );
 
-void riot6532_porta_in_set(running_device *device, UINT8 data, UINT8 mask);
-void riot6532_portb_in_set(running_device *device, UINT8 data, UINT8 mask);
+void riot6532_porta_in_set(running_device *device, uint8_t data, uint8_t mask);
+void riot6532_portb_in_set(running_device *device, uint8_t data, uint8_t mask);
 
-UINT8 riot6532_porta_in_get(running_device *device);
-UINT8 riot6532_portb_in_get(running_device *device);
+uint8_t riot6532_porta_in_get(running_device *device);
+uint8_t riot6532_portb_in_get(running_device *device);
 
-UINT8 riot6532_porta_out_get(running_device *device);
-UINT8 riot6532_portb_out_get(running_device *device);
+uint8_t riot6532_porta_out_get(running_device *device);
+uint8_t riot6532_portb_out_get(running_device *device);
 
 
 /* ----- device interface ----- */
