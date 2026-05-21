@@ -100,22 +100,22 @@
 #include "sound/2612intf.h"
 #include "includes/model2.h"
 
-UINT32 *model2_bufferram, *model2_colorxlat;
-static UINT32 *model2_workram, *model2_backup1, *model2_backup2;
-UINT32 *model2_textureram0, *model2_textureram1, *model2_lumaram;
-UINT32 *model2_paletteram32;
-static UINT32 model2_intreq;
-static UINT32 model2_intena;
-static UINT32 model2_coproctl, model2_coprocnt, model2_geoctl, model2_geocnt;
-static UINT16 *model2_soundram = NULL;
+uint32_t *model2_bufferram, *model2_colorxlat;
+static uint32_t *model2_workram, *model2_backup1, *model2_backup2;
+uint32_t *model2_textureram0, *model2_textureram1, *model2_lumaram;
+uint32_t *model2_paletteram32;
+static uint32_t model2_intreq;
+static uint32_t model2_intena;
+static uint32_t model2_coproctl, model2_coprocnt, model2_geoctl, model2_geocnt;
+static uint16_t *model2_soundram = NULL;
 
-static UINT32 model2_timervals[4], model2_timerorig[4];
+static uint32_t model2_timervals[4], model2_timerorig[4];
 static int      model2_timerrun[4];
 static timer_device *model2_timers[4];
 static int model2_ctrlmode;
 static int analog_channel;
 
-static UINT32 *tgp_program;
+static uint32_t *tgp_program;
 
 enum {
 	DSP_TYPE_TGP	= 1,
@@ -129,11 +129,11 @@ static int dsp_type;
 
 #define COPRO_FIFOIN_SIZE	32000
 static int copro_fifoin_rpos, copro_fifoin_wpos;
-static UINT32 copro_fifoin_data[COPRO_FIFOIN_SIZE];
+static uint32_t copro_fifoin_data[COPRO_FIFOIN_SIZE];
 static int copro_fifoin_num = 0;
-static int copro_fifoin_pop(running_device *device, UINT32 *result)
+static int copro_fifoin_pop(running_device *device, uint32_t *result)
 {
-	UINT32 r;
+	uint32_t r;
 
 	if (copro_fifoin_num == 0)
 	{
@@ -169,7 +169,7 @@ static int copro_fifoin_pop(running_device *device, UINT32 *result)
 	return 1;
 }
 
-static void copro_fifoin_push(running_device *device, UINT32 data)
+static void copro_fifoin_push(running_device *device, uint32_t data)
 {
 	if (copro_fifoin_num == COPRO_FIFOIN_SIZE)
 	{
@@ -197,11 +197,11 @@ static void copro_fifoin_push(running_device *device, UINT32 data)
 
 #define COPRO_FIFOOUT_SIZE	32000
 static int copro_fifoout_rpos, copro_fifoout_wpos;
-static UINT32 copro_fifoout_data[COPRO_FIFOOUT_SIZE];
+static uint32_t copro_fifoout_data[COPRO_FIFOOUT_SIZE];
 static int copro_fifoout_num = 0;
-static UINT32 copro_fifoout_pop(const address_space *space)
+static uint32_t copro_fifoout_pop(const address_space *space)
 {
-	UINT32 r;
+	uint32_t r;
 
 	if (copro_fifoout_num == 0)
 	{
@@ -241,7 +241,7 @@ static UINT32 copro_fifoout_pop(const address_space *space)
 	return r;
 }
 
-static void copro_fifoout_push(running_device *device, UINT32 data)
+static void copro_fifoout_push(running_device *device, uint32_t data)
 {
 	//if (copro_fifoout_wpos == copro_fifoout_rpos)
 	if (copro_fifoout_num == COPRO_FIFOOUT_SIZE)
@@ -315,7 +315,7 @@ static READ32_HANDLER( timers_r )
 	if (model2_timerrun[offset])
 	{
 		// get elapsed time, convert to units of 25 MHz
-		UINT32 cur = attotime_to_double(attotime_mul(model2_timers[offset]->time_elapsed(), 25000000));
+		uint32_t cur = attotime_to_double(attotime_mul(model2_timers[offset]->time_elapsed(), 25000000));
 
 		// subtract units from starting value
 		model2_timervals[offset] = model2_timerorig[offset] - cur;
@@ -437,7 +437,7 @@ static MACHINE_RESET(model2c)
 	dsp_type = DSP_TYPE_TGPX4;
 }
 
-static void chcolor(running_machine *machine, pen_t color, UINT16 data)
+static void chcolor(running_machine *machine, pen_t color, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
 }
@@ -471,7 +471,7 @@ static WRITE32_HANDLER( analog_2b_w )
 
 static READ32_HANDLER( fifoctl_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (copro_fifoout_num == 0)
 	{
@@ -489,7 +489,7 @@ static READ32_HANDLER( videoctl_r )
 
 static CUSTOM_INPUT( _1c00000_r )
 {
-	UINT32 ret = input_port_read(field->port->machine, "IN0");
+	uint32_t ret = input_port_read(field->port->machine, "IN0");
 
 	if(model2_ctrlmode == 0)
 	{
@@ -504,7 +504,7 @@ static CUSTOM_INPUT( _1c00000_r )
 
 static CUSTOM_INPUT( _1c0001c_r )
 {
-	UINT32 iptval = 0x00ff;
+	uint32_t iptval = 0x00ff;
 	if(analog_channel < 4)
 	{
 		static const char *const ports[] = { "ANA0", "ANA1", "ANA2", "ANA3" };
@@ -583,7 +583,7 @@ static CUSTOM_INPUT( _1c0001c_r )
 
 */
 
-static UINT16 cmd_data;
+static uint16_t cmd_data;
 
 static CUSTOM_INPUT( rchase2_devices_r )
 {
@@ -601,7 +601,7 @@ static WRITE32_HANDLER( rchase2_devices_w )
 		cmd_data = data;
 }
 
-static UINT8 driveio_comm_data;
+static uint8_t driveio_comm_data;
 
 static WRITE32_HANDLER( srallyc_devices_w )
 {
@@ -673,8 +673,8 @@ static WRITE32_HANDLER( copro_ctl1_w )
 
 static WRITE32_HANDLER(copro_function_port_w)
 {
-	UINT32 d = data & 0x800fffff;
-	UINT32 a = (offset >> 2) & 0xff;
+	uint32_t d = data & 0x800fffff;
+	uint32_t a = (offset >> 2) & 0xff;
 	d |= a << 23;
 
 	//logerror("copro_function_port_w: %08X, %08X, %08X\n", data, offset, mem_mask);
@@ -716,7 +716,7 @@ static WRITE32_HANDLER(copro_fifo_w)
 }
 
 static int iop_write_num = 0;
-static UINT32 iop_data = 0;
+static uint32_t iop_data = 0;
 static WRITE32_HANDLER(copro_sharc_iop_w)
 {
 	/* FIXME: clean this up */
@@ -754,8 +754,8 @@ static WRITE32_HANDLER(copro_sharc_iop_w)
 /*****************************************************************************/
 /* GEO */
 
-UINT32 geo_read_start_address = 0;
-UINT32 geo_write_start_address = 0;
+uint32_t geo_read_start_address = 0;
+uint32_t geo_write_start_address = 0;
 
 static WRITE32_HANDLER( geo_ctl1_w )
 {
@@ -827,7 +827,7 @@ static WRITE32_HANDLER(geo_sharc_fifo_w)
 }
 
 static int geo_iop_write_num = 0;
-static UINT32 geo_iop_data = 0;
+static uint32_t geo_iop_data = 0;
 static WRITE32_HANDLER(geo_sharc_iop_w)
 {
     if ((strcmp(space->machine->gamedrv->name, "schamp" ) == 0))
@@ -851,7 +851,7 @@ static WRITE32_HANDLER(geo_sharc_iop_w)
 #endif
 
 
-static void push_geo_data(UINT32 data)
+static void push_geo_data(uint32_t data)
 {
 	//mame_printf_debug("push_geo_data: %08X: %08X\n", 0x900000+geo_write_start_address, data);
 	model2_bufferram[geo_write_start_address/4] = data;
@@ -904,7 +904,7 @@ static WRITE32_HANDLER( geo_w )
 		/*if (data & 0x80000000)
         {
             int i;
-            UINT32 a;
+            uint32_t a;
             mame_printf_debug("GEO: jump to %08X\n", (data & 0xfffff));
             a = (data & 0xfffff) / 4;
             for (i=0; i < 4; i++)
@@ -931,7 +931,7 @@ static WRITE32_HANDLER( geo_w )
 
 		if (data & 0x80000000)
 		{
-			UINT32 r = 0;
+			uint32_t r = 0;
 			r |= data & 0x800fffff;
 			r |= ((address >> 4) & 0x3f) << 23;
 			push_geo_data(r);
@@ -940,7 +940,7 @@ static WRITE32_HANDLER( geo_w )
 		{
 			if ((address & 0xf) == 0)
 			{
-				UINT32 r = 0;
+				uint32_t r = 0;
 				r |= data & 0x000fffff;
 				r |= ((address >> 4) & 0x3f) << 23;
 				push_geo_data(r);
@@ -985,7 +985,7 @@ static READ32_HANDLER(daytona_unk_r)
 
 static READ32_HANDLER(desert_unk_r)
 {
-   static UINT8 test;
+   static uint8_t test;
 
 	test ^= 8;
 	// vcop needs bit 3 clear (infinite loop otherwise)
@@ -1017,7 +1017,7 @@ static WRITE32_HANDLER(model2_irq_w)
 	}
 
 	model2_intreq &= data;
-   UINT32 irq_ack = data ^ 0xffffffff;
+   uint32_t irq_ack = data ^ 0xffffffff;
 
 	if(irq_ack & 1<<0)
 		cputag_set_input_line(space->machine, "maincpu", I960_IRQ0, CLEAR_LINE);
@@ -1087,7 +1087,7 @@ static WRITE32_HANDLER( model2_serial_w )
 
 /* Protection handling */
 
-static const UINT8 ZGUNProt[] =
+static const uint8_t ZGUNProt[] =
 {
 	0x7F,0x4E,0x1B,0x1E,0xA8,0x48,0xF5,0x49,0x31,0x32,0x4A,0x09,0x89,0x29,0xC0,0x41,
 	0x3A,0x49,0x85,0x24,0xA0,0x4D,0x21,0x31,0xEA,0xC3,0x3F,0xAF,0x0E,0x4B,0x25,0x02,
@@ -1098,17 +1098,17 @@ static const UINT8 ZGUNProt[] =
 	0x94,0xD5,0x73,0x09,0xE4,0x3D,0x2D,0x92,0xC9,0xA7,0xA3,0x53,0x42,0x82,0x55,0x67,
 	0xE4,0x66,0xD0,0x4A,0x7D,0x4A,0x13,0xDE,0xD7,0x9F,0x38,0xAA,0x00,0x56,0x85,0x0A
 };
-static const UINT8 DCOPKey1326[]=
+static const uint8_t DCOPKey1326[]=
 {
 	0x43,0x66,0x54,0x11,0x99,0xfe,0xcc,0x8e,0xdd,0x87,0x11,0x89,0x22,0xdf,0x44,0x09
 };
 static int protstate, protpos;
-static UINT8 protram[256];
+static uint8_t protram[256];
 
 static READ32_HANDLER( model2_prot_r )
 {
 	static int a = 0;
-	UINT32 retval = 0;
+	uint32_t retval = 0;
 
 	if (offset == 0x10000/4)
 	{
@@ -1214,7 +1214,7 @@ static int model2_maxxstate = 0;
 
 static READ32_HANDLER( maxx_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "maincpu");
 
 	if (offset <= 0x1f/4)
 	{
@@ -1255,7 +1255,7 @@ static READ32_HANDLER( maxx_r )
 
 /* Network board emulation */
 
-static UINT32 model2_netram[0x8000/4];
+static uint32_t model2_netram[0x8000/4];
 
 static int zflagi, zflag, sysres;
 
@@ -1911,7 +1911,7 @@ static WRITE16_HANDLER( model2snd_ctrl )
 	// handle sample banking
 	if (memory_region_length(space->machine, "scsp") > 0x800000)
 	{
-		UINT8 *snd = memory_region(space->machine, "scsp");
+		uint8_t *snd = memory_region(space->machine, "scsp");
 		if (data & 0x20)
 		{
 			memory_set_bankptr(space->machine, "bank4", snd + 0x200000);
@@ -1961,7 +1961,7 @@ static const scsp_interface scsp_config =
 
 static READ32_HANDLER(copro_sharc_input_fifo_r)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	//mame_printf_debug("SHARC FIFOIN pop at %08X\n", cpu_get_pc(space->cpu));
 
 	copro_fifoin_pop(space->machine->device("dsp"), &result);
@@ -4978,7 +4978,7 @@ static DRIVER_INIT( genprot )
 
 static DRIVER_INIT( pltkids )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	memory_install_readwrite32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x01d80000, 0x01dfffff, 0, 0, model2_prot_r, model2_prot_w);
 	protstate = protpos = 0;
@@ -4989,7 +4989,7 @@ static DRIVER_INIT( pltkids )
 
 static DRIVER_INIT( zerogun )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	memory_install_readwrite32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x01d80000, 0x01dfffff, 0, 0, model2_prot_r, model2_prot_w);
 	protstate = protpos = 0;
@@ -5032,7 +5032,7 @@ static WRITE32_HANDLER( jaleco_network_w )
 
 static DRIVER_INIT( sgt24h )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	memory_install_readwrite32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x01d80000, 0x01dfffff, 0, 0, model2_prot_r, model2_prot_w);
 	memory_install_readwrite32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x01a10000, 0x01a1ffff, 0, 0, jaleco_network_r, jaleco_network_w);
@@ -5053,7 +5053,7 @@ static DRIVER_INIT( overrev )
 
 static DRIVER_INIT( doa )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	memory_install_readwrite32_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x01d80000, 0x01dfffff, 0, 0, model2_prot_r, model2_prot_w);
 	protstate = protpos = 0;

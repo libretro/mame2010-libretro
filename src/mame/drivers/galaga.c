@@ -713,7 +713,7 @@ TODO:
 
 
 static emu_timer *cpu3_interrupt_timer;
-static UINT8 custom_mod;
+static uint8_t custom_mod;
 
 
 
@@ -814,7 +814,7 @@ static const namco_51xx_interface namco_51xx_intf =
 
 static READ8_DEVICE_HANDLER( namco_52xx_rom_r )
 {
-	UINT32 length = memory_region_length(device->machine, "52xx");
+	uint32_t length = memory_region_length(device->machine, "52xx");
 //printf("ROM read %04X\n", offset);
 	if (!(offset & 0x1000))
 		offset = (offset & 0xfff) | 0x0000;
@@ -3201,7 +3201,7 @@ ROM_END
 static DRIVER_INIT (galaga)
 {
 	/* swap bytes for flipped character so we can decode them together with normal characters */
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int i, len = memory_region_length(machine, "gfx1");
 
 	for (i = 0;i < len;i++)
@@ -3226,7 +3226,7 @@ static DRIVER_INIT (gatsbee)
 
 static DRIVER_INIT( xevious )
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i;
 
 	rom = memory_region(machine, "gfx3") + 0x5000;
@@ -3237,7 +3237,7 @@ static DRIVER_INIT( xevious )
 static DRIVER_INIT( xevios )
 {
 	int A;
-	UINT8 *rom;
+	uint8_t *rom;
 
 
 	/* convert one of the sprite ROMs to the format used by Xevious */

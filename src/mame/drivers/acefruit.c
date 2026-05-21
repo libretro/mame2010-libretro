@@ -13,8 +13,8 @@ Inputs and Dip Switches by Stephh
 
 #include "../lh/sidewndr.lh"
 
-static UINT8 *colorram;
-static UINT8 *videoram;
+static uint8_t *colorram;
+static uint8_t *videoram;
 
 static void acefruit_update_irq(running_machine *machine, int vpos )
 {
@@ -94,11 +94,11 @@ static VIDEO_UPDATE( acefruit )
 				for( x = 0; x < 16; x++ )
 				{
 					int sprite = ( screen->machine->generic.spriteram.u8[ ( spriteindex / 64 ) % 6 ] & 0xf ) ^ 0xf;
-					const UINT8 *gfxdata = gfx_element_get_data(gfx, sprite);
+					const uint8_t *gfxdata = gfx_element_get_data(gfx, sprite);
 
 					for( y = 0; y < 8; y++ )
 					{
-						UINT16 *dst = BITMAP_ADDR16( bitmap, y + ( row * 8 ), x + ( col * 16 ) );
+						uint16_t *dst = BITMAP_ADDR16( bitmap, y + ( row * 8 ), x + ( col * 16 ) );
 						*( dst ) = *( gfxdata + ( ( spriterow + y ) * gfx->line_modulo ) + ( ( spriteindex % 64 ) >> 1 ) );
 					}
 
@@ -114,7 +114,7 @@ static VIDEO_UPDATE( acefruit )
 				{
 					for( y = 0; y < 8; y++ )
 					{
-						UINT16 *dst = BITMAP_ADDR16( bitmap, y + ( row * 8 ), x + ( col * 16 ) );
+						uint16_t *dst = BITMAP_ADDR16( bitmap, y + ( row * 8 ), x + ( col * 16 ) );
 						*( dst ) = 0;
 					}
 				}
@@ -576,7 +576,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( sidewndr )
 {
-	UINT8 *ROM = memory_region( machine, "maincpu" );
+	uint8_t *ROM = memory_region( machine, "maincpu" );
 	/* replace "ret nc" ( 0xd0 ) with "di" */
 	ROM[ 0 ] = 0xf3;
 	/* this is either a bad dump or the cpu core should set the carry flag on reset */

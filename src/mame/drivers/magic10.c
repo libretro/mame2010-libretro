@@ -81,9 +81,9 @@
 #include "../lh/sgsafari.lh"
 
 static tilemap_t *layer0_tilemap, *layer1_tilemap, *layer2_tilemap;
-static UINT16 *layer0_videoram, *layer1_videoram, *layer2_videoram;
+static uint16_t *layer0_videoram, *layer1_videoram, *layer2_videoram;
 static int layer2_offset[2];
-static UINT16 *magic10_vregs;
+static uint16_t *magic10_vregs;
 
 
 /***************************
@@ -186,14 +186,14 @@ static VIDEO_UPDATE( magic10 )
 
 static READ16_HANDLER( magic102_r )
 {
-	static UINT16 ret = 0;
+	static uint16_t ret = 0;
 	ret ^= 0x20;
 	return ret;
 }
 
 static READ16_HANDLER( hotslot_copro_r )
 {
-	static UINT16 ret = 0x0080;
+	static uint16_t ret = 0x0080;
 	return ret;
 }
 

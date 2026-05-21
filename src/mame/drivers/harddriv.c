@@ -3632,7 +3632,7 @@ ROM_END
  *
  *************************************/
 
-static const UINT16 default_eeprom[] =
+static const uint16_t default_eeprom[] =
 {
 	1,
 	0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,0xff00,
@@ -3793,7 +3793,7 @@ static void init_ds3(running_machine *machine)
 static void init_dsk(running_machine *machine)
 {
 	harddriv_state *state = (harddriv_state *)machine->driver_data;
-	UINT8 *usr3 = memory_region(machine, "user3");
+	uint8_t *usr3 = memory_region(machine, "user3");
 
 	/* install ASIC61 */
 	memory_install_readwrite16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x85c000, 0x85c7ff, 0, 0, hd68k_dsk_dsp32_r, hd68k_dsk_dsp32_w);
@@ -3803,11 +3803,11 @@ static void init_dsk(running_machine *machine)
 
 	/* install extra RAM */
 	memory_install_readwrite16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x900000, 0x90ffff, 0, 0, hd68k_dsk_ram_r, hd68k_dsk_ram_w);
-	state->dsk_ram = (UINT16 *)(usr3 + 0x40000);
+	state->dsk_ram = (uint16_t *)(usr3 + 0x40000);
 
 	/* install extra ZRAM */
 	memory_install_readwrite16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x910000, 0x910fff, 0, 0, hd68k_dsk_zram_r, hd68k_dsk_zram_w);
-	state->dsk_zram = (UINT16 *)(usr3 + 0x50000);
+	state->dsk_zram = (uint16_t *)(usr3 + 0x50000);
 
 	/* install ASIC65 */
 	memory_install_write16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x914000, 0x917fff, 0, 0, asic65_data_w);
@@ -3816,7 +3816,7 @@ static void init_dsk(running_machine *machine)
 
 	/* install extra ROM */
 	memory_install_read16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x940000, 0x9fffff, 0, 0, hd68k_dsk_small_rom_r);
-	state->dsk_rom = (UINT16 *)(usr3 + 0x00000);
+	state->dsk_rom = (uint16_t *)(usr3 + 0x00000);
 
 	/* set up the ASIC65 */
 	asic65_config(machine, ASIC65_STANDARD);
@@ -3827,7 +3827,7 @@ static void init_dsk(running_machine *machine)
 static void init_dsk2(running_machine *machine)
 {
 	harddriv_state *state = (harddriv_state *)machine->driver_data;
-	UINT8 *usr3 = memory_region(machine, "user3");
+	uint8_t *usr3 = memory_region(machine, "user3");
 
 	/* install ASIC65 */
 	memory_install_write16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x824000, 0x824003, 0, 0, asic65_data_w);
@@ -3842,11 +3842,11 @@ static void init_dsk2(running_machine *machine)
 
 	/* install extra RAM */
 	memory_install_readwrite16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x880000, 0x8bffff, 0, 0, hd68k_dsk_ram_r, hd68k_dsk_ram_w);
-	state->dsk_ram = (UINT16 *)(usr3 + 0x100000);
+	state->dsk_ram = (uint16_t *)(usr3 + 0x100000);
 
 	/* install extra ROM */
 	memory_install_read16_handler(cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM), 0x900000, 0x9fffff, 0, 0, hd68k_dsk_rom_r);
-	state->dsk_rom = (UINT16 *)(usr3 + 0x000000);
+	state->dsk_rom = (uint16_t *)(usr3 + 0x000000);
 
 	/* set up the ASIC65 */
 	asic65_config(machine, ASIC65_STANDARD);
@@ -3968,8 +3968,8 @@ static READ32_HANDLER( rddsp32_speedup_r )
 	harddriv_state *state = (harddriv_state *)space->machine->driver_data;
 	if (cpu_get_pc(space->cpu) == state->rddsp32_speedup_pc && (*state->rddsp32_speedup >> 16) == 0)
 	{
-		UINT32 r14 = cpu_get_reg(space->cpu, DSP32_R14);
-		UINT32 r1 = memory_read_word(space, r14 - 0x14);
+		uint32_t r14 = cpu_get_reg(space->cpu, DSP32_R14);
+		uint32_t r1 = memory_read_word(space, r14 - 0x14);
 		int cycles_to_burn = 17 * 4 * (0x2bc - r1 - 2);
 		if (cycles_to_burn > 20 * 4)
 		{

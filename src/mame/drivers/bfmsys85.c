@@ -92,15 +92,15 @@ static int mux_input;
 
 // user interface stuff ///////////////////////////////////////////////////
 
-static UINT8 Lamps[128];		  // 128 multiplexed lamps
-static UINT8 Inputs[64];		  // ??  multiplexed inputs
+static uint8_t Lamps[128];		  // 128 multiplexed lamps
+static uint8_t Inputs[64];		  // ??  multiplexed inputs
 
 ///////////////////////////////////////////////////////////////////////////
 // Serial Communications (Where does this go?) ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-static UINT8 sys85_data_line_r;
-static UINT8 sys85_data_line_t;
+static uint8_t sys85_data_line_r;
+static uint8_t sys85_data_line_t;
 
 static READ_LINE_DEVICE_HANDLER( sys85_data_r )
 {
@@ -219,7 +219,7 @@ static WRITE8_HANDLER( mmtr_w )
 {
 	int i;
 	int  changed = mmtr_latch ^ data;
-	UINT64 cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
+	uint64_t cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
 
 	mmtr_latch = data;
 
@@ -269,7 +269,7 @@ static WRITE8_HANDLER( vfd_w )
 // input / output multiplexers ///////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // conversion table BFM strobe data to internal lamp numbers
-static const UINT8 BFM_strcnv85[] =
+static const uint8_t BFM_strcnv85[] =
 {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x18,0x19,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F,

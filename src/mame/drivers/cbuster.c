@@ -522,8 +522,8 @@ ROM_END
 
 static DRIVER_INIT( twocrude )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
-	UINT8 *PTR;
+	uint8_t *RAM = memory_region(machine, "maincpu");
+	uint8_t *PTR;
 	int i, j;
 
 	/* Main cpu decrypt */

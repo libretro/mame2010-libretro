@@ -23,7 +23,7 @@ public:
 	mjsister_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     videoram0, *videoram1;
+	uint8_t *     videoram0, *videoram1;
 
 	/* video-related */
 	bitmap_t *tmpbitmap0, *tmpbitmap1;
@@ -39,7 +39,7 @@ public:
 
 	int  rombank0,rombank1;
 
-	UINT32 dac_adr, dac_bank, dac_adr_s, dac_adr_e, dac_busy;
+	uint32_t dac_adr, dac_bank, dac_adr_s, dac_adr_e, dac_busy;
 
 	/* devices */
 	running_device *maincpu;
@@ -58,14 +58,14 @@ static VIDEO_START( mjsister )
 	mjsister_state *state = (mjsister_state *)machine->driver_data;
 	state->tmpbitmap0 = auto_bitmap_alloc(machine, 256, 256, machine->primary_screen->format());
 	state->tmpbitmap1 = auto_bitmap_alloc(machine, 256, 256, machine->primary_screen->format());
-	state->videoram0 = auto_alloc_array(machine, UINT8, 0x8000);
-	state->videoram1 = auto_alloc_array(machine, UINT8, 0x8000);
+	state->videoram0 = auto_alloc_array(machine, uint8_t, 0x8000);
+	state->videoram1 = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	state_save_register_global_pointer(machine, state->videoram0, 0x8000);
 	state_save_register_global_pointer(machine, state->videoram1, 0x8000);
 }
 
-static void mjsister_plot0( running_machine *machine, int offset, UINT8 data )
+static void mjsister_plot0( running_machine *machine, int offset, uint8_t data )
 {
 	mjsister_state *state = (mjsister_state *)machine->driver_data;
 	int x, y, c1, c2;
@@ -80,7 +80,7 @@ static void mjsister_plot0( running_machine *machine, int offset, UINT8 data )
 	*BITMAP_ADDR16(state->tmpbitmap0, y, x * 2 + 1) = c2;
 }
 
-static void mjsister_plot1( running_machine *machine, int offset, UINT8 data )
+static void mjsister_plot1( running_machine *machine, int offset, uint8_t data )
 {
 	mjsister_state *state = (mjsister_state *)machine->driver_data;
 	int x, y, c1, c2;
@@ -156,7 +156,7 @@ static VIDEO_UPDATE( mjsister )
 static TIMER_CALLBACK( dac_callback )
 {
 	mjsister_state *state = (mjsister_state *)machine->driver_data;
-	UINT8 *DACROM = memory_region(machine, "samples");
+	uint8_t *DACROM = memory_region(machine, "samples");
 
 	dac_data_w(state->dac, DACROM[(state->dac_bank * 0x10000 + state->dac_adr++) & 0x1ffff]);
 
@@ -448,7 +448,7 @@ static STATE_POSTLOAD( mjsister_redraw )
 static MACHINE_START( mjsister )
 {
 	mjsister_state *state = (mjsister_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x8000);
 

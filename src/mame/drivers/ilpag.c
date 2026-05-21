@@ -78,12 +78,12 @@ ROMs
 #include "sound/dac.h"
 #include "deprecat.h"
 
-static UINT16 *blit_romaddr,*blit_attr1_ram,*blit_dst_ram_loword,*blit_attr2_ram,*blit_dst_ram_hiword,*blit_vregs,*blit_transpen;
-static UINT8 *blit_buffer;
+static uint16_t *blit_romaddr,*blit_attr1_ram,*blit_dst_ram_loword,*blit_attr2_ram,*blit_dst_ram_hiword,*blit_vregs,*blit_transpen;
+static uint8_t *blit_buffer;
 
 static VIDEO_START(ilpag)
 {
-	blit_buffer = auto_alloc_array(machine, UINT8, 512*512*4); //just to be sure,number is wrong
+	blit_buffer = auto_alloc_array(machine, uint8_t, 512*512*4); //just to be sure,number is wrong
 }
 
 static VIDEO_UPDATE(ilpag)
@@ -97,7 +97,7 @@ static VIDEO_UPDATE(ilpag)
 	{
 		for(x=0;x<512;x++)
 		{
-			UINT32 color;
+			uint32_t color;
 			color = (blit_buffer[count] & 0xff);
 
 			if(x<screen->visible_area().max_x && y<screen->visible_area().max_y)
@@ -164,11 +164,11 @@ Blitter TODO:
 */
 static WRITE16_HANDLER( blit_copy_w )
 {
-	UINT8 *blit_rom = memory_region(space->machine, "blit_data");
-	UINT32 blit_dst_xpos;
-	UINT32 blit_dst_ypos;
+	uint8_t *blit_rom = memory_region(space->machine, "blit_data");
+	uint32_t blit_dst_xpos;
+	uint32_t blit_dst_ypos;
 	int x,y,x_size,y_size;
-	UINT32 src;
+	uint32_t src;
 
 	logerror("blit copy %04x %04x %04x %04x %04x\n", blit_romaddr[0], blit_attr1_ram[0], blit_dst_ram_loword[0], blit_attr2_ram[0], blit_dst_ram_hiword[0] );
 	logerror("blit vregs %04x %04x %04x %04x\n",blit_vregs[0/2],blit_vregs[2/2],blit_vregs[4/2],blit_vregs[6/2]);
@@ -200,7 +200,7 @@ static WRITE16_HANDLER( blit_copy_w )
 				blit_buffer[drawy*512+drawx] = ((blit_vregs[0] & 0xf00)>>8);
 			else
 			{
-				UINT8 pen_helper;
+				uint8_t pen_helper;
 
 				pen_helper = blit_rom[src] & 0xff;
 				if(blit_transpen[0xa/2] & 0x100) //pen is opaque register

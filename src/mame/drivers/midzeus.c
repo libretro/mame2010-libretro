@@ -46,25 +46,25 @@ The Grid         v1.2   10/18/2000
 #define BEAM_DX			3
 #define BEAM_XOFFS		40		/* table in the code indicates an offset of 20 with a beam height of 7 */
 
-static UINT32			gun_control;
-static UINT8			gun_irq_state;
+static uint32_t			gun_control;
+static uint8_t			gun_irq_state;
 static emu_timer *		gun_timer[2];
-static INT32			gun_x[2], gun_y[2];
+static int32_t			gun_x[2], gun_y[2];
 
-static UINT8			crusnexo_leds_select;
-static UINT8			keypad_select;
-static UINT8			bitlatch[10];
+static uint8_t			crusnexo_leds_select;
+static uint8_t			keypad_select;
+static uint8_t			bitlatch[10];
 
-static UINT32 *ram_base;
-static UINT32 *zpram;
+static uint32_t *ram_base;
+static uint32_t *zpram;
 static size_t zpram_size;
-static UINT8 cmos_protected;
+static uint8_t cmos_protected;
 
-static UINT32 *linkram;
+static uint32_t *linkram;
 
 static emu_timer *timer[2];
 
-static UINT32 *tms32031_control;
+static uint32_t *tms32031_control;
 
 
 static TIMER_CALLBACK( invasn_gun_callback );
@@ -255,7 +255,7 @@ static READ32_HANDLER( bitlatches_r )
 
 static WRITE32_HANDLER( bitlatches_w )
 {
-	UINT32 oldval = bitlatch[offset];
+	uint32_t oldval = bitlatch[offset];
 	bitlatch[offset] = data;
 
 	switch (offset)
@@ -403,7 +403,7 @@ static READ32_HANDLER( tms32031_control_r )
 	{
 		/* timer is clocked at 100ns */
 		int which = (offset >> 4) & 1;
-		INT32 result = attotime_to_double(attotime_mul(timer_timeelapsed(timer[which]), 10000000));
+		int32_t result = attotime_to_double(attotime_mul(timer_timeelapsed(timer[which]), 10000000));
 		return result;
 	}
 
@@ -444,7 +444,7 @@ static WRITE32_HANDLER( tms32031_control_w )
 
 static CUSTOM_INPUT( custom_49way_r )
 {
-	static const UINT8 translate49[7] = { 0x8, 0xc, 0xe, 0xf, 0x3, 0x1, 0x0 };
+	static const uint8_t translate49[7] = { 0x8, 0xc, 0xe, 0xf, 0x3, 0x1, 0x0 };
 	const char *namex = (const char *)param;
 	const char *namey = namex + strlen(namex) + 1;
 	return (translate49[input_port_read(field->port->machine, namey) >> 4] << 4) | translate49[input_port_read(field->port->machine, namex) >> 4];
@@ -460,8 +460,8 @@ static WRITE32_HANDLER( keypad_select_w )
 
 static CUSTOM_INPUT( keypad_r )
 {
-	UINT32 bits = input_port_read(field->port->machine, (const char *)param);
-	UINT8 select = keypad_select;
+	uint32_t bits = input_port_read(field->port->machine, (const char *)param);
+	uint8_t select = keypad_select;
 	while ((select & 1) != 0)
 	{
 		select >>= 1;
@@ -528,7 +528,7 @@ static TIMER_CALLBACK( invasn_gun_callback )
 
 static WRITE32_HANDLER( invasn_gun_w )
 {
-	UINT32 old_control = gun_control;
+	uint32_t old_control = gun_control;
 	int player;
 
 	COMBINE_DATA(&gun_control);
@@ -540,7 +540,7 @@ static WRITE32_HANDLER( invasn_gun_w )
 
 	for (player = 0; player < 2; player++)
 	{
-		UINT8 pmask = 0x04 << player;
+		uint8_t pmask = 0x04 << player;
 		if (((old_control ^ gun_control) & pmask) != 0 && (gun_control & pmask) == 0)
 		{
 			const rectangle &visarea = space->machine->primary_screen->visible_area();
@@ -561,7 +561,7 @@ static READ32_HANDLER( invasn_gun_r )
 {
 	int beamx = space->machine->primary_screen->hpos();
 	int beamy = space->machine->primary_screen->vpos();
-	UINT32 result = 0xffff;
+	uint32_t result = 0xffff;
 	int player;
 
 	for (player = 0; player < 2; player++)

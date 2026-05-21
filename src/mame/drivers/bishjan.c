@@ -42,9 +42,9 @@ To do:
                               Tilemaps Access
 ***************************************************************************/
 
-static UINT8	*bishjan_colorram;
-static UINT8	*bishjan_videoram_1_lo,	*bishjan_videoram_1_hi;
-static UINT8	*bishjan_videoram_2_lo,	*bishjan_videoram_2_hi;
+static uint8_t	*bishjan_colorram;
+static uint8_t	*bishjan_videoram_1_lo,	*bishjan_videoram_1_hi;
+static uint8_t	*bishjan_videoram_2_lo,	*bishjan_videoram_2_hi;
 
 static tilemap_t	*tmap_1;
 static tilemap_t	*tmap_2;
@@ -52,7 +52,7 @@ static tilemap_t	*tmap_2;
 static TILE_GET_INFO( get_tile_info_1 )	{	SET_TILE_INFO(0, (bishjan_videoram_1_hi[ tile_index ] << 8) + bishjan_videoram_1_lo[ tile_index ], 0, 0);	}
 static TILE_GET_INFO( get_tile_info_2 )	{	SET_TILE_INFO(0, (bishjan_videoram_2_hi[ tile_index ] << 8) + bishjan_videoram_2_lo[ tile_index ], 0, 0);	}
 
-static UINT8 bishjan_byte_lo;
+static uint8_t bishjan_byte_lo;
 
 static WRITE8_HANDLER( bishjan_byte_lo_w )
 {
@@ -120,8 +120,8 @@ static int bishjan_scroll_1_x, bishjan_scroll_1_y;
 static int bishjan_scroll_2_x, bishjan_scroll_2_y;
 
 // line scroll
-static UINT8 *bishjan_scrollram_1_lo, *bishjan_scrollram_1_hi;
-static UINT8 *bishjan_scrollram_2_lo, *bishjan_scrollram_2_hi;
+static uint8_t *bishjan_scrollram_1_lo, *bishjan_scrollram_1_hi;
+static uint8_t *bishjan_scrollram_2_lo, *bishjan_scrollram_2_hi;
 
 static WRITE8_HANDLER( bishjan_scroll_w )
 {
@@ -214,21 +214,21 @@ static VIDEO_START(bishjan)
 	tilemap_set_scrolldy( tmap_1, -1, +1 );
 	tilemap_set_scrolldy( tmap_2, -1, +1 );
 
-	bishjan_videoram_1_lo = auto_alloc_array(machine, UINT8, 0x80 * 0x40);
-	bishjan_videoram_1_hi = auto_alloc_array(machine, UINT8, 0x80 * 0x40);
+	bishjan_videoram_1_lo = auto_alloc_array(machine, uint8_t, 0x80 * 0x40);
+	bishjan_videoram_1_hi = auto_alloc_array(machine, uint8_t, 0x80 * 0x40);
 
-	bishjan_videoram_2_lo = auto_alloc_array(machine, UINT8, 0x80 * 0x40);
-	bishjan_videoram_2_hi = auto_alloc_array(machine, UINT8, 0x80 * 0x40);
+	bishjan_videoram_2_lo = auto_alloc_array(machine, uint8_t, 0x80 * 0x40);
+	bishjan_videoram_2_hi = auto_alloc_array(machine, uint8_t, 0x80 * 0x40);
 
-	bishjan_scrollram_1_lo = auto_alloc_array(machine, UINT8, 0x200);
-	bishjan_scrollram_1_hi = auto_alloc_array(machine, UINT8, 0x200);
+	bishjan_scrollram_1_lo = auto_alloc_array(machine, uint8_t, 0x200);
+	bishjan_scrollram_1_hi = auto_alloc_array(machine, uint8_t, 0x200);
 
-	bishjan_scrollram_2_lo = auto_alloc_array(machine, UINT8, 0x200);
-	bishjan_scrollram_2_hi = auto_alloc_array(machine, UINT8, 0x200);
+	bishjan_scrollram_2_lo = auto_alloc_array(machine, uint8_t, 0x200);
+	bishjan_scrollram_2_hi = auto_alloc_array(machine, uint8_t, 0x200);
 
-	bishjan_videoram_2_hi = auto_alloc_array(machine, UINT8, 0x80 * 0x40);
+	bishjan_videoram_2_hi = auto_alloc_array(machine, uint8_t, 0x80 * 0x40);
 
-	bishjan_colorram = auto_alloc_array(machine, UINT8, 256*3);
+	bishjan_colorram = auto_alloc_array(machine, uint8_t, 256*3);
 }
 
 static VIDEO_UPDATE( bishjan )
@@ -314,7 +314,7 @@ static WRITE8TO16BE( colordac_word, colordac_w );
                                 Bishou Jan
 ***************************************************************************/
 
-static UINT16 bishjan_sel, bishjan_input, bishjan_hopper;
+static uint16_t bishjan_sel, bishjan_input, bishjan_hopper;
 
 static WRITE16_HANDLER( bishjan_sel_w )
 {
@@ -339,7 +339,7 @@ static WRITE16_HANDLER( bishjan_input_w )
 static READ16_HANDLER( bishjan_input_r )
 {
 	int i;
-	UINT16 res = 0xff;
+	uint16_t res = 0xff;
 	static const char *const port[] = { "KEYB_0", "KEYB_1", "KEYB_2", "KEYB_3", "KEYB_4" };
 
 	for (i = 0; i < 5; i++)
@@ -414,7 +414,7 @@ ADDRESS_MAP_END
                           Sakura Love - Ying Hua Lian
 ***************************************************************************/
 
-static UINT8 saklove_dsw_mask;
+static uint8_t saklove_dsw_mask;
 
 static WRITE8_HANDLER( saklove_dsw_mask_w )
 {
@@ -429,7 +429,7 @@ static READ8_HANDLER( saklove_dsw_r )
 			( (input_port_read(space->machine, "DSW4") & saklove_dsw_mask) ? 0x08 : 0 ) ;
 }
 
-static UINT8 *saklove_outputs;
+static uint8_t *saklove_outputs;
 static WRITE8_HANDLER( saklove_outputs_w )
 {
 	saklove_outputs[offset] = data;
@@ -467,7 +467,7 @@ static READ8_HANDLER( saklove_vblank_r )
 	return space->machine->primary_screen->vblank() ? 0x04 : 0x00;
 }
 
-static UINT8 *am188em_regs;
+static uint8_t *am188em_regs;
 
 enum
 {
@@ -955,7 +955,7 @@ ROM_END
 
 static DRIVER_INIT(bishjan)
 {
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	// check
 	rom[0x042EA/2] = 0x4008;
@@ -1013,7 +1013,7 @@ ROM_END
 
 static DRIVER_INIT(saklove)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	// patch protection test (it always enters test mode on boot otherwise)
 	rom[0x0e029] = 0xeb;

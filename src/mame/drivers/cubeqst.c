@@ -42,11 +42,11 @@
  *
  *************************************/
 
-static UINT8 *depth_buffer;
+static uint8_t *depth_buffer;
 static int video_field;
 
-static UINT8 io_latch;
-static UINT8 reset_latch;
+static uint8_t io_latch;
+static uint8_t reset_latch;
 
 static running_device *laserdisc;
 static rgb_t *colormap;
@@ -64,7 +64,7 @@ static const rectangle overlay_clip = { 0, 320-1, 0, 256-8 };
 static VIDEO_START( cubeqst )
 {
 	video_field = 0;
-	depth_buffer = auto_alloc_array(machine, UINT8, 512);
+	depth_buffer = auto_alloc_array(machine, uint8_t, 512);
 }
 
 /* TODO: Use resistor values */
@@ -75,7 +75,7 @@ static PALETTE_INIT( cubeqst )
 	colormap = auto_alloc_array(machine, rgb_t, 65536);
 	for (i = 0; i < 65536; ++i)
 	{
-		UINT8 a, r, g, b, y;
+		uint8_t a, r, g, b, y;
 
 		a = (i >> 3) & 1;
 		b = (i >> 0) & 7;
@@ -111,9 +111,9 @@ static VIDEO_UPDATE( cubeqst )
 	{
 		int i;
 		int num_entries = cubeqcpu_get_ptr_ram_val(screen->machine->device("line_cpu"), y);
-		UINT32 *stk_ram = cubeqcpu_get_stack_ram(screen->machine->device("line_cpu"));
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, 0);
-		UINT32 pen;
+		uint32_t *stk_ram = cubeqcpu_get_stack_ram(screen->machine->device("line_cpu"));
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, 0);
+		uint32_t pen;
 
 		/* Zap the depth buffer */
 		memset(depth_buffer, 0xff, 512);
@@ -313,7 +313,7 @@ static WRITE16_HANDLER( io_w )
 
 static READ16_HANDLER( io_r )
 {
-	UINT16 port_data = input_port_read(space->machine, "IO");
+	uint16_t port_data = input_port_read(space->machine, "IO");
 
 	/*
          Certain bits depend on Q7 of the IO latch:
@@ -454,7 +454,7 @@ static MACHINE_RESET( cubeqst )
  */
 
 /* Called by the sound CPU emulation */
-static void sound_dac_w(running_device *device, UINT16 data)
+static void sound_dac_w(running_device *device, uint16_t data)
 {
 	static const char *const dacs[] =
 	{

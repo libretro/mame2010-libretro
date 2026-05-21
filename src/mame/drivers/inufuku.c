@@ -116,7 +116,7 @@ static WRITE8_HANDLER( inufuku_soundrombank_w )
 static CUSTOM_INPUT( soundflag_r )
 {
 	inufuku_state *state = (inufuku_state *)field->port->machine->driver_data;
-	UINT16 soundflag = state->pending_command ? 0 : 1;
+	uint16_t soundflag = state->pending_command ? 0 : 1;
 
 	return soundflag;
 }
@@ -317,7 +317,7 @@ static const ym2610_interface ym2610_config =
 static MACHINE_START( inufuku )
 {
 	inufuku_state *state = (inufuku_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x8000);
 	memory_set_bank(machine, "bank1", 0);

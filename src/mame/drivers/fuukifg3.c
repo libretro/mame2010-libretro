@@ -195,7 +195,7 @@ static WRITE32_HANDLER( paletteram32_xRRRRRGGGGGBBBBB_dword_w )
 static READ32_HANDLER( snd_020_r )
 {
 	fuuki32_state *state = (fuuki32_state *)space->machine->driver_data;
-	UINT32 retdata = state->shared_ram[offset * 2] << 16 | state->shared_ram[(offset * 2) + 1];
+	uint32_t retdata = state->shared_ram[offset * 2] << 16 | state->shared_ram[(offset * 2) + 1];
 	return retdata;
 }
 
@@ -275,7 +275,7 @@ static WRITE8_HANDLER ( fuuki32_sound_bw_w )
 static READ8_HANDLER( snd_z80_r )
 {
 	fuuki32_state *state = (fuuki32_state *)space->machine->driver_data;
-	UINT8 retdata = state->shared_ram[offset];
+	uint8_t retdata = state->shared_ram[offset];
 	return retdata;
 }
 
@@ -511,7 +511,7 @@ static TIMER_CALLBACK( raster_interrupt_callback )
 static MACHINE_START( fuuki32 )
 {
 	fuuki32_state *state = (fuuki32_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "soundcpu");
+	uint8_t *ROM = memory_region(machine, "soundcpu");
 
 	memory_configure_bank(machine, "bank1", 0, 0x3e, &ROM[0x10000], 0x8000);
 

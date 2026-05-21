@@ -480,7 +480,7 @@ ROM_END
 */
 
 
-static UINT32 *speedup_data;
+static uint32_t *speedup_data;
 static READ32_HANDLER( speedup_r )
 {
 	int result = *speedup_data;
@@ -490,15 +490,15 @@ static READ32_HANDLER( speedup_r )
 }
 
 
-static UINT32 *movie_speedup_data;
+static uint32_t *movie_speedup_data;
 static READ32_HANDLER( movie_speedup_r )
 {
 	int result = *movie_speedup_data;
 	if ((cpu_get_previouspc(space->cpu) & 0xfffff) == 0x00a88 && (cpu_get_reg(space->cpu, ASAP_R28) & 0xfffff) == 0x397c0 &&
 		movie_speedup_data[4] == cpu_get_reg(space->cpu, ASAP_R1))
 	{
-		UINT32 temp = (INT16)result + movie_speedup_data[4] * 262;
-		if (temp - (UINT32)cpu_get_reg(space->cpu, ASAP_R15) < (UINT32)cpu_get_reg(space->cpu, ASAP_R23))
+		uint32_t temp = (int16_t)result + movie_speedup_data[4] * 262;
+		if (temp - (uint32_t)cpu_get_reg(space->cpu, ASAP_R15) < (uint32_t)cpu_get_reg(space->cpu, ASAP_R23))
 			cpu_spinuntil_int(space->cpu);
 	}
 	return result;

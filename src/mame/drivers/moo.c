@@ -96,7 +96,7 @@ static void moo_objdma( running_machine *machine, int type )
 {
 	moo_state *state = (moo_state *)machine->driver_data;
 	int num_inactive;
-	UINT16 *src, *dst, zmask;
+	uint16_t *src, *dst, zmask;
 	int counter = k053247_get_dy(state->k053246);
 
 	k053247_get_ram(state->k053246, &dst);
@@ -223,7 +223,7 @@ static WRITE16_HANDLER( K053247_scattered_word_w )
 static WRITE16_HANDLER( moo_prot_w )
 {
 	moo_state *state = (moo_state *)space->machine->driver_data;
-	UINT32 src1, src2, dst, length, a, b, res;
+	uint32_t src1, src2, dst, length, a, b, res;
 
 	COMBINE_DATA(&state->protram[offset]);
 

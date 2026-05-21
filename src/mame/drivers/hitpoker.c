@@ -47,19 +47,19 @@ Some debug tricks (let's test this CPU as more as possible):
 #include "sound/ay8910.h"
 #include "video/mc6845.h"
 
-static UINT8 *hitpoker_sys_regs;
-static UINT8 hitpoker_pic_data;
-static UINT8 *videoram;
-static UINT8 *paletteram;
-static UINT8 *colorram;
+static uint8_t *hitpoker_sys_regs;
+static uint8_t hitpoker_pic_data;
+static uint8_t *videoram;
+static uint8_t *paletteram;
+static uint8_t *colorram;
 
 #define CRTC_CLOCK XTAL_3_579545MHz
 
 static VIDEO_START(hitpoker)
 {
-	videoram = auto_alloc_array(machine, UINT8, 0x35ff);
-	paletteram = auto_alloc_array(machine, UINT8, 0x1000);
-	colorram = auto_alloc_array(machine, UINT8, 0x2000);
+	videoram = auto_alloc_array(machine, uint8_t, 0x35ff);
+	paletteram = auto_alloc_array(machine, uint8_t, 0x1000);
+	colorram = auto_alloc_array(machine, uint8_t, 0x2000);
 }
 
 static VIDEO_UPDATE(hitpoker)
@@ -90,7 +90,7 @@ static VIDEO_UPDATE(hitpoker)
 
 static READ8_HANDLER( hitpoker_vram_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	if(hitpoker_pic_data & 0x10)
 		return videoram[offset];
@@ -100,7 +100,7 @@ static READ8_HANDLER( hitpoker_vram_r )
 
 static WRITE8_HANDLER( hitpoker_vram_w )
 {
-//  UINT8 *ROM = memory_region(space->machine, "maincpu");
+//  uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 //  if(hitpoker_sys_regs[0x00] & 0x10)
 	videoram[offset] = data;
@@ -108,7 +108,7 @@ static WRITE8_HANDLER( hitpoker_vram_w )
 
 static READ8_HANDLER( hitpoker_cram_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	if(hitpoker_pic_data & 0x10)
 		return colorram[offset];
@@ -123,7 +123,7 @@ static WRITE8_HANDLER( hitpoker_cram_w )
 
 static READ8_HANDLER( hitpoker_paletteram_r )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	if(hitpoker_pic_data & 0x10)
 		return paletteram[offset];
@@ -151,8 +151,8 @@ static READ8_HANDLER( rtc_r )
 	return 0x80; //kludge it for now
 }
 
-static UINT8 eeprom_data[0x200];
-static UINT16 eeprom_index;
+static uint8_t eeprom_data[0x200];
+static uint16_t eeprom_index;
 
 /* tests 0x180, what EEPROM is this one??? */
 static WRITE8_HANDLER( eeprom_w )
@@ -172,7 +172,7 @@ static WRITE8_HANDLER( eeprom_w )
 
 static READ8_HANDLER( eeprom_r )
 {
-	static UINT8 tmp;
+	static uint8_t tmp;
 	tmp = eeprom_data[eeprom_index];
 	if((eeprom_index & 0x1f) == 0x1f)
 		tmp = 0xaa;
@@ -493,7 +493,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT(hitpoker)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0x1220] = 0x01; //patch eeprom write?
 	ROM[0x1221] = 0x01;

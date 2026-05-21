@@ -51,9 +51,9 @@ READ16_HANDLER(ddd_053936_tilerom_1_r);
 READ16_HANDLER(gai_053936_tilerom_2_r);
 READ16_HANDLER(ddd_053936_tilerom_2_r);
 
-static UINT16 *gx_workram;
+static uint16_t *gx_workram;
 
-static UINT8 mw_irq_control;
+static uint8_t mw_irq_control;
 
 static const eeprom_interface eeprom_intf =
 {

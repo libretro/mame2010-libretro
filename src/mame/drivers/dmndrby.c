@@ -54,11 +54,11 @@ DD10 DD14  DD18     H5            DD21
 #include "sound/ay8910.h"
 #include "video/resnet.h"
 
-static UINT8* dderby_vidchars;
-static UINT8* scroll_ram;
-static UINT8* dderby_vidattribs;
-static UINT8* sprite_ram;
-static UINT8 *racetrack_tilemap_rom;
+static uint8_t* dderby_vidchars;
+static uint8_t* scroll_ram;
+static uint8_t* dderby_vidattribs;
+static uint8_t* sprite_ram;
+static uint8_t *racetrack_tilemap_rom;
 static tilemap_t *racetrack_tilemap;
 
 static WRITE8_HANDLER( dderby_sound_w )
@@ -67,7 +67,7 @@ static WRITE8_HANDLER( dderby_sound_w )
 	cputag_set_input_line(space->machine, "audiocpu", 0, HOLD_LINE);
 }
 
-static UINT8 io_port[8];
+static uint8_t io_port[8];
 
 static READ8_HANDLER( input_r )
 {
@@ -470,7 +470,7 @@ static PALETTE_INIT( dmnderby )
 	/* normal tiles use colors 0-15 */
 	for (i = 0x000; i < 0x300; i++)
 	{
-		UINT8 ctabentry = color_prom[i];
+		uint8_t ctabentry = color_prom[i];
 		colortable_entry_set_value(machine->colortable, i, ctabentry);
 	}
 }

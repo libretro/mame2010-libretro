@@ -349,16 +349,16 @@ Notes:
  *
  *************************************/
 
-static const UINT8 *writeprom;
+static const uint8_t *writeprom;
 
 static emu_timer *irq_timer;
 static emu_timer *cpu_timer;
 
-static UINT8 irq_state;
-static UINT8 ctrld;
-static UINT8 flipscreen;
-static UINT8 madsel_delay;
-static UINT16 madsel_lastpc;
+static uint8_t irq_state;
+static uint8_t ctrld;
+static uint8_t flipscreen;
+static uint8_t madsel_delay;
+static uint16_t madsel_lastpc;
 
 
 
@@ -513,7 +513,7 @@ static MACHINE_RESET( missile )
 
 INLINE int get_madsel(const address_space *space)
 {
-	UINT16 pc = cpu_get_previouspc(space->cpu);
+	uint16_t pc = cpu_get_previouspc(space->cpu);
 
 	/* if we're at a different instruction than last time, reset our delay counter */
 	if (pc != madsel_lastpc)
@@ -548,12 +548,12 @@ INLINE offs_t get_bit3_addr(offs_t pixaddr)
 }
 
 
-static void write_vram(const address_space *space, offs_t address, UINT8 data)
+static void write_vram(const address_space *space, offs_t address, uint8_t data)
 {
-	static const UINT8 data_lookup[4] = { 0x00, 0x0f, 0xf0, 0xff };
+	static const uint8_t data_lookup[4] = { 0x00, 0x0f, 0xf0, 0xff };
 	offs_t vramaddr;
-	UINT8 vramdata;
-	UINT8 vrammask;
+	uint8_t vramdata;
+	uint8_t vrammask;
 
 	/* basic 2 bit VRAM writes go to addr >> 2 */
 	/* data comes from bits 6 and 7 */
@@ -578,12 +578,12 @@ static void write_vram(const address_space *space, offs_t address, UINT8 data)
 }
 
 
-static UINT8 read_vram(const address_space *space, offs_t address)
+static uint8_t read_vram(const address_space *space, offs_t address)
 {
 	offs_t vramaddr;
-	UINT8 vramdata;
-	UINT8 vrammask;
-	UINT8 result = 0xff;
+	uint8_t vramdata;
+	uint8_t vrammask;
+	uint8_t result = 0xff;
 
 	/* basic 2 bit VRAM reads go to addr >> 2 */
 	/* data goes to bits 6 and 7 */
@@ -627,11 +627,11 @@ static VIDEO_UPDATE( missile )
 	/* draw the bitmap to the screen, looping over Y */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT16 *dst = (UINT16 *)bitmap->base + y * bitmap->rowpixels;
+		uint16_t *dst = (uint16_t *)bitmap->base + y * bitmap->rowpixels;
 
 		int effy = flipscreen ? ((256+24 - y) & 0xff) : y;
-		UINT8 *src = &screen->machine->generic.videoram.u8[effy * 64];
-		UINT8 *src3 = NULL;
+		uint8_t *src = &screen->machine->generic.videoram.u8[effy * 64];
+		uint8_t *src3 = NULL;
 
 		/* compute the base of the 3rd pixel row */
 		if (effy >= 224)
@@ -640,7 +640,7 @@ static VIDEO_UPDATE( missile )
 		/* loop over X */
 		for (x = cliprect->min_x; x <= cliprect->max_x; x++)
 		{
-			UINT8 pix = src[x / 4] >> (x & 3);
+			uint8_t pix = src[x / 4] >> (x & 3);
 			pix = ((pix >> 2) & 4) | ((pix << 1) & 2);
 
 			/* if we're in the lower region, get the 3rd bit */
@@ -719,7 +719,7 @@ static WRITE8_HANDLER( missile_w )
 
 static READ8_HANDLER( missile_r )
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	/* if we're in MADSEL mode, read from video RAM */
 	if (get_madsel(space))
@@ -1115,7 +1115,7 @@ ROM_END
 static DRIVER_INIT( suprmatk )
 {
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (i = 0; i < 0x40; i++)
 	{

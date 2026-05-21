@@ -16,8 +16,8 @@
 #define SOUND_CLOCK XTAL_4MHz
 
 
-static UINT8 *shift_hi;
-static UINT8 *shift_lo;
+static uint8_t *shift_hi;
+static uint8_t *shift_lo;
 
 
 static INPUT_CHANGED( coin_inserted )
@@ -27,9 +27,9 @@ static INPUT_CHANGED( coin_inserted )
 }
 
 
-INLINE UINT8 shift_common(running_machine *machine, UINT8 hi, UINT8 lo)
+INLINE uint8_t shift_common(running_machine *machine, uint8_t hi, uint8_t lo)
 {
-	const UINT8 *table = memory_region(machine, "user2");
+	const uint8_t *table = memory_region(machine, "user2");
 
 	return table[((hi & 0x07) << 8) | lo];
 }
@@ -41,10 +41,10 @@ static READ8_HANDLER( shift_r )
 
 static READ8_HANDLER( shift_rev_r )
 {
-	UINT8 hi = *shift_hi ^ 0x07;
-	UINT8 lo = BITSWAP8(*shift_lo,0,1,2,3,4,5,6,7);
+	uint8_t hi = *shift_hi ^ 0x07;
+	uint8_t lo = BITSWAP8(*shift_lo,0,1,2,3,4,5,6,7);
 
-	UINT8 ret = shift_common(space->machine, hi, lo);
+	uint8_t ret = shift_common(space->machine, hi, lo);
 
 	return BITSWAP8(ret,7,0,1,2,3,4,5,6) & 0x7f;
 }

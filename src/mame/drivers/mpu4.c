@@ -306,21 +306,21 @@ static int global_volume;// OKI MOD 4 and above only
 Two connectors 'orange' (sampled every 8ms) and 'black' (sampled every 16ms)
 Each connector carries two banks of eight inputs and two enable signals */
 static int	  input_strobe;	  /* IC23 74LS138 A = CA2 IC7, B = CA2 IC4, C = CA2 IC8 */
-static UINT8  lamp_strobe,lamp_strobe2;
-static UINT8  lamp_data;
-static UINT8  ay_data;
+static uint8_t  lamp_strobe,lamp_strobe2;
+static uint8_t  lamp_data;
+static uint8_t  ay_data;
 
-static UINT8 MPU4_chr_data[72];
+static uint8_t MPU4_chr_data[72];
 
-static UINT8 Lamps[128];		/* 128 multiplexed lamps */
+static uint8_t Lamps[128];		/* 128 multiplexed lamps */
 static int optic_pattern;
 
 /* Lookup table for CHR data */
 
 struct mpu4_chr_table
 {
-	UINT8 call;
-	UINT8 response;
+	uint8_t call;
+	uint8_t response;
 };
 
 static const mpu4_chr_table* mpu4_current_chr_table;
@@ -344,11 +344,11 @@ with settings like this in the majority of cases.
 8 display enables (pins 10 - 17)
 */
 
-static UINT8 led_segs[8];
+static uint8_t led_segs[8];
 
 
 /* Process lamp and LED data for output system */
-static void mpu4_draw_led(UINT8 id, UINT8 value)
+static void mpu4_draw_led(uint8_t id, uint8_t value)
 {
 	output_set_digit_value(id,value);
 }
@@ -379,7 +379,7 @@ static void update_lamps(void)
 	if (led_extend)
 	{
 		/* Some games uses 'programmable' LED displays, built from light display lines. */
-		UINT8 pled_segs[2] = {0,0};
+		uint8_t pled_segs[2] = {0,0};
 
 		static const int lamps1[8] = { 106, 107, 108, 109, 104, 105, 110, 133 };
 		static const int lamps2[8] = { 114, 115, 116, 117, 112, 113, 118, 119 };
@@ -439,7 +439,7 @@ static MACHINE_RESET( mpu4 )
 
 /* init rom bank, some games don't set this */
 	{
-		UINT8 *rom = memory_region(machine, "maincpu");
+		uint8_t *rom = memory_region(machine, "maincpu");
 
 		memory_configure_bank(machine, "bank1", 0, 8, &rom[0x01000], 0x10000);
 
@@ -955,7 +955,7 @@ static WRITE8_DEVICE_HANDLER( pia_ic7_porta_w )
 static WRITE8_DEVICE_HANDLER( pia_ic7_portb_w )
 {
 	int meter;
-	UINT64 cycles = device->machine->device<cpu_device>("maincpu")->total_cycles();
+	uint64_t cycles = device->machine->device<cpu_device>("maincpu")->total_cycles();
 
 /* The meters are connected to a voltage drop sensor, where current
 flowing through them also passes through pin B7, meaning that when
@@ -996,7 +996,7 @@ static WRITE_LINE_DEVICE_HANDLER( pia_ic7_cb2_w )
 {
 /* The eighth meter is connected here, because the voltage sensor
 is on PB7. */
-	UINT64 cycles = device->machine->device<cpu_device>("maincpu")->total_cycles();
+	uint64_t cycles = device->machine->device<cpu_device>("maincpu")->total_cycles();
 	if (state)
 	{
 		pia6821_portb_w(device, 0, mmtr_data|0x80);

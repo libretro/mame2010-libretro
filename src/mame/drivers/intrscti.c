@@ -19,7 +19,7 @@ static READ8_HANDLER( unk_r )
 	return mame_rand(space->machine);
 }
 
-static UINT8 *intrscti_ram;
+static uint8_t *intrscti_ram;
 
 static ADDRESS_MAP_START( intrscti_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x0000, 0x1fff) AM_ROM
@@ -120,7 +120,7 @@ ROM_END
 
 static DRIVER_INIT( intrscti )
 {
-	UINT8 *cpu = memory_region( machine, "maincpu" );
+	uint8_t *cpu = memory_region( machine, "maincpu" );
 	int i;
 	for (i=0x8000;i<0x8fff;i++)
 	{

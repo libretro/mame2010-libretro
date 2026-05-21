@@ -448,45 +448,45 @@ or Fatal Fury for example).
 #include "includes/hng64.h"
 
 int hng64_mcu_type = 0;
-static UINT32 fake_mcu_time;
-static UINT16 hng_mcu_en;
+static uint32_t fake_mcu_time;
+static uint16_t hng_mcu_en;
 
-static UINT32 *rombase;
-static UINT32 *hng_mainram;
-static UINT32 *hng_cart;
-static UINT32 *hng64_dualport;
-static UINT16 *hng64_soundram;
-static UINT32 *hng64_sysregs;
+static uint32_t *rombase;
+static uint32_t *hng_mainram;
+static uint32_t *hng_cart;
+static uint32_t *hng64_dualport;
+static uint16_t *hng64_soundram;
+static uint32_t *hng64_sysregs;
 
 // Stuff from over in video...
 extern WRITE32_HANDLER( hng64_videoram_w );
-extern UINT32 *hng64_spriteram, *hng64_videoregs, *hng64_spriteregs;
-extern UINT32 *hng64_videoram;
-extern UINT32 *hng64_tcram;
-extern UINT32 *hng64_3dregs;
+extern uint32_t *hng64_spriteram, *hng64_videoregs, *hng64_spriteregs;
+extern uint32_t *hng64_videoram;
+extern uint32_t *hng64_tcram;
+extern uint32_t *hng64_3dregs;
 
-extern void hng64_command3d(running_machine* machine, const UINT16* packet);
+extern void hng64_command3d(running_machine* machine, const uint16_t* packet);
 
-extern UINT8 hng64_screen_dis;
+extern uint8_t hng64_screen_dis;
 
 VIDEO_START( hng64 );
 VIDEO_UPDATE( hng64 );
 
-static UINT32 activeBuffer;
-static UINT32 no_machine_error_code;
+static uint32_t activeBuffer;
+static uint32_t no_machine_error_code;
 static int hng64_interrupt_level_request;
 
 /* 3D stuff */
-static UINT32 *hng64_3d_1;
-static UINT32 *hng64_3d_2;
-static UINT32 *hng64_dl;
-//static UINT32 *hng64_q2;
+static uint32_t *hng64_3d_1;
+static uint32_t *hng64_3d_2;
+static uint32_t *hng64_dl;
+//static uint32_t *hng64_q2;
 
 /* Communications stuff */
-static UINT32 *hng64_com_ram;
-static UINT8  *hng64_com_op_base;
-static UINT8  *hng64_com_mmu_mem;
-static UINT8  *hng64_com_virtual_mem;
+static uint32_t *hng64_com_ram;
+static uint8_t  *hng64_com_op_base;
+static uint8_t  *hng64_com_mmu_mem;
+static uint8_t  *hng64_com_virtual_mem;
 
 
 #ifdef UNUSED_FUNCTION
@@ -514,8 +514,8 @@ static WRITE32_HANDLER( hng64_com_w )
 }
 
 
-static UINT32 hng64_com_shared_a;
-static UINT32 hng64_com_shared_b;
+static uint32_t hng64_com_shared_a;
+static uint32_t hng64_com_shared_b;
 
 static WRITE32_HANDLER( hng64_com_share_w )
 {
@@ -594,7 +594,7 @@ static READ32_HANDLER( hng64_sysregs_r )
 }
 
 /* preliminary dma code, dma is used to copy program code -> ram */
-static INT32 hng_dma_start,hng_dma_dst,hng_dma_len;
+static int32_t hng_dma_start,hng_dma_dst,hng_dma_len;
 
 static void hng64_do_dma(const address_space *space)
 {
@@ -602,7 +602,7 @@ static void hng64_do_dma(const address_space *space)
 
 	while (hng_dma_len>=0)
 	{
-		UINT32 dat;
+		uint32_t dat;
 
 		dat = memory_read_dword(space,hng_dma_start);
 		memory_write_dword(space,hng_dma_dst,dat);
@@ -715,7 +715,7 @@ static READ32_HANDLER( shoot_io_r )
 		}
 		case 0x010:
 		{
-			static UINT32 p1_trig;
+			static uint32_t p1_trig;
 
 			/* Quick kludge for use the input test items */
 			if(input_port_read(space->machine, "D_IN") & 0x01000000)
@@ -725,7 +725,7 @@ static READ32_HANDLER( shoot_io_r )
 		}
 		case 0x018:
 		{
-			UINT8 p1_x, p1_y, p2_x, p2_y;
+			uint8_t p1_x, p1_y, p2_x, p2_y;
 			p1_x = input_port_read(space->machine, "LIGHT_P1_X") & 0xff;
 			p1_y = input_port_read(space->machine, "LIGHT_P1_Y") & 0xff;
 			p2_x = input_port_read(space->machine, "LIGHT_P2_X") & 0xff;
@@ -735,7 +735,7 @@ static READ32_HANDLER( shoot_io_r )
 		}
 		case 0x01c:
 		{
-			UINT8 p3_x, p3_y;
+			uint8_t p3_x, p3_y;
 			p3_x = input_port_read(space->machine, "LIGHT_P3_X") & 0xff;
 			p3_y = input_port_read(space->machine, "LIGHT_P3_Y") & 0xff;
 
@@ -848,7 +848,7 @@ static WRITE32_HANDLER( hng64_3d_2_w )
 static WRITE32_HANDLER( dl_w )
 {
 	int i;
-	UINT16 packet3d[16];
+	uint16_t packet3d[16];
 
 	COMBINE_DATA(&hng64_dl[offset]);
 
@@ -862,7 +862,7 @@ static WRITE32_HANDLER( dl_w )
 		offset == 0x70 || offset == 0x78)
 	{
 		// Create a 3d packet
-		UINT16 packetStart = offset - 0x08;
+		uint16_t packetStart = offset - 0x08;
 		if (offset == 0x7f) packetStart += 1;
 
 		for (i = 0; i < 0x08; i++)
@@ -917,7 +917,7 @@ static WRITE32_HANDLER( tcram_w )
 
 	if(offset == 0x02)
 	{
-		static UINT16 min_x,min_y,max_x,max_y;
+		static uint16_t min_x,min_y,max_x,max_y;
 		rectangle visarea = space->machine->primary_screen->visible_area();
 
 		min_x = (hng64_tcram[1] & 0xffff0000) >> 16;
@@ -954,15 +954,15 @@ static READ32_HANDLER( tcram_r )
    unknown purpose (vblank? related to the display list?). */
 static READ32_HANDLER( unk_vreg_r )
 {
-	static UINT32 toggle;
+	static uint32_t toggle;
 	return ++toggle;
 }
 
 
 static WRITE32_HANDLER( hng64_soundram_w )
 {
-	UINT32 mem_mask32 = mem_mask;
-	UINT32 data32 = data;
+	uint32_t mem_mask32 = mem_mask;
+	uint32_t data32 = data;
 
 	/* swap data around.. keep the v55 happy */
 	data = data32 >> 16;
@@ -980,8 +980,8 @@ static WRITE32_HANDLER( hng64_soundram_w )
 
 static READ32_HANDLER( hng64_soundram_r )
 {
-	UINT16 datalo = hng64_soundram[offset * 2 + 0];
-	UINT16 datahi = hng64_soundram[offset * 2 + 1];
+	uint16_t datalo = hng64_soundram[offset * 2 + 0];
+	uint16_t datahi = hng64_soundram[offset * 2 + 1];
 
 	return FLIPENDIAN_INT16(datahi) | (FLIPENDIAN_INT16(datalo) << 16);
 }
@@ -989,7 +989,7 @@ static READ32_HANDLER( hng64_soundram_r )
 /* The following is guesswork, needs confirmation with a test on the real board. */
 static WRITE32_HANDLER( hng64_sprite_clear_even_w )
 {
-	static UINT32 spr_offs;
+	static uint32_t spr_offs;
 
 	spr_offs = (offset) * 0x10 * 4;
 
@@ -1011,7 +1011,7 @@ static WRITE32_HANDLER( hng64_sprite_clear_even_w )
 
 static WRITE32_HANDLER( hng64_sprite_clear_odd_w )
 {
-	static UINT32 spr_offs;
+	static uint32_t spr_offs;
 
 	spr_offs = (offset) * 0x10 * 4;
 
@@ -1112,10 +1112,10 @@ static DIRECT_UPDATE_HANDLER( KL5C80_direct_handler )
 	return ~0;
 }
 
-static UINT32 KL5C80_translate_address(UINT16 vAddr)
+static uint32_t KL5C80_translate_address(uint16_t vAddr)
 {
 	int i;
-	UINT8 bNum = 4;
+	uint8_t bNum = 4;
 
 	/* Determine what B the vAddr is in */
 	for (i = 1; i < 5; i++)
@@ -1183,7 +1183,7 @@ static void KL5C80_init(void)
 
 static READ8_HANDLER( hng64_comm_memory_r )
 {
-	UINT32 physical_address = KL5C80_translate_address(offset);
+	uint32_t physical_address = KL5C80_translate_address(offset);
 	logerror("READING 0x%02x from 0x%04x (0x%05x)\n", hng64_com_virtual_mem[physical_address], offset, physical_address);
 
 	/* Custom "virtual" memory map */
@@ -1199,7 +1199,7 @@ static READ8_HANDLER( hng64_comm_memory_r )
 static WRITE8_HANDLER( hng64_comm_memory_w )
 {
 	// Write to both virtual and physical memory
-//  UINT32 physical_address = KL5C80_translate_address(offset);
+//  uint32_t physical_address = KL5C80_translate_address(offset);
 //  logerror("WRITING 0x%02x to 0x%04x (0x%05x)\n", hng64_com_virtual_mem[physical_address], offset, physical_address);
 }
 
@@ -1480,8 +1480,8 @@ static const gfx_layout hng64_16x16x8_spritelayout =
 	32*64
 };
 
-static const UINT32 texlayout_xoffset[1024] = { STEP1024(0,8) };
-static const UINT32 texlayout_yoffset[512] = { STEP512(0,8192) };
+static const uint32_t texlayout_xoffset[1024] = { STEP1024(0,8) };
+static const uint32_t texlayout_yoffset[512] = { STEP512(0,8192) };
 static const gfx_layout hng64_texlayout =
 {
 	1024, 512,
@@ -1511,15 +1511,15 @@ static GFXDECODE_START( hng64 )
 	GFXDECODE_ENTRY( "textures", 0, hng64_texlayout,     0x0, 0x10 )  /* textures */
 GFXDECODE_END
 
-static void hng64_reorder(running_machine *machine, UINT8* gfxregion, size_t gfxregionsize)
+static void hng64_reorder(running_machine *machine, uint8_t* gfxregion, size_t gfxregionsize)
 {
 	// by default 2 4bpp tiles are stored in each 8bpp tile, this makes decoding in MAME harder than it needs to be
 	// reorder them
-	UINT8* buffer;
+	uint8_t* buffer;
 	int i;
-	UINT8 tilesize = 4*8; // 4 bytes per line, 8 lines
+	uint8_t tilesize = 4*8; // 4 bytes per line, 8 lines
 
-	buffer = auto_alloc_array(machine, UINT8, gfxregionsize);
+	buffer = auto_alloc_array(machine, uint8_t, gfxregionsize);
 
 	for (i=0;i<gfxregionsize/2;i+=tilesize)
 	{
@@ -1541,7 +1541,7 @@ static DRIVER_INIT( hng64_reorder_gfx )
 #ifdef HACK_REGION
 static void hng64_patch_bios_region(running_machine* machine, int region)
 {
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 
 	if ((rom[0x4000]==0xff) && (rom[0x4001] == 0xff))
 	{
@@ -1566,10 +1566,10 @@ static DRIVER_INIT( hng64 )
 #endif
 
 	/* 1 meg of virtual address space for the com cpu */
-	hng64_com_virtual_mem = auto_alloc_array(machine, UINT8, 0x100000);
-	hng64_com_op_base     = auto_alloc_array(machine, UINT8, 0x10000);
+	hng64_com_virtual_mem = auto_alloc_array(machine, uint8_t, 0x100000);
+	hng64_com_op_base     = auto_alloc_array(machine, uint8_t, 0x10000);
 
-	hng64_soundram=auto_alloc_array(machine, UINT16, 0x200000/2);
+	hng64_soundram=auto_alloc_array(machine, uint16_t, 0x200000/2);
 	DRIVER_INIT_CALL(hng64_reorder_gfx);
 }
 
@@ -1660,10 +1660,10 @@ static MACHINE_START(hyperneo)
 static MACHINE_RESET(hyperneo)
 {
 	int i;
-	const UINT8 *rom = memory_region(machine, "user2");
+	const uint8_t *rom = memory_region(machine, "user2");
 
 	/* Sound CPU */
-	UINT8 *RAM = (UINT8*)hng64_soundram;
+	uint8_t *RAM = (uint8_t*)hng64_soundram;
 	memory_set_bankptr(machine, "bank1",&RAM[0x1e0000]);
 	memory_set_bankptr(machine, "bank2",&RAM[0x001000]); // where..
 	cputag_set_input_line(machine, "audiocpu", INPUT_LINE_HALT, ASSERT_LINE);

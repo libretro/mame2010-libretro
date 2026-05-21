@@ -139,7 +139,7 @@
  *
  *************************************/
 
-static UINT8 *nvram_stage;
+static uint8_t *nvram_stage;
 
 
 /************************************* *
@@ -235,7 +235,7 @@ static MACHINE_START( ccastles )
 	schedule_next_irq(machine, 0);
 
 	/* allocate backing memory for the NVRAM */
-	machine->generic.nvram.u8 = auto_alloc_array(machine, UINT8, machine->generic.nvram_size);
+	machine->generic.nvram.u8 = auto_alloc_array(machine, uint8_t, machine->generic.nvram_size);
 
 	/* setup for save states */
 	state_save_register_global(machine, state->irq_state);

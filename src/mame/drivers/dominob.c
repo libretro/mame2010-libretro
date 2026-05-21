@@ -72,15 +72,15 @@ public:
 	dominob_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  spriteram;
-	UINT8 *  videoram;
-	UINT8 *  bgram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  bgram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 	size_t   spriteram_size;
 
 	/* input-related */
-	//UINT8 paddle_select;
-	//UINT8 paddle_value;
+	//uint8_t paddle_select;
+	//uint8_t paddle_value;
 };
 
 static VIDEO_START( dominob )

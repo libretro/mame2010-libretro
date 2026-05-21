@@ -32,25 +32,25 @@
 #define IRQS_PER_FRAME				(2)
 #define NMIS_PER_FRAME				(8)
 
-static const UINT8 irq_trigger_counts[IRQS_PER_FRAME] = { 0x80, 0xda };
-static const UINT8 irq_trigger_v256s [IRQS_PER_FRAME] = { 0x00, 0x01 };
+static const uint8_t irq_trigger_counts[IRQS_PER_FRAME] = { 0x80, 0xda };
+static const uint8_t irq_trigger_v256s [IRQS_PER_FRAME] = { 0x00, 0x01 };
 
-static const UINT8 nmi_trigger_counts[NMIS_PER_FRAME] = { 0x30, 0x50, 0x70, 0x90, 0xb0, 0xd0, 0xf0, 0xf0 };
-static const UINT8 nmi_trigger_v256s [NMIS_PER_FRAME] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+static const uint8_t nmi_trigger_counts[NMIS_PER_FRAME] = { 0x30, 0x50, 0x70, 0x90, 0xb0, 0xd0, 0xf0, 0xf0 };
+static const uint8_t nmi_trigger_v256s [NMIS_PER_FRAME] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
 
 
-static UINT8 *berzerk_videoram;
+static uint8_t *berzerk_videoram;
 static size_t berzerk_videoram_size;
-static UINT8 *berzerk_colorram;
+static uint8_t *berzerk_colorram;
 
-static UINT8 magicram_control;		/* 8-bit latch @ 6C */
-static UINT8 last_shift_data;		/* 7-bit latch @ 7C */
-static UINT8 intercept;				/* J-K flip-flop @ 6B */
+static uint8_t magicram_control;		/* 8-bit latch @ 6C */
+static uint8_t last_shift_data;		/* 7-bit latch @ 7C */
+static uint8_t intercept;				/* J-K flip-flop @ 6B */
 
 static emu_timer *irq_timer;
 static emu_timer *nmi_timer;
-static UINT8 irq_enabled;			/* J-K flip-flop @ 3D */
-static UINT8 nmi_enabled;			/* flip-flop made out of 2 NAND gates @ 1D */
+static uint8_t irq_enabled;			/* J-K flip-flop @ 3D */
+static uint8_t nmi_enabled;			/* flip-flop made out of 2 NAND gates @ 1D */
 
 
 
@@ -96,7 +96,7 @@ static WRITE8_HANDLER( led_off_w )
  *
  *************************************/
 
-static void vpos_to_vsync_chain_counter(int vpos, UINT8 *counter, UINT8 *v256)
+static void vpos_to_vsync_chain_counter(int vpos, uint8_t *counter, uint8_t *v256)
 {
 	/* convert from a vertical position to the actual values on the vertical sync counters */
 	*v256 = ((vpos < VBEND) || (vpos >= VBSTART));
@@ -115,7 +115,7 @@ static void vpos_to_vsync_chain_counter(int vpos, UINT8 *counter, UINT8 *v256)
 }
 
 
-static int vsync_chain_counter_to_vpos(UINT8 counter, UINT8 v256)
+static int vsync_chain_counter_to_vpos(uint8_t counter, uint8_t v256)
 {
 	/* convert from the vertical sync counters to an actual vertical position */
 	int vpos;
@@ -152,8 +152,8 @@ static WRITE8_HANDLER( irq_enable_w )
 static TIMER_CALLBACK( irq_callback )
 {
 	int irq_number = param;
-	UINT8 next_counter;
-	UINT8 next_v256;
+	uint8_t next_counter;
+	uint8_t next_v256;
 	int next_vpos;
 	int next_irq_number;
 
@@ -229,8 +229,8 @@ static READ8_HANDLER( nmi_disable_r )
 static TIMER_CALLBACK( nmi_callback )
 {
 	int nmi_number = param;
-	UINT8 next_counter;
-	UINT8 next_v256;
+	uint8_t next_counter;
+	uint8_t next_v256;
 	int next_vpos;
 	int next_nmi_number;
 
@@ -326,15 +326,15 @@ static VIDEO_START( berzerk )
 
 static WRITE8_HANDLER( magicram_w )
 {
-	UINT8 alu_output;
+	uint8_t alu_output;
 
-	UINT8 current_video_data = berzerk_videoram[offset];
+	uint8_t current_video_data = berzerk_videoram[offset];
 
 	/* shift data towards LSB.  MSB bits are filled by data from last_shift_data.
        The shifter consists of 5 74153 devices @ 7A, 8A, 9A, 10A and 11A,
        followed by 4 more 153's at 11B, 10B, 9B and 8B, which optionally
        reverse the order of the resulting bits */
-	UINT8 shift_flop_output = (((UINT16)last_shift_data << 8) | data) >> (magicram_control & 0x07);
+	uint8_t shift_flop_output = (((uint16_t)last_shift_data << 8) | data) >> (magicram_control & 0x07);
 
 	if (magicram_control & 0x08)
 		shift_flop_output = BITSWAP8(shift_flop_output, 0, 1, 2, 3, 4, 5, 6, 7);
@@ -374,8 +374,8 @@ static WRITE8_HANDLER( magicram_control_w )
 
 static READ8_HANDLER( intercept_v256_r )
 {
-	UINT8 counter;
-	UINT8 v256;
+	uint8_t counter;
+	uint8_t v256;
 
 	vpos_to_vsync_chain_counter(space->machine->primary_screen->vpos(), &counter, &v256);
 
@@ -404,14 +404,14 @@ static void get_pens(running_machine *machine, pen_t *pens)
 
 	for (color = 0; color < NUM_PENS; color++)
 	{
-		UINT8 r_bit = (color >> 0) & 0x01;
-		UINT8 g_bit = (color >> 1) & 0x01;
-		UINT8 b_bit = (color >> 2) & 0x01;
-		UINT8 i_bit = (color >> 3) & 0x01;
+		uint8_t r_bit = (color >> 0) & 0x01;
+		uint8_t g_bit = (color >> 1) & 0x01;
+		uint8_t b_bit = (color >> 2) & 0x01;
+		uint8_t i_bit = (color >> 3) & 0x01;
 
-		UINT8 r = combine_2_weights(color_weights, r_bit & i_bit, r_bit);
-		UINT8 g = combine_2_weights(color_weights, g_bit & i_bit, g_bit);
-		UINT8 b = combine_2_weights(color_weights, b_bit & i_bit, b_bit);
+		uint8_t r = combine_2_weights(color_weights, r_bit & i_bit, r_bit);
+		uint8_t g = combine_2_weights(color_weights, g_bit & i_bit, g_bit);
+		uint8_t b = combine_2_weights(color_weights, b_bit & i_bit, b_bit);
 
 		pens[color] = MAKE_RGB(r, g, b);
 	}
@@ -429,11 +429,11 @@ static VIDEO_UPDATE( berzerk )
 	{
 		int i;
 
-		UINT8 data = berzerk_videoram[offs];
-		UINT8 color = berzerk_colorram[((offs >> 2) & 0x07e0) | (offs & 0x001f)];
+		uint8_t data = berzerk_videoram[offs];
+		uint8_t color = berzerk_colorram[((offs >> 2) & 0x07e0) | (offs & 0x001f)];
 
-		UINT8 y = offs >> 5;
-		UINT8 x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t x = offs << 3;
 
 		for (i = 0; i < 4; i++)
 		{
@@ -869,8 +869,8 @@ static READ8_HANDLER( moonwarp_p1_r )
 	signed char dialread = input_port_read(space->machine,"P1_DIAL");
 	static int counter_74ls161 = 0;
 	static int direction = 0;
-	UINT8 ret;
-	UINT8 buttons = (input_port_read(space->machine,"P1")&0xe0);
+	uint8_t ret;
+	uint8_t buttons = (input_port_read(space->machine,"P1")&0xe0);
 	if (dialread < 0) direction = 0;
 	else if (dialread > 0) direction = 0x10;
 	counter_74ls161 += abs(dialread);
@@ -886,8 +886,8 @@ static READ8_HANDLER( moonwarp_p2_r )
 	signed char dialread = input_port_read(space->machine,"P2_DIAL");
 	static int counter_74ls161 = 0;
 	static int direction = 0;
-	UINT8 ret;
-	UINT8 buttons = (input_port_read(space->machine,"P2")&0xe0);
+	uint8_t ret;
+	uint8_t buttons = (input_port_read(space->machine,"P2")&0xe0);
 	if (dialread < 0) direction = 0;
 	else if (dialread > 0) direction = 0x10;
 	counter_74ls161 += abs(dialread);

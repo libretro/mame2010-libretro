@@ -351,8 +351,8 @@ ROM_END
 
 static void compgolf_expand_bg(running_machine *machine)
 {
-	UINT8 *GFXDST = memory_region(machine, "gfx2");
-	UINT8 *GFXSRC = memory_region(machine, "gfx4");
+	uint8_t *GFXDST = memory_region(machine, "gfx2");
+	uint8_t *GFXSRC = memory_region(machine, "gfx4");
 
 	int x;
 

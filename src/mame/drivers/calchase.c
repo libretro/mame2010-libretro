@@ -99,8 +99,8 @@ all files across to new HDD, boots up fine.
 
 static void ide_interrupt(running_device *device, int state);
 
-static UINT32 *bios_ram;
-static UINT32 *vga_vram;
+static uint32_t *bios_ram;
+static uint32_t *vga_vram;
 
 static struct {
 	running_device	*pit8254;
@@ -130,7 +130,7 @@ static VIDEO_UPDATE(calchase)
 		{
 			for (i=0;i<32;i++)
 			{
-				UINT32 color;
+				uint32_t color;
 
 				color = (vga_vram[count])>>(32-i) & 0x1;
 
@@ -167,13 +167,13 @@ static WRITE32_DEVICE_HANDLER(at32_dma8237_2_w)
 }
 
 static int dma_channel;
-static UINT8 dma_offset[2][4];
-static UINT8 at_pages[0x10];
+static uint8_t dma_offset[2][4];
+static uint8_t at_pages[0x10];
 
 
 static READ8_HANDLER(at_page8_r)
 {
-	UINT8 data = at_pages[offset % 0x10];
+	uint8_t data = at_pages[offset % 0x10];
 
 	switch(offset % 8) {
 	case 1:
@@ -305,16 +305,16 @@ static WRITE32_DEVICE_HANDLER( fdc_w )
 }
 
 // Intel 82439TX System Controller (MXTC)
-static UINT8 mxtc_config_reg[256];
+static uint8_t mxtc_config_reg[256];
 
-static UINT8 mxtc_config_r(running_device *busdevice, running_device *device, int function, int reg)
+static uint8_t mxtc_config_r(running_device *busdevice, running_device *device, int function, int reg)
 {
 //  mame_printf_debug("MXTC: read %d, %02X\n", function, reg);
 
 	return mxtc_config_reg[reg];
 }
 
-static void mxtc_config_w(running_device *busdevice, running_device *device, int function, int reg, UINT8 data)
+static void mxtc_config_w(running_device *busdevice, running_device *device, int function, int reg, uint8_t data)
 {
 //  mame_printf_debug("%s:MXTC: write %d, %02X, %02X\n", cpuexec_describe_context(machine), function, reg, data);
 
@@ -347,9 +347,9 @@ static void intel82439tx_init(void)
 	mxtc_config_reg[0x65] = 0x02;
 }
 
-static UINT32 intel82439tx_pci_r(running_device *busdevice, running_device *device, int function, int reg, UINT32 mem_mask)
+static uint32_t intel82439tx_pci_r(running_device *busdevice, running_device *device, int function, int reg, uint32_t mem_mask)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	if (ACCESSING_BITS_24_31)
 	{
 		r |= mxtc_config_r(busdevice, device, function, reg + 3) << 24;
@@ -369,7 +369,7 @@ static UINT32 intel82439tx_pci_r(running_device *busdevice, running_device *devi
 	return r;
 }
 
-static void intel82439tx_pci_w(running_device *busdevice, running_device *device, int function, int reg, UINT32 data, UINT32 mem_mask)
+static void intel82439tx_pci_w(running_device *busdevice, running_device *device, int function, int reg, uint32_t data, uint32_t mem_mask)
 {
 	if (ACCESSING_BITS_24_31)
 	{
@@ -390,23 +390,23 @@ static void intel82439tx_pci_w(running_device *busdevice, running_device *device
 }
 
 // Intel 82371AB PCI-to-ISA / IDE bridge (PIIX4)
-static UINT8 piix4_config_reg[4][256];
+static uint8_t piix4_config_reg[4][256];
 
-static UINT8 piix4_config_r(running_device *busdevice, running_device *device, int function, int reg)
+static uint8_t piix4_config_r(running_device *busdevice, running_device *device, int function, int reg)
 {
 //  mame_printf_debug("PIIX4: read %d, %02X\n", function, reg);
 	return piix4_config_reg[function][reg];
 }
 
-static void piix4_config_w(running_device *busdevice, running_device *device, int function, int reg, UINT8 data)
+static void piix4_config_w(running_device *busdevice, running_device *device, int function, int reg, uint8_t data)
 {
 //  mame_printf_debug("%s:PIIX4: write %d, %02X, %02X\n", cpuexec_describe_context(machine), function, reg, data);
 	piix4_config_reg[function][reg] = data;
 }
 
-static UINT32 intel82371ab_pci_r(running_device *busdevice, running_device *device, int function, int reg, UINT32 mem_mask)
+static uint32_t intel82371ab_pci_r(running_device *busdevice, running_device *device, int function, int reg, uint32_t mem_mask)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	if (ACCESSING_BITS_24_31)
 	{
 		r |= piix4_config_r(busdevice, device, function, reg + 3) << 24;
@@ -426,7 +426,7 @@ static UINT32 intel82371ab_pci_r(running_device *busdevice, running_device *devi
 	return r;
 }
 
-static void intel82371ab_pci_w(running_device *busdevice, running_device *device, int function, int reg, UINT32 data, UINT32 mem_mask)
+static void intel82371ab_pci_w(running_device *busdevice, running_device *device, int function, int reg, uint32_t data, uint32_t mem_mask)
 {
 	if (ACCESSING_BITS_24_31)
 	{
@@ -683,7 +683,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( calchase )
 {
-	bios_ram = auto_alloc_array(machine, UINT32, 0x10000/4);
+	bios_ram = auto_alloc_array(machine, uint32_t, 0x10000/4);
 
 	init_pc_common(machine, PCCOMMON_KEYBOARD_AT, calchase_set_keyb_int);
 	mc146818_init(machine, MC146818_STANDARD);

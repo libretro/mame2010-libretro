@@ -121,9 +121,9 @@ static READ8_HANDLER( boggy84_custom_io_r )
     Imago sprites DMA
 */
 
-static UINT8 imago_sprites[0x800*3];
-static UINT16 imago_sprites_address;
-static UINT8 imago_sprites_bank = 0;
+static uint8_t imago_sprites[0x800*3];
+static uint16_t imago_sprites_address;
+static uint8_t imago_sprites_bank = 0;
 
 static MACHINE_START( imago )
 {
@@ -142,8 +142,8 @@ static WRITE8_HANDLER( imago_sprites_bank_w )
 
 static WRITE8_HANDLER( imago_sprites_dma_w )
 {
-	UINT8 *rom = (UINT8 *)memory_region(space->machine, "gfx2");
-	UINT8 sprites_data;
+	uint8_t *rom = (uint8_t *)memory_region(space->machine, "gfx2");
+	uint8_t sprites_data;
 
 	sprites_data = rom[imago_sprites_address + 0x2000*0 + imago_sprites_bank * 0x1000];
 	imago_sprites[offset + 0x800*0] = sprites_data;

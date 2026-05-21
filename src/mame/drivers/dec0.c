@@ -162,10 +162,10 @@ Notes:
 #include "sound/msm5205.h"
 
 
-UINT16 *dec0_ram;
-UINT8 *robocop_shared_ram;
+uint16_t *dec0_ram;
+uint8_t *robocop_shared_ram;
 
-static UINT8 automat_adpcm_byte;
+static uint8_t automat_adpcm_byte;
 static int automat_msm5205_vclk_toggle;
 
 /******************************************************************************/
@@ -2869,7 +2869,7 @@ ROM_END
 
 // helper function
 #if 0
-static void dump_to_file(running_machine* machine, UINT8* ROM, int offset, int size)
+static void dump_to_file(running_machine* machine, uint8_t* ROM, int offset, int size)
 {
 	{
 		FILE *fp;
@@ -2887,7 +2887,7 @@ static void dump_to_file(running_machine* machine, UINT8* ROM, int offset, int s
 
 static DRIVER_INIT( convert_robocop_gfx4_to_automat )
 {
-	UINT8* R = memory_region(machine,"gfx4");
+	uint8_t* R = memory_region(machine,"gfx4");
 	int i;
 
 	for (i=0;i<0x80000;i++)

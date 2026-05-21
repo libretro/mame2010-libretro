@@ -55,7 +55,7 @@ static int toggle, debug_addr, debug_width;
                                 Video Hardware
 ***************************************************************************/
 
-static UINT8 video_disable;
+static uint8_t video_disable;
 static WRITE8_HANDLER( video_disable_w )
 {
 	video_disable = data & 1;
@@ -74,7 +74,7 @@ static VIDEO_RESET( igs017 )
 	video_disable = 0;
 }
 
-static UINT8 *fg_videoram, *bg_videoram;
+static uint8_t *fg_videoram, *bg_videoram;
 static tilemap_t *fg_tilemap, *bg_tilemap;
 
 #define COLOR(_X)	(((_X)>>2)&7)
@@ -137,23 +137,23 @@ static WRITE16_HANDLER( spriteram_lsb_w )
 }
 
 
-static UINT8 *sprites_gfx;
+static uint8_t *sprites_gfx;
 static int sprites_gfx_size;
 
 // Eeach 16 bit word in the sprites gfx roms contains three 5 bit pens: x-22222-11111-00000.
 // This routine expands each word into three bytes.
 static void expand_sprites(running_machine *machine)
 {
-	UINT8 *rom	=	memory_region(machine, "sprites");
+	uint8_t *rom	=	memory_region(machine, "sprites");
 	int size	=	memory_region_length(machine, "sprites");
 	int i;
 
 	sprites_gfx_size	=	size / 2 * 3;
-	sprites_gfx			=	auto_alloc_array(machine, UINT8, sprites_gfx_size);
+	sprites_gfx			=	auto_alloc_array(machine, uint8_t, sprites_gfx_size);
 
 	for (i = 0; i < size / 2 ; i++)
 	{
-		UINT16 pens = (rom[i*2+1] << 8) | rom[i*2];
+		uint16_t pens = (rom[i*2+1] << 8) | rom[i*2];
 
 		sprites_gfx[i * 3 + 0] = (pens >>  0) & 0x1f;
 		sprites_gfx[i * 3 + 1] = (pens >>  5) & 0x1f;
@@ -228,8 +228,8 @@ static void draw_sprite(running_machine *machine, bitmap_t *bitmap,const rectang
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 *s	=	machine->generic.spriteram.u8;
-	UINT8 *end	=	machine->generic.spriteram.u8 + 0x800;
+	uint8_t *s	=	machine->generic.spriteram.u8;
+	uint8_t *end	=	machine->generic.spriteram.u8 + 0x800;
 
 	for ( ; s < end; s += 8 )
 	{
@@ -342,8 +342,8 @@ static VIDEO_UPDATE( igs017 )
 static void decrypt_program_rom(running_machine *machine, int mask, int a7, int a6, int a5, int a4, int a3, int a2, int a1, int a0)
 {
 	int length = memory_region_length(machine, "maincpu");
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, length);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, length);
 	int i;
 
 	// decrypt the program ROM
@@ -394,7 +394,7 @@ static void decrypt_program_rom(running_machine *machine, int mask, int a7, int 
 
 static void iqblocka_patch_rom(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 //  rom[0x7b64] = 0xc9;
 
@@ -436,8 +436,8 @@ static DRIVER_INIT( iqblockf )
 static void tjsb_decrypt_sprites(running_machine *machine)
 {
 	int length = memory_region_length(machine, "sprites");
-	UINT8 *rom = memory_region(machine, "sprites");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, length);
+	uint8_t *rom = memory_region(machine, "sprites");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, length);
 	int i;
 
 	// address lines swap (to do: collapse into one bitswap)
@@ -465,7 +465,7 @@ static void tjsb_decrypt_sprites(running_machine *machine)
 
 static void tjsb_patch_rom(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	rom[0x011df] = 0x18;
 }
 
@@ -483,13 +483,13 @@ static DRIVER_INIT( tjsb )
 static void mgcs_decrypt_program_rom(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *src = (uint16_t *)memory_region(machine, "maincpu");
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		/* bit 0 xor layer */
 
@@ -533,8 +533,8 @@ static void mgcs_decrypt_program_rom(running_machine *machine)
 static void mgcs_decrypt_tiles(running_machine *machine)
 {
 	int length = memory_region_length(machine, "tilemaps");
-	UINT8 *rom = memory_region(machine, "tilemaps");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, length);
+	uint8_t *rom = memory_region(machine, "tilemaps");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, length);
 	int i;
 
 	memcpy(tmp,rom,length);
@@ -550,12 +550,12 @@ static void mgcs_decrypt_tiles(running_machine *machine)
 static void mgcs_flip_sprites(running_machine *machine)
 {
 	int length = memory_region_length(machine, "sprites");
-	UINT8 *rom = memory_region(machine, "sprites");
+	uint8_t *rom = memory_region(machine, "sprites");
 	int i;
 
 	for (i = 0;i < length;i+=2)
 	{
-		UINT16 pixels = (rom[i+1] << 8) | rom[i+0];
+		uint16_t pixels = (rom[i+1] << 8) | rom[i+0];
 
 		// flip bits
 		pixels = BITSWAP16(pixels,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
@@ -570,7 +570,7 @@ static void mgcs_flip_sprites(running_machine *machine)
 
 static void mgcs_patch_rom(running_machine *machine)
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	rom[0x4e036/2] = 0x6006;
 
@@ -596,13 +596,13 @@ static DRIVER_INIT( mgcs )
 // decryption is incomplete, the first part of code doesn't seem right.
 static DRIVER_INIT( tarzan )
 {
-	UINT16 *ROM = (UINT16 *)memory_region(machine,"maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine,"maincpu");
 	int i;
 	int size = 0x40000;
 
 	for(i=0; i<size/2; i++)
 	{
-		UINT16 x = ROM[i];
+		uint16_t x = ROM[i];
 
 		if((i & 0x10c0) == 0x0000)
 			x ^= 0x0001;
@@ -622,13 +622,13 @@ static DRIVER_INIT( tarzan )
 // by iq_132
 static DRIVER_INIT( tarzana )
 {
-	UINT8 *ROM = memory_region(machine,"maincpu");
+	uint8_t *ROM = memory_region(machine,"maincpu");
 	int i;
 	int size = 0x80000;
 
 	for (i = 0; i < size; i++)
 	{
-		UINT8 x = 0;
+		uint8_t x = 0;
 		if ((i & 0x00011) == 0x00011) x ^= 0x01;
 		if ((i & 0x02180) == 0x00000) x ^= 0x01;
 		if ((i & 0x001a0) != 0x00020) x ^= 0x20;
@@ -644,13 +644,13 @@ static DRIVER_INIT( tarzana )
 // decryption is incomplete, the first part of code doesn't seem right.
 static DRIVER_INIT( starzan )
 {
-	UINT8 *ROM = memory_region(machine,"maincpu");
+	uint8_t *ROM = memory_region(machine,"maincpu");
 	int i;
 	int size = 0x040000;
 
 	for(i=0; i<size; i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 #if 1
 		if ( (i & 0x10) && (i & 0x01) )
@@ -699,13 +699,13 @@ static DRIVER_INIT( starzan )
 static DRIVER_INIT( sdmg2 )
 {
 	int i;
-	UINT16 *src = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *src = (uint16_t *)memory_region(machine, "maincpu");
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		/* bit 0 xor layer */
 
@@ -756,13 +756,13 @@ static DRIVER_INIT( sdmg2 )
 static DRIVER_INIT( mgdh )
 {
 	int i;
-	UINT16 *src = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *src = (uint16_t *)memory_region(machine, "maincpu");
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if( (i & 0x20/2) && (i & 0x02/2) )
 		{
@@ -793,13 +793,13 @@ static DRIVER_INIT( mgdh )
 static DRIVER_INIT( lhzb2 )
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		/* bit 0 xor layer */
 
@@ -883,13 +883,13 @@ static DRIVER_INIT( lhzb2 )
 static DRIVER_INIT( lhzb2a )
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		/* bit 0 xor layer */
 
@@ -945,13 +945,13 @@ static DRIVER_INIT( lhzb2a )
 static DRIVER_INIT( slqz2 )
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		/* bit 0 xor layer */
 
@@ -1046,7 +1046,7 @@ static WRITE8_HANDLER( irq_enable_w )
 		logerror("PC %06X: irq_enable = %02x\n",cpu_get_pc(space->cpu),data);
 }
 
-static UINT8 input_select, hopper;
+static uint8_t input_select, hopper;
 static WRITE8_HANDLER( input_select_w )
 {
 	input_select = data;
@@ -1121,8 +1121,8 @@ ADDRESS_MAP_END
 
 // mgcs
 
-static UINT16 igs_magic[2];
-static UINT8 scramble_data;
+static uint16_t igs_magic[2];
+static uint8_t scramble_data;
 
 static WRITE16_HANDLER( mgcs_magic_w )
 {
@@ -1230,8 +1230,8 @@ static ADDRESS_MAP_START( mgcs, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE( 0xa04024, 0xa04025 ) AM_WRITE( video_disable_lsb_w )
 	AM_RANGE( 0xa04028, 0xa04029 ) AM_WRITE( irq2_enable_w )
 	AM_RANGE( 0xa0402a, 0xa0402b ) AM_WRITE( irq1_enable_w )
-	AM_RANGE( 0xa08000, 0xa0bfff ) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (UINT16**)&fg_videoram )
-	AM_RANGE( 0xa0c000, 0xa0ffff ) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (UINT16**)&bg_videoram )
+	AM_RANGE( 0xa08000, 0xa0bfff ) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (uint16_t**)&fg_videoram )
+	AM_RANGE( 0xa0c000, 0xa0ffff ) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (uint16_t**)&bg_videoram )
 	AM_RANGE( 0xa12000, 0xa12001 ) AM_DEVREADWRITE8( "oki", okim6295_r, okim6295_w, 0x00ff )
 	// oki banking through protection (code at $1a350)?
 ADDRESS_MAP_END
@@ -1304,7 +1304,7 @@ static READ16_HANDLER( sdmg2_magic_r )
 	{
 		case 0x00:
 		{
-			UINT16 hopper_bit = (hopper && ((space->machine->primary_screen->frame_number()/10)&1)) ? 0x0000 : 0x0001;
+			uint16_t hopper_bit = (hopper && ((space->machine->primary_screen->frame_number()/10)&1)) ? 0x0000 : 0x0001;
 			return input_port_read(space->machine, "COINS") | hopper_bit;
 		}
 
@@ -1328,8 +1328,8 @@ static ADDRESS_MAP_START( sdmg2, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x204024, 0x204025) AM_WRITE( video_disable_lsb_w )
 	AM_RANGE(0x204028, 0x204029) AM_WRITE( irq2_enable_w )
 	AM_RANGE(0x20402a, 0x20402b) AM_WRITE( irq1_enable_w )
-	AM_RANGE(0x208000, 0x20bfff) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (UINT16**)&fg_videoram )
-	AM_RANGE(0x20c000, 0x20ffff) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (UINT16**)&bg_videoram )
+	AM_RANGE(0x208000, 0x20bfff) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (uint16_t**)&fg_videoram )
+	AM_RANGE(0x20c000, 0x20ffff) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (uint16_t**)&bg_videoram )
 	AM_RANGE(0x210000, 0x210001) AM_DEVREADWRITE8( "oki", okim6295_r, okim6295_w, 0x00ff )
 	AM_RANGE(0x300000, 0x300003) AM_WRITE( sdmg2_magic_w )
 	AM_RANGE(0x300002, 0x300003) AM_READ ( sdmg2_magic_r )
@@ -1414,7 +1414,7 @@ static READ16_HANDLER( mgdh_magic_r )
 
 		case 0x03:
 		{
-			UINT16 hopper_bit = (hopper && ((space->machine->primary_screen->frame_number()/10)&1)) ? 0x0000 : 0x0001;
+			uint16_t hopper_bit = (hopper && ((space->machine->primary_screen->frame_number()/10)&1)) ? 0x0000 : 0x0001;
 			return input_port_read(space->machine, "COINS") | hopper_bit;
 		}
 
@@ -1437,8 +1437,8 @@ static ADDRESS_MAP_START( mgdh_map, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0xa04024, 0xa04025) AM_WRITE( video_disable_lsb_w )
 	AM_RANGE(0xa04028, 0xa04029) AM_WRITE( irq2_enable_w )
 	AM_RANGE(0xa0402a, 0xa0402b) AM_WRITE( irq1_enable_w )
-	AM_RANGE(0xa08000, 0xa0bfff) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (UINT16**)&fg_videoram )
-	AM_RANGE(0xa0c000, 0xa0ffff) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (UINT16**)&bg_videoram )
+	AM_RANGE(0xa08000, 0xa0bfff) AM_READWRITE( fg_lsb_r, fg_lsb_w ) AM_BASE( (uint16_t**)&fg_videoram )
+	AM_RANGE(0xa0c000, 0xa0ffff) AM_READWRITE( bg_lsb_r, bg_lsb_w ) AM_BASE( (uint16_t**)&bg_videoram )
 	AM_RANGE(0xa10000, 0xa10001) AM_DEVREADWRITE8( "oki", okim6295_r, okim6295_w, 0x00ff )
 ADDRESS_MAP_END
 

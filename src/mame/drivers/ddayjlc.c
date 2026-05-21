@@ -64,22 +64,22 @@ public:
 	ddayjlc_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  bgram;
-	UINT8 *  mainram;
-	UINT8 *  videoram;
-	UINT8 *  spriteram;
+	uint8_t *  bgram;
+	uint8_t *  mainram;
+	uint8_t *  videoram;
+	uint8_t *  spriteram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
-	INT32    char_bank;
-	INT32    bgadr;
+	int32_t    char_bank;
+	int32_t    bgadr;
 
 	/* misc */
-	INT32    sound_nmi_enable;
-	INT32    main_nmi_enable;
-	INT32    e00x_l[4];
-	INT32    e00x_d[4][2];
-	UINT8    prot_addr;
+	int32_t    sound_nmi_enable;
+	int32_t    main_nmi_enable;
+	int32_t    e00x_l[4];
+	int32_t    e00x_d[4][2];
+	uint8_t    prot_addr;
 
 	/* devices */
 	running_device *audiocpu;
@@ -121,7 +121,7 @@ public:
 
 */
 
-static const UINT8 prot_data[0x10] =
+static const uint8_t prot_data[0x10] =
 {
 	0x02, 0x02, 0x02, 0x02,
 	0x02, 0x00, 0x02, 0x00,
@@ -222,10 +222,10 @@ static WRITE8_HANDLER( i8257_LMSR_w )
 
 	if (!data)
 	{
-		INT32 src = state->e00x_d[0][1] * 256 + state->e00x_d[0][0];
-		INT32 dst = state->e00x_d[2][1] * 256 + state->e00x_d[2][0];
-		INT32 size = (state->e00x_d[1][1] * 256 + state->e00x_d[1][0]) & 0x3ff;
-		INT32 i;
+		int32_t src = state->e00x_d[0][1] * 256 + state->e00x_d[0][0];
+		int32_t dst = state->e00x_d[2][1] * 256 + state->e00x_d[2][0];
+		int32_t size = (state->e00x_d[1][1] * 256 + state->e00x_d[1][0]) & 0x3ff;
+		int32_t i;
 
 		size++; //??
 
@@ -384,18 +384,18 @@ static VIDEO_START( ddayjlc )
 static VIDEO_UPDATE( ddayjlc )
 {
 	ddayjlc_state *state = (ddayjlc_state *)screen->machine->driver_data;
-	UINT32 i;
+	uint32_t i;
 	tilemap_draw(bitmap, cliprect, state->bg_tilemap, 0, 0);
 
 	for (i = 0; i < 0x400; i += 4)
 	{
-		UINT8  flags = state->spriteram[i + 2];
-		UINT8  y = 256 - state->spriteram[i + 0] - 8;
-		UINT16 code = state->spriteram[i + 1];
-		UINT8  x = state->spriteram[i + 3] - 16;
-		UINT8  xflip = flags & 0x80;
-		UINT8  yflip = (code & 0x80);
-		UINT8  color = flags & 0xf;
+		uint8_t  flags = state->spriteram[i + 2];
+		uint8_t  y = 256 - state->spriteram[i + 0] - 8;
+		uint16_t code = state->spriteram[i + 1];
+		uint8_t  x = state->spriteram[i + 3] - 16;
+		uint8_t  xflip = flags & 0x80;
+		uint8_t  yflip = (code & 0x80);
+		uint8_t  color = flags & 0xf;
 
 		code = (code & 0x7f) | ((flags & 0x30) << 3);
 
@@ -403,7 +403,7 @@ static VIDEO_UPDATE( ddayjlc )
 	}
 
 	{
-		UINT32 x, y, c;
+		uint32_t x, y, c;
 		/* FIXME: where is/are the color offset(s)? I doubt it's hard-coded ... */
 		for (y = 0; y < 32; y++)
 			for (x = 0; x < 32; x++)
@@ -671,9 +671,9 @@ static DRIVER_INIT( ddayjlc )
 		dst[newadr+31+n] = src[oldaddr+7+0x2008+n];
 
 	{
-		UINT32 oldaddr, newadr, length,j;
-		UINT8 *src, *dst, *temp;
-		temp = auto_alloc_array(machine, UINT8, 0x10000);
+		uint32_t oldaddr, newadr, length,j;
+		uint8_t *src, *dst, *temp;
+		temp = auto_alloc_array(machine, uint8_t, 0x10000);
 		src = temp;
 		dst = memory_region(machine, "gfx1");
 		length = memory_region_length(machine, "gfx1");

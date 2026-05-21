@@ -442,7 +442,7 @@
 #include "cpu/pic16c5x/pic16c5x.h"
 #include "sound/saa1099.h"
 
-static UINT16 *blit_ram;
+static uint16_t *blit_ram;
 
 static VIDEO_START(bingor)
 {
@@ -461,7 +461,7 @@ static VIDEO_UPDATE(bingor)
 	{
 		for(x=0;x<286;x+=4)
 		{
-			UINT32 color;
+			uint32_t color;
 
 			color = (blit_ram[count] & 0xf000)>>12;
 

@@ -61,7 +61,7 @@ public:
 	mole_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *     tileram;
+	uint16_t *     tileram;
 
 	/* video-related */
 	tilemap_t    *bg_tilemap;
@@ -86,7 +86,7 @@ static PALETTE_INIT( mole )
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	mole_state *state = (mole_state *)machine->driver_data;
-	UINT16 code = state->tileram[tile_index];
+	uint16_t code = state->tileram[tile_index];
 
 	SET_TILE_INFO((code & 0x200) ? 1 : 0, code & 0x1ff, 0, 0);
 }
@@ -94,7 +94,7 @@ static TILE_GET_INFO( get_bg_tile_info )
 static VIDEO_START( mole )
 {
 	mole_state *state = (mole_state *)machine->driver_data;
-	state->tileram = auto_alloc_array_clear(machine, UINT16, 0x400);
+	state->tileram = auto_alloc_array_clear(machine, uint16_t, 0x400);
 	state->bg_tilemap = tilemap_create(machine, get_bg_tile_info, tilemap_scan_rows, 8, 8, 40, 25);
 
 	state_save_register_global_pointer(machine, state->tileram, 0x400);

@@ -82,21 +82,21 @@
 #include "video/mc6845.h"
 #include "../lh/luckgrln.lh"
 
-static UINT8 *luck_vram1,*luck_vram2,*luck_vram3;
-static UINT8 nmi_enable;
+static uint8_t *luck_vram1,*luck_vram2,*luck_vram3;
+static uint8_t nmi_enable;
 static tilemap_t *reel1_tilemap, *reel2_tilemap, *reel3_tilemap, *reel4_tilemap;
-static UINT8* reel1_ram;
-static UINT8* reel2_ram;
-static UINT8* reel3_ram;
-static UINT8* reel4_ram;
-static UINT8* reel1_scroll;
-static UINT8* reel2_scroll;
-static UINT8* reel3_scroll;
-static UINT8* reel4_scroll;
-static UINT8* reel1_attr;
-static UINT8* reel2_attr;
-static UINT8* reel3_attr;
-static UINT8* reel4_attr;
+static uint8_t* reel1_ram;
+static uint8_t* reel2_ram;
+static uint8_t* reel3_ram;
+static uint8_t* reel4_ram;
+static uint8_t* reel1_scroll;
+static uint8_t* reel2_scroll;
+static uint8_t* reel3_scroll;
+static uint8_t* reel4_scroll;
+static uint8_t* reel1_attr;
+static uint8_t* reel2_attr;
+static uint8_t* reel3_attr;
+static uint8_t* reel4_attr;
 
 
 
@@ -269,12 +269,12 @@ static VIDEO_UPDATE(luckgrln)
 
 		for (x=0;x<64;x++)
 		{
-			UINT16 tile = (luck_vram1[count] & 0xff);
-			UINT16 tile_high = (luck_vram2[count]);
-			UINT16 tileattr = (luck_vram3[count]);
-			UINT8 col = 0;
-			UINT8 region = 0;
-			UINT8 bgenable;
+			uint16_t tile = (luck_vram1[count] & 0xff);
+			uint16_t tile_high = (luck_vram2[count]);
+			uint16_t tileattr = (luck_vram3[count]);
+			uint8_t col = 0;
+			uint8_t region = 0;
+			uint8_t bgenable;
 
 			clip.min_x = x*8;
 			clip.max_x = x*8+8;
@@ -384,7 +384,7 @@ static WRITE8_HANDLER( output_w )
 
 
 static int palette_count = 0;
-static UINT8 palette_ram[0x10000];
+static uint8_t palette_ram[0x10000];
 
 static WRITE8_HANDLER( palette_offset_low_w )
 {
@@ -404,7 +404,7 @@ static WRITE8_HANDLER( palette_w )
 	{
 		int r,g,b;
 		int offs;
-		UINT16 dat;
+		uint16_t dat;
 		offs = palette_count&~0x1;
 		dat = palette_ram[offs] | palette_ram[offs+1]<<8;
 
@@ -843,8 +843,8 @@ MACHINE_DRIVER_END
 static DRIVER_INIT( luckgrln )
 {
 	int i;
-	UINT8 x,v;
-	UINT8* rom = memory_region(machine,"rom_data");
+	uint8_t x,v;
+	uint8_t* rom = memory_region(machine,"rom_data");
 
 	for (i=0;i<0x20000;i++)
 	{

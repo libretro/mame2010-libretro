@@ -24,7 +24,7 @@ Dip Locations added according to Service Mode
 
 /* Video Handling */
 
-static UINT16 *bestleag_txram,*bestleag_bgram,*bestleag_fgram,*bestleag_vregs;
+static uint16_t *bestleag_txram,*bestleag_bgram,*bestleag_fgram,*bestleag_vregs;
 static tilemap_t *tx_tilemap,*bg_tilemap,*fg_tilemap;
 
 static TILE_GET_INFO( get_tx_tile_info )
@@ -88,7 +88,7 @@ Note: sprite chip is different than the other Big Striker sets and they
 */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 
 	/*
 

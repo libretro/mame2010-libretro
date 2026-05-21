@@ -31,8 +31,8 @@ public:
 		: oki2(machine.device<okim6295_device>("oki2")) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
 
 	/* devices */
 	cpu_device *maincpu;
@@ -46,8 +46,8 @@ static VIDEO_START( wcvol95 )
 	deco156_state *state = (deco156_state *)machine->driver_data;
 
 	/* allocate the ram as 16-bit (we do it here because the CPU is 32-bit) */
-	state->pf1_rowscroll = auto_alloc_array(machine, UINT16, 0x800/2);
-	state->pf2_rowscroll = auto_alloc_array(machine, UINT16, 0x800/2);
+	state->pf1_rowscroll = auto_alloc_array(machine, uint16_t, 0x800/2);
+	state->pf2_rowscroll = auto_alloc_array(machine, uint16_t, 0x800/2);
 
 	/* and register the allocated ram so that save states still work */
 	state_save_register_global_pointer(machine, state->pf1_rowscroll, 0x800/2);
@@ -58,7 +58,7 @@ static VIDEO_START( wcvol95 )
  its the same sprite chip Data East used on many, many 16-bit era titles */
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT32 *spriteram = machine->generic.spriteram.u32;
+	uint32_t *spriteram = machine->generic.spriteram.u32;
 	int offs;
 
 	flip_screen_set_no_update(machine, 1);
@@ -688,14 +688,14 @@ ROM_END
 
 static void descramble_sound( running_machine *machine, const char *tag )
 {
-	UINT8 *rom = memory_region(machine, tag);
+	uint8_t *rom = memory_region(machine, tag);
 	int length = memory_region_length(machine, tag);
-	UINT8 *buf1 = auto_alloc_array(machine, UINT8, length);
-	UINT32 x;
+	uint8_t *buf1 = auto_alloc_array(machine, uint8_t, length);
+	uint32_t x;
 
 	for (x = 0; x < length; x++)
 	{
-		UINT32 addr;
+		uint32_t addr;
 
 		addr = BITSWAP24 (x,23,22,21,0, 20,
 		                    19,18,17,16,

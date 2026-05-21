@@ -133,7 +133,7 @@
 #include "machine/6821pia.h"
 
 
-static UINT8 last_dial;
+static uint8_t last_dial;
 
 
 
@@ -145,7 +145,7 @@ static UINT8 last_dial;
 
 static CUSTOM_INPUT( teetert_input_r )
 {
-	UINT8 dial = input_port_read(field->port->machine, "DIAL");
+	uint8_t dial = input_port_read(field->port->machine, "DIAL");
 	int result = 0;
 
 	result = (dial != last_dial) << 4;
@@ -173,7 +173,7 @@ static CUSTOM_INPUT( teetert_input_r )
 
 static WRITE8_HANDLER( fax_bank_select_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	memory_set_bankptr(space->machine, "bank1", &RAM[0x10000 + (0x2000 * (data & 0x1f))]);
 	if ((data & 0x1f) > 0x17)

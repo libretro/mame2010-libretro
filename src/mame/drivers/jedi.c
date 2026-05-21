@@ -210,7 +210,7 @@ static WRITE8_HANDLER( rom_banksel_w )
 static READ8_HANDLER( a2d_data_r )
 {
 	jedi_state *state = (jedi_state *)space->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	switch (state->a2d_select)
 	{

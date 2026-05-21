@@ -41,13 +41,13 @@
 
 
 
-static const UINT16 nvram_unlock_seq[] =
+static const uint16_t nvram_unlock_seq[] =
 {
 	0x3fb, 0x3fb, 0x3f8, 0x3fc, 0x3fa, 0x3fe, 0x3f9, 0x3fd, 0x3fb, 0x3ff
 };
 #define NVRAM_UNLOCK_SEQ_LEN (ARRAY_LENGTH(nvram_unlock_seq))
-static UINT16 nvram_write_seq[NVRAM_UNLOCK_SEQ_LEN];
-static UINT8 nvram_write_enable;
+static uint16_t nvram_write_seq[NVRAM_UNLOCK_SEQ_LEN];
+static uint8_t nvram_write_enable;
 
 
 
@@ -61,8 +61,8 @@ static void amerdart_scanline(screen_device &screen, bitmap_t *bitmap, int scanl
 {
 	coolpool_state *state = (coolpool_state *)screen.machine->driver_data;
 
-	UINT16 *vram = &state->vram_base[(params->rowaddr << 8) & 0xff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *vram = &state->vram_base[(params->rowaddr << 8) & 0xff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	rgb_t pens[16];
 	int coladdr = params->coladdr;
 	int x;
@@ -71,13 +71,13 @@ static void amerdart_scanline(screen_device &screen, bitmap_t *bitmap, int scanl
 	if (scanline < 256)
 		for (x = 0; x < 16; x++)
 		{
-			UINT16 pal = state->vram_base[x];
+			uint16_t pal = state->vram_base[x];
 			pens[x] = MAKE_RGB(pal4bit(pal >> 4), pal4bit(pal >> 8), pal4bit(pal >> 12));
 		}
 
 	for (x = params->heblnk; x < params->hsblnk; x += 4)
 	{
-		UINT16 pixels = vram[coladdr++ & 0xff];
+		uint16_t pixels = vram[coladdr++ & 0xff];
 		dest[x + 0] = pens[(pixels >> 0) & 15];
 		dest[x + 1] = pens[(pixels >> 4) & 15];
 		dest[x + 2] = pens[(pixels >> 8) & 15];
@@ -90,15 +90,15 @@ static void coolpool_scanline(screen_device &screen, bitmap_t *bitmap, int scanl
 {
 	coolpool_state *state = (coolpool_state *)screen.machine->driver_data;
 
-	UINT16 *vram = &state->vram_base[(params->rowaddr << 8) & 0x1ff00];
-	UINT32 *dest = BITMAP_ADDR32(bitmap, scanline, 0);
+	uint16_t *vram = &state->vram_base[(params->rowaddr << 8) & 0x1ff00];
+	uint32_t *dest = BITMAP_ADDR32(bitmap, scanline, 0);
 	const rgb_t *pens = tlc34076_get_pens();
 	int coladdr = params->coladdr;
 	int x;
 
 	for (x = params->heblnk; x < params->hsblnk; x += 2)
 	{
-		UINT16 pixels = vram[coladdr++ & 0xff];
+		uint16_t pixels = vram[coladdr++ & 0xff];
 		dest[x + 0] = pens[pixels & 0xff];
 		dest[x + 1] = pens[pixels >> 8];
 	}
@@ -112,7 +112,7 @@ static void coolpool_scanline(screen_device &screen, bitmap_t *bitmap, int scanl
  *
  *************************************/
 
-static void coolpool_to_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void coolpool_to_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	coolpool_state *state = (coolpool_state *)space->machine->driver_data;
 
@@ -120,7 +120,7 @@ static void coolpool_to_shiftreg(const address_space *space, UINT32 address, UIN
 }
 
 
-static void coolpool_from_shiftreg(const address_space *space, UINT32 address, UINT16 *shiftreg)
+static void coolpool_from_shiftreg(const address_space *space, uint32_t address, uint16_t *shiftreg)
 {
 	coolpool_state *state = (coolpool_state *)space->machine->driver_data;
 
@@ -232,8 +232,8 @@ static READ16_HANDLER( amerdart_dsp_bio_line_r )
 {
 	coolpool_state *state = (coolpool_state *)space->machine->driver_data;
 
-	static UINT8 old_cmd;
-	static UINT8 same_cmd_count;
+	static uint8_t old_cmd;
+	static uint8_t same_cmd_count;
 
 	/* Skip idle checking */
 	if (old_cmd == state->cmd_pending)
@@ -322,8 +322,8 @@ static int amerdart_trackball_direction(const address_space *space, int num, int
 {
 	coolpool_state *state = (coolpool_state *)space->machine->driver_data;
 
-	UINT16 result_x = (data & 0x0c) >> 2;
-	UINT16 result_y = (data & 0x03) >> 0;
+	uint16_t result_x = (data & 0x0c) >> 2;
+	uint16_t result_y = (data & 0x03) >> 0;
 
 
 	if ((state->dx[num] == 0) && (state->dy[num] < 0)) {		/* Up */
@@ -420,10 +420,10 @@ static READ16_HANDLER( amerdart_trackball_r )
 	state->newx[2] = input_port_read(space->machine, "XAXIS2");	/* Trackball 2  Left - Right */
 	state->newy[2] = input_port_read(space->machine, "YAXIS2");	/* Trackball 2   Up  - Down  */
 
-	state->dx[1] = (INT8)(state->newx[1] - state->oldx[1]);
-	state->dy[1] = (INT8)(state->newy[1] - state->oldy[1]);
-	state->dx[2] = (INT8)(state->newx[2] - state->oldx[2]);
-	state->dy[2] = (INT8)(state->newy[2] - state->oldy[2]);
+	state->dx[1] = (int8_t)(state->newx[1] - state->oldx[1]);
+	state->dy[1] = (int8_t)(state->newy[1] - state->oldy[1]);
+	state->dx[2] = (int8_t)(state->newx[2] - state->oldx[2]);
+	state->dy[2] = (int8_t)(state->newy[2] - state->oldy[2]);
 
 	/* Determine Trackball 1 direction state */
 	state->result = (state->result & 0xf0ff) | (amerdart_trackball_direction(space, 1, ((state->result >>  8) & 0xf)) <<  8);
@@ -548,7 +548,7 @@ static READ16_HANDLER( dsp_hold_line_r )
 static READ16_HANDLER( dsp_rom_r )
 {
 	coolpool_state *state = (coolpool_state *)space->machine->driver_data;
-	UINT8 *rom = memory_region(space->machine, "user2");
+	uint8_t *rom = memory_region(space->machine, "user2");
 
 	return rom[state->iop_romaddr & (memory_region_length(space->machine, "user2") - 1)];
 }
@@ -573,7 +573,7 @@ static WRITE16_HANDLER( dsp_romaddr_w )
 
 static WRITE16_DEVICE_HANDLER( dsp_dac_w )
 {
-	dac_signed_data_16_w(device, (INT16)(data << 4) + 0x8000);
+	dac_signed_data_16_w(device, (int16_t)(data << 4) + 0x8000);
 }
 
 
@@ -591,8 +591,8 @@ static READ16_HANDLER( coolpool_input_r )
 	state->result = (input_port_read(space->machine, "IN1") & 0x00ff) | (state->lastresult & 0xff00);
 	state->newx[1] = input_port_read(space->machine, "XAXIS");
 	state->newy[1] = input_port_read(space->machine, "YAXIS");
-	state->dx[1] = (INT8)(state->newx[1] - state->oldx[1]);
-	state->dy[1] = (INT8)(state->newy[1] - state->oldy[1]);
+	state->dx[1] = (int8_t)(state->newx[1] - state->oldx[1]);
+	state->dy[1] = (int8_t)(state->newy[1] - state->oldy[1]);
 
 	if (state->dx[1] < 0)
 	{
@@ -1215,10 +1215,10 @@ static DRIVER_INIT( coolpool )
 static DRIVER_INIT( 9ballsht )
 {
 	int a, len;
-	UINT16 *rom;
+	uint16_t *rom;
 
 	/* decrypt the main program ROMs */
-	rom = (UINT16 *)memory_region(machine, "user1");
+	rom = (uint16_t *)memory_region(machine, "user1");
 	len = memory_region_length(machine, "user1");
 	for (a = 0;a < len/2;a++)
 	{
@@ -1242,12 +1242,12 @@ static DRIVER_INIT( 9ballsht )
 	}
 
 	/* decrypt the sub data ROMs */
-	rom = (UINT16 *)memory_region(machine, "user2");
+	rom = (uint16_t *)memory_region(machine, "user2");
 	len = memory_region_length(machine, "user2");
 	for (a = 1;a < len/2;a+=4)
 	{
 		/* just swap bits 1 and 2 of the address */
-		UINT16 tmp = rom[a];
+		uint16_t tmp = rom[a];
 		rom[a] = rom[a+1];
 		rom[a+1] = tmp;
 	}

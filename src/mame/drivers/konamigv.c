@@ -124,13 +124,13 @@ Notes:
 
 /* static variables */
 
-static UINT8 sector_buffer[ 4096 ];
-static UINT32 flash_address;
+static uint8_t sector_buffer[ 4096 ];
+static uint32_t flash_address;
 
-static UINT16 trackball_prev[ 2 ];
-static UINT32 trackball_data[ 2 ];
-static UINT16 btc_trackball_prev[ 4 ];
-static UINT32 btc_trackball_data[ 4 ];
+static uint16_t trackball_prev[ 2 ];
+static uint32_t trackball_data[ 2 ];
+static uint16_t btc_trackball_prev[ 4 ];
+static uint32_t btc_trackball_data[ 4 ];
 
 /* EEPROM handlers */
 
@@ -185,7 +185,7 @@ ADDRESS_MAP_END
 
 /* SCSI */
 
-static void scsi_dma_read( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void scsi_dma_read( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	int i;
 	int n_this;
@@ -228,7 +228,7 @@ static void scsi_dma_read( running_machine *machine, UINT32 n_address, INT32 n_s
 	}
 }
 
-static void scsi_dma_write( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void scsi_dma_write( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	int i;
 	int n_this;
@@ -314,7 +314,7 @@ static MACHINE_RESET( konamigv )
 	cdda_set_cdrom(machine->device("cdda"), am53cf96_get_device(SCSI_ID_4));
 }
 
-static void spu_irq(running_device *device, UINT32 data)
+static void spu_irq(running_device *device, uint32_t data)
 {
 	psx_irq_set(device->machine, data);
 }
@@ -503,8 +503,8 @@ static READ32_HANDLER( trackball_r )
 	if( offset == 0 && mem_mask == 0x0000ffff )
 	{
 		int axis;
-		UINT16 diff;
-		UINT16 value;
+		uint16_t diff;
+		uint16_t value;
 		static const char *const axisnames[] = { "TRACK0_X", "TRACK0_Y" };
 
 		for( axis = 0; axis < 2; axis++ )
@@ -588,8 +588,8 @@ static READ32_HANDLER( btc_trackball_r )
 	if( offset == 1 && mem_mask == 0xffff0000 )
 	{
 		int axis;
-		UINT16 diff;
-		UINT16 value;
+		uint16_t diff;
+		uint16_t value;
 		static const char *const axisnames[] = { "TRACK0_X", "TRACK0_Y", "TRACK1_X", "TRACK1_Y" };
 
 		for( axis = 0; axis < 4; axis++ )

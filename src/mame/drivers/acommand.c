@@ -61,8 +61,8 @@ JALCF1   BIN     1,048,576  02-07-99  1:11a JALCF1.BIN
 #include "sound/okim6295.h"
 
 static tilemap_t *tx_tilemap,*bg_tilemap;
-static UINT16 *ac_txvram,*ac_bgvram;
-static UINT16 *ac_vregs;
+static uint16_t *ac_txvram,*ac_bgvram;
+static uint16_t *ac_vregs;
 
 static TILEMAP_MAPPER( bg_scan )
 {
@@ -92,7 +92,7 @@ static TILE_GET_INFO( ac_get_tx_tile_info )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority, int pri_mask)
 {
-	UINT16 *spriteram16 = machine->generic.spriteram.u16;
+	uint16_t *spriteram16 = machine->generic.spriteram.u16;
 	int offs;
 
 	for (offs = 0;offs < machine->generic.spriteram_size/2;offs += 8)
@@ -153,7 +153,7 @@ static VIDEO_START( acommand )
 	tx_tilemap = tilemap_create(machine, ac_get_tx_tile_info,tilemap_scan_cols,8,8,512,32);
 	bg_tilemap = tilemap_create(machine, ac_get_bg_tile_info,bg_scan,16,16,256,16);
 
-	ac_vregs = auto_alloc_array(machine, UINT16, 0x80/2);
+	ac_vregs = auto_alloc_array(machine, uint16_t, 0x80/2);
 
 	tilemap_set_transparent_pen(tx_tilemap,15);
 }
@@ -179,9 +179,9 @@ g & 40
 7f
 */
 /*                                    0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f*/
-static const UINT8 led_fill[0x10] = { 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00,0x00,0x00,0x00,0x00,0x00};
+static const uint8_t led_fill[0x10] = { 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x00,0x00,0x00,0x00,0x00,0x00};
 
-static void draw_led(bitmap_t *bitmap, int x, int y,UINT8 value)
+static void draw_led(bitmap_t *bitmap, int x, int y,uint8_t value)
 {
 	plot_box(bitmap, x, y, 6, 10, 0x00000000);
 
@@ -215,7 +215,7 @@ static void draw_led(bitmap_t *bitmap, int x, int y,UINT8 value)
 	*BITMAP_ADDR16(bitmap, y+4, x+3) = ((led_fill[value] & 0x0040) ? LED_ON : LED_OFF);
 }
 
-static UINT16 led0,led1;
+static uint16_t led0,led1;
 
 static VIDEO_UPDATE( acommand )
 {
@@ -269,7 +269,7 @@ static WRITE16_HANDLER(ac_txscroll_w)
 
 /******************************************************************************************/
 
-static UINT16 *ac_devram;
+static uint16_t *ac_devram;
 
 static READ16_HANDLER(ac_devices_r)
 {
@@ -314,7 +314,7 @@ static READ16_HANDLER(ac_devices_r)
             */
         //22dc8
 		{
-			static UINT16 ufo_sw1;
+			static uint16_t ufo_sw1;
 			ufo_sw1 = ac_devram[offset] & 3;
 			if(ac_devram[offset] & 0x10)
 				ufo_sw1|= 0x10;
@@ -344,7 +344,7 @@ static READ16_HANDLER(ac_devices_r)
                 ---- ---- ---- ---x Upper Switch - 4 (active low)
             */
 		{
-			static UINT16 ufo_sw2;
+			static uint16_t ufo_sw2;
 			ufo_sw2 = 0;
 			if(ac_devram[offset] & 0x01)
 				ufo_sw2|= 1;

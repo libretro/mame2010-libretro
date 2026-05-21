@@ -555,7 +555,7 @@ ROM_END
 
 static void tumblepb_gfx1_rearrange(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int len = memory_region_length(machine, "gfx1");
 	int i;
 

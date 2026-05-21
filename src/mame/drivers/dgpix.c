@@ -52,17 +52,17 @@
 #include "emu.h"
 #include "cpu/e132xs/e132xs.h"
 
-static UINT32 *vram;
+static uint32_t *vram;
 static int vbuffer = 0;
 
 static int flash_roms;
 static int old_vbuf;
-static UINT32 flash_cmd = 0;
-static INT32 first_offset;
+static uint32_t flash_cmd = 0;
+static int32_t first_offset;
 
 static READ32_HANDLER( flash_r )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "user1");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "user1");
 
 	if(offset >= (0x2000000 - flash_roms * 0x400000) / 4)
 	{
@@ -99,7 +99,7 @@ static WRITE32_HANDLER( flash_w )
 		if(data == 0xd0d00000)
 		{
 			// point to game settings
-			UINT8 *rom = (UINT8 *)memory_region(space->machine, "user1") + offset*4;
+			uint8_t *rom = (uint8_t *)memory_region(space->machine, "user1") + offset*4;
 
 			// erase one block
 			memset(rom, 0xff, 0x10000);
@@ -117,7 +117,7 @@ static WRITE32_HANDLER( flash_w )
 		}
 		else
 		{
-			UINT16 *rom = (UINT16 *)memory_region(space->machine, "user1");
+			uint16_t *rom = (uint16_t *)memory_region(space->machine, "user1");
 
 			// write game settings
 
@@ -140,7 +140,7 @@ static WRITE32_HANDLER( flash_w )
 
 static WRITE32_HANDLER( vram_w )
 {
-	UINT32 *dest = &vram[offset+(0x40000/4)*vbuffer];
+	uint32_t *dest = &vram[offset+(0x40000/4)*vbuffer];
 
 	if (mem_mask == 0xffffffff)
 	{
@@ -208,8 +208,8 @@ static NVRAM_HANDLER( flashroms )
 	if (read_or_write)
 	{
 		// point to game settings
-		UINT8 *rom = (UINT8 *)memory_region(machine, "user1") + 0x1c00000 + 0x360000;
-		UINT8 tmp[0x40000];
+		uint8_t *rom = (uint8_t *)memory_region(machine, "user1") + 0x1c00000 + 0x360000;
+		uint8_t tmp[0x40000];
 		int i;
 
 		// save the new settings
@@ -221,8 +221,8 @@ static NVRAM_HANDLER( flashroms )
 	else if (file)
 	{
 		// point to game settings
-		UINT8 *rom = (UINT8 *)memory_region(machine, "user1") + 0x1c00000 + 0x360000;
-		UINT8 tmp[0x40000];
+		uint8_t *rom = (uint8_t *)memory_region(machine, "user1") + 0x1c00000 + 0x360000;
+		uint8_t tmp[0x40000];
 		int i;
 
 		mame_fread( file, tmp, 0x40000 );
@@ -268,7 +268,7 @@ INPUT_PORTS_END
 
 static VIDEO_START( dgpix )
 {
-	vram = auto_alloc_array(machine, UINT32, 0x40000*2/4);
+	vram = auto_alloc_array(machine, uint32_t, 0x40000*2/4);
 }
 
 static VIDEO_UPDATE( dgpix )
@@ -278,8 +278,8 @@ static VIDEO_UPDATE( dgpix )
 	for (y = 0; y < 240; y++)
 	{
 		int x;
-		UINT32 *src = &vram[(vbuffer ? 0 : 0x10000) | (y << 8)];
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint32_t *src = &vram[(vbuffer ? 0 : 0x10000) | (y << 8)];
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x = 0; x < 320; x += 2)
 		{
@@ -556,7 +556,7 @@ ROM_END
 
 static DRIVER_INIT( xfiles )
 {
-	UINT8 *rom = (UINT8 *)memory_region(machine, "user1") + 0x1c00000;
+	uint8_t *rom = (uint8_t *)memory_region(machine, "user1") + 0x1c00000;
 
 	rom[BYTE4_XOR_BE(0x3aa92e)] = 3;
 	rom[BYTE4_XOR_BE(0x3aa92f)] = 0;
@@ -573,7 +573,7 @@ static DRIVER_INIT( xfiles )
 
 static DRIVER_INIT( kdynastg )
 {
-	UINT8 *rom = (UINT8 *)memory_region(machine, "user1") + 0x1c00000;
+	uint8_t *rom = (uint8_t *)memory_region(machine, "user1") + 0x1c00000;
 
 	rom[BYTE4_XOR_BE(0x3aaa10)] = 3; // 129f0 - nopped call
 	rom[BYTE4_XOR_BE(0x3aaa11)] = 0;

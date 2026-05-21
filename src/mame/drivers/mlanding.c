@@ -27,17 +27,17 @@ TODO:
 #include "sound/2151intf.h"
 #include "sound/msm5205.h"
 
-static UINT16 * ml_tileram;
-static UINT16 *g_ram;
-static UINT16 * ml_dotram;
-static UINT16 *dma_ram;
-static UINT32 adpcm_pos,adpcm_end;
+static uint16_t * ml_tileram;
+static uint16_t *g_ram;
+static uint16_t * ml_dotram;
+static uint16_t *dma_ram;
+static uint32_t adpcm_pos,adpcm_end;
 static int adpcm_data;
-static UINT8 adpcm_idle;
-static UINT8 pal_fg_bank;
+static uint8_t adpcm_idle;
+static uint8_t pal_fg_bank;
 static int dma_active;
-static UINT16 dsp_HOLD_signal;
-static UINT8 *mecha_ram;
+static uint16_t dsp_HOLD_signal;
+static uint8_t *mecha_ram;
 
 static VIDEO_START(mlanding)
 {
@@ -53,12 +53,12 @@ static VIDEO_UPDATE(mlanding)
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT16 *src = &g_ram[y * 512/2 + cliprect->min_x];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
+		uint16_t *src = &g_ram[y * 512/2 + cliprect->min_x];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			UINT16 srcpix = *src++;
+			uint16_t srcpix = *src++;
 
 			*dst++ = screen->machine->pens[256+(srcpix & 0xff) + (pal_fg_bank & 1 ? 0x100 : 0x000)];
 			*dst++ = screen->machine->pens[256+(srcpix >> 8) + (pal_fg_bank & 1 ? 0x100 : 0x000)];
@@ -76,16 +76,16 @@ static int start_dma(void)
 
 	for (offs = 0; offs < 0x2000; offs +=4)
 	{
-		UINT16 code;
-		UINT16 x;
-		UINT16 y;
-		UINT16 colour;
-		UINT16 dx;
-		UINT16 dy;
+		uint16_t code;
+		uint16_t x;
+		uint16_t y;
+		uint16_t colour;
+		uint16_t dx;
+		uint16_t dy;
 
 		int j, k;
 
-		UINT16 attr = dma_ram[offs];
+		uint16_t attr = dma_ram[offs];
 
 		if (attr == 0)
 			continue;
@@ -127,18 +127,18 @@ static int start_dma(void)
 					// Draw the 8x8 chunk
 					for (y1 = 0; y1 < 8; ++y1)
 					{
-						UINT16 *src = &ml_tileram[(code * 2 * 8) + y1*2];
-						UINT16 *dst = &g_ram[(y + k*8+y1)*512/2 + (j*8+x)/2];
+						uint16_t *src = &ml_tileram[(code * 2 * 8) + y1*2];
+						uint16_t *dst = &g_ram[(y + k*8+y1)*512/2 + (j*8+x)/2];
 
-						UINT8 p2 = *src & 0xff;
-						UINT8 p1 = *src++ >> 8;
-						UINT8 p4 = *src;
-						UINT8 p3 = *src++ >> 8;
+						uint8_t p2 = *src & 0xff;
+						uint8_t p1 = *src++ >> 8;
+						uint8_t p4 = *src;
+						uint8_t p3 = *src++ >> 8;
 
 						// DRAW 8 pixels
 						for (x1 = 0; x1 < 8; x1++)
 						{
-							UINT16 pix1, pix2;
+							uint16_t pix1, pix2;
 
 							pix1 = (BIT(p4, x1) << 3) | (BIT(p3, x1) << 2) | (BIT(p2, x1) << 1) | BIT(p1, x1);
 							x1++;
@@ -170,12 +170,12 @@ static int start_dma(void)
 		else
 		{
 			int y1;
-			UINT16 clear_colour = (colour << 12) | (colour << 4);
+			uint16_t clear_colour = (colour << 12) | (colour << 4);
 
 			for(y1 = 0; y1 < dy*8; y1++)
 			{
 				int x1;
-				UINT16 *dst = &g_ram[((y + y1) * 512/2) + x/2];
+				uint16_t *dst = &g_ram[((y + y1) * 512/2) + x/2];
 
 				for(x1 = 0; x1 < dx*8; x1+=2)
 				{
@@ -237,7 +237,7 @@ static WRITE8_DEVICE_HANDLER( sound_bankswitch_w )
 
 static void ml_msm5205_vck(running_device *device)
 {
-	static UINT8 trigger;
+	static uint8_t trigger;
 
 //  popmessage("%08x",adpcm_pos);
 
@@ -249,7 +249,7 @@ static void ml_msm5205_vck(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm");
+		uint8_t *ROM = memory_region(device->machine, "adpcm");
 
 		adpcm_data = ((trigger ? (ROM[adpcm_pos] & 0x0f) : (ROM[adpcm_pos] & 0xf0)>>4) );
 		msm5205_data_w(device,adpcm_data & 0xf);
@@ -366,8 +366,8 @@ static READ16_HANDLER( ml_analog1_msb_r )
 
 static READ16_HANDLER( ml_analog2_msb_r )
 {
-	static UINT8 res;
-	static UINT16 y_adc,x_adc;
+	static uint8_t res;
+	static uint16_t y_adc,x_adc;
 
 	y_adc = input_port_read(space->machine, "STICKY");
 	x_adc = input_port_read(space->machine, "STICKZ");
@@ -391,8 +391,8 @@ static READ16_HANDLER( ml_analog2_msb_r )
 
 static READ16_HANDLER( ml_analog3_msb_r )
 {
-	static UINT8 z_adc,res;
-	static UINT16 x_adc;
+	static uint8_t z_adc,res;
+	static uint16_t x_adc;
 
 	z_adc = input_port_read(space->machine, "STICKX");
 	x_adc = input_port_read(space->machine, "STICKZ");
@@ -805,7 +805,7 @@ ROM_END
 
 static DRIVER_INIT(mlanding)
 {
-//  UINT8 *rom = memory_region(machine, "sub");
+//  uint8_t *rom = memory_region(machine, "sub");
 //  rom[0x88b]=0x4e;
 //  rom[0x88a]=0x71;
 }

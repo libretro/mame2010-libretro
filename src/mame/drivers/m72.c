@@ -97,12 +97,12 @@ other supported games as well.
 #define SOUND_CLOCK			XTAL_3_579545MHz
 
 
-static UINT16 *protection_ram;
+static uint16_t *protection_ram;
 static emu_timer *scanline_timer;
-static UINT8 m72_irq_base;
-static UINT8 mcu_snd_cmd_latch;
-static UINT8 mcu_sample_latch;
-static UINT32 mcu_sample_addr;
+static uint8_t m72_irq_base;
+static uint8_t mcu_snd_cmd_latch;
+static uint8_t mcu_sample_latch;
+static uint32_t mcu_sample_addr;
 
 static TIMER_CALLBACK( m72_scanline_interrupt );
 
@@ -185,9 +185,9 @@ The protection device does
 
 static TIMER_CALLBACK( delayed_ram16_w )
 {
-	UINT16 val = ((UINT32) param) & 0xffff;
-	UINT16 offset = (((UINT32) param) >> 16) & 0xffff;
-	UINT16 *ram = (UINT16 *)ptr;
+	uint16_t val = ((uint32_t) param) & 0xffff;
+	uint16_t offset = (((uint32_t) param) >> 16) & 0xffff;
+	uint16_t *ram = (uint16_t *)ptr;
 
 	ram[offset] = val;
 }
@@ -207,7 +207,7 @@ static WRITE16_HANDLER( m72_main_mcu_sound_w )
 
 static WRITE16_HANDLER( m72_main_mcu_w)
 {
-	UINT16 val = protection_ram[offset];
+	uint16_t val = protection_ram[offset];
 
 	COMBINE_DATA(&val);
 
@@ -229,7 +229,7 @@ static WRITE16_HANDLER( m72_main_mcu_w)
 
 static WRITE8_HANDLER( m72_mcu_data_w )
 {
-	UINT16 val;
+	uint16_t val;
 	if (offset&1) val = (protection_ram[offset/2] & 0x00ff) | (data << 8);
 	else val = (protection_ram[offset/2] & 0xff00) | (data&0xff);
 
@@ -238,7 +238,7 @@ static WRITE8_HANDLER( m72_mcu_data_w )
 
 static READ8_HANDLER(m72_mcu_data_r )
 {
-	UINT8 ret;
+	uint8_t ret;
 
 	if (offset == 0x0fff || offset == 0x0ffe)
 	{
@@ -260,7 +260,7 @@ static INTERRUPT_GEN( m72_mcu_int )
 
 static READ8_HANDLER(m72_mcu_sample_r )
 {
-	UINT8 sample;
+	uint8_t sample;
 	sample = memory_region(space->machine, "samples")[mcu_sample_addr++];
 	return sample;
 }
@@ -324,7 +324,7 @@ INLINE DRIVER_INIT( m72_8751 )
 	const address_space *sndio = cputag_get_address_space(machine, "soundcpu", ADDRESS_SPACE_IO);
 	running_device *dac = machine->device("dac");
 
-	protection_ram = auto_alloc_array(machine, UINT16, 0x10000/2);
+	protection_ram = auto_alloc_array(machine, uint16_t, 0x10000/2);
 	memory_install_read_bank(program, 0xb0000, 0xbffff, 0, 0, "bank1");
 	memory_install_write16_handler(program, 0xb0000, 0xb0fff, 0, 0, m72_main_mcu_w);
 	memory_set_bankptr(machine, "bank1", protection_ram);
@@ -344,7 +344,7 @@ INLINE DRIVER_INIT( m72_8751 )
      * prefetching on the V30.
      */
 	{
-		UINT8 *rom=memory_region(machine, "mcu");
+		uint8_t *rom=memory_region(machine, "mcu");
 
 		rom[0x12d+5] += 1; printf(" 5: %d\n", rom[0x12d+5]);
 		rom[0x12d+8] += 5;  printf(" 8: %d\n", rom[0x12d+8]);
@@ -384,7 +384,7 @@ the NMI handler in the other games.
 #if 0
 static int find_sample(int num)
 {
-	UINT8 *rom = memory_region(machine, "samples");
+	uint8_t *rom = memory_region(machine, "samples");
 	int len = memory_region_length(machine, "samples");
 	int addr = 0;
 
@@ -511,7 +511,7 @@ running, but they have not been derived from the real 8751 code.
 #define CRC_LEN 18
 
 /* Battle Chopper / Mr. Heli */
-static const UINT8 bchopper_code[CODE_LEN] =
+static const uint8_t bchopper_code[CODE_LEN] =
 {
 	0x68,0x00,0xa0,				// push 0a000h
 	0x1f,						// pop ds
@@ -535,13 +535,13 @@ static const UINT8 bchopper_code[CODE_LEN] =
 	0xc6,0x06,0x70,0x16,0x77,	// mov [1670h], byte 077h
 	0xea,0x68,0x01,0x40,0x00	// jmp  0040:$0168
 };
-static const UINT8 bchopper_crc[CRC_LEN] =  {	0x1a,0x12,0x5c,0x08, 0x84,0xb6,0x73,0xd1,
+static const uint8_t bchopper_crc[CRC_LEN] =  {	0x1a,0x12,0x5c,0x08, 0x84,0xb6,0x73,0xd1,
 												0x54,0x91,0x94,0xeb, 0x00,0x00 };
-static const UINT8 mrheli_crc[CRC_LEN] =	  {	0x24,0x21,0x1f,0x14, 0xf9,0x28,0xfb,0x47,
+static const uint8_t mrheli_crc[CRC_LEN] =	  {	0x24,0x21,0x1f,0x14, 0xf9,0x28,0xfb,0x47,
 												0x4c,0x77,0x9e,0xc2, 0x00,0x00 };
 
 /* Ninja Spirit */
-static const UINT8 nspirit_code[CODE_LEN] =
+static const uint8_t nspirit_code[CODE_LEN] =
 {
 	0x68,0x00,0xa0,				// push 0a000h
 	0x1f,						// pop ds
@@ -565,13 +565,13 @@ static const UINT8 nspirit_code[CODE_LEN] =
 	0xc6,0x06,0x71,0x16,0x00,	// mov [1671h], byte 000h
 	0xea,0x00,0x00,0x40,0x00	// jmp  0040:$0000
 };
-static const UINT8 nspirit_crc[CRC_LEN] =   {	0xfe,0x94,0x6e,0x4e, 0xc8,0x33,0xa7,0x2d,
+static const uint8_t nspirit_crc[CRC_LEN] =   {	0xfe,0x94,0x6e,0x4e, 0xc8,0x33,0xa7,0x2d,
 												0xf2,0xa3,0xf9,0xe1, 0xa9,0x6c,0x02,0x95, 0x00,0x00 };
-static const UINT8 nspiritj_crc[CRC_LEN] =  {	0x26,0xa3,0xa5,0xe9, 0xc8,0x33,0xa7,0x2d,
+static const uint8_t nspiritj_crc[CRC_LEN] =  {	0x26,0xa3,0xa5,0xe9, 0xc8,0x33,0xa7,0x2d,
 												0xf2,0xa3,0xf9,0xe1, 0xbc,0x6c,0x01,0x95, 0x00,0x00 };
 
 /* Image Fight */
-static const UINT8 imgfight_code[CODE_LEN] =
+static const uint8_t imgfight_code[CODE_LEN] =
 {
 	0x68,0x00,0xa0,				// push 0a000h
 	0x1f,						// pop ds
@@ -598,11 +598,11 @@ static const UINT8 imgfight_code[CODE_LEN] =
 	0xc6,0x06,0xb0,0x1c,0x57,	// mov [1cb0h], byte 057h
 	0xea,0x00,0x00,0x40,0x00	// jmp  0040:$0000
 };
-static const UINT8 imgfight_crc[CRC_LEN] =  {	0x7e,0xcc,0xec,0x03, 0x04,0x33,0xb6,0xc5,
+static const uint8_t imgfight_crc[CRC_LEN] =  {	0x7e,0xcc,0xec,0x03, 0x04,0x33,0xb6,0xc5,
 												0xbf,0x37,0x92,0x94, 0x00,0x00 };
 
 /* Legend of Hero Tonma */
-static const UINT8 loht_code[CODE_LEN] =
+static const uint8_t loht_code[CODE_LEN] =
 {
 	0x68,0x00,0xa0,				// push 0a000h
 	0x1f,						// pop ds
@@ -623,28 +623,28 @@ static const UINT8 loht_code[CODE_LEN] =
 	0xea,0x5d,0x01,0x40,0x00	// jmp  0040:$015d
 
 };
-static const UINT8 loht_crc[CRC_LEN] =	  {	0x39,0x00,0x82,0xae, 0x2c,0x9d,0x4b,0x73,
+static const uint8_t loht_crc[CRC_LEN] =	  {	0x39,0x00,0x82,0xae, 0x2c,0x9d,0x4b,0x73,
 												0xfb,0xac,0xd4,0x6d, 0x6d,0x5b,0x77,0xc0, 0x00,0x00 };
 /* service mode crashes at the moment (119u2), so I can't add the CRCs for lohtj */
 
 /* X Multiply */
-static const UINT8 xmultiplm72_code[CODE_LEN] =
+static const uint8_t xmultiplm72_code[CODE_LEN] =
 {
 	0xea,0x30,0x02,0x00,0x0e	// jmp  0e00:$0230
 };
-static const UINT8 xmultiplm72_crc[CRC_LEN] =  {	0x73,0x82,0x4e,0x3f, 0xfc,0x56,0x59,0x06,
+static const uint8_t xmultiplm72_crc[CRC_LEN] =  {	0x73,0x82,0x4e,0x3f, 0xfc,0x56,0x59,0x06,
 												0x05,0x48,0xa8,0xf4, 0x00,0x00 };
 
 /* Dragon Breed */
-static const UINT8 dbreedm72_code[CODE_LEN] =
+static const uint8_t dbreedm72_code[CODE_LEN] =
 {
 	0xea,0x6c,0x00,0x00,0x00	// jmp  0000:$006c
 };
-static const UINT8 dbreedm72_crc[CRC_LEN] =	  {	0xa4,0x96,0x5f,0xc0, 0xab,0x49,0x9f,0x19,
+static const uint8_t dbreedm72_crc[CRC_LEN] =	  {	0xa4,0x96,0x5f,0xc0, 0xab,0x49,0x9f,0x19,
 												0x84,0xe6,0xd6,0xca, 0x00,0x00 };
 
 /* Air Duel */
-static const UINT8 airduel_code[CODE_LEN] =
+static const uint8_t airduel_code[CODE_LEN] =
 {
 	0x68,0x00,0xd0,				// push 0d000h
 	0x1f,						// pop ds
@@ -654,21 +654,21 @@ static const UINT8 airduel_code[CODE_LEN] =
 	0xc6,0x06,0xc0,0x1c,0x57,	// mov [1cc0h], byte 057h
 	0xea,0x69,0x0b,0x00,0x00	// jmp  0000:$0b69
 };
-static const UINT8 airduel_crc[CRC_LEN] =	  {	0x72,0x9c,0xca,0x85, 0xc9,0x12,0xcc,0xea,
+static const uint8_t airduel_crc[CRC_LEN] =	  {	0x72,0x9c,0xca,0x85, 0xc9,0x12,0xcc,0xea,
 												0x00,0x00 };
 
 /* Daiku no Gensan */
-static const UINT8 dkgenm72_code[CODE_LEN] =
+static const uint8_t dkgenm72_code[CODE_LEN] =
 {
 	0xea,0x3d,0x00,0x00,0x10	// jmp  1000:$003d
 };
-static const UINT8 dkgenm72_crc[CRC_LEN] =  {	0xc8,0xb4,0xdc,0xf8, 0xd3,0xba,0x48,0xed,
+static const uint8_t dkgenm72_crc[CRC_LEN] =  {	0xc8,0xb4,0xdc,0xf8, 0xd3,0xba,0x48,0xed,
 												0x79,0x08,0x1c,0xb3, 0x00,0x00 };
 
 
-static const UINT8 *protection_code, *protection_crc;
+static const uint8_t *protection_code, *protection_crc;
 
-static void copy_le(UINT16 *dest, const UINT8 *src, UINT8 bytes)
+static void copy_le(uint16_t *dest, const uint8_t *src, uint8_t bytes)
 {
 	int i;
 
@@ -693,9 +693,9 @@ static WRITE16_HANDLER( protection_w )
 		copy_le(&protection_ram[0x0fe0],protection_crc,CRC_LEN);
 }
 
-static void install_protection_handler(running_machine *machine, const UINT8 *code,const UINT8 *crc)
+static void install_protection_handler(running_machine *machine, const uint8_t *code,const uint8_t *crc)
 {
-	protection_ram = auto_alloc_array(machine, UINT16, 0x1000/2);
+	protection_ram = auto_alloc_array(machine, uint16_t, 0x1000/2);
 	protection_code = code;
 	protection_crc =  crc;
 	memory_install_read_bank(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xb0000, 0xb0fff, 0, 0, "bank1");
@@ -778,7 +778,7 @@ static DRIVER_INIT( gallop )
 
 
 
-static UINT8 *soundram;
+static uint8_t *soundram;
 
 
 static READ16_HANDLER( soundram_r )

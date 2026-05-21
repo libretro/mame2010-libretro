@@ -100,8 +100,8 @@
 *     Video Hardware     *
 *************************/
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
 
 
@@ -537,7 +537,7 @@ static DRIVER_INIT( jokrwild )
 *****************************************************************************/
 {
 	int i, offs;
-	UINT8 *srcp = memory_region( machine, "maincpu" );
+	uint8_t *srcp = memory_region( machine, "maincpu" );
 
 	for (i = 0x8000; i < 0x10000; i++)
 	{

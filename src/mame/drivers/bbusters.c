@@ -209,8 +209,8 @@ VIDEO_START( mechatt );
 VIDEO_UPDATE( bbuster );
 VIDEO_UPDATE( mechatt );
 
-static UINT16 *bbusters_ram, *eprom_data;
-extern UINT16 *bbusters_pf1_data,*bbusters_pf2_data,*bbusters_pf1_scroll_data,*bbusters_pf2_scroll_data;
+static uint16_t *bbusters_ram, *eprom_data;
+extern uint16_t *bbusters_pf1_data,*bbusters_pf2_data,*bbusters_pf1_scroll_data,*bbusters_pf2_scroll_data;
 
 WRITE16_HANDLER( bbusters_pf1_w );
 WRITE16_HANDLER( bbusters_pf2_w );
@@ -285,7 +285,7 @@ static READ16_HANDLER( control_3_r )
 {
 	static const char *const port[] = { "GUNX1", "GUNY1", "GUNX2", "GUNY2", "GUNX3", "GUNY3" };
 
-	UINT16 retdata =  input_port_read(space->machine, port[gun_select]);
+	uint16_t retdata =  input_port_read(space->machine, port[gun_select]);
 
 	retdata >>=1; // by lowering the precision of the gun reading hardware the game seems to work better
 

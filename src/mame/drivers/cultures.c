@@ -22,14 +22,14 @@ public:
 	cultures_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *   bg0_videoram;
-	UINT8 *   paletteram;
-	UINT8 *   bg0_regs_x;
-	UINT8 *   bg1_regs_x;
-	UINT8 *   bg2_regs_x;
-	UINT8 *   bg0_regs_y;
-	UINT8 *   bg1_regs_y;
-	UINT8 *   bg2_regs_y;
+	uint8_t *   bg0_videoram;
+	uint8_t *   paletteram;
+	uint8_t *   bg0_regs_x;
+	uint8_t *   bg1_regs_x;
+	uint8_t *   bg2_regs_x;
+	uint8_t *   bg0_regs_y;
+	uint8_t *   bg1_regs_y;
+	uint8_t *   bg2_regs_y;
 
 	/* video-related */
 	tilemap_t  *bg0_tilemap, *bg1_tilemap, *bg2_tilemap;
@@ -44,7 +44,7 @@ public:
 static TILE_GET_INFO( get_bg1_tile_info )
 {
 	cultures_state *state = (cultures_state *)machine->driver_data;
-	UINT8 *region = memory_region(machine, "gfx3") + 0x200000 + 0x80000 * state->bg1_bank;
+	uint8_t *region = memory_region(machine, "gfx3") + 0x200000 + 0x80000 * state->bg1_bank;
 	int code = region[tile_index * 2] + (region[tile_index * 2 + 1] << 8);
 	SET_TILE_INFO(2, code, code >> 12, 0);
 }
@@ -52,7 +52,7 @@ static TILE_GET_INFO( get_bg1_tile_info )
 static TILE_GET_INFO( get_bg2_tile_info )
 {
 	cultures_state *state = (cultures_state *)machine->driver_data;
-	UINT8 *region = memory_region(machine, "gfx2") + 0x200000 + 0x80000 * state->bg2_bank;
+	uint8_t *region = memory_region(machine, "gfx2") + 0x200000 + 0x80000 * state->bg2_bank;
 	int code = region[tile_index * 2] + (region[tile_index * 2 + 1] << 8);
 	SET_TILE_INFO(1, code, code >> 12, 0);
 }
@@ -151,8 +151,8 @@ static WRITE8_HANDLER( misc_w )
 	if (state->old_bank != new_bank)
 	{
 		// oki banking
-		UINT8 *src = memory_region(space->machine, "oki") + 0x40000 + 0x20000 * new_bank;
-		UINT8 *dst = memory_region(space->machine, "oki") + 0x20000;
+		uint8_t *src = memory_region(space->machine, "oki") + 0x40000 + 0x20000 * new_bank;
+		uint8_t *dst = memory_region(space->machine, "oki") + 0x20000;
 		memcpy(dst, src, 0x20000);
 
 		state->old_bank = new_bank;
@@ -361,11 +361,11 @@ static INTERRUPT_GEN( cultures_interrupt )
 static MACHINE_START( cultures )
 {
 	cultures_state *state = (cultures_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 16, &ROM[0x0000], 0x4000);
 
-	state->paletteram = auto_alloc_array(machine, UINT8, 0x4000);
+	state->paletteram = auto_alloc_array(machine, uint8_t, 0x4000);
 	state_save_register_global_pointer(machine, state->paletteram, 0x4000);
 
 	state_save_register_global(machine, state->old_bank);

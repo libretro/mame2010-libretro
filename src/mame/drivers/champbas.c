@@ -175,7 +175,7 @@ static WRITE8_HANDLER( champbas_mcu_halt_w )
 /* champbja another protection */
 static READ8_HANDLER( champbja_alt_protection_r )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 	/*
     (68BA) & 0x99 == 0x00
     (6867) & 0x99 == 0x99
@@ -1185,14 +1185,14 @@ ROM_END
 static DRIVER_INIT(champbas)
 {
 	// chars and sprites are mixed in the same ROMs, so rearrange them for easier decoding
-	UINT8 *rom1 = memory_region(machine, "gfx1");
-	UINT8 *rom2 = memory_region(machine, "gfx2");
+	uint8_t *rom1 = memory_region(machine, "gfx1");
+	uint8_t *rom2 = memory_region(machine, "gfx2");
 	int len = memory_region_length(machine, "gfx1");
 	int i;
 
 	for (i = 0; i < len/2; ++i)
 	{
-		UINT8 t = rom1[i + len/2];
+		uint8_t t = rom1[i + len/2];
 		rom1[i + len/2] = rom2[i];
 		rom2[i] = t;
 	}
@@ -1202,14 +1202,14 @@ static DRIVER_INIT(champbas)
 static DRIVER_INIT( exctsccr )
 {
 	// chars and sprites are mixed in the same ROMs, so rearrange them for easier decoding
-	UINT8 *rom1 = memory_region(machine, "gfx1");
-	UINT8 *rom2 = memory_region(machine, "gfx2");
+	uint8_t *rom1 = memory_region(machine, "gfx1");
+	uint8_t *rom2 = memory_region(machine, "gfx2");
 	int i;
 
 	// planes 0,1
 	for (i = 0; i < 0x1000; ++i)
 	{
-		UINT8 t = rom1[i + 0x1000];
+		uint8_t t = rom1[i + 0x1000];
 		rom1[i + 0x1000] = rom2[i];
 		rom2[i] = t;
 	}

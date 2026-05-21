@@ -34,7 +34,7 @@ static READ8_HANDLER( hanaawas_input_port_0_r )
 {
 	hanaawas_state *state = (hanaawas_state *)space->machine->driver_data;
 	int i, ordinal = 0;
-	UINT16 buttons = 0;
+	uint16_t buttons = 0;
 
 	switch (state->mux)
 	{

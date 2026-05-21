@@ -197,7 +197,7 @@ static void vck_callback( running_device *device )
 	/* only play back if we have data remaining */
 	if (state->sample_count != 0xff)
 	{
-		UINT8 data = memory_region(device->machine, "adpcm")[state->sample_offset >> 1];
+		uint8_t data = memory_region(device->machine, "adpcm")[state->sample_offset >> 1];
 
 		/* write the next nibble and advance */
 		msm5205_data_w(device, (data >> (4 * (~state->sample_offset & 1))) & 0x0f);

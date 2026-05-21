@@ -28,8 +28,8 @@ public:
 	laserbas_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8    *vram1;
-	UINT8    *vram2;
+	uint8_t    *vram1;
+	uint8_t    *vram2;
 	int      vrambank;
 
 	/* misc */
@@ -41,8 +41,8 @@ static VIDEO_START(laserbas)
 {
 	laserbas_state *state = (laserbas_state *)machine->driver_data;
 
-	state->vram1 = auto_alloc_array(machine, UINT8, 0x8000);
-	state->vram2 = auto_alloc_array(machine, UINT8, 0x8000);
+	state->vram1 = auto_alloc_array(machine, uint8_t, 0x8000);
+	state->vram2 = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	state_save_register_global_pointer(machine, state->vram1, 0x8000);
 	state_save_register_global_pointer(machine, state->vram2, 0x8000);

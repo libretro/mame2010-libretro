@@ -48,16 +48,16 @@ public:
 
 	astinvad_state(running_machine &machine) { }
 
-	UINT8 *    colorram;
-	UINT8 *    videoram;
+	uint8_t *    colorram;
+	uint8_t *    videoram;
 	size_t     videoram_size;
 
 	emu_timer  *int_timer;
-	UINT8      sound_state[2];
-	UINT8      screen_flip;
-	UINT8      screen_red;
-	UINT8      flip_yoffs;
-	UINT8      color_latch;
+	uint8_t      sound_state[2];
+	uint8_t      screen_flip;
+	uint8_t      screen_red;
+	uint8_t      flip_yoffs;
+	uint8_t      color_latch;
 
 	running_device *maincpu;
 	running_device *ppi8255_0;
@@ -106,7 +106,7 @@ static const ppi8255_interface ppi8255_intf[2] =
 static VIDEO_START( spaceint )
 {
 	astinvad_state *state = (astinvad_state *)machine->driver_data;
-	state->colorram = auto_alloc_array(machine, UINT8, state->videoram_size);
+	state->colorram = auto_alloc_array(machine, uint8_t, state->videoram_size);
 
 	state_save_register_global(machine, state->color_latch);
 	state_save_register_global_pointer(machine, state->colorram, state->videoram_size);
@@ -135,11 +135,11 @@ static WRITE8_HANDLER( spaceint_videoram_w )
  *
  *************************************/
 
-static void plot_byte( running_machine *machine, bitmap_t *bitmap, UINT8 y, UINT8 x, UINT8 data, UINT8 color )
+static void plot_byte( running_machine *machine, bitmap_t *bitmap, uint8_t y, uint8_t x, uint8_t data, uint8_t color )
 {
 	astinvad_state *state = (astinvad_state *)machine->driver_data;
 	pen_t fore_pen = MAKE_RGB(pal1bit(color >> 0), pal1bit(color >> 2), pal1bit(color >> 1));
-	UINT8 flip_xor = state->screen_flip & 7;
+	uint8_t flip_xor = state->screen_flip & 7;
 
 	*BITMAP_ADDR32(bitmap, y, x + (0 ^ flip_xor)) = (data & 0x01) ? fore_pen : RGB_BLACK;
 	*BITMAP_ADDR32(bitmap, y, x + (1 ^ flip_xor)) = (data & 0x02) ? fore_pen : RGB_BLACK;
@@ -155,16 +155,16 @@ static void plot_byte( running_machine *machine, bitmap_t *bitmap, UINT8 y, UINT
 static VIDEO_UPDATE( astinvad )
 {
 	astinvad_state *state = (astinvad_state *)screen->machine->driver_data;
-	const UINT8 *color_prom = memory_region(screen->machine, "proms");
-	UINT8 yoffs = state->flip_yoffs & state->screen_flip;
+	const uint8_t *color_prom = memory_region(screen->machine, "proms");
+	uint8_t yoffs = state->flip_yoffs & state->screen_flip;
 	int x, y;
 
 	/* render the visible pixels */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 		for (x = cliprect->min_x & ~7; x <= cliprect->max_x; x += 8)
 		{
-			UINT8 color = color_prom[((y & 0xf8) << 2) | (x >> 3)] >> (state->screen_flip ? 0 : 4);
-			UINT8 data = state->videoram[(((y ^ state->screen_flip) + yoffs) << 5) | ((x ^ state->screen_flip) >> 3)];
+			uint8_t color = color_prom[((y & 0xf8) << 2) | (x >> 3)] >> (state->screen_flip ? 0 : 4);
+			uint8_t data = state->videoram[(((y ^ state->screen_flip) + yoffs) << 5) | ((x ^ state->screen_flip) >> 3)];
 			plot_byte(screen->machine, bitmap, y, x, data, state->screen_red ? 1 : color);
 		}
 
@@ -175,16 +175,16 @@ static VIDEO_UPDATE( astinvad )
 static VIDEO_UPDATE( spaceint )
 {
 	astinvad_state *state = (astinvad_state *)screen->machine->driver_data;
-	const UINT8 *color_prom = memory_region(screen->machine, "proms");
+	const uint8_t *color_prom = memory_region(screen->machine, "proms");
 	int offs;
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 data = state->videoram[offs];
-		UINT8 color = state->colorram[offs];
+		uint8_t data = state->videoram[offs];
+		uint8_t color = state->colorram[offs];
 
-		UINT8 y = ~offs;
-		UINT8 x = offs >> 8 << 3;
+		uint8_t y = ~offs;
+		uint8_t x = offs >> 8 << 3;
 
 		/* this is almost certainly wrong */
 		offs_t n = ((offs >> 5) & 0xf0) | color;
@@ -292,7 +292,7 @@ static INPUT_CHANGED( spaceint_coin_inserted )
 static READ8_HANDLER( kamikaze_ppi_r )
 {
 	astinvad_state *state = (astinvad_state *)space->machine->driver_data;
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	/* the address lines are used for /CS; yes, they can overlap! */
 	if (!(offset & 4))

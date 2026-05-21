@@ -107,7 +107,7 @@ static int _32x_videopriority;
 static int _32x_displaymode;
 static int _32x_240mode;
 
-static UINT16 _32x_68k_a15104_reg;
+static uint16_t _32x_68k_a15104_reg;
 
 
 static int sh2_master_vint_enable, sh2_slave_vint_enable;
@@ -123,11 +123,11 @@ static int sh2_hint_in_vbl;
 #define SH2_PINT_IRQ_LEVEL 6
 
 
-static UINT16* _32x_dram0;
-static UINT16* _32x_dram1;
-static UINT16 *_32x_display_dram, *_32x_access_dram;
-static UINT16* _32x_palette;
-static UINT16* _32x_palette_lookup;
+static uint16_t* _32x_dram0;
+static uint16_t* _32x_dram1;
+static uint16_t *_32x_display_dram, *_32x_access_dram;
+static uint16_t* _32x_palette;
+static uint16_t* _32x_palette_lookup;
 /* SegaCD! */
 static cpu_device *_segacd_68k_cpu;
 /* SVP (virtua racing) */
@@ -144,18 +144,18 @@ int genvdp_use_cram = 0; // c2 uses it's own palette ram
 int genesis_always_irq6 = 0; // c2 never enables the irq6, different source??
 int genesis_other_hacks = 0; // misc hacks
 
-INLINE UINT16 get_hposition(void);
+INLINE uint16_t get_hposition(void);
 
-static UINT8* sprite_renderline;
-static UINT8* highpri_renderline;
-static UINT32* video_renderline;
-UINT16* megadrive_vdp_palette_lookup;
-UINT16* megadrive_vdp_palette_lookup_sprite; // for C2
-UINT16* megadrive_vdp_palette_lookup_shadow;
-UINT16* megadrive_vdp_palette_lookup_highlight;
-UINT16* megadrive_ram;
-static UINT8 megadrive_vram_fill_pending = 0;
-static UINT16 megadrive_vram_fill_length = 0;
+static uint8_t* sprite_renderline;
+static uint8_t* highpri_renderline;
+static uint32_t* video_renderline;
+uint16_t* megadrive_vdp_palette_lookup;
+uint16_t* megadrive_vdp_palette_lookup_sprite; // for C2
+uint16_t* megadrive_vdp_palette_lookup_shadow;
+uint16_t* megadrive_vdp_palette_lookup_highlight;
+uint16_t* megadrive_ram;
+static uint8_t megadrive_vram_fill_pending = 0;
+static uint16_t megadrive_vram_fill_length = 0;
 static int genesis_scanline_counter = 0;
 static int megadrive_sprite_collision = 0;
 static int megadrive_region_export;
@@ -174,10 +174,10 @@ static bitmap_t* render_bitmap;
 #ifdef UNUSED_FUNCTION
 /* taken from segaic16.c */
 /* doesn't seem to meet my needs, not used */
-static UINT16 read_next_instruction(const address_space *space)
+static uint16_t read_next_instruction(const address_space *space)
 {
-	static UINT8 recurse = 0;
-	UINT16 result;
+	static uint8_t recurse = 0;
+	uint16_t result;
 
 	/* Unmapped memory returns the last word on the data bus, which is almost always the opcode */
 	/* of the next instruction due to prefetch; however, since we may be encrypted, we actually */
@@ -205,11 +205,11 @@ static struct genesis_z80_vars
 {
 	int z80_is_reset;
 	int z80_has_bus;
-	UINT32 z80_bank_addr;
-	UINT8* z80_prgram;
+	uint32_t z80_bank_addr;
+	uint8_t* z80_prgram;
 } genz80;
 
-static void megadriv_z80_bank_w(UINT16 data)
+static void megadriv_z80_bank_w(uint16_t data)
 {
 	genz80.z80_bank_addr = ( ( genz80.z80_bank_addr >> 1 ) | ( data << 23 ) ) & 0xff8000;
 }
@@ -259,17 +259,17 @@ static WRITE16_HANDLER( megadriv_68k_req_z80_reset );
 
 
 static int megadrive_vdp_command_pending; // 2nd half of command pending..
-static UINT16 megadrive_vdp_command_part1;
-static UINT16 megadrive_vdp_command_part2;
-static UINT8  megadrive_vdp_code;
-static UINT16 megadrive_vdp_address;
-static UINT16 megadrive_vdp_register[0x20];
-static UINT16* megadrive_vdp_vram;
-static UINT16* megadrive_vdp_cram;
-static UINT16* megadrive_vdp_vsram;
+static uint16_t megadrive_vdp_command_part1;
+static uint16_t megadrive_vdp_command_part2;
+static uint8_t  megadrive_vdp_code;
+static uint16_t megadrive_vdp_address;
+static uint16_t megadrive_vdp_register[0x20];
+static uint16_t* megadrive_vdp_vram;
+static uint16_t* megadrive_vdp_cram;
+static uint16_t* megadrive_vdp_vsram;
 /* The VDP keeps a 0x400 byte on-chip cache of the Sprite Attribute Table
    to speed up processing */
-static UINT16* megadrive_vdp_internal_sprite_attribute_table;
+static uint16_t* megadrive_vdp_internal_sprite_attribute_table;
 
 /*
 
@@ -389,10 +389,10 @@ static UINT16* megadrive_vdp_internal_sprite_attribute_table;
 #define MEGADRIVE_REG17_UNUSED          ((megadrive_vdp_register[0x17]&0x3f)>>0)
 
 
-static void vdp_vram_write(UINT16 data)
+static void vdp_vram_write(uint16_t data)
 {
 
-	UINT16 sprite_base_address = MEGADRIVE_REG0C_RS1?((MEGADRIVE_REG05_SPRITE_ADDR&0x7e)<<9):((MEGADRIVE_REG05_SPRITE_ADDR&0x7f)<<9);
+	uint16_t sprite_base_address = MEGADRIVE_REG0C_RS1?((MEGADRIVE_REG05_SPRITE_ADDR&0x7e)<<9):((MEGADRIVE_REG05_SPRITE_ADDR&0x7f)<<9);
 	int spritetable_size = MEGADRIVE_REG0C_RS1?0x400:0x200;
 	int lowlimit = sprite_base_address;
 	int highlimit = sprite_base_address+spritetable_size;
@@ -417,7 +417,7 @@ static void vdp_vram_write(UINT16 data)
 	megadrive_vdp_address &= 0xffff;
 }
 
-static void vdp_vsram_write(UINT16 data)
+static void vdp_vsram_write(uint16_t data)
 {
 	megadrive_vdp_vsram[(megadrive_vdp_address&0x7e)>>1] = data;
 
@@ -447,7 +447,7 @@ static void write_cram_value(running_machine *machine, int offset, int data)
 	}
 }
 
-static void vdp_cram_write(running_machine *machine, UINT16 data)
+static void vdp_cram_write(running_machine *machine, uint16_t data)
 {
 	int offset;
 	offset = (megadrive_vdp_address&0x7e)>>1;
@@ -556,7 +556,7 @@ static void megadriv_vdp_data_port_w(running_machine *machine, int data)
 
 
 
-static void megadrive_vdp_set_register(running_machine *machine, int regnum, UINT8 value)
+static void megadrive_vdp_set_register(running_machine *machine, int regnum, uint8_t value)
 {
 	megadrive_vdp_register[regnum] = value;
 
@@ -615,13 +615,13 @@ static void update_megadrive_vdp_code_and_address(void)
                             ((megadrive_vdp_command_part2 & 0x0003) << 14);
 }
 
-static UINT16 (*vdp_get_word_from_68k_mem)(running_machine *machine, UINT32 source);
+static uint16_t (*vdp_get_word_from_68k_mem)(running_machine *machine, uint32_t source);
 
-static UINT16 vdp_get_word_from_68k_mem_default(running_machine *machine, UINT32 source)
+static uint16_t vdp_get_word_from_68k_mem_default(running_machine *machine, uint32_t source)
 {
 	if (( source >= 0x000000 ) && ( source <= 0x3fffff ))
 	{
-		UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 		return rom[(source&0x3fffff)>>1];
 	}
 	else if (( source >= 0xe00000 ) && ( source <= 0xffffff ))
@@ -663,13 +663,13 @@ static UINT16 vdp_get_word_from_68k_mem_default(running_machine *machine, UINT32
    as the 68k address bus isn't accessed */
 
 /* Wani Wani World, James Pond 3, Pirates Gold! */
-static void megadrive_do_insta_vram_copy(UINT32 source, UINT16 length)
+static void megadrive_do_insta_vram_copy(uint32_t source, uint16_t length)
 {
 	int x;
 
 	for (x=0;x<length;x++)
 	{
-		UINT8 source_byte;
+		uint8_t source_byte;
 
 		//mame_printf_debug("vram copy length %04x source %04x dest %04x\n",length, source, megadrive_vdp_address );
 		if (source&1) source_byte = MEGADRIV_VDP_VRAM((source&0xffff)>>1)&0x00ff;
@@ -691,7 +691,7 @@ static void megadrive_do_insta_vram_copy(UINT32 source, UINT16 length)
 }
 
 /* Instant, but we pause the 68k a bit */
-static void megadrive_do_insta_68k_to_vram_dma(running_machine *machine, UINT32 source,int length)
+static void megadrive_do_insta_68k_to_vram_dma(running_machine *machine, uint32_t source,int length)
 {
 	int count;
 
@@ -718,7 +718,7 @@ static void megadrive_do_insta_68k_to_vram_dma(running_machine *machine, UINT32 
 }
 
 
-static void megadrive_do_insta_68k_to_cram_dma(running_machine *machine,UINT32 source,UINT16 length)
+static void megadrive_do_insta_68k_to_cram_dma(running_machine *machine,uint32_t source,uint16_t length)
 {
 	int count;
 
@@ -746,7 +746,7 @@ static void megadrive_do_insta_68k_to_cram_dma(running_machine *machine,UINT32 s
 
 }
 
-static void megadrive_do_insta_68k_to_vsram_dma(running_machine *machine,UINT32 source,UINT16 length)
+static void megadrive_do_insta_68k_to_vsram_dma(running_machine *machine,uint32_t source,uint16_t length)
 {
 	int count;
 
@@ -779,8 +779,8 @@ static void handle_dma_bits(running_machine *machine)
 
 	if (megadrive_vdp_code&0x20)
 	{
-		UINT32 source;
-		UINT16 length;
+		uint32_t source;
+		uint16_t length;
 		source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8) | ((MEGADRIVE_REG17_DMASOURCE3&0xff)<<16))<<1;
 		length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8))<<1;
 	//  mame_printf_debug("%s 68k DMAtran set source %06x length %04x dest %04x enabled %01x code %02x %02x\n", cpuexec_describe_context(machine), source, length, megadrive_vdp_address,MEGADRIVE_REG01_DMA_ENABLE, megadrive_vdp_code,MEGADRIVE_REG0F_AUTO_INC);
@@ -795,8 +795,8 @@ static void handle_dma_bits(running_machine *machine)
 	{
 		if (MEGADRIVE_REG17_DMATYPE==0x0 || MEGADRIVE_REG17_DMATYPE==0x1)
 		{
-			UINT32 source;
-			UINT16 length;
+			uint32_t source;
+			uint16_t length;
 			source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8) | ((MEGADRIVE_REG17_DMASOURCE3&0x7f)<<16))<<1;
 			length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8))<<1;
 
@@ -816,8 +816,8 @@ static void handle_dma_bits(running_machine *machine)
 		}
 		else if (MEGADRIVE_REG17_DMATYPE==0x3)
 		{
-			UINT32 source;
-			UINT16 length;
+			uint32_t source;
+			uint16_t length;
 			source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8)); // source (byte offset)
 			length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8)); // length in bytes
 			//mame_printf_debug("setting vram copy mode length registers are %02x %02x other regs! %02x %02x %02x(Mode Bits %02x) Enable %02x\n", MEGADRIVE_REG13_DMALENGTH1, MEGADRIVE_REG14_DMALENGTH2, MEGADRIVE_REG15_DMASOURCE1, MEGADRIVE_REG16_DMASOURCE2, MEGADRIVE_REG17_DMASOURCE3, MEGADRIVE_REG17_DMATYPE, MEGADRIVE_REG01_DMA_ENABLE);
@@ -829,8 +829,8 @@ static void handle_dma_bits(running_machine *machine)
 	{
 		if (MEGADRIVE_REG17_DMATYPE==0x0 || MEGADRIVE_REG17_DMATYPE==0x1)
 		{
-			UINT32 source;
-			UINT16 length;
+			uint32_t source;
+			uint16_t length;
 			source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8) | ((MEGADRIVE_REG17_DMASOURCE3&0x7f)<<16))<<1;
 			length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8))<<1;
 
@@ -856,8 +856,8 @@ static void handle_dma_bits(running_machine *machine)
 	{
 		if (MEGADRIVE_REG17_DMATYPE==0x0 || MEGADRIVE_REG17_DMATYPE==0x1)
 		{
-			UINT32 source;
-			UINT16 length;
+			uint32_t source;
+			uint16_t length;
 			source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8) | ((MEGADRIVE_REG17_DMASOURCE3&0x7f)<<16))<<1;
 			length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8))<<1;
 
@@ -895,8 +895,8 @@ static void handle_dma_bits(running_machine *machine)
 		}
 		else if (MEGADRIVE_REG17_DMATYPE==0x3)
 		{
-			UINT32 source;
-			UINT16 length;
+			uint32_t source;
+			uint16_t length;
 			source = (MEGADRIVE_REG15_DMASOURCE1 | (MEGADRIVE_REG16_DMASOURCE2<<8)); // source (byte offset)
 			length = (MEGADRIVE_REG13_DMALENGTH1 | (MEGADRIVE_REG14_DMALENGTH2<<8)); // length in bytes
 			//mame_printf_debug("setting vram copy mode length registers are %02x %02x other regs! %02x %02x %02x(Mode Bits %02x) Enable %02x\n", MEGADRIVE_REG13_DMALENGTH1, MEGADRIVE_REG14_DMALENGTH2, MEGADRIVE_REG15_DMASOURCE1, MEGADRIVE_REG16_DMASOURCE2, MEGADRIVE_REG17_DMASOURCE3, MEGADRIVE_REG17_DMATYPE, MEGADRIVE_REG01_DMA_ENABLE);
@@ -992,25 +992,25 @@ WRITE16_HANDLER( megadriv_vdp_w )
 	}
 }
 
-static UINT16 vdp_vram_r(void)
+static uint16_t vdp_vram_r(void)
 {
 	return MEGADRIV_VDP_VRAM((megadrive_vdp_address&0xfffe)>>1);
 }
 
-static UINT16 vdp_vsram_r(void)
+static uint16_t vdp_vsram_r(void)
 {
 	return megadrive_vdp_vsram[(megadrive_vdp_address&0x7e)>>1];
 }
 
-static UINT16 vdp_cram_r(void)
+static uint16_t vdp_cram_r(void)
 {
 
 	return megadrive_vdp_cram[(megadrive_vdp_address&0x7e)>>1];
 }
 
-static UINT16 megadriv_vdp_data_port_r(running_machine *machine)
+static uint16_t megadriv_vdp_data_port_r(running_machine *machine)
 {
-	UINT16 retdata=0;
+	uint16_t retdata=0;
 
 	//return mame_rand(machine);
 
@@ -1125,7 +1125,7 @@ PAL, 256x224
 
 
 
-static UINT16 megadriv_vdp_ctrl_port_r(void)
+static uint16_t megadriv_vdp_ctrl_port_r(void)
 {
 	/* Battletoads is very fussy about the vblank flag
        it wants it to be 1. in scanline 224 */
@@ -1147,7 +1147,7 @@ static UINT16 megadriv_vdp_ctrl_port_r(void)
 	int fifo_empty = 1;
 	int fifo_full = 0;
 
-	UINT16 hpos = get_hposition();
+	uint16_t hpos = get_hposition();
 
 	if (hpos>400) megadrive_hblank_flag = 1;
 	if (hpos>460) megadrive_hblank_flag = 0;
@@ -1199,7 +1199,7 @@ static UINT16 megadriv_vdp_ctrl_port_r(void)
 	       (megadrive_region_pal<<0); // PAL MODE FLAG checked by striker for region prot..
 }
 
-static const UINT8 vc_ntsc_224[] =
+static const uint8_t vc_ntsc_224[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,    0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,    0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -1220,7 +1220,7 @@ static const UINT8 vc_ntsc_224[] =
     0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
 };
 
-static const UINT8 vc_ntsc_240[] =
+static const uint8_t vc_ntsc_240[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -1241,7 +1241,7 @@ static const UINT8 vc_ntsc_240[] =
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05
 };
 
-static const UINT8 vc_pal_224[] =
+static const uint8_t vc_pal_224[] =
 {
     0x00, 0x01, 0x02,    0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12,    0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -1265,7 +1265,7 @@ static const UINT8 vc_pal_224[] =
     0xf7, 0xf8, 0xf9,    0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff,
 };
 
-static const UINT8 vc_pal_240[] =
+static const uint8_t vc_pal_240[] =
 {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,    0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a,    0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -1291,14 +1291,14 @@ static const UINT8 vc_pal_240[] =
 
 
 
-static UINT16 megadriv_read_hv_counters(void)
+static uint16_t megadriv_read_hv_counters(void)
 {
 	/* Bubble and Squeek wants vcount=0xe0 */
 	/* Dracula is very sensitive to this */
 	/* Marvel Land is sensitive to this */
 
 	int vpos = genesis_scanline_counter;
-	UINT16 hpos = get_hposition();
+	uint16_t hpos = get_hposition();
 
 //  if (hpos>424) vpos++; // fixes dracula, breaks road rash
 	if (hpos>460) vpos++; // when does vpos increase.. also on sms, check game gear manual..
@@ -1342,7 +1342,7 @@ static UINT16 megadriv_read_hv_counters(void)
 
 READ16_HANDLER( megadriv_vdp_r )
 {
-	UINT16 retvalue = 0;
+	uint16_t retvalue = 0;
 
 
 
@@ -1435,8 +1435,8 @@ static void init_megadri6_io(running_machine *machine)
 }
 
 /* pointers to our io data read/write functions */
-UINT8 (*megadrive_io_read_data_port_ptr)(running_machine *machine, int offset);
-void (*megadrive_io_write_data_port_ptr)(running_machine *machine, int offset, UINT16 data);
+uint8_t (*megadrive_io_read_data_port_ptr)(running_machine *machine, int offset);
+void (*megadrive_io_write_data_port_ptr)(running_machine *machine, int offset, uint16_t data);
 
 /*
 
@@ -1754,9 +1754,9 @@ INPUT_PORTS_START( ssgbl )
 	PORT_DIPSETTING(    0x00, "6" )
 INPUT_PORTS_END
 
-UINT8 megadrive_io_data_regs[3];
-UINT8 megadrive_io_ctrl_regs[3];
-static UINT8 megadrive_io_tx_regs[3];
+uint8_t megadrive_io_data_regs[3];
+uint8_t megadrive_io_ctrl_regs[3];
+static uint8_t megadrive_io_tx_regs[3];
 
 static void megadrive_init_io(running_machine *machine)
 {
@@ -1793,9 +1793,9 @@ static void megadrive_reset_io(running_machine *machine)
 }
 
 /************* 6 buttons version **************************/
-static UINT8 megadrive_io_read_data_port_6button(running_machine *machine, int portnum)
+static uint8_t megadrive_io_read_data_port_6button(running_machine *machine, int portnum)
 {
-	UINT8 retdata, helper = (megadrive_io_ctrl_regs[portnum] & 0x3f) | 0xc0; // bits 6 & 7 always come from megadrive_io_data_regs
+	uint8_t retdata, helper = (megadrive_io_ctrl_regs[portnum] & 0x3f) | 0xc0; // bits 6 & 7 always come from megadrive_io_data_regs
 	static const char *const pad3names[] = { "PAD1", "PAD2", "IN0", "UNK" };
 	static const char *const pad6names[] = { "EXTRA1", "EXTRA2", "IN0", "UNK" };
 
@@ -1845,9 +1845,9 @@ static UINT8 megadrive_io_read_data_port_6button(running_machine *machine, int p
 
 
 /************* 3 buttons version **************************/
-static UINT8 megadrive_io_read_data_port_3button(running_machine *machine, int portnum)
+static uint8_t megadrive_io_read_data_port_3button(running_machine *machine, int portnum)
 {
-	UINT8 retdata, helper = (megadrive_io_ctrl_regs[portnum] & 0x7f) | 0x80; // bit 7 always comes from megadrive_io_data_regs
+	uint8_t retdata, helper = (megadrive_io_ctrl_regs[portnum] & 0x7f) | 0x80; // bit 7 always comes from megadrive_io_data_regs
 	static const char *const pad3names[] = { "PAD1", "PAD2", "IN0", "UNK" };
 
 	if (megadrive_io_data_regs[portnum] & 0x40)
@@ -1868,9 +1868,9 @@ static UINT8 megadrive_io_read_data_port_3button(running_machine *machine, int p
 }
 
 /* used by megatech bios, the test mode accesses the joypad/stick inputs like this */
-UINT8 megatech_bios_port_cc_dc_r(running_machine *machine, int offset, int ctrl)
+uint8_t megatech_bios_port_cc_dc_r(running_machine *machine, int offset, int ctrl)
 {
-	UINT8 retdata;
+	uint8_t retdata;
 
 	if (ctrl == 0x55)
 	{
@@ -1894,28 +1894,28 @@ UINT8 megatech_bios_port_cc_dc_r(running_machine *machine, int offset, int ctrl)
 	return retdata;
 }
 
-static UINT8 megadrive_io_read_ctrl_port(int portnum)
+static uint8_t megadrive_io_read_ctrl_port(int portnum)
 {
-	UINT8 retdata;
+	uint8_t retdata;
 	retdata = megadrive_io_ctrl_regs[portnum];
 	//mame_printf_debug("read io ctrl port %d %02x\n",portnum,retdata);
 
 	return retdata | (retdata << 8);
 }
 
-static UINT8 megadrive_io_read_tx_port(int portnum)
+static uint8_t megadrive_io_read_tx_port(int portnum)
 {
-	UINT8 retdata;
+	uint8_t retdata;
 	retdata = megadrive_io_tx_regs[portnum];
 	return retdata | (retdata << 8);
 }
 
-static UINT8 megadrive_io_read_rx_port(int portnum)
+static uint8_t megadrive_io_read_rx_port(int portnum)
 {
 	return 0x00;
 }
 
-static UINT8 megadrive_io_read_sctrl_port(int portnum)
+static uint8_t megadrive_io_read_sctrl_port(int portnum)
 {
 	return 0x00;
 }
@@ -1923,7 +1923,7 @@ static UINT8 megadrive_io_read_sctrl_port(int portnum)
 
 READ16_HANDLER( megadriv_68k_io_read )
 {
-	UINT8 retdata;
+	uint8_t retdata;
 
 	retdata = 0;
       /* Charles MacDonald ( http://cgfm2.emuviews.com/ )
@@ -1987,7 +1987,7 @@ READ16_HANDLER( megadriv_68k_io_read )
 }
 
 
-static void megadrive_io_write_data_port_3button(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_data_port_3button(running_machine *machine, int portnum, uint16_t data)
 {
 	megadrive_io_data_regs[portnum] = data;
 	//mame_printf_debug("Writing IO Data Register #%d data %04x\n",portnum,data);
@@ -1997,7 +1997,7 @@ static void megadrive_io_write_data_port_3button(running_machine *machine, int p
 
 /****************************** 6 buttons version*****************************/
 
-static void megadrive_io_write_data_port_6button(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_data_port_6button(running_machine *machine, int portnum, uint16_t data)
 {
 	if (megadrive_io_ctrl_regs[portnum]&0x40)
 	{
@@ -2017,23 +2017,23 @@ static void megadrive_io_write_data_port_6button(running_machine *machine, int p
 
 /*************************** 3 buttons version ****************************/
 
-static void megadrive_io_write_ctrl_port(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_ctrl_port(running_machine *machine, int portnum, uint16_t data)
 {
 	megadrive_io_ctrl_regs[portnum] = data;
 //  mame_printf_debug("Setting IO Control Register #%d data %04x\n",portnum,data);
 }
 
-static void megadrive_io_write_tx_port(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_tx_port(running_machine *machine, int portnum, uint16_t data)
 {
 	megadrive_io_tx_regs[portnum] = data;
 }
 
-static void megadrive_io_write_rx_port(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_rx_port(running_machine *machine, int portnum, uint16_t data)
 {
 
 }
 
-static void megadrive_io_write_sctrl_port(running_machine *machine, int portnum, UINT16 data)
+static void megadrive_io_write_sctrl_port(running_machine *machine, int portnum, uint16_t data)
 {
 
 }
@@ -2163,7 +2163,7 @@ static WRITE16_HANDLER( megadriv_68k_write_z80_ram )
 
 static READ16_HANDLER( megadriv_68k_check_z80_bus )
 {
-	UINT16 retvalue;
+	uint16_t retvalue;
 
 	/* Double Dragon, Shadow of the Beast, Super Off Road, and Time Killers have buggy
        sound programs.  They request the bus, then have a loop which waits for the bus
@@ -2172,7 +2172,7 @@ static READ16_HANDLER( megadriv_68k_check_z80_bus )
        the value is never zero.  Time Killers is the most fussy, and doesn't like the
        read_next_instruction function from system16, so I just return a random value
        in the unused bits */
-	UINT16 nextvalue = mame_rand(space->machine);//read_next_instruction(space)&0xff00;
+	uint16_t nextvalue = mame_rand(space->machine);//read_next_instruction(space)&0xff00;
 
 
 	/* Check if the 68k has the z80 bus */
@@ -2327,7 +2327,7 @@ static READ8_HANDLER( z80_read_68k_banked_data )
 
 	if ((genz80.z80_bank_addr >= 0x000000) && (genz80.z80_bank_addr <= 0x3fffff)) // ROM Addresses
 	{
-		UINT32 fulladdress;
+		uint32_t fulladdress;
 		fulladdress = genz80.z80_bank_addr + offset;
 
 		return memory_region(space->machine, "maincpu")[fulladdress^1]; // ^1? better..
@@ -2340,7 +2340,7 @@ static READ8_HANDLER( z80_read_68k_banked_data )
 		{
 			if ((genz80.z80_bank_addr >= 0x880000) && (genz80.z80_bank_addr <= 0x900000)) // 'fixed' 512kb 32x rom
 			{
-				UINT32 fulladdress;
+				uint32_t fulladdress;
 				fulladdress = (genz80.z80_bank_addr + offset)&0x3ffff;
 
 				return memory_region(space->machine, "gamecart")[fulladdress^1]; // ^1? better..
@@ -2349,7 +2349,7 @@ static READ8_HANDLER( z80_read_68k_banked_data )
 			}
 			else if ((genz80.z80_bank_addr >= 0x900000) && (genz80.z80_bank_addr <= 0x9fffff)) // 'banked' 1mb 32x rom
 			{
-				UINT32 fulladdress;
+				uint32_t fulladdress;
 				fulladdress = (genz80.z80_bank_addr + offset)&0x7ffff;
 
 				fulladdress |= (_32x_68k_a15104_reg&0x3)*0x80000;
@@ -2385,7 +2385,7 @@ static WRITE8_HANDLER( megadriv_z80_vdp_write )
 
 static WRITE8_HANDLER( z80_write_68k_banked_data )
 {
-	UINT32 fulladdress;
+	uint32_t fulladdress;
 	fulladdress = genz80.z80_bank_addr + offset;
 
 
@@ -2497,9 +2497,9 @@ static WRITE16_HANDLER( _32x_68k_a15186_w );
 static WRITE16_HANDLER( _32x_68k_a15188_w );
 static WRITE16_HANDLER( _32x_68k_a1518a_w );
 
-static UINT16 _32x_autofill_length;
-static UINT16 _32x_autofill_address;
-static UINT16 _32x_autofill_data;
+static uint16_t _32x_autofill_length;
+static uint16_t _32x_autofill_address;
+static uint16_t _32x_autofill_data;
 
 
 
@@ -2580,12 +2580,12 @@ static WRITE16_HANDLER( _32x_68k_dram_overwrite_w )
 
 */
 
-static UINT16 a15106_reg;
+static uint16_t a15106_reg;
 
 
 static READ16_HANDLER( _32x_68k_a15106_r)
 {
-	UINT16 retval;
+	uint16_t retval;
 
 	retval = a15106_reg;
 
@@ -2636,7 +2636,7 @@ static READ16_HANDLER( _32x_68k_MARS_r )
 // control register - used to enable 32x etc.
 /**********************************************************************************************/
 
-static UINT16 a15100_reg;
+static uint16_t a15100_reg;
 
 static READ16_HANDLER( _32x_68k_a15100_r )
 {
@@ -2761,7 +2761,7 @@ static WRITE16_HANDLER( _32x_68k_a15104_w )
 // access from the SH2 via 4020 - 402f
 /**********************************************************************************************/
 #define _32X_COMMS_PORT_SYNC 0
-static UINT16 commsram[8];
+static uint16_t commsram[8];
 
 /**********************************************************************************************/
 
@@ -2944,11 +2944,11 @@ b = 0=DRAM0 accessed by VDP, 1=DRAM1   r/w
 
 /**********************************************************************************************/
 
-static UINT16 _32x_a1518a_reg;
+static uint16_t _32x_a1518a_reg;
 static READ16_HANDLER( _32x_68k_a1518a_r )
 {
-	UINT16 retdata = _32x_a1518a_reg;
-	UINT16 hpos = get_hposition();
+	uint16_t retdata = _32x_a1518a_reg;
+	uint16_t hpos = get_hposition();
 	int megadrive_hblank_flag = 0;
 
 	if (megadrive_vblank_flag) retdata |= 0x8000;
@@ -3006,7 +3006,7 @@ P = PWM Interrupt Mask (0 masked, 1 allowed)
 
 static READ16_HANDLER( _32x_sh2_master_4000_r )
 {
-	UINT16 retvalue = 0x0200;
+	uint16_t retvalue = 0x0200;
 	retvalue |= _32x_access_auth << 15;
 
 	retvalue |=	sh2_hint_in_vbl;;
@@ -3043,7 +3043,7 @@ static WRITE16_HANDLER( _32x_sh2_master_4000_w )
 
 static READ16_HANDLER( _32x_sh2_slave_4000_r )
 {
-	UINT16 retvalue = 0x0200;
+	uint16_t retvalue = 0x0200;
 	retvalue |= _32x_access_auth << 15;
 	retvalue |=	sh2_hint_in_vbl;;
 	retvalue |= sh2_slave_vint_enable;
@@ -3321,15 +3321,15 @@ static WRITE16_HANDLER( _32x_sh2_framebuffer_overwrite_dram16_w ) { _32x_68k_dra
 #define _32X_MAP_READHANDLERS(NAMEA,NAMEB)                                          \
 static READ32_HANDLER( _32x_sh2_##NAMEA##_##NAMEB##_r )                             \
 {                                                                                   \
-	UINT32 retvalue = 0x00000000;                                                   \
+	uint32_t retvalue = 0x00000000;                                                   \
 	if (ACCESSING_BITS_16_31)                                                       \
 	{                                                                               \
-		UINT16 ret = _32x_sh2_##NAMEA##_r(space,0,(mem_mask>>16)&0xffff);         \
+		uint16_t ret = _32x_sh2_##NAMEA##_r(space,0,(mem_mask>>16)&0xffff);         \
 		retvalue |= ret << 16;                                                      \
 	}                                                                               \
 	if (ACCESSING_BITS_0_15)                                                        \
 	{                                                                               \
-		UINT16 ret = _32x_sh2_##NAMEB##_r(space,0,(mem_mask>>0)&0xffff);          \
+		uint16_t ret = _32x_sh2_##NAMEB##_r(space,0,(mem_mask>>0)&0xffff);          \
 		retvalue |= ret << 0;                                                       \
 	}                                                                               \
                                                                                     \
@@ -3354,15 +3354,15 @@ static WRITE32_HANDLER( _32x_sh2_##NAMEA##_##NAMEB##_w)                         
 #define _32X_MAP_RAM_READHANDLERS(NAMEA)                                            \
 static READ32_HANDLER( _32x_sh2_##NAMEA##_r )                                       \
 {                                                                                   \
-	UINT32 retvalue = 0x00000000;                                                   \
+	uint32_t retvalue = 0x00000000;                                                   \
 	if (ACCESSING_BITS_16_31)                                                       \
 	{                                                                               \
-		UINT16 ret = _32x_sh2_##NAMEA##16_r(space,offset*2,(mem_mask>>16)&0xffff);  \
+		uint16_t ret = _32x_sh2_##NAMEA##16_r(space,offset*2,(mem_mask>>16)&0xffff);  \
 		retvalue |= ret << 16;                                                      \
 	}                                                                               \
 	if (ACCESSING_BITS_0_15)                                                        \
 	{                                                                               \
-		UINT16 ret = _32x_sh2_##NAMEA##16_r(space,offset*2+1,(mem_mask>>0)&0xffff); \
+		uint16_t ret = _32x_sh2_##NAMEA##16_r(space,offset*2+1,(mem_mask>>0)&0xffff); \
 		retvalue |= ret << 0;                                                       \
 	}                                                                               \
                                                                                     \
@@ -3514,16 +3514,16 @@ ADDRESS_MAP_END
 
 static struct svp_vars
 {
-	UINT8 *iram; // IRAM (0-0x7ff)
-	UINT8 *dram; // [0x20000];
-	UINT32 pmac_read[6];	// read modes/addrs for PM0-PM5
-	UINT32 pmac_write[6];	// write ...
+	uint8_t *iram; // IRAM (0-0x7ff)
+	uint8_t *dram; // [0x20000];
+	uint32_t pmac_read[6];	// read modes/addrs for PM0-PM5
+	uint32_t pmac_write[6];	// write ...
 	PAIR pmc;
 	#define SSP_PMC_HAVE_ADDR  1  // address written to PMAC, waiting for mode
 	#define SSP_PMC_SET        2  // PMAC is set, PMx can be programmed
-	UINT32 emu_status;
-	UINT16 XST;		// external status, mapped at a15000 and a15002 on 68k side.
-	UINT16 XST2;		// status of XST (bit1 set when 68k writes to XST)
+	uint32_t emu_status;
+	uint16_t XST;		// external status, mapped at a15000 and a15002 on 68k side.
+	uint16_t XST2;		// status of XST (bit1 set when 68k writes to XST)
 } svp;
 
 static int get_inc(int mode)
@@ -3537,7 +3537,7 @@ static int get_inc(int mode)
 	return inc;
 }
 
-INLINE void overwrite_write(UINT16 *dst, UINT16 d)
+INLINE void overwrite_write(uint16_t *dst, uint16_t d)
 {
 	if (d & 0xf000) { *dst &= ~0xf000; *dst |= d & 0xf000; }
 	if (d & 0x0f00) { *dst &= ~0x0f00; *dst |= d & 0x0f00; }
@@ -3545,7 +3545,7 @@ INLINE void overwrite_write(UINT16 *dst, UINT16 d)
 	if (d & 0x000f) { *dst &= ~0x000f; *dst |= d & 0x000f; }
 }
 
-static UINT32 pm_io(const address_space *space, int reg, int write, UINT32 d)
+static uint32_t pm_io(const address_space *space, int reg, int write, uint32_t d)
 {
 	if (svp.emu_status & SSP_PMC_SET)
 	{
@@ -3562,7 +3562,7 @@ static UINT32 pm_io(const address_space *space, int reg, int write, UINT32 d)
 	if (reg == 4 || (cpu_get_reg(space->cpu, SSP_ST) & 0x60))
 	{
 		#define CADDR ((((mode<<16)&0x7f0000)|addr)<<1)
-		UINT16 *dram = (UINT16 *)svp.dram;
+		uint16_t *dram = (uint16_t *)svp.dram;
 		if (write)
 		{
 			int mode = svp.pmac_write[reg]>>16;
@@ -3585,7 +3585,7 @@ static UINT32 pm_io(const address_space *space, int reg, int write, UINT32 d)
 			else if ((mode & 0x47ff) == 0x001c) // IRAM
 			{
 				int inc = get_inc(mode);
-				((UINT16 *)svp.iram)[addr&0x3ff] = d;
+				((uint16_t *)svp.iram)[addr&0x3ff] = d;
 				svp.pmac_write[reg] += inc;
 			}
 			else
@@ -3600,7 +3600,7 @@ static UINT32 pm_io(const address_space *space, int reg, int write, UINT32 d)
 			int addr = svp.pmac_read[reg]&0xffff;
 			if      ((mode & 0xfff0) == 0x0800) // ROM, inc 1, verified to be correct
 			{
-				UINT16 *ROM = (UINT16 *) memory_region(space->machine, "maincpu");
+				uint16_t *ROM = (uint16_t *) memory_region(space->machine, "maincpu");
 				svp.pmac_read[reg] += 1;
 				d = ROM[addr|((mode&0xf)<<16)];
 			}
@@ -3624,13 +3624,13 @@ static UINT32 pm_io(const address_space *space, int reg, int write, UINT32 d)
 		return d;
 	}
 
-	return (UINT32)-1;
+	return (uint32_t)-1;
 }
 
 static READ16_HANDLER( read_PM0 )
 {
-	UINT32 d = pm_io(space, 0, 0, 0);
-	if (d != (UINT32)-1) return d;
+	uint32_t d = pm_io(space, 0, 0, 0);
+	if (d != (uint32_t)-1) return d;
 	d = svp.XST2;
 	svp.XST2 &= ~2; // ?
 	return d;
@@ -3638,53 +3638,53 @@ static READ16_HANDLER( read_PM0 )
 
 static WRITE16_HANDLER( write_PM0 )
 {
-	UINT32 r = pm_io(space, 0, 1, data);
-	if (r != (UINT32)-1) return;
+	uint32_t r = pm_io(space, 0, 1, data);
+	if (r != (uint32_t)-1) return;
 	svp.XST2 = data; // ?
 }
 
 static READ16_HANDLER( read_PM1 )
 {
-	UINT32 r = pm_io(space, 1, 0, 0);
-	if (r != (UINT32)-1) return r;
+	uint32_t r = pm_io(space, 1, 0, 0);
+	if (r != (uint32_t)-1) return r;
 	logerror("svp: PM1 acces in non PM mode?\n");
 	return 0;
 }
 
 static WRITE16_HANDLER( write_PM1 )
 {
-	UINT32 r = pm_io(space, 1, 1, data);
-	if (r != (UINT32)-1) return;
+	uint32_t r = pm_io(space, 1, 1, data);
+	if (r != (uint32_t)-1) return;
 	logerror("svp: PM1 acces in non PM mode?\n");
 }
 
 static READ16_HANDLER( read_PM2 )
 {
-	UINT32 r = pm_io(space, 2, 0, 0);
-	if (r != (UINT32)-1) return r;
+	uint32_t r = pm_io(space, 2, 0, 0);
+	if (r != (uint32_t)-1) return r;
 	logerror("svp: PM2 acces in non PM mode?\n");
 	return 0;
 }
 
 static WRITE16_HANDLER( write_PM2 )
 {
-	UINT32 r = pm_io(space, 2, 1, data);
-	if (r != (UINT32)-1) return;
+	uint32_t r = pm_io(space, 2, 1, data);
+	if (r != (uint32_t)-1) return;
 	logerror("svp: PM2 acces in non PM mode?\n");
 }
 
 static READ16_HANDLER( read_XST )
 {
-	UINT32 d = pm_io(space, 3, 0, 0);
-	if (d != (UINT32)-1) return d;
+	uint32_t d = pm_io(space, 3, 0, 0);
+	if (d != (uint32_t)-1) return d;
 
 	return svp.XST;
 }
 
 static WRITE16_HANDLER( write_XST )
 {
-	UINT32 r = pm_io(space, 3, 1, data);
-	if (r != (UINT32)-1) return;
+	uint32_t r = pm_io(space, 3, 1, data);
+	if (r != (uint32_t)-1) return;
 
 	svp.XST2 |= 1;
 	svp.XST = data;
@@ -3738,7 +3738,7 @@ static WRITE16_HANDLER( write_AL )
 
 static READ16_HANDLER( svp_68k_io_r )
 {
-	UINT32 d;
+	uint32_t d;
 	switch (offset)
 	{
 		// 0xa15000, 0xa15002
@@ -3767,17 +3767,17 @@ static WRITE16_HANDLER( svp_68k_io_w )
 static READ16_HANDLER( svp_68k_cell1_r )
 {
 	// this is rewritten 68k test code
-	UINT32 a1 = offset;
+	uint32_t a1 = offset;
 	a1 = (a1 & 0x7001) | ((a1 & 0x3e) << 6) | ((a1 & 0xfc0) >> 5);
-	return ((UINT16 *)svp.dram)[a1];
+	return ((uint16_t *)svp.dram)[a1];
 }
 
 static READ16_HANDLER( svp_68k_cell2_r )
 {
 	// this is rewritten 68k test code
-	UINT32 a1 = offset;
+	uint32_t a1 = offset;
 	a1 = (a1 & 0x7801) | ((a1 & 0x1e) << 6) | ((a1 & 0x7e0) >> 4);
-	return ((UINT16 *)svp.dram)[a1];
+	return ((uint16_t *)svp.dram)[a1];
 }
 
 static ADDRESS_MAP_START( svp_ssp_map, ADDRESS_SPACE_PROGRAM, 16 )
@@ -3798,17 +3798,17 @@ ADDRESS_MAP_END
 
 
 /* DMA read function for SVP */
-static UINT16 vdp_get_word_from_68k_mem_svp(running_machine *machine, UINT32 source)
+static uint16_t vdp_get_word_from_68k_mem_svp(running_machine *machine, uint32_t source)
 {
 	if ((source & 0xe00000) == 0x000000)
 	{
-		UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 		source -= 2; // DMA latency
 		return rom[source >> 1];
 	}
 	else if ((source & 0xfe0000) == 0x300000)
 	{
-		UINT16 *dram = (UINT16*)svp.dram;
+		uint16_t *dram = (uint16_t*)svp.dram;
 		source &= 0x1fffe;
 		source -= 2;
 		return dram[source >> 1];
@@ -3825,7 +3825,7 @@ static UINT16 vdp_get_word_from_68k_mem_svp(running_machine *machine, UINT32 sou
 }
 
 /* emulate testmode plug */
-static UINT8 megadrive_io_read_data_port_svp(running_machine *machine, int portnum)
+static uint8_t megadrive_io_read_data_port_svp(running_machine *machine, int portnum)
 {
 	if (portnum == 0 && input_port_read_safe(machine, "MEMORY_TEST", 0x00))
 	{
@@ -3844,12 +3844,12 @@ static READ16_HANDLER( svp_speedup_r )
 
 static void svp_init(running_machine *machine)
 {
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 	memset(&svp, 0, sizeof(svp));
 
 	/* SVP stuff */
-	svp.dram = auto_alloc_array(machine, UINT8, 0x20000);
+	svp.dram = auto_alloc_array(machine, uint8_t, 0x20000);
 	memory_install_ram(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x300000, 0x31ffff, 0, 0, svp.dram);
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xa15000, 0xa150ff, 0, 0, svp_68k_io_r, svp_68k_io_w);
 	// "cell arrange" 1 and 2
@@ -3858,7 +3858,7 @@ static void svp_init(running_machine *machine)
 
 	memory_install_read16_handler(cputag_get_address_space(machine, "svp", ADDRESS_SPACE_PROGRAM), 0x438, 0x438, 0, 0, svp_speedup_r);
 
-	svp.iram = auto_alloc_array(machine, UINT8, 0x800);
+	svp.iram = auto_alloc_array(machine, uint8_t, 0x800);
 	memory_set_bankptr(machine,  "bank3", svp.iram );
 	/* SVP ROM just shares m68k region.. */
 	ROM = memory_region(machine, "maincpu");
@@ -3909,10 +3909,10 @@ VIDEO_START(megadriv)
 
 	render_bitmap = machine->primary_screen->alloc_compatible_bitmap();
 
-	megadrive_vdp_vram  = auto_alloc_array(machine, UINT16, 0x10000/2);
-	megadrive_vdp_cram  = auto_alloc_array(machine, UINT16, 0x80/2);
-	megadrive_vdp_vsram = auto_alloc_array(machine, UINT16, 0x80/2);
-	megadrive_vdp_internal_sprite_attribute_table = auto_alloc_array(machine, UINT16, 0x400/2);
+	megadrive_vdp_vram  = auto_alloc_array(machine, uint16_t, 0x10000/2);
+	megadrive_vdp_cram  = auto_alloc_array(machine, uint16_t, 0x80/2);
+	megadrive_vdp_vsram = auto_alloc_array(machine, uint16_t, 0x80/2);
+	megadrive_vdp_internal_sprite_attribute_table = auto_alloc_array(machine, uint16_t, 0x400/2);
 
 	for (x=0;x<0x20;x++)
 		megadrive_vdp_register[x]=0;
@@ -3927,15 +3927,15 @@ VIDEO_START(megadriv)
 
 	megadrive_max_hposition = 480;
 
-	sprite_renderline = auto_alloc_array(machine, UINT8, 1024);
-	highpri_renderline = auto_alloc_array(machine, UINT8, 320);
-	video_renderline = auto_alloc_array(machine, UINT32, 320);
+	sprite_renderline = auto_alloc_array(machine, uint8_t, 1024);
+	highpri_renderline = auto_alloc_array(machine, uint8_t, 320);
+	video_renderline = auto_alloc_array(machine, uint32_t, 320);
 
-	megadrive_vdp_palette_lookup = auto_alloc_array(machine, UINT16, 0x40);
-	megadrive_vdp_palette_lookup_sprite = auto_alloc_array(machine, UINT16, 0x40);
+	megadrive_vdp_palette_lookup = auto_alloc_array(machine, uint16_t, 0x40);
+	megadrive_vdp_palette_lookup_sprite = auto_alloc_array(machine, uint16_t, 0x40);
 
-	megadrive_vdp_palette_lookup_shadow = auto_alloc_array(machine, UINT16, 0x40);
-	megadrive_vdp_palette_lookup_highlight = auto_alloc_array(machine, UINT16, 0x40);
+	megadrive_vdp_palette_lookup_shadow = auto_alloc_array(machine, uint16_t, 0x40);
+	megadrive_vdp_palette_lookup_highlight = auto_alloc_array(machine, uint16_t, 0x40);
 
 	memset(megadrive_vdp_palette_lookup,0x00,0x40*2);
 	memset(megadrive_vdp_palette_lookup_sprite,0x00,0x40*2);
@@ -3965,7 +3965,7 @@ VIDEO_UPDATE(megadriv)
 
 //  time_elapsed_since_crap = frame_timer->time_elapsed();
 //  xxx = cputag_attotime_to_clocks(screen->machine, "maincpu", time_elapsed_since_crap);
-//  mame_printf_debug("update cycles %d, %08x %08x\n",xxx, (UINT32)(time_elapsed_since_crap.attoseconds>>32),(UINT32)(time_elapsed_since_crap.attoseconds&0xffffffff));
+//  mame_printf_debug("update cycles %d, %08x %08x\n",xxx, (uint32_t)(time_elapsed_since_crap.attoseconds>>32),(uint32_t)(time_elapsed_since_crap.attoseconds&0xffffffff));
 
 	return 0;
 }
@@ -4021,7 +4021,7 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 	int screenwidth;
 	int maxsprites=0;
 	int maxpixels=0;
-	UINT16 base_address=0;
+	uint16_t base_address=0;
 
 
 
@@ -4046,7 +4046,7 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 		int drawypos;
 		int /*drawwidth,*/ drawheight;
 		int spritemask = 0;
-		UINT8 height,width=0,link=0,xflip,yflip,colour,pri;
+		uint8_t height,width=0,link=0,xflip,yflip,colour,pri;
 
 		/* Get Sprite Attribs */
 		spritenum = 0;
@@ -4055,7 +4055,7 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 
 		do
 		{
-			//UINT16 value1,value2,value3,value4;
+			//uint16_t value1,value2,value3,value4;
 
 			//value1 = megadrive_vdp_vram[((base_address>>1)+spritenum*4)+0x0];
 			//value2 = megadrive_vdp_vram[((base_address>>1)+spritenum*4)+0x1];
@@ -4131,9 +4131,9 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 
 						if (!xflip)
 						{
-							UINT16 base_addr;
+							uint16_t base_addr;
 							int xxx;
-							UINT32 gfxdata;
+							uint32_t gfxdata;
 							int loopcount;
 
 							if(megadrive_imode==3)
@@ -4162,9 +4162,9 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 						}
 						else
 						{
-							UINT16 base_addr;
+							uint16_t base_addr;
 							int xxx;
-							UINT32 gfxdata;
+							uint32_t gfxdata;
 
 							int loopcount;
 
@@ -4209,20 +4209,20 @@ static void genesis_render_spriteline_to_spritebuffer(int scanline)
 /* Clean up this function (!) */
 static void genesis_render_videoline_to_videobuffer(int scanline)
 {
-	UINT16 base_a;
-	UINT16 base_w=0;
-	UINT16 base_b;
+	uint16_t base_a;
+	uint16_t base_w=0;
+	uint16_t base_b;
 
-	UINT16 size;
-	UINT16 hsize = 64;
-	UINT16 vsize = 64;
-	UINT16 window_right;
-	UINT16 window_hpos;
-	UINT16 window_down;
-	UINT16 window_vpos;
-	UINT16 hscroll_base;
-	UINT8  vscroll_mode;
-	UINT8  hscroll_mode;
+	uint16_t size;
+	uint16_t hsize = 64;
+	uint16_t vsize = 64;
+	uint16_t window_right;
+	uint16_t window_hpos;
+	uint16_t window_down;
+	uint16_t window_vpos;
+	uint16_t hscroll_base;
+	uint8_t  vscroll_mode;
+	uint8_t  hscroll_mode;
 	int window_firstline;
 	int window_lastline;
 	int window_firstcol;
@@ -4479,7 +4479,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=hscroll_part;shift<8;shift++)
@@ -4490,7 +4490,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=hscroll_part;shift<8;shift++)
 					{
@@ -4547,7 +4547,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=0;shift<8;shift++)
@@ -4558,7 +4558,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=0;shift<8;shift++)
 					{
@@ -4614,7 +4614,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=0;shift<(hscroll_part);shift++)
@@ -4625,7 +4625,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=0;shift<(hscroll_part);shift++)
 					{
@@ -4699,7 +4699,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 			if (!tile_xflip)
 			{
 				/* 8 pixels */
-				UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+				uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 				int shift;
 
 				for (shift=0;shift<8;shift++)
@@ -4719,7 +4719,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 			}
 			else
 			{
-				UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+				uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 				int shift;
 				for (shift=0;shift<8;shift++)
 				{
@@ -4776,7 +4776,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 			if (!tile_xflip)
 			{
 				/* 8 pixels */
-				UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+				uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 				int shift;
 
 				for (shift=0;shift<8;shift++)
@@ -4796,7 +4796,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 			}
 			else
 			{
-				UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+				uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 				int shift;
 				for (shift=0;shift<8;shift++)
 				{
@@ -4894,7 +4894,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=hscroll_part;shift<8;shift++)
@@ -4914,7 +4914,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=hscroll_part;shift<8;shift++)
 					{
@@ -4986,7 +4986,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=0;shift<8;shift++)
@@ -5006,7 +5006,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=0;shift<8;shift++)
 					{
@@ -5074,7 +5074,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				if (!tile_xflip)
 				{
 					/* 8 pixels */
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 
 					for (shift=0;shift<(hscroll_part);shift++)
@@ -5094,7 +5094,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 				}
 				else
 				{
-					UINT32 gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
+					uint32_t gfxdata = (MEGADRIV_VDP_VRAM(tile_addr+0)<<16)|MEGADRIV_VDP_VRAM(tile_addr+1);
 					int shift;
 					for (shift=0;shift<(hscroll_part);shift++)
 					{
@@ -5133,7 +5133,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 
 				if (sprite_renderline[x+128] & 0x40)
 				{
-					UINT8 spritedata;
+					uint8_t spritedata;
 					spritedata = sprite_renderline[x+128]&0x3f;
 
 					if ((spritedata==0x0e) || (spritedata==0x1e) || (spritedata==0x2e))
@@ -5206,7 +5206,7 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 			{
 				if (sprite_renderline[x+128] & 0x80)
 				{
-					UINT8 spritedata;
+					uint8_t spritedata;
 					spritedata = sprite_renderline[x+128]&0x3f;
 
 					if (spritedata==0x3e)
@@ -5229,12 +5229,12 @@ static void genesis_render_videoline_to_videobuffer(int scanline)
 		}
 }
 
-static UINT32 _32x_linerender[320+258]; // tmp buffer (bigger than it needs to be to simplify RLE decode)
+static uint32_t _32x_linerender[320+258]; // tmp buffer (bigger than it needs to be to simplify RLE decode)
 
 /* This converts our render buffer to real screen colours */
 static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine, int scanline)
 {
-	UINT16*lineptr;
+	uint16_t*lineptr;
 	int x;
 	lineptr = BITMAP_ADDR16(render_bitmap, scanline, 0);
 
@@ -5244,7 +5244,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 		if (_32x_displaymode==1)
 		{
 
-			UINT32 lineoffs;
+			uint32_t lineoffs;
 			int start;
 
 			lineoffs = _32x_display_dram[scanline];
@@ -5254,7 +5254,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 
 			for (x=start;x<320;x++)
 			{
-				UINT16 coldata;
+				uint16_t coldata;
 				coldata = _32x_display_dram[lineoffs];
 
 				{
@@ -5277,7 +5277,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 		}
 		else if (_32x_displaymode==3) // mode 3 = RLE  (used by BRUTAL intro)
 		{
-			UINT32 lineoffs;
+			uint32_t lineoffs;
 			int start;
 
 			lineoffs = _32x_display_dram[scanline];
@@ -5288,7 +5288,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
             x = start;
 			while (x<320)
 			{
-				UINT16 coldata, length, l;
+				uint16_t coldata, length, l;
 				coldata = _32x_display_dram[lineoffs];
 				length = ((coldata & 0xff00)>>8)+1;
 				coldata = (coldata & 0x00ff)>>0;
@@ -5307,7 +5307,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 		}
 		else // MODE 2 - 15bpp mode, not used by any commercial games?
 		{
-			UINT32 lineoffs;
+			uint32_t lineoffs;
 			int start;
 
 			lineoffs = _32x_display_dram[scanline];
@@ -5318,7 +5318,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
             x = start;
 			while (x<320)
 			{
-				UINT16 coldata;
+				uint16_t coldata;
 				coldata = _32x_display_dram[lineoffs&0xffff];
 
 				// need to swap red and blue around for MAME
@@ -5347,7 +5347,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 
 		for (x=0;x<320;x++)
 		{
-			UINT32 dat;
+			uint32_t dat;
 			dat = video_renderline[x];
 			if ((dat&0x20000) && (_32x_is_connected) && (_32x_displaymode != 0))
 			{
@@ -5388,7 +5388,7 @@ static void genesis_render_videobuffer_to_screenbuffer(running_machine *machine,
 	{
 		for (x=0;x<320;x++)
 		{
-			UINT32 dat;
+			uint32_t dat;
 			dat = video_renderline[x];
 
 			if ((dat&0x20000) && (_32x_is_connected) && (_32x_displaymode != 0))
@@ -5500,19 +5500,19 @@ static void genesis_render_scanline(running_machine *machine, int scanline)
 	genesis_render_videobuffer_to_screenbuffer(machine, scanline);
 }
 
-INLINE UINT16 get_hposition(void)
+INLINE uint16_t get_hposition(void)
 {
 //  static int lowest = 99999;
 //  static int highest = -99999;
 
 	attotime time_elapsed_since_scanline_timer;
-	UINT16 value4;
+	uint16_t value4;
 
 	time_elapsed_since_scanline_timer = scanline_timer->time_elapsed();
 
 	if (time_elapsed_since_scanline_timer.attoseconds<(ATTOSECONDS_PER_SECOND/megadriv_framerate /megadrive_total_scanlines))
 	{
-		value4 = (UINT16)(megadrive_max_hposition*((double)(time_elapsed_since_scanline_timer.attoseconds) / (double)(ATTOSECONDS_PER_SECOND/megadriv_framerate /megadrive_total_scanlines)));
+		value4 = (uint16_t)(megadrive_max_hposition*((double)(time_elapsed_since_scanline_timer.attoseconds) / (double)(ATTOSECONDS_PER_SECOND/megadriv_framerate /megadrive_total_scanlines)));
 	}
 	else /* in some cases (probably due to rounding errors) we get some stupid results (the odd huge value where the time elapsed is much higher than the scanline time??!).. hopefully by clamping the result to the maximum we limit errors */
 	{
@@ -6139,15 +6139,15 @@ int megadrive_z80irq_hpos = 320;
 	if (0)
 	{
 		//int xxx;
-		UINT64 frametime;
+		uint64_t frametime;
 
 	//  /* reference */
 		frametime = ATTOSECONDS_PER_SECOND/megadriv_framerate;
 
 		//time_elapsed_since_crap = frame_timer->time_elapsed();
 		//xxx = cputag_attotime_to_clocks(machine, "maincpu",time_elapsed_since_crap);
-		//mame_printf_debug("---------- cycles %d, %08x %08x\n",xxx, (UINT32)(time_elapsed_since_crap.attoseconds>>32),(UINT32)(time_elapsed_since_crap.attoseconds&0xffffffff));
-		//mame_printf_debug("---------- framet %d, %08x %08x\n",xxx, (UINT32)(frametime>>32),(UINT32)(frametime&0xffffffff));
+		//mame_printf_debug("---------- cycles %d, %08x %08x\n",xxx, (uint32_t)(time_elapsed_since_crap.attoseconds>>32),(uint32_t)(time_elapsed_since_crap.attoseconds&0xffffffff));
+		//mame_printf_debug("---------- framet %d, %08x %08x\n",xxx, (uint32_t)(frametime>>32),(uint32_t)(frametime&0xffffffff));
 		frame_timer->adjust(attotime_zero);
 	}
 
@@ -6156,7 +6156,7 @@ int megadrive_z80irq_hpos = 320;
 }
 
 
-UINT16* megadriv_backupram;
+uint16_t* megadriv_backupram;
 int megadriv_backupram_length;
 
 #ifndef MESS
@@ -6370,7 +6370,7 @@ static void megadriv_init_common(running_machine *machine)
 	{
 		//printf("GENESIS Sound Z80 cpu found '%s'\n", _genesis_snd_z80_cpu->tag() );
 
-		genz80.z80_prgram = auto_alloc_array(machine, UINT8, 0x2000);
+		genz80.z80_prgram = auto_alloc_array(machine, uint8_t, 0x2000);
 		memory_set_bankptr(machine,  "bank1", genz80.z80_prgram );
 	}
 
@@ -6436,7 +6436,7 @@ static void megadriv_init_common(running_machine *machine)
           some games specify a single address, (start 200001, end 200001)
           this usually means there is serial eeprom instead */
 		int i;
-		UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+		uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 
 		mame_printf_debug("DEBUG:: Header: Backup RAM string (ignore for games without)\n");
 		for (i=0;i<12;i++)
@@ -6576,14 +6576,14 @@ void megatech_set_megadrive_z80_as_megadrive_z80(running_machine *machine, const
 
 DRIVER_INIT( _32x )
 {
-	_32x_dram0 = auto_alloc_array(machine, UINT16, 0x40000/2);
-	_32x_dram1 = auto_alloc_array(machine, UINT16, 0x40000/2);
+	_32x_dram0 = auto_alloc_array(machine, uint16_t, 0x40000/2);
+	_32x_dram1 = auto_alloc_array(machine, uint16_t, 0x40000/2);
 
 	memset(_32x_dram0, 0x00, 0x40000);
 	memset(_32x_dram1, 0x00, 0x40000);
 
-	_32x_palette_lookup = auto_alloc_array(machine, UINT16, 0x200/2);
-	_32x_palette = auto_alloc_array(machine, UINT16, 0x200/2);
+	_32x_palette_lookup = auto_alloc_array(machine, uint16_t, 0x200/2);
+	_32x_palette = auto_alloc_array(machine, uint16_t, 0x200/2);
 
 	memset(_32x_palette_lookup, 0x00, 0x200);
 	memset(_32x_palette, 0x00, 0x200);

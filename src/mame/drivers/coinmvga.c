@@ -217,7 +217,7 @@
 #include "cpu/h83002/h8.h"
 #include "sound/ymz280b.h"
 
-static UINT16 *vram;
+static uint16_t *vram;
 
 
 /*************************
@@ -861,8 +861,8 @@ ROM_END
 
 static DRIVER_INIT( colorama )
 {
-	UINT16 *ROM;
-	ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM;
+	ROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	// rte in non-irq routines? wtf? patch them to rts...
 	ROM[0x02B476/2] = 0x5470;
@@ -878,8 +878,8 @@ static DRIVER_INIT( colorama )
 
 static DRIVER_INIT( cmrltv75 )
 {
-	UINT16 *ROM;
-	ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM;
+	ROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	// rte in non-irq routines? wtf? patch them to rts...
 	ROM[0x056fd6/2] = 0x5470;

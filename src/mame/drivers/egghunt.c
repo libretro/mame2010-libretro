@@ -53,18 +53,18 @@ public:
 	egghunt_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *   bgram;
-	UINT8 *   atram;
-	UINT8 *   spram;
-//  UINT8 *   paletteram;   // currently this uses generic palette handling
+	uint8_t *   bgram;
+	uint8_t *   atram;
+	uint8_t *   spram;
+//  uint8_t *   paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t   *bg_tilemap;
-	UINT8     vidram_bank;
+	uint8_t     vidram_bank;
 
 	/* misc */
-	UINT8     okibanking;
-	UINT8     gfx_banking;
+	uint8_t     okibanking;
+	uint8_t     gfx_banking;
 
 	/* devices */
 	running_device *audiocpu;
@@ -169,8 +169,8 @@ static VIDEO_START(egghunt)
 	egghunt_state *state = (egghunt_state *)machine->driver_data;
 
 	state->bg_tilemap = tilemap_create(machine, get_bg_tile_info, tilemap_scan_rows, 8, 8, 64, 32);
-	state->bgram = auto_alloc_array(machine, UINT8, 0x1000);
-	state->spram = auto_alloc_array(machine, UINT8, 0x1000);
+	state->bgram = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->spram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	state_save_register_global_pointer(machine, state->bgram, 0x1000);
 	state_save_register_global_pointer(machine, state->spram, 0x1000);

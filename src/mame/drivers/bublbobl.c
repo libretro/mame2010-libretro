@@ -1537,7 +1537,7 @@ ROM_END
 
 static void configure_banks( running_machine* machine )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x4000);
 }
 
@@ -1572,7 +1572,7 @@ static DRIVER_INIT( dland )
 {
 	// rearrange gfx to original format
 	int i;
-	UINT8* src = memory_region(machine,"gfx1");
+	uint8_t* src = memory_region(machine,"gfx1");
 	for (i = 0; i < 0x40000; i++)
 		src[i] = BITSWAP8(src[i],7,6,5,4,0,1,2,3);
 

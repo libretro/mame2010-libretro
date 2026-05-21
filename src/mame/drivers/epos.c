@@ -382,7 +382,7 @@ static MACHINE_RESET( epos )
 
 static MACHINE_START( dealer )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x0000], 0x10000);
 	memory_configure_bank(machine, "bank2", 0, 2, &ROM[0x6000], 0x1000);
 
@@ -618,7 +618,7 @@ ROM_END
 
 static DRIVER_INIT( dealer )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
 	/* Key 0 */

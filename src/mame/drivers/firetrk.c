@@ -12,11 +12,11 @@ Atari Fire Truck + Super Bug + Monte Carlo driver
 
 #define MASTER_CLOCK (XTAL_12_096MHz)
 
-static UINT8 in_service_mode;
-static UINT32 dial[2];
-static UINT8 steer_dir[2];
-static UINT8 steer_flag[2];
-static UINT8 gear;
+static uint8_t in_service_mode;
+static uint32_t dial[2];
+static uint8_t steer_dir[2];
+static uint8_t steer_flag[2];
+static uint8_t gear;
 
 
 static void set_service_mode(running_machine *machine, int enable)
@@ -177,8 +177,8 @@ static MACHINE_RESET( firetrk )
 
 static READ8_HANDLER( firetrk_dip_r )
 {
-	UINT8 val0 = input_port_read(space->machine, "DIP_0");
-	UINT8 val1 = input_port_read(space->machine, "DIP_1");
+	uint8_t val0 = input_port_read(space->machine, "DIP_0");
+	uint8_t val1 = input_port_read(space->machine, "DIP_1");
 
 	if (val1 & (1 << (2 * offset + 0))) val0 |= 1;
 	if (val1 & (1 << (2 * offset + 1))) val0 |= 2;
@@ -189,8 +189,8 @@ static READ8_HANDLER( firetrk_dip_r )
 
 static READ8_HANDLER( montecar_dip_r )
 {
-	UINT8 val0 = input_port_read(space->machine, "DIP_0");
-	UINT8 val1 = input_port_read(space->machine, "DIP_1");
+	uint8_t val0 = input_port_read(space->machine, "DIP_0");
+	uint8_t val1 = input_port_read(space->machine, "DIP_1");
 
 	if (val1 & (1 << (3 - offset))) val0 |= 1;
 	if (val1 & (1 << (7 - offset))) val0 |= 2;
@@ -213,7 +213,7 @@ static CUSTOM_INPUT( steer_flag_r )
 
 static CUSTOM_INPUT( skid_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 	int which = (FPTR)param;
 
 	if (which != 2)
@@ -227,7 +227,7 @@ static CUSTOM_INPUT( skid_r )
 
 static CUSTOM_INPUT( crash_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 	int which = (FPTR)param;
 
 	if (which != 2)
@@ -252,8 +252,8 @@ static READ8_HANDLER( firetrk_input_r )
 	/* update steering wheels */
 	for (i = 0; i < 2; i++)
 	{
-		UINT32 new_dial = input_port_read_safe(space->machine, (i ? "STEER_2" : "STEER_1"), 0);
-		INT32 delta = new_dial - dial[i];
+		uint32_t new_dial = input_port_read_safe(space->machine, (i ? "STEER_2" : "STEER_1"), 0);
+		int32_t delta = new_dial - dial[i];
 
 		if (delta != 0)
 		{
@@ -272,7 +272,7 @@ static READ8_HANDLER( firetrk_input_r )
 
 static READ8_HANDLER( montecar_input_r )
 {
-	UINT8 ret = firetrk_input_r(space, offset);
+	uint8_t ret = firetrk_input_r(space, offset);
 
 	if (firetrk_crash[0])
 		ret |= 0x02;
@@ -810,7 +810,7 @@ static const gfx_layout superbug_car_layout2 =
 	0x001
 };
 
-static const UINT32 firetrk_trailer_layout_xoffset[64] =
+static const uint32_t firetrk_trailer_layout_xoffset[64] =
 {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
@@ -822,7 +822,7 @@ static const UINT32 firetrk_trailer_layout_xoffset[64] =
 	0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f
 };
 
-static const UINT32 firetrk_trailer_layout_yoffset[64] =
+static const uint32_t firetrk_trailer_layout_yoffset[64] =
 {
 	0x000, 0x040, 0x080, 0x0c0, 0x100, 0x140, 0x180, 0x1c0,
 	0x200, 0x240, 0x280, 0x2c0, 0x300, 0x340, 0x380, 0x3c0,

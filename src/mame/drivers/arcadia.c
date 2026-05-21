@@ -60,7 +60,7 @@
  *
  *************************************/
 
-static UINT8 coin_counter[2];
+static uint8_t coin_counter[2];
 
 
 
@@ -153,13 +153,13 @@ static WRITE8_DEVICE_HANDLER( arcadia_cia_0_portb_w )
 static CUSTOM_INPUT( coin_counter_r )
 {
 	/* return coin counter values */
-	return *(UINT8 *)param & 3;
+	return *(uint8_t *)param & 3;
 }
 
 
 static INPUT_CHANGED( coin_changed_callback )
 {
-	UINT8 *counter = (UINT8 *)param;
+	uint8_t *counter = (uint8_t *)param;
 
 	/* check for a 0 -> 1 transition */
 	if (!oldval && newval && *counter < 3)
@@ -717,7 +717,7 @@ ROM_END
 
 INLINE void generic_decode(running_machine *machine, const char *tag, int bit7, int bit6, int bit5, int bit4, int bit3, int bit2, int bit1, int bit0)
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, tag);
+	uint16_t *rom = (uint16_t *)memory_region(machine, tag);
 	int i;
 
 	/* only the low byte of ROMs are encrypted in these games */
@@ -726,7 +726,7 @@ INLINE void generic_decode(running_machine *machine, const char *tag, int bit7, 
 
 	#if 0
 	{
-		UINT8 *ROM = memory_region(machine, tag);
+		uint8_t *ROM = memory_region(machine, tag);
 		int size = memory_region_length(machine, tag);
 
 		FILE *fp;
@@ -761,7 +761,7 @@ static void arcadia_init(running_machine *machine)
 		NULL,
 		0
 	};
-	UINT16 *biosrom;
+	uint16_t *biosrom;
 
 	/* configure our Amiga setup */
 	amiga_machine_config(machine, &arcadia_intf);
@@ -771,7 +771,7 @@ static void arcadia_init(running_machine *machine)
 	memory_configure_bank(machine, "bank1", 1, 1, memory_region(machine, "user1"), 0);
 
 	/* OnePlay bios is encrypted, TenPlay is not */
-	biosrom = (UINT16 *)memory_region(machine, "user2");
+	biosrom = (uint16_t *)memory_region(machine, "user2");
 	if (biosrom[0] != 0x4afc)
 		generic_decode(machine, "user2", 6, 1, 0, 2, 3, 4, 5, 7);
 }

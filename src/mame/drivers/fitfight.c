@@ -91,14 +91,14 @@ Stephh's notes :
 static READ16_HANDLER(fitfight_700000_r)
 {
 	fitfight_state *state = (fitfight_state *)space->machine->driver_data;
-	UINT16 data = state->fof_700000_data;
+	uint16_t data = state->fof_700000_data;
 	return (data << 2);
 }
 
 static READ16_HANDLER(histryma_700000_r)
 {
 	fitfight_state *state = (fitfight_state *)space->machine->driver_data;
-	UINT16 data = (state->fof_700000_data & 0x00AA);
+	uint16_t data = (state->fof_700000_data & 0x00AA);
 	data |= ((state->fof_700000_data & 0x0055) >> 2);
 	return (data);
 }
@@ -106,7 +106,7 @@ static READ16_HANDLER(histryma_700000_r)
 static READ16_HANDLER(bbprot_700000_r)
 {
 	fitfight_state *state = (fitfight_state *)space->machine->driver_data;
-	UINT16 data = 0;
+	uint16_t data = 0;
 	data  =  (state->fof_700000_data & 0x000b);
 	data |= ((state->fof_700000_data & 0x01d0) >> 2);
 	data |= ((state->fof_700000_data & 0x0004) << 6);
@@ -977,7 +977,7 @@ ROM_END
 
 static DRIVER_INIT( fitfight )
 {
-//  UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+//  uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 //  mem16[0x0165B2/2] = 0x4e71; // for now so it boots
 	fitfight_state *state = (fitfight_state *)machine->driver_data;
 	memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x700000, 0x700001, 0, 0, fitfight_700000_r);
@@ -986,7 +986,7 @@ static DRIVER_INIT( fitfight )
 
 static DRIVER_INIT( histryma )
 {
-//  UINT16 *mem16 = (UINT16 *)memory_region(machine, "maincpu");
+//  uint16_t *mem16 = (uint16_t *)memory_region(machine, "maincpu");
 //  mem16[0x017FDC/2] = 0x4e71; // for now so it boots
 	fitfight_state *state = (fitfight_state *)machine->driver_data;
 	memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x700000, 0x700001, 0, 0, histryma_700000_r);

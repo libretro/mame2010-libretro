@@ -748,8 +748,8 @@
 #include "../lh/royalcrd.lh"
 
 /* from video */
-extern UINT8* funworld_videoram;
-extern UINT8* funworld_colorram;
+extern uint8_t* funworld_videoram;
+extern uint8_t* funworld_colorram;
 
 WRITE8_HANDLER( funworld_videoram_w );
 WRITE8_HANDLER( funworld_colorram_w );
@@ -815,11 +815,11 @@ static ADDRESS_MAP_START( funworld_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0xc000, 0xffff) AM_ROM
 ADDRESS_MAP_END
 
-static UINT8 funquiz_question_bank = 0x80;
+static uint8_t funquiz_question_bank = 0x80;
 
 static READ8_HANDLER( questions_r )
 {
-	UINT8* quiz = memory_region(space->machine,"questions");
+	uint8_t* quiz = memory_region(space->machine,"questions");
 	int extraoffset = ((funquiz_question_bank & 0x1f) * 0x8000);
 
 	// if 0x80 is set, read the 2nd half of the question rom (contains header info)
@@ -4040,7 +4040,7 @@ static DRIVER_INIT( tabblue )
 *****************************************************************************************************/
 
 	int x, na, nb, nad, nbd;
-	UINT8 *src = memory_region( machine, "gfx1" );
+	uint8_t *src = memory_region( machine, "gfx1" );
 
 
 	for (x=0x0000; x < 0x10000; x++)
@@ -4070,7 +4070,7 @@ static DRIVER_INIT( magicd2a )
 
 ******************************************************************/
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0xc1c6] = 0x92;
 }
@@ -4079,8 +4079,8 @@ static DRIVER_INIT( magicd2b )
 /*** same as blue TAB PCB, with the magicd2a patch ***/
 {
 	int x, na, nb, nad, nbd;
-	UINT8 *src = memory_region( machine, "gfx1" );
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *src = memory_region( machine, "gfx1" );
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (x=0x0000; x < 0x10000; x++)
 	{
@@ -4099,7 +4099,7 @@ static DRIVER_INIT( magicd2b )
 static DRIVER_INIT( soccernw )
 {
 /* temporary patch to avoid hardware errors for debug purposes */
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0x80b2] = 0xa9;
 	ROM[0x80b3] = 0x00;
@@ -4134,19 +4134,19 @@ static DRIVER_INIT( saloon )
 
 *************************************************/
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
 	int start = 0x8000;
 
-	UINT8 *gfxrom = memory_region(machine, "gfx1");
+	uint8_t *gfxrom = memory_region(machine, "gfx1");
 	int sizeg = memory_region_length(machine, "gfx1");
 	int startg = 0;
 
-	UINT8 *prom = memory_region(machine, "proms");
+	uint8_t *prom = memory_region(machine, "proms");
 	int sizep = memory_region_length(machine, "proms");
 	int startp = 0;
 
-	UINT8 *buffer;
+	uint8_t *buffer;
 	int i, a;
 
     /*****************************
@@ -4160,7 +4160,7 @@ static DRIVER_INIT( saloon )
 		rom[i] = BITSWAP8(rom[i], 7, 6, 5, 4, 3, 0, 1, 2);
 	}
 
-	buffer = auto_alloc_array(machine, UINT8, size);
+	buffer = auto_alloc_array(machine, uint8_t, size);
 	memcpy(buffer, rom, size);
 
 
@@ -4179,7 +4179,7 @@ static DRIVER_INIT( saloon )
     *   Graphics ROM decryption   *
     ******************************/
 
-	buffer = auto_alloc_array(machine, UINT8, sizeg);
+	buffer = auto_alloc_array(machine, uint8_t, sizeg);
 	memcpy(buffer, gfxrom, sizeg);
 
 	/* address lines swap: fedcba9876543210 -> fedcb67584a39012 */
@@ -4204,7 +4204,7 @@ static DRIVER_INIT( saloon )
 		prom[i] = BITSWAP8(prom[i], 2, 3, 5, 4, 6, 7, 1, 0);
 	}
 
-	buffer = auto_alloc_array(machine, UINT8, sizep);
+	buffer = auto_alloc_array(machine, uint8_t, sizep);
 	memcpy(buffer, prom, sizep);
 
 
@@ -4228,7 +4228,7 @@ static DRIVER_INIT( multiwin )
 
 ******************************************************/
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
 	int x;
@@ -4236,7 +4236,7 @@ static DRIVER_INIT( multiwin )
 	for (x=0x8000; x < 0x10000; x++)
 	{
 		ROM[x] = ROM[x] ^ 0x91;
-		UINT8 code;
+		uint8_t code;
 
 		ROM[x] = BITSWAP8(ROM[x],5,6,7,2,3,0,1,4);
 
@@ -4261,7 +4261,7 @@ static DRIVER_INIT( royalcdc )
 
 ******************************************************/
 
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
 	int x;
@@ -4269,7 +4269,7 @@ static DRIVER_INIT( royalcdc )
 	for (x=0x8000; x < 0x10000; x++)
 	{
 		ROM[x] = ROM[x] ^ 0x22;
-		UINT8 code;
+		uint8_t code;
 
 		// this seems correct for the data, plaintext decrypts fine
 		ROM[x] = BITSWAP8(ROM[x],2,6,7,4,3,1,5,0);

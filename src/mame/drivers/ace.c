@@ -51,9 +51,9 @@ public:
 	ace_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8 *  ram2;
-	UINT8 *  scoreram;
-	UINT8 *  characterram;
+	uint8_t *  ram2;
+	uint8_t *  scoreram;
+	uint8_t *  characterram;
 
 	/* input-related */
 	int objpos[8];

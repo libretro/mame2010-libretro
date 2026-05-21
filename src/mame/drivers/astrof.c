@@ -129,7 +129,7 @@ static CUSTOM_INPUT( astrof_p1_controls_r )
 
 static CUSTOM_INPUT( astrof_p2_controls_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* on an upright cabinet, a single set of controls
        is connected to both sets of pins on the edge
@@ -145,7 +145,7 @@ static CUSTOM_INPUT( astrof_p2_controls_r )
 
 static CUSTOM_INPUT( tomahawk_controls_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 	astrof_state *state = (astrof_state *)field->port->machine->driver_data;
 
 	/* on a cocktail cabinet, two sets of controls are
@@ -177,27 +177,27 @@ static VIDEO_START( astrof )
 	astrof_state *state = (astrof_state *)machine->driver_data;
 
 	/* allocate the color RAM -- half the size of the video RAM as A0 is not connected */
-	state->colorram = auto_alloc_array(machine, UINT8, state->videoram_size / 2);
+	state->colorram = auto_alloc_array(machine, uint8_t, state->videoram_size / 2);
 	state_save_register_global_pointer(machine, state->colorram, state->videoram_size / 2);
 }
 
 
-static rgb_t make_pen( running_machine *machine, UINT8 data )
+static rgb_t make_pen( running_machine *machine, uint8_t data )
 {
 	astrof_state *state = (astrof_state *)machine->driver_data;
 
-	UINT8 r1_bit = state->red_on ? 0x01 : (data >> 0) & 0x01;
-	UINT8 r2_bit = state->red_on ? 0x01 : (data >> 1) & 0x01;
-	UINT8 g1_bit = (data >> 2) & 0x01;
-	UINT8 g2_bit = (data >> 3) & 0x01;
-	UINT8 b1_bit = (data >> 4) & 0x01;
-	UINT8 b2_bit = (data >> 5) & 0x01;
+	uint8_t r1_bit = state->red_on ? 0x01 : (data >> 0) & 0x01;
+	uint8_t r2_bit = state->red_on ? 0x01 : (data >> 1) & 0x01;
+	uint8_t g1_bit = (data >> 2) & 0x01;
+	uint8_t g2_bit = (data >> 3) & 0x01;
+	uint8_t b1_bit = (data >> 4) & 0x01;
+	uint8_t b2_bit = (data >> 5) & 0x01;
 
 	/* this is probably not quite right, but I don't have the
        knowledge to figure out the actual weights - ZV */
-	UINT8 r = (0xc0 * r1_bit) + (0x3f * r2_bit);
-	UINT8 g = (0xc0 * g1_bit) + (0x3f * g2_bit);
-	UINT8 b = (0xc0 * b1_bit) + (0x3f * b2_bit);
+	uint8_t r = (0xc0 * r1_bit) + (0x3f * r2_bit);
+	uint8_t g = (0xc0 * g1_bit) + (0x3f * g2_bit);
+	uint8_t b = (0xc0 * b1_bit) + (0x3f * b2_bit);
 
 	return MAKE_RGB(r, g, b);
 }
@@ -207,9 +207,9 @@ static void astrof_get_pens( running_machine *machine, pen_t *pens )
 {
 	astrof_state *state = (astrof_state *)machine->driver_data;
 	offs_t i;
-	UINT8 bank = (state->astrof_palette_bank ? 0x10 : 0x00);
-	UINT8 config = input_port_read_safe(machine, "FAKE", 0x00);
-	UINT8 *prom = memory_region(machine, "proms");
+	uint8_t bank = (state->astrof_palette_bank ? 0x10 : 0x00);
+	uint8_t config = input_port_read_safe(machine, "FAKE", 0x00);
+	uint8_t *prom = memory_region(machine, "proms");
 
 	/* a common wire hack to the pcb causes the prom halves to be inverted */
 	/* this results in e.g. astrof background being black */
@@ -234,7 +234,7 @@ static void astrof_get_pens( running_machine *machine, pen_t *pens )
 
 	for (i = 0; i < ASTROF_NUM_PENS; i++)
 	{
-		UINT8 data = prom[bank | i];
+		uint8_t data = prom[bank | i];
 		pens[i] = make_pen(machine, data);
 	}
 }
@@ -243,13 +243,13 @@ static void astrof_get_pens( running_machine *machine, pen_t *pens )
 static void tomahawk_get_pens( running_machine *machine, pen_t *pens )
 {
 	offs_t i;
-	UINT8 *prom = memory_region(machine, "proms");
-	UINT8 config = input_port_read_safe(machine, "FAKE", 0x00);
+	uint8_t *prom = memory_region(machine, "proms");
+	uint8_t config = input_port_read_safe(machine, "FAKE", 0x00);
 
 	for (i = 0; i < TOMAHAWK_NUM_PENS; i++)
 	{
-		UINT8 data;
-		UINT8 pen;
+		uint8_t data;
+		uint8_t pen;
 
 		/* a common wire hack to the pcb causes the prom halves to be inverted */
 		/* this results in e.g. astrof background being black */
@@ -314,7 +314,7 @@ static WRITE8_HANDLER( video_control_1_w )
 }
 
 
-static void astrof_set_video_control_2( running_machine *machine, UINT8 data )
+static void astrof_set_video_control_2( running_machine *machine, uint8_t data )
 {
 	astrof_state *state = (astrof_state *)machine->driver_data;
 
@@ -337,7 +337,7 @@ static WRITE8_HANDLER( astrof_video_control_2_w )
 }
 
 
-static void spfghmk2_set_video_control_2( running_machine *machine, UINT8 data )
+static void spfghmk2_set_video_control_2( running_machine *machine, uint8_t data )
 {
 	astrof_state *state = (astrof_state *)machine->driver_data;
 
@@ -357,7 +357,7 @@ static WRITE8_HANDLER( spfghmk2_video_control_2_w )
 }
 
 
-static void tomahawk_set_video_control_2( running_machine *machine, UINT8 data )
+static void tomahawk_set_video_control_2( running_machine *machine, uint8_t data )
 {
 	astrof_state *state = (astrof_state *)machine->driver_data;
 
@@ -383,16 +383,16 @@ static void video_update_common( running_machine *machine, bitmap_t *bitmap, con
 
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
-		UINT8 data;
+		uint8_t data;
 		int i;
 
-		UINT8 color = state->colorram[offs >> 1];
+		uint8_t color = state->colorram[offs >> 1];
 
 		pen_t back_pen = pens[color | 0x00];
 		pen_t fore_pen = pens[color | 0x01];
 
-		UINT8 y = offs;
-		UINT8 x = offs >> 8 << 3;
+		uint8_t y = offs;
+		uint8_t x = offs >> 8 << 3;
 
 		if (!state->flipscreen)
 			y = ~y;
@@ -1304,8 +1304,8 @@ ROM_END
 static DRIVER_INIT( abattle )
 {
 	/* use the protection PROM to decrypt the ROMs */
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *prom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *prom = memory_region(machine, "user1");
 	int i;
 
 	for(i = 0xd000; i < 0x10000; i++)
@@ -1319,7 +1319,7 @@ static DRIVER_INIT( abattle )
 
 static DRIVER_INIT( afire )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	for(i = 0xd000; i < 0x10000; i++)
@@ -1333,7 +1333,7 @@ static DRIVER_INIT( afire )
 
 static DRIVER_INIT( sstarbtl )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	for(i = 0xd000; i < 0x10000; i++)

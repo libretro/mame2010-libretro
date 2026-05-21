@@ -1981,7 +1981,7 @@ ROM_END
  *
  *************************************/
 
-static void init_master_ports(running_machine *machine, UINT8 mvram_base, UINT8 io_base)
+static void init_master_ports(running_machine *machine, uint8_t mvram_base, uint8_t io_base)
 {
 	/* set up the master CPU VRAM I/O */
 	memory_install_readwrite8_handler(cputag_get_address_space(machine, "master", ADDRESS_SPACE_IO), mvram_base, mvram_base + 0x1f, 0, 0, leland_mvram_port_r, leland_mvram_port_w);

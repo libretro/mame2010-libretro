@@ -128,11 +128,11 @@ public:
 
 	m63_state(running_machine &machine) { }
 
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
-	UINT8 *  videoram2;
-	UINT8 *  scrollram;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
+	uint8_t *  videoram2;
+	uint8_t *  scrollram;
 	size_t   spriteram_size;
 
 	/* video-related */
@@ -140,10 +140,10 @@ public:
 	int      pal_bank, fg_flag, sy_offset;
 
 	/* sound-related */
-	UINT8    sound_irq;
+	uint8_t    sound_irq;
 	int      sound_status;
 	int      p1, p2;
-	INT16    *samplebuf;
+	int16_t    *samplebuf;
 
 	/* sound devices */
 	running_device *soundcpu;
@@ -677,13 +677,13 @@ static SAMPLES_START( fghtbskt_sh_start )
 	running_machine *machine = device->machine;
 	m63_state *state = (m63_state *)machine->driver_data;
 	int i, len = memory_region_length(machine, "samples");
-	UINT8 *ROM = memory_region(machine, "samples");
+	uint8_t *ROM = memory_region(machine, "samples");
 
-	state->samplebuf = auto_alloc_array(machine, INT16, len);
+	state->samplebuf = auto_alloc_array(machine, int16_t, len);
 	state_save_register_global_pointer(machine, state->samplebuf, len);
 
 	for(i = 0; i < len; i++)
-		state->samplebuf[i] = ((INT8)(ROM[i] ^ 0x80)) * 256;
+		state->samplebuf[i] = ((int8_t)(ROM[i] ^ 0x80)) * 256;
 }
 
 static const samples_interface fghtbskt_samples_interface =

@@ -189,7 +189,7 @@ enum
 #define VCR0_DUTY_MASK		0xe000
 #define VCR0_DUTY_SHIFT     13
 
-static const UINT32 banks[4] = { 0, 0x40000/2, 0x20000/2, 0x60000/2 };
+static const uint32_t banks[4] = { 0, 0x40000/2, 0x20000/2, 0x60000/2 };
 
 static struct
 {
@@ -200,10 +200,10 @@ static struct
 
 static struct
 {
-	UINT16	r[16];
-	UINT16	*dram;
+	uint16_t	r[16];
+	uint16_t	*dram;
 
-	UINT8	*line_buf;	// there's actually two
+	uint8_t	*line_buf;	// there's actually two
 } i82716;
 
 static WRITE16_HANDLER( i82716_w )
@@ -253,8 +253,8 @@ static VIDEO_START( maygayv1 )
 
 static VIDEO_UPDATE( maygayv1 )
 {
-	UINT16 *atable = &i82716.dram[VREG(ATBA)];
-	UINT16 *otable = &i82716.dram[VREG(ODTBA) & 0xfc00];  // both must be bank 0
+	uint16_t *atable = &i82716.dram[VREG(ATBA)];
+	uint16_t *otable = &i82716.dram[VREG(ODTBA) & 0xfc00];  // both must be bank 0
 
     int sl, sx;
 	int slmask = 0xffff;     // TODO: Save if using scanline callbacks
@@ -274,10 +274,10 @@ static VIDEO_UPDATE( maygayv1 )
 	for (sl = cliprect->min_x; sl <= cliprect->max_y; ++sl)
 	{
 		int obj;
-		UINT16 aflags = atable[sl];
-		UINT16 slmask_old = slmask;
+		uint16_t aflags = atable[sl];
+		uint16_t slmask_old = slmask;
 
-		UINT16 *bmp_ptr = BITMAP_ADDR16(bitmap, sl, 0);
+		uint16_t *bmp_ptr = BITMAP_ADDR16(bitmap, sl, 0);
 
 		slmask = 0xffff ^ (slmask ^ aflags);
 
@@ -293,11 +293,11 @@ static VIDEO_UPDATE( maygayv1 )
 			// Draw on this line?
 			if ( !BIT(slmask, obj) )
             {
-				UINT32	objbase, trans, width, res, cspec;
-				INT32	x, xpos;
-				UINT16	w0, w1, w2;
-				UINT16	*objptr;
-				UINT8 *bmpptr; // ?
+				uint32_t	objbase, trans, width, res, cspec;
+				int32_t	x, xpos;
+				uint16_t	w0, w1, w2;
+				uint16_t	*objptr;
+				uint8_t *bmpptr; // ?
 
 				/* Get object table entry words */
 				w0 = otable[offs];
@@ -343,15 +343,15 @@ static VIDEO_UPDATE( maygayv1 )
 				objptr = &i82716.dram[objbase + ((4 * width) * otable[offs + 3])];
 
 				// endian alert
-                bmpptr = (UINT8*)objptr;
+                bmpptr = (uint8_t*)objptr;
 
 				// 4bpp
 				for (x = xpos; x < MIN(xbound, xpos + width * 8); ++x)
 				{
 					if (x >= 0)
 					{
-						UINT8 p1 = *bmpptr & 0xf;
-						UINT8 p2 = *bmpptr >> 4;
+						uint8_t p1 = *bmpptr & 0xf;
+						uint8_t p2 = *bmpptr >> 4;
 
 						if (!trans || p1)
 					        i82716.line_buf[x] = p1;
@@ -370,7 +370,7 @@ static VIDEO_UPDATE( maygayv1 )
 		// Write it out
 		for (sx = cliprect->min_x; sx < cliprect->max_x; sx += 2)
 		{
-			UINT8 pix = i82716.line_buf[sx / 2];
+			uint8_t pix = i82716.line_buf[sx / 2];
 
 			bmp_ptr[sx + 0] = pix & 0xf;
 			bmp_ptr[sx + 1] = pix >> 4;
@@ -399,11 +399,11 @@ static VIDEO_EOF( maygayv1 )
 	if (!(VREG(VCR0) & VCR0_DEI))
 	{
 		int i;
-		UINT16 *palbase = &i82716.dram[VREG(CTBA)];
+		uint16_t *palbase = &i82716.dram[VREG(CTBA)];
 
 		for (i = 0; i < 16; ++i)
 		{
-			UINT16 entry = *palbase++;
+			uint16_t entry = *palbase++;
 			palette_set_color_rgb(machine, entry & 0xf, pal4bit(entry >> 12), pal4bit(entry >> 8), pal4bit(entry >> 4));
 		}
 	}
@@ -445,17 +445,17 @@ static READ16_HANDLER( read_odd )
 
 static struct _i8279_state
 {
-	UINT8	command;
-	UINT8	mode;
-	UINT8	prescale;
-	UINT8	inhibit;
-	UINT8	clear;
-	UINT8	fifo[8];
-	UINT8	ram[16];
+	uint8_t	command;
+	uint8_t	mode;
+	uint8_t	prescale;
+	uint8_t	inhibit;
+	uint8_t	clear;
+	uint8_t	fifo[8];
+	uint8_t	ram[16];
 } i8279;
 
 /* TODO */
-static void update_outputs(UINT16 which)
+static void update_outputs(uint16_t which)
 {
 	int i;
 
@@ -486,8 +486,8 @@ static void update_outputs(UINT16 which)
 static READ16_HANDLER( maygay_8279_r )
 {
 	static const char *const portnames[] = { "STROBE1","STROBE2","STROBE3","STROBE4","STROBE5","STROBE6","STROBE7","STROBE8" };
-	UINT8 result = 0xff;
-	UINT8 addr;
+	uint8_t result = 0xff;
+	uint8_t addr;
 
 	/* read data */
 	if ((offset & 1) == 0)
@@ -531,7 +531,7 @@ static READ16_HANDLER( maygay_8279_r )
 
 static WRITE16_HANDLER( maygay_8279_w )
 {
-	UINT8 addr;
+	uint8_t addr;
 
 	data >>= 8;
 
@@ -687,8 +687,8 @@ ADDRESS_MAP_END
 
 
 */
-static UINT8 p1; // save state
-static UINT8 p3; // save state
+static uint8_t p1; // save state
+static uint8_t p3; // save state
 
 static READ8_HANDLER( mcu_r )
 {
@@ -893,7 +893,7 @@ INPUT_PORTS_END
 
 ***************************************************************************/
 
-static void duart_irq_handler(running_device *device, UINT8 vector)
+static void duart_irq_handler(running_device *device, uint8_t vector)
 {
 	cputag_set_input_line_and_vector(device->machine, "maincpu", 5, ASSERT_LINE, vector);
 //  cputag_set_input_line(device->machine, "maincpu", 5, state ? ASSERT_LINE : CLEAR_LINE);
@@ -901,7 +901,7 @@ static void duart_irq_handler(running_device *device, UINT8 vector)
 
 static int d68681_val;
 
-static void duart_tx(running_device *device, int channel, UINT8 data)
+static void duart_tx(running_device *device, int channel, uint8_t data)
 {
 	if (channel == 0)
 	{
@@ -962,8 +962,8 @@ static const pia6821_interface pia_intf =
 
 static MACHINE_START( maygayv1 )
 {
-	i82716.dram = auto_alloc_array(machine, UINT16, 0x80000/2);   // ???
-	i82716.line_buf = auto_alloc_array(machine, UINT8, 512);
+	i82716.dram = auto_alloc_array(machine, uint16_t, 0x80000/2);   // ???
+	i82716.line_buf = auto_alloc_array(machine, uint8_t, 512);
 
 	state_save_register_global_pointer(machine, i82716.dram, 0x40000);
 

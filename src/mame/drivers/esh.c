@@ -33,10 +33,10 @@ Todo:
 /* Misc variables */
 static running_device *laserdisc;
 
-static UINT8 *tile_ram;
-static UINT8 *tile_control_ram;
+static uint8_t *tile_ram;
+static uint8_t *tile_control_ram;
 
-static UINT8 ld_video_visible;
+static uint8_t ld_video_visible;
 
 /* VIDEO GOODS */
 static VIDEO_UPDATE( esh )

@@ -50,7 +50,7 @@ Note
 
 static int exp_bank = 0;
 
-static UINT8   *fg_tile_ram, *fg_color_ram;
+static uint8_t   *fg_tile_ram, *fg_color_ram;
 static tilemap_t *fg_tilemap;
 
 static TILE_GET_INFO( get_fg_tile_info )
@@ -74,7 +74,7 @@ static WRITE8_HANDLER( fg_color_w )
 
 
 
-static UINT8   *bg_scroll, *bg_scroll2;
+static uint8_t   *bg_scroll, *bg_scroll2;
 
 static WRITE8_HANDLER( bg_scroll_w )
 {
@@ -82,7 +82,7 @@ static WRITE8_HANDLER( bg_scroll_w )
 }
 
 static tilemap_t *jackie_reel1_tilemap;
-static UINT8 *jackie_reel1_ram;
+static uint8_t *jackie_reel1_ram;
 
 static WRITE8_HANDLER( jackie_reel1_ram_w )
 {
@@ -98,7 +98,7 @@ static TILE_GET_INFO( get_jackie_reel1_tile_info )
 
 
 static tilemap_t *jackie_reel2_tilemap;
-static UINT8 *jackie_reel2_ram;
+static uint8_t *jackie_reel2_ram;
 
 static WRITE8_HANDLER( jackie_reel2_ram_w )
 {
@@ -113,7 +113,7 @@ static TILE_GET_INFO( get_jackie_reel2_tile_info )
 }
 
 static tilemap_t *jackie_reel3_tilemap;
-static UINT8 *jackie_reel3_ram;
+static uint8_t *jackie_reel3_ram;
 
 static WRITE8_HANDLER( jackie_reel3_ram_w )
 {
@@ -214,8 +214,8 @@ static INTERRUPT_GEN( jackie_interrupt )
 	}
 }
 
-static UINT8  out[3];
-static UINT16 unk_reg[3][5];
+static uint8_t  out[3];
+static uint16_t unk_reg[3][5];
 
 static void show_out(void)
 {
@@ -229,7 +229,7 @@ static void show_out(void)
 #endif
 }
 
-static void jackie_unk_reg_lo_w( int reg, int offset, UINT8 data )
+static void jackie_unk_reg_lo_w( int reg, int offset, uint8_t data )
 {
 	unk_reg[reg][offset] &= 0xff00;
 	unk_reg[reg][offset] |= data;
@@ -240,7 +240,7 @@ static WRITE8_HANDLER( jackie_unk_reg1_lo_w ) { jackie_unk_reg_lo_w( 0, offset, 
 static WRITE8_HANDLER( jackie_unk_reg2_lo_w ) { jackie_unk_reg_lo_w( 1, offset, data ); }
 static WRITE8_HANDLER( jackie_unk_reg3_lo_w ) { jackie_unk_reg_lo_w( 2, offset, data ); }
 
-static void jackie_unk_reg_hi_w( int reg, int offset, UINT8 data )
+static void jackie_unk_reg_hi_w( int reg, int offset, uint8_t data )
 {
 	unk_reg[reg][offset] &= 0xff;
 	unk_reg[reg][offset] |= data << 8;
@@ -308,7 +308,7 @@ static WRITE8_HANDLER( igs_irqack_w )
 
 static READ8_HANDLER( expram_r )
 {
-	UINT8 *rom = memory_region(space->machine, "gfx3");
+	uint8_t *rom = memory_region(space->machine, "gfx3");
 
 	offset += exp_bank * 0x8000;
 //  logerror("PC %06X: %04x = %02x\n",cpu_get_pc(space->cpu),offset,rom[offset]);
@@ -502,7 +502,7 @@ static DRIVER_INIT( jackie )
 {
 
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (A = 0;A < 0xf000;A++)
 	{

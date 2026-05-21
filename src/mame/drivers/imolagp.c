@@ -90,20 +90,20 @@ public:
 
 	imolagp_state(running_machine &machine) { }
 
-	UINT8 *slave_workram; // used only ifdef HLE_COM
+	uint8_t *slave_workram; // used only ifdef HLE_COM
 
 #ifdef HLE_COM
-	UINT8 mComData[0x100];
+	uint8_t mComData[0x100];
 	int   mComCount;
 
 #else
-	UINT8 mLatchedData[2];
+	uint8_t mLatchedData[2];
 #endif
 
-	UINT8 control;
-	UINT8 scroll;
-	UINT8 steerlatch;
-	UINT8 *videoram[3];
+	uint8_t control;
+	uint8_t scroll;
+	uint8_t steerlatch;
+	uint8_t *videoram[3];
 	int   draw_mode;
 	int   oldsteer;
 
@@ -156,7 +156,7 @@ static READ8_HANDLER( receive_data_r )
 static void initialize_colors( running_machine *machine )
 {
 	/* optional runtime remapping of colors */
-	static const UINT8 color[0x10][3] =
+	static const uint8_t color[0x10][3] =
 	{ /* wrong! need color-accurate screenshots to fix */
 		{ 0x44,0x44,0x00 },
 		{ 0x7f,0xff,0xff },
@@ -189,7 +189,7 @@ static VIDEO_START( imolagp )
 	int i;
 	for (i = 0; i < 3; i++)
 	{
-		state->videoram[i] = auto_alloc_array(machine, UINT8, 0x4000);
+		state->videoram[i] = auto_alloc_array(machine, uint8_t, 0x4000);
 		memset(state->videoram[i], 0x00, 0x4000);
 	}
 
@@ -209,14 +209,14 @@ static VIDEO_UPDATE( imolagp )
 	for (pass = 0; pass < 2; pass++)
 	{
 		int i;
-		const UINT8 *source = state->videoram[pass * 2];
+		const uint8_t *source = state->videoram[pass * 2];
 
 		for (i = 0; i < 0x4000; i++)
 		{
 			int pen;
 			int y = (i / 0x40);
 			int x = (i & 0x3f) * 4 - scroll2;
-			UINT16 *dest = BITMAP_ADDR16(bitmap, y & 0xff, 0);
+			uint16_t *dest = BITMAP_ADDR16(bitmap, y & 0xff, 0);
 			int data = source[i];
 			if (data || pass == 0)
 			{

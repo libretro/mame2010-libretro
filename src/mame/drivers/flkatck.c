@@ -198,7 +198,7 @@ static const k007232_interface k007232_config =
 static MACHINE_START( flkatck )
 {
 	flkatck_state *state = (flkatck_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 3, &ROM[0x10000], 0x2000);
 

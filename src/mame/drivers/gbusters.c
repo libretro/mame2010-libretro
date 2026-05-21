@@ -275,12 +275,12 @@ static const k051960_interface gbusters_k051960_intf =
 static MACHINE_START( gbusters )
 {
 	gbusters_state *state = (gbusters_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 16, &ROM[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
-	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, UINT8, 0x800);
+	machine->generic.paletteram.u8 = auto_alloc_array_clear(machine, uint8_t, 0x800);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");
@@ -296,7 +296,7 @@ static MACHINE_START( gbusters )
 static MACHINE_RESET( gbusters )
 {
 	gbusters_state *state = (gbusters_state *)machine->driver_data;
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	konami_configure_set_lines(machine->device("maincpu"), gbusters_banking);
 

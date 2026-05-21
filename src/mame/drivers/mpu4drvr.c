@@ -195,38 +195,38 @@ TODO:
 #define VIDEO_MASTER_CLOCK			XTAL_10MHz
 
 /* IRQ states for 68k */
-static UINT8 m6840_irq_state;
-static UINT8 m6850_irq_state;
-static UINT8 scn2674_irq_state;
+static uint8_t m6840_irq_state;
+static uint8_t m6850_irq_state;
+static uint8_t scn2674_irq_state;
 
 /* UART source/sinks */
-static UINT8 m68k_m6809_line;
-static UINT8 m6809_m68k_line;
-static UINT8 m68k_acia_cts;
-static UINT8 m6809_acia_cts;
-static UINT8 m6809_acia_rts;
-static UINT8 m6809_acia_dcd;
+static uint8_t m68k_m6809_line;
+static uint8_t m6809_m68k_line;
+static uint8_t m68k_acia_cts;
+static uint8_t m6809_acia_cts;
+static uint8_t m6809_acia_rts;
+static uint8_t m6809_acia_dcd;
 
 /* SCN2674 AVDC stuff */
 static int mpu4_gfx_index;
-static UINT16 * mpu4_vid_vidram;
-static UINT16 * mpu4_vid_mainram;
+static uint16_t * mpu4_vid_vidram;
+static uint16_t * mpu4_vid_mainram;
 
-static UINT8 scn2674_IR[16];
-static UINT8 scn2675_IR_pointer;
-static UINT8 scn2674_screen1_l;
-static UINT8 scn2674_screen1_h;
-static UINT8 scn2674_cursor_l;
-static UINT8 scn2674_cursor_h;
-static UINT8 scn2674_screen2_l;
-static UINT8 scn2674_screen2_h;
+static uint8_t scn2674_IR[16];
+static uint8_t scn2675_IR_pointer;
+static uint8_t scn2674_screen1_l;
+static uint8_t scn2674_screen1_h;
+static uint8_t scn2674_cursor_l;
+static uint8_t scn2674_cursor_h;
+static uint8_t scn2674_screen2_l;
+static uint8_t scn2674_screen2_h;
 
-static UINT8 scn2674_irq_register = 0;
-static UINT8 scn2674_status_register = 0;
-static UINT8 scn2674_irq_mask = 0;
-static UINT8 scn2674_gfx_enabled;
-static UINT8 scn2674_display_enabled;
-static UINT8 scn2674_cursor_enabled;
+static uint8_t scn2674_irq_register = 0;
+static uint8_t scn2674_status_register = 0;
+static uint8_t scn2674_irq_mask = 0;
+static uint8_t scn2674_gfx_enabled;
+static uint8_t scn2674_display_enabled;
+static uint8_t scn2674_cursor_enabled;
 
 static READ16_HANDLER( characteriser16_r );
 static WRITE16_HANDLER( characteriser16_w );
@@ -457,29 +457,29 @@ static const gfx_layout mpu4_vid_char_16x16_layout =
 };
 
 
-static UINT8 IR0_scn2674_double_ht_wd;
-static UINT8 IR0_scn2674_scanline_per_char_row;
-static UINT8 IR0_scn2674_sync_select;
-static UINT8 IR0_scn2674_buffer_mode_select;
-static UINT8 IR1_scn2674_interlace_enable;
-static UINT8 IR1_scn2674_equalizing_constant;
-static UINT8 IR2_scn2674_row_table;
-static UINT8 IR2_scn2674_horz_sync_width;
-static UINT8 IR2_scn2674_horz_back_porch;
-static UINT8 IR3_scn2674_vert_front_porch;
-static UINT8 IR3_scn2674_vert_back_porch;
-static UINT8 IR4_scn2674_rows_per_screen;
-static UINT8 IR4_scn2674_character_blink_rate;
-static UINT8 IR5_scn2674_character_per_row;
-static UINT8 IR8_scn2674_display_buffer_first_address_LSB;
-static UINT8 IR9_scn2674_display_buffer_first_address_MSB;
-static UINT8 IR9_scn2674_display_buffer_last_address;
-static UINT8 IR10_scn2674_display_pointer_address_lower;
-static UINT8 IR11_scn2674_display_pointer_address_upper;
-static UINT8 IR12_scn2674_scroll_start;
-static UINT8 IR12_scn2674_split_register_1;
-static UINT8 IR13_scn2674_scroll_end;
-static UINT8 IR13_scn2674_split_register_2;
+static uint8_t IR0_scn2674_double_ht_wd;
+static uint8_t IR0_scn2674_scanline_per_char_row;
+static uint8_t IR0_scn2674_sync_select;
+static uint8_t IR0_scn2674_buffer_mode_select;
+static uint8_t IR1_scn2674_interlace_enable;
+static uint8_t IR1_scn2674_equalizing_constant;
+static uint8_t IR2_scn2674_row_table;
+static uint8_t IR2_scn2674_horz_sync_width;
+static uint8_t IR2_scn2674_horz_back_porch;
+static uint8_t IR3_scn2674_vert_front_porch;
+static uint8_t IR3_scn2674_vert_back_porch;
+static uint8_t IR4_scn2674_rows_per_screen;
+static uint8_t IR4_scn2674_character_blink_rate;
+static uint8_t IR5_scn2674_character_per_row;
+static uint8_t IR8_scn2674_display_buffer_first_address_LSB;
+static uint8_t IR9_scn2674_display_buffer_first_address_MSB;
+static uint8_t IR9_scn2674_display_buffer_last_address;
+static uint8_t IR10_scn2674_display_pointer_address_lower;
+static uint8_t IR11_scn2674_display_pointer_address_upper;
+static uint8_t IR12_scn2674_scroll_start;
+static uint8_t IR12_scn2674_split_register_1;
+static uint8_t IR13_scn2674_scroll_end;
+static uint8_t IR13_scn2674_split_register_2;
 
 
 static VIDEO_UPDATE( mpu4_vid )
@@ -556,7 +556,7 @@ static VIDEO_UPDATE( mpu4_vid )
 
 		int screen2_base = (scn2674_screen2_h << 8) | scn2674_screen2_l;
 
-		UINT16 rowbase = (mpu4_vid_mainram[1+screen2_base+(y*2)]<<8)|mpu4_vid_mainram[screen2_base+(y*2)];
+		uint16_t rowbase = (mpu4_vid_mainram[1+screen2_base+(y*2)]<<8)|mpu4_vid_mainram[screen2_base+(y*2)];
 		int dbl_size;
 		int gfxregion = 0;
 
@@ -566,8 +566,8 @@ static VIDEO_UPDATE( mpu4_vid )
 
 		for(x = 0; x <= IR5_scn2674_character_per_row; x++)
 		{
-			UINT16 tiledat;
-			UINT16 attr;
+			uint16_t tiledat;
+			uint16_t attr;
 
 			tiledat = mpu4_vid_mainram[(rowbase+x)&0x7fff];
 			attr = tiledat >>12;
@@ -628,7 +628,7 @@ IR14 ---- ----
 */
 
 
-static void scn2674_write_init_regs(UINT8 data)
+static void scn2674_write_init_regs(uint8_t data)
 {
 	LOGSTUFF(("scn2674_write_init_regs %02x %02x\n",scn2675_IR_pointer,data));
 
@@ -745,9 +745,9 @@ static void scn2674_write_init_regs(UINT8 data)
 	if (scn2675_IR_pointer>14)scn2675_IR_pointer=14;
 }
 
-static void scn2674_write_command(running_machine *machine, UINT8 data)
+static void scn2674_write_command(running_machine *machine, uint8_t data)
 {
-	UINT8 oprand;
+	uint8_t oprand;
 	int i;
 
 	LOGSTUFF(("scn2674_write_command %02x\n",data));
@@ -1057,7 +1057,7 @@ static VIDEO_START( mpu4_vid )
 	/* if anything uses tile sizes other than 8x8 we can't really do it this way.. we'll have to draw tiles by hand.
       maybe we will anyway, but for now we don't need to */
 
-	mpu4_vid_vidram = auto_alloc_array(machine, UINT16, 0x20000/2);
+	mpu4_vid_vidram = auto_alloc_array(machine, uint16_t, 0x20000/2);
 
 	memset(mpu4_vid_vidram,0,0x20000);
 
@@ -1069,10 +1069,10 @@ static VIDEO_START( mpu4_vid )
 	assert(mpu4_gfx_index != MAX_GFX_ELEMENTS);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[mpu4_gfx_index+0] = gfx_element_alloc(machine, &mpu4_vid_char_8x8_layout, (UINT8 *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
-	machine->gfx[mpu4_gfx_index+1] = gfx_element_alloc(machine, &mpu4_vid_char_8x16_layout, (UINT8 *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
-	machine->gfx[mpu4_gfx_index+2] = gfx_element_alloc(machine, &mpu4_vid_char_16x8_layout, (UINT8 *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
-	machine->gfx[mpu4_gfx_index+3] = gfx_element_alloc(machine, &mpu4_vid_char_16x16_layout, (UINT8 *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
+	machine->gfx[mpu4_gfx_index+0] = gfx_element_alloc(machine, &mpu4_vid_char_8x8_layout, (uint8_t *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
+	machine->gfx[mpu4_gfx_index+1] = gfx_element_alloc(machine, &mpu4_vid_char_8x16_layout, (uint8_t *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
+	machine->gfx[mpu4_gfx_index+2] = gfx_element_alloc(machine, &mpu4_vid_char_16x8_layout, (uint8_t *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
+	machine->gfx[mpu4_gfx_index+3] = gfx_element_alloc(machine, &mpu4_vid_char_16x16_layout, (uint8_t *)mpu4_vid_vidram, machine->total_colors() / 16, 0);
 
 	scn2675_IR_pointer = 0;
 }
@@ -1105,8 +1105,8 @@ static INTERRUPT_GEN( mpu4_vid_irq )
 
 static struct ef9369
 {
-	UINT32 addr;
-	UINT16 clut[16];	/* 13-bits - a marking bit and a 444 color */
+	uint32_t addr;
+	uint16_t clut[16];	/* 13-bits - a marking bit and a 444 color */
 } pal;
 
 
@@ -1124,7 +1124,7 @@ static WRITE16_HANDLER( ef9369_w )
 	/* Data register */
 	else
 	{
-		UINT32 entry = pal.addr >> 1;
+		uint32_t entry = pal.addr >> 1;
 
 		if ((pal.addr & 1) == 0)
 		{
@@ -1133,7 +1133,7 @@ static WRITE16_HANDLER( ef9369_w )
 		}
 		else
 		{
-			UINT16 col;
+			uint16_t col;
 
 			pal.clut[entry] &= ~0x1f00;
 			pal.clut[entry] |= (data & 0x1f) << 8;
@@ -1156,7 +1156,7 @@ static READ16_HANDLER( ef9369_r )
 {
 	if ((offset & 1) == 0)
 	{
-		UINT16 col = pal.clut[pal.addr >> 1];
+		uint16_t col = pal.clut[pal.addr >> 1];
 
 		if ((pal.addr & 1) == 0)
 			return col & 0xff;
@@ -1189,12 +1189,12 @@ static READ8_DEVICE_HANDLER( pia_ic5_porta_track_r )
 
 	LOG(("%s: IC5 PIA Read of Port A (AUX1)\n",cpuexec_describe_context(device->machine)));
 
-	UINT8 data = input_port_read(device->machine, "AUX1");
+	uint8_t data = input_port_read(device->machine, "AUX1");
 
-	UINT16 dx = input_port_read(device->machine, "TRACKX");
-	UINT16 dy = input_port_read(device->machine, "TRACKY");
+	uint16_t dx = input_port_read(device->machine, "TRACKX");
+	uint16_t dy = input_port_read(device->machine, "TRACKY");
 
-	UINT8 xa, xb, ya, yb;
+	uint8_t xa, xb, ya, yb;
 
 	/* generate pulses for the input port (A and B are 1 unit out of phase for direction sensing)*/
 	xa = ((dx + 1) & 3) <= 1;
@@ -2071,7 +2071,7 @@ static GFXDECODE_START( dealem )
 GFXDECODE_END
 
 
-static UINT8 *dealem_videoram;
+static uint8_t *dealem_videoram;
 
 /***************************************************************************
 

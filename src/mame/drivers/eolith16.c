@@ -16,7 +16,7 @@
 #include "sound/okim6295.h"
 #include "includes/eolithsp.h"
 
-static UINT16 *vram;
+static uint16_t *vram;
 static int vbuffer = 0;
 
 // It's configured for 512 bytes
@@ -105,7 +105,7 @@ INPUT_PORTS_END
 
 static VIDEO_START( eolith16 )
 {
-	vram = auto_alloc_array(machine, UINT16, 0x10000);
+	vram = auto_alloc_array(machine, uint16_t, 0x10000);
 }
 
 static VIDEO_UPDATE( eolith16 )

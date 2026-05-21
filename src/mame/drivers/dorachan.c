@@ -24,11 +24,11 @@ public:
 	dorachan_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 	size_t   videoram_size;
 
 	/* video-related */
-	UINT8    flip_screen;
+	uint8_t    flip_screen;
 
 	/* devices */
 	running_device *main_cpu;
@@ -44,7 +44,7 @@ public:
 static CUSTOM_INPUT( dorachan_protection_r )
 {
 	dorachan_state *state = (dorachan_state *)field->port->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	switch (cpu_get_previouspc(state->main_cpu))
 	{
@@ -84,7 +84,7 @@ static VIDEO_UPDATE( dorachan )
 	dorachan_state *state = (dorachan_state *)screen->machine->driver_data;
 	pen_t pens[NUM_PENS];
 	offs_t offs;
-	const UINT8 *color_map_base;
+	const uint8_t *color_map_base;
 
 	get_pens(pens);
 
@@ -93,15 +93,15 @@ static VIDEO_UPDATE( dorachan )
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
 		int i;
-		UINT8 fore_color;
+		uint8_t fore_color;
 
-		UINT8 x = offs >> 8 << 3;
-		UINT8 y = offs & 0xff;
+		uint8_t x = offs >> 8 << 3;
+		uint8_t y = offs & 0xff;
 
 		/* the need for +1 is extremely unusual, but definetely correct */
 		offs_t color_address = ((((offs << 2) & 0x03e0) | (offs >> 8)) + 1) & 0x03ff;
 
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
 		if (state->flip_screen)
 			fore_color = (color_map_base[color_address] >> 3) & 0x07;
@@ -110,7 +110,7 @@ static VIDEO_UPDATE( dorachan )
 
 		for (i = 0; i < 8; i++)
 		{
-			UINT8 color = (data & 0x01) ? fore_color : RGB_BLACK;
+			uint8_t color = (data & 0x01) ? fore_color : RGB_BLACK;
 			*BITMAP_ADDR32(bitmap, y, x) = pens[color];
 
 			data = data >> 1;

@@ -33,7 +33,7 @@ static TILE_GET_INFO( get_hitme_tile_info )
 	hitme_state *state = (hitme_state *)machine->driver_data;
 
 	/* the code is the low 6 bits */
-	UINT8 code = state->videoram[tile_index] & 0x3f;
+	uint8_t code = state->videoram[tile_index] & 0x3f;
 	SET_TILE_INFO(0, code, 0, 0);
 }
 
@@ -99,7 +99,7 @@ static VIDEO_UPDATE( hitme )
 			/* invert pixels until we run out */
 			for (xx = 0; xx < 8 && inv; xx++, inv--)
 			{
-				UINT16 *dest = BITMAP_ADDR16(bitmap, y * 10, x * 8 + xx);
+				uint16_t *dest = BITMAP_ADDR16(bitmap, y * 10, x * 8 + xx);
 				dest[0 * dy] ^= 1;
 				dest[1 * dy] ^= 1;
 				dest[2 * dy] ^= 1;
@@ -132,21 +132,21 @@ static VIDEO_UPDATE( barricad )
  *
  *************************************/
 
-static UINT8 read_port_and_t0( running_machine *machine, int port )
+static uint8_t read_port_and_t0( running_machine *machine, int port )
 {
 	hitme_state *state = (hitme_state *)machine->driver_data;
 	static const char *const portnames[] = { "IN0", "IN1", "IN2", "IN3" };
 
-	UINT8 val = input_port_read(machine, portnames[port]);
+	uint8_t val = input_port_read(machine, portnames[port]);
 	if (attotime_compare(timer_get_time(machine), state->timeout_time) > 0)
 		val ^= 0x80;
 	return val;
 }
 
 
-static UINT8 read_port_and_t0_and_hblank( running_machine *machine, int port )
+static uint8_t read_port_and_t0_and_hblank( running_machine *machine, int port )
 {
-	UINT8 val = read_port_and_t0(machine, port);
+	uint8_t val = read_port_and_t0(machine, port);
 	if (machine->primary_screen->hpos() < (machine->primary_screen->width() * 9 / 10))
 		val ^= 0x04;
 	return val;
@@ -193,7 +193,7 @@ static WRITE8_DEVICE_HANDLER( output_port_0_w )
         system's equivalent computation, or else we will hang notes.
     */
 	hitme_state *state = (hitme_state *)device->machine->driver_data;
-	UINT8 raw_game_speed = input_port_read(device->machine, "R3");
+	uint8_t raw_game_speed = input_port_read(device->machine, "R3");
 	double resistance = raw_game_speed * 25000 / 100;
 	attotime duration = attotime_make(0, ATTOSECONDS_PER_SECOND * 0.45 * 6.8e-6 * resistance * (data + 1));
 	state->timeout_time = attotime_add(timer_get_time(device->machine), duration);

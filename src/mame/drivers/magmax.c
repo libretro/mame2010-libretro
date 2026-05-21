@@ -32,15 +32,15 @@ PALETTE_INIT( magmax );
 VIDEO_UPDATE( magmax );
 VIDEO_START( magmax );
 
-extern UINT16 *magmax_vreg;
-extern UINT16 *magmax_scroll_x;
-extern UINT16 *magmax_scroll_y;
+extern uint16_t *magmax_vreg;
+extern uint16_t *magmax_scroll_x;
+extern uint16_t *magmax_scroll_y;
 
 
-static UINT8 sound_latch = 0;
-static UINT8 LS74_clr = 0;
-static UINT8 LS74_q   = 0;
-static UINT8 gain_control = 0;
+static uint8_t sound_latch = 0;
+static uint8_t LS74_clr = 0;
+static uint8_t LS74_q   = 0;
+static uint8_t gain_control = 0;
 
 static emu_timer *interrupt_timer;
 

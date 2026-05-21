@@ -23,7 +23,7 @@ static VIDEO_START(chsuper)
 static VIDEO_UPDATE(chsuper)
 {
 	const gfx_element *gfx = screen->machine->gfx[0];
-	UINT8 *vram = memory_region(screen->machine, "vram");
+	uint8_t *vram = memory_region(screen->machine, "vram");
 	int count = 0x0000;
 	int y,x;
 
@@ -85,7 +85,7 @@ static READ8_HANDLER( ff_r )
 
 static WRITE8_HANDLER( chsuper_vram_w )
 {
-	UINT8 *vram = memory_region(space->machine, "vram");
+	uint8_t *vram = memory_region(space->machine, "vram");
 
 	vram[offset] = data;
 }
@@ -268,13 +268,13 @@ ROM_END
 
 static DRIVER_INIT( chsuper2 )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(machine,"gfx1");
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(machine,"gfx1");
 	int i;
 
 	chsuper_tilexor = 0x7f00;
 
-	buffer = auto_alloc_array(machine, UINT8, 0x100000);
+	buffer = auto_alloc_array(machine, uint8_t, 0x100000);
 
 	for (i=0;i<0x100000;i++)
 	{
@@ -292,13 +292,13 @@ static DRIVER_INIT( chsuper2 )
 
 static DRIVER_INIT( chsuper3 )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(machine,"gfx1");
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(machine,"gfx1");
 	int i;
 
 	chsuper_tilexor = 0x0e00;
 
-	buffer = auto_alloc_array(machine, UINT8, 0x100000);
+	buffer = auto_alloc_array(machine, uint8_t, 0x100000);
 
 	for (i=0;i<0x100000;i++)
 	{
@@ -316,13 +316,13 @@ static DRIVER_INIT( chsuper3 )
 
 static DRIVER_INIT( chmpnum )
 {
-	UINT8 *buffer;
-	UINT8 *rom = memory_region(machine,"gfx1");
+	uint8_t *buffer;
+	uint8_t *rom = memory_region(machine,"gfx1");
 	int i;
 
 	chsuper_tilexor = 0x1800;
 
-	buffer = auto_alloc_array(machine, UINT8, 0x100000);
+	buffer = auto_alloc_array(machine, uint8_t, 0x100000);
 
 	for (i=0;i<0x100000;i++)
 	{

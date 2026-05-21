@@ -409,7 +409,7 @@ static MACHINE_START( dkong2b )
 static MACHINE_START( s2650 )
 {
     dkong_state *state = (dkong_state *)machine->driver_data;
-    UINT8   *p = memory_region(machine, "user1");
+    uint8_t   *p = memory_region(machine, "user1");
     const char *game_name = machine->gamedrv->name;
     int i;
 
@@ -472,7 +472,7 @@ static MACHINE_RESET( dkong )
 static MACHINE_RESET( strtheat )
 {
     dkong_state *state = (dkong_state *)machine->driver_data;
-    UINT8 *ROM = memory_region(machine, "maincpu");
+    uint8_t *ROM = memory_region(machine, "maincpu");
 
     MACHINE_RESET_CALL(dkong);
 
@@ -485,7 +485,7 @@ static MACHINE_RESET( strtheat )
 static MACHINE_RESET( drakton )
 {
     dkong_state *state = (dkong_state *)machine->driver_data;
-    UINT8 *ROM = memory_region(machine, "maincpu");
+    uint8_t *ROM = memory_region(machine, "maincpu");
 
     MACHINE_RESET_CALL(dkong);
 
@@ -564,8 +564,8 @@ static READ8_HANDLER( dkong_in2_r )
 {
 	dkong_state *state = (dkong_state *)space->machine->driver_data;
 	/* mcu status (sound feedback) is inverted bit4 from port B (8039) */
-	UINT8 mcustatus = latch8_bit4_q_r(state->dev_vp2, 0);
-	UINT8 r;
+	uint8_t mcustatus = latch8_bit4_q_r(state->dev_vp2, 0);
+	uint8_t r;
 
 	r = (input_port_read(space->machine, "IN2") & 0xBF) | (mcustatus << 6);
 	coin_counter_w(space->machine, offset, r >> 7);
@@ -578,7 +578,7 @@ static READ8_HANDLER( dkongjr_in2_r )
 {
     /* dkongjr does not have the mcu line connected */
 
-    UINT8 r;
+    uint8_t r;
 
     r = (input_port_read(space->machine, "IN2") & 0xBF) | 0x40;
     coin_counter_w(space->machine, offset, r >> 7);
@@ -2847,10 +2847,10 @@ ROM_END
  *
  *************************************/
 
-static void drakton_decrypt_rom(running_machine *machine, UINT8 mod, int offs, int *bs)
+static void drakton_decrypt_rom(running_machine *machine, uint8_t mod, int offs, int *bs)
 {
-    UINT8 oldbyte,newbyte;
-    UINT8 *ROM;
+    uint8_t oldbyte,newbyte;
+    uint8_t *ROM;
     int mem;
 
     ROM = memory_region(machine, "maincpu");
@@ -2879,7 +2879,7 @@ static void drakton_decrypt_rom(running_machine *machine, UINT8 mod, int offs, i
 static DRIVER_INIT( herodk )
 {
     int A;
-    UINT8 *rom = memory_region(machine, "maincpu");
+    uint8_t *rom = memory_region(machine, "maincpu");
 
     /* swap data lines D3 and D4 */
     for (A = 0;A < 0x8000;A++)

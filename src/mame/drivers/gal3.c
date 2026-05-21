@@ -133,15 +133,15 @@ better notes (complete chip lists) for each board still needed
 #include "includes/namcos21.h"
 #include "rendlay.h"
 
-static UINT32 *mpSharedRAM0;
-//static UINT32 *mpSharedRAM1;
-static UINT32 *gal3_nvmem;
+static uint32_t *mpSharedRAM0;
+//static uint32_t *mpSharedRAM1;
+static uint32_t *gal3_nvmem;
 static size_t gal3_nvmem_size;
-static UINT16 namcos21_video_enable;
-static UINT16 *rsoSharedRAM;
+static uint16_t namcos21_video_enable;
+static uint16_t *rsoSharedRAM;
 
-static UINT32 led_mst;	//Diagnostic LEDs
-static UINT32 led_slv;
+static uint32_t led_mst;	//Diagnostic LEDs
+static uint32_t led_slv;
 
 static int objcode2tile( int code )
 { /* callback for sprite drawing code in namcoic.c */
@@ -160,7 +160,7 @@ static VIDEO_START(gal3)
 static void update_palette( running_machine *machine )
 {
 	int i;
-	INT16 data1,data2;
+	int16_t data1,data2;
 	int r,g,b;
 
 	for( i=0; i<NAMCOS21_NUM_COLORS; i++ )
@@ -232,12 +232,12 @@ static VIDEO_UPDATE(gal3)
 static NVRAM_HANDLER( gal3 )
 {
 	int i;
-	UINT8 data[4];
+	uint8_t data[4];
 	if( read_or_write )
 	{
 		for( i=0; i<gal3_nvmem_size/4; i++ )
 		{
-			UINT32 dword = gal3_nvmem[i];
+			uint32_t dword = gal3_nvmem[i];
 			data[0] = dword>>24;
 			data[1] = (dword&0x00ff0000)>>16;
 			data[2] = (dword&0x0000ff00)>>8;
@@ -317,7 +317,7 @@ static READ32_HANDLER( paletteram32_r )
 
 static WRITE32_HANDLER( paletteram32_w )
 {
-	UINT32 v;
+	uint32_t v;
 	offset *= 2;
 	v = (space->machine->generic.paletteram.u16[offset]<<16)|space->machine->generic.paletteram.u16[offset+1];
 	COMBINE_DATA( &v );
@@ -332,7 +332,7 @@ static READ32_HANDLER(namcos21_video_enable_r)
 
 static WRITE32_HANDLER(namcos21_video_enable_w)
 {
-	UINT32 v;
+	uint32_t v;
 	v = namcos21_video_enable<<16;
 	COMBINE_DATA( &v ); // 0xff53, instead of 0x40 in namcos21
 	namcos21_video_enable = v>>16;
@@ -350,7 +350,7 @@ static READ32_HANDLER(rso_r)
 
 static WRITE32_HANDLER(rso_w)
 {
-	UINT32 v;
+	uint32_t v;
 	offset *= 2;
 	v = (rsoSharedRAM[offset]<<16)|rsoSharedRAM[offset+1];
 	COMBINE_DATA( &v );

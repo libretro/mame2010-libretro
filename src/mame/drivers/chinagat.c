@@ -224,7 +224,7 @@ static WRITE8_DEVICE_HANDLER( saiyugoub1_adpcm_control_w )
 	ddragon_state *state = (ddragon_state *)device->machine->driver_data;
 
 	/* i8748 Port 2 write */
-	UINT8 *saiyugoub1_adpcm_rom = memory_region(device->machine, "adpcm");
+	uint8_t *saiyugoub1_adpcm_rom = memory_region(device->machine, "adpcm");
 
 	if (data & 0x80)	/* Reset m5205 and disable ADPCM ROM outputs */
 	{
@@ -924,8 +924,8 @@ ROM_END
 static DRIVER_INIT( chinagat )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
-	UINT8 *MAIN = memory_region(machine, "maincpu");
-	UINT8 *SUB = memory_region(machine, "sub");
+	uint8_t *MAIN = memory_region(machine, "maincpu");
+	uint8_t *SUB = memory_region(machine, "sub");
 
 	state->technos_video_hw = 1;
 	state->sprite_irq = M6809_IRQ_LINE;

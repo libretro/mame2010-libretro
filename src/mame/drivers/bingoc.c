@@ -59,7 +59,7 @@ static READ16_HANDLER( bingoc_rand_r )
 */
 static READ8_HANDLER( sound_test_r )
 {
-	static UINT8 x;
+	static uint8_t x;
 
 	if(input_code_pressed_once(space->machine, KEYCODE_Z))
 		x++;
@@ -87,7 +87,7 @@ static WRITE8_DEVICE_HANDLER( bingoc_play_w )
     ---- --x- sound rom banking
     ---- ---x start-stop sample
     */
-	UINT8 *upd = memory_region(device->machine, "upd");
+	uint8_t *upd = memory_region(device->machine, "upd");
 	memcpy(&upd[0x00000], &upd[0x20000 + (((data & 2)>>1) * 0x20000)], 0x20000);
 	upd7759_start_w(device, data & 1);
 //  printf("%02x\n",data);

@@ -175,8 +175,8 @@ Cisco Heat.
 #include "includes/megasys1.h"
 #include "includes/cischeat.h"
 
-static UINT16 *rom_1, *rom_2, *rom_3;
-static UINT16 *sharedram1, *sharedram2;
+static uint16_t *rom_1, *rom_2, *rom_3;
+static uint16_t *sharedram1, *sharedram2;
 
 
 
@@ -205,7 +205,7 @@ static READ16_HANDLER( rom_3_r ) {return rom_3[offset];}
 
 static WRITE16_HANDLER( bigrun_paletteram16_w )
 {
-	UINT16 word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
+	uint16_t word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 	int r = pal5bit(((word >> 11) & 0x1E ) | ((word >> 3) & 0x01));
 	int g = pal5bit(((word >> 7 ) & 0x1E ) | ((word >> 2) & 0x01));
 	int b = pal5bit(((word >> 3 ) & 0x1E ) | ((word >> 1) & 0x01));
@@ -258,7 +258,7 @@ ADDRESS_MAP_END
 
 static WRITE16_HANDLER( cischeat_paletteram16_w )
 {
-	UINT16 word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
+	uint16_t word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 	int r = pal5bit(((word >> 11) & 0x1E ) | ((word >> 3) & 0x01));
 	int g = pal5bit(((word >> 7 ) & 0x1E ) | ((word >> 2) & 0x01));
 	int b = pal5bit(((word >> 3 ) & 0x1E ) | ((word >> 1) & 0x01));
@@ -310,7 +310,7 @@ ADDRESS_MAP_END
 
 static WRITE16_HANDLER( f1gpstar_paletteram16_w )
 {
-	UINT16 word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
+	uint16_t word = COMBINE_DATA(&space->machine->generic.paletteram.u16[offset]);
 	int r = pal5bit(((word >> 11) & 0x1E ) | ((word >> 3) & 0x01));
 	int g = pal5bit(((word >> 7 ) & 0x1E ) | ((word >> 2) & 0x01));
 	int b = pal5bit(((word >> 3 ) & 0x1E ) | ((word >> 1) & 0x01));
@@ -405,7 +405,7 @@ static WRITE16_HANDLER( scudhamm_paletteram16_w )
 }
 
 
-UINT16 scudhamm_motor_command;
+uint16_t scudhamm_motor_command;
 
 /*  Motor Status.
 
@@ -553,7 +553,7 @@ static READ16_HANDLER( armchmp2_buttons_r )
 {
 	int arm_x = input_port_read(space->machine, "IN1");
 
-	UINT16 ret = input_port_read(space->machine, "IN0");
+	uint16_t ret = input_port_read(space->machine, "IN0");
 
 	if (arm_x < 0x40)		ret &= ~1;
 	else if (arm_x > 0xc0)	ret &= ~2;
@@ -1458,7 +1458,7 @@ static const gfx_layout tiles_16x16_quad =
 	16*16*4
 };
 
-static const UINT32 road_layout_xoffset[64] =
+static const uint32_t road_layout_xoffset[64] =
 {
 	STEP16(16*4*0,4),STEP16(16*4*1,4),
 	STEP16(16*4*2,4),STEP16(16*4*3,4)
@@ -1796,12 +1796,12 @@ MACHINE_DRIVER_END
 */
 static void cischeat_untangle_sprites(running_machine *machine, const char *region)
 {
-	UINT8		*src = memory_region(machine, region);
-	const UINT8	*end = src + memory_region_length(machine, region);
+	uint8_t		*src = memory_region(machine, region);
+	const uint8_t	*end = src + memory_region_length(machine, region);
 
 	while (src < end)
 	{
-		UINT8 sprite[16*8];
+		uint8_t sprite[16*8];
 		int i;
 
 		for (i = 0; i < 16 ; i++)
@@ -1950,7 +1950,7 @@ ROM_END
 static DRIVER_INIT( bigrun )
 {
 	/* Split ROMs */
-	rom_1 = (UINT16 *) memory_region(machine, "user1");
+	rom_1 = (uint16_t *) memory_region(machine, "user1");
 
 	cischeat_untangle_sprites(machine, "gfx4");	// Untangle sprites
 	phantasm_rom_decode(machine, "soundcpu");					// Decrypt sound cpu code
@@ -2072,17 +2072,17 @@ ROM_END
 static DRIVER_INIT( cischeat )
 {
 	/* Split ROMs */
-	rom_1 = (UINT16 *) (memory_region(machine, "user1") + 0x00000);
-	rom_2 = (UINT16 *) (memory_region(machine, "cpu2")  + 0x40000);
-	rom_3 = (UINT16 *) (memory_region(machine, "cpu3")  + 0x40000);
+	rom_1 = (uint16_t *) (memory_region(machine, "user1") + 0x00000);
+	rom_2 = (uint16_t *) (memory_region(machine, "cpu2")  + 0x40000);
+	rom_3 = (uint16_t *) (memory_region(machine, "cpu3")  + 0x40000);
 
 	memcpy(memory_region(machine, "user1") + 0x80000, rom_2, 0x40000);
 	memset(rom_2, 0, 0x40000);
-	rom_2 = (UINT16 *) (memory_region(machine, "user1") + 0x80000);
+	rom_2 = (uint16_t *) (memory_region(machine, "user1") + 0x80000);
 
 	memcpy(memory_region(machine, "user1") + 0xc0000, rom_3, 0x40000);
 	memset(rom_3, 0, 0x40000);
-	rom_3 = (UINT16 *) (memory_region(machine, "user1") + 0xc0000);
+	rom_3 = (uint16_t *) (memory_region(machine, "user1") + 0xc0000);
 
 	cischeat_untangle_sprites(machine, "gfx4");	// Untangle sprites
 	astyanax_rom_decode(machine, "soundcpu");					// Decrypt sound cpu code
@@ -2299,7 +2299,7 @@ ROM_END
 static DRIVER_INIT( f1gpstar )
 {
 	/* Split ROMs */
-	rom_1 = (UINT16 *) memory_region(machine, "user1");
+	rom_1 = (uint16_t *) memory_region(machine, "user1");
 
 	cischeat_untangle_sprites(machine, "gfx4");
 }

@@ -186,7 +186,7 @@ static const char *const gunnames[] = { "LIGHT0_X", "LIGHT0_Y", "LIGHT1_X", "LIG
 
 /* Default Eeprom for the parent.. otherwise it will always complain first boot */
 /* its easy to init but this saves me a bit of time.. */
-static const UINT8 lethalen_default_eeprom[48] = {
+static const uint8_t lethalen_default_eeprom[48] = {
 	0x02, 0x1E, 0x00, 0x00, 0x39, 0x31, 0x39, 0x31, 0x55, 0x45, 0x77, 0x00, 0x00, 0x00, 0x00, 0x01,
 	0x02, 0x01, 0x00, 0x03, 0x05, 0x01, 0x01, 0x02, 0x28, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
@@ -580,12 +580,12 @@ static const k054539_interface k054539_config =
 static MACHINE_START( lethalen )
 {
 	lethal_state *state = (lethal_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 0x20, &ROM[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
-	machine->generic.paletteram.u8 = auto_alloc_array(machine, UINT8, 0x3800 + 0x02);
+	machine->generic.paletteram.u8 = auto_alloc_array(machine, uint8_t, 0x3800 + 0x02);
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("soundcpu");
@@ -604,7 +604,7 @@ static MACHINE_START( lethalen )
 static MACHINE_RESET( lethalen )
 {
 	lethal_state *state = (lethal_state *)machine->driver_data;
-	UINT8 *prgrom = (UINT8 *)memory_region(machine, "maincpu");
+	uint8_t *prgrom = (uint8_t *)memory_region(machine, "maincpu");
 	int i;
 
 	memory_set_bankptr(machine, "bank2", &prgrom[0x48000]);

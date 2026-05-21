@@ -524,16 +524,16 @@
  *
  *************************************/
 
-static UINT8 blitter_int;
-static UINT8 tms34061_int;
-static UINT8 periodic_int;
+static uint8_t blitter_int;
+static uint8_t tms34061_int;
+static uint8_t periodic_int;
 
-static UINT8 sound_data;
+static uint8_t sound_data;
 
-static UINT8 pia_porta_data;
-static UINT8 pia_portb_data;
+static uint8_t pia_porta_data;
+static uint8_t pia_portb_data;
 
-static UINT8 *main_ram;
+static uint8_t *main_ram;
 static size_t main_ram_size;
 
 static const rectangle *visarea;

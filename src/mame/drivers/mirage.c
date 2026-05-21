@@ -51,14 +51,14 @@ public:
 		  oki_bgm(machine.device<okim6295_device>("oki_bgm")) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT16 *  spriteram;
-//  UINT16 *  paletteram;    // currently this uses generic palette handling (in deco16ic.c)
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint16_t *  spriteram;
+//  uint16_t *  paletteram;    // currently this uses generic palette handling (in deco16ic.c)
 	size_t    spriteram_size;
 
 	/* misc */
-	UINT32 mux_data;
+	uint32_t mux_data;
 
 	/* devices */
 	cpu_device *maincpu;
@@ -71,7 +71,7 @@ public:
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int pri )
 {
 	mirage_state *state = (mirage_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0; offs < 0x400; offs += 4)
@@ -144,7 +144,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 static VIDEO_UPDATE( mirage )
 {
 	mirage_state *state = (mirage_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

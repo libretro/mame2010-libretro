@@ -28,12 +28,12 @@ public:
 	boxer_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 * tile_ram;
-	UINT8 * sprite_ram;
+	uint8_t * tile_ram;
+	uint8_t * sprite_ram;
 
 	/* misc */
-	UINT8 pot_state;
-	UINT8 pot_latch;
+	uint8_t pot_state;
+	uint8_t pot_latch;
 
 	/* devices */
 	running_device *maincpu;
@@ -66,7 +66,7 @@ static TIMER_CALLBACK( periodic_callback )
 
 	if (scanline == 0)
 	{
-		UINT8 mask[256];
+		uint8_t mask[256];
 
 		int i;
 
@@ -117,7 +117,7 @@ static void draw_boxer( running_machine *machine, bitmap_t* bitmap, const rectan
 
 	for (n = 0; n < 2; n++)
 	{
-		const UINT8* p = memory_region(machine, n == 0 ? "user1" : "user2");
+		const uint8_t* p = memory_region(machine, n == 0 ? "user1" : "user2");
 
 		int i, j;
 
@@ -131,7 +131,7 @@ static void draw_boxer( running_machine *machine, bitmap_t* bitmap, const rectan
 		{
 			for (j = 0; j < 4; j++)
 			{
-				UINT8 code;
+				uint8_t code;
 
 				code = p[32 * l + 4 * i + j];
 
@@ -169,7 +169,7 @@ static VIDEO_UPDATE( boxer )
 	{
 		for (j = 0; j < 32; j++)
 		{
-			UINT8 code = state->tile_ram[32 * i + j];
+			uint8_t code = state->tile_ram[32 * i + j];
 
 			drawgfx_transpen(bitmap, cliprect,
 				screen->machine->gfx[2],
@@ -194,7 +194,7 @@ static VIDEO_UPDATE( boxer )
 
 static READ8_HANDLER( boxer_input_r )
 {
-	UINT8 val = input_port_read(space->machine, "IN0");
+	uint8_t val = input_port_read(space->machine, "IN0");
 
 	if (input_port_read(space->machine, "IN3") < space->machine->primary_screen->vpos())
 		val |= 0x02;
@@ -206,7 +206,7 @@ static READ8_HANDLER( boxer_input_r )
 static READ8_HANDLER( boxer_misc_r )
 {
 	boxer_state *state = (boxer_state *)space->machine->driver_data;
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	switch (offset & 3)
 	{

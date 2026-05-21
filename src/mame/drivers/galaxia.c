@@ -27,8 +27,8 @@ TS 2008.08.12:
 #include "video/s2636.h"
 #include "cpu/s2650/s2650.h"
 
-static UINT8 *galaxia_video;
-static UINT8 *galaxia_color;
+static uint8_t *galaxia_video;
+static uint8_t *galaxia_color;
 
 static VIDEO_UPDATE( galaxia )
 {
@@ -331,7 +331,7 @@ ROM_END
 
 static DRIVER_INIT(galaxia)
 {
-	galaxia_color=auto_alloc_array(machine, UINT8, 0x400);
+	galaxia_color=auto_alloc_array(machine, uint8_t, 0x400);
 }
 
 GAME( 1979, galaxia, 0, galaxia, galaxia, galaxia, ROT90, "Zaccaria", "Galaxia", GAME_NOT_WORKING|GAME_NO_SOUND )

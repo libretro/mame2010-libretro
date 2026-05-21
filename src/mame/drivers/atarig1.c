@@ -192,7 +192,7 @@ static void pitfightb_cheap_slapstic_init(running_machine *machine)
 	state->bslapstic_base = memory_install_read16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x038000, 0x03ffff, 0, 0, pitfightb_cheap_slapstic_r);
 
 	/* allocate memory for a copy of bank 0 */
-	state->bslapstic_bank0 = auto_alloc_array(machine, UINT8, 0x2000);
+	state->bslapstic_bank0 = auto_alloc_array(machine, uint8_t, 0x2000);
 	memcpy(state->bslapstic_bank0, state->bslapstic_base, 0x2000);
 
 	/* not primed by default */

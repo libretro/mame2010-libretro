@@ -54,8 +54,8 @@ To Do:
 static WRITE16_HANDLER( fuuki16_vregs_w )
 {
 	fuuki16_state *state = (fuuki16_state *)space->machine->driver_data;
-	UINT16 old_data = state->vregs[offset];
-	UINT16 new_data = COMBINE_DATA(&state->vregs[offset]);
+	uint16_t old_data = state->vregs[offset];
+	uint16_t new_data = COMBINE_DATA(&state->vregs[offset]);
 	if ((offset == 0x1c/2) && old_data != new_data)
 	{
 		const rectangle &visarea = space->machine->primary_screen->visible_area();
@@ -425,7 +425,7 @@ static TIMER_CALLBACK( raster_interrupt_callback )
 static MACHINE_START( fuuki16 )
 {
 	fuuki16_state *state = (fuuki16_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 3, &ROM[0x10000], 0x8000);
 

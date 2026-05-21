@@ -56,8 +56,8 @@ public:
 		  mos6560(machine.device("mos6560")) { }
 
 	/* memory pointers */
-	UINT8 *      mainram;
-	UINT8 *      tileram;
+	uint8_t *      mainram;
+	uint8_t *      tileram;
 
 	/* devices */
 	cpu_device *maincpu;

@@ -235,10 +235,10 @@ Hang Pilot (uses an unknown but similar video board)                12W         
 
 #include "rendlay.h"
 
-static UINT32 *work_ram;
+static uint32_t *work_ram;
 
-UINT8 gticlub_led_reg0;
-UINT8 gticlub_led_reg1;
+uint8_t gticlub_led_reg0;
+uint8_t gticlub_led_reg1;
 
 
 static WRITE32_HANDLER( paletteram32_w )
@@ -369,8 +369,8 @@ static READ8_HANDLER( sysreg_r )
 			// a = ADC readout
 			// e = EEPROM data out
 
-			UINT32 eeprom_bit = (eeprom_read_bit(eeprom) << 1);
-			UINT32 adc_bit = (adc1038_do_read(adc1038) << 2);
+			uint32_t eeprom_bit = (eeprom_read_bit(eeprom) << 1);
+			uint32_t adc_bit = (adc1038_do_read(adc1038) << 2);
 			return (eeprom_bit | adc_bit);
 		}
 
@@ -462,8 +462,8 @@ ADDRESS_MAP_END
 
 /*****************************************************************************/
 
-static UINT32 *sharc_dataram_0;
-static UINT32 *sharc_dataram_1;
+static uint32_t *sharc_dataram_0;
+static uint32_t *sharc_dataram_1;
 
 static READ32_HANDLER( dsp_dataram0_r )
 {
@@ -1185,7 +1185,7 @@ static DRIVER_INIT(gticlub)
 {
 	init_konami_cgboard(machine, 1, CGBOARD_TYPE_GTICLUB);
 
-	sharc_dataram_0 = auto_alloc_array(machine, UINT32, 0x100000/4);
+	sharc_dataram_0 = auto_alloc_array(machine, uint32_t, 0x100000/4);
 	gticlub_led_reg0 = gticlub_led_reg1 = 0x7f;
 
 	K001005_preprocess_texture_data(memory_region(machine, "gfx1"), memory_region_length(machine, "gfx1"), 1);
@@ -1197,8 +1197,8 @@ static DRIVER_INIT(hangplt)
 	set_cgboard_texture_bank(machine, 0, "bank5", memory_region(machine, "user5"));
 	set_cgboard_texture_bank(machine, 1, "bank6", memory_region(machine, "user5"));
 
-	sharc_dataram_0 = auto_alloc_array(machine, UINT32, 0x100000/4);
-	sharc_dataram_1 = auto_alloc_array(machine, UINT32, 0x100000/4);
+	sharc_dataram_0 = auto_alloc_array(machine, uint32_t, 0x100000/4);
+	sharc_dataram_1 = auto_alloc_array(machine, uint32_t, 0x100000/4);
 	gticlub_led_reg0 = gticlub_led_reg1 = 0x7f;
 }
 

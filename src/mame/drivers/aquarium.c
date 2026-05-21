@@ -62,7 +62,7 @@ Stephh's notes (based on the game M68000 code and some tests) :
 #if AQUARIUS_HACK
 static MACHINE_RESET( aquarium_hack )
 {
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	int data = input_port_read(machine, "FAKE");
 
 	/* Language : 0x0000 = Japanese - Other value = English */
@@ -104,9 +104,9 @@ static WRITE8_HANDLER( aquarium_z80_bank_w )
 	memory_set_bank(space->machine, "bank1", data & 0x07);
 }
 
-static UINT8 aquarium_snd_bitswap( UINT8 scrambled_data )
+static uint8_t aquarium_snd_bitswap( uint8_t scrambled_data )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	data |= ((scrambled_data & 0x01) << 7);
 	data |= ((scrambled_data & 0x02) << 5);
@@ -277,13 +277,13 @@ static const gfx_layout tilelayout =
 
 static DRIVER_INIT( aquarium )
 {
-	UINT8 *Z80 = memory_region(machine, "audiocpu");
+	uint8_t *Z80 = memory_region(machine, "audiocpu");
 
 	/* The BG tiles are 5bpp, this rearranges the data from
        the roms containing the 1bpp data so we can decode it
        correctly */
-	UINT8 *DAT2 = memory_region(machine, "gfx1") + 0x080000;
-	UINT8 *DAT = memory_region(machine, "user1");
+	uint8_t *DAT2 = memory_region(machine, "gfx1") + 0x080000;
+	uint8_t *DAT = memory_region(machine, "user1");
 	int len = 0x0200000;
 
 	for (len = 0; len < 0x020000; len++)

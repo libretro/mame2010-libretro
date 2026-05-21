@@ -37,7 +37,7 @@ Lower board (MGP_01):
 
 static int coordx=0;
 static int coordy=0;
-static UINT8 *vram;
+static uint8_t *vram;
 
 static int screenw=80;
 //static int output=0;
@@ -50,7 +50,7 @@ static PALETTE_INIT(monzagp)
 
 static VIDEO_START(monzagp)
 {
-	vram = auto_alloc_array(machine, UINT8, 0x10000);
+	vram = auto_alloc_array(machine, uint8_t, 0x10000);
 }
 
 static VIDEO_UPDATE(monzagp)

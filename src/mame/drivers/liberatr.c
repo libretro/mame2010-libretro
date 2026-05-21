@@ -142,8 +142,8 @@
 
 #define MASTER_CLOCK 20000000 /* 20Mhz Main Clock Xtal */
 
-static UINT8 trackball_offset;
-static UINT8 ctrld;
+static uint8_t trackball_offset;
+static uint8_t ctrld;
 
 
 
@@ -178,8 +178,8 @@ static WRITE8_HANDLER( liberatr_trackball_reset_w )
 	/* input becomes the starting point for the trackball counters */
 	if (((data ^ ctrld) & 0x10) && (data & 0x10))
 	{
-		UINT8 trackball = input_port_read(space->machine, "FAKE");
-		UINT8 switches = input_port_read(space->machine, "IN0");
+		uint8_t trackball = input_port_read(space->machine, "FAKE");
+		uint8_t switches = input_port_read(space->machine, "IN0");
 		trackball_offset = ((trackball & 0xf0) - (switches & 0xf0)) | ((trackball - switches) & 0x0f);
 	}
 	ctrld = data & 0x10;
@@ -191,7 +191,7 @@ static READ8_HANDLER( liberatr_input_port_0_r )
 	/* if ctrld is high, the /ld signal on the LS191 is NOT set, meaning that the trackball is counting */
 	if (ctrld)
 	{
-		UINT8 trackball = input_port_read(space->machine, "FAKE");
+		uint8_t trackball = input_port_read(space->machine, "FAKE");
 		return ((trackball & 0xf0) - (trackball_offset & 0xf0)) | ((trackball - trackball_offset) & 0x0f);
 	}
 

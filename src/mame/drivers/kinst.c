@@ -141,11 +141,11 @@ Notes:
 
 
 /* local variables */
-static UINT32 *rambase, *rambase2, *rombase;
-static UINT32 *video_base;
-static UINT32 *kinst_control;
+static uint32_t *rambase, *rambase2, *rombase;
+static uint32_t *video_base;
+static uint32_t *kinst_control;
 
-static const UINT8 *control_map;
+static const uint8_t *control_map;
 
 
 
@@ -158,7 +158,7 @@ static const UINT8 *control_map;
 static MACHINE_START( kinst )
 {
 	running_device *ide = machine->device("ide");
-	UINT8 *features = ide_get_features(ide);
+	uint8_t *features = ide_get_features(ide);
 
 	if (strncmp(machine->gamedrv->name, "kinst2", 6) != 0)
 	{
@@ -227,14 +227,14 @@ static VIDEO_UPDATE( kinst )
 	/* loop over rows and copy to the destination */
 	for (y = cliprect->min_y; y <= cliprect->max_y; y++)
 	{
-		UINT32 *src = &video_base[640/4 * y];
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
+		uint32_t *src = &video_base[640/4 * y];
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
 		int x;
 
 		/* loop over columns */
 		for (x = cliprect->min_x; x < cliprect->max_x; x += 2)
 		{
-			UINT32 data = *src++;
+			uint32_t data = *src++;
 
 			/* store two pixels */
 			*dest++ = (data >>  0) & 0x7fff;
@@ -311,7 +311,7 @@ static WRITE32_DEVICE_HANDLER( kinst_ide_extra_w )
 
 static READ32_HANDLER( kinst_control_r )
 {
-	UINT32 result;
+	uint32_t result;
 	static const char *const portnames[] = { "P1", "P2", "VOLUME", "UNUSED", "DSW" };
 
 	/* apply shuffling */
@@ -346,7 +346,7 @@ static READ32_HANDLER( kinst_control_r )
 
 static WRITE32_HANDLER( kinst_control_w )
 {
-	UINT32 olddata;
+	uint32_t olddata;
 
 	/* apply shuffling */
 	offset = control_map[offset / 2];
@@ -875,7 +875,7 @@ ROM_END
 
 static DRIVER_INIT( kinst )
 {
-	static const UINT8 kinst_control_map[8] = { 0,1,2,3,4,5,6,7 };
+	static const uint8_t kinst_control_map[8] = { 0,1,2,3,4,5,6,7 };
 
 	dcs_init(machine);
 
@@ -886,7 +886,7 @@ static DRIVER_INIT( kinst )
 
 static DRIVER_INIT( kinst2 )
 {
-	static const UINT8 kinst2_control_map[8] = { 2,4,1,0,3,5,6,7 };
+	static const uint8_t kinst2_control_map[8] = { 2,4,1,0,3,5,6,7 };
 
 	// read: $80 on ki2 = $90 on ki
 	// read: $88 on ki2 = $a0 on ki

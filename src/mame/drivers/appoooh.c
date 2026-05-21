@@ -177,7 +177,7 @@ static void appoooh_adpcm_int(running_device *device)
 	{
 		if (state->adpcm_data == 0xffffffff)
 		{
-			UINT8 *RAM = memory_region(device->machine, "adpcm");
+			uint8_t *RAM = memory_region(device->machine, "adpcm");
 
 			state->adpcm_data = RAM[state->adpcm_address++];
 			msm5205_data_w(device, state->adpcm_data >> 4);

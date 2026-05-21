@@ -66,7 +66,7 @@ PS4  J8635      PS4  J8541       PS4  J8648
 
 static READ8_DEVICE_HANDLER( kiki_ym2203_r )
 {
-	UINT8 result = ym2203_r(device, offset);
+	uint8_t result = ym2203_r(device, offset);
 
 	if (offset == 0)
 		result &= 0x7f;
@@ -422,7 +422,7 @@ static const ym2203_interface ym2203_config =
 static MACHINE_START( mexico86 )
 {
 	mexico86_state *state = (mexico86_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 6, &ROM[0x10000], 0x4000);
 

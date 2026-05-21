@@ -224,11 +224,11 @@
 
 
 /* local variables */
-static UINT8 exidy440_bank;
+static uint8_t exidy440_bank;
 
-static const UINT8 *showdown_bank_data[2];
-static INT8 showdown_bank_select;
-static UINT8 showdown_bank_offset;
+static const uint8_t *showdown_bank_data[2];
+static int8_t showdown_bank_select;
+static uint8_t showdown_bank_offset;
 
 static READ8_HANDLER( showdown_bank0_r );
 
@@ -242,7 +242,7 @@ static READ8_HANDLER( showdown_bank0_r );
 
 static NVRAM_HANDLER( exidy440 )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	if (read_or_write)
 		/* the EEROM lives in the uppermost 8k of the top bank */
 		mame_fwrite(file, &rom[0x10000 + 15 * 0x4000 + 0x2000], 0x2000);
@@ -292,7 +292,7 @@ static CUSTOM_INPUT( firq_vblank_r )
 static CUSTOM_INPUT( hitnmiss_button1_r )
 {
 	/* button 1 shows up in two bits */
-	UINT32 button1 = input_port_read(field->port->machine, "HITNMISS_BUTTON1");
+	uint32_t button1 = input_port_read(field->port->machine, "HITNMISS_BUTTON1");
 	return (button1 << 1) | button1;
 }
 
@@ -304,7 +304,7 @@ static CUSTOM_INPUT( hitnmiss_button1_r )
  *
  *************************************/
 
-void exidy440_bank_select(running_machine *machine, UINT8 bank)
+void exidy440_bank_select(running_machine *machine, uint8_t bank)
 {
 	/* for the showdown case, bank 0 is a PLD */
 	if (showdown_bank_data[0] != NULL)
@@ -403,7 +403,7 @@ static READ8_HANDLER( showdown_bank0_r )
 {
 	/* showdown relies on different values from different memory locations */
 	/* yukon relies on multiple reads from the same location returning different values */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	/* fetch the special data if a bank is selected */
 	if (showdown_bank_select >= 0)
@@ -1956,13 +1956,13 @@ static DRIVER_INIT( topsecex )
 
 static DRIVER_INIT( showdown )
 {
-	static const UINT8 bankdata0[0x18] =
+	static const uint8_t bankdata0[0x18] =
 	{
 		0x15,0x40,0xc1,0x8d,0x4c,0x84,0x0e,0xce,
 		0x52,0xd0,0x99,0x48,0x80,0x09,0xc9,0x45,
 		0xc4,0x8e,0x5a,0x92,0x18,0xd8,0x51,0xc0
 	};
-	static const UINT8 bankdata1[0x18] =
+	static const uint8_t bankdata1[0x18] =
 	{
 		0x11,0x51,0xc0,0x89,0x4d,0x85,0x0c,0xcc,
 		0x46,0xd2,0x98,0x59,0x91,0x08,0xc8,0x41,
@@ -1979,13 +1979,13 @@ static DRIVER_INIT( showdown )
 
 static DRIVER_INIT( yukon )
 {
-	static const UINT8 bankdata0[0x18] =
+	static const uint8_t bankdata0[0x18] =
 	{
 		0x31,0x40,0xc1,0x95,0x54,0x90,0x16,0xd6,
 		0x62,0xe0,0xa5,0x44,0x80,0x05,0xc5,0x51,
 		0xd0,0x96,0x66,0xa2,0x24,0xe4,0x61,0xc0
 	};
-	static const UINT8 bankdata1[0x18] =
+	static const uint8_t bankdata1[0x18] =
 	{
 		0x21,0x61,0xc0,0x85,0x55,0x91,0x14,0xd4,
 		0x52,0xe2,0xa4,0x65,0xa1,0x04,0xc4,0x41,

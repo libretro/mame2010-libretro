@@ -86,7 +86,7 @@ static READ8_DEVICE_HANDLER( ddribble_vlm5030_busy_r )
 static WRITE8_DEVICE_HANDLER( ddribble_vlm5030_ctrl_w )
 {
 	ddribble_state *state = (ddribble_state *)device->machine->driver_data;
-	UINT8 *SPEECH_ROM = memory_region(device->machine, "vlm");
+	uint8_t *SPEECH_ROM = memory_region(device->machine, "vlm");
 
 	/* b7 : vlm data bus OE   */
 
@@ -251,7 +251,7 @@ static const vlm5030_interface vlm5030_config =
 static MACHINE_START( ddribble )
 {
 	ddribble_state *state = (ddribble_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 5, &ROM[0x10000], 0x2000);
 
 	state->filter1 = machine->device("filter1");

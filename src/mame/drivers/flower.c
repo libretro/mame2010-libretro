@@ -75,8 +75,8 @@ CHIP #  POSITION   TYPE
 #include "deprecat.h"
 #include "includes/flower.h"
 
-static UINT8 *sn_irq_enable;
-static UINT8 *sn_nmi_enable;
+static uint8_t *sn_irq_enable;
+static uint8_t *sn_nmi_enable;
 
 static WRITE8_HANDLER( flower_irq_ack )
 {

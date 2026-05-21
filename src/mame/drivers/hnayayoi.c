@@ -681,7 +681,7 @@ ROM_END
 
 static DRIVER_INIT( hnfubuki )
 {
-	UINT8 *rom = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "gfx1");
 	int len = memory_region_length(machine, "gfx1");
 	int i, j;
 
@@ -692,7 +692,7 @@ static DRIVER_INIT( hnfubuki )
 	{
 		for (j = 0; j < 0x10; j++)
 		{
-			UINT8 t = rom[i + j + 0x10];
+			uint8_t t = rom[i + j + 0x10];
 			rom[i + j + 0x10] = rom[i + j + 0x20];
 			rom[i + j + 0x20] = t;
 		}

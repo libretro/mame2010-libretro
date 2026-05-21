@@ -214,9 +214,9 @@
 #include "../lh/bzone.lh"
 
 
-static UINT8 analog_data;
+static uint8_t analog_data;
 
-UINT8 rb_input_select;
+uint8_t rb_input_select;
 
 
 

@@ -13,8 +13,8 @@ public:
 	mogura_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *   tileram;
-	UINT8 *   gfxram;
+	uint8_t *   tileram;
+	uint8_t *   gfxram;
 
 	/* video-related */
 	tilemap_t *tilemap;

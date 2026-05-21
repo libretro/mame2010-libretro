@@ -15,13 +15,13 @@ TODO:
 #include "emu.h"
 #include "cpu/m6809/m6809.h"
 
-static UINT8 *io_ram;
+static uint8_t *io_ram;
 /*Temporary,to show something on screen...*/
 static char led_array[21];
 
 static VIDEO_START( deshoros )
 {
-	static UINT8 i;
+	static uint8_t i;
 	for(i=0;i<20;i++)
 		led_array[i] = 0x20;
 	led_array[20] = 0;
@@ -34,9 +34,9 @@ static VIDEO_UPDATE( deshoros )
 }
 
 /*I don't know it this is 100% correct,might be different...*/
-static void update_led_array(UINT8 new_data)
+static void update_led_array(uint8_t new_data)
 {
-	static UINT8 i;
+	static uint8_t i;
 	/*scroll the data*/
 	for(i=0;i<19;i++)
 		led_array[i] = led_array[i+1];
@@ -44,14 +44,14 @@ static void update_led_array(UINT8 new_data)
 	led_array[19] = new_data;
 }
 
-static UINT8 bank;
+static uint8_t bank;
 
-static void answer_bankswitch(running_machine *machine,UINT8 new_bank)
+static void answer_bankswitch(running_machine *machine,uint8_t new_bank)
 {
 	if(bank!=new_bank)
 	{
-		UINT8 *ROM = memory_region(machine, "data");
-		UINT32 bankaddress;
+		uint8_t *ROM = memory_region(machine, "data");
+		uint32_t bankaddress;
 
 		bank = new_bank;
 		bankaddress = 0 + 0x6000 * bank;

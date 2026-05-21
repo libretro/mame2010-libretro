@@ -125,18 +125,18 @@ public:
 	bigfghtr_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT16 *      text_videoram;
-	UINT16 *      bg_videoram;
-	UINT16 *      fg_videoram;
-	UINT16 *      sharedram;
-//  UINT16 *      spriteram;    // currently this uses generic buffer_spriteram_w
-//  UINT16 *      paletteram;   // currently this uses generic palette handling
+	uint16_t *      text_videoram;
+	uint16_t *      bg_videoram;
+	uint16_t *      fg_videoram;
+	uint16_t *      sharedram;
+//  uint16_t *      spriteram;    // currently this uses generic buffer_spriteram_w
+//  uint16_t *      paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t       *bg_tilemap, *fg_tilemap, *tx_tilemap;
-	UINT16        fg_scrollx, fg_scrolly;
-	UINT16        vreg;
-	UINT16        scroll_x, scroll_y;
+	uint16_t        fg_scrollx, fg_scrolly;
+	uint16_t        vreg;
+	uint16_t        scroll_x, scroll_y;
 
 	/* misc */
 	int           read_latch;
@@ -247,7 +247,7 @@ static WRITE16_HANDLER( bg_scrolly_w )
 
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int priority )
 {
-	UINT16 *buffered_spriteram = machine->generic.buffered_spriteram.u16;
+	uint16_t *buffered_spriteram = machine->generic.buffered_spriteram.u16;
 	int offs;
 	for (offs = 0; offs < machine->generic.spriteram_size / 2; offs += 4)
 	{
@@ -672,7 +672,7 @@ ROM_END
 static DRIVER_INIT( skyrobo )
 {
 	//RAM TESTS
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[0x2e822 / 2] = 0x4ef9;
 	RAM[0x2e824 / 2] = 0x0002;
 	RAM[0x2e826 / 2] = 0xe9ae;
@@ -682,7 +682,7 @@ static DRIVER_INIT( skyrobo )
 static DRIVER_INIT( bigfghtr )
 {
 	//RAM TESTS
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[0x2e8cc / 2] = 0x4ef9;
 	RAM[0x2e8ce / 2] = 0x0002;
 	RAM[0x2e8d0 / 2] = 0xea58;

@@ -57,8 +57,8 @@ static VIDEO_START( blackt96 )
 
 }
 
-static UINT16* blackt96_tilemapram;
-static UINT16* blackt96_tilemapram2;
+static uint16_t* blackt96_tilemapram;
+static uint16_t* blackt96_tilemapram2;
 
 static void draw_strip(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, int stripnum, int xbase, int ybase, int bg)
 {
@@ -71,9 +71,9 @@ static void draw_strip(running_machine *machine, bitmap_t *bitmap, const rectang
 
 	for (y=0;y<32;y++)
 	{
-		UINT16 tile = (blackt96_tilemapram2[count*2 + (base/2)+1]&0x3fff);
-		UINT16 flipx = (blackt96_tilemapram2[count*2 + (base/2)+1]&0x4000);
-		UINT16 colour = (blackt96_tilemapram2[count*2 + (base/2)]&0x00ff);
+		uint16_t tile = (blackt96_tilemapram2[count*2 + (base/2)+1]&0x3fff);
+		uint16_t flipx = (blackt96_tilemapram2[count*2 + (base/2)+1]&0x4000);
+		uint16_t colour = (blackt96_tilemapram2[count*2 + (base/2)]&0x00ff);
 
 		if (tile&0x2000)
 		{
@@ -135,7 +135,7 @@ static VIDEO_UPDATE( blackt96 )
 	{
 		for (y=0;y<32;y++)
 		{
-			UINT16 tile = (blackt96_tilemapram[count*2]&0x7ff)+0x800; // +0xc00 for korean text
+			uint16_t tile = (blackt96_tilemapram[count*2]&0x7ff)+0x800; // +0xc00 for korean text
 			drawgfx_transpen(bitmap,cliprect,gfx,tile,0,0,0,x*8,-16+y*8,0);
 			count++;
 		}

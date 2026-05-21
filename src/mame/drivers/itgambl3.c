@@ -62,7 +62,7 @@ static VIDEO_START( itgambl3 )
 static VIDEO_UPDATE( itgambl3 )
 {
 	int x,y,count;
-	const UINT8 *blit_ram = memory_region(screen->machine,"gfx1");
+	const uint8_t *blit_ram = memory_region(screen->machine,"gfx1");
 
 	if(input_code_pressed(screen->machine, KEYCODE_Z))
 		test_x++;
@@ -98,7 +98,7 @@ static VIDEO_UPDATE( itgambl3 )
 	{
 		for(x=0;x<test_x;x++)
 		{
-			UINT32 color;
+			uint32_t color;
 
 			color = (blit_ram[count] & 0xff)>>0;
 

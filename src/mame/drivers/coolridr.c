@@ -240,9 +240,9 @@ Note: This hardware appears to have been designed as a test-bed for a new RLE ba
 #include "deprecat.h"
 #include "sound/scsp.h"
 
-static UINT32* sysh1_workram_h,*framebuffer_vram, *h1_unk, *h1_charram, *h1_vram;
-static UINT32* sysh1_txt_blit;
-static UINT32* txt_vram;
+static uint32_t* sysh1_workram_h,*framebuffer_vram, *h1_unk, *h1_charram, *h1_vram;
+static uint32_t* sysh1_txt_blit;
+static uint32_t* txt_vram;
 static bitmap_t* temp_bitmap_sprites;
 
 /* video */
@@ -259,10 +259,10 @@ static VIDEO_UPDATE(coolridr)
 {
 	/* planes seems to basically be at 0x8000 and 0x28000... */
 	const gfx_element *gfx = screen->machine->gfx[2];
-	UINT32 count;
+	uint32_t count;
 	int y,x;
 	static int color;
-	static UINT32 test_offs = 0x2000;
+	static uint32_t test_offs = 0x2000;
 
 
 	if(input_code_pressed(screen->machine,KEYCODE_Z))
@@ -328,7 +328,7 @@ static READ32_HANDLER(sysh1_unk_r)
 	{
 		case 0x08/4:
 		{
-			static UINT8 vblank = 0;
+			static uint8_t vblank = 0;
 
 			vblank^=1;
 
@@ -392,10 +392,10 @@ CMD = ac90 PARAM = 0001 DATA = 03f40170
 /* this looks like an exotic I/O-based tilemap / sprite blitter, very unusual from Sega... */
 static WRITE32_HANDLER( sysh1_txt_blit_w )
 {
-	static UINT16 cmd,param;
-	static UINT32 dst_addr;
-	static UINT32 txt_buff[0x10],attr_buff[0x10];
-	static UINT8 txt_index,attr_index;
+	static uint16_t cmd,param;
+	static uint32_t dst_addr;
+	static uint32_t txt_buff[0x10],attr_buff[0x10];
+	static uint8_t txt_index,attr_index;
 
 	COMBINE_DATA(&sysh1_txt_blit[offset]);
 
@@ -422,7 +422,7 @@ static WRITE32_HANDLER( sysh1_txt_blit_w )
 
 				if(attr_index == 0xa)
 				{
-					static UINT16 x,y;
+					static uint16_t x,y;
 
 					y = (attr_buff[9] & 0x01f00000) >> 20;
 					x = (attr_buff[9] & 0x1f0) >> 4;
@@ -445,7 +445,7 @@ static WRITE32_HANDLER( sysh1_txt_blit_w )
 				}
 				if(attr_index == 0xc)
 				{
-					static UINT8 size;
+					static uint8_t size;
 
 					size = (attr_buff[6] / 4)+1;
 					for(txt_index = 0;txt_index < size; txt_index++)
@@ -457,7 +457,7 @@ static WRITE32_HANDLER( sysh1_txt_blit_w )
 			}
 			else if((cmd & 0xff) == 0x10)
 			{
-				static UINT32 clear_vram;
+				static uint32_t clear_vram;
 				for(clear_vram=0x3f40000;clear_vram < 0x3f4ffff;clear_vram+=4)
 					memory_write_dword(space,(clear_vram),0x00000000);
 			}
@@ -485,10 +485,10 @@ static WRITE32_HANDLER( sysh1_pal_w )
 
 
 /* FIXME: this seems to do a hell lot of stuff, it's not ST-V SCU but still somewhat complex :/ */
-static void sysh1_dma_transfer( const address_space *space, UINT16 dma_index )
+static void sysh1_dma_transfer( const address_space *space, uint16_t dma_index )
 {
-	static UINT32 src,dst,size,type,s_i;
-	static UINT8 end_dma_mark;
+	static uint32_t src,dst,size,type,s_i;
+	static uint8_t end_dma_mark;
 
 	end_dma_mark = 0;
 
@@ -576,7 +576,7 @@ static WRITE32_HANDLER( sysh1_char_w )
 	COMBINE_DATA(&h1_charram[offset]);
 
 	{
-		UINT8 *gfx = memory_region(space->machine, "ram_gfx");
+		uint8_t *gfx = memory_region(space->machine, "ram_gfx");
 
 		gfx[offset*4+0] = (h1_charram[offset] & 0xff000000) >> 24;
 		gfx[offset*4+1] = (h1_charram[offset] & 0x00ff0000) >> 16;

@@ -52,20 +52,20 @@ public:
 	galaxi_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  bg1_ram;
-	UINT16 *  bg2_ram;
-	UINT16 *  bg3_ram;
-	UINT16 *  bg4_ram;
-	UINT16 *  fg_ram;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
-//  UINT16 *  nvram;        // currently this uses generic nvram handling
+	uint16_t *  bg1_ram;
+	uint16_t *  bg2_ram;
+	uint16_t *  bg3_ram;
+	uint16_t *  bg4_ram;
+	uint16_t *  fg_ram;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
+//  uint16_t *  nvram;        // currently this uses generic nvram handling
 
 	/* video-related */
 	tilemap_t   *bg1_tmap, *bg2_tmap, *bg3_tmap, *bg4_tmap, *fg_tmap;
 
 	/* misc */
 	int       hopper, ticket;
-	UINT16    out[3];
+	uint16_t    out[3];
 };
 
 
@@ -76,35 +76,35 @@ public:
 static TILE_GET_INFO( get_bg1_tile_info )
 {
 	galaxi_state *state = (galaxi_state *)machine->driver_data;
-	UINT16 code = state->bg1_ram[tile_index];
+	uint16_t code = state->bg1_ram[tile_index];
 	SET_TILE_INFO(0, code, 0x10 + (code >> 12), 0);
 }
 
 static TILE_GET_INFO( get_bg2_tile_info )
 {
 	galaxi_state *state = (galaxi_state *)machine->driver_data;
-	UINT16 code = state->bg2_ram[tile_index];
+	uint16_t code = state->bg2_ram[tile_index];
 	SET_TILE_INFO(0, code, 0x10 + (code >> 12), 0);
 }
 
 static TILE_GET_INFO( get_bg3_tile_info )
 {
 	galaxi_state *state = (galaxi_state *)machine->driver_data;
-	UINT16 code = state->bg3_ram[tile_index];
+	uint16_t code = state->bg3_ram[tile_index];
 	SET_TILE_INFO(0, code, (code >> 12), 0);
 }
 
 static TILE_GET_INFO( get_bg4_tile_info )
 {
 	galaxi_state *state = (galaxi_state *)machine->driver_data;
-	UINT16 code = state->bg4_ram[tile_index];
+	uint16_t code = state->bg4_ram[tile_index];
 	SET_TILE_INFO(0, code, (code >> 12), 0);
 }
 
 static TILE_GET_INFO( get_fg_tile_info )
 {
 	galaxi_state *state = (galaxi_state *)machine->driver_data;
-	UINT16 code = state->fg_ram[tile_index];
+	uint16_t code = state->fg_ram[tile_index];
 	SET_TILE_INFO(1, code, 0x20 + (code >> 12), 0);
 }
 

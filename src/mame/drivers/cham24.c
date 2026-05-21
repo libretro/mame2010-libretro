@@ -60,8 +60,8 @@ Notes:
 #include "sound/nes_apu.h"
 #include "video/ppu2c0x.h"
 
-static UINT8* nt_ram;
-static UINT8* nt_page[4];
+static uint8_t* nt_ram;
+static uint8_t* nt_page[4];
 
 static void cham24_set_mirroring( int mirroring )
 {
@@ -129,10 +129,10 @@ static WRITE8_DEVICE_HANDLER( psg_4017_w )
 	nes_psg_w(device,0x17, data);
 }
 
-static UINT32 in_0;
-static UINT32 in_1;
-static UINT32 in_0_shift;
-static UINT32 in_1_shift;
+static uint32_t in_0;
+static uint32_t in_1;
+static uint32_t in_0_shift;
+static uint32_t in_1_shift;
 
 static READ8_HANDLER( cham24_IN0_r )
 {
@@ -166,14 +166,14 @@ static READ8_HANDLER( cham24_IN1_r )
 
 static WRITE8_HANDLER( cham24_mapper_w )
 {
-	UINT32 gfx_bank = offset & 0x3f;
-	UINT32 prg_16k_bank_page = (offset >> 6) & 0x01;
-	UINT32 prg_bank = (offset >> 7) & 0x1f;
-	UINT32 prg_bank_page_size = (offset >> 12) & 0x01;
-	UINT32 gfx_mirroring = (offset >> 13) & 0x01;
+	uint32_t gfx_bank = offset & 0x3f;
+	uint32_t prg_16k_bank_page = (offset >> 6) & 0x01;
+	uint32_t prg_bank = (offset >> 7) & 0x1f;
+	uint32_t prg_bank_page_size = (offset >> 12) & 0x01;
+	uint32_t gfx_mirroring = (offset >> 13) & 0x01;
 
-	UINT8* dst = memory_region(space->machine, "maincpu");
-	UINT8* src = memory_region(space->machine, "user1");
+	uint8_t* dst = memory_region(space->machine, "maincpu");
+	uint8_t* src = memory_region(space->machine, "user1");
 
 	// switch PPU VROM bank
 	memory_set_bankptr(space->machine, "bank1", memory_region(space->machine, "gfx1") + (0x2000 * gfx_bank));
@@ -280,8 +280,8 @@ static VIDEO_UPDATE( cham24 )
 static MACHINE_START( cham24 )
 {
 	/* switch PRG rom */
-	UINT8* dst = memory_region(machine, "maincpu");
-	UINT8* src = memory_region(machine, "user1");
+	uint8_t* dst = memory_region(machine, "maincpu");
+	uint8_t* src = memory_region(machine, "user1");
 
 	memcpy(&dst[0x8000], &src[0x0f8000], 0x4000);
 	memcpy(&dst[0xc000], &src[0x0f8000], 0x4000);
@@ -291,7 +291,7 @@ static MACHINE_START( cham24 )
 	memory_set_bankptr(machine, "bank1", memory_region(machine, "gfx1"));
 
 	/* need nametable ram, though. I doubt this uses more than 2k, but it starts up configured for 4 */
-	nt_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	nt_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 	nt_page[0] = nt_ram;
 	nt_page[1] = nt_ram + 0x400;
 	nt_page[2] = nt_ram + 0x800;

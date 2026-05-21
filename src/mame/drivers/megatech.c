@@ -99,7 +99,7 @@ Sonic Hedgehog 2           171-6215A   837-6963-62       610-0239-62         MPR
 static struct _mtech_bios mtech_bios;
 
 /* Megatech BIOS specific */
-static UINT8* megatech_banked_ram;
+static uint8_t* megatech_banked_ram;
 
 #define MASTER_CLOCK		53693100
 
@@ -234,7 +234,7 @@ INPUT_PORTS_END
 
 static READ8_HANDLER( megatech_instr_r )
 {
-	UINT8* instr = memory_region(space->machine, "mtbios") + 0x8000;
+	uint8_t* instr = memory_region(space->machine, "mtbios") + 0x8000;
 
 	return instr[offset / 2];
 //  else
@@ -263,8 +263,8 @@ READ8_HANDLER( md_sms_ioport_dd_r )
 
 static void megatech_select_game(running_machine *machine, int gameno)
 {
-	UINT8* game_region;
-	UINT8* bios_region;
+	uint8_t* game_region;
+	uint8_t* bios_region;
 	char tempname[20];
 
 	//printf("game 0 selected\n");
@@ -476,7 +476,7 @@ ADDRESS_MAP_END
 
 static DRIVER_INIT(mtnew)
 {
-	megatech_banked_ram = auto_alloc_array(machine, UINT8, 0x1000*8);
+	megatech_banked_ram = auto_alloc_array(machine, uint8_t, 0x1000*8);
 	DRIVER_INIT_CALL(megadriv);
 	DRIVER_INIT_CALL(megatech_bios);
 }

@@ -75,13 +75,13 @@
  *
  *************************************/
 
-static UINT8 aimpos[2];
-static UINT8 trackball_old[2];
+static uint8_t aimpos[2];
+static uint8_t trackball_old[2];
 
-static UINT8 master_sound_latch;
-static UINT8 slave_sound_latch;
-static UINT8 sound_control;
-static UINT8 dac_value[2];
+static uint8_t master_sound_latch;
+static uint8_t slave_sound_latch;
+static uint8_t sound_control;
+static uint8_t dac_value[2];
 
 
 
@@ -110,15 +110,15 @@ static READ16_HANDLER( exterm_host_data_r )
  *
  *************************************/
 
-static UINT16 exterm_trackball_port_r(const address_space *space, int which, UINT16 mem_mask)
+static uint16_t exterm_trackball_port_r(const address_space *space, int which, uint16_t mem_mask)
 {
-	UINT16 port;
+	uint16_t port;
 
 	/* Read the fake input port */
-	UINT8 trackball_pos = input_port_read(space->machine, which ? "DIAL1" : "DIAL0");
+	uint8_t trackball_pos = input_port_read(space->machine, which ? "DIAL1" : "DIAL0");
 
 	/* Calculate the change from the last position. */
-	UINT8 trackball_diff = trackball_old[which] - trackball_pos;
+	uint8_t trackball_diff = trackball_old[which] - trackball_pos;
 
 	/* Store the new position for the next comparision. */
 	trackball_old[which] = trackball_pos;
@@ -159,7 +159,7 @@ static READ16_HANDLER( exterm_input_port_1_r )
 static WRITE16_HANDLER( exterm_output_port_0_w )
 {
 	/* All the outputs are activated on the rising edge */
-	static UINT16 last = 0;
+	static uint16_t last = 0;
 
 	if (ACCESSING_BITS_0_7)
 	{

@@ -66,12 +66,12 @@ public:
 	m79amb_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
-	UINT8 *        mask;
+	uint8_t *        videoram;
+	uint8_t *        mask;
 
 	/* misc */
-	UINT8 lut_gun1[0x100];
-	UINT8 lut_gun2[0x100];
+	uint8_t lut_gun1[0x100];
+	uint8_t lut_gun2[0x100];
 };
 
 
@@ -90,7 +90,7 @@ static VIDEO_UPDATE( ramtek )
 	{
 		int i;
 
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 		int y = offs >> 5;
 		int x = (offs & 0x1f) << 3;
 
@@ -111,8 +111,8 @@ static VIDEO_UPDATE( ramtek )
 static READ8_HANDLER( gray5bit_controller0_r )
 {
 	m79amb_state *state = (m79amb_state *)space->machine->driver_data;
-	UINT8 port_data = input_port_read(space->machine, "8004");
-	UINT8 gun_pos = input_port_read(space->machine, "GUN1");
+	uint8_t port_data = input_port_read(space->machine, "8004");
+	uint8_t gun_pos = input_port_read(space->machine, "GUN1");
 
 	return (port_data & 0xe0) | state->lut_gun1[gun_pos];
 }
@@ -120,8 +120,8 @@ static READ8_HANDLER( gray5bit_controller0_r )
 static READ8_HANDLER( gray5bit_controller1_r )
 {
 	m79amb_state *state = (m79amb_state *)space->machine->driver_data;
-	UINT8 port_data = input_port_read(space->machine, "8005");
-	UINT8 gun_pos = input_port_read(space->machine, "GUN2");
+	uint8_t port_data = input_port_read(space->machine, "8005");
+	uint8_t gun_pos = input_port_read(space->machine, "GUN2");
 
 	return (port_data & 0xe0) | state->lut_gun2[gun_pos];
 }
@@ -275,14 +275,14 @@ ROM_END
     181.6, 199.9, 205.4, 211.9, 223.5, 232.4, 254.0, 254.0
 */
 
-static const UINT8 lut_cross[0x20] = {
+static const uint8_t lut_cross[0x20] = {
      19,    20,    21,    23,    25,    27,    29,    37,
      45,    53,    66,    82,    88,    95,   105,   111,
     118,   130,   142,   149,   158,   165,   170,   177,
     191,   203,   209,   218,   228,   243,   249,   255,
 };
 
-static const UINT8 lut_pos[0x20] = {
+static const uint8_t lut_pos[0x20] = {
     0x1f,  0x1e,  0x1c,  0x1d,  0x19,  0x18,  0x1a,  0x1b,
     0x13,  0x12,  0x10,  0x11,  0x15,  0x14,  0x16,  0x17,
     0x07,  0x06,  0x04,  0x05,  0x01,  0x00,  0x02,  0x03,
@@ -293,7 +293,7 @@ static const UINT8 lut_pos[0x20] = {
 static DRIVER_INIT( m79amb )
 {
 	m79amb_state *state = (m79amb_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i, j;
 
 	/* PROM data is active low */

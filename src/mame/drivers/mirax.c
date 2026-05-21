@@ -73,10 +73,10 @@ The End
 #include "deprecat.h"
 #include "sound/ay8910.h"
 
-static UINT8 nAyCtrl, nAyData;
-static UINT8 nmi_mask;
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t nAyCtrl, nAyData;
+static uint8_t nmi_mask;
+static uint8_t *videoram;
+static uint8_t *colorram;
 
 static VIDEO_START(mirax)
 {
@@ -84,7 +84,7 @@ static VIDEO_START(mirax)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int count;
 
 	for(count=0;count<0x200;count+=4)
@@ -471,8 +471,8 @@ ROM_END
 
 static DRIVER_INIT( mirax )
 {
-	UINT8 *DATA = memory_region(machine, "data_code");
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *DATA = memory_region(machine, "data_code");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int i;
 
 	for(i=0x0000;i<0x4000;i++)

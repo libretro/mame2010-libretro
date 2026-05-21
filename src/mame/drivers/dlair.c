@@ -66,12 +66,12 @@
  *************************************/
 
 static laserdisc_device *laserdisc;
-static UINT8 last_misc;
+static uint8_t last_misc;
 
-static UINT8 laserdisc_type;
-static UINT8 laserdisc_data;
+static uint8_t laserdisc_type;
+static uint8_t laserdisc_data;
 
-static const UINT8 led_map[16] =
+static const uint8_t led_map[16] =
 	{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67,0x77,0x7c,0x39,0x5e,0x79,0x00 };
 
 
@@ -167,7 +167,7 @@ static VIDEO_UPDATE( dleuro )
 	for (y = 0; y < 32; y++)
 		for (x = 0; x < 32; x++)
 		{
-			UINT8 *base = &screen->machine->generic.videoram.u8[y * 64 + x * 2 + 1];
+			uint8_t *base = &screen->machine->generic.videoram.u8[y * 64 + x * 2 + 1];
 			drawgfx_opaque(bitmap, cliprect, screen->machine->gfx[0], base[0], base[1], 0, 0, 10 * x, 16 * y);
 		}
 
@@ -235,7 +235,7 @@ static WRITE8_HANDLER( misc_w )
            D6 = ENTER
            D7 = INT/EXT
     */
-	UINT8 diff = data ^ last_misc;
+	uint8_t diff = data ^ last_misc;
 	last_misc = data;
 
 	coin_counter_w(space->machine, 0, (~data >> 4) & 1);
@@ -261,7 +261,7 @@ static WRITE8_HANDLER( dleuro_misc_w )
            D6 = ENTER
            D7 = INT/EXT
     */
-	UINT8 diff = data ^ last_misc;
+	uint8_t diff = data ^ last_misc;
 	last_misc = data;
 
 	coin_counter_w(space->machine, 1, (~data >> 3) & 1);
@@ -331,7 +331,7 @@ static CUSTOM_INPUT( laserdisc_command_r )
 
 static READ8_HANDLER( laserdisc_r )
 {
-	UINT8 result = laserdisc_data_r(laserdisc);
+	uint8_t result = laserdisc_data_r(laserdisc);
 	mame_printf_debug("laserdisc_r = %02X\n", result);
 	return result;
 }

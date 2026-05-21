@@ -47,7 +47,7 @@ this seems more like 8-bit hardware, maybe it should be v25, not v35...
 
 #define xxxx 0x90 /* Unknown */
 
-static const UINT8 cb2001_decryption_table[256] = {
+static const uint8_t cb2001_decryption_table[256] = {
 	0xe8,xxxx,xxxx,xxxx,0x80,0xe4,0x12,0x2f, 0x3c,xxxx,xxxx,0x23,xxxx,xxxx,xxxx,0x5f, /* 00 */
 //    ----                ---- **** pppp pppp  pppp           pppp                pppp
 	0x86,xxxx,xxxx,0x27,0x1c,xxxx,xxxx,xxxx, 0x32,xxxx,0xa0,0xd3,0x3a,0x14,0x89,0x1f, /* 10 */
@@ -298,8 +298,8 @@ e3 -> c6
 
 */
 
-static UINT16 *cb2001_vram_fg;
-static UINT16* cb2001_vram_bg;
+static uint16_t *cb2001_vram_fg;
+static uint16_t* cb2001_vram_bg;
 static int cb2001_videobank;
 static int cb2001_videomode;
 
@@ -344,7 +344,7 @@ static VIDEO_UPDATE(cb2001)
 
 		for (i= 0;i < 64;i++)
 		{
-			UINT16 scroll;
+			uint16_t scroll;
 
 			scroll = cb2001_vram_bg[0xa00/2 + i/2];
 			if (i&1)
@@ -738,9 +738,9 @@ static PALETTE_INIT(cb2001)
 	{
 		int r,g,b;
 
-		UINT8*proms = memory_region(machine, "proms");
+		uint8_t*proms = memory_region(machine, "proms");
 		int length = memory_region_length(machine, "proms");
-		UINT16 dat;
+		uint16_t dat;
 
 		dat = (proms[0x000+i] << 8) | proms[0x200+i];
 

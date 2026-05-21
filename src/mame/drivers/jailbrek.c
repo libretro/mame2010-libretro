@@ -409,7 +409,7 @@ ROM_END
 
 static DRIVER_INIT( jailbrek )
 {
-	UINT8 *SPEECH_ROM = memory_region(machine, "vlm");
+	uint8_t *SPEECH_ROM = memory_region(machine, "vlm");
 	int ind;
 
     /*

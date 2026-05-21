@@ -85,11 +85,11 @@ Notes:
 
 ***************************************************************************/
 
-static UINT8 *layer[8];
+static uint8_t *layer[8];
 
-static UINT16 igs011_priority, *igs011_priority_ram;
+static uint16_t igs011_priority, *igs011_priority_ram;
 
-static UINT8 lhb2_pen_hi;	// high 3 bits of pens (lhb2 only)
+static uint8_t lhb2_pen_hi;	// high 3 bits of pens (lhb2 only)
 
 
 static WRITE16_HANDLER( igs011_priority_w )
@@ -109,7 +109,7 @@ static VIDEO_START( igs011 )
 
 	for (i = 0; i < 8; i++)
 	{
-		layer[i] = auto_alloc_array(machine, UINT8, 512 * 256);
+		layer[i] = auto_alloc_array(machine, uint8_t, 512 * 256);
 	}
 
 	lhb2_pen_hi = 0;
@@ -122,7 +122,7 @@ static VIDEO_UPDATE( igs011 )
 #endif
 
 	int x,y,l,scr_addr,pri_addr;
-	UINT16 *pri_ram;
+	uint16_t *pri_ram;
 
 #ifdef MAME_DEBUG
 	if (input_code_pressed(screen->machine, KEYCODE_Z))
@@ -195,8 +195,8 @@ static READ16_HANDLER( igs011_layers_r )
 {
 	int layer0 = ((offset & (0x80000/2)) ? 4 : 0) + ((offset & 1) ? 0 : 2);
 
-	UINT8 *l0 = layer[layer0];
-	UINT8 *l1 = layer[layer0+1];
+	uint8_t *l0 = layer[layer0];
+	uint8_t *l1 = layer[layer0+1];
 
 	offset >>= 1;
 	offset &= 0x1ffff;
@@ -206,12 +206,12 @@ static READ16_HANDLER( igs011_layers_r )
 
 static WRITE16_HANDLER( igs011_layers_w )
 {
-	UINT16 word;
+	uint16_t word;
 
 	int layer0 = ((offset & (0x80000/2)) ? 4 : 0) + ((offset & 1) ? 0 : 2);
 
-	UINT8 *l0 = layer[layer0];
-	UINT8 *l1 = layer[layer0+1];
+	uint8_t *l0 = layer[layer0];
+	uint8_t *l1 = layer[layer0+1];
 
 	offset >>= 1;
 	offset &= 0x1ffff;
@@ -250,7 +250,7 @@ static WRITE16_HANDLER( igs011_palette )
 static struct
 {
 
-	UINT16	x, y, w, h,
+	uint16_t	x, y, w, h,
 			gfx_lo, gfx_hi,
 			depth,
 			pen,
@@ -274,11 +274,11 @@ static WRITE16_HANDLER( igs011_blit_flags_w )
 	int x, xstart, xend, xinc, flipx;
 	int y, ystart, yend, yinc, flipy;
 	int depth4, clear, opaque, z;
-	UINT8 trans_pen, clear_pen, pen_hi, *dest;
-	UINT8 pen = 0;
+	uint8_t trans_pen, clear_pen, pen_hi, *dest;
+	uint8_t pen = 0;
 
-	UINT8 *gfx		=	memory_region(space->machine, "blitter");
-	UINT8 *gfx2		=	memory_region(space->machine, "blitter_hi");
+	uint8_t *gfx		=	memory_region(space->machine, "blitter");
+	uint8_t *gfx2		=	memory_region(space->machine, "blitter_hi");
 	int gfx_size	=	memory_region_length(space->machine, "blitter");
 	int gfx2_size	=	memory_region_length(space->machine, "blitter_hi");
 
@@ -383,7 +383,7 @@ static WRITE16_HANDLER( igs011_blit_flags_w )
 
 // Inputs
 
-static UINT16 igs_dips_sel, igs_input_sel, igs_hopper;
+static uint16_t igs_dips_sel, igs_input_sel, igs_hopper;
 
 static CUSTOM_INPUT( igs_hopper_r )
 {
@@ -399,7 +399,7 @@ static WRITE16_HANDLER( igs_dips_w )
 static READ16_HANDLER( igs_##NUM##_dips_r )												\
 {																						\
 	int i;																				\
-	UINT16 ret=0;																		\
+	uint16_t ret=0;																		\
 	static const char *const dipnames[] = { "DSW1", "DSW2", "DSW3", "DSW4", "DSW5" };	\
 																						\
 	for (i = 0; i < NUM; i++)															\
@@ -424,13 +424,13 @@ IGS_DIPS_R( 5 )
 static void wlcc_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
     	if ((i & 0x2000) == 0x0000 || (i & 0x0004) == 0x0000 || (i & 0x0090) == 0x0000)
 			x ^= 0x0004;
@@ -448,13 +448,13 @@ static void wlcc_decrypt(running_machine *machine)
 static void lhb_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ((i & 0x1100) != 0x0100)
 			x ^= 0x0200;
@@ -473,13 +473,13 @@ static void lhb_decrypt(running_machine *machine)
 static void drgnwrld_type3_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ((i & 0x2000) == 0x0000 || (i & 0x0004) == 0x0000 || (i & 0x0090) == 0x0000)
 			x ^= 0x0004;
@@ -501,13 +501,13 @@ static void drgnwrld_type3_decrypt(running_machine *machine)
 static void drgnwrld_type2_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if(((i & 0x000090) == 0x000000) || ((i & 0x002004) != 0x002004))
 		  x ^= 0x0004;
@@ -534,13 +534,13 @@ static void drgnwrld_type2_decrypt(running_machine *machine)
 static void drgnwrld_type1_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ((i & 0x2000) == 0x0000 || (i & 0x0004) == 0x0000 || (i & 0x0090) == 0x0000)
 			x ^= 0x0004;
@@ -564,12 +564,12 @@ static void lhb2_decrypt(running_machine *machine)
 {
 	int i,j;
 	int rom_size = 0x80000;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
-	UINT16 *result_data = auto_alloc_array(machine, UINT16, rom_size/2);
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
+	uint16_t *result_data = auto_alloc_array(machine, uint16_t, rom_size/2);
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ((i & 0x0054) != 0x0000 && (i & 0x0056) != 0x0010)
 			x ^= 0x0004;
@@ -605,12 +605,12 @@ static void nkishusp_decrypt(running_machine *machine)
 
 	int i,j;
 	int rom_size = 0x80000;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
-	UINT16 *result_data = auto_alloc_array(machine, UINT16, rom_size/2);
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
+	uint16_t *result_data = auto_alloc_array(machine, uint16_t, rom_size/2);
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ((i & 0x0054) != 0x0000 && (i & 0x0056) != 0x0010)
 			x ^= 0x0004;
@@ -635,13 +635,13 @@ static void nkishusp_decrypt(running_machine *machine)
 static void vbowlj_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for(i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if((i & 0x4100) == 0x0100)
 			x ^= 0x0200;
@@ -669,13 +669,13 @@ static void vbowlj_decrypt(running_machine *machine)
 static void dbc_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) (memory_region(machine, "maincpu"));
+	uint16_t *src = (uint16_t *) (memory_region(machine, "maincpu"));
 
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if( i & 0x1000/2 )
 		{
@@ -719,12 +719,12 @@ static void dbc_decrypt(running_machine *machine)
 static void ryukobou_decrypt(running_machine *machine)
 {
 	int i;
-	UINT16 *src = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *src = (uint16_t *) memory_region(machine, "maincpu");
 	int rom_size = 0x80000;
 
 	for (i=0; i<rom_size/2; i++)
 	{
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
 		if ( (i & 0x00100) && (i & 0x00400) )
 			x ^= 0x0200;
@@ -751,8 +751,8 @@ static void lhb2_decrypt_gfx(running_machine *machine)
 {
 	int i;
 	unsigned rom_size = 0x200000;
-	UINT8 *src = (UINT8 *) (memory_region(machine, "blitter"));
-	UINT8 *result_data = auto_alloc_array(machine, UINT8, rom_size);
+	uint8_t *src = (uint8_t *) (memory_region(machine, "blitter"));
+	uint8_t *result_data = auto_alloc_array(machine, uint8_t, rom_size);
 
 	for (i=0; i<rom_size; i++)
     	result_data[i] = src[BITSWAP24(i, 23,22,21,20, 19, 17,16,15, 13,12, 10,9,8,7,6,5,4, 2,1, 3, 11, 14, 18, 0)];
@@ -766,8 +766,8 @@ static void drgnwrld_gfx_decrypt(running_machine *machine)
 {
 	int i;
 	unsigned rom_size = 0x400000;
-	UINT8 *src = (UINT8 *) (memory_region(machine, "blitter"));
-	UINT8 *result_data = auto_alloc_array(machine, UINT8, rom_size);
+	uint8_t *src = (uint8_t *) (memory_region(machine, "blitter"));
+	uint8_t *result_data = auto_alloc_array(machine, uint8_t, rom_size);
 
 	for (i=0; i<rom_size; i++)
     	result_data[i] = src[BITSWAP24(i, 23,22,21,20,19,18,17,16,15, 12, 13, 14, 11,10,9,8,7,6,5,4,3,2,1,0)];
@@ -818,10 +818,10 @@ static void drgnwrld_gfx_decrypt(running_machine *machine)
 
 ***************************************************************************/
 
-static UINT8 igs011_prot1, igs011_prot1_swap;
-static UINT32 igs011_prot1_addr;
+static uint8_t igs011_prot1, igs011_prot1_swap;
+static uint32_t igs011_prot1_addr;
 
-static UINT8 igs011_prot2;
+static uint8_t igs011_prot2;
 
 static WRITE16_HANDLER( igs011_prot1_w )
 {
@@ -857,7 +857,7 @@ static WRITE16_HANDLER( igs011_prot1_w )
 			if (ACCESSING_BITS_8_15 && (data & 0xff00) == 0x5500)
 			{
 				// b1 . (b2|b3) . b2 . (b0&b3)
-				UINT8 x = igs011_prot1;
+				uint8_t x = igs011_prot1;
 				igs011_prot1_swap = (BIT(x,1)<<3) | ((BIT(x,2)|BIT(x,3))<<2) | (BIT(x,2)<<1) | (BIT(x,0)&BIT(x,3));
 				return;
 			}
@@ -869,7 +869,7 @@ static WRITE16_HANDLER( igs011_prot1_w )
 static READ16_HANDLER( igs011_prot1_r )
 {
 	// !(b1&b2) . 0 . 0 . (b0^b3) . 0 . 0
-	UINT8 x = igs011_prot1;
+	uint8_t x = igs011_prot1;
 	return (((BIT(x,1)&BIT(x,2))^1)<<5) | ((BIT(x,0)^BIT(x,3))<<2);
 }
 
@@ -882,7 +882,7 @@ static WRITE16_HANDLER( igs011_prot_addr_w )
 //  igs011_prot2 = 0x00;
 
 	const address_space *sp = cputag_get_address_space(space->machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 	// Plug previous address range with ROM access
 	memory_install_rom(sp, igs011_prot1_addr + 0, igs011_prot1_addr + 9, 0, 0, rom + igs011_prot1_addr);
@@ -959,7 +959,7 @@ static WRITE16_HANDLER( drgnwrld_igs011_prot2_swap_w )
 //  if ( (ACCESSING_BITS_8_15 && (data & 0xff00) == 0x3300) || ((ACCESSING_BITS_0_7 && (data & 0x00ff) == 0x0033)) )
 	{
 		// (b3&b0) . b2 . (b0|b1) . (b2^!b4) . (!b1^b3)
-		UINT8 x = igs011_prot2;
+		uint8_t x = igs011_prot2;
 		igs011_prot2 = ((BIT(x,3)&BIT(x,0))<<4) | (BIT(x,2)<<3) | ((BIT(x,0)|BIT(x,1))<<2) | ((BIT(x,2)^BIT(x,4)^1)<<1) | (BIT(x,1)^1^BIT(x,3));
 	}
 //  else
@@ -974,7 +974,7 @@ static WRITE16_HANDLER( lhb_igs011_prot2_swap_w )
 //  if ( (ACCESSING_BITS_8_15 && (data & 0xff00) == 0x3300) || ((ACCESSING_BITS_0_7 && (data & 0x00ff) == 0x0033)) )
 	{
 		// (!b0|b1) . b2 . (b0&b1)
-		UINT8 x = igs011_prot2;
+		uint8_t x = igs011_prot2;
 		igs011_prot2 = (((BIT(x,0)^1)|BIT(x,1))<<2) | (BIT(x,2)<<1) | (BIT(x,0)&BIT(x,1));
 	}
 //  else
@@ -989,7 +989,7 @@ static WRITE16_HANDLER( wlcc_igs011_prot2_swap_w )
 //  if ( (ACCESSING_BITS_8_15 && (data & 0xff00) == 0x3300) || ((ACCESSING_BITS_0_7 && (data & 0x00ff) == 0x0033)) )
 	{
 		// (b3 ^ b2) . (b2 ^ b1) . (b1 ^ b0) . !(b4 ^ b0) . !(b4 ^ b3)
-		UINT8 x = igs011_prot2;
+		uint8_t x = igs011_prot2;
 		igs011_prot2 = ((BIT(x,3)^BIT(x,2))<<4) | ((BIT(x,2)^BIT(x,1))<<3) | ((BIT(x,1)^BIT(x,0))<<2) | ((BIT(x,4)^BIT(x,0)^1)<<1) | (BIT(x,4)^BIT(x,3)^1);
 	}
 //  else
@@ -1004,7 +1004,7 @@ static WRITE16_HANDLER( vbowl_igs011_prot2_swap_w )
 //  if ( (ACCESSING_BITS_8_15 && (data & 0xff00) == 0x3300) || ((ACCESSING_BITS_0_7 && (data & 0x00ff) == 0x0033)) )
 	{
 		// (b3 ^ b2) . (b2 ^ b1) . (b1 ^ b0) . (b4 ^ b0) . (b4 ^ b3)
-		UINT8 x = igs011_prot2;
+		uint8_t x = igs011_prot2;
 		igs011_prot2 = ((BIT(x,3)^BIT(x,2))<<4) | ((BIT(x,2)^BIT(x,1))<<3) | ((BIT(x,1)^BIT(x,0))<<2) | ((BIT(x,4)^BIT(x,0))<<1) | (BIT(x,4)^BIT(x,3));
 	}
 //  else
@@ -1017,15 +1017,15 @@ static WRITE16_HANDLER( vbowl_igs011_prot2_swap_w )
 static READ16_HANDLER( drgnwrldv21_igs011_prot2_r )
 {
 	// b9 = (!b4) | (!b0 & b2) | (!(b3 ^ b1) & !(!(b4 & b0) | b2))
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = (BIT(x,4)^1) | ((BIT(x,0)^1) & BIT(x,2)) | ( (BIT(x,3)^BIT(x,1)^1) & ((((BIT(x,4)^1) & BIT(x,0)) | BIT(x,2))^1) );
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = (BIT(x,4)^1) | ((BIT(x,0)^1) & BIT(x,2)) | ( (BIT(x,3)^BIT(x,1)^1) & ((((BIT(x,4)^1) & BIT(x,0)) | BIT(x,2))^1) );
 	return (b9 << 9);
 }
 static READ16_HANDLER( drgnwrldv20j_igs011_prot2_r )
 {
 	// b9 = (!b4 | !b0) | !(b3 | b1) | !(b2 & b0)
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = ((BIT(x,4)^1) | (BIT(x,0)^1)) | ((BIT(x,3) | BIT(x,1))^1) | ((BIT(x,2) & BIT(x,0))^1);
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = ((BIT(x,4)^1) | (BIT(x,0)^1)) | ((BIT(x,3) | BIT(x,1))^1) | ((BIT(x,2) & BIT(x,0))^1);
 	return (b9 << 9);
 }
 
@@ -1033,8 +1033,8 @@ static READ16_HANDLER( drgnwrldv20j_igs011_prot2_r )
 static READ16_HANDLER( lhb_igs011_prot2_r )
 {
 	// b9 = !b2 | (b1 & b0)
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = (BIT(x,2)^1) | (BIT(x,1) & BIT(x,0));
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = (BIT(x,2)^1) | (BIT(x,1) & BIT(x,0));
 	return (b9 << 9);
 }
 
@@ -1042,8 +1042,8 @@ static READ16_HANDLER( lhb_igs011_prot2_r )
 static READ16_HANDLER( dbc_igs011_prot2_r )
 {
 	// b9 = !b1 | (!b0 & b2)
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = (BIT(x,1)^1) | ((BIT(x,0)^1) & BIT(x,2));
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = (BIT(x,1)^1) | ((BIT(x,0)^1) & BIT(x,2));
 	return (b9 << 9);
 }
 
@@ -1051,8 +1051,8 @@ static READ16_HANDLER( dbc_igs011_prot2_r )
 static READ16_HANDLER( ryukobou_igs011_prot2_r )
 {
 	// b9 = (!b1 | b2) & b0
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = ((BIT(x,1)^1) | BIT(x,2)) & BIT(x,0);
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = ((BIT(x,1)^1) | BIT(x,2)) & BIT(x,0);
 	return (b9 << 9);
 }
 
@@ -1060,16 +1060,16 @@ static READ16_HANDLER( ryukobou_igs011_prot2_r )
 static READ16_HANDLER( lhb2_igs011_prot2_r )
 {
 	// b3 = !b2 | !b1 | b0
-	UINT8 x = igs011_prot2;
-	UINT8 b3 = (BIT(x,2)^1) | (BIT(x,1)^1) | BIT(x,0);
+	uint8_t x = igs011_prot2;
+	uint8_t b3 = (BIT(x,2)^1) | (BIT(x,1)^1) | BIT(x,0);
 	return (b3 << 3);
 }
 
 // vbowl
 static READ16_HANDLER( vbowl_igs011_prot2_r )
 {
-	UINT8 x = igs011_prot2;
-	UINT8 b9 = ((BIT(x,4)^1) & (BIT(x,3)^1)) | ((BIT(x,2) & BIT(x,1))^1) | ((BIT(x,4) | BIT(x,0))^1);
+	uint8_t x = igs011_prot2;
+	uint8_t b9 = ((BIT(x,4)^1) & (BIT(x,3)^1)) | ((BIT(x,2) & BIT(x,1))^1) | ((BIT(x,4) | BIT(x,0))^1);
 	return (b9 << 9);
 }
 
@@ -1094,8 +1094,8 @@ static READ16_HANDLER( vbowl_igs011_prot2_r )
 
 ***************************************************************************/
 
-static UINT8 igs012_prot, igs012_prot_swap;
-static UINT8 igs012_prot_mode;
+static uint8_t igs012_prot, igs012_prot_swap;
+static uint8_t igs012_prot_mode;
 
 static WRITE16_HANDLER( igs012_prot_reset_w )
 {
@@ -1183,7 +1183,7 @@ static WRITE16_HANDLER( igs012_prot_swap_w )
 	if ( MODE_AND_DATA(0, 0x55) || MODE_AND_DATA(1, 0xa5) )
 	{
 		// !(3 | 1)..(2 & 1)..(3 ^ 0)..(!2)
-		UINT8 x = igs012_prot;
+		uint8_t x = igs012_prot;
 		igs012_prot_swap = (((BIT(x,3)|BIT(x,1))^1)<<3) | ((BIT(x,2)&BIT(x,1))<<2) | ((BIT(x,3)^BIT(x,0))<<1) | (BIT(x,2)^1);
 	}
 	else
@@ -1193,10 +1193,10 @@ static WRITE16_HANDLER( igs012_prot_swap_w )
 static READ16_HANDLER( igs012_prot_r )
 {
 	// FIXME: mode 0 and mode 1 are mapped to different memory ranges
-	UINT8 x = igs012_prot;
+	uint8_t x = igs012_prot;
 
-	UINT8 b1 = (BIT(x,3) | BIT(x,1))^1;
-	UINT8 b0 = BIT(x,3) ^ BIT(x,0);
+	uint8_t b1 = (BIT(x,3) | BIT(x,1))^1;
+	uint8_t b0 = BIT(x,3) ^ BIT(x,0);
 
 	return (b1 << 1) | (b0 << 0);
 }
@@ -1207,7 +1207,7 @@ static READ16_HANDLER( igs012_prot_r )
 
 ***************************************************************************/
 
-static UINT16 igs003_reg[2];
+static uint16_t igs003_reg[2];
 
 static WRITE16_HANDLER( drgnwrld_igs003_w )
 {
@@ -1628,7 +1628,7 @@ static READ16_HANDLER( vbowl_igs003_r )
 // V0400O
 static DRIVER_INIT( drgnwrld )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type1_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1654,7 +1654,7 @@ static DRIVER_INIT( drgnwrld )
 
 static DRIVER_INIT( drgnwrldv30 )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type1_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1679,7 +1679,7 @@ static DRIVER_INIT( drgnwrldv30 )
 
 static DRIVER_INIT( drgnwrldv21 )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type2_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1709,7 +1709,7 @@ static DRIVER_INIT( drgnwrldv21 )
 
 static DRIVER_INIT( drgnwrldv21j )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type3_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1736,7 +1736,7 @@ static DRIVER_INIT( drgnwrldv21j )
 
 static DRIVER_INIT( drgnwrldv20j )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type3_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1774,7 +1774,7 @@ static DRIVER_INIT( drgnwrldv11h )
 
 static DRIVER_INIT( drgnwrldv10c )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	drgnwrld_type1_decrypt(machine);
 	drgnwrld_gfx_decrypt(machine);
@@ -1800,7 +1800,7 @@ static DRIVER_INIT( drgnwrldv10c )
 
 static DRIVER_INIT( lhb )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	lhb_decrypt(machine);
 
@@ -1810,7 +1810,7 @@ static DRIVER_INIT( lhb )
 
 static DRIVER_INIT( lhbv33c )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	lhb_decrypt(machine);
 
@@ -1820,7 +1820,7 @@ static DRIVER_INIT( lhbv33c )
 
 static DRIVER_INIT( dbc )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	dbc_decrypt(machine);
 
@@ -1849,7 +1849,7 @@ static DRIVER_INIT( dbc )
 
 static DRIVER_INIT( ryukobou )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	ryukobou_decrypt(machine);
 
@@ -1862,7 +1862,7 @@ static DRIVER_INIT( ryukobou )
 
 static DRIVER_INIT( xymg )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	lhb_decrypt(machine);
 /*
@@ -1896,7 +1896,7 @@ static DRIVER_INIT( xymg )
 
 static DRIVER_INIT( wlcc )
 {
-//  UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+//  uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	wlcc_decrypt(machine);
 /*
@@ -1920,7 +1920,7 @@ static DRIVER_INIT( wlcc )
 
 static DRIVER_INIT( lhb2 )
 {
-	UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	lhb2_decrypt(machine);
 	lhb2_decrypt_gfx(machine);
@@ -1942,8 +1942,8 @@ static DRIVER_INIT( lhb2 )
 
 static DRIVER_INIT( vbowl )
 {
-	UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
-	UINT8  *gfx = (UINT8 *)  memory_region(machine, "blitter");
+	uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
+	uint8_t  *gfx = (uint8_t *)  memory_region(machine, "blitter");
 	int i;
 
 	vbowlj_decrypt(machine);
@@ -1967,8 +1967,8 @@ static DRIVER_INIT( vbowl )
 
 static DRIVER_INIT( vbowlj )
 {
-	UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
-	UINT8  *gfx = (UINT8 *)  memory_region(machine, "blitter");
+	uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
+	uint8_t  *gfx = (uint8_t *)  memory_region(machine, "blitter");
 	int i;
 
 	vbowlj_decrypt(machine);
@@ -2060,7 +2060,7 @@ ADDRESS_MAP_END
 
 
 // Only values 0 and 7 are written (1 bit per irq source?)
-static UINT16 lhb_irq_enable;
+static uint16_t lhb_irq_enable;
 static WRITE16_HANDLER( lhb_irq_enable_w )
 {
 	COMBINE_DATA( &lhb_irq_enable );
@@ -2268,7 +2268,7 @@ static READ16_HANDLER( vbowl_unk_r )
 	return 0xffff;
 }
 
-static UINT16 *vbowl_trackball;
+static uint16_t *vbowl_trackball;
 static VIDEO_EOF( vbowl )
 {
 	vbowl_trackball[0] = vbowl_trackball[1];

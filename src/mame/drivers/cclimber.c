@@ -212,9 +212,9 @@ Dip location verified from manual for: cclimber, guzzler, swimmer
 
 #define MASTER_CLOCK			XTAL_18_432MHz
 
-static UINT8 yamato_p0;
-static UINT8 yamato_p1;
-static UINT8 toprollr_rombank;
+static uint8_t yamato_p0;
+static uint8_t yamato_p1;
+static uint8_t toprollr_rombank;
 
 
 static WRITE8_HANDLER( swimmer_sh_soundlatch_w )

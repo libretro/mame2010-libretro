@@ -352,7 +352,7 @@ static INTERRUPT_GEN( cps1_qsound_interrupt )
 
 static READ16_HANDLER( qsound_rom_r )
 {
-	UINT8 *rom = memory_region(space->machine, "user1");
+	uint8_t *rom = memory_region(space->machine, "user1");
 
 	if (rom)
 		return rom[offset] | 0xff00;
@@ -9533,7 +9533,7 @@ static DRIVER_INIT( pang3n )
 
 static DRIVER_INIT( pang3 )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	int A, src, dst;
 
 	for (A = 0x80000; A < 0x100000; A += 2)
@@ -9564,9 +9564,9 @@ static READ16_HANDLER( sf2mdt_r )
 static DRIVER_INIT( sf2mdt )
 {
 	int i;
-	UINT32 gfx_size = memory_region_length( machine, "gfx" );
-	UINT8 *rom = memory_region( machine, "gfx" );
-	UINT8 tmp;
+	uint32_t gfx_size = memory_region_length( machine, "gfx" );
+	uint8_t *rom = memory_region( machine, "gfx" );
+	uint8_t tmp;
 
 	for( i = 0; i < gfx_size; i += 8 )
 	{
@@ -9589,7 +9589,7 @@ static DRIVER_INIT( sf2mdt )
 static DRIVER_INIT( dinohunt )
 {
 	// is this shared with the new sound hw?
-	UINT8* ram = (UINT8*)memory_install_ram(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xf18000, 0xf19fff, 0, 0, 0);
+	uint8_t* ram = (uint8_t*)memory_install_ram(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0xf18000, 0xf19fff, 0, 0, 0);
 	memset(ram,0xff,0x2000);
 	DRIVER_INIT_CALL(cps1);
 }

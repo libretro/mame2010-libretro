@@ -271,7 +271,7 @@ static WRITE8_HANDLER( lazercmd_ctrl_port_w )
 /* triggered by REDC,r opcode */
 static READ8_HANDLER( lazercmd_ctrl_port_r )
 {
-	UINT8 data = 0;
+	uint8_t data = 0;
 	return data;
 }
 
@@ -283,7 +283,7 @@ static WRITE8_HANDLER( lazercmd_data_port_w )
 /* triggered by REDD,r opcode */
 static READ8_HANDLER( lazercmd_data_port_r )
 {
-	UINT8 data = input_port_read(space->machine, "DSW") & 0x0f;
+	uint8_t data = input_port_read(space->machine, "DSW") & 0x0f;
 	return data;
 }
 
@@ -362,7 +362,7 @@ static WRITE8_HANDLER( bbonk_hardware_w )
 static READ8_HANDLER( lazercmd_hardware_r )
 {
 	lazercmd_state *state = (lazercmd_state *)space->machine->driver_data;
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	switch (offset)
 	{
@@ -798,7 +798,7 @@ ROM_END
 static DRIVER_INIT( lazercmd )
 {
 	int i, y;
-	UINT8 *gfx = memory_region(machine, "gfx1");
+	uint8_t *gfx = memory_region(machine, "gfx1");
 
 /******************************************************************
  * To show the maze bit #6 and #7 of the video ram are used.
@@ -810,8 +810,8 @@ static DRIVER_INIT( lazercmd )
  ******************************************************************/
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
-		UINT8 *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
+		uint8_t *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
+		uint8_t *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
 
 		for (y = 0; y < VERT_CHR; y++)
 		{
@@ -827,7 +827,7 @@ static DRIVER_INIT( lazercmd )
 static DRIVER_INIT( medlanes )
 {
 	int i, y;
-	UINT8 *gfx = memory_region(machine, "gfx1");
+	uint8_t *gfx = memory_region(machine, "gfx1");
 
 /******************************************************************
  * To show the maze bit #6 and #7 of the video ram are used.
@@ -839,8 +839,8 @@ static DRIVER_INIT( medlanes )
  ******************************************************************/
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
-		UINT8 *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
+		uint8_t *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
+		uint8_t *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
 
 		for (y = 0; y < VERT_CHR; y++)
 		{
@@ -856,7 +856,7 @@ static DRIVER_INIT( medlanes )
 static DRIVER_INIT( bbonk )
 {
 	int i, y;
-	UINT8 *gfx = memory_region(machine, "gfx1");
+	uint8_t *gfx = memory_region(machine, "gfx1");
 
 /******************************************************************
  * To show the maze bit #6 and #7 of the video ram are used.
@@ -868,8 +868,8 @@ static DRIVER_INIT( bbonk )
  ******************************************************************/
 	for (i = 0; i < 0x40; i++)
 	{
-		UINT8 *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
-		UINT8 *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
+		uint8_t *d = &gfx[0 * 64 * 10 + i * VERT_CHR];
+		uint8_t *s = &gfx[4 * 64 * 10 + i * VERT_FNT];
 
 		for (y = 0; y < VERT_CHR; y++)
 		{

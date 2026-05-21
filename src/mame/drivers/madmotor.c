@@ -337,7 +337,7 @@ ROM_END
 
 static DRIVER_INIT( madmotor )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	for (i = 0x00000;i < 0x80000;i++)

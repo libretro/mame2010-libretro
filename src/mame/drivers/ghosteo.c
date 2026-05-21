@@ -55,13 +55,13 @@ Hopper, Ticket Counter, Prize System (Option)
 #include "cpu/arm7/arm7.h"
 #include "cpu/arm7/arm7core.h"
 
-static UINT32 *system_memory;
-static UINT32 *flash_regs;
-static UINT32 *lcd_control;
-static UINT32 *io_port;
+static uint32_t *system_memory;
+static uint32_t *flash_regs;
+static uint32_t *lcd_control;
+static uint32_t *io_port;
 
-//static UINT32 fifoh[16];
-//static UINT32 fifol[12];
+//static uint32_t fifoh[16];
+//static uint32_t fifol[12];
 
 static struct lcd_config
 {
@@ -92,7 +92,7 @@ static READ32_HANDLER( r2 )
 	return 2;
 }
 
-static UINT32 flash_addr = 0;
+static uint32_t flash_addr = 0;
 static int flash_addr_step = 0;
 
 #define ADDR_STEP_CONFIG 4
@@ -138,8 +138,8 @@ static READ32_HANDLER( flash_reg_r )
 
 static READ32_HANDLER( flash_r )
 {
-	UINT8 *flash = (UINT8 *)memory_region(space->machine, "user1");
-	UINT8 value = flash[flash_addr];
+	uint8_t *flash = (uint8_t *)memory_region(space->machine, "user1");
+	uint8_t value = flash[flash_addr];
 	flash_addr = (flash_addr + 1) % memory_region_length(space->machine, "user1");
 	return value;
 }
@@ -288,8 +288,8 @@ static WRITE32_HANDLER( lcd_control_w )
 
 		case 0x14/4:
 		{
-			UINT32 lcd_bank = (lcd_control[offset] >> 21) & 0x1ff;
-			UINT32 lcd_base_u = (lcd_control[offset] >> 0) & 0x1fffff;
+			uint32_t lcd_bank = (lcd_control[offset] >> 21) & 0x1ff;
+			uint32_t lcd_base_u = (lcd_control[offset] >> 0) & 0x1fffff;
 
 			lcd.lcd_bank = lcd_bank;
 			lcd.lcd_base_u = lcd_base_u;
@@ -299,7 +299,7 @@ static WRITE32_HANDLER( lcd_control_w )
 
 		case 0x18/4:
 		{
-			UINT32 lcd_base_sel = (lcd_control[offset] >> 0) & 0x1fffff;
+			uint32_t lcd_base_sel = (lcd_control[offset] >> 0) & 0x1fffff;
 
 			lcd.lcd_base_sel = lcd_base_sel;
 
@@ -425,7 +425,7 @@ static VIDEO_UPDATE( bballoon )
 			printf("max = %X\n",start_addr);
 		else
 		{
-			UINT32* videoram = system_memory + start_addr/4 + lcd.lcd_base_u/4;
+			uint32_t* videoram = system_memory + start_addr/4 + lcd.lcd_base_u/4;
 			int x,y,count;
 
 			//popmessage("%08x %08x %d",lcd.lcd_base_u,lcd.lcd_base_sel,test);
@@ -443,10 +443,10 @@ static VIDEO_UPDATE( bballoon )
 			{
 				for (x=0;x < 400;x++)
 				{
-					UINT32 color;
-					UINT32 b;
-					UINT32 g;
-					UINT32 r;
+					uint32_t color;
+					uint32_t b;
+					uint32_t g;
+					uint32_t r;
 
 					color = (videoram[count] >> 16) & 0xffff;
 
@@ -588,7 +588,7 @@ ROM_END
 
 static DRIVER_INIT( bballoon )
 {
-	UINT8 *flash = (UINT8 *)memory_region(machine, "user1");
+	uint8_t *flash = (uint8_t *)memory_region(machine, "user1");
 
 	// nop flash ECC checks
 

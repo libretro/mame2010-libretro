@@ -557,11 +557,11 @@ ROM_END
 
 static DRIVER_INIT( exerion )
 {
-	UINT32 oldaddr, newaddr, length;
-	UINT8 *src, *dst, *temp;
+	uint32_t oldaddr, newaddr, length;
+	uint8_t *src, *dst, *temp;
 
 	/* allocate some temporary space */
-	temp = auto_alloc_array(machine, UINT8, 0x10000);
+	temp = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	/* make a temporary copy of the character data */
 	src = temp;
@@ -606,7 +606,7 @@ static DRIVER_INIT( exerion )
 
 static DRIVER_INIT( exerionb )
 {
-	UINT8 *ram = memory_region(machine, "maincpu");
+	uint8_t *ram = memory_region(machine, "maincpu");
 	int addr;
 
 	/* the program ROMs have data lines D1 and D2 swapped. Decode them. */

@@ -88,7 +88,7 @@ static WRITE16_HANDLER( control2_w )
 static void gijoe_objdma( running_machine *machine )
 {
 	gijoe_state *state = (gijoe_state *)machine->driver_data;
-	UINT16 *src_head, *src_tail, *dst_head, *dst_tail;
+	uint16_t *src_head, *src_tail, *dst_head, *dst_tail;
 
 	src_head = state->spriteram;
 	src_tail = state->spriteram + 255 * 8;

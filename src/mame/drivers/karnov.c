@@ -1132,7 +1132,7 @@ static DRIVER_INIT( wndrplnt )
 static DRIVER_INIT( chelnov )
 {
 	karnov_state *state = (karnov_state *)machine->driver_data;
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 
 	state->microcontroller_id = CHELNOV;
 	state->coin_mask = 0xe0;
@@ -1143,7 +1143,7 @@ static DRIVER_INIT( chelnov )
 static DRIVER_INIT( chelnovw )
 {
 	karnov_state *state = (karnov_state *)machine->driver_data;
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 
 	state->microcontroller_id = CHELNOVW;
 	state->coin_mask = 0xe0;
@@ -1154,7 +1154,7 @@ static DRIVER_INIT( chelnovw )
 static DRIVER_INIT( chelnovj )
 {
 	karnov_state *state = (karnov_state *)machine->driver_data;
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 
 	state->microcontroller_id = CHELNOVJ;
 	state->coin_mask = 0xe0;

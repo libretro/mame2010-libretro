@@ -61,20 +61,20 @@ Bugs:
 
 
 struct _mplay_bios mplay_bios;
-static UINT16 *genesis_io_ram;
+static uint16_t *genesis_io_ram;
 
-static UINT8* ic3_ram;
+static uint8_t* ic3_ram;
 
-static UINT8* ic37_ram;
-static UINT16 *ic36_ram;
+static uint8_t* ic37_ram;
+static uint16_t *ic36_ram;
 
-//static UINT8 ic36_ram[0x4000];
+//static uint8_t ic36_ram[0x4000];
 
 
-//static UINT8 hintcount;           /* line interrupt counter, decreased each scanline */
-extern UINT8 segae_vintpending;
-extern UINT8 segae_hintpending;
-extern UINT8 *segae_vdp_regs[];		/* pointer to vdp's registers */
+//static uint8_t hintcount;           /* line interrupt counter, decreased each scanline */
+extern uint8_t segae_vintpending;
+extern uint8_t segae_hintpending;
+extern uint8_t *segae_vdp_regs[];		/* pointer to vdp's registers */
 
 // Interrupt handler - from drivers/segasyse.c
 #if 0
@@ -435,8 +435,8 @@ static READ16_HANDLER( megaplay_io_read )
 
 static READ8_HANDLER( bank_r )
 {
-	UINT32 fulladdress;
-	UINT8* bank = memory_region(space->machine, "mtbios");
+	uint32_t fulladdress;
+	uint8_t* bank = memory_region(space->machine, "mtbios");
 
 	fulladdress = mplay_bios.mp_bios_bank_addr + offset;
 
@@ -478,7 +478,7 @@ static READ8_HANDLER( bank_r )
 
 static WRITE8_HANDLER( bank_w )
 {
-	UINT32 fulladdress;
+	uint32_t fulladdress;
 	fulladdress = mplay_bios.mp_bios_bank_addr + offset;
 
 	if ((fulladdress >= 0x000000) && (fulladdress <= 0x3fffff)) // ROM / Megaplay Custom Addresses
@@ -833,9 +833,9 @@ ROM_END
 
 static void mplay_start(running_machine *machine)
 {
-	UINT8 *src = memory_region(machine, "mtbios");
-	UINT8 *instruction_rom = memory_region(machine, "user1");
-	UINT8 *game_rom = memory_region(machine, "maincpu");
+	uint8_t *src = memory_region(machine, "mtbios");
+	uint8_t *instruction_rom = memory_region(machine, "user1");
+	uint8_t *game_rom = memory_region(machine, "maincpu");
 	int offs;
 
 
@@ -845,7 +845,7 @@ static void mplay_start(running_machine *machine)
       through a handler instead?.. */
 	for (offs = 0; offs < 0x8000; offs++)
 	{
-		UINT8 dat;
+		uint8_t dat;
 
 		dat = instruction_rom[offs];
 
@@ -880,9 +880,9 @@ static WRITE16_HANDLER( megadriv_68k_write_z80_extra_ram )
 static DRIVER_INIT (megaplay)
 {
 	/* to support the old code.. */
-	ic36_ram = auto_alloc_array(machine, UINT16, 0x10000 / 2);
-	ic37_ram = auto_alloc_array(machine, UINT8, 0x10000);
-	genesis_io_ram = auto_alloc_array(machine, UINT16, 0x20 / 2);
+	ic36_ram = auto_alloc_array(machine, uint16_t, 0x10000 / 2);
+	ic37_ram = auto_alloc_array(machine, uint8_t, 0x10000);
+	genesis_io_ram = auto_alloc_array(machine, uint16_t, 0x20 / 2);
 
 	DRIVER_INIT_CALL(mpnew);
 

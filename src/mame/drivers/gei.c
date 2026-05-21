@@ -71,8 +71,8 @@ U.S.A. Trivia              New Sports                 General Facts
 #include "machine/ticket.h"
 #include "sound/dac.h"
 
-static UINT8 drawctrl[3];
-static UINT8 color[8];
+static uint8_t drawctrl[3];
+static uint8_t color[8];
 
 static WRITE8_HANDLER( gei_drawctrl_w )
 {
@@ -345,7 +345,7 @@ static WRITE8_HANDLER( signature_w )
 	if (data == 0) signature_pos = 0;
 	else
 	{
-		static const UINT8 signature[8] = { 0xff, 0x01, 0xfd, 0x05, 0xf5, 0x15, 0xd5, 0x55 };
+		static const uint8_t signature[8] = { 0xff, 0x01, 0xfd, 0x05, 0xf5, 0x15, 0xd5, 0x55 };
 
 		signature_answer = signature[signature_pos++];
 
@@ -358,7 +358,7 @@ static WRITE8_HANDLER( signature2_w )
 	if (data == 0) signature_pos = 0;
 	else
 	{
-		static const UINT8 signature[8] = { 0xff, 0x01, 0xf7, 0x11, 0xd7, 0x51, 0x57, 0x51 };
+		static const uint8_t signature[8] = { 0xff, 0x01, 0xf7, 0x11, 0xd7, 0x51, 0x57, 0x51 };
 
 		signature_answer = signature[signature_pos++];
 

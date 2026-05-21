@@ -161,7 +161,7 @@ static READ8_HANDLER( firetrap_8751_bootleg_r )
 
 	firetrap_state *state = (firetrap_state *)space->machine->driver_data;
 
-	UINT8 coin = 0, port = input_port_read(space->machine, "IN2") & 0x70;
+	uint8_t coin = 0, port = input_port_read(space->machine, "IN2") & 0x70;
 
 	if (cpu_get_pc(space->cpu) == 0x1188)
 		return ~state->coin_command_pending;
@@ -187,7 +187,7 @@ static READ8_HANDLER( firetrap_8751_r )
 
 static WRITE8_HANDLER( firetrap_8751_w )
 {
-	static const UINT8 i8751_init_data[]={
+	static const uint8_t i8751_init_data[]={
 		0xf5,0xd5,0xdd,0x21,0x05,0xc1,0x87,0x5f,0x87,0x83,0x5f,0x16,0x00,0xdd,0x19,0xd1,
 		0xf1,0xc9,0xf5,0xd5,0xfd,0x21,0x2f,0xc1,0x87,0x5f,0x16,0x00,0xfd,0x19,0xd1,0xf1,
 		0xc9,0xe3,0xd5,0xc5,0xf5,0xdd,0xe5,0xfd,0xe5,0xe9,0xe1,0xfd,0xe1,0xdd,0xe1,0xf1,
@@ -539,7 +539,7 @@ static INTERRUPT_GEN( firetrap )
 {
 	firetrap_state *state = (firetrap_state *)device->machine->driver_data;
 
-	UINT8 coin = 0, port = input_port_read(device->machine, "COIN") & 0x07;
+	uint8_t coin = 0, port = input_port_read(device->machine, "COIN") & 0x07;
 
 	/* Check for coin IRQ */
 	if (cpu_getiloops(device))
@@ -583,8 +583,8 @@ static INTERRUPT_GEN( bootleg )
 static MACHINE_START( firetrap )
 {
 	firetrap_state *state = (firetrap_state *)machine->driver_data;
-	UINT8 *MAIN = memory_region(machine, "maincpu");
-	UINT8 *SOUND = memory_region(machine, "audiocpu");
+	uint8_t *MAIN = memory_region(machine, "maincpu");
+	uint8_t *SOUND = memory_region(machine, "audiocpu");
 
 	state->maincpu = machine->device("maincpu");
 	state->audiocpu = machine->device("audiocpu");

@@ -262,7 +262,7 @@ static READ8_HANDLER( avengers_protection_r )
 static READ8_HANDLER( avengers_soundlatch2_r )
 {
 	lwings_state *state = (lwings_state *)space->machine->driver_data;
-	UINT8 data = *state->soundlatch2 | state->soundstate;
+	uint8_t data = *state->soundlatch2 | state->soundstate;
 	state->soundstate = 0;
 	return(data);
 }
@@ -743,7 +743,7 @@ static const msm5205_interface msm5205_config =
 static MACHINE_START( lwings )
 {
 	lwings_state *state = (lwings_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x4000);
 

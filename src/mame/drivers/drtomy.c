@@ -19,10 +19,10 @@ public:
 	drtomy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  spriteram;
-	UINT16 *  videoram_bg;
-	UINT16 *  videoram_fg;
-//  UINT16 *  paletteram16; // currently this uses generic palette handling
+	uint16_t *  spriteram;
+	uint16_t *  videoram_bg;
+	uint16_t *  videoram_fg;
+//  uint16_t *  paletteram16; // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t   *tilemap_bg,*tilemap_fg;

@@ -565,13 +565,13 @@ static const gfx_layout tilelayout =
 	2*16*16
 };
 
-static const UINT32 objlayout_xoffset[64] =
+static const uint32_t objlayout_xoffset[64] =
 {
 	STEP8(7*8,1), STEP8(6*8,1), STEP8(5*8,1), STEP8(4*8,1),
 	STEP8(3*8,1), STEP8(2*8,1), STEP8(1*8,1), STEP8(0*8,1)
 };
 
-static const UINT32 objlayout_yoffset[64] =
+static const uint32_t objlayout_yoffset[64] =
 {
 	STEP32(63*2*64, -1*2*64),
 	STEP32(31*2*64, -1*2*64)
@@ -1357,11 +1357,11 @@ static DRIVER_INIT( decocass )
 {
 	decocass_state *state = (decocass_state *)machine->driver_data;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
 	/* allocate memory and mark all RAM regions with their decrypted pointers */
-	state->decrypted = auto_alloc_array(machine, UINT8, 0x10000);
+	state->decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
 	memory_set_decrypted_region(space, 0x0000, 0xc7ff, &state->decrypted[0x0000]);
 	memory_set_decrypted_region(space, 0xd000, 0xdbff, &state->decrypted[0xd000]);
 	memory_set_decrypted_region(space, 0xf000, 0xffff, &state->decrypted[0xf000]);
@@ -1382,10 +1382,10 @@ static DRIVER_INIT( decocrom )
 {
 	decocass_state *state = (decocass_state *)machine->driver_data;
 	int romlength = memory_region_length(machine, "user3");
-	UINT8 *rom = memory_region(machine, "user3");
+	uint8_t *rom = memory_region(machine, "user3");
 	int i;
 
-	state->decrypted2 = auto_alloc_array(machine, UINT8, romlength);
+	state->decrypted2 = auto_alloc_array(machine, uint8_t, romlength);
 
 	/* standard init */
 	DRIVER_INIT_CALL(decocass);

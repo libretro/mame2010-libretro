@@ -57,14 +57,14 @@ Notes:
 static DRIVER_INIT( lordgun )
 {
 	int i;
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	// Decryption
 
 	int rom_size = 0x100000;
 	for(i = 0; i < rom_size/2; i++)
 	{
-		UINT16 x = rom[i];
+		uint16_t x = rom[i];
 
 		if((i & 0x0120) == 0x0100 || (i & 0x0a00) == 0x0800)
 			x ^= 0x0010;
@@ -82,7 +82,7 @@ static DRIVER_INIT( lordgun )
 // From XingXing:
 static DRIVER_INIT( aliencha )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	// Protection
 
@@ -106,7 +106,7 @@ static DRIVER_INIT( aliencha )
 
 static DRIVER_INIT( alienchac )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	// Protection
 
@@ -145,7 +145,7 @@ static WRITE8_DEVICE_HANDLER(fake2_w)
 static WRITE8_DEVICE_HANDLER( lordgun_eeprom_w )
 {
 	running_device *eeprom = device->machine->device("eeprom");
-	static UINT8 old;
+	static uint8_t old;
 	int i;
 
 	if (data & ~0xfd)
@@ -202,7 +202,7 @@ static WRITE8_DEVICE_HANDLER( aliencha_eeprom_w )
 }
 
 
-static UINT8 aliencha_dip_sel;
+static uint8_t aliencha_dip_sel;
 static READ8_DEVICE_HANDLER( aliencha_dip_r )
 {
 	switch (aliencha_dip_sel & 0x70)

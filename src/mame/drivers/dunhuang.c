@@ -66,26 +66,26 @@ public:
 	dunhuang_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *        videoram;
-	UINT16 *        videoram2;
-	UINT8	 *        colorram;
-	UINT8  *        colorram2;
-	UINT8  *        paldata;
+	uint16_t *        videoram;
+	uint16_t *        videoram2;
+	uint8_t	 *        colorram;
+	uint8_t  *        colorram2;
+	uint8_t  *        paldata;
 
 	/* video-related */
 	tilemap_t         *tmap,*tmap2;
 	int             written, written2;
-	UINT8           pos_x, pos_y, clear_y;
-	UINT8           block_x, block_y, block_w, block_h;
-	UINT8           block_addr_hi, block_addr_lo;
-	UINT8           block_dest;
-	UINT8           block_c;
-	UINT8           layers;
+	uint8_t           pos_x, pos_y, clear_y;
+	uint8_t           block_x, block_y, block_w, block_h;
+	uint8_t           block_addr_hi, block_addr_lo;
+	uint8_t           block_dest;
+	uint8_t           block_c;
+	uint8_t           layers;
 	int             paloffs;
 
 	/* input-related */
-	UINT8           input;
-	UINT8           hopper;
+	uint8_t           input;
+	uint8_t           hopper;
 };
 
 
@@ -97,15 +97,15 @@ public:
 static TILE_GET_INFO( get_tile_info )
 {
 	dunhuang_state *state = (dunhuang_state *)machine->driver_data;
-	UINT16 code = state->videoram[tile_index];
-	UINT8 color = state->colorram[tile_index] & 0x0f;
+	uint16_t code = state->videoram[tile_index];
+	uint8_t color = state->colorram[tile_index] & 0x0f;
 	SET_TILE_INFO(0, code, color, 0);
 }
 static TILE_GET_INFO( get_tile_info2 )
 {
 	dunhuang_state *state = (dunhuang_state *)machine->driver_data;
-	UINT16 code = state->videoram2[tile_index];
-	UINT8 color = state->colorram2[tile_index] & 0x0f;
+	uint16_t code = state->videoram2[tile_index];
+	uint8_t color = state->colorram2[tile_index] & 0x0f;
 	SET_TILE_INFO(1, code, color, 0);
 }
 
@@ -118,13 +118,13 @@ static VIDEO_START(dunhuang)
 	tilemap_set_transparent_pen(state->tmap, 0);
 	tilemap_set_transparent_pen(state->tmap2, 0);
 
-	state->videoram = auto_alloc_array(machine, UINT16, 0x40 * 0x20);
-	state->colorram = auto_alloc_array(machine, UINT8, 0x40 * 0x20);
+	state->videoram = auto_alloc_array(machine, uint16_t, 0x40 * 0x20);
+	state->colorram = auto_alloc_array(machine, uint8_t, 0x40 * 0x20);
 
-	state->videoram2 = auto_alloc_array(machine, UINT16, 0x40 * 0x8);
-	state->colorram2 = auto_alloc_array(machine, UINT8, 0x40 * 0x8);
+	state->videoram2 = auto_alloc_array(machine, uint16_t, 0x40 * 0x8);
+	state->colorram2 = auto_alloc_array(machine, uint8_t, 0x40 * 0x8);
 
-	state->paldata  = auto_alloc_array(machine, UINT8, 3 * 256);
+	state->paldata  = auto_alloc_array(machine, uint8_t, 3 * 256);
 
 	state_save_register_global_pointer(machine, state->videoram, 0x40 * 0x20);
 	state_save_register_global_pointer(machine, state->colorram, 0x40 * 0x20);
@@ -333,7 +333,7 @@ static WRITE8_HANDLER( dunhuang_block_h_w )
 {
 	dunhuang_state *state = (dunhuang_state *)space->machine->driver_data;
 	int i,j, addr;
-	UINT8 *tile_addr;
+	uint8_t *tile_addr;
 
 //  logerror("%06x: block dst %x, src %x, xy %x %x, wh %x %x, clr %x\n", cpu_get_pc(space->cpu), state->block_dest, (state->block_addr_hi << 8) + state->block_addr_lo, state->block_x,state->block_y,state->block_w+1,state->block_h+1,state->block_c);
 
@@ -766,7 +766,7 @@ static const ay8910_interface dunhuang_ay8910_interface =
 static MACHINE_START( dunhuang )
 {
 	dunhuang_state *state = (dunhuang_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x8000);
 

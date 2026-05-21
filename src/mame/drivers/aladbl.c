@@ -171,7 +171,7 @@ static READ16_HANDLER( aladbl_r )
 {
 	if (cpu_get_pc(space->cpu)==0x1b2a56)
 	{
-		static UINT16 mcu_port;
+		static uint16_t mcu_port;
 
 		mcu_port = input_port_read(space->machine, "MCU");
 
@@ -204,7 +204,7 @@ static DRIVER_INIT( aladbl )
      * Game does a check @ 1afc00 with work ram fff57c that makes it play like the original console version (i.e. 8 energy hits instead of 2)
      */
 	#if ENERGY_CONSOLE_MODE
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	rom[0x1afc08/2] = 0x6600;
 	#endif
 
@@ -220,7 +220,7 @@ static DRIVER_INIT( aladbl )
 static DRIVER_INIT( mk3ghw )
 {
 	int x;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (x=0x000001;x<0x100001;x+=2)
 	{

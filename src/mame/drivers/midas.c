@@ -56,7 +56,7 @@
 #include "machine/eeprom.h"
 #include "machine/ticket.h"
 
-static UINT16 *midas_gfxram, *midas_gfxregs;
+static uint16_t *midas_gfxram, *midas_gfxregs;
 
 static VIDEO_START( midas );
 static VIDEO_UPDATE( midas );
@@ -65,13 +65,13 @@ static tilemap_t *tmap;
 
 static TILE_GET_INFO( get_tile_info )
 {
-	UINT16 code = midas_gfxram[ tile_index + 0x7000 ];
+	uint16_t code = midas_gfxram[ tile_index + 0x7000 ];
 	SET_TILE_INFO(1, code & 0xfff, (code >> 12) & 0xf, TILE_FLIPXY( 0 ));
 }
 
 static VIDEO_START( midas )
 {
-	midas_gfxram = auto_alloc_array(machine, UINT16, 0x20000/2);
+	midas_gfxram = auto_alloc_array(machine, uint16_t, 0x20000/2);
 
 	tmap = tilemap_create(	machine, get_tile_info, tilemap_scan_cols,
 							8,8, 0x80,0x20	);
@@ -81,8 +81,8 @@ static VIDEO_START( midas )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT16 *s		=	midas_gfxram + 0x8000;
-	UINT16 *codes	=	midas_gfxram;
+	uint16_t *s		=	midas_gfxram + 0x8000;
+	uint16_t *codes	=	midas_gfxram;
 
 	int sx_old = 0, sy_old = 0, ynum_old = 0, xzoom_old = 0;
 	int xdim, ydim, xscale, yscale;
@@ -149,8 +149,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 
 		for (y = 0; y < ynum; y++)
 		{
-			UINT16 code		=	codes[y*2];
-			UINT16 attr		=	codes[y*2+1];
+			uint16_t code		=	codes[y*2];
+			uint16_t attr		=	codes[y*2+1];
 
 			drawgfxzoom_transpen(	bitmap,	cliprect, machine->gfx[0],
 							code,
@@ -212,7 +212,7 @@ static WRITE16_HANDLER( midas_gfxregs_w )
 	{
 		case 1:
 		{
-			UINT16 addr = midas_gfxregs[0];
+			uint16_t addr = midas_gfxregs[0];
 			midas_gfxram[addr] = data;
 			midas_gfxregs[0] += midas_gfxregs[2];
 
@@ -849,7 +849,7 @@ ROM_END
 
 static DRIVER_INIT( livequiz )
 {
-	UINT16 *rom = (UINT16 *) memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *) memory_region(machine, "maincpu");
 
 	// PROTECTION CHECKS
 	rom[0x13345a/2]	=	0x4e75;

@@ -23,15 +23,15 @@
 #include "../lh/cardline.lh"
 
 static int cardline_video;
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 
 #define DRAW_TILE(machine, offset, transparency) drawgfx_transpen(bitmap, cliprect, machine->gfx[0],\
 					(videoram[index+offset] | (colorram[index+offset]<<8))&0x3fff,\
 					(colorram[index+offset]&0x80)>>7,\
 					0,0,\
 					x<<3, y<<3,\
-					transparency?transparency:(UINT32)-1);
+					transparency?transparency:(uint32_t)-1);
 
 static VIDEO_UPDATE( cardline )
 {

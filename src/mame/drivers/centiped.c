@@ -428,10 +428,10 @@ The Two Bit Score "Dux" hack was circulated and common enough for inclusion
 #include "sound/pokey.h"
 
 
-static UINT8 oldpos[4];
-static UINT8 sign[4];
-static UINT8 dsw_select, control_select;
-static UINT8 *rambase;
+static uint8_t oldpos[4];
+static uint8_t sign[4];
+static uint8_t dsw_select, control_select;
+static uint8_t *rambase;
 
 
 /*************************************
@@ -511,7 +511,7 @@ static WRITE8_HANDLER( irq_ack_w )
 
 INLINE int read_trackball(running_machine *machine, int idx, int switch_port)
 {
-	UINT8 newpos;
+	uint8_t newpos;
 	static const char *const portnames[] = { "IN0", "IN1", "IN2" };
 	static const char *const tracknames[] = { "TRACK0_X", "TRACK0_Y", "TRACK1_X", "TRACK1_Y" };
 
@@ -555,7 +555,7 @@ static READ8_HANDLER( milliped_IN1_r )
 
 static READ8_HANDLER( milliped_IN2_r )
 {
-	UINT8 data = input_port_read(space->machine, "IN2");
+	uint8_t data = input_port_read(space->machine, "IN2");
 
 	/* MSH - 15 Feb, 2007
      * The P2 X Joystick inputs are not properly handled in
@@ -566,7 +566,7 @@ static READ8_HANDLER( milliped_IN2_r )
      */
 	if (0 != control_select) {
 		/* Bottom 4 bits is our joystick inputs */
-		UINT8 joy2data = input_port_read(space->machine, "IN3") & 0x0f;
+		uint8_t joy2data = input_port_read(space->machine, "IN3") & 0x0f;
 		data = data & 0xf0; /* Keep the top 4 bits */
 		data |= (joy2data & 0x0a) >> 1; /* flip left and up */
 		data |= (joy2data & 0x05) << 1; /* flip right and down */

@@ -178,7 +178,7 @@ static READ8_HANDLER( sound_status_r )
 static WRITE8_HANDLER( sound_control_w )
 {
 	dcheese_state *state = (dcheese_state *)space->machine->driver_data;
-	UINT8 diff = data ^ state->sound_control;
+	uint8_t diff = data ^ state->sound_control;
 	state->sound_control = data;
 
 	/* bit 0x20 = LED */

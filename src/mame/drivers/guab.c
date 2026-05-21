@@ -117,7 +117,7 @@ static WRITE16_HANDLER( guab_tms34061_w )
 
 static READ16_HANDLER( guab_tms34061_r )
 {
-	UINT16 data = 0;
+	uint16_t data = 0;
 	int func = (offset >> 19) & 3;
 	int row = (offset >> 7) & 0xff;
 	int col;
@@ -144,8 +144,8 @@ static READ16_HANDLER( guab_tms34061_r )
 
 static struct ef9369
 {
-	UINT32 addr;
-	UINT16 clut[16];	/* 13-bits - a marking bit and a 444 color */
+	uint32_t addr;
+	uint16_t clut[16];	/* 13-bits - a marking bit and a 444 color */
 } pal;
 
 
@@ -162,7 +162,7 @@ static WRITE16_HANDLER( ef9369_w )
 	/* Data register */
 	else
 	{
-		UINT32 entry = pal.addr >> 1;
+		uint32_t entry = pal.addr >> 1;
 
 		if ((pal.addr & 1) == 0)
 		{
@@ -171,7 +171,7 @@ static WRITE16_HANDLER( ef9369_w )
 		}
 		else
 		{
-			UINT16 col;
+			uint16_t col;
 
 			pal.clut[entry] &= ~0x1f00;
 			pal.clut[entry] |= (data & 0x1f) << 8;
@@ -193,7 +193,7 @@ static READ16_HANDLER( ef9369_r )
 {
 	if ((offset & 1) == 0)
 	{
-		UINT16 col = pal.clut[pal.addr >> 1];
+		uint16_t col = pal.clut[pal.addr >> 1];
 
 		if ((pal.addr & 1) == 0)
 			return col & 0xff;
@@ -230,12 +230,12 @@ static VIDEO_UPDATE( guab )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT8 *src = &state.vram[256 * y];
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t *src = &state.vram[256 * y];
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			UINT8 pen = src[x >> 1];
+			uint8_t pen = src[x >> 1];
 
 			/* Draw two 4-bit pixels */
 			*dest++ = screen->machine->pens[pen >> 4];
@@ -256,14 +256,14 @@ static VIDEO_UPDATE( guab )
 
 static struct wd1770
 {
-	UINT32	status;
-	UINT8	cmd;
-	UINT8	data;
+	uint32_t	status;
+	uint8_t	cmd;
+	uint8_t	data;
 
-	UINT32	side;
-	INT32	track;
-	INT32	sector;
-	UINT32	sptr;
+	uint32_t	side;
+	int32_t	track;
+	int32_t	sector;
+	uint32_t	sptr;
 } fdc;
 
 static emu_timer *fdc_timer;
@@ -295,7 +295,7 @@ enum wd1770_status
 
 static TIMER_CALLBACK( fdc_data_callback )
 {
-	UINT8* disk = (UINT8*)memory_region(machine, "user1");
+	uint8_t* disk = (uint8_t*)memory_region(machine, "user1");
 	int more_data = 0;
 
 	/*
@@ -363,7 +363,7 @@ static WRITE16_HANDLER( wd1770_w )
 	{
 		case 0:
 		{
-			UINT8 cmd = (data >> 4) & 0xf;
+			uint8_t cmd = (data >> 4) & 0xf;
 
 			FDC_LOG(("Command: %x:: ", data));
 
@@ -503,7 +503,7 @@ static WRITE16_HANDLER( wd1770_w )
 
 static READ16_HANDLER( wd1770_r )
 {
-	UINT16 retval = 0;
+	uint16_t retval = 0;
 
 	switch (offset)
 	{
@@ -572,11 +572,11 @@ static INPUT_CHANGED( coin_inserted )
 {
 	if (newval == 0)
 	{
-		UINT32 credit;
+		uint32_t credit;
 		const address_space *space = cputag_get_address_space(field->port->machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
 		/* Get the current credit value and add the new coin value */
-		credit = memory_read_dword(space, 0x8002c) + (UINT32)(FPTR)param;
+		credit = memory_read_dword(space, 0x8002c) + (uint32_t)(FPTR)param;
 		memory_write_dword(space, 0x8002c, credit);
 	}
 }

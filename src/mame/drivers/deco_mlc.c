@@ -107,12 +107,12 @@ VIDEO_START( mlc );
 VIDEO_UPDATE( mlc );
 VIDEO_EOF( mlc );
 
-extern UINT32 *mlc_vram, *mlc_clip_ram;
-static UINT32 *mlc_ram, *irq_ram;
+extern uint32_t *mlc_vram, *mlc_clip_ram;
+static uint32_t *mlc_ram, *irq_ram;
 static timer_device *raster_irq_timer;
 static int mainCpuIsArm;
 static int mlc_raster_table[9][256];
-static UINT32 vbl_i;
+static uint32_t vbl_i;
 
 /***************************************************************************/
 
@@ -139,7 +139,7 @@ static READ32_HANDLER(test3_r)
 static WRITE32_DEVICE_HANDLER( avengrs_eprom_w )
 {
 	if (ACCESSING_BITS_8_15) {
-		UINT8 ebyte=(data>>8)&0xff;
+		uint8_t ebyte=(data>>8)&0xff;
 //      if (ebyte&0x80) {
 			eeprom_set_clock_line(device, (ebyte & 0x2) ? ASSERT_LINE : CLEAR_LINE);
 			eeprom_write_bit(device, ebyte & 0x1);
@@ -704,15 +704,15 @@ ROM_END
 static void descramble_sound( running_machine *machine )
 {
 	/* the same as simpl156 / heavy smash? */
-	UINT8 *rom = memory_region(machine, "ymz");
+	uint8_t *rom = memory_region(machine, "ymz");
 	int length = memory_region_length(machine, "ymz");
-	UINT8 *buf1 = auto_alloc_array(machine, UINT8, length);
+	uint8_t *buf1 = auto_alloc_array(machine, uint8_t, length);
 
-	UINT32 x;
+	uint32_t x;
 
 	for (x=0;x<length;x++)
 	{
-		UINT32 addr;
+		uint32_t addr;
 
 		addr = BITSWAP24 (x,23,22,21,0, 20,
 		                    19,18,17,16,
@@ -731,8 +731,8 @@ static void descramble_sound( running_machine *machine )
 
 static READ32_HANDLER( avengrgs_speedup_r )
 {
-	UINT32 a=mlc_ram[0x89a0/4];
-	UINT32 p=cpu_get_pc(space->cpu);
+	uint32_t a=mlc_ram[0x89a0/4];
+	uint32_t p=cpu_get_pc(space->cpu);
 
 	if ((p==0x3234 || p==0x32dc) && (a&1)) cpu_spinuntil_int(space->cpu);
 

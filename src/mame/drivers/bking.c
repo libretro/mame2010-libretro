@@ -64,7 +64,7 @@ static WRITE8_HANDLER( bking3_addr_h_w )
 static READ8_HANDLER( bking3_extrarom_r )
 {
 	buggychl_state *state = (buggychl_state *)space->machine->driver_data;
-	UINT8 *rom = memory_region(space->machine, "user2");
+	uint8_t *rom = memory_region(space->machine, "user2");
 	return rom[state->addr_h * 256 + state->addr_l];
 }
 
@@ -144,7 +144,7 @@ static ADDRESS_MAP_START( bking_audio_map, ADDRESS_SPACE_PROGRAM, 8 )
 ADDRESS_MAP_END
 
 #if 0
-static UINT8 port_a_in,port_a_out,ddr_a;
+static uint8_t port_a_in,port_a_out,ddr_a;
 
 static READ8_HANDLER( bking3_68705_port_a_r )
 {
@@ -163,7 +163,7 @@ static WRITE8_HANDLER( bking3_68705_ddr_a_w )
 	ddr_a = data;
 }
 
-static UINT8 port_b_in,port_b_out,ddr_b;
+static uint8_t port_b_in,port_b_out,ddr_b;
 
 static READ8_HANDLER( bking3_68705_port_b_r )
 {

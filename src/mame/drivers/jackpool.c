@@ -21,9 +21,9 @@ TODO:
 #include "machine/eeprom.h"
 
 
-static UINT16 *jackpool_vram;
-static UINT8 map_vreg;
-static UINT16 *jackpool_io;
+static uint16_t *jackpool_vram;
+static uint8_t map_vreg;
+static uint16_t *jackpool_io;
 
 
 static VIDEO_START(jackpool)
@@ -284,7 +284,7 @@ ROM_END
 
 static DRIVER_INIT( jackpool )
 {
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	/* patch NVRAM routine */
 	rom[0x9040/2] = 0x6602;

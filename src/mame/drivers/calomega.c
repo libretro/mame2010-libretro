@@ -638,13 +638,13 @@
 
 
 /* UART */
-static UINT8 tx_line;
-static UINT8 rx_line;
+static uint8_t tx_line;
+static uint8_t rx_line;
 
 
 /* from video */
-extern UINT8 *calomega_videoram;
-extern UINT8 *calomega_colorram;
+extern uint8_t *calomega_videoram;
+extern uint8_t *calomega_colorram;
 WRITE8_HANDLER( calomega_videoram_w );
 WRITE8_HANDLER( calomega_colorram_w );
 PALETTE_INIT( calomega );
@@ -659,7 +659,7 @@ VIDEO_UPDATE( calomega );
 static WRITE_LINE_DEVICE_HANDLER( tx_rx_clk )
 {
 	int trx_clk;
-	UINT8 dsw2 = input_port_read(device->machine, "SW2");
+	uint8_t dsw2 = input_port_read(device->machine, "SW2");
 	trx_clk = UART_CLOCK * dsw2 / 128;
 	acia6850_set_rx_clock(device, trx_clk);
 	acia6850_set_tx_clock(device, trx_clk);
@@ -3074,7 +3074,7 @@ static DRIVER_INIT( standard )
 {
 	/* background color is adjusted through RGB pots */
 	int x;
-	UINT8 *BPR = memory_region( machine, "proms" );
+	uint8_t *BPR = memory_region( machine, "proms" );
 
 	for (x = 0x0000; x < 0x0400; x++)
 	{
@@ -3086,7 +3086,7 @@ static DRIVER_INIT( standard )
 static DRIVER_INIT( elgrande )
 {
 	int x;
-	UINT8 *BPR = memory_region( machine, "proms" );
+	uint8_t *BPR = memory_region( machine, "proms" );
 
 	/* background color is adjusted through RGB pots */
 	for (x = 0x0000; x < 0x0400; x++)
@@ -3100,7 +3100,7 @@ static DRIVER_INIT( jjpoker )
 {
 	/* background color is adjusted through RGB pots */
 	int x;
-	UINT8 *BPR = memory_region( machine, "proms" );
+	uint8_t *BPR = memory_region( machine, "proms" );
 
 	for (x = 0x0000; x < 0x0400; x++)
 	{

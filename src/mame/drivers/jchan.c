@@ -177,19 +177,19 @@ there are 9 PALS on the pcb (not dumped)
 static bitmap_t *sprite_bitmap_1;
 static bitmap_t *sprite_bitmap_2;
 
-static UINT32* jchan_sprite_ram32_1;
-static UINT32* jchan_sprite_ram32_2;
-static UINT32* jchan_sprite_regs32_1;
-static UINT32* jchan_sprite_regs32_2;
+static uint32_t* jchan_sprite_ram32_1;
+static uint32_t* jchan_sprite_ram32_2;
+static uint32_t* jchan_sprite_regs32_1;
+static uint32_t* jchan_sprite_regs32_2;
 
 static int jchan_irq_sub_enable;
 
-static UINT16 *jchan_spriteram_1;
-static UINT16* jchan_sprregs_1;
-static UINT16 *jchan_spriteram_2;
-static UINT16* jchan_sprregs_2;
+static uint16_t *jchan_spriteram_1;
+static uint16_t* jchan_sprregs_1;
+static uint16_t *jchan_spriteram_2;
+static uint16_t* jchan_sprregs_2;
 
-static UINT16 *mainsub_shared_ram;
+static uint16_t *mainsub_shared_ram;
 
 /***************************************************************************
 
@@ -204,13 +204,13 @@ Provided we find a working PCB, trojan code will help:
 This will benefit galpani3 and other kaneko16 games with TOYBOX MCU.
 
 ***************************************************************************/
-static UINT16 *mcu_ram, jchan_mcu_com[4];
+static uint16_t *mcu_ram, jchan_mcu_com[4];
 
 static void jchan_mcu_run(running_machine *machine)
 {
-	UINT16 mcu_command = mcu_ram[0x0010/2];		/* command nb */
-	UINT16 mcu_offset  = mcu_ram[0x0012/2] / 2;	/* offset in shared RAM where MCU will write */
-	UINT16 mcu_subcmd  = mcu_ram[0x0014/2];		/* sub-command parameter, happens only for command #4 */
+	uint16_t mcu_command = mcu_ram[0x0010/2];		/* command nb */
+	uint16_t mcu_offset  = mcu_ram[0x0012/2] / 2;	/* offset in shared RAM where MCU will write */
+	uint16_t mcu_subcmd  = mcu_ram[0x0014/2];		/* sub-command parameter, happens only for command #4 */
 
 	logerror("%s : MCU executed command: %04X %04X %04X ",cpuexec_describe_context(machine),mcu_command,mcu_offset*2,mcu_subcmd);
 
@@ -275,7 +275,7 @@ static WRITE16_HANDLER( jchan_mcu_com##_n_##_w ) \
 	if (jchan_mcu_com[2] != 0xFFFF)	return; \
 	if (jchan_mcu_com[3] != 0xFFFF)	return; \
 \
-	memset(jchan_mcu_com, 0, 4 * sizeof( UINT16 ) ); \
+	memset(jchan_mcu_com, 0, 4 * sizeof( uint16_t ) ); \
 	jchan_mcu_run(space->machine); \
 }
 
@@ -346,12 +346,12 @@ static INTERRUPT_GEN( jchan_vblank )
 static VIDEO_START(jchan)
 {
 	/* so we can use suprnova.c */
-	jchan_sprite_ram32_1 = auto_alloc_array(machine, UINT32, 0x4000/4);
-	jchan_sprite_ram32_2 = auto_alloc_array(machine, UINT32, 0x4000/4);
+	jchan_sprite_ram32_1 = auto_alloc_array(machine, uint32_t, 0x4000/4);
+	jchan_sprite_ram32_2 = auto_alloc_array(machine, uint32_t, 0x4000/4);
 
 	machine->generic.spriteram_size = 0x4000;
-	jchan_sprite_regs32_1 = auto_alloc_array(machine, UINT32, 0x40/4);
-	jchan_sprite_regs32_2 = auto_alloc_array(machine, UINT32, 0x40/4);
+	jchan_sprite_regs32_1 = auto_alloc_array(machine, uint32_t, 0x40/4);
+	jchan_sprite_regs32_2 = auto_alloc_array(machine, uint32_t, 0x40/4);
 
 	sprite_bitmap_1 = auto_bitmap_alloc(machine,1024,1024,BITMAP_FORMAT_INDEXED16);
 	sprite_bitmap_2 = auto_bitmap_alloc(machine,1024,1024,BITMAP_FORMAT_INDEXED16);
@@ -370,11 +370,11 @@ static VIDEO_START(jchan)
 static VIDEO_UPDATE(jchan)
 {
 	int x,y;
-	UINT16* src1;
-	UINT16* src2;
-	UINT16* dst;
-	UINT16 pixdata1;
-	UINT16 pixdata2;
+	uint16_t* src1;
+	uint16_t* src2;
+	uint16_t* dst;
+	uint16_t pixdata1;
+	uint16_t pixdata2;
 
 	bitmap_fill(bitmap, cliprect, get_black_pen(screen->machine));
 
@@ -424,7 +424,7 @@ static VIDEO_UPDATE(jchan)
     $f00006 is read and impacts controls 'decoding'
     $f00000 is the only location also written
 */
-static UINT16 *jchan_ctrl;
+static uint16_t *jchan_ctrl;
 
 static WRITE16_HANDLER( jchan_ctrl_w )
 {
@@ -777,7 +777,7 @@ static DRIVER_INIT( jchan )
 	memory_install_write16_handler(cputag_get_address_space(machine, "sub", ADDRESS_SPACE_PROGRAM), 0x400000, 0x400001, 0, 0, sub2main_cmd_w );
 
 
-	memset(jchan_mcu_com, 0, 4 * sizeof( UINT16 ) );
+	memset(jchan_mcu_com, 0, 4 * sizeof( uint16_t ) );
 }
 
 

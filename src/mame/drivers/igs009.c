@@ -27,7 +27,7 @@ NVRAM   :   Battery for main RAM
 
 
 static tilemap_t *gp98_reel1_tilemap;
-static UINT8 *gp98_reel1_ram;
+static uint8_t *gp98_reel1_ram;
 
 static WRITE8_HANDLER( gp98_reel1_ram_w )
 {
@@ -59,7 +59,7 @@ static TILE_GET_INFO( get_gp98_reel1_tile_info )
 }
 
 static tilemap_t *gp98_reel2_tilemap;
-static UINT8 *gp98_reel2_ram;
+static uint8_t *gp98_reel2_ram;
 
 static WRITE8_HANDLER( gp98_reel2_ram_w )
 {
@@ -91,7 +91,7 @@ static TILE_GET_INFO( get_gp98_reel2_tile_info )
 
 
 static tilemap_t *gp98_reel3_tilemap;
-static UINT8 *gp98_reel3_ram;
+static uint8_t *gp98_reel3_ram;
 
 static WRITE8_HANDLER( gp98_reel3_ram_w )
 {
@@ -123,7 +123,7 @@ static TILE_GET_INFO( get_gp98_reel3_tile_info )
 
 
 static tilemap_t *gp98_reel4_tilemap;
-static UINT8 *gp98_reel4_ram;
+static uint8_t *gp98_reel4_ram;
 
 static WRITE8_HANDLER( gp98_reel4_ram_w )
 {
@@ -156,8 +156,8 @@ static TILE_GET_INFO( get_gp98_reel4_tile_info )
 
 
 
-static UINT8   *fg_tile_ram, *fg_color_ram;
-static UINT8   *bg_scroll, *bg_scroll2;
+static uint8_t   *fg_tile_ram, *fg_color_ram;
+static uint8_t   *bg_scroll, *bg_scroll2;
 
 static tilemap_t *fg_tilemap;
 
@@ -310,7 +310,7 @@ static CUSTOM_INPUT( hopper_r )
 	return hopper && !(field->port->machine->primary_screen->frame_number()%10);
 }
 
-static UINT8 out[3];
+static uint8_t out[3];
 
 static void show_out(void)
 {
@@ -364,7 +364,7 @@ static WRITE8_HANDLER( jingbell_leds_w )
 	show_out();
 }
 
-static UINT8 igs_magic[2];
+static uint8_t igs_magic[2];
 
 static WRITE8_HANDLER( jingbell_magic_w )
 {
@@ -738,12 +738,12 @@ ROM_END
 static DRIVER_INIT( jingbell )
 {
 	int i;
-	UINT8 *rom  = (UINT8 *)memory_region(machine, "maincpu");
+	uint8_t *rom  = (uint8_t *)memory_region(machine, "maincpu");
 	size_t size = memory_region_length(machine, "maincpu");
 
 	for (i=0; i<size; i++)
 	{
-		UINT8 x = rom[i];
+		uint8_t x = rom[i];
 		if (i & 0x0080)
 		{
 			if ((i & 0x0420) == 0x0420)	x ^= 0x20;

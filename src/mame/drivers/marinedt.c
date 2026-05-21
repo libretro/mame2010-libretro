@@ -60,7 +60,7 @@ for the colours, goal has to be black otherwise it would register
 rom writes when finishing a game
     worth looking at before the collision is correct?
 playing dot hit when eaten by a shark?
-dont use any ints, s/b UINT8?
+dont use any ints, s/b uint8_t?
 enemy sprite not disabled at end of game
 tilemap
 palette may only be around 4 colours
@@ -105,18 +105,18 @@ public:
 	marinedt_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *     tx_tileram;
+	uint8_t *     tx_tileram;
 
 	/* video-related */
 	bitmap_t *tile, *obj1, *obj2;
 	tilemap_t *tx_tilemap;
 
-	UINT8 obj1_a, obj1_x, obj1_y;
-	UINT8 obj2_a, obj2_x, obj2_y;
-	UINT8 pd, pf;
-	UINT8 music, sound;
-	UINT8 coll, cx, cyr, cyq;
-	UINT8 collh, cxh, cyrh, cyqh;
+	uint8_t obj1_a, obj1_x, obj1_y;
+	uint8_t obj2_a, obj2_x, obj2_y;
+	uint8_t pd, pf;
+	uint8_t music, sound;
+	uint8_t coll, cx, cyr, cyq;
+	uint8_t collh, cxh, cyrh, cyqh;
 };
 
 
@@ -161,7 +161,7 @@ static READ8_HANDLER( marinedt_obj1_x_r )
 	//----xxxx x pos in tile ram
 
 	marinedt_state *state = (marinedt_state *)space->machine->driver_data;
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	if (RAM[0x430e])
 		--state->cx;

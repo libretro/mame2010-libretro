@@ -79,7 +79,7 @@ VIDEO_START( dynduke );
 VIDEO_UPDATE( dynduke );
 VIDEO_EOF( dynduke );
 
-extern UINT16 *dynduke_back_data, *dynduke_fore_data, *dynduke_scroll_ram;
+extern uint16_t *dynduke_back_data, *dynduke_fore_data, *dynduke_scroll_ram;
 
 /* Memory Maps */
 

@@ -28,7 +28,7 @@
 static READ8_HANDLER( deco16_bank_r )
 {
 	liberate_state *state = (liberate_state *)space->machine->driver_data;
-	const UINT8 *ROM = memory_region(space->machine, "user1");
+	const uint8_t *ROM = memory_region(space->machine, "user1");
 
 	/* The tilemap bank can be swapped into main memory */
 	if (state->bank)
@@ -79,7 +79,7 @@ static WRITE8_HANDLER( deco16_bank_w )
 static READ8_HANDLER( prosoccr_bank_r )
 {
 	liberate_state *state = (liberate_state *)space->machine->driver_data;
-	const UINT8 *ROM = memory_region(space->machine, "user1");
+	const uint8_t *ROM = memory_region(space->machine, "user1");
 
 	/* The tilemap bank can be swapped into main memory */
 	if (state->bank)
@@ -109,7 +109,7 @@ static READ8_HANDLER( prosoccr_bank_r )
 static READ8_HANDLER( prosoccr_charram_r )
 {
 	liberate_state *state = (liberate_state *)space->machine->driver_data;
-	UINT8 *SRC_GFX = memory_region(space->machine, "shared_gfx");
+	uint8_t *SRC_GFX = memory_region(space->machine, "shared_gfx");
 
 	if (state->gfx_rom_readback)
 	{
@@ -131,7 +131,7 @@ static READ8_HANDLER( prosoccr_charram_r )
 static WRITE8_HANDLER( prosoccr_charram_w )
 {
 	liberate_state *state = (liberate_state *)space->machine->driver_data;
-	UINT8 *FG_GFX = memory_region(space->machine, "fg_gfx");
+	uint8_t *FG_GFX = memory_region(space->machine, "fg_gfx");
 
 	if (state->bank)
 	{
@@ -189,7 +189,7 @@ static WRITE8_HANDLER( prosoccr_io_bank_w )
 
 static READ8_HANDLER( prosport_charram_r )
 {
-	UINT8 *FG_GFX = memory_region(space->machine, "progolf_fg_gfx");
+	uint8_t *FG_GFX = memory_region(space->machine, "progolf_fg_gfx");
 
 	switch (offset & 0x1800)
 	{
@@ -209,7 +209,7 @@ static READ8_HANDLER( prosport_charram_r )
 
 static WRITE8_HANDLER( prosport_charram_w )
 {
-	UINT8 *FG_GFX = memory_region(space->machine, "progolf_fg_gfx");
+	uint8_t *FG_GFX = memory_region(space->machine, "progolf_fg_gfx");
 
 	switch (offset & 0x1800)
 	{
@@ -1365,8 +1365,8 @@ ROM_END
 static void sound_cpu_decrypt(running_machine *machine)
 {
 	const address_space *space = cputag_get_address_space(machine, "audiocpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x4000);
-	UINT8 *rom = memory_region(machine, "audiocpu");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x4000);
+	uint8_t *rom = memory_region(machine, "audiocpu");
 	int i;
 
 	/* Bit swapping on sound cpu - Opcodes only */
@@ -1378,7 +1378,7 @@ static void sound_cpu_decrypt(running_machine *machine)
 
 static DRIVER_INIT( prosport )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	int i;
 
 	/* Main cpu has the nibbles swapped */
@@ -1399,8 +1399,8 @@ static DRIVER_INIT( liberate )
 {
 	int A;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypted);
 

@@ -44,12 +44,12 @@
 
 
 
-static UINT16 *rambase;
+static uint16_t *rambase;
 
-static UINT8 coin_detected;
-static UINT8 coin_last_reset;
+static uint8_t coin_detected;
+static uint8_t coin_last_reset;
 
-static UINT8 mux_select;
+static uint8_t mux_select;
 static int gear;
 
 
@@ -94,7 +94,7 @@ static READ8_HANDLER( inputs_r )
 
 static READ8_HANDLER( switches_r )
 {
-	static const UINT8 switch_shuffle[8] = { 2,5,4,3,0,1,6,7 };
+	static const uint8_t switch_shuffle[8] = { 2,5,4,3,0,1,6,7 };
 	return (input_port_read(space->machine, "SWITCHES") >> switch_shuffle[offset]) & 1;
 }
 
@@ -150,13 +150,13 @@ static WRITE8_HANDLER( mux_select_w )
  *
  *************************************/
 
-static UINT8 joystick_read(running_device *device)
+static uint8_t joystick_read(running_device *device)
 {
 	if (device->machine->phase() != MACHINE_PHASE_RUNNING)
 		return 0;
 	else
 	{
-		int xval = (INT16)(cpu_get_reg(device, CCPU_X) << 4) >> 4;
+		int xval = (int16_t)(cpu_get_reg(device, CCPU_X) << 4) >> 4;
 		return (input_port_read_safe(device->machine, mux_select ? "ANALOGX" : "ANALOGY", 0) - xval) < 0x800;
 	}
 }
@@ -171,11 +171,11 @@ static UINT8 joystick_read(running_device *device)
 
 static READ8_HANDLER( speedfrk_wheel_r )
 {
-	static const UINT8 speedfrk_steer[] = {0xe, 0x6, 0x2, 0x0, 0x3, 0x7, 0xf};
+	static const uint8_t speedfrk_steer[] = {0xe, 0x6, 0x2, 0x0, 0x3, 0x7, 0xf};
 	int delta_wheel;
 
     /* the shift register is cleared once per 'frame' */
-    delta_wheel = (INT8)input_port_read(space->machine, "WHEEL") / 8;
+    delta_wheel = (int8_t)input_port_read(space->machine, "WHEEL") / 8;
     if (delta_wheel > 3)
         delta_wheel = 3;
     else if (delta_wheel < -3)
@@ -211,7 +211,7 @@ static READ8_HANDLER( speedfrk_gear_r )
 static const struct
 {
 	const char *portname;
-	UINT16 bitmask;
+	uint16_t bitmask;
 } sundance_port_map[16] =
 {
 	{ "PAD1", 0x155 },	/* bit  0 is set if P1 1,3,5,7,9 is pressed */

@@ -45,9 +45,9 @@ public:
 	dynadice_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-//  UINT8 *  nvram;     // currently this uses generic nvram handling
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  videoram;
+//  uint8_t *  nvram;     // currently this uses generic nvram handling
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*top_tilemap;
@@ -296,10 +296,10 @@ ROM_END
 static DRIVER_INIT( dynadice )
 {
 	int i, j;
-	UINT8 *usr1 = memory_region(machine, "user1");
-	UINT8 *cpu2 = memory_region(machine, "audiocpu");
-	UINT8 *gfx1 = memory_region(machine, "gfx1");
-	UINT8 *gfx2 = memory_region(machine, "gfx2");
+	uint8_t *usr1 = memory_region(machine, "user1");
+	uint8_t *cpu2 = memory_region(machine, "audiocpu");
+	uint8_t *gfx1 = memory_region(machine, "gfx1");
+	uint8_t *gfx2 = memory_region(machine, "gfx2");
 
 	cpu2[0x0b] = 0x23;	/* bug in game code  Dec HL -> Inc HL*/
 

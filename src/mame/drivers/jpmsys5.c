@@ -32,7 +32,7 @@
  *
  *************************************/
 
-static UINT8 palette[16][3];
+static uint8_t palette[16][3];
 static int pal_addr;
 static int pal_idx;
 
@@ -42,17 +42,17 @@ static int touch_data_count;
 static int touch_data[3];
 static int touch_shift_cnt;
 
-static UINT8 a0_acia_dcd;
-static UINT8 a0_data_out;
-static UINT8 a0_data_in;
+static uint8_t a0_acia_dcd;
+static uint8_t a0_data_out;
+static uint8_t a0_data_in;
 
-static UINT8 a1_acia_dcd;
-static UINT8 a1_data_out;
-static UINT8 a1_data_in;
+static uint8_t a1_acia_dcd;
+static uint8_t a1_data_out;
+static uint8_t a1_data_in;
 
-static UINT8 a2_acia_dcd;
-static UINT8 a2_data_out;
-static UINT8 a2_data_in;
+static uint8_t a2_acia_dcd;
+static uint8_t a2_data_out;
+static uint8_t a2_data_in;
 
 
 /*************************************
@@ -117,7 +117,7 @@ static WRITE16_HANDLER( sys5_tms34061_w )
 
 static READ16_HANDLER( sys5_tms34061_r )
 {
-	UINT16 data = 0;
+	uint16_t data = 0;
 	int func = (offset >> 19) & 3;
 	int row = (offset >> 7) & 0x1ff;
 	int col;
@@ -186,12 +186,12 @@ static VIDEO_UPDATE( jpmsys5v )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT8 *src = &state.vram[(state.dispstart & 0xffff)*2 + 256 * y];
-		UINT32 *dest = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
+		uint8_t *src = &state.vram[(state.dispstart & 0xffff)*2 + 256 * y];
+		uint32_t *dest = BITMAP_ADDR32(bitmap, y, cliprect->min_x);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x +=2)
 		{
-			UINT8 pen = src[(x-cliprect->min_x)>>1];
+			uint8_t pen = src[(x-cliprect->min_x)>>1];
 
 			/* Draw two 4-bit pixels */
 			*dest++ = screen->machine->pens[(pen >> 4) & 0xf];
@@ -211,7 +211,7 @@ static VIDEO_UPDATE( jpmsys5v )
 
 static WRITE16_HANDLER( rombank_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	data &= 0x1f;
 	memory_set_bankptr(space->machine, "bank1", &rom[0x20000 + 0x20000 * data]);
 }

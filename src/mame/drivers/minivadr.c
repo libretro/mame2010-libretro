@@ -22,7 +22,7 @@ public:
 	minivadr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 	size_t   videoram_size;
 };
 
@@ -41,9 +41,9 @@ static VIDEO_UPDATE( minivadr )
 	{
 		int i;
 
-		UINT8 x = offs << 3;
+		uint8_t x = offs << 3;
 		int y = offs >> 5;
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{

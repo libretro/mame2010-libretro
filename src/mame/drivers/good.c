@@ -43,10 +43,10 @@ public:
 	good_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  bg_tilemapram;
-	UINT16 *  fg_tilemapram;
-	UINT16 *  sprites;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  bg_tilemapram;
+	uint16_t *  fg_tilemapram;
+	uint16_t *  sprites;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap;

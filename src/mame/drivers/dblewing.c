@@ -33,37 +33,37 @@ public:
 	dblewing_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT16 *  spriteram;
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint16_t *  spriteram;
 	size_t    spriteram_size;
 
 	/* protection */
-	UINT16 _008_data;
-	UINT16 _104_data;
-	UINT16 _406_data;
-	UINT16 _608_data;
-	UINT16 _70c_data;
-	UINT16 _78a_data;
-	UINT16 _088_data;
-	UINT16 _58c_data;
-	UINT16 _408_data;
-	UINT16 _40e_data;
-	UINT16 _080_data;
-	UINT16 _788_data;
-	UINT16 _38e_data;
-	UINT16 _580_data;
-	UINT16 _60a_data;
-	UINT16 _200_data;
-	UINT16 _28c_data;
-	UINT16 _18a_data;
-	UINT16 _280_data;
-	UINT16 _384_data;
+	uint16_t _008_data;
+	uint16_t _104_data;
+	uint16_t _406_data;
+	uint16_t _608_data;
+	uint16_t _70c_data;
+	uint16_t _78a_data;
+	uint16_t _088_data;
+	uint16_t _58c_data;
+	uint16_t _408_data;
+	uint16_t _40e_data;
+	uint16_t _080_data;
+	uint16_t _788_data;
+	uint16_t _38e_data;
+	uint16_t _580_data;
+	uint16_t _60a_data;
+	uint16_t _200_data;
+	uint16_t _28c_data;
+	uint16_t _18a_data;
+	uint16_t _280_data;
+	uint16_t _384_data;
 
-	UINT16 boss_move, boss_shoot_type, boss_3_data, boss_4_data, boss_5_data ,boss_5sx_data, boss_6_data;
+	uint16_t boss_move, boss_shoot_type, boss_3_data, boss_4_data, boss_5_data ,boss_5sx_data, boss_6_data;
 
 	/* misc */
-	UINT8 sound_irq;
+	uint8_t sound_irq;
 
 	/* devices */
 	running_device *maincpu;
@@ -104,7 +104,7 @@ x = xpos
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	dblewing_state *state = (dblewing_state *)machine->driver_data;
-	UINT16 *spriteram = state->spriteram;
+	uint16_t *spriteram = state->spriteram;
 	int offs;
 
 	for (offs = 0x400 - 4; offs >= 0; offs -= 4)
@@ -194,7 +194,7 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 static VIDEO_UPDATE(dblewing)
 {
 	dblewing_state *state = (dblewing_state *)screen->machine->driver_data;
-	UINT16 flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
+	uint16_t flip = deco16ic_pf12_control_r(state->deco16ic, 0, 0xffff);
 
 	flip_screen_set(screen->machine, BIT(flip, 7));
 	deco16ic_pf12_update(state->deco16ic, state->pf1_rowscroll, state->pf2_rowscroll);

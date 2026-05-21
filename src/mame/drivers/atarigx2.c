@@ -174,7 +174,7 @@ static WRITE32_HANDLER( atarigx2_protection_w )
 
 static READ32_HANDLER( atarigx2_protection_r )
 {
-	static const UINT32 lookup_table[][2] =
+	static const uint32_t lookup_table[][2] =
 	{
 		// sprite flipping
 		{ 0x0000e54f, 0<<11 },
@@ -1104,13 +1104,13 @@ static READ32_HANDLER( atarigx2_protection_r )
 	};
 
 	atarigx2_state *state = (atarigx2_state *)space->machine->driver_data;
-	UINT32 result = state->protection_base[offset];
+	uint32_t result = state->protection_base[offset];
 
 	if (offset == 0x300)
 		result |= 0x80000000;
 	if (offset == 0x3f0)
 	{
-		UINT32 tag = (state->last_write_offset << 17) | state->last_write;
+		uint32_t tag = (state->last_write_offset << 17) | state->last_write;
 		int i = 0;
 
 		while (lookup_table[i][0] != 0xffffffff)

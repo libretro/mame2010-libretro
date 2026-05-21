@@ -30,8 +30,8 @@
 
 
 ***************************************************************************/
-static UINT32 *igs_mainram,*igs_cg_videoram,*igs_tx_videoram,*igs_bg_videoram;
-static UINT32 *igs_pallete32;
+static uint32_t *igs_mainram,*igs_cg_videoram,*igs_tx_videoram,*igs_bg_videoram;
+static uint32_t *igs_pallete32;
 static tilemap_t *igs_tx_tilemap,*igs_bg_tilemap;
 
 
@@ -121,7 +121,7 @@ static TILE_GET_INFO( get_bg_tilemap_tile_info )
 /* Pallete Layer */
 static WRITE32_HANDLER( igs_pallete32_w )
 {
-	space->machine->generic.paletteram.u16=(UINT16 *)igs_pallete32;
+	space->machine->generic.paletteram.u16=(uint16_t *)igs_pallete32;
 	COMBINE_DATA(&igs_pallete32[offset]);
 	//paletteram16_xGGGGGRRRRRBBBBB_word_w(offset*2,space->machine->generic.paletteram.u16[offset*2],0);
 	//paletteram16_xGGGGGRRRRRBBBBB_word_w(offset*2+1,space->machine->generic.paletteram.u16[offset*2+1],0);
@@ -200,7 +200,7 @@ ADDRESS_MAP_END
     Code Decryption
 
 ***************************************************************************/
-static const UINT8 sdwx_tab[] =
+static const uint8_t sdwx_tab[] =
 {
 	0x49,0x47,0x53,0x30,0x30,0x35,0x35,0x52,0x44,0x34,0x30,0x32,0x30,0x36,0x32,0x31,
 	0x8A,0xBB,0x20,0x67,0x97,0xA5,0x20,0x45,0x6B,0xC0,0xE8,0x0C,0x80,0xFB,0x49,0xAA,
@@ -223,12 +223,12 @@ static void sdwx_decrypt(running_machine *machine)
 {
 
 	int i;
-	UINT16 *src = (UINT16 *) memory_region(machine, "user1");
+	uint16_t *src = (uint16_t *) memory_region(machine, "user1");
 
 	int rom_size = 0x80000;
 
 	for(i=0; i<rom_size/2; i++) {
-		UINT16 x = src[i];
+		uint16_t x = src[i];
 
     if((i & 0x00480) != 0x00080)
       x ^= 0x0001;
@@ -268,8 +268,8 @@ static void sdwx_gfx_decrypt(running_machine *machine)
 {
 	int i;
 	unsigned rom_size = 0x80000;
-	UINT8 *src = (UINT8 *) (memory_region(machine, "gfx1"));
-	UINT8 *result_data = auto_alloc_array(machine, UINT8, rom_size);
+	uint8_t *src = (uint8_t *) (memory_region(machine, "gfx1"));
+	uint8_t *result_data = auto_alloc_array(machine, uint8_t, rom_size);
 
 	for (i=0; i<rom_size; i++)
     	result_data[i] = src[BITSWAP24(i, 23,22,21,20,19,18,17,16,15,14,13,12,11,8,7,6,10,9,5,4,3,2,1,0)];

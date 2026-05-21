@@ -110,17 +110,17 @@ public:
 	jollyjgr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
-	UINT8 *  bulletram;
-	UINT8 *  bitmap;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
+	uint8_t *  bulletram;
+	uint8_t *  bitmap;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* misc */
-	UINT8      nmi_enable, flip_x, flip_y, bitmap_disable, tilemap_bank, pri;
+	uint8_t      nmi_enable, flip_x, flip_y, bitmap_disable, tilemap_bank, pri;
 };
 
 
@@ -481,7 +481,7 @@ static void draw_bitmap( running_machine *machine, bitmap_t *bitmap )
 static VIDEO_UPDATE( jollyjgr )
 {
 	jollyjgr_state *state = (jollyjgr_state *)screen->machine->driver_data;
-	UINT8 *spriteram = state->spriteram;
+	uint8_t *spriteram = state->spriteram;
 	int offs;
 
 	bitmap_fill(bitmap, cliprect, 32);
@@ -546,9 +546,9 @@ static VIDEO_UPDATE( fspider )
     Assume bullets to look the same as on Galaxian hw,
     that is, simply 4 pixels. Colours are unknown. */
 	for (int offs=0;offs<0x10;offs+=2) {
-		UINT8 sy=~state->bulletram[offs];
-		UINT8 sx=~state->bulletram[offs|1];
-		UINT16 bc=(offs<4)?
+		uint8_t sy=~state->bulletram[offs];
+		uint8_t sx=~state->bulletram[offs|1];
+		uint16_t bc=(offs<4)?
 			32+7: // player, white
 			32+3; // enemy, yellow
 

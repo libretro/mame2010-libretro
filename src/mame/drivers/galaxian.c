@@ -437,21 +437,21 @@ TO DO :
  *
  *************************************/
 
-static UINT8 gmgalax_selected_game;
-static UINT8 zigzag_ay8910_latch;
-static UINT8 kingball_speech_dip;
-static UINT8 kingball_sound;
-static UINT8 mshuttle_ay8910_cs;
+static uint8_t gmgalax_selected_game;
+static uint8_t zigzag_ay8910_latch;
+static uint8_t kingball_speech_dip;
+static uint8_t kingball_sound;
+static uint8_t mshuttle_ay8910_cs;
 
-static UINT16 protection_state;
-static UINT8 protection_result;
+static uint16_t protection_state;
+static uint8_t protection_result;
 
-static UINT8 konami_sound_control;
-static UINT8 sfx_sample_control;
+static uint8_t konami_sound_control;
+static uint8_t sfx_sample_control;
 
-static UINT8 moonwar_port_select;
+static uint8_t moonwar_port_select;
 
-static UINT8 irq_enabled;
+static uint8_t irq_enabled;
 static int irq_line;
 
 static int tenspot_current_game;
@@ -536,7 +536,7 @@ static WRITE8_HANDLER( coin_count_1_w )
 static READ8_HANDLER( konami_ay8910_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x20) result &= ay8910_r(space->machine->device("8910.1"), 0);
 	if (offset & 0x80) result &= ay8910_r(space->machine->device("8910.0"), 0);
 	return result;
@@ -561,7 +561,7 @@ static WRITE8_HANDLER( konami_ay8910_w )
 
 static WRITE8_DEVICE_HANDLER( konami_sound_control_w )
 {
-	UINT8 old = konami_sound_control;
+	uint8_t old = konami_sound_control;
 	konami_sound_control = data;
 
 	/* the inverse of bit 3 clocks the flip flop to signal an INT */
@@ -590,8 +590,8 @@ static READ8_DEVICE_HANDLER( konami_sound_timer_r )
         current counter index, we use the sound cpu clock times 8 mod
         16*16*2*8*5*2.
     */
-	UINT32 cycles = (device->machine->device<cpu_device>("audiocpu")->total_cycles() * 8) % (UINT64)(16*16*2*8*5*2);
-	UINT8 hibit = 0;
+	uint32_t cycles = (device->machine->device<cpu_device>("audiocpu")->total_cycles() * 8) % (uint64_t)(16*16*2*8*5*2);
+	uint8_t hibit = 0;
 
 	/* separate the high bit from the others */
 	if (cycles >= 16*16*2*8*5)
@@ -622,7 +622,7 @@ static WRITE8_HANDLER( konami_sound_filter_w )
 		if (space->machine->device(ayname[which]) != NULL)
 			for (chan = 0; chan < 3; chan++)
 			{
-				UINT8 bits = (offset >> (2 * chan + 6 * (1 - which))) & 3;
+				uint8_t bits = (offset >> (2 * chan + 6 * (1 - which))) & 3;
 
 				/* low bit goes to 0.22uF capacitor = 220000pF  */
 				/* high bit goes to 0.047uF capacitor = 47000pF */
@@ -675,7 +675,7 @@ static const ppi8255_interface konami_ppi8255_1_intf =
 static READ8_HANDLER( theend_ppi8255_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x0100) result &= ppi8255_r(space->machine->device("ppi8255_0"), offset & 3);
 	if (offset & 0x0200) result &= ppi8255_r(space->machine->device("ppi8255_1"), offset & 3);
 	return result;
@@ -796,7 +796,7 @@ static READ8_DEVICE_HANDLER( explorer_sound_latch_r )
 static READ8_HANDLER( sfx_sample_io_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x04) result &= ppi8255_r(space->machine->device("ppi8255_2"), offset & 3);
 	return result;
 }
@@ -812,7 +812,7 @@ static WRITE8_HANDLER( sfx_sample_io_w )
 
 static WRITE8_DEVICE_HANDLER( sfx_sample_control_w )
 {
-	UINT8 old = sfx_sample_control;
+	uint8_t old = sfx_sample_control;
 	sfx_sample_control = data;
 
 	/* the inverse of bit 0 clocks the flip flop to signal an INT */
@@ -843,7 +843,7 @@ static const ppi8255_interface sfx_ppi8255_2_intf =
 static READ8_HANDLER( frogger_ppi8255_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x1000) result &= ppi8255_r(space->machine->device("ppi8255_1"), (offset >> 1) & 3);
 	if (offset & 0x2000) result &= ppi8255_r(space->machine->device("ppi8255_0"), (offset >> 1) & 3);
 	return result;
@@ -861,7 +861,7 @@ static WRITE8_HANDLER( frogger_ppi8255_w )
 static READ8_HANDLER( frogger_ay8910_r )
 {
 	/* the decoding here is very simplistic */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x40) result &= ay8910_r(space->machine->device("8910.0"), 0);
 	return result;
 }
@@ -881,7 +881,7 @@ static WRITE8_HANDLER( frogger_ay8910_w )
 static READ8_DEVICE_HANDLER( frogger_sound_timer_r )
 {
 	/* same as regular Konami sound but with bits 3,5 swapped */
-	UINT8 konami_value = konami_sound_timer_r(device, 0);
+	uint8_t konami_value = konami_sound_timer_r(device, 0);
 	return BITSWAP8(konami_value, 7,6,3,4,5,2,1,0);
 }
 
@@ -902,7 +902,7 @@ static WRITE8_HANDLER( froggrmc_sound_control_w )
 static READ8_HANDLER( frogf_ppi8255_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x1000) result &= ppi8255_r(space->machine->device("ppi8255_0"), (offset >> 3) & 3);
 	if (offset & 0x2000) result &= ppi8255_r(space->machine->device("ppi8255_1"), (offset >> 3) & 3);
 	return result;
@@ -940,7 +940,7 @@ static WRITE8_HANDLER( turtles_ppi8255_1_w ) { ppi8255_w(space->machine->device(
 static READ8_HANDLER( scorpion_ay8910_r )
 {
 	/* the decoding here is very simplistic, and you can address both simultaneously */
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if (offset & 0x08) result &= ay8910_r(space->machine->device("8910.2"), 0);
 	if (offset & 0x20) result &= ay8910_r(space->machine->device("8910.1"), 0);
 	if (offset & 0x80) result &= ay8910_r(space->machine->device("8910.0"), 0);
@@ -962,8 +962,8 @@ static WRITE8_HANDLER( scorpion_ay8910_w )
 
 static READ8_DEVICE_HANDLER( scorpion_protection_r )
 {
-	UINT16 paritybits;
-	UINT8 parity = 0;
+	uint16_t paritybits;
+	uint8_t parity = 0;
 
 	/* compute parity of the current (bitmask & $CE29) */
 	for (paritybits = protection_state & 0xce29; paritybits != 0; paritybits >>= 1)
@@ -2378,15 +2378,15 @@ MACHINE_DRIVER_END
  *
  *************************************/
 
-static void decode_mooncrst(running_machine *machine, int length, UINT8 *dest)
+static void decode_mooncrst(running_machine *machine, int length, uint8_t *dest)
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int offs;
 
 	for (offs = 0; offs < length; offs++)
 	{
-		UINT8 data = rom[offs];
-		UINT8 res = data;
+		uint8_t data = rom[offs];
+		uint8_t res = data;
 		if (BIT(data,1)) res ^= 0x40;
 		if (BIT(data,5)) res ^= 0x04;
 		if ((offs & 1) == 0) res = BITSWAP8(res,7,2,5,4,3,6,1,0);
@@ -2431,7 +2431,7 @@ static void decode_checkman(running_machine *machine)
                  +-------+
         Pin layout is such that links can replace the PAL if encryption is not used.
     */
-	static const UINT8 xortable[8][4] =
+	static const uint8_t xortable[8][4] =
 	{
 		{ 6,0,6,0 },
 		{ 5,1,5,1 },
@@ -2442,14 +2442,14 @@ static void decode_checkman(running_machine *machine)
 		{ 0,2,0,2 },
 		{ 1,4,1,4 }
 	};
-	UINT8 *rombase = memory_region(machine, "maincpu");
-	UINT32 romlength = memory_region_length(machine, "maincpu");
-	UINT32 offs;
+	uint8_t *rombase = memory_region(machine, "maincpu");
+	uint32_t romlength = memory_region_length(machine, "maincpu");
+	uint32_t offs;
 
 	for (offs = 0; offs < romlength; offs++)
 	{
-		UINT8 data = rombase[offs];
-		UINT32 line = offs & 0x07;
+		uint8_t data = rombase[offs];
+		uint32_t line = offs & 0x07;
 
 		data ^= (BIT(data,xortable[line][0]) << xortable[line][1]) | (BIT(data,xortable[line][2]) << xortable[line][3]);
 		rombase[offs] = data;
@@ -2459,13 +2459,13 @@ static void decode_checkman(running_machine *machine)
 
 static void decode_dingoe(running_machine *machine)
 {
-	UINT8 *rombase = memory_region(machine, "maincpu");
-	UINT32 romlength = memory_region_length(machine, "maincpu");
-	UINT32 offs;
+	uint8_t *rombase = memory_region(machine, "maincpu");
+	uint32_t romlength = memory_region_length(machine, "maincpu");
+	uint32_t offs;
 
 	for (offs = 0; offs < romlength; offs++)
 	{
-		UINT8 data = rombase[offs];
+		uint8_t data = rombase[offs];
 
 		/* XOR bit 4 with bit 2, and bit 0 with bit 5, and invert bit 1 */
 		data ^= BIT(data, 2) << 4;
@@ -2482,8 +2482,8 @@ static void decode_dingoe(running_machine *machine)
 
 static void decode_frogger_sound(running_machine *machine)
 {
-	UINT8 *rombase = memory_region(machine, "audiocpu");
-	UINT32 offs;
+	uint8_t *rombase = memory_region(machine, "audiocpu");
+	uint32_t offs;
 
 	/* the first ROM of the sound CPU has data lines D0 and D1 swapped */
 	for (offs = 0; offs < 0x0800; offs++)
@@ -2493,8 +2493,8 @@ static void decode_frogger_sound(running_machine *machine)
 
 static void decode_frogger_gfx(running_machine *machine)
 {
-	UINT8 *rombase = memory_region(machine, "gfx1");
-	UINT32 offs;
+	uint8_t *rombase = memory_region(machine, "gfx1");
+	uint32_t offs;
 
 	/* the 2nd gfx ROM has data lines D0 and D1 swapped */
 	for (offs = 0x0800; offs < 0x1000; offs++)
@@ -2504,15 +2504,15 @@ static void decode_frogger_gfx(running_machine *machine)
 
 static void decode_anteater_gfx(running_machine *machine)
 {
-	UINT32 romlength = memory_region_length(machine, "gfx1");
-	UINT8 *rombase = memory_region(machine, "gfx1");
-	UINT8 *scratch = auto_alloc_array(machine, UINT8, romlength);
-	UINT32 offs;
+	uint32_t romlength = memory_region_length(machine, "gfx1");
+	uint8_t *rombase = memory_region(machine, "gfx1");
+	uint8_t *scratch = auto_alloc_array(machine, uint8_t, romlength);
+	uint32_t offs;
 
 	memcpy(scratch, rombase, romlength);
 	for (offs = 0; offs < romlength; offs++)
 	{
-		UINT32 srcoffs = offs & 0x9bf;
+		uint32_t srcoffs = offs & 0x9bf;
 		srcoffs |= (BIT(offs,4) ^ BIT(offs,9) ^ (BIT(offs,2) & BIT(offs,10))) << 6;
 		srcoffs |= (BIT(offs,2) ^ BIT(offs,10)) << 9;
 		srcoffs |= (BIT(offs,0) ^ BIT(offs,6) ^ 1) << 10;
@@ -2524,15 +2524,15 @@ static void decode_anteater_gfx(running_machine *machine)
 
 static void decode_losttomb_gfx(running_machine *machine)
 {
-	UINT32 romlength = memory_region_length(machine, "gfx1");
-	UINT8 *rombase = memory_region(machine, "gfx1");
-	UINT8 *scratch = auto_alloc_array(machine, UINT8, romlength);
-	UINT32 offs;
+	uint32_t romlength = memory_region_length(machine, "gfx1");
+	uint8_t *rombase = memory_region(machine, "gfx1");
+	uint8_t *scratch = auto_alloc_array(machine, uint8_t, romlength);
+	uint32_t offs;
 
 	memcpy(scratch, rombase, romlength);
 	for (offs = 0; offs < romlength; offs++)
 	{
-		UINT32 srcoffs = offs & 0xa7f;
+		uint32_t srcoffs = offs & 0xa7f;
 		srcoffs |= ((BIT(offs,1) & BIT(offs,8)) | ((1 ^ BIT(offs,1)) & (BIT(offs,10)))) << 7;
 		srcoffs |= (BIT(offs,7) ^ (BIT(offs,1) & (BIT(offs,7) ^ BIT(offs,10)))) << 8;
 		srcoffs |= ((BIT(offs,1) & BIT(offs,7)) | ((1 ^ BIT(offs,1)) & (BIT(offs,8)))) << 10;
@@ -2545,7 +2545,7 @@ static void decode_losttomb_gfx(running_machine *machine)
 static void decode_superbon(running_machine *machine)
 {
 	offs_t i;
-	UINT8 *RAM;
+	uint8_t *RAM;
 
 	/* Deryption worked out by hand by Chris Hardy. */
 
@@ -2738,7 +2738,7 @@ static DRIVER_INIT( mooncrgx )
 static DRIVER_INIT( moonqsr )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x8000);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	/* video extensions */
 	common_init(machine, galaxian_draw_bullet, galaxian_draw_background, moonqsr_extend_tile_info, moonqsr_extend_sprite_info);
@@ -2779,9 +2779,9 @@ static READ8_HANDLER( tenspot_dsw_read )
 void tenspot_set_game_bank(running_machine* machine, int bank, int from_game)
 {
 	char tmp[64];
-	UINT8* srcregion;
-	UINT8* dstregion;
-	UINT8* color_prom;
+	uint8_t* srcregion;
+	uint8_t* dstregion;
+	uint8_t* color_prom;
 	int x;
 
 	sprintf(tmp,"game_%d_cpu", bank);
@@ -3232,13 +3232,13 @@ static DRIVER_INIT( scorpion )
 	memory_install_read8_handler(cputag_get_address_space(machine, "audiocpu", ADDRESS_SPACE_PROGRAM), 0x3000, 0x3000, 0, 0, scorpion_digitalker_intr_r);
 /*
 {
-    const UINT8 *rom = memory_region(machine, "speech");
+    const uint8_t *rom = memory_region(machine, "speech");
     int i;
 
     for (i = 0; i < 0x2c; i++)
     {
-        UINT16 addr = (rom[2*i] << 8) | rom[2*i+1];
-        UINT16 endaddr = (rom[2*i+2] << 8) | rom[2*i+3];
+        uint16_t addr = (rom[2*i] << 8) | rom[2*i+1];
+        uint16_t endaddr = (rom[2*i+2] << 8) | rom[2*i+3];
         int j;
         printf("Cmd %02X -> %04X-%04X:", i, addr, endaddr - 1);
         for (j = 0; j < 32 && addr < endaddr; j++)

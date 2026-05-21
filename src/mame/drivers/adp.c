@@ -160,8 +160,8 @@ public:
 	adp_state(running_machine &machine) { }
 
 	/* misc */
-	UINT8 mux_data;
-	UINT8 register_active;
+	uint8_t mux_data;
+	uint8_t register_active;
 
 	/* devices */
 	running_device *maincpu;
@@ -176,13 +176,13 @@ public:
 
 ***************************************************************************/
 
-static void duart_irq_handler( running_device *device, UINT8 vector )
+static void duart_irq_handler( running_device *device, uint8_t vector )
 {
 	adp_state *state = (adp_state *)device->machine->driver_data;
 	cpu_set_input_line_and_vector(state->maincpu, 4, HOLD_LINE, vector);
 };
 
-static void duart_tx( running_device *device, int channel, UINT8 data )
+static void duart_tx( running_device *device, int channel, uint8_t data )
 {
 	if (channel == 0)
 	{
@@ -190,13 +190,13 @@ static void duart_tx( running_device *device, int channel, UINT8 data )
 	}
 };
 
-static void microtouch_tx( running_machine *machine, UINT8 data )
+static void microtouch_tx( running_machine *machine, uint8_t data )
 {
 	adp_state *state = (adp_state *)machine->driver_data;
 	duart68681_rx_data(state->duart, 0, data);
 }
 
-static UINT8 duart_input( running_device *device )
+static uint8_t duart_input( running_device *device )
 {
 	return input_port_read(device->machine, "DSW1");
 }
@@ -224,7 +224,7 @@ static MACHINE_START( skattv )
 
 	// hack to handle acrt rom
 	{
-		UINT16 *rom = (UINT16*)memory_region(machine, "gfx1");
+		uint16_t *rom = (uint16_t*)memory_region(machine, "gfx1");
 		int i;
 
 		running_device *hd63484 = machine->device("hd63484");
@@ -416,7 +416,7 @@ static WRITE16_HANDLER(wh2_w)
 
 static READ8_DEVICE_HANDLER(t2_r)
 {
-	static UINT8 res;
+	static uint8_t res;
 	static int h,w;
 	res = 0;
 	h = device->machine->primary_screen->height();

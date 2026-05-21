@@ -21,8 +21,8 @@ public:
 	mayumi_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
-//  UINT8 *    nvram;       // this currently uses generic nvram handlers
+	uint8_t *    videoram;
+//  uint8_t *    nvram;       // this currently uses generic nvram handlers
 
 	/* video-related */
 	tilemap_t *tilemap;
@@ -350,7 +350,7 @@ static const ym2203_interface ym2203_config =
 static MACHINE_START( mayumi )
 {
 	mayumi_state *state = (mayumi_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x4000);
 	memory_set_bank(machine, "bank1", 0);

@@ -1169,7 +1169,7 @@ static MACHINE_START( homedata )
 static MACHINE_START( reikaids )
 {
 	homedata_state *state = (homedata_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0xc000], 0x4000);
 	memory_configure_bank(machine, "bank2", 0, 4, memory_region(machine, "audiocpu"), 0x10000);
@@ -1186,7 +1186,7 @@ static MACHINE_START( reikaids )
 static MACHINE_START( pteacher )
 {
 	homedata_state *state = (homedata_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0xc000], 0x4000);
 	memory_configure_bank(machine, "bank2", 0, 4, memory_region(machine, "audiocpu"), 0x10000);
@@ -1459,7 +1459,7 @@ static ADDRESS_MAP_START( cpu1_map, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x8000, 0xffff) AM_ROM
 ADDRESS_MAP_END
 
-static UINT8 prot_data;
+static uint8_t prot_data;
 
 static READ8_HANDLER( mirderby_prot_r )
 {

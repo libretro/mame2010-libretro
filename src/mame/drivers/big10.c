@@ -102,7 +102,7 @@ static MACHINE_RESET(big10)
 *  Input Ports Demux & Common Routines  *
 ****************************************/
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 static WRITE8_DEVICE_HANDLER( mux_w )
 {

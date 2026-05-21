@@ -630,8 +630,8 @@
 *     Video Hardware     *
 *************************/
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
 
 static WRITE8_HANDLER( goldnpkr_videoram_w )
@@ -771,7 +771,7 @@ static PALETTE_INIT( witchcrd )
 ***********************/
 
 static int mux_data = 0;
-static UINT8 pia0_PA_data;
+static uint8_t pia0_PA_data;
 
 /* Inputs (buttons) are multiplexed.
    There are 4 sets of 5 bits each and are connected to PIA0, portA.
@@ -791,7 +791,7 @@ static READ8_DEVICE_HANDLER( goldnpkr_mux_port_r )
 
 static READ8_DEVICE_HANDLER( pottnpkr_mux_port_r )
 {
-	UINT8 pa_0_4 = 0xff, pa_7;	/* Temporary place holder for bits 0 to 4 & 7 */
+	uint8_t pa_0_4 = 0xff, pa_7;	/* Temporary place holder for bits 0 to 4 & 7 */
 
 	switch( mux_data & 0xf0 )		/* bits 4-7 */
 	{
@@ -3223,7 +3223,7 @@ static DRIVER_INIT( royale )
 {
     /* $60bb, NOPing the ORA #$F0 (after read the PIA1 port B */
 
-//  UINT8 *ROM = memory_region(machine, "maincpu");
+//  uint8_t *ROM = memory_region(machine, "maincpu");
 
 //  ROM[0x60bb] = 0xea;
 //  ROM[0x60bc] = 0xea;

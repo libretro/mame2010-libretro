@@ -184,8 +184,8 @@ lev 7 : 0x7c : 0000 07e0 - input device clear?
 #include "sound/8950intf.h"
 
 static tilemap_t *tx_tilemap;
-static UINT16 *tx_vram,*bg_vram,*fg_vram,*spr_ram;
-static UINT16 *io_ram;
+static uint16_t *tx_vram,*bg_vram,*fg_vram,*spr_ram;
+static uint16_t *io_ram;
 
 #define LOG_UNKNOWN_WRITE logerror("unknown io write CPU '%s':%08x  0x%08x 0x%04x & 0x%04x\n", space->cpu->tag(), cpu_get_pc(space->cpu), offset*2, data, mem_mask);
 
@@ -219,8 +219,8 @@ static VIDEO_UPDATE( cybertnk )
 		{
 			for (x=0;x<128;x++)
 			{
-				UINT16 tile = bg_vram[count] & 0x1fff;
-				UINT16 color = (fg_vram[count] & 0xe000) >> 13;
+				uint16_t tile = bg_vram[count] & 0x1fff;
+				uint16_t color = (fg_vram[count] & 0xe000) >> 13;
 
 				drawgfx_transpen(bitmap,cliprect,gfx,tile,color+0x194,0,0,x*8,(y*8),0);
 
@@ -240,8 +240,8 @@ static VIDEO_UPDATE( cybertnk )
 		{
 			for (x=0;x<128;x++)
 			{
-				UINT16 tile = fg_vram[count] & 0x1fff;
-				UINT16 color = (fg_vram[count] & 0xe000) >> 13;
+				uint16_t tile = fg_vram[count] & 0x1fff;
+				uint16_t color = (fg_vram[count] & 0xe000) >> 13;
 
 				drawgfx_transpen(bitmap,cliprect,gfx,tile,color+0x1c0,0,0,x*8,(y*8),0);
 
@@ -254,9 +254,9 @@ static VIDEO_UPDATE( cybertnk )
 	/* non-tile based spriteram (BARE-BONES, looks pretty complex) */
 	if(1)
 	{
-		const UINT8 *blit_ram = memory_region(screen->machine,"spr_gfx");
+		const uint8_t *blit_ram = memory_region(screen->machine,"spr_gfx");
 		int offs,x,y,z,xsize,ysize,yi,xi,col_bank,fx,zoom;
-		UINT32 spr_offs,spr_offs_helper;
+		uint32_t spr_offs,spr_offs_helper;
 		int xf,yf,xz,yz;
 
 		for(offs=0;offs<0x1000/2;offs+=8)
@@ -287,8 +287,8 @@ static VIDEO_UPDATE( cybertnk )
 				spr_offs_helper = spr_offs;
 				for(xi=0;xi < xsize;xi+=8)
 				{
-					UINT32 color;
-					UINT16 dot;
+					uint32_t color;
+					uint16_t dot;
 					int shift_pen, x_dec; //helpers
 
 					color = ((blit_ram[spr_offs+0] & 0xff) << 24);
@@ -390,7 +390,7 @@ if(0) //sprite gfx debug viewer
 {
 	int x,y,count;
 	static int test_x, test_y, start_offs,color_pen;
-	const UINT8 *blit_ram = memory_region(screen->machine,"spr_gfx");
+	const uint8_t *blit_ram = memory_region(screen->machine,"spr_gfx");
 
 	if(input_code_pressed(screen->machine, KEYCODE_Z))
 		test_x++;
@@ -438,8 +438,8 @@ if(0) //sprite gfx debug viewer
 	{
 		for(x=0;x<test_x;x+=8)
 		{
-			UINT32 color;
-			UINT8 dot;
+			uint32_t color;
+			uint8_t dot;
 
 			color = ((blit_ram[count+0] & 0xff) << 24);
 			color|= ((blit_ram[count+1] & 0xff) << 16);

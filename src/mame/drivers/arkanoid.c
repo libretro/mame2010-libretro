@@ -1476,8 +1476,8 @@ static DRIVER_INIT( block2 )
 	arkanoid_state *state = (arkanoid_state *)machine->driver_data;
 	// the graphics on this bootleg have the data scrambled
 	int tile;
-	UINT8* srcgfx = memory_region(machine,"gfx1");
-	UINT8* buffer = auto_alloc_array(machine, UINT8, 0x18000);
+	uint8_t* srcgfx = memory_region(machine,"gfx1");
+	uint8_t* buffer = auto_alloc_array(machine, uint8_t, 0x18000);
 
 	for (tile = 0; tile < 0x3000; tile++)
 	{
@@ -1538,7 +1538,7 @@ static DRIVER_INIT( paddle2 )
 
 static DRIVER_INIT( tetrsark )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int x;
 
 	for (x = 0; x < 0x8000; x++)
@@ -1552,7 +1552,7 @@ static DRIVER_INIT( tetrsark )
 
 static DRIVER_INIT( hexa )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 #if 0
 
 

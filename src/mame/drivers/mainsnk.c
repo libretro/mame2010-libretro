@@ -112,8 +112,8 @@ cc_p14.j2 8192 0xedc6a1eb M5L2764k
 #include "includes/snk.h"
 #include "sound/ay8910.h"
 
-extern UINT8 *mainsnk_fgram;
-extern UINT8 *mainsnk_bgram;
+extern uint8_t *mainsnk_fgram;
+extern uint8_t *mainsnk_bgram;
 WRITE8_HANDLER(mainsnk_c600_w);
 WRITE8_HANDLER(mainsnk_fgram_w);
 WRITE8_HANDLER(mainsnk_bgram_w);

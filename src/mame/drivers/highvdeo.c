@@ -88,7 +88,7 @@ Game is V30 based, with rom banking (2Mb)
 #include "sound/okim6376.h"
 #include "../lh/fashion.lh"
 
-static UINT16 *blit_ram;
+static uint16_t *blit_ram;
 
 
 static VIDEO_START(tourvisn)
@@ -106,7 +106,7 @@ static VIDEO_UPDATE(tourvisn)
 	{
 		for(x=0;x<(screen->visible_area().max_x+1)/2;x++)
 		{
-			UINT32 color;
+			uint32_t color;
 
 			color = ((blit_ram[count]) & 0x00ff)>>0;
 
@@ -136,10 +136,10 @@ static VIDEO_UPDATE(brasil)
 	{
 		for(x=0;x<400;x++)
 		{
-			UINT32 color;
-			UINT32 b;
-			UINT32 g;
-			UINT32 r;
+			uint32_t color;
+			uint32_t b;
+			uint32_t g;
+			uint32_t r;
 
 			color = (blit_ram[count]) & 0xffff;
 
@@ -210,8 +210,8 @@ static WRITE16_HANDLER( tv_vcf_paletteram_w )
 
 static WRITE16_HANDLER( tv_vcf_bankselect_w )
 {
-	static UINT32 bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "user1");
+	static uint32_t bankaddress;
+	uint8_t *ROM = memory_region(space->machine, "user1");
 
 	/* bits 0, 1 select the ROM bank */
 	bankaddress = (data & 0x03) * 0x40000;
@@ -326,8 +326,8 @@ static WRITE16_HANDLER( tv_tcf_paletteram_w )
 
 static WRITE16_HANDLER( tv_tcf_bankselect_w )
 {
-	static UINT32 bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "user1");
+	static uint32_t bankaddress;
+	uint8_t *ROM = memory_region(space->machine, "user1");
 
 	/* bits 0, 1, 2 select the ROM bank */
 	bankaddress = (data & 0x07) * 0x40000;
@@ -368,7 +368,7 @@ static READ16_HANDLER( newmcard_status_r )
 	return 0;
 }
 
-static UINT16 vblank_bit;
+static uint16_t vblank_bit;
 
 static READ16_HANDLER( newmcard_vblank_r )
 {
@@ -421,11 +421,11 @@ ADDRESS_MAP_END
 *
 ****************************/
 
-static UINT16 brasil_prot_latch;
+static uint16_t brasil_prot_latch;
 
 static READ16_HANDLER( brasil_status_r )
 {
-	static UINT16 resetpulse;
+	static uint16_t resetpulse;
 
 	switch(offset*2)
 	{
@@ -444,8 +444,8 @@ static READ16_HANDLER( brasil_status_r )
 /*bankaddress might be incorrect.*/
 static WRITE16_HANDLER( brasil_status_w )
 {
-	static UINT32 bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "user1");
+	static uint32_t bankaddress;
+	uint8_t *ROM = memory_region(space->machine, "user1");
 
 	switch(data & 3) //data & 7?
 	{
@@ -1132,7 +1132,7 @@ ROM_END
 /*Ciclone*/
 static READ16_HANDLER( ciclone_status_r )
 {
-	static UINT16 resetpulse;
+	static uint16_t resetpulse;
 	switch(offset*2)
 	{
 		case 0:

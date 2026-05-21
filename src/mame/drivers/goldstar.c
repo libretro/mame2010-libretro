@@ -5034,12 +5034,12 @@ static const gfx_layout tiles8x32x4alt_layout =
 	16*32
 };
 
-static const UINT32 layout_xoffset[128] =
+static const uint32_t layout_xoffset[128] =
 {
 	STEP32(0*128,4),STEP32(1*128,4),STEP32(2*128,4),STEP32(3*128,4)
 };
 
-static const UINT32 layout_yoffset[128] =
+static const uint32_t layout_yoffset[128] =
 {
 	STEP32(0*16384, 512),STEP32(1*16384,512),STEP32(2*16384,512),STEP32(3*16384,512)
 };
@@ -5058,12 +5058,12 @@ static const gfx_layout tiles128x128x4_layout =
 };
 
 
-static const UINT32 layout_xoffset256[256] =
+static const uint32_t layout_xoffset256[256] =
 {
 	STEP32(0*128,4),STEP32(1*128,4),STEP32(2*128,4),STEP32(3*128,4), STEP32(4*128,4), STEP32(5*128,4), STEP32(6*128,4), STEP32(7*128,4)
 };
 
-static const UINT32 layout_yoffset256[256] =
+static const uint32_t layout_yoffset256[256] =
 {
 	STEP32(0*32768, 1024),STEP32(1*32768,1024),STEP32(2*32768,1024),STEP32(3*32768,1024),STEP32(4*32768,1024), STEP32(5*32768,1024),STEP32(6*32768,1024),STEP32(7*32768,1024)
 };
@@ -5627,8 +5627,8 @@ static PALETTE_INIT(cm)
 
 	for (i = 0; i < 0x100; i++)
 	{
-		UINT8 data;
-		UINT8*proms = memory_region(machine, "proms");
+		uint8_t data;
+		uint8_t*proms = memory_region(machine, "proms");
 
 		data = proms[0x000 + i] | (proms[0x100 + i] << 4);
 
@@ -5643,7 +5643,7 @@ static PALETTE_INIT(cmast91)
 	{
 		int r,g,b;
 
-		UINT8*proms = memory_region(machine, "proms");
+		uint8_t*proms = memory_region(machine, "proms");
 
 		b = proms[0x000 + i] << 4;
 		g = proms[0x100 + i] << 4;
@@ -5658,8 +5658,8 @@ static PALETTE_INIT(lucky8)
 	/* BBGGGRRR */
 
 	int i;
-	UINT8 data;
-	UINT8 *proms;
+	uint8_t data;
+	uint8_t *proms;
 
 	proms = memory_region(machine, "proms");
 	for (i = 0; i < 0x100; i++)
@@ -5987,7 +5987,7 @@ static PALETTE_INIT(magical)
 	{
 		int r,g,b;
 
-		UINT8*proms = memory_region(machine, "proms");
+		uint8_t*proms = memory_region(machine, "proms");
 
 		b = proms[0x000 + i] << 4;
 		g = proms[0x100 + i] << 4;
@@ -7503,7 +7503,7 @@ YM2203
 static DRIVER_INIT(mtonic)
 {
 	int A;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (A = 0;A < 0x8000;A++)
 	{
@@ -9291,7 +9291,7 @@ ROM_END
 static DRIVER_INIT(goldstar)
 {
 	int A;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (A = 0;A < 0x10000;A++)
 	{
@@ -9304,12 +9304,12 @@ static DRIVER_INIT(goldstar)
 
 // this block swapping is the same for chry10, chrygld and cb3
 //  the underlying bitswaps / xors are different however
-static void do_blockswaps(running_machine *machine, UINT8* ROM)
+static void do_blockswaps(running_machine *machine, uint8_t* ROM)
 {
 	int A;
-	UINT8 *buffer;
+	uint8_t *buffer;
 
-	static const UINT16 cherry_swaptables[32] = {
+	static const uint16_t cherry_swaptables[32] = {
 		/* to align with goldstar */
 		0x0800, 0x4000, 0x2800, 0x5800,
 		0x1800, 0x3000, 0x6800, 0x7000,
@@ -9323,7 +9323,7 @@ static void do_blockswaps(running_machine *machine, UINT8* ROM)
 		0xa000, 0xa800, 0xb000, 0xb800,
 	};
 
-	buffer = auto_alloc_array(machine, UINT8, 0x10000);
+	buffer = auto_alloc_array(machine, uint8_t, 0x10000);
 	memcpy(buffer,ROM,0x10000);
 
 	// swap some 0x800 blocks around..
@@ -9335,7 +9335,7 @@ static void do_blockswaps(running_machine *machine, UINT8* ROM)
 	auto_free(machine, buffer);
 }
 
-static void dump_to_file(running_machine* machine, UINT8* ROM)
+static void dump_to_file(running_machine* machine, uint8_t* ROM)
 {
 	#if 0
 	{
@@ -9352,10 +9352,10 @@ static void dump_to_file(running_machine* machine, UINT8* ROM)
 	#endif
 }
 
-static UINT8 decrypt(UINT8 cipherText, UINT16 address)
+static uint8_t decrypt(uint8_t cipherText, uint16_t address)
 {
 	int idx;
-	UINT8 output;
+	uint8_t output;
 	int rotation[8] = {1, 0, 0, 1, 0, 1, 1, 1};
 	int sbox[8] = {0x08, 0x08, 0x28, 0x00, 0x20, 0x20, 0x88, 0x88};
 
@@ -9369,14 +9369,14 @@ static UINT8 decrypt(UINT8 cipherText, UINT16 address)
 	return output ^ sbox[idx];
 }
 
-static UINT8 chry10_decrypt(UINT8 cipherText)
+static uint8_t chry10_decrypt(uint8_t cipherText)
 {
 	return cipherText ^ (BIT(cipherText, 4) << 3) ^ (BIT(cipherText, 1) << 5) ^ (BIT(cipherText, 6) << 7);
 }
 
 static DRIVER_INIT( chry10 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
 	int start = 0;
 
@@ -9400,7 +9400,7 @@ static DRIVER_INIT( chry10 )
 
 static DRIVER_INIT( cb3 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
 	int start = 0;
 
@@ -9419,13 +9419,13 @@ static DRIVER_INIT( cb3 )
 static DRIVER_INIT( chrygld )
 {
 	int A;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	do_blockswaps(machine, ROM);
 
 	// a data bitswap
 	for (A = 0;A < 0x10000;A++)
 	{
-		UINT8 dat = ROM[A];
+		uint8_t dat = ROM[A];
 		dat =  BITSWAP8(dat,5,6,3,4,7,2,1,0);
 		ROM[A] = dat;
 	}
@@ -9435,7 +9435,7 @@ static DRIVER_INIT( chrygld )
 
 static DRIVER_INIT(cm)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 /*  forcing PPI mode 0 for all, and A, B & C as input.
     the mixed modes 2-0 are not working properly.
@@ -9446,7 +9446,7 @@ static DRIVER_INIT(cm)
 
 static DRIVER_INIT(cmv4)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 /*  forcing PPI mode 0 for all, and A, B & C as input.
     the mixed modes 2-0 are not working properly.
@@ -9457,7 +9457,7 @@ static DRIVER_INIT(cmv4)
 
 static DRIVER_INIT(cmast91)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 /*  forcing PPI mode 0 for all, and A, B & C as input.
     the mixed modes 2-0 are not working properly.
@@ -9468,7 +9468,7 @@ static DRIVER_INIT(cmast91)
 
 static DRIVER_INIT(lucky8a)
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0x0010] = 0x21;
 }
@@ -9476,11 +9476,11 @@ static DRIVER_INIT(lucky8a)
 static DRIVER_INIT( nfb96sea )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 		switch(i & 7)
 		{
 			case 0: x = BITSWAP8(x^0x80, 1,6,7,4,5,2,3,0); break;
@@ -9509,10 +9509,10 @@ static READ8_HANDLER( fixedvala8_r )
 static DRIVER_INIT( schery97 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 		switch(i & 0x12)
 		{
 			case 0x00: x = BITSWAP8(x^0x3e, 1,0,7,6,5,4,3,2); break;
@@ -9537,10 +9537,10 @@ static READ8_HANDLER( fixedval38_r )
 static DRIVER_INIT( schery97a )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 		switch(i & 6)
 		{
 			case 0: x = BITSWAP8(x^0xb9, 4,0,6,7,3,1,5,2); break;
@@ -9566,10 +9566,10 @@ static READ8_HANDLER( fixedvalea_r )
 static DRIVER_INIT( skill98 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 		switch(i & 0x12)
 		{
 			case 0x00: x = BITSWAP8(x^0x21, 2,1,0,7,6,5,4,3); break;
@@ -9593,10 +9593,10 @@ static READ8_HANDLER( fixedval68_r )
 static DRIVER_INIT( fb36xc1 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 0x12)
 		{
@@ -9630,10 +9630,10 @@ static READ8_HANDLER( fixedvalaa_r )
 static DRIVER_INIT( fbse354 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 5)
 		{
@@ -9662,10 +9662,10 @@ static READ8_HANDLER( fixedvalbe_r )
 static DRIVER_INIT( fbse362 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 5)
 		{
@@ -9694,10 +9694,10 @@ static READ8_HANDLER( fixedval84_r )
 static DRIVER_INIT( rp35 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 3)
 		{
@@ -9721,10 +9721,10 @@ static READ8_HANDLER( fixedvalb2_r )
 static DRIVER_INIT( rp36 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 5)
 		{
@@ -9748,10 +9748,10 @@ static READ8_HANDLER( fixedval48_r )
 static DRIVER_INIT( rp36c3 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 0xa)
 		{
@@ -9781,10 +9781,10 @@ static READ8_HANDLER( fixedval74_r )
 static DRIVER_INIT( po33 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 0x14)
 		{
@@ -9809,10 +9809,10 @@ static READ8_HANDLER( fixedval58_r )
 static DRIVER_INIT( tc132axt )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 0x22)
 		{
@@ -9841,10 +9841,10 @@ static READ8_HANDLER( fixedvalc7_r )
 static DRIVER_INIT( match133 )
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	for (i = 0;i < 0x10000;i++)
 	{
-		UINT8 x = ROM[i];
+		uint8_t x = ROM[i];
 
 		switch(i & 0x12)
 		{
@@ -9864,7 +9864,7 @@ static DRIVER_INIT( match133 )
 static DRIVER_INIT(cherrys)
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	unsigned char rawData[256] = {
 		0xCC, 0xCD, 0xCE, 0xCF, 0xC8, 0xC9, 0xCA, 0xCB, 0xC4, 0xC5, 0xC6, 0xC7,
@@ -9901,21 +9901,21 @@ static DRIVER_INIT(cherrys)
 /* todo: remove these patches! */
 static DRIVER_INIT( unkch1 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	ROM[0x9d52] = 0x00;
 	ROM[0x9d53] = 0x00;
 }
 
 static DRIVER_INIT( unkch3 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	ROM[0x9b86] = 0x00;
 	ROM[0x9b87] = 0x00;
 }
 
 static DRIVER_INIT( unkch4 )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	ROM[0x9a6e] = 0x00;
 	ROM[0x9a6f] = 0x00;
 }

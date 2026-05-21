@@ -202,12 +202,12 @@ psoldier dip locations still need veritication.
 #include "sound/iremga20.h"
 #include "sound/okim6295.h"
 
-static UINT8 irqvector;
-static UINT16 sound_status;
-static UINT32 bankaddress;
+static uint8_t irqvector;
+static uint16_t sound_status;
+static uint32_t bankaddress;
 static emu_timer *scanline_timer;
 
-static UINT8 m92_irq_vectorbase;
+static uint8_t m92_irq_vectorbase;
 
 #define M92_IRQ_0 ((m92_irq_vectorbase+0)/4)  /* VBL interrupt*/
 #define M92_IRQ_1 ((m92_irq_vectorbase+4)/4)  /* Sprite buffer complete interrupt */
@@ -221,7 +221,7 @@ static TIMER_CALLBACK( m92_scanline_interrupt );
 
 static void set_m92_bank(running_machine *machine)
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	memory_set_bankptr(machine, "bank1",&RAM[bankaddress]);
 }
 
@@ -275,14 +275,14 @@ static TIMER_CALLBACK( m92_scanline_interrupt )
 
 static READ16_HANDLER( m92_eeprom_r )
 {
-	UINT8 *RAM = memory_region(space->machine, "user1");
+	uint8_t *RAM = memory_region(space->machine, "user1");
 //  logerror("%05x: EEPROM RE %04x\n",cpu_get_pc(space->cpu),offset);
 	return RAM[offset] | 0xff00;
 }
 
 static WRITE16_HANDLER( m92_eeprom_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "user1");
+	uint8_t *RAM = memory_region(space->machine, "user1");
 //  logerror("%05x: EEPROM WR %04x\n",cpu_get_pc(space->cpu),offset);
 	if (ACCESSING_BITS_0_7)
 		RAM[offset] = data;
@@ -2120,7 +2120,7 @@ ROM_END
 
 static void init_m92(running_machine *machine, int hasbanks)
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	if (hasbanks)
 	{
@@ -2213,7 +2213,7 @@ static DRIVER_INIT( lethalth )
 
 static DRIVER_INIT( nbbatman )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	init_m92(machine, 1);
 
@@ -2243,7 +2243,7 @@ static DRIVER_INIT( dsoccr94j )
 
 static DRIVER_INIT( gunforc2 )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	init_m92(machine, 1);
 	memcpy(RAM + 0x80000, RAM + 0x100000, 0x20000);
 }

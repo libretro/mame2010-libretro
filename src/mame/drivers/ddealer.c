@@ -121,15 +121,15 @@ public:
 	ddealer_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  mcu_shared_ram;
-	UINT16 *  work_ram;
-	UINT16 *  back_vram;
-	UINT16 *  left_fg_vram_top;
-	UINT16 *  right_fg_vram_top;
-	UINT16 *  left_fg_vram_bottom;
-	UINT16 *  right_fg_vram_bottom;
-	UINT16 *  vregs;
-//  UINT16 *  paletteram16; // currently this uses generic palette handling
+	uint16_t *  mcu_shared_ram;
+	uint16_t *  work_ram;
+	uint16_t *  back_vram;
+	uint16_t *  left_fg_vram_top;
+	uint16_t *  right_fg_vram_top;
+	uint16_t *  left_fg_vram_bottom;
+	uint16_t *  right_fg_vram_bottom;
+	uint16_t *  vregs;
+//  uint16_t *  paletteram16; // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *back_tilemap;
@@ -137,8 +137,8 @@ public:
 	int      flipscreen;
 
 	/* misc */
-	UINT8    input_pressed;
-	UINT16   coin_input;
+	uint8_t    input_pressed;
+	uint16_t   coin_input;
 };
 
 
@@ -167,13 +167,13 @@ static VIDEO_START( ddealer )
 	state->back_tilemap = tilemap_create(machine, get_back_tile_info, tilemap_scan_cols, 8, 8, 64, 32);
 }
 
-static void ddealer_draw_video_layer( running_machine *machine, UINT16* vreg_base, UINT16* top, UINT16* bottom, bitmap_t* bitmap, const rectangle *cliprect, int flipy)
+static void ddealer_draw_video_layer( running_machine *machine, uint16_t* vreg_base, uint16_t* top, uint16_t* bottom, bitmap_t* bitmap, const rectangle *cliprect, int flipy)
 {
 	const gfx_element *gfx = machine->gfx[1];
 
-	INT16 sx, sy;
+	int16_t sx, sy;
 	int x,y, count;
-	UINT16* src;
+	uint16_t* src;
 
 	sx =  ((vreg_base[0x4 / 2] & 0xff));
 	sx |= ((vreg_base[0x2 / 2] & 0xff) << 8);
@@ -195,8 +195,8 @@ static void ddealer_draw_video_layer( running_machine *machine, UINT16* vreg_bas
 		{
 			for (y = 0; y < 16; y++)
 			{
-				UINT16 tile = (src[count] & 0x0fff);
-				UINT16 colr = (src[count] & 0xf000) >> 12;
+				uint16_t tile = (src[count] & 0x0fff);
+				uint16_t colr = (src[count] & 0xf000) >> 12;
 				count++;
 				drawgfx_transpen(bitmap, cliprect, gfx, tile, colr, 0, flipy, (x * 16) - sx, (y * 16) - sy, 15);
 			}
@@ -208,8 +208,8 @@ static void ddealer_draw_video_layer( running_machine *machine, UINT16* vreg_bas
 		{
 			for (y = 0; y < 16; y++)
 			{
-				UINT16 tile = (src[count] & 0x0fff);
-				UINT16 colr = (src[count] & 0xf000) >> 12;
+				uint16_t tile = (src[count] & 0x0fff);
+				uint16_t colr = (src[count] & 0xf000) >> 12;
 				count++;
 				drawgfx_transpen(bitmap, cliprect, gfx, tile, colr, 0, flipy, (x * 16) - sx, (y * 16) - sy, 15);
 			}
@@ -227,8 +227,8 @@ static void ddealer_draw_video_layer( running_machine *machine, UINT16* vreg_bas
 		{
 			for (y = 16; y > 0; y--)
 			{
-				UINT16 tile = (src[count] & 0x0fff);
-				UINT16 colr = (src[count] & 0xf000) >> 12;
+				uint16_t tile = (src[count] & 0x0fff);
+				uint16_t colr = (src[count] & 0xf000) >> 12;
 				count++;
 				drawgfx_transpen(bitmap, cliprect, gfx, tile, colr, flipy, flipy, (x * 16) + sx, (y * 16) + sy, 15);
 			}
@@ -240,8 +240,8 @@ static void ddealer_draw_video_layer( running_machine *machine, UINT16* vreg_bas
 		{
 			for (y = 16; y > 0; y--)
 			{
-				UINT16 tile = (src[count] & 0x0fff);
-				UINT16 colr = (src[count] & 0xf000) >> 12;
+				uint16_t tile = (src[count] & 0x0fff);
+				uint16_t colr = (src[count] & 0xf000) >> 12;
 				count++;
 				drawgfx_transpen(bitmap, cliprect, gfx, tile, colr, flipy, flipy, (x * 16) + sx, (y * 16) + sy, 15);
 			}

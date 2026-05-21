@@ -41,22 +41,22 @@ public:
 	jangou_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8        *blit_buffer;
-	UINT8        pen_data[0x10];
-	UINT8        blit_data[6];
+	uint8_t        *blit_buffer;
+	uint8_t        pen_data[0x10];
+	uint8_t        blit_data[6];
 
 	/* sound-related */
 	// Jangou CVSD Sound
 	emu_timer    *cvsd_bit_timer;
-	UINT8        cvsd_shiftreg;
+	uint8_t        cvsd_shiftreg;
 	int          cvsd_shift_cnt;
 	// Jangou Lady ADPCM Sound
-	UINT8        adpcm_byte;
+	uint8_t        adpcm_byte;
 	int          msm5205_vclk_toggle;
 
 	/* misc */
-	UINT8        mux_data;
-	UINT8        nsc_latch, z80_latch;
+	uint8_t        mux_data;
+	uint8_t        nsc_latch, z80_latch;
 
 	/* devices */
 	running_device *cpu_0;
@@ -116,7 +116,7 @@ static VIDEO_START( jangou )
 {
 	jangou_state *state = (jangou_state *)machine->driver_data;
 
-	state->blit_buffer = auto_alloc_array(machine, UINT8, 256 * 256);
+	state->blit_buffer = auto_alloc_array(machine, uint8_t, 256 * 256);
 	state_save_register_global_pointer(machine, state->blit_buffer, 256 * 256);
 }
 
@@ -127,12 +127,12 @@ static VIDEO_UPDATE( jangou )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT8 *src = &state->blit_buffer[y * 512 / 2 + cliprect->min_x];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
+		uint8_t *src = &state->blit_buffer[y * 512 / 2 + cliprect->min_x];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, cliprect->min_x);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x; x += 2)
 		{
-			UINT32 srcpix = *src++;
+			uint32_t srcpix = *src++;
 			*dst++ = screen->machine->pens[srcpix & 0xf];
 			*dst++ = screen->machine->pens[(srcpix >> 4) & 0xf];
 		}
@@ -152,9 +152,9 @@ h [$16]
 w [$17]
 */
 
-static UINT8 jangou_gfx_nibble( running_machine *machine, UINT16 niboffset )
+static uint8_t jangou_gfx_nibble( running_machine *machine, uint16_t niboffset )
 {
-	const UINT8 *const blit_rom = memory_region(machine, "gfx");
+	const uint8_t *const blit_rom = memory_region(machine, "gfx");
 
 	if (niboffset & 1)
 		return (blit_rom[(niboffset >> 1) & 0xffff] & 0xf0) >> 4;
@@ -162,7 +162,7 @@ static UINT8 jangou_gfx_nibble( running_machine *machine, UINT16 niboffset )
 		return (blit_rom[(niboffset >> 1) & 0xffff] & 0x0f);
 }
 
-static void plot_jangou_gfx_pixel( running_machine *machine, UINT8 pix, int x, int y )
+static void plot_jangou_gfx_pixel( running_machine *machine, uint8_t pix, int x, int y )
 {
 	jangou_state *state = (jangou_state *)machine->driver_data;
 	if (y < 0 || y >= 512)
@@ -209,9 +209,9 @@ static WRITE8_HANDLER( blitter_process_w )
 			{
 				int drawx = (x + xcount) & 0xff;
 				int drawy = (y + ycount) & 0xff;
-				UINT8 dat = jangou_gfx_nibble(space->machine, src + count);
-				UINT8 cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
-				UINT8 cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
+				uint8_t dat = jangou_gfx_nibble(space->machine, src + count);
+				uint8_t cur_pen_hi = state->pen_data[(dat & 0xf0) >> 4];
+				uint8_t cur_pen_lo = state->pen_data[(dat & 0x0f) >> 0];
 
 				dat = cur_pen_lo | (cur_pen_hi << 4);
 
@@ -1211,7 +1211,7 @@ static DRIVER_INIT (luckygrl)
 {
 	// this is WRONG
 	int A;
-	UINT8 *ROM = memory_region(machine, "cpu0");
+	uint8_t *ROM = memory_region(machine, "cpu0");
 
 	unsigned char patn1[32] = {
 		0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0, 0x00, 0xA0,
@@ -1225,7 +1225,7 @@ static DRIVER_INIT (luckygrl)
 
 	for (A = 0; A < 0x3000; A++)
 	{
-		UINT8 dat = ROM[A];
+		uint8_t dat = ROM[A];
 		if (A&0x100) dat = dat ^ patn2[A & 0x1f];
 		else dat = dat ^ patn1[A & 0x1f];
 

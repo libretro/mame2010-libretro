@@ -75,8 +75,8 @@ Dumping Notes:
 /* Misc variables */
 static running_device *laserdisc;
 
-static UINT8 *tile_ram;
-static UINT8 *tile_control_ram;
+static uint8_t *tile_ram;
+static uint8_t *tile_control_ram;
 
 
 /* VIDEO GOODS */

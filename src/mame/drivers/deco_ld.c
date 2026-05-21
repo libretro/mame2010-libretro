@@ -106,9 +106,9 @@ Sound processor - 6502
 #include "sound/ay8910.h"
 #include "machine/laserdsc.h"
 
-static UINT8 vram_bank;
+static uint8_t vram_bank;
 static running_device *laserdisc;
-static UINT8 laserdisc_data;
+static uint8_t laserdisc_data;
 
 static VIDEO_UPDATE( rblaster )
 {
@@ -147,7 +147,7 @@ static WRITE8_HANDLER( rblaster_vram_bank_w )
 
 static READ8_HANDLER( laserdisc_r )
 {
-	UINT8 result = laserdisc_data_r(laserdisc);
+	uint8_t result = laserdisc_data_r(laserdisc);
 	mame_printf_debug("laserdisc_r = %02X\n", result);
 	return result;
 }

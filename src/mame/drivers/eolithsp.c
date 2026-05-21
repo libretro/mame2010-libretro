@@ -33,7 +33,7 @@ void eolith_speedup_read(const address_space *space)
 static const struct
 {
 	const char *s_name;
-	UINT32 speedup_address;
+	uint32_t speedup_address;
 	int speedup_resume_scanline;
 
 } eolith_speedup_table[] =

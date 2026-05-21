@@ -34,7 +34,7 @@ To Do:
 
 ***************************************************************************/
 
-static UINT16 eeprom_word;
+static uint16_t eeprom_word;
 static READ16_DEVICE_HANDLER(galpani2_eeprom_r)
 {
 	return (eeprom_word & ~1) | (eeprom_read_bit(device) & 1);
@@ -67,7 +67,7 @@ static WRITE16_DEVICE_HANDLER(galpani2_eeprom_w)
 
 ***************************************************************************/
 
-static UINT16 *galpani2_ram, *galpani2_ram2;
+static uint16_t *galpani2_ram, *galpani2_ram2;
 
 static MACHINE_RESET( galpani2 )
 {
@@ -114,7 +114,7 @@ static WRITE8_HANDLER( galpani2_mcu_init_w )
 	running_machine *machine = space->machine;
 	const address_space *srcspace = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	const address_space *dstspace = cputag_get_address_space(machine, "sub", ADDRESS_SPACE_PROGRAM);
-	UINT32 mcu_address, mcu_data;
+	uint32_t mcu_address, mcu_data;
 
 	for ( mcu_address = 0x100010; mcu_address < (0x100010 + 6); mcu_address += 1 )
 	{
@@ -128,7 +128,7 @@ static void galpani2_mcu_nmi1(running_machine *machine)
 {
 	const address_space *srcspace = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	const address_space *dstspace = cputag_get_address_space(machine, "sub", ADDRESS_SPACE_PROGRAM);
-	UINT32 mcu_list, mcu_command, mcu_address, mcu_extra, mcu_src, mcu_dst, mcu_size;
+	uint32_t mcu_list, mcu_command, mcu_address, mcu_extra, mcu_src, mcu_dst, mcu_size;
 
 	for ( mcu_list = 0x100021; mcu_list < (0x100021 + 0x40); mcu_list += 4 )
 	{
@@ -239,7 +239,7 @@ static WRITE8_HANDLER( galpani2_mcu_nmi1_w ) //driven by CPU1's int5 ISR
 //Triggered from 'maincpu' (00007D60),once, with no command, using alternate line, during init
 //Triggered from 'maincpu' (000080BE),once, for unknown command, during init
 //Triggered from 'maincpu' (0000741E),from here on...driven by int5, even if there's no command
-	static UINT16 old_mcu_nmi1 = 0;
+	static uint16_t old_mcu_nmi1 = 0;
 	if ( (data & 1) && !(old_mcu_nmi1 & 1) )	galpani2_mcu_nmi1(space->machine);
 	//if ( (data & 0x10) && !(old_mcu_nmi1 & 0x10) )    galpani2_mcu_nmi1(space->machine);
 	//alternate line, same function?
@@ -248,7 +248,7 @@ static WRITE8_HANDLER( galpani2_mcu_nmi1_w ) //driven by CPU1's int5 ISR
 
 static WRITE8_HANDLER( galpani2_mcu_nmi2_w ) //driven by CPU2's int5 ISR
 {
-	static UINT16 old_mcu_nmi2 = 0;
+	static uint16_t old_mcu_nmi2 = 0;
 	if ( (data & 1) && !(old_mcu_nmi2 & 1) )	galpani2_mcu_nmi2(space->machine);
 	old_mcu_nmi2 = data;
 }
@@ -275,7 +275,7 @@ static WRITE8_HANDLER( galpani2_coin_lockout_w )
 
 static WRITE8_DEVICE_HANDLER( galpani2_oki1_bank_w )
 {
-		UINT8 *ROM = memory_region(device->machine, "oki1");
+		uint8_t *ROM = memory_region(device->machine, "oki1");
 		logerror("%s : %s bank %08X\n",cpuexec_describe_context(device->machine),device->tag(),data);
 		memcpy(ROM + 0x30000, ROM + 0x40000 + 0x10000 * (~data & 0xf), 0x10000);
 }
@@ -346,11 +346,11 @@ ADDRESS_MAP_END
 
 ***************************************************************************/
 
-static UINT16 *galpani2_rombank;
+static uint16_t *galpani2_rombank;
 
 static READ16_HANDLER( galpani2_bankedrom_r )
 {
-	UINT16 *ROM = (UINT16 *) memory_region( space->machine, "user1" );
+	uint16_t *ROM = (uint16_t *) memory_region( space->machine, "user1" );
 	size_t    len = memory_region_length( space->machine, "user1" ) / 2;
 
 	offset += (0x800000/2) * (*galpani2_rombank & 0x0003);

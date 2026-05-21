@@ -112,12 +112,12 @@
 static MACHINE_START(konamigx);
 static MACHINE_RESET(konamigx);
 
-UINT32 *gx_psacram, *gx_subpaletteram32;
+uint32_t *gx_psacram, *gx_subpaletteram32;
 
 static int konamigx_cfgport;
 
-static UINT32 *gx_workram; /* workram pointer for ESC protection fun */
-static UINT16 *gx_sndram;
+static uint32_t *gx_workram; /* workram pointer for ESC protection fun */
+static uint16_t *gx_sndram;
 static int gx_rdport1_3, gx_syncen;
 
 static emu_timer *dmadelay_timer;
@@ -182,10 +182,10 @@ static emu_timer *dmadelay_timer;
 
 static struct sprite_entry {
 	int pri;
-	UINT32 adr;
+	uint32_t adr;
 } sprites[0x100];
 
-static void generate_sprites(const address_space *space, UINT32 src, UINT32 spr, int count)
+static void generate_sprites(const address_space *space, uint32_t src, uint32_t spr, int count)
 {
 	int i;
 	int scount;
@@ -194,7 +194,7 @@ static void generate_sprites(const address_space *space, UINT32 src, UINT32 spr,
 	ecount = 0;
 
 	for(i=0; i<count; i++) {
-		UINT32 adr = src + 0x100*i;
+		uint32_t adr = src + 0x100*i;
 		int pri;
 		if(!memory_read_word(space, adr+2))
 			continue;
@@ -209,21 +209,21 @@ static void generate_sprites(const address_space *space, UINT32 src, UINT32 spr,
 	//qsort(sprites, ecount, sizeof(struct sprite_entry), pri_comp);
 
 	for(i=0; i<ecount; i++) {
-		UINT32 adr = sprites[i].adr;
+		uint32_t adr = sprites[i].adr;
 		if(adr) {
-			UINT32 set =(memory_read_word(space, adr) << 16)|memory_read_word(space, adr+2);
-			UINT16 glob_x = memory_read_word(space, adr+4);
-			UINT16 glob_y = memory_read_word(space, adr+8);
-			UINT16 flip_x = memory_read_word(space, adr+12) ? 0x1000 : 0x0000;
-			UINT16 flip_y = memory_read_word(space, adr+14) ? 0x2000 : 0x0000;
-			UINT16 glob_f = flip_x | (flip_y ^ 0x2000);
-			UINT16 zoom_x = memory_read_word(space, adr+20);
-			UINT16 zoom_y = memory_read_word(space, adr+22);
-			UINT16 color_val    = 0x0000;
-			UINT16 color_mask   = 0xffff;
-			UINT16 color_set    = 0x0000;
-			UINT16 color_rotate = 0x0000;
-			UINT16 v;
+			uint32_t set =(memory_read_word(space, adr) << 16)|memory_read_word(space, adr+2);
+			uint16_t glob_x = memory_read_word(space, adr+4);
+			uint16_t glob_y = memory_read_word(space, adr+8);
+			uint16_t flip_x = memory_read_word(space, adr+12) ? 0x1000 : 0x0000;
+			uint16_t flip_y = memory_read_word(space, adr+14) ? 0x2000 : 0x0000;
+			uint16_t glob_f = flip_x | (flip_y ^ 0x2000);
+			uint16_t zoom_x = memory_read_word(space, adr+20);
+			uint16_t zoom_y = memory_read_word(space, adr+22);
+			uint16_t color_val    = 0x0000;
+			uint16_t color_mask   = 0xffff;
+			uint16_t color_set    = 0x0000;
+			uint16_t color_rotate = 0x0000;
+			uint16_t v;
 
 			v = memory_read_word(space, adr+24);
 			if(v & 0x8000) {
@@ -256,12 +256,12 @@ static void generate_sprites(const address_space *space, UINT32 src, UINT32 spr,
 
 			if(set >= 0x200000 && set < 0xd00000)
 			{
-				UINT16 count2 = memory_read_word(space, set);
+				uint16_t count2 = memory_read_word(space, set);
 				set += 2;
 				while(count2) {
-					UINT16 idx  = memory_read_word(space, set);
-					UINT16 flip = memory_read_word(space, set+2);
-					UINT16 col  = memory_read_word(space, set+4);
+					uint16_t idx  = memory_read_word(space, set);
+					uint16_t flip = memory_read_word(space, set+2);
+					uint16_t col  = memory_read_word(space, set+4);
 					short y = memory_read_word(space, set+6);
 					short x = memory_read_word(space, set+8);
 
@@ -323,44 +323,44 @@ static void generate_sprites(const address_space *space, UINT32 src, UINT32 spr,
 	}
 }
 
-static void tkmmpzdm_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void tkmmpzdm_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x0142, 0x100, 0);
 }
 
-static void dragoonj_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void dragoonj_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x5c00, 0x100, 0);
 }
 
-static void sal2_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void sal2_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	konamigx_esc_alert(gx_workram, 0x1c8c, 0x172, 1);
 }
 
-static void sexyparo_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void sexyparo_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	// The d20000 should probably be p3
 	generate_sprites(space, 0xc00604, 0xd20000, 0xfc);
 }
 
-static void tbyahhoo_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void tbyahhoo_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	generate_sprites(space, 0xc00000, 0xd20000, 0x100);
 }
 
-static void daiskiss_esc(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4)
+static void daiskiss_esc(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4)
 {
 	generate_sprites(space, 0xc00000, 0xd20000, 0x100);
 }
 
-static UINT8 esc_program[4096];
-static void (*esc_cb)(const address_space *space, UINT32 p1, UINT32 p2, UINT32 p3, UINT32 p4);
+static uint8_t esc_program[4096];
+static void (*esc_cb)(const address_space *space, uint32_t p1, uint32_t p2, uint32_t p3, uint32_t p4);
 
 static WRITE32_HANDLER( esc_w )
 {
-	UINT32 opcode;
-	UINT32 params;
+	uint32_t opcode;
+	uint32_t params;
 
 	/* ignore NULL writes to the ESC (these appear to be "keepalives" on the real hardware) */
 	if (!data)
@@ -406,10 +406,10 @@ static WRITE32_HANDLER( esc_w )
 			break;
 		case 1: // Run program
 			if(esc_cb) {
-				UINT32 p1 = (memory_read_word(space, params+0)<<16) | memory_read_word(space, params+2);
-				UINT32 p2 = (memory_read_word(space, params+4)<<16) | memory_read_word(space, params+6);
-				UINT32 p3 = (memory_read_word(space, params+8)<<16) | memory_read_word(space, params+10);
-				UINT32 p4 = (memory_read_word(space, params+12)<<16) | memory_read_word(space, params+14);
+				uint32_t p1 = (memory_read_word(space, params+0)<<16) | memory_read_word(space, params+2);
+				uint32_t p2 = (memory_read_word(space, params+4)<<16) | memory_read_word(space, params+6);
+				uint32_t p3 = (memory_read_word(space, params+8)<<16) | memory_read_word(space, params+10);
+				uint32_t p4 = (memory_read_word(space, params+12)<<16) | memory_read_word(space, params+14);
 				esc_cb(space, p1, p2, p3, p4);
 			}
 			break;
@@ -449,7 +449,7 @@ static CUSTOM_INPUT( gx_rdport1_3_r )
 
 static WRITE32_HANDLER( eeprom_w )
 {
-	UINT32 odata;
+	uint32_t odata;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -542,11 +542,11 @@ static WRITE32_HANDLER( control_w )
 
 static int suspension_active, resume_trigger;
 #ifdef UNUSED_FUNCTION
-static struct { UINT32 offs, pc, mask, data; } waitskip;
+static struct { uint32_t offs, pc, mask, data; } waitskip;
 
 static READ32_HANDLER(waitskip_r)
 {
-	UINT32 data = gx_workram[waitskip.offs+offset];
+	uint32_t data = gx_workram[waitskip.offs+offset];
 
 	if (cpu_get_pc(space->cpu) == waitskip.pc && (data & mem_mask) == (waitskip.data & mem_mask))
 	{
@@ -713,12 +713,12 @@ static INTERRUPT_GEN(konamigx_hbinterrupt)
 /**********************************************************************************/
 /* sound communication handlers */
 
-static UINT8 sndto000[16], sndto020[16];	/* read/write split mapping */
+static uint8_t sndto000[16], sndto020[16];	/* read/write split mapping */
 static int snd020_hack;
 
 static READ32_HANDLER( sound020_r )
 {
-	UINT32 reg, MSW, LSW, rv = 0;
+	uint32_t reg, MSW, LSW, rv = 0;
 
 	reg = offset << 1;
 
@@ -813,7 +813,7 @@ static READ32_HANDLER( sound020_r )
 			break;
 		case 16: // Dragoon Might ver. JAA
 			{
-				UINT32 cur_pc;
+				uint32_t cur_pc;
 
 				cur_pc = cpu_get_pc(space->cpu);
 
@@ -874,7 +874,7 @@ static WRITE32_HANDLER( sound020_w )
 
 /* National Semiconductor ADC0834 4-channel serial ADC emulation */
 
-static double adc0834_callback( running_device *device, UINT8 input )
+static double adc0834_callback( running_device *device, uint8_t input )
 {
 	switch (input)
 	{
@@ -928,14 +928,14 @@ static READ32_HANDLER( gx6bppspr_r )
 
 static READ32_HANDLER( type1_roz_r1 )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "gfx3");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "gfx3");
 
 	return ROM[offset];
 }
 
 static READ32_HANDLER( type1_roz_r2 )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(space->machine, "gfx3");
+	uint32_t *ROM = (uint32_t *)memory_region(space->machine, "gfx3");
 
 	ROM += (0x600000/2);
 
@@ -1199,10 +1199,10 @@ static ADDRESS_MAP_START( gx_type1_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0xdda000, 0xddafff) AM_WRITE_PORT("ADC-WRPORT")
 	AM_RANGE(0xddc000, 0xddcfff) AM_READ_PORT("ADC-RDPORT")
 	AM_RANGE(0xdde000, 0xdde003) AM_WRITE(type1_cablamps_w)
-	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((UINT32**)&K053936_0_ctrl)
+	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((uint32_t**)&K053936_0_ctrl)
 	AM_RANGE(0xe20000, 0xe2000f) AM_WRITENOP
 	AM_RANGE(0xe40000, 0xe40003) AM_WRITENOP
-	AM_RANGE(0xe80000, 0xe81fff) AM_RAM AM_BASE((UINT32**)&K053936_0_linectrl)	// chips 21L+19L / S
+	AM_RANGE(0xe80000, 0xe81fff) AM_RAM AM_BASE((uint32_t**)&K053936_0_linectrl)	// chips 21L+19L / S
 	AM_RANGE(0xec0000, 0xedffff) AM_RAM_WRITE(konamigx_t1_psacmap_w) AM_BASE(&gx_psacram)  // chips 20J+23J+18J / S
 	AM_RANGE(0xf00000, 0xf3ffff) AM_READ(type1_roz_r1)	// ROM readback
 	AM_RANGE(0xf40000, 0xf7ffff) AM_READ(type1_roz_r2)	// ROM readback
@@ -1220,10 +1220,10 @@ ADDRESS_MAP_END
 static ADDRESS_MAP_START( gx_type3_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0xd90000, 0xd97fff) AM_RAM
 	//AM_RANGE(0xcc0000, 0xcc0007) AM_WRITE(type4_prot_w)
-	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((UINT32**)&K053936_0_ctrl)
+	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((uint32_t**)&K053936_0_ctrl)
 	//AM_RANGE(0xe20000, 0xe20003) AM_WRITENOP
 	AM_RANGE(0xe40000, 0xe40003) AM_WRITE(konamigx_type3_psac2_bank_w) AM_BASE(&konamigx_type3_psac2_bank)
-	AM_RANGE(0xe60000, 0xe60fff) AM_RAM AM_BASE((UINT32**)&K053936_0_linectrl)
+	AM_RANGE(0xe60000, 0xe60fff) AM_RAM AM_BASE((uint32_t**)&K053936_0_linectrl)
 	AM_RANGE(0xe80000, 0xe83fff) AM_RAM AM_BASE_GENERIC(paletteram) 	// main monitor palette
 	AM_RANGE(0xea0000, 0xea3fff) AM_RAM AM_BASE(&gx_subpaletteram32)
 	AM_RANGE(0xec0000, 0xec0003) AM_READ(type3_sync_r)
@@ -1234,10 +1234,10 @@ ADDRESS_MAP_END
 static ADDRESS_MAP_START( gx_type4_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0xcc0000, 0xcc0007) AM_WRITE(type4_prot_w)
 	AM_RANGE(0xd90000, 0xd97fff) AM_RAM
-	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((UINT32**)&K053936_0_ctrl)
+	AM_RANGE(0xe00000, 0xe0001f) AM_RAM AM_BASE((uint32_t**)&K053936_0_ctrl)
 	AM_RANGE(0xe20000, 0xe20003) AM_WRITENOP
 	AM_RANGE(0xe40000, 0xe40003) AM_WRITENOP
-	AM_RANGE(0xe60000, 0xe60fff) AM_RAM AM_BASE((UINT32**)&K053936_0_linectrl)  // 29C & 29G (PSAC2 line control)
+	AM_RANGE(0xe60000, 0xe60fff) AM_RAM AM_BASE((uint32_t**)&K053936_0_linectrl)  // 29C & 29G (PSAC2 line control)
 	AM_RANGE(0xe80000, 0xe87fff) AM_RAM AM_BASE_GENERIC(paletteram) // 11G/13G/15G (main screen palette RAM)
 	AM_RANGE(0xea0000, 0xea7fff) AM_RAM AM_BASE(&gx_subpaletteram32) // 5G/7G/9G (sub screen palette RAM)
 	AM_RANGE(0xec0000, 0xec0003) AM_READ(type3_sync_r)		// type 4 polls this too
@@ -1251,7 +1251,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( dual539_r )
 {
-	UINT16 ret = 0;
+	uint16_t ret = 0;
 
 	if (ACCESSING_BITS_0_7)
 		ret |= k054539_r(space->machine->device("konami2"), offset);
@@ -3672,10 +3672,10 @@ static MACHINE_RESET(konamigx)
 typedef struct
 {
 	const char *romname;
-	UINT32 cfgport;
-	UINT32 sndhack;
-	UINT32 special;
-	UINT32 readback;
+	uint32_t cfgport;
+	uint32_t sndhack;
+	uint32_t special;
+	uint32_t readback;
 } GXGameInfoT;
 
 #define BPP4  0
@@ -3758,7 +3758,7 @@ static DRIVER_INIT(konamigx)
 
 				case 2:	// tkmmpzdm hack
 	{
-		UINT32 *rom = (UINT32*)memory_region(machine, "maincpu");
+		uint32_t *rom = (uint32_t*)memory_region(machine, "maincpu");
 
 		// The display is initialized after POST but the copyright screen disabled
 		// planes B,C,D and didn't bother restoring them. I've spent a good

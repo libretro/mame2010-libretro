@@ -122,13 +122,13 @@
 #include "../lh/gorf.lh"
 
 
-static UINT8 *protected_ram;
+static uint8_t *protected_ram;
 
-static UINT8 port_1_last;
-static UINT8 port_2_last;
-static UINT8 ram_write_enable;
-static UINT8 input_select;
-static UINT8 profpac_bank;
+static uint8_t port_1_last;
+static uint8_t port_2_last;
+static uint8_t ram_write_enable;
+static uint8_t input_select;
+static uint8_t profpac_bank;
 
 
 
@@ -208,7 +208,7 @@ static WRITE8_HANDLER( seawolf2_lamps_w )
 static WRITE8_HANDLER( seawolf2_sound_1_w )  // Port 40
 {
 	running_device *samples = space->machine->device("samples");
-	UINT8 rising_bits = data & ~port_1_last;
+	uint8_t rising_bits = data & ~port_1_last;
 	port_1_last = data;
 
 	if (rising_bits & 0x01) sample_start(samples, 1, 1, 0);  /* Left Torpedo */
@@ -223,7 +223,7 @@ static WRITE8_HANDLER( seawolf2_sound_1_w )  // Port 40
 static WRITE8_HANDLER( seawolf2_sound_2_w )  // Port 41
 {
 	running_device *samples = space->machine->device("samples");
-	UINT8 rising_bits = data & ~port_2_last;
+	uint8_t rising_bits = data & ~port_2_last;
 	port_2_last = data;
 
 	sample_set_volume(samples, 0, (data & 0x80) ? 1.0 : 0.0);
@@ -301,7 +301,7 @@ static READ8_HANDLER( spacezap_io_r )
 
 static READ8_HANDLER( wow_io_r )
 {
-	UINT8 data = (offset >> 8) & 1;
+	uint8_t data = (offset >> 8) & 1;
 
 	switch ((offset >> 9) & 7)
 	{
@@ -326,7 +326,7 @@ static READ8_HANDLER( wow_io_r )
 
 static READ8_HANDLER( gorf_io_1_r )
 {
-	UINT8 data = (offset >> 8) & 1;
+	uint8_t data = (offset >> 8) & 1;
 
 	switch ((offset >> 9) & 7)
 	{
@@ -348,7 +348,7 @@ static READ8_HANDLER( gorf_io_1_r )
 
 static READ8_HANDLER( gorf_io_2_r )
 {
-	UINT8 data = (offset >> 8) & 1;
+	uint8_t data = (offset >> 8) & 1;
 
 	switch ((offset >> 9) & 7)
 	{
@@ -374,7 +374,7 @@ static READ8_HANDLER( gorf_io_2_r )
 
 static READ8_HANDLER( robby_io_r )
 {
-	UINT8 data = (offset >> 8) & 1;
+	uint8_t data = (offset >> 8) & 1;
 
 	switch ((offset >> 9) & 7)
 	{
@@ -722,7 +722,7 @@ ADDRESS_MAP_END
  *
  *************************************/
 
-static const UINT32 controller_table[64] =
+static const uint32_t controller_table[64] =
 {
 	0x20, 0x21, 0x23, 0x22, 0x26, 0x27, 0x25, 0x24,
 	0x2c, 0x2d, 0x2f, 0x2e, 0x2a, 0x2b, 0x29, 0x28,

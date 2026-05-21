@@ -286,8 +286,8 @@ public:
 	dwarfd_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  dw_ram;
-	UINT8 *  videobuf;
+	uint8_t *  dw_ram;
+	uint8_t *  videobuf;
 
 	/* video-related */
 	int bank;
@@ -1143,7 +1143,7 @@ static DRIVER_INIT(dwarfd)
 {
 	dwarfd_state *state = (dwarfd_state *)machine->driver_data;
 	int i;
-	UINT8 *src, *dst;
+	uint8_t *src, *dst;
 
 	/* expand gfx roms */
 	src = memory_region(machine, "gfx1");
@@ -1151,7 +1151,7 @@ static DRIVER_INIT(dwarfd)
 
 	for (i = 0; i < 0x4000; i++)
 	{
-		UINT8 dat;
+		uint8_t dat;
 		dat = (src[i] & 0xf0) >> 0;
 		dst[i * 2] = dat;
 
@@ -1178,8 +1178,8 @@ static DRIVER_INIT(dwarfd)
 	//      src[i] = src[i] & 0xe0;
 	}
 
-	state->videobuf = auto_alloc_array(machine, UINT8, 0x8000);
-	state->dw_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	state->videobuf = auto_alloc_array(machine, uint8_t, 0x8000);
+	state->dw_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	state_save_register_global_pointer(machine, state->videobuf, 0x8000);
 	state_save_register_global_pointer(machine, state->dw_ram, 0x1000);

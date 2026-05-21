@@ -470,7 +470,7 @@ ROM_END
 
 static DRIVER_INIT( ashnojoe )
 {
-	UINT8 *ROM = memory_region(machine, "adpcm");
+	uint8_t *ROM = memory_region(machine, "adpcm");
 	memory_configure_bank(machine, "bank4", 0, 16, &ROM[0x00000], 0x8000);
 
 	memory_set_bank(machine, "bank4", 0);

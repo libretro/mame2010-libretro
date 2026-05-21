@@ -34,9 +34,9 @@ Notes:
 #include "sound/dac.h"
 #include "sound/2151intf.h"
 
-static UINT32 bankaddress;
+static uint32_t bankaddress;
 
-extern UINT16 *m90_video_data;
+extern uint16_t *m90_video_data;
 
 VIDEO_START( m90 );
 VIDEO_START( dynablsb );
@@ -51,7 +51,7 @@ WRITE16_HANDLER( m90_video_control_w );
 
 static void set_m90_bank(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 
 	if (!rom)
 		popmessage("bankswitch with no banked ROM!");
@@ -1270,7 +1270,7 @@ static DRIVER_INIT( quizf1 )
 
 static DRIVER_INIT( bomblord )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	int i;
 	for (i=0; i<0x100000; i+=8)

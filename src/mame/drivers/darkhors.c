@@ -77,20 +77,20 @@ static VIDEO_START( darkhors );
 static VIDEO_UPDATE( darkhors );
 
 static tilemap_t *darkhors_tmap, *darkhors_tmap2;
-static UINT32 *darkhors_tmapram,  *darkhors_tmapscroll;
-static UINT32 *darkhors_tmapram2, *darkhors_tmapscroll2;
+static uint32_t *darkhors_tmapram,  *darkhors_tmapscroll;
+static uint32_t *darkhors_tmapram2, *darkhors_tmapscroll2;
 
 static TILE_GET_INFO( get_tile_info_0 )
 {
-	UINT16 tile		=	darkhors_tmapram[tile_index] >> 16;
-	UINT16 color	=	darkhors_tmapram[tile_index] & 0xffff;
+	uint16_t tile		=	darkhors_tmapram[tile_index] >> 16;
+	uint16_t color	=	darkhors_tmapram[tile_index] & 0xffff;
 	SET_TILE_INFO(0, tile/2, (color & 0x200) ? (color & 0x1ff) : ((color & 0x0ff) * 4) , 0);
 }
 
 static TILE_GET_INFO( get_tile_info_1 )
 {
-	UINT16 tile		=	darkhors_tmapram2[tile_index] >> 16;
-	UINT16 color	=	darkhors_tmapram2[tile_index] & 0xffff;
+	uint16_t tile		=	darkhors_tmapram2[tile_index] >> 16;
+	uint16_t color	=	darkhors_tmapram2[tile_index] & 0xffff;
 	SET_TILE_INFO(0, tile/2, (color & 0x200) ? (color & 0x1ff) : ((color & 0x0ff) * 4) , 0);
 }
 
@@ -107,8 +107,8 @@ static WRITE32_HANDLER( darkhors_tmapram2_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT32 *s		=	machine->generic.spriteram.u32;
-	UINT32 *end		=	machine->generic.spriteram.u32 + 0x02000/4;
+	uint32_t *s		=	machine->generic.spriteram.u32;
+	uint32_t *end		=	machine->generic.spriteram.u32 + 0x02000/4;
 
 	for ( ; s < end; s += 8/4 )
 	{
@@ -241,7 +241,7 @@ static WRITE32_HANDLER( paletteram32_xBBBBBGGGGGRRRRR_dword_w )
 	if (ACCESSING_BITS_0_15)	paletteram16_xBBBBBGGGGGRRRRR_word_w(space, offset*2+1, data, mem_mask);
 }
 
-static UINT32 input_sel;
+static uint32_t input_sel;
 static WRITE32_HANDLER( darkhors_input_sel_w )
 {
 	COMBINE_DATA(&input_sel);
@@ -308,7 +308,7 @@ static ADDRESS_MAP_START( darkhors_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x8c0130, 0x8c013f) AM_WRITEONLY AM_BASE(&darkhors_tmapscroll2)
 ADDRESS_MAP_END
 
-static UINT32* jclub2_tileram;
+static uint32_t* jclub2_tileram;
 static int jclub2_gfx_index;
 
 static WRITE32_HANDLER( jclub2_tileram_w )
@@ -661,7 +661,7 @@ static VIDEO_START(jclub2)
 	assert(jclub2_gfx_index != MAX_GFX_ELEMENTS);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[jclub2_gfx_index] = gfx_element_alloc(machine, &layout_16x16x8_jclub2, (UINT8 *)jclub2_tileram, machine->total_colors() / 16, 0);
+	machine->gfx[jclub2_gfx_index] = gfx_element_alloc(machine, &layout_16x16x8_jclub2, (uint8_t *)jclub2_tileram, machine->total_colors() / 16, 0);
 
 
 }
@@ -920,8 +920,8 @@ ROM_END
 
 static DRIVER_INIT( darkhors )
 {
-	UINT32 *rom    = (UINT32 *) memory_region(machine, "maincpu");
-	UINT8  *eeprom = (UINT8 *)  memory_region(machine, "eeprom");
+	uint32_t *rom    = (uint32_t *) memory_region(machine, "maincpu");
+	uint8_t  *eeprom = (uint8_t *)  memory_region(machine, "eeprom");
 	int i;
 
 #if 1

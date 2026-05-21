@@ -52,7 +52,7 @@ static WRITE16_HANDLER( bigkarnk_coin_w )
 
 static WRITE16_HANDLER( OKIM6295_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "oki");
+	uint8_t *RAM = memory_region(space->machine, "oki");
 
 	if (ACCESSING_BITS_0_7)
 	{

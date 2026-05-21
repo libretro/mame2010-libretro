@@ -53,7 +53,7 @@ lev 7 : 0x7c : 0000 0000 - x
 */
 
 #ifdef UNUSED_DEFINITION
-static const UINT8 kickgoal_cmd_snd[128] =
+static const uint8_t kickgoal_cmd_snd[128] =
 {
 /*00*/	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 /*08*/	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x70, 0x71,
@@ -444,7 +444,7 @@ static INTERRUPT_GEN( kickgoal_interrupt )
 }
 
 
-static const UINT8 kickgoal_default_eeprom_type1[128] = {
+static const uint8_t kickgoal_default_eeprom_type1[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -592,7 +592,7 @@ static const gfx_layout bg1632_charlayout =
 	16*16
 };
 
-static const UINT32 bg3264_charlayout_yoffset[64] =
+static const uint32_t bg3264_charlayout_yoffset[64] =
 {
 	0*32,  0*32,  1*32,  1*32,  2*32,  2*32,  3*32,  3*32,  4*32,  4*32,  5*32,  5*32,  6*32,  6*32,  7*32,  7*32,
 	8*32,  8*32,  9*32,  9*32,  10*32, 10*32, 11*32, 11*32, 12*32, 12*32, 13*32, 13*32, 14*32, 14*32, 15*32, 15*32,
@@ -831,7 +831,7 @@ ROM_END
 static DRIVER_INIT( kickgoal )
 {
 #if 0 /* we should find a real fix instead  */
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 
 	/* fix "bug" that prevents game from writing to EEPROM */
 	rom[0x12b0/2] = 0x0001;

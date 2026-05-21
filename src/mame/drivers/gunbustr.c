@@ -56,8 +56,8 @@
 VIDEO_START( gunbustr );
 VIDEO_UPDATE( gunbustr );
 
-static UINT16 coin_word;
-static UINT32 *gunbustr_ram;
+static uint16_t coin_word;
+static uint32_t *gunbustr_ram;
 
 /*********************************************************************/
 
@@ -95,7 +95,7 @@ static WRITE32_HANDLER( gunbustr_input_w )
 #if 0
 {
 char t[64];
-static UINT32 mem[2];
+static uint32_t mem[2];
 COMBINE_DATA(&mem[offset]);
 
 sprintf(t,"%08x %08x",mem[0],mem[1]);

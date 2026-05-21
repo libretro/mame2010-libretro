@@ -93,7 +93,7 @@ static const eeprom_interface eeprom_intf =
 	"0111"	/* erase command */
 };
 
-static UINT8 *nvram;
+static uint8_t *nvram;
 static size_t nvram_size;
 
 static NVRAM_HANDLER( mitchell )
@@ -2288,8 +2288,8 @@ static DRIVER_INIT( mstworld )
 {
 	/* descramble the program rom .. */
 	int len = memory_region_length(machine, "maincpu");
-	UINT8* source = auto_alloc_array(machine, UINT8, len);
-	UINT8* dst = memory_region(machine, "maincpu") ;
+	uint8_t* source = auto_alloc_array(machine, uint8_t, len);
+	uint8_t* dst = memory_region(machine, "maincpu") ;
 	int x;
 
 	static const int tablebank[]=

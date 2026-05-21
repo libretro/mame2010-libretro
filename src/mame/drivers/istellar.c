@@ -31,14 +31,14 @@ Todo:
 /* Misc variables */
 static running_device *laserdisc;
 
-static UINT8 *tile_ram;
-static UINT8 *tile_control_ram;
-static UINT8 *sprite_ram;
+static uint8_t *tile_ram;
+static uint8_t *tile_control_ram;
+static uint8_t *sprite_ram;
 
-static UINT8 ldp_latch1;
-static UINT8 ldp_latch2;
+static uint8_t ldp_latch1;
+static uint8_t ldp_latch2;
 
-static UINT8 z80_2_nmi_enable;
+static uint8_t z80_2_nmi_enable;
 
 /* VIDEO GOODS */
 static VIDEO_UPDATE( istellar )
@@ -114,7 +114,7 @@ static WRITE8_HANDLER(z80_0_latch2_write)
 /* Z80 2 R/W */
 static READ8_HANDLER(z80_2_ldp_read)
 {
-	UINT8 readResult = laserdisc_data_r(laserdisc);
+	uint8_t readResult = laserdisc_data_r(laserdisc);
 	logerror("CPU2 : reading LDP : %x\n", readResult);
 	return readResult;
 }

@@ -64,7 +64,7 @@ ADDRESS_MAP_END
 
 static CUSTOM_INPUT( homerun_40_r )
 {
-	UINT8 ret = (field->port->machine->primary_screen->vpos() > 116) ? 1 : 0;
+	uint8_t ret = (field->port->machine->primary_screen->vpos() > 116) ? 1 : 0;
 
 	return ret;
 }
@@ -193,7 +193,7 @@ GFXDECODE_END
 static MACHINE_START( homerun )
 {
 	homerun_state *state = (homerun_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 1, &ROM[0x00000], 0x4000);
 	memory_configure_bank(machine, "bank1", 1, 7, &ROM[0x10000], 0x4000);

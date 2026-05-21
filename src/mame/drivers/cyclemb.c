@@ -74,8 +74,8 @@ Dumped by Chack'n
 #include "sound/ay8910.h"
 #include "machine/tait8741.h"
 
-static UINT8 *cyclemb_vram,*cyclemb_cram;
-static UINT8 *cyclemb_obj1_ram,*cyclemb_obj2_ram,*cyclemb_obj3_ram;
+static uint8_t *cyclemb_vram,*cyclemb_cram;
+static uint8_t *cyclemb_obj1_ram,*cyclemb_obj2_ram,*cyclemb_obj3_ram;
 
 static PALETTE_INIT( cyclemb )
 {
@@ -112,7 +112,7 @@ static VIDEO_UPDATE( cyclemb )
 {
 	int x,y,count;
 	const gfx_element *gfx = screen->machine->gfx[0];
-	UINT8 flip_screen = flip_screen_get(screen->machine);
+	uint8_t flip_screen = flip_screen_get(screen->machine);
 
 	count = 0;
 
@@ -155,9 +155,9 @@ static VIDEO_UPDATE( cyclemb )
     ---- ---x [1] sprite enable flag?
     */
 	{
-		UINT8 col,fx,fy,region;
-		UINT16 spr_offs,i;
-		INT16 x,y;
+		uint8_t col,fx,fy,region;
+		uint16_t spr_offs,i;
+		int16_t x,y;
 
 		/*
         0x3b-0x3c-0x3d tire (0x13 0x00 / 0x17 0x00 )

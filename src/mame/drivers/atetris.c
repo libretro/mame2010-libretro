@@ -60,10 +60,10 @@
 
 
 /* Local variables */
-static UINT8 *slapstic_source;
-static UINT8 *slapstic_base;
-static UINT8 current_bank;
-static UINT8 nvram_write_enable;
+static uint8_t *slapstic_source;
+static uint8_t *slapstic_base;
+static uint8_t current_bank;
+static uint8_t nvram_write_enable;
 static emu_timer *interrupt_timer;
 
 
@@ -492,7 +492,7 @@ ROM_END
 
 static DRIVER_INIT( atetris )
 {
-	UINT8 *rgn = memory_region(machine, "maincpu");
+	uint8_t *rgn = memory_region(machine, "maincpu");
 	slapstic_init(machine, 101);
 	slapstic_source = &rgn[0x10000];
 	slapstic_base = &rgn[0x04000];

@@ -57,7 +57,7 @@ Grndtour:
 #include "includes/iqblock.h"
 #include "sound/2413intf.h"
 
-static UINT8 *rambase;
+static uint8_t *rambase;
 
 static WRITE8_HANDLER( iqblock_prot_w )
 {
@@ -425,7 +425,7 @@ ROM_END
 
 static DRIVER_INIT( iqblock )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	/* decrypt the program ROM */
@@ -447,7 +447,7 @@ static DRIVER_INIT( iqblock )
 
 static DRIVER_INIT( grndtour )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	/* decrypt the program ROM */

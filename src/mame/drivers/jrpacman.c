@@ -369,7 +369,7 @@ static DRIVER_INIT( jrpacman )
 	    { 0,0 }
 	};
 
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 	int i, j, A;
 
 	for (i = A = 0; table[i].count; i++)

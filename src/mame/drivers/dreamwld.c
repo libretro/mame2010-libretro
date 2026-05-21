@@ -98,11 +98,11 @@ public:
 	dreamwld_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT32 *  bg_videoram;
-	UINT32 *  bg2_videoram;
-	UINT32 *  bg_scroll;
-	UINT32 *  paletteram;
-	UINT32 *  spriteram;
+	uint32_t *  bg_videoram;
+	uint32_t *  bg2_videoram;
+	uint32_t *  bg_scroll;
+	uint32_t *  paletteram;
+	uint32_t *  spriteram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*bg2_tilemap;
@@ -118,9 +118,9 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 {
 	dreamwld_state *state = (dreamwld_state *)machine->driver_data;
 	const gfx_element *gfx = machine->gfx[0];
-	UINT32 *source = state->spriteram;
-	UINT32 *finish = state->spriteram + 0x1000 / 4;
-	UINT16 *redirect = (UINT16 *)memory_region(machine, "gfx3");
+	uint32_t *source = state->spriteram;
+	uint32_t *finish = state->spriteram + 0x1000 / 4;
+	uint16_t *redirect = (uint16_t *)memory_region(machine, "gfx3");
 
 	while (source < finish)
 	{
@@ -200,7 +200,7 @@ static WRITE32_HANDLER( dreamwld_bg2_videoram_w )
 static TILE_GET_INFO( get_dreamwld_bg2_tile_info )
 {
 	dreamwld_state *state = (dreamwld_state *)machine->driver_data;
-	UINT16 tileno, colour;
+	uint16_t tileno, colour;
 	tileno = (tile_index & 1) ? (state->bg2_videoram[tile_index >> 1] & 0xffff) : ((state->bg2_videoram[tile_index >> 1] >> 16) & 0xffff);
 	colour = tileno >> 13;
 	tileno &= 0x1fff;
@@ -253,9 +253,9 @@ static READ32_HANDLER( dreamwld_protdata_r )
 {
 	dreamwld_state *state = (dreamwld_state *)space->machine->driver_data;
 
-	UINT8 *protdata = memory_region(space->machine, "user1");
+	uint8_t *protdata = memory_region(space->machine, "user1");
 	size_t protsize = memory_region_length(space->machine, "user1");
-	UINT8 dat = protdata[(state->protindex++) % protsize];
+	uint8_t dat = protdata[(state->protindex++) % protsize];
 	return dat << 24;
 }
 
@@ -263,7 +263,7 @@ static READ32_HANDLER( dreamwld_protdata_r )
 static WRITE32_HANDLER( dreamwld_palette_w )
 {
 	dreamwld_state *state = (dreamwld_state *)space->machine->driver_data;
-	UINT16 dat;
+	uint16_t dat;
 	int color;
 
 	COMBINE_DATA(&state->paletteram[offset]);
@@ -276,11 +276,11 @@ static WRITE32_HANDLER( dreamwld_palette_w )
 	palette_set_color_rgb(space->machine, color, pal5bit(dat >> 10), pal5bit(dat >> 5), pal5bit(dat >> 0));
 }
 
-static void dreamwld_oki_setbank( running_machine *machine, UINT8 chip, UINT8 bank )
+static void dreamwld_oki_setbank( running_machine *machine, uint8_t chip, uint8_t bank )
 {
 	/* 0x30000-0x3ffff is banked.
         banks are at 0x30000,0x40000,0x50000 and 0x60000 in rom */
-	UINT8 *sound = memory_region(machine, chip ? "oki1" : "oki2");
+	uint8_t *sound = memory_region(machine, chip ? "oki1" : "oki2");
 	logerror("OKI%d: set bank %02x\n", chip, bank);
 	memcpy(sound + 0x30000, sound + 0xb0000 + 0x10000 * bank, 0x10000);
 }

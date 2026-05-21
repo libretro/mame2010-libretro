@@ -91,13 +91,13 @@ public:
 	calorie_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  fg_ram;
-	UINT8 *  sprites;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
+	uint8_t *  fg_ram;
+	uint8_t *  sprites;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap;
-	UINT8    bg_bank;
+	uint8_t    bg_bank;
 };
 
 
@@ -110,7 +110,7 @@ public:
 static TILE_GET_INFO( get_bg_tile_info )
 {
 	calorie_state *state = (calorie_state *)machine->driver_data;
-	UINT8 *src = memory_region(machine, "user1");
+	uint8_t *src = memory_region(machine, "user1");
 	int bg_base = (state->bg_bank & 0x0f) * 0x200;
 	int code  = src[bg_base + tile_index] | (((src[bg_base + tile_index + 0x100]) & 0x10) << 4);
 	int color = src[bg_base + tile_index + 0x100] & 0x0f;
@@ -221,7 +221,7 @@ static WRITE8_HANDLER( calorie_flipscreen_w )
 
 static READ8_HANDLER( calorie_soundlatch_r )
 {
-	UINT8 latch = soundlatch_r(space, 0);
+	uint8_t latch = soundlatch_r(space, 0);
 	soundlatch_clear_w(space, 0, 0);
 	return latch;
 }

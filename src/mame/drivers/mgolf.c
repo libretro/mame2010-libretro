@@ -15,14 +15,14 @@ public:
 	mgolf_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8*   video_ram;
+	uint8_t*   video_ram;
 
 	/* video-related */
 	tilemap_t* bg_tilemap;
 
 	/* misc */
-	UINT8 prev;
-	UINT8 mask;
+	uint8_t prev;
+	uint8_t mask;
 	attotime time_pushed;
 	attotime time_released;
 
@@ -34,7 +34,7 @@ public:
 static TILE_GET_INFO( get_tile_info )
 {
 	mgolf_state *state = (mgolf_state *)machine->driver_data;
-	UINT8 code = state->video_ram[tile_index];
+	uint8_t code = state->video_ram[tile_index];
 
 	SET_TILE_INFO(0, code, code >> 7, 0);
 }
@@ -87,7 +87,7 @@ static VIDEO_UPDATE( mgolf )
 static void update_plunger( running_machine *machine )
 {
 	mgolf_state *state = (mgolf_state *)machine->driver_data;
-	UINT8 val = input_port_read(machine, "BUTTON");
+	uint8_t val = input_port_read(machine, "BUTTON");
 
 	if (state->prev != val)
 	{
@@ -140,7 +140,7 @@ static READ8_HANDLER( mgolf_wram_r )
 
 static READ8_HANDLER( mgolf_dial_r )
 {
-	UINT8 val = input_port_read(space->machine, "41");
+	uint8_t val = input_port_read(space->machine, "41");
 
 	if ((input_port_read(space->machine, "DIAL") + 0x00) & 0x20)
 	{
@@ -159,7 +159,7 @@ static READ8_HANDLER( mgolf_misc_r )
 {
 	double plunger = calc_plunger_pos(space->machine); /* see Video Pinball */
 
-	UINT8 val = input_port_read(space->machine, "61");
+	uint8_t val = input_port_read(space->machine, "61");
 
 	if (plunger >= 0.000 && plunger <= 0.001)
 	{

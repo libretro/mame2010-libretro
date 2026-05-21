@@ -194,9 +194,9 @@ static DRIVER_INIT(dambustr)
 {
 	int i, j, tmp;
 	int tmpram[16];
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *usr = memory_region(machine, "user1");
-	UINT8 *gfx = memory_region(machine, "gfx1");
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *usr = memory_region(machine, "user1");
+	uint8_t *gfx = memory_region(machine, "gfx1");
 
 	// Bit swap addresses
 	for(i=0; i<4096*4; i++) {

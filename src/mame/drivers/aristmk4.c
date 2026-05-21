@@ -93,17 +93,17 @@ int rtc_address_strobe = 0;
 int rtc_data_strobe = 0;
 
 running_device *samples;
-UINT8 *shapeRomPtr;     // pointer to tile_gfx shape roms
-UINT8 shapeRom[0xC000]; // shaperom restore array.
+uint8_t *shapeRomPtr;     // pointer to tile_gfx shape roms
+uint8_t shapeRom[0xC000]; // shaperom restore array.
 
-static UINT8 *mkiv_vram;
-static UINT8 *nvram;    // backup
-static UINT8 psg_data;
+static uint8_t *mkiv_vram;
+static uint8_t *nvram;    // backup
+static uint8_t psg_data;
 static int ay8910_1;
 static int ay8910_2;
 static int u3_p0_w;
-static UINT8 cgdrsw;
-static UINT8 ripple;
+static uint8_t cgdrsw;
+static uint8_t ripple;
 static int hopper_motor;
 static int inscrd;
 
@@ -311,7 +311,7 @@ static WRITE8_DEVICE_HANDLER(mkiv_pia_cb2)
 static WRITE8_DEVICE_HANDLER(mkiv_pia_outb)
 {
 
-     UINT8 emet[5];
+     uint8_t emet[5];
      int i = 0;
      //pia_data = data;
      emet[0] = data & 0x01;	/* emet1  -  bit 1 - PB0 */
@@ -1136,7 +1136,7 @@ static PALETTE_INIT( aristmk4 )
 static DRIVER_INIT( aristmk4 )
 {
     mc146818_init(machine, MC146818_IGNORE_CENTURY);
-	shapeRomPtr = (UINT8 *)memory_region(machine, "tile_gfx");
+	shapeRomPtr = (uint8_t *)memory_region(machine, "tile_gfx");
     memcpy(shapeRom,shapeRomPtr,sizeof(shapeRom)); // back up
 }
 

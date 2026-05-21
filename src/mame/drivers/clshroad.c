@@ -23,8 +23,8 @@ XTAL        :   18.432 MHz
 
 /* Variables & functions defined in video: */
 
-extern UINT8 *clshroad_vram_0, *clshroad_vram_1;
-extern UINT8 *clshroad_vregs;
+extern uint8_t *clshroad_vram_0, *clshroad_vram_1;
+extern uint8_t *clshroad_vregs;
 
 WRITE8_HANDLER( clshroad_vram_0_w );
 WRITE8_HANDLER( clshroad_vram_1_w );
@@ -36,7 +36,7 @@ VIDEO_START( firebatl );
 VIDEO_START( clshroad );
 VIDEO_UPDATE( clshroad );
 
-extern UINT8 *wiping_soundregs;
+extern uint8_t *wiping_soundregs;
 
 DEVICE_GET_INFO( wiping_sound );
 
@@ -456,7 +456,7 @@ without this the death sequence never ends so the game is unplayable after you
 die once, it would be nice to avoid the hack however
 
 */
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	ROM[0x05C6] = 0xc3;
 	ROM[0x05C7] = 0x8d;

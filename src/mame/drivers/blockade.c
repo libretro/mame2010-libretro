@@ -78,7 +78,7 @@ static READ8_HANDLER( blockade_input_port_0_r )
 {
 	blockade_state *state = (blockade_state *)space->machine->driver_data;
 	/* coin latch is bit 7 */
-	UINT8 temp = (input_port_read(space->machine, "IN0") & 0x7f);
+	uint8_t temp = (input_port_read(space->machine, "IN0") & 0x7f);
 
 	return (state->coin_latch << 7) | temp;
 }

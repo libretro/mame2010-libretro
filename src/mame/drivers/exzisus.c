@@ -45,13 +45,13 @@ TODO:
 
 ***************************************************************************/
 
-static UINT8 *exzisus_sharedram_ab;
-static UINT8 *exzisus_sharedram_ac;
+static uint8_t *exzisus_sharedram_ab;
+static uint8_t *exzisus_sharedram_ac;
 
-extern UINT8 *exzisus_videoram0;
-extern UINT8 *exzisus_videoram1;
-extern UINT8 *exzisus_objectram0;
-extern UINT8 *exzisus_objectram1;
+extern uint8_t *exzisus_videoram0;
+extern uint8_t *exzisus_videoram1;
+extern uint8_t *exzisus_objectram0;
+extern uint8_t *exzisus_objectram1;
 extern size_t  exzisus_objectram_size0;
 extern size_t  exzisus_objectram_size1;
 
@@ -75,7 +75,7 @@ VIDEO_UPDATE( exzisus );
 
 static WRITE8_HANDLER( exzisus_cpua_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "cpua");
+	uint8_t *RAM = memory_region(space->machine, "cpua");
 	static int exzisus_cpua_bank = 0;
 
 	if ( (data & 0x0f) != exzisus_cpua_bank )
@@ -92,7 +92,7 @@ static WRITE8_HANDLER( exzisus_cpua_bankswitch_w )
 
 static WRITE8_HANDLER( exzisus_cpub_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "cpub");
+	uint8_t *RAM = memory_region(space->machine, "cpub");
 	static int exzisus_cpub_bank = 0;
 
 	if ( (data & 0x0f) != exzisus_cpub_bank )
@@ -146,7 +146,7 @@ static WRITE8_HANDLER( exzisus_cpub_reset_w )
 // the RAM check to work
 static DRIVER_INIT( exzisus )
 {
-	UINT8 *RAM = memory_region(machine, "cpua");
+	uint8_t *RAM = memory_region(machine, "cpua");
 
 	/* Fix WORK RAM error */
 	RAM[0x67fd] = 0x18;

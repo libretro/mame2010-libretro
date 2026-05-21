@@ -133,8 +133,8 @@ below are simply made to the banking address to run on other boards.
 #define multfish_VIDRAM_SIZE (0x2000*0x10)
 #define multfish_BRAM_SIZE (0x2000*0x10)
 
-static UINT8* multfish_vid;
-static UINT8* multfish_bram;
+static uint8_t* multfish_vid;
+static uint8_t* multfish_bram;
 
 static int multfish_disp_enable;
 
@@ -171,11 +171,11 @@ static TILE_GET_INFO( get_multfish_reel_tile_info )
 
 static VIDEO_START(multfish)
 {
-	multfish_vid = auto_alloc_array(machine, UINT8, multfish_VIDRAM_SIZE);
+	multfish_vid = auto_alloc_array(machine, uint8_t, multfish_VIDRAM_SIZE);
 	memset(multfish_vid,0x00,multfish_VIDRAM_SIZE);
 	state_save_register_global_pointer(machine, multfish_vid, multfish_VIDRAM_SIZE);
 
-	multfish_bram = auto_alloc_array(machine, UINT8, multfish_BRAM_SIZE);
+	multfish_bram = auto_alloc_array(machine, uint8_t, multfish_BRAM_SIZE);
 	memset(multfish_bram,0x00,multfish_BRAM_SIZE);
 	state_save_register_global_pointer(machine, multfish_bram, multfish_BRAM_SIZE);
 
@@ -251,8 +251,8 @@ static WRITE8_HANDLER( multfish_bank_w )
 	memory_set_bank(space->machine, "bank1", data & 0x0f);
 }
 
-static UINT8 rambk = 0;
-static UINT8 otherrambk = 0;
+static uint8_t rambk = 0;
+static uint8_t otherrambk = 0;
 
 static READ8_HANDLER( bankedram_r )
 {
@@ -292,8 +292,8 @@ static READ8_HANDLER( ray_r )
 	return space->machine->primary_screen->vpos();
 }
 
-static UINT8 multfish_hopper_motor = 0;
-static UINT8 multfish_hopper = 0;
+static uint8_t multfish_hopper_motor = 0;
+static uint8_t multfish_hopper = 0;
 
 static CUSTOM_INPUT( multfish_hopper_r )
 {
@@ -313,7 +313,7 @@ static WRITE8_HANDLER( multfish_port33_w )
 	multfish_hopper_motor = data & 0x10; //0x10 Hopper Motor (33B)
 }
 
-INLINE UINT8 make_bcd(UINT8 data)
+INLINE uint8_t make_bcd(uint8_t data)
 {
 	return ((data / 10) << 4) | (data % 10);
 }

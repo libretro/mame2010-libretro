@@ -68,7 +68,7 @@ DIP locations verified for:
 
 //static int speech_rom_address = 0;
 
-static UINT8 ls259_buf[8] = {0,0,0,0,0,0,0,0};
+static uint8_t ls259_buf[8] = {0,0,0,0,0,0,0,0};
 
 
 static WRITE8_DEVICE_HANDLER( bagman_ls259_w )
@@ -381,7 +381,7 @@ static const ay8910_interface ay8910_config =
    I don't know if the following is correct, there can possbily be multiple solutions for the same problem. */
 static READ8_DEVICE_HANDLER( dial_input_p1_r )
 {
-	static UINT8 res,dial_val,old_val;
+	static uint8_t res,dial_val,old_val;
 
 	dial_val = input_port_read(device->machine, "DIAL_P1");
 
@@ -401,7 +401,7 @@ static READ8_DEVICE_HANDLER( dial_input_p1_r )
 
 static READ8_DEVICE_HANDLER( dial_input_p2_r )
 {
-	static UINT8 res,dial_val,old_val;
+	static uint8_t res,dial_val,old_val;
 
 	dial_val = input_port_read(device->machine, "DIAL_P2");
 

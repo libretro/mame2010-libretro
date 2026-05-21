@@ -43,14 +43,14 @@ public:
 	astrocorp_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   spriteram;
-	UINT16 *   paletteram;
+	uint16_t *   spriteram;
+	uint16_t *   paletteram;
 	size_t     spriteram_size;
 
 	/* video-related */
 	bitmap_t * bitmap;
-	UINT16     screen_enable;
-	UINT16     draw_sprites;
+	uint16_t     screen_enable;
+	uint16_t     draw_sprites;
 };
 
 /***************************************************************************
@@ -93,8 +93,8 @@ static VIDEO_START( astrocorp )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	astrocorp_state *state = (astrocorp_state *)machine->driver_data;
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = state->spriteram + state->spriteram_size / 2;
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = state->spriteram + state->spriteram_size / 2;
 
 	for ( ; source < finish; source += 8 / 2 )
 	{
@@ -159,8 +159,8 @@ static WRITE16_HANDLER( astrocorp_draw_sprites_w )
 {
 	astrocorp_state *state = (astrocorp_state *)space->machine->driver_data;
 
-	UINT16 old = state->draw_sprites;
-	UINT16 now = COMBINE_DATA(&state->draw_sprites);
+	uint16_t old = state->draw_sprites;
+	uint16_t now = COMBINE_DATA(&state->draw_sprites);
 
 	if (!old && now)
 		draw_sprites(space->machine, state->bitmap, &space->machine->primary_screen->visible_area());
@@ -457,7 +457,7 @@ GFXDECODE_END
                                 Machine Drivers
 ***************************************************************************/
 
-static const UINT16 showhand_default_eeprom[15] =	{0x0001,0x0007,0x000a,0x0003,0x0000,0x0009,0x0003,0x0000,0x0002,0x0001,0x0000,0x0000,0x0000,0x0000,0x0000};
+static const uint16_t showhand_default_eeprom[15] =	{0x0001,0x0007,0x000a,0x0003,0x0000,0x0009,0x0003,0x0000,0x0002,0x0001,0x0000,0x0000,0x0000,0x0000,0x0000};
 
 static MACHINE_DRIVER_START( showhand )
 
@@ -971,7 +971,7 @@ ROM_END
 static DRIVER_INIT( showhand )
 {
 #if 0
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	rom[0x0a1a/2] = 0x6000;	// hopper jam
 
@@ -987,7 +987,7 @@ static DRIVER_INIT( showhand )
 static DRIVER_INIT( showhanc )
 {
 #if 0
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	rom[0x14d4/2] = 0x4e71;	// enable full test mode
 	rom[0x14d6/2] = 0x4e71;	// ""

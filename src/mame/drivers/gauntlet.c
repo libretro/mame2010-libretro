@@ -1625,7 +1625,7 @@ ROM_END
 static void gauntlet_common_init(running_machine *machine, int slapstic, int vindctr2)
 {
 	gauntlet_state *state = (gauntlet_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	state->atarigen.eeprom_default = NULL;
 	atarigen_slapstic_init(machine->device("maincpu"), 0x038000, 0, slapstic);
 
@@ -1661,8 +1661,8 @@ static DRIVER_INIT( gauntlet2 )
 
 static DRIVER_INIT( vindctr2 )
 {
-	UINT8 *gfx2_base = memory_region(machine, "gfx2");
-	UINT8 *data = auto_alloc_array(machine, UINT8, 0x8000);
+	uint8_t *gfx2_base = memory_region(machine, "gfx2");
+	uint8_t *data = auto_alloc_array(machine, uint8_t, 0x8000);
 	int i;
 
 	gauntlet_common_init(machine, 118, 1);

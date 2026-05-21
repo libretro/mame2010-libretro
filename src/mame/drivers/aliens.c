@@ -238,7 +238,7 @@ static const k051960_interface aliens_k051960_intf =
 static MACHINE_START( aliens )
 {
 	aliens_state *state = (aliens_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 20, &ROM[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);

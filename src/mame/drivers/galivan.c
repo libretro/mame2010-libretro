@@ -399,7 +399,7 @@ static MACHINE_START( galivan )
 	galivan_state *state = (galivan_state *)machine->driver_data;
 
 	/* configure ROM banking */
-	UINT8 *rombase = memory_region(machine, "maincpu");
+	uint8_t *rombase = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 2, &rombase[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 
@@ -416,7 +416,7 @@ static MACHINE_START( ninjemak )
 	galivan_state *state = (galivan_state *)machine->driver_data;
 
 	/* configure ROM banking */
-	UINT8 *rombase = memory_region(machine, "maincpu");
+	uint8_t *rombase = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 4, &rombase[0x10000], 0x2000);
 	memory_set_bank(machine, "bank1", 0);
 

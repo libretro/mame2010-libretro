@@ -109,7 +109,7 @@ DIP locations verified for:
 #include "cpu/m6800/m6800.h"
 #include "sound/namco.h"
 
-extern UINT8 *baraduke_textram, *baraduke_videoram, *baraduke_spriteram;
+extern uint8_t *baraduke_textram, *baraduke_videoram, *baraduke_spriteram;
 
 /* from video/baraduke.c */
 VIDEO_START( baraduke );
@@ -548,7 +548,7 @@ ROM_END
 
 static DRIVER_INIT( baraduke )
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i;
 
 	/* unpack the third tile ROM */

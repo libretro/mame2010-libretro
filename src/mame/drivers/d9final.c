@@ -23,7 +23,7 @@
 #include "cpu/z80/z80.h"
 #include "sound/2413intf.h"
 
-static UINT8 *lo_vram,*hi_vram,*cram;
+static uint8_t *lo_vram,*hi_vram,*cram;
 static tilemap_t *sc0_tilemap;
 
 static TILE_GET_INFO( get_sc0_tile_info )
@@ -69,8 +69,8 @@ static WRITE8_HANDLER( sc0_cram )
 
 static WRITE8_HANDLER( d9final_bank_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
-	UINT32 bankaddress;
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
+	uint32_t bankaddress;
 
 	bankaddress = 0x10000+(0x4000 * (data & 0x7));
 	memory_set_bankptr(space->machine, "bank1", &ROM[bankaddress]);
@@ -250,7 +250,7 @@ GFXDECODE_END
 
 static MACHINE_RESET( d9final )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_set_bankptr(machine, "bank1", &ROM[0x10000]);
 }

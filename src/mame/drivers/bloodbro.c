@@ -112,9 +112,9 @@ DIP locations verified for:
 #include "sound/3812intf.h"
 
 
-extern UINT16 *bloodbro_bgvideoram, *bloodbro_fgvideoram;
-extern UINT16 *bloodbro_txvideoram;
-extern UINT16 *bloodbro_scroll;
+extern uint16_t *bloodbro_bgvideoram, *bloodbro_fgvideoram;
+extern uint16_t *bloodbro_txvideoram;
+extern uint16_t *bloodbro_scroll;
 
 WRITE16_HANDLER( bloodbro_bgvideoram_w );
 WRITE16_HANDLER( bloodbro_fgvideoram_w );

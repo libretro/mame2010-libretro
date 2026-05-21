@@ -126,8 +126,8 @@ static int watchdog_kicked;
 
 // user interface stuff ///////////////////////////////////////////////////
 
-static UINT8 Lamps[256];		  // 256 multiplexed lamps
-static UINT8 sc1_Inputs[64];		  // 64? multiplexed inputs
+static uint8_t Lamps[256];		  // 256 multiplexed lamps
+static uint8_t sc1_Inputs[64];		  // 64? multiplexed inputs
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -268,7 +268,7 @@ static WRITE8_HANDLER( mmtr_w )
 	else
 	{
 		int  changed = mmtr_latch ^ data;
-		UINT64 cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
+		uint64_t cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
 
 		mmtr_latch = data;
 
@@ -342,7 +342,7 @@ static WRITE8_HANDLER( vfd_w )
 
 // conversion table BFM strobe data to internal lamp numbers
 
-static const UINT8 BFM_strcnv[] =
+static const uint8_t BFM_strcnv[] =
 {
 	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, 0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,
 	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, 0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,
@@ -638,7 +638,7 @@ static READ8_HANDLER( vid_uart_ctrl_r )
 
 // scorpion1 board init ///////////////////////////////////////////////////
 
-static const UINT16 AddressDecode[]=
+static const uint16_t AddressDecode[]=
 {
 	0x0800,0x1000,0x0001,0x0004,0x0008,0x0020,0x0080,0x0200,
 	0x0100,0x0040,0x0002,0x0010,0x0400,0x2000,0x4000,0x8000,
@@ -646,23 +646,23 @@ static const UINT16 AddressDecode[]=
 	0
 };
 
-static const UINT8 DataDecode[]=
+static const uint8_t DataDecode[]=
 {
 	0x02,0x08,0x20,0x40,0x10,0x04,0x01,0x80,
 
 	0
 };
 
-static UINT8 codec_data[256];
+static uint8_t codec_data[256];
 
 
 static void decode_sc1(running_machine *machine,const char *rom_region)
 {
-	UINT8 *tmp, *rom;
+	uint8_t *tmp, *rom;
 
 	rom = memory_region(machine,rom_region);
 
-	tmp = auto_alloc_array(machine, UINT8, 0x10000);
+	tmp = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	{
 		int i;
@@ -672,10 +672,10 @@ static void decode_sc1(running_machine *machine,const char *rom_region)
 
 		for ( i = 0; i < 256; i++ )
 		{
-			UINT8 data, pattern, newdata, *tab;
+			uint8_t data, pattern, newdata, *tab;
 			data    = i;
 
-			tab     = (UINT8*)DataDecode;
+			tab     = (uint8_t*)DataDecode;
 			pattern = 0x01;
 			newdata = 0;
 
@@ -691,9 +691,9 @@ static void decode_sc1(running_machine *machine,const char *rom_region)
 		for ( address = 0; address < 0x10000; address++)
 		{
 			int newaddress,pattern;
-			UINT16 *tab;
+			uint16_t *tab;
 
-			tab      = (UINT16*)AddressDecode;
+			tab      = (uint16_t*)AddressDecode;
 			pattern  = 0x0001;
 			newaddress = 0;
 			do
@@ -750,7 +750,7 @@ static MACHINE_RESET( bfm_sc1 )
 
 // init rom bank ////////////////////////////////////////////////////////////////////
 	{
-		UINT8 *rom = memory_region(machine, "maincpu");
+		uint8_t *rom = memory_region(machine, "maincpu");
 
 		memory_configure_bank(machine,"bank1", 0, 1, &rom[0x10000], 0);
 		memory_configure_bank(machine,"bank1", 1, 3, &rom[0x02000], 0x02000);
@@ -1337,7 +1337,7 @@ ROM_END
 
 static void sc1_common_init(running_machine *machine, int reels, int decrypt)
 {
-	UINT8 *rom, i;
+	uint8_t *rom, i;
 
 	rom = memory_region(machine, "maincpu");
 	if ( rom )

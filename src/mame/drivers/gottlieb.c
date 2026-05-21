@@ -222,24 +222,24 @@ VBlank duration: 1/VSYNC * (16/256) = 1017.6 us
  *
  *************************************/
 
-static UINT8 joystick_select;
-static UINT8 track[2];
+static uint8_t joystick_select;
+static uint8_t track[2];
 
 static running_device *laserdisc;
 static emu_timer *laserdisc_bit_timer;
 static emu_timer *laserdisc_philips_timer;
-static UINT8 laserdisc_select;
-static UINT8 laserdisc_status;
-static UINT16 laserdisc_philips_code;
+static uint8_t laserdisc_select;
+static uint8_t laserdisc_status;
+static uint16_t laserdisc_philips_code;
 
-static UINT8 *laserdisc_audio_buffer;
-static UINT16 laserdisc_audio_address;
-static INT16 laserdisc_last_samples[2];
+static uint8_t *laserdisc_audio_buffer;
+static uint16_t laserdisc_audio_address;
+static int16_t laserdisc_last_samples[2];
 static attotime laserdisc_last_time;
 static attotime laserdisc_last_clock;
-static UINT8 laserdisc_zero_seen;
-static UINT8 laserdisc_audio_bits;
-static UINT8 laserdisc_audio_bit_count;
+static uint8_t laserdisc_zero_seen;
+static uint8_t laserdisc_audio_bits;
+static uint8_t laserdisc_audio_bit_count;
 
 
 
@@ -283,7 +283,7 @@ static MACHINE_START( gottlieb )
 		laserdisc_philips_timer = timer_alloc(machine, laserdisc_philips_callback, NULL);
 
 		/* create some audio RAM */
-		laserdisc_audio_buffer = auto_alloc_array(machine, UINT8, AUDIORAM_SIZE);
+		laserdisc_audio_buffer = auto_alloc_array(machine, uint8_t, AUDIORAM_SIZE);
 		laserdisc_status = 0x38;
 
 		/* more save state registration */
@@ -417,7 +417,7 @@ static READ8_HANDLER( laserdisc_status_r )
 	}
 	else
 	{
-		UINT8 result = laserdisc_audio_buffer[laserdisc_audio_address++];
+		uint8_t result = laserdisc_audio_buffer[laserdisc_audio_address++];
 		laserdisc_audio_address %= AUDIORAM_SIZE;
 		return result;
 	}
@@ -481,8 +481,8 @@ static TIMER_CALLBACK( laserdisc_bit_off_callback )
 
 static TIMER_CALLBACK( laserdisc_bit_callback )
 {
-	UINT8 bitsleft = param >> 16;
-	UINT8 data = param;
+	uint8_t bitsleft = param >> 16;
+	uint8_t data = param;
 	attotime duration;
 
 	/* assert the line and set a timer for deassertion */
@@ -612,7 +612,7 @@ static void audio_handle_zero_crossing(attotime zerotime, int logit)
 }
 
 
-static void laserdisc_audio_process(running_device *device, int samplerate, int samples, const INT16 *ch0, const INT16 *ch1)
+static void laserdisc_audio_process(running_device *device, int samplerate, int samples, const int16_t *ch0, const int16_t *ch1)
 {
 	int logit = LOG_AUDIO_DECODE && input_code_pressed(device->machine, KEYCODE_L);
 	attotime time_per_sample = ATTOTIME_IN_HZ(samplerate);
@@ -632,7 +632,7 @@ static void laserdisc_audio_process(running_device *device, int samplerate, int 
 	/* iterate over samples */
 	for (cursamp = 0; cursamp < samples; cursamp++)
 	{
-		INT16 sample = ch1[cursamp];
+		int16_t sample = ch1[cursamp];
 
 		/* start by logging the current sample and time */
 		if (logit)

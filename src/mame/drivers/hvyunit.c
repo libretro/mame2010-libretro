@@ -60,25 +60,25 @@ Notes:
 #include "sound/2203intf.h"
 #include "video/kan_pand.h"
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
-static UINT16 hu_scrollx, hu_scrolly;
-static UINT16 port0_data;
+static uint16_t hu_scrollx, hu_scrolly;
+static uint16_t port0_data;
 
 static int addr;
-static UINT8 mcu_data;
-static UINT8 mcu_status;
-static UINT8 test_mcu;
-static UINT8 mcu_ram_mux[0x100];
+static uint8_t mcu_data;
+static uint8_t mcu_status;
+static uint8_t test_mcu;
+static uint8_t mcu_ram_mux[0x100];
 static struct
 {
 	int attract_timer;
-	UINT8 program_flow;
-	UINT8 access_ram_r,access_ram_w;
-	UINT8 internal_ram[0x80];
-	UINT8 internal_ram_index;
-	UINT8 coin_counter;
+	uint8_t program_flow;
+	uint8_t access_ram_r,access_ram_w;
+	uint8_t internal_ram[0x80];
+	uint8_t internal_ram_index;
+	uint8_t coin_counter;
 }mcu_ram;
 
 static MACHINE_RESET( mermaid )
@@ -129,7 +129,7 @@ static WRITE8_HANDLER( mermaid_data_w )
 
 static READ8_HANDLER( mermaid_data_r )
 {
-	static UINT8 res;
+	static uint8_t res;
 
 	if(input_code_pressed_once(space->machine, KEYCODE_Z))
 		test_mcu++;

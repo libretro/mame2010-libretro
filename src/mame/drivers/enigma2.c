@@ -65,14 +65,14 @@ public:
 	enigma2_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 
 	/* misc */
 	int blink_count;
-	UINT8 sound_latch;
-	UINT8 last_sound_data;
-	UINT8 protection_data;
-	UINT8 flip_screen;
+	uint8_t sound_latch;
+	uint8_t last_sound_data;
+	uint8_t protection_data;
+	uint8_t flip_screen;
 
 	emu_timer *interrupt_clear_timer;
 	emu_timer *interrupt_assert_timer;
@@ -90,13 +90,13 @@ public:
  *************************************/
 
 
-INLINE UINT16 vpos_to_vysnc_chain_counter( int vpos )
+INLINE uint16_t vpos_to_vysnc_chain_counter( int vpos )
 {
 	return vpos + VCOUNTER_START;
 }
 
 
-INLINE int vysnc_chain_counter_to_vpos( UINT16 counter )
+INLINE int vysnc_chain_counter_to_vpos( uint16_t counter )
 {
 	return counter - VCOUNTER_START;
 }
@@ -112,13 +112,13 @@ static TIMER_CALLBACK( interrupt_clear_callback )
 static TIMER_CALLBACK( interrupt_assert_callback )
 {
 	enigma2_state *state = (enigma2_state *)machine->driver_data;
-	UINT16 next_counter;
+	uint16_t next_counter;
 	int next_vpos;
 
 	/* compute vector and set the interrupt line */
 	int vpos = machine->primary_screen->vpos();
-	UINT16 counter = vpos_to_vysnc_chain_counter(vpos);
-	UINT8 vector = 0xc7 | ((counter & 0x80) >> 3) | ((~counter & 0x80) >> 4);
+	uint16_t counter = vpos_to_vysnc_chain_counter(vpos);
+	uint8_t vector = 0xc7 | ((counter & 0x80) >> 3) | ((~counter & 0x80) >> 4);
 	cpu_set_input_line_and_vector(state->maincpu, 0, ASSERT_LINE, vector);
 
 	/* set up for next interrupt */
@@ -205,23 +205,23 @@ static VIDEO_UPDATE( enigma2 )
 	pen_t pens[NUM_PENS];
 
 	const rectangle &visarea = screen->visible_area();
-	UINT8 *prom = memory_region(screen->machine, "proms");
-	UINT8 *color_map_base = state->flip_screen ? &prom[0x0400] : &prom[0x0000];
-	UINT8 *star_map_base = (state->blink_count & 0x08) ? &prom[0x0c00] : &prom[0x0800];
+	uint8_t *prom = memory_region(screen->machine, "proms");
+	uint8_t *color_map_base = state->flip_screen ? &prom[0x0400] : &prom[0x0000];
+	uint8_t *star_map_base = (state->blink_count & 0x08) ? &prom[0x0c00] : &prom[0x0800];
 
-	UINT8 x = 0;
-	UINT16 bitmap_y = visarea.min_y;
-	UINT8 y = (UINT8)vpos_to_vysnc_chain_counter(bitmap_y);
-	UINT8 video_data = 0;
-	UINT8 fore_color = 0;
-	UINT8 star_color = 0;
+	uint8_t x = 0;
+	uint16_t bitmap_y = visarea.min_y;
+	uint8_t y = (uint8_t)vpos_to_vysnc_chain_counter(bitmap_y);
+	uint8_t video_data = 0;
+	uint8_t fore_color = 0;
+	uint8_t star_color = 0;
 
 	get_pens(pens);
 
 	while (1)
 	{
-		UINT8 bit;
-		UINT8 color;
+		uint8_t bit;
+		uint8_t color;
 
 		/* read the video RAM */
 		if ((x & 0x07) == 0x00)
@@ -290,15 +290,15 @@ static VIDEO_UPDATE( enigma2 )
 static VIDEO_UPDATE( enigma2a )
 {
 	enigma2_state *state = (enigma2_state *)screen->machine->driver_data;
-	UINT8 x = 0;
+	uint8_t x = 0;
 	const rectangle &visarea = screen->visible_area();
-	UINT16 bitmap_y = visarea.min_y;
-	UINT8 y = (UINT8)vpos_to_vysnc_chain_counter(bitmap_y);
-	UINT8 video_data = 0;
+	uint16_t bitmap_y = visarea.min_y;
+	uint8_t y = (uint8_t)vpos_to_vysnc_chain_counter(bitmap_y);
+	uint8_t video_data = 0;
 
 	while (1)
 	{
-		UINT8 bit;
+		uint8_t bit;
 		pen_t pen;
 
 		/* read the video RAM */
@@ -352,7 +352,7 @@ static VIDEO_UPDATE( enigma2a )
 static READ8_HANDLER( dip_switch_r )
 {
 	enigma2_state *state = (enigma2_state *)space->machine->driver_data;
-	UINT8 ret = 0x00;
+	uint8_t ret = 0x00;
 
 	if (LOG_PROT) logerror("DIP SW Read: %x at %x (prot data %x)\n", offset, cpu_get_pc(space->cpu), state->protection_data);
 	switch (offset)
@@ -716,7 +716,7 @@ ROM_END
 static DRIVER_INIT(enigma2)
 {
 	offs_t i;
-	UINT8 *rom = memory_region(machine, "audiocpu");
+	uint8_t *rom = memory_region(machine, "audiocpu");
 
 	for(i = 0; i < 0x2000; i++)
 	{

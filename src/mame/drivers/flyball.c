@@ -19,20 +19,20 @@ public:
 	flyball_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  rombase;
-	UINT8 *  playfield_ram;
+	uint8_t *  rombase;
+	uint8_t *  playfield_ram;
 
 	/* video-related */
 	tilemap_t  *tmap;
-	UINT8    pitcher_vert;
-	UINT8    pitcher_horz;
-	UINT8    pitcher_pic;
-	UINT8    ball_vert;
-	UINT8    ball_horz;
+	uint8_t    pitcher_vert;
+	uint8_t    pitcher_horz;
+	uint8_t    pitcher_pic;
+	uint8_t    ball_vert;
+	uint8_t    ball_horz;
 
 	/* misc */
-	UINT8    potmask;
-	UINT8    potsense;
+	uint8_t    potmask;
+	uint8_t    potsense;
 
 	/* devices */
 	running_device *maincpu;
@@ -57,7 +57,7 @@ static TILEMAP_MAPPER( flyball_get_memory_offset )
 static TILE_GET_INFO( flyball_get_tile_info )
 {
 	flyball_state *state = (flyball_state *)machine->driver_data;
-	UINT8 data = state->playfield_ram[tile_index];
+	uint8_t data = state->playfield_ram[tile_index];
 	int flags = ((data & 0x40) ? TILE_FLIPX : 0) | ((data & 0x80) ? TILE_FLIPY : 0);
 	int code = data & 63;
 
@@ -381,7 +381,7 @@ static MACHINE_RESET( flyball )
 	int i;
 
 	/* address bits 0 through 8 are inverted */
-	UINT8* ROM = memory_region(machine, "maincpu") + 0x2000;
+	uint8_t* ROM = memory_region(machine, "maincpu") + 0x2000;
 
 	for (i = 0; i < 0x1000; i++)
 		state->rombase[i] = ROM[i ^ 0x1ff];

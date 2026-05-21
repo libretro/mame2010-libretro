@@ -1273,12 +1273,12 @@ ROM_END
 static DRIVER_INIT( rabbitpk )
 {
 
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int size = memory_region_length(machine, "maincpu");
 	int start = 0;
 	int i;
 
-	UINT8 dec_base[32] =
+	uint8_t dec_base[32] =
 	{
 		0x00, 0x43, 0x45, 0x06, 0xc3, 0x80, 0x86, 0xc5,
 		0x84, 0xc7, 0xc1, 0x82, 0x47, 0x04, 0x02, 0x41,

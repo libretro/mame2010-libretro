@@ -30,9 +30,9 @@
 #include "cpu/mcs51/mcs51.h"
 
 static tilemap_t *bg_tilemap, *md_tilemap, *fg_tilemap;
-static UINT32 *bg_videoram, *md_videoram, *fg_videoram, *limenko_videoreg;
+static uint32_t *bg_videoram, *md_videoram, *fg_videoram, *limenko_videoreg;
 
-static UINT32 *mainram;
+static uint32_t *mainram;
 static int spriteram_bit;
 
 static bitmap_t *sprites_bitmap;
@@ -40,7 +40,7 @@ static bitmap_t *sprites_bitmap_pri;
 
 static int prev_sprites_count = 0;
 
-static void draw_sprites(running_machine *machine, UINT32 *sprites, const rectangle *cliprect, int count);
+static void draw_sprites(running_machine *machine, uint32_t *sprites, const rectangle *cliprect, int count);
 
 /*****************************************************************************************************
   MISC FUNCTIONS
@@ -53,7 +53,7 @@ static WRITE32_HANDLER( limenko_coincounter_w )
 
 static WRITE32_HANDLER( limenko_paletteram_w )
 {
-	UINT16 paldata;
+	uint16_t paldata;
 	COMBINE_DATA(&space->machine->generic.paletteram.u32[offset]);
 
 	if(ACCESSING_BITS_0_15)
@@ -181,7 +181,7 @@ static ADDRESS_MAP_START( spotty_io_map, ADDRESS_SPACE_IO, 32 )
 	AM_RANGE(0x5000, 0x5003) AM_WRITE(spotty_soundlatch_w)
 ADDRESS_MAP_END
 
-static UINT8 spotty_sound_cmd=0;
+static uint8_t spotty_sound_cmd=0;
 static WRITE8_HANDLER( spotty_sound_cmd_w )
 {
 	spotty_sound_cmd = data;
@@ -233,11 +233,11 @@ static TILE_GET_INFO( get_fg_tile_info )
 }
 
 static void draw_single_sprite(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
-		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
+		uint32_t code,uint32_t color,int flipx,int flipy,int sx,int sy,
 		int priority)
 {
 	int pal_base = gfx->color_base + gfx->color_granularity * (color % gfx->total_colors);
-	const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+	const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 	int sprite_screen_height = ((1<<16)*gfx->height+0x8000)>>16;
 	int sprite_screen_width = ((1<<16)*gfx->width+0x8000)>>16;
@@ -307,9 +307,9 @@ static void draw_single_sprite(bitmap_t *dest_bmp,const rectangle *clip,const gf
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-				UINT16 *dest = BITMAP_ADDR16(dest_bmp, y, 0);
-				UINT8 *pri = BITMAP_ADDR8(sprites_bitmap_pri, y, 0);
+				const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+				uint16_t *dest = BITMAP_ADDR16(dest_bmp, y, 0);
+				uint8_t *pri = BITMAP_ADDR8(sprites_bitmap_pri, y, 0);
 
 				int x, x_index = x_index_base;
 				for( x=sx; x<ex; x++ )
@@ -334,14 +334,14 @@ static void draw_single_sprite(bitmap_t *dest_bmp,const rectangle *clip,const gf
 }
 
 // sprites aren't tile based (except for 8x8 ones)
-static void draw_sprites(running_machine *machine, UINT32 *sprites, const rectangle *cliprect, int count)
+static void draw_sprites(running_machine *machine, uint32_t *sprites, const rectangle *cliprect, int count)
 {
 	int i;
 
-	UINT8 *base_gfx	= memory_region(machine, "gfx1");
-	UINT8 *gfx_max	= base_gfx + memory_region_length(machine, "gfx1");
+	uint8_t *base_gfx	= memory_region(machine, "gfx1");
+	uint8_t *gfx_max	= base_gfx + memory_region_length(machine, "gfx1");
 
-	UINT8 *gfxdata;
+	uint8_t *gfxdata;
 	gfx_element gfx;
 
 	for(i = 0; i <= count*2; i += 2)
@@ -397,10 +397,10 @@ static void copy_sprites(bitmap_t *bitmap, bitmap_t *sprites_bitmap, bitmap_t *p
 	int y;
 	for( y=cliprect->min_y; y<=cliprect->max_y; y++ )
 	{
-		UINT16 *source = BITMAP_ADDR16(sprites_bitmap, y, 0);
-		UINT16 *dest = BITMAP_ADDR16(bitmap, y, 0);
-		UINT8 *dest_pri = BITMAP_ADDR8(priority_bitmap, y, 0);
-		UINT8 *source_pri = BITMAP_ADDR8(sprites_bitmap_pri, y, 0);
+		uint16_t *source = BITMAP_ADDR16(sprites_bitmap, y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, y, 0);
+		uint8_t *dest_pri = BITMAP_ADDR8(priority_bitmap, y, 0);
+		uint8_t *source_pri = BITMAP_ADDR8(sprites_bitmap_pri, y, 0);
 
 		int x;
 		for( x=cliprect->min_x; x<=cliprect->max_x; x++ )
@@ -1028,8 +1028,8 @@ static DRIVER_INIT( sb2003 )
 
 static DRIVER_INIT( spotty )
 {
-	UINT8 *dst    = memory_region(machine, "gfx1");
-	UINT8 *src    = memory_region(machine, "user2");
+	uint8_t *dst    = memory_region(machine, "gfx1");
+	uint8_t *src    = memory_region(machine, "user2");
 	int x;
 
 	/* expand 4bpp roms to 8bpp space */

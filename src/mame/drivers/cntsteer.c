@@ -37,10 +37,10 @@ public:
 	cntsteer_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  videoram2;
-	UINT8 *  colorram;
-	UINT8 *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  videoram2;
+	uint8_t *  colorram;
+	uint8_t *  spriteram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap;
@@ -364,7 +364,7 @@ static VIDEO_UPDATE( cntsteer )
 static WRITE8_HANDLER(zerotrgt_vregs_w)
 {
 	cntsteer_state *state = (cntsteer_state *)space->machine->driver_data;
-//  static UINT8 test[5];
+//  static uint8_t test[5];
 
 //  test[offset] = data;
 //    popmessage("%02x %02x %02x %02x %02x",test[0],test[1],test[2],test[3],test[4]);
@@ -390,7 +390,7 @@ static WRITE8_HANDLER(zerotrgt_vregs_w)
 static WRITE8_HANDLER(cntsteer_vregs_w)
 {
 	cntsteer_state *state = (cntsteer_state *)space->machine->driver_data;
-//  static UINT8 test[5];
+//  static uint8_t test[5];
 
 //  test[offset] = data;
 //   popmessage("%02x %02x %02x %02x %02x",test[0],test[1],test[2],test[3],test[4]);
@@ -487,7 +487,7 @@ static WRITE8_HANDLER( cntsteer_main_irq_w )
 /* Convert weird input handling with MAME standards.*/
 static READ8_HANDLER( cntsteer_adx_r )
 {
-	UINT8 res = 0, adx_val;
+	uint8_t res = 0, adx_val;
 	adx_val = input_port_read(space->machine, "AN_STEERING");
 
 	if (adx_val >= 0x70 && adx_val <= 0x90)
@@ -1083,8 +1083,8 @@ ROM_END
 
 static void zerotrgt_rearrange_gfx( running_machine *machine, int romsize, int romarea )
 {
-	UINT8 *src = memory_region(machine, "gfx4");
-	UINT8 *dst = memory_region(machine, "gfx3");
+	uint8_t *src = memory_region(machine, "gfx4");
+	uint8_t *dst = memory_region(machine, "gfx3");
 	int rm;
 	int cnt1;
 
@@ -1103,7 +1103,7 @@ static void zerotrgt_rearrange_gfx( running_machine *machine, int romsize, int r
 #if 0
 static DRIVER_INIT( cntsteer )
 {
-	UINT8 *RAM = memory_region(machine, "subcpu");
+	uint8_t *RAM = memory_region(machine, "subcpu");
 
 	RAM[0xc2cf] = 0x43; /* Patch out Cpu 1 ram test - it never ends..?! */
 	RAM[0xc2d0] = 0x43;

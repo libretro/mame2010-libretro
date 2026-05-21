@@ -29,7 +29,7 @@ VIDEO_START( dcon );
 VIDEO_UPDATE( dcon );
 VIDEO_UPDATE( sdgndmps );
 
-extern UINT16 *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
+extern uint16_t *dcon_back_data,*dcon_fore_data,*dcon_mid_data,*dcon_scroll_ram,*dcon_textram;
 
 /***************************************************************************/
 
@@ -390,7 +390,7 @@ ROM_END
 /***************************************************************************/
 static DRIVER_INIT( sdgndmps )
 {
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	RAM[0x1356/2] = 0x4e71; /* beq -> nop */
 	RAM[0x1358/2] = 0x4e71;
 

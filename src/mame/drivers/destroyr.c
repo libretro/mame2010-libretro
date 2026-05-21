@@ -17,9 +17,9 @@ public:
 	destroyr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        major_obj_ram;
-	UINT8 *        minor_obj_ram;
-	UINT8 *        alpha_num_ram;
+	uint8_t *        major_obj_ram;
+	uint8_t *        minor_obj_ram;
+	uint8_t *        alpha_num_ram;
 
 	/* video-related */
 	int            cursor;
@@ -233,7 +233,7 @@ static READ8_HANDLER( destroyr_input_r )
 
 	if (offset == 0)
 	{
-		UINT8 ret = input_port_read(space->machine, "IN0");
+		uint8_t ret = input_port_read(space->machine, "IN0");
 
 		if (state->potsense[0] && state->potmask[0])
 			ret |= 4;
@@ -357,7 +357,7 @@ static const gfx_layout destroyr_minor_object_layout =
 	0x200     /* increment */
 };
 
-static const UINT32 destroyr_major_object_layout_xoffset[64] =
+static const uint32_t destroyr_major_object_layout_xoffset[64] =
 {
 	0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
 	0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E,
@@ -385,7 +385,7 @@ static const gfx_layout destroyr_major_object_layout =
 	NULL
 };
 
-static const UINT32 destroyr_waves_layout_xoffset[64] =
+static const uint32_t destroyr_waves_layout_xoffset[64] =
 {
 	0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0A, 0x0B,
 	0x10, 0x11, 0x12, 0x13, 0x18, 0x19, 0x1A, 0x1B,

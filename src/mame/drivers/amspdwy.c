@@ -34,11 +34,11 @@ Sound:  YM2151
     Or last value when wheel delta = 0
 */
 
-static UINT8 amspdwy_wheel_r( running_machine *machine, int index )
+static uint8_t amspdwy_wheel_r( running_machine *machine, int index )
 {
 	amspdwy_state *state = (amspdwy_state *)machine->driver_data;
 	static const char *const portnames[] = { "WHEEL1", "WHEEL2", "AN1", "AN2" };
-	UINT8 wheel = input_port_read(machine, portnames[2 + index]);
+	uint8_t wheel = input_port_read(machine, portnames[2 + index]);
 	if (wheel != state->wheel_old[index])
 	{
 		wheel = (wheel & 0x7fff) - (wheel & 0x8000);
@@ -94,7 +94,7 @@ ADDRESS_MAP_END
 
 static READ8_HANDLER( amspdwy_port_r )
 {
-	UINT8 *tracks = memory_region(space->machine, "maincpu") + 0x10000;
+	uint8_t *tracks = memory_region(space->machine, "maincpu") + 0x10000;
 	return tracks[offset];
 }
 

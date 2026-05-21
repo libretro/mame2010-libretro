@@ -47,7 +47,7 @@ static READ32_HANDLER( eeprom_r )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT32 rv = input_port_read(space->machine, "SYSTEM") & ~0x1;
+		uint32_t rv = input_port_read(space->machine, "SYSTEM") & ~0x1;
 
 		return rv;	// bit 0 freezes the game if 1
 	}

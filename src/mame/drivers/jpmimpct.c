@@ -90,13 +90,13 @@
  *
  *************************************/
 
-static UINT8 tms_irq;
-static UINT8 duart_1_irq;
-static UINT8 touch_cnt;
-static UINT8 touch_data[3];
+static uint8_t tms_irq;
+static uint8_t duart_1_irq;
+static uint8_t touch_cnt;
+static uint8_t touch_data[3];
 
 static int lamp_strobe;
-static UINT8 Lamps[256];
+static uint8_t Lamps[256];
 
 
 /*************************************
@@ -110,38 +110,38 @@ static UINT8 Lamps[256];
 
 static struct
 {
-	UINT8 MR1A, MR2A;
-	UINT8 SRA, CSRA;
-	UINT8 CRA;
-	UINT8 RBA, TBA;
+	uint8_t MR1A, MR2A;
+	uint8_t SRA, CSRA;
+	uint8_t CRA;
+	uint8_t RBA, TBA;
 
-	UINT8 IPCR;
-	UINT8 ACR;
-	UINT8 ISR, IMR;
+	uint8_t IPCR;
+	uint8_t ACR;
+	uint8_t ISR, IMR;
 
 	union
 	{
-		UINT8 CUR, CLR;
-		UINT16 CR;
+		uint8_t CUR, CLR;
+		uint16_t CR;
 	};
 	union
 	{
-		UINT8 CTUR, CTLR;
-		UINT16 CT;
+		uint8_t CTUR, CTLR;
+		uint16_t CT;
 	};
 
 	int tc;
 
-	UINT8 MR1B, MR2B;
-	UINT8 SRB, CSRB;
-	UINT8 CRB;
-	UINT8 RBB, TBB;
+	uint8_t MR1B, MR2B;
+	uint8_t SRB, CSRB;
+	uint8_t CRB;
+	uint8_t RBB, TBB;
 
-	UINT8 IVR;
-	UINT8 IP;
-	UINT8 OP;
-	UINT8 OPR;
-	UINT8 OPCR;
+	uint8_t IVR;
+	uint8_t IP;
+	uint8_t OP;
+	uint8_t OPR;
+	uint8_t OPCR;
 } duart_1;//, duart_2;
 
 
@@ -246,7 +246,7 @@ static TIMER_DEVICE_CALLBACK( duart_1_timer_event )
 
 static READ16_HANDLER( duart_1_r )
 {
-	UINT16 val = 0xffff;
+	uint16_t val = 0xffff;
 	switch (offset)
 	{
 		case 0x1:
@@ -419,7 +419,7 @@ static READ16_HANDLER( duart_2_r )
 		}
 		case 0xb:
 		{
-			UINT16 val = touch_data[touch_cnt];
+			uint16_t val = touch_data[touch_cnt];
 
 			if (touch_cnt++ == 3)
 				touch_cnt = 0;
@@ -463,7 +463,7 @@ static WRITE16_HANDLER( duart_2_w )
 
 static READ16_HANDLER( inputs1_r )
 {
-	UINT16 val = 0x00ff;
+	uint16_t val = 0x00ff;
 
 	switch (offset)
 	{
@@ -560,7 +560,7 @@ static READ16_HANDLER( jpmio_r )
 
 static WRITE16_HANDLER( jpmio_w )
 {
-	UINT64 cycles = space->machine->firstcpu->total_cycles();
+	uint64_t cycles = space->machine->firstcpu->total_cycles();
 	switch (offset)
 	{
 		case 0x02:
@@ -1205,7 +1205,7 @@ static READ16_HANDLER( optos_r )
 static WRITE16_HANDLER( jpmioawp_w )
 {
 	int i;
-	UINT64 cycles  = space->machine->firstcpu->total_cycles();
+	uint64_t cycles  = space->machine->firstcpu->total_cycles();
 	switch (offset)
 	{
 		case 0x00:

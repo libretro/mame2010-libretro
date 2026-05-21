@@ -135,8 +135,8 @@
  *
  *************************************/
 
-static UINT8 main_sense_state;
-static UINT8 audio_sense_state;
+static uint8_t main_sense_state;
+static uint8_t audio_sense_state;
 
 
 
@@ -148,21 +148,21 @@ static UINT8 audio_sense_state;
 
 static READ8_HANDLER( hsync_chain_r )
 {
-	UINT8 val = space->machine->primary_screen->hpos();
+	uint8_t val = space->machine->primary_screen->hpos();
 	return BITSWAP8(val,0,1,2,3,4,5,6,7);
 }
 
 
 static READ8_HANDLER( vsync_chain_hi_r )
 {
-	UINT8 val = space->machine->primary_screen->vpos();
+	uint8_t val = space->machine->primary_screen->vpos();
 	return ((val >> 1) & 0x08) | ((val >> 3) & 0x04) | ((val >> 5) & 0x02) | (val >> 7);
 }
 
 
 static READ8_HANDLER( vsync_chain_lo_r )
 {
-	UINT8 val = space->machine->primary_screen->vpos();
+	uint8_t val = space->machine->primary_screen->vpos();
 	return val & 0x0f;
 }
 
@@ -878,7 +878,7 @@ ROM_END
 /* A fake for the missing ball sprites #3 and #4 */
 static DRIVER_INIT( gypsyjug )
 {
-	static const UINT8 ball[16*2] =
+	static const uint8_t ball[16*2] =
 	{
 		0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00,
 		0x00,0x00, 0x00,0x00, 0x00,0x00, 0x00,0x00,
@@ -886,10 +886,10 @@ static DRIVER_INIT( gypsyjug )
 		0x01,0x80, 0x03,0xc0, 0x03,0xc0, 0x01,0x80
 	};
 	int i;
-	UINT8 *gfx2 = memory_region(machine, "gfx2");
-	UINT8 *gfx3 = memory_region(machine, "gfx3");
-	UINT8 *gfx4 = memory_region(machine, "gfx4");
-	UINT8 *gfx5 = memory_region(machine, "gfx5");
+	uint8_t *gfx2 = memory_region(machine, "gfx2");
+	uint8_t *gfx3 = memory_region(machine, "gfx3");
+	uint8_t *gfx4 = memory_region(machine, "gfx4");
+	uint8_t *gfx5 = memory_region(machine, "gfx5");
 	int len3 = memory_region_length(machine, "gfx3");
 	int len4 = memory_region_length(machine, "gfx4");
 
@@ -907,7 +907,7 @@ static DRIVER_INIT( gypsyjug )
 static DRIVER_INIT( minferno )
 {
 	int i, length;
-	UINT8 *mem;
+	uint8_t *mem;
 
 	/* create an inverted copy of the graphics data */
 	mem = memory_region(machine, "gfx1");

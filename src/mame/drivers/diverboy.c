@@ -61,8 +61,8 @@ public:
 	diverboy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  spriteram;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  spriteram;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 	size_t    spriteram_size;
 
 	/* devices */
@@ -77,12 +77,12 @@ static VIDEO_START(diverboy)
 static void draw_sprites( running_machine* machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	diverboy_state *state = (diverboy_state *)machine->driver_data;
-	UINT16 *source = state->spriteram;
-	UINT16 *finish = source + (state->spriteram_size / 2);
+	uint16_t *source = state->spriteram;
+	uint16_t *finish = source + (state->spriteram_size / 2);
 
 	while (source < finish)
 	{
-		INT16 xpos, ypos, number, colr, bank, flash;
+		int16_t xpos, ypos, number, colr, bank, flash;
 
 		ypos = source[4];
 		xpos = source[0];

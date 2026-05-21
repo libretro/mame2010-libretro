@@ -293,16 +293,16 @@
 #include "includes/mcr.h"
 
 
-static UINT8 input_mux;
-static UINT8 last_op4;
+static uint8_t input_mux;
+static uint8_t last_op4;
 
-static UINT8 nflfoot_serial_out_active;
-static UINT8 nflfoot_serial_out_bits;
-static UINT8 nflfoot_serial_out_numbits;
+static uint8_t nflfoot_serial_out_active;
+static uint8_t nflfoot_serial_out_bits;
+static uint8_t nflfoot_serial_out_numbits;
 
-static UINT8 nflfoot_serial_in_active;
-static UINT16 nflfoot_serial_in_bits;
-static UINT8 nflfoot_serial_in_numbits;
+static uint8_t nflfoot_serial_in_active;
+static uint16_t nflfoot_serial_in_bits;
+static uint8_t nflfoot_serial_in_numbits;
 
 
 
@@ -515,7 +515,7 @@ WRITE8_DEVICE_HANDLER( mcr_ipu_sio_transmit )
 static READ8_HANDLER( nflfoot_ip2_r )
 {
 	/* bit 7 = J3-2 on IPU board = TXDA on SIO */
-	UINT8 val = 0x80;
+	uint8_t val = 0x80;
 
 	/* we only do this if we have active data */
 	if (nflfoot_serial_in_active)

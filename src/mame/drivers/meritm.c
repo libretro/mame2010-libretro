@@ -119,7 +119,7 @@ Not all regional versions are available for each Megatouch series
 #define SYSTEM_CLK	21470000
 #define UART_CLK	XTAL_18_432MHz
 
-static UINT8* meritm_ram;
+static uint8_t* meritm_ram;
 static running_device *meritm_z80pio[2];
 
 
@@ -140,10 +140,10 @@ static struct
 	int state;
 	int read_ptr;
 	int last_clk;
-	UINT8 key[8];
-	UINT8 nvram[16];
+	uint8_t key[8];
+	uint8_t nvram[16];
 	int out_bit;
-	UINT8 command[3];
+	uint8_t command[3];
 
 } ds1204;
 
@@ -232,7 +232,7 @@ static int ds1204_r(void)
 	return ds1204.out_bit;
 };
 
-static void ds1204_init(running_machine *machine, const UINT8* key, const UINT8* nvram)
+static void ds1204_init(running_machine *machine, const uint8_t* key, const uint8_t* nvram)
 {
 	memset(&ds1204, 0, sizeof(ds1204));
 	if (key)
@@ -253,12 +253,12 @@ static void ds1204_init(running_machine *machine, const UINT8* key, const UINT8*
  *
  *************************************/
 
-static void pc16650d_tx_callback(int channel, int count, UINT8* data)
+static void pc16650d_tx_callback(int channel, int count, uint8_t* data)
 {
 	microtouch_rx(count, data);
 };
 
-static void meritm_microtouch_tx_callback(running_machine *machine, UINT8 data)
+static void meritm_microtouch_tx_callback(running_machine *machine, uint8_t data)
 {
 	pc16552d_rx_data(machine, 0, 0, data);
 };
@@ -430,7 +430,7 @@ static WRITE8_HANDLER(meritm_bank_w)
  *
  *************************************/
 
-static UINT16 questions_loword_address;
+static uint16_t questions_loword_address;
 
 static WRITE8_HANDLER(meritm_crt250_questions_lo_w)
 {
@@ -446,8 +446,8 @@ static WRITE8_HANDLER(meritm_crt250_questions_hi_w)
 
 static WRITE8_HANDLER(meritm_crt250_questions_bank_w)
 {
-	UINT32 questions_address;
-	UINT8 *dst;
+	uint32_t questions_address;
+	uint8_t *dst;
 
 	if (meritm_bank != 0)
 	{
@@ -512,7 +512,7 @@ static WRITE8_HANDLER(meritm_ds1644_w)
 	}
 };
 
-static UINT8 binary_to_BCD(UINT8 data)
+static uint8_t binary_to_BCD(uint8_t data)
 {
 	data %= 100;
 
@@ -997,7 +997,7 @@ static MACHINE_START(meritm_crt250_crt252_crt258)
 
 static MACHINE_START(meritm_crt260)
 {
-	meritm_ram = auto_alloc_array(machine, UINT8,  0x8000 );
+	meritm_ram = auto_alloc_array(machine, uint8_t,  0x8000 );
 	memset(meritm_ram, 0x00, 0x8000);
 	memory_configure_bank(machine, "bank1", 0, 128, memory_region(machine, "maincpu"), 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 128, memory_region(machine, "maincpu"), 0x8000);
@@ -1636,10 +1636,10 @@ ROM_END
 
 static DRIVER_INIT(pitbossm)
 {
-	static const UINT8 pitbossm_ds1204_key[8] =
+	static const uint8_t pitbossm_ds1204_key[8] =
 		{ 0xf0, 0xaa, 0x0f, 0x0f, 0x55, 0x55, 0xff, 0xab };
 
-	static const UINT8 pitbossm_ds1204_nvram[16] =
+	static const uint8_t pitbossm_ds1204_nvram[16] =
 		{ 0x16, 0x90, 0xa0, 0x52, 0xd8, 0x6c, 0x12, 0xaf, 0x36, 0x22, 0x61, 0x35, 0x0d, 0x58, 0x0c, 0x00 };
 
 	ds1204_init(machine, pitbossm_ds1204_key, pitbossm_ds1204_nvram);
@@ -1648,10 +1648,10 @@ static DRIVER_INIT(pitbossm)
 
 static DRIVER_INIT(pbst30)
 {
-	static const UINT8 pbst30b_ds1204_key[8] =
+	static const uint8_t pbst30b_ds1204_key[8] =
 		{ 0xf0, 0xaa, 0x0f, 0x0f, 0x55, 0x55, 0xff, 0xab };
 
-	static const UINT8 pbst30b_ds1204_nvram[16] =
+	static const uint8_t pbst30b_ds1204_nvram[16] =
 		{ 0x3e, 0x9a, 0x3c, 0x3f, 0x1d, 0x51, 0x72, 0xc9, 0x28, 0x2c, 0x1d, 0x2d, 0x0e, 0x56, 0x41, 0x00 };
 
 	ds1204_init(machine, pbst30b_ds1204_key, pbst30b_ds1204_nvram);
@@ -1660,10 +1660,10 @@ static DRIVER_INIT(pbst30)
 
 static DRIVER_INIT(pbst30b)
 {
-	static const UINT8 megat3_ds1204_key[8] =
+	static const uint8_t megat3_ds1204_key[8] =
 		{ 0xf0, 0xaa, 0x0f, 0x0f, 0x55, 0x55, 0xff, 0xab };
 
-	static const UINT8 megat3_ds1204_nvram[16] =
+	static const uint8_t megat3_ds1204_nvram[16] =
 		{ 0xa9, 0xdb, 0x41, 0xf8, 0xe4, 0x42, 0x20, 0x6e, 0xde, 0xaf, 0x4f, 0x046, 0x3d, 0x55, 0x44, 0x00 };
 
 	ds1204_init(machine, megat3_ds1204_key, megat3_ds1204_nvram);
@@ -1672,10 +1672,10 @@ static DRIVER_INIT(pbst30b)
 
 static DRIVER_INIT(megat3)
 {
-	static const UINT8 megat3_ds1204_key[8] =
+	static const uint8_t megat3_ds1204_key[8] =
 		{ 0xf0, 0xaa, 0x0f, 0x0f, 0x55, 0x55, 0xff, 0xab };
 
-	static const UINT8 megat3_ds1204_nvram[16] =
+	static const uint8_t megat3_ds1204_nvram[16] =
 		{ 0x51, 0xa1, 0xc0, 0x7c, 0x27, 0x6e, 0x51, 0xb9, 0xa5, 0xb2, 0x27, 0x0c, 0xb9, 0x88, 0x82, 0x2c };
 
 	ds1204_init(machine, megat3_ds1204_key, megat3_ds1204_nvram);
@@ -1684,10 +1684,10 @@ static DRIVER_INIT(megat3)
 
 static DRIVER_INIT(megat3te)
 {
-	static const UINT8 megat3_ds1204_key[8] =
+	static const uint8_t megat3_ds1204_key[8] =
 		{ 0xf0, 0xaa, 0x0f, 0x0f, 0x55, 0x55, 0xff, 0xab };
 
-	static const UINT8 megat3_ds1204_nvram[16] =
+	static const uint8_t megat3_ds1204_nvram[16] =
 		{ 0x99, 0x53, 0xfc, 0x29, 0x3a, 0x95, 0x8b, 0x58, 0xca, 0xca, 0x00, 0xc2, 0x30, 0x62, 0x0b, 0x96 };
 
 	ds1204_init(machine, megat3_ds1204_key, megat3_ds1204_nvram);
@@ -1698,7 +1698,7 @@ static DRIVER_INIT(megat3te)
 
 static DRIVER_INIT(megat4)
 {
-	static const UINT8 megat4_ds1204_nvram[16] =
+	static const uint8_t megat4_ds1204_nvram[16] =
 		{ 0xe3, 0x08, 0x39, 0xd8, 0x4c, 0xbb, 0xc4, 0xf8, 0xf0, 0xe2, 0xd8, 0x77, 0xa8, 0x3d, 0x95, 0x02 };
 
 	ds1204_init(machine, 0, megat4_ds1204_nvram);
@@ -1706,7 +1706,7 @@ static DRIVER_INIT(megat4)
 
 static DRIVER_INIT(megat4te)
 {
-	static const UINT8 megat4te_ds1204_nvram[16] =
+	static const uint8_t megat4te_ds1204_nvram[16] =
 		{ 0x05, 0x21, 0x96, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
 
 	ds1204_init(machine, 0, megat4te_ds1204_nvram);
@@ -1717,7 +1717,7 @@ static DRIVER_INIT(megat4te)
 
 static DRIVER_INIT(megat4st)
 {
-	static const UINT8 megat4te_ds1204_nvram[16] =
+	static const uint8_t megat4te_ds1204_nvram[16] =
 		{ 0x11, 0x04, 0x96, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
 
 	ds1204_init(machine, 0, megat4te_ds1204_nvram);
@@ -1728,7 +1728,7 @@ static DRIVER_INIT(megat4st)
 
 static DRIVER_INIT(megat5)
 {
-	static const UINT8 megat5_ds1204_nvram[16] =
+	static const uint8_t megat5_ds1204_nvram[16] =
 		{ 0x06, 0x23, 0x97, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
 
 	ds1204_init(machine, 0, megat5_ds1204_nvram);
@@ -1737,7 +1737,7 @@ static DRIVER_INIT(megat5)
 
 static DRIVER_INIT(megat6)
 {
-	static const UINT8 megat6_ds1204_nvram[16] =
+	static const uint8_t megat6_ds1204_nvram[16] =
 		{ 0x07, 0x15, 0x98, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00 };
 
 	ds1204_init(machine, 0, megat6_ds1204_nvram);

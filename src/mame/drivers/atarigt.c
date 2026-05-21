@@ -233,7 +233,7 @@ static WRITE32_HANDLER( led_w )
 
 static READ32_HANDLER( sound_data_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	if (ACCESSING_BITS_0_15)
 		result |= cage_control_r();
@@ -262,11 +262,11 @@ static WRITE32_HANDLER( sound_data_w )
 #define ADDRSEQ_COUNT	4
 
 static offs_t protaddr[ADDRSEQ_COUNT];
-static UINT8 protmode;
-static UINT16 protresult;
-static UINT8 protdata[0x800];
+static uint8_t protmode;
+static uint16_t protresult;
+static uint8_t protdata[0x800];
 
-static UINT8 ignore_writes = 0;
+static uint8_t ignore_writes = 0;
 
 static void tmek_update_mode(offs_t offset)
 {
@@ -280,7 +280,7 @@ static void tmek_update_mode(offs_t offset)
 }
 
 
-static void tmek_protection_w(const address_space *space, offs_t offset, UINT16 data)
+static void tmek_protection_w(const address_space *space, offs_t offset, uint16_t data)
 {
 /*
     T-Mek init:
@@ -303,7 +303,7 @@ static void tmek_protection_w(const address_space *space, offs_t offset, UINT16 
 	}
 }
 
-static void tmek_protection_r(const address_space *space, offs_t offset, UINT16 *data)
+static void tmek_protection_r(const address_space *space, offs_t offset, uint16_t *data)
 {
 	if (LOG_PROTECTION) logerror("%06X:Protection R@%06X\n", cpu_get_previouspc(space->cpu), offset);
 
@@ -369,11 +369,11 @@ static void primage_update_mode(offs_t offset)
 
 
 
-static void primrage_protection_w(const address_space *space, offs_t offset, UINT16 data)
+static void primrage_protection_w(const address_space *space, offs_t offset, uint16_t data)
 {
 	if (LOG_PROTECTION)
 	{
-	UINT32 pc = cpu_get_previouspc(space->cpu);
+	uint32_t pc = cpu_get_previouspc(space->cpu);
 	switch (pc)
 	{
 		/* protection code from 20f90 - 21000 */
@@ -439,15 +439,15 @@ static void primrage_protection_w(const address_space *space, offs_t offset, UIN
 
 
 
-static void primrage_protection_r(const address_space *space, offs_t offset, UINT16 *data)
+static void primrage_protection_r(const address_space *space, offs_t offset, uint16_t *data)
 {
 	/* track accesses */
 	primage_update_mode(offset);
 
 if (LOG_PROTECTION)
 {
-	UINT32 pc = cpu_get_previouspc(space->cpu);
-	UINT32 p1, p2, a6;
+	uint32_t pc = cpu_get_previouspc(space->cpu);
+	uint32_t p1, p2, a6;
 	switch (pc)
 	{
 		/* protection code from 20f90 - 21000 */
@@ -557,8 +557,8 @@ static READ32_HANDLER( colorram_protection_r )
 {
 	atarigt_state *state = (atarigt_state *)space->machine->driver_data;
 	offs_t address = 0xd80000 + offset * 4;
-	UINT32 result32 = 0;
-	UINT16 result;
+	uint32_t result32 = 0;
+	uint16_t result;
 
 	if (ACCESSING_BITS_16_31)
 	{
@@ -1233,14 +1233,14 @@ static WRITE32_HANDLER( tmek_pf_w )
 	/* protected version */
 	if (pc == 0x2EB3C || pc == 0x2EB48)
 	{
-		logerror("%06X:PFW@%06X = %08X & %08X (src=%06X)\n", cpu_get_pc(space->cpu), 0xd72000 + offset*4, data, mem_mask, (UINT32)cpu_get_reg(space->cpu, M68K_A4) - 2);
+		logerror("%06X:PFW@%06X = %08X & %08X (src=%06X)\n", cpu_get_pc(space->cpu), 0xd72000 + offset*4, data, mem_mask, (uint32_t)cpu_get_reg(space->cpu, M68K_A4) - 2);
 		/* skip these writes to make more stuff visible */
 		return;
 	}
 
 	/* unprotected version */
 	if (pc == 0x25834 || pc == 0x25860)
-		logerror("%06X:PFW@%06X = %08X & %08X (src=%06X)\n", cpu_get_pc(space->cpu), 0xd72000 + offset*4, data, mem_mask, (UINT32)cpu_get_reg(space->cpu, M68K_A3) - 2);
+		logerror("%06X:PFW@%06X = %08X & %08X (src=%06X)\n", cpu_get_pc(space->cpu), 0xd72000 + offset*4, data, mem_mask, (uint32_t)cpu_get_reg(space->cpu, M68K_A3) - 2);
 
 	atarigen_playfield32_w(space, offset, data, mem_mask);
 }

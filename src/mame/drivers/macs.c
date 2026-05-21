@@ -62,9 +62,9 @@ KISEKAE -- info
 
 
 
-static UINT8 macs_mux_data;
-static UINT8 macs_rev;
-UINT8 macs_cart_slot;
+static uint8_t macs_mux_data;
+static uint8_t macs_rev;
+uint8_t macs_cart_slot;
 
 static MACHINE_RESET(macs);
 
@@ -130,7 +130,7 @@ static WRITE8_HANDLER( macs_rom_bank_w )
 
 static WRITE8_HANDLER( macs_output_w )
 {
-	UINT8 *ROM = memory_region(space->machine, "maincpu");
+	uint8_t *ROM = memory_region(space->machine, "maincpu");
 
 	switch(offset)
 	{
@@ -616,7 +616,7 @@ ROM_START( yujan )
 	ROM_COPY( "user2",   0x00000, 0x000000, 0x0008000 )
 ROM_END
 
-static const UINT8 ramdata[160]=
+static const uint8_t ramdata[160]=
 {
 	0xAF, 0xED, 0x47, 0xD3, 0xC1, 0xD3, 0x0C, 0xD3, 0xAF, 0xED, 0x47, 0xD3, 0xC1, 0xD3, 0x0C, 0xD3,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -709,28 +709,28 @@ static MACHINE_RESET(macs)
 
 static DRIVER_INIT(macs)
 {
-	macs_ram1=auto_alloc_array(machine, UINT8, 0x20000);
+	macs_ram1=auto_alloc_array(machine, uint8_t, 0x20000);
 	st0016_game=10|0x80;
 	macs_rev = 1;
 }
 
 static DRIVER_INIT(macs2)
 {
-	macs_ram1=auto_alloc_array(machine, UINT8, 0x20000);
+	macs_ram1=auto_alloc_array(machine, uint8_t, 0x20000);
 	st0016_game=10|0x80;
 	macs_rev = 2;
 }
 
 static DRIVER_INIT(kisekaeh)
 {
-	macs_ram1=auto_alloc_array(machine, UINT8, 0x20000);
+	macs_ram1=auto_alloc_array(machine, uint8_t, 0x20000);
 	st0016_game=11|0x180;
 	macs_rev = 1;
 }
 
 static DRIVER_INIT(kisekaem)
 {
-	macs_ram1=auto_alloc_array(machine, UINT8, 0x20000);
+	macs_ram1=auto_alloc_array(machine, uint8_t, 0x20000);
 	st0016_game=10|0x180;
 	macs_rev = 1;
 }

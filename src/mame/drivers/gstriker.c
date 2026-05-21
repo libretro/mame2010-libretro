@@ -178,9 +178,9 @@ Frequencies: 68k is XTAL_32MHZ/2
 ******************************************************************************/
 
 
-//UINT16 *gs_videoram3;
-//UINT16 *gs_mixer_regs;
-static UINT16 dmmy_8f_ret;
+//uint16_t *gs_videoram3;
+//uint16_t *gs_mixer_regs;
+static uint16_t dmmy_8f_ret;
 
 
 /*** MISC READ / WRITE HANDLERS **********************************************/
@@ -219,7 +219,7 @@ static WRITE8_HANDLER( gs_sh_pending_command_clear_w )
 
 static WRITE8_HANDLER( gs_sh_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "audiocpu");
+	uint8_t *RAM = memory_region(space->machine, "audiocpu");
 	int bankaddress;
 
 	bankaddress = 0x10000 + (data & 0x03) * 0x8000;
@@ -280,7 +280,7 @@ static const ym2610_interface ym2610_config =
 
 /*** MEMORY LAYOUTS **********************************************************/
 
-static UINT16 *work_ram;
+static uint16_t *work_ram;
 
 
 static ADDRESS_MAP_START( gstriker_map, ADDRESS_SPACE_PROGRAM, 16 )
@@ -835,7 +835,7 @@ work_ram[0x000/2] = (_num_ & 0xffff0000) >> 16;\
 work_ram[0x002/2] = (_num_ & 0x0000ffff) >> 0;
 
 static int gametype = 0;
-static UINT16 mcu_data = 0;
+static uint16_t mcu_data = 0;
 
 static WRITE16_HANDLER( twrldc94_mcu_w )
 {
@@ -847,7 +847,7 @@ static READ16_HANDLER( twrldc94_mcu_r )
 	return mcu_data;
 }
 
-static UINT16 prot_reg[2] = {0,0}; // current,last
+static uint16_t prot_reg[2] = {0,0}; // current,last
 static WRITE16_HANDLER( twrldc94_prot_reg_w )
 {
 	prot_reg[1] = prot_reg[0];

@@ -90,33 +90,33 @@
 /*
     Globals
 */
-static UINT8 bank_data[4];
-static UINT8 *work_ram;
-static UINT8 *video_ram;
-static UINT8 h_scroll;
-static UINT8 v_scroll;
-static UINT8 flip_8;
-static UINT8 flip_22;
-static UINT8 videomode;
+static uint8_t bank_data[4];
+static uint8_t *work_ram;
+static uint8_t *video_ram;
+static uint8_t h_scroll;
+static uint8_t v_scroll;
+static uint8_t flip_8;
+static uint8_t flip_22;
+static uint8_t videomode;
 
 /* UART source/sinks */
-static UINT8 z80_m6809_line;
-static UINT8 m6809_z80_line;
-static UINT8 data_r;
-static UINT8 data_t;
+static uint8_t z80_m6809_line;
+static uint8_t m6809_z80_line;
+static uint8_t data_r;
+static uint8_t data_t;
 
 static int irq_state;
 static int acia_irq;
 static int vblank_irq;
 static int blitter_irq;
 
-static UINT8 z80_int;
-static UINT8 z80_inten;
+static uint8_t z80_int;
+static uint8_t z80_inten;
 
 /* EM and lamps stuff */
-static UINT32 meter_latch;
-static UINT32 mux_input;
-static UINT32 mux_outputlatch;
+static uint32_t meter_latch;
+static uint32_t mux_input;
+static uint32_t mux_outputlatch;
 
 /*
     Function prototypes
@@ -144,13 +144,13 @@ static void update_irqs(running_machine *machine)
 typedef union
 {
 #ifdef MSB_FIRST
-	struct { UINT16 hiword, loword ; } ;
-	struct { UINT8 addr2, addr1, addr0; };
+	struct { uint16_t hiword, loword ; } ;
+	struct { uint8_t addr2, addr1, addr0; };
 #else
-	struct { UINT16 loword, hiword ; } ;
-	struct { UINT8 addr0, addr1, addr2; };
+	struct { uint16_t loword, hiword ; } ;
+	struct { uint8_t addr0, addr1, addr2; };
 #endif
-	UINT32 addr;
+	uint32_t addr;
 } ADDR_REG;
 
 /* Blitter register flag bits */
@@ -193,19 +193,19 @@ static struct
 {
 	ADDR_REG	program;
 
-	UINT8		control;
-	UINT8		status;
+	uint8_t		control;
+	uint8_t		status;
 
-	UINT8		command;
+	uint8_t		command;
 	ADDR_REG	source;
 	ADDR_REG	dest;
-	UINT8		modectl;
-	UINT8		compfunc;
-	UINT8		outercnt;
+	uint8_t		modectl;
+	uint8_t		compfunc;
+	uint8_t		outercnt;
 
-	UINT8		innercnt;
-	UINT8		step;
-	UINT8		pattern;
+	uint8_t		innercnt;
+	uint8_t		step;
+	uint8_t		pattern;
 } blitter;
 
 #define LOOPTYPE ( ( blitter.command&0x60 ) >> 5 )
@@ -215,18 +215,18 @@ static struct
 */
 static struct
 {
-	UINT8	addr_w;
-	UINT8	addr_r;
-	UINT8	mask;
+	uint8_t	addr_w;
+	uint8_t	addr_r;
+	uint8_t	mask;
 
 	/* 18-bit colors */
-	UINT8	color_r[3];
-	UINT8	color_w[3];
-	UINT32	table[256];
+	uint8_t	color_r[3];
+	uint8_t	color_w[3];
+	uint32_t	table[256];
 
 	/* Access counts */
-	UINT8	count_r;
-	UINT8	count_w;
+	uint8_t	count_r;
+	uint8_t	count_w;
 } ramdac;
 
 
@@ -251,7 +251,7 @@ static struct
 #define RED_6 ( 6 << 5 )
 #define RED_7 ( 7 << 5 )
 
-static const UINT8 col4bit_default[16]=
+static const uint8_t col4bit_default[16]=
 {
 	BLUE_0 | GREEN_0 | RED_0,
 	BLUE_1,
@@ -271,7 +271,7 @@ static const UINT8 col4bit_default[16]=
 	RED_7 | GREEN_7 | BLUE_3
 };
 
-static const UINT8 col3bit_default[16]=
+static const uint8_t col3bit_default[16]=
 {
 	0,
 	BLUE_3,
@@ -291,12 +291,12 @@ static const UINT8 col3bit_default[16]=
 	RED_7 | GREEN_7 | BLUE_3
 };
 
-static UINT8 col4bit[16];
-static UINT8 col3bit[16];
-static UINT8 col8bit[256];
-static UINT8 col7bit[256];
-static UINT8 col6bit[256];
-static const UINT8 col76index[] = {0, 2, 4, 7};
+static uint8_t col4bit[16];
+static uint8_t col3bit[16];
+static uint8_t col8bit[256];
+static uint8_t col7bit[256];
+static uint8_t col6bit[256];
+static const uint8_t col76index[] = {0, 2, 4, 7};
 
 
 static VIDEO_START( bfcobra )
@@ -307,7 +307,7 @@ static VIDEO_START( bfcobra )
 	memcpy(col3bit, col3bit_default, sizeof(col3bit));
 	for (i = 0; i < 256; ++i)
 	{
-		UINT8 col;
+		uint8_t col;
 
 		col8bit[i] = i;
 		col = i & 0x7f;
@@ -323,11 +323,11 @@ static VIDEO_START( bfcobra )
 static VIDEO_UPDATE( bfcobra )
 {
 	int x, y;
-	UINT8  *src;
-	UINT32 *dest;
-	UINT32 offset;
-	UINT8 *hirescol;
-	UINT8 *lorescol;
+	uint8_t  *src;
+	uint32_t *dest;
+	uint32_t offset;
+	uint8_t *hirescol;
+	uint8_t *lorescol;
 
 	/* Select screen has to be programmed into two registers */
 	/* No idea what happens if the registers are different */
@@ -354,14 +354,14 @@ static VIDEO_UPDATE( bfcobra )
 
 	for (y = cliprect->min_y; y <= cliprect->max_y; ++y)
 	{
-		UINT16 y_offset = (y + v_scroll) * 256;
+		uint16_t y_offset = (y + v_scroll) * 256;
 		src = &video_ram[offset + y_offset];
 		dest = BITMAP_ADDR32(bitmap, y, 0);
 
 		for (x = cliprect->min_x; x <= cliprect->max_x / 2; ++x)
 		{
-			UINT8 x_offset = x + h_scroll;
-			UINT8 pen = *(src + x_offset);
+			uint8_t x_offset = x + h_scroll;
+			uint8_t pen = *(src + x_offset);
 
 			if ( ( videomode & 0x81 ) == 1 || (videomode & 0x80 && pen & 0x80) )
 			{
@@ -379,27 +379,27 @@ static VIDEO_UPDATE( bfcobra )
 	return 0;
 }
 
-INLINE UINT8* blitter_get_addr(running_machine *machine, UINT32 addr)
+INLINE uint8_t* blitter_get_addr(running_machine *machine, uint32_t addr)
 {
 	if (addr < 0x10000)
 	{
 		/* Is this region fixed? */
-		return (UINT8*)(memory_region(machine, "user1") + addr);
+		return (uint8_t*)(memory_region(machine, "user1") + addr);
 	}
 	else if(addr < 0x20000)
 	{
 		addr &= 0xffff;
 		addr += (bank_data[0] & 1) ? 0x10000 : 0;
 
-		return (UINT8*)(memory_region(machine, "user1") + addr + ((bank_data[0] >> 1) * 0x20000));
+		return (uint8_t*)(memory_region(machine, "user1") + addr + ((bank_data[0] >> 1) * 0x20000));
 	}
 	else if (addr >= 0x20000 && addr < 0x40000)
 	{
-		return (UINT8*)&video_ram[addr - 0x20000];
+		return (uint8_t*)&video_ram[addr - 0x20000];
 	}
 	else
 	{
-		return (UINT8*)&work_ram[addr - 0x40000];
+		return (uint8_t*)&work_ram[addr - 0x40000];
 	}
 }
 
@@ -418,8 +418,8 @@ static void RunBlit(const address_space *space)
 
 	do
 	{
-		UINT8 srcdata = 0;
-		UINT8 dstdata = 0;
+		uint8_t srcdata = 0;
+		uint8_t dstdata = 0;
 
 		/* Read the blitter command */
 		BLITPRG_READ(source.addr0);
@@ -474,7 +474,7 @@ static void RunBlit(const address_space *space)
 		/* Begin outer loop */
 		for (;;)
 		{
-			UINT8 innercnt = blitter.innercnt;
+			uint8_t innercnt = blitter.innercnt;
 			dstdata = blitter.pattern;
 
 			if (blitter.command & CMD_LINEDRAW)
@@ -528,10 +528,10 @@ static void RunBlit(const address_space *space)
 			}
 			else do
 			{
-				UINT8	inhibit = 0;
+				uint8_t	inhibit = 0;
 
 				/* TODO: Set this correctly */
-				UINT8	result = blitter.pattern;
+				uint8_t	result = blitter.pattern;
 
 				if (LOOPTYPE == 3 && innercnt == blitter.innercnt)
 				{
@@ -629,15 +629,15 @@ static void RunBlit(const address_space *space)
                             The existing destination pixel is used as a lookup
                             into the table and the colours is replaced.
                         */
-						UINT8 dest = *blitter_get_addr(space->machine, blitter.dest.addr);
-						UINT8 newcol = *(blitter_get_addr(space->machine, (blitter.source.addr + dest) & 0xfffff));
+						uint8_t dest = *blitter_get_addr(space->machine, blitter.dest.addr);
+						uint8_t newcol = *(blitter_get_addr(space->machine, (blitter.source.addr + dest) & 0xfffff));
 
 						*blitter_get_addr(space->machine, blitter.dest.addr) = newcol;
 						cycles_used += 3;
 					}
 					else
 					{
-						UINT8 final_result = 0;
+						uint8_t final_result = 0;
 
 						if (blitter.compfunc & CMPFUNC_LOG3)
 							final_result |= result & dstdata;
@@ -697,13 +697,13 @@ static void RunBlit(const address_space *space)
 
 static READ8_HANDLER( ramdac_r )
 {
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	switch (offset & 3)
 	{
 		case 1:
 		{
-			UINT8 *count = &ramdac.count_r;
+			uint8_t *count = &ramdac.count_r;
 
 			if (*count == 0)
 			{
@@ -822,7 +822,7 @@ static WRITE8_HANDLER( ramdac_w )
 
 static READ8_HANDLER( chipset_r )
 {
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	switch(offset)
 	{
@@ -968,7 +968,7 @@ INLINE void z80_bank(running_machine *machine, int num, int data)
 
 	if (data < 0x08)
 	{
-		UINT32 offset = ((bank_data[0] >> 1) * 0x20000) + ((0x4000 * data) ^ ((bank_data[0] & 1) ? 0 : 0x10000));
+		uint32_t offset = ((bank_data[0] >> 1) * 0x20000) + ((0x4000 * data) ^ ((bank_data[0] & 1) ? 0 : 0x10000));
 
 		memory_set_bankptr(machine, bank_names[num - 1], memory_region(machine, "user1") + offset);
 	}
@@ -1001,9 +1001,9 @@ static WRITE8_HANDLER( rombank_w )
 
 ***************************************************************************/
 
-static void command_phase(UINT8 data);
-static void exec_w_phase(UINT8 data);
-//UINT8 exec_r_phase(void);
+static void command_phase(uint8_t data);
+static void exec_w_phase(uint8_t data);
+//uint8_t exec_r_phase(void);
 
 /*
     WD37C656C-PL (or equivalent) Floppy Disk Controller
@@ -1038,7 +1038,7 @@ enum command
 
 static struct
 {
-	UINT8	MSR;
+	uint8_t	MSR;
 
 	int		side;
 	int		track;
@@ -1056,8 +1056,8 @@ static struct
 	int		cmd_cnt;
 	int		res_len;
 	int		res_cnt;
-	UINT8	cmd[10];
-	UINT8	results[8];
+	uint8_t	cmd[10];
+	uint8_t	results[8];
 } fdc;
 
 
@@ -1071,7 +1071,7 @@ static void reset_fdc(void)
 
 static READ8_HANDLER( fdctrl_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	val = fdc.MSR;
 
@@ -1084,7 +1084,7 @@ static READ8_HANDLER( fddata_r )
 	#define SPT		10
 	#define BPT		1024*10
 
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if (fdc.phase == EXECUTION_R)
 	{
@@ -1171,7 +1171,7 @@ static WRITE8_HANDLER( fdctrl_w )
 	}
 }
 
-static void command_phase(UINT8 data)
+static void command_phase(uint8_t data)
 {
 	if (fdc.cmd_cnt == 0)
 	{
@@ -1253,18 +1253,18 @@ static void command_phase(UINT8 data)
 }
 
 #ifdef UNUSED_FUNCTION
-UINT8 exec_r_phase(void)
+uint8_t exec_r_phase(void)
 {
 	return 0;
 }
 #endif
 
-static void exec_w_phase(UINT8 data)
+static void exec_w_phase(uint8_t data)
 {
 }
 
 #ifdef UNUSED_FUNCTION
-UINT8 results_phase(void)
+uint8_t results_phase(void)
 {
 	return 0;
 }
@@ -1359,7 +1359,7 @@ static WRITE8_HANDLER( meter_w )
 {
 	int i;
 	int  changed = meter_latch ^ data;
-	UINT64 cycles = downcast<cpu_device *>(space->cpu)->total_cycles();
+	uint64_t cycles = downcast<cpu_device *>(space->cpu)->total_cycles();
 
 	meter_latch = data;
 
@@ -1562,10 +1562,10 @@ INPUT_PORTS_END
 static void init_ram(running_machine *machine)
 {
 	/* 768kB work RAM */
-	work_ram = auto_alloc_array_clear(machine, UINT8, 0xC0000);
+	work_ram = auto_alloc_array_clear(machine, uint8_t, 0xC0000);
 
 	/* 128kB video RAM */
-	video_ram = auto_alloc_array_clear(machine, UINT8, 0x20000);
+	video_ram = auto_alloc_array_clear(machine, uint8_t, 0x20000);
 }
 
 /*
@@ -1658,23 +1658,23 @@ static DRIVER_INIT( bfcobra )
         6809 ROM address and data lines are scrambled.
         This is the same scrambling as Scorpion 2.
     */
-	static const UINT8 datalookup[] = { 1, 3, 5, 6, 4, 2, 0, 7 };
-	static const UINT8 addrlookup[] = { 11, 12, 0, 2, 3, 5, 7, 9, 8, 6, 1, 4, 10, 13, 14 };
+	static const uint8_t datalookup[] = { 1, 3, 5, 6, 4, 2, 0, 7 };
+	static const uint8_t addrlookup[] = { 11, 12, 0, 2, 3, 5, 7, 9, 8, 6, 1, 4, 10, 13, 14 };
 
-	UINT32 i;
-	UINT8 *rom;
-	UINT8 *tmp;
+	uint32_t i;
+	uint8_t *rom;
+	uint8_t *tmp;
 
-	tmp = auto_alloc_array(machine, UINT8, 0x8000);
+	tmp = auto_alloc_array(machine, uint8_t, 0x8000);
 	rom = memory_region(machine, "audiocpu") + 0x8000;
 	memcpy(tmp, rom, 0x8000);
 
 	for (i = 0; i < 0x8000; i++)
 	{
-		UINT16 addr = 0;
-		UINT8 x;
-		UINT8 data = 0;
-		UINT8 val = tmp[i];
+		uint16_t addr = 0;
+		uint8_t x;
+		uint8_t data = 0;
+		uint8_t val = tmp[i];
 
 		for (x = 0; x < 8; x ++)
 			data |= ((val >> x) & 1) << datalookup[x];

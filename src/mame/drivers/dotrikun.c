@@ -32,11 +32,11 @@ public:
 	dotrikun_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *        videoram;
+	uint8_t *        videoram;
 	size_t         videoram_size;
 
 	/* video-related */
-	UINT8          color;
+	uint8_t          color;
 };
 
 
@@ -65,10 +65,10 @@ static VIDEO_UPDATE( dotrikun )
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
 		int i;
-		UINT8 data = state->videoram[offs];
+		uint8_t data = state->videoram[offs];
 
-		UINT8 x = offs << 4;
-		UINT8 y = offs >> 4 << 1;
+		uint8_t x = offs << 4;
+		uint8_t y = offs >> 4 << 1;
 
 		for (i = 0; i < 8; i++)
 		{

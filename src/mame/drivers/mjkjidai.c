@@ -34,10 +34,10 @@ struct _mjkjidai_adpcm_state
 {
 	adpcm_state adpcm;
 	sound_stream *stream;
-	UINT32 current, end;
-	UINT8 nibble;
-	UINT8 playing;
-	UINT8 *base;
+	uint32_t current, end;
+	uint8_t nibble;
+	uint8_t playing;
+	uint8_t *base;
 };
 
 static STREAM_UPDATE( mjkjidai_adpcm_callback )

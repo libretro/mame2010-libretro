@@ -2039,26 +2039,26 @@ ROM_END
 #define EXPAND_NONE		0x3f
 #define SWAP_HALVES		0x80
 
-static void expand_roms(running_machine *machine, UINT8 cd_rom_mask)
+static void expand_roms(running_machine *machine, uint8_t cd_rom_mask)
 {
 	/* load AB bank data from 0x10000-0x20000 */
 	/* load CD bank data from 0x20000-0x2e000 */
 	/* load EF           from 0x2e000-0x30000 */
 	/* ROM region must be 0x40000 total */
 
-	UINT8 *temp = auto_alloc_array(machine, UINT8, 0x20000);
+	uint8_t *temp = auto_alloc_array(machine, uint8_t, 0x20000);
 	{
-		UINT8 *rom = memory_region(machine, "maincpu");
-		UINT32 len = memory_region_length(machine, "maincpu");
-		UINT32 base;
+		uint8_t *rom = memory_region(machine, "maincpu");
+		uint32_t len = memory_region_length(machine, "maincpu");
+		uint32_t base;
 
 		for (base = 0x10000; base < len; base += 0x30000)
 		{
-			UINT8 *ab_base = &temp[0x00000];
-			UINT8 *cd_base = &temp[0x10000];
-			UINT8 *cd_common = &temp[0x1c000];
-			UINT8 *ef_common = &temp[0x1e000];
-			UINT32 dest;
+			uint8_t *ab_base = &temp[0x00000];
+			uint8_t *cd_base = &temp[0x10000];
+			uint8_t *cd_common = &temp[0x1c000];
+			uint8_t *ef_common = &temp[0x1e000];
+			uint32_t dest;
 
 			for (dest = 0x00000; dest < 0x20000; dest += 0x02000)
 			{
@@ -2105,7 +2105,7 @@ static void expand_roms(running_machine *machine, UINT8 cd_rom_mask)
 	}
 }
 
-INLINE void config_shooter_adc(running_machine *machine, UINT8 shooter, UINT8 adc_shift)
+INLINE void config_shooter_adc(running_machine *machine, uint8_t shooter, uint8_t adc_shift)
 {
 	balsente_state *state = (balsente_state *)machine->driver_data;
 	state->shooter = shooter;
@@ -2123,7 +2123,7 @@ static DRIVER_INIT( stocker )  { expand_roms(machine, EXPAND_ALL);  config_shoot
 static DRIVER_INIT( triviag1 ) { expand_roms(machine, EXPAND_ALL);  config_shooter_adc(machine, FALSE, 0 /* noanalog */); }
 static DRIVER_INIT( triviag2 )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	memcpy(&rom[0x20000], &rom[0x28000], 0x4000);
 	memcpy(&rom[0x24000], &rom[0x28000], 0x4000);
 	expand_roms(machine, EXPAND_NONE); config_shooter_adc(machine, FALSE, 0 /* noanalog */);

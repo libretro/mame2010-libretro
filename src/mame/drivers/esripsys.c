@@ -41,31 +41,31 @@
  *************************************/
 
 /* I/O */
-static UINT8 g_iodata;
-static UINT8 g_ioaddr;
-static UINT8 coin_latch;
-static UINT8 keypad_status;
-static UINT8 g_status;
-static UINT8 f_status;
+static uint8_t g_iodata;
+static uint8_t g_ioaddr;
+static uint8_t coin_latch;
+static uint8_t keypad_status;
+static uint8_t g_status;
+static uint8_t f_status;
 static int io_firq_status;
-static UINT8 cmos_ram_a2_0;
-static UINT8 cmos_ram_a10_3;
-static UINT8 *cmos_ram;
+static uint8_t cmos_ram_a2_0;
+static uint8_t cmos_ram_a10_3;
+static uint8_t *cmos_ram;
 
 /* Sound */
-static UINT8 u56a;
-static UINT8 u56b;
-static UINT8 g_to_s_latch1;
-static UINT8 g_to_s_latch2;
-static UINT8 s_to_g_latch1;
-static UINT8 s_to_g_latch2;
-static UINT8 dac_msb;
-static UINT8 dac_vol;
-static UINT8 tms_data;
+static uint8_t u56a;
+static uint8_t u56b;
+static uint8_t g_to_s_latch1;
+static uint8_t g_to_s_latch2;
+static uint8_t s_to_g_latch1;
+static uint8_t s_to_g_latch2;
+static uint8_t dac_msb;
+static uint8_t dac_vol;
+static uint8_t tms_data;
 
 /* Frame/Video CPU shared RAM */
-static UINT8 *fdt_a;
-static UINT8 *fdt_b;
+static uint8_t *fdt_a;
+static uint8_t *fdt_b;
 static int _fasel;
 static int _fbsel;
 
@@ -139,7 +139,7 @@ static READ8_HANDLER( g_status_r )
 static WRITE8_HANDLER( g_status_w )
 {
 	int bankaddress;
-	UINT8 *rom = memory_region(space->machine, "game_cpu");
+	uint8_t *rom = memory_region(space->machine, "game_cpu");
 
 	g_status = data;
 
@@ -179,7 +179,7 @@ static WRITE8_HANDLER( g_status_w )
 static READ8_HANDLER( f_status_r )
 {
 	int vblank = space->machine->primary_screen->vblank();
-	UINT8 rip_status = get_rip_status(space->machine->device("video_cpu"));
+	uint8_t rip_status = get_rip_status(space->machine->device("video_cpu"));
 
 	rip_status = (rip_status & 0x18) | (BIT(rip_status, 6) << 1) |  BIT(rip_status, 7);
 
@@ -270,11 +270,11 @@ static WRITE16_DEVICE_HANDLER( fdt_rip_w )
    D7 = /FDONE
 */
 
-static UINT8 rip_status_in(running_machine *machine)
+static uint8_t rip_status_in(running_machine *machine)
 {
 	int vpos =  machine->primary_screen->vpos();
-	UINT8 _vblank = !(vpos >= ESRIPSYS_VBLANK_START);
-//  UINT8 _hblank = !machine->primary_screen->hblank();
+	uint8_t _vblank = !(vpos >= ESRIPSYS_VBLANK_START);
+//  uint8_t _hblank = !machine->primary_screen->hblank();
 
 	return	_vblank
 			| (esripsys_hblank << 1)
@@ -522,7 +522,7 @@ static WRITE8_HANDLER( s_200e_w )
 
 static WRITE8_HANDLER( s_200f_w )
 {
-	UINT8 *rom = memory_region(space->machine, "sound_data");
+	uint8_t *rom = memory_region(space->machine, "sound_data");
 	int rombank = data & 0x20 ? 0x2000 : 0;
 
 	/* Bit 6 -> Reset latch U56A */
@@ -555,7 +555,7 @@ static READ8_HANDLER( tms5220_r )
 	{
 		/* TMS5220 core returns status bits in D7-D6 */
 		running_device *tms = space->machine->device("tms5220nl");
-		UINT8 status = tms5220_status_r(tms, 0);
+		uint8_t status = tms5220_status_r(tms, 0);
 
 		status = ((status & 0x80) >> 5) | ((status & 0x40) >> 5) | ((status & 0x20) >> 5);
 		return (tms5220_readyq_r(tms) << 7) | (tms5220_intq_r(tms) << 6) | status;
@@ -597,7 +597,7 @@ static WRITE8_DEVICE_HANDLER( esripsys_dac_w )
 	}
 	else
 	{
-		UINT16 dac_data = (dac_msb << 8) | data;
+		uint16_t dac_data = (dac_msb << 8) | data;
 
 		/*
             The 8-bit DAC modulates the 10-bit DAC.
@@ -674,11 +674,11 @@ ADDRESS_MAP_END
 
 static DRIVER_INIT( esripsys )
 {
-	UINT8 *rom = memory_region(machine, "sound_data");
+	uint8_t *rom = memory_region(machine, "sound_data");
 
-	fdt_a = auto_alloc_array(machine, UINT8, FDT_RAM_SIZE);
-	fdt_b = auto_alloc_array(machine, UINT8, FDT_RAM_SIZE);
-	cmos_ram = auto_alloc_array(machine, UINT8, CMOS_RAM_SIZE);
+	fdt_a = auto_alloc_array(machine, uint8_t, FDT_RAM_SIZE);
+	fdt_b = auto_alloc_array(machine, uint8_t, FDT_RAM_SIZE);
+	cmos_ram = auto_alloc_array(machine, uint8_t, CMOS_RAM_SIZE);
 
 	memory_set_bankptr(machine, "bank2", &rom[0x0000]);
 	memory_set_bankptr(machine, "bank3", &rom[0x4000]);

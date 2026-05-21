@@ -296,7 +296,7 @@ static WRITE16_HANDLER( galsnew_6295_bankswitch_w )
 {
 	if (ACCESSING_BITS_8_15)
 	{
-		UINT8 *rom = memory_region(space->machine, "oki");
+		uint8_t *rom = memory_region(space->machine, "oki");
 		memcpy(&rom[0x30000],&rom[0x40000 + ((data >> 8) & 0x0f) * 0x10000],0x10000);
 	}
 }
@@ -313,7 +313,7 @@ static WRITE16_HANDLER( galsnew_paletteram_w )
 	palette_set_color_rgb(space->machine,offset,pal5bit(data >> 6),pal5bit(data >> 11),pal5bit(data >> 1));
 }
 
-static UINT16 vram_0_bank_num = 0, vram_1_bank_num = 0;
+static uint16_t vram_0_bank_num = 0, vram_1_bank_num = 0;
 
 static WRITE16_HANDLER(galsnew_vram_0_bank_w)
 {
@@ -725,8 +725,8 @@ ROM_END
 
 static DRIVER_INIT(galsnew)
 {
-	UINT32 *src = (UINT32 *)memory_region(machine, "gfx3" );
-	UINT32 *dst = (UINT32 *)memory_region(machine, "gfx2" );
+	uint32_t *src = (uint32_t *)memory_region(machine, "gfx3" );
+	uint32_t *dst = (uint32_t *)memory_region(machine, "gfx2" );
 	int x, offset;
 
 

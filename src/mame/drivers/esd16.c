@@ -519,7 +519,7 @@ GFXDECODE_END
 static MACHINE_START( esd16 )
 {
 	esd16_state *state = (esd16_state *)machine->driver_data;
-	UINT8 *AUDIO = memory_region(machine, "audiocpu");
+	uint8_t *AUDIO = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 17, &AUDIO[0x0000], 0x4000);
 

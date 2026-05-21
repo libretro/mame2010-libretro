@@ -121,16 +121,16 @@
  *
  *************************************/
 
-static UINT8 input_mux;
-static UINT8 latched_input;
+static uint8_t input_mux;
+static uint8_t latched_input;
 
-static UINT8 last_op4;
+static uint8_t last_op4;
 
-static UINT8 maxrpm_adc_control;
-static UINT8 maxrpm_adc_select;
-static UINT8 maxrpm_last_shift;
-static INT8 maxrpm_p1_shift;
-static INT8 maxrpm_p2_shift;
+static uint8_t maxrpm_adc_control;
+static uint8_t maxrpm_adc_select;
+static uint8_t maxrpm_last_shift;
+static int8_t maxrpm_p1_shift;
+static int8_t maxrpm_p2_shift;
 
 
 
@@ -180,9 +180,9 @@ static READ8_HANDLER( maxrpm_ip1_r )
 
 static READ8_HANDLER( maxrpm_ip2_r )
 {
-	static const UINT8 shift_bits[5] = { 0x00, 0x05, 0x06, 0x01, 0x02 };
-	UINT8 start = input_port_read(space->machine, "MONO.IP0");
-	UINT8 shift = input_port_read(space->machine, "SHIFT");
+	static const uint8_t shift_bits[5] = { 0x00, 0x05, 0x06, 0x01, 0x02 };
+	uint8_t start = input_port_read(space->machine, "MONO.IP0");
+	uint8_t shift = input_port_read(space->machine, "SHIFT");
 
 	/* reset on a start */
 	if (!(start & 0x08))
@@ -344,7 +344,7 @@ static WRITE8_HANDLER( powerdrv_op6_w )
 
 static READ8_HANDLER( stargrds_ip0_r )
 {
-	UINT8 result = input_port_read(space->machine, "MONO.IP0");
+	uint8_t result = input_port_read(space->machine, "MONO.IP0");
 	if (input_mux)
 		result = (result & ~0x0a) | (input_port_read(space->machine, "MONO.IP0.ALT") & 0x0a);
 	return (result & ~0x10) | ((soundsgood_status_r(space, 0) << 4) & 0x10);
@@ -1013,7 +1013,7 @@ INPUT_PORTS_END
  *
  *************************************/
 
-static const UINT32 spyhunt_charlayout_xoffset[64] =
+static const uint32_t spyhunt_charlayout_xoffset[64] =
 {
 	   0,  0,  2,  2,  4,  4,  6,  6,  8,  8, 10, 10, 12, 12, 14, 14,
 	  16, 16, 18, 18, 20, 20, 22, 22, 24, 24, 26, 26, 28, 28, 30, 30,

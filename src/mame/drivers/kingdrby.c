@@ -74,7 +74,7 @@ sg1_b.e1       4096     0x92ef3c13      D2732D
 #define CLK_1	XTAL_20MHz
 #define CLK_2	XTAL_3_579545MHz
 
-static UINT8 sound_cmd;
+static uint8_t sound_cmd;
 
 /*************************************
  *
@@ -82,7 +82,7 @@ static UINT8 sound_cmd;
  *
  *************************************/
 
-static UINT8 *kingdrby_vram,*kingdrby_attr;
+static uint8_t *kingdrby_vram,*kingdrby_attr;
 static tilemap_t *sc0_tilemap,*sc0w_tilemap,*sc1_tilemap;
 
 /*
@@ -139,7 +139,7 @@ static VIDEO_START(kingdrby)
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	UINT8 *spriteram = machine->generic.spriteram.u8;
+	uint8_t *spriteram = machine->generic.spriteram.u8;
 	int count = 0;
 
 	/*sprites not fully understood.*/
@@ -229,7 +229,7 @@ static WRITE8_HANDLER( sc0_attr_w )
  *************************************/
 
 /* hopper I/O */
-static UINT8 p1_hopper,p2_hopper;
+static uint8_t p1_hopper,p2_hopper;
 
 static READ8_DEVICE_HANDLER( hopper_io_r )
 {
@@ -251,7 +251,7 @@ static WRITE8_DEVICE_HANDLER( sound_cmd_w )
 	// soundlatch_w(space,0, data);
 }
 
-static UINT8 mux_data;
+static uint8_t mux_data;
 
 /* No idea about what's this (if it's really a mux etc.)*/
 static WRITE8_DEVICE_HANDLER( outport2_w )
@@ -270,8 +270,8 @@ static READ8_DEVICE_HANDLER( input_mux_r )
 
 static READ8_DEVICE_HANDLER( key_matrix_r )
 {
-	static UINT16 p1_val,p2_val;
-	static UINT8 p1_res,p2_res;
+	static uint16_t p1_val,p2_val;
+	static uint8_t p1_res,p2_res;
 
 	p1_val = input_port_read(device->machine,"KEY_1P");
 	p2_val = input_port_read(device->machine,"KEY_2P");
@@ -935,8 +935,8 @@ static PALETTE_INIT(kingdrby)
 
 static PALETTE_INIT(kingdrbb)
 {
-	UINT8 *raw_prom = memory_region(machine, "raw_prom");
-	UINT8 *prom = memory_region(machine, "proms");
+	uint8_t *raw_prom = memory_region(machine, "raw_prom");
+	uint8_t *prom = memory_region(machine, "proms");
 	int	bit0, bit1, bit2 , r, g, b;
 	int	i;
 

@@ -326,7 +326,7 @@ static WRITE8_HANDLER( hnoridur_palette_w )
 		// hnoridur: R/W RAM
 		case 0x18:
 		{
-			UINT8 *RAM = memory_region(space->machine, "maincpu") + 0x10000 + state->hnoridur_bank * 0x8000;
+			uint8_t *RAM = memory_region(space->machine, "maincpu") + 0x10000 + state->hnoridur_bank * 0x8000;
 			RAM[offset] = data;
 			return;
 		}
@@ -623,7 +623,7 @@ static WRITE8_HANDLER( hjingi_hopper_w )
 	state->hopper = data & 0x01;
 }
 
-static UINT8 hjingi_hopper_bit( running_machine *machine )
+static uint8_t hjingi_hopper_bit( running_machine *machine )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 	return (state->hopper && !(machine->primary_screen->frame_number() % 10)) ? 0 : (1 << 6);
@@ -1606,7 +1606,7 @@ static WRITE8_HANDLER( gekisha_hopper_w )
 //  popmessage("%02x %02x", gekisha_val[0], gekisha_val[1]);
 }
 
-static void gekisha_set_rombank( running_machine *machine, UINT8 data )
+static void gekisha_set_rombank( running_machine *machine, uint8_t data )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 	state->rombank = data;
@@ -4282,7 +4282,7 @@ static MACHINE_RESET( dynax )
 
 static MACHINE_START( hanamai )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x8000], 0x8000);
 
 	MACHINE_START_CALL(dynax);
@@ -4290,7 +4290,7 @@ static MACHINE_START( hanamai )
 
 static MACHINE_START( hnoridur )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	int bank_n = (memory_region_length(machine, "maincpu") - 0x10000) / 0x8000;
 
 	memory_configure_bank(machine, "bank1", 0, bank_n, &ROM[0x10000], 0x8000);
@@ -4300,7 +4300,7 @@ static MACHINE_START( hnoridur )
 
 static MACHINE_START( htengoku )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x8000);
 
@@ -4695,8 +4695,8 @@ static const msm5205_interface jantouki_msm5205_interface =
 static MACHINE_START( jantouki )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
-	UINT8 *MAIN = memory_region(machine, "maincpu");
-	UINT8 *SOUND = memory_region(machine, "soundcpu");
+	uint8_t *MAIN = memory_region(machine, "maincpu");
+	uint8_t *SOUND = memory_region(machine, "soundcpu");
 
 	memory_configure_bank(machine, "bank1", 0, 0x10, &MAIN[0x8000],  0x8000);
 	memory_configure_bank(machine, "bank2", 0, 12,   &SOUND[0x8000], 0x8000);
@@ -5424,7 +5424,7 @@ ROM_END
 static DRIVER_INIT( blktouch )
 {
 	// fearsome encryption ;-)
-	UINT8	*src = (UINT8 *)memory_region(machine, "maincpu");
+	uint8_t	*src = (uint8_t *)memory_region(machine, "maincpu");
 	int i;
 
 	for (i = 0; i < 0x90000; i++)
@@ -5433,7 +5433,7 @@ static DRIVER_INIT( blktouch )
 
 	}
 
-	src = (UINT8 *)memory_region(machine, "gfx1");
+	src = (uint8_t *)memory_region(machine, "gfx1");
 
 	for (i = 0; i < 0xc0000; i++)
 	{
@@ -5446,11 +5446,11 @@ static DRIVER_INIT( maya )
 {
 	/* Address lines scrambling on 1 z80 rom */
 	int i;
-	UINT8	*gfx = (UINT8 *)memory_region(machine, "gfx1");
-	UINT8	*rom = memory_region(machine, "maincpu") + 0x28000, *end = rom + 0x10000;
+	uint8_t	*gfx = (uint8_t *)memory_region(machine, "gfx1");
+	uint8_t	*rom = memory_region(machine, "maincpu") + 0x28000, *end = rom + 0x10000;
 	for ( ; rom < end; rom += 8)
 	{
-		UINT8 temp[8];
+		uint8_t temp[8];
 		temp[0] = rom[0];	temp[1] = rom[1];	temp[2] = rom[2];	temp[3] = rom[3];
 		temp[4] = rom[4];	temp[5] = rom[5];	temp[6] = rom[6];	temp[7] = rom[7];
 
@@ -5459,7 +5459,7 @@ static DRIVER_INIT( maya )
 	}
 
 	/* Address lines scrambling on the blitter data roms */
-	rom = auto_alloc_array(machine, UINT8, 0xc0000);
+	rom = auto_alloc_array(machine, uint8_t, 0xc0000);
 	memcpy(rom, gfx, 0xc0000);
 	for (i = 0; i < 0xc0000; i++)
 		gfx[i] = rom[BITSWAP24(i,23,22,21,20,19,18,14,15, 16,17,13,12,11,10,9,8, 7,6,5,4,3,2,1,0)];
@@ -6164,9 +6164,9 @@ ROM_END
 static DRIVER_INIT( mjelct3 )
 {
 	int i;
-	UINT8	*rom = memory_region(machine, "maincpu");
+	uint8_t	*rom = memory_region(machine, "maincpu");
 	size_t  size = memory_region_length(machine, "maincpu");
-	UINT8	*rom1 = auto_alloc_array(machine, UINT8, size);
+	uint8_t	*rom1 = auto_alloc_array(machine, uint8_t, size);
 
 	memcpy(rom1, rom, size);
 	for (i = 0; i < size; i++)
@@ -6177,9 +6177,9 @@ static DRIVER_INIT( mjelct3 )
 static DRIVER_INIT( mjelct3a )
 {
 	int i, j;
-	UINT8	*rom = memory_region(machine, "maincpu");
+	uint8_t	*rom = memory_region(machine, "maincpu");
 	size_t  size = memory_region_length(machine, "maincpu");
-	UINT8	*rom1 = auto_alloc_array(machine, UINT8, size);
+	uint8_t	*rom1 = auto_alloc_array(machine, uint8_t, size);
 
 	memcpy(rom1, rom, size);
 	for (i = 0; i < size; i++)

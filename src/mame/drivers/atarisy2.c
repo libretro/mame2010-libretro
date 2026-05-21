@@ -215,7 +215,7 @@ static DIRECT_UPDATE_HANDLER( atarisy2_direct_handler )
 	/* make sure slapstic area looks like ROM */
 	if (address >= 0x8000 && address < 0x8200)
 	{
-		direct->raw = direct->decrypted = (UINT8 *)state->slapstic_base - 0x8000;
+		direct->raw = direct->decrypted = (uint8_t *)state->slapstic_base - 0x8000;
 		return ~0;
 	}
 	return address;
@@ -333,7 +333,7 @@ static WRITE16_HANDLER( bankselect_w )
 
 	atarisy2_state *state = (atarisy2_state *)space->machine->driver_data;
 	int newword = state->bankselect[offset];
-	UINT8 *base;
+	uint8_t *base;
 
 	COMBINE_DATA(&newword);
 	state->bankselect[offset] = newword;
@@ -3007,7 +3007,7 @@ ROM_END
 
 static DRIVER_INIT( paperboy )
 {
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0000,0x4300,0x0113,0x0124,0x0150,0x0153,0x0154,0x0100,
 		0x0112,0x01C0,0x0155,0x0143,0x0148,0x0100,0x0112,0x015C,
@@ -3038,7 +3038,7 @@ static DRIVER_INIT( paperboy )
 	};
 	int i;
 	atarisy2_state *state = (atarisy2_state *)machine->driver_data;
-	UINT8 *cpu1 = memory_region(machine, "maincpu");
+	uint8_t *cpu1 = memory_region(machine, "maincpu");
 
 	state->atarigen.eeprom_default = compressed_default_eeprom;
 	slapstic_init(machine, 105);
@@ -3062,7 +3062,7 @@ static DRIVER_INIT( 720 )
 	/* without the default EEPROM, 720 hangs at startup due to communication
        issues with the sound CPU; temporarily increasing the sound CPU frequency
        to ~2.2MHz "fixes" the problem */
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0000,0x01ff,0x01d0,0x0107,0x0100,0x01d7,0x0300,0x01d7,0x0400,0x01d0,
 		0x0107,0x0100,0xffff,0x4fff,0x0100,0x014e,0x0120,0x0139,
@@ -3098,11 +3098,11 @@ static DRIVER_INIT( 720 )
 }
 
 
-static void ssprint_init_common(running_machine *machine, const UINT16 *default_eeprom)
+static void ssprint_init_common(running_machine *machine, const uint16_t *default_eeprom)
 {
 	atarisy2_state *state = (atarisy2_state *)machine->driver_data;
 	int i;
-	UINT8 *cpu1 = memory_region(machine, "maincpu");
+	uint8_t *cpu1 = memory_region(machine, "maincpu");
 
 	state->atarigen.eeprom_default = default_eeprom;
 	slapstic_init(machine, 108);
@@ -3117,7 +3117,7 @@ static void ssprint_init_common(running_machine *machine, const UINT16 *default_
 
 static DRIVER_INIT( ssprint )
 {
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0000,0x01FF,0x0E00,0x01FF,0x0100,0x0120,0x0100,0x0120,
 		0x0300,0x0120,0x0500,0x0120,0x01FF,0x0100,0x0140,0x0100,
@@ -3149,7 +3149,7 @@ static DRIVER_INIT( ssprint )
 
 static DRIVER_INIT( ssprint1 )
 {
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0000,0x1e00,0x01ff,0x2500,0x0103,0x01e8,0x0152,0x0157,
 		0x0157,0x0103,0x01de,0x014b,0x0146,0x0154,0x0103,0x01d4,
@@ -3195,7 +3195,7 @@ static DRIVER_INIT( ssprint1 )
 
 static DRIVER_INIT( csprint )
 {
-	static const UINT16 compressed_default_eeprom[] =
+	static const uint16_t compressed_default_eeprom[] =
 	{
 		0x0000,0x01FF,0x0E00,0x0128,0x01D0,0x0127,0x0100,0x0120,
 		0x0300,0x01F7,0x01D0,0x0107,0x0300,0x0120,0x010F,0x01F0,
@@ -3227,7 +3227,7 @@ static DRIVER_INIT( csprint )
 	};
 	int i;
 	atarisy2_state *state = (atarisy2_state *)machine->driver_data;
-	UINT8 *cpu1 = memory_region(machine, "maincpu");
+	uint8_t *cpu1 = memory_region(machine, "maincpu");
 
 	state->atarigen.eeprom_default = compressed_default_eeprom;
 	slapstic_init(machine, 109);

@@ -16,7 +16,7 @@ public:
 	cball_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  video_ram;
+	uint8_t *  video_ram;
 
 	/* video-related */
 	tilemap_t* bg_tilemap;
@@ -29,7 +29,7 @@ public:
 static TILE_GET_INFO( get_tile_info )
 {
 	cball_state *state = (cball_state *)machine->driver_data;
-	UINT8 code = state->video_ram[tile_index];
+	uint8_t code = state->video_ram[tile_index];
 
 	SET_TILE_INFO(0, code, code >> 7, 0);
 }

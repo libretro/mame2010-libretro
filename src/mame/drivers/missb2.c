@@ -28,9 +28,9 @@ static VIDEO_UPDATE( missb2 )
 	int offs;
 	int sx, sy, xc, yc;
 	int gfx_num, gfx_attr, gfx_offs;
-	const UINT8 *prom;
-	const UINT8 *prom_line;
-	UINT16 bg_offs;
+	const uint8_t *prom;
+	const uint8_t *prom_line;
+	uint16_t bg_offs;
 
 	/* Bubble Bobble doesn't have a real video RAM. All graphics (characters */
 	/* and sprites) are stored in the same memory region, and information on */
@@ -59,9 +59,9 @@ static VIDEO_UPDATE( missb2 )
 	for (offs = 0; offs < state->objectram_size; offs += 4)
 	{
 		/* skip empty sprites */
-		/* this is dword aligned so the UINT32 * cast shouldn't give problems */
+		/* this is dword aligned so the uint32_t * cast shouldn't give problems */
 		/* on any architecture */
-		if (*(UINT32 *)(&state->objectram[offs]) == 0)
+		if (*(uint32_t *)(&state->objectram[offs]) == 0)
 			continue;
 
 		gfx_num = state->objectram[offs + 1];
@@ -273,7 +273,7 @@ static const gfx_layout charlayout =
 	16*8
 };
 
-static const UINT32 bglayout_xoffset[256] =
+static const uint32_t bglayout_xoffset[256] =
 {
 		0*8,      1*8, 2048*8, 2049*8,    8*8,    9*8, 2056*8, 2057*8,
 		4*8,      5*8, 2052*8, 2053*8,   12*8,   13*8, 2060*8, 2061*8,
@@ -464,8 +464,8 @@ ROM_END
 
 static void configure_banks( running_machine* machine )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
-	UINT8 *SLAVE = memory_region(machine, "slave");
+	uint8_t *ROM = memory_region(machine, "maincpu");
+	uint8_t *SLAVE = memory_region(machine, "slave");
 
 	memory_configure_bank(machine, "bank1", 0, 8, &ROM[0x10000], 0x4000);
 

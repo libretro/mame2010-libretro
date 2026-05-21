@@ -907,13 +907,13 @@ static const gfx_layout legionna_new_charlayout =
 };
 
 
-static void descramble_legionnaire_gfx(running_machine *machine, UINT8* src)
+static void descramble_legionnaire_gfx(running_machine *machine, uint8_t* src)
 {
-	UINT8 *buffer;
+	uint8_t *buffer;
 	int len = 0x10000;
 
 	/*  rearrange gfx */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)
@@ -2091,7 +2091,7 @@ ROM_END
 static DRIVER_INIT( cupsoc )
 {
 	#if CUPSOC_DEBUG_MODE
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 
 	/*Press p1 button 3 to enter into debug mode during gameplay*/
 	ROM[0xffffb/2] = 0x0000;
@@ -2102,7 +2102,7 @@ static DRIVER_INIT( cupsoc )
 static DRIVER_INIT( denjinmk )
 {
 	/* problem with audio comms? */
-	UINT16 *ROM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *ROM = (uint16_t *)memory_region(machine, "maincpu");
 	ROM[0x5fe4/2] = 0x4e71;
 }
 

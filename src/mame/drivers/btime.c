@@ -162,7 +162,7 @@ static WRITE8_HANDLER( audio_command_w );
 static READ8_HANDLER( audio_command_r );
 static READ8_HANDLER( zoar_dsw1_read );
 
-static UINT8 *decrypted;
+static uint8_t *decrypted;
 
 static WRITE8_HANDLER( audio_nmi_enable_w )
 {
@@ -200,7 +200,7 @@ static TIMER_DEVICE_CALLBACK( audio_nmi_gen )
 
 
 
-INLINE UINT8 swap_bits_5_6(UINT8 data)
+INLINE uint8_t swap_bits_5_6(uint8_t data)
 {
 	return BITSWAP8(data,7,5,6,4,3,2,1,0);
 }
@@ -209,7 +209,7 @@ INLINE UINT8 swap_bits_5_6(UINT8 data)
 static void btime_decrypt( const address_space *space )
 {
 	btime_state *state = (btime_state *)space->machine->driver_data;
-	UINT8 *src, *src1;
+	uint8_t *src, *src1;
 	int addr, addr1;
 
 
@@ -2078,8 +2078,8 @@ ROM_END
 static void decrypt_C10707_cpu(running_machine *machine, const char *cputag)
 {
 	const address_space *space = cputag_get_address_space(machine, cputag, ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8 *rom = memory_region(machine, cputag);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t *rom = memory_region(machine, cputag);
 	offs_t addr;
 
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypt);
@@ -2094,7 +2094,7 @@ static void decrypt_C10707_cpu(running_machine *machine, const char *cputag)
 
 static READ8_HANDLER( wtennis_reset_hack_r )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 
 	/* Otherwise the game goes into test mode and there is no way out that I
        can see.  I'm not sure how it can work, it probably somehow has to do
@@ -2108,9 +2108,9 @@ static READ8_HANDLER( wtennis_reset_hack_r )
 static void init_rom1(running_machine *machine)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
-	decrypted = auto_alloc_array(machine, UINT8, 0x10000);
+	decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypted);
 
 	/* For now, just copy the RAM array over to ROM. Decryption will happen */
@@ -2129,7 +2129,7 @@ static DRIVER_INIT( btime )
 static DRIVER_INIT( zoar )
 {
 	btime_state *state = (btime_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* At location 0xD50A is what looks like an undocumented opcode. I tried
        implementing it given what opcode 0x23 should do, but it still didn't
@@ -2144,7 +2144,7 @@ static DRIVER_INIT( zoar )
 static DRIVER_INIT( tisland )
 {
 	btime_state *state = (btime_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* At location 0xa2b6 there's a strange RLA followed by a BPL that reads from an
     unmapped area that causes the game to fail in several circumstances.On the Cassette

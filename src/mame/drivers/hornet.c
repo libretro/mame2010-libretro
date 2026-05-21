@@ -322,11 +322,11 @@
 #include "video/konicdev.h"
 #include "rendlay.h"
 
-static UINT8 led_reg0, led_reg1;
-static UINT32 *workram;
-static UINT32 *sharc_dataram[2];
-static UINT8 *jvs_sdata;
-static UINT32 jvs_sdata_ptr = 0;
+static uint8_t led_reg0, led_reg1;
+static uint32_t *workram;
+static uint32_t *sharc_dataram[2];
+static uint8_t *jvs_sdata;
+static uint32_t jvs_sdata_ptr = 0;
 
 
 static READ32_HANDLER( hornet_k037122_sram_r )
@@ -420,7 +420,7 @@ static VIDEO_UPDATE( hornet_2board )
 
 static READ8_HANDLER( sysreg_r )
 {
-	UINT8 r = 0;
+	uint8_t r = 0;
 	static const char *const portnames[] = { "IN0", "IN1", "IN2" };
 	running_device *adc12138 = space->machine->device("adc12138");
 	running_device *eeprom = space->machine->device("eeprom");
@@ -556,7 +556,7 @@ static WRITE32_HANDLER( comm1_w )
 static WRITE32_HANDLER( comm_rombank_w )
 {
 	int bank = data >> 24;
-	UINT8 *usr3 = memory_region(space->machine, "user3");
+	uint8_t *usr3 = memory_region(space->machine, "user3");
 	if (usr3 != NULL)
 		memory_set_bank(space->machine, "bank1", bank & 0x7f);
 }
@@ -567,7 +567,7 @@ static READ32_HANDLER( comm0_unk_r )
 	return 0xffffffff;
 }
 
-static UINT16 gn680_latch, gn680_ret0, gn680_ret1;
+static uint16_t gn680_latch, gn680_ret0, gn680_ret1;
 
 static READ32_HANDLER(gun_r)
 {
@@ -833,7 +833,7 @@ static const sharc_config sharc_cfg =
 static MACHINE_START( hornet )
 {
 	jvs_sdata_ptr = 0;
-	jvs_sdata = auto_alloc_array_clear(machine, UINT8, 1024);
+	jvs_sdata = auto_alloc_array_clear(machine, uint8_t, 1024);
 
 	/* set conservative DRC options */
 	ppcdrc_set_options(machine->device("maincpu"), PPCDRC_COMPATIBLE_OPTIONS);
@@ -849,8 +849,8 @@ static MACHINE_START( hornet )
 
 static MACHINE_RESET( hornet )
 {
-	UINT8 *usr3 = memory_region(machine, "user3");
-	UINT8 *usr5 = memory_region(machine, "user5");
+	uint8_t *usr3 = memory_region(machine, "user3");
+	uint8_t *usr5 = memory_region(machine, "user5");
 	if (usr3 != NULL)
 	{
 		memory_configure_bank(machine, "bank1", 0, memory_region_length(machine, "user3") / 0x40000, usr3, 0x40000);
@@ -863,7 +863,7 @@ static MACHINE_RESET( hornet )
 		memory_set_bankptr(machine, "bank5", usr5);
 }
 
-static double adc12138_input_callback( running_device *device, UINT8 input )
+static double adc12138_input_callback( running_device *device, uint8_t input )
 {
 	return (double)0.0;
 }
@@ -971,8 +971,8 @@ MACHINE_DRIVER_END
 
 static MACHINE_RESET( hornet_2board )
 {
-	UINT8 *usr3 = memory_region(machine, "user3");
-	UINT8 *usr5 = memory_region(machine, "user5");
+	uint8_t *usr3 = memory_region(machine, "user3");
+	uint8_t *usr5 = memory_region(machine, "user5");
 
 	if (usr3 != NULL)
 	{
@@ -1061,7 +1061,7 @@ MACHINE_DRIVER_END
 
 static void jamma_jvs_cmd_exec(running_machine *machine);
 
-static void jamma_jvs_w(running_device *device, UINT8 data)
+static void jamma_jvs_w(running_device *device, uint8_t data)
 {
 	if (jvs_sdata_ptr == 0 && data != 0xe0)
 		return;
@@ -1072,14 +1072,14 @@ static void jamma_jvs_w(running_device *device, UINT8 data)
 		jamma_jvs_cmd_exec(device->machine);
 }
 
-static int jvs_encode_data(running_machine *machine, UINT8 *in, int length)
+static int jvs_encode_data(running_machine *machine, uint8_t *in, int length)
 {
 	int inptr = 0;
 	int sum = 0;
 
 	while (inptr < length)
 	{
-		UINT8 b = in[inptr++];
+		uint8_t b = in[inptr++];
 		if (b == 0xe0)
 		{
 			sum += 0xd0 + 0xdf;
@@ -1101,17 +1101,17 @@ static int jvs_encode_data(running_machine *machine, UINT8 *in, int length)
 	return sum;
 }
 
-static int jvs_decode_data(UINT8 *in, UINT8 *out, int length)
+static int jvs_decode_data(uint8_t *in, uint8_t *out, int length)
 {
 	int outptr = 0;
 	int inptr = 0;
 
 	while (inptr < length)
 	{
-		UINT8 b = in[inptr++];
+		uint8_t b = in[inptr++];
 		if (b == 0xd0)
 		{
-			UINT8 b2 = in[inptr++];
+			uint8_t b2 = in[inptr++];
 			out[outptr++] = b2 + 1;
 		}
 		else
@@ -1125,8 +1125,8 @@ static int jvs_decode_data(UINT8 *in, UINT8 *out, int length)
 
 static void jamma_jvs_cmd_exec(running_machine *machine)
 {
-	UINT8 sync, node, byte_num;
-	UINT8 data[1024], rdata[1024];
+	uint8_t sync, node, byte_num;
+	uint8_t data[1024], rdata[1024];
 #if 0
 	int length;
 #endif

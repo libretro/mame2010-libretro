@@ -40,7 +40,7 @@ confirmed for m107 games as well.
 
 
 static emu_timer *scanline_timer;
-static UINT8 m107_irq_vectorbase;
+static uint8_t m107_irq_vectorbase;
 
 static TIMER_CALLBACK( m107_scanline_interrupt );
 
@@ -50,7 +50,7 @@ static WRITE16_HANDLER( bankswitch_w )
 {
 	if (ACCESSING_BITS_0_7)
 	{
-		UINT8 *RAM = memory_region(space->machine, "maincpu");
+		uint8_t *RAM = memory_region(space->machine, "maincpu");
 		memory_set_bankptr(space->machine, "bank1",&RAM[0x100000 + ((data&0x7)*0x10000)]);
 	}
 }
@@ -640,7 +640,7 @@ ROM_END
 
 static DRIVER_INIT( firebarr )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	memcpy(RAM + 0xffff0, RAM + 0x7fff0, 0x10); /* Start vector */
 	memory_set_bankptr(machine, "bank1", &RAM[0xa0000]); /* Initial bank */
@@ -654,7 +654,7 @@ static DRIVER_INIT( firebarr )
 
 static DRIVER_INIT( dsoccr94 )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	memcpy(RAM + 0xffff0, RAM + 0x7fff0, 0x10); /* Start vector */
 	memory_set_bankptr(machine, "bank1", &RAM[0xa0000]); /* Initial bank */
@@ -668,7 +668,7 @@ static DRIVER_INIT( dsoccr94 )
 
 static DRIVER_INIT( wpksoc )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
 
 	memcpy(RAM + 0xffff0, RAM + 0x7fff0, 0x10); /* Start vector */
 	memory_set_bankptr(machine, "bank1", &RAM[0xa0000]); /* Initial bank */

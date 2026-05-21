@@ -39,7 +39,7 @@ static int b000_val = 0;
 static int b000_ret = 0;
 static int b800_prev = 0;
 
-static UINT8 *bg_videoram, *fg_videoram;
+static uint8_t *bg_videoram, *fg_videoram;
 static tilemap_t *bg_tilemap, *fg_tilemap;
 
 static WRITE8_HANDLER( ettrivia_fg_w )
@@ -70,7 +70,7 @@ static WRITE8_HANDLER( ettrivia_control_w )
 
 static READ8_HANDLER( ettrivia_question_r )
 {
-	UINT8 *QUESTIONS = memory_region(space->machine, "user1");
+	uint8_t *QUESTIONS = memory_region(space->machine, "user1");
 	return QUESTIONS[offset + 0x10000 * question_bank];
 }
 
@@ -173,7 +173,7 @@ static GFXDECODE_START( ettrivia )
 	GFXDECODE_ENTRY( "gfx2", 0, charlayout, 32*4, 32 )
 GFXDECODE_END
 
-INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, UINT8 *vidram, int gfx_code)
+INLINE void get_tile_info(running_machine *machine, tile_data *tileinfo, int tile_index, uint8_t *vidram, int gfx_code)
 {
 	int code = vidram[tile_index];
 	int color = (code >> 5) + 8 * palreg;

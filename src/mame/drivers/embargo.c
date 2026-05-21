@@ -16,13 +16,13 @@ public:
 	embargo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
+	uint8_t *  videoram;
 	size_t   videoram_size;
 
 	/* misc */
-	UINT8    dial_enable_1;
-	UINT8    dial_enable_2;
-	UINT8    input_select;
+	uint8_t    dial_enable_1;
+	uint8_t    dial_enable_2;
+	uint8_t    input_select;
 };
 
 
@@ -41,9 +41,9 @@ static VIDEO_UPDATE( embargo )
 	{
 		int i;
 
-		UINT8 x = offs << 3;
-		UINT8 y = offs >> 5;
-		UINT8 data = state->videoram[offs];
+		uint8_t x = offs << 3;
+		uint8_t y = offs >> 5;
+		uint8_t data = state->videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{
@@ -77,17 +77,17 @@ static READ8_HANDLER( dial_r )
 {
 	embargo_state *state = (embargo_state *)space->machine->driver_data;
 
-	UINT8 lo = 0;
-	UINT8 hi = 0;
+	uint8_t lo = 0;
+	uint8_t hi = 0;
 
-	UINT8 mapped_lo = 0;
-	UINT8 mapped_hi = 0;
+	uint8_t mapped_lo = 0;
+	uint8_t mapped_hi = 0;
 
 	int i;
 
 	/* game reads 4 bits per dial and maps them onto clock directions */
 
-	static const UINT8 map[] =
+	static const uint8_t map[] =
 	{
 		0x00, 0x0b, 0x01, 0x02, 0x04, 0x04, 0x02, 0x03,
 		0x09, 0x0a, 0x08, 0x09, 0x08, 0x05, 0x07, 0x06

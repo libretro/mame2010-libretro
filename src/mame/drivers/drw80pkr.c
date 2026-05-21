@@ -34,13 +34,13 @@
 
 static tilemap_t *bg_tilemap;
 
-static UINT8 t0, t1, p0, p1, p2, prog, bus;
-static UINT8 attract_mode = 0;
-static UINT8 active_bank = 0;
+static uint8_t t0, t1, p0, p1, p2, prog, bus;
+static uint8_t attract_mode = 0;
+static uint8_t active_bank = 0;
 
-static UINT8 pkr_io_ram[0x100];
-static UINT16 video_ram[0x0400];
-static UINT8 color_ram[0x0400];
+static uint8_t pkr_io_ram[0x100];
+static uint16_t video_ram[0x0400];
+static uint8_t color_ram[0x0400];
 
 /********************
 *   NVRAM Handler   *
@@ -115,7 +115,7 @@ static WRITE8_HANDLER( bus_w )
 
 static WRITE8_HANDLER( drw80pkr_io_w )
 {
-	UINT16 n_offs;
+	uint16_t n_offs;
 
 	if (p2 == 0x3f || p2 == 0x7f)
 	{
@@ -223,8 +223,8 @@ static READ8_HANDLER( bus_r )
 
 static READ8_HANDLER( drw80pkr_io_r )
 {
-	UINT8 ret;
-	UINT16 kbdin;
+	uint8_t ret;
+	uint16_t kbdin;
 
 	ret = 0x00;
 

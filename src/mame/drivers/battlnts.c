@@ -221,7 +221,7 @@ static const k007420_interface bladestl_k007420_intf =
 static MACHINE_START( battlnts )
 {
 	battlnts_state *state = (battlnts_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x4000);
 
@@ -377,10 +377,10 @@ ROM_END
     (it could be easily converted into an iterative one).
     It's called shuffle because it mimics the shuffling of a deck of cards.
 */
-static void shuffle( UINT8 *buf, int len )
+static void shuffle( uint8_t *buf, int len )
 {
 	int i;
-	UINT8 t;
+	uint8_t t;
 
 	if (len == 2)
 		return;

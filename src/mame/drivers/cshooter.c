@@ -88,11 +88,11 @@ Stephh's notes (based on the game Z80 code and some tests) :
 #include "deprecat.h"
 #include "audio/seibu.h"
 
-static UINT8* cshooter_txram;
+static uint8_t* cshooter_txram;
 static tilemap_t *cshooter_txtilemap;
 static int coin_stat=0;
 
-static UINT8 *mainram;
+static uint8_t *mainram;
 
 static void ar_coin_hack(running_machine *machine)
 {
@@ -151,7 +151,7 @@ static VIDEO_UPDATE(cshooter)
 
 	//sprites
 	{
-		UINT8 *spriteram = screen->machine->generic.spriteram.u8;
+		uint8_t *spriteram = screen->machine->generic.spriteram.u8;
 		int i;
 		for(i=0;i<screen->machine->generic.spriteram_size;i+=4)
 		{
@@ -651,7 +651,7 @@ ROM_END
 static DRIVER_INIT( cshooter )
 {
 	/* temp so it boots */
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	rom[0xa2] = 0x00;
 	rom[0xa3] = 0x00;
@@ -663,8 +663,8 @@ static DRIVER_INIT( cshootere )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x8000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	memory_set_decrypted_region(space, 0x0000, 0x7fff, decrypt);
 

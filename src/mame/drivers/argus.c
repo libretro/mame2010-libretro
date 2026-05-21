@@ -165,7 +165,7 @@ static const ym2203_interface ym2203_config =
 
 static WRITE8_HANDLER( argus_bankselect_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "maincpu");
+	uint8_t *RAM = memory_region(space->machine, "maincpu");
 	int bankaddress;
 
 	bankaddress = 0x10000 + ((data & 7) * 0x4000);

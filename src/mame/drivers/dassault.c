@@ -834,9 +834,9 @@ static READ16_HANDLER( thndzone_main_skip )
 
 static DRIVER_INIT( dassault )
 {
-	const UINT8 *src = memory_region(machine, "gfx1");
-	UINT8 *dst = memory_region(machine, "gfx2");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, 0x80000);
+	const uint8_t *src = memory_region(machine, "gfx1");
+	uint8_t *dst = memory_region(machine, "gfx2");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, 0x80000);
 
 	/* Playfield 4 also has access to the char graphics, make things easier
     by just copying the chars to both banks (if I just used a different gfx
@@ -854,9 +854,9 @@ static DRIVER_INIT( dassault )
 
 static DRIVER_INIT( thndzone )
 {
-	const UINT8 *src = memory_region(machine, "gfx1");
-	UINT8 *dst = memory_region(machine, "gfx2");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, 0x80000);
+	const uint8_t *src = memory_region(machine, "gfx1");
+	uint8_t *dst = memory_region(machine, "gfx2");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, 0x80000);
 
 	/* Playfield 4 also has access to the char graphics, make things easier
     by just copying the chars to both banks (if I just used a different gfx

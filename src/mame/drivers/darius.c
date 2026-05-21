@@ -1292,7 +1292,7 @@ ROM_END
 static DRIVER_INIT( darius )
 {
 	/**** setup sound bank image ****/
-	UINT8 *RAM = memory_region(machine, "audiocpu");
+	uint8_t *RAM = memory_region(machine, "audiocpu");
 	int  i;
 
 	for (i = 3; i >= 0; i--)

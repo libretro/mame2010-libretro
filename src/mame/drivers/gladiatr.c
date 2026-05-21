@@ -190,7 +190,7 @@ TODO:
 
 
 /*Video functions*/
-extern UINT8 *gladiatr_videoram, *gladiatr_colorram,*gladiatr_textram;
+extern uint8_t *gladiatr_videoram, *gladiatr_colorram,*gladiatr_textram;
 WRITE8_HANDLER( gladiatr_videoram_w );
 WRITE8_HANDLER( gladiatr_colorram_w );
 WRITE8_HANDLER( gladiatr_textram_w );
@@ -208,7 +208,7 @@ VIDEO_UPDATE( gladiatr );
 /*Rom bankswitching*/
 static WRITE8_HANDLER( gladiatr_bankswitch_w )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu") + 0x10000;
+	uint8_t *rom = memory_region(space->machine, "maincpu") + 0x10000;
 
 	memory_set_bankptr(space->machine, "bank1", rom + 0x6000 * (data & 0x01));
 }
@@ -270,7 +270,7 @@ static MACHINE_RESET( gladiator )
 	TAITO8741_start(&gladiator_8741interface);
 	/* 6809 bank memory set */
 	{
-		UINT8 *rom = memory_region(machine, "audiocpu") + 0x10000;
+		uint8_t *rom = memory_region(machine, "audiocpu") + 0x10000;
 		memory_set_bankptr(machine, "bank2",rom);
 		machine->device("audiocpu")->reset();
 	}
@@ -293,7 +293,7 @@ static void gladiator_ym_irq(running_device *device, int irq)
 /*Sound Functions*/
 static WRITE8_DEVICE_HANDLER( glad_adpcm_w )
 {
-	UINT8 *rom = memory_region(device->machine, "audiocpu") + 0x10000;
+	uint8_t *rom = memory_region(device->machine, "audiocpu") + 0x10000;
 
 	/* bit6 = bank offset */
 	memory_set_bankptr(device->machine, "bank2",rom + ((data & 0x40) ? 0xc000 : 0));
@@ -955,7 +955,7 @@ ROM_START( greatgur )
 ROM_END
 
 
-static void swap_block(UINT8 *src1,UINT8 *src2,int len)
+static void swap_block(uint8_t *src1,uint8_t *src2,int len)
 {
 	int i,t;
 
@@ -969,7 +969,7 @@ static void swap_block(UINT8 *src1,UINT8 *src2,int len)
 
 static DRIVER_INIT( gladiatr )
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i,j;
 
 	rom = memory_region(machine, "gfx2");
@@ -1018,7 +1018,7 @@ static READ8_HANDLER(f6a3_r)
 
 static DRIVER_INIT(ppking)
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i,j;
 
 	rom = memory_region(machine, "gfx2");

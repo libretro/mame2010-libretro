@@ -30,23 +30,23 @@
 #define CPU_CLOCK		50000000
 
 
-static UINT32 *ram_base;
-static UINT32 *fastram_base;
-static UINT8 cmos_protected;
-static UINT16 control_data;
+static uint32_t *ram_base;
+static uint32_t *fastram_base;
+static uint8_t cmos_protected;
+static uint16_t control_data;
 
-static UINT8 adc_data;
-static UINT8 adc_shift;
+static uint8_t adc_data;
+static uint8_t adc_shift;
 
-static UINT16 last_port0;
-static UINT8 shifter_state;
+static uint16_t last_port0;
+static uint8_t shifter_state;
 
 static timer_device *timer[2];
 static double timer_rate;
 
-static UINT32 *tms32031_control;
+static uint32_t *tms32031_control;
 
-static UINT32 *midvplus_misc;
+static uint32_t *midvplus_misc;
 
 
 
@@ -105,8 +105,8 @@ static MACHINE_RESET( midvplus )
 
 static READ32_HANDLER( port0_r )
 {
-	UINT16 val = input_port_read(space->machine, "IN0");
-	UINT16 diff = val ^ last_port0;
+	uint16_t val = input_port_read(space->machine, "IN0");
+	uint16_t diff = val ^ last_port0;
 
 	/* make sure the shift controls are mutually exclusive */
 	if ((diff & 0x0400) && !(val & 0x0400))
@@ -202,7 +202,7 @@ static READ32_HANDLER( midvunit_cmos_r )
 
 static WRITE32_HANDLER( midvunit_control_w )
 {
-	UINT16 olddata = control_data;
+	uint16_t olddata = control_data;
 	COMBINE_DATA(&control_data);
 
 	/* bit 7 is the LED */
@@ -222,7 +222,7 @@ static WRITE32_HANDLER( midvunit_control_w )
 
 static WRITE32_HANDLER( crusnwld_control_w )
 {
-	UINT16 olddata = control_data;
+	uint16_t olddata = control_data;
 	COMBINE_DATA(&control_data);
 
 	/* bit 11 is the DCS sound reset */
@@ -261,7 +261,7 @@ static READ32_HANDLER( tms32031_control_r )
 	{
 		/* timer is clocked at 100ns */
 		int which = (offset >> 4) & 1;
-		INT32 result = attotime_to_double(attotime_mul(timer[which]->time_elapsed(), timer_rate));
+		int32_t result = attotime_to_double(attotime_mul(timer[which]->time_elapsed(), timer_rate));
 //      logerror("%06X:tms32031_control_r(%02X) = %08X\n", cpu_get_pc(space->cpu), offset, result);
 		return result;
 	}
@@ -342,8 +342,8 @@ static WRITE32_HANDLER( crusnwld_serial_data_w )
  *************************************/
 
 /* values from offset 3, 6, and 10 must add up to 0x904752a2 */
-static UINT16 bit_index;
-static const UINT32 bit_data[0x10] =
+static uint16_t bit_index;
+static const uint32_t bit_data[0x10] =
 {
 	0x3017c636,0x3017c636,0x3017c636,0x3017c636,
 	0x3017c636,0x3017c636,0x3017c636,0x3017c636,
@@ -401,7 +401,7 @@ static WRITE32_HANDLER( offroadc_serial_data_w )
 
 static READ32_HANDLER( midvplus_misc_r )
 {
-	UINT32 result = midvplus_misc[offset];
+	uint32_t result = midvplus_misc[offset];
 
 	switch (offset)
 	{
@@ -426,7 +426,7 @@ static READ32_HANDLER( midvplus_misc_r )
 
 static WRITE32_HANDLER( midvplus_misc_w )
 {
-	UINT32 olddata = midvplus_misc[offset];
+	uint32_t olddata = midvplus_misc[offset];
 	int logit = 1;
 
 	COMBINE_DATA(&midvplus_misc[offset]);
@@ -459,7 +459,7 @@ static WRITE32_HANDLER( midvplus_misc_w )
  *
  *************************************/
 
-static void midvplus_xf1_w(running_device *device, UINT8 val)
+static void midvplus_xf1_w(running_device *device, uint8_t val)
 {
 	static int lastval;
 //  mame_printf_debug("xf1_w = %d\n", val);
@@ -484,7 +484,7 @@ static ADDRESS_MAP_START( midvunit_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x600000, 0x600000) AM_WRITE(midvunit_dma_queue_w)
 	AM_RANGE(0x808000, 0x80807f) AM_READWRITE(tms32031_control_r, tms32031_control_w) AM_BASE(&tms32031_control)
 	AM_RANGE(0x809800, 0x809fff) AM_RAM
-	AM_RANGE(0x900000, 0x97ffff) AM_READWRITE(midvunit_videoram_r, midvunit_videoram_w) AM_BASE((UINT32 **)&midvunit_videoram)
+	AM_RANGE(0x900000, 0x97ffff) AM_READWRITE(midvunit_videoram_r, midvunit_videoram_w) AM_BASE((uint32_t **)&midvunit_videoram)
 	AM_RANGE(0x980000, 0x980000) AM_READ(midvunit_dma_queue_entries_r)
 	AM_RANGE(0x980020, 0x980020) AM_READ(midvunit_scanline_r)
 	AM_RANGE(0x980020, 0x98002b) AM_WRITE(midvunit_video_control_w)
@@ -517,7 +517,7 @@ static ADDRESS_MAP_START( midvplus_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x600000, 0x600000) AM_WRITE(midvunit_dma_queue_w)
 	AM_RANGE(0x808000, 0x80807f) AM_READWRITE(tms32031_control_r, tms32031_control_w) AM_BASE(&tms32031_control)
 	AM_RANGE(0x809800, 0x809fff) AM_RAM
-	AM_RANGE(0x900000, 0x97ffff) AM_READWRITE(midvunit_videoram_r, midvunit_videoram_w) AM_BASE((UINT32 **)&midvunit_videoram)
+	AM_RANGE(0x900000, 0x97ffff) AM_READWRITE(midvunit_videoram_r, midvunit_videoram_w) AM_BASE((uint32_t **)&midvunit_videoram)
 	AM_RANGE(0x980000, 0x980000) AM_READ(midvunit_dma_queue_entries_r)
 	AM_RANGE(0x980020, 0x980020) AM_READ(midvunit_scanline_r)
 	AM_RANGE(0x980020, 0x98002b) AM_WRITE(midvunit_video_control_w)
@@ -1589,7 +1589,7 @@ ROM_END
  *
  *************************************/
 
-static UINT32 *generic_speedup;
+static uint32_t *generic_speedup;
 static READ32_HANDLER( generic_speedup_r )
 {
 	cpu_eat_cycles(space->cpu, 100);
@@ -1658,7 +1658,7 @@ static DRIVER_INIT( offroadc )
 
 static DRIVER_INIT( wargods )
 {
-	UINT8 default_nvram[256];
+	uint8_t default_nvram[256];
 
 	/* initialize the subsystems */
 	dcs2_init(machine, 2, 0x3839);

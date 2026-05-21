@@ -57,7 +57,7 @@ static WRITE16_HANDLER( fromanc2_portselect_w )
 static READ16_HANDLER( fromanc2_keymatrix_r )
 {
 	fromanc2_state *state = (fromanc2_state *)space->machine->driver_data;
-	UINT16 ret;
+	uint16_t ret;
 
 	switch (state->portselect)
 	{

@@ -55,13 +55,13 @@ public:
 	chinsan_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  video;
+	uint8_t *  video;
 
 	/* misc */
-	UINT8    port_select;
-	UINT32   adpcm_pos;
-	UINT8    adpcm_idle, adpcm_data;
-	UINT8    trigger;
+	uint8_t    port_select;
+	uint32_t   adpcm_pos;
+	uint8_t    adpcm_idle, adpcm_data;
+	uint8_t    trigger;
 };
 
 
@@ -73,7 +73,7 @@ public:
 
 static PALETTE_INIT( chinsan )
 {
-	UINT8 *src = memory_region( machine, "color_proms" );
+	uint8_t *src = memory_region( machine, "color_proms" );
 	int i;
 
 	for (i = 0; i < 0x100; i++)
@@ -539,7 +539,7 @@ static void chin_adpcm_int( running_device *device )
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm");
+		uint8_t *ROM = memory_region(device->machine, "adpcm");
 
 		state->adpcm_data = ((state->trigger ? (ROM[state->adpcm_pos] & 0x0f) : (ROM[state->adpcm_pos] & 0xf0) >> 4));
 		msm5205_data_w(device, state->adpcm_data & 0xf);

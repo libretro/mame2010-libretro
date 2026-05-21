@@ -155,23 +155,23 @@ REF. 970429
 #define SOUND_CHANNELS	4
 
 
-static UINT32 *adsp_ram_base;
-static UINT16 *m68k_ram_base;
-static UINT16 *tms_comm_base;
-static UINT16 sound_data;
-static UINT8 sound_status;
+static uint32_t *adsp_ram_base;
+static uint16_t *m68k_ram_base;
+static uint16_t *tms_comm_base;
+static uint16_t sound_data;
+static uint8_t sound_status;
 static offs_t tms_offset_xor;
-static UINT8 analog_ports[4];
-static UINT8 framenum;
+static uint8_t analog_ports[4];
+static uint8_t framenum;
 
 static timer_device *adsp_autobuffer_timer;
-static UINT16 *adsp_control_regs;
-static UINT16 *adsp_fastram_base;
-static UINT8 adsp_ireg;
+static uint16_t *adsp_control_regs;
+static uint16_t *adsp_fastram_base;
+static uint8_t adsp_ireg;
 static offs_t adsp_ireg_base, adsp_incs, adsp_size;
 static dmadac_sound_device *dmadac[SOUND_CHANNELS];
 
-static void adsp_tx_callback(cpu_device &device, int port, INT32 data);
+static void adsp_tx_callback(cpu_device &device, int port, int32_t data);
 
 
 /*************************************
@@ -196,16 +196,16 @@ static MACHINE_START( gaelco3d )
 
 static MACHINE_RESET( common )
 {
-	UINT16 *src;
+	uint16_t *src;
 	int i;
 
 	framenum = 0;
 
 	/* boot the ADSP chip */
-	src = (UINT16 *)memory_region(machine, "user1");
+	src = (uint16_t *)memory_region(machine, "user1");
 	for (i = 0; i < (src[3] & 0xff) * 8; i++)
 	{
-		UINT32 opcode = ((src[i*4+0] & 0xff) << 16) | ((src[i*4+1] & 0xff) << 8) | (src[i*4+2] & 0xff);
+		uint32_t opcode = ((src[i*4+0] & 0xff) << 16) | ((src[i*4+1] & 0xff) << 8) | (src[i*4+2] & 0xff);
 		adsp_ram_base[i] = opcode;
 	}
 
@@ -270,7 +270,7 @@ static WRITE16_HANDLER( irq_ack_w )
 
 static READ16_DEVICE_HANDLER( eeprom_data_r )
 {
-	UINT16 result = 0xffff;
+	uint16_t result = 0xffff;
 	if (eeprom_read_bit(device))
 		result ^= 0x0004;
 	if (LOG)
@@ -418,8 +418,8 @@ static WRITE16_HANDLER( analog_port_latch_w )
 
 static READ32_HANDLER( tms_m68k_ram_r )
 {
-//  logerror("%06X:tms_m68k_ram_r(%04X) = %08X\n", cpu_get_pc(space->cpu), offset, !(offset & 1) ? ((INT32)m68k_ram_base[offset/2] >> 16) : (int)(INT16)m68k_ram_base[offset/2]);
-	return (INT32)(INT16)m68k_ram_base[offset ^ tms_offset_xor];
+//  logerror("%06X:tms_m68k_ram_r(%04X) = %08X\n", cpu_get_pc(space->cpu), offset, !(offset & 1) ? ((int32_t)m68k_ram_base[offset/2] >> 16) : (int)(int16_t)m68k_ram_base[offset/2]);
+	return (int32_t)(int16_t)m68k_ram_base[offset ^ tms_offset_xor];
 }
 
 
@@ -429,7 +429,7 @@ static WRITE32_HANDLER( tms_m68k_ram_w )
 }
 
 
-static void iack_w(running_device *device, UINT8 state, offs_t addr)
+static void iack_w(running_device *device, uint8_t state, offs_t addr)
 {
 	if (LOG)
 		logerror("iack_w(%d) - %06X\n", state, addr);
@@ -579,7 +579,7 @@ static TIMER_DEVICE_CALLBACK( adsp_autobuffer_irq )
 	/* copy the current data into the buffer */
 // logerror("ADSP buffer: I%d=%04X incs=%04X size=%04X\n", adsp_ireg, reg, adsp_incs, adsp_size);
 	if (adsp_incs)
-		dmadac_transfer(&dmadac[0], SOUND_CHANNELS, adsp_incs, SOUND_CHANNELS * adsp_incs, adsp_size / (SOUND_CHANNELS * adsp_incs), (INT16 *)&adsp_fastram_base[reg - 0x3800]);
+		dmadac_transfer(&dmadac[0], SOUND_CHANNELS, adsp_incs, SOUND_CHANNELS * adsp_incs, adsp_size / (SOUND_CHANNELS * adsp_incs), (int16_t *)&adsp_fastram_base[reg - 0x3800]);
 
 	/* increment it */
 	reg += adsp_size;
@@ -599,7 +599,7 @@ static TIMER_DEVICE_CALLBACK( adsp_autobuffer_irq )
 }
 
 
-static void adsp_tx_callback(cpu_device &device, int port, INT32 data)
+static void adsp_tx_callback(cpu_device &device, int port, int32_t data)
 {
 	/* check if it's for SPORT1 */
 	if (port != 1)
@@ -613,7 +613,7 @@ static void adsp_tx_callback(cpu_device &device, int port, INT32 data)
 		{
 			/* get the autobuffer registers */
 			int		mreg, lreg;
-			UINT16	source;
+			uint16_t	source;
 			attotime sample_period;
 
 			adsp_ireg = (adsp_control_regs[S1_AUTOBUF_REG] >> 9) & 7;
@@ -787,8 +787,8 @@ static ADDRESS_MAP_START( main020_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x510154, 0x510157) AM_WRITE16(analog_port_clock_w, 0x0000ffff)
 	AM_RANGE(0x510164, 0x510167) AM_WRITE16(analog_port_latch_w, 0x0000ffff)
 	AM_RANGE(0x510174, 0x510177) AM_WRITE16(led_1_w, 0x0000ffff)
-	AM_RANGE(0xfe7f80, 0xfe7fff) AM_WRITE16(tms_comm_w, 0xffffffff) AM_BASE((UINT32 **)&tms_comm_base)
-	AM_RANGE(0xfe0000, 0xfeffff) AM_RAM AM_BASE((UINT32 **)&m68k_ram_base)
+	AM_RANGE(0xfe7f80, 0xfe7fff) AM_WRITE16(tms_comm_w, 0xffffffff) AM_BASE((uint32_t **)&tms_comm_base)
+	AM_RANGE(0xfe0000, 0xfeffff) AM_RAM AM_BASE((uint32_t **)&m68k_ram_base)
 ADDRESS_MAP_END
 
 static ADDRESS_MAP_START( tms_map, ADDRESS_SPACE_PROGRAM, 32 )
@@ -1171,14 +1171,14 @@ ROM_END
 
 static DRIVER_INIT( gaelco3d )
 {
-	UINT8 *src, *dst;
+	uint8_t *src, *dst;
 	int x, y;
 
 	/* allocate memory */
 	gaelco3d_texture_size = memory_region_length(machine, "gfx1");
 	gaelco3d_texmask_size = memory_region_length(machine, "gfx2") * 8;
-	gaelco3d_texture = auto_alloc_array(machine, UINT8, gaelco3d_texture_size);
-	gaelco3d_texmask = auto_alloc_array(machine, UINT8, gaelco3d_texmask_size);
+	gaelco3d_texture = auto_alloc_array(machine, uint8_t, gaelco3d_texture_size);
+	gaelco3d_texmask = auto_alloc_array(machine, uint8_t, gaelco3d_texmask_size);
 
 	/* first expand the pixel data */
 	src = memory_region(machine, "gfx1");

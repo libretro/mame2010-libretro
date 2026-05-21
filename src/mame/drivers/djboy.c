@@ -376,9 +376,9 @@ static READ8_HANDLER( beast_p3_r )
 {
 	djboy_state *state = (djboy_state *)space->machine->driver_data;
 
-	UINT8 dsw = 0;
-	UINT8 dsw1 = ~input_port_read(space->machine, "DSW1");
-	UINT8 dsw2 = ~input_port_read(space->machine, "DSW2");
+	uint8_t dsw = 0;
+	uint8_t dsw1 = ~input_port_read(space->machine, "DSW1");
+	uint8_t dsw2 = ~input_port_read(space->machine, "DSW2");
 
 	switch ((state->beast_p0 >> 5) & 3)
 	{
@@ -531,9 +531,9 @@ static const kaneko_pandora_interface djboy_pandora_config =
 static MACHINE_START( djboy )
 {
 	djboy_state *state = (djboy_state *)machine->driver_data;
-	UINT8 *MAIN = memory_region(machine, "maincpu");
-	UINT8 *CPU1 = memory_region(machine, "cpu1");
-	UINT8 *CPU2 = memory_region(machine, "cpu2");
+	uint8_t *MAIN = memory_region(machine, "maincpu");
+	uint8_t *CPU1 = memory_region(machine, "cpu1");
+	uint8_t *CPU2 = memory_region(machine, "cpu2");
 
 	memory_configure_bank(machine, "bank1", 0, 4,  &MAIN[0x00000], 0x2000);
 	memory_configure_bank(machine, "bank1", 4, 28, &MAIN[0x10000], 0x2000);

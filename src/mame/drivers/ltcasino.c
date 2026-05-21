@@ -17,7 +17,7 @@ etc.
 #include "cpu/m6502/m6502.h"
 #include "sound/ay8910.h"
 
-static UINT8 *ltcasino_tile_num_ram, *ltcasino_tile_atr_ram;
+static uint8_t *ltcasino_tile_num_ram, *ltcasino_tile_atr_ram;
 
 static tilemap_t *ltcasino_tilemap;
 
@@ -697,7 +697,7 @@ ROM_END
 static DRIVER_INIT(mv4in1)
 {
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	for(i=0;i<0x10000;i++)
 		rom[i]=BITSWAP8(rom[i],7,6,5,4,3,1,2,0);
 }

@@ -549,8 +549,8 @@ ROM_END
 
 static DRIVER_INIT( boogwing )
 {
-	const UINT8* src = memory_region(machine, "gfx6");
-	UINT8* dst = memory_region(machine, "tiles2") + 0x200000;
+	const uint8_t* src = memory_region(machine, "gfx6");
+	uint8_t* dst = memory_region(machine, "tiles2") + 0x200000;
 
 	deco56_decrypt_gfx(machine, "tiles1");
 	deco56_decrypt_gfx(machine, "tiles2");

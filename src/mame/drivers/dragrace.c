@@ -93,7 +93,7 @@ static WRITE8_HANDLER( dragrace_misc_w )
 	dragrace_state *state = (dragrace_state *)space->machine->driver_data;
 
 	/* Set/clear individual bit */
-	UINT32 mask = 1 << offset;
+	uint32_t mask = 1 << offset;
 	if (data & 0x01)
 		state->misc_flags |= mask;
 	else
@@ -107,7 +107,7 @@ static WRITE8_HANDLER( dragrace_misc_clear_w )
 	dragrace_state *state = (dragrace_state *)space->machine->driver_data;
 
 	/* Clear 8 bits */
-	UINT32 mask = 0xff << (((offset >> 3) & 0x03) * 8);
+	uint32_t mask = 0xff << (((offset >> 3) & 0x03) * 8);
 	state->misc_flags &= (~mask);
 	logerror("Clear %#6x, Mask=%#10x, Flag=%#10x, Data=%x\n", 0x0920 + offset, mask, state->misc_flags, data & 0x01);
 	dragrace_update_misc_flags(space->machine);
@@ -119,8 +119,8 @@ static READ8_HANDLER( dragrace_input_r )
 	int val = input_port_read(space->machine, "IN2");
 	static const char *const portnames[] = { "IN0", "IN1" };
 
-	UINT8 maskA = 1 << (offset % 8);
-	UINT8 maskB = 1 << (offset / 8);
+	uint8_t maskA = 1 << (offset % 8);
+	uint8_t maskB = 1 << (offset / 8);
 
 	int i;
 

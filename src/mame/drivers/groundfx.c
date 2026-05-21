@@ -73,10 +73,10 @@
 VIDEO_START( groundfx );
 VIDEO_UPDATE( groundfx );
 
-static UINT16 coin_word, frame_counter=0;
-static UINT16 port_sel = 0;
-extern UINT16 groundfx_rotate_ctrl[8];
-static UINT32 *groundfx_ram;
+static uint16_t coin_word, frame_counter=0;
+static uint16_t port_sel = 0;
+extern uint16_t groundfx_rotate_ctrl[8];
+static uint32_t *groundfx_ram;
 
 /***********************************************************
                 COLOR RAM
@@ -459,8 +459,8 @@ static READ32_HANDLER( irq_speedup_r_groundfx )
 
 static DRIVER_INIT( groundfx )
 {
-	UINT32 offset,i;
-	UINT8 *gfx = memory_region(machine, "gfx3");
+	uint32_t offset,i;
+	uint8_t *gfx = memory_region(machine, "gfx3");
 	int size=memory_region_length(machine, "gfx3");
 	int data;
 

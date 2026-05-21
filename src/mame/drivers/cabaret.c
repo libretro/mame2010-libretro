@@ -31,11 +31,11 @@ are the same of IGS.  AMT may be previous IGS name.
 ***************************************************************************/
 
 
-static UINT8   *bg_tile_ram;
+static uint8_t   *bg_tile_ram;
 static tilemap_t *bg_tilemap;
-static UINT8   *bg_scroll;
+static uint8_t   *bg_scroll;
 
-static UINT8   *fg_tile_ram, *fg_color_ram;
+static uint8_t   *fg_tile_ram, *fg_color_ram;
 static tilemap_t *fg_tilemap;
 
 static WRITE8_HANDLER( bg_scroll_w )
@@ -101,7 +101,7 @@ static VIDEO_UPDATE(cabaret)
 
 static int nmi_enable;
 
-static UINT8 out[3];
+static uint8_t out[3];
 
 static void show_out(void)
 {
@@ -335,7 +335,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( cabaret )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	/* decrypt the program ROM */

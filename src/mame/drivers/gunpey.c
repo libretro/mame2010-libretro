@@ -50,11 +50,11 @@ Notes:
 #include "sound/okim6295.h"
 #include "sound/ymz280b.h"
 
-static UINT16 *blit_buffer;
+static uint16_t *blit_buffer;
 
 static VIDEO_START( gunpey )
 {
-	blit_buffer = auto_alloc_array(machine, UINT16, 512*512);
+	blit_buffer = auto_alloc_array(machine, uint16_t, 512*512);
 }
 
 static VIDEO_UPDATE( gunpey )
@@ -68,7 +68,7 @@ static VIDEO_UPDATE( gunpey )
 	{
 		for(x=0;x<512;x++)
 		{
-			UINT32 color;
+			uint32_t color;
 			int r,g,b;
 			color = (blit_buffer[count] & 0xffff);
 
@@ -115,8 +115,8 @@ static READ8_HANDLER( gunpey_inputs_r )
 
 static WRITE8_HANDLER( gunpey_blitter_w )
 {
-	static UINT16 blit_ram[0x10];
-	UINT8 *blit_rom = memory_region(space->machine, "blit_data");
+	static uint16_t blit_ram[0x10];
+	uint8_t *blit_rom = memory_region(space->machine, "blit_data");
 	int x,y;
 
 	blit_ram[offset] = data;
@@ -141,8 +141,8 @@ static WRITE8_HANDLER( gunpey_blitter_w )
 			{
 				for(x=0;x<xsize;x+=2)
 				{
-					UINT32 src_index = ((srcy+y)*2048+(srcx+x)) & 0x3fffff;
-					UINT32 dst_index = ((dsty+y)*512+(dstx+x)) & 0x3ffff;
+					uint32_t src_index = ((srcy+y)*2048+(srcx+x)) & 0x3fffff;
+					uint32_t dst_index = ((dsty+y)*512+(dstx+x)) & 0x3ffff;
 
 					color_offs = ((blit_rom[src_index] & 0xf0)>>4) + 0x10;
 					color = (blit_rom[color_offs*2+0x3B1DFD]) | (blit_rom[color_offs*2+0x3B1DFD+1]<<8);
@@ -289,7 +289,7 @@ INPUT_PORTS_END
 static PALETTE_INIT( gunpey )
 {
 	int i,r,g,b,val;
-	UINT8 *blit_rom = memory_region(machine, "blit_data");
+	uint8_t *blit_rom = memory_region(machine, "blit_data");
 
 	for (i = 0; i < 512; i+=2)
 	{
@@ -367,7 +367,7 @@ ROM_END
 
 static DRIVER_INIT( gunpey )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* patch SLOOOOW cycle checks ... */
 	rom[0x848b5] = 0x7e;

@@ -87,7 +87,7 @@ L056-6    9A          "      "      VLI-8-4 7A         "
 #define VBEND				(16)
 #define VBSTART				(224+16)
 
-static UINT8 *cop_io;
+static uint8_t *cop_io;
 
 /*************************************
  *
@@ -103,15 +103,15 @@ public:
 	looping_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *		videoram;
-	UINT8 *		colorram;
-	UINT8 *		spriteram;
+	uint8_t *		videoram;
+	uint8_t *		colorram;
+	uint8_t *		spriteram;
 
 	/* tilemaps */
 	tilemap_t *	bg_tilemap;
 
 	/* sound state */
-	UINT8		sound[8];
+	uint8_t		sound[8];
 };
 
 
@@ -249,7 +249,7 @@ static WRITE8_HANDLER( looping_colorram_w )
 
 static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect)
 {
-	const UINT8 *source;
+	const uint8_t *source;
 	looping_state *state = (looping_state *)machine->driver_data;
 
 	for (source = state->spriteram; source < state->spriteram + 0x40; source += 4)
@@ -881,10 +881,10 @@ ROM_END
 static DRIVER_INIT( looping )
 {
 	int length = memory_region_length(machine, "maincpu");
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
-	cop_io = auto_alloc_array(machine, UINT8, 0x08);
+	cop_io = auto_alloc_array(machine, uint8_t, 0x08);
 
 	/* bitswap the TMS9995 ROMs */
 	for (i = 0; i < length; i++)

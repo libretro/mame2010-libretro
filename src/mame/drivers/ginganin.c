@@ -459,10 +459,10 @@ ROM_END
 
 static DRIVER_INIT( ginganin )
 {
-	UINT16 *rom;
+	uint16_t *rom;
 
 	/* main cpu patches */
-	rom = (UINT16 *)memory_region(machine, "maincpu");
+	rom = (uint16_t *)memory_region(machine, "maincpu");
 	/* avoid writes to rom getting to the log */
 	rom[0x408 / 2] = 0x6000;
 	rom[0x40a / 2] = 0x001c;

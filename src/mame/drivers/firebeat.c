@@ -124,14 +124,14 @@
 
 typedef struct
 {
-	UINT32 *vram;
-	UINT32 vram_read_address;
-	UINT32 vram_write_fifo_address;
-	UINT32 visible_area;
+	uint32_t *vram;
+	uint32_t vram_read_address;
+	uint32_t vram_write_fifo_address;
+	uint32_t visible_area;
 } GCU_REGS;
 
-static UINT8 extend_board_irq_enable;
-static UINT8 extend_board_irq_active;
+static uint8_t extend_board_irq_enable;
+static uint8_t extend_board_irq_active;
 
 static emu_timer *keyboard_timer;
 
@@ -139,14 +139,14 @@ static GCU_REGS gcu[2];
 
 static VIDEO_START(firebeat)
 {
-	gcu[0].vram = auto_alloc_array(machine, UINT32, 0x2000000/4);
-	gcu[1].vram = auto_alloc_array(machine, UINT32, 0x2000000/4);
+	gcu[0].vram = auto_alloc_array(machine, uint32_t, 0x2000000/4);
+	gcu[1].vram = auto_alloc_array(machine, uint32_t, 0x2000000/4);
 	memset(gcu[0].vram, 0, 0x2000000);
 	memset(gcu[1].vram, 0, 0x2000000);
 }
 
 
-static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprect, UINT32 *cmd)
+static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprect, uint32_t *cmd)
 {
 	// 0x00: xxx----- -------- -------- --------   command type
 	// 0x00: -------- xxxxxxxx xxxxxxxx xxxxxxxx   object data address in vram
@@ -172,12 +172,12 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
 	int xflip			= (cmd[1] & 0x04000000) ? 1 : 0;
 	int yflip			= (cmd[1] & 0x08000000) ? 1 : 0;
 	int alpha_enable	= (cmd[1] & 0x10000000) ? 1 : 0;
-	UINT32 address		= cmd[0] & 0xffffff;
+	uint32_t address		= cmd[0] & 0xffffff;
 	int alpha_level		= (cmd[2] >> 27) & 0x1f;
 
 	int i, j;
 	int u, v;
-	UINT16 *vr = (UINT16*)gcu[chip].vram;
+	uint16_t *vr = (uint16_t*)gcu[chip].vram;
 
 	if (xscale == 0 || yscale == 0)
 	{
@@ -207,7 +207,7 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
 	{
 		int xi;
 		int index;
-		UINT16 *d = BITMAP_ADDR16(bitmap, j+y, x);
+		uint16_t *d = BITMAP_ADDR16(bitmap, j+y, x);
 		//int index = address + ((v >> 6) * 1024);
 
 		if (yflip)
@@ -232,7 +232,7 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
 		u = 0;
 		for (i=0; i < width; i++)
 		{
-			UINT16 pix = vr[((index + (u >> 6)) ^ 1) & 0xffffff];
+			uint16_t pix = vr[((index + (u >> 6)) ^ 1) & 0xffffff];
 
 			if (alpha_enable)
 			{
@@ -241,15 +241,15 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
 					if ((pix & 0x7fff) != 0)
 					{
 						//*d = pix & 0x7fff;
-						UINT16 srcpix = *d;
+						uint16_t srcpix = *d;
 						/*
-                        UINT32 r = pix & 0x7c00;
-                        UINT32 g = pix & 0x03e0;
-                        UINT32 b = pix & 0x001f;
+                        uint32_t r = pix & 0x7c00;
+                        uint32_t g = pix & 0x03e0;
+                        uint32_t b = pix & 0x001f;
 
-                        UINT32 sr = srcpix & 0x7c00;
-                        UINT32 sg = srcpix & 0x03e0;
-                        UINT32 sb = srcpix & 0x001f;
+                        uint32_t sr = srcpix & 0x7c00;
+                        uint32_t sg = srcpix & 0x03e0;
+                        uint32_t sb = srcpix & 0x001f;
 
                         sr += r;
                         sg += g;
@@ -261,12 +261,12 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
                         *d = sr | sg | sb;
                         */
 
-						UINT32 sr = (srcpix >> 10) & 0x1f;
-						UINT32 sg = (srcpix >>  5) & 0x1f;
-						UINT32 sb = (srcpix >>  0) & 0x1f;
-						UINT32 r = (pix >> 10) & 0x1f;
-						UINT32 g = (pix >>  5) & 0x1f;
-						UINT32 b = (pix >>  0) & 0x1f;
+						uint32_t sr = (srcpix >> 10) & 0x1f;
+						uint32_t sg = (srcpix >>  5) & 0x1f;
+						uint32_t sb = (srcpix >>  0) & 0x1f;
+						uint32_t r = (pix >> 10) & 0x1f;
+						uint32_t g = (pix >>  5) & 0x1f;
+						uint32_t b = (pix >>  0) & 0x1f;
 
 						sr += (r * alpha_level) >> 4;
 						sg += (g * alpha_level) >> 4;
@@ -299,7 +299,7 @@ static void gcu_draw_object(int chip, bitmap_t *bitmap, const rectangle *cliprec
 	}
 }
 
-static void gcu_fill_rect(bitmap_t *bitmap, const rectangle *cliprect, UINT32 *cmd)
+static void gcu_fill_rect(bitmap_t *bitmap, const rectangle *cliprect, uint32_t *cmd)
 {
 	int i, j;
 	int x1, y1, x2, y2;
@@ -309,7 +309,7 @@ static void gcu_fill_rect(bitmap_t *bitmap, const rectangle *cliprect, UINT32 *c
 	int width			= (cmd[0] & 0x3ff) + 1;
 	int height			= ((cmd[0] >> 10) & 0x3ff) + 1;
 
-	UINT16 color[4];
+	uint16_t color[4];
 
 	color[0] = (cmd[2] >> 16);
 	color[1] = (cmd[2] >>  0);
@@ -335,7 +335,7 @@ static void gcu_fill_rect(bitmap_t *bitmap, const rectangle *cliprect, UINT32 *c
 
 	for (j=y1; j < y2; j++)
 	{
-		UINT16 *d = BITMAP_ADDR16(bitmap, j, 0);
+		uint16_t *d = BITMAP_ADDR16(bitmap, j, 0);
 		for (i=x1; i < x2; i++)
 		{
 			if (color[i&3] & 0x8000)
@@ -346,7 +346,7 @@ static void gcu_fill_rect(bitmap_t *bitmap, const rectangle *cliprect, UINT32 *c
 	}
 }
 
-static void gcu_draw_character(int chip, bitmap_t *bitmap, const rectangle *cliprect, UINT32 *cmd)
+static void gcu_draw_character(int chip, bitmap_t *bitmap, const rectangle *cliprect, uint32_t *cmd)
 {
 	// 0x00: xxx----- -------- -------- --------   command type
 	// 0x00: -------- xxxxxxxx xxxxxxxx xxxxxxxx   character data address in vram
@@ -363,10 +363,10 @@ static void gcu_draw_character(int chip, bitmap_t *bitmap, const rectangle *clip
 	int i, j;
 	int x				= cmd[1] & 0x3ff;
 	int y				= (cmd[1] >> 10) & 0x3ff;
-	UINT32 address		= cmd[0] & 0xffffff;
-	UINT16 color[4];
+	uint32_t address		= cmd[0] & 0xffffff;
+	uint16_t color[4];
 
-	UINT16 *vr = (UINT16*)gcu[chip].vram;
+	uint16_t *vr = (uint16_t*)gcu[chip].vram;
 
 	color[0] = (cmd[2] >> 16) & 0xffff;
 	color[1] = (cmd[2] >>  0) & 0xffff;
@@ -381,8 +381,8 @@ static void gcu_draw_character(int chip, bitmap_t *bitmap, const rectangle *clip
 
 	for (j=0; j < 8; j++)
 	{
-		UINT16 *d = BITMAP_ADDR16(bitmap, y+j, x);
-		UINT16 line = vr[address^1];
+		uint16_t *d = BITMAP_ADDR16(bitmap, y+j, x);
+		uint16_t line = vr[address^1];
 
 		address += 4;
 
@@ -394,7 +394,7 @@ static void gcu_draw_character(int chip, bitmap_t *bitmap, const rectangle *clip
 	}
 }
 
-static void gcu_exec_display_list(int chip, bitmap_t *bitmap, const rectangle *cliprect, UINT32 address)
+static void gcu_exec_display_list(int chip, bitmap_t *bitmap, const rectangle *cliprect, uint32_t address)
 {
 	int counter = 0;
 	int end = 0;
@@ -404,7 +404,7 @@ static void gcu_exec_display_list(int chip, bitmap_t *bitmap, const rectangle *c
 	while (!end && counter < 0x1000 && i < (0x2000000/4))
 	{
 		int command;
-		UINT32 cmd[4];
+		uint32_t cmd[4];
 		cmd[0] = gcu[chip].vram[i+0];
 		cmd[1] = gcu[chip].vram[i+1];
 		cmd[2] = gcu[chip].vram[i+2];
@@ -549,7 +549,7 @@ static VIDEO_UPDATE(firebeat)
 	return 0;
 }
 
-static UINT32 GCU_r(int chip, UINT32 offset, UINT32 mem_mask)
+static uint32_t GCU_r(int chip, uint32_t offset, uint32_t mem_mask)
 {
 	int reg = offset * 4;
 
@@ -572,7 +572,7 @@ static UINT32 GCU_r(int chip, UINT32 offset, UINT32 mem_mask)
 	return 0xffffffff;
 }
 
-static void GCU_w(running_machine *machine, int chip, UINT32 offset, UINT32 data, UINT32 mem_mask)
+static void GCU_w(running_machine *machine, int chip, uint32_t offset, uint32_t data, uint32_t mem_mask)
 {
 	int reg = offset * 4;
 
@@ -674,7 +674,7 @@ static WRITE32_HANDLER(gcu1_w)
 
 static READ32_HANDLER(input_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -706,7 +706,7 @@ static READ32_HANDLER( sensor_r )
 
 static READ32_HANDLER(flashram_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	if (ACCESSING_BITS_24_31)
 	{
 		r |= (intelflash_read(0, (offset*4)+0) & 0xff) << 24;
@@ -748,7 +748,7 @@ static WRITE32_HANDLER(flashram_w)
 
 static READ32_HANDLER(soundflash_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	int chip;
 	if (offset >= 0 && offset < 0x200000/4)
 	{
@@ -825,7 +825,7 @@ static WRITE32_HANDLER(soundflash_w)
 
 #define ATAPI_CYCLES_PER_SECTOR (32000)	// plenty of time to allow DMA setup etc.  BIOS requires this be at least 2000, individual games may vary.
 
-static UINT8 atapi_regs[16];
+static uint8_t atapi_regs[16];
 static SCSIInstance *atapi_device_data[2];
 
 #define ATAPI_STAT_BSY	   0x80
@@ -849,8 +849,8 @@ static SCSIInstance *atapi_device_data[2];
 #define ATAPI_REG_DRIVESEL	6
 #define ATAPI_REG_CMDSTATUS	7
 
-static UINT16 atapi_data[32*1024];
-static UINT8  atapi_scsi_packet[32*1024];
+static uint16_t atapi_data[32*1024];
+static uint8_t  atapi_scsi_packet[32*1024];
 static int atapi_data_ptr, atapi_xferlen, atapi_xfermod, atapi_cdata_wait;
 static int atapi_drivesel;
 
@@ -904,10 +904,10 @@ static void atapi_reset(void)
 
 
 
-static UINT16 atapi_command_reg_r(running_machine *machine, int reg)
+static uint16_t atapi_command_reg_r(running_machine *machine, int reg)
 {
 	int i, data;
-	static UINT8 temp_data[64*1024];
+	static uint8_t temp_data[64*1024];
 
 //  printf("ATAPI: Command reg read %d\n", reg);
 
@@ -967,7 +967,7 @@ static UINT16 atapi_command_reg_r(running_machine *machine, int reg)
 	}
 }
 
-static void atapi_command_reg_w(running_machine *machine, int reg, UINT16 data)
+static void atapi_command_reg_w(running_machine *machine, int reg, uint16_t data)
 {
 	int i;
 
@@ -1123,9 +1123,9 @@ static void atapi_command_reg_w(running_machine *machine, int reg, UINT16 data)
 	}
 }
 
-static UINT16 atapi_control_reg_r(int reg)
+static uint16_t atapi_control_reg_r(int reg)
 {
-	UINT16 value;
+	uint16_t value;
 	switch(reg)
 	{
 		case 0x6:
@@ -1146,7 +1146,7 @@ static UINT16 atapi_control_reg_r(int reg)
 	return 0;
 }
 
-static void atapi_control_reg_w(int reg, UINT16 data)
+static void atapi_control_reg_w(int reg, uint16_t data)
 {
 	switch(reg)
 	{
@@ -1168,7 +1168,7 @@ static void atapi_control_reg_w(int reg, UINT16 data)
 
 static READ32_HANDLER( atapi_command_r )
 {
-	UINT16 r;
+	uint16_t r;
 //  printf("atapi_command_r: %08X, %08X\n", offset, mem_mask);
 	if (ACCESSING_BITS_16_31)
 	{
@@ -1199,7 +1199,7 @@ static WRITE32_HANDLER( atapi_command_w )
 
 static READ32_HANDLER( atapi_control_r )
 {
-	UINT16 r;
+	uint16_t r;
 //  printf("atapi_control_r: %08X, %08X\n", offset, mem_mask);
 
 	if (ACCESSING_BITS_16_31)
@@ -1231,7 +1231,7 @@ static WRITE32_HANDLER( atapi_control_w )
 
 static READ32_HANDLER( comm_uart_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -1289,7 +1289,7 @@ static const int * cur_cab_data;
 
 static READ32_HANDLER( cabinet_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 //  printf("cabinet_r: %08X, %08X\n", offset, mem_mask);
 
@@ -1326,7 +1326,7 @@ static READ32_HANDLER( keyboard_wheel_r )
 
 static READ32_HANDLER( midi_uart_r )
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -1407,7 +1407,7 @@ static TIMER_CALLBACK( keyboard_timer_callback )
 
 	for (keyboard=0; keyboard < 2; keyboard++)
 	{
-		UINT32 kbstate = input_port_read(machine, keynames[keyboard]);
+		uint32_t kbstate = input_port_read(machine, keynames[keyboard]);
 		int uart_channel = kb_uart_channel[keyboard];
 
 		if (kbstate != keyboard_state[keyboard])
@@ -1452,7 +1452,7 @@ static TIMER_CALLBACK( keyboard_timer_callback )
 
 static READ32_HANDLER( extend_board_irq_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -1614,11 +1614,11 @@ static WRITE32_HANDLER( lamp_output3_ppp_w )
 
 /*****************************************************************************/
 
-static UINT8 spu_shared_ram[0x400];
+static uint8_t spu_shared_ram[0x400];
 
 static READ32_HANDLER(ppc_spu_share_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
@@ -1679,7 +1679,7 @@ static READ16_HANDLER(spu_unk_r)
 
 /*****************************************************************************/
 
-static UINT32 *work_ram;
+static uint32_t *work_ram;
 static MACHINE_START( firebeat )
 {
 	/* set conservative DRC options */
@@ -1900,7 +1900,7 @@ static MACHINE_RESET( firebeat )
 {
 	void *cd;
 	int i;
-	UINT8 *sound = memory_region(machine, "ymz");
+	uint8_t *sound = memory_region(machine, "ymz");
 
 	for (i=0; i < 0x200000; i++)
 	{
@@ -2013,9 +2013,9 @@ MACHINE_DRIVER_END
 
 typedef struct
 {
-	UINT8 identifier[8];
-	UINT8 password[8];
-	UINT8 data[0x30];
+	uint8_t identifier[8];
+	uint8_t password[8];
+	uint8_t data[0x30];
 } IBUTTON_SUBKEY;
 
 typedef struct
@@ -2034,9 +2034,9 @@ static IBUTTON ibutton;
 static int ibutton_state = DS1991_STATE_NORMAL;
 static int ibutton_read_subkey_ptr = 0;
 
-static UINT8 ibutton_subkey_data[0x40];
+static uint8_t ibutton_subkey_data[0x40];
 
-static void set_ibutton(UINT8 *data)
+static void set_ibutton(uint8_t *data)
 {
 	int i, j;
 
@@ -2062,7 +2062,7 @@ static void set_ibutton(UINT8 *data)
 	}
 }
 
-static int ibutton_w(UINT8 data)
+static int ibutton_w(uint8_t data)
 {
 	int r = -1;
 
@@ -2153,7 +2153,7 @@ static int ibutton_w(UINT8 data)
 	return r;
 }
 
-static void security_w(running_device *device, UINT8 data)
+static void security_w(running_device *device, uint8_t data)
 {
 	int r = ibutton_w(data);
 	if (r >= 0)
@@ -2175,7 +2175,7 @@ static void init_lights(running_machine *machine, write32_space_func out1, write
 
 static void init_firebeat(running_machine *machine)
 {
-	UINT8 *rom = memory_region(machine, "user2");
+	uint8_t *rom = memory_region(machine, "user2");
 
 	atapi_init(machine);
 	intelflash_init(machine, 0, FLASH_FUJITSU_29F016A, NULL);

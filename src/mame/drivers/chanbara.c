@@ -59,15 +59,15 @@ public:
 	chanbara_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  videoram2;
-	UINT8 *  colorram;
-	UINT8 *  colorram2;
-	UINT8 *  spriteram;
+	uint8_t *  videoram;
+	uint8_t *  videoram2;
+	uint8_t *  colorram;
+	uint8_t *  colorram2;
+	uint8_t *  spriteram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*bg2_tilemap;
-	UINT8    scroll, scrollhi;
+	uint8_t    scroll, scrollhi;
 
 	/* devices */
 	running_device *maincpu;
@@ -457,9 +457,9 @@ ROM_END
 
 static DRIVER_INIT(chanbara )
 {
-	UINT8	*src = memory_region(machine, "gfx4");
-	UINT8	*dst = memory_region(machine, "gfx3") + 0x4000;
-	UINT8	*bg = memory_region(machine, "user1");
+	uint8_t	*src = memory_region(machine, "gfx4");
+	uint8_t	*dst = memory_region(machine, "gfx3") + 0x4000;
+	uint8_t	*bg = memory_region(machine, "user1");
 
 	int i;
 	for (i = 0; i < 0x1000; i++)

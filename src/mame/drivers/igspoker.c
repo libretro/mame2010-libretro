@@ -102,7 +102,7 @@ static WRITE8_HANDLER( igs_irqack_w )
 
 
 
-static UINT8   *fg_tile_ram, *fg_color_ram, *bg_tile_ram;
+static uint8_t   *fg_tile_ram, *fg_color_ram, *bg_tile_ram;
 static tilemap_t *fg_tilemap, *bg_tilemap;
 
 static TILE_GET_INFO( get_bg_tile_info )
@@ -168,7 +168,7 @@ static VIDEO_UPDATE(cpokerpk)
 	return 0;
 }
 
-static UINT8 out[3];
+static uint8_t out[3];
 
 static void show_out(void)
 {
@@ -285,7 +285,7 @@ static CUSTOM_INPUT( hopper_r )
 
 static READ8_HANDLER( exp_rom_r )
 {
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 	return rom[offset+0x10000];
 }
 
@@ -1728,7 +1728,7 @@ ROM_END
 static DRIVER_INIT( cpoker )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x10000;A++)
@@ -1742,7 +1742,7 @@ static DRIVER_INIT( cpoker )
 
 static DRIVER_INIT( cpokert )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int i;
 
 	/* decrypt the program ROM */
@@ -1772,7 +1772,7 @@ static DRIVER_INIT( cpokert )
 static DRIVER_INIT( cska )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x10000;A++)
@@ -1789,7 +1789,7 @@ static DRIVER_INIT( cska )
 static DRIVER_INIT( igs_ncs )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x10000;A++)
@@ -1906,7 +1906,7 @@ Clocks
 
 static DRIVER_INIT( igs_ncs2 )
 {
-	UINT8 *src = (UINT8 *) (memory_region(machine, "maincpu"));
+	uint8_t *src = (uint8_t *) (memory_region(machine, "maincpu"));
 	int i;
 
 	for(i = 0; i < 0x10000; i++)
@@ -1981,7 +1981,7 @@ static DRIVER_INIT( chleague )
 {
 	int A;
 	int length;
-	UINT8 *rom;
+	uint8_t *rom;
 
 	rom = memory_region(machine, "maincpu");
 	length = memory_region_length(machine, "maincpu");
@@ -2044,8 +2044,8 @@ static DRIVER_INIT( number10 )
 {
 	int A;
 	int length;
-	UINT8 *tmp;
-	UINT8 *rom;
+	uint8_t *tmp;
+	uint8_t *rom;
 
 	rom = memory_region(machine, "maincpu");
 	length = memory_region_length(machine, "maincpu");
@@ -2079,7 +2079,7 @@ static DRIVER_INIT( number10 )
 	/* Descramble graphic */
 	rom = memory_region(machine, "gfx1");
 	length = memory_region_length(machine, "gfx1");
-	tmp = auto_alloc_array(machine, UINT8, length);
+	tmp = auto_alloc_array(machine, uint8_t, length);
 	memcpy(tmp,rom,length);
 	for (A = 0;A < length;A++)
 	{
@@ -2126,7 +2126,7 @@ ROM_END
 static DRIVER_INIT( cpokerpk )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	for (A=0x0714; A < 0xF000; A+=0x1000)
 		rom[A] ^= 0x20;
@@ -2180,7 +2180,7 @@ ROM_END
 static DRIVER_INIT( pktet346 )
 {
 	int A;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 
 	for (A = 0;A < 0x10000;A++)

@@ -337,41 +337,41 @@ Notes:
 #define DMA_XOR(a)		((a) ^ NATIVE_ENDIAN_VALUE_LE_BE(1,2))
 
 
-static UINT32* decrypted_bios;
+static uint32_t* decrypted_bios;
 
-static UINT32* decrypted_gamerom;
-static UINT32 cram_gfxflash_bank;
-static UINT32* cps3_nops;
+static uint32_t* decrypted_gamerom;
+static uint32_t cram_gfxflash_bank;
+static uint32_t* cps3_nops;
 
-static UINT32* tilemap20_regs_base;
-static UINT32* tilemap30_regs_base;
-static UINT32* tilemap40_regs_base;
-static UINT32* tilemap50_regs_base;
+static uint32_t* tilemap20_regs_base;
+static uint32_t* tilemap30_regs_base;
+static uint32_t* tilemap40_regs_base;
+static uint32_t* tilemap50_regs_base;
 
-static UINT32* cps3_0xc0000000_ram;
-static UINT32* cps3_0xc0000000_ram_decrypted;
+static uint32_t* cps3_0xc0000000_ram;
+static uint32_t* cps3_0xc0000000_ram_decrypted;
 
-static UINT32* cps3_char_ram;
+static uint32_t* cps3_char_ram;
 
-static UINT32* cps3_spriteram;
-static UINT32* cps3_eeprom;
-static UINT32* cps3_fullscreenzoom;
+static uint32_t* cps3_spriteram;
+static uint32_t* cps3_eeprom;
+static uint32_t* cps3_fullscreenzoom;
 
-static UINT32 cps3_ss_pal_base = 0;
-static UINT32* cps3_colourram;
-static UINT32 cps3_unk_vidregs[0x20/4];
-static UINT32 cps3_ss_bank_base = 0;
+static uint32_t cps3_ss_pal_base = 0;
+static uint32_t* cps3_colourram;
+static uint32_t cps3_unk_vidregs[0x20/4];
+static uint32_t cps3_ss_bank_base = 0;
 
-static UINT32 cps3_screenwidth;
+static uint32_t cps3_screenwidth;
 //cdrom_file* cps3_cd;
 
-static UINT32* cps3_mame_colours;//[0x20000]; // actual values to write to 32-bit bitmap
+static uint32_t* cps3_mame_colours;//[0x20000]; // actual values to write to 32-bit bitmap
 
 static bitmap_t *renderbuffer_bitmap;
 static rectangle renderbuffer_clip;
 
-static UINT8* cps3_user4region;
-UINT8* cps3_user5region;
+static uint8_t* cps3_user4region;
+uint8_t* cps3_user5region;
 #define USER4REGION_LENGTH 0x800000*2
 #define USER5REGION_LENGTH 0x800000*10
 
@@ -383,11 +383,11 @@ UINT8* cps3_user5region;
 INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		int transparency,int transparent_color,
-		int scalex, int scaley,bitmap_t *pri_buffer,UINT32 pri_mask)
+		int scalex, int scaley,bitmap_t *pri_buffer,uint32_t pri_mask)
 {
 	rectangle myclip;
 
-//  UINT8 al;
+//  uint8_t al;
 
 //  al = (pdrawgfx_shadow_lowpri) ? 0 : 0x80;
 
@@ -430,9 +430,9 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 		if( gfx )
 		{
 //          const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
-			UINT32 palbase = (gfx->color_granularity * color) & 0x1ffff;
+			uint32_t palbase = (gfx->color_granularity * color) & 0x1ffff;
 			const pen_t *pal = &cps3_mame_colours[palbase];
-			const UINT8 *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+			const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
 			int sprite_screen_height = (scaley*gfx->height+0x8000)>>16;
 			int sprite_screen_width = (scalex*gfx->width+0x8000)>>16;
@@ -505,8 +505,8 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -524,8 +524,8 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -544,8 +544,8 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -564,8 +564,8 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->line_modulo;
-								UINT32 *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+								const uint8_t *source = source_base + (y_index>>16) * gfx->line_modulo;
+								uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
@@ -611,18 +611,18 @@ static DIRECT_UPDATE_HANDLER( cps3_direct_handler );
 
 /* Encryption */
 
-static UINT32 cps3_key1, cps3_key2;
+static uint32_t cps3_key1, cps3_key2;
 static int cps3_altEncryption; // sfiii2 has different encryption, data isn't encrypted outside of the bios
 
-static UINT16 rotate_left(UINT16 value, int n)
+static uint16_t rotate_left(uint16_t value, int n)
 {
    int aux = value>>(16-n);
    return ((value<<n)|aux)%0x10000;
 }
 
-static UINT16 rotxor(UINT16 val, UINT16 xorval)
+static uint16_t rotxor(uint16_t val, uint16_t xorval)
 {
-	UINT16 res;
+	uint16_t res;
 
 	res = val + rotate_left(val,2);
 
@@ -631,9 +631,9 @@ static UINT16 rotxor(UINT16 val, UINT16 xorval)
 	return res;
 }
 
-static UINT32 cps3_mask(UINT32 address, UINT32 key1, UINT32 key2)
+static uint32_t cps3_mask(uint32_t address, uint32_t key1, uint32_t key2)
 {
-	UINT16 val;
+	uint16_t val;
 
 	address ^= key1;
 
@@ -653,14 +653,14 @@ static UINT32 cps3_mask(UINT32 address, UINT32 key1, UINT32 key2)
 static void cps3_decrypt_bios(running_machine *machine)
 {
 	int i;
-	UINT32 *coderegion = (UINT32*)memory_region(machine, "user1");
+	uint32_t *coderegion = (uint32_t*)memory_region(machine, "user1");
 
-	decrypted_bios = (UINT32*)memory_region(machine, "user1");
+	decrypted_bios = (uint32_t*)memory_region(machine, "user1");
 
 	for (i=0;i<0x80000;i+=4)
 	{
-		UINT32 dword = coderegion[i/4];
-		UINT32 xormask = cps3_mask(i, cps3_key1, cps3_key2);
+		uint32_t dword = coderegion[i/4];
+		uint32_t xormask = cps3_mask(i, cps3_key1, cps3_key2);
 		decrypted_bios[i/4] = dword ^ xormask;
 	}
 #if 0
@@ -690,22 +690,22 @@ static DRIVER_INIT( cps3 )
 	cps3_user4region = memory_region(machine,"user4");
 	cps3_user5region = memory_region(machine,"user5");
 
-	if (!cps3_user4region) cps3_user4region = auto_alloc_array(machine, UINT8, USER4REGION_LENGTH);
-	if (!cps3_user5region) cps3_user5region = auto_alloc_array(machine, UINT8, USER5REGION_LENGTH);
+	if (!cps3_user4region) cps3_user4region = auto_alloc_array(machine, uint8_t, USER4REGION_LENGTH);
+	if (!cps3_user5region) cps3_user5region = auto_alloc_array(machine, uint8_t, USER5REGION_LENGTH);
 
 	// set strict verify
 	sh2drc_set_options(machine->device("maincpu"), SH2DRC_STRICT_VERIFY);
 
 	cps3_decrypt_bios(machine);
-	decrypted_gamerom = auto_alloc_array(machine, UINT32, 0x1000000/4);
+	decrypted_gamerom = auto_alloc_array(machine, uint32_t, 0x1000000/4);
 
 	/* just some NOPs for the game to execute if it crashes and starts executing unmapped addresses
      - this prevents MAME from crashing */
-	cps3_nops = auto_alloc(machine, UINT32);
+	cps3_nops = auto_alloc(machine, uint32_t);
 	cps3_nops[0] = 0x00090009;
 
 
-	cps3_0xc0000000_ram_decrypted = auto_alloc_array(machine, UINT32, 0x400/4);
+	cps3_0xc0000000_ram_decrypted = auto_alloc_array(machine, uint32_t, 0x400/4);
 	memory_set_direct_update_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), cps3_direct_handler);
 
 	// flash roms
@@ -713,7 +713,7 @@ static DRIVER_INIT( cps3 )
 	for (i=0;i<48;i++)
 		intelflash_init( machine, i, FLASH_FUJITSU_29F016A, NULL );
 
-	cps3_eeprom = auto_alloc_array(machine, UINT32, 0x400/4);
+	cps3_eeprom = auto_alloc_array(machine, uint32_t, 0x400/4);
 }
 
 static DRIVER_INIT( jojo )    { cps3_key1 = 0x02203ee3; cps3_key2 = 0x01301972; cps3_altEncryption = 0; DRIVER_INIT_CALL(cps3); }
@@ -753,12 +753,12 @@ static const gfx_layout cps3_tiles8x8_layout =
 	64*8
 };
 
-static UINT32* cps3_ss_ram;
+static uint32_t* cps3_ss_ram;
 
-static void cps3_set_mame_colours(running_machine *machine, int colournum, UINT16 data, UINT32 fadeval )
+static void cps3_set_mame_colours(running_machine *machine, int colournum, uint16_t data, uint32_t fadeval )
 {
 	int r,g,b;
-	UINT16* dst = (UINT16*)cps3_colourram;
+	uint16_t* dst = (uint16_t*)cps3_colourram;
 
 
 	r = (data >> 0) & 0x1f;
@@ -796,26 +796,26 @@ static void cps3_set_mame_colours(running_machine *machine, int colournum, UINT1
 
 static VIDEO_START(cps3)
 {
-	cps3_ss_ram       = auto_alloc_array(machine, UINT32, 0x10000/4);
+	cps3_ss_ram       = auto_alloc_array(machine, uint32_t, 0x10000/4);
 	memset(cps3_ss_ram, 0x00, 0x10000);
 	state_save_register_global_pointer(machine, cps3_ss_ram, 0x10000/4);
 
-	cps3_char_ram = auto_alloc_array(machine, UINT32, 0x800000/4);
+	cps3_char_ram = auto_alloc_array(machine, uint32_t, 0x800000/4);
 	memset(cps3_char_ram, 0x00, 0x800000);
 	state_save_register_global_pointer(machine, cps3_char_ram, 0x800000 /4);
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[0] = gfx_element_alloc(machine, &cps3_tiles8x8_layout, (UINT8 *)cps3_ss_ram, machine->total_colors() / 16, 0);
+	machine->gfx[0] = gfx_element_alloc(machine, &cps3_tiles8x8_layout, (uint8_t *)cps3_ss_ram, machine->total_colors() / 16, 0);
 
 	//decode_ssram();
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
-	machine->gfx[1] = gfx_element_alloc(machine, &cps3_tiles16x16_layout, (UINT8 *)cps3_char_ram, machine->total_colors() / 64, 0);
+	machine->gfx[1] = gfx_element_alloc(machine, &cps3_tiles16x16_layout, (uint8_t *)cps3_char_ram, machine->total_colors() / 64, 0);
 	machine->gfx[1]->color_granularity = 64;
 
 	//decode_charram();
 
-	cps3_mame_colours = auto_alloc_array(machine, UINT32, 0x80000/4);
+	cps3_mame_colours = auto_alloc_array(machine, uint32_t, 0x80000/4);
 	memset(cps3_mame_colours, 0x00, 0x80000);
 
 	cps3_screenwidth = 384;
@@ -837,8 +837,8 @@ static VIDEO_START(cps3)
 
 static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, int drawline, bitmap_t *bitmap, const rectangle *cliprect )
 {
-	UINT32* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
-	UINT32* regs;
+	uint32_t* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
+	uint32_t* regs;
 	int line;
 	int scrolly;
 	if (tmnum>3)
@@ -856,8 +856,8 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 	if (!(regs[1]&0x00008000)) return;
 
 	{
-		UINT32 mapbase =  (regs[2]&0x007f0000)>>16;
-		UINT32 linebase=  (regs[2]&0x7f000000)>>24;
+		uint32_t mapbase =  (regs[2]&0x007f0000)>>16;
+		uint32_t linebase=  (regs[2]&0x7f000000)>>24;
 		int linescroll_enable = (regs[1]&0x00004000);
 
 		int scrollx;
@@ -896,7 +896,7 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 		for (x=0;x<(cliprect->max_x/16)+2;x++)
 		{
 
-			UINT32 dat;
+			uint32_t dat;
 			int tileno;
 			int colour;
 			int bpp;
@@ -925,8 +925,8 @@ static VIDEO_UPDATE(cps3)
 
 	int bg_drawn[4] = { 0, 0, 0, 0 };
 
-	UINT32 fullscreenzoomx, fullscreenzoomy;
-	UINT32 fszx, fszy;
+	uint32_t fullscreenzoomx, fullscreenzoomy;
+	uint32_t fszx, fszy;
 
 //  decode_ssram();
 //  decode_charram();
@@ -983,7 +983,7 @@ static VIDEO_UPDATE(cps3)
 			int j;
 			int gscroll =      (cps3_spriteram[i+0]&0x70000000)>>28;
 			int length =    (cps3_spriteram[i+0]&0x01ff0000)>>16; // how many entries in the sprite table
-			UINT32 start  =    (cps3_spriteram[i+0]&0x00007ff0)>>4;
+			uint32_t start  =    (cps3_spriteram[i+0]&0x00007ff0)>>4;
 
 			int whichbpp =     (cps3_spriteram[i+2]&0x40000000)>>30; // not 100% sure if this is right, jojo title / characters
 			int whichpal =     (cps3_spriteram[i+2]&0x20000000)>>29;
@@ -1003,16 +1003,16 @@ static VIDEO_UPDATE(cps3)
 			for (j=0;j<(length)*4;j+=4)
 			{
 
-				UINT32 value1 = 	(cps3_spriteram[start+j+0]);
-				UINT32 value2 = 	(cps3_spriteram[start+j+1]);
-				UINT32 value3 = 	(cps3_spriteram[start+j+2]);
+				uint32_t value1 = 	(cps3_spriteram[start+j+0]);
+				uint32_t value2 = 	(cps3_spriteram[start+j+1]);
+				uint32_t value3 = 	(cps3_spriteram[start+j+2]);
 
 
-				//UINT8* srcdata = (UINT8*)cps3_char_ram;
-				//UINT32 sourceoffset = (value1 >>14)&0x7fffff;
+				//uint8_t* srcdata = (uint8_t*)cps3_char_ram;
+				//uint32_t sourceoffset = (value1 >>14)&0x7fffff;
 				int count;
 
-				UINT32 tileno = (value1&0xfffe0000)>>17;
+				uint32_t tileno = (value1&0xfffe0000)>>17;
 
 				int xpos2 = (value2 & 0x03ff0000)>>16;
 				int ypos2 = (value2 & 0x000003ff)>>0;
@@ -1031,7 +1031,7 @@ static VIDEO_UPDATE(cps3)
 				static const int tilestable[4] = { 8,1,2,4 };
 				int ysize2 = ((value3 & 0x0000000c)>>2);
 				int xsize2 = ((value3 & 0x00000003)>>0);
-				UINT32 xinc,yinc;
+				uint32_t xinc,yinc;
 
 				if (ysize2==0)
 				{
@@ -1046,8 +1046,8 @@ static VIDEO_UPDATE(cps3)
 					//int endline;
 					//int height = (value3 & 0x7f000000)>>24;
 					int uu;
-					UINT32* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
-					UINT32* regs;
+					uint32_t* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
+					uint32_t* regs;
 					regs = tmapregs[tilemapnum];
 					//endline = value2;
 					//startline = endline - height;
@@ -1176,10 +1176,10 @@ static VIDEO_UPDATE(cps3)
 
 	/* copy render bitmap with zoom */
 	{
-		UINT32 renderx,rendery;
-		UINT32 srcx, srcy;
-		UINT32* srcbitmap;
-		UINT32* dstbitmap;
+		uint32_t renderx,rendery;
+		uint32_t srcx, srcy;
+		uint32_t* srcbitmap;
+		uint32_t* dstbitmap;
 
 
 		srcy=0;
@@ -1217,8 +1217,8 @@ static VIDEO_UPDATE(cps3)
 		{
 			for (x=0;x<64;x++)
 			{
-				UINT32 data = cps3_ss_ram[count]; // +0x800 = 2nd bank, used on sfiii2 intro..
-				UINT32 tile = (data >> 16) & 0x1ff;
+				uint32_t data = cps3_ss_ram[count]; // +0x800 = 2nd bank, used on sfiii2 intro..
+				uint32_t tile = (data >> 16) & 0x1ff;
 				int pal = (data&0x003f) >> 1;
 				int flipx = (data & 0x0080) >> 7;
 				int flipy = (data & 0x0040) >> 6;
@@ -1276,10 +1276,10 @@ static DIRECT_UPDATE_HANDLER( cps3_direct_handler )
 	/* RAM */
 	else if (address >= 0x06000000 && address <= 0x06ffffff)
 	{
-		direct->decrypted = (UINT8*)decrypted_gamerom-0x06000000;
-		direct->raw = (UINT8*)decrypted_gamerom-0x06000000;
+		direct->decrypted = (uint8_t*)decrypted_gamerom-0x06000000;
+		direct->raw = (uint8_t*)decrypted_gamerom-0x06000000;
 
-		if (cps3_altEncryption) direct->raw = (UINT8*) cps3_user4region-0x06000000;
+		if (cps3_altEncryption) direct->raw = (uint8_t*) cps3_user4region-0x06000000;
 
 
 		return ~0;
@@ -1287,18 +1287,18 @@ static DIRECT_UPDATE_HANDLER( cps3_direct_handler )
 	else if (address >= 0xc0000000 && address <= 0xc00003ff)
 	{
 		//direct->decrypted = (void*)cps3_0xc0000000_ram_decrypted;
-		direct->decrypted = (UINT8*)cps3_0xc0000000_ram_decrypted-0xc0000000;
-		direct->raw = (UINT8*)cps3_0xc0000000_ram-0xc0000000;
+		direct->decrypted = (uint8_t*)cps3_0xc0000000_ram_decrypted-0xc0000000;
+		direct->raw = (uint8_t*)cps3_0xc0000000_ram-0xc0000000;
 		return ~0;
 	}
 
 	/* anything else falls through to NOPs */
-	direct->decrypted = (UINT8*)cps3_nops-address;
-	direct->raw = (UINT8*)cps3_nops-address;
+	direct->decrypted = (uint8_t*)cps3_nops-address;
+	direct->raw = (uint8_t*)cps3_nops-address;
 	return ~0;
 }
 
-static UINT32 cram_bank = 0;
+static uint32_t cram_bank = 0;
 
 static WRITE32_HANDLER( cram_bank_w )
 {
@@ -1331,14 +1331,14 @@ static WRITE32_HANDLER( cram_bank_w )
 
 static READ32_HANDLER( cram_data_r )
 {
-	UINT32 fulloffset = (((cram_bank&0x7)*0x100000)/4) + offset;
+	uint32_t fulloffset = (((cram_bank&0x7)*0x100000)/4) + offset;
 
 	return LITTLE_ENDIANIZE_INT32(cps3_char_ram[fulloffset]);
 }
 
 static WRITE32_HANDLER( cram_data_w )
 {
-	UINT32 fulloffset = (((cram_bank&0x7)*0x100000)/4) + offset;
+	uint32_t fulloffset = (((cram_bank&0x7)*0x100000)/4) + offset;
 	mem_mask = LITTLE_ENDIANIZE_INT32(mem_mask);
 	data = LITTLE_ENDIANIZE_INT32(data);
 	COMBINE_DATA(&cps3_char_ram[fulloffset]);
@@ -1349,7 +1349,7 @@ static WRITE32_HANDLER( cram_data_w )
 
 static READ32_HANDLER( cps3_gfxflash_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	int flash1 = 8;
 	int flash2 = 9;
 	if (cram_gfxflash_bank&1) offset += 0x200000/4;
@@ -1426,11 +1426,11 @@ static WRITE32_HANDLER( cps3_gfxflash_w )
 
 	/* make a copy in the linear memory region we actually use for drawing etc.  having it stored in interleaved flash roms isnt' very useful */
 	{
-		UINT32* romdata = (UINT32*)cps3_user5region;
+		uint32_t* romdata = (uint32_t*)cps3_user5region;
 		int real_offset = 0;
-		UINT32 newdata;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(flash1);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(flash2);
+		uint32_t newdata;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(flash1);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(flash2);
 
 		real_offset = ((cram_gfxflash_bank&0x3e) * 0x200000) + offset*4;
 
@@ -1446,9 +1446,9 @@ static WRITE32_HANDLER( cps3_gfxflash_w )
 
 
 
-static UINT32 cps3_flashmain_r(int base, UINT32 offset, UINT32 mem_mask)
+static uint32_t cps3_flashmain_r(int base, uint32_t offset, uint32_t mem_mask)
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	if (ACCESSING_BITS_24_31)	// Flash 1
 	{
@@ -1480,7 +1480,7 @@ static UINT32 cps3_flashmain_r(int base, UINT32 offset, UINT32 mem_mask)
 
 static READ32_HANDLER( cps3_flash1_r )
 {
-	UINT32 retvalue = cps3_flashmain_r(0, offset,mem_mask);
+	uint32_t retvalue = cps3_flashmain_r(0, offset,mem_mask);
 
 	if (cps3_altEncryption) return retvalue;
 
@@ -1490,7 +1490,7 @@ static READ32_HANDLER( cps3_flash1_r )
 
 static READ32_HANDLER( cps3_flash2_r )
 {
-	UINT32 retvalue = cps3_flashmain_r(4, offset,mem_mask);
+	uint32_t retvalue = cps3_flashmain_r(4, offset,mem_mask);
 
 	if (cps3_altEncryption) return retvalue;
 
@@ -1498,7 +1498,7 @@ static READ32_HANDLER( cps3_flash2_r )
 	return retvalue;
 }
 
-static void cps3_flashmain_w(running_machine *machine, int base, UINT32 offset, UINT32 data, UINT32 mem_mask)
+static void cps3_flashmain_w(running_machine *machine, int base, uint32_t offset, uint32_t data, uint32_t mem_mask)
 {
 	int command;
 	if (ACCESSING_BITS_24_31)	// Flash 1
@@ -1528,14 +1528,14 @@ static void cps3_flashmain_w(running_machine *machine, int base, UINT32 offset, 
 
 	/* copy data into regions to execute from */
 	{
-		UINT32* romdata =  (UINT32*)cps3_user4region;
-		UINT32* romdata2 = (UINT32*)decrypted_gamerom;
+		uint32_t* romdata =  (uint32_t*)cps3_user4region;
+		uint32_t* romdata2 = (uint32_t*)decrypted_gamerom;
 		int real_offset = 0;
-		UINT32 newdata;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(base+0);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(base+1);
-		UINT8* ptr3 = (UINT8*)intelflash_getmemptr(base+2);
-		UINT8* ptr4 = (UINT8*)intelflash_getmemptr(base+3);
+		uint32_t newdata;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(base+0);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(base+1);
+		uint8_t* ptr3 = (uint8_t*)intelflash_getmemptr(base+2);
+		uint8_t* ptr4 = (uint8_t*)intelflash_getmemptr(base+3);
 
 		real_offset = offset * 4;
 
@@ -1647,7 +1647,7 @@ static READ32_HANDLER( cps3_40C0004_r )
 
 /* EEPROM access is a little odd, I think it accesses eeprom through some kind of
    additional interface, as these writes aren't normal for the type of eeprom we have */
-static UINT16 cps3_current_eeprom_read;
+static uint16_t cps3_current_eeprom_read;
 
 static READ32_HANDLER( cps3_eeprom_r )
 {
@@ -1702,16 +1702,16 @@ static WRITE32_HANDLER( cps3_eeprom_w )
 
 static READ32_HANDLER( cps3_cdrom_r )
 {
-	UINT32 retval = 0;
+	uint32_t retval = 0;
 
 	if (ACCESSING_BITS_24_31)
 	{
-		retval |= ((UINT16)wd33c93_r(space,0))<<16;
+		retval |= ((uint16_t)wd33c93_r(space,0))<<16;
 	}
 
 	if (ACCESSING_BITS_0_7)
 	{
-		retval |= (UINT16)wd33c93_r(space,1);
+		retval |= (uint16_t)wd33c93_r(space,1);
 	}
 
 	return retval;
@@ -1758,12 +1758,12 @@ static WRITE32_HANDLER( cps3_ss_pal_base_w )
 //<ElSemi> +0 X  +2 Y +4 unknown +6 enable (&0x8000) +8 low part tilemap base, high part linescroll base
 //<ElSemi> (a word each)
 
-static UINT32 paldma_source;
-static UINT32 paldma_realsource;
-static UINT32 paldma_dest;
-static UINT32 paldma_fade;
-static UINT32 paldma_other2;
-static UINT32 paldma_length;
+static uint32_t paldma_source;
+static uint32_t paldma_realsource;
+static uint32_t paldma_dest;
+static uint32_t paldma_fade;
+static uint32_t paldma_other2;
+static uint32_t paldma_length;
 
 static WRITE32_HANDLER( cps3_palettedma_w )
 {
@@ -1793,12 +1793,12 @@ static WRITE32_HANDLER( cps3_palettedma_w )
 			if (data & 0x0002)
 			{
 				int i;
-				UINT16* src = (UINT16*)cps3_user5region;
+				uint16_t* src = (uint16_t*)cps3_user5region;
 			//  if(DEBUG_PRINTF) printf("CPS3 pal dma start %08x (real: %08x) dest %08x fade %08x other2 %08x (length %04x)\n", paldma_source, paldma_realsource, paldma_dest, paldma_fade, paldma_other2, paldma_length);
 
 				for (i=0;i<paldma_length;i++)
 				{
-					UINT16 coldata = src[BYTE_XOR_BE(((paldma_realsource>>1)+i))];
+					uint16_t coldata = src[BYTE_XOR_BE(((paldma_realsource>>1)+i))];
 
 					//if (paldma_fade!=0) printf("%08x\n",paldma_fade);
 
@@ -1815,20 +1815,20 @@ static WRITE32_HANDLER( cps3_palettedma_w )
 
 }
 
-static UINT32 chardma_source;
-static UINT32 chardma_other;
+static uint32_t chardma_source;
+static uint32_t chardma_other;
 
-//static UINT8* current_table;
-static UINT32 current_table_address;
+//static uint8_t* current_table;
+static uint32_t current_table_address;
 
 static int cps3_rle_length = 0;
 
 static int last_normal_byte = 0;
 
 
-static UINT32 process_byte( running_machine *machine, UINT8 real_byte, UINT32 destination, int max_length )
+static uint32_t process_byte( running_machine *machine, uint8_t real_byte, uint32_t destination, int max_length )
 {
-	UINT8* dest       = (UINT8*)cps3_char_ram;
+	uint8_t* dest       = (uint8_t*)cps3_char_ram;
 
 	//printf("process byte for destination %08x\n", destination);
 
@@ -1870,9 +1870,9 @@ static UINT32 process_byte( running_machine *machine, UINT8 real_byte, UINT32 de
 	}
 }
 
-static void cps3_do_char_dma( running_machine *machine, UINT32 real_source, UINT32 real_destination, UINT32 real_length )
+static void cps3_do_char_dma( running_machine *machine, uint32_t real_source, uint32_t real_destination, uint32_t real_length )
 {
-	UINT8* sourcedata = (UINT8*)cps3_user5region;
+	uint8_t* sourcedata = (uint8_t*)cps3_user5region;
 	int length_remaining;
 
 	last_normal_byte = 0;
@@ -1880,15 +1880,15 @@ static void cps3_do_char_dma( running_machine *machine, UINT32 real_source, UINT
 	length_remaining = real_length;
 	while (length_remaining)
 	{
-		UINT8 current_byte;
+		uint8_t current_byte;
 
 		current_byte = sourcedata[DMA_XOR(real_source)];
 		real_source++;
 
 		if (current_byte & 0x80)
 		{
-			UINT8 real_byte;
-			UINT32 length_processed;
+			uint8_t real_byte;
+			uint32_t length_processed;
 			current_byte &= 0x7f;
 
 			real_byte = sourcedata[DMA_XOR((current_table_address+current_byte*2+0))];
@@ -1909,7 +1909,7 @@ static void cps3_do_char_dma( running_machine *machine, UINT32 real_source, UINT
 		}
 		else
 		{
-			UINT32 length_processed;
+			uint32_t length_processed;
 			length_processed = process_byte( machine, current_byte, real_destination, length_remaining );
 			length_remaining-=length_processed; // subtract the number of bytes the operation has taken
 			real_destination+=length_processed; // add it onto the destination
@@ -1923,9 +1923,9 @@ static void cps3_do_char_dma( running_machine *machine, UINT32 real_source, UINT
 
 static unsigned short lastb;
 static unsigned short lastb2;
-static UINT32 ProcessByte8(running_machine *machine,UINT8 b,UINT32 dst_offset)
+static uint32_t ProcessByte8(running_machine *machine,uint8_t b,uint32_t dst_offset)
 {
-	UINT8* destRAM = (UINT8*)cps3_char_ram;
+	uint8_t* destRAM = (uint8_t*)cps3_char_ram;
 	int l=0;
 
 	if(lastb==lastb2)	//rle
@@ -1955,11 +1955,11 @@ static UINT32 ProcessByte8(running_machine *machine,UINT8 b,UINT32 dst_offset)
 	}
 }
 
-static void cps3_do_alt_char_dma( running_machine *machine, UINT32 src, UINT32 real_dest, UINT32 real_length )
+static void cps3_do_alt_char_dma( running_machine *machine, uint32_t src, uint32_t real_dest, uint32_t real_length )
 {
-	UINT8* px = (UINT8*)cps3_user5region;
-	UINT32 start = real_dest;
-	UINT32 ds = real_dest;
+	uint8_t* px = (uint8_t*)cps3_user5region;
+	uint32_t start = real_dest;
+	uint32_t ds = real_dest;
 
 	lastb=0xfffe;
 	lastb2=0xffff;
@@ -1967,16 +1967,16 @@ static void cps3_do_alt_char_dma( running_machine *machine, UINT32 src, UINT32 r
 	while(1)
 	{
 		int i;
-		UINT8 ctrl=px[DMA_XOR(src)];
+		uint8_t ctrl=px[DMA_XOR(src)];
 		++src;
 
 		for(i=0;i<8;++i)
 		{
-			UINT8 p=px[DMA_XOR(src)];
+			uint8_t p=px[DMA_XOR(src)];
 
 			if(ctrl&0x80)
 			{
-				UINT8 real_byte;
+				uint8_t real_byte;
 				p&=0x7f;
 				real_byte = px[DMA_XOR((current_table_address+p*2+0))];
 				ds+=ProcessByte8(machine,real_byte,ds);
@@ -1996,7 +1996,7 @@ static void cps3_do_alt_char_dma( running_machine *machine, UINT32 src, UINT32 r
 	}
 }
 
-static void cps3_process_character_dma(running_machine *machine, UINT32 address)
+static void cps3_process_character_dma(running_machine *machine, uint32_t address)
 {
 	int i;
 
@@ -2004,12 +2004,12 @@ static void cps3_process_character_dma(running_machine *machine, UINT32 address)
 
 	for (i = 0; i < 0x1000; i += 3)
 	{
-		UINT32 dat1 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 0 + (address)]);
-		UINT32 dat2 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 1 + (address)]);
-		UINT32 dat3 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 2 + (address)]);
-		UINT32 real_source      = (dat3 << 1) - 0x400000;
-		UINT32 real_destination =  dat2 << 3;
-		UINT32 real_length      = (((dat1 & 0x001fffff) + 1) << 3);
+		uint32_t dat1 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 0 + (address)]);
+		uint32_t dat2 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 1 + (address)]);
+		uint32_t dat3 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 2 + (address)]);
+		uint32_t real_source      = (dat3 << 1) - 0x400000;
+		uint32_t real_destination =  dat2 << 3;
+		uint32_t real_length      = (((dat1 & 0x001fffff) + 1) << 3);
 
 		/* 0x01000000 is the end of list marker, 0x13131313 is our default fill */
 		if ((dat1 == 0x01000000) || (dat1 == 0x13131313)) break;
@@ -2072,7 +2072,7 @@ static WRITE32_HANDLER( cps3_characterdma_w )
 		{
 			if ((data>>16) & 0x0040)
 			{
-				UINT32 list_address;
+				uint32_t list_address;
 				list_address = (chardma_source | ((chardma_other&0x003f0000)));
 
 				//printf("chardma_w activated %08x %08x (address = cram %08x)\n", chardma_source, chardma_other, list_address*4 );
@@ -2110,7 +2110,7 @@ static WRITE32_HANDLER( cps3_unk_vidregs_w )
 
 static READ32_HANDLER( cps3_colourram_r )
 {
-	UINT16* src = (UINT16*)cps3_colourram;
+	uint16_t* src = (uint16_t*)cps3_colourram;
 
 	return src[offset*2+1] | (src[offset*2+0]<<16);
 }
@@ -2130,7 +2130,7 @@ static WRITE32_HANDLER( cps3_colourram_w )
 	}
 }
 
-static UINT32* cps3_mainram;
+static uint32_t* cps3_mainram;
 
 /* there are more unknown writes, but you get the idea */
 static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
@@ -2291,16 +2291,16 @@ static MACHINE_RESET( cps3 )
 
 static void precopy_to_flash(running_machine *machine)
 {
-	UINT32* romdata = (UINT32*)cps3_user4region;
+	uint32_t* romdata = (uint32_t*)cps3_user4region;
 	int i;
 	/* precopy program roms, ok, sfiii2 tests pass, others fail because of how the decryption affects testing */
 	for (i=0;i<0x800000;i+=4)
 	{
-		UINT32 data;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(0);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(1);
-		UINT8* ptr3 = (UINT8*)intelflash_getmemptr(2);
-		UINT8* ptr4 = (UINT8*)intelflash_getmemptr(3);
+		uint32_t data;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(0);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(1);
+		uint8_t* ptr3 = (uint8_t*)intelflash_getmemptr(2);
+		uint8_t* ptr4 = (uint8_t*)intelflash_getmemptr(3);
 
 		data = romdata[i/4];
 
@@ -2312,11 +2312,11 @@ static void precopy_to_flash(running_machine *machine)
 
 	for (i=0;i<0x800000;i+=4)
 	{
-		UINT32 data;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(4);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(5);
-		UINT8* ptr3 = (UINT8*)intelflash_getmemptr(6);
-		UINT8* ptr4 = (UINT8*)intelflash_getmemptr(7);
+		uint32_t data;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(4);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(5);
+		uint8_t* ptr3 = (uint8_t*)intelflash_getmemptr(6);
+		uint8_t* ptr4 = (uint8_t*)intelflash_getmemptr(7);
 
 		data = romdata[(0x800000+i)/4];
 
@@ -2328,19 +2328,19 @@ static void precopy_to_flash(running_machine *machine)
 
 	/* precopy gfx roms, good, tests pass */
 	{
-		UINT32 thebase, len = USER5REGION_LENGTH;
+		uint32_t thebase, len = USER5REGION_LENGTH;
 		int flashnum = 8;
 
-		romdata = (UINT32*)cps3_user5region;
+		romdata = (uint32_t*)cps3_user5region;
 		for (thebase = 0;thebase < len/2; thebase+=0x200000)
 		{
 		//  printf("flashnums %d. %d\n",flashnum, flashnum+1);
 
 			for (i=0;i<0x200000;i+=2)
 			{
-				UINT8* ptr1 = (UINT8*)intelflash_getmemptr(flashnum);
-				UINT8* ptr2 = (UINT8*)intelflash_getmemptr(flashnum+1);
-				UINT32 dat = romdata[(thebase+i)/2];
+				uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(flashnum);
+				uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(flashnum+1);
+				uint32_t dat = romdata[(thebase+i)/2];
 
 				ptr1[BYTE_XOR_LE(i+1)] =  (dat&0xff000000)>>24;
 				ptr2[BYTE_XOR_LE(i+1)] =  (dat&0x00ff0000)>>16;
@@ -2357,17 +2357,17 @@ static void precopy_to_flash(running_machine *machine)
 // make a copy in the regions we execute code / draw gfx from
 static void copy_from_nvram(running_machine *machine)
 {
-	UINT32* romdata = (UINT32*)cps3_user4region;
-	UINT32* romdata2 = (UINT32*)decrypted_gamerom;
+	uint32_t* romdata = (uint32_t*)cps3_user4region;
+	uint32_t* romdata2 = (uint32_t*)decrypted_gamerom;
 	int i;
 	/* copy + decrypt program roms which have been loaded from flashroms/nvram */
 	for (i=0;i<0x800000;i+=4)
 	{
-		UINT32 data;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(0);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(1);
-		UINT8* ptr3 = (UINT8*)intelflash_getmemptr(2);
-		UINT8* ptr4 = (UINT8*)intelflash_getmemptr(3);
+		uint32_t data;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(0);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(1);
+		uint8_t* ptr3 = (uint8_t*)intelflash_getmemptr(2);
+		uint8_t* ptr4 = (uint8_t*)intelflash_getmemptr(3);
 
 		data = ((ptr1[i/4]<<24) | (ptr2[i/4]<<16) | (ptr3[i/4]<<8) | (ptr4[i/4]<<0));
 
@@ -2382,11 +2382,11 @@ static void copy_from_nvram(running_machine *machine)
 
 	for (i=0;i<0x800000;i+=4)
 	{
-		UINT32 data;
-		UINT8* ptr1 = (UINT8*)intelflash_getmemptr(4);
-		UINT8* ptr2 = (UINT8*)intelflash_getmemptr(5);
-		UINT8* ptr3 = (UINT8*)intelflash_getmemptr(6);
-		UINT8* ptr4 = (UINT8*)intelflash_getmemptr(7);
+		uint32_t data;
+		uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(4);
+		uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(5);
+		uint8_t* ptr3 = (uint8_t*)intelflash_getmemptr(6);
+		uint8_t* ptr4 = (uint8_t*)intelflash_getmemptr(7);
 
 		data = ((ptr1[i/4]<<24) | (ptr2[i/4]<<16) | (ptr3[i/4]<<8) | (ptr4[i/4]<<0));
 
@@ -2397,20 +2397,20 @@ static void copy_from_nvram(running_machine *machine)
 
 	/* copy gfx from loaded flashroms to user reigon 5, where it's used */
 	{
-		UINT32 thebase, len = USER5REGION_LENGTH;
+		uint32_t thebase, len = USER5REGION_LENGTH;
 		int flashnum = 8;
 		int countoffset = 0;
 
-		romdata = (UINT32*)cps3_user5region;
+		romdata = (uint32_t*)cps3_user5region;
 		for (thebase = 0;thebase < len/2; thebase+=0x200000)
 		{
 		//  printf("flashnums %d. %d\n",flashnum, flashnum+1);
 
 			for (i=0;i<0x200000;i+=2)
 			{
-				UINT8* ptr1 = (UINT8*)intelflash_getmemptr(flashnum);
-				UINT8* ptr2 = (UINT8*)intelflash_getmemptr(flashnum+1);
-				UINT32 dat = (ptr1[i+0]<<8) |
+				uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(flashnum);
+				uint8_t* ptr2 = (uint8_t*)intelflash_getmemptr(flashnum+1);
+				uint32_t dat = (ptr1[i+0]<<8) |
 					         (ptr1[i+1]<<24) |
 							 (ptr2[i+0]<<0) |
 							 (ptr2[i+1]<<16);
@@ -2476,7 +2476,7 @@ static NVRAM_HANDLER( cps3 )
 
 
 
-static int cps3_dma_callback(UINT32 src, UINT32 dst, UINT32 data, int size)
+static int cps3_dma_callback(uint32_t src, uint32_t dst, uint32_t data, int size)
 {
 	/*
       on the actual CPS3 hardware the SH2 DMA bypasses the encryption.
@@ -2832,7 +2832,7 @@ ROM_END
 
     DEVELOPMENT VERSION add 0x70 mask!
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fec8/4]^=0x00000001; // region hack (clear jpn)
 
     rom[0x1fec8/4]^=0x00000004; // region
@@ -2857,7 +2857,7 @@ ROM_END
 
     DEVELOPMENT VERSION add 0x70 mask!
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fec8/4]^=0x00000001; // region (clear jpn)
     rom[0x1fec8/4]^=0x00000002; // region
     rom[0x1fec8/4]^=0x00000070; // DEV mode
@@ -2878,7 +2878,7 @@ ROM_END
     OCEANIA 7
     ASIA NCD 8
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fed8/4]^=0x00000001; // clear region to 0 (invalid)
     rom[0x1fed8/4]^=0x00000008; // region 8 - ASIA NO CD - doesn't actually skip the CD
                                 // test on startup, only during game, must be another flag
@@ -2903,7 +2903,7 @@ ROM_END
 
     // bios rom also lists korea, but game rom does not.
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fec8/4]^=0x00000001; // region (clear region)
     rom[0x1fec8/4]^=0x00000008; // region
     rom[0x1fecc/4]^=0x01000000; // nocd - this ONLY skips the cd check in the bios test
@@ -2925,7 +2925,7 @@ ROM_END
     OCEANIA 7
     ASIA 8
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fec8/4]^=0x00000001; // region (clear region)
     rom[0x1fec8/4]^=0x00000008; // region
     rom[0x1fecc/4]^=0x01000000; // nocd - this ONLY skips the cd check in the bios test
@@ -2947,7 +2947,7 @@ ROM_END
     BRAZIL 6
     OCEANIA 7
 
-    UINT32 *rom =  (UINT32*)memory_region ( machine, "user1" );
+    uint32_t *rom =  (uint32_t*)memory_region ( machine, "user1" );
     rom[0x1fec8/4]^=0x00000004; // region (clear region)
     rom[0x1fec8/4]^=0x00000001; // region
     rom[0x1fecc/4]^=0x01000000; // nocd

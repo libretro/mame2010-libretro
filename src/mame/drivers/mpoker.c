@@ -172,9 +172,9 @@
 //#include "sound/dac.h"
 #include "../lh/mpoker.lh"
 
-static UINT8 output[8];
+static uint8_t output[8];
 
-static UINT8* mpoker_video;
+static uint8_t* mpoker_video;
 
 
 static VIDEO_START(mpoker)
@@ -193,8 +193,8 @@ static VIDEO_UPDATE(mpoker)
 	{
 		for (x=0;x<32;x++)
 		{
-			UINT16 dat = mpoker_video[count];
-			UINT16 col = mpoker_video[count+0x400] & 0x7f;
+			uint16_t dat = mpoker_video[count];
+			uint16_t col = mpoker_video[count+0x400] & 0x7f;
 			drawgfx_opaque(bitmap,cliprect,gfx,dat,col,0,0,x*16,y*16);
 			count++;
 		}

@@ -25,7 +25,7 @@ found/dumped yet. */
 #include "video/tms9928a.h"
 #include "sound/ay8910.h"
 
-static UINT8 forte2_input_mask;
+static uint8_t forte2_input_mask;
 
 static ADDRESS_MAP_START( program_mem, ADDRESS_SPACE_PROGRAM, 8 )
 	AM_RANGE(0x0000, 0xbfff) AM_ROM
@@ -142,9 +142,9 @@ MACHINE_DRIVER_END
 static DRIVER_INIT(pesadelo)
 {
 	int i;
-	UINT8 *mem = memory_region(machine, "maincpu");
+	uint8_t *mem = memory_region(machine, "maincpu");
 	int memsize = memory_region_length(machine, "maincpu");
-	UINT8 *buf;
+	uint8_t *buf;
 
 	// data swap
 	for ( i = 0; i < memsize; i++ )
@@ -153,7 +153,7 @@ static DRIVER_INIT(pesadelo)
 	}
 
 	// address line swap
-	buf = auto_alloc_array(machine, UINT8, memsize);
+	buf = auto_alloc_array(machine, uint8_t, memsize);
 	memcpy(buf, mem, memsize);
 	for ( i = 0; i < memsize; i++ )
 	{

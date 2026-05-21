@@ -203,11 +203,11 @@ GFXDECODE_END
 static MACHINE_START( funybubl )
 {
 	funybubl_state *state = (funybubl_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	state->audiocpu = machine->device("audiocpu");
 
-	state->banked_vram = auto_alloc_array(machine, UINT8, 0x2000);
+	state->banked_vram = auto_alloc_array(machine, uint8_t, 0x2000);
 	state_save_register_global_pointer(machine, state->banked_vram, 0x2000);
 
 	memory_configure_bank(machine, "bank1", 0, 2, &state->banked_vram[0x0000], 0x1000);

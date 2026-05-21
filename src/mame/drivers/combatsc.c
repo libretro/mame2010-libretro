@@ -271,7 +271,7 @@ static READ8_HANDLER( trackball_r )
 
 		for (i = 0; i < 4; i++)
 		{
-			UINT8 curr;
+			uint8_t curr;
 
 			curr = input_port_read_safe(space->machine, tracknames[i], 0xff);
 
@@ -669,7 +669,7 @@ static const ym2203_interface ym2203_config =
 static MACHINE_START( combatsc )
 {
 	combatsc_state *state = (combatsc_state *)machine->driver_data;
-	UINT8 *MEM = memory_region(machine, "maincpu") + 0x38000;
+	uint8_t *MEM = memory_region(machine, "maincpu") + 0x38000;
 
 	state->io_ram  = MEM + 0x0000;
 	state->page[0] = MEM + 0x4000;

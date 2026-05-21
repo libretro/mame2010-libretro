@@ -309,12 +309,12 @@ Notes:
  *
  *************************************/
 
-UINT32 *jaguar_shared_ram;
-UINT32 *jaguar_gpu_ram;
-UINT32 *jaguar_gpu_clut;
-UINT32 *jaguar_dsp_ram;
-UINT32 *jaguar_wave_rom;
-UINT8 cojag_is_r3000;
+uint32_t *jaguar_shared_ram;
+uint32_t *jaguar_gpu_ram;
+uint32_t *jaguar_gpu_clut;
+uint32_t *jaguar_dsp_ram;
+uint32_t *jaguar_wave_rom;
+uint8_t cojag_is_r3000;
 
 
 
@@ -326,10 +326,10 @@ UINT8 cojag_is_r3000;
 
 static cpu_device *main_cpu;
 
-static UINT32 misc_control_data;
-static UINT8 eeprom_enable;
+static uint32_t misc_control_data;
+static uint8_t eeprom_enable;
 
-static UINT32 *rom_base;
+static uint32_t *rom_base;
 
 
 
@@ -341,7 +341,7 @@ static UINT32 *rom_base;
 
 static MACHINE_RESET( cojag )
 {
-	UINT8 *rom = memory_region(machine, "user2");
+	uint8_t *rom = memory_region(machine, "user2");
 
 	/* 68020 only: copy the interrupt vectors into RAM */
 	if (!cojag_is_r3000)
@@ -563,9 +563,9 @@ static WRITE32_HANDLER( eeprom_data_w )
     run it until we get back to the spin loop.
 */
 
-static UINT32 *gpu_jump_address;
-static UINT8 gpu_command_pending;
-static UINT32 gpu_spin_pc;
+static uint32_t *gpu_jump_address;
+static uint8_t gpu_command_pending;
+static uint32_t gpu_spin_pc;
 
 static TIMER_CALLBACK( gpu_sync_timer )
 {
@@ -630,14 +630,14 @@ static READ32_HANDLER( gpu_jump_r )
 
 #if ENABLE_SPEEDUP_HACKS
 
-static UINT32 *main_speedup;
+static uint32_t *main_speedup;
 static int main_speedup_hits;
-static UINT64 main_speedup_last_cycles;
-static UINT64 main_speedup_max_cycles;
+static uint64_t main_speedup_last_cycles;
+static uint64_t main_speedup_max_cycles;
 
 static READ32_HANDLER( cojagr3k_main_speedup_r )
 {
-	UINT64 curcycles = main_cpu->total_cycles();
+	uint64_t curcycles = main_cpu->total_cycles();
 
 	/* if it's been less than main_speedup_max_cycles cycles since the last time */
 	if (curcycles - main_speedup_last_cycles < main_speedup_max_cycles)
@@ -682,7 +682,7 @@ static READ32_HANDLER( cojagr3k_main_speedup_r )
 
 #if ENABLE_SPEEDUP_HACKS
 
-static UINT32 *main_gpu_wait;
+static uint32_t *main_gpu_wait;
 
 static READ32_HANDLER( main_gpu_wait_r )
 {
@@ -712,7 +712,7 @@ static READ32_HANDLER( main_gpu_wait_r )
 
 static WRITE32_HANDLER( area51_main_speedup_w )
 {
-	UINT64 curcycles = main_cpu->total_cycles();
+	uint64_t curcycles = main_cpu->total_cycles();
 
 	/* store the data */
 	COMBINE_DATA(main_speedup);
@@ -746,7 +746,7 @@ static WRITE32_HANDLER( area51_main_speedup_w )
 
 static WRITE32_HANDLER( area51mx_main_speedup_w )
 {
-	UINT64 curcycles = main_cpu->total_cycles();
+	uint64_t curcycles = main_cpu->total_cycles();
 
 	/* store the data */
 	COMBINE_DATA(&main_speedup[offset]);
@@ -1503,7 +1503,7 @@ ROM_END
  *
  *************************************/
 
-static void cojag_common_init(running_machine *machine, UINT16 gpu_jump_offs, UINT16 spin_pc)
+static void cojag_common_init(running_machine *machine, uint16_t gpu_jump_offs, uint16_t spin_pc)
 {
 	/* copy over the ROM */
 	main_cpu = machine->device<cpu_device>("maincpu");

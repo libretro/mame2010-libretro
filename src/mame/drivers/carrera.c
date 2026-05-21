@@ -51,7 +51,7 @@ TODO:
 #include "sound/ay8910.h"
 #include "video/mc6845.h"
 
-static UINT8* carrera_tileram;
+static uint8_t* carrera_tileram;
 
 
 

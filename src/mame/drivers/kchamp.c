@@ -734,11 +734,11 @@ ROM_START( karatevs )
 ROM_END
 
 
-static UINT8 *decrypt_code(running_machine *machine)
+static uint8_t *decrypt_code(running_machine *machine)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t *rom = memory_region(machine, "maincpu");
 	int A;
 
 	memory_set_decrypted_region(space, 0x0000, 0xffff, decrypted);
@@ -753,8 +753,8 @@ static UINT8 *decrypt_code(running_machine *machine)
 static DRIVER_INIT( kchampvs )
 {
 	kchamp_state *state = (kchamp_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypted = decrypt_code(machine);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypted = decrypt_code(machine);
 	int A;
 
 	/*

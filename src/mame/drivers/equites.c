@@ -399,7 +399,7 @@ static TIMER_CALLBACK( equites_nmi_callback )
 static TIMER_CALLBACK( equites_frq_adjuster_callback )
 {
 	equites_state *state = (equites_state *)machine->driver_data;
-	UINT8 frq = input_port_read(machine, FRQ_ADJUSTER_TAG);
+	uint8_t frq = input_port_read(machine, FRQ_ADJUSTER_TAG);
 
 	msm5232_set_clock(state->msm, MSM5232_MIN_CLOCK + frq * (MSM5232_MAX_CLOCK - MSM5232_MIN_CLOCK) / 100);
 //popmessage("8155: C %02x A %02x  AY: A %02x B %02x Unk:%x", state->eq8155_port_c, state->eq8155_port_a, state->ay_port_a, state->ay_port_b, state->eq_cymbal_ctrl & 15);
@@ -1859,7 +1859,7 @@ ROM_END
 
 static void unpack_block( running_machine *machine, const char *region, int offset, int size )
 {
-	UINT8 *rom = memory_region(machine, region);
+	uint8_t *rom = memory_region(machine, region);
 	int i;
 
 	for (i = 0; i < size; ++i)

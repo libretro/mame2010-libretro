@@ -187,11 +187,11 @@ static int sc2gui_update_mmtr;	// bit pattern which mechanical meter needs updat
 
 // local vars /////////////////////////////////////////////////////////////
 
-static UINT8 *nvram;		// pointer to NVRAM
+static uint8_t *nvram;		// pointer to NVRAM
 static size_t nvram_size;	// size of NVRAM
-static UINT8 key[16];		// security device on gamecard (video games only)
+static uint8_t key[16];		// security device on gamecard (video games only)
 
-static UINT8 e2ram[1024];	// x24C08 e2ram
+static uint8_t e2ram[1024];	// x24C08 e2ram
 
 static int mmtr_latch;		// mechanical meter latch
 static int triac_latch;		// payslide triac latch
@@ -236,10 +236,10 @@ static int watchdog_kicked;
 
 // user interface stuff ///////////////////////////////////////////////////
 
-static UINT8 Lamps[256];
-static UINT8 sc2_Inputs[64];
+static uint8_t Lamps[256];
+static uint8_t sc2_Inputs[64];
 
-static UINT8 input_override[64];// bit pattern, bit set means this input is overriden and cannot be changed with switches
+static uint8_t input_override[64];// bit pattern, bit set means this input is overriden and cannot be changed with switches
 
 /*      INPUTS layout
 
@@ -367,7 +367,7 @@ send data to them, although obviously there's no response. */
 	// init rom bank ////////////////////////////////////////////////////////
 
 	{
-		UINT8 *rom = memory_region(machine, "maincpu");
+		uint8_t *rom = memory_region(machine, "maincpu");
 
 		memory_configure_bank(machine, "bank1", 0, 1, &rom[0x10000], 0);
 		memory_configure_bank(machine, "bank1", 1, 3, &rom[0x02000], 0x02000);
@@ -440,7 +440,7 @@ int Scorpion2_GetSwitchState(int strobe, int data)
 
 static NVRAM_HANDLER( bfm_sc2 )
 {
-	static const UINT8 init_e2ram[10] = { 1, 4, 10, 20, 0, 1, 1, 4, 10, 20 };
+	static const uint8_t init_e2ram[10] = { 1, 4, 10, 20, 0, 1, 1, 4, 10, 20 };
 	if ( read_or_write )
 	{	// writing
 		mame_fwrite(file,nvram,nvram_size);
@@ -600,7 +600,7 @@ static WRITE8_HANDLER( mmtr_w )
 {
 	int i;
 	int  changed = mmtr_latch ^ data;
-	UINT64 cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
+	uint64_t cycles  = downcast<cpu_device *>(space->cpu)->total_cycles();
 
 	mmtr_latch = data;
 
@@ -1412,29 +1412,29 @@ static int read_e2ram(void)
 	return e2data_pin;
 }
 
-static const UINT16 AddressDecode[]=
+static const uint16_t AddressDecode[]=
 {
 	0x0800,0x1000,0x0001,0x0004,0x0008,0x0020,0x0080,0x0200,
 	0x0100,0x0040,0x0002,0x0010,0x0400,0x2000,0x4000,0x8000,
 	0
 };
 
-static const UINT8 DataDecode[]=
+static const uint8_t DataDecode[]=
 {
 	0x02,0x08,0x20,0x40,0x10,0x04,0x01,0x80,
 	0
 };
 
-static UINT8 codec_data[256];
+static uint8_t codec_data[256];
 
 ///////////////////////////////////////////////////////////////////////////
 static void decode_mainrom(running_machine *machine, const char *rom_region)
 {
-	UINT8 *tmp, *rom;
+	uint8_t *tmp, *rom;
 
 	rom = memory_region(machine, rom_region);
 
-	tmp = auto_alloc_array(machine, UINT8, 0x10000);
+	tmp = auto_alloc_array(machine, uint8_t, 0x10000);
 	{
 		int i;
 		long address;
@@ -1443,10 +1443,10 @@ static void decode_mainrom(running_machine *machine, const char *rom_region)
 
 		for ( i = 0; i < 256; i++ )
 		{
-			UINT8 data,pattern,newdata,*tab;
+			uint8_t data,pattern,newdata,*tab;
 			data    = i;
 
-			tab     = (UINT8*)DataDecode;
+			tab     = (uint8_t*)DataDecode;
 			pattern = 0x01;
 			newdata = 0;
 
@@ -1462,9 +1462,9 @@ static void decode_mainrom(running_machine *machine, const char *rom_region)
 		for ( address = 0; address < 0x10000; address++)
 		{
 			int	newaddress,pattern;
-			UINT16 *tab;
+			uint16_t *tab;
 
-			tab      = (UINT16*)AddressDecode;
+			tab      = (uint16_t*)AddressDecode;
 			pattern  = 0x0001;
 			newaddress = 0;
 			do
@@ -2254,7 +2254,7 @@ MACHINE_DRIVER_END
 
 static void sc2_common_init(running_machine *machine, int decrypt)
 {
-	UINT8 *rom;
+	uint8_t *rom;
 
 	if (decrypt) decode_mainrom(machine, "maincpu");		  // decode main rom
 
@@ -2269,7 +2269,7 @@ static void sc2_common_init(running_machine *machine, int decrypt)
 
 static void adder2_common_init(running_machine *machine)
 {
-	UINT8 *pal;
+	uint8_t *pal;
 
 	pal = memory_region(machine, "proms");
 	if ( pal )

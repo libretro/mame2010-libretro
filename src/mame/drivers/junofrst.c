@@ -415,7 +415,7 @@ ROM_END
 
 static DRIVER_INIT( junofrst )
 {
-	UINT8 *decrypted = konami1_decode(machine, "maincpu");
+	uint8_t *decrypted = konami1_decode(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 16, memory_region(machine, "maincpu") + 0x10000, 0x1000);
 	memory_configure_bank_decrypted(machine, "bank1", 0, 16, decrypted + 0x10000, 0x1000);

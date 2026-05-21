@@ -797,13 +797,13 @@ static WRITE16_HANDLER(md0_w)
 
 static WRITE16_HANDLER(p_w)
 {
-	UINT16 old = space->machine->generic.paletteram.u16[offset];
+	uint16_t old = space->machine->generic.paletteram.u16[offset];
 	paletteram16_xBBBBBGGGGGRRRRR_word_w(space, offset, data, mem_mask);
 	if(0 && space->machine->generic.paletteram.u16[offset] != old)
 		logerror("XVIDEO: p_w %x, %04x @ %04x (%x)\n", offset, data, mem_mask, cpu_get_pc(space->cpu));
 }
 
-static UINT16 *mr;
+static uint16_t *mr;
 static WRITE16_HANDLER(mr_w)
 {
 	COMBINE_DATA(mr+offset);
@@ -811,7 +811,7 @@ static WRITE16_HANDLER(mr_w)
 		logerror("MR.w %x, %04x @ %04x (%x)\n", offset*2+0x500000, data, mem_mask, cpu_get_pc(space->cpu));
 }
 
-static UINT16 *mr2;
+static uint16_t *mr2;
 static WRITE16_HANDLER(mr2_w)
 {
 	COMBINE_DATA(mr2+offset);
@@ -959,7 +959,7 @@ ADDRESS_MAP_END
 
 static READ16_HANDLER( m1_snd_68k_latch_r )
 {
-	UINT16 retval;
+	uint16_t retval;
 
 	retval = to_68k[fifo_rptr];
 

@@ -37,7 +37,7 @@ Known issues:
 static INTERRUPT_GEN ( bwp1_interrupt )
 {
 	bwing_state *state = (bwing_state *)device->machine->driver_data;
-	UINT8 latch_data;
+	uint8_t latch_data;
 
 	switch (cpu_getiloops(device))
 	{
@@ -630,9 +630,9 @@ ROM_END
 static void fix_bwp3( running_machine *machine )
 {
 	bwing_state *state = (bwing_state *)machine->driver_data;
-	UINT8 *rom = state->bwp3_rombase;
+	uint8_t *rom = state->bwp3_rombase;
 	int i, j = state->bwp3_romsize;
-	UINT8 ah, al;
+	uint8_t ah, al;
 
 	// swap nibbles
 	for (i = 0; i < j; i++) { ah = al = rom[i]; rom[i] = (ah >> 4) | (al << 4); }

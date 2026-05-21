@@ -61,15 +61,15 @@ Dip sw.2
 #include "emu.h"
 #include "cpu/m68000/m68000.h"
 
-static UINT16 littlerb_vdp_address_low;
-static UINT16 littlerb_vdp_address_high;
-static UINT16 littlerb_vdp_writemode;
-static UINT32 littlerb_write_address;
+static uint16_t littlerb_vdp_address_low;
+static uint16_t littlerb_vdp_address_high;
+static uint16_t littlerb_vdp_writemode;
+static uint32_t littlerb_write_address;
 
 
-static UINT16* littlerb_region4;
+static uint16_t* littlerb_region4;
 
-static UINT8 paldac[3][0x80];
+static uint8_t paldac[3][0x80];
 
 static int paldac_select = 0;
 static int paldac_offset = 0;
@@ -160,9 +160,9 @@ class littlerb_vdp_device_config : public device_config,
 								 public device_config_memory_interface
 {
 	friend class littlerb_vdp_device;
-	littlerb_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock);
+	littlerb_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock);
 public:
-	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+	static device_config *static_alloc_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	{
 		return global_alloc(littlerb_vdp_device_config(mconfig, tag, owner, clock));
 	}
@@ -188,7 +188,7 @@ littlerb_vdp_device::littlerb_vdp_device(running_machine &_machine, const little
 {
 }
 
-littlerb_vdp_device_config::littlerb_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, UINT32 clock)
+littlerb_vdp_device_config::littlerb_vdp_device_config(const machine_config &mconfig, const char *tag, const device_config *owner, uint32_t clock)
 	: device_config(mconfig, static_alloc_device_config, "LITTLERBVDP", tag, owner, clock),
 	  device_config_memory_interface(mconfig, *this),
 	  m_space_config("littlerb_vdp", ENDIANNESS_LITTLE, 16,32, 0, NULL, *ADDRESS_MAP_NAME(littlerb_vdp_map8))
@@ -210,9 +210,9 @@ static void littlerb_recalc_regs(void)
 
 
 
-static void littlerb_data_write(running_machine *machine, UINT16 data, UINT16 mem_mask)
+static void littlerb_data_write(running_machine *machine, uint16_t data, uint16_t mem_mask)
 {
-	UINT32 addr = littlerb_write_address>>4; // is this right? should we shift?
+	uint32_t addr = littlerb_write_address>>4; // is this right? should we shift?
 	const address_space *vdp_space = machine->device<littlerb_vdp_device>("littlerbvdp")->space();
 
 
@@ -257,7 +257,7 @@ static READ16_HANDLER( littlerb_vdp_r )
 
 #define LOG_VDP 0
 static int type2_writes = 0;
-static UINT32 lasttype2pc = 0;
+static uint32_t lasttype2pc = 0;
 static WRITE16_HANDLER( littlerb_vdp_w )
 {
 
@@ -421,7 +421,7 @@ INPUT_PORTS_END
 
 static void draw_sprite(bitmap_t *bitmap, int xsize,int ysize, int offset, int xpos, int ypos, int pal )
 {
-	UINT16* spritegfx = littlerb_region4;
+	uint16_t* spritegfx = littlerb_region4;
 	int x,y;
 	//int pal = 1;
 
@@ -430,8 +430,8 @@ static void draw_sprite(bitmap_t *bitmap, int xsize,int ysize, int offset, int x
 		for (x=0;x<xsize;x++)
 		{
 			int drawxpos, drawypos;
-			UINT8 pix1 = spritegfx[offset]&0x0f;
-			UINT8 pix2 = (spritegfx[offset]>>8)&0x0f;
+			uint8_t pix1 = spritegfx[offset]&0x0f;
+			uint8_t pix2 = (spritegfx[offset]>>8)&0x0f;
 			drawxpos = xpos+x*2;
 			drawypos = ypos+y;
 
@@ -462,7 +462,7 @@ static VIDEO_UPDATE(littlerb)
 	int x,y,offs, code;
 	int xsize,ysize;
 	int pal;
-	UINT16* spriteregion = &littlerb_region4[0x400];
+	uint16_t* spriteregion = &littlerb_region4[0x400];
 	bitmap_fill(bitmap, cliprect, get_black_pen(screen->machine));
 	//printf("frame\n");
 	/* the spriteram format is something like this .. */

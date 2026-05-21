@@ -190,13 +190,13 @@ Notes:
 #include "cdrom.h"
 #include "cpu/powerpc/ppc.h"
 
-static UINT64 *main_ram;
+static uint64_t *main_ram;
 
-static UINT32 vdl0_address;
-static UINT32 vdl1_address;
+static uint32_t vdl0_address;
+static uint32_t vdl1_address;
 
-static UINT32 irq_enable;
-static UINT32 irq_active;
+static uint32_t irq_enable;
+static uint32_t irq_active;
 
 static VIDEO_START( m2 )
 {
@@ -206,19 +206,19 @@ static VIDEO_UPDATE( m2 )
 {
 	int i, j;
 
-	UINT32 fb_start = 0xffffffff;
+	uint32_t fb_start = 0xffffffff;
 	if (vdl0_address != 0)
 	{
-		fb_start = *(UINT32*)&main_ram[(vdl0_address - 0x40000000) / 8] - 0x40000000;
+		fb_start = *(uint32_t*)&main_ram[(vdl0_address - 0x40000000) / 8] - 0x40000000;
 	}
 
 	if (fb_start <= 0x800000)
 	{
-		UINT16 *frame = (UINT16*)&main_ram[fb_start/8];
+		uint16_t *frame = (uint16_t*)&main_ram[fb_start/8];
 		for (j=0; j < 384; j++)
 		{
-			UINT16 *fb = &frame[(j*512)];
-			UINT16 *d = BITMAP_ADDR16(bitmap, j, 0);
+			uint16_t *fb = &frame[(j*512)];
+			uint16_t *d = BITMAP_ADDR16(bitmap, j, 0);
 			for (i=0; i < 512; i++)
 			{
 				d[i^3] = *fb++ & 0x7fff;
@@ -234,11 +234,11 @@ static VIDEO_UPDATE( m2 )
 
 static READ64_HANDLER(irq_enable_r)
 {
-	UINT64 r = 0;
+	uint64_t r = 0;
 
 	if (ACCESSING_BITS_32_63)
 	{
-		r |= (UINT64)(irq_enable) << 32;
+		r |= (uint64_t)(irq_enable) << 32;
 	}
 
 	return r;
@@ -248,17 +248,17 @@ static WRITE64_HANDLER(irq_enable_w)
 {
 	if (ACCESSING_BITS_32_63)
 	{
-		irq_enable |= (UINT32)(data >> 32);
+		irq_enable |= (uint32_t)(data >> 32);
 	}
 }
 
 static READ64_HANDLER(irq_active_r)
 {
-	UINT64 r = 0;
+	uint64_t r = 0;
 
 	if (ACCESSING_BITS_32_63)
 	{
-		r |= (UINT64)(irq_active) << 32;
+		r |= (uint64_t)(irq_active) << 32;
 	}
 
 	return r;
@@ -277,29 +277,29 @@ static READ64_HANDLER(unk2_r)
 {
 	if (ACCESSING_BITS_32_63)
 	{
-		return (UINT64)0xa5 << 32;
+		return (uint64_t)0xa5 << 32;
 	}
 	return 0;
 }
 #endif
 
-static UINT64 unk3;
+static uint64_t unk3;
 static READ64_HANDLER(unk3_r)
 {
 	//return U64(0xffffffffffffffff);
 	return unk3;
 }
 
-static UINT32 unk20004 = 0;
+static uint32_t unk20004 = 0;
 static READ64_HANDLER(unk4_r)
 {
-	UINT64 r = 0;
-//  logerror("unk4_r: %08X, %08X%08X at %08X\n", offset, (UINT32)(mem_mask>>32), (UINT32)(mem_mask), cpu_get_pc(space->cpu));
+	uint64_t r = 0;
+//  logerror("unk4_r: %08X, %08X%08X at %08X\n", offset, (uint32_t)(mem_mask>>32), (uint32_t)(mem_mask), cpu_get_pc(space->cpu));
 
 	if (ACCESSING_BITS_32_63)
 	{
 		// MCfg
-		r |= (UINT64)((0 << 13) | (5 << 10)) << 32;
+		r |= (uint64_t)((0 << 13) | (5 << 10)) << 32;
 	}
 	if (ACCESSING_BITS_0_31)
 	{
@@ -310,8 +310,8 @@ static READ64_HANDLER(unk4_r)
 
 static WRITE64_HANDLER(unk4_w)
 {
-//  logerror("unk4_w: %08X%08X, %08X, %08X%08X at %08X\n", (UINT32)(data >> 32), (UINT32)(data),
-//      offset, (UINT32)(mem_mask>>32), (UINT32)(mem_mask), cpu_get_pc(space->cpu));
+//  logerror("unk4_w: %08X%08X, %08X, %08X%08X at %08X\n", (uint32_t)(data >> 32), (uint32_t)(data),
+//      offset, (uint32_t)(mem_mask>>32), (uint32_t)(mem_mask), cpu_get_pc(space->cpu));
 
 	if (ACCESSING_BITS_0_31)
 	{
@@ -321,7 +321,7 @@ static WRITE64_HANDLER(unk4_w)
 			cputag_set_input_line(space->machine, "sub", INPUT_LINE_IRQ0, ASSERT_LINE);
 		}
 
-		unk20004 = (UINT32)(data);
+		unk20004 = (uint32_t)(data);
 		return;
 	}
 }
@@ -330,7 +330,7 @@ static int counter1 = 0;
 static READ64_HANDLER(unk30000_r)
 {
 	counter1++;
-	return (UINT64)(counter1 & 0x7f) << 32;
+	return (uint64_t)(counter1 & 0x7f) << 32;
 }
 
 static READ64_HANDLER(unk30030_r)
@@ -346,11 +346,11 @@ static WRITE64_HANDLER(video_w)
 {
 	if (ACCESSING_BITS_32_63)
 	{
-		vdl0_address = (UINT32)(data >> 32);
+		vdl0_address = (uint32_t)(data >> 32);
 	}
 	if (ACCESSING_BITS_0_31)
 	{
-		vdl1_address = (UINT32)(data);
+		vdl1_address = (uint32_t)(data);
 	}
 }
 
@@ -371,7 +371,7 @@ static READ64_HANDLER(unk4000280_r)
 {
 	// SysCfg
 
-	UINT32 sys_config = 0x03600000;
+	uint32_t sys_config = 0x03600000;
 
 	sys_config |= 0 << 0;			// Bit 0:       PAL/NTSC switch (default is selected by encoder)
 	sys_config |= 0 << 2;			// Bit 2-3:     Video Encoder (0 = MEIENC, 1 = VP536, 2 = BT9103, 3 = DENC)
@@ -387,7 +387,7 @@ static READ64_HANDLER(unk4000280_r)
 									//              0xf = Multiplayer (not allowed)
 	sys_config |= 3 << 29;			// Bit 29-30:   Audio chip (1 = CS4216, 3 = Asahi AK4309)
 
-	return ((UINT64)(sys_config) << 32);
+	return ((uint64_t)(sys_config) << 32);
 
 }
 
@@ -399,7 +399,7 @@ static WRITE64_HANDLER(unk4000010_w)
 	}
 	else
 	{
-		mame_printf_debug("%c", (UINT8)(data & 0xff));
+		mame_printf_debug("%c", (uint8_t)(data & 0xff));
 	}
 }
 
@@ -425,9 +425,9 @@ static WRITE64_HANDLER(reset_w)
 
 typedef struct
 {
-	UINT32 dst_addr;
+	uint32_t dst_addr;
 	int length;
-	UINT32 next_dst_addr;
+	uint32_t next_dst_addr;
 	int next_length;
 	int dma_done;
 } CDE_DMA;
@@ -436,10 +436,10 @@ typedef struct
 #define CDE_DRIVE_STATE_SEEK_DONE		0x03
 
 static int cde_num_status_bytes = 0;
-static UINT32 cde_status_bytes[16];
+static uint32_t cde_status_bytes[16];
 static int cde_status_byte_ptr = 0;
 
-static UINT32 cde_command_bytes[16];
+static uint32_t cde_command_bytes[16];
 static int cde_command_byte_ptr = 0;
 
 static int cde_response = 0;
@@ -788,7 +788,7 @@ static void cde_handle_reports(void)
 
 static void cde_dma_transfer(const address_space *space, int channel, int next)
 {
-	UINT32 address;
+	uint32_t address;
 	//int length;
 	int i;
 
@@ -812,7 +812,7 @@ static void cde_dma_transfer(const address_space *space, int channel, int next)
 
 static READ64_HANDLER(cde_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	int reg = offset * 2;
 
 	if (ACCESSING_BITS_0_31)
@@ -877,27 +877,27 @@ static READ64_HANDLER(cde_r)
 
 	if (reg & 1)
 	{
-		return (UINT64)(r);
+		return (uint64_t)(r);
 	}
 	else
 	{
-		return (UINT64)(r) << 32;
+		return (uint64_t)(r) << 32;
 	}
 }
 
 static WRITE64_HANDLER(cde_w)
 {
 	int reg = offset * 2;
-	UINT32 d;
+	uint32_t d;
 
 	if (ACCESSING_BITS_0_31)
 	{
 		reg++;
-		d = (UINT32)(data);
+		d = (uint32_t)(data);
 	}
 	else
 	{
-		d = (UINT32)(data >> 32);
+		d = (uint32_t)(data >> 32);
 	}
 
 	switch (reg)
@@ -1040,7 +1040,7 @@ static WRITE64_HANDLER(cde_w)
 
 static READ64_HANDLER(device2_r)
 {
-	UINT32 r = 0;
+	uint32_t r = 0;
 	int reg = offset * 2;
 
 	if (ACCESSING_BITS_0_31)
@@ -1061,21 +1061,21 @@ static READ64_HANDLER(device2_r)
 
 	if (reg & 1)
 	{
-		return (UINT64)(r);
+		return (uint64_t)(r);
 	}
 	else
 	{
-		return (UINT64)(r) << 32;
+		return (uint64_t)(r) << 32;
 	}
 }
 
 static READ64_HANDLER(cpu_r)
 {
-	UINT64 r = 0;
+	uint64_t r = 0;
 
 	if (ACCESSING_BITS_32_63)
 	{
-		r = (UINT64)((space->cpu != space->machine->device("maincpu")) ? 0x80000000 : 0);
+		r = (uint64_t)((space->cpu != space->machine->device("maincpu")) ? 0x80000000 : 0);
 		//r |= 0x40000000;  // sets Video-LowRes !?
 		return r << 32;
 	}

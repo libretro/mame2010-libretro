@@ -72,7 +72,7 @@ static VIDEO_START( feversoc )
 
 static VIDEO_UPDATE( feversoc )
 {
-	UINT32 *spriteram32 = screen->machine->generic.spriteram.u32;
+	uint32_t *spriteram32 = screen->machine->generic.spriteram.u32;
 	int offs,spr_offs,colour,sx,sy,h,w,dx,dy;
 
 	bitmap_fill(bitmap, cliprect, screen->machine->pens[0]); //black pen
@@ -119,7 +119,7 @@ static WRITE32_HANDLER( fs_paletteram_w )
 
 static READ32_HANDLER( in0_r )
 {
-	static UINT16 x;
+	static uint16_t x;
 
 	x^=0x40; //vblank? eeprom read bit?
 	return (input_port_read(space->machine, "IN0") | x) | (input_port_read(space->machine, "IN1")<<16);

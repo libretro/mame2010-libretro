@@ -145,7 +145,7 @@ static READ8_HANDLER( changela_31_r )
 	/* If the new value is less than the old value, and it did not wrap around,
        or if the new value is greater than the old value, and it did wrap around,
        then we are moving LEFT. */
-	UINT8 curr_value = input_port_read(space->machine, "WHEEL");
+	uint8_t curr_value = input_port_read(space->machine, "WHEEL");
 
 	if ((curr_value < state->prev_value_31 && (state->prev_value_31 - curr_value) < 0x80)
 	||  (curr_value > state->prev_value_31 && (curr_value - state->prev_value_31) > 0x80))

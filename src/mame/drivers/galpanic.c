@@ -124,7 +124,7 @@ The current set of Super Model is an example of type C
 #include "sound/okim6295.h"
 #include "video/kan_pand.h"
 
-extern UINT16 *galpanic_bgvideoram,*galpanic_fgvideoram;
+extern uint16_t *galpanic_bgvideoram,*galpanic_fgvideoram;
 extern size_t galpanic_fgvideoram_size;
 
 PALETTE_INIT( galpanic );
@@ -167,7 +167,7 @@ static WRITE16_HANDLER( galpanic_6295_bankswitch_w )
 
 	if (ACCESSING_BITS_8_15)
 	{
-		UINT8 *rom = memory_region(space->machine, "oki");
+		uint8_t *rom = memory_region(space->machine, "oki");
 
 		memcpy(&rom[0x30000],&rom[0x40000 + ((data >> 8) & 0x0f) * 0x10000],0x10000);
 
@@ -180,7 +180,7 @@ static WRITE16_HANDLER( galpanica_6295_bankswitch_w )
 {
 	if (ACCESSING_BITS_8_15)
 	{
-		UINT8 *rom = memory_region(space->machine, "oki");
+		uint8_t *rom = memory_region(space->machine, "oki");
 
 		memcpy(&rom[0x30000],&rom[0x40000 + ((data >> 8) & 0x0f) * 0x10000],0x10000);
 	}
@@ -249,7 +249,7 @@ static READ16_HANDLER( kludge )
 /* a kludge! */
 static READ8_DEVICE_HANDLER( comad_okim6295_r )
 {
-	UINT16 retvalue;
+	uint16_t retvalue;
 
 //  retvalue = okim6295_r(offset,mem_mask) << 8; // doesn't work, causes lockups when girls change..
 	retvalue = mame_rand(device->machine);

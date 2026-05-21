@@ -90,12 +90,12 @@
 
 /* local variables */
 static cpu_device *maincpu;
-static UINT8 last_analog_input[2];
-static UINT8 last_analog_output[2];
+static uint8_t last_analog_input[2];
+static uint8_t last_analog_output[2];
 
 /* random number generator states */
-static UINT8 *poly17 = NULL;
-static UINT8 *rand17 = NULL;
+static uint8_t *poly17 = NULL;
+static uint8_t *rand17 = NULL;
 
 /* local prototypes */
 static void poly17_init(running_machine *machine);
@@ -187,7 +187,7 @@ static MACHINE_RESET( gridlee )
 static READ8_HANDLER( analog_port_r )
 {
 	int delta, sign, magnitude;
-	UINT8 newval;
+	uint8_t newval;
 	static const char *const portnames[] = { "TRACK0_Y", "TRACK0_X", "TRACK1_Y", "TRACK1_X" };
 
 	/* first read the new trackball value and compute the signed delta */
@@ -238,11 +238,11 @@ static READ8_HANDLER( analog_port_r )
 
 static void poly17_init(running_machine *machine)
 {
-	UINT32 i, x = 0;
-	UINT8 *p, *r;
+	uint32_t i, x = 0;
+	uint8_t *p, *r;
 
 	/* allocate memory */
-	p = poly17 = auto_alloc_array(machine, UINT8, 2 * (POLY17_SIZE + 1));
+	p = poly17 = auto_alloc_array(machine, uint8_t, 2 * (POLY17_SIZE + 1));
 	r = rand17 = poly17 + POLY17_SIZE + 1;
 
 	/* generate the polynomial */
@@ -267,7 +267,7 @@ static void poly17_init(running_machine *machine)
 
 static READ8_HANDLER( random_num_r )
 {
-	UINT32 cc;
+	uint32_t cc;
 
 	/* CPU runs at 1.25MHz, noise source at 100kHz --> multiply by 12.5 */
 	cc = maincpu->total_cycles();

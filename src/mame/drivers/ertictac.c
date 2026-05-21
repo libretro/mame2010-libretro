@@ -31,10 +31,10 @@ TODO:
 
 #define NUM_PENS	(0x100)
 
-static UINT32 *ertictac_mainram;
-static UINT32 *ertictac_videoram;
-static UINT32 IRQSTA, IRQMSKA, IRQMSKB, FIQMSK, T1low, T1high;
-static UINT32 vidFIFO[256];
+static uint32_t *ertictac_mainram;
+static uint32_t *ertictac_videoram;
+static uint32_t IRQSTA, IRQMSKA, IRQMSKB, FIQMSK, T1low, T1high;
+static uint32_t vidFIFO[256];
 static pen_t pens[NUM_PENS];
 
 static WRITE32_HANDLER(video_fifo_w)
@@ -348,10 +348,10 @@ static VIDEO_START( ertictac )
 
 	for (color = 0; color < NUM_PENS; color++)
 	{
-		UINT8 i = color & 0x03;
-		UINT8 r = ((color & 0x04) >> 0) | ((color & 0x10) >> 1) | i;
-		UINT8 g = ((color & 0x20) >> 3) | ((color & 0x40) >> 3) | i;
-		UINT8 b = ((color & 0x08) >> 1) | ((color & 0x80) >> 4) | i;
+		uint8_t i = color & 0x03;
+		uint8_t r = ((color & 0x04) >> 0) | ((color & 0x10) >> 1) | i;
+		uint8_t g = ((color & 0x20) >> 3) | ((color & 0x40) >> 3) | i;
+		uint8_t b = ((color & 0x08) >> 1) | ((color & 0x80) >> 4) | i;
 
 		pens[color] = MAKE_RGB(pal4bit(r), pal4bit(g), pal4bit(b));
 	}

@@ -287,15 +287,15 @@ static VIDEO_UPDATE( metalmx )
 	/* TODO: TMS34020 should take care of this */
 	metalmx_state *state = (metalmx_state *)screen->machine->driver_data;
 
-//  UINT32 *src_base = &gsp_vram[(vreg_base[0x40/4] & 0x40) ? 0x20000 : 0];
-	UINT16 *src_base = state->gsp_vram;
+//  uint32_t *src_base = &gsp_vram[(vreg_base[0x40/4] & 0x40) ? 0x20000 : 0];
+	uint16_t *src_base = state->gsp_vram;
 	int y;
 
 	for (y = 0; y < 384; ++y)
 	{
 		int x;
-		UINT16 *src = &src_base[512 * y];
-		UINT16 *dst = BITMAP_ADDR16(bitmap, y, 0);
+		uint16_t *src = &src_base[512 * y];
+		uint16_t *dst = BITMAP_ADDR16(bitmap, y, 0);
 
 		for(x = 0; x < 512; x++)
 			*dst++ = *src++;
@@ -352,7 +352,7 @@ static WRITE32_HANDLER( reset_w )
 
 static READ32_HANDLER( sound_data_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 
 	if (ACCESSING_BITS_0_15)
 		result |= cage_control_r();
@@ -397,7 +397,7 @@ static WRITE32_HANDLER( dsp32c_1_w )
 static READ32_HANDLER( dsp32c_1_r )
 {
 	metalmx_state *state = (metalmx_state *)space->machine->driver_data;
-	UINT32 data;
+	uint32_t data;
 
 	offset <<= 1;
 
@@ -429,7 +429,7 @@ static WRITE32_HANDLER( dsp32c_2_w )
 static READ32_HANDLER( dsp32c_2_r )
 {
 	metalmx_state *state = (metalmx_state *)space->machine->driver_data;
-	UINT32 data;
+	uint32_t data;
 
 	offset <<= 1;
 
@@ -462,7 +462,7 @@ static WRITE32_HANDLER( host_gsp_w )
 static READ32_HANDLER( host_gsp_r )
 {
 	const address_space *gsp_space = cputag_get_address_space(space->machine, "gsp", ADDRESS_SPACE_PROGRAM);
-	UINT32 val;
+	uint32_t val;
 
 	val  = memory_read_word(gsp_space, (0xc0000000 + (offset << 5) + 0x10) / 8);
 	val |= memory_read_word(gsp_space, (0xc0000000 + (offset << 5)) / 8) << 16;
@@ -784,7 +784,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( metalmx )
 {
-	UINT8 *adsp_boot = (UINT8*)memory_region(machine, "adsp");
+	uint8_t *adsp_boot = (uint8_t*)memory_region(machine, "adsp");
 	metalmx_state *state = (metalmx_state *)machine->driver_data;
 
 	state->maincpu = machine->device("maincpu");

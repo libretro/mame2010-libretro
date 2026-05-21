@@ -294,7 +294,7 @@ static WRITE8_DEVICE_HANDLER( asuka_msm5205_stop_w )
 	state->adpcm_pos &= 0xff00;
 }
 
-static UINT8 *cadash_shared_ram;
+static uint8_t *cadash_shared_ram;
 
 static READ16_HANDLER( cadash_share_r )
 {

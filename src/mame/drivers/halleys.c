@@ -204,13 +204,13 @@ Video sync   6 F   Video sync                 Post   6 F   Post
 #define CLIP_H              (VIS_MAXY - VIS_MINY + 1)
 #define CLIP_BYTEW          (CLIP_W << 1)
 
-static UINT16 *render_layer[MAX_LAYERS];
-static UINT8 sound_fifo[MAX_SOUNDS];
-static UINT8 *gfx_plane02, *gfx_plane13, *collision_list;
-static UINT8 *scrolly0, *scrollx0, *scrolly1, *scrollx1;
-static UINT32 *internal_palette, *alpha_table;
+static uint16_t *render_layer[MAX_LAYERS];
+static uint8_t sound_fifo[MAX_SOUNDS];
+static uint8_t *gfx_plane02, *gfx_plane13, *collision_list;
+static uint8_t *scrolly0, *scrollx0, *scrolly1, *scrollx1;
+static uint32_t *internal_palette, *alpha_table;
 
-static UINT8 *cpu1_base, *gfx1_base, *blitter_ram, *io_ram;
+static uint8_t *cpu1_base, *gfx1_base, *blitter_ram, *io_ram;
 static size_t blitter_ramsize, io_ramsize;
 
 static int game_id, blitter_busy, collision_count, stars_enabled, bgcolor, ffcount, ffhead, fftail;
@@ -290,21 +290,21 @@ static void blit(int offset)
 #define XMASK (SCREEN_WIDTH-1)
 #define YMASK (SCREEN_HEIGHT-1)
 
-	static const UINT8 penxlat[16]={0x03,0x07,0x0b,0x0f,0x02,0x06,0x0a,0x0e,0x01,0x05,0x09,0x0d,0x00,0x04,0x08,0x0c};
-	static const UINT8 rgbmask[16]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xfc,0xff,0xff,0xff,0xff,0xff};
-	static const UINT8 tyremap[ 8]={ 0, 5, 9,13,16,20,24,28};
+	static const uint8_t penxlat[16]={0x03,0x07,0x0b,0x0f,0x02,0x06,0x0a,0x0e,0x01,0x05,0x09,0x0d,0x00,0x04,0x08,0x0c};
+	static const uint8_t rgbmask[16]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xfc,0xff,0xff,0xff,0xff,0xff};
+	static const uint8_t tyremap[ 8]={ 0, 5, 9,13,16,20,24,28};
 
-	UINT8 *param, *src_base;
-	UINT16 *dst_base;
+	uint8_t *param, *src_base;
+	uint16_t *dst_base;
 	int stptr, mode, color, code, y, x, h, w, src1, src2;
 	int status, flags, group, command, bank, layer, pen0, pen1;
 	int yclip, xclip, src_yskip, src_xskip, dst_skip, hclip, wclip, src_dy, src_dx;
-	UINT32 *pal_ptr;
-	UINT8 *src1_ptr, *src2_ptr; // esi alias, ebx alias
-	UINT16 *dst_ptr;             // edi alias
+	uint32_t *pal_ptr;
+	uint8_t *src1_ptr, *src2_ptr; // esi alias, ebx alias
+	uint16_t *dst_ptr;             // edi alias
 	void *edi;                 // scratch
 	int eax, ebx, ecx, edx;    // scratch
-	UINT16 ax; UINT8 al, ah;      // partial regs
+	uint16_t ax; uint8_t al, ah;      // partial regs
 
 
 	param = blitter_ram + offset;
@@ -429,7 +429,7 @@ if (0) {
 	if (src1 == src2)
 	{
 		flags |= SINGLE_PEN;
-		eax = (UINT32)penxlat[color & PENCOLOR];
+		eax = (uint32_t)penxlat[color & PENCOLOR];
 		if (eax) pen1 = pen0 + eax;
 	}
 	else if (color & PENCOLOR) flags |= RGB_MASK;
@@ -441,7 +441,7 @@ if (0) {
 	eax = wclip<<1; \
 	ecx = hclip; \
 	edi = dst_ptr; \
-	do { memset((UINT8*)edi, 0, eax); edi = (UINT8*)edi + SCREEN_BYTEWIDTH; } while (--ecx); \
+	do { memset((uint8_t*)edi, 0, eax); edi = (uint8_t*)edi + SCREEN_BYTEWIDTH; } while (--ecx); \
 }
 
 //--------------------------------------------------------------------------
@@ -457,7 +457,7 @@ if (0) {
 
 		if (flags & PPCD_ON) goto COLLISION_MODE;
 
-		al = ah = (UINT8)pen0;
+		al = ah = (uint8_t)pen0;
 
 		if (!(flags & BACKMODE))
 		{
@@ -467,7 +467,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (UINT16)al;  al = ah;}
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al;  al = ah;}
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -482,7 +482,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (UINT16)al | SP_2BACK;  al = ah; }
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al | SP_2BACK;  al = ah; }
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -503,7 +503,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { dst_ptr[ecx] = (UINT16)al | SP_COLLD; } // set collision flag on group one pixels
+					if (al & 0xf) { dst_ptr[ecx] = (uint16_t)al | SP_COLLD; } // set collision flag on group one pixels
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -518,7 +518,7 @@ if (0) {
 					src1_ptr += edx;
 					al |= *src2_ptr;
 					src2_ptr += edx;
-					if (al & 0xf) { ax |= dst_ptr[ecx]; dst_ptr[ecx] = (UINT16)al; } // combine collision flags in ax
+					if (al & 0xf) { ax |= dst_ptr[ecx]; dst_ptr[ecx] = (uint16_t)al; } // combine collision flags in ax
 				}
 				while (++ecx);
 				ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -548,7 +548,7 @@ if (0) {
 
 		dst_ptr += wclip;
 		ecx = wclip = -wclip;
-		al = ah = (UINT8)pen0;
+		al = ah = (uint8_t)pen0;
 		ebx = rgbmask[color & PENCOLOR] | 0xffffff00;
 
 		do {
@@ -557,7 +557,7 @@ if (0) {
 				src1_ptr += src_dx;
 				al |= *src2_ptr;
 				src2_ptr += src_dx;
-				if (al & 0xf) { edx = (UINT32)al;  al = ah;  dst_ptr[ecx] = pal_ptr[edx] & ebx; }
+				if (al & 0xf) { edx = (uint32_t)al;  al = ah;  dst_ptr[ecx] = pal_ptr[edx] & ebx; }
 			}
 			while (++ecx);
 			ecx = wclip; src1_ptr += src_dy; src2_ptr += src_dy; dst_ptr += SCREEN_WIDTH;
@@ -577,7 +577,7 @@ if (0) {
 		ebx = hclip;
 		ecx = wclip = -wclip;
 		edx = src_dx;
-		ax = (UINT16)pen1;
+		ax = (uint16_t)pen1;
 
 		do {
 			do {
@@ -749,12 +749,12 @@ COMMAND_MODE:
 		for (yclip=y+h; y<yclip; y+=16)
 		for (xclip=x+w; x<xclip; x+=16)
 		{
-			edx = (UINT32)*src2_ptr;
+			edx = (uint32_t)*src2_ptr;
 			src2_ptr++;
 			if (edx)
 			{
-				ax = (UINT16)*(src2_ptr-0x100 -1);
-				ebx = (UINT32)ax;
+				ax = (uint16_t)*(src2_ptr-0x100 -1);
+				ebx = (uint32_t)ax;
 				ax |= BG_MONO;
 				if (edx & 0x01) {                    dst_base[C2S(x,y,ebx)] = ax; }
 				if (edx & 0x02) { ecx = RORB(ebx,1); dst_base[C2S(x,y,ecx)] = ax; }
@@ -782,7 +782,7 @@ COMMAND_MODE:
 		edx = SCREEN_WIDTH - x - w;
 		w = -w;
 
-		ax = (UINT16)(~src_base[src2] & 0xff);
+		ax = (uint16_t)(~src_base[src2] & 0xff);
 
 		for (yclip=y+h; y<yclip; y++)
 		{
@@ -791,12 +791,12 @@ COMMAND_MODE:
 			if (edx < 0)
 			{
 				ecx = edx;
-				dst_ptr = (UINT16*)edi - edx;
+				dst_ptr = (uint16_t*)edi - edx;
 				do { if (dst_ptr[ecx]) dst_ptr[ecx] ^= ax; } while (++ecx);
 				ecx = x - SCREEN_WIDTH;
 			} else ecx = w;
 
-			dst_ptr = (UINT16*)edi + x - ecx;
+			dst_ptr = (uint16_t*)edi + x - ecx;
 			do { if (dst_ptr[ecx]) dst_ptr[ecx] ^= ax; } while (++ecx);
 		}
 
@@ -843,7 +843,7 @@ COMMAND_MODE:
 		{
 			dst_ptr += x;
 			do {
-				ax = (UINT16)src1_ptr[edx];
+				ax = (uint16_t)src1_ptr[edx];
 				al = src1_ptr[edx+0x10000];
 				ax |= BG_RGB;
 				if (al & 0x01) *dst_ptr   = ax;
@@ -862,7 +862,7 @@ COMMAND_MODE:
 			#define WARPMASK ((SCREEN_WIDTH<<1)-1)
 			do {
 				ecx = x & WARPMASK;
-				ax = (UINT16)src1_ptr[edx];
+				ax = (uint16_t)src1_ptr[edx];
 				al = src1_ptr[edx+0x10000];
 				ax |= BG_RGB;
 				if (al & 0x01) dst_ptr[ecx] = ax;  ecx++; ecx &= WARPMASK;
@@ -886,9 +886,9 @@ COMMAND_MODE:
 	if (command == HORIZBAR && flags & COLOR_ON && !(layer & 1))
 	{
 		#define WARP_LINE_COMMON { \
-			if (ecx & 1) { ecx--; *dst_ptr = (UINT16)eax; dst_ptr++; } \
+			if (ecx & 1) { ecx--; *dst_ptr = (uint16_t)eax; dst_ptr++; } \
 			dst_ptr += ecx; ecx = -ecx; \
-			while (ecx) { *(UINT32*)(dst_ptr+ecx) = eax; ecx += 2; } \
+			while (ecx) { *(uint32_t*)(dst_ptr+ecx) = eax; ecx += 2; } \
 		}
 
 		src1_ptr = src_base + src1;
@@ -916,7 +916,7 @@ COMMAND_MODE:
 
 			for (yclip=y; yclip<hclip; yclip++)
 			{
-				eax = (UINT32)*src1_ptr;
+				eax = (uint32_t)*src1_ptr;
 				src1_ptr += src_dx;
 				if (!eax) continue;
 				eax = eax | (eax<<16) | ((BG_RGB<<16)|BG_RGB);
@@ -925,16 +925,16 @@ COMMAND_MODE:
 				if (edx > 0)
 				{
 					ecx = edx;
-					dst_ptr = (UINT16*)edi;
+					dst_ptr = (uint16_t*)edi;
 					WARP_LINE_COMMON
 					ecx = SCREEN_WIDTH - xclip;
 				} else ecx = w;
 
-				dst_ptr = (UINT16*)edi + xclip;
+				dst_ptr = (uint16_t*)edi + xclip;
 				WARP_LINE_COMMON
 			}
 
-			edi = src1_ptr; src1_ptr = src2_ptr; src2_ptr = (UINT8*)edi;
+			edi = src1_ptr; src1_ptr = src2_ptr; src2_ptr = (uint8_t*)edi;
 		}
 
 		#undef WARP_LINE_COMMON
@@ -950,8 +950,8 @@ COMMAND_MODE:
 static WRITE8_HANDLER( bgtile_w )
 {
 	int yskip, xskip, ecx;
-	UINT16 *edi;
-	UINT16 ax;
+	uint16_t *edi;
+	uint16_t ax;
 
 	cpu1_base[0x1f00+offset] = data;
 	offset -= 0x18;
@@ -966,7 +966,7 @@ static WRITE8_HANDLER( bgtile_w )
 
 	edi = render_layer[2] + (yskip<<SCREEN_WIDTH_L2) + xskip + (48<<SCREEN_WIDTH_L2);
 	ecx = -(48<<SCREEN_WIDTH_L2);
-	ax = (UINT16)data | BG_RGB;
+	ax = (uint16_t)data | BG_RGB;
 
 	do { edi[ecx] = edi[ecx+1] = edi[ecx+2] = edi[ecx+3] = edi[ecx+4] = ax; } while (ecx += SCREEN_WIDTH);
 }
@@ -1060,8 +1060,8 @@ static READ8_HANDLER( collision_id_r )
 
 static PALETTE_INIT( halleys )
 {
-	UINT32 d, r, g, b, i, j, count;
-	UINT32 *pal_ptr = internal_palette;
+	uint32_t d, r, g, b, i, j, count;
+	uint32_t *pal_ptr = internal_palette;
 
 	for (count=0; count<1024; count++)
 	{
@@ -1106,7 +1106,7 @@ static PALETTE_INIT( halleys )
 	}
 }
 
-static void halleys_decode_rgb(running_machine *machine, UINT32 *r, UINT32 *g, UINT32 *b, int addr, int data)
+static void halleys_decode_rgb(running_machine *machine, uint32_t *r, uint32_t *g, uint32_t *b, int addr, int data)
 {
 /*
     proms contain:
@@ -1114,8 +1114,8 @@ static void halleys_decode_rgb(running_machine *machine, UINT32 *r, UINT32 *g, U
         00 00 00 00 01 61 29 26 0b f5 e2 17 57 fb cf f7
 */
 	int latch1_273, latch2_273;
-	UINT8 *sram_189;
-	UINT8 *prom_6330;
+	uint8_t *sram_189;
+	uint8_t *prom_6330;
 
 	int bit0, bit1, bit2, bit3, bit4;
 
@@ -1153,11 +1153,11 @@ static void halleys_decode_rgb(running_machine *machine, UINT32 *r, UINT32 *g, U
 
 static WRITE8_HANDLER( halleys_paletteram_IIRRGGBB_w )
 {
-	UINT32 d, r, g, b, i, j;
-	UINT32 *pal_ptr = internal_palette;
+	uint32_t d, r, g, b, i, j;
+	uint32_t *pal_ptr = internal_palette;
 
 	space->machine->generic.paletteram.u8[offset] = data;
-	d = (UINT32)data;
+	d = (uint32_t)data;
 	j = d | BG_RGB;
 	pal_ptr[offset] = j;
 	pal_ptr[offset+SP_2BACK] = j;
@@ -1209,20 +1209,20 @@ static VIDEO_START( halleys )
 }
 
 
-static void copy_scroll_op(bitmap_t *bitmap, UINT16 *source, int sx, int sy)
+static void copy_scroll_op(bitmap_t *bitmap, uint16_t *source, int sx, int sy)
 {
 
 //--------------------------------------------------------------------------
 
 #define OPCOPY_COMMON { \
 	memcpy(edi, esi+sx, rcw); \
-	memcpy((UINT8*)edi+rcw, esi, CLIP_BYTEW-rcw); \
+	memcpy((uint8_t*)edi+rcw, esi, CLIP_BYTEW-rcw); \
 	esi += SCREEN_WIDTH; \
 	edi += edx; }
 
 //--------------------------------------------------------------------------
 
-	UINT16 *esi, *edi;
+	uint16_t *esi, *edi;
 	int rcw, bch, ecx, edx;
 
 	sx = -sx & 0xff;
@@ -1247,7 +1247,7 @@ static void copy_scroll_op(bitmap_t *bitmap, UINT16 *source, int sx, int sy)
 }
 
 
-static void copy_scroll_xp(bitmap_t *bitmap, UINT16 *source, int sx, int sy)
+static void copy_scroll_xp(bitmap_t *bitmap, uint16_t *source, int sx, int sy)
 {
 
 //--------------------------------------------------------------------------
@@ -1278,9 +1278,9 @@ static void copy_scroll_xp(bitmap_t *bitmap, UINT16 *source, int sx, int sy)
 
 	int rcw, bch, dst_adv;
 
-	UINT16 *src_base, *esi, *edi;
+	uint16_t *src_base, *esi, *edi;
 	int ecx, edx;
-	UINT16 ax, bx;
+	uint16_t ax, bx;
 
 	sx = -sx & 0xff;
 	sy = -sy & 0xff;
@@ -1306,11 +1306,11 @@ static void copy_scroll_xp(bitmap_t *bitmap, UINT16 *source, int sx, int sy)
 
 
 
-static void copy_fixed_xp(bitmap_t *bitmap, UINT16 *source)
+static void copy_fixed_xp(bitmap_t *bitmap, uint16_t *source)
 {
-	UINT16 *esi, *edi;
+	uint16_t *esi, *edi;
 	int dst_pitch, ecx, edx;
-	UINT16 ax, bx;
+	uint16_t ax, bx;
 
 	esi = source + CLIP_SKIP + CLIP_W;
 	edi = BITMAP_ADDR16(bitmap, VIS_MINY, VIS_MINX + CLIP_W);
@@ -1341,11 +1341,11 @@ static void copy_fixed_xp(bitmap_t *bitmap, UINT16 *source)
 }
 
 
-static void copy_fixed_2b(bitmap_t *bitmap, UINT16 *source)
+static void copy_fixed_2b(bitmap_t *bitmap, uint16_t *source)
 {
-	UINT16 *esi, *edi;
+	uint16_t *esi, *edi;
 	int dst_pitch, ecx, edx;
-	UINT16 ax, bx;
+	uint16_t ax, bx;
 
 	esi = source + CLIP_SKIP + CLIP_W;
 	edi = BITMAP_ADDR16(bitmap, VIS_MINY, VIS_MINX + CLIP_W);
@@ -1392,12 +1392,12 @@ static void filter_bitmap(bitmap_t *bitmap, int mask)
 {
 	int dst_pitch;
 
-	UINT32 *pal_ptr, *edi;
+	uint32_t *pal_ptr, *edi;
 	int esi, eax, ebx, ecx, edx;
 
 	pal_ptr = internal_palette;
 	esi = mask | 0xffffff00;
-	edi = (UINT32*)BITMAP_ADDR16(bitmap, VIS_MINY, VIS_MINX + CLIP_W);
+	edi = (uint32_t*)BITMAP_ADDR16(bitmap, VIS_MINY, VIS_MINX + CLIP_W);
 	dst_pitch = bitmap->rowpixels >> 1;
 	ecx = -(CLIP_W>>1);
 	edx = CLIP_H;
@@ -1487,7 +1487,7 @@ static READ8_HANDLER( debug_r ) { return(io_ram[offset]); }
 static INTERRUPT_GEN( halleys_interrupt )
 {
 	static int latch_delay = 0;
-	UINT8 latch_data;
+	uint8_t latch_data;
 
 	switch (cpu_getiloops(device))
 	{
@@ -1540,7 +1540,7 @@ static INTERRUPT_GEN( halleys_interrupt )
 static INTERRUPT_GEN( benberob_interrupt )
 {
 	static int latch_delay = 0;
-	UINT8 latch_data;
+	uint8_t latch_data;
 
 	switch (cpu_getiloops(device))
 	{
@@ -2132,36 +2132,36 @@ ROM_END
 
 static void init_common(running_machine *machine)
 {
-	UINT8 *buf, *rom;
+	uint8_t *buf, *rom;
 	int addr, i;
-	UINT8 al, ah, dl, dh;
+	uint8_t al, ah, dl, dh;
 
 
 	// allocate memory for unpacked graphics
-	buf = auto_alloc_array(machine, UINT8, 0x100000);
+	buf = auto_alloc_array(machine, uint8_t, 0x100000);
 	gfx_plane02 = buf;
 	gfx_plane13 = buf + 0x80000;
 
 
 	// allocate memory for render layers
-	buf = auto_alloc_array(machine, UINT8, SCREEN_BYTESIZE * MAX_LAYERS);
-	for (i=0; i<MAX_LAYERS; buf+=SCREEN_BYTESIZE, i++) render_layer[i] = (UINT16*)buf;
+	buf = auto_alloc_array(machine, uint8_t, SCREEN_BYTESIZE * MAX_LAYERS);
+	for (i=0; i<MAX_LAYERS; buf+=SCREEN_BYTESIZE, i++) render_layer[i] = (uint16_t*)buf;
 
 
 	// allocate memory for pre-processed ROMs
-	gfx1_base = auto_alloc_array(machine, UINT8, 0x20000);
+	gfx1_base = auto_alloc_array(machine, uint8_t, 0x20000);
 
 
 	// allocate memory for alpha table
-	alpha_table = auto_alloc_array(machine, UINT32, 0x10000);
+	alpha_table = auto_alloc_array(machine, uint32_t, 0x10000);
 
 
 	// allocate memory for internal palette
-	internal_palette = auto_alloc_array(machine, UINT32, PALETTE_SIZE);
+	internal_palette = auto_alloc_array(machine, uint32_t, PALETTE_SIZE);
 
 
 	// allocate memory for hardware collision list
-	collision_list = auto_alloc_array(machine, UINT8, MAX_SPRITES);
+	collision_list = auto_alloc_array(machine, uint8_t, MAX_SPRITES);
 
 
 	// decrypt main program ROM

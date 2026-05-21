@@ -28,15 +28,15 @@ public:
 	backfire_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  pf1_rowscroll;
-	UINT16 *  pf2_rowscroll;
-	UINT16 *  pf3_rowscroll;
-	UINT16 *  pf4_rowscroll;
-	UINT32 *  spriteram_1;
-	UINT32 *  spriteram_2;
-	UINT32 *  mainram;
-	UINT32 *  left_priority;
-	UINT32 *  right_priority;
+	uint16_t *  pf1_rowscroll;
+	uint16_t *  pf2_rowscroll;
+	uint16_t *  pf3_rowscroll;
+	uint16_t *  pf4_rowscroll;
+	uint32_t *  spriteram_1;
+	uint32_t *  spriteram_2;
+	uint32_t *  mainram;
+	uint32_t *  left_priority;
+	uint32_t *  right_priority;
 
 	/* video related */
 	bitmap_t  *left;
@@ -50,7 +50,7 @@ public:
 	running_device *eeprom;
 };
 
-//UINT32 *backfire_180010, *backfire_188010;
+//uint32_t *backfire_180010, *backfire_188010;
 
 /* I'm using the functions in deco16ic.c ... same chips, why duplicate code? */
 static VIDEO_START( backfire )
@@ -58,10 +58,10 @@ static VIDEO_START( backfire )
 	backfire_state *state = (backfire_state *)machine->driver_data;
 
 	/* allocate the ram as 16-bit (we do it here because the CPU is 32-bit) */
-	state->pf1_rowscroll = auto_alloc_array(machine, UINT16, 0x0800/2);
-	state->pf2_rowscroll = auto_alloc_array(machine, UINT16, 0x0800/2);
-	state->pf3_rowscroll = auto_alloc_array(machine, UINT16, 0x0800/2);
-	state->pf4_rowscroll = auto_alloc_array(machine, UINT16, 0x0800/2);
+	state->pf1_rowscroll = auto_alloc_array(machine, uint16_t, 0x0800/2);
+	state->pf2_rowscroll = auto_alloc_array(machine, uint16_t, 0x0800/2);
+	state->pf3_rowscroll = auto_alloc_array(machine, uint16_t, 0x0800/2);
+	state->pf4_rowscroll = auto_alloc_array(machine, uint16_t, 0x0800/2);
 
 	/* and register the allocated ram so that save states still work */
 	state_save_register_global_pointer(machine, state->pf1_rowscroll, 0x800/2);
@@ -76,7 +76,7 @@ static VIDEO_START( backfire )
 	state_save_register_global_bitmap(machine, state->right);
 }
 
-static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 *spriteram, int region )
+static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t *spriteram, int region )
 {
 	int offs;
 
@@ -649,14 +649,14 @@ ROM_END
 
 static void descramble_sound( running_machine *machine )
 {
-	UINT8 *rom = memory_region(machine, "ymz");
+	uint8_t *rom = memory_region(machine, "ymz");
 	int length = 0x200000; // only the first rom is swapped on backfire!
-	UINT8 *buf1 = auto_alloc_array(machine, UINT8, length);
-	UINT32 x;
+	uint8_t *buf1 = auto_alloc_array(machine, uint8_t, length);
+	uint32_t x;
 
 	for (x = 0; x < length; x++)
 	{
-		UINT32 addr;
+		uint32_t addr;
 
 		addr = BITSWAP24 (x,23,22,21,0, 20,
 		                    19,18,17,16,

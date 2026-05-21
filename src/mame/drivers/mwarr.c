@@ -54,11 +54,11 @@ public:
 	mwarr_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *bg_videoram, *mlow_videoram, *mhigh_videoram, *tx_videoram, *sprites_buffer;
-	UINT16 *bg_scrollram, *mlow_scrollram, *mhigh_scrollram, *vidattrram;
-	UINT16 *spriteram;
-//  UINT16 *paletteram;    // currently this uses generic palette handling
-	UINT16 *mwarr_ram;
+	uint16_t *bg_videoram, *mlow_videoram, *mhigh_videoram, *tx_videoram, *sprites_buffer;
+	uint16_t *bg_scrollram, *mlow_scrollram, *mhigh_scrollram, *vidattrram;
+	uint16_t *spriteram;
+//  uint16_t *paletteram;    // currently this uses generic palette handling
+	uint16_t *mwarr_ram;
 
 	/* video-related */
 	tilemap_t *bg_tilemap, *mlow_tilemap, *mhigh_tilemap, *tx_tilemap;
@@ -374,7 +374,7 @@ static VIDEO_START( mwarr )
 	state->mhigh_tilemap = tilemap_create(machine, get_mhigh_tile_info, tilemap_scan_cols, 16, 16, 64, 16);
 	state->tx_tilemap    = tilemap_create(machine, get_tx_tile_info,    tilemap_scan_rows,  8,  8, 64, 32);
 
-	state->sprites_buffer = auto_alloc_array(machine, UINT16, 0x800);
+	state->sprites_buffer = auto_alloc_array(machine, uint16_t, 0x800);
 
 	tilemap_set_transparent_pen(state->mlow_tilemap, 0);
 	tilemap_set_transparent_pen(state->mhigh_tilemap, 0);
@@ -390,8 +390,8 @@ static VIDEO_START( mwarr )
 static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	mwarr_state *state = (mwarr_state *)machine->driver_data;
-	const UINT16 *source = state->sprites_buffer + 0x800 - 4;
-	const UINT16 *finish = state->sprites_buffer;
+	const uint16_t *source = state->sprites_buffer + 0x800 - 4;
+	const uint16_t *finish = state->sprites_buffer;
 	const gfx_element *gfx = machine->gfx[0];
 	int x, y, color, flipx, dy, pri, pri_mask, i;
 

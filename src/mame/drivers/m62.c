@@ -2184,7 +2184,7 @@ static DRIVER_INIT( ldrun4 )
 
 static DRIVER_INIT( kidniki )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* in Kid Niki, bank 0 has code falling from 7fff to 8000, */
 	/* so I have to copy it there because bank switching wouldn't catch it */

@@ -137,7 +137,7 @@ static READ16_HANDLER( bishi_mirror_r )
 static READ16_HANDLER( bishi_K056832_rom_r )
 {
 	bishi_state *state = (bishi_state *)space->machine->driver_data;
-	UINT16 ouroffs;
+	uint16_t ouroffs;
 
 	ouroffs = (offset >> 1) * 8;
 	if (offset & 1)

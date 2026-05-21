@@ -97,7 +97,7 @@ static READ8_HANDLER( beg_fromsound_r )
 static READ8_HANDLER( beg_soundstate_r )
 {
 	bigevglf_state *state = (bigevglf_state *)space->machine->driver_data;
-	UINT8 ret = state->sound_state;
+	uint8_t ret = state->sound_state;
 	/* set a timer to force synchronization after the read */
 	timer_call_after_resynch(space->machine, NULL, 0, NULL);
 	state->sound_state &= ~2; /* read from port 21 clears bit 1 in status */
@@ -636,7 +636,7 @@ ROM_END
 
 static DRIVER_INIT( bigevglf )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0xff, &ROM[0x10000], 0x800);
 }
 

@@ -365,7 +365,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine *machine, int n_level, 
 	}
 }
 
-static INT32 flash_bank;
+static int32_t flash_bank;
 static int flash_chips;
 static int onboard_flash_start;
 static int pccard1_flash_start;
@@ -411,7 +411,7 @@ static WRITE32_HANDLER( mb89371_w )
 
 static READ32_HANDLER( mb89371_r )
 {
-	UINT32 data = 0xffffffff;
+	uint32_t data = 0xffffffff;
 	verboselog( space->machine, 2, "mb89371_r %08x %08x %08x\n", offset, mem_mask, data );
 	return data;
 }
@@ -419,7 +419,7 @@ static READ32_HANDLER( mb89371_r )
 static READ32_HANDLER( jamma_r )
 {
 	running_machine *machine = space->machine;
-	UINT32 data = input_port_read(machine, "IN1");
+	uint32_t data = input_port_read(machine, "IN1");
 	data |= 0x000000c0;
 
 	if( has_ds2401[ security_cart_number ] )
@@ -456,7 +456,7 @@ static READ32_HANDLER( jamma_r )
 	return data;
 }
 
-static UINT32 control;
+static uint32_t control;
 
 static READ32_HANDLER( control_r )
 {
@@ -534,11 +534,11 @@ static WRITE32_HANDLER( control_w )
 
 #define ATAPI_DATA_SIZE ( 64 * 1024 )
 
-static UINT8 *atapi_regs;
+static uint8_t *atapi_regs;
 static emu_timer *atapi_timer;
 static SCSIInstance *inserted_cdrom;
 static SCSIInstance *available_cdroms[ 2 ];
-static UINT8 *atapi_data;
+static uint8_t *atapi_data;
 static int atapi_data_ptr, atapi_data_len, atapi_xferlen, atapi_xferbase, atapi_cdata_wait, atapi_xfermod;
 
 #define MAX_TRANSFER_SIZE ( 63488 )
@@ -546,7 +546,7 @@ static int atapi_data_ptr, atapi_data_len, atapi_xferlen, atapi_xferbase, atapi_
 static TIMER_CALLBACK( atapi_xfer_end )
 {
 	int i, n_this;
-	UINT8 sector_buffer[ 4096 ];
+	uint8_t sector_buffer[ 4096 ];
 
 	timer_adjust_oneshot(atapi_timer, attotime_never, 0);
 
@@ -980,7 +980,7 @@ static void atapi_init(running_machine *machine)
 {
 	int i;
 
-	atapi_regs = auto_alloc_array(machine, UINT8,  ATAPI_REG_MAX );
+	atapi_regs = auto_alloc_array(machine, uint8_t,  ATAPI_REG_MAX );
 	memset(atapi_regs, 0, sizeof(atapi_regs));
 
 	atapi_regs[ATAPI_REG_CMDSTATUS] = 0;
@@ -1008,7 +1008,7 @@ static void atapi_init(running_machine *machine)
 	}
 	machine->add_notifier(MACHINE_NOTIFY_EXIT, atapi_exit);
 
-	atapi_data = auto_alloc_array(machine, UINT8,  ATAPI_DATA_SIZE );
+	atapi_data = auto_alloc_array(machine, uint8_t,  ATAPI_DATA_SIZE );
 
 	state_save_register_global_pointer(machine,  atapi_regs, ATAPI_REG_MAX );
 	state_save_register_global_pointer(machine,  atapi_data, ATAPI_DATA_SIZE / 2 );
@@ -1044,13 +1044,13 @@ static WRITE32_HANDLER( atapi_reset_w )
 	}
 }
 
-static void cdrom_dma_read( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void cdrom_dma_read( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	verboselog( machine, 2, "cdrom_dma_read( %08x, %08x )\n", n_address, n_size );
 //  mame_printf_debug("DMA read: address %08x size %08x\n", n_address, n_size);
 }
 
-static void cdrom_dma_write( running_machine *machine, UINT32 n_address, INT32 n_size )
+static void cdrom_dma_write( running_machine *machine, uint32_t n_address, int32_t n_size )
 {
 	verboselog( machine, 2, "cdrom_dma_write( %08x, %08x )\n", n_address, n_size );
 //  mame_printf_debug("DMA write: address %08x size %08x\n", n_address, n_size);
@@ -1063,7 +1063,7 @@ static void cdrom_dma_write( running_machine *machine, UINT32 n_address, INT32 n
 	timer_adjust_oneshot(atapi_timer, cputag_clocks_to_attotime(machine, "maincpu", (ATAPI_CYCLES_PER_SECTOR * (atapi_xferlen/2048))), 0);
 }
 
-static UINT32 m_n_security_control;
+static uint32_t m_n_security_control;
 static void (*security_callback)( running_machine *machine, int data );
 
 static WRITE32_HANDLER( security_w )
@@ -1112,14 +1112,14 @@ static WRITE32_HANDLER( security_w )
 
 static READ32_HANDLER( security_r )
 {
-	UINT32 data = m_n_security_control;
+	uint32_t data = m_n_security_control;
 	verboselog( space->machine, 2, "security_r( %08x, %08x ) %08x\n", offset, mem_mask, data );
 	return data;
 }
 
 static READ32_HANDLER( flash_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	if( flash_bank < 0 )
 	{
@@ -1187,10 +1187,10 @@ static WRITE32_HANDLER( flash_w )
 /* Root Counters */
 
 static emu_timer *m_p_timer_root[ 3 ];
-static UINT16 m_p_n_root_count[ 3 ];
-static UINT16 m_p_n_root_mode[ 3 ];
-static UINT16 m_p_n_root_target[ 3 ];
-static UINT64 m_p_n_root_start[ 3 ];
+static uint16_t m_p_n_root_count[ 3 ];
+static uint16_t m_p_n_root_mode[ 3 ];
+static uint16_t m_p_n_root_target[ 3 ];
+static uint64_t m_p_n_root_start[ 3 ];
 
 #define RC_STOP ( 0x01 )
 #define RC_RESET ( 0x04 ) /* guess */
@@ -1201,7 +1201,7 @@ static UINT64 m_p_n_root_start[ 3 ];
 #define RC_CLC ( 0x100 )
 #define RC_DIV ( 0x200 )
 
-static UINT64 psxcpu_gettotalcycles( running_machine *machine )
+static uint64_t psxcpu_gettotalcycles( running_machine *machine )
 {
 	/* TODO: should return the start of the current tick. */
 	return machine->firstcpu->total_cycles() * 2;
@@ -1225,7 +1225,7 @@ static int root_divider( int n_counter )
 	return 1;
 }
 
-static UINT16 root_current( running_machine *machine, int n_counter )
+static uint16_t root_current( running_machine *machine, int n_counter )
 {
 	if( ( m_p_n_root_mode[ n_counter ] & RC_STOP ) != 0 )
 	{
@@ -1233,7 +1233,7 @@ static UINT16 root_current( running_machine *machine, int n_counter )
 	}
 	else
 	{
-		UINT64 n_current;
+		uint64_t n_current;
 		n_current = psxcpu_gettotalcycles(machine) - m_p_n_root_start[ n_counter ];
 		n_current /= root_divider( n_counter );
 		n_current += m_p_n_root_count[ n_counter ];
@@ -1343,7 +1343,7 @@ static WRITE32_HANDLER( k573_counter_w )
 static READ32_HANDLER( k573_counter_r )
 {
 	int n_counter;
-	UINT32 data;
+	uint32_t data;
 
 	n_counter = offset / 4;
 
@@ -1409,7 +1409,7 @@ static void flash_init( running_machine *machine )
 	int i;
 	int chip;
 	int size;
-	UINT8 *data;
+	uint8_t *data;
 	static const struct
 	{
 		int *start;
@@ -1469,9 +1469,9 @@ static void *atapi_get_device(void)
 
 static void security_cart_init( running_machine *machine, int cart, const char *eeprom_region, const char *ds2401_region )
 {
-	UINT8 *eeprom_rom = memory_region( machine, eeprom_region );
+	uint8_t *eeprom_rom = memory_region( machine, eeprom_region );
 	int eeprom_length = memory_region_length( machine, eeprom_region );
-	UINT8 *ds2401_rom = memory_region( machine, ds2401_region );
+	uint8_t *ds2401_rom = memory_region( machine, ds2401_region );
 
 	if( eeprom_rom != NULL )
 	{
@@ -1586,7 +1586,7 @@ static MACHINE_RESET( konami573 )
 	flash_bank = -1;
 }
 
-static void spu_irq(running_device *device, UINT32 data)
+static void spu_irq(running_device *device, uint32_t data)
 {
 	psx_irq_set(device->machine, data);
 }
@@ -1662,7 +1662,7 @@ todo:
 static READ32_HANDLER( ge765pwbba_r )
 {
 	running_device *upd4701 = space->machine->device("upd4701");
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	switch (offset)
 	{
@@ -1749,12 +1749,12 @@ Analogue I/O board
 
 */
 
-static UINT8 gx700pwbf_output_data[ 4 ];
+static uint8_t gx700pwbf_output_data[ 4 ];
 static void (*gx700pwfbf_output_callback)( running_machine *machine, int offset, int data );
 
 static READ32_HANDLER( gx700pwbf_io_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 	switch( offset )
 	{
 	case 0x20:
@@ -1783,7 +1783,7 @@ static READ32_HANDLER( gx700pwbf_io_r )
 	return data;
 }
 
-static void gx700pwbf_output( running_machine *machine, int offset, UINT8 data )
+static void gx700pwbf_output( running_machine *machine, int offset, uint8_t data )
 {
 	if( gx700pwfbf_output_callback != NULL )
 	{
@@ -1862,7 +1862,7 @@ DDR Stage Multiplexor
 
 */
 
-static UINT32 stage_mask;
+static uint32_t stage_mask;
 
 #define DDR_STAGE_IDLE ( 0 )
 #define DDR_STAGE_INIT ( 1 )
@@ -2052,7 +2052,7 @@ todo:
 
 static READ32_HANDLER( gtrfrks_io_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 	switch( offset )
 	{
 	case 0:
@@ -2098,18 +2098,18 @@ static DRIVER_INIT( gtrfrks )
 
 /* GX894 digital i/o */
 
-static const UINT8 ds2401_xid[] =
+static const uint8_t ds2401_xid[] =
 {
 	0x3d, 0xbc, 0x9a, 0x78, 0x56, 0x34, 0x12, 0x01
 };
 
-static UINT32 gx894_ram_write_offset;
-static UINT32 gx894_ram_read_offset;
-static UINT16 *gx894_ram;
+static uint32_t gx894_ram_write_offset;
+static uint32_t gx894_ram_read_offset;
+static uint16_t *gx894_ram;
 
 static READ32_HANDLER( gx894pwbba_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 	switch( offset )
 	{
 	case 0x00:
@@ -2209,7 +2209,7 @@ static READ32_HANDLER( gx894pwbba_r )
 	return data;
 }
 
-static char *binary( UINT32 data )
+static char *binary( uint32_t data )
 {
 	static char s[ 33 ];
 	int i;
@@ -2221,12 +2221,12 @@ static char *binary( UINT32 data )
 	return s;
 }
 
-static UINT32 a,b,c,d;
+static uint32_t a,b,c,d;
 
-static UINT16 gx894pwbba_output_data[ 8 ];
+static uint16_t gx894pwbba_output_data[ 8 ];
 static void (*gx894pwbba_output_callback)( running_machine *machine, int offset, int data );
 
-static void gx894pwbba_output( running_machine *machine, int offset, UINT8 data )
+static void gx894pwbba_output( running_machine *machine, int offset, uint8_t data )
 {
 	if( gx894pwbba_output_callback != NULL )
 	{
@@ -2247,7 +2247,7 @@ static void gx894pwbba_output( running_machine *machine, int offset, UINT8 data 
 
 static WRITE32_HANDLER( gx894pwbba_w )
 {
-	UINT32 olda=a,oldb=b,oldc=c,oldd=d;
+	uint32_t olda=a,oldb=b,oldc=c,oldd=d;
 
 //  printf( "gx894pwbba_w( %08x, %08x, %08x )\n", offset, mem_mask, data );
 
@@ -2388,7 +2388,7 @@ static void gx894pwbba_init( running_machine *machine, void (*output_callback_fu
 
 	gx894_ram_write_offset = 0;
 	gx894_ram_read_offset = 0;
-	gx894_ram = auto_alloc_array(machine, UINT16,  gx894_ram_size/2);
+	gx894_ram = auto_alloc_array(machine, uint16_t,  gx894_ram_size/2);
 
 	ds2401_init( machine, 2, ds2401_xid ); /* todo: load this from roms */
 
@@ -2816,7 +2816,7 @@ static DRIVER_INIT( hyperbbc )
 
 /* ADC0834 Interface */
 
-static double analogue_inputs_callback( running_device *device, UINT8 input )
+static double analogue_inputs_callback( running_device *device, uint8_t input )
 {
 	switch (input)
 	{

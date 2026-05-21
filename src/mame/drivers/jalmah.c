@@ -123,9 +123,9 @@ static tilemap_t *sc3_tilemap_0,*sc3_tilemap_2,*sc3_tilemap_3,
 			   *sc0_tilemap_0,*sc0_tilemap_1,*sc0_tilemap_2,*sc0_tilemap_3,
 			   *sc1_tilemap_0,*sc1_tilemap_1,*sc1_tilemap_2,*sc1_tilemap_3,
 			   *sc2_tilemap_0,*sc2_tilemap_1,*sc2_tilemap_2,*sc2_tilemap_3;
-static UINT16 *sc3_vram,*sc0_vram,*sc1_vram,*sc2_vram;
-static UINT16 *jm_scrollram,*jm_vregs;
-static UINT16 sc0bank,pri;
+static uint16_t *sc3_vram,*sc0_vram,*sc1_vram,*sc2_vram;
+static uint16_t *jm_scrollram,*jm_vregs;
+static uint16_t sc0bank,pri;
 
 /*4096x512 tilemap*/
 static TILEMAP_MAPPER( range0_16x16 )
@@ -231,8 +231,8 @@ static VIDEO_START( jalmah )
 	sc3_tilemap_2 = tilemap_create(machine, get_sc3_tile_info,range2_8x8,8,8,128,64);
 	sc3_tilemap_3 = tilemap_create(machine, get_sc3_tile_info,range3_8x8,8,8,64,128);
 
-	jm_scrollram = auto_alloc_array(machine, UINT16, 0x80/2);
-	jm_vregs = auto_alloc_array(machine, UINT16, 0x40/2);
+	jm_scrollram = auto_alloc_array(machine, uint16_t, 0x80/2);
+	jm_vregs = auto_alloc_array(machine, uint16_t, 0x40/2);
 
 	tilemap_set_transparent_pen(sc0_tilemap_0,15);
 	tilemap_set_transparent_pen(sc0_tilemap_1,15);
@@ -259,14 +259,14 @@ static VIDEO_START( urashima )
 	sc0_tilemap_0 = tilemap_create(machine, get_sc0_tile_info,range0_16x16,16,16,256,32);
 	sc3_tilemap_0 = tilemap_create(machine, get_sc3_tile_info,range2_8x8,8,8,128,64);
 
-	jm_scrollram = auto_alloc_array(machine, UINT16, 0x80/2);
-	jm_vregs = auto_alloc_array(machine, UINT16, 0x40/2);
+	jm_scrollram = auto_alloc_array(machine, uint16_t, 0x80/2);
+	jm_vregs = auto_alloc_array(machine, uint16_t, 0x40/2);
 
 	tilemap_set_transparent_pen(sc0_tilemap_0,15);
 	tilemap_set_transparent_pen(sc3_tilemap_0,15);
 }
 
-static UINT8 sc0_prin,sc1_prin,sc2_prin,sc3_prin;
+static uint8_t sc0_prin,sc1_prin,sc2_prin,sc3_prin;
 
 /***************************************************************************************
 The priority system is a combination between one prom and the priority number.
@@ -279,9 +279,9 @@ priority = 8, then 4, 2 and finally 1).
 ***************************************************************************************/
 static void jalmah_priority_system(running_machine *machine)
 {
-    UINT8 *pri_rom = memory_region(machine, "user1");
-    UINT8 i;
-    UINT8 prinum[0x10];
+    uint8_t *pri_rom = memory_region(machine, "user1");
+    uint8_t i;
+    uint8_t prinum[0x10];
 
 	sc0_prin = 0;
 	sc1_prin = 0;
@@ -347,7 +347,7 @@ static void draw_sc3_layer(bitmap_t *bitmap, const rectangle *cliprect)
 
 static VIDEO_UPDATE( jalmah )
 {
-	static UINT8 cur_prin;
+	static uint8_t cur_prin;
 	jalmah_priority_system(screen->machine);
 
 	tilemap_set_scrollx( sc0_tilemap_0, 0, jm_scrollram[0] & 0xfff);
@@ -588,7 +588,7 @@ Protection file start
 
 ******************************************************************************************/
 
-static UINT16 *jm_shared_ram,*jm_mcu_code;
+static uint16_t *jm_shared_ram,*jm_mcu_code;
 
 /*
 MCU program number,different for each game(n.b. the numbering scheme is *mine*,do not
@@ -604,7 +604,7 @@ xxxx ---- MCU program revision
 ---- xxxx MCU program number assignment for each game.
 */
 
-static UINT8 mcu_prg;
+static uint8_t mcu_prg;
 #define DAIREIKA_MCU (0x11)
 #define URASHIMA_MCU (0x12)
 #define MJZOOMIN_MCU (0x13)
@@ -613,7 +613,7 @@ static UINT8 mcu_prg;
 #define SUCHIPI_MCU  (0x23)
 
 static int respcount;
-static UINT8 test_mode;
+static uint8_t test_mode;
 
 #define MCU_READ(tag, _bit_, _offset_, _retval_) \
 if((0xffff - input_port_read(machine, tag)) & _bit_) { jm_shared_ram[_offset_] = _retval_; }
@@ -625,17 +625,17 @@ static WRITE16_HANDLER( urashima_dma_w )
 {
 	if(data & 4)
 	{
-		UINT32 i;
+		uint32_t i;
 		for(i = 0; i < 0x200; i += 2)
 			memory_write_word(space, 0x88200 + i, memory_read_word(space, 0x88400 + i));
 	}
 }
 
 /*same as $f00c0 sub-routine,but with additional work-around,to remove from here...*/
-static void daireika_palette_dma(running_machine *machine, UINT16 val)
+static void daireika_palette_dma(running_machine *machine, uint16_t val)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT32 index_1, index_2, src_addr, tmp_addr;
+	uint32_t index_1, index_2, src_addr, tmp_addr;
 	/*a0=301c0+jm_shared_ram[0x540/2] & 0xf00 */
 	/*a1=88000*/
 	src_addr = 0x301c0 + (val * 0x40);
@@ -655,7 +655,7 @@ static void daireika_palette_dma(running_machine *machine, UINT16 val)
 /*RAM-based protection handlings*/
 static void daireika_mcu_run(running_machine *machine)
 {
-	static UINT16 prg_prot, dma_old;
+	static uint16_t prg_prot, dma_old;
 
 	if(((jm_shared_ram[0x550/2] & 0xf00) == 0x700) && ((jm_shared_ram[0x540/2] & 0xf00) != dma_old))
 	{
@@ -704,7 +704,7 @@ static void daireika_mcu_run(running_machine *machine)
 
 static void mjzoomin_mcu_run(running_machine *machine)
 {
-	static UINT16 prg_prot;
+	static uint16_t prg_prot;
 
 	if(test_mode)	//service_mode
 	{
@@ -748,7 +748,7 @@ static void mjzoomin_mcu_run(running_machine *machine)
 
 static void urashima_mcu_run(running_machine *machine)
 {
-	static UINT16 prg_prot;
+	static uint16_t prg_prot;
 
 	if(test_mode)	//service_mode
 	{
@@ -856,13 +856,13 @@ Basic driver start
 
 ******************************************************************************************/
 
-static UINT8 oki_rom,oki_bank,oki_za;
+static uint8_t oki_rom,oki_bank,oki_za;
 
 static WRITE16_HANDLER( jalmah_okirom_w )
 {
 	if(ACCESSING_BITS_0_7)
 	{
-		UINT8 *oki = memory_region(space->machine, "oki");
+		uint8_t *oki = memory_region(space->machine, "oki");
 
 		oki_rom = data & 1;
 
@@ -879,7 +879,7 @@ static WRITE16_HANDLER( jalmah_okibank_w )
 {
 	if(ACCESSING_BITS_0_7)
 	{
-		UINT8 *oki = memory_region(space->machine, "oki");
+		uint8_t *oki = memory_region(space->machine, "oki");
 
 		oki_bank = data & 3;
 
@@ -1885,12 +1885,12 @@ static READ16_HANDLER( daireika_mcu_r )
 /*
 data value is REQ under mjzoomin video test menu.It is related to the MCU?
 */
-static const UINT16 dai_mcu_code[0x11] = { 0x33c5, 0x0010, 0x07fe, 0x3a39,0x000f,0x000c,0xda86,0x0245,
+static const uint16_t dai_mcu_code[0x11] = { 0x33c5, 0x0010, 0x07fe, 0x3a39,0x000f,0x000c,0xda86,0x0245,
 									       0x003f, 0x33c5, 0x000f, 0x000c,0x3a39,0x0010,0x07fe,0x4e75    };
 
 static WRITE16_HANDLER( daireika_mcu_w )
 {
-	static UINT16 i;
+	static uint16_t i;
 
 	if(ACCESSING_BITS_0_7 && data)
 	{

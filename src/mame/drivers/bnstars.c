@@ -104,18 +104,18 @@ static tilemap_t *ms32_tx_tilemap[2];
 static tilemap_t *ms32_bg_tilemap[2];
 static tilemap_t *ms32_roz_tilemap[2];
 
-static UINT32 *ms32_tx0_ram, *ms32_tx1_ram;
-static UINT32 *ms32_bg0_ram, *ms32_bg1_ram;
-static UINT32 *ms32_roz0_ram,*ms32_roz1_ram;
+static uint32_t *ms32_tx0_ram, *ms32_tx1_ram;
+static uint32_t *ms32_bg0_ram, *ms32_bg1_ram;
+static uint32_t *ms32_roz0_ram,*ms32_roz1_ram;
 
-static UINT32 *ms32_pal_ram[2];
-static UINT32 *ms32_roz_ctrl[2];
-static UINT32 *ms32_spram;
-static UINT32 *ms32_tx0_scroll, *ms32_bg0_scroll;
-static UINT32 *ms32_tx1_scroll, *ms32_bg1_scroll;
+static uint32_t *ms32_pal_ram[2];
+static uint32_t *ms32_roz_ctrl[2];
+static uint32_t *ms32_spram;
+static uint32_t *ms32_tx0_scroll, *ms32_bg0_scroll;
+static uint32_t *ms32_tx1_scroll, *ms32_bg1_scroll;
 
 
-static UINT32 bnstars1_mahjong_select;
+static uint32_t bnstars1_mahjong_select;
 
 static TILE_GET_INFO( get_ms32_tx0_tile_info )
 {
@@ -205,7 +205,7 @@ static void draw_roz(bitmap_t *bitmap, const rectangle *cliprect,int priority, i
 
         while (y <= maxy)
         {
-            UINT32 *lineaddr = ms32_lineram + 8 * (y & 0xff);
+            uint32_t *lineaddr = ms32_lineram + 8 * (y & 0xff);
 
             int start2x = (lineaddr[0x00/4] & 0xffff) | ((lineaddr[0x04/4] & 3) << 16);
             int start2y = (lineaddr[0x08/4] & 0xffff) | ((lineaddr[0x0c/4] & 3) << 16);
@@ -330,7 +330,7 @@ static int ms32_reverse_sprite_order = 0;
 static int flipscreen = 0;
 
 /* SPRITES based on tetrisp2 for now, readd priority bits later */
-static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, UINT32 *sprram_top, size_t sprram_size, int region)
+static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect, uint32_t *sprram_top, size_t sprram_size, int region)
 {
 /***************************************************************************
 
@@ -374,8 +374,8 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap, const recta
 	int code, attr, color, size, pri, pri_mask;
 	gfx_element *gfx = machine->gfx[region];
 
-	UINT32		*source	= sprram_top;
-	const UINT32	*finish	= sprram_top + (sprram_size - 0x10) / 4;
+	uint32_t		*source	= sprram_top;
+	const uint32_t	*finish	= sprram_top + (sprram_size - 0x10) / 4;
 
 
 	if (ms32_reverse_sprite_order == 1)
@@ -1277,7 +1277,7 @@ static ADDRESS_MAP_START( bnstars_z80_map, ADDRESS_SPACE_PROGRAM, 8 )
 ADDRESS_MAP_END
 #endif
 
-static UINT16 irqreq;
+static uint16_t irqreq;
 
 static IRQ_CALLBACK(irq_callback)
 {

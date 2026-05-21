@@ -93,7 +93,7 @@ Dip locations verified from manual for:
 #include "sound/2151intf.h"
 #include "sound/okim6295.h"
 
-static UINT16* kaneko16_mainram;
+static uint16_t* kaneko16_mainram;
 
 /***************************************************************************
 
@@ -798,8 +798,8 @@ ADDRESS_MAP_END
 
 static void kaneko16_common_oki_bank_w( running_machine* machine, const char *bankname, const char* tag, int bank, size_t fixedsize, size_t bankedsize )
 {
-	UINT32 bankaddr;
-	UINT8* samples = memory_region(machine,tag);
+	uint32_t bankaddr;
+	uint8_t* samples = memory_region(machine,tag);
 	size_t length = memory_region_length(machine,tag);
 
 	bankaddr = fixedsize + (bankedsize * bank);
@@ -2141,7 +2141,7 @@ static const unsigned char shogwarr_default_eeprom[128] = {
 */
 // the above eeprom looks corrupt, some of the text is wrong, the game never writes this text tho.. maybe it should be as below
 // leaving both here incase they relate to which tables get 'locked out' by the MCU somehow
-static const UINT8 shogwarr_default_eeprom[128] = {
+static const uint8_t shogwarr_default_eeprom[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x4B, 0x41, 0x4E, 0x45, 0x4B, 0x4F, 0x2F, 0x41, 0x54, 0x4F, 0x50, 0x20, 0x31, 0x39, 0x39, 0x32,
 	0x46, 0x55, 0x4A, 0x49, 0x59, 0x41, 0x4D, 0x41, 0x20, 0x42, 0x55, 0x53, 0x54, 0x45, 0x52, 0x20,
@@ -2199,7 +2199,7 @@ static MACHINE_DRIVER_START( shogwarr )
 MACHINE_DRIVER_END
 
 
-static const UINT8 brapboys_default_eeprom[128] = {
+static const uint8_t brapboys_default_eeprom[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x05, 0x00, 0x06, 0x20, 0x30, 0x00, 0x03, 0x68, 0x18, 0x01, 0x01, 0x01, 0x01,
 	0x01, 0x01, 0x00, 0x01, 0x00, 0x04, 0x00, 0x08, 0x4B, 0x41, 0x4E, 0x45, 0x4B, 0x4F, 0x20, 0x20,
@@ -2240,7 +2240,7 @@ MACHINE_DRIVER_END
 */
 static void kaneko16_unscramble_tiles(running_machine *machine, const char *region)
 {
-	UINT8 *RAM	=	memory_region(machine, region);
+	uint8_t *RAM	=	memory_region(machine, region);
 	int size			=	memory_region_length(machine, region);
 	int i;
 
@@ -2264,7 +2264,7 @@ static void kaneko16_expand_sample_banks(running_machine *machine, const char *r
        possible combinations of these and swap between them.
     */
 	int bank;
-	UINT8 *src0;
+	uint8_t *src0;
 
 	if (memory_region_length(machine, region) < 0x40000 * 16)
 		fatalerror("gtmr SOUND1 region too small");
@@ -2273,8 +2273,8 @@ static void kaneko16_expand_sample_banks(running_machine *machine, const char *r
 	src0 = memory_region(machine, region);
 	for (bank = 15; bank > 0; bank--)
 	{
-		UINT8 *srcn = src0 + 0x10000 * (bank < 3 ? 3 : bank);
-		UINT8 *dst = src0 + 0x40000 * bank;
+		uint8_t *srcn = src0 + 0x10000 * (bank < 3 ? 3 : bank);
+		uint8_t *dst = src0 + 0x40000 * bank;
 
 		memcpy(dst + 0x30000, srcn + 0x00000, 0x10000);
 		memcpy(dst + 0x00000, src0 + 0x00000, 0x30000);

@@ -60,10 +60,10 @@ Notes:
 #define GOODEJAN_MHZ2 16000000
 #define GOODEJAN_MHZ3 12000000
 
-extern UINT16 *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
-extern UINT16 *seibucrtc_vregs;
-extern UINT16 seibucrtc_sc0bank;
-static UINT16 goodejan_mux_data;
+extern uint16_t *seibucrtc_sc0vram,*seibucrtc_sc1vram,*seibucrtc_sc2vram,*seibucrtc_sc3vram;
+extern uint16_t *seibucrtc_vregs;
+extern uint16_t seibucrtc_sc0bank;
+static uint16_t goodejan_mux_data;
 
 static WRITE16_HANDLER( goodejan_gfxbank_w )
 {
@@ -73,7 +73,7 @@ static WRITE16_HANDLER( goodejan_gfxbank_w )
 /* Multiplexer device for the mahjong panel */
 static READ16_HANDLER( mahjong_panel_r )
 {
-	UINT16 ret;
+	uint16_t ret;
 	ret = 0xffff;
 
 	switch(goodejan_mux_data)

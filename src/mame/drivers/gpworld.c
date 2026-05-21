@@ -46,15 +46,15 @@ Dumping Notes:
 /* Assumed to be the same as segald hardware */
 #define GUESSED_CLOCK (5000000)
 
-static UINT8 nmi_enable;
-static UINT8 start_lamp;
-static UINT8 ldp_read_latch;
-static UINT8 ldp_write_latch;
-static UINT8 brake_gas;
+static uint8_t nmi_enable;
+static uint8_t start_lamp;
+static uint8_t ldp_read_latch;
+static uint8_t ldp_write_latch;
+static uint8_t brake_gas;
 
-static UINT8* tile_RAM;
-static UINT8* sprite_RAM;
-static UINT8* palette_RAM;
+static uint8_t* tile_RAM;
+static uint8_t* sprite_RAM;
+static uint8_t* palette_RAM;
 
 static running_device *laserdisc;
 
@@ -62,7 +62,7 @@ static running_device *laserdisc;
 /* VIDEO GOODS */
 static void gpworld_draw_tiles(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
 {
-	UINT8 characterX, characterY;
+	uint8_t characterX, characterY;
 
 	/* Temporarily set to 64 wide to accommodate two screens */
 	for (characterX = 0; characterX < 64; characterX++)
@@ -108,12 +108,12 @@ static void gpworld_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 
 	int i;
 
-	UINT8 *GFX = memory_region(machine, "gfx2");
+	uint8_t *GFX = memory_region(machine, "gfx2");
 
 	/* Heisted from Daphne which heisted it from MAME */
 	for (i = 0; i < 0x800; i += 8)
 	{
-		UINT8 *spr_reg = sprite_RAM + i;
+		uint8_t *spr_reg = sprite_RAM + i;
 
 		if (spr_reg[SPR_Y_BOTTOM] && spr_reg[SPR_X_LO] != 0xff)
 		{
@@ -151,7 +151,7 @@ static void gpworld_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 				while (1)
 				{
 					int data_lo, data_high;
-					UINT8 pixel1, pixel2, pixel3, pixel4;
+					uint8_t pixel1, pixel2, pixel3, pixel4;
 
 					data_lo   = GFX[(src2 & 0x7fff) | (sprite_bank << 16)];
 					data_high = GFX[(src2 & 0x7fff) | 0x8000 | (sprite_bank << 16)];
@@ -164,7 +164,7 @@ static void gpworld_draw_sprites(running_machine *machine, bitmap_t *bitmap, con
 					/* we'll see if this is still applicable */
 					if (src & 0x8000)
 					{
-						UINT8 temp_pixel;
+						uint8_t temp_pixel;
 						temp_pixel = pixel1;
 						pixel1 = pixel4;
 						pixel4 = temp_pixel;

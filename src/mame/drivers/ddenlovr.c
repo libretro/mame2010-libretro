@@ -144,7 +144,7 @@ VIDEO_START( ddenlovr )
 
 	for (i = 0; i < 8; i++)
 	{
-		state->ddenlovr_pixmap[i] = auto_alloc_array(machine, UINT8, 512 * 512);
+		state->ddenlovr_pixmap[i] = auto_alloc_array(machine, uint8_t, 512 * 512);
 		state->ddenlovr_scroll[i * 2 + 0] = state->ddenlovr_scroll[i * 2 + 1] = 0;
 	}
 
@@ -263,12 +263,12 @@ static VIDEO_START( mjflove )
 	state->ddenlovr_blit_commands = mjflove_commands;
 }
 
-static void ddenlovr_flipscreen_w( UINT8 data )
+static void ddenlovr_flipscreen_w( uint8_t data )
 {
 	logerror("flipscreen = %02x (%s)\n", data, (data & 1) ? "off" : "on");
 }
 
-static void ddenlovr_blit_flip_w( running_machine *machine, UINT8 data )
+static void ddenlovr_blit_flip_w( running_machine *machine, uint8_t data )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 
@@ -384,7 +384,7 @@ static void do_plot( running_machine *machine, int x, int y, int pen )
 }
 
 
-INLINE int fetch_bit( UINT8 *src_data, int src_len, int *bit_addr )
+INLINE int fetch_bit( uint8_t *src_data, int src_len, int *bit_addr )
 {
 	int baddr = *bit_addr;
 
@@ -401,7 +401,7 @@ INLINE int fetch_bit( UINT8 *src_data, int src_len, int *bit_addr )
 	return (src_data[baddr / 8] >> (7 - (baddr & 7))) & 1;
 }
 
-INLINE int fetch_word( UINT8 *src_data, int src_len, int *bit_addr, int word_len )
+INLINE int fetch_word( uint8_t *src_data, int src_len, int *bit_addr, int word_len )
 {
 	int res = 0;
 
@@ -436,7 +436,7 @@ INLINE void log_draw_error( int src, int cmd )
 static int blit_draw( running_machine *machine, int src, int sx )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
-	UINT8 *src_data = memory_region(machine, "blitter");
+	uint8_t *src_data = memory_region(machine, "blitter");
 	int src_len = memory_region_length(machine, "blitter");
 	int bit_addr = (src & 0xffffff) * state->ddenlovr_blit_rom_bits;	/* convert to bit address */
 	int pen_size, arg_size, cmd;
@@ -693,7 +693,7 @@ INLINE void log_blit( running_machine *machine, int data )
 #endif
 }
 
-static void blitter_w( const address_space *space, int blitter, offs_t offset, UINT8 data, int irq_vector )
+static void blitter_w( const address_space *space, int blitter, offs_t offset, uint8_t data, int irq_vector )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
 	int hi_bits;
@@ -856,7 +856,7 @@ profiler_mark_end();
 
 
 // differences wrt blitter_data_w: slightly different blitter commands
-static void blitter_w_funkyfig( running_machine *machine, int blitter, offs_t offset, UINT8 data, int irq_vector )
+static void blitter_w_funkyfig( running_machine *machine, int blitter, offs_t offset, uint8_t data, int irq_vector )
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
 	int hi_bits;
@@ -1245,7 +1245,7 @@ static WRITE16_HANDLER( ddenlovr_blitter_irq_ack_w )
 static READ8_HANDLER( rongrong_gfxrom_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 *rom  = memory_region(space->machine, "blitter");
+	uint8_t *rom  = memory_region(space->machine, "blitter");
 	size_t size = memory_region_length(space->machine, "blitter");
 	int address = state->ddenlovr_blit_address;
 
@@ -1319,7 +1319,7 @@ VIDEO_UPDATE(ddenlovr)
 
 #if 0
 	static int base = 0x0;
-	const UINT8 *gfx = memory_region(screen->machine, "blitter");
+	const uint8_t *gfx = memory_region(screen->machine, "blitter");
 	int next;
 	memset(state->ddenlovr_pixmap[0], 0, 512 * 512);
 	memset(state->ddenlovr_pixmap[1], 0, 512 * 512);
@@ -1762,7 +1762,7 @@ ADDRESS_MAP_END
 static READ16_HANDLER( ddenlovj_dsw_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT16 dsw = 0;
+	uint16_t dsw = 0;
 	if ((~*state->dsw_sel16) & 0x01)	dsw |= input_port_read(space->machine, "DSW1");
 	if ((~*state->dsw_sel16) & 0x02)	dsw |= input_port_read(space->machine, "DSW2");
 	if ((~*state->dsw_sel16) & 0x04)	dsw |= input_port_read(space->machine, "DSW3");
@@ -2433,7 +2433,7 @@ static READ8_HANDLER( hanakanz_keyb_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
 
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	if      (!BIT(state->keyb, 0))   val = input_port_read(space->machine, offset ? "KEY5" : "KEY0");
 	else if (!BIT(state->keyb, 1))   val = input_port_read(space->machine, offset ? "KEY6" : "KEY1");
@@ -2465,7 +2465,7 @@ static READ8_HANDLER( hanakanz_busy_r )
 static READ8_HANDLER( hanakanz_gfxrom_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 *rom  = memory_region(space->machine, "blitter");
+	uint8_t *rom  = memory_region(space->machine, "blitter");
 	size_t size = memory_region_length(space->machine, "blitter");
 	int address = (state->ddenlovr_blit_address & 0xffffff) * 2;
 
@@ -2622,7 +2622,7 @@ ADDRESS_MAP_END
 static READ8_HANDLER( mjchuuka_keyb_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	if      (!BIT(state->keyb, 0))   val = input_port_read(space->machine, offset ? "KEY5" : "KEY0");
 	else if (!BIT(state->keyb, 1))   val = input_port_read(space->machine, offset ? "KEY6" : "KEY1");
@@ -2647,7 +2647,7 @@ static WRITE8_HANDLER( mjchuuka_blitter_w )
 static void mjchuuka_get_romdata(running_machine *machine)
 {
 	dynax_state *state = (dynax_state *)machine->driver_data;
-	UINT8 *rom = memory_region(machine, "blitter");
+	uint8_t *rom = memory_region(machine, "blitter");
 	size_t size = memory_region_length(machine, "blitter");
 	int address = (state->ddenlovr_blit_address & 0xffffff) * 2;
 
@@ -2678,7 +2678,7 @@ static READ8_HANDLER( mjchuuka_gfxrom_1_r )
 static WRITE8_HANDLER( mjchuuka_palette_w )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT16 rgb = (offset & 0xff00) | data;
+	uint16_t rgb = (offset & 0xff00) | data;
 
 	if (rgb & 0x8000)
 	{
@@ -2797,7 +2797,7 @@ static READ8_HANDLER( mjmyster_coins_r )
 static READ8_HANDLER( mjmyster_keyb_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 ret = 0xff;
+	uint8_t ret = 0xff;
 
 	if      (BIT(state->keyb, 0))   ret = input_port_read(space->machine, "KEY0");
 	else if (BIT(state->keyb, 1))   ret = input_port_read(space->machine, "KEY1");
@@ -2892,7 +2892,7 @@ static WRITE8_HANDLER( hginga_rombank_w )
 static READ8_HANDLER( hginga_protection_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 	if (state->hginga_rombank & 0x10)
 		return hanakanz_rand_r(space, 0);
@@ -3060,10 +3060,10 @@ ADDRESS_MAP_END
                              Hanafuda Hana Gokou
 ***************************************************************************/
 
-static UINT8 hgokou_player_r( const address_space *space, int player )
+static uint8_t hgokou_player_r( const address_space *space, int player )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 hopper_bit = ((state->hopper && !(space->machine->primary_screen->frame_number() % 10)) ? 0 : (1 << 6));
+	uint8_t hopper_bit = ((state->hopper && !(space->machine->primary_screen->frame_number() % 10)) ? 0 : (1 << 6));
 
 	if (!BIT(state->input_sel, 0))   return input_port_read(space->machine, player ? "KEY5" : "KEY0") | hopper_bit;
 	if (!BIT(state->input_sel, 1))   return input_port_read(space->machine, player ? "KEY6" : "KEY1") | hopper_bit;
@@ -3126,7 +3126,7 @@ static WRITE8_HANDLER( hgokou_input_w )
 static READ8_HANDLER( hgokou_protection_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 *rom = memory_region(space->machine, "maincpu");
+	uint8_t *rom = memory_region(space->machine, "maincpu");
 
 	if (state->hginga_rombank == 0)
 		return hanakanz_rand_r(space, 0);
@@ -3345,7 +3345,7 @@ static READ16_HANDLER( akamaru_protection2_r )
 static READ16_HANDLER( akamaru_dsw_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT16 dsw = 0;
+	uint16_t dsw = 0;
 
 	if (state->dsw_sel16[1] == 0xff)	dsw |= input_port_read(space->machine, "DSW1");
 	if (state->dsw_sel16[0] == 0xff)	dsw |= input_port_read(space->machine, "DSW2");
@@ -3433,7 +3433,7 @@ static READ8_HANDLER( mjflove_protection_r )
 static READ8_HANDLER( mjflove_keyb_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 val = 0xff;
+	uint8_t val = 0xff;
 
 	if      (!BIT(state->keyb, 0))   val = input_port_read(space->machine, offset ? "KEY5" : "KEY0");
 	else if (!BIT(state->keyb, 1))   val = input_port_read(space->machine, offset ? "KEY6" : "KEY1");
@@ -3558,7 +3558,7 @@ ADDRESS_MAP_END
 static READ8_HANDLER( sryudens_keyb_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 val = 0x3f;
+	uint8_t val = 0x3f;
 
 	if      (!BIT(state->keyb, 0))   val = input_port_read(space->machine, offset ? "KEY5" : "KEY0");
 	else if (!BIT(state->keyb, 1))   val = input_port_read(space->machine, offset ? "KEY6" : "KEY1");
@@ -3635,7 +3635,7 @@ ADDRESS_MAP_END
 static READ8_HANDLER( daimyojn_keyb1_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 val = 0x3f;
+	uint8_t val = 0x3f;
 
 	if      (!BIT(state->keyb, 0))  val = input_port_read(space->machine, "KEY0");
 	else if (!BIT(state->keyb, 1))  val = input_port_read(space->machine, "KEY1");
@@ -3650,7 +3650,7 @@ static READ8_HANDLER( daimyojn_keyb1_r )
 static READ8_HANDLER( daimyojn_keyb2_r )
 {
 	dynax_state *state = (dynax_state *)space->machine->driver_data;
-	UINT8 val = 0x3f;
+	uint8_t val = 0x3f;
 
 	if      (!BIT(state->keyb, 0))  val = input_port_read(space->machine, "KEY5");
 	else if (!BIT(state->keyb, 1))  val = input_port_read(space->machine, "KEY6");
@@ -7637,7 +7637,7 @@ static MACHINE_RESET( ddenlovr )
 
 static MACHINE_START( rongrong )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x20, &ROM[0x010000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 8,    &ROM[0x110000], 0x1000);
 
@@ -7646,7 +7646,7 @@ static MACHINE_START( rongrong )
 
 static MACHINE_START( mmpanic )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 8,    &ROM[0x10000], 0x8000);
 
 	MACHINE_START_CALL(ddenlovr);
@@ -7654,7 +7654,7 @@ static MACHINE_START( mmpanic )
 
 static MACHINE_START( funkyfig )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 8,    &ROM[0x90000], 0x1000);
 
@@ -7663,7 +7663,7 @@ static MACHINE_START( funkyfig )
 
 static MACHINE_START( hanakanz )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 0x10, &ROM[0x90000], 0x1000);
 
@@ -7672,7 +7672,7 @@ static MACHINE_START( hanakanz )
 
 static MACHINE_START( mjmyster )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 8,    &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 8,    &ROM[0x90000], 0x1000);
 
@@ -7681,7 +7681,7 @@ static MACHINE_START( mjmyster )
 
 static MACHINE_START( hparadis )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 8,    &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 8,    &ROM[0x50000], 0x1000);
 
@@ -7690,7 +7690,7 @@ static MACHINE_START( hparadis )
 
 static MACHINE_START( mjflove )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 8,    &ROM[0x90000], 0x1000);
 
@@ -7699,7 +7699,7 @@ static MACHINE_START( mjflove )
 
 static MACHINE_START( sryudens )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 0x10, &ROM[0x10000], 0x8000);
 	memory_configure_bank(machine, "bank2", 0, 0x10, &ROM[0x90000], 0x1000);
 

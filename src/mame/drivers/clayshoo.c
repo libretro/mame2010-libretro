@@ -25,13 +25,13 @@ public:
 	clayshoo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *   videoram;
+	uint8_t *   videoram;
 	size_t    videoram_size;
 
 	/* misc */
 	emu_timer *analog_timer_1, *analog_timer_2;
-	UINT8 input_port_select;
-	UINT8 analog_port_val;
+	uint8_t input_port_select;
+	uint8_t analog_port_val;
 };
 
 
@@ -48,12 +48,12 @@ static WRITE8_DEVICE_HANDLER( input_port_select_w )
 }
 
 
-static UINT8 difficulty_input_port_r( running_machine *machine, int bit )
+static uint8_t difficulty_input_port_r( running_machine *machine, int bit )
 {
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	/* read fake port and remap the buttons to 2 bits */
-	UINT8	raw = input_port_read(machine, "FAKE");
+	uint8_t	raw = input_port_read(machine, "FAKE");
 
 	if (raw & (1 << (bit + 1)))
 		ret = 0x03;		/* expert */
@@ -69,7 +69,7 @@ static UINT8 difficulty_input_port_r( running_machine *machine, int bit )
 static READ8_DEVICE_HANDLER( input_port_r )
 {
 	clayshoo_state *state = (clayshoo_state *)device->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	switch (state->input_port_select)
 	{
@@ -192,9 +192,9 @@ static VIDEO_UPDATE( clayshoo )
 	for (offs = 0; offs < state->videoram_size; offs++)
 	{
 		int i;
-		UINT8 x = offs << 3;
-		UINT8 y = ~(offs >> 5);
-		UINT8 data = state->videoram[offs];
+		uint8_t x = offs << 3;
+		uint8_t y = ~(offs >> 5);
+		uint8_t data = state->videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{

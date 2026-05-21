@@ -74,8 +74,8 @@ public:
 	lastfght_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  colorram;
-//  UINT8 *  nvram; // currently this uses generic nvram handling
+	uint8_t *  colorram;
+//  uint8_t *  nvram; // currently this uses generic nvram handling
 
 	/* video-related */
 	bitmap_t *bitmap[2];
@@ -85,7 +85,7 @@ public:
 	int x, y, w, h;
 
 	/* misc */
-	UINT16 c00006;
+	uint16_t c00006;
 
 	/* devices */
 	running_device *maincpu;
@@ -103,7 +103,7 @@ static VIDEO_START( lastfght )
 	for (i = 0; i < 2; i++)
 		state->bitmap[i] = machine->primary_screen->alloc_compatible_bitmap();
 
-	state->colorram = auto_alloc_array(machine, UINT8, 256 * 3);
+	state->colorram = auto_alloc_array(machine, uint8_t, 256 * 3);
 
 	state_save_register_global_bitmap(machine, state->bitmap[0]);
 	state_save_register_global_bitmap(machine, state->bitmap[1]);
@@ -121,8 +121,8 @@ static VIDEO_UPDATE( lastfght )
 	int x, y, count = 0;
 	static unsigned base = 0;
 	static int view_roms = 0;
-	UINT8 *gfxdata = memory_region(screen->machine, "gfx1");
-	UINT8 data;
+	uint8_t *gfxdata = memory_region(screen->machine, "gfx1");
+	uint8_t data;
 
 	if (input_code_pressed_once(screen->machine, KEYCODE_ENTER))	view_roms ^= 1;
 	if (view_roms)
@@ -313,7 +313,7 @@ static WRITE16_HANDLER( lastfght_blit_w )
 	if (ACCESSING_BITS_8_15)
 	{
 		int x, y, addr;
-		UINT8 *gfxdata = memory_region( space->machine, "gfx1" );
+		uint8_t *gfxdata = memory_region( space->machine, "gfx1" );
 		bitmap_t *dest = state->bitmap[state->dest];
 
 #if 0
@@ -618,7 +618,7 @@ ROM_END
 
 static DRIVER_INIT(lastfght)
 {
-	UINT16 *rom = (UINT16*)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t*)memory_region(machine, "maincpu");
 
 	// pass initial check (protection ? hw?)
 	rom[0x00354 / 2] = 0x403e;

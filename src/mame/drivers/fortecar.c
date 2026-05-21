@@ -31,7 +31,7 @@ dip 1X8
 #include "machine/8255ppi.h"
 #include "video/mc6845.h"
 
-static UINT8 *fortecar_ram;
+static uint8_t *fortecar_ram;
 static int bank;
 
 static VIDEO_START(fortecar)

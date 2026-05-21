@@ -499,8 +499,8 @@ static VIDEO_START( laserbat )
 
 	state->bg_tilemap = tilemap_create(machine, get_tile_info, tilemap_scan_rows, 8, 8, 32, 32);
 
-	state->videoram = auto_alloc_array(machine, UINT8, 0x400);
-	state->colorram = auto_alloc_array(machine, UINT8, 0x400);
+	state->videoram = auto_alloc_array(machine, uint8_t, 0x400);
+	state->colorram = auto_alloc_array(machine, uint8_t, 0x400);
 
 	state_save_register_global_pointer(machine, state->videoram, 0x400);
 	state_save_register_global_pointer(machine, state->colorram, 0x400);

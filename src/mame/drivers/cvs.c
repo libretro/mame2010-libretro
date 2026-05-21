@@ -263,7 +263,7 @@ static void cvs_slave_cpu_interrupt( running_device *cpu, int state )
 static READ8_HANDLER( cvs_input_r )
 {
 	cvs_state *state = (cvs_state *)space->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	/* the upper 4 bits of the address is used to select the character banking attributes */
 	state->character_banking_mode = (offset >> 4) & 0x03;
@@ -336,7 +336,7 @@ static void start_393hz_timer(running_machine *machine)
 static WRITE8_DEVICE_HANDLER( cvs_4_bit_dac_data_w )
 {
 	cvs_state *state = (cvs_state *)device->machine->driver_data;
-	UINT8 dac_value;
+	uint8_t dac_value;
 	static int old_data[4] = {0,0,0,0};
 
 	if (data != old_data[offset])
@@ -413,7 +413,7 @@ static READ8_HANDLER( cvs_speech_command_r )
 static WRITE8_DEVICE_HANDLER( cvs_tms5110_ctl_w )
 {
 	cvs_state *state = (cvs_state *)device->machine->driver_data;
-	UINT8 ctl;
+	uint8_t ctl;
 	/*
      * offset 0: CS ?
      */
@@ -431,7 +431,7 @@ static WRITE8_DEVICE_HANDLER( cvs_tms5110_ctl_w )
 
 static WRITE8_DEVICE_HANDLER( cvs_tms5110_pdc_w )
 {
-	UINT8 out = ((~data) >> 7) & 1;
+	uint8_t out = ((~data) >> 7) & 1;
 	LOG(("CVS: Speech PDC = %02x %02x\n", offset, out));
 	tms5110_pdc_w(device, out);
 }
@@ -441,7 +441,7 @@ static int speech_rom_read_bit( running_device *device )
 {
 	cvs_state *state = (cvs_state *)device->machine->driver_data;
 	running_machine *machine = device->machine;
-	UINT8 *ROM = memory_region(machine, "speechdata");
+	uint8_t *ROM = memory_region(machine, "speechdata");
 	int bit;
 
 	/* before reading the bit, clamp the address to the region length */
@@ -1007,9 +1007,9 @@ MACHINE_START( cvs )
 	cvs_state *state = (cvs_state *)machine->driver_data;
 
 	/* allocate memory */
-	state->color_ram = auto_alloc_array(machine, UINT8, 0x400);
-	state->palette_ram = auto_alloc_array(machine, UINT8, 0x10);
-	state->character_ram = auto_alloc_array(machine, UINT8, 3 * 0x800);  /* only half is used, but
+	state->color_ram = auto_alloc_array(machine, uint8_t, 0x400);
+	state->palette_ram = auto_alloc_array(machine, uint8_t, 0x10);
+	state->character_ram = auto_alloc_array(machine, uint8_t, 3 * 0x800);  /* only half is used, but
                                                     by allocating twice the amount,
                                                     we can use the same gfx_layout */
 
@@ -1598,7 +1598,7 @@ ROM_END
 
 static DRIVER_INIT( huncholy )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* patch out protection */
 	ROM[0x0082] = 0xc0;
@@ -1618,7 +1618,7 @@ static DRIVER_INIT( huncholy )
 
 static DRIVER_INIT( hunchbaka )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	offs_t offs;
 
@@ -1630,7 +1630,7 @@ static DRIVER_INIT( hunchbaka )
 
 static DRIVER_INIT( superbik )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* patch out protection */
 	ROM[0x0079] = 0xc0;
@@ -1658,7 +1658,7 @@ static DRIVER_INIT( superbik )
 
 static DRIVER_INIT( hero )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	/* patch out protection */
 	ROM[0x0087] = 0xc0;
@@ -1680,7 +1680,7 @@ static DRIVER_INIT( hero )
 
 static DRIVER_INIT( raiders )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	offs_t offs;
 

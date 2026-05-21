@@ -36,9 +36,9 @@ http://www.youtube.com/watch?v=ssEfw-RbSjs
 #include "sound/msm5205.h"
 #include "machine/8255ppi.h"
 
-//static UINT8 io_data[6];
-static UINT8 led[0x10]; //not the right size,TODO
-static UINT8 mux_data;
+//static uint8_t io_data[6];
+static uint8_t led[0x10]; //not the right size,TODO
+static uint8_t mux_data;
 
 static VIDEO_START( kungfur )
 {
@@ -67,7 +67,7 @@ g & 40
 #define LED_ON		0x0001
 #define LED_OFF		0x0000
 
-static void draw_led(bitmap_t *bitmap, int x, int y,UINT8 value)
+static void draw_led(bitmap_t *bitmap, int x, int y,uint8_t value)
 {
 	plot_box(bitmap, x, y, 6, 10, 0x00000000);
 
@@ -156,8 +156,8 @@ static WRITE8_DEVICE_HANDLER( test5_w )
 //  printf("%02x Unk 5 W\n",data);
 }
 
-static UINT32 adpcm_pos[2];
-static UINT8 adpcm_idle[2];
+static uint32_t adpcm_pos[2];
+static uint8_t adpcm_idle[2];
 
 static WRITE8_DEVICE_HANDLER( kungfur_adpcm1_w )
 {
@@ -261,7 +261,7 @@ static const ppi8255_interface ppi8255_intf[2] =
 
 static void kfr_adpcm1_int(running_device *device)
 {
-	static UINT8 trigger,adpcm_data;
+	static uint8_t trigger,adpcm_data;
 
 	if (adpcm_pos[0] >= 0x40000 || adpcm_idle[0])
 	{
@@ -270,7 +270,7 @@ static void kfr_adpcm1_int(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm1");
+		uint8_t *ROM = memory_region(device->machine, "adpcm1");
 
 		adpcm_data = ((trigger ? (ROM[adpcm_pos[0]] & 0x0f) : (ROM[adpcm_pos[0]] & 0xf0)>>4) );
 		msm5205_data_w(device->machine->device("adpcm1"),adpcm_data & 0xf);
@@ -287,7 +287,7 @@ static void kfr_adpcm1_int(running_device *device)
 
 static void kfr_adpcm2_int(running_device *device)
 {
-	static UINT8 trigger,adpcm_data;
+	static uint8_t trigger,adpcm_data;
 
 	if (adpcm_pos[1] >= 0x10000 || adpcm_idle[1])
 	{
@@ -296,7 +296,7 @@ static void kfr_adpcm2_int(running_device *device)
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm2");
+		uint8_t *ROM = memory_region(device->machine, "adpcm2");
 
 		adpcm_data = ((trigger ? (ROM[adpcm_pos[1]] & 0x0f) : (ROM[adpcm_pos[1]] & 0xf0)>>4) );
 		msm5205_data_w(device->machine->device("adpcm2"),adpcm_data & 0xf);

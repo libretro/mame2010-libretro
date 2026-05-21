@@ -118,7 +118,7 @@ static INTERRUPT_GEN( grchamp_cpu1_interrupt )
 static WRITE8_HANDLER( cpu0_outputs_w )
 {
 	grchamp_state *state = (grchamp_state *)space->machine->driver_data;
-	UINT8 diff = data ^ state->cpu0_out[offset];
+	uint8_t diff = data ^ state->cpu0_out[offset];
 	state->cpu0_out[offset] = data;
 
 	switch (offset)
@@ -199,7 +199,7 @@ static WRITE8_HANDLER( cpu0_outputs_w )
 
 static WRITE8_HANDLER( led_board_w )
 {
-	static const UINT8 ls247_map[16] =
+	static const uint8_t ls247_map[16] =
 		{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x58,0x4c,0x62,0x69,0x78,0x00 };
 	grchamp_state *state = (grchamp_state *)space->machine->driver_data;
 
@@ -246,7 +246,7 @@ static WRITE8_HANDLER( cpu1_outputs_w )
 {
 	running_device *discrete = space->machine->device("discrete");
 	grchamp_state *state = (grchamp_state *)space->machine->driver_data;
-	UINT8 diff = data ^ state->cpu1_out[offset];
+	uint8_t diff = data ^ state->cpu1_out[offset];
 	state->cpu1_out[offset] = data;
 
 	switch (offset)
@@ -337,7 +337,7 @@ static WRITE8_HANDLER( cpu1_outputs_w )
  *
  *************************************/
 
-INLINE UINT8 get_pc3259_bits(running_machine *machine, grchamp_state *state, int offs)
+INLINE uint8_t get_pc3259_bits(running_machine *machine, grchamp_state *state, int offs)
 {
 	int bits;
 

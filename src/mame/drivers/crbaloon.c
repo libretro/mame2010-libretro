@@ -19,7 +19,7 @@
 #include "includes/crbaloon.h"
 
 
-static UINT8 *pc3092_data;
+static uint8_t *pc3092_data;
 
 
 
@@ -72,7 +72,7 @@ static WRITE8_HANDLER( pc3092_w )
 
 static CUSTOM_INPUT( pc3092_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* enable coin & start input? Wild guess!!! */
 	if (pc3092_data[1] & 0x02)
@@ -118,10 +118,10 @@ static void pc3259_update(void)
 
 static READ8_HANDLER( pc3259_r )
 {
-	UINT8 ret = 0;
-	UINT8 reg = offset >> 2;
+	uint8_t ret = 0;
+	uint8_t reg = offset >> 2;
 
-	UINT16 collision_address = crbaloon_get_collision_address();
+	uint16_t collision_address = crbaloon_get_collision_address();
 	int collided = (collision_address != 0xffff);
 
 	switch (reg)

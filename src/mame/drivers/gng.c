@@ -305,7 +305,7 @@ static MACHINE_START( gng )
 {
 	gng_state *state = (gng_state *)machine->driver_data;
 
-	UINT8 *rombase = memory_region(machine, "maincpu");
+	uint8_t *rombase = memory_region(machine, "maincpu");
 	memory_configure_bank(machine, "bank1", 0, 4, &rombase[0x10000], 0x2000);
 	memory_configure_bank(machine, "bank1", 4, 1, &rombase[0x4000], 0x2000);
 

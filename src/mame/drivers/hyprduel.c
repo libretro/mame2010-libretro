@@ -210,7 +210,7 @@ static TIMER_CALLBACK( magerror_irq_callback )
 static READ16_HANDLER( hyprduel_bankedrom_r )
 {
 	hyprduel_state *state = (hyprduel_state *)space->machine->driver_data;
-	UINT8 *ROM = memory_region(space->machine, "gfx1");
+	uint8_t *ROM = memory_region(space->machine, "gfx1");
 	size_t  len = memory_region_length(space->machine, "gfx1");
 
 	offset = offset * 2 + 0x10000 * (*state->rombank);
@@ -272,12 +272,12 @@ static TIMER_CALLBACK( hyprduel_blit_done )
 	update_irq_state(machine);
 }
 
-INLINE int blt_read( const UINT8 *ROM, const int offs )
+INLINE int blt_read( const uint8_t *ROM, const int offs )
 {
 	return ROM[offs];
 }
 
-INLINE void blt_write( const address_space *space, const int tmap, const offs_t offs, const UINT16 data, const UINT16 mask )
+INLINE void blt_write( const address_space *space, const int tmap, const offs_t offs, const uint16_t data, const uint16_t mask )
 {
 	switch( tmap )
 	{
@@ -296,15 +296,15 @@ static WRITE16_HANDLER( hyprduel_blitter_w )
 
 	if (offset == 0xc / 2)
 	{
-		UINT8 *src = memory_region(space->machine, "gfx1");
+		uint8_t *src = memory_region(space->machine, "gfx1");
 		size_t  src_len = memory_region_length(space->machine, "gfx1");
 
-		UINT32 tmap = (state->blitter_regs[0x00 / 2] << 16) + state->blitter_regs[0x02 / 2];
-		UINT32 src_offs = (state->blitter_regs[0x04 / 2] << 16) + state->blitter_regs[0x06 / 2];
-		UINT32 dst_offs = (state->blitter_regs[0x08 / 2] << 16) + state->blitter_regs[0x0a / 2];
+		uint32_t tmap = (state->blitter_regs[0x00 / 2] << 16) + state->blitter_regs[0x02 / 2];
+		uint32_t src_offs = (state->blitter_regs[0x04 / 2] << 16) + state->blitter_regs[0x06 / 2];
+		uint32_t dst_offs = (state->blitter_regs[0x08 / 2] << 16) + state->blitter_regs[0x0a / 2];
 
 		int shift = (dst_offs & 0x80) ? 0 : 8;
-		UINT16 mask = (dst_offs & 0x80) ? 0x00ff : 0xff00;
+		uint16_t mask = (dst_offs & 0x80) ? 0x00ff : 0xff00;
 
 //      logerror("CPU #0 PC %06X : Blitter regs %08X, %08X, %08X\n", cpu_get_pc(space->cpu), tmap, src_offs, dst_offs);
 
@@ -322,7 +322,7 @@ static WRITE16_HANDLER( hyprduel_blitter_w )
 
 		while (1)
 		{
-			UINT16 b1, b2, count;
+			uint16_t b1, b2, count;
 
 			src_offs %= src_len;
 			b1 = blt_read(src, src_offs);

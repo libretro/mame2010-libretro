@@ -343,11 +343,11 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( fcombat )
 {
-	UINT32 oldaddr, newaddr, length;
-	UINT8 *src, *dst, *temp;
+	uint32_t oldaddr, newaddr, length;
+	uint8_t *src, *dst, *temp;
 
 	/* allocate some temporary space */
-	temp = auto_alloc_array(machine, UINT8, 0x10000);
+	temp = auto_alloc_array(machine, uint8_t, 0x10000);
 
 	/* make a temporary copy of the character data */
 	src = temp;

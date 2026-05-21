@@ -53,7 +53,7 @@ static PALETTE_INIT( fgoal )
 
 	for (i = 0; i < 128; i++)
 	{
-		UINT8 color = color_prom[0x80 | i] & 63;
+		uint8_t color = color_prom[0x80 | i] & 63;
 		palette_set_color_rgb(machine, i, intensity(color >> 4), intensity(color >> 2), intensity(color >> 0));
 	}
 
@@ -106,7 +106,7 @@ static READ8_HANDLER( fgoal_analog_r )
 
 static CUSTOM_INPUT( fgoal_80_r )
 {
-	UINT8 ret = (field->port->machine->primary_screen->vpos() & 0x80) ? 1 : 0;
+	uint8_t ret = (field->port->machine->primary_screen->vpos() & 0x80) ? 1 : 0;
 
 	return ret;
 }
@@ -165,7 +165,7 @@ static READ8_HANDLER( fgoal_address_lo_r )
 static READ8_HANDLER( fgoal_shifter_r )
 {
 	fgoal_state *state = (fgoal_state *)space->machine->driver_data;
-	UINT8 v = mb14241_shift_result_r(state->mb14241, 0);
+	uint8_t v = mb14241_shift_result_r(state->mb14241, 0);
 
 	return BITSWAP8(v, 7, 6, 5, 4, 3, 2, 1, 0);
 }
@@ -173,7 +173,7 @@ static READ8_HANDLER( fgoal_shifter_r )
 static READ8_HANDLER( fgoal_shifter_reverse_r )
 {
 	fgoal_state *state = (fgoal_state *)space->machine->driver_data;
-	UINT8 v = mb14241_shift_result_r(state->mb14241, 0);
+	uint8_t v = mb14241_shift_result_r(state->mb14241, 0);
 
 	return BITSWAP8(v, 0, 1, 2, 3, 4, 5, 6, 7);
 }
@@ -291,7 +291,7 @@ static INPUT_PORTS_START( fgoal )
 	PORT_BIT( 0xff, 0x80, IPT_PADDLE ) PORT_MINMAX(1, 254) PORT_SENSITIVITY(50) PORT_KEYDELTA(10) PORT_CENTERDELTA(0) PORT_REVERSE PORT_PLAYER(2)
 INPUT_PORTS_END
 
-static const UINT32 gfxlayout_xoffset[64] =
+static const uint32_t gfxlayout_xoffset[64] =
 {
 	0x000, 0x008, 0x010, 0x018, 0x020, 0x028, 0x030, 0x038,
 	0x040, 0x048, 0x050, 0x058, 0x060, 0x068, 0x070, 0x078,
@@ -303,7 +303,7 @@ static const UINT32 gfxlayout_xoffset[64] =
 	0x1c0, 0x1c8, 0x1d0, 0x1d8, 0x1e0, 0x1e8, 0x1f0, 0x1f8
 };
 
-static const UINT32 gfxlayout_yoffset[64] =
+static const uint32_t gfxlayout_yoffset[64] =
 {
 	0x0000, 0x0200, 0x0400, 0x0600, 0x0800, 0x0a00, 0x0c00, 0x0e00,
 	0x1000, 0x1200, 0x1400, 0x1600, 0x1800, 0x1a00, 0x1c00, 0x1e00,

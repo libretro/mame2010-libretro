@@ -369,27 +369,27 @@ Notes:
  *
  *************************************/
 
-static UINT8 vint_state;
-static UINT8 xint_state;
-static UINT8 qint_state;
+static uint8_t vint_state;
+static uint8_t xint_state;
+static uint8_t qint_state;
 
-static UINT8 sound_data;
-static UINT8 sound_return;
-static UINT8 sound_int_state;
+static uint8_t sound_data;
+static uint8_t sound_return;
+static uint8_t sound_int_state;
 
-static UINT16 *main_rom;
-static UINT16 *main_ram;
+static uint16_t *main_rom;
+static uint16_t *main_ram;
 static size_t main_ram_size;
-static UINT32 *nvram;
+static uint32_t *nvram;
 static size_t nvram_size;
 
 static offs_t itech020_prot_address;
 
-static UINT8 is_drivedge;
+static uint8_t is_drivedge;
 
-static UINT32 *tms1_ram, *tms2_ram;
-static UINT32 *tms1_boot;
-static UINT8 tms_spinning[2];
+static uint32_t *tms1_ram, *tms2_ram;
+static uint32_t *tms1_boot;
+static uint8_t tms_spinning[2];
 
 #define START_TMS_SPINNING(n)			do { cpu_spinuntil_trigger(space->cpu, 7351 + n); tms_spinning[n] = 1; } while (0)
 #define STOP_TMS_SPINNING(machine, n)	do { cpuexec_trigger(machine, 7351 + n); tms_spinning[n] = 0; } while (0)
@@ -631,7 +631,7 @@ static READ16_HANDLER( wcbowl_prot_result_r )
 
 static READ32_HANDLER( itech020_prot_result_r )
 {
-	UINT32 result = ((UINT32 *)main_ram)[itech020_prot_address >> 2];
+	uint32_t result = ((uint32_t *)main_ram)[itech020_prot_address >> 2];
 	result >>= (~itech020_prot_address & 3) * 8;
 	return (result & 0xff) << 8;
 }
@@ -920,11 +920,11 @@ static NVRAM_HANDLER( itech32 )
 	else
 	{
 		for (i = 0x80; i < main_ram_size; i++)
-			((UINT8 *)main_ram)[i] = mame_rand(machine);
+			((uint8_t *)main_ram)[i] = mame_rand(machine);
 
 		/* due to accessing uninitialized RAM, we need this hack */
 		if (is_drivedge)
-			((UINT32 *)main_ram)[0x2ce4/4] = 0x0000001e;
+			((uint32_t *)main_ram)[0x2ce4/4] = 0x0000001e;
 	}
 }
 
@@ -940,7 +940,7 @@ static NVRAM_HANDLER( itech020 )
 	else
 	{
 		for (i = 0; i < nvram_size; i++)
-			((UINT8 *)nvram)[i] = mame_rand(machine);
+			((uint8_t *)nvram)[i] = mame_rand(machine);
 	}
 }
 
@@ -992,7 +992,7 @@ ADDRESS_MAP_END
 /*------ Driver's Edge memory layouts ------*/
 
 #if LOG_DRIVEDGE_UNINIT_RAM
-static UINT8 written[0x8000];
+static uint8_t written[0x8000];
 
 static READ32_HANDLER( test1_r )
 {
@@ -1000,7 +1000,7 @@ static READ32_HANDLER( test1_r )
 	if (ACCESSING_BITS_16_23 && !written[0x100 + offset*4+1]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0x100 + offset*4+1);
 	if (ACCESSING_BITS_8_15 && !written[0x100 + offset*4+2]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0x100 + offset*4+2);
 	if (ACCESSING_BITS_0_7 && !written[0x100 + offset*4+3]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0x100 + offset*4+3);
-	return ((UINT32 *)main_ram)[0x100/4 + offset];
+	return ((uint32_t *)main_ram)[0x100/4 + offset];
 }
 
 static WRITE32_HANDLER( test1_w )
@@ -1009,7 +1009,7 @@ static WRITE32_HANDLER( test1_w )
 	if (ACCESSING_BITS_16_23) written[0x100 + offset*4+1] = 1;
 	if (ACCESSING_BITS_8_15) written[0x100 + offset*4+2] = 1;
 	if (ACCESSING_BITS_0_7) written[0x100 + offset*4+3] = 1;
-	COMBINE_DATA(&((UINT32 *)main_ram)[0x100/4 + offset]);
+	COMBINE_DATA(&((uint32_t *)main_ram)[0x100/4 + offset]);
 }
 
 static READ32_HANDLER( test2_r )
@@ -1018,7 +1018,7 @@ static READ32_HANDLER( test2_r )
 	if (ACCESSING_BITS_16_23 && !written[0xc00 + offset*4+1]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0xc00 + offset*4+1);
 	if (ACCESSING_BITS_8_15 && !written[0xc00 + offset*4+2]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0xc00 + offset*4+2);
 	if (ACCESSING_BITS_0_7 && !written[0xc00 + offset*4+3]) logerror("%06X:read from uninitialized memory %04X\n", cpu_get_pc(space->cpu), 0xc00 + offset*4+3);
-	return ((UINT32 *)main_ram)[0xc00/4 + offset];
+	return ((uint32_t *)main_ram)[0xc00/4 + offset];
 }
 
 static WRITE32_HANDLER( test2_w )
@@ -1027,7 +1027,7 @@ static WRITE32_HANDLER( test2_w )
 	if (ACCESSING_BITS_16_23) written[0xc00 + offset*4+1] = 1;
 	if (ACCESSING_BITS_8_15) written[0xc00 + offset*4+2] = 1;
 	if (ACCESSING_BITS_0_7) written[0xc00 + offset*4+3] = 1;
-	COMBINE_DATA(&((UINT32 *)main_ram)[0xc00/4 + offset]);
+	COMBINE_DATA(&((uint32_t *)main_ram)[0xc00/4 + offset]);
 }
 #endif
 
@@ -1036,7 +1036,7 @@ static ADDRESS_MAP_START( drivedge_map, ADDRESS_SPACE_PROGRAM, 32 )
 AM_RANGE(0x000100, 0x0003ff) AM_MIRROR(0x40000) AM_READWRITE(test1_r, test1_w)
 AM_RANGE(0x000c00, 0x007fff) AM_MIRROR(0x40000) AM_READWRITE(test2_r, test2_w)
 #endif
-	AM_RANGE(0x000000, 0x03ffff) AM_MIRROR(0x40000) AM_RAM AM_BASE((UINT32 **)&main_ram) AM_SIZE(&main_ram_size)
+	AM_RANGE(0x000000, 0x03ffff) AM_MIRROR(0x40000) AM_RAM AM_BASE((uint32_t **)&main_ram) AM_SIZE(&main_ram_size)
 	AM_RANGE(0x080000, 0x080003) AM_READ_PORT("80000")
 	AM_RANGE(0x082000, 0x082003) AM_READ_PORT("82000")
 	AM_RANGE(0x084000, 0x084003) AM_READWRITE(sound_data32_r, sound_data32_w)
@@ -1049,14 +1049,14 @@ AM_RANGE(0x000c00, 0x007fff) AM_MIRROR(0x40000) AM_READWRITE(test2_r, test2_w)
 	AM_RANGE(0x180000, 0x180003) AM_WRITE(drivedge_color0_w)
 	AM_RANGE(0x1a0000, 0x1bffff) AM_RAM_WRITE(drivedge_paletteram_w) AM_BASE_GENERIC(paletteram)
 	AM_RANGE(0x1c0000, 0x1c0003) AM_WRITENOP
-	AM_RANGE(0x1e0000, 0x1e0113) AM_READWRITE(itech020_video_r, itech020_video_w) AM_BASE((UINT32 **)&itech32_video)
+	AM_RANGE(0x1e0000, 0x1e0113) AM_READWRITE(itech020_video_r, itech020_video_w) AM_BASE((uint32_t **)&itech32_video)
 	AM_RANGE(0x1e4000, 0x1e4003) AM_WRITE(tms_reset_assert_w)
 	AM_RANGE(0x1ec000, 0x1ec003) AM_WRITE(tms_reset_clear_w)
 	AM_RANGE(0x200000, 0x200003) AM_READ_PORT("200000")
 	AM_RANGE(0x280000, 0x280fff) AM_RAM_WRITE(tms1_68k_ram_w) AM_SHARE("share1")
 	AM_RANGE(0x300000, 0x300fff) AM_RAM_WRITE(tms2_68k_ram_w) AM_SHARE("share2")
 	AM_RANGE(0x380000, 0x380003) AM_WRITENOP // AM_WRITE(watchdog_reset16_w)
-	AM_RANGE(0x600000, 0x607fff) AM_ROM AM_REGION("user1", 0) AM_BASE((UINT32 **)&main_rom)
+	AM_RANGE(0x600000, 0x607fff) AM_ROM AM_REGION("user1", 0) AM_BASE((uint32_t **)&main_rom)
 ADDRESS_MAP_END
 
 static ADDRESS_MAP_START( drivedge_tms1_map, ADDRESS_SPACE_PROGRAM, 32 )
@@ -1073,7 +1073,7 @@ ADDRESS_MAP_END
 
 /*------ 68EC020-based memory layout ------*/
 static ADDRESS_MAP_START( itech020_map, ADDRESS_SPACE_PROGRAM, 32 )
-	AM_RANGE(0x000000, 0x007fff) AM_RAM AM_BASE((UINT32 **)&main_ram) AM_SIZE(&main_ram_size)
+	AM_RANGE(0x000000, 0x007fff) AM_RAM AM_BASE((uint32_t **)&main_ram) AM_SIZE(&main_ram_size)
 	AM_RANGE(0x080000, 0x080003) AM_READ_PORT("P1") AM_WRITE(int1_ack32_w)
 	AM_RANGE(0x100000, 0x100003) AM_READ_PORT("P2")
 	AM_RANGE(0x180000, 0x180003) AM_READ_PORT("P3")
@@ -1083,7 +1083,7 @@ static ADDRESS_MAP_START( itech020_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x380000, 0x380003) AM_WRITE(itech020_color2_w)
 	AM_RANGE(0x400000, 0x400003) AM_WRITE(watchdog_reset32_w)
 	AM_RANGE(0x480000, 0x480003) AM_WRITE(sound_data32_w)
-	AM_RANGE(0x500000, 0x5000ff) AM_READWRITE(itech020_video_r, itech020_video_w) AM_BASE((UINT32 **)&itech32_video)
+	AM_RANGE(0x500000, 0x5000ff) AM_READWRITE(itech020_video_r, itech020_video_w) AM_BASE((uint32_t **)&itech32_video)
 	AM_RANGE(0x578000, 0x57ffff) AM_READNOP				/* touched by protection */
 	AM_RANGE(0x580000, 0x59ffff) AM_RAM_WRITE(itech020_paletteram_w) AM_BASE_GENERIC(paletteram)
 	AM_RANGE(0x600000, 0x603fff) AM_RAM AM_BASE(&nvram) AM_SIZE(&nvram_size)
@@ -1091,7 +1091,7 @@ static ADDRESS_MAP_START( itech020_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x680000, 0x680003) AM_READ(itech020_prot_result_r) AM_WRITENOP
 /* ! */	AM_RANGE(0x680800, 0x68083f) AM_READONLY AM_WRITENOP /* Serial DUART Channel A/B & Top LED sign - To Do! */
 	AM_RANGE(0x700000, 0x700003) AM_WRITE(itech020_plane_w)
-	AM_RANGE(0x800000, 0xbfffff) AM_ROM AM_REGION("user1", 0) AM_BASE((UINT32 **)&main_rom)
+	AM_RANGE(0x800000, 0xbfffff) AM_ROM AM_REGION("user1", 0) AM_BASE((uint32_t **)&main_rom)
 ADDRESS_MAP_END
 
 

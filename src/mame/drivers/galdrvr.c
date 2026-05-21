@@ -2364,7 +2364,7 @@ static CUSTOM_INPUT( moonwar_dial_r )
 	static int direction[2] = {0, 0};
 	signed char dialread = input_port_read(field->port->machine, dialname[p]);
 
-	UINT8 ret;
+	uint8_t ret;
 
 	if (dialread < 0) direction[p] = 0x00;
 	else if (dialread > 0) direction[p] = 0x10;

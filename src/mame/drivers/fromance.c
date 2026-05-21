@@ -961,7 +961,7 @@ static const msm5205_interface msm5205_config =
 static MACHINE_START( fromance )
 {
 	fromance_state *state = (fromance_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "sub");
+	uint8_t *ROM = memory_region(machine, "sub");
 
 	memory_configure_bank(machine, "bank1", 0, 0x100, &ROM[0x10000], 0x4000);
 

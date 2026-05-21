@@ -62,11 +62,11 @@ public:
 
 	/* video-related */
 	tilemap_t  *m14_tilemap;
-	UINT8 *  video_ram;
-	UINT8 *  color_ram;
+	uint8_t *  video_ram;
+	uint8_t *  color_ram;
 
 	/* input-related */
-	UINT8 hop_mux;
+	uint8_t hop_mux;
 
 	/* devices */
 	running_device *maincpu;
@@ -174,7 +174,7 @@ static READ8_HANDLER( input_buttons_r )
 #if 0
 static WRITE8_HANDLER( test_w )
 {
-	static UINT8 x[5];
+	static uint8_t x[5];
 
 	x[offset] = data;
 

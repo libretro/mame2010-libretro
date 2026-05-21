@@ -1536,9 +1536,9 @@ static DRIVER_INIT( raiga )
 static void descramble_drgnbowl_gfx(running_machine *machine)
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	size_t size = memory_region_length(machine, "maincpu");
-	UINT8 *buffer = auto_alloc_array(machine, UINT8, size);
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t, size);
 
 	memcpy(buffer, ROM, size);
 	for( i = 0; i < size; i++ )
@@ -1555,7 +1555,7 @@ static void descramble_drgnbowl_gfx(running_machine *machine)
 
 	ROM = memory_region(machine, "gfx2");
 	size = memory_region_length(machine, "gfx2");
-	buffer = auto_alloc_array(machine, UINT8, size);
+	buffer = auto_alloc_array(machine, uint8_t, size);
 
 	memcpy(buffer,ROM,size);
 	for( i = 0; i < size; i++ )
@@ -1580,13 +1580,13 @@ static DRIVER_INIT( drgnbowl )
 	descramble_drgnbowl_gfx(machine);
 }
 
-static void descramble_mastninj_gfx(running_machine *machine, UINT8* src)
+static void descramble_mastninj_gfx(running_machine *machine, uint8_t* src)
 {
-	UINT8 *buffer;
+	uint8_t *buffer;
 	int len = 0x80000;
 
 	/*  rearrange gfx */
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0;i < len; i++)
@@ -1603,7 +1603,7 @@ static void descramble_mastninj_gfx(running_machine *machine, UINT8* src)
 		auto_free(machine, buffer);
 	}
 
-	buffer = auto_alloc_array(machine, UINT8, len);
+	buffer = auto_alloc_array(machine, uint8_t, len);
 	{
 		int i;
 		for (i = 0; i < len; i++)

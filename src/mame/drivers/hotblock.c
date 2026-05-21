@@ -53,8 +53,8 @@ public:
 	hotblock_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  vram;
-	UINT8 *  pal;
+	uint8_t *  vram;
+	uint8_t *  pal;
 
 	/* misc */
 	int      port0;
@@ -134,7 +134,7 @@ ADDRESS_MAP_END
 static VIDEO_START(hotblock)
 {
 	hotblock_state *state = (hotblock_state *)machine->driver_data;
-	state->pal = auto_alloc_array(machine, UINT8, 0x10000);
+	state->pal = auto_alloc_array(machine, uint8_t, 0x10000);
 	state_save_register_global_pointer(machine, state->pal, 0x10000);
 }
 

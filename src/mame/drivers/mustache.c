@@ -263,14 +263,14 @@ static DRIVER_INIT( mustache )
 
 	int G1 = memory_region_length(machine, "gfx1")/3;
 	int G2 = memory_region_length(machine, "gfx2")/2;
-	UINT8 *gfx1 = memory_region(machine, "gfx1");
-	UINT8 *gfx2 = memory_region(machine, "gfx2");
-	UINT8 *buf=auto_alloc_array(machine, UINT8, G2*2);
+	uint8_t *gfx1 = memory_region(machine, "gfx1");
+	uint8_t *gfx2 = memory_region(machine, "gfx2");
+	uint8_t *buf=auto_alloc_array(machine, uint8_t, G2*2);
 
 	/* BG data lines */
 	for (i=0;i<G1; i++)
 	{
-		UINT16 w;
+		uint16_t w;
 
 		buf[i] = BITSWAP8(gfx1[i], 0,5,2,6,4,1,7,3);
 
@@ -288,7 +288,7 @@ static DRIVER_INIT( mustache )
 	/* SPR data lines */
 	for (i=0;i<G2; i++)
 	{
-		UINT16 w;
+		uint16_t w;
 
 		w = (gfx2[i] << 8) | gfx2[i+G2];
 		w = BITSWAP16(w, 5,7,11,4,15,10,3,14, 9,2,13,8,1,12,0,6 );

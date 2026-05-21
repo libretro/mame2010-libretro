@@ -27,10 +27,10 @@
 
 /* Supervisor board emulation */
 
-static UINT8 portA_in,portA_out,ddrA;
-static UINT8 portB_in,portB_out,ddrB;
-static UINT8 portC_in,portC_out,ddrC;
-static UINT8 tdr,tcr;
+static uint8_t portA_in,portA_out,ddrA;
+static uint8_t portB_in,portB_out,ddrB;
+static uint8_t portC_in,portC_out,ddrC;
+static uint8_t tdr,tcr;
 static timer_device *mcu_timer;
 
 /* Port A:
@@ -74,7 +74,7 @@ static READ8_HANDLER( mcu_portB_r )
 
 static WRITE8_HANDLER( mcu_portB_w )
 {
-	UINT8 diff = data ^ portB_out;
+	uint8_t diff = data ^ portB_out;
 	portB_out = data;
 
 	/* clear coin interrupt */
@@ -112,7 +112,7 @@ static READ8_HANDLER( mcu_portC_r )
 static WRITE8_HANDLER( mcu_portC_w )
 {
 	/* uses a 7447A, which is equivalent to an LS47/48 */
-	static const UINT8 ls48_map[16] =
+	static const uint8_t ls48_map[16] =
 		{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67,0x58,0x4c,0x62,0x69,0x78,0x00 };
 
 	portC_out = data & 0x0f;
@@ -534,7 +534,7 @@ ROM_END
 
 static DRIVER_INIT( a600xl )
 {
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 	memcpy( rom + 0x5000, rom + 0xd000, 0x800 );
 }
 

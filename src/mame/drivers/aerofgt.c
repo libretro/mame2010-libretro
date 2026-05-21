@@ -134,7 +134,7 @@ static WRITE16_DEVICE_HANDLER( aerfboo2_okim6295_banking_w )
 
 static WRITE8_HANDLER( aerfboot_okim6295_banking_w )
 {
-	UINT8 *oki = memory_region(space->machine, "oki");
+	uint8_t *oki = memory_region(space->machine, "oki");
 	/*bit 2 (0x4) setted too?*/
 	if (data & 0x4)
 		memcpy(&oki[0x20000], &oki[((data & 0x3) * 0x20000) + 0x40000], 0x20000);
@@ -1307,7 +1307,7 @@ static MACHINE_START( common )
 
 static MACHINE_START( aerofgt )
 {
-	UINT8 *rom = memory_region(machine, "audiocpu");
+	uint8_t *rom = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &rom[0x10000], 0x8000);
 

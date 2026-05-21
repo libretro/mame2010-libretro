@@ -439,13 +439,13 @@
 #include "sound/msm5205.h"
 
 /* RAM areas */
-static UINT8* mastboy_tileram;
-static UINT8* mastboy_vram;
-static UINT8* mastboy_colram;
-static UINT8* mastboy_workram;
+static uint8_t* mastboy_tileram;
+static uint8_t* mastboy_vram;
+static uint8_t* mastboy_colram;
+static uint8_t* mastboy_workram;
 
 /* Bank Control */
-static UINT8 mastboy_bank;
+static uint8_t mastboy_bank;
 
 /* General */
 static int mastboy_irq0_ack;
@@ -519,7 +519,7 @@ static READ8_HANDLER(banked_ram_r)
 
 		if (bank>0x3) // ROM access
 		{
-			UINT8 *src    = memory_region( space->machine, "gfx1" );
+			uint8_t *src    = memory_region( space->machine, "gfx1" );
 			bank &=0x3;
 			return src[offset+(bank*0x4000)];
 		}
@@ -532,7 +532,7 @@ static READ8_HANDLER(banked_ram_r)
 	}
 	else
 	{
-		UINT8 *src;
+		uint8_t *src;
 		int bank;
 		bank = mastboy_bank & 0x7f;
 		src = memory_region       ( space->machine, "user1" ) + bank * 0x4000;

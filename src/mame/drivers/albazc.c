@@ -22,10 +22,10 @@ public:
 	albazc_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8 *  spriteram1;
-	UINT8 *  spriteram2;
-	UINT8 *  spriteram3;
-	UINT8 flip_bit;
+	uint8_t *  spriteram1;
+	uint8_t *  spriteram2;
+	uint8_t *  spriteram3;
+	uint8_t flip_bit;
 };
 
 
@@ -134,7 +134,7 @@ static WRITE8_HANDLER( albazc_vregs_w )
 
 	#ifdef UNUSED_FUNCTION
 	{
-		static UINT8 x[5];
+		static uint8_t x[5];
 		x[offset] = data;
 		popmessage("%02x %02x %02x %02x %02x",x[0],x[1],x[2],x[3],x[4]);
 	}

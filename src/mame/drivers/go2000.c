@@ -42,9 +42,9 @@ public:
 	go2000_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *  videoram;
-	UINT16 *  videoram2;
-//  UINT16 *  paletteram;   // currently this uses generic palette handling
+	uint16_t *  videoram;
+	uint16_t *  videoram2;
+//  uint16_t *  paletteram;   // currently this uses generic palette handling
 
 	/* devices */
 	running_device *soundcpu;
@@ -308,7 +308,7 @@ static VIDEO_UPDATE(go2000)
 static MACHINE_START( go2000 )
 {
 	go2000_state *state = (go2000_state *)machine->driver_data;
-	UINT8 *SOUND = memory_region(machine, "soundcpu");
+	uint8_t *SOUND = memory_region(machine, "soundcpu");
 	int i;
 
 	for (i = 0; i < 8; i++)

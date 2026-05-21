@@ -328,7 +328,7 @@ ROM_END
 static DRIVER_INIT( carpolo )
 {
 	size_t i, len;
-	UINT8 *ROM;
+	uint8_t *ROM;
 
 
 	/* invert gfx PROM since the bits are active LO */

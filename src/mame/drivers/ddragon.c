@@ -479,7 +479,7 @@ static void dd_adpcm_int( running_device *device )
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm") + 0x10000 * chip;
+		uint8_t *ROM = memory_region(device->machine, "adpcm") + 0x10000 * chip;
 
 		state->adpcm_data[chip] = ROM[state->adpcm_pos[chip]++];
 		msm5205_data_w(device, state->adpcm_data[chip] >> 4);
@@ -2042,7 +2042,7 @@ static DRIVER_INIT( toffy )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
 	int i, length;
-	UINT8 *rom;
+	uint8_t *rom;
 
 	state->sound_irq = M6809_IRQ_LINE;
 	state->ym_irq = M6809_FIRQ_LINE;
@@ -2083,7 +2083,7 @@ static DRIVER_INIT( ddragon6809 )
 {
 	ddragon_state *state = (ddragon_state *)machine->driver_data;
 	int i;
-	UINT8 *dst,*src;
+	uint8_t *dst,*src;
 
 	src = memory_region(machine, "chars");
 	dst = memory_region(machine, "gfx1");

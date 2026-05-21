@@ -39,7 +39,7 @@ Memo:
 VIDEO_UPDATE( hyhoo );
 VIDEO_START( hyhoo );
 
-extern UINT8 *hyhoo_clut;
+extern uint8_t *hyhoo_clut;
 WRITE8_HANDLER( hyhoo_blitter_w );
 WRITE8_HANDLER( hyhoo_romsel_w );
 

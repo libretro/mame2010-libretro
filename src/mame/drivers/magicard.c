@@ -165,8 +165,8 @@
 #include "cpu/m68000/m68000.h"
 #include "sound/2413intf.h"
 
-static UINT16 *magicram;
-static UINT16 *pcab_vregs;
+static uint16_t *magicram;
+static uint16_t *pcab_vregs;
 
 
 /*************************
@@ -364,7 +364,7 @@ static VIDEO_START(magicard)
 static VIDEO_UPDATE(magicard)
 {
 	int x,y;
-	UINT32 count;
+	uint32_t count;
 
 	bitmap_fill(bitmap, cliprect, get_black_pen(screen->machine)); //TODO
 
@@ -379,7 +379,7 @@ static VIDEO_UPDATE(magicard)
 		{
 			for(x=0;x<84;x++)
 			{
-				UINT32 color;
+				uint32_t color;
 
 				color = ((magicram[count]) & 0x000f)>>0;
 
@@ -411,7 +411,7 @@ static VIDEO_UPDATE(magicard)
 		{
 			for(x=0;x<168;x++)
 			{
-				UINT32 color;
+				uint32_t color;
 
 				color = ((magicram[count]) & 0x00ff)>>0;
 
@@ -502,14 +502,14 @@ static WRITE16_HANDLER( philips_66470_w )
 }
 
 /* scc68070 specific stuff (to be moved) */
-static UINT16 *scc68070_ext_irqc_regs;
-static UINT16 *scc68070_iic_regs;
-static UINT16 *scc68070_uart_regs;
-static UINT16 *scc68070_timer_regs;
-static UINT16 *scc68070_int_irqc_regs;
-static UINT16 *scc68070_dma_ch1_regs;
-static UINT16 *scc68070_dma_ch2_regs;
-static UINT16 *scc68070_mmu_regs;
+static uint16_t *scc68070_ext_irqc_regs;
+static uint16_t *scc68070_iic_regs;
+static uint16_t *scc68070_uart_regs;
+static uint16_t *scc68070_timer_regs;
+static uint16_t *scc68070_int_irqc_regs;
+static uint16_t *scc68070_dma_ch1_regs;
+static uint16_t *scc68070_dma_ch2_regs;
+static uint16_t *scc68070_mmu_regs;
 
 static READ16_HANDLER( scc68070_ext_irqc_r ) { return scc68070_ext_irqc_regs[offset]; }
 static WRITE16_HANDLER( scc68070_ext_irqc_w ){ scc68070_ext_irqc_regs[offset] = data; }
@@ -603,8 +603,8 @@ INPUT_PORTS_END
 
 static MACHINE_RESET( magicard )
 {
-	UINT16 *src    = (UINT16*)memory_region( machine, "maincpu" );
-	UINT16 *dst    = magicram;
+	uint16_t *src    = (uint16_t*)memory_region( machine, "maincpu" );
+	uint16_t *dst    = magicram;
 	memcpy (dst, src, 0x80000);
 	machine->device("maincpu")->reset();
 }

@@ -675,7 +675,7 @@
 #include "../lh/lucky74.lh"
 
 /* from video hardware */
-extern UINT8 *lucky74_fg_videoram, *lucky74_fg_colorram, *lucky74_bg_videoram, *lucky74_bg_colorram;
+extern uint8_t *lucky74_fg_videoram, *lucky74_fg_colorram, *lucky74_bg_videoram, *lucky74_bg_colorram;
 WRITE8_HANDLER( lucky74_fg_videoram_w );
 WRITE8_HANDLER( lucky74_fg_colorram_w );
 WRITE8_HANDLER( lucky74_bg_videoram_w );
@@ -684,15 +684,15 @@ PALETTE_INIT( lucky74 );
 VIDEO_START( lucky74 );
 VIDEO_UPDATE( lucky74 );
 
-static UINT8 ym2149_portb;
-static UINT8 usart_8251;
-static UINT8 copro_sm7831;
+static uint8_t ym2149_portb;
+static uint8_t usart_8251;
+static uint8_t copro_sm7831;
 
 static int lucky74_adpcm_pos;
 static int lucky74_adpcm_end;
 static int lucky74_adpcm_data;
-static UINT8 lucky74_adpcm_reg[6];
-static UINT8 lucky74_adpcm_busy_line;
+static uint8_t lucky74_adpcm_reg[6];
+static uint8_t lucky74_adpcm_busy_line;
 
 
 /*****************************
@@ -1112,7 +1112,7 @@ static SOUND_START( lucky74 )
 {
     /* cleaning all 09R81P registers */
 
-	UINT8 i;
+	uint8_t i;
 
 	for (i = 0; i < 6; i++)
 	{

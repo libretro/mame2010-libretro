@@ -293,24 +293,24 @@ static READ16_HANDLER( trakball_r )
 	/* Marble Madness trackball type -- rotated 45 degrees! */
 	if (state->trackball_type == 1)
 	{
-		static UINT8 cur[2][2];
+		static uint8_t cur[2][2];
 		int player = (offset >> 1) & 1;
 		int which = offset & 1;
 
 		/* when reading the even ports, do a real analog port update */
 		if (which == 0)
 		{
-			UINT8 posx,posy;
+			uint8_t posx,posy;
 
 			if (player == 0)
 			{
-				posx = (INT8)input_port_read(space->machine, "IN0");
-				posy = (INT8)input_port_read(space->machine, "IN1");
+				posx = (int8_t)input_port_read(space->machine, "IN0");
+				posy = (int8_t)input_port_read(space->machine, "IN1");
 			}
 			else
 			{
-				posx = (INT8)input_port_read(space->machine, "IN2");
-				posy = (INT8)input_port_read(space->machine, "IN3");
+				posx = (int8_t)input_port_read(space->machine, "IN2");
+				posy = (int8_t)input_port_read(space->machine, "IN3");
 			}
 
 			cur[player][0] = posx + posy;

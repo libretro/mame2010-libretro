@@ -119,7 +119,7 @@ static READ8_HANDLER( jackal_spriteram_r )
 static WRITE8_HANDLER( jackal_rambank_w )
 {
 	jackal_state *state = (jackal_state *)space->machine->driver_data;
-	UINT8 *rgn = memory_region(space->machine, "master");
+	uint8_t *rgn = memory_region(space->machine, "master");
 
 	if (data & 0x04)
 		popmessage("jackal_rambank_w %02x", data);
@@ -336,7 +336,7 @@ static INTERRUPT_GEN( jackal_interrupt )
 static MACHINE_START( jackal )
 {
 	jackal_state *state = (jackal_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "master");
+	uint8_t *ROM = memory_region(machine, "master");
 
 	memory_configure_bank(machine, "bank1", 0, 1, &ROM[0x04000], 0x8000);
 	memory_configure_bank(machine, "bank1", 1, 1, &ROM[0x14000], 0x8000);
@@ -351,7 +351,7 @@ static MACHINE_START( jackal )
 static MACHINE_RESET( jackal )
 {
 	jackal_state *state = (jackal_state *)machine->driver_data;
-	UINT8 *rgn = memory_region(machine, "master");
+	uint8_t *rgn = memory_region(machine, "master");
 
 	// HACK: running at the nominal clock rate, music stops working
 	// at the beginning of the game. This fixes it.

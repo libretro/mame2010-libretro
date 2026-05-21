@@ -40,12 +40,12 @@ public:
 	jongkyo_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  videoram;
-	UINT8 *  videoram2;
+	uint8_t *  videoram;
+	uint8_t *  videoram2;
 
 	/* misc */
-	UINT8    rom_bank;
-	UINT8    mux_data;
+	uint8_t    rom_bank;
+	uint8_t    mux_data;
 };
 
 
@@ -72,9 +72,9 @@ static VIDEO_UPDATE( jongkyo )
 		for (x = 0; x < 256; x += 4)
 		{
 			int b;
-			UINT8 data1;
-			UINT8 data2;
-			UINT8 data3;
+			uint8_t data1;
+			uint8_t data2;
+			uint8_t data3;
 
 	//      data3 = state->videoram2[x/4 + y*64]; // wrong
 
@@ -141,7 +141,7 @@ static WRITE8_HANDLER( jongkyo_coin_counter_w )
 static READ8_DEVICE_HANDLER( input_1p_r )
 {
 	jongkyo_state *state = (jongkyo_state *)device->machine->driver_data;
-	UINT8 cr_clear = input_port_read(device->machine, "CR_CLEAR");
+	uint8_t cr_clear = input_port_read(device->machine, "CR_CLEAR");
 
 	switch (state->mux_data)
 	{
@@ -161,7 +161,7 @@ static READ8_DEVICE_HANDLER( input_1p_r )
 static READ8_DEVICE_HANDLER( input_2p_r )
 {
 	jongkyo_state *state = (jongkyo_state *)device->machine->driver_data;
-	UINT8 coin_port = input_port_read(device->machine, "COINS");
+	uint8_t coin_port = input_port_read(device->machine, "COINS");
 
 	switch (state->mux_data)
 	{
@@ -428,7 +428,7 @@ INPUT_PORTS_END
 static PALETTE_INIT(jongkyo)
 {
 	int i;
-	UINT8* proms = memory_region(machine, "proms");
+	uint8_t* proms = memory_region(machine, "proms");
 	for (i = 0; i < 0x40; i++)
 	{
 		int data = proms[i];
@@ -469,7 +469,7 @@ static MACHINE_START( jongkyo )
 {
 	jongkyo_state *state = (jongkyo_state *)machine->driver_data;
 
-	state->videoram2 = auto_alloc_array(machine, UINT8, 0x4000);
+	state->videoram2 = auto_alloc_array(machine, uint8_t, 0x4000);
 	state_save_register_global_pointer(machine, state->videoram2, 0x4000);
 
 	state_save_register_global(machine, state->rom_bank);
@@ -554,7 +554,7 @@ ROM_END
 static DRIVER_INIT( jongkyo )
 {
 	int i;
-	UINT8 *rom = memory_region(machine, "maincpu");
+	uint8_t *rom = memory_region(machine, "maincpu");
 
 	/* first of all, do a simple bitswap */
 	for (i = 0x6000; i < 0x9000; ++i)

@@ -102,13 +102,13 @@ static WRITE16_HANDLER( protection_w )
 
 	if (offset == 1)
 	{
-		UINT32 cmd = (state->prot[0] << 16) | state->prot[1];
+		uint32_t cmd = (state->prot[0] << 16) | state->prot[1];
 		switch (cmd >> 24)
 		{
 		case 0x64:
 			{
-			UINT32 param1 = (memory_read_word(space, cmd & 0xffffff) << 16) | memory_read_word(space, (cmd & 0xffffff) + 2);
-			UINT32 param2 = (memory_read_word(space, (cmd & 0xffffff) + 4) << 16) | memory_read_word(space, (cmd & 0xffffff) + 6);
+			uint32_t param1 = (memory_read_word(space, cmd & 0xffffff) << 16) | memory_read_word(space, (cmd & 0xffffff) + 2);
+			uint32_t param2 = (memory_read_word(space, (cmd & 0xffffff) + 4) << 16) | memory_read_word(space, (cmd & 0xffffff) + 6);
 
 			switch (param1 >> 24)
 			{
@@ -134,7 +134,7 @@ static WRITE16_HANDLER( protection_w )
 }
 #endif
 
-static UINT16 prot[2];
+static uint16_t prot[2];
 
 static WRITE16_HANDLER( protection_w )
 {
@@ -142,14 +142,14 @@ static WRITE16_HANDLER( protection_w )
 
 	if (offset == 1)
 	{
-		UINT32 cmd = (prot[0] << 16) | prot[1];
+		uint32_t cmd = (prot[0] << 16) | prot[1];
 		switch (cmd >> 24)
 		{
 		case 0x64:
 		{
-			UINT32 param1 = (memory_read_word(space, cmd & 0xffffff) << 16)
+			uint32_t param1 = (memory_read_word(space, cmd & 0xffffff) << 16)
 				| memory_read_word(space, (cmd & 0xffffff) + 2);
-			UINT32 param2 = (memory_read_word(space, (cmd & 0xffffff) + 4) << 16)
+			uint32_t param2 = (memory_read_word(space, (cmd & 0xffffff) + 4) << 16)
 				| memory_read_word(space, (cmd & 0xffffff) + 6);
 
 			switch (param1 >> 24)
@@ -471,8 +471,8 @@ ROM_END
 static DRIVER_INIT( asterix )
 {
 #if 0
-	*(UINT16 *)(memory_region(machine, "maincpu") + 0x07f34) = 0x602a;
-	*(UINT16 *)(memory_region(machine, "maincpu") + 0x00008) = 0x0400;
+	*(uint16_t *)(memory_region(machine, "maincpu") + 0x07f34) = 0x602a;
+	*(uint16_t *)(memory_region(machine, "maincpu") + 0x00008) = 0x0400;
 #endif
 }
 

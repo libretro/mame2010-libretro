@@ -33,9 +33,9 @@ public:
 	dacholer_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  bgvideoram;
-	UINT8 *  fgvideoram;
-	UINT8 *  spriteram;
+	uint8_t *  bgvideoram;
+	uint8_t *  fgvideoram;
+	uint8_t *  spriteram;
 	size_t   spriteram_size;
 
 	/* video-related */
@@ -45,9 +45,9 @@ public:
 	/* sound-related */
 	int msm_data;
 	int msm_toggle;
-	UINT8 snd_interrupt_enable;
-	UINT8 music_interrupt_enable;
-	UINT8 snd_ack;
+	uint8_t snd_interrupt_enable;
+	uint8_t music_interrupt_enable;
+	uint8_t snd_ack;
 
 	/* devices */
 	running_device *audiocpu;

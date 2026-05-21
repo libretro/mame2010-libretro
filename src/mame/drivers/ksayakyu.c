@@ -253,7 +253,7 @@ GFXDECODE_END
 static MACHINE_START( ksayakyu )
 {
 	ksayakyu_state *state = (ksayakyu_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 2, &ROM[0x10000], 0x4000);
 

@@ -73,16 +73,16 @@ public:
 	meijinsn_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT16 *   shared_ram;
-	UINT16 *   videoram;
+	uint16_t *   shared_ram;
+	uint16_t *   videoram;
 
 	/* video-related */
 	tilemap_t  *bg_tilemap,*fg_tilemap;
-	UINT8    bg_bank;
+	uint8_t    bg_bank;
 
 	/* misc */
-	UINT8 deposits1, deposits2, credits;
-	UINT8 coinvalue;
+	uint8_t deposits1, deposits2, credits;
+	uint8_t coinvalue;
 	int mcu_latch;
 };
 
@@ -97,8 +97,8 @@ static WRITE16_HANDLER( sound_w )
 static READ16_HANDLER( alpha_mcu_r )
 {
 	meijinsn_state *state = (meijinsn_state *)space->machine->driver_data;
-	static const UINT8 coinage1[2][2] = {{1,1}, {1,2}};
-	static const UINT8 coinage2[2][2] = {{1,5}, {2,1}};
+	static const uint8_t coinage1[2][2] = {{1,1}, {1,2}};
+	static const uint8_t coinage2[2][2] = {{1,5}, {2,1}};
 
 	int source = state->shared_ram[offset];
 

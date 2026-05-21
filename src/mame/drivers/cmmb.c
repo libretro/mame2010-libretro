@@ -60,14 +60,14 @@ static VIDEO_UPDATE( cmmb )
 
 static READ8_HANDLER( cmmb_charram_r )
 {
-	UINT8 *GFX = memory_region(space->machine, "gfx");
+	uint8_t *GFX = memory_region(space->machine, "gfx");
 
 	return GFX[offset];
 }
 
 static WRITE8_HANDLER( cmmb_charram_w )
 {
-	UINT8 *GFX = memory_region(space->machine, "gfx");
+	uint8_t *GFX = memory_region(space->machine, "gfx");
 
 	GFX[offset] = data;
 
@@ -99,12 +99,12 @@ static READ8_HANDLER( cmmb_input_r )
 	return 0xff;
 }
 
-static UINT8 irq_mask;
+static uint8_t irq_mask;
 
 /*
     {
-        UINT8 *ROM = memory_region(space->machine, "maincpu");
-        UINT32 bankaddress;
+        uint8_t *ROM = memory_region(space->machine, "maincpu");
+        uint32_t bankaddress;
 
         bankaddress = 0x10000 + (0x10000 * (data & 0x03));
         memory_set_bankptr(space->machine, "bank1", &ROM[bankaddress]);
@@ -118,8 +118,8 @@ static WRITE8_HANDLER( cmmb_output_w )
 	{
 		case 0x01:
 			{
-				UINT8 *ROM = memory_region(space->machine, "maincpu");
-				UINT32 bankaddress;
+				uint8_t *ROM = memory_region(space->machine, "maincpu");
+				uint32_t bankaddress;
 
 				bankaddress = 0x1c000 + (0x10000 * (data & 0x03));
 				memory_set_bankptr(space->machine, "bank1", &ROM[bankaddress]);

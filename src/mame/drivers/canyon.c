@@ -65,7 +65,7 @@ static PALETTE_INIT( canyon )
 
 static READ8_HANDLER( canyon_switches_r )
 {
-	UINT8 val = 0;
+	uint8_t val = 0;
 
 	if ((input_port_read(space->machine, "IN2") >> (offset & 7)) & 1)
 		val |= 0x80;

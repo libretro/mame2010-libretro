@@ -63,14 +63,14 @@ public:
 	beaminv_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *    videoram;
+	uint8_t *    videoram;
 	size_t     videoram_size;
 
 	/* misc */
 	emu_timer  *interrupt_timer;
 
 	/* input-related */
-	UINT8      controller_select;
+	uint8_t      controller_select;
 
 	/* devices */
 	running_device *maincpu;
@@ -174,9 +174,9 @@ static VIDEO_UPDATE( beaminv )
 	{
 		int i;
 
-		UINT8 y = offs;
-		UINT8 x = offs >> 8 << 3;
-		UINT8 data = state->videoram[offs];
+		uint8_t y = offs;
+		uint8_t x = offs >> 8 << 3;
+		uint8_t data = state->videoram[offs];
 
 		for (i = 0; i < 8; i++)
 		{

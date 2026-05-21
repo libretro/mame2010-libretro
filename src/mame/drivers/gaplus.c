@@ -854,7 +854,7 @@ ROM_END
 
 static DRIVER_INIT( gaplus )
 {
-	UINT8 *rom;
+	uint8_t *rom;
 	int i;
 
 	rom = memory_region(machine, "gfx1");

@@ -27,7 +27,7 @@ public:
 
 	/* memory pointers */
 	cpu_device *	maincpu;
-	UINT32 *  videoram;
+	uint32_t *  videoram;
 };
 
 

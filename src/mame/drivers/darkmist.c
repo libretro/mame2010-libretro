@@ -33,9 +33,9 @@ VIDEO_START(darkmist);
 VIDEO_UPDATE(darkmist);
 PALETTE_INIT(darkmist);
 
-extern UINT8 *darkmist_scroll;
-extern UINT8 *darkmist_spritebank;
-static UINT8 * darkmist_workram;
+extern uint8_t *darkmist_scroll;
+extern uint8_t *darkmist_spritebank;
+static uint8_t * darkmist_workram;
 
 int darkmist_hw;
 
@@ -336,8 +336,8 @@ ROM_END
 
 static void decrypt_gfx(running_machine *machine)
 {
-	UINT8 *buf = auto_alloc_array(machine, UINT8, 0x40000);
-	UINT8 *rom;
+	uint8_t *buf = auto_alloc_array(machine, uint8_t, 0x40000);
+	uint8_t *rom;
 	int size;
 	int i;
 
@@ -415,7 +415,7 @@ static void decrypt_gfx(running_machine *machine)
 static void decrypt_snd(running_machine *machine)
 {
 	int i;
-	UINT8 *ROM = memory_region(machine, "t5182");
+	uint8_t *ROM = memory_region(machine, "t5182");
 
 	for(i=0x8000;i<0x10000;i++)
 		ROM[i] = BITSWAP8(ROM[i], 7,1,2,3,4,5,6,0);
@@ -425,9 +425,9 @@ static DRIVER_INIT(darkmist)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 	int i, len;
-	UINT8 *ROM = memory_region(machine, "maincpu");
-	UINT8 *buffer = auto_alloc_array(machine, UINT8, 0x10000);
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x8000);
+	uint8_t *ROM = memory_region(machine, "maincpu");
+	uint8_t *buffer = auto_alloc_array(machine, uint8_t, 0x10000);
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x8000);
 
 	decrypt_gfx(machine);
 
@@ -435,7 +435,7 @@ static DRIVER_INIT(darkmist)
 
 	for(i=0;i<0x8000;i++)
 	{
-		UINT8 p, d;
+		uint8_t p, d;
 		p = d = ROM[i];
 
 		if(((i & 0x20) == 0x00) && ((i & 0x8) != 0))

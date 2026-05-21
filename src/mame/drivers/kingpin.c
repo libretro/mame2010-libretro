@@ -172,7 +172,7 @@ MACHINE_DRIVER_END
 
 static DRIVER_INIT( kingpin )
 {
-	static UINT8 *code_base;
+	static uint8_t *code_base;
 
 	TMS9928A_configure(&tms9928a_interface);
 

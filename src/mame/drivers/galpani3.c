@@ -74,38 +74,38 @@ Dumped by Uki
 
 ***************************************************************************/
 
-static UINT16* galpani3_priority_buffer;
-static UINT16* galpani3_framebuffer1;
-static UINT16* galpani3_framebuffer2;
-static UINT16* galpani3_framebuffer3;
-static UINT16* galpani3_framebuffer1_palette;
-static UINT16* galpani3_framebuffer2_palette;
-static UINT16* galpani3_framebuffer3_palette;
-static UINT16 galpani3_framebuffer3_scrolly;
-static UINT16 galpani3_framebuffer3_scrollx;
-static UINT16 galpani3_framebuffer2_scrolly;
-static UINT16 galpani3_framebuffer2_scrollx;
-static UINT16 galpani3_framebuffer1_scrolly;
-static UINT16 galpani3_framebuffer1_scrollx;
-static UINT16 galpani3_priority_buffer_scrollx;
-static UINT16 galpani3_priority_buffer_scrolly;
-static UINT16 galpani3_framebuffer1_enable;
-static UINT16 galpani3_framebuffer2_enable;
-static UINT16 galpani3_framebuffer3_enable;
-static UINT16*galpani3_framebuffer1_bgcol;
-static UINT16*galpani3_framebuffer2_bgcol;
-static UINT16*galpani3_framebuffer3_bgcol;
-static UINT16*galpani3_framebuffer3_bright1;
-static UINT16*galpani3_framebuffer3_bright2;
-static UINT16*galpani3_framebuffer2_bright1;
-static UINT16*galpani3_framebuffer2_bright2;
-static UINT16*galpani3_framebuffer1_bright1;
-static UINT16*galpani3_framebuffer1_bright2;
+static uint16_t* galpani3_priority_buffer;
+static uint16_t* galpani3_framebuffer1;
+static uint16_t* galpani3_framebuffer2;
+static uint16_t* galpani3_framebuffer3;
+static uint16_t* galpani3_framebuffer1_palette;
+static uint16_t* galpani3_framebuffer2_palette;
+static uint16_t* galpani3_framebuffer3_palette;
+static uint16_t galpani3_framebuffer3_scrolly;
+static uint16_t galpani3_framebuffer3_scrollx;
+static uint16_t galpani3_framebuffer2_scrolly;
+static uint16_t galpani3_framebuffer2_scrollx;
+static uint16_t galpani3_framebuffer1_scrolly;
+static uint16_t galpani3_framebuffer1_scrollx;
+static uint16_t galpani3_priority_buffer_scrollx;
+static uint16_t galpani3_priority_buffer_scrolly;
+static uint16_t galpani3_framebuffer1_enable;
+static uint16_t galpani3_framebuffer2_enable;
+static uint16_t galpani3_framebuffer3_enable;
+static uint16_t*galpani3_framebuffer1_bgcol;
+static uint16_t*galpani3_framebuffer2_bgcol;
+static uint16_t*galpani3_framebuffer3_bgcol;
+static uint16_t*galpani3_framebuffer3_bright1;
+static uint16_t*galpani3_framebuffer3_bright2;
+static uint16_t*galpani3_framebuffer2_bright1;
+static uint16_t*galpani3_framebuffer2_bright2;
+static uint16_t*galpani3_framebuffer1_bright1;
+static uint16_t*galpani3_framebuffer1_bright2;
 
 
 
-static UINT16 *galpani3_sprregs, *galpani3_spriteram;
-static UINT32* galpani3_spriteram32, *galpani3_spc_regs;
+static uint16_t *galpani3_sprregs, *galpani3_spriteram;
+static uint32_t* galpani3_spriteram32, *galpani3_spc_regs;
 static bitmap_t *sprite_bitmap_1;
 
 static INTERRUPT_GEN( galpani3_vblank ) // 2, 3, 5 ?
@@ -122,9 +122,9 @@ static INTERRUPT_GEN( galpani3_vblank ) // 2, 3, 5 ?
 static VIDEO_START(galpani3)
 {
 	/* so we can use suprnova.c */
-	galpani3_spriteram32 = auto_alloc_array(machine, UINT32, 0x4000/4);
+	galpani3_spriteram32 = auto_alloc_array(machine, uint32_t, 0x4000/4);
 	machine->generic.spriteram_size = 0x4000;
-	galpani3_spc_regs = auto_alloc_array(machine, UINT32, 0x40/4);
+	galpani3_spc_regs = auto_alloc_array(machine, uint32_t, 0x40/4);
 	suprnova_alt_enable_sprites = 1;
 
 
@@ -135,7 +135,7 @@ static VIDEO_START(galpani3)
 
 static int gp3_is_alpha_pen(running_machine *machine, int pen)
 {
-	UINT16 dat = 0;
+	uint16_t dat = 0;
 
 	if (pen<0x4000)
 	{
@@ -174,9 +174,9 @@ static int gp3_is_alpha_pen(running_machine *machine, int pen)
 static VIDEO_UPDATE(galpani3)
 {
 	int x,y;
-	UINT16* src1;
-	UINT32* dst;
-	UINT16 pixdata1;
+	uint16_t* src1;
+	uint32_t* dst;
+	uint16_t pixdata1;
 	const pen_t *paldata = screen->machine->pens;
 
 	bitmap_fill(bitmap, cliprect, 0x0000);
@@ -199,13 +199,13 @@ static VIDEO_UPDATE(galpani3)
 
 				int prioffs  = (drawx+galpani3_priority_buffer_scrollx+66)&0x1ff;
 
-				UINT8 dat1 = galpani3_framebuffer1[(srcline1*0x200)+srcoffs1];
-				UINT8 dat2 = galpani3_framebuffer2[(srcline2*0x200)+srcoffs2];
-				UINT8 dat3 = galpani3_framebuffer3[(srcline3*0x200)+srcoffs3];
+				uint8_t dat1 = galpani3_framebuffer1[(srcline1*0x200)+srcoffs1];
+				uint8_t dat2 = galpani3_framebuffer2[(srcline2*0x200)+srcoffs2];
+				uint8_t dat3 = galpani3_framebuffer3[(srcline3*0x200)+srcoffs3];
 
-				UINT8 pridat = galpani3_priority_buffer[(priline*0x200)+prioffs];
+				uint8_t pridat = galpani3_priority_buffer[(priline*0x200)+prioffs];
 
-				UINT32* dst = BITMAP_ADDR32(bitmap, drawy, drawx);
+				uint32_t* dst = BITMAP_ADDR32(bitmap, drawy, drawx);
 
 
 
@@ -234,8 +234,8 @@ static VIDEO_UPDATE(galpani3)
                        enable -- see fading in intro */
 					if (dat1 && galpani3_framebuffer1_enable)
 					{
-						UINT16 pen = dat1+0x4000;
-						UINT32 pal = paldata[pen];
+						uint16_t pen = dat1+0x4000;
+						uint32_t pal = paldata[pen];
 
 						if (gp3_is_alpha_pen(screen->machine, pen))
 						{
@@ -262,8 +262,8 @@ static VIDEO_UPDATE(galpani3)
 
 					if (dat2 && galpani3_framebuffer2_enable)
 					{
-						UINT16 pen = dat2+0x4100;
-						UINT32 pal = paldata[pen];
+						uint16_t pen = dat2+0x4100;
+						uint32_t pal = paldata[pen];
 
 						if (gp3_is_alpha_pen(screen->machine, pen))
 						{
@@ -430,13 +430,13 @@ static WRITE16_HANDLER( galpani3_suprnova_sprite32regs_w )
                 (follows the implementation of kaneko16.c)
 
 ***************************************************************************/
-static UINT16 *mcu_ram, galpani3_mcu_com[4];
+static uint16_t *mcu_ram, galpani3_mcu_com[4];
 
 static void galpani3_mcu_run(running_machine *machine)
 {
-	UINT16 mcu_command = mcu_ram[0x0010/2];		/* command nb */
-	UINT16 mcu_offset  = mcu_ram[0x0012/2] / 2;	/* offset in shared RAM where MCU will write */
-	UINT16 mcu_subcmd  = mcu_ram[0x0014/2];		/* sub-command parameter, happens only for command #4 */
+	uint16_t mcu_command = mcu_ram[0x0010/2];		/* command nb */
+	uint16_t mcu_offset  = mcu_ram[0x0012/2] / 2;	/* offset in shared RAM where MCU will write */
+	uint16_t mcu_subcmd  = mcu_ram[0x0014/2];		/* sub-command parameter, happens only for command #4 */
 
 	logerror("%s: MCU executed command : %04X %04X\n",cpuexec_describe_context(machine),mcu_command,mcu_offset*2);
 
@@ -514,7 +514,7 @@ static WRITE16_HANDLER( galpani3_mcu_com##_n_##_w ) \
 	if (galpani3_mcu_com[2] != 0xFFFF)	return; \
 	if (galpani3_mcu_com[3] != 0xFFFF)	return; \
 \
-	memset(galpani3_mcu_com, 0, 4 * sizeof( UINT16 ) ); \
+	memset(galpani3_mcu_com, 0, 4 * sizeof( uint16_t ) ); \
 	galpani3_mcu_run(space->machine); \
 }
 
@@ -606,17 +606,17 @@ static READ16_HANDLER( galpani3_regs3_r )
 }
 
 
-static UINT16 galpani3_regs1_address_regs[0x20];
-static UINT16 galpani3_regs2_address_regs[0x20];
-static UINT16 galpani3_regs3_address_regs[0x20];
+static uint16_t galpani3_regs1_address_regs[0x20];
+static uint16_t galpani3_regs2_address_regs[0x20];
+static uint16_t galpani3_regs3_address_regs[0x20];
 
-static void gp3_do_rle(UINT32 address, UINT16*framebuffer, UINT8* rledata)
+static void gp3_do_rle(uint32_t address, uint16_t*framebuffer, uint8_t* rledata)
 {
 	int rle_count = 0;
 	int normal_count = 0;
-	UINT32 dstaddress = 0;
+	uint32_t dstaddress = 0;
 
-	UINT8 thebyte;
+	uint8_t thebyte;
 
 	while (dstaddress<0x40000)
 	{
@@ -668,8 +668,8 @@ static WRITE16_HANDLER( galpani3_regs1_address_w )
 
 static WRITE16_HANDLER( galpani3_regs1_go_w )
 {
-	UINT32 address = galpani3_regs1_address_regs[1]| (galpani3_regs1_address_regs[0]<<16);
-	UINT8* rledata = memory_region(space->machine,"gfx2");
+	uint32_t address = galpani3_regs1_address_regs[1]| (galpani3_regs1_address_regs[0]<<16);
+	uint8_t* rledata = memory_region(space->machine,"gfx2");
 
 	printf("galpani3_regs1_go_w? %08x\n",address );
 	if ((data==0x2000) || (data==0x3000)) gp3_do_rle(address, galpani3_framebuffer1, rledata);
@@ -684,8 +684,8 @@ static WRITE16_HANDLER( galpani3_regs2_address_w )
 
 static WRITE16_HANDLER( galpani3_regs2_go_w )
 {
-	UINT32 address = galpani3_regs2_address_regs[1]| (galpani3_regs2_address_regs[0]<<16);
-	UINT8* rledata = memory_region(space->machine,"gfx2");
+	uint32_t address = galpani3_regs2_address_regs[1]| (galpani3_regs2_address_regs[0]<<16);
+	uint8_t* rledata = memory_region(space->machine,"gfx2");
 
 	printf("galpani3_regs2_go_w? %08x\n", address );
 
@@ -704,15 +704,15 @@ static WRITE16_HANDLER( galpani3_regs3_address_w )
 
 static WRITE16_HANDLER( galpani3_regs3_go_w )
 {
-	UINT32 address =  galpani3_regs3_address_regs[1]| (galpani3_regs3_address_regs[0]<<16);
-	UINT8* rledata = memory_region(space->machine,"gfx2");
+	uint32_t address =  galpani3_regs3_address_regs[1]| (galpani3_regs3_address_regs[0]<<16);
+	uint8_t* rledata = memory_region(space->machine,"gfx2");
 
 	printf("galpani3_regs3_go_w? %08x\n",address );
 
 	if ((data==0x2000) || (data==0x3000)) gp3_do_rle(address, galpani3_framebuffer3, rledata);
 }
 
-static void set_color_555_gp3(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, UINT16 data)
+static void set_color_555_gp3(running_machine *machine, pen_t color, int rshift, int gshift, int bshift, uint16_t data)
 {
 	palette_set_color_rgb(machine, color, pal5bit(data >> rshift), pal5bit(data >> gshift), pal5bit(data >> bshift));
 }
@@ -956,7 +956,7 @@ static DRIVER_INIT( galpani3 )
 {
 	DRIVER_INIT_CALL( decrypt_toybox_rom );
 
-	memset(galpani3_mcu_com, 0, 4 * sizeof( UINT16) );
+	memset(galpani3_mcu_com, 0, 4 * sizeof( uint16_t) );
 }
 
 GAME( 1995, galpani3, 0, galpani3, galpani3, galpani3, ROT90, "Kaneko", "Gals Panic 3", GAME_IMPERFECT_GRAPHICS )

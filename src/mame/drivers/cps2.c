@@ -7901,12 +7901,12 @@ static DRIVER_INIT( gigamn2 )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT16 *rom = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *rom = (uint16_t *)memory_region(machine, "maincpu");
 	int length = memory_region_length(machine, "maincpu");
 
 	DRIVER_INIT_CALL(cps2);
 
-	state->gigamn2_dummyqsound_ram = auto_alloc_array(machine, UINT16, 0x20000 / 2);
+	state->gigamn2_dummyqsound_ram = auto_alloc_array(machine, uint16_t, 0x20000 / 2);
 	state_save_register_global_pointer(machine, state->gigamn2_dummyqsound_ram, 0x20000 / 2);
 
 	memory_install_readwrite16_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x618000, 0x619fff, 0, 0, gigamn2_dummyqsound_r, gigamn2_dummyqsound_w); // no qsound..

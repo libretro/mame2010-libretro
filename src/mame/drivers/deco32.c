@@ -237,10 +237,10 @@ Notes:
 #include "sound/okim6295.h"
 #include "sound/bsmt2000.h"
 
-static UINT32 *deco32_ram;
+static uint32_t *deco32_ram;
 static int raster_enable;
 static timer_device *raster_irq_timer;
-static UINT8 nslasher_sound_irq;
+static uint8_t nslasher_sound_irq;
 
 /**********************************************************************************/
 
@@ -949,12 +949,12 @@ ADDRESS_MAP_END
 
 /******************************************************************************/
 
-static UINT8 bsmt_latch;
-static UINT8 bsmt_reset;
+static uint8_t bsmt_latch;
+static uint8_t bsmt_reset;
 
 static WRITE8_HANDLER(deco32_bsmt_reset_w)
 {
-	UINT8 diff = data ^ bsmt_reset;
+	uint8_t diff = data ^ bsmt_reset;
 	bsmt_reset = data;
 	if ((diff & 0x80) && !(data & 0x80))
 		devtag_reset(space->machine, "bsmt");
@@ -2974,9 +2974,9 @@ static DRIVER_INIT( captaven )
 
 static DRIVER_INIT( dragngun )
 {
-	UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
-	const UINT8 *SRC_RAM = memory_region(machine, "gfx1");
-	UINT8 *DST_RAM = memory_region(machine, "gfx2");
+	uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
+	const uint8_t *SRC_RAM = memory_region(machine, "gfx1");
+	uint8_t *DST_RAM = memory_region(machine, "gfx2");
 
 	deco74_decrypt_gfx(machine, "gfx1");
 	deco74_decrypt_gfx(machine, "gfx2");
@@ -2998,8 +2998,8 @@ static DRIVER_INIT( fghthist )
 
 static DRIVER_INIT( lockload )
 {
-	UINT8 *RAM = memory_region(machine, "maincpu");
-//  UINT32 *ROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint8_t *RAM = memory_region(machine, "maincpu");
+//  uint32_t *ROM = (uint32_t *)memory_region(machine, "maincpu");
 
 	deco74_decrypt_gfx(machine, "gfx1");
 	deco74_decrypt_gfx(machine, "gfx2");
@@ -3015,8 +3015,8 @@ static DRIVER_INIT( lockload )
 
 static DRIVER_INIT( tattass )
 {
-	UINT8 *RAM = memory_region(machine, "gfx1");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, 0x80000);
+	uint8_t *RAM = memory_region(machine, "gfx1");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, 0x80000);
 
 	/* Reorder bitplanes to make decoding easier */
 	memcpy(tmp,RAM+0x80000,0x80000);
@@ -3036,8 +3036,8 @@ static DRIVER_INIT( tattass )
 
 static DRIVER_INIT( nslasher )
 {
-	UINT8 *RAM = memory_region(machine, "gfx1");
-	UINT8 *tmp = auto_alloc_array(machine, UINT8, 0x80000);
+	uint8_t *RAM = memory_region(machine, "gfx1");
+	uint8_t *tmp = auto_alloc_array(machine, uint8_t, 0x80000);
 
 	/* Reorder bitplanes to make decoding easier */
 	memcpy(tmp,RAM+0x80000,0x80000);

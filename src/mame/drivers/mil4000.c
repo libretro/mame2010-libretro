@@ -90,12 +90,12 @@ Changes (2008-12-10, Roberto Fresca):
 #include "../lh/mil4000.lh"
 
 
-static UINT16 *sc0_vram,*sc1_vram,*sc2_vram,*sc3_vram;
+static uint16_t *sc0_vram,*sc1_vram,*sc2_vram,*sc3_vram;
 static tilemap_t *sc0_tilemap,*sc1_tilemap,*sc2_tilemap,*sc3_tilemap;
 
 static TILE_GET_INFO( get_sc0_tile_info )
 {
-	UINT32 data = (sc0_vram[tile_index*2]<<16) | sc0_vram[tile_index*2+1];
+	uint32_t data = (sc0_vram[tile_index*2]<<16) | sc0_vram[tile_index*2+1];
 	int tile = data >> 14;
 	int color = (sc0_vram[tile_index*2+1] & 0x1f)+0;
 
@@ -108,7 +108,7 @@ static TILE_GET_INFO( get_sc0_tile_info )
 
 static TILE_GET_INFO( get_sc1_tile_info )
 {
-	UINT32 data = (sc1_vram[tile_index*2]<<16) | sc1_vram[tile_index*2+1];
+	uint32_t data = (sc1_vram[tile_index*2]<<16) | sc1_vram[tile_index*2+1];
 	int tile = data >> 14;
 	int color = (sc1_vram[tile_index*2+1] & 0x1f)+0x10;
 
@@ -121,7 +121,7 @@ static TILE_GET_INFO( get_sc1_tile_info )
 
 static TILE_GET_INFO( get_sc2_tile_info )
 {
-	UINT32 data = (sc2_vram[tile_index*2]<<16) | sc2_vram[tile_index*2+1];
+	uint32_t data = (sc2_vram[tile_index*2]<<16) | sc2_vram[tile_index*2+1];
 	int tile = data >> 14;
 	int color = (sc2_vram[tile_index*2+1] & 0x1f)+0x20;
 
@@ -134,7 +134,7 @@ static TILE_GET_INFO( get_sc2_tile_info )
 
 static TILE_GET_INFO( get_sc3_tile_info )
 {
-	UINT32 data = (sc3_vram[tile_index*2]<<16) | sc3_vram[tile_index*2+1];
+	uint32_t data = (sc3_vram[tile_index*2]<<16) | sc3_vram[tile_index*2+1];
 	int tile = data >> 14;
 	int color = (sc3_vram[tile_index*2+1] & 0x1f)+0x30;
 
@@ -176,8 +176,8 @@ static VIDEO_UPDATE(mil4000)
 /*TODO*/
 static READ16_HANDLER( hvretrace_r )
 {
-	static UINT16 res;
-	static UINT16 vblank = 0,hblank = 0;
+	static uint16_t res;
+	static uint16_t vblank = 0,hblank = 0;
 
 	res = 0;
 

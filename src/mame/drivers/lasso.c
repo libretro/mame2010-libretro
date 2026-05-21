@@ -69,7 +69,7 @@ static READ8_HANDLER( sound_status_r )
 static WRITE8_HANDLER( sound_select_w )
 {
 	lasso_state *state = (lasso_state *)space->machine->driver_data;
-	UINT8 to_write = BITSWAP8(*state->chip_data, 0, 1, 2, 3, 4, 5, 6, 7);
+	uint8_t to_write = BITSWAP8(*state->chip_data, 0, 1, 2, 3, 4, 5, 6, 7);
 
 	if (~data & 0x01)	/* chip #0 */
 		sn76496_w(state->sn_1, 0, to_write);

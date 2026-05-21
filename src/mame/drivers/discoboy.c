@@ -51,16 +51,16 @@ public:
 	discoboy_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  ram_1;
-	UINT8 *  ram_2;
-	UINT8 *  ram_3;
-	UINT8 *  ram_4;
-	UINT8 *  ram_att;
+	uint8_t *  ram_1;
+	uint8_t *  ram_2;
+	uint8_t *  ram_3;
+	uint8_t *  ram_4;
+	uint8_t *  ram_att;
 
 	/* video-related */
-	UINT8    ram_bank;
-	UINT8    gfxbank;
-	UINT8    port_00;
+	uint8_t    ram_bank;
+	uint8_t    gfxbank;
+	uint8_t    port_00;
 	int      adpcm_data;
 
 	/* devices */
@@ -124,13 +124,13 @@ static void draw_sprites( running_machine *machine, bitmap_t *bitmap, const rect
 static VIDEO_UPDATE( discoboy )
 {
 	discoboy_state *state = (discoboy_state *)screen->machine->driver_data;
-	UINT16 x, y;
+	uint16_t x, y;
 	int i;
 	int count = 0;
 
 	for (i = 0; i < 0x800; i += 2)
 	{
-		UINT16 pal;
+		uint16_t pal;
 		int r, g, b;
 		pal = state->ram_1[i] | (state->ram_1[i + 1] << 8);
 
@@ -143,7 +143,7 @@ static VIDEO_UPDATE( discoboy )
 
 	for (i = 0; i < 0x800; i += 2)
 	{
-		UINT16 pal;
+		uint16_t pal;
 		int r,g,b;
 		pal = state->ram_2[i] | (state->ram_2[i + 1] << 8);
 
@@ -160,7 +160,7 @@ static VIDEO_UPDATE( discoboy )
 	{
 		for (x = 0; x < 64; x++)
 		{
-			UINT16 tileno = state->ram_3[count] | (state->ram_3[count + 1] << 8);
+			uint16_t tileno = state->ram_3[count] | (state->ram_3[count + 1] << 8);
 
 			if (tileno > 0x2000)
 			{
@@ -181,9 +181,9 @@ static VIDEO_UPDATE( discoboy )
 }
 
 #ifdef UNUSED_FUNCTION
-void discoboy_setrombank( running_machine *machine, UINT8 data )
+void discoboy_setrombank( running_machine *machine, uint8_t data )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	data &= 0x2f;
 	memory_set_bankptr(space->machine, "bank1", &ROM[0x6000 + (data * 0x1000)] );
 }
@@ -540,14 +540,14 @@ ROM_END
 static DRIVER_INIT( discoboy )
 {
 	discoboy_state *state = (discoboy_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
-	state->ram_1 = auto_alloc_array(machine, UINT8, 0x800);
-	state->ram_2 = auto_alloc_array(machine, UINT8, 0x800);
-	state->ram_att = auto_alloc_array(machine, UINT8, 0x800);
+	state->ram_1 = auto_alloc_array(machine, uint8_t, 0x800);
+	state->ram_2 = auto_alloc_array(machine, uint8_t, 0x800);
+	state->ram_att = auto_alloc_array(machine, uint8_t, 0x800);
 
-	state->ram_3 = auto_alloc_array(machine, UINT8, 0x1000);
-	state->ram_4 = auto_alloc_array(machine, UINT8, 0x1000);
+	state->ram_3 = auto_alloc_array(machine, uint8_t, 0x1000);
+	state->ram_4 = auto_alloc_array(machine, uint8_t, 0x1000);
 
 	memset(state->ram_1, 0, 0x800);
 	memset(state->ram_2, 0, 0x800);

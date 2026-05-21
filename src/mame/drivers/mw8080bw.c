@@ -168,7 +168,7 @@
 static READ8_HANDLER( mw8080bw_shift_result_rev_r )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 ret = mb14241_shift_result_r(state->mb14241, 0);
+	uint8_t ret = mb14241_shift_result_r(state->mb14241, 0);
 
 	return BITSWAP8(ret,0,1,2,3,4,5,6,7);
 }
@@ -177,7 +177,7 @@ static READ8_HANDLER( mw8080bw_shift_result_rev_r )
 static READ8_HANDLER( mw8080bw_reversable_shift_result_r )
 {
 	mw8080bw_state *state = (mw8080bw_state *)space->machine->driver_data;
-	UINT8 ret;
+	uint8_t ret;
 
 	if (state->rev_shift_res)
 	{
@@ -288,7 +288,7 @@ static WRITE8_HANDLER( seawolf_explosion_lamp_w )
 		"EXP_LAMP_C", "EXP_LAMP_D", "EXP_LAMP_E", "EXP_LAMP_F"
 	};
 
-	static const UINT8 bits_for_lamps[] =
+	static const uint8_t bits_for_lamps[] =
 	{
 		0x18, 0x14, 0x12, 0x11,
 		0x28, 0x24, 0x22, 0x21,
@@ -299,7 +299,7 @@ static WRITE8_HANDLER( seawolf_explosion_lamp_w )
 	/* set each lamp */
 	for (i = 0; i < 16; i++)
 	{
-		UINT8 bits_for_lamp = bits_for_lamps[i];
+		uint8_t bits_for_lamp = bits_for_lamps[i];
 
 		output_set_value(lamp_names[i], (data & bits_for_lamp) == bits_for_lamp);
 	}
@@ -345,7 +345,7 @@ ADDRESS_MAP_END
 
 
 /* the 30 position encoder is verified */
-static const UINT32 seawolf_controller_table[30] =
+static const uint32_t seawolf_controller_table[30] =
 {
 	0x1e, 0x1c, 0x1d, 0x19, 0x18, 0x1a, 0x1b, 0x13,
 	0x12, 0x10, 0x11, 0x15, 0x14, 0x16, 0x17, 0x07,
@@ -455,7 +455,7 @@ static ADDRESS_MAP_START( gunfight_io_map, ADDRESS_SPACE_IO, 8 )
 ADDRESS_MAP_END
 
 
-static const UINT32 gunfight_controller_table[7] =
+static const uint32_t gunfight_controller_table[7] =
 {
 	0x06, 0x02, 0x00, 0x04, 0x05, 0x01, 0x03
 };
@@ -558,7 +558,7 @@ MACHINE_DRIVER_END
 #define TORNBASE_CAB_TYPE_PORT_TAG		("CAB")
 
 
-UINT8 tornbase_get_cabinet_type(running_machine *machine)
+uint8_t tornbase_get_cabinet_type(running_machine *machine)
 {
 	return input_port_read(machine, TORNBASE_CAB_TYPE_PORT_TAG);
 }
@@ -572,7 +572,7 @@ static CUSTOM_INPUT( tornbase_hit_left_input_r )
 
 static CUSTOM_INPUT( tornbase_hit_right_input_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	switch (tornbase_get_cabinet_type(field->port->machine))
 	{
@@ -593,7 +593,7 @@ static CUSTOM_INPUT( tornbase_hit_right_input_r )
 
 static CUSTOM_INPUT( tornbase_pitch_left_input_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	switch (tornbase_get_cabinet_type(field->port->machine))
 	{
@@ -1016,7 +1016,7 @@ static ADDRESS_MAP_START( boothill_io_map, ADDRESS_SPACE_IO, 8 )
 ADDRESS_MAP_END
 
 
-static const UINT32 boothill_controller_table[7] =
+static const uint32_t boothill_controller_table[7] =
 {
 	0x00, 0x04, 0x06, 0x07, 0x03, 0x01, 0x05
 };
@@ -1207,7 +1207,7 @@ static MACHINE_START( desertgu )
 static CUSTOM_INPUT( desertgu_gun_input_r )
 {
 	mw8080bw_state *state = (mw8080bw_state *)field->port->machine->driver_data;
-	UINT32 ret;
+	uint32_t ret;
 
 	if (state->desertgun_controller_select)
 		ret = input_port_read(field->port->machine, DESERTGU_GUN_X_PORT_TAG);
@@ -1221,7 +1221,7 @@ static CUSTOM_INPUT( desertgu_gun_input_r )
 static CUSTOM_INPUT( desertgu_dip_sw_0_1_r )
 {
 	mw8080bw_state *state = (mw8080bw_state *)field->port->machine->driver_data;
-	UINT32 ret;
+	uint32_t ret;
 
 	if (state->desertgun_controller_select)
 		ret = input_port_read(field->port->machine, DESERTGU_DIP_SW_0_1_SET_2_TAG);
@@ -1338,7 +1338,7 @@ MACHINE_DRIVER_END
 
 static CUSTOM_INPUT( dplay_pitch_left_input_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	if (input_port_read(field->port->machine, DPLAY_CAB_TYPE_PORT_TAG) == DPLAY_CAB_TYPE_UPRIGHT)
 		ret = input_port_read(field->port->machine, DPLAY_L_PITCH_PORT_TAG);
@@ -1733,7 +1733,7 @@ static MACHINE_START( clowns )
 static CUSTOM_INPUT( clowns_controller_r )
 {
 	mw8080bw_state *state = (mw8080bw_state *)field->port->machine->driver_data;
-	UINT32 ret;
+	uint32_t ret;
 
 	if (state->clowns_controller_select)
 	{
@@ -2078,7 +2078,7 @@ static ADDRESS_MAP_START( dogpatch_io_map, ADDRESS_SPACE_IO, 8 )
 ADDRESS_MAP_END
 
 
-static const UINT32 dogpatch_controller_table[7] =
+static const uint32_t dogpatch_controller_table[7] =
 {
 	0x07, 0x06, 0x04, 0x05, 0x01, 0x00, 0x02
 };
@@ -2175,21 +2175,21 @@ static MACHINE_START( spcenctr )
 }
 
 #if 0
-UINT8 spcenctr_get_trench_width( *running_machine *machine )
+uint8_t spcenctr_get_trench_width( *running_machine *machine )
 {
 	mw8080bw_state *state = (mw8080bw_state *)machine->driver_data;
 	return state->spcenctr_trench_width;
 }
 
 
-UINT8 spcenctr_get_trench_center( *running_machine *machine )
+uint8_t spcenctr_get_trench_center( *running_machine *machine )
 {
 	mw8080bw_state *state = (mw8080bw_state *)machine->driver_data;
 	return state->spcenctr_trench_center;
 }
 
 
-UINT8 spcenctr_get_trench_slope( *running_machine *machine , UINT8 addr )
+uint8_t spcenctr_get_trench_slope( *running_machine *machine , uint8_t addr )
 {
 	mw8080bw_state *state = (mw8080bw_state *)machine->driver_data;
 	return state->spcenctr_trench_slope[addr & 0x0f];
@@ -2214,7 +2214,7 @@ static WRITE8_HANDLER( spcenctr_io_w )
 
 	else if ((offset & 0x07) == 0x03)
 	{											/*  -  -  -  -  -  0  1  1 */
-		UINT8 addr = ((offset & 0xc0) >> 4) | ((offset & 0x18) >> 3);
+		uint8_t addr = ((offset & 0xc0) >> 4) | ((offset & 0x18) >> 3);
 		state->spcenctr_trench_slope[addr] = data;
 	}
 	else if ((offset & 0x07) == 0x04)
@@ -2240,7 +2240,7 @@ static ADDRESS_MAP_START( spcenctr_io_map, ADDRESS_SPACE_IO, 8 )
 ADDRESS_MAP_END
 
 
-static const UINT32 spcenctr_controller_table[] =
+static const uint32_t spcenctr_controller_table[] =
 {
 	0x3f, 0x3e, 0x3c, 0x3d, 0x39, 0x38, 0x3a, 0x3b,
 	0x33, 0x32, 0x30, 0x31, 0x35, 0x34, 0x36, 0x37,
@@ -2569,7 +2569,7 @@ static MACHINE_START( invaders )
 
 static CUSTOM_INPUT( invaders_coin_input_r )
 {
-	UINT32 ret = input_port_read(field->port->machine, INVADERS_COIN_INPUT_PORT_TAG);
+	uint32_t ret = input_port_read(field->port->machine, INVADERS_COIN_INPUT_PORT_TAG);
 
 	coin_counter_w(field->port->machine, 0, !ret);
 
@@ -2579,7 +2579,7 @@ static CUSTOM_INPUT( invaders_coin_input_r )
 
 static CUSTOM_INPUT( invaders_sw6_sw7_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* upright PCB : switches visible
        cocktail PCB: HI */
@@ -2595,7 +2595,7 @@ static CUSTOM_INPUT( invaders_sw6_sw7_r )
 
 static CUSTOM_INPUT( invaders_sw5_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* upright PCB : switch visible
        cocktail PCB: HI */
@@ -2611,7 +2611,7 @@ static CUSTOM_INPUT( invaders_sw5_r )
 
 static CUSTOM_INPUT( invaders_in0_control_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* upright PCB : P1 controls
        cocktail PCB: HI */
@@ -2633,7 +2633,7 @@ CUSTOM_INPUT( invaders_in1_control_r )
 
 CUSTOM_INPUT( invaders_in2_control_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* upright PCB : P1 controls
        cocktail PCB: P2 controls */
@@ -2776,7 +2776,7 @@ MACHINE_DRIVER_END
 
 static CUSTOM_INPUT( blueshrk_coin_input_r )
 {
-	UINT32 ret = input_port_read(field->port->machine, BLUESHRK_COIN_INPUT_PORT_TAG);
+	uint32_t ret = input_port_read(field->port->machine, BLUESHRK_COIN_INPUT_PORT_TAG);
 
 	coin_counter_w(field->port->machine, 0, !ret);
 
@@ -2854,9 +2854,9 @@ MACHINE_DRIVER_END
 
 
 #ifdef UNUSED_FUNCTION
-static UINT32 invad2ct_coin_input_r(void *param)
+static uint32_t invad2ct_coin_input_r(void *param)
 {
-	UINT32 ret = input_port_read(machine, INVAD2CT_COIN_INPUT_PORT_TAG);
+	uint32_t ret = input_port_read(machine, INVAD2CT_COIN_INPUT_PORT_TAG);
 
 	coin_counter_w(machine, 0, !ret);
 

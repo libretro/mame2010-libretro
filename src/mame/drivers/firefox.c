@@ -68,7 +68,7 @@ static int m_n_disc_read_data;
    */
 static READ8_HANDLER( firefox_disc_status_r )
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 
 	result ^= 0x20;
 	if (!laserdisc_line_r(laserdisc, LASERDISC_LINE_READY))
@@ -130,8 +130,8 @@ static running_device *nvram_1d;
 static tilemap_t *bgtiles;
 
 static int control_num;
-static UINT8 sound_to_main_flag;
-static UINT8 main_to_sound_flag;
+static uint8_t sound_to_main_flag;
+static uint8_t main_to_sound_flag;
 static int sprite_bank;
 
 /*************************************
@@ -170,7 +170,7 @@ static VIDEO_UPDATE( firefox )
 
 	for( sprite = 0; sprite < 32; sprite++ )
 	{
-		UINT8 *sprite_data = screen->machine->generic.spriteram.u8 + ( 0x200 * sprite_bank ) + ( sprite * 16 );
+		uint8_t *sprite_data = screen->machine->generic.spriteram.u8 + ( 0x200 * sprite_bank ) + ( sprite * 16 );
 		int flags = sprite_data[ 0 ];
 		int y = sprite_data[ 1 ] + ( 256 * ( ( flags >> 0 ) & 1 ) );
 		int x = sprite_data[ 2 ] + ( 256 * ( ( flags >> 1 ) & 1 ) );

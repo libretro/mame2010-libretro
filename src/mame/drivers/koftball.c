@@ -34,9 +34,9 @@ ft5_v6_c4.u58 /
 #include "sound/okim6295.h"
 
 
-static UINT16 *bmc_1_videoram, *bmc_2_videoram,*main_ram;
+static uint16_t *bmc_1_videoram, *bmc_2_videoram,*main_ram;
 static tilemap_t *tilemap_1,*tilemap_2;
-static UINT8 *bmc_colorram;
+static uint8_t *bmc_colorram;
 static int clr_offset=0;
 
 static TILE_GET_INFO( get_t1_tile_info )
@@ -96,7 +96,7 @@ static READ16_HANDLER(random_number_r)
 	return mame_rand(space->machine);
 }
 
-static UINT16 prot_data;
+static uint16_t prot_data;
 
 static READ16_HANDLER(prot_r)
 {
@@ -247,7 +247,7 @@ ROM_END
 
 #if NVRAM_HACK
 
-static const UINT16 nvram[]=
+static const uint16_t nvram[]=
 {
 	0x0000,0x5555,0x0000,0x5555,0x0000,0x5555,0x0000,0x5555,
 	0x0000,0x5555,0x0000,0x0000,0x0000,0x0000,0x5555,0x5555,
@@ -271,7 +271,7 @@ static const UINT16 nvram[]=
 #endif
 static DRIVER_INIT(koftball)
 {
-	bmc_colorram = auto_alloc_array(machine, UINT8, 768);
+	bmc_colorram = auto_alloc_array(machine, uint8_t, 768);
 
 #if NVRAM_HACK
 	{

@@ -37,7 +37,7 @@ Dumped: 06/04/2009 f205v
 #include "cpu/z80/z80.h"
 #include "sound/dac.h"
 
-static UINT8* murogmbl_video;
+static uint8_t* murogmbl_video;
 
 static PALETTE_INIT( murogmbl )
 {

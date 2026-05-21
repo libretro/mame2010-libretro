@@ -29,10 +29,10 @@ x
 #include "sound/ay8910.h"
 
 
-static UINT8 *attr_ram1, *attr_ram2, *attr_ram3;
+static uint8_t *attr_ram1, *attr_ram2, *attr_ram3;
 static tilemap_t *bg_tilemap;
 
-static UINT8 question_adr[4];
+static uint8_t question_adr[4];
 
 static WRITE8_HANDLER( quizmstr_bg_w )
 {
@@ -43,7 +43,7 @@ static WRITE8_HANDLER( quizmstr_bg_w )
 }
 
 
-static void coinmstr_set_pal(running_machine *machine, UINT32 paldat, int col)
+static void coinmstr_set_pal(running_machine *machine, uint32_t paldat, int col)
 {
 	col = col *4;
 
@@ -83,7 +83,7 @@ static WRITE8_HANDLER( quizmstr_attr1_w )
 	if(offset >= 0x0240)
 	{
 		// the later games also use attr3 for something..
-		UINT32	paldata = (attr_ram1[offset] & 0x7f) | ((attr_ram2[offset] & 0x7f) << 7);
+		uint32_t	paldata = (attr_ram1[offset] & 0x7f) | ((attr_ram2[offset] & 0x7f) << 7);
 		tilemap_mark_tile_dirty(bg_tilemap, offset - 0x0240);
 
 		coinmstr_set_pal(space->machine, paldata, offset - 0x240);
@@ -98,7 +98,7 @@ static WRITE8_HANDLER( quizmstr_attr2_w )
 	if(offset >= 0x0240)
 	{
 		// the later games also use attr3 for something..
-		UINT32	paldata = (attr_ram1[offset] & 0x7f) | ((attr_ram2[offset] & 0x7f) << 7);
+		uint32_t	paldata = (attr_ram1[offset] & 0x7f) | ((attr_ram2[offset] & 0x7f) << 7);
 		tilemap_mark_tile_dirty(bg_tilemap, offset - 0x0240);
 
 		coinmstr_set_pal(space->machine, paldata, offset - 0x240);
@@ -119,7 +119,7 @@ static WRITE8_HANDLER( quizmstr_attr3_w )
 static READ8_HANDLER( question_r )
 {
 	int address;
-	UINT8 *questions = memory_region(space->machine, "user1");
+	uint8_t *questions = memory_region(space->machine, "user1");
 
 	switch(question_adr[2])
 	{
@@ -1194,9 +1194,9 @@ ROM_END
 
 static DRIVER_INIT( coinmstr )
 {
-	UINT8 *rom = memory_region(machine, "user1");
+	uint8_t *rom = memory_region(machine, "user1");
 	int length = memory_region_length(machine, "user1");
-	UINT8 *buf = auto_alloc_array(machine, UINT8, length);
+	uint8_t *buf = auto_alloc_array(machine, uint8_t, length);
 	int i;
 
 	memcpy(buf,rom,length);

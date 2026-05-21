@@ -84,7 +84,7 @@ static WRITE8_HANDLER( joinem_misc_w )
 static CUSTOM_INPUT( sound_check_r )
 {
 	jack_state *state = (jack_state *)field->port->machine->driver_data;
-	UINT8 ret = 0;
+	uint8_t ret = 0;
 
 	if ((input_port_read(field->port->machine, "IN2") & 0x80) && !state->joinem_snd_bit)
 		ret = 1;
@@ -114,7 +114,7 @@ static READ8_HANDLER( striv_question_r )
 	// Read the actual byte from question roms
 	else
 	{
-		UINT8 *ROM = memory_region(space->machine, "user1");
+		uint8_t *ROM = memory_region(space->machine, "user1");
 		int real_address;
 
 		real_address = state->question_address | (offset & 0x3f0) | state->remap_address[offset & 0x0f];
@@ -1313,8 +1313,8 @@ static void treahunt_decode( running_machine *machine )
 {
 	int A;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0x4000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0x4000);
 	int data;
 
 	memory_set_decrypted_region(space, 0x0000, 0x3fff, decrypt);
@@ -1382,7 +1382,7 @@ static DRIVER_INIT( loverboy )
        the start of the game code.
 
        ToDo: Figure out what's really going on */
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 	ROM[0x13] = 0x01;
 	ROM[0x12] = 0x9d;
 
@@ -1393,8 +1393,8 @@ static DRIVER_INIT( loverboy )
 static DRIVER_INIT( striv )
 {
 	jack_state *state = (jack_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
-	UINT8 data;
+	uint8_t *ROM = memory_region(machine, "maincpu");
+	uint8_t data;
 	int A;
 
 	/* decrypt program rom */

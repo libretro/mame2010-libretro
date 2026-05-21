@@ -135,15 +135,15 @@ public:
 		  oki_2(machine.device<okim6295_device>("oki2")) { }
 
 	/* memory pointers */
-	UINT32 *  vram;
-	UINT32 *  workram;
-	UINT32 *  paletteram;
-//  UINT32 *  nvram;    // currently this uses generic nvram handling
+	uint32_t *  vram;
+	uint32_t *  workram;
+	uint32_t *  paletteram;
+//  uint32_t *  nvram;    // currently this uses generic nvram handling
 
 	/* video-related */
 	tilemap_t   *tilemap1, *tilemap2, *tilemap3;
-	UINT32    tmap1_scrollx, tmap2_scrollx, tmap3_scrollx;
-	UINT32    tmap1_scrolly, tmap2_scrolly, tmap3_scrolly;
+	uint32_t    tmap1_scrollx, tmap2_scrollx, tmap3_scrollx;
+	uint32_t    tmap1_scrolly, tmap2_scrolly, tmap3_scrolly;
 
 	/* misc */
 	int       oki_bank_0, oki_bank_1;

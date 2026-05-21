@@ -1913,7 +1913,7 @@ ROM_END
 
 static void cninja_patch( running_machine *machine )
 {
-	UINT16 *RAM = (UINT16 *)memory_region(machine, "maincpu");
+	uint16_t *RAM = (uint16_t *)memory_region(machine, "maincpu");
 	int i;
 
 	for (i = 0; i < 0x80000 / 2; i++)
@@ -1922,7 +1922,7 @@ static void cninja_patch( running_machine *machine )
 
 		if (aword == 0x66ff || aword == 0x67ff)
 		{
-			UINT16 doublecheck = RAM[i - 4];
+			uint16_t doublecheck = RAM[i - 4];
 
 			/* Cmpi + btst controlling opcodes */
 			if (doublecheck == 0xc39 || doublecheck == 0x839)
@@ -1952,8 +1952,8 @@ static DRIVER_INIT( stoneage )
 
 static DRIVER_INIT( mutantf )
 {
-	const UINT8 *src = memory_region(machine, "gfx2");
-	UINT8 *dst = memory_region(machine, "gfx1");
+	const uint8_t *src = memory_region(machine, "gfx2");
+	uint8_t *dst = memory_region(machine, "gfx1");
 
 	/* The 16x16 graphic has some 8x8 chars in it - decode them in GFX1 */
 	memcpy(dst + 0x50000, dst + 0x10000, 0x10000);

@@ -159,9 +159,9 @@ Notes:
 static READ8_HANDLER( trackball_r )
 {
 	tnzs_state *state = (tnzs_state *)space->machine->driver_data;
-	UINT8 ret;
-	UINT8 port4 = input_port_read(space->machine, "FAKEX");
-	UINT8 port5 = input_port_read(space->machine, "FAKEY");
+	uint8_t ret;
+	uint8_t port4 = input_port_read(space->machine, "FAKEX");
+	uint8_t port5 = input_port_read(space->machine, "FAKEY");
 
 	ret = (((port4 - state->last_trackball_val[0]) & 0x0f)<<4) | ((port5 - state->last_trackball_val[1]) & 0x0f);
 
@@ -333,7 +333,7 @@ static const x1_010_interface champbwl_sound_intf =
 static MACHINE_START( champbwl )
 {
 	tnzs_state *state = (tnzs_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	state->mcu = NULL;
 

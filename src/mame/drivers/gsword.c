@@ -161,16 +161,16 @@ extern VIDEO_UPDATE( gsword );
 
 extern size_t gsword_spritexy_size;
 
-extern UINT8 *gsword_spritexy_ram;
-extern UINT8 *gsword_spritetile_ram;
-extern UINT8 *gsword_spriteattrib_ram;
+extern uint8_t *gsword_spritexy_ram;
+extern uint8_t *gsword_spritetile_ram;
+extern uint8_t *gsword_spriteattrib_ram;
 
 static int coins;
 static int fake8910_0,fake8910_1;
 
 static int gsword_nmi_enable;
 
-static UINT8 *gsword_cpu2_ram;
+static uint8_t *gsword_cpu2_ram;
 static int gsword_protect_hack;
 
 #if 0
@@ -194,7 +194,7 @@ static int gsword_coins_in(void)
 /* (4004,4005) clear down counter , if (4004,4005)==0 then (402E)=0 */
 static READ8_HANDLER( gsword_hack_r )
 {
-	UINT8 data = gsword_cpu2_ram[offset + 4];
+	uint8_t data = gsword_cpu2_ram[offset + 4];
 
 	/*if(offset==1)mame_printf_debug("CNT %02X%02X\n",gsword_cpu2_ram[5],gsword_cpu2_ram[4]); */
 
@@ -940,7 +940,7 @@ ROM_END
 static DRIVER_INIT( gsword )
 {
 #if 0
-	UINT8 *ROM2 = memory_region(machine, "sub");
+	uint8_t *ROM2 = memory_region(machine, "sub");
 	ROM2[0x1da] = 0xc3; /* patch for rom self check */
 
 	ROM2[0x71e] = 0;    /* patch for sound protection or time out function */
@@ -955,7 +955,7 @@ static DRIVER_INIT( gsword )
 static DRIVER_INIT( gsword2 )
 {
 #if 0
-	UINT8 *ROM2 = memory_region(machine, "sub");
+	uint8_t *ROM2 = memory_region(machine, "sub");
 
 	ROM2[0x1da] = 0xc3; /* patch for rom self check */
 	ROM2[0x726] = 0;    /* patch for sound protection or time out function */

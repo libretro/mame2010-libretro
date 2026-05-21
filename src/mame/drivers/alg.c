@@ -30,8 +30,8 @@
 
 static running_device *laserdisc;
 static emu_timer *serial_timer;
-static UINT8 serial_timer_active;
-static UINT16 input_select;
+static uint8_t serial_timer_active;
+static uint16_t input_select;
 
 static TIMER_CALLBACK( response_timer );
 
@@ -111,7 +111,7 @@ static TIMER_CALLBACK( response_timer )
 	/* if we still have data to send, do it now */
 	if (laserdisc_line_r(laserdisc, LASERDISC_LINE_DATA_AVAIL) == ASSERT_LINE)
 	{
-		UINT8 data = laserdisc_data_r(laserdisc);
+		uint8_t data = laserdisc_data_r(laserdisc);
 		if (data != 0x0a)
 			mame_printf_debug("Sending serial data = %02X\n", data);
 		amiga_serial_in_w(machine, data);
@@ -136,7 +136,7 @@ static void vsync_callback(running_machine *machine)
 }
 
 
-static void serial_w(running_machine *machine, UINT16 data)
+static void serial_w(running_machine *machine, uint16_t data)
 {
 	/* write to the laserdisc player */
 	laserdisc_data_w(laserdisc, data & 0xff);
@@ -157,7 +157,7 @@ static void serial_w(running_machine *machine, UINT16 data)
  *
  *************************************/
 
-static void alg_potgo_w(running_machine *machine, UINT16 data)
+static void alg_potgo_w(running_machine *machine, uint16_t data)
 {
 	/* bit 15 controls whether pin 9 is input/output */
 	/* bit 14 controls the value, which selects which player's controls to read */
@@ -687,15 +687,15 @@ static void alg_init(running_machine *machine)
 
 static DRIVER_INIT( palr1 )
 {
-	UINT32 length = memory_region_length(machine, "user2");
-	UINT8 *rom = memory_region(machine, "user2");
-	UINT8 *original = auto_alloc_array(machine, UINT8, length);
-	UINT32 srcaddr;
+	uint32_t length = memory_region_length(machine, "user2");
+	uint8_t *rom = memory_region(machine, "user2");
+	uint8_t *original = auto_alloc_array(machine, uint8_t, length);
+	uint32_t srcaddr;
 
 	memcpy(original, rom, length);
 	for (srcaddr = 0; srcaddr < length; srcaddr++)
 	{
-		UINT32 dstaddr = srcaddr;
+		uint32_t dstaddr = srcaddr;
 		if (srcaddr & 0x2000) dstaddr ^= 0x1000;
 		if (srcaddr & 0x8000) dstaddr ^= 0x4000;
 		rom[dstaddr] = original[srcaddr];
@@ -707,15 +707,15 @@ static DRIVER_INIT( palr1 )
 
 static DRIVER_INIT( palr3 )
 {
-	UINT32 length = memory_region_length(machine, "user2");
-	UINT8 *rom = memory_region(machine, "user2");
-	UINT8 *original = auto_alloc_array(machine, UINT8, length);
-	UINT32 srcaddr;
+	uint32_t length = memory_region_length(machine, "user2");
+	uint8_t *rom = memory_region(machine, "user2");
+	uint8_t *original = auto_alloc_array(machine, uint8_t, length);
+	uint32_t srcaddr;
 
 	memcpy(original, rom, length);
 	for (srcaddr = 0; srcaddr < length; srcaddr++)
 	{
-		UINT32 dstaddr = srcaddr;
+		uint32_t dstaddr = srcaddr;
 		if (srcaddr & 0x2000) dstaddr ^= 0x1000;
 		rom[dstaddr] = original[srcaddr];
 	}
@@ -726,15 +726,15 @@ static DRIVER_INIT( palr3 )
 
 static DRIVER_INIT( palr6 )
 {
-	UINT32 length = memory_region_length(machine, "user2");
-	UINT8 *rom = memory_region(machine, "user2");
-	UINT8 *original = auto_alloc_array(machine, UINT8, length);
-	UINT32 srcaddr;
+	uint32_t length = memory_region_length(machine, "user2");
+	uint8_t *rom = memory_region(machine, "user2");
+	uint8_t *original = auto_alloc_array(machine, uint8_t, length);
+	uint32_t srcaddr;
 
 	memcpy(original, rom, length);
 	for (srcaddr = 0; srcaddr < length; srcaddr++)
 	{
-		UINT32 dstaddr = srcaddr;
+		uint32_t dstaddr = srcaddr;
 		if (~srcaddr & 0x2000) dstaddr ^= 0x1000;
 		if ( srcaddr & 0x8000) dstaddr ^= 0x4000;
 		dstaddr ^= 0x20000;
@@ -748,8 +748,8 @@ static DRIVER_INIT( palr6 )
 static DRIVER_INIT( aplatoon )
 {
 	/* NOT DONE TODO FIGURE OUT THE RIGHT ORDER!!!! */
-	UINT8 *rom = memory_region(machine, "user2");
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x40000);
+	uint8_t *rom = memory_region(machine, "user2");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x40000);
 	int i;
 
 	static const int shuffle[] =

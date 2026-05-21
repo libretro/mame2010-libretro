@@ -405,8 +405,8 @@
 *     Video Hardware     *
 *************************/
 
-static UINT8 *videoram;
-static UINT8 *colorram;
+static uint8_t *videoram;
+static uint8_t *colorram;
 static tilemap_t *bg_tilemap;
 
 static WRITE8_HANDLER( magicfly_videoram_w )

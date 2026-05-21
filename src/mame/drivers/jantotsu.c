@@ -107,17 +107,17 @@ public:
 	jantotsu_state(running_machine &machine) { }
 
 	/* video-related */
-	UINT8    *bitmap;
-	UINT8    vram_bank, col_bank;
+	uint8_t    *bitmap;
+	uint8_t    vram_bank, col_bank;
 
 	/* sound-related */
-	UINT32   adpcm_pos;
-	UINT8    adpcm_idle;
+	uint32_t   adpcm_pos;
+	uint8_t    adpcm_idle;
 	int      adpcm_data;
-	UINT8    adpcm_trigger;
+	uint8_t    adpcm_trigger;
 
 	/* misc */
-	UINT8    mux_data;
+	uint8_t    mux_data;
 };
 
 
@@ -131,7 +131,7 @@ static VIDEO_START(jantotsu)
 {
 	jantotsu_state *state = (jantotsu_state *)machine->driver_data;
 
-	state->bitmap = auto_alloc_array(machine, UINT8, 0x8000);
+	state->bitmap = auto_alloc_array(machine, uint8_t, 0x8000);
 	state_save_register_global_pointer(machine, state->bitmap, 0x8000);
 }
 
@@ -231,7 +231,7 @@ static PALETTE_INIT( jantotsu )
 static READ8_HANDLER( jantotsu_mux_r )
 {
 	jantotsu_state *state = (jantotsu_state *)space->machine->driver_data;
-	UINT8 coin_port = input_port_read(space->machine, "COINS");
+	uint8_t coin_port = input_port_read(space->machine, "COINS");
 
 	//  printf("%02x\n", state->mux_data);
 
@@ -302,7 +302,7 @@ static void jan_adpcm_int( running_device *device )
 	}
 	else
 	{
-		UINT8 *ROM = memory_region(device->machine, "adpcm");
+		uint8_t *ROM = memory_region(device->machine, "adpcm");
 
 		state->adpcm_data = ((state->adpcm_trigger ? (ROM[state->adpcm_pos] & 0x0f) : (ROM[state->adpcm_pos] & 0xf0) >> 4));
 		msm5205_data_w(device, state->adpcm_data & 0xf);

@@ -71,7 +71,7 @@ hard drive  3.5 adapter     long 3.5 IDE cable      3.5 adapter   PCB
 #include "video/konicdev.h"
 
 
-extern UINT32 *djmain_obj_ram;
+extern uint32_t *djmain_obj_ram;
 
 VIDEO_UPDATE( djmain );
 VIDEO_START( djmain );
@@ -79,18 +79,18 @@ extern void djmain_tile_callback(running_machine* machine, int layer, int *code,
 
 
 static int sndram_bank;
-static UINT8 *sndram;
+static uint8_t *sndram;
 
 static int turntable_select;
-static UINT8 turntable_last_pos[2];
-static UINT16 turntable_pos[2];
+static uint8_t turntable_last_pos[2];
+static uint16_t turntable_pos[2];
 
-static UINT8 pending_vb_int;
-static UINT16 v_ctrl;
-static UINT32 obj_regs[0xa0/4];
+static uint8_t pending_vb_int;
+static uint16_t v_ctrl;
+static uint32_t obj_regs[0xa0/4];
 
-static const UINT8 *ide_user_password;
-static const UINT8 *ide_master_password;
+static const uint8_t *ide_user_password;
+static const uint8_t *ide_master_password;
 
 #define DISABLE_VB_INT	(!(v_ctrl & 0x8000))
 
@@ -135,7 +135,7 @@ static WRITE32_HANDLER( sndram_bank_w )
 
 static READ32_HANDLER( sndram_r )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	if (ACCESSING_BITS_24_31)
 		data |= sndram[offset * 4] << 24;
@@ -172,7 +172,7 @@ static WRITE32_HANDLER( sndram_w )
 
 static READ16_HANDLER( dual539_r )
 {
-	UINT16 ret = 0;
+	uint16_t ret = 0;
 
 	if (ACCESSING_BITS_0_7)
 		ret |= k054539_r(space->machine->device("konami2"), offset);
@@ -210,7 +210,7 @@ static WRITE32_HANDLER( obj_ctrl_w )
 
 static READ32_HANDLER( obj_rom_r )
 {
-	UINT8 *mem8 = memory_region(space->machine, "gfx1");
+	uint8_t *mem8 = memory_region(space->machine, "gfx1");
 	int bank = obj_regs[0x28/4] >> 16;
 
 	offset += bank * 0x200;
@@ -247,7 +247,7 @@ static WRITE32_HANDLER( v_ctrl_w )
 static READ32_HANDLER( v_rom_r )
 {
 	running_device *k056832 = space->machine->device("k056832");
-	UINT8 *mem8 = memory_region(space->machine, "gfx2");
+	uint8_t *mem8 = memory_region(space->machine, "gfx2");
 	int bank = k056832_word_r(k056832, 0x34/2, 0xffff);
 
 	offset *= 2;
@@ -280,12 +280,12 @@ static READ8_HANDLER( inp2_r )
 
 static READ32_HANDLER( turntable_r )
 {
-	UINT32 result = 0;
+	uint32_t result = 0;
 	static const char *const ttnames[] = { "TT1", "TT2" };
 
 	if (ACCESSING_BITS_8_15)
 	{
-		UINT8 pos;
+		uint8_t pos;
 		int delta;
 
 		pos = input_port_read_safe(space->machine, ttnames[turntable_select], 0);
@@ -2043,7 +2043,7 @@ static DRIVER_INIT( beatmania )
 	ide_user_password = NULL;
 }
 
-static const UINT8 beatmania_master_password[2 + 32] =
+static const uint8_t beatmania_master_password[2 + 32] =
 {
 	0x01, 0x00,
 	0x4d, 0x47, 0x43, 0x28, 0x4b, 0x29, 0x4e, 0x4f,
@@ -2054,7 +2054,7 @@ static const UINT8 beatmania_master_password[2 + 32] =
 
 static DRIVER_INIT( hmcompmx )
 {
-	static const UINT8 hmcompmx_user_password[2 + 32] =
+	static const uint8_t hmcompmx_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3a, 0x34, 0x38, 0x2a,
@@ -2071,7 +2071,7 @@ static DRIVER_INIT( hmcompmx )
 
 static DRIVER_INIT( bm4thmix )
 {
-	static const UINT8 bm4thmix_user_password[2 + 32] =
+	static const uint8_t bm4thmix_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x29, 0x4b, 0x2f, 0x2c, 0x4c, 0x32,
@@ -2087,7 +2087,7 @@ static DRIVER_INIT( bm4thmix )
 
 static DRIVER_INIT( bm5thmix )
 {
-	static const UINT8 bm5thmix_user_password[2 + 32] =
+	static const uint8_t bm5thmix_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x37, 0x35, 0x4a, 0x23,
@@ -2104,7 +2104,7 @@ static DRIVER_INIT( bm5thmix )
 
 static DRIVER_INIT( bmclubmx )
 {
-	static const UINT8 bmclubmx_user_password[2 + 32] =
+	static const uint8_t bmclubmx_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x20, 0x30, 0x57, 0x3c, 0x3f, 0x38, 0x32,
@@ -2122,7 +2122,7 @@ static DRIVER_INIT( bmclubmx )
 
 static DRIVER_INIT( bmcompm2 )
 {
-	static const UINT8 bmcompm2_user_password[2 + 32] =
+	static const uint8_t bmcompm2_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x3a, 0x20, 0x31, 0x3e, 0x46, 0x2c, 0x35, 0x46,
@@ -2139,7 +2139,7 @@ static DRIVER_INIT( bmcompm2 )
 
 static DRIVER_INIT( hmcompm2 )
 {
-	static const UINT8 hmcompm2_user_password[2 + 32] =
+	static const uint8_t hmcompm2_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x3b, 0x39, 0x24, 0x3e, 0x4e, 0x59, 0x5c, 0x32,
@@ -2156,7 +2156,7 @@ static DRIVER_INIT( hmcompm2 )
 
 static DRIVER_INIT( bmdct )
 {
-	static const UINT8 bmdct_user_password[2 + 32] =
+	static const uint8_t bmdct_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x52, 0x47, 0x30, 0x3f, 0x2f, 0x39, 0x54, 0x5e,
@@ -2173,7 +2173,7 @@ static DRIVER_INIT( bmdct )
 
 static DRIVER_INIT( bmcorerm )
 {
-	static const UINT8 bmcorerm_user_password[2 + 32] =
+	static const uint8_t bmcorerm_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3f, 0x4d, 0x4a, 0x27,
@@ -2190,7 +2190,7 @@ static DRIVER_INIT( bmcorerm )
 
 static DRIVER_INIT( bm6thmix )
 {
-	static const UINT8 bm6thmix_user_password[2 + 32] =
+	static const uint8_t bm6thmix_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3d, 0x4d, 0x4a, 0x23,
@@ -2207,7 +2207,7 @@ static DRIVER_INIT( bm6thmix )
 
 static DRIVER_INIT( bm7thmix )
 {
-	static const UINT8 bm7thmix_user_password[2 + 32] =
+	static const uint8_t bm7thmix_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3f, 0x4e, 0x4a, 0x25,
@@ -2224,7 +2224,7 @@ static DRIVER_INIT( bm7thmix )
 
 static DRIVER_INIT( bmfinal )
 {
-	static const UINT8 bmfinal_user_password[2 + 32] =
+	static const uint8_t bmfinal_user_password[2 + 32] =
 	{
 		0x00, 0x00,
 		0x44, 0x42, 0x56, 0x4b, 0x3f, 0x4f, 0x4a, 0x23,

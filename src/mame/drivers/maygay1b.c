@@ -33,7 +33,7 @@ static struct
 	running_device *duart68681;
 } maygaym1_devices;
 
-static UINT8  lamppos;
+static uint8_t  lamppos;
 static int  alpha_clock;
 static int  RAMEN;
 static int  ALARMEN;
@@ -42,23 +42,23 @@ static int  PSUrelay;
 static int  WDOG;
 static int  SRSEL;
 
-static UINT8 Lamps[256];      // 256 multiplexed lamps
+static uint8_t Lamps[256];      // 256 multiplexed lamps
 static int optic_pattern;
 
 struct i8279_state
 {
-	UINT8		command;
-	UINT8		mode;
-	UINT8		prescale;
-	UINT8		inhibit;
-	UINT8		clear;
-	UINT8		ram[16];
-	UINT8		read_sensor;
-	UINT8		write_display;
-	UINT8		sense_address;
-	UINT8		sense_auto_inc;
-	UINT8		disp_address;
-	UINT8		disp_auto_inc;
+	uint8_t		command;
+	uint8_t		mode;
+	uint8_t		prescale;
+	uint8_t		inhibit;
+	uint8_t		clear;
+	uint8_t		ram[16];
+	uint8_t		read_sensor;
+	uint8_t		write_display;
+	uint8_t		sense_address;
+	uint8_t		sense_auto_inc;
+	uint8_t		disp_address;
+	uint8_t		disp_auto_inc;
 };
 
 static i8279_state i8279[2];
@@ -85,9 +85,9 @@ static void m1_draw_lamps(int data,int strobe, int col)
  *
  *************************************/
 
-static void update_outputs(i8279_state *chip, UINT16 which)
+static void update_outputs(i8279_state *chip, uint16_t which)
 {
-	static const UINT8 ls48_map[16] =
+	static const uint8_t ls48_map[16] =
 		{ 0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7c,0x07,0x7f,0x67,0x58,0x4c,0x62,0x69,0x78,0x00 };
 	int i;
 
@@ -113,8 +113,8 @@ static READ8_HANDLER( m1_8279_r )
 {
 	i8279_state *chip = i8279 + 0;
 	static const char *const portnames[] = { "SW1","STROBE5","STROBE7","STROBE3","SW2","STROBE4","STROBE6","STROBE2" };
-	UINT8 result = 0xff;
-	UINT8 addr;
+	uint8_t result = 0xff;
+	uint8_t addr;
 
 	/* read data */
 	if ((offset & 1) == 0)
@@ -171,7 +171,7 @@ static READ8_HANDLER( m1_8279_r )
 static WRITE8_HANDLER( m1_8279_w )
 {
 	i8279_state *chip = i8279 + 0;
-	UINT8 addr;
+	uint8_t addr;
 
 	/* write data */
 	if ((offset & 1) == 0)
@@ -289,8 +289,8 @@ static WRITE8_HANDLER( m1_8279_w )
 static READ8_HANDLER( m1_8279_2_r )
 {
 	i8279_state *chip = i8279 + 1;
-	UINT8 result = 0xff;
-	UINT8 addr;
+	uint8_t result = 0xff;
+	uint8_t addr;
 
 	/* read data */
 	if ((offset & 1) == 0)
@@ -329,7 +329,7 @@ static READ8_HANDLER( m1_8279_2_r )
 static WRITE8_HANDLER( m1_8279_2_w )
 {
 	i8279_state *chip = i8279 + 1;
-	UINT8 addr;
+	uint8_t addr;
 
 	/* write data */
 	if ((offset & 1) == 0)
@@ -461,7 +461,7 @@ static MACHINE_RESET( m1 )
 
 ///////////////////////////////////////////////////////////////////////////
 
-static void duart_irq_handler(running_device *device, UINT8 state)
+static void duart_irq_handler(running_device *device, uint8_t state)
 {
 	cputag_set_input_line(device->machine, "maincpu", M6809_IRQ_LINE, state?ASSERT_LINE:CLEAR_LINE);
 	LOG(("6809 irq%d \n",state));
@@ -697,7 +697,7 @@ static WRITE8_HANDLER( reel56_w )
 	awp_draw_reel(5);
 }
 
-static UINT8 m1_duart_r (running_device *device)
+static uint8_t m1_duart_r (running_device *device)
 {
 	return (optic_pattern);
 }
@@ -705,7 +705,7 @@ static UINT8 m1_duart_r (running_device *device)
 static WRITE8_DEVICE_HANDLER( m1_meter_w )
 {
 	int i;
-	UINT64 cycles  = device->machine->device<cpu_device>("maincpu")->total_cycles();
+	uint64_t cycles  = device->machine->device<cpu_device>("maincpu")->total_cycles();
 
 	for (i=0; i<8; i++)
 	if ( data & (1 << i) )	Mechmtr_update(i, cycles, data & (1 << i) );

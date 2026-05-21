@@ -10,8 +10,8 @@ Video Fruit Machine
 #include "cpu/z80/z80.h"
 #include "sound/ay8910.h"
 
-static UINT8 *buster_rom;
-static UINT8 *buster_vram;
+static uint8_t *buster_rom;
+static uint8_t *buster_vram;
 
 static VIDEO_START(buster)
 {
@@ -113,8 +113,8 @@ ROM_END
 
 static DRIVER_INIT( buster )
 {
-	UINT8 *ROM = memory_region(machine, "maincpu");
-//  vram = auto_alloc_array(machine, UINT8, 0x2000);
+	uint8_t *ROM = memory_region(machine, "maincpu");
+//  vram = auto_alloc_array(machine, uint8_t, 0x2000);
 	memcpy(buster_rom, ROM, 0x4000);
 }
 

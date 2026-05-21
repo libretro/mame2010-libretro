@@ -72,7 +72,7 @@ INLINE void verboselog(running_machine *machine, int n_level, const char *s_fmt,
 
 // SLAVE
 //static TIMER_CALLBACK( slave_trigger_readback_int );
-//static void slave_prepare_readback(running_machine *machine, attotime delay, UINT8 channel, UINT8 count, UINT8 data0, UINT8 data1, UINT8 data2, UINT8 data3, UINT8 cmd);
+//static void slave_prepare_readback(running_machine *machine, attotime delay, uint8_t channel, uint8_t count, uint8_t data0, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t cmd);
 //static void perform_mouse_update(running_machine *machine);
 //static INPUT_CHANGED( mouse_update );
 //static READ16_HANDLER( slave_r );
@@ -84,18 +84,18 @@ INLINE void verboselog(running_machine *machine, int n_level, const char *s_fmt,
 // MCD212
 //static READ16_HANDLER(mcd212_r);
 //static WRITE16_HANDLER(mcd212_w);
-//static void mcd212_set_register(running_machine *machine, int channel, UINT8 reg, UINT32 value);
-//static void mcd212_set_vsr(int channel, UINT32 value);
-//static UINT32 mcd212_get_vsr(int channel);
-//static void mcd212_set_dcp(int channel, UINT32 value);
-//static UINT32 mcd212_get_dcp(int channel);
-//static void mcd212_set_display_parameters(int channel, UINT8 value);
+//static void mcd212_set_register(running_machine *machine, int channel, uint8_t reg, uint32_t value);
+//static void mcd212_set_vsr(int channel, uint32_t value);
+//static uint32_t mcd212_get_vsr(int channel);
+//static void mcd212_set_dcp(int channel, uint32_t value);
+//static uint32_t mcd212_get_dcp(int channel);
+//static void mcd212_set_display_parameters(int channel, uint8_t value);
 //static void mcd212_process_ica(running_machine *machine, int channel);
 //static void mcd212_process_dca(running_machine *machine, int channel);
 static void mcd212_update_region_arrays(running_machine *machine);
-//static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pixels_r, UINT8 *pixels_g, UINT8 *pixels_b);
-//static void mcd212_draw_cursor(running_machine *machine, UINT32 *scanline, int y);
-//static void mcd212_mix_lines(running_machine *machine, UINT8 *plane_a_r, UINT8 *plane_a_g, UINT8 *plane_a_b, UINT8 *plane_b_r, UINT8 *plane_b_g, UINT8 *plane_b_b, UINT32 *out);
+//static void mcd212_process_vsr(running_machine *machine, int channel, uint8_t *pixels_r, uint8_t *pixels_g, uint8_t *pixels_b);
+//static void mcd212_draw_cursor(running_machine *machine, uint32_t *scanline, int y);
+//static void mcd212_mix_lines(running_machine *machine, uint8_t *plane_a_r, uint8_t *plane_a_g, uint8_t *plane_a_b, uint8_t *plane_b_r, uint8_t *plane_b_g, uint8_t *plane_b_b, uint32_t *out);
 //static void mcd212_draw_scanline(running_machine *machine, int y);
 //static TIMER_CALLBACK( mcd212_perform_scan );
 //static VIDEO_START(cdi);
@@ -110,16 +110,16 @@ static void mcd212_update_region_arrays(running_machine *machine);
 
 typedef struct
 {
-    UINT8 reserved0;
-    UINT8 data_register;
-    UINT8 reserved1;
-    UINT8 address_register;
-    UINT8 reserved2;
-    UINT8 status_register;
-    UINT8 reserved3;
-    UINT8 control_register;
-    UINT8 reserved;
-    UINT8 clock_control_register;
+    uint8_t reserved0;
+    uint8_t data_register;
+    uint8_t reserved1;
+    uint8_t address_register;
+    uint8_t reserved2;
+    uint8_t status_register;
+    uint8_t reserved3;
+    uint8_t control_register;
+    uint8_t reserved;
+    uint8_t clock_control_register;
 } scc68070_i2c_regs_t;
 
 #define ISR_MST     0x80    // Master
@@ -133,18 +133,18 @@ typedef struct
 
 typedef struct
 {
-    UINT8 reserved0;
-    UINT8 mode_register;
-    UINT8 reserved1;
-    UINT8 status_register;
-    UINT8 reserved2;
-    UINT8 clock_select;
-    UINT8 reserved3;
-    UINT8 command_register;
-    UINT8 reserved4;
-    UINT8 transmit_holding_register;
-    UINT8 reserved5;
-    UINT8 receive_holding_register;
+    uint8_t reserved0;
+    uint8_t mode_register;
+    uint8_t reserved1;
+    uint8_t status_register;
+    uint8_t reserved2;
+    uint8_t clock_select;
+    uint8_t reserved3;
+    uint8_t command_register;
+    uint8_t reserved4;
+    uint8_t transmit_holding_register;
+    uint8_t reserved5;
+    uint8_t receive_holding_register;
 } scc68070_uart_regs_t;
 
 #define UMR_OM          0xc0
@@ -168,12 +168,12 @@ typedef struct
 
 typedef struct
 {
-    UINT8 timer_status_register;
-    UINT8 timer_control_register;
-    UINT16 reload_register;
-    UINT16 timer0;
-    UINT16 timer1;
-    UINT16 timer2;
+    uint8_t timer_status_register;
+    uint8_t timer_control_register;
+    uint16_t reload_register;
+    uint16_t timer0;
+    uint16_t timer1;
+    uint16_t timer2;
     emu_timer* timer0_timer;
 } scc68070_timer_regs_t;
 
@@ -208,27 +208,27 @@ typedef struct
 
 typedef struct
 {
-    UINT8 channel_status;
-    UINT8 channel_error;
+    uint8_t channel_status;
+    uint8_t channel_error;
 
-    UINT8 reserved0[2];
+    uint8_t reserved0[2];
 
-    UINT8 device_control;
-    UINT8 operation_control;
-    UINT8 sequence_control;
-    UINT8 channel_control;
+    uint8_t device_control;
+    uint8_t operation_control;
+    uint8_t sequence_control;
+    uint8_t channel_control;
 
-    UINT8 reserved1[3];
+    uint8_t reserved1[3];
 
-    UINT16 transfer_counter;
+    uint16_t transfer_counter;
 
-    UINT32 memory_address_counter;
+    uint32_t memory_address_counter;
 
-    UINT8 reserved2[4];
+    uint8_t reserved2[4];
 
-    UINT32 device_address_counter;
+    uint32_t device_address_counter;
 
-    UINT8 reserved3[40];
+    uint8_t reserved3[40];
 } scc68070_dma_channel_t;
 
 #define CSR_COC         0x80
@@ -276,28 +276,28 @@ typedef struct
 
 typedef struct
 {
-    UINT16 attr;
-    UINT16 length;
-    UINT8  undefined;
-    UINT8  segment;
-    UINT16 base;
+    uint16_t attr;
+    uint16_t length;
+    uint8_t  undefined;
+    uint8_t  segment;
+    uint16_t base;
 } scc68070_mmu_desc_t;
 
 typedef struct
 {
-    UINT8 status;
-    UINT8 control;
+    uint8_t status;
+    uint8_t control;
 
-    UINT8 reserved[0x3e];
+    uint8_t reserved[0x3e];
 
     scc68070_mmu_desc_t desc[8];
 } scc68070_mmu_regs_t;
 
 typedef struct
 {
-    UINT16 lir;
-    UINT8 picr1;
-    UINT8 picr2;
+    uint16_t lir;
+    uint8_t picr1;
+    uint8_t picr2;
 
     scc68070_i2c_regs_t i2c;
     scc68070_uart_regs_t uart;
@@ -310,32 +310,32 @@ typedef struct
 
 typedef struct
 {
-    UINT16 command;             // CDIC Command Register (0x303c00)
-    UINT32 time;                // CDIC Time Register (0x303c02)
-    UINT16 file;                // CDIC File Register (0x303c06)
-    UINT32 channel;             // CDIC Channel Register (0x303c08)
-    UINT16 audio_channel;       // CDIC Audio Channel Register (0x303c0c)
+    uint16_t command;             // CDIC Command Register (0x303c00)
+    uint32_t time;                // CDIC Time Register (0x303c02)
+    uint16_t file;                // CDIC File Register (0x303c06)
+    uint32_t channel;             // CDIC Channel Register (0x303c08)
+    uint16_t audio_channel;       // CDIC Audio Channel Register (0x303c0c)
 
-    UINT16 audio_buffer;        // CDIC Audio Buffer Register (0x303ff4)
-    UINT16 x_buffer;            // CDIC X-Buffer Register (0x303ff6)
-    UINT16 dma_control;         // CDIC DMA Control Register (0x303ff8)
-    UINT16 z_buffer;            // CDIC Z-Buffer Register (0x303ffa)
-    UINT16 interrupt_vector;    // CDIC Interrupt Vector Register (0x303ffc)
-    UINT16 data_buffer;         // CDIC Data Buffer Register (0x303ffe)
+    uint16_t audio_buffer;        // CDIC Audio Buffer Register (0x303ff4)
+    uint16_t x_buffer;            // CDIC X-Buffer Register (0x303ff6)
+    uint16_t dma_control;         // CDIC DMA Control Register (0x303ff8)
+    uint16_t z_buffer;            // CDIC Z-Buffer Register (0x303ffa)
+    uint16_t interrupt_vector;    // CDIC Interrupt Vector Register (0x303ffc)
+    uint16_t data_buffer;         // CDIC Data Buffer Register (0x303ffe)
 
     emu_timer *interrupt_timer;
     cdrom_file *cd;
 
     emu_timer *audio_sample_timer;
-    INT32 audio_sample_freq;
-    INT32 audio_sample_size;
+    int32_t audio_sample_freq;
+    int32_t audio_sample_size;
 
-    UINT16 decode_addr;
-    UINT8 decode_delay;
+    uint16_t decode_addr;
+    uint8_t decode_delay;
     attotime decode_period;
 
     int xa_last[4];
-    UINT16 *ram;
+    uint16_t *ram;
 } cdic_regs_t;
 
 #define CDIC_SECTOR_SYNC        0
@@ -373,10 +373,10 @@ typedef struct
 
 typedef struct
 {
-    UINT8 out_buf[4];
-    UINT8 out_index;
-    UINT8 out_count;
-    UINT8 out_cmd;
+    uint8_t out_buf[4];
+    uint8_t out_index;
+    uint8_t out_count;
+    uint8_t out_cmd;
 } slave_channel_t;
 
 typedef struct
@@ -384,66 +384,66 @@ typedef struct
     slave_channel_t channel[4];
     emu_timer *interrupt_timer;
 
-    UINT8 in_buf[17];
-    UINT8 in_index;
-    UINT8 in_count;
+    uint8_t in_buf[17];
+    uint8_t in_index;
+    uint8_t in_count;
 
-    UINT8 polling_active;
+    uint8_t polling_active;
 
-    UINT8 xbus_interrupt_enable;
+    uint8_t xbus_interrupt_enable;
 
-    UINT8 lcd_state[16];
+    uint8_t lcd_state[16];
 
-    UINT16 real_mouse_x;
-    UINT16 real_mouse_y;
+    uint16_t real_mouse_x;
+    uint16_t real_mouse_y;
 
-    UINT16 fake_mouse_x;
-    UINT16 fake_mouse_y;
+    uint16_t fake_mouse_x;
+    uint16_t fake_mouse_y;
 } slave_regs_t;
 
 
 typedef struct
 {
-    UINT8 csrr;
-    UINT16 csrw;
-    UINT16 dcr;
-    UINT16 vsr;
-    UINT16 ddr;
-    UINT16 dcp;
-    UINT32 dca;
-    UINT8 clut_r[256];
-    UINT8 clut_g[256];
-    UINT8 clut_b[256];
-    UINT32 image_coding_method;
-    UINT32 transparency_control;
-    UINT32 plane_order;
-    UINT32 clut_bank;
-    UINT32 transparent_color_a;
-    UINT32 reserved0;
-    UINT32 transparent_color_b;
-    UINT32 mask_color_a;
-    UINT32 reserved1;
-    UINT32 mask_color_b;
-    UINT32 dyuv_abs_start_a;
-    UINT32 dyuv_abs_start_b;
-    UINT32 reserved2;
-    UINT32 cursor_position;
-    UINT32 cursor_control;
-    UINT32 cursor_pattern[16];
-    UINT32 region_control[8];
-    UINT32 backdrop_color;
-    UINT32 mosaic_hold_a;
-    UINT32 mosaic_hold_b;
-    UINT8 weight_factor_a[768];
-    UINT8 weight_factor_b[768];
+    uint8_t csrr;
+    uint16_t csrw;
+    uint16_t dcr;
+    uint16_t vsr;
+    uint16_t ddr;
+    uint16_t dcp;
+    uint32_t dca;
+    uint8_t clut_r[256];
+    uint8_t clut_g[256];
+    uint8_t clut_b[256];
+    uint32_t image_coding_method;
+    uint32_t transparency_control;
+    uint32_t plane_order;
+    uint32_t clut_bank;
+    uint32_t transparent_color_a;
+    uint32_t reserved0;
+    uint32_t transparent_color_b;
+    uint32_t mask_color_a;
+    uint32_t reserved1;
+    uint32_t mask_color_b;
+    uint32_t dyuv_abs_start_a;
+    uint32_t dyuv_abs_start_b;
+    uint32_t reserved2;
+    uint32_t cursor_position;
+    uint32_t cursor_control;
+    uint32_t cursor_pattern[16];
+    uint32_t region_control[8];
+    uint32_t backdrop_color;
+    uint32_t mosaic_hold_a;
+    uint32_t mosaic_hold_b;
+    uint8_t weight_factor_a[768];
+    uint8_t weight_factor_b[768];
 } mcd212_channel_t;
 
 typedef struct
 {
     mcd212_channel_t channel[2];
     emu_timer *scan_timer;
-    UINT8 region_flag_0[768];
-    UINT8 region_flag_1[768];
+    uint8_t region_flag_0[768];
+    uint8_t region_flag_1[768];
 } mcd212_regs_t;
 
 #define MCD212_CURCNT_COLOR         0x00000f    // Cursor color
@@ -522,9 +522,9 @@ typedef struct
 #define MCD212_DDR_MT_16            0x0c00  // 16x1
 #define MCD212_DDR_MT_SHIFT         10
 
-typedef UINT8 BYTE68K;
-typedef UINT16 WORD68K;
-typedef INT16 SWORD68K;
+typedef uint8_t BYTE68K;
+typedef uint16_t WORD68K;
+typedef int16_t SWORD68K;
 
 #define BYTE68K_MAX 255
 
@@ -565,12 +565,12 @@ public:
 
     cdi_state(running_machine &machine) { }
 
-    UINT16 *planea;
-    UINT16 *planeb;
+    uint16_t *planea;
+    uint16_t *planeb;
 
     dmadac_sound_device *dmadac[2];
 
-    UINT8 timer_set;
+    uint8_t timer_set;
     emu_timer *test_timer;
     bitmap_t* lcdbitmap;
     scc68070_regs_t scc68070_regs;
@@ -582,7 +582,7 @@ public:
 
 static void scc68070_set_timer_callback(scc68070_regs_t *scc68070, int channel)
 {
-    UINT32 compare = 0;
+    uint32_t compare = 0;
     attotime period;
     switch(channel)
     {
@@ -605,7 +605,7 @@ static TIMER_CALLBACK( scc68070_timer0_callback )
     scc68070->timers.timer_status_register |= TSR_OV0;
     if(scc68070->picr1 & 7)
     {
-        UINT8 interrupt = scc68070->picr1 & 7;
+        uint8_t interrupt = scc68070->picr1 & 7;
         scc68070->timers.timer_status_register |= TSR_OV0;
         cpu_set_input_line_vector(machine->device("maincpu"), M68K_IRQ_1 + (interrupt - 1), 56 + interrupt);
         cputag_set_input_line(machine, "maincpu", M68K_IRQ_1 + (interrupt - 1), ASSERT_LINE);
@@ -971,7 +971,7 @@ static WRITE16_HANDLER( scc68070_periphs_w )
                 scc68070->timers.timer_status_register &= ~(data >> 8);
                 if(!scc68070->timers.timer_status_register)
                 {
-                    UINT8 interrupt = scc68070->picr1 & 7;
+                    uint8_t interrupt = scc68070->picr1 & 7;
                     cputag_set_input_line(space->machine, "maincpu", M68K_IRQ_1 + (interrupt - 1), CLEAR_LINE);
                 }
             }
@@ -1295,7 +1295,7 @@ static READ16_HANDLER( uart_loopback_enable )
 
 
 
-static const INT32 cdic_adpcm_filter_coef[5][2] =
+static const int32_t cdic_adpcm_filter_coef[5][2] =
 {
     { 0,0 },
     { 60,0 },
@@ -1304,9 +1304,9 @@ static const INT32 cdic_adpcm_filter_coef[5][2] =
     { 122,-60 },
 };
 
-INLINE int CDIC_IS_VALID_SAMPLE_BUF(UINT16 *cdram, UINT16 addr)
+INLINE int CDIC_IS_VALID_SAMPLE_BUF(uint16_t *cdram, uint16_t addr)
 {
-    UINT8 *cdram8 = ((UINT8*)cdram) + addr + 8;
+    uint8_t *cdram8 = ((uint8_t*)cdram) + addr + 8;
     if(cdram8[2] != 0xff)
     {
         return 1;
@@ -1314,9 +1314,9 @@ INLINE int CDIC_IS_VALID_SAMPLE_BUF(UINT16 *cdram, UINT16 addr)
     return 0;
 }
 
-INLINE double CDIC_SAMPLE_BUF_FREQ(UINT16 *cdram, UINT16 addr)
+INLINE double CDIC_SAMPLE_BUF_FREQ(uint16_t *cdram, uint16_t addr)
 {
-    UINT8 *cdram8 = ((UINT8*)cdram) + addr + 8;
+    uint8_t *cdram8 = ((uint8_t*)cdram) + addr + 8;
     switch(cdram8[2] & 0x3f)
     {
         case 0:
@@ -1334,9 +1334,9 @@ INLINE double CDIC_SAMPLE_BUF_FREQ(UINT16 *cdram, UINT16 addr)
     }
 }
 
-INLINE int CDIC_SAMPLE_BUF_SIZE(UINT16 *cdram, UINT16 addr)
+INLINE int CDIC_SAMPLE_BUF_SIZE(uint16_t *cdram, uint16_t addr)
 {
-    UINT8 *cdram8 = ((UINT8*)cdram) + addr + 8;
+    uint8_t *cdram8 = ((uint8_t*)cdram) + addr + 8;
     switch(cdram8[2] & 0x3f)
     {
         case 0:
@@ -1356,7 +1356,7 @@ INLINE int CDIC_SAMPLE_BUF_SIZE(UINT16 *cdram, UINT16 addr)
     }
 }
 
-INLINE INT16 clamp(INT16 in)
+INLINE int16_t clamp(int16_t in)
 {
     return in;
 }
@@ -1565,7 +1565,7 @@ static void cdic_decode_audio_sector(running_machine *machine, const unsigned ch
     int channels;
     int bits = 4;
     int index = 0;
-    INT16 samples[18*28*16+16];
+    int16_t samples[18*28*16+16];
     //FILE* temp_adpcm = fopen("temp_adpcm.bin","ab");
 
     //printf( "%02x\n", hdr[2] & 0x3f );
@@ -1717,7 +1717,7 @@ static TIMER_CALLBACK( audio_sample_trigger )
         verboselog(machine, 0, "Hit audio_sample_trigger, with cdic->decode_addr == %04x, calling cdic_decode_audio_sector\n", cdic->decode_addr );
 
         // Decode the data at Z+4, the same offset as a normal CD sector.
-        cdic_decode_audio_sector(machine, ((UINT8*)cdic->ram) + (cdic->decode_addr & 0x3ffe) + 4, 1);
+        cdic_decode_audio_sector(machine, ((uint8_t*)cdic->ram) + (cdic->decode_addr & 0x3ffe) + 4, 1);
 
         // Swap buffer positions to indicate our new buffer position at the next read
         cdic->decode_addr ^= 0x1a00;
@@ -1741,9 +1741,9 @@ static TIMER_CALLBACK( audio_sample_trigger )
     }
 }
 
-static UINT32 increment_cdda_frame_bcd(UINT32 bcd)
+static uint32_t increment_cdda_frame_bcd(uint32_t bcd)
 {
-    UINT8 nybbles[6] =
+    uint8_t nybbles[6] =
     {
          bcd & 0x0000000f,
         (bcd & 0x000000f0) >> 4,
@@ -1781,9 +1781,9 @@ static UINT32 increment_cdda_frame_bcd(UINT32 bcd)
     return (nybbles[5] << 20) | (nybbles[4] << 16) | (nybbles[3] << 12) | (nybbles[2] << 8) | (nybbles[1] << 4) | nybbles[0];
 }
 
-static UINT32 increment_cdda_sector_bcd(UINT32 bcd)
+static uint32_t increment_cdda_sector_bcd(uint32_t bcd)
 {
-    UINT8 nybbles[6] =
+    uint8_t nybbles[6] =
     {
          bcd & 0x0000000f,
         (bcd & 0x000000f0) >> 4,
@@ -1824,11 +1824,11 @@ static TIMER_CALLBACK( cdic_trigger_readback_int )
         case 0x2a: // Read Mode 2
         //case 0x2c: // Seek
         {
-            UINT8 buffer[2560] = { 0 };
-            UINT32 msf = cdic->time >> 8;
-            UINT32 lba = 0;
+            uint8_t buffer[2560] = { 0 };
+            uint32_t msf = cdic->time >> 8;
+            uint32_t lba = 0;
             int index = 0;
-            UINT8 nybbles[6] =
+            uint8_t nybbles[6] =
             {
                  msf & 0x0000000f,
                 (msf & 0x000000f0) >> 4,
@@ -1926,7 +1926,7 @@ static TIMER_CALLBACK( cdic_trigger_readback_int )
                                 cdic->ram[(cdic->data_buffer & 5) * (0xa00/2) + (index - 6)] = (buffer[index*2] << 8) | buffer[index*2 + 1];
                             }
 
-                            cdic_decode_audio_sector(machine, ((UINT8*)cdic->ram) + ((cdic->data_buffer & 5) * 0xa00 + 4), 0);
+                            cdic_decode_audio_sector(machine, ((uint8_t*)cdic->ram) + ((cdic->data_buffer & 5) * 0xa00 + 4), 0);
 
                             //printf( "Setting CDIC interrupt line\n" );
                             verboselog(machine, 0, "Setting CDIC interrupt line for audio sector\n" );
@@ -1997,14 +1997,14 @@ static TIMER_CALLBACK( cdic_trigger_readback_int )
             break;
         case 0x28: // Play CDDA audio
         {
-            UINT8 buffer[2560] = { 0 };
+            uint8_t buffer[2560] = { 0 };
             int index = 0;
-            UINT32 msf = (cdic->time & 0xffff7f00) >> 8;
-            UINT32 next_msf = increment_cdda_frame_bcd((cdic->time & 0xffff7f00) >> 8);
-            UINT32 rounded_next_msf = increment_cdda_sector_bcd((cdic->time & 0xffff0000) >> 8);
-            UINT32 lba = 0;
-            UINT32 next_lba = 0;
-            UINT8 nybbles[6] =
+            uint32_t msf = (cdic->time & 0xffff7f00) >> 8;
+            uint32_t next_msf = increment_cdda_frame_bcd((cdic->time & 0xffff7f00) >> 8);
+            uint32_t rounded_next_msf = increment_cdda_sector_bcd((cdic->time & 0xffff0000) >> 8);
+            uint32_t lba = 0;
+            uint32_t next_lba = 0;
+            uint8_t nybbles[6] =
             {
                  msf & 0x0000000f,
                 (msf & 0x000000f0) >> 4,
@@ -2013,7 +2013,7 @@ static TIMER_CALLBACK( cdic_trigger_readback_int )
                 (msf & 0x000f0000) >> 16,
                 (msf & 0x00f00000) >> 20
             };
-            UINT8 next_nybbles[6] =
+            uint8_t next_nybbles[6] =
             {
                  rounded_next_msf & 0x0000000f,
                 (rounded_next_msf & 0x000000f0) >> 4,
@@ -2069,12 +2069,12 @@ static TIMER_CALLBACK( cdic_trigger_readback_int )
         }
         case 0x2c: // Seek
         {
-            UINT8 buffer[2560] = { 0 };
+            uint8_t buffer[2560] = { 0 };
             int index = 0;
-            UINT32 msf = (cdic->time & 0xffff7f00) >> 8;
-            UINT32 next_msf = increment_cdda_frame_bcd((cdic->time & 0xffff7f00) >> 8);
-            UINT32 lba = 0;
-            UINT8 nybbles[6] =
+            uint32_t msf = (cdic->time & 0xffff7f00) >> 8;
+            uint32_t next_msf = increment_cdda_frame_bcd((cdic->time & 0xffff7f00) >> 8);
+            uint32_t lba = 0;
+            uint8_t nybbles[6] =
             {
                  msf & 0x0000000f,
                 (msf & 0x000000f0) >> 4,
@@ -2138,7 +2138,7 @@ static READ16_HANDLER( cdic_r )
             return cdic->time >> 16;
 
         case 0x3c04/2: // Time register (LSW)
-            verboselog(space->machine, 0, "cdic_r: Time Register (LSW) = %04x & %04x\n", (UINT16)(cdic->time & 0x0000ffff), mem_mask);
+            verboselog(space->machine, 0, "cdic_r: Time Register (LSW) = %04x & %04x\n", (uint16_t)(cdic->time & 0x0000ffff), mem_mask);
             return cdic->time & 0x0000ffff;
 
         case 0x3c06/2: // File register
@@ -2159,7 +2159,7 @@ static READ16_HANDLER( cdic_r )
 
         case 0x3ff4/2: // ABUF
         {
-            UINT16 temp = cdic->audio_buffer;
+            uint16_t temp = cdic->audio_buffer;
             cdic->audio_buffer &= 0x7fff;
             if(!((cdic->audio_buffer | cdic->x_buffer) & 0x8000))
             {
@@ -2173,7 +2173,7 @@ static READ16_HANDLER( cdic_r )
 
         case 0x3ff6/2: // XBUF
         {
-            UINT16 temp = cdic->x_buffer;
+            uint16_t temp = cdic->x_buffer;
             cdic->x_buffer &= 0x7fff;
             if(!((cdic->audio_buffer | cdic->x_buffer) & 0x8000))
             {
@@ -2267,11 +2267,11 @@ static WRITE16_HANDLER( cdic_w )
         case 0x3ff8/2:
         {
             scc68070_regs_t *scc68070 = &state->scc68070_regs;
-            UINT32 start = scc68070->dma.channel[0].memory_address_counter;
-            UINT32 count = scc68070->dma.channel[0].transfer_counter;
-            UINT32 index = 0;
-            UINT32 device_index = (data & 0x3fff) >> 1;
-            UINT16 *memory = state->planea;
+            uint32_t start = scc68070->dma.channel[0].memory_address_counter;
+            uint32_t count = scc68070->dma.channel[0].transfer_counter;
+            uint32_t index = 0;
+            uint32_t device_index = (data & 0x3fff) >> 1;
+            uint16_t *memory = state->planea;
             verboselog(space->machine, 0, "memory address counter: %08x\n", scc68070->dma.channel[0].memory_address_counter);
             verboselog(space->machine, 0, "cdic_w: DMA Control Register = %04x & %04x\n", data, mem_mask);
             verboselog(space->machine, 0, "Doing copy, transferring %04x bytes\n", count * 2 );
@@ -2425,7 +2425,7 @@ static TIMER_CALLBACK( slave_trigger_readback_int )
     timer_adjust_oneshot(slave->interrupt_timer, attotime_never, 0);
 }
 
-static void slave_prepare_readback(running_machine *machine, attotime delay, UINT8 channel, UINT8 count, UINT8 data0, UINT8 data1, UINT8 data2, UINT8 data3, UINT8 cmd)
+static void slave_prepare_readback(running_machine *machine, attotime delay, uint8_t channel, uint8_t count, uint8_t data0, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t cmd)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     slave_regs_t *slave = &state->slave_regs;
@@ -2445,12 +2445,12 @@ static void perform_mouse_update(running_machine *machine)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     slave_regs_t *slave = &state->slave_regs;
-    UINT16 x = input_port_read(machine, "MOUSEX");
-    UINT16 y = input_port_read(machine, "MOUSEY");
-    UINT8 buttons = input_port_read(machine, "MOUSEBTN");
+    uint16_t x = input_port_read(machine, "MOUSEX");
+    uint16_t y = input_port_read(machine, "MOUSEY");
+    uint8_t buttons = input_port_read(machine, "MOUSEBTN");
 
-    UINT16 old_mouse_x = slave->real_mouse_x;
-    UINT16 old_mouse_y = slave->real_mouse_y;
+    uint16_t old_mouse_x = slave->real_mouse_x;
+    uint16_t old_mouse_y = slave->real_mouse_y;
 
     if(slave->real_mouse_x == 0xffff)
     {
@@ -2495,7 +2495,7 @@ static READ16_HANDLER( slave_r )
 
     if(slave->channel[offset].out_count)
     {
-        UINT8 ret = slave->channel[offset].out_buf[slave->channel[offset].out_index];
+        uint8_t ret = slave->channel[offset].out_buf[slave->channel[offset].out_index];
         verboselog(space->machine, 0, "slave_r: Channel %d: %d, %02x\n", offset, slave->channel[offset].out_index, ret );
         if(slave->channel[offset].out_index == 0)
         {
@@ -2529,7 +2529,7 @@ static void set_mouse_position(running_machine* machine)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     slave_regs_t *slave = &state->slave_regs;
-    UINT16 x, y;
+    uint16_t x, y;
 
     //printf( "Set mouse position: %02x %02x %02x\n", slave->in_buf[0], slave->in_buf[1], slave->in_buf[2] );
 
@@ -2857,7 +2857,7 @@ static void slave_register_globals(running_machine *machine, slave_regs_t *slave
 *     Video Hardware     *
 *************************/
 
-static const UINT16 cdi220_lcd_char[20*22] =
+static const uint16_t cdi220_lcd_char[20*22] =
 {
     0x2000, 0x2000, 0x2000, 0x2000, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0200, 0x0200, 0x0200, 0x0200,
     0x2000, 0x2000, 0x2000, 0x2000, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0100, 0x0200, 0x0200, 0x0200, 0x0200,
@@ -2887,13 +2887,13 @@ static void cdi220_draw_lcd(running_machine *machine, int y)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     bitmap_t *bitmap = state->lcdbitmap;
-    UINT32 *scanline = BITMAP_ADDR32(bitmap, y, 0);
+    uint32_t *scanline = BITMAP_ADDR32(bitmap, y, 0);
     int x = 0;
     int lcd = 0;
 
     for(lcd = 0; lcd < 8; lcd++)
     {
-        UINT16 data = (state->slave_regs.lcd_state[lcd*2] << 8) | state->slave_regs.lcd_state[lcd*2 + 1];
+        uint16_t data = (state->slave_regs.lcd_state[lcd*2] << 8) | state->slave_regs.lcd_state[lcd*2 + 1];
         for(x = 0; x < 20; x++)
         {
             if(data & cdi220_lcd_char[y*20 + x])
@@ -2912,7 +2912,7 @@ static READ16_HANDLER(mcd212_r)
 {
     cdi_state *state = (cdi_state *)space->machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
-    UINT8 channel = 1 - (offset / 8);
+    uint8_t channel = 1 - (offset / 8);
 
     switch(offset)
     {
@@ -2927,9 +2927,9 @@ static READ16_HANDLER(mcd212_r)
                 }
                 else
                 {
-                    UINT8 old_csr = mcd212->channel[1].csrr;
-                    UINT8 interrupt1 = (state->scc68070_regs.lir >> 4) & 7;
-                    //UINT8 interrupt2 = state->scc68070_regs.lir & 7;
+                    uint8_t old_csr = mcd212->channel[1].csrr;
+                    uint8_t interrupt1 = (state->scc68070_regs.lir >> 4) & 7;
+                    //uint8_t interrupt2 = state->scc68070_regs.lir & 7;
                     mcd212->channel[1].csrr &= ~(MCD212_CSR2R_IT1 | MCD212_CSR2R_IT2);
                     if(interrupt1)
                     {
@@ -3033,7 +3033,7 @@ static WRITE16_HANDLER(mcd212_w)
     }
 }
 
-static void mcd212_set_register(running_machine *machine, int channel, UINT8 reg, UINT32 value)
+static void mcd212_set_register(running_machine *machine, int channel, uint8_t reg, uint32_t value)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
@@ -3049,9 +3049,9 @@ static void mcd212_set_register(running_machine *machine, int channel, UINT8 reg
         case 0xb0: case 0xb1: case 0xb2: case 0xb3: case 0xb4: case 0xb5: case 0xb6: case 0xb7:
         case 0xb8: case 0xb9: case 0xba: case 0xbb: case 0xbc: case 0xbd: case 0xbe: case 0xbf:
             verboselog(machine, 11, "          %04xxxxx: %d: CLUT[%d] = %08x\n", channel * 0x20, channel, mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80), value );
-            mcd212->channel[0].clut_r[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (UINT8)(value >> 16) & 0xfc;
-            mcd212->channel[0].clut_g[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (UINT8)(value >>  8) & 0xfc;
-            mcd212->channel[0].clut_b[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (UINT8)(value >>  0) & 0xfc;
+            mcd212->channel[0].clut_r[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (uint8_t)(value >> 16) & 0xfc;
+            mcd212->channel[0].clut_g[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (uint8_t)(value >>  8) & 0xfc;
+            mcd212->channel[0].clut_b[mcd212->channel[channel].clut_bank * 0x40 + (reg - 0x80)] = (uint8_t)(value >>  0) & 0xfc;
             break;
         case 0xc0: // Image Coding Method
             if(channel == 0)
@@ -3193,31 +3193,31 @@ static void mcd212_set_register(running_machine *machine, int channel, UINT8 reg
     }
 }
 
-static void mcd212_set_vsr(mcd212_regs_t *mcd212, int channel, UINT32 value)
+static void mcd212_set_vsr(mcd212_regs_t *mcd212, int channel, uint32_t value)
 {
     mcd212->channel[channel].vsr = value & 0x0000ffff;
     mcd212->channel[channel].dcr &= 0xffc0;
     mcd212->channel[channel].dcr |= (value >> 16) & 0x003f;
 }
 
-static UINT32 mcd212_get_vsr(mcd212_regs_t *mcd212, int channel)
+static uint32_t mcd212_get_vsr(mcd212_regs_t *mcd212, int channel)
 {
     return ((mcd212->channel[channel].dcr & 0x3f) << 16) | mcd212->channel[channel].vsr;
 }
 
-static void mcd212_set_dcp(mcd212_regs_t *mcd212, int channel, UINT32 value)
+static void mcd212_set_dcp(mcd212_regs_t *mcd212, int channel, uint32_t value)
 {
     mcd212->channel[channel].dcp = value & 0x0000ffff;
     mcd212->channel[channel].ddr &= 0xffc0;
     mcd212->channel[channel].ddr |= (value >> 16) & 0x003f;
 }
 
-static UINT32 mcd212_get_dcp(mcd212_regs_t *mcd212, int channel)
+static uint32_t mcd212_get_dcp(mcd212_regs_t *mcd212, int channel)
 {
     return ((mcd212->channel[channel].ddr & 0x3f) << 16) | mcd212->channel[channel].dcp;
 }
 
-static void mcd212_set_display_parameters(mcd212_regs_t *mcd212, int channel, UINT8 value)
+static void mcd212_set_display_parameters(mcd212_regs_t *mcd212, int channel, uint8_t value)
 {
     mcd212->channel[channel].ddr &= 0xf0ff;
     mcd212->channel[channel].ddr |= (value & 0x0f) << 8;
@@ -3229,12 +3229,12 @@ static void mcd212_process_ica(running_machine *machine, int channel)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
-    UINT16 *ica = channel ? state->planeb : state->planea;
-    UINT32 addr = 0x000400/2;
-    UINT32 cmd = 0;
+    uint16_t *ica = channel ? state->planeb : state->planea;
+    uint32_t addr = 0x000400/2;
+    uint32_t cmd = 0;
     while(1)
     {
-        UINT8 stop = 0;
+        uint8_t stop = 0;
         cmd = ica[addr++] << 16;
         cmd |= ica[addr++];
         switch((cmd & 0xff000000) >> 24)
@@ -3276,7 +3276,7 @@ static void mcd212_process_ica(running_machine *machine, int channel)
                 mcd212->channel[1].csrr |= 1 << (2 - channel);
                 if(mcd212->channel[1].csrr & (MCD212_CSR2R_IT1 | MCD212_CSR2R_IT2))
                 {
-                    UINT8 interrupt = (state->scc68070_regs.lir >> 4) & 7;
+                    uint8_t interrupt = (state->scc68070_regs.lir >> 4) & 7;
                     if(interrupt)
                     {
                         cpu_set_input_line_vector(machine->device("maincpu"), M68K_IRQ_1 + (interrupt - 1), 56 + interrupt);
@@ -3286,7 +3286,7 @@ static void mcd212_process_ica(running_machine *machine, int channel)
 #if 0
                 if(mcd212->channel[1].csrr & MCD212_CSR2R_IT2)
                 {
-                    UINT8 interrupt = state->scc68070_regs.lir & 7;
+                    uint8_t interrupt = state->scc68070_regs.lir & 7;
                     if(interrupt)
                     {
                         cpu_set_input_line_vector(machine->device("maincpu"), M68K_IRQ_1 + (interrupt - 1), 24 + interrupt);
@@ -3314,16 +3314,16 @@ static void mcd212_process_dca(running_machine *machine, int channel)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
-    UINT16 *dca = channel ? state->planeb : state->planea;
-    UINT32 addr = (mcd212->channel[channel].dca & 0x0007ffff) / 2; //(mcd212_get_dcp(mcd212, channel) & 0x0007ffff) / 2; // mcd212->channel[channel].dca / 2;
-    UINT32 cmd = 0;
-    UINT32 count = 0;
-    UINT32 max = 64;
-    UINT8 addr_changed = 0;
+    uint16_t *dca = channel ? state->planeb : state->planea;
+    uint32_t addr = (mcd212->channel[channel].dca & 0x0007ffff) / 2; //(mcd212_get_dcp(mcd212, channel) & 0x0007ffff) / 2; // mcd212->channel[channel].dca / 2;
+    uint32_t cmd = 0;
+    uint32_t count = 0;
+    uint32_t max = 64;
+    uint8_t addr_changed = 0;
     //printf( "max = %d\n", max );
     while(1)
     {
-        UINT8 stop = 0;
+        uint8_t stop = 0;
         cmd = dca[addr++] << 16;
         cmd |= dca[addr++];
         count += 4;
@@ -3367,7 +3367,7 @@ static void mcd212_process_dca(running_machine *machine, int channel)
                 mcd212->channel[1].csrr |= 1 << (2 - channel);
                 if(mcd212->channel[1].csrr & (MCD212_CSR2R_IT1 | MCD212_CSR2R_IT2))
                 {
-                    UINT8 interrupt = (state->scc68070_regs.lir >> 4) & 7;
+                    uint8_t interrupt = (state->scc68070_regs.lir >> 4) & 7;
                     if(interrupt)
                     {
                         cpu_set_input_line_vector(machine->device("maincpu"), M68K_IRQ_1 + (interrupt - 1), 56 + interrupt);
@@ -3377,7 +3377,7 @@ static void mcd212_process_dca(running_machine *machine, int channel)
 #if 0
                 if(mcd212->channel[1].csrr & MCD212_CSR2R_IT2)
                 {
-                    UINT8 interrupt = state->scc68070_regs.lir & 7;
+                    uint8_t interrupt = state->scc68070_regs.lir & 7;
                     if(interrupt)
                     {
                         cpu_set_input_line_vector(machine->device("maincpu"), M68K_IRQ_1 + (interrupt - 1), 24 + interrupt);
@@ -3409,7 +3409,7 @@ static void mcd212_process_dca(running_machine *machine, int channel)
     mcd212->channel[channel].dca = addr * 2;
 }
 
-INLINE UINT8 MCD212_LIM(INT32 in)
+INLINE uint8_t MCD212_LIM(int32_t in)
 {
     if(in < 0)
     {
@@ -3419,10 +3419,10 @@ INLINE UINT8 MCD212_LIM(INT32 in)
     {
         return 255;
     }
-    return (UINT8)in;
+    return (uint8_t)in;
 }
 
-INLINE UINT8 BYTE_TO_CLUT(int channel, int icm, UINT8 byte)
+INLINE uint8_t BYTE_TO_CLUT(int channel, int icm, uint8_t byte)
 {
     switch(icm)
     {
@@ -3703,22 +3703,22 @@ static int mcd212_get_screen_width(running_machine *machine)
     return 768;
 }
 
-static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pixels_r, UINT8 *pixels_g, UINT8 *pixels_b)
+static void mcd212_process_vsr(running_machine *machine, int channel, uint8_t *pixels_r, uint8_t *pixels_g, uint8_t *pixels_b)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
-    UINT8 *data = channel ? (UINT8*)state->planeb : (UINT8*)state->planea;
-    UINT32 vsr = mcd212_get_vsr(mcd212, channel) & 0x0007ffff;
-    UINT8 done = 0;
+    uint8_t *data = channel ? (uint8_t*)state->planeb : (uint8_t*)state->planea;
+    uint32_t vsr = mcd212_get_vsr(mcd212, channel) & 0x0007ffff;
+    uint8_t done = 0;
     int x = 0;
-    UINT32 icm_mask = channel ? MCD212_ICM_MODE2 : MCD212_ICM_MODE1;
-    UINT32 icm_shift = channel ? MCD212_ICM_MODE2_SHIFT : MCD212_ICM_MODE1_SHIFT;
-    UINT8 icm = (mcd212->channel[0].image_coding_method & icm_mask) >> icm_shift;
-    UINT8 *clut_r = mcd212->channel[0].clut_r;
-    UINT8 *clut_g = mcd212->channel[0].clut_g;
-    UINT8 *clut_b = mcd212->channel[0].clut_b;
-    UINT8 mosaic_enable = ((mcd212->channel[channel].ddr & MCD212_DDR_FT) == MCD212_DDR_FT_MOSAIC);
-    UINT8 mosaic_factor = 1 << (((mcd212->channel[channel].ddr & MCD212_DDR_MT) >> MCD212_DDR_MT_SHIFT) + 1);
+    uint32_t icm_mask = channel ? MCD212_ICM_MODE2 : MCD212_ICM_MODE1;
+    uint32_t icm_shift = channel ? MCD212_ICM_MODE2_SHIFT : MCD212_ICM_MODE1_SHIFT;
+    uint8_t icm = (mcd212->channel[0].image_coding_method & icm_mask) >> icm_shift;
+    uint8_t *clut_r = mcd212->channel[0].clut_r;
+    uint8_t *clut_g = mcd212->channel[0].clut_g;
+    uint8_t *clut_b = mcd212->channel[0].clut_b;
+    uint8_t mosaic_enable = ((mcd212->channel[channel].ddr & MCD212_DDR_FT) == MCD212_DDR_FT_MOSAIC);
+    uint8_t mosaic_factor = 1 << (((mcd212->channel[channel].ddr & MCD212_DDR_MT) >> MCD212_DDR_MT_SHIFT) + 1);
     int mosaic_index = 0;
     int width = mcd212_get_screen_width(machine);
 
@@ -3735,7 +3735,7 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
 
     while(!done)
     {
-        UINT8 byte = data[(vsr & 0x0007ffff) ^ 1];
+        uint8_t byte = data[(vsr & 0x0007ffff) ^ 1];
         vsr++;
         switch(mcd212->channel[channel].ddr & MCD212_DDR_FT)
         {
@@ -3850,7 +3850,7 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
                     {
                         for(; x < width; x += 2)
                         {
-                            UINT8 clut_entry = BYTE_TO_CLUT(channel, icm, byte);
+                            uint8_t clut_entry = BYTE_TO_CLUT(channel, icm, byte);
                             pixels_r[x + 0] = clut_r[clut_entry];
                             pixels_g[x + 0] = clut_g[clut_entry];
                             pixels_b[x + 0] = clut_b[clut_entry];
@@ -3879,8 +3879,8 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
                     {
                         for(; x < width; x += 2)
                         {
-                            UINT8 even_entry = BYTE_TO_CLUT(channel, icm, byte >> 4);
-                            UINT8 odd_entry = BYTE_TO_CLUT(channel, icm, byte);
+                            uint8_t even_entry = BYTE_TO_CLUT(channel, icm, byte >> 4);
+                            uint8_t odd_entry = BYTE_TO_CLUT(channel, icm, byte);
                             if(mosaic_enable)
                             {
                                 for(mosaic_index = 0; mosaic_index < mosaic_factor; mosaic_index++)
@@ -3934,13 +3934,13 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
                     if(byte & 0x80)
                     {
                         // Run length
-                        UINT8 length = data[((vsr++) & 0x0007ffff) ^ 1];
+                        uint8_t length = data[((vsr++) & 0x0007ffff) ^ 1];
                         if(!length)
                         {
-                            UINT8 clut_entry = BYTE_TO_CLUT(channel, icm, byte);
-                            UINT8 r = clut_r[clut_entry];
-                            UINT8 g = clut_g[clut_entry];
-                            UINT8 b = clut_b[clut_entry];
+                            uint8_t clut_entry = BYTE_TO_CLUT(channel, icm, byte);
+                            uint8_t r = clut_r[clut_entry];
+                            uint8_t g = clut_g[clut_entry];
+                            uint8_t b = clut_b[clut_entry];
                             // Go to the end of the line
                             for(; x < width; x++)
                             {
@@ -3958,10 +3958,10 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
                         else
                         {
                             int end = x + (length * 2);
-                            UINT8 clut_entry = BYTE_TO_CLUT(channel, icm, byte);
-                            UINT8 r = clut_r[clut_entry];
-                            UINT8 g = clut_g[clut_entry];
-                            UINT8 b = clut_b[clut_entry];
+                            uint8_t clut_entry = BYTE_TO_CLUT(channel, icm, byte);
+                            uint8_t r = clut_r[clut_entry];
+                            uint8_t g = clut_g[clut_entry];
+                            uint8_t b = clut_b[clut_entry];
                             for(; x < end && x < width; x++)
                             {
                                 pixels_r[x] = r;
@@ -3982,7 +3982,7 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
                     else
                     {
                         // Single pixel
-                        UINT8 clut_entry = BYTE_TO_CLUT(channel, icm, byte);
+                        uint8_t clut_entry = BYTE_TO_CLUT(channel, icm, byte);
                         pixels_r[x] = clut_r[clut_entry];
                         pixels_g[x] = clut_g[clut_entry];
                         pixels_b[x] = clut_b[clut_entry];
@@ -4006,25 +4006,25 @@ static void mcd212_process_vsr(running_machine *machine, int channel, UINT8 *pix
     //mcd212_set_vsr(&state->mcd212_regs, channel, vsr);
 }
 
-static const UINT32 mcd212_4bpp_color[16] =
+static const uint32_t mcd212_4bpp_color[16] =
 {
     0x00101010, 0x0010107a, 0x00107a10, 0x00107a7a, 0x007a1010, 0x007a107a, 0x007a7a10, 0x007a7a7a,
     0x00101010, 0x001010e6, 0x0010e610, 0x0010e6e6, 0x00e61010, 0x00e610e6, 0x00e6e610, 0x00e6e6e6
 };
 
-static void mcd212_draw_cursor(running_machine *machine, UINT32 *scanline, int y)
+static void mcd212_draw_cursor(running_machine *machine, uint32_t *scanline, int y)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
 
     if(mcd212->channel[0].cursor_control & MCD212_CURCNT_EN)
     {
-        UINT16 curx =  mcd212->channel[0].cursor_position        & 0x3ff;
-        UINT16 cury = ((mcd212->channel[0].cursor_position >> 12) & 0x3ff) + 22;
-        UINT32 x = 0;
+        uint16_t curx =  mcd212->channel[0].cursor_position        & 0x3ff;
+        uint16_t cury = ((mcd212->channel[0].cursor_position >> 12) & 0x3ff) + 22;
+        uint32_t x = 0;
         if(y >= cury && y < (cury + 16))
         {
-            UINT32 color = mcd212_4bpp_color[mcd212->channel[0].cursor_control & MCD212_CURCNT_COLOR];
+            uint32_t color = mcd212_4bpp_color[mcd212->channel[0].cursor_control & MCD212_CURCNT_COLOR];
             y -= cury;
             if(mcd212->channel[0].cursor_control & MCD212_CURCNT_CUW)
             {
@@ -4060,53 +4060,53 @@ static void mcd212_draw_cursor(running_machine *machine, UINT32 *scanline, int y
     }
 }
 
-static void mcd212_mix_lines(running_machine *machine, UINT8 *plane_a_r, UINT8 *plane_a_g, UINT8 *plane_a_b, UINT8 *plane_b_r, UINT8 *plane_b_g, UINT8 *plane_b_b, UINT32 *out)
+static void mcd212_mix_lines(running_machine *machine, uint8_t *plane_a_r, uint8_t *plane_a_g, uint8_t *plane_a_b, uint8_t *plane_b_r, uint8_t *plane_b_g, uint8_t *plane_b_b, uint32_t *out)
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
     mcd212_regs_t *mcd212 = &state->mcd212_regs;
     int x = 0;
-    UINT8 debug_mode = input_port_read(machine, "DEBUG");
-    UINT8 global_plane_a_disable = debug_mode & 1;
-    UINT8 global_plane_b_disable = debug_mode & 2;
-    UINT8 debug_backdrop_enable = debug_mode & 4;
-    UINT8 debug_backdrop_index = debug_mode >> 4;
-    UINT32 backdrop = debug_backdrop_enable ? mcd212_4bpp_color[debug_backdrop_index] : mcd212_4bpp_color[mcd212->channel[0].backdrop_color];
-    UINT8 transparency_mode_a = (mcd212->channel[0].transparency_control >> 0) & 0x0f;
-    UINT8 transparency_mode_b = (mcd212->channel[0].transparency_control >> 8) & 0x0f;
-    UINT8 transparent_color_a_r = (UINT8)(mcd212->channel[0].transparent_color_a >> 16);
-    UINT8 transparent_color_a_g = (UINT8)(mcd212->channel[0].transparent_color_a >>  8);
-    UINT8 transparent_color_a_b = (UINT8)(mcd212->channel[0].transparent_color_a >>  0);
-    UINT8 transparent_color_b_r = (UINT8)(mcd212->channel[1].transparent_color_b >> 16);
-    UINT8 transparent_color_b_g = (UINT8)(mcd212->channel[1].transparent_color_b >>  8);
-    UINT8 transparent_color_b_b = (UINT8)(mcd212->channel[1].transparent_color_b >>  0);
-    UINT8 image_coding_method_a = mcd212->channel[0].image_coding_method & 0x0000000f;
-    UINT8 image_coding_method_b = (mcd212->channel[0].image_coding_method >> 8) & 0x0000000f;
-    UINT8 dyuv_enable_a = (image_coding_method_a == 5);
-    UINT8 dyuv_enable_b = (image_coding_method_b == 5);
-    UINT8 mosaic_enable_a = (mcd212->channel[0].mosaic_hold_a & 0x800000) >> 23;
-    UINT8 mosaic_enable_b = (mcd212->channel[1].mosaic_hold_b & 0x800000) >> 23;
-    UINT8 mosaic_count_a = (mcd212->channel[0].mosaic_hold_a & 0x0000ff) << 1;
-    UINT8 mosaic_count_b = (mcd212->channel[1].mosaic_hold_b & 0x0000ff) << 1;
+    uint8_t debug_mode = input_port_read(machine, "DEBUG");
+    uint8_t global_plane_a_disable = debug_mode & 1;
+    uint8_t global_plane_b_disable = debug_mode & 2;
+    uint8_t debug_backdrop_enable = debug_mode & 4;
+    uint8_t debug_backdrop_index = debug_mode >> 4;
+    uint32_t backdrop = debug_backdrop_enable ? mcd212_4bpp_color[debug_backdrop_index] : mcd212_4bpp_color[mcd212->channel[0].backdrop_color];
+    uint8_t transparency_mode_a = (mcd212->channel[0].transparency_control >> 0) & 0x0f;
+    uint8_t transparency_mode_b = (mcd212->channel[0].transparency_control >> 8) & 0x0f;
+    uint8_t transparent_color_a_r = (uint8_t)(mcd212->channel[0].transparent_color_a >> 16);
+    uint8_t transparent_color_a_g = (uint8_t)(mcd212->channel[0].transparent_color_a >>  8);
+    uint8_t transparent_color_a_b = (uint8_t)(mcd212->channel[0].transparent_color_a >>  0);
+    uint8_t transparent_color_b_r = (uint8_t)(mcd212->channel[1].transparent_color_b >> 16);
+    uint8_t transparent_color_b_g = (uint8_t)(mcd212->channel[1].transparent_color_b >>  8);
+    uint8_t transparent_color_b_b = (uint8_t)(mcd212->channel[1].transparent_color_b >>  0);
+    uint8_t image_coding_method_a = mcd212->channel[0].image_coding_method & 0x0000000f;
+    uint8_t image_coding_method_b = (mcd212->channel[0].image_coding_method >> 8) & 0x0000000f;
+    uint8_t dyuv_enable_a = (image_coding_method_a == 5);
+    uint8_t dyuv_enable_b = (image_coding_method_b == 5);
+    uint8_t mosaic_enable_a = (mcd212->channel[0].mosaic_hold_a & 0x800000) >> 23;
+    uint8_t mosaic_enable_b = (mcd212->channel[1].mosaic_hold_b & 0x800000) >> 23;
+    uint8_t mosaic_count_a = (mcd212->channel[0].mosaic_hold_a & 0x0000ff) << 1;
+    uint8_t mosaic_count_b = (mcd212->channel[1].mosaic_hold_b & 0x0000ff) << 1;
     for(x = 0; x < 768; x++)
     {
         out[x] = backdrop;
         if(!(mcd212->channel[0].transparency_control & MCD212_TCR_DISABLE_MX))
         {
-            UINT8 abr = MCD212_LIM(((MCD212_LIM((INT32)plane_a_r[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((INT32)plane_b_r[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
-            UINT8 abg = MCD212_LIM(((MCD212_LIM((INT32)plane_a_g[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((INT32)plane_b_g[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
-            UINT8 abb = MCD212_LIM(((MCD212_LIM((INT32)plane_a_b[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((INT32)plane_b_b[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            uint8_t abr = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_r[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((int32_t)plane_b_r[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            uint8_t abg = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_g[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((int32_t)plane_b_g[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            uint8_t abb = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_b[x] - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + ((MCD212_LIM((int32_t)plane_b_b[x] - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
             out[x] = (abr << 16) | (abg << 8) | abb;
         }
         else
         {
-            UINT8 plane_enable_a = 0;
-            UINT8 plane_enable_b = 0;
-            UINT8 plane_a_r_cur = mosaic_enable_a ? plane_a_r[x - (x % mosaic_count_a)] : plane_a_r[x];
-            UINT8 plane_a_g_cur = mosaic_enable_a ? plane_a_g[x - (x % mosaic_count_a)] : plane_a_g[x];
-            UINT8 plane_a_b_cur = mosaic_enable_a ? plane_a_b[x - (x % mosaic_count_a)] : plane_a_b[x];
-            UINT8 plane_b_r_cur = mosaic_enable_b ? plane_b_r[x - (x % mosaic_count_b)] : plane_b_r[x];
-            UINT8 plane_b_g_cur = mosaic_enable_b ? plane_b_g[x - (x % mosaic_count_b)] : plane_b_g[x];
-            UINT8 plane_b_b_cur = mosaic_enable_b ? plane_b_b[x - (x % mosaic_count_b)] : plane_b_b[x];
+            uint8_t plane_enable_a = 0;
+            uint8_t plane_enable_b = 0;
+            uint8_t plane_a_r_cur = mosaic_enable_a ? plane_a_r[x - (x % mosaic_count_a)] : plane_a_r[x];
+            uint8_t plane_a_g_cur = mosaic_enable_a ? plane_a_g[x - (x % mosaic_count_a)] : plane_a_g[x];
+            uint8_t plane_a_b_cur = mosaic_enable_a ? plane_a_b[x - (x % mosaic_count_a)] : plane_a_b[x];
+            uint8_t plane_b_r_cur = mosaic_enable_b ? plane_b_r[x - (x % mosaic_count_b)] : plane_b_r[x];
+            uint8_t plane_b_g_cur = mosaic_enable_b ? plane_b_g[x - (x % mosaic_count_b)] : plane_b_g[x];
+            uint8_t plane_b_b_cur = mosaic_enable_b ? plane_b_b[x - (x % mosaic_count_b)] : plane_b_b[x];
             switch(transparency_mode_a)
             {
                 case 0:
@@ -4201,12 +4201,12 @@ static void mcd212_mix_lines(running_machine *machine, UINT8 *plane_a_r, UINT8 *
             {
                 plane_enable_b = 0;
             }
-            plane_a_r_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_a_r_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
-            plane_a_g_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_a_g_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
-            plane_a_b_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_a_b_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
-            plane_b_r_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_b_r_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
-            plane_b_g_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_b_g_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
-            plane_b_b_cur = MCD212_LIM(((MCD212_LIM((INT32)plane_b_b_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            plane_a_r_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_r_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
+            plane_a_g_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_g_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
+            plane_a_b_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_a_b_cur - 16) * mcd212->channel[0].weight_factor_a[x]) >> 6) + 16);
+            plane_b_r_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_b_r_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            plane_b_g_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_b_g_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
+            plane_b_b_cur = MCD212_LIM(((MCD212_LIM((int32_t)plane_b_b_cur - 16) * mcd212->channel[1].weight_factor_b[x]) >> 6) + 16);
             switch(mcd212->channel[0].plane_order)
             {
                 case MCD212_POR_AB:
@@ -4237,10 +4237,10 @@ static void mcd212_mix_lines(running_machine *machine, UINT8 *plane_a_r, UINT8 *
 static void mcd212_draw_scanline(running_machine *machine, int y)
 {
     bitmap_t *bitmap = machine->generic.tmpbitmap;
-    UINT8 plane_a_r[768], plane_a_g[768], plane_a_b[768];
-    UINT8 plane_b_r[768], plane_b_g[768], plane_b_b[768];
-    UINT32 out[768];
-    UINT32 *scanline = BITMAP_ADDR32(bitmap, y, 0);
+    uint8_t plane_a_r[768], plane_a_g[768], plane_a_b[768];
+    uint8_t plane_b_r[768], plane_b_g[768], plane_b_b[768];
+    uint32_t out[768];
+    uint32_t *scanline = BITMAP_ADDR32(bitmap, y, 0);
     int x;
 
     mcd212_process_vsr(machine, 0, plane_a_r, plane_a_g, plane_a_b);
@@ -4337,8 +4337,8 @@ static void mcd212_init(running_machine *machine, mcd212_regs_t *mcd212)
         mcd212->channel[index].dyuv_abs_start_b = 0;
         mcd212->channel[index].cursor_position = 0;
         mcd212->channel[index].cursor_control = 0;
-        memset((UINT8*)&mcd212->channel[index].cursor_pattern, 0, 16 * sizeof(UINT32));
-        memset((UINT8*)&mcd212->channel[index].region_control, 0, 8 * sizeof(UINT32));
+        memset((uint8_t*)&mcd212->channel[index].cursor_pattern, 0, 16 * sizeof(uint32_t));
+        memset((uint8_t*)&mcd212->channel[index].region_control, 0, 8 * sizeof(uint32_t));
         mcd212->channel[index].backdrop_color = 0;
         mcd212->channel[index].mosaic_hold_a = 0;
         mcd212->channel[index].mosaic_hold_b = 0;
@@ -4614,8 +4614,8 @@ static MACHINE_START( cdi )
 static MACHINE_RESET( cdi )
 {
     cdi_state *state = (cdi_state *)machine->driver_data;
-    UINT16 *src   = (UINT16*)memory_region(machine, "maincpu");
-    UINT16 *dst   = state->planea;
+    uint16_t *src   = (uint16_t*)memory_region(machine, "maincpu");
+    uint16_t *dst   = state->planea;
     //running_device *cdrom_dev = machine->device("cdrom");
     memcpy(dst, src, 0x8);
 

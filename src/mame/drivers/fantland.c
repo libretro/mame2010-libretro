@@ -93,19 +93,19 @@ static WRITE16_HANDLER( fantland_soundlatch_16_w )
 
 static READ16_HANDLER( spriteram_16_r )
 {
-	UINT8 *spriteram = space->machine->generic.spriteram.u8;
+	uint8_t *spriteram = space->machine->generic.spriteram.u8;
 	return spriteram[2 * offset + 0] | (spriteram[2 * offset + 1] << 8);
 }
 
 static READ16_HANDLER( spriteram2_16_r )
 {
-	UINT8 *spriteram_2 = space->machine->generic.spriteram2.u8;
+	uint8_t *spriteram_2 = space->machine->generic.spriteram2.u8;
 	return spriteram_2[2 * offset + 0] | (spriteram_2[2 * offset + 1] << 8);
 }
 
 static WRITE16_HANDLER( spriteram_16_w )
 {
-	UINT8 *spriteram = space->machine->generic.spriteram.u8;
+	uint8_t *spriteram = space->machine->generic.spriteram.u8;
 	if (ACCESSING_BITS_0_7)
 		spriteram[2 * offset + 0] = data;
 	if (ACCESSING_BITS_8_15)
@@ -114,7 +114,7 @@ static WRITE16_HANDLER( spriteram_16_w )
 
 static WRITE16_HANDLER( spriteram2_16_w )
 {
-	UINT8 *spriteram_2 = space->machine->generic.spriteram2.u8;
+	uint8_t *spriteram_2 = space->machine->generic.spriteram2.u8;
 	if (ACCESSING_BITS_0_7)
 		spriteram_2[2 * offset + 0] = data;
 	if (ACCESSING_BITS_8_15)
@@ -366,7 +366,7 @@ static WRITE8_HANDLER( borntofi_msm5205_w )
 static void borntofi_adpcm_int( running_device *device, int voice )
 {
 	fantland_state *state = (fantland_state *)device->machine->driver_data;
-	UINT8 *rom;
+	uint8_t *rom;
 	size_t len;
 	int start, stop;
 

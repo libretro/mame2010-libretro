@@ -49,9 +49,9 @@ $305.b invincibility
 VIDEO_START( galastrm );
 VIDEO_UPDATE( galastrm );
 
-static UINT16 coin_word, frame_counter=0;
-static UINT32 *galastrm_ram;
-extern INT16  galastrm_tc0610_ctrl_reg[2][8];
+static uint16_t coin_word, frame_counter=0;
+static uint32_t *galastrm_ram;
+extern int16_t  galastrm_tc0610_ctrl_reg[2][8];
 
 /*********************************************************************/
 
@@ -112,7 +112,7 @@ static WRITE32_HANDLER( galastrm_input_w )
 #if 0
 {
 char t[64];
-static UINT32 mem[2];
+static uint32_t mem[2];
 COMBINE_DATA(&mem[offset]);
 
 sprintf(t,"%08x %08x",mem[0],mem[1]);

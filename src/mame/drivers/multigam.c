@@ -77,9 +77,9 @@ PCB Layout
 
 *******************************************************/
 
-static UINT8* nt_ram;
-static UINT8* vram;
-static UINT8* nt_page[4];
+static uint8_t* nt_ram;
+static uint8_t* vram;
+static uint8_t* nt_page[4];
 
 static void set_mirroring(int mirroring)
 {
@@ -185,12 +185,12 @@ static WRITE8_DEVICE_HANDLER( psg_4017_w )
 
 *******************************************************/
 
-static UINT32 in_0;
-static UINT32 in_1;
-static UINT32 in_0_shift;
-static UINT32 in_1_shift;
-static UINT32 multigam_in_dsw;
-static UINT32 multigam_in_dsw_shift;
+static uint32_t in_0;
+static uint32_t in_1;
+static uint32_t in_0_shift;
+static uint32_t in_1_shift;
+static uint32_t multigam_in_dsw;
+static uint32_t multigam_in_dsw_shift;
 
 static READ8_HANDLER( multigam_IN0_r )
 {
@@ -238,8 +238,8 @@ static int multigam_game_gfx_bank = 0;
 static WRITE8_HANDLER(multigam_switch_prg_rom)
 {
 	/* switch PRG rom */
-	UINT8* dst = memory_region(space->machine, "maincpu");
-	UINT8* src = memory_region(space->machine, "user1");
+	uint8_t* dst = memory_region(space->machine, "maincpu");
+	uint8_t* src = memory_region(space->machine, "user1");
 
 	if (data & 0x80)
 	{
@@ -329,8 +329,8 @@ static int multigam3_mmc3_scanline_latch;
 static int multigam3_mmc3_banks[2];
 static int multigam3_mmc3_4screen;
 static int multigam3_mmc3_last_bank;
-static UINT8* multigmc_mmc3_6000_ram;
-static UINT8* multigam3_mmc3_prg_base;
+static uint8_t* multigmc_mmc3_6000_ram;
+static uint8_t* multigam3_mmc3_prg_base;
 static int multigam3_mmc3_prg_size;
 static int multigam3_mmc3_chr_bank_base;
 
@@ -362,7 +362,7 @@ static WRITE8_HANDLER( multigam3_mmc3_rom_switch_w )
 			if (multigam3_mmc3_last_bank != (data & 0xc0))
 			{
 				int bank;
-				UINT8 *prg = memory_region(space->machine, "maincpu");
+				uint8_t *prg = memory_region(space->machine, "maincpu");
 
 				/* reset the banks */
 				if (multigam3_mmc3_command & 0x40)
@@ -392,7 +392,7 @@ static WRITE8_HANDLER( multigam3_mmc3_rom_switch_w )
 
 		case 0x0001:
 			{
-				UINT8 cmd = multigam3_mmc3_command & 0x07;
+				uint8_t cmd = multigam3_mmc3_command & 0x07;
 				int page = (multigam3_mmc3_command & 0x80) >> 5;
 				int bank;
 
@@ -415,7 +415,7 @@ static WRITE8_HANDLER( multigam3_mmc3_rom_switch_w )
 
 					case 6: /* program banking */
 					{
-						UINT8 *prg = memory_region(space->machine, "maincpu");
+						uint8_t *prg = memory_region(space->machine, "maincpu");
 						if (multigam3_mmc3_command & 0x40)
 						{
 							/* high bank */
@@ -440,7 +440,7 @@ static WRITE8_HANDLER( multigam3_mmc3_rom_switch_w )
 					case 7: /* program banking */
 						{
 							/* mid bank */
-							UINT8 *prg = memory_region(space->machine, "maincpu");
+							uint8_t *prg = memory_region(space->machine, "maincpu");
 
 							multigam3_mmc3_banks[1] = data & bankmask;
 							bank = multigam3_mmc3_banks[1] * 0x2000;
@@ -495,9 +495,9 @@ static WRITE8_HANDLER( multigam3_mmc3_rom_switch_w )
 	}
 }
 
-static void multigam_init_mmc3(running_machine *machine, UINT8 *prg_base, int prg_size, int chr_bank_base)
+static void multigam_init_mmc3(running_machine *machine, uint8_t *prg_base, int prg_size, int chr_bank_base)
 {
-	UINT8* dst = memory_region(machine, "maincpu");
+	uint8_t* dst = memory_region(machine, "maincpu");
 
 	// Tom & Jerry in Super Game III enables 6000 ram, but does not read/write it
 	// however, it expects ROM from 6000 there (code jumps to $6xxx)
@@ -541,8 +541,8 @@ static WRITE8_HANDLER(multigm3_switch_gfx_rom)
 static WRITE8_HANDLER(multigm3_switch_prg_rom)
 {
 	/* switch PRG rom */
-	UINT8* dst = memory_region(space->machine, "maincpu");
-	UINT8* src = memory_region(space->machine, "user1");
+	uint8_t* dst = memory_region(space->machine, "maincpu");
+	uint8_t* src = memory_region(space->machine, "user1");
 
 	if (data == 0xa8)
 	{
@@ -601,19 +601,19 @@ ADDRESS_MAP_END
 
 *******************************************************/
 
-static UINT8* multigam_mapper02_prg_base;
+static uint8_t* multigam_mapper02_prg_base;
 static int multigam_mapper02_prg_size;
 
 static WRITE8_HANDLER(multigam3_mapper02_rom_switch_w)
 {
-	UINT8* mem = memory_region(space->machine, "maincpu");
+	uint8_t* mem = memory_region(space->machine, "maincpu");
 	int bankmask = (multigam_mapper02_prg_size/0x4000) - 1;
 	memcpy(mem + 0x8000, multigam_mapper02_prg_base + 0x4000*(data & bankmask), 0x4000);
 }
 
-static void multigam_init_mapper02(running_machine *machine, UINT8* prg_base, int prg_size)
+static void multigam_init_mapper02(running_machine *machine, uint8_t* prg_base, int prg_size)
 {
-	UINT8* mem = memory_region(machine, "maincpu");
+	uint8_t* mem = memory_region(machine, "maincpu");
 	memcpy(mem + 0x8000, prg_base + prg_size - 0x8000, 0x8000);
 	memory_install_write8_handler(cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM), 0x8000, 0xffff, 0, 0, multigam3_mapper02_rom_switch_w );
 
@@ -632,7 +632,7 @@ static void multigam_init_mapper02(running_machine *machine, UINT8* prg_base, in
 static int mmc1_shiftreg;
 static int mmc1_shiftcount;
 static int mmc1_rom_mask;
-static UINT8* multigam_mmc1_prg_base;
+static uint8_t* multigam_mmc1_prg_base;
 static int multigam_mmc1_prg_size;
 static int multigam_mmc1_chr_bank_base;
 static int multigam_mmc1_reg_write_enable;
@@ -741,7 +741,7 @@ static WRITE8_HANDLER( mmc1_rom_switch_w )
 			case 3:	/* program banking */
 				{
 					int bank = (mmc1_shiftreg & mmc1_rom_mask) * 0x4000;
-					UINT8 *prg = memory_region(space->machine, "maincpu");
+					uint8_t *prg = memory_region(space->machine, "maincpu");
 
 					if (!size16k)
 					{
@@ -771,9 +771,9 @@ static WRITE8_HANDLER( mmc1_rom_switch_w )
 	}
 }
 
-static void multigam_init_mmc1(running_machine *machine, UINT8 *prg_base, int prg_size, int chr_bank_base)
+static void multigam_init_mmc1(running_machine *machine, uint8_t *prg_base, int prg_size, int chr_bank_base)
 {
-	UINT8* dst = memory_region(machine, "maincpu");
+	uint8_t* dst = memory_region(machine, "maincpu");
 
 	memcpy(&dst[0x8000], prg_base + (prg_size - 0x8000), 0x8000);
 
@@ -811,13 +811,13 @@ static void multigam_init_mmc1(running_machine *machine, UINT8 *prg_base, int pr
           xxxx  CHR rom bank, each bank has 0x8000 bytes (32KB)
 */
 
-static UINT8 supergm3_prg_bank;
-static UINT8 supergm3_chr_bank;
+static uint8_t supergm3_prg_bank;
+static uint8_t supergm3_chr_bank;
 
 static void supergm3_set_bank(running_machine *machine)
 {
 	running_device *ppu = machine->device("ppu");
-	UINT8* mem = memory_region(machine, "maincpu");
+	uint8_t* mem = memory_region(machine, "maincpu");
 
 	// video bank
 	if (supergm3_chr_bank == 0x10 ||
@@ -1086,7 +1086,7 @@ static MACHINE_RESET( multigm3 )
 
 static MACHINE_START( multigam )
 {
-	nt_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	nt_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 	nt_page[0] = nt_ram;
 	nt_page[1] = nt_ram + 0x400;
 	nt_page[2] = nt_ram + 0x800;
@@ -1099,7 +1099,7 @@ static MACHINE_START( multigam )
 
 static MACHINE_START( multigm3 )
 {
-	nt_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	nt_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 	nt_page[0] = nt_ram;
 	nt_page[1] = nt_ram + 0x400;
 	nt_page[2] = nt_ram + 0x800;
@@ -1121,7 +1121,7 @@ static MACHINE_START( multigm3 )
 
 static MACHINE_START( supergm3 )
 {
-	nt_ram = auto_alloc_array(machine, UINT8, 0x1000);
+	nt_ram = auto_alloc_array(machine, uint8_t, 0x1000);
 	nt_page[0] = nt_ram;
 	nt_page[1] = nt_ram + 0x400;
 	nt_page[2] = nt_ram + 0x800;
@@ -1129,8 +1129,8 @@ static MACHINE_START( supergm3 )
 
 	memory_install_readwrite8_handler(cpu_get_address_space(machine->device("ppu"), ADDRESS_SPACE_PROGRAM), 0x2000, 0x3eff, 0, 0, multigam_nt_r, multigam_nt_w);
 
-	vram = auto_alloc_array(machine, UINT8, 0x2000);
-	multigmc_mmc3_6000_ram = auto_alloc_array(machine, UINT8, 0x2000);
+	vram = auto_alloc_array(machine, uint8_t, 0x2000);
+	multigmc_mmc3_6000_ram = auto_alloc_array(machine, uint8_t, 0x2000);
 }
 
 static MACHINE_DRIVER_START( multigam )
@@ -1313,7 +1313,7 @@ static DRIVER_INIT( multigam )
 	multigam_switch_prg_rom(space, 0x0, 0x01);
 }
 
-static void multigm3_decrypt(UINT8* mem, int memsize, const UINT8* decode_nibble)
+static void multigm3_decrypt(uint8_t* mem, int memsize, const uint8_t* decode_nibble)
 {
 	int i;
 	for (i = 0; i < memsize; i++)
@@ -1326,12 +1326,12 @@ static DRIVER_INIT(multigm3)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
-	const UINT8 decode[16]  = { 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00, 0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a };
+	const uint8_t decode[16]  = { 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00, 0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a };
 
 	multigm3_decrypt(memory_region(machine, "maincpu"), memory_region_length(machine, "maincpu"), decode );
 	multigm3_decrypt(memory_region(machine, "user1"), memory_region_length(machine, "user1"), decode );
 
-	multigmc_mmc3_6000_ram = auto_alloc_array(machine, UINT8, 0x2000);
+	multigmc_mmc3_6000_ram = auto_alloc_array(machine, uint8_t, 0x2000);
 
 	multigam_switch_prg_rom(space, 0x0, 0x01);
 }
@@ -1340,8 +1340,8 @@ static DRIVER_INIT(multigmt)
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
 
-	UINT8* buf = auto_alloc_array(machine, UINT8, 0x80000);
-	UINT8 *rom;
+	uint8_t* buf = auto_alloc_array(machine, uint8_t, 0x80000);
+	uint8_t *rom;
 	int size;
 	int i;
 	int addr;

@@ -69,19 +69,19 @@ public:
 	albazg_state(running_machine &machine) { }
 
 	/* memory pointers */
-	UINT8 *  cus_ram;
-	UINT8 *  videoram;
-	UINT8 *  colorram;
-//  UINT8 *  paletteram;    // currently this uses generic palette handling
-//  UINT8 *  paletteram_2;  // currently this uses generic palette handling
+	uint8_t *  cus_ram;
+	uint8_t *  videoram;
+	uint8_t *  colorram;
+//  uint8_t *  paletteram;    // currently this uses generic palette handling
+//  uint8_t *  paletteram_2;  // currently this uses generic palette handling
 
 	/* video-related */
 	tilemap_t  *bg_tilemap;
 
 	/* misc */
-	UINT8 mux_data;
+	uint8_t mux_data;
 	int bank;
-	UINT8 prot_lock;
+	uint8_t prot_lock;
 };
 
 
@@ -377,7 +377,7 @@ INPUT_PORTS_END
 static MACHINE_START( yumefuda )
 {
 	albazg_state *state = (albazg_state *)machine->driver_data;
-	UINT8 *ROM = memory_region(machine, "maincpu");
+	uint8_t *ROM = memory_region(machine, "maincpu");
 
 	memory_configure_bank(machine, "bank1", 0, 4, &ROM[0x10000], 0x2000);
 

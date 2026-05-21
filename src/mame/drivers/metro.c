@@ -132,12 +132,12 @@ static void update_irq_state( running_machine *machine )
 	const address_space *space = cpu_get_address_space(state->maincpu, ADDRESS_SPACE_PROGRAM);
 
 	/*  Get the pending IRQs (only the enabled ones, e.g. where irq_enable is *0*)  */
-	UINT16 irq = metro_irq_cause_r(space, 0, 0xffff) & ~*state->irq_enable;
+	uint16_t irq = metro_irq_cause_r(space, 0, 0xffff) & ~*state->irq_enable;
 
 	if (state->irq_line == -1)	/* mouja, gakusai, gakusai2, dokyusei, dokyusp */
 	{
 		/*  This is for games that supply an *IRQ Vector* on the data bus together with an IRQ level for each possible IRQ source */
-		UINT8 irq_level[8] = { 0 };
+		uint8_t irq_level[8] = { 0 };
 		int i;
 
 		for (i = 0; i < 8; i++)
@@ -341,7 +341,7 @@ static int metro_io_callback( running_device *device, int ioline, int state )
 {
 	metro_state *driver_state = (metro_state *)device->machine->driver_data;
 	const address_space *space = cpu_get_address_space(driver_state->maincpu, ADDRESS_SPACE_PROGRAM);
-	UINT8 data = 0;
+	uint8_t data = 0;
 
 	switch (ioline)
 	{
@@ -395,7 +395,7 @@ static WRITE16_HANDLER( metro_soundstatus_w )
 static WRITE8_HANDLER( metro_sound_rombank_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "audiocpu");
+	uint8_t *ROM = memory_region(space->machine, "audiocpu");
 
 	bankaddress = 0x10000-0x4000 + ((data >> 4) & 0x03) * 0x4000;
 	if (bankaddress < 0x10000) bankaddress = 0x0000;
@@ -406,7 +406,7 @@ static WRITE8_HANDLER( metro_sound_rombank_w )
 static WRITE8_HANDLER( daitorid_sound_rombank_w )
 {
 	int bankaddress;
-	UINT8 *ROM = memory_region(space->machine, "audiocpu");
+	uint8_t *ROM = memory_region(space->machine, "audiocpu");
 
 	bankaddress = 0x10000-0x4000 + ((data >> 4) & 0x07) * 0x4000;
 	if (bankaddress < 0x10000) bankaddress = 0x10000;
@@ -593,7 +593,7 @@ static WRITE16_HANDLER( metro_coin_lockout_4words_w )
 static READ16_HANDLER( metro_bankedrom_r )
 {
 	metro_state *state = (metro_state *)space->machine->driver_data;
-	UINT8 *ROM = memory_region(space->machine, "gfx1");
+	uint8_t *ROM = memory_region(space->machine, "gfx1");
 	size_t len = memory_region_length(space->machine, "gfx1");
 
 	offset = offset * 2 + 0x10000 * (*state->rombank);
@@ -660,12 +660,12 @@ static TIMER_CALLBACK( metro_blit_done )
 	update_irq_state(machine);
 }
 
-INLINE int blt_read( const UINT8 *ROM, const int offs )
+INLINE int blt_read( const uint8_t *ROM, const int offs )
 {
 	return ROM[offs];
 }
 
-INLINE void blt_write( const address_space *space, const int tmap, const offs_t offs, const UINT16 data, const UINT16 mask )
+INLINE void blt_write( const address_space *space, const int tmap, const offs_t offs, const uint16_t data, const uint16_t mask )
 {
 	switch(tmap)
 	{
@@ -684,15 +684,15 @@ static WRITE16_HANDLER( metro_blitter_w )
 
 	if (offset == 0x0c / 2)
 	{
-		UINT8 *src     = memory_region(space->machine, "gfx1");
+		uint8_t *src     = memory_region(space->machine, "gfx1");
 		size_t src_len = memory_region_length(space->machine, "gfx1");
 
-		UINT32 tmap     = (state->blitter_regs[0x00 / 2] << 16) + state->blitter_regs[0x02 / 2];
-		UINT32 src_offs = (state->blitter_regs[0x04 / 2] << 16) + state->blitter_regs[0x06 / 2];
-		UINT32 dst_offs = (state->blitter_regs[0x08 / 2] << 16) + state->blitter_regs[0x0a / 2];
+		uint32_t tmap     = (state->blitter_regs[0x00 / 2] << 16) + state->blitter_regs[0x02 / 2];
+		uint32_t src_offs = (state->blitter_regs[0x04 / 2] << 16) + state->blitter_regs[0x06 / 2];
+		uint32_t dst_offs = (state->blitter_regs[0x08 / 2] << 16) + state->blitter_regs[0x0a / 2];
 
 		int shift   = (dst_offs & 0x80) ? 0 : 8;
-		UINT16 mask = (dst_offs & 0x80) ? 0x00ff : 0xff00;
+		uint16_t mask = (dst_offs & 0x80) ? 0x00ff : 0xff00;
 
 //      logerror("CPU #0 PC %06X : Blitter regs %08X, %08X, %08X\n", cpu_get_pc(space->cpu), tmap, src_offs, dst_offs);
 
@@ -710,7 +710,7 @@ static WRITE16_HANDLER( metro_blitter_w )
 
 		while (1)
 		{
-			UINT16 b1, b2, count;
+			uint16_t b1, b2, count;
 
 			src_offs %= src_len;
 			b1 = blt_read(src, src_offs);
@@ -843,9 +843,9 @@ ADDRESS_MAP_END
 /* Really weird way of mapping 3 DSWs */
 static READ16_HANDLER( balcube_dsw_r )
 {
-	UINT16 dsw1 = input_port_read(space->machine, "DSW0") >> 0;
-	UINT16 dsw2 = input_port_read(space->machine, "DSW0") >> 8;
-	UINT16 dsw3 = input_port_read(space->machine, "IN2");
+	uint16_t dsw1 = input_port_read(space->machine, "DSW0") >> 0;
+	uint16_t dsw2 = input_port_read(space->machine, "DSW0") >> 8;
+	uint16_t dsw3 = input_port_read(space->machine, "IN2");
 
 	switch (offset * 2)
 	{
@@ -1303,7 +1303,7 @@ static WRITE16_DEVICE_HANDLER( gakusai_oki_bank_lo_w )
 static READ16_HANDLER( gakusai_input_r )
 {
 	metro_state *state = (metro_state *)space->machine->driver_data;
-	UINT16 input_sel = (*state->input_sel) ^ 0x3e;
+	uint16_t input_sel = (*state->input_sel) ^ 0x3e;
 	// Bit 0 ??
 	if (input_sel & 0x0002)	return input_port_read(space->machine, "KEY0");
 	if (input_sel & 0x0004)	return input_port_read(space->machine, "KEY1");
@@ -1699,7 +1699,7 @@ static WRITE16_HANDLER( blzntrnd_sound_w )
 
 static WRITE8_HANDLER( blzntrnd_sh_bankswitch_w )
 {
-	UINT8 *RAM = memory_region(space->machine, "audiocpu");
+	uint8_t *RAM = memory_region(space->machine, "audiocpu");
 	int bankaddress;
 
 	bankaddress = 0x10000 + (data & 0x03) * 0x4000;
@@ -6108,7 +6108,7 @@ static DRIVER_INIT( metro )
 static DRIVER_INIT( karatour )
 {
 	metro_state *state = (metro_state *)machine->driver_data;
-	UINT16 *RAM = auto_alloc_array(machine, UINT16, 0x20000*3/2);
+	uint16_t *RAM = auto_alloc_array(machine, uint16_t, 0x20000*3/2);
 	int i;
 
 	state->vram_0 = RAM + (0x20000/2) * 0;
@@ -6145,13 +6145,13 @@ static DRIVER_INIT( balcube )
 	metro_state *state = (metro_state *)machine->driver_data;
 
 	const size_t len = memory_region_length(machine, "gfx1");
-	UINT8 *src       = memory_region(machine, "gfx1");
-	UINT8 *end       = src + len;
+	uint8_t *src       = memory_region(machine, "gfx1");
+	uint8_t *end       = src + len;
 
 	while (src < end)
 	{
-		static const UINT8 scramble[16] = { 0x0,0x8,0x4,0xc,0x2,0xa,0x6,0xe,0x1,0x9,0x5,0xd,0x3,0xb,0x7,0xf };
-		UINT8 data;
+		static const uint8_t scramble[16] = { 0x0,0x8,0x4,0xc,0x2,0xa,0x6,0xe,0x1,0x9,0x5,0xd,0x3,0xb,0x7,0xf };
+		uint8_t data;
 
 		data  = *src;
 		*src  = (scramble[data & 0x0f] << 4) | scramble[data >> 4];
@@ -6165,12 +6165,12 @@ static DRIVER_INIT( balcube )
 
 static DRIVER_INIT( dharmak )
 {
-	UINT8 *src = memory_region( machine, "gfx1" );
+	uint8_t *src = memory_region( machine, "gfx1" );
 	int i;
 
 	for (i = 0; i < 0x200000; i += 4)
 	{
-		UINT8 dat;
+		uint8_t dat;
 		dat = src[i + 1];
 		dat = BITSWAP8(dat, 7,3,2,4, 5,6,1,0);
 		src[i + 1] = dat;

@@ -170,17 +170,17 @@ Super Strong Warriors
 #include "sound/ymf271.h"
 #include "includes/ms32.h"
 
-static UINT8 *ms32_nvram_8;
+static uint8_t *ms32_nvram_8;
 
-static UINT32 *ms32_mahjong_input_select;
+static uint32_t *ms32_mahjong_input_select;
 
-static UINT32 to_main;
+static uint32_t to_main;
 
 /********** READ INPUTS **********/
 
 static CUSTOM_INPUT( mahjong_ctrl_r )
 {
-	UINT32 mj_input;
+	uint32_t mj_input;
 
 	switch (ms32_mahjong_input_select[0])
 	{
@@ -1204,7 +1204,7 @@ GFXDECODE_END
    10 - 6d4 - big, vbl?
 */
 
-static UINT16 irqreq;
+static uint16_t irqreq;
 
 static IRQ_CALLBACK(irq_callback)
 {
@@ -2139,15 +2139,15 @@ void ms32_rearrange_sprites(running_machine *machine, const char *region)
 {
 	/* sprites are not encrypted, but we need to move the data around to handle them as 256x256 tiles */
 	int i;
-	UINT8 *source_data;
+	uint8_t *source_data;
 	int source_size;
 
-	UINT8 *result_data;
+	uint8_t *result_data;
 
 	source_data = memory_region       ( machine, region );
 	source_size = memory_region_length( machine, region );
 
-	result_data = auto_alloc_array(machine, UINT8, source_size);
+	result_data = auto_alloc_array(machine, uint8_t, source_size);
 
 	for(i=0; i<source_size; i++)
 	{
@@ -2164,15 +2164,15 @@ void ms32_rearrange_sprites(running_machine *machine, const char *region)
 void decrypt_ms32_tx(running_machine *machine, int addr_xor,int data_xor, const char *region)
 {
 	int i;
-	UINT8 *source_data;
+	uint8_t *source_data;
 	int source_size;
 
-	UINT8 *result_data;
+	uint8_t *result_data;
 
 	source_data = memory_region       ( machine, region );
 	source_size = memory_region_length( machine, region );
 
-	result_data = auto_alloc_array(machine, UINT8, source_size);
+	result_data = auto_alloc_array(machine, uint8_t, source_size);
 
 	addr_xor ^= 0x1005d;
 
@@ -2218,15 +2218,15 @@ void decrypt_ms32_tx(running_machine *machine, int addr_xor,int data_xor, const 
 void decrypt_ms32_bg(running_machine *machine, int addr_xor,int data_xor, const char *region)
 {
 	int i;
-	UINT8 *source_data;
+	uint8_t *source_data;
 	int source_size;
 
-	UINT8 *result_data;
+	uint8_t *result_data;
 
 	source_data = memory_region       ( machine, region );
 	source_size = memory_region_length( machine, region );
 
-	result_data = auto_alloc_array(machine, UINT8, source_size);
+	result_data = auto_alloc_array(machine, uint8_t, source_size);
 
 	addr_xor ^= 0xc1c5b;
 
@@ -2281,7 +2281,7 @@ static void configure_banks(running_machine *machine)
 
 static DRIVER_INIT( ms32_common )
 {
-	ms32_nvram_8 = auto_alloc_array(machine, UINT8, 0x2000);
+	ms32_nvram_8 = auto_alloc_array(machine, uint8_t, 0x2000);
 	configure_banks(machine);
 }
 
@@ -2334,7 +2334,7 @@ static DRIVER_INIT (47pie2)
 static DRIVER_INIT (f1superb)
 {
 #if 0 // we shouldn't need this hack, something else is wrong, and the x offsets are never copied either, v70 problems??
-	UINT32 *pROM = (UINT32 *)memory_region(machine, "maincpu");
+	uint32_t *pROM = (uint32_t *)memory_region(machine, "maincpu");
 	pROM[0x19d04/4]=0x167a021a; // bne->br  : sprite Y offset table is always copied to RAM
 #endif
 	DRIVER_INIT_CALL(ss92046_01);

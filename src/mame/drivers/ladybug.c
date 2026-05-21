@@ -215,7 +215,7 @@ static CUSTOM_INPUT( ladybug_p1_control_r )
 
 static CUSTOM_INPUT( ladybug_p2_control_r )
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	/* upright cabinet only uses a single set of controls */
 	if (input_port_read(field->port->machine, "DSW0") & 0x20)
@@ -1069,9 +1069,9 @@ static DRIVER_INIT( dorodon )
 
 	offs_t i;
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *decrypted = auto_alloc_array(machine, UINT8, 0x6000);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *table = memory_region(machine, "user1");
+	uint8_t *decrypted = auto_alloc_array(machine, uint8_t, 0x6000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *table = memory_region(machine, "user1");
 
 	memory_set_decrypted_region(space, 0x0000, 0x5fff, decrypted);
 

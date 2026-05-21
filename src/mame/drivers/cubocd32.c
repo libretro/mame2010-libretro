@@ -338,7 +338,7 @@ routines :
 #define MGNUMBER_USE_JOY	1
 
 
-static void handle_cd32_joystick_cia(UINT8 pra, UINT8 dra);
+static void handle_cd32_joystick_cia(uint8_t pra, uint8_t dra);
 
 static WRITE32_HANDLER( aga_overlay_w )
 {
@@ -421,7 +421,7 @@ static ADDRESS_MAP_START( cd32_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0xb80000, 0xb8003f) AM_READWRITE(amiga_akiko32_r, amiga_akiko32_w)
 	AM_RANGE(0xbfa000, 0xbfa003) AM_WRITE(aga_overlay_w)
 	AM_RANGE(0xbfd000, 0xbfefff) AM_READWRITE16(amiga_cia_r, amiga_cia_w, 0xffffffff)
-	AM_RANGE(0xc00000, 0xdfffff) AM_READWRITE16(amiga_custom_r, amiga_custom_w, 0xffffffff) AM_BASE((UINT32**)&amiga_custom_regs)
+	AM_RANGE(0xc00000, 0xdfffff) AM_READWRITE16(amiga_custom_r, amiga_custom_w, 0xffffffff) AM_BASE((uint32_t**)&amiga_custom_regs)
 	AM_RANGE(0xe00000, 0xe7ffff) AM_ROM AM_REGION("user1", 0x80000)	/* CD32 Extended ROM */
 	AM_RANGE(0xa00000, 0xf7ffff) AM_NOP
 	AM_RANGE(0xf80000, 0xffffff) AM_ROM AM_REGION("user1", 0x0)		/* Kickstart */
@@ -433,11 +433,11 @@ ADDRESS_MAP_END
  *
  *************************************/
 
-static UINT16 potgo_value = 0;
+static uint16_t potgo_value = 0;
 static int cd32_shifter[2];
 static void (*cubocd32_input_hack)(running_machine *machine) = 0;
 
-static void cubocd32_potgo_w(running_machine *machine, UINT16 data)
+static void cubocd32_potgo_w(running_machine *machine, uint16_t data)
 {
 	int i;
 
@@ -449,33 +449,33 @@ static void cubocd32_potgo_w(running_machine *machine, UINT16 data)
 
     for (i = 0; i < 8; i += 2)
 	{
-		UINT16 dir = 0x0200 << i;
+		uint16_t dir = 0x0200 << i;
 		if (data & dir)
 		{
-			UINT16 d = 0x0100 << i;
+			uint16_t d = 0x0100 << i;
 			potgo_value &= ~d;
 			potgo_value |= data & d;
 		}
     }
     for (i = 0; i < 2; i++)
 	{
-	    UINT16 p5dir = 0x0200 << (i * 4); /* output enable P5 */
-	    UINT16 p5dat = 0x0100 << (i * 4); /* data P5 */
+	    uint16_t p5dir = 0x0200 << (i * 4); /* output enable P5 */
+	    uint16_t p5dat = 0x0100 << (i * 4); /* data P5 */
 	    if ((potgo_value & p5dir) && (potgo_value & p5dat))
 			cd32_shifter[i] = 8;
     }
 }
 
-static void handle_cd32_joystick_cia(UINT8 pra, UINT8 dra)
+static void handle_cd32_joystick_cia(uint8_t pra, uint8_t dra)
 {
     static int oldstate[2];
     int i;
 
     for (i = 0; i < 2; i++)
 	{
-		UINT8 but = 0x40 << i;
-		UINT16 p5dir = 0x0200 << (i * 4); /* output enable P5 */
-		UINT16 p5dat = 0x0100 << (i * 4); /* data P5 */
+		uint8_t but = 0x40 << i;
+		uint16_t p5dir = 0x0200 << (i * 4); /* output enable P5 */
+		uint16_t p5dat = 0x0100 << (i * 4); /* data P5 */
 
 		if (!(potgo_value & p5dir) || !(potgo_value & p5dat))
 		{
@@ -493,17 +493,17 @@ static void handle_cd32_joystick_cia(UINT8 pra, UINT8 dra)
     }
 }
 
-static UINT16 handle_joystick_potgor (running_machine *machine, UINT16 potgor)
+static uint16_t handle_joystick_potgor (running_machine *machine, uint16_t potgor)
 {
 	static const char *const player_portname[] = { "P2", "P1" };
     int i;
 
     for (i = 0; i < 2; i++)
 	{
-		UINT16 p9dir = 0x0800 << (i * 4); /* output enable P9 */
-		UINT16 p9dat = 0x0400 << (i * 4); /* data P9 */
-		UINT16 p5dir = 0x0200 << (i * 4); /* output enable P5 */
-		UINT16 p5dat = 0x0100 << (i * 4); /* data P5 */
+		uint16_t p9dir = 0x0800 << (i * 4); /* output enable P9 */
+		uint16_t p9dat = 0x0400 << (i * 4); /* data P9 */
+		uint16_t p5dir = 0x0200 << (i * 4); /* output enable P5 */
+		uint16_t p5dat = 0x0100 << (i * 4); /* data P5 */
 
 	    /* p5 is floating in input-mode */
 	    potgor &= ~p5dat;
@@ -1194,7 +1194,7 @@ static void cndypuzl_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w(0x051c02, 0x0000);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
 		amiga_chip_ram_w(r_A5 - 0x7ebe, 0x0000);
 	}
 }
@@ -1211,8 +1211,8 @@ static void haremchl_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w8(0x002907, 0x00);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
-		UINT32 r_A2 = (amiga_chip_ram_r(r_A5 - 0x7f00 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7f00 + 2));
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A2 = (amiga_chip_ram_r(r_A5 - 0x7f00 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7f00 + 2));
 		amiga_chip_ram_w8(r_A2 + 0x1f, 0x00);
 	}
 }
@@ -1229,8 +1229,8 @@ static void lsrquiz_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w8(0x001e1b, 0x00);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
-		UINT32 r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fe0 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fe0 + 2));
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fe0 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fe0 + 2));
 		amiga_chip_ram_w8(r_A2 + 0x13, 0x00);
 	}
 }
@@ -1248,8 +1248,8 @@ static void lsrquiz2_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w8(0x046107, 0x00);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
-		UINT32 r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fdc + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fdc + 2));
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fdc + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fdc + 2));
 		amiga_chip_ram_w8(r_A2 + 0x17, 0x00);
 	}
 }
@@ -1266,8 +1266,8 @@ static void lasstixx_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w8(0x00281c, 0x00);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
-		UINT32 r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fa2 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fa2 + 2));
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A2 = (amiga_chip_ram_r(r_A5 - 0x7fa2 + 0) << 16) | (amiga_chip_ram_r(r_A5 - 0x7fa2 + 2));
 		amiga_chip_ram_w8(r_A2 + 0x24, 0x00);
 	}
 }
@@ -1284,7 +1284,7 @@ static void mgnumber_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w(0x04bfa0, 0x0000);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
 		amiga_chip_ram_w(r_A5 - 0x7ed8, 0x0000);
 	}
 }
@@ -1301,7 +1301,7 @@ static void mgprem11_input_hack(running_machine *machine)
 	{
 //      amiga_chip_ram_w8(0x044f7e, 0x00);
 
-		UINT32 r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
+		uint32_t r_A5 = cpu_get_reg(machine->device("maincpu"), M68K_A5);
 		amiga_chip_ram_w8(r_A5 - 0x7eca, 0x00);
 	}
 }

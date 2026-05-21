@@ -67,8 +67,8 @@
  *
  *************************************/
 
-static UINT16 control_word;
-static UINT8 protection_data[5];
+static uint16_t control_word;
+static uint8_t protection_data[5];
 
 
 
@@ -201,7 +201,7 @@ static WRITE16_HANDLER( spyhunt2_control_w )
  *      1111 = right/down full
  */
 
-static const UINT8 translate49[7] = { 0x7, 0x3, 0x1, 0x0, 0xc, 0xe, 0xf };
+static const uint8_t translate49[7] = { 0x7, 0x3, 0x1, 0x0, 0xc, 0xe, 0xf };
 
 static READ16_HANDLER( archrivl_port_1_r )
 {
@@ -291,8 +291,8 @@ static READ16_HANDLER( pigskin_port_2_r )
 
 static READ16_HANDLER( trisport_port_1_r )
 {
-	int xaxis = (INT8)input_port_read(space->machine, "AN1");
-	int yaxis = (INT8)input_port_read(space->machine, "AN2");
+	int xaxis = (int8_t)input_port_read(space->machine, "AN1");
+	int yaxis = (int8_t)input_port_read(space->machine, "AN2");
 	int result = input_port_read(space->machine, "IN1");
 
 	result |= (xaxis & 0x3c) << 6;

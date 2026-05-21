@@ -484,7 +484,7 @@ static MACHINE_START( lastduel )
 
 static MACHINE_START( madgear )
 {
-	UINT8 *ROM = memory_region(machine, "audiocpu");
+	uint8_t *ROM = memory_region(machine, "audiocpu");
 
 	memory_configure_bank(machine, "bank1", 0, 2, &ROM[0x10000], 0x4000);
 

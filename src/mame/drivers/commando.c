@@ -522,8 +522,8 @@ ROM_END
 static DRIVER_INIT( commando )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0xc000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0xc000);
 	int A;
 
 	memory_set_decrypted_region(space, 0x0000, 0xbfff, decrypt);
@@ -542,8 +542,8 @@ static DRIVER_INIT( commando )
 static DRIVER_INIT( spaceinv )
 {
 	const address_space *space = cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM);
-	UINT8 *rom = memory_region(machine, "maincpu");
-	UINT8 *decrypt = auto_alloc_array(machine, UINT8, 0xc000);
+	uint8_t *rom = memory_region(machine, "maincpu");
+	uint8_t *decrypt = auto_alloc_array(machine, uint8_t, 0xc000);
 	int A;
 
 	memory_set_decrypted_region(space, 0x0000, 0xbfff, decrypt);
