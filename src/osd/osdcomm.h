@@ -102,32 +102,10 @@
     FUNDAMENTAL TYPES
 ***************************************************************************/
 
-/* These types work on most modern compilers; however, OSD code can
-   define their own by setting OSD_TYPES_DEFINED */
-
-#ifndef OSD_TYPES_DEFINED
-
-/* 8-bit values */
-typedef uint8_t								UINT8;
-typedef int8_t								INT8;
-
-/* 16-bit values */
-typedef uint16_t							UINT16;
-typedef int16_t								INT16;
-
-/* 32-bit values */
-#ifndef _WINDOWS_H
-typedef uint32_t							UINT32;
-typedef int32_t								INT32;
-#endif
-
-/* 64-bit values */
-#ifndef _WINDOWS_H
-typedef uint64_t							UINT64;
-typedef int64_t								INT64;
-#endif
-
-#endif
+/* The fundamental integer types are <stdint.h>'s exact-width types
+   (uint8_t/int8_t .. uint64_t/int64_t), included near the top of this
+   header. The legacy UINT8../INT8.. aliases have been removed now that
+   all code uses the stdint spellings directly. */
 
 
 
@@ -170,9 +148,9 @@ typedef int64_t								INT64;
 
 
 /* Concatenate/extract 32-bit halves of 64-bit values */
-#define CONCAT_64(hi,lo)	(((UINT64)(hi) << 32) | (UINT32)(lo))
-#define EXTRACT_64HI(val)	((UINT32)((val) >> 32))
-#define EXTRACT_64LO(val)	((UINT32)(val))
+#define CONCAT_64(hi,lo)	(((uint64_t)(hi) << 32) | (uint32_t)(lo))
+#define EXTRACT_64HI(val)	((uint32_t)((val) >> 32))
+#define EXTRACT_64LO(val)	((uint32_t)(val))
 
 
 /* MINGW has adopted the MSVC formatting for 64-bit ints as of gcc 4.4 */
@@ -188,19 +166,19 @@ typedef int64_t								INT64;
 
 
 /* Macros for normalizing data into big or little endian formats */
-#define FLIPENDIAN_INT16(x)	(((((UINT16) (x)) >> 8) | ((x) << 8)) & 0xffff)
-#define FLIPENDIAN_INT32(x)	((((UINT32) (x)) << 24) | (((UINT32) (x)) >> 24) | \
-	(( ((UINT32) (x)) & 0x0000ff00) << 8) | (( ((UINT32) (x)) & 0x00ff0000) >> 8))
+#define FLIPENDIAN_INT16(x)	(((((uint16_t) (x)) >> 8) | ((x) << 8)) & 0xffff)
+#define FLIPENDIAN_INT32(x)	((((uint32_t) (x)) << 24) | (((uint32_t) (x)) >> 24) | \
+	(( ((uint32_t) (x)) & 0x0000ff00) << 8) | (( ((uint32_t) (x)) & 0x00ff0000) >> 8))
 #define FLIPENDIAN_INT64(x)	\
 	(												\
-		(((((UINT64) (x)) >> 56) & ((UINT64) 0xFF)) <<  0)	|	\
-		(((((UINT64) (x)) >> 48) & ((UINT64) 0xFF)) <<  8)	|	\
-		(((((UINT64) (x)) >> 40) & ((UINT64) 0xFF)) << 16)	|	\
-		(((((UINT64) (x)) >> 32) & ((UINT64) 0xFF)) << 24)	|	\
-		(((((UINT64) (x)) >> 24) & ((UINT64) 0xFF)) << 32)	|	\
-		(((((UINT64) (x)) >> 16) & ((UINT64) 0xFF)) << 40)	|	\
-		(((((UINT64) (x)) >>  8) & ((UINT64) 0xFF)) << 48)	|	\
-		(((((UINT64) (x)) >>  0) & ((UINT64) 0xFF)) << 56)		\
+		(((((uint64_t) (x)) >> 56) & ((uint64_t) 0xFF)) <<  0)	|	\
+		(((((uint64_t) (x)) >> 48) & ((uint64_t) 0xFF)) <<  8)	|	\
+		(((((uint64_t) (x)) >> 40) & ((uint64_t) 0xFF)) << 16)	|	\
+		(((((uint64_t) (x)) >> 32) & ((uint64_t) 0xFF)) << 24)	|	\
+		(((((uint64_t) (x)) >> 24) & ((uint64_t) 0xFF)) << 32)	|	\
+		(((((uint64_t) (x)) >> 16) & ((uint64_t) 0xFF)) << 40)	|	\
+		(((((uint64_t) (x)) >>  8) & ((uint64_t) 0xFF)) << 48)	|	\
+		(((((uint64_t) (x)) >>  0) & ((uint64_t) 0xFF)) << 56)		\
 	)
 
 #ifdef MSB_FIRST
