@@ -27,18 +27,18 @@
 
 typedef struct _s2650_regs s2650_regs;
 struct _s2650_regs {
-	UINT16	ppc;	/* previous program counter (page + iar) */
-    UINT16  page;   /* 8K page select register (A14..A13) */
-    UINT16  iar;    /* instruction address register (A12..A0) */
-    UINT16  ea;     /* effective address (A14..A0) */
-    UINT8   psl;    /* processor status lower */
-    UINT8   psu;    /* processor status upper */
-    UINT8   r;      /* absolute addressing dst/src register */
-    UINT8   reg[7]; /* 7 general purpose registers */
-    UINT8   halt;   /* 1 if cpu is halted */
-    UINT8   ir;     /* instruction register */
-    UINT16  ras[8]; /* 8 return address stack entries */
-	UINT8	irq_state;
+	uint16_t	ppc;	/* previous program counter (page + iar) */
+    uint16_t  page;   /* 8K page select register (A14..A13) */
+    uint16_t  iar;    /* instruction address register (A12..A0) */
+    uint16_t  ea;     /* effective address (A14..A0) */
+    uint8_t   psl;    /* processor status lower */
+    uint8_t   psu;    /* processor status upper */
+    uint8_t   r;      /* absolute addressing dst/src register */
+    uint8_t   reg[7]; /* 7 general purpose registers */
+    uint8_t   halt;   /* 1 if cpu is halted */
+    uint8_t   ir;     /* instruction register */
+    uint16_t  ras[8]; /* 8 return address stack entries */
+	uint8_t	irq_state;
 
 	int		icount;
 	device_irq_callback irq_callback;
@@ -55,7 +55,7 @@ INLINE s2650_regs *get_safe_token(running_device *device)
 }
 
 /* condition code changes for a byte */
-static const UINT8 ccc[0x200] = {
+static const uint8_t ccc[0x200] = {
 	0x00,0x40,0x40,0x40,0x40,0x40,0x40,0x40,
 	0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,
 	0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,
@@ -155,21 +155,21 @@ static const int S2650_relative[0x100] =
 
 static void s2650_set_sense(s2650_regs *s2650c, int state);
 
-INLINE void set_psu(s2650_regs *s2650c, UINT8 new_val)
+INLINE void set_psu(s2650_regs *s2650c, uint8_t new_val)
 {
-	UINT8 old = s2650c->psu;
+	uint8_t old = s2650c->psu;
 
     s2650c->psu = new_val;
     if ((new_val ^ old) & FO)
     	memory_write_byte_8le(s2650c->io, S2650_FO_PORT, (new_val & FO) ? 1 : 0);
 }
 
-INLINE UINT8 get_sp(s2650_regs *s2650c)
+INLINE uint8_t get_sp(s2650_regs *s2650c)
 {
 	return (s2650c->psu & SP);
 }
 
-INLINE void set_sp(s2650_regs *s2650c, UINT8 new_sp)
+INLINE void set_sp(s2650_regs *s2650c, uint8_t new_sp)
 {
 	s2650c->psu = (s2650c->psu & ~SP) | (new_sp & SP);
 }
@@ -233,9 +233,9 @@ INLINE int check_irq_line(s2650_regs *s2650c)
  * ROP
  * read next opcode
  ***************************************************************/
-INLINE UINT8 ROP(s2650_regs *s2650c)
+INLINE uint8_t ROP(s2650_regs *s2650c)
 {
-	UINT8 result = memory_decrypted_read_byte(s2650c->program, s2650c->page + s2650c->iar);
+	uint8_t result = memory_decrypted_read_byte(s2650c->program, s2650c->page + s2650c->iar);
 	s2650c->iar = (s2650c->iar + 1) & PMSK;
 	return result;
 }
@@ -244,9 +244,9 @@ INLINE UINT8 ROP(s2650_regs *s2650c)
  * ARG
  * read next opcode argument
  ***************************************************************/
-INLINE UINT8 ARG(s2650_regs *s2650c)
+INLINE uint8_t ARG(s2650_regs *s2650c)
 {
-	UINT8 result = memory_raw_read_byte(s2650c->program, s2650c->page + s2650c->iar);
+	uint8_t result = memory_raw_read_byte(s2650c->program, s2650c->page + s2650c->iar);
 	s2650c->iar = (s2650c->iar + 1) & PMSK;
 	return result;
 }
@@ -257,7 +257,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define _REL_EA(page)											\
 {																\
-	UINT8 hr = ARG(s2650c);	/* get 'holding register' */            \
+	uint8_t hr = ARG(s2650c);	/* get 'holding register' */            \
 	/* build effective address within current 8K page */		\
 	s2650c->ea = page + ((s2650c->iar + S2650_relative[hr]) & PMSK);		\
 	if (hr & 0x80) { /* indirect bit set ? */					\
@@ -276,7 +276,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define _REL_ZERO(page)											\
 {																\
-	UINT8 hr = ARG(s2650c);	/* get 'holding register' */            \
+	uint8_t hr = ARG(s2650c);	/* get 'holding register' */            \
 	/* build effective address from 0 */						\
 	s2650c->ea = (S2650_relative[hr] & PMSK);							\
 	if (hr & 0x80) { /* indirect bit set ? */					\
@@ -295,7 +295,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define _ABS_EA()												\
 {																\
-	UINT8 hr, dr;												\
+	uint8_t hr, dr;												\
 	hr = ARG(s2650c);	/* get 'holding register' */                \
 	dr = ARG(s2650c);	/* get 'data bus register' */               \
 	/* build effective address within current 8K page */		\
@@ -337,7 +337,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define _BRA_EA()												\
 {																\
-	UINT8 hr, dr;												\
+	uint8_t hr, dr;												\
 	hr = ARG(s2650c);	/* get 'holding register' */                \
 	dr = ARG(s2650c);	/* get 'data bus register' */               \
 	/* build address in 32K address space */					\
@@ -360,7 +360,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define SWAP_REGS												\
 {																\
-	UINT8 tmp;													\
+	uint8_t tmp;													\
 	tmp = s2650c->reg[1];											\
 	s2650c->reg[1] = s2650c->reg[4];										\
 	s2650c->reg[4] = tmp;											\
@@ -571,10 +571,10 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_ADD(dest,_source)										\
 {																\
-	UINT8 source = _source;										\
-	UINT8 before = dest;										\
+	uint8_t source = _source;										\
+	uint8_t before = dest;										\
 	/* add source; carry only if WC is set */					\
-	UINT16 res = dest + source + ((s2650c->psl >> 3) & s2650c->psl & C);	\
+	uint16_t res = dest + source + ((s2650c->psl >> 3) & s2650c->psl & C);	\
 	s2650c->psl &= ~(C | OVF | IDC);									\
 	if(res & 0x100) s2650c->psl |= C;							    \
     dest = res & 0xff;                                          \
@@ -589,10 +589,10 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_SUB(dest,_source)										\
 {																\
-	UINT8 source = _source;										\
-	UINT8 before = dest;										\
+	uint8_t source = _source;										\
+	uint8_t before = dest;										\
 	/* subtract source; borrow only if WC is set */ 			\
-	UINT16 res = dest - source - ((s2650c->psl >> 3) & (s2650c->psl ^ C) & C);	\
+	uint16_t res = dest - source - ((s2650c->psl >> 3) & (s2650c->psl ^ C) & C);	\
 	s2650c->psl &= ~(C | OVF | IDC);									\
 	if((res & 0x100)==0) s2650c->psl |= C;							\
     dest = res & 0xff;                                          \
@@ -609,8 +609,8 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
 {																\
 	int d;														\
 	s2650c->psl &= ~CC;												\
-	if (s2650c->psl & COM) d = (UINT8)reg - (UINT8)val;				\
-				else d = (INT8)reg - (INT8)val; 				\
+	if (s2650c->psl & COM) d = (uint8_t)reg - (uint8_t)val;				\
+				else d = (int8_t)reg - (int8_t)val; 				\
 	if( d < 0 ) s2650c->psl |= 0x80;									\
 	else														\
 	if( d > 0 ) s2650c->psl |= 0x40;									\
@@ -633,10 +633,10 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_RRL(dest) 											\
 {																\
-	UINT8 before = dest;										\
+	uint8_t before = dest;										\
 	if( s2650c->psl & WC )											\
 	{															\
-		UINT8 c = s2650c->psl & C;									\
+		uint8_t c = s2650c->psl & C;									\
 		s2650c->psl &= ~(C + IDC);									\
 		dest = (before << 1) | c;								\
 		s2650c->psl |= (before >> 7) + (dest & IDC);					\
@@ -656,10 +656,10 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_RRR(dest) 											\
 {																\
-	UINT8 before = dest;										\
+	uint8_t before = dest;										\
 	if (s2650c->psl & WC)											\
 	{															\
-		UINT8 c = s2650c->psl & C;									\
+		uint8_t c = s2650c->psl & C;									\
 		s2650c->psl &= ~(C + IDC);									\
 		dest = (before >> 1) | (c << 7);						\
 		s2650c->psl |= (before & C) + (dest & IDC);					\
@@ -697,7 +697,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_CPSU()												\
 {																\
-	UINT8 cpsu = ARG(s2650c);									\
+	uint8_t cpsu = ARG(s2650c);									\
 	set_psu(s2650c, s2650c->psu & ~cpsu);						\
 	s2650c->icount -= check_irq_line(s2650c);					\
 }
@@ -708,7 +708,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_CPSL()												\
 {																\
-	UINT8 cpsl = ARG(s2650c);									\
+	uint8_t cpsl = ARG(s2650c);									\
 	/* select other register set now ? */						\
 	if( (cpsl & RS) && (s2650c->psl & RS) )						\
 		SWAP_REGS;												\
@@ -722,7 +722,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_PPSU()												\
 {																\
-	UINT8 ppsu = (ARG(s2650c) & ~PSU34) & ~SI;					\
+	uint8_t ppsu = (ARG(s2650c) & ~PSU34) & ~SI;					\
 	set_psu(s2650c, s2650c->psu | ppsu);						\
 }
 
@@ -732,7 +732,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_PPSL()												\
 {																\
-	UINT8 ppsl = ARG(s2650c);										\
+	uint8_t ppsl = ARG(s2650c);										\
 	/* select 2nd register set now ? */ 						\
 	if ((ppsl & RS) && !(s2650c->psl & RS))							\
 		SWAP_REGS;												\
@@ -745,8 +745,8 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_TPSU()												\
 {																\
-	UINT8 tpsu = ARG(s2650c);										\
-    UINT8 rpsu = (s2650c->psu | (memory_read_byte_8le(s2650c->io, S2650_SENSE_PORT) ? SI : 0)); \
+	uint8_t tpsu = ARG(s2650c);										\
+    uint8_t rpsu = (s2650c->psu | (memory_read_byte_8le(s2650c->io, S2650_SENSE_PORT) ? SI : 0)); \
 	s2650c->psl &= ~CC;												\
 	if( (rpsu & tpsu) != tpsu )									\
 		s2650c->psl |= 0x80;											\
@@ -758,7 +758,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_TPSL()												\
 {																\
-	UINT8 tpsl = ARG(s2650c);										\
+	uint8_t tpsl = ARG(s2650c);										\
 	if( (s2650c->psl & tpsl) != tpsl )								\
 		s2650c->psl = (s2650c->psl & ~CC) | 0x80;							\
 	else														\
@@ -771,7 +771,7 @@ INLINE UINT8 ARG(s2650_regs *s2650c)
  ***************************************************************/
 #define M_TMI(value)											\
 {																\
-	UINT8 tmi = ARG(s2650c);											\
+	uint8_t tmi = ARG(s2650c);											\
 	s2650c->psl &= ~CC;												\
 	if( (value & tmi) != tmi )									\
 		s2650c->psl |= 0x80;											\

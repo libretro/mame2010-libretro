@@ -67,7 +67,7 @@ enum
 typedef struct _dsp32_config dsp32_config;
 struct _dsp32_config
 {
-	void	(*output_pins_changed)(running_device *device, UINT32 pins);	/* a change has occurred on an output pin */
+	void	(*output_pins_changed)(running_device *device, uint32_t pins);	/* a change has occurred on an output pin */
 };
 
 

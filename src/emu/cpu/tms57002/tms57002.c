@@ -85,22 +85,22 @@ typedef struct {
 } cstate;
 
 typedef struct {
-	INT64 macc;
+	int64_t macc;
 
-	UINT32 cmem[256];
-	UINT32 dmem0[256];
-	UINT32 dmem1[32];
+	uint32_t cmem[256];
+	uint32_t dmem0[256];
+	uint32_t dmem1[32];
 
-	UINT32 si[4], so[4];
+	uint32_t si[4], so[4];
 
-	UINT32 st0, st1, sti;
-	UINT32 aacc, xoa, xba, xwr, xrd, creg;
+	uint32_t st0, st1, sti;
+	uint32_t aacc, xoa, xba, xwr, xrd, creg;
 
-	UINT8 pc, ca, id, ba0, ba1, rptc, rptc_next, sa;
+	uint8_t pc, ca, id, ba0, ba1, rptc, rptc_next, sa;
 
-	UINT32 xm_adr;
+	uint32_t xm_adr;
 
-	UINT8 host[4], hidx, allow_update;
+	uint8_t host[4], hidx, allow_update;
 
 	cd cache;
 
@@ -121,7 +121,7 @@ static void tms57002_cache_flush(tms57002_t *s);
 WRITE8_DEVICE_HANDLER(tms57002_pload_w)
 {
 	tms57002_t *s = get_safe_token(device);
-	UINT8 olds = s->sti;
+	uint8_t olds = s->sti;
 
 	if(data)
 		s->sti &= ~IN_PLOAD;
@@ -135,7 +135,7 @@ WRITE8_DEVICE_HANDLER(tms57002_pload_w)
 WRITE8_DEVICE_HANDLER(tms57002_cload_w)
 {
 	tms57002_t *s = get_safe_token(device);
-	UINT8 olds = s->sti;
+	uint8_t olds = s->sti;
 	if(data)
 		s->sti &= ~IN_CLOAD;
 	else
@@ -179,7 +179,7 @@ WRITE8_DEVICE_HANDLER(tms57002_data_w)
 	case IN_PLOAD:
 		s->host[s->hidx++] = data;
 		if(s->hidx >= 3) {
-			UINT32 val = (s->host[0]<<16) | (s->host[1]<<8) | s->host[2];
+			uint32_t val = (s->host[0]<<16) | (s->host[1]<<8) | s->host[2];
 			s->hidx = 0;
 
 			switch(s->sti & SU_MASK) {
@@ -201,7 +201,7 @@ WRITE8_DEVICE_HANDLER(tms57002_data_w)
 		if(s->sti & SU_CVAL) {
 			s->host[s->hidx++] = data;
 			if(s->hidx >= 4) {
-				UINT32 val = (s->host[0]<<24) | (s->host[1]<<16) | (s->host[2]<<8) | s->host[3];
+				uint32_t val = (s->host[0]<<24) | (s->host[1]<<16) | (s->host[2]<<8) | s->host[3];
 				s->cmem[s->sa] = val;
 				s->sti &= ~SU_CVAL;
 				s->allow_update = 0;
@@ -216,7 +216,7 @@ WRITE8_DEVICE_HANDLER(tms57002_data_w)
 	case IN_PLOAD|IN_CLOAD:
 		s->host[s->hidx++] = data;
 		if(s->hidx >= 4) {
-			UINT32 val = (s->host[0]<<24) | (s->host[1]<<16) | (s->host[2]<<8) | s->host[3];
+			uint32_t val = (s->host[0]<<24) | (s->host[1]<<16) | (s->host[2]<<8) | s->host[3];
 			s->hidx = 0;
 			s->cmem[s->ca++] = val;
 		}
@@ -227,7 +227,7 @@ WRITE8_DEVICE_HANDLER(tms57002_data_w)
 READ8_DEVICE_HANDLER(tms57002_data_r)
 {
 	tms57002_t *s = get_safe_token(device);
-	UINT8 res;
+	uint8_t res;
 	if(!(s->sti & S_HOST))
 		return 0xff;
 
@@ -273,9 +273,9 @@ void tms57002_sync(running_device *device)
 }
 
 #ifdef UNUSED_FUNCTION
-static UINT32 tms57002_read_c(tms57002_t *s, UINT8 index)
+static uint32_t tms57002_read_c(tms57002_t *s, uint8_t index)
 {
-	UINT32 v = s->cmem[index];
+	uint32_t v = s->cmem[index];
 	if((s->st1 & ST1_CRM) != ST1_CRM_32) {
 		if((s->st1 & ST1_CRM) == ST1_CRM_16H)
 			v &= 0xffff0000;
@@ -285,12 +285,12 @@ static UINT32 tms57002_read_c(tms57002_t *s, UINT8 index)
 	return v;
 }
 
-static void tms57002_write_c(tms57002_t *s, UINT8 index, UINT32 v)
+static void tms57002_write_c(tms57002_t *s, uint8_t index, uint32_t v)
 {
 	s->cmem[index] = v;
 }
 
-static void tms57002_write_d(tms57002_t *s, UINT8 index, UINT32 v)
+static void tms57002_write_d(tms57002_t *s, uint8_t index, uint32_t v)
 {
 	if(s->st1 & ST1_DBP)
 		s->dmem1[(s->ba1 + index) & 0x1f] = v;
@@ -298,7 +298,7 @@ static void tms57002_write_d(tms57002_t *s, UINT8 index, UINT32 v)
 		s->dmem0[(s->ba0 + index) & 0xff] = v;
 }
 
-static UINT32 tms57002_read_d(tms57002_t *s, UINT8 index)
+static uint32_t tms57002_read_d(tms57002_t *s, uint8_t index)
 {
 	if(s->st1 & ST1_DBP)
 		return s->dmem1[(s->ba1 + index) & 0x1f];
@@ -306,7 +306,7 @@ static UINT32 tms57002_read_d(tms57002_t *s, UINT8 index)
 		return s->dmem0[(s->ba0 + index) & 0xff];
 }
 
-static void tms57002_opc_write_c(tms57002_t *s, UINT32 opcode, UINT32 v)
+static void tms57002_opc_write_c(tms57002_t *s, uint32_t opcode, uint32_t v)
 {
 	if(opcode & 0x400) {
 		if(opcode & 0x100)
@@ -321,7 +321,7 @@ static void tms57002_opc_write_c(tms57002_t *s, UINT32 opcode, UINT32 v)
 		tms57002_write_c(s, s->ca, v);
 }
 
-static UINT32 tms57002_opc_read_c(tms57002_t *s, UINT32 opcode)
+static uint32_t tms57002_opc_read_c(tms57002_t *s, uint32_t opcode)
 {
 	if(opcode & 0x400) {
 		if(opcode & 0x100)
@@ -336,7 +336,7 @@ static UINT32 tms57002_opc_read_c(tms57002_t *s, UINT32 opcode)
 		return tms57002_read_c(s, s->ca);
 }
 
-static void tms57002_opc_write_d(tms57002_t *s, UINT32 opcode, UINT32 v)
+static void tms57002_opc_write_d(tms57002_t *s, uint32_t opcode, uint32_t v)
 {
 	if(!(opcode & 0x400)) {
 		if(opcode & 0x100)
@@ -351,7 +351,7 @@ static void tms57002_opc_write_d(tms57002_t *s, UINT32 opcode, UINT32 v)
 		tms57002_write_d(s, s->id, v);
 }
 
-static UINT32 tms57002_opc_read_d(tms57002_t *s, UINT32 opcode)
+static uint32_t tms57002_opc_read_d(tms57002_t *s, uint32_t opcode)
 {
 	if(!(opcode & 0x400)) {
 		if(opcode & 0x100)
@@ -369,8 +369,8 @@ static UINT32 tms57002_opc_read_d(tms57002_t *s, UINT32 opcode)
 
 static void tms57002_xm_init(tms57002_t *s)
 {
-	UINT32 adr = s->xoa + s->xba;
-	UINT32 mask = 0;
+	uint32_t adr = s->xoa + s->xba;
+	uint32_t mask = 0;
 
 	switch(s->st0 & ST0_M) {
 	case ST0_M_64K:  mask = 0x0ffff; break;
@@ -390,8 +390,8 @@ static void tms57002_xm_init(tms57002_t *s)
 
 static void tms57002_xm_step_read(tms57002_t *s)
 {
-	UINT32 adr = s->xm_adr;
-	UINT8 v = memory_read_byte_8le(s->data, adr);
+	uint32_t adr = s->xm_adr;
+	uint8_t v = memory_read_byte_8le(s->data, adr);
 	int done;
 	if(s->st0 & ST0_WORD) {
 		if(s->st0 & ST0_SEL) {
@@ -427,8 +427,8 @@ static void tms57002_xm_step_read(tms57002_t *s)
 
 static void tms57002_xm_step_write(tms57002_t *s)
 {
-	UINT32 adr = s->xm_adr;
-	UINT8 v;
+	uint32_t adr = s->xm_adr;
+	uint8_t v;
 	int done;
 	if(s->st0 & ST0_WORD) {
 		if(s->st0 & ST0_SEL) {
@@ -460,7 +460,7 @@ static void tms57002_xm_step_write(tms57002_t *s)
 }
 
 #ifdef UNUSED_FUNCTION
-static UINT32 tms57002_aacc_to_output(tms57002_t *s)
+static uint32_t tms57002_aacc_to_output(tms57002_t *s)
 {
 	if(s->st1 & ST1_SFAO)
 		return s->aacc << 7;
@@ -468,12 +468,12 @@ static UINT32 tms57002_aacc_to_output(tms57002_t *s)
 		return s->aacc;
 }
 
-static INT64 tms57002_macc_to_output(tms57002_t *s)
+static int64_t tms57002_macc_to_output(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0, rmode;
-	static const INT64 rounding[8] = {
+	static const int64_t rounding[8] = {
 		0,
 		1LL << (48-32-1),
 		1LL << (48-24-1),
@@ -481,7 +481,7 @@ static INT64 tms57002_macc_to_output(tms57002_t *s)
 		1LL << (48-16-1),
 		0, 0, 0
 	};
-	static const UINT64 rmask[8] = {
+	static const uint64_t rmask[8] = {
 		~0ULL,
 		(~0ULL) << (48-32),
 		(~0ULL) << (48-24),
@@ -537,10 +537,10 @@ static INT64 tms57002_macc_to_output(tms57002_t *s)
 }
 #endif
 
-static noinline INT64 tms57002_macc_to_output_0(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_0(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -562,10 +562,10 @@ static noinline INT64 tms57002_macc_to_output_0(tms57002_t *s, INT64 rounding, U
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_1(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_1(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -588,10 +588,10 @@ static noinline INT64 tms57002_macc_to_output_1(tms57002_t *s, INT64 rounding, U
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_2(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_2(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -614,10 +614,10 @@ static noinline INT64 tms57002_macc_to_output_2(tms57002_t *s, INT64 rounding, U
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_3(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_3(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -637,10 +637,10 @@ static noinline INT64 tms57002_macc_to_output_3(tms57002_t *s, INT64 rounding, U
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_0s(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_0s(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -666,10 +666,10 @@ static noinline INT64 tms57002_macc_to_output_0s(tms57002_t *s, INT64 rounding, 
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_1s(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_1s(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -696,10 +696,10 @@ static noinline INT64 tms57002_macc_to_output_1s(tms57002_t *s, INT64 rounding, 
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_2s(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_2s(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -726,10 +726,10 @@ static noinline INT64 tms57002_macc_to_output_2s(tms57002_t *s, INT64 rounding, 
 	return m;
 }
 
-static noinline INT64 tms57002_macc_to_output_3s(tms57002_t *s, INT64 rounding, UINT64 rmask)
+static noinline int64_t tms57002_macc_to_output_3s(tms57002_t *s, int64_t rounding, uint64_t rmask)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection and shifting
@@ -754,10 +754,10 @@ static noinline INT64 tms57002_macc_to_output_3s(tms57002_t *s, INT64 rounding, 
 }
 
 #ifdef UNUSED_FUNCTION
-static INT64 tms57002_check_macc_overflow(tms57002_t *s)
+static int64_t tms57002_check_macc_overflow(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 	int over = 0;
 
 	// Overflow detection
@@ -795,10 +795,10 @@ static INT64 tms57002_check_macc_overflow(tms57002_t *s)
 }
 #endif
 
-static noinline INT64 tms57002_check_macc_overflow_0(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_0(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xf800000000000ULL;
@@ -808,10 +808,10 @@ static noinline INT64 tms57002_check_macc_overflow_0(tms57002_t *s)
 	return m;
 }
 
-static noinline INT64 tms57002_check_macc_overflow_1(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_1(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xfe00000000000ULL;
@@ -821,10 +821,10 @@ static noinline INT64 tms57002_check_macc_overflow_1(tms57002_t *s)
 	return m;
 }
 
-static noinline INT64 tms57002_check_macc_overflow_2(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_2(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xff80000000000ULL;
@@ -834,15 +834,15 @@ static noinline INT64 tms57002_check_macc_overflow_2(tms57002_t *s)
 	return m;
 }
 
-static INT64 tms57002_check_macc_overflow_3(tms57002_t *s)
+static int64_t tms57002_check_macc_overflow_3(tms57002_t *s)
 {
 	return s->macc;
 }
 
-static noinline INT64 tms57002_check_macc_overflow_0s(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_0s(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xf800000000000ULL;
@@ -856,10 +856,10 @@ static noinline INT64 tms57002_check_macc_overflow_0s(tms57002_t *s)
 	return m;
 }
 
-static noinline INT64 tms57002_check_macc_overflow_1s(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_1s(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xfe00000000000ULL;
@@ -873,10 +873,10 @@ static noinline INT64 tms57002_check_macc_overflow_1s(tms57002_t *s)
 	return m;
 }
 
-static noinline INT64 tms57002_check_macc_overflow_2s(tms57002_t *s)
+static noinline int64_t tms57002_check_macc_overflow_2s(tms57002_t *s)
 {
-	INT64 m = s->macc;
-	UINT64 m1;
+	int64_t m = s->macc;
+	uint64_t m1;
 
 	// Overflow detection
 	m1 = m & 0xff80000000000ULL;
@@ -890,15 +890,15 @@ static noinline INT64 tms57002_check_macc_overflow_2s(tms57002_t *s)
 	return m;
 }
 
-static INT64 tms57002_check_macc_overflow_3s(tms57002_t *s)
+static int64_t tms57002_check_macc_overflow_3s(tms57002_t *s)
 {
 	return s->macc;
 }
 
 #ifdef UNUSED_FUNCTION
-static INT64 tms57002_macc_to_loop(tms57002_t *s)
+static int64_t tms57002_macc_to_loop(tms57002_t *s)
 {
-	INT64 m = s->macc;
+	int64_t m = s->macc;
 
 	// sfma shifting
 	switch((s->st1 & ST1_SFMA) >> ST1_SFMA_SHIFT) {
@@ -920,10 +920,10 @@ static INT64 tms57002_macc_to_loop(tms57002_t *s)
 	return m;
 }
 
-static void tms57002_execute_cat1(tms57002_t *s, UINT32 opcode)
+static void tms57002_execute_cat1(tms57002_t *s, uint32_t opcode)
 {
-	UINT32 c, d;
-	INT64 r;
+	uint32_t c, d;
+	int64_t r;
 	switch(opcode >> 18) {
 	case 0x00: // nop
 		break;
@@ -937,7 +937,7 @@ static void tms57002_execute_cat1(tms57002_t *s, UINT32 opcode)
 	}
 }
 
-static void tms57002_execute_cat2_pre(tms57002_t *s, UINT32 opcode)
+static void tms57002_execute_cat2_pre(tms57002_t *s, uint32_t opcode)
 {
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
@@ -952,9 +952,9 @@ static void tms57002_execute_cat2_pre(tms57002_t *s, UINT32 opcode)
 	}
 }
 
-static void tms57002_execute_cat2_post(tms57002_t *s, UINT32 opcode)
+static void tms57002_execute_cat2_post(tms57002_t *s, uint32_t opcode)
 {
-	UINT32 c;
+	uint32_t c;
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
 		break;
@@ -968,7 +968,7 @@ static void tms57002_execute_cat2_post(tms57002_t *s, UINT32 opcode)
 	}
 }
 
-static void tms57002_execute_cat3(tms57002_t *s, UINT32 opcode)
+static void tms57002_execute_cat3(tms57002_t *s, uint32_t opcode)
 {
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
@@ -986,7 +986,7 @@ static void tms57002_execute_cat3(tms57002_t *s, UINT32 opcode)
 void tms57002_execute(tms57002_t *s)
 {
 	while(!(s->sti & (S_IDLE | IN_PLOAD | IN_CLOAD))) {
-		UINT32 opcode = memory_read_dword_32le(s->program, s->pc << 2);
+		uint32_t opcode = memory_read_dword_32le(s->program, s->pc << 2);
 
 		if(s->sti & (S_READ|S_WRITE)) {
 			if(s->sti & S_READ)
@@ -1018,7 +1018,7 @@ void tms57002_execute(tms57002_t *s)
 }
 #endif
 
-INLINE int xmode(UINT32 opcode, char type)
+INLINE int xmode(uint32_t opcode, char type)
 {
 	if(((opcode & 0x400) && (type == 'c')) || (!(opcode & 0x400) && (type == 'd'))) {
 		if(opcode & 0x100)
@@ -1033,42 +1033,42 @@ INLINE int xmode(UINT32 opcode, char type)
 	return 1;
 }
 
-INLINE int sfao(UINT32 st1)
+INLINE int sfao(uint32_t st1)
 {
 	return st1 & ST1_SFAO ? 1 : 0;
 }
 
-INLINE int dbp(UINT32 st1)
+INLINE int dbp(uint32_t st1)
 {
 	return st1 & ST1_DBP ? 1 : 0;
 }
 
-INLINE int crm(UINT32 st1)
+INLINE int crm(uint32_t st1)
 {
 	return (st1 & ST1_CRM) >> ST1_CRM_SHIFT;
 }
 
-INLINE int sfai(UINT32 st1)
+INLINE int sfai(uint32_t st1)
 {
 	return st1 & ST1_SFAI ? 1 : 0;
 }
 
-INLINE int sfmo(UINT32 st1)
+INLINE int sfmo(uint32_t st1)
 {
 	return (st1 & ST1_SFMO) >> ST1_SFMO_SHIFT;
 }
 
-INLINE int rnd(UINT32 st1)
+INLINE int rnd(uint32_t st1)
 {
 	return (st1 & ST1_RND) >> ST1_RND_SHIFT;
 }
 
-INLINE int movm(UINT32 st1)
+INLINE int movm(uint32_t st1)
 {
 	return st1 & ST1_MOVM ? 1 : 0;
 }
 
-INLINE int sfma(UINT32 st1)
+INLINE int sfma(uint32_t st1)
 {
 	return (st1 & ST1_SFMA) >> ST1_SFMA_SHIFT;
 }
@@ -1091,10 +1091,10 @@ static void tms57002_cache_flush(tms57002_t *s)
 	}
 }
 
-static void tms57002_decode_error(tms57002_t *s, UINT32 opcode)
+static void tms57002_decode_error(tms57002_t *s, uint32_t opcode)
 {
 	char buf[256];
-	UINT8 opr[3];
+	uint8_t opr[3];
 	if(s->unsupported_inst_warning)
 		return;
 
@@ -1107,7 +1107,7 @@ static void tms57002_decode_error(tms57002_t *s, UINT32 opcode)
 	popmessage("tms57002: %s - Contact Mamedev", buf);
 }
 
-static void tms57002_decode_cat1(tms57002_t *s, UINT32 opcode, unsigned short *op, cstate *cs)
+static void tms57002_decode_cat1(tms57002_t *s, uint32_t opcode, unsigned short *op, cstate *cs)
 {
 	switch(opcode >> 18) {
 	case 0x00: // nop
@@ -1123,7 +1123,7 @@ static void tms57002_decode_cat1(tms57002_t *s, UINT32 opcode, unsigned short *o
 	}
 }
 
-static void tms57002_decode_cat2_pre(tms57002_t *s, UINT32 opcode, unsigned short *op, cstate *cs)
+static void tms57002_decode_cat2_pre(tms57002_t *s, uint32_t opcode, unsigned short *op, cstate *cs)
 {
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
@@ -1139,7 +1139,7 @@ static void tms57002_decode_cat2_pre(tms57002_t *s, UINT32 opcode, unsigned shor
 	}
 }
 
-static void tms57002_decode_cat2_post(tms57002_t *s, UINT32 opcode, unsigned short *op, cstate *cs)
+static void tms57002_decode_cat2_post(tms57002_t *s, uint32_t opcode, unsigned short *op, cstate *cs)
 {
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
@@ -1155,7 +1155,7 @@ static void tms57002_decode_cat2_post(tms57002_t *s, UINT32 opcode, unsigned sho
 	}
 }
 
-static void tms57002_decode_cat3(tms57002_t *s, UINT32 opcode, unsigned short *op, cstate *cs)
+static void tms57002_decode_cat3(tms57002_t *s, uint32_t opcode, unsigned short *op, cstate *cs)
 {
 	switch((opcode >> 11) & 0x7f) {
 	case 0x00: // nop
@@ -1171,7 +1171,7 @@ static void tms57002_decode_cat3(tms57002_t *s, UINT32 opcode, unsigned short *o
 	}
 }
 
-static void tms57002_add_one(tms57002_t *s, cstate *cs, unsigned short op, UINT8 param)
+static void tms57002_add_one(tms57002_t *s, cstate *cs, unsigned short op, uint8_t param)
 {
 	short ipc = s->cache.iused++;
 	s->cache.inst[ipc].op = op;
@@ -1186,7 +1186,7 @@ static void tms57002_add_one(tms57002_t *s, cstate *cs, unsigned short op, UINT8
 	}
 }
 
-static void tms57002_decode_one(tms57002_t *s, UINT32 opcode, cstate *cs, void (*dec)(tms57002_t *s, UINT32 opcode, unsigned short *op, cstate *cs))
+static void tms57002_decode_one(tms57002_t *s, uint32_t opcode, cstate *cs, void (*dec)(tms57002_t *s, uint32_t opcode, unsigned short *op, cstate *cs))
 {
 	unsigned short op = 0;
 	dec(s, opcode, &op, cs);
@@ -1195,7 +1195,7 @@ static void tms57002_decode_one(tms57002_t *s, UINT32 opcode, cstate *cs, void (
 	tms57002_add_one(s, cs, op, opcode & 0xff);
 }
 
-static short tms57002_get_hash(tms57002_t *s, unsigned char adr, UINT32 st1, short *pnode)
+static short tms57002_get_hash(tms57002_t *s, unsigned char adr, uint32_t st1, short *pnode)
 {
 	short hnode;
 	st1 &= ST1_CACHE;
@@ -1210,7 +1210,7 @@ static short tms57002_get_hash(tms57002_t *s, unsigned char adr, UINT32 st1, sho
 	return -1;
 }
 
-static short tms57002_get_hashnode(tms57002_t *s, unsigned char adr, UINT32 st1, short pnode)
+static short tms57002_get_hashnode(tms57002_t *s, unsigned char adr, uint32_t st1, short pnode)
 {
 	short hnode = s->cache.hused++;
 	s->cache.hashnode[hnode].st1 = st1 & ST1_CACHE;
@@ -1225,10 +1225,10 @@ static short tms57002_get_hashnode(tms57002_t *s, unsigned char adr, UINT32 st1,
 
 static int tms57002_decode_get_pc(tms57002_t *s)
 {
-	UINT32 st1 = s->st1;
+	uint32_t st1 = s->st1;
 	short pnode, res;
 	cstate cs;
-	UINT8 adr = s->pc;
+	uint8_t adr = s->pc;
 
 	res = tms57002_get_hash(s, adr, st1, &pnode);
 	if(res != -1)
@@ -1245,7 +1245,7 @@ static int tms57002_decode_get_pc(tms57002_t *s)
 
 	for(;;) {
 		short ipc;
-		UINT32 opcode = memory_read_dword_32le(s->program, adr << 2);
+		uint32_t opcode = memory_read_dword_32le(s->program, adr << 2);
 
 		if((opcode & 0xfc0000) == 0xfc0000)
 			tms57002_decode_one(s, opcode, &cs, tms57002_decode_cat3);
@@ -1295,8 +1295,8 @@ static CPU_EXECUTE(tms57002)
 		}
 
 		for(;;) {
-			UINT32 c, d;
-			INT64 r;
+			uint32_t c, d;
+			int64_t r;
 			const icd *i = s->cache.inst + ipc;
 
 			ipc = i->next;

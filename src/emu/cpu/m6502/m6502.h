@@ -51,8 +51,8 @@ enum
    positiv edge sets overflow flag */
 #define M6502_SET_OVERFLOW	1
 
-typedef UINT8 (*m6510_port_read_func)(running_device *device, UINT8 direction);
-typedef void (*m6510_port_write_func)(running_device *device, UINT8 direction, UINT8 data);
+typedef uint8_t (*m6510_port_read_func)(running_device *device, uint8_t direction);
+typedef void (*m6510_port_write_func)(running_device *device, uint8_t direction, uint8_t data);
 
 
 /* Optional interface to set callbacks */
@@ -89,7 +89,7 @@ DECLARE_LEGACY_CPU_DEVICE(M6510, m6510);
 
 extern CPU_DISASSEMBLE( m6510 );
 
-UINT8 m6510_get_port(legacy_cpu_device *device);
+uint8_t m6510_get_port(legacy_cpu_device *device);
 
 #define M6510T_A						M6502_A
 #define M6510T_X						M6502_X

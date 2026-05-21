@@ -18,17 +18,17 @@ enum { RCACHE_SIZE = 4 };
 
 typedef struct _i960_state_t i960_state_t;
 struct _i960_state_t {
-	UINT32 r[0x20];
-	UINT32 rcache[RCACHE_SIZE][0x10];
-	UINT32 rcache_frame_addr[RCACHE_SIZE];
+	uint32_t r[0x20];
+	uint32_t rcache[RCACHE_SIZE][0x10];
+	uint32_t rcache_frame_addr[RCACHE_SIZE];
 	// rcache_pos = how deep in the stack we are.  0-(RCACHE_SIZE-1) means in-cache.
 	// RCACHE_SIZE or greater means out of cache, must save to memory.
-	INT32 rcache_pos;
+	int32_t rcache_pos;
 
 	double fp[4];
 
-	UINT32 SAT, PRCB, PC, AC;
-	UINT32 IP, PIP, ICR;
+	uint32_t SAT, PRCB, PC, AC;
+	uint32_t IP, PIP, ICR;
 	int bursting;
 
 	int immediate_irq, immediate_vector, immediate_pri;
@@ -47,9 +47,9 @@ INLINE i960_state_t *get_safe_token(running_device *device)
 	return (i960_state_t *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-static void do_call(i960_state_t *i960, UINT32 adr, int type, UINT32 stack);
+static void do_call(i960_state_t *i960, uint32_t adr, int type, uint32_t stack);
 
-INLINE UINT32 i960_read_dword_unaligned(i960_state_t *i960, UINT32 address)
+INLINE uint32_t i960_read_dword_unaligned(i960_state_t *i960, uint32_t address)
 {
 	if (address & 3)
 		return memory_read_byte_32le(i960->program, address) | memory_read_byte_32le(i960->program, address+1)<<8 | memory_read_byte_32le(i960->program, address+2)<<16 | memory_read_byte_32le(i960->program, address+3)<<24;
@@ -57,7 +57,7 @@ INLINE UINT32 i960_read_dword_unaligned(i960_state_t *i960, UINT32 address)
 		return memory_read_dword_32le(i960->program, address);
 }
 
-INLINE UINT16 i960_read_word_unaligned(i960_state_t *i960, UINT32 address)
+INLINE uint16_t i960_read_word_unaligned(i960_state_t *i960, uint32_t address)
 {
 	if (address & 1)
 		return memory_read_byte_32le(i960->program, address) | memory_read_byte_32le(i960->program, address+1)<<8;
@@ -65,7 +65,7 @@ INLINE UINT16 i960_read_word_unaligned(i960_state_t *i960, UINT32 address)
 		return memory_read_word_32le(i960->program, address);
 }
 
-INLINE void i960_write_dword_unaligned(i960_state_t *i960, UINT32 address, UINT32 data)
+INLINE void i960_write_dword_unaligned(i960_state_t *i960, uint32_t address, uint32_t data)
 {
 	if (address & 3)
 	{
@@ -80,7 +80,7 @@ INLINE void i960_write_dword_unaligned(i960_state_t *i960, UINT32 address, UINT3
 	}
 }
 
-INLINE void i960_write_word_unaligned(i960_state_t *i960, UINT32 address, UINT16 data)
+INLINE void i960_write_word_unaligned(i960_state_t *i960, uint32_t address, uint16_t data)
 {
 	if (address & 1)
 	{
@@ -93,9 +93,9 @@ INLINE void i960_write_word_unaligned(i960_state_t *i960, UINT32 address, UINT16
 	}
 }
 
-INLINE void send_iac(i960_state_t *i960, UINT32 adr)
+INLINE void send_iac(i960_state_t *i960, uint32_t adr)
 {
-	UINT32 iac[4];
+	uint32_t iac[4];
 	iac[0] = memory_read_dword_32le(i960->program, adr);
 	iac[1] = memory_read_dword_32le(i960->program, adr+4);
 	iac[2] = memory_read_dword_32le(i960->program, adr+8);
@@ -113,11 +113,11 @@ INLINE void send_iac(i960_state_t *i960, UINT32 adr)
 	}
 }
 
-INLINE UINT32 get_ea(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_ea(i960_state_t *i960, uint32_t opcode)
 {
 	int abase = (opcode >> 14) & 0x1f;
 	if(!(opcode & 0x00001000)) { // MEMA
-		UINT32 offset = opcode & 0x1fff;
+		uint32_t offset = opcode & 0x1fff;
 		if(!(opcode & 0x2000))
 			return offset;
 		else
@@ -126,7 +126,7 @@ INLINE UINT32 get_ea(i960_state_t *i960, UINT32 opcode)
 		int index = opcode & 0x1f;
 		int scale = (opcode >> 7) & 0x7;
 		int mode  = (opcode >> 10) & 0xf;
-		UINT32 ret;
+		uint32_t ret;
 
 		switch(mode) {
 		case 0x4:
@@ -162,7 +162,7 @@ INLINE UINT32 get_ea(i960_state_t *i960, UINT32 opcode)
 	}
 }
 
-INLINE UINT32 get_1_ri(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_1_ri(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00000800))
 		return i960->r[opcode & 0x1f];
@@ -170,7 +170,7 @@ INLINE UINT32 get_1_ri(i960_state_t *i960, UINT32 opcode)
 		return opcode & 0x1f;
 }
 
-INLINE UINT32 get_2_ri(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_2_ri(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00001000))
 		return i960->r[(opcode>>14) & 0x1f];
@@ -178,15 +178,15 @@ INLINE UINT32 get_2_ri(i960_state_t *i960, UINT32 opcode)
 		return (opcode>>14) & 0x1f;
 }
 
-INLINE UINT64 get_2_ri64(i960_state_t *i960, UINT32 opcode)
+INLINE uint64_t get_2_ri64(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00001000))
-		return i960->r[(opcode>>14) & 0x1f] | ((UINT64)i960->r[((opcode>>14) & 0x1f)+1]<<32);
+		return i960->r[(opcode>>14) & 0x1f] | ((uint64_t)i960->r[((opcode>>14) & 0x1f)+1]<<32);
 	else
 		return (opcode>>14) & 0x1f;
 }
 
-INLINE void set_ri(i960_state_t *i960, UINT32 opcode, UINT32 val)
+INLINE void set_ri(i960_state_t *i960, uint32_t opcode, uint32_t val)
 {
 	if(!(opcode & 0x00002000))
 		i960->r[(opcode>>19) & 0x1f] = val;
@@ -195,7 +195,7 @@ INLINE void set_ri(i960_state_t *i960, UINT32 opcode, UINT32 val)
 	}
 }
 
-INLINE void set_ri2(i960_state_t *i960, UINT32 opcode, UINT32 val, UINT32 val2)
+INLINE void set_ri2(i960_state_t *i960, uint32_t opcode, uint32_t val, uint32_t val2)
 {
 	if(!(opcode & 0x00002000))
 	{
@@ -207,7 +207,7 @@ INLINE void set_ri2(i960_state_t *i960, UINT32 opcode, UINT32 val, UINT32 val2)
 	}
 }
 
-INLINE void set_ri64(i960_state_t *i960, UINT32 opcode, UINT64 val)
+INLINE void set_ri64(i960_state_t *i960, uint32_t opcode, uint64_t val)
 {
 	if(!(opcode & 0x00002000)) {
 		i960->r[(opcode>>19) & 0x1f] = val;
@@ -216,7 +216,7 @@ INLINE void set_ri64(i960_state_t *i960, UINT32 opcode, UINT64 val)
 		fatalerror("I960: %x: set_ri64 on literal?", i960->PIP);
 }
 
-INLINE double get_1_rif(i960_state_t *i960, UINT32 opcode)
+INLINE double get_1_rif(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00000800))
 		return u2f(i960->r[opcode & 0x1f]);
@@ -230,7 +230,7 @@ INLINE double get_1_rif(i960_state_t *i960, UINT32 opcode)
 	}
 }
 
-INLINE double get_2_rif(i960_state_t *i960, UINT32 opcode)
+INLINE double get_2_rif(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00001000))
 		return u2f(i960->r[(opcode>>14) & 0x1f]);
@@ -244,7 +244,7 @@ INLINE double get_2_rif(i960_state_t *i960, UINT32 opcode)
 	}
 }
 
-INLINE void set_rif(i960_state_t *i960, UINT32 opcode, double val)
+INLINE void set_rif(i960_state_t *i960, uint32_t opcode, double val)
 {
 	if(!(opcode & 0x00002000))
 		i960->r[(opcode>>19) & 0x1f] = f2u(val);
@@ -254,11 +254,11 @@ INLINE void set_rif(i960_state_t *i960, UINT32 opcode, double val)
 		fatalerror("I960: %x: set_rif on literal?", i960->PIP);
 }
 
-INLINE double get_1_rifl(i960_state_t *i960, UINT32 opcode)
+INLINE double get_1_rifl(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00000800)) {
-		UINT64 v = i960->r[opcode & 0x1e];
-		v |= ((UINT64)(i960->r[(opcode & 0x1e)+1]))<<32;
+		uint64_t v = i960->r[opcode & 0x1e];
+		v |= ((uint64_t)(i960->r[(opcode & 0x1e)+1]))<<32;
 		return u2d(v);
 	} else {
 		int idx = opcode & 0x1f;
@@ -270,11 +270,11 @@ INLINE double get_1_rifl(i960_state_t *i960, UINT32 opcode)
 	}
 }
 
-INLINE double get_2_rifl(i960_state_t *i960, UINT32 opcode)
+INLINE double get_2_rifl(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00001000)) {
-		UINT64 v = i960->r[(opcode >> 14) & 0x1e];
-		v |= ((UINT64)(i960->r[((opcode>>14) & 0x1e)+1]))<<32;
+		uint64_t v = i960->r[(opcode >> 14) & 0x1e];
+		v |= ((uint64_t)(i960->r[((opcode>>14) & 0x1e)+1]))<<32;
 		return u2d(v);
 	} else {
 		int idx = (opcode>>14) & 0x1f;
@@ -286,10 +286,10 @@ INLINE double get_2_rifl(i960_state_t *i960, UINT32 opcode)
 	}
 }
 
-INLINE void set_rifl(i960_state_t *i960, UINT32 opcode, double val)
+INLINE void set_rifl(i960_state_t *i960, uint32_t opcode, double val)
 {
 	if(!(opcode & 0x00002000)) {
-		UINT64 v = d2u(val);
+		uint64_t v = d2u(val);
 		i960->r[(opcode>>19) & 0x1e] = v;
 		i960->r[((opcode>>19) & 0x1e)+1] = v>>32;
 	} else if(!(opcode & 0x00e00000))
@@ -298,7 +298,7 @@ INLINE void set_rifl(i960_state_t *i960, UINT32 opcode, double val)
 		fatalerror("I960: %x: set_rifl on literal?", i960->PIP);
 }
 
-INLINE UINT32 get_1_ci(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_1_ci(i960_state_t *i960, uint32_t opcode)
 {
 	if(!(opcode & 0x00002000))
 		return i960->r[(opcode >> 19) & 0x1f];
@@ -306,30 +306,30 @@ INLINE UINT32 get_1_ci(i960_state_t *i960, UINT32 opcode)
 		return (opcode >> 19) & 0x1f;
 }
 
-INLINE UINT32 get_2_ci(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_2_ci(i960_state_t *i960, uint32_t opcode)
 {
 	return i960->r[(opcode >> 14) & 0x1f];
 }
 
-INLINE UINT32 get_disp(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_disp(i960_state_t *i960, uint32_t opcode)
 {
-	UINT32 disp;
+	uint32_t disp;
 	disp = opcode & 0xffffff;
 	if(disp & 0x00800000)
 		disp |= 0xff000000;
 	return disp-4;
 }
 
-INLINE UINT32 get_disp_s(i960_state_t *i960, UINT32 opcode)
+INLINE uint32_t get_disp_s(i960_state_t *i960, uint32_t opcode)
 {
-	UINT32 disp;
+	uint32_t disp;
 	disp = opcode & 0x1fff;
 	if(disp & 0x00001000)
 		disp |= 0xffffe000;
 	return disp-4;
 }
 
-INLINE void cmp_s(i960_state_t *i960, INT32 v1, INT32 v2)
+INLINE void cmp_s(i960_state_t *i960, int32_t v1, int32_t v2)
 {
 	i960->AC &= ~7;
 	if(v1<v2)
@@ -340,7 +340,7 @@ INLINE void cmp_s(i960_state_t *i960, INT32 v1, INT32 v2)
 		i960->AC |= 1;
 }
 
-INLINE void cmp_u(i960_state_t *i960, UINT32 v1, UINT32 v2)
+INLINE void cmp_u(i960_state_t *i960, uint32_t v1, uint32_t v2)
 {
 	i960->AC &= ~7;
 	if(v1<v2)
@@ -351,7 +351,7 @@ INLINE void cmp_u(i960_state_t *i960, UINT32 v1, UINT32 v2)
 		i960->AC |= 1;
 }
 
-INLINE void concmp_s(i960_state_t *i960, INT32 v1, INT32 v2)
+INLINE void concmp_s(i960_state_t *i960, int32_t v1, int32_t v2)
 {
 	i960->AC &= ~7;
 	if(v1 <= v2)
@@ -360,7 +360,7 @@ INLINE void concmp_s(i960_state_t *i960, INT32 v1, INT32 v2)
 		i960->AC |= 1;
 }
 
-INLINE void concmp_u(i960_state_t *i960, UINT32 v1, UINT32 v2)
+INLINE void concmp_u(i960_state_t *i960, uint32_t v1, uint32_t v2)
 {
 	i960->AC &= ~7;
 	if(v1 <= v2)
@@ -380,21 +380,21 @@ INLINE void cmp_d(i960_state_t *i960, double v1, double v2)
 		i960->AC |= 1;
 }
 
-INLINE void bxx(i960_state_t *i960, UINT32 opcode, int mask)
+INLINE void bxx(i960_state_t *i960, uint32_t opcode, int mask)
 {
 	if(i960->AC & mask) {
 		i960->IP += get_disp(i960, opcode);
 	}
 }
 
-INLINE void bxx_s(i960_state_t *i960, UINT32 opcode, int mask)
+INLINE void bxx_s(i960_state_t *i960, uint32_t opcode, int mask)
 {
 	if(i960->AC & mask) {
 		i960->IP += get_disp_s(i960, opcode);
 	}
 }
 
-INLINE void test(i960_state_t *i960, UINT32 opcode, int mask)
+INLINE void test(i960_state_t *i960, uint32_t opcode, int mask)
 {
 	if(i960->AC & mask)
 		i960->r[(opcode>>19) & 0x1f] = 1;
@@ -418,7 +418,7 @@ static void take_interrupt(i960_state_t *i960, int vector, int lvl)
 	int int_tab =  memory_read_dword_32le(i960->program, i960->PRCB+20);	// interrupt table
 	int int_SP  =  memory_read_dword_32le(i960->program, i960->PRCB+24);	// interrupt stack
 	int SP;
-	UINT32 IRQV;
+	uint32_t IRQV;
 
 	IRQV = memory_read_dword_32le(i960->program, int_tab + 36 + (vector-8)*4);
 
@@ -455,7 +455,7 @@ static void check_irqs(i960_state_t *i960)
 	int pending_pri;
 	int lvl, irq, take = -1;
 	int vword;
-	static const UINT32 lvlmask[4] = { 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000 };
+	static const uint32_t lvlmask[4] = { 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000 };
 
 	pending_pri = memory_read_dword_32le(i960->program, int_tab);		// read pending priorities
 
@@ -513,10 +513,10 @@ static void check_irqs(i960_state_t *i960)
 	}
 }
 
-static void do_call(i960_state_t *i960, UINT32 adr, int type, UINT32 stack)
+static void do_call(i960_state_t *i960, uint32_t adr, int type, uint32_t stack)
 {
 	int i;
-	UINT32 FP;
+	uint32_t FP;
 
 	// call and callx take 9 cycles base
 	i960->icount -= 9;
@@ -535,7 +535,7 @@ static void do_call(i960_state_t *i960, UINT32 adr, int type, UINT32 stack)
 	}
 	else	// a cache entry is available, use it
 	{
-		memcpy(&i960->rcache[i960->rcache_pos][0], i960->r, 0x10 * sizeof(UINT32));
+		memcpy(&i960->rcache[i960->rcache_pos][0], i960->r, 0x10 * sizeof(uint32_t));
 		i960->rcache_frame_addr[i960->rcache_pos] = i960->r[I960_FP] & ~0x3f;
 	}
 	i960->rcache_pos++;
@@ -578,7 +578,7 @@ static void do_ret_0(i960_state_t *i960)
 	}
 	else
 	{
-		memcpy(i960->r, i960->rcache[i960->rcache_pos], 0x10*sizeof(UINT32));
+		memcpy(i960->r, i960->rcache[i960->rcache_pos], 0x10*sizeof(uint32_t));
 	}
 
 //  mame_printf_debug("RET (type %d): FP %x, %x => %x, rcache_pos %d\n", type, i960->r[I960_FP], i960->IP, i960->r[I960_RIP], i960->rcache_pos);
@@ -587,7 +587,7 @@ static void do_ret_0(i960_state_t *i960)
 
 static void do_ret(i960_state_t *i960)
 {
-	UINT32 x, y;
+	uint32_t x, y;
 	i960->icount -= 7;
 	switch(i960->r[I960_PFP] & 7) {
 	case 0:
@@ -611,9 +611,9 @@ static void do_ret(i960_state_t *i960)
 	}
 }
 
-INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
+INLINE void execute_op(i960_state_t *i960, uint32_t opcode)
 {
-	UINT32 t1, t2;
+	uint32_t t1, t2;
 	double t1f, t2f;
 
 	switch(opcode >> 24) {
@@ -996,11 +996,11 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 				i960->icount--;
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
-				if(((INT32)t2) < 0) {
+				if(((int32_t)t2) < 0) {
 					if(t2 & ((1<<t1)-1))
-						set_ri(i960, opcode, (((INT32)t2)>>t1)+1);
+						set_ri(i960, opcode, (((int32_t)t2)>>t1)+1);
 					else
-						set_ri(i960, opcode, ((INT32)t2)>>t1);
+						set_ri(i960, opcode, ((int32_t)t2)>>t1);
 				} else
 					set_ri(i960, opcode, t2>>t1);
 				break;
@@ -1009,7 +1009,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 				i960->icount--;
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
-				set_ri(i960, opcode, ((INT32)t2)>>t1);
+				set_ri(i960, opcode, ((int32_t)t2)>>t1);
 				break;
 
 			case 0xc: // shlo
@@ -1124,7 +1124,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 			switch((opcode >> 7) & 0xf) {
 			case 0x0:	// addc
 				{
-					UINT64 res;
+					uint64_t res;
 
 					i960->icount -= 2;
 					t1 = get_1_ri(i960, opcode);
@@ -1134,7 +1134,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 					i960->AC &= ~0x3;	// clear C and V
 					// set carry
-					i960->AC |= ((res) & (((UINT64)1) << 32)) ? 0x2 : 0;
+					i960->AC |= ((res) & (((uint64_t)1) << 32)) ? 0x2 : 0;
 					// set overflow
 					i960->AC |= (((res) ^ (t1)) & ((res) ^ (t2)) & 0x80000000) ? 1: 0;
 				}
@@ -1142,7 +1142,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 			case 0x2:	// subc
 				{
-					UINT64 res;
+					uint64_t res;
 
 					i960->icount -= 2;
 					t1 = get_1_ri(i960, opcode);
@@ -1152,7 +1152,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 					i960->AC &= ~0x3;	// clear C and V
 					// set carry
-					i960->AC |= ((res) & (((UINT64)1) << 32)) ? 0x2 : 0;
+					i960->AC |= ((res) & (((uint64_t)1) << 32)) ? 0x2 : 0;
 					// set overflow
 					i960->AC |= (((t2) ^ (t1)) & ((t2) ^ (res)) & 0x80000000) ? 1 : 0;
 				}
@@ -1185,7 +1185,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 					t1 = opcode & 0x1f;
 					i960->r[t2] = i960->r[t2+1] = t1;
 				} else
-					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 2*sizeof(UINT32));
+					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 2*sizeof(uint32_t));
 				break;
 
 			default:
@@ -1202,7 +1202,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 					t1 = opcode & 0x1f;
 					i960->r[t2] = i960->r[t2+1] = i960->r[t2+2]= t1;
 				} else
-					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 3*sizeof(UINT32));
+					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 3*sizeof(uint32_t));
 				break;
 
 			default:
@@ -1219,7 +1219,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 					t1 = opcode & 0x1f;
 					i960->r[t2] = i960->r[t2+1] = i960->r[t2+2] = i960->r[t2+3] = t1;
 				} else
-					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 4*sizeof(UINT32));
+					memcpy(i960->r+t2, i960->r+(opcode & 0x1f), 4*sizeof(uint32_t));
 				break;
 
 			default:
@@ -1265,7 +1265,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 			switch((opcode >> 7) & 0xf) {
 			case 0x0: // spanbit
 				{
-					UINT32 res = 0xffffffff;
+					uint32_t res = 0xffffffff;
 					int i;
 
 					i960->icount -= 10;
@@ -1289,7 +1289,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 			case 0x1: // scanbit
 				{
-					UINT32 res = 0xffffffff;
+					uint32_t res = 0xffffffff;
 					int i;
 
 					i960->icount -= 10;
@@ -1352,7 +1352,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 					for (i = 0; i < 0x10; i++)
 					{
-						memory_write_dword_32le(i960->program, i960->rcache_frame_addr[t1] + (i * sizeof(UINT32)), i960->rcache[t1][i]);
+						memory_write_dword_32le(i960->program, i960->rcache_frame_addr[t1] + (i * sizeof(uint32_t)), i960->rcache[t1][i]);
 					}
 				}
 				i960->rcache_pos = 0;
@@ -1370,13 +1370,13 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
 
-				set_ri64(i960, opcode, (INT64)t1 * (INT64)t2);
+				set_ri64(i960, opcode, (int64_t)t1 * (int64_t)t2);
 				break;
 
 			case 0x1: // ediv
 				i960->icount -= 37;
 				{
-					UINT64 src1, src2;
+					uint64_t src1, src2;
 
 					src1 = get_1_ri(i960, opcode);
 					src2 = get_2_ri64(i960, opcode);
@@ -1388,21 +1388,21 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 			case 0x4: // cvtir
 				i960->icount -= 30;
 				t1 = get_1_ri(i960, opcode);
-				set_rif(i960, opcode, (double)(INT32)t1);
+				set_rif(i960, opcode, (double)(int32_t)t1);
 				break;
 
 			case 0x6: // scalerl
 				i960->icount -= 30;
 				t1 = get_1_ri(i960, opcode);
 				t2f = get_2_rifl(i960, opcode);
-				set_rifl(i960, opcode, t2f * pow(2.0, (double)(INT32)t1));
+				set_rifl(i960, opcode, t2f * pow(2.0, (double)(int32_t)t1));
 				break;
 
 			case 0x7: // scaler
 				i960->icount -= 30;
 				t1 = get_1_ri(i960, opcode);
 				t2f = get_2_rif(i960, opcode);
-			set_rif(i960, opcode, t2f * pow(2.0, (double)(INT32)t1));
+			set_rif(i960, opcode, t2f * pow(2.0, (double)(int32_t)t1));
 				break;
 
 			default:
@@ -1454,7 +1454,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 			case 0xb: // roundr
 				{
-					INT32 st1 = get_1_rif(i960, opcode);
+					int32_t st1 = get_1_rif(i960, opcode);
 					i960->icount -= 69;
 					set_rif(i960, opcode, (double)st1);
 				}
@@ -1525,7 +1525,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 			case 0xb: // roundrl
 				{
-					INT32 st1 = get_1_rifl(i960, opcode);
+					int32_t st1 = get_1_rifl(i960, opcode);
 					i960->icount -= 70;
 					set_rifl(i960, opcode, (double)st1);
 				}
@@ -1569,19 +1569,19 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 					case 2: t2f = ceil(t1f); break;
 					case 3: t2f = t1f; break;
 				}
-				set_ri(i960, opcode, (INT32)t2f);
+				set_ri(i960, opcode, (int32_t)t2f);
 				break;
 
 			case 0x2: // cvtzri
 				i960->icount -= 43;
 				t1f = get_1_rif(i960, opcode);
-				set_ri(i960, opcode, (INT32)t1f);
+				set_ri(i960, opcode, (int32_t)t1f);
 				break;
 
 			case 0x3: // cvtzril
 				i960->icount -= 44;
 				t1f = get_1_rif(i960, opcode);
-				set_ri64(i960, opcode, (INT64)t1f);
+				set_ri64(i960, opcode, (int64_t)t1f);
 				break;
 
 			case 0x9: // movr
@@ -1612,22 +1612,22 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 			switch((opcode >> 7) & 0xf) {
 			case 0x1: // movre
 				{
-					UINT32 *src=0, *dst=0;
+					uint32_t *src=0, *dst=0;
 
 					i960->icount -= 8;
 
 					if(!(opcode & 0x00000800)) {
-						src = (UINT32 *)&i960->r[opcode & 0x1e];
+						src = (uint32_t *)&i960->r[opcode & 0x1e];
 					} else {
 						int idx = opcode & 0x1f;
 						if(idx < 4)
-							src = (UINT32 *)&i960->fp[idx];
+							src = (uint32_t *)&i960->fp[idx];
 					}
 
 					if(!(opcode & 0x00002000)) {
-						dst = (UINT32 *)&i960->r[(opcode>>19) & 0x1e];
+						dst = (uint32_t *)&i960->r[(opcode>>19) & 0x1e];
 					} else if(!(opcode & 0x00e00000))
-						dst = (UINT32 *)&i960->fp[(opcode>>19) & 3];
+						dst = (uint32_t *)&i960->fp[(opcode>>19) & 3];
 
 					dst[0] = src[0];
 					dst[1] = src[1];
@@ -1686,21 +1686,21 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 				i960->icount -= 18;
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
-				set_ri(i960, opcode, ((INT32)t2)*((INT32)t1));
+				set_ri(i960, opcode, ((int32_t)t2)*((int32_t)t1));
 				break;
 
 			case 0x8: // remi
 				i960->icount -= 37;
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
-				set_ri(i960, opcode, ((INT32)t2)%((INT32)t1));
+				set_ri(i960, opcode, ((int32_t)t2)%((int32_t)t1));
 				break;
 
 			case 0x9:{// modi
-				INT32 src1, src2, dst;
+				int32_t src1, src2, dst;
 				i960->icount -= 37;
-				src1 = (INT32)get_1_ri(i960, opcode);
-				src2 = (INT32)get_2_ri(i960, opcode);
+				src1 = (int32_t)get_1_ri(i960, opcode);
+				src2 = (int32_t)get_2_ri(i960, opcode);
 				dst = src2 - ((src2/src1)*src1);
 				if(((src2*src1) < 0) && (dst != 0))
 					dst += src1;
@@ -1712,7 +1712,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 				i960->icount -= 37;
 				t1 = get_1_ri(i960, opcode);
 				t2 = get_2_ri(i960, opcode);
-				set_ri(i960, opcode, ((INT32)t2)/((INT32)t1));
+				set_ri(i960, opcode, ((int32_t)t2)/((int32_t)t1));
 				break;
 
 			default:
@@ -1928,7 +1928,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 		case 0xc0: // ldib
 			i960->icount -= 4;
-			i960->r[(opcode>>19)&0x1f] = (INT8)memory_read_byte_32le(i960->program, get_ea(i960, opcode));
+			i960->r[(opcode>>19)&0x1f] = (int8_t)memory_read_byte_32le(i960->program, get_ea(i960, opcode));
 			break;
 
 		case 0xc2: // stib
@@ -1938,7 +1938,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 
 		case 0xc8: // ldis
 			i960->icount -= 4;
-			i960->r[(opcode>>19)&0x1f] = (INT16)i960_read_word_unaligned(i960, get_ea(i960, opcode));
+			i960->r[(opcode>>19)&0x1f] = (int16_t)i960_read_word_unaligned(i960, get_ea(i960, opcode));
 			break;
 
 		case 0xca: // stis
@@ -1955,7 +1955,7 @@ INLINE void execute_op(i960_state_t *i960, UINT32 opcode)
 static CPU_EXECUTE( i960 )
 {
 	i960_state_t *i960 = get_safe_token(device);
-	UINT32 opcode;
+	uint32_t opcode;
 
 	check_irqs(i960);
 	while(i960->icount > 0) {
@@ -1977,7 +1977,7 @@ static void set_irq_line(i960_state_t *i960, int irqline, int state)
 	int cpu_pri = (i960->PC>>16)&0x1f;
 	int vector =0;
 	int priority;
-	UINT32 pend, word, wordofs;
+	uint32_t pend, word, wordofs;
 
 	// We support the 4 external IRQ lines in "normal" mode only.
 	// The i960's interrupt support is a bit more complete than that,

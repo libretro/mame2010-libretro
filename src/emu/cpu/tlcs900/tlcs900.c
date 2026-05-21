@@ -45,11 +45,11 @@ struct _tlcs900_state
 	PAIR	dmam[4];
 
 	/* Internal timers, irqs, etc */
-	UINT8	reg[0x80];
-	UINT32	timer_pre;
-	UINT8	timer[6];
-	UINT8	tff1;
-	UINT8	tff3;
+	uint8_t	reg[0x80];
+	uint32_t	timer_pre;
+	uint8_t	timer[6];
+	uint8_t	tff1;
+	uint8_t	tff3;
 	int		timer_change[4];
 
 	/* Current state of input levels */
@@ -60,13 +60,13 @@ struct _tlcs900_state
 
 	/* used during execution */
 	PAIR	dummy; /* for illegal register references */
-	UINT8	op;
+	uint8_t	op;
 	PAIR	ea1, ea2;
 	PAIR	imm1, imm2;
 	int	cycles;
-	UINT8	*p1_reg8, *p2_reg8;
-	UINT16	*p1_reg16, *p2_reg16;
-	UINT32	*p1_reg32, *p2_reg32;
+	uint8_t	*p1_reg8, *p2_reg8;
+	uint16_t	*p1_reg16, *p2_reg16;
+	uint32_t	*p1_reg32, *p2_reg32;
 
 	int halted;
 	int icount;
@@ -200,8 +200,8 @@ struct _tlcs900_state
 #define RDOP()				RDMEM( cpustate->pc.d ); cpustate->pc.d++
 #define RDMEMW(addr)			( RDMEM(addr) | ( RDMEM(addr+1) << 8 ) )
 #define RDMEML(addr)			( RDMEMW(addr) | ( RDMEMW(addr+2) << 16 ) )
-#define WRMEMW(addr,data)		{ UINT16 dw = data; WRMEM(addr,dw & 0xff); WRMEM(addr+1,(dw >> 8 )); }
-#define WRMEML(addr,data)		{ UINT32 dl = data; WRMEMW(addr,dl); WRMEMW(addr+2,(dl >> 16)); }
+#define WRMEMW(addr,data)		{ uint16_t dw = data; WRMEM(addr,dw & 0xff); WRMEM(addr+1,(dw >> 8 )); }
+#define WRMEML(addr,data)		{ uint32_t dl = data; WRMEMW(addr,dl); WRMEMW(addr+2,(dl >> 16)); }
 
 
 INLINE tlcs900_state *get_safe_token( running_device *device )
@@ -353,9 +353,9 @@ static CPU_EXIT( tlcs900 )
 
 #define NUM_MASKABLE_IRQS	22
 static const struct {
-	UINT8 reg;
-	UINT8 iff;
-	UINT8 vector;
+	uint8_t reg;
+	uint8_t iff;
+	uint8_t vector;
 } irq_vector_map[NUM_MASKABLE_IRQS] =
 {
 	{ INTETC32, 0x80, 0x80 },	/* INTTC3 */
@@ -386,7 +386,7 @@ static const struct {
 
 INLINE int tlcs900_process_hdma( tlcs900_state *cpustate, int channel )
 {
-	UINT8 vector = ( cpustate->reg[0x7c + channel] & 0x1f ) << 2;
+	uint8_t vector = ( cpustate->reg[0x7c + channel] & 0x1f ) << 2;
 
 	/* Check if any HDMA actions should be performed */
 	if ( vector >= 0x28 && vector != 0x3C && vector < 0x74 )
@@ -584,7 +584,7 @@ INLINE void tlcs900_check_irqs( tlcs900_state *cpustate )
 	/* Take irq */
 	if ( irq >= 0 )
 	{
-		UINT8 vector = irq_vector_map[irq].vector;
+		uint8_t vector = irq_vector_map[irq].vector;
 
 		cpustate->xssp.d -= 4;
 		WRMEML( cpustate->xssp.d, cpustate->pc.d );
@@ -687,7 +687,7 @@ INLINE void tlcs900_change_tff( tlcs900_state *cpustate, int which, int change )
 
 INLINE void tlcs900_handle_timers( tlcs900_state *cpustate )
 {
-	UINT32	old_pre = cpustate->timer_pre;
+	uint32_t	old_pre = cpustate->timer_pre;
 
 	/* Is the pre-scaler active */
 	if ( cpustate->reg[TRUN] & 0x80 )

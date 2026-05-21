@@ -18,7 +18,7 @@ CPU_DISASSEMBLE( esrip );
     CONSTANTS
 ***************************************************************************/
 
-#define IPT_RAM_SIZE	(8192 * sizeof(UINT16))
+#define IPT_RAM_SIZE	(8192 * sizeof(uint16_t))
 
 
 /***************************************************************************
@@ -63,51 +63,51 @@ CPU_DISASSEMBLE( esrip );
 
 typedef struct
 {
-	UINT16	ram[32];
-	UINT16	acc;
-	UINT16	d_latch;
-	UINT16	i_latch;
-	UINT16	result;
-	UINT8	new_status;
-	UINT8	status;
-	UINT16	inst;
-	UINT8	immflag;
-	UINT8	ct;
-	UINT8	t;
+	uint16_t	ram[32];
+	uint16_t	acc;
+	uint16_t	d_latch;
+	uint16_t	i_latch;
+	uint16_t	result;
+	uint8_t	new_status;
+	uint8_t	status;
+	uint16_t	inst;
+	uint8_t	immflag;
+	uint8_t	ct;
+	uint8_t	t;
 
 	/* Instruction latches - current and previous values */
-	UINT8	l1, pl1;
-	UINT8	l2, pl2;
-	UINT8	l3, pl3;
-	UINT8	l4, pl4;
-	UINT8	l5, pl5;
-	UINT8	l6, pl6;
-	UINT8	l7, pl7;
+	uint8_t	l1, pl1;
+	uint8_t	l2, pl2;
+	uint8_t	l3, pl3;
+	uint8_t	l4, pl4;
+	uint8_t	l5, pl5;
+	uint8_t	l6, pl6;
+	uint8_t	l7, pl7;
 
-	UINT8	pc;
-	UINT8	status_out;
+	uint8_t	pc;
+	uint8_t	status_out;
 
-	UINT8	x_scale;
-	UINT8	y_scale;
-	UINT8	img_bank;
-	UINT8	line_latch;
-	UINT16	fig_latch;
-	UINT16	attr_latch;
-	UINT16	adl_latch;
-	UINT16	adr_latch;
-	UINT16	iaddr_latch;
-	UINT8	c_latch;
+	uint8_t	x_scale;
+	uint8_t	y_scale;
+	uint8_t	img_bank;
+	uint8_t	line_latch;
+	uint16_t	fig_latch;
+	uint16_t	attr_latch;
+	uint16_t	adl_latch;
+	uint16_t	adr_latch;
+	uint16_t	iaddr_latch;
+	uint8_t	c_latch;
 
-	UINT16	fdt_cnt;
-	UINT16	ipt_cnt;
+	uint16_t	fdt_cnt;
+	uint16_t	ipt_cnt;
 
-	UINT8	fig;
-	UINT16	fig_cycles;
+	uint8_t	fig;
+	uint16_t	fig_cycles;
 
-	UINT8	*optable;
+	uint8_t	*optable;
 
-	UINT16	*ipt_ram;
-	UINT8	*lbrm;
+	uint16_t	*ipt_ram;
+	uint8_t	*lbrm;
 
 	legacy_cpu_device *device;
 	const	address_space *program;
@@ -115,7 +115,7 @@ typedef struct
 
 	read16_device_func	fdt_r;
 	write16_device_func	fdt_w;
-	UINT8 (*status_in)(running_machine *machine);
+	uint8_t (*status_in)(running_machine *machine);
 	int (*draw)(running_machine *machine, int l, int r, int fig, int attr, int addr, int col, int x_scale, int bank);
 } esrip_state;
 
@@ -132,7 +132,7 @@ INLINE esrip_state *get_safe_token(running_device *device)
     PUBLIC FUNCTIONS
 ***************************************************************************/
 
-UINT8 get_rip_status(running_device *cpu)
+uint8_t get_rip_status(running_device *cpu)
 {
 	esrip_state *cpustate = get_safe_token(cpu);
 	return cpustate->status_out;
@@ -255,18 +255,18 @@ static CPU_INIT( esrip )
 	/* Register configuration structure callbacks */
 	cpustate->fdt_r = _config->fdt_r;
 	cpustate->fdt_w = _config->fdt_w;
-	cpustate->lbrm = (UINT8*)memory_region(device->machine, _config->lbrm_prom);
+	cpustate->lbrm = (uint8_t*)memory_region(device->machine, _config->lbrm_prom);
 	cpustate->status_in = _config->status_in;
 	cpustate->draw = _config->draw;
 
 	/* Allocate image pointer table RAM */
-	cpustate->ipt_ram = auto_alloc_array(device->machine, UINT16, IPT_RAM_SIZE/2);
+	cpustate->ipt_ram = auto_alloc_array(device->machine, uint16_t, IPT_RAM_SIZE/2);
 
 	cpustate->device = device;
 	cpustate->program = device->space(AS_PROGRAM);
 
 	/* Create the instruction decode lookup table */
-	cpustate->optable = auto_alloc_array(device->machine, UINT8, 65536);
+	cpustate->optable = auto_alloc_array(device->machine, uint8_t, 65536);
 	make_ops(cpustate);
 
 	/* Register stuff for state saving */
@@ -311,7 +311,7 @@ static CPU_INIT( esrip )
 	state_save_register_device_item(device, 0, cpustate->ipt_cnt);
 	state_save_register_device_item(device, 0, cpustate->fig);
 	state_save_register_device_item(device, 0, cpustate->fig_cycles);
-	state_save_register_device_item_pointer(device, 0, cpustate->ipt_ram, IPT_RAM_SIZE / sizeof(UINT16));
+	state_save_register_device_item_pointer(device, 0, cpustate->ipt_ram, IPT_RAM_SIZE / sizeof(uint16_t));
 }
 
 
@@ -363,12 +363,12 @@ static int get_lbrm(esrip_state *cpustate)
 	int addr = ((cpustate->y_scale & 0x3f) << 3) | ((cpustate->line_latch >> 3) & 7);
 	int sel = (cpustate->line_latch & 7);
 
-	UINT8 val = cpustate->lbrm[addr];
+	uint8_t val = cpustate->lbrm[addr];
 
 	return (val >> sel) & 1;
 }
 
-INLINE int check_jmp(esrip_state *cpustate, UINT8 jmp_ctrl)
+INLINE int check_jmp(esrip_state *cpustate, uint8_t jmp_ctrl)
 {
 	int ret = 0;
 
@@ -409,37 +409,37 @@ INLINE int check_jmp(esrip_state *cpustate, UINT8 jmp_ctrl)
 }
 
 
-INLINE void calc_z_flag(esrip_state *cpustate, UINT16 res)
+INLINE void calc_z_flag(esrip_state *cpustate, uint16_t res)
 {
 	cpustate->new_status &= ~Z_FLAG;
 	cpustate->new_status |= (res == 0);
 }
 
-INLINE void calc_c_flag_add(esrip_state *cpustate, UINT16 a, UINT16 b)
+INLINE void calc_c_flag_add(esrip_state *cpustate, uint16_t a, uint16_t b)
 {
 	cpustate->new_status &= ~C_FLAG;
-	cpustate->new_status |= ((UINT16)(b) > (UINT16)(~(a))) ? 2 : 0;
+	cpustate->new_status |= ((uint16_t)(b) > (uint16_t)(~(a))) ? 2 : 0;
 }
 
-INLINE void calc_c_flag_sub(esrip_state *cpustate, UINT16 a, UINT16 b)
+INLINE void calc_c_flag_sub(esrip_state *cpustate, uint16_t a, uint16_t b)
 {
 	cpustate->new_status &= ~C_FLAG;
-	cpustate->new_status |= ((UINT16)(b) <= (UINT16)(a)) ? 2 : 0;
+	cpustate->new_status |= ((uint16_t)(b) <= (uint16_t)(a)) ? 2 : 0;
 }
 
-INLINE void calc_n_flag(esrip_state *cpustate, UINT16 res)
+INLINE void calc_n_flag(esrip_state *cpustate, uint16_t res)
 {
 	cpustate->new_status &= ~N_FLAG;
 	cpustate->new_status |= (res & 0x8000) ? 4 : 0;
 }
 
-INLINE void calc_v_flag_add(esrip_state *cpustate, UINT16 a, UINT16 b, UINT32 r)
+INLINE void calc_v_flag_add(esrip_state *cpustate, uint16_t a, uint16_t b, uint32_t r)
 {
 	cpustate->new_status &= ~V_FLAG;
 	cpustate->new_status |= ((a ^ r) & (b ^ r) & 0x8000) ? 8 : 0;
 }
 
-INLINE void calc_v_flag_sub(esrip_state *cpustate, UINT16 a, UINT16 b, UINT32 r)
+INLINE void calc_v_flag_sub(esrip_state *cpustate, uint16_t a, uint16_t b, uint32_t r)
 {
 	cpustate->new_status &= ~V_FLAG;
 	cpustate->new_status |= ((a ^ b) & (r ^ b) & 0x8000) ? 8 : 0;
@@ -485,9 +485,9 @@ enum
 	SORR  = 0xb
 };
 
-static UINT16 sor_op(esrip_state *cpustate, UINT16 r, UINT16 opcode)
+static uint16_t sor_op(esrip_state *cpustate, uint16_t r, uint16_t opcode)
 {
-	UINT32 res = 0;
+	uint32_t res = 0;
 
 	switch (opcode)
 	{
@@ -531,11 +531,11 @@ static UINT16 sor_op(esrip_state *cpustate, UINT16 r, UINT16 opcode)
 	return res & 0xffff;
 }
 
-static void sor(esrip_state *cpustate, UINT16 inst)
+static void sor(esrip_state *cpustate, uint16_t inst)
 {
-	UINT16	r = 0;
-	UINT16	dst = 0;
-	UINT16	res = 0;
+	uint16_t	r = 0;
+	uint16_t	dst = 0;
+	uint16_t	res = 0;
 
 	if (BYTE_MODE)
 	{
@@ -603,10 +603,10 @@ enum
 	NRAS = 5,
 };
 
-static void sonr(esrip_state *cpustate, UINT16 inst)
+static void sonr(esrip_state *cpustate, uint16_t inst)
 {
-	UINT16	r = 0;
-	UINT16	res = 0;
+	uint16_t	r = 0;
+	uint16_t	res = 0;
 
 	switch ((inst >> 5) & 0xf)
 	{
@@ -667,9 +667,9 @@ enum
 	EXNOR = 0xb
 };
 
-static UINT16 tor_op(esrip_state *cpustate, UINT16 r, UINT16 s, int opcode)
+static uint16_t tor_op(esrip_state *cpustate, uint16_t r, uint16_t s, int opcode)
 {
-	UINT32 res = 0;
+	uint32_t res = 0;
 
 	switch (opcode)
 	{
@@ -765,12 +765,12 @@ static UINT16 tor_op(esrip_state *cpustate, UINT16 r, UINT16 s, int opcode)
 	return res & 0xffff;
 }
 
-static void tor1(esrip_state *cpustate, UINT16 inst)
+static void tor1(esrip_state *cpustate, uint16_t inst)
 {
-	UINT16 r = 0;
-	UINT16 s = 0;
-	UINT16 dst = 0;
-	UINT16	res = 0;
+	uint16_t r = 0;
+	uint16_t s = 0;
+	uint16_t dst = 0;
+	uint16_t	res = 0;
 
 	enum
 	{
@@ -862,11 +862,11 @@ static void tor1(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void tor2(esrip_state *cpustate, UINT16 inst)
+static void tor2(esrip_state *cpustate, uint16_t inst)
 {
-	UINT16 r = 0;
-	UINT16 s = 0;
-	UINT32 res = 0;
+	uint16_t r = 0;
+	uint16_t s = 0;
+	uint32_t res = 0;
 
 	enum
 	{
@@ -922,7 +922,7 @@ static void tor2(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void tonr(esrip_state *cpustate, UINT16 inst)
+static void tonr(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -939,9 +939,9 @@ static void tonr(esrip_state *cpustate, UINT16 inst)
 		NRAS = 5,
 	};
 
-	UINT16 r = 0;
-	UINT16 s = 0;
-	UINT16	res = 0;
+	uint16_t r = 0;
+	uint16_t s = 0;
+	uint16_t	res = 0;
 
 	switch (SRC)
 	{
@@ -1003,7 +1003,7 @@ static void tonr(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void bonr(esrip_state *cpustate, UINT16 inst)
+static void bonr(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1023,7 +1023,7 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 		LDC2NY = 0x17,
 	};
 
-	UINT16	res = 0;
+	uint16_t	res = 0;
 
 	switch (inst & 0x1f)
 	{
@@ -1054,8 +1054,8 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 		}
 		case A2NA:
 		{
-			UINT16 r = cpustate->acc;
-			UINT16 s = 1 << N;
+			uint16_t r = cpustate->acc;
+			uint16_t s = 1 << N;
 			res = r + s;
 			calc_z_flag(cpustate, res);
 			calc_n_flag(cpustate, res);
@@ -1066,8 +1066,8 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 		}
 		case S2NA:
 		{
-			UINT16 r = cpustate->acc;
-			UINT16 s = 1 << N;
+			uint16_t r = cpustate->acc;
+			uint16_t s = 1 << N;
 			res = r - s;
 			calc_z_flag(cpustate, res);
 			calc_n_flag(cpustate, res);
@@ -1088,7 +1088,7 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 
 		case SETND:
 		{
-			UINT16 r = cpustate->d_latch;
+			uint16_t r = cpustate->d_latch;
 			res = r | (1 << N);
 			cpustate->d_latch = res;
 
@@ -1113,8 +1113,8 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 
 		case A2NDY:
 		{
-			UINT16 r = cpustate->d_latch;
-			UINT16 s = 1 << N;
+			uint16_t r = cpustate->d_latch;
+			uint16_t s = 1 << N;
 			res = r + s;
 
 			calc_z_flag(cpustate, res);
@@ -1131,7 +1131,7 @@ static void bonr(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void bor1(esrip_state *cpustate, UINT16 inst)
+static void bor1(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1140,7 +1140,7 @@ static void bor1(esrip_state *cpustate, UINT16 inst)
 		TSTNR  = 0xf,
 	};
 
-	UINT16	res = 0;
+	uint16_t	res = 0;
 
 	switch ((inst >> 5) & 0xf)
 	{
@@ -1177,7 +1177,7 @@ static void bor1(esrip_state *cpustate, UINT16 inst)
 
 
 
-static void bor2(esrip_state *cpustate, UINT16 inst)
+static void bor2(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1187,7 +1187,7 @@ static void bor2(esrip_state *cpustate, UINT16 inst)
 		S2NR   = 0xf,
 	};
 
-	UINT32 res = 0;
+	uint32_t res = 0;
 
 	switch ((inst >> 5) & 0xf)
 	{
@@ -1207,8 +1207,8 @@ static void bor2(esrip_state *cpustate, UINT16 inst)
 		}
 		case A2NR:
 		{
-			UINT16 r = cpustate->ram[RAM_ADDR];
-			UINT16 s = 1 << N;
+			uint16_t r = cpustate->ram[RAM_ADDR];
+			uint16_t s = 1 << N;
 
 			res = r + s;
 			calc_v_flag_add(cpustate, r, s, res);
@@ -1219,8 +1219,8 @@ static void bor2(esrip_state *cpustate, UINT16 inst)
 		}
 		case S2NR:
 		{
-			UINT16 r = cpustate->ram[RAM_ADDR];
-			UINT16 s = 1 << N;
+			uint16_t r = cpustate->ram[RAM_ADDR];
+			uint16_t s = 1 << N;
 
 			res = r - s;
 			calc_v_flag_sub(cpustate, r, s, res);
@@ -1244,7 +1244,7 @@ static void bor2(esrip_state *cpustate, UINT16 inst)
  *************************************/
 
 /* TODO Combine these */
-static void rotr1(esrip_state *cpustate, UINT16 inst)
+static void rotr1(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1253,9 +1253,9 @@ static void rotr1(esrip_state *cpustate, UINT16 inst)
 		RTRR = 0xf,
 	};
 
-	UINT16	u = 0;
-	UINT16	dst = 0;
-	UINT16	res = 0;
+	uint16_t	u = 0;
+	uint16_t	dst = 0;
+	uint16_t	res = 0;
 	int		n = N;
 
 	switch ((inst >> 5) & 0xf)
@@ -1280,7 +1280,7 @@ static void rotr1(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void rotr2(esrip_state *cpustate, UINT16 inst)
+static void rotr2(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1288,8 +1288,8 @@ static void rotr2(esrip_state *cpustate, UINT16 inst)
 		RTDR = 1,
 	};
 
-	UINT16	u = 0;
-	UINT16	res = 0;
+	uint16_t	u = 0;
+	uint16_t	res = 0;
 
 	switch ((inst >> 5) & 0xf)
 	{
@@ -1307,7 +1307,7 @@ static void rotr2(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void rotnr(esrip_state *cpustate, UINT16 inst)
+static void rotnr(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1317,9 +1317,9 @@ static void rotnr(esrip_state *cpustate, UINT16 inst)
 		RTAA = 0x1d,
 	};
 
-	UINT16	u = 0;
-	UINT16	res = 0;
-	UINT16	dst = 0;
+	uint16_t	u = 0;
+	uint16_t	res = 0;
+	uint16_t	dst = 0;
 
 	switch (inst & 0x1f)
 	{
@@ -1352,7 +1352,7 @@ static void rotnr(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void rotc(esrip_state *cpustate, UINT16 inst)
+static void rotc(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
@@ -1363,7 +1363,7 @@ static void rotc(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void rotm(esrip_state *cpustate, UINT16 inst)
+static void rotm(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
@@ -1374,12 +1374,12 @@ static void rotm(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void prt(esrip_state *cpustate, UINT16 inst)
+static void prt(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
 
-static void prtnr(esrip_state *cpustate, UINT16 inst)
+static void prtnr(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
@@ -1391,12 +1391,12 @@ static void prtnr(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void crcf(esrip_state *cpustate, UINT16 inst)
+static void crcf(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
 
-static void crcr(esrip_state *cpustate, UINT16 inst)
+static void crcr(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
@@ -1422,9 +1422,9 @@ enum
 #define	SET_LINK_flag(cpustate, x)	(cpustate->new_status &= ~L_FLAG); \
 							(cpustate->new_status |= x ? L_FLAG : 0)
 
-static UINT16 shift_op(esrip_state *cpustate, UINT16 u, int opcode)
+static uint16_t shift_op(esrip_state *cpustate, uint16_t u, int opcode)
 {
-	UINT32 res = 0;
+	uint32_t res = 0;
 
 	switch (opcode)
 	{
@@ -1467,7 +1467,7 @@ static UINT16 shift_op(esrip_state *cpustate, UINT16 u, int opcode)
 	return res;
 }
 
-static void shftr(esrip_state *cpustate, UINT16 inst)
+static void shftr(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1475,8 +1475,8 @@ static void shftr(esrip_state *cpustate, UINT16 inst)
 		SHDR = 7,
 	};
 
-	UINT16	u = 0;
-	UINT16	res = 0;
+	uint16_t	u = 0;
+	uint16_t	res = 0;
 
 	switch ((inst >> 9) & 0xf)
 	{
@@ -1492,7 +1492,7 @@ static void shftr(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = res;
 }
 
-static void shftnr(esrip_state *cpustate, UINT16 inst)
+static void shftnr(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1500,8 +1500,8 @@ static void shftnr(esrip_state *cpustate, UINT16 inst)
 		SHD = 7,
 	};
 
-	UINT16	u = 0;
-	UINT16	res = 0;
+	uint16_t	u = 0;
+	uint16_t	res = 0;
 
 	switch ((inst >> 9) & 0xf)
 	{
@@ -1528,12 +1528,12 @@ static void shftnr(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void svstr(esrip_state *cpustate, UINT16 inst)
+static void svstr(esrip_state *cpustate, uint16_t inst)
 {
 	UNHANDLED;
 }
 
-static void rstst(esrip_state *cpustate, UINT16 inst)
+static void rstst(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1556,7 +1556,7 @@ static void rstst(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = 0;
 }
 
-static void setst(esrip_state *cpustate, UINT16 inst)
+static void setst(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1579,7 +1579,7 @@ static void setst(esrip_state *cpustate, UINT16 inst)
 	cpustate->result = 0xffff;
 }
 
-static void test(esrip_state *cpustate, UINT16 inst)
+static void test(esrip_state *cpustate, uint16_t inst)
 {
 	enum
 	{
@@ -1597,7 +1597,7 @@ static void test(esrip_state *cpustate, UINT16 inst)
 		TF3  = 0x16
 	};
 
-	UINT32 res = 0;
+	uint32_t res = 0;
 
 	switch (inst & 0x1f)
 	{
@@ -1626,19 +1626,19 @@ static void test(esrip_state *cpustate, UINT16 inst)
  *
  *************************************/
 
-static void nop(esrip_state *cpustate, UINT16 inst)
+static void nop(esrip_state *cpustate, uint16_t inst)
 {
 	cpustate->result = 0xff;	// Undefined
 }
 
-static void (*const operations[24])(esrip_state *cpustate, UINT16 inst) =
+static void (*const operations[24])(esrip_state *cpustate, uint16_t inst) =
 {
 	rotr1, tor1, rotr2, rotc, rotm, bor2, crcf, crcr,
 	svstr, prt, sor, tor2, shftr, test, nop, setst, rstst,
 	rotnr, bonr, bor1, sonr, shftnr, prtnr, tonr
 };
 
-INLINE void am29116_execute(esrip_state *cpustate, UINT16 inst, int _sre)
+INLINE void am29116_execute(esrip_state *cpustate, uint16_t inst, int _sre)
 {
 	/* Status register shadow */
 	cpustate->new_status = cpustate->status;
@@ -1663,7 +1663,7 @@ static CPU_EXECUTE( esrip )
 {
 	esrip_state *cpustate = get_safe_token(device);
 	int calldebugger = (device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0;
-	UINT8 status;
+	uint8_t status;
 
 	/* I think we can get away with placing this outside of the loop */
 	status = cpustate->status_in(device->machine);
@@ -1671,18 +1671,18 @@ static CPU_EXECUTE( esrip )
 	/* Core execution loop */
 	do
 	{
-		UINT64	inst;
-		UINT8	next_pc;
-		UINT16	x_bus = 0;
-		UINT16	ipt_bus = 0;
-		UINT16	y_bus = 0;
+		uint64_t	inst;
+		uint8_t	next_pc;
+		uint16_t	x_bus = 0;
+		uint16_t	ipt_bus = 0;
+		uint16_t	y_bus = 0;
 
 		int yoe = _BIT(cpustate->l5, 1);
 		int bl46 = BIT(cpustate->l4, 6);
 		int bl44 = BIT(cpustate->l4, 4);
 
-		UINT32 in_h;
-		UINT32 in_l;
+		uint32_t in_h;
+		uint32_t in_l;
 
 		if (cpustate->fig_cycles)
 		{

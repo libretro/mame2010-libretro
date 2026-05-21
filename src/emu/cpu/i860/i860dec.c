@@ -57,12 +57,12 @@
 
 
 /* Prototypes.  */
-static void decode_exec (i860s *, UINT32, UINT32);
-static UINT32 get_address_translation (i860s *, UINT32, int, int);
-static UINT32 readmemi_emu (i860s *cpustate, UINT32, int);
+static void decode_exec (i860s *, uint32_t, uint32_t);
+static uint32_t get_address_translation (i860s *, uint32_t, int, int);
+static uint32_t readmemi_emu (i860s *cpustate, uint32_t, int);
 
 //static void debugger (i860s *cpustate);
-//static void disasm (i860s *cpustate, UINT32, int);
+//static void disasm (i860s *cpustate, uint32_t, int);
 //static void dump_state (i860s *cpustate);
 
 
@@ -85,12 +85,12 @@ enum {
 INLINE float get_fregval_s (i860s *cpustate, int fr)
 {
 	float f;
-	UINT32 x;
-	UINT8 *tp;
+	uint32_t x;
+	uint8_t *tp;
 	fr = 31 - fr;
-	tp = (UINT8 *)(&cpustate->frg[fr * 4]);
-	x = ((UINT32)tp[0] << 24) | ((UINT32)tp[1] << 16) |
-		((UINT32)tp[2] << 8) | ((UINT32)tp[3]);
+	tp = (uint8_t *)(&cpustate->frg[fr * 4]);
+	x = ((uint32_t)tp[0] << 24) | ((uint32_t)tp[1] << 16) |
+		((uint32_t)tp[2] << 8) | ((uint32_t)tp[3]);
 	f = *(float *)(&x);
 	return f;
 }
@@ -98,27 +98,27 @@ INLINE float get_fregval_s (i860s *cpustate, int fr)
 INLINE double get_fregval_d (i860s *cpustate, int fr)
 {
 	double d;
-	UINT64 x;
-	UINT8 *tp;
+	uint64_t x;
+	uint8_t *tp;
 	fr = 31 - (fr + 1);
-	tp = (UINT8 *)(&cpustate->frg[fr * 4]);
-	x = ((UINT64)tp[0] << 56) | ((UINT64)tp[1] << 48) |
-		((UINT64)tp[2] << 40) | ((UINT64)tp[3] << 32) |
-		((UINT64)tp[4] << 24) | ((UINT64)tp[5] << 16) |
-		((UINT64)tp[6] << 8) | ((UINT64)tp[7]);
+	tp = (uint8_t *)(&cpustate->frg[fr * 4]);
+	x = ((uint64_t)tp[0] << 56) | ((uint64_t)tp[1] << 48) |
+		((uint64_t)tp[2] << 40) | ((uint64_t)tp[3] << 32) |
+		((uint64_t)tp[4] << 24) | ((uint64_t)tp[5] << 16) |
+		((uint64_t)tp[6] << 8) | ((uint64_t)tp[7]);
 	d = *(double *)(&x);
 	return d;
 }
 
 INLINE void set_fregval_s (i860s *cpustate, int fr, float s)
 {
-	UINT8 *f = (UINT8 *)&s;
-	UINT8 *tp;
+	uint8_t *f = (uint8_t *)&s;
+	uint8_t *tp;
 	int newfr = 31 - fr;
 	float jj = s;
-	tp = (UINT8 *)(&cpustate->frg[newfr * 4]);
+	tp = (uint8_t *)(&cpustate->frg[newfr * 4]);
 
-	f = (UINT8 *)(&jj);
+	f = (uint8_t *)(&jj);
 	if (fr == 0 || fr == 1)
 	{
 		tp[0] = 0; tp[1] = 0; tp[2] = 0; tp[3] = 0;
@@ -135,13 +135,13 @@ INLINE void set_fregval_s (i860s *cpustate, int fr, float s)
 
 INLINE void set_fregval_d (i860s *cpustate, int fr, double d)
 {
-	UINT8 *f = (UINT8 *)&d;
-	UINT8 *tp;
+	uint8_t *f = (uint8_t *)&d;
+	uint8_t *tp;
 	int newfr = 31 - (fr + 1);
 	double jj = d;
-	tp = (UINT8 *)(&cpustate->frg[newfr * 4]);
+	tp = (uint8_t *)(&cpustate->frg[newfr * 4]);
 
-	f = (UINT8 *)(&jj);
+	f = (uint8_t *)(&jj);
 
 	if (fr == 0)
 	{
@@ -297,7 +297,7 @@ enum {
 
 
 /*
-static int has_delay_slot(UINT32 insn)
+static int has_delay_slot(uint32_t insn)
 {
     int opc = (insn >> 26) & 0x3f;
     if (opc == 0x10 || opc == 0x1a || opc == 0x1b || opc == 0x1d ||
@@ -348,10 +348,10 @@ void i860_gen_interrupt (i860s *cpustate)
 /* Fetch instructions from instruction cache.
    Note: The instruction cache is not implemented for MAME version,
    this just fetches and returns 1 instruction from memory.  */
-static UINT32 ifetch (i860s *cpustate, UINT32 pc)
+static uint32_t ifetch (i860s *cpustate, uint32_t pc)
 {
-	UINT32 phys_pc = 0;
-	UINT32 w1 = 0;
+	uint32_t phys_pc = 0;
+	uint32_t w1 = 0;
 
 	/* If virtual mode, get translation.  */
 	if (GET_DIRBASE_ATE ())
@@ -387,21 +387,21 @@ static UINT32 ifetch (i860s *cpustate, UINT32 pc)
 
    Page tables must always be in memory (not cached).  So the routine
    here only accesses memory.  */
-static UINT32 get_address_translation (i860s *cpustate, UINT32 vaddr, int is_dataref, int is_write)
+static uint32_t get_address_translation (i860s *cpustate, uint32_t vaddr, int is_dataref, int is_write)
 {
-	UINT32 vdir = (vaddr >> 22) & 0x3ff;
-	UINT32 vpage = (vaddr >> 12) & 0x3ff;
-	UINT32 voffset = vaddr & 0xfff;
-	UINT32 dtb = (cpustate->cregs[CR_DIRBASE]) & 0xfffff000;
-	UINT32 pg_dir_entry_a = 0;
-	UINT32 pg_dir_entry = 0;
-	UINT32 pg_tbl_entry_a = 0;
-	UINT32 pg_tbl_entry = 0;
-	UINT32 pfa1 = 0;
-	UINT32 pfa2 = 0;
-	UINT32 ret = 0;
-	UINT32 ttpde = 0;
-	UINT32 ttpte = 0;
+	uint32_t vdir = (vaddr >> 22) & 0x3ff;
+	uint32_t vpage = (vaddr >> 12) & 0x3ff;
+	uint32_t voffset = vaddr & 0xfff;
+	uint32_t dtb = (cpustate->cregs[CR_DIRBASE]) & 0xfffff000;
+	uint32_t pg_dir_entry_a = 0;
+	uint32_t pg_dir_entry = 0;
+	uint32_t pg_tbl_entry_a = 0;
+	uint32_t pg_tbl_entry = 0;
+	uint32_t pfa1 = 0;
+	uint32_t pfa2 = 0;
+	uint32_t ret = 0;
+	uint32_t ttpde = 0;
+	uint32_t ttpte = 0;
 
 	assert (GET_DIRBASE_ATE ());
 
@@ -533,7 +533,7 @@ static UINT32 get_address_translation (i860s *cpustate, UINT32 vaddr, int is_dat
 /* Read memory emulation.
      addr = address to read.
      size = size of read in bytes.  */
-static UINT32 readmemi_emu (i860s *cpustate, UINT32 addr, int size)
+static uint32_t readmemi_emu (i860s *cpustate, uint32_t addr, int size)
 {
 #ifdef TRACE_RDWR_MEM
 	fprintf (stderr, "readmemi_emu: (ATE=%d) addr = 0x%08x, size = %d\n",
@@ -543,7 +543,7 @@ static UINT32 readmemi_emu (i860s *cpustate, UINT32 addr, int size)
 	/* If virtual mode, do translation.  */
 	if (GET_DIRBASE_ATE ())
 	{
-		UINT32 phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 0 /* is_write */);
+		uint32_t phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 0 /* is_write */);
 		if (cpustate->pending_trap && (GET_PSR_IAT () || GET_PSR_DAT ()))
 		{
 #ifdef TRACE_PAGE_FAULT
@@ -567,12 +567,12 @@ static UINT32 readmemi_emu (i860s *cpustate, UINT32 addr, int size)
 	/* Now do the actual read.  */
 	if (size == 1)
 	{
-		UINT32 ret = memory_read_byte_64le(cpustate->program, addr);
+		uint32_t ret = memory_read_byte_64le(cpustate->program, addr);
 		return ret & 0xff;
 	}
 	else if (size == 2)
 	{
-		UINT32 ret = memory_read_word_64le(cpustate->program, addr);
+		uint32_t ret = memory_read_word_64le(cpustate->program, addr);
 #ifdef HOST_MSB
 		BYTE_REV16 (ret);
 #endif
@@ -580,7 +580,7 @@ static UINT32 readmemi_emu (i860s *cpustate, UINT32 addr, int size)
 	}
 	else if (size == 4)
 	{
-		UINT32 ret = memory_read_dword_64le(cpustate->program, addr);
+		uint32_t ret = memory_read_dword_64le(cpustate->program, addr);
 #ifdef HOST_MSB
 		BYTE_REV32 (ret);
 #endif
@@ -597,7 +597,7 @@ static UINT32 readmemi_emu (i860s *cpustate, UINT32 addr, int size)
      addr = address to write.
      size = size of write in bytes.
      data = data to write.  */
-static void writememi_emu (i860s *cpustate, UINT32 addr, int size, UINT32 data)
+static void writememi_emu (i860s *cpustate, uint32_t addr, int size, uint32_t data)
 {
 #ifdef TRACE_RDWR_MEM
 	fprintf (stderr, "writememi_emu: (ATE=%d) addr = 0x%08x, size = %d, data = 0x%08x\n",
@@ -607,7 +607,7 @@ static void writememi_emu (i860s *cpustate, UINT32 addr, int size, UINT32 data)
 	/* If virtual mode, do translation.  */
 	if (GET_DIRBASE_ATE ())
 	{
-		UINT32 phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 1 /* is_write */);
+		uint32_t phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 1 /* is_write */);
 		if (cpustate->pending_trap && (GET_PSR_IAT () || GET_PSR_DAT ()))
 		{
 #ifdef TRACE_PAGE_FAULT
@@ -654,7 +654,7 @@ static void writememi_emu (i860s *cpustate, UINT32 addr, int size, UINT32 data)
      addr = address to read.
      size = size of read in bytes.
      dest = memory to put read data.  */
-static void fp_readmem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *dest)
+static void fp_readmem_emu (i860s *cpustate, uint32_t addr, int size, uint8_t *dest)
 {
 #ifdef TRACE_RDWR_MEM
 	fprintf (stderr, "fp_readmem_emu: (ATE=%d) addr = 0x%08x, size = %d\n",
@@ -666,7 +666,7 @@ static void fp_readmem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *dest)
 	/* If virtual mode, do translation.  */
 	if (GET_DIRBASE_ATE ())
 	{
-		UINT32 phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 0 /* is_write */);
+		uint32_t phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 0 /* is_write */);
 		if (cpustate->pending_trap && (GET_PSR_IAT () || GET_PSR_DAT ()))
 		{
 #ifdef TRACE_PAGE_FAULT
@@ -721,7 +721,7 @@ static void fp_readmem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *dest)
      size = size of read in bytes.
      data = pointer to the data.
      wmask = bit mask of bytes to write (only for pst.d).  */
-static void fp_writemem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *data, UINT32 wmask)
+static void fp_writemem_emu (i860s *cpustate, uint32_t addr, int size, uint8_t *data, uint32_t wmask)
 {
 #ifdef TRACE_RDWR_MEM
 	fprintf (stderr, "fp_writemem_emu: (ATE=%d) addr = 0x%08x, size = %d\n",
@@ -733,7 +733,7 @@ static void fp_writemem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *data
 	/* If virtual mode, do translation.  */
 	if (GET_DIRBASE_ATE ())
 	{
-		UINT32 phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 1 /* is_write */);
+		uint32_t phys = get_address_translation (cpustate, addr, 1 /* is_dataref */, 1 /* is_write */);
 		if (cpustate->pending_trap && GET_PSR_DAT ())
 		{
 #ifdef TRACE_PAGE_FAULT
@@ -762,7 +762,7 @@ static void fp_writemem_emu (i860s *cpustate, UINT32 addr, int size, UINT8 *data
 		memory_write_byte_64le(cpustate->program, addr+1, data[2]);
 		memory_write_byte_64le(cpustate->program, addr+0, data[3]);
 #else
-		UINT32 ddd = (data[3]) | (data[2] << 8) | (data[1] << 16) |(data[0] << 24);
+		uint32_t ddd = (data[3]) | (data[2] << 8) | (data[1] << 16) |(data[0] << 24);
 		memory_write_dword_64le(cpustate->program, addr+0, ddd);
 #endif
 	}
@@ -820,10 +820,10 @@ static void dump_pipe (i860s *cpustate, int type)
 		{
 			if (cpustate->A[i].stat.arp)
 				fprintf (stderr, "[%dd] 0x%016llx ", i + 1,
-						 *(UINT64 *)(&cpustate->A[i].val.d));
+						 *(uint64_t *)(&cpustate->A[i].val.d));
 			else
 				fprintf	(stderr, "[%ds] 0x%08x ", i + 1,
-						 *(UINT32 *)(&cpustate->A[i].val.s));
+						 *(uint32_t *)(&cpustate->A[i].val.s));
 		}
 		fprintf (stderr, "\n");
 	}
@@ -837,10 +837,10 @@ static void dump_pipe (i860s *cpustate, int type)
 		{
 			if (cpustate->M[i].stat.mrp)
 				fprintf (stderr, "[%dd] 0x%016llx ", i + 1,
-						 *(UINT64 *)(&cpustate->M[i].val.d));
+						 *(uint64_t *)(&cpustate->M[i].val.d));
 			else
 				fprintf	(stderr, "[%ds] 0x%08x ", i + 1,
-						 *(UINT32 *)(&cpustate->M[i].val.s));
+						 *(uint32_t *)(&cpustate->M[i].val.s));
 		}
 		fprintf (stderr, "\n");
 	}
@@ -853,10 +853,10 @@ static void dump_pipe (i860s *cpustate, int type)
 		{
 			if (cpustate->L[i].stat.lrp)
 				fprintf (stderr, "[%dd] 0x%016llx ", i + 1,
-						 *(UINT64 *)(&cpustate->L[i].val.d));
+						 *(uint64_t *)(&cpustate->L[i].val.d));
 			else
 				fprintf	(stderr, "[%ds] 0x%08x ", i + 1,
-						 *(UINT32 *)(&cpustate->L[i].val.s));
+						 *(uint32_t *)(&cpustate->L[i].val.s));
 		}
 		fprintf (stderr, "\n");
 	}
@@ -867,10 +867,10 @@ static void dump_pipe (i860s *cpustate, int type)
 		fprintf (stderr, "  I: ");
 		if (cpustate->G.stat.irp)
 			fprintf (stderr, "[1d] 0x%016llx\n",
-					 *(UINT64 *)(&cpustate->G.val.d));
+					 *(uint64_t *)(&cpustate->G.val.d));
 		else
 			fprintf	(stderr, "[1s] 0x%08x\n",
-					 *(UINT32 *)(&cpustate->G.val.s));
+					 *(uint32_t *)(&cpustate->G.val.s));
 	}
 }
 
@@ -895,7 +895,7 @@ static void dump_state (i860s *cpustate)
 		float ff = get_fregval_s (cpustate, rn);
 		if ((rn % 4) == 0)
 			fprintf (stderr, "\n");
-		fprintf (stderr, "%%f%-3d: 0x%08x  ", rn, *(UINT32 *)&ff);
+		fprintf (stderr, "%%f%-3d: 0x%08x  ", rn, *(uint32_t *)&ff);
 	}
 	fprintf (stderr, "\n");
 
@@ -915,26 +915,26 @@ static void dump_state (i860s *cpustate)
 #endif
 
 /* Sign extend N-bit number.  */
-INLINE INT32 sign_ext (UINT32 x, int n)
+INLINE int32_t sign_ext (uint32_t x, int n)
 {
-	INT32 t;
+	int32_t t;
 	t = x >> (n - 1);
 	t = ((-t) << n) | x;
 	return t;
 }
 
 
-static void unrecog_opcode (UINT32 pc, UINT32 insn)
+static void unrecog_opcode (uint32_t pc, uint32_t insn)
 {
 	fprintf (stderr, "0x%08x: 0x%08x   (unrecognized opcode)\n", pc, insn);
 }
 
 
 /* Execute "ld.c csrc2,idest" instruction.  */
-static void insn_ld_ctrl (i860s *cpustate, UINT32 insn)
+static void insn_ld_ctrl (i860s *cpustate, uint32_t insn)
 {
-	UINT32 csrc2 = get_creg (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t csrc2 = get_creg (insn);
+	uint32_t idest = get_idest (insn);
 
 #ifdef TRACE_UNDEFINED_I860
 	if (csrc2 > 5)
@@ -965,10 +965,10 @@ static void insn_ld_ctrl (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "st.c isrc1,csrc2" instruction.  */
-static void insn_st_ctrl (i860s *cpustate, UINT32 insn)
+static void insn_st_ctrl (i860s *cpustate, uint32_t insn)
 {
-	UINT32 csrc2 = get_creg (insn);
-	UINT32 isrc1 = get_isrc1 (insn);
+	uint32_t csrc2 = get_creg (insn);
+	uint32_t isrc1 = get_isrc1 (insn);
 
 #ifdef TRACE_UNDEFINED_I860
 	if (csrc2 > 5)
@@ -999,7 +999,7 @@ static void insn_st_ctrl (i860s *cpustate, UINT32 insn)
 	/* Update the register -- unless it is fir which cannot be updated.  */
 	if (csrc2 == CR_EPSR)
 	{
-		UINT32 enew = 0, tmp = 0;
+		uint32_t enew = 0, tmp = 0;
 		/* Make sure unchangeable EPSR bits stay unchanged (DCS, stepping,
            and type).  Also, some bits are only writeable in supervisor
            mode.  */
@@ -1020,8 +1020,8 @@ static void insn_st_ctrl (i860s *cpustate, UINT32 insn)
 		/* Some PSR bits are only writeable in supervisor mode.  */
 		if (GET_PSR_U ())
 		{
-			UINT32 enew = get_iregval (isrc1) & ~PSR_SUPERVISOR_ONLY_MASK;
-			UINT32 tmp = cpustate->cregs[CR_PSR] & PSR_SUPERVISOR_ONLY_MASK;
+			uint32_t enew = get_iregval (isrc1) & ~PSR_SUPERVISOR_ONLY_MASK;
+			uint32_t tmp = cpustate->cregs[CR_PSR] & PSR_SUPERVISOR_ONLY_MASK;
 			cpustate->cregs[CR_PSR] = enew | tmp;
 		}
 		else
@@ -1030,8 +1030,8 @@ static void insn_st_ctrl (i860s *cpustate, UINT32 insn)
 	else if (csrc2 == CR_FSR)
 	{
 		/* I believe that only 21..17, 8..5, and 3..0 should be updated.  */
-		UINT32 enew = get_iregval (isrc1) & 0x003e01ef;
-		UINT32 tmp = cpustate->cregs[CR_FSR] & ~0x003e01ef;
+		uint32_t enew = get_iregval (isrc1) & 0x003e01ef;
+		uint32_t tmp = cpustate->cregs[CR_FSR] & ~0x003e01ef;
 		cpustate->cregs[CR_FSR] = enew | tmp;
 	}
 	else if (csrc2 != CR_FIR)
@@ -1041,13 +1041,13 @@ static void insn_st_ctrl (i860s *cpustate, UINT32 insn)
 
 /* Execute "ld.{s,b,l} isrc1(isrc2),idest" or
    "ld.{s,b,l} #const(isrc2),idest".  */
-static void insn_ldx (i860s *cpustate, UINT32 insn)
+static void insn_ldx (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	INT32 immsrc1 = sign_ext (get_imm16 (insn), 16);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 eff = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	int32_t immsrc1 = sign_ext (get_imm16 (insn), 16);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t eff = 0;
 	/* Operand size, in bytes.  */
 	int sizes[4] = { 1, 1, 2, 4};
 	int size = 0;
@@ -1064,7 +1064,7 @@ static void insn_ldx (i860s *cpustate, UINT32 insn)
 	{
 		/* Chop off lower bits of displacement.  */
 		immsrc1 &= ~(size - 1);
-		eff = (UINT32)(immsrc1 + (INT32)(get_iregval (isrc2)));
+		eff = (uint32_t)(immsrc1 + (int32_t)(get_iregval (isrc2)));
 	}
 	else
 		eff	= get_iregval (isrc1) + get_iregval (isrc2);
@@ -1087,7 +1087,7 @@ static void insn_ldx (i860s *cpustate, UINT32 insn)
        is the target register).  */
 	if (size < 4)
 	{
-		UINT32 readval = sign_ext (readmemi_emu (cpustate, eff, size), size * 8);
+		uint32_t readval = sign_ext (readmemi_emu (cpustate, eff, size), size * 8);
 		/* Do not update register on page fault.  */
 		if (cpustate->exiting_readmem)
 		{
@@ -1097,7 +1097,7 @@ static void insn_ldx (i860s *cpustate, UINT32 insn)
 	}
 	else
 	{
-		UINT32 readval = readmemi_emu (cpustate, eff, size);
+		uint32_t readval = readmemi_emu (cpustate, eff, size);
 		/* Do not update register on page fault.  */
 		if (cpustate->exiting_readmem)
 		{
@@ -1111,12 +1111,12 @@ static void insn_ldx (i860s *cpustate, UINT32 insn)
 /* Execute "st.x isrc1ni,#const(isrc2)" instruction (there is no
    (reg + reg form).  Store uses the split immediate, not the normal
    16-bit immediate as in ld.x.  */
-static void insn_stx (i860s *cpustate, UINT32 insn)
+static void insn_stx (i860s *cpustate, uint32_t insn)
 {
-	INT32 immsrc = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 eff = 0;
+	int32_t immsrc = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t eff = 0;
 	/* Operand size, in bytes.  */
 	int sizes[4] = { 1, 1, 2, 4};
 	int size = 0;
@@ -1128,7 +1128,7 @@ static void insn_stx (i860s *cpustate, UINT32 insn)
 
 	/* Get effective address.  Chop off lower bits of displacement.  */
 	immsrc &= ~(size - 1);
-	eff = (UINT32)(immsrc + (INT32)get_iregval (isrc2));
+	eff = (uint32_t)(immsrc + (int32_t)get_iregval (isrc2));
 
 	/* Write data (value of reg isrc1) to memory at eff.  */
 	writememi_emu (cpustate, eff, size, get_iregval (isrc1));
@@ -1140,13 +1140,13 @@ static void insn_stx (i860s *cpustate, UINT32 insn)
 /* Execute "fst.y fdest,isrc1(isrc2)", "fst.y fdest,isrc1(isrc2)++",
            "fst.y fdest,#const(isrc2)" or "fst.y fdest,#const(isrc2)++"
    instruction.  */
-static void insn_fsty (i860s *cpustate, UINT32 insn)
+static void insn_fsty (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	INT32 immsrc1 = sign_ext (get_imm16 (insn), 16);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
-	UINT32 eff = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	int32_t immsrc1 = sign_ext (get_imm16 (insn), 16);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
+	uint32_t eff = 0;
 	/* Operand size, in bytes.  */
 	int sizes[4] = { 8, 4, 16, 4};
 	int size = 0;
@@ -1167,7 +1167,7 @@ static void insn_fsty (i860s *cpustate, UINT32 insn)
 	{
 		/* Chop off lower bits of displacement.  */
 		immsrc1 &= ~(size - 1);
-		eff = (UINT32)(immsrc1 + (INT32)(get_iregval (isrc2)));
+		eff = (uint32_t)(immsrc1 + (int32_t)(get_iregval (isrc2)));
 	}
 	else
 		eff	= get_iregval (isrc1) + get_iregval (isrc2);
@@ -1200,11 +1200,11 @@ static void insn_fsty (i860s *cpustate, UINT32 insn)
 
 	/* Write data (value of freg fdest) to memory at eff.  */
 	if (size == 4)
-		fp_writemem_emu (cpustate, eff, size, (UINT8 *)(&cpustate->frg[4 * (31 - fdest)]), 0xff);
+		fp_writemem_emu (cpustate, eff, size, (uint8_t *)(&cpustate->frg[4 * (31 - fdest)]), 0xff);
 	else if (size == 8)
-		fp_writemem_emu (cpustate, eff, size, (UINT8 *)(&cpustate->frg[4 * (31 - (fdest + 1))]), 0xff);
+		fp_writemem_emu (cpustate, eff, size, (uint8_t *)(&cpustate->frg[4 * (31 - (fdest + 1))]), 0xff);
 	else
-		fp_writemem_emu	(cpustate, eff, size, (UINT8 *)(&cpustate->frg[4 * (31 - (fdest + 3))]), 0xff);
+		fp_writemem_emu	(cpustate, eff, size, (uint8_t *)(&cpustate->frg[4 * (31 - (fdest + 3))]), 0xff);
 
 }
 
@@ -1212,13 +1212,13 @@ static void insn_fsty (i860s *cpustate, UINT32 insn)
 /* Execute "fld.y isrc1(isrc2),fdest", "fld.y isrc1(isrc2)++,idest",
            "fld.y #const(isrc2),fdest" or "fld.y #const(isrc2)++,idest".
    Where y = {l,d,q}.  Note, there is no pfld.q, though.  */
-static void insn_fldy (i860s *cpustate, UINT32 insn)
+static void insn_fldy (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	INT32 immsrc1 = sign_ext (get_imm16 (insn), 16);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
-	UINT32 eff = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	int32_t immsrc1 = sign_ext (get_imm16 (insn), 16);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
+	uint32_t eff = 0;
 	/* Operand size, in bytes.  */
 	int sizes[4] = { 8, 4, 16, 4};
 	int size = 0;
@@ -1247,7 +1247,7 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
 	{
 		/* Chop off lower bits of displacement.  */
 		immsrc1 &= ~(size - 1);
-		eff = (UINT32)(immsrc1 + (INT32)(get_iregval (isrc2)));
+		eff = (uint32_t)(immsrc1 + (int32_t)(get_iregval (isrc2)));
 	}
 	else
 		eff	= get_iregval (isrc1) + get_iregval (isrc2);
@@ -1288,11 +1288,11 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
 		if (fdest > 1)
 		{
 			if (size == 4)
-				fp_readmem_emu (cpustate, eff, size, (UINT8 *)&(cpustate->frg[4 * (31 - fdest)]));
+				fp_readmem_emu (cpustate, eff, size, (uint8_t *)&(cpustate->frg[4 * (31 - fdest)]));
 			else if (size == 8)
-				fp_readmem_emu (cpustate, eff, size, (UINT8 *)&(cpustate->frg[4 * (31 - (fdest + 1))]));
+				fp_readmem_emu (cpustate, eff, size, (uint8_t *)&(cpustate->frg[4 * (31 - (fdest + 1))]));
 			else if (size == 16)
-				fp_readmem_emu (cpustate, eff, size, (UINT8 *)&(cpustate->frg[4 * (31 - (fdest + 3))]));
+				fp_readmem_emu (cpustate, eff, size, (uint8_t *)&(cpustate->frg[4 * (31 - (fdest + 3))]));
 		}
 	}
 	else
@@ -1301,7 +1301,7 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
            for any traps before updating the pipeline.  The pipeline must
            stay unaffected after a trap so that the instruction can be
            properly restarted.  */
-		UINT8 bebuf[8];
+		uint8_t bebuf[8];
 		fp_readmem_emu (cpustate, eff, size, bebuf);
 		if (cpustate->pending_trap && cpustate->exiting_readmem)
 			goto ab_op;
@@ -1326,7 +1326,7 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
 		cpustate->L[1] = cpustate->L[0];
 		if (size == 8)
 		{
-			UINT8 *t = (UINT8 *)&(cpustate->L[0].val.d);
+			uint8_t *t = (uint8_t *)&(cpustate->L[0].val.d);
 #ifndef HOST_MSB
 			t[7] = bebuf[0]; t[6] = bebuf[1]; t[5] = bebuf[2]; t[4] = bebuf[3];
 			t[3] = bebuf[4]; t[2] = bebuf[5]; t[1] = bebuf[6]; t[0] = bebuf[7];
@@ -1338,7 +1338,7 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
 		}
 		else
 		{
-			UINT8 *t = (UINT8 *)&(cpustate->L[0].val.s);
+			uint8_t *t = (uint8_t *)&(cpustate->L[0].val.s);
 #ifndef HOST_MSB
 			t[3] = bebuf[0]; t[2] = bebuf[1]; t[1] = bebuf[2]; t[0] = bebuf[3];
 #else
@@ -1354,17 +1354,17 @@ static void insn_fldy (i860s *cpustate, UINT32 insn)
 
 /* Execute "pst.d fdest,#const(isrc2)" or "fst.d fdest,#const(isrc2)++"
    instruction.  */
-static void insn_pstd (i860s *cpustate, UINT32 insn)
+static void insn_pstd (i860s *cpustate, uint32_t insn)
 {
-	INT32 immsrc1 = sign_ext (get_imm16 (insn), 16);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
-	UINT32 eff = 0;
+	int32_t immsrc1 = sign_ext (get_imm16 (insn), 16);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
+	uint32_t eff = 0;
 	int auto_inc = (insn & 1);
-	UINT8 *bebuf = 0;
+	uint8_t *bebuf = 0;
 	int pm = GET_PSR_PM ();
 	int i;
-	UINT32 wmask;
+	uint32_t wmask;
 	int orig_pm = pm;
 
 	/* Get the pixel size, where:
@@ -1390,7 +1390,7 @@ static void insn_pstd (i860s *cpustate, UINT32 insn)
 
 	/* Get effective address.  Chop off lower bits of displacement.  */
 	immsrc1 &= ~(8 - 1);
-	eff = (UINT32)(immsrc1 + (INT32)(get_iregval (isrc2)));
+	eff = (uint32_t)(immsrc1 + (int32_t)(get_iregval (isrc2)));
 
 #ifdef TRACE_UNALIGNED_MEM
 	if (eff & (8 - 1))
@@ -1448,17 +1448,17 @@ static void insn_pstd (i860s *cpustate, UINT32 insn)
 		}
 		orig_pm <<= 1;
 	}
-	bebuf = (UINT8 *)(&cpustate->frg[4 * (31 - (fdest + 1))]);
+	bebuf = (uint8_t *)(&cpustate->frg[4 * (31 - (fdest + 1))]);
 	fp_writemem_emu (cpustate, eff, 8, bebuf, wmask);
 }
 
 
 /* Execute "ixfr isrc1ni,fdest" instruction.  */
-static void insn_ixfr (i860s *cpustate, UINT32 insn)
+static void insn_ixfr (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 fdest = get_fdest (insn);
-	UINT32 iv = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t fdest = get_fdest (insn);
+	uint32_t iv = 0;
 
 	/* This is a bit-pattern transfer, not a conversion.  */
 	iv = get_iregval (isrc1);
@@ -1467,13 +1467,13 @@ static void insn_ixfr (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "addu isrc1,isrc2,idest".  */
-static void insn_addu (i860s *cpustate, UINT32 insn)
+static void insn_addu (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
-	UINT64 tmp = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
+	uint64_t tmp = 0;
 
 	src1val = get_iregval (get_isrc1 (insn));
 
@@ -1487,7 +1487,7 @@ static void insn_addu (i860s *cpustate, UINT32 insn)
          OF = bit 31 carry
          CC = bit 31 carry.
      */
-	tmp = (UINT64)src1val + (UINT64)(get_iregval (isrc2));
+	tmp = (uint64_t)src1val + (uint64_t)(get_iregval (isrc2));
 	if ((tmp >> 32) & 1)
 	{
 		SET_PSR_CC (1);
@@ -1505,13 +1505,13 @@ static void insn_addu (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "addu #const,isrc2,idest".  */
-static void insn_addu_imm (i860s *cpustate, UINT32 insn)
+static void insn_addu_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
-	UINT64 tmp = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
+	uint64_t tmp = 0;
 
 	src1val = sign_ext (get_imm16 (insn), 16);
 
@@ -1525,7 +1525,7 @@ static void insn_addu_imm (i860s *cpustate, UINT32 insn)
          OF = bit 31 carry
          CC = bit 31 carry.
      */
-	tmp = (UINT64)src1val + (UINT64)(get_iregval (isrc2));
+	tmp = (uint64_t)src1val + (uint64_t)(get_iregval (isrc2));
 	if ((tmp >> 32) & 1)
 	{
 		SET_PSR_CC (1);
@@ -1543,12 +1543,12 @@ static void insn_addu_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "adds isrc1,isrc2,idest".  */
-static void insn_adds (i860s *cpustate, UINT32 insn)
+static void insn_adds (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 	int sa, sb, sres;
 
 	src1val = get_iregval (get_isrc1 (insn));
@@ -1572,7 +1572,7 @@ static void insn_adds (i860s *cpustate, UINT32 insn)
 	else
 		SET_EPSR_OF	(0);
 
-	if ((INT32)get_iregval (isrc2) < -(INT32)(src1val))
+	if ((int32_t)get_iregval (isrc2) < -(int32_t)(src1val))
 		SET_PSR_CC (1);
 	else
 		SET_PSR_CC (0);
@@ -1583,12 +1583,12 @@ static void insn_adds (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "adds #const,isrc2,idest".  */
-static void insn_adds_imm (i860s *cpustate, UINT32 insn)
+static void insn_adds_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 	int sa, sb, sres;
 
 	src1val = sign_ext (get_imm16 (insn), 16);
@@ -1612,7 +1612,7 @@ static void insn_adds_imm (i860s *cpustate, UINT32 insn)
 	else
 		SET_EPSR_OF	(0);
 
-	if ((INT32)get_iregval (isrc2) < -(INT32)(src1val))
+	if ((int32_t)get_iregval (isrc2) < -(int32_t)(src1val))
 		SET_PSR_CC (1);
 	else
 		SET_PSR_CC (0);
@@ -1623,12 +1623,12 @@ static void insn_adds_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "subu isrc1,isrc2,idest".  */
-static void insn_subu (i860s *cpustate, UINT32 insn)
+static void insn_subu (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 
 	src1val = get_iregval (get_isrc1 (insn));
 
@@ -1644,7 +1644,7 @@ static void insn_subu (i860s *cpustate, UINT32 insn)
          (i.e. CC set   if isrc2 <= isrc1
                CC clear if isrc2 > isrc1
      */
-	if ((UINT32)get_iregval (isrc2) <= (UINT32)src1val)
+	if ((uint32_t)get_iregval (isrc2) <= (uint32_t)src1val)
 	{
 		SET_PSR_CC (1);
 		SET_EPSR_OF (0);
@@ -1661,12 +1661,12 @@ static void insn_subu (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "subu #const,isrc2,idest".  */
-static void insn_subu_imm (i860s *cpustate, UINT32 insn)
+static void insn_subu_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 
 	src1val = sign_ext (get_imm16 (insn), 16);
 
@@ -1682,7 +1682,7 @@ static void insn_subu_imm (i860s *cpustate, UINT32 insn)
          (i.e. CC set   if isrc2 <= isrc1
                CC clear if isrc2 > isrc1
      */
-	if ((UINT32)get_iregval (isrc2) <= (UINT32)src1val)
+	if ((uint32_t)get_iregval (isrc2) <= (uint32_t)src1val)
 	{
 		SET_PSR_CC (1);
 		SET_EPSR_OF (0);
@@ -1699,12 +1699,12 @@ static void insn_subu_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "subs isrc1,isrc2,idest".  */
-static void insn_subs (i860s *cpustate, UINT32 insn)
+static void insn_subs (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 	int sa, sb, sres;
 
 	src1val = get_iregval (get_isrc1 (insn));
@@ -1728,7 +1728,7 @@ static void insn_subs (i860s *cpustate, UINT32 insn)
 	else
 		SET_EPSR_OF	(0);
 
-	if ((INT32)get_iregval (isrc2) > (INT32)(src1val))
+	if ((int32_t)get_iregval (isrc2) > (int32_t)(src1val))
 		SET_PSR_CC (1);
 	else
 		SET_PSR_CC (0);
@@ -1739,12 +1739,12 @@ static void insn_subs (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "subs #const,isrc2,idest".  */
-static void insn_subs_imm (i860s *cpustate, UINT32 insn)
+static void insn_subs_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 tmp_dest_val = 0;
+	uint32_t src1val;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t tmp_dest_val = 0;
 	int sa, sb, sres;
 
 	src1val = sign_ext (get_imm16 (insn), 16);
@@ -1768,7 +1768,7 @@ static void insn_subs_imm (i860s *cpustate, UINT32 insn)
 	else
 		SET_EPSR_OF	(0);
 
-	if ((INT32)get_iregval (isrc2) > (INT32)(src1val))
+	if ((int32_t)get_iregval (isrc2) > (int32_t)(src1val))
 		SET_PSR_CC (1);
 	else
 		SET_PSR_CC (0);
@@ -1779,11 +1779,11 @@ static void insn_subs_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "shl isrc1,isrc2,idest".  */
-static void insn_shl (i860s *cpustate, UINT32 insn)
+static void insn_shl (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = get_iregval (get_isrc1 (insn));
 	set_iregval (idest, get_iregval (isrc2) << src1val);
@@ -1791,11 +1791,11 @@ static void insn_shl (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "shl #const,isrc2,idest".  */
-static void insn_shl_imm (i860s *cpustate, UINT32 insn)
+static void insn_shl_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = sign_ext (get_imm16 (insn), 16);
 	set_iregval (idest, get_iregval (isrc2) << src1val);
@@ -1803,15 +1803,15 @@ static void insn_shl_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "shr isrc1,isrc2,idest".  */
-static void insn_shr (i860s *cpustate, UINT32 insn)
+static void insn_shr (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = get_iregval (get_isrc1 (insn));
 
-	/* The iregs array is UINT32, so this is a logical shift.  */
+	/* The iregs array is uint32_t, so this is a logical shift.  */
 	set_iregval (idest, get_iregval (isrc2) >> src1val);
 
 	/* shr also sets the SC in psr (shift count).  */
@@ -1820,15 +1820,15 @@ static void insn_shr (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "shr #const,isrc2,idest".  */
-static void insn_shr_imm (i860s *cpustate, UINT32 insn)
+static void insn_shr_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = sign_ext (get_imm16 (insn), 16);
 
-	/* The iregs array is UINT32, so this is a logical shift.  */
+	/* The iregs array is uint32_t, so this is a logical shift.  */
 	set_iregval (idest, get_iregval (isrc2) >> src1val);
 
 	/* shr also sets the SC in psr (shift count).  */
@@ -1837,41 +1837,41 @@ static void insn_shr_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "shra isrc1,isrc2,idest".  */
-static void insn_shra (i860s *cpustate, UINT32 insn)
+static void insn_shra (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = get_iregval (get_isrc1 (insn));
 
-	/* The iregs array is UINT32, so cast isrc2 to get arithmetic shift.  */
-	set_iregval (idest, (INT32)get_iregval (isrc2) >> src1val);
+	/* The iregs array is uint32_t, so cast isrc2 to get arithmetic shift.  */
+	set_iregval (idest, (int32_t)get_iregval (isrc2) >> src1val);
 }
 
 
 /* Execute "shra #const,isrc2,idest".  */
-static void insn_shra_imm (i860s *cpustate, UINT32 insn)
+static void insn_shra_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
 
 	src1val = sign_ext (get_imm16 (insn), 16);
 
-	/* The iregs array is UINT32, so cast isrc2 to get arithmetic shift.  */
-	set_iregval (idest, (INT32)get_iregval (isrc2) >> src1val);
+	/* The iregs array is uint32_t, so cast isrc2 to get arithmetic shift.  */
+	set_iregval (idest, (int32_t)get_iregval (isrc2) >> src1val);
 }
 
 
 /* Execute "shrd isrc1ni,isrc2,idest" instruction.  */
-static void insn_shrd (i860s *cpustate, UINT32 insn)
+static void insn_shrd (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 sc = GET_PSR_SC ();
-	UINT32 tmp;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t sc = GET_PSR_SC ();
+	uint32_t tmp;
 
 	/* Do the operation:
        idest = low_32(isrc1ni:isrc2 >> sc).  */
@@ -1887,12 +1887,12 @@ static void insn_shrd (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "and isrc1,isrc2,idest".  */
-static void insn_and (i860s *cpustate, UINT32 insn)
+static void insn_and (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	res = get_iregval (isrc1) & get_iregval (isrc2);
@@ -1908,12 +1908,12 @@ static void insn_and (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "and #const,isrc2,idest".  */
-static void insn_and_imm (i860s *cpustate, UINT32 insn)
+static void insn_and_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -1930,12 +1930,12 @@ static void insn_and_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "andh #const,isrc2,idest".  */
-static void insn_andh_imm (i860s *cpustate, UINT32 insn)
+static void insn_andh_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -1952,12 +1952,12 @@ static void insn_andh_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "andnot isrc1,isrc2,idest".  */
-static void insn_andnot (i860s *cpustate, UINT32 insn)
+static void insn_andnot (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	res = (~get_iregval (isrc1)) & get_iregval (isrc2);
@@ -1973,12 +1973,12 @@ static void insn_andnot (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "andnot #const,isrc2,idest".  */
-static void insn_andnot_imm (i860s *cpustate, UINT32 insn)
+static void insn_andnot_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -1995,12 +1995,12 @@ static void insn_andnot_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "andnoth #const,isrc2,idest".  */
-static void insn_andnoth_imm (i860s *cpustate, UINT32 insn)
+static void insn_andnoth_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -2017,12 +2017,12 @@ static void insn_andnoth_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "or isrc1,isrc2,idest".  */
-static void insn_or (i860s *cpustate, UINT32 insn)
+static void insn_or (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	res = get_iregval (isrc1) | get_iregval (isrc2);
@@ -2038,12 +2038,12 @@ static void insn_or (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "or #const,isrc2,idest".  */
-static void insn_or_imm (i860s *cpustate, UINT32 insn)
+static void insn_or_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -2060,12 +2060,12 @@ static void insn_or_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "orh #const,isrc2,idest".  */
-static void insn_orh_imm (i860s *cpustate, UINT32 insn)
+static void insn_orh_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -2082,12 +2082,12 @@ static void insn_orh_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "xor isrc1,isrc2,idest".  */
-static void insn_xor (i860s *cpustate, UINT32 insn)
+static void insn_xor (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	res = get_iregval (isrc1) ^ get_iregval (isrc2);
@@ -2103,12 +2103,12 @@ static void insn_xor (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "xor #const,isrc2,idest".  */
-static void insn_xor_imm (i860s *cpustate, UINT32 insn)
+static void insn_xor_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -2125,12 +2125,12 @@ static void insn_xor_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "xorh #const,isrc2,idest".  */
-static void insn_xorh_imm (i860s *cpustate, UINT32 insn)
+static void insn_xorh_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 idest = get_idest (insn);
-	UINT32 res = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t idest = get_idest (insn);
+	uint32_t res = 0;
 
 	/* Do the operation.  */
 	src1val = get_imm16 (insn);
@@ -2147,7 +2147,7 @@ static void insn_xorh_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "trap isrc1ni,isrc2,idest" instruction.  */
-static void insn_trap (i860s *cpustate, UINT32 insn)
+static void insn_trap (i860s *cpustate, uint32_t insn)
 {
 	SET_PSR_IT (1);
 	cpustate->pending_trap = 1;
@@ -2155,7 +2155,7 @@ static void insn_trap (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "intovr" instruction.  */
-static void insn_intovr (i860s *cpustate, UINT32 insn)
+static void insn_intovr (i860s *cpustate, uint32_t insn)
 {
 	if (GET_EPSR_OF ())
 	{
@@ -2166,19 +2166,19 @@ static void insn_intovr (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bte isrc1,isrc2,sbroff".  */
-static void insn_bte (i860s *cpustate, UINT32 insn)
+static void insn_bte (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 target_addr = 0;
-	INT32 sbroff = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t target_addr = 0;
+	int32_t sbroff = 0;
 	int res = 0;
 
 	src1val = get_iregval (get_isrc1 (insn));
 
 	/* Compute the target address from the sbroff field.  */
 	sbroff = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	target_addr = (INT32)cpustate->pc + 4 + (sbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (sbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (src1val == get_iregval (isrc2));
@@ -2194,19 +2194,19 @@ static void insn_bte (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bte #const5,isrc2,sbroff".  */
-static void insn_bte_imm (i860s *cpustate, UINT32 insn)
+static void insn_bte_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 target_addr = 0;
-	INT32 sbroff = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t target_addr = 0;
+	int32_t sbroff = 0;
 	int res = 0;
 
 	src1val = (insn >> 11) & 0x1f;	/* 5-bit field, zero-extended.  */
 
 	/* Compute the target address from the sbroff field.  */
 	sbroff = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	target_addr = (INT32)cpustate->pc + 4 + (sbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (sbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (src1val == get_iregval (isrc2));
@@ -2222,19 +2222,19 @@ static void insn_bte_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "btne isrc1,isrc2,sbroff".  */
-static void insn_btne (i860s *cpustate, UINT32 insn)
+static void insn_btne (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 target_addr = 0;
-	INT32 sbroff = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t target_addr = 0;
+	int32_t sbroff = 0;
 	int res = 0;
 
 	src1val = get_iregval (get_isrc1 (insn));
 
 	/* Compute the target address from the sbroff field.  */
 	sbroff = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	target_addr = (INT32)cpustate->pc + 4 + (sbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (sbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (src1val != get_iregval (isrc2));
@@ -2250,19 +2250,19 @@ static void insn_btne (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "btne #const5,isrc2,sbroff".  */
-static void insn_btne_imm (i860s *cpustate, UINT32 insn)
+static void insn_btne_imm (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = 0;
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 target_addr = 0;
-	INT32 sbroff = 0;
+	uint32_t src1val = 0;
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t target_addr = 0;
+	int32_t sbroff = 0;
 	int res = 0;
 
 	src1val = (insn >> 11) & 0x1f;	/* 5-bit field, zero-extended.  */
 
 	/* Compute the target address from the sbroff field.  */
 	sbroff = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	target_addr = (INT32)cpustate->pc + 4 + (sbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (sbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (src1val != get_iregval (isrc2));
@@ -2278,15 +2278,15 @@ static void insn_btne_imm (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bc lbroff" instruction.  */
-static void insn_bc (i860s *cpustate, UINT32 insn)
+static void insn_bc (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
 	int res = 0;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (GET_PSR_CC () == 1);
@@ -2302,15 +2302,15 @@ static void insn_bc (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bnc lbroff" instruction.  */
-static void insn_bnc (i860s *cpustate, UINT32 insn)
+static void insn_bnc (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
 	int res = 0;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (GET_PSR_CC () == 0);
@@ -2327,16 +2327,16 @@ static void insn_bnc (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bc.t lbroff" instruction.  */
-static void insn_bct (i860s *cpustate, UINT32 insn)
+static void insn_bct (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
 	int res = 0;
-	UINT32 orig_pc = cpustate->pc;
+	uint32_t orig_pc = cpustate->pc;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (GET_PSR_CC () == 1);
@@ -2371,16 +2371,16 @@ static void insn_bct (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bnc.t lbroff" instruction.  */
-static void insn_bnct (i860s *cpustate, UINT32 insn)
+static void insn_bnct (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
 	int res = 0;
-	UINT32 orig_pc = cpustate->pc;
+	uint32_t orig_pc = cpustate->pc;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Determine comparison result.  */
 	res = (GET_PSR_CC () == 0);
@@ -2415,15 +2415,15 @@ static void insn_bnct (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "call lbroff" instruction.  */
-static void insn_call (i860s *cpustate, UINT32 insn)
+static void insn_call (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
-	UINT32 orig_pc = cpustate->pc;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
+	uint32_t orig_pc = cpustate->pc;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Execute the delay slot instruction.  */
 	cpustate->pc += 4;
@@ -2447,15 +2447,15 @@ static void insn_call (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "br lbroff".  */
-static void insn_br (i860s *cpustate, UINT32 insn)
+static void insn_br (i860s *cpustate, uint32_t insn)
 {
-	UINT32 target_addr = 0;
-	INT32 lbroff = 0;
-	UINT32 orig_pc = cpustate->pc;
+	uint32_t target_addr = 0;
+	int32_t lbroff = 0;
+	uint32_t orig_pc = cpustate->pc;
 
 	/* Compute the target address from the lbroff field.  */
 	lbroff = sign_ext ((insn & 0x03ffffff), 26);
-	target_addr = (INT32)cpustate->pc + 4 + (lbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (lbroff << 2);
 
 	/* Execute the delay slot instruction.  */
 	cpustate->pc += 4;
@@ -2478,12 +2478,12 @@ static void insn_br (i860s *cpustate, UINT32 insn)
 /* Execute "bri isrc1ni" instruction.
    Note: I didn't merge this code with calli because bri must do
    a lot of flag manipulation if any trap bits are set.  */
-static void insn_bri (i860s *cpustate, UINT32 insn)
+static void insn_bri (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 orig_pc = cpustate->pc;
-	UINT32 orig_psr = cpustate->cregs[CR_PSR];
-	UINT32 orig_src1_val = get_iregval (isrc1);
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t orig_pc = cpustate->pc;
+	uint32_t orig_psr = cpustate->cregs[CR_PSR];
+	uint32_t orig_src1_val = get_iregval (isrc1);
 
 #if 1 /* TURBO.  */
 	cpustate->cregs[CR_PSR] &= ~PSR_ALL_TRAP_BITS_MASK;
@@ -2523,11 +2523,11 @@ static void insn_bri (i860s *cpustate, UINT32 insn)
 }
 
 /* Execute "calli isrc1ni" instruction.  */
-static void insn_calli (i860s *cpustate, UINT32 insn)
+static void insn_calli (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 orig_pc = cpustate->pc;
-	UINT32 orig_src1_val = get_iregval (isrc1);
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t orig_pc = cpustate->pc;
+	uint32_t orig_src1_val = get_iregval (isrc1);
 
 #ifdef TRACE_UNDEFINED_I860
 	/* Check for undefined behavior.  */
@@ -2561,15 +2561,15 @@ static void insn_calli (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "bla isrc1ni,isrc2,sbroff" instruction.  */
-static void insn_bla (i860s *cpustate, UINT32 insn)
+static void insn_bla (i860s *cpustate, uint32_t insn)
 {
-	UINT32 isrc1 = get_isrc1 (insn);
-	UINT32 isrc2 = get_isrc2 (insn);
-	UINT32 target_addr = 0;
-	INT32 sbroff = 0;
+	uint32_t isrc1 = get_isrc1 (insn);
+	uint32_t isrc2 = get_isrc2 (insn);
+	uint32_t target_addr = 0;
+	int32_t sbroff = 0;
 	int lcc_tmp = 0;
-	UINT32 orig_pc = cpustate->pc;
-	UINT32 orig_isrc2val = get_iregval (isrc2);
+	uint32_t orig_pc = cpustate->pc;
+	uint32_t orig_isrc2val = get_iregval (isrc2);
 
 #ifdef TRACE_UNDEFINED_I860
 	/* Check for undefined behavior.  */
@@ -2583,10 +2583,10 @@ static void insn_bla (i860s *cpustate, UINT32 insn)
 
 	/* Compute the target address from the sbroff field.  */
 	sbroff = sign_ext ((((insn >> 5) & 0xf800) | (insn & 0x07ff)), 16);
-	target_addr = (INT32)cpustate->pc + 4 + (sbroff << 2);
+	target_addr = (int32_t)cpustate->pc + 4 + (sbroff << 2);
 
 	/* Determine comparison result based on opcode.  */
-	lcc_tmp = ((INT32)get_iregval (isrc2) >= -(INT32)get_iregval (isrc1));
+	lcc_tmp = ((int32_t)get_iregval (isrc2) >= -(int32_t)get_iregval (isrc1));
 
 	set_iregval (isrc2, get_iregval (isrc1) + orig_isrc2val);
 
@@ -2616,12 +2616,12 @@ static void insn_bla (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "flush #const(isrc2)" or "flush #const(isrc2)++" instruction.  */
-static void insn_flush (i860s *cpustate, UINT32 insn)
+static void insn_flush (i860s *cpustate, uint32_t insn)
 {
-	UINT32 src1val = sign_ext (get_imm16 (insn), 16);
-	UINT32 isrc2 = get_isrc2 (insn);
+	uint32_t src1val = sign_ext (get_imm16 (insn), 16);
+	uint32_t isrc2 = get_isrc2 (insn);
 	int auto_inc = (insn & 1);
-	UINT32 eff = 0;
+	uint32_t eff = 0;
 
 	/* Technically, idest should be encoded as r0 because idest
        is undefined after the instruction.  We don't currently
@@ -2654,11 +2654,11 @@ static void insn_flush (i860s *cpustate, UINT32 insn)
 
    The pfmul3.dd differs from pfmul.dd in that it treats the pipeline
    as 3 stages, even though it is a double precision multiply.  */
-static void insn_fmul (i860s *cpustate, UINT32 insn)
+static void insn_fmul (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
@@ -2790,17 +2790,17 @@ static void insn_fmul (i860s *cpustate, UINT32 insn)
 
 
 /* Execute "fmlow.dd fsrc1,fsrc2,fdest" instruction.  */
-static void insn_fmlow (i860s *cpustate, UINT32 insn)
+static void insn_fmlow (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 
 	double v1 = get_fregval_d (cpustate, fsrc1);
 	double v2 = get_fregval_d (cpustate, fsrc2);
-	INT64 i1 = *(UINT64 *)&v1;
-	INT64 i2 = *(UINT64 *)&v2;
-	INT64 tmp = 0;
+	int64_t i1 = *(uint64_t *)&v1;
+	int64_t i2 = *(uint64_t *)&v2;
+	int64_t tmp = 0;
 
 	/* Only .dd is valid for fmlow.  */
 	if ((insn & 0x180) != 0x180)
@@ -2823,11 +2823,11 @@ static void insn_fmlow (i860s *cpustate, UINT32 insn)
 
 
 /* Execute [p]fadd.{ss,sd,dd} fsrc1,fsrc2,fdest (.ds disallowed above).  */
-static void insn_fadd_sub (i860s *cpustate, UINT32 insn)
+static void insn_fadd_sub (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
@@ -2988,11 +2988,11 @@ static const struct
 	/* 1111 */ { OP_SRC1, OP_SRC2,        OP_T,           OP_APIPE|FLAGM, 0, 0}
 };
 
-static float get_fval_from_optype_s (i860s *cpustate, UINT32 insn, int optype)
+static float get_fval_from_optype_s (i860s *cpustate, uint32_t insn, int optype)
 {
 	float retval = 0.0;
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
 
 	optype &= ~FLAGM;
 	switch (optype)
@@ -3027,11 +3027,11 @@ static float get_fval_from_optype_s (i860s *cpustate, UINT32 insn, int optype)
 }
 
 
-static double get_fval_from_optype_d (i860s *cpustate, UINT32 insn, int optype)
+static double get_fval_from_optype_d (i860s *cpustate, uint32_t insn, int optype)
 {
 	double retval = 0.0;
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
 
 	optype &= ~FLAGM;
 	switch (optype)
@@ -3076,11 +3076,11 @@ static double get_fval_from_optype_d (i860s *cpustate, UINT32 insn, int optype)
    floating point operations.  The S bit denotes the precision of the
    multiplication source, while the R bit denotes the precision of
    the addition source as well as precision of all results.  */
-static void insn_dualop (i860s *cpustate, UINT32 insn)
+static void insn_dualop (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int is_pfam = insn & 0x400;		 /* 1 = pfam, 0 = pfmam.  */
@@ -3337,10 +3337,10 @@ static void insn_dualop (i860s *cpustate, UINT32 insn)
 
 
 /* Execute frcp.{ss,sd,dd} fsrc2,fdest (.ds disallowed above).  */
-static void insn_frcp (i860s *cpustate, UINT32 insn)
+static void insn_frcp (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 
@@ -3366,9 +3366,9 @@ static void insn_frcp (i860s *cpustate, UINT32 insn)
 			/* Real i860 isn't a precise as a real divide, but this should
                be okay.  */
 			SET_FSR_SE (0);
-			*((UINT64 *)&v) &= 0xfffff00000000000ULL;
+			*((uint64_t *)&v) &= 0xfffff00000000000ULL;
 			res = (double)1.0/v;
-			*((UINT64 *)&res) &= 0xfffff00000000000ULL;
+			*((uint64_t *)&res) &= 0xfffff00000000000ULL;
 			if (res_prec)
 				set_fregval_d (cpustate, fdest, res);
 			else
@@ -3395,9 +3395,9 @@ static void insn_frcp (i860s *cpustate, UINT32 insn)
 			/* Real i860 isn't a precise as a real divide, but this should
                be okay.  */
 			SET_FSR_SE (0);
-			*((UINT32 *)&v) &= 0xffff8000;
+			*((uint32_t *)&v) &= 0xffff8000;
 			res = (float)1.0/v;
-			*((UINT32 *)&res) &= 0xffff8000;
+			*((uint32_t *)&res) &= 0xffff8000;
 			if (res_prec)
 				set_fregval_d (cpustate, fdest, (double)res);
 			else
@@ -3408,10 +3408,10 @@ static void insn_frcp (i860s *cpustate, UINT32 insn)
 
 
 /* Execute frsqr.{ss,sd,dd} fsrc2,fdest (.ds disallowed above).  */
-static void insn_frsqr (i860s *cpustate, UINT32 insn)
+static void insn_frsqr (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 
@@ -3449,9 +3449,9 @@ static void insn_frsqr (i860s *cpustate, UINT32 insn)
 		else
 		{
 			SET_FSR_SE (0);
-			*((UINT64 *)&v) &= 0xfffff00000000000ULL;
+			*((uint64_t *)&v) &= 0xfffff00000000000ULL;
 			res = (double)1.0/sqrt (v);
-			*((UINT64 *)&res) &= 0xfffff00000000000ULL;
+			*((uint64_t *)&res) &= 0xfffff00000000000ULL;
 			if (res_prec)
 				set_fregval_d (cpustate, fdest, res);
 			else
@@ -3476,9 +3476,9 @@ static void insn_frsqr (i860s *cpustate, UINT32 insn)
 		else
 		{
 			SET_FSR_SE (0);
-			*((UINT32 *)&v) &= 0xffff8000;
+			*((uint32_t *)&v) &= 0xffff8000;
 			res = (float)1.0/sqrt (v);
-			*((UINT32 *)&res) &= 0xffff8000;
+			*((uint32_t *)&res) &= 0xffff8000;
 			if (res_prec)
 				set_fregval_d (cpustate, fdest, (double)res);
 			else
@@ -3489,15 +3489,15 @@ static void insn_frsqr (i860s *cpustate, UINT32 insn)
 
 
 /* Execute fxfr fsrc1,idest.  */
-static void insn_fxfr (i860s *cpustate, UINT32 insn)
+static void insn_fxfr (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 idest = get_idest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t idest = get_idest (insn);
 	float fv = 0;
 
 	/* This is a bit-pattern transfer, not a conversion.  */
 	fv = get_fregval_s (cpustate, fsrc1);
-	set_iregval (idest, *(UINT32 *)&fv);
+	set_iregval (idest, *(uint32_t *)&fv);
 }
 
 
@@ -3509,10 +3509,10 @@ static void insn_fxfr (i860s *cpustate, UINT32 insn)
    results.  Inconsistent.
    Update: The vendor SVR4 assembler does not accept .ss combination,
    so the latter sentence above appears to be the correct way.  */
-static void insn_ftrunc (i860s *cpustate, UINT32 insn)
+static void insn_ftrunc (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
@@ -3530,7 +3530,7 @@ static void insn_ftrunc (i860s *cpustate, UINT32 insn)
 	if (src_prec)
 	{
 		double v1 = get_fregval_d (cpustate, fsrc1);
-		INT32 iv = (INT32)v1;
+		int32_t iv = (int32_t)v1;
 		/* We always write a single, since the lower 32-bits of fdest
            get the result (and the even numbered reg is the lower).  */
 		set_fregval_s (cpustate, fdest, *(float *)&iv);
@@ -3538,7 +3538,7 @@ static void insn_ftrunc (i860s *cpustate, UINT32 insn)
 	else
 	{
 		float v1 = get_fregval_s (cpustate, fsrc1);
-		INT32 iv = (INT32)v1;
+		int32_t iv = (int32_t)v1;
 		/* We always write a single, since the lower 32-bits of fdest
            get the result (and the even numbered reg is the lower).  */
 		set_fregval_s (cpustate, fdest, *(float *)&iv);
@@ -3558,10 +3558,10 @@ static void insn_ftrunc (i860s *cpustate, UINT32 insn)
 
 
 /* Execute [p]famov.{ss,sd,ds,dd} fsrc1,fdest.  */
-static void insn_famov (i860s *cpustate, UINT32 insn)
+static void insn_famov (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
@@ -3635,11 +3635,11 @@ static void insn_famov (i860s *cpustate, UINT32 insn)
 
 
 /* Execute [p]fiadd/sub.{ss,dd} fsrc1,fsrc2,fdest.  */
-static void insn_fiadd_sub (i860s *cpustate, UINT32 insn)
+static void insn_fiadd_sub (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	int res_prec = insn & 0x080;	 /* 1 = double, 0 = single.  */
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
@@ -3661,9 +3661,9 @@ static void insn_fiadd_sub (i860s *cpustate, UINT32 insn)
 	{
 		double v1 = get_fregval_d (cpustate, fsrc1);
 		double v2 = get_fregval_d (cpustate, fsrc2);
-		UINT64 iv1 = *(UINT64 *)&v1;
-		UINT64 iv2 = *(UINT64 *)&v2;
-		UINT64 r;
+		uint64_t iv1 = *(uint64_t *)&v1;
+		uint64_t iv2 = *(uint64_t *)&v2;
+		uint64_t r;
 		if (is_sub)
 			r = iv1 - iv2;
 		else
@@ -3677,13 +3677,13 @@ static void insn_fiadd_sub (i860s *cpustate, UINT32 insn)
 	{
 		float v1 = get_fregval_s (cpustate, fsrc1);
 		float v2 = get_fregval_s (cpustate, fsrc2);
-		UINT64 iv1 = (UINT64)(*(UINT32 *)&v1);
-		UINT64 iv2 = (UINT64)(*(UINT32 *)&v2);
-		UINT32 r;
+		uint64_t iv1 = (uint64_t)(*(uint32_t *)&v1);
+		uint64_t iv2 = (uint64_t)(*(uint32_t *)&v2);
+		uint32_t r;
 		if (is_sub)
-			r = (UINT32)(iv1 - iv2);
+			r = (uint32_t)(iv1 - iv2);
 		else
-			r = (UINT32)(iv1 + iv2);
+			r = (uint32_t)(iv1 + iv2);
 		if (res_prec)
 			assert (0);	   /* .sd not allowed.  */
 		else
@@ -3735,11 +3735,11 @@ static void insn_fiadd_sub (i860s *cpustate, UINT32 insn)
 
 /* Execute pf{gt,le,eq}.{ss,dd} fsrc1,fsrc2,fdest.
    Opcode pfgt has R bit cleared; pfle has R bit set.  */
-static void insn_fcmp (i860s *cpustate, UINT32 insn)
+static void insn_fcmp (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int src_prec = insn & 0x100;	 /* 1 = double, 0 = single.  */
 	double dbl_tmp_dest = 0.0;
 	double sgl_tmp_dest = 0.0;
@@ -3814,20 +3814,20 @@ static void insn_fcmp (i860s *cpustate, UINT32 insn)
 
 /* Execute [p]fzchk{l,s} fsrc1,fsrc2,fdest.
    The fzchk instructions have S and R bits set.  */
-static void insn_fzchk (i860s *cpustate, UINT32 insn)
+static void insn_fzchk (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
 	int is_fzchks = insn & 8;		 /* 1 = fzchks, 0 = fzchkl.  */
 	double dbl_tmp_dest = 0.0;
 	int i;
 	double v1 = get_fregval_d (cpustate, fsrc1);
 	double v2 = get_fregval_d (cpustate, fsrc2);
-	UINT64 iv1 = *(UINT64 *)&v1;
-	UINT64 iv2 = *(UINT64 *)&v2;
-	UINT64 r = 0;
+	uint64_t iv1 = *(uint64_t *)&v1;
+	uint64_t iv2 = *(uint64_t *)&v2;
+	uint64_t r = 0;
 	char pm = GET_PSR_PM ();
 
 	/* Check for S and R bits set.  */
@@ -3845,16 +3845,16 @@ static void insn_fzchk (i860s *cpustate, UINT32 insn)
 		pm = (pm >> 4) & 0x0f;
 		for (i = 3; i >= 0; i--)
 		{
-			UINT16 ps1 = (iv1 >> (i * 16)) & 0xffff;
-			UINT16 ps2 = (iv2 >> (i * 16)) & 0xffff;
+			uint16_t ps1 = (iv1 >> (i * 16)) & 0xffff;
+			uint16_t ps2 = (iv2 >> (i * 16)) & 0xffff;
 			if (ps2 <= ps1)
 			{
-				r |= ((UINT64)ps2 << (i * 16));
+				r |= ((uint64_t)ps2 << (i * 16));
 				pm |= (1 << (7 - (3 - i)));
 			}
 			else
 			{
-				r |= ((UINT64)ps1 << (i * 16));
+				r |= ((uint64_t)ps1 << (i * 16));
 				pm &= ~(1 << (7 - (3 - i)));
 			}
 		}
@@ -3864,16 +3864,16 @@ static void insn_fzchk (i860s *cpustate, UINT32 insn)
 		pm = (pm >> 2) & 0x3f;
 		for (i = 1; i >= 0; i--)
 		{
-			UINT32 ps1 = (iv1 >> (i * 32)) & 0xffffffff;
-			UINT32 ps2 = (iv2 >> (i * 32)) & 0xffffffff;
+			uint32_t ps1 = (iv1 >> (i * 32)) & 0xffffffff;
+			uint32_t ps2 = (iv2 >> (i * 32)) & 0xffffffff;
 			if (ps2 <= ps1)
 			{
-				r |= ((UINT64)ps2 << (i * 32));
+				r |= ((uint64_t)ps2 << (i * 32));
 				pm |= (1 << (7 - (1 - i)));
 			}
 			else
 			{
-				r |= ((UINT64)ps1 << (i * 32));
+				r |= ((uint64_t)ps1 << (i * 32));
 				pm &= ~(1 << (7 - (1 - i)));
 			}
 		}
@@ -3910,14 +3910,14 @@ static void insn_fzchk (i860s *cpustate, UINT32 insn)
 
 /* Execute [p]form.dd fsrc1,fdest.
    The form.dd instructions have S and R bits set.  */
-static void insn_form (i860s *cpustate, UINT32 insn)
+static void insn_form (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
 	double dbl_tmp_dest = 0.0;
 	double v1 = get_fregval_d (cpustate, fsrc1);
-	UINT64 iv1 = *(UINT64 *)&v1;
+	uint64_t iv1 = *(uint64_t *)&v1;
 
 	/* Check for S and R bits set.  */
 	if ((insn & 0x180) != 0x180)
@@ -3956,18 +3956,18 @@ static void insn_form (i860s *cpustate, UINT32 insn)
 
 
 /* Execute [p]faddp fsrc1,fsrc2,fdest.  */
-static void insn_faddp (i860s *cpustate, UINT32 insn)
+static void insn_faddp (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
 	double dbl_tmp_dest = 0.0;
 	double v1 = get_fregval_d (cpustate, fsrc1);
 	double v2 = get_fregval_d (cpustate, fsrc2);
-	UINT64 iv1 = *(UINT64 *)&v1;
-	UINT64 iv2 = *(UINT64 *)&v2;
-	UINT64 r = 0;
+	uint64_t iv1 = *(uint64_t *)&v1;
+	uint64_t iv2 = *(uint64_t *)&v2;
+	uint64_t r = 0;
 	int ps = GET_PSR_PS ();
 
 	r = iv1 + iv2;
@@ -4021,18 +4021,18 @@ static void insn_faddp (i860s *cpustate, UINT32 insn)
 
 
 /* Execute [p]faddz fsrc1,fsrc2,fdest.  */
-static void insn_faddz (i860s *cpustate, UINT32 insn)
+static void insn_faddz (i860s *cpustate, uint32_t insn)
 {
-	UINT32 fsrc1 = get_fsrc1 (insn);
-	UINT32 fsrc2 = get_fsrc2 (insn);
-	UINT32 fdest = get_fdest (insn);
+	uint32_t fsrc1 = get_fsrc1 (insn);
+	uint32_t fsrc2 = get_fsrc2 (insn);
+	uint32_t fdest = get_fdest (insn);
 	int piped = insn & 0x400;		 /* 1 = pipelined, 0 = scalar.  */
 	double dbl_tmp_dest = 0.0;
 	double v1 = get_fregval_d (cpustate, fsrc1);
 	double v2 = get_fregval_d (cpustate, fsrc2);
-	UINT64 iv1 = *(UINT64 *)&v1;
-	UINT64 iv2 = *(UINT64 *)&v2;
-	UINT64 r = 0;
+	uint64_t iv1 = *(uint64_t *)&v1;
+	uint64_t iv2 = *(uint64_t *)&v2;
+	uint64_t r = 0;
 
 	r = iv1 + iv2;
 	dbl_tmp_dest = *(double *)&r;
@@ -4075,7 +4075,7 @@ enum {
 
 typedef struct {
 	/* Execute function for this opcode.  */
-	void (*insn_exec)(i860s *, UINT32);
+	void (*insn_exec)(i860s *, uint32_t);
 
 	/* Flags for this opcode.  */
 	char flags;
@@ -4310,7 +4310,7 @@ static const decode_tbl_t fp_decode_tbl[128] = {
  *  insn = instruction at the current PC to execute.
  *  non_shadow = This insn is not in the shadow of a delayed branch).
  */
-static void decode_exec (i860s *cpustate, UINT32 insn, UINT32 non_shadow)
+static void decode_exec (i860s *cpustate, uint32_t insn, uint32_t non_shadow)
 {
 	int upper_6bits = (insn >> 26) & 0x3f;
 	char flags = 0;
@@ -4459,7 +4459,7 @@ static CPU_EXECUTE( i860 )
 	/* Decode and execute loop.  */
 	while (cpustate->icount > 0)
 	{
-		UINT32 savepc = cpustate->pc;
+		uint32_t savepc = cpustate->pc;
 		cpustate->pc_updated = 0;
 		cpustate->pending_trap = 0;
 
@@ -4538,14 +4538,14 @@ extern unsigned disasm_i860 (char *buf, unsigned int pc, unsigned int insn);
 
 
 /* Disassemble `len' instructions starting at `addr'.  */
-static void disasm (i860s *cpustate, UINT32 addr, int len)
+static void disasm (i860s *cpustate, uint32_t addr, int len)
 {
-	UINT32 insn;
+	uint32_t insn;
 	int j;
 	for (j = 0; j < len; j++)
 	{
 		char buf[256];
-		UINT32 phys_addr = addr;
+		uint32_t phys_addr = addr;
 		if (GET_DIRBASE_ATE ())
 			phys_addr = get_address_translation (cpustate, addr, 1	/* is_dataref */, 0	/* is_write */);
 
@@ -4568,9 +4568,9 @@ static void disasm (i860s *cpustate, UINT32 addr, int len)
 
 
 /* Dump `len' bytes starting at `addr'.  */
-static void dbg_db (i860s *cpustate, UINT32 addr, int len)
+static void dbg_db (i860s *cpustate, uint32_t addr, int len)
 {
-	UINT8 b[16];
+	uint8_t b[16];
 	int i;
 	/* This will always dump a multiple of 16 bytes, even if 'len' isn't.  */
 	while (len > 0)
@@ -4580,7 +4580,7 @@ static void dbg_db (i860s *cpustate, UINT32 addr, int len)
 		fprintf (stderr, "0x%08x: ", addr);
 		for (i = 0; i < 16; i++)
 		{
-			UINT32 phys_addr = addr;
+			uint32_t phys_addr = addr;
 			if (GET_DIRBASE_ATE ())
 				phys_addr = get_address_translation (cpustate, addr, 1	/* is_dataref */, 0	/* is_write */);
 
@@ -4606,8 +4606,8 @@ static void dbg_db (i860s *cpustate, UINT32 addr, int len)
 void debugger (i860s *cpustate)
 {
 	char buf[256];
-	UINT32 curr_disasm = cpustate->pc;
-	UINT32 curr_dumpdb = 0;
+	uint32_t curr_disasm = cpustate->pc;
+	uint32_t curr_dumpdb = 0;
 	int c = 0;
 
 	if (cpustate->single_stepping > 1 && cpustate->single_stepping != cpustate->pc)
@@ -4689,7 +4689,7 @@ void debugger (i860s *cpustate)
 		}
 		else if (buf[0] == 'x' && buf[1] == '0')
 		{
-			UINT32 v;
+			uint32_t v;
 			sscanf (buf + 1, "%x", &v);
 			if (GET_DIRBASE_ATE ())
 				fprintf (stderr, "vma 0x%08x ==> phys 0x%08x\n", v,

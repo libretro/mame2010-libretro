@@ -54,7 +54,7 @@ static void DZError(m68_state_t *m68_state)
 /* $00 NEG direct ?**** */
 OP_HANDLER( neg_di )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	DIRBYTE(t);
 	r = -t;
 	CLR_NZVC;
@@ -65,7 +65,7 @@ OP_HANDLER( neg_di )
 /* $01 OIM direct ?**** */
 OP_HANDLER( oim_di )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	DIRBYTE(t);
 	r = im | t;
@@ -77,7 +77,7 @@ OP_HANDLER( oim_di )
 /* $02 AIM direct */
 OP_HANDLER( aim_di )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	DIRBYTE(t);
 	r = im & t;
@@ -89,7 +89,7 @@ OP_HANDLER( aim_di )
 /* $03 COM direct -**01 */
 OP_HANDLER( com_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	t = ~t;
 	CLR_NZV;
@@ -101,7 +101,7 @@ OP_HANDLER( com_di )
 /* $04 LSR direct -0*-* */
 OP_HANDLER( lsr_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -113,7 +113,7 @@ OP_HANDLER( lsr_di )
 /* $05 EIM direct */
 OP_HANDLER( eim_di )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	DIRBYTE(t);
 	r = im ^ t;
@@ -125,7 +125,7 @@ OP_HANDLER( eim_di )
 /* $06 ROR direct -**-* */
 OP_HANDLER( ror_di )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(t);
 	r= (CC & CC_C) << 7;
 	CLR_NZC;
@@ -138,7 +138,7 @@ OP_HANDLER( ror_di )
 /* $07 ASR direct ?**-* */
 OP_HANDLER( asr_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -150,7 +150,7 @@ OP_HANDLER( asr_di )
 /* $08 ASL direct ?**** */
 OP_HANDLER( asl_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = t << 1;
 	CLR_NZVC;
@@ -161,7 +161,7 @@ OP_HANDLER( asl_di )
 /* $09 ROL direct -**** */
 OP_HANDLER( rol_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = (CC & CC_C) | (t << 1);
 	CLR_NZVC;
@@ -172,7 +172,7 @@ OP_HANDLER( rol_di )
 /* $0A DEC direct -***- */
 OP_HANDLER( dec_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	--t;
 	CLR_NZV;
@@ -183,7 +183,7 @@ OP_HANDLER( dec_di )
 /* $0B TIM direct */
 OP_HANDLER( tim_di )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	DIRBYTE(t);
 	r = im & t;
@@ -194,7 +194,7 @@ OP_HANDLER( tim_di )
 /* $OC INC direct -***- */
 OP_HANDLER( inc_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	++t;
 	CLR_NZV;
@@ -205,7 +205,7 @@ OP_HANDLER( inc_di )
 /* $OD TST direct -**0- */
 OP_HANDLER( tst_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	CLR_NZV;
 	SET_NZ8(t);
@@ -290,22 +290,22 @@ OP_HANDLER( lbsr )
 /* $19 DAA inherent (A) -**0* */
 OP_HANDLER( daa )
 {
-	UINT8 msn, lsn;
-	UINT16 t, cf = 0;
+	uint8_t msn, lsn;
+	uint16_t t, cf = 0;
 	msn = A & 0xf0; lsn = A & 0x0f;
 	if( lsn>0x09 || CC & CC_H) cf |= 0x06;
 	if( msn>0x80 && lsn>0x09 ) cf |= 0x60;
 	if( msn>0x90 || CC & CC_C) cf |= 0x60;
 	t = cf + A;
 	CLR_NZV; /* keep carry from previous operation */
-	SET_NZ8((UINT8)t); SET_C8(t);
+	SET_NZ8((uint8_t)t); SET_C8(t);
 	A = t;
 }
 
 /* $1A ORCC immediate ##### */
 OP_HANDLER( orcc )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	CC |= t;
 	check_irq_lines(m68_state);	/* HJB 990116 */
@@ -316,7 +316,7 @@ OP_HANDLER( orcc )
 /* $1C ANDCC immediate ##### */
 OP_HANDLER( andcc )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	CC &= t;
 	check_irq_lines(m68_state);	/* HJB 990116 */
@@ -325,7 +325,7 @@ OP_HANDLER( andcc )
 /* $1D SEX inherent -**-- */
 OP_HANDLER( sex )
 {
-	UINT16 t;
+	uint16_t t;
 	t = SIGNED(B);
 	D = t;
 	//  CLR_NZV;    Tim Lindner 20020905: verified that V flag is not affected
@@ -336,8 +336,8 @@ OP_HANDLER( sex )
 /* $1E EXG inherent ----- */
 OP_HANDLER( exg )
 {
-	UINT16 t1,t2;
-	UINT8 tb;
+	uint16_t t1,t2;
+	uint8_t tb;
 	int 	promote = FALSE;
 
 	IMMBYTE(tb);
@@ -424,8 +424,8 @@ OP_HANDLER( exg )
 /* $1F TFR inherent ----- */
 OP_HANDLER( tfr )
 {
-	UINT8 tb;
-	UINT16 t;
+	uint8_t tb;
+	uint16_t t;
 	int 	promote = FALSE;
 
 	IMMBYTE(tb);
@@ -476,7 +476,7 @@ OP_HANDLER( tfr )
 /* $20 BRA relative ----- */
 OP_HANDLER( bra )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	PC += SIGNED(t);
 	/* JB 970823 - speed up busy loops */
@@ -487,7 +487,7 @@ OP_HANDLER( bra )
 /* $21 BRN relative ----- */
 OP_HANDLER( brn )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 }
 
@@ -710,11 +710,11 @@ OP_HANDLER( lble )
 
 OP_HANDLER( addr_r )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
@@ -738,11 +738,11 @@ OP_HANDLER( addr_r )
 
 OP_HANDLER( adcr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
@@ -767,21 +767,21 @@ OP_HANDLER( adcr )
 /* $1032 SUBR r1 - r2 -> r2 */
 OP_HANDLER( subr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
 
 	if ( large )
 	{
-		r16 = (UINT32)*dst16Reg - (UINT32)*src16Reg;
+		r16 = (uint32_t)*dst16Reg - (uint32_t)*src16Reg;
 		CLR_NZVC;
 		*dst16Reg = r16;
-		SET_FLAGS16((UINT32)*dst16Reg,(UINT32)*src16Reg,r16);
+		SET_FLAGS16((uint32_t)*dst16Reg,(uint32_t)*src16Reg,r16);
 	}
 	else
 	{
@@ -795,21 +795,21 @@ OP_HANDLER( subr )
 /* $1033 SBCR r1 - r2 - C -> r2 */
 OP_HANDLER( sbcr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
 
 	if ( large )
 	{
-		r16 = (UINT32)*dst16Reg - (UINT32)*src16Reg - (CC & CC_C);
+		r16 = (uint32_t)*dst16Reg - (uint32_t)*src16Reg - (CC & CC_C);
 		CLR_NZVC;
 		*dst16Reg = r16;
-		SET_FLAGS16((UINT32)*dst16Reg,(UINT32)*src16Reg,r16);
+		SET_FLAGS16((uint32_t)*dst16Reg,(uint32_t)*src16Reg,r16);
 	}
 	else
 	{
@@ -823,11 +823,11 @@ OP_HANDLER( sbcr )
 /* $1034 ANDR r1 & r2 -> r2 */
 OP_HANDLER( andr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
@@ -851,11 +851,11 @@ OP_HANDLER( andr )
 /* $1035 ORR r1 | r2 -> r2 */
 OP_HANDLER( orr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
@@ -879,11 +879,11 @@ OP_HANDLER( orr )
 /* $1036 EORR r1 ^ r2 -> r2 */
 OP_HANDLER( eorr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
@@ -907,20 +907,20 @@ OP_HANDLER( eorr )
 /* $1037 CMPR r1 - r2 */
 OP_HANDLER( cmpr )
 {
-	UINT8	tb, z8 = 0;
-	UINT16	z16 = 0, r8;
-	UINT32	r16;
-	UINT8	*src8Reg = NULL, *dst8Reg = NULL;
-	UINT16	*src16Reg = NULL, *dst16Reg = NULL;
+	uint8_t	tb, z8 = 0;
+	uint16_t	z16 = 0, r8;
+	uint32_t	r16;
+	uint8_t	*src8Reg = NULL, *dst8Reg = NULL;
+	uint16_t	*src16Reg = NULL, *dst16Reg = NULL;
 	int 	promote = FALSE, large = FALSE;
 
 	REGREG_PREAMBLE;
 
 	if ( large )
 	{
-		r16 = (UINT32)*dst16Reg - (UINT32)*src16Reg;
+		r16 = (uint32_t)*dst16Reg - (uint32_t)*src16Reg;
 		CLR_NZVC;
-		SET_FLAGS16((UINT32)*dst16Reg,(UINT32)*src16Reg,r16);
+		SET_FLAGS16((uint32_t)*dst16Reg,(uint32_t)*src16Reg,r16);
 	}
 	else
 	{
@@ -933,7 +933,7 @@ OP_HANDLER( cmpr )
 /* $1138 TFM R0+,R1+ */
 OP_HANDLER( tfmpp )
 {
-	UINT8	tb, srcValue = 0;
+	uint8_t	tb, srcValue = 0;
 
 	IMMBYTE(tb);
 
@@ -967,7 +967,7 @@ OP_HANDLER( tfmpp )
 /* $1139 TFM R0-,R1- */
 OP_HANDLER( tfmmm )
 {
-	UINT8	tb, srcValue = 0;
+	uint8_t	tb, srcValue = 0;
 
 	IMMBYTE(tb);
 
@@ -1001,7 +1001,7 @@ OP_HANDLER( tfmmm )
 /* $113A TFM R0+,R1 */
 OP_HANDLER( tfmpc )
 {
-	UINT8	tb, srcValue = 0;
+	uint8_t	tb, srcValue = 0;
 
 	IMMBYTE(tb);
 
@@ -1035,7 +1035,7 @@ OP_HANDLER( tfmpc )
 /* $113B TFM R0,R1+ */
 OP_HANDLER( tfmcp )
 {
-	UINT8	tb, srcValue = 0;
+	uint8_t	tb, srcValue = 0;
 
 	IMMBYTE(tb);
 
@@ -1102,7 +1102,7 @@ OP_HANDLER( leau )
 /* $34 PSHS inherent ----- */
 OP_HANDLER( pshs )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	if( t&0x80 ) { PUSHWORD(pPC); m68_state->icount -= 2; }
 	if( t&0x40 ) { PUSHWORD(pU);  m68_state->icount -= 2; }
@@ -1129,7 +1129,7 @@ OP_HANDLER( pshuw )
 /* $35 PULS inherent ----- */
 OP_HANDLER( puls )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	if( t&0x01 ) { PULLBYTE(CC); m68_state->icount -= 1; }
 	if( t&0x02 ) { PULLBYTE(A);  m68_state->icount -= 1; }
@@ -1159,7 +1159,7 @@ OP_HANDLER( puluw )
 /* $36 PSHU inherent ----- */
 OP_HANDLER( pshu )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	if( t&0x80 ) { PSHUWORD(pPC); m68_state->icount -= 2; }
 	if( t&0x40 ) { PSHUWORD(pS);  m68_state->icount -= 2; }
@@ -1174,7 +1174,7 @@ OP_HANDLER( pshu )
 /* 37 PULU inherent ----- */
 OP_HANDLER( pulu )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	if( t&0x01 ) { PULUBYTE(CC); m68_state->icount -= 1; }
 	if( t&0x02 ) { PULUBYTE(A);  m68_state->icount -= 1; }
@@ -1206,7 +1206,7 @@ OP_HANDLER( abx )
 /* $3B RTI inherent ##### */
 OP_HANDLER( rti )
 {
-	UINT8 t;
+	uint8_t t;
 	PULLBYTE(CC);
 	t = CC & CC_E;		/* HJB 990225: entire state saved? */
 	if(t)
@@ -1232,7 +1232,7 @@ OP_HANDLER( rti )
 /* $3C CWAI inherent ----1 */
 OP_HANDLER( cwai )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	CC &= t;
 	/*
@@ -1264,7 +1264,7 @@ OP_HANDLER( cwai )
 /* $3D MUL inherent --*-@ */
 OP_HANDLER( mul )
 {
-	UINT16 t;
+	uint16_t t;
 	t = A * B;
 	CLR_ZC; SET_Z16(t); if(t&0x80) SEC;
 	D = t;
@@ -1299,12 +1299,12 @@ OP_HANDLER( swi )
 #define decodePB_src(n) 	(((n) >> 3) & 0x07)
 #define decodePB_dst(n) 	(((n) >> 0) & 0x07)
 
-static const UINT8 bitTable[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+static const uint8_t bitTable[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
 OP_HANDLER( band )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1320,8 +1320,8 @@ OP_HANDLER( band )
 
 OP_HANDLER( biand )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1337,8 +1337,8 @@ OP_HANDLER( biand )
 
 OP_HANDLER( bor )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1354,8 +1354,8 @@ OP_HANDLER( bor )
 
 OP_HANDLER( bior )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1371,9 +1371,9 @@ OP_HANDLER( bior )
 
 OP_HANDLER( beor )
 {
-	UINT8		pb;
-	UINT16		db;
-	UINT8		tReg, tMem;
+	uint8_t		pb;
+	uint16_t		db;
+	uint8_t		tReg, tMem;
 
 	IMMBYTE(pb);
 
@@ -1392,9 +1392,9 @@ OP_HANDLER( beor )
 
 OP_HANDLER( bieor )
 {
-	UINT8		pb;
-	UINT16		db;
-	UINT8		tReg, tMem;
+	uint8_t		pb;
+	uint16_t		db;
+	uint8_t		tReg, tMem;
 
 	IMMBYTE(pb);
 
@@ -1413,8 +1413,8 @@ OP_HANDLER( bieor )
 
 OP_HANDLER( ldbt )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1430,8 +1430,8 @@ OP_HANDLER( ldbt )
 
 OP_HANDLER( stbt )
 {
-	UINT8		pb;
-	UINT16		db;
+	uint8_t		pb;
+	uint16_t		db;
 
 	IMMBYTE(pb);
 
@@ -1486,7 +1486,7 @@ OP_HANDLER( swi3 )
 /* $40 NEGA inherent ?**** */
 OP_HANDLER( nega )
 {
-	UINT16 r;
+	uint16_t r;
 	r = -A;
 	CLR_NZVC;
 	SET_FLAGS8(0,A,r);
@@ -1520,7 +1520,7 @@ OP_HANDLER( lsra )
 /* $46 RORA inherent -**-* */
 OP_HANDLER( rora )
 {
-	UINT8 r;
+	uint8_t r;
 	r = (CC & CC_C) << 7;
 	CLR_NZC;
 	CC |= (A & CC_C);
@@ -1541,7 +1541,7 @@ OP_HANDLER( asra )
 /* $48 ASLA inherent ?**** */
 OP_HANDLER( asla )
 {
-	UINT16 r;
+	uint16_t r;
 	r = A << 1;
 	CLR_NZVC;
 	SET_FLAGS8(A,A,r);
@@ -1551,7 +1551,7 @@ OP_HANDLER( asla )
 /* $49 ROLA inherent -**** */
 OP_HANDLER( rola )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = A;
 	r = (CC & CC_C) | (t<<1);
 	CLR_NZVC; SET_FLAGS8(t,t,r);
@@ -1595,7 +1595,7 @@ OP_HANDLER( clra )
 /* $50 NEGB inherent ?**** */
 OP_HANDLER( negb )
 {
-	UINT16 r;
+	uint16_t r;
 	r = -B;
 	CLR_NZVC;
 	SET_FLAGS8(0,B,r);
@@ -1605,7 +1605,7 @@ OP_HANDLER( negb )
 /* $1040 NEGD inherent ?**** */
 OP_HANDLER( negd )
 {
-	UINT32 r;
+	uint32_t r;
 	r = -D;
 	CLR_NZVC;
 	SET_FLAGS16(0,D,r);
@@ -1693,7 +1693,7 @@ OP_HANDLER( lsrw )
 /* $56 RORB inherent -**-* */
 OP_HANDLER( rorb )
 {
-	UINT8 r;
+	uint8_t r;
 	r = (CC & CC_C) << 7;
 	CLR_NZC;
 	CC |= (B & CC_C);
@@ -1705,7 +1705,7 @@ OP_HANDLER( rorb )
 /* $1046 RORD inherent -**-* */
 OP_HANDLER( rord )
 {
-	UINT16 r;
+	uint16_t r;
 	r = (CC & CC_C) << 15;
 	CLR_NZC;
 	CC |= (D & CC_C);
@@ -1717,7 +1717,7 @@ OP_HANDLER( rord )
 /* $1056 RORW inherent -**-* */
 OP_HANDLER( rorw )
 {
-	UINT16 r;
+	uint16_t r;
 	r = (CC & CC_C) << 15;
 	CLR_NZC;
 	CC |= (W & CC_C);
@@ -1747,7 +1747,7 @@ OP_HANDLER( asrd )
 /* $58 ASLB inherent ?**** */
 OP_HANDLER( aslb )
 {
-	UINT16 r;
+	uint16_t r;
 	r = B << 1;
 	CLR_NZVC;
 	SET_FLAGS8(B,B,r);
@@ -1757,7 +1757,7 @@ OP_HANDLER( aslb )
 /* $1048 ASLD inherent ?**** */
 OP_HANDLER( asld )
 {
-	UINT32 r;
+	uint32_t r;
 	r = D << 1;
 	CLR_NZVC;
 	SET_FLAGS16(D,D,r);
@@ -1767,7 +1767,7 @@ OP_HANDLER( asld )
 /* $59 ROLB inherent -**** */
 OP_HANDLER( rolb )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = B;
 	r = CC & CC_C;
 	r |= t << 1;
@@ -1779,7 +1779,7 @@ OP_HANDLER( rolb )
 /* $1049 ROLD inherent -**** */
 OP_HANDLER( rold )
 {
-	UINT32 t,r;
+	uint32_t t,r;
 	t = D;
 	r = CC & CC_C;
 	r |= t << 1;
@@ -1791,7 +1791,7 @@ OP_HANDLER( rold )
 /* $1059 ROLW inherent -**** */
 OP_HANDLER( rolw )
 {
-	UINT32 t,r;
+	uint32_t t,r;
 	t = W;
 	r = CC & CC_C;
 	r |= t << 1;
@@ -1827,7 +1827,7 @@ OP_HANDLER( decf )
 /* $104a DECD inherent -***- */
 OP_HANDLER( decd )
 {
-	UINT32 r;
+	uint32_t r;
 	r = D - 1;
 	CLR_NZVC;
 	SET_FLAGS16(D,D,r)
@@ -1837,7 +1837,7 @@ OP_HANDLER( decd )
 /* $105a DECW inherent -***- */
 OP_HANDLER( decw )
 {
-	UINT32 r;
+	uint32_t r;
 	r = W - 1;
 	CLR_NZVC;
 	SET_FLAGS16(W,W,r)
@@ -1873,7 +1873,7 @@ OP_HANDLER( incf )
 /* $104c INCD inherent -***- */
 OP_HANDLER( incd )
 {
-	UINT32 r;
+	uint32_t r;
 	r = D + 1;
 	CLR_NZVC;
 	SET_FLAGS16(D,D,r)
@@ -1883,7 +1883,7 @@ OP_HANDLER( incd )
 /* $105c INCW inherent -***- */
 OP_HANDLER( incw )
 {
-	UINT32 r;
+	uint32_t r;
 	r = W + 1;
 	CLR_NZVC;
 	SET_FLAGS16(W,W,r)
@@ -1965,7 +1965,7 @@ OP_HANDLER( clrw )
 /* $60 NEG indexed ?**** */
 OP_HANDLER( neg_ix )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r=-t;
@@ -1977,7 +1977,7 @@ OP_HANDLER( neg_ix )
 /* $61 OIM indexed */
 OP_HANDLER( oim_ix )
 {
-	UINT8	r,im;
+	uint8_t	r,im;
 	IMMBYTE(im);
 	fetch_effective_address(m68_state);
 	r = im | RM(EAD);
@@ -1989,7 +1989,7 @@ OP_HANDLER( oim_ix )
 /* $62 AIM indexed */
 OP_HANDLER( aim_ix )
 {
-	UINT8	r,im;
+	uint8_t	r,im;
 	IMMBYTE(im);
 	fetch_effective_address(m68_state);
 	r = im & RM(EAD);
@@ -2001,7 +2001,7 @@ OP_HANDLER( aim_ix )
 /* $63 COM indexed -**01 */
 OP_HANDLER( com_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t = ~RM(EAD);
 	CLR_NZV;
@@ -2013,7 +2013,7 @@ OP_HANDLER( com_ix )
 /* $64 LSR indexed -0*-* */
 OP_HANDLER( lsr_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
 	CLR_NZC;
@@ -2025,7 +2025,7 @@ OP_HANDLER( lsr_ix )
 /* $65 EIM indexed */
 OP_HANDLER( eim_ix )
 {
-	UINT8	r,im;
+	uint8_t	r,im;
 	IMMBYTE(im);
 	fetch_effective_address(m68_state);
 	r = im ^ RM(EAD);
@@ -2036,7 +2036,7 @@ OP_HANDLER( eim_ix )
 /* $66 ROR indexed -**-* */
 OP_HANDLER( ror_ix )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
 	r = (CC & CC_C) << 7;
@@ -2049,7 +2049,7 @@ OP_HANDLER( ror_ix )
 /* $67 ASR indexed ?**-* */
 OP_HANDLER( asr_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
 	CLR_NZC;
@@ -2062,7 +2062,7 @@ OP_HANDLER( asr_ix )
 /* $68 ASL indexed ?**** */
 OP_HANDLER( asl_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
 	r = t << 1;
@@ -2074,7 +2074,7 @@ OP_HANDLER( asl_ix )
 /* $69 ROL indexed -**** */
 OP_HANDLER( rol_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
 	r = CC & CC_C;
@@ -2087,7 +2087,7 @@ OP_HANDLER( rol_ix )
 /* $6A DEC indexed -***- */
 OP_HANDLER( dec_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t = RM(EAD) - 1;
 	CLR_NZV; SET_FLAGS8D(t);
@@ -2097,7 +2097,7 @@ OP_HANDLER( dec_ix )
 /* $6B TIM indexed */
 OP_HANDLER( tim_ix )
 {
-	UINT8	r,im,m;
+	uint8_t	r,im,m;
 	IMMBYTE(im);
 	fetch_effective_address(m68_state);
 	m = RM(EAD);
@@ -2109,7 +2109,7 @@ OP_HANDLER( tim_ix )
 /* $6C INC indexed -***- */
 OP_HANDLER( inc_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t = RM(EAD) + 1;
 	CLR_NZV; SET_FLAGS8I(t);
@@ -2119,7 +2119,7 @@ OP_HANDLER( inc_ix )
 /* $6D TST indexed -**0- */
 OP_HANDLER( tst_ix )
 {
-	UINT8 t;
+	uint8_t t;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	CLR_NZV;
@@ -2145,7 +2145,7 @@ OP_HANDLER( clr_ix )
 /* $70 NEG extended ?**** */
 OP_HANDLER( neg_ex )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	EXTBYTE(t); r=-t;
 	CLR_NZVC; SET_FLAGS8(0,t,r);
 	WM(EAD,r);
@@ -2154,7 +2154,7 @@ OP_HANDLER( neg_ex )
 /* $71 OIM extended */
 OP_HANDLER( oim_ex )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	EXTBYTE(t);
 	r = im | t;
@@ -2166,7 +2166,7 @@ OP_HANDLER( oim_ex )
 /* $72 AIM extended */
 OP_HANDLER( aim_ex )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	EXTBYTE(t);
 	r = im & t;
@@ -2178,7 +2178,7 @@ OP_HANDLER( aim_ex )
 /* $73 COM extended -**01 */
 OP_HANDLER( com_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); t = ~t;
 	CLR_NZV; SET_NZ8(t); SEC;
 	WM(EAD,t);
@@ -2187,7 +2187,7 @@ OP_HANDLER( com_ex )
 /* $74 LSR extended -0*-* */
 OP_HANDLER( lsr_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); CLR_NZC; CC |= (t & CC_C);
 	t>>=1; SET_Z8(t);
 	WM(EAD,t);
@@ -2196,7 +2196,7 @@ OP_HANDLER( lsr_ex )
 /* $75 EIM extended */
 OP_HANDLER( eim_ex )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	EXTBYTE(t);
 	r = im ^ t;
@@ -2208,7 +2208,7 @@ OP_HANDLER( eim_ex )
 /* $76 ROR extended -**-* */
 OP_HANDLER( ror_ex )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(t); r=(CC & CC_C) << 7;
 	CLR_NZC; CC |= (t & CC_C);
 	r |= t>>1; SET_NZ8(r);
@@ -2218,7 +2218,7 @@ OP_HANDLER( ror_ex )
 /* $77 ASR extended ?**-* */
 OP_HANDLER( asr_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); CLR_NZC; CC |= (t & CC_C);
 	t=(t&0x80)|(t>>1);
 	SET_NZ8(t);
@@ -2228,7 +2228,7 @@ OP_HANDLER( asr_ex )
 /* $78 ASL extended ?**** */
 OP_HANDLER( asl_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t); r=t<<1;
 	CLR_NZVC; SET_FLAGS8(t,t,r);
 	WM(EAD,r);
@@ -2237,7 +2237,7 @@ OP_HANDLER( asl_ex )
 /* $79 ROL extended -**** */
 OP_HANDLER( rol_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t); r = (CC & CC_C) | (t << 1);
 	CLR_NZVC; SET_FLAGS8(t,t,r);
 	WM(EAD,r);
@@ -2246,7 +2246,7 @@ OP_HANDLER( rol_ex )
 /* $7A DEC extended -***- */
 OP_HANDLER( dec_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); --t;
 	CLR_NZV; SET_FLAGS8D(t);
 	WM(EAD,t);
@@ -2255,7 +2255,7 @@ OP_HANDLER( dec_ex )
 /* $7B TIM extended */
 OP_HANDLER( tim_ex )
 {
-	UINT8	r,t,im;
+	uint8_t	r,t,im;
 	IMMBYTE(im);
 	EXTBYTE(t);
 	r = im & t;
@@ -2266,7 +2266,7 @@ OP_HANDLER( tim_ex )
 /* $7C INC extended -***- */
 OP_HANDLER( inc_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); ++t;
 	CLR_NZV; SET_FLAGS8I(t);
 	WM(EAD,t);
@@ -2275,7 +2275,7 @@ OP_HANDLER( inc_ex )
 /* $7D TST extended -**0- */
 OP_HANDLER( tst_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t); CLR_NZV; SET_NZ8(t);
 }
 
@@ -2298,7 +2298,7 @@ OP_HANDLER( clr_ex )
 /* $80 SUBA immediate ?**** */
 OP_HANDLER( suba_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -2309,7 +2309,7 @@ OP_HANDLER( suba_im )
 /* $81 CMPA immediate ?**** */
 OP_HANDLER( cmpa_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -2319,7 +2319,7 @@ OP_HANDLER( cmpa_im )
 /* $82 SBCA immediate ?**** */
 OP_HANDLER( sbca_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2330,7 +2330,7 @@ OP_HANDLER( sbca_im )
 /* $83 SUBD (CMPD CMPU) immediate -**** */
 OP_HANDLER( subd_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = D;
@@ -2343,7 +2343,7 @@ OP_HANDLER( subd_im )
 /* $1080 SUBW immediate -**** */
 OP_HANDLER( subw_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = W;
@@ -2356,7 +2356,7 @@ OP_HANDLER( subw_im )
 /* $1083 CMPD immediate -**** */
 OP_HANDLER( cmpd_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = D;
@@ -2368,7 +2368,7 @@ OP_HANDLER( cmpd_im )
 /* $1081 CMPW immediate -**** */
 OP_HANDLER( cmpw_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = W;
@@ -2380,7 +2380,7 @@ OP_HANDLER( cmpw_im )
 /* $1183 CMPU immediate -**** */
 OP_HANDLER( cmpu_im )
 {
-	UINT32 r, d;
+	uint32_t r, d;
 	PAIR b;
 	IMMWORD(b);
 	d = U;
@@ -2392,7 +2392,7 @@ OP_HANDLER( cmpu_im )
 /* $84 ANDA immediate -**0- */
 OP_HANDLER( anda_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	A &= t;
 	CLR_NZV;
@@ -2402,7 +2402,7 @@ OP_HANDLER( anda_im )
 /* $85 BITA immediate -**0- */
 OP_HANDLER( bita_im )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	IMMBYTE(t);
 	r = A & t;
 	CLR_NZV;
@@ -2420,7 +2420,7 @@ OP_HANDLER( lda_im )
 /* $88 EORA immediate -**0- */
 OP_HANDLER( eora_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	A ^= t;
 	CLR_NZV;
@@ -2430,7 +2430,7 @@ OP_HANDLER( eora_im )
 /* $89 ADCA immediate ***** */
 OP_HANDLER( adca_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2442,7 +2442,7 @@ OP_HANDLER( adca_im )
 /* $8A ORA immediate -**0- */
 OP_HANDLER( ora_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	A |= t;
 	CLR_NZV;
@@ -2452,7 +2452,7 @@ OP_HANDLER( ora_im )
 /* $8B ADDA immediate ***** */
 OP_HANDLER( adda_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = A + t;
 	CLR_HNZVC;
@@ -2464,7 +2464,7 @@ OP_HANDLER( adda_im )
 /* $8C CMPX (CMPY CMPS) immediate -**** */
 OP_HANDLER( cmpx_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = X;
@@ -2476,7 +2476,7 @@ OP_HANDLER( cmpx_im )
 /* $108C CMPY immediate -**** */
 OP_HANDLER( cmpy_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = Y;
@@ -2488,7 +2488,7 @@ OP_HANDLER( cmpy_im )
 /* $118C CMPS immediate -**** */
 OP_HANDLER( cmps_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = S;
@@ -2500,7 +2500,7 @@ OP_HANDLER( cmps_im )
 /* $8D BSR ----- */
 OP_HANDLER( bsr )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	PUSHWORD(pPC);
 	PC += SIGNED(t);
@@ -2541,7 +2541,7 @@ OP_HANDLER( muld_im )
 	PAIR t, q;
 
 	IMMWORD( t );
-	q.d = (INT16) D * (INT16)t.w.l;
+	q.d = (int16_t) D * (int16_t)t.w.l;
 	D = q.w.h;
 	W = q.w.l;
 	CLR_NZVC;
@@ -2551,16 +2551,16 @@ OP_HANDLER( muld_im )
 /* $118d DIVD immediate */
 OP_HANDLER( divd_im )
 {
-	UINT8   t;
-	INT16   v, oldD;
+	uint8_t   t;
+	int16_t   v, oldD;
 
 	IMMBYTE( t );
 
 	if( t != 0 )
 	{
 		oldD = D;
-		v = (INT16) D / (INT8) t;
-		A = (INT16) D % (INT8) t;
+		v = (int16_t) D / (int8_t) t;
+		A = (int16_t) D % (int8_t) t;
 		B = v;
 
 		CLR_NZVC;
@@ -2569,7 +2569,7 @@ OP_HANDLER( divd_im )
 		if( B & 0x01 )
 			SEC;
 
-		if( (INT16)D < 0 )
+		if( (int16_t)D < 0 )
 			SEN;
 
 		if ( (v > 127) || (v < -128) ) /* soft overflow */
@@ -2594,7 +2594,7 @@ OP_HANDLER( divd_im )
 OP_HANDLER( divq_im )
 {
 	PAIR	t,q, oldQ;
-	INT32	v;
+	int32_t	v;
 
 	IMMWORD( t );
 
@@ -2605,8 +2605,8 @@ OP_HANDLER( divq_im )
 	{
 		oldQ = q;
 
-		v = (INT32) q.d / (INT16) t.w.l;
-		D = (INT32) q.d % (INT16) t.w.l;
+		v = (int32_t) q.d / (int16_t) t.w.l;
+		D = (int32_t) q.d % (int16_t) t.w.l;
 		W = v;
 
 		CLR_NZVC;
@@ -2621,7 +2621,7 @@ OP_HANDLER( divq_im )
 
 			if( (v > 65536 ) || (v < -65535 ) ) /* hard overflow - division is aborted */
 			{
-				if( (INT32)oldQ.d < 0 )
+				if( (int32_t)oldQ.d < 0 )
 					SEN;
 				else if( oldQ.d == 0 )
 					SEZ;
@@ -2639,7 +2639,7 @@ OP_HANDLER( divq_im )
 /* $90 SUBA direct ?**** */
 OP_HANDLER( suba_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -2650,7 +2650,7 @@ OP_HANDLER( suba_di )
 /* $91 CMPA direct ?**** */
 OP_HANDLER( cmpa_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -2660,7 +2660,7 @@ OP_HANDLER( cmpa_di )
 /* $92 SBCA direct ?**** */
 OP_HANDLER( sbca_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2671,7 +2671,7 @@ OP_HANDLER( sbca_di )
 /* $93 SUBD (CMPD CMPU) direct -**** */
 OP_HANDLER( subd_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = D;
@@ -2684,7 +2684,7 @@ OP_HANDLER( subd_di )
 /* $1090 SUBW direct -**** */
 OP_HANDLER( subw_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = W;
@@ -2697,7 +2697,7 @@ OP_HANDLER( subw_di )
 /* $1093 CMPD direct -**** */
 OP_HANDLER( cmpd_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = D;
@@ -2709,7 +2709,7 @@ OP_HANDLER( cmpd_di )
 /* $1091 CMPW direct -**** */
 OP_HANDLER( cmpw_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = W;
@@ -2721,7 +2721,7 @@ OP_HANDLER( cmpw_di )
 /* $1193 CMPU direct -**** */
 OP_HANDLER( cmpu_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = U;
@@ -2733,7 +2733,7 @@ OP_HANDLER( cmpu_di )
 /* $94 ANDA direct -**0- */
 OP_HANDLER( anda_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	A &= t;
 	CLR_NZV;
@@ -2743,7 +2743,7 @@ OP_HANDLER( anda_di )
 /* $95 BITA direct -**0- */
 OP_HANDLER( bita_di )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(t);
 	r = A & t;
 	CLR_NZV;
@@ -2770,7 +2770,7 @@ OP_HANDLER( sta_di )
 /* $98 EORA direct -**0- */
 OP_HANDLER( eora_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	A ^= t;
 	CLR_NZV;
@@ -2780,7 +2780,7 @@ OP_HANDLER( eora_di )
 /* $99 ADCA direct ***** */
 OP_HANDLER( adca_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2792,7 +2792,7 @@ OP_HANDLER( adca_di )
 /* $9A ORA direct -**0- */
 OP_HANDLER( ora_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	A |= t;
 	CLR_NZV;
@@ -2802,7 +2802,7 @@ OP_HANDLER( ora_di )
 /* $9B ADDA direct ***** */
 OP_HANDLER( adda_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = A + t;
 	CLR_HNZVC;
@@ -2814,7 +2814,7 @@ OP_HANDLER( adda_di )
 /* $9C CMPX (CMPY CMPS) direct -**** */
 OP_HANDLER( cmpx_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = X;
@@ -2826,7 +2826,7 @@ OP_HANDLER( cmpx_di )
 /* $109C CMPY direct -**** */
 OP_HANDLER( cmpy_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = Y;
@@ -2838,7 +2838,7 @@ OP_HANDLER( cmpy_di )
 /* $119C CMPS direct -**** */
 OP_HANDLER( cmps_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = S;
@@ -2869,7 +2869,7 @@ OP_HANDLER( muld_di )
 	PAIR	t,q;
 
 	DIRWORD(t);
-	q.d = (INT16) D * (INT16)t.w.l;
+	q.d = (int16_t) D * (int16_t)t.w.l;
 
 	D = q.w.h;
 	W = q.w.l;
@@ -2880,16 +2880,16 @@ OP_HANDLER( muld_di )
 /* $119d DIVD direct -**0- */
 OP_HANDLER( divd_di )
 {
-	UINT8	t;
-	INT16   v, oldD;
+	uint8_t	t;
+	int16_t   v, oldD;
 
 	DIRBYTE(t);
 
 	if( t != 0 )
 	{
 		oldD = D;
-		v = (INT16) D / (INT8) t;
-		A = (INT16) D % (INT8) t;
+		v = (int16_t) D / (int8_t) t;
+		A = (int16_t) D % (int8_t) t;
 		B = v;
 
 		CLR_NZVC;
@@ -2898,7 +2898,7 @@ OP_HANDLER( divd_di )
 		if( B & 0x01 )
 			SEC;
 
-		if( (INT16)D < 0 )
+		if( (int16_t)D < 0 )
 			SEN;
 
 		if ( (v > 127) || (v < -128) ) /* soft overflow */
@@ -2923,7 +2923,7 @@ OP_HANDLER( divd_di )
 OP_HANDLER( divq_di )
 {
 	PAIR	t,q, oldQ;
-	INT32	v;
+	int32_t	v;
 
 	DIRWORD(t);
 
@@ -2934,8 +2934,8 @@ OP_HANDLER( divq_di )
 	{
 		oldQ = q;
 
-		v = (INT32) q.d / (INT16) t.w.l;
-		D = (INT32) q.d % (INT16) t.w.l;
+		v = (int32_t) q.d / (int16_t) t.w.l;
+		D = (int32_t) q.d % (int16_t) t.w.l;
 		W = v;
 
 		CLR_NZVC;
@@ -2950,7 +2950,7 @@ OP_HANDLER( divq_di )
 
 			if( (v > 65535 ) || (v < -65536 ) ) /* hard overflow - division is aborted */
 			{
-				if( (INT32)oldQ.d < 0 )
+				if( (int32_t)oldQ.d < 0 )
 					SEN;
 				else if( oldQ.d == 0 )
 					SEZ;
@@ -3020,7 +3020,7 @@ OP_HANDLER( sty_di )
 /* $a0 SUBA indexed ?**** */
 OP_HANDLER( suba_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = A - t;
@@ -3032,7 +3032,7 @@ OP_HANDLER( suba_ix )
 /* $a1 CMPA indexed ?**** */
 OP_HANDLER( cmpa_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = A - t;
@@ -3043,7 +3043,7 @@ OP_HANDLER( cmpa_ix )
 /* $a2 SBCA indexed ?**** */
 OP_HANDLER( sbca_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = A - t - (CC & CC_C);
@@ -3055,7 +3055,7 @@ OP_HANDLER( sbca_ix )
 /* $a3 SUBD (CMPD CMPU) indexed -**** */
 OP_HANDLER( subd_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3069,7 +3069,7 @@ OP_HANDLER( subd_ix )
 /* $10a0 SUBW indexed -**** */
 OP_HANDLER( subw_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3083,7 +3083,7 @@ OP_HANDLER( subw_ix )
 /* $10a1 CMPW indexed -**** */
 OP_HANDLER( cmpw_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3096,7 +3096,7 @@ OP_HANDLER( cmpw_ix )
 /* $10a3 CMPD indexed -**** */
 OP_HANDLER( cmpd_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3109,7 +3109,7 @@ OP_HANDLER( cmpd_ix )
 /* $11a3 CMPU indexed -**** */
 OP_HANDLER( cmpu_ix )
 {
-	UINT32 r;
+	uint32_t r;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3130,7 +3130,7 @@ OP_HANDLER( anda_ix )
 /* $a5 BITA indexed -**0- */
 OP_HANDLER( bita_ix )
 {
-	UINT8 r;
+	uint8_t r;
 	fetch_effective_address(m68_state);
 	r = A & RM(EAD);
 	CLR_NZV;
@@ -3167,7 +3167,7 @@ OP_HANDLER( eora_ix )
 /* $a9 ADCA indexed ***** */
 OP_HANDLER( adca_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = A + t + (CC & CC_C);
@@ -3189,7 +3189,7 @@ OP_HANDLER( ora_ix )
 /* $aB ADDA indexed ***** */
 OP_HANDLER( adda_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = A + t;
@@ -3202,7 +3202,7 @@ OP_HANDLER( adda_ix )
 /* $aC CMPX (CMPY CMPS) indexed -**** */
 OP_HANDLER( cmpx_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3215,7 +3215,7 @@ OP_HANDLER( cmpx_ix )
 /* $10aC CMPY indexed -**** */
 OP_HANDLER( cmpy_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3228,7 +3228,7 @@ OP_HANDLER( cmpy_ix )
 /* $11aC CMPS indexed -**** */
 OP_HANDLER( cmps_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -3259,11 +3259,11 @@ OP_HANDLER( ldx_ix )
 OP_HANDLER( muld_ix )
 {
 	PAIR	q;
-	UINT16	t;
+	uint16_t	t;
 
 	fetch_effective_address(m68_state);
 	t=RM16(m68_state, EAD);
-	q.d = (INT16) D * (INT16)t;
+	q.d = (int16_t) D * (int16_t)t;
 
 	D = q.w.h;
 	W = q.w.l;
@@ -3274,8 +3274,8 @@ OP_HANDLER( muld_ix )
 /* $11ad DIVD indexed -**0- */
 OP_HANDLER( divd_ix )
 {
-	UINT8	t;
-	INT16   v, oldD;
+	uint8_t	t;
+	int16_t   v, oldD;
 
 	fetch_effective_address(m68_state);
 	t=RM(EAD);
@@ -3283,8 +3283,8 @@ OP_HANDLER( divd_ix )
 	if( t != 0 )
 	{
 		oldD = D;
-		v = (INT16) D / (INT8) t;
-		A = (INT16) D % (INT8) t;
+		v = (int16_t) D / (int8_t) t;
+		A = (int16_t) D % (int8_t) t;
 		B = v;
 
 		CLR_NZVC;
@@ -3293,7 +3293,7 @@ OP_HANDLER( divd_ix )
 		if( B & 0x01 )
 			SEC;
 
-		if( (INT16)D < 0 )
+		if( (int16_t)D < 0 )
 			SEN;
 
 		if ( (v > 127) || (v < -128) ) /* soft overflow */
@@ -3318,7 +3318,7 @@ OP_HANDLER( divd_ix )
 OP_HANDLER( divq_ix )
 {
 	PAIR	t,q, oldQ;
-	INT32	v;
+	int32_t	v;
 
 	fetch_effective_address(m68_state);
 	t.w.l=RM16(m68_state, EAD);
@@ -3330,8 +3330,8 @@ OP_HANDLER( divq_ix )
 	{
 		oldQ = q;
 
-		v = (INT32) q.d / (INT16) t.w.l;
-		D = (INT32) q.d % (INT16) t.w.l;
+		v = (int32_t) q.d / (int16_t) t.w.l;
+		D = (int32_t) q.d % (int16_t) t.w.l;
 		W = v;
 
 		CLR_NZVC;
@@ -3346,7 +3346,7 @@ OP_HANDLER( divq_ix )
 
 			if( (v > 65535 ) || (v < -65536 ) ) /* hard overflow - division is aborted */
 			{
-				if( (INT32)oldQ.d < 0 )
+				if( (int32_t)oldQ.d < 0 )
 					SEN;
 				else if( oldQ.d == 0 )
 					SEZ;
@@ -3419,7 +3419,7 @@ OP_HANDLER( sty_ix )
 /* $b0 SUBA extended ?**** */
 OP_HANDLER( suba_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -3430,7 +3430,7 @@ OP_HANDLER( suba_ex )
 /* $b1 CMPA extended ?**** */
 OP_HANDLER( cmpa_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = A - t;
 	CLR_NZVC;
@@ -3440,7 +3440,7 @@ OP_HANDLER( cmpa_ex )
 /* $b2 SBCA extended ?**** */
 OP_HANDLER( sbca_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -3451,7 +3451,7 @@ OP_HANDLER( sbca_ex )
 /* $b3 SUBD (CMPD CMPU) extended -**** */
 OP_HANDLER( subd_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = D;
@@ -3464,7 +3464,7 @@ OP_HANDLER( subd_ex )
 /* $10b0 SUBW extended -**** */
 OP_HANDLER( subw_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b = {{0,}};
 	EXTWORD(b);
 	d = W;
@@ -3477,7 +3477,7 @@ OP_HANDLER( subw_ex )
 /* $10b3 CMPD extended -**** */
 OP_HANDLER( cmpd_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = D;
@@ -3489,7 +3489,7 @@ OP_HANDLER( cmpd_ex )
 /* $10b1 CMPW extended -**** */
 OP_HANDLER( cmpw_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b = {{0,}};
 	EXTWORD(b);
 	d = W;
@@ -3501,7 +3501,7 @@ OP_HANDLER( cmpw_ex )
 /* $11b3 CMPU extended -**** */
 OP_HANDLER( cmpu_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = U;
@@ -3513,7 +3513,7 @@ OP_HANDLER( cmpu_ex )
 /* $b4 ANDA extended -**0- */
 OP_HANDLER( anda_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	A &= t;
 	CLR_NZV;
@@ -3523,7 +3523,7 @@ OP_HANDLER( anda_ex )
 /* $b5 BITA extended -**0- */
 OP_HANDLER( bita_ex )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(t);
 	r = A & t;
 	CLR_NZV; SET_NZ8(r);
@@ -3549,7 +3549,7 @@ OP_HANDLER( sta_ex )
 /* $b8 EORA extended -**0- */
 OP_HANDLER( eora_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	A ^= t;
 	CLR_NZV;
@@ -3559,7 +3559,7 @@ OP_HANDLER( eora_ex )
 /* $b9 ADCA extended ***** */
 OP_HANDLER( adca_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -3571,7 +3571,7 @@ OP_HANDLER( adca_ex )
 /* $bA ORA extended -**0- */
 OP_HANDLER( ora_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	A |= t;
 	CLR_NZV;
@@ -3581,7 +3581,7 @@ OP_HANDLER( ora_ex )
 /* $bB ADDA extended ***** */
 OP_HANDLER( adda_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = A + t;
 	CLR_HNZVC;
@@ -3593,7 +3593,7 @@ OP_HANDLER( adda_ex )
 /* $bC CMPX (CMPY CMPS) extended -**** */
 OP_HANDLER( cmpx_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = X;
@@ -3605,7 +3605,7 @@ OP_HANDLER( cmpx_ex )
 /* $10bC CMPY extended -**** */
 OP_HANDLER( cmpy_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = Y;
@@ -3617,7 +3617,7 @@ OP_HANDLER( cmpy_ex )
 /* $11bC CMPS extended -**** */
 OP_HANDLER( cmps_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = S;
@@ -3648,7 +3648,7 @@ OP_HANDLER( muld_ex )
 	PAIR	t, q;
 
 	EXTWORD(t);
-	q.d = (INT16) D * (INT16)t.w.l;
+	q.d = (int16_t) D * (int16_t)t.w.l;
 
 	D = q.w.h;
 	W = q.w.l;
@@ -3659,16 +3659,16 @@ OP_HANDLER( muld_ex )
 /* $11bd DIVD extended -**0- */
 OP_HANDLER( divd_ex )
 {
-	UINT8	t;
-	INT16   v, oldD;
+	uint8_t	t;
+	int16_t   v, oldD;
 
 	EXTBYTE(t);
 
 	if( t != 0 )
 	{
 		oldD = D;
-		v = (INT16) D / (INT8) t;
-		A = (INT16) D % (INT8) t;
+		v = (int16_t) D / (int8_t) t;
+		A = (int16_t) D % (int8_t) t;
 		B = v;
 
 		CLR_NZVC;
@@ -3677,7 +3677,7 @@ OP_HANDLER( divd_ex )
 		if( B & 0x01 )
 			SEC;
 
-		if( (INT16)D < 0 )
+		if( (int16_t)D < 0 )
 			SEN;
 
 		if ( (v > 127) || (v < -128) ) /* soft overflow */
@@ -3702,7 +3702,7 @@ OP_HANDLER( divd_ex )
 OP_HANDLER( divq_ex )
 {
 	PAIR	t,q, oldQ;
-	INT32	v;
+	int32_t	v;
 
 	EXTWORD(t);
 
@@ -3713,8 +3713,8 @@ OP_HANDLER( divq_ex )
 	{
 		oldQ = q;
 
-		v = (INT32) q.d / (INT16) t.w.l;
-		D = (INT32) q.d % (INT16) t.w.l;
+		v = (int32_t) q.d / (int16_t) t.w.l;
+		D = (int32_t) q.d % (int16_t) t.w.l;
 		W = v;
 
 		CLR_NZVC;
@@ -3729,7 +3729,7 @@ OP_HANDLER( divq_ex )
 
 			if( (v > 65535 ) || (v < -65536 ) ) /* hard overflow - division is aborted */
 			{
-				if( (INT32)oldQ.d < 0 )
+				if( (int32_t)oldQ.d < 0 )
 					SEN;
 				else if( oldQ.d == 0 )
 					SEZ;
@@ -3800,7 +3800,7 @@ OP_HANDLER( sty_ex )
 /* $c0 SUBB immediate ?**** */
 OP_HANDLER( subb_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = B - t;
 	CLR_NZVC;
@@ -3811,7 +3811,7 @@ OP_HANDLER( subb_im )
 /* $1180 SUBE immediate ?**** */
 OP_HANDLER( sube_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = E - t;
 	CLR_NZVC;
@@ -3822,7 +3822,7 @@ OP_HANDLER( sube_im )
 /* $11C0 SUBF immediate ?**** */
 OP_HANDLER( subf_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = F - t;
 	CLR_NZVC;
@@ -3833,7 +3833,7 @@ OP_HANDLER( subf_im )
 /* $c1 CMPB immediate ?**** */
 OP_HANDLER( cmpb_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = B - t;
 	CLR_NZVC; SET_FLAGS8(B,t,r);
@@ -3842,7 +3842,7 @@ OP_HANDLER( cmpb_im )
 /* $1181 CMPE immediate ?**** */
 OP_HANDLER( cmpe_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = E - t;
 	CLR_NZVC; SET_FLAGS8(E,t,r);
@@ -3851,7 +3851,7 @@ OP_HANDLER( cmpe_im )
 /* $11C1 CMPF immediate ?**** */
 OP_HANDLER( cmpf_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = F - t;
 	CLR_NZVC; SET_FLAGS8(F,t,r);
@@ -3860,7 +3860,7 @@ OP_HANDLER( cmpf_im )
 /* $c2 SBCB immediate ?**** */
 OP_HANDLER( sbcb_im )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -3872,7 +3872,7 @@ OP_HANDLER( sbcb_im )
 OP_HANDLER( sbcd_im )
 {
 	PAIR	t;
-	UINT32	 r;
+	uint32_t	 r;
 	IMMWORD(t);
 	r = D - t.w.l - (CC & CC_C);
 	CLR_NZVC;
@@ -3883,7 +3883,7 @@ OP_HANDLER( sbcd_im )
 /* $c3 ADDD immediate -**** */
 OP_HANDLER( addd_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = D;
@@ -3896,7 +3896,7 @@ OP_HANDLER( addd_im )
 /* $108b ADDW immediate -**** */
 OP_HANDLER( addw_im )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(b);
 	d = W;
@@ -3909,7 +3909,7 @@ OP_HANDLER( addw_im )
 /* $118b ADDE immediate -**** */
 OP_HANDLER( adde_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = E + t;
 	CLR_HNZVC;
@@ -3921,7 +3921,7 @@ OP_HANDLER( adde_im )
 /* $11Cb ADDF immediate -**** */
 OP_HANDLER( addf_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = F + t;
 	CLR_HNZVC;
@@ -3933,7 +3933,7 @@ OP_HANDLER( addf_im )
 /* $c4 ANDB immediate -**0- */
 OP_HANDLER( andb_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	B &= t;
 	CLR_NZV;
@@ -3953,7 +3953,7 @@ OP_HANDLER( andd_im )
 /* $c5 BITB immediate -**0- */
 OP_HANDLER( bitb_im )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	IMMBYTE(t);
 	r = B & t;
 	CLR_NZV;
@@ -3964,7 +3964,7 @@ OP_HANDLER( bitb_im )
 OP_HANDLER( bitd_im )
 {
 	PAIR	t;
-	UINT16	r;
+	uint16_t	r;
 	IMMWORD(t);
 	r = B & t.w.l;
 	CLR_NZV;
@@ -3985,7 +3985,7 @@ OP_HANDLER( bitmd_im )
     His comments come from experimentation and differ from Chris Burke
     */
 
-	UINT8 t,r;
+	uint8_t t,r;
 	IMMBYTE(t);
 	r = MD & t;
 	CLR_Z;
@@ -4029,7 +4029,7 @@ OP_HANDLER( ldf_im )
 /* $c8 EORB immediate -**0- */
 OP_HANDLER( eorb_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	B ^= t;
 	CLR_NZV;
@@ -4049,7 +4049,7 @@ OP_HANDLER( eord_im )
 /* $c9 ADCB immediate ***** */
 OP_HANDLER( adcb_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -4062,7 +4062,7 @@ OP_HANDLER( adcb_im )
 OP_HANDLER( adcd_im )
 {
 	PAIR	t;
-	UINT32	r;
+	uint32_t	r;
 	IMMWORD(t);
 	r = D + t.w.l + (CC & CC_C);
 	CLR_NZVC;
@@ -4073,7 +4073,7 @@ OP_HANDLER( adcd_im )
 /* $cA ORB immediate -**0- */
 OP_HANDLER( orb_im )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(t);
 	B |= t;
 	CLR_NZV;
@@ -4093,7 +4093,7 @@ OP_HANDLER( ord_im )
 /* $cB ADDB immediate ***** */
 OP_HANDLER( addb_im )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(t);
 	r = B + t;
 	CLR_HNZVC;
@@ -4143,7 +4143,7 @@ OP_HANDLER( lds_im )
 /* $d0 SUBB direct ?**** */
 OP_HANDLER( subb_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = B - t;
 	CLR_NZVC;
@@ -4154,7 +4154,7 @@ OP_HANDLER( subb_di )
 /* $1190 SUBE direct ?**** */
 OP_HANDLER( sube_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = E - t;
 	CLR_NZVC;
@@ -4165,7 +4165,7 @@ OP_HANDLER( sube_di )
 /* $11d0 SUBF direct ?**** */
 OP_HANDLER( subf_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = F - t;
 	CLR_NZVC;
@@ -4176,7 +4176,7 @@ OP_HANDLER( subf_di )
 /* $d1 CMPB direct ?**** */
 OP_HANDLER( cmpb_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = B - t;
 	CLR_NZVC;
@@ -4186,7 +4186,7 @@ OP_HANDLER( cmpb_di )
 /* $1191 CMPE direct ?**** */
 OP_HANDLER( cmpe_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = E - t;
 	CLR_NZVC;
@@ -4196,7 +4196,7 @@ OP_HANDLER( cmpe_di )
 /* $11D1 CMPF direct ?**** */
 OP_HANDLER( cmpf_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = F - t;
 	CLR_NZVC;
@@ -4206,7 +4206,7 @@ OP_HANDLER( cmpf_di )
 /* $d2 SBCB direct ?**** */
 OP_HANDLER( sbcb_di )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -4218,7 +4218,7 @@ OP_HANDLER( sbcb_di )
 OP_HANDLER( sbcd_di )
 {
 	PAIR	t;
-	UINT32	r;
+	uint32_t	r;
 	DIRWORD(t);
 	r = D - t.w.l - (CC & CC_C);
 	CLR_NZVC;
@@ -4229,7 +4229,7 @@ OP_HANDLER( sbcd_di )
 /* $d3 ADDD direct -**** */
 OP_HANDLER( addd_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = D;
@@ -4242,7 +4242,7 @@ OP_HANDLER( addd_di )
 /* $109b ADDW direct -**** */
 OP_HANDLER( addw_di )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(b);
 	d = W;
@@ -4255,7 +4255,7 @@ OP_HANDLER( addw_di )
 /* $119b ADDE direct -**** */
 OP_HANDLER( adde_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = E + t;
 	CLR_HNZVC;
@@ -4267,7 +4267,7 @@ OP_HANDLER( adde_di )
 /* $11db ADDF direct -**** */
 OP_HANDLER( addf_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = F + t;
 	CLR_HNZVC;
@@ -4279,7 +4279,7 @@ OP_HANDLER( addf_di )
 /* $d4 ANDB direct -**0- */
 OP_HANDLER( andb_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	B &= t;
 	CLR_NZV;
@@ -4299,7 +4299,7 @@ OP_HANDLER( andd_di )
 /* $d5 BITB direct -**0- */
 OP_HANDLER( bitb_di )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(t);
 	r = B & t;
 	CLR_NZV;
@@ -4310,7 +4310,7 @@ OP_HANDLER( bitb_di )
 OP_HANDLER( bitd_di )
 {
 	PAIR	t;
-	UINT16	r;
+	uint16_t	r;
 	DIRWORD(t);
 	r = B & t.w.l;
 	CLR_NZV;
@@ -4371,7 +4371,7 @@ OP_HANDLER( stf_di )
 /* $d8 EORB direct -**0- */
 OP_HANDLER( eorb_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	B ^= t;
 	CLR_NZV;
@@ -4391,7 +4391,7 @@ OP_HANDLER( eord_di )
 /* $d9 ADCB direct ***** */
 OP_HANDLER( adcb_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -4403,7 +4403,7 @@ OP_HANDLER( adcb_di )
 /* $1099 adcd direct ***** */
 OP_HANDLER( adcd_di )
 {
-	UINT32	r;
+	uint32_t	r;
 	PAIR	t;
 
 	DIRWORD(t);
@@ -4416,7 +4416,7 @@ OP_HANDLER( adcd_di )
 /* $dA ORB direct -**0- */
 OP_HANDLER( orb_di )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(t);
 	B |= t;
 	CLR_NZV;
@@ -4436,7 +4436,7 @@ OP_HANDLER( ord_di )
 /* $dB ADDB direct ***** */
 OP_HANDLER( addb_di )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(t);
 	r = B + t;
 	CLR_HNZVC;
@@ -4521,7 +4521,7 @@ OP_HANDLER( sts_di )
 /* $e0 SUBB indexed ?**** */
 OP_HANDLER( subb_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = B - t;
@@ -4533,7 +4533,7 @@ OP_HANDLER( subb_ix )
 /* $11a0 SUBE indexed ?**** */
 OP_HANDLER( sube_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = E - t;
@@ -4545,7 +4545,7 @@ OP_HANDLER( sube_ix )
 /* $11e0 SUBF indexed ?**** */
 OP_HANDLER( subf_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = F - t;
@@ -4557,7 +4557,7 @@ OP_HANDLER( subf_ix )
 /* $e1 CMPB indexed ?**** */
 OP_HANDLER( cmpb_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = B - t;
@@ -4568,7 +4568,7 @@ OP_HANDLER( cmpb_ix )
 /* $11a1 CMPE indexed ?**** */
 OP_HANDLER( cmpe_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = E - t;
@@ -4579,7 +4579,7 @@ OP_HANDLER( cmpe_ix )
 /* $11e1 CMPF indexed ?**** */
 OP_HANDLER( cmpf_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = F - t;
@@ -4590,7 +4590,7 @@ OP_HANDLER( cmpf_ix )
 /* $e2 SBCB indexed ?**** */
 OP_HANDLER( sbcb_ix )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = B - t - (CC & CC_C);
@@ -4602,7 +4602,7 @@ OP_HANDLER( sbcb_ix )
 /* $10a2 SBCD indexed ?**** */
 OP_HANDLER( sbcd_ix )
 {
-	UINT32	  t,r;
+	uint32_t	  t,r;
 	fetch_effective_address(m68_state);
 	t = RM16(m68_state, EAD);
 	r = D - t - (CC & CC_C);
@@ -4614,7 +4614,7 @@ OP_HANDLER( sbcd_ix )
 /* $e3 ADDD indexed -**** */
 OP_HANDLER( addd_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -4628,7 +4628,7 @@ OP_HANDLER( addd_ix )
 /* $10ab ADDW indexed -**** */
 OP_HANDLER( addw_ix )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	fetch_effective_address(m68_state);
 	b.d=RM16(m68_state, EAD);
@@ -4642,7 +4642,7 @@ OP_HANDLER( addw_ix )
 /* $11ab ADDE indexed -**** */
 OP_HANDLER( adde_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = E + t;
@@ -4655,7 +4655,7 @@ OP_HANDLER( adde_ix )
 /* $11eb ADDF indexed -**** */
 OP_HANDLER( addf_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = F + t;
@@ -4686,7 +4686,7 @@ OP_HANDLER( andd_ix )
 /* $e5 BITB indexed -**0- */
 OP_HANDLER( bitb_ix )
 {
-	UINT8 r;
+	uint8_t r;
 	fetch_effective_address(m68_state);
 	r = B & RM(EAD);
 	CLR_NZV;
@@ -4696,7 +4696,7 @@ OP_HANDLER( bitb_ix )
 /* $10a5 BITD indexed -**0- */
 OP_HANDLER( bitd_ix )
 {
-	UINT16 r;
+	uint16_t r;
 	fetch_effective_address(m68_state);
 	r = D & RM16(m68_state, EAD);
 	CLR_NZV;
@@ -4778,7 +4778,7 @@ OP_HANDLER( eord_ix )
 /* $e9 ADCB indexed ***** */
 OP_HANDLER( adcb_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = B + t + (CC & CC_C);
@@ -4791,7 +4791,7 @@ OP_HANDLER( adcb_ix )
 /* $10a9 ADCD indexed ***** */
 OP_HANDLER( adcd_ix )
 {
-	UINT32	r;
+	uint32_t	r;
 	PAIR	t;
 	fetch_effective_address(m68_state);
 	t.d = RM16(m68_state, EAD);
@@ -4822,7 +4822,7 @@ OP_HANDLER( ord_ix )
 /* $eB ADDB indexed ***** */
 OP_HANDLER( addb_ix )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	fetch_effective_address(m68_state);
 	t = RM(EAD);
 	r = B + t;
@@ -4906,7 +4906,7 @@ OP_HANDLER( sts_ix )
 /* $f0 SUBB extended ?**** */
 OP_HANDLER( subb_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = B - t;
 	CLR_NZVC;
@@ -4917,7 +4917,7 @@ OP_HANDLER( subb_ex )
 /* $11b0 SUBE extended ?**** */
 OP_HANDLER( sube_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = E - t;
 	CLR_NZVC;
@@ -4928,7 +4928,7 @@ OP_HANDLER( sube_ex )
 /* $11f0 SUBF extended ?**** */
 OP_HANDLER( subf_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = F - t;
 	CLR_NZVC;
@@ -4939,7 +4939,7 @@ OP_HANDLER( subf_ex )
 /* $f1 CMPB extended ?**** */
 OP_HANDLER( cmpb_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = B - t;
 	CLR_NZVC;
@@ -4949,7 +4949,7 @@ OP_HANDLER( cmpb_ex )
 /* $11b1 CMPE extended ?**** */
 OP_HANDLER( cmpe_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = E - t;
 	CLR_NZVC;
@@ -4959,7 +4959,7 @@ OP_HANDLER( cmpe_ex )
 /* $11f1 CMPF extended ?**** */
 OP_HANDLER( cmpf_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = F - t;
 	CLR_NZVC;
@@ -4969,7 +4969,7 @@ OP_HANDLER( cmpf_ex )
 /* $f2 SBCB extended ?**** */
 OP_HANDLER( sbcb_ex )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -4981,7 +4981,7 @@ OP_HANDLER( sbcb_ex )
 OP_HANDLER( sbcd_ex )
 {
 	PAIR t = {{0,}};
-	UINT32 r;
+	uint32_t r;
 
 	EXTWORD(t);
 	r = D - t.w.l - (CC & CC_C);
@@ -4993,7 +4993,7 @@ OP_HANDLER( sbcd_ex )
 /* $f3 ADDD extended -**** */
 OP_HANDLER( addd_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(b);
 	d = D;
@@ -5006,7 +5006,7 @@ OP_HANDLER( addd_ex )
 /* $10bb ADDW extended -**** */
 OP_HANDLER( addw_ex )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b = {{0,}};
 	EXTWORD(b);
 	d = W;
@@ -5019,7 +5019,7 @@ OP_HANDLER( addw_ex )
 /* $11bb ADDE extended -**** */
 OP_HANDLER( adde_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = E + t;
 	CLR_HNZVC;
@@ -5031,7 +5031,7 @@ OP_HANDLER( adde_ex )
 /* $11fb ADDF extended -**** */
 OP_HANDLER( addf_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = F + t;
 	CLR_HNZVC;
@@ -5043,7 +5043,7 @@ OP_HANDLER( addf_ex )
 /* $f4 ANDB extended -**0- */
 OP_HANDLER( andb_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	B &= t;
 	CLR_NZV;
@@ -5063,7 +5063,7 @@ OP_HANDLER( andd_ex )
 /* $f5 BITB extended -**0- */
 OP_HANDLER( bitb_ex )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(t);
 	r = B & t;
 	CLR_NZV;
@@ -5074,7 +5074,7 @@ OP_HANDLER( bitb_ex )
 OP_HANDLER( bitd_ex )
 {
 	PAIR t = {{0,}};
-	UINT8 r;
+	uint8_t r;
 	EXTWORD(t);
 	r = B & t.w.l;
 	CLR_NZV;
@@ -5135,7 +5135,7 @@ OP_HANDLER( stf_ex )
 /* $f8 EORB extended -**0- */
 OP_HANDLER( eorb_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	B ^= t;
 	CLR_NZV;
@@ -5155,7 +5155,7 @@ OP_HANDLER( eord_ex )
 /* $f9 ADCB extended ***** */
 OP_HANDLER( adcb_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -5167,7 +5167,7 @@ OP_HANDLER( adcb_ex )
 /* $10b9 ADCD extended ***** */
 OP_HANDLER( adcd_ex )
 {
-	UINT32	r;
+	uint32_t	r;
 	PAIR	t;
 	EXTWORD(t);
 	r = D + t.w.l + (CC & CC_C);
@@ -5179,7 +5179,7 @@ OP_HANDLER( adcd_ex )
 /* $fA ORB extended -**0- */
 OP_HANDLER( orb_ex )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(t);
 	B |= t;
 	CLR_NZV;
@@ -5199,7 +5199,7 @@ OP_HANDLER( ord_ex )
 /* $fB ADDB extended ***** */
 OP_HANDLER( addb_ex )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(t);
 	r = B + t;
 	CLR_HNZVC;
@@ -5280,7 +5280,7 @@ OP_HANDLER( sts_ex )
 /* $10xx opcodes */
 OP_HANDLER( pref10 )
 {
-	UINT8 ireg2 = ROP(PCD);
+	uint8_t ireg2 = ROP(PCD);
 	PC++;
 
 #if BIG_SWITCH
@@ -5430,7 +5430,7 @@ OP_HANDLER( pref10 )
 /* $11xx opcodes */
 OP_HANDLER( pref11 )
 {
-	UINT8 ireg2 = ROP(PCD);
+	uint8_t ireg2 = ROP(PCD);
 	PC++;
 
 #if BIG_SWITCH

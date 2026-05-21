@@ -81,8 +81,8 @@ static const int mpc603r_pll_config[12][9] =
 static void ppc603_exception(int exception);
 static void ppc602_exception(int exception);
 static void ppc403_exception(int exception);
-static UINT8 ppc403_spu_r(UINT32 a);
-static void ppc403_spu_w(UINT32 a, UINT8 d);
+static uint8_t ppc403_spu_r(uint32_t a);
+static void ppc403_spu_w(uint32_t a, uint8_t d);
 
 #define RD				((op >> 21) & 0x1F)
 #define RT				((op >> 21) & 0x1f)
@@ -101,8 +101,8 @@ static void ppc403_spu_w(UINT32 a, UINT8 d);
 #define FXM				((op >> 12) & 0xff)
 #define SPR				(((op >> 16) & 0x1f) | ((op >> 6) & 0x3e0))
 
-#define SIMM16			(INT32)(INT16)(op & 0xffff)
-#define UIMM16			(UINT32)(op & 0xffff)
+#define SIMM16			(int32_t)(int16_t)(op & 0xffff)
+#define UIMM16			(uint32_t)(op & 0xffff)
 
 #define RCBIT			(op & 0x1)
 #define OEBIT			(op & 0x400)
@@ -139,7 +139,7 @@ static void ppc403_spu_w(UINT32 a, UINT8 d);
 	if((ppc.msr & 0x2000) == 0){	\
 	}
 
-static UINT32		ppc_field_xlat[256];
+static uint32_t		ppc_field_xlat[256];
 
 
 
@@ -153,12 +153,12 @@ static UINT32		ppc_field_xlat[256];
 
 
 
-#define BITMASK_0(n)	(UINT32)(((UINT64)1 << n) - 1)
+#define BITMASK_0(n)	(uint32_t)(((uint64_t)1 << n) - 1)
 #define CRBIT(x)		((ppc.cr[x / 4] & (1 << (3 - (x % 4)))) ? 1 : 0)
 #define _BIT(n)			(1 << (n))
 #define GET_ROTATE_MASK(mb,me)		(ppc_rotate_mask[mb][me])
-#define ADD_CA(r,a,b)		((UINT32)r < (UINT32)a)
-#define SUB_CA(r,a,b)		(!((UINT32)a < (UINT32)b))
+#define ADD_CA(r,a,b)		((uint32_t)r < (uint32_t)a)
+#define SUB_CA(r,a,b)		(!((uint32_t)a < (uint32_t)b))
 #define ADD_OV(r,a,b)		((~((a) ^ (b)) & ((a) ^ (r))) & 0x80000000)
 #define SUB_OV(r,a,b)		(( ((a) ^ (b)) & ((a) ^ (r))) & 0x80000000)
 
@@ -196,160 +196,160 @@ static UINT32		ppc_field_xlat[256];
 #define BYTE_REVERSE32(x)	((((x) >> 24) & 0xff) | (((x) >> 8) & 0xff00) | (((x) << 8) & 0xff0000) | (((x) << 24) & 0xff000000))
 
 typedef struct {
-	UINT32 cr;
-	UINT32 da;
-	UINT32 sa;
-	UINT32 ct;
-	UINT32 cc;
+	uint32_t cr;
+	uint32_t da;
+	uint32_t sa;
+	uint32_t ct;
+	uint32_t cc;
 } DMA_REGS;
 
 typedef struct {
-	UINT8 spls;
-	UINT8 sphs;
-	UINT16 brd;
-	UINT8 spctl;
-	UINT8 sprc;
-	UINT8 sptc;
-	UINT8 sprb;
-	UINT8 sptb;
+	uint8_t spls;
+	uint8_t sphs;
+	uint16_t brd;
+	uint8_t spctl;
+	uint8_t sprc;
+	uint8_t sptc;
+	uint8_t sprb;
+	uint8_t sptb;
 	emu_timer *rx_timer;
 	emu_timer *tx_timer;
 } SPU_REGS;
 
 typedef union {
-	UINT64	id;
+	uint64_t	id;
 	double	fd;
 } FPR;
 
 typedef union {
-	UINT32 i;
+	uint32_t i;
 	float f;
 } FPR32;
 
 typedef struct {
-	UINT32 u;
-	UINT32 l;
+	uint32_t u;
+	uint32_t l;
 } BATENT;
 
 
 typedef struct {
-	UINT32 r[32];
-	UINT32 pc;
-	UINT32 npc;
+	uint32_t r[32];
+	uint32_t pc;
+	uint32_t npc;
 
-	UINT32 lr;
-	UINT32 ctr;
-	UINT32 xer;
-	UINT32 msr;
-	UINT8 cr[8];
-	UINT32 pvr;
-	UINT32 srr0;
-	UINT32 srr1;
-	UINT32 srr2;
-	UINT32 srr3;
-	UINT32 hid0;
-	UINT32 hid1;
-	UINT32 hid2;
-	UINT32 sdr1;
-	UINT32 sprg[4];
+	uint32_t lr;
+	uint32_t ctr;
+	uint32_t xer;
+	uint32_t msr;
+	uint8_t cr[8];
+	uint32_t pvr;
+	uint32_t srr0;
+	uint32_t srr1;
+	uint32_t srr2;
+	uint32_t srr3;
+	uint32_t hid0;
+	uint32_t hid1;
+	uint32_t hid2;
+	uint32_t sdr1;
+	uint32_t sprg[4];
 
-	UINT32 dsisr;
-	UINT32 dar;
-	UINT32 ear;
-	UINT32 dmiss;
-	UINT32 dcmp;
-	UINT32 hash1;
-	UINT32 hash2;
-	UINT32 imiss;
-	UINT32 icmp;
-	UINT32 rpa;
+	uint32_t dsisr;
+	uint32_t dar;
+	uint32_t ear;
+	uint32_t dmiss;
+	uint32_t dcmp;
+	uint32_t hash1;
+	uint32_t hash2;
+	uint32_t imiss;
+	uint32_t icmp;
+	uint32_t rpa;
 
 
 	BATENT ibat[4];
 	BATENT dbat[4];
 
-	UINT32 evpr;
-	UINT32 exier;
-	UINT32 exisr;
-	UINT32 bear;
-	UINT32 besr;
-	UINT32 iocr;
-	UINT32 br[8];
-	UINT32 iabr;
-	UINT32 esr;
-	UINT32 iccr;
-	UINT32 dccr;
-	UINT32 pit;
-	UINT32 pit_counter;
-	UINT32 pit_int_enable;
-	UINT32 tsr;
-	UINT32 dbsr;
-	UINT32 sgr;
-	UINT32 pid;
-	UINT32 pbl1, pbl2, pbu1, pbu2;
-	UINT32 fit_bit;
-	UINT32 fit_int_enable;
-	UINT32 wdt_bit;
-	UINT32 wdt_int_enable;
-	UINT32 dac1, dac2;
-	UINT32 iac1, iac2;
+	uint32_t evpr;
+	uint32_t exier;
+	uint32_t exisr;
+	uint32_t bear;
+	uint32_t besr;
+	uint32_t iocr;
+	uint32_t br[8];
+	uint32_t iabr;
+	uint32_t esr;
+	uint32_t iccr;
+	uint32_t dccr;
+	uint32_t pit;
+	uint32_t pit_counter;
+	uint32_t pit_int_enable;
+	uint32_t tsr;
+	uint32_t dbsr;
+	uint32_t sgr;
+	uint32_t pid;
+	uint32_t pbl1, pbl2, pbu1, pbu2;
+	uint32_t fit_bit;
+	uint32_t fit_int_enable;
+	uint32_t wdt_bit;
+	uint32_t wdt_int_enable;
+	uint32_t dac1, dac2;
+	uint32_t iac1, iac2;
 
 	SPU_REGS spu;
 	DMA_REGS dma[4];
-	UINT32 dmasr;
+	uint32_t dmasr;
 
 	int reserved;
-	UINT32 reserved_address;
+	uint32_t reserved_address;
 
 	int interrupt_pending;
 
-	UINT64 tb;			/* 56-bit timebase register */
+	uint64_t tb;			/* 56-bit timebase register */
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 
 	// STUFF added for the 6xx series
-	UINT32 dec, dec_frac;
-	UINT32 fpscr;
+	uint32_t dec, dec_frac;
+	uint32_t fpscr;
 
 	FPR	fpr[32];
-	UINT32 sr[16];
+	uint32_t sr[16];
 
 	int is603;
 	int is602;
 
 	/* PowerPC 602 specific registers */
-	UINT32 lt;
-	UINT32 sp;
-	UINT32 tcr;
-	UINT32 ibr;
-	UINT32 esasrr;
-	UINT32 sebr;
-	UINT32 ser;
+	uint32_t lt;
+	uint32_t sp;
+	uint32_t tcr;
+	uint32_t ibr;
+	uint32_t esasrr;
+	uint32_t sebr;
+	uint32_t ser;
 
 	/* PowerPC function pointers for memory accesses/exceptions */
 	jmp_buf exception_jmpbuf;
-	UINT8 (*read8)(const address_space *space, offs_t address);
-	UINT16 (*read16)(const address_space *space, offs_t address);
-	UINT32 (*read32)(const address_space *space, offs_t address);
-	UINT64 (*read64)(const address_space *space, offs_t address);
-	void (*write8)(const address_space *space, offs_t address, UINT8 data);
-	void (*write16)(const address_space *space, offs_t address, UINT16 data);
-	void (*write32)(const address_space *space, offs_t address, UINT32 data);
-	void (*write64)(const address_space *space, offs_t address, UINT64 data);
-	UINT16 (*read16_unaligned)(const address_space *space, offs_t address);
-	UINT32 (*read32_unaligned)(const address_space *space, offs_t address);
-	UINT64 (*read64_unaligned)(const address_space *space, offs_t address);
-	void (*write16_unaligned)(const address_space *space, offs_t address, UINT16 data);
-	void (*write32_unaligned)(const address_space *space, offs_t address, UINT32 data);
-	void (*write64_unaligned)(const address_space *space, offs_t address, UINT64 data);
+	uint8_t (*read8)(const address_space *space, offs_t address);
+	uint16_t (*read16)(const address_space *space, offs_t address);
+	uint32_t (*read32)(const address_space *space, offs_t address);
+	uint64_t (*read64)(const address_space *space, offs_t address);
+	void (*write8)(const address_space *space, offs_t address, uint8_t data);
+	void (*write16)(const address_space *space, offs_t address, uint16_t data);
+	void (*write32)(const address_space *space, offs_t address, uint32_t data);
+	void (*write64)(const address_space *space, offs_t address, uint64_t data);
+	uint16_t (*read16_unaligned)(const address_space *space, offs_t address);
+	uint32_t (*read32_unaligned)(const address_space *space, offs_t address);
+	uint64_t (*read64_unaligned)(const address_space *space, offs_t address);
+	void (*write16_unaligned)(const address_space *space, offs_t address, uint16_t data);
+	void (*write32_unaligned)(const address_space *space, offs_t address, uint32_t data);
+	void (*write64_unaligned)(const address_space *space, offs_t address, uint64_t data);
 
-	void (* optable19[1024])(UINT32);
-	void (* optable31[1024])(UINT32);
-	void (* optable59[1024])(UINT32);
-	void (* optable63[1024])(UINT32);
-	void (* optable[64])(UINT32);
+	void (* optable19[1024])(uint32_t);
+	void (* optable31[1024])(uint32_t);
+	void (* optable59[1024])(uint32_t);
+	void (* optable63[1024])(uint32_t);
+	void (* optable[64])(uint32_t);
 } PPC_REGS;
 
 
@@ -357,7 +357,7 @@ typedef struct {
 typedef struct {
 	int code;
 	int subcode;
-	void (* handler)(UINT32);
+	void (* handler)(uint32_t);
 } PPC_OPCODE;
 
 
@@ -368,7 +368,7 @@ static int ppc_dec_base_icount;
 static int ppc_dec_trigger_cycle;
 static int bus_freq_multiplier = 1;
 static PPC_REGS ppc;
-static UINT32 ppc_rotate_mask[32][32];
+static uint32_t ppc_rotate_mask[32][32];
 
 #define ROPCODE(pc)			memory_decrypted_read_dword(ppc.program, pc)
 #define ROPCODE64(pc)		memory_decrypted_read_qword(ppc.program, DWORD_XOR_BE(pc))
@@ -393,7 +393,7 @@ INLINE int IS_PPC403(void)
 /*********************************************************************/
 
 
-INLINE void SET_CR0(INT32 rd)
+INLINE void SET_CR0(int32_t rd)
 {
 	if( rd < 0 ) {
 		CR(0) = 0x8;
@@ -412,7 +412,7 @@ INLINE void SET_CR1(void)
 	CR(1) = (ppc.fpscr >> 28) & 0xf;
 }
 
-INLINE void SET_ADD_OV(UINT32 rd, UINT32 ra, UINT32 rb)
+INLINE void SET_ADD_OV(uint32_t rd, uint32_t ra, uint32_t rb)
 {
 	if( ADD_OV(rd, ra, rb) )
 		XER |= XER_SO | XER_OV;
@@ -420,7 +420,7 @@ INLINE void SET_ADD_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_OV;
 }
 
-INLINE void SET_SUB_OV(UINT32 rd, UINT32 ra, UINT32 rb)
+INLINE void SET_SUB_OV(uint32_t rd, uint32_t ra, uint32_t rb)
 {
 	if( SUB_OV(rd, ra, rb) )
 		XER |= XER_SO | XER_OV;
@@ -428,7 +428,7 @@ INLINE void SET_SUB_OV(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_OV;
 }
 
-INLINE void SET_ADD_CA(UINT32 rd, UINT32 ra, UINT32 rb)
+INLINE void SET_ADD_CA(uint32_t rd, uint32_t ra, uint32_t rb)
 {
 	if( ADD_CA(rd, ra, rb) )
 		XER |= XER_CA;
@@ -436,7 +436,7 @@ INLINE void SET_ADD_CA(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_CA;
 }
 
-INLINE void SET_SUB_CA(UINT32 rd, UINT32 ra, UINT32 rb)
+INLINE void SET_SUB_CA(uint32_t rd, uint32_t ra, uint32_t rb)
 {
 	if( SUB_CA(rd, ra, rb) )
 		XER |= XER_CA;
@@ -444,14 +444,14 @@ INLINE void SET_SUB_CA(UINT32 rd, UINT32 ra, UINT32 rb)
 		XER &= ~XER_CA;
 }
 
-INLINE UINT32 check_condition_code(UINT32 bo, UINT32 bi)
+INLINE uint32_t check_condition_code(uint32_t bo, uint32_t bi)
 {
-	UINT32 ctr_ok;
-	UINT32 condition_ok;
-	UINT32 bo0 = (bo & 0x10) ? 1 : 0;
-	UINT32 bo1 = (bo & 0x08) ? 1 : 0;
-	UINT32 bo2 = (bo & 0x04) ? 1 : 0;
-	UINT32 bo3 = (bo & 0x02) ? 1 : 0;
+	uint32_t ctr_ok;
+	uint32_t condition_ok;
+	uint32_t bo0 = (bo & 0x10) ? 1 : 0;
+	uint32_t bo1 = (bo & 0x08) ? 1 : 0;
+	uint32_t bo2 = (bo & 0x04) ? 1 : 0;
+	uint32_t bo3 = (bo & 0x02) ? 1 : 0;
 
 	if( bo2 == 0 )
 		--CTR;
@@ -462,7 +462,7 @@ INLINE UINT32 check_condition_code(UINT32 bo, UINT32 bi)
 	return ctr_ok && condition_ok;
 }
 
-INLINE UINT64 ppc_read_timebase(void)
+INLINE uint64_t ppc_read_timebase(void)
 {
 	int cycles = ppc_tb_base_icount - ppc_icount;
 
@@ -478,7 +478,7 @@ INLINE UINT64 ppc_read_timebase(void)
 	}
 }
 
-INLINE void ppc_write_timebase_l(UINT32 tbl)
+INLINE void ppc_write_timebase_l(uint32_t tbl)
 {
 	ppc_tb_base_icount = ppc_icount;
 
@@ -486,15 +486,15 @@ INLINE void ppc_write_timebase_l(UINT32 tbl)
 	ppc.tb |= tbl;
 }
 
-INLINE void ppc_write_timebase_h(UINT32 tbh)
+INLINE void ppc_write_timebase_h(uint32_t tbh)
 {
 	ppc_tb_base_icount = ppc_icount;
 
 	ppc.tb &= 0xffffffff;
-	ppc.tb |= (UINT64)(tbh) << 32;
+	ppc.tb |= (uint64_t)(tbh) << 32;
 }
 
-INLINE UINT32 read_decrementer(void)
+INLINE uint32_t read_decrementer(void)
 {
 	int cycles = ppc_dec_base_icount - ppc_icount;
 
@@ -502,14 +502,14 @@ INLINE UINT32 read_decrementer(void)
 	return DEC - (cycles / (bus_freq_multiplier * 2));
 }
 
-INLINE void write_decrementer(UINT32 value)
+INLINE void write_decrementer(uint32_t value)
 {
 	ppc_dec_base_icount = ppc_icount + (ppc_dec_base_icount - ppc_icount) % (bus_freq_multiplier * 2);
 
 	DEC = value;
 
 	// check if decrementer exception occurs during execution
-	if ((UINT32)(DEC - ppc_icount) > (UINT32)(DEC))
+	if ((uint32_t)(DEC - ppc_icount) > (uint32_t)(DEC))
 	{
 		ppc_dec_trigger_cycle = ppc_icount - DEC;
 	}
@@ -521,7 +521,7 @@ INLINE void write_decrementer(UINT32 value)
 
 /*********************************************************************/
 
-INLINE void ppc_set_spr(int spr, UINT32 value)
+INLINE void ppc_set_spr(int spr, uint32_t value)
 {
 	switch (spr)
 	{
@@ -674,7 +674,7 @@ INLINE void ppc_set_spr(int spr, UINT32 value)
 	fatalerror("ppc: set_spr: unknown spr %d (%03X) !", spr, spr);
 }
 
-INLINE UINT32 ppc_get_spr(int spr)
+INLINE uint32_t ppc_get_spr(int spr)
 {
 	switch(spr)
 	{
@@ -695,9 +695,9 @@ INLINE UINT32 ppc_get_spr(int spr)
 		switch (spr)
 		{
 			case SPR403_TBLU:
-			case SPR403_TBLO:		return (UINT32)(ppc_read_timebase());
+			case SPR403_TBLO:		return (uint32_t)(ppc_read_timebase());
 			case SPR403_TBHU:
-			case SPR403_TBHI:		return (UINT32)(ppc_read_timebase() >> 32);
+			case SPR403_TBHI:		return (uint32_t)(ppc_read_timebase() >> 32);
 
 			case SPR403_EVPR:		return EVPR;
 			case SPR403_ESR:		return ppc.esr;
@@ -746,8 +746,8 @@ INLINE UINT32 ppc_get_spr(int spr)
 				fatalerror("ppc: get_spr: TBU_R ");
 				break;
 
-			case SPR603E_TBL_W:		return (UINT32)(ppc_read_timebase());
-			case SPR603E_TBU_W:		return (UINT32)(ppc_read_timebase() >> 32);
+			case SPR603E_TBL_W:		return (uint32_t)(ppc_read_timebase());
+			case SPR603E_TBU_W:		return (uint32_t)(ppc_read_timebase() >> 32);
 			case SPR603E_HID0:		return ppc.hid0;
 			case SPR603E_HID1:		return ppc.hid1;
 			case SPR603E_HID2:		return ppc.hid2;
@@ -786,16 +786,16 @@ INLINE UINT32 ppc_get_spr(int spr)
 	return 0;
 }
 
-static UINT8 ppc_read8_translated(const address_space *space, offs_t address);
-static UINT16 ppc_read16_translated(const address_space *space, offs_t address);
-static UINT32 ppc_read32_translated(const address_space *space, offs_t address);
-static UINT64 ppc_read64_translated(const address_space *space, offs_t address);
-static void ppc_write8_translated(const address_space *space, offs_t address, UINT8 data);
-static void ppc_write16_translated(const address_space *space, offs_t address, UINT16 data);
-static void ppc_write32_translated(const address_space *space, offs_t address, UINT32 data);
-static void ppc_write64_translated(const address_space *space, offs_t address, UINT64 data);
+static uint8_t ppc_read8_translated(const address_space *space, offs_t address);
+static uint16_t ppc_read16_translated(const address_space *space, offs_t address);
+static uint32_t ppc_read32_translated(const address_space *space, offs_t address);
+static uint64_t ppc_read64_translated(const address_space *space, offs_t address);
+static void ppc_write8_translated(const address_space *space, offs_t address, uint8_t data);
+static void ppc_write16_translated(const address_space *space, offs_t address, uint16_t data);
+static void ppc_write32_translated(const address_space *space, offs_t address, uint32_t data);
+static void ppc_write64_translated(const address_space *space, offs_t address, uint64_t data);
 
-INLINE void ppc_set_msr(UINT32 value)
+INLINE void ppc_set_msr(uint32_t value)
 {
 	if( value & (MSR_ILE | MSR_LE) )
 		fatalerror("ppc: set_msr: little_endian mode not supported !");
@@ -829,12 +829,12 @@ INLINE void ppc_set_msr(UINT32 value)
 	}
 }
 
-INLINE UINT32 ppc_get_msr(void)
+INLINE uint32_t ppc_get_msr(void)
 {
 	return MSR;
 }
 
-INLINE void ppc_set_cr(UINT32 value)
+INLINE void ppc_set_cr(uint32_t value)
 {
 	CR(0) = (value >> 28) & 0xf;
 	CR(1) = (value >> 24) & 0xf;
@@ -846,7 +846,7 @@ INLINE void ppc_set_cr(UINT32 value)
 	CR(7) = (value >> 0) & 0xf;
 }
 
-INLINE UINT32 ppc_get_cr(void)
+INLINE uint32_t ppc_get_cr(void)
 {
 	return CR(0) << 28 | CR(1) << 24 | CR(2) << 20 | CR(3) << 16 | CR(4) << 12 | CR(5) << 8 | CR(6) << 4 | CR(7);
 }
@@ -913,10 +913,10 @@ static void ppc_init(void)
 	/* Calculate rotate mask table */
 	for( i=0; i < 32; i++ ) {
 		for( j=0; j < 32; j++ ) {
-			UINT32 mask;
+			uint32_t mask;
 			int mb = i;
 			int me = j;
-			mask = ((UINT32)0xFFFFFFFF >> mb) ^ ((me >= 31) ? 0 : ((UINT32)0xFFFFFFFF >> (me + 1)));
+			mask = ((uint32_t)0xFFFFFFFF >> mb) ^ ((me >= 31) ? 0 : ((uint32_t)0xFFFFFFFF >> (me + 1)));
 			if( mb > me )
 				mask = ~mask;
 
@@ -1250,12 +1250,12 @@ static CPU_EXIT( ppc602 )
 
 }
 
-static void mpc8240_tlbli(UINT32 op)
+static void mpc8240_tlbli(uint32_t op)
 {
 
 }
 
-static void mpc8240_tlbld(UINT32 op)
+static void mpc8240_tlbld(uint32_t op)
 {
 
 }

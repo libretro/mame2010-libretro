@@ -16,7 +16,7 @@
 
 /* Graphics Instructions */
 
-static void line(tms34010_state *tms, UINT16 op)
+static void line(tms34010_state *tms, uint16_t op)
 {
 	if (!P_FLAG(tms))
 	{
@@ -30,7 +30,7 @@ static void line(tms34010_state *tms, UINT16 op)
 
 	if (COUNT(tms) > 0)
 	{
-		INT16 x1,y1;
+		int16_t x1,y1;
 
 		COUNT(tms)--;
 		if (WINDOW_CHECKING(tms) != 3 ||
@@ -70,7 +70,7 @@ cases:
 * directions (left->right/right->left, top->bottom/bottom->top)
 */
 
-static int apply_window(tms34010_state *tms, const char *inst_name,int srcbpp, UINT32 *srcaddr, XY *dst, int *dx, int *dy)
+static int apply_window(tms34010_state *tms, const char *inst_name,int srcbpp, uint32_t *srcaddr, XY *dst, int *dx, int *dy)
 {
 	/* apply the window */
 	if (WINDOW_CHECKING(tms) == 0)
@@ -201,26 +201,26 @@ static int compute_pixblt_b_cycles(int left_partials, int right_partials, int fu
 
 
 /* Shift register handling */
-static void shiftreg_w(const address_space *space, offs_t offset,UINT16 data)
+static void shiftreg_w(const address_space *space, offs_t offset,uint16_t data)
 {
 	tms34010_state *tms = get_safe_token(space->cpu);
 	if (tms->config->from_shiftreg)
-		(*tms->config->from_shiftreg)(space, (UINT32)(offset << 3) & ~15, &tms->shiftreg[0]);
+		(*tms->config->from_shiftreg)(space, (uint32_t)(offset << 3) & ~15, &tms->shiftreg[0]);
 	else
 		logerror("From ShiftReg function not set. PC = %08X\n", tms->pc);
 }
 
-static UINT16 shiftreg_r(const address_space *space, offs_t offset)
+static uint16_t shiftreg_r(const address_space *space, offs_t offset)
 {
 	tms34010_state *tms = get_safe_token(space->cpu);
 	if (tms->config->to_shiftreg)
-		(*tms->config->to_shiftreg)(space, (UINT32)(offset << 3) & ~15, &tms->shiftreg[0]);
+		(*tms->config->to_shiftreg)(space, (uint32_t)(offset << 3) & ~15, &tms->shiftreg[0]);
 	else
 		logerror("To ShiftReg function not set. PC = %08X\n", tms->pc);
 	return tms->shiftreg[0];
 }
 
-static UINT16 dummy_shiftreg_r(const address_space *space, offs_t offset)
+static uint16_t dummy_shiftreg_r(const address_space *space, offs_t offset)
 {
 	tms34010_state *tms = get_safe_token(space->cpu);
 	return tms->shiftreg[0];
@@ -229,42 +229,42 @@ static UINT16 dummy_shiftreg_r(const address_space *space, offs_t offset)
 
 
 /* Pixel operations */
-static UINT32 pixel_op00(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return srcpix; }
-static UINT32 pixel_op01(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return srcpix & dstpix; }
-static UINT32 pixel_op02(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return srcpix & ~dstpix; }
-static UINT32 pixel_op03(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return 0; }
-static UINT32 pixel_op04(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (srcpix | ~dstpix) & mask; }
-static UINT32 pixel_op05(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return ~(srcpix ^ dstpix) & mask; }
-static UINT32 pixel_op06(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return ~dstpix & mask; }
-static UINT32 pixel_op07(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return ~(srcpix | dstpix) & mask; }
-static UINT32 pixel_op08(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (srcpix | dstpix) & mask; }
-static UINT32 pixel_op09(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return dstpix & mask; }
-static UINT32 pixel_op10(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (srcpix ^ dstpix) & mask; }
-static UINT32 pixel_op11(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (~srcpix & dstpix) & mask; }
-static UINT32 pixel_op12(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return mask; }
-static UINT32 pixel_op13(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (~srcpix & dstpix) & mask; }
-static UINT32 pixel_op14(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return ~(srcpix & dstpix) & mask; }
-static UINT32 pixel_op15(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return srcpix ^ mask; }
-static UINT32 pixel_op16(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (srcpix + dstpix) & mask; }
-static UINT32 pixel_op17(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { INT32 tmp = srcpix + (dstpix & mask); return (tmp > mask) ? mask : tmp; }
-static UINT32 pixel_op18(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { return (dstpix - srcpix) & mask; }
-static UINT32 pixel_op19(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { INT32 tmp = srcpix - (dstpix & mask); return (tmp < 0) ? 0 : tmp; }
-static UINT32 pixel_op20(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { dstpix &= mask; return (srcpix > dstpix) ? srcpix : dstpix; }
-static UINT32 pixel_op21(UINT32 dstpix, UINT32 mask, UINT32 srcpix) { dstpix &= mask; return (srcpix < dstpix) ? srcpix : dstpix; }
+static uint32_t pixel_op00(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return srcpix; }
+static uint32_t pixel_op01(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return srcpix & dstpix; }
+static uint32_t pixel_op02(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return srcpix & ~dstpix; }
+static uint32_t pixel_op03(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return 0; }
+static uint32_t pixel_op04(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (srcpix | ~dstpix) & mask; }
+static uint32_t pixel_op05(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return ~(srcpix ^ dstpix) & mask; }
+static uint32_t pixel_op06(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return ~dstpix & mask; }
+static uint32_t pixel_op07(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return ~(srcpix | dstpix) & mask; }
+static uint32_t pixel_op08(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (srcpix | dstpix) & mask; }
+static uint32_t pixel_op09(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return dstpix & mask; }
+static uint32_t pixel_op10(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (srcpix ^ dstpix) & mask; }
+static uint32_t pixel_op11(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (~srcpix & dstpix) & mask; }
+static uint32_t pixel_op12(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return mask; }
+static uint32_t pixel_op13(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (~srcpix & dstpix) & mask; }
+static uint32_t pixel_op14(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return ~(srcpix & dstpix) & mask; }
+static uint32_t pixel_op15(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return srcpix ^ mask; }
+static uint32_t pixel_op16(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (srcpix + dstpix) & mask; }
+static uint32_t pixel_op17(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { int32_t tmp = srcpix + (dstpix & mask); return (tmp > mask) ? mask : tmp; }
+static uint32_t pixel_op18(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { return (dstpix - srcpix) & mask; }
+static uint32_t pixel_op19(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { int32_t tmp = srcpix - (dstpix & mask); return (tmp < 0) ? 0 : tmp; }
+static uint32_t pixel_op20(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { dstpix &= mask; return (srcpix > dstpix) ? srcpix : dstpix; }
+static uint32_t pixel_op21(uint32_t dstpix, uint32_t mask, uint32_t srcpix) { dstpix &= mask; return (srcpix < dstpix) ? srcpix : dstpix; }
 
-static UINT32 (*const pixel_op_table[])(UINT32, UINT32, UINT32) =
+static uint32_t (*const pixel_op_table[])(uint32_t, uint32_t, uint32_t) =
 {
 	pixel_op00,	pixel_op01,	pixel_op02,	pixel_op03,	pixel_op04,	pixel_op05,	pixel_op06,	pixel_op07,
 	pixel_op08,	pixel_op09,	pixel_op10,	pixel_op11,	pixel_op12,	pixel_op13,	pixel_op14,	pixel_op15,
 	pixel_op16,	pixel_op17,	pixel_op18,	pixel_op19,	pixel_op20,	pixel_op21,	pixel_op00,	pixel_op00,
 	pixel_op00,	pixel_op00,	pixel_op00,	pixel_op00,	pixel_op00,	pixel_op00,	pixel_op00,	pixel_op00
 };
-static const UINT8 pixel_op_timing_table[] =
+static const uint8_t pixel_op_timing_table[] =
 {
 	2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,6,5,5,2,2,2,2,2,2,2,2,2,2,2
 };
-static UINT32 (*pixel_op)(UINT32, UINT32, UINT32);
-static UINT32 pixel_op_timing;
+static uint32_t (*pixel_op)(uint32_t, uint32_t, uint32_t);
+static uint32_t pixel_op_timing;
 
 
 /* Blitters/fillers */
@@ -894,13 +894,13 @@ static void (*const fill_op_table[])(tms34010_state *tms, int) =
 #undef PIXEL_OP_TIMING
 #undef PIXEL_OP
 
-static const UINT8 pixelsize_lookup[32] =
+static const uint8_t pixelsize_lookup[32] =
 {
 	0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
 };
 
 
-static void pixblt_b_l(tms34010_state *tms, UINT16 op)
+static void pixblt_b_l(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -912,7 +912,7 @@ static void pixblt_b_l(tms34010_state *tms, UINT16 op)
 	(*pixblt_b_op_table[ix])(tms, 1);
 }
 
-static void pixblt_b_xy(tms34010_state *tms, UINT16 op)
+static void pixblt_b_xy(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -924,7 +924,7 @@ static void pixblt_b_xy(tms34010_state *tms, UINT16 op)
 	(*pixblt_b_op_table[ix])(tms, 0);
 }
 
-static void pixblt_l_l(tms34010_state *tms, UINT16 op)
+static void pixblt_l_l(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -940,7 +940,7 @@ static void pixblt_l_l(tms34010_state *tms, UINT16 op)
 		(*pixblt_r_op_table[ix])(tms, 1, 1);
 }
 
-static void pixblt_l_xy(tms34010_state *tms, UINT16 op)
+static void pixblt_l_xy(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -956,7 +956,7 @@ static void pixblt_l_xy(tms34010_state *tms, UINT16 op)
 		(*pixblt_r_op_table[ix])(tms, 1, 0);
 }
 
-static void pixblt_xy_l(tms34010_state *tms, UINT16 op)
+static void pixblt_xy_l(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -972,7 +972,7 @@ static void pixblt_xy_l(tms34010_state *tms, UINT16 op)
 		(*pixblt_r_op_table[ix])(tms, 0, 1);
 }
 
-static void pixblt_xy_xy(tms34010_state *tms, UINT16 op)
+static void pixblt_xy_xy(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -988,7 +988,7 @@ static void pixblt_xy_xy(tms34010_state *tms, UINT16 op)
 		(*pixblt_r_op_table[ix])(tms, 0, 0);
 }
 
-static void fill_l(tms34010_state *tms, UINT16 op)
+static void fill_l(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -1000,7 +1000,7 @@ static void fill_l(tms34010_state *tms, UINT16 op)
 	(*fill_op_table[ix])(tms, 1);
 }
 
-static void fill_xy(tms34010_state *tms, UINT16 op)
+static void fill_xy(tms34010_state *tms, uint16_t op)
 {
 	int psize = pixelsize_lookup[IOREG(tms, REG_PSIZE) & 0x1f];
 	int trans = (IOREG(tms, REG_CONTROL) & 0x20) >> 5;
@@ -1028,10 +1028,10 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 	if (!P_FLAG(tms))
 	{
 		int dx, dy, x, y, /*words,*/ yreverse;
-		void (*word_write)(const address_space *space,offs_t address,UINT16 data);
-		UINT16 (*word_read)(const address_space *space,offs_t address);
-		UINT32 readwrites = 0;
-		UINT32 saddr, daddr;
+		void (*word_write)(const address_space *space,offs_t address,uint16_t data);
+		uint16_t (*word_read)(const address_space *space,offs_t address);
+		uint32_t readwrites = 0;
+		uint32_t saddr, daddr;
 		XY dstxy = { 0 };
 
 		/* determine read/write functions */
@@ -1050,8 +1050,8 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 		saddr = src_is_linear ? SADDR(tms) : SXYTOL(tms,SADDR_XY(tms));
 
 		/* compute the bounds of the operation */
-		dx = (INT16)DYDX_X(tms);
-		dy = (INT16)DYDX_Y(tms);
+		dx = (int16_t)DYDX_X(tms);
+		dy = (int16_t)DYDX_Y(tms);
 
 		/* apply the window for non-linear destinations */
 		tms->gfxcycles = 7 + (src_is_linear ? 0 : 2);
@@ -1096,11 +1096,11 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 		/* loop over rows */
 		for (y = 0; y < dy; y++)
 		{
-			UINT32 srcwordaddr = saddr >> 4;
-			UINT32 dstwordaddr = daddr >> 4;
-			UINT8 srcbit = saddr & 15;
-			UINT8 dstbit = daddr & 15;
-			UINT32 srcword, dstword = 0;
+			uint32_t srcwordaddr = saddr >> 4;
+			uint32_t dstwordaddr = daddr >> 4;
+			uint8_t srcbit = saddr & 15;
+			uint8_t dstbit = daddr & 15;
+			uint32_t srcword, dstword = 0;
 
 			/* fetch the initial source word */
 			srcword = (*word_read)(tms->program, srcwordaddr++ << 1);
@@ -1116,8 +1116,8 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 			/* loop over pixels */
 			for (x = 0; x < dx; x++)
 			{
-				UINT32 dstmask;
-				UINT32 pixel;
+				uint32_t dstmask;
+				uint32_t pixel;
 
 				/* fetch more words if necessary */
 				if (srcbit + BITS_PER_PIXEL > 16)
@@ -1167,8 +1167,8 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 				/* if we're right-partial, read and mask the remaining bits */
 				if (dstbit != 16)
 				{
-					UINT16 origdst = (*word_read)(tms->program, dstwordaddr << 1);
-					UINT16 mask = 0xffff << dstbit;
+					uint16_t origdst = (*word_read)(tms->program, dstwordaddr << 1);
+					uint16_t mask = 0xffff << dstbit;
 					dstword = (dstword & ~mask) | (origdst & mask);
 					readwrites++;
 				}
@@ -1181,8 +1181,8 @@ static void FUNCTION_NAME(pixblt)(tms34010_state *tms, int src_is_linear, int ds
 
 #if 0
 			int left_partials, right_partials, full_words, bitshift, bitshift_alt;
-			UINT16 srcword, srcmask, dstword, dstmask, pixel;
-			UINT32 swordaddr, dwordaddr;
+			uint16_t srcword, srcmask, dstword, dstmask, pixel;
+			uint32_t swordaddr, dwordaddr;
 
 			/* determine the bit shift to get from source to dest */
 			bitshift = ((daddr & 15) - (saddr & 15)) & 15;
@@ -1375,9 +1375,9 @@ static void FUNCTION_NAME(pixblt_r)(tms34010_state *tms, int src_is_linear, int 
 	if (!P_FLAG(tms))
 	{
 		int dx, dy, x, y, words, yreverse;
-		void (*word_write)(const address_space *space,offs_t address,UINT16 data);
-		UINT16 (*word_read)(const address_space *space,offs_t address);
-		UINT32 saddr, daddr;
+		void (*word_write)(const address_space *space,offs_t address,uint16_t data);
+		uint16_t (*word_read)(const address_space *space,offs_t address);
+		uint32_t saddr, daddr;
 		XY dstxy = { 0 };
 
 		/* determine read/write functions */
@@ -1398,8 +1398,8 @@ if ((saddr & (BITS_PER_PIXEL - 1)) != 0) mame_printf_debug("PIXBLT_R%d with odd 
 		saddr &= ~(BITS_PER_PIXEL - 1);
 
 		/* compute the bounds of the operation */
-		dx = (INT16)DYDX_X(tms);
-		dy = (INT16)DYDX_Y(tms);
+		dx = (int16_t)DYDX_X(tms);
+		dy = (int16_t)DYDX_Y(tms);
 
 		/* apply the window for non-linear destinations */
 		tms->gfxcycles = 7 + (src_is_linear ? 0 : 2);
@@ -1450,8 +1450,8 @@ if ((daddr & (BITS_PER_PIXEL - 1)) != 0) mame_printf_debug("PIXBLT_R%d with odd 
 		for (y = 0; y < dy; y++)
 		{
 			int left_partials, right_partials, full_words, bitshift, bitshift_alt;
-			UINT16 srcword, srcmask, dstword, dstmask, pixel;
-			UINT32 swordaddr, dwordaddr;
+			uint16_t srcword, srcmask, dstword, dstmask, pixel;
+			uint32_t swordaddr, dwordaddr;
 
 			/* determine the bit shift to get from source to dest */
 			bitshift = ((daddr & 15) - (saddr & 15)) & 15;
@@ -1640,9 +1640,9 @@ static void FUNCTION_NAME(pixblt_b)(tms34010_state *tms, int dst_is_linear)
 	if (!P_FLAG(tms))
 	{
 		int dx, dy, x, y, words, left_partials, right_partials, full_words;
-		void (*word_write)(const address_space *space,offs_t address,UINT16 data);
-		UINT16 (*word_read)(const address_space *space,offs_t address);
-		UINT32 saddr, daddr;
+		void (*word_write)(const address_space *space,offs_t address,uint16_t data);
+		uint16_t (*word_read)(const address_space *space,offs_t address);
+		uint32_t saddr, daddr;
 		XY dstxy = { 0 };
 
 		/* determine read/write functions */
@@ -1661,8 +1661,8 @@ static void FUNCTION_NAME(pixblt_b)(tms34010_state *tms, int dst_is_linear)
 		saddr = SADDR(tms);
 
 		/* compute the bounds of the operation */
-		dx = (INT16)DYDX_X(tms);
-		dy = (INT16)DYDX_Y(tms);
+		dx = (int16_t)DYDX_X(tms);
+		dy = (int16_t)DYDX_Y(tms);
 
 		/* apply the window for non-linear destinations */
 		tms->gfxcycles = 4;
@@ -1709,8 +1709,8 @@ static void FUNCTION_NAME(pixblt_b)(tms34010_state *tms, int dst_is_linear)
 		/* loop over rows */
 		for (y = 0; y < dy; y++)
 		{
-			UINT16 srcword, srcmask, dstword, dstmask, pixel;
-			UINT32 swordaddr, dwordaddr;
+			uint16_t srcword, srcmask, dstword, dstmask, pixel;
+			uint32_t swordaddr, dwordaddr;
 
 			/* use byte addresses each row */
 			swordaddr = saddr >> 4;
@@ -1854,9 +1854,9 @@ static void FUNCTION_NAME(fill)(tms34010_state *tms, int dst_is_linear)
 	if (!P_FLAG(tms))
 	{
 		int dx, dy, x, y, words, left_partials, right_partials, full_words;
-		void (*word_write)(const address_space *space,offs_t address,UINT16 data);
-		UINT16 (*word_read)(const address_space *space,offs_t address);
-		UINT32 daddr;
+		void (*word_write)(const address_space *space,offs_t address,uint16_t data);
+		uint16_t (*word_read)(const address_space *space,offs_t address);
+		uint32_t daddr;
 		XY dstxy = { 0 };
 
 		/* determine read/write functions */
@@ -1872,8 +1872,8 @@ static void FUNCTION_NAME(fill)(tms34010_state *tms, int dst_is_linear)
 		}
 
 		/* compute the bounds of the operation */
-		dx = (INT16)DYDX_X(tms);
-		dy = (INT16)DYDX_Y(tms);
+		dx = (int16_t)DYDX_X(tms);
+		dy = (int16_t)DYDX_Y(tms);
 
 		/* apply the window for non-linear destinations */
 		tms->gfxcycles = 4;
@@ -1920,8 +1920,8 @@ static void FUNCTION_NAME(fill)(tms34010_state *tms, int dst_is_linear)
 		/* loop over rows */
 		for (y = 0; y < dy; y++)
 		{
-			UINT16 dstword, dstmask, pixel;
-			UINT32 dwordaddr;
+			uint16_t dstword, dstmask, pixel;
+			uint32_t dwordaddr;
 
 			/* use byte addresses each row */
 			dwordaddr = daddr >> 4;

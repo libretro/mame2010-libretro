@@ -38,8 +38,8 @@ enum
     CONFIG STRUCTURE
 ***************************************************************************/
 
-typedef UINT8 (*ccpu_input_func)(running_device *device);
-typedef void (*ccpu_vector_func)(running_device *device, INT16 sx, INT16 sy, INT16 ex, INT16 ey, UINT8 shift);
+typedef uint8_t (*ccpu_input_func)(running_device *device);
+typedef void (*ccpu_vector_func)(running_device *device, int16_t sx, int16_t sy, int16_t ex, int16_t ey, uint8_t shift);
 
 typedef struct _ccpu_config ccpu_config;
 struct _ccpu_config

@@ -3,10 +3,10 @@
  *  HALT: must add log
  */
 
-static UINT32 opBRK(v60_state *cpustate)
+static uint32_t opBRK(v60_state *cpustate)
 {
 /*
-    UINT32 oldPSW = v60_update_psw_for_exception(cpustate, 0, 0);
+    uint32_t oldPSW = v60_update_psw_for_exception(cpustate, 0, 0);
 
     cpustate->SP -=4;
     MemWrite32(cpustate->program, cpustate->SP, EXCEPTION_CODE_AND_SIZE(0x0d00, 4));
@@ -21,9 +21,9 @@ static UINT32 opBRK(v60_state *cpustate)
 	return 1;
 }
 
-static UINT32 opBRKV(v60_state *cpustate)
+static uint32_t opBRKV(v60_state *cpustate)
 {
-	UINT32 oldPSW = v60_update_psw_for_exception(cpustate, 0, 0);
+	uint32_t oldPSW = v60_update_psw_for_exception(cpustate, 0, 0);
 
 	cpustate->SP -=4;
 	MemWrite32(cpustate->program, cpustate->SP, cpustate->PC);
@@ -38,14 +38,14 @@ static UINT32 opBRKV(v60_state *cpustate)
 	return 0;
 }
 
-static UINT32 opCLRTLBA(v60_state *cpustate)
+static uint32_t opCLRTLBA(v60_state *cpustate)
 {
 	// @@@ TLB not yet supported
 	logerror("Skipping CLRTLBA opcode! cpustate->PC=%x\n", cpustate->PC);
 	return 1;
 }
 
-static UINT32 opDISPOSE(v60_state *cpustate)
+static uint32_t opDISPOSE(v60_state *cpustate)
 {
 	cpustate->SP = cpustate->FP;
 	cpustate->FP = MemRead32(cpustate->program, cpustate->SP);
@@ -54,19 +54,19 @@ static UINT32 opDISPOSE(v60_state *cpustate)
 	return 1;
 }
 
-static UINT32 opHALT(v60_state *cpustate)
+static uint32_t opHALT(v60_state *cpustate)
 {
 	// @@@ It should wait for an interrupt to occur
 	//logerror("HALT found: skipping");
 	return 1;
 }
 
-static UINT32 opNOP(v60_state *cpustate) /* TRUSTED */
+static uint32_t opNOP(v60_state *cpustate) /* TRUSTED */
 {
 	return 1;
 }
 
-static UINT32 opRSR(v60_state *cpustate)
+static uint32_t opRSR(v60_state *cpustate)
 {
 	cpustate->PC = MemRead32(cpustate->program, cpustate->SP);
 	cpustate->SP +=4;
@@ -74,7 +74,7 @@ static UINT32 opRSR(v60_state *cpustate)
 	return 0;
 }
 
-static UINT32 opTRAPFL(v60_state *cpustate)
+static uint32_t opTRAPFL(v60_state *cpustate)
 {
 	if ((cpustate->TKCW & 0x1F0) & ((v60ReadPSW(cpustate) & 0x1F00) >> 4))
 	{

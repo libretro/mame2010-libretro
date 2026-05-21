@@ -17,9 +17,9 @@ CPU_DISASSEMBLE( ssem );
 typedef struct _ssem_state ssem_state;
 struct _ssem_state
 {
-    UINT32 pc;
-    UINT32 a;
-    UINT32 halt;
+    uint32_t pc;
+    uint32_t a;
+    uint32_t halt;
 
     legacy_cpu_device *device;
     const address_space *program;
@@ -42,7 +42,7 @@ INLINE ssem_state *get_safe_token(running_device *device)
 // The de facto snapshot format for other SSEM simulators stores the data physically in that format as well.
 // Therefore, in MESS, every 32-bit word has its bits reversed, too, and as a result the values must be
 // un-reversed before being used.
-INLINE UINT32 reverse(UINT32 v)
+INLINE uint32_t reverse(uint32_t v)
 {
     // Taken from http://www-graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
     // swap odd and even bits
@@ -59,9 +59,9 @@ INLINE UINT32 reverse(UINT32 v)
     return v;
 }
 
-INLINE UINT32 READ32(ssem_state *cpustate, UINT32 address)
+INLINE uint32_t READ32(ssem_state *cpustate, uint32_t address)
 {
-    UINT32 v = 0;
+    uint32_t v = 0;
     // The MAME core does not have a good way of specifying a minimum datum size that is more than
     // 8 bits in width.  The minimum datum width on the SSEM is 32 bits, so we need to quadruple
     // the address value to get the appropriate byte index.
@@ -75,9 +75,9 @@ INLINE UINT32 READ32(ssem_state *cpustate, UINT32 address)
     return reverse(v);
 }
 
-INLINE void WRITE32(ssem_state *cpustate, UINT32 address, UINT32 data)
+INLINE void WRITE32(ssem_state *cpustate, uint32_t address, uint32_t data)
 {
-    UINT32 v = reverse(data);
+    uint32_t v = reverse(data);
 
     // The MAME core does not have a good way of specifying a minimum datum size that is more than
     // 8 bits in width.  The minimum datum width on the SSEM is 32 bits, so we need to quadruple
@@ -93,7 +93,7 @@ INLINE void WRITE32(ssem_state *cpustate, UINT32 address, UINT32 data)
 
 /*****************************************************************************/
 
-static void unimplemented_opcode(ssem_state *cpustate, UINT32 op)
+static void unimplemented_opcode(ssem_state *cpustate, uint32_t op)
 {
     if((cpustate->device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
     {
@@ -105,14 +105,14 @@ static void unimplemented_opcode(ssem_state *cpustate, UINT32 op)
 #if SSEM_DISASM_ON_UNIMPL
     {
         char string[200] = { 0 };
-        UINT32 i = 0;
+        uint32_t i = 0;
         FILE *disasm = fopen("ssemdasm.txt", "wt");
 
         if(disasm)
         {
             for(i = 0; i < 0x20; i++)
             {
-                UINT32 opcode = reverse(READ32(cpustate, i));
+                uint32_t opcode = reverse(READ32(cpustate, i));
                 ssem_dasm_one(string, i, opcode);
                 fprintf(disasm, "%02X: %08X    %s\n", i, opcode, string);
             }
@@ -123,7 +123,7 @@ static void unimplemented_opcode(ssem_state *cpustate, UINT32 op)
 #endif
 #if SSEM_DUMP_MEM_ON_UNIMPL
     {
-        UINT32 i = 0;
+        uint32_t i = 0;
         FILE *store = fopen("ssemmem.bin", "wb");
 
         if(store)
@@ -169,7 +169,7 @@ static CPU_RESET( ssem )
 static CPU_EXECUTE( ssem )
 {
     ssem_state *cpustate = get_safe_token(device);
-    UINT32 op;
+    uint32_t op;
 
     cpustate->pc &= 0x1f;
 
@@ -196,11 +196,11 @@ static CPU_EXECUTE( ssem )
                 break;
             case 1:
                 // JRP: Add the value at the specified address to the Program Counter.
-                cpustate->pc += (INT32)READ32(cpustate, ADDR);
+                cpustate->pc += (int32_t)READ32(cpustate, ADDR);
                 break;
             case 2:
                 // LDN: Load the accumulator with the two's-complement negation of the value at the specified address.
-                cpustate->a = (UINT32)(0 - (INT32)READ32(cpustate, ADDR));
+                cpustate->a = (uint32_t)(0 - (int32_t)READ32(cpustate, ADDR));
                 break;
             case 3:
                 // STO: Store the value in the accumulator at the specified address.
@@ -213,7 +213,7 @@ static CPU_EXECUTE( ssem )
                 break;
             case 6:
                 // CMP: If the accumulator is less than zero, skip the next opcode.
-                if((INT32)(cpustate->a) < 0)
+                if((int32_t)(cpustate->a) < 0)
                 {
                     cpustate->pc++;
                 }

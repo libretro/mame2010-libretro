@@ -237,48 +237,48 @@ enum
 typedef struct _mcs51_uart mcs51_uart;
 struct _mcs51_uart
 {
-	UINT8	data_out;		//Data to send out
-	UINT8	bits_to_send;	//How many bits left to send when transmitting out the serial port
+	uint8_t	data_out;		//Data to send out
+	uint8_t	bits_to_send;	//How many bits left to send when transmitting out the serial port
 
 	int		smod_div;		/* signal divided by 2^SMOD */
 	int		rx_clk;			/* rx clock */
 	int		tx_clk;			/* tx clock */
-	UINT8	delay_cycles;	//Gross Hack;
+	uint8_t	delay_cycles;	//Gross Hack;
 };
 
 typedef struct _mcs51_state_t mcs51_state_t;
 struct _mcs51_state_t
 {
 	//Internal stuff
-	UINT16	ppc;			//previous pc
-	UINT16	pc;				//current pc
-	UINT16	features;		//features of this cpu
-	UINT8	rwm;			//Signals that the current instruction is a read/write/modify instruction
+	uint16_t	ppc;			//previous pc
+	uint16_t	pc;				//current pc
+	uint16_t	features;		//features of this cpu
+	uint8_t	rwm;			//Signals that the current instruction is a read/write/modify instruction
 
 	int		inst_cycles;		/* cycles for the current instruction */
 	int		ram_mask;			/* second ram bank for indirect access available ? */
 	int		num_interrupts;		/* number of interrupts supported */
 	int		recalc_parity;		/* recalculate parity before next instruction */
-	UINT32	last_line_state;	/* last state of input lines line */
+	uint32_t	last_line_state;	/* last state of input lines line */
 	int		t0_cnt;				/* number of 0->1 transistions on T0 line */
 	int		t1_cnt;				/* number of 0->1 transistions on T1 line */
 	int		t2_cnt;				/* number of 0->1 transistions on T2 line */
 	int		t2ex_cnt;			/* number of 0->1 transistions on T2EX line */
 	int		cur_irq_prio;		/* Holds value of the current IRQ Priority Level; -1 if no irq */
-	UINT8	irq_active;			/* mask which irq levels are serviced */
-	UINT8	irq_prio[8];		/* interrupt priority */
+	uint8_t	irq_active;			/* mask which irq levels are serviced */
+	uint8_t	irq_prio[8];		/* interrupt priority */
 
 	int		icount;
 
 	mcs51_uart uart;			/* internal uart */
 
 	/* Internal Ram */
-	UINT8	*internal_ram;		/* 128 RAM (8031/51) + 128 RAM in second bank (8032/52) */
-	UINT8	*sfr_ram;			/* 128 SFR - these are in 0x80 - 0xFF */
+	uint8_t	*internal_ram;		/* 128 RAM (8031/51) + 128 RAM in second bank (8032/52) */
+	uint8_t	*sfr_ram;			/* 128 SFR - these are in 0x80 - 0xFF */
 
 	/* SFR Callbacks */
-	void	(*sfr_write)(mcs51_state_t *mcs51_state, size_t offset, UINT8 data);
-	UINT8	(*sfr_read)(mcs51_state_t *mcs51_state, size_t offset);
+	void	(*sfr_write)(mcs51_state_t *mcs51_state, size_t offset, uint8_t data);
+	uint8_t	(*sfr_read)(mcs51_state_t *mcs51_state, size_t offset);
 
 	/* Interrupt Callback */
 	device_irq_callback irq_callback;
@@ -296,9 +296,9 @@ struct _mcs51_state_t
 
 	/* DS5002FP */
 	struct {
-		UINT8	previous_ta;		/* Previous Timed Access value */
-		UINT8	ta_window;			/* Limed Access window */
-		UINT8	range;				/* Memory Range */
+		uint8_t	previous_ta;		/* Previous Timed Access value */
+		uint8_t	ta_window;			/* Limed Access window */
+		uint8_t	range;				/* Memory Range */
 		const ds5002fp_config *config;	/* Bootstrap Configuration */
 	} ds5002fp;
 
@@ -314,10 +314,10 @@ struct _mcs51_state_t
 #define ROP_ARG(pc)		memory_raw_read_byte(mcs51_state->program, pc)
 
 /* Read a byte from External Code Memory (Usually Program Rom(s) Space) */
-#define CODEMEM_R(a)	(UINT8)memory_read_byte_8le(mcs51_state->program, a)
+#define CODEMEM_R(a)	(uint8_t)memory_read_byte_8le(mcs51_state->program, a)
 
 /* Read/Write a byte from/to External Data Memory (Usually RAM or other I/O) */
-#define DATAMEM_R(a)	(UINT8)memory_read_byte_8le(mcs51_state->io, a)
+#define DATAMEM_R(a)	(uint8_t)memory_read_byte_8le(mcs51_state->io, a)
 #define DATAMEM_W(a,v)	memory_write_byte_8le(mcs51_state->io, a, v)
 
 /* Read/Write a byte from/to the Internal RAM */
@@ -327,8 +327,8 @@ struct _mcs51_state_t
 
 /* Read/Write a byte from/to the Internal RAM indirectly */
 /* (called from indirect addressing)                     */
-INLINE UINT8 iram_iread(mcs51_state_t *mcs51_state, offs_t a) { return (a <= mcs51_state->ram_mask) ? memory_read_byte_8le(mcs51_state->data, a) : 0xff; }
-INLINE void iram_iwrite(mcs51_state_t *mcs51_state, offs_t a, UINT8 d) { if (a <= mcs51_state->ram_mask) memory_write_byte_8le(mcs51_state->data, a, d); }
+INLINE uint8_t iram_iread(mcs51_state_t *mcs51_state, offs_t a) { return (a <= mcs51_state->ram_mask) ? memory_read_byte_8le(mcs51_state->data, a) : 0xff; }
+INLINE void iram_iwrite(mcs51_state_t *mcs51_state, offs_t a, uint8_t d) { if (a <= mcs51_state->ram_mask) memory_write_byte_8le(mcs51_state->data, a, d); }
 
 #define IRAM_IR(a)		iram_iread(mcs51_state, a)
 #define IRAM_IW(a, d)	iram_iwrite(mcs51_state, a, d)
@@ -342,7 +342,7 @@ INLINE void iram_iwrite(mcs51_state_t *mcs51_state, offs_t a, UINT8 d) { if (a <
 #define BIT_W(a,v)		bit_address_w(mcs51_state, a, v)
 
 /* Input/Output a byte from given I/O port */
-#define IN(port)		((UINT8)memory_read_byte(mcs51_state->io, port))
+#define IN(port)		((uint8_t)memory_read_byte(mcs51_state->io, port))
 #define OUT(port,value) memory_write_byte(mcs51_state->io, port,value)
 
 
@@ -360,13 +360,13 @@ INLINE void iram_iwrite(mcs51_state_t *mcs51_state, offs_t a, UINT8 d) { if (a <
 #define SFR_A(a)		mcs51_state->sfr_ram[(a)]
 #define SET_SFR_A(a,v)	do { SFR_A(a) = (v); } while (0)
 
-#define ACC			((const UINT8) SFR_A(ADDR_ACC))
-#define PSW			((const UINT8) SFR_A(ADDR_PSW))
+#define ACC			((const uint8_t) SFR_A(ADDR_ACC))
+#define PSW			((const uint8_t) SFR_A(ADDR_PSW))
 
-#define P0			((const UINT8) SFR_A(ADDR_P0))
-#define P1			((const UINT8) SFR_A(ADDR_P1))
-#define P2			((const UINT8) SFR_A(ADDR_P2))
-#define P3			((const UINT8) SFR_A(ADDR_P3))
+#define P0			((const uint8_t) SFR_A(ADDR_P0))
+#define P1			((const uint8_t) SFR_A(ADDR_P1))
+#define P2			((const uint8_t) SFR_A(ADDR_P2))
+#define P3			((const uint8_t) SFR_A(ADDR_P3))
 
 #define SP			SFR_A(ADDR_SP)
 #define DPL			SFR_A(ADDR_DPL)
@@ -640,7 +640,7 @@ INLINE void iram_iwrite(mcs51_state_t *mcs51_state, offs_t a, UINT8 d) { if (a <
 ***************************************************************************/
 
 static void check_irqs(mcs51_state_t *mcs51_state);
-INLINE void serial_transmit(mcs51_state_t *mcs51_state, UINT8 data);
+INLINE void serial_transmit(mcs51_state_t *mcs51_state, uint8_t data);
 
 /* Hold callback functions so they can be set by caller (before the cpu reset) */
 
@@ -683,14 +683,14 @@ INLINE void clear_current_irq(mcs51_state_t *mcs51_state)
 	LOG(("New: %d %02x\n", mcs51_state->cur_irq_prio, mcs51_state->irq_active));
 }
 
-INLINE UINT8 r_acc(mcs51_state_t *mcs51_state) { return SFR_A(ADDR_ACC); }
+INLINE uint8_t r_acc(mcs51_state_t *mcs51_state) { return SFR_A(ADDR_ACC); }
 
-INLINE UINT8 r_psw(mcs51_state_t *mcs51_state) { return SFR_A(ADDR_PSW); }
+INLINE uint8_t r_psw(mcs51_state_t *mcs51_state) { return SFR_A(ADDR_PSW); }
 
 INLINE void update_ptrs(mcs51_state_t *mcs51_state)
 {
-	mcs51_state->internal_ram = (UINT8 *)memory_get_write_ptr(mcs51_state->data, 0x00);
-	mcs51_state->sfr_ram = (UINT8 *)memory_get_write_ptr(mcs51_state->data, 0x100);
+	mcs51_state->internal_ram = (uint8_t *)memory_get_write_ptr(mcs51_state->data, 0x00);
+	mcs51_state->sfr_ram = (uint8_t *)memory_get_write_ptr(mcs51_state->data, 0x100);
 }
 
 
@@ -728,9 +728,9 @@ INLINE void update_ptrs(mcs51_state_t *mcs51_state)
 INLINE offs_t external_ram_iaddr(mcs51_state_t *mcs51_state, offs_t offset, offs_t mem_mask)
 {
 	/* Memory Range (RG1 and RG0 @ MCON and RPCTL registers) */
-	static const UINT16 ds5002fp_ranges[4] = { 0x1fff, 0x3fff, 0x7fff, 0xffff };
+	static const uint16_t ds5002fp_ranges[4] = { 0x1fff, 0x3fff, 0x7fff, 0xffff };
 	/* Memory Partition Table (RG1 & RG0 @ MCON & RPCTL registers) */
-	static const UINT32 ds5002fp_partitions[16] = {
+	static const uint32_t ds5002fp_partitions[16] = {
 		0x0000, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000,  0x7000,
 		0x8000, 0x9000, 0xa000, 0xb000, 0xc000, 0xd000, 0xe000,	0x10000 };
 
@@ -755,12 +755,12 @@ INLINE offs_t external_ram_iaddr(mcs51_state_t *mcs51_state, offs_t offset, offs
 
 /* Internal ram read/write */
 
-INLINE UINT8 iram_read(mcs51_state_t *mcs51_state, size_t offset)
+INLINE uint8_t iram_read(mcs51_state_t *mcs51_state, size_t offset)
 {
 	return (((offset) < 0x80) ? memory_read_byte_8le(mcs51_state->data, offset) : mcs51_state->sfr_read(mcs51_state, offset));
 }
 
-INLINE void iram_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
+INLINE void iram_write(mcs51_state_t *mcs51_state, size_t offset, uint8_t data)
 {
 	if ((offset) < 0x80)
 		memory_write_byte_8le(mcs51_state->data, offset, data);
@@ -771,7 +771,7 @@ INLINE void iram_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
 /*Push the current PC to the stack*/
 INLINE void push_pc(mcs51_state_t *mcs51_state)
 {
-	UINT8 tmpSP = SP+1;						//Grab and Increment Stack Pointer
+	uint8_t tmpSP = SP+1;						//Grab and Increment Stack Pointer
 	IRAM_IW(tmpSP, (PC & 0xff));				//Store low byte of PC to Internal Ram (Use IRAM_IW to store stack above 128 bytes)
 	tmpSP++;									// ""
 	SP = tmpSP;								// ""
@@ -781,7 +781,7 @@ INLINE void push_pc(mcs51_state_t *mcs51_state)
 /*Pop the current PC off the stack and into the pc*/
 INLINE void pop_pc(mcs51_state_t *mcs51_state)
 {
-	UINT8 tmpSP = SP;							//Grab Stack Pointer
+	uint8_t tmpSP = SP;							//Grab Stack Pointer
 	PC = (IRAM_IR(tmpSP--) & 0xff) << 8;		//Store hi byte to PC (must use IRAM_IR to access stack pointing above 128 bytes)
 	PC = PC | IRAM_IR(tmpSP--);					//Store lo byte to PC (must use IRAM_IR to access stack pointing above 128 bytes)
 	SP = tmpSP;								//Decrement Stack Pointer
@@ -791,9 +791,9 @@ INLINE void pop_pc(mcs51_state_t *mcs51_state)
 INLINE void set_parity(mcs51_state_t *mcs51_state)
 {
 	//This flag will be set when the accumulator contains an odd # of bits set..
-	UINT8 p = 0;
+	uint8_t p = 0;
 	int i;
-	UINT8 a = ACC;
+	uint8_t a = ACC;
 
 	for (i=0; i<8; i++) {		//Test for each of the 8 bits in the ACC!
 		p ^= (a & 1);
@@ -803,10 +803,10 @@ INLINE void set_parity(mcs51_state_t *mcs51_state)
 	SET_P(p & 1);
 }
 
-INLINE UINT8 bit_address_r(mcs51_state_t *mcs51_state, UINT8 offset)
+INLINE uint8_t bit_address_r(mcs51_state_t *mcs51_state, uint8_t offset)
 {
-	UINT8	word;
-	UINT8	mask;
+	uint8_t	word;
+	uint8_t	mask;
 	int	bit_pos;
 	int	distance;	/* distance between bit addressable words */
 					/* 1 for normal bits, 8 for sfr bit addresses */
@@ -830,12 +830,12 @@ INLINE UINT8 bit_address_r(mcs51_state_t *mcs51_state, UINT8 offset)
 }
 
 
-INLINE void bit_address_w(mcs51_state_t *mcs51_state, UINT8 offset, UINT8 bit)
+INLINE void bit_address_w(mcs51_state_t *mcs51_state, uint8_t offset, uint8_t bit)
 {
 	int	word;
-	UINT8	mask;
+	uint8_t	mask;
 	int	bit_pos;
-	UINT8	result;
+	uint8_t	result;
 	int	distance;
 
 	/* User defined bit addresses 0x20-0x2f (values are 0x0-0x7f) */
@@ -862,10 +862,10 @@ INLINE void bit_address_w(mcs51_state_t *mcs51_state, UINT8 offset, UINT8 bit)
 	}
 }
 
-INLINE void do_add_flags(mcs51_state_t *mcs51_state, UINT8 a, UINT8 data, UINT8 c)
+INLINE void do_add_flags(mcs51_state_t *mcs51_state, uint8_t a, uint8_t data, uint8_t c)
 {
-	UINT16 result = a+data+c;
-	INT16 result1 = (INT8)a+(INT8)data+c;
+	uint16_t result = a+data+c;
+	int16_t result1 = (int8_t)a+(int8_t)data+c;
 
 	SET_CY((result & 0x100) >> 8);
 	result = (a&0x0f)+(data&0x0f)+c;
@@ -873,10 +873,10 @@ INLINE void do_add_flags(mcs51_state_t *mcs51_state, UINT8 a, UINT8 data, UINT8 
 	SET_OV(result1 < -128 || result1 > 127);
 }
 
-INLINE void do_sub_flags(mcs51_state_t *mcs51_state, UINT8 a, UINT8 data, UINT8 c)
+INLINE void do_sub_flags(mcs51_state_t *mcs51_state, uint8_t a, uint8_t data, uint8_t c)
 {
-	UINT16 result = a-(data+c);
-	INT16 result1 = (INT8)a-(INT8)(data+c);
+	uint16_t result = a-(data+c);
+	int16_t result1 = (int8_t)a-(int8_t)(data+c);
 
 	SET_CY((result & 0x100) >> 8);
 	result = (a&0x0f)-((data&0x0f)+c);
@@ -960,11 +960,11 @@ INLINE void transmit_receive(mcs51_state_t *mcs51_state, int source)
 INLINE void update_timer_t0(mcs51_state_t *mcs51_state, int cycles)
 {
 	int mode = (GET_M0_1<<1) | GET_M0_0;
-	UINT32 count = 0;
+	uint32_t count = 0;
 
 	if (GET_TR0)
 	{
-		UINT32 delta;
+		uint32_t delta;
 
 		/* counter / external input */
 		delta = GET_CT0 ? mcs51_state->t0_cnt : cycles;
@@ -994,7 +994,7 @@ INLINE void update_timer_t0(mcs51_state_t *mcs51_state, int cycles)
 				TL0 = count & 0xff;
 				break;
 			case 2:			/* 8 Bit Autoreload */
-				count = ((UINT32) TL0) + delta;
+				count = ((uint32_t) TL0) + delta;
 				if ( count & 0xffffff00 )				/* Check for overflow */
 				{
 					SET_TF0(1);
@@ -1005,7 +1005,7 @@ INLINE void update_timer_t0(mcs51_state_t *mcs51_state, int cycles)
 				break;
 			case 3:
 				/* Split Timer 1 */
-				count = ((UINT32) TL0) + delta;
+				count = ((uint32_t) TL0) + delta;
 				if ( count & 0xffffff00 )				/* Check for overflow */
 					SET_TF0(1);
 				TL0 = count & 0xff; 					/* Update new values of the counter */
@@ -1018,7 +1018,7 @@ INLINE void update_timer_t0(mcs51_state_t *mcs51_state, int cycles)
 		{
 		case 3:
 			/* Split Timer 2 */
-			count = ((UINT32) TH0) + cycles;			/* No gate control or counting !*/
+			count = ((uint32_t) TH0) + cycles;			/* No gate control or counting !*/
 			if ( count & 0xffffff00 )				/* Check for overflow */
 				SET_TF1(1);
 			TH0 = count & 0xff;						/* Update new values of the counter */
@@ -1045,16 +1045,16 @@ switching it into or out of Mode 3 or it can be assigned as a baud rate generato
 
 INLINE void update_timer_t1(mcs51_state_t *mcs51_state, int cycles)
 {
-	UINT8 mode = (GET_M1_1<<1) | GET_M1_0;
-	UINT8 mode_0 = (GET_M0_1<<1) | GET_M0_0;
-	UINT32 count = 0;
+	uint8_t mode = (GET_M1_1<<1) | GET_M1_0;
+	uint8_t mode_0 = (GET_M0_1<<1) | GET_M0_0;
+	uint32_t count = 0;
 
 	if (mode_0 != 3)
 	{
 		if (GET_TR1)
 		{
-			UINT32 delta;
-			UINT32 overflow = 0;
+			uint32_t delta;
+			uint32_t overflow = 0;
 
 			/* counter / external input */
 			delta = GET_CT1 ? mcs51_state->t1_cnt : cycles;
@@ -1082,7 +1082,7 @@ INLINE void update_timer_t1(mcs51_state_t *mcs51_state, int cycles)
 					TL1 = count & 0xff;
 					break;
 				case 2:			/* 8 Bit Autoreload */
-					count = ((UINT32) TL1) + delta;
+					count = ((uint32_t) TL1) + delta;
 					overflow = count & 0xffffff00; /* Check for overflow */
 					if ( overflow )
 					{
@@ -1104,8 +1104,8 @@ INLINE void update_timer_t1(mcs51_state_t *mcs51_state, int cycles)
 	}
 	else
 	{
-		UINT32 delta;
-		UINT32 overflow = 0;
+		uint32_t delta;
+		uint32_t overflow = 0;
 
 		delta =  cycles;
 		/* taken, reset */
@@ -1126,7 +1126,7 @@ INLINE void update_timer_t1(mcs51_state_t *mcs51_state, int cycles)
 				TL1 = count & 0xff;
 				break;
 			case 2:			/* 8 Bit Autoreload */
-				count = ((UINT32) TL1) + delta;
+				count = ((uint32_t) TL1) + delta;
 				overflow = count & 0xffffff00; /* Check for overflow */
 				if ( overflow )
 				{
@@ -1153,7 +1153,7 @@ INLINE void update_timer_t2(mcs51_state_t *mcs51_state, int cycles)
 		int mode = ((GET_TCLK | GET_RCLK) << 1) | GET_CP;
 		int delta = GET_CT2 ? mcs51_state->t2_cnt : (mode & 2) ? cycles * (12/2) : cycles;
 
-		UINT32 count = ((TH2<<8) | TL2) + delta;
+		uint32_t count = ((TH2<<8) | TL2) + delta;
 		mcs51_state->t2_cnt = 0;
 
 		switch (mode)
@@ -1214,7 +1214,7 @@ INLINE void update_timers(mcs51_state_t *mcs51_state, int cycles)
 //Set up to transmit data out of serial port
 //NOTE: Enable Serial Port Interrupt bit is NOT required to send/receive data!
 
-INLINE void serial_transmit(mcs51_state_t *mcs51_state, UINT8 data)
+INLINE void serial_transmit(mcs51_state_t *mcs51_state, uint8_t data)
 {
 	int mode = (GET_SM0<<1) | GET_SM1;
 
@@ -1269,7 +1269,7 @@ INLINE void	update_serial(mcs51_state_t *mcs51_state, int cycles)
 }
 
 /* Check and update status of serial port */
-INLINE void	update_irq_prio(mcs51_state_t *mcs51_state, UINT8 ipl, UINT8 iph)
+INLINE void	update_irq_prio(mcs51_state_t *mcs51_state, uint8_t ipl, uint8_t iph)
 {
 	int i;
 	for (i=0; i<8; i++)
@@ -1297,12 +1297,12 @@ void i8051_set_serial_rx_callback(running_device *device, mcs51_serial_rx_func r
     OPCODES
 ***************************************************************************/
 
-#define OPHANDLER( _name ) INLINE void _name (mcs51_state_t *mcs51_state, UINT8 r)
+#define OPHANDLER( _name ) INLINE void _name (mcs51_state_t *mcs51_state, uint8_t r)
 
 #include "mcs51ops.c"
 
 
-static void execute_op(mcs51_state_t *mcs51_state, UINT8 op)
+static void execute_op(mcs51_state_t *mcs51_state, uint8_t op)
 {
 	if (mcs51_state->recalc_parity)
 	{
@@ -1629,7 +1629,7 @@ static void execute_op(mcs51_state_t *mcs51_state, UINT8 op)
 ***************************************************************************/
 
 /* # of oscilations each opcode requires*/
-static const UINT8 mcs51_cycles[] = {
+static const uint8_t mcs51_cycles[] = {
 	1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,
 	2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -1667,10 +1667,10 @@ static const UINT8 mcs51_cycles[] = {
  **********************************************************************************/
 static void check_irqs(mcs51_state_t *mcs51_state)
 {
-	UINT8 ints = (GET_IE0 | (GET_TF0<<1) | (GET_IE1<<2) | (GET_TF1<<3)
+	uint8_t ints = (GET_IE0 | (GET_TF0<<1) | (GET_IE1<<2) | (GET_TF1<<3)
 			| ((GET_RI|GET_TI)<<4));
-	UINT8 int_vec = 0;
-	UINT8 int_mask = 0;
+	uint8_t int_vec = 0;
+	uint8_t int_mask = 0;
 	int priority_request = -1;
 	int i;
 
@@ -1817,9 +1817,9 @@ static void mcs51_set_irq_line(mcs51_state_t *mcs51_state, int irqline, int stat
      * for at least one cycle (12 states)
      *
      */
-	UINT32 new_state = (mcs51_state->last_line_state & ~(1 << irqline)) | ((state != CLEAR_LINE) << irqline);
+	uint32_t new_state = (mcs51_state->last_line_state & ~(1 << irqline)) | ((state != CLEAR_LINE) << irqline);
 	/* detect 0->1 transistions */
-	UINT32 tr_state = (~mcs51_state->last_line_state) & new_state;
+	uint32_t tr_state = (~mcs51_state->last_line_state) & new_state;
 
 	switch( irqline )
 	{
@@ -1923,7 +1923,7 @@ static void mcs51_set_irq_line(mcs51_state_t *mcs51_state, int irqline, int stat
 static CPU_EXECUTE( mcs51 )
 {
 	mcs51_state_t *mcs51_state = get_safe_token(device);
-	UINT8 op;
+	uint8_t op;
 
 	update_ptrs(mcs51_state);
 
@@ -1988,7 +1988,7 @@ static CPU_EXECUTE( mcs51 )
  * MCS51/8051 Section
  ****************************************************************************/
 
-static void mcs51_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
+static void mcs51_sfr_write(mcs51_state_t *mcs51_state, size_t offset, uint8_t data)
 {
 	/* update register */
 	assert(offset >= 0x80 && offset <= 0xff);
@@ -2020,14 +2020,14 @@ static void mcs51_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 dat
 		case ADDR_SCON:
 			break;
 		default:
-			LOG(("mcs51 '%s': attemping to write to an invalid/non-implemented SFR address: %x at 0x%04x, data=%x\n", mcs51_state->device->tag(), (UINT32)offset,PC,data));
+			LOG(("mcs51 '%s': attemping to write to an invalid/non-implemented SFR address: %x at 0x%04x, data=%x\n", mcs51_state->device->tag(), (uint32_t)offset,PC,data));
 			/* no write in this case according to manual */
 			return;
 	}
 	memory_write_byte_8le(mcs51_state->data, (size_t)offset | 0x100, data);
 }
 
-static UINT8 mcs51_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
+static uint8_t mcs51_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
 {
 	assert(offset >= 0x80 && offset <= 0xff);
 
@@ -2060,7 +2060,7 @@ static UINT8 mcs51_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
 			return memory_read_byte_8le(mcs51_state->data, (size_t) offset | 0x100);
 		/* Illegal or non-implemented sfr */
 		default:
-			LOG(("mcs51 '%s': attemping to read an invalid/non-implemented SFR address: %x at 0x%04x\n", mcs51_state->device->tag(), (UINT32)offset,PC));
+			LOG(("mcs51 '%s': attemping to read an invalid/non-implemented SFR address: %x at 0x%04x\n", mcs51_state->device->tag(), (uint32_t)offset,PC));
 			/* according to the manual, the read may return random bits */
 			return 0xff;
 	}
@@ -2202,7 +2202,7 @@ static CPU_EXIT( mcs51 )
  * 8052 Section
  ****************************************************************************/
 
-static void i8052_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
+static void i8052_sfr_write(mcs51_state_t *mcs51_state, size_t offset, uint8_t data)
 {
 	switch (offset)
 	{
@@ -2220,7 +2220,7 @@ static void i8052_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 dat
 	}
 }
 
-static UINT8 i8052_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
+static uint8_t i8052_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
 {
 	switch (offset)
 	{
@@ -2253,7 +2253,7 @@ static CPU_INIT( i8052 )
  * 80C52 Section
  ****************************************************************************/
 
-static void i80c52_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
+static void i80c52_sfr_write(mcs51_state_t *mcs51_state, size_t offset, uint8_t data)
 {
 	switch (offset)
 	{
@@ -2275,7 +2275,7 @@ static void i80c52_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 da
 	memory_write_byte_8le(mcs51_state->data, (size_t) offset | 0x100, data);
 }
 
-static UINT8 i80c52_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
+static uint8_t i80c52_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
 {
 	switch (offset)
 	{
@@ -2315,9 +2315,9 @@ static CPU_INIT( i80c31 )
 #define DS5_LOGW(a, d)	LOG(("ds5002fp '%s': write to  " # a " register at 0x%04x, data=%x\n", mcs51_state->device->tag(), PC, d))
 #define DS5_LOGR(a, d)	LOG(("ds5002fp '%s': read from " # a " register at 0x%04x\n", mcs51_state->device->tag(), PC))
 
-INLINE UINT8 ds5002fp_protected(mcs51_state_t *mcs51_state, size_t offset, UINT8 data, UINT8 ta_mask, UINT8 mask)
+INLINE uint8_t ds5002fp_protected(mcs51_state_t *mcs51_state, size_t offset, uint8_t data, uint8_t ta_mask, uint8_t mask)
 {
-	UINT8 is_timed_access;
+	uint8_t is_timed_access;
 
 	is_timed_access = (mcs51_state->ds5002fp.ta_window > 0) && (TA == 0x55);
 	if (is_timed_access)
@@ -2328,7 +2328,7 @@ INLINE UINT8 ds5002fp_protected(mcs51_state_t *mcs51_state, size_t offset, UINT8
 	return (mcs51_state->sfr_ram[offset] & (~mask)) | (data & mask);
 }
 
-static void ds5002fp_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 data)
+static void ds5002fp_sfr_write(mcs51_state_t *mcs51_state, size_t offset, uint8_t data)
 {
 	switch (offset)
 	{
@@ -2358,7 +2358,7 @@ static void ds5002fp_sfr_write(mcs51_state_t *mcs51_state, size_t offset, UINT8 
 	memory_write_byte_8le(mcs51_state->data, (size_t) offset | 0x100, data);
 }
 
-static UINT8 ds5002fp_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
+static uint8_t ds5002fp_sfr_read(mcs51_state_t *mcs51_state, size_t offset)
 {
 	switch (offset)
 	{

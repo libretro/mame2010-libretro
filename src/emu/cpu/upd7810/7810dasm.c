@@ -12,7 +12,7 @@
 #include "upd7810.h"
 
 struct dasm_s {
-	UINT8 token;
+	uint8_t token;
 	const void *args;
 };
 
@@ -5360,14 +5360,14 @@ static const char *const regname[32] =
 	"illegal", "TMM",     "PT",      "illegal"
 };
 
-static offs_t Dasm( char *buffer, offs_t pc, const struct dasm_s *dasmXX, const UINT8 *oprom, const UINT8 *opram, int is_7810 )
+static offs_t Dasm( char *buffer, offs_t pc, const struct dasm_s *dasmXX, const uint8_t *oprom, const uint8_t *opram, int is_7810 )
 {
 	int idx = 0;
-	UINT8 op = oprom[idx++], op2, t;
+	uint8_t op = oprom[idx++], op2, t;
 	int offset;
-	UINT16 ea;
+	uint16_t ea;
 	const char *a;
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 
 	t = dasmXX[op].token;
 	a = (const char *)dasmXX[op].args;

@@ -239,39 +239,39 @@ OP(DD) { /* illegal operation? */ }
 OP(DE) { /* illegal operation? */ }
 OP(DF) { /* illegal operation? */ }
 
-OP(E0) { INT8 d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E1) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_Z ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E2) { INT8 d8 = rdop(minx); if ( !( minx->F & FLAG_Z ) && ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E3) { INT8 d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E4) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E5) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E6) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_S ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E7) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_S ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E8) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X0 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E9) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X1 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(EA) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X2 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(EB) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_DZ ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(EC) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X0 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(ED) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X1 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(EE) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X2 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(EF) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_DZ ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E0) { int8_t d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E1) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_Z ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E2) { int8_t d8 = rdop(minx); if ( !( minx->F & FLAG_Z ) && ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E3) { int8_t d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E4) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E5) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_O ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E6) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_S ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E7) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_S ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E8) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X0 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E9) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X1 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(EA) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X2 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(EB) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_DZ ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(EC) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X0 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(ED) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X1 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(EE) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X2 ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(EF) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_DZ ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
 
-OP(F0) { INT8 d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F1) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_Z ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F2) { INT8 d8 = rdop(minx); if ( !( minx->F & FLAG_Z ) && ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F3) { INT8 d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) { CALL( minx, minx->PC + d8 - 1 ); } }
-OP(F4) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F5) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F6) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_S ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F7) { INT8 d8 = rdop(minx); if ( ( minx->F & FLAG_S ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F8) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X0 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(F9) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X1 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FA) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_X2 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FB) { INT8 d8 = rdop(minx); if ( ! ( minx->E & EXEC_DZ ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FC) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X0 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FD) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X1 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FE) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_X2 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(FF) { INT8 d8 = rdop(minx); if ( ( minx->E & EXEC_DZ ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F0) { int8_t d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F1) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_Z ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_S ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F2) { int8_t d8 = rdop(minx); if ( !( minx->F & FLAG_Z ) && ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F3) { int8_t d8 = rdop(minx); if ( ( ( minx->F & ( FLAG_S | FLAG_O ) ) == 0 ) || ( ( minx->F & ( FLAG_S | FLAG_O ) ) == ( FLAG_S | FLAG_O ) ) ) { CALL( minx, minx->PC + d8 - 1 ); } }
+OP(F4) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F5) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_O ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F6) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_S ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F7) { int8_t d8 = rdop(minx); if ( ( minx->F & FLAG_S ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F8) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X0 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(F9) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X1 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FA) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_X2 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FB) { int8_t d8 = rdop(minx); if ( ! ( minx->E & EXEC_DZ ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FC) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X0 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FD) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X1 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FE) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_X2 ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(FF) { int8_t d8 = rdop(minx); if ( ( minx->E & EXEC_DZ ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
 
 static void (*const insnminx_CE[256])(minx_state *minx) = {
 	minx_CE_00, minx_CE_01, minx_CE_02, minx_CE_03, minx_CE_04, minx_CE_05, minx_CE_06, minx_CE_07,

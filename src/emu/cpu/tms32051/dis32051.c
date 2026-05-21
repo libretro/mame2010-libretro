@@ -53,7 +53,7 @@ static const char *const tp_condition_codes[4] =
 
 
 static offs_t npc;
-static const UINT8 *rombase;
+static const uint8_t *rombase;
 static offs_t pcbase;
 
 static char *output;
@@ -67,9 +67,9 @@ static void ATTR_PRINTF(1,2) print(const char *fmt, ...)
 	va_end(vl);
 }
 
-static UINT16 FETCH(void)
+static uint16_t FETCH(void)
 {
-	UINT16 result = rombase[(npc - pcbase) * 2 + 0] | (rombase[(npc - pcbase) * 2 + 1] << 8);
+	uint16_t result = rombase[(npc - pcbase) * 2 + 0] | (rombase[(npc - pcbase) * 2 + 1] << 8);
 	npc++;
 	return result;
 }
@@ -126,7 +126,7 @@ static char *GET_SHIFT(int shift)
 	return buffer;
 }
 
-static void dasm_group_be(UINT16 opcode)
+static void dasm_group_be(uint16_t opcode)
 {
 	int subop = opcode & 0xff;
 
@@ -212,7 +212,7 @@ static void dasm_group_be(UINT16 opcode)
 	}
 }
 
-static void dasm_group_bf(UINT16 opcode)
+static void dasm_group_bf(uint16_t opcode)
 {
 	int subop = (opcode >>  4) & 0xf;
 	int shift = opcode & 0xf;
@@ -258,8 +258,8 @@ static void dasm_group_bf(UINT16 opcode)
 
 CPU_DISASSEMBLE( tms32051 )
 {
-	UINT32 flags = 0;
-	UINT16 opcode;
+	uint32_t flags = 0;
+	uint16_t opcode;
 	int baseop;
 	int address, addr_mode;
 

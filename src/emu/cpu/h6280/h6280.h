@@ -46,29 +46,29 @@ typedef struct
     PAIR  sp;           /* stack pointer (always 100 - 1FF) */
     PAIR  zp;           /* zero page address */
     PAIR  ea;           /* effective address */
-    UINT8 a;            /* Accumulator */
-    UINT8 x;            /* X index register */
-    UINT8 y;            /* Y index register */
-    UINT8 p;            /* Processor status */
-    UINT8 mmr[8];       /* Hu6280 memory mapper registers */
-    UINT8 irq_mask;     /* interrupt enable/disable */
-    UINT8 timer_status; /* timer status */
-	UINT8 timer_ack;	/* timer acknowledge */
-    UINT8 clocks_per_cycle; /* 4 = low speed mode, 1 = high speed mode */
-    INT32 timer_value;    /* timer interrupt */
-    INT32 timer_load;		/* reload value */
-    UINT8 nmi_state;
-    UINT8 irq_state[3];
-	UINT8 irq_pending;
+    uint8_t a;            /* Accumulator */
+    uint8_t x;            /* X index register */
+    uint8_t y;            /* Y index register */
+    uint8_t p;            /* Processor status */
+    uint8_t mmr[8];       /* Hu6280 memory mapper registers */
+    uint8_t irq_mask;     /* interrupt enable/disable */
+    uint8_t timer_status; /* timer status */
+	uint8_t timer_ack;	/* timer acknowledge */
+    uint8_t clocks_per_cycle; /* 4 = low speed mode, 1 = high speed mode */
+    int32_t timer_value;    /* timer interrupt */
+    int32_t timer_load;		/* reload value */
+    uint8_t nmi_state;
+    uint8_t irq_state[3];
+	uint8_t irq_pending;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
 
 #if LAZY_FLAGS
-    INT32 NZ;			/* last value (lazy N and Z flag) */
+    int32_t NZ;			/* last value (lazy N and Z flag) */
 #endif
-	UINT8 io_buffer;	/* last value written to the PSG, timer, and interrupt pages */
+	uint8_t io_buffer;	/* last value written to the PSG, timer, and interrupt pages */
 } h6280_Regs;
 
 
@@ -81,8 +81,8 @@ READ8_HANDLER( h6280_timer_r );
 WRITE8_HANDLER( h6280_timer_w );
 
 /* functions for use by the PSG and joypad port only! */
-UINT8 h6280io_get_buffer(running_device*);
-void h6280io_set_buffer(running_device*, UINT8);
+uint8_t h6280io_get_buffer(running_device*);
+void h6280io_set_buffer(running_device*, uint8_t);
 
 CPU_DISASSEMBLE( h6280 );
 

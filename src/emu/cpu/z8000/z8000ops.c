@@ -29,17 +29,17 @@
  check new fcw for switch to system mode
  and swap stack pointer if needed
  ******************************************/
-INLINE void CHANGE_FCW(z8000_state *cpustate, UINT16 fcw)
+INLINE void CHANGE_FCW(z8000_state *cpustate, uint16_t fcw)
 {
 	if (fcw & F_S_N) {			/* system mode now? */
 		if (!(cpustate->fcw & F_S_N)) {	/* and not before? */
-			UINT16 tmp = cpustate->RW(SP);
+			uint16_t tmp = cpustate->RW(SP);
 			cpustate->RW(SP) = cpustate->nsp;
 			cpustate->nsp = tmp;
 		}
 	} else {					/* user mode now */
 		if (cpustate->fcw & F_S_N) {		/* and not before? */
-			UINT16 tmp = cpustate->RW(SP);
+			uint16_t tmp = cpustate->RW(SP);
 			cpustate->RW(SP) = cpustate->nsp;
 			cpustate->nsp = tmp;
         }
@@ -51,37 +51,37 @@ INLINE void CHANGE_FCW(z8000_state *cpustate, UINT16 fcw)
     cpustate->fcw = fcw;  /* set new cpustate->fcw */
 }
 
-INLINE void PUSHW(z8000_state *cpustate, UINT8 dst, UINT16 value)
+INLINE void PUSHW(z8000_state *cpustate, uint8_t dst, uint16_t value)
 {
     cpustate->RW(dst) -= 2;
 	WRMEM_W(cpustate,  cpustate->RW(dst), value);
 }
 
-INLINE UINT16 POPW(z8000_state *cpustate, UINT8 src)
+INLINE uint16_t POPW(z8000_state *cpustate, uint8_t src)
 {
-	UINT16 result = RDMEM_W(cpustate,  cpustate->RW(src));
+	uint16_t result = RDMEM_W(cpustate,  cpustate->RW(src));
     cpustate->RW(src) += 2;
 	return result;
 }
 
-INLINE void PUSHL(z8000_state *cpustate, UINT8 dst, UINT32 value)
+INLINE void PUSHL(z8000_state *cpustate, uint8_t dst, uint32_t value)
 {
 	cpustate->RW(dst) -= 4;
 	WRMEM_L(cpustate,  cpustate->RW(dst), value);
 }
 
-INLINE UINT32 POPL(z8000_state *cpustate, UINT8 src)
+INLINE uint32_t POPL(z8000_state *cpustate, uint8_t src)
 {
-	UINT32 result = RDMEM_L(cpustate,  cpustate->RW(src));
+	uint32_t result = RDMEM_L(cpustate,  cpustate->RW(src));
     cpustate->RW(src) += 4;
 	return result;
 }
 
 /* check zero and sign flag for byte, word and long results */
-#define CHK_XXXB_ZS if (!result) SET_Z; else if ((INT8) result < 0) SET_S
-#define CHK_XXXW_ZS if (!result) SET_Z; else if ((INT16)result < 0) SET_S
-#define CHK_XXXL_ZS if (!result) SET_Z; else if ((INT32)result < 0) SET_S
-#define CHK_XXXQ_ZS if (!result) SET_Z; else if ((INT64)result < 0) SET_S
+#define CHK_XXXB_ZS if (!result) SET_Z; else if ((int8_t) result < 0) SET_S
+#define CHK_XXXW_ZS if (!result) SET_Z; else if ((int16_t)result < 0) SET_S
+#define CHK_XXXL_ZS if (!result) SET_Z; else if ((int32_t)result < 0) SET_S
+#define CHK_XXXQ_ZS if (!result) SET_Z; else if ((int64_t)result < 0) SET_S
 
 #define CHK_XXXB_ZSP cpustate->fcw |= z8000_zsp[result]
 
@@ -114,9 +114,9 @@ INLINE UINT32 POPL(z8000_state *cpustate, UINT8 src)
  add byte
  flags:  CZSVDH
  ******************************************/
-INLINE UINT8 ADDB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t ADDB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest + value;
+	uint8_t result = dest + value;
     CLR_CZSVH;      /* first clear C, Z, S, P/V and H flags    */
     CLR_DA;         /* clear DA (decimal adjust) flag for addb */
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
@@ -130,9 +130,9 @@ INLINE UINT8 ADDB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  add word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 ADDW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t ADDW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest + value;
+	uint16_t result = dest + value;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_ADDX_C; 	/* set C if result overflowed              */
@@ -144,9 +144,9 @@ INLINE UINT16 ADDW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  add long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 ADDL(z8000_state *cpustate, UINT32 dest, UINT32 value)
+INLINE uint32_t ADDL(z8000_state *cpustate, uint32_t dest, uint32_t value)
 {
-	UINT32 result = dest + value;
+	uint32_t result = dest + value;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	CHK_ADDX_C; 	/* set C if result overflowed              */
@@ -158,9 +158,9 @@ INLINE UINT32 ADDL(z8000_state *cpustate, UINT32 dest, UINT32 value)
  add with carry byte
  flags:  CZSVDH
  ******************************************/
-INLINE UINT8 ADCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t ADCB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest + value + GET_C;
+	uint8_t result = dest + value + GET_C;
     CLR_CZSVH;      /* first clear C, Z, S, P/V and H flags    */
     CLR_DA;         /* clear DA (decimal adjust) flag for adcb */
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
@@ -174,9 +174,9 @@ INLINE UINT8 ADCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  add with carry word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 ADCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t ADCW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest + value + GET_C;
+	uint16_t result = dest + value + GET_C;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_ADCX_C; 	/* set C if result overflowed              */
@@ -188,9 +188,9 @@ INLINE UINT16 ADCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  subtract byte
  flags:  CZSVDH
  ******************************************/
-INLINE UINT8 SUBB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t SUBB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest - value;
+	uint8_t result = dest - value;
     CLR_CZSVH;      /* first clear C, Z, S, P/V and H flags    */
     SET_DA;         /* set DA (decimal adjust) flag for subb   */
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
@@ -204,9 +204,9 @@ INLINE UINT8 SUBB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  subtract word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SUBW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t SUBW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest - value;
+	uint16_t result = dest - value;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_SUBX_C; 	/* set C if result underflowed             */
@@ -218,9 +218,9 @@ INLINE UINT16 SUBW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  subtract long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SUBL(z8000_state *cpustate, UINT32 dest, UINT32 value)
+INLINE uint32_t SUBL(z8000_state *cpustate, uint32_t dest, uint32_t value)
 {
-	UINT32 result = dest - value;
+	uint32_t result = dest - value;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	CHK_SUBX_C; 	/* set C if result underflowed             */
@@ -232,9 +232,9 @@ INLINE UINT32 SUBL(z8000_state *cpustate, UINT32 dest, UINT32 value)
  subtract with carry byte
  flags:  CZSVDH
  ******************************************/
-INLINE UINT8 SBCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t SBCB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest - value - GET_C;
+	uint8_t result = dest - value - GET_C;
     CLR_CZSVH;      /* first clear C, Z, S, P/V and H flags    */
     SET_DA;         /* set DA (decimal adjust) flag for sbcb   */
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
@@ -248,9 +248,9 @@ INLINE UINT8 SBCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  subtract with carry word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SBCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t SBCW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest - value - GET_C;
+	uint16_t result = dest - value - GET_C;
     CLR_CZSV;       /* first clear C, Z, S, P/V flags          */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_SBCX_C; 	/* set C if result underflowed             */
@@ -262,9 +262,9 @@ INLINE UINT16 SBCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  logical or byte
  flags:  -ZSP--
  ******************************************/
-INLINE UINT8 ORB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t ORB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest | value;
+	uint8_t result = dest | value;
 	CLR_ZSP;		/* first clear Z, S, P/V flags             */
 	CHK_XXXB_ZSP;	/* set Z, S and P flags for result byte    */
 	return result;
@@ -274,9 +274,9 @@ INLINE UINT8 ORB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  logical or word
  flags:  -ZS---
  ******************************************/
-INLINE UINT16 ORW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t ORW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest | value;
+	uint16_t result = dest | value;
 	CLR_ZS; 		/* first clear Z, and S flags              */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	return result;
@@ -286,9 +286,9 @@ INLINE UINT16 ORW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  logical and byte
  flags:  -ZSP--
  ******************************************/
-INLINE UINT8 ANDB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t ANDB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest & value;
+	uint8_t result = dest & value;
     CLR_ZSP;        /* first clear Z,S and P/V flags           */
 	CHK_XXXB_ZSP;	/* set Z, S and P flags for result byte    */
 	return result;
@@ -298,9 +298,9 @@ INLINE UINT8 ANDB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  logical and word
  flags:  -ZS---
  ******************************************/
-INLINE UINT16 ANDW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t ANDW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest & value;
+	uint16_t result = dest & value;
     CLR_ZS;         /* first clear Z and S flags               */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	return result;
@@ -310,9 +310,9 @@ INLINE UINT16 ANDW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  logical exclusive or byte
  flags:  -ZSP--
  ******************************************/
-INLINE UINT8 XORB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t XORB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest ^ value;
+	uint8_t result = dest ^ value;
     CLR_ZSP;        /* first clear Z, S and P/V flags          */
 	CHK_XXXB_ZSP;	/* set Z, S and P flags for result byte    */
 	return result;
@@ -322,9 +322,9 @@ INLINE UINT8 XORB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  logical exclusive or word
  flags:  -ZS---
  ******************************************/
-INLINE UINT16 XORW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t XORW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest ^ value;
+	uint16_t result = dest ^ value;
     CLR_ZS;         /* first clear Z and S flags               */
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	return result;
@@ -335,9 +335,9 @@ INLINE UINT16 XORW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  compare byte
  flags:  CZSV--
  ******************************************/
-INLINE void CPB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE void CPB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-	UINT8 result = dest - value;
+	uint8_t result = dest - value;
     CLR_CZSV;       /* first clear C, Z, S and P/V flags       */
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	CHK_SUBX_C; 	/* set C if result underflowed             */
@@ -348,9 +348,9 @@ INLINE void CPB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  compare word
  flags:  CZSV--
  ******************************************/
-INLINE void CPW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE void CPW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT16 result = dest - value;
+	uint16_t result = dest - value;
 	CLR_CZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_SUBX_C; 	/* set C if result underflowed             */
@@ -361,9 +361,9 @@ INLINE void CPW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  compare long
  flags:  CZSV--
  ******************************************/
-INLINE void CPL(z8000_state *cpustate, UINT32 dest, UINT32 value)
+INLINE void CPL(z8000_state *cpustate, uint32_t dest, uint32_t value)
 {
-	UINT32 result = dest - value;
+	uint32_t result = dest - value;
 	CLR_CZSV;
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	CHK_SUBX_C; 	/* set C if result underflowed             */
@@ -374,9 +374,9 @@ INLINE void CPL(z8000_state *cpustate, UINT32 dest, UINT32 value)
  complement byte
  flags: -ZSP--
  ******************************************/
-INLINE UINT8 COMB(z8000_state *cpustate, UINT8 dest)
+INLINE uint8_t COMB(z8000_state *cpustate, uint8_t dest)
 {
-	UINT8 result = ~dest;
+	uint8_t result = ~dest;
 	CLR_ZSP;
 	CHK_XXXB_ZSP;	/* set Z, S and P flags for result byte    */
 	return result;
@@ -386,9 +386,9 @@ INLINE UINT8 COMB(z8000_state *cpustate, UINT8 dest)
  complement word
  flags: -ZS---
  ******************************************/
-INLINE UINT16 COMW(z8000_state *cpustate, UINT16 dest)
+INLINE uint16_t COMW(z8000_state *cpustate, uint16_t dest)
 {
-	UINT16 result = ~dest;
+	uint16_t result = ~dest;
 	CLR_ZS;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	return result;
@@ -398,9 +398,9 @@ INLINE UINT16 COMW(z8000_state *cpustate, UINT16 dest)
  negate byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 NEGB(z8000_state *cpustate, UINT8 dest)
+INLINE uint8_t NEGB(z8000_state *cpustate, uint8_t dest)
 {
-	UINT8 result = (UINT8) -dest;
+	uint8_t result = (uint8_t) -dest;
 	CLR_CZSV;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (result > 0) SET_C;
@@ -412,9 +412,9 @@ INLINE UINT8 NEGB(z8000_state *cpustate, UINT8 dest)
  negate word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 NEGW(z8000_state *cpustate, UINT16 dest)
+INLINE uint16_t NEGW(z8000_state *cpustate, uint16_t dest)
 {
-	UINT16 result = (UINT16) -dest;
+	uint16_t result = (uint16_t) -dest;
 	CLR_CZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (result > 0) SET_C;
@@ -426,7 +426,7 @@ INLINE UINT16 NEGW(z8000_state *cpustate, UINT16 dest)
  test byte
  flags:  -ZSP--
  ******************************************/
-INLINE void TESTB(z8000_state *cpustate, UINT8 result)
+INLINE void TESTB(z8000_state *cpustate, uint8_t result)
 {
 	CLR_ZSP;
 	CHK_XXXB_ZSP;	/* set Z and S flags for result byte       */
@@ -436,7 +436,7 @@ INLINE void TESTB(z8000_state *cpustate, UINT8 result)
  test word
  flags:  -ZS---
  ******************************************/
-INLINE void TESTW(z8000_state *cpustate, UINT16 dest)
+INLINE void TESTW(z8000_state *cpustate, uint16_t dest)
 {
 	CLR_ZS;
     if (!dest) SET_Z; else if (dest & S16) SET_S;
@@ -446,7 +446,7 @@ INLINE void TESTW(z8000_state *cpustate, UINT16 dest)
  test long
  flags:  -ZS---
  ******************************************/
-INLINE void TESTL(z8000_state *cpustate, UINT32 dest)
+INLINE void TESTL(z8000_state *cpustate, uint32_t dest)
 {
 	CLR_ZS;
 	if (!dest) SET_Z; else if (dest & S32) SET_S;
@@ -456,9 +456,9 @@ INLINE void TESTL(z8000_state *cpustate, UINT32 dest)
  increment byte
  flags: -ZSV--
  ******************************************/
-INLINE UINT8 INCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t INCB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-    UINT8 result = dest + value;
+    uint8_t result = dest + value;
 	CLR_ZSV;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	CHK_ADDB_V; 	/* set V if result overflowed              */
@@ -469,9 +469,9 @@ INLINE UINT8 INCB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  increment word
  flags: -ZSV--
  ******************************************/
-INLINE UINT16 INCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t INCW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-    UINT16 result = dest + value;
+    uint16_t result = dest + value;
 	CLR_ZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result byte       */
 	CHK_ADDW_V; 	/* set V if result overflowed              */
@@ -482,9 +482,9 @@ INLINE UINT16 INCW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  decrement byte
  flags: -ZSV--
  ******************************************/
-INLINE UINT8 DECB(z8000_state *cpustate, UINT8 dest, UINT8 value)
+INLINE uint8_t DECB(z8000_state *cpustate, uint8_t dest, uint8_t value)
 {
-    UINT8 result = dest - value;
+    uint8_t result = dest - value;
 	CLR_ZSV;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	CHK_SUBB_V; 	/* set V if result overflowed              */
@@ -495,9 +495,9 @@ INLINE UINT8 DECB(z8000_state *cpustate, UINT8 dest, UINT8 value)
  decrement word
  flags: -ZSV--
  ******************************************/
-INLINE UINT16 DECW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint16_t DECW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-    UINT16 result = dest - value;
+    uint16_t result = dest - value;
 	CLR_ZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	CHK_SUBW_V; 	/* set V if result overflowed              */
@@ -508,9 +508,9 @@ INLINE UINT16 DECW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  multiply words
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 MULTW(z8000_state *cpustate, UINT16 dest, UINT16 value)
+INLINE uint32_t MULTW(z8000_state *cpustate, uint16_t dest, uint16_t value)
 {
-	UINT32 result = (INT32)(INT16)dest * (INT16)value;
+	uint32_t result = (int32_t)(int16_t)dest * (int16_t)value;
 	CLR_CZSV;
     CHK_XXXL_ZS;
 	if(!value)
@@ -518,7 +518,7 @@ INLINE UINT32 MULTW(z8000_state *cpustate, UINT16 dest, UINT16 value)
 		/* multiplication with zero is faster */
         cpustate->icount += (70-18);
 	}
-	if((INT32)result < -0x7fff || (INT32)result >= 0x7fff) SET_C;
+	if((int32_t)result < -0x7fff || (int32_t)result >= 0x7fff) SET_C;
 	return result;
 }
 
@@ -526,9 +526,9 @@ INLINE UINT32 MULTW(z8000_state *cpustate, UINT16 dest, UINT16 value)
  multiply longs
  flags:  CZSV--
  ******************************************/
-INLINE UINT64 MULTL(z8000_state *cpustate, UINT32 dest, UINT32 value)
+INLINE uint64_t MULTL(z8000_state *cpustate, uint32_t dest, uint32_t value)
 {
-	UINT64 result = (INT64)(INT32)dest * (INT32)value;
+	uint64_t result = (int64_t)(int32_t)dest * (int32_t)value;
     if(!value)
 	{
 		/* multiplication with zero is faster */
@@ -542,7 +542,7 @@ INLINE UINT64 MULTL(z8000_state *cpustate, UINT32 dest, UINT32 value)
     }
     CLR_CZSV;
 	CHK_XXXQ_ZS;
-	if((INT64)result < -0x7fffffffL || (INT64)result >= 0x7fffffffL) SET_C;
+	if((int64_t)result < -0x7fffffffL || (int64_t)result >= 0x7fffffffL) SET_C;
 	return result;
 }
 
@@ -550,24 +550,24 @@ INLINE UINT64 MULTL(z8000_state *cpustate, UINT32 dest, UINT32 value)
  divide long by word
  flags: CZSV--
  ******************************************/
-INLINE UINT32 DIVW(z8000_state *cpustate, UINT32 dest, UINT16 value)
+INLINE uint32_t DIVW(z8000_state *cpustate, uint32_t dest, uint16_t value)
 {
-	UINT32 result = dest;
-	UINT16 remainder = 0;
+	uint32_t result = dest;
+	uint16_t remainder = 0;
 	CLR_CZSV;
 	if (value)
 	{
-		UINT16 qsign = ((dest >> 16) ^ value) & S16;
-		UINT16 rsign = (dest >> 16) & S16;
-		if ((INT32)dest < 0) dest = -dest;
-		if ((INT16)value < 0) value = -value;
+		uint16_t qsign = ((dest >> 16) ^ value) & S16;
+		uint16_t rsign = (dest >> 16) & S16;
+		if ((int32_t)dest < 0) dest = -dest;
+		if ((int16_t)value < 0) value = -value;
 		result = dest / value;
 		remainder = dest % value;
 		if (qsign) result = -result;
 		if (rsign) remainder = -remainder;
-		if ((INT32)result < -0x8000 || (INT32)result > 0x7fff)
+		if ((int32_t)result < -0x8000 || (int32_t)result > 0x7fff)
 		{
-			INT32 temp = (INT32)result >> 1;
+			int32_t temp = (int32_t)result >> 1;
 			SET_V;
 			if (temp >= -0x8000 && temp <= 0x7fff)
 			{
@@ -580,7 +580,7 @@ INLINE UINT32 DIVW(z8000_state *cpustate, UINT32 dest, UINT16 value)
 		{
 			CHK_XXXW_ZS;
 		}
-		result = ((UINT32)remainder << 16) | (result & 0xffff);
+		result = ((uint32_t)remainder << 16) | (result & 0xffff);
     }
     else
     {
@@ -594,24 +594,24 @@ INLINE UINT32 DIVW(z8000_state *cpustate, UINT32 dest, UINT16 value)
  divide quad word by long
  flags: CZSV--
  ******************************************/
-INLINE UINT64 DIVL(z8000_state *cpustate, UINT64 dest, UINT32 value)
+INLINE uint64_t DIVL(z8000_state *cpustate, uint64_t dest, uint32_t value)
 {
-	UINT64 result = dest;
-	UINT32 remainder = 0;
+	uint64_t result = dest;
+	uint32_t remainder = 0;
 	CLR_CZSV;
 	if (value)
 	{
-		UINT32 qsign = ((dest >> 32) ^ value) & S32;
-		UINT32 rsign = (dest >> 32) & S32;
-		if ((INT64)dest < 0) dest = -dest;
-		if ((INT32)value < 0) value = -value;
+		uint32_t qsign = ((dest >> 32) ^ value) & S32;
+		uint32_t rsign = (dest >> 32) & S32;
+		if ((int64_t)dest < 0) dest = -dest;
+		if ((int32_t)value < 0) value = -value;
 		result = dest / value;
 		remainder = dest % value;
 		if (qsign) result = -result;
 		if (rsign) remainder = -remainder;
-		if ((INT64)result < -0x80000000 || (INT64)result > 0x7fffffff)
+		if ((int64_t)result < -0x80000000 || (int64_t)result > 0x7fffffff)
 		{
-			INT64 temp = (INT64)result >> 1;
+			int64_t temp = (int64_t)result >> 1;
 			SET_V;
 			if (temp >= -0x80000000 && temp <= 0x7fffffff)
 			{
@@ -624,7 +624,7 @@ INLINE UINT64 DIVL(z8000_state *cpustate, UINT64 dest, UINT32 value)
 		{
 			CHK_XXXL_ZS;
 		}
-		result = ((UINT64)remainder << 32) | (result & 0xffffffff);
+		result = ((uint64_t)remainder << 32) | (result & 0xffffffff);
     }
     else
     {
@@ -638,9 +638,9 @@ INLINE UINT64 DIVL(z8000_state *cpustate, UINT64 dest, UINT32 value)
  rotate left byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 RLB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
+INLINE uint8_t RLB(z8000_state *cpustate, uint8_t dest, uint8_t twice)
 {
-	UINT8 result = (dest << 1) | (dest >> 7);
+	uint8_t result = (dest << 1) | (dest >> 7);
 	CLR_CZSV;
 	if (twice) result = (result << 1) | (result >> 7);
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
@@ -653,9 +653,9 @@ INLINE UINT8 RLB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
  rotate left word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 RLW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
+INLINE uint16_t RLW(z8000_state *cpustate, uint16_t dest, uint8_t twice)
 {
-	UINT16 result = (dest << 1) | (dest >> 15);
+	uint16_t result = (dest << 1) | (dest >> 15);
 	CLR_CZSV;
 	if (twice) result = (result << 1) | (result >> 15);
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
@@ -668,13 +668,13 @@ INLINE UINT16 RLW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
  rotate left through carry byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 RLCB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
+INLINE uint8_t RLCB(z8000_state *cpustate, uint8_t dest, uint8_t twice)
 {
-    UINT8 c = dest & S08;
-	UINT8 result = (dest << 1) | GET_C;
+    uint8_t c = dest & S08;
+	uint8_t result = (dest << 1) | GET_C;
 	CLR_CZSV;
 	if (twice) {
-		UINT8 c1 = c >> 7;
+		uint8_t c1 = c >> 7;
         c = result & S08;
 		result = (result << 1) | c1;
 	}
@@ -688,13 +688,13 @@ INLINE UINT8 RLCB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
  rotate left through carry word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 RLCW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
+INLINE uint16_t RLCW(z8000_state *cpustate, uint16_t dest, uint8_t twice)
 {
-    UINT16 c = dest & S16;
-	UINT16 result = (dest << 1) | GET_C;
+    uint16_t c = dest & S16;
+	uint16_t result = (dest << 1) | GET_C;
 	CLR_CZSV;
 	if (twice) {
-		UINT16 c1 = c >> 15;
+		uint16_t c1 = c >> 15;
         c = result & S16;
 		result = (result << 1) | c1;
     }
@@ -708,9 +708,9 @@ INLINE UINT16 RLCW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
  rotate right byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 RRB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
+INLINE uint8_t RRB(z8000_state *cpustate, uint8_t dest, uint8_t twice)
 {
-	UINT8 result = (dest >> 1) | (dest << 7);
+	uint8_t result = (dest >> 1) | (dest << 7);
 	CLR_CZSV;
 	if (twice) result = (result >> 1) | (result << 7);
     if (!result) SET_Z; else if (result & S08) SET_SC;
@@ -722,9 +722,9 @@ INLINE UINT8 RRB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
  rotate right word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 RRW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
+INLINE uint16_t RRW(z8000_state *cpustate, uint16_t dest, uint8_t twice)
 {
-	UINT16 result = (dest >> 1) | (dest << 15);
+	uint16_t result = (dest >> 1) | (dest << 15);
 	CLR_CZSV;
 	if (twice) result = (result >> 1) | (result << 15);
     if (!result) SET_Z; else if (result & S16) SET_SC;
@@ -736,13 +736,13 @@ INLINE UINT16 RRW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
  rotate right through carry byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 RRCB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
+INLINE uint8_t RRCB(z8000_state *cpustate, uint8_t dest, uint8_t twice)
 {
-	UINT8 c = dest & 1;
-	UINT8 result = (dest >> 1) | (GET_C << 7);
+	uint8_t c = dest & 1;
+	uint8_t result = (dest >> 1) | (GET_C << 7);
 	CLR_CZSV;
 	if (twice) {
-		UINT8 c1 = c << 7;
+		uint8_t c1 = c << 7;
 		c = result & 1;
 		result = (result >> 1) | c1;
 	}
@@ -756,13 +756,13 @@ INLINE UINT8 RRCB(z8000_state *cpustate, UINT8 dest, UINT8 twice)
  rotate right through carry word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 RRCW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
+INLINE uint16_t RRCW(z8000_state *cpustate, uint16_t dest, uint8_t twice)
 {
-	UINT16 c = dest & 1;
-	UINT16 result = (dest >> 1) | (GET_C << 15);
+	uint16_t c = dest & 1;
+	uint16_t result = (dest >> 1) | (GET_C << 15);
 	CLR_CZSV;
 	if (twice) {
-		UINT16 c1 = c << 15;
+		uint16_t c1 = c << 15;
 		c = result & 1;
 		result = (result >> 1) | c1;
     }
@@ -776,10 +776,10 @@ INLINE UINT16 RRCW(z8000_state *cpustate, UINT16 dest, UINT8 twice)
  shift dynamic arithmetic byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 SDAB(z8000_state *cpustate, UINT8 dest, INT8 count)
+INLINE uint8_t SDAB(z8000_state *cpustate, uint8_t dest, int8_t count)
 {
-	INT8 result = (INT8) dest;
-	UINT8 c = 0;
+	int8_t result = (int8_t) dest;
+	uint8_t c = 0;
 	CLR_CZSV;
 	while (count > 0) {
         c = result & S08;
@@ -794,17 +794,17 @@ INLINE UINT8 SDAB(z8000_state *cpustate, UINT8 dest, INT8 count)
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (c) SET_C;
     if ((result ^ dest) & S08) SET_V;
-	return (UINT8)result;
+	return (uint8_t)result;
 }
 
 /******************************************
  shift dynamic arithmetic word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SDAW(z8000_state *cpustate, UINT16 dest, INT8 count)
+INLINE uint16_t SDAW(z8000_state *cpustate, uint16_t dest, int8_t count)
 {
-	INT16 result = (INT16) dest;
-	UINT16 c = 0;
+	int16_t result = (int16_t) dest;
+	uint16_t c = 0;
 	CLR_CZSV;
 	while (count > 0) {
         c = result & S16;
@@ -819,17 +819,17 @@ INLINE UINT16 SDAW(z8000_state *cpustate, UINT16 dest, INT8 count)
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (c) SET_C;
     if ((result ^ dest) & S16) SET_V;
-	return (UINT16)result;
+	return (uint16_t)result;
 }
 
 /******************************************
  shift dynamic arithmetic long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SDAL(z8000_state *cpustate, UINT32 dest, INT8 count)
+INLINE uint32_t SDAL(z8000_state *cpustate, uint32_t dest, int8_t count)
 {
-	INT32 result = (INT32) dest;
-	UINT32 c = 0;
+	int32_t result = (int32_t) dest;
+	uint32_t c = 0;
 	CLR_CZSV;
 	while (count > 0) {
         c = result & S32;
@@ -844,17 +844,17 @@ INLINE UINT32 SDAL(z8000_state *cpustate, UINT32 dest, INT8 count)
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	if (c) SET_C;
     if ((result ^ dest) & S32) SET_V;
-	return (UINT32) result;
+	return (uint32_t) result;
 }
 
 /******************************************
  shift dynamic logic byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 SDLB(z8000_state *cpustate, UINT8 dest, INT8 count)
+INLINE uint8_t SDLB(z8000_state *cpustate, uint8_t dest, int8_t count)
 {
-	UINT8 result = dest;
-	UINT8 c = 0;
+	uint8_t result = dest;
+	uint8_t c = 0;
 	CLR_CZSV;
 	while (count > 0) {
         c = result & S08;
@@ -876,10 +876,10 @@ INLINE UINT8 SDLB(z8000_state *cpustate, UINT8 dest, INT8 count)
  shift dynamic logic word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SDLW(z8000_state *cpustate, UINT16 dest, INT8 count)
+INLINE uint16_t SDLW(z8000_state *cpustate, uint16_t dest, int8_t count)
 {
-	UINT16 result = dest;
-	UINT16 c = 0;
+	uint16_t result = dest;
+	uint16_t c = 0;
     CLR_CZSV;
 	while (count > 0) {
         c = result & S16;
@@ -901,10 +901,10 @@ INLINE UINT16 SDLW(z8000_state *cpustate, UINT16 dest, INT8 count)
  shift dynamic logic long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SDLL(z8000_state *cpustate, UINT32 dest, INT8 count)
+INLINE uint32_t SDLL(z8000_state *cpustate, uint32_t dest, int8_t count)
 {
-	UINT32 result = dest;
-	UINT32 c = 0;
+	uint32_t result = dest;
+	uint32_t c = 0;
     CLR_CZSV;
 	while (count > 0) {
         c = result & S32;
@@ -926,10 +926,10 @@ INLINE UINT32 SDLL(z8000_state *cpustate, UINT32 dest, INT8 count)
  shift left arithmetic byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 SLAB(z8000_state *cpustate, UINT8 dest, UINT8 count)
+INLINE uint8_t SLAB(z8000_state *cpustate, uint8_t dest, uint8_t count)
 {
-    UINT8 c = (count) ? (dest << (count - 1)) & S08 : 0;
-	UINT8 result = (UINT8)((INT8)dest << count);
+    uint8_t c = (count) ? (dest << (count - 1)) & S08 : 0;
+	uint8_t result = (uint8_t)((int8_t)dest << count);
 	CLR_CZSV;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (c) SET_C;
@@ -941,10 +941,10 @@ INLINE UINT8 SLAB(z8000_state *cpustate, UINT8 dest, UINT8 count)
  shift left arithmetic word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SLAW(z8000_state *cpustate, UINT16 dest, UINT8 count)
+INLINE uint16_t SLAW(z8000_state *cpustate, uint16_t dest, uint8_t count)
 {
-    UINT16 c = (count) ? (dest << (count - 1)) & S16 : 0;
-	UINT16 result = (UINT16)((INT16)dest << count);
+    uint16_t c = (count) ? (dest << (count - 1)) & S16 : 0;
+	uint16_t result = (uint16_t)((int16_t)dest << count);
 	CLR_CZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (c) SET_C;
@@ -956,10 +956,10 @@ INLINE UINT16 SLAW(z8000_state *cpustate, UINT16 dest, UINT8 count)
  shift left arithmetic long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SLAL(z8000_state *cpustate, UINT32 dest, UINT8 count)
+INLINE uint32_t SLAL(z8000_state *cpustate, uint32_t dest, uint8_t count)
 {
-    UINT32 c = (count) ? (dest << (count - 1)) & S32 : 0;
-	UINT32 result = (UINT32)((INT32)dest << count);
+    uint32_t c = (count) ? (dest << (count - 1)) & S32 : 0;
+	uint32_t result = (uint32_t)((int32_t)dest << count);
 	CLR_CZSV;
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	if (c) SET_C;
@@ -971,10 +971,10 @@ INLINE UINT32 SLAL(z8000_state *cpustate, UINT32 dest, UINT8 count)
  shift left logic byte
  flags:  CZS---
  ******************************************/
-INLINE UINT8 SLLB(z8000_state *cpustate, UINT8 dest, UINT8 count)
+INLINE uint8_t SLLB(z8000_state *cpustate, uint8_t dest, uint8_t count)
 {
-    UINT8 c = (count) ? (dest << (count - 1)) & S08 : 0;
-	UINT8 result = dest << count;
+    uint8_t c = (count) ? (dest << (count - 1)) & S08 : 0;
+	uint8_t result = dest << count;
 	CLR_CZS;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (c) SET_C;
@@ -985,10 +985,10 @@ INLINE UINT8 SLLB(z8000_state *cpustate, UINT8 dest, UINT8 count)
  shift left logic word
  flags:  CZS---
  ******************************************/
-INLINE UINT16 SLLW(z8000_state *cpustate, UINT16 dest, UINT8 count)
+INLINE uint16_t SLLW(z8000_state *cpustate, uint16_t dest, uint8_t count)
 {
-    UINT16 c = (count) ? (dest << (count - 1)) & S16 : 0;
-	UINT16 result = dest << count;
+    uint16_t c = (count) ? (dest << (count - 1)) & S16 : 0;
+	uint16_t result = dest << count;
 	CLR_CZS;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (c) SET_C;
@@ -999,10 +999,10 @@ INLINE UINT16 SLLW(z8000_state *cpustate, UINT16 dest, UINT8 count)
  shift left logic long
  flags:  CZS---
  ******************************************/
-INLINE UINT32 SLLL(z8000_state *cpustate, UINT32 dest, UINT8 count)
+INLINE uint32_t SLLL(z8000_state *cpustate, uint32_t dest, uint8_t count)
 {
-    UINT32 c = (count) ? (dest << (count - 1)) & S32 : 0;
-	UINT32 result = dest << count;
+    uint32_t c = (count) ? (dest << (count - 1)) & S32 : 0;
+	uint32_t result = dest << count;
 	CLR_CZS;
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	if (c) SET_C;
@@ -1013,10 +1013,10 @@ INLINE UINT32 SLLL(z8000_state *cpustate, UINT32 dest, UINT8 count)
  shift right arithmetic byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 SRAB(z8000_state *cpustate, UINT8 dest, UINT8 count)
+INLINE uint8_t SRAB(z8000_state *cpustate, uint8_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? ((INT8)dest >> (count - 1)) & 1 : 0;
-	UINT8 result = (UINT8)((INT8)dest >> count);
+	uint8_t c = (count) ? ((int8_t)dest >> (count - 1)) & 1 : 0;
+	uint8_t result = (uint8_t)((int8_t)dest >> count);
 	CLR_CZSV;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (c) SET_C;
@@ -1027,10 +1027,10 @@ INLINE UINT8 SRAB(z8000_state *cpustate, UINT8 dest, UINT8 count)
  shift right arithmetic word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SRAW(z8000_state *cpustate, UINT16 dest, UINT8 count)
+INLINE uint16_t SRAW(z8000_state *cpustate, uint16_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? ((INT16)dest >> (count - 1)) & 1 : 0;
-	UINT16 result = (UINT16)((INT16)dest >> count);
+	uint8_t c = (count) ? ((int16_t)dest >> (count - 1)) & 1 : 0;
+	uint16_t result = (uint16_t)((int16_t)dest >> count);
 	CLR_CZSV;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (c) SET_C;
@@ -1041,10 +1041,10 @@ INLINE UINT16 SRAW(z8000_state *cpustate, UINT16 dest, UINT8 count)
  shift right arithmetic long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SRAL(z8000_state *cpustate, UINT32 dest, UINT8 count)
+INLINE uint32_t SRAL(z8000_state *cpustate, uint32_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? ((INT32)dest >> (count - 1)) & 1 : 0;
-	UINT32 result = (UINT32)((INT32)dest >> count);
+	uint8_t c = (count) ? ((int32_t)dest >> (count - 1)) & 1 : 0;
+	uint32_t result = (uint32_t)((int32_t)dest >> count);
 	CLR_CZSV;
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	if (c) SET_C;
@@ -1055,10 +1055,10 @@ INLINE UINT32 SRAL(z8000_state *cpustate, UINT32 dest, UINT8 count)
  shift right logic byte
  flags:  CZSV--
  ******************************************/
-INLINE UINT8 SRLB(z8000_state *cpustate, UINT8 dest, UINT8 count)
+INLINE uint8_t SRLB(z8000_state *cpustate, uint8_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? (dest >> (count - 1)) & 1 : 0;
-	UINT8 result = dest >> count;
+	uint8_t c = (count) ? (dest >> (count - 1)) & 1 : 0;
+	uint8_t result = dest >> count;
 	CLR_CZS;
     CHK_XXXB_ZS;    /* set Z and S flags for result byte       */
 	if (c) SET_C;
@@ -1069,10 +1069,10 @@ INLINE UINT8 SRLB(z8000_state *cpustate, UINT8 dest, UINT8 count)
  shift right logic word
  flags:  CZSV--
  ******************************************/
-INLINE UINT16 SRLW(z8000_state *cpustate, UINT16 dest, UINT8 count)
+INLINE uint16_t SRLW(z8000_state *cpustate, uint16_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? (dest >> (count - 1)) & 1 : 0;
-	UINT16 result = dest >> count;
+	uint8_t c = (count) ? (dest >> (count - 1)) & 1 : 0;
+	uint16_t result = dest >> count;
 	CLR_CZS;
     CHK_XXXW_ZS;    /* set Z and S flags for result word       */
 	if (c) SET_C;
@@ -1083,10 +1083,10 @@ INLINE UINT16 SRLW(z8000_state *cpustate, UINT16 dest, UINT8 count)
  shift right logic long
  flags:  CZSV--
  ******************************************/
-INLINE UINT32 SRLL(z8000_state *cpustate, UINT32 dest, UINT8 count)
+INLINE uint32_t SRLL(z8000_state *cpustate, uint32_t dest, uint8_t count)
 {
-	UINT8 c = (count) ? (dest >> (count - 1)) & 1 : 0;
-	UINT32 result = dest >> count;
+	uint8_t c = (count) ? (dest >> (count - 1)) & 1 : 0;
+	uint32_t result = dest >> count;
 	CLR_CZS;
     CHK_XXXL_ZS;    /* set Z and S flags for result long       */
 	if (c) SET_C;
@@ -1779,7 +1779,7 @@ static void Z1C_ddN0_1001_0000_ssss_0000_nmin1(z8000_state *cpustate)
     GET_DST(OP0,NIB2);
     GET_CNT(OP1,NIB3);
     GET_SRC(OP1,NIB1);
-	UINT16 idx = cpustate->RW(dst);
+	uint16_t idx = cpustate->RW(dst);
     while (cnt-- >= 0) {
         WRMEM_W(cpustate,  idx, cpustate->RW(src));
 		idx = (idx + 2) & 0xffff;
@@ -1796,7 +1796,7 @@ static void Z1C_ssN0_0001_0000_dddd_0000_nmin1(z8000_state *cpustate)
 	GET_SRC(OP0,NIB2);
 	GET_CNT(OP1,NIB3);
 	GET_DST(OP1,NIB1);
-	UINT16 idx = cpustate->RW(src);
+	uint16_t idx = cpustate->RW(src);
 	while (cnt-- >= 0) {
 		cpustate->RW(dst) = RDMEM_W(cpustate,  idx);
 		idx = (idx + 2) & 0xffff;
@@ -1867,7 +1867,7 @@ static void Z20_ssN0_dddd(z8000_state *cpustate)
 
 static void Z20_ssN0_dddd_seg(z8000_state *cpustate)
 {
-	UINT32 addr;
+	uint32_t addr;
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	addr = (cpustate->RW(src) & 0x0007) << 16;
@@ -2082,7 +2082,7 @@ static void Z2C_ssN0_dddd(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
-	UINT8 tmp = RDMEM_B(cpustate,  cpustate->RW(src));
+	uint8_t tmp = RDMEM_B(cpustate,  cpustate->RW(src));
 	WRMEM_B(cpustate,  cpustate->RW(src), cpustate->RB(dst));
 	cpustate->RB(dst) = tmp;
 }
@@ -2095,7 +2095,7 @@ static void Z2D_ssN0_dddd(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
-	UINT16 tmp = RDMEM_W(cpustate,  cpustate->RW(src));
+	uint16_t tmp = RDMEM_W(cpustate,  cpustate->RW(src));
 	WRMEM_W(cpustate,  cpustate->RW(src), cpustate->RW(dst));
 	cpustate->RW(dst) = tmp;
 }
@@ -2335,9 +2335,9 @@ static void Z38_imm8(z8000_state *cpustate)
 static void Z39_ssN0_0000(z8000_state *cpustate)
 {
 	GET_SRC(OP0,NIB2);
-	UINT16 fcw;
+	uint16_t fcw;
 	fcw = RDMEM_W(cpustate,  cpustate->RW(src));
-	cpustate->pc	= RDMEM_W(cpustate,  (UINT16)(cpustate->RW(src) + 2));
+	cpustate->pc	= RDMEM_W(cpustate,  (uint16_t)(cpustate->RW(src) + 2));
 	CHANGE_FCW(cpustate, fcw); /* check for user/system mode change */
 }
 
@@ -3115,12 +3115,12 @@ static void Z4C_0000_1000_addr(z8000_state *cpustate)
 
 static void Z4C_0000_1000_addr_seg(z8000_state *cpustate)
 {
-	static UINT32 offset;
-	UINT16 operand1 = fetch(cpustate);
+	static uint32_t offset;
+	uint16_t operand1 = fetch(cpustate);
 
 	if(operand1 & 0x8000)
 	{
-		UINT16 operand2 = fetch(cpustate);
+		uint16_t operand2 = fetch(cpustate);
 
 		offset = (operand1 & 0x0700) << 8;
 		offset|= (operand2 & 0xffff);
@@ -3277,13 +3277,13 @@ static void Z4D_0000_0101_addr_imm16(z8000_state *cpustate)
 
 static void Z4D_0000_0101_addr_imm16_seg(z8000_state *cpustate)
 {
-	static UINT32 offset;
-	UINT16 operand1 = fetch(cpustate);
+	static uint32_t offset;
+	uint16_t operand1 = fetch(cpustate);
 
 	if(operand1 & 0x8000)
 	{
-		UINT16 operand2 = fetch(cpustate);
-		UINT16 imm16 = fetch(cpustate);
+		uint16_t operand2 = fetch(cpustate);
+		uint16_t imm16 = fetch(cpustate);
 
 		offset = (operand1 & 0x0700) << 8;
 		offset|= (operand2 & 0xffff);
@@ -3292,7 +3292,7 @@ static void Z4D_0000_0101_addr_imm16_seg(z8000_state *cpustate)
 	}
 	else
 	{
-		UINT16 imm16 = fetch(cpustate);
+		uint16_t imm16 = fetch(cpustate);
 
 		offset = (operand1 & 0x0700) << 8;
 		offset|= (operand1 & 0x00ff);
@@ -3324,12 +3324,12 @@ static void Z4D_0000_1000_addr(z8000_state *cpustate)
 
 static void Z4D_0000_1000_addr_seg(z8000_state *cpustate)
 {
-	static UINT32 offset;
-	UINT16 operand1 = fetch(cpustate);
+	static uint32_t offset;
+	uint16_t operand1 = fetch(cpustate);
 
 	if(operand1 & 0x8000)
 	{
-		UINT16 operand2 = fetch(cpustate);
+		uint16_t operand2 = fetch(cpustate);
 
 		offset = (operand1 & 0x0700) << 8;
 		offset|= (operand2 & 0xffff);
@@ -4225,7 +4225,7 @@ static void Z6C_0000_dddd_addr(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_ADDR(OP1);
-	UINT8 tmp = RDMEM_B(cpustate, addr);
+	uint8_t tmp = RDMEM_B(cpustate, addr);
 	WRMEM_B(cpustate, addr, cpustate->RB(dst));
 	cpustate->RB(dst) = tmp;
 }
@@ -4239,7 +4239,7 @@ static void Z6C_ssN0_dddd_addr(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_ADDR(OP1);
-	UINT8 tmp;
+	uint8_t tmp;
 	addr += cpustate->RW(src);
 	tmp = RDMEM_B(cpustate, addr);
 	WRMEM_B(cpustate, addr, cpustate->RB(dst));
@@ -4254,7 +4254,7 @@ static void Z6D_0000_dddd_addr(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_ADDR(OP1);
-	UINT16 tmp = RDMEM_W(cpustate, addr);
+	uint16_t tmp = RDMEM_W(cpustate, addr);
 	WRMEM_W(cpustate,  addr, cpustate->RW(dst));
 	cpustate->RW(dst) = tmp;
 }
@@ -4268,7 +4268,7 @@ static void Z6D_ssN0_dddd_addr(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_ADDR(OP1);
-	UINT16 tmp;
+	uint16_t tmp;
 	addr += cpustate->RW(src);
 	tmp = RDMEM_W(cpustate, addr);
 	WRMEM_W(cpustate,  addr, cpustate->RW(dst));
@@ -4332,7 +4332,7 @@ static void Z70_ssN0_dddd_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	cpustate->RB(dst) = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + cpustate->RW(idx)));
+	cpustate->RB(dst) = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + cpustate->RW(idx)));
 }
 
 /******************************************
@@ -4344,7 +4344,7 @@ static void Z71_ssN0_dddd_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	cpustate->RW(dst) = RDMEM_W(cpustate,  (UINT16)(cpustate->RW(src) + cpustate->RW(idx)));
+	cpustate->RW(dst) = RDMEM_W(cpustate,  (uint16_t)(cpustate->RW(src) + cpustate->RW(idx)));
 }
 
 /******************************************
@@ -4356,7 +4356,7 @@ static void Z72_ddN0_ssss_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_SRC(OP0,NIB3);
 	GET_DST(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	WRMEM_B(cpustate,  (UINT16)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RB(src));
+	WRMEM_B(cpustate,  (uint16_t)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RB(src));
 }
 
 /******************************************
@@ -4368,7 +4368,7 @@ static void Z73_ddN0_ssss_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_SRC(OP0,NIB3);
 	GET_DST(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	WRMEM_W(cpustate,  (UINT16)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RW(src));
+	WRMEM_W(cpustate,  (uint16_t)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RW(src));
 }
 
 /******************************************
@@ -4380,7 +4380,7 @@ static void Z74_ssN0_dddd_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	cpustate->RW(dst) = (UINT16)(cpustate->RW(src) + cpustate->RW(idx));
+	cpustate->RW(dst) = (uint16_t)(cpustate->RW(src) + cpustate->RW(idx));
 }
 
 /******************************************
@@ -4392,7 +4392,7 @@ static void Z75_ssN0_dddd_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	cpustate->RL(dst) = RDMEM_L(cpustate,  (UINT16)(cpustate->RW(src) + cpustate->RW(idx)));
+	cpustate->RL(dst) = RDMEM_L(cpustate,  (uint16_t)(cpustate->RW(src) + cpustate->RW(idx)));
 }
 
 /******************************************
@@ -4408,15 +4408,15 @@ static void Z76_0000_dddd_addr(z8000_state *cpustate)
 
 static void Z76_0000_dddd_addr_seg(z8000_state *cpustate)
 {
-	static UINT32 offset;
-	UINT16 operand1;
+	static uint32_t offset;
+	uint16_t operand1;
 
 	GET_DST(OP0,NIB3);
 	operand1 = fetch(cpustate);
 
 	if(operand1 & 0x8000)
 	{
-		UINT16 operand2 = fetch(cpustate);
+		uint16_t operand2 = fetch(cpustate);
 
 		offset = (operand1 & 0x0700) << 8;
 		offset|= (operand2 & 0xffff);
@@ -4456,7 +4456,7 @@ static void Z77_ddN0_ssss_0000_xxxx_0000_0000(z8000_state *cpustate)
 	GET_SRC(OP0,NIB3);
 	GET_DST(OP0,NIB2);
 	GET_IDX(OP1,NIB1);
-	WRMEM_L(cpustate,  (UINT16)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RL(src));
+	WRMEM_L(cpustate,  (uint16_t)(cpustate->RW(dst) + cpustate->RW(idx)), cpustate->RL(src));
 }
 
 /******************************************
@@ -4480,9 +4480,9 @@ static void Z78_imm8(z8000_state *cpustate)
 static void Z79_0000_0000_addr(z8000_state *cpustate)
 {
 	GET_ADDR(OP1);
-	UINT16 fcw;
+	uint16_t fcw;
 	fcw = RDMEM_W(cpustate, addr);
-	cpustate->pc	= RDMEM_W(cpustate, (UINT16)(addr + 2));
+	cpustate->pc	= RDMEM_W(cpustate, (uint16_t)(addr + 2));
 	CHANGE_FCW(cpustate, fcw); /* check for user/system mode change */
 }
 
@@ -4494,10 +4494,10 @@ static void Z79_ssN0_0000_addr(z8000_state *cpustate)
 {
 	GET_SRC(OP0,NIB2);
 	GET_ADDR(OP1);
-	UINT16 fcw;
+	uint16_t fcw;
 	addr += cpustate->RW(src);
 	fcw = RDMEM_W(cpustate, addr);
-	cpustate->pc	= RDMEM_W(cpustate, (UINT16)(addr + 2));
+	cpustate->pc	= RDMEM_W(cpustate, (uint16_t)(addr + 2));
 	CHANGE_FCW(cpustate, fcw); /* check for user/system mode change */
 }
 
@@ -4517,7 +4517,7 @@ static void Z7A_0000_0000(z8000_state *cpustate)
  ******************************************/
 static void Z7B_0000_0000(z8000_state *cpustate)
 {
-	UINT16 tag, fcw;
+	uint16_t tag, fcw;
 	tag = POPW(cpustate, SP);	/* get type tag */
 	fcw = POPW(cpustate, SP);	/* get cpustate->fcw  */
 	cpustate->pc	= POPW(cpustate, SP);	/* get cpustate->pc   */
@@ -4569,7 +4569,7 @@ static void Z7B_dddd_1101(z8000_state *cpustate)
 static void Z7C_0000_00ii(z8000_state *cpustate)
 {
 	GET_IMM2(OP0,NIB3);
-	UINT16 fcw = cpustate->fcw;
+	uint16_t fcw = cpustate->fcw;
 	fcw &= ~(imm2 << 11);
 	CHANGE_FCW(cpustate, fcw);
 }
@@ -4581,7 +4581,7 @@ static void Z7C_0000_00ii(z8000_state *cpustate)
 static void Z7C_0000_01ii(z8000_state *cpustate)
 {
 	GET_IMM2(OP0,NIB3);
-	UINT16 fcw = cpustate->fcw;
+	uint16_t fcw = cpustate->fcw;
 	fcw |= imm2 << 11;
 	CHANGE_FCW(cpustate, fcw);
 }
@@ -4623,7 +4623,7 @@ static void Z7D_ssss_1ccc(z8000_state *cpustate)
 	switch (imm3) {
 		case 0:
 			{
-				UINT16 fcw;
+				uint16_t fcw;
 				fcw = cpustate->RW(src);
 				CHANGE_FCW(cpustate, fcw); /* check for user/system mode change */
 			}
@@ -5305,7 +5305,7 @@ static void ZAC_ssss_dddd(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
-	UINT8 tmp = cpustate->RB(src);
+	uint8_t tmp = cpustate->RB(src);
 	cpustate->RB(src) = cpustate->RB(dst);
 	cpustate->RB(dst) = tmp;
 }
@@ -5318,7 +5318,7 @@ static void ZAD_ssss_dddd(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB3);
 	GET_SRC(OP0,NIB2);
-	UINT16 tmp = cpustate->RW(src);
+	uint16_t tmp = cpustate->RW(src);
 	cpustate->RW(src) = cpustate->RW(dst);
 	cpustate->RW(dst) = tmp;
 }
@@ -5331,7 +5331,7 @@ static void ZAE_dddd_cccc(z8000_state *cpustate)
 {
 	GET_CCC(OP0,NIB3);
 	GET_DST(OP0,NIB2);
-	UINT8 tmp = cpustate->RB(dst) & ~1;
+	uint8_t tmp = cpustate->RB(dst) & ~1;
 	switch (cc) {
 		case  0: if (CC0) tmp |= 1; break;
 		case  1: if (CC1) tmp |= 1; break;
@@ -5361,7 +5361,7 @@ static void ZAF_dddd_cccc(z8000_state *cpustate)
 {
 	GET_CCC(OP0,NIB3);
 	GET_DST(OP0,NIB2);
-	UINT16 tmp = cpustate->RW(dst) & ~1;
+	uint16_t tmp = cpustate->RW(dst) & ~1;
 	switch (cc) {
 		case  0: if (CC0) tmp |= 1; break;
 		case  1: if (CC1) tmp |= 1; break;
@@ -5390,8 +5390,8 @@ static void ZAF_dddd_cccc(z8000_state *cpustate)
 static void ZB0_dddd_0000(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB2);
-	UINT8 result;
-	UINT16 idx = cpustate->RB(dst);
+	uint8_t result;
+	uint16_t idx = cpustate->RB(dst);
 	if (cpustate->fcw & F_C)	idx |= 0x100;
 	if (cpustate->fcw & F_H)	idx |= 0x200;
 	if (cpustate->fcw & F_DA) idx |= 0x400;
@@ -5445,7 +5445,7 @@ static void ZB2_dddd_0001_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RB(dst) = SRLB(cpustate, cpustate->RB(dst), -(INT16)imm16);
+		cpustate->RB(dst) = SRLB(cpustate, cpustate->RB(dst), -(int16_t)imm16);
 	else
 		cpustate->RB(dst) = SLLB(cpustate, cpustate->RB(dst), imm16);
 }
@@ -5458,7 +5458,7 @@ static void ZB2_dddd_0011_0000_ssss_0000_0000(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB1);
-	cpustate->RB(dst) = SRLB(cpustate, cpustate->RB(dst), (INT8)cpustate->RW(src));
+	cpustate->RB(dst) = SRLB(cpustate, cpustate->RB(dst), (int8_t)cpustate->RW(src));
 }
 
 /******************************************
@@ -5494,7 +5494,7 @@ static void ZB2_dddd_1001_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RB(dst) = SRAB(cpustate, cpustate->RB(dst), -(INT16)imm16);
+		cpustate->RB(dst) = SRAB(cpustate, cpustate->RB(dst), -(int16_t)imm16);
 	else
 		cpustate->RB(dst) = SLAB(cpustate, cpustate->RB(dst), imm16);
 }
@@ -5507,7 +5507,7 @@ static void ZB2_dddd_1011_0000_ssss_0000_0000(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB1);
-	cpustate->RB(dst) = SDAB(cpustate, cpustate->RB(dst), (INT8) cpustate->RW(src));
+	cpustate->RB(dst) = SDAB(cpustate, cpustate->RB(dst), (int8_t) cpustate->RW(src));
 }
 
 /******************************************
@@ -5543,7 +5543,7 @@ static void ZB3_dddd_0001_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RW(dst) = SRLW(cpustate, cpustate->RW(dst), -(INT16)imm16);
+		cpustate->RW(dst) = SRLW(cpustate, cpustate->RW(dst), -(int16_t)imm16);
 	else
         cpustate->RW(dst) = SLLW(cpustate, cpustate->RW(dst), imm16);
 }
@@ -5556,7 +5556,7 @@ static void ZB3_dddd_0011_0000_ssss_0000_0000(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB1);
-	cpustate->RW(dst) = SDLW(cpustate, cpustate->RW(dst), (INT8)cpustate->RW(src));
+	cpustate->RW(dst) = SDLW(cpustate, cpustate->RW(dst), (int8_t)cpustate->RW(src));
 }
 
 /******************************************
@@ -5581,7 +5581,7 @@ static void ZB3_dddd_0101_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RL(dst) = SRLL(cpustate, cpustate->RL(dst), -(INT16)imm16);
+		cpustate->RL(dst) = SRLL(cpustate, cpustate->RL(dst), -(int16_t)imm16);
 	else
 		cpustate->RL(dst) = SLLL(cpustate, cpustate->RL(dst), imm16);
 }
@@ -5619,7 +5619,7 @@ static void ZB3_dddd_1001_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RW(dst) = SRAW(cpustate, cpustate->RW(dst), -(INT16)imm16);
+		cpustate->RW(dst) = SRAW(cpustate, cpustate->RW(dst), -(int16_t)imm16);
 	else
         cpustate->RW(dst) = SLAW(cpustate, cpustate->RW(dst), imm16);
 }
@@ -5632,7 +5632,7 @@ static void ZB3_dddd_1011_0000_ssss_0000_0000(z8000_state *cpustate)
 {
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB1);
-	cpustate->RW(dst) = SDAW(cpustate, cpustate->RW(dst), (INT8)cpustate->RW(src));
+	cpustate->RW(dst) = SDAW(cpustate, cpustate->RW(dst), (int8_t)cpustate->RW(src));
 }
 
 /******************************************
@@ -5657,7 +5657,7 @@ static void ZB3_dddd_1101_imm8(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_IMM16(OP1);
 	if (imm16 & S16)
-		cpustate->RL(dst) = SRAL(cpustate, cpustate->RL(dst), -(INT16)imm16);
+		cpustate->RL(dst) = SRAL(cpustate, cpustate->RL(dst), -(int16_t)imm16);
 	else
 		cpustate->RL(dst) = SLAL(cpustate, cpustate->RL(dst), imm16);
 }
@@ -5737,7 +5737,7 @@ static void ZB8_ddN0_0010_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	cpustate->RB(2) = xlt;
 	if (xlt) CLR_Z; else SET_Z;
 	cpustate->RW(dst)++;
@@ -5753,7 +5753,7 @@ static void ZB8_ddN0_0110_0000_rrrr_ssN0_1110(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	cpustate->RB(2) = xlt;
 	if (xlt) CLR_Z; else SET_Z;
 	cpustate->RW(dst)++;
@@ -5769,7 +5769,7 @@ static void ZB8_ddN0_1010_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	cpustate->RB(2) = xlt;
 	if (xlt) CLR_Z; else SET_Z;
     cpustate->RW(dst)--;
@@ -5785,7 +5785,7 @@ static void ZB8_ddN0_1110_0000_rrrr_ssN0_1110(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	cpustate->RB(2) = xlt;
 	if (xlt) CLR_Z; else SET_Z;
     cpustate->RW(dst)--;
@@ -5801,7 +5801,7 @@ static void ZB8_ddN0_0000_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	WRMEM_B(cpustate,  cpustate->RW(dst), xlt);
 	cpustate->RW(dst)++;
 	if (--cpustate->RW(cnt)) CLR_V; else SET_V;
@@ -5816,7 +5816,7 @@ static void ZB8_ddN0_0100_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	WRMEM_B(cpustate,  cpustate->RW(dst), xlt);
 	cpustate->RW(dst)++;
 	if (--cpustate->RW(cnt)) { CLR_V; cpustate->pc -= 4; } else SET_V;
@@ -5831,7 +5831,7 @@ static void ZB8_ddN0_1000_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	WRMEM_B(cpustate,  cpustate->RW(dst), xlt);
     cpustate->RW(dst)--;
 	if (--cpustate->RW(cnt)) CLR_V; else SET_V;
@@ -5846,7 +5846,7 @@ static void ZB8_ddN0_1100_0000_rrrr_ssN0_0000(z8000_state *cpustate)
 	GET_DST(OP0,NIB2);
 	GET_SRC(OP1,NIB2);
 	GET_CNT(OP1,NIB1);
-	UINT8 xlt = RDMEM_B(cpustate,  (UINT16)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
+	uint8_t xlt = RDMEM_B(cpustate,  (uint16_t)(cpustate->RW(src) + RDMEM_B(cpustate, cpustate->RW(dst))));
 	WRMEM_B(cpustate,  cpustate->RW(dst), xlt);
     cpustate->RW(dst)--;
 	if (--cpustate->RW(cnt)) { CLR_V; cpustate->pc -= 4; } else SET_V;
@@ -6477,9 +6477,9 @@ static void ZBB_ssN0_1110_0000_rrrr_ddN0_cccc(z8000_state *cpustate)
  ******************************************/
 static void ZBC_aaaa_bbbb(z8000_state *cpustate)
 {
-	UINT8 b = cpustate->op[0] & 15;
-	UINT8 a = (cpustate->op[0] >> 4) & 15;
-	UINT8 tmp = cpustate->RB(b);
+	uint8_t b = cpustate->op[0] & 15;
+	uint8_t a = (cpustate->op[0] >> 4) & 15;
+	uint8_t tmp = cpustate->RB(b);
 	cpustate->RB(a) = (cpustate->RB(a) >> 4) | (cpustate->RB(b) << 4);
 	cpustate->RB(b) = (cpustate->RB(b) & 0xf0) | (tmp & 0x0f);
     if (cpustate->RB(b)) CLR_Z; else SET_Z;
@@ -6502,9 +6502,9 @@ static void ZBD_dddd_imm4(z8000_state *cpustate)
  ******************************************/
 static void ZBE_aaaa_bbbb(z8000_state *cpustate)
 {
-	UINT8 b = cpustate->op[0] & 15;
-	UINT8 a = (cpustate->op[0] >> 4) & 15;
-	UINT8 tmp = cpustate->RB(a);
+	uint8_t b = cpustate->op[0] & 15;
+	uint8_t a = (cpustate->op[0] >> 4) & 15;
+	uint8_t tmp = cpustate->RB(a);
 	cpustate->RB(a) = (cpustate->RB(a) << 4) | (cpustate->RB(b) & 0x0f);
 	cpustate->RB(b) = (cpustate->RB(b) & 0xf0) | (tmp >> 4);
 	if (cpustate->RB(b)) CLR_Z; else SET_Z;
@@ -6542,7 +6542,7 @@ static void ZC_dddd_imm8(z8000_state *cpustate)
  ******************************************/
 static void ZD_dsp12(z8000_state *cpustate)
 {
-	INT16 dsp12 = cpustate->op[0] & 0xfff;
+	int16_t dsp12 = cpustate->op[0] & 0xfff;
 	PUSHW(cpustate, SP, cpustate->pc);
 	dsp12 = (dsp12 & 2048) ? 4096 -2 * (dsp12 & 2047) : -2 * (dsp12 & 2047);
 	cpustate->pc += dsp12;

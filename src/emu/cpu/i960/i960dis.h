@@ -7,8 +7,8 @@ struct _disassemble_t
 	char		*buffer;	// output buffer
 	unsigned long	IP;
 	unsigned long	IPinc;
-	const UINT8 *oprom;
-	UINT32 disflags;
+	const uint8_t *oprom;
+	uint32_t disflags;
 };
 
 #endif /* __I960DIS_H__ */

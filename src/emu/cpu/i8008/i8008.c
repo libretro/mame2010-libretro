@@ -15,7 +15,7 @@
 
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
 
-static UINT8 PARITY[256];
+static uint8_t PARITY[256];
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -24,15 +24,15 @@ static UINT8 PARITY[256];
 typedef struct _i8008_state i8008_state;
 struct _i8008_state
 {
-	UINT8	A,B,C,D,E,H,L;
+	uint8_t	A,B,C,D,E,H,L;
 	PAIR	PC; // It is in fact one of ADDR regs
 	PAIR	ADDR[8]; // Address registers
-	UINT8	CF; // Carry flag
-	UINT8	ZF; // Zero flag
-	UINT8	SF; // Sign flag
-	UINT8	PF; // Parity flag
-	UINT8	HALT;
-	UINT8	flags; // temporary I/O only
+	uint8_t	CF; // Carry flag
+	uint8_t	ZF; // Zero flag
+	uint8_t	SF; // Sign flag
+	uint8_t	PF; // Parity flag
+	uint8_t	HALT;
+	uint8_t	flags; // temporary I/O only
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
@@ -40,7 +40,7 @@ struct _i8008_state
 	int 				pc_pos; // PC possition in ADDR
 
 	device_irq_callback irq_callback;
-	UINT8			irq_state;
+	uint8_t			irq_state;
 };
 
 /***************************************************************************
@@ -72,17 +72,17 @@ INLINE void POP_STACK(i8008_state *cpustate)
 	cpustate->pc_pos = (cpustate->pc_pos - 1) & 7;
 }
 
-INLINE UINT8 ROP(i8008_state *cpustate)
+INLINE uint8_t ROP(i8008_state *cpustate)
 {
-	UINT8 retVal = memory_decrypted_read_byte(cpustate->program, GET_PC.w.l);
+	uint8_t retVal = memory_decrypted_read_byte(cpustate->program, GET_PC.w.l);
 	GET_PC.w.l = (GET_PC.w.l + 1) & 0x3fff;
 	cpustate->PC = GET_PC;
 	return retVal;
 }
 
-INLINE UINT8 GET_REG(i8008_state *cpustate,UINT8 reg)
+INLINE uint8_t GET_REG(i8008_state *cpustate,uint8_t reg)
 {
-	UINT8 retVal;
+	uint8_t retVal;
 	switch(reg) {
 		case 0 : retVal = cpustate->A; break;
 		case 1 : retVal = cpustate->B; break;
@@ -96,7 +96,7 @@ INLINE UINT8 GET_REG(i8008_state *cpustate,UINT8 reg)
 	return retVal;
 }
 
-INLINE void SET_REG(i8008_state *cpustate,UINT8 reg, UINT8 val)
+INLINE void SET_REG(i8008_state *cpustate,uint8_t reg, uint8_t val)
 {
 	switch(reg) {
 		case 0 : cpustate->A = val; break;
@@ -110,25 +110,25 @@ INLINE void SET_REG(i8008_state *cpustate,UINT8 reg, UINT8 val)
 	}
 }
 
-INLINE UINT8 ARG(i8008_state *cpustate)
+INLINE uint8_t ARG(i8008_state *cpustate)
 {
-	UINT8 retVal = memory_raw_read_byte(cpustate->program, GET_PC.w.l);
+	uint8_t retVal = memory_raw_read_byte(cpustate->program, GET_PC.w.l);
 	GET_PC.w.l = (GET_PC.w.l + 1) & 0x3fff;
 	cpustate->PC = GET_PC;
 	return retVal;
 }
 
-INLINE void UPDATE_FLAGS(i8008_state *cpustate,UINT8 val)
+INLINE void UPDATE_FLAGS(i8008_state *cpustate,uint8_t val)
 {
 	cpustate->ZF = (val == 0) ? 1 : 0;
 	cpustate->SF = (val & 0x80) ? 1 : 0;
 	cpustate->PF = PARITY[val];
 }
 
-INLINE UINT8 DO_CONDITION(i8008_state *cpustate, UINT8 val)
+INLINE uint8_t DO_CONDITION(i8008_state *cpustate, uint8_t val)
 {
-	UINT8 v = (val >> 5) & 1;
-	UINT8 cond = 0;
+	uint8_t v = (val >> 5) & 1;
+	uint8_t cond = 0;
 	switch((val>> 3) & 0x03) {
 		case 0 :
 				if (cpustate->CF==v) cond = 1;
@@ -146,24 +146,24 @@ INLINE UINT8 DO_CONDITION(i8008_state *cpustate, UINT8 val)
 	return cond;
 }
 
-INLINE UINT16 GET_ADDR(i8008_state *cpustate)
+INLINE uint16_t GET_ADDR(i8008_state *cpustate)
 {
-	UINT8 lo = ARG(cpustate);
-	UINT8 hi = ARG(cpustate);
+	uint8_t lo = ARG(cpustate);
+	uint8_t hi = ARG(cpustate);
 	return ((hi & 0x3f) << 8) + lo;
 }
 
-INLINE void illegal(i8008_state *cpustate,UINT8 opcode)
+INLINE void illegal(i8008_state *cpustate,uint8_t opcode)
 {
 #if VERBOSE
-	UINT16 pc = cpustate->PC.w.l;
+	uint16_t pc = cpustate->PC.w.l;
 	LOG(("I8008 illegal instruction %04X $%02X\n", pc, opcode));
 #endif
 }
 
 static void execute_one(i8008_state *cpustate, int opcode)
 {
-	UINT16 tmp;
+	uint16_t tmp;
 
 	switch (opcode >> 6)
 	{
@@ -500,7 +500,7 @@ static CPU_EXECUTE( i8008 )
 static void init_tables (void)
 {
 	int i;
-	UINT8 p;
+	uint8_t p;
 	for (i = 0; i < 256; i++)
 	{
 		p = 0;

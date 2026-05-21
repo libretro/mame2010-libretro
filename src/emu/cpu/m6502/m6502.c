@@ -51,22 +51,22 @@
 typedef struct _m6502_Regs m6502_Regs;
 struct _m6502_Regs
 {
-	UINT8	subtype;		/* currently selected cpu sub type */
+	uint8_t	subtype;		/* currently selected cpu sub type */
 	void	(*const *insn)(m6502_Regs *); /* pointer to the function pointer table */
 	PAIR	ppc;			/* previous program counter */
 	PAIR	pc; 			/* program counter */
 	PAIR	sp; 			/* stack pointer (always 100 - 1FF) */
 	PAIR	zp; 			/* zero page address */
 	PAIR	ea; 			/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
-	UINT8	p;				/* Processor status */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
-	UINT8   so_state;
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
+	uint8_t	p;				/* Processor status */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
+	uint8_t   so_state;
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -78,8 +78,8 @@ struct _m6502_Regs
 	read8_space_func rdmem_id;					/* readmem callback for indexed instructions */
 	write8_space_func wrmem_id;					/* writemem callback for indexed instructions */
 
-	UINT8    ddr;
-	UINT8    port;
+	uint8_t    ddr;
+	uint8_t    port;
 	m6510_port_read_func port_read;
 	m6510_port_write_func port_write;
 };
@@ -99,8 +99,8 @@ INLINE m6502_Regs *get_safe_token(running_device *device)
 	return (m6502_Regs *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-static UINT8 default_rdmem_id(const address_space *space, offs_t offset) { return memory_read_byte_8le(space, offset); }
-static void default_wdmem_id(const address_space *space, offs_t offset, UINT8 data) { memory_write_byte_8le(space, offset, data); }
+static uint8_t default_rdmem_id(const address_space *space, offs_t offset) { return memory_read_byte_8le(space, offset); }
+static void default_wdmem_id(const address_space *space, offs_t offset, uint8_t data) { memory_write_byte_8le(space, offset, data); }
 
 /***************************************************************
  * include the opcode macros, functions and tables
@@ -127,7 +127,7 @@ static void default_wdmem_id(const address_space *space, offs_t offset, UINT8 da
  *
  *****************************************************************************/
 
-static void m6502_common_init(legacy_cpu_device *device, device_irq_callback irqcallback, UINT8 subtype, void (*const *insn)(m6502_Regs *cpustate), const char *type)
+static void m6502_common_init(legacy_cpu_device *device, device_irq_callback irqcallback, uint8_t subtype, void (*const *insn)(m6502_Regs *cpustate), const char *type)
 {
 	m6502_Regs *cpustate = get_safe_token(device);
 	const m6502_interface *intf = (const m6502_interface *)device->baseconfig().static_config();
@@ -227,7 +227,7 @@ static CPU_EXECUTE( m6502 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);
@@ -354,7 +354,7 @@ static CPU_RESET( m6510 )
 	cpustate->ddr = 0x00;
 }
 
-UINT8 m6510_get_port(legacy_cpu_device *device)
+uint8_t m6510_get_port(legacy_cpu_device *device)
 {
 	m6502_Regs *cpustate = get_safe_token(device);
 	return (cpustate->port & cpustate->ddr) | (cpustate->ddr ^ 0xff);
@@ -363,7 +363,7 @@ UINT8 m6510_get_port(legacy_cpu_device *device)
 static READ8_HANDLER( m6510_read_0000 )
 {
 	m6502_Regs *cpustate = get_safe_token(space->cpu);
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 
 	switch(offset)
 	{
@@ -445,7 +445,7 @@ static CPU_EXECUTE( m65c02 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);
@@ -607,7 +607,7 @@ static CPU_EXECUTE( deco16 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);

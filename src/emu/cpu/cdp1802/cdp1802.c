@@ -34,18 +34,18 @@ struct _cdp1802_state
 	devcb_resolved_write8		out_dma_func;
 
 	/* registers */
-	UINT8 d;				/* data register (accumulator) */
+	uint8_t d;				/* data register (accumulator) */
 	int df;					/* data flag (ALU carry) */
-	UINT8 b;				/* auxiliary holding register */
-	UINT16 r[16];			/* scratchpad registers */
-	UINT8 p;				/* designates which register is Program Counter */
-	UINT8 x;				/* designates which register is Data Pointer */
-	UINT8 n;				/* low-order instruction digit */
-	UINT8 i;				/* high-order instruction digit */
-	UINT8 t;				/* temporary register */
+	uint8_t b;				/* auxiliary holding register */
+	uint16_t r[16];			/* scratchpad registers */
+	uint8_t p;				/* designates which register is Program Counter */
+	uint8_t x;				/* designates which register is Data Pointer */
+	uint8_t n;				/* low-order instruction digit */
+	uint8_t i;				/* high-order instruction digit */
+	uint8_t t;				/* temporary register */
 	int ie;					/* interrupt enable */
 	int q;					/* output flip-flop */
-	UINT8 flags;			// used for I/O only
+	uint8_t flags;			// used for I/O only
 
 	/* cpu state */
 	cdp1802_cpu_state state;		/* processor state */
@@ -271,7 +271,7 @@ static void cdp1802_run(running_device *device)
 
 	case CDP1802_STATE_0_FETCH:
 		{
-		UINT8 opcode = OPCODE_R(R[P]);
+		uint8_t opcode = OPCODE_R(R[P]);
 
 		I = opcode >> 4;
 		N = opcode & 0x0f;
@@ -427,7 +427,7 @@ static void cdp1802_run(running_device *device)
 			case 0xe:
 			case 0xf:
 				{
-				UINT8 data = IO_R(N & 0x07);
+				uint8_t data = IO_R(N & 0x07);
 				RAM_W(R[X], data);
 				D = data;
 				}
@@ -440,7 +440,7 @@ static void cdp1802_run(running_device *device)
 			{
 			case 0:
 				{
-				UINT8 data = RAM_R(R[X]);
+				uint8_t data = RAM_R(R[X]);
 				R[X] = R[X] + 1;
 				P = data & 0xf;
 				X = data >> 4;
@@ -450,7 +450,7 @@ static void cdp1802_run(running_device *device)
 
 			case 1:
 				{
-				UINT8 data = RAM_R(R[X]);
+				uint8_t data = RAM_R(R[X]);
 				R[X] = R[X] + 1;
 				P = data & 0xf;
 				X = data >> 4;
@@ -495,7 +495,7 @@ static void cdp1802_run(running_device *device)
 
 			case 9:
 				{
-				UINT8 result = (X << 4) | P;
+				uint8_t result = (X << 4) | P;
 				T = result;
 				RAM_W(R[2], result);
 				X = P;

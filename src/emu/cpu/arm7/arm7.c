@@ -49,8 +49,8 @@
 static WRITE32_DEVICE_HANDLER(arm7_do_callback);
 static READ32_DEVICE_HANDLER(arm7_rt_r_callback);
 static WRITE32_DEVICE_HANDLER(arm7_rt_w_callback);
-void arm7_dt_r_callback(arm_state *cpustate, UINT32 insn, UINT32 *prn, UINT32 (*read32)(arm_state *cpustate, UINT32 addr));
-void arm7_dt_w_callback(arm_state *cpustate, UINT32 insn, UINT32 *prn, void (*write32)(arm_state *cpustate, UINT32 addr, UINT32 data));
+void arm7_dt_r_callback(arm_state *cpustate, uint32_t insn, uint32_t *prn, uint32_t (*read32)(arm_state *cpustate, uint32_t addr));
+void arm7_dt_w_callback(arm_state *cpustate, uint32_t insn, uint32_t *prn, void (*write32)(arm_state *cpustate, uint32_t addr, uint32_t data));
 
 /* Macros that can be re-defined for custom cpu implementations - The core expects these to be defined */
 /* In this case, we are using the default arm7 handlers (supplied by the core)
@@ -75,7 +75,7 @@ INLINE arm_state *get_safe_token(running_device *device)
 	return (arm_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE INT64 saturate_qbit_overflow(arm_state *cpustate, INT64 res)
+INLINE int64_t saturate_qbit_overflow(arm_state *cpustate, int64_t res)
 {
 	if (res > 2147483647)	// INT32_MAX
 	{	// overflow high? saturate and set Q
@@ -101,15 +101,15 @@ enum
     TLB_FINE,
 };
 
-INLINE UINT32 arm7_tlb_get_first_level_descriptor( arm_state *cpustate, UINT32 vaddr )
+INLINE uint32_t arm7_tlb_get_first_level_descriptor( arm_state *cpustate, uint32_t vaddr )
 {
-    UINT32 entry_paddr = ( COPRO_TLB_BASE & COPRO_TLB_BASE_MASK ) | ( ( vaddr & COPRO_TLB_VADDR_FLTI_MASK ) >> COPRO_TLB_VADDR_FLTI_MASK_SHIFT );
+    uint32_t entry_paddr = ( COPRO_TLB_BASE & COPRO_TLB_BASE_MASK ) | ( ( vaddr & COPRO_TLB_VADDR_FLTI_MASK ) >> COPRO_TLB_VADDR_FLTI_MASK_SHIFT );
     return memory_read_dword_32le( cpustate->program, entry_paddr );
 }
 
-INLINE UINT32 arm7_tlb_get_second_level_descriptor( arm_state *cpustate, UINT32 granularity, UINT32 first_desc, UINT32 vaddr )
+INLINE uint32_t arm7_tlb_get_second_level_descriptor( arm_state *cpustate, uint32_t granularity, uint32_t first_desc, uint32_t vaddr )
 {
-    UINT32 desc_lvl2 = vaddr;
+    uint32_t desc_lvl2 = vaddr;
 
     switch( granularity )
     {
@@ -128,11 +128,11 @@ INLINE UINT32 arm7_tlb_get_second_level_descriptor( arm_state *cpustate, UINT32 
     return memory_read_dword_32le( cpustate->program, desc_lvl2 );
 }
 
-INLINE UINT32 arm7_tlb_translate(arm_state *cpustate, UINT32 vaddr)
+INLINE uint32_t arm7_tlb_translate(arm_state *cpustate, uint32_t vaddr)
 {
-    UINT32 desc_lvl1 = arm7_tlb_get_first_level_descriptor( cpustate, vaddr );
-    UINT32 desc_lvl2 = 0;
-    UINT32 paddr = vaddr;
+    uint32_t desc_lvl1 = arm7_tlb_get_first_level_descriptor( cpustate, vaddr );
+    uint32_t desc_lvl2 = 0;
+    uint32_t paddr = vaddr;
 
     switch( desc_lvl1 & 3 )
     {
@@ -629,12 +629,12 @@ static WRITE32_DEVICE_HANDLER( arm7_do_callback )
 static READ32_DEVICE_HANDLER( arm7_rt_r_callback )
 {
     arm_state *cpustate = get_safe_token(device);
-    UINT32 opcode = offset;
-    UINT8 cReg = ( opcode & INSN_COPRO_CREG ) >> INSN_COPRO_CREG_SHIFT;
-    UINT8 op2 =  ( opcode & INSN_COPRO_OP2 )  >> INSN_COPRO_OP2_SHIFT;
-    UINT8 op3 =    opcode & INSN_COPRO_OP3;
-    UINT8 cpnum = (opcode & INSN_COPRO_CPNUM) >> INSN_COPRO_CPNUM_SHIFT;
-    UINT32 data = 0;
+    uint32_t opcode = offset;
+    uint8_t cReg = ( opcode & INSN_COPRO_CREG ) >> INSN_COPRO_CREG_SHIFT;
+    uint8_t op2 =  ( opcode & INSN_COPRO_OP2 )  >> INSN_COPRO_OP2_SHIFT;
+    uint8_t op3 =    opcode & INSN_COPRO_OP3;
+    uint8_t cpnum = (opcode & INSN_COPRO_CPNUM) >> INSN_COPRO_CPNUM_SHIFT;
+    uint32_t data = 0;
 
 //    printf("cpnum %d cReg %d op2 %d op3 %d (%x)\n", cpnum, cReg, op2, op3, GET_REGISTER(cpustate, 15));
 
@@ -649,7 +649,7 @@ static READ32_DEVICE_HANDLER( arm7_rt_r_callback )
 			switch( cReg )
 			{
 				case 1:	// clock counter
-					data = (UINT32)cpustate->device->total_cycles();
+					data = (uint32_t)cpustate->device->total_cycles();
 					break;
 
 				default:
@@ -782,11 +782,11 @@ static READ32_DEVICE_HANDLER( arm7_rt_r_callback )
 static WRITE32_DEVICE_HANDLER( arm7_rt_w_callback )
 {
     arm_state *cpustate = get_safe_token(device);
-    UINT32 opcode = offset;
-    UINT8 cReg = ( opcode & INSN_COPRO_CREG ) >> INSN_COPRO_CREG_SHIFT;
-    UINT8 op2 =  ( opcode & INSN_COPRO_OP2 )  >> INSN_COPRO_OP2_SHIFT;
-    UINT8 op3 =    opcode & INSN_COPRO_OP3;
-    UINT8 cpnum = (opcode & INSN_COPRO_CPNUM) >> INSN_COPRO_CPNUM_SHIFT;
+    uint32_t opcode = offset;
+    uint8_t cReg = ( opcode & INSN_COPRO_CREG ) >> INSN_COPRO_CREG_SHIFT;
+    uint8_t op2 =  ( opcode & INSN_COPRO_OP2 )  >> INSN_COPRO_OP2_SHIFT;
+    uint8_t op3 =    opcode & INSN_COPRO_OP3;
+    uint8_t cpnum = (opcode & INSN_COPRO_CPNUM) >> INSN_COPRO_CPNUM_SHIFT;
 
     // handle XScale specific CP14 - just eat writes for now
     if (cpnum != 15)
@@ -862,11 +862,11 @@ static WRITE32_DEVICE_HANDLER( arm7_rt_w_callback )
     op3 = 0;
 }
 
-void arm7_dt_r_callback(arm_state *cpustate, UINT32 insn, UINT32 *prn, UINT32 (*read32)(arm_state *cpustate, UINT32 addr))
+void arm7_dt_r_callback(arm_state *cpustate, uint32_t insn, uint32_t *prn, uint32_t (*read32)(arm_state *cpustate, uint32_t addr))
 {
 }
 
-void arm7_dt_w_callback(arm_state *cpustate, UINT32 insn, UINT32 *prn, void (*write32)(arm_state *cpustate, UINT32 addr, UINT32 data))
+void arm7_dt_w_callback(arm_state *cpustate, uint32_t insn, uint32_t *prn, void (*write32)(arm_state *cpustate, uint32_t addr, uint32_t data))
 {
 }
 

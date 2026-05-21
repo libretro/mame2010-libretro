@@ -119,34 +119,34 @@ struct _z180_state
 {
 	PAIR	PREPC,PC,SP,AF,BC,DE,HL,IX,IY;
 	PAIR	AF2,BC2,DE2,HL2;
-	UINT8	R,R2,IFF1,IFF2,HALT,IM,I;
-	UINT8	tmdr_latch; 					/* flag latched TMDR0H, TMDR1H values */
-	UINT8	read_tcr_tmdr[2];				/* flag to indicate that TCR or TMDR was read */
-	UINT32	iol;							/* I/O line status bits */
-	UINT8	io[64];							/* 64 internal 8 bit registers */
+	uint8_t	R,R2,IFF1,IFF2,HALT,IM,I;
+	uint8_t	tmdr_latch; 					/* flag latched TMDR0H, TMDR1H values */
+	uint8_t	read_tcr_tmdr[2];				/* flag to indicate that TCR or TMDR was read */
+	uint32_t	iol;							/* I/O line status bits */
+	uint8_t	io[64];							/* 64 internal 8 bit registers */
 	offs_t	mmu[16];						/* MMU address translation */
-	UINT8	tmdrh[2];						/* latched TMDR0H and TMDR1H values */
-	UINT16	tmdr_value[2];					/* TMDR values used byt PRT0 and PRT1 as down counter */
-	UINT8	tif[2];							/* TIF0 and TIF1 values */
-	UINT8	nmi_state;						/* nmi line state */
-	UINT8	nmi_pending;					/* nmi pending */
-	UINT8	irq_state[3];					/* irq line states (INT0,INT1,INT2) */
-	UINT8	int_pending[Z180_INT_MAX + 1];	/* interrupt pending */
-	UINT8	after_EI;						/* are we in the EI shadow? */
-	UINT32	ea;
-	UINT8	timer_cnt;						/* timer counter / divide by 20 */
-	UINT8	dma0_cnt;						/* dma0 counter / divide by 20 */
-	UINT8	dma1_cnt;						/* dma1 counter / divide by 20 */
+	uint8_t	tmdrh[2];						/* latched TMDR0H and TMDR1H values */
+	uint16_t	tmdr_value[2];					/* TMDR values used byt PRT0 and PRT1 as down counter */
+	uint8_t	tif[2];							/* TIF0 and TIF1 values */
+	uint8_t	nmi_state;						/* nmi line state */
+	uint8_t	nmi_pending;					/* nmi pending */
+	uint8_t	irq_state[3];					/* irq line states (INT0,INT1,INT2) */
+	uint8_t	int_pending[Z180_INT_MAX + 1];	/* interrupt pending */
+	uint8_t	after_EI;						/* are we in the EI shadow? */
+	uint32_t	ea;
+	uint8_t	timer_cnt;						/* timer counter / divide by 20 */
+	uint8_t	dma0_cnt;						/* dma0 counter / divide by 20 */
+	uint8_t	dma1_cnt;						/* dma1 counter / divide by 20 */
 	z80_daisy_chain daisy;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *iospace;
-	UINT8	rtemp;
-	UINT32	ioltemp;
+	uint8_t	rtemp;
+	uint32_t	ioltemp;
 	int icount;
 	int extra_cycles;			/* extra cpu cycles */
-	UINT8 *cc[6];
+	uint8_t *cc[6];
 };
 
 INLINE z180_state *get_safe_token(running_device *device)
@@ -810,17 +810,17 @@ static void set_irq_line(z180_state *cpustate, int irqline, int state);
 
 
 
-static UINT8 SZ[256];		/* zero and sign flags */
-static UINT8 SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
-static UINT8 SZP[256];		/* zero, sign and parity flags */
-static UINT8 SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
-static UINT8 SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
+static uint8_t SZ[256];		/* zero and sign flags */
+static uint8_t SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
+static uint8_t SZP[256];		/* zero, sign and parity flags */
+static uint8_t SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
+static uint8_t SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
 
-static UINT8 *SZHVC_add;
-static UINT8 *SZHVC_sub;
+static uint8_t *SZHVC_add;
+static uint8_t *SZHVC_sub;
 
-static UINT8 z180_readcontrol(z180_state *cpustate, offs_t port);
-static void z180_writecontrol(z180_state *cpustate, offs_t port, UINT8 data);
+static uint8_t z180_readcontrol(z180_state *cpustate, offs_t port);
+static void z180_writecontrol(z180_state *cpustate, offs_t port, uint8_t data);
 static int z180_dma0(z180_state *cpustate, int max_cycles);
 static int z180_dma1(z180_state *cpustate);
 static CPU_BURN( z180 );
@@ -836,10 +836,10 @@ static CPU_SET_INFO( z180 );
 #include "z180ed.c"
 #include "z180op.c"
 
-static UINT8 z180_readcontrol(z180_state *cpustate, offs_t port)
+static uint8_t z180_readcontrol(z180_state *cpustate, offs_t port)
 {
 	/* normal external readport */
-	UINT8 data = memory_read_byte_8le(cpustate->iospace, port);
+	uint8_t data = memory_read_byte_8le(cpustate->iospace, port);
 
 	/* remap internal I/O registers */
 	if((port & (cpustate->IO_IOCR & 0xc0)) == (cpustate->IO_IOCR & 0xc0))
@@ -1264,7 +1264,7 @@ data |= 0x02; // kludge for 20pacgal
 	return data;
 }
 
-static void z180_writecontrol(z180_state *cpustate, offs_t port, UINT8 data)
+static void z180_writecontrol(z180_state *cpustate, offs_t port, uint8_t data)
 {
 	/* normal external write port */
 	memory_write_byte_8le(cpustate->iospace, port, data);
@@ -1361,7 +1361,7 @@ static void z180_writecontrol(z180_state *cpustate, offs_t port, UINT8 data)
 	case Z180_TCR:
 		LOG(("Z180 '%s' TCR    wr $%02x ($%02x)\n", cpustate->device->tag(), data,  data & Z180_TCR_WMASK));
 		{
-			UINT16 old = cpustate->IO_TCR;
+			uint16_t old = cpustate->IO_TCR;
 			/* Force reload on state change */
 			cpustate->IO_TCR = (cpustate->IO_TCR & ~Z180_TCR_WMASK) | (data & Z180_TCR_WMASK);
 			if (!(old & Z180_TCR_TDE0) && (cpustate->IO_TCR & Z180_TCR_TDE0))
@@ -1812,9 +1812,9 @@ static int z180_dma1(z180_state *cpustate)
 	return 6 + cycles;
 }
 
-static void z180_write_iolines(z180_state *cpustate, UINT32 data)
+static void z180_write_iolines(z180_state *cpustate, uint32_t data)
 {
-	UINT32 changes = cpustate->iol ^ data;
+	uint32_t changes = cpustate->iol ^ data;
 
     /* I/O asynchronous clock 0 (active high) or DREQ0 (mux) */
 	if (changes & Z180_CKA0)
@@ -1944,8 +1944,8 @@ static CPU_INIT( z180 )
 		cpustate->daisy.init(device, (const z80_daisy_config *)device->baseconfig().static_config());
 	cpustate->irq_callback = irqcallback;
 
-	SZHVC_add = auto_alloc_array(device->machine, UINT8, 2*256*256);
-	SZHVC_sub = auto_alloc_array(device->machine, UINT8, 2*256*256);
+	SZHVC_add = auto_alloc_array(device->machine, uint8_t, 2*256*256);
+	SZHVC_sub = auto_alloc_array(device->machine, uint8_t, 2*256*256);
 
 	/* set up the state table */
 	{
@@ -2100,7 +2100,7 @@ static CPU_RESET( z180 )
 	z180_state *cpustate = get_safe_token(device);
 	int i, p;
 	int oldval, newval, val;
-	UINT8 *padd, *padc, *psub, *psbc;
+	uint8_t *padd, *padc, *psub, *psbc;
 	/* allocate big flag arrays once */
 	padd = &SZHVC_add[	0*256];
 	padc = &SZHVC_add[256*256];
@@ -2215,7 +2215,7 @@ static CPU_RESET( z180 )
 	cpustate->iospace = device->space(AS_IO);
 	cpustate->device = device;
 
-	memcpy(cpustate->cc, (UINT8 *)cc_default, sizeof(cpustate->cc));
+	memcpy(cpustate->cc, (uint8_t *)cc_default, sizeof(cpustate->cc));
 	cpustate->_IX = cpustate->_IY = 0xffff; /* IX and IY are FFFF after a reset! */
 	cpustate->_F = ZF;			/* Zero flag is set */
 
@@ -2658,12 +2658,12 @@ static CPU_SET_INFO( z180 )
 		case CPUINFO_INT_INPUT_STATE + Z180_IRQ2:		set_irq_line(cpustate, Z180_IRQ2, info->i);			break;
 
 		/* --- the following bits of info are set as pointers to data or functions --- */
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_op:		cpustate->cc[Z180_TABLE_op] = (UINT8 *)info->p;		break;
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_cb:		cpustate->cc[Z180_TABLE_cb] = (UINT8 *)info->p;		break;
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_ed:		cpustate->cc[Z180_TABLE_ed] = (UINT8 *)info->p;		break;
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_xy:		cpustate->cc[Z180_TABLE_xy] = (UINT8 *)info->p;		break;
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_xycb:	cpustate->cc[Z180_TABLE_xycb] = (UINT8 *)info->p;	break;
-		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_ex:		cpustate->cc[Z180_TABLE_ex] = (UINT8 *)info->p;		break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_op:		cpustate->cc[Z180_TABLE_op] = (uint8_t *)info->p;		break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_cb:		cpustate->cc[Z180_TABLE_cb] = (uint8_t *)info->p;		break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_ed:		cpustate->cc[Z180_TABLE_ed] = (uint8_t *)info->p;		break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_xy:		cpustate->cc[Z180_TABLE_xy] = (uint8_t *)info->p;		break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_xycb:	cpustate->cc[Z180_TABLE_xycb] = (uint8_t *)info->p;	break;
+		case CPUINFO_PTR_Z180_CYCLE_TABLE + Z180_TABLE_ex:		cpustate->cc[Z180_TABLE_ex] = (uint8_t *)info->p;		break;
 	}
 }
 

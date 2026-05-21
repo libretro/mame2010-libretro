@@ -25,30 +25,30 @@ CPU_DISASSEMBLE( mb86233 );
 
 typedef union
 {
-	INT32	i;
-	UINT32	u;
+	int32_t	i;
+	uint32_t	u;
 	float	f;
 } MB86233_REG;
 
 typedef struct _mb86233_state mb86233_state;
 struct _mb86233_state
 {
-	UINT16			pc;
+	uint16_t			pc;
 	MB86233_REG		a;
 	MB86233_REG		b;
 	MB86233_REG		d;
 	MB86233_REG		p;
 
-	UINT16			reps;
-	UINT16			pcs[4];
-	UINT8			pcsp;
-	UINT32			eb;
-	UINT32			shift;
-	UINT32			repcnt;
-	UINT16			sr;
+	uint16_t			reps;
+	uint16_t			pcs[4];
+	uint8_t			pcsp;
+	uint32_t			eb;
+	uint32_t			shift;
+	uint32_t			repcnt;
+	uint16_t			sr;
 
-	UINT32			gpr[16];
-	UINT32			extport[0x30];
+	uint32_t			gpr[16];
+	uint32_t			extport[0x30];
 
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -60,9 +60,9 @@ struct _mb86233_state
 	mb86233_fifo_write_func fifo_write_cb;
 
 	/* internal RAM */
-	UINT32			*RAM;
-	UINT32			*ARAM, *BRAM;
-	UINT32			*Tables;
+	uint32_t			*RAM;
+	uint32_t			*ARAM, *BRAM;
+	uint32_t			*Tables;
 };
 
 INLINE mb86233_state *get_safe_token(running_device *device)
@@ -119,13 +119,13 @@ static CPU_INIT( mb86233 )
 		cpustate->fifo_write_cb = _config->fifo_write_cb;
 	}
 
-	cpustate->RAM = auto_alloc_array(device->machine, UINT32, 2 * 0x200);		/* 2x 2KB */
-	memset( cpustate->RAM, 0, 2 * 0x200 * sizeof(UINT32) );
+	cpustate->RAM = auto_alloc_array(device->machine, uint32_t, 2 * 0x200);		/* 2x 2KB */
+	memset( cpustate->RAM, 0, 2 * 0x200 * sizeof(uint32_t) );
 	cpustate->ARAM = &cpustate->RAM[0];
 	cpustate->BRAM = &cpustate->RAM[0x200];
-	cpustate->Tables = (UINT32*) memory_region(device->machine, _config->tablergn);
+	cpustate->Tables = (uint32_t*) memory_region(device->machine, _config->tablergn);
 
-	state_save_register_global_pointer(device->machine, cpustate->RAM,2 * 0x200 * sizeof(UINT32));
+	state_save_register_global_pointer(device->machine, cpustate->RAM,2 * 0x200 * sizeof(uint32_t));
 }
 
 static CPU_RESET( mb86233 )
@@ -162,7 +162,7 @@ static void FLAGSF( mb86233_state *cpustate, float v )
 		GETSR() |= SIGN_FLAG;
 }
 
-static void FLAGSI( mb86233_state *cpustate, UINT32 v )
+static void FLAGSI( mb86233_state *cpustate, uint32_t v )
 {
 	GETSR() = 0;
 
@@ -179,7 +179,7 @@ static void FLAGSI( mb86233_state *cpustate, UINT32 v )
     Condition Codes
 ***************************************************************************/
 
-static int COND( mb86233_state *cpustate, UINT32 cond )
+static int COND( mb86233_state *cpustate, uint32_t cond )
 {
 	switch( cond )
 	{
@@ -229,7 +229,7 @@ static int COND( mb86233_state *cpustate, UINT32 cond )
     ALU
 ***************************************************************************/
 
-static void ALU( mb86233_state *cpustate, UINT32 alu)
+static void ALU( mb86233_state *cpustate, uint32_t alu)
 {
 	float	ftmp;
 
@@ -316,7 +316,7 @@ static void ALU( mb86233_state *cpustate, UINT32 alu)
 		break;
 
 		case 0x0F:	/* D = int(D) */
-			GETD().i = (INT32)GETD().f;
+			GETD().i = (int32_t)GETD().f;
 			FLAGSI(cpustate, GETD().u);
 		break;
 
@@ -383,7 +383,7 @@ static void ALU( mb86233_state *cpustate, UINT32 alu)
     Memory Access
 ***************************************************************************/
 
-static UINT32 ScaleExp(unsigned int v,int scale)
+static uint32_t ScaleExp(unsigned int v,int scale)
 {
 	int exp=(v>>23)&0xff;
 	exp+=scale;
@@ -392,17 +392,17 @@ static UINT32 ScaleExp(unsigned int v,int scale)
 }
 
 
-static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
+static uint32_t GETEXTERNAL( mb86233_state *cpustate, uint32_t EB, uint32_t offset )
 {
-	UINT32		addr;
+	uint32_t		addr;
 
 	if ( EB == 0 && offset >= 0x20 && offset <= 0x2f )	/* TGP Tables in ROM - FIXME - */
 	{
 		if(offset>=0x20 && offset<=0x23)	//SIN from value at RAM(0x20) in 0x4000/PI steps
 		{
-			UINT32 r;
-			UINT32 value=GETEXTPORT()[0x20];
-			UINT32 off;
+			uint32_t r;
+			uint32_t value=GETEXTPORT()[0x20];
+			uint32_t off;
 			value+=(offset-0x20)<<14;
 			off=value&0x3fff;
 			if((value&0x7fff)==0)
@@ -502,9 +502,9 @@ static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
 
 		if(offset==0x28)
 		{
-			UINT32 offset=(GETEXTPORT()[0x28]>>10)&0x1fff;
-			UINT32 value=cpustate->Tables[offset*2+0x20000/4];
-			UINT32 srcexp=(GETEXTPORT()[0x28]>>23)&0xff;
+			uint32_t offset=(GETEXTPORT()[0x28]>>10)&0x1fff;
+			uint32_t value=cpustate->Tables[offset*2+0x20000/4];
+			uint32_t srcexp=(GETEXTPORT()[0x28]>>23)&0xff;
 
 			value&=0x7FFFFFFF;
 
@@ -512,9 +512,9 @@ static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
 		}
 		if(offset==0x29)
 		{
-			UINT32 offset=(GETEXTPORT()[0x28]>>10)&0x1fff;
-			UINT32 value=cpustate->Tables[offset*2+(0x20000/4)+1];
-			UINT32 srcexp=(GETEXTPORT()[0x28]>>23)&0xff;
+			uint32_t offset=(GETEXTPORT()[0x28]>>10)&0x1fff;
+			uint32_t value=cpustate->Tables[offset*2+(0x20000/4)+1];
+			uint32_t srcexp=(GETEXTPORT()[0x28]>>23)&0xff;
 
 			value&=0x7FFFFFFF;
 			if(GETEXTPORT()[0x28]&(1<<31))
@@ -524,9 +524,9 @@ static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
 		}
 		if(offset==0x2a)
 		{
-			UINT32 offset=((GETEXTPORT()[0x2a]>>11)&0x1fff)^0x1000;
-			UINT32 value=cpustate->Tables[offset*2+0x30000/4];
-			UINT32 srcexp=(GETEXTPORT()[0x2a]>>24)&0x7f;
+			uint32_t offset=((GETEXTPORT()[0x2a]>>11)&0x1fff)^0x1000;
+			uint32_t value=cpustate->Tables[offset*2+0x30000/4];
+			uint32_t srcexp=(GETEXTPORT()[0x2a]>>24)&0x7f;
 
 			value&=0x7FFFFFFF;
 
@@ -534,9 +534,9 @@ static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
 		}
 		if(offset==0x2b)
 		{
-			UINT32 offset=((GETEXTPORT()[0x2a]>>11)&0x1fff)^0x1000;
-			UINT32 value=cpustate->Tables[offset*2+(0x30000/4)+1];
-			UINT32 srcexp=(GETEXTPORT()[0x2a]>>24)&0x7f;
+			uint32_t offset=((GETEXTPORT()[0x2a]>>11)&0x1fff)^0x1000;
+			uint32_t value=cpustate->Tables[offset*2+(0x30000/4)+1];
+			uint32_t srcexp=(GETEXTPORT()[0x2a]>>24)&0x7f;
 
 			value&=0x7FFFFFFF;
 			if(GETEXTPORT()[0x2a]&(1<<31))
@@ -553,9 +553,9 @@ static UINT32 GETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset )
 	return RDMEM(addr);
 }
 
-static void SETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset, UINT32 value )
+static void SETEXTERNAL( mb86233_state *cpustate, uint32_t EB, uint32_t offset, uint32_t value )
 {
-	UINT32	addr;
+	uint32_t	addr;
 
 	if ( EB == 0 && offset >= 0x20 && offset <= 0x2f )	/* TGP Tables in ROM - FIXME - */
 	{
@@ -586,9 +586,9 @@ static void SETEXTERNAL( mb86233_state *cpustate, UINT32 EB, UINT32 offset, UINT
     Register Access
 ***************************************************************************/
 
-static UINT32 GETREGS( mb86233_state *cpustate, UINT32 reg, int source )
+static uint32_t GETREGS( mb86233_state *cpustate, uint32_t reg, int source )
 {
-	UINT32	mode = ( reg >> 6 ) & 0x07;
+	uint32_t	mode = ( reg >> 6 ) & 0x07;
 
 	reg &= 0x3f;
 
@@ -646,7 +646,7 @@ static UINT32 GETREGS( mb86233_state *cpustate, UINT32 reg, int source )
 
 			case 0x21:	/* FIn */
 			{
-				UINT32	fifo_data;
+				uint32_t	fifo_data;
 
 				if ( cpustate->fifo_read_cb )
 				{
@@ -676,7 +676,7 @@ static UINT32 GETREGS( mb86233_state *cpustate, UINT32 reg, int source )
 	}
 	else if ( mode == 2 )	/* Indexed */
 	{
-		UINT32	addr = reg & 0x1f;
+		uint32_t	addr = reg & 0x1f;
 
 		if ( source )
 		{
@@ -697,7 +697,7 @@ static UINT32 GETREGS( mb86233_state *cpustate, UINT32 reg, int source )
 	}
 	else if( mode == 6 )	/* Indexed with postop */
 	{
-		UINT32	addr = 0;
+		uint32_t	addr = 0;
 
 		if ( source )
 		{
@@ -739,7 +739,7 @@ static UINT32 GETREGS( mb86233_state *cpustate, UINT32 reg, int source )
 	return 0;
 }
 
-static void SETREGS( mb86233_state *cpustate, UINT32 reg, UINT32 val )
+static void SETREGS( mb86233_state *cpustate, uint32_t reg, uint32_t val )
 {
 	int		mode = ( reg >> 6) & 0x07;
 
@@ -859,9 +859,9 @@ static void SETREGS( mb86233_state *cpustate, UINT32 reg, UINT32 val )
     Addressing Modes
 ***************************************************************************/
 
-static UINT32 INDIRECT( mb86233_state *cpustate, UINT32 reg, int source )
+static uint32_t INDIRECT( mb86233_state *cpustate, uint32_t reg, int source )
 {
-	UINT32	mode = ( reg >> 6 ) & 0x07;
+	uint32_t	mode = ( reg >> 6 ) & 0x07;
 
 	if ( mode == 0 || mode == 1 || mode == 3 )
 	{
@@ -869,7 +869,7 @@ static UINT32 INDIRECT( mb86233_state *cpustate, UINT32 reg, int source )
 	}
 	else if ( mode == 2 )
 	{
-		UINT32	addr = reg & 0x1f;
+		uint32_t	addr = reg & 0x1f;
 
 		if ( source )
 		{
@@ -890,7 +890,7 @@ static UINT32 INDIRECT( mb86233_state *cpustate, UINT32 reg, int source )
 	}
 	else if ( mode == 6 || mode == 7 )
 	{
-		UINT32	addr = 0;
+		uint32_t	addr = 0;
 
 		if ( source )
 		{
@@ -942,8 +942,8 @@ static CPU_EXECUTE( mb86233 )
 
 	while( cpustate->icount > 0 )
 	{
-		UINT32		val;
-		UINT32		opcode;
+		uint32_t		val;
+		uint32_t		opcode;
 
 		debugger_instruction_hook(device, GETPC());
 
@@ -955,10 +955,10 @@ static CPU_EXECUTE( mb86233 )
 		{
 			case 0x00:	/* dual move */
 			{
-				UINT32		r1 = opcode & 0x1ff;
-				UINT32		r2 = ( opcode >> 9 ) & 0x7f;
-				UINT32		alu = ( opcode >> 21 ) & 0x1f;
-				UINT32		op = ( opcode >> 16 ) & 0x1f;
+				uint32_t		r1 = opcode & 0x1ff;
+				uint32_t		r2 = ( opcode >> 9 ) & 0x7f;
+				uint32_t		alu = ( opcode >> 21 ) & 0x1f;
+				uint32_t		op = ( opcode >> 16 ) & 0x1f;
 
 				ALU( cpustate, alu );
 
@@ -1003,10 +1003,10 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x7:	/* LD/MOV */
 			{
-				UINT32		r1 = opcode & 0x1ff;
-				UINT32		r2 = ( opcode >> 9 ) & 0x7f;
-				UINT32		alu = ( opcode >> 21 ) & 0x1f;
-				UINT32		op = ( opcode >> 16 ) & 0x1f;
+				uint32_t		r1 = opcode & 0x1ff;
+				uint32_t		r2 = ( opcode >> 9 ) & 0x7f;
+				uint32_t		alu = ( opcode >> 21 ) & 0x1f;
+				uint32_t		op = ( opcode >> 16 ) & 0x1f;
 
 				switch( op )
 				{
@@ -1112,7 +1112,7 @@ static CPU_EXECUTE( mb86233 )
 
 					case 0x1e:	/* External->Reg */
 					{
-						UINT32	offset;
+						uint32_t	offset;
 
 						if ( ( r2 >> 6 ) & 1 )
 							offset = INDIRECT(cpustate,r1,1);
@@ -1166,8 +1166,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x0e:	/* LDIMM24 */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				/* sign extend 24->32 */
 				if ( imm & 0x800000 )
@@ -1196,14 +1196,14 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x0f:	/* REP/CLEAR/FLAGS */
 			{
-				UINT32		alu = ( opcode >> 20 ) & 0x1f;
-				UINT32		sub2 = ( opcode >> 16 ) & 0x0f;
+				uint32_t		alu = ( opcode >> 20 ) & 0x1f;
+				uint32_t		sub2 = ( opcode >> 16 ) & 0x0f;
 
 				ALU(cpustate, alu );
 
 				if( sub2 == 0x00 )			/* CLEAR reg */
 				{
-					UINT32	reg = opcode & 0x1f;
+					uint32_t	reg = opcode & 0x1f;
 
 					switch( reg )
 					{
@@ -1222,7 +1222,7 @@ static CPU_EXECUTE( mb86233 )
 				}
 				else if ( sub2 == 0x04 )	/* REP xxx */
 				{
-					UINT32		sub3 = ( opcode >> 12 ) & 0x0f;
+					uint32_t		sub3 = ( opcode >> 12 ) & 0x0f;
 
 					if ( sub3 == 0 )
 					{
@@ -1252,8 +1252,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x10:	/* LDIMM rx */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffff;
 
 				GETGPR(sub) = imm;
 			}
@@ -1261,8 +1261,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x13:	/* LDIMM r1x */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 0 ) /* R12 */
 					GETGPR(12) = imm & 0xff;
@@ -1275,8 +1275,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x14:	/* LDIMM m,e */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 0 ) /* A */
 				{
@@ -1301,8 +1301,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x15:	/* LDIMM m,e */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 0 ) /* B.e again? */
 				{
@@ -1329,8 +1329,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x16:	/* LDIMM m,e */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 1 ) /* clear + D.m */
 				{
@@ -1355,8 +1355,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x17:	/* LDIMM special reg */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 0x03 )
 				{
@@ -1371,8 +1371,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x18:	/* LDIMM external reg */
 			{
-				UINT32	sub = (opcode>>24) & 0x03;
-				UINT32	imm = opcode & 0xffffff;
+				uint32_t	sub = (opcode>>24) & 0x03;
+				uint32_t	imm = opcode & 0xffffff;
 
 				if ( sub == 0x03 )
 				{
@@ -1387,8 +1387,8 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x1d:	//LDIMM to Rep regs
 			{
-				UINT32 sub = (opcode>>24)&0x3;
-				UINT32 imm = opcode&0xffffff;
+				uint32_t sub = (opcode>>24)&0x3;
+				uint32_t imm = opcode&0xffffff;
 				if(sub == 0x00)
 				{
 					GETREPCNT() = imm;
@@ -1402,9 +1402,9 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x2f:	/* Conditional Branches */
 			{
-				UINT32	cond = ( opcode >> 20 ) & 0x1f;
-				UINT32	subtype = ( opcode >> 16 ) & 0x0f;
-				UINT32	data = opcode & 0xffff;
+				uint32_t	cond = ( opcode >> 20 ) & 0x1f;
+				uint32_t	subtype = ( opcode >> 16 ) & 0x0f;
+				uint32_t	data = opcode & 0xffff;
 
 				if( COND(cpustate, cond) )
 				{
@@ -1471,9 +1471,9 @@ static CPU_EXECUTE( mb86233 )
 
 			case 0x3f:	/* Inverse Conditional Branches */
 			{
-				UINT32	cond = ( opcode >> 20 ) & 0x1f;
-				UINT32	subtype = ( opcode >> 16 ) & 0x0f;
-				UINT32	data = opcode & 0xffff;
+				uint32_t	cond = ( opcode >> 20 ) & 0x1f;
+				uint32_t	subtype = ( opcode >> 16 ) & 0x0f;
+				uint32_t	data = opcode & 0xffff;
 
 				if( !COND(cpustate, cond) )
 				{

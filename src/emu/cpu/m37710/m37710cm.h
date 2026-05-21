@@ -122,7 +122,7 @@ struct _m37710i_cpu_struct
 	int  (*execute)(m37710i_cpu_struct *cpustate, int cycles);
 
 	// on-board peripheral stuff
-	UINT8 m37710_regs[128];
+	uint8_t m37710_regs[128];
 	attotime reload[8];
 	emu_timer *timers[8];
 };

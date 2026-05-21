@@ -129,18 +129,18 @@ struct _m4510_Regs {
 	PAIR	zp; 			/* zero page address */
 	/* contains B register zp.b.h */
 	PAIR	ea; 			/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
-	UINT8	z;				/* Z index register */
-	UINT8	p;				/* Processor status */
-	UINT8 interrupt_inhibit;	/* Some instructions, like MAP, inhibit interrupt */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
-	UINT16  low, high;
-	UINT32	mem[8];
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
+	uint8_t	z;				/* Z index register */
+	uint8_t	p;				/* Processor status */
+	uint8_t interrupt_inhibit;	/* Some instructions, like MAP, inhibit interrupt */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
+	uint16_t  low, high;
+	uint32_t	mem[8];
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -150,8 +150,8 @@ struct _m4510_Regs {
 	read8_space_func rdmem_id;					/* readmem callback for indexed instructions */
 	write8_space_func wrmem_id;					/* writemem callback for indexed instructions */
 
-	UINT8    ddr;
-	UINT8    port;
+	uint8_t    ddr;
+	uint8_t    port;
 	m6510_port_read_func port_read;
 	m6510_port_write_func port_write;
 };
@@ -169,25 +169,25 @@ INLINE m4510_Regs *get_safe_token(running_device *device)
 
 INLINE int m4510_cpu_readop(m4510_Regs *cpustate)
 {
-	register UINT16 t=cpustate->pc.w.l++;
+	register uint16_t t=cpustate->pc.w.l++;
 	return memory_decrypted_read_byte(cpustate->space, M4510_MEM(t));
 }
 
 INLINE int m4510_cpu_readop_arg(m4510_Regs *cpustate)
 {
-	register UINT16 t=cpustate->pc.w.l++;
+	register uint16_t t=cpustate->pc.w.l++;
 	return memory_raw_read_byte(cpustate->space, M4510_MEM(t));
 }
 
 #define M4510
 #include "t65ce02.c"
 
-static UINT8 default_rdmem_id(const address_space *space, offs_t address)
+static uint8_t default_rdmem_id(const address_space *space, offs_t address)
 {
 	m4510_Regs *cpustate = get_safe_token(space->cpu);
 	return memory_read_byte_8le(space, M4510_MEM(address));
 }
-static void default_wrmem_id(const address_space *space, offs_t address, UINT8 data)
+static void default_wrmem_id(const address_space *space, offs_t address, uint8_t data)
 {
 	m4510_Regs *cpustate = get_safe_token(space->cpu);
 	memory_write_byte_8le(space, M4510_MEM(address), data);
@@ -283,7 +283,7 @@ static CPU_EXECUTE( m4510 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);
@@ -348,14 +348,14 @@ static void m4510_set_irq_line(m4510_Regs *cpustate, int irqline, int state)
 	}
 }
 
-UINT8 m4510_get_port(legacy_cpu_device *device)
+uint8_t m4510_get_port(legacy_cpu_device *device)
 {
 	m4510_Regs *cpustate = get_safe_token(device);
 	return (cpustate->port & cpustate->ddr) | (cpustate->ddr ^ 0xff);
 }
 static READ8_HANDLER( m4510_read_0000 )
 {
-	UINT8 result = 0x00;
+	uint8_t result = 0x00;
 	m4510_Regs *cpustate = get_safe_token(space->cpu);
 
 	switch(offset)

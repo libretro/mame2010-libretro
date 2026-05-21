@@ -166,31 +166,31 @@ typedef struct _psxcpu_state psxcpu_state;
 struct _psxcpu_state
 {
 	int icount;
-	UINT32 op;
-	UINT32 pc;
-	UINT32 delayv;
-	UINT32 delayr;
-	UINT32 hi;
-	UINT32 lo;
-	UINT32 biu;
-	UINT32 berr;
-	UINT32 r[ 32 ];
-	UINT32 cp0r[ 16 ];
+	uint32_t op;
+	uint32_t pc;
+	uint32_t delayv;
+	uint32_t delayr;
+	uint32_t hi;
+	uint32_t lo;
+	uint32_t biu;
+	uint32_t berr;
+	uint32_t r[ 32 ];
+	uint32_t cp0r[ 16 ];
 	PAIR cp2cr[ 32 ];
 	PAIR cp2dr[ 32 ];
-	UINT32 icacheTag[ ICACHE_ENTRIES / 4 ];
-	UINT32 icache[ ICACHE_ENTRIES ];
-	UINT32 dcache[ DCACHE_ENTRIES ];
+	uint32_t icacheTag[ ICACHE_ENTRIES / 4 ];
+	uint32_t icache[ ICACHE_ENTRIES ];
+	uint32_t dcache[ DCACHE_ENTRIES ];
 	int multiplier_operation;
-	UINT32 multiplier_operand1;
-	UINT32 multiplier_operand2;
+	uint32_t multiplier_operand1;
+	uint32_t multiplier_operand2;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	int bus_attached;
-	UINT32 bad_byte_address_mask;
-	UINT32 bad_half_address_mask;
-	UINT32 bad_word_address_mask;
+	uint32_t bad_byte_address_mask;
+	uint32_t bad_half_address_mask;
+	uint32_t bad_word_address_mask;
 };
 
 INLINE psxcpu_state *get_safe_token(running_device *device)
@@ -201,7 +201,7 @@ INLINE psxcpu_state *get_safe_token(running_device *device)
 	return (psxcpu_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-static const UINT32 mips_mtc0_writemask[]=
+static const uint32_t mips_mtc0_writemask[]=
 {
 	0x00000000, /* !INDEX */
 	0x00000000, /* !RANDOM */
@@ -235,29 +235,29 @@ void ATTR_PRINTF(1,2) GTELOG(const char *a,...)
 INLINE void ATTR_PRINTF(1,2) GTELOG(const char *a, ...) {}
 #endif
 
-static UINT32 getcp1dr( psxcpu_state *psxcpu, int reg );
-static void setcp1dr( psxcpu_state *psxcpu, int reg, UINT32 value );
-static UINT32 getcp1cr( psxcpu_state *psxcpu, int reg );
-static void setcp1cr( psxcpu_state *psxcpu, int reg, UINT32 value );
+static uint32_t getcp1dr( psxcpu_state *psxcpu, int reg );
+static void setcp1dr( psxcpu_state *psxcpu, int reg, uint32_t value );
+static uint32_t getcp1cr( psxcpu_state *psxcpu, int reg );
+static void setcp1cr( psxcpu_state *psxcpu, int reg, uint32_t value );
 //static void docop1( int op );
 
 
-static UINT32 getcp2dr( psxcpu_state *psxcpu, int reg );
-static void setcp2dr( psxcpu_state *psxcpu, int reg, UINT32 value );
-static UINT32 getcp2cr( psxcpu_state *psxcpu, int reg );
-static void setcp2cr( psxcpu_state *psxcpu, int reg, UINT32 value );
+static uint32_t getcp2dr( psxcpu_state *psxcpu, int reg );
+static void setcp2dr( psxcpu_state *psxcpu, int reg, uint32_t value );
+static uint32_t getcp2cr( psxcpu_state *psxcpu, int reg );
+static void setcp2cr( psxcpu_state *psxcpu, int reg, uint32_t value );
 static void docop2( psxcpu_state *psxcpu, int op );
 
 
-static UINT32 getcp3dr( psxcpu_state *psxcpu, int reg );
-static void setcp3dr( psxcpu_state *psxcpu, int reg, UINT32 value );
-static UINT32 getcp3cr( psxcpu_state *psxcpu, int reg );
-static void setcp3cr( psxcpu_state *psxcpu, int reg, UINT32 value );
+static uint32_t getcp3dr( psxcpu_state *psxcpu, int reg );
+static void setcp3dr( psxcpu_state *psxcpu, int reg, uint32_t value );
+static uint32_t getcp3cr( psxcpu_state *psxcpu, int reg );
+static void setcp3cr( psxcpu_state *psxcpu, int reg, uint32_t value );
 //static void docop3( int op );
 
 
 static void mips_exception( psxcpu_state *psxcpu, int exception );
-static void mips_load_bad_address( psxcpu_state *psxcpu, UINT32 address );
+static void mips_load_bad_address( psxcpu_state *psxcpu, uint32_t address );
 
 static void mips_stop( psxcpu_state *psxcpu )
 {
@@ -265,15 +265,15 @@ static void mips_stop( psxcpu_state *psxcpu )
 	debugger_instruction_hook( psxcpu->program->cpu,  psxcpu->pc );
 }
 
-static UINT32 mips_cache_readword( psxcpu_state *psxcpu, UINT32 offset )
+static uint32_t mips_cache_readword( psxcpu_state *psxcpu, uint32_t offset )
 {
-	UINT32 data = 0;
+	uint32_t data = 0;
 
 	if( ( psxcpu->biu & BIU_TAG ) != 0 )
 	{
 		if( ( psxcpu->biu & BIU_IS1 ) != 0 )
 		{
-			UINT32 tag = psxcpu->icacheTag[ ( offset / 16 ) % ( ICACHE_ENTRIES / 4 ) ];
+			uint32_t tag = psxcpu->icacheTag[ ( offset / 16 ) % ( ICACHE_ENTRIES / 4 ) ];
 			data |= tag & TAG_VALID;
 
 			if( ( ( tag ^ offset ) & TAG_MATCH_MASK ) == 0 )
@@ -301,7 +301,7 @@ static UINT32 mips_cache_readword( psxcpu_state *psxcpu, UINT32 offset )
 	return data;
 }
 
-static void mips_cache_writeword( psxcpu_state *psxcpu, UINT32 offset, UINT32 data )
+static void mips_cache_writeword( psxcpu_state *psxcpu, uint32_t offset, uint32_t data )
 {
 	if( ( psxcpu->biu & BIU_TAG ) != 0 )
 	{
@@ -331,7 +331,7 @@ static void mips_cache_writeword( psxcpu_state *psxcpu, UINT32 offset, UINT32 da
 	}
 }
 
-INLINE UINT8 psx_readbyte( psxcpu_state *psxcpu, UINT32 address )
+INLINE uint8_t psx_readbyte( psxcpu_state *psxcpu, uint32_t address )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -343,7 +343,7 @@ INLINE UINT8 psx_readbyte( psxcpu_state *psxcpu, UINT32 address )
 	}
 }
 
-INLINE UINT16 psx_readhalf( psxcpu_state *psxcpu, UINT32 address )
+INLINE uint16_t psx_readhalf( psxcpu_state *psxcpu, uint32_t address )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -355,7 +355,7 @@ INLINE UINT16 psx_readhalf( psxcpu_state *psxcpu, UINT32 address )
 	}
 }
 
-INLINE UINT32 psx_readword( psxcpu_state *psxcpu, UINT32 address )
+INLINE uint32_t psx_readword( psxcpu_state *psxcpu, uint32_t address )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -367,7 +367,7 @@ INLINE UINT32 psx_readword( psxcpu_state *psxcpu, UINT32 address )
 	}
 }
 
-INLINE UINT32 psx_readword_masked( psxcpu_state *psxcpu, UINT32 address, UINT32 mask )
+INLINE uint32_t psx_readword_masked( psxcpu_state *psxcpu, uint32_t address, uint32_t mask )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -379,7 +379,7 @@ INLINE UINT32 psx_readword_masked( psxcpu_state *psxcpu, UINT32 address, UINT32 
 	}
 }
 
-INLINE void psx_writeword( psxcpu_state *psxcpu, UINT32 address, UINT32 data )
+INLINE void psx_writeword( psxcpu_state *psxcpu, uint32_t address, uint32_t data )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -391,7 +391,7 @@ INLINE void psx_writeword( psxcpu_state *psxcpu, UINT32 address, UINT32 data )
 	}
 }
 
-INLINE void psx_writeword_masked( psxcpu_state *psxcpu, UINT32 address, UINT32 data, UINT32 mask )
+INLINE void psx_writeword_masked( psxcpu_state *psxcpu, uint32_t address, uint32_t data, uint32_t mask )
 {
 	if( psxcpu->bus_attached )
 	{
@@ -720,7 +720,7 @@ static const struct
 	{ 0x00, 0x00, NULL }
 };
 
-static UINT32 log_bioscall_parameter( psxcpu_state *psxcpu, int parm )
+static uint32_t log_bioscall_parameter( psxcpu_state *psxcpu, int parm )
 {
 	if( parm < 4 )
 	{
@@ -735,7 +735,7 @@ static UINT32 log_bioscall_parameter( psxcpu_state *psxcpu, int parm )
 static const char *log_bioscall_string( psxcpu_state *psxcpu, int parm )
 {
 	int pos;
-	UINT32 address;
+	uint32_t address;
 	static char string[ 1024 ];
 
 	address = log_bioscall_parameter( psxcpu, parm );
@@ -749,7 +749,7 @@ static const char *log_bioscall_string( psxcpu_state *psxcpu, int parm )
 
 	for( ;; )
 	{
-		UINT8 c = psx_readbyte( psxcpu, address );
+		uint8_t c = psx_readbyte( psxcpu, address );
 		if( c == 0 )
 		{
 			break;
@@ -844,7 +844,7 @@ static void log_bioscall( psxcpu_state *psxcpu )
 			{
 				while( nbytes > 0 )
 				{
-					UINT8 c = psx_readbyte( psxcpu, buf );
+					uint8_t c = psx_readbyte( psxcpu, buf );
 					putchar( c );
 					nbytes--;
 					buf++;
@@ -931,13 +931,13 @@ static void log_bioscall( psxcpu_state *psxcpu )
 					{
 						if( parm > 0 )
 						{
-							UINT32 format = log_bioscall_parameter( psxcpu, parm - 1 );
+							uint32_t format = log_bioscall_parameter( psxcpu, parm - 1 );
 							const char *parmstr = NULL;
 							int percent = 0;
 
 							for( ;; )
 							{
-								UINT8 c = psx_readbyte( psxcpu, format );
+								uint8_t c = psx_readbyte( psxcpu, format );
 								if( c == 0 )
 								{
 									break;
@@ -1144,7 +1144,7 @@ static void multiplier_update( psxcpu_state *psxcpu )
 	{
 	case MULTIPLIER_OPERATION_MULT:
 		{
-			INT64 result = mul_32x32( (INT32)psxcpu->multiplier_operand1, (INT32)psxcpu->multiplier_operand2 );
+			int64_t result = mul_32x32( (int32_t)psxcpu->multiplier_operand1, (int32_t)psxcpu->multiplier_operand2 );
 			psxcpu->lo = EXTRACT_64LO( result );
 			psxcpu->hi = EXTRACT_64HI( result );
 		}
@@ -1152,7 +1152,7 @@ static void multiplier_update( psxcpu_state *psxcpu )
 
 	case MULTIPLIER_OPERATION_MULTU:
 		{
-			UINT64 result = mulu_32x32( psxcpu->multiplier_operand1, psxcpu->multiplier_operand2 );
+			uint64_t result = mulu_32x32( psxcpu->multiplier_operand1, psxcpu->multiplier_operand2 );
 			psxcpu->lo = EXTRACT_64LO( result );
 			psxcpu->hi = EXTRACT_64HI( result );
 		}
@@ -1161,12 +1161,12 @@ static void multiplier_update( psxcpu_state *psxcpu )
 	case MULTIPLIER_OPERATION_DIV:
 		if( psxcpu->multiplier_operand2 != 0 )
 		{
-			psxcpu->lo = (INT32)psxcpu->multiplier_operand1 / (INT32)psxcpu->multiplier_operand2;
-			psxcpu->hi = (INT32)psxcpu->multiplier_operand1 % (INT32)psxcpu->multiplier_operand2;
+			psxcpu->lo = (int32_t)psxcpu->multiplier_operand1 / (int32_t)psxcpu->multiplier_operand2;
+			psxcpu->hi = (int32_t)psxcpu->multiplier_operand1 % (int32_t)psxcpu->multiplier_operand2;
 		}
 		else
 		{
-			if( (INT32)psxcpu->multiplier_operand1 < 0 )
+			if( (int32_t)psxcpu->multiplier_operand1 < 0 )
 			{
 				psxcpu->lo = 1;
 			}
@@ -1196,7 +1196,7 @@ static void multiplier_update( psxcpu_state *psxcpu )
 	psxcpu->multiplier_operation = MULTIPLIER_OPERATION_IDLE;
 }
 
-static UINT32 mips_get_hi( psxcpu_state *psxcpu )
+static uint32_t mips_get_hi( psxcpu_state *psxcpu )
 {
 	if( psxcpu->multiplier_operation != MULTIPLIER_OPERATION_IDLE )
 	{
@@ -1206,7 +1206,7 @@ static UINT32 mips_get_hi( psxcpu_state *psxcpu )
 	return psxcpu->hi;
 }
 
-static UINT32 mips_get_lo( psxcpu_state *psxcpu )
+static uint32_t mips_get_lo( psxcpu_state *psxcpu )
 {
 	if( psxcpu->multiplier_operation != MULTIPLIER_OPERATION_IDLE )
 	{
@@ -1319,9 +1319,9 @@ static void mips_update_scratchpad( const address_space *space )
 	}
 }
 
-INLINE void mips_set_cp0r( psxcpu_state *psxcpu, int reg, UINT32 value )
+INLINE void mips_set_cp0r( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
-	UINT32 old = psxcpu->cp0r[ reg ];
+	uint32_t old = psxcpu->cp0r[ reg ];
 
 	psxcpu->cp0r[ reg ] = value;
 
@@ -1373,7 +1373,7 @@ static void mips_fetch_next_op( psxcpu_state *psxcpu )
 {
 	if( psxcpu->delayr == PSXCPU_DELAYR_PC )
 	{
-		UINT32 safepc = psxcpu->delayv & ~psxcpu->bad_word_address_mask;
+		uint32_t safepc = psxcpu->delayv & ~psxcpu->bad_word_address_mask;
 
 		psxcpu->op = memory_decrypted_read_dword( psxcpu->program, safepc );
 	}
@@ -1412,7 +1412,7 @@ INLINE int mips_advance_pc( psxcpu_state *psxcpu )
 	return 1;
 }
 
-INLINE void mips_load( psxcpu_state *psxcpu, UINT32 reg, UINT32 value )
+INLINE void mips_load( psxcpu_state *psxcpu, uint32_t reg, uint32_t value )
 {
 	mips_advance_pc( psxcpu );
 
@@ -1422,7 +1422,7 @@ INLINE void mips_load( psxcpu_state *psxcpu, UINT32 reg, UINT32 value )
 	}
 }
 
-INLINE void mips_delayed_load( psxcpu_state *psxcpu, UINT32 reg, UINT32 value )
+INLINE void mips_delayed_load( psxcpu_state *psxcpu, uint32_t reg, uint32_t value )
 {
 	mips_advance_pc( psxcpu );
 
@@ -1430,7 +1430,7 @@ INLINE void mips_delayed_load( psxcpu_state *psxcpu, UINT32 reg, UINT32 value )
 	psxcpu->delayv = value;
 }
 
-INLINE void mips_branch( psxcpu_state *psxcpu, UINT32 address )
+INLINE void mips_branch( psxcpu_state *psxcpu, uint32_t address )
 {
 	mips_advance_pc( psxcpu );
 
@@ -1462,7 +1462,7 @@ INLINE void mips_unconditional_branch( psxcpu_state *psxcpu )
 	psxcpu->delayv = ( psxcpu->pc & 0xf0000000 ) + ( INS_TARGET( psxcpu->op ) << 2 );
 }
 
-static void mips_common_exception( psxcpu_state *psxcpu, int exception, UINT32 romOffset, UINT32 ramOffset )
+static void mips_common_exception( psxcpu_state *psxcpu, int exception, uint32_t romOffset, uint32_t ramOffset )
 {
 	int cause = ( exception << 2 ) | ( ( ( psxcpu->op >> 26 ) & 3 ) << 28 );
 
@@ -1549,19 +1549,19 @@ static void mips_store_bus_error_exception( psxcpu_state *psxcpu )
 	mips_common_exception( psxcpu, EXC_DBE, 0xbfc00180, 0x80000080 );
 }
 
-static void mips_load_bad_address( psxcpu_state *psxcpu, UINT32 address )
+static void mips_load_bad_address( psxcpu_state *psxcpu, uint32_t address )
 {
 	mips_set_cp0r( psxcpu, CP0_BADA, address );
 	mips_exception( psxcpu, EXC_ADEL );
 }
 
-static void mips_store_bad_address( psxcpu_state *psxcpu, UINT32 address )
+static void mips_store_bad_address( psxcpu_state *psxcpu, uint32_t address )
 {
 	mips_set_cp0r( psxcpu, CP0_BADA, address );
 	mips_exception( psxcpu, EXC_ADES );
 }
 
-INLINE int mips_data_address_breakpoint( psxcpu_state *psxcpu, int dcic_rw, int dcic_status, UINT32 address )
+INLINE int mips_data_address_breakpoint( psxcpu_state *psxcpu, int dcic_rw, int dcic_status, uint32_t address )
 {
 	if( address < 0x1f000000 || address > 0x1fffffff )
 	{
@@ -1585,12 +1585,12 @@ INLINE int mips_data_address_breakpoint( psxcpu_state *psxcpu, int dcic_rw, int 
 	return 0;
 }
 
-INLINE int mips_load_data_address_breakpoint( psxcpu_state *psxcpu, UINT32 address )
+INLINE int mips_load_data_address_breakpoint( psxcpu_state *psxcpu, uint32_t address )
 {
 	return mips_data_address_breakpoint( psxcpu, DCIC_DR | DCIC_DAE, DCIC_DB | DCIC_DA | DCIC_R, address );
 }
 
-INLINE int mips_store_data_address_breakpoint( psxcpu_state *psxcpu, UINT32 address )
+INLINE int mips_store_data_address_breakpoint( psxcpu_state *psxcpu, uint32_t address )
 {
 	return mips_data_address_breakpoint( psxcpu, DCIC_DW | DCIC_DAE, DCIC_DB | DCIC_DA | DCIC_W, address );
 }
@@ -1666,11 +1666,11 @@ static CPU_EXIT( psxcpu )
 {
 }
 
-static UINT32 mips_get_register_from_pipeline( psxcpu_state *psxcpu, int reg )
+static uint32_t mips_get_register_from_pipeline( psxcpu_state *psxcpu, int reg )
 {
 	if( psxcpu->delayr == reg )
 	{
-		UINT32 data = psxcpu->delayv;
+		uint32_t data = psxcpu->delayv;
 
 		psxcpu->delayr = 0;
 		psxcpu->delayv = 0;
@@ -1695,7 +1695,7 @@ static int mips_cop0_usable( psxcpu_state *psxcpu )
 
 static void mips_lwc( psxcpu_state *psxcpu, int cop, int sr_cu )
 {
-	UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+	uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 	int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 	if( ( psxcpu->cp0r[ CP0_SR ] & sr_cu ) == 0 )
@@ -1712,7 +1712,7 @@ static void mips_lwc( psxcpu_state *psxcpu, int cop, int sr_cu )
 	}
 	else
 	{
-		UINT32 data = psx_readword( psxcpu, address );
+		uint32_t data = psx_readword( psxcpu, address );
 
 		if( psxcpu->berr )
 		{
@@ -1748,7 +1748,7 @@ static void mips_lwc( psxcpu_state *psxcpu, int cop, int sr_cu )
 
 static void mips_swc( psxcpu_state *psxcpu, int cop, int sr_cu )
 {
-	UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+	uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 	int breakpoint = mips_store_data_address_breakpoint( psxcpu, address );
 
 	if( ( psxcpu->cp0r[ CP0_SR ] & sr_cu ) == 0 )
@@ -1761,7 +1761,7 @@ static void mips_swc( psxcpu_state *psxcpu, int cop, int sr_cu )
 	}
 	else
 	{
-		UINT32 data = 0;
+		uint32_t data = 0;
 
 		switch( cop )
 		{
@@ -1867,7 +1867,7 @@ static CPU_EXECUTE( psxcpu )
 				break;
 
 			case FUNCT_SRA:
-				mips_load( psxcpu, INS_RD( psxcpu->op ), (INT32)psxcpu->r[ INS_RT( psxcpu->op ) ] >> INS_SHAMT( psxcpu->op ) );
+				mips_load( psxcpu, INS_RD( psxcpu->op ), (int32_t)psxcpu->r[ INS_RT( psxcpu->op ) ] >> INS_SHAMT( psxcpu->op ) );
 				break;
 
 			case FUNCT_SLLV:
@@ -1879,7 +1879,7 @@ static CPU_EXECUTE( psxcpu )
 				break;
 
 			case FUNCT_SRAV:
-				mips_load( psxcpu, INS_RD( psxcpu->op ), (INT32)psxcpu->r[ INS_RT( psxcpu->op ) ] >> ( psxcpu->r[ INS_RS( psxcpu->op ) ] & 31 ) );
+				mips_load( psxcpu, INS_RD( psxcpu->op ), (int32_t)psxcpu->r[ INS_RT( psxcpu->op ) ] >> ( psxcpu->r[ INS_RS( psxcpu->op ) ] & 31 ) );
 				break;
 
 			case FUNCT_JR:
@@ -1943,8 +1943,8 @@ static CPU_EXECUTE( psxcpu )
 
 			case FUNCT_ADD:
 				{
-					UINT32 result = psxcpu->r[ INS_RS( psxcpu->op ) ] + psxcpu->r[ INS_RT( psxcpu->op ) ];
-					if( (INT32)( ~( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ psxcpu->r[ INS_RT( psxcpu->op ) ] ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
+					uint32_t result = psxcpu->r[ INS_RS( psxcpu->op ) ] + psxcpu->r[ INS_RT( psxcpu->op ) ];
+					if( (int32_t)( ~( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ psxcpu->r[ INS_RT( psxcpu->op ) ] ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
 					{
 						mips_exception( psxcpu, EXC_OVF );
 					}
@@ -1961,8 +1961,8 @@ static CPU_EXECUTE( psxcpu )
 
 			case FUNCT_SUB:
 				{
-					UINT32 result = psxcpu->r[ INS_RS( psxcpu->op ) ] - psxcpu->r[ INS_RT( psxcpu->op ) ];
-					if( (INT32)( ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ psxcpu->r[ INS_RT( psxcpu->op ) ] ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
+					uint32_t result = psxcpu->r[ INS_RS( psxcpu->op ) ] - psxcpu->r[ INS_RT( psxcpu->op ) ];
+					if( (int32_t)( ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ psxcpu->r[ INS_RT( psxcpu->op ) ] ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
 					{
 						mips_exception( psxcpu, EXC_OVF );
 					}
@@ -1994,7 +1994,7 @@ static CPU_EXECUTE( psxcpu )
 				break;
 
 			case FUNCT_SLT:
-				mips_load( psxcpu, INS_RD( psxcpu->op ), (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] < (INT32)psxcpu->r[ INS_RT( psxcpu->op ) ] );
+				mips_load( psxcpu, INS_RD( psxcpu->op ), (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] < (int32_t)psxcpu->r[ INS_RT( psxcpu->op ) ] );
 				break;
 
 			case FUNCT_SLTU:
@@ -2011,7 +2011,7 @@ static CPU_EXECUTE( psxcpu )
 			switch( INS_RT_REGIMM( psxcpu->op ) )
 			{
 			case RT_BLTZ:
-				mips_conditional_branch( psxcpu, (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] < 0 );
+				mips_conditional_branch( psxcpu, (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] < 0 );
 
 				if( INS_RT( psxcpu->op ) == RT_BLTZAL )
 				{
@@ -2020,7 +2020,7 @@ static CPU_EXECUTE( psxcpu )
 				break;
 
 			case RT_BGEZ:
-				mips_conditional_branch( psxcpu, (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] >= 0 );
+				mips_conditional_branch( psxcpu, (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] >= 0 );
 
 				if( INS_RT( psxcpu->op ) == RT_BGEZAL )
 				{
@@ -2048,18 +2048,18 @@ static CPU_EXECUTE( psxcpu )
 			break;
 
 		case OP_BLEZ:
-			mips_conditional_branch( psxcpu, (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] < 0 || psxcpu->r[ INS_RS( psxcpu->op ) ] == psxcpu->r[ INS_RT( psxcpu->op ) ] );
+			mips_conditional_branch( psxcpu, (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] < 0 || psxcpu->r[ INS_RS( psxcpu->op ) ] == psxcpu->r[ INS_RT( psxcpu->op ) ] );
 			break;
 
 		case OP_BGTZ:
-			mips_conditional_branch( psxcpu, (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] >= 0 && psxcpu->r[ INS_RS( psxcpu->op ) ] != psxcpu->r[ INS_RT( psxcpu->op ) ] );
+			mips_conditional_branch( psxcpu, (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] >= 0 && psxcpu->r[ INS_RS( psxcpu->op ) ] != psxcpu->r[ INS_RT( psxcpu->op ) ] );
 			break;
 
 		case OP_ADDI:
 			{
-				UINT32 immediate = PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
-				UINT32 result = psxcpu->r[ INS_RS( psxcpu->op ) ] + immediate;
-				if( (INT32)( ~( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ immediate ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
+				uint32_t immediate = PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t result = psxcpu->r[ INS_RS( psxcpu->op ) ] + immediate;
+				if( (int32_t)( ~( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ immediate ) & ( psxcpu->r[ INS_RS( psxcpu->op ) ] ^ result ) ) < 0 )
 				{
 					mips_exception( psxcpu, EXC_OVF );
 				}
@@ -2075,11 +2075,11 @@ static CPU_EXECUTE( psxcpu )
 			break;
 
 		case OP_SLTI:
-			mips_load( psxcpu, INS_RT( psxcpu->op ), (INT32)psxcpu->r[ INS_RS( psxcpu->op ) ] < PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) ) );
+			mips_load( psxcpu, INS_RT( psxcpu->op ), (int32_t)psxcpu->r[ INS_RS( psxcpu->op ) ] < PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) ) );
 			break;
 
 		case OP_SLTIU:
-			mips_load( psxcpu, INS_RT( psxcpu->op ), psxcpu->r[ INS_RS( psxcpu->op ) ] < (UINT32)PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) ) );
+			mips_load( psxcpu, INS_RT( psxcpu->op ), psxcpu->r[ INS_RS( psxcpu->op ) ] < (uint32_t)PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) ) );
 			break;
 
 		case OP_ANDI:
@@ -2147,7 +2147,7 @@ static CPU_EXECUTE( psxcpu )
 					{
 						if( mips_cop0_usable( psxcpu ) )
 						{
-							UINT32 data = ( psxcpu->cp0r[ reg ] & ~mips_mtc0_writemask[ reg ] ) |
+							uint32_t data = ( psxcpu->cp0r[ reg ] & ~mips_mtc0_writemask[ reg ] ) |
 								( psxcpu->r[ INS_RT( psxcpu->op ) ] & mips_mtc0_writemask[ reg ] );
 							mips_advance_pc( psxcpu );
 
@@ -2370,7 +2370,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LB:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_byte_address_mask ) != 0 )
@@ -2383,7 +2383,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = PSXCPU_BYTE_EXTEND( psx_readbyte( psxcpu, address ) );
+					uint32_t data = PSXCPU_BYTE_EXTEND( psx_readbyte( psxcpu, address ) );
 
 					if( psxcpu->berr )
 					{
@@ -2399,7 +2399,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LH:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_half_address_mask ) != 0 )
@@ -2412,7 +2412,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = PSXCPU_WORD_EXTEND( psx_readhalf( psxcpu, address ) );
+					uint32_t data = PSXCPU_WORD_EXTEND( psx_readhalf( psxcpu, address ) );
 
 					if( psxcpu->berr )
 					{
@@ -2428,7 +2428,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LWL:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int load_type = address & 3;
 				int breakpoint;
 
@@ -2445,7 +2445,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = mips_get_register_from_pipeline( psxcpu, INS_RT( psxcpu->op ) );
+					uint32_t data = mips_get_register_from_pipeline( psxcpu, INS_RT( psxcpu->op ) );
 
 					switch( load_type )
 					{
@@ -2480,7 +2480,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LW:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_word_address_mask ) != 0 )
@@ -2493,7 +2493,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = psx_readword( psxcpu, address );
+					uint32_t data = psx_readword( psxcpu, address );
 
 					if( psxcpu->berr )
 					{
@@ -2509,7 +2509,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LBU:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_byte_address_mask ) != 0 )
@@ -2522,7 +2522,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = psx_readbyte( psxcpu, address );
+					uint32_t data = psx_readbyte( psxcpu, address );
 
 					if( psxcpu->berr )
 					{
@@ -2538,7 +2538,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LHU:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_half_address_mask ) != 0 )
@@ -2551,7 +2551,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = psx_readhalf( psxcpu, address );
+					uint32_t data = psx_readhalf( psxcpu, address );
 
 					if( psxcpu->berr )
 					{
@@ -2567,7 +2567,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_LWR:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_load_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_byte_address_mask ) != 0 )
@@ -2580,7 +2580,7 @@ static CPU_EXECUTE( psxcpu )
 				}
 				else
 				{
-					UINT32 data = mips_get_register_from_pipeline( psxcpu, INS_RT( psxcpu->op ) );
+					uint32_t data = mips_get_register_from_pipeline( psxcpu, INS_RT( psxcpu->op ) );
 
 					switch( address & 3 )
 					{
@@ -2615,7 +2615,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_SB:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_store_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_byte_address_mask ) != 0 )
@@ -2645,7 +2645,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_SH:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_store_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_half_address_mask ) != 0 )
@@ -2675,7 +2675,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_SWL:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int save_type = address & 3;
 				int breakpoint;
 
@@ -2725,7 +2725,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_SW:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_store_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_word_address_mask ) != 0 )
@@ -2754,7 +2754,7 @@ static CPU_EXECUTE( psxcpu )
 
 		case OP_SWR:
 			{
-				UINT32 address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
+				uint32_t address = psxcpu->r[ INS_RS( psxcpu->op ) ] + PSXCPU_WORD_EXTEND( INS_IMMEDIATE( psxcpu->op ) );
 				int breakpoint = mips_store_data_address_breakpoint( psxcpu, address );
 
 				if( ( address & psxcpu->bad_byte_address_mask ) != 0 )
@@ -2842,7 +2842,7 @@ static CPU_EXECUTE( psxcpu )
 
 static void set_irq_line( psxcpu_state *psxcpu, int irqline, int state )
 {
-	UINT32 ip;
+	uint32_t ip;
 
 	switch( irqline )
 	{
@@ -2907,7 +2907,7 @@ static READ32_HANDLER( psx_biu_r )
 static WRITE32_HANDLER( psx_biu_w )
 {
 	psxcpu_state *psxcpu = get_safe_token(space->cpu);
-	UINT32 old = psxcpu->biu;
+	uint32_t old = psxcpu->biu;
 
 	COMBINE_DATA( &psxcpu->biu );
 
@@ -2955,30 +2955,30 @@ static CPU_DISASSEMBLE( psxcpu )
 }
 
 
-static UINT32 getcp1dr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp1dr( psxcpu_state *psxcpu, int reg )
 {
 	/* if a mtc/ctc precedes then this will get the value moved (which cop1 register is irrelevant). */
 	/* if a mfc/cfc follows then it will get the same value as this one. */
 	return memory_read_dword_32le( psxcpu->program, psxcpu->pc + 4 );
 }
 
-static void setcp1dr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp1dr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 }
 
-static UINT32 getcp1cr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp1cr( psxcpu_state *psxcpu, int reg )
 {
 	/* if a mtc/ctc precedes then this will get the value moved (which cop1 register is irrelevant). */
 	/* if a mfc/cfc follows then it will get the same value as this one. */
 	return memory_read_dword_32le( psxcpu->program, psxcpu->pc + 4 );
 }
 
-static void setcp1cr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp1cr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 }
 
 
-static UINT32 getcp3dr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp3dr( psxcpu_state *psxcpu, int reg )
 {
 	/* if you have mtc/ctc with an mfc/cfc directly afterwards then you get the value that was moved. */
 	/* if you have an lwc with an mfc/cfc somewhere after it then you get the value that is loaded */
@@ -2986,11 +2986,11 @@ static UINT32 getcp3dr( psxcpu_state *psxcpu, int reg )
 	return memory_read_dword_32le( psxcpu->program, psxcpu->pc + 4 );
 }
 
-static void setcp3dr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp3dr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 }
 
-static UINT32 getcp3cr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp3cr( psxcpu_state *psxcpu, int reg )
 {
 	/* if you have mtc/ctc with an mfc/cfc directly afterwards then you get the value that was moved. */
 	/* if you have an lwc with an mfc/cfc somewhere after it then you get the value that is loaded */
@@ -2998,7 +2998,7 @@ static UINT32 getcp3cr( psxcpu_state *psxcpu, int reg )
 	return memory_read_dword_32le( psxcpu->program, psxcpu->pc + 4 );
 }
 
-static void setcp3cr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp3cr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 }
 
@@ -3129,7 +3129,7 @@ static void setcp3cr( psxcpu_state *psxcpu, int reg, UINT32 value )
 #define ZSF4 ( psxcpu->cp2cr[ 30 ].sw.l )
 #define FLAG ( psxcpu->cp2cr[ 31 ].d )
 
-INLINE INT32 LIM( psxcpu_state *psxcpu, INT32 value, INT32 max, INT32 min, UINT32 flag )
+INLINE int32_t LIM( psxcpu_state *psxcpu, int32_t value, int32_t max, int32_t min, uint32_t flag )
 {
 	if( value > max )
 	{
@@ -3144,7 +3144,7 @@ INLINE INT32 LIM( psxcpu_state *psxcpu, INT32 value, INT32 max, INT32 min, UINT3
 	return value;
 }
 
-static UINT32 getcp2dr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp2dr( psxcpu_state *psxcpu, int reg )
 {
 	switch( reg )
 	{
@@ -3155,7 +3155,7 @@ static UINT32 getcp2dr( psxcpu_state *psxcpu, int reg )
 	case 9:
 	case 10:
 	case 11:
-		psxcpu->cp2dr[ reg ].d = (INT32)psxcpu->cp2dr[ reg ].sw.l;
+		psxcpu->cp2dr[ reg ].d = (int32_t)psxcpu->cp2dr[ reg ].sw.l;
 		break;
 
 	case 7:
@@ -3163,7 +3163,7 @@ static UINT32 getcp2dr( psxcpu_state *psxcpu, int reg )
 	case 17:
 	case 18:
 	case 19:
-		psxcpu->cp2dr[ reg ].d = (UINT32)psxcpu->cp2dr[ reg ].w.l;
+		psxcpu->cp2dr[ reg ].d = (uint32_t)psxcpu->cp2dr[ reg ].w.l;
 		break;
 
 	case 15:
@@ -3180,7 +3180,7 @@ static UINT32 getcp2dr( psxcpu_state *psxcpu, int reg )
 	return psxcpu->cp2dr[ reg ].d;
 }
 
-static void setcp2dr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp2dr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 	GTELOG( "set CP2DR%u=%08x", reg, value );
 
@@ -3200,8 +3200,8 @@ static void setcp2dr( psxcpu_state *psxcpu, int reg, UINT32 value )
 
 	case 30:
 	{
-		UINT32 lzcs = value;
-		UINT32 lzcr = 0;
+		uint32_t lzcs = value;
+		uint32_t lzcr = 0;
 
 		if( ( lzcs & 0x80000000 ) == 0 )
 		{
@@ -3224,14 +3224,14 @@ static void setcp2dr( psxcpu_state *psxcpu, int reg, UINT32 value )
 	psxcpu->cp2dr[ reg ].d = value;
 }
 
-static UINT32 getcp2cr( psxcpu_state *psxcpu, int reg )
+static uint32_t getcp2cr( psxcpu_state *psxcpu, int reg )
 {
 	GTELOG( "get CP2CR%u=%08x", reg, psxcpu->cp2cr[ reg ].d );
 
 	return psxcpu->cp2cr[ reg ].d;
 }
 
-static void setcp2cr( psxcpu_state *psxcpu, int reg, UINT32 value )
+static void setcp2cr( psxcpu_state *psxcpu, int reg, uint32_t value )
 {
 	GTELOG( "set CP2CR%u=%08x", reg, value );
 
@@ -3244,7 +3244,7 @@ static void setcp2cr( psxcpu_state *psxcpu, int reg, UINT32 value )
 	case 27:
 	case 29:
 	case 30:
-		value = (INT32)(INT16) value;
+		value = (int32_t)(int16_t) value;
 		break;
 
 	case 31:
@@ -3259,7 +3259,7 @@ static void setcp2cr( psxcpu_state *psxcpu, int reg, UINT32 value )
 	psxcpu->cp2cr[ reg ].d = value;
 }
 
-INLINE INT64 BOUNDS( psxcpu_state *psxcpu, INT64 n_value, INT64 n_max, int n_maxflag, INT64 n_min, int n_minflag )
+INLINE int64_t BOUNDS( psxcpu_state *psxcpu, int64_t n_value, int64_t n_max, int n_maxflag, int64_t n_min, int n_minflag )
 {
 	if( n_value > n_max )
 	{
@@ -3272,7 +3272,7 @@ INLINE INT64 BOUNDS( psxcpu_state *psxcpu, INT64 n_value, INT64 n_max, int n_max
 	return n_value;
 }
 
-static const UINT16 reciprocals[ 32768 ]=
+static const uint16_t reciprocals[ 32768 ]=
 {
 	0x0,0xfffc,0xfff8,0xfff4,0xfff0,0xffec,0xffe8,0xffe4,0xffe0,0xffdc,0xffd8,0xffd4,0xffd0,0xffcc,0xffc8,0xffc4,
 	0xffc0,0xffbc,0xffb8,0xffb4,0xffb0,0xffac,0xffa8,0xffa4,0xffa0,0xff9c,0xff98,0xff94,0xff90,0xff8c,0xff88,0xff84,
@@ -5324,22 +5324,22 @@ static const UINT16 reciprocals[ 32768 ]=
 	0xf,0xe,0xd,0xc,0xb,0xa,0x9,0x8,0x7,0x6,0x5,0x4,0x3,0x2,0x1,0x0,
 };
 
-INLINE UINT32 gte_divide( INT16 numerator, UINT16 denominator )
+INLINE uint32_t gte_divide( int16_t numerator, uint16_t denominator )
 {
 	if( numerator >= 0 && numerator < ( denominator * 2 ) )
 	{
-		UINT32 offset = denominator;
+		uint32_t offset = denominator;
 		int shift = 0;
-		UINT64 reciprocal;
+		uint64_t reciprocal;
 		while( offset <= 0x8000 )
 		{
 			offset <<= 1;
 			shift++;
 		}
 
-		reciprocal = (UINT64)( 0x10000 | reciprocals[ offset & 0x7fff ] ) << shift;
+		reciprocal = (uint64_t)( 0x10000 | reciprocals[ offset & 0x7fff ] ) << shift;
 
-		return (UINT32)( ( ( reciprocal * numerator ) + 0x8000 ) >> 16 );
+		return (uint32_t)( ( ( reciprocal * numerator ) + 0x8000 ) >> 16 );
 	}
 
 	return 0xffffffff;
@@ -5347,9 +5347,9 @@ INLINE UINT32 gte_divide( INT16 numerator, UINT16 denominator )
 
 /* Setting bits 12 & 19-22 in FLAG does not set bit 31 */
 
-#define A1( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 30 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 27 ) )
-#define A2( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 29 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 26 ) )
-#define A3( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 28 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 25 ) )
+#define A1( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 30 ), -(int64_t)0x80000000, ( 1 << 31 ) | ( 1 << 27 ) )
+#define A2( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 29 ), -(int64_t)0x80000000, ( 1 << 31 ) | ( 1 << 26 ) )
+#define A3( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 28 ), -(int64_t)0x80000000, ( 1 << 31 ) | ( 1 << 25 ) )
 #define Lm_B1( a, l ) LIM( psxcpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 24 ) )
 #define Lm_B2( a, l ) LIM( psxcpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 31 ) | ( 1 << 23 ) )
 #define Lm_B3( a, l ) LIM( psxcpu, ( a ), 0x7fff, -0x8000 * !l, ( 1 << 22 ) )
@@ -5358,7 +5358,7 @@ INLINE UINT32 gte_divide( INT16 numerator, UINT16 denominator )
 #define Lm_C3( a ) LIM( psxcpu, ( a ), 0x00ff, 0x0000, ( 1 << 19 ) )
 #define Lm_D( a ) LIM( psxcpu, ( a ), 0xffff, 0x0000, ( 1 << 31 ) | ( 1 << 18 ) )
 
-INLINE UINT32 Lm_E( psxcpu_state *psxcpu, UINT32 result )
+INLINE uint32_t Lm_E( psxcpu_state *psxcpu, uint32_t result )
 {
 	if( result > 0x1ffff )
 	{
@@ -5369,7 +5369,7 @@ INLINE UINT32 Lm_E( psxcpu_state *psxcpu, UINT32 result )
 	return result;
 }
 
-#define F( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(INT64)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
+#define F( a ) BOUNDS( psxcpu, ( a ), 0x7fffffff, ( 1 << 31 ) | ( 1 << 16 ), -(int64_t)0x80000000, ( 1 << 31 ) | ( 1 << 15 ) )
 #define Lm_G1( a ) LIM( psxcpu, ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 14 ) )
 #define Lm_G2( a ) LIM( psxcpu, ( a ), 0x3ff, -0x400, ( 1 << 31 ) | ( 1 << 13 ) )
 #define Lm_H( a ) LIM( psxcpu, ( a ), 0xfff, 0x000, ( 1 << 12 ) )
@@ -5381,8 +5381,8 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 	int lm;
 	int cv;
 	int mx;
-	INT32 h_over_sz3;
-	INT64 mac0;
+	int32_t h_over_sz3;
+	int64_t mac0;
 
 	switch( GTE_FUNCT( gteop ) )
 	{
@@ -5392,9 +5392,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "RTPS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) TRX << 12 ) + ( R11 * VX0 ) + ( R12 * VY0 ) + ( R13 * VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) TRY << 12 ) + ( R21 * VX0 ) + ( R22 * VY0 ) + ( R23 * VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) TRZ << 12 ) + ( R31 * VX0 ) + ( R32 * VY0 ) + ( R33 * VZ0 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) TRX << 12 ) + ( R11 * VX0 ) + ( R12 * VY0 ) + ( R13 * VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) TRY << 12 ) + ( R21 * VX0 ) + ( R22 * VY0 ) + ( R23 * VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) TRZ << 12 ) + ( R31 * VX0 ) + ( R32 * VY0 ) + ( R33 * VZ0 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 0 );
 			IR2 = Lm_B2( MAC2, 0 );
 			IR3 = Lm_B3( MAC3, 0 );
@@ -5405,9 +5405,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			h_over_sz3 = Lm_E( psxcpu, gte_divide( H, SZ3 ) );
 			SXY0 = SXY1;
 			SXY1 = SXY2;
-			SX2 = Lm_G1( F( (INT64) OFX + ( (INT64) IR1 * h_over_sz3 ) ) >> 16 );
-			SY2 = Lm_G2( F( (INT64) OFY + ( (INT64) IR2 * h_over_sz3 ) ) >> 16 );
-			MAC0 = F( (INT64) DQB + ( (INT64) DQA * h_over_sz3 ) );
+			SX2 = Lm_G1( F( (int64_t) OFX + ( (int64_t) IR1 * h_over_sz3 ) ) >> 16 );
+			SY2 = Lm_G2( F( (int64_t) OFY + ( (int64_t) IR2 * h_over_sz3 ) ) >> 16 );
+			MAC0 = F( (int64_t) DQB + ( (int64_t) DQA * h_over_sz3 ) );
 			IR0 = Lm_H( MAC0 >> 12 );
 			return;
 		}
@@ -5417,7 +5417,7 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		GTELOG( "NCLIP" );
 		FLAG = 0;
 
-		MAC0 = F( (INT64)( SX0 * SY1 ) + ( SX1 * SY2 ) + ( SX2 * SY0 ) - ( SX0 * SY2 ) - ( SX1 * SY0 ) - ( SX2 * SY1 ) );
+		MAC0 = F( (int64_t)( SX0 * SY1 ) + ( SX1 * SY2 ) + ( SX2 * SY0 ) - ( SX0 * SY2 ) - ( SX1 * SY0 ) - ( SX2 * SY1 ) );
 		return;
 
 	case 0x0c:
@@ -5427,9 +5427,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		shift = 12 * GTE_SF( gteop );
 		lm = GTE_LM( gteop );
 
-		MAC1 = A1( ( (INT64) ( R22 * IR3 ) - ( R33 * IR2 ) ) >> shift );
-		MAC2 = A2( ( (INT64) ( R33 * IR1 ) - ( R11 * IR3 ) ) >> shift );
-		MAC3 = A3( ( (INT64) ( R11 * IR2 ) - ( R22 * IR1 ) ) >> shift );
+		MAC1 = A1( ( (int64_t) ( R22 * IR3 ) - ( R33 * IR2 ) ) >> shift );
+		MAC2 = A2( ( (int64_t) ( R33 * IR1 ) - ( R11 * IR3 ) ) >> shift );
+		MAC3 = A3( ( (int64_t) ( R11 * IR2 ) - ( R22 * IR1 ) ) >> shift );
 		IR1 = Lm_B1( MAC1, lm );
 		IR2 = Lm_B2( MAC2, lm );
 		IR3 = Lm_B3( MAC3, lm );
@@ -5442,9 +5442,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		shift = 12 * GTE_SF( gteop );
 		lm = GTE_LM( gteop );
 
-		MAC1 = ( ( R << 16 ) + ( IR0 * Lm_B1( A1( (INT64) RFC - ( R << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
-		MAC2 = ( ( G << 16 ) + ( IR0 * Lm_B2( A2( (INT64) GFC - ( G << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
-		MAC3 = ( ( B << 16 ) + ( IR0 * Lm_B3( A3( (INT64) BFC - ( B << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC1 = ( ( R << 16 ) + ( IR0 * Lm_B1( A1( (int64_t) RFC - ( R << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC2 = ( ( G << 16 ) + ( IR0 * Lm_B2( A2( (int64_t) GFC - ( G << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC3 = ( ( B << 16 ) + ( IR0 * Lm_B3( A3( (int64_t) BFC - ( B << 4 ) ) << ( 12 - shift ), 0 ) ) ) >> shift;
 		IR1 = Lm_B1( MAC1, lm );
 		IR2 = Lm_B2( MAC2, lm );
 		IR3 = Lm_B3( MAC3, lm );
@@ -5463,9 +5463,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		shift = 12 * GTE_SF( gteop );
 		lm = GTE_LM( gteop );
 
-		MAC1 = ( ( IR1 << 12 ) + ( IR0 * Lm_B1( A1( (INT64) RFC - IR1 ) << ( 12 - shift ), 0 ) ) ) >> shift;
-		MAC2 = ( ( IR2 << 12 ) + ( IR0 * Lm_B2( A2( (INT64) GFC - IR2 ) << ( 12 - shift ), 0 ) ) ) >> shift;
-		MAC3 = ( ( IR3 << 12 ) + ( IR0 * Lm_B3( A3( (INT64) BFC - IR3 ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC1 = ( ( IR1 << 12 ) + ( IR0 * Lm_B1( A1( (int64_t) RFC - IR1 ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC2 = ( ( IR2 << 12 ) + ( IR0 * Lm_B2( A2( (int64_t) GFC - IR2 ) << ( 12 - shift ), 0 ) ) ) >> shift;
+		MAC3 = ( ( IR3 << 12 ) + ( IR0 * Lm_B3( A3( (int64_t) BFC - IR3 ) << ( 12 - shift ), 0 ) ) ) >> shift;
 		IR1 = Lm_B1( MAC1, lm );
 		IR2 = Lm_B2( MAC2, lm );
 		IR3 = Lm_B3( MAC3, lm );
@@ -5489,9 +5489,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) CV1( cv ) << 12 ) + ( MX11( mx ) * VX( v ) ) + ( MX12( mx ) * VY( v ) ) + ( MX13( mx ) * VZ( v ) ) ) >> shift );
-			MAC2 = A2( ( ( (INT64) CV2( cv ) << 12 ) + ( MX21( mx ) * VX( v ) ) + ( MX22( mx ) * VY( v ) ) + ( MX23( mx ) * VZ( v ) ) ) >> shift );
-			MAC3 = A3( ( ( (INT64) CV3( cv ) << 12 ) + ( MX31( mx ) * VX( v ) ) + ( MX32( mx ) * VY( v ) ) + ( MX33( mx ) * VZ( v ) ) ) >> shift );
+			MAC1 = A1( ( ( (int64_t) CV1( cv ) << 12 ) + ( MX11( mx ) * VX( v ) ) + ( MX12( mx ) * VY( v ) ) + ( MX13( mx ) * VZ( v ) ) ) >> shift );
+			MAC2 = A2( ( ( (int64_t) CV2( cv ) << 12 ) + ( MX21( mx ) * VX( v ) ) + ( MX22( mx ) * VY( v ) ) + ( MX23( mx ) * VZ( v ) ) ) >> shift );
+			MAC3 = A3( ( ( (int64_t) CV3( cv ) << 12 ) + ( MX31( mx ) * VX( v ) ) + ( MX32( mx ) * VY( v ) ) + ( MX33( mx ) * VZ( v ) ) ) >> shift );
 
 			IR1 = Lm_B1( MAC1, lm );
 			IR2 = Lm_B2( MAC2, lm );
@@ -5505,21 +5505,21 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "NCDS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( ( ( (INT64) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC2 = A2( ( ( ( (INT64) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC3 = A3( ( ( ( (INT64) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC1 = A1( ( ( ( (int64_t) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC2 = A2( ( ( ( (int64_t) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC3 = A3( ( ( ( (int64_t) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -5544,15 +5544,15 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "CDP" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( ( ( (INT64) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC2 = A2( ( ( ( (INT64) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
-			MAC3 = A3( ( ( ( (INT64) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC1 = A1( ( ( ( (int64_t) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC2 = A2( ( ( ( (int64_t) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
+			MAC3 = A3( ( ( ( (int64_t) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -5579,21 +5579,21 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			for( v = 0; v < 3; v++ )
 			{
-				MAC1 = A1( ( ( (INT64) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
-				MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
-				MAC1 = A1( ( ( ( (INT64) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
-				MAC2 = A2( ( ( ( (INT64) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
-				MAC3 = A3( ( ( ( (INT64) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
+				MAC1 = A1( ( ( ( (int64_t) R << 4 ) * IR1 ) + ( IR0 * Lm_B1( RFC - ( ( R * IR1 ) >> 8 ), 0 ) ) ) >> 12 );
+				MAC2 = A2( ( ( ( (int64_t) G << 4 ) * IR2 ) + ( IR0 * Lm_B2( GFC - ( ( G * IR2 ) >> 8 ), 0 ) ) ) >> 12 );
+				MAC3 = A3( ( ( ( (int64_t) B << 4 ) * IR3 ) + ( IR0 * Lm_B3( BFC - ( ( B * IR3 ) >> 8 ), 0 ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
@@ -5619,21 +5619,21 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "NCCS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( (INT64) R * IR1 ) >> 8 );
-			MAC2 = A2( ( (INT64) G * IR2 ) >> 8 );
-			MAC3 = A3( ( (INT64) B * IR3 ) >> 8 );
+			MAC1 = A1( ( (int64_t) R * IR1 ) >> 8 );
+			MAC2 = A2( ( (int64_t) G * IR2 ) >> 8 );
+			MAC3 = A3( ( (int64_t) B * IR3 ) >> 8 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -5658,15 +5658,15 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "CC" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( (INT64) R * IR1 ) >> 8 );
-			MAC2 = A2( ( (INT64) G * IR2 ) >> 8 );
-			MAC3 = A3( ( (INT64) B * IR3 ) >> 8 );
+			MAC1 = A1( ( (int64_t) R * IR1 ) >> 8 );
+			MAC2 = A2( ( (int64_t) G * IR2 ) >> 8 );
+			MAC3 = A3( ( (int64_t) B * IR3 ) >> 8 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -5691,15 +5691,15 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			GTELOG( "NCS" );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) L11 * VX0 ) + ( L12 * VY0 ) + ( L13 * VZ0 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) L21 * VX0 ) + ( L22 * VY0 ) + ( L23 * VZ0 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) L31 * VX0 ) + ( L32 * VY0 ) + ( L33 * VZ0 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
-			MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-			MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-			MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+			MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+			MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+			MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 			IR1 = Lm_B1( MAC1, 1 );
 			IR2 = Lm_B2( MAC2, 1 );
 			IR3 = Lm_B3( MAC3, 1 );
@@ -5726,15 +5726,15 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			for( v = 0; v < 3; v++ )
 			{
-				MAC1 = A1( ( ( (INT64) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
-				MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
@@ -5779,9 +5779,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			for( v = 0; v < 3; v++ )
 			{
-				MAC1 = A1( ( ( (INT64) R0 << 16 ) + ( (INT64) IR0 * ( Lm_B1( RFC - ( R0 << 4 ), 0 ) ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) G0 << 16 ) + ( (INT64) IR0 * ( Lm_B1( GFC - ( G0 << 4 ), 0 ) ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) B0 << 16 ) + ( (INT64) IR0 * ( Lm_B1( BFC - ( B0 << 4 ), 0 ) ) ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) R0 << 16 ) + ( (int64_t) IR0 * ( Lm_B1( RFC - ( R0 << 4 ), 0 ) ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) G0 << 16 ) + ( (int64_t) IR0 * ( Lm_B1( GFC - ( G0 << 4 ), 0 ) ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) B0 << 16 ) + ( (int64_t) IR0 * ( Lm_B1( BFC - ( B0 << 4 ), 0 ) ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 0 );
 				IR2 = Lm_B2( MAC2, 0 );
 				IR3 = Lm_B3( MAC3, 0 );
@@ -5806,7 +5806,7 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		GTELOG( "AVSZ3" );
 		FLAG = 0;
 
-		mac0 = F( (INT64) ( ZSF3 * SZ1 ) + ( ZSF3 * SZ2 ) + ( ZSF3 * SZ3 ) );
+		mac0 = F( (int64_t) ( ZSF3 * SZ1 ) + ( ZSF3 * SZ2 ) + ( ZSF3 * SZ3 ) );
 		OTZ = Lm_D( mac0 >> 12 );
 
 		MAC0 = mac0;
@@ -5816,7 +5816,7 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 		GTELOG( "AVSZ4" );
 		FLAG = 0;
 
-		mac0 = F( (INT64) ( ZSF4 * SZ0 ) + ( ZSF4 * SZ1 ) + ( ZSF4 * SZ2 ) + ( ZSF4 * SZ3 ) );
+		mac0 = F( (int64_t) ( ZSF4 * SZ0 ) + ( ZSF4 * SZ1 ) + ( ZSF4 * SZ2 ) + ( ZSF4 * SZ3 ) );
 		OTZ = Lm_D( mac0 >> 12 );
 
 		MAC0 = mac0;
@@ -5830,9 +5830,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			for( v = 0; v < 3; v++ )
 			{
-				MAC1 = A1( ( ( (INT64) TRX << 12 ) + ( R11 * VX( v ) ) + ( R12 * VY( v ) ) + ( R13 * VZ( v ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) TRY << 12 ) + ( R21 * VX( v ) ) + ( R22 * VY( v ) ) + ( R23 * VZ( v ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) TRZ << 12 ) + ( R31 * VX( v ) ) + ( R32 * VY( v ) ) + ( R33 * VZ( v ) ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) TRX << 12 ) + ( R11 * VX( v ) ) + ( R12 * VY( v ) ) + ( R13 * VZ( v ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) TRY << 12 ) + ( R21 * VX( v ) ) + ( R22 * VY( v ) ) + ( R23 * VZ( v ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) TRZ << 12 ) + ( R31 * VX( v ) ) + ( R32 * VY( v ) ) + ( R33 * VZ( v ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 0 );
 				IR2 = Lm_B2( MAC2, 0 );
 				IR3 = Lm_B3( MAC3, 0 );
@@ -5843,9 +5843,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 				h_over_sz3 = Lm_E( psxcpu, gte_divide( H, SZ3 ) );
 				SXY0 = SXY1;
 				SXY1 = SXY2;
-				SX2 = Lm_G1( F( ( (INT64) OFX + ( (INT64) IR1 * h_over_sz3 ) ) >> 16 ) );
-				SY2 = Lm_G2( F( ( (INT64) OFY + ( (INT64) IR2 * h_over_sz3 ) ) >> 16 ) );
-				MAC0 = F( (INT64) DQB + ( (INT64) DQA * h_over_sz3 ) );
+				SX2 = Lm_G1( F( ( (int64_t) OFX + ( (int64_t) IR1 * h_over_sz3 ) ) >> 16 ) );
+				SY2 = Lm_G2( F( ( (int64_t) OFY + ( (int64_t) IR2 * h_over_sz3 ) ) >> 16 ) );
+				MAC0 = F( (int64_t) DQB + ( (int64_t) DQA * h_over_sz3 ) );
 				IR0 = Lm_H( MAC0 >> 12 );
 			}
 			return;
@@ -5859,9 +5859,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			shift = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( (INT64) IR0 * IR1 ) >> shift );
-			MAC2 = A2( ( (INT64) IR0 * IR2 ) >> shift );
-			MAC3 = A3( ( (INT64) IR0 * IR3 ) >> shift );
+			MAC1 = A1( ( (int64_t) IR0 * IR1 ) >> shift );
+			MAC2 = A2( ( (int64_t) IR0 * IR2 ) >> shift );
+			MAC3 = A3( ( (int64_t) IR0 * IR3 ) >> shift );
 			IR1 = Lm_B1( MAC1, 0 );
 			IR2 = Lm_B2( MAC2, 0 );
 			IR3 = Lm_B3( MAC3, 0 );
@@ -5887,9 +5887,9 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 			shift = 12 * GTE_SF( gteop );
 			FLAG = 0;
 
-			MAC1 = A1( ( ( (INT64) MAC1 << shift ) + ( IR0 * IR1 ) ) >> shift );
-			MAC2 = A2( ( ( (INT64) MAC2 << shift ) + ( IR0 * IR2 ) ) >> shift );
-			MAC3 = A3( ( ( (INT64) MAC3 << shift ) + ( IR0 * IR3 ) ) >> shift );
+			MAC1 = A1( ( ( (int64_t) MAC1 << shift ) + ( IR0 * IR1 ) ) >> shift );
+			MAC2 = A2( ( ( (int64_t) MAC2 << shift ) + ( IR0 * IR2 ) ) >> shift );
+			MAC3 = A3( ( ( (int64_t) MAC3 << shift ) + ( IR0 * IR3 ) ) >> shift );
 			IR1 = Lm_B1( MAC1, 0 );
 			IR2 = Lm_B2( MAC2, 0 );
 			IR3 = Lm_B3( MAC3, 0 );
@@ -5917,21 +5917,21 @@ static void docop2( psxcpu_state *psxcpu, int gteop )
 
 			for( v = 0; v < 3; v++ )
 			{
-				MAC1 = A1( ( ( (INT64) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) L11 * VX( v ) ) + ( L12 * VY( v ) ) + ( L13 * VZ( v ) ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) L21 * VX( v ) ) + ( L22 * VY( v ) ) + ( L23 * VZ( v ) ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) L31 * VX( v ) ) + ( L32 * VY( v ) ) + ( L33 * VZ( v ) ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
-				MAC1 = A1( ( ( (INT64) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
-				MAC2 = A2( ( ( (INT64) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
-				MAC3 = A3( ( ( (INT64) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
+				MAC1 = A1( ( ( (int64_t) RBK << 12 ) + ( LR1 * IR1 ) + ( LR2 * IR2 ) + ( LR3 * IR3 ) ) >> 12 );
+				MAC2 = A2( ( ( (int64_t) GBK << 12 ) + ( LG1 * IR1 ) + ( LG2 * IR2 ) + ( LG3 * IR3 ) ) >> 12 );
+				MAC3 = A3( ( ( (int64_t) BBK << 12 ) + ( LB1 * IR1 ) + ( LB2 * IR2 ) + ( LB3 * IR3 ) ) >> 12 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );
-				MAC1 = A1( ( (INT64) R * IR1 ) >> 8 );
-				MAC2 = A2( ( (INT64) G * IR2 ) >> 8 );
-				MAC3 = A3( ( (INT64) B * IR3 ) >> 8 );
+				MAC1 = A1( ( (int64_t) R * IR1 ) >> 8 );
+				MAC2 = A2( ( (int64_t) G * IR2 ) >> 8 );
+				MAC3 = A3( ( (int64_t) B * IR3 ) >> 8 );
 				IR1 = Lm_B1( MAC1, 1 );
 				IR2 = Lm_B2( MAC2, 1 );
 				IR3 = Lm_B3( MAC3, 1 );

@@ -1,11 +1,11 @@
 #define DUMP_PAGEFAULTS 0
 
-INLINE UINT8 READ8(UINT32 a)
+INLINE uint8_t READ8(uint32_t a)
 {
 	return ppc.read8(ppc.program, a);
 }
 
-INLINE UINT16 READ16(UINT32 a)
+INLINE uint16_t READ16(uint32_t a)
 {
 	if( a & 0x1 )
 		return ppc.read16_unaligned(ppc.program, a);
@@ -13,7 +13,7 @@ INLINE UINT16 READ16(UINT32 a)
 		return ppc.read16(ppc.program, a);
 }
 
-INLINE UINT32 READ32(UINT32 a)
+INLINE uint32_t READ32(uint32_t a)
 {
 	if( a & 0x3 )
 		return ppc.read32_unaligned(ppc.program, a);
@@ -21,7 +21,7 @@ INLINE UINT32 READ32(UINT32 a)
 		return ppc.read32(ppc.program, a);
 }
 
-INLINE UINT64 READ64(UINT32 a)
+INLINE uint64_t READ64(uint32_t a)
 {
 	if( a & 0x7 )
 		return ppc.read64_unaligned(ppc.program, a);
@@ -29,12 +29,12 @@ INLINE UINT64 READ64(UINT32 a)
 		return ppc.read64(ppc.program, a);
 }
 
-INLINE void WRITE8(UINT32 a, UINT8 d)
+INLINE void WRITE8(uint32_t a, uint8_t d)
 {
 	ppc.write8(ppc.program, a, d);
 }
 
-INLINE void WRITE16(UINT32 a, UINT16 d)
+INLINE void WRITE16(uint32_t a, uint16_t d)
 {
 	if( a & 0x1 )
 		ppc.write16_unaligned(ppc.program, a, d);
@@ -42,7 +42,7 @@ INLINE void WRITE16(UINT32 a, UINT16 d)
 		ppc.write16(ppc.program, a, d);
 }
 
-INLINE void WRITE32(UINT32 a, UINT32 d)
+INLINE void WRITE32(uint32_t a, uint32_t d)
 {
 	if( ppc.reserved ) {
 		if( a == ppc.reserved_address ) {
@@ -56,7 +56,7 @@ INLINE void WRITE32(UINT32 a, UINT32 d)
 		ppc.write32(ppc.program, a, d);
 }
 
-INLINE void WRITE64(UINT32 a, UINT64 d)
+INLINE void WRITE64(uint32_t a, uint64_t d)
 {
 	if( a & 0x7 )
 		ppc.write64_unaligned(ppc.program, a, d);
@@ -66,40 +66,40 @@ INLINE void WRITE64(UINT32 a, UINT64 d)
 
 /***********************************************************************/
 
-static UINT16 ppc_read16_unaligned(const address_space *space, UINT32 a)
+static uint16_t ppc_read16_unaligned(const address_space *space, uint32_t a)
 {
-	return ((UINT16)ppc.read8(space, a+0) << 8) | ((UINT16)ppc.read8(space, a+1) << 0);
+	return ((uint16_t)ppc.read8(space, a+0) << 8) | ((uint16_t)ppc.read8(space, a+1) << 0);
 }
 
-static UINT32 ppc_read32_unaligned(const address_space *space, UINT32 a)
+static uint32_t ppc_read32_unaligned(const address_space *space, uint32_t a)
 {
-	return ((UINT32)ppc.read8(space, a+0) << 24) | ((UINT32)ppc.read8(space, a+1) << 16) |
-				   ((UINT32)ppc.read8(space, a+2) << 8) | ((UINT32)ppc.read8(space, a+3) << 0);
+	return ((uint32_t)ppc.read8(space, a+0) << 24) | ((uint32_t)ppc.read8(space, a+1) << 16) |
+				   ((uint32_t)ppc.read8(space, a+2) << 8) | ((uint32_t)ppc.read8(space, a+3) << 0);
 }
 
-static UINT64 ppc_read64_unaligned(const address_space *space, UINT32 a)
+static uint64_t ppc_read64_unaligned(const address_space *space, uint32_t a)
 {
-	return ((UINT64)READ32(space, a+0) << 32) | (UINT64)(READ32(space, a+4));
+	return ((uint64_t)READ32(space, a+0) << 32) | (uint64_t)(READ32(space, a+4));
 }
 
-static void ppc_write16_unaligned(const address_space *space, UINT32 a, UINT16 d)
+static void ppc_write16_unaligned(const address_space *space, uint32_t a, uint16_t d)
 {
-	ppc.write8(space, a+0, (UINT8)(d >> 8));
-	ppc.write8(space, a+1, (UINT8)(d));
+	ppc.write8(space, a+0, (uint8_t)(d >> 8));
+	ppc.write8(space, a+1, (uint8_t)(d));
 }
 
-static void ppc_write32_unaligned(const address_space *space, UINT32 a, UINT32 d)
+static void ppc_write32_unaligned(const address_space *space, uint32_t a, uint32_t d)
 {
-	ppc.write8(space, a+0, (UINT8)(d >> 24));
-	ppc.write8(space, a+1, (UINT8)(d >> 16));
-	ppc.write8(space, a+2, (UINT8)(d >> 8));
-	ppc.write8(space, a+3, (UINT8)(d >> 0));
+	ppc.write8(space, a+0, (uint8_t)(d >> 24));
+	ppc.write8(space, a+1, (uint8_t)(d >> 16));
+	ppc.write8(space, a+2, (uint8_t)(d >> 8));
+	ppc.write8(space, a+3, (uint8_t)(d >> 0));
 }
 
-static void ppc_write64_unaligned(const address_space *space, UINT32 a, UINT64 d)
+static void ppc_write64_unaligned(const address_space *space, uint32_t a, uint64_t d)
 {
-	ppc.write32(space, a+0, (UINT32)(d >> 32));
-	ppc.write32(space, a+4, (UINT32)(d));
+	ppc.write32(space, a+0, (uint32_t)(d >> 32));
+	ppc.write32(space, a+4, (uint32_t)(d));
 }
 
 /***********************************************************************/
@@ -128,7 +128,7 @@ enum
 
 
 
-static int ppc_is_protected(UINT32 pp, int flags)
+static int ppc_is_protected(uint32_t pp, int flags)
 {
 	if (flags & PPC_TRANSLATE_WRITE)
 	{
@@ -148,14 +148,14 @@ static int ppc_translate_address(offs_t *addr_ptr, int flags)
 	if (PPC_MMU_ENABLED)
 	{
 		const BATENT *bat;
-		UINT32 address;
-		UINT32 sr, vsid, hash;
-		UINT32 pteg_address;
-		UINT32 target_pte, bl, mask;
-		UINT64 pte;
-		UINT64 *pteg_ptr[2];
+		uint32_t address;
+		uint32_t sr, vsid, hash;
+		uint32_t pteg_address;
+		uint32_t target_pte, bl, mask;
+		uint64_t pte;
+		uint64_t *pteg_ptr[2];
 		int i, hash_type;
-		UINT32 dsisr = DSISR_PROT;
+		uint32_t dsisr = DSISR_PROT;
 
 		bat = (flags & PPC_TRANSLATE_CODE) ? ppc.ibat : ppc.dbat;
 
@@ -217,10 +217,10 @@ static int ppc_translate_address(offs_t *addr_ptr, int flags)
 						/* is valid? */
 						if (((pte >> 32) & 0xFFFFFFFF) == target_pte)
 						{
-							if (ppc_is_protected((UINT32) pte, flags))
+							if (ppc_is_protected((uint32_t) pte, flags))
 								goto exception;
 
-							*addr_ptr = ((UINT32) (pte & 0xFFFFF000))
+							*addr_ptr = ((uint32_t) (pte & 0xFFFFF000))
 								| (address & 0x0FFF);
 							return 1;
 						}
@@ -306,56 +306,56 @@ static int ppc_translate_address_cb(int space, offs_t *addr)
 	return success;
 }
 
-static UINT8 ppc_read8_translated(const address_space *space, offs_t address)
+static uint8_t ppc_read8_translated(const address_space *space, offs_t address)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_READ);
 	return memory_read_byte_64be(space, address);
 }
 
-static UINT16 ppc_read16_translated(const address_space *space, offs_t address)
+static uint16_t ppc_read16_translated(const address_space *space, offs_t address)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_READ);
 	return memory_read_word_64be(space, address);
 }
 
-static UINT32 ppc_read32_translated(const address_space *space, offs_t address)
+static uint32_t ppc_read32_translated(const address_space *space, offs_t address)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_READ);
 	return memory_read_dword_64be(space, address);
 }
 
-static UINT64 ppc_read64_translated(const address_space *space, offs_t address)
+static uint64_t ppc_read64_translated(const address_space *space, offs_t address)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_READ);
 	return memory_read_qword_64be(space, address);
 }
 
-static void ppc_write8_translated(const address_space *space, offs_t address, UINT8 data)
+static void ppc_write8_translated(const address_space *space, offs_t address, uint8_t data)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_WRITE);
 	memory_write_byte_64be(space, address, data);
 }
 
-static void ppc_write16_translated(const address_space *space, offs_t address, UINT16 data)
+static void ppc_write16_translated(const address_space *space, offs_t address, uint16_t data)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_WRITE);
 	memory_write_word_64be(space, address, data);
 }
 
-static void ppc_write32_translated(const address_space *space, offs_t address, UINT32 data)
+static void ppc_write32_translated(const address_space *space, offs_t address, uint32_t data)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_WRITE);
 	memory_write_dword_64be(space, address, data);
 }
 
-static void ppc_write64_translated(const address_space *space, offs_t address, UINT64 data)
+static void ppc_write64_translated(const address_space *space, offs_t address, uint64_t data)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_DATA | PPC_TRANSLATE_WRITE);
 	memory_write_qword_64be(space, address, data);
 }
 
 #ifndef PPC_DRC
-static UINT32 ppc_readop_translated(const address_space *space, offs_t address)
+static uint32_t ppc_readop_translated(const address_space *space, offs_t address)
 {
 	ppc_translate_address(&address, PPC_TRANSLATE_CODE | PPC_TRANSLATE_READ);
 	return memory_read_dword_64be(space, address);
@@ -367,8 +367,8 @@ static UINT32 ppc_readop_translated(const address_space *space, offs_t address)
 
 static CPU_DISASSEMBLE( ppc )
 {
-	UINT32 op;
-	op = BIG_ENDIANIZE_INT32(*((UINT32 *) oprom));
+	uint32_t op;
+	op = BIG_ENDIANIZE_INT32(*((uint32_t *) oprom));
 	return ppc_dasm_one(buffer, pc, op);
 }
 

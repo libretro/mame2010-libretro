@@ -17,7 +17,7 @@
 #define KCONST6(op)     ((((op) >> 2) & 0x0030) | ((op) & 0x000f))
 #define KCONST7(op)     (((op) >> 3) & 0x007f)
 #define KCONST8(op)     ((((op) >> 4) & 0x00f0) | ((op) & 0x000f))
-#define KCONST22(op)    (((((UINT32)(op) >> 3) & 0x003e) | ((UINT32)(op) & 0x0001)) << 16)
+#define KCONST22(op)    (((((uint32_t)(op) >> 3) & 0x003e) | ((uint32_t)(op) & 0x0001)) << 16)
 #define QCONST6(op)     ((((op) >> 8) & 0x0020) | (((op) >> 7) & 0x0018) | ((op) & 0x0007))
 #define ACONST5(op)     (((op) >> 3) & 0x001f)
 #define ACONST6(op)     ((((op) >> 5) & 0x0030) | ((op) & 0x000f))
@@ -26,7 +26,7 @@ CPU_DISASSEMBLE( avr8 )
 {
     char *output = buffer;
     int pos = 0;
-    UINT32 op = oprom[pos++];
+    uint32_t op = oprom[pos++];
     op |= oprom[pos++] << 8;
 
     switch(op & 0xf000)

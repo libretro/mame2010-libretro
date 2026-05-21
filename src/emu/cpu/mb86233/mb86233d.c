@@ -45,7 +45,7 @@ static char * COND(unsigned int cond)
 	return buf;
 }
 
-static char * REGS( UINT32 reg, int IsSource )
+static char * REGS( uint32_t reg, int IsSource )
 {
 	static char bufs[4][256];
 	static int bufindex = 0;
@@ -192,7 +192,7 @@ static char * REGS( UINT32 reg, int IsSource )
 	return buf;
 }
 
-static char * INDIRECT( UINT32 reg, int IsSource )
+static char * INDIRECT( uint32_t reg, int IsSource )
 {
     static char bufs[4][256];
 	static int bufindex = 0;
@@ -259,7 +259,7 @@ static char * INDIRECT( UINT32 reg, int IsSource )
 }
 
 
-static char * ALU( UINT32 alu)
+static char * ALU( uint32_t alu)
 {
 	static char bufs[4][256];
 	static int bufindex = 0;
@@ -373,19 +373,19 @@ static char * ALU( UINT32 alu)
 	return buf;
 }
 
-static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
+static unsigned dasm_mb86233(char *buffer, uint32_t opcode )
 {
 	char *p = buffer;
-	UINT32	grp = ( opcode >> 26 ) & 0x3f;
+	uint32_t	grp = ( opcode >> 26 ) & 0x3f;
 
 	switch( grp )
 	{
 		case 0x0:	/* Dual move */
 		{
-			UINT32 r1=opcode & 0x1ff;
-			UINT32 r2=(opcode>>9) & 0x7f;
-			UINT32 alu=(opcode>>21) & 0x1f;
-			UINT32 op=(opcode>>16) & 0x1f;
+			uint32_t r1=opcode & 0x1ff;
+			uint32_t r2=(opcode>>9) & 0x7f;
+			uint32_t alu=(opcode>>21) & 0x1f;
+			uint32_t op=(opcode>>16) & 0x1f;
 
 			if ( alu != 0 )
 				p += sprintf(p, "%s, ", ALU(alu) );
@@ -417,10 +417,10 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 	    case 0x7:	/* LD/MOV */
 		{
-		    UINT32 r1=opcode & 0x1ff;
-			UINT32 r2=(opcode>>9) & 0x7f;
-			UINT32 alu=(opcode>>21) & 0x1f;
-			UINT32 op=(opcode>>16) & 0x1f;
+		    uint32_t r1=opcode & 0x1ff;
+			uint32_t r2=(opcode>>9) & 0x7f;
+			uint32_t alu=(opcode>>21) & 0x1f;
+			uint32_t op=(opcode>>16) & 0x1f;
 
 			if ( alu != 0 )
 			{
@@ -539,7 +539,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 	    case 0x0e:	/* Load 24 bit val */
 		{
-			UINT32 sub=(opcode>>24)&0x3;
+			uint32_t sub=(opcode>>24)&0x3;
 			static const char regs[4] = { 'p', 'a', 'b', 'd' };
 
 			p += sprintf(p,"LDIMM24 0x%X->%c",opcode&0xffffff, regs[sub]);
@@ -548,8 +548,8 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x0f:	/* repeat */
 		{
-			UINT32	alu = ( opcode >> 20 ) & 0x1f;
-			UINT32	sub2 = ( opcode >> 16 ) & 0x0f;
+			uint32_t	alu = ( opcode >> 20 ) & 0x1f;
+			uint32_t	sub2 = ( opcode >> 16 ) & 0x0f;
 
 			if ( alu != 0 )
 				p += sprintf(p, "%s, ", ALU(alu) );
@@ -582,8 +582,8 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 	    case 0x10:
 		{
-		    UINT32	dst=(opcode>>24)&0xf;
-		    UINT32	imm=(opcode)&0xFFFF;
+		    uint32_t	dst=(opcode>>24)&0xf;
+		    uint32_t	imm=(opcode)&0xFFFF;
 
 		    if ( dst <= 3 )
 				p += sprintf(p,"LDIMM 0x%x->r%d",imm,dst);
@@ -594,7 +594,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x13:
 		{
-			UINT32 sub = ( opcode >> 24 ) & 0x03;
+			uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 		    p += sprintf(p,"LDIMM 0x%X->",opcode&0xffffff);
 
@@ -606,7 +606,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x14:
 		{
-			UINT32 sub = ( opcode >> 24 ) & 0x03;
+			uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 			p += sprintf(p,"LDIMM 0x%X->",opcode&0xffffff);
 
@@ -619,7 +619,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x15:
 		{
-			UINT32 sub = ( opcode >> 24 ) & 0x03;
+			uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 		    p += sprintf(p,"LDIMM 0x%X->",opcode&0xffffff);
 
@@ -632,7 +632,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x16:
 		{
-		    UINT32 sub = ( opcode >> 24 ) & 0x03;
+		    uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 			p += sprintf(p,"LDIMM 0x%X->",opcode&0xffffff);
 
@@ -644,7 +644,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x17:
 		{
-			UINT32 sub = ( opcode >> 24 ) & 0x03;
+			uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 		    p += sprintf(p,"LDIMM 0x%X->",opcode&0xffffff);
 
@@ -655,7 +655,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x18:
 		{
-			UINT32 sub = ( opcode >> 24 ) & 0x03;
+			uint32_t sub = ( opcode >> 24 ) & 0x03;
 
 			p += sprintf(p,"LDIMM24 0x%X->",opcode&0xffffff);
 
@@ -666,9 +666,9 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 	    case 0x2f:
 		{
-		    UINT32 cond = ( opcode >> 20 ) & 0x1f;
-		    UINT32 subtype = ( opcode >> 16 ) & 0x0f;
-		    UINT32 data = opcode & 0xffff;
+		    uint32_t cond = ( opcode >> 20 ) & 0x1f;
+		    uint32_t subtype = ( opcode >> 16 ) & 0x0f;
+		    uint32_t data = opcode & 0xffff;
 
 		    switch( subtype )
 		    {
@@ -717,9 +717,9 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 		case 0x3f:
 		{
-		    UINT32 cond = ( opcode >> 20 ) & 0x1f;
-		    UINT32 subtype = ( opcode >> 16 ) & 0x0f;
-		    UINT32 data = opcode & 0xffff;
+		    uint32_t cond = ( opcode >> 20 ) & 0x1f;
+		    uint32_t subtype = ( opcode >> 16 ) & 0x0f;
+		    uint32_t data = opcode & 0xffff;
 
 		    switch( subtype )
 		    {
@@ -776,7 +776,7 @@ static unsigned dasm_mb86233(char *buffer, UINT32 opcode )
 
 CPU_DISASSEMBLE( mb86233 )
 {
-	UINT32 op = *(UINT32 *)oprom;
+	uint32_t op = *(uint32_t *)oprom;
 	op = LITTLE_ENDIANIZE_INT32(op);
 	return dasm_mb86233(buffer, op);
 }

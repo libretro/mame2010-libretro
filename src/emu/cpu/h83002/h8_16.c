@@ -39,13 +39,13 @@ CPU_DISASSEMBLE(h8_32);
 #define H8_WORD_TIMING(x, adr)	if (address24 >= 0xffff10) h8->cyccnt -= (x) * 3; else h8->cyccnt -= (x) * 4;
 #define H8_IOP_TIMING(x)	h8->cyccnt -= (x);
 
-INLINE UINT32 h8_mem_read32(h83xx_state *h8, offs_t address)
+INLINE uint32_t h8_mem_read32(h83xx_state *h8, offs_t address)
 {
-	UINT32 result = memory_read_word_16be(h8->program, address) << 16;
+	uint32_t result = memory_read_word_16be(h8->program, address) << 16;
 	return result | memory_read_word_16be(h8->program, address + 2);
 }
 
-INLINE void h8_mem_write32(h83xx_state *h8, offs_t address, UINT32 data)
+INLINE void h8_mem_write32(h83xx_state *h8, offs_t address, uint32_t data)
 {
 	memory_write_word_16be(h8->program, address, data >> 16);
 	memory_write_word_16be(h8->program, address + 2, data);
@@ -55,7 +55,7 @@ static void h8_check_irqs(h83xx_state *h8);
 
 /* implementation */
 
-void h8_3002_InterruptRequest(h83xx_state *h8, UINT8 source, UINT8 state)
+void h8_3002_InterruptRequest(h83xx_state *h8, uint8_t source, uint8_t state)
 {
 	// don't allow clear on external interrupts
 	if ((source <= 17) && (state == 0)) return;
@@ -85,7 +85,7 @@ void h8_3002_InterruptRequest(h83xx_state *h8, UINT8 source, UINT8 state)
 }
 
 
-static UINT8 h8_get_ccr(h83xx_state *h8)
+static uint8_t h8_get_ccr(h83xx_state *h8)
 {
 	h8->ccr = 0;
 	if(h8->h8nflag)h8->ccr |= NFLAG;
@@ -116,7 +116,7 @@ static char *h8_get_ccr_str(h83xx_state *h8)
 	return res;
 }
 
-static void h8_set_ccr(h83xx_state *h8, UINT8 data)
+static void h8_set_ccr(h83xx_state *h8, uint8_t data)
 {
 	h8->ccr = data;
 
@@ -141,7 +141,7 @@ static void h8_set_ccr(h83xx_state *h8, UINT8 data)
 	if (!h8->incheckirqs) h8_check_irqs(h8);
 }
 
-static INT16 h8_getreg16(h83xx_state *h8, UINT8 reg)
+static int16_t h8_getreg16(h83xx_state *h8, uint8_t reg)
 {
 	if(reg > 7)
 	{
@@ -153,7 +153,7 @@ static INT16 h8_getreg16(h83xx_state *h8, UINT8 reg)
 	}
 }
 
-static void h8_setreg16(h83xx_state *h8, UINT8 reg, UINT16 data)
+static void h8_setreg16(h83xx_state *h8, uint8_t reg, uint16_t data)
 {
 	if(reg > 7)
 	{
@@ -167,7 +167,7 @@ static void h8_setreg16(h83xx_state *h8, UINT8 reg, UINT16 data)
 	}
 }
 
-static UINT8 h8_getreg8(h83xx_state *h8, UINT8 reg)
+static uint8_t h8_getreg8(h83xx_state *h8, uint8_t reg)
 {
 	if(reg > 7)
 	{
@@ -179,7 +179,7 @@ static UINT8 h8_getreg8(h83xx_state *h8, UINT8 reg)
 	}
 }
 
-static void h8_setreg8(h83xx_state *h8, UINT8 reg, UINT8 data)
+static void h8_setreg8(h83xx_state *h8, uint8_t reg, uint8_t data)
 {
 	if(reg > 7)
 	{
@@ -193,12 +193,12 @@ static void h8_setreg8(h83xx_state *h8, UINT8 reg, UINT8 data)
 	}
 }
 
-static UINT32 h8_getreg32(h83xx_state *h8, UINT8 reg)
+static uint32_t h8_getreg32(h83xx_state *h8, uint8_t reg)
 {
 	return h8->regs[reg];
 }
 
-static void h8_setreg32(h83xx_state *h8, UINT8 reg, UINT32 data)
+static void h8_setreg32(h83xx_state *h8, uint8_t reg, uint32_t data)
 {
 	h8->regs[reg] = data;
 }
@@ -264,7 +264,7 @@ static CPU_RESET(h8)
 	h8_itu_reset(h8);
 }
 
-static void h8_GenException(h83xx_state *h8, UINT8 vectornr)
+static void h8_GenException(h83xx_state *h8, uint8_t vectornr)
 {
 	// push PC on stack
 	// extended mode stack push!
@@ -285,7 +285,7 @@ static void h8_GenException(h83xx_state *h8, UINT8 vectornr)
 	H8_STACK_TIMING(2);
 }
 
-static int h8_get_priority(h83xx_state *h8, UINT8 bit)
+static int h8_get_priority(h83xx_state *h8, uint8_t bit)
 {
 	int res = 0;
 	switch(bit)
@@ -344,7 +344,7 @@ static void h8_check_irqs(h83xx_state *h8)
 	// any interrupts wanted and can accept ?
 	if(((h8->h8_IRQrequestH != 0) || (h8->h8_IRQrequestL != 0)) && (lv >= 0))
 	{
-		UINT8 bit, source;
+		uint8_t bit, source;
 		// which one ?
 		for(bit = 0, source = 0xff; source == 0xff && bit < 32; bit++)
 		{

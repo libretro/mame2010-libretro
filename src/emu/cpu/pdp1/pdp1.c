@@ -352,7 +352,7 @@ typedef struct _pdp1_state pdp1_state;
 struct _pdp1_state
 {
 	/* processor registers */
-	UINT32 pc;		/* program counter (12, 15 or 16 bits) */
+	uint32_t pc;		/* program counter (12, 15 or 16 bits) */
 	int ir;			/* basic operation code of current instruction (5 bits) */
 	int mb;			/* memory buffer (used for holding the current instruction only) (18 bits) */
 	int ma;			/* memory address (12, 15 or 16 bits) */

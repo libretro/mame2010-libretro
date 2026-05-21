@@ -18,10 +18,10 @@
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static int describe_instruction_special(rsp_state *rsp, UINT32 op, opcode_desc *desc);
-static int describe_instruction_regimm(rsp_state *rsp, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop0(rsp_state *rsp, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop2(rsp_state *rsp, UINT32 op, opcode_desc *desc);
+static int describe_instruction_special(rsp_state *rsp, uint32_t op, opcode_desc *desc);
+static int describe_instruction_regimm(rsp_state *rsp, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop0(rsp_state *rsp, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop2(rsp_state *rsp, uint32_t op, opcode_desc *desc);
 
 /***************************************************************************
     INSTRUCTION PARSERS
@@ -35,7 +35,7 @@ static int describe_instruction_cop2(rsp_state *rsp, UINT32 op, opcode_desc *des
 int rspfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
 {
 	rsp_state *rsp = (rsp_state *)param;
-	UINT32 op, opswitch;
+	uint32_t op, opswitch;
 
 	/* fetch the opcode */
 	op = desc->opptr.l[0] = memory_decrypted_read_dword(rsp->program, desc->physpc | 0x1000);
@@ -159,7 +159,7 @@ int rspfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
     'special' group
 -------------------------------------------------*/
 
-static int describe_instruction_special(rsp_state *rsp, UINT32 op, opcode_desc *desc)
+static int describe_instruction_special(rsp_state *rsp, uint32_t op, opcode_desc *desc)
 {
 	switch (op & 63)
 	{
@@ -222,7 +222,7 @@ static int describe_instruction_special(rsp_state *rsp, UINT32 op, opcode_desc *
     'regimm' group
 -------------------------------------------------*/
 
-static int describe_instruction_regimm(rsp_state *rsp, UINT32 op, opcode_desc *desc)
+static int describe_instruction_regimm(rsp_state *rsp, uint32_t op, opcode_desc *desc)
 {
 	switch (RTREG)
 	{
@@ -266,7 +266,7 @@ static int describe_instruction_regimm(rsp_state *rsp, UINT32 op, opcode_desc *d
     COP0 group
 -------------------------------------------------*/
 
-static int describe_instruction_cop0(rsp_state *rsp, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop0(rsp_state *rsp, uint32_t op, opcode_desc *desc)
 {
 	switch (RSREG)
 	{
@@ -288,7 +288,7 @@ static int describe_instruction_cop0(rsp_state *rsp, UINT32 op, opcode_desc *des
     COP2 group
 -------------------------------------------------*/
 
-static int describe_instruction_cop2(rsp_state *rsp, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop2(rsp_state *rsp, uint32_t op, opcode_desc *desc)
 {
 	switch (RSREG)
 	{

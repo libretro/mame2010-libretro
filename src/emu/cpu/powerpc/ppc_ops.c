@@ -4,15 +4,15 @@
 #include <math.h>
 
 #ifndef PPC_DRC
-static void ppc_unimplemented(UINT32 op)
+static void ppc_unimplemented(uint32_t op)
 {
 	fatalerror("ppc: Unimplemented opcode %08X at %08X", op, ppc.pc);
 }
 
-static void ppc_addx(UINT32 op)
+static void ppc_addx(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
 
 	REG(RT) = ra + rb;
 
@@ -24,10 +24,10 @@ static void ppc_addx(UINT32 op)
 	}
 }
 
-static void ppc_addcx(UINT32 op)
+static void ppc_addcx(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
 
 	REG(RT) = ra + rb;
 
@@ -42,12 +42,12 @@ static void ppc_addcx(UINT32 op)
 }
 #endif
 
-static void ppc_addex(UINT32 op)
+static void ppc_addex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
-	UINT32 carry = (XER >> 29) & 0x1;
-	UINT32 tmp;
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
+	uint32_t carry = (XER >> 29) & 0x1;
+	uint32_t tmp;
 
 	tmp = rb + carry;
 	REG(RT) = ra + tmp;
@@ -66,10 +66,10 @@ static void ppc_addex(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_addi(UINT32 op)
+static void ppc_addi(uint32_t op)
 {
-	UINT32 i = SIMM16;
-	UINT32 a = RA;
+	uint32_t i = SIMM16;
+	uint32_t a = RA;
 
 	if( a )
 		i += REG(a);
@@ -77,10 +77,10 @@ static void ppc_addi(UINT32 op)
 	REG(RT) = i;
 }
 
-static void ppc_addic(UINT32 op)
+static void ppc_addic(uint32_t op)
 {
-	UINT32 i = SIMM16;
-	UINT32 ra = REG(RA);
+	uint32_t i = SIMM16;
+	uint32_t ra = REG(RA);
 
 	REG(RT) = ra + i;
 
@@ -90,10 +90,10 @@ static void ppc_addic(UINT32 op)
 		XER &= ~XER_CA;
 }
 
-static void ppc_addic_rc(UINT32 op)
+static void ppc_addic_rc(uint32_t op)
 {
-	UINT32 i = SIMM16;
-	UINT32 ra = REG(RA);
+	uint32_t i = SIMM16;
+	uint32_t ra = REG(RA);
 
 	REG(RT) = ra + i;
 
@@ -105,10 +105,10 @@ static void ppc_addic_rc(UINT32 op)
 	SET_CR0(REG(RT));
 }
 
-static void ppc_addis(UINT32 op)
+static void ppc_addis(uint32_t op)
 {
-	UINT32 i = UIMM16 << 16;
-	UINT32 a = RA;
+	uint32_t i = UIMM16 << 16;
+	uint32_t a = RA;
 
 	if( a )
 		i += REG(a);
@@ -117,11 +117,11 @@ static void ppc_addis(UINT32 op)
 }
 #endif
 
-static void ppc_addmex(UINT32 op)
+static void ppc_addmex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 carry = (XER >> 29) & 0x1;
-	UINT32 tmp;
+	uint32_t ra = REG(RA);
+	uint32_t carry = (XER >> 29) & 0x1;
+	uint32_t tmp;
 
 	tmp = ra + carry;
 	REG(RT) = tmp + -1;
@@ -139,10 +139,10 @@ static void ppc_addmex(UINT32 op)
 	}
 }
 
-static void ppc_addzex(UINT32 op)
+static void ppc_addzex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 carry = (XER >> 29) & 0x1;
+	uint32_t ra = REG(RA);
+	uint32_t carry = (XER >> 29) & 0x1;
 
 	REG(RT) = ra + carry;
 
@@ -160,7 +160,7 @@ static void ppc_addzex(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_andx(UINT32 op)
+static void ppc_andx(uint32_t op)
 {
 	REG(RA) = REG(RS) & REG(RB);
 
@@ -169,7 +169,7 @@ static void ppc_andx(UINT32 op)
 	}
 }
 
-static void ppc_andcx(UINT32 op)
+static void ppc_andcx(uint32_t op)
 {
 	REG(RA) = REG(RS) & ~REG(RB);
 
@@ -178,27 +178,27 @@ static void ppc_andcx(UINT32 op)
 	}
 }
 
-static void ppc_andi_rc(UINT32 op)
+static void ppc_andi_rc(uint32_t op)
 {
-	UINT32 i = UIMM16;
+	uint32_t i = UIMM16;
 
 	REG(RA) = REG(RS) & i;
 
 	SET_CR0(REG(RA));
 }
 
-static void ppc_andis_rc(UINT32 op)
+static void ppc_andis_rc(uint32_t op)
 {
-	UINT32 i = UIMM16 << 16;
+	uint32_t i = UIMM16 << 16;
 
 	REG(RA) = REG(RS) & i;
 
 	SET_CR0(REG(RA));
 }
 
-static void ppc_bx(UINT32 op)
+static void ppc_bx(uint32_t op)
 {
-	INT32 li = op & 0x3fffffc;
+	int32_t li = op & 0x3fffffc;
 	if( li & 0x2000000 )
 		li |= 0xfc000000;
 
@@ -213,7 +213,7 @@ static void ppc_bx(UINT32 op)
 	}
 }
 
-static void ppc_bcx(UINT32 op)
+static void ppc_bcx(uint32_t op)
 {
 	int condition = check_condition_code(BO, BI);
 
@@ -230,7 +230,7 @@ static void ppc_bcx(UINT32 op)
 	}
 }
 
-static void ppc_bcctrx(UINT32 op)
+static void ppc_bcctrx(uint32_t op)
 {
 	int condition = check_condition_code(BO, BI);
 
@@ -243,7 +243,7 @@ static void ppc_bcctrx(UINT32 op)
 	}
 }
 
-static void ppc_bclrx(UINT32 op)
+static void ppc_bclrx(uint32_t op)
 {
 	int condition = check_condition_code(BO, BI);
 
@@ -256,10 +256,10 @@ static void ppc_bclrx(UINT32 op)
 	}
 }
 
-static void ppc_cmp(UINT32 op)
+static void ppc_cmp(uint32_t op)
 {
-	INT32 ra = REG(RA);
-	INT32 rb = REG(RB);
+	int32_t ra = REG(RA);
+	int32_t rb = REG(RB);
 	int d = CRFD;
 
 	if( ra < rb )
@@ -273,10 +273,10 @@ static void ppc_cmp(UINT32 op)
 		CR(d) |= 0x1;
 }
 
-static void ppc_cmpi(UINT32 op)
+static void ppc_cmpi(uint32_t op)
 {
-	INT32 ra = REG(RA);
-	INT32 i = SIMM16;
+	int32_t ra = REG(RA);
+	int32_t i = SIMM16;
 	int d = CRFD;
 
 	if( ra < i )
@@ -290,10 +290,10 @@ static void ppc_cmpi(UINT32 op)
 		CR(d) |= 0x1;
 }
 
-static void ppc_cmpl(UINT32 op)
+static void ppc_cmpl(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
 	int d = CRFD;
 
 	if( ra < rb )
@@ -307,10 +307,10 @@ static void ppc_cmpl(UINT32 op)
 		CR(d) |= 0x1;
 }
 
-static void ppc_cmpli(UINT32 op)
+static void ppc_cmpli(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 i = UIMM16;
+	uint32_t ra = REG(RA);
+	uint32_t i = UIMM16;
 	int d = CRFD;
 
 	if( ra < i )
@@ -324,11 +324,11 @@ static void ppc_cmpli(UINT32 op)
 		CR(d) |= 0x1;
 }
 
-static void ppc_cntlzw(UINT32 op)
+static void ppc_cntlzw(uint32_t op)
 {
 	int n = 0;
 	int t = RT;
-	UINT32 m = 0x80000000;
+	uint32_t m = 0x80000000;
 
 	while(n < 32)
 	{
@@ -346,7 +346,7 @@ static void ppc_cntlzw(UINT32 op)
 }
 #endif
 
-static void ppc_crand(UINT32 op)
+static void ppc_crand(uint32_t op)
 {
 	int bit = RT;
 	int b = CRBIT(RA) & CRBIT(RB);
@@ -356,7 +356,7 @@ static void ppc_crand(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_crandc(UINT32 op)
+static void ppc_crandc(uint32_t op)
 {
 	int bit = RT;
 	int b = CRBIT(RA) & ~CRBIT(RB);
@@ -366,7 +366,7 @@ static void ppc_crandc(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_creqv(UINT32 op)
+static void ppc_creqv(uint32_t op)
 {
 	int bit = RT;
 	int b = ~(CRBIT(RA) ^ CRBIT(RB));
@@ -376,7 +376,7 @@ static void ppc_creqv(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_crnand(UINT32 op)
+static void ppc_crnand(uint32_t op)
 {
 	int bit = RT;
 	int b = ~(CRBIT(RA) & CRBIT(RB));
@@ -386,7 +386,7 @@ static void ppc_crnand(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_crnor(UINT32 op)
+static void ppc_crnor(uint32_t op)
 {
 	int bit = RT;
 	int b = ~(CRBIT(RA) | CRBIT(RB));
@@ -396,7 +396,7 @@ static void ppc_crnor(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_cror(UINT32 op)
+static void ppc_cror(uint32_t op)
 {
 	int bit = RT;
 	int b = CRBIT(RA) | CRBIT(RB);
@@ -406,7 +406,7 @@ static void ppc_cror(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_crorc(UINT32 op)
+static void ppc_crorc(uint32_t op)
 {
 	int bit = RT;
 	int b = CRBIT(RA) | ~CRBIT(RB);
@@ -416,7 +416,7 @@ static void ppc_crorc(UINT32 op)
 		CR(bit / 4) &= ~_BIT(3-(bit % 4));
 }
 
-static void ppc_crxor(UINT32 op)
+static void ppc_crxor(uint32_t op)
 {
 	int bit = RT;
 	int b = CRBIT(RA) ^ CRBIT(RB);
@@ -427,38 +427,38 @@ static void ppc_crxor(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_dcbf(UINT32 op)
+static void ppc_dcbf(uint32_t op)
 {
 
 }
 
-static void ppc_dcbi(UINT32 op)
+static void ppc_dcbi(uint32_t op)
 {
 
 }
 
-static void ppc_dcbst(UINT32 op)
+static void ppc_dcbst(uint32_t op)
 {
 
 }
 
-static void ppc_dcbt(UINT32 op)
+static void ppc_dcbt(uint32_t op)
 {
 
 }
 
-static void ppc_dcbtst(UINT32 op)
+static void ppc_dcbtst(uint32_t op)
 {
 
 }
 
-static void ppc_dcbz(UINT32 op)
+static void ppc_dcbz(uint32_t op)
 {
 
 }
 #endif
 
-static void ppc_divwx(UINT32 op)
+static void ppc_divwx(uint32_t op)
 {
 	if( REG(RB) == 0 && REG(RA) < 0x80000000 )
 	{
@@ -476,7 +476,7 @@ static void ppc_divwx(UINT32 op)
 	}
 	else
 	{
-		REG(RT) = (INT32)REG(RA) / (INT32)REG(RB);
+		REG(RT) = (int32_t)REG(RA) / (int32_t)REG(RB);
 		if( OEBIT ) {
 			XER &= ~XER_OV;
 		}
@@ -487,7 +487,7 @@ static void ppc_divwx(UINT32 op)
 	}
 }
 
-static void ppc_divwux(UINT32 op)
+static void ppc_divwux(uint32_t op)
 {
 	if( REG(RB) == 0 )
 	{
@@ -498,7 +498,7 @@ static void ppc_divwux(UINT32 op)
 	}
 	else
 	{
-		REG(RT) = (UINT32)REG(RA) / (UINT32)REG(RB);
+		REG(RT) = (uint32_t)REG(RA) / (uint32_t)REG(RB);
 		if( OEBIT ) {
 			XER &= ~XER_OV;
 		}
@@ -510,12 +510,12 @@ static void ppc_divwux(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_eieio(UINT32 op)
+static void ppc_eieio(uint32_t op)
 {
 
 }
 
-static void ppc_eqvx(UINT32 op)
+static void ppc_eqvx(uint32_t op)
 {
 	REG(RA) = ~(REG(RS) ^ REG(RB));
 
@@ -524,118 +524,118 @@ static void ppc_eqvx(UINT32 op)
 	}
 }
 
-static void ppc_extsbx(UINT32 op)
+static void ppc_extsbx(uint32_t op)
 {
-	REG(RA) = (INT32)(INT8)REG(RS);
+	REG(RA) = (int32_t)(int8_t)REG(RS);
 
 	if( RCBIT ) {
 		SET_CR0(REG(RA));
 	}
 }
 
-static void ppc_extshx(UINT32 op)
+static void ppc_extshx(uint32_t op)
 {
-	REG(RA) = (INT32)(INT16)REG(RS);
+	REG(RA) = (int32_t)(int16_t)REG(RS);
 
 	if( RCBIT ) {
 		SET_CR0(REG(RA));
 	}
 }
 
-static void ppc_icbi(UINT32 op)
+static void ppc_icbi(uint32_t op)
 {
 
 }
 
-static void ppc_isync(UINT32 op)
+static void ppc_isync(uint32_t op)
 {
 
 }
 
-static void ppc_lbz(UINT32 op)
+static void ppc_lbz(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
 	else
 		ea = REG(RA) + SIMM16;
 
-	REG(RT) = (UINT32)READ8(ea);
+	REG(RT) = (uint32_t)READ8(ea);
 }
 
-static void ppc_lbzu(UINT32 op)
+static void ppc_lbzu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
-	REG(RT) = (UINT32)READ8(ea);
+	REG(RT) = (uint32_t)READ8(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lbzux(UINT32 op)
+static void ppc_lbzux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
-	REG(RT) = (UINT32)READ8(ea);
+	REG(RT) = (uint32_t)READ8(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lbzx(UINT32 op)
+static void ppc_lbzx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
 	else
 		ea = REG(RA) + REG(RB);
 
-	REG(RT) = (UINT32)READ8(ea);
+	REG(RT) = (uint32_t)READ8(ea);
 }
 
-static void ppc_lha(UINT32 op)
+static void ppc_lha(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
 	else
 		ea = REG(RA) + SIMM16;
 
-	REG(RT) = (INT32)(INT16)READ16(ea);
+	REG(RT) = (int32_t)(int16_t)READ16(ea);
 }
 
-static void ppc_lhau(UINT32 op)
+static void ppc_lhau(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
-	REG(RT) = (INT32)(INT16)READ16(ea);
+	REG(RT) = (int32_t)(int16_t)READ16(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lhaux(UINT32 op)
+static void ppc_lhaux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
-	REG(RT) = (INT32)(INT16)READ16(ea);
+	REG(RT) = (int32_t)(int16_t)READ16(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lhax(UINT32 op)
+static void ppc_lhax(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
 	else
 		ea = REG(RA) + REG(RB);
 
-	REG(RT) = (INT32)(INT16)READ16(ea);
+	REG(RT) = (int32_t)(int16_t)READ16(ea);
 }
 
-static void ppc_lhbrx(UINT32 op)
+static void ppc_lhbrx(uint32_t op)
 {
-	UINT32 ea;
-	UINT16 w;
+	uint32_t ea;
+	uint16_t w;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -643,54 +643,54 @@ static void ppc_lhbrx(UINT32 op)
 		ea = REG(RA) + REG(RB);
 
 	w = READ16(ea);
-	REG(RT) = (UINT32)BYTE_REVERSE16(w);
+	REG(RT) = (uint32_t)BYTE_REVERSE16(w);
 }
 
-static void ppc_lhz(UINT32 op)
+static void ppc_lhz(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
 	else
 		ea = REG(RA) + SIMM16;
 
-	REG(RT) = (UINT32)READ16(ea);
+	REG(RT) = (uint32_t)READ16(ea);
 }
 
-static void ppc_lhzu(UINT32 op)
+static void ppc_lhzu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
-	REG(RT) = (UINT32)READ16(ea);
+	REG(RT) = (uint32_t)READ16(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lhzux(UINT32 op)
+static void ppc_lhzux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
-	REG(RT) = (UINT32)READ16(ea);
+	REG(RT) = (uint32_t)READ16(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lhzx(UINT32 op)
+static void ppc_lhzx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
 	else
 		ea = REG(RA) + REG(RB);
 
-	REG(RT) = (UINT32)READ16(ea);
+	REG(RT) = (uint32_t)READ16(ea);
 }
 #endif
 
-static void ppc_lmw(UINT32 op)
+static void ppc_lmw(uint32_t op)
 {
 	int r = RT;
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
@@ -705,10 +705,10 @@ static void ppc_lmw(UINT32 op)
 	}
 }
 
-static void ppc_lswi(UINT32 op)
+static void ppc_lswi(uint32_t op)
 {
 	int n, r, i;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	if( RA != 0 )
 		ea = REG(RA);
 
@@ -736,10 +736,10 @@ static void ppc_lswi(UINT32 op)
 	}
 }
 
-static void ppc_lswx(UINT32 op)
+static void ppc_lswx(uint32_t op)
 {
 	int n, r, i;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	if( RA != 0 )
 		ea = REG(RA);
 
@@ -766,9 +766,9 @@ static void ppc_lswx(UINT32 op)
 	}
 }
 
-static void ppc_lwarx(UINT32 op)
+static void ppc_lwarx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -782,10 +782,10 @@ static void ppc_lwarx(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_lwbrx(UINT32 op)
+static void ppc_lwbrx(uint32_t op)
 {
-	UINT32 ea;
-	UINT32 w;
+	uint32_t ea;
+	uint32_t w;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -796,9 +796,9 @@ static void ppc_lwbrx(UINT32 op)
 	REG(RT) = BYTE_REVERSE32(w);
 }
 
-static void ppc_lwz(UINT32 op)
+static void ppc_lwz(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
@@ -808,25 +808,25 @@ static void ppc_lwz(UINT32 op)
 	REG(RT) = READ32(ea);
 }
 
-static void ppc_lwzu(UINT32 op)
+static void ppc_lwzu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
 	REG(RT) = READ32(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lwzux(UINT32 op)
+static void ppc_lwzux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
 	REG(RT) = READ32(ea);
 	REG(RA) = ea;
 }
 
-static void ppc_lwzx(UINT32 op)
+static void ppc_lwzx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -836,34 +836,34 @@ static void ppc_lwzx(UINT32 op)
 	REG(RT) = READ32(ea);
 }
 
-static void ppc_mcrf(UINT32 op)
+static void ppc_mcrf(uint32_t op)
 {
 	CR(RT >> 2) = CR(RA >> 2);
 }
 
-static void ppc_mcrxr(UINT32 op)
+static void ppc_mcrxr(uint32_t op)
 {
 	CR(RT >> 2) = (XER >> 28) & 0x0F;
 	XER &= ~0xf0000000;
 }
 
-static void ppc_mfcr(UINT32 op)
+static void ppc_mfcr(uint32_t op)
 {
 	REG(RT) = ppc_get_cr();
 }
 
-static void ppc_mfmsr(UINT32 op)
+static void ppc_mfmsr(uint32_t op)
 {
 	REG(RT) = ppc_get_msr();
 }
 
-static void ppc_mfspr(UINT32 op)
+static void ppc_mfspr(uint32_t op)
 {
 	REG(RT) = ppc_get_spr(SPR);
 }
 #endif
 
-static void ppc_mtcrf(UINT32 op)
+static void ppc_mtcrf(uint32_t op)
 {
 	int fxm = FXM;
 	int t = RT;
@@ -879,61 +879,61 @@ static void ppc_mtcrf(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_mtmsr(UINT32 op)
+static void ppc_mtmsr(uint32_t op)
 {
 	ppc_set_msr(REG(RS));
 }
 
-static void ppc_mtspr(UINT32 op)
+static void ppc_mtspr(uint32_t op)
 {
 	ppc_set_spr(SPR, REG(RS));
 }
 
-static void ppc_mulhwx(UINT32 op)
+static void ppc_mulhwx(uint32_t op)
 {
-	INT64 ra = (INT64)(INT32)REG(RA);
-	INT64 rb = (INT64)(INT32)REG(RB);
+	int64_t ra = (int64_t)(int32_t)REG(RA);
+	int64_t rb = (int64_t)(int32_t)REG(RB);
 
-	REG(RT) = (UINT32)((ra * rb) >> 32);
+	REG(RT) = (uint32_t)((ra * rb) >> 32);
 
 	if( RCBIT ) {
 		SET_CR0(REG(RT));
 	}
 }
 
-static void ppc_mulhwux(UINT32 op)
+static void ppc_mulhwux(uint32_t op)
 {
-	UINT64 ra = (UINT64)REG(RA);
-	UINT64 rb = (UINT64)REG(RB);
+	uint64_t ra = (uint64_t)REG(RA);
+	uint64_t rb = (uint64_t)REG(RB);
 
-	REG(RT) = (UINT32)((ra * rb) >> 32);
+	REG(RT) = (uint32_t)((ra * rb) >> 32);
 
 	if( RCBIT ) {
 		SET_CR0(REG(RT));
 	}
 }
 
-static void ppc_mulli(UINT32 op)
+static void ppc_mulli(uint32_t op)
 {
-	INT32 ra = (INT32)REG(RA);
-	INT32 i = SIMM16;
+	int32_t ra = (int32_t)REG(RA);
+	int32_t i = SIMM16;
 
 	REG(RT) = ra * i;
 }
 
-static void ppc_mullwx(UINT32 op)
+static void ppc_mullwx(uint32_t op)
 {
-	INT64 ra = (INT64)(INT32)REG(RA);
-	INT64 rb = (INT64)(INT32)REG(RB);
-	INT64 r;
+	int64_t ra = (int64_t)(int32_t)REG(RA);
+	int64_t rb = (int64_t)(int32_t)REG(RB);
+	int64_t r;
 
 	r = ra * rb;
-	REG(RT) = (UINT32)r;
+	REG(RT) = (uint32_t)r;
 
 	if( OEBIT ) {
 		XER &= ~XER_OV;
 
-		if( r != (INT64)(INT32)r )
+		if( r != (int64_t)(int32_t)r )
 			XER |= XER_OV | XER_SO;
 	}
 
@@ -942,7 +942,7 @@ static void ppc_mullwx(UINT32 op)
 	}
 }
 
-static void ppc_nandx(UINT32 op)
+static void ppc_nandx(uint32_t op)
 {
 	REG(RA) = ~(REG(RS) & REG(RB));
 
@@ -951,7 +951,7 @@ static void ppc_nandx(UINT32 op)
 	}
 }
 
-static void ppc_negx(UINT32 op)
+static void ppc_negx(uint32_t op)
 {
 	REG(RT) = -REG(RA);
 
@@ -967,7 +967,7 @@ static void ppc_negx(UINT32 op)
 	}
 }
 
-static void ppc_norx(UINT32 op)
+static void ppc_norx(uint32_t op)
 {
 	REG(RA) = ~(REG(RS) | REG(RB));
 
@@ -976,7 +976,7 @@ static void ppc_norx(UINT32 op)
 	}
 }
 
-static void ppc_orx(UINT32 op)
+static void ppc_orx(uint32_t op)
 {
 	REG(RA) = REG(RS) | REG(RB);
 
@@ -985,7 +985,7 @@ static void ppc_orx(UINT32 op)
 	}
 }
 
-static void ppc_orcx(UINT32 op)
+static void ppc_orcx(uint32_t op)
 {
 	REG(RA) = REG(RS) | ~REG(RB);
 
@@ -994,29 +994,29 @@ static void ppc_orcx(UINT32 op)
 	}
 }
 
-static void ppc_ori(UINT32 op)
+static void ppc_ori(uint32_t op)
 {
 	REG(RA) = REG(RS) | UIMM16;
 }
 
-static void ppc_oris(UINT32 op)
+static void ppc_oris(uint32_t op)
 {
 	REG(RA) = REG(RS) | (UIMM16 << 16);
 }
 
-static void ppc_rfi(UINT32 op)
+static void ppc_rfi(uint32_t op)
 {
-	UINT32 msr;
+	uint32_t msr;
 	ppc.npc = ppc_get_spr(SPR_SRR0);
 	msr = ppc_get_spr(SPR_SRR1);
 	ppc_set_msr( msr );
 }
 
-static void ppc_rlwimix(UINT32 op)
+static void ppc_rlwimix(uint32_t op)
 {
-	UINT32 r;
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
-	UINT32 rs = REG(RS);
+	uint32_t r;
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t rs = REG(RS);
 	int sh = SH;
 
 	r = (rs << sh) | (rs >> (32-sh));
@@ -1027,11 +1027,11 @@ static void ppc_rlwimix(UINT32 op)
 	}
 }
 
-static void ppc_rlwinmx(UINT32 op)
+static void ppc_rlwinmx(uint32_t op)
 {
-	UINT32 r;
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
-	UINT32 rs = REG(RS);
+	uint32_t r;
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t rs = REG(RS);
 	int sh = SH;
 
 	r = (rs << sh) | (rs >> (32-sh));
@@ -1042,11 +1042,11 @@ static void ppc_rlwinmx(UINT32 op)
 	}
 }
 
-static void ppc_rlwnmx(UINT32 op)
+static void ppc_rlwnmx(uint32_t op)
 {
-	UINT32 r;
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
-	UINT32 rs = REG(RS);
+	uint32_t r;
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t rs = REG(RS);
 	int sh = REG(RB) & 0x1f;
 
 	r = (rs << sh) | (rs >> (32-sh));
@@ -1059,7 +1059,7 @@ static void ppc_rlwnmx(UINT32 op)
 #endif
 
 #ifndef PPC_DRC
-static void ppc_sc(UINT32 op)
+static void ppc_sc(uint32_t op)
 {
 	if (ppc.is603) {
 		ppc603_exception(EXCEPTION_SYSTEM_CALL);
@@ -1073,7 +1073,7 @@ static void ppc_sc(UINT32 op)
 }
 #endif
 
-static void ppc_slwx(UINT32 op)
+static void ppc_slwx(uint32_t op)
 {
 	int sh = REG(RB) & 0x3f;
 
@@ -1089,7 +1089,7 @@ static void ppc_slwx(UINT32 op)
 	}
 }
 
-static void ppc_srawx(UINT32 op)
+static void ppc_srawx(uint32_t op)
 {
 	int sh = REG(RB) & 0x3f;
 
@@ -1104,8 +1104,8 @@ static void ppc_srawx(UINT32 op)
 			XER |= XER_CA;
 	}
 	else {
-		REG(RA) = (INT32)(REG(RS)) >> sh;
-		if( ((INT32)(REG(RS)) < 0) && (REG(RS) & BITMASK_0(sh)) )
+		REG(RA) = (int32_t)(REG(RS)) >> sh;
+		if( ((int32_t)(REG(RS)) < 0) && (REG(RS) & BITMASK_0(sh)) )
 			XER |= XER_CA;
 	}
 
@@ -1114,22 +1114,22 @@ static void ppc_srawx(UINT32 op)
 	}
 }
 
-static void ppc_srawix(UINT32 op)
+static void ppc_srawix(uint32_t op)
 {
 	int sh = SH;
 
 	XER &= ~XER_CA;
-	if( ((INT32)(REG(RS)) < 0) && (REG(RS) & BITMASK_0(sh)) )
+	if( ((int32_t)(REG(RS)) < 0) && (REG(RS) & BITMASK_0(sh)) )
 		XER |= XER_CA;
 
-	REG(RA) = (INT32)(REG(RS)) >> sh;
+	REG(RA) = (int32_t)(REG(RS)) >> sh;
 
 	if( RCBIT ) {
 		SET_CR0(REG(RA));
 	}
 }
 
-static void ppc_srwx(UINT32 op)
+static void ppc_srwx(uint32_t op)
 {
 	int sh = REG(RB) & 0x3f;
 
@@ -1146,62 +1146,62 @@ static void ppc_srwx(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_stb(UINT32 op)
+static void ppc_stb(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
 	else
 		ea = REG(RA) + SIMM16;
 
-	WRITE8(ea, (UINT8)REG(RS));
+	WRITE8(ea, (uint8_t)REG(RS));
 }
 
-static void ppc_stbu(UINT32 op)
+static void ppc_stbu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
-	WRITE8(ea, (UINT8)REG(RS));
+	WRITE8(ea, (uint8_t)REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_stbux(UINT32 op)
+static void ppc_stbux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
-	WRITE8(ea, (UINT8)REG(RS));
+	WRITE8(ea, (uint8_t)REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_stbx(UINT32 op)
+static void ppc_stbx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
 	else
 		ea = REG(RA) + REG(RB);
 
-	WRITE8(ea, (UINT8)REG(RS));
+	WRITE8(ea, (uint8_t)REG(RS));
 }
 
-static void ppc_sth(UINT32 op)
+static void ppc_sth(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
 	else
 		ea = REG(RA) + SIMM16;
 
-	WRITE16(ea, (UINT16)REG(RS));
+	WRITE16(ea, (uint16_t)REG(RS));
 }
 
-static void ppc_sthbrx(UINT32 op)
+static void ppc_sthbrx(uint32_t op)
 {
-	UINT32 ea;
-	UINT16 w;
+	uint32_t ea;
+	uint16_t w;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -1209,41 +1209,41 @@ static void ppc_sthbrx(UINT32 op)
 		ea = REG(RA) + REG(RB);
 
 	w = REG(RS);
-	WRITE16(ea, (UINT16)BYTE_REVERSE16(w));
+	WRITE16(ea, (uint16_t)BYTE_REVERSE16(w));
 }
 
-static void ppc_sthu(UINT32 op)
+static void ppc_sthu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
-	WRITE16(ea, (UINT16)REG(RS));
+	WRITE16(ea, (uint16_t)REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_sthux(UINT32 op)
+static void ppc_sthux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
-	WRITE16(ea, (UINT16)REG(RS));
+	WRITE16(ea, (uint16_t)REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_sthx(UINT32 op)
+static void ppc_sthx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
 	else
 		ea = REG(RA) + REG(RB);
 
-	WRITE16(ea, (UINT16)REG(RS));
+	WRITE16(ea, (uint16_t)REG(RS));
 }
 #endif
 
-static void ppc_stmw(UINT32 op)
+static void ppc_stmw(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 	int r = RS;
 
 	if( RA == 0 )
@@ -1259,10 +1259,10 @@ static void ppc_stmw(UINT32 op)
 	}
 }
 
-static void ppc_stswi(UINT32 op)
+static void ppc_stswi(uint32_t op)
 {
 	int n, r, i;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	if( RA != 0 )
 		ea = REG(RA);
 
@@ -1289,10 +1289,10 @@ static void ppc_stswi(UINT32 op)
 	}
 }
 
-static void ppc_stswx(UINT32 op)
+static void ppc_stswx(uint32_t op)
 {
 	int n, r, i;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	if( RA != 0 )
 		ea = REG(RA);
 
@@ -1319,9 +1319,9 @@ static void ppc_stswx(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_stw(UINT32 op)
+static void ppc_stw(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = SIMM16;
@@ -1331,10 +1331,10 @@ static void ppc_stw(UINT32 op)
 	WRITE32(ea, REG(RS));
 }
 
-static void ppc_stwbrx(UINT32 op)
+static void ppc_stwbrx(uint32_t op)
 {
-	UINT32 ea;
-	UINT32 w;
+	uint32_t ea;
+	uint32_t w;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -1346,9 +1346,9 @@ static void ppc_stwbrx(UINT32 op)
 }
 #endif
 
-static void ppc_stwcx_rc(UINT32 op)
+static void ppc_stwcx_rc(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -1372,25 +1372,25 @@ static void ppc_stwcx_rc(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_stwu(UINT32 op)
+static void ppc_stwu(uint32_t op)
 {
-	UINT32 ea = REG(RA) + SIMM16;
+	uint32_t ea = REG(RA) + SIMM16;
 
 	WRITE32(ea, REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_stwux(UINT32 op)
+static void ppc_stwux(uint32_t op)
 {
-	UINT32 ea = REG(RA) + REG(RB);
+	uint32_t ea = REG(RA) + REG(RB);
 
 	WRITE32(ea, REG(RS));
 	REG(RA) = ea;
 }
 
-static void ppc_stwx(UINT32 op)
+static void ppc_stwx(uint32_t op)
 {
-	UINT32 ea;
+	uint32_t ea;
 
 	if( RA == 0 )
 		ea = REG(RB);
@@ -1400,10 +1400,10 @@ static void ppc_stwx(UINT32 op)
 	WRITE32(ea, REG(RS));
 }
 
-static void ppc_subfx(UINT32 op)
+static void ppc_subfx(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
 	REG(RT) = rb - ra;
 
 	if( OEBIT ) {
@@ -1415,10 +1415,10 @@ static void ppc_subfx(UINT32 op)
 }
 #endif
 
-static void ppc_subfcx(UINT32 op)
+static void ppc_subfcx(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
 	REG(RT) = rb - ra;
 
 	SET_SUB_CA(REG(RT), rb, ra);
@@ -1432,12 +1432,12 @@ static void ppc_subfcx(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_subfex(UINT32 op)
+static void ppc_subfex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 rb = REG(RB);
-	UINT32 carry = (XER >> 29) & 0x1;
-	UINT32 r;
+	uint32_t ra = REG(RA);
+	uint32_t rb = REG(RB);
+	uint32_t carry = (XER >> 29) & 0x1;
+	uint32_t r;
 
 	r = ~ra + carry;
 	REG(RT) = rb + r;
@@ -1454,10 +1454,10 @@ static void ppc_subfex(UINT32 op)
 	}
 }
 
-static void ppc_subfic(UINT32 op)
+static void ppc_subfic(uint32_t op)
 {
-	UINT32 i = SIMM16;
-	UINT32 ra = REG(RA);
+	uint32_t i = SIMM16;
+	uint32_t ra = REG(RA);
 
 	REG(RT) = i - ra;
 
@@ -1465,11 +1465,11 @@ static void ppc_subfic(UINT32 op)
 }
 #endif
 
-static void ppc_subfmex(UINT32 op)
+static void ppc_subfmex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 carry = (XER >> 29) & 0x1;
-	UINT32 r;
+	uint32_t ra = REG(RA);
+	uint32_t carry = (XER >> 29) & 0x1;
+	uint32_t r;
 
 	r = ~ra + carry;
 	REG(RT) = r - 1;
@@ -1486,10 +1486,10 @@ static void ppc_subfmex(UINT32 op)
 	}
 }
 
-static void ppc_subfzex(UINT32 op)
+static void ppc_subfzex(uint32_t op)
 {
-	UINT32 ra = REG(RA);
-	UINT32 carry = (XER >> 29) & 0x1;
+	uint32_t ra = REG(RA);
+	uint32_t carry = (XER >> 29) & 0x1;
 
 	REG(RT) = ~ra + carry;
 
@@ -1504,18 +1504,18 @@ static void ppc_subfzex(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_sync(UINT32 op)
+static void ppc_sync(uint32_t op)
 {
 
 }
 #endif
 
 #ifndef PPC_DRC
-static void ppc_tw(UINT32 op)
+static void ppc_tw(uint32_t op)
 {
 	int exception = 0;
-	INT32 a = REG(RA);
-	INT32 b = REG(RB);
+	int32_t a = REG(RA);
+	int32_t b = REG(RB);
 	int to = RT;
 
 	if( (a < b) && (to & 0x10) ) {
@@ -1527,10 +1527,10 @@ static void ppc_tw(UINT32 op)
 	if( (a == b) && (to & 0x04) ) {
 		exception = 1;
 	}
-	if( ((UINT32)a < (UINT32)b) && (to & 0x02) ) {
+	if( ((uint32_t)a < (uint32_t)b) && (to & 0x02) ) {
 		exception = 1;
 	}
-	if( ((UINT32)a > (UINT32)b) && (to & 0x01) ) {
+	if( ((uint32_t)a > (uint32_t)b) && (to & 0x01) ) {
 		exception = 1;
 	}
 
@@ -1549,11 +1549,11 @@ static void ppc_tw(UINT32 op)
 #endif
 
 #ifndef PPC_DRC
-static void ppc_twi(UINT32 op)
+static void ppc_twi(uint32_t op)
 {
 	int exception = 0;
-	INT32 a = REG(RA);
-	INT32 i = SIMM16;
+	int32_t a = REG(RA);
+	int32_t i = SIMM16;
 	int to = RT;
 
 	if( (a < i) && (to & 0x10) ) {
@@ -1565,10 +1565,10 @@ static void ppc_twi(UINT32 op)
 	if( (a == i) && (to & 0x04) ) {
 		exception = 1;
 	}
-	if( ((UINT32)a < (UINT32)i) && (to & 0x02) ) {
+	if( ((uint32_t)a < (uint32_t)i) && (to & 0x02) ) {
 		exception = 1;
 	}
-	if( ((UINT32)a > (UINT32)i) && (to & 0x01) ) {
+	if( ((uint32_t)a > (uint32_t)i) && (to & 0x01) ) {
 		exception = 1;
 	}
 
@@ -1587,7 +1587,7 @@ static void ppc_twi(UINT32 op)
 #endif
 
 #ifndef PPC_DRC
-static void ppc_xorx(UINT32 op)
+static void ppc_xorx(uint32_t op)
 {
 	REG(RA) = REG(RS) ^ REG(RB);
 
@@ -1596,19 +1596,19 @@ static void ppc_xorx(UINT32 op)
 	}
 }
 
-static void ppc_xori(UINT32 op)
+static void ppc_xori(uint32_t op)
 {
 	REG(RA) = REG(RS) ^ UIMM16;
 }
 
-static void ppc_xoris(UINT32 op)
+static void ppc_xoris(uint32_t op)
 {
 	REG(RA) = REG(RS) ^ (UIMM16 << 16);
 }
 
 
 
-static void ppc_invalid(UINT32 op)
+static void ppc_invalid(uint32_t op)
 {
 	fatalerror("ppc: Invalid opcode %08X PC : %X", op, ppc.pc);
 }
@@ -1658,7 +1658,7 @@ INLINE int is_infinity_double(FPR x)
 
 INLINE int is_normalized_double(FPR x)
 {
-	UINT64 exp;
+	uint64_t exp;
 
 	exp = (x.id & DOUBLE_EXP) >> 52;
 
@@ -1676,39 +1676,39 @@ INLINE int sign_double(FPR x)
 	return ((x.id & DOUBLE_SIGN) != 0);
 }
 
-INLINE INT64 round_to_nearest(FPR f)
+INLINE int64_t round_to_nearest(FPR f)
 {
 	if (f.fd >= 0)
 	{
-		return (INT64)(f.fd + 0.5);
+		return (int64_t)(f.fd + 0.5);
 	}
 	else
 	{
-		return -(INT64)(-f.fd + 0.5);
+		return -(int64_t)(-f.fd + 0.5);
 	}
 }
 
-INLINE INT64 round_toward_zero(FPR f)
+INLINE int64_t round_toward_zero(FPR f)
 {
-	return (INT64)(f.fd);
+	return (int64_t)(f.fd);
 }
 
-INLINE INT64 round_toward_positive_infinity(FPR f)
+INLINE int64_t round_toward_positive_infinity(FPR f)
 {
 	double r = ceil(f.fd);
-	return (INT64)(r);
+	return (int64_t)(r);
 }
 
-INLINE INT64 round_toward_negative_infinity(FPR f)
+INLINE int64_t round_toward_negative_infinity(FPR f)
 {
 	double r = floor(f.fd);
-	return (INT64)(r);
+	return (int64_t)(r);
 }
 
 
 INLINE void set_fprf(FPR f)
 {
-	UINT32 fprf;
+	uint32_t fprf;
 
 	// see page 3-30, 3-31
 
@@ -1757,11 +1757,11 @@ INLINE void set_fprf(FPR f)
 
 
 
-static void ppc_lfs(UINT32 op)
+static void ppc_lfs(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	if(a)
@@ -1771,11 +1771,11 @@ static void ppc_lfs(UINT32 op)
 	FPR(t).fd = (double)(f.f);
 }
 
-static void ppc_lfsu(UINT32 op)
+static void ppc_lfsu(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	ea += REG(a);
@@ -1787,11 +1787,11 @@ static void ppc_lfsu(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_lfd(UINT32 op)
+static void ppc_lfd(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	if(a)
 		ea += REG(a);
@@ -1799,11 +1799,11 @@ static void ppc_lfd(UINT32 op)
 	FPR(t).id = READ64(ea);
 }
 
-static void ppc_lfdu(UINT32 op)
+static void ppc_lfdu(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 d = RD;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t d = RD;
 
 	ea += REG(a);
 
@@ -1813,11 +1813,11 @@ static void ppc_lfdu(UINT32 op)
 }
 #endif
 
-static void ppc_stfs(UINT32 op)
+static void ppc_stfs(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	if(a)
@@ -1827,11 +1827,11 @@ static void ppc_stfs(UINT32 op)
 	WRITE32(ea, f.i);
 }
 
-static void ppc_stfsu(UINT32 op)
+static void ppc_stfsu(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	ea += REG(a);
@@ -1843,11 +1843,11 @@ static void ppc_stfsu(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_stfd(UINT32 op)
+static void ppc_stfd(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	if(a)
 		ea += REG(a);
@@ -1855,11 +1855,11 @@ static void ppc_stfd(UINT32 op)
 	WRITE64(ea, FPR(t).id);
 }
 
-static void ppc_stfdu(UINT32 op)
+static void ppc_stfdu(uint32_t op)
 {
-	UINT32 ea = SIMM16;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = SIMM16;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	ea += REG(a);
 
@@ -1868,11 +1868,11 @@ static void ppc_stfdu(UINT32 op)
 	REG(a) = ea;
 }
 
-static void ppc_lfdux(UINT32 op)
+static void ppc_lfdux(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 d = RD;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t d = RD;
 
 	ea += REG(a);
 
@@ -1881,11 +1881,11 @@ static void ppc_lfdux(UINT32 op)
 	REG(a) = ea;
 }
 
-static void ppc_lfdx(UINT32 op)
+static void ppc_lfdx(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 d = RD;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t d = RD;
 
 	if(a)
 		ea += REG(a);
@@ -1894,11 +1894,11 @@ static void ppc_lfdx(UINT32 op)
 }
 #endif
 
-static void ppc_lfsux(UINT32 op)
+static void ppc_lfsux(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	ea += REG(a);
@@ -1909,11 +1909,11 @@ static void ppc_lfsux(UINT32 op)
 	REG(a) = ea;
 }
 
-static void ppc_lfsx(UINT32 op)
+static void ppc_lfsx(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	if(a)
@@ -1923,52 +1923,52 @@ static void ppc_lfsx(UINT32 op)
 	FPR(t).fd = (double)(f.f);
 }
 
-static void ppc_mfsr(UINT32 op)
+static void ppc_mfsr(uint32_t op)
 {
-	UINT32 sr = (op >> 16) & 15;
-	UINT32 t = RT;
+	uint32_t sr = (op >> 16) & 15;
+	uint32_t t = RT;
 
 	CHECK_SUPERVISOR();
 
 	REG(t) = ppc.sr[sr];
 }
 
-static void ppc_mfsrin(UINT32 op)
+static void ppc_mfsrin(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_SUPERVISOR();
 
 	REG(t) = ppc.sr[REG(b) >> 28];
 }
 
-static void ppc_mftb(UINT32 op)
+static void ppc_mftb(uint32_t op)
 {
-	UINT32 x = SPRF;
+	uint32_t x = SPRF;
 
 	switch(x)
 	{
-		case 268:	REG(RT) = (UINT32)(ppc_read_timebase()); break;
-		case 269:	REG(RT) = (UINT32)(ppc_read_timebase() >> 32); break;
+		case 268:	REG(RT) = (uint32_t)(ppc_read_timebase()); break;
+		case 269:	REG(RT) = (uint32_t)(ppc_read_timebase() >> 32); break;
 		default:	fatalerror("ppc: Invalid timebase register %d at %08X", x, ppc.pc); break;
 	}
 }
 
-static void ppc_mtsr(UINT32 op)
+static void ppc_mtsr(uint32_t op)
 {
-	UINT32 sr = (op >> 16) & 15;
-	UINT32 t = RT;
+	uint32_t sr = (op >> 16) & 15;
+	uint32_t t = RT;
 
 	CHECK_SUPERVISOR();
 
 	ppc.sr[sr] = REG(t);
 }
 
-static void ppc_mtsrin(UINT32 op)
+static void ppc_mtsrin(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_SUPERVISOR();
 
@@ -1976,16 +1976,16 @@ static void ppc_mtsrin(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_dcba(UINT32 op)
+static void ppc_dcba(uint32_t op)
 {
 	/* TODO: Cache not emulated so this opcode doesn't need to be implemented */
 }
 
-static void ppc_stfdux(UINT32 op)
+static void ppc_stfdux(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	ea += REG(a);
 
@@ -1995,11 +1995,11 @@ static void ppc_stfdux(UINT32 op)
 }
 #endif
 
-static void ppc_stfdx(UINT32 op)
+static void ppc_stfdx(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	if(a)
 		ea += REG(a);
@@ -2007,23 +2007,23 @@ static void ppc_stfdx(UINT32 op)
 	WRITE64(ea, FPR(t).id);
 }
 
-static void ppc_stfiwx(UINT32 op)
+static void ppc_stfiwx(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	if(a)
 		ea += REG(a);
 
-	WRITE32(ea, (UINT32)FPR(t).id);
+	WRITE32(ea, (uint32_t)FPR(t).id);
 }
 
-static void ppc_stfsux(UINT32 op)
+static void ppc_stfsux(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	ea += REG(a);
@@ -2034,11 +2034,11 @@ static void ppc_stfsux(UINT32 op)
 	REG(a) = ea;
 }
 
-static void ppc_stfsx(UINT32 op)
+static void ppc_stfsx(uint32_t op)
 {
-	UINT32 ea = REG(RB);
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t ea = REG(RB);
+	uint32_t a = RA;
+	uint32_t t = RT;
 	FPR32 f;
 
 	if(a)
@@ -2050,36 +2050,36 @@ static void ppc_stfsx(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_tlbia(UINT32 op)
+static void ppc_tlbia(uint32_t op)
 {
 	/* TODO: TLB not emulated so this opcode doesn't need to implemented */
 }
 
-static void ppc_tlbie(UINT32 op)
+static void ppc_tlbie(uint32_t op)
 {
 	/* TODO: TLB not emulated so this opcode doesn't need to implemented */
 }
 
-static void ppc_tlbsync(UINT32 op)
+static void ppc_tlbsync(uint32_t op)
 {
 	/* TODO: TLB not emulated so this opcode doesn't need to implemented */
 }
 
-static void ppc_eciwx(UINT32 op)
+static void ppc_eciwx(uint32_t op)
 {
 	ppc_unimplemented(op);
 }
 
-static void ppc_ecowx(UINT32 op)
+static void ppc_ecowx(uint32_t op)
 {
 	ppc_unimplemented(op);
 }
 #endif
 
-static void ppc_fabsx(UINT32 op)
+static void ppc_fabsx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2090,11 +2090,11 @@ static void ppc_fabsx(UINT32 op)
 	}
 }
 
-static void ppc_faddx(UINT32 op)
+static void ppc_faddx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2108,12 +2108,12 @@ static void ppc_faddx(UINT32 op)
 	}
 }
 
-static void ppc_fcmpo(UINT32 op)
+static void ppc_fcmpo(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = (RT >> 2);
-	UINT32 c;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = (RT >> 2);
+	uint32_t c;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2145,12 +2145,12 @@ static void ppc_fcmpo(UINT32 op)
 	ppc.fpscr |= (c << 12);
 }
 
-static void ppc_fcmpu(UINT32 op)
+static void ppc_fcmpu(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = (RT >> 2);
-	UINT32 c;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = (RT >> 2);
+	uint32_t c;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2179,11 +2179,11 @@ static void ppc_fcmpu(UINT32 op)
 	ppc.fpscr |= (c << 12);
 }
 
-static void ppc_fctiwx(UINT32 op)
+static void ppc_fctiwx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
-	INT64 r = 0;
+	uint32_t b = RB;
+	uint32_t t = RT;
+	int64_t r = 0;
 
 	// TODO: fix FPSCR flags FX,VXSNAN,VXCVI
 
@@ -2193,20 +2193,20 @@ static void ppc_fctiwx(UINT32 op)
 
 	switch(ppc.fpscr & 3)
 	{
-		case 0: r = (INT64)round_to_nearest(FPR(b)); break;
-		case 1: r = (INT64)round_toward_zero(FPR(b)); break;
-		case 2: r = (INT64)round_toward_positive_infinity(FPR(b)); break;
-		case 3: r = (INT64)round_toward_negative_infinity(FPR(b)); break;
+		case 0: r = (int64_t)round_to_nearest(FPR(b)); break;
+		case 1: r = (int64_t)round_toward_zero(FPR(b)); break;
+		case 2: r = (int64_t)round_toward_positive_infinity(FPR(b)); break;
+		case 3: r = (int64_t)round_toward_negative_infinity(FPR(b)); break;
 	}
 
-    if(r > (INT64)((INT32)0x7FFFFFFF))
+    if(r > (int64_t)((int32_t)0x7FFFFFFF))
 	{
 		FPR(t).id = 0x7FFFFFFF;
 		// FPSCR[FR] = 0
 		// FPSCR[FI] = 1
 		// FPSCR[XX] = 1
 	}
-	else if(FPR(b).fd < (INT64)((INT32)0x80000000))
+	else if(FPR(b).fd < (int64_t)((int32_t)0x80000000))
 	{
 		FPR(t).id = 0x80000000;
 		// FPSCR[FR] = 1
@@ -2215,7 +2215,7 @@ static void ppc_fctiwx(UINT32 op)
 	}
 	else
 	{
-		FPR(t).id = (UINT32)r;
+		FPR(t).id = (uint32_t)r;
 		// FPSCR[FR] = t.iw > t.fd
 		// FPSCR[FI] = t.iw == t.fd
 		// FPSCR[XX] = ?
@@ -2227,11 +2227,11 @@ static void ppc_fctiwx(UINT32 op)
 	}
 }
 
-static void ppc_fctiwzx(UINT32 op)
+static void ppc_fctiwzx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
-	INT64 r;
+	uint32_t b = RB;
+	uint32_t t = RT;
+	int64_t r;
 
 	// TODO: fix FPSCR flags FX,VXSNAN,VXCVI
 
@@ -2240,7 +2240,7 @@ static void ppc_fctiwzx(UINT32 op)
     SET_VXSNAN_1(FPR(b));
 	r = round_toward_zero(FPR(b));
 
-    if(r > (INT64)((INT32)0x7fffffff))
+    if(r > (int64_t)((int32_t)0x7fffffff))
 	{
 		FPR(t).id = 0x7fffffff;
 		// FPSCR[FR] = 0
@@ -2248,7 +2248,7 @@ static void ppc_fctiwzx(UINT32 op)
 		// FPSCR[XX] = 1
 
 	}
-	else if(r < (INT64)((INT32)0x80000000))
+	else if(r < (int64_t)((int32_t)0x80000000))
 	{
 		FPR(t).id = 0x80000000;
 		// FPSCR[FR] = 1
@@ -2257,7 +2257,7 @@ static void ppc_fctiwzx(UINT32 op)
 	}
 	else
 	{
-		FPR(t).id = (UINT32)r;
+		FPR(t).id = (uint32_t)r;
 		// FPSCR[FR] = t.iw > t.fd
 		// FPSCR[FI] = t.iw == t.fd
 		// FPSCR[XX] = ?
@@ -2269,11 +2269,11 @@ static void ppc_fctiwzx(UINT32 op)
 	}
 }
 
-static void ppc_fdivx(UINT32 op)
+static void ppc_fdivx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2287,10 +2287,10 @@ static void ppc_fdivx(UINT32 op)
 	}
 }
 
-static void ppc_fmrx(UINT32 op)
+static void ppc_fmrx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2301,10 +2301,10 @@ static void ppc_fmrx(UINT32 op)
 	}
 }
 
-static void ppc_fnabsx(UINT32 op)
+static void ppc_fnabsx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2315,10 +2315,10 @@ static void ppc_fnabsx(UINT32 op)
 	}
 }
 
-static void ppc_fnegx(UINT32 op)
+static void ppc_fnegx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2329,10 +2329,10 @@ static void ppc_fnegx(UINT32 op)
 	}
 }
 
-static void ppc_frspx(UINT32 op)
+static void ppc_frspx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2346,10 +2346,10 @@ static void ppc_frspx(UINT32 op)
 	}
 }
 
-static void ppc_frsqrtex(UINT32 op)
+static void ppc_frsqrtex(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2363,11 +2363,11 @@ static void ppc_frsqrtex(UINT32 op)
 	}
 }
 
-static void ppc_fsqrtx(UINT32 op)
+static void ppc_fsqrtx(uint32_t op)
 {
 	/* NOTE: PPC603e doesn't support this opcode */
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2381,11 +2381,11 @@ static void ppc_fsqrtx(UINT32 op)
 	}
 }
 
-static void ppc_fsubx(UINT32 op)
+static void ppc_fsubx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2399,18 +2399,18 @@ static void ppc_fsubx(UINT32 op)
 	}
 }
 
-static void ppc_mffsx(UINT32 op)
+static void ppc_mffsx(uint32_t op)
 {
-	FPR(RT).id = (UINT32)ppc.fpscr;
+	FPR(RT).id = (uint32_t)ppc.fpscr;
 
 	if( RCBIT ) {
 		SET_CR1();
 	}
 }
 
-static void ppc_mtfsb0x(UINT32 op)
+static void ppc_mtfsb0x(uint32_t op)
 {
-    UINT32 crbD;
+    uint32_t crbD;
 
     crbD = (op >> 21) & 0x1F;
 
@@ -2422,9 +2422,9 @@ static void ppc_mtfsb0x(UINT32 op)
 	}
 }
 
-static void ppc_mtfsb1x(UINT32 op)
+static void ppc_mtfsb1x(uint32_t op)
 {
-    UINT32 crbD;
+    uint32_t crbD;
 
     crbD = (op >> 21) & 0x1F;
 
@@ -2436,15 +2436,15 @@ static void ppc_mtfsb1x(UINT32 op)
 	}
 }
 
-static void ppc_mtfsfx(UINT32 op)
+static void ppc_mtfsfx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 f = FM;
+	uint32_t b = RB;
+	uint32_t f = FM;
 
 	f = ppc_field_xlat[FM];
 
 	ppc.fpscr &= (~f) | ~(FPSCR_FEX | FPSCR_VX);
-	ppc.fpscr |= (UINT32)(FPR(b).id) & ~(FPSCR_FEX | FPSCR_VX);
+	ppc.fpscr |= (uint32_t)(FPR(b).id) & ~(FPSCR_FEX | FPSCR_VX);
 
 	// FEX, VX
 
@@ -2453,10 +2453,10 @@ static void ppc_mtfsfx(UINT32 op)
 	}
 }
 
-static void ppc_mtfsfix(UINT32 op)
+static void ppc_mtfsfix(uint32_t op)
 {
-    UINT32 crfd = CRFD;
-    UINT32 imm = (op >> 12) & 0xF;
+    uint32_t crfd = CRFD;
+    uint32_t imm = (op >> 12) & 0xF;
 
     /*
      * According to the manual:
@@ -2485,9 +2485,9 @@ static void ppc_mtfsfix(UINT32 op)
 	}
 }
 
-static void ppc_mcrfs(UINT32 op)
+static void ppc_mcrfs(uint32_t op)
 {
-	UINT32 crfs, f;
+	uint32_t crfs, f;
 	crfs = CRFA;
 
 	f = ppc.fpscr >> ((7 - crfs) * 4);	// get crfS field from FPSCR
@@ -2517,11 +2517,11 @@ static void ppc_mcrfs(UINT32 op)
 	CR(CRFD) = f;
 }
 
-static void ppc_faddsx(UINT32 op)
+static void ppc_faddsx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2535,11 +2535,11 @@ static void ppc_faddsx(UINT32 op)
 	}
 }
 
-static void ppc_fdivsx(UINT32 op)
+static void ppc_fdivsx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2553,10 +2553,10 @@ static void ppc_fdivsx(UINT32 op)
 	}
 }
 
-static void ppc_fresx(UINT32 op)
+static void ppc_fresx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2570,11 +2570,11 @@ static void ppc_fresx(UINT32 op)
 	}
 }
 
-static void ppc_fsqrtsx(UINT32 op)
+static void ppc_fsqrtsx(uint32_t op)
 {
 	/* NOTE: This opcode is not supported in PPC603e */
-	UINT32 b = RB;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2588,11 +2588,11 @@ static void ppc_fsqrtsx(UINT32 op)
 	}
 }
 
-static void ppc_fsubsx(UINT32 op)
+static void ppc_fsubsx(uint32_t op)
 {
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2606,12 +2606,12 @@ static void ppc_fsubsx(UINT32 op)
 	}
 }
 
-static void ppc_fmaddx(UINT32 op)
+static void ppc_fmaddx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2626,12 +2626,12 @@ static void ppc_fmaddx(UINT32 op)
 	}
 }
 
-static void ppc_fmsubx(UINT32 op)
+static void ppc_fmsubx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2646,11 +2646,11 @@ static void ppc_fmsubx(UINT32 op)
 	}
 }
 
-static void ppc_fmulx(UINT32 op)
+static void ppc_fmulx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2664,12 +2664,12 @@ static void ppc_fmulx(UINT32 op)
 	}
 }
 
-static void ppc_fnmaddx(UINT32 op)
+static void ppc_fnmaddx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2684,12 +2684,12 @@ static void ppc_fnmaddx(UINT32 op)
 	}
 }
 
-static void ppc_fnmsubx(UINT32 op)
+static void ppc_fnmsubx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2704,12 +2704,12 @@ static void ppc_fnmsubx(UINT32 op)
 	}
 }
 
-static void ppc_fselx(UINT32 op)
+static void ppc_fselx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2720,12 +2720,12 @@ static void ppc_fselx(UINT32 op)
 	}
 }
 
-static void ppc_fmaddsx(UINT32 op)
+static void ppc_fmaddsx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2740,12 +2740,12 @@ static void ppc_fmaddsx(UINT32 op)
 	}
 }
 
-static void ppc_fmsubsx(UINT32 op)
+static void ppc_fmsubsx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2760,11 +2760,11 @@ static void ppc_fmsubsx(UINT32 op)
 	}
 }
 
-static void ppc_fmulsx(UINT32 op)
+static void ppc_fmulsx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 	SET_VXSNAN(FPR(a), FPR(c));
@@ -2777,12 +2777,12 @@ static void ppc_fmulsx(UINT32 op)
 	}
 }
 
-static void ppc_fnmaddsx(UINT32 op)
+static void ppc_fnmaddsx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 
@@ -2797,12 +2797,12 @@ static void ppc_fnmaddsx(UINT32 op)
 	}
 }
 
-static void ppc_fnmsubsx(UINT32 op)
+static void ppc_fnmsubsx(uint32_t op)
 {
-	UINT32 c = RC;
-	UINT32 b = RB;
-	UINT32 a = RA;
-	UINT32 t = RT;
+	uint32_t c = RC;
+	uint32_t b = RB;
+	uint32_t a = RA;
+	uint32_t t = RT;
 
 	CHECK_FPU_AVAILABLE();
 

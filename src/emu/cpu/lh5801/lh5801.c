@@ -56,11 +56,11 @@ struct _lh5810_state
 	PAIR s, p, u, x, y;
 	int tm; //9 bit
 
-	UINT8 t, a;
+	uint8_t t, a;
 
 	int bf, dp, pu, pv;
 
-	UINT16 oldpc;
+	uint16_t oldpc;
 
 	int irq_state;
 

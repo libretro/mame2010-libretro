@@ -1,7 +1,7 @@
 #define	RLC_8BIT(x)				\
 {								\
-	register UINT8 f;			\
-	(x)=(UINT8)(((x)<<1)|((x)>>7)); 	 \
+	register uint8_t f;			\
+	(x)=(uint8_t)(((x)<<1)|((x)>>7)); 	 \
 	if( (x)&1 )					\
 		f=FLAG_C;				\
 	else						\
@@ -13,9 +13,9 @@
 
 #define	RL_8BIT(x)				\
 {								\
-	register UINT8 r;			\
+	register uint8_t r;			\
 	r=((x)&0x80)?FLAG_C:0;		\
-	(x)=(UINT8)(((x)<<1)|((cpustate->b.F&FLAG_C)?1:0));	 \
+	(x)=(uint8_t)(((x)<<1)|((cpustate->b.F&FLAG_C)?1:0));	 \
 	if( (x)==0 )				\
 		r|=FLAG_Z;				\
 	cpustate->b.F=r;			\
@@ -23,8 +23,8 @@
 
 #define	RRC_8BIT(x)				\
 {								\
-	register UINT8 f;			\
-	(x)=(UINT8)(((x)>>1)|((x)<<7)); 	 \
+	register uint8_t f;			\
+	(x)=(uint8_t)(((x)>>1)|((x)<<7)); 	 \
 	if( (x)&0x80 )				\
 		f=FLAG_C;				\
 	else						\
@@ -36,9 +36,9 @@
 
 #define	RR_8BIT(x)				\
 {								\
-	register UINT8 r;			\
+	register uint8_t r;			\
 	r=((x)&1)?FLAG_C:0;			\
-	(x)=(UINT8)(((x)>>1)|((cpustate->b.F&FLAG_C)?0x80:0));	 \
+	(x)=(uint8_t)(((x)>>1)|((cpustate->b.F&FLAG_C)?0x80:0));	 \
 	if( (x)==0 )				\
 		r|=FLAG_Z;				\
 	cpustate->b.F=r;			\
@@ -46,7 +46,7 @@
 
 #define	SLA_8BIT(x)				\
 {								\
-	register UINT8 f;			\
+	register uint8_t f;			\
 	if( (x)&0x80 )				\
 		f=FLAG_C;				\
 	else						\
@@ -59,19 +59,19 @@
 
 #define	SRA_8BIT(x)				\
 {								\
-	register UINT8 f;			\
+	register uint8_t f;			\
 	if( (x)&1 )					\
 		f=FLAG_C;				\
 	else						\
 		f=0;					\
-	(x)=(UINT8)(((char)(x))>>1);	 \
+	(x)=(uint8_t)(((char)(x))>>1);	 \
 	if( (x)==0 )				\
 		f|=FLAG_Z;				\
 	cpustate->b.F=f;			\
 }
 
 #define	SWAP_8BIT(x)			\
-	(x)=(UINT8)(((x)>>4)|((x)<<4)); 	 \
+	(x)=(uint8_t)(((x)>>4)|((x)<<4)); 	 \
 	if( (x)==0 )				\
 		cpustate->b.F=FLAG_Z;	\
 	else						\
@@ -80,7 +80,7 @@
 
 #define	SRL_8BIT(x)				\
 {								\
-	register UINT8 f;			\
+	register uint8_t f;			\
 	if( (x)&1 )					\
 		f=FLAG_C;				\
 	else						\
@@ -93,9 +93,9 @@
 
 #define	BIT_8BIT(n,x)			\
 	if( (x)&(1<<(n)) )			\
-		cpustate->b.F=(UINT8)(FLAG_H|(cpustate->b.F&FLAG_C));  \
+		cpustate->b.F=(uint8_t)(FLAG_H|(cpustate->b.F&FLAG_C));  \
 	else						\
-		cpustate->b.F=(UINT8)(FLAG_Z|FLAG_H|(cpustate->b.F&FLAG_C));
+		cpustate->b.F=(uint8_t)(FLAG_Z|FLAG_H|(cpustate->b.F&FLAG_C));
 
 #define	RES_8BIT(n,x)	(x)&=~(1<<(n));
 

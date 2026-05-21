@@ -14,9 +14,9 @@ static void PENTIUMOP(wrmsr)(i386_state *cpustate)			// Opcode 0x0f 30
 
 static void PENTIUMOP(rdtsc)(i386_state *cpustate)			// Opcode 0x0f 31
 {
-	UINT64 ts = cpustate->tsc + (cpustate->base_cycles - cpustate->cycles);
-	REG32(EAX) = (UINT32)(ts);
-	REG32(EDX) = (UINT32)(ts >> 32);
+	uint64_t ts = cpustate->tsc + (cpustate->base_cycles - cpustate->cycles);
+	REG32(EAX) = (uint32_t)(ts);
+	REG32(EDX) = (uint32_t)(ts >> 32);
 
 	CYCLES(cpustate,CYCLES_RDTSC);
 }
@@ -28,22 +28,22 @@ static void I386OP(cyrix_unknown)(i386_state *cpustate)		// Opcode 0x0f 74
 
 static void PENTIUMOP(cmpxchg8b_m64)(i386_state *cpustate)	// Opcode 0x0f c7
 {
-	UINT8 modm = FETCH(cpustate);
+	uint8_t modm = FETCH(cpustate);
 	if( modm >= 0xc0 ) {
 		fatalerror("pentium: cmpxchg8b_m64 - invalid modm");
 	} else {
-		UINT32 ea = GetEA(cpustate,modm);
-		UINT64 value = READ64(cpustate,ea);
-		UINT64 edx_eax = (((UINT64) REG32(EDX)) << 32) | REG32(EAX);
-		UINT64 ecx_ebx = (((UINT64) REG32(ECX)) << 32) | REG32(EBX);
+		uint32_t ea = GetEA(cpustate,modm);
+		uint64_t value = READ64(cpustate,ea);
+		uint64_t edx_eax = (((uint64_t) REG32(EDX)) << 32) | REG32(EAX);
+		uint64_t ecx_ebx = (((uint64_t) REG32(ECX)) << 32) | REG32(EBX);
 
 		if( value == edx_eax ) {
 			WRITE64(cpustate,ea, ecx_ebx);
 			cpustate->ZF = 1;
 			CYCLES(cpustate,CYCLES_CMPXCHG_REG_MEM_T);
 		} else {
-			REG32(EDX) = (UINT32) (value >> 32);
-			REG32(EAX) = (UINT32) (value >>  0);
+			REG32(EDX) = (uint32_t) (value >> 32);
+			REG32(EAX) = (uint32_t) (value >>  0);
 			cpustate->ZF = 0;
 			CYCLES(cpustate,CYCLES_CMPXCHG_REG_MEM_F);
 		}

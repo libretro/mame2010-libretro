@@ -57,18 +57,18 @@ DECLARE_LEGACY_CPU_DEVICE(I860, i860);
 /* i860 state.  */
 typedef struct {
 	/* Integer registers (32 x 32-bits).  */
-	UINT32 iregs[32];
+	uint32_t iregs[32];
 
 	/* Floating point registers (32 x 32-bits, 16 x 64 bits, or 8 x 128 bits).
        When referenced as pairs or quads, the higher numbered registers
        are the upper bits. E.g., double precision f0 is f1:f0.  */
-	UINT8 frg[32 * 4];
+	uint8_t frg[32 * 4];
 
 	/* Control registers (6 x 32-bits).  */
-	UINT32 cregs[6];
+	uint32_t cregs[6];
 
 	/* Program counter (1 x 32-bits).  Reset starts at pc=0xffffff00.  */
-	UINT32 pc;
+	uint32_t pc;
 
 	/* Special registers (4 x 64-bits).  */
 	union
@@ -76,7 +76,7 @@ typedef struct {
 		float s;
 		double d;
 	} KR, KI, T;
-	UINT64 merge;
+	uint64_t merge;
 
 	/* The adder pipeline, always 3 stages.  */
 	struct
@@ -170,7 +170,7 @@ typedef struct {
      */
 	legacy_cpu_device *device;
 	const address_space *program;
-	UINT32 ppc;
+	uint32_t ppc;
 	int icount;
 
 } i860_state_t;
@@ -208,13 +208,13 @@ enum {
 /*  TODO: THESE WILL BE REPLACED BY MAME FUNCTIONS
 #define BYTE_REV32(t)   \
   do { \
-    (t) = ((UINT32)(t) >> 16) | ((UINT32)(t) << 16); \
-    (t) = (((UINT32)(t) >> 8) & 0x00ff00ff) | (((UINT32)(t) << 8) & 0xff00ff00); \
+    (t) = ((uint32_t)(t) >> 16) | ((uint32_t)(t) << 16); \
+    (t) = (((uint32_t)(t) >> 8) & 0x00ff00ff) | (((uint32_t)(t) << 8) & 0xff00ff00); \
   } while (0);
 
 #define BYTE_REV16(t)   \
   do { \
-    (t) = (((UINT16)(t) >> 8) & 0x00ff) | (((UINT16)(t) << 8) & 0xff00); \
+    (t) = (((uint16_t)(t) >> 8) & 0x00ff) | (((uint16_t)(t) << 8) & 0xff00); \
   } while (0);
 #endif
 */

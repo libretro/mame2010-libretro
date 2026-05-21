@@ -75,33 +75,33 @@ typedef struct
 {
 	// **** Dsp56k side **** //
 	// Host Control Register
-	UINT16* hcr;
+	uint16_t* hcr;
 
 	// Host Status Register
-	UINT16* hsr;
+	uint16_t* hsr;
 
 	// Host Transmit/Receive Data
-	UINT16* htrx;
+	uint16_t* htrx;
 
 	// **** Host CPU side **** //
 	// Interrupt Control Register
-	UINT8 icr;
+	uint8_t icr;
 
 	// Command Vector Register
-	UINT8 cvr;
+	uint8_t cvr;
 
 	// Interrupt Status Register
-	UINT8 isr;
+	uint8_t isr;
 
 	// Interrupt Vector Register
-	UINT8 ivr;
+	uint8_t ivr;
 
 	// Transmit / Receive Registers
-	UINT8 trxh;
-	UINT8 trxl;
+	uint8_t trxh;
+	uint8_t trxl;
 
 	// HACK - Host interface bootstrap write offset
-	UINT16 bootstrap_offset;
+	uint16_t bootstrap_offset;
 
 } dsp56k_host_interface;
 
@@ -126,28 +126,28 @@ typedef struct
 typedef struct
 {
 	// Four address registers
-	UINT16 r0;
-	UINT16 r1;
-	UINT16 r2;
-	UINT16 r3;
+	uint16_t r0;
+	uint16_t r1;
+	uint16_t r2;
+	uint16_t r3;
 
 	// Four offset registers
-	UINT16 n0;
-	UINT16 n1;
-	UINT16 n2;
-	UINT16 n3;
+	uint16_t n0;
+	uint16_t n1;
+	uint16_t n2;
+	uint16_t n3;
 
 	// Four modifier registers
-	UINT16 m0;
-	UINT16 m1;
-	UINT16 m2;
-	UINT16 m3;
+	uint16_t m0;
+	uint16_t m1;
+	uint16_t m2;
+	uint16_t m3;
 
 	// Used in loop processing
-	UINT16 temp;
+	uint16_t temp;
 
 	// FM.4-5 - hmmm?
-	// UINT8 status;
+	// uint8_t status;
 
 	// Basics
 } dsp56k_agu;
@@ -156,22 +156,22 @@ typedef struct
 typedef struct
 {
 	// Program Counter
-	UINT16 pc;
+	uint16_t pc;
 
 	// Loop Address
-	UINT16 la;
+	uint16_t la;
 
 	// Loop Counter
-	UINT16 lc;
+	uint16_t lc;
 
 	// Status Register
-	UINT16 sr;
+	uint16_t sr;
 
 	// Operating Mode Register
-	UINT16 omr;
+	uint16_t omr;
 
 	// Stack Pointer
-	UINT16 sp;
+	uint16_t sp;
 
 	// Stack (TODO: 15-level?)
 	PAIR ss[16];
@@ -180,12 +180,12 @@ typedef struct
 	void (*service_interrupts)(void);
 
 	// A list of pending interrupts (indices into dsp56k_interrupt_sources array)
-	INT8 pending_interrupts[32];
+	int8_t pending_interrupts[32];
 
 	// Basics
 
 	// Other PCU internals
-	UINT16 reset_vector;
+	uint16_t reset_vector;
 
 } dsp56k_pcu;
 
@@ -212,25 +212,25 @@ typedef struct
 	dsp56k_host_interface HI;
 
 	// IRQ line states
-	UINT8 modA_state;
-	UINT8 modB_state;
-	UINT8 modC_state;
-	UINT8 reset_state;
+	uint8_t modA_state;
+	uint8_t modB_state;
+	uint8_t modC_state;
+	uint8_t reset_state;
 
 	// HACK - Bootstrap mode state variable.
-	UINT8 bootstrap_mode;
+	uint8_t bootstrap_mode;
 
-	UINT8	repFlag;	// Knowing if we're in a 'repeat' state (dunno how the processor does this)
-	UINT32	repAddr;	// The address of the instruction to repeat...
+	uint8_t	repFlag;	// Knowing if we're in a 'repeat' state (dunno how the processor does this)
+	uint32_t	repAddr;	// The address of the instruction to repeat...
 
 
 	/* MAME internal stuff */
 	int icount;
 
-	UINT32			ppc;
-	UINT32			op;
+	uint32_t			ppc;
+	uint32_t			op;
 	int				interrupt_cycles;
-	void			(*output_pins_changed)(UINT32 pins);
+	void			(*output_pins_changed)(uint32_t pins);
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *data;
@@ -240,9 +240,9 @@ typedef struct
 /***************************************************************************
     PUBLIC FUNCTIONS - ACCESSIBLE TO DRIVERS
 ***************************************************************************/
-void  dsp56k_host_interface_write(running_device* device, UINT8 offset, UINT8 data);
-UINT8 dsp56k_host_interface_read(running_device* device, UINT8 offset);
+void  dsp56k_host_interface_write(running_device* device, uint8_t offset, uint8_t data);
+uint8_t dsp56k_host_interface_read(running_device* device, uint8_t offset);
 
-UINT16 dsp56k_get_peripheral_memory(running_device* device, UINT16 addr);
+uint16_t dsp56k_get_peripheral_memory(running_device* device, uint16_t addr);
 
 #endif /* __DSP56K_H__ */

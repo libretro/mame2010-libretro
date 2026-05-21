@@ -68,7 +68,7 @@ enum
     STRUCTURES
 ***************************************************************************/
 
-typedef void (*rsp_set_status_func)(running_device *device, UINT32 status);
+typedef void (*rsp_set_status_func)(running_device *device, uint32_t status);
 
 typedef struct _rsp_config rsp_config;
 struct _rsp_config
@@ -87,7 +87,7 @@ struct _rsp_config
 ***************************************************************************/
 
 void rspdrc_flush_drc_cache(running_device *device);
-void rspdrc_set_options(running_device *device, UINT32 options);
+void rspdrc_set_options(running_device *device, uint32_t options);
 void rspdrc_add_imem(running_device *device, void *base);
 void rspdrc_add_dmem(running_device *device, void *base);
 
@@ -117,8 +117,8 @@ void rspdrc_add_dmem(running_device *device, void *base);
 #define IS_FLOAT(o) 	(((o) & (1 << 23)) == 0)
 #define IS_INTEGRAL(o)	(((o) & (1 << 23)) != 0)
 
-#define SIMMVAL			((INT16)op)
-#define UIMMVAL			((UINT16)op)
+#define SIMMVAL			((int16_t)op)
+#define UIMMVAL			((uint16_t)op)
 #define LIMMVAL			(op & 0x03ffffff)
 
 #define RSP_STATUS_HALT          0x0001
@@ -143,10 +143,10 @@ typedef struct
 {
 	union
 	{
-		UINT8 b[16];
-		UINT16 s[8];
-		UINT32 l[4];
-		UINT64 d[2];
+		uint8_t b[16];
+		uint16_t s[8];
+		uint32_t l[4];
+		uint64_t d[2];
 	};
 } VECTOR_REG;
 
@@ -154,32 +154,32 @@ typedef struct
 {
 	union
 	{
-		INT64 l;
+		int64_t l;
 #ifdef MSB_FIRST
 		struct
 		{
-			INT16 high;
-			INT16 mid;
-			INT16 low;
-			INT16 z;
+			int16_t high;
+			int16_t mid;
+			int16_t low;
+			int16_t z;
 		} h;
 		struct
 		{
-			INT32 mh;
-			INT32 zl;
+			int32_t mh;
+			int32_t zl;
 		} w;
 #else
 		struct
 		{
-			INT16 z;
-			INT16 low;
-			INT16 mid;
-			INT16 high;
+			int16_t z;
+			int16_t low;
+			int16_t mid;
+			int16_t high;
 		} h;
 		struct
 		{
-			INT32 zl;
-			INT32 mh;
+			int32_t zl;
+			int32_t mh;
 		} w;
 #endif
 	};
@@ -192,21 +192,21 @@ struct _rsp_state
 	const rsp_config *config;
 	FILE *exec_output;
 
-	UINT32 pc;
-	UINT32 r[35];
+	uint32_t pc;
+	uint32_t r[35];
 	VECTOR_REG v[32];
-	UINT16 flag[4];
-	UINT32 sr;
-	UINT32 step_count;
+	uint16_t flag[4];
+	uint32_t sr;
+	uint32_t step_count;
 
 	ACCUMULATOR accum[8];
-	INT32 square_root_res;
-	INT32 square_root_high;
-	INT32 reciprocal_res;
-	INT32 reciprocal_high;
+	int32_t square_root_res;
+	int32_t square_root_high;
+	int32_t reciprocal_res;
+	int32_t reciprocal_high;
 
-	UINT32 ppc;
-	UINT32 nextpc;
+	uint32_t ppc;
+	uint32_t nextpc;
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -218,6 +218,6 @@ struct _rsp_state
 
 DECLARE_LEGACY_CPU_DEVICE(RSP, rsp);
 
-extern offs_t rsp_dasm_one(char *buffer, offs_t pc, UINT32 op);
+extern offs_t rsp_dasm_one(char *buffer, offs_t pc, uint32_t op);
 
 #endif /* __RSP_H__ */

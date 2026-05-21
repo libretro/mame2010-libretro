@@ -92,10 +92,10 @@ enum
 
 typedef struct {
 	const char *mnemonic;
-	UINT32 flags;
-	UINT32 param1;
-	UINT32 param2;
-	UINT32 param3;
+	uint32_t flags;
+	uint32_t param1;
+	uint32_t param2;
+	uint32_t param3;
 	offs_t dasm_flags;
 } I386_OPCODE;
 
@@ -104,8 +104,8 @@ typedef struct {
 	const I386_OPCODE *opcode;
 } GROUP_OP;
 
-static const UINT8 *opcode_ptr;
-static const UINT8 *opcode_ptr_base;
+static const uint8_t *opcode_ptr;
+static const uint8_t *opcode_ptr_base;
 
 static const I386_OPCODE i386_opcode_table1[256] =
 {
@@ -1092,19 +1092,19 @@ static const char *const i386_sreg[8] = {"es", "cs", "ss", "ds", "fs", "gs", "??
 
 static int address_size;
 static int operand_size;
-static UINT64 pc;
-static UINT8 modrm;
-static UINT32 segment;
+static uint64_t pc;
+static uint8_t modrm;
+static uint32_t segment;
 static offs_t dasm_flags;
 static char modrm_string[256];
-static UINT8 rex, regex, sibex, rmex;
-static UINT8 pre0f;
-static UINT8 curmode;
+static uint8_t rex, regex, sibex, rmex;
+static uint8_t pre0f;
+static uint8_t curmode;
 
 #define MODRM_REG1	((modrm >> 3) & 0x7)
 #define MODRM_REG2	(modrm & 0x7)
 
-INLINE UINT8 FETCH(void)
+INLINE uint8_t FETCH(void)
 {
 	if ((opcode_ptr - opcode_ptr_base) + 1 > 15)
 		return 0xff;
@@ -1112,9 +1112,9 @@ INLINE UINT8 FETCH(void)
 	return *opcode_ptr++;
 }
 
-INLINE UINT16 FETCH16(void)
+INLINE uint16_t FETCH16(void)
 {
-	UINT16 d;
+	uint16_t d;
 	if ((opcode_ptr - opcode_ptr_base) + 2 > 15)
 		return 0xffff;
 	d = opcode_ptr[0] | (opcode_ptr[1] << 8);
@@ -1123,9 +1123,9 @@ INLINE UINT16 FETCH16(void)
 	return d;
 }
 
-INLINE UINT32 FETCH32(void)
+INLINE uint32_t FETCH32(void)
 {
-	UINT32 d;
+	uint32_t d;
 	if ((opcode_ptr - opcode_ptr_base) + 4 > 15)
 		return 0xffffffff;
 	d = opcode_ptr[0] | (opcode_ptr[1] << 8) | (opcode_ptr[2] << 16) | (opcode_ptr[3] << 24);
@@ -1134,7 +1134,7 @@ INLINE UINT32 FETCH32(void)
 	return d;
 }
 
-INLINE UINT8 FETCHD(void)
+INLINE uint8_t FETCHD(void)
 {
 	if ((opcode_ptr - opcode_ptr_base) + 1 > 15)
 		return 0xff;
@@ -1142,9 +1142,9 @@ INLINE UINT8 FETCHD(void)
 	return *opcode_ptr++;
 }
 
-INLINE UINT16 FETCHD16(void)
+INLINE uint16_t FETCHD16(void)
 {
-	UINT16 d;
+	uint16_t d;
 	if ((opcode_ptr - opcode_ptr_base) + 2 > 15)
 		return 0xffff;
 	d = opcode_ptr[0] | (opcode_ptr[1] << 8);
@@ -1153,9 +1153,9 @@ INLINE UINT16 FETCHD16(void)
 	return d;
 }
 
-INLINE UINT32 FETCHD32(void)
+INLINE uint32_t FETCHD32(void)
 {
-	UINT32 d;
+	uint32_t d;
 	if ((opcode_ptr - opcode_ptr_base) + 4 > 15)
 		return 0xffffffff;
 	d = opcode_ptr[0] | (opcode_ptr[1] << 8) | (opcode_ptr[2] << 16) | (opcode_ptr[3] << 24);
@@ -1164,7 +1164,7 @@ INLINE UINT32 FETCHD32(void)
 	return d;
 }
 
-static char *hexstring(UINT32 value, int digits)
+static char *hexstring(uint32_t value, int digits)
 {
 	static char buffer[20];
 	buffer[0] = '0';
@@ -1175,7 +1175,7 @@ static char *hexstring(UINT32 value, int digits)
 	return (buffer[1] >= '0' && buffer[1] <= '9') ? &buffer[1] : &buffer[0];
 }
 
-static char *hexstring64(UINT32 lo, UINT32 hi)
+static char *hexstring64(uint32_t lo, uint32_t hi)
 {
 	static char buffer[40];
 	buffer[0] = '0';
@@ -1186,15 +1186,15 @@ static char *hexstring64(UINT32 lo, UINT32 hi)
 	return (buffer[1] >= '0' && buffer[1] <= '9') ? &buffer[1] : &buffer[0];
 }
 
-static char *hexstringpc(UINT64 pc)
+static char *hexstringpc(uint64_t pc)
 {
 	if (curmode == 64)
-		return hexstring64((UINT32)pc, (UINT32)(pc >> 32));
+		return hexstring64((uint32_t)pc, (uint32_t)(pc >> 32));
 	else
-		return hexstring((UINT32)pc, 0);
+		return hexstring((uint32_t)pc, 0);
 }
 
-static char *shexstring(UINT32 value, int digits, int always)
+static char *shexstring(uint32_t value, int digits, int always)
 {
 	static char buffer[20];
 	if (value >= 0x80000000)
@@ -1206,11 +1206,11 @@ static char *shexstring(UINT32 value, int digits, int always)
 	return buffer;
 }
 
-static char* handle_sib_byte( char* s, UINT8 mod )
+static char* handle_sib_byte( char* s, uint8_t mod )
 {
-	UINT32 i32;
-	UINT8 scale, i, base;
-	UINT8 sib = FETCHD();
+	uint32_t i32;
+	uint8_t scale, i, base;
+	uint8_t sib = FETCHD();
 
 	scale = (sib >> 6) & 0x3;
 	i = ((sib >> 3) & 0x7) | sibex;
@@ -1232,10 +1232,10 @@ static char* handle_sib_byte( char* s, UINT8 mod )
 
 static void handle_modrm(char* s)
 {
-	INT8 disp8;
-	INT16 disp16;
-	INT32 disp32;
-	UINT8 mod, rm;
+	int8_t disp8;
+	int16_t disp16;
+	int32_t disp32;
+	uint8_t mod, rm;
 
 	modrm = FETCHD();
 	mod = (modrm >> 6) & 0x3;
@@ -1266,7 +1266,7 @@ static void handle_modrm(char* s)
 		if( mod == 1 ) {
 			disp8 = FETCHD();
 			if (disp8 != 0)
-				s += sprintf( s, "%s", shexstring((INT32)disp8, 0, TRUE) );
+				s += sprintf( s, "%s", shexstring((int32_t)disp8, 0, TRUE) );
 		} else if( mod == 2 ) {
 			disp32 = FETCHD32();
 			if (disp32 != 0)
@@ -1286,7 +1286,7 @@ static void handle_modrm(char* s)
 		if( mod == 1 ) {
 			disp8 = FETCHD();
 			if (disp8 != 0)
-				s += sprintf( s, "%s", shexstring((INT32)disp8, 0, TRUE) );
+				s += sprintf( s, "%s", shexstring((int32_t)disp8, 0, TRUE) );
 		} else if( mod == 2 ) {
 			disp32 = FETCHD32();
 			if (disp32 != 0)
@@ -1304,7 +1304,7 @@ static void handle_modrm(char* s)
 			case 6:
 				if( mod == 0 ) {
 					disp16 = FETCHD16();
-					s += sprintf( s, "%s", hexstring((unsigned) (UINT16) disp16, 0) );
+					s += sprintf( s, "%s", hexstring((unsigned) (uint16_t) disp16, 0) );
 				} else {
 					s += sprintf( s, "bp" );
 				}
@@ -1314,26 +1314,26 @@ static void handle_modrm(char* s)
 		if( mod == 1 ) {
 			disp8 = FETCHD();
 			if (disp8 != 0)
-				s += sprintf( s, "%s", shexstring((INT32)disp8, 0, TRUE) );
+				s += sprintf( s, "%s", shexstring((int32_t)disp8, 0, TRUE) );
 		} else if( mod == 2 ) {
 			disp16 = FETCHD16();
 			if (disp16 != 0)
-				s += sprintf( s, "%s", shexstring((INT32)disp16, 0, TRUE) );
+				s += sprintf( s, "%s", shexstring((int32_t)disp16, 0, TRUE) );
 		}
 	}
 	s += sprintf( s, "]" );
 }
 
-static char* handle_param(char* s, UINT32 param)
+static char* handle_param(char* s, uint32_t param)
 {
-	UINT8 i8;
-	UINT16 i16;
-	UINT32 i32;
-	UINT16 ptr;
-	UINT32 addr;
-	INT8 d8;
-	INT16 d16;
-	INT32 d32;
+	uint8_t i8;
+	uint16_t i16;
+	uint32_t i32;
+	uint16_t ptr;
+	uint32_t addr;
+	int8_t d8;
+	int16_t d16;
+	int32_t d32;
 
 	switch(param)
 	{
@@ -1480,27 +1480,27 @@ static char* handle_param(char* s, UINT32 param)
 
 		case PARAM_I8:
 			i8 = FETCHD();
-			s += sprintf( s, "%s", shexstring((INT8)i8, 0, FALSE) );
+			s += sprintf( s, "%s", shexstring((int8_t)i8, 0, FALSE) );
 			break;
 
 		case PARAM_I16:
 			i16 = FETCHD16();
-			s += sprintf( s, "%s", shexstring((INT16)i16, 0, FALSE) );
+			s += sprintf( s, "%s", shexstring((int16_t)i16, 0, FALSE) );
 			break;
 
 		case PARAM_UI8:
 			i8 = FETCHD();
-			s += sprintf( s, "%s", shexstring((UINT8)i8, 0, FALSE) );
+			s += sprintf( s, "%s", shexstring((uint8_t)i8, 0, FALSE) );
 			break;
 
 		case PARAM_UI16:
 			i16 = FETCHD16();
-			s += sprintf( s, "%s", shexstring((UINT16)i16, 0, FALSE) );
+			s += sprintf( s, "%s", shexstring((uint16_t)i16, 0, FALSE) );
 			break;
 
 		case PARAM_IMM64:
 			if (operand_size == 2) {
-				UINT32 lo32 = FETCHD32();
+				uint32_t lo32 = FETCHD32();
 				i32 = FETCHD32();
 				s += sprintf( s, "%s", hexstring64(lo32, i32) );
 			} else if( operand_size ) {
@@ -1617,7 +1617,7 @@ static char* handle_param(char* s, UINT32 param)
 	return s;
 }
 
-static void handle_fpu(char *s, UINT8 op1, UINT8 op2)
+static void handle_fpu(char *s, uint8_t op1, uint8_t op2)
 {
 	switch (op1 & 0x7)
 	{
@@ -1994,10 +1994,10 @@ static void handle_fpu(char *s, UINT8 op1, UINT8 op2)
 	}
 }
 
-static void decode_opcode(char *s, const I386_OPCODE *op, UINT8 op1)
+static void decode_opcode(char *s, const I386_OPCODE *op, uint8_t op1)
 {
 	int i;
-	UINT8 op2;
+	uint8_t op2;
 
 	if (op->flags & SPECIAL64)
 		op = &x64_opcode_alt[op->flags >> 24];
@@ -2123,9 +2123,9 @@ handle_unknown:
 	sprintf(s, "???");
 }
 
-int i386_dasm_one_ex(char *buffer, UINT64 eip, const UINT8 *oprom, int mode)
+int i386_dasm_one_ex(char *buffer, uint64_t eip, const uint8_t *oprom, int mode)
 {
-	UINT8 op;
+	uint8_t op;
 
 	opcode_ptr = opcode_ptr_base = oprom;
 	address_size = (mode == 16) ? 0 : (mode == 32) ? 1 : 2;
@@ -2143,7 +2143,7 @@ int i386_dasm_one_ex(char *buffer, UINT64 eip, const UINT8 *oprom, int mode)
 	return (pc-eip) | dasm_flags | DASMFLAG_SUPPORTED;
 }
 
-int i386_dasm_one(char *buffer, offs_t eip, const UINT8 *oprom, int mode)
+int i386_dasm_one(char *buffer, offs_t eip, const uint8_t *oprom, int mode)
 {
 	return i386_dasm_one_ex(buffer, eip, oprom, mode);
 }

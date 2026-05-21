@@ -169,18 +169,18 @@ struct _i8085_state
 
 	int 				cputype;		/* 0 8080, 1 8085A */
 	PAIR				PC,SP,AF,BC,DE,HL,WZ;
-	UINT8				HALT;
-	UINT8				IM; 			/* interrupt mask (8085A only) */
-	UINT8   			STATUS;			/* status word */
+	uint8_t				HALT;
+	uint8_t				IM; 			/* interrupt mask (8085A only) */
+	uint8_t   			STATUS;			/* status word */
 
-	UINT8				after_ei;		/* post-EI processing; starts at 2, check for ints at 0 */
-	UINT8				nmi_state;		/* raw NMI line state */
-	UINT8				irq_state[4];	/* raw IRQ line states */
-	UINT8				trap_pending;	/* TRAP interrupt latched? */
-	UINT8				trap_im_copy;	/* copy of IM register when TRAP was taken */
-	UINT8				sod_state;		/* state of the SOD line */
+	uint8_t				after_ei;		/* post-EI processing; starts at 2, check for ints at 0 */
+	uint8_t				nmi_state;		/* raw NMI line state */
+	uint8_t				irq_state[4];	/* raw IRQ line states */
+	uint8_t				trap_pending;	/* TRAP interrupt latched? */
+	uint8_t				trap_im_copy;	/* copy of IM register when TRAP was taken */
+	uint8_t				sod_state;		/* state of the SOD line */
 
-	UINT8				ietemp;			/* import/export temp space */
+	uint8_t				ietemp;			/* import/export temp space */
 
 	device_irq_callback	irq_callback;
 	legacy_cpu_device *device;
@@ -205,7 +205,7 @@ struct _i8085_state
 ***************************************************************************/
 
 /* cycles lookup */
-static const UINT8 lut_cycles_8080[256]={
+static const uint8_t lut_cycles_8080[256]={
 /*      0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  */
 /* 0 */ 4, 10,7, 5, 5, 5, 7, 4, 4, 10,7, 5, 5, 5, 7, 4,
 /* 1 */ 4, 10,7, 5, 5, 5, 7, 4, 4, 10,7, 5, 5, 5, 7, 4,
@@ -223,7 +223,7 @@ static const UINT8 lut_cycles_8080[256]={
 /* D */ 5, 10,10,10,11,11,7, 11,5, 10,10,10,11,11,7, 11,
 /* E */ 5, 10,10,18,11,11,7, 11,5, 5, 10,5, 11,11,7, 11,
 /* F */ 5, 10,10,4, 11,11,7, 11,5, 5, 10,4, 11,11,7, 11 };
-static const UINT8 lut_cycles_8085[256]={
+static const uint8_t lut_cycles_8085[256]={
 /*      0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  */
 /* 0 */ 4, 10,7, 6, 4, 4, 7, 4, 10,10,7, 6, 4, 4, 7, 4,
 /* 1 */ 7, 10,7, 6, 4, 4, 7, 4, 10,10,7, 6, 4, 4, 7, 4,
@@ -252,11 +252,11 @@ M_CALL 8080    11        +6(17)   -0
 M_CALL 8085    11        +7(18)   -2(9)
 
 */
-static UINT8 lut_cycles[256];
+static uint8_t lut_cycles[256];
 
 /* flags lookup */
-static UINT8 ZS[256];
-static UINT8 ZSP[256];
+static uint8_t ZS[256];
+static uint8_t ZSP[256];
 
 
 
@@ -310,7 +310,7 @@ INLINE void set_inte(i8085_state *cpustate, int state)
 }
 
 
-INLINE void set_status(i8085_state *cpustate, UINT8 status)
+INLINE void set_status(i8085_state *cpustate, uint8_t status)
 {
 	if (status != cpustate->STATUS)
 		devcb_call_write8(&cpustate->out_status_func, 0, status);
@@ -319,9 +319,9 @@ INLINE void set_status(i8085_state *cpustate, UINT8 status)
 }
 
 
-INLINE UINT8 get_rim_value(i8085_state *cpustate)
+INLINE uint8_t get_rim_value(i8085_state *cpustate)
 {
-	UINT8 result = cpustate->IM;
+	uint8_t result = cpustate->IM;
 	int sid = devcb_call_read_line(&cpustate->in_sid_func);
 
 	/* copy live RST5.5 and RST6.5 states */
@@ -350,20 +350,20 @@ INLINE void break_halt_for_interrupt(i8085_state *cpustate)
 }
 
 
-INLINE UINT8 ROP(i8085_state *cpustate)
+INLINE uint8_t ROP(i8085_state *cpustate)
 {
 	set_status(cpustate, 0xa2); // instruction fetch
 	return memory_decrypted_read_byte(cpustate->program, cpustate->PC.w.l++);
 }
 
-INLINE UINT8 ARG(i8085_state *cpustate)
+INLINE uint8_t ARG(i8085_state *cpustate)
 {
 	return memory_raw_read_byte(cpustate->program, cpustate->PC.w.l++);
 }
 
-INLINE UINT16 ARG16(i8085_state *cpustate)
+INLINE uint16_t ARG16(i8085_state *cpustate)
 {
-	UINT16 w;
+	uint16_t w;
 	w  = memory_raw_read_byte(cpustate->program, cpustate->PC.d);
 	cpustate->PC.w.l++;
 	w += memory_raw_read_byte(cpustate->program, cpustate->PC.d) << 8;
@@ -371,13 +371,13 @@ INLINE UINT16 ARG16(i8085_state *cpustate)
 	return w;
 }
 
-INLINE UINT8 RM(i8085_state *cpustate, UINT32 a)
+INLINE uint8_t RM(i8085_state *cpustate, uint32_t a)
 {
 	set_status(cpustate, 0x82); // memory read
 	return memory_read_byte_8le(cpustate->program, a);
 }
 
-INLINE void WM(i8085_state *cpustate, UINT32 a, UINT8 v)
+INLINE void WM(i8085_state *cpustate, uint32_t a, uint8_t v)
 {
 	set_status(cpustate, 0x00); // memory write
 	memory_write_byte_8le(cpustate->program, a, v);
@@ -459,7 +459,7 @@ static void check_for_interrupts(i8085_state *cpustate)
 	/* followed by classic INTR */
 	else if (cpustate->irq_state[I8085_INTR_LINE] && (cpustate->IM & IM_IE))
 	{
-		UINT32 vector = 0;
+		uint32_t vector = 0;
 
 		/* break out of HALT state and call the IRQ ack callback */
 		break_halt_for_interrupt(cpustate);
@@ -940,7 +940,7 @@ static CPU_EXECUTE( i808x )
 
 static void init_tables (int type)
 {
-	UINT8 zs;
+	uint8_t zs;
 	int i, p;
 	for (i = 0; i < 256; i++)
 	{

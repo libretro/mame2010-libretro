@@ -26,29 +26,29 @@
  *
  *****************************************************************************/
 
-INLINE UINT8 READ_OP(sc61860_state *cpustate)
+INLINE uint8_t READ_OP(sc61860_state *cpustate)
 {
 	return memory_decrypted_read_byte(cpustate->program, cpustate->pc++);
 }
 
-INLINE UINT8 READ_OP_ARG(sc61860_state *cpustate)
+INLINE uint8_t READ_OP_ARG(sc61860_state *cpustate)
 {
 	return memory_raw_read_byte(cpustate->program, cpustate->pc++);
 }
 
-INLINE UINT16 READ_OP_ARG_WORD(sc61860_state *cpustate)
+INLINE uint16_t READ_OP_ARG_WORD(sc61860_state *cpustate)
 {
-	UINT16 t=memory_decrypted_read_byte(cpustate->program, cpustate->pc++)<<8;
+	uint16_t t=memory_decrypted_read_byte(cpustate->program, cpustate->pc++)<<8;
 	t|=memory_decrypted_read_byte(cpustate->program, cpustate->pc++);
 	return t;
 }
 
-INLINE UINT8 READ_BYTE(sc61860_state *cpustate, UINT16 adr)
+INLINE uint8_t READ_BYTE(sc61860_state *cpustate, uint16_t adr)
 {
 	return memory_read_byte(cpustate->program, adr);
 }
 
-INLINE void WRITE_BYTE(sc61860_state *cpustate, UINT16 a,UINT8 v)
+INLINE void WRITE_BYTE(sc61860_state *cpustate, uint16_t a,uint8_t v)
 {
 	memory_write_byte(cpustate->program, a,v);
 }
@@ -56,7 +56,7 @@ INLINE void WRITE_BYTE(sc61860_state *cpustate, UINT16 a,UINT8 v)
 #define PUSH(v) cpustate->ram[--cpustate->r]=v
 #define POP(cpustate) cpustate->ram[cpustate->r++]
 
-INLINE void sc61860_load_imm(sc61860_state *cpustate, int r, UINT8 v)
+INLINE void sc61860_load_imm(sc61860_state *cpustate, int r, uint8_t v)
 {
 	cpustate->ram[r]=v;
 }
@@ -66,12 +66,12 @@ INLINE void sc61860_load(sc61860_state *cpustate)
 	cpustate->ram[A]=cpustate->ram[cpustate->p];
 }
 
-INLINE void sc61860_load_imm_p(sc61860_state *cpustate, UINT8 v)
+INLINE void sc61860_load_imm_p(sc61860_state *cpustate, uint8_t v)
 {
 	cpustate->p=v&0x7f;
 }
 
-INLINE void sc61860_load_imm_q(sc61860_state *cpustate, UINT8 v)
+INLINE void sc61860_load_imm_q(sc61860_state *cpustate, uint8_t v)
 {
 	cpustate->q=v&0x7f;
 }
@@ -118,12 +118,12 @@ INLINE void sc61860_store_ext(sc61860_state *cpustate, int r)
 
 INLINE void sc61860_exam(sc61860_state *cpustate, int a, int b)
 {
-	UINT8 t=cpustate->ram[a];
+	uint8_t t=cpustate->ram[a];
 	cpustate->ram[a]=cpustate->ram[b];
 	cpustate->ram[b]=t;
 }
 
-INLINE void sc61860_test(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_test(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	cpustate->zero=(cpustate->ram[reg]&value)==0;
 }
@@ -133,26 +133,26 @@ INLINE void sc61860_test_ext(sc61860_state *cpustate)
 	cpustate->zero=(READ_BYTE(cpustate, cpustate->dp)&READ_OP_ARG(cpustate))==0;
 }
 
-INLINE void sc61860_and(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_and(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	cpustate->zero=(cpustate->ram[reg]&=value)==0;
 }
 
 INLINE void sc61860_and_ext(sc61860_state *cpustate)
 {
-	UINT8 t=READ_BYTE(cpustate, cpustate->dp)&READ_OP_ARG(cpustate);
+	uint8_t t=READ_BYTE(cpustate, cpustate->dp)&READ_OP_ARG(cpustate);
 	cpustate->zero=t==0;
     WRITE_BYTE(cpustate, cpustate->dp,t);
 }
 
-INLINE void sc61860_or(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_or(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	cpustate->zero=(cpustate->ram[reg]|=value)==0;
 }
 
 INLINE void sc61860_or_ext(sc61860_state *cpustate)
 {
-	UINT8 t=READ_BYTE(cpustate, cpustate->dp)|READ_OP_ARG(cpustate);
+	uint8_t t=READ_BYTE(cpustate, cpustate->dp)|READ_OP_ARG(cpustate);
 	cpustate->zero=t==0;
     WRITE_BYTE(cpustate, cpustate->dp,t);
 }
@@ -206,7 +206,7 @@ INLINE void sc61860_dec_p(sc61860_state *cpustate)
 	cpustate->p--;
 }
 
-INLINE void sc61860_add(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_add(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	int t=cpustate->ram[reg]+value;
 	cpustate->zero=(cpustate->ram[reg]=t)==0;
@@ -235,7 +235,7 @@ INLINE void sc61860_add_word(sc61860_state *cpustate)
 }
 
 
-INLINE void sc61860_sub(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_sub(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	int t=cpustate->ram[reg]-value;
 	cpustate->zero=(cpustate->ram[reg]=t)==0;
@@ -264,7 +264,7 @@ INLINE void sc61860_sub_word(sc61860_state *cpustate)
 	cpustate->carry=t2<0;
 }
 
-INLINE void sc61860_cmp(sc61860_state *cpustate, int reg, UINT8 value)
+INLINE void sc61860_cmp(sc61860_state *cpustate, int reg, uint8_t value)
 {
 	int t=cpustate->ram[reg]-value;
 	cpustate->zero=t==0;
@@ -306,7 +306,7 @@ INLINE void sc61860_execute_table_call(sc61860_state *cpustate)
 }
 
 
-INLINE void sc61860_call(sc61860_state *cpustate, UINT16 adr)
+INLINE void sc61860_call(sc61860_state *cpustate, uint16_t adr)
 {
 	PUSH(cpustate->pc>>8);
 	PUSH(cpustate->pc&0xff);
@@ -315,14 +315,14 @@ INLINE void sc61860_call(sc61860_state *cpustate, UINT16 adr)
 
 INLINE void sc61860_return(sc61860_state *cpustate)
 {
-	UINT16 t=POP(cpustate);
+	uint16_t t=POP(cpustate);
 	t|=POP(cpustate)<<8;
 	cpustate->pc=t;
 }
 
 INLINE void sc61860_jump(sc61860_state *cpustate, int yes)
 {
-	UINT16 adr=READ_OP_ARG_WORD(cpustate);
+	uint16_t adr=READ_OP_ARG_WORD(cpustate);
 	if (yes) {
 		cpustate->pc=adr;
 	}
@@ -330,7 +330,7 @@ INLINE void sc61860_jump(sc61860_state *cpustate, int yes)
 
 INLINE void sc61860_jump_rel_plus(sc61860_state *cpustate, int yes)
 {
-	UINT16 adr=cpustate->pc;
+	uint16_t adr=cpustate->pc;
 	adr+=READ_OP_ARG(cpustate);
 	if (yes) {
 		cpustate->pc=adr;
@@ -340,7 +340,7 @@ INLINE void sc61860_jump_rel_plus(sc61860_state *cpustate, int yes)
 
 INLINE void sc61860_jump_rel_minus(sc61860_state *cpustate, int yes)
 {
-	UINT16 adr=cpustate->pc;
+	uint16_t adr=cpustate->pc;
 	adr-=READ_OP_ARG(cpustate);
 	if (yes) {
 		cpustate->pc=adr;
@@ -350,7 +350,7 @@ INLINE void sc61860_jump_rel_minus(sc61860_state *cpustate, int yes)
 
 INLINE void sc61860_loop(sc61860_state *cpustate)
 {
-	UINT16 adr=cpustate->pc;
+	uint16_t adr=cpustate->pc;
 	adr-=READ_OP_ARG(cpustate);
 	cpustate->ram[cpustate->r]--;
 	cpustate->zero=cpustate->ram[cpustate->r]==0;
@@ -466,7 +466,7 @@ INLINE void sc61860_test_special(sc61860_state *cpustate)
 // p-=I+1 sideeffect
 INLINE void sc61860_add_bcd_a(sc61860_state *cpustate)
 {
- UINT8 help = cpustate->ram[A];
+ uint8_t help = cpustate->ram[A];
  int i, hlp, hlp1 = 0; cpustate->zero=1;
  for ( i=0; i <= cpustate->ram[I]; i++)
  {
@@ -509,7 +509,7 @@ hlp1;
 // p-=I+1 sideeffect
 INLINE void sc61860_sub_bcd_a(sc61860_state *cpustate)
 {
- UINT8 help = cpustate->ram[A];
+ uint8_t help = cpustate->ram[A];
  int i, hlp, hlp1 = 0; cpustate->zero=1;
  for ( i=0; i <= cpustate->ram[I]; i++)
  {
@@ -680,7 +680,7 @@ INLINE void sc61860_copy_int(sc61860_state *cpustate, int count)
 INLINE void sc61860_exchange(sc61860_state *cpustate, int count)
 {
 	int i;
-	UINT8 t;
+	uint8_t t;
 	for (i=0; i<=count; i++) {
 		t=cpustate->ram[cpustate->p];
 		cpustate->ram[cpustate->p++]=cpustate->ram[cpustate->q];
@@ -692,7 +692,7 @@ INLINE void sc61860_exchange(sc61860_state *cpustate, int count)
 INLINE void sc61860_exchange_ext(sc61860_state *cpustate, int count)
 {
 	int i;
-	UINT8 t;
+	uint8_t t;
 	for (i=0; i<=count; i++) {
 		t=cpustate->ram[cpustate->p];
 		cpustate->ram[cpustate->p++]=READ_BYTE(cpustate, cpustate->dp);

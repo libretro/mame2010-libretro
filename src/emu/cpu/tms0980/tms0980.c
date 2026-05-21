@@ -229,63 +229,63 @@ unknown cycle: CME, SSE, SSS
 typedef struct _tms0980_state tms0980_state;
 struct _tms0980_state
 {
-	UINT8	prev_pc;		/* previous program counter */
-	UINT8	prev_pa;		/* previous page address register */
-	UINT8	pc;				/* program counter is a 7 bit register on tms0980, 6 bit register on tms1000/1070/1200/1270/1100/1300 */
-	UINT8	pa;				/* page address register is a 4 bit register */
-	UINT8	sr;				/* subroutine return register is a 7 bit register */
-	UINT8	pb;				/* page buffer register is a 4 bit register */
-	UINT8	a;				/* Accumulator is a 4 bit register (?) */
-	UINT8	x;				/* X-register is a 2 bit register */
-	UINT8	y;				/* Y-register is a 4 bit register */
-	UINT8	dam;			/* DAM register is a 4 bit register */
-	UINT8	ca;				/* Chapter address bit */
-	UINT8	cb;				/* Chapter buffer bit */
-	UINT8	cs;				/* Chapter subroutine bit */
-	UINT16	r;
-	UINT8	o;
-	UINT8	cki_bus;		/* CKI bus */
-	UINT8	p;				/* adder p-input */
-	UINT8	n;				/* adder n-input */
-	UINT8	adder_result;	/* adder result */
-	UINT8	carry_in;		/* carry in */
-	UINT8	status;
-	UINT8	status_latch;
-	UINT8	special_status;
-	UINT8	call_latch;
-	UINT8	add_latch;
-	UINT8	branch_latch;
+	uint8_t	prev_pc;		/* previous program counter */
+	uint8_t	prev_pa;		/* previous page address register */
+	uint8_t	pc;				/* program counter is a 7 bit register on tms0980, 6 bit register on tms1000/1070/1200/1270/1100/1300 */
+	uint8_t	pa;				/* page address register is a 4 bit register */
+	uint8_t	sr;				/* subroutine return register is a 7 bit register */
+	uint8_t	pb;				/* page buffer register is a 4 bit register */
+	uint8_t	a;				/* Accumulator is a 4 bit register (?) */
+	uint8_t	x;				/* X-register is a 2 bit register */
+	uint8_t	y;				/* Y-register is a 4 bit register */
+	uint8_t	dam;			/* DAM register is a 4 bit register */
+	uint8_t	ca;				/* Chapter address bit */
+	uint8_t	cb;				/* Chapter buffer bit */
+	uint8_t	cs;				/* Chapter subroutine bit */
+	uint16_t	r;
+	uint8_t	o;
+	uint8_t	cki_bus;		/* CKI bus */
+	uint8_t	p;				/* adder p-input */
+	uint8_t	n;				/* adder n-input */
+	uint8_t	adder_result;	/* adder result */
+	uint8_t	carry_in;		/* carry in */
+	uint8_t	status;
+	uint8_t	status_latch;
+	uint8_t	special_status;
+	uint8_t	call_latch;
+	uint8_t	add_latch;
+	uint8_t	branch_latch;
 	int	subcycle;
-	UINT8	ram_address;
-	UINT16	ram_data;
-	UINT16	rom_address;
-	UINT16	opcode;
-	UINT32	decode;
+	uint8_t	ram_address;
+	uint16_t	ram_data;
+	uint16_t	rom_address;
+	uint16_t	opcode;
+	uint32_t	decode;
 	int		icount;
-	UINT16	o_mask;			/* mask to determine the number of O outputs */
-	UINT16	r_mask;			/* mask to determine the number of R outputs */
-	UINT8	pc_size;		/* how bits in the PC register */
-	UINT8	byte_size;		/* 8 or 9 bit bytes */
-	const UINT32 *decode_table;
+	uint16_t	o_mask;			/* mask to determine the number of O outputs */
+	uint16_t	r_mask;			/* mask to determine the number of R outputs */
+	uint8_t	pc_size;		/* how bits in the PC register */
+	uint8_t	byte_size;		/* 8 or 9 bit bytes */
+	const uint32_t *decode_table;
 	const tms0980_config	*config;
 	const address_space *program;
 	const address_space *data;
 };
 
 
-static const UINT8 tms0980_c2_value[4] =
+static const uint8_t tms0980_c2_value[4] =
 {
 	0x00, 0x02, 0x01, 0x03
 };
-static const UINT8 tms0980_c4_value[16] =
+static const uint8_t tms0980_c4_value[16] =
 {
 	0x00, 0x08, 0x04, 0x0C, 0x02, 0x0A, 0x06, 0x0E, 0x01, 0x09, 0x05, 0x0D, 0x03, 0x0B, 0x07, 0x0F
 };
-static const UINT8 tms0980_bit_value[4] = { 1, 4, 2, 8 };
-static const UINT8 tms0980_nbit_value[4] = { 0x0E, 0x0B, 0x0D, 0x07 };
+static const uint8_t tms0980_bit_value[4] = { 1, 4, 2, 8 };
+static const uint8_t tms0980_nbit_value[4] = { 0x0E, 0x0B, 0x0D, 0x07 };
 
 
-static const UINT32 tms0980_decode[512] =
+static const uint32_t tms0980_decode[512] =
 {
 	/* 0x000 */
 	F_COMX, I_ALEM, I_YNEA, I_XMA, I_DYN, I_IYC, I_CLA, I_DMAN,
@@ -362,7 +362,7 @@ static const UINT32 tms0980_decode[512] =
 };
 
 
-static const UINT32 tms1000_default_decode[256] = {
+static const uint32_t tms1000_default_decode[256] = {
 	/* 0x00 */
 	F_COMX, I_A8AAC, I_YNEA, I_TAM, I_TAMZA, I_A10AAC, I_A6AAC, I_DAN,
 	I_TKA, I_KNEZ, F_TDO, F_CLO, F_RSTR, F_SETR, I_IA, F_RETN,
@@ -404,7 +404,7 @@ static const UINT32 tms1000_default_decode[256] = {
 };
 
 
-static const UINT32 tms1100_default_decode[256] = {
+static const uint32_t tms1100_default_decode[256] = {
 	/* 0x00 */
 	I_MNEA, I_ALEM, I_YNEA, I_XMA, I_DYN, I_IYC, I_AMAAC, I_DMAN,
 	I_TKA, F_COMX, F_TDO, F_COMC, F_RSTR, F_SETR, I_KNEZ, F_RETN,
@@ -490,7 +490,7 @@ static ADDRESS_MAP_START(data_7bit, ADDRESS_SPACE_DATA, 8)
 ADDRESS_MAP_END
 
 
-static void cpu_init_tms_common( legacy_cpu_device *device, const UINT32* decode_table, UINT16 o_mask, UINT16 r_mask, UINT8 pc_size, UINT8 byte_size )
+static void cpu_init_tms_common( legacy_cpu_device *device, const uint32_t* decode_table, uint16_t o_mask, uint16_t r_mask, uint8_t pc_size, uint8_t byte_size )
 {
 	tms0980_state *cpustate = get_safe_token( device );
 
@@ -704,7 +704,7 @@ location{1:0} =  ( pc{5:4} == 00 && pc{0} == 0 ) => 11
                  ( pc{5:4} == 11 && pc{0} == 1 ) => 10
 
 */
-static const UINT8 tms1000_next_pc[64] = {
+static const uint8_t tms1000_next_pc[64] = {
 	0x01, 0x03, 0x05, 0x07, 0x09, 0x0B, 0x0D, 0x0F, 0x11, 0x13, 0x15, 0x17, 0x19, 0x1B, 0x1D, 0x1F,
 	0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E, 0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3F,
 	0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E, 0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E,
@@ -733,8 +733,8 @@ INLINE void tms0980_next_pc( tms0980_state *cpustate )
 {
 	if ( cpustate->byte_size > 8 )
 	{
-		UINT8	xorval = ( cpustate->pc & 0x3F ) == 0x3F ? 1 : 0;
-		UINT8	new_bit = ( ( cpustate->pc ^ ( cpustate->pc << 1 ) ) & 0x40 ) ? xorval : 1 - xorval;
+		uint8_t	xorval = ( cpustate->pc & 0x3F ) == 0x3F ? 1 : 0;
+		uint8_t	new_bit = ( ( cpustate->pc ^ ( cpustate->pc << 1 ) ) & 0x40 ) ? xorval : 1 - xorval;
 
 		cpustate->pc = ( cpustate->pc << 1 ) | new_bit;
 	}
@@ -745,7 +745,7 @@ INLINE void tms0980_next_pc( tms0980_state *cpustate )
 }
 
 
-static const UINT8 tms1000_pc_decode[64] =
+static const uint8_t tms1000_pc_decode[64] =
 {
 	0x03, 0x04, 0x0B, 0x0C, 0x13, 0x14, 0x1B, 0x1C,
 	0x23, 0x24, 0x2B, 0x2C, 0x33, 0x34, 0x3B, 0x3C,
@@ -1058,7 +1058,7 @@ static CPU_EXECUTE( tms0980 )
 				}
 				if ( cpustate->decode == F_CALL )
 				{
-					UINT8 t = cpustate->pa;
+					uint8_t t = cpustate->pa;
 					if ( cpustate->call_latch == 0 )
 					{
 						cpustate->sr = cpustate->pc;

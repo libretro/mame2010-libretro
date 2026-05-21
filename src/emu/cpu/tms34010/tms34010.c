@@ -33,34 +33,34 @@ typedef struct _XY XY;
 struct _XY
 {
 #ifdef MSB_FIRST
-	INT16 y;
-	INT16 x;
+	int16_t y;
+	int16_t x;
 #else
-	INT16 x;
-	INT16 y;
+	int16_t x;
+	int16_t y;
 #endif
 };
 
 typedef struct _tms34010_state tms34010_state;
 struct _tms34010_state
 {
-	UINT32				pc;
-	UINT32				ppc;
-	UINT32				st;
-	void (*pixel_write)(tms34010_state *tms, offs_t offset, UINT32 data);
-	UINT32 (*pixel_read)(tms34010_state *tms, offs_t offset);
-	UINT32 (*raster_op)(tms34010_state *tms, UINT32 newpix, UINT32 oldpix);
-	UINT32				convsp;
-	UINT32				convdp;
-	UINT32				convmp;
-	UINT16 *			shiftreg;
-	INT32				gfxcycles;
-	UINT8				pixelshift;
-	UINT8				is_34020;
-	UINT8				reset_deferred;
-	UINT8				hblank_stable;
-	UINT8				external_host_access;
-	UINT8				executing;
+	uint32_t				pc;
+	uint32_t				ppc;
+	uint32_t				st;
+	void (*pixel_write)(tms34010_state *tms, offs_t offset, uint32_t data);
+	uint32_t (*pixel_read)(tms34010_state *tms, offs_t offset);
+	uint32_t (*raster_op)(tms34010_state *tms, uint32_t newpix, uint32_t oldpix);
+	uint32_t				convsp;
+	uint32_t				convdp;
+	uint32_t				convmp;
+	uint16_t *			shiftreg;
+	int32_t				gfxcycles;
+	uint8_t				pixelshift;
+	uint8_t				is_34020;
+	uint8_t				reset_deferred;
+	uint8_t				hblank_stable;
+	uint8_t				external_host_access;
+	uint8_t				executing;
 	device_irq_callback	irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -73,11 +73,11 @@ struct _tms34010_state
 	/* B registers 0-15 map to regs[30]-regs[15] */
 	union
 	{
-		INT32 reg;
+		int32_t reg;
 		XY xy;
 	} regs[31];
 
-	UINT16 IOregs[64];
+	uint16_t IOregs[64];
 };
 
 INLINE tms34010_state *get_safe_token(running_device *device)
@@ -154,7 +154,7 @@ static STATE_POSTLOAD( tms34010_state_postload );
 #define SKIP_LONG(T)	((T)->pc += (4 << 3))
 #define PARAM_K(O)		(((O) >> 5) & 0x1f)
 #define PARAM_N(O)		((O) & 0x1f)
-#define PARAM_REL8(O)	((INT8)(O))
+#define PARAM_REL8(O)	((int8_t)(O))
 
 /* memory I/O */
 #define WFIELD0(T,a,b)	(*tms34010_wfield_functions[FW(T,0)])(T,a,b)
@@ -202,7 +202,7 @@ static STATE_POSTLOAD( tms34010_state_postload );
 ***************************************************************************/
 
 /* Break up Status Register into indiviual flags */
-INLINE void SET_ST(tms34010_state *tms, UINT32 st)
+INLINE void SET_ST(tms34010_state *tms, uint32_t st)
 {
 	tms->st = st;
 	/* interrupts might have been enabled, check it */
@@ -216,74 +216,74 @@ INLINE void RESET_ST(tms34010_state *tms)
 }
 
 /* shortcuts for reading opcodes */
-INLINE UINT32 ROPCODE(tms34010_state *tms)
+INLINE uint32_t ROPCODE(tms34010_state *tms)
 {
-	UINT32 pc = TOBYTE(tms->pc);
+	uint32_t pc = TOBYTE(tms->pc);
 	tms->pc += 2 << 3;
 	return memory_decrypted_read_word(tms->program, pc);
 }
 
-INLINE INT16 PARAM_WORD(tms34010_state *tms)
+INLINE int16_t PARAM_WORD(tms34010_state *tms)
 {
-	UINT32 pc = TOBYTE(tms->pc);
+	uint32_t pc = TOBYTE(tms->pc);
 	tms->pc += 2 << 3;
 	return memory_raw_read_word(tms->program, pc);
 }
 
-INLINE INT32 PARAM_LONG(tms34010_state *tms)
+INLINE int32_t PARAM_LONG(tms34010_state *tms)
 {
-	UINT32 pc = TOBYTE(tms->pc);
+	uint32_t pc = TOBYTE(tms->pc);
 	tms->pc += 4 << 3;
-	return (UINT16)memory_raw_read_word(tms->program, pc) | (memory_raw_read_word(tms->program, pc + 2) << 16);
+	return (uint16_t)memory_raw_read_word(tms->program, pc) | (memory_raw_read_word(tms->program, pc + 2) << 16);
 }
 
-INLINE INT16 PARAM_WORD_NO_INC(tms34010_state *tms)
+INLINE int16_t PARAM_WORD_NO_INC(tms34010_state *tms)
 {
 	return memory_raw_read_word(tms->program, TOBYTE(tms->pc));
 }
 
-INLINE INT32 PARAM_LONG_NO_INC(tms34010_state *tms)
+INLINE int32_t PARAM_LONG_NO_INC(tms34010_state *tms)
 {
-	UINT32 pc = TOBYTE(tms->pc);
-	return (UINT16)memory_raw_read_word(tms->program, pc) | (memory_raw_read_word(tms->program, pc + 2) << 16);
+	uint32_t pc = TOBYTE(tms->pc);
+	return (uint16_t)memory_raw_read_word(tms->program, pc) | (memory_raw_read_word(tms->program, pc + 2) << 16);
 }
 
 /* read memory byte */
-INLINE UINT32 RBYTE(tms34010_state *tms, offs_t offset)
+INLINE uint32_t RBYTE(tms34010_state *tms, offs_t offset)
 {
-	UINT32 ret;
+	uint32_t ret;
 	RFIELDMAC_8(tms);
 	return ret;
 }
 
 /* write memory byte */
-INLINE void WBYTE(tms34010_state *tms, offs_t offset, UINT32 data)
+INLINE void WBYTE(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	WFIELDMAC_8(tms);
 }
 
 /* read memory long */
-INLINE UINT32 RLONG(tms34010_state *tms, offs_t offset)
+INLINE uint32_t RLONG(tms34010_state *tms, offs_t offset)
 {
 	RFIELDMAC_32(tms);
 }
 
 /* write memory long */
-INLINE void WLONG(tms34010_state *tms, offs_t offset, UINT32 data)
+INLINE void WLONG(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	WFIELDMAC_32(tms);
 }
 
 /* pushes/pops a value from the stack */
-INLINE void PUSH(tms34010_state *tms, UINT32 data)
+INLINE void PUSH(tms34010_state *tms, uint32_t data)
 {
 	SP(tms) -= 0x20;
 	WLONG(tms, SP(tms), data);
 }
 
-INLINE INT32 POP(tms34010_state *tms)
+INLINE int32_t POP(tms34010_state *tms)
 {
-	INT32 ret = RLONG(tms, SP(tms));
+	int32_t ret = RLONG(tms, SP(tms));
 	SP(tms) += 0x20;
 	return ret;
 }
@@ -298,23 +298,23 @@ INLINE INT32 POP(tms34010_state *tms)
 	/* TODO: Plane masking */								\
 	return (TMS34010_RDMEM_WORD(T, TOBYTE(offset & 0xfffffff0)) >> (offset & m1)) & m2;
 
-static UINT32 read_pixel_1(tms34010_state *tms, offs_t offset) { RP(tms,0x0f,0x01) }
-static UINT32 read_pixel_2(tms34010_state *tms, offs_t offset) { RP(tms,0x0e,0x03) }
-static UINT32 read_pixel_4(tms34010_state *tms, offs_t offset) { RP(tms,0x0c,0x0f) }
-static UINT32 read_pixel_8(tms34010_state *tms, offs_t offset) { RP(tms,0x08,0xff) }
-static UINT32 read_pixel_16(tms34010_state *tms, offs_t offset)
+static uint32_t read_pixel_1(tms34010_state *tms, offs_t offset) { RP(tms,0x0f,0x01) }
+static uint32_t read_pixel_2(tms34010_state *tms, offs_t offset) { RP(tms,0x0e,0x03) }
+static uint32_t read_pixel_4(tms34010_state *tms, offs_t offset) { RP(tms,0x0c,0x0f) }
+static uint32_t read_pixel_8(tms34010_state *tms, offs_t offset) { RP(tms,0x08,0xff) }
+static uint32_t read_pixel_16(tms34010_state *tms, offs_t offset)
 {
 	/* TODO: Plane masking */
 	return TMS34010_RDMEM_WORD(tms, TOBYTE(offset & 0xfffffff0));
 }
-static UINT32 read_pixel_32(tms34010_state *tms, offs_t offset)
+static uint32_t read_pixel_32(tms34010_state *tms, offs_t offset)
 {
 	/* TODO: Plane masking */
 	return TMS34010_RDMEM_DWORD(tms, TOBYTE(offset & 0xffffffe0));
 }
 
 /* Shift register read */
-static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
+static uint32_t read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 {
 	if (tms->config->to_shiftreg)
 		tms->config->to_shiftreg(tms->program, offset, &tms->shiftreg[0]);
@@ -331,9 +331,9 @@ static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 
 /* No Raster Op + No Transparency */
 #define WP(T,m1,m2) 																		\
-	UINT32 a = TOBYTE(offset & 0xfffffff0);													\
-	UINT32 pix = TMS34010_RDMEM_WORD(T,a);													\
-	UINT32 shiftcount = offset & m1;														\
+	uint32_t a = TOBYTE(offset & 0xfffffff0);													\
+	uint32_t pix = TMS34010_RDMEM_WORD(T,a);													\
+	uint32_t shiftcount = offset & m1;														\
 																							\
 	/* TODO: plane masking */																\
 	data &= m2;																				\
@@ -346,9 +346,9 @@ static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 	data &= m2;																				\
 	if (data)																				\
 	{																						\
-		UINT32 a = TOBYTE(offset & 0xfffffff0);												\
-		UINT32 pix = TMS34010_RDMEM_WORD(T,a);												\
-		UINT32 shiftcount = offset & m1;													\
+		uint32_t a = TOBYTE(offset & 0xfffffff0);												\
+		uint32_t pix = TMS34010_RDMEM_WORD(T,a);												\
+		uint32_t shiftcount = offset & m1;													\
 																							\
 		/* TODO: plane masking */															\
 		pix = (pix & ~(m2 << shiftcount)) | (data << shiftcount);							\
@@ -357,9 +357,9 @@ static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 
 /* Raster Op + No Transparency */
 #define WP_R(T,m1,m2)																		\
-	UINT32 a = TOBYTE(offset & 0xfffffff0);													\
-	UINT32 pix = TMS34010_RDMEM_WORD(T,a);													\
-	UINT32 shiftcount = offset & m1;														\
+	uint32_t a = TOBYTE(offset & 0xfffffff0);													\
+	uint32_t pix = TMS34010_RDMEM_WORD(T,a);													\
+	uint32_t shiftcount = offset & m1;														\
 																							\
 	/* TODO: plane masking */																\
 	data = (*(T)->raster_op)(tms, data & m2, (pix >> shiftcount) & m2) & m2;				\
@@ -368,9 +368,9 @@ static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 
 /* Raster Op + Transparency */
 #define WP_R_T(T,m1,m2) 																	\
-	UINT32 a = TOBYTE(offset & 0xfffffff0);													\
-	UINT32 pix = TMS34010_RDMEM_WORD(T,a);													\
-	UINT32 shiftcount = offset & m1;														\
+	uint32_t a = TOBYTE(offset & 0xfffffff0);													\
+	uint32_t pix = TMS34010_RDMEM_WORD(T,a);													\
+	uint32_t shiftcount = offset & m1;														\
 																							\
 	/* TODO: plane masking */																\
 	data = (*(T)->raster_op)(tms, data & m2, (pix >> shiftcount) & m2) & m2;				\
@@ -382,33 +382,33 @@ static UINT32 read_pixel_shiftreg(tms34010_state *tms, offs_t offset)
 
 
 /* No Raster Op + No Transparency */
-static void write_pixel_1(tms34010_state *tms, offs_t offset, UINT32 data) { WP(tms, 0x0f, 0x01); }
-static void write_pixel_2(tms34010_state *tms, offs_t offset, UINT32 data) { WP(tms, 0x0e, 0x03); }
-static void write_pixel_4(tms34010_state *tms, offs_t offset, UINT32 data) { WP(tms, 0x0c, 0x0f); }
-static void write_pixel_8(tms34010_state *tms, offs_t offset, UINT32 data) { WP(tms, 0x08, 0xff); }
-static void write_pixel_16(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_1(tms34010_state *tms, offs_t offset, uint32_t data) { WP(tms, 0x0f, 0x01); }
+static void write_pixel_2(tms34010_state *tms, offs_t offset, uint32_t data) { WP(tms, 0x0e, 0x03); }
+static void write_pixel_4(tms34010_state *tms, offs_t offset, uint32_t data) { WP(tms, 0x0c, 0x0f); }
+static void write_pixel_8(tms34010_state *tms, offs_t offset, uint32_t data) { WP(tms, 0x08, 0xff); }
+static void write_pixel_16(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
 	TMS34010_WRMEM_WORD(tms, TOBYTE(offset & 0xfffffff0), data);
 }
-static void write_pixel_32(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_32(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
 	TMS34010_WRMEM_WORD(tms, TOBYTE(offset & 0xffffffe0), data);
 }
 
 /* No Raster Op + Transparency */
-static void write_pixel_t_1(tms34010_state *tms, offs_t offset, UINT32 data) { WP_T(tms, 0x0f, 0x01); }
-static void write_pixel_t_2(tms34010_state *tms, offs_t offset, UINT32 data) { WP_T(tms, 0x0e, 0x03); }
-static void write_pixel_t_4(tms34010_state *tms, offs_t offset, UINT32 data) { WP_T(tms, 0x0c, 0x0f); }
-static void write_pixel_t_8(tms34010_state *tms, offs_t offset, UINT32 data) { WP_T(tms, 0x08, 0xff); }
-static void write_pixel_t_16(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_t_1(tms34010_state *tms, offs_t offset, uint32_t data) { WP_T(tms, 0x0f, 0x01); }
+static void write_pixel_t_2(tms34010_state *tms, offs_t offset, uint32_t data) { WP_T(tms, 0x0e, 0x03); }
+static void write_pixel_t_4(tms34010_state *tms, offs_t offset, uint32_t data) { WP_T(tms, 0x0c, 0x0f); }
+static void write_pixel_t_8(tms34010_state *tms, offs_t offset, uint32_t data) { WP_T(tms, 0x08, 0xff); }
+static void write_pixel_t_16(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
 	if (data)
 		TMS34010_WRMEM_WORD(tms, TOBYTE(offset & 0xfffffff0), data);
 }
-static void write_pixel_t_32(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_t_32(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
 	if (data)
@@ -416,41 +416,41 @@ static void write_pixel_t_32(tms34010_state *tms, offs_t offset, UINT32 data)
 }
 
 /* Raster Op + No Transparency */
-static void write_pixel_r_1(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R(tms, 0x0f, 0x01); }
-static void write_pixel_r_2(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R(tms, 0x0e, 0x03); }
-static void write_pixel_r_4(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R(tms, 0x0c, 0x0f); }
-static void write_pixel_r_8(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R(tms, 0x08, 0xff); }
-static void write_pixel_r_16(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_r_1(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R(tms, 0x0f, 0x01); }
+static void write_pixel_r_2(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R(tms, 0x0e, 0x03); }
+static void write_pixel_r_4(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R(tms, 0x0c, 0x0f); }
+static void write_pixel_r_8(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R(tms, 0x08, 0xff); }
+static void write_pixel_r_16(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
-	UINT32 a = TOBYTE(offset & 0xfffffff0);
+	uint32_t a = TOBYTE(offset & 0xfffffff0);
 	TMS34010_WRMEM_WORD(tms, a, (*tms->raster_op)(tms, data, TMS34010_RDMEM_WORD(tms, a)));
 }
-static void write_pixel_r_32(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_r_32(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
-	UINT32 a = TOBYTE(offset & 0xffffffe0);
+	uint32_t a = TOBYTE(offset & 0xffffffe0);
 	TMS34010_WRMEM_DWORD(tms, a, (*tms->raster_op)(tms, data, TMS34010_RDMEM_DWORD(tms, a)));
 }
 
 /* Raster Op + Transparency */
-static void write_pixel_r_t_1(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R_T(tms, 0x0f,0x01); }
-static void write_pixel_r_t_2(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R_T(tms, 0x0e,0x03); }
-static void write_pixel_r_t_4(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R_T(tms, 0x0c,0x0f); }
-static void write_pixel_r_t_8(tms34010_state *tms, offs_t offset, UINT32 data) { WP_R_T(tms, 0x08,0xff); }
-static void write_pixel_r_t_16(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_r_t_1(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R_T(tms, 0x0f,0x01); }
+static void write_pixel_r_t_2(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R_T(tms, 0x0e,0x03); }
+static void write_pixel_r_t_4(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R_T(tms, 0x0c,0x0f); }
+static void write_pixel_r_t_8(tms34010_state *tms, offs_t offset, uint32_t data) { WP_R_T(tms, 0x08,0xff); }
+static void write_pixel_r_t_16(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
-	UINT32 a = TOBYTE(offset & 0xfffffff0);
+	uint32_t a = TOBYTE(offset & 0xfffffff0);
 	data = (*tms->raster_op)(tms, data, TMS34010_RDMEM_WORD(tms, a));
 
 	if (data)
 		TMS34010_WRMEM_WORD(tms, a, data);
 }
-static void write_pixel_r_t_32(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_r_t_32(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	/* TODO: plane masking */
-	UINT32 a = TOBYTE(offset & 0xffffffe0);
+	uint32_t a = TOBYTE(offset & 0xffffffe0);
 	data = (*tms->raster_op)(tms, data, TMS34010_RDMEM_DWORD(tms, a));
 
 	if (data)
@@ -458,7 +458,7 @@ static void write_pixel_r_t_32(tms34010_state *tms, offs_t offset, UINT32 data)
 }
 
 /* Shift register write */
-static void write_pixel_shiftreg(tms34010_state *tms, offs_t offset, UINT32 data)
+static void write_pixel_shiftreg(tms34010_state *tms, offs_t offset, uint32_t data)
 {
 	if (tms->config->from_shiftreg)
 		tms->config->from_shiftreg(tms->program, offset, &tms->shiftreg[0]);
@@ -473,32 +473,32 @@ static void write_pixel_shiftreg(tms34010_state *tms, offs_t offset, UINT32 data
 ***************************************************************************/
 
 /* Raster operations */
-static UINT32 raster_op_1(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return newpix & oldpix; }
-static UINT32 raster_op_2(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return newpix & ~oldpix; }
-static UINT32 raster_op_3(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return 0; }
-static UINT32 raster_op_4(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return newpix | ~oldpix; }
-static UINT32 raster_op_5(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return ~(newpix ^ oldpix); }
-static UINT32 raster_op_6(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return ~oldpix; }
-static UINT32 raster_op_7(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return ~(newpix | oldpix); }
-static UINT32 raster_op_8(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return newpix | oldpix; }
-static UINT32 raster_op_9(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)  { return oldpix; }
-static UINT32 raster_op_10(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return newpix ^ oldpix; }
-static UINT32 raster_op_11(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return ~newpix & oldpix; }
-static UINT32 raster_op_12(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return 0xffff; }
-static UINT32 raster_op_13(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return ~newpix | oldpix; }
-static UINT32 raster_op_14(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return ~(newpix & oldpix); }
-static UINT32 raster_op_15(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return ~newpix; }
-static UINT32 raster_op_16(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return newpix + oldpix; }
-static UINT32 raster_op_17(tms34010_state *tms, UINT32 newpix, UINT32 oldpix)
+static uint32_t raster_op_1(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return newpix & oldpix; }
+static uint32_t raster_op_2(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return newpix & ~oldpix; }
+static uint32_t raster_op_3(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return 0; }
+static uint32_t raster_op_4(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return newpix | ~oldpix; }
+static uint32_t raster_op_5(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return ~(newpix ^ oldpix); }
+static uint32_t raster_op_6(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return ~oldpix; }
+static uint32_t raster_op_7(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return ~(newpix | oldpix); }
+static uint32_t raster_op_8(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return newpix | oldpix; }
+static uint32_t raster_op_9(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)  { return oldpix; }
+static uint32_t raster_op_10(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return newpix ^ oldpix; }
+static uint32_t raster_op_11(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return ~newpix & oldpix; }
+static uint32_t raster_op_12(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return 0xffff; }
+static uint32_t raster_op_13(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return ~newpix | oldpix; }
+static uint32_t raster_op_14(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return ~(newpix & oldpix); }
+static uint32_t raster_op_15(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return ~newpix; }
+static uint32_t raster_op_16(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return newpix + oldpix; }
+static uint32_t raster_op_17(tms34010_state *tms, uint32_t newpix, uint32_t oldpix)
 {
-	UINT32 max = (UINT32)0xffffffff >> (32 - IOREG(tms, REG_PSIZE));
-	UINT32 res = newpix + oldpix;
+	uint32_t max = (uint32_t)0xffffffff >> (32 - IOREG(tms, REG_PSIZE));
+	uint32_t res = newpix + oldpix;
 	return (res > max) ? max : res;
 }
-static UINT32 raster_op_18(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return oldpix - newpix; }
-static UINT32 raster_op_19(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return (oldpix > newpix) ? oldpix - newpix : 0; }
-static UINT32 raster_op_20(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return (oldpix > newpix) ? oldpix : newpix; }
-static UINT32 raster_op_21(tms34010_state *tms, UINT32 newpix, UINT32 oldpix) { return (oldpix > newpix) ? newpix : oldpix; }
+static uint32_t raster_op_18(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return oldpix - newpix; }
+static uint32_t raster_op_19(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return (oldpix > newpix) ? oldpix - newpix : 0; }
+static uint32_t raster_op_20(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return (oldpix > newpix) ? oldpix : newpix; }
+static uint32_t raster_op_21(tms34010_state *tms, uint32_t newpix, uint32_t oldpix) { return (oldpix > newpix) ? newpix : oldpix; }
 
 
 
@@ -654,7 +654,7 @@ static CPU_INIT( tms34010 )
 	timer_adjust_oneshot(tms->scantimer, attotime_zero, 0);
 
 	/* allocate the shiftreg */
-	tms->shiftreg = auto_alloc_array(device->machine, UINT16, SHIFTREG_SIZE/2);
+	tms->shiftreg = auto_alloc_array(device->machine, uint16_t, SHIFTREG_SIZE/2);
 
 	state_save_register_device_item(device, 0, tms->pc);
 	state_save_register_device_item(device, 0, tms->st);
@@ -676,7 +676,7 @@ static CPU_RESET( tms34010 )
 	tms34010_state *tms = get_safe_token(device);
 	const tms34010_config *config = tms->config;
 	screen_device *screen = tms->screen;
-	UINT16 *shiftreg = tms->shiftreg;
+	uint16_t *shiftreg = tms->shiftreg;
 	device_irq_callback save_irqcallback = tms->irq_callback;
 	emu_timer *save_scantimer = tms->scantimer;
 
@@ -800,7 +800,7 @@ static CPU_EXECUTE( tms34010 )
 	{
 		do
 		{
-			UINT16 op;
+			uint16_t op;
 			tms->ppc = tms->pc;
 			op = ROPCODE(tms);
 			(*opcode_table[op >> 4])(tms, op);
@@ -810,7 +810,7 @@ static CPU_EXECUTE( tms34010 )
 	{
 		do
 		{
-			UINT16 op;
+			uint16_t op;
 			debugger_instruction_hook(tms->device, tms->pc);
 			tms->ppc = tms->pc;
 			op = ROPCODE(tms);
@@ -826,7 +826,7 @@ static CPU_EXECUTE( tms34010 )
     PIXEL OPS
 ***************************************************************************/
 
-static void (*const pixel_write_ops[4][6])(tms34010_state *tms, offs_t offset, UINT32 data) =
+static void (*const pixel_write_ops[4][6])(tms34010_state *tms, offs_t offset, uint32_t data) =
 {
 	{ write_pixel_1,     write_pixel_2,     write_pixel_4,     write_pixel_8,     write_pixel_16,     write_pixel_32     },
 	{ write_pixel_r_1,   write_pixel_r_2,   write_pixel_r_4,   write_pixel_r_8,   write_pixel_r_16,   write_pixel_r_32   },
@@ -834,7 +834,7 @@ static void (*const pixel_write_ops[4][6])(tms34010_state *tms, offs_t offset, U
 	{ write_pixel_r_t_1, write_pixel_r_t_2, write_pixel_r_t_4, write_pixel_r_t_8, write_pixel_r_t_16, write_pixel_r_t_32 }
 };
 
-static UINT32 (*const pixel_read_ops[6])(tms34010_state *tms, offs_t offset) =
+static uint32_t (*const pixel_read_ops[6])(tms34010_state *tms, offs_t offset) =
 {
 	read_pixel_1,        read_pixel_2,      read_pixel_4,      read_pixel_8,      read_pixel_16,      read_pixel_32
 };
@@ -842,7 +842,7 @@ static UINT32 (*const pixel_read_ops[6])(tms34010_state *tms, offs_t offset) =
 
 static void set_pixel_function(tms34010_state *tms)
 {
-	UINT32 i1,i2;
+	uint32_t i1,i2;
 
 	if (IOREG(tms, REG_DPYCTL) & 0x0800)
 	{
@@ -878,7 +878,7 @@ static void set_pixel_function(tms34010_state *tms)
     RASTER OPS
 ***************************************************************************/
 
-static UINT32 (*const raster_ops[32]) (tms34010_state *tms, UINT32 newpix, UINT32 oldpix) =
+static uint32_t (*const raster_ops[32]) (tms34010_state *tms, uint32_t newpix, uint32_t oldpix) =
 {
 	           0, raster_op_1 , raster_op_2 , raster_op_3,
 	raster_op_4 , raster_op_5 , raster_op_6 , raster_op_7,
@@ -1009,7 +1009,7 @@ static TIMER_CALLBACK( scanline_callback )
 		/* 34010 increments by the DUDATE field in DPYCTL */
 		if (!tms->is_34020)
 		{
-			UINT16 dpyadr = IOREG(tms, REG_DPYADR);
+			uint16_t dpyadr = IOREG(tms, REG_DPYADR);
 			if ((dpyadr & 3) == 0)
 				dpyadr = ((dpyadr & 0xfffc) - (IOREG(tms, REG_DPYCTL) & 0x03fc)) | (IOREG(tms, REG_DPYSTRT) & 0x0003);
 			else
@@ -1020,8 +1020,8 @@ static TIMER_CALLBACK( scanline_callback )
 		/* 34020 updates based on the DINC register, including zoom */
 		else
 		{
-			UINT32 dpynx = IOREG(tms, REG020_DPYNXL) | (IOREG(tms, REG020_DPYNXH) << 16);
-			UINT32 dinc = IOREG(tms, REG020_DINCL) | (IOREG(tms, REG020_DINCH) << 16);
+			uint32_t dpynx = IOREG(tms, REG020_DPYNXL) | (IOREG(tms, REG020_DPYNXH) << 16);
+			uint32_t dinc = IOREG(tms, REG020_DINCL) | (IOREG(tms, REG020_DINCH) << 16);
 			dpynx = (dpynx & 0xffffffe0) | ((dpynx + dinc) & 0x1f);
 			if ((dpynx & 0x1f) == 0)
 				dpynx += dinc & 0xffffffe0;
@@ -1055,7 +1055,7 @@ void tms34010_get_display_params(running_device *cpu, tms34010_display_params *p
 	/* 34010 gets its address from DPYADR and DPYTAP */
 	if (!tms->is_34020)
 	{
-		UINT16 dpyadr = IOREG(tms, REG_DPYADR);
+		uint16_t dpyadr = IOREG(tms, REG_DPYADR);
 		if (!(IOREG(tms, REG_DPYCTL) & 0x0400))
 			dpyadr ^= 0xfffc;
 		params->rowaddr = dpyadr >> 4;
@@ -1116,7 +1116,7 @@ VIDEO_UPDATE( tms340x0 )
 	/* blank out the blank regions */
 	if (bitmap->bpp == 16)
 	{
-		UINT16 *dest = BITMAP_ADDR16(bitmap, cliprect->min_y, 0);
+		uint16_t *dest = BITMAP_ADDR16(bitmap, cliprect->min_y, 0);
 		for (x = cliprect->min_x; x < params.heblnk; x++)
 			dest[x] = blackpen;
 		for (x = params.hsblnk; x <= cliprect->max_y; x++)
@@ -1124,7 +1124,7 @@ VIDEO_UPDATE( tms340x0 )
 	}
 	else if (bitmap->bpp == 32)
 	{
-		UINT32 *dest = BITMAP_ADDR32(bitmap, cliprect->min_y, 0);
+		uint32_t *dest = BITMAP_ADDR32(bitmap, cliprect->min_y, 0);
 		for (x = cliprect->min_x; x < params.heblnk; x++)
 			dest[x] = blackpen;
 		for (x = params.hsblnk; x <= cliprect->max_y; x++)
@@ -1584,7 +1584,7 @@ void tms34010_host_w(running_device *cpu, int reg, int data)
 			{
 				addr += 0x10;
 				IOREG(tms, REG_HSTADRH) = addr >> 16;
-				IOREG(tms, REG_HSTADRL) = (UINT16)addr;
+				IOREG(tms, REG_HSTADRL) = (uint16_t)addr;
 			}
 			break;
 
@@ -1643,7 +1643,7 @@ int tms34010_host_r(running_device *cpu, int reg)
 			{
 				addr += 0x10;
 				IOREG(tms, REG_HSTADRH) = addr >> 16;
-				IOREG(tms, REG_HSTADRL) = (UINT16)addr;
+				IOREG(tms, REG_HSTADRL) = (uint16_t)addr;
 			}
 			break;
 

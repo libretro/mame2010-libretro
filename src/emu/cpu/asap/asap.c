@@ -34,8 +34,8 @@
 #define REGBASE				0xffe0
 
 
-#define SET_C_ADD(A,a,b)		((A)->cflag = (UINT32)(b) > (UINT32)(~(a)))
-#define SET_C_SUB(A,a,b)		((A)->cflag = (UINT32)(b) <= (UINT32)(a))
+#define SET_C_ADD(A,a,b)		((A)->cflag = (uint32_t)(b) > (uint32_t)(~(a)))
+#define SET_C_SUB(A,a,b)		((A)->cflag = (uint32_t)(b) <= (uint32_t)(a))
 #define SET_V_ADD(A,r,a,b)		((A)->vflag = ~((a) ^ (b)) & ((a) ^ (r)))
 #define SET_V_SUB(A,r,a,b)		((A)->vflag =  ((a) ^ (b)) & ((a) ^ (r)))
 #define SET_ZN(A,r)				((A)->znflag = (r))
@@ -70,27 +70,27 @@ typedef struct _asap_state asap_state;
 struct _asap_state
 {
 	/* core registers */
-	UINT32		pc;
+	uint32_t		pc;
 
 	/* expanded flags */
-	UINT32		pflag;
-	UINT32		iflag;
-	UINT32		cflag;
-	UINT32		vflag;
-	UINT32		znflag;
+	uint32_t		pflag;
+	uint32_t		iflag;
+	uint32_t		cflag;
+	uint32_t		vflag;
+	uint32_t		znflag;
 
 	/* internal stuff */
 	PAIR		op;
-	UINT32		ppc;
-	UINT32		nextpc;
-	UINT8		irq_state;
+	uint32_t		ppc;
+	uint32_t		nextpc;
+	uint8_t		irq_state;
 	int			icount;
 	device_irq_callback irq_callback;
 	const address_space *program;
 	legacy_cpu_device *device;
 
 	/* src2val table, registers are at the end */
-	UINT32		src2val[65536];
+	uint32_t		src2val[65536];
 };
 
 
@@ -284,13 +284,13 @@ INLINE asap_state *get_safe_token(running_device *device)
 #define ROPCODE(A,pc)	memory_decrypted_read_dword((A)->program, pc)
 
 
-INLINE UINT8 READBYTE(asap_state *asap, offs_t address)
+INLINE uint8_t READBYTE(asap_state *asap, offs_t address)
 {
 	/* no alignment issues with bytes */
 	return memory_read_byte_32le(asap->program, address);
 }
 
-INLINE UINT16 READWORD(asap_state *asap, offs_t address)
+INLINE uint16_t READWORD(asap_state *asap, offs_t address)
 {
 	/* aligned reads are easy */
 	if (!(address & 1))
@@ -300,7 +300,7 @@ INLINE UINT16 READWORD(asap_state *asap, offs_t address)
 	return memory_read_dword_32le(asap->program, address & ~3) >> (address & 3);
 }
 
-INLINE UINT32 READLONG(asap_state *asap, offs_t address)
+INLINE uint32_t READLONG(asap_state *asap, offs_t address)
 {
 	/* aligned reads are easy */
 	if (!(address & 3))
@@ -310,13 +310,13 @@ INLINE UINT32 READLONG(asap_state *asap, offs_t address)
 	return memory_read_dword_32le(asap->program, address & ~3) >> (address & 3);
 }
 
-INLINE void WRITEBYTE(asap_state *asap, offs_t address, UINT8 data)
+INLINE void WRITEBYTE(asap_state *asap, offs_t address, uint8_t data)
 {
 	/* no alignment issues with bytes */
 	memory_write_byte_32le(asap->program, address, data);
 }
 
-INLINE void WRITEWORD(asap_state *asap, offs_t address, UINT16 data)
+INLINE void WRITEWORD(asap_state *asap, offs_t address, uint16_t data)
 {
 	/* aligned writes are easy */
 	if (!(address & 1))
@@ -335,7 +335,7 @@ INLINE void WRITEWORD(asap_state *asap, offs_t address, UINT16 data)
 		memory_write_byte_32le(asap->program, address + 1, data);
 }
 
-INLINE void WRITELONG(asap_state *asap, offs_t address, UINT32 data)
+INLINE void WRITELONG(asap_state *asap, offs_t address, uint32_t data)
 {
 	/* aligned writes are easy */
 	if (!(address & 3))
@@ -614,9 +614,9 @@ static void trap0(asap_state *asap)
 
 static void bsp(asap_state *asap)
 {
-	if ((INT32)asap->znflag > 0)
+	if ((int32_t)asap->znflag > 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -629,9 +629,9 @@ static void bsp(asap_state *asap)
 
 static void bmz(asap_state *asap)
 {
-	if ((INT32)asap->znflag <= 0)
+	if ((int32_t)asap->znflag <= 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -644,9 +644,9 @@ static void bmz(asap_state *asap)
 
 static void bgt(asap_state *asap)
 {
-	if (asap->znflag != 0 && (INT32)(asap->znflag ^ asap->vflag) >= 0)
+	if (asap->znflag != 0 && (int32_t)(asap->znflag ^ asap->vflag) >= 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -659,9 +659,9 @@ static void bgt(asap_state *asap)
 
 static void ble(asap_state *asap)
 {
-	if (asap->znflag == 0 || (INT32)(asap->znflag ^ asap->vflag) < 0)
+	if (asap->znflag == 0 || (int32_t)(asap->znflag ^ asap->vflag) < 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -674,9 +674,9 @@ static void ble(asap_state *asap)
 
 static void bge(asap_state *asap)
 {
-	if ((INT32)(asap->znflag ^ asap->vflag) >= 0)
+	if ((int32_t)(asap->znflag ^ asap->vflag) >= 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -689,9 +689,9 @@ static void bge(asap_state *asap)
 
 static void blt(asap_state *asap)
 {
-	if ((INT32)(asap->znflag ^ asap->vflag) < 0)
+	if ((int32_t)(asap->znflag ^ asap->vflag) < 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -706,7 +706,7 @@ static void bhi(asap_state *asap)
 {
 	if (asap->znflag != 0 && asap->cflag)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -721,7 +721,7 @@ static void bls(asap_state *asap)
 {
 	if (asap->znflag == 0 || !asap->cflag)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -736,7 +736,7 @@ static void bcc(asap_state *asap)
 {
 	if (!asap->cflag)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -751,7 +751,7 @@ static void bcs(asap_state *asap)
 {
 	if (asap->cflag)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -764,9 +764,9 @@ static void bcs(asap_state *asap)
 
 static void bpl(asap_state *asap)
 {
-	if ((INT32)asap->znflag >= 0)
+	if ((int32_t)asap->znflag >= 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -779,9 +779,9 @@ static void bpl(asap_state *asap)
 
 static void bmi(asap_state *asap)
 {
-	if ((INT32)asap->znflag < 0)
+	if ((int32_t)asap->znflag < 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -796,7 +796,7 @@ static void bne(asap_state *asap)
 {
 	if (asap->znflag != 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -811,7 +811,7 @@ static void beq(asap_state *asap)
 {
 	if (asap->znflag == 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -824,9 +824,9 @@ static void beq(asap_state *asap)
 
 static void bvc(asap_state *asap)
 {
-	if ((INT32)asap->vflag >= 0)
+	if ((int32_t)asap->vflag >= 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -839,9 +839,9 @@ static void bvc(asap_state *asap)
 
 static void bvs(asap_state *asap)
 {
-	if ((INT32)asap->vflag < 0)
+	if ((int32_t)asap->vflag < 0)
 	{
-		asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+		asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 		fetch_instruction(asap);
 		asap->pc = asap->nextpc;
@@ -857,7 +857,7 @@ static void bvs(asap_state *asap)
 static void bsr(asap_state *asap)
 {
 	DSTVAL(asap) = asap->pc + 4;
-	asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+	asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 	fetch_instruction(asap);
 	asap->pc = asap->nextpc;
@@ -869,7 +869,7 @@ static void bsr(asap_state *asap)
 
 static void bsr_0(asap_state *asap)
 {
-	asap->nextpc = asap->ppc + ((INT32)(asap->op.d << 10) >> 8);
+	asap->nextpc = asap->ppc + ((int32_t)(asap->op.d << 10) >> 8);
 
 	fetch_instruction(asap);
 	asap->pc = asap->nextpc;
@@ -888,9 +888,9 @@ static void lea(asap_state *asap)
 
 static void lea_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + (src2 << 2);
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + (src2 << 2);
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	if (src1 & 0xc0000000)
@@ -902,9 +902,9 @@ static void lea_c(asap_state *asap)
 
 static void lea_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + (src2 << 2);
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + (src2 << 2);
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	if (src1 & 0xc0000000)
@@ -922,9 +922,9 @@ static void leah(asap_state *asap)
 
 static void leah_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + (src2 << 1);
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + (src2 << 1);
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	if (src1 & 0x80000000)
@@ -936,9 +936,9 @@ static void leah_c(asap_state *asap)
 
 static void leah_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + (src2 << 1);
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + (src2 << 1);
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	if (src1 & 0x80000000)
@@ -956,9 +956,9 @@ static void subr(asap_state *asap)
 
 static void subr_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src2 - src1;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src2 - src1;
 
 	SET_ZNCV_SUB(asap, dst, src2, src1);
 	DSTVAL(asap) = dst;
@@ -966,9 +966,9 @@ static void subr_c(asap_state *asap)
 
 static void subr_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src2 - src1;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src2 - src1;
 
 	SET_ZNCV_SUB(asap, dst, src2, src1);
 }
@@ -982,14 +982,14 @@ static void xor_(asap_state *asap)
 
 static void xor_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) ^ SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) ^ SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void xor_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) ^ SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) ^ SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1002,14 +1002,14 @@ static void xorn(asap_state *asap)
 
 static void xorn_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) ^ ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) ^ ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void xorn_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) ^ ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) ^ ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1022,9 +1022,9 @@ static void add(asap_state *asap)
 
 static void add_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + src2;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + src2;
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	DSTVAL(asap) = dst;
@@ -1032,9 +1032,9 @@ static void add_c(asap_state *asap)
 
 static void add_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + src2;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + src2;
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 }
@@ -1048,9 +1048,9 @@ static void sub(asap_state *asap)
 
 static void sub_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 - src2;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 - src2;
 
 	SET_ZNCV_SUB(asap, dst, src1, src2);
 	DSTVAL(asap) = dst;
@@ -1058,9 +1058,9 @@ static void sub_c(asap_state *asap)
 
 static void sub_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 - src2;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 - src2;
 
 	SET_ZNCV_SUB(asap, dst, src1, src2);
 }
@@ -1074,9 +1074,9 @@ static void addc(asap_state *asap)
 
 static void addc_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + src2 + asap->cflag;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + src2 + asap->cflag;
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 	DSTVAL(asap) = dst;
@@ -1084,9 +1084,9 @@ static void addc_c(asap_state *asap)
 
 static void addc_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 + src2 + asap->cflag;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 + src2 + asap->cflag;
 
 	SET_ZNCV_ADD(asap, dst, src1, src2);
 }
@@ -1100,9 +1100,9 @@ static void subc(asap_state *asap)
 
 static void subc_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 - src2 - 1 + asap->cflag;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 - src2 - 1 + asap->cflag;
 
 	SET_ZNCV_SUB(asap, dst, src1, src2);
 	DSTVAL(asap) = dst;
@@ -1110,9 +1110,9 @@ static void subc_c(asap_state *asap)
 
 static void subc_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap);
-	UINT32 dst = src1 - src2 - 1 + asap->cflag;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
+	uint32_t dst = src1 - src2 - 1 + asap->cflag;
 
 	SET_ZNCV_SUB(asap, dst, src1, src2);
 }
@@ -1126,14 +1126,14 @@ static void and_(asap_state *asap)
 
 static void and_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) & SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) & SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void and_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) & SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) & SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1146,14 +1146,14 @@ static void andn(asap_state *asap)
 
 static void andn_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) & ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) & ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void andn_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) & ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) & ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1166,14 +1166,14 @@ static void or_(asap_state *asap)
 
 static void or_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) | SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) | SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void or_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) | SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) | SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1186,14 +1186,14 @@ static void orn(asap_state *asap)
 
 static void orn_c(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) | ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) | ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void orn_c0(asap_state *asap)
 {
-	UINT32 dst = SRC1VAL(asap) | ~SRC2VAL(asap);
+	uint32_t dst = SRC1VAL(asap) | ~SRC2VAL(asap);
 	SET_ZN(asap, dst);
 }
 
@@ -1211,14 +1211,14 @@ static void ld_0(asap_state *asap)
 
 static void ld_c(asap_state *asap)
 {
-	UINT32 dst = READLONG(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 2));
+	uint32_t dst = READLONG(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 2));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void ld_c0(asap_state *asap)
 {
-	UINT32 dst = READLONG(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 2));
+	uint32_t dst = READLONG(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 2));
 	SET_ZN(asap, dst);
 }
 
@@ -1226,7 +1226,7 @@ static void ld_c0(asap_state *asap)
 
 static void ldh(asap_state *asap)
 {
-	DSTVAL(asap) = (INT16)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
+	DSTVAL(asap) = (int16_t)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
 }
 
 static void ldh_0(asap_state *asap)
@@ -1236,14 +1236,14 @@ static void ldh_0(asap_state *asap)
 
 static void ldh_c(asap_state *asap)
 {
-	UINT32 dst = (INT16)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
+	uint32_t dst = (int16_t)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void ldh_c0(asap_state *asap)
 {
-	UINT32 dst = (INT16)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
+	uint32_t dst = (int16_t)READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
 	SET_ZN(asap, dst);
 }
 
@@ -1261,14 +1261,14 @@ static void lduh_0(asap_state *asap)
 
 static void lduh_c(asap_state *asap)
 {
-	UINT32 dst = READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
+	uint32_t dst = READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void lduh_c0(asap_state *asap)
 {
-	UINT32 dst = READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
+	uint32_t dst = READWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1));
 	SET_ZN(asap, dst);
 }
 
@@ -1286,7 +1286,7 @@ static void sth_0(asap_state *asap)
 
 static void sth_c(asap_state *asap)
 {
-	UINT32 dst = (UINT16)DSTVAL(asap);
+	uint32_t dst = (uint16_t)DSTVAL(asap);
 	SET_ZN(asap, dst);
 	WRITEWORD(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 1), dst);
 }
@@ -1311,7 +1311,7 @@ static void st_0(asap_state *asap)
 
 static void st_c(asap_state *asap)
 {
-	UINT32 dst = DSTVAL(asap);
+	uint32_t dst = DSTVAL(asap);
 	SET_ZN(asap, dst);
 	WRITELONG(asap, SRC1VAL(asap) + (SRC2VAL(asap) << 2), dst);
 }
@@ -1326,7 +1326,7 @@ static void st_c0(asap_state *asap)
 
 static void ldb(asap_state *asap)
 {
-	DSTVAL(asap) = (INT8)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
+	DSTVAL(asap) = (int8_t)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
 }
 
 static void ldb_0(asap_state *asap)
@@ -1336,14 +1336,14 @@ static void ldb_0(asap_state *asap)
 
 static void ldb_c(asap_state *asap)
 {
-	UINT32 dst = (INT8)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
+	uint32_t dst = (int8_t)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void ldb_c0(asap_state *asap)
 {
-	UINT32 dst = (INT8)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
+	uint32_t dst = (int8_t)READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
 	SET_ZN(asap, dst);
 }
 
@@ -1361,14 +1361,14 @@ static void ldub_0(asap_state *asap)
 
 static void ldub_c(asap_state *asap)
 {
-	UINT32 dst = READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
+	uint32_t dst = READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void ldub_c0(asap_state *asap)
 {
-	UINT32 dst = READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
+	uint32_t dst = READBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap));
 	SET_ZN(asap, dst);
 }
 
@@ -1386,7 +1386,7 @@ static void stb_0(asap_state *asap)
 
 static void stb_c(asap_state *asap)
 {
-	UINT32 dst = (UINT8)DSTVAL(asap);
+	uint32_t dst = (uint8_t)DSTVAL(asap);
 	SET_ZN(asap, dst);
 	WRITEBYTE(asap, SRC1VAL(asap) + SRC2VAL(asap), dst);
 }
@@ -1401,18 +1401,18 @@ static void stb_c0(asap_state *asap)
 
 static void ashr(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
-	DSTVAL(asap) = (src2 < 32) ? ((INT32)SRC1VAL(asap) >> src2) : ((INT32)SRC1VAL(asap) >> 31);
+	uint32_t src2 = SRC2VAL(asap);
+	DSTVAL(asap) = (src2 < 32) ? ((int32_t)SRC1VAL(asap) >> src2) : ((int32_t)SRC1VAL(asap) >> 31);
 }
 
 static void ashr_c(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = (INT32)src1 >> src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = (int32_t)src1 >> src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
@@ -1423,7 +1423,7 @@ static void ashr_c(asap_state *asap)
 	}
 	else
 	{
-		UINT32 dst = (INT32)SRC1VAL(asap) >> 31;
+		uint32_t dst = (int32_t)SRC1VAL(asap) >> 31;
 		SET_ZN(asap, dst);
 		DSTVAL(asap) = dst;
 	}
@@ -1431,12 +1431,12 @@ static void ashr_c(asap_state *asap)
 
 static void ashr_c0(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = (INT32)src1 >> src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = (int32_t)src1 >> src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
@@ -1446,7 +1446,7 @@ static void ashr_c0(asap_state *asap)
 	}
 	else
 	{
-		UINT32 dst = (INT32)SRC1VAL(asap) >> 31;
+		uint32_t dst = (int32_t)SRC1VAL(asap) >> 31;
 		SET_ZN(asap, dst);
 	}
 }
@@ -1455,18 +1455,18 @@ static void ashr_c0(asap_state *asap)
 
 static void lshr(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	DSTVAL(asap) = (src2 < 32) ? (SRC1VAL(asap) >> src2) : (SRC1VAL(asap) >> 31);
 }
 
 static void lshr_c(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = src1 >> src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = src1 >> src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
@@ -1477,7 +1477,7 @@ static void lshr_c(asap_state *asap)
 	}
 	else
 	{
-		UINT32 dst = SRC1VAL(asap) >> 31;
+		uint32_t dst = SRC1VAL(asap) >> 31;
 		SET_ZN(asap, dst);
 		DSTVAL(asap) = dst;
 	}
@@ -1485,12 +1485,12 @@ static void lshr_c(asap_state *asap)
 
 static void lshr_c0(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = src1 >> src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = src1 >> src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
@@ -1509,24 +1509,24 @@ static void lshr_c0(asap_state *asap)
 
 static void ashl(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	DSTVAL(asap) = (src2 < 32) ? (SRC1VAL(asap) << src2) : 0;
 }
 
 static void ashl_c(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = asap->vflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = src1 << src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = src1 << src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
-			src1 = (INT32)src1 >> (32 - src2);
+			src1 = (int32_t)src1 >> (32 - src2);
 			asap->cflag = src1 & PS_CFLAG;
-			asap->vflag = (src1 != ((INT32)dst >> 31)) << 31;
+			asap->vflag = (src1 != ((int32_t)dst >> 31)) << 31;
 		}
 		DSTVAL(asap) = dst;
 	}
@@ -1539,18 +1539,18 @@ static void ashl_c(asap_state *asap)
 
 static void ashl_c0(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap);
+	uint32_t src2 = SRC2VAL(asap);
 	asap->cflag = asap->vflag = 0;
 	if (src2 < 32)
 	{
-		UINT32 src1 = SRC1VAL(asap);
-		UINT32 dst = src1 << src2;
+		uint32_t src1 = SRC1VAL(asap);
+		uint32_t dst = src1 << src2;
 		SET_ZN(asap, dst);
 		if (src2 != 0)
 		{
-			src1 = (INT32)src1 >> (32 - src2);
+			src1 = (int32_t)src1 >> (32 - src2);
 			asap->cflag = src1 & PS_CFLAG;
-			asap->vflag = (src1 != ((INT32)dst >> 31)) << 31;
+			asap->vflag = (src1 != ((int32_t)dst >> 31)) << 31;
 		}
 	}
 	else
@@ -1561,25 +1561,25 @@ static void ashl_c0(asap_state *asap)
 
 static void rotl(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap) & 31;
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap) & 31;
 	DSTVAL(asap) = (src1 << src2) | (src1 >> (32 - src2));
 }
 
 static void rotl_c(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap) & 31;
-	UINT32 dst = (src1 << src2) | (src1 >> (32 - src2));
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap) & 31;
+	uint32_t dst = (src1 << src2) | (src1 >> (32 - src2));
 	SET_ZN(asap, dst);
 	DSTVAL(asap) = dst;
 }
 
 static void rotl_c0(asap_state *asap)
 {
-	UINT32 src1 = SRC1VAL(asap);
-	UINT32 src2 = SRC2VAL(asap) & 31;
-	UINT32 dst = (src1 << src2) | (src1 >> (32 - src2));
+	uint32_t src1 = SRC1VAL(asap);
+	uint32_t src2 = SRC2VAL(asap) & 31;
+	uint32_t dst = (src1 << src2) | (src1 >> (32 - src2));
 	SET_ZN(asap, dst);
 }
 
@@ -1594,7 +1594,7 @@ static void getps(asap_state *asap)
 
 static void putps(asap_state *asap)
 {
-	UINT32 src2 = SRC2VAL(asap) & 0x3f;
+	uint32_t src2 = SRC2VAL(asap) & 0x3f;
 	SET_FLAGS(asap, src2);
 	check_irqs(asap);
 }

@@ -58,17 +58,17 @@ INLINE X87_REG FPU_POP(i386_state *cpustate)
 
 static void I386OP(fpu_group_d8)(i386_state *cpustate)		// Opcode 0xd8
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	fatalerror("I386: FPU Op D8 %02X at %08X", modrm, cpustate->pc-2);
 }
 
 static void I386OP(fpu_group_d9)(i386_state *cpustate)		// Opcode 0xd9
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
-		UINT32 ea = GetEA(cpustate,modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
 
 		switch ((modrm >> 3) & 0x7)
 		{
@@ -135,13 +135,13 @@ static void I386OP(fpu_group_d9)(i386_state *cpustate)		// Opcode 0xd9
 
 static void I386OP(fpu_group_da)(i386_state *cpustate)		// Opcode 0xda
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	fatalerror("I386: FPU Op DA %02X at %08X", modrm, cpustate->pc-2);
 }
 
 static void I386OP(fpu_group_db)(i386_state *cpustate)		// Opcode 0xdb
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
@@ -178,11 +178,11 @@ static void I386OP(fpu_group_db)(i386_state *cpustate)		// Opcode 0xdb
 
 static void I386OP(fpu_group_dc)(i386_state *cpustate)		// Opcode 0xdc
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
-		//UINT32 ea = GetEA(cpustate,modrm);
+		//uint32_t ea = GetEA(cpustate,modrm);
 
 		switch ((modrm >> 3) & 0x7)
 		{
@@ -221,11 +221,11 @@ static void I386OP(fpu_group_dc)(i386_state *cpustate)		// Opcode 0xdc
 
 static void I386OP(fpu_group_dd)(i386_state *cpustate)		// Opcode 0xdd
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
-		UINT32 ea = GetEA(cpustate,modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
 
 		switch ((modrm >> 3) & 0x7)
 		{
@@ -252,11 +252,11 @@ static void I386OP(fpu_group_dd)(i386_state *cpustate)		// Opcode 0xdd
 
 static void I386OP(fpu_group_de)(i386_state *cpustate)		// Opcode 0xde
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
-	//  UINT32 ea = GetEA(cpustate,modrm);
+	//  uint32_t ea = GetEA(cpustate,modrm);
 
 		switch ((modrm >> 3) & 0x7)
 		{
@@ -322,11 +322,11 @@ static void I386OP(fpu_group_de)(i386_state *cpustate)		// Opcode 0xde
 
 static void I386OP(fpu_group_df)(i386_state *cpustate)		// Opcode 0xdf
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 
 	if (modrm < 0xc0)
 	{
-	//  UINT32 ea = GetEA(cpustate,modrm);
+	//  uint32_t ea = GetEA(cpustate,modrm);
 
 		switch ((modrm >> 3) & 0x7)
 		{

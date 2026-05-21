@@ -34,7 +34,7 @@
 #include "cpu/drcuml.h"
 #include "cpu/drcumlsh.h"
 
-extern unsigned dasmmips3(char *buffer, unsigned pc, UINT32 op);
+extern unsigned dasmmips3(char *buffer, unsigned pc, uint32_t op);
 
 
 
@@ -90,7 +90,7 @@ extern unsigned dasmmips3(char *buffer, unsigned pc, UINT32 op);
     MACROS
 ***************************************************************************/
 
-#define LOPTR(x)				((UINT32 *)(x) + NATIVE_ENDIAN_VALUE_LE_BE(0,1))
+#define LOPTR(x)				((uint32_t *)(x) + NATIVE_ENDIAN_VALUE_LE_BE(0,1))
 
 #define R32(reg)				mips3->impstate->regmaplo[reg].type, mips3->impstate->regmaplo[reg].value
 #define LO32					R32(REG_LO)
@@ -113,7 +113,7 @@ extern unsigned dasmmips3(char *buffer, unsigned pc, UINT32 op);
 #define CCR264(reg)				MEM(&mips3->ccr[2][reg])
 
 #define FCCSHIFT(which)			fcc_shift[(mips3->flavor < MIPS3_TYPE_MIPS_IV) ? 0 : ((which) & 7)]
-#define FCCMASK(which)			((UINT32)(1 << FCCSHIFT(which)))
+#define FCCMASK(which)			((uint32_t)(1 << FCCSHIFT(which)))
 
 
 
@@ -127,7 +127,7 @@ struct _fast_ram_info
 {
 	offs_t				start;						/* start of the RAM block */
 	offs_t				end;						/* end of the RAM block */
-	UINT8				readonly;					/* TRUE if read-only */
+	uint8_t				readonly;					/* TRUE if read-only */
 	void *				base;						/* base in memory where the RAM lives */
 };
 
@@ -137,8 +137,8 @@ typedef struct _hotspot_info hotspot_info;
 struct _hotspot_info
 {
 	offs_t				pc;							/* PC to consider */
-	UINT32				opcode;						/* required opcode at that PC */
-	UINT32				cycles;						/* number of cycles to eat when hit */
+	uint32_t				opcode;						/* required opcode at that PC */
+	uint32_t				cycles;						/* number of cycles to eat when hit */
 };
 
 
@@ -146,9 +146,9 @@ struct _hotspot_info
 typedef struct _compiler_state compiler_state;
 struct _compiler_state
 {
-	UINT32				cycles;						/* accumulated cycles */
-	UINT8				checkints;					/* need to check interrupts before next instruction */
-	UINT8				checksoftints;				/* need to check software interrupts before next instruction */
+	uint32_t				cycles;						/* accumulated cycles */
+	uint8_t				checkints;					/* need to check interrupts before next instruction */
+	uint8_t				checksoftints;				/* need to check software interrupts before next instruction */
 	drcuml_codelabel	labelnum;					/* index for local labels */
 };
 
@@ -160,21 +160,21 @@ struct _mips3imp_state
 	drccache *			cache;						/* pointer to the DRC code cache */
 	drcuml_state *		drcuml;						/* DRC UML generator state */
 	drcfe_state *		drcfe;						/* pointer to the DRC front-end state */
-	UINT32				drcoptions;					/* configurable DRC options */
+	uint32_t				drcoptions;					/* configurable DRC options */
 
 	/* internal stuff */
-	UINT8				cache_dirty;				/* true if we need to flush the cache */
-	UINT32				jmpdest;					/* destination jump target */
+	uint8_t				cache_dirty;				/* true if we need to flush the cache */
+	uint32_t				jmpdest;					/* destination jump target */
 
 	/* parameters for subroutines */
-	UINT64				numcycles;					/* return value from gettotalcycles */
-	UINT32				mode;						/* current global mode */
+	uint64_t				numcycles;					/* return value from gettotalcycles */
+	uint32_t				mode;						/* current global mode */
 	const char *		format;						/* format string for print_debug */
-	UINT32				arg0;						/* print_debug argument 1 */
-	UINT32				arg1;						/* print_debug argument 2 */
+	uint32_t				arg0;						/* print_debug argument 1 */
+	uint32_t				arg1;						/* print_debug argument 2 */
 
 	/* tables */
-	UINT8				fpmode[4];					/* FPU mode table */
+	uint8_t				fpmode[4];					/* FPU mode table */
 
 	/* register mappings */
 	drcuml_parameter	regmap[34];					/* parameter to register mappings for all 32 integer registers */
@@ -201,11 +201,11 @@ struct _mips3imp_state
 	drcuml_codehandle *	exception_norecover[EXCEPTION_COUNT];	/* array of no-recover exception handlers */
 
 	/* fast RAM */
-	UINT32				fastram_select;
+	uint32_t				fastram_select;
 	fast_ram_info		fastram[MIPS3_MAX_FASTRAM];
 
 	/* hotspots */
-	UINT32				hotspot_select;
+	uint32_t				hotspot_select;
 	hotspot_info		hotspot[MIPS3_MAX_HOTSPOTS];
 };
 
@@ -216,7 +216,7 @@ struct _mips3imp_state
 ***************************************************************************/
 
 static void code_flush_cache(mips3_state *mips3);
-static void code_compile_block(mips3_state *mips3, UINT8 mode, offs_t pc);
+static void code_compile_block(mips3_state *mips3, uint8_t mode, offs_t pc);
 
 static void cfunc_printf_exception(void *param);
 static void cfunc_get_cycles(void *param);
@@ -226,27 +226,27 @@ static void static_generate_entry_point(mips3_state *mips3);
 static void static_generate_nocode_handler(mips3_state *mips3);
 static void static_generate_out_of_cycles(mips3_state *mips3);
 static void static_generate_tlb_mismatch(mips3_state *mips3);
-static void static_generate_exception(mips3_state *mips3, UINT8 exception, int recover, const char *name);
+static void static_generate_exception(mips3_state *mips3, uint8_t exception, int recover, const char *name);
 static void static_generate_memory_accessor(mips3_state *mips3, int mode, int size, int iswrite, int ismasked, const char *name, drcuml_codehandle **handleptr);
 
 static void generate_update_mode(mips3_state *mips3, drcuml_block *block);
-static void generate_update_cycles(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, UINT64 pvalue, int allow_exception);
+static void generate_update_cycles(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, uint64_t pvalue, int allow_exception);
 static void generate_checksum_block(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *seqhead, const opcode_desc *seqlast);
 static void generate_sequence_instruction(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
-static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 linkreg);
+static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t linkreg);
 static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_special(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_regimm(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_idt(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
-static int generate_set_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 reg);
-static int generate_get_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 reg);
+static int generate_set_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t reg);
+static int generate_get_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t reg);
 static int generate_cop0(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_cop1(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_cop1x(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 
-static void log_add_disasm_comment(mips3_state *mips3, drcuml_block *block, UINT32 pc, UINT32 op);
-static const char *log_desc_flags_to_string(UINT32 flags);
-static void log_register_list(drcuml_state *drcuml, const char *string, const UINT32 *reglist, const UINT32 *regnostarlist);
+static void log_add_disasm_comment(mips3_state *mips3, drcuml_block *block, uint32_t pc, uint32_t op);
+static const char *log_desc_flags_to_string(uint32_t flags);
+static void log_register_list(drcuml_state *drcuml, const char *string, const uint32_t *reglist, const uint32_t *regnostarlist);
 static void log_opcode_desc(drcuml_state *drcuml, const opcode_desc *desclist, int indent);
 
 
@@ -256,10 +256,10 @@ static void log_opcode_desc(drcuml_state *drcuml, const opcode_desc *desclist, i
 ***************************************************************************/
 
 /* bit indexes for various FCCs */
-static const UINT8 fcc_shift[8] = { 23, 25, 26, 27, 28, 29, 30, 31 };
+static const uint8_t fcc_shift[8] = { 23, 25, 26, 27, 28, 29, 30, 31 };
 
 /* lookup table for FP modes */
-static const UINT8 fpmode_source[4] =
+static const uint8_t fpmode_source[4] =
 {
 	DRCUML_FMOD_ROUND,
 	DRCUML_FMOD_TRUNC,
@@ -301,7 +301,7 @@ INLINE mips3_state *get_safe_token(running_device *device)
     descriptor
 -------------------------------------------------*/
 
-INLINE UINT32 epc(const opcode_desc *desc)
+INLINE uint32_t epc(const opcode_desc *desc)
 {
 	return (desc->flags & OPFLAG_IN_DELAY_SLOT) ? (desc->pc - 3) : desc->pc;
 }
@@ -370,13 +370,13 @@ static void mips3_init(mips3_flavor flavor, int bigendian, legacy_cpu_device *de
 	mips3_state *mips3;
 	drccache *cache;
 	drcbe_info beinfo;
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 	int regnum;
 
 	/* allocate enough space for the cache and the core */
 	cache = (drccache *)drccache_alloc(CACHE_SIZE + sizeof(*mips3));
 	if (cache == NULL)
-		fatalerror("Unable to allocate cache of size %d", (UINT32)(CACHE_SIZE + sizeof(*mips3)));
+		fatalerror("Unable to allocate cache of size %d", (uint32_t)(CACHE_SIZE + sizeof(*mips3)));
 
 	/* allocate the core memory */
 	*(mips3_state **)device->token() = mips3 = (mips3_state *)drccache_memory_alloc_near(cache, sizeof(*mips3));
@@ -625,7 +625,7 @@ static CPU_GET_INFO( mips3 )
     mips3drc_set_options - configure DRC options
 -------------------------------------------------*/
 
-void mips3drc_set_options(running_device *device, UINT32 options)
+void mips3drc_set_options(running_device *device, uint32_t options)
 {
 	mips3_state *mips3 = get_safe_token(device);
 	mips3->impstate->drcoptions = options;
@@ -637,7 +637,7 @@ void mips3drc_set_options(running_device *device, UINT32 options)
     region
 -------------------------------------------------*/
 
-void mips3drc_add_fastram(running_device *device, offs_t start, offs_t end, UINT8 readonly, void *base)
+void mips3drc_add_fastram(running_device *device, offs_t start, offs_t end, uint8_t readonly, void *base)
 {
 	mips3_state *mips3 = get_safe_token(device);
 	if (mips3->impstate->fastram_select < ARRAY_LENGTH(mips3->impstate->fastram))
@@ -655,7 +655,7 @@ void mips3drc_add_fastram(running_device *device, offs_t start, offs_t end, UINT
     mips3drc_add_hotspot - add a new hotspot
 -------------------------------------------------*/
 
-void mips3drc_add_hotspot(running_device *device, offs_t pc, UINT32 opcode, UINT32 cycles)
+void mips3drc_add_hotspot(running_device *device, offs_t pc, uint32_t opcode, uint32_t cycles)
 {
 	mips3_state *mips3 = get_safe_token(device);
 	if (mips3->impstate->hotspot_select < ARRAY_LENGTH(mips3->impstate->hotspot))
@@ -732,7 +732,7 @@ static void code_flush_cache(mips3_state *mips3)
     given mode at the specified pc
 -------------------------------------------------*/
 
-static void code_compile_block(mips3_state *mips3, UINT8 mode, offs_t pc)
+static void code_compile_block(mips3_state *mips3, uint8_t mode, offs_t pc)
 {
 	drcuml_state *drcuml = mips3->impstate->drcuml;
 	compiler_state compiler = { 0 };
@@ -760,7 +760,7 @@ static void code_compile_block(mips3_state *mips3, UINT8 mode, offs_t pc)
 	for (seqhead = desclist; seqhead != NULL; seqhead = seqlast->next)
 	{
 		const opcode_desc *curdesc;
-		UINT32 nextpc;
+		uint32_t nextpc;
 
 		/* add a code log entry */
 		if (LOG_UML)
@@ -856,7 +856,7 @@ static void cfunc_get_cycles(void *param)
 static void cfunc_printf_exception(void *param)
 {
 	mips3_state *mips3 = (mips3_state *)param;
-	printf("Exception: EPC=%08X Cause=%08X BadVAddr=%08X Jmp=%08X\n", (UINT32)mips3->cpr[0][COP0_EPC], (UINT32)mips3->cpr[0][COP0_Cause], (UINT32)mips3->cpr[0][COP0_BadVAddr], mips3->pc);
+	printf("Exception: EPC=%08X Cause=%08X BadVAddr=%08X Jmp=%08X\n", (uint32_t)mips3->cpr[0][COP0_EPC], (uint32_t)mips3->cpr[0][COP0_Cause], (uint32_t)mips3->cpr[0][COP0_BadVAddr], mips3->pc);
 	cfunc_printf_probe(mips3);
 }
 
@@ -884,47 +884,47 @@ static void cfunc_printf_probe(void *param)
 
 	printf(" PC=%08X          r1=%08X%08X  r2=%08X%08X  r3=%08X%08X\n",
 		mips3->pc,
-		(UINT32)(mips3->r[1] >> 32), (UINT32)mips3->r[1],
-		(UINT32)(mips3->r[2] >> 32), (UINT32)mips3->r[2],
-		(UINT32)(mips3->r[3] >> 32), (UINT32)mips3->r[3]);
+		(uint32_t)(mips3->r[1] >> 32), (uint32_t)mips3->r[1],
+		(uint32_t)(mips3->r[2] >> 32), (uint32_t)mips3->r[2],
+		(uint32_t)(mips3->r[3] >> 32), (uint32_t)mips3->r[3]);
 	printf(" r4=%08X%08X  r5=%08X%08X  r6=%08X%08X  r7=%08X%08X\n",
-		(UINT32)(mips3->r[4] >> 32), (UINT32)mips3->r[4],
-		(UINT32)(mips3->r[5] >> 32), (UINT32)mips3->r[5],
-		(UINT32)(mips3->r[6] >> 32), (UINT32)mips3->r[6],
-		(UINT32)(mips3->r[7] >> 32), (UINT32)mips3->r[7]);
+		(uint32_t)(mips3->r[4] >> 32), (uint32_t)mips3->r[4],
+		(uint32_t)(mips3->r[5] >> 32), (uint32_t)mips3->r[5],
+		(uint32_t)(mips3->r[6] >> 32), (uint32_t)mips3->r[6],
+		(uint32_t)(mips3->r[7] >> 32), (uint32_t)mips3->r[7]);
 	printf(" r8=%08X%08X  r9=%08X%08X r10=%08X%08X r11=%08X%08X\n",
-		(UINT32)(mips3->r[8] >> 32), (UINT32)mips3->r[8],
-		(UINT32)(mips3->r[9] >> 32), (UINT32)mips3->r[9],
-		(UINT32)(mips3->r[10] >> 32), (UINT32)mips3->r[10],
-		(UINT32)(mips3->r[11] >> 32), (UINT32)mips3->r[11]);
+		(uint32_t)(mips3->r[8] >> 32), (uint32_t)mips3->r[8],
+		(uint32_t)(mips3->r[9] >> 32), (uint32_t)mips3->r[9],
+		(uint32_t)(mips3->r[10] >> 32), (uint32_t)mips3->r[10],
+		(uint32_t)(mips3->r[11] >> 32), (uint32_t)mips3->r[11]);
 	printf("r12=%08X%08X r13=%08X%08X r14=%08X%08X r15=%08X%08X\n",
-		(UINT32)(mips3->r[12] >> 32), (UINT32)mips3->r[12],
-		(UINT32)(mips3->r[13] >> 32), (UINT32)mips3->r[13],
-		(UINT32)(mips3->r[14] >> 32), (UINT32)mips3->r[14],
-		(UINT32)(mips3->r[15] >> 32), (UINT32)mips3->r[15]);
+		(uint32_t)(mips3->r[12] >> 32), (uint32_t)mips3->r[12],
+		(uint32_t)(mips3->r[13] >> 32), (uint32_t)mips3->r[13],
+		(uint32_t)(mips3->r[14] >> 32), (uint32_t)mips3->r[14],
+		(uint32_t)(mips3->r[15] >> 32), (uint32_t)mips3->r[15]);
 	printf("r16=%08X%08X r17=%08X%08X r18=%08X%08X r19=%08X%08X\n",
-		(UINT32)(mips3->r[16] >> 32), (UINT32)mips3->r[16],
-		(UINT32)(mips3->r[17] >> 32), (UINT32)mips3->r[17],
-		(UINT32)(mips3->r[18] >> 32), (UINT32)mips3->r[18],
-		(UINT32)(mips3->r[19] >> 32), (UINT32)mips3->r[19]);
+		(uint32_t)(mips3->r[16] >> 32), (uint32_t)mips3->r[16],
+		(uint32_t)(mips3->r[17] >> 32), (uint32_t)mips3->r[17],
+		(uint32_t)(mips3->r[18] >> 32), (uint32_t)mips3->r[18],
+		(uint32_t)(mips3->r[19] >> 32), (uint32_t)mips3->r[19]);
 	printf("r20=%08X%08X r21=%08X%08X r22=%08X%08X r23=%08X%08X\n",
-		(UINT32)(mips3->r[20] >> 32), (UINT32)mips3->r[20],
-		(UINT32)(mips3->r[21] >> 32), (UINT32)mips3->r[21],
-		(UINT32)(mips3->r[22] >> 32), (UINT32)mips3->r[22],
-		(UINT32)(mips3->r[23] >> 32), (UINT32)mips3->r[23]);
+		(uint32_t)(mips3->r[20] >> 32), (uint32_t)mips3->r[20],
+		(uint32_t)(mips3->r[21] >> 32), (uint32_t)mips3->r[21],
+		(uint32_t)(mips3->r[22] >> 32), (uint32_t)mips3->r[22],
+		(uint32_t)(mips3->r[23] >> 32), (uint32_t)mips3->r[23]);
 	printf("r24=%08X%08X r25=%08X%08X r26=%08X%08X r27=%08X%08X\n",
-		(UINT32)(mips3->r[24] >> 32), (UINT32)mips3->r[24],
-		(UINT32)(mips3->r[25] >> 32), (UINT32)mips3->r[25],
-		(UINT32)(mips3->r[26] >> 32), (UINT32)mips3->r[26],
-		(UINT32)(mips3->r[27] >> 32), (UINT32)mips3->r[27]);
+		(uint32_t)(mips3->r[24] >> 32), (uint32_t)mips3->r[24],
+		(uint32_t)(mips3->r[25] >> 32), (uint32_t)mips3->r[25],
+		(uint32_t)(mips3->r[26] >> 32), (uint32_t)mips3->r[26],
+		(uint32_t)(mips3->r[27] >> 32), (uint32_t)mips3->r[27]);
 	printf("r28=%08X%08X r29=%08X%08X r30=%08X%08X r31=%08X%08X\n",
-		(UINT32)(mips3->r[28] >> 32), (UINT32)mips3->r[28],
-		(UINT32)(mips3->r[29] >> 32), (UINT32)mips3->r[29],
-		(UINT32)(mips3->r[30] >> 32), (UINT32)mips3->r[30],
-		(UINT32)(mips3->r[31] >> 32), (UINT32)mips3->r[31]);
+		(uint32_t)(mips3->r[28] >> 32), (uint32_t)mips3->r[28],
+		(uint32_t)(mips3->r[29] >> 32), (uint32_t)mips3->r[29],
+		(uint32_t)(mips3->r[30] >> 32), (uint32_t)mips3->r[30],
+		(uint32_t)(mips3->r[31] >> 32), (uint32_t)mips3->r[31]);
 	printf(" hi=%08X%08X  lo=%08X%08X\n",
-		(UINT32)(mips3->r[REG_HI] >> 32), (UINT32)mips3->r[REG_HI],
-		(UINT32)(mips3->r[REG_LO] >> 32), (UINT32)mips3->r[REG_LO]);
+		(uint32_t)(mips3->r[REG_HI] >> 32), (uint32_t)mips3->r[REG_HI],
+		(uint32_t)(mips3->r[REG_LO] >> 32), (uint32_t)mips3->r[REG_LO]);
 }
 
 
@@ -936,7 +936,7 @@ static void cfunc_printf_probe(void *param)
 static void cfunc_unimplemented(void *param)
 {
 	mips3_state *mips3 = (mips3_state *)param;
-	UINT32 opcode = mips3->impstate->arg0;
+	uint32_t opcode = mips3->impstate->arg0;
 	fatalerror("PC=%08X: Unimplemented op %08X (%02X,%02X)", mips3->pc, opcode, opcode >> 26, opcode & 0x3f);
 }
 
@@ -1115,11 +1115,11 @@ static void static_generate_tlb_mismatch(mips3_state *mips3)
     exception handler
 -------------------------------------------------*/
 
-static void static_generate_exception(mips3_state *mips3, UINT8 exception, int recover, const char *name)
+static void static_generate_exception(mips3_state *mips3, uint8_t exception, int recover, const char *name)
 {
 	drcuml_codehandle **exception_handle = recover ? &mips3->impstate->exception[exception] : &mips3->impstate->exception_norecover[exception];
 	drcuml_state *drcuml = mips3->impstate->drcuml;
-	UINT32 offset = 0x180;
+	uint32_t offset = 0x180;
 	drcuml_codelabel next = 1;
 	drcuml_codelabel skip = 2;
 	drcuml_block *block;
@@ -1274,8 +1274,8 @@ static void static_generate_memory_accessor(mips3_state *mips3, int mode, int si
 		for (ramnum = 0; ramnum < MIPS3_MAX_FASTRAM; ramnum++)
 			if (mips3->impstate->fastram[ramnum].base != NULL && (!iswrite || !mips3->impstate->fastram[ramnum].readonly))
 			{
-				void *fastbase = (UINT8 *)mips3->impstate->fastram[ramnum].base - mips3->impstate->fastram[ramnum].start;
-				UINT32 skip = label++;
+				void *fastbase = (uint8_t *)mips3->impstate->fastram[ramnum].base - mips3->impstate->fastram[ramnum].start;
+				uint32_t skip = label++;
 				if (mips3->impstate->fastram[ramnum].end != 0xffffffff)
 				{
 					UML_CMP(block, IREG(0), IMM(mips3->impstate->fastram[ramnum].end));	// cmp     i0,end
@@ -1455,7 +1455,7 @@ static void generate_update_mode(mips3_state *mips3, drcuml_block *block)
     an exception if out
 -------------------------------------------------*/
 
-static void generate_update_cycles(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, UINT64 pvalue, int allow_exception)
+static void generate_update_cycles(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, uint64_t pvalue, int allow_exception)
 {
 	/* check software interrupts if pending */
 	if (compiler->checksoftints)
@@ -1540,7 +1540,7 @@ static void generate_checksum_block(mips3_state *mips3, drcuml_block *block, com
 				UML_EXHc(block, IF_NE, mips3->impstate->nocode, IMM(epc(seqhead)));	// exne    nocode,seqhead->pc
 			}
 #else
-		UINT32 sum = 0;
+		uint32_t sum = 0;
 		void *base = memory_decrypted_read_ptr(mips3->program, seqhead->physpc);
 		UML_LOAD(block, IREG(0), base, IMM(0), DWORD);								// load    i0,base,0,dword
 		sum += seqhead->opptr.l[0];
@@ -1683,10 +1683,10 @@ static void generate_sequence_instruction(mips3_state *mips3, drcuml_block *bloc
     generate_delay_slot_and_branch
 ------------------------------------------------------------------*/
 
-static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 linkreg)
+static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t linkreg)
 {
 	compiler_state compiler_temp = *compiler;
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	/* fetch the target register if dynamic, in case it is modified by the delay slot */
 	if (desc->targetpc == BRANCH_TARGET_DYNAMIC)
@@ -1694,7 +1694,7 @@ static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *blo
 
 	/* set the link if needed -- before the delay slot */
 	if (linkreg != 0)
-		UML_DMOV(block, R64(linkreg), IMM((INT32)(desc->pc + 8)));					// dmov    <linkreg>,desc->pc + 8
+		UML_DMOV(block, R64(linkreg), IMM((int32_t)(desc->pc + 8)));					// dmov    <linkreg>,desc->pc + 8
 
 	/* compile the delay slot using temporary compiler state */
 	assert(desc->delay != NULL);
@@ -1735,8 +1735,8 @@ static void generate_delay_slot_and_branch(mips3_state *mips3, drcuml_block *blo
 static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
 	int in_delay_slot = ((desc->flags & OPFLAG_IN_DELAY_SLOT) != 0);
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = op >> 26;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = op >> 26;
 	drcuml_codelabel skip;
 
 	switch (opswitch)
@@ -2003,12 +2003,12 @@ static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_sta
 			UML_AND(block, IREG(0), IREG(0), IMM(~7));								// and     i0,i0,~7
 			if (!mips3->bigendian)
 				UML_XOR(block, IREG(1), IREG(1), IMM(0x38));						// xor     i1,i1,0x38
-			UML_DSHR(block, IREG(2), IMM((UINT64)~0), IREG(1));						// dshr    i2,~0,i1
+			UML_DSHR(block, IREG(2), IMM((uint64_t)~0), IREG(1));						// dshr    i2,~0,i1
 			UML_CALLH(block, mips3->impstate->read64mask[mips3->impstate->mode >> 1]);
 																					// callh   read64mask
 			if (RTREG != 0)
 			{
-				UML_DSHL(block, IREG(2), IMM((UINT64)~0), IREG(1));					// dshl    i2,~0,i1
+				UML_DSHL(block, IREG(2), IMM((uint64_t)~0), IREG(1));					// dshl    i2,~0,i1
 				UML_DROLINS(block, R64(RTREG), IREG(0), IREG(1), IREG(2));			// drolins <rtreg>,i0,i1,i2
 			}
 			if (!in_delay_slot)
@@ -2021,12 +2021,12 @@ static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_sta
 			UML_AND(block, IREG(0), IREG(0), IMM(~7));								// and     i0,i0,~7
 			if (mips3->bigendian)
 				UML_XOR(block, IREG(1), IREG(1), IMM(0x38));						// xor     i1,i1,0x38
-			UML_DSHL(block, IREG(2), IMM((UINT64)~0), IREG(1));						// dshl    i2,~0,i1
+			UML_DSHL(block, IREG(2), IMM((uint64_t)~0), IREG(1));						// dshl    i2,~0,i1
 			UML_CALLH(block, mips3->impstate->read64mask[mips3->impstate->mode >> 1]);
 																					// callh   read64mask
 			if (RTREG != 0)
 			{
-				UML_DSHR(block, IREG(2), IMM((UINT64)~0), IREG(1));					// dshr    i2,~0,i1
+				UML_DSHR(block, IREG(2), IMM((uint64_t)~0), IREG(1));					// dshr    i2,~0,i1
 				UML_SUB(block, IREG(1), IMM(64), IREG(1));							// sub     i1,64,i1
 				UML_DROLINS(block, R64(RTREG), IREG(0), IREG(1), IREG(2));			// drolins <rtreg>,i0,i1,i2
 			}
@@ -2162,7 +2162,7 @@ static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_sta
 			UML_DMOV(block, IREG(1), R64(RTREG));									// dmov    i1,<rtreg>
 			if (!mips3->bigendian)
 				UML_XOR(block, IREG(3), IREG(3), IMM(0x38));						// xor     i3,i3,0x38
-			UML_DSHR(block, IREG(2), IMM((UINT64)~0), IREG(3));						// dshr    i2,~0,i3
+			UML_DSHR(block, IREG(2), IMM((uint64_t)~0), IREG(3));						// dshr    i2,~0,i3
 			UML_DSHR(block, IREG(1), IREG(1), IREG(3));								// dshr    i1,i1,i3
 			UML_CALLH(block, mips3->impstate->write64mask[mips3->impstate->mode >> 1]);
 																					// callh   write64mask
@@ -2177,7 +2177,7 @@ static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_sta
 			UML_DMOV(block, IREG(1), R64(RTREG));									// dmov    i1,<rtreg>
 			if (mips3->bigendian)
 				UML_XOR(block, IREG(3), IREG(3), IMM(0x38));						// xor     i3,i3,0x38
-			UML_DSHL(block, IREG(2), IMM((UINT64)~0), IREG(3));						// dshl    i2,~0,i3
+			UML_DSHL(block, IREG(2), IMM((uint64_t)~0), IREG(3));						// dshl    i2,~0,i3
 			UML_DSHL(block, IREG(1), IREG(1), IREG(3));								// dshl    i1,i1,i3
 			UML_CALLH(block, mips3->impstate->write64mask[mips3->impstate->mode >> 1]);
 																					// callh   write64mask
@@ -2257,8 +2257,8 @@ static int generate_opcode(mips3_state *mips3, drcuml_block *block, compiler_sta
 
 static int generate_special(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = op & 63;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = op & 63;
 
 	switch (opswitch)
 	{
@@ -2506,7 +2506,7 @@ static int generate_special(mips3_state *mips3, drcuml_block *block, compiler_st
 			if (RDREG != 0)
 			{
 				UML_DOR(block, IREG(0), R64(RSREG), R64(RTREG));					// dor      i0,<rsreg>,<rtreg>
-				UML_DXOR(block, R64(RDREG), IREG(0), IMM((UINT64)~0));				// dxor     <rdreg>,i0,~0
+				UML_DXOR(block, R64(RDREG), IREG(0), IMM((uint64_t)~0));				// dxor     <rdreg>,i0,~0
 			}
 			return TRUE;
 
@@ -2650,8 +2650,8 @@ static int generate_special(mips3_state *mips3, drcuml_block *block, compiler_st
 
 static int generate_regimm(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = RTREG;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = RTREG;
 	drcuml_codelabel skip;
 
 	switch (opswitch)
@@ -2728,8 +2728,8 @@ static int generate_regimm(mips3_state *mips3, drcuml_block *block, compiler_sta
 
 static int generate_idt(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = op & 0x1f;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = op & 0x1f;
 
 	/* only enabled on IDT processors */
 	if (mips3->flavor != MIPS3_TYPE_R4650)
@@ -2776,7 +2776,7 @@ static int generate_idt(mips3_state *mips3, drcuml_block *block, compiler_state 
     handle special COP0 registers
 -------------------------------------------------*/
 
-static int generate_set_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 reg)
+static int generate_set_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t reg)
 {
 	int in_delay_slot = ((desc->flags & OPFLAG_IN_DELAY_SLOT) != 0);
 	drcuml_codelabel link;
@@ -2850,7 +2850,7 @@ static int generate_set_cop0_reg(mips3_state *mips3, drcuml_block *block, compil
     read special COP0 registers
 -------------------------------------------------*/
 
-static int generate_get_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 reg)
+static int generate_get_cop0_reg(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t reg)
 {
 	drcuml_codelabel link1, link2;
 
@@ -2896,8 +2896,8 @@ static int generate_get_cop0_reg(mips3_state *mips3, drcuml_block *block, compil
 
 static int generate_cop0(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = RSREG;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = RSREG;
 	int skip;
 
 	/* generate an exception if COP0 is disabled unless we are in kernel mode */
@@ -3022,7 +3022,7 @@ static int generate_cop0(mips3_state *mips3, drcuml_block *block, compiler_state
 
 static int generate_cop1(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 	drcuml_codelabel skip;
 	int condition;
 
@@ -3399,7 +3399,7 @@ static int generate_cop1(mips3_state *mips3, drcuml_block *block, compiler_state
 static int generate_cop1x(mips3_state *mips3, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
 	int in_delay_slot = ((desc->flags & OPFLAG_IN_DELAY_SLOT) != 0);
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	if (mips3->impstate->drcoptions & MIPS3DRC_STRICT_COP1)
 	{
@@ -3504,7 +3504,7 @@ static int generate_cop1x(mips3_state *mips3, drcuml_block *block, compiler_stat
     including disassembly of a MIPS instruction
 -------------------------------------------------*/
 
-static void log_add_disasm_comment(mips3_state *mips3, drcuml_block *block, UINT32 pc, UINT32 op)
+static void log_add_disasm_comment(mips3_state *mips3, drcuml_block *block, uint32_t pc, uint32_t op)
 {
 #if (LOG_UML)
 	char buffer[100];
@@ -3520,7 +3520,7 @@ static void log_add_disasm_comment(mips3_state *mips3, drcuml_block *block, UINT
     flags
 -------------------------------------------------*/
 
-static const char *log_desc_flags_to_string(UINT32 flags)
+static const char *log_desc_flags_to_string(uint32_t flags)
 {
 	static char tempbuf[30];
 	char *dest = tempbuf;
@@ -3574,7 +3574,7 @@ static const char *log_desc_flags_to_string(UINT32 flags)
     log_register_list - log a list of GPR registers
 -------------------------------------------------*/
 
-static void log_register_list(drcuml_state *drcuml, const char *string, const UINT32 *reglist, const UINT32 *regnostarlist)
+static void log_register_list(drcuml_state *drcuml, const char *string, const uint32_t *reglist, const uint32_t *regnostarlist)
 {
 	int count = 0;
 	int regnum;

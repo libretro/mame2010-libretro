@@ -1,9 +1,9 @@
 #define	INC_8BIT(x) \
 { \
-  register UINT8 r,f; \
+  register uint8_t r,f; \
   x++; \
   r=(x);  \
-  f=(UINT8)(cpustate->b.F&FLAG_C); \
+  f=(uint8_t)(cpustate->b.F&FLAG_C); \
   if( r==0 )       f|=FLAG_Z; \
   if( (r&0xF)==0 ) f|=FLAG_H; \
   cpustate->b.F=f; \
@@ -11,10 +11,10 @@
 
 #define	DEC_8BIT(x) \
 { \
-  register UINT8 r,f; \
+  register uint8_t r,f; \
   x--; \
   r=(x);  \
-  f=(UINT8)((cpustate->b.F&FLAG_C)|FLAG_N); \
+  f=(uint8_t)((cpustate->b.F&FLAG_C)|FLAG_N); \
   if( r==0 )       f|=FLAG_Z; \
   if( (r&0xF)==0xF ) f|=FLAG_H; \
   cpustate->b.F=f; \
@@ -22,25 +22,25 @@
 
 #define	ADD_HL_RR(x) \
 { \
-  register UINT32 r1,r2; \
-  register UINT8 f; \
+  register uint32_t r1,r2; \
+  register uint8_t f; \
   r1=cpustate->w.HL+(x); \
   r2=(cpustate->w.HL&0xFFF)+((x)&0xFFF); \
-  f=(UINT8)(cpustate->b.F&FLAG_Z); \
+  f=(uint8_t)(cpustate->b.F&FLAG_Z); \
   if( r1>0xFFFF ) f|=FLAG_C; \
   if( r2>0x0FFF ) f|=FLAG_H; \
-  cpustate->w.HL=(UINT16)r1; \
+  cpustate->w.HL=(uint16_t)r1; \
   cpustate->b.F=f; \
 }
 
 #define	ADD_A_X(x) \
 { \
-  register UINT16 r1,r2; \
-  register UINT8 f; \
-  r1=(UINT16)((cpustate->b.A&0xF)+((x)&0xF)); \
-  r2=(UINT16)(cpustate->b.A+(x)); \
-  cpustate->b.A=(UINT8)r2; \
-  if( ((UINT8)r2)==0 ) f=FLAG_Z; \
+  register uint16_t r1,r2; \
+  register uint8_t f; \
+  r1=(uint16_t)((cpustate->b.A&0xF)+((x)&0xF)); \
+  r2=(uint16_t)(cpustate->b.A+(x)); \
+  cpustate->b.A=(uint8_t)r2; \
+  if( ((uint8_t)r2)==0 ) f=FLAG_Z; \
     else f=0; \
   if( r2>0xFF ) f|=FLAG_C; \
   if( r1>0xF )  f|=FLAG_H; \
@@ -49,12 +49,12 @@
 
 #define	SUB_A_X(x) \
 { \
-  register UINT16 r1,r2; \
-  register UINT8 f; \
-  r1=(UINT16)((cpustate->b.A&0xF)-((x)&0xF)); \
-  r2=(UINT16)(cpustate->b.A-(x)); \
-  cpustate->b.A=(UINT8)r2; \
-  if( ((UINT8)r2)==0 ) f=FLAG_N|FLAG_Z; \
+  register uint16_t r1,r2; \
+  register uint8_t f; \
+  r1=(uint16_t)((cpustate->b.A&0xF)-((x)&0xF)); \
+  r2=(uint16_t)(cpustate->b.A-(x)); \
+  cpustate->b.A=(uint8_t)r2; \
+  if( ((uint8_t)r2)==0 ) f=FLAG_N|FLAG_Z; \
     else f=FLAG_N; \
   if( r2>0xFF ) f|=FLAG_C; \
   if( r1>0xF )  f|=FLAG_H; \
@@ -64,14 +64,14 @@
 /*
    #define      CP_A_X(x) \
    { \
-   register UINT16 r; \
-   register UINT8 f; \
-   r=(UINT16)(cpustate->b.A-(x)); \
-   if( ((UINT8)r)==0 ) \
+   register uint16_t r; \
+   register uint8_t f; \
+   r=(uint16_t)(cpustate->b.A-(x)); \
+   if( ((uint8_t)r)==0 ) \
    f=FLAG_N|FLAG_Z; \
    else \
    f=FLAG_N; \
-   f|=(UINT8)((r>>8)&FLAG_C); \
+   f|=(uint8_t)((r>>8)&FLAG_C); \
    if( (r^cpustate->b.A^(x))&0x10 ) \
    f|=FLAG_H; \
    cpustate->b.F=f; \
@@ -80,11 +80,11 @@
 
 #define	CP_A_X(x) \
 { \
-  register UINT16 r1,r2; \
-  register UINT8 f; \
-  r1=(UINT16)((cpustate->b.A&0xF)-((x)&0xF)); \
-  r2=(UINT16)(cpustate->b.A-(x)); \
-  if( ((UINT8)r2)==0 ) f=FLAG_N|FLAG_Z; \
+  register uint16_t r1,r2; \
+  register uint8_t f; \
+  r1=(uint16_t)((cpustate->b.A&0xF)-((x)&0xF)); \
+  r2=(uint16_t)(cpustate->b.A-(x)); \
+  if( ((uint8_t)r2)==0 ) f=FLAG_N|FLAG_Z; \
     else f=FLAG_N; \
   if( r2>0xFF ) f|=FLAG_C; \
   if( r1>0xF )  f|=FLAG_H; \
@@ -93,12 +93,12 @@
 
 #define	SBC_A_X(x) \
 { \
-  register UINT16 r1,r2; \
-  register UINT8 f; \
-  r1=(UINT16)((cpustate->b.A&0xF)-((x)&0xF)-((cpustate->b.F&FLAG_C)?1:0)); \
-  r2=(UINT16)(cpustate->b.A-(x)-((cpustate->b.F&FLAG_C)?1:0)); \
-  cpustate->b.A=(UINT8)r2; \
-  if( ((UINT8)r2)==0 ) f=FLAG_N|FLAG_Z; \
+  register uint16_t r1,r2; \
+  register uint8_t f; \
+  r1=(uint16_t)((cpustate->b.A&0xF)-((x)&0xF)-((cpustate->b.F&FLAG_C)?1:0)); \
+  r2=(uint16_t)(cpustate->b.A-(x)-((cpustate->b.F&FLAG_C)?1:0)); \
+  cpustate->b.A=(uint8_t)r2; \
+  if( ((uint8_t)r2)==0 ) f=FLAG_N|FLAG_Z; \
     else f=FLAG_N; \
   if( r2>0xFF ) f|=FLAG_C; \
   if( r1>0xF )  f|=FLAG_H; \
@@ -107,11 +107,11 @@
 
 #define	ADC_A_X(x) \
 { \
-  register UINT16 r1,r2;  \
-  register UINT8 f; \
-  r1=(UINT16)((cpustate->b.A&0xF)+((x)&0xF)+((cpustate->b.F&FLAG_C)?1:0));  \
-  r2=(UINT16)(cpustate->b.A+(x)+((cpustate->b.F&FLAG_C)?1:0)); \
-  if( (cpustate->b.A=(UINT8)r2)==0 ) f=FLAG_Z; \
+  register uint16_t r1,r2;  \
+  register uint8_t f; \
+  r1=(uint16_t)((cpustate->b.A&0xF)+((x)&0xF)+((cpustate->b.F&FLAG_C)?1:0));  \
+  r2=(uint16_t)(cpustate->b.A+(x)+((cpustate->b.F&FLAG_C)?1:0)); \
+  if( (cpustate->b.A=(uint8_t)r2)==0 ) f=FLAG_Z; \
     else f=0; \
   if( r2>0xFF )	f|=FLAG_C; \
   if( r1>0xF )	f|=FLAG_H; \
@@ -170,7 +170,7 @@ case 0x06: /*      LD B,n8 */
   break;
 case 0x07: /*      RLCA */
 
-  cpustate->b.A = (UINT8) ((cpustate->b.A << 1) | (cpustate->b.A >> 7));
+  cpustate->b.A = (uint8_t) ((cpustate->b.A << 1) | (cpustate->b.A >> 7));
   if (cpustate->b.A & 1)
   {
     cpustate->b.F = FLAG_C;
@@ -218,7 +218,7 @@ case 0x0E: /*      LD C,n8 */
   break;
 case 0x0F: /*      RRCA */
 
-  cpustate->b.A = (UINT8) ((cpustate->b.A >> 1) | (cpustate->b.A << 7));
+  cpustate->b.A = (uint8_t) ((cpustate->b.A >> 1) | (cpustate->b.A << 7));
   cpustate->b.F = 0;
   if (cpustate->b.A & 0x80)
   {
@@ -266,12 +266,12 @@ case 0x17: /*      RLA */
 
   x = (cpustate->b.A & 0x80) ? FLAG_C : 0;
 
-  cpustate->b.A = (UINT8) ((cpustate->b.A << 1) | ((cpustate->b.F & FLAG_C) ? 1 : 0));
+  cpustate->b.A = (uint8_t) ((cpustate->b.A << 1) | ((cpustate->b.F & FLAG_C) ? 1 : 0));
   cpustate->b.F = x;
   break;
 case 0x18: /*      JR      n8 */
   {
-	INT8 offset;
+	int8_t offset;
 
     offset = mem_ReadByte (cpustate, cpustate->w.PC++);
     cpustate->w.PC += offset;
@@ -312,7 +312,7 @@ case 0x1F: /*      RRA */
 
   x = (cpustate->b.A & 1) ? FLAG_C : 0;
 
-  cpustate->b.A = (UINT8) ((cpustate->b.A >> 1) | ((cpustate->b.F & FLAG_C) ? 0x80 : 0));
+  cpustate->b.A = (uint8_t) ((cpustate->b.A >> 1) | ((cpustate->b.F & FLAG_C) ? 0x80 : 0));
   cpustate->b.F = x;
   break;
 case 0x20: /*      JR NZ,n8 */
@@ -323,7 +323,7 @@ case 0x20: /*      JR NZ,n8 */
   }
   else
   {
-	INT8 offset;
+	int8_t offset;
 
     offset = mem_ReadByte (cpustate, cpustate->w.PC++);
     cpustate->w.PC += offset;
@@ -400,7 +400,7 @@ case 0x28: /*      JR Z,n8 */
 
   if (cpustate->b.F & FLAG_Z)
   {
-	INT8 offset;
+	int8_t offset;
 
     offset = mem_ReadByte (cpustate, cpustate->w.PC++);
     cpustate->w.PC += offset;
@@ -463,7 +463,7 @@ case 0x30: /*      JR NC,n8 */
   }
   else
   {
-	INT8 offset;
+	int8_t offset;
 
     offset = mem_ReadByte (cpustate, cpustate->w.PC++);
     cpustate->w.PC += offset;
@@ -494,10 +494,10 @@ case 0x33: /*      INC SP */
 case 0x34: /*      INC (HL) */
 
   {
-	register UINT8 r, f;
+	register uint8_t r, f;
 
-	f = (UINT8) (cpustate->b.F & FLAG_C);
-	r = (UINT8) (mem_ReadByte (cpustate, cpustate->w.HL) + 1);
+	f = (uint8_t) (cpustate->b.F & FLAG_C);
+	r = (uint8_t) (mem_ReadByte (cpustate, cpustate->w.HL) + 1);
     mem_WriteByte (cpustate, cpustate->w.HL, r);
 
     if (r == 0)
@@ -512,10 +512,10 @@ case 0x34: /*      INC (HL) */
 case 0x35: /*      DEC (HL) */
 
   {
-	register UINT8 r, f;
+	register uint8_t r, f;
 
-	f = (UINT8) ((cpustate->b.F & FLAG_C) | FLAG_N);
-	r = (UINT8) (mem_ReadByte (cpustate, cpustate->w.HL) - 1);
+	f = (uint8_t) ((cpustate->b.F & FLAG_C) | FLAG_N);
+	r = (uint8_t) (mem_ReadByte (cpustate, cpustate->w.HL) - 1);
     mem_WriteByte (cpustate, cpustate->w.HL, r);
 
     if (r == 0)
@@ -533,13 +533,13 @@ case 0x36: /*      LD (HL),n8 */
   break;
 case 0x37: /*      SCF */
 
-  cpustate->b.F = (UINT8) ((cpustate->b.F & FLAG_Z) | FLAG_C);
+  cpustate->b.F = (uint8_t) ((cpustate->b.F & FLAG_Z) | FLAG_C);
   break;
 case 0x38: /*      JR C,n8 */
 
   if (cpustate->b.F & FLAG_C)
   {
-	INT8 offset;
+	int8_t offset;
 
     offset = mem_ReadByte (cpustate, cpustate->w.PC++);
     cpustate->w.PC += offset;
@@ -583,7 +583,7 @@ case 0x3E: /*      LD A,n8 */
   break;
 case 0x3F: /*      CCF */
 
-  cpustate->b.F = (UINT8) ((cpustate->b.F & FLAG_Z) | ((cpustate->b.F & FLAG_C) ? 0 : FLAG_C));
+  cpustate->b.F = (uint8_t) ((cpustate->b.F & FLAG_Z) | ((cpustate->b.F & FLAG_C) ? 0 : FLAG_C));
   break;
 case 0x40: /*      LD B,B */
   break;
@@ -1137,7 +1137,7 @@ case 0xC4: /*      CALL NZ,n16 */
   }
   else
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = mem_ReadWord (cpustate, cpustate->w.PC);
     cpustate->w.PC += 2;
 
@@ -1160,7 +1160,7 @@ case 0xC6: /*      ADD A,n8 */
 case 0xC7: /*      RST 0 */
 
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = cpustate->w.PC;
     cpustate->w.PC = 0;
 
@@ -1206,7 +1206,7 @@ case 0xCC: /*      CALL Z,n16 */
 
   if (cpustate->b.F & FLAG_Z)
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = mem_ReadWord (cpustate, cpustate->w.PC);
     cpustate->w.PC += 2;
 
@@ -1222,7 +1222,7 @@ case 0xCC: /*      CALL Z,n16 */
   break;
 case 0xCD: /*      CALL n16 */
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = mem_ReadWord (cpustate, cpustate->w.PC);
     cpustate->w.PC += 2;
 
@@ -1278,7 +1278,7 @@ case 0xD4: /*      CALL NC,n16 */
   }
   else
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = mem_ReadWord (cpustate, cpustate->w.PC);
     cpustate->w.PC += 2;
 
@@ -1337,7 +1337,7 @@ case 0xDC: /*      CALL C,n16 */
 
   if (cpustate->b.F & FLAG_C)
   {
-	register UINT16 PC;
+	register uint16_t PC;
     PC = mem_ReadWord (cpustate, cpustate->w.PC);
     cpustate->w.PC += 2;
 
@@ -1374,7 +1374,7 @@ case 0xE1: /*      POP HL */
   break;
 case 0xE2: /*      LD ($FF00+C),A */
 
-  mem_WriteByte (cpustate, (UINT16) (0xFF00 + cpustate->b.C), cpustate->b.A);
+  mem_WriteByte (cpustate, (uint16_t) (0xFF00 + cpustate->b.C), cpustate->b.A);
   break;
 case 0xE3: /*      EH? */
   break;
@@ -1405,11 +1405,11 @@ case 0xE8: /*      ADD SP,n8 */
  */
 
   {
-	register INT32 n;
+	register int32_t n;
 
-	n = (INT32) ((INT8) mem_ReadByte (cpustate, cpustate->w.PC++));
+	n = (int32_t) ((int8_t) mem_ReadByte (cpustate, cpustate->w.PC++));
 
-	if ( ( cpustate->w.SP & 0xFF ) + (UINT8)(n & 0xFF) > 0xFF )
+	if ( ( cpustate->w.SP & 0xFF ) + (uint8_t)(n & 0xFF) > 0xFF )
     {
       cpustate->b.F = FLAG_C;
     }
@@ -1423,7 +1423,7 @@ case 0xE8: /*      ADD SP,n8 */
       cpustate->b.F |= FLAG_H;
     }
 
-	cpustate->w.SP = (UINT16) ( cpustate->w.SP + n );
+	cpustate->w.SP = (uint16_t) ( cpustate->w.SP + n );
   }
   break;
 case 0xE9: /*      JP (HL) */
@@ -1458,12 +1458,12 @@ case 0xF0: /*      LD A,($FF00+n8) */
   break;
 case 0xF1: /*      POP AF */
 
-  cpustate->w.AF = (UINT16) (mem_ReadWord (cpustate, cpustate->w.SP) & 0xFFF0);
+  cpustate->w.AF = (uint16_t) (mem_ReadWord (cpustate, cpustate->w.SP) & 0xFFF0);
   cpustate->w.SP += 2;
   break;
 case 0xF2: /*      LD A,($FF00+C) */
 
-  cpustate->b.A = mem_ReadByte (cpustate, (UINT16) (0xFF00 + cpustate->b.C));
+  cpustate->b.A = mem_ReadByte (cpustate, (uint16_t) (0xFF00 + cpustate->b.C));
   break;
 case 0xF3: /*      DI */
   cpustate->w.ei_delay = 0;
@@ -1474,7 +1474,7 @@ case 0xF4: /*      EH? */
 case 0xF5: /*      PUSH AF */
 
   cpustate->w.SP -= 2;
-  mem_WriteWord (cpustate, cpustate->w.SP, (UINT16) (cpustate->w.AF & 0xFFF0));
+  mem_WriteWord (cpustate, cpustate->w.SP, (uint16_t) (cpustate->w.AF & 0xFFF0));
   break;
 case 0xF6: /*      OR A,n8 */
 
@@ -1489,7 +1489,7 @@ case 0xF7: /*      RST $30 */
   break;
 case 0xF8: /*      LD HL,SP+n8 */
 /*
- *   n = one UINT8 signed immediate value.
+ *   n = one uint8_t signed immediate value.
  * Flags affected:
  *   Z - Reset.
  *   N - Reset.
@@ -1499,11 +1499,11 @@ case 0xF8: /*      LD HL,SP+n8 */
  */
 
   {
-	register INT32 n;
+	register int32_t n;
 
-	n = (INT32) ((INT8) mem_ReadByte (cpustate, cpustate->w.PC++));
+	n = (int32_t) ((int8_t) mem_ReadByte (cpustate, cpustate->w.PC++));
 
-	if ( ( cpustate->w.SP & 0xFF ) + (UINT8)(n & 0xFF) > 0xFF )
+	if ( ( cpustate->w.SP & 0xFF ) + (uint8_t)(n & 0xFF) > 0xFF )
     {
       cpustate->b.F = FLAG_C;
     }
@@ -1517,7 +1517,7 @@ case 0xF8: /*      LD HL,SP+n8 */
       cpustate->b.F |= FLAG_H;
     }
 
-	cpustate->w.HL = (UINT16) ( cpustate->w.SP + n );
+	cpustate->w.HL = (uint16_t) ( cpustate->w.SP + n );
   }
   break;
 case 0xF9: /*      LD SP,HL */

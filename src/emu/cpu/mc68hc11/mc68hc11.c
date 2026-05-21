@@ -39,28 +39,28 @@ struct _hc11_state
 	union {
 		struct {
 #ifdef MSB_FIRST
-			UINT8 a;
-			UINT8 b;
+			uint8_t a;
+			uint8_t b;
 #else
-			UINT8 b;
-			UINT8 a;
+			uint8_t b;
+			uint8_t a;
 #endif
 		} d8;
-		UINT16 d16;
+		uint16_t d16;
 	} d;
 
-	UINT16 ix;
-	UINT16 iy;
-	UINT16 sp;
-	UINT16 pc;
-	UINT16 ppc;
-	UINT8 ccr;
+	uint16_t ix;
+	uint16_t iy;
+	uint16_t sp;
+	uint16_t pc;
+	uint16_t ppc;
+	uint8_t ccr;
 
-	UINT8 adctl;
+	uint8_t adctl;
 	int ad_channel;
 
 	device_irq_callback irq_callback;
-	UINT8 irq_state[2];
+	uint8_t irq_state[2];
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
@@ -68,14 +68,14 @@ struct _hc11_state
 
 	int ram_position;
 	int reg_position;
-	UINT8 *internal_ram;
+	uint8_t *internal_ram;
 
 	int has_extended_io; // extended I/O enable flag
 	int internal_ram_size;
 
-	UINT8 wait_state,stop_state;
+	uint8_t wait_state,stop_state;
 
-	UINT8 tflg1;
+	uint8_t tflg1;
 };
 
 INLINE hc11_state *get_safe_token(running_device *device)
@@ -90,7 +90,7 @@ INLINE hc11_state *get_safe_token(running_device *device)
 /*****************************************************************************/
 /* Internal registers */
 
-static UINT8 hc11_regs_r(hc11_state *cpustate, UINT32 address)
+static uint8_t hc11_regs_r(hc11_state *cpustate, uint32_t address)
 {
 	int reg = address & 0xff;
 
@@ -196,7 +196,7 @@ static UINT8 hc11_regs_r(hc11_state *cpustate, UINT32 address)
 	return 0; // Dummy
 }
 
-static void hc11_regs_w(hc11_state *cpustate, UINT32 address, UINT8 value)
+static void hc11_regs_w(hc11_state *cpustate, uint32_t address, uint8_t value)
 {
 	int reg = address & 0xff;
 
@@ -301,20 +301,20 @@ static void hc11_regs_w(hc11_state *cpustate, UINT32 address, UINT8 value)
 
 /*****************************************************************************/
 
-INLINE UINT8 FETCH(hc11_state *cpustate)
+INLINE uint8_t FETCH(hc11_state *cpustate)
 {
 	return memory_decrypted_read_byte(cpustate->program, cpustate->pc++);
 }
 
-INLINE UINT16 FETCH16(hc11_state *cpustate)
+INLINE uint16_t FETCH16(hc11_state *cpustate)
 {
-	UINT16 w;
+	uint16_t w;
 	w = (memory_decrypted_read_byte(cpustate->program, cpustate->pc) << 8) | (memory_decrypted_read_byte(cpustate->program, cpustate->pc+1));
 	cpustate->pc += 2;
 	return w;
 }
 
-INLINE UINT8 READ8(hc11_state *cpustate, UINT32 address)
+INLINE uint8_t READ8(hc11_state *cpustate, uint32_t address)
 {
 	if(address >= cpustate->reg_position && address < cpustate->reg_position+(cpustate->has_extended_io ? 0x100 : 0x40))
 	{
@@ -327,7 +327,7 @@ INLINE UINT8 READ8(hc11_state *cpustate, UINT32 address)
 	return memory_read_byte(cpustate->program, address);
 }
 
-INLINE void WRITE8(hc11_state *cpustate, UINT32 address, UINT8 value)
+INLINE void WRITE8(hc11_state *cpustate, uint32_t address, uint8_t value)
 {
 	if(address >= cpustate->reg_position && address < cpustate->reg_position+(cpustate->has_extended_io ? 0x100 : 0x40))
 	{
@@ -342,12 +342,12 @@ INLINE void WRITE8(hc11_state *cpustate, UINT32 address, UINT8 value)
 	memory_write_byte(cpustate->program, address, value);
 }
 
-INLINE UINT16 READ16(hc11_state *cpustate, UINT32 address)
+INLINE uint16_t READ16(hc11_state *cpustate, uint32_t address)
 {
 	return (READ8(cpustate, address) << 8) | (READ8(cpustate, address+1));
 }
 
-INLINE void WRITE16(hc11_state *cpustate, UINT32 address, UINT16 value)
+INLINE void WRITE16(hc11_state *cpustate, uint32_t address, uint16_t value)
 {
 	WRITE8(cpustate, address+0, (value >> 8) & 0xff);
 	WRITE8(cpustate, address+1, (value >> 0) & 0xff);
@@ -409,7 +409,7 @@ static CPU_INIT( hc11 )
 		cpustate->internal_ram_size = 1280;
 	}
 
-	cpustate->internal_ram = auto_alloc_array(device->machine, UINT8, cpustate->internal_ram_size);
+	cpustate->internal_ram = auto_alloc_array(device->machine, uint8_t, cpustate->internal_ram_size);
 
 	cpustate->reg_position = 0;
 	cpustate->ram_position = 0x100;
@@ -464,7 +464,7 @@ static void check_irq_lines(hc11_state *cpustate)
 {
 	if( cpustate->irq_state[MC68HC11_IRQ_LINE]!=CLEAR_LINE && (!(cpustate->ccr & CC_I)) )
 	{
-		UINT16 pc_vector;
+		uint16_t pc_vector;
 
 		if(cpustate->wait_state == 0)
 		{
@@ -497,7 +497,7 @@ static CPU_EXECUTE( hc11 )
 
 	while(cpustate->icount > 0)
 	{
-		UINT8 op;
+		uint8_t op;
 
 		check_irq_lines(cpustate);
 

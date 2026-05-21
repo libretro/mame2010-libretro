@@ -28,9 +28,9 @@ struct _t11_state
 	PAIR				ppc;	/* previous program counter */
     PAIR				reg[8];
     PAIR				psw;
-    UINT16				initial_pc;
-    UINT8				wait_state;
-    UINT8				irq_state;
+    uint16_t				initial_pc;
+    uint8_t				wait_state;
+    uint8_t				irq_state;
     int					icount;
 	device_irq_callback	irq_callback;
 	legacy_cpu_device *		device;
@@ -167,8 +167,8 @@ INLINE int POP(t11_state *cpustate)
 
 struct irq_table_entry
 {
-	UINT8	priority;
-	UINT8	vector;
+	uint8_t	priority;
+	uint8_t	vector;
 };
 
 static const struct irq_table_entry irq_table[] =
@@ -252,7 +252,7 @@ static void t11_check_irqs(t11_state *cpustate)
 
 static CPU_INIT( t11 )
 {
-	static const UINT16 initial_pc[] =
+	static const uint16_t initial_pc[] =
 	{
 		0xc000, 0x8000, 0x4000, 0x2000,
 		0x1000, 0x0000, 0xf600, 0xf400
@@ -354,7 +354,7 @@ static CPU_EXECUTE( t11 )
 
 	do
 	{
-		UINT16 op;
+		uint16_t op;
 
 		cpustate->ppc = cpustate->reg[7];	/* copy PC to previous PC */
 

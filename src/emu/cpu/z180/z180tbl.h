@@ -1,15 +1,15 @@
 /* tmp1 value for ini/inir/outi/otir for [C.1-0][io.1-0] */
-static const UINT8 irep_tmp1[4][4] = {
+static const uint8_t irep_tmp1[4][4] = {
 	{0,0,1,0},{0,1,0,1},{1,0,1,1},{0,1,1,0}
 };
 
 /* tmp1 value for ind/indr/outd/otdr for [C.1-0][io.1-0] */
-static const UINT8 drep_tmp1[4][4] = {
+static const uint8_t drep_tmp1[4][4] = {
 	{0,1,0,0},{1,0,0,1},{0,0,1,0},{0,1,0,1}
 };
 
 /* tmp2 value for all in/out repeated opcodes for B.7-0 */
-static const UINT8 breg_tmp2[256] = {
+static const uint8_t breg_tmp2[256] = {
 	0,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,
 	0,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,
 	1,1,0,0,1,0,1,1,0,0,1,1,0,1,0,0,
@@ -28,7 +28,7 @@ static const UINT8 breg_tmp2[256] = {
 	1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1
 };
 
-static const UINT8 cc_op[0x100] = {
+static const uint8_t cc_op[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
    3, 9, 7, 4, 4, 4, 6, 3, 4, 7, 6, 4, 4, 4, 6, 3,
    7, 9, 7, 4, 4, 4, 6, 3, 8, 7, 6, 4, 4, 4, 6, 3,
@@ -48,7 +48,7 @@ static const UINT8 cc_op[0x100] = {
    5, 9, 6, 3, 6,11, 6,11, 5, 4, 6, 3, 6, 0, 6,11
 };
 
-static const UINT8 cc_cb[0x100] = {
+static const uint8_t cc_cb[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
    7, 7, 7, 7, 7, 7,13, 7, 7, 7, 7, 7, 7, 7,13, 7,
    7, 7, 7, 7, 7, 7,13, 7, 7, 7, 7, 7, 7, 7,13, 7,
@@ -68,7 +68,7 @@ static const UINT8 cc_cb[0x100] = {
    7, 7, 7, 7, 7, 7,13, 7, 7, 7, 7, 7, 7, 7,13, 7
 };
 
-static const UINT8 cc_ed[0x100] = {
+static const uint8_t cc_ed[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
   12,13, 6, 6, 9, 6, 6, 6,12,13, 6, 6, 9, 6, 6, 6,
   12,13, 6, 6, 9, 6, 6, 6,12,13, 6, 6, 9, 6, 6, 6,
@@ -88,7 +88,7 @@ static const UINT8 cc_ed[0x100] = {
    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
 };
 
-static const UINT8 cc_xy[0x100] = {
+static const uint8_t cc_xy[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
    4, 4, 4, 4, 4, 4, 4, 4, 4,10, 4, 4, 4, 4, 4, 4,
    4, 4, 4, 4, 4, 4, 4, 4, 4,10, 4, 4, 4, 4, 4, 4,
@@ -108,7 +108,7 @@ static const UINT8 cc_xy[0x100] = {
    4, 4, 4, 4, 4, 4, 4, 4, 4, 7, 4, 4, 4, 4, 4, 4
 };
 
-static const UINT8 cc_xycb[0x100] = {
+static const uint8_t cc_xycb[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
   19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,
   19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,
@@ -129,7 +129,7 @@ static const UINT8 cc_xycb[0x100] = {
 };
 
 /* extra cycles if jr/jp/call taken and 'interrupt latency' on rst 0-7 */
-static const UINT8 cc_ex[0x100] = {
+static const uint8_t cc_ex[0x100] = {
 /*-0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -a -b -c -d -e -f */
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	  /* DJNZ */
@@ -149,7 +149,7 @@ static const UINT8 cc_ex[0x100] = {
    5, 0, 3, 0,10, 0, 0, 2, 5, 0, 3, 0,10, 0, 0, 2
 };
 
-static const UINT8 *const cc_default[6] = { cc_op, cc_cb, cc_ed, cc_xy, cc_xycb, cc_ex };
+static const uint8_t *const cc_default[6] = { cc_op, cc_cb, cc_ed, cc_xy, cc_xycb, cc_ex };
 
 #define Z180_TABLE_dd	 Z180_TABLE_xy
 #define Z180_TABLE_fd	 Z180_TABLE_xy
@@ -289,7 +289,7 @@ static void (*const Z180ops[Z180_PREFIX_COUNT][0x100])(z180_state *cpustate) =
  ***************************************************************/
 
 #define EXEC_PROTOTYPE(prefix) \
-INLINE int exec##_##prefix(z180_state *cpustate, const UINT8 opcode)	\
+INLINE int exec##_##prefix(z180_state *cpustate, const uint8_t opcode)	\
 {																		\
     (*Z180ops[Z180_PREFIX_##prefix][opcode])(cpustate);                 		            \
     return cpustate->cc[Z180_TABLE_##prefix][opcode];					\

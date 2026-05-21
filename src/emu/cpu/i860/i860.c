@@ -55,7 +55,7 @@ static CPU_RESET( i860 )
 
 static CPU_DISASSEMBLE( i860 )
 {
-	extern unsigned disasm_i860(char*, unsigned, UINT32);
+	extern unsigned disasm_i860(char*, unsigned, uint32_t);
 
 	/* Hard-coded little endian for now.  */
 	return disasm_i860(buffer, pc, (oprom[0] << 0)  |

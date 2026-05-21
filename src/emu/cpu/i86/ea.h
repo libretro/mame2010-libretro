@@ -7,14 +7,14 @@ static unsigned EA_005(i8086_state *cpustate) { cpustate->icount-=5; cpustate->e
 static unsigned EA_006(i8086_state *cpustate) { cpustate->icount-=6; cpustate->eo=FETCHOP; cpustate->eo+=FETCHOP<<8; cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
 static unsigned EA_007(i8086_state *cpustate) { cpustate->icount-=5; cpustate->eo=cpustate->regs.w[BX]; cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
 
-static unsigned EA_100(i8086_state *cpustate) { cpustate->icount-=11; cpustate->eo=(WORD)(cpustate->regs.w[BX]+cpustate->regs.w[SI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_101(i8086_state *cpustate) { cpustate->icount-=12; cpustate->eo=(WORD)(cpustate->regs.w[BX]+cpustate->regs.w[DI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_102(i8086_state *cpustate) { cpustate->icount-=12; cpustate->eo=(WORD)(cpustate->regs.w[BP]+cpustate->regs.w[SI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_103(i8086_state *cpustate) { cpustate->icount-=11; cpustate->eo=(WORD)(cpustate->regs.w[BP]+cpustate->regs.w[DI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_104(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[SI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_105(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[DI]+(INT8)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_106(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[BP]+(INT8)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
-static unsigned EA_107(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[BX]+(INT8)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_100(i8086_state *cpustate) { cpustate->icount-=11; cpustate->eo=(WORD)(cpustate->regs.w[BX]+cpustate->regs.w[SI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_101(i8086_state *cpustate) { cpustate->icount-=12; cpustate->eo=(WORD)(cpustate->regs.w[BX]+cpustate->regs.w[DI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_102(i8086_state *cpustate) { cpustate->icount-=12; cpustate->eo=(WORD)(cpustate->regs.w[BP]+cpustate->regs.w[SI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_103(i8086_state *cpustate) { cpustate->icount-=11; cpustate->eo=(WORD)(cpustate->regs.w[BP]+cpustate->regs.w[DI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_104(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[SI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_105(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[DI]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_106(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[BP]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(SS)+cpustate->eo; return cpustate->ea; }
+static unsigned EA_107(i8086_state *cpustate) { cpustate->icount-=9; cpustate->eo=(WORD)(cpustate->regs.w[BX]+(int8_t)FETCHOP); cpustate->ea=DefaultBase(DS)+cpustate->eo; return cpustate->ea; }
 
 static unsigned EA_200(i8086_state *cpustate) { cpustate->icount-=11; cpustate->eo=FETCHOP; cpustate->eo+=FETCHOP<<8; cpustate->eo+=cpustate->regs.w[BX]+cpustate->regs.w[SI]; cpustate->ea=DefaultBase(DS)+(WORD)cpustate->eo; return cpustate->ea; }
 static unsigned EA_201(i8086_state *cpustate) { cpustate->icount-=12; cpustate->eo=FETCHOP; cpustate->eo+=FETCHOP<<8; cpustate->eo+=cpustate->regs.w[BX]+cpustate->regs.w[DI]; cpustate->ea=DefaultBase(DS)+(WORD)cpustate->eo; return cpustate->ea; }

@@ -48,98 +48,98 @@ enum
 
 typedef struct
 {
-	UINT16 iptr;
-	UINT16 avis;
-	UINT16 ovly;
-	UINT16 ram;
-	UINT16 mpmc;
-	UINT16 ndx;
-	UINT16 trm;
-	UINT16 braf;
+	uint16_t iptr;
+	uint16_t avis;
+	uint16_t ovly;
+	uint16_t ram;
+	uint16_t mpmc;
+	uint16_t ndx;
+	uint16_t trm;
+	uint16_t braf;
 } PMST;
 
 typedef struct
 {
-	UINT16 dp;
-	UINT16 intm;
-	UINT16 ovm;
-	UINT16 ov;
-	UINT16 arp;
+	uint16_t dp;
+	uint16_t intm;
+	uint16_t ovm;
+	uint16_t ov;
+	uint16_t arp;
 } ST0;
 
 typedef struct
 {
-	UINT16 arb;
-	UINT16 cnf;
-	UINT16 tc;
-	UINT16 sxm;
-	UINT16 c;
-	UINT16 hm;
-	UINT16 xf;
-	UINT16 pm;
+	uint16_t arb;
+	uint16_t cnf;
+	uint16_t tc;
+	uint16_t sxm;
+	uint16_t c;
+	uint16_t hm;
+	uint16_t xf;
+	uint16_t pm;
 } ST1;
 
 typedef struct _tms32051_state tms32051_state;
 struct _tms32051_state
 {
-	UINT16 pc;
-	UINT16 op;
-	INT32 acc;
-	INT32 accb;
-	INT32 preg;
-	UINT16 treg0;
-	UINT16 treg1;
-	UINT16 treg2;
-	UINT16 ar[8];
-	INT32 rptc;
+	uint16_t pc;
+	uint16_t op;
+	int32_t acc;
+	int32_t accb;
+	int32_t preg;
+	uint16_t treg0;
+	uint16_t treg1;
+	uint16_t treg2;
+	uint16_t ar[8];
+	int32_t rptc;
 
-	UINT16 bmar;
-	INT32 brcr;
-	UINT16 paer;
-	UINT16 pasr;
-	UINT16 indx;
-	UINT16 dbmr;
-	UINT16 arcr;
+	uint16_t bmar;
+	int32_t brcr;
+	uint16_t paer;
+	uint16_t pasr;
+	uint16_t indx;
+	uint16_t dbmr;
+	uint16_t arcr;
 
 	ST0 st0;
 	ST1 st1;
 	PMST pmst;
 
-	UINT16 ifr;
-	UINT16 imr;
+	uint16_t ifr;
+	uint16_t imr;
 
-	UINT16 pcstack[8];
+	uint16_t pcstack[8];
 	int pcstack_ptr;
 
-	UINT16 rpt_start, rpt_end;
+	uint16_t rpt_start, rpt_end;
 
-	UINT16 cbcr;
-	UINT16 cbsr1;
-	UINT16 cber1;
-	UINT16 cbsr2;
-	UINT16 cber2;
+	uint16_t cbcr;
+	uint16_t cbsr1;
+	uint16_t cber1;
+	uint16_t cbsr2;
+	uint16_t cber2;
 
 	struct
 	{
 		int tddr;
 		int psc;
-		UINT16 tim;
-		UINT16 prd;
+		uint16_t tim;
+		uint16_t prd;
 	} timer;
 
 	struct
 	{
-		INT32 acc;
-		INT32 accb;
-		UINT16 arcr;
-		UINT16 indx;
+		int32_t acc;
+		int32_t accb;
+		uint16_t arcr;
+		uint16_t indx;
 		PMST pmst;
-		INT32 preg;
+		int32_t preg;
 		ST0 st0;
 		ST1 st1;
-		INT32 treg0;
-		INT32 treg1;
-		INT32 treg2;
+		int32_t treg0;
+		int32_t treg1;
+		int32_t treg2;
 	} shadow;
 
 	device_irq_callback irq_callback;
@@ -156,7 +156,7 @@ INLINE tms32051_state *get_safe_token(running_device *device)
 	return (tms32051_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-static void delay_slot(tms32051_state *cpustate, UINT16 startpc);
+static void delay_slot(tms32051_state *cpustate, uint16_t startpc);
 static void save_interrupt_context(tms32051_state *cpustate);
 static void restore_interrupt_context(tms32051_state *cpustate);
 static void check_interrupts(tms32051_state *cpustate);
@@ -166,27 +166,27 @@ static void check_interrupts(tms32051_state *cpustate);
 
 #define ROPCODE(cpustate)		memory_decrypted_read_word(cpustate->program, (cpustate->pc++) << 1)
 
-INLINE void CHANGE_PC(tms32051_state *cpustate, UINT16 new_pc)
+INLINE void CHANGE_PC(tms32051_state *cpustate, uint16_t new_pc)
 {
 	cpustate->pc = new_pc;
 }
 
-INLINE UINT16 PM_READ16(tms32051_state *cpustate, UINT16 address)
+INLINE uint16_t PM_READ16(tms32051_state *cpustate, uint16_t address)
 {
 	return memory_read_word_16le(cpustate->program, address << 1);
 }
 
-INLINE void PM_WRITE16(tms32051_state *cpustate, UINT16 address, UINT16 data)
+INLINE void PM_WRITE16(tms32051_state *cpustate, uint16_t address, uint16_t data)
 {
 	memory_write_word_16le(cpustate->program, address << 1, data);
 }
 
-INLINE UINT16 DM_READ16(tms32051_state *cpustate, UINT16 address)
+INLINE uint16_t DM_READ16(tms32051_state *cpustate, uint16_t address)
 {
 	return memory_read_word_16le(cpustate->data, address << 1);
 }
 
-INLINE void DM_WRITE16(tms32051_state *cpustate, UINT16 address, UINT16 data)
+INLINE void DM_WRITE16(tms32051_state *cpustate, uint16_t address, uint16_t data)
 {
 	memory_write_word_16le(cpustate->data, address << 1, data);
 }
@@ -204,7 +204,7 @@ static void op_group_bf(tms32051_state *cpustate)
 	tms32051_opcode_table_bf[cpustate->op & 0xff](cpustate);
 }
 
-static void delay_slot(tms32051_state *cpustate, UINT16 startpc)
+static void delay_slot(tms32051_state *cpustate, uint16_t startpc)
 {
 	cpustate->op = ROPCODE(cpustate);
 	tms32051_opcode_table[cpustate->op >> 8](cpustate);
@@ -231,7 +231,7 @@ static CPU_RESET( tms )
 {
 	tms32051_state *cpustate = get_safe_token(device);
 	int i;
-	UINT16 src, dst, length;
+	uint16_t src, dst, length;
 
 	src = 0x7800;
 	dst = DM_READ16(cpustate, src++);
@@ -241,7 +241,7 @@ static CPU_RESET( tms )
 
 	for (i=0; i < length; i++)
 	{
-		UINT16 data = DM_READ16(cpustate, src++);
+		uint16_t data = DM_READ16(cpustate, src++);
 		PM_WRITE16(cpustate, dst++, data);
 	}
 
@@ -339,7 +339,7 @@ static CPU_EXECUTE( tms )
 
 	while(cpustate->icount > 0)
 	{
-		UINT16 ppc;
+		uint16_t ppc;
 
 		// handle block repeat
 		if (cpustate->pmst.braf)
@@ -409,7 +409,7 @@ static READ16_HANDLER( cpuregs_r )
 
 		case 0x07:		// PMST
 		{
-			UINT16 r = 0;
+			uint16_t r = 0;
 			r |= cpustate->pmst.iptr << 11;
 			r |= cpustate->pmst.avis << 7;
 			r |= cpustate->pmst.ovly << 5;
@@ -437,7 +437,7 @@ static READ16_HANDLER( cpuregs_r )
 
 		case 0x26:		// TCR
 		{
-			UINT16 r = 0;
+			uint16_t r = 0;
 			r |= (cpustate->timer.psc & 0xf) << 6;
 			r |= (cpustate->timer.tddr & 0xf);
 			return r;

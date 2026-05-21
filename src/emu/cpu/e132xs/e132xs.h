@@ -38,7 +38,7 @@ DECLARE_LEGACY_CPU_DEVICE(GMS30C2216, gms30c2216);
 DECLARE_LEGACY_CPU_DEVICE(GMS30C2232, gms30c2232);
 
 
-extern unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned h_flag, int private_fp);
+extern unsigned dasm_hyperstone(char *buffer, unsigned pc, const uint8_t *oprom, unsigned h_flag, int private_fp);
 
 /* Memory access */
 /* read byte */

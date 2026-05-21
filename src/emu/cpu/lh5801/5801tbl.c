@@ -4,7 +4,7 @@
    (decrement, compare the same)
    (like in the m6502 processors)
 */
-INLINE UINT8 lh5801_add_generic(lh5801_state *cpustate, int left, int right, int carry)
+INLINE uint8_t lh5801_add_generic(lh5801_state *cpustate, int left, int right, int carry)
 {
 	int res=left+right+carry;
 	int v,c;
@@ -21,21 +21,21 @@ INLINE UINT8 lh5801_add_generic(lh5801_state *cpustate, int left, int right, int
 	return res;
 }
 
-INLINE UINT16 lh5801_readop_word(lh5801_state *cpustate)
+INLINE uint16_t lh5801_readop_word(lh5801_state *cpustate)
 {
-	UINT16 r;
+	uint16_t r;
 	r=memory_decrypted_read_byte(cpustate->program,P++)<<8;
 	r|=memory_decrypted_read_byte(cpustate->program,P++);
 	return r;
 }
 
 
-INLINE void lh5801_adc(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_adc(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a=lh5801_add_generic(cpustate,cpustate->a,data,cpustate->t&C);
 }
 
-INLINE void lh5801_add_mem(lh5801_state *cpustate, int addr, UINT8 data)
+INLINE void lh5801_add_mem(lh5801_state *cpustate, int addr, uint8_t data)
 {
 	int v=lh5801_add_generic(cpustate,memory_read_byte(cpustate->program,addr),data,0);
 	memory_write_byte(cpustate->program,addr,v);
@@ -49,17 +49,17 @@ INLINE void lh5801_adr(lh5801_state *cpustate, PAIR *reg)
 	}
 }
 
-INLINE void lh5801_sbc(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_sbc(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a=lh5801_add_generic(cpustate,cpustate->a,data^0xff,(cpustate->t&C)^1);
 }
 
-INLINE void lh5801_cpa(lh5801_state *cpustate, UINT8 a, UINT8 b)
+INLINE void lh5801_cpa(lh5801_state *cpustate, uint8_t a, uint8_t b)
 {
 	lh5801_add_generic(cpustate,a, b^0xff, 1);
 }
 
-INLINE UINT8 lh5801_decimaladd_generic(lh5801_state *cpustate, int left, int right, int carry)
+INLINE uint8_t lh5801_decimaladd_generic(lh5801_state *cpustate, int left, int right, int carry)
 {
 	int res=(left&0xf)+(right&0xf)+carry;
 	cpustate->t&=~(H|V|Z|C);
@@ -78,24 +78,24 @@ INLINE UINT8 lh5801_decimaladd_generic(lh5801_state *cpustate, int left, int rig
 	return res;
 }
 
-INLINE void lh5801_dca(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_dca(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a=lh5801_decimaladd_generic(cpustate, cpustate->a, data, cpustate->t&C);
 }
 
-INLINE void lh5801_dcs(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_dcs(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a=lh5801_decimaladd_generic(cpustate, cpustate->a, data^0xff, (cpustate->t&C)^1);
 }
 
-INLINE void lh5801_and(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_and(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a&=data;
 	cpustate->t&=~Z;
 	if (!cpustate->a) cpustate->t|=Z;
 }
 
-INLINE void lh5801_and_mem(lh5801_state *cpustate, int addr, UINT8 data)
+INLINE void lh5801_and_mem(lh5801_state *cpustate, int addr, uint8_t data)
 {
 	data&=memory_read_byte(cpustate->program,addr);
 	cpustate->t&=~Z;
@@ -103,27 +103,27 @@ INLINE void lh5801_and_mem(lh5801_state *cpustate, int addr, UINT8 data)
 	memory_write_byte(cpustate->program,addr,data);
 }
 
-INLINE void lh5801_bit(lh5801_state *cpustate, UINT8 a, UINT8 b)
+INLINE void lh5801_bit(lh5801_state *cpustate, uint8_t a, uint8_t b)
 {
 	cpustate->t&=~Z;
 	if (!(a&b)) cpustate->t|=Z;
 }
 
-INLINE void lh5801_eor(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_eor(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a^=data;
 	cpustate->t&=~Z;
 	if (!cpustate->a) cpustate->t|=Z;
 }
 
-INLINE void lh5801_ora(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_ora(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a^=data;
 	cpustate->t&=~Z;
 	if (!cpustate->a) cpustate->t|=Z;
 }
 
-INLINE void lh5801_ora_mem(lh5801_state *cpustate, int addr, UINT8 data)
+INLINE void lh5801_ora_mem(lh5801_state *cpustate, int addr, uint8_t data)
 {
 	data|=memory_read_byte(cpustate->program,addr);
 	cpustate->t&=~Z;
@@ -131,7 +131,7 @@ INLINE void lh5801_ora_mem(lh5801_state *cpustate, int addr, UINT8 data)
 	memory_write_byte(cpustate->program,addr,data);
 }
 
-INLINE void lh5801_lda(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_lda(lh5801_state *cpustate, uint8_t data)
 {
 	cpustate->a=data;
 	cpustate->t&=~Z;
@@ -164,12 +164,12 @@ INLINE void lh5801_sin(lh5801_state *cpustate, PAIR *reg)
 	memory_write_byte(cpustate->program,reg->w.l++, cpustate->a);
 }
 
-INLINE void lh5801_dec(lh5801_state *cpustate, UINT8 *adr)
+INLINE void lh5801_dec(lh5801_state *cpustate, uint8_t *adr)
 {
 	*adr=lh5801_add_generic(cpustate,*adr,0xff,0);
 }
 
-INLINE void lh5801_inc(lh5801_state *cpustate, UINT8 *adr)
+INLINE void lh5801_inc(lh5801_state *cpustate, uint8_t *adr)
 {
 	*adr=lh5801_add_generic(cpustate,*adr,1,0);
 }
@@ -201,25 +201,25 @@ INLINE void lh5801_rti(lh5801_state *cpustate)
 	cpustate->t=memory_read_byte(cpustate->program,++S);
 }
 
-INLINE void lh5801_push(lh5801_state *cpustate, UINT8 data)
+INLINE void lh5801_push(lh5801_state *cpustate, uint8_t data)
 {
 	memory_write_byte(cpustate->program,S--, data);
 }
 
-INLINE void lh5801_push_word(lh5801_state *cpustate, UINT16 data)
+INLINE void lh5801_push_word(lh5801_state *cpustate, uint16_t data)
 {
 	memory_write_byte(cpustate->program,S--, data&0xff);
 	memory_write_byte(cpustate->program,S--, data>>8);
 }
 
-INLINE void lh5801_jmp(lh5801_state *cpustate, UINT16 adr)
+INLINE void lh5801_jmp(lh5801_state *cpustate, uint16_t adr)
 {
 	P=adr;
 }
 
 INLINE void lh5801_branch_plus(lh5801_state *cpustate, int doit)
 {
-	UINT8 t=memory_decrypted_read_byte(cpustate->program,P++);
+	uint8_t t=memory_decrypted_read_byte(cpustate->program,P++);
 	if (doit) {
 		cpustate->icount-=3;
 		P+=t;
@@ -228,7 +228,7 @@ INLINE void lh5801_branch_plus(lh5801_state *cpustate, int doit)
 
 INLINE void lh5801_branch_minus(lh5801_state *cpustate, int doit)
 {
-	UINT8 t=memory_decrypted_read_byte(cpustate->program,P++);
+	uint8_t t=memory_decrypted_read_byte(cpustate->program,P++);
 	if (doit) {
 		cpustate->icount-=3;
 		P-=t;
@@ -237,7 +237,7 @@ INLINE void lh5801_branch_minus(lh5801_state *cpustate, int doit)
 
 INLINE void lh5801_lop(lh5801_state *cpustate)
 {
-	UINT8 t=memory_decrypted_read_byte(cpustate->program,P++);
+	uint8_t t=memory_decrypted_read_byte(cpustate->program,P++);
 	cpustate->icount-=8;
 	if (UL--) {
 		cpustate->icount-=3;
@@ -247,7 +247,7 @@ INLINE void lh5801_lop(lh5801_state *cpustate)
 
 INLINE void lh5801_sjp(lh5801_state *cpustate)
 {
-	UINT16 n=lh5801_readop_word(cpustate);
+	uint16_t n=lh5801_readop_word(cpustate);
 	lh5801_push_word(cpustate,P);
 	P=n;
 }
@@ -265,14 +265,14 @@ INLINE void lh5801_vector(lh5801_state *cpustate, int doit, int nr)
 
 INLINE void lh5801_aex(lh5801_state *cpustate)
 {
-	UINT8 t=cpustate->a;
+	uint8_t t=cpustate->a;
 	cpustate->a=(t<<4)|(t>>4);
 	// flags?
 }
 
 INLINE void lh5801_drl(lh5801_state *cpustate, int adr)
 {
-	UINT16 t=cpustate->a|(memory_read_byte(cpustate->program,adr)<<8);
+	uint16_t t=cpustate->a|(memory_read_byte(cpustate->program,adr)<<8);
 
 	cpustate->a=t>>8;
 	memory_write_byte(cpustate->program,adr,t>>4);
@@ -280,7 +280,7 @@ INLINE void lh5801_drl(lh5801_state *cpustate, int adr)
 
 INLINE void lh5801_drr(lh5801_state *cpustate, int adr)
 {
-	UINT16 t=memory_read_byte(cpustate->program,adr)|(cpustate->a<<8);
+	uint16_t t=memory_read_byte(cpustate->program,adr)|(cpustate->a<<8);
 
 	cpustate->a=t;
 	memory_write_byte(cpustate->program,adr,t>>4);

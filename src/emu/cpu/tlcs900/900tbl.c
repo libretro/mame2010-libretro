@@ -32,7 +32,7 @@ enum e_operand
 };
 
 
-INLINE int condition_true( tlcs900_state *cpustate, UINT8 cond )
+INLINE int condition_true( tlcs900_state *cpustate, uint8_t cond )
 {
 	switch ( cond & 0x0f )
 	{
@@ -110,7 +110,7 @@ INLINE int condition_true( tlcs900_state *cpustate, UINT8 cond )
 }
 
 
-INLINE UINT8 *get_reg8_current( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint8_t *get_reg8_current( tlcs900_state *cpustate, uint8_t reg )
 {
 	switch( reg & 7 )
 	{
@@ -151,7 +151,7 @@ INLINE UINT8 *get_reg8_current( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE UINT16 *get_reg16_current( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint16_t *get_reg16_current( tlcs900_state *cpustate, uint8_t reg )
 {
 	switch( reg & 7 )
 	{
@@ -193,7 +193,7 @@ INLINE UINT16 *get_reg16_current( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE UINT32 *get_reg32_current( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint32_t *get_reg32_current( tlcs900_state *cpustate, uint8_t reg )
 {
 	switch( reg & 7 )
 	{
@@ -235,9 +235,9 @@ INLINE UINT32 *get_reg32_current( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE PAIR *get_reg( tlcs900_state *cpustate, UINT8 reg )
+INLINE PAIR *get_reg( tlcs900_state *cpustate, uint8_t reg )
 {
-	UINT8	regbank;
+	uint8_t	regbank;
 
 	switch( reg & 0xf0 )
 	{
@@ -277,7 +277,7 @@ INLINE PAIR *get_reg( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE UINT8 *get_reg8( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint8_t *get_reg8( tlcs900_state *cpustate, uint8_t reg )
 {
 	PAIR	*r = get_reg( cpustate, reg );
 
@@ -293,7 +293,7 @@ INLINE UINT8 *get_reg8( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE UINT16 *get_reg16( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint16_t *get_reg16( tlcs900_state *cpustate, uint8_t reg )
 {
 	PAIR	*r = get_reg( cpustate, reg );
 
@@ -301,7 +301,7 @@ INLINE UINT16 *get_reg16( tlcs900_state *cpustate, UINT8 reg )
 }
 
 
-INLINE UINT32 *get_reg32( tlcs900_state *cpustate, UINT8 reg )
+INLINE uint32_t *get_reg32( tlcs900_state *cpustate, uint8_t reg )
 {
 	PAIR	*r = get_reg( cpustate, reg );
 
@@ -310,7 +310,7 @@ INLINE UINT32 *get_reg32( tlcs900_state *cpustate, UINT8 reg )
 
 
 
-INLINE void parity8( tlcs900_state *cpustate, UINT8 a )
+INLINE void parity8( tlcs900_state *cpustate, uint8_t a )
 {
 	int	i, j;
 
@@ -324,7 +324,7 @@ INLINE void parity8( tlcs900_state *cpustate, UINT8 a )
 }
 
 
-INLINE void parity16( tlcs900_state *cpustate, UINT16 a )
+INLINE void parity16( tlcs900_state *cpustate, uint16_t a )
 {
 	int	i, j;
 
@@ -338,7 +338,7 @@ INLINE void parity16( tlcs900_state *cpustate, UINT16 a )
 }
 
 
-INLINE void parity32( tlcs900_state *cpustate, UINT32 a )
+INLINE void parity32( tlcs900_state *cpustate, uint32_t a )
 {
 	int	i, j;
 
@@ -352,10 +352,10 @@ INLINE void parity32( tlcs900_state *cpustate, UINT32 a )
 }
 
 
-INLINE UINT8 adc8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t adc8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT8 result = a + b + cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t result = a + b + cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -367,10 +367,10 @@ INLINE UINT8 adc8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 adc16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t adc16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT16 result = a + b + cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint16_t result = a + b + cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -382,10 +382,10 @@ INLINE UINT16 adc16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 adc32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t adc32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT32 result = a + b + cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint32_t result = a + b + cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -396,9 +396,9 @@ INLINE UINT32 adc32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 add8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t add8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 result = a + b;
+	uint8_t result = a + b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -410,9 +410,9 @@ INLINE UINT8 add8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 add16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t add16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT16 result = a + b;
+	uint16_t result = a + b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -424,9 +424,9 @@ INLINE UINT16 add16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 add32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t add32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT32 result = a + b;
+	uint32_t result = a + b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -437,10 +437,10 @@ INLINE UINT32 add32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 sbc8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t sbc8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT8 result = a - b - cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t result = a - b - cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -452,10 +452,10 @@ INLINE UINT8 sbc8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 sbc16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t sbc16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT16 result = a - b - cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint16_t result = a - b - cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -467,10 +467,10 @@ INLINE UINT16 sbc16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 sbc32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t sbc32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT8 cy = cpustate->sr.b.l & FLAG_CF;
-	UINT32 result = a - b - cy;
+	uint8_t cy = cpustate->sr.b.l & FLAG_CF;
+	uint32_t result = a - b - cy;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -481,9 +481,9 @@ INLINE UINT32 sbc32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 sub8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t sub8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 result = a - b;
+	uint8_t result = a - b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -495,9 +495,9 @@ INLINE UINT8 sub8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 sub16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t sub16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT16 result = a - b;
+	uint16_t result = a - b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -509,9 +509,9 @@ INLINE UINT16 sub16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 sub32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t sub32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT32 result = a - b;
+	uint32_t result = a - b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) |
@@ -522,9 +522,9 @@ INLINE UINT32 sub32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 and8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t and8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 result = a & b;
+	uint8_t result = a & b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -535,9 +535,9 @@ INLINE UINT8 and8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 and16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t and16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT16 result = a & b;
+	uint16_t result = a & b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -548,9 +548,9 @@ INLINE UINT16 and16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 and32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t and32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT32 result = a & b;
+	uint32_t result = a & b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -559,9 +559,9 @@ INLINE UINT32 and32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 or8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t or8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 result = a | b;
+	uint8_t result = a | b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -572,9 +572,9 @@ INLINE UINT8 or8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 or16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t or16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT16 result = a | b;
+	uint16_t result = a | b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -585,9 +585,9 @@ INLINE UINT16 or16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 or32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t or32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT32 result = a | b;
+	uint32_t result = a | b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -596,9 +596,9 @@ INLINE UINT32 or32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE UINT8 xor8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
+INLINE uint8_t xor8( tlcs900_state *cpustate, uint8_t a, uint8_t b)
 {
-	UINT8 result = a ^ b;
+	uint8_t result = a ^ b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( result & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -609,9 +609,9 @@ INLINE UINT8 xor8( tlcs900_state *cpustate, UINT8 a, UINT8 b)
 }
 
 
-INLINE UINT16 xor16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
+INLINE uint16_t xor16( tlcs900_state *cpustate, uint16_t a, uint16_t b)
 {
-	UINT16 result = a ^ b;
+	uint16_t result = a ^ b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 8 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -622,9 +622,9 @@ INLINE UINT16 xor16( tlcs900_state *cpustate, UINT16 a, UINT16 b)
 }
 
 
-INLINE UINT32 xor32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
+INLINE uint32_t xor32( tlcs900_state *cpustate, uint32_t a, uint32_t b)
 {
-	UINT32 result = a ^ b;
+	uint32_t result = a ^ b;
 
 	cpustate->sr.b.l &= ~(FLAG_SF | FLAG_ZF | FLAG_HF | FLAG_VF | FLAG_NF | FLAG_CF);
 	cpustate->sr.b.l |= ( ( result >> 24 ) & FLAG_SF ) | ( result ? 0 : FLAG_ZF );
@@ -633,7 +633,7 @@ INLINE UINT32 xor32( tlcs900_state *cpustate, UINT32 a, UINT32 b)
 }
 
 
-INLINE void ldcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void ldcf8( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x07 ) ) )
 		cpustate->sr.b.l |= FLAG_CF;
@@ -642,7 +642,7 @@ INLINE void ldcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
 }
 
 
-INLINE void ldcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void ldcf16( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x0f ) ) )
 		cpustate->sr.b.l |= FLAG_CF;
@@ -651,7 +651,7 @@ INLINE void ldcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
 }
 
 
-INLINE void andcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void andcf8( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( ( b & ( 1 << ( a & 0x07 ) ) ) && ( cpustate->sr.b.l & FLAG_CF ) )
 		cpustate->sr.b.l |= FLAG_CF;
@@ -660,7 +660,7 @@ INLINE void andcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
 }
 
 
-INLINE void andcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void andcf16( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( ( b & ( 1 << ( a & 0x0f ) ) ) && ( cpustate->sr.b.l & FLAG_CF ) )
 		cpustate->sr.b.l |= FLAG_CF;
@@ -669,37 +669,37 @@ INLINE void andcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
 }
 
 
-INLINE void orcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void orcf8( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x07 ) ) )
 		cpustate->sr.b.l |= FLAG_CF;
 }
 
 
-INLINE void orcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void orcf16( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x0f ) ) )
 		cpustate->sr.b.l |= FLAG_CF;
 }
 
 
-INLINE void xorcf8( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void xorcf8( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x07 ) ) )
 		cpustate->sr.b.l ^= FLAG_CF;
 }
 
 
-INLINE void xorcf16( tlcs900_state *cpustate, UINT8 a, UINT8 b )
+INLINE void xorcf16( tlcs900_state *cpustate, uint8_t a, uint8_t b )
 {
 	if ( b & ( 1 << ( a & 0x0f ) ) )
 		cpustate->sr.b.l ^= FLAG_CF;
 }
 
 
-INLINE UINT8 rl8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t rl8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -723,9 +723,9 @@ INLINE UINT8 rl8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 rl16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t rl16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -749,9 +749,9 @@ INLINE UINT16 rl16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 rl32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t rl32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -775,9 +775,9 @@ INLINE UINT32 rl32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 	return a;
 }
 
-INLINE UINT8 rlc8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t rlc8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -792,9 +792,9 @@ INLINE UINT8 rlc8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 rlc16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t rlc16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -809,9 +809,9 @@ INLINE UINT16 rlc16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 rlc32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t rlc32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -827,9 +827,9 @@ INLINE UINT32 rlc32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT8 rr8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t rr8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -853,9 +853,9 @@ INLINE UINT8 rr8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 rr16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t rr16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -879,9 +879,9 @@ INLINE UINT16 rr16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 rr32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t rr32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -906,9 +906,9 @@ INLINE UINT32 rr32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT8 rrc8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t rrc8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -923,9 +923,9 @@ INLINE UINT8 rrc8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 rrc16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t rrc16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -940,9 +940,9 @@ INLINE UINT16 rrc16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 rrc32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t rrc32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -958,9 +958,9 @@ INLINE UINT32 rrc32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT8 sla8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t sla8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -976,9 +976,9 @@ INLINE UINT8 sla8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 sla16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t sla16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -994,9 +994,9 @@ INLINE UINT16 sla16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 sla32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t sla32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1013,9 +1013,9 @@ INLINE UINT32 sla32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT8 sra8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t sra8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1031,9 +1031,9 @@ INLINE UINT8 sra8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 sra16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t sra16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1049,9 +1049,9 @@ INLINE UINT16 sra16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 sra32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t sra32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1068,9 +1068,9 @@ INLINE UINT32 sra32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT8 srl8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
+INLINE uint8_t srl8( tlcs900_state *cpustate, uint8_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1086,9 +1086,9 @@ INLINE UINT8 srl8( tlcs900_state *cpustate, UINT8 a, UINT8 s )
 }
 
 
-INLINE UINT16 srl16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
+INLINE uint16_t srl16( tlcs900_state *cpustate, uint16_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1104,9 +1104,9 @@ INLINE UINT16 srl16( tlcs900_state *cpustate, UINT16 a, UINT8 s )
 }
 
 
-INLINE UINT32 srl32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
+INLINE uint32_t srl32( tlcs900_state *cpustate, uint32_t a, uint8_t s )
 {
-	UINT8 count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
+	uint8_t count = ( s & 0x0f ) ? ( s & 0x0f ) : 16;
 
 	for ( ; count > 0; count-- )
 	{
@@ -1123,7 +1123,7 @@ INLINE UINT32 srl32( tlcs900_state *cpustate, UINT32 a, UINT8 s )
 }
 
 
-INLINE UINT16 div8( tlcs900_state *cpustate, UINT16 a, UINT8 b )
+INLINE uint16_t div8( tlcs900_state *cpustate, uint16_t a, uint8_t b )
 {
 	ldiv_t	result;
 
@@ -1134,8 +1134,8 @@ INLINE UINT16 div8( tlcs900_state *cpustate, UINT16 a, UINT8 b )
 	}
 
 	if ( a >= ( 0x0200 * b ) ) {
-		UINT16 diff = a - ( 0x0200 * b );
-		UINT16 range = 0x100 - b;
+		uint16_t diff = a - ( 0x0200 * b );
+		uint16_t range = 0x100 - b;
 
 		result = ldiv( diff, range );
 		result.quot = 0x1ff - result.quot;
@@ -1155,7 +1155,7 @@ INLINE UINT16 div8( tlcs900_state *cpustate, UINT16 a, UINT8 b )
 }
 
 
-INLINE UINT32 div16( tlcs900_state *cpustate, UINT32 a, UINT16 b )
+INLINE uint32_t div16( tlcs900_state *cpustate, uint32_t a, uint16_t b )
 {
 	ldiv_t	result;
 
@@ -1166,8 +1166,8 @@ INLINE UINT32 div16( tlcs900_state *cpustate, UINT32 a, UINT16 b )
 	}
 
 //  if ( a >= ( 0x02000000 * b ) ) {
-//      UINT32 diff = a - ( 0x02000000 * b );
-//      UINT32 range = 0x1000000 - b;
+//      uint32_t diff = a - ( 0x02000000 * b );
+//      uint32_t range = 0x1000000 - b;
 //
 //      result = ldiv( diff, range );
 //      result.quot = 0x1ffffff - result.quot;
@@ -1187,7 +1187,7 @@ INLINE UINT32 div16( tlcs900_state *cpustate, UINT32 a, UINT16 b )
 }
 
 
-INLINE UINT16 divs8( tlcs900_state *cpustate, INT16 a, INT8 b )
+INLINE uint16_t divs8( tlcs900_state *cpustate, int16_t a, int8_t b )
 {
 	ldiv_t	result;
 
@@ -1208,7 +1208,7 @@ INLINE UINT16 divs8( tlcs900_state *cpustate, INT16 a, INT8 b )
 }
 
 
-INLINE UINT32 divs16( tlcs900_state *cpustate, INT32 a, INT16 b )
+INLINE uint32_t divs16( tlcs900_state *cpustate, int32_t a, int16_t b )
 {
 	ldiv_t	result;
 
@@ -1549,7 +1549,7 @@ static void _BITWIR(tlcs900_state *cpustate)
 
 static void _BS1BRR(tlcs900_state *cpustate)
 {
-	UINT16	r = *cpustate->p2_reg16;
+	uint16_t	r = *cpustate->p2_reg16;
 
 	if ( r )
 	{
@@ -1568,7 +1568,7 @@ static void _BS1BRR(tlcs900_state *cpustate)
 
 static void _BS1FRR(tlcs900_state *cpustate)
 {
-	UINT16	r = *cpustate->p2_reg16;
+	uint16_t	r = *cpustate->p2_reg16;
 
 	if ( r )
 	{
@@ -1724,8 +1724,8 @@ static void _CPLRR(tlcs900_state *cpustate)
 
 static void _CPD(tlcs900_state *cpustate)
 {
-	UINT8	result = *get_reg8_current( cpustate, 1 ) - RDMEM( *cpustate->p2_reg32 );
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint8_t	result = *get_reg8_current( cpustate, 1 ) - RDMEM( *cpustate->p2_reg32 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	*cpustate->p2_reg32 -= 1;
 	*bc -= 1;
@@ -1749,8 +1749,8 @@ static void _CPDR(tlcs900_state *cpustate)
 
 static void _CPDW(tlcs900_state *cpustate)
 {
-	UINT16	result = *get_reg16_current( cpustate, 0 ) - RDMEMW( *cpustate->p2_reg32 );
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	result = *get_reg16_current( cpustate, 0 ) - RDMEMW( *cpustate->p2_reg32 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	*cpustate->p2_reg32 -= 2;
 	*bc -= 1;
@@ -1774,8 +1774,8 @@ static void _CPDRW(tlcs900_state *cpustate)
 
 static void _CPI(tlcs900_state *cpustate)
 {
-	UINT8	result = *get_reg8_current( cpustate, 1 ) - RDMEM( *cpustate->p2_reg32 );
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint8_t	result = *get_reg8_current( cpustate, 1 ) - RDMEM( *cpustate->p2_reg32 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	*cpustate->p2_reg32 += 1;
 	*bc -= 1;
@@ -1799,8 +1799,8 @@ static void _CPIR(tlcs900_state *cpustate)
 
 static void _CPIW(tlcs900_state *cpustate)
 {
-	UINT16	result = *get_reg16_current( cpustate, 0 ) - RDMEMW( *cpustate->p2_reg32 );
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	result = *get_reg16_current( cpustate, 0 ) - RDMEMW( *cpustate->p2_reg32 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	*cpustate->p2_reg32 += 2;
 	*bc -= 1;
@@ -1838,11 +1838,11 @@ static void _CPLWR(tlcs900_state *cpustate)
 
 static void _DAABR(tlcs900_state *cpustate)
 {
-	UINT8	oldval = *cpustate->p1_reg8;
-	UINT8	fixval = 0;
-	UINT8	carry = 0;
-	UINT8	high = *cpustate->p1_reg8 & 0xf0;
-	UINT8	low = *cpustate->p1_reg8 & 0x0f;
+	uint8_t	oldval = *cpustate->p1_reg8;
+	uint8_t	fixval = 0;
+	uint8_t	carry = 0;
+	uint8_t	high = *cpustate->p1_reg8 & 0xf0;
+	uint8_t	low = *cpustate->p1_reg8 & 0x0f;
 
 	if ( cpustate->sr.b.l & FLAG_CF )
 	{
@@ -1906,7 +1906,7 @@ static void _DB(tlcs900_state *cpustate)
 
 static void _DECBIM(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	WRMEM( cpustate->ea2.d, sub8( cpustate, RDMEM( cpustate->ea2.d ), cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 ) );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -1915,7 +1915,7 @@ static void _DECBIM(tlcs900_state *cpustate)
 
 static void _DECBIR(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	*cpustate->p2_reg8 = sub8( cpustate, *cpustate->p2_reg8, cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -1924,7 +1924,7 @@ static void _DECBIR(tlcs900_state *cpustate)
 
 static void _DECWIM(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	WRMEMW( cpustate->ea2.d, sub16( cpustate, RDMEMW( cpustate->ea2.d ), cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 ) );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -2054,7 +2054,7 @@ static void _EI(tlcs900_state *cpustate)
 
 static void _EXBMR(tlcs900_state *cpustate)
 {
-	UINT8	i = RDMEM( cpustate->ea1.d );
+	uint8_t	i = RDMEM( cpustate->ea1.d );
 
 	WRMEM( cpustate->ea1.d, *cpustate->p2_reg8 );
 	*cpustate->p2_reg8 = i;
@@ -2063,7 +2063,7 @@ static void _EXBMR(tlcs900_state *cpustate)
 
 static void _EXBRR(tlcs900_state *cpustate)
 {
-	UINT8	i = *cpustate->p2_reg8;
+	uint8_t	i = *cpustate->p2_reg8;
 
 	*cpustate->p2_reg8 = *cpustate->p1_reg8;
 	*cpustate->p1_reg8 = i;
@@ -2072,7 +2072,7 @@ static void _EXBRR(tlcs900_state *cpustate)
 
 static void _EXWMR(tlcs900_state *cpustate)
 {
-	UINT16	i = RDMEMW( cpustate->ea1.d );
+	uint16_t	i = RDMEMW( cpustate->ea1.d );
 
 	WRMEMW( cpustate->ea1.d, *cpustate->p2_reg16 );
 	*cpustate->p2_reg16 = i;
@@ -2081,7 +2081,7 @@ static void _EXWMR(tlcs900_state *cpustate)
 
 static void _EXWRR(tlcs900_state *cpustate)
 {
-	UINT16	i = *cpustate->p2_reg16;
+	uint16_t	i = *cpustate->p2_reg16;
 
 	*cpustate->p2_reg16 = *cpustate->p1_reg16;
 	*cpustate->p1_reg16 = i;
@@ -2126,7 +2126,7 @@ static void _HALT(tlcs900_state *cpustate)
 
 static void _INCBIM(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	WRMEM( cpustate->ea2.d, add8( cpustate, RDMEM( cpustate->ea2.d ), cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 ) );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -2135,7 +2135,7 @@ static void _INCBIM(tlcs900_state *cpustate)
 
 static void _INCBIR(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	*cpustate->p2_reg8 = add8( cpustate, *cpustate->p2_reg8, cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -2144,7 +2144,7 @@ static void _INCBIR(tlcs900_state *cpustate)
 
 static void _INCWIM(tlcs900_state *cpustate)
 {
-	UINT8	cy = cpustate->sr.b.l & FLAG_CF;
+	uint8_t	cy = cpustate->sr.b.l & FLAG_CF;
 
 	WRMEMW( cpustate->ea2.d, add16( cpustate, RDMEMW( cpustate->ea2.d ), cpustate->imm1.b.l ? cpustate->imm1.b.l : 8 ) );
 	cpustate->sr.b.l = ( cpustate->sr.b.l & ~ FLAG_CF ) | cy;
@@ -2371,7 +2371,7 @@ static void _LDCFWRR(tlcs900_state *cpustate)
 
 static void _LDD(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEM( *cpustate->p1_reg32, RDMEM( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 -= 1;
@@ -2387,7 +2387,7 @@ static void _LDD(tlcs900_state *cpustate)
 
 static void _LDDR(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEM( *cpustate->p1_reg32, RDMEM( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 -= 1;
@@ -2405,7 +2405,7 @@ static void _LDDR(tlcs900_state *cpustate)
 
 static void _LDDRW(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEMW( *cpustate->p1_reg32, RDMEMW( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 -= 2;
@@ -2423,7 +2423,7 @@ static void _LDDRW(tlcs900_state *cpustate)
 
 static void _LDDW(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEMW( *cpustate->p1_reg32, RDMEMW( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 -= 2;
@@ -2446,7 +2446,7 @@ static void _LDF(tlcs900_state *cpustate)
 
 static void _LDI(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEM( *cpustate->p1_reg32, RDMEM( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 += 1;
@@ -2462,7 +2462,7 @@ static void _LDI(tlcs900_state *cpustate)
 
 static void _LDIR(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEM( *cpustate->p1_reg32, RDMEM( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 += 1;
@@ -2480,7 +2480,7 @@ static void _LDIR(tlcs900_state *cpustate)
 
 static void _LDIRW(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEMW( *cpustate->p1_reg32, RDMEMW( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 += 2;
@@ -2498,7 +2498,7 @@ static void _LDIRW(tlcs900_state *cpustate)
 
 static void _LDIW(tlcs900_state *cpustate)
 {
-	UINT16	*bc = get_reg16_current( cpustate, 1 );
+	uint16_t	*bc = get_reg16_current( cpustate, 1 );
 
 	WRMEMW( *cpustate->p1_reg32, RDMEMW( *cpustate->p2_reg32 ) );
 	*cpustate->p1_reg32 += 2;
@@ -2514,7 +2514,7 @@ static void _LDIW(tlcs900_state *cpustate)
 
 static void _LDX(tlcs900_state *cpustate)
 {
-	UINT8	a, b;
+	uint8_t	a, b;
 
 	RDOP();
 	a = RDOP();
@@ -2596,8 +2596,8 @@ static void _MINC4(tlcs900_state *cpustate)
 
 static void _MIRRW(tlcs900_state *cpustate)
 {
-	UINT16	r = *cpustate->p1_reg16;
-	UINT16	s = ( r & 0x01 );
+	uint16_t	r = *cpustate->p1_reg16;
+	uint16_t	s = ( r & 0x01 );
 	int i;
 
 
@@ -2650,10 +2650,10 @@ static void _MULWRR(tlcs900_state *cpustate)
 
 static void _MULAR(tlcs900_state *cpustate)
 {
-	UINT32	*xde = get_reg32_current( cpustate, 2 );
-	UINT32	*xhl = get_reg32_current( cpustate, 3 );
+	uint32_t	*xde = get_reg32_current( cpustate, 2 );
+	uint32_t	*xhl = get_reg32_current( cpustate, 3 );
 
-	*cpustate->p1_reg32 = *cpustate->p1_reg32 + ( ((INT16)RDMEMW( *xde )) * ((INT16)RDMEMW( *xhl )) );
+	*cpustate->p1_reg32 = *cpustate->p1_reg32 + ( ((int16_t)RDMEMW( *xde )) * ((int16_t)RDMEMW( *xhl )) );
 	*xhl -= 2;
 
 	cpustate->sr.b.l &= ~ ( FLAG_SF | FLAG_ZF | FLAG_VF );
@@ -2663,37 +2663,37 @@ static void _MULAR(tlcs900_state *cpustate)
 
 static void _MULSBRI(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg16 = (INT8)( *cpustate->p1_reg16 & 0xff ) * cpustate->imm2.sb.l;
+	*cpustate->p1_reg16 = (int8_t)( *cpustate->p1_reg16 & 0xff ) * cpustate->imm2.sb.l;
 }
 
 
 static void _MULSBRM(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg16 = (INT8)( *cpustate->p1_reg16 & 0xff ) * (INT8)RDMEM( cpustate->ea2.d );
+	*cpustate->p1_reg16 = (int8_t)( *cpustate->p1_reg16 & 0xff ) * (int8_t)RDMEM( cpustate->ea2.d );
 }
 
 
 static void _MULSBRR(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg16 = (INT8)( *cpustate->p1_reg16 & 0xff ) * (INT8)*cpustate->p2_reg8;
+	*cpustate->p1_reg16 = (int8_t)( *cpustate->p1_reg16 & 0xff ) * (int8_t)*cpustate->p2_reg8;
 }
 
 
 static void _MULSWRI(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg32 = (INT16)( *cpustate->p1_reg32 & 0xffff ) * cpustate->imm2.sw.l;
+	*cpustate->p1_reg32 = (int16_t)( *cpustate->p1_reg32 & 0xffff ) * cpustate->imm2.sw.l;
 }
 
 
 static void _MULSWRM(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg32 = (INT16)( *cpustate->p1_reg32 & 0xffff ) * (INT16)RDMEMW( cpustate->ea2.d );
+	*cpustate->p1_reg32 = (int16_t)( *cpustate->p1_reg32 & 0xffff ) * (int16_t)RDMEMW( cpustate->ea2.d );
 }
 
 
 static void _MULSWRR(tlcs900_state *cpustate)
 {
-	*cpustate->p1_reg32 = (INT16)( *cpustate->p1_reg32 & 0xffff ) * (INT16)*cpustate->p2_reg16;
+	*cpustate->p1_reg32 = (int16_t)( *cpustate->p1_reg32 & 0xffff ) * (int16_t)*cpustate->p2_reg16;
 }
 
 
@@ -3105,8 +3105,8 @@ static void _RLCLRR(tlcs900_state *cpustate)
 
 static void _RLDRM(tlcs900_state *cpustate)
 {
-	UINT8	a = *cpustate->p1_reg8 & 0x0f;
-	UINT8	b = RDMEM( cpustate->ea2.d );
+	uint8_t	a = *cpustate->p1_reg8 & 0x0f;
+	uint8_t	b = RDMEM( cpustate->ea2.d );
 
 	*cpustate->p1_reg8 = ( *cpustate->p1_reg8 & 0xf0 ) | ( ( b & 0xf0 ) >> 4 );
 	WRMEM( cpustate->ea2.d, ( ( b & 0x0f ) << 4 ) | a );
@@ -3214,8 +3214,8 @@ static void _RRCLRR(tlcs900_state *cpustate)
 
 static void _RRDRM(tlcs900_state *cpustate)
 {
-	UINT8	a = *cpustate->p1_reg8 & 0x0f;
-	UINT8	b = RDMEM( cpustate->ea2.d );
+	uint8_t	a = *cpustate->p1_reg8 & 0x0f;
+	uint8_t	b = RDMEM( cpustate->ea2.d );
 
 	*cpustate->p1_reg8 = ( *cpustate->p1_reg8 & 0xf0 ) | ( b & 0x0f );
 	WRMEM( cpustate->ea2.d, ( ( b & 0xf0 ) >> 4 ) | ( a << 4 ) );
@@ -3688,8 +3688,8 @@ static void _SWI(tlcs900_state *cpustate)
 
 static void _TSETBIM(tlcs900_state *cpustate)
 {
-	UINT8	b = 1 << ( cpustate->imm1.b.l & 0x07 );
-	UINT8	a = RDMEM( cpustate->ea2.d );
+	uint8_t	b = 1 << ( cpustate->imm1.b.l & 0x07 );
+	uint8_t	a = RDMEM( cpustate->ea2.d );
 
 	cpustate->sr.b.l &= ~ ( FLAG_ZF | FLAG_NF );
 	cpustate->sr.b.l |= ( ( a & b ) ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -3699,7 +3699,7 @@ static void _TSETBIM(tlcs900_state *cpustate)
 
 static void _TSETBIR(tlcs900_state *cpustate)
 {
-	UINT8	b = 1 << ( cpustate->imm1.b.l & 0x07 );
+	uint8_t	b = 1 << ( cpustate->imm1.b.l & 0x07 );
 
 	cpustate->sr.b.l &= ~ ( FLAG_ZF | FLAG_NF );
 	cpustate->sr.b.l |= ( ( *cpustate->p2_reg8 & b ) ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -3709,7 +3709,7 @@ static void _TSETBIR(tlcs900_state *cpustate)
 
 static void _TSETWIR(tlcs900_state *cpustate)
 {
-	UINT16	b = 1 << ( cpustate->imm1.b.l & 0x0f );
+	uint16_t	b = 1 << ( cpustate->imm1.b.l & 0x0f );
 
 	cpustate->sr.b.l &= ~ ( FLAG_ZF | FLAG_NF );
 	cpustate->sr.b.l |= ( ( *cpustate->p2_reg16 & b ) ? 0 : FLAG_ZF ) | FLAG_HF;
@@ -5344,7 +5344,7 @@ static void _88(tlcs900_state *cpustate)
 
 	cpustate->ea2.d = *get_reg32_current( cpustate, cpustate->op );
 	cpustate->op = RDOP();
-	cpustate->ea2.d += (INT8)cpustate->op;
+	cpustate->ea2.d += (int8_t)cpustate->op;
 	cpustate->cycles += 2;
 	cpustate->op = RDOP();
 	inst = &mnemonic_80[cpustate->op];
@@ -5379,7 +5379,7 @@ static void _98(tlcs900_state *cpustate)
 
 	cpustate->ea2.d = *get_reg32_current( cpustate, cpustate->op );
 	cpustate->op = RDOP();
-	cpustate->ea2.d += (INT8)cpustate->op;
+	cpustate->ea2.d += (int8_t)cpustate->op;
 	cpustate->cycles += 2;
 	cpustate->op = RDOP();
 	inst = &mnemonic_98[cpustate->op];
@@ -5410,7 +5410,7 @@ static void _A8(tlcs900_state *cpustate)
 
 	cpustate->ea2.d = *get_reg32_current( cpustate, cpustate->op );
 	cpustate->op = RDOP();
-	cpustate->ea2.d += (INT8)cpustate->op;
+	cpustate->ea2.d += (int8_t)cpustate->op;
 	cpustate->cycles += 2;
 	cpustate->op = RDOP();
 	inst = &mnemonic_a0[cpustate->op];
@@ -5441,7 +5441,7 @@ static void _B8(tlcs900_state *cpustate)
 
 	cpustate->ea2.d = *get_reg32_current( cpustate, cpustate->op );
 	cpustate->op = RDOP();
-	cpustate->ea2.d += (INT8)cpustate->op;
+	cpustate->ea2.d += (int8_t)cpustate->op;
 	cpustate->cycles += 2;
 	cpustate->op = RDOP();
 	inst = &mnemonic_b8[cpustate->op];
@@ -5455,7 +5455,7 @@ static void _B8(tlcs900_state *cpustate)
 static void _C0(tlcs900_state *cpustate)
 {
 	const tlcs900inst *inst;
-	UINT32 *reg = NULL;
+	uint32_t *reg = NULL;
 
 	switch ( cpustate->op & 0x07 )
 	{
@@ -5507,7 +5507,7 @@ static void _C0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT8) *get_reg8( cpustate, cpustate->op );
+				cpustate->ea2.d += (int8_t) *get_reg8( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5516,7 +5516,7 @@ static void _C0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT16) *get_reg16( cpustate, cpustate->op );
+				cpustate->ea2.d += (int16_t) *get_reg16( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5584,7 +5584,7 @@ static void oC8(tlcs900_state *cpustate)
 static void _D0(tlcs900_state *cpustate)
 {
 	const tlcs900inst *inst;
-	UINT32 *reg = NULL;
+	uint32_t *reg = NULL;
 
 	switch ( cpustate->op & 0x07 )
 	{
@@ -5636,7 +5636,7 @@ static void _D0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT8) *get_reg8( cpustate, cpustate->op );
+				cpustate->ea2.d += (int8_t) *get_reg8( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5645,7 +5645,7 @@ static void _D0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT16) *get_reg16( cpustate, cpustate->op );
+				cpustate->ea2.d += (int16_t) *get_reg16( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5711,7 +5711,7 @@ static void oD8(tlcs900_state *cpustate)
 static void _E0(tlcs900_state *cpustate)
 {
 	const tlcs900inst *inst;
-	UINT32 *reg = NULL;
+	uint32_t *reg = NULL;
 
 	switch ( cpustate->op & 0x07 )
 	{
@@ -5763,7 +5763,7 @@ static void _E0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT8) *get_reg8( cpustate, cpustate->op );
+				cpustate->ea2.d += (int8_t) *get_reg8( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5772,7 +5772,7 @@ static void _E0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT16) *get_reg16( cpustate, cpustate->op );
+				cpustate->ea2.d += (int16_t) *get_reg16( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5836,7 +5836,7 @@ static void _E8(tlcs900_state *cpustate)
 static void _F0(tlcs900_state *cpustate)
 {
 	const tlcs900inst *inst;
-	UINT32 *reg = NULL;
+	uint32_t *reg = NULL;
 
 	switch ( cpustate->op & 0x07 )
 	{
@@ -5888,7 +5888,7 @@ static void _F0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT8) *get_reg8( cpustate, cpustate->op );
+				cpustate->ea2.d += (int8_t) *get_reg8( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 
@@ -5897,7 +5897,7 @@ static void _F0(tlcs900_state *cpustate)
 				cpustate->op = RDOP();
 				cpustate->ea2.d = *get_reg32( cpustate, cpustate->op );
 				cpustate->op = RDOP();
-				cpustate->ea2.d += (INT16) *get_reg16( cpustate, cpustate->op );
+				cpustate->ea2.d += (int16_t) *get_reg16( cpustate, cpustate->op );
 				cpustate->cycles += 8;
 				break;
 

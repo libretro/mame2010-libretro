@@ -277,7 +277,7 @@ INLINE void tst_di(m68_state_t *m68_state);
 INLINE void tst_ex(m68_state_t *m68_state);
 INLINE void tst_ix(m68_state_t *m68_state);
 
-static const UINT8 flags8i[256]=	 /* increment */
+static const uint8_t flags8i[256]=	 /* increment */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -296,7 +296,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 };
-static const UINT8 flags8d[256]= /* decrement */
+static const uint8_t flags8d[256]= /* decrement */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -317,7 +317,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 };
 
 /* FIXME: Cycles differ slighly from hd6309 emulation */
-static const UINT8 index_cycle_em[256] = {        /* Index Loopup cycle counts */
+static const uint8_t index_cycle_em[256] = {        /* Index Loopup cycle counts */
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 
 /* 0x0X */      1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -339,7 +339,7 @@ static const UINT8 index_cycle_em[256] = {        /* Index Loopup cycle counts *
 };
 
 /* timings for 1-byte opcodes */
-static const UINT8 cycles1[] =
+static const uint8_t cycles1[] =
 {
 	/*   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
   /*0*/  6, 6, 2, 6, 6, 2, 6, 6, 6, 6, 6, 2, 6, 6, 3, 6,

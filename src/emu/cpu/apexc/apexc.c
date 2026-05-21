@@ -346,9 +346,9 @@ without danger */
 typedef struct _apexc_state apexc_state;
 struct _apexc_state
 {
-	UINT32 a;	/* accumulator */
-	UINT32 r;	/* register */
-	UINT32 cr;	/* control register (i.e. instruction register) */
+	uint32_t a;	/* accumulator */
+	uint32_t r;	/* register */
+	uint32_t cr;	/* control register (i.e. instruction register) */
 	int ml;		/* memory location (current track in working store, and requested
                 word position within track) (10 bits) */
 	int working_store;	/* current working store (group of 16 tracks) (1-15) */
@@ -356,7 +356,7 @@ struct _apexc_state
 
 	int running;	/* 1 flag: */
 				/* running: flag implied by the existence of the stop instruction */
-	UINT32 pc;	/* address of next instruction for the disassembler */
+	uint32_t pc;	/* address of next instruction for the disassembler */
 
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -403,9 +403,9 @@ static int effective_address(apexc_state *cpustate, int address)
 }
 
 /* read word */
-static UINT32 word_read(apexc_state *cpustate, int address, int special)
+static uint32_t word_read(apexc_state *cpustate, int address, int special)
 {
-	UINT32 result;
+	uint32_t result;
 
 	/* compute absolute track address */
 	address = effective_address(cpustate, address);
@@ -441,7 +441,7 @@ static UINT32 word_read(apexc_state *cpustate, int address, int special)
 }
 
 /* write word (or part of a word, according to mask) */
-static void word_write(apexc_state *cpustate, int address, UINT32 data, UINT32 mask)
+static void word_write(apexc_state *cpustate, int address, uint32_t data, uint32_t mask)
 {
 	/* compute absolute track address */
 	address = effective_address(cpustate, address);
@@ -641,7 +641,7 @@ static void execute(apexc_state *cpustate)
 				cpustate->r >>= 1;
 				if (cpustate->a & 1)
 					cpustate->r |= 0x80000000UL;
-				cpustate->a = ((INT32) cpustate->a) >> 1;
+				cpustate->a = ((int32_t) cpustate->a) >> 1;
 
 				c6 = (c6+1) & 0x3f;
 			}
@@ -690,7 +690,7 @@ static void execute(apexc_state *cpustate)
 					cpustate->r >>= 1;
 					if (cpustate->a & 1)
 						cpustate->r |= 0x80000000UL;
-					cpustate->a = ((INT32) cpustate->a) >> 1;
+					cpustate->a = ((int32_t) cpustate->a) >> 1;
 				}
 			}
 
@@ -729,7 +729,7 @@ static void execute(apexc_state *cpustate)
 			/* R_(1-n)(x) & R_(n-32)(x) */
 
 			{
-				UINT32 mask;
+				uint32_t mask;
 
 				if (c6 & 0x20)
 					mask = 0xFFFFFFFFUL << (64 - c6);
@@ -748,7 +748,7 @@ static void execute(apexc_state *cpustate)
 			/* A_(1-n)(x) & A_(n-32)(x) */
 
 			{
-				UINT32 mask;
+				uint32_t mask;
 
 				if (c6 & 0x20)
 					mask = 0xFFFFFFFFUL << (64 - c6);

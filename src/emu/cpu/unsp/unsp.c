@@ -84,24 +84,24 @@ static void unsp_set_irq_line(unsp_state *unsp, int irqline, int state);
 #define WRITEBACK_OPA \
 		if(OP0 != 4 && OP0 < 12) \
 		{ \
-			UNSP_REG_I(OPA) = (UINT16)lres; \
+			UNSP_REG_I(OPA) = (uint16_t)lres; \
 		}
 
 /*****************************************************************************/
 
-static void unimplemented_opcode(unsp_state *unsp, UINT16 op)
+static void unimplemented_opcode(unsp_state *unsp, uint16_t op)
 {
     fatalerror("UNSP: unknown opcode %04x at %04x\n", op, UNSP_LPC << 1);
 }
 
 /*****************************************************************************/
 
-INLINE UINT16 READ16(unsp_state *unsp, UINT32 address)
+INLINE uint16_t READ16(unsp_state *unsp, uint32_t address)
 {
 	return memory_read_word_16be(unsp->program, address << 1);
 }
 
-INLINE void WRITE16(unsp_state *unsp, UINT32 address, UINT16 data)
+INLINE void WRITE16(unsp_state *unsp, uint32_t address, uint16_t data)
 {
 	memory_write_word_16be(unsp->program, address << 1, data);
 }
@@ -111,7 +111,7 @@ INLINE void WRITE16(unsp_state *unsp, UINT32 address, UINT16 data)
 static CPU_INIT( unsp )
 {
     unsp_state *unsp = get_safe_token(device);
-    memset(unsp->r, 0, sizeof(UINT16) * UNSP_GPR_COUNT);
+    memset(unsp->r, 0, sizeof(uint16_t) * UNSP_GPR_COUNT);
 
     unsp->device = device;
     unsp->program = device->space(AS_PROGRAM);
@@ -122,47 +122,47 @@ static CPU_INIT( unsp )
 static CPU_RESET( unsp )
 {
     unsp_state *unsp = get_safe_token(device);
-    memset(unsp->r, 0, sizeof(UINT16) * UNSP_GPR_COUNT);
+    memset(unsp->r, 0, sizeof(uint16_t) * UNSP_GPR_COUNT);
 
     UNSP_REG(PC) = READ16(unsp, 0xfff7);
 }
 
 /*****************************************************************************/
 
-static void unsp_update_nz(unsp_state *unsp, UINT32 value)
+static void unsp_update_nz(unsp_state *unsp, uint32_t value)
 {
 	UNSP_REG(SR) &= ~(UNSP_N | UNSP_Z);
 	if(value & 0x8000)
 	{
 		UNSP_REG(SR) |= UNSP_N;
 	}
-	if((UINT16)value == 0)
+	if((uint16_t)value == 0)
 	{
 		UNSP_REG(SR) |= UNSP_Z;
 	}
 }
 
-static void unsp_update_nzsc(unsp_state *unsp, UINT32 value, UINT16 r0, UINT16 r1)
+static void unsp_update_nzsc(unsp_state *unsp, uint32_t value, uint16_t r0, uint16_t r1)
 {
 	UNSP_REG(SR) &= ~(UNSP_C | UNSP_S);
 	unsp_update_nz(unsp, value);
-	if(value != (UINT16)value)
+	if(value != (uint16_t)value)
 	{
 		UNSP_REG(SR) |= UNSP_C;
 	}
 
-	if((INT16)r0 < (INT16)r1)
+	if((int16_t)r0 < (int16_t)r1)
 	{
 		UNSP_REG(SR) |= UNSP_S;
 	}
 }
 
-static void unsp_push(unsp_state *unsp, UINT16 value, UINT16 *reg)
+static void unsp_push(unsp_state *unsp, uint16_t value, uint16_t *reg)
 {
 	WRITE16(unsp, (*reg)--, value);
 }
 
-static UINT16 unsp_pop(unsp_state *unsp, UINT16 *reg)
+static uint16_t unsp_pop(unsp_state *unsp, uint16_t *reg)
 {
 	return READ16(unsp, ++(*reg));
 }
@@ -170,9 +170,9 @@ static UINT16 unsp_pop(unsp_state *unsp, UINT16 *reg)
 static CPU_EXECUTE( unsp )
 {
     unsp_state *unsp = get_safe_token(device);
-    UINT32 op;
-    UINT32 lres;
-    UINT16 r0, r1;
+    uint32_t op;
+    uint32_t lres;
+    uint16_t r0, r1;
 	lres = 0;
 
     while (unsp->icount > 0)
@@ -494,7 +494,7 @@ static CPU_EXECUTE( unsp )
 							}
 							if(OP0 != 4 && OP0 < 12)
 							{
-								WRITE16(unsp, READ16(unsp, UNSP_LPC), (UINT16)lres);
+								WRITE16(unsp, READ16(unsp, UNSP_LPC), (uint16_t)lres);
 							}
 							UNSP_REG(PC)++;
 							break;
@@ -502,7 +502,7 @@ static CPU_EXECUTE( unsp )
 						// ALU, Shifted
 						default:
 						{
-							UINT32 shift = (UNSP_REG_I(OPB) << 4) | unsp->sb;
+							uint32_t shift = (UNSP_REG_I(OPB) << 4) | unsp->sb;
 							if(shift & 0x80000)
 							{
 								shift |= 0xf00000;
@@ -554,8 +554,8 @@ static CPU_EXECUTE( unsp )
 							case 9: // load r, r >> imm2
 								lres = ((UNSP_REG_I(OPB) << 4) | unsp->sb) >> (OPN - 3);
 								unsp->sb = lres & 0x0f;
-								unsp_update_nz(unsp, (UINT16)(lres >> 4));
-								UNSP_REG_I(OPA) = (UINT16)(lres >> 4);
+								unsp_update_nz(unsp, (uint16_t)(lres >> 4));
+								UNSP_REG_I(OPA) = (uint16_t)(lres >> 4);
 								break;
 							default:
 								unimplemented_opcode(unsp, op);
@@ -564,7 +564,7 @@ static CPU_EXECUTE( unsp )
 					}
 					else
 					{
-						UINT32 shift = ((unsp->sb << 16) | UNSP_REG_I(OPB)) << (OPN + 1);
+						uint32_t shift = ((unsp->sb << 16) | UNSP_REG_I(OPB)) << (OPN + 1);
 						unsp->sb = (shift >> 16) & 0x0f;
 						r0 = UNSP_REG_I(OPA);
 						r1 = shift & 0x0000ffff;
@@ -574,17 +574,17 @@ static CPU_EXECUTE( unsp )
 							case 0: // add r, r << imm2
 								lres = r0 + r1;
 								unsp_update_nzsc(unsp, lres, r0, r1);
-								UNSP_REG_I(OPA) = (UINT16)lres;
+								UNSP_REG_I(OPA) = (uint16_t)lres;
 								break;
 							case 9: // load r, r << imm2
 								lres = r1;
 								unsp_update_nz(unsp, lres);
-								UNSP_REG_I(OPA) = (UINT16)lres;
+								UNSP_REG_I(OPA) = (uint16_t)lres;
 								break;
 							case 10: // or r, r << imm2
 								lres = r0 | r1;
 								unsp_update_nz(unsp, lres);
-								UNSP_REG_I(OPA) = (UINT16)lres;
+								UNSP_REG_I(OPA) = (uint16_t)lres;
 								break;
 							default:
 								unimplemented_opcode(unsp, op);
@@ -599,13 +599,13 @@ static CPU_EXECUTE( unsp )
 					{
 						lres = ((((unsp->sb << 16) | UNSP_REG_I(OPB)) << 4) | unsp->sb) >> (OPN - 3);
 						unsp->sb = lres & 0x0f;
-						r1 = (UINT16)(lres >> 4);
+						r1 = (uint16_t)(lres >> 4);
 					}
 					else
 					{
 						lres = ((((unsp->sb << 16) | UNSP_REG_I(OPB)) << 4) | unsp->sb) << (OPN + 1);
 						unsp->sb = (lres >> 20) & 0x0f;
-						r1 = (UINT16)(lres >> 4);
+						r1 = (uint16_t)(lres >> 4);
 					}
 
 					switch(OP0)
@@ -664,7 +664,7 @@ static CPU_EXECUTE( unsp )
 							lres -= UNSP_REG_I(OPA) << 16;
 						}
 						UNSP_REG(R4) = lres >> 16;
-						UNSP_REG(R3) = (UINT16)lres;
+						UNSP_REG(R3) = (uint16_t)lres;
 						break;
 					}
 					else
@@ -687,7 +687,7 @@ static CPU_EXECUTE( unsp )
 							lres -= UNSP_REG_I(OPB) << 16;
 						}
 						UNSP_REG(R4) = lres >> 16;
-						UNSP_REG(R3) = (UINT16)lres;
+						UNSP_REG(R3) = (uint16_t)lres;
 						break;
 					}
 					else
@@ -752,7 +752,7 @@ static CPU_EXECUTE( unsp )
 
 static void unsp_set_irq_line(unsp_state *unsp, int irqline, int state)
 {
-	UINT16 irq_vector = 0;
+	uint16_t irq_vector = 0;
 
 	unsp->sirq &= ~(1 << irqline);
 

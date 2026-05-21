@@ -80,9 +80,9 @@ enum
 typedef struct _ds5002fp_config ds5002fp_config;
 struct _ds5002fp_config
 {
-	UINT8	mcon;					/* bootstrap loader MCON register */
-	UINT8	rpctl;					/* bootstrap loader RPCTL register */
-	UINT8	crc;					/* bootstrap loader CRC register */
+	uint8_t	mcon;					/* bootstrap loader MCON register */
+	uint8_t	rpctl;					/* bootstrap loader RPCTL register */
+	uint8_t	crc;					/* bootstrap loader CRC register */
 };
 
 /***************************************************************************

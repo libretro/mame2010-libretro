@@ -49,7 +49,7 @@ enum
 typedef struct _r3000_cpu_core r3000_cpu_core;
 struct _r3000_cpu_core
 {
-	UINT8		hasfpu;			/* 1 if we have an FPU, 0 otherwise */
+	uint8_t		hasfpu;			/* 1 if we have an FPU, 0 otherwise */
 	size_t		icache;			/* code cache size */
 	size_t		dcache;			/* data cache size */
 };

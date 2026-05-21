@@ -52,16 +52,16 @@
 					}
 
 typedef struct {
-	UINT16 AF;
-	UINT16 BC;
-	UINT16 DE;
-	UINT16 HL;
+	uint16_t AF;
+	uint16_t BC;
+	uint16_t DE;
+	uint16_t HL;
 
-	UINT16 SP;
-	UINT16 PC;
+	uint16_t SP;
+	uint16_t PC;
 	/* Interrupt related */
-	UINT8	IE;
-	UINT8	IF;
+	uint8_t	IE;
+	uint8_t	IF;
 	int	irq_state;
 	int	ei_delay;
 	device_irq_callback irq_callback;
@@ -72,37 +72,37 @@ typedef struct {
 	lr35902_timer_fired_func timer_fired_func;
 	/* Fetch & execute related */
 	int		execution_state;
-	UINT8	op;
+	uint8_t	op;
 	/* Others */
 	int gb_speed;
 	int gb_speed_change_pending;
 	int enable;
 	int doHALTbug;
-	UINT8	features;
+	uint8_t	features;
 	const lr35902_cpu_core *config;
 } lr35902_16BitRegs;
 
 #ifdef MSB_FIRST
 typedef struct {
-	UINT8 A;
-	UINT8 F;
-	UINT8 B;
-	UINT8 C;
-	UINT8 D;
-	UINT8 E;
-	UINT8 H;
-	UINT8 L;
+	uint8_t A;
+	uint8_t F;
+	uint8_t B;
+	uint8_t C;
+	uint8_t D;
+	uint8_t E;
+	uint8_t H;
+	uint8_t L;
 } lr35902_8BitRegs;
 #else
 typedef struct {
-	UINT8 F;
-	UINT8 A;
-	UINT8 C;
-	UINT8 B;
-	UINT8 E;
-	UINT8 D;
-	UINT8 L;
-	UINT8 H;
+	uint8_t F;
+	uint8_t A;
+	uint8_t C;
+	uint8_t B;
+	uint8_t E;
+	uint8_t D;
+	uint8_t L;
+	uint8_t H;
 } lr35902_8BitRegs;
 #endif
 
@@ -129,17 +129,17 @@ typedef int (*OpcodeEmulator) (lr35902_state *cpustate);
 /* Memory functions                                                         */
 /****************************************************************************/
 
-#define mem_ReadByte(cs,A)		((UINT8)memory_read_byte_8le((cs)->w.program,A))
+#define mem_ReadByte(cs,A)		((uint8_t)memory_read_byte_8le((cs)->w.program,A))
 #define mem_WriteByte(cs,A,V)	(memory_write_byte_8le((cs)->w.program,A,V))
 
-INLINE UINT16 mem_ReadWord (lr35902_state *cpustate, UINT32 address)
+INLINE uint16_t mem_ReadWord (lr35902_state *cpustate, uint32_t address)
 {
-	UINT16 value = (UINT16) mem_ReadByte (cpustate, (address + 1) & 0xffff) << 8;
+	uint16_t value = (uint16_t) mem_ReadByte (cpustate, (address + 1) & 0xffff) << 8;
 	value |= mem_ReadByte (cpustate, address);
 	return value;
 }
 
-INLINE void mem_WriteWord (lr35902_state *cpustate, UINT32 address, UINT16 value)
+INLINE void mem_WriteWord (lr35902_state *cpustate, uint32_t address, uint16_t value)
 {
 	mem_WriteByte (cpustate, address, value & 0xFF);
 	mem_WriteByte (cpustate, (address + 1) & 0xffff, value >> 8);
@@ -238,7 +238,7 @@ static CPU_RESET( lr35902 )
 
 INLINE void lr35902_ProcessInterrupts (lr35902_state *cpustate)
 {
-	UINT8 irq = cpustate->w.IE & cpustate->w.IF;
+	uint8_t irq = cpustate->w.IE & cpustate->w.IF;
 
 	/* Interrupts should be taken after the first instruction after an EI instruction */
 	if (cpustate->w.ei_delay) {
@@ -308,7 +308,7 @@ static CPU_EXECUTE( lr35902 )
 	do
 	{
 		if ( cpustate->w.execution_state ) {
-			UINT8	x;
+			uint8_t	x;
 			/* Execute instruction */
 			switch( cpustate->w.op ) {
 #include "opc_main.h"

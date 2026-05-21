@@ -43,12 +43,12 @@
 
 #define I8							(am29000->exec_ir & 0xff)
 #define I16							(((am29000->exec_ir >> 8) & 0xff00) | (am29000->exec_ir & 0xff))
-#define I16_ZEX						((UINT32)(I16))
-#define I16_SEX						((INT32)(INT16)I16)
+#define I16_ZEX						((uint32_t)(I16))
+#define I16_SEX						((int32_t)(int16_t)I16)
 #define I16_OEX						(0xffff0000 | I16)
 
 #define JMP_ZEX						(I16 << 2)
-#define JMP_SEX						((INT32)(INT16)(((am29000->exec_ir >> 8) & 0xff00) | (am29000->exec_ir & 0xff)) << 2)
+#define JMP_SEX						((int32_t)(int16_t)(((am29000->exec_ir >> 8) & 0xff00) | (am29000->exec_ir & 0xff)) << 2)
 
 #define BOOLEAN_MASK				(1 << 31)
 #define BOOLEAN_TRUE				(1 << 31)
@@ -64,7 +64,7 @@
 typedef struct _op_info
 {
 	void (*opcode)(am29000_state *);
-	UINT32 flags;
+	uint32_t flags;
 } op_info;
 
 
@@ -76,31 +76,31 @@ typedef struct _op_info
 								am29000->alu |= (r == 0) << ALU_Z_SHIFT;
 
 #define SET_ALU_N(r)			am29000->alu &= ~ALU_N; \
-								am29000->alu |= ((UINT32)r & 0x80000000) >> (31 - ALU_N_SHIFT);
+								am29000->alu |= ((uint32_t)r & 0x80000000) >> (31 - ALU_N_SHIFT);
 
-#define CALC_C_ADD(r, a)		((UINT32)(r) < (UINT32)(a))
+#define CALC_C_ADD(r, a)		((uint32_t)(r) < (uint32_t)(a))
 
 #define SET_ALU_C_ADD(r, a)		am29000->alu &= ~ALU_C; \
 								am29000->alu |= CALC_C_ADD(r, a) << ALU_C_SHIFT;
 
-#define CALC_C_SUB(a, b)		(!((UINT32)(a) < (UINT32)(b)))
+#define CALC_C_SUB(a, b)		(!((uint32_t)(a) < (uint32_t)(b)))
 
 #define SET_ALU_C_SUB(a, b)		am29000->alu &= ~ALU_C; \
 								am29000->alu |= CALC_C_SUB(a, b) << ALU_C_SHIFT;
 
 #define SET_ALU_V_ADD(r, a, b)	am29000->alu &= ~ALU_V; \
-								am29000->alu |= (((INT32)(~((a) ^ (b)) & ((a) ^ (r))) < 0)) << ALU_V_SHIFT;
+								am29000->alu |= (((int32_t)(~((a) ^ (b)) & ((a) ^ (r))) < 0)) << ALU_V_SHIFT;
 
 #define SET_ALU_V_SUB(r, a, b)	am29000->alu &= ~ALU_V; \
-								am29000->alu |= ((INT32)(((a) ^ (b)) & ((a) ^ (r))) < 0) << ALU_V_SHIFT;
+								am29000->alu |= ((int32_t)(((a) ^ (b)) & ((a) ^ (r))) < 0) << ALU_V_SHIFT;
 
 #define GET_CARRY				((am29000->alu >> ALU_C_SHIFT) & 1)
 
 
 
-static UINT32 read_spr(am29000_state *am29000, UINT32 idx)
+static uint32_t read_spr(am29000_state *am29000, uint32_t idx)
 {
-	UINT32 val = 0;
+	uint32_t val = 0;
 
 	switch (idx)
 	{
@@ -138,7 +138,7 @@ static UINT32 read_spr(am29000_state *am29000, UINT32 idx)
 }
 
 
-static void write_spr(am29000_state *am29000, UINT32 idx, UINT32 val)
+static void write_spr(am29000_state *am29000, uint32_t idx, uint32_t val)
 {
 	switch (idx)
 	{
@@ -212,9 +212,9 @@ static void write_spr(am29000_state *am29000, UINT32 idx, UINT32 val)
 
 static void ADD(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a + b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a + b;
 
 	if (!FREEZE_MODE)
 	{
@@ -244,14 +244,14 @@ static void ADDC(am29000_state *am29000)
 
 static void ADDCS(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a + b + GET_CARRY;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a + b + GET_CARRY;
 
 	if (!FREEZE_MODE)
 	{
-		UINT32 carry = GET_CARRY;
-		UINT32 tmp = a + b;
+		uint32_t carry = GET_CARRY;
+		uint32_t tmp = a + b;
 
 		SET_ALU_V_ADD(r, a, b);
 		SET_ALU_Z(r);
@@ -273,9 +273,9 @@ static void ADDCU(am29000_state *am29000)
 
 static void SUB(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r = a - b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r = a - b;
 
 	if (!FREEZE_MODE)
 	{
@@ -291,9 +291,9 @@ static void SUB(am29000_state *am29000)
 
 static void SUBS(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r = a - b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r = a - b;
 
 	if (!FREEZE_MODE)
 	{
@@ -303,7 +303,7 @@ static void SUBS(am29000_state *am29000)
 		SET_ALU_C_SUB(a, b);
 	}
 
-	if ((INT32)(((a) ^ (b)) & ((a) ^ (r))) < 0)
+	if ((int32_t)(((a) ^ (b)) & ((a) ^ (r))) < 0)
 		SIGNAL_EXCEPTION(EXCEPTION_OUT_OF_RANGE);
 
 	am29000->r[RC] = r;
@@ -331,9 +331,9 @@ static void SUBCU(am29000_state *am29000)
 
 static void SUBR(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r = b - a;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r = b - a;
 
 	if (!FREEZE_MODE)
 	{
@@ -358,9 +358,9 @@ static void SUBRU(am29000_state *am29000)
 
 static void SUBRC(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r = b - a - 1 + GET_CARRY;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r = b - a - 1 + GET_CARRY;
 
 	if (!FREEZE_MODE)
 	{
@@ -396,16 +396,16 @@ static void MULTIPLY(am29000_state *am29000)
 static void MUL(am29000_state *am29000)
 {
 	/* TODO: Zero/Neg flags ? */
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r;
-	UINT64 v;
-	UINT32 sign;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r;
+	uint64_t v;
+	uint32_t sign;
 
 	if (am29000->q & 1)
 	{
 		r = a + b;
-		sign = (r >> 31) ^ (((INT32)(~((a) ^ (b)) & ((a) ^ (r))) < 0));
+		sign = (r >> 31) ^ (((int32_t)(~((a) ^ (b)) & ((a) ^ (r))) < 0));
 	}
 	else
 	{
@@ -413,7 +413,7 @@ static void MUL(am29000_state *am29000)
 		sign = b >> 31;
 	}
 
-	v = ((((UINT64)r << 32) | am29000->q) >> 1) | ((UINT64)sign << 63);
+	v = ((((uint64_t)r << 32) | am29000->q) >> 1) | ((uint64_t)sign << 63);
 	am29000->q = v & 0xffffffff;
 
 	am29000->r[RC] = v >> 32;
@@ -422,16 +422,16 @@ static void MUL(am29000_state *am29000)
 static void MULL(am29000_state *am29000)
 {
 	/* TODO: Zero/Neg flags ? */
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r;
-	UINT64 v;
-	UINT32 sign;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r;
+	uint64_t v;
+	uint32_t sign;
 
 	if (am29000->q & 1)
 	{
 		r = b - a;
-		sign = (r >> 31) ^ ((INT32)(((a) ^ (b)) & ((a) ^ (r))) < 0);
+		sign = (r >> 31) ^ ((int32_t)(((a) ^ (b)) & ((a) ^ (r))) < 0);
 	}
 	else
 	{
@@ -439,7 +439,7 @@ static void MULL(am29000_state *am29000)
 		sign = b >> 31;
 	}
 
-	v = ((((UINT64)r << 32) | am29000->q) >> 1) | ((UINT64)sign << 63);
+	v = ((((uint64_t)r << 32) | am29000->q) >> 1) | ((uint64_t)sign << 63);
 	am29000->q = v & 0xffffffff;
 
 	am29000->r[RC] = v >> 32;
@@ -448,16 +448,16 @@ static void MULL(am29000_state *am29000)
 static void MULU(am29000_state *am29000)
 {
 	/* TODO: Zero/Neg flags ? */
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r;
-	UINT64 v;
-	UINT32 c;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r;
+	uint64_t v;
+	uint32_t c;
 
 	if (am29000->q & 1)
 	{
 		r = a + b;
-		c = (UINT32)(r) < (UINT32)(a);
+		c = (uint32_t)(r) < (uint32_t)(a);
 	}
 	else
 	{
@@ -465,7 +465,7 @@ static void MULU(am29000_state *am29000)
 		c = 0;
 	}
 
-	v = ((((UINT64)r << 32) | am29000->q) >> 1) | ((UINT64)c << 63);
+	v = ((((uint64_t)r << 32) | am29000->q) >> 1) | ((uint64_t)c << 63);
 	am29000->q = v & 0xffffffff;
 
 	am29000->r[RC] = v >> 32;
@@ -487,8 +487,8 @@ static void DIVIDU(am29000_state *am29000)
 
 static void DIV0(am29000_state *am29000)
 {
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT64 v;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint64_t v;
 
 	if (!FREEZE_MODE)
 	{
@@ -496,7 +496,7 @@ static void DIV0(am29000_state *am29000)
 		SET_ALU_N(b);
 	}
 
-	v = (((UINT64)b << 32) | am29000->q) << 1;
+	v = (((uint64_t)b << 32) | am29000->q) << 1;
 
 	am29000->q = v & 0xffffffff;
 
@@ -505,22 +505,22 @@ static void DIV0(am29000_state *am29000)
 
 static void DIV(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 c;
-	UINT32 r;
-	UINT64 r64;
-	UINT32 df;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t c;
+	uint32_t r;
+	uint64_t r64;
+	uint32_t df;
 
 	if (am29000->alu & ALU_DF)
 	{
 		r = a - b;
-		c = !((UINT32)(a) < (UINT32)(b));
+		c = !((uint32_t)(a) < (uint32_t)(b));
 	}
 	else
 	{
 		r = a + b;
-		c = (UINT32)(r) < (UINT32)(a);
+		c = (uint32_t)(r) < (uint32_t)(a);
 	}
 
 
@@ -533,7 +533,7 @@ static void DIV(am29000_state *am29000)
 		SET_ALU_N(r);
 	}
 
-	r64 = ((((UINT64)r << 32) | am29000->q) << 1) | df;
+	r64 = ((((uint64_t)r << 32) | am29000->q) << 1) | df;
 	am29000->q = r64 & 0xffffffff;
 
 	am29000->r[RC] = r64 >> 32;
@@ -541,21 +541,21 @@ static void DIV(am29000_state *am29000)
 
 static void DIVL(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 c;
-	UINT32 r;
-	UINT32 df;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t c;
+	uint32_t r;
+	uint32_t df;
 
 	if (am29000->alu & ALU_DF)
 	{
 		r = a - b;
-		c = !((UINT32)(a) < (UINT32)(b));
+		c = !((uint32_t)(a) < (uint32_t)(b));
 	}
 	else
 	{
 		r = a + b;
-		c = (UINT32)(r) < (UINT32)(a);
+		c = (uint32_t)(r) < (uint32_t)(a);
 	}
 
 	df = (~(c ^ (am29000->alu >> ALU_DF_SHIFT) ^ (am29000->alu >> ALU_N_SHIFT)) & 1);
@@ -573,8 +573,8 @@ static void DIVL(am29000_state *am29000)
 
 static void DIVREM(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
 
 	if (am29000->alu & ALU_DF)
 		am29000->r[RC] = a;
@@ -589,99 +589,99 @@ static void DIVREM(am29000_state *am29000)
 
 static void CPEQ(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a == b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a == b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPNEQ(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a != b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a != b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPLT(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (INT32)a < (INT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (int32_t)a < (int32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPLTU(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (UINT32)a < (UINT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (uint32_t)a < (uint32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPLE(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (INT32)a <= (INT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (int32_t)a <= (int32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPLEU(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (UINT32)a <= (UINT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (uint32_t)a <= (uint32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPGT(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (INT32)a > (INT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (int32_t)a > (int32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPGTU(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (UINT32)a > (UINT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (uint32_t)a > (uint32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPGE(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (INT32)a >= (INT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (int32_t)a >= (int32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPGEU(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = (UINT32)a >= (UINT32)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = (uint32_t)a >= (uint32_t)b ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 
 	am29000->r[RC] = r;
 }
 
 static void CPBYTE(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8 : GET_RB_VAL;
-	UINT32 r =
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8 : GET_RB_VAL;
+	uint32_t r =
 			((a & 0xff000000) == (b & 0xff000000)) ||
 			((a & 0x00ff0000) == (b & 0x00ff0000)) ||
 			((a & 0x0000ff00) == (b & 0x0000ff00)) ||
@@ -711,7 +711,7 @@ static void ASLT(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((INT32)GET_RA_VAL < (INT32)GET_RB_VAL))
+	else if (!((int32_t)GET_RA_VAL < (int32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -719,7 +719,7 @@ static void ASLTU(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((UINT32)GET_RA_VAL < (UINT32)GET_RB_VAL))
+	else if (!((uint32_t)GET_RA_VAL < (uint32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -727,7 +727,7 @@ static void ASLE(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((INT32)GET_RA_VAL <= (INT32)GET_RB_VAL))
+	else if (!((int32_t)GET_RA_VAL <= (int32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -735,7 +735,7 @@ static void ASLEU(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((UINT32)GET_RA_VAL <= (UINT32)GET_RB_VAL))
+	else if (!((uint32_t)GET_RA_VAL <= (uint32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -743,7 +743,7 @@ static void ASGT(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((INT32)GET_RA_VAL > (INT32)GET_RB_VAL))
+	else if (!((int32_t)GET_RA_VAL > (int32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -751,7 +751,7 @@ static void ASGTU(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((UINT32)GET_RA_VAL > (UINT32)GET_RB_VAL))
+	else if (!((uint32_t)GET_RA_VAL > (uint32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -759,7 +759,7 @@ static void ASGE(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((INT32)GET_RA_VAL >= (INT32)GET_RB_VAL))
+	else if (!((int32_t)GET_RA_VAL >= (int32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -767,7 +767,7 @@ static void ASGEU(am29000_state *am29000)
 {
 	if (USER_MODE && INST_VN < 64)
 		SIGNAL_EXCEPTION(EXCEPTION_PROTECTION_VIOLATION);
-	else if (!((UINT32)GET_RA_VAL >= (UINT32)GET_RB_VAL))
+	else if (!((uint32_t)GET_RA_VAL >= (uint32_t)GET_RB_VAL))
 		SIGNAL_EXCEPTION(INST_VN);
 }
 
@@ -778,9 +778,9 @@ static void ASGEU(am29000_state *am29000)
 
 static void AND(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a & b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a & b;
 
 	if (!FREEZE_MODE)
 	{
@@ -793,9 +793,9 @@ static void AND(am29000_state *am29000)
 
 static void ANDN(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a & ~b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a & ~b;
 
 	if (!FREEZE_MODE)
 	{
@@ -808,9 +808,9 @@ static void ANDN(am29000_state *am29000)
 
 static void NAND(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = ~(a & b);
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = ~(a & b);
 
 	if (!FREEZE_MODE)
 	{
@@ -823,9 +823,9 @@ static void NAND(am29000_state *am29000)
 
 static void OR(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a | b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a | b;
 
 	if (!FREEZE_MODE)
 	{
@@ -838,9 +838,9 @@ static void OR(am29000_state *am29000)
 
 static void NOR(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = ~(a | b);
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = ~(a | b);
 
 	if (!FREEZE_MODE)
 	{
@@ -853,9 +853,9 @@ static void NOR(am29000_state *am29000)
 
 static void XOR(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = a ^ b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = a ^ b;
 
 	if (!FREEZE_MODE)
 	{
@@ -868,9 +868,9 @@ static void XOR(am29000_state *am29000)
 
 static void XNOR(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r = ~(a ^ b);
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r = ~(a ^ b);
 
 	if (!FREEZE_MODE)
 	{
@@ -888,38 +888,38 @@ static void XNOR(am29000_state *am29000)
 
 static void SLL(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
-	UINT32 r = a << b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
+	uint32_t r = a << b;
 
 	am29000->r[RC] = r;
 }
 
 static void SRL(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
-	UINT32 r = a >> b;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
+	uint32_t r = a >> b;
 
 	am29000->r[RC] = r;
 }
 
 static void SRA(am29000_state *am29000)
 {
-	INT32 a = GET_RA_VAL;
-	UINT32 b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
-	UINT32 r = a >> b;
+	int32_t a = GET_RA_VAL;
+	uint32_t b = (INST_M_BIT ? I8: GET_RB_VAL) & 0x1f;
+	uint32_t r = a >> b;
 
 	am29000->r[RC] = r;
 }
 
 static void EXTRACT(am29000_state *am29000)
 {
-	INT32 a = GET_RA_VAL;
-	UINT32 b = (INST_M_BIT ? I8: GET_RB_VAL);
-	UINT64 r;
+	int32_t a = GET_RA_VAL;
+	uint32_t b = (INST_M_BIT ? I8: GET_RB_VAL);
+	uint64_t r;
 
-	r = (((UINT64)a << 32) | b) << GET_ALU_FC;
+	r = (((uint64_t)a << 32) | b) << GET_ALU_FC;
 
 	am29000->r[RC] = r >> 32;
 }
@@ -931,8 +931,8 @@ static void EXTRACT(am29000_state *am29000)
 
 static void LOAD(am29000_state *am29000)
 {
-	UINT32 addr = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r;
+	uint32_t addr = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r;
 
 	if (INST_UA_BIT)
 		fatalerror("Am29000: UA bit set on LOAD\n");
@@ -995,8 +995,8 @@ static void LOADSET(am29000_state *am29000)
 
 static void LOADM(am29000_state *am29000)
 {
-	UINT32 addr = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r;
+	uint32_t addr = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r;
 
 	if (INST_UA_BIT)
 		fatalerror("Am29000: UA bit set on LOAD\n");
@@ -1058,8 +1058,8 @@ static void LOADM(am29000_state *am29000)
 
 static void STORE(am29000_state *am29000)
 {
-	UINT32 addr = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r;
+	uint32_t addr = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r;
 
 	if (INST_UA_BIT)
 		fatalerror("Am29000: UA bit set on LOAD\n");
@@ -1111,8 +1111,8 @@ static void STOREL(am29000_state *am29000)
 
 static void STOREM(am29000_state *am29000)
 {
-	UINT32 addr = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 r;
+	uint32_t addr = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t r;
 
 	if (INST_UA_BIT)
 		fatalerror("Am29000: UA bit set on LOAD\n");
@@ -1172,11 +1172,11 @@ static void STOREM(am29000_state *am29000)
 
 static void EXBYTE(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 bp = GET_ALU_BP;
-	UINT8 srcbyte;
-	UINT32 r;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t bp = GET_ALU_BP;
+	uint8_t srcbyte;
+	uint32_t r;
 
 	if (am29000->cfg & CFG_BO)
 		srcbyte = a >> 8 * bp;
@@ -1190,11 +1190,11 @@ static void EXBYTE(am29000_state *am29000)
 
 static void EXHW(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
-	UINT16 srcword;
-	UINT32 r;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
+	uint16_t srcword;
+	uint32_t r;
 
 	if (am29000->cfg & CFG_BO)
 		srcword = a >> 16 * wp;
@@ -1208,28 +1208,28 @@ static void EXHW(am29000_state *am29000)
 
 static void EXHWS(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
-	UINT16 srcword;
-	UINT32 r;
+	uint32_t a = GET_RA_VAL;
+	uint32_t wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
+	uint16_t srcword;
+	uint32_t r;
 
 	if (am29000->cfg & CFG_BO)
 		srcword = a >> 16 * wp;
 	else
 		srcword = a >> (16 * (1 - wp));
 
-	r = (INT32)(INT16)srcword;
+	r = (int32_t)(int16_t)srcword;
 
 	am29000->r[RC] = r;
 }
 
 static void INBYTE(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 bp = GET_ALU_BP;
-	UINT8 shift = (am29000->cfg & CFG_BO) ? 8 * bp : (8 * (3 - bp));
-	UINT32 r;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t bp = GET_ALU_BP;
+	uint8_t shift = (am29000->cfg & CFG_BO) ? 8 * bp : (8 * (3 - bp));
+	uint32_t r;
 
 	r = (a & ~(0xff << shift)) | ((b & 0xff) << shift);
 
@@ -1238,11 +1238,11 @@ static void INBYTE(am29000_state *am29000)
 
 static void INHW(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
-	UINT32 wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
-	UINT32 shift = (am29000->cfg & CFG_BO) ? 16 * wp : (16 * (1 - wp));
-	UINT32 r;
+	uint32_t a = GET_RA_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t wp = ((am29000->alu >> ALU_BP_SHIFT) & ALU_BP_MASK) >> 1;
+	uint32_t shift = (am29000->cfg & CFG_BO) ? 16 * wp : (16 * (1 - wp));
+	uint32_t r;
 
 	r = (a & ~(0xffff << shift)) | ((b & 0xffff) << shift);
 
@@ -1301,7 +1301,7 @@ static void CONSTN(am29000_state *am29000)
 
 static void CALL(am29000_state *am29000)
 {
-	UINT32 ret = am29000->next_pc;
+	uint32_t ret = am29000->next_pc;
 
 	if (INST_M_BIT)
 		am29000->next_pc = JMP_ZEX;
@@ -1314,7 +1314,7 @@ am29000->next_pl_flags |= PFLAG_JUMP;
 
 static void CALLI(am29000_state *am29000)
 {
-	UINT32 ret = am29000->next_pc;
+	uint32_t ret = am29000->next_pc;
 	am29000->next_pc = GET_RB_VAL;
 	am29000->r[RA] = ret;
 	am29000->next_pl_flags |= PFLAG_JUMP;
@@ -1383,7 +1383,7 @@ static void JMPFI(am29000_state *am29000)
 
 static void JMPFDEC(am29000_state *am29000)
 {
-	UINT32 a = GET_RA_VAL;
+	uint32_t a = GET_RA_VAL;
 
 	if ((a & BOOLEAN_MASK) == BOOLEAN_FALSE)
 	{
@@ -1405,7 +1405,7 @@ static void JMPFDEC(am29000_state *am29000)
 
 static void CLZ(am29000_state *am29000)
 {
-	UINT32 b = INST_M_BIT ? I8: GET_RB_VAL;
+	uint32_t b = INST_M_BIT ? I8: GET_RB_VAL;
 
 	am29000->r[RC] = count_leading_zeros(b);
 }

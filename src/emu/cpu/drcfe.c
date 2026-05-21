@@ -46,9 +46,9 @@ struct _pc_stack_entry
 struct _drcfe_state
 {
 	/* configuration parameters */
-	UINT32				window_start;				/* code window start offset = startpc - window_start */
-	UINT32				window_end;					/* code window end offset = startpc + window_end */
-	UINT32				max_sequence;				/* maximum instructions to include in a sequence */
+	uint32_t				window_start;				/* code window start offset = startpc - window_start */
+	uint32_t				window_end;					/* code window end offset = startpc + window_end */
+	uint32_t				max_sequence;				/* maximum instructions to include in a sequence */
 
 	drcfe_describe_func	describe;					/* callback to describe a single instruction */
 	void *				param;						/* parameter for the callback */
@@ -62,7 +62,7 @@ struct _drcfe_state
 	opcode_desc *		desc_live_list;				/* head of list of live descriptions */
 	opcode_desc *		desc_free_list;				/* head of list of free descriptions */
 	opcode_desc **		desc_array;					/* array of descriptions in PC order */
-	UINT32				desc_array_size;			/* size of the array */
+	uint32_t				desc_array_size;			/* size of the array */
 };
 
 
@@ -72,8 +72,8 @@ struct _drcfe_state
 ***************************************************************************/
 
 static opcode_desc *describe_one(drcfe_state *drcfe, offs_t curpc, const opcode_desc *prevdesc);
-static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, int start, int end, UINT32 endflag);
-static void accumulate_required_backwards(opcode_desc *desc, UINT32 *reqmask);
+static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, int start, int end, uint32_t endflag);
+static void accumulate_required_backwards(opcode_desc *desc, uint32_t *reqmask);
 static void release_descriptions(drcfe_state *drcfe, opcode_desc *desc);
 
 
@@ -297,7 +297,7 @@ static opcode_desc *describe_one(drcfe_state *drcfe, offs_t curpc, const opcode_
 		opcode_desc **tailptr = &desc->delay;
 		offs_t delaypc = curpc + desc->length;
 		opcode_desc *prev = desc;
-		UINT8 slotnum;
+		uint8_t slotnum;
 
 		/* iterate over slots and describe them */
 		for (slotnum = 0; slotnum < desc->delayslots; slotnum++)
@@ -332,7 +332,7 @@ static opcode_desc *describe_one(drcfe_state *drcfe, offs_t curpc, const opcode_
     of instructions
 -------------------------------------------------*/
 
-static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, int start, int end, UINT32 endflag)
+static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, int start, int end, uint32_t endflag)
 {
 	opcode_desc *prev = NULL;
 	int consecutive = 0;
@@ -347,7 +347,7 @@ static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, i
 			opcode_desc *curdesc = drcfe->desc_array[descnum];
 			opcode_desc *nextdesc = NULL;
 			int nextdescnum;
-			UINT8 skipnum;
+			uint8_t skipnum;
 
 			/* determine the next instruction, taking skips into account */
 			nextdescnum = descnum + curdesc->length;
@@ -404,7 +404,7 @@ static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, i
 			/* if this is the end of a sequence, work backwards */
 			if (curdesc->flags & OPFLAG_END_SEQUENCE)
 			{
-				UINT32 reqmask[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
+				uint32_t reqmask[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff };
 				int backdesc;
 
 				/* figure out which registers we *must* generate, assuming at the end all must be */
@@ -455,7 +455,7 @@ static opcode_desc **build_sequence(drcfe_state *drcfe, opcode_desc **tailptr, i
     walking in a backwards direction
 -------------------------------------------------*/
 
-static void accumulate_required_backwards(opcode_desc *desc, UINT32 *reqmask)
+static void accumulate_required_backwards(opcode_desc *desc, uint32_t *reqmask)
 {
 	/* recursively handle delay slots */
 	if (desc->delay != NULL)

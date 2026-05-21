@@ -53,7 +53,7 @@ struct _sc61860_cpu_core
 CPU_DISASSEMBLE( sc61860 );
 
 /* this is though for power on/off of the sharps */
-UINT8 *sc61860_internal_ram(running_device *device);
+uint8_t *sc61860_internal_ram(running_device *device);
 
 DECLARE_LEGACY_CPU_DEVICE(SC61860, sc61860);
 

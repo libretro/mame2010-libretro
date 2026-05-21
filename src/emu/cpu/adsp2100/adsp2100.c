@@ -129,8 +129,8 @@
 /* 16-bit registers that can be loaded signed or unsigned */
 typedef union
 {
-	UINT16	u;
-	INT16	s;
+	uint16_t	u;
+	int16_t	s;
 } ADSPREG16;
 
 
@@ -142,7 +142,7 @@ typedef union
 #else
 	struct { ADSPREG16 sr0, sr1; } srx;
 #endif
-	UINT32 sr;
+	uint32_t sr;
 } SHIFTRESULT;
 
 
@@ -151,12 +151,12 @@ typedef union
 {
 #ifdef MSB_FIRST
 	struct { ADSPREG16 mrzero, mr2, mr1, mr0; } mrx;
-	struct { UINT32 mr1, mr0; } mry;
+	struct { uint32_t mr1, mr0; } mry;
 #else
 	struct { ADSPREG16 mr0, mr1, mr2, mrzero; } mrx;
-	struct { UINT32 mr0, mr1; } mry;
+	struct { uint32_t mr0, mr1; } mry;
 #endif
-	UINT64 mr;
+	uint64_t mr;
 } MACRESULT;
 
 /* there are two banks of "core" registers */
@@ -193,54 +193,54 @@ typedef struct
 	ADSPCORE	alt;
 
 	/* Memory addressing registers */
-	UINT32		i[8];
-	INT32		m[8];
-	UINT32		l[8];
-	UINT32		lmask[8];
-	UINT32		base[8];
-	UINT8		px;
+	uint32_t		i[8];
+	int32_t		m[8];
+	uint32_t		l[8];
+	uint32_t		lmask[8];
+	uint32_t		base[8];
+	uint8_t		px;
 
 	/* other CPU registers */
-	UINT32		pc;
-	UINT32		ppc;
-	UINT32		loop;
-	UINT32		loop_condition;
-	UINT32		cntr;
+	uint32_t		pc;
+	uint32_t		ppc;
+	uint32_t		loop;
+	uint32_t		loop_condition;
+	uint32_t		cntr;
 
 	/* status registers */
-	UINT32		astat;
-	UINT32		sstat;
-	UINT32		mstat;
-	UINT32		mstat_prev;
-	UINT32		astat_clear;
-	UINT32		idle;
+	uint32_t		astat;
+	uint32_t		sstat;
+	uint32_t		mstat;
+	uint32_t		mstat_prev;
+	uint32_t		astat_clear;
+	uint32_t		idle;
 
 	/* stacks */
-	UINT32		loop_stack[LOOP_STACK_DEPTH];
-	UINT32		cntr_stack[CNTR_STACK_DEPTH];
-	UINT32		pc_stack[PC_STACK_DEPTH];
-	UINT16		stat_stack[STAT_STACK_DEPTH][3];
-	INT32		pc_sp;
-	INT32		cntr_sp;
-	INT32		stat_sp;
-	INT32		loop_sp;
+	uint32_t		loop_stack[LOOP_STACK_DEPTH];
+	uint32_t		cntr_stack[CNTR_STACK_DEPTH];
+	uint32_t		pc_stack[PC_STACK_DEPTH];
+	uint16_t		stat_stack[STAT_STACK_DEPTH][3];
+	int32_t		pc_sp;
+	int32_t		cntr_sp;
+	int32_t		stat_sp;
+	int32_t		loop_sp;
 
 	/* external I/O */
-	UINT8		flagout;
-	UINT8		flagin;
-	UINT8		fl0;
-	UINT8		fl1;
-	UINT8		fl2;
-	UINT16		idma_addr;
-	UINT16		idma_cache;
-	UINT8		idma_offs;
+	uint8_t		flagout;
+	uint8_t		flagin;
+	uint8_t		fl0;
+	uint8_t		fl1;
+	uint8_t		fl2;
+	uint16_t		idma_addr;
+	uint16_t		idma_cache;
+	uint8_t		idma_offs;
 
 	/* interrupt handling */
-	UINT16		imask;
-	UINT8		icntl;
-	UINT16		ifc;
-    UINT8   	irq_state[9];
-    UINT8   	irq_latch[9];
+	uint16_t		imask;
+	uint8_t		icntl;
+	uint16_t		ifc;
+    uint8_t   	irq_state[9];
+    uint8_t   	irq_latch[9];
     device_irq_callback irq_callback;
     legacy_cpu_device *device;
 
@@ -275,12 +275,12 @@ typedef struct
     PRIVATE GLOBAL VARIABLES
 ***************************************************************************/
 
-static UINT16 *reverse_table = 0;
-static UINT16 *mask_table = 0;
-static UINT8 *condition_table = 0;
+static uint16_t *reverse_table = 0;
+static uint16_t *mask_table = 0;
+static uint8_t *condition_table = 0;
 
 #if TRACK_HOTSPOTS
-static UINT32 pcbucket[0x4000];
+static uint32_t pcbucket[0x4000];
 #endif
 
 
@@ -316,32 +316,32 @@ INLINE adsp2100_state *get_safe_token(running_device *device)
     MEMORY ACCESSORS
 ***************************************************************************/
 
-INLINE UINT16 RWORD_DATA(adsp2100_state *adsp, UINT32 addr)
+INLINE uint16_t RWORD_DATA(adsp2100_state *adsp, uint32_t addr)
 {
 	return memory_read_word_16le(adsp->data, addr << 1);
 }
 
-INLINE void WWORD_DATA(adsp2100_state *adsp, UINT32 addr, UINT16 data)
+INLINE void WWORD_DATA(adsp2100_state *adsp, uint32_t addr, uint16_t data)
 {
 	memory_write_word_16le(adsp->data, addr << 1, data);
 }
 
-INLINE UINT16 RWORD_IO(adsp2100_state *adsp, UINT32 addr)
+INLINE uint16_t RWORD_IO(adsp2100_state *adsp, uint32_t addr)
 {
 	return memory_read_word_16le(adsp->io, addr << 1);
 }
 
-INLINE void WWORD_IO(adsp2100_state *adsp, UINT32 addr, UINT16 data)
+INLINE void WWORD_IO(adsp2100_state *adsp, uint32_t addr, uint16_t data)
 {
 	memory_write_word_16le(adsp->io, addr << 1, data);
 }
 
-INLINE UINT32 RWORD_PGM(adsp2100_state *adsp, UINT32 addr)
+INLINE uint32_t RWORD_PGM(adsp2100_state *adsp, uint32_t addr)
 {
 	return memory_read_dword_32le(adsp->program, addr << 2);
 }
 
-INLINE void WWORD_PGM(adsp2100_state *adsp, UINT32 addr, UINT32 data)
+INLINE void WWORD_PGM(adsp2100_state *adsp, uint32_t addr, uint32_t data)
 {
 	memory_write_dword_32le(adsp->program, addr << 2, data & 0xffffff);
 }
@@ -438,7 +438,7 @@ INLINE int adsp2181_generate_irq(adsp2100_state *adsp, int which, int indx)
 
 static void check_irqs(adsp2100_state *adsp)
 {
-	UINT8 check;
+	uint8_t check;
 
 	if (adsp->chip_type >= CHIP_TYPE_ADSP2181)
 	{
@@ -877,11 +877,11 @@ static int create_tables(void)
 
 	/* allocate the tables */
 	if (!reverse_table)
-		reverse_table = global_alloc_array(UINT16, 0x4000);
+		reverse_table = global_alloc_array(uint16_t, 0x4000);
 	if (!mask_table)
-		mask_table = global_alloc_array(UINT16, 0x4000);
+		mask_table = global_alloc_array(uint16_t, 0x4000);
 	if (!condition_table)
-		condition_table = global_alloc_array(UINT8, 0x1000);
+		condition_table = global_alloc_array(uint8_t, 0x1000);
 
 	/* handle errors */
 	if (reverse_table == NULL || mask_table == NULL || condition_table == NULL)
@@ -890,7 +890,7 @@ static int create_tables(void)
 	/* initialize the bit reversing table */
 	for (i = 0; i < 0x4000; i++)
 	{
-		UINT16 data = 0;
+		uint16_t data = 0;
 
 		data |= (i >> 13) & 0x0001;
 		data |= (i >> 11) & 0x0002;
@@ -1010,8 +1010,8 @@ static CPU_EXECUTE( adsp21xx )
 
 	do
 	{
-		UINT32 temp;
-		UINT32 op;
+		uint32_t temp;
+		uint32_t op;
 
 		/* debugging */
 		adsp->ppc = adsp->pc;	/* copy PC to previous PC */
@@ -1359,19 +1359,19 @@ static CPU_EXECUTE( adsp21xx )
 				break;
 			case 0x30: case 0x31: case 0x32: case 0x33:
 				/* 001100xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 0) */
-				WRITE_REG(adsp, 0, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(adsp, 0, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x34: case 0x35: case 0x36: case 0x37:
 				/* 001101xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 1) */
-				WRITE_REG(adsp, 1, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(adsp, 1, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x38: case 0x39: case 0x3a: case 0x3b:
 				/* 001110xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 2) */
-				WRITE_REG(adsp, 2, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(adsp, 2, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x3c: case 0x3d: case 0x3e: case 0x3f:
 				/* 001111xx xxxxxxxx xxxxxxxx  load non-data register immediate (group 3) */
-				WRITE_REG(adsp, 3, op & 15, (INT32)(op << 14) >> 18);
+				WRITE_REG(adsp, 3, op & 15, (int32_t)(op << 14) >> 18);
 				break;
 			case 0x40: case 0x41: case 0x42: case 0x43: case 0x44: case 0x45: case 0x46: case 0x47:
 			case 0x48: case 0x49: case 0x4a: case 0x4b: case 0x4c: case 0x4d: case 0x4e: case 0x4f:
@@ -1912,14 +1912,14 @@ static CPU_GET_INFO( adsp21xx )
 	}
 }
 
-static void adsp21xx_load_boot_data(UINT8 *srcdata, UINT32 *dstdata)
+static void adsp21xx_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	/* see how many words we need to copy */
 	int pagelen = (srcdata[(3)] + 1) * 8;
 	int i;
 	for (i = 0; i < pagelen; i++)
 	{
-		UINT32 opcode = (srcdata[(i*4+0)] << 16) | (srcdata[(i*4+1)] << 8) | srcdata[(i*4+2)];
+		uint32_t opcode = (srcdata[(i*4+0)] << 16) | (srcdata[(i*4+1)] << 8) | srcdata[(i*4+2)];
 		dstdata[i] = opcode;
 	}
 }
@@ -1996,7 +1996,7 @@ static CPU_INIT( adsp2104 )
 	adsp->imask_mask = 0x3f;
 }
 
-void adsp2104_load_boot_data(UINT8 *srcdata, UINT32 *dstdata)
+void adsp2104_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp21xx_load_boot_data(srcdata, dstdata);
 }
@@ -2031,7 +2031,7 @@ static CPU_INIT( adsp2105 )
 	adsp->imask_mask = 0x3f;
 }
 
-void adsp2105_load_boot_data(UINT8 *srcdata, UINT32 *dstdata)
+void adsp2105_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp21xx_load_boot_data(srcdata, dstdata);
 }
@@ -2066,7 +2066,7 @@ static CPU_INIT( adsp2115 )
 	adsp->imask_mask = 0x3f;
 }
 
-void adsp2115_load_boot_data(UINT8 *srcdata, UINT32 *dstdata)
+void adsp2115_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp21xx_load_boot_data(srcdata, dstdata);
 }
@@ -2101,7 +2101,7 @@ static CPU_INIT( adsp2181 )
 	adsp->imask_mask = 0x3ff;
 }
 
-void adsp2181_load_boot_data(UINT8 *srcdata, UINT32 *dstdata)
+void adsp2181_load_boot_data(uint8_t *srcdata, uint32_t *dstdata)
 {
 	adsp21xx_load_boot_data(srcdata, dstdata);
 }
@@ -2129,20 +2129,20 @@ CPU_GET_INFO( adsp2181 )
 	}
 }
 
-void adsp2181_idma_addr_w(running_device *device, UINT16 data)
+void adsp2181_idma_addr_w(running_device *device, uint16_t data)
 {
 	adsp2100_state *adsp = get_safe_token(device);
 	adsp->idma_addr = data;
 	adsp->idma_offs = 0;
 }
 
-UINT16 adsp2181_idma_addr_r(running_device *device)
+uint16_t adsp2181_idma_addr_r(running_device *device)
 {
 	adsp2100_state *adsp = get_safe_token(device);
 	return adsp->idma_addr;
 }
 
-void adsp2181_idma_data_w(running_device *device, UINT16 data)
+void adsp2181_idma_data_w(running_device *device, uint16_t data)
 {
 	adsp2100_state *adsp = get_safe_token(device);
 
@@ -2169,10 +2169,10 @@ void adsp2181_idma_data_w(running_device *device, UINT16 data)
 		WWORD_DATA(adsp, adsp->idma_addr++ & 0x3fff, data);
 }
 
-UINT16 adsp2181_idma_data_r(running_device *device)
+uint16_t adsp2181_idma_data_r(running_device *device)
 {
 	adsp2100_state *adsp = get_safe_token(device);
-	UINT16 result = 0xffff;
+	uint16_t result = 0xffff;
 
 	/* program memory? */
 	if (!(adsp->idma_addr & 0x4000))

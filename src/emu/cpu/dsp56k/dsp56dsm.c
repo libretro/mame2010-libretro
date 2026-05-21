@@ -18,191 +18,191 @@
 /*******************/
 /* Dasm prototypes */
 /*******************/
-static size_t dsp56k_dasm_addsub_2	(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mac_1		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_macr_1	(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_tfr_2		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_move_1	(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mpy_1		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mpyr_1	(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mpy_2		(const UINT16 op_byte, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_mac_2		(const UINT16 op_byte, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_clr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_add		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_move		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_tfr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_rnd		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_tst		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_inc		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_inc24		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_or		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_asr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_asl		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_lsr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_lsl		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_eor		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_subl		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_sub		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_clr24		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_sbc		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_cmp		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_neg		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_not		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_dec		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_dec24		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_and		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_abs		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_ror		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_rol		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_cmpm		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mpy		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mpyr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_mac		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_macr		(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register);
-static size_t dsp56k_dasm_adc		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_andi		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_asl4		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_asr4		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_asr16		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_bfop		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_bcc		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bcc_1		(const UINT16 op, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bcc_2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_bra		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bra_1		(const UINT16 op, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bra_2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_brkcc		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_bscc		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bscc_1	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_bsr		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_bsr_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_chkaau	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_debug		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_debugcc	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_div		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_dmac		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_do		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_do_1		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_do_2		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_doforever	(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc);
-static size_t dsp56k_dasm_enddo		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_ext		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_illegal	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_imac		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_impy		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jcc		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jcc_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jmp		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jmp_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jscc		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jscc_1	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jsr		(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jsr_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_jsr_2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_lea		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_lea_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_macsuuu	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_move_2	(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec_1	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec_2	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec_3	(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec_4	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movec_5	(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movei		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movem		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movem_1	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movem_2	(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movep		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_movep_1	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_moves		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_mpysuuu	(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_negc		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_nop		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_norm		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_ori		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_rep		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_rep_1		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_rep_2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_repcc		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_reset		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_rti		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_rts		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_stop		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_swap		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_swi		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_tcc		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_tfr2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_tfr3		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_tst2		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_wait		(const UINT16 op, char* opcode_str, char* arg_str);
-static size_t dsp56k_dasm_zero		(const UINT16 op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_addsub_2	(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mac_1		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_macr_1	(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_tfr_2		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_move_1	(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mpy_1		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mpyr_1	(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mpy_2		(const uint16_t op_byte, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_mac_2		(const uint16_t op_byte, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_clr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_add		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_move		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_tfr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_rnd		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_tst		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_inc		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_inc24		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_or		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_asr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_asl		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_lsr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_lsl		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_eor		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_subl		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_sub		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_clr24		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_sbc		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_cmp		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_neg		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_not		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_dec		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_dec24		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_and		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_abs		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_ror		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_rol		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_cmpm		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mpy		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mpyr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_mac		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_macr		(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register);
+static size_t dsp56k_dasm_adc		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_andi		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_asl4		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_asr4		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_asr16		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_bfop		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_bcc		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bcc_1		(const uint16_t op, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bcc_2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_bra		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bra_1		(const uint16_t op, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bra_2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_brkcc		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_bscc		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bscc_1	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_bsr		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_bsr_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_chkaau	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_debug		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_debugcc	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_div		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_dmac		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_do		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_do_1		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_do_2		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_doforever	(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc);
+static size_t dsp56k_dasm_enddo		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_ext		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_illegal	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_imac		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_impy		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jcc		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jcc_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jmp		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jmp_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jscc		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jscc_1	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jsr		(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jsr_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_jsr_2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_lea		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_lea_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_macsuuu	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_move_2	(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec_1	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec_2	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec_3	(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec_4	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movec_5	(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movei		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movem		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movem_1	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movem_2	(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movep		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_movep_1	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_moves		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_mpysuuu	(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_negc		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_nop		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_norm		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_ori		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_rep		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_rep_1		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_rep_2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_repcc		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_reset		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_rti		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_rts		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_stop		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_swap		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_swi		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_tcc		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_tfr2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_tfr3		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_tst2		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_wait		(const uint16_t op, char* opcode_str, char* arg_str);
+static size_t dsp56k_dasm_zero		(const uint16_t op, char* opcode_str, char* arg_str);
 
 
 /***************************/
 /* Table decoder functions */
 /***************************/
-static int  decode_BBB_table  (UINT16 BBB);
-static void decode_cccc_table (UINT16 cccc, char *mnemonic);
-static void decode_DDDDD_table(UINT16 DDDDD, char *SD);
-static void decode_DD_table   (UINT16 DD, char *SD);
-static void decode_DDF_table  (UINT16 DD, UINT16 F, char *S, char *D);
-static void decode_EE_table   (UINT16 EE, char *D);
-static void decode_F_table    (UINT16 F, char *SD);
-static void decode_h0hF_table (UINT16 h0h, UINT16 F, char *S, char *D);
-static void decode_HH_table   (UINT16 HH, char *SD);
-static void decode_HHH_table  (UINT16 HHH, char *SD);
-static void decode_IIII_table (UINT16 IIII, char *S, char *D);
-static void decode_JJJF_table (UINT16 JJJ, UINT16 F, char *S, char *D);
-static void decode_JJF_table  (UINT16 JJ, UINT16 F, char *S, char *D);
-static void decode_JF_table   (UINT16 J, UINT16 F, char *S, char *D);
-static void decode_k_table    (UINT16 k, char *Dnot);
-static void decode_kSign_table(UINT16 k, char *plusMinus);
-static void decode_KKK_table  (UINT16 KKK, char *D1, char *D2);
-static int  decode_NN_table   (UINT16 NN);
-static int  decode_TT_table   (UINT16 TT);
-static void decode_QQF_table  (UINT16 QQ, UINT16 F, char *S1, char *S2, char *D);
-static void decode_QQF_special_table(UINT16 QQ, UINT16 F, char *S1, char *S2, char *D);
-static void decode_QQQF_table (UINT16 QQQ, UINT16 F, char *S1, char *S2, char *D);
-static int  decode_RR_table   (UINT16 RR);
-static int  decode_rr_table   (UINT16 rr);
-static void decode_s_table    (UINT16 s, char *arithmetic);
-static void decode_ss_table   (UINT16 ss, char *arithmetic);
-static void decode_uuuuF_table(UINT16 uuuu, UINT16 F, char *arg, char *S, char *D);
-static void decode_Z_table    (UINT16 Z, char *ea);
+static int  decode_BBB_table  (uint16_t BBB);
+static void decode_cccc_table (uint16_t cccc, char *mnemonic);
+static void decode_DDDDD_table(uint16_t DDDDD, char *SD);
+static void decode_DD_table   (uint16_t DD, char *SD);
+static void decode_DDF_table  (uint16_t DD, uint16_t F, char *S, char *D);
+static void decode_EE_table   (uint16_t EE, char *D);
+static void decode_F_table    (uint16_t F, char *SD);
+static void decode_h0hF_table (uint16_t h0h, uint16_t F, char *S, char *D);
+static void decode_HH_table   (uint16_t HH, char *SD);
+static void decode_HHH_table  (uint16_t HHH, char *SD);
+static void decode_IIII_table (uint16_t IIII, char *S, char *D);
+static void decode_JJJF_table (uint16_t JJJ, uint16_t F, char *S, char *D);
+static void decode_JJF_table  (uint16_t JJ, uint16_t F, char *S, char *D);
+static void decode_JF_table   (uint16_t J, uint16_t F, char *S, char *D);
+static void decode_k_table    (uint16_t k, char *Dnot);
+static void decode_kSign_table(uint16_t k, char *plusMinus);
+static void decode_KKK_table  (uint16_t KKK, char *D1, char *D2);
+static int  decode_NN_table   (uint16_t NN);
+static int  decode_TT_table   (uint16_t TT);
+static void decode_QQF_table  (uint16_t QQ, uint16_t F, char *S1, char *S2, char *D);
+static void decode_QQF_special_table(uint16_t QQ, uint16_t F, char *S1, char *S2, char *D);
+static void decode_QQQF_table (uint16_t QQQ, uint16_t F, char *S1, char *S2, char *D);
+static int  decode_RR_table   (uint16_t RR);
+static int  decode_rr_table   (uint16_t rr);
+static void decode_s_table    (uint16_t s, char *arithmetic);
+static void decode_ss_table   (uint16_t ss, char *arithmetic);
+static void decode_uuuuF_table(uint16_t uuuu, uint16_t F, char *arg, char *S, char *D);
+static void decode_Z_table    (uint16_t Z, char *ea);
 
-static void assemble_ea_from_m_table (UINT16 m, int n, char *ea);
-static void assemble_eas_from_m_table(UINT16 mm, int n1, int n2, char *ea1, char *ea2);
-static void assemble_ea_from_MM_table(UINT16 MM, int n, char *ea);
-static void assemble_ea_from_t_table (UINT16 t, UINT16 val, char *ea);
-static void assemble_ea_from_q_table (UINT16 q, int n, char *ea);
-static void assemble_ea_from_z_table (UINT16 z, int n, char *ea);
+static void assemble_ea_from_m_table (uint16_t m, int n, char *ea);
+static void assemble_eas_from_m_table(uint16_t mm, int n1, int n2, char *ea1, char *ea2);
+static void assemble_ea_from_MM_table(uint16_t MM, int n, char *ea);
+static void assemble_ea_from_t_table (uint16_t t, uint16_t val, char *ea);
+static void assemble_ea_from_q_table (uint16_t q, int n, char *ea);
+static void assemble_ea_from_z_table (uint16_t z, int n, char *ea);
 
-static void assemble_D_from_P_table(UINT16 P, UINT16 ppppp, char *D);
-static void assemble_arguments_from_W_table(UINT16 W, char *args, char ma, char *SD, char *ea);
-static void assemble_reg_from_W_table(UINT16 W, char *args, char ma, char *SD, INT8 xx);
+static void assemble_D_from_P_table(uint16_t P, uint16_t ppppp, char *D);
+static void assemble_arguments_from_W_table(uint16_t W, char *args, char ma, char *SD, char *ea);
+static void assemble_reg_from_W_table(uint16_t W, char *args, char ma, char *SD, int8_t xx);
 
-static void assemble_address_from_IO_short_address(UINT16 pp, char *ea);
-static INT8 get_6_bit_signed_value(UINT16 bits);
+static void assemble_address_from_IO_short_address(uint16_t pp, char *ea);
+static int8_t get_6_bit_signed_value(uint16_t bits);
 
 
 /**********************************/
 /* Parallel memory move functions */
 /**********************************/
-static void decode_x_memory_data_move(const UINT16 op, char* parallel_move_str);
-static void decode_x_memory_data_move2(const UINT16 op, char* parallel_move_str, char* d_register);
-static void decode_dual_x_memory_data_read(const UINT16 op, char* parallel_move_str, char* parallel_move_str2, char* d_register);
-static void decode_register_to_register_data_move(const UINT16 op, char* parallel_move_str, char* d_register);
-static void decode_x_memory_data_write_and_register_data_move(const UINT16 op, char* parallel_move_str, char* parallel_move_str2);
-static void decode_address_register_update(const UINT16 op, char* parallel_move_str);
-static void decode_x_memory_data_move_with_short_displacement(const UINT16 op, const UINT16 op2, char* parallel_move_str);
+static void decode_x_memory_data_move(const uint16_t op, char* parallel_move_str);
+static void decode_x_memory_data_move2(const uint16_t op, char* parallel_move_str, char* d_register);
+static void decode_dual_x_memory_data_read(const uint16_t op, char* parallel_move_str, char* parallel_move_str2, char* d_register);
+static void decode_register_to_register_data_move(const uint16_t op, char* parallel_move_str, char* d_register);
+static void decode_x_memory_data_write_and_register_data_move(const uint16_t op, char* parallel_move_str, char* parallel_move_str2);
+static void decode_address_register_update(const uint16_t op, char* parallel_move_str);
+static void decode_x_memory_data_move_with_short_displacement(const uint16_t op, const uint16_t op2, char* parallel_move_str);
 
 
 /********************/
 /* Helper functions */
 /********************/
 #define BITS(CUR,MASK) (dsp56k_op_mask(CUR,MASK))
-static UINT16 dsp56k_op_mask(UINT16 op, UINT16 mask);
+static uint16_t dsp56k_op_mask(uint16_t op, uint16_t mask);
 static void pad_string(const int dest_length, char* string);
 
 enum bbbType  { BBB_UPPER, BBB_MIDDLE, BBB_LOWER, BBB_INVALID };
@@ -223,8 +223,8 @@ CPU_DISASSEMBLE( dsp56k )
 	char parallel_move_str[128] = "";
 	char parallel_move_str2[128] = "";
 
-	const UINT16 op  = oprom[0] | (oprom[1] << 8);
-	const UINT16 op2 = oprom[2] | (oprom[3] << 8);
+	const uint16_t op  = oprom[0] | (oprom[1] << 8);
+	const uint16_t op2 = oprom[2] | (oprom[3] << 8);
 
 	/* Dual X Memory Data Read : 011m mKKK .rr. .... : A-142*/
 	if ((op & 0xe000) == 0x6000)
@@ -232,7 +232,7 @@ CPU_DISASSEMBLE( dsp56k )
 		char d_register[32] = "";
 
 		/* Quote: (MOVE, MAC(R), MPY(R), ADD, SUB, TFR) */
-		UINT16 op_byte = op & 0x00ff;
+		uint16_t op_byte = op & 0x00ff;
 
 		/* ADD : 011m mKKK 0rru Fuuu : A-22 */
 		/* SUB : 011m mKKK 0rru Fuuu : A-202 */
@@ -285,7 +285,7 @@ CPU_DISASSEMBLE( dsp56k )
 	else if ((op & 0xfe00) == 0x1600)
 	{
 		/* Quote: (MPY or MAC) */
-		UINT16 op_byte = op & 0x00ff;
+		uint16_t op_byte = op & 0x00ff;
 
 		/* MPY : 0001 0110 RRDD FQQQ : A-160 */
 		if ((op & 0xff00) == 0x1600)
@@ -316,7 +316,7 @@ CPU_DISASSEMBLE( dsp56k )
 					 kXMemoryDataMove2,
 					 kXMemoryDataMoveWithDisp };
 
-		UINT16 op_byte = 0x0000;
+		uint16_t op_byte = 0x0000;
 		char d_register[32] = "";
 		int parallelType = -1;
 
@@ -1092,7 +1092,7 @@ CPU_DISASSEMBLE( dsp56k )
 
 /* ADD : 011m mKKK 0rru Fuuu : A-22 */
 /* SUB : 011m mKKK 0rru Fuuu : A-202 */
-static size_t dsp56k_dasm_addsub_2(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_addsub_2(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* TODO: How strange.  Same as SUB?  Investigate */
 	char D[32];
@@ -1106,7 +1106,7 @@ static size_t dsp56k_dasm_addsub_2(const UINT16 op_byte, char* opcode_str, char*
 }
 
 /* MAC : 011m mKKK 1xx0 F1QQ : A-122 */
-static size_t dsp56k_dasm_mac_1(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mac_1(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1119,7 +1119,7 @@ static size_t dsp56k_dasm_mac_1(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* MACR: 011m mKKK 1--1 F1QQ : A-124 */
-static size_t dsp56k_dasm_macr_1(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_macr_1(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1132,7 +1132,7 @@ static size_t dsp56k_dasm_macr_1(const UINT16 op_byte, char* opcode_str, char* a
 }
 
 /* TFR : 011m mKKK 0rr1 F0DD : A-212 */
-static size_t dsp56k_dasm_tfr_2(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_tfr_2(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* Note: This opcode collides with move_1 when F0DD is 0000.  Needs verifying on a real CPU. */
 	char D[32];
@@ -1147,7 +1147,7 @@ static size_t dsp56k_dasm_tfr_2(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* MOVE : 011m mKKK 0rr1 0000 : A-128 */
-static size_t dsp56k_dasm_move_1(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_move_1(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* Note: This opcode collides with tfr_2 & will never be disassembled.  Needs verifying on a real CPU. */
 	char D[32];
@@ -1160,7 +1160,7 @@ static size_t dsp56k_dasm_move_1(const UINT16 op_byte, char* opcode_str, char* a
 }
 
 /* MPY : 011m mKKK 1xx0 F0QQ : A-160 */
-static size_t dsp56k_dasm_mpy_1(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mpy_1(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1173,7 +1173,7 @@ static size_t dsp56k_dasm_mpy_1(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* MPYR : 011m mKKK 1--1 F0QQ : A-162 */
-static size_t dsp56k_dasm_mpyr_1(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mpyr_1(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1186,7 +1186,7 @@ static size_t dsp56k_dasm_mpyr_1(const UINT16 op_byte, char* opcode_str, char* a
 }
 
 /* MPY : 0001 0110 RRDD FQQQ : A-160 */
-static size_t dsp56k_dasm_mpy_2(const UINT16 op_byte, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_mpy_2(const uint16_t op_byte, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -1198,7 +1198,7 @@ static size_t dsp56k_dasm_mpy_2(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* MAC : 0001 0111 RRDD FQQQ : A-122 */
-static size_t dsp56k_dasm_mac_2(const UINT16 op_byte, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_mac_2(const uint16_t op_byte, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -1210,7 +1210,7 @@ static size_t dsp56k_dasm_mac_2(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* CLR : .... .... 0000 F001 : A-60 */
-static size_t dsp56k_dasm_clr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_clr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1221,7 +1221,7 @@ static size_t dsp56k_dasm_clr(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* ADD : .... .... 0000 FJJJ : A-22 */
-static size_t dsp56k_dasm_add(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_add(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1233,7 +1233,7 @@ static size_t dsp56k_dasm_add(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* MOVE : .... .... 0001 0001 : A-128 */
-static size_t dsp56k_dasm_move(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_move(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* Equivalent to a NOP (+ parallel move) */
 	sprintf(opcode_str, "move");
@@ -1243,7 +1243,7 @@ static size_t dsp56k_dasm_move(const UINT16 op_byte, char* opcode_str, char* arg
 }
 
 /* TFR : .... .... 0001 FJJJ : A-212 */
-static size_t dsp56k_dasm_tfr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_tfr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1255,7 +1255,7 @@ static size_t dsp56k_dasm_tfr(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* RND : .... .... 0010 F000 : A-188 */
-static size_t dsp56k_dasm_rnd(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_rnd(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1266,7 +1266,7 @@ static size_t dsp56k_dasm_rnd(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* TST : .... .... 0010 F001 : A-218 */
-static size_t dsp56k_dasm_tst(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_tst(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1277,7 +1277,7 @@ static size_t dsp56k_dasm_tst(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* INC : .... .... 0010 F010 : A-104 */
-static size_t dsp56k_dasm_inc(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_inc(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1288,7 +1288,7 @@ static size_t dsp56k_dasm_inc(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* INC24 : .... .... 0010 F011 : A-106 */
-static size_t dsp56k_dasm_inc24(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_inc24(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1299,7 +1299,7 @@ static size_t dsp56k_dasm_inc24(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* OR : .... .... 0010 F1JJ : A-176 */
-static size_t dsp56k_dasm_or(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_or(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1311,7 +1311,7 @@ static size_t dsp56k_dasm_or(const UINT16 op_byte, char* opcode_str, char* arg_s
 }
 
 /* ASR : .... .... 0011 F000 : A-32 */
-static size_t dsp56k_dasm_asr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_asr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1322,7 +1322,7 @@ static size_t dsp56k_dasm_asr(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* ASL : .... .... 0011 F001 : A-28 */
-static size_t dsp56k_dasm_asl(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_asl(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1333,7 +1333,7 @@ static size_t dsp56k_dasm_asl(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* LSR : .... .... 0011 F010 : A-120 */
-static size_t dsp56k_dasm_lsr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_lsr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1344,7 +1344,7 @@ static size_t dsp56k_dasm_lsr(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* LSL : .... .... 0011 F011 : A-118 */
-static size_t dsp56k_dasm_lsl(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_lsl(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1355,7 +1355,7 @@ static size_t dsp56k_dasm_lsl(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* EOR : .... .... 0011 F1JJ : A-94 */
-static size_t dsp56k_dasm_eor(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_eor(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1367,7 +1367,7 @@ static size_t dsp56k_dasm_eor(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* SUBL : .... .... 0100 F001 : A-204 */
-static size_t dsp56k_dasm_subl(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_subl(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	sprintf(opcode_str, "subl");
 
@@ -1387,7 +1387,7 @@ static size_t dsp56k_dasm_subl(const UINT16 op_byte, char* opcode_str, char* arg
 }
 
 /* SUB : .... .... 0100 FJJJ : A-202 */
-static size_t dsp56k_dasm_sub(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_sub(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1399,7 +1399,7 @@ static size_t dsp56k_dasm_sub(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* CLR24 : .... .... 0101 F001 : A-62 */
-static size_t dsp56k_dasm_clr24(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_clr24(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1410,7 +1410,7 @@ static size_t dsp56k_dasm_clr24(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* SBC : .... .... 0101 F01J : A-198 */
-static size_t dsp56k_dasm_sbc(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_sbc(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1422,7 +1422,7 @@ static size_t dsp56k_dasm_sbc(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* CMP : .... .... 0101 FJJJ : A-64 */
-static size_t dsp56k_dasm_cmp(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_cmp(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1436,7 +1436,7 @@ static size_t dsp56k_dasm_cmp(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* NEG : .... .... 0110 F000 : A-166 */
-static size_t dsp56k_dasm_neg(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_neg(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1447,7 +1447,7 @@ static size_t dsp56k_dasm_neg(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* NOT : .... .... 0110 F001 : A-174 */
-static size_t dsp56k_dasm_not(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_not(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1458,7 +1458,7 @@ static size_t dsp56k_dasm_not(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* DEC : .... .... 0110 F010 : A-72 */
-static size_t dsp56k_dasm_dec(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_dec(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1469,7 +1469,7 @@ static size_t dsp56k_dasm_dec(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* DEC24 : .... .... 0110 F011 : A-74 */
-static size_t dsp56k_dasm_dec24(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_dec24(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1480,7 +1480,7 @@ static size_t dsp56k_dasm_dec24(const UINT16 op_byte, char* opcode_str, char* ar
 }
 
 /* AND : .... .... 0110 F1JJ : A-24 */
-static size_t dsp56k_dasm_and(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_and(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1492,7 +1492,7 @@ static size_t dsp56k_dasm_and(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* ABS : .... .... 0111 F001 : A-18 */
-static size_t dsp56k_dasm_abs(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_abs(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1503,7 +1503,7 @@ static size_t dsp56k_dasm_abs(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* ROR : .... .... 0111 F010 : A-192 */
-static size_t dsp56k_dasm_ror(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_ror(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1514,7 +1514,7 @@ static size_t dsp56k_dasm_ror(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* ROL : .... .... 0111 F011 : A-190 */
-static size_t dsp56k_dasm_rol(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_rol(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	decode_F_table(BITS(op_byte,0x08), D);
@@ -1525,7 +1525,7 @@ static size_t dsp56k_dasm_rol(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* CMPM : .... .... 0111 FJJJ : A-66 */
-static size_t dsp56k_dasm_cmpm(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_cmpm(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1539,7 +1539,7 @@ static size_t dsp56k_dasm_cmpm(const UINT16 op_byte, char* opcode_str, char* arg
 }
 
 /* MPY : .... .... 1k00 FQQQ : A-160    -- CONFIRMED TYPO IN DOCS (HHHH vs HHHW) */
-static size_t dsp56k_dasm_mpy(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mpy(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* There are inconsistencies with the S1 & S2 operand ordering in the docs,
        but since it's a multiply it doesn't matter */
@@ -1559,7 +1559,7 @@ static size_t dsp56k_dasm_mpy(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* MPYR : .... .... 1k01 FQQQ : A-162 */
-static size_t dsp56k_dasm_mpyr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mpyr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* There are inconsistencies with the S1 & S2 operand ordering in the docs,
        but since it's a multiply it doesn't matter */
@@ -1579,7 +1579,7 @@ static size_t dsp56k_dasm_mpyr(const UINT16 op_byte, char* opcode_str, char* arg
 }
 
 /* MAC : .... .... 1k10 FQQQ : A-122 */
-static size_t dsp56k_dasm_mac(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_mac(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	char D[32];
 	char S1[32];
@@ -1597,7 +1597,7 @@ static size_t dsp56k_dasm_mac(const UINT16 op_byte, char* opcode_str, char* arg_
 }
 
 /* MACR : .... .... 1k11 FQQQ : A-124   -- DRAMA - rr vs xx (805) */
-static size_t dsp56k_dasm_macr(const UINT16 op_byte, char* opcode_str, char* arg_str, char* d_register)
+static size_t dsp56k_dasm_macr(const uint16_t op_byte, char* opcode_str, char* arg_str, char* d_register)
 {
 	/* There are inconsistencies with the S1 & S2 operand ordering in the docs,
        but since it's a multiply it doesn't matter */
@@ -1622,7 +1622,7 @@ static size_t dsp56k_dasm_macr(const UINT16 op_byte, char* opcode_str, char* arg
 /******************************/
 
 /* ADC : 0001 0101 0000 F01J : A-20 */
-static size_t dsp56k_dasm_adc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_adc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -1633,7 +1633,7 @@ static size_t dsp56k_dasm_adc(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ANDI : 0001 1EE0 iiii iiii : A-26 */
-static size_t dsp56k_dasm_andi(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_andi(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_EE_table(BITS(op,0x0600), D);
@@ -1643,7 +1643,7 @@ static size_t dsp56k_dasm_andi(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ASL4 : 0001 0101 0011 F001 : A-30 */
-static size_t dsp56k_dasm_asl4(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_asl4(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -1653,7 +1653,7 @@ static size_t dsp56k_dasm_asl4(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ASR4 : 0001 0101 0011 F000 : A-34 */
-static size_t dsp56k_dasm_asr4(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_asr4(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -1663,7 +1663,7 @@ static size_t dsp56k_dasm_asr4(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ASR16 : 0001 0101 0111 F000 : A-36 */
-static size_t dsp56k_dasm_asr16(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_asr16(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -1687,12 +1687,12 @@ static size_t dsp56k_dasm_asr16(const UINT16 op, char* opcode_str, char* arg_str
 /* BFTSTL : 0001 0100 01Pp pppp BBB0 0000 iiii iiii : A-46 */
 /* BFTSTL : 0001 0100 001- --RR BBB0 0000 iiii iiii : A-46 */
 /* BFTSTL : 0001 0100 000D DDDD BBB0 0000 iiii iiii : A-46 */
-static size_t dsp56k_dasm_bfop(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_bfop(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	int upperMiddleLower = -1;
-	UINT16 iVal = 0x0000;
-	UINT16 rVal = 0x0000;
+	uint16_t iVal = 0x0000;
+	uint16_t rVal = 0x0000;
 
 	/* Decode the common parts */
 	upperMiddleLower = decode_BBB_table(BITS(op2,0xe000));
@@ -1743,20 +1743,20 @@ static size_t dsp56k_dasm_bfop(const UINT16 op, const UINT16 op2, char* opcode_s
 }
 
 /* Bcc : 0000 0111 --11 cccc xxxx xxxx xxxx xxxx : A-48 */
-static size_t dsp56k_dasm_bcc(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bcc(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
 	sprintf(opcode_str, "b.%s", M);
-	sprintf(arg_str, "$%04x (%d)", pc + 2 + (INT16)op2, (INT16)op2);
+	sprintf(arg_str, "$%04x (%d)", pc + 2 + (int16_t)op2, (int16_t)op2);
 	return 2;
 }
 
 /* Bcc : 0010 11cc ccee eeee : A-48 */
-static size_t dsp56k_dasm_bcc_1(const UINT16 op, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bcc_1(const uint16_t op, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	char M[32];
-	INT8 relativeInt;
+	int8_t relativeInt;
 	decode_cccc_table(BITS(op,0x3c0), M);
 	relativeInt = get_6_bit_signed_value(BITS(op,0x003f));
 	sprintf(opcode_str, "b.%s", M);
@@ -1765,7 +1765,7 @@ static size_t dsp56k_dasm_bcc_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* Bcc : 0000 0111 RR10 cccc : A-48 */
-static size_t dsp56k_dasm_bcc_2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_bcc_2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char M[32];
@@ -1777,24 +1777,24 @@ static size_t dsp56k_dasm_bcc_2(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* BRA : 0000 0001 0011 11-- xxxx xxxx xxxx xxxx : A-50 */
-static size_t dsp56k_dasm_bra(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bra(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	sprintf(opcode_str, "bra");
-	sprintf(arg_str, "$%04x (%d)", pc + 2 + op2, (INT16)op2);
+	sprintf(arg_str, "$%04x (%d)", pc + 2 + op2, (int16_t)op2);
 	return 2;
 }
 
 /* BRA : 0000 1011 aaaa aaaa : A-50 */
-static size_t dsp56k_dasm_bra_1(const UINT16 op, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bra_1(const uint16_t op, char* opcode_str, char* arg_str, const offs_t pc)
 {
-	INT8 iVal = (INT8)BITS(op,0x00ff);
+	int8_t iVal = (int8_t)BITS(op,0x00ff);
 	sprintf(opcode_str, "bra");
 	sprintf(arg_str, "$%04x (%d)", pc + 1 + iVal, iVal);
 	return 1;
 }
 
 /* BRA : 0000 0001 0010 11RR : A-50 */
-static size_t dsp56k_dasm_bra_2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_bra_2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -1804,7 +1804,7 @@ static size_t dsp56k_dasm_bra_2(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* BRKc : 0000 0001 0001 cccc : A-52 */
-static size_t dsp56k_dasm_brkcc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_brkcc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
@@ -1814,17 +1814,17 @@ static size_t dsp56k_dasm_brkcc(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* BScc : 0000 0111 --01 cccc xxxx xxxx xxxx xxxx : A-54 */
-static size_t dsp56k_dasm_bscc(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bscc(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
 	sprintf(opcode_str, "bs.%s", M);
-	sprintf(arg_str, "$%04x (%d)", pc + 2 + (INT16)op2, (INT16)op2);
+	sprintf(arg_str, "$%04x (%d)", pc + 2 + (int16_t)op2, (int16_t)op2);
 	return (2 | DASMFLAG_STEP_OVER);
 }
 
 /* BScc: 0000 0111 RR00 cccc : A-54 */
-static size_t dsp56k_dasm_bscc_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_bscc_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char M[32];
@@ -1836,15 +1836,15 @@ static size_t dsp56k_dasm_bscc_1(const UINT16 op, char* opcode_str, char* arg_st
 }
 
 /* BSR : 0000 0001 0011 10-- xxxx xxxx xxxx xxxx : A-56 */
-static size_t dsp56k_dasm_bsr(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_bsr(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	sprintf(opcode_str, "bsr");
-	sprintf(arg_str, "$%04x (%d)", pc + 2 + (INT16)op2, (INT16)op2);
+	sprintf(arg_str, "$%04x (%d)", pc + 2 + (int16_t)op2, (int16_t)op2);
 	return (2 | DASMFLAG_STEP_OVER);
 }
 
 /* BSR : 0000 0001 0010 10RR : A-56 */
-static size_t dsp56k_dasm_bsr_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_bsr_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -1854,7 +1854,7 @@ static size_t dsp56k_dasm_bsr_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* CHKAAU : 0000 0000 0000 0100 : A-58 */
-static size_t dsp56k_dasm_chkaau(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_chkaau(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "chkaau");
 	sprintf(arg_str, " ");
@@ -1862,7 +1862,7 @@ static size_t dsp56k_dasm_chkaau(const UINT16 op, char* opcode_str, char* arg_st
 }
 
 /* DEBUG : 0000 0000 0000 0001 : A-68 */
-static size_t dsp56k_dasm_debug(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_debug(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "debug");
 	sprintf(arg_str, " ");
@@ -1870,7 +1870,7 @@ static size_t dsp56k_dasm_debug(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* DEBUGcc : 0000 0000 0101 cccc : A-70 */
-static size_t dsp56k_dasm_debugcc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_debugcc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
@@ -1880,7 +1880,7 @@ static size_t dsp56k_dasm_debugcc(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* DIV : 0001 0101 0--0 F1DD : A-76 */
-static size_t dsp56k_dasm_div(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_div(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	/* The docs on page A-76 claim there is potential for a parallel move here,
        but various other sources (including elsewhere in the family manual) disagree */
@@ -1893,7 +1893,7 @@ static size_t dsp56k_dasm_div(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* DMAC : 0001 0101 10s1 FsQQ : A-80 */
-static size_t dsp56k_dasm_dmac(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_dmac(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char A[32];
 	char D[32];
@@ -1907,7 +1907,7 @@ static size_t dsp56k_dasm_dmac(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* DO : 0000 0000 110- --RR xxxx xxxx xxxx xxxx : A-82 */
-static size_t dsp56k_dasm_do(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_do(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -1917,7 +1917,7 @@ static size_t dsp56k_dasm_do(const UINT16 op, const UINT16 op2, char* opcode_str
 }
 
 /* DO : 0000 1110 iiii iiii xxxx xxxx xxxx xxxx : A-82 */
-static size_t dsp56k_dasm_do_1(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_do_1(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	sprintf(opcode_str, "do");
 	sprintf(arg_str, "#$%02x,$%04x", BITS(op,0x00ff), pc + 2 + op2);
@@ -1925,7 +1925,7 @@ static size_t dsp56k_dasm_do_1(const UINT16 op, const UINT16 op2, char* opcode_s
 }
 
 /* DO : 0000 0100 000D DDDD xxxx xxxx xxxx xxxx : A-82 */
-static size_t dsp56k_dasm_do_2(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_do_2(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	char S1[32];
 	decode_DDDDD_table(BITS(op,0x001f), S1);
@@ -1935,7 +1935,7 @@ static size_t dsp56k_dasm_do_2(const UINT16 op, const UINT16 op2, char* opcode_s
 }
 
 /* DO FOREVER : 0000 0000 0000 0010 xxxx xxxx xxxx xxxx : A-88 */
-static size_t dsp56k_dasm_doforever(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str, const offs_t pc)
+static size_t dsp56k_dasm_doforever(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str, const offs_t pc)
 {
 	sprintf(opcode_str, "do forever");
 	sprintf(arg_str, "$%04x", pc + 2 + op2);
@@ -1943,7 +1943,7 @@ static size_t dsp56k_dasm_doforever(const UINT16 op, const UINT16 op2, char* opc
 }
 
 /* ENDDO : 0000 0000 0000 1001 : A-92 */
-static size_t dsp56k_dasm_enddo(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_enddo(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "enddo");
 	sprintf(arg_str, " ");
@@ -1951,7 +1951,7 @@ static size_t dsp56k_dasm_enddo(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* EXT : 0001 0101 0101 F010 : A-96 */
-static size_t dsp56k_dasm_ext(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_ext(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -1961,7 +1961,7 @@ static size_t dsp56k_dasm_ext(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ILLEGAL : 0000 0000 0000 1111 : A-98 */
-static size_t dsp56k_dasm_illegal(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_illegal(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "illegal");
 	sprintf(arg_str, " ");
@@ -1969,7 +1969,7 @@ static size_t dsp56k_dasm_illegal(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* IMAC : 0001 0101 1010 FQQQ : A-100 */
-static size_t dsp56k_dasm_imac(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_imac(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -1981,7 +1981,7 @@ static size_t dsp56k_dasm_imac(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* IMPY : 0001 0101 1000 FQQQ : A-102 */
-static size_t dsp56k_dasm_impy(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_impy(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -1993,7 +1993,7 @@ static size_t dsp56k_dasm_impy(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* Jcc : 0000 0110 --11 cccc xxxx xxxx xxxx xxxx : A-108 */
-static size_t dsp56k_dasm_jcc(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jcc(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
@@ -2003,7 +2003,7 @@ static size_t dsp56k_dasm_jcc(const UINT16 op, const UINT16 op2, char* opcode_st
 }
 
 /* Jcc : 0000 0110 RR10 cccc : A-108 */
-static size_t dsp56k_dasm_jcc_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jcc_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char M[32];
@@ -2015,7 +2015,7 @@ static size_t dsp56k_dasm_jcc_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* JMP : 0000 0001 0011 01-- xxxx xxxx xxxx xxxx : A-110 */
-static size_t dsp56k_dasm_jmp(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jmp(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "jmp");
 	sprintf(arg_str, "$%04x", op2);
@@ -2023,7 +2023,7 @@ static size_t dsp56k_dasm_jmp(const UINT16 op, const UINT16 op2, char* opcode_st
 }
 
 /* JMP : 0000 0001 0010 01RR : A-110 */
-static size_t dsp56k_dasm_jmp_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jmp_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -2033,7 +2033,7 @@ static size_t dsp56k_dasm_jmp_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* JScc : 0000 0110 --01 cccc xxxx xxxx xxxx xxxx : A-112 */
-static size_t dsp56k_dasm_jscc(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jscc(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
@@ -2043,7 +2043,7 @@ static size_t dsp56k_dasm_jscc(const UINT16 op, const UINT16 op2, char* opcode_s
 }
 
 /* JScc : 0000 0110 RR00 cccc : A-112 */
-static size_t dsp56k_dasm_jscc_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jscc_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char M[32];
@@ -2055,7 +2055,7 @@ static size_t dsp56k_dasm_jscc_1(const UINT16 op, char* opcode_str, char* arg_st
 }
 
 /* JSR : 0000 0001 0011 00-- xxxx xxxx xxxx xxxx : A-114 */
-static size_t dsp56k_dasm_jsr(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jsr(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "jsr");
 	sprintf(arg_str, "$%04x", op2);
@@ -2063,7 +2063,7 @@ static size_t dsp56k_dasm_jsr(const UINT16 op, const UINT16 op2, char* opcode_st
 }
 
 /* JSR : 0000 1010 AAAA AAAA : A-114 */
-static size_t dsp56k_dasm_jsr_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jsr_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "jsr");
 	sprintf(arg_str, "#$%02x", BITS(op,0x00ff));
@@ -2071,7 +2071,7 @@ static size_t dsp56k_dasm_jsr_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* JSR : 0000 0001 0010 00RR : A-114 */
-static size_t dsp56k_dasm_jsr_2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_jsr_2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -2081,7 +2081,7 @@ static size_t dsp56k_dasm_jsr_2(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* LEA : 0000 0001 11TT MMRR : A-116 */
-static size_t dsp56k_dasm_lea(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_lea(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	int Tnum;
@@ -2095,7 +2095,7 @@ static size_t dsp56k_dasm_lea(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* LEA : 0000 0001 10NN MMRR : A-116 */
-static size_t dsp56k_dasm_lea_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_lea_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Nnum;
 	int Rnum;
@@ -2109,7 +2109,7 @@ static size_t dsp56k_dasm_lea_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MAC(su,uu) : 0001 0101 1110 FsQQ : A-126 */
-static size_t dsp56k_dasm_macsuuu(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_macsuuu(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char A[32];
 	char D[32];
@@ -2123,9 +2123,9 @@ static size_t dsp56k_dasm_macsuuu(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE : 0000 0101 BBBB BBBB ---- HHHW 0001 0001 : A-128 */
-static size_t dsp56k_dasm_move_2(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_move_2(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
-	INT8 B;
+	int8_t B;
 	char SD[32];
 	char args[32];
 	B = BITS(op,0x00ff);
@@ -2137,7 +2137,7 @@ static size_t dsp56k_dasm_move_2(const UINT16 op, const UINT16 op2, char* opcode
 }
 
 /* MOVE(C) : 0011 1WDD DDD0 MMRR : A-144 */
-static size_t dsp56k_dasm_movec(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char ea[32];
@@ -2153,7 +2153,7 @@ static size_t dsp56k_dasm_movec(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MOVE(C) : 0011 1WDD DDD1 q0RR : A-144 */
-static size_t dsp56k_dasm_movec_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char ea[32];
@@ -2169,7 +2169,7 @@ static size_t dsp56k_dasm_movec_1(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE(C) : 0011 1WDD DDD1 Z11- : A-144 */
-static size_t dsp56k_dasm_movec_2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec_2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char ea[32];
 	char SD[32];
@@ -2183,7 +2183,7 @@ static size_t dsp56k_dasm_movec_2(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE(C) : 0011 1WDD DDD1 t10- xxxx xxxx xxxx xxxx : A-144 */
-static size_t dsp56k_dasm_movec_3(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec_3(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
 	char ea[32];
 	char SD[32];
@@ -2200,7 +2200,7 @@ static size_t dsp56k_dasm_movec_3(const UINT16 op, const UINT16 op2, char* opcod
 }
 
 /* MOVE(C) : 0010 10dd dddD DDDD : A-144 */
-static size_t dsp56k_dasm_movec_4(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec_4(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D1[32];
 	char S1[32];
@@ -2212,9 +2212,9 @@ static size_t dsp56k_dasm_movec_4(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE(C) : 0000 0101 BBBB BBBB 0011 1WDD DDD0 ---- : A-144 */
-static size_t dsp56k_dasm_movec_5(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movec_5(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
-	INT8 B;
+	int8_t B;
 	char SD[32];
 	char args[32];
 	B = BITS(op,0x00ff);
@@ -2226,7 +2226,7 @@ static size_t dsp56k_dasm_movec_5(const UINT16 op, const UINT16 op2, char* opcod
 }
 
 /* MOVE(I) : 0010 00DD BBBB BBBB : A-150 */
-static size_t dsp56k_dasm_movei(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movei(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D1[32];
 	decode_DD_table(BITS(op,0x0300), D1);
@@ -2236,7 +2236,7 @@ static size_t dsp56k_dasm_movei(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MOVE(M) : 0000 001W RR0M MHHH : A-152 */
-static size_t dsp56k_dasm_movem(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movem(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char ea[32];
@@ -2252,7 +2252,7 @@ static size_t dsp56k_dasm_movem(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MOVE(M) : 0000 001W RR11 mmRR : A-152 */
-static size_t dsp56k_dasm_movem_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movem_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char ea[32];
 	char SD[32];
@@ -2267,9 +2267,9 @@ static size_t dsp56k_dasm_movem_1(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE(M) : 0000 0101 BBBB BBBB 0000 001W --0- -HHH : A-152 */
-static size_t dsp56k_dasm_movem_2(const UINT16 op, const UINT16 op2, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movem_2(const uint16_t op, const uint16_t op2, char* opcode_str, char* arg_str)
 {
-	INT8 B;
+	int8_t B;
 	char SD[32];
 	char args[32];
 	B = BITS(op,0x00ff);
@@ -2281,7 +2281,7 @@ static size_t dsp56k_dasm_movem_2(const UINT16 op, const UINT16 op2, char* opcod
 }
 
 /* MOVE(P) : 0001 100W HH1p pppp : A-156 */
-static size_t dsp56k_dasm_movep(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movep(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char A[32];
 	char SD[32];
@@ -2297,7 +2297,7 @@ static size_t dsp56k_dasm_movep(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MOVE(P) : 0000 110W RRmp pppp : A-156 */
-static size_t dsp56k_dasm_movep_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_movep_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char ea[32];
@@ -2315,7 +2315,7 @@ static size_t dsp56k_dasm_movep_1(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* MOVE(S) : 0001 100W HH0a aaaa : A-158 */
-static size_t dsp56k_dasm_moves(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_moves(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char A[32];
 	char SD[32];
@@ -2329,7 +2329,7 @@ static size_t dsp56k_dasm_moves(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* MPY(su,uu) : 0001 0101 1100 FsQQ : A-164 */
-static size_t dsp56k_dasm_mpysuuu(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_mpysuuu(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char A[32];
 	char D[32];
@@ -2343,7 +2343,7 @@ static size_t dsp56k_dasm_mpysuuu(const UINT16 op, char* opcode_str, char* arg_s
 }
 
 /* NEGC : 0001 0101 0110 F000 : A-168 */
-static size_t dsp56k_dasm_negc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_negc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -2353,7 +2353,7 @@ static size_t dsp56k_dasm_negc(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* NOP : 0000 0000 0000 0000 : A-170 */
-static size_t dsp56k_dasm_nop(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_nop(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "nop");
 	sprintf(arg_str, " ");
@@ -2361,7 +2361,7 @@ static size_t dsp56k_dasm_nop(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* NORM : 0001 0101 0010 F0RR : A-172 */
-static size_t dsp56k_dasm_norm(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_norm(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char D[32];
@@ -2373,7 +2373,7 @@ static size_t dsp56k_dasm_norm(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ORI : 0001 1EE1 iiii iiii : A-178 */
-static size_t dsp56k_dasm_ori(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_ori(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_EE_table(BITS(op,0x0600), D);
@@ -2383,7 +2383,7 @@ static size_t dsp56k_dasm_ori(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* REP : 0000 0000 111- --RR : A-180 */
-static size_t dsp56k_dasm_rep(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_rep(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	Rnum = decode_RR_table(BITS(op,0x0003));
@@ -2393,7 +2393,7 @@ static size_t dsp56k_dasm_rep(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* REP : 0000 1111 iiii iiii : A-180 */
-static size_t dsp56k_dasm_rep_1(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_rep_1(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "rep");
 	sprintf(arg_str, "#$%02x (%d)", BITS(op,0x00ff), BITS(op,0x00ff));
@@ -2401,7 +2401,7 @@ static size_t dsp56k_dasm_rep_1(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* REP : 0000 0100 001D DDDD : A-180 */
-static size_t dsp56k_dasm_rep_2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_rep_2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char S1[32];
 	decode_DDDDD_table(BITS(op,0x001f), S1);
@@ -2411,7 +2411,7 @@ static size_t dsp56k_dasm_rep_2(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* REPcc : 0000 0001 0101 cccc : A-184 */
-static size_t dsp56k_dasm_repcc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_repcc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char M[32];
 	decode_cccc_table(BITS(op,0x000f), M);
@@ -2421,7 +2421,7 @@ static size_t dsp56k_dasm_repcc(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* RESET : 0000 0000 0000 1000 : A-186 */
-static size_t dsp56k_dasm_reset(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_reset(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "reset");
 	sprintf(arg_str, " ");
@@ -2429,7 +2429,7 @@ static size_t dsp56k_dasm_reset(const UINT16 op, char* opcode_str, char* arg_str
 }
 
 /* RTI : 0000 0000 0000 0111 : A-194 */
-static size_t dsp56k_dasm_rti(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_rti(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "rti");
 	sprintf(arg_str, " ");
@@ -2437,7 +2437,7 @@ static size_t dsp56k_dasm_rti(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* RTS : 0000 0000 0000 0110 : A-196 */
-static size_t dsp56k_dasm_rts(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_rts(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "rts");
 	sprintf(arg_str, " ");
@@ -2445,7 +2445,7 @@ static size_t dsp56k_dasm_rts(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* STOP : 0000 0000 0000 1010 : A-200 */
-static size_t dsp56k_dasm_stop(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_stop(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "stop");
 	sprintf(arg_str, " ");
@@ -2453,7 +2453,7 @@ static size_t dsp56k_dasm_stop(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* SWAP : 0001 0101 0111 F001 : A-206 */
-static size_t dsp56k_dasm_swap(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_swap(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -2463,7 +2463,7 @@ static size_t dsp56k_dasm_swap(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* SWI : 0000 0000 0000 0101 : A-208 */
-static size_t dsp56k_dasm_swi(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_swi(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "swi");
 	sprintf(arg_str, " ");
@@ -2471,7 +2471,7 @@ static size_t dsp56k_dasm_swi(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* Tcc : 0001 00cc ccTT Fh0h : A-210 */
-static size_t dsp56k_dasm_tcc(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_tcc(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum = -1;
 	char M[32];
@@ -2494,7 +2494,7 @@ static size_t dsp56k_dasm_tcc(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* TFR(2) : 0001 0101 0000 F00J : A-214 */
-static size_t dsp56k_dasm_tfr2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_tfr2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	char S1[32];
@@ -2505,7 +2505,7 @@ static size_t dsp56k_dasm_tfr2(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* TFR(3) : 0010 01mW RRDD FHHH : A-216 */
-static size_t dsp56k_dasm_tfr3(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_tfr3(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	int Rnum;
 	char ea[32];
@@ -2524,7 +2524,7 @@ static size_t dsp56k_dasm_tfr3(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* TST(2) : 0001 0101 0001 -1DD : A-220 */
-static size_t dsp56k_dasm_tst2(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_tst2(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char S1[32];
 	decode_DD_table(BITS(op,0x0003), S1);
@@ -2534,7 +2534,7 @@ static size_t dsp56k_dasm_tst2(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* WAIT : 0000 0000 0000 1011 : A-222 */
-static size_t dsp56k_dasm_wait(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_wait(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	sprintf(opcode_str, "wait");
 	sprintf(arg_str, " ");
@@ -2542,7 +2542,7 @@ static size_t dsp56k_dasm_wait(const UINT16 op, char* opcode_str, char* arg_str)
 }
 
 /* ZERO : 0001 0101 0101 F000 : A-224 */
-static size_t dsp56k_dasm_zero(const UINT16 op, char* opcode_str, char* arg_str)
+static size_t dsp56k_dasm_zero(const uint16_t op, char* opcode_str, char* arg_str)
 {
 	char D[32];
 	decode_F_table(BITS(op,0x0008), D);
@@ -2557,7 +2557,7 @@ static size_t dsp56k_dasm_zero(const UINT16 op, char* opcode_str, char* arg_str)
 /* Parallel memory move functions */
 /**********************************/
 /* X Memory Data Move : 1mRR HHHW ---- ---- : A-137 */
-static void decode_x_memory_data_move(const UINT16 op, char* parallel_move_str)
+static void decode_x_memory_data_move(const uint16_t op, char* parallel_move_str)
 {
 	int Rnum;
 	char SD[32];
@@ -2573,7 +2573,7 @@ static void decode_x_memory_data_move(const UINT16 op, char* parallel_move_str)
 }
 
 /* X Memory Data Move : 0101 HHHW ---- ---- : A-137 */
-static void decode_x_memory_data_move2(const UINT16 op, char* parallel_move_str, char* d_register)
+static void decode_x_memory_data_move2(const uint16_t op, char* parallel_move_str, char* d_register)
 {
 	char SD[32] ;
 	char args[32] ;
@@ -2593,7 +2593,7 @@ static void decode_x_memory_data_move2(const UINT16 op, char* parallel_move_str,
 }
 
 /* Dual X Memory Data Read : 011m mKKK -rr- ---- : A-142*/
-static void decode_dual_x_memory_data_read(const UINT16 op, char* parallel_move_str, char* parallel_move_str2, char* d_register)
+static void decode_dual_x_memory_data_read(const uint16_t op, char* parallel_move_str, char* parallel_move_str2, char* d_register)
 {
 	int Rnum;
 	char D1[32] = "";
@@ -2628,7 +2628,7 @@ static void decode_dual_x_memory_data_read(const UINT16 op, char* parallel_move_
 }
 
 /* Register to Register Data Move : 0100 IIII ---- ---- : A-133 */
-static void decode_register_to_register_data_move(const UINT16 op, char* parallel_move_str, char* d_register)
+static void decode_register_to_register_data_move(const uint16_t op, char* parallel_move_str, char* d_register)
 {
 	char S[32];
 	char D[32];
@@ -2655,7 +2655,7 @@ static void decode_register_to_register_data_move(const UINT16 op, char* paralle
 }
 
 /* Address Register Update : 0011 0zRR ---- ---- : A-135 */
-static void decode_address_register_update(const UINT16 op, char* parallel_move_str)
+static void decode_address_register_update(const uint16_t op, char* parallel_move_str)
 {
 	char ea[32];
 	int Rnum;
@@ -2665,7 +2665,7 @@ static void decode_address_register_update(const UINT16 op, char* parallel_move_
 }
 
 /* X Memory Data Write and Register Data Move : 0001 011k RRDD ---- : A-140 */
-static void decode_x_memory_data_write_and_register_data_move(const UINT16 op, char* parallel_move_str, char* parallel_move_str2)
+static void decode_x_memory_data_write_and_register_data_move(const uint16_t op, char* parallel_move_str, char* parallel_move_str2)
 {
 	int Rnum;
 	char S[32];
@@ -2680,9 +2680,9 @@ static void decode_x_memory_data_write_and_register_data_move(const UINT16 op, c
 }
 
 /* X Memory Data Move with short displacement : 0000 0101 BBBB BBBB ---- HHHW ---- ---- : A-139 */
-static void decode_x_memory_data_move_with_short_displacement(const UINT16 op, const UINT16 op2, char* parallel_move_str)
+static void decode_x_memory_data_move_with_short_displacement(const uint16_t op, const uint16_t op2, char* parallel_move_str)
 {
-	INT8 B;
+	int8_t B;
 	char SD[32];
 	char args[32];
 
@@ -2697,7 +2697,7 @@ static void decode_x_memory_data_move_with_short_displacement(const UINT16 op, c
 /* Table decoding */
 /******************/
 
-static int decode_BBB_table(UINT16 BBB)
+static int decode_BBB_table(uint16_t BBB)
 {
 	switch(BBB)
 	{
@@ -2709,7 +2709,7 @@ static int decode_BBB_table(UINT16 BBB)
 	return BBB_INVALID;
 }
 
-static void decode_cccc_table(UINT16 cccc, char *mnemonic)
+static void decode_cccc_table(uint16_t cccc, char *mnemonic)
 {
 	switch (cccc)
 	{
@@ -2732,7 +2732,7 @@ static void decode_cccc_table(UINT16 cccc, char *mnemonic)
 	}
 }
 
-static void decode_DDDDD_table(UINT16 DDDDD, char *SD)
+static void decode_DDDDD_table(uint16_t DDDDD, char *SD)
 {
 	switch(DDDDD)
 	{
@@ -2772,7 +2772,7 @@ static void decode_DDDDD_table(UINT16 DDDDD, char *SD)
 	}
 }
 
-static void decode_DD_table(UINT16 DD, char *SD)
+static void decode_DD_table(uint16_t DD, char *SD)
 {
 	switch (DD)
 	{
@@ -2783,9 +2783,9 @@ static void decode_DD_table(UINT16 DD, char *SD)
 	}
 }
 
-static void decode_DDF_table(UINT16 DD, UINT16 F, char *S, char *D)
+static void decode_DDF_table(uint16_t DD, uint16_t F, char *S, char *D)
 {
-	UINT16 switchVal = (DD << 1) | F;
+	uint16_t switchVal = (DD << 1) | F;
 
 	switch (switchVal)
 	{
@@ -2800,7 +2800,7 @@ static void decode_DDF_table(UINT16 DD, UINT16 F, char *S, char *D)
 	}
 }
 
-static void decode_EE_table(UINT16 EE, char *D)
+static void decode_EE_table(uint16_t EE, char *D)
 {
 	switch(EE)
 	{
@@ -2810,7 +2810,7 @@ static void decode_EE_table(UINT16 EE, char *D)
 	}
 }
 
-static void decode_F_table(UINT16 F, char *SD)
+static void decode_F_table(uint16_t F, char *SD)
 {
 	switch(F)
 	{
@@ -2819,9 +2819,9 @@ static void decode_F_table(UINT16 F, char *SD)
 	}
 }
 
-static void decode_h0hF_table(UINT16 h0h, UINT16 F, char *S, char *D)
+static void decode_h0hF_table(uint16_t h0h, uint16_t F, char *S, char *D)
 {
-	UINT16 switchVal = (h0h << 1) | F;
+	uint16_t switchVal = (h0h << 1) | F;
 
 	switch (switchVal)
 	{
@@ -2836,7 +2836,7 @@ static void decode_h0hF_table(UINT16 h0h, UINT16 F, char *S, char *D)
 	}
 }
 
-static void decode_HH_table(UINT16 HH, char *SD)
+static void decode_HH_table(uint16_t HH, char *SD)
 {
 	switch(HH)
 	{
@@ -2847,7 +2847,7 @@ static void decode_HH_table(UINT16 HH, char *SD)
 	}
 }
 
-static void decode_HHH_table(UINT16 HHH, char *SD)
+static void decode_HHH_table(uint16_t HHH, char *SD)
 {
 	switch(HHH)
 	{
@@ -2862,7 +2862,7 @@ static void decode_HHH_table(UINT16 HHH, char *SD)
 	}
 }
 
-static void decode_IIII_table(UINT16 IIII, char *S, char *D)
+static void decode_IIII_table(uint16_t IIII, char *S, char *D)
 {
 	switch(IIII)
 	{
@@ -2885,9 +2885,9 @@ static void decode_IIII_table(UINT16 IIII, char *S, char *D)
 	}
 }
 
-static void decode_JJJF_table(UINT16 JJJ, UINT16 F, char *S, char *D)
+static void decode_JJJF_table(uint16_t JJJ, uint16_t F, char *S, char *D)
 {
-	UINT16 switchVal = (JJJ << 1) | F;
+	uint16_t switchVal = (JJJ << 1) | F;
 
 	switch(switchVal)
 	{
@@ -2910,9 +2910,9 @@ static void decode_JJJF_table(UINT16 JJJ, UINT16 F, char *S, char *D)
 	}
 }
 
-static void decode_JJF_table(UINT16 JJ, UINT16 F, char *S, char *D)
+static void decode_JJF_table(uint16_t JJ, uint16_t F, char *S, char *D)
 {
-	UINT16 switchVal = (JJ << 1) | F;
+	uint16_t switchVal = (JJ << 1) | F;
 
 	switch (switchVal)
 	{
@@ -2927,9 +2927,9 @@ static void decode_JJF_table(UINT16 JJ, UINT16 F, char *S, char *D)
 	}
 }
 
-static void decode_JF_table(UINT16 J, UINT16 F, char *S, char *D)
+static void decode_JF_table(uint16_t J, uint16_t F, char *S, char *D)
 {
-	UINT16 switchVal = (J << 1) | F;
+	uint16_t switchVal = (J << 1) | F;
 
 	switch(switchVal)
 	{
@@ -2940,7 +2940,7 @@ static void decode_JF_table(UINT16 J, UINT16 F, char *S, char *D)
 	}
 }
 
-static void decode_k_table(UINT16 k, char *Dnot)
+static void decode_k_table(uint16_t k, char *Dnot)
 {
 	switch(k)
 	{
@@ -2949,7 +2949,7 @@ static void decode_k_table(UINT16 k, char *Dnot)
 	}
 }
 
-static void decode_kSign_table(UINT16 k, char *plusMinus)
+static void decode_kSign_table(uint16_t k, char *plusMinus)
 {
 	switch(k)
 	{
@@ -2958,7 +2958,7 @@ static void decode_kSign_table(UINT16 k, char *plusMinus)
 	}
 }
 
-static void decode_KKK_table(UINT16 KKK, char *D1, char *D2)
+static void decode_KKK_table(uint16_t KKK, char *D1, char *D2)
 {
 	switch(KKK)
 	{
@@ -2973,19 +2973,19 @@ static void decode_KKK_table(UINT16 KKK, char *D1, char *D2)
 	}
 }
 
-static int decode_NN_table(UINT16 NN)
+static int decode_NN_table(uint16_t NN)
 {
 	return NN;
 }
 
-static int decode_TT_table(UINT16 TT)
+static int decode_TT_table(uint16_t TT)
 {
 	return TT;
 }
 
-static void decode_QQF_table(UINT16 QQ, UINT16 F, char *S1, char *S2, char *D)
+static void decode_QQF_table(uint16_t QQ, uint16_t F, char *S1, char *S2, char *D)
 {
-	UINT16 switchVal = (QQ << 1) | F;
+	uint16_t switchVal = (QQ << 1) | F;
 
 	switch(switchVal)
 	{
@@ -3000,9 +3000,9 @@ static void decode_QQF_table(UINT16 QQ, UINT16 F, char *S1, char *S2, char *D)
 	}
 }
 
-static void decode_QQF_special_table(UINT16 QQ, UINT16 F, char *S1, char *S2, char *D)
+static void decode_QQF_special_table(uint16_t QQ, uint16_t F, char *S1, char *S2, char *D)
 {
-	UINT16 switchVal = (QQ << 1) | F;
+	uint16_t switchVal = (QQ << 1) | F;
 
 	switch(switchVal)
 	{
@@ -3017,9 +3017,9 @@ static void decode_QQF_special_table(UINT16 QQ, UINT16 F, char *S1, char *S2, ch
 	}
 }
 
-static void decode_QQQF_table(UINT16 QQQ, UINT16 F, char *S1, char *S2, char *D)
+static void decode_QQQF_table(uint16_t QQQ, uint16_t F, char *S1, char *S2, char *D)
 {
-	UINT16 switchVal = (QQQ << 1) | F;
+	uint16_t switchVal = (QQQ << 1) | F;
 
 	switch(switchVal)
 	{
@@ -3042,17 +3042,17 @@ static void decode_QQQF_table(UINT16 QQQ, UINT16 F, char *S1, char *S2, char *D)
 	}
 }
 
-static int decode_RR_table(UINT16 RR)
+static int decode_RR_table(uint16_t RR)
 {
 	return RR;
 }
 
-static int decode_rr_table(UINT16 rr)
+static int decode_rr_table(uint16_t rr)
 {
 	return rr;
 }
 
-static void decode_s_table(UINT16 s, char *arithmetic)
+static void decode_s_table(uint16_t s, char *arithmetic)
 {
 	switch(s)
 	{
@@ -3061,7 +3061,7 @@ static void decode_s_table(UINT16 s, char *arithmetic)
 	}
 }
 
-static void decode_ss_table(UINT16 ss, char *arithmetic)
+static void decode_ss_table(uint16_t ss, char *arithmetic)
 {
 	switch(ss)
 	{
@@ -3072,9 +3072,9 @@ static void decode_ss_table(UINT16 ss, char *arithmetic)
 	}
 }
 
-static void decode_uuuuF_table(UINT16 uuuu, UINT16 F, char *arg, char *S, char *D)
+static void decode_uuuuF_table(uint16_t uuuu, uint16_t F, char *arg, char *S, char *D)
 {
-	UINT16 switchVal = (uuuu << 1) | F;
+	uint16_t switchVal = (uuuu << 1) | F;
 
 	sprintf(D, "sub?");
 	sprintf(S, "add");
@@ -3105,7 +3105,7 @@ static void decode_uuuuF_table(UINT16 uuuu, UINT16 F, char *arg, char *S, char *
 	}
 }
 
-static void decode_Z_table(UINT16 Z, char *ea)
+static void decode_Z_table(uint16_t Z, char *ea)
 {
 	/* This is fixed as per the Family Manual errata addendum */
 	switch(Z)
@@ -3115,7 +3115,7 @@ static void decode_Z_table(UINT16 Z, char *ea)
 	}
 }
 
-static void assemble_ea_from_m_table(UINT16 m, int n, char *ea)
+static void assemble_ea_from_m_table(uint16_t m, int n, char *ea)
 {
 	switch(m)
 	{
@@ -3124,7 +3124,7 @@ static void assemble_ea_from_m_table(UINT16 m, int n, char *ea)
 	}
 }
 
-static void assemble_eas_from_m_table(UINT16 mm, int n1, int n2, char *ea1, char *ea2)
+static void assemble_eas_from_m_table(uint16_t mm, int n1, int n2, char *ea1, char *ea2)
 {
 	switch(mm)
 	{
@@ -3139,7 +3139,7 @@ static void assemble_eas_from_m_table(UINT16 mm, int n1, int n2, char *ea1, char
 	}
 }
 
-static void assemble_ea_from_MM_table(UINT16 MM, int n, char *ea)
+static void assemble_ea_from_MM_table(uint16_t MM, int n, char *ea)
 {
 	switch(MM)
 	{
@@ -3150,7 +3150,7 @@ static void assemble_ea_from_MM_table(UINT16 MM, int n, char *ea)
 	}
 }
 
-static void assemble_ea_from_q_table(UINT16 q, int n, char *ea)
+static void assemble_ea_from_q_table(uint16_t q, int n, char *ea)
 {
 	switch(q)
 	{
@@ -3159,7 +3159,7 @@ static void assemble_ea_from_q_table(UINT16 q, int n, char *ea)
 	}
 }
 
-static void assemble_ea_from_t_table(UINT16 t,  UINT16 val, char *ea)
+static void assemble_ea_from_t_table(uint16_t t,  uint16_t val, char *ea)
 {
 	switch(t)
 	{
@@ -3168,7 +3168,7 @@ static void assemble_ea_from_t_table(UINT16 t,  UINT16 val, char *ea)
 	}
 }
 
-static void assemble_ea_from_z_table(UINT16 z, int n, char *ea)
+static void assemble_ea_from_z_table(uint16_t z, int n, char *ea)
 {
 	switch(z)
 	{
@@ -3177,7 +3177,7 @@ static void assemble_ea_from_z_table(UINT16 z, int n, char *ea)
 	}
 }
 
-static void assemble_D_from_P_table(UINT16 P, UINT16 ppppp, char *D)
+static void assemble_D_from_P_table(uint16_t P, uint16_t ppppp, char *D)
 {
 	char fullAddy[128];		/* Convert Short Absolute Address to full 16-bit */
 
@@ -3191,7 +3191,7 @@ static void assemble_D_from_P_table(UINT16 P, UINT16 ppppp, char *D)
 	}
 }
 
-static void assemble_arguments_from_W_table(UINT16 W, char *args, char ma, char *SD, char *ea)
+static void assemble_arguments_from_W_table(uint16_t W, char *args, char ma, char *SD, char *ea)
 {
 	switch(W)
 	{
@@ -3200,9 +3200,9 @@ static void assemble_arguments_from_W_table(UINT16 W, char *args, char ma, char 
 	}
 }
 
-static void assemble_reg_from_W_table(UINT16 W, char *args, char ma, char *SD, INT8 xx)
+static void assemble_reg_from_W_table(uint16_t W, char *args, char ma, char *SD, int8_t xx)
 {
-	UINT8 abs_xx;
+	uint8_t abs_xx;
 	char operation[32];
 
 	if(xx < 0)
@@ -3219,21 +3219,21 @@ static void assemble_reg_from_W_table(UINT16 W, char *args, char ma, char *SD, I
 	}
 }
 
-static void assemble_address_from_IO_short_address(UINT16 pp, char *ea)
+static void assemble_address_from_IO_short_address(uint16_t pp, char *ea)
 {
-	UINT16 fullAddy = 0xffe0;
+	uint16_t fullAddy = 0xffe0;
 	fullAddy |= pp;
 
 	sprintf(ea, "%.04x", fullAddy);
 }
 
-static INT8 get_6_bit_signed_value(UINT16 bits)
+static int8_t get_6_bit_signed_value(uint16_t bits)
 {
-	UINT16 fullAddy = bits;
+	uint16_t fullAddy = bits;
 	if (fullAddy & 0x0020)
 		fullAddy |= 0xffc0;
 
-	return (INT8)fullAddy;
+	return (int8_t)fullAddy;
 }
 
 
@@ -3241,12 +3241,12 @@ static INT8 get_6_bit_signed_value(UINT16 bits)
 /* HELPER FUNCTIONS */
 /********************/
 
-static UINT16 dsp56k_op_mask(UINT16 cur, UINT16 mask)
+static uint16_t dsp56k_op_mask(uint16_t cur, uint16_t mask)
 {
 	int i;
 
-	UINT16 retVal = (cur & mask);
-	UINT16 temp = 0x0000;
+	uint16_t retVal = (cur & mask);
+	uint16_t temp = 0x0000;
 	int offsetCount = 0;
 
 	/* Shift everything right, eliminating 'whitespace'... */

@@ -71,29 +71,29 @@ typedef struct _pic16c5x_state pic16c5x_state;
 struct _pic16c5x_state
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PC;
-	UINT16	PREVPC;		/* previous program counter */
-	UINT8	W;
-	UINT8	OPTION;
-	UINT16	CONFIG;
-	UINT8	ALU;
-	UINT16	WDT;
-	UINT8	TRISA;
-	UINT8	TRISB;
-	UINT8	TRISC;
-	UINT16	STACK[2];
-	UINT16	prescaler;	/* Note: this is really an 8-bit register */
+	uint16_t	PC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint8_t	W;
+	uint8_t	OPTION;
+	uint16_t	CONFIG;
+	uint8_t	ALU;
+	uint16_t	WDT;
+	uint8_t	TRISA;
+	uint8_t	TRISB;
+	uint8_t	TRISC;
+	uint16_t	STACK[2];
+	uint16_t	prescaler;	/* Note: this is really an 8-bit register */
 	PAIR	opcode;
-	UINT8	*internalram;
+	uint8_t	*internalram;
 
 	int		icount;
 	int		reset_vector;
 	int		picmodel;
 	int		delay_timer;
-	UINT16	temp_config;
-	UINT8	old_T0;
-	INT8	old_data;
-	UINT8	picRAMmask;
+	uint16_t	temp_config;
+	uint8_t	old_T0;
+	int8_t	old_data;
+	uint8_t	picRAMmask;
 	int		inst_cycles;
 
 
@@ -119,23 +119,23 @@ INLINE pic16c5x_state *get_safe_token(running_device *device)
 typedef struct _pic16c5x_opcode pic16c5x_opcode;
 struct _pic16c5x_opcode
 {
-	UINT8	cycles;
+	uint8_t	cycles;
 	void	(*function)(pic16c5x_state *);
 };
 
 
 INLINE void update_internalram_ptr(pic16c5x_state *cpustate)
 {
-	cpustate->internalram = (UINT8 *)memory_get_write_ptr(cpustate->data, 0x00);
+	cpustate->internalram = (uint8_t *)memory_get_write_ptr(cpustate->data, 0x00);
 }
 
 
 
 
 #define PIC16C5x_RDOP(A)         (memory_decrypted_read_word(cpustate->program, (A)<<1))
-#define PIC16C5x_RAM_RDMEM(A)    ((UINT8)memory_read_byte_8le(cpustate->data, A))
+#define PIC16C5x_RAM_RDMEM(A)    ((uint8_t)memory_read_byte_8le(cpustate->data, A))
 #define PIC16C5x_RAM_WRMEM(A,V)  (memory_write_byte_8le(cpustate->data, A,V))
-#define PIC16C5x_In(Port)        ((UINT8)memory_read_byte_8le(cpustate->io, (Port)))
+#define PIC16C5x_In(Port)        ((uint8_t)memory_read_byte_8le(cpustate->io, (Port)))
 #define PIC16C5x_Out(Port,Value) (memory_write_byte_8le(cpustate->io, (Port),Value))
 /************  Read the state of the T0 Clock input signal  ************/
 #define PIC16C5x_T0_In           (memory_read_byte_8le(cpustate->io, PIC16C5x_T0))
@@ -212,7 +212,7 @@ INLINE void update_internalram_ptr(pic16c5x_state *cpustate)
  *  Shortcuts
  ************************************************************************/
 
-#define CLR(flagreg, flag) ( flagreg &= (UINT8)(~flag) )
+#define CLR(flagreg, flag) ( flagreg &= (uint8_t)(~flag) )
 #define SET(flagreg, flag) ( flagreg |=  flag )
 
 
@@ -231,7 +231,7 @@ INLINE void CALCULATE_Z_FLAG(pic16c5x_state *cpustate)
 
 INLINE void CALCULATE_ADD_CARRY(pic16c5x_state *cpustate)
 {
-	if ((UINT8)(cpustate->old_data) > (UINT8)(cpustate->ALU)) {
+	if ((uint8_t)(cpustate->old_data) > (uint8_t)(cpustate->ALU)) {
 		SET(cpustate->STATUS, C_FLAG);
 	}
 	else {
@@ -241,7 +241,7 @@ INLINE void CALCULATE_ADD_CARRY(pic16c5x_state *cpustate)
 
 INLINE void CALCULATE_ADD_DIGITCARRY(pic16c5x_state *cpustate)
 {
-	if (((UINT8)(cpustate->old_data) & 0x0f) > ((UINT8)(cpustate->ALU) & 0x0f)) {
+	if (((uint8_t)(cpustate->old_data) & 0x0f) > ((uint8_t)(cpustate->ALU) & 0x0f)) {
 		SET(cpustate->STATUS, DC_FLAG);
 	}
 	else {
@@ -251,7 +251,7 @@ INLINE void CALCULATE_ADD_DIGITCARRY(pic16c5x_state *cpustate)
 
 INLINE void CALCULATE_SUB_CARRY(pic16c5x_state *cpustate)
 {
-	if ((UINT8)(cpustate->old_data) < (UINT8)(cpustate->ALU)) {
+	if ((uint8_t)(cpustate->old_data) < (uint8_t)(cpustate->ALU)) {
 		CLR(cpustate->STATUS, C_FLAG);
 	}
 	else {
@@ -261,7 +261,7 @@ INLINE void CALCULATE_SUB_CARRY(pic16c5x_state *cpustate)
 
 INLINE void CALCULATE_SUB_DIGITCARRY(pic16c5x_state *cpustate)
 {
-	if (((UINT8)(cpustate->old_data) & 0x0f) < ((UINT8)(cpustate->ALU) & 0x0f)) {
+	if (((uint8_t)(cpustate->old_data) & 0x0f) < ((uint8_t)(cpustate->ALU) & 0x0f)) {
 		CLR(cpustate->STATUS, DC_FLAG);
 	}
 	else {
@@ -271,13 +271,13 @@ INLINE void CALCULATE_SUB_DIGITCARRY(pic16c5x_state *cpustate)
 
 
 
-INLINE UINT16 POP_STACK(pic16c5x_state *cpustate)
+INLINE uint16_t POP_STACK(pic16c5x_state *cpustate)
 {
-	UINT16 data = cpustate->STACK[1];
+	uint16_t data = cpustate->STACK[1];
 	cpustate->STACK[1] = cpustate->STACK[0];
 	return (data & ADDR_MASK);
 }
-INLINE void PUSH_STACK(pic16c5x_state *cpustate, UINT16 data)
+INLINE void PUSH_STACK(pic16c5x_state *cpustate, uint16_t data)
 {
 	cpustate->STACK[0] = cpustate->STACK[1];
 	cpustate->STACK[1] = (data & ADDR_MASK);
@@ -285,9 +285,9 @@ INLINE void PUSH_STACK(pic16c5x_state *cpustate, UINT16 data)
 
 
 
-INLINE UINT8 GET_REGFILE(pic16c5x_state *cpustate, offs_t addr)	/* Read from internal memory */
+INLINE uint8_t GET_REGFILE(pic16c5x_state *cpustate, offs_t addr)	/* Read from internal memory */
 {
-	UINT8 data;
+	uint8_t data;
 
 	if (addr == 0) {						/* Indirect addressing  */
 		addr = (cpustate->FSR & cpustate->picRAMmask);
@@ -304,21 +304,21 @@ INLINE UINT8 GET_REGFILE(pic16c5x_state *cpustate, offs_t addr)	/* Read from int
 		case 00:	/* Not an actual register, so return 0 */
 					data = 0;
 					break;
-		case 04:	data = (cpustate->FSR | (UINT8)(~cpustate->picRAMmask));
+		case 04:	data = (cpustate->FSR | (uint8_t)(~cpustate->picRAMmask));
 					break;
 		case 05:	data = P_IN(0);
 					data &= cpustate->TRISA;
-					data |= ((UINT8)(~cpustate->TRISA) & cpustate->PORTA);
+					data |= ((uint8_t)(~cpustate->TRISA) & cpustate->PORTA);
 					data &= 0x0f;		/* 4-bit port (only lower 4 bits used) */
 					break;
 		case 06:	data = P_IN(1);
 					data &= cpustate->TRISB;
-					data |= ((UINT8)(~cpustate->TRISB) & cpustate->PORTB);
+					data |= ((uint8_t)(~cpustate->TRISB) & cpustate->PORTB);
 					break;
 		case 07:	if ((cpustate->picmodel == 0x16C55) || (cpustate->picmodel == 0x16C57)) {
 						data = P_IN(2);
 						data &= cpustate->TRISC;
-						data |= ((UINT8)(~cpustate->TRISC) & cpustate->PORTC);
+						data |= ((uint8_t)(~cpustate->TRISC) & cpustate->PORTC);
 					}
 					else {				/* PIC16C54, PIC16C56, PIC16C58 */
 						data = M_RDRAM(addr);
@@ -330,7 +330,7 @@ INLINE UINT8 GET_REGFILE(pic16c5x_state *cpustate, offs_t addr)	/* Read from int
 	return data;
 }
 
-INLINE void STORE_REGFILE(pic16c5x_state *cpustate, offs_t addr, UINT8 data)	/* Write to internal memory */
+INLINE void STORE_REGFILE(pic16c5x_state *cpustate, offs_t addr, uint8_t data)	/* Write to internal memory */
 {
 	if (addr == 0) {						/* Indirect addressing  */
 		addr = (cpustate->FSR & cpustate->picRAMmask);
@@ -353,17 +353,17 @@ INLINE void STORE_REGFILE(pic16c5x_state *cpustate, offs_t addr, UINT8 data)	/* 
 		case 02:	cpustate->PCL = data;
 					cpustate->PC = ((cpustate->STATUS & PA_REG) << 4) | data;
 					break;
-		case 03:	cpustate->STATUS &= (UINT8)(~PA_REG); cpustate->STATUS |= (data & PA_REG);
+		case 03:	cpustate->STATUS &= (uint8_t)(~PA_REG); cpustate->STATUS |= (data & PA_REG);
 					break;
-		case 04:	cpustate->FSR = (data | (UINT8)(~cpustate->picRAMmask));
+		case 04:	cpustate->FSR = (data | (uint8_t)(~cpustate->picRAMmask));
 					break;
 		case 05:	data &= 0x0f;		/* 4-bit port (only lower 4 bits used) */
-					P_OUT(0,data & (UINT8)(~cpustate->TRISA)); cpustate->PORTA = data;
+					P_OUT(0,data & (uint8_t)(~cpustate->TRISA)); cpustate->PORTA = data;
 					break;
-		case 06:	P_OUT(1,data & (UINT8)(~cpustate->TRISB)); cpustate->PORTB = data;
+		case 06:	P_OUT(1,data & (uint8_t)(~cpustate->TRISB)); cpustate->PORTB = data;
 					break;
 		case 07:	if ((cpustate->picmodel == 0x16C55) || (cpustate->picmodel == 0x16C57)) {
-						P_OUT(2,data & (UINT8)(~cpustate->TRISC));
+						P_OUT(2,data & (uint8_t)(~cpustate->TRISC));
 						cpustate->PORTC = data;
 					}
 					else {		/* PIC16C54, PIC16C56, PIC16C58 */
@@ -376,7 +376,7 @@ INLINE void STORE_REGFILE(pic16c5x_state *cpustate, offs_t addr, UINT8 data)	/* 
 }
 
 
-INLINE void STORE_RESULT(pic16c5x_state *cpustate, offs_t addr, UINT8 data)
+INLINE void STORE_RESULT(pic16c5x_state *cpustate, offs_t addr, uint8_t data)
 {
 	if (cpustate->opcode.b.l & 0x20)
 	{
@@ -491,7 +491,7 @@ static void clrwdt(pic16c5x_state *cpustate)
 
 static void comf(pic16c5x_state *cpustate)
 {
-	cpustate->ALU = (UINT8)(~(GET_REGFILE(cpustate, ADDR)));
+	cpustate->ALU = (uint8_t)(~(GET_REGFILE(cpustate, ADDR)));
 	STORE_RESULT(cpustate, ADDR, cpustate->ALU);
 	CALCULATE_Z_FLAG(cpustate);
 }
@@ -639,12 +639,12 @@ static void tris(pic16c5x_state *cpustate)
 	switch(cpustate->opcode.b.l & 0x7)
 	{
 		case 05:	if   (cpustate->TRISA == cpustate->W) break;
-					else { cpustate->TRISA = cpustate->W | 0xf0; P_OUT(0,cpustate->PORTA & (UINT8)(~cpustate->TRISA) & 0x0f); break; }
+					else { cpustate->TRISA = cpustate->W | 0xf0; P_OUT(0,cpustate->PORTA & (uint8_t)(~cpustate->TRISA) & 0x0f); break; }
 		case 06:	if   (cpustate->TRISB == cpustate->W) break;
-					else { cpustate->TRISB = cpustate->W; P_OUT(1,cpustate->PORTB & (UINT8)(~cpustate->TRISB)); break; }
+					else { cpustate->TRISB = cpustate->W; P_OUT(1,cpustate->PORTB & (uint8_t)(~cpustate->TRISB)); break; }
 		case 07:	if ((cpustate->picmodel == 0x16C55) || (cpustate->picmodel == 0x16C57)) {
 						if   (cpustate->TRISC == cpustate->W) break;
-						else { cpustate->TRISC = cpustate->W; P_OUT(2,cpustate->PORTC & (UINT8)(~cpustate->TRISC)); break; }
+						else { cpustate->TRISC = cpustate->W; P_OUT(2,cpustate->PORTC & (uint8_t)(~cpustate->TRISC)); break; }
 					}
 					else {
 						illegal(cpustate); break;
@@ -782,7 +782,7 @@ static void pic16c5x_reset_regs(pic16c5x_state *cpustate)
 	cpustate->TRISC  = 0xff;
 	cpustate->OPTION = (T0CS_FLAG | T0SE_FLAG | PSA_FLAG | PS_REG);
 	cpustate->PCL    = 0xff;
-	cpustate->FSR   |= (UINT8)(~cpustate->picRAMmask);
+	cpustate->FSR   |= (uint8_t)(~cpustate->picRAMmask);
 	cpustate->PORTA &= 0x0f;
 	cpustate->prescaler = 0;
 	cpustate->delay_timer = 0;
@@ -830,7 +830,7 @@ static void pic16c5x_update_watchdog(pic16c5x_state *cpustate, int counts)
 
 	if ((cpustate->opcode.w.l != 3) && (cpustate->opcode.w.l != 4))
 	{
-		UINT16 old_WDT = cpustate->WDT;
+		uint16_t old_WDT = cpustate->WDT;
 
 		cpustate->WDT -= counts;
 
@@ -883,7 +883,7 @@ static void pic16c5x_update_timer(pic16c5x_state *cpustate, int counts)
 static CPU_EXECUTE( pic16c5x )
 {
 	pic16c5x_state *cpustate = get_safe_token(device);
-	UINT8 T0_in;
+	uint8_t T0_in;
 
 	update_internalram_ptr(cpustate);
 
@@ -979,7 +979,7 @@ static CPU_SET_INFO( pic16c5x )
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTA:		cpustate->PORTA  = info->i & 0x0f;				break;
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTB:		cpustate->PORTB  = info->i;						break;
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTC:		cpustate->PORTC  = info->i;						break;
-		case CPUINFO_INT_REGISTER + PIC16C5x_FSR:		cpustate->FSR    = ((info->i & cpustate->picRAMmask) | (UINT8)(~cpustate->picRAMmask));	break;
+		case CPUINFO_INT_REGISTER + PIC16C5x_FSR:		cpustate->FSR    = ((info->i & cpustate->picRAMmask) | (uint8_t)(~cpustate->picRAMmask));	break;
 	}
 }
 
@@ -1035,7 +1035,7 @@ static CPU_GET_INFO( pic16c5x )
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTA:		info->i = cpustate->PORTA;						break;
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTB:		info->i = cpustate->PORTB;						break;
 		case CPUINFO_INT_REGISTER + PIC16C5x_PRTC:		info->i = cpustate->PORTC;						break;
-		case CPUINFO_INT_REGISTER + PIC16C5x_FSR:		info->i = ((cpustate->FSR & cpustate->picRAMmask) | (UINT8)(~cpustate->picRAMmask));	break;
+		case CPUINFO_INT_REGISTER + PIC16C5x_FSR:		info->i = ((cpustate->FSR & cpustate->picRAMmask) | (uint8_t)(~cpustate->picRAMmask));	break;
 
 		/* --- the following bits of info are returned as pointers to data or functions --- */
 		case CPUINFO_FCT_SET_INFO:						info->setinfo = CPU_SET_INFO_NAME(pic16c5x);	break;
@@ -1084,7 +1084,7 @@ static CPU_GET_INFO( pic16c5x )
 		case CPUINFO_STR_REGISTER + PIC16C5x_TRSA:		sprintf(info->s, "TRSA:%01X", ((cpustate->TRISA) & 0x0f));	break;
 		case CPUINFO_STR_REGISTER + PIC16C5x_TRSB:		sprintf(info->s, "TRSB:%02X", cpustate->TRISB);				break;
 		case CPUINFO_STR_REGISTER + PIC16C5x_TRSC:		sprintf(info->s, "TRSC:%02X", cpustate->TRISC);				break;
-		case CPUINFO_STR_REGISTER + PIC16C5x_FSR:		sprintf(info->s, "FSR:%02X",  ((cpustate->FSR) & cpustate->picRAMmask) | (UINT8)(~cpustate->picRAMmask));	break;
+		case CPUINFO_STR_REGISTER + PIC16C5x_FSR:		sprintf(info->s, "FSR:%02X",  ((cpustate->FSR) & cpustate->picRAMmask) | (uint8_t)(~cpustate->picRAMmask));	break;
 		case CPUINFO_STR_REGISTER + PIC16C5x_PSCL:		sprintf(info->s, "PSCL:%c%02X", ((cpustate->OPTION & 0x08) ? 'W':'T'), cpustate->prescaler);	break;
 	}
 }

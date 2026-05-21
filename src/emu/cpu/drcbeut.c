@@ -31,8 +31,8 @@ struct _drcmap_entry
 {
 	drcmap_entry *		next;				/* pointer to next map entry */
 	drccodeptr			codeptr;			/* pointer to the relevant code */
-	UINT32				mapvar;				/* map variable id */
-	UINT32				newval;				/* value of the variable starting at codeptr */
+	uint32_t				mapvar;				/* map variable id */
+	uint32_t				newval;				/* value of the variable starting at codeptr */
 };
 
 
@@ -40,11 +40,11 @@ struct _drcmap_entry
 struct _drcmap_state
 {
 	drccache *			cache;				/* pointer to the cache */
-	UINT64				uniquevalue;		/* unique value used to find the table */
+	uint64_t				uniquevalue;		/* unique value used to find the table */
 	drcmap_entry *		head;				/* head of the live list */
 	drcmap_entry **		tailptr;			/* pointer to tail of the live list */
-	UINT32				numvalues;			/* number of values  in the list */
-	UINT32				mapvalue[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0]; /* array of current values */
+	uint32_t				numvalues;			/* number of values  in the list */
+	uint32_t				mapvalue[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0]; /* array of current values */
 };
 
 
@@ -158,7 +158,7 @@ int drchash_reset(drchash_state *drchash)
     block
 -------------------------------------------------*/
 
-void drchash_block_begin(drchash_state *drchash, drcuml_block *block, const drcuml_instruction *instlist, UINT32 numinst)
+void drchash_block_begin(drchash_state *drchash, drcuml_block *block, const drcuml_instruction *instlist, uint32_t numinst)
 {
 	int inum;
 
@@ -236,10 +236,10 @@ void drchash_set_default_codeptr(drchash_state *drchash, drccodeptr nocodeptr)
     given mode/pc
 -------------------------------------------------*/
 
-int drchash_set_codeptr(drchash_state *drchash, UINT32 mode, UINT32 pc, drccodeptr code)
+int drchash_set_codeptr(drchash_state *drchash, uint32_t mode, uint32_t pc, drccodeptr code)
 {
-	UINT32 l1 = (pc >> drchash->l1shift) & drchash->l1mask;
-	UINT32 l2 = (pc >> drchash->l2shift) & drchash->l2mask;
+	uint32_t l1 = (pc >> drchash->l1shift) & drchash->l1mask;
+	uint32_t l2 = (pc >> drchash->l2shift) & drchash->l2mask;
 
 	assert(mode < drchash->modes);
 
@@ -280,7 +280,7 @@ int drchash_set_codeptr(drchash_state *drchash, UINT32 mode, UINT32 pc, drccodep
     cache)
 -------------------------------------------------*/
 
-drcmap_state *drcmap_alloc(drccache *cache, UINT64 uniquevalue)
+drcmap_state *drcmap_alloc(drccache *cache, uint64_t uniquevalue)
 {
 	drcmap_state *drcmap;
 
@@ -328,25 +328,25 @@ void drcmap_block_begin(drcmap_state *drcmap, drcuml_block *block)
 
 void drcmap_block_end(drcmap_state *drcmap, drcuml_block *block)
 {
-	UINT32 curvalue[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0] = { 0 };
-	UINT8 changed[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0] = { 0 };
+	uint32_t curvalue[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0] = { 0 };
+	uint8_t changed[DRCUML_MAPVAR_END - DRCUML_MAPVAR_M0] = { 0 };
 	drcmap_entry *entry;
 	drccodeptr lastptr;
 	drccodeptr *top;
-	UINT32 *dest;
+	uint32_t *dest;
 
 	/* only process if we have data */
 	if (drcmap->head == NULL)
 		return;
 
 	/* begin "code generation" aligned to an 8-byte boundary */
-	top = drccache_begin_codegen(drcmap->cache, sizeof(UINT64) + sizeof(UINT32) + 2 * sizeof(UINT32) * drcmap->numvalues);
+	top = drccache_begin_codegen(drcmap->cache, sizeof(uint64_t) + sizeof(uint32_t) + 2 * sizeof(uint32_t) * drcmap->numvalues);
 	if (top == NULL)
 		drcuml_block_abort(block);
-	dest = (UINT32 *)(((FPTR)*top + 7) & ~7);
+	dest = (uint32_t *)(((FPTR)*top + 7) & ~7);
 
 	/* store the cookie first */
-	*(UINT64 *)dest = drcmap->uniquevalue;
+	*(uint64_t *)dest = drcmap->uniquevalue;
 	dest += 2;
 
 	/* get the pointer to the first item and store an initial backwards offset */
@@ -367,8 +367,8 @@ void drcmap_block_end(drcmap_state *drcmap, drcuml_block *block)
 		/* if the next code pointer is different, or if we're at the end, flush changes */
 		if (entry->next == NULL || entry->next->codeptr != entry->codeptr)
 		{
-			UINT32 codedelta = entry->codeptr - lastptr;
-			UINT32 varmask = 0;
+			uint32_t codedelta = entry->codeptr - lastptr;
+			uint32_t varmask = 0;
 			int numchanged;
 			int varnum;
 
@@ -417,7 +417,7 @@ void drcmap_block_end(drcmap_state *drcmap, drcuml_block *block)
     given code pointer
 -------------------------------------------------*/
 
-void drcmap_set_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar, UINT32 newvalue)
+void drcmap_set_value(drcmap_state *drcmap, drccodeptr codebase, uint32_t mapvar, uint32_t newvalue)
 {
 	drcmap_entry *entry;
 
@@ -451,20 +451,20 @@ void drcmap_set_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar, 
     given code pointer
 -------------------------------------------------*/
 
-UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar)
+uint32_t drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, uint32_t mapvar)
 {
-	UINT64 *endscan = (UINT64 *)drccache_top(drcmap->cache);
-	UINT32 varmask = 0x10 << mapvar;
+	uint64_t *endscan = (uint64_t *)drccache_top(drcmap->cache);
+	uint32_t varmask = 0x10 << mapvar;
 	drccodeptr curcode;
-	UINT32 result = 0;
-	UINT64 *curscan;
-	UINT32 *data;
+	uint32_t result = 0;
+	uint64_t *curscan;
+	uint32_t *data;
 
 	assert(mapvar >= DRCUML_MAPVAR_M0 && mapvar < DRCUML_MAPVAR_END);
 	mapvar -= DRCUML_MAPVAR_M0;
 
 	/* get an aligned pointer to start scanning */
-	curscan = (UINT64 *)(((FPTR)codebase | 7) + 1);
+	curscan = (uint64_t *)(((FPTR)codebase | 7) + 1);
 
 	/* look for the signature */
 	while (curscan < endscan && *curscan++ != drcmap->uniquevalue) ;
@@ -472,7 +472,7 @@ UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar
 		return 0;
 
 	/* switch to 32-bit pointers for processing the rest */
-	data = (UINT32 *)curscan;
+	data = (uint32_t *)curscan;
 
 	/* first get the 32-bit starting offset to the code */
 	curcode = (drccodeptr)data - *data;
@@ -481,7 +481,7 @@ UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar
 	/* now loop until we advance past our target */
 	while (TRUE)
 	{
-		UINT32 controlword = *data++;
+		uint32_t controlword = *data++;
 
 		/* a 0 is a terminator */
 		if (controlword == 0)
@@ -496,7 +496,7 @@ UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar
 		if ((controlword & varmask) != 0)
 		{
 			int dataoffs = 0;
-			UINT32 skipmask;
+			uint32_t skipmask;
 
 			/* count how many words precede the one we care about */
 			for (skipmask = (controlword & (varmask - 1)) >> 4; skipmask != 0; skipmask = skipmask & (skipmask - 1))
@@ -520,7 +520,7 @@ UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar
     recently set map value
 -------------------------------------------------*/
 
-UINT32 drcmap_get_last_value(drcmap_state *drcmap, UINT32 mapvar)
+uint32_t drcmap_get_last_value(drcmap_state *drcmap, uint32_t mapvar)
 {
 	assert(mapvar >= DRCUML_MAPVAR_M0 && mapvar < DRCUML_MAPVAR_END);
 	return drcmap->mapvalue[mapvar - DRCUML_MAPVAR_M0];

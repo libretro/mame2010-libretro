@@ -1,6 +1,6 @@
-static void ppc_dsa(UINT32 op)
+static void ppc_dsa(uint32_t op)
 {
-	UINT32 msr = ppc_get_msr();
+	uint32_t msr = ppc_get_msr();
 
 	msr &= ~(MSR_SA | MSR_EE | MSR_PR | MSR_AP);
 	if (ppc.esasrr & 0x8)	msr |= MSR_PR;
@@ -11,10 +11,10 @@ static void ppc_dsa(UINT32 op)
 	ppc_set_msr(msr);
 }
 
-static void ppc_esa(UINT32 op)
+static void ppc_esa(uint32_t op)
 {
 	int sa, ee, pr, ap;
-	UINT32 msr = ppc_get_msr();
+	uint32_t msr = ppc_get_msr();
 
 	sa = (msr & MSR_SA) ? 1 : 0;
 	ee = (msr & MSR_EE) ? 1 : 0;
@@ -30,12 +30,12 @@ static void ppc_esa(UINT32 op)
 }
 
 #ifndef PPC_DRC
-static void ppc_tlbli(UINT32 op)
+static void ppc_tlbli(uint32_t op)
 {
 
 }
 
-static void ppc_tlbld(UINT32 op)
+static void ppc_tlbld(uint32_t op)
 {
 
 }
@@ -48,7 +48,7 @@ void ppc602_exception(int exception)
 	{
 		case EXCEPTION_IRQ:		/* External Interrupt */
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -71,7 +71,7 @@ void ppc602_exception(int exception)
 
 		case EXCEPTION_DECREMENTER:		/* Decrementer overflow exception */
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -94,7 +94,7 @@ void ppc602_exception(int exception)
 
 		case EXCEPTION_TRAP:			/* Program exception / Trap */
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.pc;
 				SRR1 = (msr & 0xff73) | 0x20000;	/* 0x20000 = TRAP bit */
@@ -114,7 +114,7 @@ void ppc602_exception(int exception)
 
 		case EXCEPTION_SYSTEM_CALL:		/* System call */
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = (msr & 0xff73);
@@ -134,7 +134,7 @@ void ppc602_exception(int exception)
 
 		case EXCEPTION_SMI:
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -216,12 +216,12 @@ static CPU_RESET( ppc602 )
 static CPU_EXECUTE( ppc602 )
 {
 	int exception_type;
-	UINT32 opcode;
+	uint32_t opcode;
 	ppc_tb_base_icount = ppc_icount;
 	ppc_dec_base_icount = ppc_icount;
 
 	// check if decrementer exception occurs during execution
-	if ((UINT32)(DEC - ppc_icount) > (UINT32)(DEC))
+	if ((uint32_t)(DEC - ppc_icount) > (uint32_t)(DEC))
 	{
 		ppc_dec_trigger_cycle = ppc_icount - DEC;
 	}

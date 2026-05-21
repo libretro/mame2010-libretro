@@ -13,8 +13,8 @@ typedef struct _tms0980_config tms0980_config;
 struct _tms0980_config {
 	/* O-output PLA configuration */
 	struct {
-		UINT8	value;
-		UINT16	output;
+		uint8_t	value;
+		uint16_t	output;
 	}	o_pla[20];
 	read8_device_func	read_k;
 	write16_device_func	write_o;		/* tms1270 has 10 O-outputs */

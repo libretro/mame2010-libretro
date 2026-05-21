@@ -50,7 +50,7 @@ extern void m68881_mmu_ops(m68ki_cpu_core *m68k);
 /* ======================================================================== */
 
 /* Used by shift & rotate instructions */
-const UINT8 m68ki_shift_8_table[65] =
+const uint8_t m68ki_shift_8_table[65] =
 {
 	0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -59,7 +59,7 @@ const UINT8 m68ki_shift_8_table[65] =
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff
 };
-const UINT16 m68ki_shift_16_table[65] =
+const uint16_t m68ki_shift_16_table[65] =
 {
 	0x0000, 0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00,
 	0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff, 0xffff,
@@ -70,7 +70,7 @@ const UINT16 m68ki_shift_16_table[65] =
 	0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
 	0xffff, 0xffff
 };
-const UINT32 m68ki_shift_32_table[65] =
+const uint32_t m68ki_shift_32_table[65] =
 {
 	0x00000000, 0x80000000, 0xc0000000, 0xe0000000, 0xf0000000, 0xf8000000,
 	0xfc000000, 0xfe000000, 0xff000000, 0xff800000, 0xffc00000, 0xffe00000,
@@ -89,7 +89,7 @@ const UINT32 m68ki_shift_32_table[65] =
 /* Number of clock cycles to use for exception processing.
  * I used 4 for any vectors that are undocumented for processing times.
  */
-const UINT8 m68ki_exception_cycle_table[5][256] =
+const uint8_t m68ki_exception_cycle_table[5][256] =
 {
 	{ /* 000 */
 		 40, /*  0: Reset - Initial Stack Pointer                      */
@@ -458,7 +458,7 @@ const UINT8 m68ki_exception_cycle_table[5][256] =
 	}
 };
 
-const UINT8 m68ki_ea_idx_cycle_table[64] =
+const uint8_t m68ki_ea_idx_cycle_table[64] =
 {
 	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	 0, /* ..01.000 no memory indirect, base NULL             */
@@ -516,9 +516,9 @@ INLINE m68ki_cpu_core *get_safe_token(running_device *device)
 
 static void set_irq_line(m68ki_cpu_core *m68k, int irqline, int state)
 {
-	UINT32 old_level = m68k->int_level;
-	UINT32 vstate = m68k->virq_state;
-	UINT32 blevel;
+	uint32_t old_level = m68k->int_level;
+	uint32_t vstate = m68k->virq_state;
+	uint32_t blevel;
 
 	if(state == ASSERT_LINE)
 		vstate |= 1 << irqline;
@@ -626,7 +626,7 @@ static CPU_EXECUTE( m68k )
 
 static CPU_INIT( m68k )
 {
-	static UINT32 emulation_initialized = 0;
+	static uint32_t emulation_initialized = 0;
 	m68ki_cpu_core *m68k = get_safe_token(device);
 
 	m68k->device = device;
@@ -817,7 +817,7 @@ static CPU_SET_INFO( m68k )
 static CPU_EXPORT_STRING( m68k )
 {
 	m68ki_cpu_core *m68k = get_safe_token(device);
-	UINT16 sr;
+	uint16_t sr;
 
 	switch (entry.index())
 	{
@@ -944,7 +944,7 @@ void m68k_set_encrypted_opcode_range(running_device *device, offs_t start, offs_
  * 8-bit data memory interface
  ****************************************************************************/
 
-static UINT16 m68008_read_immediate_16(const address_space *space, offs_t address)
+static uint16_t m68008_read_immediate_16(const address_space *space, offs_t address)
 {
 	offs_t addr = address;
 	return (memory_decrypted_read_byte(space, addr) << 8) | (memory_decrypted_read_byte(space, addr + 1));
@@ -967,13 +967,13 @@ static const m68k_memory_interface interface_d8 =
  * 16-bit data memory interface
  ****************************************************************************/
 
-static UINT16 read_immediate_16(const address_space *space, offs_t address)
+static uint16_t read_immediate_16(const address_space *space, offs_t address)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 	return memory_decrypted_read_word(space, (address) ^ m68k->memory.opcode_xor);
 }
 
-static UINT16 simple_read_immediate_16(const address_space *space, offs_t address)
+static uint16_t simple_read_immediate_16(const address_space *space, offs_t address)
 {
 	return memory_decrypted_read_word(space, address);
 }
@@ -996,9 +996,9 @@ static const m68k_memory_interface interface_d16 =
  ****************************************************************************/
 
 /* potentially misaligned 16-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static UINT16 readword_d32(const address_space *space, offs_t address)
+static uint16_t readword_d32(const address_space *space, offs_t address)
 {
-	UINT16 result;
+	uint16_t result;
 
 	if (!(address & 1))
 		return memory_read_word_32be(space, address);
@@ -1007,7 +1007,7 @@ static UINT16 readword_d32(const address_space *space, offs_t address)
 }
 
 /* potentially misaligned 16-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writeword_d32(const address_space *space, offs_t address, UINT16 data)
+static void writeword_d32(const address_space *space, offs_t address, uint16_t data)
 {
 	if (!(address & 1))
 	{
@@ -1019,9 +1019,9 @@ static void writeword_d32(const address_space *space, offs_t address, UINT16 dat
 }
 
 /* potentially misaligned 32-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static UINT32 readlong_d32(const address_space *space, offs_t address)
+static uint32_t readlong_d32(const address_space *space, offs_t address)
 {
-	UINT32 result;
+	uint32_t result;
 
 	if (!(address & 3))
 		return memory_read_dword_32be(space, address);
@@ -1036,7 +1036,7 @@ static UINT32 readlong_d32(const address_space *space, offs_t address)
 }
 
 /* potentially misaligned 32-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writelong_d32(const address_space *space, offs_t address, UINT32 data)
+static void writelong_d32(const address_space *space, offs_t address, uint32_t data)
 {
 	if (!(address & 3))
 	{
@@ -1068,7 +1068,7 @@ static const m68k_memory_interface interface_d32 =
 };
 
 /* interface for 32-bit data bus with PMMU (68EC020, 68020) */
-static UINT8 read_byte_32_mmu(const address_space *space, offs_t address)
+static uint8_t read_byte_32_mmu(const address_space *space, offs_t address)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 
@@ -1080,7 +1080,7 @@ static UINT8 read_byte_32_mmu(const address_space *space, offs_t address)
 	return memory_read_byte_32be(space, address);
 }
 
-static void write_byte_32_mmu(const address_space *space, offs_t address, UINT8 data)
+static void write_byte_32_mmu(const address_space *space, offs_t address, uint8_t data)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 
@@ -1092,7 +1092,7 @@ static void write_byte_32_mmu(const address_space *space, offs_t address, UINT8 
 	memory_write_byte_32be(space, address, data);
 }
 
-static UINT16 read_immediate_16_mmu(const address_space *space, offs_t address)
+static uint16_t read_immediate_16_mmu(const address_space *space, offs_t address)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 
@@ -1105,10 +1105,10 @@ static UINT16 read_immediate_16_mmu(const address_space *space, offs_t address)
 }
 
 /* potentially misaligned 16-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static UINT16 readword_d32_mmu(const address_space *space, offs_t address)
+static uint16_t readword_d32_mmu(const address_space *space, offs_t address)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
-	UINT16 result;
+	uint16_t result;
 
 	if (m68k->pmmu_enabled)
 	{
@@ -1122,7 +1122,7 @@ static UINT16 readword_d32_mmu(const address_space *space, offs_t address)
 }
 
 /* potentially misaligned 16-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writeword_d32_mmu(const address_space *space, offs_t address, UINT16 data)
+static void writeword_d32_mmu(const address_space *space, offs_t address, uint16_t data)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 
@@ -1141,10 +1141,10 @@ static void writeword_d32_mmu(const address_space *space, offs_t address, UINT16
 }
 
 /* potentially misaligned 32-bit reads with a 32-bit data bus (and 24-bit address bus) */
-static UINT32 readlong_d32_mmu(const address_space *space, offs_t address)
+static uint32_t readlong_d32_mmu(const address_space *space, offs_t address)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
-	UINT32 result;
+	uint32_t result;
 
 	if (m68k->pmmu_enabled)
 	{
@@ -1164,7 +1164,7 @@ static UINT32 readlong_d32_mmu(const address_space *space, offs_t address)
 }
 
 /* potentially misaligned 32-bit writes with a 32-bit data bus (and 24-bit address bus) */
-static void writelong_d32_mmu(const address_space *space, offs_t address, UINT32 data)
+static void writelong_d32_mmu(const address_space *space, offs_t address, uint32_t data)
 {
 	m68ki_cpu_core *m68k = get_safe_token(space->cpu);
 
@@ -1234,7 +1234,7 @@ void m68k_set_tas_callback(running_device *device, m68k_tas_func callback)
 static void define_state(running_device *device)
 {
 	m68ki_cpu_core *m68k = get_safe_token(device);
-	UINT32 addrmask = (m68k->cpu_type & MASK_24BIT_SPACE) ? 0xffffff : 0xffffffff;
+	uint32_t addrmask = (m68k->cpu_type & MASK_24BIT_SPACE) ? 0xffffff : 0xffffffff;
 
 	device_state_interface *state;
 	device->interface(state);

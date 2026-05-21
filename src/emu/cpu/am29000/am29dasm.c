@@ -27,14 +27,14 @@
 #define OP_CE		((op >> 23) & 1)
 #define OP_CNTL		((op >> 16) & 0x7f)
 
-#define OP_SJMP		((INT32)(INT16)OP_I16 << 2)
+#define OP_SJMP		((int32_t)(int16_t)OP_I16 << 2)
 
 
 /***************************************************************************
     CODE
 ***************************************************************************/
 
-static const char *dasm_type1(UINT32 op)
+static const char *dasm_type1(uint32_t op)
 {
 	static char buf[32];
 
@@ -46,7 +46,7 @@ static const char *dasm_type1(UINT32 op)
 	return buf;
 }
 
-static const char *dasm_type2(UINT32 op)
+static const char *dasm_type2(uint32_t op)
 {
 	static char buf[32];
 
@@ -55,7 +55,7 @@ static const char *dasm_type2(UINT32 op)
 	return buf;
 }
 
-static const char *dasm_type3(UINT32 op)
+static const char *dasm_type3(uint32_t op)
 {
 	static char buf[32];
 
@@ -64,7 +64,7 @@ static const char *dasm_type3(UINT32 op)
 	return buf;
 }
 
-static const char *dasm_type4(UINT32 op, UINT32 pc)
+static const char *dasm_type4(uint32_t op, uint32_t pc)
 {
 	static char buf[32];
 
@@ -76,7 +76,7 @@ static const char *dasm_type4(UINT32 op, UINT32 pc)
 	return buf;
 }
 
-static const char *dasm_type5(UINT32 op)
+static const char *dasm_type5(uint32_t op)
 {
 	static char buf[32];
 
@@ -88,7 +88,7 @@ static const char *dasm_type5(UINT32 op)
 	return buf;
 }
 
-static const char *dasm_type6(UINT32 op)
+static const char *dasm_type6(uint32_t op)
 {
 	static char buf[32];
 
@@ -145,8 +145,8 @@ static const char* get_spr(int spid)
 
 CPU_DISASSEMBLE( am29000 )
 {
-	UINT32 op = (oprom[0] << 24) | (oprom[1] << 16) | (oprom[2] << 8) | oprom[3];
-	UINT32 flags = 0;
+	uint32_t op = (oprom[0] << 24) | (oprom[1] << 16) | (oprom[2] << 8) | oprom[3];
+	uint32_t flags = 0;
 
 	switch (op >> 24)
 	{

@@ -24,7 +24,7 @@
 
 static const int div_tab[4] = { 3, 5, 7, 0 };
 
-INLINE UINT32 RL(sh2_state *sh2, offs_t A)
+INLINE uint32_t RL(sh2_state *sh2, offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r(sh2->internal, (A & 0x1fc)>>2, 0xffffffff);
@@ -38,7 +38,7 @@ INLINE UINT32 RL(sh2_state *sh2, offs_t A)
   return memory_read_dword_32be(sh2->program, A & AM);
 }
 
-INLINE void WL(sh2_state *sh2, offs_t A, UINT32 V)
+INLINE void WL(sh2_state *sh2, offs_t A, uint32_t V)
 {
 	if (A >= 0xe0000000)
 	{
@@ -61,7 +61,7 @@ INLINE void WL(sh2_state *sh2, offs_t A, UINT32 V)
 static void sh2_timer_resync(sh2_state *sh2)
 {
 	int divider = div_tab[(sh2->m[5] >> 8) & 3];
-	UINT64 cur_time = sh2->device->total_cycles();
+	uint64_t cur_time = sh2->device->total_cycles();
 
 	if(divider)
 		sh2->frc += (cur_time - sh2->frc_base) >> divider;
@@ -71,19 +71,19 @@ static void sh2_timer_resync(sh2_state *sh2)
 static void sh2_timer_activate(sh2_state *sh2)
 {
 	int max_delta = 0xfffff;
-	UINT16 frc;
+	uint16_t frc;
 
 	timer_adjust_oneshot(sh2->timer, attotime_never, 0);
 
 	frc = sh2->frc;
 	if(!(sh2->m[4] & OCFA)) {
-		UINT16 delta = sh2->ocra - frc;
+		uint16_t delta = sh2->ocra - frc;
 		if(delta < max_delta)
 			max_delta = delta;
 	}
 
 	if(!(sh2->m[4] & OCFB) && (sh2->ocra <= sh2->ocrb || !(sh2->m[4] & 0x010000))) {
-		UINT16 delta = sh2->ocrb - frc;
+		uint16_t delta = sh2->ocrb - frc;
 		if(delta < max_delta)
 			max_delta = delta;
 	}
@@ -109,7 +109,7 @@ static void sh2_timer_activate(sh2_state *sh2)
 static TIMER_CALLBACK( sh2_timer_callback )
 {
 	sh2_state *sh2 = (sh2_state *)ptr;
-	UINT16 frc;
+	uint16_t frc;
 
 	sh2_timer_resync(sh2);
 
@@ -151,8 +151,8 @@ static void sh2_dmac_check(sh2_state *sh2, int dma)
 		if(!sh2->dma_timer_active[dma] && !(sh2->m[0x63+4*dma] & 2))
 		{
 			int incs, incd, size;
-			UINT32 src, dst, count;
-			UINT32 dmadata;
+			uint32_t src, dst, count;
+			uint32_t dmadata;
 			incd = (sh2->m[0x63+4*dma] >> 14) & 3;
 			incs = (sh2->m[0x63+4*dma] >> 12) & 3;
 			size = (sh2->m[0x63+4*dma] >> 10) & 3;
@@ -285,7 +285,7 @@ static void sh2_dmac_check(sh2_state *sh2, int dma)
 WRITE32_HANDLER( sh2_internal_w )
 {
 	sh2_state *sh2 = GET_SH2(space->cpu);
-	UINT32 old;
+	uint32_t old;
 
 #ifdef USE_SH2DRC
 	offset &= 0x7f;
@@ -356,8 +356,8 @@ WRITE32_HANDLER( sh2_internal_w )
 		break;
 	case 0x41: // DVDNT
 		{
-			INT32 a = sh2->m[0x41];
-			INT32 b = sh2->m[0x40];
+			int32_t a = sh2->m[0x41];
+			int32_t b = sh2->m[0x40];
 			LOG(("SH2 '%s' div+mod %d/%d\n", sh2->device->tag(), a, b));
 			if (b)
 			{
@@ -384,13 +384,13 @@ WRITE32_HANDLER( sh2_internal_w )
 		break;
 	case 0x45: // DVDNTL
 		{
-			INT64 a = sh2->m[0x45] | ((UINT64)(sh2->m[0x44]) << 32);
-			INT64 b = (INT32)sh2->m[0x40];
+			int64_t a = sh2->m[0x45] | ((uint64_t)(sh2->m[0x44]) << 32);
+			int64_t b = (int32_t)sh2->m[0x40];
 			LOG(("SH2 '%s' div+mod %" I64FMT "d/%" I64FMT "d\n", sh2->device->tag(), a, b));
 			if (b)
 			{
-				INT64 q = a / b;
-				if (q != (INT32)q)
+				int64_t q = a / b;
+				if (q != (int32_t)q)
 				{
 					sh2->m[0x42] |= 0x00010000;
 					sh2->m[0x45] = 0x7fffffff;
@@ -500,7 +500,7 @@ READ32_HANDLER( sh2_internal_r )
 	return sh2->m[offset];
 }
 
-void sh2_set_ftcsr_read_callback(running_device *device, void (*callback)(UINT32))
+void sh2_set_ftcsr_read_callback(running_device *device, void (*callback)(uint32_t))
 {
 	sh2_state *sh2 = GET_SH2(device);
 	sh2->ftcsr_read_callback = callback;
@@ -712,7 +712,7 @@ void sh2_common_init(sh2_state *sh2, legacy_cpu_device *device, device_irq_callb
 	sh2->dma_timer[1] = timer_alloc(device->machine, sh2_dmac_callback, sh2);
 	timer_adjust_oneshot(sh2->dma_timer[1], attotime_never, 0);
 
-	sh2->m = auto_alloc_array(device->machine, UINT32, 0x200/4);
+	sh2->m = auto_alloc_array(device->machine, uint32_t, 0x200/4);
 
 	if(conf)
 	{

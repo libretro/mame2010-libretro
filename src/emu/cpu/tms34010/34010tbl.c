@@ -6,395 +6,395 @@
 
 *****************************************************************************/
 
-static void unimpl(tms34010_state *tms, UINT16 op);
+static void unimpl(tms34010_state *tms, uint16_t op);
 
 /* Graphics Instructions */
 
-static void pixblt_l_l(tms34010_state *tms, UINT16 op); /* 0f00 */
-static void pixblt_l_xy(tms34010_state *tms, UINT16 op); /* 0f20 */
-static void pixblt_xy_l(tms34010_state *tms, UINT16 op); /* 0f40 */
-static void pixblt_xy_xy(tms34010_state *tms, UINT16 op); /* 0f60 */
-static void pixblt_b_l(tms34010_state *tms, UINT16 op); /* 0f80 */
-static void pixblt_b_xy(tms34010_state *tms, UINT16 op); /* 0fa0 */
-static void fill_l(tms34010_state *tms, UINT16 op);   /* 0fc0 */
-static void fill_xy(tms34010_state *tms, UINT16 op);  /* 0fe0 */
-static void line(tms34010_state *tms, UINT16 op);     /* df10/df90 */
-static void add_xy_a(tms34010_state *tms, UINT16 op); /* e000/e100 */
-static void add_xy_b(tms34010_state *tms, UINT16 op); /* e000/e100 */
-static void sub_xy_a(tms34010_state *tms, UINT16 op); /* e200/e300 */
-static void sub_xy_b(tms34010_state *tms, UINT16 op); /* e200/e300 */
-static void cmp_xy_a(tms34010_state *tms, UINT16 op); /* e400/e500 */
-static void cmp_xy_b(tms34010_state *tms, UINT16 op); /* e400/e500 */
-static void cpw_a(tms34010_state *tms, UINT16 op);    /* e600/e700 */
-static void cpw_b(tms34010_state *tms, UINT16 op);    /* e600/e700 */
-static void cvxyl_a(tms34010_state *tms, UINT16 op);  /* e800/e900 */
-static void cvxyl_b(tms34010_state *tms, UINT16 op);  /* e800/e900 */
-static void movx_a(tms34010_state *tms, UINT16 op);   /* ec00/ed00 */
-static void movx_b(tms34010_state *tms, UINT16 op);   /* ec00/ed00 */
-static void movy_a(tms34010_state *tms, UINT16 op);   /* ee00/ef00 */
-static void movy_b(tms34010_state *tms, UINT16 op);   /* ee00/ef00 */
-static void pixt_ri_a(tms34010_state *tms, UINT16 op); /* f800/f900 */
-static void pixt_ri_b(tms34010_state *tms, UINT16 op); /* f800/f900 */
-static void pixt_rixy_a(tms34010_state *tms, UINT16 op); /* f000/f100 */
-static void pixt_rixy_b(tms34010_state *tms, UINT16 op); /* f000/f100 */
-static void pixt_ir_a(tms34010_state *tms, UINT16 op); /* fa00/fb00 */
-static void pixt_ir_b(tms34010_state *tms, UINT16 op); /* fa00/fb00 */
-static void pixt_ii_a(tms34010_state *tms, UINT16 op); /* fc00/fd00 */
-static void pixt_ii_b(tms34010_state *tms, UINT16 op); /* fc00/fd00 */
-static void pixt_ixyr_a(tms34010_state *tms, UINT16 op); /* f200/f300 */
-static void pixt_ixyr_b(tms34010_state *tms, UINT16 op); /* f200/f300 */
-static void pixt_ixyixy_a(tms34010_state *tms, UINT16 op); /* f400/f500 */
-static void pixt_ixyixy_b(tms34010_state *tms, UINT16 op); /* f400/f500 */
-static void drav_a(tms34010_state *tms, UINT16 op); /* f600/f700 */
-static void drav_b(tms34010_state *tms, UINT16 op); /* f600/f700 */
+static void pixblt_l_l(tms34010_state *tms, uint16_t op); /* 0f00 */
+static void pixblt_l_xy(tms34010_state *tms, uint16_t op); /* 0f20 */
+static void pixblt_xy_l(tms34010_state *tms, uint16_t op); /* 0f40 */
+static void pixblt_xy_xy(tms34010_state *tms, uint16_t op); /* 0f60 */
+static void pixblt_b_l(tms34010_state *tms, uint16_t op); /* 0f80 */
+static void pixblt_b_xy(tms34010_state *tms, uint16_t op); /* 0fa0 */
+static void fill_l(tms34010_state *tms, uint16_t op);   /* 0fc0 */
+static void fill_xy(tms34010_state *tms, uint16_t op);  /* 0fe0 */
+static void line(tms34010_state *tms, uint16_t op);     /* df10/df90 */
+static void add_xy_a(tms34010_state *tms, uint16_t op); /* e000/e100 */
+static void add_xy_b(tms34010_state *tms, uint16_t op); /* e000/e100 */
+static void sub_xy_a(tms34010_state *tms, uint16_t op); /* e200/e300 */
+static void sub_xy_b(tms34010_state *tms, uint16_t op); /* e200/e300 */
+static void cmp_xy_a(tms34010_state *tms, uint16_t op); /* e400/e500 */
+static void cmp_xy_b(tms34010_state *tms, uint16_t op); /* e400/e500 */
+static void cpw_a(tms34010_state *tms, uint16_t op);    /* e600/e700 */
+static void cpw_b(tms34010_state *tms, uint16_t op);    /* e600/e700 */
+static void cvxyl_a(tms34010_state *tms, uint16_t op);  /* e800/e900 */
+static void cvxyl_b(tms34010_state *tms, uint16_t op);  /* e800/e900 */
+static void movx_a(tms34010_state *tms, uint16_t op);   /* ec00/ed00 */
+static void movx_b(tms34010_state *tms, uint16_t op);   /* ec00/ed00 */
+static void movy_a(tms34010_state *tms, uint16_t op);   /* ee00/ef00 */
+static void movy_b(tms34010_state *tms, uint16_t op);   /* ee00/ef00 */
+static void pixt_ri_a(tms34010_state *tms, uint16_t op); /* f800/f900 */
+static void pixt_ri_b(tms34010_state *tms, uint16_t op); /* f800/f900 */
+static void pixt_rixy_a(tms34010_state *tms, uint16_t op); /* f000/f100 */
+static void pixt_rixy_b(tms34010_state *tms, uint16_t op); /* f000/f100 */
+static void pixt_ir_a(tms34010_state *tms, uint16_t op); /* fa00/fb00 */
+static void pixt_ir_b(tms34010_state *tms, uint16_t op); /* fa00/fb00 */
+static void pixt_ii_a(tms34010_state *tms, uint16_t op); /* fc00/fd00 */
+static void pixt_ii_b(tms34010_state *tms, uint16_t op); /* fc00/fd00 */
+static void pixt_ixyr_a(tms34010_state *tms, uint16_t op); /* f200/f300 */
+static void pixt_ixyr_b(tms34010_state *tms, uint16_t op); /* f200/f300 */
+static void pixt_ixyixy_a(tms34010_state *tms, uint16_t op); /* f400/f500 */
+static void pixt_ixyixy_b(tms34010_state *tms, uint16_t op); /* f400/f500 */
+static void drav_a(tms34010_state *tms, uint16_t op); /* f600/f700 */
+static void drav_b(tms34010_state *tms, uint16_t op); /* f600/f700 */
 
 /* General Instructions */
-static void abs_a(tms34010_state *tms, UINT16 op); /* 0380 */
-static void abs_b(tms34010_state *tms, UINT16 op); /* 0390 */
-static void add_a(tms34010_state *tms, UINT16 op); /* 4000/4100 */
-static void add_b(tms34010_state *tms, UINT16 op); /* 4000/4100 */
-static void addc_a(tms34010_state *tms, UINT16 op); /* 4200/4200 */
-static void addc_b(tms34010_state *tms, UINT16 op); /* 4200/4200 */
-static void addi_w_a(tms34010_state *tms, UINT16 op); /* 0b00 */
-static void addi_w_b(tms34010_state *tms, UINT16 op); /* 0b10 */
-static void addi_l_a(tms34010_state *tms, UINT16 op); /* 0b20 */
-static void addi_l_b(tms34010_state *tms, UINT16 op); /* 0b30 */
-static void addk_a(tms34010_state *tms, UINT16 op); /* 1000-1300 */
-static void addk_b(tms34010_state *tms, UINT16 op); /* 1000-1300 */
-static void and_a(tms34010_state *tms, UINT16 op); /* 5000/5100 */
-static void and_b(tms34010_state *tms, UINT16 op); /* 5000/5100 */
-static void andi_a(tms34010_state *tms, UINT16 op); /* 0b80 */
-static void andi_b(tms34010_state *tms, UINT16 op); /* 0b90 */
-static void andn_a(tms34010_state *tms, UINT16 op); /* 5200-5300 */
-static void andn_b(tms34010_state *tms, UINT16 op); /* 5200-5300 */
-static void btst_k_a(tms34010_state *tms, UINT16 op); /* 1c00-1f00 */
-static void btst_k_b(tms34010_state *tms, UINT16 op); /* 1c00-1f00 */
-static void btst_r_a(tms34010_state *tms, UINT16 op); /* 4a00-4b00 */
-static void btst_r_b(tms34010_state *tms, UINT16 op); /* 4a00-4b00 */
-static void clrc(tms34010_state *tms, UINT16 op); /* 0320 */
-static void cmp_a(tms34010_state *tms, UINT16 op); /* 4800/4900 */
-static void cmp_b(tms34010_state *tms, UINT16 op); /* 4800/4900 */
-static void cmpi_w_a(tms34010_state *tms, UINT16 op); /* 0b40 */
-static void cmpi_w_b(tms34010_state *tms, UINT16 op); /* 0b50 */
-static void cmpi_l_a(tms34010_state *tms, UINT16 op); /* 0b60 */
-static void cmpi_l_b(tms34010_state *tms, UINT16 op); /* 0b70 */
-static void dint(tms34010_state *tms, UINT16 op);
-static void divs_a(tms34010_state *tms, UINT16 op);	/* 5800/5900 */
-static void divs_b(tms34010_state *tms, UINT16 op);	/* 5800/5900 */
-static void divu_a(tms34010_state *tms, UINT16 op);	/* 5a00/5b00 */
-static void divu_b(tms34010_state *tms, UINT16 op);	/* 5a00/5b00 */
-static void eint(tms34010_state *tms, UINT16 op);
-static void exgf0_a(tms34010_state *tms, UINT16 op);  /* d500 */
-static void exgf0_b(tms34010_state *tms, UINT16 op);	/* d510 */
-static void exgf1_a(tms34010_state *tms, UINT16 op);	/* d700 */
-static void exgf1_b(tms34010_state *tms, UINT16 op);	/* d710 */
-static void lmo_a(tms34010_state *tms, UINT16 op);	/* 6a00/6b00 */
-static void lmo_b(tms34010_state *tms, UINT16 op);	/* 6a00/6b00 */
-static void mmfm_a(tms34010_state *tms, UINT16 op); /* 09a0 */
-static void mmfm_b(tms34010_state *tms, UINT16 op); /* 09b0 */
-static void mmtm_a(tms34010_state *tms, UINT16 op); /* 0980 */
-static void mmtm_b(tms34010_state *tms, UINT16 op); /* 0990 */
-static void mods_a(tms34010_state *tms, UINT16 op); /* 6c00/6d00 */
-static void mods_b(tms34010_state *tms, UINT16 op); /* 6c00/6d00 */
-static void modu_a(tms34010_state *tms, UINT16 op); /* 6e00/6f00 */
-static void modu_b(tms34010_state *tms, UINT16 op); /* 6e00/6f00 */
-static void mpys_a(tms34010_state *tms, UINT16 op); /* 5c00/5d00 */
-static void mpys_b(tms34010_state *tms, UINT16 op); /* 5c00/5d00 */
-static void mpyu_a(tms34010_state *tms, UINT16 op); /* 5e00/5e00 */
-static void mpyu_b(tms34010_state *tms, UINT16 op); /* 5e00/5f00 */
-static void neg_a(tms34010_state *tms, UINT16 op); /* 03a0 */
-static void neg_b(tms34010_state *tms, UINT16 op); /* 03b0 */
-static void negb_a(tms34010_state *tms, UINT16 op); /* 03c0 */
-static void negb_b(tms34010_state *tms, UINT16 op); /* 03d0 */
-static void nop(tms34010_state *tms, UINT16 op); /* 0300 */
-static void not_a(tms34010_state *tms, UINT16 op); /* 03e0 */
-static void not_b(tms34010_state *tms, UINT16 op); /* 03f0 */
-static void or_a(tms34010_state *tms, UINT16 op); /* 5400-5500 */
-static void or_b(tms34010_state *tms, UINT16 op); /* 5400-5500 */
-static void ori_a(tms34010_state *tms, UINT16 op); /* 0ba0 */
-static void ori_b(tms34010_state *tms, UINT16 op); /* 0bb0 */
-static void rl_k_a(tms34010_state *tms, UINT16 op); /* 3000-3300 */
-static void rl_k_b(tms34010_state *tms, UINT16 op); /* 3000-3300 */
-static void rl_r_a(tms34010_state *tms, UINT16 op); /* 6800/6900 */
-static void rl_r_b(tms34010_state *tms, UINT16 op); /* 6800/6900 */
-static void setc(tms34010_state *tms, UINT16 op); /* 0de0 */
-static void setf0(tms34010_state *tms, UINT16 op);
-static void setf1(tms34010_state *tms, UINT16 op);
-static void sext0_a(tms34010_state *tms, UINT16 op); /* 0500 */
-static void sext0_b(tms34010_state *tms, UINT16 op); /* 0510 */
-static void sext1_a(tms34010_state *tms, UINT16 op); /* 0700 */
-static void sext1_b(tms34010_state *tms, UINT16 op); /* 0710 */
-static void sla_k_a(tms34010_state *tms, UINT16 op); /* 2000-2300 */
-static void sla_k_b(tms34010_state *tms, UINT16 op); /* 2000-2300 */
-static void sla_r_a(tms34010_state *tms, UINT16 op); /* 6000/6100 */
-static void sla_r_b(tms34010_state *tms, UINT16 op); /* 6000/6100 */
-static void sll_k_a(tms34010_state *tms, UINT16 op); /* 2400-2700 */
-static void sll_k_b(tms34010_state *tms, UINT16 op); /* 2400-2700 */
-static void sll_r_a(tms34010_state *tms, UINT16 op); /* 6200/6300 */
-static void sll_r_b(tms34010_state *tms, UINT16 op); /* 6200/6300 */
-static void sra_k_a(tms34010_state *tms, UINT16 op); /* 2800-2b00 */
-static void sra_k_b(tms34010_state *tms, UINT16 op); /* 2800-2b00 */
-static void sra_r_a(tms34010_state *tms, UINT16 op); /* 6400/6500 */
-static void sra_r_b(tms34010_state *tms, UINT16 op); /* 6400/6500 */
-static void srl_k_a(tms34010_state *tms, UINT16 op); /* 2c00-2f00 */
-static void srl_k_b(tms34010_state *tms, UINT16 op); /* 2c00-2f00 */
-static void srl_r_a(tms34010_state *tms, UINT16 op); /* 6600/6700 */
-static void srl_r_b(tms34010_state *tms, UINT16 op); /* 6600/6700 */
-static void sub_a(tms34010_state *tms, UINT16 op); /* 4400/4500 */
-static void sub_b(tms34010_state *tms, UINT16 op); /* 4400/4500 */
-static void subb_a(tms34010_state *tms, UINT16 op); /* 4600/4700 */
-static void subb_b(tms34010_state *tms, UINT16 op); /* 4600/4700 */
-static void subi_w_a(tms34010_state *tms, UINT16 op); /* 0be0 */
-static void subi_w_b(tms34010_state *tms, UINT16 op); /* 0bf0 */
-static void subi_l_a(tms34010_state *tms, UINT16 op); /* 0d00 */
-static void subi_l_b(tms34010_state *tms, UINT16 op); /* 0d10 */
-static void subk_a(tms34010_state *tms, UINT16 op); /* 1400-1700 */
-static void subk_b(tms34010_state *tms, UINT16 op); /* 1400-1700 */
-static void xor_a(tms34010_state *tms, UINT16 op); /* 5600-5700 */
-static void xor_b(tms34010_state *tms, UINT16 op); /* 5600-5700 */
-static void xori_a(tms34010_state *tms, UINT16 op); /* 0bc0 */
-static void xori_b(tms34010_state *tms, UINT16 op); /* 0bd0 */
-static void zext0_a(tms34010_state *tms, UINT16 op); /* 0520 */
-static void zext0_b(tms34010_state *tms, UINT16 op); /* 0530 */
-static void zext1_a(tms34010_state *tms, UINT16 op); /* 0720 */
-static void zext1_b(tms34010_state *tms, UINT16 op); /* 0720 */
+static void abs_a(tms34010_state *tms, uint16_t op); /* 0380 */
+static void abs_b(tms34010_state *tms, uint16_t op); /* 0390 */
+static void add_a(tms34010_state *tms, uint16_t op); /* 4000/4100 */
+static void add_b(tms34010_state *tms, uint16_t op); /* 4000/4100 */
+static void addc_a(tms34010_state *tms, uint16_t op); /* 4200/4200 */
+static void addc_b(tms34010_state *tms, uint16_t op); /* 4200/4200 */
+static void addi_w_a(tms34010_state *tms, uint16_t op); /* 0b00 */
+static void addi_w_b(tms34010_state *tms, uint16_t op); /* 0b10 */
+static void addi_l_a(tms34010_state *tms, uint16_t op); /* 0b20 */
+static void addi_l_b(tms34010_state *tms, uint16_t op); /* 0b30 */
+static void addk_a(tms34010_state *tms, uint16_t op); /* 1000-1300 */
+static void addk_b(tms34010_state *tms, uint16_t op); /* 1000-1300 */
+static void and_a(tms34010_state *tms, uint16_t op); /* 5000/5100 */
+static void and_b(tms34010_state *tms, uint16_t op); /* 5000/5100 */
+static void andi_a(tms34010_state *tms, uint16_t op); /* 0b80 */
+static void andi_b(tms34010_state *tms, uint16_t op); /* 0b90 */
+static void andn_a(tms34010_state *tms, uint16_t op); /* 5200-5300 */
+static void andn_b(tms34010_state *tms, uint16_t op); /* 5200-5300 */
+static void btst_k_a(tms34010_state *tms, uint16_t op); /* 1c00-1f00 */
+static void btst_k_b(tms34010_state *tms, uint16_t op); /* 1c00-1f00 */
+static void btst_r_a(tms34010_state *tms, uint16_t op); /* 4a00-4b00 */
+static void btst_r_b(tms34010_state *tms, uint16_t op); /* 4a00-4b00 */
+static void clrc(tms34010_state *tms, uint16_t op); /* 0320 */
+static void cmp_a(tms34010_state *tms, uint16_t op); /* 4800/4900 */
+static void cmp_b(tms34010_state *tms, uint16_t op); /* 4800/4900 */
+static void cmpi_w_a(tms34010_state *tms, uint16_t op); /* 0b40 */
+static void cmpi_w_b(tms34010_state *tms, uint16_t op); /* 0b50 */
+static void cmpi_l_a(tms34010_state *tms, uint16_t op); /* 0b60 */
+static void cmpi_l_b(tms34010_state *tms, uint16_t op); /* 0b70 */
+static void dint(tms34010_state *tms, uint16_t op);
+static void divs_a(tms34010_state *tms, uint16_t op);	/* 5800/5900 */
+static void divs_b(tms34010_state *tms, uint16_t op);	/* 5800/5900 */
+static void divu_a(tms34010_state *tms, uint16_t op);	/* 5a00/5b00 */
+static void divu_b(tms34010_state *tms, uint16_t op);	/* 5a00/5b00 */
+static void eint(tms34010_state *tms, uint16_t op);
+static void exgf0_a(tms34010_state *tms, uint16_t op);  /* d500 */
+static void exgf0_b(tms34010_state *tms, uint16_t op);	/* d510 */
+static void exgf1_a(tms34010_state *tms, uint16_t op);	/* d700 */
+static void exgf1_b(tms34010_state *tms, uint16_t op);	/* d710 */
+static void lmo_a(tms34010_state *tms, uint16_t op);	/* 6a00/6b00 */
+static void lmo_b(tms34010_state *tms, uint16_t op);	/* 6a00/6b00 */
+static void mmfm_a(tms34010_state *tms, uint16_t op); /* 09a0 */
+static void mmfm_b(tms34010_state *tms, uint16_t op); /* 09b0 */
+static void mmtm_a(tms34010_state *tms, uint16_t op); /* 0980 */
+static void mmtm_b(tms34010_state *tms, uint16_t op); /* 0990 */
+static void mods_a(tms34010_state *tms, uint16_t op); /* 6c00/6d00 */
+static void mods_b(tms34010_state *tms, uint16_t op); /* 6c00/6d00 */
+static void modu_a(tms34010_state *tms, uint16_t op); /* 6e00/6f00 */
+static void modu_b(tms34010_state *tms, uint16_t op); /* 6e00/6f00 */
+static void mpys_a(tms34010_state *tms, uint16_t op); /* 5c00/5d00 */
+static void mpys_b(tms34010_state *tms, uint16_t op); /* 5c00/5d00 */
+static void mpyu_a(tms34010_state *tms, uint16_t op); /* 5e00/5e00 */
+static void mpyu_b(tms34010_state *tms, uint16_t op); /* 5e00/5f00 */
+static void neg_a(tms34010_state *tms, uint16_t op); /* 03a0 */
+static void neg_b(tms34010_state *tms, uint16_t op); /* 03b0 */
+static void negb_a(tms34010_state *tms, uint16_t op); /* 03c0 */
+static void negb_b(tms34010_state *tms, uint16_t op); /* 03d0 */
+static void nop(tms34010_state *tms, uint16_t op); /* 0300 */
+static void not_a(tms34010_state *tms, uint16_t op); /* 03e0 */
+static void not_b(tms34010_state *tms, uint16_t op); /* 03f0 */
+static void or_a(tms34010_state *tms, uint16_t op); /* 5400-5500 */
+static void or_b(tms34010_state *tms, uint16_t op); /* 5400-5500 */
+static void ori_a(tms34010_state *tms, uint16_t op); /* 0ba0 */
+static void ori_b(tms34010_state *tms, uint16_t op); /* 0bb0 */
+static void rl_k_a(tms34010_state *tms, uint16_t op); /* 3000-3300 */
+static void rl_k_b(tms34010_state *tms, uint16_t op); /* 3000-3300 */
+static void rl_r_a(tms34010_state *tms, uint16_t op); /* 6800/6900 */
+static void rl_r_b(tms34010_state *tms, uint16_t op); /* 6800/6900 */
+static void setc(tms34010_state *tms, uint16_t op); /* 0de0 */
+static void setf0(tms34010_state *tms, uint16_t op);
+static void setf1(tms34010_state *tms, uint16_t op);
+static void sext0_a(tms34010_state *tms, uint16_t op); /* 0500 */
+static void sext0_b(tms34010_state *tms, uint16_t op); /* 0510 */
+static void sext1_a(tms34010_state *tms, uint16_t op); /* 0700 */
+static void sext1_b(tms34010_state *tms, uint16_t op); /* 0710 */
+static void sla_k_a(tms34010_state *tms, uint16_t op); /* 2000-2300 */
+static void sla_k_b(tms34010_state *tms, uint16_t op); /* 2000-2300 */
+static void sla_r_a(tms34010_state *tms, uint16_t op); /* 6000/6100 */
+static void sla_r_b(tms34010_state *tms, uint16_t op); /* 6000/6100 */
+static void sll_k_a(tms34010_state *tms, uint16_t op); /* 2400-2700 */
+static void sll_k_b(tms34010_state *tms, uint16_t op); /* 2400-2700 */
+static void sll_r_a(tms34010_state *tms, uint16_t op); /* 6200/6300 */
+static void sll_r_b(tms34010_state *tms, uint16_t op); /* 6200/6300 */
+static void sra_k_a(tms34010_state *tms, uint16_t op); /* 2800-2b00 */
+static void sra_k_b(tms34010_state *tms, uint16_t op); /* 2800-2b00 */
+static void sra_r_a(tms34010_state *tms, uint16_t op); /* 6400/6500 */
+static void sra_r_b(tms34010_state *tms, uint16_t op); /* 6400/6500 */
+static void srl_k_a(tms34010_state *tms, uint16_t op); /* 2c00-2f00 */
+static void srl_k_b(tms34010_state *tms, uint16_t op); /* 2c00-2f00 */
+static void srl_r_a(tms34010_state *tms, uint16_t op); /* 6600/6700 */
+static void srl_r_b(tms34010_state *tms, uint16_t op); /* 6600/6700 */
+static void sub_a(tms34010_state *tms, uint16_t op); /* 4400/4500 */
+static void sub_b(tms34010_state *tms, uint16_t op); /* 4400/4500 */
+static void subb_a(tms34010_state *tms, uint16_t op); /* 4600/4700 */
+static void subb_b(tms34010_state *tms, uint16_t op); /* 4600/4700 */
+static void subi_w_a(tms34010_state *tms, uint16_t op); /* 0be0 */
+static void subi_w_b(tms34010_state *tms, uint16_t op); /* 0bf0 */
+static void subi_l_a(tms34010_state *tms, uint16_t op); /* 0d00 */
+static void subi_l_b(tms34010_state *tms, uint16_t op); /* 0d10 */
+static void subk_a(tms34010_state *tms, uint16_t op); /* 1400-1700 */
+static void subk_b(tms34010_state *tms, uint16_t op); /* 1400-1700 */
+static void xor_a(tms34010_state *tms, uint16_t op); /* 5600-5700 */
+static void xor_b(tms34010_state *tms, uint16_t op); /* 5600-5700 */
+static void xori_a(tms34010_state *tms, uint16_t op); /* 0bc0 */
+static void xori_b(tms34010_state *tms, uint16_t op); /* 0bd0 */
+static void zext0_a(tms34010_state *tms, uint16_t op); /* 0520 */
+static void zext0_b(tms34010_state *tms, uint16_t op); /* 0530 */
+static void zext1_a(tms34010_state *tms, uint16_t op); /* 0720 */
+static void zext1_b(tms34010_state *tms, uint16_t op); /* 0720 */
 
 
 /* Move Instructions */
-static void movi_w_a(tms34010_state *tms, UINT16 op);
-static void movi_w_b(tms34010_state *tms, UINT16 op);
-static void movi_l_a(tms34010_state *tms, UINT16 op);
-static void movi_l_b(tms34010_state *tms, UINT16 op);
-static void movk_a(tms34010_state *tms, UINT16 op);
-static void movk_b(tms34010_state *tms, UINT16 op);
-static void movb_rn_a(tms34010_state *tms, UINT16 op); /* 8c00-8d00 */
-static void movb_rn_b(tms34010_state *tms, UINT16 op); /* 8c00-8d00 */
-static void movb_nr_a(tms34010_state *tms, UINT16 op); /* 8e00-8f00 */
-static void movb_nr_b(tms34010_state *tms, UINT16 op); /* 8e00-8f00 */
-static void movb_nn_a(tms34010_state *tms, UINT16 op); /* 9c00-9d00 */
-static void movb_nn_b(tms34010_state *tms, UINT16 op); /* 9c00-9d00 */
-static void movb_r_no_a(tms34010_state *tms, UINT16 op); /* ac00-ad00 */
-static void movb_r_no_b(tms34010_state *tms, UINT16 op); /* ac00-ad00 */
-static void movb_no_r_a(tms34010_state *tms, UINT16 op); /* ae00-af00 */
-static void movb_no_r_b(tms34010_state *tms, UINT16 op); /* ae00-af00 */
-static void movb_no_no_a(tms34010_state *tms, UINT16 op); /* bc00-bd00 */
-static void movb_no_no_b(tms34010_state *tms, UINT16 op); /* bc00-bd00 */
-static void movb_ra_a(tms34010_state *tms, UINT16 op);
-static void movb_ra_b(tms34010_state *tms, UINT16 op);
-static void movb_ar_a(tms34010_state *tms, UINT16 op);
-static void movb_ar_b(tms34010_state *tms, UINT16 op);
-static void movb_aa(tms34010_state *tms, UINT16 op);
-static void move_rr_a(tms34010_state *tms, UINT16 op); /* 4c00/d00 */
-static void move_rr_b(tms34010_state *tms, UINT16 op); /* 4c00/d00 */
-static void move_rr_ax(tms34010_state *tms, UINT16 op); /* 4e00/f00 */
-static void move_rr_bx(tms34010_state *tms, UINT16 op); /* 4e00/f00 */
-static void move0_rn_a(tms34010_state *tms, UINT16 op); /* 8000 */
-static void move0_rn_b(tms34010_state *tms, UINT16 op);
-static void move1_rn_a(tms34010_state *tms, UINT16 op);
-static void move1_rn_b(tms34010_state *tms, UINT16 op);
-static void move0_r_dn_a(tms34010_state *tms, UINT16 op); /* a000 */
-static void move0_r_dn_b(tms34010_state *tms, UINT16 op);
-static void move1_r_dn_a(tms34010_state *tms, UINT16 op);
-static void move1_r_dn_b(tms34010_state *tms, UINT16 op);
-static void move0_r_ni_a(tms34010_state *tms, UINT16 op); /* 9000 */
-static void move0_r_ni_b(tms34010_state *tms, UINT16 op);
-static void move1_r_ni_a(tms34010_state *tms, UINT16 op);
-static void move1_r_ni_b(tms34010_state *tms, UINT16 op);
-static void move0_nr_a(tms34010_state *tms, UINT16 op); /* 8400-500 */
-static void move0_nr_b(tms34010_state *tms, UINT16 op); /* 8400-500 */
-static void move1_nr_a(tms34010_state *tms, UINT16 op); /* 8600-700 */
-static void move1_nr_b(tms34010_state *tms, UINT16 op); /* 8600-700 */
-static void move0_dn_r_a(tms34010_state *tms, UINT16 op); /* A400-500 */
-static void move0_dn_r_b(tms34010_state *tms, UINT16 op); /* A400-500 */
-static void move1_dn_r_a(tms34010_state *tms, UINT16 op); /* A600-700 */
-static void move1_dn_r_b(tms34010_state *tms, UINT16 op); /* A600-700 */
-static void move0_ni_r_a(tms34010_state *tms, UINT16 op); /* 9400-500 */
-static void move0_ni_r_b(tms34010_state *tms, UINT16 op); /* 9400-500 */
-static void move1_ni_r_a(tms34010_state *tms, UINT16 op); /* 9600-700 */
-static void move1_ni_r_b(tms34010_state *tms, UINT16 op); /* 9600-700 */
-static void move0_nn_a(tms34010_state *tms, UINT16 op); /* 8800 */
-static void move0_nn_b(tms34010_state *tms, UINT16 op);
-static void move1_nn_a(tms34010_state *tms, UINT16 op);
-static void move1_nn_b(tms34010_state *tms, UINT16 op);
-static void move0_dn_dn_a(tms34010_state *tms, UINT16 op); /* a800 */
-static void move0_dn_dn_b(tms34010_state *tms, UINT16 op);
-static void move1_dn_dn_a(tms34010_state *tms, UINT16 op);
-static void move1_dn_dn_b(tms34010_state *tms, UINT16 op);
-static void move0_ni_ni_a(tms34010_state *tms, UINT16 op); /* 9800 */
-static void move0_ni_ni_b(tms34010_state *tms, UINT16 op);
-static void move1_ni_ni_a(tms34010_state *tms, UINT16 op);
-static void move1_ni_ni_b(tms34010_state *tms, UINT16 op);
-static void move0_r_no_a(tms34010_state *tms, UINT16 op); /* b000 */
-static void move0_r_no_b(tms34010_state *tms, UINT16 op);
-static void move1_r_no_a(tms34010_state *tms, UINT16 op);
-static void move1_r_no_b(tms34010_state *tms, UINT16 op);
-static void move0_no_r_a(tms34010_state *tms, UINT16 op); /* b400 */
-static void move0_no_r_b(tms34010_state *tms, UINT16 op);
-static void move1_no_r_a(tms34010_state *tms, UINT16 op);
-static void move1_no_r_b(tms34010_state *tms, UINT16 op);
-static void move0_no_ni_a(tms34010_state *tms, UINT16 op); /* d000 */
-static void move0_no_ni_b(tms34010_state *tms, UINT16 op);
-static void move1_no_ni_a(tms34010_state *tms, UINT16 op);
-static void move1_no_ni_b(tms34010_state *tms, UINT16 op);
-static void move0_no_no_a(tms34010_state *tms, UINT16 op); /* b800 */
-static void move0_no_no_b(tms34010_state *tms, UINT16 op);
-static void move1_no_no_a(tms34010_state *tms, UINT16 op);
-static void move1_no_no_b(tms34010_state *tms, UINT16 op);
-static void move0_ra_a(tms34010_state *tms, UINT16 op);
-static void move0_ra_b(tms34010_state *tms, UINT16 op);
-static void move1_ra_a(tms34010_state *tms, UINT16 op);
-static void move1_ra_b(tms34010_state *tms, UINT16 op);
-static void move0_ar_a(tms34010_state *tms, UINT16 op);
-static void move0_ar_b(tms34010_state *tms, UINT16 op);
-static void move1_ar_a(tms34010_state *tms, UINT16 op);
-static void move1_ar_b(tms34010_state *tms, UINT16 op);
-static void move0_a_ni_a(tms34010_state *tms, UINT16 op); /* d400 */
-static void move0_a_ni_b(tms34010_state *tms, UINT16 op); /* d410 */
-static void move1_a_ni_a(tms34010_state *tms, UINT16 op); /* d600 */
-static void move1_a_ni_b(tms34010_state *tms, UINT16 op); /* d610 */
-static void move0_aa(tms34010_state *tms, UINT16 op); /* 05c0 */
-static void move1_aa(tms34010_state *tms, UINT16 op); /* 07c0 */
+static void movi_w_a(tms34010_state *tms, uint16_t op);
+static void movi_w_b(tms34010_state *tms, uint16_t op);
+static void movi_l_a(tms34010_state *tms, uint16_t op);
+static void movi_l_b(tms34010_state *tms, uint16_t op);
+static void movk_a(tms34010_state *tms, uint16_t op);
+static void movk_b(tms34010_state *tms, uint16_t op);
+static void movb_rn_a(tms34010_state *tms, uint16_t op); /* 8c00-8d00 */
+static void movb_rn_b(tms34010_state *tms, uint16_t op); /* 8c00-8d00 */
+static void movb_nr_a(tms34010_state *tms, uint16_t op); /* 8e00-8f00 */
+static void movb_nr_b(tms34010_state *tms, uint16_t op); /* 8e00-8f00 */
+static void movb_nn_a(tms34010_state *tms, uint16_t op); /* 9c00-9d00 */
+static void movb_nn_b(tms34010_state *tms, uint16_t op); /* 9c00-9d00 */
+static void movb_r_no_a(tms34010_state *tms, uint16_t op); /* ac00-ad00 */
+static void movb_r_no_b(tms34010_state *tms, uint16_t op); /* ac00-ad00 */
+static void movb_no_r_a(tms34010_state *tms, uint16_t op); /* ae00-af00 */
+static void movb_no_r_b(tms34010_state *tms, uint16_t op); /* ae00-af00 */
+static void movb_no_no_a(tms34010_state *tms, uint16_t op); /* bc00-bd00 */
+static void movb_no_no_b(tms34010_state *tms, uint16_t op); /* bc00-bd00 */
+static void movb_ra_a(tms34010_state *tms, uint16_t op);
+static void movb_ra_b(tms34010_state *tms, uint16_t op);
+static void movb_ar_a(tms34010_state *tms, uint16_t op);
+static void movb_ar_b(tms34010_state *tms, uint16_t op);
+static void movb_aa(tms34010_state *tms, uint16_t op);
+static void move_rr_a(tms34010_state *tms, uint16_t op); /* 4c00/d00 */
+static void move_rr_b(tms34010_state *tms, uint16_t op); /* 4c00/d00 */
+static void move_rr_ax(tms34010_state *tms, uint16_t op); /* 4e00/f00 */
+static void move_rr_bx(tms34010_state *tms, uint16_t op); /* 4e00/f00 */
+static void move0_rn_a(tms34010_state *tms, uint16_t op); /* 8000 */
+static void move0_rn_b(tms34010_state *tms, uint16_t op);
+static void move1_rn_a(tms34010_state *tms, uint16_t op);
+static void move1_rn_b(tms34010_state *tms, uint16_t op);
+static void move0_r_dn_a(tms34010_state *tms, uint16_t op); /* a000 */
+static void move0_r_dn_b(tms34010_state *tms, uint16_t op);
+static void move1_r_dn_a(tms34010_state *tms, uint16_t op);
+static void move1_r_dn_b(tms34010_state *tms, uint16_t op);
+static void move0_r_ni_a(tms34010_state *tms, uint16_t op); /* 9000 */
+static void move0_r_ni_b(tms34010_state *tms, uint16_t op);
+static void move1_r_ni_a(tms34010_state *tms, uint16_t op);
+static void move1_r_ni_b(tms34010_state *tms, uint16_t op);
+static void move0_nr_a(tms34010_state *tms, uint16_t op); /* 8400-500 */
+static void move0_nr_b(tms34010_state *tms, uint16_t op); /* 8400-500 */
+static void move1_nr_a(tms34010_state *tms, uint16_t op); /* 8600-700 */
+static void move1_nr_b(tms34010_state *tms, uint16_t op); /* 8600-700 */
+static void move0_dn_r_a(tms34010_state *tms, uint16_t op); /* A400-500 */
+static void move0_dn_r_b(tms34010_state *tms, uint16_t op); /* A400-500 */
+static void move1_dn_r_a(tms34010_state *tms, uint16_t op); /* A600-700 */
+static void move1_dn_r_b(tms34010_state *tms, uint16_t op); /* A600-700 */
+static void move0_ni_r_a(tms34010_state *tms, uint16_t op); /* 9400-500 */
+static void move0_ni_r_b(tms34010_state *tms, uint16_t op); /* 9400-500 */
+static void move1_ni_r_a(tms34010_state *tms, uint16_t op); /* 9600-700 */
+static void move1_ni_r_b(tms34010_state *tms, uint16_t op); /* 9600-700 */
+static void move0_nn_a(tms34010_state *tms, uint16_t op); /* 8800 */
+static void move0_nn_b(tms34010_state *tms, uint16_t op);
+static void move1_nn_a(tms34010_state *tms, uint16_t op);
+static void move1_nn_b(tms34010_state *tms, uint16_t op);
+static void move0_dn_dn_a(tms34010_state *tms, uint16_t op); /* a800 */
+static void move0_dn_dn_b(tms34010_state *tms, uint16_t op);
+static void move1_dn_dn_a(tms34010_state *tms, uint16_t op);
+static void move1_dn_dn_b(tms34010_state *tms, uint16_t op);
+static void move0_ni_ni_a(tms34010_state *tms, uint16_t op); /* 9800 */
+static void move0_ni_ni_b(tms34010_state *tms, uint16_t op);
+static void move1_ni_ni_a(tms34010_state *tms, uint16_t op);
+static void move1_ni_ni_b(tms34010_state *tms, uint16_t op);
+static void move0_r_no_a(tms34010_state *tms, uint16_t op); /* b000 */
+static void move0_r_no_b(tms34010_state *tms, uint16_t op);
+static void move1_r_no_a(tms34010_state *tms, uint16_t op);
+static void move1_r_no_b(tms34010_state *tms, uint16_t op);
+static void move0_no_r_a(tms34010_state *tms, uint16_t op); /* b400 */
+static void move0_no_r_b(tms34010_state *tms, uint16_t op);
+static void move1_no_r_a(tms34010_state *tms, uint16_t op);
+static void move1_no_r_b(tms34010_state *tms, uint16_t op);
+static void move0_no_ni_a(tms34010_state *tms, uint16_t op); /* d000 */
+static void move0_no_ni_b(tms34010_state *tms, uint16_t op);
+static void move1_no_ni_a(tms34010_state *tms, uint16_t op);
+static void move1_no_ni_b(tms34010_state *tms, uint16_t op);
+static void move0_no_no_a(tms34010_state *tms, uint16_t op); /* b800 */
+static void move0_no_no_b(tms34010_state *tms, uint16_t op);
+static void move1_no_no_a(tms34010_state *tms, uint16_t op);
+static void move1_no_no_b(tms34010_state *tms, uint16_t op);
+static void move0_ra_a(tms34010_state *tms, uint16_t op);
+static void move0_ra_b(tms34010_state *tms, uint16_t op);
+static void move1_ra_a(tms34010_state *tms, uint16_t op);
+static void move1_ra_b(tms34010_state *tms, uint16_t op);
+static void move0_ar_a(tms34010_state *tms, uint16_t op);
+static void move0_ar_b(tms34010_state *tms, uint16_t op);
+static void move1_ar_a(tms34010_state *tms, uint16_t op);
+static void move1_ar_b(tms34010_state *tms, uint16_t op);
+static void move0_a_ni_a(tms34010_state *tms, uint16_t op); /* d400 */
+static void move0_a_ni_b(tms34010_state *tms, uint16_t op); /* d410 */
+static void move1_a_ni_a(tms34010_state *tms, uint16_t op); /* d600 */
+static void move1_a_ni_b(tms34010_state *tms, uint16_t op); /* d610 */
+static void move0_aa(tms34010_state *tms, uint16_t op); /* 05c0 */
+static void move1_aa(tms34010_state *tms, uint16_t op); /* 07c0 */
 
 
 /* Program Control and Context Switching */
-static void call_a(tms34010_state *tms, UINT16 op); /* 0920 */
-static void call_b(tms34010_state *tms, UINT16 op); /* 0930 */
-static void callr(tms34010_state *tms, UINT16 op); /* 0d3f */
-static void calla(tms34010_state *tms, UINT16 op); /* 0d5f */
-static void dsj_a(tms34010_state *tms, UINT16 op);  /* 0d80 */
-static void dsj_b(tms34010_state *tms, UINT16 op);  /* 0d90 */
-static void dsjeq_a(tms34010_state *tms, UINT16 op); /* 0da0 */
-static void dsjeq_b(tms34010_state *tms, UINT16 op); /* 0db0 */
-static void dsjne_a(tms34010_state *tms, UINT16 op); /* 0dc0 */
-static void dsjne_b(tms34010_state *tms, UINT16 op); /* 0dd0 */
-static void dsjs_a(tms34010_state *tms, UINT16 op);
-static void dsjs_b(tms34010_state *tms, UINT16 op);
-static void emu(tms34010_state *tms, UINT16 op);     /* 0100 */
-static void exgpc_a(tms34010_state *tms, UINT16 op); /* 0120 */
-static void exgpc_b(tms34010_state *tms, UINT16 op); /* 0130 */
-static void getpc_a(tms34010_state *tms, UINT16 op); /* 0140 */
-static void getpc_b(tms34010_state *tms, UINT16 op); /* 0150 */
-static void getst_a(tms34010_state *tms, UINT16 op); /* 0180 */
-static void getst_b(tms34010_state *tms, UINT16 op); /* 0190 */
-static void j_UC_0(tms34010_state *tms, UINT16 op);
-static void j_UC_8(tms34010_state *tms, UINT16 op);
-static void j_UC_x(tms34010_state *tms, UINT16 op);
-static void j_P_0(tms34010_state *tms, UINT16 op);
-static void j_P_8(tms34010_state *tms, UINT16 op);
-static void j_P_x(tms34010_state *tms, UINT16 op);
-static void j_LS_0(tms34010_state *tms, UINT16 op);
-static void j_LS_8(tms34010_state *tms, UINT16 op);
-static void j_LS_x(tms34010_state *tms, UINT16 op);
-static void j_HI_0(tms34010_state *tms, UINT16 op);
-static void j_HI_8(tms34010_state *tms, UINT16 op);
-static void j_HI_x(tms34010_state *tms, UINT16 op);
-static void j_LT_0(tms34010_state *tms, UINT16 op);
-static void j_LT_8(tms34010_state *tms, UINT16 op);
-static void j_LT_x(tms34010_state *tms, UINT16 op);
-static void j_GE_0(tms34010_state *tms, UINT16 op);
-static void j_GE_8(tms34010_state *tms, UINT16 op);
-static void j_GE_x(tms34010_state *tms, UINT16 op);
-static void j_LE_0(tms34010_state *tms, UINT16 op);
-static void j_LE_8(tms34010_state *tms, UINT16 op);
-static void j_LE_x(tms34010_state *tms, UINT16 op);
-static void j_GT_0(tms34010_state *tms, UINT16 op);
-static void j_GT_8(tms34010_state *tms, UINT16 op);
-static void j_GT_x(tms34010_state *tms, UINT16 op);
-static void j_C_0(tms34010_state *tms, UINT16 op);
-static void j_C_8(tms34010_state *tms, UINT16 op);
-static void j_C_x(tms34010_state *tms, UINT16 op);
-static void j_NC_0(tms34010_state *tms, UINT16 op);
-static void j_NC_8(tms34010_state *tms, UINT16 op);
-static void j_NC_x(tms34010_state *tms, UINT16 op);
-static void j_EQ_0(tms34010_state *tms, UINT16 op);
-static void j_EQ_8(tms34010_state *tms, UINT16 op);
-static void j_EQ_x(tms34010_state *tms, UINT16 op);
-static void j_NE_0(tms34010_state *tms, UINT16 op);
-static void j_NE_8(tms34010_state *tms, UINT16 op);
-static void j_NE_x(tms34010_state *tms, UINT16 op);
-static void j_V_0(tms34010_state *tms, UINT16 op);
-static void j_V_8(tms34010_state *tms, UINT16 op);
-static void j_V_x(tms34010_state *tms, UINT16 op);
-static void j_NV_0(tms34010_state *tms, UINT16 op);
-static void j_NV_8(tms34010_state *tms, UINT16 op);
-static void j_NV_x(tms34010_state *tms, UINT16 op);
-static void j_N_0(tms34010_state *tms, UINT16 op);
-static void j_N_8(tms34010_state *tms, UINT16 op);
-static void j_N_x(tms34010_state *tms, UINT16 op);
-static void j_NN_0(tms34010_state *tms, UINT16 op);
-static void j_NN_8(tms34010_state *tms, UINT16 op);
-static void j_NN_x(tms34010_state *tms, UINT16 op);
-static void jump_a(tms34010_state *tms, UINT16 op); /* 0160 */
-static void jump_b(tms34010_state *tms, UINT16 op); /* 0170 */
-static void popst(tms34010_state *tms, UINT16 op); /* 01c0 */
-static void pushst(tms34010_state *tms, UINT16 op); /* 01e0 */
-static void putst_a(tms34010_state *tms, UINT16 op); /* 01a0 */
-static void putst_b(tms34010_state *tms, UINT16 op); /* 01b0 */
-static void reti(tms34010_state *tms, UINT16 op); /* 0940 */
-static void rets(tms34010_state *tms, UINT16 op); /* 0960/70 */
-static void rev_a(tms34010_state *tms, UINT16 op); /* 0020 */
-static void rev_b(tms34010_state *tms, UINT16 op); /* 0030 */
-static void trap(tms34010_state *tms, UINT16 op); /* 0900/10 */
+static void call_a(tms34010_state *tms, uint16_t op); /* 0920 */
+static void call_b(tms34010_state *tms, uint16_t op); /* 0930 */
+static void callr(tms34010_state *tms, uint16_t op); /* 0d3f */
+static void calla(tms34010_state *tms, uint16_t op); /* 0d5f */
+static void dsj_a(tms34010_state *tms, uint16_t op);  /* 0d80 */
+static void dsj_b(tms34010_state *tms, uint16_t op);  /* 0d90 */
+static void dsjeq_a(tms34010_state *tms, uint16_t op); /* 0da0 */
+static void dsjeq_b(tms34010_state *tms, uint16_t op); /* 0db0 */
+static void dsjne_a(tms34010_state *tms, uint16_t op); /* 0dc0 */
+static void dsjne_b(tms34010_state *tms, uint16_t op); /* 0dd0 */
+static void dsjs_a(tms34010_state *tms, uint16_t op);
+static void dsjs_b(tms34010_state *tms, uint16_t op);
+static void emu(tms34010_state *tms, uint16_t op);     /* 0100 */
+static void exgpc_a(tms34010_state *tms, uint16_t op); /* 0120 */
+static void exgpc_b(tms34010_state *tms, uint16_t op); /* 0130 */
+static void getpc_a(tms34010_state *tms, uint16_t op); /* 0140 */
+static void getpc_b(tms34010_state *tms, uint16_t op); /* 0150 */
+static void getst_a(tms34010_state *tms, uint16_t op); /* 0180 */
+static void getst_b(tms34010_state *tms, uint16_t op); /* 0190 */
+static void j_UC_0(tms34010_state *tms, uint16_t op);
+static void j_UC_8(tms34010_state *tms, uint16_t op);
+static void j_UC_x(tms34010_state *tms, uint16_t op);
+static void j_P_0(tms34010_state *tms, uint16_t op);
+static void j_P_8(tms34010_state *tms, uint16_t op);
+static void j_P_x(tms34010_state *tms, uint16_t op);
+static void j_LS_0(tms34010_state *tms, uint16_t op);
+static void j_LS_8(tms34010_state *tms, uint16_t op);
+static void j_LS_x(tms34010_state *tms, uint16_t op);
+static void j_HI_0(tms34010_state *tms, uint16_t op);
+static void j_HI_8(tms34010_state *tms, uint16_t op);
+static void j_HI_x(tms34010_state *tms, uint16_t op);
+static void j_LT_0(tms34010_state *tms, uint16_t op);
+static void j_LT_8(tms34010_state *tms, uint16_t op);
+static void j_LT_x(tms34010_state *tms, uint16_t op);
+static void j_GE_0(tms34010_state *tms, uint16_t op);
+static void j_GE_8(tms34010_state *tms, uint16_t op);
+static void j_GE_x(tms34010_state *tms, uint16_t op);
+static void j_LE_0(tms34010_state *tms, uint16_t op);
+static void j_LE_8(tms34010_state *tms, uint16_t op);
+static void j_LE_x(tms34010_state *tms, uint16_t op);
+static void j_GT_0(tms34010_state *tms, uint16_t op);
+static void j_GT_8(tms34010_state *tms, uint16_t op);
+static void j_GT_x(tms34010_state *tms, uint16_t op);
+static void j_C_0(tms34010_state *tms, uint16_t op);
+static void j_C_8(tms34010_state *tms, uint16_t op);
+static void j_C_x(tms34010_state *tms, uint16_t op);
+static void j_NC_0(tms34010_state *tms, uint16_t op);
+static void j_NC_8(tms34010_state *tms, uint16_t op);
+static void j_NC_x(tms34010_state *tms, uint16_t op);
+static void j_EQ_0(tms34010_state *tms, uint16_t op);
+static void j_EQ_8(tms34010_state *tms, uint16_t op);
+static void j_EQ_x(tms34010_state *tms, uint16_t op);
+static void j_NE_0(tms34010_state *tms, uint16_t op);
+static void j_NE_8(tms34010_state *tms, uint16_t op);
+static void j_NE_x(tms34010_state *tms, uint16_t op);
+static void j_V_0(tms34010_state *tms, uint16_t op);
+static void j_V_8(tms34010_state *tms, uint16_t op);
+static void j_V_x(tms34010_state *tms, uint16_t op);
+static void j_NV_0(tms34010_state *tms, uint16_t op);
+static void j_NV_8(tms34010_state *tms, uint16_t op);
+static void j_NV_x(tms34010_state *tms, uint16_t op);
+static void j_N_0(tms34010_state *tms, uint16_t op);
+static void j_N_8(tms34010_state *tms, uint16_t op);
+static void j_N_x(tms34010_state *tms, uint16_t op);
+static void j_NN_0(tms34010_state *tms, uint16_t op);
+static void j_NN_8(tms34010_state *tms, uint16_t op);
+static void j_NN_x(tms34010_state *tms, uint16_t op);
+static void jump_a(tms34010_state *tms, uint16_t op); /* 0160 */
+static void jump_b(tms34010_state *tms, uint16_t op); /* 0170 */
+static void popst(tms34010_state *tms, uint16_t op); /* 01c0 */
+static void pushst(tms34010_state *tms, uint16_t op); /* 01e0 */
+static void putst_a(tms34010_state *tms, uint16_t op); /* 01a0 */
+static void putst_b(tms34010_state *tms, uint16_t op); /* 01b0 */
+static void reti(tms34010_state *tms, uint16_t op); /* 0940 */
+static void rets(tms34010_state *tms, uint16_t op); /* 0960/70 */
+static void rev_a(tms34010_state *tms, uint16_t op); /* 0020 */
+static void rev_b(tms34010_state *tms, uint16_t op); /* 0030 */
+static void trap(tms34010_state *tms, uint16_t op); /* 0900/10 */
 
 
 /* 34020 instructions */
-static void addxyi_a(tms34010_state *tms, UINT16 op);
-static void addxyi_b(tms34010_state *tms, UINT16 op);
-static void blmove(tms34010_state *tms, UINT16 op);
-static void cexec_l(tms34010_state *tms, UINT16 op);
-static void cexec_s(tms34010_state *tms, UINT16 op);
-static void clip(tms34010_state *tms, UINT16 op);
-static void cmovcg_a(tms34010_state *tms, UINT16 op);
-static void cmovcg_b(tms34010_state *tms, UINT16 op);
-static void cmovcm_f(tms34010_state *tms, UINT16 op);
-static void cmovcm_b(tms34010_state *tms, UINT16 op);
-static void cmovgc_a(tms34010_state *tms, UINT16 op);
-static void cmovgc_b(tms34010_state *tms, UINT16 op);
-static void cmovgc_a_s(tms34010_state *tms, UINT16 op);
-static void cmovgc_b_s(tms34010_state *tms, UINT16 op);
-static void cmovmc_f(tms34010_state *tms, UINT16 op);
-static void cmovmc_f_va(tms34010_state *tms, UINT16 op);
-static void cmovmc_f_vb(tms34010_state *tms, UINT16 op);
-static void cmovmc_b(tms34010_state *tms, UINT16 op);
-static void cmp_k_a(tms34010_state *tms, UINT16 op);
-static void cmp_k_b(tms34010_state *tms, UINT16 op);
-static void cvdxyl_a(tms34010_state *tms, UINT16 op);
-static void cvdxyl_b(tms34010_state *tms, UINT16 op);
-static void cvmxyl_a(tms34010_state *tms, UINT16 op);
-static void cvmxyl_b(tms34010_state *tms, UINT16 op);
-static void cvsxyl_a(tms34010_state *tms, UINT16 op);
-static void cvsxyl_b(tms34010_state *tms, UINT16 op);
-static void exgps_a(tms34010_state *tms, UINT16 op);
-static void exgps_b(tms34010_state *tms, UINT16 op);
-static void fline(tms34010_state *tms, UINT16 op);
-static void fpixeq(tms34010_state *tms, UINT16 op);
-static void fpixne(tms34010_state *tms, UINT16 op);
-static void getps_a(tms34010_state *tms, UINT16 op);
-static void getps_b(tms34010_state *tms, UINT16 op);
-static void idle(tms34010_state *tms, UINT16 op);
-static void linit(tms34010_state *tms, UINT16 op);
-static void mwait(tms34010_state *tms, UINT16 op);
-static void pfill_xy(tms34010_state *tms, UINT16 op);
-static void pixblt_l_m_l(tms34010_state *tms, UINT16 op);
-static void retm(tms34010_state *tms, UINT16 op);
-static void rmo_a(tms34010_state *tms, UINT16 op);
-static void rmo_b(tms34010_state *tms, UINT16 op);
-static void rpix_a(tms34010_state *tms, UINT16 op);
-static void rpix_b(tms34010_state *tms, UINT16 op);
-static void setcdp(tms34010_state *tms, UINT16 op);
-static void setcmp(tms34010_state *tms, UINT16 op);
-static void setcsp(tms34010_state *tms, UINT16 op);
-static void swapf_a(tms34010_state *tms, UINT16 op);
-static void swapf_b(tms34010_state *tms, UINT16 op);
-static void tfill_xy(tms34010_state *tms, UINT16 op);
-static void trapl(tms34010_state *tms, UINT16 op);
-static void vblt_b_l(tms34010_state *tms, UINT16 op);
-static void vfill_l(tms34010_state *tms, UINT16 op);
-static void vlcol(tms34010_state *tms, UINT16 op);
+static void addxyi_a(tms34010_state *tms, uint16_t op);
+static void addxyi_b(tms34010_state *tms, uint16_t op);
+static void blmove(tms34010_state *tms, uint16_t op);
+static void cexec_l(tms34010_state *tms, uint16_t op);
+static void cexec_s(tms34010_state *tms, uint16_t op);
+static void clip(tms34010_state *tms, uint16_t op);
+static void cmovcg_a(tms34010_state *tms, uint16_t op);
+static void cmovcg_b(tms34010_state *tms, uint16_t op);
+static void cmovcm_f(tms34010_state *tms, uint16_t op);
+static void cmovcm_b(tms34010_state *tms, uint16_t op);
+static void cmovgc_a(tms34010_state *tms, uint16_t op);
+static void cmovgc_b(tms34010_state *tms, uint16_t op);
+static void cmovgc_a_s(tms34010_state *tms, uint16_t op);
+static void cmovgc_b_s(tms34010_state *tms, uint16_t op);
+static void cmovmc_f(tms34010_state *tms, uint16_t op);
+static void cmovmc_f_va(tms34010_state *tms, uint16_t op);
+static void cmovmc_f_vb(tms34010_state *tms, uint16_t op);
+static void cmovmc_b(tms34010_state *tms, uint16_t op);
+static void cmp_k_a(tms34010_state *tms, uint16_t op);
+static void cmp_k_b(tms34010_state *tms, uint16_t op);
+static void cvdxyl_a(tms34010_state *tms, uint16_t op);
+static void cvdxyl_b(tms34010_state *tms, uint16_t op);
+static void cvmxyl_a(tms34010_state *tms, uint16_t op);
+static void cvmxyl_b(tms34010_state *tms, uint16_t op);
+static void cvsxyl_a(tms34010_state *tms, uint16_t op);
+static void cvsxyl_b(tms34010_state *tms, uint16_t op);
+static void exgps_a(tms34010_state *tms, uint16_t op);
+static void exgps_b(tms34010_state *tms, uint16_t op);
+static void fline(tms34010_state *tms, uint16_t op);
+static void fpixeq(tms34010_state *tms, uint16_t op);
+static void fpixne(tms34010_state *tms, uint16_t op);
+static void getps_a(tms34010_state *tms, uint16_t op);
+static void getps_b(tms34010_state *tms, uint16_t op);
+static void idle(tms34010_state *tms, uint16_t op);
+static void linit(tms34010_state *tms, uint16_t op);
+static void mwait(tms34010_state *tms, uint16_t op);
+static void pfill_xy(tms34010_state *tms, uint16_t op);
+static void pixblt_l_m_l(tms34010_state *tms, uint16_t op);
+static void retm(tms34010_state *tms, uint16_t op);
+static void rmo_a(tms34010_state *tms, uint16_t op);
+static void rmo_b(tms34010_state *tms, uint16_t op);
+static void rpix_a(tms34010_state *tms, uint16_t op);
+static void rpix_b(tms34010_state *tms, uint16_t op);
+static void setcdp(tms34010_state *tms, uint16_t op);
+static void setcmp(tms34010_state *tms, uint16_t op);
+static void setcsp(tms34010_state *tms, uint16_t op);
+static void swapf_a(tms34010_state *tms, uint16_t op);
+static void swapf_b(tms34010_state *tms, uint16_t op);
+static void tfill_xy(tms34010_state *tms, uint16_t op);
+static void trapl(tms34010_state *tms, uint16_t op);
+static void vblt_b_l(tms34010_state *tms, uint16_t op);
+static void vfill_l(tms34010_state *tms, uint16_t op);
+static void vlcol(tms34010_state *tms, uint16_t op);
 
 
 /* Opcode Table */
-static void (*const opcode_table[65536 >> 4])(tms34010_state *tms, UINT16 op) =
+static void (*const opcode_table[65536 >> 4])(tms34010_state *tms, uint16_t op) =
 {
 	/* 0x0000 0x0010 0x0020 0x0030 ... 0x00f0 */
 	unimpl,		unimpl,		rev_a,		rev_b,		idle,		unimpl,		unimpl,		unimpl,

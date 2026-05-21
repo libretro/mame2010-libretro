@@ -13,17 +13,17 @@ typedef struct _h83xx_state h83xx_state;
 struct _h83xx_state
 {
 	// main CPU stuff
-	UINT32 h8err;
-	UINT32 regs[8];
-	UINT32 pc, ppc;
+	uint32_t h8err;
+	uint32_t regs[8];
+	uint32_t pc, ppc;
 
-	UINT32 h8_IRQrequestH, h8_IRQrequestL;
-	INT32 cyccnt;
+	uint32_t h8_IRQrequestH, h8_IRQrequestL;
+	int32_t cyccnt;
 
-	UINT8  ccr;
-	UINT8  h8nflag, h8vflag, h8cflag, h8zflag, h8iflag, h8hflag;
-	UINT8  h8uflag, h8uiflag;
-	UINT8  incheckirqs;
+	uint8_t  ccr;
+	uint8_t  h8nflag, h8vflag, h8cflag, h8zflag, h8iflag, h8hflag;
+	uint8_t  h8uflag, h8uiflag;
+	uint8_t  incheckirqs;
 
 	device_irq_callback irq_cb;
 	legacy_cpu_device *device;
@@ -32,13 +32,13 @@ struct _h83xx_state
 	const address_space *io;
 
 	// onboard peripherals stuff
-	UINT8 per_regs[256];
+	uint8_t per_regs[256];
 
-	UINT16 h8TCNT[5];
-	UINT8 h8TSTR;
+	uint16_t h8TCNT[5];
+	uint8_t h8TSTR;
 
-	UINT8 STCR, TCR[2], TCSR[2], TCORA[2], TCORB[2], TCNT[2];
-	UINT16 FRC;
+	uint8_t STCR, TCR[2], TCSR[2], TCORA[2], TCORB[2], TCNT[2];
+	uint16_t FRC;
 
 	emu_timer *timer[5];
 	emu_timer *frctimer;
@@ -57,19 +57,19 @@ INLINE h83xx_state *get_safe_token(running_device *device)
 	return (h83xx_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-UINT8 h8_register_read8(h83xx_state *h8, UINT32 address);
-UINT8 h8_3007_register_read8(h83xx_state *h8, UINT32 address);
-UINT8 h8_3007_register1_read8(h83xx_state *h8, UINT32 address);
-void h8_register_write8(h83xx_state *h8, UINT32 address, UINT8 val);
-void h8_3007_register_write8(h83xx_state *h8, UINT32 address, UINT8 val);
-void h8_3007_register1_write8(h83xx_state *h8, UINT32 address, UINT8 val);
+uint8_t h8_register_read8(h83xx_state *h8, uint32_t address);
+uint8_t h8_3007_register_read8(h83xx_state *h8, uint32_t address);
+uint8_t h8_3007_register1_read8(h83xx_state *h8, uint32_t address);
+void h8_register_write8(h83xx_state *h8, uint32_t address, uint8_t val);
+void h8_3007_register_write8(h83xx_state *h8, uint32_t address, uint8_t val);
+void h8_3007_register1_write8(h83xx_state *h8, uint32_t address, uint8_t val);
 
 void h8_itu_init(h83xx_state *h8);
 void h8_3007_itu_init(h83xx_state *h8);
 void h8_itu_reset(h83xx_state *h8);
-UINT8 h8_itu_read8(h83xx_state *h8, UINT8 reg);
-UINT8 h8_3007_itu_read8(h83xx_state *h8, UINT8 reg);
-void h8_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val);
-void h8_3007_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val);
+uint8_t h8_itu_read8(h83xx_state *h8, uint8_t reg);
+uint8_t h8_3007_itu_read8(h83xx_state *h8, uint8_t reg);
+void h8_itu_write8(h83xx_state *h8, uint8_t reg, uint8_t val);
+void h8_3007_itu_write8(h83xx_state *h8, uint8_t reg, uint8_t val);
 
 #endif /* __H8PRIV_H__ */

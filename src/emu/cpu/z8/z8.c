@@ -164,16 +164,16 @@ struct _z8_state
     const address_space *io;
 
 	/* registers */
-	UINT16 pc;				/* program counter */
-	UINT8 r[256];			/* register file */
-	UINT8 input[4];			/* port input latches */
-	UINT8 output[4];		/* port output latches */
-	UINT8 t0;				/* timer 0 current count */
-	UINT8 t1;				/* timer 1 current count */
+	uint16_t pc;				/* program counter */
+	uint8_t r[256];			/* register file */
+	uint8_t input[4];			/* port input latches */
+	uint8_t output[4];		/* port output latches */
+	uint8_t t0;				/* timer 0 current count */
+	uint8_t t1;				/* timer 1 current count */
 
 	/* fake registers */
-	UINT16 fake_sp;			/* fake stack pointer */
-	UINT8 fake_r[16];		/* fake working registers */
+	uint16_t fake_sp;			/* fake stack pointer */
+	uint8_t fake_r[16];		/* fake working registers */
 
 	/* interrupts */
 	int irq[6];				/* interrupts */
@@ -200,19 +200,19 @@ INLINE z8_state *get_safe_token(running_device *device)
 	return (z8_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT8 fetch(z8_state *cpustate)
+INLINE uint8_t fetch(z8_state *cpustate)
 {
-	UINT8 data = memory_decrypted_read_byte(cpustate->program, cpustate->pc);
+	uint8_t data = memory_decrypted_read_byte(cpustate->program, cpustate->pc);
 
 	cpustate->pc++;
 
 	return data;
 }
 
-INLINE UINT8 register_read(z8_state *cpustate, UINT8 offset)
+INLINE uint8_t register_read(z8_state *cpustate, uint8_t offset)
 {
-	UINT8 data = 0xff;
-	UINT8 mask = 0;
+	uint8_t data = 0xff;
+	uint8_t mask = 0;
 
 	switch (offset)
 	{
@@ -303,14 +303,14 @@ INLINE UINT8 register_read(z8_state *cpustate, UINT8 offset)
 	return data;
 }
 
-INLINE UINT16 register_pair_read(z8_state *cpustate, UINT8 offset)
+INLINE uint16_t register_pair_read(z8_state *cpustate, uint8_t offset)
 {
 	return (register_read(cpustate, offset) << 8) | register_read(cpustate, offset + 1);
 }
 
-INLINE void register_write(z8_state *cpustate, UINT8 offset, UINT8 data)
+INLINE void register_write(z8_state *cpustate, uint8_t offset, uint8_t data)
 {
-	UINT8 mask = 0;
+	uint8_t mask = 0;
 
 	switch (offset)
 	{
@@ -394,18 +394,18 @@ INLINE void register_write(z8_state *cpustate, UINT8 offset, UINT8 data)
 	cpustate->r[offset] = data;
 }
 
-INLINE void register_pair_write(z8_state *cpustate, UINT8 offset, UINT16 data)
+INLINE void register_pair_write(z8_state *cpustate, uint8_t offset, uint16_t data)
 {
 	register_write(cpustate, offset, data >> 8);
 	register_write(cpustate, offset + 1, data & 0xff);
 }
 
-INLINE UINT8 get_working_register(z8_state *cpustate, int offset)
+INLINE uint8_t get_working_register(z8_state *cpustate, int offset)
 {
 	return (cpustate->r[Z8_REGISTER_RP] & 0xf0) | (offset & 0x0f);
 }
 
-INLINE UINT8 get_register(z8_state *cpustate, UINT8 offset)
+INLINE uint8_t get_register(z8_state *cpustate, uint8_t offset)
 {
 	if ((offset & 0xf0) == 0xe0)
 		return get_working_register(cpustate, offset & 0x0f);
@@ -413,17 +413,17 @@ INLINE UINT8 get_register(z8_state *cpustate, UINT8 offset)
 		return offset;
 }
 
-INLINE UINT8 get_intermediate_register(z8_state *cpustate, int offset)
+INLINE uint8_t get_intermediate_register(z8_state *cpustate, int offset)
 {
 	return register_read(cpustate, get_register(cpustate, offset));
 }
 
-INLINE void stack_push_byte(z8_state *cpustate, UINT8 src)
+INLINE void stack_push_byte(z8_state *cpustate, uint8_t src)
 {
 	if (register_read(cpustate, Z8_REGISTER_P01M) & Z8_P01M_INTERNAL_STACK)
 	{
 		/* SP <- SP - 1 */
-		UINT8 sp = register_read(cpustate, Z8_REGISTER_SPL) - 1;
+		uint8_t sp = register_read(cpustate, Z8_REGISTER_SPL) - 1;
 		register_write(cpustate, Z8_REGISTER_SPL, sp);
 
 		/* @SP <- src */
@@ -432,7 +432,7 @@ INLINE void stack_push_byte(z8_state *cpustate, UINT8 src)
 	else
 	{
 		/* SP <- SP - 1 */
-		UINT16 sp = register_pair_read(cpustate, Z8_REGISTER_SPH) - 1;
+		uint16_t sp = register_pair_read(cpustate, Z8_REGISTER_SPH) - 1;
 		register_pair_write(cpustate, Z8_REGISTER_SPH, sp);
 
 		/* @SP <- src */
@@ -440,12 +440,12 @@ INLINE void stack_push_byte(z8_state *cpustate, UINT8 src)
 	}
 }
 
-INLINE void stack_push_word(z8_state *cpustate, UINT16 src)
+INLINE void stack_push_word(z8_state *cpustate, uint16_t src)
 {
 	if (register_read(cpustate, Z8_REGISTER_P01M) & Z8_P01M_INTERNAL_STACK)
 	{
 		/* SP <- SP - 2 */
-		UINT8 sp = register_read(cpustate, Z8_REGISTER_SPL) - 2;
+		uint8_t sp = register_read(cpustate, Z8_REGISTER_SPL) - 2;
 		register_write(cpustate, Z8_REGISTER_SPL, sp);
 
 		/* @SP <- src */
@@ -454,7 +454,7 @@ INLINE void stack_push_word(z8_state *cpustate, UINT16 src)
 	else
 	{
 		/* SP <- SP - 2 */
-		UINT16 sp = register_pair_read(cpustate, Z8_REGISTER_SPH) - 2;
+		uint16_t sp = register_pair_read(cpustate, Z8_REGISTER_SPH) - 2;
 		register_pair_write(cpustate, Z8_REGISTER_SPH, sp);
 
 		/* @SP <- src */
@@ -462,12 +462,12 @@ INLINE void stack_push_word(z8_state *cpustate, UINT16 src)
 	}
 }
 
-INLINE UINT8 stack_pop_byte(z8_state *cpustate)
+INLINE uint8_t stack_pop_byte(z8_state *cpustate)
 {
 	if (register_read(cpustate, Z8_REGISTER_P01M) & Z8_P01M_INTERNAL_STACK)
 	{
 		/* SP <- SP + 1 */
-		UINT8 sp = register_read(cpustate, Z8_REGISTER_SPL) + 1;
+		uint8_t sp = register_read(cpustate, Z8_REGISTER_SPL) + 1;
 		register_write(cpustate, Z8_REGISTER_SPL, sp);
 
 		/* @SP <- src */
@@ -476,7 +476,7 @@ INLINE UINT8 stack_pop_byte(z8_state *cpustate)
 	else
 	{
 		/* SP <- SP + 1 */
-		UINT16 sp = register_pair_read(cpustate, Z8_REGISTER_SPH) + 1;
+		uint16_t sp = register_pair_read(cpustate, Z8_REGISTER_SPH) + 1;
 		register_pair_write(cpustate, Z8_REGISTER_SPH, sp);
 
 		/* @SP <- src */
@@ -484,12 +484,12 @@ INLINE UINT8 stack_pop_byte(z8_state *cpustate)
 	}
 }
 
-INLINE UINT16 stack_pop_word(z8_state *cpustate)
+INLINE uint16_t stack_pop_word(z8_state *cpustate)
 {
 	if (register_read(cpustate, Z8_REGISTER_P01M) & Z8_P01M_INTERNAL_STACK)
 	{
 		/* SP <- SP + 2 */
-		UINT8 sp = register_read(cpustate, Z8_REGISTER_SPL) + 2;
+		uint8_t sp = register_read(cpustate, Z8_REGISTER_SPL) + 2;
 		register_write(cpustate, Z8_REGISTER_SPL, sp);
 
 		/* @SP <- src */
@@ -498,7 +498,7 @@ INLINE UINT16 stack_pop_word(z8_state *cpustate)
 	else
 	{
 		/* SP <- SP + 2 */
-		UINT16 sp = register_pair_read(cpustate, Z8_REGISTER_SPH) + 2;
+		uint16_t sp = register_pair_read(cpustate, Z8_REGISTER_SPH) + 2;
 		register_pair_write(cpustate, Z8_REGISTER_SPH, sp);
 
 		/* @SP <- src */
@@ -506,7 +506,7 @@ INLINE UINT16 stack_pop_word(z8_state *cpustate)
 	}
 }
 
-INLINE void set_flag(z8_state *cpustate, UINT8 flag, int state)
+INLINE void set_flag(z8_state *cpustate, uint8_t flag, int state)
 {
 	if (state)
 		cpustate->r[Z8_REGISTER_FLAGS] |= flag;
@@ -525,7 +525,7 @@ INLINE void set_flag(z8_state *cpustate, UINT8 flag, int state)
     OPCODE HANDLERS
 ***************************************************************************/
 
-#define INSTRUCTION(mnemonic) INLINE void (mnemonic)(z8_state *cpustate, UINT8 opcode, int *cycles)
+#define INSTRUCTION(mnemonic) INLINE void (mnemonic)(z8_state *cpustate, uint8_t opcode, int *cycles)
 
 INSTRUCTION( illegal )
 {
@@ -538,7 +538,7 @@ INSTRUCTION( illegal )
     OPCODE TABLES
 ***************************************************************************/
 
-typedef void (*z8_opcode_func) (z8_state *cpustate, UINT8 opcode, int *cycles);
+typedef void (*z8_opcode_func) (z8_state *cpustate, uint8_t opcode, int *cycles);
 
 typedef struct _z8_opcode_map z8_opcode_map;
 struct _z8_opcode_map
@@ -688,7 +688,7 @@ static CPU_EXECUTE( z8 )
 
 	do
 	{
-		UINT8 opcode;
+		uint8_t opcode;
 		int cycles;
 
 		debugger_instruction_hook(device, cpustate->pc);

@@ -142,48 +142,48 @@ typedef struct _dsp32_state dsp32_state;
 struct _dsp32_state
 {
 	/* core registers */
-	UINT32			r[32];
-	UINT32			pin, pout;
-	UINT32			ivtp;
-	UINT32			nzcflags;
-	UINT32			vflags;
+	uint32_t			r[32];
+	uint32_t			pin, pout;
+	uint32_t			ivtp;
+	uint32_t			nzcflags;
+	uint32_t			vflags;
 
 	double			a[6];
 	double			NZflags;
-	UINT8			VUflags;
+	uint8_t			VUflags;
 
 	double			abuf[4];
-	UINT8			abufreg[4];
-	UINT8			abufVUflags[4];
-	UINT8			abufNZflags[4];
+	uint8_t			abufreg[4];
+	uint8_t			abufVUflags[4];
+	uint8_t			abufNZflags[4];
 	int				abufcycle[4];
 	int				abuf_index;
 
-	INT32			mbufaddr[4];
-	UINT32			mbufdata[4];
+	int32_t			mbufaddr[4];
+	uint32_t			mbufdata[4];
 	int				mbuf_index;
 
-	UINT16			par;
-	UINT8			pare;
-	UINT16			pdr;
-	UINT16			pdr2;
-	UINT16			pir;
-	UINT16			pcr;
-	UINT16			emr;
-	UINT8			esr;
-	UINT16			pcw;
-	UINT8			piop;
+	uint16_t			par;
+	uint8_t			pare;
+	uint16_t			pdr;
+	uint16_t			pdr2;
+	uint16_t			pir;
+	uint16_t			pcr;
+	uint16_t			emr;
+	uint8_t			esr;
+	uint16_t			pcw;
+	uint8_t			piop;
 
-	UINT32			ibuf;
-	UINT32			isr;
-	UINT32			obuf;
-	UINT32			osr;
+	uint32_t			ibuf;
+	uint32_t			isr;
+	uint32_t			obuf;
+	uint32_t			osr;
 
 	/* internal stuff */
 	int				icount;
-	UINT8			lastpins;
-	UINT32			ppc;
-	void			(*output_pins_changed)(running_device *device, UINT32 pins);
+	uint8_t			lastpins;
+	uint32_t			ppc;
+	void			(*output_pins_changed)(running_device *device, uint32_t pins);
 	legacy_cpu_device *	device;
 	const address_space *program;
 };
@@ -229,29 +229,29 @@ INLINE dsp32_state *get_safe_token(running_device *device)
 
 #else
 
-INLINE UINT16 RWORD(dsp32_state *cpustate, offs_t addr)
+INLINE uint16_t RWORD(dsp32_state *cpustate, offs_t addr)
 {
-	UINT16 data;
+	uint16_t data;
 	if (addr & 1) fprintf(stderr, "Unaligned word read @ %06X, PC=%06X\n", addr, cpustate->PC);
 	data = memory_read_word_32le(cpustate->program, addr);
 	return data;
 }
 
-INLINE UINT32 RLONG(dsp32_state *cpustate, offs_t addr)
+INLINE uint32_t RLONG(dsp32_state *cpustate, offs_t addr)
 {
-	UINT32 data;
+	uint32_t data;
 	if (addr & 3) fprintf(stderr, "Unaligned long read @ %06X, PC=%06X\n", addr, cpustate->PC);
 	data = memory_write_word_32le(cpustate->program, addr);
 	return data;
 }
 
-INLINE void WWORD(dsp32_state *cpustate, offs_t addr, UINT16 data)
+INLINE void WWORD(dsp32_state *cpustate, offs_t addr, uint16_t data)
 {
 	if (addr & 1) fprintf(stderr, "Unaligned word write @ %06X, PC=%06X\n", addr, cpustate->PC);
 	memory_read_dword_32le(cpustate->program, (addr), data);
 }
 
-INLINE void WLONG(dsp32_state *cpustate, offs_t addr, UINT32 data)
+INLINE void WLONG(dsp32_state *cpustate, offs_t addr, uint32_t data)
 {
 	if (addr & 3) fprintf(stderr, "Unaligned long write @ %06X, PC=%06X\n", addr, cpustate->PC);
 	memory_write_dword_32le(cpustate->program, (addr), data);
@@ -282,9 +282,9 @@ static void set_irq_line(dsp32_state *cpustate, int irqline, int state)
     REGISTER HANDLING
 ***************************************************************************/
 
-static void update_pcr(dsp32_state *cpustate, UINT16 newval)
+static void update_pcr(dsp32_state *cpustate, uint16_t newval)
 {
-	UINT16 oldval = cpustate->pcr;
+	uint16_t oldval = cpustate->pcr;
 	cpustate->pcr = newval;
 
 	/* reset the chip if we get a reset */
@@ -294,7 +294,7 @@ static void update_pcr(dsp32_state *cpustate, UINT16 newval)
 	/* track the state of the output pins */
 	if (cpustate->output_pins_changed)
 	{
-		UINT16 newoutput = ((newval & (PCR_PIFs | PCR_ENI)) == (PCR_PIFs | PCR_ENI)) ? DSP32_OUTPUT_PIF : 0;
+		uint16_t newoutput = ((newval & (PCR_PIFs | PCR_ENI)) == (PCR_PIFs | PCR_ENI)) ? DSP32_OUTPUT_PIF : 0;
 		if (newoutput != cpustate->lastpins)
 		{
 			cpustate->lastpins = newoutput;
@@ -444,7 +444,7 @@ static CPU_EXECUTE( dsp32c )
     PARALLEL INTERFACE WRITES
 ***************************************************************************/
 
-static const UINT32 regmap[4][16] =
+static const uint32_t regmap[4][16] =
 {
 	{	/* DSP32 compatible mode */
 		PIO_PAR|LOWER, PIO_PAR|UPPER, PIO_PDR|LOWER, PIO_PDR|UPPER,
@@ -495,7 +495,7 @@ INLINE void dma_load(dsp32_state *cpustate)
 	/* only process if DMA is enabled */
 	if (cpustate->pcr & PCR_DMA)
 	{
-		UINT32 addr = cpustate->par | (cpustate->pare << 16);
+		uint32_t addr = cpustate->par | (cpustate->pare << 16);
 
 		/* 16-bit case */
 		if (!(cpustate->pcr & PCR_DMA32))
@@ -504,7 +504,7 @@ INLINE void dma_load(dsp32_state *cpustate)
 		/* 32-bit case */
 		else
 		{
-			UINT32 temp = RLONG(cpustate, addr & 0xfffffc);
+			uint32_t temp = RLONG(cpustate, addr & 0xfffffc);
 			cpustate->pdr = temp >> 16;
 			cpustate->pdr2 = temp & 0xffff;
 		}
@@ -520,7 +520,7 @@ INLINE void dma_store(dsp32_state *cpustate)
 	/* only process if DMA is enabled */
 	if (cpustate->pcr & PCR_DMA)
 	{
-		UINT32 addr = cpustate->par | (cpustate->pare << 16);
+		uint32_t addr = cpustate->par | (cpustate->pare << 16);
 
 		/* 16-bit case */
 		if (!(cpustate->pcr & PCR_DMA32))
@@ -539,8 +539,8 @@ INLINE void dma_store(dsp32_state *cpustate)
 void dsp32c_pio_w(running_device *device, int reg, int data)
 {
 	dsp32_state *cpustate = get_safe_token(device);
-	UINT16 mask;
-	UINT8 mode;
+	uint16_t mask;
+	uint8_t mode;
 
 	/* look up register and mask */
 	mode = ((cpustate->pcr >> 8) & 2) | ((cpustate->pcr >> 1) & 1);
@@ -618,8 +618,8 @@ void dsp32c_pio_w(running_device *device, int reg, int data)
 int dsp32c_pio_r(running_device *device, int reg)
 {
 	dsp32_state *cpustate = get_safe_token(device);
-	UINT16 mask, result = 0xffff;
-	UINT8 mode, shift = 0;
+	uint16_t mask, result = 0xffff;
+	uint8_t mode, shift = 0;
 
 	/* look up register and mask */
 	mode = ((cpustate->pcr >> 8) & 2) | ((cpustate->pcr >> 1) & 1);

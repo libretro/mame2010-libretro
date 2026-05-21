@@ -136,7 +136,7 @@
 ***************************************************************************/
 
 /* entry point */
-typedef UINT32 (*x86_entry_point_func)(x86code *entry);
+typedef uint32_t (*x86_entry_point_func)(x86code *entry);
 
 /* opcode handler */
 typedef x86code *(*opcode_generate_func)(drcbe_state *drcbe, x86code *dst, const drcuml_instruction *inst);
@@ -168,29 +168,29 @@ struct _drcbe_state
 	x86code *				save;					/* save handler */
 	x86code *				restore;				/* restore handler */
 
-	UINT32 *				reglo[REG_MAX];			/* pointer to low part of data for each register */
-	UINT32 *				reghi[REG_MAX];			/* pointer to high part of data for each register */
-	UINT8					last_lower_reg;			/* last register we stored a lower from */
+	uint32_t *				reglo[REG_MAX];			/* pointer to low part of data for each register */
+	uint32_t *				reghi[REG_MAX];			/* pointer to high part of data for each register */
+	uint8_t					last_lower_reg;			/* last register we stored a lower from */
 	x86code *				last_lower_pc;			/* PC after instruction where we last stored a lower register */
-	UINT32 *				last_lower_addr;		/* address where we last stored an lower register */
-	UINT8					last_upper_reg;			/* last register we stored an upper from */
+	uint32_t *				last_lower_addr;		/* address where we last stored an lower register */
+	uint8_t					last_upper_reg;			/* last register we stored an upper from */
 	x86code *				last_upper_pc;			/* PC after instruction where we last stored an upper register */
-	UINT32 *				last_upper_addr;		/* address where we last stored an upper register */
+	uint32_t *				last_upper_addr;		/* address where we last stored an upper register */
 	double					fptemp;					/* temporary storage for floating point */
 
 	const address_space *	space[ADDRESS_SPACES];	/* address spaces */
 
-	UINT8					sse3;					/* do we have SSE3 support? */
-	UINT16					fpumode;				/* saved FPU mode */
-	UINT16					fmodesave;				/* temporary location for saving */
+	uint8_t					sse3;					/* do we have SSE3 support? */
+	uint16_t					fpumode;				/* saved FPU mode */
+	uint16_t					fmodesave;				/* temporary location for saving */
 
 	void *					stacksave;				/* saved stack pointer */
 	void *					hashstacksave;			/* saved stack pointer for hashjmp */
-	UINT64					reslo;					/* extended low result */
-	UINT64					reshi;					/* extended high result */
+	uint64_t					reslo;					/* extended low result */
+	uint64_t					reshi;					/* extended high result */
 
 	x86log_context *		log;					/* logging */
-	UINT8					logged_common;			/* logged common code already? */
+	uint8_t					logged_common;			/* logged common code already? */
 };
 
 
@@ -200,22 +200,22 @@ struct _drcbe_state
 ***************************************************************************/
 
 /* primary back-end callbacks */
-static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, running_device *device, UINT32 flags, int modes, int addrbits, int ignorebits);
+static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, running_device *device, uint32_t flags, int modes, int addrbits, int ignorebits);
 static void drcbex86_free(drcbe_state *drcbe);
 static void drcbex86_reset(drcbe_state *drcbe);
 static int drcbex86_execute(drcbe_state *drcbe, drcuml_codehandle *entry);
-static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drcuml_instruction *instlist, UINT32 numinst);
-static int drcbex86_hash_exists(drcbe_state *drcbe, UINT32 mode, UINT32 pc);
+static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drcuml_instruction *instlist, uint32_t numinst);
+static int drcbex86_hash_exists(drcbe_state *drcbe, uint32_t mode, uint32_t pc);
 static void drcbex86_get_info(drcbe_state *state, drcbe_info *info);
 
 /* private helper functions */
 static void fixup_label(void *parameter, drccodeptr labelcodeptr);
 
 /* miscellaneous functions */
-static int dmulu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2, int flags);
-static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags);
-static int ddivu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2);
-static int ddivs(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2);
+static int dmulu(uint64_t *dstlo, uint64_t *dsthi, uint64_t src1, uint64_t src2, int flags);
+static int dmuls(uint64_t *dstlo, uint64_t *dsthi, int64_t src1, int64_t src2, int flags);
+static int ddivu(uint64_t *dstlo, uint64_t *dsthi, uint64_t src1, uint64_t src2);
+static int ddivs(uint64_t *dstlo, uint64_t *dsthi, int64_t src1, int64_t src2);
 
 
 
@@ -239,20 +239,20 @@ extern const drcbe_interface drcbe_x86_be_interface =
 static opcode_generate_func opcode_table[DRCUML_OP_MAX];
 
 /* size-to-mask table */
-static const UINT64 size_to_mask[] = { 0, 0xff, 0xffff, 0, 0xffffffff, 0, 0, 0, U64(0xffffffffffffffff) };
+static const uint64_t size_to_mask[] = { 0, 0xff, 0xffff, 0, 0xffffffff, 0, 0, 0, U64(0xffffffffffffffff) };
 
 /* register mapping tables */
-static const UINT8 int_register_map[DRCUML_REG_I_END - DRCUML_REG_I0] =
+static const uint8_t int_register_map[DRCUML_REG_I_END - DRCUML_REG_I0] =
 {
 	REG_EBX, REG_ESI, REG_EDI, REG_EBP
 };
 
 /* flags mapping tables */
-static UINT8 flags_map[0x1000];
-static UINT32 flags_unmap[0x20];
+static uint8_t flags_map[0x1000];
+static uint32_t flags_unmap[0x20];
 
 /* condition mapping table */
-static const UINT8 condition_map[DRCUML_COND_MAX - DRCUML_COND_Z] =
+static const uint8_t condition_map[DRCUML_COND_MAX - DRCUML_COND_Z] =
 {
 	COND_Z,		/* DRCUML_COND_Z = 0x80,    requires Z */
 	COND_NZ,	/* DRCUML_COND_NZ,          requires Z */
@@ -273,7 +273,7 @@ static const UINT8 condition_map[DRCUML_COND_MAX - DRCUML_COND_Z] =
 };
 
 /* FPU control register mapping */
-static const UINT16 fp_control[4] =
+static const uint16_t fp_control[4] =
 {
 	0x0e3f, 	/* DRCUML_FMOD_TRUNC */
 	0x023f, 	/* DRCUML_FMOD_ROUND */
@@ -541,12 +541,12 @@ INLINE void reset_last_upper_lower_reg(drcbe_state *drcbe)
     loaded a lower register
 -------------------------------------------------*/
 
-INLINE void set_last_lower_reg(drcbe_state *drcbe, x86code *dst, const drcuml_parameter *param, UINT8 reglo)
+INLINE void set_last_lower_reg(drcbe_state *drcbe, x86code *dst, const drcuml_parameter *param, uint8_t reglo)
 {
 	if (param->type == DRCUML_PTYPE_MEMORY)
 	{
 		drcbe->last_lower_reg = reglo;
-		drcbe->last_lower_addr = (UINT32 *)((FPTR)param->value);
+		drcbe->last_lower_addr = (uint32_t *)((FPTR)param->value);
 		drcbe->last_lower_pc = dst;
 	}
 }
@@ -557,10 +557,10 @@ INLINE void set_last_lower_reg(drcbe_state *drcbe, x86code *dst, const drcuml_pa
     loaded an upper register
 -------------------------------------------------*/
 
-INLINE void set_last_upper_reg(drcbe_state *drcbe, x86code *dst, const drcuml_parameter *param, UINT8 reghi)
+INLINE void set_last_upper_reg(drcbe_state *drcbe, x86code *dst, const drcuml_parameter *param, uint8_t reghi)
 {
 	drcbe->last_upper_reg = reghi;
-	drcbe->last_upper_addr = (param->type == DRCUML_PTYPE_INT_REGISTER) ? drcbe->reghi[param->value] : (UINT32 *)((FPTR)param->value + 4);
+	drcbe->last_upper_addr = (param->type == DRCUML_PTYPE_INT_REGISTER) ? drcbe->reghi[param->value] : (uint32_t *)((FPTR)param->value + 4);
 	drcbe->last_upper_pc = dst;
 }
 
@@ -570,7 +570,7 @@ INLINE void set_last_upper_reg(drcbe_state *drcbe, x86code *dst, const drcuml_pa
     skip re-loading a lower half of a register
 -------------------------------------------------*/
 
-INLINE int can_skip_lower_load(drcbe_state *drcbe, x86code *dst, UINT32 *memptr, UINT8 reglo)
+INLINE int can_skip_lower_load(drcbe_state *drcbe, x86code *dst, uint32_t *memptr, uint8_t reglo)
 {
 //  return FALSE;
 	return (dst == drcbe->last_lower_pc && memptr == drcbe->last_lower_addr && reglo == drcbe->last_lower_reg);
@@ -582,7 +582,7 @@ INLINE int can_skip_lower_load(drcbe_state *drcbe, x86code *dst, UINT32 *memptr,
     skip re-loading an upper half of a register
 -------------------------------------------------*/
 
-INLINE int can_skip_upper_load(drcbe_state *drcbe, x86code *dst, UINT32 *memptr, UINT8 reghi)
+INLINE int can_skip_upper_load(drcbe_state *drcbe, x86code *dst, uint32_t *memptr, uint8_t reghi)
 {
 //  return FALSE;
 	return (dst == drcbe->last_upper_pc && memptr == drcbe->last_upper_addr && reghi == drcbe->last_upper_reg);
@@ -613,7 +613,7 @@ INLINE void track_resolve_link(drcbe_state *drcbe, x86code **destptr, const emit
     state
 -------------------------------------------------*/
 
-static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, running_device *device, UINT32 flags, int modes, int addrbits, int ignorebits)
+static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, running_device *device, uint32_t flags, int modes, int addrbits, int ignorebits)
 {
 	int opnum, regnum, entry, spacenum;
 	drcbe_state *drcbe;
@@ -655,7 +655,7 @@ static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, runnin
 	/* build the flags map (static but it doesn't hurt to regenerate it) */
 	for (entry = 0; entry < ARRAY_LENGTH(flags_map); entry++)
 	{
-		UINT8 flags = 0;
+		uint8_t flags = 0;
 		if (entry & 0x001) flags |= DRCUML_FLAG_C;
 		if (entry & 0x004) flags |= DRCUML_FLAG_U;
 		if (entry & 0x040) flags |= DRCUML_FLAG_Z;
@@ -665,7 +665,7 @@ static drcbe_state *drcbex86_alloc(drcuml_state *drcuml, drccache *cache, runnin
 	}
 	for (entry = 0; entry < ARRAY_LENGTH(flags_unmap); entry++)
 	{
-		UINT32 flags = 0;
+		uint32_t flags = 0;
 		if (entry & DRCUML_FLAG_C) flags |= 0x001;
 		if (entry & DRCUML_FLAG_U) flags |= 0x004;
 		if (entry & DRCUML_FLAG_Z) flags |= 0x040;
@@ -708,7 +708,7 @@ static void drcbex86_free(drcbe_state *drcbe)
 
 static void drcbex86_reset(drcbe_state *drcbe)
 {
-	UINT32 (*cpuid_ecx_stub)(void);
+	uint32_t (*cpuid_ecx_stub)(void);
 	x86code **dst;
 	int regnum;
 
@@ -722,7 +722,7 @@ static void drcbex86_reset(drcbe_state *drcbe)
 		fatalerror("Out of cache space after a reset!");
 
 	/* generate a simple CPUID stub */
-	cpuid_ecx_stub = (UINT32 (*)(void))*dst;
+	cpuid_ecx_stub = (uint32_t (*)(void))*dst;
 	emit_push_r32(dst, REG_EBX);														// push  ebx
 	emit_mov_r32_imm(dst, REG_EAX, 1);													// mov   eax,1
 	emit_cpuid(dst);																	// cpuid
@@ -870,7 +870,7 @@ static int drcbex86_execute(drcbe_state *drcbe, drcuml_codehandle *entry)
     drcbex86_generate - generate code
 -------------------------------------------------*/
 
-static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drcuml_instruction *instlist, UINT32 numinst)
+static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drcuml_instruction *instlist, uint32_t numinst)
 {
 	const char *blockname = NULL;
 	char blockbuffer[100];
@@ -914,7 +914,7 @@ static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drc
 				blockname = drcuml_handle_name((drcuml_codehandle *)(FPTR)inst->param[0].value);
 			else if (inst->opcode == DRCUML_OP_HASH)
 			{
-				sprintf(blockbuffer, "Code: mode=%d PC=%08X", (UINT32)inst->param[0].value, (offs_t)inst->param[1].value);
+				sprintf(blockbuffer, "Code: mode=%d PC=%08X", (uint32_t)inst->param[0].value, (offs_t)inst->param[1].value);
 				blockname = blockbuffer;
 			}
 		}
@@ -943,7 +943,7 @@ static void drcbex86_generate(drcbe_state *drcbe, drcuml_block *block, const drc
     given mode/pc exists in the hash table
 -------------------------------------------------*/
 
-static int drcbex86_hash_exists(drcbe_state *drcbe, UINT32 mode, UINT32 pc)
+static int drcbex86_hash_exists(drcbe_state *drcbe, uint32_t mode, uint32_t pc)
 {
 	return drchash_code_exists(drcbe->hash, mode, pc);
 }
@@ -973,7 +973,7 @@ static void drcbex86_get_info(drcbe_state *state, drcbe_info *info)
     into a reduced set
 -------------------------------------------------*/
 
-static void param_normalize(drcbe_state *drcbe, const drcuml_parameter *src, drcuml_parameter *dest, UINT32 allowed)
+static void param_normalize(drcbe_state *drcbe, const drcuml_parameter *src, drcuml_parameter *dest, uint32_t allowed)
 {
 	int regnum;
 
@@ -1031,7 +1031,7 @@ static void param_normalize(drcbe_state *drcbe, const drcuml_parameter *src, drc
     parameter instruction
 -------------------------------------------------*/
 
-static void param_normalize_1(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0)
+static void param_normalize_1(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0)
 {
 	assert(inst->numparams == 1);
 	param_normalize(drcbe, &inst->param[0], dest0, allowed0);
@@ -1043,7 +1043,7 @@ static void param_normalize_1(drcbe_state *drcbe, const drcuml_instruction *inst
     parameter instruction
 -------------------------------------------------*/
 
-static void param_normalize_2(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1)
+static void param_normalize_2(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1)
 {
 	assert(inst->numparams == 2);
 	param_normalize(drcbe, &inst->param[0], dest0, allowed0);
@@ -1058,7 +1058,7 @@ static void param_normalize_2(drcbe_state *drcbe, const drcuml_instruction *inst
     parameters can be swapped
 -------------------------------------------------*/
 
-static void param_normalize_2_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1)
+static void param_normalize_2_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1)
 {
 	param_normalize_2(drcbe, inst, dest0, allowed0, dest1, allowed1);
 
@@ -1085,7 +1085,7 @@ static void param_normalize_2_commutative(drcbe_state *drcbe, const drcuml_instr
     parameter instruction
 -------------------------------------------------*/
 
-static void param_normalize_3(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1, drcuml_parameter *dest2, UINT32 allowed2)
+static void param_normalize_3(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1, drcuml_parameter *dest2, uint32_t allowed2)
 {
 	assert(inst->numparams == 3);
 	param_normalize(drcbe, &inst->param[0], dest0, allowed0);
@@ -1101,7 +1101,7 @@ static void param_normalize_3(drcbe_state *drcbe, const drcuml_instruction *inst
     2 can be swapped
 -------------------------------------------------*/
 
-static void param_normalize_3_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1, drcuml_parameter *dest2, UINT32 allowed2)
+static void param_normalize_3_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1, drcuml_parameter *dest2, uint32_t allowed2)
 {
 	param_normalize_3(drcbe, inst, dest0, allowed0, dest1, allowed1, dest2, allowed2);
 
@@ -1136,7 +1136,7 @@ static void param_normalize_3_commutative(drcbe_state *drcbe, const drcuml_instr
     parameter instruction
 -------------------------------------------------*/
 
-static void param_normalize_4(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1, drcuml_parameter *dest2, UINT32 allowed2, drcuml_parameter *dest3, UINT32 allowed3)
+static void param_normalize_4(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1, drcuml_parameter *dest2, uint32_t allowed2, drcuml_parameter *dest3, uint32_t allowed3)
 {
 	assert(inst->numparams == 4);
 	param_normalize(drcbe, &inst->param[0], dest0, allowed0);
@@ -1153,7 +1153,7 @@ static void param_normalize_4(drcbe_state *drcbe, const drcuml_instruction *inst
     2 can be swapped
 -------------------------------------------------*/
 
-static void param_normalize_4_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, UINT32 allowed0, drcuml_parameter *dest1, UINT32 allowed1, drcuml_parameter *dest2, UINT32 allowed2, drcuml_parameter *dest3, UINT32 allowed3)
+static void param_normalize_4_commutative(drcbe_state *drcbe, const drcuml_instruction *inst, drcuml_parameter *dest0, uint32_t allowed0, drcuml_parameter *dest1, uint32_t allowed1, drcuml_parameter *dest2, uint32_t allowed2, drcuml_parameter *dest3, uint32_t allowed3)
 {
 	param_normalize_4(drcbe, inst, dest0, allowed0, dest1, allowed1, dest2, allowed2, dest3, allowed3);
 
@@ -1193,7 +1193,7 @@ static void param_normalize_4_commutative(drcbe_state *drcbe, const drcuml_instr
     into a register
 -------------------------------------------------*/
 
-static void emit_mov_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param)
+static void emit_mov_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
@@ -1218,13 +1218,13 @@ static void emit_mov_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const
     any flags
 -------------------------------------------------*/
 
-static void emit_mov_r32_p32_keepflags(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param)
+static void emit_mov_r32_p32_keepflags(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 		emit_mov_r32_imm(dst, reg, param->value);										// mov   reg,param
 	else if (param->type == DRCUML_PTYPE_MEMORY)
 	{
-		if (!can_skip_lower_load(drcbe, *dst, (UINT32 *)((FPTR)param->value), reg))
+		if (!can_skip_lower_load(drcbe, *dst, (uint32_t *)((FPTR)param->value), reg))
 			emit_mov_r32_m32(dst, reg, MABS(param->value));								// mov   reg,[param]
 	}
 	else if (param->type == DRCUML_PTYPE_INT_REGISTER)
@@ -1246,7 +1246,7 @@ static void emit_mov_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 		emit_mov_m32_imm(dst, MEMPARAMS, param->value);									// mov   [mem],param
 	else if (param->type == DRCUML_PTYPE_MEMORY)
 	{
-		if (!can_skip_lower_load(drcbe, *dst, (UINT32 *)((FPTR)param->value), REG_EAX))
+		if (!can_skip_lower_load(drcbe, *dst, (uint32_t *)((FPTR)param->value), REG_EAX))
 			emit_mov_r32_m32(dst, REG_EAX, MABS(param->value));							// mov   eax,[param]
 		emit_mov_m32_r32(dst, MEMPARAMS, REG_EAX);										// mov   [mem],eax
 	}
@@ -1260,7 +1260,7 @@ static void emit_mov_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     32-bit parameter
 -------------------------------------------------*/
 
-static void emit_mov_p32_r32(drcbe_state *drcbe, x86code **dst, const drcuml_parameter *param, UINT8 reg)
+static void emit_mov_p32_r32(drcbe_state *drcbe, x86code **dst, const drcuml_parameter *param, uint8_t reg)
 {
 	assert(param->type != DRCUML_PTYPE_IMMEDIATE);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -1281,7 +1281,7 @@ static void emit_mov_p32_r32(drcbe_state *drcbe, x86code **dst, const drcuml_par
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_add_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_add_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
@@ -1321,7 +1321,7 @@ static void emit_add_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_adc_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_adc_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 		emit_adc_r32_imm(dst, reg, param->value);										// adc   reg,param
@@ -1355,7 +1355,7 @@ static void emit_adc_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_sub_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sub_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
@@ -1395,7 +1395,7 @@ static void emit_sub_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_sbb_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sbb_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 		emit_sbb_r32_imm(dst, reg, param->value);										// sbb   reg,param
@@ -1429,7 +1429,7 @@ static void emit_sbb_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_cmp_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_cmp_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 		emit_cmp_r32_imm(dst, reg, param->value);										// cmp   reg,param
@@ -1463,13 +1463,13 @@ static void emit_cmp_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_and_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_and_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0)
 			emit_xor_r32_r32(dst, reg, reg);											// xor   reg,reg
 		else
 			emit_and_r32_imm(dst, reg, param->value);									// and   reg,param
@@ -1490,9 +1490,9 @@ static void emit_and_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0)
 			emit_mov_m32_imm(dst, MEMPARAMS, 0);										// mov   [dest],0
 		else
 			emit_and_m32_imm(dst, MEMPARAMS, param->value);								// and   [dest],param
@@ -1511,7 +1511,7 @@ static void emit_and_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_test_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_test_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 		emit_test_r32_imm(dst, reg, param->value);										// test   reg,param
@@ -1546,13 +1546,13 @@ static void emit_test_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARA
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_or_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_or_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_mov_r32_imm(dst, reg, ~0);												// mov  reg,-1
 		else
 			emit_or_r32_imm(dst, reg, param->value);									// or   reg,param
@@ -1573,9 +1573,9 @@ static void emit_or_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAMS
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_mov_m32_imm(dst, MEMPARAMS, ~0);										// mov   [dest],-1
 		else
 			emit_or_m32_imm(dst, MEMPARAMS, param->value);								// or   [dest],param
@@ -1594,13 +1594,13 @@ static void emit_or_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAMS
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_xor_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_xor_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_not_r32(dst, reg);														// not   reg
 		else
 			emit_xor_r32_imm(dst, reg, param->value);									// xor   reg,param
@@ -1621,9 +1621,9 @@ static void emit_xor_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_not_m32(dst, MEMPARAMS);												// not   [dest]
 		else
 			emit_xor_m32_imm(dst, MEMPARAMS, param->value);								// xor   [dest],param
@@ -1642,11 +1642,11 @@ static void emit_xor_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_shl_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_shl_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_shl_r32_imm(dst, reg, param->value);									// shl   reg,param
@@ -1668,7 +1668,7 @@ static void emit_shl_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_shl_m32_imm(dst, MEMPARAMS, param->value);								// shl   [dest],param
@@ -1686,11 +1686,11 @@ static void emit_shl_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_shr_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_shr_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_shr_r32_imm(dst, reg, param->value);									// shr   reg,param
@@ -1712,7 +1712,7 @@ static void emit_shr_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_shr_m32_imm(dst, MEMPARAMS, param->value);								// shr   [dest],param
@@ -1730,11 +1730,11 @@ static void emit_shr_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_sar_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sar_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_sar_r32_imm(dst, reg, param->value);									// sar   reg,param
@@ -1756,7 +1756,7 @@ static void emit_sar_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_sar_m32_imm(dst, MEMPARAMS, param->value);								// sar   [dest],param
@@ -1774,11 +1774,11 @@ static void emit_sar_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_rol_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rol_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rol_r32_imm(dst, reg, param->value);									// rol   reg,param
@@ -1800,7 +1800,7 @@ static void emit_rol_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rol_m32_imm(dst, MEMPARAMS, param->value);								// rol   [dest],param
@@ -1818,11 +1818,11 @@ static void emit_rol_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_ror_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_ror_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_ror_r32_imm(dst, reg, param->value);									// ror   reg,param
@@ -1844,7 +1844,7 @@ static void emit_ror_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_ror_m32_imm(dst, MEMPARAMS, param->value);								// ror   [dest],param
@@ -1862,11 +1862,11 @@ static void emit_ror_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_rcl_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rcl_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rcl_r32_imm(dst, reg, param->value);									// rcl   reg,param
@@ -1888,7 +1888,7 @@ static void emit_rcl_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rcl_m32_imm(dst, MEMPARAMS, param->value);								// rcl   [dest],param
@@ -1906,11 +1906,11 @@ static void emit_rcl_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     register from a 32-bit parameter
 -------------------------------------------------*/
 
-static void emit_rcr_r32_p32(drcbe_state *drcbe, x86code **dst, UINT8 reg, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rcr_r32_p32(drcbe_state *drcbe, x86code **dst, uint8_t reg, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rcr_r32_imm(dst, reg, param->value);									// rcr   reg,param
@@ -1932,7 +1932,7 @@ static void emit_rcr_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
 		else
 			emit_rcr_m32_imm(dst, MEMPARAMS, param->value);								// rcr   [dest],param
@@ -1955,27 +1955,27 @@ static void emit_rcr_m32_p32(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     into a pair of registers
 -------------------------------------------------*/
 
-static void emit_mov_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param)
+static void emit_mov_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
 		if (reglo == REG_NONE)
 			;
-		else if ((UINT32)param->value == 0)
+		else if ((uint32_t)param->value == 0)
 			emit_xor_r32_r32(dst, reglo, reglo);										// xor   reglo,reglo
 		else
 			emit_mov_r32_imm(dst, reglo, param->value);									// mov   reglo,param
 		if (reghi == REG_NONE)
 			;
-		else if ((UINT32)(param->value >> 32) == 0)
+		else if ((uint32_t)(param->value >> 32) == 0)
 			emit_xor_r32_r32(dst, reghi, reghi);										// xor   reghi,reghi
 		else
 			emit_mov_r32_imm(dst, reghi, param->value >> 32);							// mov   reghi,param >> 32
 	}
 	else if (param->type == DRCUML_PTYPE_MEMORY)
 	{
-		int skip_lower = can_skip_lower_load(drcbe, *dst, (UINT32 *)((FPTR)param->value), reglo);
-		int skip_upper = can_skip_upper_load(drcbe, *dst, (UINT32 *)((FPTR)param->value + 4), reghi);
+		int skip_lower = can_skip_lower_load(drcbe, *dst, (uint32_t *)((FPTR)param->value), reglo);
+		int skip_upper = can_skip_upper_load(drcbe, *dst, (uint32_t *)((FPTR)param->value + 4), reghi);
 		if (reglo != REG_NONE && !skip_lower)
 			emit_mov_r32_m32(dst, reglo, MABS(param->value));							// mov   reglo,[param]
 		if (reghi != REG_NONE && !skip_upper)
@@ -1998,7 +1998,7 @@ static void emit_mov_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     affecting any flags
 -------------------------------------------------*/
 
-static void emit_mov_r64_p64_keepflags(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param)
+static void emit_mov_r64_p64_keepflags(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param)
 {
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
@@ -2009,8 +2009,8 @@ static void emit_mov_r64_p64_keepflags(drcbe_state *drcbe, x86code **dst, UINT8 
 	}
 	else if (param->type == DRCUML_PTYPE_MEMORY)
 	{
-		int skip_lower = can_skip_lower_load(drcbe, *dst, (UINT32 *)((FPTR)param->value), reglo);
-		int skip_upper = can_skip_upper_load(drcbe, *dst, (UINT32 *)((FPTR)param->value + 4), reghi);
+		int skip_lower = can_skip_lower_load(drcbe, *dst, (uint32_t *)((FPTR)param->value), reglo);
+		int skip_upper = can_skip_upper_load(drcbe, *dst, (uint32_t *)((FPTR)param->value + 4), reghi);
 		if (reglo != REG_NONE && !skip_lower)
 			emit_mov_r32_m32(dst, reglo, MABS(param->value));							// mov   reglo,[param]
 		if (reghi != REG_NONE && !skip_upper)
@@ -2041,7 +2041,7 @@ static void emit_mov_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 	}
 	else if (param->type == DRCUML_PTYPE_MEMORY)
 	{
-		int skip_lower = can_skip_lower_load(drcbe, *dst, (UINT32 *)((FPTR)param->value), REG_EAX);
+		int skip_lower = can_skip_lower_load(drcbe, *dst, (uint32_t *)((FPTR)param->value), REG_EAX);
 		if (!skip_lower)
 			emit_mov_r32_m32(dst, REG_EAX, MABS(param->value));							// mov   eax,[param]
 		emit_mov_m32_r32(dst, MEMPARAMS + 0, REG_EAX);									// mov   [mem],eax
@@ -2062,7 +2062,7 @@ static void emit_mov_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     into a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_mov_p64_r64(drcbe_state *drcbe, x86code **dst, const drcuml_parameter *param, UINT8 reglo, UINT8 reghi)
+static void emit_mov_p64_r64(drcbe_state *drcbe, x86code **dst, const drcuml_parameter *param, uint8_t reglo, uint8_t reghi)
 {
 	assert(param->type != DRCUML_PTYPE_IMMEDIATE);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2086,7 +2086,7 @@ static void emit_mov_p64_r64(drcbe_state *drcbe, x86code **dst, const drcuml_par
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_add_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_add_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2144,7 +2144,7 @@ static void emit_add_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_adc_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_adc_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2202,7 +2202,7 @@ static void emit_adc_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_sub_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sub_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2260,7 +2260,7 @@ static void emit_sub_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_sbb_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sbb_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2318,7 +2318,7 @@ static void emit_sbb_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_cmp_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_cmp_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = (inst->flags != DRCUML_FLAG_Z && (inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2351,7 +2351,7 @@ static void emit_cmp_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_and_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_and_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2362,16 +2362,16 @@ static void emit_and_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
 	}
 	else if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0)
 			emit_xor_r32_r32(dst, reglo, reglo);										// xor   reglo,reglo
 		else
 			emit_and_r32_imm(dst, reglo, param->value);									// and   reglo,param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			emit_xor_r32_r32(dst, reghi, reghi);										// xor   reghi,reghi
 		else
 			emit_and_r32_imm(dst, reghi, param->value >> 32);							// and   reghi,param >> 32
@@ -2397,16 +2397,16 @@ static void emit_and_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0)
 			emit_mov_m32_imm(dst, MEMPARAMS, 0);										// mov   [dest],0
 		else
 			emit_and_m32_imm(dst, MEMPARAMS, param->value);								// and   [dest],param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			emit_mov_m32_imm(dst, MEMPARAMS + 4, 0);									// mov   [dest+4],0
 		else
 			emit_and_m32_imm(dst, MEMPARAMS + 4, param->value >> 32);					// and   [dest+4],param >> 32
@@ -2429,7 +2429,7 @@ static void emit_and_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_test_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_test_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2487,7 +2487,7 @@ static void emit_test_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARA
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_or_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_or_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2498,16 +2498,16 @@ static void emit_or_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT
 	}
 	else if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_mov_r32_imm(dst, reglo, ~0);											// mov   reglo,-1
 		else
 			emit_or_r32_imm(dst, reglo, param->value);									// or    reglo,param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			emit_mov_r32_imm(dst, reghi, ~0);											// mov   reghi,-1
 		else
 			emit_or_r32_imm(dst, reghi, param->value >> 32);							// or    reghi,param >> 32
@@ -2533,16 +2533,16 @@ static void emit_or_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAMS
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_mov_m32_imm(dst, MEMPARAMS, ~0);										// mov   [dest],-1
 		else
 			emit_or_m32_imm(dst, MEMPARAMS, param->value);								// or    [dest],param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			emit_mov_m32_imm(dst, MEMPARAMS + 4, ~0);									// mov   [dest+4],-1
 		else
 			emit_or_m32_imm(dst, MEMPARAMS + 4, param->value >> 32);					// or    [dest+4],param >> 32
@@ -2565,7 +2565,7 @@ static void emit_or_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAMS
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_xor_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_xor_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_MEMORY)
@@ -2576,16 +2576,16 @@ static void emit_xor_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
 	}
 	else if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_not_r32(dst, reglo);													// not   reglo
 		else
 			emit_xor_r32_imm(dst, reglo, param->value);									// xor   reglo,param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			emit_not_r32(dst, reghi);													// not   reghi
 		else
 			emit_xor_r32_imm(dst, reghi, param->value >> 32);							// xor   reghi,param >> 32
@@ -2611,16 +2611,16 @@ static void emit_xor_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (inst->flags == 0 && (UINT32)param->value == 0)
+		if (inst->flags == 0 && (uint32_t)param->value == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)param->value == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)param->value == 0xffffffff)
 			emit_not_m32(dst, MEMPARAMS);												// not   [dest]
 		else
 			emit_xor_m32_imm(dst, MEMPARAMS, param->value);								// xor   [dest],param
 		if (saveflags) emit_pushf(dst);													// pushf
-		if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0)
+		if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0)
 			/* skip */;
-		else if (inst->flags == 0 && (UINT32)(param->value >> 32) == 0xffffffff)
+		else if (inst->flags == 0 && (uint32_t)(param->value >> 32) == 0xffffffff)
 			emit_not_m32(dst, MEMPARAMS + 4);											// not   [dest+4]
 		else
 			emit_xor_m32_imm(dst, MEMPARAMS + 4, param->value >> 32);					// xor   [dest+4],param >> 32
@@ -2643,7 +2643,7 @@ static void emit_xor_m64_p64(drcbe_state *drcbe, x86code **dst, DECLARE_MEMPARAM
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_shl_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_shl_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = (inst->flags != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
@@ -2714,7 +2714,7 @@ static void emit_shl_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_shr_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_shr_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
@@ -2785,7 +2785,7 @@ static void emit_shr_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_sar_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_sar_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
@@ -2856,7 +2856,7 @@ static void emit_sar_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_rol_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rol_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
@@ -2931,7 +2931,7 @@ static void emit_rol_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_ror_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_ror_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	if (param->type == DRCUML_PTYPE_IMMEDIATE)
@@ -3006,7 +3006,7 @@ static void emit_ror_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_rcl_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rcl_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = ((inst->flags & DRCUML_FLAG_Z) != 0);
 	emit_link skipall, skiploop;
@@ -3048,7 +3048,7 @@ static void emit_rcl_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UIN
     pair of registers from a 64-bit parameter
 -------------------------------------------------*/
 
-static void emit_rcr_r64_p64(drcbe_state *drcbe, x86code **dst, UINT8 reglo, UINT8 reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
+static void emit_rcr_r64_p64(drcbe_state *drcbe, x86code **dst, uint8_t reglo, uint8_t reghi, const drcuml_parameter *param, const drcuml_instruction *inst)
 {
 	int saveflags = (inst->flags != 0);
 	emit_link skipall, skiploop;
@@ -3145,12 +3145,12 @@ static void fixup_label(void *parameter, drccodeptr labelcodeptr)
 	else if (src[0] == 0xe9)
 	{
 		src += 1 + 4;
-		((UINT32 *)src)[-1] = labelcodeptr - src;
+		((uint32_t *)src)[-1] = labelcodeptr - src;
 	}
 	else if (src[0] == 0x0f && (src[1] & 0xf0) == 0x80)
 	{
 		src += 2 + 4;
-		((UINT32 *)src)[-1] = labelcodeptr - src;
+		((uint32_t *)src)[-1] = labelcodeptr - src;
 	}
 	else
 		fatalerror("fixup_label called with invalid jmp source!");
@@ -3178,7 +3178,7 @@ static void fixup_exception(drccodeptr *codeptr, void *param1, void *param2, voi
 	targetptr = drcuml_handle_codeptr_addr((drcuml_codehandle *)(FPTR)handp.value);
 
 	/* first fixup the jump to get us here */
-	((UINT32 *)src)[-1] = dst - src;
+	((uint32_t *)src)[-1] = dst - src;
 
 	/* then store the exception parameter */
 	emit_mov_m32_p32(drcbe, &dst, MABS(&drcbe->state.exp), &exp);						// mov   [exp],exp
@@ -3425,8 +3425,8 @@ static x86code *op_hashjmp(drcbe_state *drcbe, x86code *dst, const drcuml_instru
 		/* a straight immediate jump is direct, though we need the PC in EAX in case of failure */
 		if (pcp.type == DRCUML_PTYPE_IMMEDIATE)
 		{
-			UINT32 l1val = (pcp.value >> drcbe->hash->l1shift) & drcbe->hash->l1mask;
-			UINT32 l2val = (pcp.value >> drcbe->hash->l2shift) & drcbe->hash->l2mask;
+			uint32_t l1val = (pcp.value >> drcbe->hash->l1shift) & drcbe->hash->l1mask;
+			uint32_t l2val = (pcp.value >> drcbe->hash->l2shift) & drcbe->hash->l2mask;
 			emit_call_m32(&dst, MABS(&drcbe->hash->base[modep.value][l1val][l2val]));	// call  hash[modep][l1val][l2val]
 		}
 
@@ -3452,8 +3452,8 @@ static x86code *op_hashjmp(drcbe_state *drcbe, x86code *dst, const drcuml_instru
 		/* fixed PC */
 		if (pcp.type == DRCUML_PTYPE_IMMEDIATE)
 		{
-			UINT32 l1val = (pcp.value >> drcbe->hash->l1shift) & drcbe->hash->l1mask;
-			UINT32 l2val = (pcp.value >> drcbe->hash->l2shift) & drcbe->hash->l2mask;
+			uint32_t l1val = (pcp.value >> drcbe->hash->l1shift) & drcbe->hash->l1mask;
+			uint32_t l2val = (pcp.value >> drcbe->hash->l2shift) & drcbe->hash->l2mask;
 			emit_mov_r32_m32(&dst, REG_EDX, MBD(REG_ECX, l1val*4));						// mov   edx,[ecx+l1val*4]
 			emit_call_m32(&dst, MBD(REG_EDX, l2val*4));									// call  [l2val*4]
 		}
@@ -3783,7 +3783,7 @@ static x86code *op_getexp(drcbe_state *drcbe, x86code *dst, const drcuml_instruc
 static x86code *op_getflgs(drcbe_state *drcbe, x86code *dst, const drcuml_instruction *inst)
 {
 	drcuml_parameter dstp, maskp;
-	UINT32 flagmask = 0;
+	uint32_t flagmask = 0;
 	int dstreg;
 
 	/* validate instruction */
@@ -4259,7 +4259,7 @@ static x86code *op_read(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 
 	/* set up a call to the read byte handler */
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
 	if ((spacesizep.value & 3) == DRCUML_SIZE_BYTE)
 	{
 		emit_call(&dst, (x86code *)drcbe->space[spacesizep.value / 16]->accessors.read_byte);
@@ -4339,7 +4339,7 @@ static x86code *op_readm(drcbe_state *drcbe, x86code *dst, const drcuml_instruct
 	else
 		emit_mov_m64_p64(drcbe, &dst, MBD(REG_ESP, 8), &maskp);							// mov    [esp+8],maskp
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
 	if ((spacesizep.value & 3) == DRCUML_SIZE_WORD)
 	{
 		emit_call(&dst, (x86code *)drcbe->space[spacesizep.value / 16]->accessors.read_word_masked);
@@ -4409,7 +4409,7 @@ static x86code *op_write(drcbe_state *drcbe, x86code *dst, const drcuml_instruct
 	else
 		emit_mov_m64_p64(drcbe, &dst, MBD(REG_ESP, 8), &srcp);							// mov    [esp+8],srcp
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
 	if ((spacesizep.value & 3) == DRCUML_SIZE_BYTE)
 		emit_call(&dst, (x86code *)drcbe->space[spacesizep.value / 16]->accessors.write_byte);
 																						// call   write_byte
@@ -4454,7 +4454,7 @@ static x86code *op_writem(drcbe_state *drcbe, x86code *dst, const drcuml_instruc
 		emit_mov_m64_p64(drcbe, &dst, MBD(REG_ESP, 8), &srcp);							// mov    [esp+8],srcp
 	}
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacesizep.value / 16]);// mov    [esp],space
 	if ((spacesizep.value & 3) == DRCUML_SIZE_WORD)
 		emit_call(&dst, (x86code *)drcbe->space[spacesizep.value / 16]->accessors.write_word_masked);
 																						// call   write_word_masked
@@ -4487,7 +4487,7 @@ static x86code *op_carry(drcbe_state *drcbe, x86code *dst, const drcuml_instruct
 	/* degenerate case: source is immediate */
 	if (srcp.type == DRCUML_PTYPE_IMMEDIATE && bitp.type == DRCUML_PTYPE_IMMEDIATE)
 	{
-		if (srcp.value & ((UINT64)1 << bitp.value))
+		if (srcp.value & ((uint64_t)1 << bitp.value))
 			emit_stc(&dst);
 		else
 			emit_clc(&dst);
@@ -5186,8 +5186,8 @@ static x86code *op_cmp(drcbe_state *drcbe, x86code *dst, const drcuml_instructio
 
 static x86code *op_mulu(drcbe_state *drcbe, x86code *dst, const drcuml_instruction *inst)
 {
-	UINT8 zsflags = inst->flags & (DRCUML_FLAG_Z | DRCUML_FLAG_S);
-	UINT8 vflag =  inst->flags & DRCUML_FLAG_V;
+	uint8_t zsflags = inst->flags & (DRCUML_FLAG_Z | DRCUML_FLAG_S);
+	uint8_t vflag =  inst->flags & DRCUML_FLAG_V;
 	drcuml_parameter dstp, edstp, src1p, src2p;
 	int compute_hi;
 
@@ -5270,13 +5270,13 @@ static x86code *op_mulu(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 		emit_call(&dst, (x86code *)dmulu);												// call  dmulu
 		if (inst->flags != 0)
 			emit_push_m32(&dst, MISD(REG_EAX, 4, flags_unmap));							// push   flags_unmap[eax*4]
-		emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
-		emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
+		emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
+		emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
 		emit_mov_p64_r64(drcbe, &dst, &dstp, REG_EAX, REG_EDX);							// mov   dstp,edx:eax
 		if (compute_hi)
 		{
-			emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
-			emit_mov_r32_m32(&dst, REG_ECX, MABS((UINT32 *)&drcbe->reshi + 1));			// mov   ecx,reshi.hi
+			emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
+			emit_mov_r32_m32(&dst, REG_ECX, MABS((uint32_t *)&drcbe->reshi + 1));			// mov   ecx,reshi.hi
 			emit_mov_p64_r64(drcbe, &dst, &edstp, REG_EAX, REG_ECX);					// mov   edstp,ecx:eax
 		}
 		if (inst->flags != 0)
@@ -5292,8 +5292,8 @@ static x86code *op_mulu(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 
 static x86code *op_muls(drcbe_state *drcbe, x86code *dst, const drcuml_instruction *inst)
 {
-	UINT8 zsflags = inst->flags & (DRCUML_FLAG_Z | DRCUML_FLAG_S);
-	UINT8 vflag =  inst->flags & DRCUML_FLAG_V;
+	uint8_t zsflags = inst->flags & (DRCUML_FLAG_Z | DRCUML_FLAG_S);
+	uint8_t vflag =  inst->flags & DRCUML_FLAG_V;
 	drcuml_parameter dstp, edstp, src1p, src2p;
 	int compute_hi;
 
@@ -5399,13 +5399,13 @@ static x86code *op_muls(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 		emit_call(&dst, (x86code *)dmuls);												// call  dmuls
 		if (inst->flags != 0)
 			emit_push_m32(&dst, MISD(REG_EAX, 4, flags_unmap));							// push   flags_unmap[eax*4]
-		emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
-		emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
+		emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
+		emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
 		emit_mov_p64_r64(drcbe, &dst, &dstp, REG_EAX, REG_EDX);							// mov   dstp,edx:eax
 		if (compute_hi)
 		{
-			emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
-			emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
+			emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
+			emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
 			emit_mov_p64_r64(drcbe, &dst, &edstp, REG_EAX, REG_EDX);					// mov   edstp,edx:eax
 		}
 		if (inst->flags != 0)
@@ -5470,13 +5470,13 @@ static x86code *op_divu(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 		emit_call(&dst, (x86code *)ddivu);												// call  ddivu
 		if (inst->flags != 0)
 			emit_push_m32(&dst, MISD(REG_EAX, 4, flags_unmap));							// push   flags_unmap[eax*4]
-		emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
-		emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
+		emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
+		emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
 		emit_mov_p64_r64(drcbe, &dst, &dstp, REG_EAX, REG_EDX);							// mov   dstp,edx:eax
 		if (compute_rem)
 		{
-			emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
-			emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
+			emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
+			emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
 			emit_mov_p64_r64(drcbe, &dst, &edstp, REG_EAX, REG_EDX);					// mov   edstp,edx:eax
 		}
 		if (inst->flags != 0)
@@ -5541,13 +5541,13 @@ static x86code *op_divs(drcbe_state *drcbe, x86code *dst, const drcuml_instructi
 		emit_call(&dst, (x86code *)ddivs);												// call  ddivs
 		if (inst->flags != 0)
 			emit_push_m32(&dst, MISD(REG_EAX, 4, flags_unmap));							// push   flags_unmap[eax*4]
-		emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
-		emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
+		emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reslo + 0));				// mov   eax,reslo.lo
+		emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reslo + 1));				// mov   edx,reslo.hi
 		emit_mov_p64_r64(drcbe, &dst, &dstp, REG_EAX, REG_EDX);							// mov   dstp,edx:eax
 		if (compute_rem)
 		{
-			emit_mov_r32_m32(&dst, REG_EAX, MABS((UINT32 *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
-			emit_mov_r32_m32(&dst, REG_EDX, MABS((UINT32 *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
+			emit_mov_r32_m32(&dst, REG_EAX, MABS((uint32_t *)&drcbe->reshi + 0));			// mov   eax,reshi.lo
+			emit_mov_r32_m32(&dst, REG_EDX, MABS((uint32_t *)&drcbe->reshi + 1));			// mov   edx,reshi.hi
 			emit_mov_p64_r64(drcbe, &dst, &edstp, REG_EAX, REG_EDX);					// mov   edstp,edx:eax
 		}
 		if (inst->flags != 0)
@@ -6409,7 +6409,7 @@ static x86code *op_fread(drcbe_state *drcbe, x86code *dst, const drcuml_instruct
 
 	/* set up a call to the read dword/qword handler */
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacep.value]);		// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacep.value]);		// mov    [esp],space
 	if (inst->size == 4)
 		emit_call(&dst, (x86code *)drcbe->space[spacep.value]->accessors.read_dword);	// call   read_dword
 	else if (inst->size == 8)
@@ -6447,7 +6447,7 @@ static x86code *op_fwrite(drcbe_state *drcbe, x86code *dst, const drcuml_instruc
 	else if (inst->size == 8)
 		emit_mov_m64_p64(drcbe, &dst, MBD(REG_ESP, 8), &srcp);							// mov    [esp+8],srcp
 	emit_mov_m32_p32(drcbe, &dst, MBD(REG_ESP, 4), &addrp);								// mov    [esp+4],addrp
-	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (UINT32)drcbe->space[spacep.value]);		// mov    [esp],space
+	emit_mov_m32_imm(&dst, MBD(REG_ESP, 0), (uint32_t)drcbe->space[spacep.value]);		// mov    [esp],space
 	if (inst->size == 4)
 		emit_call(&dst, (x86code *)drcbe->space[spacep.value]->accessors.write_dword);	// call   write_dword
 	else if (inst->size == 8)
@@ -6606,7 +6606,7 @@ static x86code *op_ffrint(drcbe_state *drcbe, x86code *dst, const drcuml_instruc
 		if (srcp.type == DRCUML_PTYPE_IMMEDIATE)
 		{
 			emit_mov_m32_imm(&dst, MABS(&drcbe->fptemp), srcp.value);					// mov   [fptemp],srcp
-			emit_mov_m32_imm(&dst, MABS((UINT8 *)&drcbe->fptemp + 4), srcp.value);		// mov   [fptemp+4],srcp
+			emit_mov_m32_imm(&dst, MABS((uint8_t *)&drcbe->fptemp + 4), srcp.value);		// mov   [fptemp+4],srcp
 			emit_fild_m64(&dst, MABS(&drcbe->fptemp));									// fild  [fptemp]
 		}
 		else if (srcp.type == DRCUML_PTYPE_MEMORY)
@@ -6944,10 +6944,10 @@ static x86code *op_frsqrt(drcbe_state *drcbe, x86code *dst, const drcuml_instruc
     dmulu - perform a double-wide unsigned multiply
 -------------------------------------------------*/
 
-static int dmulu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2, int flags)
+static int dmulu(uint64_t *dstlo, uint64_t *dsthi, uint64_t src1, uint64_t src2, int flags)
 {
-	UINT64 lo, hi, prevlo;
-	UINT64 a, b, temp;
+	uint64_t lo, hi, prevlo;
+	uint64_t a, b, temp;
 
 	/* shortcut if we don't care about the high bits or the flags */
 	if (dstlo == dsthi && flags == 0)
@@ -6966,17 +6966,17 @@ static int dmulu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2, int fla
 	}
 
 	/* compute high and low parts first */
-	lo = (UINT64)(UINT32)(a >> 0)  * (UINT64)(UINT32)(b >> 0);
-	hi = (UINT64)(UINT32)(a >> 32) * (UINT64)(UINT32)(b >> 32);
+	lo = (uint64_t)(uint32_t)(a >> 0)  * (uint64_t)(uint32_t)(b >> 0);
+	hi = (uint64_t)(uint32_t)(a >> 32) * (uint64_t)(uint32_t)(b >> 32);
 
 	/* compute middle parts */
 	prevlo = lo;
-	temp = (UINT64)(UINT32)(a >> 32)  * (UINT64)(UINT32)(b >> 0);
+	temp = (uint64_t)(uint32_t)(a >> 32)  * (uint64_t)(uint32_t)(b >> 0);
 	lo += temp << 32;
 	hi += (temp >> 32) + (lo < prevlo);
 
 	prevlo = lo;
-	temp = (UINT64)(UINT32)(a >> 0)  * (UINT64)(UINT32)(b >> 32);
+	temp = (uint64_t)(uint32_t)(a >> 0)  * (uint64_t)(uint32_t)(b >> 32);
 	lo += temp << 32;
 	hi += (temp >> 32) + (lo < prevlo);
 
@@ -6991,10 +6991,10 @@ static int dmulu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2, int fla
     dmuls - perform a double-wide signed multiply
 -------------------------------------------------*/
 
-static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags)
+static int dmuls(uint64_t *dstlo, uint64_t *dsthi, int64_t src1, int64_t src2, int flags)
 {
-	UINT64 lo, hi, prevlo;
-	UINT64 a, b, temp;
+	uint64_t lo, hi, prevlo;
+	uint64_t a, b, temp;
 
 	/* shortcut if we don't care about the high bits or the flags */
 	if (dstlo == dsthi && flags == 0)
@@ -7004,8 +7004,8 @@ static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags
 	}
 
 	/* fetch absolute source values */
-	a = src1; if ((INT64)a < 0) a = -a;
-	b = src2; if ((INT64)b < 0) b = -b;
+	a = src1; if ((int64_t)a < 0) a = -a;
+	b = src2; if ((int64_t)b < 0) b = -b;
 	if (a == 0 || b == 0)
 	{
 		*dsthi = *dstlo = 0;
@@ -7013,22 +7013,22 @@ static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags
 	}
 
 	/* compute high and low parts first */
-	lo = (UINT64)(UINT32)(a >> 0)  * (UINT64)(UINT32)(b >> 0);
-	hi = (UINT64)(UINT32)(a >> 32) * (UINT64)(UINT32)(b >> 32);
+	lo = (uint64_t)(uint32_t)(a >> 0)  * (uint64_t)(uint32_t)(b >> 0);
+	hi = (uint64_t)(uint32_t)(a >> 32) * (uint64_t)(uint32_t)(b >> 32);
 
 	/* compute middle parts */
 	prevlo = lo;
-	temp = (UINT64)(UINT32)(a >> 32)  * (UINT64)(UINT32)(b >> 0);
+	temp = (uint64_t)(uint32_t)(a >> 32)  * (uint64_t)(uint32_t)(b >> 0);
 	lo += temp << 32;
 	hi += (temp >> 32) + (lo < prevlo);
 
 	prevlo = lo;
-	temp = (UINT64)(UINT32)(a >> 0)  * (UINT64)(UINT32)(b >> 32);
+	temp = (uint64_t)(uint32_t)(a >> 0)  * (uint64_t)(uint32_t)(b >> 32);
 	lo += temp << 32;
 	hi += (temp >> 32) + (lo < prevlo);
 
 	/* adjust for signage */
-	if ((INT64)(src1 ^ src2) < 0)
+	if ((int64_t)(src1 ^ src2) < 0)
 	{
 		hi = ~hi + (lo == 0);
 		lo = ~lo + 1;
@@ -7037,7 +7037,7 @@ static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags
 	/* store the results */
 	*dsthi = hi;
 	*dstlo = lo;
-	return ((hi >> 60) & DRCUML_FLAG_S) | ((*dsthi != ((INT64)lo >> 63)) << 1);
+	return ((hi >> 60) & DRCUML_FLAG_S) | ((*dsthi != ((int64_t)lo >> 63)) << 1);
 }
 
 
@@ -7045,7 +7045,7 @@ static int dmuls(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2, int flags
     ddivu - perform a double-wide unsigned divide
 -------------------------------------------------*/
 
-static int ddivu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2)
+static int ddivu(uint64_t *dstlo, uint64_t *dsthi, uint64_t src1, uint64_t src2)
 {
 	/* do nothing if src2 == 0 */
 	if (src2 == 0)
@@ -7063,7 +7063,7 @@ static int ddivu(UINT64 *dstlo, UINT64 *dsthi, UINT64 src1, UINT64 src2)
     ddivs - perform a double-wide signed divide
 -------------------------------------------------*/
 
-static int ddivs(UINT64 *dstlo, UINT64 *dsthi, INT64 src1, INT64 src2)
+static int ddivs(uint64_t *dstlo, uint64_t *dsthi, int64_t src1, int64_t src2)
 {
 	/* do nothing if src2 == 0 */
 	if (src2 == 0)

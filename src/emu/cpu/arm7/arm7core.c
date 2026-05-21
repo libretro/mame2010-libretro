@@ -83,29 +83,29 @@
 
 // SJE: should these be inline? or are they too big to see any benefit?
 
-static void HandleCoProcDO(arm_state *cpustate, UINT32 insn);
-static void HandleCoProcRT(arm_state *cpustate, UINT32 insn);
-static void HandleCoProcDT(arm_state *cpustate, UINT32 insn);
-static void HandleHalfWordDT(arm_state *cpustate, UINT32 insn);
-static void HandleSwap(arm_state *cpustate, UINT32 insn);
-static void HandlePSRTransfer(arm_state *cpustate, UINT32 insn);
-static void HandleALU(arm_state *cpustate, UINT32 insn);
-static void HandleMul(arm_state *cpustate, UINT32 insn);
-static void HandleUMulLong(arm_state *cpustate, UINT32 insn);
-static void HandleSMulLong(arm_state *cpustate, UINT32 insn);
-INLINE void HandleBranch(arm_state *cpustate, UINT32 insn);       // pretty short, so inline should be ok
-static void HandleMemSingle(arm_state *cpustate, UINT32 insn);
-static void HandleMemBlock(arm_state *cpustate, UINT32 insn);
-static UINT32 decodeShift(arm_state *cpustate, UINT32 insn, UINT32 *pCarry);
+static void HandleCoProcDO(arm_state *cpustate, uint32_t insn);
+static void HandleCoProcRT(arm_state *cpustate, uint32_t insn);
+static void HandleCoProcDT(arm_state *cpustate, uint32_t insn);
+static void HandleHalfWordDT(arm_state *cpustate, uint32_t insn);
+static void HandleSwap(arm_state *cpustate, uint32_t insn);
+static void HandlePSRTransfer(arm_state *cpustate, uint32_t insn);
+static void HandleALU(arm_state *cpustate, uint32_t insn);
+static void HandleMul(arm_state *cpustate, uint32_t insn);
+static void HandleUMulLong(arm_state *cpustate, uint32_t insn);
+static void HandleSMulLong(arm_state *cpustate, uint32_t insn);
+INLINE void HandleBranch(arm_state *cpustate, uint32_t insn);       // pretty short, so inline should be ok
+static void HandleMemSingle(arm_state *cpustate, uint32_t insn);
+static void HandleMemBlock(arm_state *cpustate, uint32_t insn);
+static uint32_t decodeShift(arm_state *cpustate, uint32_t insn, uint32_t *pCarry);
 INLINE void SwitchMode(arm_state *cpustate, int);
 static void arm7_check_irq_state(arm_state *cpustate);
 
-INLINE void arm7_cpu_write32(arm_state *cpustate, UINT32 addr, UINT32 data);
-INLINE void arm7_cpu_write16(arm_state *cpustate, UINT32 addr, UINT16 data);
-INLINE void arm7_cpu_write8(arm_state *cpustate, UINT32 addr, UINT8 data);
-INLINE UINT32 arm7_cpu_read32(arm_state *cpustate, UINT32 addr);
-INLINE UINT16 arm7_cpu_read16(arm_state *cpustate, UINT32 addr);
-INLINE UINT8 arm7_cpu_read8(arm_state *cpustate, offs_t addr);
+INLINE void arm7_cpu_write32(arm_state *cpustate, uint32_t addr, uint32_t data);
+INLINE void arm7_cpu_write16(arm_state *cpustate, uint32_t addr, uint16_t data);
+INLINE void arm7_cpu_write8(arm_state *cpustate, uint32_t addr, uint8_t data);
+INLINE uint32_t arm7_cpu_read32(arm_state *cpustate, uint32_t addr);
+INLINE uint16_t arm7_cpu_read16(arm_state *cpustate, uint32_t addr);
+INLINE uint8_t arm7_cpu_read8(arm_state *cpustate, offs_t addr);
 
 /* Static Vars */
 // Note: for multi-cpu implementation, this approach won't work w/o modification
@@ -113,21 +113,21 @@ write32_device_func arm7_coproc_do_callback;    // holder for the co processor D
 read32_device_func arm7_coproc_rt_r_callback;   // holder for the co processor Register Transfer Read Callback func.
 write32_device_func arm7_coproc_rt_w_callback;  // holder for the co processor Register Transfer Write Callback Callback func.
 // holder for the co processor Data Transfer Read & Write Callback funcs
-void (*arm7_coproc_dt_r_callback)(arm_state *cpustate, UINT32 insn, UINT32 *prn, UINT32 (*read32)(arm_state *cpustate, UINT32 addr));
-void (*arm7_coproc_dt_w_callback)(arm_state *cpustate, UINT32 insn, UINT32 *prn, void (*write32)(arm_state *cpustate, UINT32 addr, UINT32 data));
+void (*arm7_coproc_dt_r_callback)(arm_state *cpustate, uint32_t insn, uint32_t *prn, uint32_t (*read32)(arm_state *cpustate, uint32_t addr));
+void (*arm7_coproc_dt_w_callback)(arm_state *cpustate, uint32_t insn, uint32_t *prn, void (*write32)(arm_state *cpustate, uint32_t addr, uint32_t data));
 
 #ifdef UNUSED_DEFINITION
 // custom dasm callback handlers for co-processor instructions
-char *(*arm7_dasm_cop_dt_callback)(arm_state *cpustate, char *pBuf, UINT32 opcode, char *pConditionCode, char *pBuf0);
-char *(*arm7_dasm_cop_rt_callback)(arm_state *cpustate, char *pBuf, UINT32 opcode, char *pConditionCode, char *pBuf0);
-char *(*arm7_dasm_cop_do_callback)(arm_state *cpustate, char *pBuf, UINT32 opcode, char *pConditionCode, char *pBuf0);
+char *(*arm7_dasm_cop_dt_callback)(arm_state *cpustate, char *pBuf, uint32_t opcode, char *pConditionCode, char *pBuf0);
+char *(*arm7_dasm_cop_rt_callback)(arm_state *cpustate, char *pBuf, uint32_t opcode, char *pConditionCode, char *pBuf0);
+char *(*arm7_dasm_cop_do_callback)(arm_state *cpustate, char *pBuf, uint32_t opcode, char *pConditionCode, char *pBuf0);
 #endif
 
 
 /***************************************************************************
  * Default Memory Handlers
  ***************************************************************************/
-INLINE void arm7_cpu_write32(arm_state *cpustate, UINT32 addr, UINT32 data)
+INLINE void arm7_cpu_write32(arm_state *cpustate, uint32_t addr, uint32_t data)
 {
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -142,7 +142,7 @@ INLINE void arm7_cpu_write32(arm_state *cpustate, UINT32 addr, UINT32 data)
 }
 
 
-INLINE void arm7_cpu_write16(arm_state *cpustate, UINT32 addr, UINT16 data)
+INLINE void arm7_cpu_write16(arm_state *cpustate, uint32_t addr, uint16_t data)
 {
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -156,7 +156,7 @@ INLINE void arm7_cpu_write16(arm_state *cpustate, UINT32 addr, UINT16 data)
 		memory_write_word_32le(cpustate->program, addr, data);
 }
 
-INLINE void arm7_cpu_write8(arm_state *cpustate, UINT32 addr, UINT8 data)
+INLINE void arm7_cpu_write8(arm_state *cpustate, uint32_t addr, uint8_t data)
 {
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -169,9 +169,9 @@ INLINE void arm7_cpu_write8(arm_state *cpustate, UINT32 addr, UINT8 data)
 		memory_write_byte_32le(cpustate->program, addr, data);
 }
 
-INLINE UINT32 arm7_cpu_read32(arm_state *cpustate, offs_t addr)
+INLINE uint32_t arm7_cpu_read32(arm_state *cpustate, offs_t addr)
 {
-    UINT32 result;
+    uint32_t result;
 
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -197,9 +197,9 @@ INLINE UINT32 arm7_cpu_read32(arm_state *cpustate, offs_t addr)
     return result;
 }
 
-INLINE UINT16 arm7_cpu_read16(arm_state *cpustate, offs_t addr)
+INLINE uint16_t arm7_cpu_read16(arm_state *cpustate, offs_t addr)
 {
-    UINT16 result;
+    uint16_t result;
 
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -219,7 +219,7 @@ INLINE UINT16 arm7_cpu_read16(arm_state *cpustate, offs_t addr)
     return result;
 }
 
-INLINE UINT8 arm7_cpu_read8(arm_state *cpustate, offs_t addr)
+INLINE uint8_t arm7_cpu_read8(arm_state *cpustate, offs_t addr)
 {
     if( COPRO_CTRL & COPRO_CTRL_MMU_EN )
     {
@@ -287,7 +287,7 @@ INLINE UINT8 arm7_cpu_read8(arm_state *cpustate, offs_t addr)
 
 // Long ALU Functions use bit 63
 #define HandleLongALUNZFlags(rd)                            \
-  ((((rd) & ((UINT64)1 << 63)) >> 32) | ((!(rd)) << Z_BIT))
+  ((((rd) & ((uint64_t)1 << 63)) >> 32) | ((!(rd)) << Z_BIT))
 
 #define HandleALULogicalFlags(rd, sc)                  \
   if (insn & INSN_S)                                   \
@@ -313,7 +313,7 @@ static const char *GetModeText(int cpsr)
 // I could prob. convert to macro, but Switchmode shouldn't occur that often in emulated code..
 INLINE void SwitchMode(arm_state *cpustate, int cpsr_mode_val)
 {
-    UINT32 cspr = GET_CPSR & ~MODE_FLAG;
+    uint32_t cspr = GET_CPSR & ~MODE_FLAG;
     SET_CPSR(cspr | cpsr_mode_val);
 }
 
@@ -336,11 +336,11 @@ INLINE void SwitchMode(arm_state *cpustate, int cpsr_mode_val)
    ROR >32   = Same result as ROR n-32 until amount in range of 1-32 then follow rules
 */
 
-static UINT32 decodeShift(arm_state *cpustate, UINT32 insn, UINT32 *pCarry)
+static uint32_t decodeShift(arm_state *cpustate, uint32_t insn, uint32_t *pCarry)
 {
-    UINT32 k  = (insn & INSN_OP2_SHIFT) >> INSN_OP2_SHIFT_SHIFT;  // Bits 11-7
-    UINT32 rm = GET_REGISTER(cpustate, insn & INSN_OP2_RM);
-    UINT32 t  = (insn & INSN_OP2_SHIFT_TYPE) >> INSN_OP2_SHIFT_TYPE_SHIFT;
+    uint32_t k  = (insn & INSN_OP2_SHIFT) >> INSN_OP2_SHIFT_SHIFT;  // Bits 11-7
+    uint32_t rm = GET_REGISTER(cpustate, insn & INSN_OP2_RM);
+    uint32_t t  = (insn & INSN_OP2_SHIFT_TYPE) >> INSN_OP2_SHIFT_TYPE_SHIFT;
 
     if ((insn & INSN_OP2_RM) == 0xf) {
         rm += 8;
@@ -457,7 +457,7 @@ static UINT32 decodeShift(arm_state *cpustate, UINT32 insn, UINT32 *pCarry)
 } /* decodeShift */
 
 
-static int loadInc(arm_state *cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
+static int loadInc(arm_state *cpustate, uint32_t pat, uint32_t rbv, uint32_t s)
 {
     int i, result;
 
@@ -481,7 +481,7 @@ static int loadInc(arm_state *cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
     return result;
 }
 
-static int loadDec(arm_state *cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
+static int loadDec(arm_state *cpustate, uint32_t pat, uint32_t rbv, uint32_t s)
 {
     int i, result;
 
@@ -505,7 +505,7 @@ static int loadDec(arm_state *cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
     return result;
 }
 
-static int storeInc(arm_state *cpustate, UINT32 pat, UINT32 rbv)
+static int storeInc(arm_state *cpustate, uint32_t pat, uint32_t rbv)
 {
     int i, result;
 
@@ -525,7 +525,7 @@ static int storeInc(arm_state *cpustate, UINT32 pat, UINT32 rbv)
     return result;
 } /* storeInc */
 
-static int storeDec(arm_state *cpustate, UINT32 pat, UINT32 rbv)
+static int storeDec(arm_state *cpustate, uint32_t pat, uint32_t rbv)
 {
     int i, result;
 
@@ -588,8 +588,8 @@ static void arm7_core_reset(legacy_cpu_device *device)
 // Note: couldn't find any exact cycle counts for most of these exceptions
 static void arm7_check_irq_state(arm_state *cpustate)
 {
-    UINT32 cpsr = GET_CPSR;   /* save current CPSR */
-    UINT32 pc = R15 + 4;      /* save old pc (already incremented in pipeline) */;
+    uint32_t cpsr = GET_CPSR;   /* save current CPSR */
+    uint32_t pc = R15 + 4;      /* save old pc (already incremented in pipeline) */;
 
     /* Exception priorities:
 
@@ -714,7 +714,7 @@ static void arm7_core_set_irq_line(arm_state *cpustate, int irqline, int state)
  ***************************************************************************/
 
 // Co-Processor Data Operation
-static void HandleCoProcDO(arm_state *cpustate, UINT32 insn)
+static void HandleCoProcDO(arm_state *cpustate, uint32_t insn)
 {
     // This instruction simply instructs the co-processor to do something, no data is returned to ARM7 core
     if (arm7_coproc_do_callback)
@@ -724,7 +724,7 @@ static void HandleCoProcDO(arm_state *cpustate, UINT32 insn)
 }
 
 // Co-Processor Register Transfer - To/From Arm to Co-Proc
-static void HandleCoProcRT(arm_state *cpustate, UINT32 insn)
+static void HandleCoProcRT(arm_state *cpustate, uint32_t insn)
 {
 
     /* xxxx 1110 oooL nnnn dddd cccc ppp1 mmmm */
@@ -734,7 +734,7 @@ static void HandleCoProcRT(arm_state *cpustate, UINT32 insn)
     {
         if (arm7_coproc_rt_r_callback)
         {
-            UINT32 res = arm7_coproc_rt_r_callback(cpustate->device, insn, 0);   // RT Read handler must parse opcode & return appropriate result
+            uint32_t res = arm7_coproc_rt_r_callback(cpustate->device, insn, 0);   // RT Read handler must parse opcode & return appropriate result
             SET_REGISTER(cpustate, (insn >> 12) & 0xf, res);
         }
         else
@@ -762,17 +762,17 @@ static void HandleCoProcRT(arm_state *cpustate, UINT32 insn)
                 but if co-proc reads multiple address, it must handle the offset adjustment itself.
 */
 // todo: test with valid instructions
-static void HandleCoProcDT(arm_state *cpustate, UINT32 insn)
+static void HandleCoProcDT(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rn = (insn >> 16) & 0xf;
-    UINT32 rnv = GET_REGISTER(cpustate, rn);    // Get Address Value stored from Rn
-    UINT32 ornv = rnv;                // Keep value of Rn
-    UINT32 off = (insn & 0xff) << 2;  // Offset is << 2 according to manual
-    UINT32 *prn = &ARM7REG(rn);       // Pointer to our register, so it can be changed in the callback
+    uint32_t rn = (insn >> 16) & 0xf;
+    uint32_t rnv = GET_REGISTER(cpustate, rn);    // Get Address Value stored from Rn
+    uint32_t ornv = rnv;                // Keep value of Rn
+    uint32_t off = (insn & 0xff) << 2;  // Offset is << 2 according to manual
+    uint32_t *prn = &ARM7REG(rn);       // Pointer to our register, so it can be changed in the callback
 
     // Pointers to read32/write32 functions
-    void (*write32)(arm_state *cpustate, UINT32 addr, UINT32 data);
-    UINT32 (*read32)(arm_state *cpustate, UINT32 addr);
+    void (*write32)(arm_state *cpustate, uint32_t addr, uint32_t data);
+    uint32_t (*read32)(arm_state *cpustate, uint32_t addr);
     write32 = PTR_WRITE32;
     read32 = PTR_READ32;
 
@@ -813,9 +813,9 @@ static void HandleCoProcDT(arm_state *cpustate, UINT32 insn)
         SET_REGISTER(cpustate, rn, ornv);
 }
 
-INLINE void HandleBranch(arm_state *cpustate, UINT32 insn)
+INLINE void HandleBranch(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 off = (insn & INSN_BRANCH) << 2;
+    uint32_t off = (insn & INSN_BRANCH) << 2;
 
     /* Save PC into LR if this is a branch with link */
     if (insn & INSN_BL)
@@ -834,9 +834,9 @@ INLINE void HandleBranch(arm_state *cpustate, UINT32 insn)
     }
 }
 
-static void HandleMemSingle(arm_state *cpustate, UINT32 insn)
+static void HandleMemSingle(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rn, rnv, off, rd;
+    uint32_t rn, rnv, off, rd;
 
     /* Fetch the offset */
     if (insn & INSN_I)
@@ -896,7 +896,7 @@ static void HandleMemSingle(arm_state *cpustate, UINT32 insn)
         /* Load */
         if (insn & INSN_SDT_B)
         {
-            SET_REGISTER(cpustate, rd, (UINT32)READ8(rnv));
+            SET_REGISTER(cpustate, rd, (uint32_t)READ8(rnv));
         }
         else
         {
@@ -923,7 +923,7 @@ static void HandleMemSingle(arm_state *cpustate, UINT32 insn)
                     LOG(("Wrote R15 in byte mode\n"));
 #endif
 
-            WRITE8(rnv, (UINT8) GET_REGISTER(cpustate, rd) & 0xffu);
+            WRITE8(rnv, (uint8_t) GET_REGISTER(cpustate, rd) & 0xffu);
         }
         else
         {
@@ -978,9 +978,9 @@ static void HandleMemSingle(arm_state *cpustate, UINT32 insn)
 
 } /* HandleMemSingle */
 
-static void HandleHalfWordDT(arm_state *cpustate, UINT32 insn)
+static void HandleHalfWordDT(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rn, rnv, off, rd;
+    uint32_t rn, rnv, off, rd;
 
     // Immediate or Register Offset?
     if (insn & 0x400000) {               // Bit 22 - 1 = immediate, 0 = register
@@ -1040,22 +1040,22 @@ static void HandleHalfWordDT(arm_state *cpustate, UINT32 insn)
         // Signed?
         if (insn & 0x40)
         {
-            UINT32 newval = 0;
+            uint32_t newval = 0;
 
             // Signed Half Word?
             if (insn & 0x20) {
-                UINT16 signbyte, databyte;
+                uint16_t signbyte, databyte;
                 databyte = READ16(rnv) & 0xFFFF;
                 signbyte = (databyte & 0x8000) ? 0xffff : 0;
-                newval = (UINT32)(signbyte << 16)|databyte;
+                newval = (uint32_t)(signbyte << 16)|databyte;
             }
             // Signed Byte
             else {
-                UINT8 databyte;
-                UINT32 signbyte;
+                uint8_t databyte;
+                uint32_t signbyte;
                 databyte = READ8(rnv) & 0xff;
                 signbyte = (databyte & 0x80) ? 0xffffff : 0;
-                newval = (UINT32)(signbyte << 8)|databyte;
+                newval = (uint32_t)(signbyte << 8)|databyte;
             }
 
             // PC?
@@ -1154,9 +1154,9 @@ static void HandleHalfWordDT(arm_state *cpustate, UINT32 insn)
     }
 }
 
-static void HandleSwap(arm_state *cpustate, UINT32 insn)
+static void HandleSwap(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rn, rm, rd, tmp;
+    uint32_t rn, rm, rd, tmp;
 
     rn = GET_REGISTER(cpustate, (insn >> 16) & 0xf);  // reg. w/read address
     rm = GET_REGISTER(cpustate, insn & 0xf);          // reg. w/write address
@@ -1186,10 +1186,10 @@ static void HandleSwap(arm_state *cpustate, UINT32 insn)
     ARM7_ICOUNT -= 1;
 }
 
-static void HandlePSRTransfer(arm_state *cpustate, UINT32 insn)
+static void HandlePSRTransfer(arm_state *cpustate, uint32_t insn)
 {
     int reg = (insn & 0x400000) ? SPSR : eCPSR; // Either CPSR or SPSR
-    UINT32 newval, val = 0;
+    uint32_t newval, val = 0;
     int oldmode = GET_CPSR & MODE_FLAG;
 
     // get old value of CPSR/SPSR
@@ -1281,10 +1281,10 @@ static void HandlePSRTransfer(arm_state *cpustate, UINT32 insn)
     }
 }
 
-static void HandleALU(arm_state *cpustate, UINT32 insn)
+static void HandleALU(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 op2, sc = 0, rd, rn, opcode;
-    UINT32 by, rdn;
+    uint32_t op2, sc = 0, rd, rn, opcode;
+    uint32_t by, rdn;
 
     opcode = (insn & INSN_OPCODE) >> INSN_OPCODE_SHIFT;
 
@@ -1448,9 +1448,9 @@ static void HandleALU(arm_state *cpustate, UINT32 insn)
     }
 }
 
-static void HandleMul(arm_state *cpustate, UINT32 insn)
+static void HandleMul(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 r;
+    uint32_t r;
 
     /* Do the basic multiply of Rm and Rs */
     r = GET_REGISTER(cpustate, insn & INSN_MUL_RM) *
@@ -1480,14 +1480,14 @@ static void HandleMul(arm_state *cpustate, UINT32 insn)
 }
 
 // todo: add proper cycle counts
-static void HandleSMulLong(arm_state *cpustate, UINT32 insn)
+static void HandleSMulLong(arm_state *cpustate, uint32_t insn)
 {
-    INT32 rm, rs;
-    UINT32 rhi, rlo;
-    INT64 res = 0;
+    int32_t rm, rs;
+    uint32_t rhi, rlo;
+    int64_t res = 0;
 
-    rm  = (INT32)GET_REGISTER(cpustate, insn & 0xf);
-    rs  = (INT32)GET_REGISTER(cpustate, ((insn >> 8) & 0xf));
+    rm  = (int32_t)GET_REGISTER(cpustate, insn & 0xf);
+    rs  = (int32_t)GET_REGISTER(cpustate, ((insn >> 8) & 0xf));
     rhi = (insn >> 16) & 0xf;
     rlo = (insn >> 12) & 0xf;
 
@@ -1497,12 +1497,12 @@ static void HandleSMulLong(arm_state *cpustate, UINT32 insn)
 #endif
 
     /* Perform the multiplication */
-    res = (INT64)rm * rs;
+    res = (int64_t)rm * rs;
 
     /* Add on Rn if this is a MLA */
     if (insn & INSN_MUL_A)
     {
-        INT64 acum = (INT64)((((INT64)(GET_REGISTER(cpustate, rhi))) << 32) | GET_REGISTER(cpustate, rlo));
+        int64_t acum = (int64_t)((((int64_t)(GET_REGISTER(cpustate, rhi))) << 32) | GET_REGISTER(cpustate, rlo));
         res += acum;
     }
 
@@ -1518,14 +1518,14 @@ static void HandleSMulLong(arm_state *cpustate, UINT32 insn)
 }
 
 // todo: add proper cycle counts
-static void HandleUMulLong(arm_state *cpustate, UINT32 insn)
+static void HandleUMulLong(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rm, rs;
-    UINT32 rhi, rlo;
-    UINT64 res = 0;
+    uint32_t rm, rs;
+    uint32_t rhi, rlo;
+    uint64_t res = 0;
 
-    rm  = (INT32)GET_REGISTER(cpustate, insn & 0xf);
-    rs  = (INT32)GET_REGISTER(cpustate, ((insn >> 8) & 0xf));
+    rm  = (int32_t)GET_REGISTER(cpustate, insn & 0xf);
+    rs  = (int32_t)GET_REGISTER(cpustate, ((insn >> 8) & 0xf));
     rhi = (insn >> 16) & 0xf;
     rlo = (insn >> 12) & 0xf;
 
@@ -1535,12 +1535,12 @@ static void HandleUMulLong(arm_state *cpustate, UINT32 insn)
 #endif
 
     /* Perform the multiplication */
-    res = (UINT64)rm * rs;
+    res = (uint64_t)rm * rs;
 
     /* Add on Rn if this is a MLA */
     if (insn & INSN_MUL_A)
     {
-        UINT64 acum = (UINT64)((((UINT64)(GET_REGISTER(cpustate, rhi))) << 32) | GET_REGISTER(cpustate, rlo));
+        uint64_t acum = (uint64_t)((((uint64_t)(GET_REGISTER(cpustate, rhi))) << 32) | GET_REGISTER(cpustate, rlo));
         res += acum;
     }
 
@@ -1555,10 +1555,10 @@ static void HandleUMulLong(arm_state *cpustate, UINT32 insn)
     }
 }
 
-static void HandleMemBlock(arm_state *cpustate, UINT32 insn)
+static void HandleMemBlock(arm_state *cpustate, uint32_t insn)
 {
-    UINT32 rb = (insn & INSN_RN) >> INSN_RN_SHIFT;
-    UINT32 rbp = GET_REGISTER(cpustate, rb);
+    uint32_t rb = (insn & INSN_RN) >> INSN_RN_SHIFT;
+    uint32_t rbp = GET_REGISTER(cpustate, rb);
     int result;
 
 #if ARM7_DEBUG_CORE

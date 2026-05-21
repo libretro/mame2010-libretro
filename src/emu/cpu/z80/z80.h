@@ -29,6 +29,6 @@ DECLARE_LEGACY_CPU_DEVICE(NSC800, nsc800);
 
 CPU_DISASSEMBLE( z80 );
 
-void z80_set_cycle_tables(running_device *device, const UINT8 *op, const UINT8 *cb, const UINT8 *ed, const UINT8 *xy, const UINT8 *xycb, const UINT8 *ex);
+void z80_set_cycle_tables(running_device *device, const uint8_t *op, const uint8_t *cb, const uint8_t *ed, const uint8_t *xy, const uint8_t *xycb, const uint8_t *ex);
 
 #endif /* __Z80_H__ */

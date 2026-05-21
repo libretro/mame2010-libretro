@@ -38,8 +38,8 @@
 #define D 8
 #define I 9 // invalid
 
-typedef UINT32 SaturnAdr;   // 20 bit, packed
-typedef UINT8  SaturnNib;   // 4 bit
+typedef uint32_t SaturnAdr;   // 20 bit, packed
+typedef uint8_t  SaturnNib;   // 4 bit
 
 // 64 bit, unpacked (one nibble per byte)
 typedef SaturnNib Saturn64[16];
@@ -63,9 +63,9 @@ struct _saturn_state
 
 	SaturnNib p; // 4 bit pointer
 
-        UINT16 out; // 12 bit (packed)
-	UINT8  carry, decimal;
-	UINT16 st; // status 16 bit
+        uint16_t out; // 12 bit (packed)
+	uint8_t  carry, decimal;
+	uint16_t st; // status 16 bit
 
 	SaturnNib hst; // hardware status 4 bit
 #define XM 1 // external Modules missing
@@ -73,12 +73,12 @@ struct _saturn_state
 #define SR 4 // Service Request
 #define MP 8 // Module Pulled
 
-	UINT8	nmi_state;
-	UINT8   irq_state;
-	UINT8   irq_enable;     /* INTON / INTOFF */
-	UINT8   in_irq;         /* already servicing IRQ */
-	UINT8	pending_irq;	/* IRQ is pending */
-	UINT8   sleeping;       /* low-consumption state */
+	uint8_t	nmi_state;
+	uint8_t   irq_state;
+	uint8_t   irq_enable;     /* INTON / INTOFF */
+	uint8_t   in_irq;         /* already servicing IRQ */
+	uint8_t	pending_irq;	/* IRQ is pending */
+	uint8_t   sleeping;       /* low-consumption state */
 	int 	monitor_id;
 	int		monitor_in;
 	device_irq_callback irq_callback;
@@ -232,7 +232,7 @@ static void saturn_set_wakeup_line(saturn_state *cpustate, int state)
  * Generic set_info
  **************************************************************************/
 
-static void IntReg64(Saturn64 r, INT64 d)
+static void IntReg64(Saturn64 r, int64_t d)
 {
 	int i;
 	for (i=0; i<16; i++)
@@ -288,12 +288,12 @@ static CPU_SET_INFO( saturn )
 #define Reg64Data(s) s[15],s[14],s[13],s[12],s[11],s[10],s[9],s[8],s[7],s[6],s[5],s[4],s[3],s[2],s[1],s[0]
 #define Reg64Format "%x %x%x%x%x%x%x%x %x%x%x %x%x%x%x%x"
 
-static INT64 Reg64Int(Saturn64 r)
+static int64_t Reg64Int(Saturn64 r)
 {
-	INT64 x = 0;
+	int64_t x = 0;
 	int i;
 	for (i=0; i<16; i++)
-		x |= (INT64) r[i] << (4*i);
+		x |= (int64_t) r[i] << (4*i);
 	return x;
 }
 

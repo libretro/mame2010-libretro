@@ -17,7 +17,7 @@
 static void setstat(tms99xx_state *cpustate)
 {
 	int i;
-	UINT8 a;
+	uint8_t a;
 
 	cpustate->STATUS &= ~ ST_OP;
 
@@ -72,7 +72,7 @@ static void getstat(tms99xx_state *cpustate)
 */
 
 
-static const UINT16 right_shift_mask_table[17] =
+static const uint16_t right_shift_mask_table[17] =
 {
 	0xFFFF,
 	0x7FFF,
@@ -93,7 +93,7 @@ static const UINT16 right_shift_mask_table[17] =
 	0x0000
 };
 
-static const UINT16 inverted_right_shift_mask_table[17] =
+static const uint16_t inverted_right_shift_mask_table[17] =
 {
 	0x0000,
 	0x8000,
@@ -114,12 +114,12 @@ static const UINT16 inverted_right_shift_mask_table[17] =
 	0xFFFF
 };
 
-INLINE UINT16 logical_right_shift(UINT16 val, int c)
+INLINE uint16_t logical_right_shift(uint16_t val, int c)
 {
 	return((val>>c) & right_shift_mask_table[c]);
 }
 
-INLINE INT16 arithmetic_right_shift(INT16 val, int c)
+INLINE int16_t arithmetic_right_shift(int16_t val, int c)
 {
 	if (val < 0)
 		return((val>>c) | inverted_right_shift_mask_table[c]);
@@ -134,7 +134,7 @@ INLINE INT16 arithmetic_right_shift(INT16 val, int c)
 /*
     Set lae
 */
-INLINE void setst_lae(tms99xx_state *cpustate, INT16 val)
+INLINE void setst_lae(tms99xx_state *cpustate, int16_t val)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ);
 
@@ -150,7 +150,7 @@ INLINE void setst_lae(tms99xx_state *cpustate, INT16 val)
 /*
     Set laep (BYTE)
 */
-INLINE void setst_byte_laep(tms99xx_state *cpustate, INT8 val)
+INLINE void setst_byte_laep(tms99xx_state *cpustate, int8_t val)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ);
 
@@ -167,7 +167,7 @@ INLINE void setst_byte_laep(tms99xx_state *cpustate, INT8 val)
 /*
     For COC, CZC, and TB
 */
-INLINE void setst_e(tms99xx_state *cpustate, UINT16 val, UINT16 to)
+INLINE void setst_e(tms99xx_state *cpustate, uint16_t val, uint16_t to)
 {
 	if (val == to)
 		cpustate->STATUS |= ST_EQ;
@@ -178,7 +178,7 @@ INLINE void setst_e(tms99xx_state *cpustate, UINT16 val, UINT16 to)
 /*
     For CI, C, CB
 */
-INLINE void setst_c_lae(tms99xx_state *cpustate, UINT16 to, UINT16 val)
+INLINE void setst_c_lae(tms99xx_state *cpustate, uint16_t to, uint16_t val)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ);
 
@@ -186,9 +186,9 @@ INLINE void setst_c_lae(tms99xx_state *cpustate, UINT16 to, UINT16 val)
 		cpustate->STATUS |= ST_EQ;
 	else
 	{
-		if ( ((INT16) val) > ((INT16) to) )
+		if ( ((int16_t) val) > ((int16_t) to) )
 			cpustate->STATUS |= ST_AGT;
-		if ( ((UINT16) val) > ((UINT16) to) )
+		if ( ((uint16_t) val) > ((uint16_t) to) )
 		cpustate->STATUS |= ST_LGT;
 	}
 }
@@ -196,10 +196,10 @@ INLINE void setst_c_lae(tms99xx_state *cpustate, UINT16 to, UINT16 val)
 /*
     Set laeco for add
 */
-INLINE INT16 setst_add_laeco(tms99xx_state *cpustate, int a, int b)
+INLINE int16_t setst_add_laeco(tms99xx_state *cpustate, int a, int b)
 {
-	UINT32 res;
-	INT16 res2;
+	uint32_t res;
+	int16_t res2;
 
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
 
@@ -216,7 +216,7 @@ INLINE INT16 setst_add_laeco(tms99xx_state *cpustate, int a, int b)
 		cpustate->STATUS |= ST_DC;
 #endif
 
-	res2 = (INT16) res;
+	res2 = (int16_t) res;
 
 	if (res2 > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
@@ -232,10 +232,10 @@ INLINE INT16 setst_add_laeco(tms99xx_state *cpustate, int a, int b)
 /*
     Set laeco for subtract
 */
-INLINE INT16 setst_sub_laeco(tms99xx_state *cpustate, int a, int b)
+INLINE int16_t setst_sub_laeco(tms99xx_state *cpustate, int a, int b)
 {
-	UINT32 res;
-	INT16 res2;
+	uint32_t res;
+	int16_t res2;
 
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
 
@@ -252,7 +252,7 @@ INLINE INT16 setst_sub_laeco(tms99xx_state *cpustate, int a, int b)
 		cpustate->STATUS |= ST_DC;
 #endif
 
-	res2 = (INT16) res;
+	res2 = (int16_t) res;
 
 	if (res2 > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
@@ -268,10 +268,10 @@ INLINE INT16 setst_sub_laeco(tms99xx_state *cpustate, int a, int b)
 /*
     Set laecop for add (BYTE)
 */
-INLINE INT8 setst_addbyte_laecop(tms99xx_state *cpustate, int a, int b)
+INLINE int8_t setst_addbyte_laecop(tms99xx_state *cpustate, int a, int b)
 {
 	unsigned int res;
-	INT8 res2;
+	int8_t res2;
 
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV | ST_OP);
 
@@ -288,7 +288,7 @@ INLINE INT8 setst_addbyte_laecop(tms99xx_state *cpustate, int a, int b)
 		cpustate->STATUS |= ST_DC;
 #endif
 
-	res2 = (INT8) res;
+	res2 = (int8_t) res;
 
 	if (res2 > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
@@ -306,10 +306,10 @@ INLINE INT8 setst_addbyte_laecop(tms99xx_state *cpustate, int a, int b)
 /*
     Set laecop for subtract (BYTE)
 */
-INLINE INT8 setst_subbyte_laecop(tms99xx_state *cpustate, int a, int b)
+INLINE int8_t setst_subbyte_laecop(tms99xx_state *cpustate, int a, int b)
 {
 	unsigned int res;
-	INT8 res2;
+	int8_t res2;
 
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV | ST_OP);
 
@@ -326,7 +326,7 @@ INLINE INT8 setst_subbyte_laecop(tms99xx_state *cpustate, int a, int b)
 		cpustate->STATUS |= ST_DC;
 #endif
 
-	res2 = (INT8) res;
+	res2 = (int8_t) res;
 
 	if (res2 > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
@@ -345,7 +345,7 @@ INLINE INT8 setst_subbyte_laecop(tms99xx_state *cpustate, int a, int b)
 /*
     For NEG
 */
-INLINE void setst_laeo(tms99xx_state *cpustate, INT16 val)
+INLINE void setst_laeo(tms99xx_state *cpustate, int16_t val)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_OV);
 
@@ -354,7 +354,7 @@ INLINE void setst_laeo(tms99xx_state *cpustate, INT16 val)
 	else if (val < 0)
 	{
 	cpustate->STATUS |= ST_LGT;
-	if (((UINT16) val) == 0x8000)
+	if (((uint16_t) val) == 0x8000)
 		cpustate->STATUS |= ST_OV;
 	}
 	else
@@ -366,7 +366,7 @@ INLINE void setst_laeo(tms99xx_state *cpustate, INT16 val)
 /*
     Meat of SRA
 */
-INLINE UINT16 setst_sra_laec(tms99xx_state *cpustate, INT16 a, UINT16 c)
+INLINE uint16_t setst_sra_laec(tms99xx_state *cpustate, int16_t a, uint16_t c)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C);
 
@@ -392,7 +392,7 @@ INLINE UINT16 setst_sra_laec(tms99xx_state *cpustate, INT16 a, UINT16 c)
 /*
     Meat of SRL.  Same algorithm as SRA, except that we fills in with 0s.
 */
-INLINE UINT16 setst_srl_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
+INLINE uint16_t setst_srl_laec(tms99xx_state *cpustate, uint16_t a,uint16_t c)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C);
 
@@ -404,9 +404,9 @@ INLINE UINT16 setst_srl_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
 		a = logical_right_shift(a, 1);
 	}
 
-	if (((INT16) a) > 0)
+	if (((int16_t) a) > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
-	else if (((INT16) a) < 0)
+	else if (((int16_t) a) < 0)
 		cpustate->STATUS |= ST_LGT;
 	else
 		cpustate->STATUS |= ST_EQ;
@@ -418,7 +418,7 @@ INLINE UINT16 setst_srl_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
 //
 // Meat of SRC
 //
-INLINE UINT16 setst_src_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
+INLINE uint16_t setst_src_laec(tms99xx_state *cpustate, uint16_t a,uint16_t c)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C);
 
@@ -429,9 +429,9 @@ INLINE UINT16 setst_src_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
 			cpustate->STATUS |= ST_C;
 	}
 
-	if (((INT16) a) > 0)
+	if (((int16_t) a) > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
-	else if (((INT16) a) < 0)
+	else if (((int16_t) a) < 0)
 		cpustate->STATUS |= ST_LGT;
 	else
 		cpustate->STATUS |= ST_EQ;
@@ -443,15 +443,15 @@ INLINE UINT16 setst_src_laec(tms99xx_state *cpustate, UINT16 a,UINT16 c)
 //
 // Meat of SLA
 //
-INLINE UINT16 setst_sla_laeco(tms99xx_state *cpustate, UINT16 a, UINT16 c)
+INLINE uint16_t setst_sla_laeco(tms99xx_state *cpustate, uint16_t a, uint16_t c)
 {
 	cpustate->STATUS &= ~ (ST_LGT | ST_AGT | ST_EQ | ST_C | ST_OV);
 
 	if (c != 0)
 	{
 		{
-			register UINT16 mask;
-			register UINT16 ousted_bits;
+			register uint16_t mask;
+			register uint16_t ousted_bits;
 
 			mask = 0xFFFF << (16-c-1);
 			ousted_bits = a & mask;
@@ -468,9 +468,9 @@ INLINE UINT16 setst_sla_laeco(tms99xx_state *cpustate, UINT16 a, UINT16 c)
 		a <<= 1;
 	}
 
-	if (((INT16) a) > 0)
+	if (((int16_t) a) > 0)
 		cpustate->STATUS |= ST_LGT | ST_AGT;
-	else if (((INT16) a) < 0)
+	else if (((int16_t) a) < 0)
 		cpustate->STATUS |= ST_LGT;
 	else
 		cpustate->STATUS |= ST_EQ;

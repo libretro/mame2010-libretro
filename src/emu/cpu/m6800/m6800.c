@@ -12,9 +12,9 @@
         6809 Microcomputer Programming & Interfacing with Experiments"
             by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-    System dependencies:    UINT16 must be 16 bit unsigned int
-                            UINT8 must be 8 bit unsigned int
-                            UINT32 must be more than 16 bits
+    System dependencies:    uint16_t must be 16 bit unsigned int
+                            uint8_t must be 8 bit unsigned int
+                            uint32_t must be more than 16 bits
                             arrays up to 65536 bytes must be supported
                             machine must be twos complement
 
@@ -105,12 +105,12 @@ struct _m6800_state
 	PAIR	s;				/* Stack pointer */
 	PAIR	x;				/* Index register */
 	PAIR	d;				/* Accumulators */
-	UINT8	cc; 			/* Condition codes */
-	UINT8	wai_state;		/* WAI opcode state ,(or sleep opcode state) */
-	UINT8	nmi_state;		/* NMI line state */
-	UINT8	nmi_pending;	/* NMI pending */
-	UINT8	irq_state[2];	/* IRQ line state [IRQ1,TIN] */
-	UINT8	ic_eddge;		/* InputCapture eddge , b.0=fall,b.1=raise */
+	uint8_t	cc; 			/* Condition codes */
+	uint8_t	wai_state;		/* WAI opcode state ,(or sleep opcode state) */
+	uint8_t	nmi_state;		/* NMI line state */
+	uint8_t	nmi_pending;	/* NMI pending */
+	uint8_t	irq_state[2];	/* IRQ line state [IRQ1,TIN] */
+	uint8_t	ic_eddge;		/* InputCapture eddge , b.0=fall,b.1=raise */
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -121,26 +121,26 @@ struct _m6800_state
     const address_space *io;
 
 	void	(* const * insn)(m6800_state *);	/* instruction table */
-	const UINT8 *cycles;			/* clock cycle of instruction table */
+	const uint8_t *cycles;			/* clock cycle of instruction table */
 	/* internal registers */
-	UINT8	port1_ddr;
-	UINT8	port2_ddr;
-	UINT8	port3_ddr;
-	UINT8	port4_ddr;
-	UINT8	port1_data;
-	UINT8	port2_data;
-	UINT8	port3_data;
-	UINT8	port4_data;
-	UINT8	tcsr;			/* Timer Control and Status Register */
-	UINT8	pending_tcsr;	/* pending IRQ flag for clear IRQflag process */
-	UINT8	irq2;			/* IRQ2 flags */
-	UINT8	ram_ctrl;
+	uint8_t	port1_ddr;
+	uint8_t	port2_ddr;
+	uint8_t	port3_ddr;
+	uint8_t	port4_ddr;
+	uint8_t	port1_data;
+	uint8_t	port2_data;
+	uint8_t	port3_data;
+	uint8_t	port4_data;
+	uint8_t	tcsr;			/* Timer Control and Status Register */
+	uint8_t	pending_tcsr;	/* pending IRQ flag for clear IRQflag process */
+	uint8_t	irq2;			/* IRQ2 flags */
+	uint8_t	ram_ctrl;
 	PAIR	counter;		/* free running counter */
 	PAIR	output_compare;	/* output compare       */
-	UINT16	input_capture;	/* input capture        */
+	uint16_t	input_capture;	/* input capture        */
 
 	int		clock;
-	UINT8	trcsr, rmcr, rdr, tdr, rsr, tsr;
+	uint8_t	trcsr, rmcr, rdr, tdr, rsr, tsr;
 	int		rxbits, txbits, txstate, trcsr_read, tx;
 
 	int		icount;
@@ -199,7 +199,7 @@ static void hd63701_trap_pc(m6800_state *cpustate);
 #define EA		cpustate->ea.w.l
 
 /* point of next timer event */
-static UINT32 timer_next;
+static uint32_t timer_next;
 
 /* memory interface */
 
@@ -299,7 +299,7 @@ enum
 
 /* operate one instruction for */
 #define ONE_MORE_INSN() {		\
-	UINT8 ireg; 							\
+	uint8_t ireg; 							\
 	pPPC = pPC; 							\
 	debugger_instruction_hook(cpustate->device, PCD);						\
 	ireg=M_RDOP(PCD);						\
@@ -321,8 +321,8 @@ enum
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)		if(!(a))SEZ
-#define SET_Z8(a)		SET_Z((UINT8)(a))
-#define SET_Z16(a)		SET_Z((UINT16)(a))
+#define SET_Z8(a)		SET_Z((uint8_t)(a))
+#define SET_Z16(a)		SET_Z((uint16_t)(a))
 #define SET_N8(a)		CC|=(((a)&0x80)>>4)
 #define SET_N16(a)		CC|=(((a)&0x8000)>>12)
 #define SET_H(a,b,r)	CC|=((((a)^(b)^(r))&0x10)<<1)
@@ -331,7 +331,7 @@ enum
 #define SET_V8(a,b,r)	CC|=((((a)^(b)^(r)^((r)>>1))&0x80)>>6)
 #define SET_V16(a,b,r)	CC|=((((a)^(b)^(r)^((r)>>1))&0x8000)>>14)
 
-static const UINT8 flags8i[256]=	 /* increment */
+static const uint8_t flags8i[256]=	 /* increment */
 {
 0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -350,7 +350,7 @@ static const UINT8 flags8i[256]=	 /* increment */
 0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,
 0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08
 };
-static const UINT8 flags8d[256]= /* decrement */
+static const uint8_t flags8d[256]= /* decrement */
 {
 0x04,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -378,15 +378,15 @@ static const UINT8 flags8d[256]= /* decrement */
 #define SET_FLAGS8(a,b,r)	{SET_N8(r);SET_Z8(r);SET_V8(a,b,r);SET_C8(r);}
 #define SET_FLAGS16(a,b,r)	{SET_N16(r);SET_Z16(r);SET_V16(a,b,r);SET_C16(r);}
 
-/* for treating an UINT8 as a signed INT16 */
-#define SIGNED(b) ((INT16)(b&0x80?b|0xff00:b))
+/* for treating an uint8_t as a signed int16_t */
+#define SIGNED(b) ((int16_t)(b&0x80?b|0xff00:b))
 
 /* Macros for addressing modes */
 #define DIRECT IMMBYTE(EAD)
 #define IMM8 EA=PC++
 #define IMM16 {EA=PC;PC+=2;}
 #define EXTENDED IMMWORD(cpustate->ea)
-#define INDEXED {EA=X+(UINT8)M_RDOP_ARG(PCD);PC++;}
+#define INDEXED {EA=X+(uint8_t)M_RDOP_ARG(PCD);PC++;}
 
 /* macros to set status flags */
 #if defined(SEC)
@@ -433,7 +433,7 @@ static const UINT8 flags8d[256]= /* decrement */
 
 /* Note: we use 99 cycles here for invalid opcodes so that we don't */
 /* hang in an infinite loop if we hit one */
-static const UINT8 cycles_6800[] =
+static const uint8_t cycles_6800[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/ 99, 2,99,99,99,99, 2, 2, 4, 4, 2, 2, 2, 2, 2, 2,
@@ -454,7 +454,7 @@ static const UINT8 cycles_6800[] =
 	/*F*/  4, 4, 4,99, 4, 4, 4, 5, 4, 4, 4, 4,99,99, 5, 6
 };
 
-static const UINT8 cycles_6803[] =
+static const uint8_t cycles_6803[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/ 99, 2,99,99, 3, 3, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2,
@@ -475,7 +475,7 @@ static const UINT8 cycles_6803[] =
 	/*F*/  4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
 
-static const UINT8 cycles_63701[] =
+static const uint8_t cycles_63701[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/ 99, 1,99,99, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -496,7 +496,7 @@ static const UINT8 cycles_63701[] =
 	/*F*/  4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
 
-static const UINT8 cycles_nsc8105[] =
+static const uint8_t cycles_nsc8105[] =
 {
 		/* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
 	/*0*/ 99,99, 2,99,99, 2,99, 2, 4, 2, 4, 2, 2, 2, 2, 2,
@@ -529,20 +529,20 @@ static const UINT8 cycles_nsc8105[] =
 	}																\
 }
 
-INLINE UINT32 RM16(m6800_state *cpustate, UINT32 Addr )
+INLINE uint32_t RM16(m6800_state *cpustate, uint32_t Addr )
 {
-	UINT32 result = RM(Addr) << 8;
+	uint32_t result = RM(Addr) << 8;
 	return result | RM((Addr+1)&0xffff);
 }
 
-INLINE void WM16(m6800_state *cpustate, UINT32 Addr, PAIR *p )
+INLINE void WM16(m6800_state *cpustate, uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
 	WM( (Addr+1)&0xffff, p->b.l );
 }
 
 /* IRQ enter */
-static void enter_interrupt(m6800_state *cpustate, const char *message,UINT16 irq_vector)
+static void enter_interrupt(m6800_state *cpustate, const char *message,uint16_t irq_vector)
 {
 	LOG((message, cpustate->device->tag()));
 	if( cpustate->wai_state & (M6800_WAI|M6800_SLP) )
@@ -998,7 +998,7 @@ static void set_irq_line(m6800_state *cpustate, int irqline, int state)
  * Execute one instruction
  ****************************************************************************/
 
-INLINE void m6800_execute_one(m6800_state *cpustate, UINT8 ireg)
+INLINE void m6800_execute_one(m6800_state *cpustate, uint8_t ireg)
 {
 	switch( ireg )
 	{
@@ -1267,7 +1267,7 @@ INLINE void m6800_execute_one(m6800_state *cpustate, UINT8 ireg)
 static CPU_EXECUTE( m6800 )
 {
 	m6800_state *cpustate = get_safe_token(device);
-	UINT8 ireg;
+	uint8_t ireg;
 
 	CHECK_IRQ_LINES(cpustate); /* HJB 990417 */
 
@@ -1360,7 +1360,7 @@ static CPU_INIT( m6803 )
  * Execute one instruction
  ****************************************************************************/
 
-INLINE void m6803_execute_one(m6800_state *cpustate, UINT8 ireg)
+INLINE void m6803_execute_one(m6800_state *cpustate, uint8_t ireg)
 {
 	switch( ireg )
 	{
@@ -1629,7 +1629,7 @@ INLINE void m6803_execute_one(m6800_state *cpustate, UINT8 ireg)
 static CPU_EXECUTE( m6803 )
 {
 	m6800_state *cpustate = get_safe_token(device);
-	UINT8 ireg;
+	uint8_t ireg;
 
 	CHECK_IRQ_LINES(cpustate); /* HJB 990417 */
 
@@ -1711,7 +1711,7 @@ static CPU_INIT( hd63701 )
  * Execute one instruction
  ****************************************************************************/
 
-INLINE void hd63071_execute_one(m6800_state *cpustate, UINT8 ireg)
+INLINE void hd63071_execute_one(m6800_state *cpustate, uint8_t ireg)
 {
 	switch( ireg )
 	{
@@ -1980,7 +1980,7 @@ INLINE void hd63071_execute_one(m6800_state *cpustate, UINT8 ireg)
 static CPU_EXECUTE( hd63701 )
 {
 	m6800_state *cpustate = get_safe_token(device);
-	UINT8 ireg;
+	uint8_t ireg;
 
 	CHECK_IRQ_LINES(cpustate); /* HJB 990417 */
 
@@ -2054,7 +2054,7 @@ static CPU_INIT( nsc8105 )
  * Execute one instruction
  ****************************************************************************/
 
-INLINE void nsc8105_execute_one(m6800_state *cpustate, UINT8 ireg)
+INLINE void nsc8105_execute_one(m6800_state *cpustate, uint8_t ireg)
 {
 	switch( ireg )
 	{
@@ -2323,7 +2323,7 @@ INLINE void nsc8105_execute_one(m6800_state *cpustate, UINT8 ireg)
 static CPU_EXECUTE( nsc8105 )
 {
 	m6800_state *cpustate = get_safe_token(device);
-	UINT8 ireg;
+	uint8_t ireg;
 
 	CHECK_IRQ_LINES(cpustate); /* HJB 990417 */
 

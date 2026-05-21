@@ -42,13 +42,13 @@ typedef struct _tms7000_state tms7000_state;
 
 static void tms7000_set_irq_line(tms7000_state *cpustate, int irqline, int state);
 static void tms7000_check_IRQ_lines(tms7000_state *cpustate);
-static void tms7000_do_interrupt( tms7000_state *cpustate, UINT16 address, UINT8 line );
+static void tms7000_do_interrupt( tms7000_state *cpustate, uint16_t address, uint8_t line );
 static CPU_EXECUTE( tms7000 );
 static CPU_EXECUTE( tms7000_exl );
 static void tms7000_service_timer1( running_device *device );
-static UINT16 bcd_add( UINT16 a, UINT16 b );
-static UINT16 bcd_tencomp( UINT16 a );
-static UINT16 bcd_sub( UINT16 a, UINT16 b);
+static uint16_t bcd_add( uint16_t a, uint16_t b );
+static uint16_t bcd_tencomp( uint16_t a );
+static uint16_t bcd_sub( uint16_t a, uint16_t b);
 
 /* Static variables */
 
@@ -67,11 +67,11 @@ static UINT16 bcd_sub( UINT16 a, UINT16 b);
 struct _tms7000_state
 {
 	PAIR		pc; 		/* Program counter */
-	UINT8		sp;		/* Stack Pointer */
-	UINT8		sr;		/* Status Register */
-	UINT8		irq_state[3];	/* State of the three IRQs */
-	UINT8		rf[0x80];	/* Register file (SJE) */
-	UINT8		pf[0x100];	/* Perpherial file */
+	uint8_t		sp;		/* Stack Pointer */
+	uint8_t		sr;		/* Status Register */
+	uint8_t		irq_state[3];	/* State of the three IRQs */
+	uint8_t		rf[0x80];	/* Register file (SJE) */
+	uint8_t		pf[0x100];	/* Perpherial file */
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -79,10 +79,10 @@ struct _tms7000_state
 	int			icount;
 	int 		div_by_16_trigger;
 	int			cycles_per_INT2;
-	UINT8		t1_capture_latch; /* Timer 1 capture latch */
-	INT8		t1_prescaler;	/* Timer 1 prescaler (5 bits) */
-	INT16		t1_decrementer;	/* Timer 1 decrementer (8 bits) */
-	UINT8		idle_state;	/* Set after the execution of an idle instruction */
+	uint8_t		t1_capture_latch; /* Timer 1 capture latch */
+	int8_t		t1_prescaler;	/* Timer 1 prescaler (5 bits) */
+	int16_t		t1_decrementer;	/* Timer 1 decrementer (8 bits) */
+	uint8_t		idle_state;	/* Set after the execution of an idle instruction */
 };
 
 INLINE tms7000_state *get_safe_token(running_device *device)
@@ -114,8 +114,8 @@ INLINE tms7000_state *get_safe_token(running_device *device)
 #define SET_C8(a)	pSR|=((a&0x0100)>>1)
 #define SET_N8(a)	pSR|=((a&0x0080)>>1)
 #define SET_Z(a)	if(!a)pSR|=SR_Z
-#define SET_Z8(a)	SET_Z((UINT8)a)
-#define SET_Z16(a)	SET_Z((UINT8)a>>8)
+#define SET_Z8(a)	SET_Z((uint8_t)a)
+#define SET_Z16(a)	SET_Z((uint8_t)a>>8)
 #define GET_C		(pSR >> 7)
 
 /* Not working */
@@ -137,13 +137,13 @@ static ADDRESS_MAP_START(tms7000_mem, ADDRESS_SPACE_PROGRAM, 8)
 ADDRESS_MAP_END
 
 
-INLINE UINT16 RM16( tms7000_state *cpustate, UINT32 mAddr )	/* Read memory (16-bit) */
+INLINE uint16_t RM16( tms7000_state *cpustate, uint32_t mAddr )	/* Read memory (16-bit) */
 {
-	UINT32 result = RM(mAddr) << 8;
+	uint32_t result = RM(mAddr) << 8;
 	return result | RM((mAddr+1)&0xffff);
 }
 
-INLINE UINT16 RRF16( tms7000_state *cpustate, UINT32 mAddr )	/*Read register file (16 bit) */
+INLINE uint16_t RRF16( tms7000_state *cpustate, uint32_t mAddr )	/*Read register file (16 bit) */
 {
 	PAIR result;
 	result.b.h = RM((mAddr-1)&0xffff);
@@ -151,7 +151,7 @@ INLINE UINT16 RRF16( tms7000_state *cpustate, UINT32 mAddr )	/*Read register fil
 	return result.w.l;
 }
 
-INLINE void WRF16( tms7000_state *cpustate, UINT32 mAddr, PAIR p )	/*Write register file (16 bit) */
+INLINE void WRF16( tms7000_state *cpustate, uint32_t mAddr, PAIR p )	/*Write register file (16 bit) */
 {
 	WM( (mAddr-1)&0xffff, p.b.h );
 	WM( mAddr, p.b.l );
@@ -418,7 +418,7 @@ static void tms7000_check_IRQ_lines(tms7000_state *cpustate)
 	}
 }
 
-static void tms7000_do_interrupt( tms7000_state *cpustate, UINT16 address, UINT8 line )
+static void tms7000_do_interrupt( tms7000_state *cpustate, uint16_t address, uint8_t line )
 {
 	PUSHBYTE( pSR );		/* Push Status register */
 	PUSHWORD( PC );			/* Push Program Counter */
@@ -556,7 +556,7 @@ static void tms7000_service_timer1( running_device *device )
 static WRITE8_HANDLER( tms70x0_pf_w )	/* Perpherial file write */
 {
 	tms7000_state *cpustate = get_safe_token(space->cpu);
-	UINT8	temp1, temp2, temp3;
+	uint8_t	temp1, temp2, temp3;
 
 	switch( offset )
 	{
@@ -625,8 +625,8 @@ static WRITE8_HANDLER( tms70x0_pf_w )	/* Perpherial file write */
 static READ8_HANDLER( tms70x0_pf_r )	/* Perpherial file read */
 {
 	tms7000_state *cpustate = get_safe_token(space->cpu);
-	UINT8 result;
-	UINT8	temp1, temp2, temp3;
+	uint8_t result;
+	uint8_t	temp1, temp2, temp3;
 
 	switch( offset )
 	{
@@ -680,9 +680,9 @@ static READ8_HANDLER( tms70x0_pf_r )	/* Perpherial file read */
 }
 
 // BCD arthrimetic handling
-static UINT16 bcd_add( UINT16 a, UINT16 b )
+static uint16_t bcd_add( uint16_t a, uint16_t b )
 {
-	UINT16	t1,t2,t3,t4,t5,t6;
+	uint16_t	t1,t2,t3,t4,t5,t6;
 
 	/* Sure it is a lot of code, but it works! */
 	t1 = a + 0x0666;
@@ -694,9 +694,9 @@ static UINT16 bcd_add( UINT16 a, UINT16 b )
 	return t2-t6;
 }
 
-static UINT16 bcd_tencomp( UINT16 a )
+static uint16_t bcd_tencomp( uint16_t a )
 {
-	UINT16	t1,t2,t3,t4,t5,t6;
+	uint16_t	t1,t2,t3,t4,t5,t6;
 
 	t1 = 0xffff - a;
 	t2 = -a;
@@ -710,7 +710,7 @@ static UINT16 bcd_tencomp( UINT16 a )
 /*
     Compute difference a-b???
 */
-static UINT16 bcd_sub( UINT16 a, UINT16 b)
+static uint16_t bcd_sub( uint16_t a, uint16_t b)
 {
 	//return bcd_tencomp(b) - bcd_tencomp(a);
 	return bcd_add(a, bcd_tencomp(b) & 0xff);

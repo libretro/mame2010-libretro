@@ -16,7 +16,7 @@ static const int tcnt_div[8] = { 4, 16, 64, 256, 1024, 1, 1, 1 };
 static const int rtcnt_div[8] = { 0, 4, 16, 64, 256, 1024, 2048, 4096 };
 static const int daysmonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 static const int dmasize[8] = { 8, 1, 2, 4, 32, 0, 0, 0 };
-static const UINT32 exception_priority_default[] = { EXPPRI(1,1,0,0), EXPPRI(1,2,0,1), EXPPRI(1,1,0,2), EXPPRI(1,3,0,3), EXPPRI(1,4,0,4),
+static const uint32_t exception_priority_default[] = { EXPPRI(1,1,0,0), EXPPRI(1,2,0,1), EXPPRI(1,1,0,2), EXPPRI(1,3,0,3), EXPPRI(1,4,0,4),
 	EXPPRI(2,0,0,5), EXPPRI(2,1,0,6), EXPPRI(2,2,0,7), EXPPRI(2,3,0,8), EXPPRI(2,4,0,9), EXPPRI(2,4,0,10), EXPPRI(2,4,0,11), EXPPRI(2,4,0,12),
 	EXPPRI(2,5,0,13), EXPPRI(2,5,0,14), EXPPRI(2,6,0,15), EXPPRI(2,6,0,16), EXPPRI(2,7,0,17), EXPPRI(2,7,0,18), EXPPRI(2,8,0,19),
 	EXPPRI(2,9,0,20), EXPPRI(2,4,0,21), EXPPRI(2,10,0,22), EXPPRI(3,0,16,SH4_INTC_NMI) };
@@ -26,9 +26,9 @@ static const int exception_codes[] = { 0x000, 0x020, 0x000, 0x140, 0x140, 0x1E0,
 	0x7E0, 0x6C0, 0xB00, 0xB80, 0x400, 0x420, 0x440, 0x460, 0x480, 0x4A0, 0x4C0, 0x4E0, 0x500, 0x520, 0x540, 0x700, 0x720, 0x740, 0x760,
 	0x560, 0x580, 0x5A0 };
 
-static const UINT16 tcnt[] = { TCNT0, TCNT1, TCNT2 };
-static const UINT16 tcor[] = { TCOR0, TCOR1, TCOR2 };
-static const UINT16 tcr[] = { TCR0, TCR1, TCR2 };
+static const uint16_t tcnt[] = { TCNT0, TCNT1, TCNT2 };
+static const uint16_t tcor[] = { TCOR0, TCOR1, TCOR2 };
+static const uint16_t tcr[] = { TCR0, TCR1, TCR2 };
 
 INLINE sh4_state *get_safe_token(running_device *device)
 {
@@ -62,7 +62,7 @@ int s;
 void sh4_swap_fp_registers(sh4_state *sh4)
 {
 int s;
-UINT32 z;
+uint32_t z;
 
 	for (s = 0;s <= 15;s++)
 	{
@@ -76,7 +76,7 @@ UINT32 z;
 void sh4_swap_fp_couples(sh4_state *sh4)
 {
 int s;
-UINT32 z;
+uint32_t z;
 
 	for (s = 0;s <= 15;s = s+2)
 	{
@@ -166,7 +166,7 @@ void sh4_exception_checkunrequest(sh4_state *sh4, int exception)
 
 void sh4_exception(sh4_state *sh4, const char *message, int exception) // handle exception
 {
-	UINT32 vector;
+	uint32_t vector;
 
 	if (exception < SH4_INTC_NMI)
 		return; // Not yet supported
@@ -214,17 +214,17 @@ void sh4_exception(sh4_state *sh4, const char *message, int exception) // handle
 	if(sh4->sleep_mode == 1) { sh4->sleep_mode = 2; }
 }
 
-static UINT32 compute_ticks_refresh_timer(emu_timer *timer, int hertz, int base, int divisor)
+static uint32_t compute_ticks_refresh_timer(emu_timer *timer, int hertz, int base, int divisor)
 {
 	// elapsed:total = x : ticks
 	// x=elapsed*tics/total -> x=elapsed*(double)100000000/rtcnt_div[(sh4->m[RTCSR] >> 3) & 7]
 	// ticks/total=ticks / ((rtcnt_div[(sh4->m[RTCSR] >> 3) & 7] * ticks) / 100000000)=1/((rtcnt_div[(sh4->m[RTCSR] >> 3) & 7] / 100000000)=100000000/rtcnt_div[(sh4->m[RTCSR] >> 3) & 7]
-	return base + (UINT32)((attotime_to_double(timer_timeelapsed(timer)) * (double)hertz) / (double)divisor);
+	return base + (uint32_t)((attotime_to_double(timer_timeelapsed(timer)) * (double)hertz) / (double)divisor);
 }
 
 static void sh4_refresh_timer_recompute(sh4_state *sh4)
 {
-UINT32 ticks;
+uint32_t ticks;
 
 	//if rtcnt < rtcor then rtcor-rtcnt
 	//if rtcnt >= rtcor then 256-rtcnt+rtcor=256+rtcor-rtcnt
@@ -240,17 +240,17 @@ UINT32 ticks;
     a (constant+1) where 0 <= constant < 2^32
 -------------------------------------------------*/
 
-INLINE attotime sh4_scale_up_mame_time(attotime _time1, UINT32 factor1)
+INLINE attotime sh4_scale_up_mame_time(attotime _time1, uint32_t factor1)
 {
 	return attotime_add(attotime_mul(_time1, factor1), _time1);
 }
 
-static UINT32 compute_ticks_timer(emu_timer *timer, int hertz, int divisor)
+static uint32_t compute_ticks_timer(emu_timer *timer, int hertz, int divisor)
 {
 	double ret;
 
 	ret=((attotime_to_double(timer_timeleft(timer)) * (double)hertz) / (double)divisor) - 1;
-	return (UINT32)ret;
+	return (uint32_t)ret;
 }
 
 static void sh4_timer_recompute(sh4_state *sh4, int which)
@@ -388,7 +388,7 @@ static TIMER_CALLBACK( sh4_rtc_timer_callback )
 
 static TIMER_CALLBACK( sh4_timer_callback )
 {
-	static const UINT16 tuni[] = { SH4_INTC_TUNI0, SH4_INTC_TUNI1, SH4_INTC_TUNI2 };
+	static const uint16_t tuni[] = { SH4_INTC_TUNI0, SH4_INTC_TUNI1, SH4_INTC_TUNI2 };
 	sh4_state *sh4 = (sh4_state *)ptr;
 	int which = param;
 	int idx = tcr[which];
@@ -436,10 +436,10 @@ static TIMER_CALLBACK( sh4_dmac_callback )
 	}
 }
 
-static int sh4_dma_transfer(sh4_state *sh4, int channel, int timermode, UINT32 chcr, UINT32 *sar, UINT32 *dar, UINT32 *dmatcr)
+static int sh4_dma_transfer(sh4_state *sh4, int channel, int timermode, uint32_t chcr, uint32_t *sar, uint32_t *dar, uint32_t *dmatcr)
 {
 	int incs, incd, size;
-	UINT32 src, dst, count;
+	uint32_t src, dst, count;
 
 	incd = (chcr >> 14) & 3;
 	incs = (chcr >> 12) & 3;
@@ -565,7 +565,7 @@ static int sh4_dma_transfer(sh4_state *sh4, int channel, int timermode, UINT32 c
 
 static void sh4_dmac_check(sh4_state *sh4, int channel)
 {
-UINT32 dmatcr,chcr,sar,dar;
+uint32_t dmatcr,chcr,sar,dar;
 
 	switch (channel)
 	{
@@ -634,7 +634,7 @@ WRITE32_HANDLER( sh4_internal_w )
 {
 	sh4_state *sh4 = get_safe_token(space->cpu);
 	int a;
-	UINT32 old = sh4->m[offset];
+	uint32_t old = sh4->m[offset];
 	COMBINE_DATA(sh4->m+offset);
 
 	//  logerror("sh4_internal_w:  Write %08x (%x), %08x @ %08x\n", 0xfe000000+((offset & 0x3fc0) << 11)+((offset & 0x3f) << 2), offset, data, mem_mask);
@@ -910,11 +910,11 @@ WRITE32_HANDLER( sh4_internal_w )
 		sh4->ioport16_direction &= 0xffff;
 		sh4->ioport16_pullup = (sh4->ioport16_pullup | sh4->ioport16_direction) ^ 0xffff;
 		if (sh4->m[BCR2] & 1)
-			memory_write_dword_64le(sh4->io, SH4_IOPORT_16, (UINT64)(sh4->m[PDTRA] & sh4->ioport16_direction) | ((UINT64)sh4->m[PCTRA] << 16));
+			memory_write_dword_64le(sh4->io, SH4_IOPORT_16, (uint64_t)(sh4->m[PDTRA] & sh4->ioport16_direction) | ((uint64_t)sh4->m[PCTRA] << 16));
 		break;
 	case PDTRA:
 		if (sh4->m[BCR2] & 1)
-			memory_write_dword_64le(sh4->io, SH4_IOPORT_16, (UINT64)(sh4->m[PDTRA] & sh4->ioport16_direction) | ((UINT64)sh4->m[PCTRA] << 16));
+			memory_write_dword_64le(sh4->io, SH4_IOPORT_16, (uint64_t)(sh4->m[PDTRA] & sh4->ioport16_direction) | ((uint64_t)sh4->m[PCTRA] << 16));
 		break;
 	case PCTRB:
 		sh4->ioport4_pullup = 0;
@@ -1184,16 +1184,16 @@ void sh4_common_init(running_device *device)
 	sh4->rtc_timer = timer_alloc(device->machine, sh4_rtc_timer_callback, sh4);
 	timer_adjust_oneshot(sh4->rtc_timer, attotime_never, 0);
 
-	sh4->m = auto_alloc_array(device->machine, UINT32, 16384);
+	sh4->m = auto_alloc_array(device->machine, uint32_t, 16384);
 }
 
 void sh4_dma_ddt(running_device *device, struct sh4_ddt_dma *s)
 {
 	sh4_state *sh4 = get_safe_token(device);
-	UINT32 chcr;
-	UINT32 *p32bits;
-	UINT64 *p32bytes;
-	UINT32 pos,len,siz;
+	uint32_t chcr;
+	uint32_t *p32bits;
+	uint64_t *p32bytes;
+	uint32_t pos,len,siz;
 
 	if (sh4->dma_timer_active[s->channel])
 		return;
@@ -1276,7 +1276,7 @@ void sh4_dma_ddt(running_device *device, struct sh4_ddt_dma *s)
 		if (s->size == 4) {
 			if ((s->direction) == 0) {
 				len = s->length;
-				p32bits = (UINT32 *)(s->buffer);
+				p32bits = (uint32_t *)(s->buffer);
 				for (pos = 0;pos < len;pos++) {
 					*p32bits = memory_read_dword_64le(sh4->program, s->source);
 					p32bits++;
@@ -1284,7 +1284,7 @@ void sh4_dma_ddt(running_device *device, struct sh4_ddt_dma *s)
 				}
 			} else {
 				len = s->length;
-				p32bits = (UINT32 *)(s->buffer);
+				p32bits = (uint32_t *)(s->buffer);
 				for (pos = 0;pos < len;pos++) {
 					memory_write_dword_64le(sh4->program, s->destination, *p32bits);
 					p32bits++;
@@ -1295,7 +1295,7 @@ void sh4_dma_ddt(running_device *device, struct sh4_ddt_dma *s)
 		if (s->size == 32) {
 			if ((s->direction) == 0) {
 				len = s->length * 4;
-				p32bytes = (UINT64 *)(s->buffer);
+				p32bytes = (uint64_t *)(s->buffer);
 				for (pos = 0;pos < len;pos++) {
 					*p32bytes = memory_read_qword_64le(sh4->program, s->source);
 					p32bytes++;
@@ -1303,7 +1303,7 @@ void sh4_dma_ddt(running_device *device, struct sh4_ddt_dma *s)
 				}
 			} else {
 				len = s->length * 4;
-				p32bytes = (UINT64 *)(s->buffer);
+				p32bytes = (uint64_t *)(s->buffer);
 				for (pos = 0;pos < len;pos++) {
 					memory_write_qword_64le(sh4->program, s->destination, *p32bytes);
 					p32bytes++;

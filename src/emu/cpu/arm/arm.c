@@ -99,12 +99,12 @@ static const int sRegisterTable[kNumModes][16] =
 #define I_BIT	27
 #define F_BIT	26
 
-#define N_MASK	((UINT32)(1<<N_BIT)) /* Negative flag */
-#define Z_MASK	((UINT32)(1<<Z_BIT)) /* Zero flag */
-#define C_MASK	((UINT32)(1<<C_BIT)) /* Carry flag */
-#define V_MASK	((UINT32)(1<<V_BIT)) /* oVerflow flag */
-#define I_MASK	((UINT32)(1<<I_BIT)) /* Interrupt request disable */
-#define F_MASK	((UINT32)(1<<F_BIT)) /* Fast interrupt request disable */
+#define N_MASK	((uint32_t)(1<<N_BIT)) /* Negative flag */
+#define Z_MASK	((uint32_t)(1<<Z_BIT)) /* Zero flag */
+#define C_MASK	((uint32_t)(1<<C_BIT)) /* Carry flag */
+#define V_MASK	((uint32_t)(1<<V_BIT)) /* oVerflow flag */
+#define I_MASK	((uint32_t)(1<<I_BIT)) /* Interrupt request disable */
+#define F_MASK	((uint32_t)(1<<F_BIT)) /* Fast interrupt request disable */
 
 #define N_IS_SET(pc)	((pc) & N_MASK)
 #define Z_IS_SET(pc)	((pc) & Z_MASK)
@@ -120,50 +120,50 @@ static const int sRegisterTable[kNumModes][16] =
 #define I_IS_CLEAR(pc)	(!I_IS_SET(pc))
 #define F_IS_CLEAR(pc)	(!F_IS_SET(pc))
 
-#define PSR_MASK		((UINT32) 0xf0000000u)
-#define IRQ_MASK		((UINT32) 0x0c000000u)
-#define ADDRESS_MASK	((UINT32) 0x03fffffcu)
-#define MODE_MASK		((UINT32) 0x00000003u)
+#define PSR_MASK		((uint32_t) 0xf0000000u)
+#define IRQ_MASK		((uint32_t) 0x0c000000u)
+#define ADDRESS_MASK	((uint32_t) 0x03fffffcu)
+#define MODE_MASK		((uint32_t) 0x00000003u)
 
 #define R15						cpustate->sArmRegister[eR15]
 #define MODE					(R15&0x03)
-#define SIGN_BIT				((UINT32)(1<<31))
+#define SIGN_BIT				((uint32_t)(1<<31))
 #define SIGN_BITS_DIFFER(a,b)	(((a)^(b)) >> 31)
 
 /* Deconstructing an instruction */
 
-#define INSN_COND			((UINT32) 0xf0000000u)
-#define INSN_SDT_L			((UINT32) 0x00100000u)
-#define INSN_SDT_W			((UINT32) 0x00200000u)
-#define INSN_SDT_B			((UINT32) 0x00400000u)
-#define INSN_SDT_U			((UINT32) 0x00800000u)
-#define INSN_SDT_P			((UINT32) 0x01000000u)
-#define INSN_BDT_L			((UINT32) 0x00100000u)
-#define INSN_BDT_W			((UINT32) 0x00200000u)
-#define INSN_BDT_S			((UINT32) 0x00400000u)
-#define INSN_BDT_U			((UINT32) 0x00800000u)
-#define INSN_BDT_P			((UINT32) 0x01000000u)
-#define INSN_BDT_REGS		((UINT32) 0x0000ffffu)
-#define INSN_SDT_IMM		((UINT32) 0x00000fffu)
-#define INSN_MUL_A			((UINT32) 0x00200000u)
-#define INSN_MUL_RM			((UINT32) 0x0000000fu)
-#define INSN_MUL_RS			((UINT32) 0x00000f00u)
-#define INSN_MUL_RN			((UINT32) 0x0000f000u)
-#define INSN_MUL_RD			((UINT32) 0x000f0000u)
-#define INSN_I				((UINT32) 0x02000000u)
-#define INSN_OPCODE			((UINT32) 0x01e00000u)
-#define INSN_S				((UINT32) 0x00100000u)
-#define INSN_BL				((UINT32) 0x01000000u)
-#define INSN_BRANCH			((UINT32) 0x00ffffffu)
-#define INSN_SWI			((UINT32) 0x00ffffffu)
-#define INSN_RN				((UINT32) 0x000f0000u)
-#define INSN_RD				((UINT32) 0x0000f000u)
-#define INSN_OP2			((UINT32) 0x00000fffu)
-#define INSN_OP2_SHIFT		((UINT32) 0x00000f80u)
-#define INSN_OP2_SHIFT_TYPE	((UINT32) 0x00000070u)
-#define INSN_OP2_RM			((UINT32) 0x0000000fu)
-#define INSN_OP2_ROTATE		((UINT32) 0x00000f00u)
-#define INSN_OP2_IMM		((UINT32) 0x000000ffu)
+#define INSN_COND			((uint32_t) 0xf0000000u)
+#define INSN_SDT_L			((uint32_t) 0x00100000u)
+#define INSN_SDT_W			((uint32_t) 0x00200000u)
+#define INSN_SDT_B			((uint32_t) 0x00400000u)
+#define INSN_SDT_U			((uint32_t) 0x00800000u)
+#define INSN_SDT_P			((uint32_t) 0x01000000u)
+#define INSN_BDT_L			((uint32_t) 0x00100000u)
+#define INSN_BDT_W			((uint32_t) 0x00200000u)
+#define INSN_BDT_S			((uint32_t) 0x00400000u)
+#define INSN_BDT_U			((uint32_t) 0x00800000u)
+#define INSN_BDT_P			((uint32_t) 0x01000000u)
+#define INSN_BDT_REGS		((uint32_t) 0x0000ffffu)
+#define INSN_SDT_IMM		((uint32_t) 0x00000fffu)
+#define INSN_MUL_A			((uint32_t) 0x00200000u)
+#define INSN_MUL_RM			((uint32_t) 0x0000000fu)
+#define INSN_MUL_RS			((uint32_t) 0x00000f00u)
+#define INSN_MUL_RN			((uint32_t) 0x0000f000u)
+#define INSN_MUL_RD			((uint32_t) 0x000f0000u)
+#define INSN_I				((uint32_t) 0x02000000u)
+#define INSN_OPCODE			((uint32_t) 0x01e00000u)
+#define INSN_S				((uint32_t) 0x00100000u)
+#define INSN_BL				((uint32_t) 0x01000000u)
+#define INSN_BRANCH			((uint32_t) 0x00ffffffu)
+#define INSN_SWI			((uint32_t) 0x00ffffffu)
+#define INSN_RN				((uint32_t) 0x000f0000u)
+#define INSN_RD				((uint32_t) 0x0000f000u)
+#define INSN_OP2			((uint32_t) 0x00000fffu)
+#define INSN_OP2_SHIFT		((uint32_t) 0x00000f80u)
+#define INSN_OP2_SHIFT_TYPE	((uint32_t) 0x00000070u)
+#define INSN_OP2_RM			((uint32_t) 0x0000000fu)
+#define INSN_OP2_ROTATE		((uint32_t) 0x00000f00u)
+#define INSN_OP2_IMM		((uint32_t) 0x000000ffu)
 #define INSN_OP2_SHIFT_TYPE_SHIFT	4
 #define INSN_OP2_SHIFT_SHIFT		7
 #define INSN_OP2_ROTATE_SHIFT		8
@@ -230,10 +230,10 @@ enum
 typedef struct
 {
 	int icount;
-	UINT32 sArmRegister[kNumRegisters];
-	UINT32 coproRegister[16];
-	UINT8 pendingIrq;
-	UINT8 pendingFiq;
+	uint32_t sArmRegister[kNumRegisters];
+	uint32_t coproRegister[16];
+	uint8_t pendingIrq;
+	uint8_t pendingFiq;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -241,13 +241,13 @@ typedef struct
 } ARM_REGS;
 
 /* Prototypes */
-static void HandleALU( ARM_REGS* cpustate, UINT32 insn);
-static void HandleMul( ARM_REGS* cpustate, UINT32 insn);
-static void HandleBranch( ARM_REGS* cpustate, UINT32 insn);
-static void HandleMemSingle( ARM_REGS* cpustate, UINT32 insn);
-static void HandleMemBlock( ARM_REGS* cpustate, UINT32 insn);
-static void HandleCoPro( ARM_REGS* cpustate, UINT32 insn);
-static UINT32 decodeShift( ARM_REGS* cpustate, UINT32 insn, UINT32 *pCarry);
+static void HandleALU( ARM_REGS* cpustate, uint32_t insn);
+static void HandleMul( ARM_REGS* cpustate, uint32_t insn);
+static void HandleBranch( ARM_REGS* cpustate, uint32_t insn);
+static void HandleMemSingle( ARM_REGS* cpustate, uint32_t insn);
+static void HandleMemBlock( ARM_REGS* cpustate, uint32_t insn);
+static void HandleCoPro( ARM_REGS* cpustate, uint32_t insn);
+static uint32_t decodeShift( ARM_REGS* cpustate, uint32_t insn, uint32_t *pCarry);
 static void arm_check_irq_state(ARM_REGS* cpustate);
 
 /***************************************************************************/
@@ -259,7 +259,7 @@ INLINE ARM_REGS *get_safe_token(running_device *device)
 	return (ARM_REGS *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE void cpu_write32( ARM_REGS* cpustate, int addr, UINT32 data )
+INLINE void cpu_write32( ARM_REGS* cpustate, int addr, uint32_t data )
 {
 	/* Unaligned writes are treated as normal writes */
 	if ( cpustate->endian == ENDIANNESS_BIG )
@@ -269,7 +269,7 @@ INLINE void cpu_write32( ARM_REGS* cpustate, int addr, UINT32 data )
 	if (ARM_DEBUG_CORE && addr&3) logerror("%08x: Unaligned write %08x\n",R15,addr);
 }
 
-INLINE void cpu_write8( ARM_REGS* cpustate, int addr, UINT8 data )
+INLINE void cpu_write8( ARM_REGS* cpustate, int addr, uint8_t data )
 {
 	if ( cpustate->endian == ENDIANNESS_BIG )
 		memory_write_byte_32be(cpustate->program,addr,data);
@@ -277,9 +277,9 @@ INLINE void cpu_write8( ARM_REGS* cpustate, int addr, UINT8 data )
 		memory_write_byte_32le(cpustate->program,addr,data);
 }
 
-INLINE UINT32 cpu_read32( ARM_REGS* cpustate, int addr )
+INLINE uint32_t cpu_read32( ARM_REGS* cpustate, int addr )
 {
-	UINT32 result;
+	uint32_t result;
 
 	if ( cpustate->endian == ENDIANNESS_BIG )
 		result = memory_read_dword_32be(cpustate->program,addr&ADDRESS_MASK);
@@ -302,7 +302,7 @@ INLINE UINT32 cpu_read32( ARM_REGS* cpustate, int addr )
 	return result;
 }
 
-INLINE UINT8 cpu_read8( ARM_REGS* cpustate, int addr )
+INLINE uint8_t cpu_read8( ARM_REGS* cpustate, int addr )
 {
 	if ( cpustate->endian == ENDIANNESS_BIG )
 		return memory_read_byte_32be(cpustate->program, addr);
@@ -310,12 +310,12 @@ INLINE UINT8 cpu_read8( ARM_REGS* cpustate, int addr )
 		return memory_read_byte_32le(cpustate->program, addr);
 }
 
-INLINE UINT32 GetRegister( ARM_REGS* cpustate, int rIndex )
+INLINE uint32_t GetRegister( ARM_REGS* cpustate, int rIndex )
 {
 	return cpustate->sArmRegister[sRegisterTable[MODE][rIndex]];
 }
 
-INLINE void SetRegister( ARM_REGS* cpustate, int rIndex, UINT32 value )
+INLINE void SetRegister( ARM_REGS* cpustate, int rIndex, uint32_t value )
 {
 	cpustate->sArmRegister[sRegisterTable[MODE][rIndex]] = value;
 }
@@ -346,8 +346,8 @@ static CPU_EXIT( arm )
 
 static CPU_EXECUTE( arm )
 {
-	UINT32 pc;
-	UINT32 insn;
+	uint32_t pc;
+	uint32_t insn;
 	ARM_REGS *cpustate = get_safe_token(device);
 
 	do
@@ -458,7 +458,7 @@ static CPU_EXECUTE( arm )
 
 static void arm_check_irq_state(ARM_REGS* cpustate)
 {
-	UINT32 pc = R15+4; /* save old pc (already incremented in pipeline) */;
+	uint32_t pc = R15+4; /* save old pc (already incremented in pipeline) */;
 
 	/* Exception priorities (from ARM6, not specifically ARM2/3):
 
@@ -545,9 +545,9 @@ static CPU_INIT( arm_be )
 
 /***************************************************************************/
 
-static void HandleBranch( ARM_REGS* cpustate, UINT32 insn )
+static void HandleBranch( ARM_REGS* cpustate, uint32_t insn )
 {
-	UINT32 off = (insn & INSN_BRANCH) << 2;
+	uint32_t off = (insn & INSN_BRANCH) << 2;
 
 	/* Save PC into LR if this is a branch with link */
 	if (insn & INSN_BL)
@@ -567,9 +567,9 @@ static void HandleBranch( ARM_REGS* cpustate, UINT32 insn )
 	cpustate->icount -= 2 * S_CYCLE + N_CYCLE;
 }
 
-static void HandleMemSingle( ARM_REGS* cpustate, UINT32 insn )
+static void HandleMemSingle( ARM_REGS* cpustate, uint32_t insn )
 {
-	UINT32 rn, rnv, off, rd;
+	uint32_t rn, rnv, off, rd;
 
 	/* Fetch the offset */
 	if (insn & INSN_I)
@@ -632,7 +632,7 @@ static void HandleMemSingle( ARM_REGS* cpustate, UINT32 insn )
 		{
 			if (ARM_DEBUG_CORE && rd == eR15)
 				logerror("read byte R15 %08x\n", R15);
-			SetRegister(cpustate, rd,(UINT32) READ8(rnv) );
+			SetRegister(cpustate, rd,(uint32_t) READ8(rnv) );
 		}
 		else
 		{
@@ -668,7 +668,7 @@ static void HandleMemSingle( ARM_REGS* cpustate, UINT32 insn )
 			if (ARM_DEBUG_CORE && rd==eR15)
 				logerror("Wrote R15 in byte mode\n");
 
-			WRITE8(rnv, (UINT8) GetRegister(cpustate, rd) & 0xffu);
+			WRITE8(rnv, (uint8_t) GetRegister(cpustate, rd) & 0xffu);
 		}
 		else
 		{
@@ -753,10 +753,10 @@ static void HandleMemSingle( ARM_REGS* cpustate, UINT32 insn )
                      | (((sc) != 0) << C_BIT)) + 4; \
   else R15 += 4;
 
-static void HandleALU( ARM_REGS* cpustate, UINT32 insn )
+static void HandleALU( ARM_REGS* cpustate, uint32_t insn )
 {
-	UINT32 op2, sc=0, rd, rn, opcode;
-	UINT32 by, rdn;
+	uint32_t op2, sc=0, rd, rn, opcode;
+	uint32_t by, rdn;
 
 	opcode = (insn & INSN_OPCODE) >> INSN_OPCODE_SHIFT;
 	cpustate->icount -= S_CYCLE;
@@ -918,9 +918,9 @@ static void HandleALU( ARM_REGS* cpustate, UINT32 insn )
 	}
 }
 
-static void HandleMul( ARM_REGS* cpustate, UINT32 insn)
+static void HandleMul( ARM_REGS* cpustate, uint32_t insn)
 {
-	UINT32 r;
+	uint32_t r;
 
 	cpustate->icount -= S_CYCLE + I_CYCLE;
 	/* should be:
@@ -970,7 +970,7 @@ static void HandleMul( ARM_REGS* cpustate, UINT32 insn)
 	}
 }
 
-static int loadInc ( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
+static int loadInc ( ARM_REGS* cpustate, uint32_t pat, uint32_t rbv, uint32_t s)
 {
 	int i,result;
 
@@ -993,7 +993,7 @@ static int loadInc ( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv, UINT32 s)
 	return result;
 }
 
-static int loadDec( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv, UINT32 s, UINT32* deferredR15, int* defer)
+static int loadDec( ARM_REGS* cpustate, uint32_t pat, uint32_t rbv, uint32_t s, uint32_t* deferredR15, int* defer)
 {
 	int i,result;
 
@@ -1017,7 +1017,7 @@ static int loadDec( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv, UINT32 s, UINT32
 	return result;
 }
 
-static int storeInc( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv)
+static int storeInc( ARM_REGS* cpustate, uint32_t pat, uint32_t rbv)
 {
 	int i,result;
 
@@ -1036,7 +1036,7 @@ static int storeInc( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv)
 	return result;
 } /* storeInc */
 
-static int storeDec( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv)
+static int storeDec( ARM_REGS* cpustate, uint32_t pat, uint32_t rbv)
 {
 	int i,result;
 
@@ -1055,10 +1055,10 @@ static int storeDec( ARM_REGS* cpustate, UINT32 pat, UINT32 rbv)
 	return result;
 } /* storeDec */
 
-static void HandleMemBlock( ARM_REGS* cpustate, UINT32 insn )
+static void HandleMemBlock( ARM_REGS* cpustate, uint32_t insn )
 {
-	UINT32 rb = (insn & INSN_RN) >> INSN_RN_SHIFT;
-	UINT32 rbp = GetRegister(cpustate, rb);
+	uint32_t rb = (insn & INSN_RN) >> INSN_RN_SHIFT;
+	uint32_t rbp = GetRegister(cpustate, rb);
 	int result;
 
 	if (ARM_DEBUG_CORE && insn & INSN_BDT_S)
@@ -1103,7 +1103,7 @@ static void HandleMemBlock( ARM_REGS* cpustate, UINT32 insn )
 		}
 		else
 		{
-			UINT32 deferredR15=0;
+			uint32_t deferredR15=0;
 			int defer=0;
 
 			/* Decrementing */
@@ -1190,11 +1190,11 @@ static void HandleMemBlock( ARM_REGS* cpustate, UINT32 insn )
  * shifter carry output will manifest itself as @*carry == 0@ for carry clear
  * and @*carry != 0@ for carry set.
  */
-static UINT32 decodeShift( ARM_REGS* cpustate, UINT32 insn, UINT32 *pCarry)
+static uint32_t decodeShift( ARM_REGS* cpustate, uint32_t insn, uint32_t *pCarry)
 {
-	UINT32 k	= (insn & INSN_OP2_SHIFT) >> INSN_OP2_SHIFT_SHIFT;
-	UINT32 rm	= GetRegister( cpustate, insn & INSN_OP2_RM );
-	UINT32 t	= (insn & INSN_OP2_SHIFT_TYPE) >> INSN_OP2_SHIFT_TYPE_SHIFT;
+	uint32_t k	= (insn & INSN_OP2_SHIFT) >> INSN_OP2_SHIFT_SHIFT;
+	uint32_t rm	= GetRegister( cpustate, insn & INSN_OP2_RM );
+	uint32_t t	= (insn & INSN_OP2_SHIFT_TYPE) >> INSN_OP2_SHIFT_TYPE_SHIFT;
 
 	if ((insn & INSN_OP2_RM)==0xf) {
 		/* If hardwired shift, then PC is 8 bytes ahead, else if register shift
@@ -1282,10 +1282,10 @@ static UINT32 decodeShift( ARM_REGS* cpustate, UINT32 insn, UINT32 *pCarry)
 } /* decodeShift */
 
 
-static UINT32 BCDToDecimal(UINT32 value)
+static uint32_t BCDToDecimal(uint32_t value)
 {
-	UINT32	accumulator = 0;
-	UINT32	multiplier = 1;
+	uint32_t	accumulator = 0;
+	uint32_t	multiplier = 1;
 	int		i;
 
 	for(i = 0; i < 8; i++)
@@ -1299,15 +1299,15 @@ static UINT32 BCDToDecimal(UINT32 value)
 	return accumulator;
 }
 
-static UINT32 DecimalToBCD(UINT32 value)
+static uint32_t DecimalToBCD(uint32_t value)
 {
-	UINT32	accumulator = 0;
-	UINT32	divisor = 10;
+	uint32_t	accumulator = 0;
+	uint32_t	divisor = 10;
 	int		i;
 
 	for(i = 0; i < 8; i++)
 	{
-		UINT32	temp;
+		uint32_t	temp;
 
 		temp = value % divisor;
 		value -= temp;
@@ -1321,10 +1321,10 @@ static UINT32 DecimalToBCD(UINT32 value)
 	return accumulator;
 }
 
-static void HandleCoPro( ARM_REGS* cpustate, UINT32 insn )
+static void HandleCoPro( ARM_REGS* cpustate, uint32_t insn )
 {
-	UINT32 rn=(insn>>12)&0xf;
-	UINT32 crn=(insn>>16)&0xf;
+	uint32_t rn=(insn>>12)&0xf;
+	uint32_t crn=(insn>>16)&0xf;
 
 	cpustate->icount -= S_CYCLE;
 

@@ -120,14 +120,14 @@ OP(6D) { /* illegal instruction? */ }
 OP(6E) { minx->SP = rdop16(minx); }
 OP(6F) { /* illegal instruction? */ }
 
-OP(70) { UINT8 ofs8 = rdop(minx); minx->BA = rd16( minx, minx->SP + ofs8 ); }
-OP(71) { UINT8 ofs8 = rdop(minx); minx->HL = rd16( minx, minx->SP + ofs8 ); }
-OP(72) { UINT8 ofs8 = rdop(minx); minx->X = rd16( minx, minx->SP + ofs8 ); }
-OP(73) { UINT8 ofs8 = rdop(minx); minx->Y = rd16( minx, minx->SP + ofs8 ); }
-OP(74) { UINT8 ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->BA ); }
-OP(75) { UINT8 ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->HL ); }
-OP(76) { UINT8 ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->X ); }
-OP(77) { UINT8 ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->Y ); }
+OP(70) { uint8_t ofs8 = rdop(minx); minx->BA = rd16( minx, minx->SP + ofs8 ); }
+OP(71) { uint8_t ofs8 = rdop(minx); minx->HL = rd16( minx, minx->SP + ofs8 ); }
+OP(72) { uint8_t ofs8 = rdop(minx); minx->X = rd16( minx, minx->SP + ofs8 ); }
+OP(73) { uint8_t ofs8 = rdop(minx); minx->Y = rd16( minx, minx->SP + ofs8 ); }
+OP(74) { uint8_t ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->BA ); }
+OP(75) { uint8_t ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->HL ); }
+OP(76) { uint8_t ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->X ); }
+OP(77) { uint8_t ofs8 = rdop(minx); wr16( minx, minx->SP + ofs8, minx->Y ); }
 OP(78) { AD2_I16; minx->SP = rd16( minx, addr2 ); }
 OP(79) { /* illegal instruction? */ }
 OP(7A) { /* illegal instruction? */ }

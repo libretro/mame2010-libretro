@@ -15,7 +15,7 @@
 
 #define LOG(x) do { if (VERBOSE) logerror x; } while (0)
 
-static const UINT8 kbp_table[] = { 0x00,0x01,0x02,0x0f,0x03,0x0f,0x0f,0x0f,0x04,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
+static const uint8_t kbp_table[] = { 0x00,0x01,0x02,0x0f,0x03,0x0f,0x0f,0x0f,0x04,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f,0x0f };
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -24,14 +24,14 @@ static const UINT8 kbp_table[] = { 0x00,0x01,0x02,0x0f,0x03,0x0f,0x0f,0x0f,0x04,
 typedef struct _i4004_state i4004_state;
 struct _i4004_state
 {
-	UINT8	A; // Accumulator
-	UINT8	R[8];
+	uint8_t	A; // Accumulator
+	uint8_t	R[8];
 	PAIR	ADDR[4]; // Address registers
 	PAIR	RAM;
-	UINT8	C; // Carry flag
-	UINT8	TEST; // Test PIN status
+	uint8_t	C; // Carry flag
+	uint8_t	TEST; // Test PIN status
 	PAIR	PC; // It is in fact one of ADDR regs
-	UINT8	flags; // used for I/O only
+	uint8_t	flags; // used for I/O only
 
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -58,75 +58,75 @@ INLINE i4004_state *get_safe_token(running_device *device)
 	return (i4004_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT8 ROP(i4004_state *cpustate)
+INLINE uint8_t ROP(i4004_state *cpustate)
 {
-	UINT8 retVal = memory_decrypted_read_byte(cpustate->program, GET_PC.w.l);
+	uint8_t retVal = memory_decrypted_read_byte(cpustate->program, GET_PC.w.l);
 	GET_PC.w.l = (GET_PC.w.l + 1) & 0x0fff;
 	cpustate->PC = GET_PC;
 	return retVal;
 }
 
-INLINE UINT8 READ_ROM(i4004_state *cpustate)
+INLINE uint8_t READ_ROM(i4004_state *cpustate)
 {
 	return memory_decrypted_read_byte(cpustate->program, (GET_PC.w.l & 0x0f00) | cpustate->R[0]);
 }
 
 INLINE void WPM(i4004_state *cpustate)
 {
-	UINT8 t =  (memory_read_byte_8le(cpustate->program, cpustate->RAM.d) << 4) | cpustate->A;
+	uint8_t t =  (memory_read_byte_8le(cpustate->program, cpustate->RAM.d) << 4) | cpustate->A;
 	memory_write_byte_8le(cpustate->program, (GET_PC.w.l & 0x0f00) | cpustate->RAM.d, t);
 }
 
 
-INLINE UINT8 ARG(i4004_state *cpustate)
+INLINE uint8_t ARG(i4004_state *cpustate)
 {
-	UINT8 retVal = memory_raw_read_byte(cpustate->program, GET_PC.w.l);
+	uint8_t retVal = memory_raw_read_byte(cpustate->program, GET_PC.w.l);
 	GET_PC.w.l = (GET_PC.w.l + 1) & 0x0fff;
 	cpustate->PC = GET_PC;
 	return retVal;
 }
 
-INLINE UINT8 RM(i4004_state *cpustate)
+INLINE uint8_t RM(i4004_state *cpustate)
 {
 	return memory_read_byte_8le(cpustate->data, cpustate->RAM.d) & 0x0f;
 }
 
-INLINE UINT8 RMS(i4004_state *cpustate, UINT32 a)
+INLINE uint8_t RMS(i4004_state *cpustate, uint32_t a)
 {
 	return memory_read_byte_8le(cpustate->data, (cpustate->RAM.d & 0xff0) + a) >> 4;
 }
 
-INLINE void WM(i4004_state *cpustate, UINT8 v)
+INLINE void WM(i4004_state *cpustate, uint8_t v)
 {
-	UINT8 t =  memory_read_byte_8le(cpustate->data, cpustate->RAM.d);
+	uint8_t t =  memory_read_byte_8le(cpustate->data, cpustate->RAM.d);
 	memory_write_byte_8le(cpustate->data, cpustate->RAM.d, (t & 0xf0) | v);
 }
 
 
-INLINE void WMP(i4004_state *cpustate, UINT8 v)
+INLINE void WMP(i4004_state *cpustate, uint8_t v)
 {
 	memory_write_byte_8le(cpustate->io, (cpustate->RAM.d >> 6) | 0x10, v & 0x0f);
 }
 
-INLINE void WMS(i4004_state *cpustate, UINT32 a, UINT8 v)
+INLINE void WMS(i4004_state *cpustate, uint32_t a, uint8_t v)
 {
-	UINT8 t =  memory_read_byte_8le(cpustate->data, (cpustate->RAM.d & 0xff0) + a);
+	uint8_t t =  memory_read_byte_8le(cpustate->data, (cpustate->RAM.d & 0xff0) + a);
 	memory_write_byte_8le(cpustate->data,(cpustate->RAM.d & 0xff0) + a, (t & 0x0f) | (v<<4));
 }
 
-INLINE UINT8 RIO(i4004_state *cpustate)
+INLINE uint8_t RIO(i4004_state *cpustate)
 {
 	return memory_read_byte_8le(cpustate->io, cpustate->RAM.b.l >> 4) & 0x0f;
 }
 
-INLINE void WIO(i4004_state *cpustate, UINT8 v)
+INLINE void WIO(i4004_state *cpustate, uint8_t v)
 {
 	memory_write_byte_8le(cpustate->io, cpustate->RAM.b.l >> 4, v & 0x0f);
 }
 
-INLINE UINT8 GET_REG(i4004_state *cpustate, UINT8 num)
+INLINE uint8_t GET_REG(i4004_state *cpustate, uint8_t num)
 {
-	UINT8 r = cpustate->R[num>>1];
+	uint8_t r = cpustate->R[num>>1];
 	if (num & 1) {
 		return r & 0x0f;
 	} else {
@@ -134,7 +134,7 @@ INLINE UINT8 GET_REG(i4004_state *cpustate, UINT8 num)
 	}
 }
 
-INLINE void SET_REG(i4004_state *cpustate, UINT8 num, UINT8 val)
+INLINE void SET_REG(i4004_state *cpustate, uint8_t num, uint8_t val)
 {
 	if (num & 1) {
 		cpustate->R[num>>1] = (cpustate->R[num>>1] & 0xf0) + (val & 0x0f);
@@ -154,7 +154,7 @@ INLINE void POP_STACK(i4004_state *cpustate)
 	cpustate->pc_pos = (cpustate->pc_pos - 1) & cpustate->addr_mask;
 }
 
-void i4004_set_test(running_device *device, UINT8 val)
+void i4004_set_test(running_device *device, uint8_t val)
 {
 	i4004_state *cpustate = get_safe_token(device);
 	cpustate->TEST = val;
@@ -173,13 +173,13 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0x18: case 0x19: case 0x1a: case 0x1b:
 		case 0x1c: case 0x1d: case 0x1e: case 0x1f: /* JCN */
 			{
-				UINT8 arg =  ARG(cpustate);
+				uint8_t arg =  ARG(cpustate);
 
-				UINT8 C1 = BIT(opcode,3);
-				UINT8 C2 = BIT(opcode,2);
-				UINT8 C3 = BIT(opcode,1);
-				UINT8 C4 = BIT(opcode,0);
-				UINT8 JUMP = (((cpustate->A == 0) ? 1 : 0) & C2) | ((cpustate->C) & C3) | ((cpustate->TEST ^ 1) & C4);
+				uint8_t C1 = BIT(opcode,3);
+				uint8_t C2 = BIT(opcode,2);
+				uint8_t C3 = BIT(opcode,1);
+				uint8_t C4 = BIT(opcode,0);
+				uint8_t JUMP = (((cpustate->A == 0) ? 1 : 0) & C2) | ((cpustate->C) & C3) | ((cpustate->TEST ^ 1) & C4);
 				cpustate->icount -= 8;
 
 				if(((C1 ^ 1) &  JUMP) | (C1 & (JUMP ^ 1))) {
@@ -220,7 +220,7 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0x58: case 0x59: case 0x5a: case 0x5b:
 		case 0x5c: case 0x5d: case 0x5e: case 0x5f: /* JMS */
 			{
-				UINT16 newPC = ((opcode & 0x0f) << 8) | ARG(cpustate);
+				uint16_t newPC = ((opcode & 0x0f) << 8) | ARG(cpustate);
 				cpustate->icount -= 8;
 				PUSH_STACK(cpustate);
 				GET_PC.w.l = newPC;
@@ -238,8 +238,8 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0x78: case 0x79: case 0x7a: case 0x7b:
 		case 0x7c: case 0x7d: case 0x7e: case 0x7f: /* ISZ */
 			{
-				UINT8 val = (GET_REG(cpustate, opcode & 0x0f) + 1) & 0xf;
-				UINT16 addr = ARG(cpustate);
+				uint8_t val = (GET_REG(cpustate, opcode & 0x0f) + 1) & 0xf;
+				uint16_t addr = ARG(cpustate);
 				cpustate->icount -= 8;
 				SET_REG(cpustate, opcode & 0x0f, val);
 				if (val!=0) {
@@ -253,7 +253,7 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0x88: case 0x89: case 0x8a: case 0x8b:
 		case 0x8c: case 0x8d: case 0x8e: case 0x8f: /* ADD */
 			{
-				UINT8 acc = cpustate->A + GET_REG(cpustate, opcode & 0x0f) + cpustate->C;
+				uint8_t acc = cpustate->A + GET_REG(cpustate, opcode & 0x0f) + cpustate->C;
 				cpustate->A = acc & 0x0f;
 				cpustate->C = (acc >> 4) & 1;
 			}
@@ -263,7 +263,7 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0x98: case 0x99: case 0x9a: case 0x9b:
 		case 0x9c: case 0x9d: case 0x9e: case 0x9f: /* SUB */
 			{
-				UINT8 acc = cpustate->A + (GET_REG(cpustate, opcode & 0x0f) ^ 0x0f) + (cpustate->C ^ 1);
+				uint8_t acc = cpustate->A + (GET_REG(cpustate, opcode & 0x0f) ^ 0x0f) + (cpustate->C ^ 1);
 				cpustate->A = acc & 0x0f;
 				cpustate->C = (acc >> 4) & 1;
 			}
@@ -279,7 +279,7 @@ static void execute_one(i4004_state *cpustate, int opcode)
 		case 0xb8: case 0xb9: case 0xba: case 0xbb:
 		case 0xbc: case 0xbd: case 0xbe: case 0xbf: /* XCH */
 			{
-				UINT8 temp = cpustate->A;
+				uint8_t temp = cpustate->A;
 				cpustate->A = GET_REG(cpustate, opcode & 0x0f);
 				SET_REG(cpustate, opcode & 0x0f, temp);
 			}
@@ -376,7 +376,7 @@ static void execute_one(i4004_state *cpustate, int opcode)
 			break;
 		case 0xf6: /* RAR */
 			{
-				UINT8 c = cpustate->A & 1;
+				uint8_t c = cpustate->A & 1;
 				cpustate->A = (cpustate->A >> 1) | (cpustate->C  << 3);
 				cpustate->C = c;
 			}

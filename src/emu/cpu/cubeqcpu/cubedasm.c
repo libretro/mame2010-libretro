@@ -79,9 +79,9 @@ CPU_DISASSEMBLE( cquestsnd )
 		"       ",
 	};
 
-	UINT64 inst = BIG_ENDIANIZE_INT64(*(UINT64 *)oprom);
-	UINT32 inslow = inst & 0xffffffff;
-	UINT32 inshig = inst >> 32;
+	uint64_t inst = BIG_ENDIANIZE_INT64(*(uint64_t *)oprom);
+	uint32_t inslow = inst & 0xffffffff;
+	uint32_t inshig = inst >> 32;
 
 	int t       = (inshig >> 24) & 0xff;
 	int b       = (inshig >> 20) & 0xf;
@@ -183,9 +183,9 @@ CPU_DISASSEMBLE( cquestrot )
 		"???   "
 	};
 
-	UINT64 inst = BIG_ENDIANIZE_INT64(*(UINT64 *)oprom);
-	UINT32 inslow = inst & 0xffffffff;
-	UINT32 inshig = inst >> 32;
+	uint64_t inst = BIG_ENDIANIZE_INT64(*(uint64_t *)oprom);
+	uint32_t inslow = inst & 0xffffffff;
+	uint32_t inshig = inst >> 32;
 
 	int t       = (inshig >> 20) & 0xfff;
 	int jmp     = (inshig >> 16) & 0xf;
@@ -269,9 +269,9 @@ CPU_DISASSEMBLE( cquestlin )
 		"BRES  ",
 	};
 
-	UINT64 inst = BIG_ENDIANIZE_INT64(*(UINT64 *)oprom);
-	UINT32 inslow = inst & 0xffffffff;
-	UINT32 inshig = inst >> 32;
+	uint64_t inst = BIG_ENDIANIZE_INT64(*(uint64_t *)oprom);
+	uint32_t inslow = inst & 0xffffffff;
+	uint32_t inshig = inst >> 32;
 
 	int t       = (inshig >> 24) & 0xff;
 	int jmp		= (inshig >> 20) & 0xf;

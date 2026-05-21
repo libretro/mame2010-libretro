@@ -108,23 +108,23 @@ struct _opcode_desc
 	/* copy of up to 16 bytes of opcode */
 	union
 	{
-		UINT8		b[16];
-		UINT16		w[8];
-		UINT32		l[4];
-		UINT64		q[2];
+		uint8_t		b[16];
+		uint16_t		w[8];
+		uint32_t		l[4];
+		uint64_t		q[2];
 	} opptr;								/* pointer to opcode memory */
 
 	/* information about this instruction's execution */
-	UINT8			length;					/* length in bytes of this opcode */
-	UINT8			delayslots;				/* number of delay slots (for branches) */
-	UINT8			skipslots;				/* number of skip slots (for branches) */
-	UINT32			flags;					/* OPFLAG_* opcode flags */
-	UINT32			cycles;					/* number of cycles needed to execute */
+	uint8_t			length;					/* length in bytes of this opcode */
+	uint8_t			delayslots;				/* number of delay slots (for branches) */
+	uint8_t			skipslots;				/* number of skip slots (for branches) */
+	uint32_t			flags;					/* OPFLAG_* opcode flags */
+	uint32_t			cycles;					/* number of cycles needed to execute */
 
 	/* register usage information */
-	UINT32			regin[4];				/* input registers */
-	UINT32			regout[4];				/* output registers */
-	UINT32			regreq[4];				/* required output registers */
+	uint32_t			regin[4];				/* input registers */
+	uint32_t			regout[4];				/* output registers */
+	uint32_t			regreq[4];				/* required output registers */
 };
 
 
@@ -136,9 +136,9 @@ typedef int (*drcfe_describe_func)(void *param, opcode_desc *desc, const opcode_
 typedef struct _drcfe_config drcfe_config;
 struct _drcfe_config
 {
-	UINT32			window_start;			/* code window start offset = startpc - window_start */
-	UINT32			window_end;				/* code window end offset = startpc + window_end */
-	UINT32			max_sequence;			/* maximum instructions to include in a sequence */
+	uint32_t			window_start;			/* code window start offset = startpc - window_start */
+	uint32_t			window_end;				/* code window end offset = startpc + window_end */
+	uint32_t			max_sequence;			/* maximum instructions to include in a sequence */
 	drcfe_describe_func	describe;				/* callback to describe a single instruction */
 };
 

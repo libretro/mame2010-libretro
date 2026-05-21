@@ -16,14 +16,14 @@
     TYPE DEFINITIONS
 ***************************************************************************/
 
-typedef void (*tms32031_xf_func)(running_device *device, UINT8 val);
-typedef void (*tms32031_iack_func)(running_device *device, UINT8 val, offs_t address);
+typedef void (*tms32031_xf_func)(running_device *device, uint8_t val);
+typedef void (*tms32031_iack_func)(running_device *device, uint8_t val, offs_t address);
 
 
 typedef struct _tms32031_config tms32031_config;
 struct _tms32031_config
 {
-	UINT32				bootoffset;
+	uint32_t				bootoffset;
 	tms32031_xf_func	xf0_w;
 	tms32031_xf_func	xf1_w;
 	tms32031_iack_func	iack_w;
@@ -75,9 +75,9 @@ enum
 DECLARE_LEGACY_CPU_DEVICE(TMS32031, tms32031);
 DECLARE_LEGACY_CPU_DEVICE(TMS32032, tms32032);
 
-extern float convert_tms3203x_fp_to_float(UINT32 floatdata);
-extern double convert_tms3203x_fp_to_double(UINT32 floatdata);
-extern UINT32 convert_float_to_tms3203x_fp(float fval);
-extern UINT32 convert_double_to_tms3203x_fp(double dval);
+extern float convert_tms3203x_fp_to_float(uint32_t floatdata);
+extern double convert_tms3203x_fp_to_double(uint32_t floatdata);
+extern uint32_t convert_float_to_tms3203x_fp(float fval);
+extern uint32_t convert_double_to_tms3203x_fp(double dval);
 
 #endif /* __TMS32031_H__ */

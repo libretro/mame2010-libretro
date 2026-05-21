@@ -15,7 +15,7 @@
 	else													\
 		MemWrite32((cs)->program, (cs)->op##num, f2u(appf));
 
-static void F2DecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1)
+static void F2DecodeFirstOperand(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1)
 {
 	cpustate->moddim = dim1;
 	cpustate->modm = cpustate->instflags & 0x40;
@@ -25,7 +25,7 @@ static void F2DecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_st
 	cpustate->flag1 = cpustate->amflag;
 }
 
-static void F2DecodeSecondOperand(v60_state *cpustate, UINT32 (*DecodeOp2)(v60_state *), UINT8 dim2)
+static void F2DecodeSecondOperand(v60_state *cpustate, uint32_t (*DecodeOp2)(v60_state *), uint8_t dim2)
 {
 	cpustate->moddim = dim2;
 	cpustate->modm = cpustate->instflags & 0x20;
@@ -35,7 +35,7 @@ static void F2DecodeSecondOperand(v60_state *cpustate, UINT32 (*DecodeOp2)(v60_s
 	cpustate->flag2 = cpustate->amflag;
 }
 
-static void F2WriteSecondOperand(v60_state *cpustate, UINT8 dim2)
+static void F2WriteSecondOperand(v60_state *cpustate, uint8_t dim2)
 {
 	cpustate->moddim = dim2;
 	cpustate->modm = cpustate->instflags & 0x20;
@@ -43,14 +43,14 @@ static void F2WriteSecondOperand(v60_state *cpustate, UINT8 dim2)
 	cpustate->amlength2 = WriteAM(cpustate);
 }
 
-static UINT32 opCVTWS(v60_state *cpustate)
+static uint32_t opCVTWS(v60_state *cpustate)
 {
 	float val;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
 
 	// Convert to float
-	val = (float)(INT32)cpustate->op1;
+	val = (float)(int32_t)cpustate->op1;
 	cpustate->modwritevalw = f2u(val);
 
 	cpustate->_OV = 0;
@@ -62,15 +62,15 @@ static UINT32 opCVTWS(v60_state *cpustate)
 	F2END(cpustate);
 }
 
-static UINT32 opCVTSW(v60_state *cpustate)
+static uint32_t opCVTSW(v60_state *cpustate)
 {
 	float val;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
 
-	// Convert to UINT32
+	// Convert to uint32_t
 	val = u2f(cpustate->op1);
-	cpustate->modwritevalw = (UINT32)val;
+	cpustate->modwritevalw = (uint32_t)val;
 
 	cpustate->_OV = 0;
 	cpustate->_CY =(val < 0.0f);
@@ -81,7 +81,7 @@ static UINT32 opCVTSW(v60_state *cpustate)
 	F2END(cpustate);
 }
 
-static UINT32 opMOVFS(v60_state *cpustate)
+static uint32_t opMOVFS(v60_state *cpustate)
 {
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
 	cpustate->modwritevalw = cpustate->op1;
@@ -89,7 +89,7 @@ static UINT32 opMOVFS(v60_state *cpustate)
 	F2END(cpustate);
 }
 
-static UINT32 opNEGFS(v60_state *cpustate)
+static uint32_t opNEGFS(v60_state *cpustate)
 {
 	float appf;
 
@@ -107,7 +107,7 @@ static UINT32 opNEGFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opABSFS(v60_state *cpustate)
+static uint32_t opABSFS(v60_state *cpustate)
 {
 	float appf;
 
@@ -128,9 +128,9 @@ static UINT32 opABSFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opADDFS(v60_state *cpustate)
+static uint32_t opADDFS(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
@@ -149,9 +149,9 @@ static UINT32 opADDFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opSUBFS(v60_state *cpustate)
+static uint32_t opSUBFS(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
@@ -170,9 +170,9 @@ static UINT32 opSUBFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opMULFS(v60_state *cpustate)
+static uint32_t opMULFS(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
@@ -191,9 +191,9 @@ static UINT32 opMULFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opDIVFS(v60_state *cpustate)
+static uint32_t opDIVFS(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 2);
@@ -212,9 +212,9 @@ static UINT32 opDIVFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opSCLFS(v60_state *cpustate)
+static uint32_t opSCLFS(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	float appf;
 
 	F2DecodeFirstOperand(cpustate, ReadAM, 1);
@@ -222,8 +222,8 @@ static UINT32 opSCLFS(v60_state *cpustate)
 
 	F2LOADOPFLOAT(cpustate, 2);
 
-	if ((INT16)cpustate->op1 < 0)
-		appf /= 1 << -(INT16)cpustate->op1;
+	if ((int16_t)cpustate->op1 < 0)
+		appf /= 1 << -(int16_t)cpustate->op1;
 	else
 		appf *= 1 << cpustate->op1;
 
@@ -236,7 +236,7 @@ static UINT32 opSCLFS(v60_state *cpustate)
 	F2END(cpustate)
 }
 
-static UINT32 opCMPF(v60_state *cpustate)
+static uint32_t opCMPF(v60_state *cpustate)
 {
 	float appf;
 
@@ -253,19 +253,19 @@ static UINT32 opCMPF(v60_state *cpustate)
 	F2END(cpustate);
 }
 
-static UINT32 op5FUNHANDLED(v60_state *cpustate)
+static uint32_t op5FUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 5F opcode at %08x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 op5CUNHANDLED(v60_state *cpustate)
+static uint32_t op5CUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 5C opcode at %08x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 (*const Op5FTable[32])(v60_state *) =
+static uint32_t (*const Op5FTable[32])(v60_state *) =
 {
 	opCVTWS,
 	opCVTSW,
@@ -301,7 +301,7 @@ static UINT32 (*const Op5FTable[32])(v60_state *) =
 	op5FUNHANDLED
 };
 
-static UINT32 (*const Op5CTable[32])(v60_state *) =
+static uint32_t (*const Op5CTable[32])(v60_state *) =
 {
 	opCMPF,
 	op5CUNHANDLED,
@@ -339,14 +339,14 @@ static UINT32 (*const Op5CTable[32])(v60_state *) =
 };
 
 
-static UINT32 op5F(v60_state *cpustate)
+static uint32_t op5F(v60_state *cpustate)
 {
 	cpustate->instflags = OpRead8(cpustate->program, cpustate->PC + 1);
 	return Op5FTable[cpustate->instflags & 0x1F](cpustate);
 }
 
 
-static UINT32 op5C(v60_state *cpustate)
+static uint32_t op5C(v60_state *cpustate)
 {
 	cpustate->instflags = OpRead8(cpustate->program, cpustate->PC + 1);
 	return Op5CTable[cpustate->instflags & 0x1F](cpustate);

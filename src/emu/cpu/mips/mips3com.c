@@ -24,8 +24,8 @@
 
 static TIMER_CALLBACK( compare_int_callback );
 
-static UINT32 compute_config_register(const mips3_state *mips);
-static UINT32 compute_prid_register(const mips3_state *mips);
+static uint32_t compute_config_register(const mips3_state *mips);
+static uint32_t compute_prid_register(const mips3_state *mips);
 
 static void tlb_map_entry(mips3_state *mips, int tlbindex);
 static void tlb_write_common(mips3_state *mips, int tlbindex);
@@ -42,7 +42,7 @@ static void tlb_entry_log_half(mips3_tlb_entry *entry, int tlbindex, int which);
     TLB entry matches the provided ASID
 -------------------------------------------------*/
 
-INLINE int tlb_entry_matches_asid(const mips3_tlb_entry *entry, UINT8 asid)
+INLINE int tlb_entry_matches_asid(const mips3_tlb_entry *entry, uint8_t asid)
 {
 	return (entry->entry_hi & 0xff) == asid;
 }
@@ -178,10 +178,10 @@ void mips3com_reset(mips3_state *mips)
     CPU
 -------------------------------------------------*/
 
-offs_t mips3com_dasm(mips3_state *mips, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram)
+offs_t mips3com_dasm(mips3_state *mips, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram)
 {
-	extern unsigned dasmmips3(char *, unsigned, UINT32);
-	UINT32 op = *(UINT32 *)oprom;
+	extern unsigned dasmmips3(char *, unsigned, uint32_t);
+	uint32_t op = *(uint32_t *)oprom;
 	if (mips->bigendian)
 		op = BIG_ENDIANIZE_INT32(op);
 	else
@@ -200,10 +200,10 @@ void mips3com_update_cycle_counting(mips3_state *mips)
 	/* modify the timer to go off */
 	if (mips->compare_armed && (mips->cpr[0][COP0_Status] & SR_IMEX5))
 	{
-		UINT32 count = (mips->device->total_cycles() - mips->count_zero_time) / 2;
-		UINT32 compare = mips->cpr[0][COP0_Compare];
-		UINT32 delta = compare - count;
-		attotime newtime = mips->device->cycles_to_attotime((UINT64)delta * 2);
+		uint32_t count = (mips->device->total_cycles() - mips->count_zero_time) / 2;
+		uint32_t compare = mips->cpr[0][COP0_Compare];
+		uint32_t delta = compare - count;
+		attotime newtime = mips->device->cycles_to_attotime((uint64_t)delta * 2);
 		timer_adjust_oneshot(mips->compare_int_timer, newtime, 0);
 		return;
 	}
@@ -258,7 +258,7 @@ int mips3com_translate_address(mips3_state *mips, int space, int intention, offs
 
 void mips3com_tlbr(mips3_state *mips)
 {
-	UINT32 tlbindex = mips->cpr[0][COP0_Index] & 0x3f;
+	uint32_t tlbindex = mips->cpr[0][COP0_Index] & 0x3f;
 
 	/* only handle entries within the TLB */
 	if (tlbindex < mips->tlbentries)
@@ -291,9 +291,9 @@ void mips3com_tlbwi(mips3_state *mips)
 
 void mips3com_tlbwr(mips3_state *mips)
 {
-	UINT32 wired = mips->cpr[0][COP0_Wired] & 0x3f;
-	UINT32 unwired = mips->tlbentries - wired;
-	UINT32 tlbindex = mips->tlbentries - 1;
+	uint32_t wired = mips->cpr[0][COP0_Wired] & 0x3f;
+	uint32_t unwired = mips->tlbentries - wired;
+	uint32_t tlbindex = mips->tlbentries - 1;
 
 	/* "random" is based off of the current cycle counting through the non-wired pages */
 	if (unwired > 0)
@@ -310,14 +310,14 @@ void mips3com_tlbwr(mips3_state *mips)
 
 void mips3com_tlbp(mips3_state *mips)
 {
-	UINT32 tlbindex;
-	UINT64 vpn;
+	uint32_t tlbindex;
+	uint64_t vpn;
 
 	/* iterate over TLB entries */
 	for (tlbindex = 0; tlbindex < mips->tlbentries; tlbindex++)
 	{
 		mips3_tlb_entry *entry = &mips->tlb[tlbindex];
-		UINT64 mask = ~((entry->page_mask >> 13) & 0xfff) << 13;
+		uint64_t mask = ~((entry->page_mask >> 13) & 0xfff) << 13;
 
 		/* if the relevant bits of EntryHi match the relevant bits of the TLB */
 		if ((entry->entry_hi & mask) == (mips->cpr[0][COP0_EntryHi] & mask))
@@ -346,7 +346,7 @@ void mips3com_tlbp(mips3_state *mips)
     a MIPS 3 CPU
 -------------------------------------------------*/
 
-void mips3com_set_info(mips3_state *mips, UINT32 state, cpuinfo *info)
+void mips3com_set_info(mips3_state *mips, uint32_t state, cpuinfo *info)
 {
 	switch (state)
 	{
@@ -451,7 +451,7 @@ void mips3com_set_info(mips3_state *mips, UINT32 state, cpuinfo *info)
     a MIPS 3 CPU
 -------------------------------------------------*/
 
-void mips3com_get_info(mips3_state *mips, UINT32 state, cpuinfo *info)
+void mips3com_get_info(mips3_state *mips, uint32_t state, cpuinfo *info)
 {
 	switch (state)
 	{
@@ -554,186 +554,186 @@ void mips3com_get_info(mips3_state *mips, UINT32 state, cpuinfo *info)
 		case CPUINFO_STR_FLAGS:							strcpy(info->s, " ");					break;
 
 		case CPUINFO_STR_REGISTER + MIPS3_PC:			sprintf(info->s, "PC: %08X", mips->pc); break;
-		case CPUINFO_STR_REGISTER + MIPS3_SR:			sprintf(info->s, "SR: %08X", (UINT32)mips->cpr[0][COP0_Status]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_EPC:			sprintf(info->s, "EPC:%08X", (UINT32)mips->cpr[0][COP0_EPC]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_CAUSE:		sprintf(info->s, "Cause:%08X", (UINT32)mips->cpr[0][COP0_Cause]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_COUNT:		sprintf(info->s, "Count:%08X", (UINT32)((mips->device->total_cycles() - mips->count_zero_time) / 2)); break;
-		case CPUINFO_STR_REGISTER + MIPS3_COMPARE:		sprintf(info->s, "Compare:%08X", (UINT32)mips->cpr[0][COP0_Compare]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_INDEX:		sprintf(info->s, "Index:%08X", (UINT32)mips->cpr[0][COP0_Index]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_RANDOM:		sprintf(info->s, "Random:%08X", (UINT32)mips->cpr[0][COP0_Random]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_ENTRYHI:		sprintf(info->s, "EntryHi:%08X%08X", (UINT32)(mips->cpr[0][COP0_EntryHi] >> 32), (UINT32)mips->cpr[0][COP0_EntryHi]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_ENTRYLO0:		sprintf(info->s, "EntryLo0:%08X%08X", (UINT32)(mips->cpr[0][COP0_EntryLo0] >> 32), (UINT32)mips->cpr[0][COP0_EntryLo0]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_ENTRYLO1:		sprintf(info->s, "EntryLo1:%08X%08X", (UINT32)(mips->cpr[0][COP0_EntryLo1] >> 32), (UINT32)mips->cpr[0][COP0_EntryLo1]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_PAGEMASK:		sprintf(info->s, "PageMask:%08X%08X", (UINT32)(mips->cpr[0][COP0_PageMask] >> 32), (UINT32)mips->cpr[0][COP0_PageMask]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_WIRED:		sprintf(info->s, "Wired:%08X", (UINT32)mips->cpr[0][COP0_Wired]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_BADVADDR:		sprintf(info->s, "BadVAddr:%08X", (UINT32)mips->cpr[0][COP0_BadVAddr]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_SR:			sprintf(info->s, "SR: %08X", (uint32_t)mips->cpr[0][COP0_Status]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_EPC:			sprintf(info->s, "EPC:%08X", (uint32_t)mips->cpr[0][COP0_EPC]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_CAUSE:		sprintf(info->s, "Cause:%08X", (uint32_t)mips->cpr[0][COP0_Cause]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_COUNT:		sprintf(info->s, "Count:%08X", (uint32_t)((mips->device->total_cycles() - mips->count_zero_time) / 2)); break;
+		case CPUINFO_STR_REGISTER + MIPS3_COMPARE:		sprintf(info->s, "Compare:%08X", (uint32_t)mips->cpr[0][COP0_Compare]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_INDEX:		sprintf(info->s, "Index:%08X", (uint32_t)mips->cpr[0][COP0_Index]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_RANDOM:		sprintf(info->s, "Random:%08X", (uint32_t)mips->cpr[0][COP0_Random]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_ENTRYHI:		sprintf(info->s, "EntryHi:%08X%08X", (uint32_t)(mips->cpr[0][COP0_EntryHi] >> 32), (uint32_t)mips->cpr[0][COP0_EntryHi]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_ENTRYLO0:		sprintf(info->s, "EntryLo0:%08X%08X", (uint32_t)(mips->cpr[0][COP0_EntryLo0] >> 32), (uint32_t)mips->cpr[0][COP0_EntryLo0]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_ENTRYLO1:		sprintf(info->s, "EntryLo1:%08X%08X", (uint32_t)(mips->cpr[0][COP0_EntryLo1] >> 32), (uint32_t)mips->cpr[0][COP0_EntryLo1]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_PAGEMASK:		sprintf(info->s, "PageMask:%08X%08X", (uint32_t)(mips->cpr[0][COP0_PageMask] >> 32), (uint32_t)mips->cpr[0][COP0_PageMask]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_WIRED:		sprintf(info->s, "Wired:%08X", (uint32_t)mips->cpr[0][COP0_Wired]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_BADVADDR:		sprintf(info->s, "BadVAddr:%08X", (uint32_t)mips->cpr[0][COP0_BadVAddr]); break;
 
 #if USE_ABI_REG_NAMES
-		case CPUINFO_STR_REGISTER + MIPS3_R0:			sprintf(info->s, "$zero: %08X%08X", (UINT32)(mips->r[0] >> 32), (UINT32)mips->r[0]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R1:			sprintf(info->s, "  $at: %08X%08X", (UINT32)(mips->r[1] >> 32), (UINT32)mips->r[1]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R2:			sprintf(info->s, "  $v0: %08X%08X", (UINT32)(mips->r[2] >> 32), (UINT32)mips->r[2]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R3:			sprintf(info->s, "  $v1: %08X%08X", (UINT32)(mips->r[3] >> 32), (UINT32)mips->r[3]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R4:			sprintf(info->s, "  $a0: %08X%08X", (UINT32)(mips->r[4] >> 32), (UINT32)mips->r[4]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R5:			sprintf(info->s, "  $a1: %08X%08X", (UINT32)(mips->r[5] >> 32), (UINT32)mips->r[5]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R6:			sprintf(info->s, "  $a2: %08X%08X", (UINT32)(mips->r[6] >> 32), (UINT32)mips->r[6]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R7:			sprintf(info->s, "  $a3: %08X%08X", (UINT32)(mips->r[7] >> 32), (UINT32)mips->r[7]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R8:			sprintf(info->s, "  $t0: %08X%08X", (UINT32)(mips->r[8] >> 32), (UINT32)mips->r[8]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R9:			sprintf(info->s, "  $t1: %08X%08X", (UINT32)(mips->r[9] >> 32), (UINT32)mips->r[9]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R10:			sprintf(info->s, "  $t2:%08X%08X", (UINT32)(mips->r[10] >> 32), (UINT32)mips->r[10]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R11:			sprintf(info->s, "  $t3:%08X%08X", (UINT32)(mips->r[11] >> 32), (UINT32)mips->r[11]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R12:			sprintf(info->s, "  $t4:%08X%08X", (UINT32)(mips->r[12] >> 32), (UINT32)mips->r[12]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R13:			sprintf(info->s, "  $t5:%08X%08X", (UINT32)(mips->r[13] >> 32), (UINT32)mips->r[13]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R14:			sprintf(info->s, "  $t6:%08X%08X", (UINT32)(mips->r[14] >> 32), (UINT32)mips->r[14]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R15:			sprintf(info->s, "  $t7:%08X%08X", (UINT32)(mips->r[15] >> 32), (UINT32)mips->r[15]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R16:			sprintf(info->s, "  $s0:%08X%08X", (UINT32)(mips->r[16] >> 32), (UINT32)mips->r[16]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R17:			sprintf(info->s, "  $s1:%08X%08X", (UINT32)(mips->r[17] >> 32), (UINT32)mips->r[17]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R18:			sprintf(info->s, "  $s2:%08X%08X", (UINT32)(mips->r[18] >> 32), (UINT32)mips->r[18]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R19:			sprintf(info->s, "  $s3:%08X%08X", (UINT32)(mips->r[19] >> 32), (UINT32)mips->r[19]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R20:			sprintf(info->s, "  $s4:%08X%08X", (UINT32)(mips->r[20] >> 32), (UINT32)mips->r[20]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R21:			sprintf(info->s, "  $s5:%08X%08X", (UINT32)(mips->r[21] >> 32), (UINT32)mips->r[21]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R22:			sprintf(info->s, "  $s6:%08X%08X", (UINT32)(mips->r[22] >> 32), (UINT32)mips->r[22]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R23:			sprintf(info->s, "  $s7:%08X%08X", (UINT32)(mips->r[23] >> 32), (UINT32)mips->r[23]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R24:			sprintf(info->s, "  $t8:%08X%08X", (UINT32)(mips->r[24] >> 32), (UINT32)mips->r[24]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R25:			sprintf(info->s, "  $t9:%08X%08X", (UINT32)(mips->r[25] >> 32), (UINT32)mips->r[25]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R26:			sprintf(info->s, "  $k0:%08X%08X", (UINT32)(mips->r[26] >> 32), (UINT32)mips->r[26]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R27:			sprintf(info->s, "  $k1:%08X%08X", (UINT32)(mips->r[27] >> 32), (UINT32)mips->r[27]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R28:			sprintf(info->s, "  $gp:%08X%08X", (UINT32)(mips->r[28] >> 32), (UINT32)mips->r[28]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R29:			sprintf(info->s, "  $sp:%08X%08X", (UINT32)(mips->r[29] >> 32), (UINT32)mips->r[29]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R30:			sprintf(info->s, "  $fp:%08X%08X", (UINT32)(mips->r[30] >> 32), (UINT32)mips->r[30]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R31:			sprintf(info->s, "  $ra:%08X%08X", (UINT32)(mips->r[31] >> 32), (UINT32)mips->r[31]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R0:			sprintf(info->s, "$zero: %08X%08X", (uint32_t)(mips->r[0] >> 32), (uint32_t)mips->r[0]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R1:			sprintf(info->s, "  $at: %08X%08X", (uint32_t)(mips->r[1] >> 32), (uint32_t)mips->r[1]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R2:			sprintf(info->s, "  $v0: %08X%08X", (uint32_t)(mips->r[2] >> 32), (uint32_t)mips->r[2]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R3:			sprintf(info->s, "  $v1: %08X%08X", (uint32_t)(mips->r[3] >> 32), (uint32_t)mips->r[3]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R4:			sprintf(info->s, "  $a0: %08X%08X", (uint32_t)(mips->r[4] >> 32), (uint32_t)mips->r[4]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R5:			sprintf(info->s, "  $a1: %08X%08X", (uint32_t)(mips->r[5] >> 32), (uint32_t)mips->r[5]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R6:			sprintf(info->s, "  $a2: %08X%08X", (uint32_t)(mips->r[6] >> 32), (uint32_t)mips->r[6]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R7:			sprintf(info->s, "  $a3: %08X%08X", (uint32_t)(mips->r[7] >> 32), (uint32_t)mips->r[7]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R8:			sprintf(info->s, "  $t0: %08X%08X", (uint32_t)(mips->r[8] >> 32), (uint32_t)mips->r[8]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R9:			sprintf(info->s, "  $t1: %08X%08X", (uint32_t)(mips->r[9] >> 32), (uint32_t)mips->r[9]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R10:			sprintf(info->s, "  $t2:%08X%08X", (uint32_t)(mips->r[10] >> 32), (uint32_t)mips->r[10]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R11:			sprintf(info->s, "  $t3:%08X%08X", (uint32_t)(mips->r[11] >> 32), (uint32_t)mips->r[11]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R12:			sprintf(info->s, "  $t4:%08X%08X", (uint32_t)(mips->r[12] >> 32), (uint32_t)mips->r[12]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R13:			sprintf(info->s, "  $t5:%08X%08X", (uint32_t)(mips->r[13] >> 32), (uint32_t)mips->r[13]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R14:			sprintf(info->s, "  $t6:%08X%08X", (uint32_t)(mips->r[14] >> 32), (uint32_t)mips->r[14]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R15:			sprintf(info->s, "  $t7:%08X%08X", (uint32_t)(mips->r[15] >> 32), (uint32_t)mips->r[15]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R16:			sprintf(info->s, "  $s0:%08X%08X", (uint32_t)(mips->r[16] >> 32), (uint32_t)mips->r[16]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R17:			sprintf(info->s, "  $s1:%08X%08X", (uint32_t)(mips->r[17] >> 32), (uint32_t)mips->r[17]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R18:			sprintf(info->s, "  $s2:%08X%08X", (uint32_t)(mips->r[18] >> 32), (uint32_t)mips->r[18]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R19:			sprintf(info->s, "  $s3:%08X%08X", (uint32_t)(mips->r[19] >> 32), (uint32_t)mips->r[19]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R20:			sprintf(info->s, "  $s4:%08X%08X", (uint32_t)(mips->r[20] >> 32), (uint32_t)mips->r[20]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R21:			sprintf(info->s, "  $s5:%08X%08X", (uint32_t)(mips->r[21] >> 32), (uint32_t)mips->r[21]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R22:			sprintf(info->s, "  $s6:%08X%08X", (uint32_t)(mips->r[22] >> 32), (uint32_t)mips->r[22]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R23:			sprintf(info->s, "  $s7:%08X%08X", (uint32_t)(mips->r[23] >> 32), (uint32_t)mips->r[23]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R24:			sprintf(info->s, "  $t8:%08X%08X", (uint32_t)(mips->r[24] >> 32), (uint32_t)mips->r[24]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R25:			sprintf(info->s, "  $t9:%08X%08X", (uint32_t)(mips->r[25] >> 32), (uint32_t)mips->r[25]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R26:			sprintf(info->s, "  $k0:%08X%08X", (uint32_t)(mips->r[26] >> 32), (uint32_t)mips->r[26]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R27:			sprintf(info->s, "  $k1:%08X%08X", (uint32_t)(mips->r[27] >> 32), (uint32_t)mips->r[27]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R28:			sprintf(info->s, "  $gp:%08X%08X", (uint32_t)(mips->r[28] >> 32), (uint32_t)mips->r[28]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R29:			sprintf(info->s, "  $sp:%08X%08X", (uint32_t)(mips->r[29] >> 32), (uint32_t)mips->r[29]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R30:			sprintf(info->s, "  $fp:%08X%08X", (uint32_t)(mips->r[30] >> 32), (uint32_t)mips->r[30]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R31:			sprintf(info->s, "  $ra:%08X%08X", (uint32_t)(mips->r[31] >> 32), (uint32_t)mips->r[31]); break;
 #else
-		case CPUINFO_STR_REGISTER + MIPS3_R0:			sprintf(info->s, " R0: %08X%08X", (UINT32)(mips->r[0] >> 32), (UINT32)mips->r[0]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R1:			sprintf(info->s, " R1: %08X%08X", (UINT32)(mips->r[1] >> 32), (UINT32)mips->r[1]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R2:			sprintf(info->s, " R2: %08X%08X", (UINT32)(mips->r[2] >> 32), (UINT32)mips->r[2]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R3:			sprintf(info->s, " R3: %08X%08X", (UINT32)(mips->r[3] >> 32), (UINT32)mips->r[3]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R4:			sprintf(info->s, " R4: %08X%08X", (UINT32)(mips->r[4] >> 32), (UINT32)mips->r[4]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R5:			sprintf(info->s, " R5: %08X%08X", (UINT32)(mips->r[5] >> 32), (UINT32)mips->r[5]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R6:			sprintf(info->s, " R6: %08X%08X", (UINT32)(mips->r[6] >> 32), (UINT32)mips->r[6]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R7:			sprintf(info->s, " R7: %08X%08X", (UINT32)(mips->r[7] >> 32), (UINT32)mips->r[7]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R8:			sprintf(info->s, " R8: %08X%08X", (UINT32)(mips->r[8] >> 32), (UINT32)mips->r[8]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R9:			sprintf(info->s, " R9: %08X%08X", (UINT32)(mips->r[9] >> 32), (UINT32)mips->r[9]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R10:			sprintf(info->s, "R10: %08X%08X", (UINT32)(mips->r[10] >> 32), (UINT32)mips->r[10]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R11:			sprintf(info->s, "R11: %08X%08X", (UINT32)(mips->r[11] >> 32), (UINT32)mips->r[11]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R12:			sprintf(info->s, "R12: %08X%08X", (UINT32)(mips->r[12] >> 32), (UINT32)mips->r[12]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R13:			sprintf(info->s, "R13: %08X%08X", (UINT32)(mips->r[13] >> 32), (UINT32)mips->r[13]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R14:			sprintf(info->s, "R14: %08X%08X", (UINT32)(mips->r[14] >> 32), (UINT32)mips->r[14]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R15:			sprintf(info->s, "R15: %08X%08X", (UINT32)(mips->r[15] >> 32), (UINT32)mips->r[15]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R16:			sprintf(info->s, "R16: %08X%08X", (UINT32)(mips->r[16] >> 32), (UINT32)mips->r[16]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R17:			sprintf(info->s, "R17: %08X%08X", (UINT32)(mips->r[17] >> 32), (UINT32)mips->r[17]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R18:			sprintf(info->s, "R18: %08X%08X", (UINT32)(mips->r[18] >> 32), (UINT32)mips->r[18]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R19:			sprintf(info->s, "R19: %08X%08X", (UINT32)(mips->r[19] >> 32), (UINT32)mips->r[19]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R20:			sprintf(info->s, "R20: %08X%08X", (UINT32)(mips->r[20] >> 32), (UINT32)mips->r[20]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R21:			sprintf(info->s, "R21: %08X%08X", (UINT32)(mips->r[21] >> 32), (UINT32)mips->r[21]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R22:			sprintf(info->s, "R22: %08X%08X", (UINT32)(mips->r[22] >> 32), (UINT32)mips->r[22]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R23:			sprintf(info->s, "R23: %08X%08X", (UINT32)(mips->r[23] >> 32), (UINT32)mips->r[23]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R24:			sprintf(info->s, "R24: %08X%08X", (UINT32)(mips->r[24] >> 32), (UINT32)mips->r[24]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R25:			sprintf(info->s, "R25: %08X%08X", (UINT32)(mips->r[25] >> 32), (UINT32)mips->r[25]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R26:			sprintf(info->s, "R26: %08X%08X", (UINT32)(mips->r[26] >> 32), (UINT32)mips->r[26]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R27:			sprintf(info->s, "R27: %08X%08X", (UINT32)(mips->r[27] >> 32), (UINT32)mips->r[27]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R28:			sprintf(info->s, "R28: %08X%08X", (UINT32)(mips->r[28] >> 32), (UINT32)mips->r[28]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R29:			sprintf(info->s, "R29: %08X%08X", (UINT32)(mips->r[29] >> 32), (UINT32)mips->r[29]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R30:			sprintf(info->s, "R30: %08X%08X", (UINT32)(mips->r[30] >> 32), (UINT32)mips->r[30]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_R31:			sprintf(info->s, "R31: %08X%08X", (UINT32)(mips->r[31] >> 32), (UINT32)mips->r[31]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R0:			sprintf(info->s, " R0: %08X%08X", (uint32_t)(mips->r[0] >> 32), (uint32_t)mips->r[0]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R1:			sprintf(info->s, " R1: %08X%08X", (uint32_t)(mips->r[1] >> 32), (uint32_t)mips->r[1]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R2:			sprintf(info->s, " R2: %08X%08X", (uint32_t)(mips->r[2] >> 32), (uint32_t)mips->r[2]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R3:			sprintf(info->s, " R3: %08X%08X", (uint32_t)(mips->r[3] >> 32), (uint32_t)mips->r[3]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R4:			sprintf(info->s, " R4: %08X%08X", (uint32_t)(mips->r[4] >> 32), (uint32_t)mips->r[4]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R5:			sprintf(info->s, " R5: %08X%08X", (uint32_t)(mips->r[5] >> 32), (uint32_t)mips->r[5]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R6:			sprintf(info->s, " R6: %08X%08X", (uint32_t)(mips->r[6] >> 32), (uint32_t)mips->r[6]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R7:			sprintf(info->s, " R7: %08X%08X", (uint32_t)(mips->r[7] >> 32), (uint32_t)mips->r[7]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R8:			sprintf(info->s, " R8: %08X%08X", (uint32_t)(mips->r[8] >> 32), (uint32_t)mips->r[8]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R9:			sprintf(info->s, " R9: %08X%08X", (uint32_t)(mips->r[9] >> 32), (uint32_t)mips->r[9]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R10:			sprintf(info->s, "R10: %08X%08X", (uint32_t)(mips->r[10] >> 32), (uint32_t)mips->r[10]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R11:			sprintf(info->s, "R11: %08X%08X", (uint32_t)(mips->r[11] >> 32), (uint32_t)mips->r[11]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R12:			sprintf(info->s, "R12: %08X%08X", (uint32_t)(mips->r[12] >> 32), (uint32_t)mips->r[12]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R13:			sprintf(info->s, "R13: %08X%08X", (uint32_t)(mips->r[13] >> 32), (uint32_t)mips->r[13]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R14:			sprintf(info->s, "R14: %08X%08X", (uint32_t)(mips->r[14] >> 32), (uint32_t)mips->r[14]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R15:			sprintf(info->s, "R15: %08X%08X", (uint32_t)(mips->r[15] >> 32), (uint32_t)mips->r[15]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R16:			sprintf(info->s, "R16: %08X%08X", (uint32_t)(mips->r[16] >> 32), (uint32_t)mips->r[16]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R17:			sprintf(info->s, "R17: %08X%08X", (uint32_t)(mips->r[17] >> 32), (uint32_t)mips->r[17]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R18:			sprintf(info->s, "R18: %08X%08X", (uint32_t)(mips->r[18] >> 32), (uint32_t)mips->r[18]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R19:			sprintf(info->s, "R19: %08X%08X", (uint32_t)(mips->r[19] >> 32), (uint32_t)mips->r[19]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R20:			sprintf(info->s, "R20: %08X%08X", (uint32_t)(mips->r[20] >> 32), (uint32_t)mips->r[20]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R21:			sprintf(info->s, "R21: %08X%08X", (uint32_t)(mips->r[21] >> 32), (uint32_t)mips->r[21]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R22:			sprintf(info->s, "R22: %08X%08X", (uint32_t)(mips->r[22] >> 32), (uint32_t)mips->r[22]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R23:			sprintf(info->s, "R23: %08X%08X", (uint32_t)(mips->r[23] >> 32), (uint32_t)mips->r[23]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R24:			sprintf(info->s, "R24: %08X%08X", (uint32_t)(mips->r[24] >> 32), (uint32_t)mips->r[24]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R25:			sprintf(info->s, "R25: %08X%08X", (uint32_t)(mips->r[25] >> 32), (uint32_t)mips->r[25]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R26:			sprintf(info->s, "R26: %08X%08X", (uint32_t)(mips->r[26] >> 32), (uint32_t)mips->r[26]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R27:			sprintf(info->s, "R27: %08X%08X", (uint32_t)(mips->r[27] >> 32), (uint32_t)mips->r[27]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R28:			sprintf(info->s, "R28: %08X%08X", (uint32_t)(mips->r[28] >> 32), (uint32_t)mips->r[28]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R29:			sprintf(info->s, "R29: %08X%08X", (uint32_t)(mips->r[29] >> 32), (uint32_t)mips->r[29]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R30:			sprintf(info->s, "R30: %08X%08X", (uint32_t)(mips->r[30] >> 32), (uint32_t)mips->r[30]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_R31:			sprintf(info->s, "R31: %08X%08X", (uint32_t)(mips->r[31] >> 32), (uint32_t)mips->r[31]); break;
 #endif
-		case CPUINFO_STR_REGISTER + MIPS3_HI:			sprintf(info->s, "HI: %08X%08X", (UINT32)(mips->r[REG_HI] >> 32), (UINT32)mips->r[REG_HI]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_LO:			sprintf(info->s, "LO: %08X%08X", (UINT32)(mips->r[REG_LO] >> 32), (UINT32)mips->r[REG_LO]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_HI:			sprintf(info->s, "HI: %08X%08X", (uint32_t)(mips->r[REG_HI] >> 32), (uint32_t)mips->r[REG_HI]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_LO:			sprintf(info->s, "LO: %08X%08X", (uint32_t)(mips->r[REG_LO] >> 32), (uint32_t)mips->r[REG_LO]); break;
 
-		case CPUINFO_STR_REGISTER + MIPS3_CCR1_31:		sprintf(info->s, "CCR31:%08X", (UINT32)mips->ccr[1][31]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_CCR1_31:		sprintf(info->s, "CCR31:%08X", (uint32_t)mips->ccr[1][31]); break;
 
-		case CPUINFO_STR_REGISTER + MIPS3_FPR0:			sprintf(info->s, "FPR0: %08X%08X", (UINT32)(mips->cpr[1][0] >> 32), (UINT32)mips->cpr[1][0]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR0:			sprintf(info->s, "FPR0: %08X%08X", (uint32_t)(mips->cpr[1][0] >> 32), (uint32_t)mips->cpr[1][0]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS0:			sprintf(info->s, "FPS0: !%16g", *(float *)&mips->cpr[1][0]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD0:			sprintf(info->s, "FPD0: !%16g", *(double *)&mips->cpr[1][0]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR1:			sprintf(info->s, "FPR1: %08X%08X", (UINT32)(mips->cpr[1][1] >> 32), (UINT32)mips->cpr[1][1]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR1:			sprintf(info->s, "FPR1: %08X%08X", (uint32_t)(mips->cpr[1][1] >> 32), (uint32_t)mips->cpr[1][1]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS1:			sprintf(info->s, "FPS1: !%16g", *(float *)&mips->cpr[1][1]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD1:			sprintf(info->s, "FPD1: !%16g", *(double *)&mips->cpr[1][1]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR2:			sprintf(info->s, "FPR2: %08X%08X", (UINT32)(mips->cpr[1][2] >> 32), (UINT32)mips->cpr[1][2]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR2:			sprintf(info->s, "FPR2: %08X%08X", (uint32_t)(mips->cpr[1][2] >> 32), (uint32_t)mips->cpr[1][2]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS2:			sprintf(info->s, "FPS2: !%16g", *(float *)&mips->cpr[1][2]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD2:			sprintf(info->s, "FPD2: !%16g", *(double *)&mips->cpr[1][2]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR3:			sprintf(info->s, "FPR3: %08X%08X", (UINT32)(mips->cpr[1][3] >> 32), (UINT32)mips->cpr[1][3]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR3:			sprintf(info->s, "FPR3: %08X%08X", (uint32_t)(mips->cpr[1][3] >> 32), (uint32_t)mips->cpr[1][3]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS3:			sprintf(info->s, "FPS3: !%16g", *(float *)&mips->cpr[1][3]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD3:			sprintf(info->s, "FPD3: !%16g", *(double *)&mips->cpr[1][3]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR4:			sprintf(info->s, "FPR4: %08X%08X", (UINT32)(mips->cpr[1][4] >> 32), (UINT32)mips->cpr[1][4]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR4:			sprintf(info->s, "FPR4: %08X%08X", (uint32_t)(mips->cpr[1][4] >> 32), (uint32_t)mips->cpr[1][4]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS4:			sprintf(info->s, "FPS4: !%16g", *(float *)&mips->cpr[1][4]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD4:			sprintf(info->s, "FPD4: !%16g", *(double *)&mips->cpr[1][4]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR5:			sprintf(info->s, "FPR5: %08X%08X", (UINT32)(mips->cpr[1][5] >> 32), (UINT32)mips->cpr[1][5]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR5:			sprintf(info->s, "FPR5: %08X%08X", (uint32_t)(mips->cpr[1][5] >> 32), (uint32_t)mips->cpr[1][5]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS5:			sprintf(info->s, "FPS5: !%16g", *(float *)&mips->cpr[1][5]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD5:			sprintf(info->s, "FPD5: !%16g", *(double *)&mips->cpr[1][5]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR6:			sprintf(info->s, "FPR6: %08X%08X", (UINT32)(mips->cpr[1][6] >> 32), (UINT32)mips->cpr[1][6]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR6:			sprintf(info->s, "FPR6: %08X%08X", (uint32_t)(mips->cpr[1][6] >> 32), (uint32_t)mips->cpr[1][6]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS6:			sprintf(info->s, "FPS6: !%16g", *(float *)&mips->cpr[1][6]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD6:			sprintf(info->s, "FPD6: !%16g", *(double *)&mips->cpr[1][6]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR7:			sprintf(info->s, "FPR7: %08X%08X", (UINT32)(mips->cpr[1][7] >> 32), (UINT32)mips->cpr[1][7]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR7:			sprintf(info->s, "FPR7: %08X%08X", (uint32_t)(mips->cpr[1][7] >> 32), (uint32_t)mips->cpr[1][7]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS7:			sprintf(info->s, "FPS7: !%16g", *(float *)&mips->cpr[1][7]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD7:			sprintf(info->s, "FPD7: !%16g", *(double *)&mips->cpr[1][7]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR8:			sprintf(info->s, "FPR8: %08X%08X", (UINT32)(mips->cpr[1][8] >> 32), (UINT32)mips->cpr[1][8]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR8:			sprintf(info->s, "FPR8: %08X%08X", (uint32_t)(mips->cpr[1][8] >> 32), (uint32_t)mips->cpr[1][8]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS8:			sprintf(info->s, "FPS8: !%16g", *(float *)&mips->cpr[1][8]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD8:			sprintf(info->s, "FPD8: !%16g", *(double *)&mips->cpr[1][8]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR9:			sprintf(info->s, "FPR9: %08X%08X", (UINT32)(mips->cpr[1][9] >> 32), (UINT32)mips->cpr[1][9]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR9:			sprintf(info->s, "FPR9: %08X%08X", (uint32_t)(mips->cpr[1][9] >> 32), (uint32_t)mips->cpr[1][9]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS9:			sprintf(info->s, "FPS9: !%16g", *(float *)&mips->cpr[1][9]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD9:			sprintf(info->s, "FPD9: !%16g", *(double *)&mips->cpr[1][9]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR10:		sprintf(info->s, "FPR10:%08X%08X", (UINT32)(mips->cpr[1][10] >> 32), (UINT32)mips->cpr[1][10]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR10:		sprintf(info->s, "FPR10:%08X%08X", (uint32_t)(mips->cpr[1][10] >> 32), (uint32_t)mips->cpr[1][10]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS10:		sprintf(info->s, "FPS10:!%16g", *(float *)&mips->cpr[1][10]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD10:		sprintf(info->s, "FPD10:!%16g", *(double *)&mips->cpr[1][10]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR11:		sprintf(info->s, "FPR11:%08X%08X", (UINT32)(mips->cpr[1][11] >> 32), (UINT32)mips->cpr[1][11]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR11:		sprintf(info->s, "FPR11:%08X%08X", (uint32_t)(mips->cpr[1][11] >> 32), (uint32_t)mips->cpr[1][11]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS11:		sprintf(info->s, "FPS11:!%16g", *(float *)&mips->cpr[1][11]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD11:		sprintf(info->s, "FPD11:!%16g", *(double *)&mips->cpr[1][11]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR12:		sprintf(info->s, "FPR12:%08X%08X", (UINT32)(mips->cpr[1][12] >> 32), (UINT32)mips->cpr[1][12]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR12:		sprintf(info->s, "FPR12:%08X%08X", (uint32_t)(mips->cpr[1][12] >> 32), (uint32_t)mips->cpr[1][12]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS12:		sprintf(info->s, "FPS12:!%16g", *(float *)&mips->cpr[1][12]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD12:		sprintf(info->s, "FPD12:!%16g", *(double *)&mips->cpr[1][12]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR13:		sprintf(info->s, "FPR13:%08X%08X", (UINT32)(mips->cpr[1][13] >> 32), (UINT32)mips->cpr[1][13]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR13:		sprintf(info->s, "FPR13:%08X%08X", (uint32_t)(mips->cpr[1][13] >> 32), (uint32_t)mips->cpr[1][13]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS13:		sprintf(info->s, "FPS13:!%16g", *(float *)&mips->cpr[1][13]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD13:		sprintf(info->s, "FPD13:!%16g", *(double *)&mips->cpr[1][13]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR14:		sprintf(info->s, "FPR14:%08X%08X", (UINT32)(mips->cpr[1][14] >> 32), (UINT32)mips->cpr[1][14]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR14:		sprintf(info->s, "FPR14:%08X%08X", (uint32_t)(mips->cpr[1][14] >> 32), (uint32_t)mips->cpr[1][14]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS14:		sprintf(info->s, "FPS14:!%16g", *(float *)&mips->cpr[1][14]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD14:		sprintf(info->s, "FPD14:!%16g", *(double *)&mips->cpr[1][14]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR15:		sprintf(info->s, "FPR15:%08X%08X", (UINT32)(mips->cpr[1][15] >> 32), (UINT32)mips->cpr[1][15]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR15:		sprintf(info->s, "FPR15:%08X%08X", (uint32_t)(mips->cpr[1][15] >> 32), (uint32_t)mips->cpr[1][15]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS15:		sprintf(info->s, "FPS15:!%16g", *(float *)&mips->cpr[1][15]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD15:		sprintf(info->s, "FPD15:!%16g", *(double *)&mips->cpr[1][15]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR16:		sprintf(info->s, "FPR16:%08X%08X", (UINT32)(mips->cpr[1][16] >> 32), (UINT32)mips->cpr[1][16]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR16:		sprintf(info->s, "FPR16:%08X%08X", (uint32_t)(mips->cpr[1][16] >> 32), (uint32_t)mips->cpr[1][16]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS16:		sprintf(info->s, "FPS16:!%16g", *(float *)&mips->cpr[1][16]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD16:		sprintf(info->s, "FPD16:!%16g", *(double *)&mips->cpr[1][16]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR17:		sprintf(info->s, "FPR17:%08X%08X", (UINT32)(mips->cpr[1][17] >> 32), (UINT32)mips->cpr[1][17]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR17:		sprintf(info->s, "FPR17:%08X%08X", (uint32_t)(mips->cpr[1][17] >> 32), (uint32_t)mips->cpr[1][17]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS17:		sprintf(info->s, "FPS17:!%16g", *(float *)&mips->cpr[1][17]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD17:		sprintf(info->s, "FPD17:!%16g", *(double *)&mips->cpr[1][17]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR18:		sprintf(info->s, "FPR18:%08X%08X", (UINT32)(mips->cpr[1][18] >> 32), (UINT32)mips->cpr[1][18]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR18:		sprintf(info->s, "FPR18:%08X%08X", (uint32_t)(mips->cpr[1][18] >> 32), (uint32_t)mips->cpr[1][18]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS18:		sprintf(info->s, "FPS18:!%16g", *(float *)&mips->cpr[1][18]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD18:		sprintf(info->s, "FPD18:!%16g", *(double *)&mips->cpr[1][18]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR19:		sprintf(info->s, "FPR19:%08X%08X", (UINT32)(mips->cpr[1][19] >> 32), (UINT32)mips->cpr[1][19]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR19:		sprintf(info->s, "FPR19:%08X%08X", (uint32_t)(mips->cpr[1][19] >> 32), (uint32_t)mips->cpr[1][19]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS19:		sprintf(info->s, "FPS19:!%16g", *(float *)&mips->cpr[1][19]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD19:		sprintf(info->s, "FPD19:!%16g", *(double *)&mips->cpr[1][19]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR20:		sprintf(info->s, "FPR20:%08X%08X", (UINT32)(mips->cpr[1][20] >> 32), (UINT32)mips->cpr[1][20]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR20:		sprintf(info->s, "FPR20:%08X%08X", (uint32_t)(mips->cpr[1][20] >> 32), (uint32_t)mips->cpr[1][20]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS20:		sprintf(info->s, "FPS20:!%16g", *(float *)&mips->cpr[1][20]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD20:		sprintf(info->s, "FPD20:!%16g", *(double *)&mips->cpr[1][20]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR21:		sprintf(info->s, "FPR21:%08X%08X", (UINT32)(mips->cpr[1][21] >> 32), (UINT32)mips->cpr[1][21]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR21:		sprintf(info->s, "FPR21:%08X%08X", (uint32_t)(mips->cpr[1][21] >> 32), (uint32_t)mips->cpr[1][21]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS21:		sprintf(info->s, "FPS21:!%16g", *(float *)&mips->cpr[1][21]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD21:		sprintf(info->s, "FPD21:!%16g", *(double *)&mips->cpr[1][21]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR22:		sprintf(info->s, "FPR22:%08X%08X", (UINT32)(mips->cpr[1][22] >> 32), (UINT32)mips->cpr[1][22]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR22:		sprintf(info->s, "FPR22:%08X%08X", (uint32_t)(mips->cpr[1][22] >> 32), (uint32_t)mips->cpr[1][22]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS22:		sprintf(info->s, "FPS22:!%16g", *(float *)&mips->cpr[1][22]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD22:		sprintf(info->s, "FPD22:!%16g", *(double *)&mips->cpr[1][22]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR23:		sprintf(info->s, "FPR23:%08X%08X", (UINT32)(mips->cpr[1][23] >> 32), (UINT32)mips->cpr[1][23]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR23:		sprintf(info->s, "FPR23:%08X%08X", (uint32_t)(mips->cpr[1][23] >> 32), (uint32_t)mips->cpr[1][23]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS23:		sprintf(info->s, "FPS23:!%16g", *(float *)&mips->cpr[1][23]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD23:		sprintf(info->s, "FPD23:!%16g", *(double *)&mips->cpr[1][23]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR24:		sprintf(info->s, "FPR24:%08X%08X", (UINT32)(mips->cpr[1][24] >> 32), (UINT32)mips->cpr[1][24]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR24:		sprintf(info->s, "FPR24:%08X%08X", (uint32_t)(mips->cpr[1][24] >> 32), (uint32_t)mips->cpr[1][24]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS24:		sprintf(info->s, "FPS24:!%16g", *(float *)&mips->cpr[1][24]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD24:		sprintf(info->s, "FPD24:!%16g", *(double *)&mips->cpr[1][24]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR25:		sprintf(info->s, "FPR25:%08X%08X", (UINT32)(mips->cpr[1][25] >> 32), (UINT32)mips->cpr[1][25]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR25:		sprintf(info->s, "FPR25:%08X%08X", (uint32_t)(mips->cpr[1][25] >> 32), (uint32_t)mips->cpr[1][25]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS25:		sprintf(info->s, "FPS25:!%16g", *(float *)&mips->cpr[1][25]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD25:		sprintf(info->s, "FPD25:!%16g", *(double *)&mips->cpr[1][25]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR26:		sprintf(info->s, "FPR26:%08X%08X", (UINT32)(mips->cpr[1][26] >> 32), (UINT32)mips->cpr[1][26]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR26:		sprintf(info->s, "FPR26:%08X%08X", (uint32_t)(mips->cpr[1][26] >> 32), (uint32_t)mips->cpr[1][26]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS26:		sprintf(info->s, "FPS26:!%16g", *(float *)&mips->cpr[1][26]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD26:		sprintf(info->s, "FPD26:!%16g", *(double *)&mips->cpr[1][26]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR27:		sprintf(info->s, "FPR27:%08X%08X", (UINT32)(mips->cpr[1][27] >> 32), (UINT32)mips->cpr[1][27]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR27:		sprintf(info->s, "FPR27:%08X%08X", (uint32_t)(mips->cpr[1][27] >> 32), (uint32_t)mips->cpr[1][27]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS27:		sprintf(info->s, "FPS27:!%16g", *(float *)&mips->cpr[1][27]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD27:		sprintf(info->s, "FPD27:!%16g", *(double *)&mips->cpr[1][27]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR28:		sprintf(info->s, "FPR28:%08X%08X", (UINT32)(mips->cpr[1][28] >> 32), (UINT32)mips->cpr[1][28]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR28:		sprintf(info->s, "FPR28:%08X%08X", (uint32_t)(mips->cpr[1][28] >> 32), (uint32_t)mips->cpr[1][28]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS28:		sprintf(info->s, "FPS28:!%16g", *(float *)&mips->cpr[1][28]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD28:		sprintf(info->s, "FPD28:!%16g", *(double *)&mips->cpr[1][28]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR29:		sprintf(info->s, "FPR29:%08X%08X", (UINT32)(mips->cpr[1][29] >> 32), (UINT32)mips->cpr[1][29]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR29:		sprintf(info->s, "FPR29:%08X%08X", (uint32_t)(mips->cpr[1][29] >> 32), (uint32_t)mips->cpr[1][29]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS29:		sprintf(info->s, "FPS29:!%16g", *(float *)&mips->cpr[1][29]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD29:		sprintf(info->s, "FPD29:!%16g", *(double *)&mips->cpr[1][29]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR30:		sprintf(info->s, "FPR30:%08X%08X", (UINT32)(mips->cpr[1][30] >> 32), (UINT32)mips->cpr[1][30]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR30:		sprintf(info->s, "FPR30:%08X%08X", (uint32_t)(mips->cpr[1][30] >> 32), (uint32_t)mips->cpr[1][30]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS30:		sprintf(info->s, "FPS30:!%16g", *(float *)&mips->cpr[1][30]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD30:		sprintf(info->s, "FPD30:!%16g", *(double *)&mips->cpr[1][30]); break;
-		case CPUINFO_STR_REGISTER + MIPS3_FPR31:		sprintf(info->s, "FPR31:%08X%08X", (UINT32)(mips->cpr[1][31] >> 32), (UINT32)mips->cpr[1][31]); break;
+		case CPUINFO_STR_REGISTER + MIPS3_FPR31:		sprintf(info->s, "FPR31:%08X%08X", (uint32_t)(mips->cpr[1][31] >> 32), (uint32_t)mips->cpr[1][31]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPS31:		sprintf(info->s, "FPS31:!%16g", *(float *)&mips->cpr[1][31]); break;
 		case CPUINFO_STR_REGISTER + MIPS3_FPD31:		sprintf(info->s, "FPD31:!%16g", *(double *)&mips->cpr[1][31]); break;
 	}
@@ -761,10 +761,10 @@ static TIMER_CALLBACK( compare_int_callback )
     of the config register
 -------------------------------------------------*/
 
-static UINT32 compute_config_register(const mips3_state *mips)
+static uint32_t compute_config_register(const mips3_state *mips)
 {
 	/* set the cache line size to 32 bytes */
-	UINT32 configreg = 0x00026030;
+	uint32_t configreg = 0x00026030;
 	int divisor;
 
 	// NEC VR series does not use a 100% compatible COP0/TLB implementation
@@ -834,7 +834,7 @@ static UINT32 compute_config_register(const mips3_state *mips)
     of the PRId register
 -------------------------------------------------*/
 
-static UINT32 compute_prid_register(const mips3_state *mips)
+static uint32_t compute_prid_register(const mips3_state *mips)
 {
 	switch (mips->flavor)
 	{
@@ -871,7 +871,7 @@ static void tlb_map_entry(mips3_state *mips, int tlbindex)
 {
 	int current_asid = mips->cpr[0][COP0_EntryHi] & 0xff;
 	mips3_tlb_entry *entry = &mips->tlb[tlbindex];
-	UINT32 count, vpn;
+	uint32_t count, vpn;
 	int which;
 
 	/* the ASID doesn't match the current ASID, and if the page isn't global, unmap it from the TLB */
@@ -897,10 +897,10 @@ static void tlb_map_entry(mips3_state *mips, int tlbindex)
 	/* loop over both the even and odd pages */
 	for (which = 0; which < 2; which++)
 	{
-		UINT32 effvpn = vpn + count * which;
-		UINT64 lo = entry->entry_lo[which];
-		UINT32 pfn;
-		UINT32 flags = 0;
+		uint32_t effvpn = vpn + count * which;
+		uint64_t lo = entry->entry_lo[which];
+		uint32_t pfn;
+		uint32_t flags = 0;
 
 		/* compute physical page index */
 		pfn = (lo >> 6) & mips->pfnmask;
@@ -965,21 +965,21 @@ static void tlb_entry_log_half(mips3_tlb_entry *entry, int tlbindex, int which)
 {
 if (PRINTF_TLB)
 {
-	UINT64 hi = entry->entry_hi;
-	UINT64 lo = entry->entry_lo[which];
-	UINT32 vpn = (((hi >> 13) & 0x07ffffff) << 1);
-	UINT32 asid = hi & 0xff;
-	UINT32 r = (hi >> 62) & 3;
-	UINT32 pfn = (lo >> 6) & 0x00ffffff;
-	UINT32 c = (lo >> 3) & 7;
-	UINT32 pagesize = (((entry->page_mask >> 13) & 0xfff) + 1) << MIPS3_MIN_PAGE_SHIFT;
-	UINT64 vaddr = (UINT64)vpn * MIPS3_MIN_PAGE_SIZE;
-	UINT64 paddr = (UINT64)pfn * MIPS3_MIN_PAGE_SIZE;
+	uint64_t hi = entry->entry_hi;
+	uint64_t lo = entry->entry_lo[which];
+	uint32_t vpn = (((hi >> 13) & 0x07ffffff) << 1);
+	uint32_t asid = hi & 0xff;
+	uint32_t r = (hi >> 62) & 3;
+	uint32_t pfn = (lo >> 6) & 0x00ffffff;
+	uint32_t c = (lo >> 3) & 7;
+	uint32_t pagesize = (((entry->page_mask >> 13) & 0xfff) + 1) << MIPS3_MIN_PAGE_SHIFT;
+	uint64_t vaddr = (uint64_t)vpn * MIPS3_MIN_PAGE_SIZE;
+	uint64_t paddr = (uint64_t)pfn * MIPS3_MIN_PAGE_SIZE;
 
 	vaddr += pagesize * which;
 
 	printf("index=%08X  pagesize=%08X  vaddr=%08X%08X  paddr=%08X%08X  asid=%02X  r=%X  c=%X  dvg=%c%c%c\n",
-			tlbindex, pagesize, (UINT32)(vaddr >> 32), (UINT32)vaddr, (UINT32)(paddr >> 32), (UINT32)paddr,
+			tlbindex, pagesize, (uint32_t)(vaddr >> 32), (uint32_t)vaddr, (uint32_t)(paddr >> 32), (uint32_t)paddr,
 			asid, r, c, (lo & 4) ? 'd' : '.', (lo & 2) ? 'v' : '.', (lo & 1) ? 'g' : '.');
 }
 }

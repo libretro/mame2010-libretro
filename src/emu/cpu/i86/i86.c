@@ -13,7 +13,7 @@
 
 #include "i86mem.h"
 
-extern int i386_dasm_one(char *buffer, UINT32 eip, const UINT8 *oprom, int mode);
+extern int i386_dasm_one(char *buffer, uint32_t eip, const uint8_t *oprom, int mode);
 
 #define VERBOSE 0
 #define LOG(x) do { if (VERBOSE) mame_printf_debug x; } while (0)
@@ -26,8 +26,8 @@ extern int i386_dasm_one(char *buffer, UINT32 eip, const UINT8 *oprom, int mode)
 /* I86 registers */
 typedef union
 {									   /* eight general registers */
-	UINT16 w[8];					   /* viewed as 16 bits registers */
-	UINT8 b[16];					   /* or as 8 bit registers */
+	uint16_t w[8];					   /* viewed as 16 bits registers */
+	uint8_t b[16];					   /* or as 8 bit registers */
 }
 i8086basicregs;
 
@@ -35,27 +35,27 @@ typedef struct _i8086_state i8086_state;
 struct _i8086_state
 {
 	i8086basicregs regs;
-	UINT32 pc;
-	UINT32 prevpc;
-	UINT32 base[4];
-	UINT16 sregs[4];
-	UINT16 flags;
+	uint32_t pc;
+	uint32_t prevpc;
+	uint32_t base[4];
+	uint16_t sregs[4];
+	uint16_t flags;
 	device_irq_callback irq_callback;
-	INT32 AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal;		/* 0 or non-0 valued flags */
-	UINT8 ParityVal;
-	UINT8 TF, IF;				   /* 0 or 1 valued flags */
-	UINT8 MF;						   /* V30 mode flag */
-	UINT8 int_vector;
-	INT8 nmi_state;
-	INT8 irq_state;
-	INT8 test_state;
-	UINT8 rep_in_progress;
-	INT32 extra_cycles;       /* extra cycles for interrupts */
+	int32_t AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal;		/* 0 or non-0 valued flags */
+	uint8_t ParityVal;
+	uint8_t TF, IF;				   /* 0 or 1 valued flags */
+	uint8_t MF;						   /* V30 mode flag */
+	uint8_t int_vector;
+	int8_t nmi_state;
+	int8_t irq_state;
+	int8_t test_state;
+	uint8_t rep_in_progress;
+	int32_t extra_cycles;       /* extra cycles for interrupts */
 
 	int halted;         /* Is the CPU halted ? */
 
-	UINT16 ip;
-	UINT32 sp;
+	uint16_t ip;
+	uint32_t sp;
 
 	memory_interface	mem;
 
@@ -67,7 +67,7 @@ struct _i8086_state
 	unsigned prefix_base;		   /* base address of the latest prefix segment */
 	char seg_prefix;				   /* prefix segment indicator */
 	unsigned ea;
-	UINT16 eo; /* HJB 12/13/98 effective offset of the address (before segment is added) */
+	uint16_t eo; /* HJB 12/13/98 effective offset of the address (before segment is added) */
 };
 
 INLINE i8086_state *get_safe_token(running_device *device)
@@ -90,7 +90,7 @@ INLINE i8086_state *get_safe_token(running_device *device)
 
 static struct i80x86_timing timing;
 
-static UINT8 parity_table[256];
+static uint8_t parity_table[256];
 
 /* The interrupt number of a pending external interrupt pending NMI is 2.   */
 /* For INTR interrupts, the level is caught on the bus during an INTA cycle */
@@ -266,7 +266,7 @@ static void set_irq_line(i8086_state *cpustate, int irqline, int state)
 
 		/* if the IF is set, signal an interrupt */
 		if (state != CLEAR_LINE && cpustate->IF)
-			PREFIX(_interrupt)(cpustate, (UINT32)-1);
+			PREFIX(_interrupt)(cpustate, (uint32_t)-1);
 	}
 }
 

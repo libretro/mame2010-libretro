@@ -133,7 +133,7 @@ OP(ed,6d) { RETI;													} /* RETI             */
 OP(ed,6e) { cpustate->IM = 0;												} /* IM   0           */
 OP(ed,6f) { RLD;													} /* RLD  (HL)        */
 
-OP(ed,70) { UINT8 res = IN(cpustate, cpustate->_BC); cpustate->_F = (cpustate->_F & CF) | SZP[res]; 		} /* IN   0,(C)       */
+OP(ed,70) { uint8_t res = IN(cpustate, cpustate->_BC); cpustate->_F = (cpustate->_F & CF) | SZP[res]; 		} /* IN   0,(C)       */
 OP(ed,71) { OUT(cpustate, cpustate->_BC,0); 											} /* OUT  (C),0       */
 OP(ed,72) { SBC16( SP );											} /* SBC  HL,SP       */
 OP(ed,73) { cpustate->ea = ARG16(cpustate); WM16(cpustate,  cpustate->ea, &cpustate->SP );					} /* LD   (w),SP      */

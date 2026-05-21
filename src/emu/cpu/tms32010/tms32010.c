@@ -80,21 +80,21 @@ typedef struct _tms32010_state tms32010_state;		/* Page 3-6 shows all registers 
 struct _tms32010_state
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PC;
-	UINT16	PREVPC;		/* previous program counter */
-	UINT16	STR;
+	uint16_t	PC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint16_t	STR;
 	PAIR	ACC;
 	PAIR	ALU;
 	PAIR	Preg;
-	UINT16	Treg;
-	UINT16	AR[2];
-	UINT16	STACK[4];
+	uint16_t	Treg;
+	uint16_t	AR[2];
+	uint16_t	STACK[4];
 
 	PAIR	opcode;
 	int		INTF;		/* Pending Interrupt flag */
 	int		icount;
 	PAIR	oldacc;
-	UINT16	memaccess;
+	uint16_t	memaccess;
 	int		addr_mask;
 
 	legacy_cpu_device *device;
@@ -116,7 +116,7 @@ INLINE tms32010_state *get_safe_token(running_device *device)
 typedef struct _tms32010_opcode tms32010_opcode;
 struct _tms32010_opcode
 {
-	UINT8	cycles;
+	uint8_t	cycles;
 	void	(*function)(tms32010_state *);
 };
 
@@ -218,36 +218,36 @@ INLINE int add_branch_cycle(tms32010_state *cpustate);
  *  Shortcuts
  ************************************************************************/
 
-INLINE void CLR(tms32010_state *cpustate, UINT16 flag) { cpustate->STR &= ~flag; cpustate->STR |= 0x1efe; }
-INLINE void SET(tms32010_state *cpustate, UINT16 flag) { cpustate->STR |=  flag; cpustate->STR |= 0x1efe; }
+INLINE void CLR(tms32010_state *cpustate, uint16_t flag) { cpustate->STR &= ~flag; cpustate->STR |= 0x1efe; }
+INLINE void SET(tms32010_state *cpustate, uint16_t flag) { cpustate->STR |=  flag; cpustate->STR |= 0x1efe; }
 
 
-INLINE void CALCULATE_ADD_OVERFLOW(tms32010_state *cpustate, INT32 addval)
+INLINE void CALCULATE_ADD_OVERFLOW(tms32010_state *cpustate, int32_t addval)
 {
-	if ((INT32)(~(cpustate->oldacc.d ^ addval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0) {
+	if ((int32_t)(~(cpustate->oldacc.d ^ addval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0) {
 		SET(cpustate, OV_FLAG);
 		if (OVM)
-			cpustate->ACC.d = ((INT32)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			cpustate->ACC.d = ((int32_t)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
-INLINE void CALCULATE_SUB_OVERFLOW(tms32010_state *cpustate, INT32 subval)
+INLINE void CALCULATE_SUB_OVERFLOW(tms32010_state *cpustate, int32_t subval)
 {
-	if ((INT32)((cpustate->oldacc.d ^ subval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0) {
+	if ((int32_t)((cpustate->oldacc.d ^ subval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0) {
 		SET(cpustate, OV_FLAG);
 		if (OVM)
-			cpustate->ACC.d = ((INT32)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			cpustate->ACC.d = ((int32_t)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 	}
 }
 
-INLINE UINT16 POP_STACK(tms32010_state *cpustate)
+INLINE uint16_t POP_STACK(tms32010_state *cpustate)
 {
-	UINT16 data = cpustate->STACK[3];
+	uint16_t data = cpustate->STACK[3];
 	cpustate->STACK[3] = cpustate->STACK[2];
 	cpustate->STACK[2] = cpustate->STACK[1];
 	cpustate->STACK[1] = cpustate->STACK[0];
 	return (data & cpustate->addr_mask);
 }
-INLINE void PUSH_STACK(tms32010_state *cpustate, UINT16 data)
+INLINE void PUSH_STACK(tms32010_state *cpustate, uint16_t data)
 {
 	cpustate->STACK[0] = cpustate->STACK[1];
 	cpustate->STACK[1] = cpustate->STACK[2];
@@ -258,7 +258,7 @@ INLINE void PUSH_STACK(tms32010_state *cpustate, UINT16 data)
 INLINE void UPDATE_AR(tms32010_state *cpustate)
 {
 	if (cpustate->opcode.b.l & 0x30) {
-		UINT16 tmpAR = cpustate->AR[ARP];
+		uint16_t tmpAR = cpustate->AR[ARP];
 		if (cpustate->opcode.b.l & 0x20) tmpAR++ ;
 		if (cpustate->opcode.b.l & 0x10) tmpAR-- ;
 		cpustate->AR[ARP] = (cpustate->AR[ARP] & 0xfe00) | (tmpAR & 0x01ff);
@@ -273,15 +273,15 @@ INLINE void UPDATE_ARP(tms32010_state *cpustate)
 }
 
 
-INLINE void getdata(tms32010_state *cpustate, UINT8 shift,UINT8 signext)
+INLINE void getdata(tms32010_state *cpustate, uint8_t shift,uint8_t signext)
 {
 	if (cpustate->opcode.b.l & 0x80)
 		cpustate->memaccess = IND;
 	else
 		cpustate->memaccess = DMA_DP;
 
-	cpustate->ALU.d = (UINT16)M_RDRAM(cpustate->memaccess);
-	if (signext) cpustate->ALU.d = (INT16)cpustate->ALU.d;
+	cpustate->ALU.d = (uint16_t)M_RDRAM(cpustate->memaccess);
+	if (signext) cpustate->ALU.d = (int16_t)cpustate->ALU.d;
 	cpustate->ALU.d <<= shift;
 	if (cpustate->opcode.b.l & 0x80) {
 		UPDATE_AR(cpustate);
@@ -289,7 +289,7 @@ INLINE void getdata(tms32010_state *cpustate, UINT8 shift,UINT8 signext)
 	}
 }
 
-INLINE void putdata(tms32010_state *cpustate, UINT16 data)
+INLINE void putdata(tms32010_state *cpustate, uint16_t data)
 {
 	if (cpustate->opcode.b.l & 0x80)
 		cpustate->memaccess = IND;
@@ -302,7 +302,7 @@ INLINE void putdata(tms32010_state *cpustate, UINT16 data)
 	}
 	M_WRTRAM(cpustate->memaccess,data);
 }
-INLINE void putdata_sar(tms32010_state *cpustate, UINT8 data)
+INLINE void putdata_sar(tms32010_state *cpustate, uint8_t data)
 {
 	if (cpustate->opcode.b.l & 0x80)
 		cpustate->memaccess = IND;
@@ -315,7 +315,7 @@ INLINE void putdata_sar(tms32010_state *cpustate, UINT8 data)
 	}
 	M_WRTRAM(cpustate->memaccess,cpustate->AR[data]);
 }
-INLINE void putdata_sst(tms32010_state *cpustate, UINT16 data)
+INLINE void putdata_sst(tms32010_state *cpustate, uint16_t data)
 {
 	if (cpustate->opcode.b.l & 0x80)
 		cpustate->memaccess = IND;
@@ -347,7 +347,7 @@ static void illegal(tms32010_state *cpustate)
 
 static void abst(tms32010_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) < 0 ) {
+	if ( (int32_t)(cpustate->ACC.d) < 0 ) {
 		cpustate->ACC.d = -cpustate->ACC.d;
 		if (OVM && (cpustate->ACC.d == 0x80000000)) cpustate->ACC.d-- ;
 	}
@@ -374,10 +374,10 @@ static void addh(tms32010_state *cpustate)
 	cpustate->oldacc.d = cpustate->ACC.d;
 	getdata(cpustate, 0,0);
 	cpustate->ACC.w.h += cpustate->ALU.w.l;
-	if ((INT16)(~(cpustate->oldacc.w.h ^ cpustate->ALU.w.h) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
+	if ((int16_t)(~(cpustate->oldacc.w.h ^ cpustate->ALU.w.h) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
 		SET(cpustate, OV_FLAG);
 		if (OVM)
-			cpustate->ACC.w.h = ((INT16)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
+			cpustate->ACC.w.h = ((int16_t)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
 	}
 }
 static void adds(tms32010_state *cpustate)
@@ -416,7 +416,7 @@ static void banz(tms32010_state *cpustate)
 }
 static void bgez(tms32010_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) >= 0 ) {
+	if ( (int32_t)(cpustate->ACC.d) >= 0 ) {
 		cpustate->PC = M_RDOP_ARG(cpustate->PC);
 		cpustate->icount -= add_branch_cycle(cpustate);
 	}
@@ -425,7 +425,7 @@ static void bgez(tms32010_state *cpustate)
 }
 static void bgz(tms32010_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) > 0 ) {
+	if ( (int32_t)(cpustate->ACC.d) > 0 ) {
 		cpustate->PC = M_RDOP_ARG(cpustate->PC);
 		cpustate->icount -= add_branch_cycle(cpustate);
 	}
@@ -443,7 +443,7 @@ static void bioz(tms32010_state *cpustate)
 }
 static void blez(tms32010_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) <= 0 ) {
+	if ( (int32_t)(cpustate->ACC.d) <= 0 ) {
 		cpustate->PC = M_RDOP_ARG(cpustate->PC);
 		cpustate->icount -= add_branch_cycle(cpustate);
 	}
@@ -452,7 +452,7 @@ static void blez(tms32010_state *cpustate)
 }
 static void blz(tms32010_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) <  0 ) {
+	if ( (int32_t)(cpustate->ACC.d) <  0 ) {
 		cpustate->PC = M_RDOP_ARG(cpustate->PC);
 		cpustate->icount -= add_branch_cycle(cpustate);
 	}
@@ -601,12 +601,12 @@ static void ltd(tms32010_state *cpustate)
 static void mpy(tms32010_state *cpustate)
 {
 	getdata(cpustate, 0,0);
-	cpustate->Preg.d = (INT16)cpustate->ALU.w.l * (INT16)cpustate->Treg;
+	cpustate->Preg.d = (int16_t)cpustate->ALU.w.l * (int16_t)cpustate->Treg;
 	if (cpustate->Preg.d == 0x40000000) cpustate->Preg.d = 0xc0000000;
 }
 static void mpyk(tms32010_state *cpustate)
 {
-	cpustate->Preg.d = (INT16)cpustate->Treg * ((INT16)(cpustate->opcode.w.l << 3) >> 3);
+	cpustate->Preg.d = (int16_t)cpustate->Treg * ((int16_t)(cpustate->opcode.w.l << 3) >> 3);
 }
 static void nop(tms32010_state *cpustate)
 {
@@ -685,10 +685,10 @@ static void subc(tms32010_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
 	getdata(cpustate, 15,0);
-	cpustate->ALU.d = (INT32) cpustate->ACC.d - cpustate->ALU.d;
-	if ((INT32)((cpustate->oldacc.d ^ cpustate->ALU.d) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
+	cpustate->ALU.d = (int32_t) cpustate->ACC.d - cpustate->ALU.d;
+	if ((int32_t)((cpustate->oldacc.d ^ cpustate->ALU.d) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
 		SET(cpustate, OV_FLAG);
-	if ( (INT32)(cpustate->ALU.d) >= 0 )
+	if ( (int32_t)(cpustate->ALU.d) >= 0 )
 		cpustate->ACC.d = ((cpustate->ALU.d << 1) + 1);
 	else
 		cpustate->ACC.d = (cpustate->ACC.d << 1);

@@ -24,15 +24,15 @@ static TIMER_CALLBACK( ppc403_spu_tx_callback );
 
 static PPC_DMA_HANDLER spu_rx_dma_handler;
 static PPC_DMA_HANDLER spu_tx_dma_handler;
-static UINT8 *spu_rx_dma_ptr;
-static UINT8 *spu_tx_dma_ptr;
+static uint8_t *spu_rx_dma_ptr;
+static uint8_t *spu_tx_dma_ptr;
 
 static PPC_DMA_HANDLER dma_read_handler[4];
 static PPC_DMA_HANDLER dma_write_handler[4];
-static UINT8 *dma_read_ptr[4];
-static UINT8 *dma_write_ptr[4];
+static uint8_t *dma_read_ptr[4];
+static uint8_t *dma_write_ptr[4];
 
-INLINE void ppc_set_dcr(int dcr, UINT32 value)
+INLINE void ppc_set_dcr(int dcr, uint32_t value)
 {
 	switch(dcr)
 	{
@@ -74,7 +74,7 @@ INLINE void ppc_set_dcr(int dcr, UINT32 value)
 	}
 }
 
-INLINE UINT32 ppc_get_dcr(int dcr)
+INLINE uint32_t ppc_get_dcr(int dcr)
 {
 	switch(dcr)
 	{
@@ -149,15 +149,15 @@ static CPU_RESET( ppc403 )
 
 static CPU_EXECUTE( ppc403 )
 {
-	UINT32 fit_trigger_cycle;
+	uint32_t fit_trigger_cycle;
 	ppc_tb_base_icount = cycles;
 
 	fit_trigger_cycle = 0x7fffffff;
 
 	if (ppc.fit_int_enable)
 	{
-		UINT32 tb = (UINT32)ppc.tb;
-		UINT32 fit_cycles = 0;
+		uint32_t tb = (uint32_t)ppc.tb;
+		uint32_t fit_cycles = 0;
 
 		if (ppc.tb & ppc.fit_bit)
 		{
@@ -172,7 +172,7 @@ static CPU_EXECUTE( ppc403 )
 
 	while( ppc_icount > 0 )
 	{
-		UINT32 opcode;
+		uint32_t opcode;
 
 		debugger_instruction_hook(device, ppc.pc);
 		ppc.pc = ppc.npc;
@@ -221,7 +221,7 @@ static CPU_EXECUTE( ppc403 )
 
 #if 0
 		/* Watchdog Timer */
-		if (((UINT32)(ppc.tb) & ppc.wdt_bit) && (tblo & ppc.wdt_bit) == 0) {
+		if (((uint32_t)(ppc.tb) & ppc.wdt_bit) && (tblo & ppc.wdt_bit) == 0) {
 			switch((ppc.tsr >> 28) & 0x3)
 			{
 				case 0: ppc.tsr |= TSR_ENW; break;
@@ -252,7 +252,7 @@ void ppc403_exception(int exception)
 		case EXCEPTION_IRQ:		/* External Interrupt */
 		{
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr;
@@ -273,7 +273,7 @@ void ppc403_exception(int exception)
 
 		case EXCEPTION_TRAP:			/* Program exception / Trap */
 		{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.pc;
 				SRR1 = msr;
@@ -294,7 +294,7 @@ void ppc403_exception(int exception)
 
 		case EXCEPTION_SYSTEM_CALL:		/* System call */
 		{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr;
@@ -316,7 +316,7 @@ void ppc403_exception(int exception)
 		case EXCEPTION_PROGRAMMABLE_INTERVAL_TIMER:
 		{
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr;
@@ -339,7 +339,7 @@ void ppc403_exception(int exception)
 		case EXCEPTION_FIXED_INTERVAL_TIMER:		/* Fixed Interval Timer */
 		{
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr;
@@ -359,7 +359,7 @@ void ppc403_exception(int exception)
 
 		case EXCEPTION_WATCHDOG_TIMER:				/* Watchdog Timer */
 		{
-			UINT32 msr = ppc_get_msr();
+			uint32_t msr = ppc_get_msr();
 
 			SRR2 = ppc.npc;
 			SRR3 = msr;
@@ -377,7 +377,7 @@ void ppc403_exception(int exception)
 
 		case EXCEPTION_CRITICAL_INTERRUPT:
 		{
-			UINT32 msr = ppc_get_msr();
+			uint32_t msr = ppc_get_msr();
 
 			SRR2 = ppc.npc;
 			SRR3 = msr;
@@ -404,7 +404,7 @@ static void ppc403_set_irq_line(int irqline, int state)
 {
 	if (irqline >= INPUT_LINE_IRQ0 && irqline <= INPUT_LINE_IRQ4)
 	{
-		UINT32 mask = (1 << (4 - irqline));
+		uint32_t mask = (1 << (4 - irqline));
 		if( state == ASSERT_LINE) {
 			if( EXIER & mask ) {
 				ppc.exisr |= mask;
@@ -424,7 +424,7 @@ static void ppc403_set_irq_line(int irqline, int state)
 	}
 	else if (irqline == PPC_IRQ_SPU_RX)
 	{
-		UINT32 mask = 0x08000000;
+		uint32_t mask = 0x08000000;
 		if (state) {
 			if( EXIER & mask ) {
 				ppc.exisr |= mask;
@@ -434,7 +434,7 @@ static void ppc403_set_irq_line(int irqline, int state)
 	}
 	else if (irqline == PPC_IRQ_SPU_TX)
 	{
-		UINT32 mask = 0x04000000;
+		uint32_t mask = 0x04000000;
 		if (state) {
 			if( EXIER & mask ) {
 				ppc.exisr |= mask;
@@ -458,7 +458,7 @@ static void ppc403_set_irq_line(int irqline, int state)
 
 static void ppc403_dma_set_irq_line(int dma, int state)
 {
-	UINT32 mask = (1 << (3 - dma)) << 20;
+	uint32_t mask = (1 << (3 - dma)) << 20;
 	if( state ) {
 		if( EXIER & mask ) {
 			ppc.exisr |= mask;
@@ -471,7 +471,7 @@ static void ppc403_dma_set_irq_line(int dma, int state)
 #ifdef PPC_DRC
 static void ppc403_dma_set_irq_line(int dma, int state)
 {
-	UINT32 mask = (1 << (3 - dma)) << 20;
+	uint32_t mask = (1 << (3 - dma)) << 20;
 	if( state ) {
 		if( EXIER & mask ) {
 			ppc.exisr |= mask;
@@ -487,34 +487,34 @@ static void ppc403_dma_set_irq_line(int dma, int state)
 
 
 #ifndef PPC_DRC
-static void ppc_dccci(UINT32 op)
+static void ppc_dccci(uint32_t op)
 {
 
 }
 
-static void ppc_dcread(UINT32 op)
+static void ppc_dcread(uint32_t op)
 {
 
 }
 
-static void ppc_icbt(UINT32 op)
+static void ppc_icbt(uint32_t op)
 {
 
 }
 
-static void ppc_iccci(UINT32 op)
+static void ppc_iccci(uint32_t op)
 {
 
 }
 
-static void ppc_icread(UINT32 op)
+static void ppc_icread(uint32_t op)
 {
 
 }
 
-static void ppc_rfci(UINT32 op)
+static void ppc_rfci(uint32_t op)
 {
-	UINT32 msr;
+	uint32_t msr;
 	ppc.npc = ppc.srr2;
 	msr = ppc.srr3;
 	ppc_set_msr( msr );
@@ -522,17 +522,17 @@ static void ppc_rfci(UINT32 op)
 }
 #endif
 
-static void ppc_mfdcr(UINT32 op)
+static void ppc_mfdcr(uint32_t op)
 {
 	REG(RT) = ppc_get_dcr(SPR);
 }
 
-static void ppc_mtdcr(UINT32 op)
+static void ppc_mtdcr(uint32_t op)
 {
 	ppc_set_dcr(SPR, REG(RS));
 }
 
-static void ppc_wrtee(UINT32 op)
+static void ppc_wrtee(uint32_t op)
 {
 	if( REG(RS) & 0x8000 )
 		ppc_set_msr( ppc_get_msr() | MSR_EE);
@@ -540,7 +540,7 @@ static void ppc_wrtee(UINT32 op)
 		ppc_set_msr( ppc_get_msr() & ~MSR_EE);
 }
 
-static void ppc_wrteei(UINT32 op)
+static void ppc_wrteei(uint32_t op)
 {
 	if( op & 0x8000 )
 		ppc_set_msr( ppc_get_msr() | MSR_EE);
@@ -553,7 +553,7 @@ static void ppc_wrteei(UINT32 op)
 /**************************************************************************/
 /* PPC403 Serial Port */
 
-static UINT8 ppc403_spu_r(UINT32 a)
+static uint8_t ppc403_spu_r(uint32_t a)
 {
 	switch(a & 0xf)
 	{
@@ -569,7 +569,7 @@ static UINT8 ppc403_spu_r(UINT32 a)
 	}
 }
 
-static void ppc403_spu_w(UINT32 a, UINT8 d)
+static void ppc403_spu_w(uint32_t a, uint8_t d)
 {
 	switch(a & 0xf)
 	{
@@ -677,7 +677,7 @@ static void ppc403_spu_w(UINT32 a, UINT8 d)
 	//mame_printf_debug("spu_w: %02X, %02X at %08X\n", a & 0xf, d, ppc.pc);
 }
 
-void ppc403_spu_rx(UINT8 data)
+void ppc403_spu_rx(uint8_t data)
 {
 	ppc.spu.sprb = data;
 
@@ -730,18 +730,18 @@ void ppc403_install_spu_tx_handler(SPU_TX_HANDLER tx_handler)
 }
 
 
-void ppc403_spu_rx_dma(UINT8 *data, int length)
+void ppc403_spu_rx_dma(uint8_t *data, int length)
 {
 
 }
 
-void ppc403_install_spu_rx_dma_handler(PPC_DMA_HANDLER rx_dma_handler, UINT8 *buffer)
+void ppc403_install_spu_rx_dma_handler(PPC_DMA_HANDLER rx_dma_handler, uint8_t *buffer)
 {
 	spu_rx_dma_handler = rx_dma_handler;
 	spu_rx_dma_ptr = buffer;
 }
 
-void ppc403_install_spu_tx_dma_handler(PPC_DMA_HANDLER tx_dma_handler, UINT8 *buffer)
+void ppc403_install_spu_tx_dma_handler(PPC_DMA_HANDLER tx_dma_handler, uint8_t *buffer)
 {
 	spu_tx_dma_handler = tx_dma_handler;
 	spu_tx_dma_ptr = buffer;
@@ -753,13 +753,13 @@ void ppc403_install_spu_tx_dma_handler(PPC_DMA_HANDLER tx_dma_handler, UINT8 *bu
 
 static const int dma_transfer_width[4] = { 1, 2, 4, 16 };
 
-void ppc403_install_dma_read_handler(int ch, PPC_DMA_HANDLER dma_handler, UINT8 *buffer)
+void ppc403_install_dma_read_handler(int ch, PPC_DMA_HANDLER dma_handler, uint8_t *buffer)
 {
 	dma_read_handler[ch] = dma_handler;
 	dma_read_ptr[ch] = buffer;
 }
 
-void ppc403_install_dma_write_handler(int ch, PPC_DMA_HANDLER dma_handler, UINT8 *buffer)
+void ppc403_install_dma_write_handler(int ch, PPC_DMA_HANDLER dma_handler, uint8_t *buffer)
 {
 	dma_write_handler[ch] = dma_handler;
 	dma_write_ptr[ch] = buffer;
@@ -839,7 +839,7 @@ static void ppc403_dma_exec(int ch)
 					case 1:		/* Byte transfer */
 						for (i=0; i < ppc.dma[ch].ct; i++)
 						{
-							UINT8 b = READ8(ppc.dma[ch].sa);
+							uint8_t b = READ8(ppc.dma[ch].sa);
 							WRITE8(ppc.dma[ch].da, b);
 							ppc.dma[ch].sa += sai;
 							ppc.dma[ch].da += dai;
@@ -848,7 +848,7 @@ static void ppc403_dma_exec(int ch)
 					case 2:		/* Word transfer */
 						for (i=0; i < ppc.dma[ch].ct; i++)
 						{
-							UINT16 w = READ16(ppc.dma[ch].sa);
+							uint16_t w = READ16(ppc.dma[ch].sa);
 							WRITE16(ppc.dma[ch].da, w);
 							ppc.dma[ch].sa += sai;
 							ppc.dma[ch].da += dai;
@@ -857,7 +857,7 @@ static void ppc403_dma_exec(int ch)
 					case 4:		/* Double word transfer */
 						for (i=0; i < ppc.dma[ch].ct; i++)
 						{
-							UINT32 d = READ32(ppc.dma[ch].sa);
+							uint32_t d = READ32(ppc.dma[ch].sa);
 							WRITE32(ppc.dma[ch].da, d);
 							ppc.dma[ch].sa += sai;
 							ppc.dma[ch].da += dai;
@@ -866,10 +866,10 @@ static void ppc403_dma_exec(int ch)
 					case 16:	/* 16-byte transfer */
 						for (i=0; i < ppc.dma[ch].ct; i++)
 						{
-							UINT32 d1 = READ32(ppc.dma[ch].sa+0);
-							UINT32 d2 = READ32(ppc.dma[ch].sa+4);
-							UINT32 d3 = READ32(ppc.dma[ch].sa+8);
-							UINT32 d4 = READ32(ppc.dma[ch].sa+12);
+							uint32_t d1 = READ32(ppc.dma[ch].sa+0);
+							uint32_t d2 = READ32(ppc.dma[ch].sa+4);
+							uint32_t d3 = READ32(ppc.dma[ch].sa+8);
+							uint32_t d4 = READ32(ppc.dma[ch].sa+12);
 							WRITE32(ppc.dma[ch].da+0, d1);
 							WRITE32(ppc.dma[ch].da+4, d2);
 							WRITE32(ppc.dma[ch].da+8, d3);
@@ -906,7 +906,7 @@ static void ppc403_dma_exec(int ch)
 
 /*********************************************************************************/
 
-static UINT8 ppc403_read8(const address_space *space, UINT32 a)
+static uint8_t ppc403_read8(const address_space *space, uint32_t a)
 {
 	if(a >= 0x40000000 && a <= 0x4000000f)		/* Serial Port */
 		return ppc403_spu_r(a);
@@ -916,7 +916,7 @@ static UINT8 ppc403_read8(const address_space *space, UINT32 a)
 #define ppc403_read16	memory_read_word_32be
 #define ppc403_read32	memory_read_dword_32be
 
-static void ppc403_write8(const address_space *space, UINT32 a, UINT8 d)
+static void ppc403_write8(const address_space *space, uint32_t a, uint8_t d)
 {
 	if( a >= 0x40000000 && a <= 0x4000000f )		/* Serial Port */
 	{
@@ -929,24 +929,24 @@ static void ppc403_write8(const address_space *space, UINT32 a, UINT8 d)
 #define ppc403_write16	memory_write_word_32be
 #define ppc403_write32	memory_write_dword_32be
 
-static UINT16 ppc403_read16_unaligned(const address_space *space, UINT32 a)
+static uint16_t ppc403_read16_unaligned(const address_space *space, uint32_t a)
 {
 	fatalerror("ppc: Unaligned read16 %08X at %08X", a, ppc.pc);
 	return 0;
 }
 
-static UINT32 ppc403_read32_unaligned(const address_space *space, UINT32 a)
+static uint32_t ppc403_read32_unaligned(const address_space *space, uint32_t a)
 {
 	fatalerror("ppc: Unaligned read32 %08X at %08X", a, ppc.pc);
 	return 0;
 }
 
-static void ppc403_write16_unaligned(const address_space *space, UINT32 a, UINT16 d)
+static void ppc403_write16_unaligned(const address_space *space, uint32_t a, uint16_t d)
 {
 	fatalerror("ppc: Unaligned write16 %08X, %04X at %08X", a, d, ppc.pc);
 }
 
-static void ppc403_write32_unaligned(const address_space *space, UINT32 a, UINT32 d)
+static void ppc403_write32_unaligned(const address_space *space, uint32_t a, uint32_t d)
 {
 	fatalerror("ppc: Unaligned write32 %08X, %08X at %08X", a, d, ppc.pc);
 }

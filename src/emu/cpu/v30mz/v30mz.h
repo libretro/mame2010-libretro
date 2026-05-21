@@ -37,19 +37,19 @@ typedef enum {
 #define SetZF(x)		(cpustate->ZeroVal = (x))
 #define SetPF(x)		(cpustate->ParityVal = (x))
 
-#define SetSZPF_Byte(x) (cpustate->SignVal=cpustate->ZeroVal=cpustate->ParityVal=(INT8)(x))
-#define SetSZPF_Word(x) (cpustate->SignVal=cpustate->ZeroVal=cpustate->ParityVal=(INT16)(x))
+#define SetSZPF_Byte(x) (cpustate->SignVal=cpustate->ZeroVal=cpustate->ParityVal=(int8_t)(x))
+#define SetSZPF_Word(x) (cpustate->SignVal=cpustate->ZeroVal=cpustate->ParityVal=(int16_t)(x))
 
 #define SetOFW_Add(x,y,z)	(cpustate->OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x8000)
 #define SetOFB_Add(x,y,z)	(cpustate->OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x80)
 #define SetOFW_Sub(x,y,z)	(cpustate->OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x8000)
 #define SetOFB_Sub(x,y,z)	(cpustate->OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x80)
 
-#define ADDB { UINT32 res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define ADDW { UINT32 res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define ADDB { uint32_t res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define ADDW { uint32_t res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
-#define SUBB { UINT32 res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define SUBW { UINT32 res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define SUBB { uint32_t res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define SUBW { uint32_t res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
 #define ORB dst|=src; cpustate->CarryVal=cpustate->OverVal=cpustate->AuxVal=0; SetSZPF_Byte(dst)
 #define ORW dst|=src; cpustate->CarryVal=cpustate->OverVal=cpustate->AuxVal=0; SetSZPF_Word(dst)
@@ -74,8 +74,8 @@ typedef enum {
 
 #define DefaultBase(Seg) ((cpustate->seg_prefix && (Seg==DS || Seg==SS)) ? cpustate->prefix_base : cpustate->sregs[Seg] << 4)
 
-#define GetMemB(Seg,Off) ((UINT8)memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+(Off))))
-#define GetMemW(Seg,Off) ((UINT16) memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+(Off))) + (memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+((Off)+1)))<<8) )
+#define GetMemB(Seg,Off) ((uint8_t)memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+(Off))))
+#define GetMemW(Seg,Off) ((uint16_t) memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+(Off))) + (memory_read_byte_8le(cpustate->program, (DefaultBase(Seg)+((Off)+1)))<<8) )
 
 #define PutMemB(Seg,Off,x) { memory_write_byte_8le(cpustate->program, (DefaultBase(Seg)+(Off)),(x)); }
 #define PutMemW(Seg,Off,x) { PutMemB(Seg,Off,(x)&0xff); PutMemB(Seg,(Off)+1,(BYTE)((x)>>8)); }
@@ -97,7 +97,7 @@ typedef enum {
 #define PEEK(addr) ((BYTE)memory_raw_read_byte(cpustate->program, addr))
 #define PEEKOP(addr) ((BYTE)memory_decrypted_read_byte(cpustate->program, addr))
 
-#define GetModRM UINT32 ModRM=memory_raw_read_byte(cpustate->program, (cpustate->sregs[CS]<<4)+cpustate->ip++)
+#define GetModRM uint32_t ModRM=memory_raw_read_byte(cpustate->program, (cpustate->sregs[CS]<<4)+cpustate->ip++)
 
 /* Cycle count macros:
     CLK  - cycle count is the same on all processors
@@ -150,7 +150,7 @@ typedef enum {
 	cpustate->regs.w[Reg]=tmp1
 
 #define JMP(flag)							\
-	int tmp = (int)((INT8)FETCH);			\
+	int tmp = (int)((int8_t)FETCH);			\
 	if (flag)								\
 	{										\
 		cpustate->ip = (WORD)(cpustate->ip+tmp);			\
@@ -161,7 +161,7 @@ typedef enum {
 #define ADJ4(param1,param2)					\
 	if (AF || ((cpustate->regs.b[AL] & 0xf) > 9))	\
 	{										\
-		UINT16 tmp;							\
+		uint16_t tmp;							\
 		tmp = cpustate->regs.b[AL] + param1;		\
 		cpustate->regs.b[AL] = tmp;					\
 		cpustate->AuxVal = 1;						\
@@ -233,8 +233,8 @@ typedef enum {
 #define SHL_WORD(c) cpustate->icount-=c; dst <<= c;	SetCFW(dst); SetSZPF_Word(dst);	PutbackRMWord(ModRM,(WORD)dst)
 #define SHR_BYTE(c) cpustate->icount-=c; dst >>= c-1; cpustate->CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
 #define SHR_WORD(c) cpustate->icount-=c; dst >>= c-1; cpustate->CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-#define SHRA_BYTE(c) cpustate->icount-=c; dst = ((INT8)dst) >> (c-1);	cpustate->CarryVal = dst & 0x1;	dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHRA_WORD(c) cpustate->icount-=c; dst = ((INT16)dst) >> (c-1);	cpustate->CarryVal = dst & 0x1;	dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHRA_BYTE(c) cpustate->icount-=c; dst = ((int8_t)dst) >> (c-1);	cpustate->CarryVal = dst & 0x1;	dst = ((int8_t)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHRA_WORD(c) cpustate->icount-=c; dst = ((int16_t)dst) >> (c-1);	cpustate->CarryVal = dst & 0x1;	dst = ((int16_t)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 
 #define DIVUB												\
 	uresult = cpustate->regs.w[AW];									\
@@ -247,9 +247,9 @@ typedef enum {
 	}
 
 #define DIVB												\
-	result = (INT16)cpustate->regs.w[AW];							\
-	result2 = result % (INT16)((INT8)tmp);					\
-	if ((result /= (INT16)((INT8)tmp)) > 0xff) {			\
+	result = (int16_t)cpustate->regs.w[AW];							\
+	result2 = result % (int16_t)((int8_t)tmp);					\
+	if ((result /= (int16_t)((int8_t)tmp)) > 0xff) {			\
 		nec_interrupt(cpustate,0,0); break;							\
 	} else {												\
 		cpustate->regs.b[AL] = result;								\
@@ -257,7 +257,7 @@ typedef enum {
 	}
 
 #define DIVUW												\
-	uresult = (((UINT32)cpustate->regs.w[DW]) << 16) | cpustate->regs.w[AW];\
+	uresult = (((uint32_t)cpustate->regs.w[DW]) << 16) | cpustate->regs.w[AW];\
 	uresult2 = uresult % tmp;								\
 	if ((uresult /= tmp) > 0xffff) {						\
 		nec_interrupt(cpustate,0,0); break;							\
@@ -267,9 +267,9 @@ typedef enum {
 	}
 
 #define DIVW												\
-	result = ((UINT32)cpustate->regs.w[DW] << 16) + cpustate->regs.w[AW];	\
-	result2 = result % (INT32)((INT16)tmp);					\
-	if ((result /= (INT32)((INT16)tmp)) > 0xffff) {			\
+	result = ((uint32_t)cpustate->regs.w[DW] << 16) + cpustate->regs.w[AW];	\
+	result2 = result % (int32_t)((int16_t)tmp);					\
+	if ((result /= (int32_t)((int16_t)tmp)) > 0xffff) {			\
 		nec_interrupt(cpustate,0,0); break;							\
 	} else {												\
 		cpustate->regs.w[AW]=result;								\

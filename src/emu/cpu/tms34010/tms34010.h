@@ -180,26 +180,26 @@ enum
 typedef struct _tms34010_display_params tms34010_display_params;
 struct _tms34010_display_params
 {
-	UINT16	vcount;								/* most recent VCOUNT */
-	UINT16	veblnk, vsblnk;						/* start/end of VBLANK */
-	UINT16	heblnk, hsblnk;						/* start/end of HBLANK */
-	UINT16	rowaddr, coladdr;					/* row/column addresses */
-	UINT8	yoffset;							/* y offset from addresses */
-	UINT8	enabled;							/* video enabled */
+	uint16_t	vcount;								/* most recent VCOUNT */
+	uint16_t	veblnk, vsblnk;						/* start/end of VBLANK */
+	uint16_t	heblnk, hsblnk;						/* start/end of HBLANK */
+	uint16_t	rowaddr, coladdr;					/* row/column addresses */
+	uint8_t	yoffset;							/* y offset from addresses */
+	uint8_t	enabled;							/* video enabled */
 };
 
 
 typedef struct _tms34010_config tms34010_config;
 struct _tms34010_config
 {
-	UINT8	halt_on_reset;						/* /HCS pin, which determines HALT state after reset */
+	uint8_t	halt_on_reset;						/* /HCS pin, which determines HALT state after reset */
 	const char *screen_tag;						/* the screen operated on */
-	UINT32	pixclock;							/* the pixel clock (0 means don't adjust screen size) */
+	uint32_t	pixclock;							/* the pixel clock (0 means don't adjust screen size) */
 	int		pixperclock;						/* pixels per clock */
 	void	(*scanline_callback)(screen_device &screen, bitmap_t *bitmap, int scanline, const tms34010_display_params *params);
 	void	(*output_int)(running_device *device, int state);			/* output interrupt callback */
-	void	(*to_shiftreg)(const address_space *space, offs_t, UINT16 *);	/* shift register write */
-	void	(*from_shiftreg)(const address_space *space, offs_t, UINT16 *);	/* shift register read */
+	void	(*to_shiftreg)(const address_space *space, offs_t, uint16_t *);	/* shift register write */
+	void	(*from_shiftreg)(const address_space *space, offs_t, uint16_t *);	/* shift register read */
 };
 
 

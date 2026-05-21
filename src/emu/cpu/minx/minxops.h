@@ -188,14 +188,14 @@ OP(AD) { minx->I = POP8(minx); }
 OP(AE) { minx->YI = POP8(minx); minx->XI = POP8(minx); }
 OP(AF) { minx->F = POP8(minx); }
 
-OP(B0) { UINT8 op = rdop(minx); minx->BA = ( minx->BA & 0xFF00 ) | op; }
-OP(B1) { UINT8 op = rdop(minx); minx->BA = ( minx->BA & 0x00FF ) | ( op << 8 ); }
-OP(B2) { UINT8 op = rdop(minx); minx->HL = ( minx->HL & 0xFF00 ) | op; }
-OP(B3) { UINT8 op = rdop(minx); minx->HL = ( minx->HL & 0x00FF ) | ( op << 8 ); }
-OP(B4) { UINT8 op = rdop(minx); minx->N = op; }
-OP(B5) { AD1_IHL; UINT8 op = rdop(minx); WR( addr1, op); }
-OP(B6) { AD1_XIX; UINT8 op = rdop(minx); WR( addr1, op ); }
-OP(B7) { AD1_YIY; UINT8 op = rdop(minx); WR( addr1, op ); }
+OP(B0) { uint8_t op = rdop(minx); minx->BA = ( minx->BA & 0xFF00 ) | op; }
+OP(B1) { uint8_t op = rdop(minx); minx->BA = ( minx->BA & 0x00FF ) | ( op << 8 ); }
+OP(B2) { uint8_t op = rdop(minx); minx->HL = ( minx->HL & 0xFF00 ) | op; }
+OP(B3) { uint8_t op = rdop(minx); minx->HL = ( minx->HL & 0x00FF ) | ( op << 8 ); }
+OP(B4) { uint8_t op = rdop(minx); minx->N = op; }
+OP(B5) { AD1_IHL; uint8_t op = rdop(minx); WR( addr1, op); }
+OP(B6) { AD1_XIX; uint8_t op = rdop(minx); WR( addr1, op ); }
+OP(B7) { AD1_YIY; uint8_t op = rdop(minx); WR( addr1, op ); }
 OP(B8) { AD2_I16; minx->BA = rd16( minx, addr2 ); }
 OP(B9) { AD2_I16; minx->HL = rd16( minx, addr2 ); }
 OP(BA) { AD2_I16; minx->X = rd16( minx, addr2 ); }
@@ -213,14 +213,14 @@ OP(C4) { minx->BA = rdop16(minx); }
 OP(C5) { minx->HL = rdop16(minx); }
 OP(C6) { minx->X = rdop16(minx); }
 OP(C7) { minx->Y = rdop16(minx); }
-OP(C8) { UINT16 t = minx->BA; minx->BA = minx->HL; minx->HL = t; }
-OP(C9) { UINT16 t = minx->BA; minx->BA = minx->X; minx->X = t; }
-OP(CA) { UINT16 t = minx->BA; minx->BA = minx->Y; minx->Y = t; }
-OP(CB) { UINT16 t = minx->BA; minx->BA = minx->SP; minx->SP = t; }
+OP(C8) { uint16_t t = minx->BA; minx->BA = minx->HL; minx->HL = t; }
+OP(C9) { uint16_t t = minx->BA; minx->BA = minx->X; minx->X = t; }
+OP(CA) { uint16_t t = minx->BA; minx->BA = minx->Y; minx->Y = t; }
+OP(CB) { uint16_t t = minx->BA; minx->BA = minx->SP; minx->SP = t; }
 OP(CC) { minx->BA = ( minx->BA >> 8 ) | ( ( minx->BA & 0x00FF ) << 8 ); }
-OP(CD) { UINT8 t; AD2_IHL; t = RD( addr2 ); WR( addr2, ( minx->BA & 0x00FF ) ); minx->BA = ( minx->BA & 0xFF00 ) | t; }
-OP(CE) { UINT8 op = rdop(minx); insnminx_CE[op](minx); minx->icount -= insnminx_cycles_CE[op]; }
-OP(CF) { UINT8 op = rdop(minx); insnminx_CF[op](minx); minx->icount -= insnminx_cycles_CF[op]; }
+OP(CD) { uint8_t t; AD2_IHL; t = RD( addr2 ); WR( addr2, ( minx->BA & 0x00FF ) ); minx->BA = ( minx->BA & 0xFF00 ) | t; }
+OP(CE) { uint8_t op = rdop(minx); insnminx_CE[op](minx); minx->icount -= insnminx_cycles_CE[op]; }
+OP(CF) { uint8_t op = rdop(minx); insnminx_CF[op](minx); minx->icount -= insnminx_cycles_CF[op]; }
 
 OP(D0) { minx->BA = SUB16( minx, minx->BA, rdop16(minx) ); }
 OP(D1) { minx->HL = SUB16( minx, minx->HL, rdop16(minx) ); }
@@ -239,37 +239,37 @@ OP(DD) { AD1_IN8; WR( addr1, rdop(minx) ); }
 OP(DE) { minx->BA = ( minx->BA & 0xFF00 ) | ( ( minx->BA & 0x000F ) | ( ( minx->BA & 0x0F00 ) >> 4 ) ); }
 OP(DF) { minx->BA = ( ( minx->BA & 0x0080 ) ? 0xFF00 : 0x0000 ) | ( minx->BA & 0x000F ); }
 
-OP(E0) { INT8 d8 = rdop(minx); if ( minx->F & FLAG_C ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(E1) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_C ) ) { CALL( minx, minx->PC + d8- 1  ); minx->icount -= 12; } }
-OP(E2) { INT8 d8 = rdop(minx); if ( minx->F & FLAG_Z ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(E3) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_Z ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
-OP(E4) { INT8 d8 = rdop(minx); if ( minx->F & FLAG_C ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E5) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_C ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E6) { INT8 d8 = rdop(minx); if ( minx->F & FLAG_Z ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E7) { INT8 d8 = rdop(minx); if ( ! ( minx->F & FLAG_Z ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
-OP(E8) { UINT16 d16 = rdop16(minx); if ( minx->F & FLAG_C ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
-OP(E9) { UINT16 d16 = rdop16(minx); if ( ! ( minx->F & FLAG_C ) ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
-OP(EA) { UINT16 d16 = rdop16(minx); if ( minx->F & FLAG_Z ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
-OP(EB) { UINT16 d16 = rdop16(minx); if ( ! ( minx->F & FLAG_Z ) ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
-OP(EC) { UINT16 d16 = rdop16(minx); if ( minx->F & FLAG_C ) { JMP( minx, minx->PC + d16 - 1 ); } }
-OP(ED) { UINT16 d16 = rdop16(minx); if ( ! ( minx->F & FLAG_C ) ) { JMP( minx, minx->PC + d16 - 1 ); } }
-OP(EE) { UINT16 d16 = rdop16(minx); if ( minx->F & FLAG_Z ) { JMP( minx, minx->PC + d16 - 1 ); } }
-OP(EF) { UINT16 d16 = rdop16(minx); if ( ! ( minx->F & FLAG_Z ) ) { JMP( minx, minx->PC + d16 - 1 ); } }
+OP(E0) { int8_t d8 = rdop(minx); if ( minx->F & FLAG_C ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(E1) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_C ) ) { CALL( minx, minx->PC + d8- 1  ); minx->icount -= 12; } }
+OP(E2) { int8_t d8 = rdop(minx); if ( minx->F & FLAG_Z ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(E3) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_Z ) ) { CALL( minx, minx->PC + d8 - 1 ); minx->icount -= 12; } }
+OP(E4) { int8_t d8 = rdop(minx); if ( minx->F & FLAG_C ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E5) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_C ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E6) { int8_t d8 = rdop(minx); if ( minx->F & FLAG_Z ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E7) { int8_t d8 = rdop(minx); if ( ! ( minx->F & FLAG_Z ) ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(E8) { uint16_t d16 = rdop16(minx); if ( minx->F & FLAG_C ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
+OP(E9) { uint16_t d16 = rdop16(minx); if ( ! ( minx->F & FLAG_C ) ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
+OP(EA) { uint16_t d16 = rdop16(minx); if ( minx->F & FLAG_Z ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
+OP(EB) { uint16_t d16 = rdop16(minx); if ( ! ( minx->F & FLAG_Z ) ) { CALL( minx, minx->PC + d16 - 1 ); minx->icount -= 12; } }
+OP(EC) { uint16_t d16 = rdop16(minx); if ( minx->F & FLAG_C ) { JMP( minx, minx->PC + d16 - 1 ); } }
+OP(ED) { uint16_t d16 = rdop16(minx); if ( ! ( minx->F & FLAG_C ) ) { JMP( minx, minx->PC + d16 - 1 ); } }
+OP(EE) { uint16_t d16 = rdop16(minx); if ( minx->F & FLAG_Z ) { JMP( minx, minx->PC + d16 - 1 ); } }
+OP(EF) { uint16_t d16 = rdop16(minx); if ( ! ( minx->F & FLAG_Z ) ) { JMP( minx, minx->PC + d16 - 1 ); } }
 
-OP(F0) { INT8 d8 = rdop(minx); CALL( minx, minx->PC + d8 - 1 ); }
-OP(F1) { INT8 d8 = rdop(minx); JMP( minx, minx->PC + d8 - 1 ); }
-OP(F2) { UINT16 d16 = rdop16(minx); CALL( minx, minx->PC + d16 - 1 ); }
-OP(F3) { UINT16 d16 = rdop16(minx); JMP( minx, minx->PC + d16 - 1 ); }
+OP(F0) { int8_t d8 = rdop(minx); CALL( minx, minx->PC + d8 - 1 ); }
+OP(F1) { int8_t d8 = rdop(minx); JMP( minx, minx->PC + d8 - 1 ); }
+OP(F2) { uint16_t d16 = rdop16(minx); CALL( minx, minx->PC + d16 - 1 ); }
+OP(F3) { uint16_t d16 = rdop16(minx); JMP( minx, minx->PC + d16 - 1 ); }
 OP(F4) { JMP( minx, minx->HL ); }
-OP(F5) { INT8 d8 = rdop(minx); minx->BA = minx->BA - 0x0100; if ( minx->BA & 0xFF00 ) { JMP( minx, minx->PC + d8 - 1 ); } }
+OP(F5) { int8_t d8 = rdop(minx); minx->BA = minx->BA - 0x0100; if ( minx->BA & 0xFF00 ) { JMP( minx, minx->PC + d8 - 1 ); } }
 OP(F6) { minx->BA = ( minx->BA & 0xFF00 ) | ( ( minx->BA & 0x00F0 ) >> 4 ) | ( ( minx->BA & 0x000F ) << 4 ); }
-OP(F7) { UINT8 d; AD1_IHL; d = RD( addr1 ); WR( addr1, ( ( d & 0xF0 ) >> 4 ) | ( ( d & 0x0F ) << 4 ) ); }
+OP(F7) { uint8_t d; AD1_IHL; d = RD( addr1 ); WR( addr1, ( ( d & 0xF0 ) >> 4 ) | ( ( d & 0x0F ) << 4 ) ); }
 OP(F8) { minx->PC = POP16(minx); minx->V = POP8(minx); minx->U = minx->V; }
 OP(F9) { minx->F = POP8(minx); minx->PC = POP16(minx); minx->V = POP8(minx); minx->U = minx->V; }
 OP(FA) { minx->PC = POP16(minx) + 2; minx->V = POP8(minx); minx->U = minx->V; }
 OP(FB) { AD1_I16; CALL( minx, rd16( minx, addr1 ) ); }
-OP(FC) { UINT8 i = rdop(minx) & 0xFE; CALL( minx, rd16( minx, i ) ); PUSH8( minx, minx->F ); }
-OP(FD) { UINT8 i = rdop(minx) & 0xFE; JMP( minx, rd16( minx, i ) ); /* PUSH8( minx, minx->F );?? */ }
+OP(FC) { uint8_t i = rdop(minx) & 0xFE; CALL( minx, rd16( minx, i ) ); PUSH8( minx, minx->F ); }
+OP(FD) { uint8_t i = rdop(minx) & 0xFE; JMP( minx, rd16( minx, i ) ); /* PUSH8( minx, minx->F );?? */ }
 OP(FE) { /* illegal operation? */ }
 OP(FF) { }
 

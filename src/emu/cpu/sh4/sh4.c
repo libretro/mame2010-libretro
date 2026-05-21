@@ -60,7 +60,7 @@ if ((sh4->fpscr & PR) == 1)
 
 int data_type_of(int n)
 {
-UINT32 abs;
+uint32_t abs;
 
 	abs = sh4->fr[n] & 0x7fffffff;
 	if ((sh4->fpscr & PR) == 0) { /* Single-precision */
@@ -120,7 +120,7 @@ UINT32 abs;
 }
 #endif
 
-INLINE UINT8 RB(sh4_state *sh4, offs_t A)
+INLINE uint8_t RB(sh4_state *sh4, offs_t A)
 {
 	if (A >= 0xfe000000)
 		return sh4_internal_r(sh4->internal, ((A & 0x0fc) >> 2) | ((A & 0x1fe0000) >> 11), 0xff << ((A & 3)*8)) >> ((A & 3)*8);
@@ -131,7 +131,7 @@ INLINE UINT8 RB(sh4_state *sh4, offs_t A)
 	return memory_read_byte_64le(sh4->program, A & AM);
 }
 
-INLINE UINT16 RW(sh4_state *sh4, offs_t A)
+INLINE uint16_t RW(sh4_state *sh4, offs_t A)
 {
 	if (A >= 0xfe000000)
 		return sh4_internal_r(sh4->internal, ((A & 0x0fc) >> 2) | ((A & 0x1fe0000) >> 11), 0xffff << ((A & 2)*8)) >> ((A & 2)*8);
@@ -142,7 +142,7 @@ INLINE UINT16 RW(sh4_state *sh4, offs_t A)
 	return memory_read_word_64le(sh4->program, A & AM);
 }
 
-INLINE UINT32 RL(sh4_state *sh4, offs_t A)
+INLINE uint32_t RL(sh4_state *sh4, offs_t A)
 {
 	if (A >= 0xfe000000)
 		return sh4_internal_r(sh4->internal, ((A & 0x0fc) >> 2) | ((A & 0x1fe0000) >> 11), 0xffffffff);
@@ -153,7 +153,7 @@ INLINE UINT32 RL(sh4_state *sh4, offs_t A)
   return memory_read_dword_64le(sh4->program, A & AM);
 }
 
-INLINE void WB(sh4_state *sh4, offs_t A, UINT8 V)
+INLINE void WB(sh4_state *sh4, offs_t A, uint8_t V)
 {
 
 	if (A >= 0xfe000000)
@@ -171,7 +171,7 @@ INLINE void WB(sh4_state *sh4, offs_t A, UINT8 V)
 	memory_write_byte_64le(sh4->program, A & AM,V);
 }
 
-INLINE void WW(sh4_state *sh4, offs_t A, UINT16 V)
+INLINE void WW(sh4_state *sh4, offs_t A, uint16_t V)
 {
 	if (A >= 0xfe000000)
 	{
@@ -188,7 +188,7 @@ INLINE void WW(sh4_state *sh4, offs_t A, UINT16 V)
 	memory_write_word_64le(sh4->program, A & AM,V);
 }
 
-INLINE void WL(sh4_state *sh4, offs_t A, UINT32 V)
+INLINE void WL(sh4_state *sh4, offs_t A, uint32_t V)
 {
 	if (A >= 0xfe000000)
 	{
@@ -212,7 +212,7 @@ INLINE void WL(sh4_state *sh4, offs_t A, UINT32 V)
  *  0011 nnnn mmmm 1100  1       -
  *  ADD     Rm,Rn
  */
-INLINE void ADD(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void ADD(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] += sh4->r[m];
 }
@@ -221,18 +221,18 @@ INLINE void ADD(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0111 nnnn iiii iiii  1       -
  *  ADD     #imm,Rn
  */
-INLINE void ADDI(sh4_state *sh4, UINT32 i, UINT32 n)
+INLINE void ADDI(sh4_state *sh4, uint32_t i, uint32_t n)
 {
-	sh4->r[n] += (INT32)(INT16)(INT8)i;
+	sh4->r[n] += (int32_t)(int16_t)(int8_t)i;
 }
 
 /*  code                 cycles  t-bit
  *  0011 nnnn mmmm 1110  1       carry
  *  ADDC    Rm,Rn
  */
-INLINE void ADDC(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void ADDC(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0, tmp1;
+	uint32_t tmp0, tmp1;
 
 	tmp1 = sh4->r[n] + sh4->r[m];
 	tmp0 = sh4->r[n];
@@ -249,21 +249,21 @@ INLINE void ADDC(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 1111  1       overflow
  *  ADDV    Rm,Rn
  */
-INLINE void ADDV(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void ADDV(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	INT32 dest, src, ans;
+	int32_t dest, src, ans;
 
-	if ((INT32) sh4->r[n] >= 0)
+	if ((int32_t) sh4->r[n] >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) sh4->r[m] >= 0)
+	if ((int32_t) sh4->r[m] >= 0)
 		src = 0;
 	else
 		src = 1;
 	src += dest;
 	sh4->r[n] += sh4->r[m];
-	if ((INT32) sh4->r[n] >= 0)
+	if ((int32_t) sh4->r[n] >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -283,7 +283,7 @@ INLINE void ADDV(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0010 nnnn mmmm 1001  1       -
  *  AND     Rm,Rn
  */
-INLINE void AND(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void AND(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] &= sh4->r[m];
 }
@@ -293,7 +293,7 @@ INLINE void AND(sh4_state *sh4, UINT32 m, UINT32 n)
  *  1100 1001 iiii iiii  1       -
  *  AND     #imm,R0
  */
-INLINE void ANDI(sh4_state *sh4, UINT32 i)
+INLINE void ANDI(sh4_state *sh4, uint32_t i)
 {
 	sh4->r[0] &= i;
 }
@@ -302,9 +302,9 @@ INLINE void ANDI(sh4_state *sh4, UINT32 i)
  *  1100 1101 iiii iiii  1       -
  *  AND.B   #imm,@(R0,GBR)
  */
-INLINE void ANDM(sh4_state *sh4, UINT32 i)
+INLINE void ANDM(sh4_state *sh4, uint32_t i)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	sh4->ea = sh4->gbr + sh4->r[0];
 	temp = i & RB(sh4,  sh4->ea );
@@ -316,11 +316,11 @@ INLINE void ANDM(sh4_state *sh4, UINT32 i)
  *  1000 1011 dddd dddd  3/1     -
  *  BF      disp8
  */
-INLINE void BF(sh4_state *sh4, UINT32 d)
+INLINE void BF(sh4_state *sh4, uint32_t d)
 {
 	if ((sh4->sr & T) == 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh4->pc = sh4->ea = sh4->pc + disp * 2 + 2;
 		sh4->sh4_icount -= 2;
 	}
@@ -330,11 +330,11 @@ INLINE void BF(sh4_state *sh4, UINT32 d)
  *  1000 1111 dddd dddd  3/1     -
  *  BFS     disp8
  */
-INLINE void BFS(sh4_state *sh4, UINT32 d)
+INLINE void BFS(sh4_state *sh4, uint32_t d)
 {
 	if ((sh4->sr & T) == 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh4->delay = sh4->pc;
 		sh4->pc = sh4->ea = sh4->pc + disp * 2 + 2;
 		sh4->sh4_icount--;
@@ -345,14 +345,14 @@ INLINE void BFS(sh4_state *sh4, UINT32 d)
  *  1010 dddd dddd dddd  2       -
  *  BRA     disp12
  */
-INLINE void BRA(sh4_state *sh4, UINT32 d)
+INLINE void BRA(sh4_state *sh4, uint32_t d)
 {
-	INT32 disp = ((INT32)d << 20) >> 20;
+	int32_t disp = ((int32_t)d << 20) >> 20;
 
 #if BUSY_LOOP_HACKS
 	if (disp == -2)
 	{
-		UINT32 next_opcode = RW(sh4,sh4->ppc & AM);
+		uint32_t next_opcode = RW(sh4,sh4->ppc & AM);
 		/* BRA  $
          * NOP
          */
@@ -369,7 +369,7 @@ INLINE void BRA(sh4_state *sh4, UINT32 d)
  *  0000 mmmm 0010 0011  2       -
  *  BRAF    Rm
  */
-INLINE void BRAF(sh4_state *sh4, UINT32 m)
+INLINE void BRAF(sh4_state *sh4, uint32_t m)
 {
 	sh4->delay = sh4->pc;
 	sh4->pc += sh4->r[m] + 2;
@@ -380,9 +380,9 @@ INLINE void BRAF(sh4_state *sh4, UINT32 m)
  *  1011 dddd dddd dddd  2       -
  *  BSR     disp12
  */
-INLINE void BSR(sh4_state *sh4, UINT32 d)
+INLINE void BSR(sh4_state *sh4, uint32_t d)
 {
-	INT32 disp = ((INT32)d << 20) >> 20;
+	int32_t disp = ((int32_t)d << 20) >> 20;
 
 	sh4->pr = sh4->pc + 2;
 	sh4->delay = sh4->pc;
@@ -394,7 +394,7 @@ INLINE void BSR(sh4_state *sh4, UINT32 d)
  *  0000 mmmm 0000 0011  2       -
  *  BSRF    Rm
  */
-INLINE void BSRF(sh4_state *sh4, UINT32 m)
+INLINE void BSRF(sh4_state *sh4, uint32_t m)
 {
 	sh4->pr = sh4->pc + 2;
 	sh4->delay = sh4->pc;
@@ -406,11 +406,11 @@ INLINE void BSRF(sh4_state *sh4, UINT32 m)
  *  1000 1001 dddd dddd  3/1     -
  *  BT      disp8
  */
-INLINE void BT(sh4_state *sh4, UINT32 d)
+INLINE void BT(sh4_state *sh4, uint32_t d)
 {
 	if ((sh4->sr & T) != 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh4->pc = sh4->ea = sh4->pc + disp * 2 + 2;
 		sh4->sh4_icount -= 2;
 	}
@@ -420,11 +420,11 @@ INLINE void BT(sh4_state *sh4, UINT32 d)
  *  1000 1101 dddd dddd  2/1     -
  *  BTS     disp8
  */
-INLINE void BTS(sh4_state *sh4, UINT32 d)
+INLINE void BTS(sh4_state *sh4, uint32_t d)
 {
 	if ((sh4->sr & T) != 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh4->delay = sh4->pc;
 		sh4->pc = sh4->ea = sh4->pc + disp * 2 + 2;
 		sh4->sh4_icount--;
@@ -454,7 +454,7 @@ INLINE void CLRT(sh4_state *sh4)
  *  0011 nnnn mmmm 0000  1       comparison result
  *  CMP_EQ  Rm,Rn
  */
-INLINE void CMPEQ(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPEQ(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	if (sh4->r[n] == sh4->r[m])
 		sh4->sr |= T;
@@ -466,9 +466,9 @@ INLINE void CMPEQ(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0011  1       comparison result
  *  CMP_GE  Rm,Rn
  */
-INLINE void CMPGE(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPGE(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	if ((INT32) sh4->r[n] >= (INT32) sh4->r[m])
+	if ((int32_t) sh4->r[n] >= (int32_t) sh4->r[m])
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -478,9 +478,9 @@ INLINE void CMPGE(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0111  1       comparison result
  *  CMP_GT  Rm,Rn
  */
-INLINE void CMPGT(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPGT(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	if ((INT32) sh4->r[n] > (INT32) sh4->r[m])
+	if ((int32_t) sh4->r[n] > (int32_t) sh4->r[m])
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -490,9 +490,9 @@ INLINE void CMPGT(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0110  1       comparison result
  *  CMP_HI  Rm,Rn
  */
-INLINE void CMPHI(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPHI(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	if ((UINT32) sh4->r[n] > (UINT32) sh4->r[m])
+	if ((uint32_t) sh4->r[n] > (uint32_t) sh4->r[m])
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -502,9 +502,9 @@ INLINE void CMPHI(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0010  1       comparison result
  *  CMP_HS  Rm,Rn
  */
-INLINE void CMPHS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPHS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	if ((UINT32) sh4->r[n] >= (UINT32) sh4->r[m])
+	if ((uint32_t) sh4->r[n] >= (uint32_t) sh4->r[m])
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -515,9 +515,9 @@ INLINE void CMPHS(sh4_state *sh4, UINT32 m, UINT32 n)
  *  0100 nnnn 0001 0101  1       comparison result
  *  CMP_PL  Rn
  */
-INLINE void CMPPL(sh4_state *sh4, UINT32 n)
+INLINE void CMPPL(sh4_state *sh4, uint32_t n)
 {
-	if ((INT32) sh4->r[n] > 0)
+	if ((int32_t) sh4->r[n] > 0)
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -527,9 +527,9 @@ INLINE void CMPPL(sh4_state *sh4, UINT32 n)
  *  0100 nnnn 0001 0001  1       comparison result
  *  CMP_PZ  Rn
  */
-INLINE void CMPPZ(sh4_state *sh4, UINT32 n)
+INLINE void CMPPZ(sh4_state *sh4, uint32_t n)
 {
-	if ((INT32) sh4->r[n] >= 0)
+	if ((int32_t) sh4->r[n] >= 0)
 		sh4->sr |= T;
 	else
 		sh4->sr &= ~T;
@@ -539,10 +539,10 @@ INLINE void CMPPZ(sh4_state *sh4, UINT32 n)
  *  0010 nnnn mmmm 1100  1       comparison result
  * CMP_STR  Rm,Rn
  */
-INLINE void CMPSTR(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void CMPSTR(sh4_state *sh4, uint32_t m, uint32_t n)
  {
-  UINT32 temp;
-  INT32 HH, HL, LH, LL;
+  uint32_t temp;
+  int32_t HH, HL, LH, LL;
   temp = sh4->r[n] ^ sh4->r[m];
   HH = (temp >> 24) & 0xff;
   HL = (temp >> 16) & 0xff;
@@ -559,9 +559,9 @@ INLINE void CMPSTR(sh4_state *sh4, UINT32 m, UINT32 n)
  *  1000 1000 iiii iiii  1       comparison result
  *  CMP/EQ #imm,R0
  */
-INLINE void CMPIM(sh4_state *sh4, UINT32 i)
+INLINE void CMPIM(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = (UINT32)(INT32)(INT16)(INT8)i;
+	uint32_t imm = (uint32_t)(int32_t)(int16_t)(int8_t)i;
 
 	if (sh4->r[0] == imm)
 		sh4->sr |= T;
@@ -573,7 +573,7 @@ INLINE void CMPIM(sh4_state *sh4, UINT32 i)
  *  0010 nnnn mmmm 0111  1       calculation result
  *  DIV0S   Rm,Rn
  */
-INLINE void DIV0S(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void DIV0S(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	if ((sh4->r[n] & 0x80000000) == 0)
 		sh4->sr &= ~Q;
@@ -602,10 +602,10 @@ INLINE void DIV0U(sh4_state *sh4)
  *  0011 nnnn mmmm 0100  1       calculation result
  *  DIV1 Rm,Rn
  */
-INLINE void DIV1(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void DIV1(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0;
-	UINT32 old_q;
+	uint32_t tmp0;
+	uint32_t old_q;
 
 	old_q = sh4->sr & Q;
 	if (0x80000000 & sh4->r[n])
@@ -694,24 +694,24 @@ INLINE void DIV1(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  DMULS.L Rm,Rn */
-INLINE void DMULS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void DMULS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
-	INT32 tempm, tempn, fnLmL;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
+	int32_t tempm, tempn, fnLmL;
 
-	tempn = (INT32) sh4->r[n];
-	tempm = (INT32) sh4->r[m];
+	tempn = (int32_t) sh4->r[n];
+	tempm = (int32_t) sh4->r[m];
 	if (tempn < 0)
 		tempn = 0 - tempn;
 	if (tempm < 0)
 		tempm = 0 - tempm;
-	if ((INT32) (sh4->r[n] ^ sh4->r[m]) < 0)
+	if ((int32_t) (sh4->r[n] ^ sh4->r[m]) < 0)
 		fnLmL = -1;
 	else
 		fnLmL = 0;
-	temp1 = (UINT32) tempn;
-	temp2 = (UINT32) tempm;
+	temp1 = (uint32_t) tempn;
+	temp2 = (uint32_t) tempm;
 	RnL = temp1 & 0x0000ffff;
 	RnH = (temp1 >> 16) & 0x0000ffff;
 	RmL = temp2 & 0x0000ffff;
@@ -743,10 +743,10 @@ INLINE void DMULS(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  DMULU.L Rm,Rn */
-INLINE void DMULU(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void DMULU(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
 
 	RnL = sh4->r[n] & 0x0000ffff;
 	RnH = (sh4->r[n] >> 16) & 0x0000ffff;
@@ -771,7 +771,7 @@ INLINE void DMULU(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  DT      Rn */
-INLINE void DT(sh4_state *sh4, UINT32 n)
+INLINE void DT(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n]--;
 	if (sh4->r[n] == 0)
@@ -780,7 +780,7 @@ INLINE void DT(sh4_state *sh4, UINT32 n)
 		sh4->sr &= ~T;
 #if BUSY_LOOP_HACKS
 	{
-		UINT32 next_opcode = RW(sh4,sh4->ppc & AM);
+		uint32_t next_opcode = RW(sh4,sh4->ppc & AM);
 		/* DT   Rn
          * BF   $-2
          */
@@ -797,38 +797,38 @@ INLINE void DT(sh4_state *sh4, UINT32 n)
 }
 
 /*  EXTS.B  Rm,Rn */
-INLINE void EXTSB(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void EXTSB(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->r[n] = ((INT32)sh4->r[m] << 24) >> 24;
+	sh4->r[n] = ((int32_t)sh4->r[m] << 24) >> 24;
 }
 
 /*  EXTS.W  Rm,Rn */
-INLINE void EXTSW(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void EXTSW(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->r[n] = ((INT32)sh4->r[m] << 16) >> 16;
+	sh4->r[n] = ((int32_t)sh4->r[m] << 16) >> 16;
 }
 
 /*  EXTU.B  Rm,Rn */
-INLINE void EXTUB(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void EXTUB(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = sh4->r[m] & 0x000000ff;
 }
 
 /*  EXTU.W  Rm,Rn */
-INLINE void EXTUW(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void EXTUW(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = sh4->r[m] & 0x0000ffff;
 }
 
 /*  JMP     @Rm */
-INLINE void JMP(sh4_state *sh4, UINT32 m)
+INLINE void JMP(sh4_state *sh4, uint32_t m)
 {
 	sh4->delay = sh4->pc;
 	sh4->pc = sh4->ea = sh4->r[m];
 }
 
 /*  JSR     @Rm */
-INLINE void JSR(sh4_state *sh4, UINT32 m)
+INLINE void JSR(sh4_state *sh4, uint32_t m)
 {
 	sh4->delay = sh4->pc;
 	sh4->pr = sh4->pc + 2;
@@ -838,9 +838,9 @@ INLINE void JSR(sh4_state *sh4, UINT32 m)
 
 
 /*  LDC     Rm,SR */
-INLINE void LDCSR(sh4_state *sh4, UINT32 m)
+INLINE void LDCSR(sh4_state *sh4, uint32_t m)
 {
-UINT32 reg;
+uint32_t reg;
 
 	reg = sh4->r[m];
 	if ((sh4->device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
@@ -852,21 +852,21 @@ UINT32 reg;
 }
 
 /*  LDC     Rm,GBR */
-INLINE void LDCGBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCGBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->gbr = sh4->r[m];
 }
 
 /*  LDC     Rm,VBR */
-INLINE void LDCVBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCVBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->vbr = sh4->r[m];
 }
 
 /*  LDC.L   @Rm+,SR */
-INLINE void LDCMSR(sh4_state *sh4, UINT32 m)
+INLINE void LDCMSR(sh4_state *sh4, uint32_t m)
 {
-UINT32 old;
+uint32_t old;
 
 	old = sh4->sr;
 	sh4->ea = sh4->r[m];
@@ -881,7 +881,7 @@ UINT32 old;
 }
 
 /*  LDC.L   @Rm+,GBR */
-INLINE void LDCMGBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCMGBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->gbr = RL(sh4, sh4->ea );
@@ -890,7 +890,7 @@ INLINE void LDCMGBR(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDC.L   @Rm+,VBR */
-INLINE void LDCMVBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCMVBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->vbr = RL(sh4, sh4->ea );
@@ -899,25 +899,25 @@ INLINE void LDCMVBR(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDS     Rm,MACH */
-INLINE void LDSMACH(sh4_state *sh4, UINT32 m)
+INLINE void LDSMACH(sh4_state *sh4, uint32_t m)
 {
 	sh4->mach = sh4->r[m];
 }
 
 /*  LDS     Rm,MACL */
-INLINE void LDSMACL(sh4_state *sh4, UINT32 m)
+INLINE void LDSMACL(sh4_state *sh4, uint32_t m)
 {
 	sh4->macl = sh4->r[m];
 }
 
 /*  LDS     Rm,PR */
-INLINE void LDSPR(sh4_state *sh4, UINT32 m)
+INLINE void LDSPR(sh4_state *sh4, uint32_t m)
 {
 	sh4->pr = sh4->r[m];
 }
 
 /*  LDS.L   @Rm+,MACH */
-INLINE void LDSMMACH(sh4_state *sh4, UINT32 m)
+INLINE void LDSMMACH(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->mach = RL(sh4, sh4->ea );
@@ -925,7 +925,7 @@ INLINE void LDSMMACH(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDS.L   @Rm+,MACL */
-INLINE void LDSMMACL(sh4_state *sh4, UINT32 m)
+INLINE void LDSMMACL(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->macl = RL(sh4, sh4->ea );
@@ -933,7 +933,7 @@ INLINE void LDSMMACL(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDS.L   @Rm+,PR */
-INLINE void LDSMPR(sh4_state *sh4, UINT32 m)
+INLINE void LDSMPR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->pr = RL(sh4, sh4->ea );
@@ -941,17 +941,17 @@ INLINE void LDSMPR(sh4_state *sh4, UINT32 m)
 }
 
 /*  MAC.L   @Rm+,@Rn+ */
-INLINE void MAC_L(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MAC_L(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
-	INT32 tempm, tempn, fnLmL;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
+	int32_t tempm, tempn, fnLmL;
 
-	tempn = (INT32) RL(sh4, sh4->r[n] );
+	tempn = (int32_t) RL(sh4, sh4->r[n] );
 	sh4->r[n] += 4;
-	tempm = (INT32) RL(sh4, sh4->r[m] );
+	tempm = (int32_t) RL(sh4, sh4->r[m] );
 	sh4->r[m] += 4;
-	if ((INT32) (tempn ^ tempm) < 0)
+	if ((int32_t) (tempn ^ tempm) < 0)
 		fnLmL = -1;
 	else
 		fnLmL = 0;
@@ -959,8 +959,8 @@ INLINE void MAC_L(sh4_state *sh4, UINT32 m, UINT32 n)
 		tempn = 0 - tempn;
 	if (tempm < 0)
 		tempm = 0 - tempm;
-	temp1 = (UINT32) tempn;
-	temp2 = (UINT32) tempm;
+	temp1 = (uint32_t) tempn;
+	temp2 = (uint32_t) tempm;
 	RnL = temp1 & 0x0000ffff;
 	RnH = (temp1 >> 16) & 0x0000ffff;
 	RmL = temp2 & 0x0000ffff;
@@ -992,12 +992,12 @@ INLINE void MAC_L(sh4_state *sh4, UINT32 m, UINT32 n)
 		if (sh4->macl > Res0)
 			Res2++;
 		Res2 += (sh4->mach & 0x0000ffff);
-		if (((INT32) Res2 < 0) && (Res2 < 0xffff8000))
+		if (((int32_t) Res2 < 0) && (Res2 < 0xffff8000))
 		{
 			Res2 = 0x00008000;
 			Res0 = 0x00000000;
 		}
-		else if (((INT32) Res2 > 0) && (Res2 > 0x00007fff))
+		else if (((int32_t) Res2 > 0) && (Res2 > 0x00007fff))
 		{
 			Res2 = 0x00007fff;
 			Res0 = 0xffffffff;
@@ -1018,22 +1018,22 @@ INLINE void MAC_L(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  MAC.W   @Rm+,@Rn+ */
-INLINE void MAC_W(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MAC_W(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	INT32 tempm, tempn, dest, src, ans;
-	UINT32 templ;
+	int32_t tempm, tempn, dest, src, ans;
+	uint32_t templ;
 
-	tempn = (INT32) RW(sh4, sh4->r[n] );
+	tempn = (int32_t) RW(sh4, sh4->r[n] );
 	sh4->r[n] += 2;
-	tempm = (INT32) RW(sh4, sh4->r[m] );
+	tempm = (int32_t) RW(sh4, sh4->r[m] );
 	sh4->r[m] += 2;
 	templ = sh4->macl;
-	tempm = ((INT32) (short) tempn * (INT32) (short) tempm);
-	if ((INT32) sh4->macl >= 0)
+	tempm = ((int32_t) (short) tempn * (int32_t) (short) tempm);
+	if ((int32_t) sh4->macl >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) tempm >= 0)
+	if ((int32_t) tempm >= 0)
 	{
 		src = 0;
 		tempn = 0;
@@ -1045,7 +1045,7 @@ INLINE void MAC_W(sh4_state *sh4, UINT32 m, UINT32 n)
 	}
 	src += dest;
 	sh4->macl += tempm;
-	if ((INT32) sh4->macl >= 0)
+	if ((int32_t) sh4->macl >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -1070,99 +1070,99 @@ INLINE void MAC_W(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  MOV     Rm,Rn */
-INLINE void MOV(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOV(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = sh4->r[m];
 }
 
 /*  MOV.B   Rm,@Rn */
-INLINE void MOVBS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n];
 	WB(sh4, sh4->ea, sh4->r[m] & 0x000000ff);
 }
 
 /*  MOV.W   Rm,@Rn */
-INLINE void MOVWS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n];
 	WW(sh4, sh4->ea, sh4->r[m] & 0x0000ffff);
 }
 
 /*  MOV.L   Rm,@Rn */
-INLINE void MOVLS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n];
 	WL(sh4, sh4->ea, sh4->r[m] );
 }
 
 /*  MOV.B   @Rm,Rn */
-INLINE void MOVBL(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBL(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m];
-	sh4->r[n] = (UINT32)(INT32)(INT16)(INT8) RB(sh4,  sh4->ea );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB(sh4,  sh4->ea );
 }
 
 /*  MOV.W   @Rm,Rn */
-INLINE void MOVWL(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWL(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m];
-	sh4->r[n] = (UINT32)(INT32)(INT16) RW(sh4, sh4->ea );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t) RW(sh4, sh4->ea );
 }
 
 /*  MOV.L   @Rm,Rn */
-INLINE void MOVLL(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLL(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m];
 	sh4->r[n] = RL(sh4, sh4->ea );
 }
 
 /*  MOV.B   Rm,@-Rn */
-INLINE void MOVBM(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBM(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	/* SMG : bug fix, was reading sh4->r[n] */
-	UINT32 data = sh4->r[m] & 0x000000ff;
+	uint32_t data = sh4->r[m] & 0x000000ff;
 
 	sh4->r[n] -= 1;
 	WB(sh4, sh4->r[n], data );
 }
 
 /*  MOV.W   Rm,@-Rn */
-INLINE void MOVWM(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWM(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 data = sh4->r[m] & 0x0000ffff;
+	uint32_t data = sh4->r[m] & 0x0000ffff;
 
 	sh4->r[n] -= 2;
 	WW(sh4, sh4->r[n], data );
 }
 
 /*  MOV.L   Rm,@-Rn */
-INLINE void MOVLM(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLM(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 data = sh4->r[m];
+	uint32_t data = sh4->r[m];
 
 	sh4->r[n] -= 4;
 	WL(sh4, sh4->r[n], data );
 }
 
 /*  MOV.B   @Rm+,Rn */
-INLINE void MOVBP(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBP(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->r[n] = (UINT32)(INT32)(INT16)(INT8) RB(sh4,  sh4->r[m] );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB(sh4,  sh4->r[m] );
 	if (n != m)
 		sh4->r[m] += 1;
 }
 
 /*  MOV.W   @Rm+,Rn */
-INLINE void MOVWP(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWP(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->r[n] = (UINT32)(INT32)(INT16) RW(sh4, sh4->r[m] );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t) RW(sh4, sh4->r[m] );
 	if (n != m)
 		sh4->r[m] += 2;
 }
 
 /*  MOV.L   @Rm+,Rn */
-INLINE void MOVLP(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLP(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = RL(sh4, sh4->r[m] );
 	if (n != m)
@@ -1170,208 +1170,208 @@ INLINE void MOVLP(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  MOV.B   Rm,@(R0,Rn) */
-INLINE void MOVBS0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBS0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n] + sh4->r[0];
 	WB(sh4, sh4->ea, sh4->r[m] & 0x000000ff );
 }
 
 /*  MOV.W   Rm,@(R0,Rn) */
-INLINE void MOVWS0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWS0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n] + sh4->r[0];
 	WW(sh4, sh4->ea, sh4->r[m] & 0x0000ffff );
 }
 
 /*  MOV.L   Rm,@(R0,Rn) */
-INLINE void MOVLS0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLS0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n] + sh4->r[0];
 	WL(sh4, sh4->ea, sh4->r[m] );
 }
 
 /*  MOV.B   @(R0,Rm),Rn */
-INLINE void MOVBL0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVBL0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m] + sh4->r[0];
-	sh4->r[n] = (UINT32)(INT32)(INT16)(INT8) RB(sh4,  sh4->ea );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB(sh4,  sh4->ea );
 }
 
 /*  MOV.W   @(R0,Rm),Rn */
-INLINE void MOVWL0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVWL0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m] + sh4->r[0];
-	sh4->r[n] = (UINT32)(INT32)(INT16) RW(sh4, sh4->ea );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t) RW(sh4, sh4->ea );
 }
 
 /*  MOV.L   @(R0,Rm),Rn */
-INLINE void MOVLL0(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MOVLL0(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[m] + sh4->r[0];
 	sh4->r[n] = RL(sh4, sh4->ea );
 }
 
 /*  MOV     #imm,Rn */
-INLINE void MOVI(sh4_state *sh4, UINT32 i, UINT32 n)
+INLINE void MOVI(sh4_state *sh4, uint32_t i, uint32_t n)
 {
-	sh4->r[n] = (UINT32)(INT32)(INT16)(INT8) i;
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) i;
 }
 
 /*  MOV.W   @(disp8,PC),Rn */
-INLINE void MOVWI(sh4_state *sh4, UINT32 d, UINT32 n)
+INLINE void MOVWI(sh4_state *sh4, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->pc + disp * 2 + 2;
-	sh4->r[n] = (UINT32)(INT32)(INT16) RW(sh4, sh4->ea );
+	sh4->r[n] = (uint32_t)(int32_t)(int16_t) RW(sh4, sh4->ea );
 }
 
 /*  MOV.L   @(disp8,PC),Rn */
-INLINE void MOVLI(sh4_state *sh4, UINT32 d, UINT32 n)
+INLINE void MOVLI(sh4_state *sh4, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = ((sh4->pc + 2) & ~3) + disp * 4;
 	sh4->r[n] = RL(sh4, sh4->ea );
 }
 
 /*  MOV.B   @(disp8,GBR),R0 */
-INLINE void MOVBLG(sh4_state *sh4, UINT32 d)
+INLINE void MOVBLG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp;
-	sh4->r[0] = (UINT32)(INT32)(INT16)(INT8) RB(sh4,  sh4->ea );
+	sh4->r[0] = (uint32_t)(int32_t)(int16_t)(int8_t) RB(sh4,  sh4->ea );
 }
 
 /*  MOV.W   @(disp8,GBR),R0 */
-INLINE void MOVWLG(sh4_state *sh4, UINT32 d)
+INLINE void MOVWLG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp * 2;
-	sh4->r[0] = (INT32)(INT16) RW(sh4, sh4->ea );
+	sh4->r[0] = (int32_t)(int16_t) RW(sh4, sh4->ea );
 }
 
 /*  MOV.L   @(disp8,GBR),R0 */
-INLINE void MOVLLG(sh4_state *sh4, UINT32 d)
+INLINE void MOVLLG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp * 4;
 	sh4->r[0] = RL(sh4, sh4->ea );
 }
 
 /*  MOV.B   R0,@(disp8,GBR) */
-INLINE void MOVBSG(sh4_state *sh4, UINT32 d)
+INLINE void MOVBSG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp;
 	WB(sh4, sh4->ea, sh4->r[0] & 0x000000ff );
 }
 
 /*  MOV.W   R0,@(disp8,GBR) */
-INLINE void MOVWSG(sh4_state *sh4, UINT32 d)
+INLINE void MOVWSG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp * 2;
 	WW(sh4, sh4->ea, sh4->r[0] & 0x0000ffff );
 }
 
 /*  MOV.L   R0,@(disp8,GBR) */
-INLINE void MOVLSG(sh4_state *sh4, UINT32 d)
+INLINE void MOVLSG(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = sh4->gbr + disp * 4;
 	WL(sh4, sh4->ea, sh4->r[0] );
 }
 
 /*  MOV.B   R0,@(disp4,Rn) */
-INLINE void MOVBS4(sh4_state *sh4, UINT32 d, UINT32 n)
+INLINE void MOVBS4(sh4_state *sh4, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[n] + disp;
 	WB(sh4, sh4->ea, sh4->r[0] & 0x000000ff );
 }
 
 /*  MOV.W   R0,@(disp4,Rn) */
-INLINE void MOVWS4(sh4_state *sh4, UINT32 d, UINT32 n)
+INLINE void MOVWS4(sh4_state *sh4, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[n] + disp * 2;
 	WW(sh4, sh4->ea, sh4->r[0] & 0x0000ffff );
 }
 
 /* MOV.L Rm,@(disp4,Rn) */
-INLINE void MOVLS4(sh4_state *sh4, UINT32 m, UINT32 d, UINT32 n)
+INLINE void MOVLS4(sh4_state *sh4, uint32_t m, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[n] + disp * 4;
 	WL(sh4, sh4->ea, sh4->r[m] );
 }
 
 /*  MOV.B   @(disp4,Rm),R0 */
-INLINE void MOVBL4(sh4_state *sh4, UINT32 m, UINT32 d)
+INLINE void MOVBL4(sh4_state *sh4, uint32_t m, uint32_t d)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[m] + disp;
-	sh4->r[0] = (UINT32)(INT32)(INT16)(INT8) RB(sh4,  sh4->ea );
+	sh4->r[0] = (uint32_t)(int32_t)(int16_t)(int8_t) RB(sh4,  sh4->ea );
 }
 
 /*  MOV.W   @(disp4,Rm),R0 */
-INLINE void MOVWL4(sh4_state *sh4, UINT32 m, UINT32 d)
+INLINE void MOVWL4(sh4_state *sh4, uint32_t m, uint32_t d)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[m] + disp * 2;
-	sh4->r[0] = (UINT32)(INT32)(INT16) RW(sh4, sh4->ea );
+	sh4->r[0] = (uint32_t)(int32_t)(int16_t) RW(sh4, sh4->ea );
 }
 
 /*  MOV.L   @(disp4,Rm),Rn */
-INLINE void MOVLL4(sh4_state *sh4, UINT32 m, UINT32 d, UINT32 n)
+INLINE void MOVLL4(sh4_state *sh4, uint32_t m, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh4->ea = sh4->r[m] + disp * 4;
 	sh4->r[n] = RL(sh4, sh4->ea );
 }
 
 /*  MOVA    @(disp8,PC),R0 */
-INLINE void MOVA(sh4_state *sh4, UINT32 d)
+INLINE void MOVA(sh4_state *sh4, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh4->ea = ((sh4->pc + 2) & ~3) + disp * 4;
 	sh4->r[0] = sh4->ea;
 }
 
 /*  MOVT    Rn */
-INLINE void MOVT(sh4_state *sh4, UINT32 n)
+INLINE void MOVT(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->sr & T;
 }
 
 /*  MUL.L   Rm,Rn */
-INLINE void MULL(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MULL(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->macl = sh4->r[n] * sh4->r[m];
 	sh4->sh4_icount--;
 }
 
 /*  MULS    Rm,Rn */
-INLINE void MULS(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MULS(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->macl = (INT16) sh4->r[n] * (INT16) sh4->r[m];
+	sh4->macl = (int16_t) sh4->r[n] * (int16_t) sh4->r[m];
 }
 
 /*  MULU    Rm,Rn */
-INLINE void MULU(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void MULU(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	sh4->macl = (UINT16) sh4->r[n] * (UINT16) sh4->r[m];
+	sh4->macl = (uint16_t) sh4->r[n] * (uint16_t) sh4->r[m];
 }
 
 /*  NEG     Rm,Rn */
-INLINE void NEG(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void NEG(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = 0 - sh4->r[m];
 }
 
 /*  NEGC    Rm,Rn */
-INLINE void NEGC(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void NEGC(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = sh4->r[m];
 	sh4->r[n] = -temp - (sh4->sr & T);
@@ -1387,28 +1387,28 @@ INLINE void NOP(sh4_state *sh4)
 }
 
 /*  NOT     Rm,Rn */
-INLINE void NOT(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void NOT(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = ~sh4->r[m];
 }
 
 /*  OR      Rm,Rn */
-INLINE void OR(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void OR(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] |= sh4->r[m];
 }
 
 /*  OR      #imm,R0 */
-INLINE void ORI(sh4_state *sh4, UINT32 i)
+INLINE void ORI(sh4_state *sh4, uint32_t i)
 {
 	sh4->r[0] |= i;
 	sh4->sh4_icount -= 2;
 }
 
 /*  OR.B    #imm,@(R0,GBR) */
-INLINE void ORM(sh4_state *sh4, UINT32 i)
+INLINE void ORM(sh4_state *sh4, uint32_t i)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	sh4->ea = sh4->gbr + sh4->r[0];
 	temp = RB(sh4,  sh4->ea );
@@ -1417,9 +1417,9 @@ INLINE void ORM(sh4_state *sh4, UINT32 i)
 }
 
 /*  ROTCL   Rn */
-INLINE void ROTCL(sh4_state *sh4, UINT32 n)
+INLINE void ROTCL(sh4_state *sh4, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh4->r[n] >> 31) & T;
 	sh4->r[n] = (sh4->r[n] << 1) | (sh4->sr & T);
@@ -1427,9 +1427,9 @@ INLINE void ROTCL(sh4_state *sh4, UINT32 n)
 }
 
 /*  ROTCR   Rn */
-INLINE void ROTCR(sh4_state *sh4, UINT32 n)
+INLINE void ROTCR(sh4_state *sh4, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 	temp = (sh4->sr & T) << 31;
 	if (sh4->r[n] & T)
 		sh4->sr |= T;
@@ -1439,14 +1439,14 @@ INLINE void ROTCR(sh4_state *sh4, UINT32 n)
 }
 
 /*  ROTL    Rn */
-INLINE void ROTL(sh4_state *sh4, UINT32 n)
+INLINE void ROTL(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | ((sh4->r[n] >> 31) & T);
 	sh4->r[n] = (sh4->r[n] << 1) | (sh4->r[n] >> 31);
 }
 
 /*  ROTR    Rn */
-INLINE void ROTR(sh4_state *sh4, UINT32 n)
+INLINE void ROTR(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | (sh4->r[n] & T);
 	sh4->r[n] = (sh4->r[n] >> 1) | (sh4->r[n] << 31);
@@ -1481,65 +1481,65 @@ INLINE void SETT(sh4_state *sh4)
 }
 
 /*  SHAL    Rn      (same as SHLL) */
-INLINE void SHAL(sh4_state *sh4, UINT32 n)
+INLINE void SHAL(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | ((sh4->r[n] >> 31) & T);
 	sh4->r[n] <<= 1;
 }
 
 /*  SHAR    Rn */
-INLINE void SHAR(sh4_state *sh4, UINT32 n)
+INLINE void SHAR(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | (sh4->r[n] & T);
-	sh4->r[n] = (UINT32)((INT32)sh4->r[n] >> 1);
+	sh4->r[n] = (uint32_t)((int32_t)sh4->r[n] >> 1);
 }
 
 /*  SHLL    Rn      (same as SHAL) */
-INLINE void SHLL(sh4_state *sh4, UINT32 n)
+INLINE void SHLL(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | ((sh4->r[n] >> 31) & T);
 	sh4->r[n] <<= 1;
 }
 
 /*  SHLL2   Rn */
-INLINE void SHLL2(sh4_state *sh4, UINT32 n)
+INLINE void SHLL2(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] <<= 2;
 }
 
 /*  SHLL8   Rn */
-INLINE void SHLL8(sh4_state *sh4, UINT32 n)
+INLINE void SHLL8(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] <<= 8;
 }
 
 /*  SHLL16  Rn */
-INLINE void SHLL16(sh4_state *sh4, UINT32 n)
+INLINE void SHLL16(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] <<= 16;
 }
 
 /*  SHLR    Rn */
-INLINE void SHLR(sh4_state *sh4, UINT32 n)
+INLINE void SHLR(sh4_state *sh4, uint32_t n)
 {
 	sh4->sr = (sh4->sr & ~T) | (sh4->r[n] & T);
 	sh4->r[n] >>= 1;
 }
 
 /*  SHLR2   Rn */
-INLINE void SHLR2(sh4_state *sh4, UINT32 n)
+INLINE void SHLR2(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] >>= 2;
 }
 
 /*  SHLR8   Rn */
-INLINE void SHLR8(sh4_state *sh4, UINT32 n)
+INLINE void SHLR8(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] >>= 8;
 }
 
 /*  SHLR16  Rn */
-INLINE void SHLR16(sh4_state *sh4, UINT32 n)
+INLINE void SHLR16(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] >>= 16;
 }
@@ -1561,25 +1561,25 @@ INLINE void SLEEP(sh4_state *sh4)
 }
 
 /*  STC     SR,Rn */
-INLINE void STCSR(sh4_state *sh4, UINT32 n)
+INLINE void STCSR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->sr;
 }
 
 /*  STC     GBR,Rn */
-INLINE void STCGBR(sh4_state *sh4, UINT32 n)
+INLINE void STCGBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->gbr;
 }
 
 /*  STC     VBR,Rn */
-INLINE void STCVBR(sh4_state *sh4, UINT32 n)
+INLINE void STCVBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->vbr;
 }
 
 /*  STC.L   SR,@-Rn */
-INLINE void STCMSR(sh4_state *sh4, UINT32 n)
+INLINE void STCMSR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1588,7 +1588,7 @@ INLINE void STCMSR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STC.L   GBR,@-Rn */
-INLINE void STCMGBR(sh4_state *sh4, UINT32 n)
+INLINE void STCMGBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1597,7 +1597,7 @@ INLINE void STCMGBR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STC.L   VBR,@-Rn */
-INLINE void STCMVBR(sh4_state *sh4, UINT32 n)
+INLINE void STCMVBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1606,25 +1606,25 @@ INLINE void STCMVBR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STS     MACH,Rn */
-INLINE void STSMACH(sh4_state *sh4, UINT32 n)
+INLINE void STSMACH(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->mach;
 }
 
 /*  STS     MACL,Rn */
-INLINE void STSMACL(sh4_state *sh4, UINT32 n)
+INLINE void STSMACL(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->macl;
 }
 
 /*  STS     PR,Rn */
-INLINE void STSPR(sh4_state *sh4, UINT32 n)
+INLINE void STSPR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->pr;
 }
 
 /*  STS.L   MACH,@-Rn */
-INLINE void STSMMACH(sh4_state *sh4, UINT32 n)
+INLINE void STSMMACH(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1632,7 +1632,7 @@ INLINE void STSMMACH(sh4_state *sh4, UINT32 n)
 }
 
 /*  STS.L   MACL,@-Rn */
-INLINE void STSMMACL(sh4_state *sh4, UINT32 n)
+INLINE void STSMMACL(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1640,7 +1640,7 @@ INLINE void STSMMACL(sh4_state *sh4, UINT32 n)
 }
 
 /*  STS.L   PR,@-Rn */
-INLINE void STSMPR(sh4_state *sh4, UINT32 n)
+INLINE void STSMPR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1648,15 +1648,15 @@ INLINE void STSMPR(sh4_state *sh4, UINT32 n)
 }
 
 /*  SUB     Rm,Rn */
-INLINE void SUB(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void SUB(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] -= sh4->r[m];
 }
 
 /*  SUBC    Rm,Rn */
-INLINE void SUBC(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void SUBC(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0, tmp1;
+	uint32_t tmp0, tmp1;
 
 	tmp1 = sh4->r[n] - sh4->r[m];
 	tmp0 = sh4->r[n];
@@ -1670,21 +1670,21 @@ INLINE void SUBC(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  SUBV    Rm,Rn */
-INLINE void SUBV(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void SUBV(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	INT32 dest, src, ans;
+	int32_t dest, src, ans;
 
-	if ((INT32) sh4->r[n] >= 0)
+	if ((int32_t) sh4->r[n] >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) sh4->r[m] >= 0)
+	if ((int32_t) sh4->r[m] >= 0)
 		src = 0;
 	else
 		src = 1;
 	src += dest;
 	sh4->r[n] -= sh4->r[m];
-	if ((INT32) sh4->r[n] >= 0)
+	if ((int32_t) sh4->r[n] >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -1701,9 +1701,9 @@ INLINE void SUBV(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  SWAP.B  Rm,Rn */
-INLINE void SWAPB(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void SWAPB(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 temp0, temp1;
+	uint32_t temp0, temp1;
 
 	temp0 = sh4->r[m] & 0xffff0000;
 	temp1 = (sh4->r[m] & 0x000000ff) << 8;
@@ -1712,18 +1712,18 @@ INLINE void SWAPB(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  SWAP.W  Rm,Rn */
-INLINE void SWAPW(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void SWAPW(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh4->r[m] >> 16) & 0x0000ffff;
 	sh4->r[n] = (sh4->r[m] << 16) | temp;
 }
 
 /*  TAS.B   @Rn */
-INLINE void TAS(sh4_state *sh4, UINT32 n)
+INLINE void TAS(sh4_state *sh4, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 	sh4->ea = sh4->r[n];
 	/* Bus Lock enable */
 	temp = RB(sh4,  sh4->ea );
@@ -1738,9 +1738,9 @@ INLINE void TAS(sh4_state *sh4, UINT32 n)
 }
 
 /*  TRAPA   #imm */
-INLINE void TRAPA(sh4_state *sh4, UINT32 i)
+INLINE void TRAPA(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	sh4->m[TRA] = imm;
 	sh4->ssr = sh4->sr;
@@ -1763,7 +1763,7 @@ INLINE void TRAPA(sh4_state *sh4, UINT32 i)
 }
 
 /*  TST     Rm,Rn */
-INLINE void TST(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void TST(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	if ((sh4->r[n] & sh4->r[m]) == 0)
 		sh4->sr |= T;
@@ -1772,9 +1772,9 @@ INLINE void TST(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  TST     #imm,R0 */
-INLINE void TSTI(sh4_state *sh4, UINT32 i)
+INLINE void TSTI(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	if ((imm & sh4->r[0]) == 0)
 		sh4->sr |= T;
@@ -1783,9 +1783,9 @@ INLINE void TSTI(sh4_state *sh4, UINT32 i)
 }
 
 /*  TST.B   #imm,@(R0,GBR) */
-INLINE void TSTM(sh4_state *sh4, UINT32 i)
+INLINE void TSTM(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	sh4->ea = sh4->gbr + sh4->r[0];
 	if ((imm & RB(sh4,  sh4->ea )) == 0)
@@ -1796,23 +1796,23 @@ INLINE void TSTM(sh4_state *sh4, UINT32 i)
 }
 
 /*  XOR     Rm,Rn */
-INLINE void XOR(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void XOR(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] ^= sh4->r[m];
 }
 
 /*  XOR     #imm,R0 */
-INLINE void XORI(sh4_state *sh4, UINT32 i)
+INLINE void XORI(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 	sh4->r[0] ^= imm;
 }
 
 /*  XOR.B   #imm,@(R0,GBR) */
-INLINE void XORM(sh4_state *sh4, UINT32 i)
+INLINE void XORM(sh4_state *sh4, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
-	UINT32 temp;
+	uint32_t imm = i & 0xff;
+	uint32_t temp;
 
 	sh4->ea = sh4->gbr + sh4->r[0];
 	temp = RB(sh4,  sh4->ea );
@@ -1822,9 +1822,9 @@ INLINE void XORM(sh4_state *sh4, UINT32 i)
 }
 
 /*  XTRCT   Rm,Rn */
-INLINE void XTRCT(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void XTRCT(sh4_state *sh4, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh4->r[m] << 16) & 0xffff0000;
 	sh4->r[n] = (sh4->r[n] >> 16) & 0x0000ffff;
@@ -1832,49 +1832,49 @@ INLINE void XTRCT(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  STC     SSR,Rn */
-INLINE void STCSSR(sh4_state *sh4, UINT32 n)
+INLINE void STCSSR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->ssr;
 }
 
 /*  STC     SPC,Rn */
-INLINE void STCSPC(sh4_state *sh4, UINT32 n)
+INLINE void STCSPC(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->spc;
 }
 
 /*  STC     SGR,Rn */
-INLINE void STCSGR(sh4_state *sh4, UINT32 n)
+INLINE void STCSGR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->sgr;
 }
 
 /*  STS     FPUL,Rn */
-INLINE void STSFPUL(sh4_state *sh4, UINT32 n)
+INLINE void STSFPUL(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->fpul;
 }
 
 /*  STS     FPSCR,Rn */
-INLINE void STSFPSCR(sh4_state *sh4, UINT32 n)
+INLINE void STSFPSCR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->fpscr & 0x003FFFFF;
 }
 
 /*  STC     DBR,Rn */
-INLINE void STCDBR(sh4_state *sh4, UINT32 n)
+INLINE void STCDBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] = sh4->dbr;
 }
 
 /*  STCRBANK   Rm_BANK,Rn */
-INLINE void STCRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void STCRBANK(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] = sh4->rbnk[sh4->sr&sRB ? 0 : 1][m & 7];
 }
 
 /*  STCMRBANK   Rm_BANK,@-Rn */
-INLINE void STCMRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void STCMRBANK(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1883,7 +1883,7 @@ INLINE void STCMRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  MOVCA.L     R0,@Rn */
-INLINE void MOVCAL(sh4_state *sh4, UINT32 n)
+INLINE void MOVCAL(sh4_state *sh4, uint32_t n)
 {
 	sh4->ea = sh4->r[n];
 	WL(sh4, sh4->ea, sh4->r[0] );
@@ -1900,7 +1900,7 @@ INLINE void SETS(sh4_state *sh4)
 }
 
 /*  STS.L   SGR,@-Rn */
-INLINE void STCMSGR(sh4_state *sh4, UINT32 n)
+INLINE void STCMSGR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1908,7 +1908,7 @@ INLINE void STCMSGR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STS.L   FPUL,@-Rn */
-INLINE void STSMFPUL(sh4_state *sh4, UINT32 n)
+INLINE void STSMFPUL(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1916,7 +1916,7 @@ INLINE void STSMFPUL(sh4_state *sh4, UINT32 n)
 }
 
 /*  STS.L   FPSCR,@-Rn */
-INLINE void STSMFPSCR(sh4_state *sh4, UINT32 n)
+INLINE void STSMFPSCR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1924,7 +1924,7 @@ INLINE void STSMFPSCR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STC.L   DBR,@-Rn */
-INLINE void STCMDBR(sh4_state *sh4, UINT32 n)
+INLINE void STCMDBR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1932,7 +1932,7 @@ INLINE void STCMDBR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STC.L   SSR,@-Rn */
-INLINE void STCMSSR(sh4_state *sh4, UINT32 n)
+INLINE void STCMSSR(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1940,7 +1940,7 @@ INLINE void STCMSSR(sh4_state *sh4, UINT32 n)
 }
 
 /*  STC.L   SPC,@-Rn */
-INLINE void STCMSPC(sh4_state *sh4, UINT32 n)
+INLINE void STCMSPC(sh4_state *sh4, uint32_t n)
 {
 	sh4->r[n] -= 4;
 	sh4->ea = sh4->r[n];
@@ -1948,7 +1948,7 @@ INLINE void STCMSPC(sh4_state *sh4, UINT32 n)
 }
 
 /*  LDS.L   @Rm+,FPUL */
-INLINE void LDSMFPUL(sh4_state *sh4, UINT32 m)
+INLINE void LDSMFPUL(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->fpul = RL(sh4, sh4->ea );
@@ -1956,9 +1956,9 @@ INLINE void LDSMFPUL(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDS.L   @Rm+,FPSCR */
-INLINE void LDSMFPSCR(sh4_state *sh4, UINT32 m)
+INLINE void LDSMFPSCR(sh4_state *sh4, uint32_t m)
 {
-UINT32 s;
+uint32_t s;
 
 	s = sh4->fpscr;
 	sh4->ea = sh4->r[m];
@@ -1976,7 +1976,7 @@ UINT32 s;
 }
 
 /*  LDC.L   @Rm+,DBR */
-INLINE void LDCMDBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCMDBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->dbr = RL(sh4, sh4->ea );
@@ -1984,7 +1984,7 @@ INLINE void LDCMDBR(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDC.L   @Rn+,Rm_BANK */
-INLINE void LDCMRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void LDCMRBANK(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->ea = sh4->r[n];
 	sh4->rbnk[sh4->sr&sRB ? 0 : 1][m & 7] = RL(sh4, sh4->ea );
@@ -1992,7 +1992,7 @@ INLINE void LDCMRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
 }
 
 /*  LDC.L   @Rm+,SSR */
-INLINE void LDCMSSR(sh4_state *sh4, UINT32 m)
+INLINE void LDCMSSR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->ssr = RL(sh4, sh4->ea );
@@ -2000,7 +2000,7 @@ INLINE void LDCMSSR(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDC.L   @Rm+,SPC */
-INLINE void LDCMSPC(sh4_state *sh4, UINT32 m)
+INLINE void LDCMSPC(sh4_state *sh4, uint32_t m)
 {
 	sh4->ea = sh4->r[m];
 	sh4->spc = RL(sh4, sh4->ea );
@@ -2008,15 +2008,15 @@ INLINE void LDCMSPC(sh4_state *sh4, UINT32 m)
 }
 
 /*  LDS     Rm,FPUL */
-INLINE void LDSFPUL(sh4_state *sh4, UINT32 m)
+INLINE void LDSFPUL(sh4_state *sh4, uint32_t m)
 {
 	sh4->fpul = sh4->r[m];
 }
 
 /*  LDS     Rm,FPSCR */
-INLINE void LDSFPSCR(sh4_state *sh4, UINT32 m)
+INLINE void LDSFPSCR(sh4_state *sh4, uint32_t m)
 {
-UINT32 s;
+uint32_t s;
 
 	s = sh4->fpscr;
 	sh4->fpscr = sh4->r[m] & 0x003FFFFF;
@@ -2031,13 +2031,13 @@ UINT32 s;
 }
 
 /*  LDC     Rm,DBR */
-INLINE void LDCDBR(sh4_state *sh4, UINT32 m)
+INLINE void LDCDBR(sh4_state *sh4, uint32_t m)
 {
 	sh4->dbr = sh4->r[m];
 }
 
 /*  SHAD    Rm,Rn */
-INLINE void SHAD(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void SHAD(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if ((sh4->r[m] & 0x80000000) == 0)
 		sh4->r[n] = sh4->r[n] << (sh4->r[m] & 0x1F);
@@ -2047,11 +2047,11 @@ INLINE void SHAD(sh4_state *sh4, UINT32 m,UINT32 n)
 		else
 			sh4->r[n] = 0xFFFFFFFF;
 	} else
-		sh4->r[n]=(INT32)sh4->r[n] >> ((~sh4->r[m] & 0x1F)+1);
+		sh4->r[n]=(int32_t)sh4->r[n] >> ((~sh4->r[m] & 0x1F)+1);
 }
 
 /*  SHLD    Rm,Rn */
-INLINE void SHLD(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void SHLD(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if ((sh4->r[m] & 0x80000000) == 0)
 		sh4->r[n] = sh4->r[n] << (sh4->r[m] & 0x1F);
@@ -2062,35 +2062,35 @@ INLINE void SHLD(sh4_state *sh4, UINT32 m,UINT32 n)
 }
 
 /*  LDCRBANK   Rn,Rm_BANK */
-INLINE void LDCRBANK(sh4_state *sh4, UINT32 m, UINT32 n)
+INLINE void LDCRBANK(sh4_state *sh4, uint32_t m, uint32_t n)
 {
 	sh4->rbnk[sh4->sr&sRB ? 0 : 1][m & 7] = sh4->r[n];
 }
 
 /*  LDC     Rm,SSR */
-INLINE void LDCSSR(sh4_state *sh4, UINT32 m)
+INLINE void LDCSSR(sh4_state *sh4, uint32_t m)
 {
 	sh4->ssr = sh4->r[m];
 }
 
 /*  LDC     Rm,SPC */
-INLINE void LDCSPC(sh4_state *sh4, UINT32 m)
+INLINE void LDCSPC(sh4_state *sh4, uint32_t m)
 {
 	sh4->spc = sh4->r[m];
 }
 
-static UINT32 sh4_getsqremap(sh4_state *sh4, UINT32 address)
+static uint32_t sh4_getsqremap(sh4_state *sh4, uint32_t address)
 {
 	if (!sh4->sh4_mmu_enabled)
 		return address;
 	else
 	{
 		int i;
-		UINT32 topaddr = address&0xfff00000;
+		uint32_t topaddr = address&0xfff00000;
 
 		for (i=0;i<64;i++)
 		{
-			UINT32 topcmp = sh4->sh4_tlb_address[i]&0xfff00000;
+			uint32_t topcmp = sh4->sh4_tlb_address[i]&0xfff00000;
 			if (topcmp==topaddr)
 				return (address&0x000fffff) | ((sh4->sh4_tlb_data[i])&0xfff00000);
 		}
@@ -2101,10 +2101,10 @@ static UINT32 sh4_getsqremap(sh4_state *sh4, UINT32 address)
 }
 
 /*  PREF     @Rn */
-INLINE void PREFM(sh4_state *sh4, UINT32 n)
+INLINE void PREFM(sh4_state *sh4, uint32_t n)
 {
 	int a;
-	UINT32 addr,dest,sq;
+	uint32_t addr,dest,sq;
 
 	addr = sh4->r[n]; // address
 	if ((addr >= 0xE0000000) && (addr <= 0xE3FFFFFF))
@@ -2139,7 +2139,7 @@ INLINE void PREFM(sh4_state *sh4, UINT32 n)
 /*****************************************************************************
  *  OPCODE DISPATCHERS
  *****************************************************************************/
-INLINE void op0000(sh4_state *sh4, UINT16 opcode)
+INLINE void op0000(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 0xF)
 	{
@@ -2260,12 +2260,12 @@ INLINE void op0000(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op0001(sh4_state *sh4, UINT16 opcode)
+INLINE void op0001(sh4_state *sh4, uint16_t opcode)
 {
 	MOVLS4(sh4, Rm, opcode & 0x0f, Rn);
 }
 
-INLINE void op0010(sh4_state *sh4, UINT16 opcode)
+INLINE void op0010(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -2288,7 +2288,7 @@ INLINE void op0010(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op0011(sh4_state *sh4, UINT16 opcode)
+INLINE void op0011(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -2311,7 +2311,7 @@ INLINE void op0011(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op0100(sh4_state *sh4, UINT16 opcode)
+INLINE void op0100(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 0xF)
 	{
@@ -2506,12 +2506,12 @@ INLINE void op0100(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op0101(sh4_state *sh4, UINT16 opcode)
+INLINE void op0101(sh4_state *sh4, uint16_t opcode)
 {
 	MOVLL4(sh4, Rm, opcode & 0x0f, Rn);
 }
 
-INLINE void op0110(sh4_state *sh4, UINT16 opcode)
+INLINE void op0110(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -2534,12 +2534,12 @@ INLINE void op0110(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op0111(sh4_state *sh4, UINT16 opcode)
+INLINE void op0111(sh4_state *sh4, uint16_t opcode)
 {
 	ADDI(sh4, opcode & 0xff, Rn);
 }
 
-INLINE void op1000(sh4_state *sh4, UINT16 opcode)
+INLINE void op1000(sh4_state *sh4, uint16_t opcode)
 {
 	switch ( opcode  & (15<<8) )
 	{
@@ -2563,22 +2563,22 @@ INLINE void op1000(sh4_state *sh4, UINT16 opcode)
 }
 
 
-INLINE void op1001(sh4_state *sh4, UINT16 opcode)
+INLINE void op1001(sh4_state *sh4, uint16_t opcode)
 {
 	MOVWI(sh4, opcode & 0xff, Rn);
 }
 
-INLINE void op1010(sh4_state *sh4, UINT16 opcode)
+INLINE void op1010(sh4_state *sh4, uint16_t opcode)
 {
 	BRA(sh4, opcode & 0xfff);
 }
 
-INLINE void op1011(sh4_state *sh4, UINT16 opcode)
+INLINE void op1011(sh4_state *sh4, uint16_t opcode)
 {
 	BSR(sh4, opcode & 0xfff);
 }
 
-INLINE void op1100(sh4_state *sh4, UINT16 opcode)
+INLINE void op1100(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & (15<<8))
 	{
@@ -2601,12 +2601,12 @@ INLINE void op1100(sh4_state *sh4, UINT16 opcode)
 	}
 }
 
-INLINE void op1101(sh4_state *sh4, UINT16 opcode)
+INLINE void op1101(sh4_state *sh4, uint16_t opcode)
 {
 	MOVLI(sh4, opcode & 0xff, Rn);
 }
 
-INLINE void op1110(sh4_state *sh4, UINT16 opcode)
+INLINE void op1110(sh4_state *sh4, uint16_t opcode)
 {
 	MOVI(sh4, opcode & 0xff, Rn);
 }
@@ -2615,7 +2615,7 @@ INLINE void op1110(sh4_state *sh4, UINT16 opcode)
 /*  FMOV    @Rm+,DRn PR=0 SZ=1 1111nnn0mmmm1001 */
 /*  FMOV    @Rm+,XDn PR=0 SZ=1 1111nnn1mmmm1001 */
 /*  FMOV    @Rm+,XDn PR=1      1111nnn1mmmm1001 */
-INLINE void FMOVMRIFR(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FMOVMRIFR(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -2651,7 +2651,7 @@ INLINE void FMOVMRIFR(sh4_state *sh4, UINT32 m,UINT32 n)
 /*  FMOV    DRm,@Rn PR=0 SZ=1 1111nnnnmmm01010 */
 /*  FMOV    XDm,@Rn PR=0 SZ=1 1111nnnnmmm11010 */
 /*  FMOV    XDm,@Rn PR=1      1111nnnnmmm11010 */
-INLINE void FMOVFRMR(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVFRMR(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		m= m & 14;
@@ -2681,7 +2681,7 @@ INLINE void FMOVFRMR(sh4_state *sh4,UINT32 m,UINT32 n)
 /*  FMOV    DRm,@-Rn PR=0 SZ=1 1111nnnnmmm01011 */
 /*  FMOV    XDm,@-Rn PR=0 SZ=1 1111nnnnmmm11011 */
 /*  FMOV    XDm,@-Rn PR=1      1111nnnnmmm11011 */
-INLINE void FMOVFRMDR(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVFRMDR(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		m= m & 14;
@@ -2715,7 +2715,7 @@ INLINE void FMOVFRMDR(sh4_state *sh4,UINT32 m,UINT32 n)
 /*  FMOV    DRm,@(R0,Rn) PR=0 SZ=1 1111nnnnmmm00111 */
 /*  FMOV    XDm,@(R0,Rn) PR=0 SZ=1 1111nnnnmmm10111 */
 /*  FMOV    XDm,@(R0,Rn) PR=1      1111nnnnmmm10111 */
-INLINE void FMOVFRS0(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVFRS0(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		m= m & 14;
@@ -2745,7 +2745,7 @@ INLINE void FMOVFRS0(sh4_state *sh4,UINT32 m,UINT32 n)
 /*  FMOV    @(R0,Rm),DRn PR=0 SZ=1 1111nnn0mmmm0110 */
 /*  FMOV    @(R0,Rm),XDn PR=0 SZ=1 1111nnn1mmmm0110 */
 /*  FMOV    @(R0,Rm),XDn PR=1      1111nnn1mmmm0110 */
-INLINE void FMOVS0FR(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVS0FR(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n= n & 14;
@@ -2776,7 +2776,7 @@ INLINE void FMOVS0FR(sh4_state *sh4,UINT32 m,UINT32 n)
 /*  FMOV    @Rm,XDn PR=0 SZ=1 1111nnn1mmmm1000 */
 /*  FMOV    @Rm,XDn PR=1      1111nnn1mmmm1000 */
 /*  FMOV    @Rm,DRn PR=1      1111nnn0mmmm1000 */
-INLINE void FMOVMRFR(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVMRFR(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		if (n & 1) {
@@ -2815,7 +2815,7 @@ INLINE void FMOVMRFR(sh4_state *sh4,UINT32 m,UINT32 n)
 /*  FMOV    XDm,DRn PR=1      XDm -> DRn 1111nnn0mmm11100 */
 /*  FMOV    DRm,XDn PR=1      DRm -> XDn 1111nnn1mmm01100 */
 /*  FMOV    XDm,XDn PR=1      XDm -> XDn 1111nnn1mmm11100 */
-INLINE void FMOVFR(sh4_state *sh4,UINT32 m,UINT32 n)
+INLINE void FMOVFR(sh4_state *sh4,uint32_t m,uint32_t n)
 {
 	if ((sh4->fpu_sz == 0) && (sh4->fpu_pr == 0)) /* SZ = 0 */
 		sh4->fr[n] = sh4->fr[m];
@@ -2841,25 +2841,25 @@ INLINE void FMOVFR(sh4_state *sh4,UINT32 m,UINT32 n)
 }
 
 /*  FLDI1  FRn 1111nnnn10011101 */
-INLINE void FLDI1(sh4_state *sh4, UINT32 n)
+INLINE void FLDI1(sh4_state *sh4, uint32_t n)
 {
 	sh4->fr[n] = 0x3F800000;
 }
 
 /*  FLDI0  FRn 1111nnnn10001101 */
-INLINE void FLDI0(sh4_state *sh4, UINT32 n)
+INLINE void FLDI0(sh4_state *sh4, uint32_t n)
 {
 	sh4->fr[n] = 0;
 }
 
 /*  FLDS FRm,FPUL 1111mmmm00011101 */
-INLINE void	FLDS(sh4_state *sh4, UINT32 m)
+INLINE void	FLDS(sh4_state *sh4, uint32_t m)
 {
 	sh4->fpul = sh4->fr[m];
 }
 
 /*  FSTS FPUL,FRn 1111nnnn00001101 */
-INLINE void	FSTS(sh4_state *sh4, UINT32 n)
+INLINE void	FSTS(sh4_state *sh4, uint32_t n)
 {
 	sh4->fr[n] = sh4->fpul;
 }
@@ -2880,32 +2880,32 @@ INLINE void FSCHG(sh4_state *sh4)
 
 /* FTRC FRm,FPUL PR=0 1111mmmm00111101 */
 /* FTRC DRm,FPUL PR=1 1111mmm000111101 */
-INLINE void FTRC(sh4_state *sh4, UINT32 n)
+INLINE void FTRC(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
-		*((INT32 *)&sh4->fpul) = (INT32)FP_RFD(n);
+		*((int32_t *)&sh4->fpul) = (int32_t)FP_RFD(n);
 	} else {              /* PR = 0 */
 		/* read sh4->fr[n] as float -> truncate -> fpul(32) */
-		*((INT32 *)&sh4->fpul) = (INT32)FP_RFS(n);
+		*((int32_t *)&sh4->fpul) = (int32_t)FP_RFS(n);
 	}
 }
 
 /* FLOAT FPUL,FRn PR=0 1111nnnn00101101 */
 /* FLOAT FPUL,DRn PR=1 1111nnn000101101 */
-INLINE void FLOAT(sh4_state *sh4, UINT32 n)
+INLINE void FLOAT(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
-		FP_RFD(n) = (double)*((INT32 *)&sh4->fpul);
+		FP_RFD(n) = (double)*((int32_t *)&sh4->fpul);
 	} else {              /* PR = 0 */
-		FP_RFS(n) = (float)*((INT32 *)&sh4->fpul);
+		FP_RFS(n) = (float)*((int32_t *)&sh4->fpul);
 	}
 }
 
 /* FNEG FRn PR=0 1111nnnn01001101 */
 /* FNEG DRn PR=1 1111nnn001001101 */
-INLINE void FNEG(sh4_state *sh4, UINT32 n)
+INLINE void FNEG(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		FP_RFD(n) = -FP_RFD(n);
@@ -2916,7 +2916,7 @@ INLINE void FNEG(sh4_state *sh4, UINT32 n)
 
 /* FABS FRn PR=0 1111nnnn01011101 */
 /* FABS DRn PR=1 1111nnn001011101 */
-INLINE void FABS(sh4_state *sh4, UINT32 n)
+INLINE void FABS(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 #ifdef MSB_FIRST
@@ -2933,7 +2933,7 @@ INLINE void FABS(sh4_state *sh4, UINT32 n)
 
 /* FCMP/EQ FRm,FRn PR=0 1111nnnnmmmm0100 */
 /* FCMP/EQ DRm,DRn PR=1 1111nnn0mmm00100 */
-INLINE void FCMP_EQ(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FCMP_EQ(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -2952,7 +2952,7 @@ INLINE void FCMP_EQ(sh4_state *sh4, UINT32 m,UINT32 n)
 
 /* FCMP/GT FRm,FRn PR=0 1111nnnnmmmm0101 */
 /* FCMP/GT DRm,DRn PR=1 1111nnn0mmm00101 */
-INLINE void FCMP_GT(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FCMP_GT(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -2970,7 +2970,7 @@ INLINE void FCMP_GT(sh4_state *sh4, UINT32 m,UINT32 n)
 }
 
 /* FCNVDS DRm,FPUL PR=1 1111mmm010111101 */
-INLINE void FCNVDS(sh4_state *sh4, UINT32 n)
+INLINE void FCNVDS(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -2981,7 +2981,7 @@ INLINE void FCNVDS(sh4_state *sh4, UINT32 n)
 }
 
 /* FCNVSD FPUL, DRn PR=1 1111nnn010101101 */
-INLINE void FCNVSD(sh4_state *sh4, UINT32 n)
+INLINE void FCNVSD(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -2991,7 +2991,7 @@ INLINE void FCNVSD(sh4_state *sh4, UINT32 n)
 
 /* FADD FRm,FRn PR=0 1111nnnnmmmm0000 */
 /* FADD DRm,DRn PR=1 1111nnn0mmm00000 */
-INLINE void FADD(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FADD(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -3004,7 +3004,7 @@ INLINE void FADD(sh4_state *sh4, UINT32 m,UINT32 n)
 
 /* FSUB FRm,FRn PR=0 1111nnnnmmmm0001 */
 /* FSUB DRm,DRn PR=1 1111nnn0mmm00001 */
-INLINE void FSUB(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FSUB(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -3018,7 +3018,7 @@ INLINE void FSUB(sh4_state *sh4, UINT32 m,UINT32 n)
 
 /* FMUL FRm,FRn PR=0 1111nnnnmmmm0010 */
 /* FMUL DRm,DRn PR=1 1111nnn0mmm00010 */
-INLINE void FMUL(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FMUL(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -3031,7 +3031,7 @@ INLINE void FMUL(sh4_state *sh4, UINT32 m,UINT32 n)
 
 /* FDIV FRm,FRn PR=0 1111nnnnmmmm0011 */
 /* FDIV DRm,DRn PR=1 1111nnn0mmm00011 */
-INLINE void FDIV(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FDIV(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -3047,7 +3047,7 @@ INLINE void FDIV(sh4_state *sh4, UINT32 m,UINT32 n)
 }
 
 /* FMAC FR0,FRm,FRn PR=0 1111nnnnmmmm1110 */
-INLINE void FMAC(sh4_state *sh4, UINT32 m,UINT32 n)
+INLINE void FMAC(sh4_state *sh4, uint32_t m,uint32_t n)
 {
 	if (sh4->fpu_pr == 0) { /* PR = 0 */
 		FP_RFS(n) = (FP_RFS(0) * FP_RFS(m)) + FP_RFS(n);
@@ -3056,7 +3056,7 @@ INLINE void FMAC(sh4_state *sh4, UINT32 m,UINT32 n)
 
 /* FSQRT FRn PR=0 1111nnnn01101101 */
 /* FSQRT DRn PR=1 1111nnnn01101101 */
-INLINE void FSQRT(sh4_state *sh4, UINT32 n)
+INLINE void FSQRT(sh4_state *sh4, uint32_t n)
 {
 	if (sh4->fpu_pr) { /* PR = 1 */
 		n = n & 14;
@@ -3071,7 +3071,7 @@ INLINE void FSQRT(sh4_state *sh4, UINT32 n)
 }
 
 /* FSRRA FRn PR=0 1111nnnn01111101 */
-INLINE void FSRRA(sh4_state *sh4, UINT32 n)
+INLINE void FSRRA(sh4_state *sh4, uint32_t n)
 {
 	if (FP_RFS(n) < 0)
 		return;
@@ -3079,7 +3079,7 @@ INLINE void FSRRA(sh4_state *sh4, UINT32 n)
 }
 
 /*  FSSCA FPUL,FRn PR=0 1111nnn011111101 */
-INLINE void FSSCA(sh4_state *sh4, UINT32 n)
+INLINE void FSSCA(sh4_state *sh4, uint32_t n)
 {
 float angle;
 
@@ -3089,9 +3089,9 @@ float angle;
 }
 
 /* FIPR FVm,FVn PR=0 1111nnmm11101101 */
-INLINE void FIPR(sh4_state *sh4, UINT32 n)
+INLINE void FIPR(sh4_state *sh4, uint32_t n)
 {
-UINT32 m;
+uint32_t m;
 float ml[4];
 int a;
 
@@ -3103,7 +3103,7 @@ int a;
 }
 
 /* FTRV XMTRX,FVn PR=0 1111nn0111111101 */
-INLINE void FTRV(sh4_state *sh4, UINT32 n)
+INLINE void FTRV(sh4_state *sh4, uint32_t n)
 {
 int i,j;
 float sum[4];
@@ -3118,7 +3118,7 @@ float sum[4];
 		FP_RFS(n + i) = sum[i];
 }
 
-INLINE void op1111(sh4_state *sh4, UINT16 opcode)
+INLINE void op1111(sh4_state *sh4, uint16_t opcode)
 {
 	switch (opcode & 0xf)
 	{
@@ -3248,11 +3248,11 @@ static CPU_RESET( sh4 )
 	sh4_state *sh4 = get_safe_token(device);
 	emu_timer *tsaved[4];
 	emu_timer *tsave[5];
-	UINT32 *m;
+	uint32_t *m;
 	int save_is_slave;
 	int	savecpu_clock, savebus_clock, savepm_clock;
 
-	void (*f)(UINT32 data);
+	void (*f)(uint32_t data);
 	device_irq_callback save_irqcallback;
 
 	m = sh4->m;
@@ -3336,15 +3336,15 @@ static CPU_EXECUTE( sh4 )
 
 	do
 	{
-		UINT32 opcode;
+		uint32_t opcode;
 
 		if (sh4->delay)
 		{
-			opcode = memory_decrypted_read_word(sh4->program, WORD2_XOR_LE((UINT32)(sh4->delay & AM)));
+			opcode = memory_decrypted_read_word(sh4->program, WORD2_XOR_LE((uint32_t)(sh4->delay & AM)));
 			sh4->pc -= 2;
 		}
 		else
-			opcode = memory_decrypted_read_word(sh4->program, WORD2_XOR_LE((UINT32)(sh4->pc & AM)));
+			opcode = memory_decrypted_read_word(sh4->program, WORD2_XOR_LE((uint32_t)(sh4->pc & AM)));
 
 		debugger_instruction_hook(device, sh4->pc & AM);
 
@@ -3630,12 +3630,12 @@ static READ64_HANDLER( sh4_tlb_r )
 
 	if (offs >= 0x01000000)
 	{
-		UINT8 i = (offs>>8)&63;
+		uint8_t i = (offs>>8)&63;
 		return sh4->sh4_tlb_data[i];
 	}
 	else
 	{
-		UINT8 i = (offs>>8)&63;
+		uint8_t i = (offs>>8)&63;
 		return sh4->sh4_tlb_address[i];
 	}
 }
@@ -3648,12 +3648,12 @@ static WRITE64_HANDLER( sh4_tlb_w )
 
 	if (offs >= 0x01000000)
 	{
-		UINT8 i = (offs>>8)&63;
+		uint8_t i = (offs>>8)&63;
 		sh4->sh4_tlb_data[i]  = data&0xffffffff;
 	}
 	else
 	{
-		UINT8 i = (offs>>8)&63;
+		uint8_t i = (offs>>8)&63;
 		sh4->sh4_tlb_address[i] = data&0xffffffff;
 	}
 }

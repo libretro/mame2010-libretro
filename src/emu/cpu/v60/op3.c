@@ -1,13 +1,13 @@
-static UINT32 opINCB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opINCB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
 
 	cpustate->amlength1 = ReadAMAddress(cpustate);
 
 	if (cpustate->amflag)
-		appb = (UINT8)cpustate->reg[cpustate->amout];
+		appb = (uint8_t)cpustate->reg[cpustate->amout];
 	else
 		appb = MemRead8(cpustate->program, cpustate->amout);
 
@@ -21,16 +21,16 @@ static UINT32 opINCB(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opINCH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opINCH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 1;
 
 	cpustate->amlength1 = ReadAMAddress(cpustate);
 
 	if (cpustate->amflag)
-		apph = (UINT16)cpustate->reg[cpustate->amout];
+		apph = (uint16_t)cpustate->reg[cpustate->amout];
 	else
 		apph = MemRead16(cpustate->program, cpustate->amout);
 
@@ -44,9 +44,9 @@ static UINT32 opINCH(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opINCW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opINCW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
 
@@ -67,16 +67,16 @@ static UINT32 opINCW(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opDECB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDECB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
 
 	cpustate->amlength1 = ReadAMAddress(cpustate);
 
 	if (cpustate->amflag)
-		appb = (UINT8)cpustate->reg[cpustate->amout];
+		appb = (uint8_t)cpustate->reg[cpustate->amout];
 	else
 		appb = MemRead8(cpustate->program, cpustate->amout);
 
@@ -90,16 +90,16 @@ static UINT32 opDECB(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opDECH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDECH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 1;
 
 	cpustate->amlength1 = ReadAMAddress(cpustate);
 
 	if (cpustate->amflag)
-		apph = (UINT16)cpustate->reg[cpustate->amout];
+		apph = (uint16_t)cpustate->reg[cpustate->amout];
 	else
 		apph = MemRead16(cpustate->program, cpustate->amout);
 
@@ -113,9 +113,9 @@ static UINT32 opDECH(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opDECW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDECW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
 
@@ -136,7 +136,7 @@ static UINT32 opDECW(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opJMP(v60_state *cpustate) /* TRUSTED */
+static uint32_t opJMP(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
@@ -153,7 +153,7 @@ static UINT32 opJMP(v60_state *cpustate) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opJSR(v60_state *cpustate) /* TRUSTED */
+static uint32_t opJSR(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
@@ -174,7 +174,7 @@ static UINT32 opJSR(v60_state *cpustate) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opPREPARE(v60_state *cpustate)	/* somewhat TRUSTED */
+static uint32_t opPREPARE(v60_state *cpustate)	/* somewhat TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -195,7 +195,7 @@ static UINT32 opPREPARE(v60_state *cpustate)	/* somewhat TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opRET(v60_state *cpustate) /* TRUSTED */
+static uint32_t opRET(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -217,9 +217,9 @@ static UINT32 opRET(v60_state *cpustate) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opTRAP(v60_state *cpustate)
+static uint32_t opTRAP(v60_state *cpustate)
 {
-	UINT32 oldPSW;
+	uint32_t oldPSW;
 
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
@@ -297,9 +297,9 @@ static UINT32 opTRAP(v60_state *cpustate)
 	return 0;
 }
 
-static UINT32 opRETIU(v60_state *cpustate) /* TRUSTED */
+static uint32_t opRETIU(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 newPSW;
+	uint32_t newPSW;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 1;
 
@@ -321,9 +321,9 @@ static UINT32 opRETIU(v60_state *cpustate) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opRETIS(v60_state *cpustate)
+static uint32_t opRETIS(v60_state *cpustate)
 {
-	UINT32 newPSW;
+	uint32_t newPSW;
 
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 1;
@@ -346,10 +346,10 @@ static UINT32 opRETIS(v60_state *cpustate)
 	return 0;
 }
 
-static UINT32 opSTTASK(v60_state *cpustate)
+static uint32_t opSTTASK(v60_state *cpustate)
 {
 	int i;
-	UINT32 adr;
+	uint32_t adr;
 
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -392,7 +392,7 @@ static UINT32 opSTTASK(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opGETPSW(v60_state *cpustate)
+static uint32_t opGETPSW(v60_state *cpustate)
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -404,18 +404,18 @@ static UINT32 opGETPSW(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opTASI(v60_state *cpustate)
+static uint32_t opTASI(v60_state *cpustate)
 {
-	UINT8 appb;
+	uint8_t appb;
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
 
 	// Load the address of the operand
 	cpustate->amlength1 = ReadAMAddress(cpustate);
 
-	// Load UINT8 from the address
+	// Load uint8_t from the address
 	if (cpustate->amflag)
-		appb = (UINT8)cpustate->reg[cpustate->amout & 0x1F];
+		appb = (uint8_t)cpustate->reg[cpustate->amout & 0x1F];
 	else
 		appb = MemRead8(cpustate->program, cpustate->amout);
 
@@ -431,7 +431,7 @@ static UINT32 opTASI(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opCLRTLB(v60_state *cpustate)
+static uint32_t opCLRTLB(v60_state *cpustate)
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -444,7 +444,7 @@ static UINT32 opCLRTLB(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opPOPM(v60_state *cpustate)
+static uint32_t opPOPM(v60_state *cpustate)
 {
 	int i;
 
@@ -470,7 +470,7 @@ static UINT32 opPOPM(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opPUSHM(v60_state *cpustate)
+static uint32_t opPUSHM(v60_state *cpustate)
 {
 	int i;
 
@@ -497,7 +497,7 @@ static UINT32 opPUSHM(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opTESTB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opTESTB(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 0;
@@ -513,7 +513,7 @@ static UINT32 opTESTB(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opTESTH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opTESTH(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 1;
@@ -529,7 +529,7 @@ static UINT32 opTESTH(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opTESTW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opTESTW(v60_state *cpustate) /* TRUSTED */
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -545,7 +545,7 @@ static UINT32 opTESTW(v60_state *cpustate) /* TRUSTED */
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opPUSH(v60_state *cpustate)
+static uint32_t opPUSH(v60_state *cpustate)
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -558,7 +558,7 @@ static UINT32 opPUSH(v60_state *cpustate)
 	return cpustate->amlength1 + 1;
 }
 
-static UINT32 opPOP(v60_state *cpustate)
+static uint32_t opPOP(v60_state *cpustate)
 {
 	cpustate->modadd = cpustate->PC + 1;
 	cpustate->moddim = 2;
@@ -570,70 +570,70 @@ static UINT32 opPOP(v60_state *cpustate)
 }
 
 
-static UINT32 opINCB_0(v60_state *cpustate) { cpustate->modm = 0; return opINCB(cpustate); }
-static UINT32 opINCB_1(v60_state *cpustate) { cpustate->modm = 1; return opINCB(cpustate); }
-static UINT32 opINCH_0(v60_state *cpustate) { cpustate->modm = 0; return opINCH(cpustate); }
-static UINT32 opINCH_1(v60_state *cpustate) { cpustate->modm = 1; return opINCH(cpustate); }
-static UINT32 opINCW_0(v60_state *cpustate) { cpustate->modm = 0; return opINCW(cpustate); }
-static UINT32 opINCW_1(v60_state *cpustate) { cpustate->modm = 1; return opINCW(cpustate); }
+static uint32_t opINCB_0(v60_state *cpustate) { cpustate->modm = 0; return opINCB(cpustate); }
+static uint32_t opINCB_1(v60_state *cpustate) { cpustate->modm = 1; return opINCB(cpustate); }
+static uint32_t opINCH_0(v60_state *cpustate) { cpustate->modm = 0; return opINCH(cpustate); }
+static uint32_t opINCH_1(v60_state *cpustate) { cpustate->modm = 1; return opINCH(cpustate); }
+static uint32_t opINCW_0(v60_state *cpustate) { cpustate->modm = 0; return opINCW(cpustate); }
+static uint32_t opINCW_1(v60_state *cpustate) { cpustate->modm = 1; return opINCW(cpustate); }
 
-static UINT32 opDECB_0(v60_state *cpustate) { cpustate->modm = 0; return opDECB(cpustate); }
-static UINT32 opDECB_1(v60_state *cpustate) { cpustate->modm = 1; return opDECB(cpustate); }
-static UINT32 opDECH_0(v60_state *cpustate) { cpustate->modm = 0; return opDECH(cpustate); }
-static UINT32 opDECH_1(v60_state *cpustate) { cpustate->modm = 1; return opDECH(cpustate); }
-static UINT32 opDECW_0(v60_state *cpustate) { cpustate->modm = 0; return opDECW(cpustate); }
-static UINT32 opDECW_1(v60_state *cpustate) { cpustate->modm = 1; return opDECW(cpustate); }
+static uint32_t opDECB_0(v60_state *cpustate) { cpustate->modm = 0; return opDECB(cpustate); }
+static uint32_t opDECB_1(v60_state *cpustate) { cpustate->modm = 1; return opDECB(cpustate); }
+static uint32_t opDECH_0(v60_state *cpustate) { cpustate->modm = 0; return opDECH(cpustate); }
+static uint32_t opDECH_1(v60_state *cpustate) { cpustate->modm = 1; return opDECH(cpustate); }
+static uint32_t opDECW_0(v60_state *cpustate) { cpustate->modm = 0; return opDECW(cpustate); }
+static uint32_t opDECW_1(v60_state *cpustate) { cpustate->modm = 1; return opDECW(cpustate); }
 
-static UINT32 opJMP_0(v60_state *cpustate) { cpustate->modm = 0; return opJMP(cpustate); }
-static UINT32 opJMP_1(v60_state *cpustate) { cpustate->modm = 1; return opJMP(cpustate); }
+static uint32_t opJMP_0(v60_state *cpustate) { cpustate->modm = 0; return opJMP(cpustate); }
+static uint32_t opJMP_1(v60_state *cpustate) { cpustate->modm = 1; return opJMP(cpustate); }
 
-static UINT32 opJSR_0(v60_state *cpustate) { cpustate->modm = 0; return opJSR(cpustate); }
-static UINT32 opJSR_1(v60_state *cpustate) { cpustate->modm = 1; return opJSR(cpustate); }
+static uint32_t opJSR_0(v60_state *cpustate) { cpustate->modm = 0; return opJSR(cpustate); }
+static uint32_t opJSR_1(v60_state *cpustate) { cpustate->modm = 1; return opJSR(cpustate); }
 
-static UINT32 opPREPARE_0(v60_state *cpustate) { cpustate->modm = 0; return opPREPARE(cpustate); }
-static UINT32 opPREPARE_1(v60_state *cpustate) { cpustate->modm = 1; return opPREPARE(cpustate); }
+static uint32_t opPREPARE_0(v60_state *cpustate) { cpustate->modm = 0; return opPREPARE(cpustate); }
+static uint32_t opPREPARE_1(v60_state *cpustate) { cpustate->modm = 1; return opPREPARE(cpustate); }
 
-static UINT32 opRET_0(v60_state *cpustate) { cpustate->modm = 0; return opRET(cpustate); }
-static UINT32 opRET_1(v60_state *cpustate) { cpustate->modm = 1; return opRET(cpustate); }
+static uint32_t opRET_0(v60_state *cpustate) { cpustate->modm = 0; return opRET(cpustate); }
+static uint32_t opRET_1(v60_state *cpustate) { cpustate->modm = 1; return opRET(cpustate); }
 
-static UINT32 opTRAP_0(v60_state *cpustate) { cpustate->modm = 0; return opTRAP(cpustate); }
-static UINT32 opTRAP_1(v60_state *cpustate) { cpustate->modm = 1; return opTRAP(cpustate); }
+static uint32_t opTRAP_0(v60_state *cpustate) { cpustate->modm = 0; return opTRAP(cpustate); }
+static uint32_t opTRAP_1(v60_state *cpustate) { cpustate->modm = 1; return opTRAP(cpustate); }
 
-static UINT32 opRETIU_0(v60_state *cpustate) { cpustate->modm = 0; return opRETIU(cpustate); }
-static UINT32 opRETIU_1(v60_state *cpustate) { cpustate->modm = 1; return opRETIU(cpustate); }
+static uint32_t opRETIU_0(v60_state *cpustate) { cpustate->modm = 0; return opRETIU(cpustate); }
+static uint32_t opRETIU_1(v60_state *cpustate) { cpustate->modm = 1; return opRETIU(cpustate); }
 
-static UINT32 opRETIS_0(v60_state *cpustate) { cpustate->modm = 0; return opRETIS(cpustate); }
-static UINT32 opRETIS_1(v60_state *cpustate) { cpustate->modm = 1; return opRETIS(cpustate); }
+static uint32_t opRETIS_0(v60_state *cpustate) { cpustate->modm = 0; return opRETIS(cpustate); }
+static uint32_t opRETIS_1(v60_state *cpustate) { cpustate->modm = 1; return opRETIS(cpustate); }
 
-static UINT32 opGETPSW_0(v60_state *cpustate) { cpustate->modm = 0; return opGETPSW(cpustate); }
-static UINT32 opGETPSW_1(v60_state *cpustate) { cpustate->modm = 1; return opGETPSW(cpustate); }
+static uint32_t opGETPSW_0(v60_state *cpustate) { cpustate->modm = 0; return opGETPSW(cpustate); }
+static uint32_t opGETPSW_1(v60_state *cpustate) { cpustate->modm = 1; return opGETPSW(cpustate); }
 
-static UINT32 opTASI_0(v60_state *cpustate) { cpustate->modm = 0; return opTASI(cpustate); }
-static UINT32 opTASI_1(v60_state *cpustate) { cpustate->modm = 1; return opTASI(cpustate); }
+static uint32_t opTASI_0(v60_state *cpustate) { cpustate->modm = 0; return opTASI(cpustate); }
+static uint32_t opTASI_1(v60_state *cpustate) { cpustate->modm = 1; return opTASI(cpustate); }
 
-static UINT32 opCLRTLB_0(v60_state *cpustate) { cpustate->modm = 0; return opCLRTLB(cpustate); }
-static UINT32 opCLRTLB_1(v60_state *cpustate) { cpustate->modm = 1; return opCLRTLB(cpustate); }
+static uint32_t opCLRTLB_0(v60_state *cpustate) { cpustate->modm = 0; return opCLRTLB(cpustate); }
+static uint32_t opCLRTLB_1(v60_state *cpustate) { cpustate->modm = 1; return opCLRTLB(cpustate); }
 
-static UINT32 opPOPM_0(v60_state *cpustate) { cpustate->modm = 0; return opPOPM(cpustate); }
-static UINT32 opPOPM_1(v60_state *cpustate) { cpustate->modm = 1; return opPOPM(cpustate); }
+static uint32_t opPOPM_0(v60_state *cpustate) { cpustate->modm = 0; return opPOPM(cpustate); }
+static uint32_t opPOPM_1(v60_state *cpustate) { cpustate->modm = 1; return opPOPM(cpustate); }
 
-static UINT32 opPUSHM_0(v60_state *cpustate) { cpustate->modm = 0; return opPUSHM(cpustate); }
-static UINT32 opPUSHM_1(v60_state *cpustate) { cpustate->modm = 1; return opPUSHM(cpustate); }
+static uint32_t opPUSHM_0(v60_state *cpustate) { cpustate->modm = 0; return opPUSHM(cpustate); }
+static uint32_t opPUSHM_1(v60_state *cpustate) { cpustate->modm = 1; return opPUSHM(cpustate); }
 
-static UINT32 opTESTB_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTB(cpustate); }
-static UINT32 opTESTB_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTB(cpustate); }
+static uint32_t opTESTB_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTB(cpustate); }
+static uint32_t opTESTB_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTB(cpustate); }
 
-static UINT32 opTESTH_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTH(cpustate); }
-static UINT32 opTESTH_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTH(cpustate); }
+static uint32_t opTESTH_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTH(cpustate); }
+static uint32_t opTESTH_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTH(cpustate); }
 
-static UINT32 opTESTW_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTW(cpustate); }
-static UINT32 opTESTW_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTW(cpustate); }
+static uint32_t opTESTW_0(v60_state *cpustate) { cpustate->modm = 0; return opTESTW(cpustate); }
+static uint32_t opTESTW_1(v60_state *cpustate) { cpustate->modm = 1; return opTESTW(cpustate); }
 
-static UINT32 opPUSH_0(v60_state *cpustate) { cpustate->modm = 0; return opPUSH(cpustate); }
-static UINT32 opPUSH_1(v60_state *cpustate) { cpustate->modm = 1; return opPUSH(cpustate); }
+static uint32_t opPUSH_0(v60_state *cpustate) { cpustate->modm = 0; return opPUSH(cpustate); }
+static uint32_t opPUSH_1(v60_state *cpustate) { cpustate->modm = 1; return opPUSH(cpustate); }
 
-static UINT32 opPOP_0(v60_state *cpustate) { cpustate->modm = 0; return opPOP(cpustate); }
-static UINT32 opPOP_1(v60_state *cpustate) { cpustate->modm = 1; return opPOP(cpustate); }
+static uint32_t opPOP_0(v60_state *cpustate) { cpustate->modm = 0; return opPOP(cpustate); }
+static uint32_t opPOP_1(v60_state *cpustate) { cpustate->modm = 1; return opPOP(cpustate); }
 
-static UINT32 opSTTASK_0(v60_state *cpustate) { cpustate->modm = 0; return opSTTASK(cpustate); }
-static UINT32 opSTTASK_1(v60_state *cpustate) { cpustate->modm = 1; return opSTTASK(cpustate); }
+static uint32_t opSTTASK_0(v60_state *cpustate) { cpustate->modm = 0; return opSTTASK(cpustate); }
+static uint32_t opSTTASK_1(v60_state *cpustate) { cpustate->modm = 1; return opSTTASK(cpustate); }

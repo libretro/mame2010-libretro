@@ -3,8 +3,8 @@ struct _memory_interface
 {
 	offs_t	fetch_xor;
 
-	UINT8	(*rbyte)(const address_space *, offs_t);
-	UINT16	(*rword)(const address_space *, offs_t);
-	void	(*wbyte)(const address_space *, offs_t, UINT8);
-	void	(*wword)(const address_space *, offs_t, UINT16);
+	uint8_t	(*rbyte)(const address_space *, offs_t);
+	uint16_t	(*rword)(const address_space *, offs_t);
+	void	(*wbyte)(const address_space *, offs_t, uint8_t);
+	void	(*wword)(const address_space *, offs_t, uint16_t);
 };

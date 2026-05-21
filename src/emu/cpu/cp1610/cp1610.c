@@ -33,12 +33,12 @@
 typedef struct _cp1610_state cp1610_state;
 struct _cp1610_state
 {
-	UINT16	r[8];	/* registers */
-	UINT8	flags;	/* flags */
+	uint16_t	r[8];	/* registers */
+	uint8_t	flags;	/* flags */
 	int 	intr_enabled;
 	//int       (*reset_callback)(cp1610_state *cpustate);
 	device_irq_callback irq_callback;
-	UINT16	intr_vector;
+	uint16_t	intr_vector;
 	int 	reset_state;
 	int		intr_state;
 	int		intrm_state;
@@ -240,7 +240,7 @@ static void cp1610_comr(cp1610_state *cpustate, int n)
  ***************************************************/
 static void cp1610_negr(cp1610_state *cpustate, int n)
 {
-	UINT32 temp;
+	uint32_t temp;
 	CLR_SZOC;
 	temp = (cpustate->r[n] ^ 0xffff) + 1;
 	SET_COV(0,temp,1);
@@ -255,7 +255,7 @@ static void cp1610_negr(cp1610_state *cpustate, int n)
  ***************************************************/
 static void cp1610_adcr(cp1610_state *cpustate, int n)
 {
-	UINT16 offset = 0;
+	uint16_t offset = 0;
 	if (cpustate->flags & C)
 		offset = 1;
 	CLR_SZOC;
@@ -310,7 +310,7 @@ static void cp1610_rswd(cp1610_state *cpustate, int n)
  ***************************************************/
 static void cp1610_swap(cp1610_state *cpustate, int r)
 {
-	UINT8 temp;
+	uint8_t temp;
 	cpustate->mask_interrupts = 1;
 	CLR_SZ;
 	temp = cpustate->r[r] >> 8;
@@ -330,7 +330,7 @@ static void cp1610_swap(cp1610_state *cpustate, int r)
 static void cp1610_dswap(cp1610_state *cpustate, int r)
 {
 	/* This instruction was not officially supported by GI */
-	UINT16 temp;
+	uint16_t temp;
 	cpustate->mask_interrupts = 1;
 	CLR_SZ;
 	temp = cpustate->r[r] & 0xff;
@@ -375,7 +375,7 @@ static void cp1610_sll_2(cp1610_state *cpustate, int r)
  ***************************************************/
 static void cp1610_rlc_1(cp1610_state *cpustate, int r)
 {
-	UINT16 offset = 0;
+	uint16_t offset = 0;
 	cpustate->mask_interrupts = 1;
 	if (cpustate->flags & C)
 		offset = 1;
@@ -393,7 +393,7 @@ static void cp1610_rlc_1(cp1610_state *cpustate, int r)
  ***************************************************/
 static void cp1610_rlc_2(cp1610_state *cpustate, int r)
 {
-	UINT16 offset = 0;
+	uint16_t offset = 0;
 	cpustate->mask_interrupts = 1;
 	switch(cpustate->flags & (C | OV))
 	{
@@ -496,7 +496,7 @@ static void cp1610_sar_1(cp1610_state *cpustate, int r)
 {
 	cpustate->mask_interrupts = 1;
 	CLR_SZ;
-	cpustate->r[r] = (UINT16)(((INT16)(cpustate->r[r])) >> 1);
+	cpustate->r[r] = (uint16_t)(((int16_t)(cpustate->r[r])) >> 1);
 	SET_SZ(cpustate->r[r]);
 	/* S flag is set on bit 7 not bit 15 */
 	cpustate->flags &= ~S;
@@ -513,7 +513,7 @@ static void cp1610_sar_2(cp1610_state *cpustate, int r)
 {
 	cpustate->mask_interrupts = 1;
 	CLR_SZ;
-	cpustate->r[r] = (UINT16)(((INT16)(cpustate->r[r])) >> 2);
+	cpustate->r[r] = (uint16_t)(((int16_t)(cpustate->r[r])) >> 2);
 	SET_SZ(cpustate->r[r]);
 	/* S flag is set on bit 7 not bit 15 */
 	cpustate->flags &= ~S;
@@ -528,7 +528,7 @@ static void cp1610_sar_2(cp1610_state *cpustate, int r)
  ***************************************************/
 static void cp1610_rrc_1(cp1610_state *cpustate, int r)
 {
-	UINT16 offset = 0;
+	uint16_t offset = 0;
 	cpustate->mask_interrupts = 1;
 	if (cpustate->flags & C)
 		offset = 0x8000;
@@ -551,7 +551,7 @@ static void cp1610_rrc_1(cp1610_state *cpustate, int r)
  ***************************************************/
 static void cp1610_rrc_2(cp1610_state *cpustate, int r)
 {
-	UINT16 offset = 0;
+	uint16_t offset = 0;
 	cpustate->mask_interrupts = 1;
 	if (cpustate->flags & C)
 		offset |= 0x4000;
@@ -582,7 +582,7 @@ static void cp1610_sarc_1(cp1610_state *cpustate, int r)
 	CLR_SZC;
 	if (cpustate->r[r] & 1)
 		cpustate->flags |= C;
-	cpustate->r[r] = (UINT16)(((INT16)cpustate->r[r]) >> 1);
+	cpustate->r[r] = (uint16_t)(((int16_t)cpustate->r[r]) >> 1);
 	SET_SZ(cpustate->r[r]);
 	/* S flag is set on bit 7 not bit 15 */
 	cpustate->flags &= ~S;
@@ -603,7 +603,7 @@ static void cp1610_sarc_2(cp1610_state *cpustate, int r)
 		cpustate->flags |= C;
 	if (cpustate->r[r] & 2)
 		cpustate->flags |= OV;
-	cpustate->r[r] = (UINT16)(((INT16)cpustate->r[r]) >> 2);
+	cpustate->r[r] = (uint16_t)(((int16_t)cpustate->r[r]) >> 2);
 	SET_SZ(cpustate->r[r]);
 	/* S flag is set on bit 7 not bit 15 */
 	cpustate->flags &= ~S;
@@ -659,7 +659,7 @@ static void cp1610_addr(cp1610_state *cpustate, int s, int d)
 static void cp1610_subr(cp1610_state *cpustate, int s, int d)
 {
 	CLR_SZOC;
-	SET_COV(cpustate->r[d],(UINT32)((cpustate->r[s]^0xffff)+1),1);
+	SET_COV(cpustate->r[d],(uint32_t)((cpustate->r[s]^0xffff)+1),1);
 	cpustate->r[d] -= cpustate->r[s];
 	SET_SZ(cpustate->r[d]);
 	cpustate->icount -= 6;
@@ -671,9 +671,9 @@ static void cp1610_subr(cp1610_state *cpustate, int s, int d)
  ***************************************************/
 static void cp1610_cmpr(cp1610_state *cpustate, int s, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZOC;
-	SET_COV(cpustate->r[d],(UINT32)((cpustate->r[s]^0xffff)+1),1);
+	SET_COV(cpustate->r[d],(uint32_t)((cpustate->r[s]^0xffff)+1),1);
 	temp = cpustate->r[d] - cpustate->r[s];
 	SET_SZ(temp);
 	cpustate->icount -= 6;
@@ -721,7 +721,7 @@ static void cp1610_clrr(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_b(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	cpustate->r[7] += (offset ^ dir);
 	cpustate->icount -= 9;
@@ -744,7 +744,7 @@ static void cp1610_nopp(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bc(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & C)
 	{
@@ -763,7 +763,7 @@ static void cp1610_bc(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bnc(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (!(cpustate->flags & C))
 	{
@@ -782,7 +782,7 @@ static void cp1610_bnc(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bov(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & OV)
 	{
@@ -801,7 +801,7 @@ static void cp1610_bov(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bnov(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (!(cpustate->flags & OV))
 	{
@@ -820,7 +820,7 @@ static void cp1610_bnov(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bpl(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (!(cpustate->flags & S))
 	{
@@ -839,7 +839,7 @@ static void cp1610_bpl(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bmi(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & S)
 	{
@@ -858,7 +858,7 @@ static void cp1610_bmi(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bze(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & Z)
 	{
@@ -877,7 +877,7 @@ static void cp1610_bze(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bnze(cp1610_state *cpustate, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (!(cpustate->flags & Z))
 	{
@@ -898,7 +898,7 @@ static void cp1610_blt(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & S) condition1 = 1;
 	if (cpustate->flags & OV) condition2 = 1;
@@ -921,7 +921,7 @@ static void cp1610_bge(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & S) condition1 = 1;
 	if (cpustate->flags & OV) condition2 = 1;
@@ -944,7 +944,7 @@ static void cp1610_ble(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & S) condition1 = 1;
 	if (cpustate->flags & OV) condition2 = 1;
@@ -967,7 +967,7 @@ static void cp1610_bgt(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & S) condition1 = 1;
 	if (cpustate->flags & OV) condition2 = 1;
@@ -990,7 +990,7 @@ static void cp1610_busc(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & C) condition1 = 1;
 	if (cpustate->flags & S) condition2 = 1;
@@ -1013,7 +1013,7 @@ static void cp1610_besc(cp1610_state *cpustate, int dir)
 {
 	int condition1 = 0;
 	int condition2 = 0;
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	if (cpustate->flags & C) condition1 = 1;
 	if (cpustate->flags & S) condition2 = 1;
@@ -1034,7 +1034,7 @@ static void cp1610_besc(cp1610_state *cpustate, int dir)
  ***************************************************/
 static void cp1610_bext(cp1610_state *cpustate, int ext, int dir)
 {
-	UINT16 offset = cp1610_readop(cpustate->r[7]);
+	uint16_t offset = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	/* TBD */
 	if (0)
@@ -1054,7 +1054,7 @@ static void cp1610_bext(cp1610_state *cpustate, int ext, int dir)
  ***************************************************/
 static void cp1610_mvo(cp1610_state *cpustate, int s)
 {
-	UINT16 addr;
+	uint16_t addr;
 	cpustate->mask_interrupts = 1;
 	addr = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
@@ -1103,7 +1103,7 @@ static void cp1610_mvoi(cp1610_state *cpustate, int s)
  ***************************************************/
 static void cp1610_mvi(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	cpustate->r[d] = cp1610_readmem16(addr);
 	cpustate->icount -= 10;
@@ -1125,7 +1125,7 @@ static void cp1610_mviat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_mviat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 temp = cp1610_readmem16(cpustate->r[m]);
+	uint16_t temp = cp1610_readmem16(cpustate->r[m]);
 	cpustate->r[m]++;
 	cpustate->r[d] = temp;
 	cpustate->icount -= 8;
@@ -1152,7 +1152,7 @@ static void cp1610_pulr(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_mvii(cp1610_state *cpustate, int d)
 {
-	UINT16 temp = cp1610_readop(cpustate->r[7]);
+	uint16_t temp = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	cpustate->r[d] = temp;
 	cpustate->icount -= 8;
@@ -1164,8 +1164,8 @@ static void cp1610_mvii(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_add(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
-	UINT16 data = cp1610_readmem16(addr);
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
+	uint16_t data = cp1610_readmem16(addr);
 	cpustate->r[7]++;
 	CLR_SZOC;
 	SET_COV(cpustate->r[d],data,0);
@@ -1180,7 +1180,7 @@ static void cp1610_add(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_addat(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZOC;
 	SET_COV(cpustate->r[d],data,0);
 	cpustate->r[d] += data;
@@ -1194,7 +1194,7 @@ static void cp1610_addat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_addat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	cpustate->r[m]++;
 	CLR_SZOC;
 	SET_COV(cpustate->r[d],data,0);
@@ -1209,7 +1209,7 @@ static void cp1610_addat_i(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_addat_d(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	cpustate->r[m]--;
 	data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZOC;
@@ -1225,7 +1225,7 @@ static void cp1610_addat_d(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_addi(cp1610_state *cpustate, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	data = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	CLR_SZOC;
@@ -1241,8 +1241,8 @@ static void cp1610_addi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sub(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
-	UINT32 data = cp1610_readmem16(addr);
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
+	uint32_t data = cp1610_readmem16(addr);
 	cpustate->r[7]++;
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
@@ -1259,7 +1259,7 @@ static void cp1610_sub(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_subat(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data = cp1610_readmem16(cpustate->r[m]);
+	uint32_t data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
 	SET_COV(cpustate->r[d],data,1);
@@ -1275,7 +1275,7 @@ static void cp1610_subat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_subat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data = cp1610_readmem16(cpustate->r[m]);
+	uint32_t data = cp1610_readmem16(cpustate->r[m]);
 	cpustate->r[m]++;
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
@@ -1292,7 +1292,7 @@ static void cp1610_subat_i(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_subat_d(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data;
+	uint32_t data;
 	cpustate->r[m]--;
 	data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZOC;
@@ -1310,7 +1310,7 @@ static void cp1610_subat_d(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_subi(cp1610_state *cpustate, int d)
 {
-	UINT32 data;
+	uint32_t data;
 	data = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	data = (data ^ 0xffff) + 1;
@@ -1328,9 +1328,9 @@ static void cp1610_subi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_cmp(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
-	UINT32 data = cp1610_readmem16(addr);
-	UINT16 res;
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
+	uint32_t data = cp1610_readmem16(addr);
+	uint16_t res;
 	cpustate->r[7]++;
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
@@ -1347,8 +1347,8 @@ static void cp1610_cmp(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_cmpat(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data = cp1610_readmem16(cpustate->r[m]);
-	UINT16 res;
+	uint32_t data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t res;
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
 	SET_COV(cpustate->r[d],data,1);
@@ -1364,8 +1364,8 @@ static void cp1610_cmpat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_cmpat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data = cp1610_readmem16(cpustate->r[m]);
-	UINT16 res;
+	uint32_t data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t res;
 	cpustate->r[m]++;
 	CLR_SZOC;
 	data = (data ^ 0xffff) + 1;
@@ -1382,8 +1382,8 @@ static void cp1610_cmpat_i(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_cmpat_d(cp1610_state *cpustate, int m, int d)
 {
-	UINT32 data;
-	UINT16 res;
+	uint32_t data;
+	uint16_t res;
 	cpustate->r[m]--;
 	data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZOC;
@@ -1401,8 +1401,8 @@ static void cp1610_cmpat_d(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_cmpi(cp1610_state *cpustate, int d)
 {
-	UINT32 data;
-	UINT16 res;
+	uint32_t data;
+	uint16_t res;
 	data = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	data = (data ^ 0xffff) + 1;
@@ -1420,8 +1420,8 @@ static void cp1610_cmpi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_and(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
-	UINT16 data = cp1610_readmem16(addr);
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
+	uint16_t data = cp1610_readmem16(addr);
 	cpustate->r[7]++;
 	CLR_SZ;
 	cpustate->r[d] &= data;
@@ -1435,7 +1435,7 @@ static void cp1610_and(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_andat(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZ;
 	cpustate->r[d] &= data;
 	SET_SZ(cpustate->r[d]);
@@ -1448,7 +1448,7 @@ static void cp1610_andat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_andat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	cpustate->r[m]++;
 	CLR_SZ;
 	cpustate->r[d] &= data;
@@ -1462,7 +1462,7 @@ static void cp1610_andat_i(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_andat_d(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	cpustate->r[m]--;
 	data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZ;
@@ -1477,7 +1477,7 @@ static void cp1610_andat_d(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_andi(cp1610_state *cpustate, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	data = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	CLR_SZ;
@@ -1492,8 +1492,8 @@ static void cp1610_andi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_xor(cp1610_state *cpustate, int d)
 {
-	UINT16 addr = cp1610_readop(cpustate->r[7]);
-	UINT16 data = cp1610_readmem16(addr);
+	uint16_t addr = cp1610_readop(cpustate->r[7]);
+	uint16_t data = cp1610_readmem16(addr);
 	cpustate->r[7]++;
 	CLR_SZ;
 	cpustate->r[d] ^= data;
@@ -1507,7 +1507,7 @@ static void cp1610_xor(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_xorat(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZ;
 	cpustate->r[d] ^= data;
 	SET_SZ(cpustate->r[d]);
@@ -1520,7 +1520,7 @@ static void cp1610_xorat(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_xorat_i(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data = cp1610_readmem16(cpustate->r[m]);
+	uint16_t data = cp1610_readmem16(cpustate->r[m]);
 	cpustate->r[m]++;
 	CLR_SZ;
 	cpustate->r[d] ^= data;
@@ -1534,7 +1534,7 @@ static void cp1610_xorat_i(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_xorat_d(cp1610_state *cpustate, int m, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	cpustate->r[m]--;
 	data = cp1610_readmem16(cpustate->r[m]);
 	CLR_SZ;
@@ -1549,7 +1549,7 @@ static void cp1610_xorat_d(cp1610_state *cpustate, int m, int d)
  ***************************************************/
 static void cp1610_xori(cp1610_state *cpustate, int d)
 {
-	UINT16 data;
+	uint16_t data;
 	data = cp1610_readop(cpustate->r[7]);
 	cpustate->r[7]++;
 	CLR_SZ;
@@ -1581,7 +1581,7 @@ static void cp1610_sdbd_mviat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_mviat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
 	cpustate->r[d] = temp;
@@ -1610,7 +1610,7 @@ static void cp1610_sdbd_mviat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_mvii(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
+	uint16_t addr;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
 	addr |= (cp1610_readop(cpustate->r[7]) << 8);
@@ -1625,7 +1625,7 @@ static void cp1610_sdbd_mvii(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sdbd_addat(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	temp |= (cp1610_readmem16(cpustate->r[r]) << 8);
@@ -1641,7 +1641,7 @@ static void cp1610_sdbd_addat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_addat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
@@ -1659,7 +1659,7 @@ static void cp1610_sdbd_addat_i(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_addat_d(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZOC;
 	cpustate->r[r]--;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
@@ -1677,8 +1677,8 @@ static void cp1610_sdbd_addat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_addi(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
-	UINT16 temp;
+	uint16_t addr;
+	uint16_t temp;
 	CLR_SZOC;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
@@ -1697,7 +1697,7 @@ static void cp1610_sdbd_addi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sdbd_subat(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
+	uint32_t temp;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	temp |= (cp1610_readmem16(cpustate->r[r]) << 8);
@@ -1715,7 +1715,7 @@ static void cp1610_sdbd_subat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_subat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
+	uint32_t temp;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
@@ -1735,7 +1735,7 @@ static void cp1610_sdbd_subat_i(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_subat_d(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
+	uint32_t temp;
 	CLR_SZOC;
 	cpustate->r[r]--;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
@@ -1755,8 +1755,8 @@ static void cp1610_sdbd_subat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_subi(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
-	UINT32 temp;
+	uint16_t addr;
+	uint32_t temp;
 	CLR_SZOC;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
@@ -1777,8 +1777,8 @@ static void cp1610_sdbd_subi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sdbd_cmpat(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
-	UINT16 temp2;
+	uint32_t temp;
+	uint16_t temp2;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	temp |= (cp1610_readmem16(cpustate->r[r]) << 8);
@@ -1796,8 +1796,8 @@ static void cp1610_sdbd_cmpat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_cmpat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
-	UINT16 temp2;
+	uint32_t temp;
+	uint16_t temp2;
 	CLR_SZOC;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
@@ -1817,8 +1817,8 @@ static void cp1610_sdbd_cmpat_i(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_cmpat_d(cp1610_state *cpustate, int r, int d)
 {
-	UINT32 temp;
-	UINT16 temp2;
+	uint32_t temp;
+	uint16_t temp2;
 	CLR_SZOC;
 	cpustate->r[r]--;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
@@ -1838,9 +1838,9 @@ static void cp1610_sdbd_cmpat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_cmpi(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
-	UINT32 temp;
-	UINT16 temp2;
+	uint16_t addr;
+	uint32_t temp;
+	uint16_t temp2;
 	CLR_SZOC;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
@@ -1861,7 +1861,7 @@ static void cp1610_sdbd_cmpi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sdbd_andat(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	temp |= (cp1610_readmem16(cpustate->r[r]) << 8);
@@ -1876,7 +1876,7 @@ static void cp1610_sdbd_andat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_andat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
@@ -1893,7 +1893,7 @@ static void cp1610_sdbd_andat_i(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_andat_d(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	cpustate->r[r]--;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
@@ -1910,7 +1910,7 @@ static void cp1610_sdbd_andat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_andi(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
+	uint16_t addr;
 	CLR_SZ;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
@@ -1927,7 +1927,7 @@ static void cp1610_sdbd_andi(cp1610_state *cpustate, int d)
  ***************************************************/
 static void cp1610_sdbd_xorat(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	temp |= (cp1610_readmem16(cpustate->r[r]) << 8);
@@ -1942,7 +1942,7 @@ static void cp1610_sdbd_xorat(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_xorat_i(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
 	cpustate->r[r]++;
@@ -1959,7 +1959,7 @@ static void cp1610_sdbd_xorat_i(cp1610_state *cpustate, int r, int d)
  ***************************************************/
 static void cp1610_sdbd_xorat_d(cp1610_state *cpustate, int r, int d)
 {
-	UINT16 temp;
+	uint16_t temp;
 	CLR_SZ;
 	cpustate->r[r]--;
 	temp = cp1610_readmem16(cpustate->r[r]) & 0xff;
@@ -1976,7 +1976,7 @@ static void cp1610_sdbd_xorat_d(cp1610_state *cpustate, int r, int d)
  ************************************************************************/
 static void cp1610_sdbd_xori(cp1610_state *cpustate, int d)
 {
-	UINT16 addr;
+	uint16_t addr;
 	CLR_SZ;
 	addr = cp1610_readop(cpustate->r[7]) & 0xff;
 	cpustate->r[7]++;
@@ -1991,7 +1991,7 @@ static void cp1610_sdbd_xori(cp1610_state *cpustate, int d)
  *  S Z C OV b baa aaa a00  x xxx xxa aaa aaa aaa
  *  - - - -  JSR R1bb, ADDR
  ***************************************************/
-static void cp1610_jsr(cp1610_state *cpustate, int r, UINT16 addr)
+static void cp1610_jsr(cp1610_state *cpustate, int r, uint16_t addr)
 {
 	cpustate->r[r] = cpustate->r[7];
 	cpustate->r[7] = addr;
@@ -2001,7 +2001,7 @@ static void cp1610_jsr(cp1610_state *cpustate, int r, UINT16 addr)
  *  S Z C OV b baa aaa a01  x xxx xxa aaa aaa aaa
  *  - - - -  JSRE R1bb, ADDR
  ***************************************************/
-static void cp1610_jsre(cp1610_state *cpustate, int r, UINT16 addr)
+static void cp1610_jsre(cp1610_state *cpustate, int r, uint16_t addr)
 {
 	cpustate->r[r] = cpustate->r[7];
 	cpustate->r[7] = addr;
@@ -2012,7 +2012,7 @@ static void cp1610_jsre(cp1610_state *cpustate, int r, UINT16 addr)
  *  S Z C OV b baa aaa a10  x xxx xxa aaa aaa aaa
  *  - - - -  JSRD R1bb, ADDR
  ***************************************************/
-static void cp1610_jsrd(cp1610_state *cpustate, int r, UINT16 addr)
+static void cp1610_jsrd(cp1610_state *cpustate, int r, uint16_t addr)
 {
 	cpustate->r[r] = cpustate->r[7];
 	cpustate->r[7] = addr;
@@ -2023,7 +2023,7 @@ static void cp1610_jsrd(cp1610_state *cpustate, int r, UINT16 addr)
  *  S Z C OV 1 1aa aaa a00  x xxx xxa aaa aaa aaa
  *  - - - -  J ADDR
  ***************************************************/
-static void cp1610_j(cp1610_state *cpustate, UINT16 addr)
+static void cp1610_j(cp1610_state *cpustate, uint16_t addr)
 {
 	cpustate->r[7] = addr;
 }
@@ -2032,7 +2032,7 @@ static void cp1610_j(cp1610_state *cpustate, UINT16 addr)
  *  S Z C OV 1 1aa aaa a01  x xxx xxa aaa aaa aaa
  *  - - - -  JE ADDR
  ***************************************************/
-static void cp1610_je(cp1610_state *cpustate, UINT16 addr)
+static void cp1610_je(cp1610_state *cpustate, uint16_t addr)
 {
 	cpustate->r[7] = addr;
 	cpustate->intr_enabled = 1;
@@ -2042,7 +2042,7 @@ static void cp1610_je(cp1610_state *cpustate, UINT16 addr)
  *  S Z C OV 1 1aa aaa a10  x xxx xxa aaa aaa aaa
  *  - - - -  JD ADDR
  ***************************************************/
-static void cp1610_jd(cp1610_state *cpustate, UINT16 addr)
+static void cp1610_jd(cp1610_state *cpustate, uint16_t addr)
 {
 	cpustate->r[7] = addr;
 	cpustate->intr_enabled = 0;
@@ -2050,7 +2050,7 @@ static void cp1610_jd(cp1610_state *cpustate, UINT16 addr)
 
 static void cp1610_do_sdbd(cp1610_state *cpustate)
 {
-	UINT16 sdbdtype, dest;
+	uint16_t sdbdtype, dest;
 
 	/* Even though SDBD is uninterruptable, we don't need to set the mask bit,
      * because we already treat the SDBD prefixed instructions as uninterruptable
@@ -2131,7 +2131,7 @@ static void cp1610_do_sdbd(cp1610_state *cpustate)
 
 static void cp1610_do_jumps(cp1610_state *cpustate)
 {
-	UINT16 jumptype, arg1, arg2, addr;
+	uint16_t jumptype, arg1, arg2, addr;
 
 	arg1 = cp1610_readop(cpustate->r[7]);
     cpustate->r[7]++;
@@ -2173,7 +2173,7 @@ static void cp1610_do_jumps(cp1610_state *cpustate)
 static CPU_EXECUTE( cp1610 )
 {
 	cp1610_state *cpustate = get_safe_token(device);
-	UINT16 opcode;
+	uint16_t opcode;
 
     do
     {
@@ -3404,7 +3404,7 @@ static CPU_INIT( cp1610 )
 	state_save_register_device_item(device, 0, cpustate->mask_interrupts);
 }
 
-static void cp1610_set_irq_line(cp1610_state *cpustate, UINT32 irqline, int state)
+static void cp1610_set_irq_line(cp1610_state *cpustate, uint32_t irqline, int state)
 {
 	switch(irqline)
 	{

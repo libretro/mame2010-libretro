@@ -142,20 +142,20 @@ struct _tms32025_state
 
 {
 	/******************** CPU Internal Registers *******************/
-	UINT16	PREVPC;		/* previous program counter */
-	UINT16	PC;
-	UINT16	PFC;
-	UINT16	STR0, STR1;
-	UINT8	IFR;
-	UINT8	RPTC;
+	uint16_t	PREVPC;		/* previous program counter */
+	uint16_t	PC;
+	uint16_t	PFC;
+	uint16_t	STR0, STR1;
+	uint8_t	IFR;
+	uint8_t	RPTC;
 	PAIR	ACC;
 	PAIR	Preg;
-	UINT16	Treg;
-	UINT16	AR[8];
-	UINT16	STACK[8];
+	uint16_t	Treg;
+	uint16_t	AR[8];
+	uint16_t	STACK[8];
 	PAIR	ALU;
-	UINT16	*intRAM;
-	UINT8	timerover;
+	uint16_t	*intRAM;
+	uint8_t	timerover;
 
 	/********************** Status data ****************************/
 	PAIR	opcode;
@@ -168,7 +168,7 @@ struct _tms32025_state
 	device_irq_callback irq_callback;
 
 	PAIR	oldacc;
-	UINT32	memaccess;
+	uint32_t	memaccess;
 	int		icount;
 	int		mHackIgnoreARP;			 /* special handling for lst, lst1 instructions */
 	int		waiting_for_serial_frame;
@@ -178,8 +178,8 @@ struct _tms32025_state
 	const address_space *data;
 	const address_space *io;
 
-	UINT16 *pgmmap[0x200];
-	UINT16 *datamap[0x200];
+	uint16_t *pgmmap[0x200];
+	uint16_t *datamap[0x200];
 };
 
 INLINE tms32025_state *get_safe_token(running_device *device)
@@ -194,21 +194,21 @@ INLINE tms32025_state *get_safe_token(running_device *device)
 typedef struct _tms32025_opcode tms32025_opcode;
 struct _tms32025_opcode
 {
-	UINT8	cycles;
+	uint8_t	cycles;
 	void	(*function)(tms32025_state *);
 };
 /* opcode table entry (Opcode CE has sub-opcodes) */
 typedef struct _tms32025_opcode_CE tms32025_opcode_CE;
 struct _tms32025_opcode_CE
 {
-	UINT8	cycles;
+	uint8_t	cycles;
 	void	(*function)(tms32025_state *);
 };
 /* opcode table entry (Opcode Dx has sub-opcodes) */
 typedef struct _tms32025_opcode_Dx tms32025_opcode_Dx;
 struct _tms32025_opcode_Dx
 {
-	UINT8	cycles;
+	uint8_t	cycles;
 	void	(*function)(tms32025_state *);
 };
 
@@ -280,10 +280,10 @@ struct _tms32025_opcode_Dx
 #define DMApg0	(cpustate->opcode.b.l & 0x7f)			/* address used in direct memory access operations for sst instruction */
 #define IND		cpustate->AR[ARP]						/* address used in indirect memory access operations */
 
-INLINE void CLR0(tms32025_state *cpustate, UINT16 flag) { cpustate->STR0 &= ~flag; cpustate->STR0 |= 0x0400; }
-INLINE void SET0(tms32025_state *cpustate, UINT16 flag) { cpustate->STR0 |=  flag; cpustate->STR0 |= 0x0400; }
-INLINE void CLR1(tms32025_state *cpustate, UINT16 flag) { cpustate->STR1 &= ~flag; cpustate->STR1 |= 0x0180; }
-INLINE void SET1(tms32025_state *cpustate, UINT16 flag) { cpustate->STR1 |=  flag; cpustate->STR1 |= 0x0180; }
+INLINE void CLR0(tms32025_state *cpustate, uint16_t flag) { cpustate->STR0 &= ~flag; cpustate->STR0 |= 0x0400; }
+INLINE void SET0(tms32025_state *cpustate, uint16_t flag) { cpustate->STR0 |=  flag; cpustate->STR0 |= 0x0400; }
+INLINE void CLR1(tms32025_state *cpustate, uint16_t flag) { cpustate->STR1 &= ~flag; cpustate->STR1 |= 0x0180; }
+INLINE void SET1(tms32025_state *cpustate, uint16_t flag) { cpustate->STR1 |=  flag; cpustate->STR1 |= 0x0180; }
 
 INLINE void MODIFY_DP(tms32025_state *cpustate, int data)
 {
@@ -318,36 +318,36 @@ INLINE void MODIFY_ARB(tms32025_state *cpustate, int data)
 #endif
 
 
-INLINE UINT16 M_RDROM(tms32025_state *cpustate, offs_t addr)
+INLINE uint16_t M_RDROM(tms32025_state *cpustate, offs_t addr)
 {
-	UINT16 *ram;
+	uint16_t *ram;
 	addr &= 0xffff;
 	ram = cpustate->pgmmap[addr >> 7];
 	if (ram) return ram[addr & 0x7f];
 	return memory_read_word_16be(cpustate->program, addr << 1);
 }
 
-INLINE void M_WRTROM(tms32025_state *cpustate, offs_t addr, UINT16 data)
+INLINE void M_WRTROM(tms32025_state *cpustate, offs_t addr, uint16_t data)
 {
-	UINT16 *ram;
+	uint16_t *ram;
 	addr &= 0xffff;
 	ram = cpustate->pgmmap[addr >> 7];
 	if (ram) { ram[addr & 0x7f] = data; }
 	else memory_write_word_16be(cpustate->program, addr << 1, data);
 }
 
-INLINE UINT16 M_RDRAM(tms32025_state *cpustate, offs_t addr)
+INLINE uint16_t M_RDRAM(tms32025_state *cpustate, offs_t addr)
 {
-	UINT16 *ram;
+	uint16_t *ram;
 	addr &= 0xffff;
 	ram = cpustate->datamap[addr >> 7];
 	if (ram) return ram[addr & 0x7f];
 	return memory_read_word_16be(cpustate->data, addr << 1);
 }
 
-INLINE void M_WRTRAM(tms32025_state *cpustate, offs_t addr, UINT16 data)
+INLINE void M_WRTRAM(tms32025_state *cpustate, offs_t addr, uint16_t data)
 {
-	UINT16 *ram;
+	uint16_t *ram;
 	addr &= 0xffff;
 	ram = cpustate->datamap[addr >> 7];
 	if (ram) {
@@ -363,9 +363,9 @@ INLINE void M_WRTRAM(tms32025_state *cpustate, offs_t addr, UINT16 data)
 }
 
 
-static UINT16 reverse_carry_add(UINT16 arg0, UINT16 arg1 )
+static uint16_t reverse_carry_add(uint16_t arg0, uint16_t arg1 )
 {
-	UINT16 result = 0;
+	uint16_t result = 0;
 	int carry = 0;
 	int count;
 	for( count=0; count<16; count++ )
@@ -428,7 +428,7 @@ INLINE void MODIFY_AR_ARP(tms32025_state *cpustate)
 
 INLINE void CALCULATE_ADD_CARRY(tms32025_state *cpustate)
 {
-	if ( (UINT32)(cpustate->oldacc.d) > (UINT32)(cpustate->ACC.d) ) {
+	if ( (uint32_t)(cpustate->oldacc.d) > (uint32_t)(cpustate->ACC.d) ) {
 		SET1(cpustate, C_FLAG);
 	}
 	else {
@@ -438,7 +438,7 @@ INLINE void CALCULATE_ADD_CARRY(tms32025_state *cpustate)
 
 INLINE void CALCULATE_SUB_CARRY(tms32025_state *cpustate)
 {
-	if ( (UINT32)(cpustate->oldacc.d) < (UINT32)(cpustate->ACC.d) ) {
+	if ( (uint32_t)(cpustate->oldacc.d) < (uint32_t)(cpustate->ACC.d) ) {
 		CLR1(cpustate, C_FLAG);
 	}
 	else {
@@ -446,34 +446,34 @@ INLINE void CALCULATE_SUB_CARRY(tms32025_state *cpustate)
 	}
 }
 
-INLINE void CALCULATE_ADD_OVERFLOW(tms32025_state *cpustate, INT32 addval)
+INLINE void CALCULATE_ADD_OVERFLOW(tms32025_state *cpustate, int32_t addval)
 {
-	if ((INT32)(~(cpustate->oldacc.d ^ addval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
+	if ((int32_t)(~(cpustate->oldacc.d ^ addval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
 	{
 		SET0(cpustate, OV_FLAG);
 		if (OVM)
 		{
 		// Stroff:HACK! support for overflow capping as implemented results in bad DSP floating point math in many
 		// System22 games - for example, the score display in Prop Cycle.
-		//  cpustate->ACC.d = ((INT32)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+		//  cpustate->ACC.d = ((int32_t)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 		}
 	}
 }
-INLINE void CALCULATE_SUB_OVERFLOW(tms32025_state *cpustate, INT32 subval)
+INLINE void CALCULATE_SUB_OVERFLOW(tms32025_state *cpustate, int32_t subval)
 {
-	if ((INT32)((cpustate->oldacc.d ^ subval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
+	if ((int32_t)((cpustate->oldacc.d ^ subval) & (cpustate->oldacc.d ^ cpustate->ACC.d)) < 0)
 	{
 		SET0(cpustate, OV_FLAG);
 		if (OVM)
 		{
-			cpustate->ACC.d = ((INT32)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+			cpustate->ACC.d = ((int32_t)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 		}
 	}
 }
 
-INLINE UINT16 POP_STACK(tms32025_state *cpustate)
+INLINE uint16_t POP_STACK(tms32025_state *cpustate)
 {
-	UINT16 data = cpustate->STACK[7];
+	uint16_t data = cpustate->STACK[7];
 	cpustate->STACK[7] = cpustate->STACK[6];
 	cpustate->STACK[6] = cpustate->STACK[5];
 	cpustate->STACK[5] = cpustate->STACK[4];
@@ -483,7 +483,7 @@ INLINE UINT16 POP_STACK(tms32025_state *cpustate)
 	cpustate->STACK[1] = cpustate->STACK[0];
 	return data;
 }
-INLINE void PUSH_STACK(tms32025_state *cpustate, UINT16 data)
+INLINE void PUSH_STACK(tms32025_state *cpustate, uint16_t data)
 {
 	cpustate->STACK[0] = cpustate->STACK[1];
 	cpustate->STACK[1] = cpustate->STACK[2];
@@ -527,15 +527,15 @@ INLINE void GETDATA(tms32025_state *cpustate, int shift,int signext)
 		cpustate->external_mem_access = 0;
 	}
 
-	cpustate->ALU.d = (UINT16)M_RDRAM(cpustate, cpustate->memaccess);
-	if (signext) cpustate->ALU.d = (INT16)cpustate->ALU.d;
+	cpustate->ALU.d = (uint16_t)M_RDRAM(cpustate, cpustate->memaccess);
+	if (signext) cpustate->ALU.d = (int16_t)cpustate->ALU.d;
 	cpustate->ALU.d <<= shift;
 
 	/* next ARP */
 	if (cpustate->opcode.b.l & 0x80) MODIFY_AR_ARP(cpustate);
 }
 
-INLINE void PUTDATA(tms32025_state *cpustate, UINT16 data)
+INLINE void PUTDATA(tms32025_state *cpustate, uint16_t data)
 {
 	if (cpustate->opcode.b.l & 0x80) {
 		if (cpustate->memaccess >= 0x800) cpustate->external_mem_access = 1;	/* Pause if hold pin is active */
@@ -551,7 +551,7 @@ INLINE void PUTDATA(tms32025_state *cpustate, UINT16 data)
 		M_WRTRAM(cpustate, DMA, data);
 	}
 }
-INLINE void PUTDATA_SST(tms32025_state *cpustate, UINT16 data)
+INLINE void PUTDATA_SST(tms32025_state *cpustate, uint16_t data)
 {
 	if (cpustate->opcode.b.l & 0x80) cpustate->memaccess = IND;
 	else cpustate->memaccess = DMApg0;
@@ -579,7 +579,7 @@ static void illegal(tms32025_state *cpustate)
 
 static void abst(tms32025_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) < 0 ) {
+	if ( (int32_t)(cpustate->ACC.d) < 0 ) {
 		cpustate->ACC.d = -cpustate->ACC.d;
 		if (cpustate->ACC.d == 0x80000000) {
 			SET0(cpustate, OV_FLAG);
@@ -611,12 +611,12 @@ static void addh(tms32025_state *cpustate)
 	cpustate->oldacc.d = cpustate->ACC.d;
 	GETDATA(cpustate, 0, 0);
 	cpustate->ACC.w.h += cpustate->ALU.w.l;
-	if ((INT16)(~(cpustate->oldacc.w.h ^ cpustate->ALU.w.l) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
+	if ((int16_t)(~(cpustate->oldacc.w.h ^ cpustate->ALU.w.l) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
 		SET0(cpustate, OV_FLAG);
 		if (OVM)
-			cpustate->ACC.w.h = ((INT16)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
+			cpustate->ACC.w.h = ((int16_t)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
 	}
-	if ( ((INT16)(cpustate->oldacc.w.h) < 0) && ((INT16)(cpustate->ACC.w.h) >= 0) ) {
+	if ( ((int16_t)(cpustate->oldacc.w.h) < 0) && ((int16_t)(cpustate->ACC.w.h) >= 0) ) {
 		SET1(cpustate, C_FLAG);
 	}
 	/* Carry flag is not cleared, if no carry occured */
@@ -624,7 +624,7 @@ static void addh(tms32025_state *cpustate)
 static void addk(tms32025_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
-	cpustate->ALU.d = (UINT8)cpustate->opcode.b.l;
+	cpustate->ALU.d = (uint8_t)cpustate->opcode.b.l;
 	cpustate->ACC.d += cpustate->ALU.d;
 	CALCULATE_ADD_OVERFLOW(cpustate, cpustate->ALU.d);
 	CALCULATE_ADD_CARRY(cpustate);
@@ -648,8 +648,8 @@ static void addt(tms32025_state *cpustate)
 static void adlk(tms32025_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
-	if (SXM) cpustate->ALU.d =  (INT16)M_RDOP_ARG(cpustate->PC);
-	else     cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+	if (SXM) cpustate->ALU.d =  (int16_t)M_RDOP_ARG(cpustate->PC);
+	else     cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 	cpustate->PC++;
 	cpustate->ALU.d <<= (cpustate->opcode.b.h & 0xf);
 	cpustate->ACC.d += cpustate->ALU.d;
@@ -668,7 +668,7 @@ static void and_(tms32025_state *cpustate)
 static void andk(tms32025_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
-	cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+	cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 	cpustate->PC++;
 	cpustate->ALU.d <<= (cpustate->opcode.b.h & 0xf);
 	cpustate->ACC.d &= cpustate->ALU.d;
@@ -717,13 +717,13 @@ static void bc(tms32025_state *cpustate)
 }
 static void bgez(tms32025_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) >= 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
+	if ( (int32_t)(cpustate->ACC.d) >= 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
 	else cpustate->PC++ ;
 	MODIFY_AR_ARP(cpustate);
 }
 static void bgz(tms32025_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) > 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
+	if ( (int32_t)(cpustate->ACC.d) > 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
 	else cpustate->PC++ ;
 	MODIFY_AR_ARP(cpustate);
 }
@@ -747,7 +747,7 @@ static void bitt(tms32025_state *cpustate)
 }
 static void blez(tms32025_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) <= 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
+	if ( (int32_t)(cpustate->ACC.d) <= 0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
 	else cpustate->PC++ ;
 	MODIFY_AR_ARP(cpustate);
 }
@@ -775,7 +775,7 @@ static void blkp(tms32025_state *cpustate)
 }
 static void blz(tms32025_state *cpustate)
 {
-	if ( (INT32)(cpustate->ACC.d) <  0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
+	if ( (int32_t)(cpustate->ACC.d) <  0 ) SET_PC(M_RDOP_ARG(cpustate->PC));
 	else cpustate->PC++ ;
 	MODIFY_AR_ARP(cpustate);
 }
@@ -835,16 +835,16 @@ static void cmpr(tms32025_state *cpustate)
 {
 	switch (cpustate->opcode.b.l & 3)
 	{
-		case 00:	if ( (UINT16)(cpustate->AR[ARP]) == (UINT16)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
+		case 00:	if ( (uint16_t)(cpustate->AR[ARP]) == (uint16_t)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
 					else CLR1(cpustate, TC_FLAG);
 					break;
-		case 01:	if ( (UINT16)(cpustate->AR[ARP]) <  (UINT16)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
+		case 01:	if ( (uint16_t)(cpustate->AR[ARP]) <  (uint16_t)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
 					else CLR1(cpustate, TC_FLAG);
 					break;
-		case 02:	if ( (UINT16)(cpustate->AR[ARP])  > (UINT16)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
+		case 02:	if ( (uint16_t)(cpustate->AR[ARP])  > (uint16_t)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
 					else CLR1(cpustate, TC_FLAG);
 					break;
-		case 03:	if ( (UINT16)(cpustate->AR[ARP]) != (UINT16)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
+		case 03:	if ( (uint16_t)(cpustate->AR[ARP]) != (uint16_t)(cpustate->AR[0]) ) SET1(cpustate, TC_FLAG);
 					else CLR1(cpustate, TC_FLAG);
 					break;
 		default:	break;
@@ -1016,7 +1016,7 @@ static void lac(tms32025_state *cpustate)
 }
 static void lack(tms32025_state *cpustate)		/* ZAC is a subset of this instruction */
 {
-	cpustate->ACC.d = (UINT8)cpustate->opcode.b.l;
+	cpustate->ACC.d = (uint8_t)cpustate->opcode.b.l;
 }
 static void lact(tms32025_state *cpustate)
 {
@@ -1026,11 +1026,11 @@ static void lact(tms32025_state *cpustate)
 static void lalk(tms32025_state *cpustate)
 {
 	if (SXM) {
-		cpustate->ALU.d = (INT16)M_RDOP_ARG(cpustate->PC);
+		cpustate->ALU.d = (int16_t)M_RDOP_ARG(cpustate->PC);
 		cpustate->ACC.d = cpustate->ALU.d << (cpustate->opcode.b.h & 0xf);
 	}
 	else {
-		cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+		cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 		cpustate->ACC.d = cpustate->ALU.d << (cpustate->opcode.b.h & 0xf);
 		cpustate->ACC.d &= 0x7fffffff;
 	}
@@ -1068,7 +1068,7 @@ static void lph(tms32025_state *cpustate)
 }
 static void lrlk(tms32025_state *cpustate)
 {
-	cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+	cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 	cpustate->PC++;
 	cpustate->AR[cpustate->opcode.b.h & 7] = cpustate->ALU.w.l;
 }
@@ -1151,7 +1151,7 @@ static void mac(tms32025_state *cpustate)			/** RAM blocks B0,B1,B2 may be impor
 	CALCULATE_ADD_CARRY(cpustate);
 	GETDATA(cpustate, 0, 0);
 	cpustate->Treg = cpustate->ALU.w.l;
-	cpustate->Preg.d = ( (INT16)cpustate->ALU.w.l * (INT16)M_RDROM(cpustate, cpustate->PFC) );
+	cpustate->Preg.d = ( (int16_t)cpustate->ALU.w.l * (int16_t)M_RDROM(cpustate, cpustate->PFC) );
 	cpustate->PFC++;
 	cpustate->tms32025_dec_cycles += (2*CLK);
 }
@@ -1171,7 +1171,7 @@ static void macd(tms32025_state *cpustate)			/** RAM blocks B0,B1,B2 may be impo
 		M_WRTRAM(cpustate, (cpustate->memaccess+1), cpustate->ALU.w.l);
 	}
 	cpustate->Treg = cpustate->ALU.w.l;
-	cpustate->Preg.d = ( (INT16)cpustate->ALU.w.l * (INT16)M_RDROM(cpustate, cpustate->PFC) );
+	cpustate->Preg.d = ( (int16_t)cpustate->ALU.w.l * (int16_t)M_RDROM(cpustate, cpustate->PFC) );
 	cpustate->PFC++;
 	cpustate->tms32025_dec_cycles += (2*CLK);
 }
@@ -1182,7 +1182,7 @@ static void mar(tms32025_state *cpustate)		/* LARP and NOP are a subset of this 
 static void mpy(tms32025_state *cpustate)
 {
 	GETDATA(cpustate, 0, 0);
-	cpustate->Preg.d = (INT16)(cpustate->ALU.w.l) * (INT16)(cpustate->Treg);
+	cpustate->Preg.d = (int16_t)(cpustate->ALU.w.l) * (int16_t)(cpustate->Treg);
 }
 static void mpya(tms32025_state *cpustate)
 {
@@ -1192,11 +1192,11 @@ static void mpya(tms32025_state *cpustate)
 	CALCULATE_ADD_OVERFLOW(cpustate, cpustate->ALU.d);
 	CALCULATE_ADD_CARRY(cpustate);
 	GETDATA(cpustate, 0, 0);
-	cpustate->Preg.d = (INT16)(cpustate->ALU.w.l) * (INT16)(cpustate->Treg);
+	cpustate->Preg.d = (int16_t)(cpustate->ALU.w.l) * (int16_t)(cpustate->Treg);
 }
 static void mpyk(tms32025_state *cpustate)
 {
-	cpustate->Preg.d = (INT16)cpustate->Treg * ((INT16)(cpustate->opcode.w.l << 3) >> 3);
+	cpustate->Preg.d = (int16_t)cpustate->Treg * ((int16_t)(cpustate->opcode.w.l << 3) >> 3);
 
 }
 static void mpys(tms32025_state *cpustate)
@@ -1207,12 +1207,12 @@ static void mpys(tms32025_state *cpustate)
 	CALCULATE_SUB_OVERFLOW(cpustate, cpustate->ALU.d);
 	CALCULATE_SUB_CARRY(cpustate);
 	GETDATA(cpustate, 0, 0);
-	cpustate->Preg.d = (INT16)(cpustate->ALU.w.l) * (INT16)(cpustate->Treg);
+	cpustate->Preg.d = (int16_t)(cpustate->ALU.w.l) * (int16_t)(cpustate->Treg);
 }
 static void mpyu(tms32025_state *cpustate)
 {
 	GETDATA(cpustate, 0, 0);
-	cpustate->Preg.d = (UINT16)(cpustate->ALU.w.l) * (UINT16)(cpustate->Treg);
+	cpustate->Preg.d = (uint16_t)(cpustate->ALU.w.l) * (uint16_t)(cpustate->Treg);
 }
 static void neg(tms32025_state *cpustate)
 {
@@ -1229,7 +1229,7 @@ static void nop(tms32025_state *cpustate) { }   // NOP is a subset of the MAR in
 */
 static void norm(tms32025_state *cpustate)
 {
-	UINT32 acc = cpustate->ACC.d;
+	uint32_t acc = cpustate->ACC.d;
 
 	if( acc == 0 || ((acc^(acc<<1))&(1<<31))!=0 ) {
 		SET1(cpustate, TC_FLAG); /* 1 -> TC */
@@ -1247,7 +1247,7 @@ static void or_(tms32025_state *cpustate)
 }
 static void ork(tms32025_state *cpustate)
 {
-	cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+	cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 	cpustate->PC++;
 	cpustate->ALU.d <<= (cpustate->opcode.b.h & 0xf);
 	cpustate->ACC.d |=  (cpustate->ALU.d & 0x7fffffff);
@@ -1264,11 +1264,11 @@ static void pac(tms32025_state *cpustate)
 }
 static void pop(tms32025_state *cpustate)
 {
-	cpustate->ACC.d = (UINT16)POP_STACK(cpustate);
+	cpustate->ACC.d = (uint16_t)POP_STACK(cpustate);
 }
 static void popd(tms32025_state *cpustate)
 {
-	cpustate->ALU.d = (UINT16)POP_STACK(cpustate);
+	cpustate->ALU.d = (uint16_t)POP_STACK(cpustate);
 	PUTDATA(cpustate, cpustate->ALU.w.l);
 }
 static void pshd(tms32025_state *cpustate)
@@ -1366,8 +1366,8 @@ static void sar_ar7(tms32025_state *cpustate)	{ PUTDATA(cpustate, cpustate->AR[7
 static void sblk(tms32025_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
-	if (SXM) cpustate->ALU.d =  (INT16)M_RDOP_ARG(cpustate->PC);
-	else     cpustate->ALU.d = (UINT16)M_RDOP_ARG(cpustate->PC);
+	if (SXM) cpustate->ALU.d =  (int16_t)M_RDOP_ARG(cpustate->PC);
+	else     cpustate->ALU.d = (uint16_t)M_RDOP_ARG(cpustate->PC);
 	cpustate->PC++;
 	cpustate->ALU.d <<= (cpustate->opcode.b.h & 0xf);
 	cpustate->ACC.d -= cpustate->ALU.d;
@@ -1442,7 +1442,7 @@ static void sqra(tms32025_state *cpustate)
 	CALCULATE_ADD_CARRY(cpustate);
 	GETDATA(cpustate, 0, 0);
 	cpustate->Treg = cpustate->ALU.w.l;
-	cpustate->Preg.d = ((INT16)cpustate->ALU.w.l * (INT16)cpustate->ALU.w.l);
+	cpustate->Preg.d = ((int16_t)cpustate->ALU.w.l * (int16_t)cpustate->ALU.w.l);
 }
 static void sqrs(tms32025_state *cpustate)
 {
@@ -1453,7 +1453,7 @@ static void sqrs(tms32025_state *cpustate)
 	CALCULATE_SUB_CARRY(cpustate);
 	GETDATA(cpustate, 0, 0);
 	cpustate->Treg = cpustate->ALU.w.l;
-	cpustate->Preg.d = ((INT16)cpustate->ALU.w.l * (INT16)cpustate->ALU.w.l);
+	cpustate->Preg.d = ((int16_t)cpustate->ALU.w.l * (int16_t)cpustate->ALU.w.l);
 }
 static void sst(tms32025_state *cpustate)
 {
@@ -1515,9 +1515,9 @@ static void subc(tms32025_state *cpustate)
 	}
 // Stroff: HACK! support for overflow capping as implemented results in bad DSP floating point math in many
 // System22 games - for example, the score display in Prop Cycle.
-//  cpustate->ACC.d = ((INT32)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
+//  cpustate->ACC.d = ((int32_t)cpustate->oldacc.d < 0) ? 0x80000000 : 0x7fffffff;
 
-//  if ((INT32)((cpustate->oldacc.d ^ subval ) & (cpustate->oldacc.d ^ cpustate->ALU.d)) < 0) {
+//  if ((int32_t)((cpustate->oldacc.d ^ subval ) & (cpustate->oldacc.d ^ cpustate->ALU.d)) < 0) {
 //      SET0(cpustate, OV_FLAG);
 //  }
 //  CALCULATE_SUB_CARRY(cpustate);
@@ -1528,12 +1528,12 @@ static void subh(tms32025_state *cpustate)
 	cpustate->oldacc.d = cpustate->ACC.d;
 	GETDATA(cpustate, 0, 0);
 	cpustate->ACC.w.h -= cpustate->ALU.w.l;
-	if ((INT16)((cpustate->oldacc.w.h ^ cpustate->ALU.w.l) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
+	if ((int16_t)((cpustate->oldacc.w.h ^ cpustate->ALU.w.l) & (cpustate->oldacc.w.h ^ cpustate->ACC.w.h)) < 0) {
 		SET0(cpustate, OV_FLAG);
 		if (OVM)
-			cpustate->ACC.w.h = ((INT16)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
+			cpustate->ACC.w.h = ((int16_t)cpustate->oldacc.w.h < 0) ? 0x8000 : 0x7fff;
 	}
-	if ( ((INT16)(cpustate->oldacc.w.h) >= 0) && ((INT16)(cpustate->ACC.w.h) < 0) ) {
+	if ( ((int16_t)(cpustate->oldacc.w.h) >= 0) && ((int16_t)(cpustate->ACC.w.h) < 0) ) {
 		CLR1(cpustate, C_FLAG);
 	}
 	/* Carry flag is not affected, if no borrow occured */
@@ -1541,7 +1541,7 @@ static void subh(tms32025_state *cpustate)
 static void subk(tms32025_state *cpustate)
 {
 	cpustate->oldacc.d = cpustate->ACC.d;
-	cpustate->ALU.d = (UINT8)cpustate->opcode.b.l;
+	cpustate->ALU.d = (uint8_t)cpustate->opcode.b.l;
 	cpustate->ACC.d -= cpustate->ALU.b.l;
 	CALCULATE_SUB_OVERFLOW(cpustate, cpustate->ALU.d);
 	CALCULATE_SUB_CARRY(cpustate);
@@ -1573,7 +1573,7 @@ static void tblr(tms32025_state *cpustate)
 		cpustate->PFC = cpustate->ACC.w.l;
 	}
 	cpustate->ALU.w.l = M_RDROM(cpustate, cpustate->PFC);
-	if ( (CNF0) && ( (UINT16)(cpustate->PFC) >= 0xff00 ) ) {}	/** TMS32025 only */
+	if ( (CNF0) && ( (uint16_t)(cpustate->PFC) >= 0xff00 ) ) {}	/** TMS32025 only */
 	else cpustate->tms32025_dec_cycles += (1*CLK);
 	PUTDATA(cpustate, cpustate->ALU.w.l);
 	cpustate->PFC++;
@@ -1718,7 +1718,7 @@ static CPU_INIT( tms32025 )
 {
 	tms32025_state *cpustate = get_safe_token(device);
 
-	cpustate->intRAM = auto_alloc_array(device->machine, UINT16, 0x800);
+	cpustate->intRAM = auto_alloc_array(device->machine, uint16_t, 0x800);
 	cpustate->irq_callback = irqcallback;
 	cpustate->device = device;
 	cpustate->program = device->space(AS_PROGRAM);
@@ -2075,7 +2075,7 @@ static CPU_EXECUTE( tms32025 )
 				}
 				cpustate->init_load_addr = 0;
 				cpustate->RPTC-- ;
-			} while ((INT8)(cpustate->RPTC) != -1);
+			} while ((int8_t)(cpustate->RPTC) != -1);
 			cpustate->RPTC = 0;
 			cpustate->PFC = cpustate->PC;
 			cpustate->init_load_addr = 1;
@@ -2129,13 +2129,13 @@ static CPU_READOP( tms32025 )
 	if (!cpustate->pgmmap[offset >> 8])
 		return 0;
 
-	ptr = &((UINT8 *)&cpustate->pgmmap[offset >> 8])[offset & 0xff];
+	ptr = &((uint8_t *)&cpustate->pgmmap[offset >> 8])[offset & 0xff];
 	switch (size)
 	{
-		case 1:	*value = *((UINT8 *) ptr);
-		case 2:	*value = *((UINT16 *) ptr);
-		case 4:	*value = *((UINT32 *) ptr);
-		case 8:	*value = *((UINT64 *) ptr);
+		case 1:	*value = *((uint8_t *) ptr);
+		case 2:	*value = *((uint16_t *) ptr);
+		case 4:	*value = *((uint32_t *) ptr);
+		case 8:	*value = *((uint64_t *) ptr);
 	}
 	return 1;
 }
@@ -2149,7 +2149,7 @@ static CPU_READ( tms32025 )
 	tms32025_state *cpustate = get_safe_token(device);
 
 	void *ptr = NULL;
-	UINT64 temp = 0;
+	uint64_t temp = 0;
 
 	switch (space)
 	{
@@ -2172,10 +2172,10 @@ static CPU_READ( tms32025 )
 	switch (size)
 	{
 		case 1:
-			*value = ((UINT8 *)ptr)[BYTE_XOR_BE(offset & 0xff)];
+			*value = ((uint8_t *)ptr)[BYTE_XOR_BE(offset & 0xff)];
 			break;
 		case 2:
-			*value = ((UINT16 *)ptr)[(offset & 0xff) / 2];
+			*value = ((uint16_t *)ptr)[(offset & 0xff) / 2];
 			break;
 		case 4:
 			CPU_READ_NAME(tms32025)(device, space, offset + 0, 2, &temp);
@@ -2224,10 +2224,10 @@ static CPU_WRITE( tms32025 )
 	switch (size)
 	{
 		case 1:
-			((UINT8 *)ptr)[BYTE_XOR_BE(offset & 0xff)] = value;
+			((uint8_t *)ptr)[BYTE_XOR_BE(offset & 0xff)] = value;
 			break;
 		case 2:
-			((UINT16 *)ptr)[(offset & 0xff) / 2] = value;
+			((uint16_t *)ptr)[(offset & 0xff) / 2] = value;
 			break;
 		case 4:
 			CPU_WRITE_NAME(tms32025)(device, space, offset + 0, 2, value >> 16);

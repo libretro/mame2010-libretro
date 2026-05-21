@@ -414,10 +414,10 @@ struct _upd7810_state
 	PAIR	ppc;	/* previous program counter */
 	PAIR	pc; 	/* program counter */
 	PAIR	sp; 	/* stack pointer */
-	UINT8	op; 	/* opcode */
-	UINT8	op2;	/* opcode part 2 */
-	UINT8	iff;	/* interrupt enable flip flop */
-	UINT8	psw;	/* processor status word */
+	uint8_t	op; 	/* opcode */
+	uint8_t	op2;	/* opcode part 2 */
+	uint8_t	iff;	/* interrupt enable flip flop */
+	uint8_t	psw;	/* processor status word */
 	PAIR	ea; 	/* extended accumulator */
 	PAIR	va; 	/* accumulator + vector register */
 	PAIR	bc; 	/* 8bit B and C registers / 16bit BC register */
@@ -432,62 +432,62 @@ struct _upd7810_state
 	PAIR	tm; 	/* 8 bit timer 0/1 comparator inputs */
 	PAIR	ecnt;	/* timer counter register / capture register */
 	PAIR	etm;	/* timer 0/1 comparator inputs */
-	UINT8	ma; 	/* port A input or output mask */
-	UINT8	mb; 	/* port B input or output mask */
-	UINT8	mcc;	/* port C control/port select */
-	UINT8	mc; 	/* port C input or output mask */
-	UINT8	mm; 	/* memory mapping */
-	UINT8	mf; 	/* port F input or output mask */
-	UINT8	tmm;	/* timer 0 and timer 1 operating parameters */
-	UINT8	etmm;	/* 16-bit multifunction timer/event counter */
-	UINT8	eom;	/* 16-bit timer/event counter output control */
-	UINT8	sml;	/* serial interface parameters low */
-	UINT8	smh;	/* -"- high */
-	UINT8	anm;	/* analog to digital converter operating parameters */
-	UINT8	mkl;	/* interrupt mask low */
-	UINT8	mkh;	/* -"- high */
-	UINT8	zcm;	/* bias circuitry for ac zero-cross detection */
-	UINT8	pa_in;	/* port A,B,C,D,F inputs */
-	UINT8	pb_in;
-	UINT8	pc_in;
-	UINT8	pd_in;
-	UINT8	pf_in;
-	UINT8	pa_out; /* port A,B,C,D,F outputs */
-	UINT8	pb_out;
-	UINT8	pc_out;
-	UINT8	pd_out;
-	UINT8	pf_out;
-	UINT8	cr0;	/* analog digital conversion register 0 */
-	UINT8	cr1;	/* analog digital conversion register 1 */
-	UINT8	cr2;	/* analog digital conversion register 2 */
-	UINT8	cr3;	/* analog digital conversion register 3 */
-	UINT8	txb;	/* transmitter buffer */
-	UINT8	rxb;	/* receiver buffer */
-	UINT8	txd;	/* port C control line states */
-	UINT8	rxd;
-	UINT8	sck;
-	UINT8	ti;
-	UINT8	to;
-	UINT8	ci;
-	UINT8	co0;
-	UINT8	co1;
-	UINT16	irr;	/* interrupt request register */
-	UINT16	itf;	/* interrupt test flag register */
+	uint8_t	ma; 	/* port A input or output mask */
+	uint8_t	mb; 	/* port B input or output mask */
+	uint8_t	mcc;	/* port C control/port select */
+	uint8_t	mc; 	/* port C input or output mask */
+	uint8_t	mm; 	/* memory mapping */
+	uint8_t	mf; 	/* port F input or output mask */
+	uint8_t	tmm;	/* timer 0 and timer 1 operating parameters */
+	uint8_t	etmm;	/* 16-bit multifunction timer/event counter */
+	uint8_t	eom;	/* 16-bit timer/event counter output control */
+	uint8_t	sml;	/* serial interface parameters low */
+	uint8_t	smh;	/* -"- high */
+	uint8_t	anm;	/* analog to digital converter operating parameters */
+	uint8_t	mkl;	/* interrupt mask low */
+	uint8_t	mkh;	/* -"- high */
+	uint8_t	zcm;	/* bias circuitry for ac zero-cross detection */
+	uint8_t	pa_in;	/* port A,B,C,D,F inputs */
+	uint8_t	pb_in;
+	uint8_t	pc_in;
+	uint8_t	pd_in;
+	uint8_t	pf_in;
+	uint8_t	pa_out; /* port A,B,C,D,F outputs */
+	uint8_t	pb_out;
+	uint8_t	pc_out;
+	uint8_t	pd_out;
+	uint8_t	pf_out;
+	uint8_t	cr0;	/* analog digital conversion register 0 */
+	uint8_t	cr1;	/* analog digital conversion register 1 */
+	uint8_t	cr2;	/* analog digital conversion register 2 */
+	uint8_t	cr3;	/* analog digital conversion register 3 */
+	uint8_t	txb;	/* transmitter buffer */
+	uint8_t	rxb;	/* receiver buffer */
+	uint8_t	txd;	/* port C control line states */
+	uint8_t	rxd;
+	uint8_t	sck;
+	uint8_t	ti;
+	uint8_t	to;
+	uint8_t	ci;
+	uint8_t	co0;
+	uint8_t	co1;
+	uint16_t	irr;	/* interrupt request register */
+	uint16_t	itf;	/* interrupt test flag register */
 	int		int1;	/* keep track of current int1 state. Needed for 7801 irq checking. */
 	int		int2;	/* keep track to current int2 state. Needed for 7801 irq checking. */
 
 /* internal helper variables */
-	UINT16	txs;	/* transmitter shift register */
-	UINT16	rxs;	/* receiver shift register */
-	UINT8	txcnt;	/* transmitter shift register bit count */
-	UINT8	rxcnt;	/* receiver shift register bit count */
-	UINT8	txbuf;	/* transmitter buffer was written */
-	INT32	ovc0;	/* overflow counter for timer 0 (for clock div 12/384) */
-	INT32	ovc1;	/* overflow counter for timer 0 (for clock div 12/384) */
-	INT32	ovce;	/* overflow counter for ecnt */
-	INT32	ovcf;	/* overflow counter for fixed clock div 3 mode */
-	INT32	ovcs;	/* overflow counter for serial I/O */
-	UINT8	edges;	/* rising/falling edge flag for serial I/O */
+	uint16_t	txs;	/* transmitter shift register */
+	uint16_t	rxs;	/* receiver shift register */
+	uint8_t	txcnt;	/* transmitter shift register bit count */
+	uint8_t	rxcnt;	/* receiver shift register bit count */
+	uint8_t	txbuf;	/* transmitter buffer was written */
+	int32_t	ovc0;	/* overflow counter for timer 0 (for clock div 12/384) */
+	int32_t	ovc1;	/* overflow counter for timer 0 (for clock div 12/384) */
+	int32_t	ovce;	/* overflow counter for ecnt */
+	int32_t	ovcf;	/* overflow counter for fixed clock div 3 mode */
+	int32_t	ovcs;	/* overflow counter for serial I/O */
+	uint8_t	edges;	/* rising/falling edge flag for serial I/O */
 	const struct opcode_s *opXX;	/* opcode table */
 	const struct opcode_s *op48;
 	const struct opcode_s *op4C;
@@ -636,10 +636,10 @@ INLINE upd7810_state *get_safe_token(running_device *device)
 
 struct opcode_s {
 	void (*opfunc)(upd7810_state *cpustate);
-	UINT8 oplen;
-	UINT8 cycles;
-	UINT8 cycles_skip;
-	UINT8 mask_l0_l1;
+	uint8_t oplen;
+	uint8_t cycles;
+	uint8_t cycles_skip;
+	uint8_t mask_l0_l1;
 };
 
 #define RDOP(O) 	O = memory_decrypted_read_byte(cpustate->program, PCD); PC++
@@ -679,9 +679,9 @@ struct opcode_s {
 #define SKIP_NZ 	if (0 == (PSW & Z)) PSW |= SK
 #define SET_Z(n)	if (n) PSW &= ~Z; else PSW |= Z
 
-static UINT8 RP(upd7810_state *cpustate, offs_t port)
+static uint8_t RP(upd7810_state *cpustate, offs_t port)
 {
-	UINT8 data = 0xff;
+	uint8_t data = 0xff;
 	switch (port)
 	{
 	case UPD7810_PORTA:
@@ -759,7 +759,7 @@ static UINT8 RP(upd7810_state *cpustate, offs_t port)
 	return data;
 }
 
-static void WP(upd7810_state *cpustate, offs_t port, UINT8 data)
+static void WP(upd7810_state *cpustate, offs_t port, uint8_t data)
 {
 	switch (port)
 	{
@@ -838,7 +838,7 @@ static void WP(upd7810_state *cpustate, offs_t port, UINT8 data)
 
 static void upd7810_take_irq(upd7810_state *cpustate)
 {
-	UINT16 vector = 0;
+	uint16_t vector = 0;
 	int irqline = 0;
 
 	/* global interrupt disable? */
@@ -1145,7 +1145,7 @@ static void upd7810_sio_input(upd7810_state *cpustate)
 	{
 		if (cpustate->config.io_callback)
 			RXD = (*cpustate->config.io_callback)(cpustate->device,UPD7810_RXD,RXD);
-		cpustate->rxs = (cpustate->rxs >> 1) | ((UINT16)RXD << 15);
+		cpustate->rxs = (cpustate->rxs >> 1) | ((uint16_t)RXD << 15);
 		cpustate->rxcnt--;
 		if (0 == cpustate->rxcnt)
 		{

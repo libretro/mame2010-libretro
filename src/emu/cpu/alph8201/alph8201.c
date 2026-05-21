@@ -173,28 +173,28 @@ Timming
 typedef struct _alpha8201_state alpha8201_state;
 struct _alpha8201_state
 {
-	UINT8 RAM[8*8];  /* internal GP register 8 * 8bank       */
+	uint8_t RAM[8*8];  /* internal GP register 8 * 8bank       */
 	unsigned PREVPC;
 	PAIR  retptr;   /* for 8301, return address of CALL       */
 	PAIR  pc;       /* 2bit+8bit program counter              */
-	UINT8 regPtr;   /* RB register base                       */
-	UINT8 mb;       /* MB memory bank reg. latch after Branch */
-	UINT8 cf;       /* C flag                                 */
-	UINT8 zf;       /* Z flag                                 */
-	UINT8 savec;    /* for 8301, save flags                   */
-	UINT8 savez;    /* for 8301, save flags                   */
+	uint8_t regPtr;   /* RB register base                       */
+	uint8_t mb;       /* MB memory bank reg. latch after Branch */
+	uint8_t cf;       /* C flag                                 */
+	uint8_t zf;       /* Z flag                                 */
+	uint8_t savec;    /* for 8301, save flags                   */
+	uint8_t savez;    /* for 8301, save flags                   */
 //
 	PAIR ix0;		/* 8bit memory read index reg. */
 	PAIR ix1;		/* 8bitmemory read index reg.  */
 	PAIR ix2;		/* 8bitmemory write index reg. */
-	UINT8 lp0;       /* 8bit loop reg.             */
-	UINT8 lp1;       /* 8bit loop reg.             */
-	UINT8 lp2;       /* 8bit loop reg.             */
-	UINT8 A;         /* 8bit accumerator           */
-	UINT8 B;         /* 8bit regiser               */
+	uint8_t lp0;       /* 8bit loop reg.             */
+	uint8_t lp1;       /* 8bit loop reg.             */
+	uint8_t lp2;       /* 8bit loop reg.             */
+	uint8_t A;         /* 8bit accumerator           */
+	uint8_t B;         /* 8bit regiser               */
 //
 #if HANDLE_HALT_LINE
-	UINT8 halt;     /* halt input line                        */
+	uint8_t halt;     /* halt input line                        */
 #endif
 
 	legacy_cpu_device *device;
@@ -241,49 +241,49 @@ INLINE unsigned M_RDMEM_OPCODE (alpha8201_state *cpustate)
 	return retval;
 }
 
-INLINE void M_ADD(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_ADD(alpha8201_state *cpustate, uint8_t dat)
 {
-	UINT16 temp = cpustate->A + dat;
+	uint16_t temp = cpustate->A + dat;
 	cpustate->A = temp & 0xff;
 	cpustate->zf = (cpustate->A==0);
 	cpustate->cf = temp>>8;
 }
 
-INLINE void M_ADDB(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_ADDB(alpha8201_state *cpustate, uint8_t dat)
 {
-	UINT16 temp = cpustate->B + dat;
+	uint16_t temp = cpustate->B + dat;
 	cpustate->B = temp & 0xff;
 	cpustate->zf = (cpustate->B==0);
 	cpustate->cf = temp>>8;
 }
 
-INLINE void M_SUB(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_SUB(alpha8201_state *cpustate, uint8_t dat)
 {
 	cpustate->cf = (cpustate->A>=dat);	// cpustate->cf is No Borrow
 	cpustate->A -= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_AND(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_AND(alpha8201_state *cpustate, uint8_t dat)
 {
 	cpustate->A &= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_OR(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_OR(alpha8201_state *cpustate, uint8_t dat)
 {
 	cpustate->A |= dat;
 	cpustate->zf = (cpustate->A==0);
 }
 
-INLINE void M_XOR(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_XOR(alpha8201_state *cpustate, uint8_t dat)
 {
 	cpustate->A ^= dat;
 	cpustate->zf = (cpustate->A==0);
 	cpustate->cf = 0;
 }
 
-INLINE void M_JMP(alpha8201_state *cpustate, UINT8 dat)
+INLINE void M_JMP(alpha8201_state *cpustate, uint8_t dat)
 {
 	cpustate->PCL = dat;
 	/* update pc page */
@@ -303,8 +303,8 @@ INLINE void M_UNDEFINED(alpha8201_state *cpustate)
 
 INLINE void M_UNDEFINED2(alpha8201_state *cpustate)
 {
-	UINT8 op  = M_RDOP(cpustate->PC-1);
-	UINT8 imm = M_RDMEM_OPCODE(cpustate);
+	uint8_t op  = M_RDOP(cpustate->PC-1);
+	uint8_t imm = M_RDMEM_OPCODE(cpustate);
 	logerror("alpha8201:  cpustate->PC = %03x,  Unimplemented opcode = %02x,%02x\n", cpustate->PC-2, op,imm);
 #if SHOW_MESSAGE_CONSOLE
 	mame_printf_debug("alpha8201:  cpustate->PC = %03x,  Unimplemented opcode = %02x,%02x\n", cpustate->PC-2, op,imm);
@@ -502,7 +502,7 @@ static void ld_bank_3(alpha8201_state *cpustate)	 { cpustate->mb = 3; }
 
 static void stop(alpha8201_state *cpustate)
 {
-	UINT8 pcptr = M_RDMEM(0x001) & 0x1f;
+	uint8_t pcptr = M_RDMEM(0x001) & 0x1f;
 	M_WRMEM(pcptr,(M_RDMEM(pcptr)&0xf)+0x08); /* mark entry point ODD to HALT */
 	cpustate->mb |= 0x08;        /* mark internal HALT state */
 }
@@ -515,13 +515,13 @@ static void ld_lp1_n(alpha8201_state *cpustate)	 { cpustate->LP1 = M_RDMEM_OPCOD
 static void ld_lp2_n(alpha8201_state *cpustate)	 { cpustate->LP2 = M_RDMEM_OPCODE(cpustate); }
 static void ld_b_n(alpha8201_state *cpustate)	 { cpustate->B = M_RDMEM_OPCODE(cpustate); }
 
-static void djnz_lp0(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); cpustate->LP0--; if (cpustate->LP0 != 0) M_JMP(cpustate, i); }
-static void djnz_lp1(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); cpustate->LP1--; if (cpustate->LP1 != 0) M_JMP(cpustate, i); }
-static void djnz_lp2(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); cpustate->LP2--; if (cpustate->LP2 != 0) M_JMP(cpustate, i); }
-static void jnz(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); if (!cpustate->zf) M_JMP(cpustate, i); }
-static void jnc(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); if (!cpustate->cf) M_JMP(cpustate, i);}
-static void jz(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); if ( cpustate->zf) M_JMP(cpustate, i); }
-static void jc(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate); if ( cpustate->cf) M_JMP(cpustate, i);}
+static void djnz_lp0(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); cpustate->LP0--; if (cpustate->LP0 != 0) M_JMP(cpustate, i); }
+static void djnz_lp1(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); cpustate->LP1--; if (cpustate->LP1 != 0) M_JMP(cpustate, i); }
+static void djnz_lp2(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); cpustate->LP2--; if (cpustate->LP2 != 0) M_JMP(cpustate, i); }
+static void jnz(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); if (!cpustate->zf) M_JMP(cpustate, i); }
+static void jnc(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); if (!cpustate->cf) M_JMP(cpustate, i);}
+static void jz(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); if ( cpustate->zf) M_JMP(cpustate, i); }
+static void jc(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate); if ( cpustate->cf) M_JMP(cpustate, i);}
 static void jmp(alpha8201_state *cpustate)	{ M_JMP(cpustate,  M_RDMEM_OPCODE(cpustate) ); }
 
 static const s_opcode opcode_8201[256]=
@@ -567,14 +567,14 @@ static const s_opcode opcode_8201[256]=
 
 
 /* ALPHA 8301 : added instruction */
-static void exg_a_ix0(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->IX0; cpustate->IX0 = t; }
-static void exg_a_ix1(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->IX1; cpustate->IX1 = t; }
-static void exg_a_ix2(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->IX2; cpustate->IX2 = t; }
-static void exg_a_lp0(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->LP0; cpustate->LP0 = t; }
-static void exg_a_lp1(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->LP1; cpustate->LP1 = t; }
-static void exg_a_lp2(alpha8201_state *cpustate)  { UINT8 t=cpustate->A; cpustate->A = cpustate->LP2; cpustate->LP2 = t; }
-static void exg_a_b(alpha8201_state *cpustate)    { UINT8 t=cpustate->A; cpustate->A = cpustate->B; cpustate->B = t; }
-static void exg_a_rb(alpha8201_state *cpustate)   { UINT8 t=cpustate->A; cpustate->A = cpustate->regPtr; cpustate->regPtr = t; }
+static void exg_a_ix0(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->IX0; cpustate->IX0 = t; }
+static void exg_a_ix1(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->IX1; cpustate->IX1 = t; }
+static void exg_a_ix2(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->IX2; cpustate->IX2 = t; }
+static void exg_a_lp0(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->LP0; cpustate->LP0 = t; }
+static void exg_a_lp1(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->LP1; cpustate->LP1 = t; }
+static void exg_a_lp2(alpha8201_state *cpustate)  { uint8_t t=cpustate->A; cpustate->A = cpustate->LP2; cpustate->LP2 = t; }
+static void exg_a_b(alpha8201_state *cpustate)    { uint8_t t=cpustate->A; cpustate->A = cpustate->B; cpustate->B = t; }
+static void exg_a_rb(alpha8201_state *cpustate)   { uint8_t t=cpustate->A; cpustate->A = cpustate->regPtr; cpustate->regPtr = t; }
 
 static void ld_ix0_a(alpha8201_state *cpustate)    { cpustate->IX0 = cpustate->A; }
 static void ld_ix1_a(alpha8201_state *cpustate)    { cpustate->IX1 = cpustate->A; }
@@ -585,8 +585,8 @@ static void ld_lp2_a(alpha8201_state *cpustate)    { cpustate->LP2 = cpustate->A
 static void ld_b_a(alpha8201_state *cpustate)      { cpustate->B = cpustate->A; }
 static void ld_rb_a(alpha8201_state *cpustate)     { cpustate->regPtr = cpustate->A; }
 
-static void exg_ix0_ix1(alpha8201_state *cpustate)  { UINT8 t=cpustate->IX1; cpustate->IX1 = cpustate->IX0; cpustate->IX0 = t; }
-static void exg_ix0_ix2(alpha8201_state *cpustate)  { UINT8 t=cpustate->IX2; cpustate->IX2 = cpustate->IX0; cpustate->IX0 = t; }
+static void exg_ix0_ix1(alpha8201_state *cpustate)  { uint8_t t=cpustate->IX1; cpustate->IX1 = cpustate->IX0; cpustate->IX0 = t; }
+static void exg_ix0_ix2(alpha8201_state *cpustate)  { uint8_t t=cpustate->IX2; cpustate->IX2 = cpustate->IX0; cpustate->IX0 = t; }
 
 static void op_d4(alpha8201_state *cpustate) { cpustate->A = M_RDMEM( ((cpustate->RAM[(7<<3)+7] & 3) << 8) | M_RDMEM_OPCODE(cpustate) ); }
 static void op_d5(alpha8201_state *cpustate) { M_WRMEM( ((cpustate->RAM[(7<<3)+7] & 3) << 8) | M_RDMEM_OPCODE(cpustate), cpustate->A ); }
@@ -602,16 +602,16 @@ static void op_rep_ld_ix2_b(alpha8201_state *cpustate) { do { M_WRMEM(cpustate->
 static void op_rep_ld_b_ix0(alpha8201_state *cpustate) { do { cpustate->RAM[(cpustate->B>>1)&0x3f] = M_RDMEM(cpustate->BIX0); cpustate->IX0++; cpustate->B+=2; cpustate->LP0--; } while (cpustate->LP0 != 0); }
 static void ld_rxb_a(alpha8201_state *cpustate) { cpustate->RAM[(cpustate->B>>1)&0x3f] = cpustate->A; }
 static void ld_a_rxb(alpha8201_state *cpustate) { cpustate->A = cpustate->RAM[(cpustate->B>>1)&0x3f]; }
-static void cmp_a_rxb(alpha8201_state *cpustate) { UINT8 i=cpustate->RAM[(cpustate->B>>1)&0x3f];  cpustate->zf = (cpustate->A==i); cpustate->cf = (cpustate->A>=i); }
+static void cmp_a_rxb(alpha8201_state *cpustate) { uint8_t i=cpustate->RAM[(cpustate->B>>1)&0x3f];  cpustate->zf = (cpustate->A==i); cpustate->cf = (cpustate->A>=i); }
 static void xor_a_rxb(alpha8201_state *cpustate) { M_XOR(cpustate, cpustate->RAM[(cpustate->B>>1)&0x3f] ); }
 
 static void add_a_cf(alpha8201_state *cpustate) { if (cpustate->cf) inc_a(cpustate); }
 static void sub_a_cf(alpha8201_state *cpustate) { if (cpustate->cf) dec_a(cpustate); }
 static void tst_a(alpha8201_state *cpustate)	 { cpustate->zf = (cpustate->A==0); }
 static void clr_a(alpha8201_state *cpustate)	 { cpustate->A = 0; cpustate->zf = (cpustate->A==0); }
-static void cmp_a_n(alpha8201_state *cpustate)	{ UINT8 i=M_RDMEM_OPCODE(cpustate);  cpustate->zf = (cpustate->A==i); cpustate->cf = (cpustate->A>=i); }
+static void cmp_a_n(alpha8201_state *cpustate)	{ uint8_t i=M_RDMEM_OPCODE(cpustate);  cpustate->zf = (cpustate->A==i); cpustate->cf = (cpustate->A>=i); }
 static void xor_a_n(alpha8201_state *cpustate)	{ M_XOR(cpustate, M_RDMEM_OPCODE(cpustate) ); }
-static void call(alpha8201_state *cpustate) { UINT8 i=M_RDMEM_OPCODE(cpustate); cpustate->retptr.w.l = cpustate->PC; M_JMP(cpustate, i); };
+static void call(alpha8201_state *cpustate) { uint8_t i=M_RDMEM_OPCODE(cpustate); cpustate->retptr.w.l = cpustate->PC; M_JMP(cpustate, i); };
 static void ld_a_ix0_a(alpha8201_state *cpustate) { cpustate->A = M_RDMEM(cpustate->BIX0+cpustate->A); }
 static void ret(alpha8201_state *cpustate) { cpustate->mb = cpustate->retptr.b.h; M_JMP(cpustate,  cpustate->retptr.b.l ); };
 static void save_zc(alpha8201_state *cpustate) { cpustate->savez = cpustate->zf; cpustate->savec = cpustate->cf; };
@@ -732,7 +732,7 @@ static void alpha8xxx_execute(running_device *device,const s_opcode *op_map)
 {
 	alpha8201_state *cpustate = get_safe_token(device);
 	unsigned opcode;
-	UINT8 pcptr;
+	uint8_t pcptr;
 
 #if HANDLE_HALT_LINE
 	if(cpustate->halt)

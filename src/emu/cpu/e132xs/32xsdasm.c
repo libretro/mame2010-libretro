@@ -47,17 +47,17 @@ static const char *const SETxx[] =
 static int size, global_fp;
 
 static offs_t base_pc;
-static const UINT8 *base_oprom;
+static const uint8_t *base_oprom;
 #define READ_OP_DASM(p)			((base_oprom[(p) - base_pc] << 8) | base_oprom[(p) + 1 - base_pc])
 
 
-static void LL_format(char *source, char *dest, UINT16 op)
+static void LL_format(char *source, char *dest, uint16_t op)
 {
 	strcpy(source, L_REG[(SOURCECODE(op)+global_fp)%64]);
 	strcpy(dest, L_REG[(DESTCODE(op)+global_fp)%64]);
 }
 
-static void LR_format(char *source, char *dest, UINT16 op)
+static void LR_format(char *source, char *dest, uint16_t op)
 {
 	if( SOURCEBIT(op) )
 	{
@@ -71,7 +71,7 @@ static void LR_format(char *source, char *dest, UINT16 op)
 	strcpy(dest, L_REG[(DESTCODE(op)+global_fp)%64]);
 }
 
-static void RR_format(char *source, char *dest, UINT16 op, unsigned h_flag)
+static void RR_format(char *source, char *dest, uint16_t op, unsigned h_flag)
 {
 	if( SOURCEBIT(op) )
 	{
@@ -92,10 +92,10 @@ static void RR_format(char *source, char *dest, UINT16 op, unsigned h_flag)
 	}
 }
 
-static UINT32 LRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
+static uint32_t LRconst_format(char *source, char *dest, uint16_t op, unsigned *pc)
 {
-	UINT16 next_op;
-	UINT32 const_val;
+	uint16_t next_op;
+	uint32_t const_val;
 
 	if( SOURCEBIT(op) )
 	{
@@ -115,7 +115,7 @@ static UINT32 LRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
 
 	if( E_BIT(next_op) )
 	{
-		UINT16 next_op2;
+		uint16_t next_op2;
 
 		size = 6;
 
@@ -142,10 +142,10 @@ static UINT32 LRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
 	return const_val;
 }
 
-static UINT32 RRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
+static uint32_t RRconst_format(char *source, char *dest, uint16_t op, unsigned *pc)
 {
-	UINT16 next_op;
-	UINT32 const_val;
+	uint16_t next_op;
+	uint32_t const_val;
 
 	if( SOURCEBIT(op) )
 	{
@@ -172,7 +172,7 @@ static UINT32 RRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
 
 	if( E_BIT(next_op) )
 	{
-		UINT16 next_op2;
+		uint16_t next_op2;
 
 		size = 6;
 
@@ -199,10 +199,10 @@ static UINT32 RRconst_format(char *source, char *dest, UINT16 op, unsigned *pc)
 	return const_val;
 }
 
-static INT32 Rimm_format(char *dest, UINT16 op, unsigned *pc, unsigned h_flag)
+static int32_t Rimm_format(char *dest, uint16_t op, unsigned *pc, unsigned h_flag)
 {
-	UINT16 imm1, imm2;
-	INT32 ret;
+	uint16_t imm1, imm2;
+	int32_t ret;
 
 	int n = N_VALUE(op);
 
@@ -241,7 +241,7 @@ static INT32 Rimm_format(char *dest, UINT16 op, unsigned *pc, unsigned h_flag)
 
 		case 19:
 			*pc += 2;
-			ret = (INT32) (0xffff0000 | READ_OP_DASM(*pc));
+			ret = (int32_t) (0xffff0000 | READ_OP_DASM(*pc));
 
 			size = 4;
 			return ret;
@@ -287,14 +287,14 @@ static INT32 Rimm_format(char *dest, UINT16 op, unsigned *pc, unsigned h_flag)
 	}
 }
 
-static UINT8 Ln_format(char *dest, UINT16 op)
+static uint8_t Ln_format(char *dest, uint16_t op)
 {
 	strcpy(dest, L_REG[(DESTCODE(op)+global_fp)%64]);
 
 	return N_VALUE(op);
 }
 
-static UINT8 Rn_format(char *dest, UINT16 op)
+static uint8_t Rn_format(char *dest, uint16_t op)
 {
 	if( DESTBIT(op) )
 	{
@@ -308,13 +308,13 @@ static UINT8 Rn_format(char *dest, UINT16 op)
 	return N_VALUE(op);
 }
 
-static INT32 PCrel_format(UINT16 op, unsigned pc)
+static int32_t PCrel_format(uint16_t op, unsigned pc)
 {
-	INT32 ret;
+	int32_t ret;
 
 	if( op & 0x80 ) //bit 7 = 1
 	{
-		UINT16 next;
+		uint16_t next;
 
 		size = 4;
 
@@ -340,9 +340,9 @@ static INT32 PCrel_format(UINT16 op, unsigned pc)
 	return (pc + ret);
 }
 
-static UINT32 RRdis_format(char *source, char *dest, UINT16 op, UINT16 next_op, unsigned pc)
+static uint32_t RRdis_format(char *source, char *dest, uint16_t op, uint16_t next_op, unsigned pc)
 {
-	UINT32 ret;
+	uint32_t ret;
 
 	if( SOURCEBIT(op) )
 	{
@@ -364,7 +364,7 @@ static UINT32 RRdis_format(char *source, char *dest, UINT16 op, UINT16 next_op, 
 
 	if( E_BIT(next_op) )
 	{
-		UINT16 next;
+		uint16_t next;
 
 		size = 6;
 
@@ -390,15 +390,15 @@ static UINT32 RRdis_format(char *source, char *dest, UINT16 op, UINT16 next_op, 
 	return ret;
 }
 
-unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned h_flag, int private_fp)
+unsigned dasm_hyperstone(char *buffer, unsigned pc, const uint8_t *oprom, unsigned h_flag, int private_fp)
 {
-	UINT16 op = 0;
-	UINT8 op_num;
+	uint16_t op = 0;
+	uint8_t op_num;
 
-	UINT8 source_code, dest_code, source_bit, dest_bit;
+	uint8_t source_code, dest_code, source_bit, dest_bit;
 
 	char source[5] = "\0", dest[5] = "\0";
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 
 	base_pc = pc;
 	base_oprom = oprom;
@@ -496,11 +496,11 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 
 			if( xcode < 4 )
 			{
-				UINT16 lim;
+				uint16_t lim;
 
 				if( E_BIT(op) )
 				{
-					UINT16 next_op;
+					uint16_t next_op;
 
 					size = 6;
 
@@ -514,12 +514,12 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 					lim = op & 0xfff;
 				}
 
-				sprintf(buffer, "XM%x %s, %s, $%x", (UINT8)(float) pow(2.0, xcode), dest, source, lim);
+				sprintf(buffer, "XM%x %s, %s, $%x", (uint8_t)(float) pow(2.0, xcode), dest, source, lim);
 
 			}
 			else
 			{
-				sprintf(buffer, "XX%x %s, %s, 0", (UINT8)(float) pow(2.0, (xcode - 4)), dest, source);
+				sprintf(buffer, "XX%x %s, %s, 0", (uint8_t)(float) pow(2.0, (xcode - 4)), dest, source);
 			}
 
 			break;
@@ -528,7 +528,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// MASK
 		case 0x14: case 0x15: case 0x16: case 0x17:
 		{
-			UINT32 const_val = RRconst_format(source, dest, op, &pc);
+			uint32_t const_val = RRconst_format(source, dest, op, &pc);
 
 			sprintf(buffer, "MASK %s, %s, $%x", dest, source, const_val);
 
@@ -538,7 +538,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SUM
 		case 0x18: case 0x19: case 0x1a: case 0x1b:
 		{
-			UINT32 const_val = RRconst_format(source, dest, op, &pc);
+			uint32_t const_val = RRconst_format(source, dest, op, &pc);
 
 			if( source_code == SR_REGISTER && !source_bit )
 			{
@@ -555,7 +555,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SUMS
 		case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 		{
-			UINT32 const_val = RRconst_format(source, dest, op, &pc);
+			uint32_t const_val = RRconst_format(source, dest, op, &pc);
 
 			if( source_code == SR_REGISTER && !source_bit )
 			{
@@ -773,7 +773,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// CMPI
 		case 0x60: case 0x61: case 0x62: case 0x63:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			sprintf(buffer, "CMPI %s, $%x", dest, imm);
 
@@ -783,7 +783,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// MOVI
 		case 0x64: case 0x65: case 0x66: case 0x67:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, h_flag);
+			uint32_t imm = Rimm_format(dest, op, &pc, h_flag);
 
 			sprintf(buffer, "MOVI %s, $%x", dest, imm);
 
@@ -793,7 +793,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// ADDI
 		case 0x68: case 0x69: case 0x6a: case 0x6b:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			if( !N_VALUE(op) )
 			{
@@ -810,7 +810,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// ADDSI
 		case 0x6c: case 0x6d: case 0x6e: case 0x6f:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			if( !N_VALUE(op) )
 			{
@@ -827,7 +827,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// CMPBI
 		case 0x70: case 0x71: case 0x72: case 0x73:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			if( !N_VALUE(op) )
 			{
@@ -847,7 +847,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// ANDNI
 		case 0x74: case 0x75: case 0x76: case 0x77:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			if( N_VALUE(op) == 31 )
 				imm = 0x7fffffff; //bit 31 = 0, others = 1
@@ -860,7 +860,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// ORI
 		case 0x78: case 0x79: case 0x7a: case 0x7b:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			sprintf(buffer, "ORI %s, $%x", dest, imm);
 
@@ -870,7 +870,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// XORI
 		case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 		{
-			UINT32 imm = Rimm_format(dest, op, &pc, 0);
+			uint32_t imm = Rimm_format(dest, op, &pc, 0);
 
 			sprintf(buffer, "XORI %s, $%x", dest, imm);
 
@@ -880,7 +880,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SHRDI
 		case 0x80: case 0x81:
 		{
-			UINT8 n = Ln_format(dest, op);
+			uint8_t n = Ln_format(dest, op);
 
 			sprintf(buffer, "SHRDI %s, $%x", dest, n);
 
@@ -908,7 +908,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SARDI
 		case 0x84: case 0x85:
 		{
-			UINT8 n = Ln_format(dest, op);
+			uint8_t n = Ln_format(dest, op);
 
 			sprintf(buffer, "SARDI %s, $%x", dest, n);
 
@@ -936,7 +936,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SHLDI
 		case 0x88: case 0x89:
 		{
-			UINT8 n = Ln_format(dest, op);
+			uint8_t n = Ln_format(dest, op);
 
 			sprintf(buffer, "SHLDI %s, $%x", dest, n);
 
@@ -990,8 +990,8 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// LDxx.D/A/IOD/IOA
 		case 0x90: case 0x91: case 0x92: case 0x93:
 		{
-			UINT16 next_op = READ_OP_DASM(pc + 2);
-			UINT32 dis = RRdis_format(source, dest, op, next_op, pc);
+			uint16_t next_op = READ_OP_DASM(pc + 2);
+			uint32_t dis = RRdis_format(source, dest, op, next_op, pc);
 
 			if( size == 2 )
 				size = 4;
@@ -1108,8 +1108,8 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// LDxx.N/S
 		case 0x94: case 0x95: case 0x96: case 0x97:
 		{
-			UINT16 next_op = READ_OP_DASM(pc + 2);
-			UINT32 dis = RRdis_format(source, dest, op, next_op, pc);
+			uint16_t next_op = READ_OP_DASM(pc + 2);
+			uint32_t dis = RRdis_format(source, dest, op, next_op, pc);
 
 			if( size == 2 )
 				size = 4;
@@ -1177,8 +1177,8 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// STxx.D/A/IOD/IOA
 		case 0x98: case 0x99: case 0x9a: case 0x9b:
 		{
-			UINT16 next_op = READ_OP_DASM(pc + 2);
-			UINT32 dis = RRdis_format(source, dest, op, next_op, pc);
+			uint16_t next_op = READ_OP_DASM(pc + 2);
+			uint32_t dis = RRdis_format(source, dest, op, next_op, pc);
 
 			if( size == 2 )
 				size = 4;
@@ -1298,8 +1298,8 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// STxx.N/S
 		case 0x9c: case 0x9d: case 0x9e: case 0x9f:
 		{
-			UINT16 next_op = READ_OP_DASM(pc + 2);
-			UINT32 dis = RRdis_format(source, dest, op, next_op, pc);
+			uint16_t next_op = READ_OP_DASM(pc + 2);
+			uint32_t dis = RRdis_format(source, dest, op, next_op, pc);
 
 			if( size == 2 )
 				size = 4;
@@ -1370,7 +1370,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SHRI
 		case 0xa0: case 0xa1: case 0xa2: case 0xa3:
 		{
-			UINT8 n = Rn_format(dest, op);
+			uint8_t n = Rn_format(dest, op);
 
 			sprintf(buffer, "SHRI %s, $%x", dest, n);
 
@@ -1380,7 +1380,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SARI
 		case 0xa4: case 0xa5: case 0xa6: case 0xa7:
 		{
-			UINT8 n = Rn_format(dest, op);
+			uint8_t n = Rn_format(dest, op);
 
 			sprintf(buffer, "SARI %s, $%x", dest, n);
 
@@ -1390,7 +1390,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SHLI
 		case 0xa8: case 0xa9: case 0xaa: case 0xab:
 		{
-			UINT8 n = Rn_format(dest, op);
+			uint8_t n = Rn_format(dest, op);
 
 			sprintf(buffer, "SHLI %s, $%x", dest, n);
 
@@ -1418,7 +1418,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// SETxx - SETADR - FETCH
 		case 0xb8: case 0xb9: case 0xba: case 0xbb:
 		{
-			UINT8 n = Rn_format(dest, op);
+			uint8_t n = Rn_format(dest, op);
 
 			if( dest_code == PC_REGISTER && !dest_bit )
 			{
@@ -1574,7 +1574,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// EXTEND
 		case 0xce:
 		{
-			UINT16 extended_op;
+			uint16_t extended_op;
 
 			LL_format(source, dest, op);
 
@@ -1747,7 +1747,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBV
 		case 0xe0:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBV $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1758,7 +1758,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBNV
 		case 0xe1:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBNV $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1769,7 +1769,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBE
 		case 0xe2:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBE $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1780,7 +1780,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBNE
 		case 0xe3:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBNE $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1791,7 +1791,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBC
 		case 0xe4:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBC $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1802,7 +1802,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBNC
 		case 0xe5:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBNC $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1813,7 +1813,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBSE
 		case 0xe6:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBSE $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1824,7 +1824,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBHT
 		case 0xe7:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBHT $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1835,7 +1835,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBN
 		case 0xe8:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBN $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1846,7 +1846,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBNN
 		case 0xe9:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBNN $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1857,7 +1857,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBLE
 		case 0xea:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBLE $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1868,7 +1868,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBGT
 		case 0xeb:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBGT $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1879,7 +1879,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// DBR
 		case 0xec:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "DBR $%x", rel);
 			flags = DASMFLAG_STEP_OVER | DASMFLAG_STEP_OVER_EXTRA(1);
@@ -1900,7 +1900,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// CALL
 		case 0xee: case 0xef:
 		{
-			UINT32 const_val = LRconst_format(source, dest, op, &pc);
+			uint32_t const_val = LRconst_format(source, dest, op, &pc);
 
 			if( source_code == SR_REGISTER && !source_bit )
 			{
@@ -1919,7 +1919,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BV
 		case 0xf0:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BV $%x", rel);
 
@@ -1929,7 +1929,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BNV
 		case 0xf1:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BNV $%x", rel);
 
@@ -1939,7 +1939,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BE
 		case 0xf2:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BE $%x", rel);
 
@@ -1949,7 +1949,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BNE
 		case 0xf3:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BNE $%x", rel);
 
@@ -1959,7 +1959,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BC
 		case 0xf4:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BC $%x", rel);
 
@@ -1969,7 +1969,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BNC
 		case 0xf5:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BNC $%x", rel);
 
@@ -1979,7 +1979,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BSE
 		case 0xf6:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BSE $%x", rel);
 
@@ -1989,7 +1989,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BHT
 		case 0xf7:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BHT $%x", rel);
 
@@ -1999,7 +1999,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BN
 		case 0xf8:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BN $%x", rel);
 
@@ -2009,7 +2009,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BNN
 		case 0xf9:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BNN $%x", rel);
 
@@ -2019,7 +2019,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BLE
 		case 0xfa:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BLE $%x", rel);
 
@@ -2029,7 +2029,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BGT
 		case 0xfb:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BGT $%x", rel);
 
@@ -2039,7 +2039,7 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// BR
 		case 0xfc:
 		{
-			INT32 rel = PCrel_format(op, pc) + 2;
+			int32_t rel = PCrel_format(op, pc) + 2;
 
 			sprintf(buffer, "BR $%x", rel);
 
@@ -2049,8 +2049,8 @@ unsigned dasm_hyperstone(char *buffer, unsigned pc, const UINT8 *oprom, unsigned
 		// TRAPxx - TRAP
 		case 0xfd: case 0xfe: case 0xff:
 		{
-			UINT8 code = ((op & 0x300) >> 6) | (op & 0x03);
-			UINT8 trapno = (op & 0xfc) >> 2;
+			uint8_t code = ((op & 0x300) >> 6) | (op & 0x03);
+			uint8_t trapno = (op & 0xfc) >> 2;
 
 			switch( code )
 			{

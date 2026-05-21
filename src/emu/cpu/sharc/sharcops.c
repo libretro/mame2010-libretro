@@ -125,7 +125,7 @@
 
 static void systemreg_write_latency_effect(SHARC_REGS *cpustate);
 
-static void add_systemreg_write_latency_effect(SHARC_REGS *cpustate, int sysreg, UINT32 data, UINT32 prev_data)
+static void add_systemreg_write_latency_effect(SHARC_REGS *cpustate, int sysreg, uint32_t data, uint32_t prev_data)
 {
 	if (cpustate->systemreg_latency_cycles > 0)
 	{
@@ -139,9 +139,9 @@ static void add_systemreg_write_latency_effect(SHARC_REGS *cpustate, int sysreg,
 	cpustate->systemreg_previous_data = prev_data;
 }
 
-INLINE void swap_register(UINT32 *a, UINT32 *b)
+INLINE void swap_register(uint32_t *a, uint32_t *b)
 {
-	UINT32 temp = *a;
+	uint32_t temp = *a;
 	*a = *b;
 	*b = temp;
 }
@@ -149,14 +149,14 @@ INLINE void swap_register(UINT32 *a, UINT32 *b)
 static void systemreg_write_latency_effect(SHARC_REGS *cpustate)
 {
 	int i;
-	UINT32 data = cpustate->systemreg_latency_data;
-	UINT32 old_data = cpustate->systemreg_previous_data;
+	uint32_t data = cpustate->systemreg_latency_data;
+	uint32_t old_data = cpustate->systemreg_previous_data;
 
 	switch(cpustate->systemreg_latency_reg)
 	{
 		case 0xb:	/* MODE1 */
 		{
-			UINT32 oldreg = old_data;
+			uint32_t oldreg = old_data;
 			cpustate->mode1 = data;
 
 			if ((data & 0x1) != (oldreg & 0x1))
@@ -251,12 +251,12 @@ static void systemreg_write_latency_effect(SHARC_REGS *cpustate)
 			if ((data & 0x80) != (oldreg & 0x80))
 			{
 				for (i=8; i<16; i++)
-					swap_register((UINT32*)&cpustate->r[i].r, (UINT32*)&cpustate->reg_alt[i].r);
+					swap_register((uint32_t*)&cpustate->r[i].r, (uint32_t*)&cpustate->reg_alt[i].r);
 			}
 			if ((data & 0x400) != (oldreg & 0x400))
 			{
 				for (i=0; i<8; i++)
-					swap_register((UINT32*)&cpustate->r[i].r, (UINT32*)&cpustate->reg_alt[i].r);
+					swap_register((uint32_t*)&cpustate->r[i].r, (uint32_t*)&cpustate->reg_alt[i].r);
 			}
 			break;
 		}
@@ -266,7 +266,7 @@ static void systemreg_write_latency_effect(SHARC_REGS *cpustate)
 	cpustate->systemreg_latency_reg = -1;
 }
 
-static UINT32 GET_UREG(SHARC_REGS *cpustate, int ureg)
+static uint32_t GET_UREG(SHARC_REGS *cpustate, int ureg)
 {
 	int reg = ureg & 0xf;
 	switch((ureg >> 4) & 0xf)
@@ -292,7 +292,7 @@ static UINT32 GET_UREG(SHARC_REGS *cpustate, int ureg)
 		{
 			if (reg & 0x8)		/* M8 - M15 */
 			{
-				INT32 r = cpustate->dag2.m[reg & 0x7];
+				int32_t r = cpustate->dag2.m[reg & 0x7];
 				if (r & 0x800000)	r |= 0xff000000;
 
 				return r;
@@ -348,7 +348,7 @@ static UINT32 GET_UREG(SHARC_REGS *cpustate, int ureg)
 				case 0xb:	return cpustate->mode1;			/* MODE1 */
 				case 0xc:								/* ASTAT */
 				{
-					UINT32 r = cpustate->astat;
+					uint32_t r = cpustate->astat;
 					r &= ~0x00780000;
 					r |= (cpustate->flag[0] << 19);
 					r |= (cpustate->flag[1] << 20);
@@ -368,9 +368,9 @@ static UINT32 GET_UREG(SHARC_REGS *cpustate, int ureg)
 			switch(reg)
 			{
 				/* PX needs to be handled separately if the whole 48 bits are needed */
-				case 0xb:	return (UINT32)(cpustate->px);			/* PX */
-				case 0xc:	return (UINT16)(cpustate->px);			/* PX1 */
-				case 0xd:	return (UINT32)(cpustate->px >> 16);	/* PX2 */
+				case 0xb:	return (uint32_t)(cpustate->px);			/* PX */
+				case 0xc:	return (uint16_t)(cpustate->px);			/* PX1 */
+				case 0xd:	return (uint32_t)(cpustate->px >> 16);	/* PX2 */
 				default:	fatalerror("SHARC: GET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
 			}
 			break;
@@ -380,7 +380,7 @@ static UINT32 GET_UREG(SHARC_REGS *cpustate, int ureg)
 	}
 }
 
-static void SET_UREG(SHARC_REGS *cpustate, int ureg, UINT32 data)
+static void SET_UREG(SHARC_REGS *cpustate, int ureg, uint32_t data)
 {
 	int reg = ureg & 0xf;
 	switch((ureg >> 4) & 0xf)
@@ -479,7 +479,7 @@ static void SET_UREG(SHARC_REGS *cpustate, int ureg, UINT32 data)
 			switch(reg)
 			{
 				case 0xc:	cpustate->px &= U64(0xffffffffffff0000); cpustate->px |= (data & 0xffff); break;		/* PX1 */
-				case 0xd:	cpustate->px &= U64(0x000000000000ffff); cpustate->px |= (UINT64)data << 16; break;		/* PX2 */
+				case 0xd:	cpustate->px &= U64(0x000000000000ffff); cpustate->px |= (uint64_t)data << 16; break;		/* PX2 */
 				default:	fatalerror("SHARC: SET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
 			}
 			break;
@@ -489,16 +489,16 @@ static void SET_UREG(SHARC_REGS *cpustate, int ureg, UINT32 data)
 }
 
 /*****************************************************************************/
-#define SET_FLAG_SV_LSHIFT(x, shift)	if((x) & ((UINT32)0xffffffff << shift)) cpustate->astat |= SV
-#define SET_FLAG_SV_RSHIFT(x, shift)	if((x) & ((UINT32)0xffffffff >> shift)) cpustate->astat |= SV
+#define SET_FLAG_SV_LSHIFT(x, shift)	if((x) & ((uint32_t)0xffffffff << shift)) cpustate->astat |= SV
+#define SET_FLAG_SV_RSHIFT(x, shift)	if((x) & ((uint32_t)0xffffffff >> shift)) cpustate->astat |= SV
 
 #define SET_FLAG_SZ(x)					if((x) == 0) cpustate->astat |= SZ
 
-#define MAKE_EXTRACT_MASK(start_bit, length)	((0xffffffff << start_bit) & (((UINT32)0xffffffff) >> (32 - (start_bit + length))))
+#define MAKE_EXTRACT_MASK(start_bit, length)	((0xffffffff << start_bit) & (((uint32_t)0xffffffff) >> (32 - (start_bit + length))))
 
 static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int rn, int rx)
 {
-	INT8 shift = data & 0xff;
+	int8_t shift = data & 0xff;
 	int bit = data & 0x3f;
 	int len = (data >> 6) & 0x3f;
 
@@ -525,11 +525,11 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 		{
 			if (shift < 0)
 			{
-				REG(rn) = (shift > -32) ? ((INT32)REG(rx) >> -shift) : ((REG(rx) & 0x80000000) ? 0xffffffff : 0);
+				REG(rn) = (shift > -32) ? ((int32_t)REG(rx) >> -shift) : ((REG(rx) & 0x80000000) ? 0xffffffff : 0);
 			}
 			else
 			{
-				REG(rn) = (shift < 32) ? ((INT32)REG(rx) << shift) : 0;
+				REG(rn) = (shift < 32) ? ((int32_t)REG(rx) << shift) : 0;
 				if (shift > 0)
 				{
 					cpustate->astat |= SV;
@@ -544,14 +544,14 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 			if (shift < 0)
 			{
 				int s = (-shift) & 0x1f;
-				REG(rn) = (((UINT32)REG(rx) >> s) & ((UINT32)(0xffffffff) >> s)) |
-							  (((UINT32)REG(rx) << (32-s)) & ((UINT32)(0xffffffff) << (32-s)));
+				REG(rn) = (((uint32_t)REG(rx) >> s) & ((uint32_t)(0xffffffff) >> s)) |
+							  (((uint32_t)REG(rx) << (32-s)) & ((uint32_t)(0xffffffff) << (32-s)));
 			}
 			else
 			{
 				int s = shift & 0x1f;
-				REG(rn) = (((UINT32)REG(rx) << s) & ((UINT32)(0xffffffff) << s)) |
-							  (((UINT32)REG(rx) >> (32-s)) & ((UINT32)(0xffffffff) >> (32-s)));
+				REG(rn) = (((uint32_t)REG(rx) << s) & ((uint32_t)(0xffffffff) << s)) |
+							  (((uint32_t)REG(rx) >> (32-s)) & ((uint32_t)(0xffffffff) >> (32-s)));
 			}
 			SET_FLAG_SZ(REG(rn));
 			break;
@@ -559,7 +559,7 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 		case 0x08:		/* Rn = Rn OR LSHIFT Rx BY <data8> */
 		{
-			UINT32 r = 0;
+			uint32_t r = 0;
 			if(shift < 0) {
 				r = (shift > -32 ) ? (REG(rx) >> -shift) : 0;
 			} else {
@@ -577,7 +577,7 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 		case 0x10:		/* FEXT Rx BY <bit6>:<len6> */
 		{
-			UINT32 ext = REG(rx) & MAKE_EXTRACT_MASK(bit, len);
+			uint32_t ext = REG(rx) & MAKE_EXTRACT_MASK(bit, len);
 			REG(rn) = ext >> bit;
 
 			SET_FLAG_SZ(REG(rn));
@@ -590,9 +590,9 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 		case 0x12:		/* FEXT Rx BY <bit6>:<len6> (Sign Extended) */
 		{
-			UINT32 ext = (REG(rx) & MAKE_EXTRACT_MASK(bit, len)) >> bit;
+			uint32_t ext = (REG(rx) & MAKE_EXTRACT_MASK(bit, len)) >> bit;
 			if (ext & (1 << (len-1))) {
-				ext |= (UINT32)0xffffffff << (len-1);
+				ext |= (uint32_t)0xffffffff << (len-1);
 			}
 			REG(rn) = ext;
 
@@ -606,9 +606,9 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 		case 0x13:		/* FDEP Rx BY Ry <bit6>:<len6> (Sign Extended) */
 		{
-			UINT32 ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
+			uint32_t ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
 			if (ext & (1 << (len-1))) {
-				ext |= (UINT32)0xffffffff << (len-1);
+				ext |= (uint32_t)0xffffffff << (len-1);
 			}
 			REG(rn) = ext << bit;
 
@@ -622,7 +622,7 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 		case 0x19:		/* Rn = Rn OR FDEP Rx BY <bit6>:<len6> */
 		{
-			UINT32 ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
+			uint32_t ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
 
 			REG(rn) |= ext << bit;
 
@@ -683,7 +683,7 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 		{
 			if (data < 32)
 			{
-				UINT32 r = REG(rx) & (1 << data);
+				uint32_t r = REG(rx) & (1 << data);
 
 				SET_FLAG_SZ(r);
 			}
@@ -700,7 +700,7 @@ static void SHIFT_OPERATION_IMM(SHARC_REGS *cpustate, int shiftop, int data, int
 
 #include "compute.c"
 
-static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
+static void COMPUTE(SHARC_REGS *cpustate, uint32_t opcode)
 {
 	int multiop;
 	int op = (opcode >> 12) & 0xff;
@@ -916,14 +916,14 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 						if (shift < 0)
 						{
 							int s = (-shift) & 0x1f;
-							REG(rn) = (((UINT32)REG(rx) >> s) & ((UINT32)(0xffffffff) >> s)) |
-									  (((UINT32)REG(rx) << (32-s)) & ((UINT32)(0xffffffff) << (32-s)));
+							REG(rn) = (((uint32_t)REG(rx) >> s) & ((uint32_t)(0xffffffff) >> s)) |
+									  (((uint32_t)REG(rx) << (32-s)) & ((uint32_t)(0xffffffff) << (32-s)));
 						}
 						else
 						{
 							int s = shift & 0x1f;
-							REG(rn) = (((UINT32)REG(rx) << s) & ((UINT32)(0xffffffff) << s)) |
-									  (((UINT32)REG(rx) >> (32-s)) & ((UINT32)(0xffffffff) >> (32-s)));
+							REG(rn) = (((uint32_t)REG(rx) << s) & ((uint32_t)(0xffffffff) << s)) |
+									  (((uint32_t)REG(rx) >> (32-s)) & ((uint32_t)(0xffffffff) >> (32-s)));
 							if (shift > 0)
 							{
 								cpustate->astat |= SV;
@@ -935,7 +935,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 
 					case 0x08:		/* Rn = Rn OR LSHIFT Rx BY Ry*/
 					{
-						INT8 shift = REG(ry);
+						int8_t shift = REG(ry);
 						if(shift < 0) {
 							REG(rn) = REG(rn) | ((shift > -32 ) ? (REG(rx) >> -shift) : 0);
 						} else {
@@ -953,7 +953,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 					{
 						int bit = REG(ry) & 0x3f;
 						int len = (REG(ry) >> 6) & 0x3f;
-						UINT32 ext = REG(rx) & MAKE_EXTRACT_MASK(bit, len);
+						uint32_t ext = REG(rx) & MAKE_EXTRACT_MASK(bit, len);
 						REG(rn) = ext >> bit;
 
 						SET_FLAG_SZ(REG(rn));
@@ -968,9 +968,9 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 					{
 						int bit = REG(ry) & 0x3f;
 						int len = (REG(ry) >> 6) & 0x3f;
-						UINT32 ext = (REG(rx) & MAKE_EXTRACT_MASK(bit, len)) >> bit;
+						uint32_t ext = (REG(rx) & MAKE_EXTRACT_MASK(bit, len)) >> bit;
 						if (ext & (1 << (len-1))) {
-							ext |= (UINT32)0xffffffff << (len-1);
+							ext |= (uint32_t)0xffffffff << (len-1);
 						}
 						REG(rn) = ext;
 
@@ -986,7 +986,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 					{
 						int bit = REG(ry) & 0x3f;
 						int len = (REG(ry) >> 6) & 0x3f;
-						UINT32 ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
+						uint32_t ext = REG(rx) & MAKE_EXTRACT_MASK(0, len);
 
 						REG(rn) |= ext << bit;
 
@@ -1000,7 +1000,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 
 					case 0x30:		/* BSET Rx BY Ry */
 					{
-						UINT32 shift = REG(ry);
+						uint32_t shift = REG(ry);
 						REG(rn) = REG(rx);
 						if (shift < 32)
 						{
@@ -1016,7 +1016,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 
 					case 0x31:		/* BCLR Rx BY Ry */
 					{
-						UINT32 shift = REG(ry);
+						uint32_t shift = REG(ry);
 						REG(rn) = REG(rx);
 						if (shift < 32)
 						{
@@ -1032,10 +1032,10 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 
 					case 0x33:		/* BTST Rx BY Ry */
 					{
-						UINT32 shift = REG(ry);
+						uint32_t shift = REG(ry);
 						if (shift < 32)
 						{
-							UINT32 r = REG(rx) & (1 << shift);
+							uint32_t r = REG(rx) & (1 << shift);
 
 							SET_FLAG_SZ(r);
 						}
@@ -1058,7 +1058,7 @@ static void COMPUTE(SHARC_REGS *cpustate, UINT32 opcode)
 	}
 }
 
-INLINE void PUSH_PC(SHARC_REGS *cpustate, UINT32 pc)
+INLINE void PUSH_PC(SHARC_REGS *cpustate, uint32_t pc)
 {
 	cpustate->pcstkp++;
 	if(cpustate->pcstkp >= 32)
@@ -1079,7 +1079,7 @@ INLINE void PUSH_PC(SHARC_REGS *cpustate, UINT32 pc)
 	cpustate->pcstack[cpustate->pcstkp] = pc;
 }
 
-INLINE UINT32 POP_PC(SHARC_REGS *cpustate)
+INLINE uint32_t POP_PC(SHARC_REGS *cpustate)
 {
 	cpustate->pcstk = cpustate->pcstack[cpustate->pcstkp];
 
@@ -1102,12 +1102,12 @@ INLINE UINT32 POP_PC(SHARC_REGS *cpustate)
 	return cpustate->pcstk;
 }
 
-INLINE UINT32 TOP_PC(SHARC_REGS *cpustate)
+INLINE uint32_t TOP_PC(SHARC_REGS *cpustate)
 {
 	return cpustate->pcstack[cpustate->pcstkp];
 }
 
-INLINE void PUSH_LOOP(SHARC_REGS *cpustate, UINT32 pc, UINT32 count)
+INLINE void PUSH_LOOP(SHARC_REGS *cpustate, uint32_t pc, uint32_t count)
 {
 	cpustate->lstkp++;
 	if(cpustate->lstkp >= 6)
@@ -1292,8 +1292,8 @@ static void sharcop_compute_dreg_dm_dreg_pm(SHARC_REGS *cpustate)
 
 	/* due to parallelity issues, source DREGs must be saved */
 	/* because the compute operation may change them */
-	UINT32 parallel_pm_dreg = REG(pm_dreg);
-	UINT32 parallel_dm_dreg = REG(dm_dreg);
+	uint32_t parallel_pm_dreg = REG(pm_dreg);
+	uint32_t parallel_dm_dreg = REG(dm_dreg);
 
 	if (compute)
 	{
@@ -1360,7 +1360,7 @@ static void sharcop_compute_ureg_dmpm_premod(SHARC_REGS *cpustate)
 	{
 		/* due to parallelity issues, source UREG must be saved */
 		/* because the compute operation may change it */
-		UINT32 parallel_ureg = GET_UREG(cpustate, ureg);
+		uint32_t parallel_ureg = GET_UREG(cpustate, ureg);
 
 		if (compute)
 		{
@@ -1421,7 +1421,7 @@ static void sharcop_compute_ureg_dmpm_postmod(SHARC_REGS *cpustate)
 	{
 		/* due to parallelity issues, source UREG must be saved */
 		/* because the compute operation may change it */
-		UINT32 parallel_ureg = GET_UREG(cpustate, ureg);
+		uint32_t parallel_ureg = GET_UREG(cpustate, ureg);
 
 		if (compute)
 		{
@@ -1520,7 +1520,7 @@ static void sharcop_compute_dreg_to_dm_immmod(SHARC_REGS *cpustate)
 
 	/* due to parallelity issues, source REG must be saved */
 	/* because the shift operation may change it */
-	UINT32 parallel_dreg = REG(dreg);
+	uint32_t parallel_dreg = REG(dreg);
 
 	if (IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -1584,7 +1584,7 @@ static void sharcop_compute_dreg_to_pm_immmod(SHARC_REGS *cpustate)
 
 	/* due to parallelity issues, source REG must be saved */
 	/* because the compute operation may change it */
-	UINT32 parallel_dreg = REG(dreg);
+	uint32_t parallel_dreg = REG(dreg);
 
 	if (IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -1621,7 +1621,7 @@ static void sharcop_compute_ureg_to_ureg(SHARC_REGS *cpustate)
 	{
 		/* due to parallelity issues, source UREG must be saved */
 		/* because the compute operation may change it */
-		UINT32 parallel_ureg = GET_UREG(cpustate, src_ureg);
+		uint32_t parallel_ureg = GET_UREG(cpustate, src_ureg);
 
 		if (compute != 0)
 		{
@@ -1653,7 +1653,7 @@ static void sharcop_imm_shift_dreg_dmpm(SHARC_REGS *cpustate)
 	{
 		/* due to parallelity issues, source REG must be saved */
 		/* because the shift operation may change it */
-		UINT32 parallel_dreg = REG(dreg);
+		uint32_t parallel_dreg = REG(dreg);
 
 		SHIFT_OPERATION_IMM(cpustate, shiftop, data, rn, rx);
 
@@ -1748,7 +1748,7 @@ static void sharcop_direct_call(SHARC_REGS *cpustate)
 {
 	int j = (cpustate->opcode >> 26) & 0x1;
 	int cond = (cpustate->opcode >> 33) & 0x1f;
-	UINT32 address = cpustate->opcode & 0xffffff;
+	uint32_t address = cpustate->opcode & 0xffffff;
 
 	if (IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -1774,7 +1774,7 @@ static void sharcop_direct_jump(SHARC_REGS *cpustate)
 	int ci = (cpustate->opcode >> 24) & 0x1;
 	int j = (cpustate->opcode >> 26) & 0x1;
 	int cond = (cpustate->opcode >> 33) & 0x1f;
-	UINT32 address = cpustate->opcode & 0xffffff;
+	uint32_t address = cpustate->opcode & 0xffffff;
 
 	if(IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -1816,7 +1816,7 @@ static void sharcop_relative_call(SHARC_REGS *cpustate)
 {
 	int j = (cpustate->opcode >> 26) & 0x1;
 	int cond = (cpustate->opcode >> 33) & 0x1f;
-	UINT32 address = cpustate->opcode & 0xffffff;
+	uint32_t address = cpustate->opcode & 0xffffff;
 
 	if (IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -1840,7 +1840,7 @@ static void sharcop_relative_jump(SHARC_REGS *cpustate)
 	int ci = (cpustate->opcode >> 24) & 0x1;
 	int j = (cpustate->opcode >> 26) & 0x1;
 	int cond = (cpustate->opcode >> 33) & 0x1f;
-	UINT32 address = cpustate->opcode & 0xffffff;
+	uint32_t address = cpustate->opcode & 0xffffff;
 
 	if (IF_CONDITION_CODE(cpustate, cond))
 	{
@@ -2174,10 +2174,10 @@ static void sharcop_indirect_jump_compute_dreg_dm(SHARC_REGS *cpustate)
 	}
 	else
 	{
-		UINT32 compute = cpustate->opcode & 0x7fffff;
+		uint32_t compute = cpustate->opcode & 0x7fffff;
 		/* due to parallelity issues, source REG must be saved */
 		/* because the compute operation may change it */
-		UINT32 parallel_dreg = REG(dreg);
+		uint32_t parallel_dreg = REG(dreg);
 
 		if (compute)
 		{
@@ -2217,10 +2217,10 @@ static void sharcop_relative_jump_compute_dreg_dm(SHARC_REGS *cpustate)
 	}
 	else
 	{
-		UINT32 compute = cpustate->opcode & 0x7fffff;
+		uint32_t compute = cpustate->opcode & 0x7fffff;
 		/* due to parallelity issues, source REG must be saved */
 		/* because the compute operation may change it */
-		UINT32 parallel_dreg = REG(dreg);
+		uint32_t parallel_dreg = REG(dreg);
 
 		if (compute)
 		{
@@ -2368,9 +2368,9 @@ static void sharcop_rti(SHARC_REGS *cpustate)
 /* do until counter expired, LCNTR immediate */
 static void sharcop_do_until_counter_imm(SHARC_REGS *cpustate)
 {
-	UINT16 data = (UINT16)(cpustate->opcode >> 24);
+	uint16_t data = (uint16_t)(cpustate->opcode >> 24);
 	int offset = SIGN_EXTEND24(cpustate->opcode & 0xffffff);
-	UINT32 address = cpustate->pc + offset;
+	uint32_t address = cpustate->pc + offset;
 	int type;
 	int cond = 0xf;		/* until LCE (loop counter expired */
 	int distance = abs(offset);
@@ -2404,7 +2404,7 @@ static void sharcop_do_until_counter_ureg(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
 	int offset = SIGN_EXTEND24(cpustate->opcode & 0xffffff);
-	UINT32 address = cpustate->pc + offset;
+	uint32_t address = cpustate->pc + offset;
 	int type;
 	int cond = 0xf;		/* until LCE (loop counter expired */
 	int distance = abs(offset);
@@ -2438,7 +2438,7 @@ static void sharcop_do_until(SHARC_REGS *cpustate)
 {
 	int cond = (cpustate->opcode >> 33) & 0x1f;
 	int offset = SIGN_EXTEND24(cpustate->opcode & 0xffffff);
-	UINT32 address = (cpustate->pc + offset);
+	uint32_t address = (cpustate->pc + offset);
 
 	PUSH_PC(cpustate, cpustate->pc+1);
 	PUSH_LOOP(cpustate, address | (cond << 24), 0);
@@ -2451,7 +2451,7 @@ static void sharcop_do_until(SHARC_REGS *cpustate)
 static void sharcop_dm_to_ureg_direct(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 address = (UINT32)(cpustate->opcode);
+	uint32_t address = (uint32_t)(cpustate->opcode);
 
 	SET_UREG(cpustate, ureg, dm_read32(cpustate, address));
 }
@@ -2460,7 +2460,7 @@ static void sharcop_dm_to_ureg_direct(SHARC_REGS *cpustate)
 static void sharcop_ureg_to_dm_direct(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 address = (UINT32)(cpustate->opcode);
+	uint32_t address = (uint32_t)(cpustate->opcode);
 
 	dm_write32(cpustate, address, GET_UREG(cpustate, ureg));
 }
@@ -2469,7 +2469,7 @@ static void sharcop_ureg_to_dm_direct(SHARC_REGS *cpustate)
 static void sharcop_pm_to_ureg_direct(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 address = (UINT32)(cpustate->opcode);
+	uint32_t address = (uint32_t)(cpustate->opcode);
 
 	if (ureg == 0xdb)		// PX is 48-bit
 	{
@@ -2485,7 +2485,7 @@ static void sharcop_pm_to_ureg_direct(SHARC_REGS *cpustate)
 static void sharcop_ureg_to_pm_direct(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 address = (UINT32)(cpustate->opcode);
+	uint32_t address = (uint32_t)(cpustate->opcode);
 
 	if (ureg == 0xdb)		// PX is 48-bit
 	{
@@ -2504,7 +2504,7 @@ static void sharcop_ureg_to_pm_direct(SHARC_REGS *cpustate)
 static void sharcop_dm_to_ureg_indirect(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 offset = (UINT32)cpustate->opcode;
+	uint32_t offset = (uint32_t)cpustate->opcode;
 	int i = (cpustate->opcode >> 41) & 0x7;
 
 	SET_UREG(cpustate, ureg, dm_read32(cpustate, DM_REG_I(i) + offset));
@@ -2514,7 +2514,7 @@ static void sharcop_dm_to_ureg_indirect(SHARC_REGS *cpustate)
 static void sharcop_ureg_to_dm_indirect(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 offset = (UINT32)cpustate->opcode;
+	uint32_t offset = (uint32_t)cpustate->opcode;
 	int i = (cpustate->opcode >> 41) & 0x7;
 
 	dm_write32(cpustate, DM_REG_I(i) + offset, GET_UREG(cpustate, ureg));
@@ -2524,7 +2524,7 @@ static void sharcop_ureg_to_dm_indirect(SHARC_REGS *cpustate)
 static void sharcop_pm_to_ureg_indirect(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 offset = cpustate->opcode & 0xffffff;
+	uint32_t offset = cpustate->opcode & 0xffffff;
 	int i = (cpustate->opcode >> 41) & 0x7;
 
 	if (ureg == 0xdb)		/* PX is 48-bit */
@@ -2541,7 +2541,7 @@ static void sharcop_pm_to_ureg_indirect(SHARC_REGS *cpustate)
 static void sharcop_ureg_to_pm_indirect(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 offset = (UINT32)cpustate->opcode;
+	uint32_t offset = (uint32_t)cpustate->opcode;
 	int i = (cpustate->opcode >> 41) & 0x7;
 
 	if (ureg == 0xdb)		/* PX is 48-bit */
@@ -2563,7 +2563,7 @@ static void sharcop_imm_to_dmpm(SHARC_REGS *cpustate)
 	int i = (cpustate->opcode >> 41) & 0x7;
 	int m = (cpustate->opcode >> 38) & 0x7;
 	int g = (cpustate->opcode >> 37) & 0x1;
-	UINT32 data = (UINT32)cpustate->opcode;
+	uint32_t data = (uint32_t)cpustate->opcode;
 
 	if (g)
 	{
@@ -2588,7 +2588,7 @@ static void sharcop_imm_to_dmpm(SHARC_REGS *cpustate)
 static void sharcop_imm_to_ureg(SHARC_REGS *cpustate)
 {
 	int ureg = (cpustate->opcode >> 32) & 0xff;
-	UINT32 data = (UINT32)cpustate->opcode;
+	uint32_t data = (uint32_t)cpustate->opcode;
 
 	SET_UREG(cpustate, ureg, data);
 }
@@ -2601,9 +2601,9 @@ static void sharcop_sysreg_bitop(SHARC_REGS *cpustate)
 {
 	int bop = (cpustate->opcode >> 37) & 0x7;
 	int sreg = (cpustate->opcode >> 32) & 0xf;
-	UINT32 data = (UINT32)cpustate->opcode;
+	uint32_t data = (uint32_t)cpustate->opcode;
 
-	UINT32 src = GET_UREG(cpustate, 0x70 | sreg);
+	uint32_t src = GET_UREG(cpustate, 0x70 | sreg);
 
 	switch(bop)
 	{
@@ -2662,7 +2662,7 @@ static void sharcop_modify(SHARC_REGS *cpustate)
 {
 	int g = (cpustate->opcode >> 38) & 0x1;
 	int i = (cpustate->opcode >> 32) & 0x7;
-	INT32 data = (cpustate->opcode);
+	int32_t data = (cpustate->opcode);
 
 	if (g)		// PM
 	{
@@ -2751,5 +2751,5 @@ static void sharcop_unimplemented(SHARC_REGS *cpustate)
 	char dasm[1000];
 	CPU_DISASSEMBLE_NAME(sharc)(NULL, dasm, cpustate->pc, NULL, NULL, 0);
 	mame_printf_debug("SHARC: %08X: %s\n", cpustate->pc, dasm);
-	fatalerror("SHARC: Unimplemented opcode %04X%08X at %08X", (UINT16)(cpustate->opcode >> 32), (UINT32)(cpustate->opcode), cpustate->pc);
+	fatalerror("SHARC: Unimplemented opcode %04X%08X at %08X", (uint16_t)(cpustate->opcode >> 32), (uint32_t)(cpustate->opcode), cpustate->pc);
 }

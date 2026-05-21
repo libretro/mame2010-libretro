@@ -76,7 +76,7 @@
 
     20010207 Sylvain Glaize (mokona@puupuu.org)
 
-    - Bug fix in INLINE void MOVBM(UINT32 m, UINT32 n) (see comment)
+    - Bug fix in INLINE void MOVBM(uint32_t m, uint32_t n) (see comment)
     - Support of full 32 bit addressing (RB, RW, RL and WB, WW, WL functions)
         reason : when the two high bits of the address are set, access is
         done directly in the cache data array. The SUPER KANEKO NOVA SYSTEM
@@ -125,7 +125,7 @@ INLINE sh2_state *get_safe_token(running_device *device)
 	return (sh2_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT8 RB(sh2_state *sh2, offs_t A)
+INLINE uint8_t RB(sh2_state *sh2, offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r(sh2->internal, (A & 0x1fc)>>2, 0xff << (((~A) & 3)*8)) >> (((~A) & 3)*8);
@@ -139,7 +139,7 @@ INLINE UINT8 RB(sh2_state *sh2, offs_t A)
 	return memory_read_byte_32be(sh2->program, A & AM);
 }
 
-INLINE UINT16 RW(sh2_state *sh2, offs_t A)
+INLINE uint16_t RW(sh2_state *sh2, offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r(sh2->internal, (A & 0x1fc)>>2, 0xffff << (((~A) & 2)*8)) >> (((~A) & 2)*8);
@@ -153,7 +153,7 @@ INLINE UINT16 RW(sh2_state *sh2, offs_t A)
 	return memory_read_word_32be(sh2->program, A & AM);
 }
 
-INLINE UINT32 RL(sh2_state *sh2, offs_t A)
+INLINE uint32_t RL(sh2_state *sh2, offs_t A)
 {
 	if (A >= 0xe0000000)
 		return sh2_internal_r(sh2->internal, (A & 0x1fc)>>2, 0xffffffff);
@@ -167,7 +167,7 @@ INLINE UINT32 RL(sh2_state *sh2, offs_t A)
   return memory_read_dword_32be(sh2->program, A & AM);
 }
 
-INLINE void WB(sh2_state *sh2, offs_t A, UINT8 V)
+INLINE void WB(sh2_state *sh2, offs_t A, uint8_t V)
 {
 
 	if (A >= 0xe0000000)
@@ -188,7 +188,7 @@ INLINE void WB(sh2_state *sh2, offs_t A, UINT8 V)
 	memory_write_byte_32be(sh2->program, A & AM,V);
 }
 
-INLINE void WW(sh2_state *sh2, offs_t A, UINT16 V)
+INLINE void WW(sh2_state *sh2, offs_t A, uint16_t V)
 {
 	if (A >= 0xe0000000)
 	{
@@ -208,7 +208,7 @@ INLINE void WW(sh2_state *sh2, offs_t A, UINT16 V)
 	memory_write_word_32be(sh2->program, A & AM,V);
 }
 
-INLINE void WL(sh2_state *sh2, offs_t A, UINT32 V)
+INLINE void WL(sh2_state *sh2, offs_t A, uint32_t V)
 {
 	if (A >= 0xe0000000)
 	{
@@ -232,7 +232,7 @@ INLINE void WL(sh2_state *sh2, offs_t A, UINT32 V)
  *  0011 nnnn mmmm 1100  1       -
  *  ADD     Rm,Rn
  */
-INLINE void ADD(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void ADD(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] += sh2->r[m];
 }
@@ -241,18 +241,18 @@ INLINE void ADD(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0111 nnnn iiii iiii  1       -
  *  ADD     #imm,Rn
  */
-INLINE void ADDI(sh2_state *sh2, UINT32 i, UINT32 n)
+INLINE void ADDI(sh2_state *sh2, uint32_t i, uint32_t n)
 {
-	sh2->r[n] += (INT32)(INT16)(INT8)i;
+	sh2->r[n] += (int32_t)(int16_t)(int8_t)i;
 }
 
 /*  code                 cycles  t-bit
  *  0011 nnnn mmmm 1110  1       carry
  *  ADDC    Rm,Rn
  */
-INLINE void ADDC(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void ADDC(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0, tmp1;
+	uint32_t tmp0, tmp1;
 
 	tmp1 = sh2->r[n] + sh2->r[m];
 	tmp0 = sh2->r[n];
@@ -269,21 +269,21 @@ INLINE void ADDC(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 1111  1       overflow
  *  ADDV    Rm,Rn
  */
-INLINE void ADDV(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void ADDV(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	INT32 dest, src, ans;
+	int32_t dest, src, ans;
 
-	if ((INT32) sh2->r[n] >= 0)
+	if ((int32_t) sh2->r[n] >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) sh2->r[m] >= 0)
+	if ((int32_t) sh2->r[m] >= 0)
 		src = 0;
 	else
 		src = 1;
 	src += dest;
 	sh2->r[n] += sh2->r[m];
-	if ((INT32) sh2->r[n] >= 0)
+	if ((int32_t) sh2->r[n] >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -303,7 +303,7 @@ INLINE void ADDV(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0010 nnnn mmmm 1001  1       -
  *  AND     Rm,Rn
  */
-INLINE void AND(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void AND(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] &= sh2->r[m];
 }
@@ -313,7 +313,7 @@ INLINE void AND(sh2_state *sh2, UINT32 m, UINT32 n)
  *  1100 1001 iiii iiii  1       -
  *  AND     #imm,R0
  */
-INLINE void ANDI(sh2_state *sh2, UINT32 i)
+INLINE void ANDI(sh2_state *sh2, uint32_t i)
 {
 	sh2->r[0] &= i;
 }
@@ -322,9 +322,9 @@ INLINE void ANDI(sh2_state *sh2, UINT32 i)
  *  1100 1101 iiii iiii  1       -
  *  AND.B   #imm,@(R0,GBR)
  */
-INLINE void ANDM(sh2_state *sh2, UINT32 i)
+INLINE void ANDM(sh2_state *sh2, uint32_t i)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	sh2->ea = sh2->gbr + sh2->r[0];
 	temp = i & RB( sh2, sh2->ea );
@@ -336,11 +336,11 @@ INLINE void ANDM(sh2_state *sh2, UINT32 i)
  *  1000 1011 dddd dddd  3/1     -
  *  BF      disp8
  */
-INLINE void BF(sh2_state *sh2, UINT32 d)
+INLINE void BF(sh2_state *sh2, uint32_t d)
 {
 	if ((sh2->sr & T) == 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh2->pc = sh2->ea = sh2->pc + disp * 2 + 2;
 		sh2->icount -= 2;
 	}
@@ -350,11 +350,11 @@ INLINE void BF(sh2_state *sh2, UINT32 d)
  *  1000 1111 dddd dddd  3/1     -
  *  BFS     disp8
  */
-INLINE void BFS(sh2_state *sh2, UINT32 d)
+INLINE void BFS(sh2_state *sh2, uint32_t d)
 {
 	if ((sh2->sr & T) == 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh2->delay = sh2->pc;
 		sh2->pc = sh2->ea = sh2->pc + disp * 2 + 2;
 		sh2->icount--;
@@ -365,14 +365,14 @@ INLINE void BFS(sh2_state *sh2, UINT32 d)
  *  1010 dddd dddd dddd  2       -
  *  BRA     disp12
  */
-INLINE void BRA(sh2_state *sh2, UINT32 d)
+INLINE void BRA(sh2_state *sh2, uint32_t d)
 {
-	INT32 disp = ((INT32)d << 20) >> 20;
+	int32_t disp = ((int32_t)d << 20) >> 20;
 
 #if BUSY_LOOP_HACKS
 	if (disp == -2)
 	{
-		UINT32 next_opcode = RW( sh2, sh2->ppc & AM );
+		uint32_t next_opcode = RW( sh2, sh2->ppc & AM );
 		/* BRA  $
          * NOP
          */
@@ -389,7 +389,7 @@ INLINE void BRA(sh2_state *sh2, UINT32 d)
  *  0000 mmmm 0010 0011  2       -
  *  BRAF    Rm
  */
-INLINE void BRAF(sh2_state *sh2, UINT32 m)
+INLINE void BRAF(sh2_state *sh2, uint32_t m)
 {
 	sh2->delay = sh2->pc;
 	sh2->pc += sh2->r[m] + 2;
@@ -400,9 +400,9 @@ INLINE void BRAF(sh2_state *sh2, UINT32 m)
  *  1011 dddd dddd dddd  2       -
  *  BSR     disp12
  */
-INLINE void BSR(sh2_state *sh2, UINT32 d)
+INLINE void BSR(sh2_state *sh2, uint32_t d)
 {
-	INT32 disp = ((INT32)d << 20) >> 20;
+	int32_t disp = ((int32_t)d << 20) >> 20;
 
 	sh2->pr = sh2->pc + 2;
 	sh2->delay = sh2->pc;
@@ -414,7 +414,7 @@ INLINE void BSR(sh2_state *sh2, UINT32 d)
  *  0000 mmmm 0000 0011  2       -
  *  BSRF    Rm
  */
-INLINE void BSRF(sh2_state *sh2, UINT32 m)
+INLINE void BSRF(sh2_state *sh2, uint32_t m)
 {
 	sh2->pr = sh2->pc + 2;
 	sh2->delay = sh2->pc;
@@ -426,11 +426,11 @@ INLINE void BSRF(sh2_state *sh2, UINT32 m)
  *  1000 1001 dddd dddd  3/1     -
  *  BT      disp8
  */
-INLINE void BT(sh2_state *sh2, UINT32 d)
+INLINE void BT(sh2_state *sh2, uint32_t d)
 {
 	if ((sh2->sr & T) != 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh2->pc = sh2->ea = sh2->pc + disp * 2 + 2;
 		sh2->icount -= 2;
 	}
@@ -440,11 +440,11 @@ INLINE void BT(sh2_state *sh2, UINT32 d)
  *  1000 1101 dddd dddd  2/1     -
  *  BTS     disp8
  */
-INLINE void BTS(sh2_state *sh2, UINT32 d)
+INLINE void BTS(sh2_state *sh2, uint32_t d)
 {
 	if ((sh2->sr & T) != 0)
 	{
-		INT32 disp = ((INT32)d << 24) >> 24;
+		int32_t disp = ((int32_t)d << 24) >> 24;
 		sh2->delay = sh2->pc;
 		sh2->pc = sh2->ea = sh2->pc + disp * 2 + 2;
 		sh2->icount--;
@@ -474,7 +474,7 @@ INLINE void CLRT(sh2_state *sh2)
  *  0011 nnnn mmmm 0000  1       comparison result
  *  CMP_EQ  Rm,Rn
  */
-INLINE void CMPEQ(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPEQ(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	if (sh2->r[n] == sh2->r[m])
 		sh2->sr |= T;
@@ -486,9 +486,9 @@ INLINE void CMPEQ(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0011  1       comparison result
  *  CMP_GE  Rm,Rn
  */
-INLINE void CMPGE(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPGE(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	if ((INT32) sh2->r[n] >= (INT32) sh2->r[m])
+	if ((int32_t) sh2->r[n] >= (int32_t) sh2->r[m])
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -498,9 +498,9 @@ INLINE void CMPGE(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0111  1       comparison result
  *  CMP_GT  Rm,Rn
  */
-INLINE void CMPGT(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPGT(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	if ((INT32) sh2->r[n] > (INT32) sh2->r[m])
+	if ((int32_t) sh2->r[n] > (int32_t) sh2->r[m])
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -510,9 +510,9 @@ INLINE void CMPGT(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0110  1       comparison result
  *  CMP_HI  Rm,Rn
  */
-INLINE void CMPHI(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPHI(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	if ((UINT32) sh2->r[n] > (UINT32) sh2->r[m])
+	if ((uint32_t) sh2->r[n] > (uint32_t) sh2->r[m])
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -522,9 +522,9 @@ INLINE void CMPHI(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0011 nnnn mmmm 0010  1       comparison result
  *  CMP_HS  Rm,Rn
  */
-INLINE void CMPHS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPHS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	if ((UINT32) sh2->r[n] >= (UINT32) sh2->r[m])
+	if ((uint32_t) sh2->r[n] >= (uint32_t) sh2->r[m])
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -535,9 +535,9 @@ INLINE void CMPHS(sh2_state *sh2, UINT32 m, UINT32 n)
  *  0100 nnnn 0001 0101  1       comparison result
  *  CMP_PL  Rn
  */
-INLINE void CMPPL(sh2_state *sh2, UINT32 n)
+INLINE void CMPPL(sh2_state *sh2, uint32_t n)
 {
-	if ((INT32) sh2->r[n] > 0)
+	if ((int32_t) sh2->r[n] > 0)
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -547,9 +547,9 @@ INLINE void CMPPL(sh2_state *sh2, UINT32 n)
  *  0100 nnnn 0001 0001  1       comparison result
  *  CMP_PZ  Rn
  */
-INLINE void CMPPZ(sh2_state *sh2, UINT32 n)
+INLINE void CMPPZ(sh2_state *sh2, uint32_t n)
 {
-	if ((INT32) sh2->r[n] >= 0)
+	if ((int32_t) sh2->r[n] >= 0)
 		sh2->sr |= T;
 	else
 		sh2->sr &= ~T;
@@ -559,10 +559,10 @@ INLINE void CMPPZ(sh2_state *sh2, UINT32 n)
  *  0010 nnnn mmmm 1100  1       comparison result
  * CMP_STR  Rm,Rn
  */
-INLINE void CMPSTR(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void CMPSTR(sh2_state *sh2, uint32_t m, uint32_t n)
  {
-  UINT32 temp;
-  INT32 HH, HL, LH, LL;
+  uint32_t temp;
+  int32_t HH, HL, LH, LL;
   temp = sh2->r[n] ^ sh2->r[m];
   HH = (temp >> 24) & 0xff;
   HL = (temp >> 16) & 0xff;
@@ -579,9 +579,9 @@ INLINE void CMPSTR(sh2_state *sh2, UINT32 m, UINT32 n)
  *  1000 1000 iiii iiii  1       comparison result
  *  CMP/EQ #imm,R0
  */
-INLINE void CMPIM(sh2_state *sh2, UINT32 i)
+INLINE void CMPIM(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = (UINT32)(INT32)(INT16)(INT8)i;
+	uint32_t imm = (uint32_t)(int32_t)(int16_t)(int8_t)i;
 
 	if (sh2->r[0] == imm)
 		sh2->sr |= T;
@@ -593,7 +593,7 @@ INLINE void CMPIM(sh2_state *sh2, UINT32 i)
  *  0010 nnnn mmmm 0111  1       calculation result
  *  DIV0S   Rm,Rn
  */
-INLINE void DIV0S(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void DIV0S(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	if ((sh2->r[n] & 0x80000000) == 0)
 		sh2->sr &= ~Q;
@@ -622,10 +622,10 @@ INLINE void DIV0U(sh2_state *sh2)
  *  0011 nnnn mmmm 0100  1       calculation result
  *  DIV1 Rm,Rn
  */
-INLINE void DIV1(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void DIV1(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0;
-	UINT32 old_q;
+	uint32_t tmp0;
+	uint32_t old_q;
 
 	old_q = sh2->sr & Q;
 	if (0x80000000 & sh2->r[n])
@@ -714,24 +714,24 @@ INLINE void DIV1(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  DMULS.L Rm,Rn */
-INLINE void DMULS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void DMULS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
-	INT32 tempm, tempn, fnLmL;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
+	int32_t tempm, tempn, fnLmL;
 
-	tempn = (INT32) sh2->r[n];
-	tempm = (INT32) sh2->r[m];
+	tempn = (int32_t) sh2->r[n];
+	tempm = (int32_t) sh2->r[m];
 	if (tempn < 0)
 		tempn = 0 - tempn;
 	if (tempm < 0)
 		tempm = 0 - tempm;
-	if ((INT32) (sh2->r[n] ^ sh2->r[m]) < 0)
+	if ((int32_t) (sh2->r[n] ^ sh2->r[m]) < 0)
 		fnLmL = -1;
 	else
 		fnLmL = 0;
-	temp1 = (UINT32) tempn;
-	temp2 = (UINT32) tempm;
+	temp1 = (uint32_t) tempn;
+	temp2 = (uint32_t) tempm;
 	RnL = temp1 & 0x0000ffff;
 	RnH = (temp1 >> 16) & 0x0000ffff;
 	RmL = temp2 & 0x0000ffff;
@@ -763,10 +763,10 @@ INLINE void DMULS(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  DMULU.L Rm,Rn */
-INLINE void DMULU(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void DMULU(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
 
 	RnL = sh2->r[n] & 0x0000ffff;
 	RnH = (sh2->r[n] >> 16) & 0x0000ffff;
@@ -791,7 +791,7 @@ INLINE void DMULU(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  DT      Rn */
-INLINE void DT(sh2_state *sh2, UINT32 n)
+INLINE void DT(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n]--;
 	if (sh2->r[n] == 0)
@@ -800,7 +800,7 @@ INLINE void DT(sh2_state *sh2, UINT32 n)
 		sh2->sr &= ~T;
 #if BUSY_LOOP_HACKS
 	{
-		UINT32 next_opcode = RW( sh2, sh2->ppc & AM );
+		uint32_t next_opcode = RW( sh2, sh2->ppc & AM );
 		/* DT   Rn
          * BF   $-2
          */
@@ -817,38 +817,38 @@ INLINE void DT(sh2_state *sh2, UINT32 n)
 }
 
 /*  EXTS.B  Rm,Rn */
-INLINE void EXTSB(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void EXTSB(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->r[n] = ((INT32)sh2->r[m] << 24) >> 24;
+	sh2->r[n] = ((int32_t)sh2->r[m] << 24) >> 24;
 }
 
 /*  EXTS.W  Rm,Rn */
-INLINE void EXTSW(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void EXTSW(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->r[n] = ((INT32)sh2->r[m] << 16) >> 16;
+	sh2->r[n] = ((int32_t)sh2->r[m] << 16) >> 16;
 }
 
 /*  EXTU.B  Rm,Rn */
-INLINE void EXTUB(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void EXTUB(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = sh2->r[m] & 0x000000ff;
 }
 
 /*  EXTU.W  Rm,Rn */
-INLINE void EXTUW(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void EXTUW(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = sh2->r[m] & 0x0000ffff;
 }
 
 /*  JMP     @Rm */
-INLINE void JMP(sh2_state *sh2, UINT32 m)
+INLINE void JMP(sh2_state *sh2, uint32_t m)
 {
 	sh2->delay = sh2->pc;
 	sh2->pc = sh2->ea = sh2->r[m];
 }
 
 /*  JSR     @Rm */
-INLINE void JSR(sh2_state *sh2, UINT32 m)
+INLINE void JSR(sh2_state *sh2, uint32_t m)
 {
 	sh2->delay = sh2->pc;
 	sh2->pr = sh2->pc + 2;
@@ -858,26 +858,26 @@ INLINE void JSR(sh2_state *sh2, UINT32 m)
 
 
 /*  LDC     Rm,SR */
-INLINE void LDCSR(sh2_state *sh2, UINT32 m)
+INLINE void LDCSR(sh2_state *sh2, uint32_t m)
 {
 	sh2->sr = sh2->r[m] & FLAGS;
 	sh2->test_irq = 1;
 }
 
 /*  LDC     Rm,GBR */
-INLINE void LDCGBR(sh2_state *sh2, UINT32 m)
+INLINE void LDCGBR(sh2_state *sh2, uint32_t m)
 {
 	sh2->gbr = sh2->r[m];
 }
 
 /*  LDC     Rm,VBR */
-INLINE void LDCVBR(sh2_state *sh2, UINT32 m)
+INLINE void LDCVBR(sh2_state *sh2, uint32_t m)
 {
 	sh2->vbr = sh2->r[m];
 }
 
 /*  LDC.L   @Rm+,SR */
-INLINE void LDCMSR(sh2_state *sh2, UINT32 m)
+INLINE void LDCMSR(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->sr = RL( sh2, sh2->ea ) & FLAGS;
@@ -887,7 +887,7 @@ INLINE void LDCMSR(sh2_state *sh2, UINT32 m)
 }
 
 /*  LDC.L   @Rm+,GBR */
-INLINE void LDCMGBR(sh2_state *sh2, UINT32 m)
+INLINE void LDCMGBR(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->gbr = RL( sh2, sh2->ea );
@@ -896,7 +896,7 @@ INLINE void LDCMGBR(sh2_state *sh2, UINT32 m)
 }
 
 /*  LDC.L   @Rm+,VBR */
-INLINE void LDCMVBR(sh2_state *sh2, UINT32 m)
+INLINE void LDCMVBR(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->vbr = RL( sh2, sh2->ea );
@@ -905,25 +905,25 @@ INLINE void LDCMVBR(sh2_state *sh2, UINT32 m)
 }
 
 /*  LDS     Rm,MACH */
-INLINE void LDSMACH(sh2_state *sh2, UINT32 m)
+INLINE void LDSMACH(sh2_state *sh2, uint32_t m)
 {
 	sh2->mach = sh2->r[m];
 }
 
 /*  LDS     Rm,MACL */
-INLINE void LDSMACL(sh2_state *sh2, UINT32 m)
+INLINE void LDSMACL(sh2_state *sh2, uint32_t m)
 {
 	sh2->macl = sh2->r[m];
 }
 
 /*  LDS     Rm,PR */
-INLINE void LDSPR(sh2_state *sh2, UINT32 m)
+INLINE void LDSPR(sh2_state *sh2, uint32_t m)
 {
 	sh2->pr = sh2->r[m];
 }
 
 /*  LDS.L   @Rm+,MACH */
-INLINE void LDSMMACH(sh2_state *sh2, UINT32 m)
+INLINE void LDSMMACH(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->mach = RL( sh2, sh2->ea );
@@ -931,7 +931,7 @@ INLINE void LDSMMACH(sh2_state *sh2, UINT32 m)
 }
 
 /*  LDS.L   @Rm+,MACL */
-INLINE void LDSMMACL(sh2_state *sh2, UINT32 m)
+INLINE void LDSMMACL(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->macl = RL( sh2, sh2->ea );
@@ -939,7 +939,7 @@ INLINE void LDSMMACL(sh2_state *sh2, UINT32 m)
 }
 
 /*  LDS.L   @Rm+,PR */
-INLINE void LDSMPR(sh2_state *sh2, UINT32 m)
+INLINE void LDSMPR(sh2_state *sh2, uint32_t m)
 {
 	sh2->ea = sh2->r[m];
 	sh2->pr = RL( sh2, sh2->ea );
@@ -947,17 +947,17 @@ INLINE void LDSMPR(sh2_state *sh2, UINT32 m)
 }
 
 /*  MAC.L   @Rm+,@Rn+ */
-INLINE void MAC_L(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MAC_L(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 RnL, RnH, RmL, RmH, Res0, Res1, Res2;
-	UINT32 temp0, temp1, temp2, temp3;
-	INT32 tempm, tempn, fnLmL;
+	uint32_t RnL, RnH, RmL, RmH, Res0, Res1, Res2;
+	uint32_t temp0, temp1, temp2, temp3;
+	int32_t tempm, tempn, fnLmL;
 
-	tempn = (INT32) RL( sh2, sh2->r[n] );
+	tempn = (int32_t) RL( sh2, sh2->r[n] );
 	sh2->r[n] += 4;
-	tempm = (INT32) RL( sh2, sh2->r[m] );
+	tempm = (int32_t) RL( sh2, sh2->r[m] );
 	sh2->r[m] += 4;
-	if ((INT32) (tempn ^ tempm) < 0)
+	if ((int32_t) (tempn ^ tempm) < 0)
 		fnLmL = -1;
 	else
 		fnLmL = 0;
@@ -965,8 +965,8 @@ INLINE void MAC_L(sh2_state *sh2, UINT32 m, UINT32 n)
 		tempn = 0 - tempn;
 	if (tempm < 0)
 		tempm = 0 - tempm;
-	temp1 = (UINT32) tempn;
-	temp2 = (UINT32) tempm;
+	temp1 = (uint32_t) tempn;
+	temp2 = (uint32_t) tempm;
 	RnL = temp1 & 0x0000ffff;
 	RnH = (temp1 >> 16) & 0x0000ffff;
 	RmL = temp2 & 0x0000ffff;
@@ -998,12 +998,12 @@ INLINE void MAC_L(sh2_state *sh2, UINT32 m, UINT32 n)
 		if (sh2->macl > Res0)
 			Res2++;
 		Res2 += (sh2->mach & 0x0000ffff);
-		if (((INT32) Res2 < 0) && (Res2 < 0xffff8000))
+		if (((int32_t) Res2 < 0) && (Res2 < 0xffff8000))
 		{
 			Res2 = 0x00008000;
 			Res0 = 0x00000000;
 		}
-		else if (((INT32) Res2 > 0) && (Res2 > 0x00007fff))
+		else if (((int32_t) Res2 > 0) && (Res2 > 0x00007fff))
 		{
 			Res2 = 0x00007fff;
 			Res0 = 0xffffffff;
@@ -1024,22 +1024,22 @@ INLINE void MAC_L(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  MAC.W   @Rm+,@Rn+ */
-INLINE void MAC_W(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MAC_W(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	INT32 tempm, tempn, dest, src, ans;
-	UINT32 templ;
+	int32_t tempm, tempn, dest, src, ans;
+	uint32_t templ;
 
-	tempn = (INT32) RW( sh2, sh2->r[n] );
+	tempn = (int32_t) RW( sh2, sh2->r[n] );
 	sh2->r[n] += 2;
-	tempm = (INT32) RW( sh2, sh2->r[m] );
+	tempm = (int32_t) RW( sh2, sh2->r[m] );
 	sh2->r[m] += 2;
 	templ = sh2->macl;
-	tempm = ((INT32) (short) tempn * (INT32) (short) tempm);
-	if ((INT32) sh2->macl >= 0)
+	tempm = ((int32_t) (short) tempn * (int32_t) (short) tempm);
+	if ((int32_t) sh2->macl >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) tempm >= 0)
+	if ((int32_t) tempm >= 0)
 	{
 		src = 0;
 		tempn = 0;
@@ -1051,7 +1051,7 @@ INLINE void MAC_W(sh2_state *sh2, UINT32 m, UINT32 n)
 	}
 	src += dest;
 	sh2->macl += tempm;
-	if ((INT32) sh2->macl >= 0)
+	if ((int32_t) sh2->macl >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -1076,99 +1076,99 @@ INLINE void MAC_W(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  MOV     Rm,Rn */
-INLINE void MOV(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOV(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = sh2->r[m];
 }
 
 /*  MOV.B   Rm,@Rn */
-INLINE void MOVBS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n];
 	WB( sh2, sh2->ea, sh2->r[m] & 0x000000ff);
 }
 
 /*  MOV.W   Rm,@Rn */
-INLINE void MOVWS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n];
 	WW( sh2, sh2->ea, sh2->r[m] & 0x0000ffff);
 }
 
 /*  MOV.L   Rm,@Rn */
-INLINE void MOVLS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n];
 	WL( sh2, sh2->ea, sh2->r[m] );
 }
 
 /*  MOV.B   @Rm,Rn */
-INLINE void MOVBL(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBL(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m];
-	sh2->r[n] = (UINT32)(INT32)(INT16)(INT8) RB( sh2, sh2->ea );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB( sh2, sh2->ea );
 }
 
 /*  MOV.W   @Rm,Rn */
-INLINE void MOVWL(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWL(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m];
-	sh2->r[n] = (UINT32)(INT32)(INT16) RW( sh2, sh2->ea );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t) RW( sh2, sh2->ea );
 }
 
 /*  MOV.L   @Rm,Rn */
-INLINE void MOVLL(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLL(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m];
 	sh2->r[n] = RL( sh2, sh2->ea );
 }
 
 /*  MOV.B   Rm,@-Rn */
-INLINE void MOVBM(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBM(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	/* SMG : bug fix, was reading sh2->r[n] */
-	UINT32 data = sh2->r[m] & 0x000000ff;
+	uint32_t data = sh2->r[m] & 0x000000ff;
 
 	sh2->r[n] -= 1;
 	WB( sh2, sh2->r[n], data );
 }
 
 /*  MOV.W   Rm,@-Rn */
-INLINE void MOVWM(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWM(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 data = sh2->r[m] & 0x0000ffff;
+	uint32_t data = sh2->r[m] & 0x0000ffff;
 
 	sh2->r[n] -= 2;
 	WW( sh2, sh2->r[n], data );
 }
 
 /*  MOV.L   Rm,@-Rn */
-INLINE void MOVLM(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLM(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 data = sh2->r[m];
+	uint32_t data = sh2->r[m];
 
 	sh2->r[n] -= 4;
 	WL( sh2, sh2->r[n], data );
 }
 
 /*  MOV.B   @Rm+,Rn */
-INLINE void MOVBP(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBP(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->r[n] = (UINT32)(INT32)(INT16)(INT8) RB( sh2, sh2->r[m] );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB( sh2, sh2->r[m] );
 	if (n != m)
 		sh2->r[m] += 1;
 }
 
 /*  MOV.W   @Rm+,Rn */
-INLINE void MOVWP(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWP(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->r[n] = (UINT32)(INT32)(INT16) RW( sh2, sh2->r[m] );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t) RW( sh2, sh2->r[m] );
 	if (n != m)
 		sh2->r[m] += 2;
 }
 
 /*  MOV.L   @Rm+,Rn */
-INLINE void MOVLP(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLP(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = RL( sh2, sh2->r[m] );
 	if (n != m)
@@ -1176,208 +1176,208 @@ INLINE void MOVLP(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  MOV.B   Rm,@(R0,Rn) */
-INLINE void MOVBS0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBS0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n] + sh2->r[0];
 	WB( sh2, sh2->ea, sh2->r[m] & 0x000000ff );
 }
 
 /*  MOV.W   Rm,@(R0,Rn) */
-INLINE void MOVWS0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWS0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n] + sh2->r[0];
 	WW( sh2, sh2->ea, sh2->r[m] & 0x0000ffff );
 }
 
 /*  MOV.L   Rm,@(R0,Rn) */
-INLINE void MOVLS0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLS0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[n] + sh2->r[0];
 	WL( sh2, sh2->ea, sh2->r[m] );
 }
 
 /*  MOV.B   @(R0,Rm),Rn */
-INLINE void MOVBL0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVBL0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m] + sh2->r[0];
-	sh2->r[n] = (UINT32)(INT32)(INT16)(INT8) RB( sh2, sh2->ea );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) RB( sh2, sh2->ea );
 }
 
 /*  MOV.W   @(R0,Rm),Rn */
-INLINE void MOVWL0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVWL0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m] + sh2->r[0];
-	sh2->r[n] = (UINT32)(INT32)(INT16) RW( sh2, sh2->ea );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t) RW( sh2, sh2->ea );
 }
 
 /*  MOV.L   @(R0,Rm),Rn */
-INLINE void MOVLL0(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MOVLL0(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->ea = sh2->r[m] + sh2->r[0];
 	sh2->r[n] = RL( sh2, sh2->ea );
 }
 
 /*  MOV     #imm,Rn */
-INLINE void MOVI(sh2_state *sh2, UINT32 i, UINT32 n)
+INLINE void MOVI(sh2_state *sh2, uint32_t i, uint32_t n)
 {
-	sh2->r[n] = (UINT32)(INT32)(INT16)(INT8) i;
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t)(int8_t) i;
 }
 
 /*  MOV.W   @(disp8,PC),Rn */
-INLINE void MOVWI(sh2_state *sh2, UINT32 d, UINT32 n)
+INLINE void MOVWI(sh2_state *sh2, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->pc + disp * 2 + 2;
-	sh2->r[n] = (UINT32)(INT32)(INT16) RW( sh2, sh2->ea );
+	sh2->r[n] = (uint32_t)(int32_t)(int16_t) RW( sh2, sh2->ea );
 }
 
 /*  MOV.L   @(disp8,PC),Rn */
-INLINE void MOVLI(sh2_state *sh2, UINT32 d, UINT32 n)
+INLINE void MOVLI(sh2_state *sh2, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = ((sh2->pc + 2) & ~3) + disp * 4;
 	sh2->r[n] = RL( sh2, sh2->ea );
 }
 
 /*  MOV.B   @(disp8,GBR),R0 */
-INLINE void MOVBLG(sh2_state *sh2, UINT32 d)
+INLINE void MOVBLG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp;
-	sh2->r[0] = (UINT32)(INT32)(INT16)(INT8) RB( sh2, sh2->ea );
+	sh2->r[0] = (uint32_t)(int32_t)(int16_t)(int8_t) RB( sh2, sh2->ea );
 }
 
 /*  MOV.W   @(disp8,GBR),R0 */
-INLINE void MOVWLG(sh2_state *sh2, UINT32 d)
+INLINE void MOVWLG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp * 2;
-	sh2->r[0] = (INT32)(INT16) RW( sh2, sh2->ea );
+	sh2->r[0] = (int32_t)(int16_t) RW( sh2, sh2->ea );
 }
 
 /*  MOV.L   @(disp8,GBR),R0 */
-INLINE void MOVLLG(sh2_state *sh2, UINT32 d)
+INLINE void MOVLLG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp * 4;
 	sh2->r[0] = RL( sh2, sh2->ea );
 }
 
 /*  MOV.B   R0,@(disp8,GBR) */
-INLINE void MOVBSG(sh2_state *sh2, UINT32 d)
+INLINE void MOVBSG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp;
 	WB( sh2, sh2->ea, sh2->r[0] & 0x000000ff );
 }
 
 /*  MOV.W   R0,@(disp8,GBR) */
-INLINE void MOVWSG(sh2_state *sh2, UINT32 d)
+INLINE void MOVWSG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp * 2;
 	WW( sh2, sh2->ea, sh2->r[0] & 0x0000ffff );
 }
 
 /*  MOV.L   R0,@(disp8,GBR) */
-INLINE void MOVLSG(sh2_state *sh2, UINT32 d)
+INLINE void MOVLSG(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = sh2->gbr + disp * 4;
 	WL( sh2, sh2->ea, sh2->r[0] );
 }
 
 /*  MOV.B   R0,@(disp4,Rn) */
-INLINE void MOVBS4(sh2_state *sh2, UINT32 d, UINT32 n)
+INLINE void MOVBS4(sh2_state *sh2, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[n] + disp;
 	WB( sh2, sh2->ea, sh2->r[0] & 0x000000ff );
 }
 
 /*  MOV.W   R0,@(disp4,Rn) */
-INLINE void MOVWS4(sh2_state *sh2, UINT32 d, UINT32 n)
+INLINE void MOVWS4(sh2_state *sh2, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[n] + disp * 2;
 	WW( sh2, sh2->ea, sh2->r[0] & 0x0000ffff );
 }
 
 /* MOV.L Rm,@(disp4,Rn) */
-INLINE void MOVLS4(sh2_state *sh2, UINT32 m, UINT32 d, UINT32 n)
+INLINE void MOVLS4(sh2_state *sh2, uint32_t m, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[n] + disp * 4;
 	WL( sh2, sh2->ea, sh2->r[m] );
 }
 
 /*  MOV.B   @(disp4,Rm),R0 */
-INLINE void MOVBL4(sh2_state *sh2, UINT32 m, UINT32 d)
+INLINE void MOVBL4(sh2_state *sh2, uint32_t m, uint32_t d)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[m] + disp;
-	sh2->r[0] = (UINT32)(INT32)(INT16)(INT8) RB( sh2, sh2->ea );
+	sh2->r[0] = (uint32_t)(int32_t)(int16_t)(int8_t) RB( sh2, sh2->ea );
 }
 
 /*  MOV.W   @(disp4,Rm),R0 */
-INLINE void MOVWL4(sh2_state *sh2, UINT32 m, UINT32 d)
+INLINE void MOVWL4(sh2_state *sh2, uint32_t m, uint32_t d)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[m] + disp * 2;
-	sh2->r[0] = (UINT32)(INT32)(INT16) RW( sh2, sh2->ea );
+	sh2->r[0] = (uint32_t)(int32_t)(int16_t) RW( sh2, sh2->ea );
 }
 
 /*  MOV.L   @(disp4,Rm),Rn */
-INLINE void MOVLL4(sh2_state *sh2, UINT32 m, UINT32 d, UINT32 n)
+INLINE void MOVLL4(sh2_state *sh2, uint32_t m, uint32_t d, uint32_t n)
 {
-	UINT32 disp = d & 0x0f;
+	uint32_t disp = d & 0x0f;
 	sh2->ea = sh2->r[m] + disp * 4;
 	sh2->r[n] = RL( sh2, sh2->ea );
 }
 
 /*  MOVA    @(disp8,PC),R0 */
-INLINE void MOVA(sh2_state *sh2, UINT32 d)
+INLINE void MOVA(sh2_state *sh2, uint32_t d)
 {
-	UINT32 disp = d & 0xff;
+	uint32_t disp = d & 0xff;
 	sh2->ea = ((sh2->pc + 2) & ~3) + disp * 4;
 	sh2->r[0] = sh2->ea;
 }
 
 /*  MOVT    Rn */
-INLINE void MOVT(sh2_state *sh2, UINT32 n)
+INLINE void MOVT(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->sr & T;
 }
 
 /*  MUL.L   Rm,Rn */
-INLINE void MULL(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MULL(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->macl = sh2->r[n] * sh2->r[m];
 	sh2->icount--;
 }
 
 /*  MULS    Rm,Rn */
-INLINE void MULS(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MULS(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->macl = (INT16) sh2->r[n] * (INT16) sh2->r[m];
+	sh2->macl = (int16_t) sh2->r[n] * (int16_t) sh2->r[m];
 }
 
 /*  MULU    Rm,Rn */
-INLINE void MULU(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void MULU(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	sh2->macl = (UINT16) sh2->r[n] * (UINT16) sh2->r[m];
+	sh2->macl = (uint16_t) sh2->r[n] * (uint16_t) sh2->r[m];
 }
 
 /*  NEG     Rm,Rn */
-INLINE void NEG(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void NEG(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = 0 - sh2->r[m];
 }
 
 /*  NEGC    Rm,Rn */
-INLINE void NEGC(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void NEGC(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = sh2->r[m];
 	sh2->r[n] = -temp - (sh2->sr & T);
@@ -1393,28 +1393,28 @@ INLINE void NOP(void)
 }
 
 /*  NOT     Rm,Rn */
-INLINE void NOT(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void NOT(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] = ~sh2->r[m];
 }
 
 /*  OR      Rm,Rn */
-INLINE void OR(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void OR(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] |= sh2->r[m];
 }
 
 /*  OR      #imm,R0 */
-INLINE void ORI(sh2_state *sh2, UINT32 i)
+INLINE void ORI(sh2_state *sh2, uint32_t i)
 {
 	sh2->r[0] |= i;
 	sh2->icount -= 2;
 }
 
 /*  OR.B    #imm,@(R0,GBR) */
-INLINE void ORM(sh2_state *sh2, UINT32 i)
+INLINE void ORM(sh2_state *sh2, uint32_t i)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	sh2->ea = sh2->gbr + sh2->r[0];
 	temp = RB( sh2, sh2->ea );
@@ -1423,9 +1423,9 @@ INLINE void ORM(sh2_state *sh2, UINT32 i)
 }
 
 /*  ROTCL   Rn */
-INLINE void ROTCL(sh2_state *sh2, UINT32 n)
+INLINE void ROTCL(sh2_state *sh2, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh2->r[n] >> 31) & T;
 	sh2->r[n] = (sh2->r[n] << 1) | (sh2->sr & T);
@@ -1433,9 +1433,9 @@ INLINE void ROTCL(sh2_state *sh2, UINT32 n)
 }
 
 /*  ROTCR   Rn */
-INLINE void ROTCR(sh2_state *sh2, UINT32 n)
+INLINE void ROTCR(sh2_state *sh2, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 	temp = (sh2->sr & T) << 31;
 	if (sh2->r[n] & T)
 		sh2->sr |= T;
@@ -1445,14 +1445,14 @@ INLINE void ROTCR(sh2_state *sh2, UINT32 n)
 }
 
 /*  ROTL    Rn */
-INLINE void ROTL(sh2_state *sh2, UINT32 n)
+INLINE void ROTL(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | ((sh2->r[n] >> 31) & T);
 	sh2->r[n] = (sh2->r[n] << 1) | (sh2->r[n] >> 31);
 }
 
 /*  ROTR    Rn */
-INLINE void ROTR(sh2_state *sh2, UINT32 n)
+INLINE void ROTR(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | (sh2->r[n] & T);
 	sh2->r[n] = (sh2->r[n] >> 1) | (sh2->r[n] << 31);
@@ -1487,65 +1487,65 @@ INLINE void SETT(sh2_state *sh2)
 }
 
 /*  SHAL    Rn      (same as SHLL) */
-INLINE void SHAL(sh2_state *sh2, UINT32 n)
+INLINE void SHAL(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | ((sh2->r[n] >> 31) & T);
 	sh2->r[n] <<= 1;
 }
 
 /*  SHAR    Rn */
-INLINE void SHAR(sh2_state *sh2, UINT32 n)
+INLINE void SHAR(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | (sh2->r[n] & T);
-	sh2->r[n] = (UINT32)((INT32)sh2->r[n] >> 1);
+	sh2->r[n] = (uint32_t)((int32_t)sh2->r[n] >> 1);
 }
 
 /*  SHLL    Rn      (same as SHAL) */
-INLINE void SHLL(sh2_state *sh2, UINT32 n)
+INLINE void SHLL(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | ((sh2->r[n] >> 31) & T);
 	sh2->r[n] <<= 1;
 }
 
 /*  SHLL2   Rn */
-INLINE void SHLL2(sh2_state *sh2, UINT32 n)
+INLINE void SHLL2(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] <<= 2;
 }
 
 /*  SHLL8   Rn */
-INLINE void SHLL8(sh2_state *sh2, UINT32 n)
+INLINE void SHLL8(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] <<= 8;
 }
 
 /*  SHLL16  Rn */
-INLINE void SHLL16(sh2_state *sh2, UINT32 n)
+INLINE void SHLL16(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] <<= 16;
 }
 
 /*  SHLR    Rn */
-INLINE void SHLR(sh2_state *sh2, UINT32 n)
+INLINE void SHLR(sh2_state *sh2, uint32_t n)
 {
 	sh2->sr = (sh2->sr & ~T) | (sh2->r[n] & T);
 	sh2->r[n] >>= 1;
 }
 
 /*  SHLR2   Rn */
-INLINE void SHLR2(sh2_state *sh2, UINT32 n)
+INLINE void SHLR2(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] >>= 2;
 }
 
 /*  SHLR8   Rn */
-INLINE void SHLR8(sh2_state *sh2, UINT32 n)
+INLINE void SHLR8(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] >>= 8;
 }
 
 /*  SHLR16  Rn */
-INLINE void SHLR16(sh2_state *sh2, UINT32 n)
+INLINE void SHLR16(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] >>= 16;
 }
@@ -1559,25 +1559,25 @@ INLINE void SLEEP(sh2_state *sh2)
 }
 
 /*  STC     SR,Rn */
-INLINE void STCSR(sh2_state *sh2, UINT32 n)
+INLINE void STCSR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->sr;
 }
 
 /*  STC     GBR,Rn */
-INLINE void STCGBR(sh2_state *sh2, UINT32 n)
+INLINE void STCGBR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->gbr;
 }
 
 /*  STC     VBR,Rn */
-INLINE void STCVBR(sh2_state *sh2, UINT32 n)
+INLINE void STCVBR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->vbr;
 }
 
 /*  STC.L   SR,@-Rn */
-INLINE void STCMSR(sh2_state *sh2, UINT32 n)
+INLINE void STCMSR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1586,7 +1586,7 @@ INLINE void STCMSR(sh2_state *sh2, UINT32 n)
 }
 
 /*  STC.L   GBR,@-Rn */
-INLINE void STCMGBR(sh2_state *sh2, UINT32 n)
+INLINE void STCMGBR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1595,7 +1595,7 @@ INLINE void STCMGBR(sh2_state *sh2, UINT32 n)
 }
 
 /*  STC.L   VBR,@-Rn */
-INLINE void STCMVBR(sh2_state *sh2, UINT32 n)
+INLINE void STCMVBR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1604,25 +1604,25 @@ INLINE void STCMVBR(sh2_state *sh2, UINT32 n)
 }
 
 /*  STS     MACH,Rn */
-INLINE void STSMACH(sh2_state *sh2, UINT32 n)
+INLINE void STSMACH(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->mach;
 }
 
 /*  STS     MACL,Rn */
-INLINE void STSMACL(sh2_state *sh2, UINT32 n)
+INLINE void STSMACL(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->macl;
 }
 
 /*  STS     PR,Rn */
-INLINE void STSPR(sh2_state *sh2, UINT32 n)
+INLINE void STSPR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] = sh2->pr;
 }
 
 /*  STS.L   MACH,@-Rn */
-INLINE void STSMMACH(sh2_state *sh2, UINT32 n)
+INLINE void STSMMACH(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1630,7 +1630,7 @@ INLINE void STSMMACH(sh2_state *sh2, UINT32 n)
 }
 
 /*  STS.L   MACL,@-Rn */
-INLINE void STSMMACL(sh2_state *sh2, UINT32 n)
+INLINE void STSMMACL(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1638,7 +1638,7 @@ INLINE void STSMMACL(sh2_state *sh2, UINT32 n)
 }
 
 /*  STS.L   PR,@-Rn */
-INLINE void STSMPR(sh2_state *sh2, UINT32 n)
+INLINE void STSMPR(sh2_state *sh2, uint32_t n)
 {
 	sh2->r[n] -= 4;
 	sh2->ea = sh2->r[n];
@@ -1646,15 +1646,15 @@ INLINE void STSMPR(sh2_state *sh2, UINT32 n)
 }
 
 /*  SUB     Rm,Rn */
-INLINE void SUB(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void SUB(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] -= sh2->r[m];
 }
 
 /*  SUBC    Rm,Rn */
-INLINE void SUBC(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void SUBC(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 tmp0, tmp1;
+	uint32_t tmp0, tmp1;
 
 	tmp1 = sh2->r[n] - sh2->r[m];
 	tmp0 = sh2->r[n];
@@ -1668,21 +1668,21 @@ INLINE void SUBC(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  SUBV    Rm,Rn */
-INLINE void SUBV(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void SUBV(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	INT32 dest, src, ans;
+	int32_t dest, src, ans;
 
-	if ((INT32) sh2->r[n] >= 0)
+	if ((int32_t) sh2->r[n] >= 0)
 		dest = 0;
 	else
 		dest = 1;
-	if ((INT32) sh2->r[m] >= 0)
+	if ((int32_t) sh2->r[m] >= 0)
 		src = 0;
 	else
 		src = 1;
 	src += dest;
 	sh2->r[n] -= sh2->r[m];
-	if ((INT32) sh2->r[n] >= 0)
+	if ((int32_t) sh2->r[n] >= 0)
 		ans = 0;
 	else
 		ans = 1;
@@ -1699,9 +1699,9 @@ INLINE void SUBV(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  SWAP.B  Rm,Rn */
-INLINE void SWAPB(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void SWAPB(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 temp0, temp1;
+	uint32_t temp0, temp1;
 
 	temp0 = sh2->r[m] & 0xffff0000;
 	temp1 = (sh2->r[m] & 0x000000ff) << 8;
@@ -1710,18 +1710,18 @@ INLINE void SWAPB(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  SWAP.W  Rm,Rn */
-INLINE void SWAPW(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void SWAPW(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh2->r[m] >> 16) & 0x0000ffff;
 	sh2->r[n] = (sh2->r[m] << 16) | temp;
 }
 
 /*  TAS.B   @Rn */
-INLINE void TAS(sh2_state *sh2, UINT32 n)
+INLINE void TAS(sh2_state *sh2, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 	sh2->ea = sh2->r[n];
 	/* Bus Lock enable */
 	temp = RB( sh2, sh2->ea );
@@ -1736,9 +1736,9 @@ INLINE void TAS(sh2_state *sh2, UINT32 n)
 }
 
 /*  TRAPA   #imm */
-INLINE void TRAPA(sh2_state *sh2, UINT32 i)
+INLINE void TRAPA(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	sh2->ea = sh2->vbr + imm * 4;
 
@@ -1753,7 +1753,7 @@ INLINE void TRAPA(sh2_state *sh2, UINT32 i)
 }
 
 /*  TST     Rm,Rn */
-INLINE void TST(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void TST(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	if ((sh2->r[n] & sh2->r[m]) == 0)
 		sh2->sr |= T;
@@ -1762,9 +1762,9 @@ INLINE void TST(sh2_state *sh2, UINT32 m, UINT32 n)
 }
 
 /*  TST     #imm,R0 */
-INLINE void TSTI(sh2_state *sh2, UINT32 i)
+INLINE void TSTI(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	if ((imm & sh2->r[0]) == 0)
 		sh2->sr |= T;
@@ -1773,9 +1773,9 @@ INLINE void TSTI(sh2_state *sh2, UINT32 i)
 }
 
 /*  TST.B   #imm,@(R0,GBR) */
-INLINE void TSTM(sh2_state *sh2, UINT32 i)
+INLINE void TSTM(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 
 	sh2->ea = sh2->gbr + sh2->r[0];
 	if ((imm & RB( sh2, sh2->ea )) == 0)
@@ -1786,23 +1786,23 @@ INLINE void TSTM(sh2_state *sh2, UINT32 i)
 }
 
 /*  XOR     Rm,Rn */
-INLINE void XOR(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void XOR(sh2_state *sh2, uint32_t m, uint32_t n)
 {
 	sh2->r[n] ^= sh2->r[m];
 }
 
 /*  XOR     #imm,R0 */
-INLINE void XORI(sh2_state *sh2, UINT32 i)
+INLINE void XORI(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
+	uint32_t imm = i & 0xff;
 	sh2->r[0] ^= imm;
 }
 
 /*  XOR.B   #imm,@(R0,GBR) */
-INLINE void XORM(sh2_state *sh2, UINT32 i)
+INLINE void XORM(sh2_state *sh2, uint32_t i)
 {
-	UINT32 imm = i & 0xff;
-	UINT32 temp;
+	uint32_t imm = i & 0xff;
+	uint32_t temp;
 
 	sh2->ea = sh2->gbr + sh2->r[0];
 	temp = RB( sh2, sh2->ea );
@@ -1812,9 +1812,9 @@ INLINE void XORM(sh2_state *sh2, UINT32 i)
 }
 
 /*  XTRCT   Rm,Rn */
-INLINE void XTRCT(sh2_state *sh2, UINT32 m, UINT32 n)
+INLINE void XTRCT(sh2_state *sh2, uint32_t m, uint32_t n)
 {
-	UINT32 temp;
+	uint32_t temp;
 
 	temp = (sh2->r[m] << 16) & 0xffff0000;
 	sh2->r[n] = (sh2->r[n] >> 16) & 0x0000ffff;
@@ -1825,7 +1825,7 @@ INLINE void XTRCT(sh2_state *sh2, UINT32 m, UINT32 n)
  *  OPCODE DISPATCHERS
  *****************************************************************************/
 
-INLINE void op0000(sh2_state *sh2, UINT16 opcode)
+INLINE void op0000(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & 0x3F)
 	{
@@ -1902,12 +1902,12 @@ INLINE void op0000(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op0001(sh2_state *sh2, UINT16 opcode)
+INLINE void op0001(sh2_state *sh2, uint16_t opcode)
 {
 	MOVLS4(sh2, Rm, opcode & 0x0f, Rn);
 }
 
-INLINE void op0010(sh2_state *sh2, UINT16 opcode)
+INLINE void op0010(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -1930,7 +1930,7 @@ INLINE void op0010(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op0011(sh2_state *sh2, UINT16 opcode)
+INLINE void op0011(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -1953,7 +1953,7 @@ INLINE void op0011(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op0100(sh2_state *sh2, UINT16 opcode)
+INLINE void op0100(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & 0x3F)
 	{
@@ -2028,12 +2028,12 @@ INLINE void op0100(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op0101(sh2_state *sh2, UINT16 opcode)
+INLINE void op0101(sh2_state *sh2, uint16_t opcode)
 {
 	MOVLL4(sh2, Rm, opcode & 0x0f, Rn);
 }
 
-INLINE void op0110(sh2_state *sh2, UINT16 opcode)
+INLINE void op0110(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & 15)
 	{
@@ -2056,12 +2056,12 @@ INLINE void op0110(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op0111(sh2_state *sh2, UINT16 opcode)
+INLINE void op0111(sh2_state *sh2, uint16_t opcode)
 {
 	ADDI(sh2, opcode & 0xff, Rn);
 }
 
-INLINE void op1000(sh2_state *sh2, UINT16 opcode)
+INLINE void op1000(sh2_state *sh2, uint16_t opcode)
 {
 	switch ( opcode  & (15<<8) )
 	{
@@ -2085,22 +2085,22 @@ INLINE void op1000(sh2_state *sh2, UINT16 opcode)
 }
 
 
-INLINE void op1001(sh2_state *sh2, UINT16 opcode)
+INLINE void op1001(sh2_state *sh2, uint16_t opcode)
 {
 	MOVWI(sh2, opcode & 0xff, Rn);
 }
 
-INLINE void op1010(sh2_state *sh2, UINT16 opcode)
+INLINE void op1010(sh2_state *sh2, uint16_t opcode)
 {
 	BRA(sh2, opcode & 0xfff);
 }
 
-INLINE void op1011(sh2_state *sh2, UINT16 opcode)
+INLINE void op1011(sh2_state *sh2, uint16_t opcode)
 {
 	BSR(sh2, opcode & 0xfff);
 }
 
-INLINE void op1100(sh2_state *sh2, UINT16 opcode)
+INLINE void op1100(sh2_state *sh2, uint16_t opcode)
 {
 	switch (opcode & (15<<8))
 	{
@@ -2123,17 +2123,17 @@ INLINE void op1100(sh2_state *sh2, UINT16 opcode)
 	}
 }
 
-INLINE void op1101(sh2_state *sh2, UINT16 opcode)
+INLINE void op1101(sh2_state *sh2, uint16_t opcode)
 {
 	MOVLI(sh2, opcode & 0xff, Rn);
 }
 
-INLINE void op1110(sh2_state *sh2, UINT16 opcode)
+INLINE void op1110(sh2_state *sh2, uint16_t opcode)
 {
 	MOVI(sh2, opcode & 0xff, Rn);
 }
 
-INLINE void op1111(sh2_state *sh2, UINT16 opcode)
+INLINE void op1111(sh2_state *sh2, uint16_t opcode)
 {
 	NOP();
 }
@@ -2146,11 +2146,11 @@ static CPU_RESET( sh2 )
 {
 	sh2_state *sh2 = get_safe_token(device);
 	emu_timer *tsave, *tsaved0, *tsaved1;
-	UINT32 *m;
-	int  (*dma_callback_kludge)(UINT32 src, UINT32 dst, UINT32 data, int size);
+	uint32_t *m;
+	int  (*dma_callback_kludge)(uint32_t src, uint32_t dst, uint32_t data, int size);
 	int save_is_slave;
 
-	void (*f)(UINT32 data);
+	void (*f)(uint32_t data);
 	device_irq_callback save_irqcallback;
 
 	m = sh2->m;
@@ -2218,15 +2218,15 @@ static CPU_EXECUTE( sh2 )
 
 	do
 	{
-		UINT32 opcode;
+		uint32_t opcode;
 
 		if (sh2->delay)
 		{
-			opcode = memory_decrypted_read_word(sh2->program, WORD_XOR_BE((UINT32)(sh2->delay & AM)));
+			opcode = memory_decrypted_read_word(sh2->program, WORD_XOR_BE((uint32_t)(sh2->delay & AM)));
 			sh2->pc -= 2;
 		}
 		else
-			opcode = memory_decrypted_read_word(sh2->program, WORD_XOR_BE((UINT32)(sh2->pc & AM)));
+			opcode = memory_decrypted_read_word(sh2->program, WORD_XOR_BE((uint32_t)(sh2->pc & AM)));
 
 		debugger_instruction_hook(device, sh2->pc);
 
@@ -2477,7 +2477,7 @@ CPU_GET_INFO( sh1 )
 	}
 }
 
-void sh2drc_set_options(running_device *device, UINT32 options)
+void sh2drc_set_options(running_device *device, uint32_t options)
 {
 	/* doesn't apply here */
 }

@@ -58,7 +58,7 @@ addresses take place.
 
 typedef struct _m6509_Regs m6509_Regs;
 struct _m6509_Regs {
-	UINT8	subtype;		/* currently selected cpu sub type */
+	uint8_t	subtype;		/* currently selected cpu sub type */
 	void	(*const *insn)(m6509_Regs *); /* pointer to the function pointer table */
 	PAIR	ppc;			/* previous program counter */
 	/* pc.w.h contains the current page pc_bank.w.h for better speed */
@@ -66,17 +66,17 @@ struct _m6509_Regs {
 	PAIR	sp; 			/* stack pointer (always 100 - 1FF) */
 	PAIR	zp; 			/* zero page address */
 	PAIR	ea; 			/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
 	PAIR   pc_bank; 	   /* 4 bits, addressed over address 0 */
 	PAIR   ind_bank;	   /* 4 bits, addressed over address 1 */
-	UINT8	p;				/* Processor status */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
-	UINT8	so_state;
+	uint8_t	p;				/* Processor status */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
+	uint8_t	so_state;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *space;
@@ -134,8 +134,8 @@ static ADDRESS_MAP_START(m6509_mem, ADDRESS_SPACE_PROGRAM, 8)
 	AM_RANGE(0x00001, 0x00001) AM_MIRROR(0xF0000) AM_READWRITE(m6509_read_00001, m6509_write_00001)
 ADDRESS_MAP_END
 
-static UINT8 default_rdmem_id(const address_space *space, offs_t address) { return memory_read_byte_8le(space, address); }
-static void default_wdmem_id(const address_space *space, offs_t address, UINT8 data) { memory_write_byte_8le(space, address, data); }
+static uint8_t default_rdmem_id(const address_space *space, offs_t address) { return memory_read_byte_8le(space, address); }
+static void default_wdmem_id(const address_space *space, offs_t address, uint8_t data) { memory_write_byte_8le(space, address, data); }
 
 static CPU_INIT( m6509 )
 {
@@ -211,7 +211,7 @@ static CPU_EXECUTE( m6509 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);

@@ -26,34 +26,34 @@ typedef struct _sm8500_state sm8500_state;
 struct _sm8500_state
 {
 	SM8500_CONFIG config;
-	UINT16 PC;
-	UINT8 *register_base;
-	UINT8 IE0;
-	UINT8 IE1;
-	UINT8 IR0;
-	UINT8 IR1;
-	UINT8 P0;
-	UINT8 P1;
-	UINT8 P2;
-	UINT8 P3;
-	UINT8 SYS;
-	UINT8 CKC;
-	UINT8 clock_changed;
-	UINT16 SP;
-	UINT8 PS0;
-	UINT8 PS1;
-	UINT8 P0C;
-	UINT8 P1C;
-	UINT8 P2C;
-	UINT8 P3C;
-	UINT8 IFLAGS;
-	UINT8 CheckInterrupts;
+	uint16_t PC;
+	uint8_t *register_base;
+	uint8_t IE0;
+	uint8_t IE1;
+	uint8_t IR0;
+	uint8_t IR1;
+	uint8_t P0;
+	uint8_t P1;
+	uint8_t P2;
+	uint8_t P3;
+	uint8_t SYS;
+	uint8_t CKC;
+	uint8_t clock_changed;
+	uint16_t SP;
+	uint8_t PS0;
+	uint8_t PS1;
+	uint8_t P0C;
+	uint8_t P1C;
+	uint8_t P2C;
+	uint8_t P3C;
+	uint8_t IFLAGS;
+	uint8_t CheckInterrupts;
 	int halted;
 	int icount;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
-	UINT8 internal_ram[0x500];
+	uint8_t internal_ram[0x500];
 };
 
 INLINE sm8500_state *get_safe_token(running_device *device)
@@ -63,15 +63,15 @@ INLINE sm8500_state *get_safe_token(running_device *device)
 	return (sm8500_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-static const UINT8 sm8500_b2w[8] = {
+static const uint8_t sm8500_b2w[8] = {
         0, 8, 2, 10, 4, 12, 6, 14
 };
 
-static UINT8 sm85cpu_mem_readbyte( sm8500_state *cpustate, UINT32 offset ) {
+static uint8_t sm85cpu_mem_readbyte( sm8500_state *cpustate, uint32_t offset ) {
 	return ( offset < 0x10 ) ? cpustate->register_base[offset] : memory_read_byte_8be( cpustate->program, offset );
 }
 
-static void sm85cpu_mem_writebyte( sm8500_state *cpustate, UINT32 offset, UINT8 data ) {
+static void sm85cpu_mem_writebyte( sm8500_state *cpustate, uint32_t offset, uint8_t data ) {
 	if ( offset < 0x10 ) {
 		cpustate->register_base[offset] = data;
 	} else {
@@ -79,14 +79,14 @@ static void sm85cpu_mem_writebyte( sm8500_state *cpustate, UINT32 offset, UINT8 
 	}
 }
 
-INLINE UINT16 sm85cpu_mem_readword( sm8500_state *cpustate, UINT32 address )
+INLINE uint16_t sm85cpu_mem_readword( sm8500_state *cpustate, uint32_t address )
 {
-	UINT16 value = (UINT16) sm85cpu_mem_readbyte( cpustate, address ) << 8;
+	uint16_t value = (uint16_t) sm85cpu_mem_readbyte( cpustate, address ) << 8;
 	value |= sm85cpu_mem_readbyte( cpustate, ( address + 1 ) & 0xffff );
 	return value;
 }
 
-INLINE void sm85cpu_mem_writeword( sm8500_state *cpustate, UINT32 address, UINT16 value )
+INLINE void sm85cpu_mem_writeword( sm8500_state *cpustate, uint32_t address, uint16_t value )
 {
 	sm85cpu_mem_writebyte( cpustate, address, value >> 8 );
 	sm85cpu_mem_writebyte( cpustate, ( address + 1 ) & 0xffff, value & 0xff );
@@ -139,7 +139,7 @@ static CPU_EXIT( sm8500 )
 			} \
 			sm85cpu_mem_writebyte( cpustate, cpustate->SP, X );
 
-INLINE void sm8500_do_interrupt(sm8500_state *cpustate, UINT16 vector) {
+INLINE void sm8500_do_interrupt(sm8500_state *cpustate, uint16_t vector) {
 	/* Push PC */
 	PUSH_BYTE( cpustate->PC & 0xFF );
 	PUSH_BYTE( cpustate->PC >> 8 );
@@ -226,16 +226,16 @@ INLINE void sm8500_process_interrupts(sm8500_state *cpustate) {
 static CPU_EXECUTE( sm8500 )
 {
 	sm8500_state *cpustate = get_safe_token(device);
-	UINT8	op;
-	UINT16 oldpc;
+	uint8_t	op;
+	uint16_t oldpc;
 	int	mycycles;
 
 	do
 	{
-		UINT8	r1,r2;
-		UINT16	s1,s2;
-		UINT32	d1,d2;
-		UINT32	res;
+		uint8_t	r1,r2;
+		uint16_t	s1,s2;
+		uint32_t	d1,d2;
+		uint32_t	res;
 
 		debugger_instruction_hook(device, cpustate->PC);
 		oldpc = cpustate->PC;
@@ -383,7 +383,7 @@ static void sm8500_set_irq_line( sm8500_state *cpustate, int irqline, int state 
 	}
 }
 
-UINT8 *sm8500_get_internal_ram(legacy_cpu_device *device)
+uint8_t *sm8500_get_internal_ram(legacy_cpu_device *device)
 {
 	sm8500_state *cpustate = get_safe_token(device);
 	return cpustate->internal_ram;

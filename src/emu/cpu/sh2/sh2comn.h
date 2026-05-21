@@ -90,41 +90,41 @@ do {											\
 
 typedef struct
 {
-	UINT32	ppc;
-	UINT32	pc;
-	UINT32	pr;
-	UINT32	sr;
-	UINT32	gbr, vbr;
-	UINT32	mach, macl;
-	UINT32	r[16];
-	UINT32	ea;
-	UINT32	delay;
-	UINT32	cpu_off;
-	UINT32	dvsr, dvdnth, dvdntl, dvcr;
-	UINT32	pending_irq;
-	UINT32	test_irq;
-	UINT32	pending_nmi;
-	INT32  irqline;
-	UINT32	evec;				// exception vector for DRC
-	UINT32  irqsr;				// IRQ-time old SR for DRC
-	UINT32 target;				// target for jmp/jsr/etc so the delay slot can't kill it
+	uint32_t	ppc;
+	uint32_t	pc;
+	uint32_t	pr;
+	uint32_t	sr;
+	uint32_t	gbr, vbr;
+	uint32_t	mach, macl;
+	uint32_t	r[16];
+	uint32_t	ea;
+	uint32_t	delay;
+	uint32_t	cpu_off;
+	uint32_t	dvsr, dvdnth, dvdntl, dvcr;
+	uint32_t	pending_irq;
+	uint32_t	test_irq;
+	uint32_t	pending_nmi;
+	int32_t  irqline;
+	uint32_t	evec;				// exception vector for DRC
+	uint32_t  irqsr;				// IRQ-time old SR for DRC
+	uint32_t target;				// target for jmp/jsr/etc so the delay slot can't kill it
 	irq_entry     irq_queue[16];
 
 	int pcfsel;	    			// last pcflush entry set
 	int maxpcfsel;				// highest valid pcflush entry
-	UINT32 pcflushes[16];			// pcflush entries
+	uint32_t pcflushes[16];			// pcflush entries
 
-	INT8	irq_line_state[17];
+	int8_t	irq_line_state[17];
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *internal;
-	UINT32	*m;
-	INT8  nmi_line_state;
+	uint32_t	*m;
+	int8_t  nmi_line_state;
 
-	UINT16	frc;
-	UINT16	ocra, ocrb, icr;
-	UINT64	frc_base;
+	uint16_t	frc;
+	uint16_t	ocra, ocrb, icr;
+	uint64_t	frc_base;
 
 	int		frt_input;
 	int 	internal_irq_level;
@@ -136,24 +136,24 @@ typedef struct
 	int     dma_timer_active[2];
 
 	int     is_slave, cpu_type;
-	int  (*dma_callback_kludge)(UINT32 src, UINT32 dst, UINT32 data, int size);
+	int  (*dma_callback_kludge)(uint32_t src, uint32_t dst, uint32_t data, int size);
 
-	void	(*ftcsr_read_callback)(UINT32 data);
+	void	(*ftcsr_read_callback)(uint32_t data);
 
 #ifdef USE_SH2DRC
 	drccache *			cache;			    	/* pointer to the DRC code cache */
 	drcuml_state *		drcuml;					/* DRC UML generator state */
 	drcfe_state *		drcfe;					/* pointer to the DRC front-end state */
-	UINT32				drcoptions;			/* configurable DRC options */
+	uint32_t				drcoptions;			/* configurable DRC options */
 
 	/* internal stuff */
-	UINT8				cache_dirty;		    	/* true if we need to flush the cache */
+	uint8_t				cache_dirty;		    	/* true if we need to flush the cache */
 
 	/* parameters for subroutines */
-	UINT64				numcycles;		    	/* return value from gettotalcycles */
-	UINT32				arg0;			    	/* print_debug argument 1 */
-	UINT32				arg1;			    	/* print_debug argument 2 */
-	UINT32				irq;				/* irq we're taking */
+	uint64_t				numcycles;		    	/* return value from gettotalcycles */
+	uint32_t				arg0;			    	/* print_debug argument 1 */
+	uint32_t				arg1;			    	/* print_debug argument 2 */
+	uint32_t				irq;				/* irq we're taking */
 
 	/* register mappings */
 	drcuml_parameter	regmap[16];		    		/* parameter to register mappings for all 16 integer registers */

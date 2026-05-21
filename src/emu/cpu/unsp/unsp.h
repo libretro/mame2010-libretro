@@ -15,13 +15,13 @@ typedef struct _unspimp_state unspimp_state;
 typedef struct _unsp_state unsp_state;
 struct _unsp_state
 {
-	UINT16 r[16];
-	UINT8 irq;
-	UINT8 fiq;
-	UINT16 curirq;
-	UINT16 sirq;
-	UINT8 sb;
-	UINT8 saved_sb;
+	uint16_t r[16];
+	uint8_t irq;
+	uint8_t fiq;
+	uint16_t curirq;
+	uint16_t sirq;
+	uint8_t sb;
+	uint8_t saved_sb;
 
 	legacy_cpu_device *device;
 	const address_space *program;

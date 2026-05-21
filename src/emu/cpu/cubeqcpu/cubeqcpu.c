@@ -74,28 +74,28 @@ enum alu_dst
 typedef struct
 {
 	/* AM2901 internals */
-	UINT16	ram[16];
-	UINT16  q;
-	UINT16	f;
-	UINT16	y;
-	UINT32	cflag;
-	UINT32	vflag;
+	uint16_t	ram[16];
+	uint16_t  q;
+	uint16_t	f;
+	uint16_t	y;
+	uint32_t	cflag;
+	uint32_t	vflag;
 
-	UINT8	pc;         /* 2 x LS161 @ 6E, 6F */
-	UINT16	platch;
-	UINT8	rtnlatch;   /* LS374 @ 5F */
-	UINT8	adrcntr;    /* 2 x LS161 */
-	UINT16	adrlatch;
-	UINT16	dinlatch;
-	UINT16	ramwlatch;
+	uint8_t	pc;         /* 2 x LS161 @ 6E, 6F */
+	uint16_t	platch;
+	uint8_t	rtnlatch;   /* LS374 @ 5F */
+	uint8_t	adrcntr;    /* 2 x LS161 */
+	uint16_t	adrlatch;
+	uint16_t	dinlatch;
+	uint16_t	ramwlatch;
 
-	UINT16 *sram;
+	uint16_t *sram;
 
 	int prev_ipram;
 	int prev_ipwrt;
 
 	cubeqst_dac_w_func dac_w;
-	UINT16 *sound_data;
+	uint16_t *sound_data;
 
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -106,36 +106,36 @@ typedef struct
 typedef struct
 {
 	/* AM2901 internals */
-	UINT16	ram[16];
-	UINT16  q;
-	UINT16	f;
-	UINT16	y;
-	UINT32	cflag;
-	UINT32	vflag;
+	uint16_t	ram[16];
+	uint16_t  q;
+	uint16_t	f;
+	uint16_t	y;
+	uint32_t	cflag;
+	uint32_t	vflag;
 
-	UINT16	pc;			/* 12-bit, but only 9 used */
-	UINT8	seqcnt;		/* 4-bit counter */
+	uint16_t	pc;			/* 12-bit, but only 9 used */
+	uint8_t	seqcnt;		/* 4-bit counter */
 
-	UINT8	dsrclatch;
-	UINT8	rsrclatch;
-	UINT16	dynaddr;	/* LS374 at 2D, 8D  */
-	UINT16	dyndata;	/* LS374 at 10B, 9B */
-	UINT16	yrlatch;	/* LS374 at 9D, 10D */
-	UINT16	ydlatch;	/* LS374 at 9C, 10C */
-	UINT16	dinlatch;
-	UINT8	divreg;		/* LS74 at ? */
+	uint8_t	dsrclatch;
+	uint8_t	rsrclatch;
+	uint16_t	dynaddr;	/* LS374 at 2D, 8D  */
+	uint16_t	dyndata;	/* LS374 at 10B, 9B */
+	uint16_t	yrlatch;	/* LS374 at 9D, 10D */
+	uint16_t	ydlatch;	/* LS374 at 9C, 10C */
+	uint16_t	dinlatch;
+	uint8_t	divreg;		/* LS74 at ? */
 
-	UINT16	linedata;
-	UINT16	lineaddr;
+	uint16_t	linedata;
+	uint16_t	lineaddr;
 
-	UINT16 *dram;
-	UINT16 *sram;
+	uint16_t *dram;
+	uint16_t *sram;
 
-	UINT8 prev_dred;
-	UINT8 prev_dwrt;
-	UINT8 wc;
-	UINT8 rc;
-	UINT8 clkcnt;
+	uint8_t prev_dred;
+	uint8_t prev_dwrt;
+	uint8_t wc;
+	uint8_t rc;
+	uint8_t clkcnt;
 
 	legacy_cpu_device *device;
 	legacy_cpu_device *lindevice;
@@ -147,41 +147,41 @@ typedef struct
 typedef struct
 {
 	/* 12-bit AM2901 internals */
-	UINT16	ram[16];
-	UINT16  q;
-	UINT16	f;
-	UINT16	y;
-	UINT32	cflag;
-	UINT32	vflag;
+	uint16_t	ram[16];
+	uint16_t  q;
+	uint16_t	f;
+	uint16_t	y;
+	uint32_t	cflag;
+	uint32_t	vflag;
 
-	UINT8	pc[2];		/* Two program counters; one for FG, other for BG */
+	uint8_t	pc[2];		/* Two program counters; one for FG, other for BG */
 
-	UINT16	seqcnt;		/* 12-bit */
-	UINT16	clatch;		/* LS374 at 9E and 1-bit FF */
-	UINT8	zlatch;		/* LS374 at 4H */
+	uint16_t	seqcnt;		/* 12-bit */
+	uint16_t	clatch;		/* LS374 at 9E and 1-bit FF */
+	uint8_t	zlatch;		/* LS374 at 4H */
 
-	UINT16	xcnt;
-	UINT16	ycnt;
-	UINT8	sreg;
+	uint16_t	xcnt;
+	uint16_t	ycnt;
+	uint8_t	sreg;
 
-	UINT16	fadlatch;
-	UINT16	badlatch;
+	uint16_t	fadlatch;
+	uint16_t	badlatch;
 
-	UINT16	sramdlatch;
+	uint16_t	sramdlatch;
 
-	UINT8	fglatch;
-	UINT8	bglatch;
-	UINT8	gt0reg;
-	UINT8	fdxreg;
-	UINT32	field;
+	uint8_t	fglatch;
+	uint8_t	bglatch;
+	uint8_t	gt0reg;
+	uint8_t	fdxreg;
+	uint32_t	field;
 
-	UINT32	clkcnt;
+	uint32_t	clkcnt;
 
 	/* RAM */
-	UINT16	*sram;
-	UINT8	*ptr_ram;
-	UINT32	*e_stack;
-	UINT32	*o_stack;
+	uint16_t	*sram;
+	uint8_t	*ptr_ram;
+	uint32_t	*e_stack;
+	uint32_t	*o_stack;
 
 	legacy_cpu_device *device;
 	legacy_cpu_device *rotdevice;
@@ -283,13 +283,13 @@ static CPU_INIT( cquestsnd )
 	memset(cpustate, 0, sizeof(*cpustate));
 
 	cpustate->dac_w = _config->dac_w;
-	cpustate->sound_data = (UINT16*)memory_region(device->machine, _config->sound_data_region);
+	cpustate->sound_data = (uint16_t*)memory_region(device->machine, _config->sound_data_region);
 
 	cpustate->device = device;
 	cpustate->program = device->space(AS_PROGRAM);
 
 	/* Allocate RAM shared with 68000 */
-	cpustate->sram = auto_alloc_array(device->machine, UINT16, 4096/2);
+	cpustate->sram = auto_alloc_array(device->machine, uint16_t, 4096/2);
 
 	cquestsnd_state_register(device);
 }
@@ -355,8 +355,8 @@ static CPU_INIT( cquestrot )
 	memset(cpustate, 0, sizeof(*cpustate));
 
 	/* Allocate RAM */
-	cpustate->dram = auto_alloc_array(device->machine, UINT16, 16384);  /* Shared with 68000 */
-	cpustate->sram = auto_alloc_array(device->machine, UINT16, 2048);   /* Private */
+	cpustate->dram = auto_alloc_array(device->machine, uint16_t, 16384);  /* Shared with 68000 */
+	cpustate->sram = auto_alloc_array(device->machine, uint16_t, 2048);   /* Private */
 
 	cpustate->device = device;
 	cpustate->lindevice = device->machine->device<legacy_cpu_device>(rotconfig->lin_cpu_tag);
@@ -438,10 +438,10 @@ static CPU_INIT( cquestlin )
 	memset(cpustate, 0, sizeof(*cpustate));
 
 	/* Allocate RAM */
-	cpustate->sram = auto_alloc_array(device->machine, UINT16, 4096);      /* Shared with rotate CPU */
-	cpustate->ptr_ram = auto_alloc_array(device->machine, UINT8, 1024);                    /* Pointer RAM */
-	cpustate->e_stack = auto_alloc_array(device->machine, UINT32, 32768);  /* Stack DRAM: 32kx20 */
-	cpustate->o_stack = auto_alloc_array(device->machine, UINT32, 32768);  /* Stack DRAM: 32kx20 */
+	cpustate->sram = auto_alloc_array(device->machine, uint16_t, 4096);      /* Shared with rotate CPU */
+	cpustate->ptr_ram = auto_alloc_array(device->machine, uint8_t, 1024);                    /* Pointer RAM */
+	cpustate->e_stack = auto_alloc_array(device->machine, uint32_t, 32768);  /* Stack DRAM: 32kx20 */
+	cpustate->o_stack = auto_alloc_array(device->machine, uint32_t, 32768);  /* Stack DRAM: 32kx20 */
 
 	cpustate->device = device;
 	cpustate->rotdevice = device->machine->device<legacy_cpu_device>(linconfig->rot_cpu_tag);
@@ -503,9 +503,9 @@ static CPU_EXECUTE( cquestsnd )
 	do
 	{
 		/* Decode the instruction */
-		UINT64 inst = memory_decrypted_read_qword(cpustate->program, SND_PC << 3);
-		UINT32 inslow = inst & 0xffffffff;
-		UINT32 inshig = inst >> 32;
+		uint64_t inst = memory_decrypted_read_qword(cpustate->program, SND_PC << 3);
+		uint32_t inslow = inst & 0xffffffff;
+		uint32_t inshig = inst >> 32;
 
 		int t       = (inshig >> 24) & 0xff;
 		int b       = (inshig >> 20) & 0xf;
@@ -533,12 +533,12 @@ static CPU_EXECUTE( cquestsnd )
 
 		/* Handle the AM2901 ALU instruction */
 		{
-			UINT16 r = 0;
-			UINT16 s = 0;
+			uint16_t r = 0;
+			uint16_t s = 0;
 
-			UINT32 res = 0;
-			UINT32 cflag = 0;
-			UINT32 vflag = 0;
+			uint32_t res = 0;
+			uint32_t cflag = 0;
+			uint32_t vflag = 0;
 
 			/* Determine the ALU sources */
 			switch (i2_0)
@@ -611,7 +611,7 @@ static CPU_EXECUTE( cquestsnd )
 					break;
 				case RAMQD:
 				{
-					UINT16 qin;
+					uint16_t qin;
 
 					cpustate->ram[b] = (_rin ? 0 : 0x8000) | (cpustate->f >> 1);
 					cpustate->q >>= 1;
@@ -642,7 +642,7 @@ static CPU_EXECUTE( cquestsnd )
 		/* Now handle any SRAM accesses from the previous cycle */
 		if (!cpustate->prev_ipram)
 		{
-		  UINT16 addr = cpustate->adrlatch | (cpustate->adrcntr & 0x7f);
+		  uint16_t addr = cpustate->adrlatch | (cpustate->adrcntr & 0x7f);
 
 		  if (!cpustate->prev_ipwrt)
 			cpustate->sram[addr] = cpustate->ramwlatch;
@@ -764,10 +764,10 @@ static CPU_EXECUTE( cquestrot )
 	do
 	{
 		/* Decode the instruction */
-		UINT64 inst = memory_decrypted_read_qword(cpustate->program, ROT_PC << 3);
+		uint64_t inst = memory_decrypted_read_qword(cpustate->program, ROT_PC << 3);
 
-		UINT32 inslow = inst & 0xffffffff;
-		UINT32 inshig = inst >> 32;
+		uint32_t inslow = inst & 0xffffffff;
+		uint32_t inshig = inst >> 32;
 
 		int t       = (inshig >> 20) & 0xfff;
 		int jmp     = (inshig >> 16) & 0xf;
@@ -785,7 +785,7 @@ static CPU_EXECUTE( cquestrot )
 		int i2_0	= (inslow >> 16) & 0x7;
 
 		int dsrclatch;
-		UINT16 data_in = 0xffff;
+		uint16_t data_in = 0xffff;
 
 		if (calldebugger)
 			debugger_instruction_hook(device, ROT_PC);
@@ -838,12 +838,12 @@ static CPU_EXECUTE( cquestrot )
 
 		/* No do the ALU operation */
 		{
-			UINT16 r = 0;
-			UINT16 s = 0;
+			uint16_t r = 0;
+			uint16_t s = 0;
 
-			UINT32 res = 0;
-			UINT32 cflag = 0;
-			UINT32 vflag = 0;
+			uint32_t res = 0;
+			uint32_t cflag = 0;
+			uint32_t vflag = 0;
 
 			/* First, determine correct I1 bit */
 			if ((spf == SPF_MULT) && !_BIT(cpustate->q, 0))
@@ -927,10 +927,10 @@ static CPU_EXECUTE( cquestrot )
 					break;
 				case RAMQD:
 				{
-					UINT16 q0 = cpustate->q & 1;
-					UINT16 r0 = cpustate->f & 1;
-					UINT16 q15 = 0;
-					UINT16 r15 = 0;
+					uint16_t q0 = cpustate->q & 1;
+					uint16_t r0 = cpustate->f & 1;
+					uint16_t q15 = 0;
+					uint16_t r15 = 0;
 
 					/* Determine Q15 and RAM15 */
 					switch (sel)
@@ -954,8 +954,8 @@ static CPU_EXECUTE( cquestrot )
 				}
 				case RAMD:
 				{
-					UINT16 r0 = cpustate->f & 1;
-					UINT16 r15 = 0;
+					uint16_t r0 = cpustate->f & 1;
+					uint16_t r15 = 0;
 
 					switch (sel)
 					{
@@ -973,10 +973,10 @@ static CPU_EXECUTE( cquestrot )
 				}
 				case RAMQU:
 				{
-					UINT16 q15 = BIT(cpustate->q, 15);
-					UINT16 r15 = BIT(cpustate->f, 15);
-					UINT16 q0 = 0;
-					UINT16 r0 = 0;
+					uint16_t q15 = BIT(cpustate->q, 15);
+					uint16_t r15 = BIT(cpustate->f, 15);
+					uint16_t q0 = 0;
+					uint16_t r0 = 0;
 
 					switch (sel)
 					{
@@ -999,9 +999,9 @@ static CPU_EXECUTE( cquestrot )
 				case RAMU:
 				{
 
-					UINT16 q15 = BIT(cpustate->q, 15);
-					UINT16 r15 = BIT(cpustate->f, 15);
-					UINT16 r0 = 0;
+					uint16_t q15 = BIT(cpustate->q, 15);
+					uint16_t r15 = BIT(cpustate->f, 15);
+					uint16_t r0 = 0;
 
 					switch (sel)
 					{
@@ -1149,13 +1149,13 @@ void cubeqcpu_clear_stack(running_device *device)
 	memset(&cpustate->ptr_ram[cpustate->field * 256], 0, 256);
 }
 
-UINT8 cubeqcpu_get_ptr_ram_val(running_device *device, int i)
+uint8_t cubeqcpu_get_ptr_ram_val(running_device *device, int i)
 {
 	cquestlin_state *cpustate = get_safe_token_lin(device);
 	return cpustate->ptr_ram[(VISIBLE_FIELD * 256) + i];
 }
 
-UINT32* cubeqcpu_get_stack_ram(running_device *device)
+uint32_t* cubeqcpu_get_stack_ram(running_device *device)
 {
 	cquestlin_state *cpustate = get_safe_token_lin(device);
 	if (VISIBLE_FIELD == ODD_FIELD)
@@ -1172,8 +1172,8 @@ static CPU_EXECUTE( cquestlin )
 	cquestlin_state *cpustate = get_safe_token_lin(device);
 	cquestrot_state *rotcpustate = get_safe_token_rot(cpustate->rotdevice);
 	int calldebugger = ((device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0);
-	UINT32	*stack_ram;
-	UINT8	*ptr_ram;
+	uint32_t	*stack_ram;
+	uint8_t	*ptr_ram;
 
 	/* Check the field and set the stack/pointer RAM pointers appropriately */
 	if (cpustate->field == ODD_FIELD)
@@ -1193,10 +1193,10 @@ static CPU_EXECUTE( cquestlin )
 		/* Are we executing the foreground or backgroud program? */
 		int prog = (cpustate->clkcnt & 3) ? BACKGROUND : FOREGROUND;
 
-		UINT64 inst = memory_decrypted_read_qword(cpustate->program, LINE_PC << 3);
+		uint64_t inst = memory_decrypted_read_qword(cpustate->program, LINE_PC << 3);
 
-		UINT32 inslow = inst & 0xffffffff;
-		UINT32 inshig = inst >> 32;
+		uint32_t inslow = inst & 0xffffffff;
+		uint32_t inshig = inst >> 32;
 
 		int t       = (inshig >> 24) & 0xff;
 		int jmp		= (inshig >> 20) & 0xf;
@@ -1211,7 +1211,7 @@ static CPU_EXECUTE( cquestlin )
 		int _pbcs	= (inslow >> 27) & 0x1;
 		int i2_0	= (inslow >> 24) & 0x7;
 
-		UINT16	data_in = 0;
+		uint16_t	data_in = 0;
 
 		if (calldebugger)
 			debugger_instruction_hook(device, cpustate->pc[prog]);
@@ -1240,9 +1240,9 @@ static CPU_EXECUTE( cquestlin )
 			if (_BIT(cpustate->fglatch, 4) && (cpustate->ycnt < 256))
 			{
 				/* 20-bit words */
-				UINT32 data;
-				UINT16 h = cpustate->xcnt;
-				UINT8 v = cpustate->ycnt & 0xff;
+				uint32_t data;
+				uint16_t h = cpustate->xcnt;
+				uint8_t v = cpustate->ycnt & 0xff;
 
 				/* Clamp H between 0 and 319 */
 				if (h >= 320)
@@ -1275,12 +1275,12 @@ static CPU_EXECUTE( cquestlin )
 
 		/* Now do the ALU operation */
 		{
-			UINT16 r = 0;
-			UINT16 s = 0;
+			uint16_t r = 0;
+			uint16_t s = 0;
 
-			UINT16 res = 0;
-			UINT32 cflag = 0;
-			UINT32 vflag = 0;
+			uint16_t res = 0;
+			uint32_t cflag = 0;
+			uint32_t vflag = 0;
 
 			/* Determine the ALU sources */
 			switch (i2_0)
@@ -1357,8 +1357,8 @@ static CPU_EXECUTE( cquestlin )
 					break;
 				case RAMQD:
 				{
-					UINT16 r11 = (BIT(cpustate->f, 11) ^ cpustate->vflag) ? 0x800 : 0;
-					UINT16 q11 = (prog == BACKGROUND) ? 0x800 : 0;
+					uint16_t r11 = (BIT(cpustate->f, 11) ^ cpustate->vflag) ? 0x800 : 0;
+					uint16_t q11 = (prog == BACKGROUND) ? 0x800 : 0;
 
 					cpustate->ram[b] = r11 | (cpustate->f >> 1);
 					cpustate->q = q11 | (cpustate->q >> 1);
@@ -1367,7 +1367,7 @@ static CPU_EXECUTE( cquestlin )
 				}
 				case RAMD:
 				{
-					UINT16 r11 = (BIT(cpustate->f, 11) ^ cpustate->vflag) ? 0x800 : 0;
+					uint16_t r11 = (BIT(cpustate->f, 11) ^ cpustate->vflag) ? 0x800 : 0;
 
 					cpustate->ram[b] = r11 | (cpustate->f >> 1);
 					cpustate->y = cpustate->f;
@@ -1376,7 +1376,7 @@ static CPU_EXECUTE( cquestlin )
 				case RAMQU:
 				{
 					/* Determine shift inputs */
-					UINT16 r0 = (prog == BACKGROUND);
+					uint16_t r0 = (prog == BACKGROUND);
 
 					/* This should never happen - Q0 will be invalid */
 					cpustate->ram[b] = (cpustate->f << 1) | r0;
@@ -1386,7 +1386,7 @@ static CPU_EXECUTE( cquestlin )
 				}
 				case RAMU:
 				{
-					UINT16 r0 = (prog == BACKGROUND);
+					uint16_t r0 = (prog == BACKGROUND);
 
 					cpustate->ram[b] = (cpustate->f << 1) | r0;
 					cpustate->y = cpustate->f;

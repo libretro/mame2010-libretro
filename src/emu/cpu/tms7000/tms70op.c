@@ -29,7 +29,7 @@ static void illegal(tms7000_state *cpustate)
 
 static void adc_b2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA + RDB + GET_C;
 	WRA(t);
@@ -44,8 +44,8 @@ static void adc_b2a(tms7000_state *cpustate)
 
 static void adc_r2a(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -62,8 +62,8 @@ static void adc_r2a(tms7000_state *cpustate)
 
 static void adc_r2b(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -80,8 +80,8 @@ static void adc_r2b(tms7000_state *cpustate)
 
 static void adc_r2r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i,j;
+	uint16_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -99,8 +99,8 @@ static void adc_r2r(tms7000_state *cpustate)
 
 static void adc_i2a(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -117,8 +117,8 @@ static void adc_i2a(tms7000_state *cpustate)
 
 static void adc_i2b(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -135,8 +135,8 @@ static void adc_i2b(tms7000_state *cpustate)
 
 static void adc_i2r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i,j;
+	uint16_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -154,7 +154,7 @@ static void adc_i2r(tms7000_state *cpustate)
 
 static void add_b2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA + RDB;
 	WRA(t);
@@ -169,8 +169,8 @@ static void add_b2a(tms7000_state *cpustate)
 
 static void add_r2a(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -187,8 +187,8 @@ static void add_r2a(tms7000_state *cpustate)
 
 static void add_r2b(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -205,8 +205,8 @@ static void add_r2b(tms7000_state *cpustate)
 
 static void add_r2r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i,j;
+	uint16_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -224,8 +224,8 @@ static void add_r2r(tms7000_state *cpustate)
 
 static void add_i2a(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -242,8 +242,8 @@ static void add_i2a(tms7000_state *cpustate)
 
 static void add_i2b(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	v;
+	uint16_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -260,8 +260,8 @@ static void add_i2b(tms7000_state *cpustate)
 
 static void add_i2r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i,j;
+	uint16_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -279,7 +279,7 @@ static void add_i2r(tms7000_state *cpustate)
 
 static void and_b2a(tms7000_state *cpustate)
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RDA & RDB;
 	WRA(t);
@@ -293,8 +293,8 @@ static void and_b2a(tms7000_state *cpustate)
 
 static void and_r2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -310,8 +310,8 @@ static void and_r2a(tms7000_state *cpustate)
 
 static void and_r2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -327,8 +327,8 @@ static void and_r2b(tms7000_state *cpustate)
 
 static void and_r2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -345,8 +345,8 @@ static void and_r2r(tms7000_state *cpustate)
 
 static void and_i2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -362,8 +362,8 @@ static void and_i2a(tms7000_state *cpustate)
 
 static void and_i2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -379,8 +379,8 @@ static void and_i2b(tms7000_state *cpustate)
 
 static void and_i2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -397,8 +397,8 @@ static void and_i2r(tms7000_state *cpustate)
 
 static void andp_a2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDA & RM( 0x0100 + v);
@@ -413,8 +413,8 @@ static void andp_a2p(tms7000_state *cpustate)
 
 static void andp_b2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDB & RM( 0x0100 + v);
@@ -430,7 +430,7 @@ static void andp_b2p(tms7000_state *cpustate)
 
 static void movp_i2p(tms7000_state *cpustate)
 {
-	UINT8	i,v;
+	uint8_t	i,v;
 
 	IMMBYTE(i);
 	IMMBYTE(v);
@@ -445,8 +445,8 @@ static void movp_i2p(tms7000_state *cpustate)
 
 static void andp_i2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,v;
+	uint8_t	t;
+	uint8_t	i,v;
 
 	IMMBYTE(i);
 	IMMBYTE(v);
@@ -471,7 +471,7 @@ static void br_dir(tms7000_state *cpustate)
 
 static void br_ind(tms7000_state *cpustate)
 {
-	UINT8	v;
+	uint8_t	v;
 
 	IMMBYTE( v );
 	PC.w.l = RRF16(cpustate,v);
@@ -490,7 +490,7 @@ static void br_inx(tms7000_state *cpustate)
 
 static void btjo_b2a(tms7000_state *cpustate)
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RDB & RDA;
 
@@ -500,7 +500,7 @@ static void btjo_b2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE( j );
 		pPC += j;
@@ -515,7 +515,7 @@ static void btjo_b2a(tms7000_state *cpustate)
 
 static void btjo_r2a(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE( r );
 	t = RM( r ) & RDA;
@@ -526,7 +526,7 @@ static void btjo_r2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE( j );
 		pPC += j;
@@ -541,7 +541,7 @@ static void btjo_r2a(tms7000_state *cpustate)
 
 static void btjo_r2b(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE(r);
 	t = RM(r) & RDB;
@@ -552,7 +552,7 @@ static void btjo_r2b(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -567,7 +567,7 @@ static void btjo_r2b(tms7000_state *cpustate)
 
 static void btjo_r2r(tms7000_state *cpustate)
 {
-	UINT8	t,r,s;
+	uint8_t	t,r,s;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -579,7 +579,7 @@ static void btjo_r2r(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -594,7 +594,7 @@ static void btjo_r2r(tms7000_state *cpustate)
 
 static void btjo_i2a(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE(r);
 	t = r & RDA;
@@ -605,7 +605,7 @@ static void btjo_i2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -620,7 +620,7 @@ static void btjo_i2a(tms7000_state *cpustate)
 
 static void btjo_i2b(tms7000_state *cpustate)
 {
-	UINT8	t,i;
+	uint8_t	t,i;
 
 	IMMBYTE(i);
 	t = i & RDB;
@@ -631,7 +631,7 @@ static void btjo_i2b(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -646,7 +646,7 @@ static void btjo_i2b(tms7000_state *cpustate)
 
 static void btjo_i2r(tms7000_state *cpustate)
 {
-	UINT8	t,i,r;
+	uint8_t	t,i,r;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -658,7 +658,7 @@ static void btjo_i2r(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -673,7 +673,7 @@ static void btjo_i2r(tms7000_state *cpustate)
 
 static void btjop_ap(tms7000_state *cpustate)
 {
-	UINT8	t,p;
+	uint8_t	t,p;
 
 	IMMBYTE(p);
 
@@ -685,7 +685,7 @@ static void btjop_ap(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -700,7 +700,7 @@ static void btjop_ap(tms7000_state *cpustate)
 
 static void btjop_bp(tms7000_state *cpustate)
 {
-	UINT8	t,p;
+	uint8_t	t,p;
 
 	IMMBYTE(p);
 
@@ -712,7 +712,7 @@ static void btjop_bp(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -727,7 +727,7 @@ static void btjop_bp(tms7000_state *cpustate)
 
 static void btjop_ip(tms7000_state *cpustate)
 {
-	UINT8	t,p,i;
+	uint8_t	t,p,i;
 
 	IMMBYTE(i);
 	IMMBYTE(p);
@@ -740,7 +740,7 @@ static void btjop_ip(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -755,7 +755,7 @@ static void btjop_ip(tms7000_state *cpustate)
 
 static void btjz_b2a(tms7000_state *cpustate)
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RDB & ~RDA;
 
@@ -765,7 +765,7 @@ static void btjz_b2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE( j );
 		pPC += j;
@@ -780,7 +780,7 @@ static void btjz_b2a(tms7000_state *cpustate)
 
 static void btjz_r2a(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE( r );
 	t = RM( r ) & ~RDA;
@@ -791,7 +791,7 @@ static void btjz_r2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE( j );
 		pPC += j;
@@ -806,7 +806,7 @@ static void btjz_r2a(tms7000_state *cpustate)
 
 static void btjz_r2b(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE(r);
 	t = RM(r) & ~RDB;
@@ -817,7 +817,7 @@ static void btjz_r2b(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -832,7 +832,7 @@ static void btjz_r2b(tms7000_state *cpustate)
 
 static void btjz_r2r(tms7000_state *cpustate)
 {
-	UINT8	t,r,s;
+	uint8_t	t,r,s;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -844,7 +844,7 @@ static void btjz_r2r(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -859,7 +859,7 @@ static void btjz_r2r(tms7000_state *cpustate)
 
 static void btjz_i2a(tms7000_state *cpustate)
 {
-	UINT8	t,r;
+	uint8_t	t,r;
 
 	IMMBYTE(r);
 	t = r & ~RDA;
@@ -870,7 +870,7 @@ static void btjz_i2a(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -885,7 +885,7 @@ static void btjz_i2a(tms7000_state *cpustate)
 
 static void btjz_i2b(tms7000_state *cpustate)
 {
-	UINT8	t,i;
+	uint8_t	t,i;
 
 	IMMBYTE(i);
 	t = i & ~RDB;
@@ -896,7 +896,7 @@ static void btjz_i2b(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -911,7 +911,7 @@ static void btjz_i2b(tms7000_state *cpustate)
 
 static void btjz_i2r(tms7000_state *cpustate)
 {
-	UINT8	t,i,r;
+	uint8_t	t,i,r;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -923,7 +923,7 @@ static void btjz_i2r(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -938,7 +938,7 @@ static void btjz_i2r(tms7000_state *cpustate)
 
 static void btjzp_ap(tms7000_state *cpustate)
 {
-	UINT8	t,p;
+	uint8_t	t,p;
 
 	IMMBYTE(p);
 
@@ -950,7 +950,7 @@ static void btjzp_ap(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -965,7 +965,7 @@ static void btjzp_ap(tms7000_state *cpustate)
 
 static void btjzp_bp(tms7000_state *cpustate)
 {
-	UINT8	t,p;
+	uint8_t	t,p;
 
 	IMMBYTE(p);
 
@@ -977,7 +977,7 @@ static void btjzp_bp(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -992,7 +992,7 @@ static void btjzp_bp(tms7000_state *cpustate)
 
 static void btjzp_ip(tms7000_state *cpustate)
 {
-	UINT8	t,p,i;
+	uint8_t	t,p,i;
 
 	IMMBYTE(i);
 	IMMBYTE(p);
@@ -1005,7 +1005,7 @@ static void btjzp_ip(tms7000_state *cpustate)
 
 	if(t != 0)
 	{
-		INT8	j;
+		int8_t	j;
 
 		SIMMBYTE(j);
 		pPC += j;
@@ -1031,7 +1031,7 @@ static void call_dir(tms7000_state *cpustate)
 
 static void call_ind(tms7000_state *cpustate)
 {
-	UINT8	v;
+	uint8_t	v;
 
 	IMMBYTE( v );
 	PUSHWORD( PC );
@@ -1064,7 +1064,7 @@ static void clr_b(tms7000_state *cpustate)
 
 static void clr_r(tms7000_state *cpustate)
 {
-	UINT8	r;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	WM(r,0);
@@ -1073,7 +1073,7 @@ static void clr_r(tms7000_state *cpustate)
 
 static void clrc(tms7000_state *cpustate)
 {
-	UINT8	a;
+	uint8_t	a;
 
 	a = RDA;
 
@@ -1086,7 +1086,7 @@ static void clrc(tms7000_state *cpustate)
 
 static void cmp_ba(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = RDA - RDB;
 
@@ -1104,8 +1104,8 @@ static void cmp_ba(tms7000_state *cpustate)
 
 static void cmp_ra(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDA - RM(r);
@@ -1124,8 +1124,8 @@ static void cmp_ra(tms7000_state *cpustate)
 
 static void cmp_rb(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDB - RM(r);
@@ -1144,8 +1144,8 @@ static void cmp_rb(tms7000_state *cpustate)
 
 static void cmp_rr(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r,s;
+	uint16_t	t;
+	uint8_t	r,s;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -1165,8 +1165,8 @@ static void cmp_rr(tms7000_state *cpustate)
 
 static void cmp_ia(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDA - i;
@@ -1185,8 +1185,8 @@ static void cmp_ia(tms7000_state *cpustate)
 
 static void cmp_ib(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDB - i;
@@ -1205,8 +1205,8 @@ static void cmp_ib(tms7000_state *cpustate)
 
 static void cmp_ir(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i,r;
+	uint16_t	t;
+	uint8_t	i,r;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -1226,7 +1226,7 @@ static void cmp_ir(tms7000_state *cpustate)
 
 static void cmpa_dir(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	IMMWORD( i );
@@ -1246,9 +1246,9 @@ static void cmpa_dir(tms7000_state *cpustate)
 
 static void cmpa_ind(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	p;
-	INT8	i;
+	int8_t	i;
 
 	IMMBYTE(i);
 	p.w.l = RRF16(cpustate,i);
@@ -1268,7 +1268,7 @@ static void cmpa_ind(tms7000_state *cpustate)
 
 static void cmpa_inx(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	IMMWORD( i );
@@ -1288,7 +1288,7 @@ static void cmpa_inx(tms7000_state *cpustate)
 
 static void dac_b2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = bcd_add( RDA, RDB );
 
@@ -1307,8 +1307,8 @@ static void dac_b2a(tms7000_state *cpustate)
 
 static void dac_r2a(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -1329,8 +1329,8 @@ static void dac_r2a(tms7000_state *cpustate)
 
 static void dac_r2b(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -1351,8 +1351,8 @@ static void dac_r2b(tms7000_state *cpustate)
 
 static void dac_r2r(tms7000_state *cpustate)
 {
-	UINT8	r,s;
-	UINT16	t;
+	uint8_t	r,s;
+	uint16_t	t;
 
 	IMMBYTE(s);
 	IMMBYTE(r);
@@ -1374,8 +1374,8 @@ static void dac_r2r(tms7000_state *cpustate)
 
 static void dac_i2a(tms7000_state *cpustate)
 {
-	UINT8	i;
-	UINT16	t;
+	uint8_t	i;
+	uint16_t	t;
 
 	IMMBYTE(i);
 
@@ -1396,8 +1396,8 @@ static void dac_i2a(tms7000_state *cpustate)
 
 static void dac_i2b(tms7000_state *cpustate)
 {
-	UINT8	i;
-	UINT16	t;
+	uint8_t	i;
+	uint16_t	t;
 
 	IMMBYTE(i);
 
@@ -1418,8 +1418,8 @@ static void dac_i2b(tms7000_state *cpustate)
 
 static void dac_i2r(tms7000_state *cpustate)
 {
-	UINT8	i,r;
-	UINT16	t;
+	uint8_t	i,r;
+	uint16_t	t;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -1441,7 +1441,7 @@ static void dac_i2r(tms7000_state *cpustate)
 
 static void dec_a(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = RDA - 1;
 
@@ -1457,7 +1457,7 @@ static void dec_a(tms7000_state *cpustate)
 
 static void dec_b(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = RDB - 1;
 
@@ -1473,8 +1473,8 @@ static void dec_b(tms7000_state *cpustate)
 
 static void dec_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -1528,7 +1528,7 @@ static void decd_b(tms7000_state *cpustate)
 
 static void decd_r(tms7000_state *cpustate)
 {
-	UINT8	r;
+	uint8_t	r;
 	PAIR	t;
 
 	IMMBYTE(r);
@@ -1554,7 +1554,7 @@ static void dint(tms7000_state *cpustate)
 
 static void djnz_a(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = RDA - 1;
 
@@ -1566,7 +1566,7 @@ static void djnz_a(tms7000_state *cpustate)
 
 	if( t != 0 )
 	{
-		INT8	s;
+		int8_t	s;
 
 		SIMMBYTE(s);
 		pPC += s;
@@ -1581,7 +1581,7 @@ static void djnz_a(tms7000_state *cpustate)
 
 static void djnz_b(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = RDB - 1;
 
@@ -1593,7 +1593,7 @@ static void djnz_b(tms7000_state *cpustate)
 
 	if( t != 0 )
 	{
-		INT8	s;
+		int8_t	s;
 
 		SIMMBYTE(s);
 		pPC += s;
@@ -1608,8 +1608,8 @@ static void djnz_b(tms7000_state *cpustate)
 
 static void djnz_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -1623,7 +1623,7 @@ static void djnz_r(tms7000_state *cpustate)
 
 	if( t != 0 )
 	{
-		INT8	s;
+		int8_t	s;
 
 		SIMMBYTE(s);
 		pPC += s;
@@ -1638,7 +1638,7 @@ static void djnz_r(tms7000_state *cpustate)
 
 static void dsb_b2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = bcd_sub( RDA, RDB );
 
@@ -1657,8 +1657,8 @@ static void dsb_b2a(tms7000_state *cpustate)
 
 static void dsb_r2a(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -1679,8 +1679,8 @@ static void dsb_r2a(tms7000_state *cpustate)
 
 static void dsb_r2b(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -1701,8 +1701,8 @@ static void dsb_r2b(tms7000_state *cpustate)
 
 static void dsb_r2r(tms7000_state *cpustate)
 {
-	UINT8	r,s;
-	UINT16	t;
+	uint8_t	r,s;
+	uint16_t	t;
 
 	IMMBYTE(s);
 	IMMBYTE(r);
@@ -1724,8 +1724,8 @@ static void dsb_r2r(tms7000_state *cpustate)
 
 static void dsb_i2a(tms7000_state *cpustate)
 {
-	UINT8	i;
-	UINT16	t;
+	uint8_t	i;
+	uint16_t	t;
 
 	IMMBYTE(i);
 
@@ -1746,8 +1746,8 @@ static void dsb_i2a(tms7000_state *cpustate)
 
 static void dsb_i2b(tms7000_state *cpustate)
 {
-	UINT8	i;
-	UINT16	t;
+	uint8_t	i;
+	uint16_t	t;
 
 	IMMBYTE(i);
 
@@ -1768,8 +1768,8 @@ static void dsb_i2b(tms7000_state *cpustate)
 
 static void dsb_i2r(tms7000_state *cpustate)
 {
-	UINT8	r,i;
-	UINT16	t;
+	uint8_t	r,i;
+	uint16_t	t;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -1804,7 +1804,7 @@ static void idle(tms7000_state *cpustate)
 
 static void inc_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA + 1;
 
@@ -1820,7 +1820,7 @@ static void inc_a(tms7000_state *cpustate)
 
 static void inc_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDB + 1;
 
@@ -1836,8 +1836,8 @@ static void inc_b(tms7000_state *cpustate)
 
 static void inc_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -1855,7 +1855,7 @@ static void inc_r(tms7000_state *cpustate)
 
 static void inv_a(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = ~(RDA);
 	WRA(t);
@@ -1869,7 +1869,7 @@ static void inv_a(tms7000_state *cpustate)
 
 static void inv_b(tms7000_state *cpustate)
 {
-	UINT16 t;
+	uint16_t t;
 
 	t = ~(RDA);
 	WRA(t);
@@ -1883,8 +1883,8 @@ static void inv_b(tms7000_state *cpustate)
 
 static void inv_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -1903,7 +1903,7 @@ static void jc(tms7000_state *cpustate)
 {
 	if( pSR & SR_C )
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -1920,7 +1920,7 @@ static void jeq(tms7000_state *cpustate)
 {
 	if( pSR & SR_Z )
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -1942,7 +1942,7 @@ static void jl(tms7000_state *cpustate)
 	}
 	else
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -1952,7 +1952,7 @@ static void jl(tms7000_state *cpustate)
 
 static void jmp(tms7000_state *cpustate)
 {
-	INT8 s;
+	int8_t s;
 
 	SIMMBYTE( s );
 	pPC += s;
@@ -1963,7 +1963,7 @@ static void j_jn(tms7000_state *cpustate)
 {
 	if( pSR & SR_N )
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -1986,7 +1986,7 @@ static void jne(tms7000_state *cpustate)
 	}
 	else
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -2003,7 +2003,7 @@ static void jp(tms7000_state *cpustate)
 	}
 	else
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -2015,7 +2015,7 @@ static void jpz(tms7000_state *cpustate)
 {
 	if ((pSR & SR_N) == 0 && (pSR & SR_Z) != 0)
 	{
-		INT8 s;
+		int8_t s;
 
 		SIMMBYTE( s );
 		pPC += s;
@@ -2030,7 +2030,7 @@ static void jpz(tms7000_state *cpustate)
 
 static void lda_dir(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	IMMWORD( i );
@@ -2046,9 +2046,9 @@ static void lda_dir(tms7000_state *cpustate)
 
 static void lda_ind(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	p;
-	INT8	i;
+	int8_t	i;
 
 	IMMBYTE(i);
 	p.w.l=RRF16(cpustate,i);
@@ -2064,7 +2064,7 @@ static void lda_ind(tms7000_state *cpustate)
 
 static void lda_inx(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	IMMWORD( i );
@@ -2086,7 +2086,7 @@ static void ldsp(tms7000_state *cpustate)
 
 static void mov_a2b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA;
 	WRB(t);
@@ -2100,7 +2100,7 @@ static void mov_a2b(tms7000_state *cpustate)
 
 static void mov_b2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDB;
 	WRA(t);
@@ -2115,8 +2115,8 @@ static void mov_b2a(tms7000_state *cpustate)
 
 static void mov_a2r(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -2132,8 +2132,8 @@ static void mov_a2r(tms7000_state *cpustate)
 
 static void mov_b2r(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -2149,8 +2149,8 @@ static void mov_b2r(tms7000_state *cpustate)
 
 static void mov_r2a(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 	t = RM(r);
@@ -2165,8 +2165,8 @@ static void mov_r2a(tms7000_state *cpustate)
 
 static void mov_r2b(tms7000_state *cpustate)
 {
-	UINT8	r;
-	UINT16	t;
+	uint8_t	r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 	t = RM(r);
@@ -2181,8 +2181,8 @@ static void mov_r2b(tms7000_state *cpustate)
 
 static void mov_r2r(tms7000_state *cpustate)
 {
-	UINT8	r,s;
-	UINT16	t;
+	uint8_t	r,s;
+	uint16_t	t;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -2198,7 +2198,7 @@ static void mov_r2r(tms7000_state *cpustate)
 
 static void mov_i2a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	IMMBYTE(t);
 	WRA(t);
@@ -2212,7 +2212,7 @@ static void mov_i2a(tms7000_state *cpustate)
 
 static void mov_i2b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	IMMBYTE(t);
 	WRB(t);
@@ -2226,8 +2226,8 @@ static void mov_i2b(tms7000_state *cpustate)
 
 static void mov_i2r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(t);
 	IMMBYTE(r);
@@ -2243,7 +2243,7 @@ static void mov_i2r(tms7000_state *cpustate)
 static void movd_imm(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r;
+	uint8_t	r;
 
 	IMMWORD(t);
 	IMMBYTE(r);
@@ -2260,7 +2260,7 @@ static void movd_imm(tms7000_state *cpustate)
 static void movd_r(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r,s;
+	uint8_t	r,s;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -2278,7 +2278,7 @@ static void movd_r(tms7000_state *cpustate)
 static void movd_inx(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r;
+	uint8_t	r;
 
 	IMMWORD(t);
 	t.w.l += RDB;
@@ -2294,8 +2294,8 @@ static void movd_inx(tms7000_state *cpustate)
 
 static void movp_a2p(tms7000_state *cpustate)
 {
-	UINT8	p;
-	UINT16	t;
+	uint8_t	p;
+	uint16_t	t;
 
 	IMMBYTE(p);
 	t=RDA;
@@ -2310,8 +2310,8 @@ static void movp_a2p(tms7000_state *cpustate)
 
 static void movp_b2p(tms7000_state *cpustate)
 {
-	UINT8	p;
-	UINT16	t;
+	uint8_t	p;
+	uint16_t	t;
 
 	IMMBYTE(p);
 	t=RDB;
@@ -2328,8 +2328,8 @@ static void movp_b2p(tms7000_state *cpustate)
 /* this appears to be unused */
 static void movp_r2p(tms7000_state *cpustate)
 {
-	UINT8	p,r;
-	UINT16	t;
+	uint8_t	p,r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 	IMMBYTE(p);
@@ -2346,8 +2346,8 @@ static void movp_r2p(tms7000_state *cpustate)
 
 static void movp_p2a(tms7000_state *cpustate)
 {
-	UINT8	p;
-	UINT16	t;
+	uint8_t	p;
+	uint16_t	t;
 
 	IMMBYTE(p);
 	t=RM(0x0100+p);
@@ -2362,8 +2362,8 @@ static void movp_p2a(tms7000_state *cpustate)
 
 static void movp_p2b(tms7000_state *cpustate)
 {
-	UINT8	p;
-	UINT16	t;
+	uint8_t	p;
+	uint16_t	t;
 
 	IMMBYTE(p);
 	t=RM(0x0100+p);
@@ -2395,7 +2395,7 @@ static void mpy_ba(tms7000_state *cpustate)
 static void mpy_ra(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -2414,7 +2414,7 @@ static void mpy_ra(tms7000_state *cpustate)
 static void mpy_rb(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -2433,7 +2433,7 @@ static void mpy_rb(tms7000_state *cpustate)
 static void mpy_rr(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	r,s;
+	uint8_t	r,s;
 
 	IMMBYTE(r);
 	IMMBYTE(s);
@@ -2453,7 +2453,7 @@ static void mpy_rr(tms7000_state *cpustate)
 static void mpy_ia(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	i;
+	uint8_t	i;
 
 	IMMBYTE(i);
 
@@ -2472,7 +2472,7 @@ static void mpy_ia(tms7000_state *cpustate)
 static void mpy_ib(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	i;
+	uint8_t	i;
 
 	IMMBYTE(i);
 
@@ -2491,7 +2491,7 @@ static void mpy_ib(tms7000_state *cpustate)
 static void mpy_ir(tms7000_state *cpustate)
 {
 	PAIR	t;
-	UINT8	i,r;
+	uint8_t	i,r;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -2515,7 +2515,7 @@ static void nop(tms7000_state *cpustate)
 
 static void or_b2a(tms7000_state *cpustate)
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RDA | RDB;
 	WRA(t);
@@ -2529,8 +2529,8 @@ static void or_b2a(tms7000_state *cpustate)
 
 static void or_r2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -2546,8 +2546,8 @@ static void or_r2a(tms7000_state *cpustate)
 
 static void or_r2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -2563,8 +2563,8 @@ static void or_r2b(tms7000_state *cpustate)
 
 static void or_r2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -2581,8 +2581,8 @@ static void or_r2r(tms7000_state *cpustate)
 
 static void or_i2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -2598,8 +2598,8 @@ static void or_i2a(tms7000_state *cpustate)
 
 static void or_i2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -2615,8 +2615,8 @@ static void or_i2b(tms7000_state *cpustate)
 
 static void or_i2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -2633,8 +2633,8 @@ static void or_i2r(tms7000_state *cpustate)
 
 static void orp_a2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDA | RM( 0x0100 + v);
@@ -2649,8 +2649,8 @@ static void orp_a2p(tms7000_state *cpustate)
 
 static void orp_b2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDB | RM( 0x0100 + v);
@@ -2665,8 +2665,8 @@ static void orp_b2p(tms7000_state *cpustate)
 
 static void orp_i2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,v;
+	uint8_t	t;
+	uint8_t	i,v;
 
 	IMMBYTE(i);
 	IMMBYTE(v);
@@ -2682,7 +2682,7 @@ static void orp_i2p(tms7000_state *cpustate)
 
 static void pop_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	PULLBYTE(t);
 	WRA(t);
@@ -2696,7 +2696,7 @@ static void pop_a(tms7000_state *cpustate)
 
 static void pop_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	PULLBYTE(t);
 	WRB(t);
@@ -2710,8 +2710,8 @@ static void pop_b(tms7000_state *cpustate)
 
 static void pop_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	PULLBYTE(t);
@@ -2726,7 +2726,7 @@ static void pop_r(tms7000_state *cpustate)
 
 static void pop_st(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	PULLBYTE(t);
 	pSR = t;
@@ -2736,7 +2736,7 @@ static void pop_st(tms7000_state *cpustate)
 
 static void push_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA;
 	PUSHBYTE(t);
@@ -2750,7 +2750,7 @@ static void push_a(tms7000_state *cpustate)
 
 static void push_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDB;
 	PUSHBYTE(t);
@@ -2764,8 +2764,8 @@ static void push_b(tms7000_state *cpustate)
 
 static void push_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	INT8	r;
+	uint16_t	t;
+	int8_t	r;
 
 	IMMBYTE(r);
 	t = RM(r);
@@ -2780,7 +2780,7 @@ static void push_r(tms7000_state *cpustate)
 
 static void push_st(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	t = pSR;
 	PUSHBYTE(t);
 
@@ -2804,7 +2804,7 @@ static void rets(tms7000_state *cpustate)
 
 static void rl_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA << 1;
 
@@ -2823,7 +2823,7 @@ static void rl_a(tms7000_state *cpustate)
 
 static void rl_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDB << 1;
 
@@ -2842,8 +2842,8 @@ static void rl_b(tms7000_state *cpustate)
 
 static void rl_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RM(r) << 1;
@@ -2863,7 +2863,7 @@ static void rl_r(tms7000_state *cpustate)
 
 static void rlc_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_carry;
 
 	old_carry = (pSR & SR_C);
@@ -2885,7 +2885,7 @@ static void rlc_a(tms7000_state *cpustate)
 
 static void rlc_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_carry;
 
 	old_carry = (pSR & SR_C);
@@ -2907,8 +2907,8 @@ static void rlc_b(tms7000_state *cpustate)
 
 static void rlc_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 	int		old_carry;
 
 	old_carry = (pSR & SR_C);
@@ -2931,7 +2931,7 @@ static void rlc_r(tms7000_state *cpustate)
 
 static void rr_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_bit0;
 
 	t = RDA;
@@ -2957,7 +2957,7 @@ static void rr_a(tms7000_state *cpustate)
 
 static void rr_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_bit0;
 
 	t = RDB;
@@ -2983,8 +2983,8 @@ static void rr_b(tms7000_state *cpustate)
 
 static void rr_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	int		old_bit0;
 
@@ -3012,7 +3012,7 @@ static void rr_r(tms7000_state *cpustate)
 
 static void rrc_a(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_bit0;
 
 	t = RDA;
@@ -3036,7 +3036,7 @@ static void rrc_a(tms7000_state *cpustate)
 
 static void rrc_b(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	int		old_bit0;
 
 	t = RDB;
@@ -3060,8 +3060,8 @@ static void rrc_b(tms7000_state *cpustate)
 
 static void rrc_r(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 	int		old_bit0;
 
 	IMMBYTE(r);
@@ -3086,7 +3086,7 @@ static void rrc_r(tms7000_state *cpustate)
 
 static void sbb_ba(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA - RDB - ((pSR & SR_C) ? 0 : 1);
 	WRA(t);
@@ -3101,8 +3101,8 @@ static void sbb_ba(tms7000_state *cpustate)
 
 static void sbb_ra(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDA - RM(r) - ((pSR & SR_C) ? 0 : 1);
@@ -3118,8 +3118,8 @@ static void sbb_ra(tms7000_state *cpustate)
 
 static void sbb_rb(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDB - RM(r) - ((pSR & SR_C) ? 0 : 1);
@@ -3135,8 +3135,8 @@ static void sbb_rb(tms7000_state *cpustate)
 
 static void sbb_rr(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r,s;
+	uint16_t	t;
+	uint8_t	r,s;
 
 	IMMBYTE(s);
 	IMMBYTE(r);
@@ -3153,8 +3153,8 @@ static void sbb_rr(tms7000_state *cpustate)
 
 static void sbb_ia(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDA - i - ((pSR & SR_C) ? 0 : 1);
@@ -3170,8 +3170,8 @@ static void sbb_ia(tms7000_state *cpustate)
 
 static void sbb_ib(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDB - i - ((pSR & SR_C) ? 0 : 1);
@@ -3187,8 +3187,8 @@ static void sbb_ib(tms7000_state *cpustate)
 
 static void sbb_ir(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r,i;
+	uint16_t	t;
+	uint8_t	r,i;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -3213,7 +3213,7 @@ static void setc(tms7000_state *cpustate)
 
 static void sta_dir(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	t = RDA;
@@ -3230,9 +3230,9 @@ static void sta_dir(tms7000_state *cpustate)
 
 static void sta_ind(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	p;
-	INT8	r;
+	int8_t	r;
 
 	IMMBYTE(r);
 	p.w.l = RRF16(cpustate,r);
@@ -3248,7 +3248,7 @@ static void sta_ind(tms7000_state *cpustate)
 
 static void sta_inx(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 	PAIR	i;
 
 	IMMWORD( i );
@@ -3271,7 +3271,7 @@ static void stsp(tms7000_state *cpustate)
 
 static void sub_ba(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t = RDA - RDB;
 	WRA(t);
@@ -3286,8 +3286,8 @@ static void sub_ba(tms7000_state *cpustate)
 
 static void sub_ra(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDA - RM(r);
@@ -3303,8 +3303,8 @@ static void sub_ra(tms7000_state *cpustate)
 
 static void sub_rb(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r;
+	uint16_t	t;
+	uint8_t	r;
 
 	IMMBYTE(r);
 	t = RDB - RM(r);
@@ -3320,8 +3320,8 @@ static void sub_rb(tms7000_state *cpustate)
 
 static void sub_rr(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r,s;
+	uint16_t	t;
+	uint8_t	r,s;
 
 	IMMBYTE(s);
 	IMMBYTE(r);
@@ -3338,8 +3338,8 @@ static void sub_rr(tms7000_state *cpustate)
 
 static void sub_ia(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDA - i;
@@ -3355,8 +3355,8 @@ static void sub_ia(tms7000_state *cpustate)
 
 static void sub_ib(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	i;
+	uint16_t	t;
+	uint8_t	i;
 
 	IMMBYTE(i);
 	t = RDB - i;
@@ -3372,8 +3372,8 @@ static void sub_ib(tms7000_state *cpustate)
 
 static void sub_ir(tms7000_state *cpustate)
 {
-	UINT16	t;
-	UINT8	r,i;
+	uint16_t	t;
+	uint8_t	r,i;
 
 	IMMBYTE(i);
 	IMMBYTE(r);
@@ -3558,8 +3558,8 @@ static void trap_23(tms7000_state *cpustate)
 
 static void swap_a(tms7000_state *cpustate)
 {
-	UINT8	a,b;
-	UINT16	t;
+	uint8_t	a,b;
+	uint16_t	t;
 
 	a = b = RDA;
 
@@ -3580,8 +3580,8 @@ static void swap_a(tms7000_state *cpustate)
 
 static void swap_b(tms7000_state *cpustate)
 {
-	UINT8	a,b;
-	UINT16	t;
+	uint8_t	a,b;
+	uint16_t	t;
 
 	a = b = RDB;
 
@@ -3602,8 +3602,8 @@ static void swap_b(tms7000_state *cpustate)
 
 static void swap_r(tms7000_state *cpustate)
 {
-	UINT8	a,b,r;
-	UINT16	t;
+	uint8_t	a,b,r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 	a = b = RM(r);
@@ -3625,8 +3625,8 @@ static void swap_r(tms7000_state *cpustate)
 
 static void swap_r_exl(tms7000_state *cpustate)
 {
-	UINT8	a,b,r;
-	UINT16	t;
+	uint8_t	a,b,r;
+	uint16_t	t;
 
 	IMMBYTE(r);
 
@@ -3665,7 +3665,7 @@ static void swap_r_exl(tms7000_state *cpustate)
 
 static void tstb(tms7000_state *cpustate)
 {
-	UINT16	t;
+	uint16_t	t;
 
 	t=RDB;
 
@@ -3678,7 +3678,7 @@ static void tstb(tms7000_state *cpustate)
 
 static void xchb_a(tms7000_state *cpustate)
 {
-	UINT16	t,u;
+	uint16_t	t,u;
 
 	t = RDB;
 	u = RDA;
@@ -3695,8 +3695,8 @@ static void xchb_a(tms7000_state *cpustate)
 
 static void xchb_b(tms7000_state *cpustate)
 {
-	UINT16	t;
-/*  UINT16  u;  */
+	uint16_t	t;
+/*  uint16_t  u;  */
 
 	t = RDB;
 /*  u = RDB;    */
@@ -3713,8 +3713,8 @@ static void xchb_b(tms7000_state *cpustate)
 
 static void xchb_r(tms7000_state *cpustate)
 {
-	UINT16	t,u;
-	UINT8	r;
+	uint16_t	t,u;
+	uint8_t	r;
 
 	IMMBYTE(r);
 
@@ -3733,7 +3733,7 @@ static void xchb_r(tms7000_state *cpustate)
 
 static void xor_b2a(tms7000_state *cpustate)
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RDA ^ RDB;
 	WRA(t);
@@ -3747,8 +3747,8 @@ static void xor_b2a(tms7000_state *cpustate)
 
 static void xor_r2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -3764,8 +3764,8 @@ static void xor_r2a(tms7000_state *cpustate)
 
 static void xor_r2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -3781,8 +3781,8 @@ static void xor_r2b(tms7000_state *cpustate)
 
 static void xor_r2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -3799,8 +3799,8 @@ static void xor_r2r(tms7000_state *cpustate)
 
 static void xor_i2a(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -3816,8 +3816,8 @@ static void xor_i2a(tms7000_state *cpustate)
 
 static void xor_i2b(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 
@@ -3833,8 +3833,8 @@ static void xor_i2b(tms7000_state *cpustate)
 
 static void xor_i2r(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,j;
+	uint8_t	t;
+	uint8_t	i,j;
 
 	IMMBYTE(i);
 	IMMBYTE(j);
@@ -3851,8 +3851,8 @@ static void xor_i2r(tms7000_state *cpustate)
 
 static void xorp_a2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDA ^ RM( 0x0100 + v);
@@ -3867,8 +3867,8 @@ static void xorp_a2p(tms7000_state *cpustate)
 
 static void xorp_b2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	v;
+	uint8_t	t;
+	uint8_t	v;
 
 	IMMBYTE(v);
 	t = RDB ^ RM( 0x0100 + v);
@@ -3883,8 +3883,8 @@ static void xorp_b2p(tms7000_state *cpustate)
 
 static void xorp_i2p(tms7000_state *cpustate)
 {
-	UINT8	t;
-	UINT8	i,v;
+	uint8_t	t;
+	uint8_t	i,v;
 
 	IMMBYTE(i);
 	IMMBYTE(v);

@@ -74,7 +74,7 @@ static const char *const s_mnemonic[] = {
 };
 
 typedef struct {
-	UINT8 mnemonic;
+	uint8_t mnemonic;
 	const char *arguments;
 }	z80dasm;
 
@@ -413,12 +413,12 @@ static const z80dasm mnemonic_main[256]= {
 	{zCALL,"m,A"},  {zDB,"fd"},     {zCP,"B"},      {zRST,"V"}
 };
 
-static char sign(INT8 offset)
+static char sign(int8_t offset)
 {
  return (offset < 0)? '-':'+';
 }
 
-static int offs(INT8 offset)
+static int offs(int8_t offset)
 {
 	if (offset < 0) return -offset;
 	return offset;
@@ -433,11 +433,11 @@ CPU_DISASSEMBLE( z180 )
 	const char *src, *ixy;
 	char *dst;
 	unsigned PC = pc;
-	INT8 offset = 0;
-	UINT8 op, op1 = 0;
-	UINT16 ea = 0;
+	int8_t offset = 0;
+	uint8_t op, op1 = 0;
+	uint16_t ea = 0;
 	int pos = 0;
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 
 	ixy = "oops!!";
 	dst = buffer;
@@ -459,7 +459,7 @@ CPU_DISASSEMBLE( z180 )
 		op1 = oprom[pos++];
 		if( op1 == 0xcb )
 		{
-			offset = (INT8) opram[pos++];
+			offset = (int8_t) opram[pos++];
 			op1 = opram[pos++]; /* fourth byte from opbase.ram! */
 			d = &mnemonic_xx_cb[op1];
 		}
@@ -470,7 +470,7 @@ CPU_DISASSEMBLE( z180 )
 		op1 = oprom[pos++];
 		if( op1 == 0xcb )
 		{
-			offset = (INT8) opram[pos++];
+			offset = (int8_t) opram[pos++];
 			op1 = opram[pos++]; /* fourth byte from opbase.ram! */
 			d = &mnemonic_xx_cb[op1];
 		}
@@ -507,7 +507,7 @@ CPU_DISASSEMBLE( z180 )
 				dst += sprintf( dst, "$%04X", ea );
 				break;
 			case 'O':   /* Offset relative to PC */
-				offset = (INT8) opram[pos++];
+				offset = (int8_t) opram[pos++];
 				dst += sprintf( dst, "$%05X", PC + offset + 2 );
 				break;
 			case 'P':   /* Port number */
@@ -524,7 +524,7 @@ CPU_DISASSEMBLE( z180 )
 				dst += sprintf( dst, "$%05X", ea );
 				break;
 			case 'X':
-				offset = (INT8) opram[pos++];
+				offset = (int8_t) opram[pos++];
 			case 'Y':
 				dst += sprintf( dst,"(%s%c$%02x)", ixy, sign(offset), offs(offset) );
 				break;

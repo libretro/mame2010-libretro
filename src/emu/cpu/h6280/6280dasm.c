@@ -140,7 +140,7 @@ static const unsigned char op6280[512]=
  *****************************************************************************/
 CPU_DISASSEMBLE( h6280 )
 {
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 	int PC, OP, opc, arg;
 
 	PC = pc;

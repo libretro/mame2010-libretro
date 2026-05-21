@@ -492,12 +492,12 @@ enum
 typedef struct _ppc4xx_spu_state ppc4xx_spu_state;
 struct _ppc4xx_spu_state
 {
-	UINT8			regs[9];
-	UINT8			txbuf;
-	UINT8			rxbuf;
+	uint8_t			regs[9];
+	uint8_t			txbuf;
+	uint8_t			rxbuf;
 	emu_timer *		timer;
-	UINT8			rxbuffer[256];
-	UINT32			rxin, rxout;
+	uint8_t			rxbuffer[256];
+	uint32_t			rxin, rxout;
 	ppc4xx_spu_tx_handler tx_handler;
 };
 
@@ -511,54 +511,54 @@ typedef struct _powerpc_state powerpc_state;
 struct _powerpc_state
 {
 	/* core registers */
-	UINT32			pc;
+	uint32_t			pc;
 	int				icount;
-	UINT32			r[32];
+	uint32_t			r[32];
 	double			f[32];
-	UINT32			cr[8];
-	UINT32			xerso;
-	UINT32			fpscr;
-	UINT32			msr;
-	UINT32			sr[16];
-	UINT32			spr[1024];
-	UINT32			dcr[256];
+	uint32_t			cr[8];
+	uint32_t			xerso;
+	uint32_t			fpscr;
+	uint32_t			msr;
+	uint32_t			sr[16];
+	uint32_t			spr[1024];
+	uint32_t			dcr[256];
 
 	/* parameters for calls */
-	UINT32			param0;
-	UINT32			param1;
+	uint32_t			param0;
+	uint32_t			param1;
 
 	/* MMU */
 	vtlb_state *	vtlb;
 
 	/* architectural distinctions */
 	powerpc_flavor	flavor;
-	UINT8			cap;
-	UINT8			cache_line_size;
-	UINT32			tb_divisor;
+	uint8_t			cap;
+	uint8_t			cache_line_size;
+	uint32_t			tb_divisor;
 
 	/* PowerPC 4xx-specific state */
 	ppc4xx_spu_state spu;
 	emu_timer *		fit_timer;
 	emu_timer *		pit_timer;
 	emu_timer *		wdog_timer;
-	UINT32			pit_reload;
-	UINT32			irqstate;
+	uint32_t			pit_reload;
+	uint32_t			irqstate;
 
 	/* PowerPC 603-specific state */
-	UINT32			mmu603_cmp;
-	UINT32			mmu603_hash[2];
-	UINT32			mmu603_r[4];
+	uint32_t			mmu603_cmp;
+	uint32_t			mmu603_hash[2];
+	uint32_t			mmu603_r[4];
 
 	/* internal stuff */
 	device_irq_callback irq_callback;
 	legacy_cpu_device *	device;
 	const address_space *program;
 	offs_t			codexor;
-	UINT32			irq_pending;
-	UINT32			system_clock;
-	UINT32			cpu_clock;
-	UINT64			tb_zero_cycles;
-	UINT64			dec_zero_cycles;
+	uint32_t			irq_pending;
+	uint32_t			system_clock;
+	uint32_t			cpu_clock;
+	uint64_t			tb_zero_cycles;
+	uint64_t			dec_zero_cycles;
 	emu_timer *		decrementer_int_timer;
 
 	/* for use by specific implementations */
@@ -571,16 +571,16 @@ struct _powerpc_state
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-void ppccom_init(powerpc_state *ppc, powerpc_flavor flavor, UINT8 cap, int tb_divisor, legacy_cpu_device *device, device_irq_callback irqcallback);
+void ppccom_init(powerpc_state *ppc, powerpc_flavor flavor, uint8_t cap, int tb_divisor, legacy_cpu_device *device, device_irq_callback irqcallback);
 void ppccom_exit(powerpc_state *ppc);
 
 void ppccom_reset(powerpc_state *ppc);
-offs_t ppccom_dasm(powerpc_state *ppc, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram);
+offs_t ppccom_dasm(powerpc_state *ppc, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram);
 
 int ppccom_translate_address(powerpc_state *ppc, int space, int intention, offs_t *address);
 
-void ppccom_set_info(powerpc_state *ppc, UINT32 state, cpuinfo *info);
-void ppccom_get_info(powerpc_state *ppc, UINT32 state, cpuinfo *info);
+void ppccom_set_info(powerpc_state *ppc, uint32_t state, cpuinfo *info);
+void ppccom_get_info(powerpc_state *ppc, uint32_t state, cpuinfo *info);
 
 void ppccom_tlb_fill(powerpc_state *ppc);
 void ppccom_tlb_flush(powerpc_state *ppc);
@@ -596,7 +596,7 @@ void ppccom_execute_mtdcr(powerpc_state *ppc);
 
 void ppccom_update_fprf(powerpc_state *ppc);
 
-void ppc4xx_set_info(powerpc_state *ppc, UINT32 state, cpuinfo *info);
-void ppc4xx_get_info(powerpc_state *ppc, UINT32 state, cpuinfo *info);
+void ppc4xx_set_info(powerpc_state *ppc, uint32_t state, cpuinfo *info);
+void ppc4xx_get_info(powerpc_state *ppc, uint32_t state, cpuinfo *info);
 
 #endif /* __PPCCOM_H__ */

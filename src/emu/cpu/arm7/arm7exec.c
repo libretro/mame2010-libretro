@@ -41,8 +41,8 @@
 /* This implementation uses an improved switch() for hopefully faster opcode fetches compared to my last version
 .. though there's still room for improvement. */
 {
-    UINT32 pc;
-    UINT32 insn;
+    uint32_t pc;
+    uint32_t insn;
     arm_state *cpustate = get_safe_token(device);
 
     do
@@ -52,9 +52,9 @@
         /* handle Thumb instructions if active */
         if (T_IS_SET(GET_CPSR))
         {
-            UINT32 readword, addr, raddr;
-            UINT32 rm, rn, rs, rd, op2, imm, rrs, rrd;
-            INT32 offs;
+            uint32_t readword, addr, raddr;
+            uint32_t rm, rn, rs, rd, op2, imm, rrs, rrd;
+            int32_t offs;
 
             pc = R15;
 	    raddr = pc & (~1);
@@ -833,16 +833,16 @@
                     if (insn & THUMB_STACKOP_L)
                     {
                         rd = (insn & THUMB_STACKOP_RD) >> THUMB_STACKOP_RD_SHIFT;
-                        offs = (UINT8)(insn & THUMB_INSN_IMM);
-                        readword = READ32(GET_REGISTER(cpustate, 13) + ((UINT32)offs << 2));
+                        offs = (uint8_t)(insn & THUMB_INSN_IMM);
+                        readword = READ32(GET_REGISTER(cpustate, 13) + ((uint32_t)offs << 2));
                         SET_REGISTER(cpustate, rd, readword);
                         R15 += 2;
                     }
                     else
                     {
                         rd = (insn & THUMB_STACKOP_RD) >> THUMB_STACKOP_RD_SHIFT;
-                        offs = (UINT8)(insn & THUMB_INSN_IMM);
-                        WRITE32(GET_REGISTER(cpustate, 13) + ((UINT32)offs << 2), GET_REGISTER(cpustate, rd));
+                        offs = (uint8_t)(insn & THUMB_INSN_IMM);
+                        WRITE32(GET_REGISTER(cpustate, 13) + ((uint32_t)offs << 2), GET_REGISTER(cpustate, rd));
                         R15 += 2;
                     }
                     break;
@@ -850,14 +850,14 @@
                     if (insn & THUMB_RELADDR_SP) /* ADD Rd, SP, #nn */
                     {
                         rd = (insn & THUMB_RELADDR_RD) >> THUMB_RELADDR_RD_SHIFT;
-                        offs = (UINT8)(insn & THUMB_INSN_IMM) << 2;
+                        offs = (uint8_t)(insn & THUMB_INSN_IMM) << 2;
                         SET_REGISTER(cpustate, rd, GET_REGISTER(cpustate, 13) + offs);
                         R15 += 2;
                     }
                     else /* ADD Rd, PC, #nn */
                     {
                         rd = (insn & THUMB_RELADDR_RD) >> THUMB_RELADDR_RD_SHIFT;
-                        offs = (UINT8)(insn & THUMB_INSN_IMM) << 2;
+                        offs = (uint8_t)(insn & THUMB_INSN_IMM) << 2;
                         SET_REGISTER(cpustate, rd, ((R15 + 4) & ~2) + offs);
                         R15 += 2;
                     }
@@ -926,7 +926,7 @@
                     break;
                 case 0xc: /* Multiple Load/Store */
                     {
-                        UINT32 ld_st_address;
+                        uint32_t ld_st_address;
 
                         rd = (insn & THUMB_MULTLS_BASE) >> THUMB_MULTLS_BASE_SHIFT;
                         ld_st_address = GET_REGISTER(cpustate, rd) & 0xfffffffc;
@@ -964,7 +964,7 @@
                     }
                     break;
                 case 0xd: /* Conditional Branch */
-                    offs = (INT8)(insn & THUMB_INSN_IMM);
+                    offs = (int8_t)(insn & THUMB_INSN_IMM);
                     switch ((insn & THUMB_COND_TYPE) >> THUMB_COND_TYPE_SHIFT)
                     {
                         case COND_EQ:
@@ -1257,8 +1257,8 @@
                     }
 		    else if ((insn & 0x0ff000f0) == 0x01600010)	// CLZ - v5
 		    {
-		    	UINT32 rm = insn&0xf;
-			UINT32 rd = (insn>>12)&0xf;
+		    	uint32_t rm = insn&0xf;
+			uint32_t rd = (insn>>12)&0xf;
 
 			SET_REGISTER(cpustate, rd, count_leading_zeros(GET_REGISTER(cpustate, rm)));
 
@@ -1266,63 +1266,63 @@
 		    }
 		    else if ((insn & 0x0ff000f0) == 0x01000050)	// QADD - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
+			int64_t res;
 
-			res = saturate_qbit_overflow(cpustate, (INT64)src1 + (INT64)src2);
+			res = saturate_qbit_overflow(cpustate, (int64_t)src1 + (int64_t)src2);
 
-			SET_REGISTER(cpustate, (insn>>12)&0xf, (INT32)res);
+			SET_REGISTER(cpustate, (insn>>12)&0xf, (int32_t)res);
 			R15 += 4;
 		    }
 		    else if ((insn & 0x0ff000f0) == 0x01400050)	// QDADD - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
+			int64_t res;
 
 			// check if doubling operation will overflow
-			res = (INT64)src2 * 2;
+			res = (int64_t)src2 * 2;
 			saturate_qbit_overflow(cpustate, res);
 
 			src2 *= 2;
-			res = saturate_qbit_overflow(cpustate, (INT64)src1 + (INT64)src2);
+			res = saturate_qbit_overflow(cpustate, (int64_t)src1 + (int64_t)src2);
 
-			SET_REGISTER(cpustate, (insn>>12)&0xf, (INT32)res);
+			SET_REGISTER(cpustate, (insn>>12)&0xf, (int32_t)res);
 			R15 += 4;
 		    }
 		    else if ((insn & 0x0ff000f0) == 0x01200050)	// QSUB - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
+			int64_t res;
 
-			res = saturate_qbit_overflow(cpustate, (INT64)src1 - (INT64)src2);
+			res = saturate_qbit_overflow(cpustate, (int64_t)src1 - (int64_t)src2);
 
-			SET_REGISTER(cpustate, (insn>>12)&0xf, (INT32)res);
+			SET_REGISTER(cpustate, (insn>>12)&0xf, (int32_t)res);
 			R15 += 4;
 		    }
 		    else if ((insn & 0x0ff000f0) == 0x01600050)	// QDSUB - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>16)&0xf);
+			int64_t res;
 
 			// check if doubling operation will overflow
-			res = (INT64)src2 * 2;
+			res = (int64_t)src2 * 2;
 			saturate_qbit_overflow(cpustate, res);
 
 			src2 *= 2;
-			res = saturate_qbit_overflow(cpustate, (INT64)src1 - (INT64)src2);
+			res = saturate_qbit_overflow(cpustate, (int64_t)src1 - (int64_t)src2);
 
-			SET_REGISTER(cpustate, (insn>>12)&0xf, (INT32)res);
+			SET_REGISTER(cpustate, (insn>>12)&0xf, (int32_t)res);
 			R15 += 4;
 		    }
 		    else if ((insn & 0x0ff00090) == 0x01000080)	// SMLAxy - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
-			INT32 res1;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
+			int32_t res1;
 
 			// select top and bottom halves of src1/src2 and sign extend if necessary
 			if (insn & 0x20)
@@ -1354,16 +1354,16 @@
 			// do the signed multiply
 			res1 = src1 * src2;
 			// and the accumulate.  NOTE: only the accumulate can cause an overflow, which is why we do it this way.
-			saturate_qbit_overflow(cpustate, (INT64)res1 + (INT64)GET_REGISTER(cpustate, (insn>>12)&0xf));
+			saturate_qbit_overflow(cpustate, (int64_t)res1 + (int64_t)GET_REGISTER(cpustate, (insn>>12)&0xf));
 
 			SET_REGISTER(cpustate, (insn>>16)&0xf, res1 + GET_REGISTER(cpustate, (insn>>12)&0xf));
 			R15 += 4;
 		    }
 		    else if ((insn & 0x0ff00090) == 0x01400080)	// SMLALxy - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
-			INT64 dst;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
+			int64_t dst;
 
 			// select top and bottom halves of src1/src2 and sign extend if necessary
 			if (insn & 0x20)
@@ -1392,21 +1392,21 @@
 				}
 			}
 
-			dst = (INT64)GET_REGISTER(cpustate, (insn>>12)&0xf);
-			dst |= (INT64)GET_REGISTER(cpustate, (insn>>16)&0xf)<<32;
+			dst = (int64_t)GET_REGISTER(cpustate, (insn>>12)&0xf);
+			dst |= (int64_t)GET_REGISTER(cpustate, (insn>>16)&0xf)<<32;
 
 			// do the multiply and accumulate
-			dst += (INT64)src1 * (INT64)src2;
+			dst += (int64_t)src1 * (int64_t)src2;
 
 			// write back the result
-			SET_REGISTER(cpustart, (insn>>12)&0xf, (UINT32)(dst&0xffffffff));
-			SET_REGISTER(cpustart, (insn>>16)&0xf, (UINT32)(dst>>32));
+			SET_REGISTER(cpustart, (insn>>12)&0xf, (uint32_t)(dst&0xffffffff));
+			SET_REGISTER(cpustart, (insn>>16)&0xf, (uint32_t)(dst>>32));
 		    }
 		    else if ((insn & 0x0ff00090) == 0x01600080)	// SMULxy - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
-			INT32 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
+			int32_t res;
 
 			// select top and bottom halves of src1/src2 and sign extend if necessary
 			if (insn & 0x20)
@@ -1440,9 +1440,9 @@
 		    }
 		    else if ((insn & 0x0ff000b0) == 0x012000a0)	// SMULWy - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
+			int64_t res;
 
 			if (insn & 0x40)
 			{
@@ -1457,16 +1457,16 @@
 				}
 			}
 
-			res = (INT64)src1 * (INT64)src2;
+			res = (int64_t)src1 * (int64_t)src2;
 			res >>= 16;
-			SET_REGISTER(cpustart, (insn>>16)&0xf, (UINT32)res);
+			SET_REGISTER(cpustart, (insn>>16)&0xf, (uint32_t)res);
 		    }
 		    else if ((insn & 0x0ff000b0) == 0x01200080)	// SMLAWy - v5
 		    {
-		    	INT32 src1 = GET_REGISTER(cpustate, insn&0xf);
-			INT32 src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
-			INT32 src3 = GET_REGISTER(cpustate, (insn>>12)&0xf);
-			INT64 res;
+		    	int32_t src1 = GET_REGISTER(cpustate, insn&0xf);
+			int32_t src2 = GET_REGISTER(cpustate, (insn>>8)&0xf);
+			int32_t src3 = GET_REGISTER(cpustate, (insn>>12)&0xf);
+			int64_t res;
 
 			if (insn & 0x40)
 			{
@@ -1481,17 +1481,17 @@
 				}
 			}
 
-			res = (INT64)src1 * (INT64)src2;
+			res = (int64_t)src1 * (int64_t)src2;
 			res >>= 16;
 
 			// check for overflow and set the Q bit
-			saturate_qbit_overflow(cpustate, (INT64)src3 + res);
+			saturate_qbit_overflow(cpustate, (int64_t)src3 + res);
 
 			// do the real accumulate
-			src3 += (INT32)res;
+			src3 += (int32_t)res;
 
 			// write the result back
-			SET_REGISTER(cpustart, (insn>>16)&0xf, (UINT32)res);
+			SET_REGISTER(cpustart, (insn>>16)&0xf, (uint32_t)res);
 		    }
                     else
                     /* Multiply OR Swap OR Half Word Data Transfer */

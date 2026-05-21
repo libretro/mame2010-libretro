@@ -33,12 +33,12 @@
 #define TCR3	(0x82)
 #define TCR4	(0x92)
 
-static const UINT8 tsr[5] = { TSR0, TSR1, TSR2, TSR3, TSR4 };
-static const UINT8 tier[5] = { TIER0, TIER1, TIER2, TIER3, TIER4 };
-static const UINT8 tcr[5] = { TCR0, TCR1, TCR2, TCR3, TCR4 };
+static const uint8_t tsr[5] = { TSR0, TSR1, TSR2, TSR3, TSR4 };
+static const uint8_t tier[5] = { TIER0, TIER1, TIER2, TIER3, TIER4 };
+static const uint8_t tcr[5] = { TCR0, TCR1, TCR2, TCR3, TCR4 };
 static const int tscales[4] = { 1, 2, 4, 8 };
 
-extern void h8_3002_InterruptRequest(h83xx_state *h8, UINT8 source, UINT8 state);
+extern void h8_3002_InterruptRequest(h83xx_state *h8, uint8_t source, uint8_t state);
 
 static void h8itu_timer_expire(h83xx_state *h8, int which)
 {
@@ -110,7 +110,7 @@ static void h8_itu_sync_timers(h83xx_state *h8, int tnum)
 {
 	int ourTCR = 0;
 	attotime cycle_time, cur;
-	UINT16 ratio;
+	uint16_t ratio;
 
 	ourTCR = h8->per_regs[tcr[tnum]];
 
@@ -123,9 +123,9 @@ static void h8_itu_sync_timers(h83xx_state *h8, int tnum)
 	h8->h8TCNT[tnum] = ratio;
 }
 
-UINT8 h8_itu_read8(h83xx_state *h8, UINT8 reg)
+uint8_t h8_itu_read8(h83xx_state *h8, uint8_t reg)
 {
-	UINT8 val;
+	uint8_t val;
 
 	switch(reg)
 	{
@@ -173,7 +173,7 @@ UINT8 h8_itu_read8(h83xx_state *h8, UINT8 reg)
 	return val;
 }
 
-void h8_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val)
+void h8_itu_write8(h83xx_state *h8, uint8_t reg, uint8_t val)
 {
 	h8->per_regs[reg] = val;
 	switch(reg)
@@ -278,18 +278,18 @@ void h8_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val)
 }
 
 #ifdef UNUSED_FUNCTION
-UINT8 h8_debugger_itu_read8(UINT8 reg)
+uint8_t h8_debugger_itu_read8(uint8_t reg)
 {
-	UINT8 val;
+	uint8_t val;
 	val = 0;
 	return val;
 }
 #endif
 
 
-static UINT8 h8_ISR_r(h83xx_state *h8)
+static uint8_t h8_ISR_r(h83xx_state *h8)
 {
-	UINT8 res = 0;
+	uint8_t res = 0;
 
 	int i;
 	for (i = 0; i < 6; i++)
@@ -298,7 +298,7 @@ static UINT8 h8_ISR_r(h83xx_state *h8)
 	return res;
 }
 
-static void h8_ISR_w(h83xx_state *h8, UINT8 val)
+static void h8_ISR_w(h83xx_state *h8, uint8_t val)
 {
 	int i;
 	for (i = 0; i < 6; i++)
@@ -306,10 +306,10 @@ static void h8_ISR_w(h83xx_state *h8, UINT8 val)
 }
 
 
-UINT8 h8_register_read8(h83xx_state *h8, UINT32 address)
+uint8_t h8_register_read8(h83xx_state *h8, uint32_t address)
 {
-	UINT8 val;
-	UINT8 reg;
+	uint8_t val;
+	uint8_t reg;
 
 	address &= 0xffffff;
 
@@ -398,9 +398,9 @@ UINT8 h8_register_read8(h83xx_state *h8, UINT32 address)
 	return val;
 }
 
-void h8_register_write8(h83xx_state *h8, UINT32 address, UINT8 val)
+void h8_register_write8(h83xx_state *h8, uint32_t address, uint8_t val)
 {
-	UINT8 reg;
+	uint8_t reg;
 
 	address &= 0xffffff;
 
@@ -470,7 +470,7 @@ static void h8_3007_itu_refresh_timer(h83xx_state *h8, int tnum)
 static void h8itu_3007_timer_expire(h83xx_state *h8, int tnum)
 {
 	int base = 0x68 + (tnum*8);
-	UINT16 count;
+	uint16_t count;
 
 	count = (h8->per_regs[base + 0x2]<<8) | h8->per_regs[base + 0x3];
 	count++;
@@ -558,9 +558,9 @@ static TIMER_CALLBACK( h8itu_3007_timer_2_cb )
 	h8itu_3007_timer_expire(h8, 2);
 }
 
-UINT8 h8_3007_itu_read8(h83xx_state *h8, UINT8 reg)
+uint8_t h8_3007_itu_read8(h83xx_state *h8, uint8_t reg)
 {
-	UINT8 val;
+	uint8_t val;
 
 	switch(reg)
 	{
@@ -575,7 +575,7 @@ UINT8 h8_3007_itu_read8(h83xx_state *h8, UINT8 reg)
 	return val;
 }
 
-void h8_3007_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val)
+void h8_3007_itu_write8(h83xx_state *h8, uint8_t reg, uint8_t val)
 {
 	logerror("%06x: h8/3007 reg %02x = %02x\n",h8->pc,reg,val);
 	h8->per_regs[reg] = val;
@@ -602,10 +602,10 @@ void h8_3007_itu_write8(h83xx_state *h8, UINT8 reg, UINT8 val)
 	}
 }
 
-UINT8 h8_3007_register_read8(h83xx_state *h8, UINT32 address)
+uint8_t h8_3007_register_read8(h83xx_state *h8, uint32_t address)
 {
-	UINT8 val;
-	UINT8 reg;
+	uint8_t val;
+	uint8_t reg;
 
 	address &= 0xffffff;
 
@@ -691,9 +691,9 @@ UINT8 h8_3007_register_read8(h83xx_state *h8, UINT32 address)
 	return val;
 }
 
-void h8_3007_register_write8(h83xx_state *h8, UINT32 address, UINT8 val)
+void h8_3007_register_write8(h83xx_state *h8, uint32_t address, uint8_t val)
 {
-	UINT8 reg;
+	uint8_t reg;
 
 	address &= 0xffffff;
 
@@ -740,7 +740,7 @@ void h8_3007_register_write8(h83xx_state *h8, UINT32 address, UINT8 val)
 	}
 }
 
-UINT8 h8_3007_register1_read8(h83xx_state *h8, UINT32 address)
+uint8_t h8_3007_register1_read8(h83xx_state *h8, uint32_t address)
 {
 	switch (address)
 	{
@@ -753,7 +753,7 @@ UINT8 h8_3007_register1_read8(h83xx_state *h8, UINT32 address)
 	return 0;
 }
 
-void h8_3007_register1_write8(h83xx_state *h8, UINT32 address, UINT8 val)
+void h8_3007_register1_write8(h83xx_state *h8, uint32_t address, uint8_t val)
 {
 	switch (address)
 	{

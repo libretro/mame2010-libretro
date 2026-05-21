@@ -64,11 +64,11 @@
 /* logical */
 #define M_ORA(R) cpustate->AF.b.h|=R; cpustate->AF.b.l=ZSP[cpustate->AF.b.h]
 #define M_XRA(R) cpustate->AF.b.h^=R; cpustate->AF.b.l=ZSP[cpustate->AF.b.h]
-#define M_ANA(R) {UINT8 hc = ((cpustate->AF.b.h | R)<<1) & HF; cpustate->AF.b.h&=R; cpustate->AF.b.l=ZSP[cpustate->AF.b.h]; if(IS_8085(cpustate)) { cpustate->AF.b.l |= HF; } else {cpustate->AF.b.l |= hc; } }
+#define M_ANA(R) {uint8_t hc = ((cpustate->AF.b.h | R)<<1) & HF; cpustate->AF.b.h&=R; cpustate->AF.b.l=ZSP[cpustate->AF.b.h]; if(IS_8085(cpustate)) { cpustate->AF.b.l |= HF; } else {cpustate->AF.b.l |= hc; } }
 
 /* increase / decrease */
-#define M_INR(R) {UINT8 hc = ((R & 0x0f) == 0x0f) ? HF : 0; ++R; cpustate->AF.b.l= (cpustate->AF.b.l & CF ) | ZSP[R] | hc; }
-#define M_DCR(R) {UINT8 hc = ((R & 0x0f) == 0x00) ? HF : 0; --R; cpustate->AF.b.l= (cpustate->AF.b.l & CF ) | ZSP[R] | hc | VF; }
+#define M_INR(R) {uint8_t hc = ((R & 0x0f) == 0x0f) ? HF : 0; ++R; cpustate->AF.b.l= (cpustate->AF.b.l & CF ) | ZSP[R] | hc; }
+#define M_DCR(R) {uint8_t hc = ((R & 0x0f) == 0x00) ? HF : 0; --R; cpustate->AF.b.l= (cpustate->AF.b.l & CF ) | ZSP[R] | hc | VF; }
 
 /* arithmetic */
 #define M_ADD(R) {																	\
@@ -161,7 +161,7 @@
 {																					\
 	if (cc) 																		\
 	{																				\
-		UINT16 a = ARG16(cpustate); 												\
+		uint16_t a = ARG16(cpustate); 												\
 		cpustate->icount -= (IS_8085(cpustate)) ? 7 : 6 ;							\
 		M_PUSH(PC); 																\
 		cpustate->PC.d = a; 														\

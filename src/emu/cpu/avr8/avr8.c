@@ -24,7 +24,7 @@
 typedef struct _avr8_state avr8_state;
 struct _avr8_state
 {
-    UINT32 pc;
+    uint32_t pc;
 
     legacy_cpu_device *device;
     const address_space *program;
@@ -65,7 +65,7 @@ enum
 #define KCONST6(op)     ((((op) >> 2) & 0x0030) | ((op) & 0x000f))
 #define KCONST7(op)     (((op) >> 3) & 0x007f)
 #define KCONST8(op)     ((((op) >> 4) & 0x00f0) | ((op) & 0x000f))
-#define KCONST22(op)    (((((UINT32)(op) >> 3) & 0x003e) | ((UINT32)(op) & 0x0001)) << 16)
+#define KCONST22(op)    (((((uint32_t)(op) >> 3) & 0x003e) | ((uint32_t)(op) & 0x0001)) << 16)
 #define QCONST6(op)     ((((op) >> 8) & 0x0020) | (((op) >> 7) & 0x0018) | ((op) & 0x0007))
 #define ACONST5(op)     (((op) >> 3) & 0x001f)
 #define ACONST6(op)     ((((op) >> 5) & 0x0030) | ((op) & 0x000f))
@@ -84,14 +84,14 @@ INLINE avr8_state *get_safe_token(running_device *device)
 
 /*****************************************************************************/
 
-static void unimplemented_opcode(avr8_state *cpustate, UINT32 op)
+static void unimplemented_opcode(avr8_state *cpustate, uint32_t op)
 {
     fatalerror("AVR8: unknown opcode (%08x) at %08x\n", op, cpustate->pc);
 }
 
 /*****************************************************************************/
 
-INLINE bool avr8_is_long_opcode(UINT16 op)
+INLINE bool avr8_is_long_opcode(uint16_t op)
 {
 	if((op & 0xf000) == 0x9000)
 	{
@@ -113,39 +113,39 @@ INLINE bool avr8_is_long_opcode(UINT16 op)
 	return false;
 }
 
-INLINE UINT8 READ_PRG_8(avr8_state *cpustate, UINT32 address)
+INLINE uint8_t READ_PRG_8(avr8_state *cpustate, uint32_t address)
 {
     return memory_read_byte_16le(cpustate->program, address);
 }
 
-INLINE UINT16 READ_PRG_16(avr8_state *cpustate, UINT32 address)
+INLINE uint16_t READ_PRG_16(avr8_state *cpustate, uint32_t address)
 {
     return memory_read_word_16le(cpustate->program, address << 1);
 }
 
-INLINE void WRITE_PRG_8(avr8_state *cpustate, UINT32 address, UINT8 data)
+INLINE void WRITE_PRG_8(avr8_state *cpustate, uint32_t address, uint8_t data)
 {
     memory_write_byte_16le(cpustate->program, address, data);
 }
 
-INLINE void WRITE_PRG_16(avr8_state *cpustate, UINT32 address, UINT16 data)
+INLINE void WRITE_PRG_16(avr8_state *cpustate, uint32_t address, uint16_t data)
 {
     memory_write_word_16le(cpustate->program, address, data);
 }
 
-INLINE UINT8 READ_IO_8(avr8_state *cpustate, UINT16 address)
+INLINE uint8_t READ_IO_8(avr8_state *cpustate, uint16_t address)
 {
     return memory_read_byte(cpustate->io, address);
 }
 
-INLINE void WRITE_IO_8(avr8_state *cpustate, UINT16 address, UINT8 data)
+INLINE void WRITE_IO_8(avr8_state *cpustate, uint16_t address, uint8_t data)
 {
     memory_write_byte(cpustate->io, address, data);
 }
 
-INLINE void PUSH(avr8_state *cpustate, UINT8 val)
+INLINE void PUSH(avr8_state *cpustate, uint8_t val)
 {
-    UINT16 sp = SPREG;
+    uint16_t sp = SPREG;
     WRITE_IO_8(cpustate, sp, val);
     sp--;
     //printf( "PUSH %02x, new SP = %04x\n", val, sp );
@@ -153,9 +153,9 @@ INLINE void PUSH(avr8_state *cpustate, UINT8 val)
     WRITE_IO_8(cpustate, AVR8_IO_SPL, sp & 0x00ff);
 }
 
-INLINE UINT8 POP(avr8_state *cpustate)
+INLINE uint8_t POP(avr8_state *cpustate)
 {
-    UINT16 sp = SPREG;
+    uint16_t sp = SPREG;
     sp++;
     WRITE_IO_8(cpustate, AVR8_IO_SPH, (sp >> 8) & 0x00ff);
     WRITE_IO_8(cpustate, AVR8_IO_SPL, sp & 0x00ff);
@@ -163,7 +163,7 @@ INLINE UINT8 POP(avr8_state *cpustate)
     return READ_IO_8(cpustate, sp);
 }
 
-static void avr8_set_irq_line(avr8_state *cpustate, UINT16 vector, int state)
+static void avr8_set_irq_line(avr8_state *cpustate, uint16_t vector, int state)
 {
     //printf( "OMFG SETTING IRQ LINE\n" );
     // Horrible hack, not accurate
@@ -210,15 +210,15 @@ static CPU_RESET( avr8 )
 
 static CPU_EXECUTE( avr8 )
 {
-    UINT32 op = 0;
-    INT32 offs = 0;
-    UINT8 rd = 0;
-    UINT8 rr = 0;
-    UINT8 res = 0;
-    UINT16 pd = 0;
-    INT16 sd = 0;
-    INT32 opcycles = 1;
-    //UINT16 pr = 0;
+    uint32_t op = 0;
+    int32_t offs = 0;
+    uint8_t rd = 0;
+    uint8_t rr = 0;
+    uint8_t res = 0;
+    uint16_t pd = 0;
+    int16_t sd = 0;
+    int32_t opcycles = 1;
+    //uint16_t pr = 0;
     avr8_state *cpustate = get_safe_token(device);
 
     while (cpustate->icount > 0)
@@ -227,7 +227,7 @@ static CPU_EXECUTE( avr8 )
 
         debugger_instruction_hook(device, cpustate->pc << 1);
 
-        op = (UINT32)READ_PRG_16(cpustate, cpustate->pc);
+        op = (uint32_t)READ_PRG_16(cpustate, cpustate->pc);
 
         switch(op & 0xf000)
         {
@@ -245,7 +245,7 @@ static CPU_EXECUTE( avr8 )
                         unimplemented_opcode(cpustate, op);
                         break;
                     case 0x0300:    // MULSU Rd,Rr
-                        sd = (INT8)READ_IO_8(cpustate, 16+RD4(op)) * (UINT8)READ_IO_8(cpustate, 16+RR4(op));
+                        sd = (int8_t)READ_IO_8(cpustate, 16+RD4(op)) * (uint8_t)READ_IO_8(cpustate, 16+RR4(op));
                         WRITE_IO_8(cpustate, 1, (sd >> 8) & 0x00ff);
                         WRITE_IO_8(cpustate, 0, sd & 0x00ff);
                         SREG_W(AVR8_SREG_C, (sd & 0x8000) ? 1 : 0);
@@ -870,7 +870,7 @@ static CPU_EXECUTE( avr8 )
                     case 0x0d00:
                     case 0x0e00:
                     case 0x0f00:    // MUL Rd,Rr
-                        sd = (UINT8)READ_IO_8(cpustate, RD5(op)) * (UINT8)READ_IO_8(cpustate, RR5(op));
+                        sd = (uint8_t)READ_IO_8(cpustate, RD5(op)) * (uint8_t)READ_IO_8(cpustate, RR5(op));
                         WRITE_IO_8(cpustate, 1, (sd >> 8) & 0x00ff);
                         WRITE_IO_8(cpustate, 0, sd & 0x00ff);
                         SREG_W(AVR8_SREG_C, (sd & 0x8000) ? 1 : 0);
@@ -891,12 +891,12 @@ static CPU_EXECUTE( avr8 )
                 }
                 break;
             case 0xc000:    // RJMP k
-                offs = (INT32)((op & 0x0800) ? ((op & 0x0fff) | 0xfffff000) : (op & 0x0fff));
+                offs = (int32_t)((op & 0x0800) ? ((op & 0x0fff) | 0xfffff000) : (op & 0x0fff));
                 cpustate->pc += offs;
                 opcycles = 2;
                 break;
             case 0xd000:    // RCALL k
-                offs = (INT32)((op & 0x0800) ? ((op & 0x0fff) | 0xfffff000) : (op & 0x0fff));
+                offs = (int32_t)((op & 0x0800) ? ((op & 0x0fff) | 0xfffff000) : (op & 0x0fff));
                 PUSH(cpustate, ((cpustate->pc + 1) >> 8) & 0x00ff);
                 PUSH(cpustate, (cpustate->pc + 1) & 0x00ff);
                 cpustate->pc += offs;
@@ -912,7 +912,7 @@ static CPU_EXECUTE( avr8 )
                     case 0x0000: // BRLO through BRIE
                         if(SREG_R(op & 0x0007))
                         {
-                            offs = (INT32)(KCONST7(op));
+                            offs = (int32_t)(KCONST7(op));
                             if(offs & 0x40)
                             {
                                 offs |= 0xffffff80;
@@ -924,7 +924,7 @@ static CPU_EXECUTE( avr8 )
                     case 0x0400: // BRSH through BRID
                         if(SREG_R(op & 0x0007) == 0)
                         {
-                            offs = (INT32)(KCONST7(op));
+                            offs = (int32_t)(KCONST7(op));
                             if(offs & 0x40)
                             {
                                 offs |= 0xffffff80;
@@ -955,7 +955,7 @@ static CPU_EXECUTE( avr8 )
                         {
                             if(BIT(READ_IO_8(cpustate, RD5(op)),RR3(op)))
                             {
-                                op = (UINT32)READ_PRG_16(cpustate, cpustate->pc++);
+                                op = (uint32_t)READ_PRG_16(cpustate, cpustate->pc++);
                                 opcycles = 2;
                                 if((op & 0xfe0c) == 0x940c ||
                                    (op & 0xfe0f) == 0xfe0f)
@@ -969,7 +969,7 @@ static CPU_EXECUTE( avr8 )
                         {
                             if(!BIT(READ_IO_8(cpustate, RD5(op)),RR3(op)))
                             {
-                                op = (UINT32)READ_PRG_16(cpustate, cpustate->pc++);
+                                op = (uint32_t)READ_PRG_16(cpustate, cpustate->pc++);
                                 opcycles = 2;
                                 if((op & 0xfe0c) == 0x940c ||
                                    (op & 0xfc0f) == 0x9000)

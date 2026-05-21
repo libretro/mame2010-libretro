@@ -44,12 +44,12 @@ typedef struct _sc61860_state sc61860_state;
 struct _sc61860_state
 {
     sc61860_cpu_core *config;
-    UINT8 ram[0x60]; // internal special ram
-    UINT8 p, q, r; //7 bits only?
+    uint8_t ram[0x60]; // internal special ram
+    uint8_t p, q, r; //7 bits only?
 
-    UINT8 c;        // port c, used for HLT.
-    UINT8 d, h;
-    UINT16 oldpc, pc, dp;
+    uint8_t c;        // port c, used for HLT.
+    uint8_t d, h;
+    uint16_t oldpc, pc, dp;
 
     int carry, zero;
 
@@ -67,7 +67,7 @@ INLINE sc61860_state *get_safe_token(running_device *device)
 	return (sc61860_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-UINT8 *sc61860_internal_ram(running_device *device)
+uint8_t *sc61860_internal_ram(running_device *device)
 {
 	sc61860_state *cpustate = get_safe_token(device);
 	return cpustate->ram;

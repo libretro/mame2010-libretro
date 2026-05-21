@@ -11,7 +11,7 @@
 #include "tlcs90.h"
 
 typedef enum					{	UNKNOWN,	NOP,	EX,		EXX,	LD,		LDW,	LDA,	LDI,	LDIR,	LDD,	LDDR,	CPI,	CPIR,	CPD,	CPDR,	PUSH,	POP,	JP,		JR,		CALL,	CALLR,		RET,	RETI,	HALT,	DI,		EI,		SWI,	DAA,	CPL,	NEG,	LDAR,	RCF,	SCF,	CCF,	TSET,	BIT,	SET,	RES,	INC,	DEC,	INCX,	DECX,	INCW,	DECW,	ADD,	ADC,	SUB,	SBC,	AND,	XOR,	OR,		CP,		RLC,	RRC,	RL,		RR,		SLA,	SRA,	SLL,	SRL,	RLD,	RRD,	DJNZ,	MUL,	DIV		}	_e_op;
-typedef UINT8 e_op;
+typedef uint8_t e_op;
 static const char *const op_names[] =	{	"??",		"nop",	"ex",	"exx",	"ld",	"ldw",	"lda",	"ldi",	"ldir",	"ldd",	"lddr",	"cpi",	"cpir",	"cpd",	"cpdr",	"push",	"pop",	"jp",	"jr",	"call",	"callr",	"ret",	"reti",	"halt",	"di",	"ei",	"swi",	"daa",	"cpl",	"neg",	"ldar",	"rcf",	"scf",	"ccf",	"tset",	"bit",	"set",	"res",	"inc",	"dec",	"incx",	"decx",	"incw",	"decw",	"add",	"adc",	"sub",	"sbc",	"and",	"xor",	"or",	"cp",	"rlc",	"rrc",	"rl",	"rr",	"sla",	"sra",	"sll",	"srl",	"rld",	"rrd",	"djnz",	"mul",	"div"	};
 
 typedef enum	{
@@ -22,27 +22,27 @@ typedef enum	{
 	MODE_R16D8,	MODE_R16R8
 }	e_mode;
 
-typedef UINT16 e_r;
+typedef uint16_t e_r;
 
 typedef struct
 {
 	PAIR		prvpc,pc,sp,af,bc,de,hl,ix,iy;
 	PAIR		af2,bc2,de2,hl2;
-	UINT8		halt, after_EI;
-	UINT16		irq_state, irq_mask;
+	uint8_t		halt, after_EI;
+	uint16_t		irq_state, irq_mask;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
 	int		icount;
 	int			extra_cycles;		// extra cycles for interrupts
-	UINT8		internal_registers[48];
-	UINT32		ixbase,iybase;
+	uint8_t		internal_registers[48];
+	uint32_t		ixbase,iybase;
 
 	// Timers: 4 x 8-bit + 1 x 16-bit
 	emu_timer	*timer[4+1];
-	UINT8		timer_value[4];
-	UINT16		timer4_value;
+	uint8_t		timer_value[4];
+	uint16_t		timer4_value;
 	attotime	timer_period;
 
 	// Work registers
@@ -56,7 +56,7 @@ typedef struct
 
 	int	cyc_t,cyc_f;
 
-	UINT32	addr;
+	uint32_t	addr;
 
 }	t90_Regs;
 
@@ -138,11 +138,11 @@ static const char *const r16_names[]	=	{	"bc",	"de",	"hl",	"??",	"ix",	"iy",	"sp
 #define ZF	0x40
 #define SF	0x80
 
-static UINT8 SZ[256];		/* zero and sign flags */
-static UINT8 SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
-static UINT8 SZP[256];		/* zero, sign and parity flags */
-static UINT8 SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
-static UINT8 SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
+static uint8_t SZ[256];		/* zero and sign flags */
+static uint8_t SZ_BIT[256];	/* zero, sign and parity/overflow (=zero) flags for BIT opcode */
+static uint8_t SZP[256];		/* zero, sign and parity flags */
+static uint8_t SZHV_inc[256]; /* zero, sign, half carry and overflow flags INC r8 */
+static uint8_t SZHV_dec[256]; /* zero, sign, half carry and overflow flags DEC r8 */
 
 static const char *const cc_names[]	=	{	"f",	"lt",	"le",	"ule",	"ov",	"mi",	"z",	"c",	"",		"ge",	"gt",	"ugt",	"nov",	"pl",	"nz",	"nc"	};
 
@@ -177,25 +177,25 @@ static const char *const cc_names[]	=	{	"f",	"lt",	"le",	"ule",	"ov",	"mi",	"z",
 #define R16D8( N,R,I )		cpustate->mode##N = MODE_R16D8;	cpustate->r##N = R;	cpustate->r##N##b = I;
 #define R16R8( N,R,g )		cpustate->mode##N = MODE_R16R8;	cpustate->r##N = R;	cpustate->r##N##b = g;
 
-INLINE UINT8  RM8 (t90_Regs *cpustate, UINT32 a)	{ return memory_read_byte_8le( cpustate->program, a ); }
-INLINE UINT16 RM16(t90_Regs *cpustate, UINT32 a)	{ return RM8(cpustate,a) | (RM8( cpustate, (a+1) & 0xffff ) << 8); }
+INLINE uint8_t  RM8 (t90_Regs *cpustate, uint32_t a)	{ return memory_read_byte_8le( cpustate->program, a ); }
+INLINE uint16_t RM16(t90_Regs *cpustate, uint32_t a)	{ return RM8(cpustate,a) | (RM8( cpustate, (a+1) & 0xffff ) << 8); }
 
-INLINE void WM8 (t90_Regs *cpustate, UINT32 a, UINT8  v)	{ memory_write_byte_8le( cpustate->program, a, v ); }
-INLINE void WM16(t90_Regs *cpustate, UINT32 a, UINT16 v)	{ WM8(cpustate,a,v);	WM8( cpustate, (a+1) & 0xffff, v >> 8); }
+INLINE void WM8 (t90_Regs *cpustate, uint32_t a, uint8_t  v)	{ memory_write_byte_8le( cpustate->program, a, v ); }
+INLINE void WM16(t90_Regs *cpustate, uint32_t a, uint16_t v)	{ WM8(cpustate,a,v);	WM8( cpustate, (a+1) & 0xffff, v >> 8); }
 
-INLINE UINT8  RX8 (t90_Regs *cpustate, UINT32 a, UINT32 base)	{ return memory_read_byte_8le( cpustate->program, base | a ); }
-INLINE UINT16 RX16(t90_Regs *cpustate, UINT32 a, UINT32 base)	{ return RX8(cpustate,a,base) | (RX8( cpustate, (a+1) & 0xffff, base ) << 8); }
+INLINE uint8_t  RX8 (t90_Regs *cpustate, uint32_t a, uint32_t base)	{ return memory_read_byte_8le( cpustate->program, base | a ); }
+INLINE uint16_t RX16(t90_Regs *cpustate, uint32_t a, uint32_t base)	{ return RX8(cpustate,a,base) | (RX8( cpustate, (a+1) & 0xffff, base ) << 8); }
 
-INLINE void WX8 (t90_Regs *cpustate, UINT32 a, UINT8  v, UINT32 base)	{ memory_write_byte_8le( cpustate->program, base | a, v ); }
-INLINE void WX16(t90_Regs *cpustate, UINT32 a, UINT16 v, UINT32 base)	{ WX8(cpustate,a,v,base);	WX8( cpustate, (a+1) & 0xffff, v >> 8, base); }
+INLINE void WX8 (t90_Regs *cpustate, uint32_t a, uint8_t  v, uint32_t base)	{ memory_write_byte_8le( cpustate->program, base | a, v ); }
+INLINE void WX16(t90_Regs *cpustate, uint32_t a, uint16_t v, uint32_t base)	{ WX8(cpustate,a,v,base);	WX8( cpustate, (a+1) & 0xffff, v >> 8, base); }
 
-INLINE UINT8  READ8(t90_Regs *cpustate)	{ UINT8 b0 = RM8( cpustate, cpustate->addr++ ); cpustate->addr &= 0xffff; return b0; }
-INLINE UINT16 READ16(t90_Regs *cpustate)	{ UINT8 b0 = READ8(cpustate); return b0 | (READ8(cpustate) << 8); }
+INLINE uint8_t  READ8(t90_Regs *cpustate)	{ uint8_t b0 = RM8( cpustate, cpustate->addr++ ); cpustate->addr &= 0xffff; return b0; }
+INLINE uint16_t READ16(t90_Regs *cpustate)	{ uint8_t b0 = READ8(cpustate); return b0 | (READ8(cpustate) << 8); }
 
 static void decode(t90_Regs *cpustate)
 {
-	UINT8  b0, b1, b2, b3;
-	UINT16 imm16;
+	uint8_t  b0, b1, b2, b3;
+	uint16_t imm16;
 
 	b0 = READ8(cpustate);
 
@@ -964,14 +964,14 @@ static const char *const ir_names[] =	{
 	"DMAEH",	"SCMOD",	"SCCR",			"SCBUF",	"BX",		"BY",		"ADREG",	"ADMOD"
 };
 
-static const char *internal_registers_names(UINT16 x)
+static const char *internal_registers_names(uint16_t x)
 {
 	int ir = x - T90_IOBASE;
 	if ( ir >= 0 && ir < sizeof(ir_names)/sizeof(ir_names[0]) )
 		return ir_names[ir];
 	return NULL;
 }
-static int sprint_arg(char *buffer, UINT32 pc, const char *pre, const e_mode mode, const e_r r, const e_r rb)
+static int sprint_arg(char *buffer, uint32_t pc, const char *pre, const e_mode mode, const e_r r, const e_r rb)
 {
 	const char *reg_name;
 	switch ( mode )
@@ -1025,7 +1025,7 @@ CPU_DISASSEMBLE( t90 )
 }
 
 
-INLINE UINT16 r8( t90_Regs *cpustate, const e_r r )
+INLINE uint16_t r8( t90_Regs *cpustate, const e_r r )
 {
 	switch( r )
 	{
@@ -1042,7 +1042,7 @@ INLINE UINT16 r8( t90_Regs *cpustate, const e_r r )
 	}
 }
 
-INLINE void w8( t90_Regs *cpustate, const e_r r, UINT16 value )
+INLINE void w8( t90_Regs *cpustate, const e_r r, uint16_t value )
 {
 	switch( r )
 	{
@@ -1059,7 +1059,7 @@ INLINE void w8( t90_Regs *cpustate, const e_r r, UINT16 value )
 	}
 }
 
-INLINE UINT16 r16( t90_Regs *cpustate, const e_r r )
+INLINE uint16_t r16( t90_Regs *cpustate, const e_r r )
 {
 	switch( r )
 	{
@@ -1080,7 +1080,7 @@ INLINE UINT16 r16( t90_Regs *cpustate, const e_r r )
 	}
 }
 
-INLINE void w16( t90_Regs *cpustate, const e_r r, UINT16 value )
+INLINE void w16( t90_Regs *cpustate, const e_r r, uint16_t value )
 {
 	switch( r )
 	{
@@ -1101,15 +1101,15 @@ INLINE void w16( t90_Regs *cpustate, const e_r r, UINT16 value )
 
 
 #define READ_FN( N ) \
-INLINE UINT8 Read##N##_8(t90_Regs *cpustate)	{ \
+INLINE uint8_t Read##N##_8(t90_Regs *cpustate)	{ \
 	switch ( cpustate->mode##N )	{ \
 		case MODE_CC: \
 		case MODE_BIT8: \
-		case MODE_I8:		return (UINT8)cpustate->r##N; \
-		case MODE_D8:		return (UINT8)cpustate->r##N; \
-		case MODE_R8:		return (UINT8)r8(cpustate, cpustate->r##N); \
+		case MODE_I8:		return (uint8_t)cpustate->r##N; \
+		case MODE_D8:		return (uint8_t)cpustate->r##N; \
+		case MODE_R8:		return (uint8_t)r8(cpustate, cpustate->r##N); \
 		case MODE_MI16: 	return RM8(cpustate, cpustate->r##N); \
-		case MODE_MR16R8:	return RM8(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)r8(cpustate, cpustate->r##N##b))); \
+		case MODE_MR16R8:	return RM8(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)r8(cpustate, cpustate->r##N##b))); \
 		case MODE_MR16: \
 			switch( cpustate->r##N ) { \
 				case IX:	return RX8(cpustate, cpustate->ix.w.l,cpustate->ixbase); \
@@ -1118,24 +1118,24 @@ INLINE UINT8 Read##N##_8(t90_Regs *cpustate)	{ \
 			return RM8(cpustate, r16(cpustate, cpustate->r##N)); \
 		case MODE_MR16D8: \
 			switch( cpustate->r##N ) { \
-				case IX:	return RX8(cpustate, (UINT16)(cpustate->ix.w.l + (INT8)cpustate->r##N##b),cpustate->ixbase); \
-				case IY:	return RX8(cpustate, (UINT16)(cpustate->iy.w.l + (INT8)cpustate->r##N##b),cpustate->iybase); \
+				case IX:	return RX8(cpustate, (uint16_t)(cpustate->ix.w.l + (int8_t)cpustate->r##N##b),cpustate->ixbase); \
+				case IY:	return RX8(cpustate, (uint16_t)(cpustate->iy.w.l + (int8_t)cpustate->r##N##b),cpustate->iybase); \
 			} \
-			return RM8(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)cpustate->r##N##b)); \
+			return RM8(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)cpustate->r##N##b)); \
 		default: \
 			fatalerror("%04x: unimplemented Read%d_8 mode = %d\n",cpustate->pc.w.l,N,cpustate->mode##N); \
 	} \
 	return 0; \
 } \
-INLINE UINT16 Read##N##_16(t90_Regs *cpustate)	{ \
+INLINE uint16_t Read##N##_16(t90_Regs *cpustate)	{ \
 	switch ( cpustate->mode##N )	{ \
 		case MODE_I16:		return cpustate->r##N; \
 		case MODE_D16:		return cpustate->r##N - 1; \
 		case MODE_R16:		return r16(cpustate, cpustate->r##N); \
-		case MODE_R16D8:	return r16(cpustate, cpustate->r##N) + (INT8)cpustate->r##N##b; \
-		case MODE_R16R8:	return r16(cpustate, cpustate->r##N) + (INT8)r8(cpustate, cpustate->r##N##b); \
+		case MODE_R16D8:	return r16(cpustate, cpustate->r##N) + (int8_t)cpustate->r##N##b; \
+		case MODE_R16R8:	return r16(cpustate, cpustate->r##N) + (int8_t)r8(cpustate, cpustate->r##N##b); \
 		case MODE_MI16: 	return RM16(cpustate, cpustate->r##N); \
-		case MODE_MR16R8:	return RM16(cpustate,(UINT16)(r16(cpustate, cpustate->r##N) + (INT8)r8(cpustate, cpustate->r##N##b))); \
+		case MODE_MR16R8:	return RM16(cpustate,(uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)r8(cpustate, cpustate->r##N##b))); \
 		case MODE_MR16: \
 			switch( cpustate->r##N ) { \
 				case IX:	return RX16(cpustate, cpustate->ix.w.l,cpustate->ixbase); \
@@ -1144,10 +1144,10 @@ INLINE UINT16 Read##N##_16(t90_Regs *cpustate)	{ \
 			return RM16(cpustate,r16(cpustate, cpustate->r##N)); \
 		case MODE_MR16D8: \
 			switch( cpustate->r##N ) { \
-				case IX:	return RX16(cpustate, (UINT16)(cpustate->ix.w.l + (INT8)cpustate->r##N##b),cpustate->ixbase); \
-				case IY:	return RX16(cpustate, (UINT16)(cpustate->iy.w.l + (INT8)cpustate->r##N##b),cpustate->iybase); \
+				case IX:	return RX16(cpustate, (uint16_t)(cpustate->ix.w.l + (int8_t)cpustate->r##N##b),cpustate->ixbase); \
+				case IY:	return RX16(cpustate, (uint16_t)(cpustate->iy.w.l + (int8_t)cpustate->r##N##b),cpustate->iybase); \
 			} \
-			return RM16(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)cpustate->r##N##b)); \
+			return RM16(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)cpustate->r##N##b)); \
 		default: \
 			fatalerror("%04x: unimplemented Read%d_16 modes = %d\n",cpustate->pc.w.l,N,cpustate->mode##N); \
 	} \
@@ -1157,11 +1157,11 @@ INLINE UINT16 Read##N##_16(t90_Regs *cpustate)	{ \
 
 
 #define WRITE_FN( N ) \
-INLINE void Write##N##_8( t90_Regs *cpustate, UINT8 value )	{ \
+INLINE void Write##N##_8( t90_Regs *cpustate, uint8_t value )	{ \
 	switch ( cpustate->mode##N )	{ \
 		case MODE_R8:		w8(cpustate, cpustate->r##N,value);		return; \
 		case MODE_MI16: 	WM8(cpustate, cpustate->r##N, value);	return; \
-		case MODE_MR16R8:	WM8(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)r8(cpustate, cpustate->r##N##b)), value);	return; \
+		case MODE_MR16R8:	WM8(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)r8(cpustate, cpustate->r##N##b)), value);	return; \
 		case MODE_MR16: \
 			switch( cpustate->r##N ) { \
 				case IX:	WX8(cpustate, cpustate->ix.w.l,value,cpustate->ixbase);	return; \
@@ -1170,20 +1170,20 @@ INLINE void Write##N##_8( t90_Regs *cpustate, UINT8 value )	{ \
 			WM8(cpustate, r16(cpustate, cpustate->r##N), value);	return; \
 		case MODE_MR16D8: \
 			switch( cpustate->r##N ) { \
-				case IX:	WX8(cpustate, (UINT16)(cpustate->ix.w.l + (INT8)cpustate->r##N##b),value,cpustate->ixbase);	return; \
-				case IY:	WX8(cpustate, (UINT16)(cpustate->iy.w.l + (INT8)cpustate->r##N##b),value,cpustate->iybase);	return; \
+				case IX:	WX8(cpustate, (uint16_t)(cpustate->ix.w.l + (int8_t)cpustate->r##N##b),value,cpustate->ixbase);	return; \
+				case IY:	WX8(cpustate, (uint16_t)(cpustate->iy.w.l + (int8_t)cpustate->r##N##b),value,cpustate->iybase);	return; \
 			} \
-			WM8(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)cpustate->r##N##b), value);	return; \
+			WM8(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)cpustate->r##N##b), value);	return; \
 		default: \
 			fatalerror("%04x: unimplemented Write%d_8 mode = %d\n",cpustate->pc.w.l,N,cpustate->mode##N); \
 	} \
 } \
-INLINE void Write##N##_16( t90_Regs *cpustate, UINT16 value ) \
+INLINE void Write##N##_16( t90_Regs *cpustate, uint16_t value ) \
 { \
 	switch ( cpustate->mode##N )	{ \
 		case MODE_R16:		w16(cpustate, cpustate->r##N,value);	return; \
 		case MODE_MI16: 	WM16(cpustate, cpustate->r##N, value);	return; \
-		case MODE_MR16R8:	WM16(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)r8(cpustate, cpustate->r##N##b)), value);	return; \
+		case MODE_MR16R8:	WM16(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)r8(cpustate, cpustate->r##N##b)), value);	return; \
 		case MODE_MR16: \
 			switch( cpustate->r##N ) { \
 				case IX:	WX16(cpustate, cpustate->ix.w.l,value,cpustate->ixbase);	return; \
@@ -1192,10 +1192,10 @@ INLINE void Write##N##_16( t90_Regs *cpustate, UINT16 value ) \
 			WM16(cpustate, r16(cpustate, cpustate->r##N), value);	return; \
 		case MODE_MR16D8: \
 			switch( cpustate->r##N ) { \
-				case IX:	WX16(cpustate, (UINT16)(cpustate->ix.w.l + (INT8)cpustate->r##N##b),value,cpustate->ixbase);	return; \
-				case IY:	WX16(cpustate, (UINT16)(cpustate->iy.w.l + (INT8)cpustate->r##N##b),value,cpustate->iybase);	return; \
+				case IX:	WX16(cpustate, (uint16_t)(cpustate->ix.w.l + (int8_t)cpustate->r##N##b),value,cpustate->ixbase);	return; \
+				case IY:	WX16(cpustate, (uint16_t)(cpustate->iy.w.l + (int8_t)cpustate->r##N##b),value,cpustate->iybase);	return; \
 			} \
-			WM16(cpustate, (UINT16)(r16(cpustate, cpustate->r##N) + (INT8)cpustate->r##N##b), value);	return; \
+			WM16(cpustate, (uint16_t)(r16(cpustate, cpustate->r##N) + (int8_t)cpustate->r##N##b), value);	return; \
 		default: \
 			fatalerror("%04x: unimplemented Write%d_16 mode = %d\n",cpustate->pc.w.l,N,cpustate->mode##N); \
 	} \
@@ -1206,7 +1206,7 @@ READ_FN(2)
 WRITE_FN(1)
 WRITE_FN(2)
 
-INLINE int Test( t90_Regs *cpustate, UINT8 cond )
+INLINE int Test( t90_Regs *cpustate, uint8_t cond )
 {
 	int s,v;
 	switch ( cond )
@@ -1345,8 +1345,8 @@ INLINE void Cyc_f(t90_Regs *cpustate)	{	cpustate->icount -= cpustate->cyc_f;	}
 static CPU_EXECUTE( t90 )
 {
 	t90_Regs *cpustate = get_safe_token(device);
-	UINT8    a8,b8;
-	UINT16   a16,b16;
+	uint8_t    a8,b8;
+	uint16_t   a16,b16;
 	unsigned a32;
 	PAIR tmp;
 
@@ -1492,7 +1492,7 @@ static CPU_EXECUTE( t90 )
 			case JR:
 				if ( Test( cpustate, Read1_8(cpustate) ) )
 				{
-					cpustate->pc.w.l += /*2 +*/ (INT8)Read2_8(cpustate);
+					cpustate->pc.w.l += /*2 +*/ (int8_t)Read2_8(cpustate);
 					Cyc(cpustate);
 				}
 				else	Cyc_f(cpustate);
@@ -1556,7 +1556,7 @@ static CPU_EXECUTE( t90 )
 
 			case DAA:
 			{
-				UINT8 cf, nf, hf, lo, hi, diff;
+				uint8_t cf, nf, hf, lo, hi, diff;
 				cf = F & CF;
 				nf = F & NF;
 				hf = F & HF;
@@ -1605,7 +1605,7 @@ static CPU_EXECUTE( t90 )
 				a8 = 0;
 				b8 = cpustate->af.b.h;
 				a32 = a8 - b8;
-				F = (F & IF) | SZ[(UINT8)a32] | NF;
+				F = (F & IF) | SZ[(uint8_t)a32] | NF;
 				if (a32 & 0x100)			F |= CF | XCF;	//X?
 				if ((a8 ^ a32 ^ b8) & 0x10)	F |= HF;
 				if ((b8 ^ a8) & (a8 ^ a32) & 0x80)	F |= VF;
@@ -1677,7 +1677,7 @@ static CPU_EXECUTE( t90 )
 				a32 = a16 + 1;
 				Write1_16( cpustate, a32 );
 				F &= IF | CF;
-				if ((UINT16)a32 == 0)	F |= ZF | XCF;
+				if ((uint16_t)a32 == 0)	F |= ZF | XCF;
 				if (a32 & 0x8000)		F |= SF;
 				if ((a16 ^ 0x8000) & a32 & 0x8000)	F |= VF;
 				if ((a16 ^ a32 ^ 1) & 0x1000)	F |= HF;	//??
@@ -1715,7 +1715,7 @@ static CPU_EXECUTE( t90 )
 				a32 = a16 - 1;
 				Write1_16( cpustate, a32 );
 				F = (F & (IF | CF)) | NF;
-				if ((UINT16)a32 == 0)	F |= ZF | XCF;
+				if ((uint16_t)a32 == 0)	F |= ZF | XCF;
 				if (a32 & 0x8000)		F |= SF;
 				if (a16 == 0x8000)		F |= VF;
 				if ((a16 ^ a32 ^ 1) & 0x1000)	F |= HF;	//??
@@ -1729,7 +1729,7 @@ static CPU_EXECUTE( t90 )
 				a32 = a8 + b8;
 				if ( (cpustate->op == ADC) && (F & CF) )	a32 += 1;
 				Write1_8( cpustate, a32 );
-				F = (F & IF) | SZ[(UINT8)a32];
+				F = (F & IF) | SZ[(uint8_t)a32];
 				if (a32 & 0x100)			F |= CF | XCF;	//X?
 				if ((a8 ^ a32 ^ b8) & 0x10)	F |= HF;
 				if ((b8 ^ a8 ^ 0x80) & (b8 ^ a32) & 0x80)	F |= VF;
@@ -1749,7 +1749,7 @@ static CPU_EXECUTE( t90 )
 				else
 				{
 					F &= IF;
-					if ((UINT16)a32 == 0)			F |= ZF;
+					if ((uint16_t)a32 == 0)			F |= ZF;
 					if (a32 & 0x8000)				F |= SF;
 					if ((b16 ^ a16 ^ 0x8000) & (b16 ^ a32) & 0x8000)	F |= VF;
 				}
@@ -1765,7 +1765,7 @@ static CPU_EXECUTE( t90 )
 				b8 = Read2_8(cpustate);
 				a32 = a8 - b8;
 				if ( (cpustate->op == SBC) && (F & CF) )	a32 -= 1;
-				F = (F & IF) | SZ[(UINT8)a32] | NF;
+				F = (F & IF) | SZ[(uint8_t)a32] | NF;
 				if (a32 & 0x100)			F |= CF | XCF;	//X?
 				if ((a8 ^ a32 ^ b8) & 0x10)	F |= HF;
 				if ((b8 ^ a8) & (a8 ^ a32) & 0x80)	F |= VF;
@@ -1781,7 +1781,7 @@ static CPU_EXECUTE( t90 )
 				a32 = a16 - b16;
 				if ( (cpustate->op == (SBC | OP_16)) && (F & CF) )	a32 -= 1;
 				F = (F & IF) | NF;
-				if ((UINT16)a32 == 0)			F |= ZF;
+				if ((uint16_t)a32 == 0)			F |= ZF;
 				if (a32 & 0x8000)				F |= SF;
 				if (a32 & 0x10000)				F |= CF | XCF;	//X?
 				if ((a16 ^ a32 ^ b16) & 0x1000)	F |= HF;	//??
@@ -1928,7 +1928,7 @@ static CPU_EXECUTE( t90 )
 			case DJNZ:
 				if ( --cpustate->bc.b.h )
 				{
-					cpustate->pc.w.l += /*2 +*/ (INT8)Read1_8(cpustate);
+					cpustate->pc.w.l += /*2 +*/ (int8_t)Read1_8(cpustate);
 					Cyc(cpustate);
 				}
 				else	Cyc_f(cpustate);
@@ -1936,19 +1936,19 @@ static CPU_EXECUTE( t90 )
 			case DJNZ | OP_16:
 				if ( --cpustate->bc.w.l )
 				{
-					cpustate->pc.w.l += /*2 +*/ (INT8)Read2_8(cpustate);
+					cpustate->pc.w.l += /*2 +*/ (int8_t)Read2_8(cpustate);
 					Cyc(cpustate);
 				}
 				else	Cyc_f(cpustate);
 				break;
 
 			case MUL:
-				cpustate->hl.w.l = (UINT16)cpustate->hl.b.l * (UINT16)Read2_8(cpustate);
+				cpustate->hl.w.l = (uint16_t)cpustate->hl.b.l * (uint16_t)Read2_8(cpustate);
 				Cyc(cpustate);
 				break;
 			case DIV:
 				a16 = cpustate->hl.w.l;
-				b16 = (UINT16)Read2_8(cpustate);
+				b16 = (uint16_t)Read2_8(cpustate);
 				if (b16 == 0)
 				{
 					F |= VF;
@@ -2286,7 +2286,7 @@ static READ8_HANDLER( t90_internal_registers_r )
 
 	#define RIO		memory_read_byte_8le( cpustate->io, T90_IOBASE+offset )
 
-	UINT8 data = cpustate->internal_registers[offset];
+	uint8_t data = cpustate->internal_registers[offset];
 	switch ( T90_IOBASE + offset )
 	{
 		case T90_P3:	// 7,4,1,0
@@ -2498,8 +2498,8 @@ static WRITE8_HANDLER( t90_internal_registers_w )
 	#define WIO		memory_write_byte_8le( cpustate->io, T90_IOBASE+offset, data )
 
 	t90_Regs *cpustate = get_safe_token(space->cpu);
-	UINT8 out_mask;
-	UINT8 old = cpustate->internal_registers[offset];
+	uint8_t out_mask;
+	uint8_t old = cpustate->internal_registers[offset];
 	switch ( T90_IOBASE + offset )
 	{
 		case T90_TRUN:

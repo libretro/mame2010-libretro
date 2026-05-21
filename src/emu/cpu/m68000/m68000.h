@@ -66,9 +66,9 @@ enum
 	M68K_GENPCBASE = STATE_GENPCBASE
 };
 
-typedef void (*m68k_bkpt_ack_func)(running_device *device, UINT32 data);
+typedef void (*m68k_bkpt_ack_func)(running_device *device, uint32_t data);
 typedef void (*m68k_reset_func)(running_device *device);
-typedef void (*m68k_cmpild_func)(running_device *device, UINT32 data, UINT8 reg);
+typedef void (*m68k_cmpild_func)(running_device *device, uint32_t data, uint8_t reg);
 typedef void (*m68k_rte_func)(running_device *device);
 typedef int (*m68k_tas_func)(running_device *device);
 

@@ -42,22 +42,22 @@
 typedef struct _f8_Regs f8_Regs;
 struct _f8_Regs
 {
-	UINT16	pc0;	/* program counter 0 */
-	UINT16	pc1;	/* program counter 1 */
-	UINT16	dc0;	/* data counter 0 */
-	UINT16	dc1;	/* data counter 1 */
-	UINT8	a;		/* accumulator */
-	UINT8	w;		/* processor status */
-	UINT8	is; 	/* scratchpad pointer */
-	UINT8	dbus;	/* data bus value */
-	UINT16	io; 	/* last I/O address */
-	UINT16  irq_vector;
+	uint16_t	pc0;	/* program counter 0 */
+	uint16_t	pc1;	/* program counter 1 */
+	uint16_t	dc0;	/* data counter 0 */
+	uint16_t	dc1;	/* data counter 1 */
+	uint8_t	a;		/* accumulator */
+	uint8_t	w;		/* processor status */
+	uint8_t	is; 	/* scratchpad pointer */
+	uint8_t	dbus;	/* data bus value */
+	uint16_t	io; 	/* last I/O address */
+	uint16_t  irq_vector;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *iospace;
 	int icount;
-	UINT8   r[64];  /* scratchpad RAM */
+	uint8_t   r[64];  /* scratchpad RAM */
 	int     irq_request;
 };
 
@@ -69,7 +69,7 @@ INLINE f8_Regs *get_safe_token(running_device *device)
 }
 
 /* timer shifter polynome values (will be used for timer interrupts) */
-static UINT8 timer_shifter[256];
+static uint8_t timer_shifter[256];
 
 /* clear all flags */
 #define CLR_OZCS                \
@@ -133,7 +133,7 @@ static void ROMC_01(f8_Regs *cpustate)
      * on the data bus as signed binary number to PC0.
      */
 	cpustate->dbus = memory_raw_read_byte(cpustate->program, cpustate->pc0);
-	cpustate->pc0 += (INT8)cpustate->dbus;
+	cpustate->pc0 += (int8_t)cpustate->dbus;
     cpustate->icount -= cL;
 }
 
@@ -228,7 +228,7 @@ static void ROMC_0A(f8_Regs *cpustate)
      * All devices add the 8-bit value on the data bus, treated as
      * signed binary number, to the data counter.
      */
-    cpustate->dc0 += (INT8)cpustate->dbus;
+    cpustate->dc0 += (int8_t)cpustate->dbus;
     cpustate->icount -= cL;
 }
 
@@ -444,7 +444,7 @@ static void ROMC_1D(f8_Regs *cpustate)
      * Devices with DC0 and DC1 registers must switch registers.
      * Devices without a DC1 register perform no operation.
      */
-    UINT16 tmp = cpustate->dc0;
+    uint16_t tmp = cpustate->dc0;
     cpustate->dc0 = cpustate->dc1;
     cpustate->dc1 = tmp;
     cpustate->icount -= cS;
@@ -885,12 +885,12 @@ static void f8_ai(f8_Regs *cpustate)
  ***************************************************/
 static void f8_ci(f8_Regs *cpustate)
 {
-    UINT16 tmp = ((UINT8)~cpustate->a) + 1;
+    uint16_t tmp = ((uint8_t)~cpustate->a) + 1;
     ROMC_03(cpustate, cL);
     CLR_OZCS;
     SET_OC(tmp,cpustate->dbus);
     tmp += cpustate->dbus;
-    SET_SZ((UINT8)tmp);
+    SET_SZ((uint8_t)tmp);
 }
 
 /***************************************************
@@ -1158,7 +1158,7 @@ static void f8_am(f8_Regs *cpustate)
  ***************************************************/
 static void f8_amd(f8_Regs *cpustate)
 {
-    UINT8 tmp = cpustate->a - 0x66, adj = 0x00;
+    uint8_t tmp = cpustate->a - 0x66, adj = 0x00;
     int sum;
     ROMC_02(cpustate);
     sum = (tmp & 0x0f) + (cpustate->dbus & 0x0f);
@@ -1216,12 +1216,12 @@ static void f8_xm(f8_Regs *cpustate)
  ***************************************************/
 static void f8_cm(f8_Regs *cpustate)	/* SKR changed to match f8_ci(cpustate) */
 {
-    UINT16 tmp = ((UINT8)~cpustate->a) + 1;
+    uint16_t tmp = ((uint8_t)~cpustate->a) + 1;
 	ROMC_02(cpustate);
 	CLR_OZCS;
 	SET_OC(tmp,cpustate->dbus);
 	tmp += cpustate->dbus;
-	SET_SZ((UINT8)tmp);
+	SET_SZ((uint8_t)tmp);
 }
 
 /***************************************************
@@ -1363,7 +1363,7 @@ static void f8_as_isar_d(f8_Regs *cpustate)
  ***************************************************/
 static void f8_asd(f8_Regs *cpustate, int r)
 {
-	UINT8 tmp = cpustate->a - 0x66, adj = 0x00;
+	uint8_t tmp = cpustate->a - 0x66, adj = 0x00;
 	int sum;
 	ROMC_1C(cpustate, cS);
 	sum = (tmp & 0x0f) + (cpustate->r[r] & 0x0f);
@@ -1385,7 +1385,7 @@ static void f8_asd(f8_Regs *cpustate, int r)
  ***************************************************/
 static void f8_asd_isar(f8_Regs *cpustate)
 {
-	UINT8 tmp = cpustate->a - 0x66, adj = 0x00;
+	uint8_t tmp = cpustate->a - 0x66, adj = 0x00;
 	int sum;
 	ROMC_1C(cpustate, cS);
 	sum = (tmp & 0x0f) + (cpustate->r[cpustate->is] & 0x0f);
@@ -1407,7 +1407,7 @@ static void f8_asd_isar(f8_Regs *cpustate)
  ***************************************************/
 static void f8_asd_isar_i(f8_Regs *cpustate)
 {
-	UINT8 tmp = cpustate->a - 0x66, adj = 0x00;
+	uint8_t tmp = cpustate->a - 0x66, adj = 0x00;
 	int sum;
 	ROMC_1C(cpustate, cS);
 	sum = (tmp & 0x0f) + (cpustate->r[cpustate->is] & 0x0f);
@@ -1430,7 +1430,7 @@ static void f8_asd_isar_i(f8_Regs *cpustate)
  ***************************************************/
 static void f8_asd_isar_d(f8_Regs *cpustate)
 {
-	UINT8 tmp = cpustate->a - 0x66, adj = 0x00;
+	uint8_t tmp = cpustate->a - 0x66, adj = 0x00;
 	int sum;
 	ROMC_1C(cpustate, cS);
 	sum = (tmp & 0x0f) + (cpustate->r[cpustate->is] & 0x0f);
@@ -1542,7 +1542,7 @@ static void f8_ns_isar_d(f8_Regs *cpustate)
 static CPU_RESET( f8 )
 {
 	f8_Regs *cpustate = get_safe_token(device);
-	UINT8 data;
+	uint8_t data;
 	int i;
 	device_irq_callback save_callback;
 
@@ -1588,7 +1588,7 @@ static CPU_EXECUTE( f8 )
 
     do
     {
-	UINT8 op=cpustate->dbus;
+	uint8_t op=cpustate->dbus;
         debugger_instruction_hook(device, (cpustate->pc0 - 1) & 0xffff);
 
 	switch( op )

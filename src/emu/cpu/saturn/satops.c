@@ -5,7 +5,7 @@
 
 INLINE int READ_OP(saturn_state *cpustate)
 {
-	UINT8 data;
+	uint8_t data;
 	cpustate->icount-=3;
         data=memory_decrypted_read_byte(cpustate->program, cpustate->pc);
 	saturn_assert(data<0x10);
@@ -15,7 +15,7 @@ INLINE int READ_OP(saturn_state *cpustate)
 
 INLINE int READ_OP_ARG(saturn_state *cpustate)
 {
-	UINT8 data;
+	uint8_t data;
 	cpustate->icount-=3;
         data=memory_raw_read_byte(cpustate->program, cpustate->pc);
 	saturn_assert(data<0x10);
@@ -30,9 +30,9 @@ INLINE int READ_OP_ARG8(saturn_state *cpustate)
 	return n0|(n1<<4);
 }
 
-INLINE INT8 READ_OP_DIS8(saturn_state *cpustate)
+INLINE int8_t READ_OP_DIS8(saturn_state *cpustate)
 {
-	return (INT8)READ_OP_ARG8(cpustate);
+	return (int8_t)READ_OP_ARG8(cpustate);
 }
 
 INLINE int READ_OP_ARG12(saturn_state *cpustate)
@@ -59,9 +59,9 @@ INLINE int READ_OP_ARG16(saturn_state *cpustate)
 	return n0|(n1<<4)|(n2<<8)|(n3<<12);
 }
 
-INLINE INT16 READ_OP_DIS16(saturn_state *cpustate)
+INLINE int16_t READ_OP_DIS16(saturn_state *cpustate)
 {
-	return (INT16)READ_OP_ARG16(cpustate);
+	return (int16_t)READ_OP_ARG16(cpustate);
 }
 
 INLINE int READ_OP_ARG20(saturn_state *cpustate)
@@ -76,7 +76,7 @@ INLINE int READ_OP_ARG20(saturn_state *cpustate)
 
 INLINE int READ_NIBBLE(saturn_state *cpustate, SaturnAdr adr)
 {
-	UINT8 data;
+	uint8_t data;
 	cpustate->icount-=3;
 	data=memory_read_byte(cpustate->program, adr&0xfffff);
 	saturn_assert(data<0x10);

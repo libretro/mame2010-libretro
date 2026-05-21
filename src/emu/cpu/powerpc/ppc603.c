@@ -4,7 +4,7 @@ void ppc603_exception(int exception)
 	{
 		case EXCEPTION_IRQ:		/* External Interrupt */
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -27,7 +27,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_DECREMENTER:		/* Decrementer overflow exception */
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -50,7 +50,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_TRAP:			/* Program exception / Trap */
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.pc;
 				SRR1 = (msr & 0xff73) | 0x20000;	/* 0x20000 = TRAP bit */
@@ -71,7 +71,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_SYSTEM_CALL:		/* System call */
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = (msr & 0xff73);
@@ -92,7 +92,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_SMI:
 			if( ppc_get_msr() & MSR_EE ) {
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -115,7 +115,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_DSI:
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -138,7 +138,7 @@ void ppc603_exception(int exception)
 
 		case EXCEPTION_ISI:
 			{
-				UINT32 msr = ppc_get_msr();
+				uint32_t msr = ppc_get_msr();
 
 				SRR0 = ppc.npc;
 				SRR1 = msr & 0xff73;
@@ -220,12 +220,12 @@ static CPU_RESET( ppc603 )
 static CPU_EXECUTE( ppc603 )
 {
 	int exception_type;
-	UINT32 opcode;
+	uint32_t opcode;
 	ppc_tb_base_icount = ppc_icount;
 	ppc_dec_base_icount = ppc_icount + ppc.dec_frac;
 
 	// check if decrementer exception occurs during execution
-	if ((UINT32)(DEC - ppc_icount) > (UINT32)(DEC))
+	if ((uint32_t)(DEC - ppc_icount) > (uint32_t)(DEC))
 	{
 		ppc_dec_trigger_cycle = ppc_icount - DEC;
 	}

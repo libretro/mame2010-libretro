@@ -46,10 +46,10 @@ static void I486OP(wbinvd)(i386_state *cpustate)			// Opcode 0x0f 09
 
 static void I486OP(cmpxchg_rm8_r8)(i386_state *cpustate)	// Opcode 0x0f b0
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT8 dst = LOAD_RM8(modrm);
-		UINT8 src = LOAD_REG8(modrm);
+		uint8_t dst = LOAD_RM8(modrm);
+		uint8_t src = LOAD_REG8(modrm);
 
 		if( REG8(AL) == dst ) {
 			STORE_RM8(modrm, src);
@@ -61,9 +61,9 @@ static void I486OP(cmpxchg_rm8_r8)(i386_state *cpustate)	// Opcode 0x0f b0
 			CYCLES(cpustate,CYCLES_CMPXCHG_REG_REG_F);
 		}
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT8 dst = READ8(cpustate,ea);
-		UINT8 src = LOAD_REG8(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint8_t dst = READ8(cpustate,ea);
+		uint8_t src = LOAD_REG8(modrm);
 
 		if( REG8(AL) == dst ) {
 			WRITE8(cpustate,modrm, src);
@@ -79,10 +79,10 @@ static void I486OP(cmpxchg_rm8_r8)(i386_state *cpustate)	// Opcode 0x0f b0
 
 static void I486OP(cmpxchg_rm16_r16)(i386_state *cpustate)	// Opcode 0x0f b1
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT16 dst = LOAD_RM16(modrm);
-		UINT16 src = LOAD_REG16(modrm);
+		uint16_t dst = LOAD_RM16(modrm);
+		uint16_t src = LOAD_REG16(modrm);
 
 		if( REG16(AX) == dst ) {
 			STORE_RM16(modrm, src);
@@ -94,9 +94,9 @@ static void I486OP(cmpxchg_rm16_r16)(i386_state *cpustate)	// Opcode 0x0f b1
 			CYCLES(cpustate,CYCLES_CMPXCHG_REG_REG_F);
 		}
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT16 dst = READ16(cpustate,ea);
-		UINT16 src = LOAD_REG16(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint16_t dst = READ16(cpustate,ea);
+		uint16_t src = LOAD_REG16(modrm);
 
 		if( REG16(AX) == dst ) {
 			WRITE16(cpustate,modrm, src);
@@ -112,10 +112,10 @@ static void I486OP(cmpxchg_rm16_r16)(i386_state *cpustate)	// Opcode 0x0f b1
 
 static void I486OP(cmpxchg_rm32_r32)(i386_state *cpustate)	// Opcode 0x0f b1
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT32 dst = LOAD_RM32(modrm);
-		UINT32 src = LOAD_REG32(modrm);
+		uint32_t dst = LOAD_RM32(modrm);
+		uint32_t src = LOAD_REG32(modrm);
 
 		if( REG32(EAX) == dst ) {
 			STORE_RM32(modrm, src);
@@ -127,9 +127,9 @@ static void I486OP(cmpxchg_rm32_r32)(i386_state *cpustate)	// Opcode 0x0f b1
 			CYCLES(cpustate,CYCLES_CMPXCHG_REG_REG_F);
 		}
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT32 dst = READ32(cpustate,ea);
-		UINT32 src = LOAD_REG32(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint32_t dst = READ32(cpustate,ea);
+		uint32_t src = LOAD_REG32(modrm);
 
 		if( REG32(EAX) == dst ) {
 			WRITE32(cpustate,ea, src);
@@ -145,17 +145,17 @@ static void I486OP(cmpxchg_rm32_r32)(i386_state *cpustate)	// Opcode 0x0f b1
 
 static void I486OP(xadd_rm8_r8)(i386_state *cpustate)	// Opcode 0x0f c0
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT8 dst = LOAD_RM8(modrm);
-		UINT8 src = LOAD_REG8(modrm);
+		uint8_t dst = LOAD_RM8(modrm);
+		uint8_t src = LOAD_REG8(modrm);
 		STORE_RM16(modrm, dst + src);
 		STORE_REG16(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_REG);
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT8 dst = READ8(cpustate,ea);
-		UINT8 src = LOAD_REG8(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint8_t dst = READ8(cpustate,ea);
+		uint8_t src = LOAD_REG8(modrm);
 		WRITE8(cpustate,ea, dst + src);
 		STORE_REG8(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_MEM);
@@ -164,17 +164,17 @@ static void I486OP(xadd_rm8_r8)(i386_state *cpustate)	// Opcode 0x0f c0
 
 static void I486OP(xadd_rm16_r16)(i386_state *cpustate)	// Opcode 0x0f c1
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT16 dst = LOAD_RM16(modrm);
-		UINT16 src = LOAD_REG16(modrm);
+		uint16_t dst = LOAD_RM16(modrm);
+		uint16_t src = LOAD_REG16(modrm);
 		STORE_RM16(modrm, dst + src);
 		STORE_REG16(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_REG);
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT16 dst = READ16(cpustate,ea);
-		UINT16 src = LOAD_REG16(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint16_t dst = READ16(cpustate,ea);
+		uint16_t src = LOAD_REG16(modrm);
 		WRITE16(cpustate,ea, dst + src);
 		STORE_REG16(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_MEM);
@@ -183,17 +183,17 @@ static void I486OP(xadd_rm16_r16)(i386_state *cpustate)	// Opcode 0x0f c1
 
 static void I486OP(xadd_rm32_r32)(i386_state *cpustate)	// Opcode 0x0f c1
 {
-	UINT8 modrm = FETCH(cpustate);
+	uint8_t modrm = FETCH(cpustate);
 	if( modrm >= 0xc0 ) {
-		UINT32 dst = LOAD_RM32(modrm);
-		UINT32 src = LOAD_REG32(modrm);
+		uint32_t dst = LOAD_RM32(modrm);
+		uint32_t src = LOAD_REG32(modrm);
 		STORE_RM32(modrm, dst + src);
 		STORE_REG32(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_REG);
 	} else {
-		UINT32 ea = GetEA(cpustate,modrm);
-		UINT32 dst = READ32(cpustate,ea);
-		UINT32 src = LOAD_REG32(modrm);
+		uint32_t ea = GetEA(cpustate,modrm);
+		uint32_t dst = READ32(cpustate,ea);
+		uint32_t src = LOAD_REG32(modrm);
 		WRITE32(cpustate,ea, dst + src);
 		STORE_REG32(modrm, dst);
 		CYCLES(cpustate,CYCLES_XADD_REG_MEM);
@@ -202,9 +202,9 @@ static void I486OP(xadd_rm32_r32)(i386_state *cpustate)	// Opcode 0x0f c1
 
 static void I486OP(group0F01_16)(i386_state *cpustate)		// Opcode 0x0f 01
 {
-	UINT8 modrm = FETCH(cpustate);
-	UINT16 address;
-	UINT32 ea;
+	uint8_t modrm = FETCH(cpustate);
+	uint16_t address;
+	uint32_t ea;
 
 	switch( (modrm >> 3) & 0x7 )
 	{
@@ -269,7 +269,7 @@ static void I486OP(group0F01_16)(i386_state *cpustate)		// Opcode 0x0f 01
 					STORE_RM16(modrm, cpustate->cr[0]);
 					CYCLES(cpustate,CYCLES_SMSW_REG);
 				} else {
-					UINT32 ea = GetEA(cpustate,modrm);
+					uint32_t ea = GetEA(cpustate,modrm);
 					WRITE16(cpustate,ea, cpustate->cr[0]);
 					CYCLES(cpustate,CYCLES_SMSW_MEM);
 				}
@@ -278,7 +278,7 @@ static void I486OP(group0F01_16)(i386_state *cpustate)		// Opcode 0x0f 01
 		case 6:			/* LMSW */
 			{
 				// TODO: Check for protection fault
-				UINT8 b;
+				uint8_t b;
 				if( modrm >= 0xc0 ) {
 					b = LOAD_RM8(modrm);
 					CYCLES(cpustate,CYCLES_LMSW_REG);
@@ -304,8 +304,8 @@ static void I486OP(group0F01_16)(i386_state *cpustate)		// Opcode 0x0f 01
 
 static void I486OP(group0F01_32)(i386_state *cpustate)		// Opcode 0x0f 01
 {
-	UINT8 modrm = FETCH(cpustate);
-	UINT32 address, ea;
+	uint8_t modrm = FETCH(cpustate);
+	uint32_t address, ea;
 
 	switch( (modrm >> 3) & 0x7 )
 	{

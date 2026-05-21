@@ -338,7 +338,7 @@ void *drccache_memory_alloc_temporary(drccache *cache, size_t bytes)
     generation
 -------------------------------------------------*/
 
-drccodeptr *drccache_begin_codegen(drccache *cache, UINT32 reserve_bytes)
+drccodeptr *drccache_begin_codegen(drccache *cache, uint32_t reserve_bytes)
 {
 	drccodeptr ptr = cache->top;
 

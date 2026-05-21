@@ -6,7 +6,7 @@
 typedef struct _nec_config nec_config;
 struct _nec_config
 {
-	const UINT8*	v25v35_decryptiontable; // internal decryption table
+	const uint8_t*	v25v35_decryptiontable; // internal decryption table
 };
 
 #define NEC_INPUT_LINE_POLL 20

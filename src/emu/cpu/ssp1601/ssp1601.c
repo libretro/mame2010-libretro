@@ -47,7 +47,7 @@ struct _ssp1601_state_t
 					unsigned short RAM1[256];
 			};
 	};
-	UINT16 stack[6]; /* 6-level hardware stack */
+	uint16_t stack[6]; /* 6-level hardware stack */
 	PAIR ppc;
 
 	int g_cycles;
@@ -141,14 +141,14 @@ INLINE ssp1601_state_t *get_safe_token(running_device *device)
 }
 
 #define OP_CMPA(x) { \
-	UINT32 t = rA32 - ((x) << 16); \
+	uint32_t t = rA32 - ((x) << 16); \
 	rST &= ~(SSP_FLAG_L|SSP_FLAG_Z|SSP_FLAG_V|SSP_FLAG_N); \
 	if (!t) rST |= SSP_FLAG_Z; \
 	else    rST |= (t>>16)&SSP_FLAG_N; \
 }
 
 #define OP_CMPA32(x) { \
-	UINT32 t = rA32 - (x); \
+	uint32_t t = rA32 - (x); \
 	rST &= ~(SSP_FLAG_L|SSP_FLAG_Z|SSP_FLAG_V|SSP_FLAG_N); \
 	if (!t) rST |= SSP_FLAG_Z; \
 	else    rST |= (t>>16)&SSP_FLAG_N; \
@@ -240,39 +240,39 @@ static void update_P(ssp1601_state_t *ssp1601_state)
 	rP.d = (m1 * m2 * 2);
 }
 
-static UINT32 read_unknown(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_unknown(ssp1601_state_t *ssp1601_state, int reg)
 {
 	logerror("%s:%i FIXME\n", __FILE__, __LINE__);
 	return 0;
 }
 
-static void write_unknown(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_unknown(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	logerror("%s:%i FIXME\n", __FILE__, __LINE__);
 }
 
 /* map EXT regs to virtual I/O range of 0x00-0x0f */
-static UINT32 read_ext(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_ext(ssp1601_state_t *ssp1601_state, int reg)
 {
 	reg &= 7;
 	return memory_read_word_16be(ssp1601_state->io, (reg << 1));
 }
 
-static void write_ext(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_ext(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	reg &= 7;
 	memory_write_word_16be(ssp1601_state->io, (reg << 1), d);
 }
 
 // 4
-static void write_ST(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_ST(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	CHECK_ST(d);
 	rST = d;
 }
 
 // 5
-static UINT32 read_STACK(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_STACK(ssp1601_state_t *ssp1601_state, int reg)
 {
 	--rSTACK;
 	if ((signed short)rSTACK < 0) {
@@ -282,7 +282,7 @@ static UINT32 read_STACK(ssp1601_state_t *ssp1601_state, int reg)
 	return ssp1601_state->stack[rSTACK];
 }
 
-static void write_STACK(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_STACK(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	if (rSTACK >= 6) {
 		logerror(__FILE__ " FIXME: stack overflow! (%i) @ %04x\n", rSTACK, GET_PPC_OFFS());
@@ -292,41 +292,41 @@ static void write_STACK(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
 }
 
 // 6
-static UINT32 read_PC(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_PC(ssp1601_state_t *ssp1601_state, int reg)
 {
 	return rPC;
 }
 
-static void write_PC(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_PC(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	rPC = d;
 	ssp1601_state->g_cycles--;
 }
 
 // 7
-static UINT32 read_P(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_P(ssp1601_state_t *ssp1601_state, int reg)
 {
 	update_P(ssp1601_state);
 	return rP.w.h;
 }
 
 // 15
-static UINT32 read_AL(ssp1601_state_t *ssp1601_state, int reg)
+static uint32_t read_AL(ssp1601_state_t *ssp1601_state, int reg)
 {
 	/* apparently reading AL causes some effect on EXT bus, VR depends on that.. */
 	read_ext(ssp1601_state, reg);
 	return rAL;
 }
 
-static void write_AL(ssp1601_state_t *ssp1601_state, int reg, UINT32 d)
+static void write_AL(ssp1601_state_t *ssp1601_state, int reg, uint32_t d)
 {
 	write_ext(ssp1601_state, reg, d);
 	rAL = d;
 }
 
 
-typedef UINT32 (*read_func_t)(ssp1601_state_t *ssp1601_state, int reg);
-typedef void (*write_func_t)(ssp1601_state_t *ssp1601_state, int reg, UINT32 d);
+typedef uint32_t (*read_func_t)(ssp1601_state_t *ssp1601_state, int reg);
+typedef void (*write_func_t)(ssp1601_state_t *ssp1601_state, int reg, uint32_t d);
 
 static const read_func_t reg_read_handlers[16] =
 {
@@ -368,10 +368,10 @@ static const write_func_t reg_write_handlers[16] =
 //
 #define ptr1_read(ssp1601_state, op) ptr1_read_(ssp1601_state, op&3,(op>>6)&4,(op<<1)&0x18)
 
-static UINT32 ptr1_read_(ssp1601_state_t *ssp1601_state, int ri, int isj2, int modi3)
+static uint32_t ptr1_read_(ssp1601_state_t *ssp1601_state, int ri, int isj2, int modi3)
 {
 	//int t = (op&3) | ((op>>6)&4) | ((op<<1)&0x18);
-	UINT32 mask, add = 0, t = ri | isj2 | modi3;
+	uint32_t mask, add = 0, t = ri | isj2 | modi3;
 	unsigned char *rp = NULL;
 	switch (t)
 	{
@@ -429,7 +429,7 @@ modulo:
 	return t;
 }
 
-static void ptr1_write(ssp1601_state_t *ssp1601_state, int op, UINT32 d)
+static void ptr1_write(ssp1601_state_t *ssp1601_state, int op, uint32_t d)
 {
 	int t = (op&3) | ((op>>6)&4) | ((op<<1)&0x18);
 	switch (t)
@@ -474,7 +474,7 @@ static void ptr1_write(ssp1601_state_t *ssp1601_state, int op, UINT32 d)
 	}
 }
 
-static UINT32 ptr2_read(ssp1601_state_t *ssp1601_state, int op)
+static uint32_t ptr2_read(ssp1601_state_t *ssp1601_state, int op)
 {
 	int mv = 0, t = (op&3) | ((op>>6)&4) | ((op<<1)&0x18);
 	switch (t)
@@ -555,7 +555,7 @@ static CPU_EXECUTE( ssp1601 )
 	while (ssp1601_state->g_cycles > 0)
 	{
 		int op;
-		UINT32 tmpv;
+		uint32_t tmpv;
 
 		PPC = rPC;
 

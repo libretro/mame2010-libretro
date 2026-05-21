@@ -303,10 +303,10 @@ typedef enum _drcuml_opcode drcuml_opcode;
 ***************************************************************************/
 
 /* represents a reference to a local label in the code */
-typedef UINT32 drcuml_codelabel;
+typedef uint32_t drcuml_codelabel;
 
 /* represents the value of an opcode parameter */
-typedef UINT64 drcuml_pvalue;
+typedef uint64_t drcuml_pvalue;
 
 
 /* opaque structure describing UML generation state */
@@ -336,10 +336,10 @@ typedef struct _drcuml_instruction drcuml_instruction;
 struct _drcuml_instruction
 {
 	drcuml_opcode		opcode;				/* opcode */
-	UINT8				condition;			/* condition */
-	UINT8				flags;				/* flags */
-	UINT8				size;				/* operation size */
-	UINT8				numparams;			/* number of parameters */
+	uint8_t				condition;			/* condition */
+	uint8_t				flags;				/* flags */
+	uint8_t				size;				/* operation size */
+	uint8_t				numparams;			/* number of parameters */
 	drcuml_parameter	param[4];			/* up to 4 parameters */
 };
 
@@ -348,9 +348,9 @@ struct _drcuml_instruction
 typedef struct _drcuml_parameter_info drcuml_parameter_info;
 struct _drcuml_parameter_info
 {
-	UINT8				output;				/* input or output? */
-	UINT8				size;				/* size of the parameter */
-	UINT16				typemask;			/* types allowed */
+	uint8_t				output;				/* input or output? */
+	uint8_t				size;				/* size of the parameter */
+	uint16_t				typemask;			/* types allowed */
 };
 
 
@@ -360,11 +360,11 @@ struct _drcuml_opcode_info
 {
 	drcuml_opcode		opcode;				/* the opcode itself */
 	const char *		mnemonic;			/* mnemonic string */
-	UINT8				sizes;				/* allowed sizes */
-	UINT8				condition;			/* conditions allowed? */
-	UINT8				inflags;			/* input flags */
-	UINT8				outflags;			/* output flags */
-	UINT8				modflags;			/* modified flags */
+	uint8_t				sizes;				/* allowed sizes */
+	uint8_t				condition;			/* conditions allowed? */
+	uint8_t				inflags;			/* input flags */
+	uint8_t				outflags;			/* output flags */
+	uint8_t				modflags;			/* modified flags */
 	drcuml_parameter_info param[4];			/* information about parameters */
 };
 
@@ -374,11 +374,11 @@ typedef union _drcuml_ireg drcuml_ireg;
 union _drcuml_ireg
 {
 #ifdef MSB_FIRST
-	struct { UINT32 h,l; } w;				/* 32-bit low, high parts of the register */
+	struct { uint32_t h,l; } w;				/* 32-bit low, high parts of the register */
 #else
-	struct { UINT32	l,h; } w;				/* 32-bit low, high parts of the register */
+	struct { uint32_t	l,h; } w;				/* 32-bit low, high parts of the register */
 #endif
-	UINT64				d;					/* 64-bit full register */
+	uint64_t				d;					/* 64-bit full register */
 };
 
 
@@ -401,9 +401,9 @@ struct _drcuml_machine_state
 {
 	drcuml_ireg			r[DRCUML_REG_I_END - DRCUML_REG_I0];	/* integer registers */
 	drcuml_freg			f[DRCUML_REG_F_END - DRCUML_REG_F0];	/* floating-point registers */
-	UINT32				exp;				/* exception parameter register */
-	UINT8				fmod;				/* fmod (floating-point mode) register */
-	UINT8				flags;				/* flags state */
+	uint32_t				exp;				/* exception parameter register */
+	uint8_t				fmod;				/* fmod (floating-point mode) register */
+	uint8_t				flags;				/* flags state */
 };
 
 
@@ -411,18 +411,18 @@ struct _drcuml_machine_state
 typedef struct _drcbe_info drcbe_info;
 struct _drcbe_info
 {
-	UINT8				direct_iregs;		/* number of direct-mapped integer registers */
-	UINT8				direct_fregs;		/* number of direct-mapped floating point registers */
+	uint8_t				direct_iregs;		/* number of direct-mapped integer registers */
+	uint8_t				direct_fregs;		/* number of direct-mapped floating point registers */
 };
 
 
 /* typedefs for back-end callback functions */
-typedef drcbe_state *(*drcbe_alloc_func)(drcuml_state *drcuml, drccache *cache, running_device *device, UINT32 flags, int modes, int addrbits, int ignorebits);
+typedef drcbe_state *(*drcbe_alloc_func)(drcuml_state *drcuml, drccache *cache, running_device *device, uint32_t flags, int modes, int addrbits, int ignorebits);
 typedef void (*drcbe_free_func)(drcbe_state *state);
 typedef void (*drcbe_reset_func)(drcbe_state *state);
 typedef int	(*drcbe_execute_func)(drcbe_state *state, drcuml_codehandle *entry);
-typedef void (*drcbe_generate_func)(drcbe_state *state, drcuml_block *block, const drcuml_instruction *instlist, UINT32 numinst);
-typedef int (*drcbe_hash_exists)(drcbe_state *state, UINT32 mode, UINT32 pc);
+typedef void (*drcbe_generate_func)(drcbe_state *state, drcuml_block *block, const drcuml_instruction *instlist, uint32_t numinst);
+typedef int (*drcbe_hash_exists)(drcbe_state *state, uint32_t mode, uint32_t pc);
 typedef void (*drcbe_get_info)(drcbe_state *state, drcbe_info *info);
 
 
@@ -448,7 +448,7 @@ struct _drcbe_interface
 /* ----- initialization/teardown ----- */
 
 /* allocate state for the code generator and initialize the back-end */
-drcuml_state *drcuml_alloc(running_device *device, drccache *cache, UINT32 flags, int modes, int addrbits, int ignorebits);
+drcuml_state *drcuml_alloc(running_device *device, drccache *cache, uint32_t flags, int modes, int addrbits, int ignorebits);
 
 /* return information about the back-end */
 void drcuml_get_backend_info(drcuml_state *drcuml, drcbe_info *info);
@@ -464,14 +464,14 @@ void drcuml_free(drcuml_state *drcuml);
 /* ----- code block generation ----- */
 
 /* begin a new code block */
-drcuml_block *drcuml_block_begin(drcuml_state *drcuml, UINT32 maxinst, jmp_buf *errorbuf);
+drcuml_block *drcuml_block_begin(drcuml_state *drcuml, uint32_t maxinst, jmp_buf *errorbuf);
 
 /* append an opcode to the block, with 0-4 parameters */
-void drcuml_block_append_0(drcuml_block *block, drcuml_opcode op, UINT8 size, UINT8 condition);
-void drcuml_block_append_1(drcuml_block *block, drcuml_opcode op, UINT8 size, UINT8 condition, drcuml_ptype p0type, drcuml_pvalue p0value);
-void drcuml_block_append_2(drcuml_block *block, drcuml_opcode op, UINT8 size, UINT8 condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value);
-void drcuml_block_append_3(drcuml_block *block, drcuml_opcode op, UINT8 size, UINT8 condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value, drcuml_ptype p2type, drcuml_pvalue p2value);
-void drcuml_block_append_4(drcuml_block *block, drcuml_opcode op, UINT8 size, UINT8 condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value, drcuml_ptype p2type, drcuml_pvalue p2value, drcuml_ptype p3type, drcuml_pvalue p3value);
+void drcuml_block_append_0(drcuml_block *block, drcuml_opcode op, uint8_t size, uint8_t condition);
+void drcuml_block_append_1(drcuml_block *block, drcuml_opcode op, uint8_t size, uint8_t condition, drcuml_ptype p0type, drcuml_pvalue p0value);
+void drcuml_block_append_2(drcuml_block *block, drcuml_opcode op, uint8_t size, uint8_t condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value);
+void drcuml_block_append_3(drcuml_block *block, drcuml_opcode op, uint8_t size, uint8_t condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value, drcuml_ptype p2type, drcuml_pvalue p2value);
+void drcuml_block_append_4(drcuml_block *block, drcuml_opcode op, uint8_t size, uint8_t condition, drcuml_ptype p0type, drcuml_pvalue p0value, drcuml_ptype p1type, drcuml_pvalue p1value, drcuml_ptype p2type, drcuml_pvalue p2value, drcuml_ptype p3type, drcuml_pvalue p3value);
 
 /* complete a code block and commit it to the cache via the back-end */
 void drcuml_block_end(drcuml_block *block);
@@ -480,7 +480,7 @@ void drcuml_block_end(drcuml_block *block);
 void drcuml_block_abort(drcuml_block *block);
 
 /* return true if a hash entry exists for the given mode/pc */
-int drcuml_hash_exists(drcuml_state *drcuml, UINT32 mode, UINT32 pc);
+int drcuml_hash_exists(drcuml_state *drcuml, uint32_t mode, uint32_t pc);
 
 
 
@@ -516,10 +516,10 @@ const char *drcuml_handle_name(const drcuml_codehandle *handle);
 void drcuml_log_printf(drcuml_state *drcuml, const char *format, ...) ATTR_PRINTF(2,3);
 
 /* add a symbol to the internal symbol table */
-void drcuml_symbol_add(drcuml_state *drcuml, void *base, UINT32 length, const char *name);
+void drcuml_symbol_add(drcuml_state *drcuml, void *base, uint32_t length, const char *name);
 
 /* look up a symbol from the internal symbol table or return NULL if not found */
-const char *drcuml_symbol_find(drcuml_state *drcuml, void *base, UINT32 *offset);
+const char *drcuml_symbol_find(drcuml_state *drcuml, void *base, uint32_t *offset);
 
 /* attach a comment to the current output location in the specified block */
 void drcuml_add_comment(drcuml_block *block, const char *format, ...) ATTR_PRINTF(2,3);

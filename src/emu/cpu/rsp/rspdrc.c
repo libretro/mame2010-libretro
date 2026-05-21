@@ -29,7 +29,7 @@
 
 CPU_DISASSEMBLE( rsp );
 
-extern offs_t rsp_dasm_one(char *buffer, offs_t pc, UINT32 op);
+extern offs_t rsp_dasm_one(char *buffer, offs_t pc, uint32_t op);
 
 #ifdef USE_RSPDRC
 
@@ -127,7 +127,7 @@ struct _fast_ram_info
 {
 	offs_t				start;						/* start of the RAM block */
 	offs_t				end;						/* end of the RAM block */
-	UINT8				readonly;					/* TRUE if read-only */
+	uint8_t				readonly;					/* TRUE if read-only */
 	void *				base;						/* base in memory where the RAM lives */
 };
 
@@ -136,9 +136,9 @@ struct _fast_ram_info
 typedef struct _compiler_state compiler_state;
 struct _compiler_state
 {
-	UINT32				cycles;						/* accumulated cycles */
-	UINT8				checkints;					/* need to check interrupts before next instruction */
-	UINT8				checksoftints;				/* need to check software interrupts before next instruction */
+	uint32_t				cycles;						/* accumulated cycles */
+	uint8_t				checkints;					/* need to check interrupts before next instruction */
+	uint8_t				checksoftints;				/* need to check software interrupts before next instruction */
 	drcuml_codelabel	labelnum;					/* index for local labels */
 };
 
@@ -148,19 +148,19 @@ struct _rspimp_state
 	drccache *			cache;						/* pointer to the DRC code cache */
 	drcuml_state *		drcuml;						/* DRC UML generator state */
 	drcfe_state *		drcfe;						/* pointer to the DRC front-end state */
-	UINT32				drcoptions;					/* configurable DRC options */
+	uint32_t				drcoptions;					/* configurable DRC options */
 
 	/* internal stuff */
-	UINT8				cache_dirty;				/* true if we need to flush the cache */
-	UINT32				jmpdest;					/* destination jump target */
+	uint8_t				cache_dirty;				/* true if we need to flush the cache */
+	uint32_t				jmpdest;					/* destination jump target */
 
 	/* parameters for subroutines */
-	UINT64				numcycles;					/* return value from gettotalcycles */
+	uint64_t				numcycles;					/* return value from gettotalcycles */
 	const char *		format;						/* format string for print_debug */
-	UINT32				arg0;						/* print_debug argument 1 */
-	UINT32				arg1;						/* print_debug argument 2 */
-	UINT64				arg64;						/* print_debug 64-bit argument */
-	UINT32				vres[8];					/* used for temporary vector results */
+	uint32_t				arg0;						/* print_debug argument 1 */
+	uint32_t				arg1;						/* print_debug argument 2 */
+	uint64_t				arg64;						/* print_debug 64-bit argument */
+	uint32_t				vres[8];					/* used for temporary vector results */
 
 	/* register mappings */
 	drcuml_parameter	regmap[998];				/* parameter to register mappings for all 32 integer registers, vector registers, flags, accumulators and temps */
@@ -293,17 +293,17 @@ static int generate_vnxor(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #endif
 static int generate_lwc2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_swc2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
-static void generate_update_cycles(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, UINT64 pvalue, int allow_exception);
+static void generate_update_cycles(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, uint64_t pvalue, int allow_exception);
 static void generate_checksum_block(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *seqhead, const opcode_desc *seqlast);
 static void generate_sequence_instruction(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
-static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 linkreg);
+static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t linkreg);
 static int generate_opcode(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_special(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_regimm(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_cop0(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 static int generate_cop2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc);
 
-static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, UINT32 pc, UINT32 op);
+static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, uint32_t pc, uint32_t op);
 
 /***************************************************************************
     HELPFUL DEFINES
@@ -315,8 +315,8 @@ static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, UINT32 p
 #define EL							((op >> 21) & 0xf)
 
 #define R_VREG_B(reg, offset)		rsp->v[(reg)].b[15 - (offset)]
-#define R_VREG_S(reg, offset)		(INT16)rsp->v[(reg)].s[7 - (offset)]
-#define R_VREG_S_X(reg, offset)		(INT16)rsp->v[reg].s[offset]
+#define R_VREG_S(reg, offset)		(int16_t)rsp->v[(reg)].s[7 - (offset)]
+#define R_VREG_S_X(reg, offset)		(int16_t)rsp->v[reg].s[offset]
 #define R_VREG_L(reg, offset)		rsp->v[(reg)].l[3 - (offset)]
 #define R_VREG_D(reg, offset)		rsp->v[(reg)].d[1 - (offset)]
 
@@ -331,9 +331,9 @@ static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, UINT32 p
 
 #define ACCUM(x)					(rsp->accum[x])
 
-#define W_ACCUM_H(x, y)				(ACCUM(x).h.high = (INT16)((INT64)(y)))
-#define W_ACCUM_M(x, y)				(ACCUM(x).h.mid  = (INT16)((INT64)(y)))
-#define W_ACCUM_L(x, y)				(ACCUM(x).h.low  = (INT16)((INT64)(y)))
+#define W_ACCUM_H(x, y)				(ACCUM(x).h.high = (int16_t)((int64_t)(y)))
+#define W_ACCUM_M(x, y)				(ACCUM(x).h.mid  = (int16_t)((int64_t)(y)))
+#define W_ACCUM_L(x, y)				(ACCUM(x).h.low  = (int16_t)((int64_t)(y)))
 
 #define CARRY_FLAG(x)				((rsp->flag[0] & (1 << (x))) ? 1 : 0)
 #define CLEAR_CARRY_FLAGS()			{ rsp->flag[0] &= ~0xff; }
@@ -366,7 +366,7 @@ INLINE rsp_state *get_safe_token(running_device *device)
     descriptor
 -------------------------------------------------*/
 
-INLINE UINT32 epc(const opcode_desc *desc)
+INLINE uint32_t epc(const opcode_desc *desc)
 {
 	return ((desc->flags & OPFLAG_IN_DELAY_SLOT) ? (desc->pc - 3) : desc->pc) | 0x1000;
 }
@@ -418,94 +418,94 @@ INLINE void save_fast_iregs(rsp_state *rsp, drcuml_block *block)
 ***************************************************************************/
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE UINT8 READ8(rsp_state *rsp, UINT32 address)
+INLINE uint8_t READ8(rsp_state *rsp, uint32_t address)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
 	return dmem[BYTE4_XOR_BE(address & 0x00000fff)];
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE UINT16 READ16(rsp_state *rsp, UINT32 address)
+INLINE uint16_t READ16(rsp_state *rsp, uint32_t address)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
-	UINT16 ret = 0;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
+	uint16_t ret = 0;
 	address &= 0x00000fff;
-	ret  = (UINT16)dmem[BYTE4_XOR_BE(address+0)] << 8;
-	ret |= (UINT16)dmem[BYTE4_XOR_BE(address+1)];
+	ret  = (uint16_t)dmem[BYTE4_XOR_BE(address+0)] << 8;
+	ret |= (uint16_t)dmem[BYTE4_XOR_BE(address+1)];
 	return ret;
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE UINT32 READ32(rsp_state *rsp, UINT32 address)
+INLINE uint32_t READ32(rsp_state *rsp, uint32_t address)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
-	UINT32 ret = 0;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
+	uint32_t ret = 0;
 	address &= 0x00000fff;
-	ret  = (UINT32)dmem[BYTE4_XOR_BE(address+0)] << 24;
-	ret |= (UINT32)dmem[BYTE4_XOR_BE(address+1)] << 16;
-	ret |= (UINT32)dmem[BYTE4_XOR_BE(address+2)] <<  8;
-	ret |= (UINT32)dmem[BYTE4_XOR_BE(address+3)];
+	ret  = (uint32_t)dmem[BYTE4_XOR_BE(address+0)] << 24;
+	ret |= (uint32_t)dmem[BYTE4_XOR_BE(address+1)] << 16;
+	ret |= (uint32_t)dmem[BYTE4_XOR_BE(address+2)] <<  8;
+	ret |= (uint32_t)dmem[BYTE4_XOR_BE(address+3)];
 	return ret;
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE UINT64 READ64(rsp_state *rsp, UINT32 address)
+INLINE uint64_t READ64(rsp_state *rsp, uint32_t address)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
-	UINT64 ret = 0;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
+	uint64_t ret = 0;
 	address &= 0x00000fff;
-	ret  = (UINT64)dmem[BYTE4_XOR_BE(address+0)] << 56;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+1)] << 48;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+2)] << 40;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+3)] << 32;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+4)] << 24;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+5)] << 16;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+6)] <<  8;
-	ret |= (UINT64)dmem[BYTE4_XOR_BE(address+7)];
+	ret  = (uint64_t)dmem[BYTE4_XOR_BE(address+0)] << 56;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+1)] << 48;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+2)] << 40;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+3)] << 32;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+4)] << 24;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+5)] << 16;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+6)] <<  8;
+	ret |= (uint64_t)dmem[BYTE4_XOR_BE(address+7)];
 	return ret;
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE void WRITE8(rsp_state *rsp, UINT32 address, UINT8 data)
+INLINE void WRITE8(rsp_state *rsp, uint32_t address, uint8_t data)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
 	address &= 0x00000fff;
 	dmem[BYTE4_XOR_BE(address)] = data;
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE void WRITE16(rsp_state *rsp, UINT32 address, UINT16 data)
+INLINE void WRITE16(rsp_state *rsp, uint32_t address, uint16_t data)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
 	address &= 0x00000fff;
-	dmem[BYTE4_XOR_BE(address+0)] = (UINT8)(data >> 8);
-	dmem[BYTE4_XOR_BE(address+1)] = (UINT8)(data >> 0);
+	dmem[BYTE4_XOR_BE(address+0)] = (uint8_t)(data >> 8);
+	dmem[BYTE4_XOR_BE(address+1)] = (uint8_t)(data >> 0);
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE void WRITE32(rsp_state *rsp, UINT32 address, UINT32 data)
+INLINE void WRITE32(rsp_state *rsp, uint32_t address, uint32_t data)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
 	address &= 0x00000fff;
-	dmem[BYTE4_XOR_BE(address+0)] = (UINT8)(data >> 24);
-	dmem[BYTE4_XOR_BE(address+1)] = (UINT8)(data >> 16);
-	dmem[BYTE4_XOR_BE(address+2)] = (UINT8)(data >>  8);
-	dmem[BYTE4_XOR_BE(address+3)] = (UINT8)(data >>  0);
+	dmem[BYTE4_XOR_BE(address+0)] = (uint8_t)(data >> 24);
+	dmem[BYTE4_XOR_BE(address+1)] = (uint8_t)(data >> 16);
+	dmem[BYTE4_XOR_BE(address+2)] = (uint8_t)(data >>  8);
+	dmem[BYTE4_XOR_BE(address+3)] = (uint8_t)(data >>  0);
 }
 
 /* Legacy.  Needed for vector cfuncs. */
-INLINE void WRITE64(rsp_state *rsp, UINT32 address, UINT64 data)
+INLINE void WRITE64(rsp_state *rsp, uint32_t address, uint64_t data)
 {
-	UINT8* dmem = (UINT8*)rsp->impstate->dmem;
+	uint8_t* dmem = (uint8_t*)rsp->impstate->dmem;
 	address &= 0x00000fff;
-	dmem[BYTE4_XOR_BE(address+0)] = (UINT8)(data >> 56);
-	dmem[BYTE4_XOR_BE(address+1)] = (UINT8)(data >> 48);
-	dmem[BYTE4_XOR_BE(address+2)] = (UINT8)(data >> 40);
-	dmem[BYTE4_XOR_BE(address+3)] = (UINT8)(data >> 32);
-	dmem[BYTE4_XOR_BE(address+4)] = (UINT8)(data >> 24);
-	dmem[BYTE4_XOR_BE(address+5)] = (UINT8)(data >> 16);
-	dmem[BYTE4_XOR_BE(address+6)] = (UINT8)(data >>  8);
-	dmem[BYTE4_XOR_BE(address+7)] = (UINT8)(data >>  0);
+	dmem[BYTE4_XOR_BE(address+0)] = (uint8_t)(data >> 56);
+	dmem[BYTE4_XOR_BE(address+1)] = (uint8_t)(data >> 48);
+	dmem[BYTE4_XOR_BE(address+2)] = (uint8_t)(data >> 40);
+	dmem[BYTE4_XOR_BE(address+3)] = (uint8_t)(data >> 32);
+	dmem[BYTE4_XOR_BE(address+4)] = (uint8_t)(data >> 24);
+	dmem[BYTE4_XOR_BE(address+5)] = (uint8_t)(data >> 16);
+	dmem[BYTE4_XOR_BE(address+6)] = (uint8_t)(data >>  8);
+	dmem[BYTE4_XOR_BE(address+7)] = (uint8_t)(data >>  0);
 }
 
 /*****************************************************************************/
@@ -514,7 +514,7 @@ INLINE void WRITE64(rsp_state *rsp, UINT32 address, UINT64 data)
     rspdrc_set_options - configure DRC options
 -------------------------------------------------*/
 
-void rspdrc_set_options(running_device *device, UINT32 options)
+void rspdrc_set_options(running_device *device, uint32_t options)
 {
 	rsp_state *rsp = get_safe_token(device);
 	rsp->impstate->drcoptions = options;
@@ -567,8 +567,8 @@ static void cfunc_printf_debug(void *param)
 static void cfunc_printf_debug64(void *param)
 {
 	rsp_state *rsp = (rsp_state *)param;
-	printf(rsp->impstate->format, (UINT32)(rsp->impstate->arg64 >> 32), (UINT32)(rsp->impstate->arg64 & 0x00000000ffffffff));
-	logerror(rsp->impstate->format, (UINT32)(rsp->impstate->arg64 >> 32), (UINT32)(rsp->impstate->arg64 & 0x00000000ffffffff));
+	printf(rsp->impstate->format, (uint32_t)(rsp->impstate->arg64 >> 32), (uint32_t)(rsp->impstate->arg64 & 0x00000000ffffffff));
+	logerror(rsp->impstate->format, (uint32_t)(rsp->impstate->arg64 >> 32), (uint32_t)(rsp->impstate->arg64 & 0x00000000ffffffff));
 }
 #endif
 
@@ -602,7 +602,7 @@ static void cfunc_set_cop0_reg(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int reg = rsp->impstate->arg0;
-	UINT32 data = rsp->impstate->arg1;
+	uint32_t data = rsp->impstate->arg1;
 
 	if (reg >= 0 && reg < 8)
 	{
@@ -632,7 +632,7 @@ static void cfunc_unimplemented_opcode(void *param)
 	fatalerror("RSP: unknown opcode %02X (%08X) at %08X\n", op >> 26, op, rsp->ppc);
 }
 
-static void unimplemented_opcode(rsp_state *rsp, UINT32 op)
+static void unimplemented_opcode(rsp_state *rsp, uint32_t op)
 {
 	if ((rsp->device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
 	{
@@ -739,7 +739,7 @@ static CPU_INIT( rsp )
 	};
 	rsp_state *rsp;
 	drccache *cache;
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 	int regnum;
 	int elnum;
 
@@ -747,7 +747,7 @@ static CPU_INIT( rsp )
 	cache = (drccache *)drccache_alloc(CACHE_SIZE + sizeof(*rsp));
 	if (cache == NULL)
 	{
-		fatalerror("Unable to allocate cache of size %d", (UINT32)(CACHE_SIZE + sizeof(*rsp)));
+		fatalerror("Unable to allocate cache of size %d", (uint32_t)(CACHE_SIZE + sizeof(*rsp)));
 	}
 
 	/* allocate the core memory */
@@ -875,8 +875,8 @@ static CPU_RESET( rsp )
 static void cfunc_rsp_lbv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -900,8 +900,8 @@ static void cfunc_rsp_lbv(void *param)
 static void cfunc_rsp_lsv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -927,8 +927,8 @@ static void cfunc_rsp_lsv(void *param)
 static void cfunc_rsp_llv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -954,8 +954,8 @@ static void cfunc_rsp_llv(void *param)
 static void cfunc_rsp_ldv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -983,10 +983,10 @@ static void cfunc_rsp_ldv(void *param)
 static void cfunc_rsp_lqv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
 	int end = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1018,10 +1018,10 @@ static void cfunc_rsp_lqv(void *param)
 static void cfunc_rsp_lrv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
 	int end = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1054,9 +1054,9 @@ static void cfunc_rsp_lrv(void *param)
 static void cfunc_rsp_lpv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1085,9 +1085,9 @@ static void cfunc_rsp_lpv(void *param)
 static void cfunc_rsp_luv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1115,9 +1115,9 @@ static void cfunc_rsp_luv(void *param)
 static void cfunc_rsp_lhv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1144,10 +1144,10 @@ static void cfunc_rsp_lhv(void *param)
 static void cfunc_rsp_lfv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
 	int end = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1184,10 +1184,10 @@ static void cfunc_rsp_lfv(void *param)
 static void cfunc_rsp_lwv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
 	int end = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1221,9 +1221,9 @@ static void cfunc_rsp_lwv(void *param)
 static void cfunc_rsp_ltv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int i = 0;
-	UINT32 ea = 0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1269,7 +1269,7 @@ static void cfunc_rsp_ltv(void *param)
 static int generate_lwc2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
 	//int loopdest;
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 	//int dest = (op >> 16) & 0x1f;
 	//int base = (op >> 21) & 0x1f;
 	//int index = (op >> 7) & 0xf;
@@ -1563,8 +1563,8 @@ static int generate_lwc2(rsp_state *rsp, drcuml_block *block, compiler_state *co
 static void cfunc_rsp_sbv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1588,8 +1588,8 @@ static void cfunc_rsp_sbv(void *param)
 static void cfunc_rsp_ssv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1615,8 +1615,8 @@ static void cfunc_rsp_ssv(void *param)
 static void cfunc_rsp_slv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
 	int index = (op >> 7) & 0xf;
@@ -1642,8 +1642,8 @@ static void cfunc_rsp_slv(void *param)
 static void cfunc_rsp_sdv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int end = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
@@ -1673,8 +1673,8 @@ static void cfunc_rsp_sdv(void *param)
 static void cfunc_rsp_sqv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int end = 0;
 	int dest = (op >> 16) & 0x1f;
@@ -1707,8 +1707,8 @@ static void cfunc_rsp_sqv(void *param)
 static void cfunc_rsp_srv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int o;
 	int i = 0;
 	int end = 0;
@@ -1744,8 +1744,8 @@ static void cfunc_rsp_srv(void *param)
 static void cfunc_rsp_spv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int end = 0;
 	int dest = (op >> 16) & 0x1f;
@@ -1784,8 +1784,8 @@ static void cfunc_rsp_spv(void *param)
 static void cfunc_rsp_suv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int end = 0;
 	int dest = (op >> 16) & 0x1f;
@@ -1823,8 +1823,8 @@ static void cfunc_rsp_suv(void *param)
 static void cfunc_rsp_shv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
@@ -1845,7 +1845,7 @@ static void cfunc_rsp_shv(void *param)
 
 			for (i=0; i < 8; i++)
 			{
-				UINT8 d = ((R_VREG_B(dest, ((index + (i << 1) + 0) & 0xf))) << 1) |
+				uint8_t d = ((R_VREG_B(dest, ((index + (i << 1) + 0) & 0xf))) << 1) |
 						  ((R_VREG_B(dest, ((index + (i << 1) + 1) & 0xf))) >> 7);
 
 				WRITE8(rsp, ea, d);
@@ -1856,8 +1856,8 @@ static void cfunc_rsp_shv(void *param)
 static void cfunc_rsp_sfv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int end = 0;
 	int eaoffset = 0;
@@ -1897,8 +1897,8 @@ static void cfunc_rsp_sfv(void *param)
 static void cfunc_rsp_swv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int end = 0;
 	int eaoffset = 0;
@@ -1935,8 +1935,8 @@ static void cfunc_rsp_swv(void *param)
 static void cfunc_rsp_stv(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
-	UINT32 ea = 0;
+	uint32_t op = rsp->impstate->arg0;
+	uint32_t ea = 0;
 	int i = 0;
 	int dest = (op >> 16) & 0x1f;
 	int base = (op >> 21) & 0x1f;
@@ -1981,7 +1981,7 @@ static void cfunc_rsp_stv(void *param)
 static int generate_swc2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
 //  int loopdest;
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 	//int dest = (op >> 16) & 0x1f;
 	//int base = (op >> 21) & 0x1f;
 	//int index = (op >> 7) & 0xf;
@@ -2148,7 +2148,7 @@ static void generate_saturate_accum_unsigned(rsp_state *rsp, drcuml_block *block
 }
 #endif
 
-INLINE UINT16 SATURATE_ACCUM_UNSIGNED(rsp_state *rsp, int accum)
+INLINE uint16_t SATURATE_ACCUM_UNSIGNED(rsp_state *rsp, int accum)
 {
 	if (ACCUM(accum).w.mh < -32768)
 	{
@@ -2187,7 +2187,7 @@ static void generate_saturate_accum_signed(rsp_state *rsp, drcuml_block *block, 
 }
 #endif
 
-INLINE UINT16 SATURATE_ACCUM_SIGNED(rsp_state *rsp, int accum)
+INLINE uint16_t SATURATE_ACCUM_SIGNED(rsp_state *rsp, int accum)
 {
 	if (ACCUM(accum).w.mh < -32768)
 	{
@@ -2215,7 +2215,7 @@ INLINE UINT16 SATURATE_ACCUM_SIGNED(rsp_state *rsp, int accum)
 #if 0
 static float float_round(float input)
 {
-	INT32 integer = (INT32)input;
+	int32_t integer = (int32_t)input;
 	float fraction = input - (float)integer;
 	float output = 0.0f;
 	if( fraction >= 0.5f )
@@ -2232,38 +2232,38 @@ static float float_round(float input)
 
 #define RSP_VMULF(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27, I0, I1, I2, I3, I4, I5, I6, I7) \
 	{ \
-		INT16 v1, v2; \
+		int16_t v1, v2; \
 		v1 = R_VREG_S_X(VS1REG, I0); v2 = R_VREG_S_X(VS2REG, E20); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E10).l = 0x0000800080000000LL; vres[E10] = 0x7fff; } \
-		else { ACCUM(E10).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E10] = ACCUM(E10).h.mid; } \
+		else { ACCUM(E10).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E10] = ACCUM(E10).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I1); v2 = R_VREG_S_X(VS2REG, E21); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E11).l = 0x0000800080000000LL; vres[E11] = 0x7fff; } \
-		else { ACCUM(E11).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E11] = ACCUM(E11).h.mid; } \
+		else { ACCUM(E11).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E11] = ACCUM(E11).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I2); v2 = R_VREG_S_X(VS2REG, E22); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E12).l = 0x0000800080000000LL; vres[E12] = 0x7fff; } \
-		else { ACCUM(E12).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E12] = ACCUM(E12).h.mid; } \
+		else { ACCUM(E12).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E12] = ACCUM(E12).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I3); v2 = R_VREG_S_X(VS2REG, E23); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E13).l = 0x0000800080000000LL; vres[E13] = 0x7fff; } \
-		else { ACCUM(E13).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E13] = ACCUM(E13).h.mid; } \
+		else { ACCUM(E13).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E13] = ACCUM(E13).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I4); v2 = R_VREG_S_X(VS2REG, E24); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E14).l = 0x0000800080000000LL; vres[E14] = 0x7fff; } \
-		else { ACCUM(E14).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E14] = ACCUM(E14).h.mid; } \
+		else { ACCUM(E14).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E14] = ACCUM(E14).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I5); v2 = R_VREG_S_X(VS2REG, E25); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E15).l = 0x0000800080000000LL; vres[E15] = 0x7fff; } \
-		else { ACCUM(E15).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E15] = ACCUM(E15).h.mid; } \
+		else { ACCUM(E15).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E15] = ACCUM(E15).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I6); v2 = R_VREG_S_X(VS2REG, E26); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E16).l = 0x0000800080000000LL; vres[E16] = 0x7fff; } \
-		else { ACCUM(E16).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E16] = ACCUM(E16).h.mid; } \
+		else { ACCUM(E16).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E16] = ACCUM(E16).h.mid; } \
 		v1 = R_VREG_S_X(VS1REG, I7); v2 = R_VREG_S_X(VS2REG, E27); \
 		if (v1 == -32768 && v2 == -32768) { ACCUM(E17).l = 0x0000800080000000LL; vres[E17] = 0x7fff; } \
-		else { ACCUM(E17).l = ((INT64)((INT32)v1 * (INT32)v2) * 0x20000 + 0x80000000); vres[E17] = ACCUM(E17).h.mid; } \
+		else { ACCUM(E17).l = ((int64_t)((int32_t)v1 * (int32_t)v2) * 0x20000 + 0x80000000); vres[E17] = ACCUM(E17).h.mid; } \
 	}
 
 INLINE void cfunc_rsp_vmulf(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2331,7 +2331,7 @@ INLINE void cfunc_rsp_vmulu(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2343,9 +2343,9 @@ INLINE void cfunc_rsp_vmulu(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (INT32)(INT16)R_VREG_S(VS2REG, sel);
-		INT64 r = s1 * s2;
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (int32_t)(int16_t)R_VREG_S(VS2REG, sel);
+		int64_t r = s1 * s2;
 		r += 0x4000;	// rounding ?
 
 		ACCUM(del).l = r << 17;
@@ -2458,7 +2458,7 @@ INLINE void cfunc_rsp_vmulu(void *param)
 
 static int generate_vmudl(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vmudl
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2525,14 +2525,14 @@ static int generate_vmudl(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #else
 #define RSP_VMUDL(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27) \
 	{ \
-		ACCUM(E10).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E10) * (UINT32)(UINT16)R_VREG_S(VS2REG, E20)) & 0xffff0000); \
-		ACCUM(E11).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E11) * (UINT32)(UINT16)R_VREG_S(VS2REG, E21)) & 0xffff0000); \
-		ACCUM(E12).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E12) * (UINT32)(UINT16)R_VREG_S(VS2REG, E22)) & 0xffff0000); \
-		ACCUM(E13).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E13) * (UINT32)(UINT16)R_VREG_S(VS2REG, E23)) & 0xffff0000); \
-		ACCUM(E14).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E14) * (UINT32)(UINT16)R_VREG_S(VS2REG, E24)) & 0xffff0000); \
-		ACCUM(E15).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E15) * (UINT32)(UINT16)R_VREG_S(VS2REG, E25)) & 0xffff0000); \
-		ACCUM(E16).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E16) * (UINT32)(UINT16)R_VREG_S(VS2REG, E26)) & 0xffff0000); \
-		ACCUM(E17).l = (((UINT32)(UINT16)R_VREG_S(VS1REG, E17) * (UINT32)(UINT16)R_VREG_S(VS2REG, E27)) & 0xffff0000); \
+		ACCUM(E10).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E10) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E20)) & 0xffff0000); \
+		ACCUM(E11).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E11) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E21)) & 0xffff0000); \
+		ACCUM(E12).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E12) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E22)) & 0xffff0000); \
+		ACCUM(E13).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E13) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E23)) & 0xffff0000); \
+		ACCUM(E14).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E14) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E24)) & 0xffff0000); \
+		ACCUM(E15).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E15) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E25)) & 0xffff0000); \
+		ACCUM(E16).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E16) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E26)) & 0xffff0000); \
+		ACCUM(E17).l = (((uint32_t)(uint16_t)R_VREG_S(VS1REG, E17) * (uint32_t)(uint16_t)R_VREG_S(VS2REG, E27)) & 0xffff0000); \
 		vres[E10] = ACCUM(E10).h.low; \
 		vres[E11] = ACCUM(E11).h.low; \
 		vres[E12] = ACCUM(E12).h.low; \
@@ -2555,7 +2555,7 @@ INLINE void cfunc_rsp_vmudl(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 001101 |
@@ -2710,7 +2710,7 @@ INLINE void cfunc_rsp_vmudl(void *param)
 
 static int generate_vmudm(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vmudl
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2777,14 +2777,14 @@ static int generate_vmudm(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #else
 #define RSP_VMUDM(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27, I0, I1, I2, I3, I4, I5, I6, I7) \
 	{ \
-		ACCUM(E10).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I0) * (UINT16)R_VREG_S_X(VS2REG, E20)) << 16; \
-		ACCUM(E11).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I1) * (UINT16)R_VREG_S_X(VS2REG, E21)) << 16; \
-		ACCUM(E12).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I2) * (UINT16)R_VREG_S_X(VS2REG, E22)) << 16; \
-		ACCUM(E13).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I3) * (UINT16)R_VREG_S_X(VS2REG, E23)) << 16; \
-		ACCUM(E14).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I4) * (UINT16)R_VREG_S_X(VS2REG, E24)) << 16; \
-		ACCUM(E15).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I5) * (UINT16)R_VREG_S_X(VS2REG, E25)) << 16; \
-		ACCUM(E16).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I6) * (UINT16)R_VREG_S_X(VS2REG, E26)) << 16; \
-		ACCUM(E17).l = (INT64)((INT32)(INT16)R_VREG_S_X(VS1REG, I7) * (UINT16)R_VREG_S_X(VS2REG, E27)) << 16; \
+		ACCUM(E10).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I0) * (uint16_t)R_VREG_S_X(VS2REG, E20)) << 16; \
+		ACCUM(E11).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I1) * (uint16_t)R_VREG_S_X(VS2REG, E21)) << 16; \
+		ACCUM(E12).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I2) * (uint16_t)R_VREG_S_X(VS2REG, E22)) << 16; \
+		ACCUM(E13).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I3) * (uint16_t)R_VREG_S_X(VS2REG, E23)) << 16; \
+		ACCUM(E14).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I4) * (uint16_t)R_VREG_S_X(VS2REG, E24)) << 16; \
+		ACCUM(E15).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I5) * (uint16_t)R_VREG_S_X(VS2REG, E25)) << 16; \
+		ACCUM(E16).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I6) * (uint16_t)R_VREG_S_X(VS2REG, E26)) << 16; \
+		ACCUM(E17).l = (int64_t)((int32_t)(int16_t)R_VREG_S_X(VS1REG, I7) * (uint16_t)R_VREG_S_X(VS2REG, E27)) << 16; \
 		vres[E10] = ACCUM(E10).h.mid; \
 		vres[E11] = ACCUM(E11).h.mid; \
 		vres[E12] = ACCUM(E12).h.mid; \
@@ -2807,7 +2807,7 @@ INLINE void cfunc_rsp_vmudm(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2875,13 +2875,13 @@ INLINE void cfunc_rsp_vmudm(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (UINT16)R_VREG_S(VS2REG, sel);   // not sign-extended
-		INT32 r =  s1 * s2;
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (uint16_t)R_VREG_S(VS2REG, sel);   // not sign-extended
+		int32_t r =  s1 * s2;
 
 		W_ACCUM_H(del, (r < 0) ? 0xffff : 0);       // sign-extend to 48-bit
-		W_ACCUM_M(del, (INT16)(r >> 16));
-		W_ACCUM_L(del, (UINT16)(r));
+		W_ACCUM_M(del, (int16_t)(r >> 16));
+		W_ACCUM_L(del, (uint16_t)(r));
 
 		vres[del] = ACCUM(del).h.mid;
 	}
@@ -2892,14 +2892,14 @@ INLINE void cfunc_rsp_vmudm(void *param)
 
 #define RSP_VMUDN(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27) \
 	{ \
-		ACCUM(E10).l = ((UINT16)R_VREG_S(VS1REG, E10) * (INT64)(INT16)R_VREG_S(VS2REG, E20)) << 16; \
-		ACCUM(E11).l = ((UINT16)R_VREG_S(VS1REG, E11) * (INT64)(INT16)R_VREG_S(VS2REG, E21)) << 16; \
-		ACCUM(E12).l = ((UINT16)R_VREG_S(VS1REG, E12) * (INT64)(INT16)R_VREG_S(VS2REG, E22)) << 16; \
-		ACCUM(E13).l = ((UINT16)R_VREG_S(VS1REG, E13) * (INT64)(INT16)R_VREG_S(VS2REG, E23)) << 16; \
-		ACCUM(E14).l = ((UINT16)R_VREG_S(VS1REG, E14) * (INT64)(INT16)R_VREG_S(VS2REG, E24)) << 16; \
-		ACCUM(E15).l = ((UINT16)R_VREG_S(VS1REG, E15) * (INT64)(INT16)R_VREG_S(VS2REG, E25)) << 16; \
-		ACCUM(E16).l = ((UINT16)R_VREG_S(VS1REG, E16) * (INT64)(INT16)R_VREG_S(VS2REG, E26)) << 16; \
-		ACCUM(E17).l = ((UINT16)R_VREG_S(VS1REG, E17) * (INT64)(INT16)R_VREG_S(VS2REG, E27)) << 16; \
+		ACCUM(E10).l = ((uint16_t)R_VREG_S(VS1REG, E10) * (int64_t)(int16_t)R_VREG_S(VS2REG, E20)) << 16; \
+		ACCUM(E11).l = ((uint16_t)R_VREG_S(VS1REG, E11) * (int64_t)(int16_t)R_VREG_S(VS2REG, E21)) << 16; \
+		ACCUM(E12).l = ((uint16_t)R_VREG_S(VS1REG, E12) * (int64_t)(int16_t)R_VREG_S(VS2REG, E22)) << 16; \
+		ACCUM(E13).l = ((uint16_t)R_VREG_S(VS1REG, E13) * (int64_t)(int16_t)R_VREG_S(VS2REG, E23)) << 16; \
+		ACCUM(E14).l = ((uint16_t)R_VREG_S(VS1REG, E14) * (int64_t)(int16_t)R_VREG_S(VS2REG, E24)) << 16; \
+		ACCUM(E15).l = ((uint16_t)R_VREG_S(VS1REG, E15) * (int64_t)(int16_t)R_VREG_S(VS2REG, E25)) << 16; \
+		ACCUM(E16).l = ((uint16_t)R_VREG_S(VS1REG, E16) * (int64_t)(int16_t)R_VREG_S(VS2REG, E26)) << 16; \
+		ACCUM(E17).l = ((uint16_t)R_VREG_S(VS1REG, E17) * (int64_t)(int16_t)R_VREG_S(VS2REG, E27)) << 16; \
 		W_VREG_S(VDREG, E10, ACCUM(E10).h.low);			\
 		W_VREG_S(VDREG, E11, ACCUM(E11).h.low);			\
 		W_VREG_S(VDREG, E12, ACCUM(E12).h.low);			\
@@ -2980,7 +2980,7 @@ INLINE void cfunc_rsp_vmudh(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -2995,31 +2995,31 @@ INLINE void cfunc_rsp_vmudh(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (INT32)(INT16)R_VREG_S(VS2REG, sel);
-		INT32 r = s1 * s2;
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (int32_t)(int16_t)R_VREG_S(VS2REG, sel);
+		int32_t r = s1 * s2;
 
-		W_ACCUM_H(del, (INT16)(r >> 16));
-		W_ACCUM_M(del, (UINT16)(r));
+		W_ACCUM_H(del, (int16_t)(r >> 16));
+		W_ACCUM_M(del, (uint16_t)(r));
 		W_ACCUM_L(del, 0);
 
 		if (r < -32768) r = -32768;
 		if (r >  32767)	r = 32767;
-		vres[del] = (INT16)(r);
+		vres[del] = (int16_t)(r);
 	}
 	WRITEBACK_RESULT();
 }
 
 #define RSP_VMACF(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27) \
 	{ \
-		ACCUM(E10).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E10) * (INT32)(INT16)R_VREG_S(VS2REG, E20)) << 17; \
-		ACCUM(E11).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E11) * (INT32)(INT16)R_VREG_S(VS2REG, E21)) << 17; \
-		ACCUM(E12).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E12) * (INT32)(INT16)R_VREG_S(VS2REG, E22)) << 17; \
-		ACCUM(E13).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E13) * (INT32)(INT16)R_VREG_S(VS2REG, E23)) << 17; \
-		ACCUM(E14).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E14) * (INT32)(INT16)R_VREG_S(VS2REG, E24)) << 17; \
-		ACCUM(E15).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E15) * (INT32)(INT16)R_VREG_S(VS2REG, E25)) << 17; \
-		ACCUM(E16).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E16) * (INT32)(INT16)R_VREG_S(VS2REG, E26)) << 17; \
-		ACCUM(E17).l += (INT64)((INT32)(INT16)R_VREG_S(VS1REG, E17) * (INT32)(INT16)R_VREG_S(VS2REG, E27)) << 17; \
+		ACCUM(E10).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E10) * (int32_t)(int16_t)R_VREG_S(VS2REG, E20)) << 17; \
+		ACCUM(E11).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E11) * (int32_t)(int16_t)R_VREG_S(VS2REG, E21)) << 17; \
+		ACCUM(E12).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E12) * (int32_t)(int16_t)R_VREG_S(VS2REG, E22)) << 17; \
+		ACCUM(E13).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E13) * (int32_t)(int16_t)R_VREG_S(VS2REG, E23)) << 17; \
+		ACCUM(E14).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E14) * (int32_t)(int16_t)R_VREG_S(VS2REG, E24)) << 17; \
+		ACCUM(E15).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E15) * (int32_t)(int16_t)R_VREG_S(VS2REG, E25)) << 17; \
+		ACCUM(E16).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E16) * (int32_t)(int16_t)R_VREG_S(VS2REG, E26)) << 17; \
+		ACCUM(E17).l += (int64_t)((int32_t)(int16_t)R_VREG_S(VS1REG, E17) * (int32_t)(int16_t)R_VREG_S(VS2REG, E27)) << 17; \
 		vres[E10] = SATURATE_ACCUM_SIGNED(rsp, E10); \
 		vres[E11] = SATURATE_ACCUM_SIGNED(rsp, E11); \
 		vres[E12] = SATURATE_ACCUM_SIGNED(rsp, E12); \
@@ -3042,7 +3042,7 @@ INLINE void cfunc_rsp_vmacf(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3106,14 +3106,14 @@ INLINE void cfunc_rsp_vmacf(void *param)
 #if 0
 	for (i=0; i < 8; i++)
 	{
-		UINT16 res;
+		uint16_t res;
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (INT32)(INT16)R_VREG_S(VS2REG, sel);
-		INT32 r = s1 * s2;
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (int32_t)(int16_t)R_VREG_S(VS2REG, sel);
+		int32_t r = s1 * s2;
 
-		ACCUM(del).l += (INT64)(r) << 17;
+		ACCUM(del).l += (int64_t)(r) << 17;
 		res = SATURATE_ACCUM_SIGNED(rsp, del);
 
 		vres[del] = res;
@@ -3126,7 +3126,7 @@ INLINE void cfunc_rsp_vmacu(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3136,18 +3136,18 @@ INLINE void cfunc_rsp_vmacu(void *param)
 
 	for (i=0; i < 8; i++)
 	{
-		UINT16 res;
+		uint16_t res;
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (INT32)(INT16)R_VREG_S(VS2REG, sel);
-		INT32 r1 = s1 * s2;
-		UINT32 r2 = (UINT16)ACCUM(del).h.low + ((UINT16)(r1) * 2);
-		UINT32 r3 = (UINT16)ACCUM(del).h.mid + (UINT16)((r1 >> 16) * 2) + (UINT16)(r2 >> 16);
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (int32_t)(int16_t)R_VREG_S(VS2REG, sel);
+		int32_t r1 = s1 * s2;
+		uint32_t r2 = (uint16_t)ACCUM(del).h.low + ((uint16_t)(r1) * 2);
+		uint32_t r3 = (uint16_t)ACCUM(del).h.mid + (uint16_t)((r1 >> 16) * 2) + (uint16_t)(r2 >> 16);
 
-		W_ACCUM_L(del, (UINT16)(r2));
-		W_ACCUM_M(del, (UINT16)(r3));
-		W_ACCUM_H(del, (UINT16)ACCUM(del).h.high + (UINT16)(r3 >> 16) + (UINT16)(r1 >> 31));
+		W_ACCUM_L(del, (uint16_t)(r2));
+		W_ACCUM_M(del, (uint16_t)(r3));
+		W_ACCUM_H(del, (uint16_t)ACCUM(del).h.high + (uint16_t)(r3 >> 16) + (uint16_t)(r1 >> 31));
 
 		if (ACCUM(del).h.high < 0)
 		{
@@ -3181,7 +3181,7 @@ INLINE void cfunc_rsp_vmadl(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3194,18 +3194,18 @@ INLINE void cfunc_rsp_vmadl(void *param)
 
 	for (i=0; i < 8; i++)
 	{
-		UINT16 res;
+		uint16_t res;
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		UINT32 s1 = (UINT32)(UINT16)R_VREG_S(VS1REG, del);
-		UINT32 s2 = (UINT32)(UINT16)R_VREG_S(VS2REG, sel);
-		UINT32 r1 = s1 * s2;
-		UINT32 r2 = (UINT16)ACCUM(del).h.low + (r1 >> 16);
-		UINT32 r3 = (UINT16)ACCUM(del).h.mid + (r2 >> 16);
+		uint32_t s1 = (uint32_t)(uint16_t)R_VREG_S(VS1REG, del);
+		uint32_t s2 = (uint32_t)(uint16_t)R_VREG_S(VS2REG, sel);
+		uint32_t r1 = s1 * s2;
+		uint32_t r2 = (uint16_t)ACCUM(del).h.low + (r1 >> 16);
+		uint32_t r3 = (uint16_t)ACCUM(del).h.mid + (r2 >> 16);
 
-		W_ACCUM_L(del, (UINT16)(r2));
-		W_ACCUM_M(del, (UINT16)(r3));
-		W_ACCUM_H(del, ACCUM(del).h.high + (INT16)(r3 >> 16));
+		W_ACCUM_L(del, (uint16_t)(r2));
+		W_ACCUM_M(del, (uint16_t)(r3));
+		W_ACCUM_H(del, ACCUM(del).h.high + (int16_t)(r3 >> 16));
 
 		res = SATURATE_ACCUM_UNSIGNED(rsp, del);
 
@@ -3305,7 +3305,7 @@ INLINE void cfunc_rsp_vmadl(void *param)
 
 static int generate_vmadm(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vmadm
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3372,14 +3372,14 @@ static int generate_vmadm(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #else
 #define RSP_VMADM(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27) \
 	{ \
-		ACCUM(E10).l += ((INT64)(INT16)R_VREG_S(VS1REG, E10) * (UINT16)R_VREG_S(VS2REG, E20)) << 16; \
-		ACCUM(E11).l += ((INT64)(INT16)R_VREG_S(VS1REG, E11) * (UINT16)R_VREG_S(VS2REG, E21)) << 16; \
-		ACCUM(E12).l += ((INT64)(INT16)R_VREG_S(VS1REG, E12) * (UINT16)R_VREG_S(VS2REG, E22)) << 16; \
-		ACCUM(E13).l += ((INT64)(INT16)R_VREG_S(VS1REG, E13) * (UINT16)R_VREG_S(VS2REG, E23)) << 16; \
-		ACCUM(E14).l += ((INT64)(INT16)R_VREG_S(VS1REG, E14) * (UINT16)R_VREG_S(VS2REG, E24)) << 16; \
-		ACCUM(E15).l += ((INT64)(INT16)R_VREG_S(VS1REG, E15) * (UINT16)R_VREG_S(VS2REG, E25)) << 16; \
-		ACCUM(E16).l += ((INT64)(INT16)R_VREG_S(VS1REG, E16) * (UINT16)R_VREG_S(VS2REG, E26)) << 16; \
-		ACCUM(E17).l += ((INT64)(INT16)R_VREG_S(VS1REG, E17) * (UINT16)R_VREG_S(VS2REG, E27)) << 16; \
+		ACCUM(E10).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E10) * (uint16_t)R_VREG_S(VS2REG, E20)) << 16; \
+		ACCUM(E11).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E11) * (uint16_t)R_VREG_S(VS2REG, E21)) << 16; \
+		ACCUM(E12).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E12) * (uint16_t)R_VREG_S(VS2REG, E22)) << 16; \
+		ACCUM(E13).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E13) * (uint16_t)R_VREG_S(VS2REG, E23)) << 16; \
+		ACCUM(E14).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E14) * (uint16_t)R_VREG_S(VS2REG, E24)) << 16; \
+		ACCUM(E15).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E15) * (uint16_t)R_VREG_S(VS2REG, E25)) << 16; \
+		ACCUM(E16).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E16) * (uint16_t)R_VREG_S(VS2REG, E26)) << 16; \
+		ACCUM(E17).l += ((int64_t)(int16_t)R_VREG_S(VS1REG, E17) * (uint16_t)R_VREG_S(VS2REG, E27)) << 16; \
 		vres[E10] = SATURATE_ACCUM_SIGNED(rsp, E10); \
 		vres[E11] = SATURATE_ACCUM_SIGNED(rsp, E11); \
 		vres[E12] = SATURATE_ACCUM_SIGNED(rsp, E12); \
@@ -3402,7 +3402,7 @@ INLINE void cfunc_rsp_vmadm(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 001101 |
@@ -3557,7 +3557,7 @@ INLINE void cfunc_rsp_vmadm(void *param)
 
 static int generate_vmadn(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vmadn
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3624,14 +3624,14 @@ static int generate_vmadn(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #else
 #define RSP_VMADN(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27, I0, I1, I2, I3, I4, I5, I6, I7) \
 	{ \
-		ACCUM(E10).l += ((UINT16)R_VREG_S_X(VS1REG, I0) * (INT64)R_VREG_S_X(VS2REG, E20)) << 16; \
-		ACCUM(E11).l += ((UINT16)R_VREG_S_X(VS1REG, I1) * (INT64)R_VREG_S_X(VS2REG, E21)) << 16; \
-		ACCUM(E12).l += ((UINT16)R_VREG_S_X(VS1REG, I2) * (INT64)R_VREG_S_X(VS2REG, E22)) << 16; \
-		ACCUM(E13).l += ((UINT16)R_VREG_S_X(VS1REG, I3) * (INT64)R_VREG_S_X(VS2REG, E23)) << 16; \
-		ACCUM(E14).l += ((UINT16)R_VREG_S_X(VS1REG, I4) * (INT64)R_VREG_S_X(VS2REG, E24)) << 16; \
-		ACCUM(E15).l += ((UINT16)R_VREG_S_X(VS1REG, I5) * (INT64)R_VREG_S_X(VS2REG, E25)) << 16; \
-		ACCUM(E16).l += ((UINT16)R_VREG_S_X(VS1REG, I6) * (INT64)R_VREG_S_X(VS2REG, E26)) << 16; \
-		ACCUM(E17).l += ((UINT16)R_VREG_S_X(VS1REG, I7) * (INT64)R_VREG_S_X(VS2REG, E27)) << 16; \
+		ACCUM(E10).l += ((uint16_t)R_VREG_S_X(VS1REG, I0) * (int64_t)R_VREG_S_X(VS2REG, E20)) << 16; \
+		ACCUM(E11).l += ((uint16_t)R_VREG_S_X(VS1REG, I1) * (int64_t)R_VREG_S_X(VS2REG, E21)) << 16; \
+		ACCUM(E12).l += ((uint16_t)R_VREG_S_X(VS1REG, I2) * (int64_t)R_VREG_S_X(VS2REG, E22)) << 16; \
+		ACCUM(E13).l += ((uint16_t)R_VREG_S_X(VS1REG, I3) * (int64_t)R_VREG_S_X(VS2REG, E23)) << 16; \
+		ACCUM(E14).l += ((uint16_t)R_VREG_S_X(VS1REG, I4) * (int64_t)R_VREG_S_X(VS2REG, E24)) << 16; \
+		ACCUM(E15).l += ((uint16_t)R_VREG_S_X(VS1REG, I5) * (int64_t)R_VREG_S_X(VS2REG, E25)) << 16; \
+		ACCUM(E16).l += ((uint16_t)R_VREG_S_X(VS1REG, I6) * (int64_t)R_VREG_S_X(VS2REG, E26)) << 16; \
+		ACCUM(E17).l += ((uint16_t)R_VREG_S_X(VS1REG, I7) * (int64_t)R_VREG_S_X(VS2REG, E27)) << 16; \
 		vres[E10] = SATURATE_ACCUM_UNSIGNED(rsp, E10); \
 		vres[E11] = SATURATE_ACCUM_UNSIGNED(rsp, E11); \
 		vres[E12] = SATURATE_ACCUM_UNSIGNED(rsp, E12); \
@@ -3654,7 +3654,7 @@ INLINE void cfunc_rsp_vmadn(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 001110 |
@@ -3784,7 +3784,7 @@ INLINE void cfunc_rsp_vmadn(void *param)
 
 static int generate_vmadh(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vmadh
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -3851,14 +3851,14 @@ static int generate_vmadh(rsp_state *rsp, drcuml_block *block, compiler_state *c
 #else
 #define RSP_VMADH(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27, I0, I1, I2, I3, I4, I5, I6, I7) \
 	{ \
-		ACCUM(E10).w.mh += (INT32)R_VREG_S_X(VS1REG, I0) * (INT32)R_VREG_S_X(VS2REG, E20); \
-		ACCUM(E11).w.mh += (INT32)R_VREG_S_X(VS1REG, I1) * (INT32)R_VREG_S_X(VS2REG, E21); \
-		ACCUM(E12).w.mh += (INT32)R_VREG_S_X(VS1REG, I2) * (INT32)R_VREG_S_X(VS2REG, E22); \
-		ACCUM(E13).w.mh += (INT32)R_VREG_S_X(VS1REG, I3) * (INT32)R_VREG_S_X(VS2REG, E23); \
-		ACCUM(E14).w.mh += (INT32)R_VREG_S_X(VS1REG, I4) * (INT32)R_VREG_S_X(VS2REG, E24); \
-		ACCUM(E15).w.mh += (INT32)R_VREG_S_X(VS1REG, I5) * (INT32)R_VREG_S_X(VS2REG, E25); \
-		ACCUM(E16).w.mh += (INT32)R_VREG_S_X(VS1REG, I6) * (INT32)R_VREG_S_X(VS2REG, E26); \
-		ACCUM(E17).w.mh += (INT32)R_VREG_S_X(VS1REG, I7) * (INT32)R_VREG_S_X(VS2REG, E27); \
+		ACCUM(E10).w.mh += (int32_t)R_VREG_S_X(VS1REG, I0) * (int32_t)R_VREG_S_X(VS2REG, E20); \
+		ACCUM(E11).w.mh += (int32_t)R_VREG_S_X(VS1REG, I1) * (int32_t)R_VREG_S_X(VS2REG, E21); \
+		ACCUM(E12).w.mh += (int32_t)R_VREG_S_X(VS1REG, I2) * (int32_t)R_VREG_S_X(VS2REG, E22); \
+		ACCUM(E13).w.mh += (int32_t)R_VREG_S_X(VS1REG, I3) * (int32_t)R_VREG_S_X(VS2REG, E23); \
+		ACCUM(E14).w.mh += (int32_t)R_VREG_S_X(VS1REG, I4) * (int32_t)R_VREG_S_X(VS2REG, E24); \
+		ACCUM(E15).w.mh += (int32_t)R_VREG_S_X(VS1REG, I5) * (int32_t)R_VREG_S_X(VS2REG, E25); \
+		ACCUM(E16).w.mh += (int32_t)R_VREG_S_X(VS1REG, I6) * (int32_t)R_VREG_S_X(VS2REG, E26); \
+		ACCUM(E17).w.mh += (int32_t)R_VREG_S_X(VS1REG, I7) * (int32_t)R_VREG_S_X(VS2REG, E27); \
 		vres[E10] = SATURATE_ACCUM_SIGNED(rsp, E10); \
 		vres[E11] = SATURATE_ACCUM_SIGNED(rsp, E11); \
 		vres[E12] = SATURATE_ACCUM_SIGNED(rsp, E12); \
@@ -3881,7 +3881,7 @@ INLINE void cfunc_rsp_vmadh(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 001111 |
@@ -4190,7 +4190,7 @@ INLINE void cfunc_rsp_vmadh(void *param)
 
 static int generate_vadd(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)	// vadd
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4257,22 +4257,22 @@ static int generate_vadd(rsp_state *rsp, drcuml_block *block, compiler_state *co
 #else
 #define RSP_VADD(E10, E11, E12, E13, E14, E15, E16, E17, E20, E21, E22, E23, E24, E25, E26, E27, I0, I1, I2, I3, I4, I5, I6, I7) \
 	{																						\
-		INT32 r;																			\
-		ACCUM(E10).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I0) + (INT32)R_VREG_S_X(VS2REG, E20) + ((rsp->flag[0] & (1 << E10)) >> E10)); \
+		int32_t r;																			\
+		ACCUM(E10).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I0) + (int32_t)R_VREG_S_X(VS2REG, E20) + ((rsp->flag[0] & (1 << E10)) >> E10)); \
 		vres[E10] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E10).h.low);		\
-		ACCUM(E11).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I1) + (INT32)R_VREG_S_X(VS2REG, E21) + ((rsp->flag[0] & (1 << E11)) >> E11)); \
+		ACCUM(E11).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I1) + (int32_t)R_VREG_S_X(VS2REG, E21) + ((rsp->flag[0] & (1 << E11)) >> E11)); \
 		vres[E11] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E11).h.low);		\
-		ACCUM(E12).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I2) + (INT32)R_VREG_S_X(VS2REG, E22) + ((rsp->flag[0] & (1 << E12)) >> E12)); \
+		ACCUM(E12).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I2) + (int32_t)R_VREG_S_X(VS2REG, E22) + ((rsp->flag[0] & (1 << E12)) >> E12)); \
 		vres[E12] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E12).h.low);		\
-		ACCUM(E13).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I3) + (INT32)R_VREG_S_X(VS2REG, E23) + ((rsp->flag[0] & (1 << E13)) >> E13)); \
+		ACCUM(E13).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I3) + (int32_t)R_VREG_S_X(VS2REG, E23) + ((rsp->flag[0] & (1 << E13)) >> E13)); \
 		vres[E13] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E13).h.low);		\
-		ACCUM(E14).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I4) + (INT32)R_VREG_S_X(VS2REG, E24) + ((rsp->flag[0] & (1 << E14)) >> E14)); \
+		ACCUM(E14).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I4) + (int32_t)R_VREG_S_X(VS2REG, E24) + ((rsp->flag[0] & (1 << E14)) >> E14)); \
 		vres[E14] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E14).h.low);		\
-		ACCUM(E15).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I5) + (INT32)R_VREG_S_X(VS2REG, E25) + ((rsp->flag[0] & (1 << E15)) >> E15)); \
+		ACCUM(E15).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I5) + (int32_t)R_VREG_S_X(VS2REG, E25) + ((rsp->flag[0] & (1 << E15)) >> E15)); \
 		vres[E15] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E15).h.low);		\
-		ACCUM(E16).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I6) + (INT32)R_VREG_S_X(VS2REG, E26) + ((rsp->flag[0] & (1 << E16)) >> E16)); \
+		ACCUM(E16).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I6) + (int32_t)R_VREG_S_X(VS2REG, E26) + ((rsp->flag[0] & (1 << E16)) >> E16)); \
 		vres[E16] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E16).h.low);		\
-		ACCUM(E17).h.low = (INT16)(r = (INT32)R_VREG_S_X(VS1REG, I7) + (INT32)R_VREG_S_X(VS2REG, E27) + ((rsp->flag[0] & (1 << E17)) >> E17)); \
+		ACCUM(E17).h.low = (int16_t)(r = (int32_t)R_VREG_S_X(VS1REG, I7) + (int32_t)R_VREG_S_X(VS2REG, E27) + ((rsp->flag[0] & (1 << E17)) >> E17)); \
 		vres[E17] = (r > 32767) ? 32767 : ((r < -32768) ? -32768 : ACCUM(E17).h.low);		\
 	}
 
@@ -4280,7 +4280,7 @@ INLINE void cfunc_rsp_vadd(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4350,7 +4350,7 @@ INLINE void cfunc_rsp_vsub(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4365,16 +4365,16 @@ INLINE void cfunc_rsp_vsub(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (INT32)(INT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (INT32)(INT16)R_VREG_S(VS2REG, sel);
-		INT32 r = s1 - s2 - CARRY_FLAG(del);
+		int32_t s1 = (int32_t)(int16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (int32_t)(int16_t)R_VREG_S(VS2REG, sel);
+		int32_t r = s1 - s2 - CARRY_FLAG(del);
 
-		W_ACCUM_L(del, (INT16)(r));
+		W_ACCUM_L(del, (int16_t)(r));
 
 		if (r > 32767) r = 32767;
 		if (r < -32768) r = -32768;
 
-		vres[del] = (INT16)(r);
+		vres[del] = (int16_t)(r);
 	}
 	rsp->flag[0] = 0;
 	WRITEBACK_RESULT();
@@ -4384,7 +4384,7 @@ INLINE void cfunc_rsp_vabs(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4398,8 +4398,8 @@ INLINE void cfunc_rsp_vabs(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT16 s1 = (INT16)R_VREG_S(VS1REG, del);
-		INT16 s2 = (INT16)R_VREG_S(VS2REG, sel);
+		int16_t s1 = (int16_t)R_VREG_S(VS1REG, del);
+		int16_t s2 = (int16_t)R_VREG_S(VS2REG, sel);
 
 		if (s1 < 0)
 		{
@@ -4430,7 +4430,7 @@ INLINE void cfunc_rsp_vaddc(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4447,12 +4447,12 @@ INLINE void cfunc_rsp_vaddc(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (UINT32)(UINT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (UINT32)(UINT16)R_VREG_S(VS2REG, sel);
-		INT32 r = s1 + s2;
+		int32_t s1 = (uint32_t)(uint16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (uint32_t)(uint16_t)R_VREG_S(VS2REG, sel);
+		int32_t r = s1 + s2;
 
-		vres[del] = (INT16)(r);
-		W_ACCUM_L(del, (INT16)(r));
+		vres[del] = (int16_t)(r);
+		W_ACCUM_L(del, (int16_t)(r));
 
 		if (r & 0xffff0000)
 		{
@@ -4466,7 +4466,7 @@ INLINE void cfunc_rsp_vsubc(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4483,14 +4483,14 @@ INLINE void cfunc_rsp_vsubc(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT32 s1 = (UINT32)(UINT16)R_VREG_S(VS1REG, del);
-		INT32 s2 = (UINT32)(UINT16)R_VREG_S(VS2REG, sel);
-		INT32 r = s1 - s2;
+		int32_t s1 = (uint32_t)(uint16_t)R_VREG_S(VS1REG, del);
+		int32_t s2 = (uint32_t)(uint16_t)R_VREG_S(VS2REG, sel);
+		int32_t r = s1 - s2;
 
-		vres[del] = (INT16)(r);
-		W_ACCUM_L(del, (UINT16)(r));
+		vres[del] = (int16_t)(r);
+		W_ACCUM_L(del, (uint16_t)(r));
 
-		if ((UINT16)(r) != 0)
+		if ((uint16_t)(r) != 0)
 		{
 			SET_ZERO_FLAG(del);
 		}
@@ -4686,7 +4686,7 @@ INLINE void cfunc_rsp_vlt(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4754,7 +4754,7 @@ INLINE void cfunc_rsp_veq(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -4791,7 +4791,7 @@ INLINE void cfunc_rsp_vne(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5015,7 +5015,7 @@ INLINE void cfunc_rsp_vge(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	//int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5118,7 +5118,7 @@ INLINE void cfunc_rsp_vcl(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5131,8 +5131,8 @@ INLINE void cfunc_rsp_vcl(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT16 s1 = R_VREG_S(VS1REG, del);
-		INT16 s2 = R_VREG_S(VS2REG, sel);
+		int16_t s1 = R_VREG_S(VS1REG, del);
+		int16_t s2 = R_VREG_S(VS2REG, sel);
 
 		if (CARRY_FLAG(del) != 0)
 		{
@@ -5140,7 +5140,7 @@ INLINE void cfunc_rsp_vcl(void *param)
 			{
 				if (COMPARE_FLAG(del) != 0)
 				{
-					W_ACCUM_L(del, -(UINT16)s2);
+					W_ACCUM_L(del, -(uint16_t)s2);
 				}
 				else
 				{
@@ -5151,27 +5151,27 @@ INLINE void cfunc_rsp_vcl(void *param)
 			{
 				if (rsp->flag[2] & (1 << (del)))
 				{
-					if (((UINT32)(UINT16)(s1) + (UINT32)(UINT16)(s2)) > 0x10000)
+					if (((uint32_t)(uint16_t)(s1) + (uint32_t)(uint16_t)(s2)) > 0x10000)
 					{
 						W_ACCUM_L(del, s1);
 						CLEAR_COMPARE_FLAG(del);
 					}
 					else
 					{
-						W_ACCUM_L(del, -((UINT16)s2));
+						W_ACCUM_L(del, -((uint16_t)s2));
 						SET_COMPARE_FLAG(del);
 					}
 				}
 				else
 				{
-					if (((UINT32)(INT16)(s1) + (UINT32)(INT16)(s2)) != 0)
+					if (((uint32_t)(int16_t)(s1) + (uint32_t)(int16_t)(s2)) != 0)
 					{
 						W_ACCUM_L(del, s1);
 						CLEAR_COMPARE_FLAG(del);
 					}
 					else
 					{
-						W_ACCUM_L(del, -((UINT16)s2));
+						W_ACCUM_L(del, -((uint16_t)s2));
 						SET_COMPARE_FLAG(del);
 					}
 				}
@@ -5192,7 +5192,7 @@ INLINE void cfunc_rsp_vcl(void *param)
 			}
 			else
 			{
-				if (((INT32)(UINT16)s1 - (INT32)(UINT16)s2) >= 0)
+				if (((int32_t)(uint16_t)s1 - (int32_t)(uint16_t)s2) >= 0)
 				{
 					W_ACCUM_L(del, s2);
 					rsp->flag[1] |= (0x100 << del);
@@ -5216,7 +5216,7 @@ INLINE void cfunc_rsp_vch(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5233,8 +5233,8 @@ INLINE void cfunc_rsp_vch(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT16 s1 = R_VREG_S(VS1REG, del);
-		INT16 s2 = R_VREG_S(VS2REG, sel);
+		int16_t s1 = R_VREG_S(VS1REG, del);
+		int16_t s2 = R_VREG_S(VS2REG, sel);
 
 		if ((s1 ^ s2) < 0)
 		{
@@ -5251,7 +5251,7 @@ INLINE void cfunc_rsp_vch(void *param)
 					rsp->flag[2] |= (1 << (del));
 				}
 				SET_COMPARE_FLAG(del);
-				vres[del] = -((UINT16)s2);
+				vres[del] = -((uint16_t)s2);
 			}
 			else
 			{
@@ -5300,7 +5300,7 @@ INLINE void cfunc_rsp_vcr(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8];
+	int16_t vres[8];
 	int i;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5317,10 +5317,10 @@ INLINE void cfunc_rsp_vcr(void *param)
 	{
 		int del = VEC_EL_1(EL, i);
 		int sel = VEC_EL_2(EL, del);
-		INT16 s1 = R_VREG_S(VS1REG, del);
-		INT16 s2 = R_VREG_S(VS2REG, sel);
+		int16_t s1 = R_VREG_S(VS1REG, del);
+		int16_t s2 = R_VREG_S(VS2REG, sel);
 
-		if ((INT16)(s1 ^ s2) < 0)
+		if ((int16_t)(s1 ^ s2) < 0)
 		{
 			if (s2 < 0)
 			{
@@ -5328,7 +5328,7 @@ INLINE void cfunc_rsp_vcr(void *param)
 			}
 			if ((s1 + s2) <= 0)
 			{
-				W_ACCUM_L(del, ~((UINT16)s2));
+				W_ACCUM_L(del, ~((uint16_t)s2));
 				SET_COMPARE_FLAG(del);
 			}
 			else
@@ -5436,7 +5436,7 @@ INLINE void cfunc_rsp_vmrg(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 100111 |
@@ -5561,7 +5561,7 @@ INLINE void cfunc_rsp_vmrg(void *param)
 
 static int generate_vand(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5647,7 +5647,7 @@ INLINE void cfunc_rsp_vand(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101000 |
@@ -5781,7 +5781,7 @@ INLINE void cfunc_rsp_vand(void *param)
 
 static int generate_vnand(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -5867,7 +5867,7 @@ INLINE void cfunc_rsp_vnand(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };
+	int16_t vres[8] = { 0 };
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101001 |
@@ -5993,7 +5993,7 @@ INLINE void cfunc_rsp_vnand(void *param)
 
 static int generate_vor(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -6079,7 +6079,7 @@ INLINE void cfunc_rsp_vor(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };;
+	int16_t vres[8] = { 0 };;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101010 |
@@ -6213,7 +6213,7 @@ INLINE void cfunc_rsp_vor(void *param)
 
 static int generate_vnor(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -6299,7 +6299,7 @@ INLINE void cfunc_rsp_vnor(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };;
+	int16_t vres[8] = { 0 };;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101011 |
@@ -6425,7 +6425,7 @@ INLINE void cfunc_rsp_vnor(void *param)
 
 static int generate_vxor(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -6511,7 +6511,7 @@ INLINE void cfunc_rsp_vxor(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };;
+	int16_t vres[8] = { 0 };;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101100 |
@@ -6645,7 +6645,7 @@ INLINE void cfunc_rsp_vxor(void *param)
 
 static int generate_vnxor(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
@@ -6731,7 +6731,7 @@ INLINE void cfunc_rsp_vnxor(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
 	int op = rsp->impstate->arg0;
-	INT16 vres[8] = { 0 };;
+	int16_t vres[8] = { 0 };;
 	// 31       25  24     20      15      10      5        0
 	// ------------------------------------------------------
 	// | 010010 | 1 | EEEE | SSSSS | TTTTT | DDDDD | 101101 |
@@ -6808,9 +6808,9 @@ INLINE void cfunc_rsp_vrcp(void *param)
 
 	int del = 7 - (VS1REG & 7);
 	int sel = 7 - (EL & 7);
-	INT32 rec;
+	int32_t rec;
 
-	rec = (INT16)(R_VREG_S_X(VS2REG, sel));
+	rec = (int16_t)(R_VREG_S_X(VS2REG, sel));
 
 	if (rec == 0)
 	{
@@ -6883,7 +6883,7 @@ INLINE void cfunc_rsp_vrcp(void *param)
 
 	rsp->reciprocal_res = rec;
 
-	W_VREG_S_X(VDREG, del, (UINT16)(rsp->reciprocal_res));			// store low part
+	W_VREG_S_X(VDREG, del, (uint16_t)(rsp->reciprocal_res));			// store low part
 }
 
 INLINE void cfunc_rsp_vrcpl(void *param)
@@ -6900,9 +6900,9 @@ INLINE void cfunc_rsp_vrcpl(void *param)
 
 	int del = 7 - (VS1REG & 7);
 	int sel = 7 - VEC_EL_2(EL, 7-del);
-	INT32 rec;
+	int32_t rec;
 
-	rec = ((UINT16)(R_VREG_S_X(VS2REG, sel)) | ((UINT32)(rsp->reciprocal_high) << 16));
+	rec = ((uint16_t)(R_VREG_S_X(VS2REG, sel)) | ((uint32_t)(rsp->reciprocal_high) << 16));
 
 	if (rec == 0)
 	{
@@ -6914,7 +6914,7 @@ INLINE void cfunc_rsp_vrcpl(void *param)
 		int negative = 0;
 		if (rec < 0)
 		{
-			if (((UINT32)(rec & 0xffff0000) == 0xffff0000) && ((INT16)(rec & 0xffff) < 0))
+			if (((uint32_t)(rec & 0xffff0000) == 0xffff0000) && ((int16_t)(rec & 0xffff) < 0))
 			{
 				rec = ~rec+1;
 			}
@@ -6955,7 +6955,7 @@ INLINE void cfunc_rsp_vrcpl(void *param)
 
 	rsp->reciprocal_res = rec;
 
-	W_VREG_S_X(VDREG, del, (UINT16)(rsp->reciprocal_res));			// store low part
+	W_VREG_S_X(VDREG, del, (uint16_t)(rsp->reciprocal_res));			// store low part
 }
 
 INLINE void cfunc_rsp_vrcph(void *param)
@@ -6983,7 +6983,7 @@ INLINE void cfunc_rsp_vrcph(void *param)
 	W_ACCUM_L(6, R_VREG_S_X(VS2REG, VEC_EL_2(EL, 6)));
 	W_ACCUM_L(7, R_VREG_S_X(VS2REG, VEC_EL_2(EL, 7)));
 
-	W_VREG_S_X(VDREG, del, (INT16)(rsp->reciprocal_res >> 16));	// store high part
+	W_VREG_S_X(VDREG, del, (int16_t)(rsp->reciprocal_res >> 16));	// store high part
 }
 
 INLINE void cfunc_rsp_vmov(void *param)
@@ -7015,9 +7015,9 @@ INLINE void cfunc_rsp_vrsql(void *param)
 
 	int del = 7 - (VS1REG & 7);
 	int sel = 7 - VEC_EL_2(EL, 7 - del);
-	INT32 sqr;
+	int32_t sqr;
 
-	sqr = (UINT16)(R_VREG_S_X(VS2REG, sel)) | ((UINT32)(rsp->square_root_high) << 16);
+	sqr = (uint16_t)(R_VREG_S_X(VS2REG, sel)) | ((uint32_t)(rsp->square_root_high) << 16);
 
 	if (sqr == 0)
 	{
@@ -7034,7 +7034,7 @@ INLINE void cfunc_rsp_vrsql(void *param)
 		int negative = 0;
 		if (sqr < 0)
 		{
-			if (((UINT32)(sqr & 0xffff0000) == 0xffff0000) && ((INT16)(sqr & 0xffff) < 0))
+			if (((uint32_t)(sqr & 0xffff0000) == 0xffff0000) && ((int16_t)(sqr & 0xffff) < 0))
 			{
 				sqr = ~sqr+1;
 			}
@@ -7052,7 +7052,7 @@ INLINE void cfunc_rsp_vrsql(void *param)
 				i = 0;
 			}
 		}
-		sqr = (INT32)(0x7fffffff / sqrt((double)sqr));
+		sqr = (int32_t)(0x7fffffff / sqrt((double)sqr));
 		for (i = 31; i > 0; i--)
 		{
 			if (sqr & (1 << i))
@@ -7078,7 +7078,7 @@ INLINE void cfunc_rsp_vrsql(void *param)
 
 	rsp->square_root_res = sqr;
 
-	W_VREG_S_X(VDREG, del, (UINT16)(rsp->square_root_res));			// store low part
+	W_VREG_S_X(VDREG, del, (uint16_t)(rsp->square_root_res));			// store low part
 }
 
 INLINE void cfunc_rsp_vrsqh(void *param)
@@ -7104,7 +7104,7 @@ INLINE void cfunc_rsp_vrsqh(void *param)
 		W_ACCUM_L(i, R_VREG_S(VS2REG, element));		// perhaps accumulator is used to store the intermediate values ?
 	}
 
-	W_VREG_S(VDREG, del, (INT16)(rsp->square_root_res >> 16));	// store high part
+	W_VREG_S(VDREG, del, (int16_t)(rsp->square_root_res >> 16));	// store high part
 }
 static void cfunc_sp_set_status_cb(void *param)
 {
@@ -7224,7 +7224,7 @@ static void code_compile_block(rsp_state *rsp, offs_t pc)
 	for (seqhead = desclist; seqhead != NULL; seqhead = seqlast->next)
 	{
 		const opcode_desc *curdesc;
-		UINT32 nextpc;
+		uint32_t nextpc;
 
 		/* add a code log entry */
 		if (LOG_UML)
@@ -7302,7 +7302,7 @@ static void code_compile_block(rsp_state *rsp, offs_t pc)
 static void cfunc_unimplemented(void *param)
 {
 	rsp_state *rsp = (rsp_state *)param;
-	UINT32 opcode = rsp->impstate->arg0;
+	uint32_t opcode = rsp->impstate->arg0;
 	fatalerror("PC=%08X: Unimplemented op %08X (%02X,%02X)", rsp->pc, opcode, opcode >> 26, opcode & 0x3f);
 }
 
@@ -7572,7 +7572,7 @@ static void static_generate_memory_accessor(rsp_state *rsp, int size, int iswrit
     subtract cycles from the icount and generate
     an exception if out
 -------------------------------------------------*/
-static void generate_update_cycles(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, UINT64 pvalue, int allow_exception)
+static void generate_update_cycles(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, drcuml_ptype ptype, uint64_t pvalue, int allow_exception)
 {
 	/* account for cycles */
 	if (compiler->cycles > 0)
@@ -7611,7 +7611,7 @@ static void generate_checksum_block(rsp_state *rsp, drcuml_block *block, compile
 	/* full verification; sum up everything */
 	else
 	{
-		UINT32 sum = 0;
+		uint32_t sum = 0;
 		void *base = memory_decrypted_read_ptr(rsp->program, seqhead->physpc | 0x1000);
 		UML_LOAD(block, IREG(0), base, IMM(0), DWORD);								// load    i0,base,0,dword
 		sum += seqhead->opptr.l[0];
@@ -7687,10 +7687,10 @@ static void generate_sequence_instruction(rsp_state *rsp, drcuml_block *block, c
     generate_delay_slot_and_branch
 ------------------------------------------------------------------*/
 
-static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, UINT8 linkreg)
+static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc, uint8_t linkreg)
 {
 	compiler_state compiler_temp = *compiler;
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 
 	/* fetch the target register if dynamic, in case it is modified by the delay slot */
 	if (desc->targetpc == BRANCH_TARGET_DYNAMIC)
@@ -7702,7 +7702,7 @@ static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, 
 	/* set the link if needed -- before the delay slot */
 	if (linkreg != 0)
 	{
-		UML_MOV(block, R32(linkreg), IMM((INT32)(desc->pc + 8)));					// mov    <linkreg>,desc->pc + 8
+		UML_MOV(block, R32(linkreg), IMM((int32_t)(desc->pc + 8)));					// mov    <linkreg>,desc->pc + 8
 	}
 
 	/* compile the delay slot using temporary compiler state */
@@ -7747,7 +7747,7 @@ static void generate_delay_slot_and_branch(rsp_state *rsp, drcuml_block *block, 
 
 static int generate_vector_opcode(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
+	uint32_t op = desc->opptr.l[0];
 	// Opcode legend:
 	//    E = VS2 element type
 	//    S = VS1, Source vector 1
@@ -8004,8 +8004,8 @@ static int generate_vector_opcode(rsp_state *rsp, drcuml_block *block, compiler_
 static int generate_opcode(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
 	int in_delay_slot = ((desc->flags & OPFLAG_IN_DELAY_SLOT) != 0);
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = op >> 26;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = op >> 26;
 	drcuml_codelabel skip;
 
 	switch (opswitch)
@@ -8219,8 +8219,8 @@ static int generate_opcode(rsp_state *rsp, drcuml_block *block, compiler_state *
 
 static int generate_special(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = op & 63;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = op & 63;
 	//drcuml_codelabel skip;
 
 	switch (opswitch)
@@ -8314,7 +8314,7 @@ static int generate_special(rsp_state *rsp, drcuml_block *block, compiler_state 
 			if (RDREG != 0)
 			{
 				UML_OR(block, IREG(0), R32(RSREG), R32(RTREG));					// dor      i0,<rsreg>,<rtreg>
-				UML_XOR(block, R32(RDREG), IREG(0), IMM((UINT64)~0));				// dxor     <rdreg>,i0,~0
+				UML_XOR(block, R32(RDREG), IREG(0), IMM((uint64_t)~0));				// dxor     <rdreg>,i0,~0
 			}
 			return TRUE;
 
@@ -8371,8 +8371,8 @@ static int generate_special(rsp_state *rsp, drcuml_block *block, compiler_state 
 
 static int generate_regimm(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = RTREG;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = RTREG;
 	drcuml_codelabel skip;
 
 	switch (opswitch)
@@ -8414,8 +8414,8 @@ static int generate_regimm(rsp_state *rsp, drcuml_block *block, compiler_state *
 
 static int generate_cop2(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = RSREG;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = RSREG;
 
 	switch (opswitch)
 	{
@@ -8460,8 +8460,8 @@ static int generate_cop2(rsp_state *rsp, drcuml_block *block, compiler_state *co
 
 static int generate_cop0(rsp_state *rsp, drcuml_block *block, compiler_state *compiler, const opcode_desc *desc)
 {
-	UINT32 op = desc->opptr.l[0];
-	UINT8 opswitch = RSREG;
+	uint32_t op = desc->opptr.l[0];
+	uint8_t opswitch = RSREG;
 
 	switch (opswitch)
 	{
@@ -8487,17 +8487,17 @@ static int generate_cop0(rsp_state *rsp, drcuml_block *block, compiler_state *co
 static void cfunc_mfc2(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int el = (op >> 7) & 0xf;
-	UINT16 b1 = R_VREG_B(VS1REG, (el+0) & 0xf);
-	UINT16 b2 = R_VREG_B(VS1REG, (el+1) & 0xf);
-	if (RTREG) RTVAL = (INT32)(INT16)((b1 << 8) | (b2));
+	uint16_t b1 = R_VREG_B(VS1REG, (el+0) & 0xf);
+	uint16_t b2 = R_VREG_B(VS1REG, (el+1) & 0xf);
+	if (RTREG) RTVAL = (int32_t)(int16_t)((b1 << 8) | (b2));
 }
 
 static void cfunc_cfc2(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	if (RTREG)
 	{
 		if (RDREG == 2)
@@ -8508,7 +8508,7 @@ static void cfunc_cfc2(void *param)
 		else
 		{
 			// All other flags are 16 bits but sign-extended at retrieval
-			RTVAL = (UINT32)rsp->flag[RDREG] | ( ( rsp->flag[RDREG] & 0x8000 ) ? 0xffff0000 : 0 );
+			RTVAL = (uint32_t)rsp->flag[RDREG] | ( ( rsp->flag[RDREG] & 0x8000 ) ? 0xffff0000 : 0 );
 		}
 	}
 }
@@ -8516,7 +8516,7 @@ static void cfunc_cfc2(void *param)
 static void cfunc_mtc2(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	int el = (op >> 7) & 0xf;
 	W_VREG_B(VS1REG, (el+0) & 0xf, (RTVAL >> 8) & 0xff);
 	W_VREG_B(VS1REG, (el+1) & 0xf, (RTVAL >> 0) & 0xff);
@@ -8525,7 +8525,7 @@ static void cfunc_mtc2(void *param)
 static void cfunc_ctc2(void *param)
 {
 	rsp_state *rsp = (rsp_state*)param;
-	UINT32 op = rsp->impstate->arg0;
+	uint32_t op = rsp->impstate->arg0;
 	rsp->flag[RDREG] = RTVAL & 0xffff;
 }
 
@@ -8538,7 +8538,7 @@ static void cfunc_ctc2(void *param)
     including disassembly of a RSP instruction
 -------------------------------------------------*/
 
-static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, UINT32 pc, UINT32 op)
+static void log_add_disasm_comment(rsp_state *rsp, drcuml_block *block, uint32_t pc, uint32_t op)
 {
 #if (LOG_UML)
 	char buffer[100];

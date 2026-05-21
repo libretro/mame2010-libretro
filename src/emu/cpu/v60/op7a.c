@@ -27,9 +27,9 @@
 #define F7CCREATEBITMASK(x)	\
 	x = ((1 << (x)) - 1)
 
-static void F7aDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1, UINT32 (*DecodeOp2)(v60_state *), UINT8 dim2)
+static void F7aDecodeOperands(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1, uint32_t (*DecodeOp2)(v60_state *), uint8_t dim2)
 {
-	UINT8 appb;
+	uint8_t appb;
 	// Decode first operand
 	cpustate->moddim = dim1;
 	cpustate->modm = cpustate->subop & 0x40;
@@ -61,9 +61,9 @@ static void F7aDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 		cpustate->lenop2 = appb;
 }
 
-static void F7bDecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1)
+static void F7bDecodeFirstOperand(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1)
 {
-	UINT8 appb;
+	uint8_t appb;
 	// Decode first operand
 	cpustate->moddim = dim1;
 	cpustate->modm = cpustate->subop & 0x40;
@@ -81,7 +81,7 @@ static void F7bDecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_s
 }
 
 
-static void F7bWriteSecondOperand(v60_state *cpustate, UINT8 dim2)
+static void F7bWriteSecondOperand(v60_state *cpustate, uint8_t dim2)
 {
 	cpustate->moddim = dim2;
 	cpustate->modm = cpustate->subop & 0x20;
@@ -90,7 +90,7 @@ static void F7bWriteSecondOperand(v60_state *cpustate, UINT8 dim2)
 }
 
 
-static void F7bDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1, UINT32 (*DecodeOp2)(v60_state *), UINT8 dim2)
+static void F7bDecodeOperands(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1, uint32_t (*DecodeOp2)(v60_state *), uint8_t dim2)
 {
 	// Decode first operand
 	F7bDecodeFirstOperand(cpustate, DecodeOp1, dim1);
@@ -106,9 +106,9 @@ static void F7bDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 	cpustate->bamoffset2 = cpustate->bamoffset;
 }
 
-static void F7cDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1, UINT32 (*DecodeOp2)(v60_state *), UINT8 dim2)
+static void F7cDecodeOperands(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1, uint32_t (*DecodeOp2)(v60_state *), uint8_t dim2)
 {
-	UINT8 appb;
+	uint8_t appb;
 	// Decode first operand
 	cpustate->moddim = dim1;
 	cpustate->modm = cpustate->subop & 0x40;
@@ -135,13 +135,13 @@ static void F7cDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 
 #define F7CLOADOP1BYTE(cs,appb) \
 	if ((cs)->flag1) \
-		appb = (UINT8)((cs)->reg[(cs)->op1]&0xFF); \
+		appb = (uint8_t)((cs)->reg[(cs)->op1]&0xFF); \
 	else \
 		appb = MemRead8((cs)->program, (cs)->op1);
 
 #define F7CLOADOP2BYTE(cs,appb) \
 	if ((cs)->flag2) \
-		appb = (UINT8)((cs)->reg[(cs)->op2]&0xFF); \
+		appb = (uint8_t)((cs)->reg[(cs)->op2]&0xFF); \
 	else \
 		appb = MemRead8((cs)->program, (cs)->op2);
 
@@ -158,10 +158,10 @@ static void F7cDecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 	else \
 		MemWrite16((cs)->program, (cs)->op2, apph);
 
-static UINT32 opCMPSTRB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
+static uint32_t opCMPSTRB(v60_state *cpustate, uint8_t bFill, uint8_t bStop)
 {
-	UINT32 i, dest;
-	UINT8 c1, c2;
+	uint32_t i, dest;
+	uint8_t c1, c2;
 
 	F7aDecodeOperands(cpustate, ReadAMAddress, 0,ReadAMAddress, 0);
 
@@ -171,12 +171,12 @@ static UINT32 opCMPSTRB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 		if (cpustate->lenop1 < cpustate->lenop2)
 		{
 			for (i = cpustate->lenop1; i < cpustate->lenop2; i++)
-				MemWrite8(cpustate->program, cpustate->op1 + i,(UINT8)cpustate->R26);
+				MemWrite8(cpustate->program, cpustate->op1 + i,(uint8_t)cpustate->R26);
 		}
 		else if (cpustate->lenop2 < cpustate->lenop1)
 		{
 			for (i = cpustate->lenop2; i < cpustate->lenop1; i++)
-				MemWrite8(cpustate->program, cpustate->op2 + i,(UINT8)cpustate->R26);
+				MemWrite8(cpustate->program, cpustate->op2 + i,(uint8_t)cpustate->R26);
 		}
 	}
 
@@ -201,7 +201,7 @@ static UINT32 opCMPSTRB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 		}
 
 		if (bStop)
-			if (c1 == (UINT8)cpustate->R26 || c2 == (UINT8)cpustate->R26)
+			if (c1 == (uint8_t)cpustate->R26 || c2 == (uint8_t)cpustate->R26)
 			{
 				cpustate->_CY = 0;
 				break;
@@ -224,10 +224,10 @@ static UINT32 opCMPSTRB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	F7AEND(cpustate);
 }
 
-static UINT32 opCMPSTRH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
+static uint32_t opCMPSTRH(v60_state *cpustate, uint8_t bFill, uint8_t bStop)
 {
-	UINT32 i, dest;
-	UINT16 c1, c2;
+	uint32_t i, dest;
+	uint16_t c1, c2;
 
 	F7aDecodeOperands(cpustate, ReadAMAddress, 0,ReadAMAddress, 0);
 
@@ -237,12 +237,12 @@ static UINT32 opCMPSTRH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 		if (cpustate->lenop1 < cpustate->lenop2)
 		{
 			for (i = cpustate->lenop1; i < cpustate->lenop2; i++)
-				MemWrite16(cpustate->program, cpustate->op1 + i * 2,(UINT16)cpustate->R26);
+				MemWrite16(cpustate->program, cpustate->op1 + i * 2,(uint16_t)cpustate->R26);
 		}
 		else if (cpustate->lenop2 < cpustate->lenop1)
 		{
 			for (i = cpustate->lenop2; i < cpustate->lenop1; i++)
-				MemWrite16(cpustate->program, cpustate->op2 + i * 2,(UINT16)cpustate->R26);
+				MemWrite16(cpustate->program, cpustate->op2 + i * 2,(uint16_t)cpustate->R26);
 		}
 	}
 
@@ -267,7 +267,7 @@ static UINT32 opCMPSTRH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 		}
 
 		if (bStop)
-			if (c1 == (UINT16)cpustate->R26 || c2 == (UINT16)cpustate->R26)
+			if (c1 == (uint16_t)cpustate->R26 || c2 == (uint16_t)cpustate->R26)
 			{
 				cpustate->_CY = 0;
 				break;
@@ -292,10 +292,10 @@ static UINT32 opCMPSTRH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 
 
 
-static UINT32 opMOVSTRUB(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUSTED (0, 0) (1, 0) */
+static uint32_t opMOVSTRUB(v60_state *cpustate, uint8_t bFill, uint8_t bStop) /* TRUSTED (0, 0) (1, 0) */
 {
-	UINT32 i, dest;
-	UINT8 c1;
+	uint32_t i, dest;
+	uint8_t c1;
 
 //  if (bStop)
 //  {
@@ -310,7 +310,7 @@ static UINT32 opMOVSTRUB(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	{
 		MemWrite8(cpustate->program, cpustate->op2 + i,(c1 = MemRead8(cpustate->program, cpustate->op1 + i)));
 
-		if (bStop && c1 == (UINT8)cpustate->R26)
+		if (bStop && c1 == (uint8_t)cpustate->R26)
 			break;
 	}
 
@@ -320,7 +320,7 @@ static UINT32 opMOVSTRUB(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	if (bFill && cpustate->lenop1 < cpustate->lenop2)
 	{
 		for (;i < cpustate->lenop2; i++)
-			MemWrite8(cpustate->program, cpustate->op2 + i,(UINT8)cpustate->R26);
+			MemWrite8(cpustate->program, cpustate->op2 + i,(uint8_t)cpustate->R26);
 
 		cpustate->R27 = cpustate->op2 + i;
 	}
@@ -329,10 +329,10 @@ static UINT32 opMOVSTRUB(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	F7AEND(cpustate);
 }
 
-static UINT32 opMOVSTRDB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
+static uint32_t opMOVSTRDB(v60_state *cpustate, uint8_t bFill, uint8_t bStop)
 {
-	UINT32 i, dest;
-	UINT8 c1;
+	uint32_t i, dest;
+	uint8_t c1;
 
 	F7aDecodeOperands(cpustate, ReadAMAddress, 0,ReadAMAddress, 0);
 
@@ -342,7 +342,7 @@ static UINT32 opMOVSTRDB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	{
 		MemWrite8(cpustate->program, cpustate->op2 + (dest - i - 1),(c1 = MemRead8(cpustate->program, cpustate->op1 + (dest - i - 1))));
 
-		if (bStop && c1 == (UINT8)cpustate->R26)
+		if (bStop && c1 == (uint8_t)cpustate->R26)
 			break;
 	}
 
@@ -352,7 +352,7 @@ static UINT32 opMOVSTRDB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	if (bFill && cpustate->lenop1 < cpustate->lenop2)
 	{
 		for (;i < cpustate->lenop2; i++)
-			MemWrite8(cpustate->program, cpustate->op2 + dest + (cpustate->lenop2 - i - 1),(UINT8)cpustate->R26);
+			MemWrite8(cpustate->program, cpustate->op2 + dest + (cpustate->lenop2 - i - 1),(uint8_t)cpustate->R26);
 
 		cpustate->R27 = cpustate->op2 + (cpustate->lenop2 - i - 1);
 	}
@@ -362,10 +362,10 @@ static UINT32 opMOVSTRDB(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 }
 
 
-static UINT32 opMOVSTRUH(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUSTED (0, 0) (1, 0) */
+static uint32_t opMOVSTRUH(v60_state *cpustate, uint8_t bFill, uint8_t bStop) /* TRUSTED (0, 0) (1, 0) */
 {
-	UINT32 i, dest;
-	UINT16 c1;
+	uint32_t i, dest;
+	uint16_t c1;
 
 //  if (bStop)
 //  {   int a = 1; }
@@ -378,7 +378,7 @@ static UINT32 opMOVSTRUH(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	{
 		MemWrite16(cpustate->program, cpustate->op2 + i * 2,(c1 = MemRead16(cpustate->program, cpustate->op1 + i * 2)));
 
-		if (bStop && c1 == (UINT16)cpustate->R26)
+		if (bStop && c1 == (uint16_t)cpustate->R26)
 			break;
 	}
 
@@ -388,7 +388,7 @@ static UINT32 opMOVSTRUH(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	if (bFill && cpustate->lenop1 < cpustate->lenop2)
 	{
 		for (;i < cpustate->lenop2; i++)
-			MemWrite16(cpustate->program, cpustate->op2 + i * 2,(UINT16)cpustate->R26);
+			MemWrite16(cpustate->program, cpustate->op2 + i * 2,(uint16_t)cpustate->R26);
 
 		cpustate->R27 = cpustate->op2 + i * 2;
 	}
@@ -396,10 +396,10 @@ static UINT32 opMOVSTRUH(v60_state *cpustate, UINT8 bFill, UINT8 bStop) /* TRUST
 	F7AEND(cpustate);
 }
 
-static UINT32 opMOVSTRDH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
+static uint32_t opMOVSTRDH(v60_state *cpustate, uint8_t bFill, uint8_t bStop)
 {
-	UINT32 i, dest;
-	UINT16 c1;
+	uint32_t i, dest;
+	uint16_t c1;
 
 //  if (bFill | bStop)
 //  { int a = 1; }
@@ -415,7 +415,7 @@ static UINT32 opMOVSTRDH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	{
 		MemWrite16(cpustate->program, cpustate->op2 + (dest - i - 1) * 2,(c1 = MemRead16(cpustate->program, cpustate->op1 + (dest - i - 1) * 2)));
 
-		if (bStop && c1 == (UINT16)cpustate->R26)
+		if (bStop && c1 == (uint16_t)cpustate->R26)
 			break;
 	}
 
@@ -425,7 +425,7 @@ static UINT32 opMOVSTRDH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	if (bFill && cpustate->lenop1 < cpustate->lenop2)
 	{
 		for (;i < cpustate->lenop2; i++)
-			MemWrite16(cpustate->program, cpustate->op2 + (cpustate->lenop2 - i - 1) * 2,(UINT16)cpustate->R26);
+			MemWrite16(cpustate->program, cpustate->op2 + (cpustate->lenop2 - i - 1) * 2,(uint16_t)cpustate->R26);
 
 		cpustate->R27 = cpustate->op2 + (cpustate->lenop2 - i - 1) * 2;
 	}
@@ -433,16 +433,16 @@ static UINT32 opMOVSTRDH(v60_state *cpustate, UINT8 bFill, UINT8 bStop)
 	F7AEND(cpustate);
 }
 
-static UINT32 opSEARCHUB(v60_state *cpustate, UINT8 bSearch)
+static uint32_t opSEARCHUB(v60_state *cpustate, uint8_t bSearch)
 {
-	UINT8 appb;
-	UINT32 i;
+	uint8_t appb;
+	uint32_t i;
 
 	F7bDecodeOperands(cpustate, ReadAMAddress, 0,ReadAM, 0);
 
 	for (i = 0; i < cpustate->lenop1; i++)
 	{
-		appb = (MemRead8(cpustate->program, cpustate->op1 + i) == (UINT8)cpustate->op2);
+		appb = (MemRead8(cpustate->program, cpustate->op1 + i) == (uint8_t)cpustate->op2);
 		if ((bSearch && appb) || (!bSearch && !appb))
 			break;
 	}
@@ -459,16 +459,16 @@ static UINT32 opSEARCHUB(v60_state *cpustate, UINT8 bSearch)
 	F7BEND(cpustate);
 }
 
-static UINT32 opSEARCHUH(v60_state *cpustate, UINT8 bSearch)
+static uint32_t opSEARCHUH(v60_state *cpustate, uint8_t bSearch)
 {
-	UINT8 appb;
-	UINT32 i;
+	uint8_t appb;
+	uint32_t i;
 
 	F7bDecodeOperands(cpustate, ReadAMAddress, 1,ReadAM, 1);
 
 	for (i = 0; i < cpustate->lenop1; i++)
 	{
-		appb = (MemRead16(cpustate->program, cpustate->op1 + i * 2) == (UINT16)cpustate->op2);
+		appb = (MemRead16(cpustate->program, cpustate->op1 + i * 2) == (uint16_t)cpustate->op2);
 		if ((bSearch && appb) || (!bSearch && !appb))
 			break;
 	}
@@ -484,16 +484,16 @@ static UINT32 opSEARCHUH(v60_state *cpustate, UINT8 bSearch)
 	F7BEND(cpustate);
 }
 
-static UINT32 opSEARCHDB(v60_state *cpustate, UINT8 bSearch)
+static uint32_t opSEARCHDB(v60_state *cpustate, uint8_t bSearch)
 {
-	UINT8 appb;
-	INT32 i;
+	uint8_t appb;
+	int32_t i;
 
 	F7bDecodeOperands(cpustate, ReadAMAddress, 0,ReadAM, 0);
 
 	for (i = cpustate->lenop1; i >= 0; i--)
 	{
-		appb = (MemRead8(cpustate->program, cpustate->op1 + i) == (UINT8)cpustate->op2);
+		appb = (MemRead8(cpustate->program, cpustate->op1 + i) == (uint8_t)cpustate->op2);
 		if ((bSearch && appb) || (!bSearch && !appb))
 			break;
 	}
@@ -502,7 +502,7 @@ static UINT32 opSEARCHDB(v60_state *cpustate, UINT8 bSearch)
 	cpustate->R27 = i;
 
 	// This is the opposite as stated in V60 manual...
-	if ((UINT32)i != cpustate->lenop1)
+	if ((uint32_t)i != cpustate->lenop1)
 		cpustate->_Z = 0;
 	else
 		cpustate->_Z = 1;
@@ -510,16 +510,16 @@ static UINT32 opSEARCHDB(v60_state *cpustate, UINT8 bSearch)
 	F7BEND(cpustate);
 }
 
-static UINT32 opSEARCHDH(v60_state *cpustate, UINT8 bSearch)
+static uint32_t opSEARCHDH(v60_state *cpustate, uint8_t bSearch)
 {
-	UINT8 appb;
-	INT32 i;
+	uint8_t appb;
+	int32_t i;
 
 	F7bDecodeOperands(cpustate, ReadAMAddress, 1,ReadAM, 1);
 
 	for (i = cpustate->lenop1 - 1; i >= 0; i--)
 	{
-		appb = (MemRead16(cpustate->program, cpustate->op1 + i * 2) == (UINT16)cpustate->op2);
+		appb = (MemRead16(cpustate->program, cpustate->op1 + i * 2) == (uint16_t)cpustate->op2);
 		if ((bSearch && appb) || (!bSearch && !appb))
 			break;
 	}
@@ -527,7 +527,7 @@ static UINT32 opSEARCHDH(v60_state *cpustate, UINT8 bSearch)
 	cpustate->R28 = cpustate->op1 + i * 2;
 	cpustate->R27 = i;
 
-	if ((UINT32)i != cpustate->lenop1)
+	if ((uint32_t)i != cpustate->lenop1)
 		cpustate->_Z = 0;
 	else
 		cpustate->_Z = 1;
@@ -536,35 +536,35 @@ static UINT32 opSEARCHDH(v60_state *cpustate, UINT8 bSearch)
 }
 
 
-static UINT32 opSCHCUB(v60_state *cpustate) { return opSEARCHUB(cpustate, 1); }
-static UINT32 opSCHCUH(v60_state *cpustate) { return opSEARCHUH(cpustate, 1); }
-static UINT32 opSCHCDB(v60_state *cpustate) { return opSEARCHDB(cpustate, 1); }
-static UINT32 opSCHCDH(v60_state *cpustate) { return opSEARCHDH(cpustate, 1); }
-static UINT32 opSKPCUB(v60_state *cpustate) { return opSEARCHUB(cpustate, 0); }
-static UINT32 opSKPCUH(v60_state *cpustate) { return opSEARCHUH(cpustate, 0); }
-static UINT32 opSKPCDB(v60_state *cpustate) { return opSEARCHDB(cpustate, 0); }
-static UINT32 opSKPCDH(v60_state *cpustate) { return opSEARCHDH(cpustate, 0); }
+static uint32_t opSCHCUB(v60_state *cpustate) { return opSEARCHUB(cpustate, 1); }
+static uint32_t opSCHCUH(v60_state *cpustate) { return opSEARCHUH(cpustate, 1); }
+static uint32_t opSCHCDB(v60_state *cpustate) { return opSEARCHDB(cpustate, 1); }
+static uint32_t opSCHCDH(v60_state *cpustate) { return opSEARCHDH(cpustate, 1); }
+static uint32_t opSKPCUB(v60_state *cpustate) { return opSEARCHUB(cpustate, 0); }
+static uint32_t opSKPCUH(v60_state *cpustate) { return opSEARCHUH(cpustate, 0); }
+static uint32_t opSKPCDB(v60_state *cpustate) { return opSEARCHDB(cpustate, 0); }
+static uint32_t opSKPCDH(v60_state *cpustate) { return opSEARCHDH(cpustate, 0); }
 
-static UINT32 opCMPCB(v60_state *cpustate) { return opCMPSTRB(cpustate, 0, 0); }
-static UINT32 opCMPCH(v60_state *cpustate) { return opCMPSTRH(cpustate, 0, 0); }
-static UINT32 opCMPCFB(v60_state *cpustate) { return opCMPSTRB(cpustate, 1, 0); }
-static UINT32 opCMPCFH(v60_state *cpustate) { return opCMPSTRH(cpustate, 1, 0); }
-static UINT32 opCMPCSB(v60_state *cpustate) { return opCMPSTRB(cpustate, 0, 1); }
-static UINT32 opCMPCSH(v60_state *cpustate) { return opCMPSTRH(cpustate, 0, 1); }
+static uint32_t opCMPCB(v60_state *cpustate) { return opCMPSTRB(cpustate, 0, 0); }
+static uint32_t opCMPCH(v60_state *cpustate) { return opCMPSTRH(cpustate, 0, 0); }
+static uint32_t opCMPCFB(v60_state *cpustate) { return opCMPSTRB(cpustate, 1, 0); }
+static uint32_t opCMPCFH(v60_state *cpustate) { return opCMPSTRH(cpustate, 1, 0); }
+static uint32_t opCMPCSB(v60_state *cpustate) { return opCMPSTRB(cpustate, 0, 1); }
+static uint32_t opCMPCSH(v60_state *cpustate) { return opCMPSTRH(cpustate, 0, 1); }
 
-static UINT32 opMOVCUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 0, 0); }
-static UINT32 opMOVCUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 0, 0); }
-static UINT32 opMOVCFUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 1, 0); }
-static UINT32 opMOVCFUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 1, 0); }
-static UINT32 opMOVCSUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 0, 1); }
-static UINT32 opMOVCSUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 0, 1); }
+static uint32_t opMOVCUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 0, 0); }
+static uint32_t opMOVCUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 0, 0); }
+static uint32_t opMOVCFUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 1, 0); }
+static uint32_t opMOVCFUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 1, 0); }
+static uint32_t opMOVCSUB(v60_state *cpustate) { return opMOVSTRUB(cpustate, 0, 1); }
+static uint32_t opMOVCSUH(v60_state *cpustate) { return opMOVSTRUH(cpustate, 0, 1); }
 
-static UINT32 opMOVCDB(v60_state *cpustate) { return opMOVSTRDB(cpustate, 0, 0); }
-static UINT32 opMOVCDH(v60_state *cpustate) { return opMOVSTRDH(cpustate, 0, 0); }
-static UINT32 opMOVCFDB(v60_state *cpustate) { return opMOVSTRDB(cpustate, 1, 0); }
-static UINT32 opMOVCFDH(v60_state *cpustate) { return opMOVSTRDH(cpustate, 1, 0); }
+static uint32_t opMOVCDB(v60_state *cpustate) { return opMOVSTRDB(cpustate, 0, 0); }
+static uint32_t opMOVCDH(v60_state *cpustate) { return opMOVSTRDH(cpustate, 0, 0); }
+static uint32_t opMOVCFDB(v60_state *cpustate) { return opMOVSTRDB(cpustate, 1, 0); }
+static uint32_t opMOVCFDH(v60_state *cpustate) { return opMOVSTRDH(cpustate, 1, 0); }
 
-static UINT32 opEXTBFZ(v60_state *cpustate) /* TRUSTED */
+static uint32_t opEXTBFZ(v60_state *cpustate) /* TRUSTED */
 {
 	F7bDecodeFirstOperand(cpustate, BitReadAM, 11);
 
@@ -577,7 +577,7 @@ static UINT32 opEXTBFZ(v60_state *cpustate) /* TRUSTED */
 	F7BEND(cpustate);
 }
 
-static UINT32 opEXTBFS(v60_state *cpustate) /* TRUSTED */
+static uint32_t opEXTBFS(v60_state *cpustate) /* TRUSTED */
 {
 	F7bDecodeFirstOperand(cpustate, BitReadAM, 11);
 
@@ -592,9 +592,9 @@ static UINT32 opEXTBFS(v60_state *cpustate) /* TRUSTED */
 	F7BEND(cpustate);
 }
 
-static UINT32 opEXTBFL(v60_state *cpustate)
+static uint32_t opEXTBFL(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 
 	F7bDecodeFirstOperand(cpustate, BitReadAM, 11);
 
@@ -609,14 +609,14 @@ static UINT32 opEXTBFL(v60_state *cpustate)
 	F7BEND(cpustate);
 }
 
-static UINT32 opSCHBS(v60_state *cpustate, UINT32 bSearch1)
+static uint32_t opSCHBS(v60_state *cpustate, uint32_t bSearch1)
 {
-	UINT32 i, data;
-	UINT32 offset;
+	uint32_t i, data;
+	uint32_t offset;
 
 	F7bDecodeFirstOperand(cpustate, BitReadAMAddress, 10);
 
-	// Read first UINT8
+	// Read first uint8_t
 	cpustate->op1 += cpustate->bamoffset / 8;
 	data = MemRead8(cpustate->program, cpustate->op1);
 	offset = cpustate->bamoffset & 7;
@@ -636,7 +636,7 @@ static UINT32 opSCHBS(v60_state *cpustate, UINT32 bSearch1)
 		offset++;
 		if (offset == 8)
 		{
-			// Next UINT8 please
+			// Next uint8_t please
 			offset = 0;
 			cpustate->op1++;
 			data = MemRead8(cpustate->program, cpustate->op1);
@@ -653,12 +653,12 @@ static UINT32 opSCHBS(v60_state *cpustate, UINT32 bSearch1)
 	F7BEND(cpustate);
 }
 
-static UINT32 opSCH0BSU(v60_state *cpustate) { return opSCHBS(cpustate, 0); }
-static UINT32 opSCH1BSU(v60_state *cpustate) { return opSCHBS(cpustate, 1); }
+static uint32_t opSCH0BSU(v60_state *cpustate) { return opSCHBS(cpustate, 0); }
+static uint32_t opSCH1BSU(v60_state *cpustate) { return opSCHBS(cpustate, 1); }
 
-static UINT32 opINSBFR(v60_state *cpustate)
+static uint32_t opINSBFR(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	F7cDecodeOperands(cpustate, ReadAM, 2,BitReadAMAddress, 11);
 
 	F7CCREATEBITMASK(cpustate->lenop1);
@@ -675,9 +675,9 @@ static UINT32 opINSBFR(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opINSBFL(v60_state *cpustate)
+static uint32_t opINSBFL(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	F7cDecodeOperands(cpustate, ReadAM, 2,BitReadAMAddress, 11);
 
 	cpustate->op1 >>= (32 - cpustate->lenop1);
@@ -696,10 +696,10 @@ static UINT32 opINSBFL(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opMOVBSD(v60_state *cpustate)
+static uint32_t opMOVBSD(v60_state *cpustate)
 {
-	UINT32 i;
-	UINT8 srcdata, dstdata;
+	uint32_t i;
+	uint8_t srcdata, dstdata;
 
 	F7bDecodeOperands(cpustate, BitReadAMAddress, 10, BitReadAMAddress, 10);
 
@@ -752,10 +752,10 @@ static UINT32 opMOVBSD(v60_state *cpustate)
 	F7BEND(cpustate);
 }
 
-static UINT32 opMOVBSU(v60_state *cpustate)
+static uint32_t opMOVBSU(v60_state *cpustate)
 {
-	UINT32 i;
-	UINT8 srcdata, dstdata;
+	uint32_t i;
+	uint8_t srcdata, dstdata;
 
 	F7bDecodeOperands(cpustate, BitReadAMAddress, 10, BitReadAMAddress, 10);
 
@@ -803,10 +803,10 @@ static UINT32 opMOVBSU(v60_state *cpustate)
 
 // RADM 0x20f4b8 holds the time left
 
-static UINT32 opADDDC(v60_state *cpustate)
+static uint32_t opADDDC(v60_state *cpustate)
 {
-	UINT8 appb;
-	UINT8 src, dst;
+	uint8_t appb;
+	uint8_t src, dst;
 
 	F7cDecodeOperands(cpustate, ReadAM, 0, ReadAMAddress, 0);
 
@@ -817,7 +817,7 @@ static UINT32 opADDDC(v60_state *cpustate)
 
 	F7CLOADOP2BYTE(cpustate, appb);
 
-	src = (UINT8)(cpustate->op1 >> 4) * 10 + (UINT8)(cpustate->op1 & 0xF);
+	src = (uint8_t)(cpustate->op1 >> 4) * 10 + (uint8_t)(cpustate->op1 & 0xF);
 	dst = (appb >> 4) * 10 + (appb & 0xF);
 
 	appb = src + dst + (cpustate->_CY?1:0);
@@ -842,10 +842,10 @@ static UINT32 opADDDC(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opSUBDC(v60_state *cpustate)
+static uint32_t opSUBDC(v60_state *cpustate)
 {
-	INT8 appb;
-	UINT32 src, dst;
+	int8_t appb;
+	uint32_t src, dst;
 
 	F7cDecodeOperands(cpustate, ReadAM, 0, ReadAMAddress, 0);
 
@@ -856,11 +856,11 @@ static UINT32 opSUBDC(v60_state *cpustate)
 
 	F7CLOADOP2BYTE(cpustate, appb);
 
-	src = (UINT32)(cpustate->op1 >> 4) * 10 + (UINT32)(cpustate->op1 & 0xF);
+	src = (uint32_t)(cpustate->op1 >> 4) * 10 + (uint32_t)(cpustate->op1 & 0xF);
 	dst = ((appb & 0xF0) >> 4) * 10 + (appb & 0xF);
 
 	// Note that this APPB must be SIGNED!
-	appb = (INT32)dst - (INT32)src - (cpustate->_CY?1:0);
+	appb = (int32_t)dst - (int32_t)src - (cpustate->_CY?1:0);
 
 	if (appb < 0)
 	{
@@ -882,10 +882,10 @@ static UINT32 opSUBDC(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opSUBRDC(v60_state *cpustate)
+static uint32_t opSUBRDC(v60_state *cpustate)
 {
-	INT8 appb;
-	UINT32 src, dst;
+	int8_t appb;
+	uint32_t src, dst;
 
 	F7cDecodeOperands(cpustate, ReadAM, 0, ReadAMAddress, 0);
 
@@ -896,11 +896,11 @@ static UINT32 opSUBRDC(v60_state *cpustate)
 
 	F7CLOADOP2BYTE(cpustate, appb);
 
-	src = (UINT32)(cpustate->op1 >> 4) * 10 + (UINT32)(cpustate->op1 & 0xF);
+	src = (uint32_t)(cpustate->op1 >> 4) * 10 + (uint32_t)(cpustate->op1 & 0xF);
 	dst = ((appb & 0xF0) >> 4) * 10 + (appb & 0xF);
 
 	// Note that this APPB must be SIGNED!
-	appb = (INT32)src - (INT32)dst - (cpustate->_CY?1:0);
+	appb = (int32_t)src - (int32_t)dst - (cpustate->_CY?1:0);
 
 	if (appb < 0)
 	{
@@ -922,13 +922,13 @@ static UINT32 opSUBRDC(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opCVTDPZ(v60_state *cpustate)
+static uint32_t opCVTDPZ(v60_state *cpustate)
 {
-	UINT16 apph;
+	uint16_t apph;
 
 	F7cDecodeOperands(cpustate, ReadAM, 0, ReadAMAddress, 1);
 
-	apph = (UINT16)(((cpustate->op1 >> 4) & 0xF) | ((cpustate->op1 & 0xF) << 8));
+	apph = (uint16_t)(((cpustate->op1 >> 4) & 0xF) | ((cpustate->op1 & 0xF) << 8));
 	apph |= (cpustate->lenop1);
 	apph |= (cpustate->lenop1 << 8);
 
@@ -939,9 +939,9 @@ static UINT32 opCVTDPZ(v60_state *cpustate)
 	F7CEND(cpustate);
 }
 
-static UINT32 opCVTDZP(v60_state *cpustate)
+static uint32_t opCVTDZP(v60_state *cpustate)
 {
-	UINT8 appb;
+	uint8_t appb;
 	F7cDecodeOperands(cpustate, ReadAM, 1, ReadAMAddress, 0);
 
 	if ((cpustate->op1 & 0xF0) != (cpustate->lenop1 & 0xF0) || ((cpustate->op1 >> 8) & 0xF0) != (cpustate->lenop1 & 0xF0))
@@ -956,44 +956,44 @@ static UINT32 opCVTDZP(v60_state *cpustate)
 		logerror("CVTD.ZP Decimal exception #2!\n");
 	}
 
-	appb = (UINT8)(((cpustate->op1 >> 8) & 0xF) | ((cpustate->op1 & 0xF) << 4));
+	appb = (uint8_t)(((cpustate->op1 >> 8) & 0xF) | ((cpustate->op1 & 0xF) << 4));
 	if (appb != 0) cpustate->_Z = 0;
 
 	F7CSTOREOP2BYTE(cpustate);
 	F7CEND(cpustate);
 }
 
-static UINT32 op58UNHANDLED(v60_state *cpustate)
+static uint32_t op58UNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 58 opcode at cpustate->PC: /%06x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 op5AUNHANDLED(v60_state *cpustate)
+static uint32_t op5AUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 5A opcode at cpustate->PC: /%06x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 op5BUNHANDLED(v60_state *cpustate)
+static uint32_t op5BUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 5B opcode at cpustate->PC: /%06x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 op5DUNHANDLED(v60_state *cpustate)
+static uint32_t op5DUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 5D opcode at cpustate->PC: /%06x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 op59UNHANDLED(v60_state *cpustate)
+static uint32_t op59UNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled 59 opcode at cpustate->PC: /%06x", cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
 }
 
-static UINT32 (*const Op59Table[32])(v60_state *) =
+static uint32_t (*const Op59Table[32])(v60_state *) =
 {
 	opADDDC,
 	opSUBDC,
@@ -1030,7 +1030,7 @@ static UINT32 (*const Op59Table[32])(v60_state *) =
 };
 
 
-static UINT32 (*const Op5BTable[32])(v60_state *) =
+static uint32_t (*const Op5BTable[32])(v60_state *) =
 {
 	opSCH0BSU,
 	op5BUNHANDLED,
@@ -1067,7 +1067,7 @@ static UINT32 (*const Op5BTable[32])(v60_state *) =
 };
 
 
-static UINT32 (*const Op5DTable[32])(v60_state *) =
+static uint32_t (*const Op5DTable[32])(v60_state *) =
 {
 	op5DUNHANDLED,
 	op5DUNHANDLED,
@@ -1103,7 +1103,7 @@ static UINT32 (*const Op5DTable[32])(v60_state *) =
 	op5DUNHANDLED
 };
 
-static UINT32 (*const Op58Table[32])(v60_state *) =
+static uint32_t (*const Op58Table[32])(v60_state *) =
 {
 	opCMPCB,
 	opCMPCFB,
@@ -1139,7 +1139,7 @@ static UINT32 (*const Op58Table[32])(v60_state *) =
 	op58UNHANDLED
 };
 
-static UINT32 (*const Op5ATable[32])(v60_state *) =
+static uint32_t (*const Op5ATable[32])(v60_state *) =
 {
 	opCMPCH,
 	opCMPCFH,
@@ -1175,35 +1175,35 @@ static UINT32 (*const Op5ATable[32])(v60_state *) =
 	op5AUNHANDLED
 };
 
-static UINT32 op58(v60_state *cpustate)
+static uint32_t op58(v60_state *cpustate)
 {
 	cpustate->subop = OpRead8(cpustate->program, cpustate->PC + 1);
 
 	return Op58Table[cpustate->subop & 0x1F](cpustate);
 }
 
-static UINT32 op5A(v60_state *cpustate)
+static uint32_t op5A(v60_state *cpustate)
 {
 	cpustate->subop = OpRead8(cpustate->program, cpustate->PC + 1);
 
 	return Op5ATable[cpustate->subop & 0x1F](cpustate);
 }
 
-static UINT32 op5B(v60_state *cpustate)
+static uint32_t op5B(v60_state *cpustate)
 {
 	cpustate->subop = OpRead8(cpustate->program, cpustate->PC + 1);
 
 	return Op5BTable[cpustate->subop & 0x1F](cpustate);
 }
 
-static UINT32 op5D(v60_state *cpustate)
+static uint32_t op5D(v60_state *cpustate)
 {
 	cpustate->subop = OpRead8(cpustate->program, cpustate->PC + 1);
 
 	return Op5DTable[cpustate->subop & 0x1F](cpustate);
 }
 
-static UINT32 op59(v60_state *cpustate)
+static uint32_t op59(v60_state *cpustate)
 {
 	cpustate->subop = OpRead8(cpustate->program, cpustate->PC + 1);
 

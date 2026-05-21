@@ -27,14 +27,14 @@
 
 #define SetCFB(x)			{cpustate->_CY = ((x) & 0x100) ? 1 : 0; }
 #define SetCFW(x)			{cpustate->_CY = ((x) & 0x10000) ? 1 : 0; }
-#define SetCFL(x)			{cpustate->_CY = ((x) & (((UINT64)1) << 32)) ? 1 : 0; }
+#define SetCFL(x)			{cpustate->_CY = ((x) & (((uint64_t)1) << 32)) ? 1 : 0; }
 
 #define SetSF(x)			(cpustate->_S = (x))
 #define SetZF(x)			(cpustate->_Z = (x))
 
-#define SetSZPF_Byte(x) 	{cpustate->_Z = ((UINT8)(x) == 0);  cpustate->_S = ((x)&0x80) ? 1 : 0; }
-#define SetSZPF_Word(x) 	{cpustate->_Z = ((UINT16)(x) == 0);  cpustate->_S = ((x)&0x8000) ? 1 : 0; }
-#define SetSZPF_Long(x) 	{cpustate->_Z = ((UINT32)(x) == 0);  cpustate->_S = ((x)&0x80000000) ? 1 : 0; }
+#define SetSZPF_Byte(x) 	{cpustate->_Z = ((uint8_t)(x) == 0);  cpustate->_S = ((x)&0x80) ? 1 : 0; }
+#define SetSZPF_Word(x) 	{cpustate->_Z = ((uint16_t)(x) == 0);  cpustate->_S = ((x)&0x8000) ? 1 : 0; }
+#define SetSZPF_Long(x) 	{cpustate->_Z = ((uint32_t)(x) == 0);  cpustate->_S = ((x)&0x80000000) ? 1 : 0; }
 
 #define ORB(dst, src)		{ (dst) |= (src); cpustate->_CY = cpustate->_OV = 0; SetSZPF_Byte(dst); }
 #define ORW(dst, src)		{ (dst) |= (src); cpustate->_CY = cpustate->_OV = 0; SetSZPF_Word(dst); }
@@ -48,13 +48,13 @@
 #define XORW(dst, src)		{ (dst) ^= (src); cpustate->_CY = cpustate->_OV = 0; SetSZPF_Word(dst); }
 #define XORL(dst, src)		{ (dst) ^= (src); cpustate->_CY = cpustate->_OV = 0; SetSZPF_Long(dst); }
 
-#define SUBB(dst, src)		{ unsigned res = (dst) - (src); SetCFB(res); SetOFB_Sub(res, src, dst); SetSZPF_Byte(res); dst = (UINT8)res; }
-#define SUBW(dst, src)		{ unsigned res = (dst) - (src); SetCFW(res); SetOFW_Sub(res, src, dst); SetSZPF_Word(res); dst = (UINT16)res; }
-#define SUBL(dst, src)		{ UINT64 res = (UINT64)(dst) - (INT64)(src); SetCFL(res); SetOFL_Sub(res, src, dst); SetSZPF_Long(res); dst = (UINT32)res; }
+#define SUBB(dst, src)		{ unsigned res = (dst) - (src); SetCFB(res); SetOFB_Sub(res, src, dst); SetSZPF_Byte(res); dst = (uint8_t)res; }
+#define SUBW(dst, src)		{ unsigned res = (dst) - (src); SetCFW(res); SetOFW_Sub(res, src, dst); SetSZPF_Word(res); dst = (uint16_t)res; }
+#define SUBL(dst, src)		{ uint64_t res = (uint64_t)(dst) - (int64_t)(src); SetCFL(res); SetOFL_Sub(res, src, dst); SetSZPF_Long(res); dst = (uint32_t)res; }
 
-#define ADDB(dst, src)		{ unsigned res = (dst) + (src); SetCFB(res); SetOFB_Add(res, src, dst); SetSZPF_Byte(res); dst = (UINT8)res; }
-#define ADDW(dst, src)		{ unsigned res = (dst) + (src); SetCFW(res); SetOFW_Add(res, src, dst); SetSZPF_Word(res); dst = (UINT16)res; }
-#define ADDL(dst, src)		{ UINT64 res = (UINT64)(dst) + (UINT64)(src); SetCFL(res); SetOFL_Add(res, src, dst); SetSZPF_Long(res); dst = (UINT32)res; }
+#define ADDB(dst, src)		{ unsigned res = (dst) + (src); SetCFB(res); SetOFB_Add(res, src, dst); SetSZPF_Byte(res); dst = (uint8_t)res; }
+#define ADDW(dst, src)		{ unsigned res = (dst) + (src); SetCFW(res); SetOFW_Add(res, src, dst); SetSZPF_Word(res); dst = (uint16_t)res; }
+#define ADDL(dst, src)		{ uint64_t res = (uint64_t)(dst) + (uint64_t)(src); SetCFL(res); SetOFL_Add(res, src, dst); SetSZPF_Long(res); dst = (uint32_t)res; }
 
 #define SETREG8(a, b)		(a) = ((a) & ~0xff) | ((b) & 0xff)
 #define SETREG16(a, b)		(a) = ((a) & ~0xffff) | ((b) & 0xffff)
@@ -62,10 +62,10 @@
 typedef struct _v60_flags v60_flags;
 struct _v60_flags
 {
-	UINT8 CY;
-	UINT8 OV;
-	UINT8 S;
-	UINT8 Z;
+	uint8_t CY;
+	uint8_t OV;
+	uint8_t S;
+	uint8_t Z;
 };
 
 // v60 Register Inside (Hm... It's not a pentium inside :-))) )
@@ -73,42 +73,42 @@ typedef struct _v60_state v60_state;
 struct _v60_state
 {
 	struct cpu_info 	info;
-	UINT32				reg[68];
+	uint32_t				reg[68];
 	v60_flags			flags;
-	UINT8				irq_line;
-	UINT8				nmi_line;
+	uint8_t				irq_line;
+	uint8_t				nmi_line;
 	device_irq_callback	irq_cb;
 	legacy_cpu_device *		device;
 	const address_space *program;
 	const address_space *io;
-	UINT32				PPC;
+	uint32_t				PPC;
 	int					icount;
 	int					stall_io;
 
-	UINT32				op1, op2;
-	UINT8				flag1, flag2;
-	UINT8				instflags;
-	UINT32				lenop1, lenop2;
-	UINT8				subop;
-	UINT32				bamoffset1, bamoffset2;
+	uint32_t				op1, op2;
+	uint8_t				flag1, flag2;
+	uint8_t				instflags;
+	uint32_t				lenop1, lenop2;
+	uint8_t				subop;
+	uint32_t				bamoffset1, bamoffset2;
 
 	// Output variables for ReadAMAddress(cpustate)
-	UINT8				amflag;
-	UINT32				amout;
-	UINT32				bamoffset;
+	uint8_t				amflag;
+	uint32_t				amout;
+	uint32_t				bamoffset;
 
 	// Appo temp var
-	UINT32				amlength1, amlength2;
+	uint32_t				amlength1, amlength2;
 
 	// Global vars used by AM functions
-	UINT32				modadd;
-	UINT8				modm;
-	UINT8				modval;
-	UINT8				modval2;
-	UINT8				modwritevalb;
-	UINT16				modwritevalh;
-	UINT32				modwritevalw;
-	UINT8				moddim;
+	uint32_t				modadd;
+	uint8_t				modm;
+	uint8_t				modval;
+	uint8_t				modval2;
+	uint8_t				modwritevalb;
+	uint16_t				modwritevalh;
+	uint32_t				modwritevalw;
+	uint8_t				moddim;
 };
 
 INLINE v60_state *get_safe_token(running_device *device)
@@ -226,14 +226,14 @@ INLINE void v60ReloadStack(v60_state *cpustate)
 		cpustate->SP = cpustate->reg[37 + ((cpustate->PSW >> 24) & 3)];
 }
 
-INLINE UINT32 v60ReadPSW(v60_state *cpustate)
+INLINE uint32_t v60ReadPSW(v60_state *cpustate)
 {
 	cpustate->PSW &= 0xfffffff0;
 	cpustate->PSW |= (cpustate->_Z?1:0) | (cpustate->_S?2:0) | (cpustate->_OV?4:0) | (cpustate->_CY?8:0);
 	return cpustate->PSW;
 }
 
-INLINE void v60WritePSW(v60_state *cpustate, UINT32 newval)
+INLINE void v60WritePSW(v60_state *cpustate, uint32_t newval)
 {
 	/* determine if we need to save / restore the stacks */
 	int updateStack = 0;
@@ -252,10 +252,10 @@ INLINE void v60WritePSW(v60_state *cpustate, UINT32 newval)
 
 	/* set the new value and update the flags */
 	cpustate->PSW = newval;
-	cpustate->_Z =  (UINT8)(cpustate->PSW & 1);
-	cpustate->_S =  (UINT8)(cpustate->PSW & 2);
-	cpustate->_OV = (UINT8)(cpustate->PSW & 4);
-	cpustate->_CY = (UINT8)(cpustate->PSW & 8);
+	cpustate->_Z =  (uint8_t)(cpustate->PSW & 1);
+	cpustate->_S =  (uint8_t)(cpustate->PSW & 2);
+	cpustate->_OV = (uint8_t)(cpustate->PSW & 4);
+	cpustate->_CY = (uint8_t)(cpustate->PSW & 8);
 
 	/* fetch the new stack value */
 	if (updateStack)
@@ -263,10 +263,10 @@ INLINE void v60WritePSW(v60_state *cpustate, UINT32 newval)
 }
 
 
-INLINE UINT32 v60_update_psw_for_exception(v60_state *cpustate, int is_interrupt, int target_level)
+INLINE uint32_t v60_update_psw_for_exception(v60_state *cpustate, int is_interrupt, int target_level)
 {
-	UINT32 oldPSW = v60ReadPSW(cpustate);
-	UINT32 newPSW = oldPSW;
+	uint32_t oldPSW = v60ReadPSW(cpustate);
+	uint32_t newPSW = oldPSW;
 
 	// Change to interrupt context
 	newPSW &= ~(3 << 24);  // cpustate->PSW.EL = 0
@@ -301,7 +301,7 @@ INLINE UINT32 v60_update_psw_for_exception(v60_state *cpustate, int is_interrupt
 #include "op6.c"
 #include "op7a.c"
 
-static UINT32 opUNHANDLED(v60_state *cpustate)
+static uint32_t opUNHANDLED(v60_state *cpustate)
 {
 	fatalerror("Unhandled OpCode found : %02x at %08x", OpRead16(cpustate->program, cpustate->PC), cpustate->PC);
 	return 0; /* never reached, fatalerror won't return */
@@ -387,7 +387,7 @@ void v60_stall(running_device *device)
 
 static void v60_do_irq(v60_state *cpustate, int vector)
 {
-	UINT32 oldPSW = v60_update_psw_for_exception(cpustate, 1, 0);
+	uint32_t oldPSW = v60_update_psw_for_exception(cpustate, 1, 0);
 
 	// Push cpustate->PC and cpustate->PSW onto the stack
 	cpustate->SP-=4;
@@ -445,7 +445,7 @@ static CPU_EXECUTE( v60 )
 
 	while (cpustate->icount > 0)
 	{
-		UINT32 inc;
+		uint32_t inc;
 		cpustate->PPC = cpustate->PC;
 		debugger_instruction_hook(device, cpustate->PC);
 		cpustate->icount -= 8;	/* fix me -- this is just an average */

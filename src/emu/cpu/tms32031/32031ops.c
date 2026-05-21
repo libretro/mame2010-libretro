@@ -23,22 +23,22 @@
 #define FREGEXP(T,rnum)		(EXPONENT(&(T)->r[rnum]))
 #define FREGMAN(T,rnum)		(MANTISSA(&(T)->r[rnum]))
 
-#define FP2LONG(T,rnum)		((FREGEXP(T,rnum) << 24) | ((UINT32)FREGMAN(T,rnum) >> 8))
-#define LONG2FP(T,rnum,v)	do { SET_MANTISSA(&(T)->r[rnum], (v) << 8); SET_EXPONENT(&(T)->r[rnum], (INT32)(v) >> 24); } while (0)
+#define FP2LONG(T,rnum)		((FREGEXP(T,rnum) << 24) | ((uint32_t)FREGMAN(T,rnum) >> 8))
+#define LONG2FP(T,rnum,v)	do { SET_MANTISSA(&(T)->r[rnum], (v) << 8); SET_EXPONENT(&(T)->r[rnum], (int32_t)(v) >> 24); } while (0)
 #define SHORT2FP(T,rnum,v)	do { \
-								if ((UINT16)(v) == 0x8000) { SET_MANTISSA(&(T)->r[rnum], 0); SET_EXPONENT(&(T)->r[rnum], -128); } \
-								else { SET_MANTISSA(&(T)->r[rnum], (v) << 20); SET_EXPONENT(&(T)->r[rnum], (INT16)(v) >> 12); } \
+								if ((uint16_t)(v) == 0x8000) { SET_MANTISSA(&(T)->r[rnum], 0); SET_EXPONENT(&(T)->r[rnum], -128); } \
+								else { SET_MANTISSA(&(T)->r[rnum], (v) << 20); SET_EXPONENT(&(T)->r[rnum], (int16_t)(v) >> 12); } \
 							} while (0)
 
-#define DIRECT(T,op)			(((IREG(T,TMR_DP) & 0xff) << 16) | ((UINT16)op))
+#define DIRECT(T,op)			(((IREG(T,TMR_DP) & 0xff) << 16) | ((uint16_t)op))
 #define INDIRECT_D(T,op,o)		((*indirect_d[((o) >> 3) & 31])(T,op,o))
 #define INDIRECT_1(T,op,o)		((*indirect_1[((o) >> 3) & 31])(T,op,o))
 #define INDIRECT_1_DEF(T,op,o)	((*indirect_1_def[((o) >> 3) & 31])(T,op,o,&defptr))
 
 #define SIGN(val)			((val) & 0x80000000)
 
-#define OVERFLOW_SUB(a,b,r)	((INT32)(((a) ^ (b)) & ((a) ^ (r))) < 0)
-#define OVERFLOW_ADD(a,b,r)	((INT32)(~((a) ^ (b)) & ((a) ^ (r))) < 0)
+#define OVERFLOW_SUB(a,b,r)	((int32_t)(((a) ^ (b)) & ((a) ^ (r))) < 0)
+#define OVERFLOW_ADD(a,b,r)	((int32_t)(~((a) ^ (b)) & ((a) ^ (r))) < 0)
 
 #define CLR_FLAGS(T,f)		do { IREG(T,TMR_ST) &= ~(f); } while (0)
 #define CLR_NVUF(T)			CLR_FLAGS(T, NFLAG | VFLAG | UFFLAG)
@@ -49,16 +49,16 @@
 #define OR_NZ(T,val)		do { IREG(T, TMR_ST) |= (((val) >> 28) & NFLAG) | (((val) == 0) << 2); } while (0)
 #define OR_NZF(T,reg)		do { IREG(T, TMR_ST) |= ((MANTISSA(reg) >> 28) & NFLAG) | ((EXPONENT(reg) == -128) << 2); } while (0)
 #define OR_NUF(T,reg)		do { int temp = (EXPONENT(reg) == -128) << 4; IREG(T,TMR_ST) |= ((MANTISSA(reg) >> 28) & NFLAG) | (temp) | (temp << 2); } while (0)
-#define OR_V_SUB(T,a,b,r)	do { UINT32 temp = ((((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(T,TMR_ST) |= temp | (temp << 4); } while (0)
-#define OR_V_ADD(T,a,b,r)	do { UINT32 temp = ((~((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(T,TMR_ST) |= temp | (temp << 4); } while (0)
-#define OR_C_SUB(T,a,b,r)	do { IREG(T,TMR_ST) |= ((UINT32)(b) > (UINT32)(a)); } while (0)
-#define OR_C_ADD(T,a,b,r)	do { IREG(T,TMR_ST) |= ((UINT32)(~(a)) < (UINT32)(b)); } while (0)
+#define OR_V_SUB(T,a,b,r)	do { uint32_t temp = ((((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(T,TMR_ST) |= temp | (temp << 4); } while (0)
+#define OR_V_ADD(T,a,b,r)	do { uint32_t temp = ((~((a) ^ (b)) & ((a) ^ (r))) >> 30) & VFLAG; IREG(T,TMR_ST) |= temp | (temp << 4); } while (0)
+#define OR_C_SUB(T,a,b,r)	do { IREG(T,TMR_ST) |= ((uint32_t)(b) > (uint32_t)(a)); } while (0)
+#define OR_C_ADD(T,a,b,r)	do { IREG(T,TMR_ST) |= ((uint32_t)(~(a)) < (uint32_t)(b)); } while (0)
 #define OR_NZCV_SUB(T,a,b,r) do { OR_V_SUB(T,a,b,r); OR_C_SUB(T,a,b,r); OR_NZ(T,r); } while (0)
 #define OR_NZCV_ADD(T,a,b,r) do { OR_V_ADD(T,a,b,r); OR_C_ADD(T,a,b,r); OR_NZ(T,r); } while (0)
 
 #define OVM(T)				(IREG(T,TMR_ST) & OVMFLAG)
 
-#define DECLARE_DEF			UINT32 defval; UINT32 *defptr = &defval
+#define DECLARE_DEF			uint32_t defval; uint32_t *defptr = &defval
 #define UPDATE_DEF()		*defptr = defval
 
 
@@ -67,7 +67,7 @@
     FORWARD DECLARATIONS
 ***************************************************************************/
 
-extern void (*const tms32031ops[])(tms32031_state *tms, UINT32 op);
+extern void (*const tms32031ops[])(tms32031_state *tms, uint32_t op);
 
 
 
@@ -75,7 +75,7 @@ extern void (*const tms32031ops[])(tms32031_state *tms, UINT32 op);
     IMPLEMENTATION
 ***************************************************************************/
 
-static void illegal(tms32031_state *tms, UINT32 op)
+static void illegal(tms32031_state *tms, uint32_t op)
 {
 	if ((tms->device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
 	{
@@ -85,7 +85,7 @@ static void illegal(tms32031_state *tms, UINT32 op)
 }
 
 
-static void unimplemented(tms32031_state *tms, UINT32 op)
+static void unimplemented(tms32031_state *tms, uint32_t op)
 {
 	fatalerror("Unimplemented op @ %06X: %08X (tbl=%03X)", tms->pc - 1, op, op >> 21);
 }
@@ -93,7 +93,7 @@ static void unimplemented(tms32031_state *tms, UINT32 op)
 
 INLINE void execute_one(tms32031_state *tms)
 {
-	UINT32 op = ROPCODE(tms, tms->pc);
+	uint32_t op = ROPCODE(tms, tms->pc);
 	tms->icount -= 2;	/* 2 clocks per cycle */
 	tms->pc++;
 #if (LOG_OPCODE_USAGE)
@@ -107,7 +107,7 @@ static void update_special(tms32031_state *tms, int dreg)
 {
 	if (dreg == TMR_BK)
 	{
-		UINT32 temp = IREG(tms, TMR_BK);
+		uint32_t temp = IREG(tms, TMR_BK);
 		tms->bkmask = temp;
 		while (temp >>= 1)
 			tms->bkmask |= temp;
@@ -202,7 +202,7 @@ void double_to_dsp_with_flags(tms32031_state *tms, double val, tmsreg *result)
 	}
 	else if (exponent > 127)
 	{
-		if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+		if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 			SET_MANTISSA(result, 0x7fffffff);
 		else
 		{
@@ -218,7 +218,7 @@ void double_to_dsp_with_flags(tms32031_state *tms, double val, tmsreg *result)
 		SET_EXPONENT(result, -128);
 		IREG(tms, TMR_ST) |= ZFLAG;
 	}
-	else if ((INT32)id.i[BYTE_XOR_BE(0)] >= 0)
+	else if ((int32_t)id.i[BYTE_XOR_BE(0)] >= 0)
 	{
 		SET_MANTISSA(result, mantissa);
 		SET_EXPONENT(result, exponent);
@@ -248,7 +248,7 @@ static void int2float(tms32031_state *tms, tmsreg *srcdst)
 #else
 static void int2float(tms32031_state *tms, tmsreg *srcdst)
 {
-	UINT32 man = MANTISSA(srcdst);
+	uint32_t man = MANTISSA(srcdst);
 	int exp, cnt;
 
 	/* never overflows or underflows */
@@ -262,14 +262,14 @@ static void int2float(tms32031_state *tms, tmsreg *srcdst)
 	}
 
 	/* check for -1 here because count_leading_ones will infinite loop */
-	else if (man == (UINT32)-1)
+	else if (man == (uint32_t)-1)
 	{
 		man = 0;
 		exp = -1;
 	}
 
 	/* positive values; count leading zeros and shift */
-	else if ((INT32)man > 0)
+	else if ((int32_t)man > 0)
 	{
 		cnt = count_leading_zeros(man);
 		man <<= cnt;
@@ -296,12 +296,12 @@ static void int2float(tms32031_state *tms, tmsreg *srcdst)
 #if USE_FP
 static void float2int(tms32031_state *tms, tmsreg *srcdst, int setflags)
 {
-	INT32 val;
+	int32_t val;
 
 	if (setflags) CLR_NZVUF(tms);
 	if (EXPONENT(srcdst) > 30)
 	{
-		if ((INT32)MANTISSA(srcdst) >= 0)
+		if ((int32_t)MANTISSA(srcdst) >= 0)
 			val = 0x7fffffff;
 		else
 			val = 0x80000000;
@@ -315,7 +315,7 @@ static void float2int(tms32031_state *tms, tmsreg *srcdst, int setflags)
 #else
 static void float2int(tms32031_state *tms, tmsreg *srcdst, int setflags)
 {
-	INT32 man = MANTISSA(srcdst);
+	int32_t man = MANTISSA(srcdst);
 	int shift = 31 - EXPONENT(srcdst);
 
 	/* never underflows */
@@ -352,7 +352,7 @@ static void negf(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 #else
 static void negf(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 {
-	INT32 man = MANTISSA(src);
+	int32_t man = MANTISSA(src);
 
 	CLR_NZVUF(tms);
 
@@ -390,8 +390,8 @@ static void addf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 #else
 static void addf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 {
-	INT64 man;
-	INT64 m1, m2;
+	int64_t man;
+	int64_t m1, m2;
 	int exp, cnt;
 
 	/* reset over/underflow conditions */
@@ -412,8 +412,8 @@ static void addf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* extract mantissas from 1.0.31 values to 1.1.31 values */
-	m1 = (INT64)MANTISSA(src1) ^ 0x80000000;
-	m2 = (INT64)MANTISSA(src2) ^ 0x80000000;
+	m1 = (int64_t)MANTISSA(src1) ^ 0x80000000;
+	m2 = (int64_t)MANTISSA(src2) ^ 0x80000000;
 
 	/* normalize based on the exponent */
 	if (EXPONENT(src1) > EXPONENT(src2))
@@ -452,24 +452,24 @@ static void addf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or < -2.0, normalize */
-	else if (man >= ((INT64)2 << 31) || man < ((INT64)-2 << 31))
+	else if (man >= ((int64_t)2 << 31) || man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
 	}
 
 	/* if the mantissa is < 1.0 and > -1.0, normalize */
-	else if (man < ((INT64)1 << 31) && man >= ((INT64)-1 << 31))
+	else if (man < ((int64_t)1 << 31) && man >= ((int64_t)-1 << 31))
 	{
 		if (man > 0)
 		{
-			cnt = count_leading_zeros((UINT32)man);
+			cnt = count_leading_zeros((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
 		else
 		{
-			cnt = count_leading_ones((UINT32)man);
+			cnt = count_leading_ones((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
@@ -493,7 +493,7 @@ static void addf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(tms, dst);
 }
@@ -510,8 +510,8 @@ static void subf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 #else
 static void subf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 {
-	INT64 man;
-	INT64 m1, m2;
+	int64_t man;
+	int64_t m1, m2;
 	int exp, cnt;
 
 	/* reset over/underflow conditions */
@@ -526,8 +526,8 @@ static void subf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* extract mantissas from 1.0.31 values to 1.1.31 values */
-	m1 = (INT64)MANTISSA(src1) ^ 0x80000000;
-	m2 = (INT64)MANTISSA(src2) ^ 0x80000000;
+	m1 = (int64_t)MANTISSA(src1) ^ 0x80000000;
+	m2 = (int64_t)MANTISSA(src2) ^ 0x80000000;
 
 	/* normalize based on the exponent */
 	if (EXPONENT(src1) > EXPONENT(src2))
@@ -565,24 +565,24 @@ static void subf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or < -2.0, normalize */
-	else if (man >= ((INT64)2 << 31) || man < ((INT64)-2 << 31))
+	else if (man >= ((int64_t)2 << 31) || man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
 	}
 
 	/* if the mantissa is < 1.0 and > -1.0, normalize */
-	else if (man < ((INT64)1 << 31) && man >= ((INT64)-1 << 31))
+	else if (man < ((int64_t)1 << 31) && man >= ((int64_t)-1 << 31))
 	{
 		if (man > 0)
 		{
-			cnt = count_leading_zeros((UINT32)man);
+			cnt = count_leading_zeros((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
 		else
 		{
-			cnt = count_leading_ones((UINT32)man);
+			cnt = count_leading_ones((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
@@ -606,7 +606,7 @@ static void subf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(tms, dst);
 }
@@ -623,8 +623,8 @@ static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 #else
 static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 {
-	INT64 man;
-	INT32 m1, m2;
+	int64_t man;
+	int32_t m1, m2;
 	int exp;
 
 	/* reset over/underflow conditions */
@@ -644,7 +644,7 @@ static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	m2 = (MANTISSA(src2) >> 8) ^ 0x800000;
 
 	/* multiply the mantissas and add the exponents */
-	man = (INT64)m1 * (INT64)m2;
+	man = (int64_t)m1 * (int64_t)m2;
 	exp = EXPONENT(src1) + EXPONENT(src2);
 
 	/* chop off the low bits, going from 1.2.46 down to 1.2.31 */
@@ -658,11 +658,11 @@ static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or <= -2.0, normalize */
-	else if (man >= ((INT64)2 << 31))
+	else if (man >= ((int64_t)2 << 31))
 	{
 		man >>= 1;
 		exp++;
-		if (man >= ((INT64)2 << 31))
+		if (man >= ((int64_t)2 << 31))
 		{
 			man >>= 1;
 			exp++;
@@ -670,7 +670,7 @@ static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 	}
 
 	/* if the mantissa is >= 2.0 or <= -2.0, normalize */
-	else if (man < ((INT64)-2 << 31))
+	else if (man < ((int64_t)-2 << 31))
 	{
 		man >>= 1;
 		exp++;
@@ -694,7 +694,7 @@ static void mpyf(tms32031_state *tms, tmsreg *dst, tmsreg *src1, tmsreg *src2)
 
 	/* store the result back, removing the implicit one and putting */
 	/* back the sign bit */
-	SET_MANTISSA(dst, (UINT32)man ^ 0x80000000);
+	SET_MANTISSA(dst, (uint32_t)man ^ 0x80000000);
 	SET_EXPONENT(dst, exp);
 	OR_NZF(tms, dst);
 }
@@ -710,7 +710,7 @@ static void norm(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 #else
 static void norm(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 {
-	INT32 man = MANTISSA(src);
+	int32_t man = MANTISSA(src);
 	int exp = EXPONENT(src);
 
 	CLR_NZVUF(tms);
@@ -727,13 +727,13 @@ static void norm(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 		int cnt;
 		if (man > 0)
 		{
-			cnt = count_leading_zeros((UINT32)man);
+			cnt = count_leading_zeros((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
 		else
 		{
-			cnt = count_leading_ones((UINT32)man);
+			cnt = count_leading_ones((uint32_t)man);
 			man <<= cnt;
 			exp -= cnt;
 		}
@@ -762,64 +762,64 @@ static void norm(tms32031_state *tms, tmsreg *dst, tmsreg *src)
 
 /* immediate displacement variants */
 
-static UINT32 mod00_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod00_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	return IREG(tms, reg) + (UINT8)op;
+	return IREG(tms, reg) + (uint8_t)op;
 }
 
-static UINT32 mod01_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod01_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	return IREG(tms, reg) - (UINT8)op;
+	return IREG(tms, reg) - (uint8_t)op;
 }
 
-static UINT32 mod02_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod02_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	IREG(tms, reg) += (UINT8)op;
+	IREG(tms, reg) += (uint8_t)op;
 	return IREG(tms, reg);
 }
 
-static UINT32 mod03_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod03_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	IREG(tms, reg) -= (UINT8)op;
+	IREG(tms, reg) -= (uint8_t)op;
 	return IREG(tms, reg);
 }
 
-static UINT32 mod04_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod04_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	IREG(tms, reg) += (UINT8)op;
+	uint32_t result = IREG(tms, reg);
+	IREG(tms, reg) += (uint8_t)op;
 	return result;
 }
 
-static UINT32 mod05_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod05_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	IREG(tms, reg) -= (UINT8)op;
+	uint32_t result = IREG(tms, reg);
+	IREG(tms, reg) -= (uint8_t)op;
 	return result;
 }
 
-static UINT32 mod06_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod06_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + (UINT8)op;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + (uint8_t)op;
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
 	return result;
 }
 
-static UINT32 mod07_d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod07_d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - (UINT8)op;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - (uint8_t)op;
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -829,58 +829,58 @@ static UINT32 mod07_d(tms32031_state *tms, UINT32 op, UINT8 ar)
 
 /* immediate displacement variants (implied 1) */
 
-static UINT32 mod00_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod00_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + 1;
 }
 
-static UINT32 mod01_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod01_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - 1;
 }
 
-static UINT32 mod02_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod02_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return ++IREG(tms, reg);
 }
 
-static UINT32 mod03_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod03_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return --IREG(tms, reg);
 }
 
-static UINT32 mod04_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod04_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg)++;
 }
 
-static UINT32 mod05_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod05_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg)--;
 }
 
-static UINT32 mod06_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod06_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + 1;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + 1;
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
 	return result;
 }
 
-static UINT32 mod07_1(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod07_1(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - 1;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - 1;
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -890,64 +890,64 @@ static UINT32 mod07_1(tms32031_state *tms, UINT32 op, UINT8 ar)
 
 /* IR0 displacement variants */
 
-static UINT32 mod08(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod08(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + IREG(tms, TMR_IR0);
 }
 
-static UINT32 mod09(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod09(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - IREG(tms, TMR_IR0);
 }
 
-static UINT32 mod0a(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0a(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(tms, reg) += IREG(tms, TMR_IR0);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod0b(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0b(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(tms, reg) -= IREG(tms, TMR_IR0);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod0c(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0c(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
+	uint32_t result = IREG(tms, reg);
 	IREG(tms, reg) += IREG(tms, TMR_IR0);
 	return result;
 }
 
-static UINT32 mod0d(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0d(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
+	uint32_t result = IREG(tms, reg);
 	IREG(tms, reg) -= IREG(tms, TMR_IR0);
 	return result;
 }
 
-static UINT32 mod0e(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0e(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + IREG(tms, TMR_IR0);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + IREG(tms, TMR_IR0);
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
 	return result;
 }
 
-static UINT32 mod0f(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod0f(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - IREG(tms, TMR_IR0);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - IREG(tms, TMR_IR0);
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -957,64 +957,64 @@ static UINT32 mod0f(tms32031_state *tms, UINT32 op, UINT8 ar)
 
 /* IR1 displacement variants */
 
-static UINT32 mod10(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod10(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + IREG(tms, TMR_IR1);
 }
 
-static UINT32 mod11(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod11(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - IREG(tms, TMR_IR1);
 }
 
-static UINT32 mod12(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod12(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(tms, reg) += IREG(tms, TMR_IR1);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod13(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod13(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	IREG(tms, reg) -= IREG(tms, TMR_IR1);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod14(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod14(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
+	uint32_t result = IREG(tms, reg);
 	IREG(tms, reg) += IREG(tms, TMR_IR1);
 	return result;
 }
 
-static UINT32 mod15(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod15(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
+	uint32_t result = IREG(tms, reg);
 	IREG(tms, reg) -= IREG(tms, TMR_IR1);
 	return result;
 }
 
-static UINT32 mod16(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod16(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + IREG(tms, TMR_IR1);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + IREG(tms, TMR_IR1);
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
 	return result;
 }
 
-static UINT32 mod17(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod17(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - IREG(tms, TMR_IR1);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - IREG(tms, TMR_IR1);
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	IREG(tms, reg) = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1024,19 +1024,19 @@ static UINT32 mod17(tms32031_state *tms, UINT32 op, UINT8 ar)
 
 /* special variants */
 
-static UINT32 mod18(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod18(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod19(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t mod19(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	unimplemented(tms, op);
 	return 0;
 }
 
-static UINT32 modillegal(tms32031_state *tms, UINT32 op, UINT8 ar)
+static uint32_t modillegal(tms32031_state *tms, uint32_t op, uint8_t ar)
 {
 	illegal(tms, op);
 	return 0;
@@ -1045,37 +1045,37 @@ static UINT32 modillegal(tms32031_state *tms, UINT32 op, UINT8 ar)
 
 /* immediate displacement variants (implied 1) */
 
-static UINT32 mod00_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod00_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + 1;
 }
 
-static UINT32 mod01_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod01_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - 1;
 }
 
-static UINT32 mod02_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod02_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) + 1;
+	uint32_t defval = IREG(tms, reg) + 1;
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod03_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod03_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) - 1;
+	uint32_t defval = IREG(tms, reg) - 1;
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod04_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod04_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) + 1;
@@ -1083,7 +1083,7 @@ static UINT32 mod04_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **def
 	return IREG(tms, reg);
 }
 
-static UINT32 mod05_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod05_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) - 1;
@@ -1091,11 +1091,11 @@ static UINT32 mod05_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **def
 	return IREG(tms, reg);
 }
 
-static UINT32 mod06_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod06_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + 1;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + 1;
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1103,11 +1103,11 @@ static UINT32 mod06_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **def
 	return result;
 }
 
-static UINT32 mod07_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod07_1_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - 1;
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - 1;
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1118,37 +1118,37 @@ static UINT32 mod07_1_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **def
 
 /* IR0 displacement variants */
 
-static UINT32 mod08_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod08_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + IREG(tms, TMR_IR0);
 }
 
-static UINT32 mod09_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod09_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - IREG(tms, TMR_IR0);
 }
 
-static UINT32 mod0a_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0a_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) + IREG(tms, TMR_IR0);
+	uint32_t defval = IREG(tms, reg) + IREG(tms, TMR_IR0);
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod0b_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0b_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) - IREG(tms, TMR_IR0);
+	uint32_t defval = IREG(tms, reg) - IREG(tms, TMR_IR0);
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod0c_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0c_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) + IREG(tms, TMR_IR0);
@@ -1156,7 +1156,7 @@ static UINT32 mod0c_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return IREG(tms, reg);
 }
 
-static UINT32 mod0d_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0d_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) - IREG(tms, TMR_IR0);
@@ -1164,11 +1164,11 @@ static UINT32 mod0d_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return IREG(tms, reg);
 }
 
-static UINT32 mod0e_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0e_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + IREG(tms, TMR_IR0);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + IREG(tms, TMR_IR0);
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1176,11 +1176,11 @@ static UINT32 mod0e_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return result;
 }
 
-static UINT32 mod0f_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod0f_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - IREG(tms, TMR_IR0);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - IREG(tms, TMR_IR0);
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1191,37 +1191,37 @@ static UINT32 mod0f_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 
 /* IR1 displacement variants */
 
-static UINT32 mod10_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod10_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) + IREG(tms, TMR_IR1);
 }
 
-static UINT32 mod11_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod11_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg) - IREG(tms, TMR_IR1);
 }
 
-static UINT32 mod12_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod12_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) + IREG(tms, TMR_IR1);
+	uint32_t defval = IREG(tms, reg) + IREG(tms, TMR_IR1);
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod13_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod13_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 defval = IREG(tms, reg) - IREG(tms, TMR_IR1);
+	uint32_t defval = IREG(tms, reg) - IREG(tms, TMR_IR1);
 	**defptrptr = defval;
 	*defptrptr = &IREG(tms, reg);
 	return defval;
 }
 
-static UINT32 mod14_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod14_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) + IREG(tms, TMR_IR1);
@@ -1229,7 +1229,7 @@ static UINT32 mod14_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return IREG(tms, reg);
 }
 
-static UINT32 mod15_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod15_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	**defptrptr = IREG(tms, reg) - IREG(tms, TMR_IR1);
@@ -1237,11 +1237,11 @@ static UINT32 mod15_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return IREG(tms, reg);
 }
 
-static UINT32 mod16_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod16_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) + IREG(tms, TMR_IR1);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) + IREG(tms, TMR_IR1);
 	if (temp >= IREG(tms, TMR_BK))
 		temp -= IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1249,11 +1249,11 @@ static UINT32 mod16_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return result;
 }
 
-static UINT32 mod17_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod17_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
-	UINT32 result = IREG(tms, reg);
-	INT32 temp = (result & tms->bkmask) - IREG(tms, TMR_IR1);
+	uint32_t result = IREG(tms, reg);
+	int32_t temp = (result & tms->bkmask) - IREG(tms, TMR_IR1);
 	if (temp < 0)
 		temp += IREG(tms, TMR_BK);
 	**defptrptr = (IREG(tms, reg) & ~tms->bkmask) | (temp & tms->bkmask);
@@ -1261,19 +1261,19 @@ static UINT32 mod17_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defpt
 	return result;
 }
 
-static UINT32 mod18_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod18_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	int reg = TMR_AR0 + (ar & 7);
 	return IREG(tms, reg);
 }
 
-static UINT32 mod19_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t mod19_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	unimplemented(tms, op);
 	return 0;
 }
 
-static UINT32 modillegal_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **defptrptr)
+static uint32_t modillegal_def(tms32031_state *tms, uint32_t op, uint8_t ar, uint32_t **defptrptr)
 {
 	illegal(tms, op);
 	return 0;
@@ -1281,7 +1281,7 @@ static UINT32 modillegal_def(tms32031_state *tms, UINT32 op, UINT8 ar, UINT32 **
 
 /* tables */
 
-static UINT32 (*const indirect_d[0x20])(tms32031_state *, UINT32, UINT8) =
+static uint32_t (*const indirect_d[0x20])(tms32031_state *, uint32_t, uint8_t) =
 {
 	mod00_d,	mod01_d,	mod02_d,	mod03_d,	mod04_d,	mod05_d,	mod06_d,	mod07_d,
 	mod08,		mod09,		mod0a,		mod0b,		mod0c,		mod0d,		mod0e,		mod0f,
@@ -1290,7 +1290,7 @@ static UINT32 (*const indirect_d[0x20])(tms32031_state *, UINT32, UINT8) =
 };
 
 
-static UINT32 (*const indirect_1[0x20])(tms32031_state *, UINT32, UINT8) =
+static uint32_t (*const indirect_1[0x20])(tms32031_state *, uint32_t, uint8_t) =
 {
 	mod00_1,	mod01_1,	mod02_1,	mod03_1,	mod04_1,	mod05_1,	mod06_1,	mod07_1,
 	mod08,		mod09,		mod0a,		mod0b,		mod0c,		mod0d,		mod0e,		mod0f,
@@ -1299,7 +1299,7 @@ static UINT32 (*const indirect_1[0x20])(tms32031_state *, UINT32, UINT8) =
 };
 
 
-static UINT32 (*const indirect_1_def[0x20])(tms32031_state *, UINT32, UINT8, UINT32 **) =
+static uint32_t (*const indirect_1_def[0x20])(tms32031_state *, uint32_t, uint8_t, uint32_t **) =
 {
 	mod00_1_def,mod01_1_def,mod02_1_def,mod03_1_def,mod04_1_def,mod05_1_def,mod06_1_def,mod07_1_def,
 	mod08_def,	mod09_def,	mod0a_def,	mod0b_def,	mod0c_def,	mod0d_def,	mod0e_def,	mod0f_def,
@@ -1313,42 +1313,42 @@ static UINT32 (*const indirect_1_def[0x20])(tms32031_state *, UINT32, UINT8, UIN
 
 #define ABSF(dreg, sreg)												\
 {																		\
-	INT32 man = FREGMAN(tms, sreg);											\
+	int32_t man = FREGMAN(tms, sreg);											\
 	CLR_NZVUF(tms);														\
 	tms->r[dreg] = tms->r[sreg];								\
 	if (man < 0)														\
 	{																	\
 		SET_MANTISSA(&tms->r[dreg], ~man);							\
-		if (man == (INT32)0x80000000 && FREGEXP(tms, sreg) == 127)			\
+		if (man == (int32_t)0x80000000 && FREGEXP(tms, sreg) == 127)			\
 			IREG(tms, TMR_ST) |= VFLAG | LVFLAG;								\
 	}																	\
 	OR_NZF(tms, &tms->r[dreg]);											\
 }
 
-static void absf_reg(tms32031_state *tms, UINT32 op)
+static void absf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	int sreg = op & 7;
 	ABSF(dreg, sreg);
 }
 
-static void absf_dir(tms32031_state *tms, UINT32 op)
+static void absf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	ABSF(dreg, TMR_TEMP1);
 }
 
-static void absf_ind(tms32031_state *tms, UINT32 op)
+static void absf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	ABSF(dreg, TMR_TEMP1);
 }
 
-static void absf_imm(tms32031_state *tms, UINT32 op)
+static void absf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -1359,7 +1359,7 @@ static void absf_imm(tms32031_state *tms, UINT32 op)
 
 #define ABSI(dreg, src)												\
 {																	\
-	UINT32 _res = ((INT32)src < 0) ? -src : src;					\
+	uint32_t _res = ((int32_t)src < 0) ? -src : src;					\
 	if (!OVM(tms) || _res != 0x80000000)									\
 		IREG(tms, dreg) = _res;											\
 	else															\
@@ -1375,30 +1375,30 @@ static void absf_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void absi_reg(tms32031_state *tms, UINT32 op)
+static void absi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ABSI(dreg, src);
 }
 
-static void absi_dir(tms32031_state *tms, UINT32 op)
+static void absi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	ABSI(dreg, src);
 }
 
-static void absi_ind(tms32031_state *tms, UINT32 op)
+static void absi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	ABSI(dreg, src);
 }
 
-static void absi_imm(tms32031_state *tms, UINT32 op)
+static void absi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
 	ABSI(dreg, src);
 }
@@ -1407,14 +1407,14 @@ static void absi_imm(tms32031_state *tms, UINT32 op)
 
 #define ADDC(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 + src2 + (IREG(tms, TMR_ST) & CFLAG);				\
+	uint32_t _res = src1 + src2 + (IREG(tms, TMR_ST) & CFLAG);				\
 	if (!OVM(tms) || !OVERFLOW_ADD(src1,src2,_res))						\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
-		UINT32 tempc = src2 + (IREG(tms, TMR_ST) & CFLAG);				\
+		uint32_t tempc = src2 + (IREG(tms, TMR_ST) & CFLAG);				\
 		CLR_NZCVUF(tms);												\
 		OR_NZCV_ADD(tms,src1,tempc,_res);								\
 	}																\
@@ -1422,63 +1422,63 @@ static void absi_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void addc_reg(tms32031_state *tms, UINT32 op)
+static void addc_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDC(dreg, dst, src);
 }
 
-static void addc_dir(tms32031_state *tms, UINT32 op)
+static void addc_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDC(dreg, dst, src);
 }
 
-static void addc_ind(tms32031_state *tms, UINT32 op)
+static void addc_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDC(dreg, dst, src);
 }
 
-static void addc_imm(tms32031_state *tms, UINT32 op)
+static void addc_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDC(dreg, dst, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void addf_reg(tms32031_state *tms, UINT32 op)
+static void addf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	addf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[op & 7]);
 }
 
-static void addf_dir(tms32031_state *tms, UINT32 op)
+static void addf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	addf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void addf_ind(tms32031_state *tms, UINT32 op)
+static void addf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	addf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void addf_imm(tms32031_state *tms, UINT32 op)
+static void addf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -1489,11 +1489,11 @@ static void addf_imm(tms32031_state *tms, UINT32 op)
 
 #define ADDI(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 + src2;										\
+	uint32_t _res = src1 + src2;										\
 	if (!OVM(tms) || !OVERFLOW_ADD(src1,src2,_res))						\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF(tms);												\
@@ -1503,35 +1503,35 @@ static void addf_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void addi_reg(tms32031_state *tms, UINT32 op)
+static void addi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDI(dreg, dst, src);
 }
 
-static void addi_dir(tms32031_state *tms, UINT32 op)
+static void addi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDI(dreg, dst, src);
 }
 
-static void addi_ind(tms32031_state *tms, UINT32 op)
+static void addi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDI(dreg, dst, src);
 }
 
-static void addi_imm(tms32031_state *tms, UINT32 op)
+static void addi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ADDI(dreg, dst, src);
 }
 
@@ -1539,7 +1539,7 @@ static void addi_imm(tms32031_state *tms, UINT32 op)
 
 #define AND(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) & (src2);									\
+	uint32_t _res = (src1) & (src2);									\
 	IREG(tms, dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -1550,35 +1550,35 @@ static void addi_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void and_reg(tms32031_state *tms, UINT32 op)
+static void and_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	AND(dreg, dst, src);
 }
 
-static void and_dir(tms32031_state *tms, UINT32 op)
+static void and_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	AND(dreg, dst, src);
 }
 
-static void and_ind(tms32031_state *tms, UINT32 op)
+static void and_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	AND(dreg, dst, src);
 }
 
-static void and_imm(tms32031_state *tms, UINT32 op)
+static void and_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
+	uint32_t src = (uint16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	AND(dreg, dst, src);
 }
 
@@ -1586,7 +1586,7 @@ static void and_imm(tms32031_state *tms, UINT32 op)
 
 #define ANDN(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) & ~(src2);									\
+	uint32_t _res = (src1) & ~(src2);									\
 	IREG(tms, dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -1597,35 +1597,35 @@ static void and_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void andn_reg(tms32031_state *tms, UINT32 op)
+static void andn_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ANDN(dreg, dst, src);
 }
 
-static void andn_dir(tms32031_state *tms, UINT32 op)
+static void andn_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ANDN(dreg, dst, src);
 }
 
-static void andn_ind(tms32031_state *tms, UINT32 op)
+static void andn_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ANDN(dreg, dst, src);
 }
 
-static void andn_imm(tms32031_state *tms, UINT32 op)
+static void andn_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
+	uint32_t src = (uint16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	ANDN(dreg, dst, src);
 }
 
@@ -1633,19 +1633,19 @@ static void andn_imm(tms32031_state *tms, UINT32 op)
 
 #define ASH(dreg, src, count)										\
 {																	\
-	UINT32 _res;													\
-	INT32 _count = (INT16)(count << 9) >> 9;	/* 7 LSBs */		\
+	uint32_t _res;													\
+	int32_t _count = (int16_t)(count << 9) >> 9;	/* 7 LSBs */		\
 	if (_count < 0)													\
 	{																\
 		if (_count >= -31)											\
-			_res = (INT32)src >> -_count;							\
+			_res = (int32_t)src >> -_count;							\
 		else														\
-			_res = (INT32)src >> 31;								\
+			_res = (int32_t)src >> 31;								\
 	}																\
 	else															\
 	{																\
 		if (_count <= 31)											\
-			_res = (INT32)src << _count;							\
+			_res = (int32_t)src << _count;							\
 		else														\
 			_res = 0;												\
 	}																\
@@ -1657,77 +1657,77 @@ static void andn_imm(tms32031_state *tms, UINT32 op)
 		if (_count < 0)												\
 		{															\
 			if (_count >= -32)										\
-				OR_C(tms, ((INT32)src >> (-_count - 1)) & 1);			\
+				OR_C(tms, ((int32_t)src >> (-_count - 1)) & 1);			\
 			else													\
-				OR_C(tms, ((INT32)src >> 31) & 1);						\
+				OR_C(tms, ((int32_t)src >> 31) & 1);						\
 		}															\
 		else if (_count > 0)										\
 		{															\
 			if (_count <= 32)										\
-				OR_C(tms, ((UINT32)src << (_count - 1)) >> 31);			\
+				OR_C(tms, ((uint32_t)src << (_count - 1)) >> 31);			\
 		}															\
 	}																\
 	else if (dreg >= TMR_BK)										\
 		update_special(tms, dreg);										\
 }
 
-static void ash_reg(tms32031_state *tms, UINT32 op)
+static void ash_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = IREG(tms, op & 31);
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	ASH(dreg, src, count);
 }
 
-static void ash_dir(tms32031_state *tms, UINT32 op)
+static void ash_dir(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = RMEM(tms, DIRECT(tms, op));
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	ASH(dreg, src, count);
 }
 
-static void ash_ind(tms32031_state *tms, UINT32 op)
+static void ash_ind(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	ASH(dreg, src, count);
 }
 
-static void ash_imm(tms32031_state *tms, UINT32 op)
+static void ash_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = op;
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	ASH(dreg, src, count);
 }
 
 /*-----------------------------------------------------*/
 
-static void cmpf_reg(tms32031_state *tms, UINT32 op)
+static void cmpf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	subf(tms, &tms->r[TMR_TEMP2], &tms->r[dreg], &tms->r[op & 7]);
 }
 
-static void cmpf_dir(tms32031_state *tms, UINT32 op)
+static void cmpf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[TMR_TEMP2], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void cmpf_ind(tms32031_state *tms, UINT32 op)
+static void cmpf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[TMR_TEMP2], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void cmpf_imm(tms32031_state *tms, UINT32 op)
+static void cmpf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -1738,65 +1738,65 @@ static void cmpf_imm(tms32031_state *tms, UINT32 op)
 
 #define CMPI(src1, src2)											\
 {																	\
-	UINT32 _res = src1 - src2;										\
+	uint32_t _res = src1 - src2;										\
 	CLR_NZCVUF(tms);													\
 	OR_NZCV_SUB(tms,src1,src2,_res);									\
 }
 
-static void cmpi_reg(tms32031_state *tms, UINT32 op)
+static void cmpi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = IREG(tms, op & 31);
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	CMPI(dst, src);
 }
 
-static void cmpi_dir(tms32031_state *tms, UINT32 op)
+static void cmpi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	CMPI(dst, src);
 }
 
-static void cmpi_ind(tms32031_state *tms, UINT32 op)
+static void cmpi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	CMPI(dst, src);
 }
 
-static void cmpi_imm(tms32031_state *tms, UINT32 op)
+static void cmpi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = (int16_t)op;
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	CMPI(dst, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void fix_reg(tms32031_state *tms, UINT32 op)
+static void fix_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	tms->r[dreg] = tms->r[op & 7];
 	float2int(tms, &tms->r[dreg], dreg < 8);
 }
 
-static void fix_dir(tms32031_state *tms, UINT32 op)
+static void fix_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	LONG2FP(tms, dreg, res);
 	float2int(tms, &tms->r[dreg], dreg < 8);
 }
 
-static void fix_ind(tms32031_state *tms, UINT32 op)
+static void fix_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	LONG2FP(tms, dreg, res);
 	float2int(tms, &tms->r[dreg], dreg < 8);
 }
 
-static void fix_imm(tms32031_state *tms, UINT32 op)
+static void fix_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	SHORT2FP(tms, dreg, op);
@@ -1811,37 +1811,37 @@ static void fix_imm(tms32031_state *tms, UINT32 op)
 	int2float(tms, &tms->r[dreg]);									\
 }
 
-static void float_reg(tms32031_state *tms, UINT32 op)
+static void float_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
-static void float_dir(tms32031_state *tms, UINT32 op)
+static void float_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
-static void float_ind(tms32031_state *tms, UINT32 op)
+static void float_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
-static void float_imm(tms32031_state *tms, UINT32 op)
+static void float_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 7;
 	FLOAT(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void idle(tms32031_state *tms, UINT32 op)
+static void idle(tms32031_state *tms, uint32_t op)
 {
 	tms->is_idling = TRUE;
 	IREG(tms, TMR_ST) |= GIEFLAG;
@@ -1852,7 +1852,7 @@ static void idle(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void lde_reg(tms32031_state *tms, UINT32 op)
+static void lde_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SET_EXPONENT(&tms->r[dreg], EXPONENT(&tms->r[op & 7]));
@@ -1860,9 +1860,9 @@ static void lde_reg(tms32031_state *tms, UINT32 op)
 		SET_MANTISSA(&tms->r[dreg], 0);
 }
 
-static void lde_dir(tms32031_state *tms, UINT32 op)
+static void lde_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	SET_EXPONENT(&tms->r[dreg], EXPONENT(&tms->r[TMR_TEMP1]));
@@ -1870,9 +1870,9 @@ static void lde_dir(tms32031_state *tms, UINT32 op)
 		SET_MANTISSA(&tms->r[dreg], 0);
 }
 
-static void lde_ind(tms32031_state *tms, UINT32 op)
+static void lde_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	SET_EXPONENT(&tms->r[dreg], EXPONENT(&tms->r[TMR_TEMP1]));
@@ -1880,7 +1880,7 @@ static void lde_ind(tms32031_state *tms, UINT32 op)
 		SET_MANTISSA(&tms->r[dreg], 0);
 }
 
-static void lde_imm(tms32031_state *tms, UINT32 op)
+static void lde_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -1891,7 +1891,7 @@ static void lde_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldf_reg(tms32031_state *tms, UINT32 op)
+static void ldf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	tms->r[dreg] = tms->r[op & 7];
@@ -1899,25 +1899,25 @@ static void ldf_reg(tms32031_state *tms, UINT32 op)
 	OR_NZF(tms, &tms->r[dreg]);
 }
 
-static void ldf_dir(tms32031_state *tms, UINT32 op)
+static void ldf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 	CLR_NZVUF(tms);
 	OR_NZF(tms, &tms->r[dreg]);
 }
 
-static void ldf_ind(tms32031_state *tms, UINT32 op)
+static void ldf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 	CLR_NZVUF(tms);
 	OR_NZF(tms, &tms->r[dreg]);
 }
 
-static void ldf_imm(tms32031_state *tms, UINT32 op)
+static void ldf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, dreg, op);
@@ -1927,8 +1927,8 @@ static void ldf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfi_dir(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
-static void ldfi_ind(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void ldfi_dir(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
+static void ldfi_ind(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
@@ -1944,62 +1944,62 @@ static void ldfi_ind(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
 		update_special(tms, dreg);										\
 }
 
-static void ldi_reg(tms32031_state *tms, UINT32 op)
+static void ldi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	LDI(dreg, src);
 }
 
-static void ldi_dir(tms32031_state *tms, UINT32 op)
+static void ldi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	LDI(dreg, src);
 }
 
-static void ldi_ind(tms32031_state *tms, UINT32 op)
+static void ldi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	LDI(dreg, src);
 }
 
-static void ldi_imm(tms32031_state *tms, UINT32 op)
+static void ldi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
 	LDI(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void ldii_dir(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
-static void ldii_ind(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void ldii_dir(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
+static void ldii_ind(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
-static void ldm_reg(tms32031_state *tms, UINT32 op)
+static void ldm_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SET_MANTISSA(&tms->r[dreg], MANTISSA(&tms->r[op & 7]));
 }
 
-static void ldm_dir(tms32031_state *tms, UINT32 op)
+static void ldm_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	SET_MANTISSA(&tms->r[dreg], res);
 }
 
-static void ldm_ind(tms32031_state *tms, UINT32 op)
+static void ldm_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	SET_MANTISSA(&tms->r[dreg], res);
 }
 
-static void ldm_imm(tms32031_state *tms, UINT32 op)
+static void ldm_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2010,19 +2010,19 @@ static void ldm_imm(tms32031_state *tms, UINT32 op)
 
 #define LSH(dreg, src, count)										\
 {																	\
-	UINT32 _res;													\
-	INT32 _count = (INT16)(count << 9) >> 9;	/* 7 LSBs */		\
+	uint32_t _res;													\
+	int32_t _count = (int16_t)(count << 9) >> 9;	/* 7 LSBs */		\
 	if (_count < 0)													\
 	{																\
 		if (_count >= -31)											\
-			_res = (UINT32)src >> -_count;							\
+			_res = (uint32_t)src >> -_count;							\
 		else														\
 			_res = 0;												\
 	}																\
 	else															\
 	{																\
 		if (_count <= 31)											\
-			_res = (UINT32)src << _count;							\
+			_res = (uint32_t)src << _count;							\
 		else														\
 			_res = 0;												\
 	}																\
@@ -2034,75 +2034,75 @@ static void ldm_imm(tms32031_state *tms, UINT32 op)
 		if (_count < 0)												\
 		{															\
 			if (_count >= -32)										\
-				OR_C(tms, ((UINT32)src >> (-_count - 1)) & 1);			\
+				OR_C(tms, ((uint32_t)src >> (-_count - 1)) & 1);			\
 		}															\
 		else if (_count > 0)										\
 		{															\
 			if (_count <= 32)										\
-				OR_C(tms, ((UINT32)src << (_count - 1)) >> 31);			\
+				OR_C(tms, ((uint32_t)src << (_count - 1)) >> 31);			\
 		}															\
 	}																\
 	else if (dreg >= TMR_BK)										\
 		update_special(tms, dreg);										\
 }
 
-static void lsh_reg(tms32031_state *tms, UINT32 op)
+static void lsh_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = IREG(tms, op & 31);
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	LSH(dreg, src, count);
 }
 
-static void lsh_dir(tms32031_state *tms, UINT32 op)
+static void lsh_dir(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = RMEM(tms, DIRECT(tms, op));
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	LSH(dreg, src, count);
 }
 
-static void lsh_ind(tms32031_state *tms, UINT32 op)
+static void lsh_ind(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	LSH(dreg, src, count);
 }
 
-static void lsh_imm(tms32031_state *tms, UINT32 op)
+static void lsh_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	int count = op;
-	UINT32 src = IREG(tms, dreg);
+	uint32_t src = IREG(tms, dreg);
 	LSH(dreg, src, count);
 }
 
 /*-----------------------------------------------------*/
 
-static void mpyf_reg(tms32031_state *tms, UINT32 op)
+static void mpyf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	mpyf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[op & 31]);
 }
 
-static void mpyf_dir(tms32031_state *tms, UINT32 op)
+static void mpyf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	LONG2FP(tms, TMR_TEMP1, res);
 	mpyf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void mpyf_ind(tms32031_state *tms, UINT32 op)
+static void mpyf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	LONG2FP(tms, TMR_TEMP1, res);
 	mpyf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void mpyf_imm(tms32031_state *tms, UINT32 op)
+static void mpyf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2113,7 +2113,7 @@ static void mpyf_imm(tms32031_state *tms, UINT32 op)
 
 #define MPYI(dreg, src1, src2)										\
 {																	\
-	INT64 _res = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);\
+	int64_t _res = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);\
 	if (!OVM(tms) || (_res >= -0x80000000 && _res <= 0x7fffffff))		\
 		IREG(tms, dreg) = _res;											\
 	else															\
@@ -2121,43 +2121,43 @@ static void mpyf_imm(tms32031_state *tms, UINT32 op)
 	if (dreg < 8)													\
 	{																\
 		CLR_NZVUF(tms);												\
-		OR_NZ(tms, (UINT32)_res);										\
-		if (_res < -(INT64)0x80000000 || _res > (INT64)0x7fffffff)	\
+		OR_NZ(tms, (uint32_t)_res);										\
+		if (_res < -(int64_t)0x80000000 || _res > (int64_t)0x7fffffff)	\
 			IREG(tms, TMR_ST) |= VFLAG | LVFLAG;							\
 	}																\
 	else if (dreg >= TMR_BK)										\
 		update_special(tms, dreg);										\
 }
 
-static void mpyi_reg(tms32031_state *tms, UINT32 op)
+static void mpyi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	MPYI(dreg, dst, src);
 }
 
-static void mpyi_dir(tms32031_state *tms, UINT32 op)
+static void mpyi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	MPYI(dreg, dst, src);
 }
 
-static void mpyi_ind(tms32031_state *tms, UINT32 op)
+static void mpyi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	MPYI(dreg, dst, src);
 }
 
-static void mpyi_imm(tms32031_state *tms, UINT32 op)
+static void mpyi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	MPYI(dreg, dst, src);
 }
 
@@ -2165,12 +2165,12 @@ static void mpyi_imm(tms32031_state *tms, UINT32 op)
 
 #define NEGB(dreg, src)												\
 {																	\
-	UINT32 temps = 0 - (IREG(tms, TMR_ST) & CFLAG);						\
-	UINT32 _res = temps - src;										\
+	uint32_t temps = 0 - (IREG(tms, TMR_ST) & CFLAG);						\
+	uint32_t _res = temps - src;										\
 	if (!OVM(tms) || !OVERFLOW_SUB(temps,src,_res))						\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF(tms);												\
@@ -2180,59 +2180,59 @@ static void mpyi_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void negb_reg(tms32031_state *tms, UINT32 op)
+static void negb_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	NEGB(dreg, src);
 }
 
-static void negb_dir(tms32031_state *tms, UINT32 op)
+static void negb_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	NEGB(dreg, src);
 }
 
-static void negb_ind(tms32031_state *tms, UINT32 op)
+static void negb_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	NEGB(dreg, src);
 }
 
-static void negb_imm(tms32031_state *tms, UINT32 op)
+static void negb_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
 	NEGB(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void negf_reg(tms32031_state *tms, UINT32 op)
+static void negf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	negf(tms, &tms->r[dreg], &tms->r[op & 7]);
 }
 
-static void negf_dir(tms32031_state *tms, UINT32 op)
+static void negf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	negf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void negf_ind(tms32031_state *tms, UINT32 op)
+static void negf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	negf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void negf_imm(tms32031_state *tms, UINT32 op)
+static void negf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2243,11 +2243,11 @@ static void negf_imm(tms32031_state *tms, UINT32 op)
 
 #define NEGI(dreg, src)												\
 {																	\
-	UINT32 _res = 0 - src;											\
+	uint32_t _res = 0 - src;											\
 	if (!OVM(tms) || !OVERFLOW_SUB(0,src,_res))							\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF(tms);												\
@@ -2257,70 +2257,70 @@ static void negf_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void negi_reg(tms32031_state *tms, UINT32 op)
+static void negi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	NEGI(dreg, src);
 }
 
-static void negi_dir(tms32031_state *tms, UINT32 op)
+static void negi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	NEGI(dreg, src);
 }
 
-static void negi_ind(tms32031_state *tms, UINT32 op)
+static void negi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	NEGI(dreg, src);
 }
 
-static void negi_imm(tms32031_state *tms, UINT32 op)
+static void negi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
 	NEGI(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void nop_reg(tms32031_state *tms, UINT32 op)
+static void nop_reg(tms32031_state *tms, uint32_t op)
 {
 }
 
-static void nop_ind(tms32031_state *tms, UINT32 op)
+static void nop_ind(tms32031_state *tms, uint32_t op)
 {
 	RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 }
 
 /*-----------------------------------------------------*/
 
-static void norm_reg(tms32031_state *tms, UINT32 op)
+static void norm_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	norm(tms, &tms->r[dreg], &tms->r[op & 7]);
 }
 
-static void norm_dir(tms32031_state *tms, UINT32 op)
+static void norm_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	norm(tms, &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void norm_ind(tms32031_state *tms, UINT32 op)
+static void norm_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	norm(tms, &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void norm_imm(tms32031_state *tms, UINT32 op)
+static void norm_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2331,7 +2331,7 @@ static void norm_imm(tms32031_state *tms, UINT32 op)
 
 #define NOT(dreg, src)												\
 {																	\
-	UINT32 _res = ~(src);											\
+	uint32_t _res = ~(src);											\
 	IREG(tms, dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2342,40 +2342,40 @@ static void norm_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void not_reg(tms32031_state *tms, UINT32 op)
+static void not_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	NOT(dreg, src);
 }
 
-static void not_dir(tms32031_state *tms, UINT32 op)
+static void not_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	NOT(dreg, src);
 }
 
-static void not_ind(tms32031_state *tms, UINT32 op)
+static void not_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	NOT(dreg, src);
 }
 
-static void not_imm(tms32031_state *tms, UINT32 op)
+static void not_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
+	uint32_t src = (uint16_t)op;
 	int dreg = (op >> 16) & 31;
 	NOT(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void pop(tms32031_state *tms, UINT32 op)
+static void pop(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	UINT32 val = RMEM(tms, IREG(tms, TMR_SP)--);
+	uint32_t val = RMEM(tms, IREG(tms, TMR_SP)--);
 	IREG(tms, dreg) = val;
 	if (dreg < 8)
 	{
@@ -2386,21 +2386,21 @@ static void pop(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void popf(tms32031_state *tms, UINT32 op)
+static void popf(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
-	UINT32 val = RMEM(tms, IREG(tms, TMR_SP)--);
+	uint32_t val = RMEM(tms, IREG(tms, TMR_SP)--);
 	LONG2FP(tms, dreg, val);
 	CLR_NZVUF(tms);
 	OR_NZF(tms, &tms->r[dreg]);
 }
 
-static void push(tms32031_state *tms, UINT32 op)
+static void push(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, ++IREG(tms, TMR_SP), IREG(tms, (op >> 16) & 31));
 }
 
-static void pushf(tms32031_state *tms, UINT32 op)
+static void pushf(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	WMEM(tms, ++IREG(tms, TMR_SP), FP2LONG(tms, dreg));
@@ -2410,7 +2410,7 @@ static void pushf(tms32031_state *tms, UINT32 op)
 
 #define OR(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) | (src2);									\
+	uint32_t _res = (src1) | (src2);									\
 	IREG(tms, dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2421,56 +2421,56 @@ static void pushf(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void or_reg(tms32031_state *tms, UINT32 op)
+static void or_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	OR(dreg, dst, src);
 }
 
-static void or_dir(tms32031_state *tms, UINT32 op)
+static void or_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	OR(dreg, dst, src);
 }
 
-static void or_ind(tms32031_state *tms, UINT32 op)
+static void or_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	OR(dreg, dst, src);
 }
 
-static void or_imm(tms32031_state *tms, UINT32 op)
+static void or_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
+	uint32_t src = (uint16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	OR(dreg, dst, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void maxspeed(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void maxspeed(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
 #define RND(dreg)													\
 {																	\
-	INT32 man = FREGMAN(tms, dreg);										\
+	int32_t man = FREGMAN(tms, dreg);										\
 	CLR_NVUF(tms);														\
 	if (man < 0x7fffff80)											\
 	{																\
-		SET_MANTISSA(&tms->r[dreg], ((UINT32)man + 0x80) & 0xffffff00);	\
+		SET_MANTISSA(&tms->r[dreg], ((uint32_t)man + 0x80) & 0xffffff00);	\
 		OR_NUF(tms, &tms->r[dreg]);									\
 	}																\
 	else if (FREGEXP(tms, dreg) < 127)									\
 	{																\
-		SET_MANTISSA(&tms->r[dreg], ((UINT32)man + 0x80) & 0x7fffff00);	\
+		SET_MANTISSA(&tms->r[dreg], ((uint32_t)man + 0x80) & 0x7fffff00);	\
 		SET_EXPONENT(&tms->r[dreg], FREGEXP(tms, dreg) + 1);			\
 		OR_NUF(tms, &tms->r[dreg]);									\
 	}																\
@@ -2481,7 +2481,7 @@ static void maxspeed(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
 	}																\
 }
 
-static void rnd_reg(tms32031_state *tms, UINT32 op)
+static void rnd_reg(tms32031_state *tms, uint32_t op)
 {
 	int sreg = op & 7;
 	int dreg = (op >> 16) & 7;
@@ -2489,23 +2489,23 @@ static void rnd_reg(tms32031_state *tms, UINT32 op)
 	RND(dreg);
 }
 
-static void rnd_dir(tms32031_state *tms, UINT32 op)
+static void rnd_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 	RND(dreg);
 }
 
-static void rnd_ind(tms32031_state *tms, UINT32 op)
+static void rnd_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 	RND(dreg);
 }
 
-static void rnd_imm(tms32031_state *tms, UINT32 op)
+static void rnd_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, dreg, op);
@@ -2514,10 +2514,10 @@ static void rnd_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void rol(tms32031_state *tms, UINT32 op)
+static void rol(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	UINT32 res = IREG(tms, dreg);
+	uint32_t res = IREG(tms, dreg);
 	int newcflag = res >> 31;
 	res = (res << 1) | newcflag;
 	IREG(tms, dreg) = res;
@@ -2531,10 +2531,10 @@ static void rol(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void rolc(tms32031_state *tms, UINT32 op)
+static void rolc(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	UINT32 res = IREG(tms, dreg);
+	uint32_t res = IREG(tms, dreg);
 	int newcflag = res >> 31;
 	res = (res << 1) | (IREG(tms, TMR_ST) & CFLAG);
 	IREG(tms, dreg) = res;
@@ -2548,10 +2548,10 @@ static void rolc(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void ror(tms32031_state *tms, UINT32 op)
+static void ror(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	UINT32 res = IREG(tms, dreg);
+	uint32_t res = IREG(tms, dreg);
 	int newcflag = res & 1;
 	res = (res >> 1) | (newcflag << 31);
 	IREG(tms, dreg) = res;
@@ -2565,10 +2565,10 @@ static void ror(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void rorc(tms32031_state *tms, UINT32 op)
+static void rorc(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	UINT32 res = IREG(tms, dreg);
+	uint32_t res = IREG(tms, dreg);
 	int newcflag = res & 1;
 	res = (res >> 1) | ((IREG(tms, TMR_ST) & CFLAG) << 31);
 	IREG(tms, dreg) = res;
@@ -2584,7 +2584,7 @@ static void rorc(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void rtps_reg(tms32031_state *tms, UINT32 op)
+static void rtps_reg(tms32031_state *tms, uint32_t op)
 {
 	IREG(tms, TMR_RC) = IREG(tms, op & 31);
 	IREG(tms, TMR_RS) = tms->pc;
@@ -2594,7 +2594,7 @@ static void rtps_reg(tms32031_state *tms, UINT32 op)
 	tms->delayed = TRUE;
 }
 
-static void rtps_dir(tms32031_state *tms, UINT32 op)
+static void rtps_dir(tms32031_state *tms, uint32_t op)
 {
 	IREG(tms, TMR_RC) = RMEM(tms, DIRECT(tms, op));
 	IREG(tms, TMR_RS) = tms->pc;
@@ -2604,7 +2604,7 @@ static void rtps_dir(tms32031_state *tms, UINT32 op)
 	tms->delayed = TRUE;
 }
 
-static void rtps_ind(tms32031_state *tms, UINT32 op)
+static void rtps_ind(tms32031_state *tms, uint32_t op)
 {
 	IREG(tms, TMR_RC) = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	IREG(tms, TMR_RS) = tms->pc;
@@ -2614,9 +2614,9 @@ static void rtps_ind(tms32031_state *tms, UINT32 op)
 	tms->delayed = TRUE;
 }
 
-static void rtps_imm(tms32031_state *tms, UINT32 op)
+static void rtps_imm(tms32031_state *tms, uint32_t op)
 {
-	IREG(tms, TMR_RC) = (UINT16)op;
+	IREG(tms, TMR_RC) = (uint16_t)op;
 	IREG(tms, TMR_RS) = tms->pc;
 	IREG(tms, TMR_RE) = tms->pc;
 	IREG(tms, TMR_ST) |= RMFLAG;
@@ -2626,52 +2626,52 @@ static void rtps_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void stf_dir(tms32031_state *tms, UINT32 op)
+static void stf_dir(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, DIRECT(tms, op), FP2LONG(tms, (op >> 16) & 7));
 }
 
-static void stf_ind(tms32031_state *tms, UINT32 op)
+static void stf_ind(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, INDIRECT_D(tms, op, op >> 8), FP2LONG(tms, (op >> 16) & 7));
 }
 
 /*-----------------------------------------------------*/
 
-static void stfi_dir(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
-static void stfi_ind(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void stfi_dir(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
+static void stfi_ind(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
-static void sti_dir(tms32031_state *tms, UINT32 op)
+static void sti_dir(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, DIRECT(tms, op), IREG(tms, (op >> 16) & 31));
 }
 
-static void sti_ind(tms32031_state *tms, UINT32 op)
+static void sti_ind(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, INDIRECT_D(tms, op, op >> 8), IREG(tms, (op >> 16) & 31));
 }
 
 /*-----------------------------------------------------*/
 
-static void stii_dir(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
-static void stii_ind(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void stii_dir(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
+static void stii_ind(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
-static void sigi(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void sigi(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
 #define SUBB(dreg, src1, src2)										\
 {																	\
-	UINT32 temps = src1 - (IREG(tms, TMR_ST) & CFLAG);					\
-	UINT32 _res = temps - src2;										\
+	uint32_t temps = src1 - (IREG(tms, TMR_ST) & CFLAG);					\
+	uint32_t _res = temps - src2;										\
 	if (!OVM(tms) || !OVERFLOW_SUB(temps,src2,_res))						\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF(tms);												\
@@ -2681,35 +2681,35 @@ static void sigi(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
 		update_special(tms, dreg);										\
 }
 
-static void subb_reg(tms32031_state *tms, UINT32 op)
+static void subb_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, dst, src);
 }
 
-static void subb_dir(tms32031_state *tms, UINT32 op)
+static void subb_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, dst, src);
 }
 
-static void subb_ind(tms32031_state *tms, UINT32 op)
+static void subb_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, dst, src);
 }
 
-static void subb_imm(tms32031_state *tms, UINT32 op)
+static void subb_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, dst, src);
 }
 
@@ -2717,7 +2717,7 @@ static void subb_imm(tms32031_state *tms, UINT32 op)
 
 #define SUBC(dreg, src)												\
 {																	\
-	UINT32 dst = IREG(tms, dreg);										\
+	uint32_t dst = IREG(tms, dreg);										\
 	if (dst >= src)													\
 		IREG(tms, dreg) = ((dst - src) << 1) | 1;						\
 	else															\
@@ -2726,59 +2726,59 @@ static void subb_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void subc_reg(tms32031_state *tms, UINT32 op)
+static void subc_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	SUBC(dreg, src);
 }
 
-static void subc_dir(tms32031_state *tms, UINT32 op)
+static void subc_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
 	SUBC(dreg, src);
 }
 
-static void subc_ind(tms32031_state *tms, UINT32 op)
+static void subc_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
 	SUBC(dreg, src);
 }
 
-static void subc_imm(tms32031_state *tms, UINT32 op)
+static void subc_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
 	SUBC(dreg, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void subf_reg(tms32031_state *tms, UINT32 op)
+static void subf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	subf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[op & 7]);
 }
 
-static void subf_dir(tms32031_state *tms, UINT32 op)
+static void subf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void subf_ind(tms32031_state *tms, UINT32 op)
+static void subf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[dreg], &tms->r[dreg], &tms->r[TMR_TEMP1]);
 }
 
-static void subf_imm(tms32031_state *tms, UINT32 op)
+static void subf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2789,11 +2789,11 @@ static void subf_imm(tms32031_state *tms, UINT32 op)
 
 #define SUBI(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = src1 - src2;										\
+	uint32_t _res = src1 - src2;										\
 	if (!OVM(tms) || !OVERFLOW_SUB(src1,src2,_res))						\
 		IREG(tms, dreg) = _res;											\
 	else															\
-		IREG(tms, dreg) = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
+		IREG(tms, dreg) = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;	\
 	if (dreg < 8)													\
 	{																\
 		CLR_NZCVUF(tms);												\
@@ -2803,97 +2803,97 @@ static void subf_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void subi_reg(tms32031_state *tms, UINT32 op)
+static void subi_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, dst, src);
 }
 
-static void subi_dir(tms32031_state *tms, UINT32 op)
+static void subi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, dst, src);
 }
 
-static void subi_ind(tms32031_state *tms, UINT32 op)
+static void subi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, dst, src);
 }
 
-static void subi_imm(tms32031_state *tms, UINT32 op)
+static void subi_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, dst, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void subrb_reg(tms32031_state *tms, UINT32 op)
+static void subrb_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, src, dst);
 }
 
-static void subrb_dir(tms32031_state *tms, UINT32 op)
+static void subrb_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, src, dst);
 }
 
-static void subrb_ind(tms32031_state *tms, UINT32 op)
+static void subrb_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, src, dst);
 }
 
-static void subrb_imm(tms32031_state *tms, UINT32 op)
+static void subrb_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBB(dreg, src, dst);
 }
 
 /*-----------------------------------------------------*/
 
-static void subrf_reg(tms32031_state *tms, UINT32 op)
+static void subrf_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	subf(tms, &tms->r[dreg], &tms->r[op & 7], &tms->r[dreg]);
 }
 
-static void subrf_dir(tms32031_state *tms, UINT32 op)
+static void subrf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1], &tms->r[dreg]);
 }
 
-static void subrf_ind(tms32031_state *tms, UINT32 op)
+static void subrf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, res);
 	subf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1], &tms->r[dreg]);
 }
 
-static void subrf_imm(tms32031_state *tms, UINT32 op)
+static void subrf_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, TMR_TEMP1, op);
@@ -2902,35 +2902,35 @@ static void subrf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void subri_reg(tms32031_state *tms, UINT32 op)
+static void subri_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, src, dst);
 }
 
-static void subri_dir(tms32031_state *tms, UINT32 op)
+static void subri_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, src, dst);
 }
 
-static void subri_ind(tms32031_state *tms, UINT32 op)
+static void subri_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, src, dst);
 }
 
-static void subri_imm(tms32031_state *tms, UINT32 op)
+static void subri_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (INT16)op;
+	uint32_t src = (int16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	SUBI(dreg, src, dst);
 }
 
@@ -2938,36 +2938,36 @@ static void subri_imm(tms32031_state *tms, UINT32 op)
 
 #define TSTB(src1, src2)											\
 {																	\
-	UINT32 _res = (src1) & (src2);									\
+	uint32_t _res = (src1) & (src2);									\
 	CLR_NZVUF(tms);													\
 	OR_NZ(tms, _res);													\
 }
 
-static void tstb_reg(tms32031_state *tms, UINT32 op)
+static void tstb_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = IREG(tms, op & 31);
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	TSTB(dst, src);
 }
 
-static void tstb_dir(tms32031_state *tms, UINT32 op)
+static void tstb_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	TSTB(dst, src);
 }
 
-static void tstb_ind(tms32031_state *tms, UINT32 op)
+static void tstb_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	TSTB(dst, src);
 }
 
-static void tstb_imm(tms32031_state *tms, UINT32 op)
+static void tstb_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
-	UINT32 dst = IREG(tms, (op >> 16) & 31);
+	uint32_t src = (uint16_t)op;
+	uint32_t dst = IREG(tms, (op >> 16) & 31);
 	TSTB(dst, src);
 }
 
@@ -2975,7 +2975,7 @@ static void tstb_imm(tms32031_state *tms, UINT32 op)
 
 #define XOR(dreg, src1, src2)										\
 {																	\
-	UINT32 _res = (src1) ^ (src2);									\
+	uint32_t _res = (src1) ^ (src2);									\
 	IREG(tms, dreg) = _res;												\
 	if (dreg < 8)													\
 	{																\
@@ -2986,41 +2986,41 @@ static void tstb_imm(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);										\
 }
 
-static void xor_reg(tms32031_state *tms, UINT32 op)
+static void xor_reg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = IREG(tms, op & 31);
+	uint32_t src = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	XOR(dreg, dst, src);
 }
 
-static void xor_dir(tms32031_state *tms, UINT32 op)
+static void xor_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, DIRECT(tms, op));
+	uint32_t src = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	XOR(dreg, dst, src);
 }
 
-static void xor_ind(tms32031_state *tms, UINT32 op)
+static void xor_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t src = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	XOR(dreg, dst, src);
 }
 
-static void xor_imm(tms32031_state *tms, UINT32 op)
+static void xor_imm(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src = (UINT16)op;
+	uint32_t src = (uint16_t)op;
 	int dreg = (op >> 16) & 31;
-	UINT32 dst = IREG(tms, dreg);
+	uint32_t dst = IREG(tms, dreg);
 	XOR(dreg, dst, src);
 }
 
 /*-----------------------------------------------------*/
 
-static void iack_dir(tms32031_state *tms, UINT32 op)
+static void iack_dir(tms32031_state *tms, uint32_t op)
 {
 	offs_t addr = DIRECT(tms, op);
 	if (tms->iack_w)
@@ -3030,7 +3030,7 @@ static void iack_dir(tms32031_state *tms, UINT32 op)
 		(*tms->iack_w)(tms->device, CLEAR_LINE, addr);
 }
 
-static void iack_ind(tms32031_state *tms, UINT32 op)
+static void iack_ind(tms32031_state *tms, uint32_t op)
 {
 	offs_t addr = INDIRECT_D(tms, op, op >> 8);
 	if (tms->iack_w)
@@ -3042,35 +3042,35 @@ static void iack_ind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void addc3_regreg(tms32031_state *tms, UINT32 op)
+static void addc3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
-static void addc3_indreg(tms32031_state *tms, UINT32 op)
+static void addc3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
-static void addc3_regind(tms32031_state *tms, UINT32 op)
+static void addc3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	ADDC(dreg, src1, src2);
 }
 
-static void addc3_indind(tms32031_state *tms, UINT32 op)
+static void addc3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	ADDC(dreg, src1, src2);
@@ -3078,7 +3078,7 @@ static void addc3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void addf3_regreg(tms32031_state *tms, UINT32 op)
+static void addf3_regreg(tms32031_state *tms, uint32_t op)
 {
 	int sreg1 = (op >> 8) & 7;
 	int sreg2 = op & 7;
@@ -3086,29 +3086,29 @@ static void addf3_regreg(tms32031_state *tms, UINT32 op)
 	addf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[sreg2]);
 }
 
-static void addf3_indreg(tms32031_state *tms, UINT32 op)
+static void addf3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
 	int sreg2 = op & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, src1);
 	addf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1], &tms->r[sreg2]);
 }
 
-static void addf3_regind(tms32031_state *tms, UINT32 op)
+static void addf3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int sreg1 = (op >> 8) & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP2, src2);
 	addf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[TMR_TEMP2]);
 }
 
-static void addf3_indind(tms32031_state *tms, UINT32 op)
+static void addf3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 7;
 	UPDATE_DEF();
 	LONG2FP(tms, TMR_TEMP1, src1);
@@ -3118,36 +3118,36 @@ static void addf3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void addi3_regreg(tms32031_state *tms, UINT32 op)
+static void addi3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
-static void addi3_indreg(tms32031_state *tms, UINT32 op)
+static void addi3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
-static void addi3_regind(tms32031_state *tms, UINT32 op)
+static void addi3_regind(tms32031_state *tms, uint32_t op)
 {
 	/* Radikal Bikers confirms via ADDI3 AR3,*AR3++(1),R2 / SUB $0001,R2 sequence */
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	ADDI(dreg, src1, src2);
 }
 
-static void addi3_indind(tms32031_state *tms, UINT32 op)
+static void addi3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	ADDI(dreg, src1, src2);
@@ -3155,35 +3155,35 @@ static void addi3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void and3_regreg(tms32031_state *tms, UINT32 op)
+static void and3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
-static void and3_indreg(tms32031_state *tms, UINT32 op)
+static void and3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
-static void and3_regind(tms32031_state *tms, UINT32 op)
+static void and3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	AND(dreg, src1, src2);
 }
 
-static void and3_indind(tms32031_state *tms, UINT32 op)
+static void and3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	AND(dreg, src1, src2);
@@ -3191,35 +3191,35 @@ static void and3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void andn3_regreg(tms32031_state *tms, UINT32 op)
+static void andn3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
-static void andn3_indreg(tms32031_state *tms, UINT32 op)
+static void andn3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
-static void andn3_regind(tms32031_state *tms, UINT32 op)
+static void andn3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	ANDN(dreg, src1, src2);
 }
 
-static void andn3_indind(tms32031_state *tms, UINT32 op)
+static void andn3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	ANDN(dreg, src1, src2);
@@ -3227,35 +3227,35 @@ static void andn3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ash3_regreg(tms32031_state *tms, UINT32 op)
+static void ash3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
-static void ash3_indreg(tms32031_state *tms, UINT32 op)
+static void ash3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
-static void ash3_regind(tms32031_state *tms, UINT32 op)
+static void ash3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	ASH(dreg, src1, src2);
 }
 
-static void ash3_indind(tms32031_state *tms, UINT32 op)
+static void ash3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	ASH(dreg, src1, src2);
@@ -3263,34 +3263,34 @@ static void ash3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void cmpf3_regreg(tms32031_state *tms, UINT32 op)
+static void cmpf3_regreg(tms32031_state *tms, uint32_t op)
 {
 	int sreg1 = (op >> 8) & 7;
 	int sreg2 = op & 7;
 	subf(tms, &tms->r[TMR_TEMP1], &tms->r[sreg1], &tms->r[sreg2]);
 }
 
-static void cmpf3_indreg(tms32031_state *tms, UINT32 op)
+static void cmpf3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
 	int sreg2 = op & 7;
 	LONG2FP(tms, TMR_TEMP1, src1);
 	subf(tms, &tms->r[TMR_TEMP1], &tms->r[TMR_TEMP1], &tms->r[sreg2]);
 }
 
-static void cmpf3_regind(tms32031_state *tms, UINT32 op)
+static void cmpf3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int sreg1 = (op >> 8) & 7;
 	LONG2FP(tms, TMR_TEMP2, src2);
 	subf(tms, &tms->r[TMR_TEMP1], &tms->r[sreg1], &tms->r[TMR_TEMP2]);
 }
 
-static void cmpf3_indind(tms32031_state *tms, UINT32 op)
+static void cmpf3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	UPDATE_DEF();
 	LONG2FP(tms, TMR_TEMP1, src1);
 	LONG2FP(tms, TMR_TEMP2, src2);
@@ -3299,67 +3299,67 @@ static void cmpf3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void cmpi3_regreg(tms32031_state *tms, UINT32 op)
+static void cmpi3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	CMPI(src1, src2);
 }
 
-static void cmpi3_indreg(tms32031_state *tms, UINT32 op)
+static void cmpi3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	CMPI(src1, src2);
 }
 
-static void cmpi3_regind(tms32031_state *tms, UINT32 op)
+static void cmpi3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	CMPI(src1, src2);
 }
 
-static void cmpi3_indind(tms32031_state *tms, UINT32 op)
+static void cmpi3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	UPDATE_DEF();
 	CMPI(src1, src2);
 }
 
 /*-----------------------------------------------------*/
 
-static void lsh3_regreg(tms32031_state *tms, UINT32 op)
+static void lsh3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
-static void lsh3_indreg(tms32031_state *tms, UINT32 op)
+static void lsh3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
-static void lsh3_regind(tms32031_state *tms, UINT32 op)
+static void lsh3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	LSH(dreg, src1, src2);
 }
 
-static void lsh3_indind(tms32031_state *tms, UINT32 op)
+static void lsh3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	LSH(dreg, src1, src2);
@@ -3367,7 +3367,7 @@ static void lsh3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpyf3_regreg(tms32031_state *tms, UINT32 op)
+static void mpyf3_regreg(tms32031_state *tms, uint32_t op)
 {
 	int sreg1 = (op >> 8) & 7;
 	int sreg2 = op & 7;
@@ -3375,29 +3375,29 @@ static void mpyf3_regreg(tms32031_state *tms, UINT32 op)
 	mpyf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[sreg2]);
 }
 
-static void mpyf3_indreg(tms32031_state *tms, UINT32 op)
+static void mpyf3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
 	int sreg2 = op & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, src1);
 	mpyf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1], &tms->r[sreg2]);
 }
 
-static void mpyf3_regind(tms32031_state *tms, UINT32 op)
+static void mpyf3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int sreg1 = (op >> 8) & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP2, src2);
 	mpyf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[TMR_TEMP2]);
 }
 
-static void mpyf3_indind(tms32031_state *tms, UINT32 op)
+static void mpyf3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 7;
 	UPDATE_DEF();
 	LONG2FP(tms, TMR_TEMP1, src1);
@@ -3407,35 +3407,35 @@ static void mpyf3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpyi3_regreg(tms32031_state *tms, UINT32 op)
+static void mpyi3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
-static void mpyi3_indreg(tms32031_state *tms, UINT32 op)
+static void mpyi3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
-static void mpyi3_regind(tms32031_state *tms, UINT32 op)
+static void mpyi3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	MPYI(dreg, src1, src2);
 }
 
-static void mpyi3_indind(tms32031_state *tms, UINT32 op)
+static void mpyi3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	MPYI(dreg, src1, src2);
@@ -3443,35 +3443,35 @@ static void mpyi3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void or3_regreg(tms32031_state *tms, UINT32 op)
+static void or3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
-static void or3_indreg(tms32031_state *tms, UINT32 op)
+static void or3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
-static void or3_regind(tms32031_state *tms, UINT32 op)
+static void or3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	OR(dreg, src1, src2);
 }
 
-static void or3_indind(tms32031_state *tms, UINT32 op)
+static void or3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	OR(dreg, src1, src2);
@@ -3479,35 +3479,35 @@ static void or3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void subb3_regreg(tms32031_state *tms, UINT32 op)
+static void subb3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
-static void subb3_indreg(tms32031_state *tms, UINT32 op)
+static void subb3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
-static void subb3_regind(tms32031_state *tms, UINT32 op)
+static void subb3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	SUBB(dreg, src1, src2);
 }
 
-static void subb3_indind(tms32031_state *tms, UINT32 op)
+static void subb3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	SUBB(dreg, src1, src2);
@@ -3515,7 +3515,7 @@ static void subb3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void subf3_regreg(tms32031_state *tms, UINT32 op)
+static void subf3_regreg(tms32031_state *tms, uint32_t op)
 {
 	int sreg1 = (op >> 8) & 7;
 	int sreg2 = op & 7;
@@ -3523,29 +3523,29 @@ static void subf3_regreg(tms32031_state *tms, UINT32 op)
 	subf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[sreg2]);
 }
 
-static void subf3_indreg(tms32031_state *tms, UINT32 op)
+static void subf3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
 	int sreg2 = op & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP1, src1);
 	subf(tms, &tms->r[dreg], &tms->r[TMR_TEMP1], &tms->r[sreg2]);
 }
 
-static void subf3_regind(tms32031_state *tms, UINT32 op)
+static void subf3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int sreg1 = (op >> 8) & 7;
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, TMR_TEMP2, src2);
 	subf(tms, &tms->r[dreg], &tms->r[sreg1], &tms->r[TMR_TEMP2]);
 }
 
-static void subf3_indind(tms32031_state *tms, UINT32 op)
+static void subf3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 7;
 	UPDATE_DEF();
 	LONG2FP(tms, TMR_TEMP1, src1);
@@ -3555,35 +3555,35 @@ static void subf3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void subi3_regreg(tms32031_state *tms, UINT32 op)
+static void subi3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
-static void subi3_indreg(tms32031_state *tms, UINT32 op)
+static void subi3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
-static void subi3_regind(tms32031_state *tms, UINT32 op)
+static void subi3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	SUBI(dreg, src1, src2);
 }
 
-static void subi3_indind(tms32031_state *tms, UINT32 op)
+static void subi3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	SUBI(dreg, src1, src2);
@@ -3591,67 +3591,67 @@ static void subi3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void tstb3_regreg(tms32031_state *tms, UINT32 op)
+static void tstb3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	TSTB(src1, src2);
 }
 
-static void tstb3_indreg(tms32031_state *tms, UINT32 op)
+static void tstb3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	TSTB(src1, src2);
 }
 
-static void tstb3_regind(tms32031_state *tms, UINT32 op)
+static void tstb3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	TSTB(src1, src2);
 }
 
-static void tstb3_indind(tms32031_state *tms, UINT32 op)
+static void tstb3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	UPDATE_DEF();
 	TSTB(src1, src2);
 }
 
 /*-----------------------------------------------------*/
 
-static void xor3_regreg(tms32031_state *tms, UINT32 op)
+static void xor3_regreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
-static void xor3_indreg(tms32031_state *tms, UINT32 op)
+static void xor3_indreg(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
-	UINT32 src2 = IREG(tms, op & 31);
+	uint32_t src1 = RMEM(tms, INDIRECT_1(tms, op, op >> 8));
+	uint32_t src2 = IREG(tms, op & 31);
 	int dreg = (op >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
-static void xor3_regind(tms32031_state *tms, UINT32 op)
+static void xor3_regind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
-	UINT32 src1 = IREG(tms, (op >> 8) & 31);
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = IREG(tms, (op >> 8) & 31);
 	int dreg = (op >> 16) & 31;
 	XOR(dreg, src1, src2);
 }
 
-static void xor3_indind(tms32031_state *tms, UINT32 op)
+static void xor3_indind(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src2 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src1 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src2 = RMEM(tms, INDIRECT_1(tms, op, op));
 	int dreg = (op >> 16) & 31;
 	UPDATE_DEF();
 	XOR(dreg, src1, src2);
@@ -3659,26 +3659,26 @@ static void xor3_indind(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfu_reg(tms32031_state *tms, UINT32 op)
+static void ldfu_reg(tms32031_state *tms, uint32_t op)
 {
 	tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfu_dir(tms32031_state *tms, UINT32 op)
+static void ldfu_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, DIRECT(tms, op));
+	uint32_t res = RMEM(tms, DIRECT(tms, op));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 }
 
-static void ldfu_ind(tms32031_state *tms, UINT32 op)
+static void ldfu_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	int dreg = (op >> 16) & 7;
 	LONG2FP(tms, dreg, res);
 }
 
-static void ldfu_imm(tms32031_state *tms, UINT32 op)
+static void ldfu_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 7;
 	SHORT2FP(tms, dreg, op);
@@ -3686,27 +3686,27 @@ static void ldfu_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldflo_reg(tms32031_state *tms, UINT32 op)
+static void ldflo_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldflo_dir(tms32031_state *tms, UINT32 op)
+static void ldflo_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldflo_ind(tms32031_state *tms, UINT32 op)
+static void ldflo_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3714,7 +3714,7 @@ static void ldflo_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldflo_imm(tms32031_state *tms, UINT32 op)
+static void ldflo_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 	{
@@ -3725,27 +3725,27 @@ static void ldflo_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfls_reg(tms32031_state *tms, UINT32 op)
+static void ldfls_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfls_dir(tms32031_state *tms, UINT32 op)
+static void ldfls_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfls_ind(tms32031_state *tms, UINT32 op)
+static void ldfls_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3753,7 +3753,7 @@ static void ldfls_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfls_imm(tms32031_state *tms, UINT32 op)
+static void ldfls_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 	{
@@ -3764,27 +3764,27 @@ static void ldfls_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfhi_reg(tms32031_state *tms, UINT32 op)
+static void ldfhi_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfhi_dir(tms32031_state *tms, UINT32 op)
+static void ldfhi_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfhi_ind(tms32031_state *tms, UINT32 op)
+static void ldfhi_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3792,7 +3792,7 @@ static void ldfhi_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfhi_imm(tms32031_state *tms, UINT32 op)
+static void ldfhi_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 	{
@@ -3803,27 +3803,27 @@ static void ldfhi_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfhs_reg(tms32031_state *tms, UINT32 op)
+static void ldfhs_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfhs_dir(tms32031_state *tms, UINT32 op)
+static void ldfhs_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfhs_ind(tms32031_state *tms, UINT32 op)
+static void ldfhs_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3831,7 +3831,7 @@ static void ldfhs_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfhs_imm(tms32031_state *tms, UINT32 op)
+static void ldfhs_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 	{
@@ -3842,27 +3842,27 @@ static void ldfhs_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfeq_reg(tms32031_state *tms, UINT32 op)
+static void ldfeq_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfeq_dir(tms32031_state *tms, UINT32 op)
+static void ldfeq_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfeq_ind(tms32031_state *tms, UINT32 op)
+static void ldfeq_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3870,7 +3870,7 @@ static void ldfeq_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfeq_imm(tms32031_state *tms, UINT32 op)
+static void ldfeq_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 	{
@@ -3881,27 +3881,27 @@ static void ldfeq_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfne_reg(tms32031_state *tms, UINT32 op)
+static void ldfne_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfne_dir(tms32031_state *tms, UINT32 op)
+static void ldfne_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfne_ind(tms32031_state *tms, UINT32 op)
+static void ldfne_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3909,7 +3909,7 @@ static void ldfne_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfne_imm(tms32031_state *tms, UINT32 op)
+static void ldfne_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 	{
@@ -3920,27 +3920,27 @@ static void ldfne_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldflt_reg(tms32031_state *tms, UINT32 op)
+static void ldflt_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldflt_dir(tms32031_state *tms, UINT32 op)
+static void ldflt_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldflt_ind(tms32031_state *tms, UINT32 op)
+static void ldflt_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3948,7 +3948,7 @@ static void ldflt_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldflt_imm(tms32031_state *tms, UINT32 op)
+static void ldflt_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 	{
@@ -3959,27 +3959,27 @@ static void ldflt_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfle_reg(tms32031_state *tms, UINT32 op)
+static void ldfle_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfle_dir(tms32031_state *tms, UINT32 op)
+static void ldfle_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfle_ind(tms32031_state *tms, UINT32 op)
+static void ldfle_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -3987,7 +3987,7 @@ static void ldfle_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfle_imm(tms32031_state *tms, UINT32 op)
+static void ldfle_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 	{
@@ -3998,27 +3998,27 @@ static void ldfle_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfgt_reg(tms32031_state *tms, UINT32 op)
+static void ldfgt_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfgt_dir(tms32031_state *tms, UINT32 op)
+static void ldfgt_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfgt_ind(tms32031_state *tms, UINT32 op)
+static void ldfgt_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4026,7 +4026,7 @@ static void ldfgt_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfgt_imm(tms32031_state *tms, UINT32 op)
+static void ldfgt_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 	{
@@ -4037,27 +4037,27 @@ static void ldfgt_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfge_reg(tms32031_state *tms, UINT32 op)
+static void ldfge_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfge_dir(tms32031_state *tms, UINT32 op)
+static void ldfge_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfge_ind(tms32031_state *tms, UINT32 op)
+static void ldfge_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4065,7 +4065,7 @@ static void ldfge_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfge_imm(tms32031_state *tms, UINT32 op)
+static void ldfge_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 	{
@@ -4076,27 +4076,27 @@ static void ldfge_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfnv_reg(tms32031_state *tms, UINT32 op)
+static void ldfnv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfnv_dir(tms32031_state *tms, UINT32 op)
+static void ldfnv_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfnv_ind(tms32031_state *tms, UINT32 op)
+static void ldfnv_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4104,7 +4104,7 @@ static void ldfnv_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfnv_imm(tms32031_state *tms, UINT32 op)
+static void ldfnv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 	{
@@ -4115,27 +4115,27 @@ static void ldfnv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfv_reg(tms32031_state *tms, UINT32 op)
+static void ldfv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfv_dir(tms32031_state *tms, UINT32 op)
+static void ldfv_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfv_ind(tms32031_state *tms, UINT32 op)
+static void ldfv_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4143,7 +4143,7 @@ static void ldfv_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfv_imm(tms32031_state *tms, UINT32 op)
+static void ldfv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 	{
@@ -4154,27 +4154,27 @@ static void ldfv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfnuf_reg(tms32031_state *tms, UINT32 op)
+static void ldfnuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfnuf_dir(tms32031_state *tms, UINT32 op)
+static void ldfnuf_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfnuf_ind(tms32031_state *tms, UINT32 op)
+static void ldfnuf_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4182,7 +4182,7 @@ static void ldfnuf_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfnuf_imm(tms32031_state *tms, UINT32 op)
+static void ldfnuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 	{
@@ -4193,27 +4193,27 @@ static void ldfnuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfuf_reg(tms32031_state *tms, UINT32 op)
+static void ldfuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfuf_dir(tms32031_state *tms, UINT32 op)
+static void ldfuf_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfuf_ind(tms32031_state *tms, UINT32 op)
+static void ldfuf_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4221,7 +4221,7 @@ static void ldfuf_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfuf_imm(tms32031_state *tms, UINT32 op)
+static void ldfuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 	{
@@ -4232,27 +4232,27 @@ static void ldfuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfnlv_reg(tms32031_state *tms, UINT32 op)
+static void ldfnlv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfnlv_dir(tms32031_state *tms, UINT32 op)
+static void ldfnlv_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfnlv_ind(tms32031_state *tms, UINT32 op)
+static void ldfnlv_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4260,7 +4260,7 @@ static void ldfnlv_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfnlv_imm(tms32031_state *tms, UINT32 op)
+static void ldfnlv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 	{
@@ -4271,27 +4271,27 @@ static void ldfnlv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldflv_reg(tms32031_state *tms, UINT32 op)
+static void ldflv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldflv_dir(tms32031_state *tms, UINT32 op)
+static void ldflv_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldflv_ind(tms32031_state *tms, UINT32 op)
+static void ldflv_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4299,7 +4299,7 @@ static void ldflv_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldflv_imm(tms32031_state *tms, UINT32 op)
+static void ldflv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 	{
@@ -4310,27 +4310,27 @@ static void ldflv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfnluf_reg(tms32031_state *tms, UINT32 op)
+static void ldfnluf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfnluf_dir(tms32031_state *tms, UINT32 op)
+static void ldfnluf_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfnluf_ind(tms32031_state *tms, UINT32 op)
+static void ldfnluf_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4338,7 +4338,7 @@ static void ldfnluf_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfnluf_imm(tms32031_state *tms, UINT32 op)
+static void ldfnluf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 	{
@@ -4349,27 +4349,27 @@ static void ldfnluf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfluf_reg(tms32031_state *tms, UINT32 op)
+static void ldfluf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfluf_dir(tms32031_state *tms, UINT32 op)
+static void ldfluf_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfluf_ind(tms32031_state *tms, UINT32 op)
+static void ldfluf_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4377,7 +4377,7 @@ static void ldfluf_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfluf_imm(tms32031_state *tms, UINT32 op)
+static void ldfluf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 	{
@@ -4388,27 +4388,27 @@ static void ldfluf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfzuf_reg(tms32031_state *tms, UINT32 op)
+static void ldfzuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 		tms->r[(op >> 16) & 7] = tms->r[op & 7];
 }
 
-static void ldfzuf_dir(tms32031_state *tms, UINT32 op)
+static void ldfzuf_dir(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 	{
-		UINT32 res = RMEM(tms, DIRECT(tms, op));
+		uint32_t res = RMEM(tms, DIRECT(tms, op));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
 }
 
-static void ldfzuf_ind(tms32031_state *tms, UINT32 op)
+static void ldfzuf_ind(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 	{
-		UINT32 res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+		uint32_t res = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 		int dreg = (op >> 16) & 7;
 		LONG2FP(tms, dreg, res);
 	}
@@ -4416,7 +4416,7 @@ static void ldfzuf_ind(tms32031_state *tms, UINT32 op)
 		INDIRECT_D(tms, op, op >> 8);
 }
 
-static void ldfzuf_imm(tms32031_state *tms, UINT32 op)
+static void ldfzuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 	{
@@ -4427,7 +4427,7 @@ static void ldfzuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldiu_reg(tms32031_state *tms, UINT32 op)
+static void ldiu_reg(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	IREG(tms, dreg) = IREG(tms, op & 31);
@@ -4435,7 +4435,7 @@ static void ldiu_reg(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void ldiu_dir(tms32031_state *tms, UINT32 op)
+static void ldiu_dir(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	IREG(tms, dreg) = RMEM(tms, DIRECT(tms, op));
@@ -4443,7 +4443,7 @@ static void ldiu_dir(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void ldiu_ind(tms32031_state *tms, UINT32 op)
+static void ldiu_ind(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
 	IREG(tms, dreg) = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
@@ -4451,17 +4451,17 @@ static void ldiu_ind(tms32031_state *tms, UINT32 op)
 		update_special(tms, dreg);
 }
 
-static void ldiu_imm(tms32031_state *tms, UINT32 op)
+static void ldiu_imm(tms32031_state *tms, uint32_t op)
 {
 	int dreg = (op >> 16) & 31;
-	IREG(tms, dreg) = (INT16)op;
+	IREG(tms, dreg) = (int16_t)op;
 	if (dreg >= TMR_BK)
 		update_special(tms, dreg);
 }
 
 /*-----------------------------------------------------*/
 
-static void ldilo_reg(tms32031_state *tms, UINT32 op)
+static void ldilo_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 	{
@@ -4472,9 +4472,9 @@ static void ldilo_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilo_dir(tms32031_state *tms, UINT32 op)
+static void ldilo_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LO(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4484,9 +4484,9 @@ static void ldilo_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilo_ind(tms32031_state *tms, UINT32 op)
+static void ldilo_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LO(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4496,12 +4496,12 @@ static void ldilo_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilo_imm(tms32031_state *tms, UINT32 op)
+static void ldilo_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LO(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4509,7 +4509,7 @@ static void ldilo_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldils_reg(tms32031_state *tms, UINT32 op)
+static void ldils_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 	{
@@ -4520,9 +4520,9 @@ static void ldils_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldils_dir(tms32031_state *tms, UINT32 op)
+static void ldils_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LS(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4532,9 +4532,9 @@ static void ldils_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldils_ind(tms32031_state *tms, UINT32 op)
+static void ldils_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LS(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4544,12 +4544,12 @@ static void ldils_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldils_imm(tms32031_state *tms, UINT32 op)
+static void ldils_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LS(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4557,7 +4557,7 @@ static void ldils_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldihi_reg(tms32031_state *tms, UINT32 op)
+static void ldihi_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 	{
@@ -4568,9 +4568,9 @@ static void ldihi_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihi_dir(tms32031_state *tms, UINT32 op)
+static void ldihi_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_HI(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4580,9 +4580,9 @@ static void ldihi_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihi_ind(tms32031_state *tms, UINT32 op)
+static void ldihi_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_HI(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4592,12 +4592,12 @@ static void ldihi_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihi_imm(tms32031_state *tms, UINT32 op)
+static void ldihi_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HI(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4605,7 +4605,7 @@ static void ldihi_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldihs_reg(tms32031_state *tms, UINT32 op)
+static void ldihs_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 	{
@@ -4616,9 +4616,9 @@ static void ldihs_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihs_dir(tms32031_state *tms, UINT32 op)
+static void ldihs_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_HS(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4628,9 +4628,9 @@ static void ldihs_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihs_ind(tms32031_state *tms, UINT32 op)
+static void ldihs_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_HS(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4640,12 +4640,12 @@ static void ldihs_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldihs_imm(tms32031_state *tms, UINT32 op)
+static void ldihs_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_HS(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4653,7 +4653,7 @@ static void ldihs_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldieq_reg(tms32031_state *tms, UINT32 op)
+static void ldieq_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 	{
@@ -4664,9 +4664,9 @@ static void ldieq_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldieq_dir(tms32031_state *tms, UINT32 op)
+static void ldieq_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_EQ(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4676,9 +4676,9 @@ static void ldieq_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldieq_ind(tms32031_state *tms, UINT32 op)
+static void ldieq_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_EQ(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4688,12 +4688,12 @@ static void ldieq_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldieq_imm(tms32031_state *tms, UINT32 op)
+static void ldieq_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_EQ(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4701,7 +4701,7 @@ static void ldieq_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldine_reg(tms32031_state *tms, UINT32 op)
+static void ldine_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 	{
@@ -4712,9 +4712,9 @@ static void ldine_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldine_dir(tms32031_state *tms, UINT32 op)
+static void ldine_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_NE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4724,9 +4724,9 @@ static void ldine_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldine_ind(tms32031_state *tms, UINT32 op)
+static void ldine_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_NE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4736,12 +4736,12 @@ static void ldine_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldine_imm(tms32031_state *tms, UINT32 op)
+static void ldine_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NE(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4749,7 +4749,7 @@ static void ldine_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldilt_reg(tms32031_state *tms, UINT32 op)
+static void ldilt_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 	{
@@ -4760,9 +4760,9 @@ static void ldilt_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilt_dir(tms32031_state *tms, UINT32 op)
+static void ldilt_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LT(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4772,9 +4772,9 @@ static void ldilt_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilt_ind(tms32031_state *tms, UINT32 op)
+static void ldilt_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LT(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4784,12 +4784,12 @@ static void ldilt_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilt_imm(tms32031_state *tms, UINT32 op)
+static void ldilt_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LT(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4797,7 +4797,7 @@ static void ldilt_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldile_reg(tms32031_state *tms, UINT32 op)
+static void ldile_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 	{
@@ -4808,9 +4808,9 @@ static void ldile_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldile_dir(tms32031_state *tms, UINT32 op)
+static void ldile_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4820,9 +4820,9 @@ static void ldile_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldile_ind(tms32031_state *tms, UINT32 op)
+static void ldile_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4832,12 +4832,12 @@ static void ldile_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldile_imm(tms32031_state *tms, UINT32 op)
+static void ldile_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LE(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4845,7 +4845,7 @@ static void ldile_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldigt_reg(tms32031_state *tms, UINT32 op)
+static void ldigt_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 	{
@@ -4856,9 +4856,9 @@ static void ldigt_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldigt_dir(tms32031_state *tms, UINT32 op)
+static void ldigt_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_GT(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4868,9 +4868,9 @@ static void ldigt_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldigt_ind(tms32031_state *tms, UINT32 op)
+static void ldigt_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_GT(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4880,12 +4880,12 @@ static void ldigt_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldigt_imm(tms32031_state *tms, UINT32 op)
+static void ldigt_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GT(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4893,7 +4893,7 @@ static void ldigt_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldige_reg(tms32031_state *tms, UINT32 op)
+static void ldige_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 	{
@@ -4904,9 +4904,9 @@ static void ldige_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldige_dir(tms32031_state *tms, UINT32 op)
+static void ldige_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_GE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4916,9 +4916,9 @@ static void ldige_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldige_ind(tms32031_state *tms, UINT32 op)
+static void ldige_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_GE(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4928,12 +4928,12 @@ static void ldige_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldige_imm(tms32031_state *tms, UINT32 op)
+static void ldige_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_GE(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4941,7 +4941,7 @@ static void ldige_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldinv_reg(tms32031_state *tms, UINT32 op)
+static void ldinv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 	{
@@ -4952,9 +4952,9 @@ static void ldinv_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinv_dir(tms32031_state *tms, UINT32 op)
+static void ldinv_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_NV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4964,9 +4964,9 @@ static void ldinv_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinv_ind(tms32031_state *tms, UINT32 op)
+static void ldinv_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_NV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -4976,12 +4976,12 @@ static void ldinv_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinv_imm(tms32031_state *tms, UINT32 op)
+static void ldinv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NV(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -4989,7 +4989,7 @@ static void ldinv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldiuf_reg(tms32031_state *tms, UINT32 op)
+static void ldiuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 	{
@@ -5000,9 +5000,9 @@ static void ldiuf_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiuf_dir(tms32031_state *tms, UINT32 op)
+static void ldiuf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_UF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5012,9 +5012,9 @@ static void ldiuf_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiuf_ind(tms32031_state *tms, UINT32 op)
+static void ldiuf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_UF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5024,12 +5024,12 @@ static void ldiuf_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiuf_imm(tms32031_state *tms, UINT32 op)
+static void ldiuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_UF(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5037,7 +5037,7 @@ static void ldiuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldinuf_reg(tms32031_state *tms, UINT32 op)
+static void ldinuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 	{
@@ -5048,9 +5048,9 @@ static void ldinuf_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinuf_dir(tms32031_state *tms, UINT32 op)
+static void ldinuf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_NUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5060,9 +5060,9 @@ static void ldinuf_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinuf_ind(tms32031_state *tms, UINT32 op)
+static void ldinuf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_NUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5072,12 +5072,12 @@ static void ldinuf_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinuf_imm(tms32031_state *tms, UINT32 op)
+static void ldinuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5085,7 +5085,7 @@ static void ldinuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldiv_reg(tms32031_state *tms, UINT32 op)
+static void ldiv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 	{
@@ -5096,9 +5096,9 @@ static void ldiv_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiv_dir(tms32031_state *tms, UINT32 op)
+static void ldiv_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_V(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5108,9 +5108,9 @@ static void ldiv_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiv_ind(tms32031_state *tms, UINT32 op)
+static void ldiv_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_V(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5120,12 +5120,12 @@ static void ldiv_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiv_imm(tms32031_state *tms, UINT32 op)
+static void ldiv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_V(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5133,7 +5133,7 @@ static void ldiv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldinlv_reg(tms32031_state *tms, UINT32 op)
+static void ldinlv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 	{
@@ -5144,9 +5144,9 @@ static void ldinlv_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinlv_dir(tms32031_state *tms, UINT32 op)
+static void ldinlv_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_NLV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5156,9 +5156,9 @@ static void ldinlv_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinlv_ind(tms32031_state *tms, UINT32 op)
+static void ldinlv_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_NLV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5168,12 +5168,12 @@ static void ldinlv_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinlv_imm(tms32031_state *tms, UINT32 op)
+static void ldinlv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLV(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5181,7 +5181,7 @@ static void ldinlv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldilv_reg(tms32031_state *tms, UINT32 op)
+static void ldilv_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 	{
@@ -5192,9 +5192,9 @@ static void ldilv_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilv_dir(tms32031_state *tms, UINT32 op)
+static void ldilv_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5204,9 +5204,9 @@ static void ldilv_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilv_ind(tms32031_state *tms, UINT32 op)
+static void ldilv_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LV(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5216,12 +5216,12 @@ static void ldilv_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldilv_imm(tms32031_state *tms, UINT32 op)
+static void ldilv_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LV(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5229,7 +5229,7 @@ static void ldilv_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldinluf_reg(tms32031_state *tms, UINT32 op)
+static void ldinluf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 	{
@@ -5240,9 +5240,9 @@ static void ldinluf_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinluf_dir(tms32031_state *tms, UINT32 op)
+static void ldinluf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_NLUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5252,9 +5252,9 @@ static void ldinluf_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinluf_ind(tms32031_state *tms, UINT32 op)
+static void ldinluf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_NLUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5264,12 +5264,12 @@ static void ldinluf_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldinluf_imm(tms32031_state *tms, UINT32 op)
+static void ldinluf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_NLUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5277,7 +5277,7 @@ static void ldinluf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldiluf_reg(tms32031_state *tms, UINT32 op)
+static void ldiluf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 	{
@@ -5288,9 +5288,9 @@ static void ldiluf_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiluf_dir(tms32031_state *tms, UINT32 op)
+static void ldiluf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_LUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5300,9 +5300,9 @@ static void ldiluf_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiluf_ind(tms32031_state *tms, UINT32 op)
+static void ldiluf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_LUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5312,12 +5312,12 @@ static void ldiluf_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldiluf_imm(tms32031_state *tms, UINT32 op)
+static void ldiluf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_LUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5325,7 +5325,7 @@ static void ldiluf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldizuf_reg(tms32031_state *tms, UINT32 op)
+static void ldizuf_reg(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 	{
@@ -5336,9 +5336,9 @@ static void ldizuf_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldizuf_dir(tms32031_state *tms, UINT32 op)
+static void ldizuf_dir(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, DIRECT(tms, op));
+	uint32_t val = RMEM(tms, DIRECT(tms, op));
 	if (CONDITION_ZUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5348,9 +5348,9 @@ static void ldizuf_dir(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldizuf_ind(tms32031_state *tms, UINT32 op)
+static void ldizuf_ind(tms32031_state *tms, uint32_t op)
 {
-	UINT32 val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
+	uint32_t val = RMEM(tms, INDIRECT_D(tms, op, op >> 8));
 	if (CONDITION_ZUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
@@ -5360,12 +5360,12 @@ static void ldizuf_ind(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void ldizuf_imm(tms32031_state *tms, UINT32 op)
+static void ldizuf_imm(tms32031_state *tms, uint32_t op)
 {
 	if (CONDITION_ZUF(tms))
 	{
 		int dreg = (op >> 16) & 31;
-		IREG(tms, dreg) = (INT16)op;
+		IREG(tms, dreg) = (int16_t)op;
 		if (dreg >= TMR_BK)
 			update_special(tms, dreg);
 	}
@@ -5373,7 +5373,7 @@ static void ldizuf_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-INLINE void execute_delayed(tms32031_state *tms, UINT32 newpc)
+INLINE void execute_delayed(tms32031_state *tms, uint32_t newpc)
 {
 	tms->delayed = TRUE;
 
@@ -5405,20 +5405,20 @@ INLINE void execute_delayed(tms32031_state *tms, UINT32 newpc)
 
 /*-----------------------------------------------------*/
 
-static void br_imm(tms32031_state *tms, UINT32 op)
+static void br_imm(tms32031_state *tms, uint32_t op)
 {
 	tms->pc = op & 0xffffff;
 	tms->icount -= 3*2;
 }
 
-static void brd_imm(tms32031_state *tms, UINT32 op)
+static void brd_imm(tms32031_state *tms, uint32_t op)
 {
 	execute_delayed(tms, op & 0xffffff);
 }
 
 /*-----------------------------------------------------*/
 
-static void call_imm(tms32031_state *tms, UINT32 op)
+static void call_imm(tms32031_state *tms, uint32_t op)
 {
 	WMEM(tms, ++IREG(tms, TMR_SP), tms->pc);
 	tms->pc = op & 0xffffff;
@@ -5427,7 +5427,7 @@ static void call_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void rptb_imm(tms32031_state *tms, UINT32 op)
+static void rptb_imm(tms32031_state *tms, uint32_t op)
 {
 	IREG(tms, TMR_RS) = tms->pc;
 	IREG(tms, TMR_RE) = op & 0xffffff;
@@ -5437,11 +5437,11 @@ static void rptb_imm(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void swi(tms32031_state *tms, UINT32 op) { unimplemented(tms, op); }
+static void swi(tms32031_state *tms, uint32_t op) { unimplemented(tms, op); }
 
 /*-----------------------------------------------------*/
 
-static void brc_reg(tms32031_state *tms, UINT32 op)
+static void brc_reg(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
@@ -5450,30 +5450,30 @@ static void brc_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void brcd_reg(tms32031_state *tms, UINT32 op)
+static void brcd_reg(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 		execute_delayed(tms, IREG(tms, op & 31));
 }
 
-static void brc_imm(tms32031_state *tms, UINT32 op)
+static void brc_imm(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
-		tms->pc += (INT16)op;
+		tms->pc += (int16_t)op;
 		tms->icount -= 3*2;
 	}
 }
 
-static void brcd_imm(tms32031_state *tms, UINT32 op)
+static void brcd_imm(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
-		execute_delayed(tms, tms->pc + 2 + (INT16)op);
+		execute_delayed(tms, tms->pc + 2 + (int16_t)op);
 }
 
 /*-----------------------------------------------------*/
 
-static void dbc_reg(tms32031_state *tms, UINT32 op)
+static void dbc_reg(tms32031_state *tms, uint32_t op)
 {
 	int reg = TMR_AR0 + ((op >> 22) & 7);
 	int res = (IREG(tms, reg) - 1) & 0xffffff;
@@ -5485,7 +5485,7 @@ static void dbc_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void dbcd_reg(tms32031_state *tms, UINT32 op)
+static void dbcd_reg(tms32031_state *tms, uint32_t op)
 {
 	int reg = TMR_AR0 + ((op >> 22) & 7);
 	int res = (IREG(tms, reg) - 1) & 0xffffff;
@@ -5494,30 +5494,30 @@ static void dbcd_reg(tms32031_state *tms, UINT32 op)
 		execute_delayed(tms, IREG(tms, op & 31));
 }
 
-static void dbc_imm(tms32031_state *tms, UINT32 op)
+static void dbc_imm(tms32031_state *tms, uint32_t op)
 {
 	int reg = TMR_AR0 + ((op >> 22) & 7);
 	int res = (IREG(tms, reg) - 1) & 0xffffff;
 	IREG(tms, reg) = res | (IREG(tms, reg) & 0xff000000);
 	if (condition(tms, op >> 16) && !(res & 0x800000))
 	{
-		tms->pc += (INT16)op;
+		tms->pc += (int16_t)op;
 		tms->icount -= 3*2;
 	}
 }
 
-static void dbcd_imm(tms32031_state *tms, UINT32 op)
+static void dbcd_imm(tms32031_state *tms, uint32_t op)
 {
 	int reg = TMR_AR0 + ((op >> 22) & 7);
 	int res = (IREG(tms, reg) - 1) & 0xffffff;
 	IREG(tms, reg) = res | (IREG(tms, reg) & 0xff000000);
 	if (condition(tms, op >> 16) && !(res & 0x800000))
-		execute_delayed(tms, tms->pc + 2 + (INT16)op);
+		execute_delayed(tms, tms->pc + 2 + (int16_t)op);
 }
 
 /*-----------------------------------------------------*/
 
-static void callc_reg(tms32031_state *tms, UINT32 op)
+static void callc_reg(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
@@ -5527,12 +5527,12 @@ static void callc_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void callc_imm(tms32031_state *tms, UINT32 op)
+static void callc_imm(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
 		WMEM(tms, ++IREG(tms, TMR_SP), tms->pc);
-		tms->pc += (INT16)op;
+		tms->pc += (int16_t)op;
 		tms->icount -= 3*2;
 	}
 }
@@ -5552,7 +5552,7 @@ static void trap(tms32031_state *tms, int trapnum)
 	tms->icount -= 4*2;
 }
 
-static void trapc(tms32031_state *tms, UINT32 op)
+static void trapc(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 		trap(tms, op & 0x3f);
@@ -5560,7 +5560,7 @@ static void trapc(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void retic_reg(tms32031_state *tms, UINT32 op)
+static void retic_reg(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
@@ -5571,7 +5571,7 @@ static void retic_reg(tms32031_state *tms, UINT32 op)
 	}
 }
 
-static void retsc_reg(tms32031_state *tms, UINT32 op)
+static void retsc_reg(tms32031_state *tms, uint32_t op)
 {
 	if (condition(tms, op >> 16))
 	{
@@ -5582,12 +5582,12 @@ static void retsc_reg(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpyaddf_0(tms32031_state *tms, UINT32 op)
+static void mpyaddf_0(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src4, src1 + src2 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[TMR_TEMP2]);
@@ -5596,12 +5596,12 @@ static void mpyaddf_0(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpyaddf_1(tms32031_state *tms, UINT32 op)
+static void mpyaddf_1(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src4 + src2 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[(op >> 19) & 7]);
@@ -5610,12 +5610,12 @@ static void mpyaddf_1(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpyaddf_2(tms32031_state *tms, UINT32 op)
+static void mpyaddf_2(tms32031_state *tms, uint32_t op)
 {
 	/* src1 * src2, src3 + src4 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[(op >> 19) & 7], &tms->r[(op >> 16) & 7]);
@@ -5624,12 +5624,12 @@ static void mpyaddf_2(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpyaddf_3(tms32031_state *tms, UINT32 op)
+static void mpyaddf_3(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src2 + src4 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[(op >> 19) & 7]);
@@ -5640,12 +5640,12 @@ static void mpyaddf_3(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpysubf_0(tms32031_state *tms, UINT32 op)
+static void mpysubf_0(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src4, src1 - src2 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[TMR_TEMP2]);
@@ -5654,12 +5654,12 @@ static void mpysubf_0(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpysubf_1(tms32031_state *tms, UINT32 op)
+static void mpysubf_1(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src4 - src2 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[(op >> 19) & 7]);
@@ -5668,12 +5668,12 @@ static void mpysubf_1(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpysubf_2(tms32031_state *tms, UINT32 op)
+static void mpysubf_2(tms32031_state *tms, uint32_t op)
 {
 	/* src1 * src2, src3 - src4 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[(op >> 19) & 7], &tms->r[(op >> 16) & 7]);
@@ -5682,12 +5682,12 @@ static void mpysubf_2(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpysubf_3(tms32031_state *tms, UINT32 op)
+static void mpysubf_3(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src2 - src4 */
 	DECLARE_DEF;
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
 	LONG2FP(tms, TMR_TEMP1, src3);
 	LONG2FP(tms, TMR_TEMP2, src4);
 	mpyf(tms, &tms->r[TMR_TEMP3], &tms->r[TMR_TEMP1], &tms->r[(op >> 19) & 7]);
@@ -5698,96 +5698,96 @@ static void mpysubf_3(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpyaddi_0(tms32031_state *tms, UINT32 op)
+static void mpyaddi_0(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src4, src1 + src2 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src4 << 8) >> 8);
-	UINT32 ares = src1 + src2;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src4 << 8) >> 8);
+	uint32_t ares = src1 + src2;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src1,src2,ares))
-			ares = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpyaddi_1(tms32031_state *tms, UINT32 op)
+static void mpyaddi_1(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src4 + src2 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src4 + src2;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src4 + src2;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src4,src2,ares))
-			ares = ((INT32)src4 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src4 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpyaddi_2(tms32031_state *tms, UINT32 op)
+static void mpyaddi_2(tms32031_state *tms, uint32_t op)
 {
 	/* src1 * src2, src3 + src4 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);
-	UINT32 ares = src3 + src4;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);
+	uint32_t ares = src3 + src4;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src3,src4,ares))
-			ares = ((INT32)src3 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src3 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpyaddi_3(tms32031_state *tms, UINT32 op)
+static void mpyaddi_3(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src2 + src4 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src2 + src4;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src2 + src4;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_ADD(src2,src4,ares))
-			ares = ((INT32)src2 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src2 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
@@ -5796,96 +5796,96 @@ static void mpyaddi_3(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void mpysubi_0(tms32031_state *tms, UINT32 op)
+static void mpysubi_0(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src4, src1 - src2 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src4 << 8) >> 8);
-	UINT32 ares = src1 - src2;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src4 << 8) >> 8);
+	uint32_t ares = src1 - src2;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src1,src2,ares))
-			ares = ((INT32)src1 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src1 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpysubi_1(tms32031_state *tms, UINT32 op)
+static void mpysubi_1(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src4 - src2 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src4 - src2;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src4 - src2;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src4,src2,ares))
-			ares = ((INT32)src4 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src4 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpysubi_2(tms32031_state *tms, UINT32 op)
+static void mpysubi_2(tms32031_state *tms, uint32_t op)
 {
 	/* src1 * src2, src3 - src4 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src1 << 8) >> 8) * (INT64)((INT32)(src2 << 8) >> 8);
-	UINT32 ares = src3 - src4;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src1 << 8) >> 8) * (int64_t)((int32_t)(src2 << 8) >> 8);
+	uint32_t ares = src3 - src4;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src3,src4,ares))
-			ares = ((INT32)src3 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src3 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
 	UPDATE_DEF();
 }
 
-static void mpysubi_3(tms32031_state *tms, UINT32 op)
+static void mpysubi_3(tms32031_state *tms, uint32_t op)
 {
 	/* src3 * src1, src2 - src4 */
 	DECLARE_DEF;
-	UINT32 src1 = IREG(tms, (op >> 19) & 7);
-	UINT32 src2 = IREG(tms, (op >> 16) & 7);
-	UINT32 src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
-	UINT32 src4 = RMEM(tms, INDIRECT_1(tms, op, op));
-	INT64 mres = (INT64)((INT32)(src3 << 8) >> 8) * (INT64)((INT32)(src1 << 8) >> 8);
-	UINT32 ares = src2 - src4;
+	uint32_t src1 = IREG(tms, (op >> 19) & 7);
+	uint32_t src2 = IREG(tms, (op >> 16) & 7);
+	uint32_t src3 = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
+	uint32_t src4 = RMEM(tms, INDIRECT_1(tms, op, op));
+	int64_t mres = (int64_t)((int32_t)(src3 << 8) >> 8) * (int64_t)((int32_t)(src1 << 8) >> 8);
+	uint32_t ares = src2 - src4;
 
 	CLR_NZVUF(tms);
 	if (OVM(tms))
 	{
-		if (mres < -(INT64)0x80000000 || mres > (INT64)0x7fffffff)
+		if (mres < -(int64_t)0x80000000 || mres > (int64_t)0x7fffffff)
 			mres = (mres < 0) ? 0x80000000 : 0x7fffffff;
 		if (OVERFLOW_SUB(src2,src4,ares))
-			ares = ((INT32)src2 < 0) ? 0x80000000 : 0x7fffffff;
+			ares = ((int32_t)src2 < 0) ? 0x80000000 : 0x7fffffff;
 	}
 	IREG(tms, (op >> 23) & 1) = mres;
 	IREG(tms, ((op >> 22) & 1) | 2) = ares;
@@ -5894,7 +5894,7 @@ static void mpysubi_3(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void stfstf(tms32031_state *tms, UINT32 op)
+static void stfstf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
 	WMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8), FP2LONG(tms, (op >> 16) & 7));
@@ -5902,7 +5902,7 @@ static void stfstf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void stisti(tms32031_state *tms, UINT32 op)
+static void stisti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
 	WMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8), IREG(tms, (op >> 16) & 7));
@@ -5912,10 +5912,10 @@ static void stisti(tms32031_state *tms, UINT32 op)
 
 /*-----------------------------------------------------*/
 
-static void ldfldf(tms32031_state *tms, UINT32 op)
+static void ldfldf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 res;
+	uint32_t res;
 	int dreg;
 
 	res = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
@@ -5927,7 +5927,7 @@ static void ldfldf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void ldildi(tms32031_state *tms, UINT32 op)
+static void ldildi(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
 	IREG(tms, (op >> 19) & 7) = RMEM(tms, INDIRECT_1_DEF(tms, op, op >> 8));
@@ -5943,11 +5943,11 @@ static void ldildi(tms32031_state *tms, UINT32 op)
 //  sreg1 = ((op >> 19) & 7)
 //  dreg1 = ((op >> 22) & 7)
 
-static void absfstf(tms32031_state *tms, UINT32 op)
+static void absfstf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		LONG2FP(tms, TMR_TEMP1, src2);
@@ -5957,11 +5957,11 @@ static void absfstf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void absisti(tms32031_state *tms, UINT32 op)
+static void absisti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		ABSI(dreg, src2);
@@ -5970,11 +5970,11 @@ static void absisti(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void addf3stf(tms32031_state *tms, UINT32 op)
+static void addf3stf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		LONG2FP(tms, TMR_TEMP1, src2);
 		addf(tms, &tms->r[(op >> 22) & 7], &tms->r[(op >> 19) & 7], &tms->r[TMR_TEMP1]);
@@ -5983,53 +5983,53 @@ static void addf3stf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void addi3sti(tms32031_state *tms, UINT32 op)
+static void addi3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		ADDI(dreg, src1, src2);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void and3sti(tms32031_state *tms, UINT32 op)
+static void and3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		AND(dreg, src1, src2);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void ash3sti(tms32031_state *tms, UINT32 op)
+static void ash3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 count = IREG(tms, (op >> 19) & 7);
+		uint32_t count = IREG(tms, (op >> 19) & 7);
 		ASH(dreg, src2, count);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void fixsti(tms32031_state *tms, UINT32 op)
+static void fixsti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		LONG2FP(tms, dreg, src2);
@@ -6039,11 +6039,11 @@ static void fixsti(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void floatstf(tms32031_state *tms, UINT32 op)
+static void floatstf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		IREG(tms, dreg) = src2;
@@ -6053,11 +6053,11 @@ static void floatstf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void ldfstf(tms32031_state *tms, UINT32 op)
+static void ldfstf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		LONG2FP(tms, dreg, src2);
@@ -6066,35 +6066,35 @@ static void ldfstf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void ldisti(tms32031_state *tms, UINT32 op)
+static void ldisti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	IREG(tms, (op >> 22) & 7) = src2;
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void lsh3sti(tms32031_state *tms, UINT32 op)
+static void lsh3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 count = IREG(tms, (op >> 19) & 7);
+		uint32_t count = IREG(tms, (op >> 19) & 7);
 		LSH(dreg, src2, count);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void mpyf3stf(tms32031_state *tms, UINT32 op)
+static void mpyf3stf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		LONG2FP(tms, TMR_TEMP1, src2);
 		mpyf(tms, &tms->r[(op >> 22) & 7], &tms->r[(op >> 19) & 7], &tms->r[TMR_TEMP1]);
@@ -6103,25 +6103,25 @@ static void mpyf3stf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void mpyi3sti(tms32031_state *tms, UINT32 op)
+static void mpyi3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		MPYI(dreg, src1, src2);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void negfstf(tms32031_state *tms, UINT32 op)
+static void negfstf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		LONG2FP(tms, TMR_TEMP1, src2);
 		negf(tms, &tms->r[(op >> 22) & 7], &tms->r[TMR_TEMP1]);
@@ -6130,11 +6130,11 @@ static void negfstf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void negisti(tms32031_state *tms, UINT32 op)
+static void negisti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		NEGI(dreg, src2);
@@ -6143,11 +6143,11 @@ static void negisti(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void notsti(tms32031_state *tms, UINT32 op)
+static void notsti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
 		NOT(dreg, src2);
@@ -6156,25 +6156,25 @@ static void notsti(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void or3sti(tms32031_state *tms, UINT32 op)
+static void or3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		OR(dreg, src1, src2);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void subf3stf(tms32031_state *tms, UINT32 op)
+static void subf3stf(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = FP2LONG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = FP2LONG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		LONG2FP(tms, TMR_TEMP1, src2);
 		subf(tms, &tms->r[(op >> 22) & 7], &tms->r[TMR_TEMP1], &tms->r[(op >> 19) & 7]);
@@ -6183,28 +6183,28 @@ static void subf3stf(tms32031_state *tms, UINT32 op)
 	UPDATE_DEF();
 }
 
-static void subi3sti(tms32031_state *tms, UINT32 op)
+static void subi3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		SUBI(dreg, src2, src1);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
 	UPDATE_DEF();
 }
 
-static void xor3sti(tms32031_state *tms, UINT32 op)
+static void xor3sti(tms32031_state *tms, uint32_t op)
 {
 	DECLARE_DEF;
-	UINT32 src3 = IREG(tms, (op >> 16) & 7);
-	UINT32 src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
+	uint32_t src3 = IREG(tms, (op >> 16) & 7);
+	uint32_t src2 = RMEM(tms, INDIRECT_1_DEF(tms, op, op));
 	{
 		int dreg = (op >> 22) & 7;
-		UINT32 src1 = IREG(tms, (op >> 19) & 7);
+		uint32_t src1 = IREG(tms, (op >> 19) & 7);
 		XOR(dreg, src1, src2);
 	}
 	WMEM(tms, INDIRECT_1(tms, op, op >> 8), src3);
@@ -6216,7 +6216,7 @@ static void xor3sti(tms32031_state *tms, UINT32 op)
     FUNCTION TABLE
 ***************************************************************************/
 
-void (*const tms32031ops[])(tms32031_state *tms, UINT32 op) =
+void (*const tms32031ops[])(tms32031_state *tms, uint32_t op) =
 {
 	absf_reg,		absf_dir,		absf_ind,		absf_imm,		/* 0x00 */
 	absi_reg,		absi_dir,		absi_ind,		absi_imm,

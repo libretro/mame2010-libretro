@@ -24,7 +24,7 @@ INLINE void illegal( konami_state *cpustate )
 /* $00 NEG direct ?**** */
 INLINE void neg_di( konami_state *cpustate )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	DIRBYTE(cpustate, t);
 	r = -t;
 	CLR_NZVC;
@@ -39,7 +39,7 @@ INLINE void neg_di( konami_state *cpustate )
 /* $03 COM direct -**01 */
 INLINE void com_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	t = ~t;
 	CLR_NZV;
@@ -51,7 +51,7 @@ INLINE void com_di( konami_state *cpustate )
 /* $04 LSR direct -0*-* */
 INLINE void lsr_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -65,7 +65,7 @@ INLINE void lsr_di( konami_state *cpustate )
 /* $06 ROR direct -**-* */
 INLINE void ror_di( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(cpustate, t);
 	r= (CC & CC_C) << 7;
 	CLR_NZC;
@@ -78,7 +78,7 @@ INLINE void ror_di( konami_state *cpustate )
 /* $07 ASR direct ?**-* */
 INLINE void asr_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -90,7 +90,7 @@ INLINE void asr_di( konami_state *cpustate )
 /* $08 ASL direct ?**** */
 INLINE void asl_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = t << 1;
 	CLR_NZVC;
@@ -101,7 +101,7 @@ INLINE void asl_di( konami_state *cpustate )
 /* $09 ROL direct -**** */
 INLINE void rol_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = (CC & CC_C) | (t << 1);
 	CLR_NZVC;
@@ -112,7 +112,7 @@ INLINE void rol_di( konami_state *cpustate )
 /* $0A DEC direct -***- */
 INLINE void dec_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	--t;
 	CLR_NZV;
@@ -125,7 +125,7 @@ INLINE void dec_di( konami_state *cpustate )
 /* $OC INC direct -***- */
 INLINE void inc_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	++t;
 	CLR_NZV;
@@ -136,7 +136,7 @@ INLINE void inc_di( konami_state *cpustate )
 /* $OD TST direct -**0- */
 INLINE void tst_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	CLR_NZV;
 	SET_NZ8(t);
@@ -211,22 +211,22 @@ INLINE void lbsr( konami_state *cpustate )
 /* $19 DAA inherent (A) -**0* */
 INLINE void daa( konami_state *cpustate )
 {
-	UINT8 msn, lsn;
-	UINT16 t, cf = 0;
+	uint8_t msn, lsn;
+	uint16_t t, cf = 0;
 	msn = A & 0xf0; lsn = A & 0x0f;
 	if( lsn>0x09 || CC & CC_H) cf |= 0x06;
 	if( msn>0x80 && lsn>0x09 ) cf |= 0x60;
 	if( msn>0x90 || CC & CC_C) cf |= 0x60;
 	t = cf + A;
 	CLR_NZV; /* keep carry from previous operation */
-	SET_NZ8((UINT8)t); SET_C8(t);
+	SET_NZ8((uint8_t)t); SET_C8(t);
 	A = t;
 }
 #else
 /* $19 DAA inherent (A) -**0* */
 INLINE void daa( konami_state *cpustate )
 {
-	UINT16 t;
+	uint16_t t;
 	t = A;
 	if (CC & CC_H) t+=0x06;
 	if ((t&0x0f)>9) t+=0x06;		/* ASG -- this code is broken! $66+$99=$FF -> DAA should = $65, we get $05! */
@@ -240,7 +240,7 @@ INLINE void daa( konami_state *cpustate )
 /* $1A ORCC immediate ##### */
 INLINE void orcc( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	CC |= t;
 	check_irq_lines(cpustate);
@@ -251,7 +251,7 @@ INLINE void orcc( konami_state *cpustate )
 /* $1C ANDCC immediate ##### */
 INLINE void andcc( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	CC &= t;
 	check_irq_lines(cpustate);
@@ -260,7 +260,7 @@ INLINE void andcc( konami_state *cpustate )
 /* $1D SEX inherent -**0- */
 INLINE void sex( konami_state *cpustate )
 {
-	UINT16 t;
+	uint16_t t;
 	t = SIGNED(B);
 	D = t;
 //  CLR_NZV;    NS 20020905: applying the same fix that was applied to 6809 and 6309
@@ -271,8 +271,8 @@ INLINE void sex( konami_state *cpustate )
 /* $1E EXG inherent ----- */
 INLINE void exg( konami_state *cpustate )
 {
-	UINT16 t1 = 0, t2 = 0;
-	UINT8 tb;
+	uint16_t t1 = 0, t2 = 0;
+	uint8_t tb;
 
 	IMMBYTE(cpustate, tb);
 
@@ -286,8 +286,8 @@ INLINE void exg( konami_state *cpustate )
 /* $1F TFR inherent ----- */
 INLINE void tfr( konami_state *cpustate )
 {
-	UINT8 tb;
-	UINT16 t = 0;
+	uint8_t tb;
+	uint16_t t = 0;
 
 	IMMBYTE(cpustate, tb);
 
@@ -298,7 +298,7 @@ INLINE void tfr( konami_state *cpustate )
 /* $20 BRA relative ----- */
 INLINE void bra( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	PC += SIGNED(t);
 	/* JB 970823 - speed up busy loops */
@@ -309,7 +309,7 @@ INLINE void bra( konami_state *cpustate )
 /* $21 BRN relative ----- */
 INLINE void brn( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 }
 
@@ -519,7 +519,7 @@ INLINE void leau( konami_state *cpustate )
 /* $34 PSHS inherent ----- */
 INLINE void pshs( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	if( t&0x80 ) { PUSHWORD(cpustate, pPC); cpustate->icount -= 2; }
 	if( t&0x40 ) { PUSHWORD(cpustate, pU);  cpustate->icount -= 2; }
@@ -534,7 +534,7 @@ INLINE void pshs( konami_state *cpustate )
 /* 35 PULS inherent ----- */
 INLINE void puls( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	if( t&0x01 ) { PULLBYTE(cpustate, CC); cpustate->icount -= 1; }
 	if( t&0x02 ) { PULLBYTE(cpustate, A);  cpustate->icount -= 1; }
@@ -552,7 +552,7 @@ INLINE void puls( konami_state *cpustate )
 /* $36 PSHU inherent ----- */
 INLINE void pshu( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	if( t&0x80 ) { PSHUWORD(cpustate, pPC); cpustate->icount -= 2; }
 	if( t&0x40 ) { PSHUWORD(cpustate, pS);  cpustate->icount -= 2; }
@@ -567,7 +567,7 @@ INLINE void pshu( konami_state *cpustate )
 /* 37 PULU inherent ----- */
 INLINE void pulu( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	if( t&0x01 ) { PULUBYTE(cpustate, CC); cpustate->icount -= 1; }
 	if( t&0x02 ) { PULUBYTE(cpustate, A);  cpustate->icount -= 1; }
@@ -617,7 +617,7 @@ INLINE void rti( konami_state *cpustate )
 /* $3C CWAI inherent ----1 */
 INLINE void cwai( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	CC &= t;
 	/*
@@ -643,7 +643,7 @@ INLINE void cwai( konami_state *cpustate )
 /* $3D MUL inherent --*-@ */
 INLINE void mul( konami_state *cpustate )
 {
-	UINT16 t;
+	uint16_t t;
 	t = A * B;
 	CLR_ZC; SET_Z16(t); if(t&0x80) SEC;
 	D = t;
@@ -700,7 +700,7 @@ INLINE void swi3( konami_state *cpustate )
 /* $40 NEGA inherent ?**** */
 INLINE void nega( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	r = -A;
 	CLR_NZVC;
 	SET_FLAGS8(0,A,r);
@@ -734,7 +734,7 @@ INLINE void lsra( konami_state *cpustate )
 /* $46 RORA inherent -**-* */
 INLINE void rora( konami_state *cpustate )
 {
-	UINT8 r;
+	uint8_t r;
 	r = (CC & CC_C) << 7;
 	CLR_NZC;
 	CC |= (A & CC_C);
@@ -755,7 +755,7 @@ INLINE void asra( konami_state *cpustate )
 /* $48 ASLA inherent ?**** */
 INLINE void asla( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	r = A << 1;
 	CLR_NZVC;
 	SET_FLAGS8(A,A,r);
@@ -765,7 +765,7 @@ INLINE void asla( konami_state *cpustate )
 /* $49 ROLA inherent -**** */
 INLINE void rola( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = A;
 	r = (CC & CC_C) | (t<<1);
 	CLR_NZVC; SET_FLAGS8(t,t,r);
@@ -809,7 +809,7 @@ INLINE void clra( konami_state *cpustate )
 /* $50 NEGB inherent ?**** */
 INLINE void negb( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	r = -B;
 	CLR_NZVC;
 	SET_FLAGS8(0,B,r);
@@ -843,7 +843,7 @@ INLINE void lsrb( konami_state *cpustate )
 /* $56 RORB inherent -**-* */
 INLINE void rorb( konami_state *cpustate )
 {
-	UINT8 r;
+	uint8_t r;
 	r = (CC & CC_C) << 7;
 	CLR_NZC;
 	CC |= (B & CC_C);
@@ -864,7 +864,7 @@ INLINE void asrb( konami_state *cpustate )
 /* $58 ASLB inherent ?**** */
 INLINE void aslb( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	r = B << 1;
 	CLR_NZVC;
 	SET_FLAGS8(B,B,r);
@@ -874,7 +874,7 @@ INLINE void aslb( konami_state *cpustate )
 /* $59 ROLB inherent -**** */
 INLINE void rolb( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = B;
 	r = CC & CC_C;
 	r |= t << 1;
@@ -920,7 +920,7 @@ INLINE void clrb( konami_state *cpustate )
 /* $60 NEG indexed ?**** */
 INLINE void neg_ix( konami_state *cpustate )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	t = RM(cpustate, EAD);
 	r = -t;
 	CLR_NZVC;
@@ -935,7 +935,7 @@ INLINE void neg_ix( konami_state *cpustate )
 /* $63 COM indexed -**01 */
 INLINE void com_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = ~RM(cpustate, EAD);
 	CLR_NZV;
 	SET_NZ8(t);
@@ -946,7 +946,7 @@ INLINE void com_ix( konami_state *cpustate )
 /* $64 LSR indexed -0*-* */
 INLINE void lsr_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EAD);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -959,7 +959,7 @@ INLINE void lsr_ix( konami_state *cpustate )
 /* $66 ROR indexed -**-* */
 INLINE void ror_ix( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	t = RM(cpustate, EAD);
 	r = (CC & CC_C) << 7;
 	CLR_NZC;
@@ -971,7 +971,7 @@ INLINE void ror_ix( konami_state *cpustate )
 /* $67 ASR indexed ?**-* */
 INLINE void asr_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EAD);
 	CLR_NZC;
 	CC |= (t & CC_C);
@@ -983,7 +983,7 @@ INLINE void asr_ix( konami_state *cpustate )
 /* $68 ASL indexed ?**** */
 INLINE void asl_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = t << 1;
 	CLR_NZVC;
@@ -994,7 +994,7 @@ INLINE void asl_ix( konami_state *cpustate )
 /* $69 ROL indexed -**** */
 INLINE void rol_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = CC & CC_C;
 	r |= t << 1;
@@ -1006,7 +1006,7 @@ INLINE void rol_ix( konami_state *cpustate )
 /* $6A DEC indexed -***- */
 INLINE void dec_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EAD) - 1;
 	CLR_NZV; SET_FLAGS8D(t);
 	WM(cpustate, EAD,t);
@@ -1017,7 +1017,7 @@ INLINE void dec_ix( konami_state *cpustate )
 /* $6C INC indexed -***- */
 INLINE void inc_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EAD) + 1;
 	CLR_NZV; SET_FLAGS8I(t);
 	WM(cpustate, EAD,t);
@@ -1026,7 +1026,7 @@ INLINE void inc_ix( konami_state *cpustate )
 /* $6D TST indexed -**0- */
 INLINE void tst_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EAD);
 	CLR_NZV;
 	SET_NZ8(t);
@@ -1048,7 +1048,7 @@ INLINE void clr_ix( konami_state *cpustate )
 /* $70 NEG extended ?**** */
 INLINE void neg_ex( konami_state *cpustate )
 {
-	UINT16 r,t;
+	uint16_t r,t;
 	EXTBYTE(cpustate, t); r=-t;
 	CLR_NZVC; SET_FLAGS8(0,t,r);
 	WM(cpustate, EAD,r);
@@ -1061,7 +1061,7 @@ INLINE void neg_ex( konami_state *cpustate )
 /* $73 COM extended -**01 */
 INLINE void com_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); t = ~t;
 	CLR_NZV; SET_NZ8(t); SEC;
 	WM(cpustate, EAD,t);
@@ -1070,7 +1070,7 @@ INLINE void com_ex( konami_state *cpustate )
 /* $74 LSR extended -0*-* */
 INLINE void lsr_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); CLR_NZC; CC |= (t & CC_C);
 	t>>=1; SET_Z8(t);
 	WM(cpustate, EAD,t);
@@ -1081,7 +1081,7 @@ INLINE void lsr_ex( konami_state *cpustate )
 /* $76 ROR extended -**-* */
 INLINE void ror_ex( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(cpustate, t); r=(CC & CC_C) << 7;
 	CLR_NZC; CC |= (t & CC_C);
 	r |= t>>1; SET_NZ8(r);
@@ -1091,7 +1091,7 @@ INLINE void ror_ex( konami_state *cpustate )
 /* $77 ASR extended ?**-* */
 INLINE void asr_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); CLR_NZC; CC |= (t & CC_C);
 	t=(t&0x80)|(t>>1);
 	SET_NZ8(t);
@@ -1101,7 +1101,7 @@ INLINE void asr_ex( konami_state *cpustate )
 /* $78 ASL extended ?**** */
 INLINE void asl_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t); r=t<<1;
 	CLR_NZVC; SET_FLAGS8(t,t,r);
 	WM(cpustate, EAD,r);
@@ -1110,7 +1110,7 @@ INLINE void asl_ex( konami_state *cpustate )
 /* $79 ROL extended -**** */
 INLINE void rol_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t); r = (CC & CC_C) | (t << 1);
 	CLR_NZVC; SET_FLAGS8(t,t,r);
 	WM(cpustate, EAD,r);
@@ -1119,7 +1119,7 @@ INLINE void rol_ex( konami_state *cpustate )
 /* $7A DEC extended -***- */
 INLINE void dec_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); --t;
 	CLR_NZV; SET_FLAGS8D(t);
 	WM(cpustate, EAD,t);
@@ -1130,7 +1130,7 @@ INLINE void dec_ex( konami_state *cpustate )
 /* $7C INC extended -***- */
 INLINE void inc_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); ++t;
 	CLR_NZV; SET_FLAGS8I(t);
 	WM(cpustate, EAD,t);
@@ -1139,7 +1139,7 @@ INLINE void inc_ex( konami_state *cpustate )
 /* $7D TST extended -**0- */
 INLINE void tst_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t); CLR_NZV; SET_NZ8(t);
 }
 
@@ -1161,7 +1161,7 @@ INLINE void clr_ex( konami_state *cpustate )
 /* $80 SUBA immediate ?**** */
 INLINE void suba_im( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1172,7 +1172,7 @@ INLINE void suba_im( konami_state *cpustate )
 /* $81 CMPA immediate ?**** */
 INLINE void cmpa_im( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1182,7 +1182,7 @@ INLINE void cmpa_im( konami_state *cpustate )
 /* $82 SBCA immediate ?**** */
 INLINE void sbca_im( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(cpustate, t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -1193,7 +1193,7 @@ INLINE void sbca_im( konami_state *cpustate )
 /* $83 SUBD (CMPD CMPU) immediate -**** */
 INLINE void subd_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = D;
@@ -1206,7 +1206,7 @@ INLINE void subd_im( konami_state *cpustate )
 /* $1083 CMPD immediate -**** */
 INLINE void cmpd_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = D;
@@ -1218,7 +1218,7 @@ INLINE void cmpd_im( konami_state *cpustate )
 /* $1183 CMPU immediate -**** */
 INLINE void cmpu_im( konami_state *cpustate )
 {
-	UINT32 r, d;
+	uint32_t r, d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = U;
@@ -1230,7 +1230,7 @@ INLINE void cmpu_im( konami_state *cpustate )
 /* $84 ANDA immediate -**0- */
 INLINE void anda_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	A &= t;
 	CLR_NZV;
@@ -1240,7 +1240,7 @@ INLINE void anda_im( konami_state *cpustate )
 /* $85 BITA immediate -**0- */
 INLINE void bita_im( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	IMMBYTE(cpustate, t);
 	r = A & t;
 	CLR_NZV;
@@ -1268,7 +1268,7 @@ INLINE void sta_im( konami_state *cpustate )
 /* $88 EORA immediate -**0- */
 INLINE void eora_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	A ^= t;
 	CLR_NZV;
@@ -1278,7 +1278,7 @@ INLINE void eora_im( konami_state *cpustate )
 /* $89 ADCA immediate ***** */
 INLINE void adca_im( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(cpustate, t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -1290,7 +1290,7 @@ INLINE void adca_im( konami_state *cpustate )
 /* $8A ORA immediate -**0- */
 INLINE void ora_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	A |= t;
 	CLR_NZV;
@@ -1300,7 +1300,7 @@ INLINE void ora_im( konami_state *cpustate )
 /* $8B ADDA immediate ***** */
 INLINE void adda_im( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(cpustate, t);
 	r = A + t;
 	CLR_HNZVC;
@@ -1312,7 +1312,7 @@ INLINE void adda_im( konami_state *cpustate )
 /* $8C CMPX (CMPY CMPS) immediate -**** */
 INLINE void cmpx_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = X;
@@ -1324,7 +1324,7 @@ INLINE void cmpx_im( konami_state *cpustate )
 /* $108C CMPY immediate -**** */
 INLINE void cmpy_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = Y;
@@ -1336,7 +1336,7 @@ INLINE void cmpy_im( konami_state *cpustate )
 /* $118C CMPS immediate -**** */
 INLINE void cmps_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = S;
@@ -1348,7 +1348,7 @@ INLINE void cmps_im( konami_state *cpustate )
 /* $8D BSR ----- */
 INLINE void bsr( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	PUSHWORD(cpustate, pPC);
 	PC += SIGNED(t);
@@ -1393,7 +1393,7 @@ INLINE void sty_im( konami_state *cpustate )
 /* $90 SUBA direct ?**** */
 INLINE void suba_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1404,7 +1404,7 @@ INLINE void suba_di( konami_state *cpustate )
 /* $91 CMPA direct ?**** */
 INLINE void cmpa_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1414,7 +1414,7 @@ INLINE void cmpa_di( konami_state *cpustate )
 /* $92 SBCA direct ?**** */
 INLINE void sbca_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -1425,7 +1425,7 @@ INLINE void sbca_di( konami_state *cpustate )
 /* $93 SUBD (CMPD CMPU) direct -**** */
 INLINE void subd_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = D;
@@ -1438,7 +1438,7 @@ INLINE void subd_di( konami_state *cpustate )
 /* $1093 CMPD direct -**** */
 INLINE void cmpd_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = D;
@@ -1450,7 +1450,7 @@ INLINE void cmpd_di( konami_state *cpustate )
 /* $1193 CMPU direct -**** */
 INLINE void cmpu_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = U;
@@ -1462,7 +1462,7 @@ INLINE void cmpu_di( konami_state *cpustate )
 /* $94 ANDA direct -**0- */
 INLINE void anda_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	A &= t;
 	CLR_NZV;
@@ -1472,7 +1472,7 @@ INLINE void anda_di( konami_state *cpustate )
 /* $95 BITA direct -**0- */
 INLINE void bita_di( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(cpustate, t);
 	r = A & t;
 	CLR_NZV;
@@ -1499,7 +1499,7 @@ INLINE void sta_di( konami_state *cpustate )
 /* $98 EORA direct -**0- */
 INLINE void eora_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	A ^= t;
 	CLR_NZV;
@@ -1509,7 +1509,7 @@ INLINE void eora_di( konami_state *cpustate )
 /* $99 ADCA direct ***** */
 INLINE void adca_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -1521,7 +1521,7 @@ INLINE void adca_di( konami_state *cpustate )
 /* $9A ORA direct -**0- */
 INLINE void ora_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	A |= t;
 	CLR_NZV;
@@ -1531,7 +1531,7 @@ INLINE void ora_di( konami_state *cpustate )
 /* $9B ADDA direct ***** */
 INLINE void adda_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = A + t;
 	CLR_HNZVC;
@@ -1543,7 +1543,7 @@ INLINE void adda_di( konami_state *cpustate )
 /* $9C CMPX (CMPY CMPS) direct -**** */
 INLINE void cmpx_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = X;
@@ -1555,7 +1555,7 @@ INLINE void cmpx_di( konami_state *cpustate )
 /* $109C CMPY direct -**** */
 INLINE void cmpy_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = Y;
@@ -1567,7 +1567,7 @@ INLINE void cmpy_di( konami_state *cpustate )
 /* $119C CMPS direct -**** */
 INLINE void cmps_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = S;
@@ -1621,7 +1621,7 @@ INLINE void sty_di( konami_state *cpustate )
 /* $a0 SUBA indexed ?**** */
 INLINE void suba_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = A - t;
 	CLR_NZVC;
@@ -1632,7 +1632,7 @@ INLINE void suba_ix( konami_state *cpustate )
 /* $a1 CMPA indexed ?**** */
 INLINE void cmpa_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = A - t;
 	CLR_NZVC;
@@ -1642,7 +1642,7 @@ INLINE void cmpa_ix( konami_state *cpustate )
 /* $a2 SBCA indexed ?**** */
 INLINE void sbca_ix( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	t = RM(cpustate, EAD);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -1653,7 +1653,7 @@ INLINE void sbca_ix( konami_state *cpustate )
 /* $a3 SUBD (CMPD CMPU) indexed -**** */
 INLINE void subd_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = D;
@@ -1666,7 +1666,7 @@ INLINE void subd_ix( konami_state *cpustate )
 /* $10a3 CMPD indexed -**** */
 INLINE void cmpd_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = D;
@@ -1678,7 +1678,7 @@ INLINE void cmpd_ix( konami_state *cpustate )
 /* $11a3 CMPU indexed -**** */
 INLINE void cmpu_ix( konami_state *cpustate )
 {
-	UINT32 r;
+	uint32_t r;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	r = U - b.d;
@@ -1697,7 +1697,7 @@ INLINE void anda_ix( konami_state *cpustate )
 /* $a5 BITA indexed -**0- */
 INLINE void bita_ix( konami_state *cpustate )
 {
-	UINT8 r;
+	uint8_t r;
 	r = A & RM(cpustate, EAD);
 	CLR_NZV;
 	SET_NZ8(r);
@@ -1730,7 +1730,7 @@ INLINE void eora_ix( konami_state *cpustate )
 /* $a9 ADCA indexed ***** */
 INLINE void adca_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -1750,7 +1750,7 @@ INLINE void ora_ix( konami_state *cpustate )
 /* $aB ADDA indexed ***** */
 INLINE void adda_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = A + t;
 	CLR_HNZVC;
@@ -1762,7 +1762,7 @@ INLINE void adda_ix( konami_state *cpustate )
 /* $aC CMPX (CMPY CMPS) indexed -**** */
 INLINE void cmpx_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = X;
@@ -1774,7 +1774,7 @@ INLINE void cmpx_ix( konami_state *cpustate )
 /* $10aC CMPY indexed -**** */
 INLINE void cmpy_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = Y;
@@ -1786,7 +1786,7 @@ INLINE void cmpy_ix( konami_state *cpustate )
 /* $11aC CMPS indexed -**** */
 INLINE void cmps_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = S;
@@ -1837,7 +1837,7 @@ INLINE void sty_ix( konami_state *cpustate )
 /* $b0 SUBA extended ?**** */
 INLINE void suba_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1848,7 +1848,7 @@ INLINE void suba_ex( konami_state *cpustate )
 /* $b1 CMPA extended ?**** */
 INLINE void cmpa_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = A - t;
 	CLR_NZVC;
@@ -1858,7 +1858,7 @@ INLINE void cmpa_ex( konami_state *cpustate )
 /* $b2 SBCA extended ?**** */
 INLINE void sbca_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = A - t - (CC & CC_C);
 	CLR_NZVC;
@@ -1869,7 +1869,7 @@ INLINE void sbca_ex( konami_state *cpustate )
 /* $b3 SUBD (CMPD CMPU) extended -**** */
 INLINE void subd_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = D;
@@ -1882,7 +1882,7 @@ INLINE void subd_ex( konami_state *cpustate )
 /* $10b3 CMPD extended -**** */
 INLINE void cmpd_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = D;
@@ -1894,7 +1894,7 @@ INLINE void cmpd_ex( konami_state *cpustate )
 /* $11b3 CMPU extended -**** */
 INLINE void cmpu_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = U;
@@ -1906,7 +1906,7 @@ INLINE void cmpu_ex( konami_state *cpustate )
 /* $b4 ANDA extended -**0- */
 INLINE void anda_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	A &= t;
 	CLR_NZV;
@@ -1916,7 +1916,7 @@ INLINE void anda_ex( konami_state *cpustate )
 /* $b5 BITA extended -**0- */
 INLINE void bita_ex( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(cpustate, t);
 	r = A & t;
 	CLR_NZV; SET_NZ8(r);
@@ -1942,7 +1942,7 @@ INLINE void sta_ex( konami_state *cpustate )
 /* $b8 EORA extended -**0- */
 INLINE void eora_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	A ^= t;
 	CLR_NZV;
@@ -1952,7 +1952,7 @@ INLINE void eora_ex( konami_state *cpustate )
 /* $b9 ADCA extended ***** */
 INLINE void adca_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t);
 	r = A + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -1964,7 +1964,7 @@ INLINE void adca_ex( konami_state *cpustate )
 /* $bA ORA extended -**0- */
 INLINE void ora_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	A |= t;
 	CLR_NZV;
@@ -1974,7 +1974,7 @@ INLINE void ora_ex( konami_state *cpustate )
 /* $bB ADDA extended ***** */
 INLINE void adda_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t);
 	r = A + t;
 	CLR_HNZVC;
@@ -1986,7 +1986,7 @@ INLINE void adda_ex( konami_state *cpustate )
 /* $bC CMPX (CMPY CMPS) extended -**** */
 INLINE void cmpx_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = X;
@@ -1998,7 +1998,7 @@ INLINE void cmpx_ex( konami_state *cpustate )
 /* $10bC CMPY extended -**** */
 INLINE void cmpy_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = Y;
@@ -2010,7 +2010,7 @@ INLINE void cmpy_ex( konami_state *cpustate )
 /* $11bC CMPS extended -**** */
 INLINE void cmps_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = S;
@@ -2064,7 +2064,7 @@ INLINE void sty_ex( konami_state *cpustate )
 /* $c0 SUBB immediate ?**** */
 INLINE void subb_im( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC;
@@ -2075,7 +2075,7 @@ INLINE void subb_im( konami_state *cpustate )
 /* $c1 CMPB immediate ?**** */
 INLINE void cmpb_im( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC; SET_FLAGS8(B,t,r);
@@ -2084,7 +2084,7 @@ INLINE void cmpb_im( konami_state *cpustate )
 /* $c2 SBCB immediate ?**** */
 INLINE void sbcb_im( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	IMMBYTE(cpustate, t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2095,7 +2095,7 @@ INLINE void sbcb_im( konami_state *cpustate )
 /* $c3 ADDD immediate -**** */
 INLINE void addd_im( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	IMMWORD(cpustate, b);
 	d = D;
@@ -2108,7 +2108,7 @@ INLINE void addd_im( konami_state *cpustate )
 /* $c4 ANDB immediate -**0- */
 INLINE void andb_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	B &= t;
 	CLR_NZV;
@@ -2118,7 +2118,7 @@ INLINE void andb_im( konami_state *cpustate )
 /* $c5 BITB immediate -**0- */
 INLINE void bitb_im( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	IMMBYTE(cpustate, t);
 	r = B & t;
 	CLR_NZV;
@@ -2146,7 +2146,7 @@ INLINE void stb_im( konami_state *cpustate )
 /* $c8 EORB immediate -**0- */
 INLINE void eorb_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	B ^= t;
 	CLR_NZV;
@@ -2156,7 +2156,7 @@ INLINE void eorb_im( konami_state *cpustate )
 /* $c9 ADCB immediate ***** */
 INLINE void adcb_im( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(cpustate, t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2168,7 +2168,7 @@ INLINE void adcb_im( konami_state *cpustate )
 /* $cA ORB immediate -**0- */
 INLINE void orb_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 	B |= t;
 	CLR_NZV;
@@ -2178,7 +2178,7 @@ INLINE void orb_im( konami_state *cpustate )
 /* $cB ADDB immediate ***** */
 INLINE void addb_im( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	IMMBYTE(cpustate, t);
 	r = B + t;
 	CLR_HNZVC;
@@ -2245,7 +2245,7 @@ INLINE void sts_im( konami_state *cpustate )
 /* $d0 SUBB direct ?**** */
 INLINE void subb_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC;
@@ -2256,7 +2256,7 @@ INLINE void subb_di( konami_state *cpustate )
 /* $d1 CMPB direct ?**** */
 INLINE void cmpb_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC;
@@ -2266,7 +2266,7 @@ INLINE void cmpb_di( konami_state *cpustate )
 /* $d2 SBCB direct ?**** */
 INLINE void sbcb_di( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	DIRBYTE(cpustate, t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2277,7 +2277,7 @@ INLINE void sbcb_di( konami_state *cpustate )
 /* $d3 ADDD direct -**** */
 INLINE void addd_di( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	DIRWORD(cpustate, b);
 	d = D;
@@ -2290,7 +2290,7 @@ INLINE void addd_di( konami_state *cpustate )
 /* $d4 ANDB direct -**0- */
 INLINE void andb_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	B &= t;
 	CLR_NZV;
@@ -2300,7 +2300,7 @@ INLINE void andb_di( konami_state *cpustate )
 /* $d5 BITB direct -**0- */
 INLINE void bitb_di( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	DIRBYTE(cpustate, t);
 	r = B & t;
 	CLR_NZV;
@@ -2327,7 +2327,7 @@ INLINE void stb_di( konami_state *cpustate )
 /* $d8 EORB direct -**0- */
 INLINE void eorb_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	B ^= t;
 	CLR_NZV;
@@ -2337,7 +2337,7 @@ INLINE void eorb_di( konami_state *cpustate )
 /* $d9 ADCB direct ***** */
 INLINE void adcb_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2349,7 +2349,7 @@ INLINE void adcb_di( konami_state *cpustate )
 /* $dA ORB direct -**0- */
 INLINE void orb_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 	B |= t;
 	CLR_NZV;
@@ -2359,7 +2359,7 @@ INLINE void orb_di( konami_state *cpustate )
 /* $dB ADDB direct ***** */
 INLINE void addb_di( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	DIRBYTE(cpustate, t);
 	r = B + t;
 	CLR_HNZVC;
@@ -2423,7 +2423,7 @@ INLINE void sts_di( konami_state *cpustate )
 /* $e0 SUBB indexed ?**** */
 INLINE void subb_ix( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	t = RM(cpustate, EAD);
 	r = B - t;
 	CLR_NZVC;
@@ -2434,7 +2434,7 @@ INLINE void subb_ix( konami_state *cpustate )
 /* $e1 CMPB indexed ?**** */
 INLINE void cmpb_ix( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	t = RM(cpustate, EAD);
 	r = B - t;
 	CLR_NZVC;
@@ -2444,7 +2444,7 @@ INLINE void cmpb_ix( konami_state *cpustate )
 /* $e2 SBCB indexed ?**** */
 INLINE void sbcb_ix( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	t = RM(cpustate, EAD);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2455,7 +2455,7 @@ INLINE void sbcb_ix( konami_state *cpustate )
 /* $e3 ADDD indexed -**** */
 INLINE void addd_ix( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	b.d=RM16(cpustate, EAD);
 	d = D;
@@ -2476,7 +2476,7 @@ INLINE void andb_ix( konami_state *cpustate )
 /* $e5 BITB indexed -**0- */
 INLINE void bitb_ix( konami_state *cpustate )
 {
-	UINT8 r;
+	uint8_t r;
 	r = B & RM(cpustate, EAD);
 	CLR_NZV;
 	SET_NZ8(r);
@@ -2509,7 +2509,7 @@ INLINE void eorb_ix( konami_state *cpustate )
 /* $e9 ADCB indexed ***** */
 INLINE void adcb_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2529,7 +2529,7 @@ INLINE void orb_ix( konami_state *cpustate )
 /* $eb ADDB indexed ***** */
 INLINE void addb_ix( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	t = RM(cpustate, EAD);
 	r = B + t;
 	CLR_HNZVC;
@@ -2589,7 +2589,7 @@ INLINE void sts_ix( konami_state *cpustate )
 /* $f0 SUBB extended ?**** */
 INLINE void subb_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC;
@@ -2600,7 +2600,7 @@ INLINE void subb_ex( konami_state *cpustate )
 /* $f1 CMPB extended ?**** */
 INLINE void cmpb_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = B - t;
 	CLR_NZVC;
@@ -2610,7 +2610,7 @@ INLINE void cmpb_ex( konami_state *cpustate )
 /* $f2 SBCB extended ?**** */
 INLINE void sbcb_ex( konami_state *cpustate )
 {
-	UINT16	  t,r;
+	uint16_t	  t,r;
 	EXTBYTE(cpustate, t);
 	r = B - t - (CC & CC_C);
 	CLR_NZVC;
@@ -2621,7 +2621,7 @@ INLINE void sbcb_ex( konami_state *cpustate )
 /* $f3 ADDD extended -**** */
 INLINE void addd_ex( konami_state *cpustate )
 {
-	UINT32 r,d;
+	uint32_t r,d;
 	PAIR b;
 	EXTWORD(cpustate, b);
 	d = D;
@@ -2634,7 +2634,7 @@ INLINE void addd_ex( konami_state *cpustate )
 /* $f4 ANDB extended -**0- */
 INLINE void andb_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	B &= t;
 	CLR_NZV;
@@ -2644,7 +2644,7 @@ INLINE void andb_ex( konami_state *cpustate )
 /* $f5 BITB extended -**0- */
 INLINE void bitb_ex( konami_state *cpustate )
 {
-	UINT8 t,r;
+	uint8_t t,r;
 	EXTBYTE(cpustate, t);
 	r = B & t;
 	CLR_NZV;
@@ -2671,7 +2671,7 @@ INLINE void stb_ex( konami_state *cpustate )
 /* $f8 EORB extended -**0- */
 INLINE void eorb_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	B ^= t;
 	CLR_NZV;
@@ -2681,7 +2681,7 @@ INLINE void eorb_ex( konami_state *cpustate )
 /* $f9 ADCB extended ***** */
 INLINE void adcb_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t);
 	r = B + t + (CC & CC_C);
 	CLR_HNZVC;
@@ -2693,7 +2693,7 @@ INLINE void adcb_ex( konami_state *cpustate )
 /* $fA ORB extended -**0- */
 INLINE void orb_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 	B |= t;
 	CLR_NZV;
@@ -2703,7 +2703,7 @@ INLINE void orb_ex( konami_state *cpustate )
 /* $fB ADDB extended ***** */
 INLINE void addb_ex( konami_state *cpustate )
 {
-	UINT16 t,r;
+	uint16_t t,r;
 	EXTBYTE(cpustate, t);
 	r = B + t;
 	CLR_HNZVC;
@@ -2766,7 +2766,7 @@ INLINE void sts_ex( konami_state *cpustate )
 
 INLINE void setline_im( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	IMMBYTE(cpustate, t);
 
 	if ( cpustate->setlines_callback )
@@ -2775,7 +2775,7 @@ INLINE void setline_im( konami_state *cpustate )
 
 INLINE void setline_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	t = RM(cpustate, EA);
 
 	if ( cpustate->setlines_callback )
@@ -2784,7 +2784,7 @@ INLINE void setline_ix( konami_state *cpustate )
 
 INLINE void setline_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	DIRBYTE(cpustate, t);
 
 	if ( cpustate->setlines_callback )
@@ -2793,7 +2793,7 @@ INLINE void setline_di( konami_state *cpustate )
 
 INLINE void setline_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 	EXTBYTE(cpustate, t);
 
 	if ( cpustate->setlines_callback )
@@ -2802,7 +2802,7 @@ INLINE void setline_ex( konami_state *cpustate )
 
 INLINE void bmove( konami_state *cpustate )
 {
-	UINT8	t;
+	uint8_t	t;
 
 	while( U != 0 ) {
 		t = RM(cpustate, Y);
@@ -2816,7 +2816,7 @@ INLINE void bmove( konami_state *cpustate )
 
 INLINE void move( konami_state *cpustate )
 {
-	UINT8	t;
+	uint8_t	t;
 
 	t = RM(cpustate, Y);
 	WM(cpustate, X,t);
@@ -2865,7 +2865,7 @@ INLINE void clrw_ex( konami_state *cpustate )
 /* LSRD immediate -0*-* */
 INLINE void lsrd( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	IMMBYTE(cpustate,  t );
 
@@ -2880,8 +2880,8 @@ INLINE void lsrd( konami_state *cpustate )
 /* RORD immediate -**-* */
 INLINE void rord( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	IMMBYTE(cpustate, t);
 
@@ -2898,7 +2898,7 @@ INLINE void rord( konami_state *cpustate )
 /* ASRD immediate ?**-* */
 INLINE void asrd( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	IMMBYTE(cpustate, t);
 
@@ -2913,8 +2913,8 @@ INLINE void asrd( konami_state *cpustate )
 /* ASLD immediate ?**** */
 INLINE void asld( konami_state *cpustate )
 {
-	UINT32	r;
-	UINT8	t;
+	uint32_t	r;
+	uint8_t	t;
 
 	IMMBYTE(cpustate,  t );
 
@@ -2929,8 +2929,8 @@ INLINE void asld( konami_state *cpustate )
 /* ROLD immediate -**-* */
 INLINE void rold( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	IMMBYTE(cpustate, t);
 
@@ -2964,7 +2964,7 @@ INLINE void decxjnz( konami_state *cpustate )
 
 INLINE void bset( konami_state *cpustate )
 {
-	UINT8	t;
+	uint8_t	t;
 
 	while( U != 0 ) {
 		t = A;
@@ -2988,7 +2988,7 @@ INLINE void bset2( konami_state *cpustate )
 /* LMUL inherent --*-@ */
 INLINE void lmul( konami_state *cpustate )
 {
-	UINT32 t;
+	uint32_t t;
 	t = X * Y;
 	X = (t >> 16);
 	Y = (t & 0xffff);
@@ -2998,8 +2998,8 @@ INLINE void lmul( konami_state *cpustate )
 /* DIVX inherent --*-@ */
 INLINE void divx( konami_state *cpustate )
 {
-	UINT16 t;
-	UINT8 r;
+	uint16_t t;
+	uint8_t r;
 	if ( B != 0 )
 	{
 		t = X / B;
@@ -3019,7 +3019,7 @@ INLINE void divx( konami_state *cpustate )
 /* INCD inherent -***- */
 INLINE void incd( konami_state *cpustate )
 {
-	UINT32 r;
+	uint32_t r;
 	r = D + 1;
 	CLR_NZV;
 	SET_FLAGS16(D,D,r);
@@ -3064,7 +3064,7 @@ INLINE void incw_ex( konami_state *cpustate )
 /* DECD inherent -***- */
 INLINE void decd( konami_state *cpustate )
 {
-	UINT32 r;
+	uint32_t r;
 	r = D - 1;
 	CLR_NZV;
 	SET_FLAGS16(D,D,r);
@@ -3319,7 +3319,7 @@ INLINE void rolw_ex( konami_state *cpustate )
 /* NEGD inherent ?**** */
 INLINE void negd( konami_state *cpustate )
 {
-	UINT32 r;
+	uint32_t r;
 	r = -D;
 	CLR_NZVC;
 	SET_FLAGS16(0,D,r);
@@ -3362,7 +3362,7 @@ INLINE void negw_ex( konami_state *cpustate )
 /* ABSA inherent ?**** */
 INLINE void absa( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	if (A & 0x80)
 		r = -A;
 	else
@@ -3375,7 +3375,7 @@ INLINE void absa( konami_state *cpustate )
 /* ABSB inherent ?**** */
 INLINE void absb( konami_state *cpustate )
 {
-	UINT16 r;
+	uint16_t r;
 	if (B & 0x80)
 		r = -B;
 	else
@@ -3388,7 +3388,7 @@ INLINE void absb( konami_state *cpustate )
 /* ABSD inherent ?**** */
 INLINE void absd( konami_state *cpustate )
 {
-	UINT32 r;
+	uint32_t r;
 	if (D & 0x8000)
 		r = -D;
 	else
@@ -3401,7 +3401,7 @@ INLINE void absd( konami_state *cpustate )
 /* LSRD direct -0*-* */
 INLINE void lsrd_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	DIRBYTE(cpustate,  t );
 
@@ -3416,8 +3416,8 @@ INLINE void lsrd_di( konami_state *cpustate )
 /* RORD direct -**-* */
 INLINE void rord_di( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	DIRBYTE(cpustate, t);
 
@@ -3434,7 +3434,7 @@ INLINE void rord_di( konami_state *cpustate )
 /* ASRD direct ?**-* */
 INLINE void asrd_di( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	DIRBYTE(cpustate, t);
 
@@ -3449,8 +3449,8 @@ INLINE void asrd_di( konami_state *cpustate )
 /* ASLD direct ?**** */
 INLINE void asld_di( konami_state *cpustate )
 {
-	UINT32	r;
-	UINT8	t;
+	uint32_t	r;
+	uint8_t	t;
 
 	DIRBYTE(cpustate,  t );
 
@@ -3465,8 +3465,8 @@ INLINE void asld_di( konami_state *cpustate )
 /* ROLD direct -**-* */
 INLINE void rold_di( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	DIRBYTE(cpustate, t);
 
@@ -3483,7 +3483,7 @@ INLINE void rold_di( konami_state *cpustate )
 /* LSRD indexed -0*-* */
 INLINE void lsrd_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	t=RM(cpustate, EA);
 
@@ -3498,8 +3498,8 @@ INLINE void lsrd_ix( konami_state *cpustate )
 /* RORD indexed -**-* */
 INLINE void rord_ix( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	t=RM(cpustate, EA);
 
@@ -3516,7 +3516,7 @@ INLINE void rord_ix( konami_state *cpustate )
 /* ASRD indexed ?**-* */
 INLINE void asrd_ix( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	t=RM(cpustate, EA);
 
@@ -3531,8 +3531,8 @@ INLINE void asrd_ix( konami_state *cpustate )
 /* ASLD indexed ?**** */
 INLINE void asld_ix( konami_state *cpustate )
 {
-	UINT32	r;
-	UINT8	t;
+	uint32_t	r;
+	uint8_t	t;
 
 	t=RM(cpustate, EA);
 
@@ -3547,8 +3547,8 @@ INLINE void asld_ix( konami_state *cpustate )
 /* ROLD indexed -**-* */
 INLINE void rold_ix( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	t=RM(cpustate, EA);
 
@@ -3565,7 +3565,7 @@ INLINE void rold_ix( konami_state *cpustate )
 /* LSRD extended -0*-* */
 INLINE void lsrd_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	EXTBYTE(cpustate, t);
 
@@ -3580,8 +3580,8 @@ INLINE void lsrd_ex( konami_state *cpustate )
 /* RORD extended -**-* */
 INLINE void rord_ex( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	EXTBYTE(cpustate, t);
 
@@ -3598,7 +3598,7 @@ INLINE void rord_ex( konami_state *cpustate )
 /* ASRD extended ?**-* */
 INLINE void asrd_ex( konami_state *cpustate )
 {
-	UINT8 t;
+	uint8_t t;
 
 	EXTBYTE(cpustate, t);
 
@@ -3613,8 +3613,8 @@ INLINE void asrd_ex( konami_state *cpustate )
 /* ASLD extended ?**** */
 INLINE void asld_ex( konami_state *cpustate )
 {
-	UINT32	r;
-	UINT8	t;
+	uint32_t	r;
+	uint8_t	t;
 
 	EXTBYTE(cpustate, t);
 
@@ -3629,8 +3629,8 @@ INLINE void asld_ex( konami_state *cpustate )
 /* ROLD extended -**-* */
 INLINE void rold_ex( konami_state *cpustate )
 {
-	UINT16 r;
-	UINT8  t;
+	uint16_t r;
+	uint8_t  t;
 
 	EXTBYTE(cpustate, t);
 
@@ -3646,7 +3646,7 @@ INLINE void rold_ex( konami_state *cpustate )
 
 INLINE void opcode2( konami_state *cpustate )
 {
-	UINT8 ireg2 = ROP_ARG(cpustate, PCD);
+	uint8_t ireg2 = ROP_ARG(cpustate, PCD);
 	PC++;
 
 	switch ( ireg2 ) {

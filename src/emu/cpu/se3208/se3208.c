@@ -14,19 +14,19 @@ typedef struct _se3208_state_t se3208_state_t;
 struct _se3208_state_t
 {
 	//GPR
-	UINT32 R[8];
+	uint32_t R[8];
 	//SPR
-	UINT32 PC;
-	UINT32 SR;
-	UINT32 SP;
-	UINT32 ER;
-	UINT32 PPC;
+	uint32_t PC;
+	uint32_t SR;
+	uint32_t SP;
+	uint32_t ER;
+	uint32_t PPC;
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
-	UINT8 IRQ;
-	UINT8 NMI;
+	uint8_t IRQ;
+	uint8_t NMI;
 
 	int icount;
 };
@@ -54,8 +54,8 @@ struct _se3208_state_t
 #define SEX(bits,val)	((val)&(1<<(bits-1))?((val)|(~((1<<bits)-1))):(val&((1<<bits)-1)))
 
 //Precompute the instruction decoding in a big table
-typedef void (*_OP)(se3208_state_t *se3208_state, UINT16 Opcode);
-#define INST(a) static void a(se3208_state_t *se3208_state, UINT16 Opcode)
+typedef void (*_OP)(se3208_state_t *se3208_state, uint16_t Opcode);
+#define INST(a) static void a(se3208_state_t *se3208_state, uint16_t Opcode)
 static _OP *OpTable=NULL;
 
 INLINE se3208_state_t *get_safe_token(running_device *device)
@@ -65,7 +65,7 @@ INLINE se3208_state_t *get_safe_token(running_device *device)
 	return (se3208_state_t *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT32 read_dword_unaligned(const address_space *space, UINT32 address)
+INLINE uint32_t read_dword_unaligned(const address_space *space, uint32_t address)
 {
 	if (address & 3)
 		return memory_read_byte_32le(space,address) | memory_read_byte_32le(space,address+1)<<8 | memory_read_byte_32le(space,address+2)<<16 | memory_read_byte_32le(space,address+3)<<24;
@@ -73,7 +73,7 @@ INLINE UINT32 read_dword_unaligned(const address_space *space, UINT32 address)
 		return memory_read_dword_32le(space,address);
 }
 
-INLINE UINT16 read_word_unaligned(const address_space *space, UINT32 address)
+INLINE uint16_t read_word_unaligned(const address_space *space, uint32_t address)
 {
 	if (address & 1)
 		return memory_read_byte_32le(space,address) | memory_read_byte_32le(space,address+1)<<8;
@@ -81,7 +81,7 @@ INLINE UINT16 read_word_unaligned(const address_space *space, UINT32 address)
 		return memory_read_word_32le(space,address);
 }
 
-INLINE void write_dword_unaligned(const address_space *space, UINT32 address, UINT32 data)
+INLINE void write_dword_unaligned(const address_space *space, uint32_t address, uint32_t data)
 {
 	if (address & 3)
 	{
@@ -96,7 +96,7 @@ INLINE void write_dword_unaligned(const address_space *space, UINT32 address, UI
 	}
 }
 
-INLINE void write_word_unaligned(const address_space *space, UINT32 address, UINT16 data)
+INLINE void write_word_unaligned(const address_space *space, uint32_t address, uint16_t data)
 {
 	if (address & 1)
 	{
@@ -110,41 +110,41 @@ INLINE void write_word_unaligned(const address_space *space, UINT32 address, UIN
 }
 
 
-INLINE UINT8 SE3208_Read8(se3208_state_t *se3208_state, UINT32 addr)
+INLINE uint8_t SE3208_Read8(se3208_state_t *se3208_state, uint32_t addr)
 {
 	return memory_read_byte_32le(se3208_state->program,addr);
 }
 
-INLINE UINT16 SE3208_Read16(se3208_state_t *se3208_state, UINT32 addr)
+INLINE uint16_t SE3208_Read16(se3208_state_t *se3208_state, uint32_t addr)
 {
 	return read_word_unaligned(se3208_state->program,addr);
 }
 
-INLINE UINT32 SE3208_Read32(se3208_state_t *se3208_state, UINT32 addr)
+INLINE uint32_t SE3208_Read32(se3208_state_t *se3208_state, uint32_t addr)
 {
 	return read_dword_unaligned(se3208_state->program,addr);
 }
 
-INLINE void SE3208_Write8(se3208_state_t *se3208_state, UINT32 addr,UINT8 val)
+INLINE void SE3208_Write8(se3208_state_t *se3208_state, uint32_t addr,uint8_t val)
 {
 	memory_write_byte_32le(se3208_state->program,addr,val);
 }
 
-INLINE void SE3208_Write16(se3208_state_t *se3208_state, UINT32 addr,UINT16 val)
+INLINE void SE3208_Write16(se3208_state_t *se3208_state, uint32_t addr,uint16_t val)
 {
 	write_word_unaligned(se3208_state->program,addr,val);
 }
 
-INLINE void SE3208_Write32(se3208_state_t *se3208_state, UINT32 addr,UINT32 val)
+INLINE void SE3208_Write32(se3208_state_t *se3208_state, uint32_t addr,uint32_t val)
 {
 	write_dword_unaligned(se3208_state->program,addr,val);
 }
 
 
 
-INLINE UINT32 AddWithFlags(se3208_state_t *se3208_state, UINT32 a,UINT32 b)
+INLINE uint32_t AddWithFlags(se3208_state_t *se3208_state, uint32_t a,uint32_t b)
 {
-	UINT32 r=a+b;
+	uint32_t r=a+b;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!r)
 		SETFLAG(FLAG_Z);
@@ -157,9 +157,9 @@ INLINE UINT32 AddWithFlags(se3208_state_t *se3208_state, UINT32 a,UINT32 b)
 	return r;
 }
 
-INLINE UINT32 SubWithFlags(se3208_state_t *se3208_state, UINT32 a,UINT32 b)	//a-b
+INLINE uint32_t SubWithFlags(se3208_state_t *se3208_state, uint32_t a,uint32_t b)	//a-b
 {
-	UINT32 r=a-b;
+	uint32_t r=a-b;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!r)
 		SETFLAG(FLAG_Z);
@@ -172,10 +172,10 @@ INLINE UINT32 SubWithFlags(se3208_state_t *se3208_state, UINT32 a,UINT32 b)	//a-
 	return r;
 }
 
-INLINE UINT32 AdcWithFlags(se3208_state_t *se3208_state,UINT32 a,UINT32 b)
+INLINE uint32_t AdcWithFlags(se3208_state_t *se3208_state,uint32_t a,uint32_t b)
 {
-	UINT32 C=(se3208_state->SR&FLAG_C)?1:0;
-	UINT32 r=a+b+C;
+	uint32_t C=(se3208_state->SR&FLAG_C)?1:0;
+	uint32_t r=a+b+C;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!r)
 		SETFLAG(FLAG_Z);
@@ -189,10 +189,10 @@ INLINE UINT32 AdcWithFlags(se3208_state_t *se3208_state,UINT32 a,UINT32 b)
 
 }
 
-INLINE UINT32 SbcWithFlags(se3208_state_t *se3208_state,UINT32 a,UINT32 b)
+INLINE uint32_t SbcWithFlags(se3208_state_t *se3208_state,uint32_t a,uint32_t b)
 {
-	UINT32 C=(se3208_state->SR&FLAG_C)?1:0;
-	UINT32 r=a-b-C;
+	uint32_t C=(se3208_state->SR&FLAG_C)?1:0;
+	uint32_t r=a-b-C;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!r)
 		SETFLAG(FLAG_Z);
@@ -205,21 +205,21 @@ INLINE UINT32 SbcWithFlags(se3208_state_t *se3208_state,UINT32 a,UINT32 b)
 	return r;
 }
 
-INLINE UINT32 MulWithFlags(se3208_state_t *se3208_state,UINT32 a,UINT32 b)
+INLINE uint32_t MulWithFlags(se3208_state_t *se3208_state,uint32_t a,uint32_t b)
 {
-	INT64 r=(INT64) a*(INT64) b;
+	int64_t r=(int64_t) a*(int64_t) b;
 	CLRFLAG(FLAG_V);
 	if(r>>32)
 		SETFLAG(FLAG_V);
-	return (UINT32) (r&0xffffffff);
+	return (uint32_t) (r&0xffffffff);
 }
 
-INLINE UINT32 NegWithFlags(se3208_state_t *se3208_state,UINT32 a)
+INLINE uint32_t NegWithFlags(se3208_state_t *se3208_state,uint32_t a)
 {
 	return SubWithFlags(se3208_state,0,a);
 }
 
-INLINE UINT32 AsrWithFlags(se3208_state_t *se3208_state,UINT32 Val, UINT8 By)
+INLINE uint32_t AsrWithFlags(se3208_state_t *se3208_state,uint32_t Val, uint8_t By)
 {
 	signed int v=(signed int) Val;
 	v>>=By;
@@ -230,12 +230,12 @@ INLINE UINT32 AsrWithFlags(se3208_state_t *se3208_state,UINT32 Val, UINT8 By)
 		SETFLAG(FLAG_S);
 	if(Val&(1<<(By-1)))
 		SETFLAG(FLAG_C);
-	return (UINT32) v;
+	return (uint32_t) v;
 }
 
-INLINE UINT32 LsrWithFlags(se3208_state_t *se3208_state,UINT32 Val, UINT8 By)
+INLINE uint32_t LsrWithFlags(se3208_state_t *se3208_state,uint32_t Val, uint8_t By)
 {
-	UINT32 v=Val;
+	uint32_t v=Val;
 	v>>=By;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!v)
@@ -247,9 +247,9 @@ INLINE UINT32 LsrWithFlags(se3208_state_t *se3208_state,UINT32 Val, UINT8 By)
 	return v;
 }
 
-INLINE UINT32 AslWithFlags(se3208_state_t *se3208_state,UINT32 Val, UINT8 By)
+INLINE uint32_t AslWithFlags(se3208_state_t *se3208_state,uint32_t Val, uint8_t By)
 {
-	UINT32 v=Val;
+	uint32_t v=Val;
 	v<<=By;
 	CLRFLAG(FLAG_Z|FLAG_C|FLAG_V|FLAG_S);
 	if(!v)
@@ -269,10 +269,10 @@ INST(INVALIDOP)
 
 INST(LDB)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Val;
 
 	if(Index)
 		Index=se3208_state->R[Index];
@@ -290,9 +290,9 @@ INST(LDB)
 
 INST(STB)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	if(Index)
 		Index=se3208_state->R[Index];
@@ -309,10 +309,10 @@ INST(STB)
 
 INST(LDS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Val;
 
 	Offset<<=1;
 
@@ -332,9 +332,9 @@ INST(LDS)
 
 INST(STS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=1;
 
@@ -353,9 +353,9 @@ INST(STS)
 
 INST(LD)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -374,9 +374,9 @@ INST(LD)
 
 INST(ST)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -395,10 +395,10 @@ INST(ST)
 
 INST(LDBU)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Val;
 
 	if(Index)
 		Index=se3208_state->R[Index];
@@ -416,10 +416,10 @@ INST(LDBU)
 
 INST(LDSU)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Val;
 
 	Offset<<=1;
 
@@ -440,7 +440,7 @@ INST(LDSU)
 
 INST(LERI)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,13);
+	uint32_t Imm=EXTRACT(Opcode,0,13);
 	if(TESTFLAG(FLAG_E))
 		se3208_state->ER=(EXTRACT(se3208_state->ER,0,17)<<14)|Imm;
 	else
@@ -452,9 +452,9 @@ INST(LERI)
 
 INST(LDSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -468,9 +468,9 @@ INST(LDSP)
 
 INST(STSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -482,22 +482,22 @@ INST(STSP)
 	CLRFLAG(FLAG_E);
 }
 
-static void PushVal(se3208_state_t *se3208_state, UINT32 Val)
+static void PushVal(se3208_state_t *se3208_state, uint32_t Val)
 {
 	se3208_state->SP-=4;
 	SE3208_Write32(se3208_state, se3208_state->SP,Val);
 }
 
-static UINT32 PopVal(se3208_state_t *se3208_state)
+static uint32_t PopVal(se3208_state_t *se3208_state)
 {
-	UINT32 Val=SE3208_Read32(se3208_state, se3208_state->SP);
+	uint32_t Val=SE3208_Read32(se3208_state, se3208_state->SP);
 	se3208_state->SP+=4;
 	return Val;
 }
 
 INST(PUSH)
 {
-	UINT32 Set=EXTRACT(Opcode,0,10);
+	uint32_t Set=EXTRACT(Opcode,0,10);
 	if(Set&(1<<10))
 		PushVal(se3208_state,se3208_state->PC);
 	if(Set&(1<<9))
@@ -524,7 +524,7 @@ INST(PUSH)
 
 INST(POP)
 {
-	UINT32 Set=EXTRACT(Opcode,0,10);
+	uint32_t Set=EXTRACT(Opcode,0,10);
 	if(Set&(1<<0))
 		se3208_state->R[0]=PopVal(se3208_state);
 	if(Set&(1<<1))
@@ -553,8 +553,8 @@ INST(POP)
 
 INST(LEATOSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,9,12);
-	UINT32 Index=EXTRACT(Opcode,3,5);
+	uint32_t Offset=EXTRACT(Opcode,9,12);
+	uint32_t Index=EXTRACT(Opcode,3,5);
 
 	if(Index)
 		Index=se3208_state->R[Index];
@@ -573,8 +573,8 @@ INST(LEATOSP)
 
 INST(LEAFROMSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,9,12);
-	UINT32 Index=EXTRACT(Opcode,3,5);
+	uint32_t Offset=EXTRACT(Opcode,9,12);
+	uint32_t Index=EXTRACT(Opcode,3,5);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,27)<<4)|(Offset&0xf);
@@ -588,7 +588,7 @@ INST(LEAFROMSP)
 
 INST(LEASPTOSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	Offset<<=2;
 
@@ -604,16 +604,16 @@ INST(LEASPTOSP)
 
 INST(MOV)
 {
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,9,11);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,9,11);
 
 	se3208_state->R[Dst]=se3208_state->R[Src];
 }
 
 INST(LDI)
 {
-	UINT32 Dst=EXTRACT(Opcode,8,10);
-	UINT32 Imm=EXTRACT(Opcode,0,7);
+	uint32_t Dst=EXTRACT(Opcode,8,10);
+	uint32_t Imm=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -627,10 +627,10 @@ INST(LDI)
 
 INST(LDBSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Val;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,27)<<4)|(Offset&0xf);
@@ -643,9 +643,9 @@ INST(LDBSP)
 
 INST(STBSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,27)<<4)|(Offset&0xf);
@@ -657,10 +657,10 @@ INST(STBSP)
 
 INST(LDSSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Val;
 
 	Offset<<=1;
 
@@ -675,9 +675,9 @@ INST(LDSSP)
 
 INST(STSSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	Offset<<=1;
 
@@ -691,10 +691,10 @@ INST(STSSP)
 
 INST(LDBUSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Val;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,27)<<4)|(Offset&0xf);
@@ -707,10 +707,10 @@ INST(LDBUSP)
 
 INST(LDSUSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 Index=se3208_state->SP;
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
-	UINT32 Val;
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t Index=se3208_state->SP;
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Val;
 
 	Offset<<=1;
 
@@ -725,9 +725,9 @@ INST(LDSUSP)
 
 INST(ADDI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -741,9 +741,9 @@ INST(ADDI)
 
 INST(SUBI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -757,9 +757,9 @@ INST(SUBI)
 
 INST(ADCI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -773,9 +773,9 @@ INST(ADCI)
 
 INST(SBCI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -789,9 +789,9 @@ INST(SBCI)
 
 INST(ANDI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -809,9 +809,9 @@ INST(ANDI)
 
 INST(ORI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -829,9 +829,9 @@ INST(ORI)
 
 INST(XORI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -849,8 +849,8 @@ INST(XORI)
 
 INST(CMPI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -864,9 +864,9 @@ INST(CMPI)
 
 INST(TSTI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst;
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(se3208_state->ER,0,27)<<4)|(Imm&0xf);
@@ -884,45 +884,45 @@ INST(TSTI)
 
 INST(ADD)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=AddWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 }
 
 INST(SUB)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=SubWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 }
 
 INST(ADC)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=AdcWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 }
 
 INST(SBC)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=SbcWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 }
 
 INST(AND)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=se3208_state->R[Src1]&se3208_state->R[Src2];
 
@@ -935,9 +935,9 @@ INST(AND)
 
 INST(OR)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=se3208_state->R[Src1]|se3208_state->R[Src2];
 
@@ -951,9 +951,9 @@ INST(OR)
 
 INST(XOR)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=se3208_state->R[Src1]^se3208_state->R[Src2];
 
@@ -967,17 +967,17 @@ INST(XOR)
 
 INST(CMP)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
 
 	SubWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 }
 
 INST(TST)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst;
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst;
 
 	Dst=se3208_state->R[Src1]&se3208_state->R[Src2];
 
@@ -990,9 +990,9 @@ INST(TST)
 
 INST(MULS)
 {
-	UINT32 Src2=EXTRACT(Opcode,6,8);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,6,8);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	se3208_state->R[Dst]=MulWithFlags(se3208_state,se3208_state->R[Src1],se3208_state->R[Src2]);
 
@@ -1001,15 +1001,15 @@ INST(MULS)
 
 INST(NEG)
 {
-	UINT32 Dst=EXTRACT(Opcode,9,11);
-	UINT32 Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,9,11);
+	uint32_t Src=EXTRACT(Opcode,3,5);
 
 	se3208_state->R[Dst]=NegWithFlags(se3208_state,se3208_state->R[Src]);
 }
 
 INST(CALL)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1024,7 +1024,7 @@ INST(CALL)
 
 INST(JV)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1043,7 +1043,7 @@ INST(JV)
 
 INST(JNV)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1061,7 +1061,7 @@ INST(JNV)
 
 INST(JC)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1079,7 +1079,7 @@ INST(JC)
 
 INST(JNC)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1097,7 +1097,7 @@ INST(JNC)
 
 INST(JP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1115,7 +1115,7 @@ INST(JP)
 
 INST(JM)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1133,7 +1133,7 @@ INST(JM)
 
 INST(JNZ)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1151,7 +1151,7 @@ INST(JNZ)
 
 INST(JZ)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1169,9 +1169,9 @@ INST(JZ)
 
 INST(JGE)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 S=TESTFLAG(FLAG_S)?1:0;
-	UINT32 V=TESTFLAG(FLAG_V)?1:0;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t S=TESTFLAG(FLAG_S)?1:0;
+	uint32_t V=TESTFLAG(FLAG_V)?1:0;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1189,9 +1189,9 @@ INST(JGE)
 
 INST(JLE)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 S=TESTFLAG(FLAG_S)?1:0;
-	UINT32 V=TESTFLAG(FLAG_V)?1:0;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t S=TESTFLAG(FLAG_S)?1:0;
+	uint32_t V=TESTFLAG(FLAG_V)?1:0;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1208,7 +1208,7 @@ INST(JLE)
 
 INST(JHI)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1226,7 +1226,7 @@ INST(JHI)
 
 INST(JLS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1244,9 +1244,9 @@ INST(JLS)
 
 INST(JGT)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 S=TESTFLAG(FLAG_S)?1:0;
-	UINT32 V=TESTFLAG(FLAG_V)?1:0;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t S=TESTFLAG(FLAG_S)?1:0;
+	uint32_t V=TESTFLAG(FLAG_V)?1:0;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1264,9 +1264,9 @@ INST(JGT)
 
 INST(JLT)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 S=TESTFLAG(FLAG_S)?1:0;
-	UINT32 V=TESTFLAG(FLAG_V)?1:0;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t S=TESTFLAG(FLAG_S)?1:0;
+	uint32_t V=TESTFLAG(FLAG_V)?1:0;
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1286,7 +1286,7 @@ INST(JLT)
 
 INST(JMP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(se3208_state->ER,0,22)<<8)|Offset;
@@ -1302,7 +1302,7 @@ INST(JMP)
 
 INST(JR)
 {
-	UINT32 Src=EXTRACT(Opcode,0,3);
+	uint32_t Src=EXTRACT(Opcode,0,3);
 
 	se3208_state->PC=se3208_state->R[Src]-2;
 
@@ -1311,7 +1311,7 @@ INST(JR)
 
 INST(CALLR)
 {
-	UINT32 Src=EXTRACT(Opcode,0,3);
+	uint32_t Src=EXTRACT(Opcode,0,3);
 	PushVal(se3208_state,se3208_state->PC+2);
 	se3208_state->PC=se3208_state->R[Src]-2;
 
@@ -1320,10 +1320,10 @@ INST(CALLR)
 
 INST(ASR)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		se3208_state->R[Dst]=AsrWithFlags(se3208_state,se3208_state->R[Dst],se3208_state->R[Cnt]&0x1f);
@@ -1335,10 +1335,10 @@ INST(ASR)
 
 INST(LSR)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		se3208_state->R[Dst]=LsrWithFlags(se3208_state,se3208_state->R[Dst],se3208_state->R[Cnt]&0x1f);
@@ -1350,10 +1350,10 @@ INST(LSR)
 
 INST(ASL)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		se3208_state->R[Dst]=AslWithFlags(se3208_state,se3208_state->R[Dst],se3208_state->R[Cnt]&0x1f);
@@ -1365,8 +1365,8 @@ INST(ASL)
 
 INST(EXTB)
 {
-	UINT32 Dst=EXTRACT(Opcode,0,3);
-	UINT32 Val=se3208_state->R[Dst];
+	uint32_t Dst=EXTRACT(Opcode,0,3);
+	uint32_t Val=se3208_state->R[Dst];
 
 	se3208_state->R[Dst]=SEX8(Val);
 
@@ -1380,8 +1380,8 @@ INST(EXTB)
 
 INST(EXTS)
 {
-	UINT32 Dst=EXTRACT(Opcode,0,3);
-	UINT32 Val=se3208_state->R[Dst];
+	uint32_t Dst=EXTRACT(Opcode,0,3);
+	uint32_t Val=se3208_state->R[Dst];
 
 	se3208_state->R[Dst]=SEX16(Val);
 
@@ -1394,21 +1394,21 @@ INST(EXTS)
 
 INST(SET)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	se3208_state->SR|=(1<<Imm);
 }
 
 INST(CLR)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	se3208_state->SR&=~(1<<Imm);
 }
 
 INST(SWI)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	if(!TESTFLAG(FLAG_ENI))
 		return;
@@ -1422,33 +1422,33 @@ INST(SWI)
 
 INST(HALT)
 {
-//  UINT32 Imm=EXTRACT(Opcode,0,3);
+//  uint32_t Imm=EXTRACT(Opcode,0,3);
 
 //  DEBUGMESSAGE("HALT\t0x%x",Imm);
 }
 
 INST(MVTC)
 {
-//  UINT32 Imm=EXTRACT(Opcode,0,3);
+//  uint32_t Imm=EXTRACT(Opcode,0,3);
 
 //  DEBUGMESSAGE("MVTC\t%%R0,%%CR%d",Imm);
 }
 
 INST(MVFC)
 {
-//  UINT32 Imm=EXTRACT(Opcode,0,3);
+//  uint32_t Imm=EXTRACT(Opcode,0,3);
 
 //  DEBUGMESSAGE("MVFC\t%%CR0%d,%%R0",Imm);
 }
 
 
-static _OP DecodeOp(UINT16 Opcode)
+static _OP DecodeOp(uint16_t Opcode)
 {
 	switch(EXTRACT(Opcode,14,15))
 	{
 		case 0x0:
 			{
-				UINT8 Op=EXTRACT(Opcode,11,13);
+				uint8_t Op=EXTRACT(Opcode,11,13);
 				switch(Op)
 				{
 					case 0x0:
@@ -1758,7 +1758,7 @@ static CPU_EXECUTE( se3208 )
 
 	do
 	{
-		UINT16 Opcode=memory_decrypted_read_word(se3208_state->program, WORD_XOR_LE(se3208_state->PC));
+		uint16_t Opcode=memory_decrypted_read_word(se3208_state->program, WORD_XOR_LE(se3208_state->PC));
 
 		debugger_instruction_hook(device, se3208_state->PC);
 

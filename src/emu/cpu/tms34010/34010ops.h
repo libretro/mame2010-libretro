@@ -14,7 +14,7 @@
 
 
 /* Size of the memory buffer allocated for the shiftr register */
-#define SHIFTREG_SIZE			(8 * 512 * sizeof(UINT16))
+#define SHIFTREG_SIZE			(8 * 512 * sizeof(uint16_t))
 
 
 
@@ -24,15 +24,15 @@
 
 #define TMS34010_RDMEM(T,A)			((unsigned)memory_read_byte_16le ((T)->program, A))
 #define TMS34010_RDMEM_WORD(T,A)	((unsigned)memory_read_word_16le ((T)->program, A))
-INLINE UINT32 TMS34010_RDMEM_DWORD(tms34010_state *tms, offs_t A)
+INLINE uint32_t TMS34010_RDMEM_DWORD(tms34010_state *tms, offs_t A)
 {
-	UINT32 result = memory_read_word_16le(tms->program, A);
+	uint32_t result = memory_read_word_16le(tms->program, A);
 	return result | (memory_read_word_16le(tms->program, A+2)<<16);
 }
 
 #define TMS34010_WRMEM(T,A,V)		(memory_write_byte_16le((T)->program, A,V))
 #define TMS34010_WRMEM_WORD(T,A,V)	(memory_write_word_16le((T)->program, A,V))
-INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
+INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,uint32_t V)
 {
 	memory_write_word_16le(tms->program, A,V);
 	memory_write_word_16le(tms->program, A+2,V>>16);
@@ -53,36 +53,36 @@ INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
 ***************************************************************************/
 
 #define WFIELDMAC(T,MASK,MAX)														\
-	UINT32 shift = offset & 0x0f;   												\
-	UINT32 masked_data = data & (MASK);												\
-	UINT32 old;																		\
+	uint32_t shift = offset & 0x0f;   												\
+	uint32_t masked_data = data & (MASK);												\
+	uint32_t old;																		\
 																					\
 	offset = TOBYTE(offset & 0xfffffff0);											\
 																					\
 	if (shift >= MAX)																\
 	{																				\
-		old = (UINT32)TMS34010_RDMEM_DWORD(T, offset) & ~((MASK) << shift); 			\
+		old = (uint32_t)TMS34010_RDMEM_DWORD(T, offset) & ~((MASK) << shift); 			\
 		TMS34010_WRMEM_DWORD(T, offset, (masked_data << shift) | old);					\
 	}																				\
 	else																			\
 	{																				\
-		old = (UINT32)TMS34010_RDMEM_WORD(T, offset) & ~((MASK) << shift);			\
+		old = (uint32_t)TMS34010_RDMEM_WORD(T, offset) & ~((MASK) << shift);			\
 		TMS34010_WRMEM_WORD(T, offset, ((masked_data & (MASK)) << shift) | old);		\
 	}																				\
 
 #define WFIELDMAC_BIG(T,MASK,MAX)														\
-	UINT32 shift = offset & 0x0f;   												\
-	UINT32 masked_data = data & (MASK);												\
-	UINT32 old;																		\
+	uint32_t shift = offset & 0x0f;   												\
+	uint32_t masked_data = data & (MASK);												\
+	uint32_t old;																		\
 																					\
 	offset = TOBYTE(offset & 0xfffffff0);											\
 																					\
-	old = (UINT32)TMS34010_RDMEM_DWORD(T, offset) & ~(UINT32)((MASK) << shift);		\
-	TMS34010_WRMEM_DWORD(T, offset, (UINT32)(masked_data << shift) | old);				\
+	old = (uint32_t)TMS34010_RDMEM_DWORD(T, offset) & ~(uint32_t)((MASK) << shift);		\
+	TMS34010_WRMEM_DWORD(T, offset, (uint32_t)(masked_data << shift) | old);				\
 	if (shift >= MAX)																\
 	{																				\
 		shift = 32 - shift;															\
-		old = (UINT32)TMS34010_RDMEM_WORD(T, offset + 4) & ~((MASK) >> shift);			\
+		old = (uint32_t)TMS34010_RDMEM_WORD(T, offset + 4) & ~((MASK) >> shift);			\
 		TMS34010_WRMEM_WORD(T, offset, (masked_data >> shift) | old);					\
 	}																				\
 
@@ -105,12 +105,12 @@ INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
 #define WFIELDMAC_32(T)																\
 	if (offset & 0x0f)																\
 	{																				\
-		UINT32 shift = offset&0x0f;													\
-		UINT32 old;																	\
-		UINT32 hiword;																\
+		uint32_t shift = offset&0x0f;													\
+		uint32_t old;																	\
+		uint32_t hiword;																\
 		offset &= 0xfffffff0;														\
-		old =    ((UINT32) TMS34010_RDMEM_DWORD (T, TOBYTE(offset     ))&(0xffffffff>>(0x20-shift)));	\
-		hiword = ((UINT32) TMS34010_RDMEM_DWORD (T, TOBYTE(offset+0x20))&(0xffffffff<<shift));		\
+		old =    ((uint32_t) TMS34010_RDMEM_DWORD (T, TOBYTE(offset     ))&(0xffffffff>>(0x20-shift)));	\
+		hiword = ((uint32_t) TMS34010_RDMEM_DWORD (T, TOBYTE(offset+0x20))&(0xffffffff<<shift));		\
 		TMS34010_WRMEM_DWORD(T, TOBYTE(offset     ),(data<<      shift) |old);			\
 		TMS34010_WRMEM_DWORD(T, TOBYTE(offset+0x20),(data>>(0x20-shift))|hiword);		\
 	}																				\
@@ -124,7 +124,7 @@ INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
 ***************************************************************************/
 
 #define RFIELDMAC(T,MASK,MAX)															\
-	UINT32 shift = offset & 0x0f;													\
+	uint32_t shift = offset & 0x0f;													\
 	offset = TOBYTE(offset & 0xfffffff0);											\
 																					\
 	if (shift >= MAX)																\
@@ -133,10 +133,10 @@ INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
 		ret = (TMS34010_RDMEM_WORD(T, offset) >> shift) & (MASK);						\
 
 #define RFIELDMAC_BIG(T,MASK,MAX)														\
-	UINT32 shift = offset & 0x0f;													\
+	uint32_t shift = offset & 0x0f;													\
 	offset = TOBYTE(offset & 0xfffffff0);											\
 																					\
-	ret = (UINT32)TMS34010_RDMEM_DWORD(T, offset) >> shift;							\
+	ret = (uint32_t)TMS34010_RDMEM_DWORD(T, offset) >> shift;							\
 	if (shift >= MAX)																\
 		ret |= (TMS34010_RDMEM_WORD(T, offset + 4) << (32 - shift));					\
 	ret &= MASK;																	\
@@ -144,9 +144,9 @@ INLINE void TMS34010_WRMEM_DWORD(tms34010_state *tms, offs_t A,UINT32 V)
 #define RFIELDMAC_32(T)																\
 	if (offset&0x0f)																\
 	{																				\
-		UINT32 shift = offset&0x0f;													\
+		uint32_t shift = offset&0x0f;													\
 		offset &= 0xfffffff0;														\
-		return (((UINT32)TMS34010_RDMEM_DWORD (T, TOBYTE(offset     ))>>      shift) |	\
+		return (((uint32_t)TMS34010_RDMEM_DWORD (T, TOBYTE(offset     ))>>      shift) |	\
 			            (TMS34010_RDMEM_DWORD (T, TOBYTE(offset+0x20))<<(0x20-shift)));\
 	}																				\
 	else																			\

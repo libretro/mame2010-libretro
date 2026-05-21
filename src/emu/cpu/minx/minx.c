@@ -67,22 +67,22 @@ TODO:
 
 typedef struct {
 //  MINX_CONFIG  config;
-	UINT16	PC;
-	UINT16	SP;
-	UINT16	BA;
-	UINT16	HL;
-	UINT16	X;
-	UINT16	Y;
-	UINT8	U;
-	UINT8	V;
-	UINT8	F;
-	UINT8	E;
-	UINT8	N;
-	UINT8	I;
-	UINT8	XI;
-	UINT8	YI;
-	UINT8	halted;
-	UINT8	interrupt_pending;
+	uint16_t	PC;
+	uint16_t	SP;
+	uint16_t	BA;
+	uint16_t	HL;
+	uint16_t	X;
+	uint16_t	Y;
+	uint8_t	U;
+	uint8_t	V;
+	uint8_t	F;
+	uint8_t	E;
+	uint8_t	N;
+	uint8_t	I;
+	uint8_t	XI;
+	uint8_t	YI;
+	uint8_t	halted;
+	uint8_t	interrupt_pending;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -101,13 +101,13 @@ INLINE minx_state *get_safe_token(running_device *device)
 	return (minx_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT16 rd16( minx_state *minx, UINT32 offset )
+INLINE uint16_t rd16( minx_state *minx, uint32_t offset )
 {
 	return RD( offset ) | ( RD( offset + 1 ) << 8 );
 }
 
 
-INLINE void wr16( minx_state *minx, UINT32 offset, UINT16 data )
+INLINE void wr16( minx_state *minx, uint32_t offset, uint16_t data )
 {
 	WR( offset, ( data & 0x00FF ) );
 	WR( offset + 1, ( data >> 8 ) );
@@ -145,17 +145,17 @@ static CPU_EXIT( minx )
 }
 
 
-INLINE UINT8 rdop( minx_state *minx )
+INLINE uint8_t rdop( minx_state *minx )
 {
-	UINT8 op = RD( GET_MINX_PC );
+	uint8_t op = RD( GET_MINX_PC );
 	minx->PC++;
 	return op;
 }
 
 
-INLINE UINT16 rdop16( minx_state *minx )
+INLINE uint16_t rdop16( minx_state *minx )
 {
-	UINT16 op = rdop(minx);
+	uint16_t op = rdop(minx);
 	op = op | ( rdop(minx) << 8 );
 	return op;
 }
@@ -169,8 +169,8 @@ INLINE UINT16 rdop16( minx_state *minx )
 
 static CPU_EXECUTE( minx )
 {
-	UINT32	oldpc;
-	UINT8	op;
+	uint32_t	oldpc;
+	uint8_t	op;
 	minx_state *minx = get_safe_token(device);
 
 	do

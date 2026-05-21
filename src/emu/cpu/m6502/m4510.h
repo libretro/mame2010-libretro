@@ -44,6 +44,6 @@ DECLARE_LEGACY_CPU_DEVICE(M4510, m4510);
 
 extern CPU_DISASSEMBLE( m4510 );
 
-UINT8 m4510_get_port(legacy_cpu_device *device);
+uint8_t m4510_get_port(legacy_cpu_device *device);
 
 #endif /* __M4510_H__ */

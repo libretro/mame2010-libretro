@@ -28,9 +28,9 @@ struct _scmp_state
 	PAIR	P1;
 	PAIR	P2;
 	PAIR	P3;
-	UINT8	AC;
-	UINT8	ER;
-	UINT8	SR;
+	uint8_t	AC;
+	uint8_t	ER;
+	uint8_t	SR;
 
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -60,39 +60,39 @@ INLINE scmp_state *get_safe_token(running_device *device)
 	return (scmp_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE UINT16 ADD12(UINT16 addr, INT8 val)
+INLINE uint16_t ADD12(uint16_t addr, int8_t val)
 {
 	return ((addr + val) & 0x0fff) | (addr & 0xf000);
 }
 
-INLINE UINT8 ROP(scmp_state *cpustate)
+INLINE uint8_t ROP(scmp_state *cpustate)
 {
-	UINT16 pc = cpustate->PC.w.l;
+	uint16_t pc = cpustate->PC.w.l;
 	cpustate->PC.w.l = ADD12(cpustate->PC.w.l,1);
 	return memory_decrypted_read_byte(cpustate->program,  pc);
 }
 
-INLINE UINT8 ARG(scmp_state *cpustate)
+INLINE uint8_t ARG(scmp_state *cpustate)
 {
-	UINT16 pc = cpustate->PC.w.l;
+	uint16_t pc = cpustate->PC.w.l;
 	cpustate->PC.w.l = ADD12(cpustate->PC.w.l,1);
 	return memory_raw_read_byte(cpustate->program, pc);
 }
 
-INLINE UINT8 RM(scmp_state *cpustate,UINT32 a)
+INLINE uint8_t RM(scmp_state *cpustate,uint32_t a)
 {
 	return memory_read_byte_8le(cpustate->program, a);
 }
 
-INLINE void WM(scmp_state *cpustate,UINT32 a, UINT8 v)
+INLINE void WM(scmp_state *cpustate,uint32_t a, uint8_t v)
 {
 	memory_write_byte_8le(cpustate->program, a, v);
 }
 
-INLINE void illegal(scmp_state *cpustate,UINT8 opcode)
+INLINE void illegal(scmp_state *cpustate,uint8_t opcode)
 {
 #if VERBOSE
-	UINT16 pc = cpustate->PC.w.l;
+	uint16_t pc = cpustate->PC.w.l;
 	LOG(("SC/MP illegal instruction %04X $%02X\n", pc-1, opcode));
 #endif
 }
@@ -108,10 +108,10 @@ INLINE PAIR *GET_PTR_REG(scmp_state *cpustate, int num)
 	}
 }
 
-INLINE void BIN_ADD(scmp_state *cpustate, UINT8 val)
+INLINE void BIN_ADD(scmp_state *cpustate, uint8_t val)
 {
-	UINT16 tmp = cpustate->AC + val + ((cpustate->SR >> 7) & 1);
-	UINT8 ov = (((cpustate->AC & 0x80)==(val & 0x80)) && ((cpustate->AC & 0x80)!=(tmp & 0x80))) ? 0x40 : 0x00;
+	uint16_t tmp = cpustate->AC + val + ((cpustate->SR >> 7) & 1);
+	uint8_t ov = (((cpustate->AC & 0x80)==(val & 0x80)) && ((cpustate->AC & 0x80)!=(tmp & 0x80))) ? 0x40 : 0x00;
 
 	cpustate->AC = tmp & 0xff;
 	cpustate->SR &= 0x3f; // clear CY/L and OV flag
@@ -119,28 +119,28 @@ INLINE void BIN_ADD(scmp_state *cpustate, UINT8 val)
 	cpustate->SR |= ov;
 }
 
-INLINE void DEC_ADD(scmp_state *cpustate, UINT8 val)
+INLINE void DEC_ADD(scmp_state *cpustate, uint8_t val)
 {
-	UINT16 tmp = cpustate->AC + val + ((cpustate->SR >> 7) & 1);
+	uint16_t tmp = cpustate->AC + val + ((cpustate->SR >> 7) & 1);
 	if ((tmp & 0x0f) > 9) tmp +=6;
 	cpustate->AC = tmp % 0xa0;
 	cpustate->SR &= 0x7f; // clear CY/L flag
 	cpustate->SR |= (tmp > 0x99) ? 0x80 : 0x00;
 }
 
-INLINE UINT16 GET_ADDR(scmp_state *cpustate, UINT8 code)
+INLINE uint16_t GET_ADDR(scmp_state *cpustate, uint8_t code)
 {
-	UINT16 addr = 0;
-	INT8 offset = 0;
-	UINT16 retVal = 0;
-	UINT16 ptr = GET_PTR_REG(cpustate,code & 0x03)->w.l;
+	uint16_t addr = 0;
+	int8_t offset = 0;
+	uint16_t retVal = 0;
+	uint16_t ptr = GET_PTR_REG(cpustate,code & 0x03)->w.l;
 
-	UINT8 arg = ARG(cpustate);
+	uint8_t arg = ARG(cpustate);
 	if (arg == 0x80) {
 		offset = cpustate->ER;
 	} else {
 		if (arg & 0x80) {
-			offset = (INT8)arg;
+			offset = (int8_t)arg;
 		} else {
 			offset = arg;
 		}
@@ -172,8 +172,8 @@ INLINE UINT16 GET_ADDR(scmp_state *cpustate, UINT8 code)
 
 static void execute_one(scmp_state *cpustate, int opcode)
 {
-	UINT8 tmp;
-	UINT8 ptr = opcode & 3;
+	uint8_t tmp;
+	uint8_t ptr = opcode & 3;
 	if (BIT(opcode,7)) {
 		// two bytes instructions
 		switch (opcode)
@@ -231,7 +231,7 @@ static void execute_one(scmp_state *cpustate, int opcode)
 			case 0xa8 : case 0xa9 : case 0xaa : case 0xab :
 						// IDL
 						{
-							UINT16 addr = GET_ADDR(cpustate,opcode);
+							uint16_t addr = GET_ADDR(cpustate,opcode);
 							cpustate->icount -= 22;
 							cpustate->AC = RM(cpustate,addr) + 1;
 							WM(cpustate,addr,cpustate->AC);
@@ -240,7 +240,7 @@ static void execute_one(scmp_state *cpustate, int opcode)
 			case 0xb8 : case 0xb9 : case 0xba : case 0xbb :
 						// DLD
 						{
-							UINT16 addr = GET_ADDR(cpustate,opcode);
+							uint16_t addr = GET_ADDR(cpustate,opcode);
 							cpustate->icount -= 22;
 							cpustate->AC = RM(cpustate,addr) - 1;
 							WM(cpustate,addr,cpustate->AC);
@@ -278,14 +278,14 @@ static void execute_one(scmp_state *cpustate, int opcode)
 			// Transfer Instructions
 			case 0x90 : case 0x91 : case 0x92 : case 0x93 :// JMP
 						cpustate->icount -= 11;
-						cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(INT8)ARG(cpustate));
+						cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(int8_t)ARG(cpustate));
 						break;
 			case 0x94 : case 0x95 : case 0x96 : case 0x97 :
 						// JP
 						cpustate->icount -= 9;
 						tmp = ARG(cpustate);
 						if (!(cpustate->AC & 0x80)) {
-							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(INT8)tmp);
+							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(int8_t)tmp);
 							cpustate->icount -= 2;
 						}
 						break;
@@ -294,7 +294,7 @@ static void execute_one(scmp_state *cpustate, int opcode)
 						cpustate->icount -= 9;
 						tmp = ARG(cpustate);
 						if (!cpustate->AC) {
-							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(INT8)tmp);
+							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(int8_t)tmp);
 							cpustate->icount -= 2;
 						}
 						break;
@@ -303,14 +303,14 @@ static void execute_one(scmp_state *cpustate, int opcode)
 						cpustate->icount -= 9;
 						tmp = ARG(cpustate);
 						if (cpustate->AC) {
-							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(INT8)tmp);
+							cpustate->PC.w.l = ADD12(GET_PTR_REG(cpustate,ptr)->w.l,(int8_t)tmp);
 							cpustate->icount -= 2;
 						}
 						break;
 			// Double-Byte Miscellaneous Instructions
 			case 0x8f:	// DLY
 						tmp = ARG(cpustate);
-						cpustate->icount -= 13 + (cpustate->AC * 2) + (((UINT32)tmp) << 1) + (((UINT32)tmp) << 9);
+						cpustate->icount -= 13 + (cpustate->AC * 2) + (((uint32_t)tmp) << 1) + (((uint32_t)tmp) << 9);
 						cpustate->AC = 0xff;
 						break;
 			// Others are illegal
@@ -374,7 +374,7 @@ static void execute_one(scmp_state *cpustate, int opcode)
 			case 0x3c:	case 0x3d :case 0x3e: case 0x3f:
 						// XPPC
 						{
-							UINT16 tmp = ADD12(cpustate->PC.w.l,-1); // Since PC is incremented we need to fix it
+							uint16_t tmp = ADD12(cpustate->PC.w.l,-1); // Since PC is incremented we need to fix it
 							cpustate->icount -= 7;
 							cpustate->PC.w.l = GET_PTR_REG(cpustate,ptr)->w.l;
 							GET_PTR_REG(cpustate,ptr)->w.l = tmp;
@@ -459,7 +459,7 @@ static void execute_one(scmp_state *cpustate, int opcode)
 ***************************************************************************/
 static void take_interrupt(scmp_state *cpustate)
 {
-	UINT16 tmp = ADD12(cpustate->PC.w.l,-1); // We fix PC so at return it goes to current location
+	uint16_t tmp = ADD12(cpustate->PC.w.l,-1); // We fix PC so at return it goes to current location
 	cpustate->SR &= 0xf7; // clear IE flag
 
 	cpustate->icount -= 8; // assumption

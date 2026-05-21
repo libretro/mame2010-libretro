@@ -154,8 +154,8 @@ typedef enum _mips3_flavor mips3_flavor;
 #define IS_FLOAT(o) 	(((o) & (1 << 23)) == 0)
 #define IS_INTEGRAL(o)	(((o) & (1 << 23)) != 0)
 
-#define SIMMVAL			((INT16)op)
-#define UIMMVAL			((UINT16)op)
+#define SIMMVAL			((int16_t)op)
+#define UIMMVAL			((uint16_t)op)
 #define LIMMVAL			(op & 0x03ffffff)
 
 
@@ -168,9 +168,9 @@ typedef enum _mips3_flavor mips3_flavor;
 typedef struct _mips3_tlb_entry mips3_tlb_entry;
 struct _mips3_tlb_entry
 {
-	UINT64			page_mask;
-	UINT64			entry_hi;
-	UINT64			entry_lo[2];
+	uint64_t			page_mask;
+	uint64_t			entry_hi;
+	uint64_t			entry_lo[2];
 };
 
 
@@ -183,32 +183,32 @@ typedef struct _mips3_state mips3_state;
 struct _mips3_state
 {
 	/* core registers */
-	UINT32			pc;
+	uint32_t			pc;
 	int				icount;
-	UINT64			r[35];
+	uint64_t			r[35];
 
 	/* COP registers */
-	UINT64			cpr[3][32];
-	UINT64			ccr[3][32];
-	UINT32			llbit;
+	uint64_t			cpr[3][32];
+	uint64_t			ccr[3][32];
+	uint32_t			llbit;
 
 	/* internal stuff */
 	mips3_flavor	flavor;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *	device;
 	const address_space *program;
-	UINT32			system_clock;
-	UINT32			cpu_clock;
-	UINT64			count_zero_time;
-	UINT32			compare_armed;
+	uint32_t			system_clock;
+	uint32_t			cpu_clock;
+	uint64_t			count_zero_time;
+	uint32_t			compare_armed;
 	emu_timer *		compare_int_timer;
 
 	/* derived info based on flavor */
-	UINT32			pfnmask;
-	UINT8			tlbentries;
+	uint32_t			pfnmask;
+	uint8_t			tlbentries;
 
 	/* memory accesses */
-	UINT8			bigendian;
+	uint8_t			bigendian;
 	data_accessors	memory;
 
 	/* cache memory */
@@ -233,7 +233,7 @@ void mips3com_init(mips3_state *mips, mips3_flavor flavor, int bigendian, legacy
 void mips3com_exit(mips3_state *mips);
 
 void mips3com_reset(mips3_state *mips);
-offs_t mips3com_dasm(mips3_state *mips, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram);
+offs_t mips3com_dasm(mips3_state *mips, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram);
 void mips3com_update_cycle_counting(mips3_state *mips);
 
 void mips3com_asid_changed(mips3_state *mips);
@@ -243,8 +243,8 @@ void mips3com_tlbwi(mips3_state *mips);
 void mips3com_tlbwr(mips3_state *mips);
 void mips3com_tlbp(mips3_state *mips);
 
-void mips3com_set_info(mips3_state *mips, UINT32 state, cpuinfo *info);
-void mips3com_get_info(mips3_state *mips, UINT32 state, cpuinfo *info);
+void mips3com_set_info(mips3_state *mips, uint32_t state, cpuinfo *info);
+void mips3com_get_info(mips3_state *mips, uint32_t state, cpuinfo *info);
 
 
 

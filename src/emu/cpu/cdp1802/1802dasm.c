@@ -98,10 +98,10 @@ static const struct { const char *mnemonic; Adr adr; } table[]={
 
 CPU_DISASSEMBLE( cdp1802 )
 {
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 	int oldpc = pc;
 	int oper;
-	UINT16 absolut;
+	uint16_t absolut;
 	oldpc&=0xffff;
 	pc=oldpc;
 	oper=oprom[pc++ - oldpc];

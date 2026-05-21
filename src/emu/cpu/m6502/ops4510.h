@@ -32,7 +32,7 @@
 #define TXS								\
 	SPL = X;							\
 	if (PEEK_OP() == 0x2b /*TYS*/ ) {	            \
-		UINT8 op = RDOP();				\
+		uint8_t op = RDOP();				\
 		(*cpustate->insn[op])(cpustate);			\
 	}
 
@@ -56,6 +56,6 @@
   cpustate->mem[7]=(cpustate->high&0x8000) ? (cpustate->high&0xfff)<<8:0; \
   cpustate->icount -= 3; \
   { \
-				UINT8 op = RDOP();								\
+				uint8_t op = RDOP();								\
 				(*cpustate->insn[op])(cpustate);							\
   }

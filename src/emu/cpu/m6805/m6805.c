@@ -12,9 +12,9 @@
         6809 Microcomputer Programming & Interfacing with Experiments"
             by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-    System dependencies:    UINT16 must be 16 bit unsigned int
-                            UINT8 must be 8 bit unsigned int
-                            UINT32 must be more than 16 bits
+    System dependencies:    uint16_t must be 16 bit unsigned int
+                            uint8_t must be 8 bit unsigned int
+                            uint32_t must be more than 16 bits
                             arrays up to 65536 bytes must be supported
                             machine must be twos complement
 
@@ -51,15 +51,15 @@ typedef struct
 	PAIR ea;				/* effective address */
 
 	int 	subtype;		/* Which sub-type is being emulated */
-	UINT32	sp_mask;		/* Stack pointer address mask */
-	UINT32	sp_low; 		/* Stack pointer low water mark (or floor) */
+	uint32_t	sp_mask;		/* Stack pointer address mask */
+	uint32_t	sp_low; 		/* Stack pointer low water mark (or floor) */
     PAIR    pc;             /* Program counter */
 	PAIR	s;				/* Stack pointer */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* Index register */
-	UINT8	cc; 			/* Condition codes */
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* Index register */
+	uint8_t	cc; 			/* Condition codes */
 
-	UINT16	pending_interrupts; /* MB */
+	uint16_t	pending_interrupts; /* MB */
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
@@ -150,12 +150,12 @@ INLINE m6805_Regs *get_safe_token(running_device *device)
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)       if(!a)SEZ
-#define SET_Z8(a)	   SET_Z((UINT8)a)
+#define SET_Z8(a)	   SET_Z((uint8_t)a)
 #define SET_N8(a)	   CC|=((a&0x80)>>5)
 #define SET_H(a,b,r)   CC|=((a^b^r)&0x10)
 #define SET_C8(a)	   CC|=((a&0x100)>>8)
 
-static const UINT8 flags8i[256]=	 /* increment */
+static const uint8_t flags8i[256]=	 /* increment */
 {
 0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -174,7 +174,7 @@ static const UINT8 flags8i[256]=	 /* increment */
 0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
 0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04
 };
-static const UINT8 flags8d[256]= /* decrement */
+static const uint8_t flags8d[256]= /* decrement */
 {
 0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -200,8 +200,8 @@ static const UINT8 flags8d[256]= /* decrement */
 #define SET_NZ8(a)			{SET_N8(a);SET_Z(a);}
 #define SET_FLAGS8(a,b,r)	{SET_N8(r);SET_Z8(r);SET_C8(r);}
 
-/* for treating an unsigned UINT8 as a signed INT16 */
-#define SIGNED(b) ((INT16)(b&0x80?b|0xff00:b))
+/* for treating an unsigned uint8_t as a signed int16_t */
+#define SIGNED(b) ((int16_t)(b&0x80?b|0xff00:b))
 
 /* Macros for addressing modes */
 #define DIRECT EAD=0;IMMBYTE(cpustate->ea.b.l)
@@ -233,7 +233,7 @@ static const UINT8 flags8d[256]= /* decrement */
 #define IDX1BYTE(b) {INDEXED1;b=RM(EAD);}
 #define IDX2BYTE(b) {INDEXED2;b=RM(EAD);}
 /* Macros for branch instructions */
-#define BRANCH(f) { UINT8 t; IMMBYTE(t); if(f) { PC+=SIGNED(t); if (t==0xfe) { /* speed up busy loops */ if(cpustate->iCount > 0) cpustate->iCount = 0; } } }
+#define BRANCH(f) { uint8_t t; IMMBYTE(t); if(f) { PC+=SIGNED(t); if (t==0xfe) { /* speed up busy loops */ if(cpustate->iCount > 0) cpustate->iCount = 0; } } }
 
 /* what they say it is ... */
 static const unsigned char cycles1[] =
@@ -261,7 +261,7 @@ static const unsigned char cycles1[] =
 /* pre-clear a PAIR union; clearing h2 and h3 only might be faster? */
 #define CLEAR_PAIR(p)   p->d = 0
 
-INLINE void rd_s_handler_b( m6805_Regs *cpustate, UINT8 *b )
+INLINE void rd_s_handler_b( m6805_Regs *cpustate, uint8_t *b )
 {
 	SP_INC;
 	*b = RM( S );
@@ -276,7 +276,7 @@ INLINE void rd_s_handler_w( m6805_Regs *cpustate, PAIR *p )
 	p->b.l = RM( S );
 }
 
-INLINE void wr_s_handler_b( m6805_Regs *cpustate, UINT8 *b )
+INLINE void wr_s_handler_b( m6805_Regs *cpustate, uint8_t *b )
 {
 	WM( S, *b );
 	SP_DEC;
@@ -290,7 +290,7 @@ INLINE void wr_s_handler_w( m6805_Regs *cpustate, PAIR *p )
     SP_DEC;
 }
 
-INLINE void RM16( m6805_Regs *cpustate, UINT32 Addr, PAIR *p )
+INLINE void RM16( m6805_Regs *cpustate, uint32_t Addr, PAIR *p )
 {
 	CLEAR_PAIR(p);
     p->b.h = RM(Addr);
@@ -300,7 +300,7 @@ INLINE void RM16( m6805_Regs *cpustate, UINT32 Addr, PAIR *p )
 }
 
 #ifdef UNUSED_FUNCTION
-INLINE void WM16( m6805_Regs *cpustate, UINT32 Addr, PAIR *p )
+INLINE void WM16( m6805_Regs *cpustate, uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
     ++Addr;
@@ -509,7 +509,7 @@ static void set_irq_line( m6805_Regs *cpustate,	int irqline, int state )
 /* execute instructions on this CPU until icount expires */
 static CPU_EXECUTE( m6805 )
 {
-	UINT8 ireg;
+	uint8_t ireg;
 	m6805_Regs *cpustate = get_safe_token(device);
 
 	S = SP_ADJUST( S );		/* Taken from CPU_SET_CONTEXT when pointer'afying */

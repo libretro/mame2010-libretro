@@ -1,7 +1,7 @@
 typedef struct
 {
-	UINT32 op_mask;
-	UINT32 op_bits;
+	uint32_t op_mask;
+	uint32_t op_bits;
 	void (*handler)(SHARC_REGS *cpustate);
 } SHARC_OP;
 

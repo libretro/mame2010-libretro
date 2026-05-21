@@ -30,46 +30,46 @@
 /* I86 registers */
 typedef union
 {                   /* eight general registers */
-    UINT16 w[8];    /* viewed as 16 bits registers */
-    UINT8  b[16];   /* or as 8 bit registers */
+    uint16_t w[8];    /* viewed as 16 bits registers */
+    uint8_t  b[16];   /* or as 8 bit registers */
 } i80286basicregs;
 
 typedef struct _i80286_state i80286_state;
 struct _i80286_state
 {
     i80286basicregs regs;
-	UINT32	amask;			/* address mask */
-    UINT32  pc;
-    UINT32  prevpc;
-	UINT16	flags;
-	UINT16	msw;
-	UINT32	base[4];
-	UINT16	sregs[4];
-	UINT16	limit[4];
-	UINT8 rights[4];
+	uint32_t	amask;			/* address mask */
+    uint32_t  pc;
+    uint32_t  prevpc;
+	uint16_t	flags;
+	uint16_t	msw;
+	uint32_t	base[4];
+	uint16_t	sregs[4];
+	uint16_t	limit[4];
+	uint8_t rights[4];
 	struct {
-		UINT32 base;
-		UINT16 limit;
+		uint32_t base;
+		uint16_t limit;
 	} gdtr, idtr;
 	struct {
-		UINT16 sel;
-		UINT32 base;
-		UINT16 limit;
-		UINT8 rights;
+		uint16_t sel;
+		uint32_t base;
+		uint16_t limit;
+		uint8_t rights;
 	} ldtr, tr;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
-	INT32	AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal; /* 0 or non-0 valued flags */
-	UINT8	ParityVal;
-	UINT8	TF, IF; 	/* 0 or 1 valued flags */
-	UINT8	int_vector;
-	INT8	nmi_state;
-	INT8	irq_state;
-	INT8	test_state;
-	UINT8 rep_in_progress;
-	INT32	extra_cycles;       /* extra cycles for interrupts */
+	int32_t	AuxVal, OverVal, SignVal, ZeroVal, CarryVal, DirVal; /* 0 or non-0 valued flags */
+	uint8_t	ParityVal;
+	uint8_t	TF, IF; 	/* 0 or 1 valued flags */
+	uint8_t	int_vector;
+	int8_t	nmi_state;
+	int8_t	irq_state;
+	int8_t	test_state;
+	uint8_t rep_in_progress;
+	int32_t	extra_cycles;       /* extra cycles for interrupts */
 
 	int halted;         /* Is the CPU halted ? */
 
@@ -78,7 +78,7 @@ struct _i80286_state
 	unsigned prefix_base;
 	char seg_prefix;
 	unsigned ea;
-	UINT16 eo; /* HJB 12/13/98 effective offset of the address (before segment is added) */
+	uint16_t eo; /* HJB 12/13/98 effective offset of the address (before segment is added) */
 };
 
 INLINE i80286_state *get_safe_token(running_device *device)
@@ -91,7 +91,7 @@ INLINE i80286_state *get_safe_token(running_device *device)
 #define INT_IRQ 0x01
 #define NMI_IRQ 0x02
 
-static UINT8 parity_table[256];
+static uint8_t parity_table[256];
 
 static struct i80x86_timing timing;
 
@@ -204,7 +204,7 @@ static void set_irq_line(i80286_state *cpustate, int irqline, int state)
 
 		/* if the IF is set, signal an interrupt */
 		if (state != CLEAR_LINE && cpustate->IF)
-			PREFIX(_interrupt)(cpustate, (UINT32)-1);
+			PREFIX(_interrupt)(cpustate, (uint32_t)-1);
 	}
 }
 
@@ -243,7 +243,7 @@ static CPU_EXECUTE( i80286 )
 	cpustate->extra_cycles = 0;
 }
 
-extern int i386_dasm_one(char *buffer, UINT32 eip, const UINT8 *oprom, int mode);
+extern int i386_dasm_one(char *buffer, uint32_t eip, const uint8_t *oprom, int mode);
 
 static CPU_DISASSEMBLE( i80286 )
 {

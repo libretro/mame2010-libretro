@@ -658,7 +658,7 @@ INLINE uint EA_SIY(g65816i_cpu_struct *cpustate)   {return MAKE_UINT_16(read_16_
 			SRC    = OPER_8_##MODE(cpustate);										\
 			if(FLAG_D)														\
 			{																\
-				INT32 result, r0, r1, carry;													\
+				int32_t result, r0, r1, carry;													\
 				r0 = REGISTER_A;	\
 				r1 = SRC;		\
 				carry = CFLAG_AS_1();	\
@@ -684,7 +684,7 @@ INLINE uint EA_SIY(g65816i_cpu_struct *cpustate)   {return MAKE_UINT_16(read_16_
 #define OP_ADC(MODE)														\
 			CLK(CLK_OP + CLK_R16 + CLK_##MODE);								\
 			SRC    = OPER_16_##MODE(cpustate);										\
-			INT32 result, r0, r1, carry;													\
+			int32_t result, r0, r1, carry;													\
 			r0 = REGISTER_A;	\
 			r1 = SRC;		\
 			carry = CFLAG_AS_1();	\
@@ -1532,7 +1532,7 @@ INLINE uint EA_SIY(g65816i_cpu_struct *cpustate)   {return MAKE_UINT_16(read_16_
 			}																\
 			else															\
 			{																\
-				INT32 result, r0, r1, carry;													\
+				int32_t result, r0, r1, carry;													\
 				r0 = REGISTER_A;	\
 				r1 = SRC;		\
 				r1 ^= 0xff;		\
@@ -1551,7 +1551,7 @@ INLINE uint EA_SIY(g65816i_cpu_struct *cpustate)   {return MAKE_UINT_16(read_16_
 #define OP_SBC(MODE)														\
 			CLK(CLK_OP + CLK_R16 + CLK_##MODE);								\
 			SRC    = OPER_16_##MODE(cpustate);										\
-			INT32 result, r0, r1, carry;													\
+			int32_t result, r0, r1, carry;													\
 			r0 = REGISTER_A;	\
 			r1 = SRC;		\
 			r1 ^= 0xffff;		\

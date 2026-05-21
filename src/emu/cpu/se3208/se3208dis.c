@@ -5,9 +5,9 @@
 
 static struct _DisSE3208
 {
-	UINT32 PC;
-	UINT32 SR;
-	UINT32 ER;
+	uint32_t PC;
+	uint32_t SR;
+	uint32_t ER;
 } Context;
 
 #define FLAG_E		0x0800
@@ -23,8 +23,8 @@ static struct _DisSE3208
 #define ZEX16(val)	((val)&0xFFFF)
 #define SEX(bits,val)	((val)&(1<<(bits-1))?((val)|(~((1<<bits)-1))):(val&((1<<bits)-1)))
 
-typedef UINT32 (*_OP)(UINT16 Opcode,char *dst);
-#define INST(a) static UINT32 a(UINT16 Opcode,char *dst)
+typedef uint32_t (*_OP)(uint16_t Opcode,char *dst);
+#define INST(a) static uint32_t a(uint16_t Opcode,char *dst)
 
 
 INST(INVALIDOP)
@@ -35,9 +35,9 @@ INST(INVALIDOP)
 
 INST(LDB)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -53,9 +53,9 @@ INST(LDB)
 
 INST(STB)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -71,9 +71,9 @@ INST(STB)
 
 INST(LDS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=1;
 
@@ -91,9 +91,9 @@ INST(LDS)
 
 INST(STS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=1;
 
@@ -111,9 +111,9 @@ INST(STS)
 
 INST(LD)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -131,9 +131,9 @@ INST(LD)
 
 INST(ST)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -151,9 +151,9 @@ INST(ST)
 
 INST(LDBU)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -169,9 +169,9 @@ INST(LDBU)
 
 INST(LDSU)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,4);
-	UINT32 Index=EXTRACT(Opcode,5,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,4);
+	uint32_t Index=EXTRACT(Opcode,5,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=1;
 
@@ -190,7 +190,7 @@ INST(LDSU)
 
 INST(LERI)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,13);
+	uint32_t Imm=EXTRACT(Opcode,0,13);
 
 	if(TESTFLAG(FLAG_E))
 		Context.ER=(EXTRACT(Context.ER,0,17)<<14)|Imm;
@@ -206,8 +206,8 @@ INST(LERI)
 
 INST(LDSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -222,8 +222,8 @@ INST(LDSP)
 
 INST(STSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 SrcDst=EXTRACT(Opcode,8,10);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t SrcDst=EXTRACT(Opcode,8,10);
 
 	Offset<<=2;
 
@@ -238,7 +238,7 @@ INST(STSP)
 
 INST(PUSH)
 {
-	UINT32 Set=EXTRACT(Opcode,0,10);
+	uint32_t Set=EXTRACT(Opcode,0,10);
 	char str[1024];
 	strcpy(str,"PUSH  ");
 	if(Set&(1<<10))
@@ -270,7 +270,7 @@ INST(PUSH)
 
 INST(POP)
 {
-	UINT32 Set=EXTRACT(Opcode,0,10);
+	uint32_t Set=EXTRACT(Opcode,0,10);
 	char str[1024];
 	int Ret=0;
 	strcpy(str,"POP   ");
@@ -309,8 +309,8 @@ INST(POP)
 
 INST(LEATOSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,9,12);
-	UINT32 Index=EXTRACT(Opcode,3,5);
+	uint32_t Offset=EXTRACT(Opcode,9,12);
+	uint32_t Index=EXTRACT(Opcode,3,5);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -328,8 +328,8 @@ INST(LEATOSP)
 
 INST(LEAFROMSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,9,12);
-	UINT32 Index=EXTRACT(Opcode,3,5);
+	uint32_t Offset=EXTRACT(Opcode,9,12);
+	uint32_t Index=EXTRACT(Opcode,3,5);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -344,7 +344,7 @@ INST(LEAFROMSP)
 
 INST(LEASPTOSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset=EXTRACT(Opcode,0,7);
 
 	Offset<<=2;
 
@@ -362,8 +362,8 @@ INST(LEASPTOSP)
 
 INST(MOV)
 {
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,9,11);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,9,11);
 
 	if(Src==0 && Dst==0)
 		sprintf(dst,"NOP");
@@ -374,8 +374,8 @@ INST(MOV)
 
 INST(LDI)
 {
-	UINT32 Dst=EXTRACT(Opcode,8,10);
-	UINT32 Imm=EXTRACT(Opcode,0,7);
+	uint32_t Dst=EXTRACT(Opcode,8,10);
+	uint32_t Imm=EXTRACT(Opcode,0,7);
 
 	if(TESTFLAG(FLAG_E))
 		Imm=(EXTRACT(Context.ER,0,27)<<4)|(Imm&0xf);
@@ -390,8 +390,8 @@ INST(LDI)
 
 INST(LDBSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -404,8 +404,8 @@ INST(LDBSP)
 
 INST(STBSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -418,8 +418,8 @@ INST(STBSP)
 
 INST(LDSSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	Offset<<=1;
 
@@ -434,8 +434,8 @@ INST(LDSSP)
 
 INST(STSSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	Offset<<=1;
 
@@ -450,8 +450,8 @@ INST(STSSP)
 
 INST(LDBUSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	if(TESTFLAG(FLAG_E))
 		Offset=(EXTRACT(Context.ER,0,27)<<4)|(Offset&0xf);
@@ -464,8 +464,8 @@ INST(LDBUSP)
 
 INST(LDSUSP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,3);
-	UINT32 SrcDst=EXTRACT(Opcode,4,6);
+	uint32_t Offset=EXTRACT(Opcode,0,3);
+	uint32_t SrcDst=EXTRACT(Opcode,4,6);
 
 	Offset<<=1;
 
@@ -480,10 +480,10 @@ INST(LDSUSP)
 
 INST(ADDI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -498,10 +498,10 @@ INST(ADDI)
 
 INST(SUBI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -517,10 +517,10 @@ INST(SUBI)
 
 INST(ADCI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -535,10 +535,10 @@ INST(ADCI)
 
 INST(SBCI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -553,10 +553,10 @@ INST(SBCI)
 
 INST(ANDI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -571,10 +571,10 @@ INST(ANDI)
 
 INST(ORI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -589,10 +589,10 @@ INST(ORI)
 
 INST(XORI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -607,9 +607,9 @@ INST(XORI)
 
 INST(CMPI)
 {
-	UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Imm2=Imm;
+	uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -624,9 +624,9 @@ INST(CMPI)
 
 INST(TSTI)
 {
-		UINT32 Imm=EXTRACT(Opcode,9,12);
-	UINT32 Src=EXTRACT(Opcode,3,5);
-	UINT32 Imm2=Imm;
+		uint32_t Imm=EXTRACT(Opcode,9,12);
+	uint32_t Src=EXTRACT(Opcode,3,5);
+	uint32_t Imm2=Imm;
 
 	if(TESTFLAG(FLAG_E))
 		Imm2=(EXTRACT(Context.ER,0,27)<<4)|(Imm2&0xf);
@@ -641,9 +641,9 @@ INST(TSTI)
 
 INST(ADD)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"ADD   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -651,9 +651,9 @@ INST(ADD)
 
 INST(SUB)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"SUB   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -661,9 +661,9 @@ INST(SUB)
 
 INST(ADC)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"ADC   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -671,9 +671,9 @@ INST(ADC)
 
 INST(SBC)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"SBC   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -681,9 +681,9 @@ INST(SBC)
 
 INST(AND)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"AND   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -691,9 +691,9 @@ INST(AND)
 
 INST(OR)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"OR    %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -701,9 +701,9 @@ INST(OR)
 
 INST(XOR)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"XOR   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 	return 0;
@@ -711,8 +711,8 @@ INST(XOR)
 
 INST(CMP)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
 
 	sprintf(dst,"CMP   %%SR%d,%%SR%d",Src1,Src2);
 	return 0;
@@ -720,8 +720,8 @@ INST(CMP)
 
 INST(TST)
 {
-	UINT32 Src2=EXTRACT(Opcode,9,11);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
+	uint32_t Src2=EXTRACT(Opcode,9,11);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
 
 	sprintf(dst,"TST   %%SR%d,%%SR%d",Src1,Src2);
 	return 0;
@@ -729,9 +729,9 @@ INST(TST)
 
 INST(MULS)
 {
-	UINT32 Src2=EXTRACT(Opcode,6,8);
-	UINT32 Src1=EXTRACT(Opcode,3,5);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
+	uint32_t Src2=EXTRACT(Opcode,6,8);
+	uint32_t Src1=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
 
 	sprintf(dst,"MUL   %%SR%d,%%SR%d,%%DR%d",Src1,Src2,Dst);
 
@@ -741,8 +741,8 @@ INST(MULS)
 
 INST(NEG)
 {
-	UINT32 Dst=EXTRACT(Opcode,9,11);
-	UINT32 Src=EXTRACT(Opcode,3,5);
+	uint32_t Dst=EXTRACT(Opcode,9,11);
+	uint32_t Src=EXTRACT(Opcode,3,5);
 
 	sprintf(dst,"NEG   %%SR%d,%%DR%d",Src,Dst);
 	return 0;
@@ -750,8 +750,8 @@ INST(NEG)
 
 INST(CALL)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -766,8 +766,8 @@ INST(CALL)
 
 INST(JV)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -782,8 +782,8 @@ INST(JV)
 
 INST(JNV)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -798,8 +798,8 @@ INST(JNV)
 
 INST(JC)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -814,8 +814,8 @@ INST(JC)
 
 INST(JNC)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -830,8 +830,8 @@ INST(JNC)
 
 INST(JP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -846,8 +846,8 @@ INST(JP)
 
 INST(JM)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -862,8 +862,8 @@ INST(JM)
 
 INST(JNZ)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -878,8 +878,8 @@ INST(JNZ)
 
 INST(JZ)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -894,8 +894,8 @@ INST(JZ)
 
 INST(JGE)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -910,8 +910,8 @@ INST(JGE)
 
 INST(JLE)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -926,8 +926,8 @@ INST(JLE)
 
 INST(JHI)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -942,8 +942,8 @@ INST(JHI)
 
 INST(JLS)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -958,8 +958,8 @@ INST(JLS)
 
 INST(JGT)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -974,8 +974,8 @@ INST(JGT)
 
 INST(JLT)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -992,8 +992,8 @@ INST(JLT)
 
 INST(JMP)
 {
-	UINT32 Offset=EXTRACT(Opcode,0,7);
-	UINT32 Offset2;
+	uint32_t Offset=EXTRACT(Opcode,0,7);
+	uint32_t Offset2;
 
 	if(TESTFLAG(FLAG_E))
 		Offset2=(EXTRACT(Context.ER,0,22)<<8)|Offset;
@@ -1008,7 +1008,7 @@ INST(JMP)
 
 INST(JR)
 {
-	UINT32 Src=EXTRACT(Opcode,0,3);
+	uint32_t Src=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"JR    %%R%d",Src);
 
@@ -1018,7 +1018,7 @@ INST(JR)
 
 INST(CALLR)
 {
-	UINT32 Src=EXTRACT(Opcode,0,3);
+	uint32_t Src=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"CALLR %%R%d",Src);
 
@@ -1028,10 +1028,10 @@ INST(CALLR)
 
 INST(ASR)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		sprintf(dst,"ASR   %%R%d,%%R%d",Cnt,Dst);
@@ -1044,10 +1044,10 @@ INST(ASR)
 
 INST(LSR)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		sprintf(dst,"LSR   %%R%d,%%R%d",Cnt,Dst);
@@ -1060,10 +1060,10 @@ INST(LSR)
 
 INST(ASL)
 {
-	UINT32 CS=Opcode&(1<<10);
-	UINT32 Dst=EXTRACT(Opcode,0,2);
-	UINT32 Imm=EXTRACT(Opcode,5,9);
-	UINT32 Cnt=EXTRACT(Opcode,5,7);
+	uint32_t CS=Opcode&(1<<10);
+	uint32_t Dst=EXTRACT(Opcode,0,2);
+	uint32_t Imm=EXTRACT(Opcode,5,9);
+	uint32_t Cnt=EXTRACT(Opcode,5,7);
 
 	if(CS)
 		sprintf(dst,"ASL   %%R%d,%%R%d",Cnt,Dst);
@@ -1076,7 +1076,7 @@ INST(ASL)
 
 INST(EXTB)
 {
-	UINT32 Dst=EXTRACT(Opcode,0,3);
+	uint32_t Dst=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"EXTB  %%R%d",Dst);
 
@@ -1086,7 +1086,7 @@ INST(EXTB)
 
 INST(EXTS)
 {
-	UINT32 Dst=EXTRACT(Opcode,0,3);
+	uint32_t Dst=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"EXTS  %%R%d",Dst);
 
@@ -1096,7 +1096,7 @@ INST(EXTS)
 
 INST(SET)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"SET   0x%x",Imm);
 	return 0;
@@ -1104,7 +1104,7 @@ INST(SET)
 
 INST(CLR)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"CLR   0x%x",Imm);
 	return 0;
@@ -1112,7 +1112,7 @@ INST(CLR)
 
 INST(SWI)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"SWI   0x%x",Imm);
 	return 0;
@@ -1120,7 +1120,7 @@ INST(SWI)
 
 INST(HALT)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"HALT  0x%x",Imm);
 	return 0;
@@ -1128,7 +1128,7 @@ INST(HALT)
 
 INST(MVTC)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"MVTC  %%R0,%%CR%d",Imm);
 	return 0;
@@ -1136,19 +1136,19 @@ INST(MVTC)
 
 INST(MVFC)
 {
-	UINT32 Imm=EXTRACT(Opcode,0,3);
+	uint32_t Imm=EXTRACT(Opcode,0,3);
 
 	sprintf(dst,"MVFC  %%CR0%d,%%R0",Imm);
 	return 0;
 }
 
-static _OP DecodeOp(UINT16 Opcode)
+static _OP DecodeOp(uint16_t Opcode)
 {
 	switch(EXTRACT(Opcode,14,15))
 	{
 		case 0x0:
 			{
-				UINT8 Op=EXTRACT(Opcode,11,13);
+				uint8_t Op=EXTRACT(Opcode,11,13);
 				switch(Op)
 				{
 					case 0x0:
@@ -1402,7 +1402,7 @@ static _OP DecodeOp(UINT16 Opcode)
 
 CPU_DISASSEMBLE( se3208 )
 {
-	UINT16 Opcode;
+	uint16_t Opcode;
 
 	CLRFLAG(FLAG_E);
 	Context.ER=0;

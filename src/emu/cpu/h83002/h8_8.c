@@ -34,27 +34,27 @@ static TIMER_CALLBACK( h8_timer_1_cb );
 static TIMER_CALLBACK( h8_timer_2_cb );
 static TIMER_CALLBACK( h8_timer_3_cb );
 
-INLINE UINT16 h8_mem_read16(h83xx_state *h8, offs_t address)
+INLINE uint16_t h8_mem_read16(h83xx_state *h8, offs_t address)
 {
-	UINT16 result =  memory_read_byte(h8->program, address)<<8;
+	uint16_t result =  memory_read_byte(h8->program, address)<<8;
 	return result | memory_read_byte(h8->program, address+1);
 }
 
-INLINE UINT16 h8_readop16(h83xx_state *h8, offs_t address)
+INLINE uint16_t h8_readop16(h83xx_state *h8, offs_t address)
 {
-	UINT16 result =  memory_decrypted_read_byte(h8->program, address)<<8;
+	uint16_t result =  memory_decrypted_read_byte(h8->program, address)<<8;
 	return result | memory_decrypted_read_byte(h8->program, address+1);
 }
 
-INLINE void h8_mem_write16(h83xx_state *h8, offs_t address, UINT16 data)
+INLINE void h8_mem_write16(h83xx_state *h8, offs_t address, uint16_t data)
 {
 	memory_write_byte(h8->program, address, data >> 8);
 	memory_write_byte(h8->program, address+1, data);
 }
 
-INLINE UINT32 h8_mem_read32(h83xx_state *h8, offs_t address)
+INLINE uint32_t h8_mem_read32(h83xx_state *h8, offs_t address)
 {
-	UINT32 result = memory_read_byte(h8->program, address) << 24;
+	uint32_t result = memory_read_byte(h8->program, address) << 24;
 	result |= memory_read_byte(h8->program, address+1) << 16;
 	result |= memory_read_byte(h8->program, address+2) << 8;
 	result |= memory_read_byte(h8->program, address+3);
@@ -62,7 +62,7 @@ INLINE UINT32 h8_mem_read32(h83xx_state *h8, offs_t address)
 	return result;
 }
 
-INLINE void h8_mem_write32(h83xx_state *h8, offs_t address, UINT32 data)
+INLINE void h8_mem_write32(h83xx_state *h8, offs_t address, uint32_t data)
 {
 	memory_write_byte(h8->program, address, data >> 24);
 	memory_write_byte(h8->program, address+1, data >> 16);
@@ -74,7 +74,7 @@ static void h8_check_irqs(h83xx_state *h8);
 
 /* implementation */
 
-static void h8_300_InterruptRequest(h83xx_state *h8, UINT8 source, UINT8 mode)
+static void h8_300_InterruptRequest(h83xx_state *h8, uint8_t source, uint8_t mode)
 {
 	if (source>31)
 	{
@@ -101,7 +101,7 @@ static void h8_300_InterruptRequest(h83xx_state *h8, UINT8 source, UINT8 mode)
 }
 
 
-static UINT8 h8_get_ccr(h83xx_state *h8)
+static uint8_t h8_get_ccr(h83xx_state *h8)
 {
 	h8->ccr = 0;
 	if(h8->h8nflag)h8->ccr |= NFLAG;
@@ -132,7 +132,7 @@ static char *h8_get_ccr_str(h83xx_state *h8)
 	return res;
 }
 
-static void h8_set_ccr(h83xx_state *h8, UINT8 data)
+static void h8_set_ccr(h83xx_state *h8, uint8_t data)
 {
 	h8->ccr = data;
 
@@ -157,7 +157,7 @@ static void h8_set_ccr(h83xx_state *h8, UINT8 data)
 	if (!h8->incheckirqs) h8_check_irqs(h8);
 }
 
-static INT16 h8_getreg16(h83xx_state *h8, UINT8 reg)
+static int16_t h8_getreg16(h83xx_state *h8, uint8_t reg)
 {
 	if(reg > 7)
 	{
@@ -169,7 +169,7 @@ static INT16 h8_getreg16(h83xx_state *h8, UINT8 reg)
 	}
 }
 
-static void h8_setreg16(h83xx_state *h8, UINT8 reg, UINT16 data)
+static void h8_setreg16(h83xx_state *h8, uint8_t reg, uint16_t data)
 {
 	if(reg > 7)
 	{
@@ -183,7 +183,7 @@ static void h8_setreg16(h83xx_state *h8, UINT8 reg, UINT16 data)
 	}
 }
 
-static UINT8 h8_getreg8(h83xx_state *h8, UINT8 reg)
+static uint8_t h8_getreg8(h83xx_state *h8, uint8_t reg)
 {
 	if(reg > 7)
 	{
@@ -195,7 +195,7 @@ static UINT8 h8_getreg8(h83xx_state *h8, UINT8 reg)
 	}
 }
 
-static void h8_setreg8(h83xx_state *h8, UINT8 reg, UINT8 data)
+static void h8_setreg8(h83xx_state *h8, uint8_t reg, uint8_t data)
 {
 	if(reg > 7)
 	{
@@ -209,12 +209,12 @@ static void h8_setreg8(h83xx_state *h8, UINT8 reg, UINT8 data)
 	}
 }
 
-static UINT32 h8_getreg32(h83xx_state *h8, UINT8 reg)
+static uint32_t h8_getreg32(h83xx_state *h8, uint8_t reg)
 {
 	return h8->regs[reg];
 }
 
-static void h8_setreg32(h83xx_state *h8, UINT8 reg, UINT32 data)
+static void h8_setreg32(h83xx_state *h8, uint8_t reg, uint32_t data)
 {
 	h8->regs[reg] = data;
 }
@@ -280,7 +280,7 @@ static CPU_RESET(h8bit)
 	h8->TCNT[0] = h8->TCNT[1] = 0;
 }
 
-static void h8_GenException(h83xx_state *h8, UINT8 vectornr)
+static void h8_GenException(h83xx_state *h8, uint8_t vectornr)
 {
 	// push PC on stack
 	h8_setreg16(h8, H8_SP, h8_getreg16(h8, H8_SP)-2);
@@ -300,7 +300,7 @@ static void h8_GenException(h83xx_state *h8, UINT8 vectornr)
 	H8_STACK_TIMING(3);	// 12 cycles
 }
 
-static int h8_get_priority(h83xx_state *h8, UINT8 bit)
+static int h8_get_priority(h83xx_state *h8, uint8_t bit)
 {
 	int res = 0;
 	switch(bit)
@@ -353,7 +353,7 @@ static void h8_check_irqs(h83xx_state *h8)
 	// any interrupts wanted and can accept ?
 	if(((h8->h8_IRQrequestH != 0) || (h8->h8_IRQrequestL != 0)) && (lv >= 0))
 	{
-		UINT8 bit, source;
+		uint8_t bit, source;
 		// which one ?
 		for(bit = 0, source = 0xff; source == 0xff && bit < 32; bit++)
 		{
@@ -400,9 +400,9 @@ static void h8_check_irqs(h83xx_state *h8)
 //  peripherals
 static void recalc_8bit_timer(h83xx_state *h8, int t)
 {
-	static const INT32 dividers[8] = { 0, 0, 8, 2, 64, 32, 1024, 256 };
+	static const int32_t dividers[8] = { 0, 0, 8, 2, 64, 32, 1024, 256 };
 	int div;
-	INT32 time;
+	int32_t time;
 
 	div = (h8->STCR & 1) | ((h8->TCR[t] & 3)<<1);
 
@@ -511,10 +511,10 @@ static CPU_SET_INFO( h8 )
 
 static READ8_HANDLER( h8330_itu_r )
 {
-	UINT8 val;
-	UINT8 reg;
-	UINT64 frc;
-	static const UINT64 divider[4] = { 2, 8, 32, 1 };
+	uint8_t val;
+	uint8_t reg;
+	uint64_t frc;
+	static const uint64_t divider[4] = { 2, 8, 32, 1 };
 	h83xx_state *h8 = get_safe_token(space->cpu);
 
 	reg = (offset + 0x88) & 0xff;
@@ -602,7 +602,7 @@ static READ8_HANDLER( h8330_itu_r )
 
 static WRITE8_HANDLER( h8330_itu_w )
 {
-	UINT8 reg;
+	uint8_t reg;
 	h83xx_state *h8 = get_safe_token(space->cpu);
 
 	reg = (offset + 0x88) & 0xff;

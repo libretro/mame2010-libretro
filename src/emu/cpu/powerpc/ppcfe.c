@@ -54,10 +54,10 @@
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static int describe_instruction_13(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev);
-static int describe_instruction_1f(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev);
-static int describe_instruction_3b(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev);
-static int describe_instruction_3f(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev);
+static int describe_instruction_13(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev);
+static int describe_instruction_1f(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev);
+static int describe_instruction_3b(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev);
+static int describe_instruction_3f(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev);
 
 
 
@@ -70,7 +70,7 @@ static int describe_instruction_3f(powerpc_state *ppc, UINT32 op, opcode_desc *d
     SPR field of an opcode
 -------------------------------------------------*/
 
-INLINE UINT32 compute_spr(UINT32 spr)
+INLINE uint32_t compute_spr(uint32_t spr)
 {
 	return ((spr >> 5) | (spr << 5)) & 0x3ff;
 }
@@ -129,7 +129,7 @@ INLINE int is_603_class(const powerpc_state *ppc)
 int ppcfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
 {
 	powerpc_state *ppc = (powerpc_state *)param;
-	UINT32 op, opswitch;
+	uint32_t op, opswitch;
 	int regnum;
 
 	/* compute the physical PC */
@@ -225,7 +225,7 @@ int ppcfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
 				desc->flags |= OPFLAG_IS_UNCONDITIONAL_BRANCH | OPFLAG_END_SEQUENCE;
 			else
 				desc->flags |= OPFLAG_IS_CONDITIONAL_BRANCH;
-			desc->targetpc = (INT16)(G_BD(op) << 2) + ((op & M_AA) ? 0 : desc->pc);
+			desc->targetpc = (int16_t)(G_BD(op) << 2) + ((op & M_AA) ? 0 : desc->pc);
 			if (desc->targetpc == desc->pc && desc->cycles == 0)
 				desc->cycles = 1;
 			return TRUE;
@@ -246,7 +246,7 @@ int ppcfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
 			if (op & M_LK)
 				LR_MODIFIED(desc);
 			desc->flags |= OPFLAG_IS_UNCONDITIONAL_BRANCH | OPFLAG_END_SEQUENCE;
-			desc->targetpc = ((INT32)(G_LI(op) << 8) >> 6) + ((op & M_AA) ? 0 : desc->pc);
+			desc->targetpc = ((int32_t)(G_LI(op) << 8) >> 6) + ((op & M_AA) ? 0 : desc->pc);
 			/* branch folding */
 			if (desc->targetpc != desc->pc)
 				desc->cycles = 0;
@@ -421,9 +421,9 @@ int ppcfe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
     0x13 group
 -------------------------------------------------*/
 
-static int describe_instruction_13(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev)
+static int describe_instruction_13(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev)
 {
-	UINT32 opswitch = (op >> 1) & 0x3ff;
+	uint32_t opswitch = (op >> 1) & 0x3ff;
 
 	switch (opswitch)
 	{
@@ -522,9 +522,9 @@ static int describe_instruction_13(powerpc_state *ppc, UINT32 op, opcode_desc *d
     0x1f group
 -------------------------------------------------*/
 
-static int describe_instruction_1f(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev)
+static int describe_instruction_1f(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev)
 {
-	UINT32 opswitch = (op >> 1) & 0x3ff;
+	uint32_t opswitch = (op >> 1) & 0x3ff;
 	int spr, regnum;
 
 	switch (opswitch)
@@ -1221,9 +1221,9 @@ static int describe_instruction_1f(powerpc_state *ppc, UINT32 op, opcode_desc *d
     0x3b group
 -------------------------------------------------*/
 
-static int describe_instruction_3b(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev)
+static int describe_instruction_3b(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev)
 {
-	UINT32 opswitch = (op >> 1) & 0x1f;
+	uint32_t opswitch = (op >> 1) & 0x1f;
 
 	if (!(ppc->cap & PPCCAP_FPU))
 		return FALSE;
@@ -1297,9 +1297,9 @@ static int describe_instruction_3b(powerpc_state *ppc, UINT32 op, opcode_desc *d
     0x3f group
 -------------------------------------------------*/
 
-static int describe_instruction_3f(powerpc_state *ppc, UINT32 op, opcode_desc *desc, const opcode_desc *prev)
+static int describe_instruction_3f(powerpc_state *ppc, uint32_t op, opcode_desc *desc, const opcode_desc *prev)
 {
-	UINT32 opswitch = (op >> 1) & 0x3ff;
+	uint32_t opswitch = (op >> 1) & 0x3ff;
 
 	if (!(ppc->cap & PPCCAP_FPU))
 		return FALSE;

@@ -64,15 +64,15 @@ struct	_m65ce02_Regs {
 	PAIR	zp;				/* zero page address */
 	/* contains B register zp.b.h */
 	PAIR	ea;				/* effective address */
-	UINT8	a;				/* Accumulator */
-	UINT8	x;				/* X index register */
-	UINT8	y;				/* Y index register */
-	UINT8	z;				/* Z index register */
-	UINT8	p;				/* Processor status */
-	UINT8	pending_irq;	/* nonzero if an IRQ is pending */
-	UINT8	after_cli;		/* pending IRQ and last insn cleared I */
-	UINT8	nmi_state;
-	UINT8	irq_state;
+	uint8_t	a;				/* Accumulator */
+	uint8_t	x;				/* X index register */
+	uint8_t	y;				/* Y index register */
+	uint8_t	z;				/* Z index register */
+	uint8_t	p;				/* Processor status */
+	uint8_t	pending_irq;	/* nonzero if an IRQ is pending */
+	uint8_t	after_cli;		/* pending IRQ and last insn cleared I */
+	uint8_t	nmi_state;
+	uint8_t	irq_state;
 	int		icount;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -94,8 +94,8 @@ INLINE m65ce02_Regs *get_safe_token(running_device *device)
 
 #include "t65ce02.c"
 
-static UINT8 default_rdmem_id(const address_space *space, offs_t address) { return memory_read_byte_8le(space, address); }
-static void default_wdmem_id(const address_space *space, offs_t address, UINT8 data) { memory_write_byte_8le(space, address, data); }
+static uint8_t default_rdmem_id(const address_space *space, offs_t address) { return memory_read_byte_8le(space, address); }
+static void default_wdmem_id(const address_space *space, offs_t address, uint8_t data) { memory_write_byte_8le(space, address, data); }
 
 static CPU_INIT( m65ce02 )
 {
@@ -170,7 +170,7 @@ static CPU_EXECUTE( m65ce02 )
 
 	do
 	{
-		UINT8 op;
+		uint8_t op;
 		PPC = PCD;
 
 		debugger_instruction_hook(device, PCD);

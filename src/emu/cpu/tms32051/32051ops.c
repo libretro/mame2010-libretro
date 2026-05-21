@@ -1,4 +1,4 @@
-INLINE void PUSH_STACK(tms32051_state *cpustate, UINT16 pc)
+INLINE void PUSH_STACK(tms32051_state *cpustate, uint16_t pc)
 {
 	if (cpustate->pcstack_ptr >= 8)
 	{
@@ -9,9 +9,9 @@ INLINE void PUSH_STACK(tms32051_state *cpustate, UINT16 pc)
 	cpustate->pcstack_ptr++;
 }
 
-INLINE UINT16 POP_STACK(tms32051_state *cpustate)
+INLINE uint16_t POP_STACK(tms32051_state *cpustate)
 {
-	UINT16 pc;
+	uint16_t pc;
 	cpustate->pcstack_ptr--;
 	if (cpustate->pcstack_ptr < 0)
 	{
@@ -22,16 +22,16 @@ INLINE UINT16 POP_STACK(tms32051_state *cpustate)
 	return pc;
 }
 
-INLINE INT32 SUB(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
+INLINE int32_t SUB(tms32051_state *cpustate, int32_t a, int32_t b, int shift16)
 {
-	INT64 res = a - b;
+	int64_t res = a - b;
 	if (cpustate->st0.ovm)	// overflow saturation mode
 	{
-		if ((res & 0x80000000) && ((UINT32)(res >> 32) & 0xffffffff) != 0xffffffff)
+		if ((res & 0x80000000) && ((uint32_t)(res >> 32) & 0xffffffff) != 0xffffffff)
 		{
 			res = 0x80000000;
 		}
-		else if (((res & 0x80000000) == 0) && ((UINT32)(res >> 32) & 0xffffffff) != 0)
+		else if (((res & 0x80000000) == 0) && ((uint32_t)(res >> 32) & 0xffffffff) != 0)
 		{
 			res = 0x7fffffff;
 		}
@@ -39,7 +39,7 @@ INLINE INT32 SUB(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
 	else				// normal mode, result is not modified
 	{
 		// set OV flag if overflow occured, this is a sticky flag
-		if (((a) ^ (b)) & ((a) ^ ((INT32)res)) & 0x80000000)
+		if (((a) ^ (b)) & ((a) ^ ((int32_t)res)) & 0x80000000)
 		{
 			cpustate->st0.ov = 1;
 		}
@@ -49,7 +49,7 @@ INLINE INT32 SUB(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
 	if (!shift16)
 	{
 		// C is cleared if borrow was generated
-		if (((UINT64)(a) + (UINT64)(~b)) & U64(0x100000000))
+		if (((uint64_t)(a) + (uint64_t)(~b)) & U64(0x100000000))
 		{
 			cpustate->st1.c = 0;
 		}
@@ -61,25 +61,25 @@ INLINE INT32 SUB(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
 	else
 	{
 		// if 16-bit shift, C is cleared if borrow was generated, otherwise C is unaffected
-		if (((UINT64)(a) + (UINT64)(~b)) & U64(0x100000000))
+		if (((uint64_t)(a) + (uint64_t)(~b)) & U64(0x100000000))
 		{
 			cpustate->st1.c = 0;
 		}
 	}
 
-	return (INT32)(res);
+	return (int32_t)(res);
 }
 
-INLINE INT32 ADD(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
+INLINE int32_t ADD(tms32051_state *cpustate, int32_t a, int32_t b, int shift16)
 {
-	INT64 res = a + b;
+	int64_t res = a + b;
 	if (cpustate->st0.ovm)	// overflow saturation mode
 	{
-		if ((res & 0x80000000) && ((UINT32)(res >> 32) & 0xffffffff) != 0xffffffff)
+		if ((res & 0x80000000) && ((uint32_t)(res >> 32) & 0xffffffff) != 0xffffffff)
 		{
 			res = 0x80000000;
 		}
-		else if (((res & 0x80000000) == 0) && ((UINT32)(res >> 32) & 0xffffffff) != 0)
+		else if (((res & 0x80000000) == 0) && ((uint32_t)(res >> 32) & 0xffffffff) != 0)
 		{
 			res = 0x7fffffff;
 		}
@@ -115,7 +115,7 @@ INLINE INT32 ADD(tms32051_state *cpustate, INT32 a, INT32 b, int shift16)
 		}
 	}
 
-	return (INT32)(res);
+	return (int32_t)(res);
 }
 
 
@@ -162,11 +162,11 @@ INLINE void UPDATE_ARP(tms32051_state *cpustate, int nar)
 	cpustate->st0.arp = nar;
 }
 
-static UINT16 GET_ADDRESS(tms32051_state *cpustate)
+static uint16_t GET_ADDRESS(tms32051_state *cpustate)
 {
 	if (cpustate->op & 0x80)		// Indirect Addressing
 	{
-		UINT16 ea;
+		uint16_t ea;
 		int arp = cpustate->st0.arp;
 		int nar = cpustate->op & 0x7;
 
@@ -245,22 +245,22 @@ static int GET_ZLVC_CONDITION(tms32051_state *cpustate, int zlvc, int zlvc_mask)
 
 	if (zlvc_mask & 0x8)		// Z-bit
 	{
-		if ((zlvc & 0x8) && (INT32)(cpustate->acc) == 0)				// EQ
+		if ((zlvc & 0x8) && (int32_t)(cpustate->acc) == 0)				// EQ
 		{
 			condition = 1;
 		}
-		else if ((zlvc & 0x8) == 0 && (INT32)(cpustate->acc) != 0)	// NEQ
+		else if ((zlvc & 0x8) == 0 && (int32_t)(cpustate->acc) != 0)	// NEQ
 		{
 			condition = 1;
 		}
 	}
 	if (zlvc_mask & 0x4)		// L-bit
 	{
-		if ((zlvc & 0x4) && (INT32)(cpustate->acc) < 0)				// LT
+		if ((zlvc & 0x4) && (int32_t)(cpustate->acc) < 0)				// LT
 		{
 			condition = 1;
 		}
-		else if ((zlvc & 0x4) == 0 && (INT32)(cpustate->acc) > 0)		// GT
+		else if ((zlvc & 0x4) == 0 && (int32_t)(cpustate->acc) > 0)		// GT
 		{
 			condition = 1;
 		}
@@ -316,7 +316,7 @@ static int GET_TP_CONDITION(tms32051_state *cpustate, int tp)
 	return 0;
 }
 
-INLINE INT32 PREG_PSCALER(tms32051_state *cpustate, INT32 preg)
+INLINE int32_t PREG_PSCALER(tms32051_state *cpustate, int32_t preg)
 {
 	switch (cpustate->st1.pm & 3)
 	{
@@ -334,7 +334,7 @@ INLINE INT32 PREG_PSCALER(tms32051_state *cpustate, INT32 preg)
 		}
 		case 3:		// Right-shifted 6 bits, sign-extended, 6 LSBs lost
 		{
-			return (INT32)(preg >> 6);
+			return (int32_t)(preg >> 6);
 		}
 	}
 	return 0;
@@ -364,18 +364,18 @@ static void op_adcb(tms32051_state *cpustate)
 
 static void op_add_mem(tms32051_state *cpustate)
 {
-	INT32 d;
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	int32_t d;
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	int shift = (cpustate->op >> 8) & 0xf;
 
 	if (cpustate->st1.sxm)
 	{
-		d = (INT32)(INT16)(data) << shift;
+		d = (int32_t)(int16_t)(data) << shift;
 	}
 	else
 	{
-		d = (UINT32)(UINT16)(data) << shift;
+		d = (uint32_t)(uint16_t)(data) << shift;
 	}
 
 	cpustate->acc = ADD(cpustate, cpustate->acc, d, 0);
@@ -385,7 +385,7 @@ static void op_add_mem(tms32051_state *cpustate)
 
 static void op_add_simm(tms32051_state *cpustate)
 {
-	UINT16 imm = cpustate->op & 0xff;
+	uint16_t imm = cpustate->op & 0xff;
 
 	cpustate->acc = ADD(cpustate, cpustate->acc, imm, 0);
 
@@ -394,17 +394,17 @@ static void op_add_simm(tms32051_state *cpustate)
 
 static void op_add_limm(tms32051_state *cpustate)
 {
-	INT32 d;
-	UINT16 imm = ROPCODE(cpustate);
+	int32_t d;
+	uint16_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	if (cpustate->st1.sxm)
 	{
-		d = (INT32)(INT16)(imm) << shift;
+		d = (int32_t)(int16_t)(imm) << shift;
 	}
 	else
 	{
-		d = (UINT32)(UINT16)(imm) << shift;
+		d = (uint32_t)(uint16_t)(imm) << shift;
 	}
 
 	cpustate->acc = ADD(cpustate, cpustate->acc, d, 0);
@@ -446,7 +446,7 @@ static void op_and_mem(tms32051_state *cpustate)
 
 static void op_and_limm(tms32051_state *cpustate)
 {
-	UINT32 imm = ROPCODE(cpustate);
+	uint32_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	cpustate->acc &= imm << shift;
@@ -470,11 +470,11 @@ static void op_bsar(tms32051_state *cpustate)
 
 	if (cpustate->st1.sxm)
 	{
-		cpustate->acc = (INT32)(cpustate->acc) >> shift;
+		cpustate->acc = (int32_t)(cpustate->acc) >> shift;
 	}
 	else
 	{
-		cpustate->acc = (UINT32)(cpustate->acc) >> shift;
+		cpustate->acc = (uint32_t)(cpustate->acc) >> shift;
 	}
 
 	CYCLES(1);
@@ -529,7 +529,7 @@ static void op_crlt(tms32051_state *cpustate)
 
 static void op_exar(tms32051_state *cpustate)
 {
-	INT32 tmp = cpustate->acc;
+	int32_t tmp = cpustate->acc;
 	cpustate->acc = cpustate->accb;
 	cpustate->accb = tmp;
 
@@ -546,16 +546,16 @@ static void op_lacb(tms32051_state *cpustate)
 static void op_lacc_mem(tms32051_state *cpustate)
 {
 	int shift = (cpustate->op >> 8) & 0xf;
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
 	if (cpustate->st1.sxm)
 	{
-		cpustate->acc = (INT32)(INT16)(data) << shift;
+		cpustate->acc = (int32_t)(int16_t)(data) << shift;
 	}
 	else
 	{
-		cpustate->acc = (UINT32)(UINT16)(data) << shift;
+		cpustate->acc = (uint32_t)(uint16_t)(data) << shift;
 	}
 
 	CYCLES(1);
@@ -563,16 +563,16 @@ static void op_lacc_mem(tms32051_state *cpustate)
 
 static void op_lacc_limm(tms32051_state *cpustate)
 {
-	UINT16 imm = ROPCODE(cpustate);
+	uint16_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	if (cpustate->st1.sxm)
 	{
-		cpustate->acc = (INT32)(INT16)(imm) << shift;
+		cpustate->acc = (int32_t)(int16_t)(imm) << shift;
 	}
 	else
 	{
-		cpustate->acc = (UINT32)(UINT16)(imm) << shift;
+		cpustate->acc = (uint32_t)(uint16_t)(imm) << shift;
 	}
 
 	CYCLES(1);
@@ -580,15 +580,15 @@ static void op_lacc_limm(tms32051_state *cpustate)
 
 static void op_lacc_s16_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 
 	if (cpustate->st1.sxm)
 	{
-		cpustate->acc = (INT32)(INT16)(DM_READ16(cpustate, ea)) << 16;
+		cpustate->acc = (int32_t)(int16_t)(DM_READ16(cpustate, ea)) << 16;
 	}
 	else
 	{
-		cpustate->acc = (UINT32)(DM_READ16(cpustate, ea)) << 16;
+		cpustate->acc = (uint32_t)(DM_READ16(cpustate, ea)) << 16;
 	}
 
 	CYCLES(1);
@@ -603,7 +603,7 @@ static void op_lacl_simm(tms32051_state *cpustate)
 
 static void op_lacl_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 	cpustate->acc = DM_READ16(cpustate, ea) & 0xffff;
 
 	CYCLES(1);
@@ -616,7 +616,7 @@ static void op_lact(tms32051_state *cpustate)
 
 static void op_lamm(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 	ea &= 0x7f;
 
 	cpustate->acc = DM_READ16(cpustate, ea) & 0xffff;
@@ -625,7 +625,7 @@ static void op_lamm(tms32051_state *cpustate)
 
 static void op_neg(tms32051_state *cpustate)
 {
-	if ((UINT32)(cpustate->acc) == 0x80000000)
+	if ((uint32_t)(cpustate->acc) == 0x80000000)
 	{
 		cpustate->st0.ov = 1;
 		if (cpustate->st0.ovm)
@@ -639,7 +639,7 @@ static void op_neg(tms32051_state *cpustate)
 	}
 	else
 	{
-		cpustate->acc = 0 - (UINT32)(cpustate->acc);
+		cpustate->acc = 0 - (uint32_t)(cpustate->acc);
 
 		if (cpustate->acc == 0)
 		{
@@ -661,17 +661,17 @@ static void op_norm(tms32051_state *cpustate)
 
 static void op_or_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
-	cpustate->acc |= (UINT32)(data);
+	cpustate->acc |= (uint32_t)(data);
 
 	CYCLES(1);
 }
 
 static void op_or_limm(tms32051_state *cpustate)
 {
-	UINT32 imm = ROPCODE(cpustate);
+	uint32_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	cpustate->acc |= imm << shift;
@@ -698,9 +698,9 @@ static void op_rol(tms32051_state *cpustate)
 
 static void op_rolb(tms32051_state *cpustate)
 {
-	UINT32 acc = cpustate->acc;
-	UINT32 accb = cpustate->accb;
-	UINT32 c = cpustate->st1.c & 1;
+	uint32_t acc = cpustate->acc;
+	uint32_t accb = cpustate->accb;
+	uint32_t c = cpustate->st1.c & 1;
 
 	cpustate->acc = (acc << 1) | ((accb >> 31) & 1);
 	cpustate->accb = (accb << 1) | c;
@@ -728,28 +728,28 @@ static void op_sacb(tms32051_state *cpustate)
 
 static void op_sach(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 	int shift = (cpustate->op >> 8) & 0x7;
 
-	DM_WRITE16(cpustate, ea, (UINT16)((cpustate->acc << shift) >> 16));
+	DM_WRITE16(cpustate, ea, (uint16_t)((cpustate->acc << shift) >> 16));
 	CYCLES(1);
 }
 
 static void op_sacl(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 	int shift = (cpustate->op >> 8) & 0x7;
 
-	DM_WRITE16(cpustate, ea, (UINT16)(cpustate->acc << shift));
+	DM_WRITE16(cpustate, ea, (uint16_t)(cpustate->acc << shift));
 	CYCLES(1);
 }
 
 static void op_samm(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
 	ea &= 0x7f;
 
-	DM_WRITE16(cpustate, ea, (UINT16)(cpustate->acc));
+	DM_WRITE16(cpustate, ea, (uint16_t)(cpustate->acc));
 	CYCLES(1);
 }
 
@@ -785,8 +785,8 @@ static void op_sfl(tms32051_state *cpustate)
 
 static void op_sflb(tms32051_state *cpustate)
 {
-	UINT32 acc = cpustate->acc;
-	UINT32 accb = cpustate->accb;
+	uint32_t acc = cpustate->acc;
+	uint32_t accb = cpustate->accb;
 
 	cpustate->acc = (acc << 1) | ((accb >> 31) & 1);
 	cpustate->accb = (accb << 1);
@@ -801,11 +801,11 @@ static void op_sfr(tms32051_state *cpustate)
 
 	if (cpustate->st1.sxm)
 	{
-		cpustate->acc = (INT32)(cpustate->acc) >> 1;
+		cpustate->acc = (int32_t)(cpustate->acc) >> 1;
 	}
 	else
 	{
-		cpustate->acc = (UINT32)(cpustate->acc) >> 1;
+		cpustate->acc = (uint32_t)(cpustate->acc) >> 1;
 	}
 
 	CYCLES(1);
@@ -818,18 +818,18 @@ static void op_sfrb(tms32051_state *cpustate)
 
 static void op_sub_mem(tms32051_state *cpustate)
 {
-	INT32 d;
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	int32_t d;
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	int shift = (cpustate->op >> 8) & 0xf;
 
 	if (cpustate->st1.sxm)
 	{
-		d = (INT32)(INT16)(data) << shift;
+		d = (int32_t)(int16_t)(data) << shift;
 	}
 	else
 	{
-		d = (UINT32)(UINT16)(data) << shift;
+		d = (uint32_t)(uint16_t)(data) << shift;
 	}
 
 	cpustate->acc = SUB(cpustate, cpustate->acc, d, 0);
@@ -844,7 +844,7 @@ static void op_sub_s16_mem(tms32051_state *cpustate)
 
 static void op_sub_simm(tms32051_state *cpustate)
 {
-	UINT16 imm = cpustate->op & 0xff;
+	uint16_t imm = cpustate->op & 0xff;
 
 	cpustate->acc = SUB(cpustate, cpustate->acc, imm, 0);
 
@@ -853,17 +853,17 @@ static void op_sub_simm(tms32051_state *cpustate)
 
 static void op_sub_limm(tms32051_state *cpustate)
 {
-	INT32 d;
-	UINT16 imm = ROPCODE(cpustate);
+	int32_t d;
+	uint16_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	if (cpustate->st1.sxm)
 	{
-		d = (INT32)(INT16)(imm) << shift;
+		d = (int32_t)(int16_t)(imm) << shift;
 	}
 	else
 	{
-		d = (UINT32)(UINT16)(imm) << shift;
+		d = (uint32_t)(uint16_t)(imm) << shift;
 	}
 
 	cpustate->acc = SUB(cpustate, cpustate->acc, d, 0);
@@ -893,17 +893,17 @@ static void op_subt(tms32051_state *cpustate)
 
 static void op_xor_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
-	cpustate->acc ^= (UINT32)(data);
+	cpustate->acc ^= (uint32_t)(data);
 
 	CYCLES(1);
 }
 
 static void op_xor_limm(tms32051_state *cpustate)
 {
-	UINT32 imm = ROPCODE(cpustate);
+	uint32_t imm = ROPCODE(cpustate);
 	int shift = cpustate->op & 0xf;
 
 	cpustate->acc ^= imm << shift;
@@ -938,7 +938,7 @@ static void op_zap(tms32051_state *cpustate)
 
 static void op_adrk(tms32051_state *cpustate)
 {
-	UINT16 imm = cpustate->op & 0xff;
+	uint16_t imm = cpustate->op & 0xff;
 	UPDATE_AR(cpustate, cpustate->st0.arp, imm);
 
 	CYCLES(1);
@@ -990,8 +990,8 @@ static void op_cmpr(tms32051_state *cpustate)
 static void op_lar_mem(tms32051_state *cpustate)
 {
 	int arx = (cpustate->op >> 8) & 0x7;
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
 	cpustate->ar[arx] = data;
 
@@ -1009,7 +1009,7 @@ static void op_lar_simm(tms32051_state *cpustate)
 static void op_lar_limm(tms32051_state *cpustate)
 {
 	int arx = cpustate->op & 0x7;
-	UINT16 imm = ROPCODE(cpustate);
+	uint16_t imm = ROPCODE(cpustate);
 	cpustate->ar[arx] = imm;
 
 	CYCLES(2);
@@ -1039,8 +1039,8 @@ static void op_mar(tms32051_state *cpustate)
 static void op_sar(tms32051_state *cpustate)
 {
 	int arx = (cpustate->op >> 8) & 0x7;
-	UINT16 ar = cpustate->ar[arx];
-	UINT16 ea = GET_ADDRESS(cpustate);
+	uint16_t ar = cpustate->ar[arx];
+	uint16_t ea = GET_ADDRESS(cpustate);
 	DM_WRITE16(cpustate, ea, ar);
 
 	CYCLES(1);
@@ -1048,7 +1048,7 @@ static void op_sar(tms32051_state *cpustate)
 
 static void op_sbrk(tms32051_state *cpustate)
 {
-	UINT16 imm = cpustate->op & 0xff;
+	uint16_t imm = cpustate->op & 0xff;
 	UPDATE_AR(cpustate, cpustate->st0.arp, -imm);
 
 	CYCLES(1);
@@ -1058,7 +1058,7 @@ static void op_sbrk(tms32051_state *cpustate)
 
 static void op_b(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	GET_ADDRESS(cpustate);		// update AR/ARP
 
 	CHANGE_PC(cpustate, pma);
@@ -1067,14 +1067,14 @@ static void op_b(tms32051_state *cpustate)
 
 static void op_bacc(tms32051_state *cpustate)
 {
-	CHANGE_PC(cpustate, (UINT16)(cpustate->acc));
+	CHANGE_PC(cpustate, (uint16_t)(cpustate->acc));
 
 	CYCLES(4);
 }
 
 static void op_baccd(tms32051_state *cpustate)
 {
-	UINT16 pc = (UINT16)(cpustate->acc);
+	uint16_t pc = (uint16_t)(cpustate->acc);
 
 	delay_slot(cpustate, cpustate->pc);
 	CHANGE_PC(cpustate, pc);
@@ -1084,7 +1084,7 @@ static void op_baccd(tms32051_state *cpustate)
 
 static void op_banz(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 
 	if (cpustate->ar[cpustate->st0.arp] != 0)
 	{
@@ -1106,7 +1106,7 @@ static void op_banzd(tms32051_state *cpustate)
 
 static void op_bcnd(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 
 	int zlvc_condition = GET_ZLVC_CONDITION(cpustate, (cpustate->op >> 4) & 0xf, cpustate->op & 0xf);
 	int tp_condition = GET_TP_CONDITION(cpustate, (cpustate->op >> 8) & 0x3);
@@ -1124,7 +1124,7 @@ static void op_bcnd(tms32051_state *cpustate)
 
 static void op_bcndd(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 
 	int zlvc_condition = GET_ZLVC_CONDITION(cpustate, (cpustate->op >> 4) & 0xf, cpustate->op & 0xf);
 	int tp_condition = GET_TP_CONDITION(cpustate, (cpustate->op >> 8) & 0x3);
@@ -1143,7 +1143,7 @@ static void op_bcndd(tms32051_state *cpustate)
 
 static void op_bd(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	GET_ADDRESS(cpustate);		// update AR/ARP
 
 	delay_slot(cpustate, cpustate->pc);
@@ -1162,7 +1162,7 @@ static void op_cala(tms32051_state *cpustate)
 
 static void op_calad(tms32051_state *cpustate)
 {
-	UINT16 pma = cpustate->acc;
+	uint16_t pma = cpustate->acc;
 	PUSH_STACK(cpustate, cpustate->pc+2);
 
 	delay_slot(cpustate, cpustate->pc);
@@ -1173,7 +1173,7 @@ static void op_calad(tms32051_state *cpustate)
 
 static void op_call(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	GET_ADDRESS(cpustate);		// update AR/ARP
 	PUSH_STACK(cpustate, cpustate->pc);
 
@@ -1184,7 +1184,7 @@ static void op_call(tms32051_state *cpustate)
 
 static void op_calld(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	GET_ADDRESS(cpustate);		// update AR/ARP
 	PUSH_STACK(cpustate, cpustate->pc+2);
 
@@ -1201,7 +1201,7 @@ static void op_cc(tms32051_state *cpustate)
 
 static void op_ccd(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	int zlvc_condition = GET_ZLVC_CONDITION(cpustate, (cpustate->op >> 4) & 0xf, cpustate->op & 0xf);
 	int tp_condition = GET_TP_CONDITION(cpustate, (cpustate->op >> 8) & 0x3);
 
@@ -1243,7 +1243,7 @@ static void op_retc(tms32051_state *cpustate)
 
 	if (condition)
 	{
-		UINT16 pc = POP_STACK(cpustate);
+		uint16_t pc = POP_STACK(cpustate);
 		CHANGE_PC(cpustate, pc);
 		CYCLES(4);
 	}
@@ -1270,7 +1270,7 @@ static void op_retcd(tms32051_state *cpustate)
 
 	if (condition)
 	{
-		UINT16 pc = POP_STACK(cpustate);
+		uint16_t pc = POP_STACK(cpustate);
 		delay_slot(cpustate, cpustate->pc);
 		CHANGE_PC(cpustate, pc);
 		CYCLES(4);
@@ -1283,7 +1283,7 @@ static void op_retcd(tms32051_state *cpustate)
 
 static void op_rete(tms32051_state *cpustate)
 {
-	UINT16 pc = POP_STACK(cpustate);
+	uint16_t pc = POP_STACK(cpustate);
 	CHANGE_PC(cpustate, pc);
 
 	cpustate->st0.intm = 0;
@@ -1324,12 +1324,12 @@ static void op_xc(tms32051_state *cpustate)
 
 static void op_bldd_slimm(tms32051_state *cpustate)
 {
-	UINT16 pfc = ROPCODE(cpustate);
+	uint16_t pfc = ROPCODE(cpustate);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, pfc);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, pfc);
 		DM_WRITE16(cpustate, ea, data);
 		pfc++;
 		CYCLES(2);
@@ -1340,12 +1340,12 @@ static void op_bldd_slimm(tms32051_state *cpustate)
 
 static void op_bldd_dlimm(tms32051_state *cpustate)
 {
-	UINT16 pfc = ROPCODE(cpustate);
+	uint16_t pfc = ROPCODE(cpustate);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, ea);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, ea);
 		DM_WRITE16(cpustate, pfc, data);
 		pfc++;
 		CYCLES(2);
@@ -1361,12 +1361,12 @@ static void op_bldd_sbmar(tms32051_state *cpustate)
 
 static void op_bldd_dbmar(tms32051_state *cpustate)
 {
-	UINT16 pfc = cpustate->bmar;
+	uint16_t pfc = cpustate->bmar;
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, ea);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, ea);
 		DM_WRITE16(cpustate, pfc, data);
 		pfc++;
 		CYCLES(2);
@@ -1377,12 +1377,12 @@ static void op_bldd_dbmar(tms32051_state *cpustate)
 
 static void op_bldp(tms32051_state *cpustate)
 {
-	UINT16 pfc = cpustate->bmar;
+	uint16_t pfc = cpustate->bmar;
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, ea);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, ea);
 		PM_WRITE16(cpustate, pfc, data);
 		pfc++;
 		CYCLES(1);
@@ -1398,12 +1398,12 @@ static void op_blpd_bmar(tms32051_state *cpustate)
 
 static void op_blpd_imm(tms32051_state *cpustate)
 {
-	UINT16 pfc = ROPCODE(cpustate);
+	uint16_t pfc = ROPCODE(cpustate);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = PM_READ16(cpustate, pfc);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = PM_READ16(cpustate, pfc);
 		DM_WRITE16(cpustate, ea, data);
 		pfc++;
 		CYCLES(2);
@@ -1426,12 +1426,12 @@ static void op_in(tms32051_state *cpustate)
 
 static void op_lmmr(tms32051_state *cpustate)
 {
-	UINT16 pfc = ROPCODE(cpustate);
+	uint16_t pfc = ROPCODE(cpustate);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, pfc);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, pfc);
 		DM_WRITE16(cpustate, ea & 0x7f, data);
 		pfc++;
 		CYCLES(2);
@@ -1447,12 +1447,12 @@ static void op_out(tms32051_state *cpustate)
 
 static void op_smmr(tms32051_state *cpustate)
 {
-	UINT16 pfc = ROPCODE(cpustate);
+	uint16_t pfc = ROPCODE(cpustate);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, ea & 0x7f);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, ea & 0x7f);
 		DM_WRITE16(cpustate, pfc, data);
 		pfc++;
 		CYCLES(2);
@@ -1463,12 +1463,12 @@ static void op_smmr(tms32051_state *cpustate)
 
 static void op_tblr(tms32051_state *cpustate)
 {
-	UINT16 pfc = (UINT16)(cpustate->acc);
+	uint16_t pfc = (uint16_t)(cpustate->acc);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = PM_READ16(cpustate, pfc);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = PM_READ16(cpustate, pfc);
 		DM_WRITE16(cpustate, ea, data);
 		pfc++;
 		CYCLES(2);
@@ -1479,12 +1479,12 @@ static void op_tblr(tms32051_state *cpustate)
 
 static void op_tblw(tms32051_state *cpustate)
 {
-	UINT16 pfc = (UINT16)(cpustate->acc);
+	uint16_t pfc = (uint16_t)(cpustate->acc);
 
 	while (cpustate->rptc > -1)
 	{
-		UINT16 ea = GET_ADDRESS(cpustate);
-		UINT16 data = DM_READ16(cpustate, ea);
+		uint16_t ea = GET_ADDRESS(cpustate);
+		uint16_t data = DM_READ16(cpustate, ea);
 		PM_WRITE16(cpustate, pfc, data);
 		pfc++;
 		CYCLES(2);
@@ -1497,8 +1497,8 @@ static void op_tblw(tms32051_state *cpustate)
 
 static void op_apl_dbmr(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	data &= cpustate->dbmr;
 	DM_WRITE16(cpustate, ea, data);
 	CYCLES(1);
@@ -1506,9 +1506,9 @@ static void op_apl_dbmr(tms32051_state *cpustate)
 
 static void op_apl_imm(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 imm = ROPCODE(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t imm = ROPCODE(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	data &= imm;
 	DM_WRITE16(cpustate, ea, data);
 	CYCLES(1);
@@ -1521,9 +1521,9 @@ static void op_cpl_dbmr(tms32051_state *cpustate)
 
 static void op_cpl_imm(tms32051_state *cpustate)
 {
-	UINT16 imm = ROPCODE(cpustate);
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t imm = ROPCODE(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
 	if (data == imm)
 	{
@@ -1539,8 +1539,8 @@ static void op_cpl_imm(tms32051_state *cpustate)
 
 static void op_opl_dbmr(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	data |= cpustate->dbmr;
 	DM_WRITE16(cpustate, ea, data);
 	CYCLES(1);
@@ -1548,9 +1548,9 @@ static void op_opl_dbmr(tms32051_state *cpustate)
 
 static void op_opl_imm(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 imm = ROPCODE(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t imm = ROPCODE(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	data |= imm;
 	DM_WRITE16(cpustate, ea, data);
 	CYCLES(1);
@@ -1558,8 +1558,8 @@ static void op_opl_imm(tms32051_state *cpustate)
 
 static void op_splk(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 imm = ROPCODE(cpustate);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t imm = ROPCODE(cpustate);
 
 	DM_WRITE16(cpustate, ea, imm);
 
@@ -1578,7 +1578,7 @@ static void op_xpl_imm(tms32051_state *cpustate)
 
 static void op_apac(tms32051_state *cpustate)
 {
-	INT32 spreg = PREG_PSCALER(cpustate, cpustate->preg);
+	int32_t spreg = PREG_PSCALER(cpustate, cpustate->preg);
 	cpustate->acc = ADD(cpustate, cpustate->acc, spreg, 0);
 
 	CYCLES(1);
@@ -1591,8 +1591,8 @@ static void op_lph(tms32051_state *cpustate)
 
 static void op_lt(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
 	cpustate->treg0 = data;
 
@@ -1601,9 +1601,9 @@ static void op_lt(tms32051_state *cpustate)
 
 static void op_lta(tms32051_state *cpustate)
 {
-	INT32 spreg;
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	int32_t spreg;
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 
 	cpustate->treg0 = data;
 	spreg = PREG_PSCALER(cpustate, cpustate->preg);
@@ -1649,10 +1649,10 @@ static void op_mads(tms32051_state *cpustate)
 
 static void op_mpy_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	INT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	int16_t data = DM_READ16(cpustate, ea);
 
-	cpustate->preg = (INT32)(data) * (INT32)(INT16)(cpustate->treg0);
+	cpustate->preg = (int32_t)(data) * (int32_t)(int16_t)(cpustate->treg0);
 
 	CYCLES(1);
 }
@@ -1694,8 +1694,8 @@ static void op_spac(tms32051_state *cpustate)
 
 static void op_sph(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 spreg = (UINT16)(PREG_PSCALER(cpustate, cpustate->preg) >> 16);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t spreg = (uint16_t)(PREG_PSCALER(cpustate, cpustate->preg) >> 16);
 	DM_WRITE16(cpustate, ea, spreg);
 
 	CYCLES(1);
@@ -1730,8 +1730,8 @@ static void op_zpr(tms32051_state *cpustate)
 
 static void op_bit(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	int bit = 15 - ((cpustate->op >> 8) & 0xf);
 
 	if (data & (1 << bit))
@@ -1748,8 +1748,8 @@ static void op_bit(tms32051_state *cpustate)
 
 static void op_bitt(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	int bit = 15 - (cpustate->treg2 & 0xf);
 
 	if (data & (1 << bit))
@@ -1858,8 +1858,8 @@ static void op_push(tms32051_state *cpustate)
 
 static void op_rpt_mem(tms32051_state *cpustate)
 {
-	UINT16 ea = GET_ADDRESS(cpustate);
-	UINT16 data = DM_READ16(cpustate, ea);
+	uint16_t ea = GET_ADDRESS(cpustate);
+	uint16_t data = DM_READ16(cpustate, ea);
 	cpustate->rptc = data;
 	cpustate->rpt_start = cpustate->pc;
 	cpustate->rpt_end = cpustate->pc;
@@ -1869,7 +1869,7 @@ static void op_rpt_mem(tms32051_state *cpustate)
 
 static void op_rpt_limm(tms32051_state *cpustate)
 {
-	cpustate->rptc = (UINT16)ROPCODE(cpustate);
+	cpustate->rptc = (uint16_t)ROPCODE(cpustate);
 	cpustate->rpt_start = cpustate->pc;
 	cpustate->rpt_end = cpustate->pc;
 
@@ -1887,7 +1887,7 @@ static void op_rpt_simm(tms32051_state *cpustate)
 
 static void op_rptb(tms32051_state *cpustate)
 {
-	UINT16 pma = ROPCODE(cpustate);
+	uint16_t pma = ROPCODE(cpustate);
 	cpustate->pmst.braf = 1;
 	cpustate->pasr = cpustate->pc;
 	cpustate->paer = pma + 1;

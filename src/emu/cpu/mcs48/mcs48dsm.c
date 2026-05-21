@@ -10,10 +10,10 @@
 #include "emu.h"
 
 
-static UINT32 common_dasm(running_device *device, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram, int upi41)
+static uint32_t common_dasm(running_device *device, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, int upi41)
 {
-	const UINT8 *startram = opram;
-	UINT32 flags = 0;
+	const uint8_t *startram = opram;
+	uint32_t flags = 0;
 
 	opram++;
 	switch (*oprom++)

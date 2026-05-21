@@ -43,7 +43,7 @@ static const char *const s_mnemonic[] = {
 };
 
 
-static const UINT32 s_flags[] = {
+static const uint32_t s_flags[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  _OVER, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -55,7 +55,7 @@ static const UINT32 s_flags[] = {
 };
 
 
-static const UINT8 s_addressing[] = {
+static const uint8_t s_addressing[] = {
 	zB0, zB0, zB0, zI4, zI4, zI4, zI4, zB0, zB0, zB7, zB7, zB0,
 	zB0, zB0, zB0, zB0, zB0, zB0, zB0, zB0, zB0, zB0, zB0,
 	zB0, zB0, zB0, zB0, zB0, zB0, zI4, zI2, zI4, zB0, zB0,
@@ -67,7 +67,7 @@ static const UINT8 s_addressing[] = {
 };
 
 
-static const UINT8 tms0980_mnemonic[512] = {
+static const uint8_t tms0980_mnemonic[512] = {
 	/* 0x000 */
 	zCOMX, zALEM, zYNEA, zXMA, zDYN, zIYC, zCLA, zDMAN,
 	zTKA, zMNEA, zTKM, zILL, zILL, zSETR, zKNE, zILL,
@@ -153,7 +153,7 @@ static const UINT8 tms0980_mnemonic[512] = {
 };
 
 
-static const UINT8 tms1000_mnemonic[256] = {
+static const uint8_t tms1000_mnemonic[256] = {
 	/* 0x00 */
 	zCOMX, zA8AAC, zYNEA, zTAM, zTAMZA, zA10AAC, zA6AAC, zDAN,
 	zTKA, zKNEZ, zTDO, zCLO, zRSTR, zSETR, zIA, zRETN,
@@ -193,7 +193,7 @@ static const UINT8 tms1000_mnemonic[256] = {
 };
 
 
-static const UINT8 tms1100_mnemonic[256] = {
+static const uint8_t tms1100_mnemonic[256] = {
 	/* 0x00 */
 	zMNEA, zALEM, zYNEA, zXMA, zDYN, zIYC, zAMAAC, zDMAN,
 	zTKA, zCOMX, zTDO, zCOMC, zRSTR, zSETR, zKNEZ, zRETN,
@@ -234,20 +234,20 @@ static const UINT8 tms1100_mnemonic[256] = {
 	zCALL, zCALL, zCALL, zCALL, zCALL, zCALL, zCALL, zCALL,
 };
 
-static const UINT8 tms0980_i2_value[4] =
+static const uint8_t tms0980_i2_value[4] =
 {
 	0x00, 0x02, 0x01, 0x03
 };
-static const UINT8 tms0980_i4_value[16] =
+static const uint8_t tms0980_i4_value[16] =
 {
 	0x00, 0x08, 0x04, 0x0C, 0x02, 0x0A, 0x06, 0x0E, 0x01, 0x09, 0x05, 0x0D, 0x03, 0x0B, 0x07, 0x0F
 };
-static const UINT8 tms0980_bit_value[4] = { 1, 4, 2, 8 };
+static const uint8_t tms0980_bit_value[4] = { 1, 4, 2, 8 };
 
 
 CPU_DISASSEMBLE( tms0980 ) {
 	char *dst = buffer;
-	UINT16 op, instr;
+	uint16_t op, instr;
 	int pos = 0;
 
 	op = ( ( oprom[pos] << 8 ) | oprom[pos + 1]  ) & 0x01FF;
@@ -280,7 +280,7 @@ CPU_DISASSEMBLE( tms0980 ) {
 
 CPU_DISASSEMBLE( tms1000 ) {
 	char *dst = buffer;
-	UINT8 op, instr;
+	uint8_t op, instr;
 	int pos = 0;
 
 	op = oprom[pos];
@@ -313,7 +313,7 @@ CPU_DISASSEMBLE( tms1000 ) {
 
 CPU_DISASSEMBLE( tms1100 ) {
 	char *dst = buffer;
-	UINT8 op, instr;
+	uint8_t op, instr;
 	int pos = 0;
 
 	op = oprom[pos];

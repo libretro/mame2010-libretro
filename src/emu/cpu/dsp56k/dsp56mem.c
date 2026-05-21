@@ -3,21 +3,21 @@
 
 
 /* IPR Accessor Implementations */
-static void IPR_set(dsp56k_core* cpustate, UINT16 value)
+static void IPR_set(dsp56k_core* cpustate, uint16_t value)
 {
 	/* TODO: Is there anything else? */
 	IPR = value;
 }
 
-static INT8  irqa_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0003) >> 0) - 1;  }
-static UINT8 irqa_trigger(dsp56k_core* cpustate){ return  (IPR & 0x0004) >> 2;       }
-static INT8  irqb_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0018) >> 3) - 1;  }
-static UINT8 irqb_trigger(dsp56k_core* cpustate){ return  (IPR & 0x0002) >> 5;       }
-static INT8  codec_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x00c0) >> 6) - 1;  }
-static INT8  host_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0300) >> 8) - 1;  }
-static INT8  ssi0_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0c00) >> 10) - 1; }
-static INT8  ssi1_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x3000) >> 12) - 1; }
-static INT8  tm_ipl(dsp56k_core* cpustate)		{ return ((IPR & 0xc000) >> 14) - 1; }
+static int8_t  irqa_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0003) >> 0) - 1;  }
+static uint8_t irqa_trigger(dsp56k_core* cpustate){ return  (IPR & 0x0004) >> 2;       }
+static int8_t  irqb_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0018) >> 3) - 1;  }
+static uint8_t irqb_trigger(dsp56k_core* cpustate){ return  (IPR & 0x0002) >> 5;       }
+static int8_t  codec_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x00c0) >> 6) - 1;  }
+static int8_t  host_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0300) >> 8) - 1;  }
+static int8_t  ssi0_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x0c00) >> 10) - 1; }
+static int8_t  ssi1_ipl(dsp56k_core* cpustate)	{ return ((IPR & 0x3000) >> 12) - 1; }
+static int8_t  tm_ipl(dsp56k_core* cpustate)		{ return ((IPR & 0xc000) >> 14) - 1; }
 
 static void mem_reset(dsp56k_core* cpustate)
 {
@@ -97,7 +97,7 @@ static READ16_HANDLER( peripheral_register_r )
 				return 0xbeef;
 			else
 			{
-				UINT16 value = HRX;		// TODO: Maybe not exactly right?  Just being safe.
+				uint16_t value = HRX;		// TODO: Maybe not exactly right?  Just being safe.
 				HRDF_bit_set(cpustate, 0);
 				return value;
 			}
@@ -328,7 +328,7 @@ static WRITE16_HANDLER( peripheral_register_w )
 /************************************/
 /* Host Control Register (HCR) Bits */
 /************************************/
-static void HCR_set(dsp56k_core* cpustate, UINT16 value)
+static void HCR_set(dsp56k_core* cpustate, uint16_t value)
 {
 	HF3_bit_set (cpustate, (value & 0x0010) >> 4);
 	HF2_bit_set (cpustate, (value & 0x0008) >> 3);
@@ -336,13 +336,13 @@ static void HCR_set(dsp56k_core* cpustate, UINT16 value)
 	HTIE_bit_set(cpustate, (value & 0x0002) >> 1);
 	HRIE_bit_set(cpustate, (value & 0x0001) >> 0);
 }
-//static UINT16 HF3_bit(dsp56k_core* cpustate) { return ((HCR & 0x0010) != 0); }
-//static UINT16 HF2_bit(dsp56k_core* cpustate) { return ((HCR & 0x0008) != 0); }
-static UINT16 HCIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0004) != 0); }
-static UINT16 HTIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0002) != 0); }
-static UINT16 HRIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0001) != 0); }
+//static uint16_t HF3_bit(dsp56k_core* cpustate) { return ((HCR & 0x0010) != 0); }
+//static uint16_t HF2_bit(dsp56k_core* cpustate) { return ((HCR & 0x0008) != 0); }
+static uint16_t HCIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0004) != 0); }
+static uint16_t HTIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0002) != 0); }
+static uint16_t HRIE_bit(dsp56k_core* cpustate) { return ((HCR & 0x0001) != 0); }
 
-static void HF3_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HF3_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HCR &= ~(0x0010);
@@ -350,7 +350,7 @@ static void HF3_bit_set(dsp56k_core* cpustate, UINT16 value)
 
 	HF3_bit_host_set(cpustate, value);
 }
-static void HF2_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HF2_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HCR &= ~(0x0008);
@@ -358,19 +358,19 @@ static void HF2_bit_set(dsp56k_core* cpustate, UINT16 value)
 
 	HF2_bit_host_set(cpustate, value);
 }
-static void HCIE_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HCIE_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HCR &= ~(0x0004);
 	HCR |=  (value << 2);
 }
-static void HTIE_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HTIE_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HCR &= ~(0x0002);
 	HCR |=  (value << 1);
 }
-static void HRIE_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HRIE_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HCR &= ~(0x0001);
@@ -380,33 +380,33 @@ static void HRIE_bit_set(dsp56k_core* cpustate, UINT16 value)
 /***********************************/
 /* Host Status Register (HSR) Bits */
 /***********************************/
-//static UINT16 DMA_bit(dsp56k_core* cpustate) { return ((HSR & 0x0080) != 0); }
-//static UINT16 HF1_bit(dsp56k_core* cpustate) { return ((HSR & 0x0010) != 0); }
-//static UINT16 HF0_bit(dsp56k_core* cpustate) { return ((HSR & 0x0008) != 0); }
-//static UINT16 HCP_bit(dsp56k_core* cpustate) { return ((HSR & 0x0004) != 0); }
-static UINT16 HTDE_bit(dsp56k_core* cpustate) { return ((HSR & 0x0002) != 0); }
-static UINT16 HRDF_bit(dsp56k_core* cpustate) { return ((HSR & 0x0001) != 0); }
+//static uint16_t DMA_bit(dsp56k_core* cpustate) { return ((HSR & 0x0080) != 0); }
+//static uint16_t HF1_bit(dsp56k_core* cpustate) { return ((HSR & 0x0010) != 0); }
+//static uint16_t HF0_bit(dsp56k_core* cpustate) { return ((HSR & 0x0008) != 0); }
+//static uint16_t HCP_bit(dsp56k_core* cpustate) { return ((HSR & 0x0004) != 0); }
+static uint16_t HTDE_bit(dsp56k_core* cpustate) { return ((HSR & 0x0002) != 0); }
+static uint16_t HRDF_bit(dsp56k_core* cpustate) { return ((HSR & 0x0001) != 0); }
 
-static void DMA_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void DMA_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0080);
 	HSR |= (value << 7);
 	// TODO: 5-12 When the DMA bit is set, the DMA mode is enabled by the Host Mode bits HM0 & HM1
 }
-static void HF1_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HF1_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0010);
 	HSR |= (value << 4);
 }
-static void HF0_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HF0_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0008);
 	HSR |= (value << 3);
 }
-static void HCP_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HCP_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0004);
@@ -415,7 +415,7 @@ static void HCP_bit_set(dsp56k_core* cpustate, UINT16 value)
 	if (value && HCIE_bit(cpustate))
 		dsp56k_add_pending_interrupt(cpustate, "Host Command");
 }
-static void HTDE_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HTDE_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0002);
@@ -429,7 +429,7 @@ static void HTDE_bit_set(dsp56k_core* cpustate, UINT16 value)
 	if (!value && !RXDF_bit(cpustate))
 		dsp56k_host_interface_HTX_to_host(cpustate);
 }
-static void HRDF_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void HRDF_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x01;
 	HSR &= ~(0x0001);
@@ -452,7 +452,7 @@ static void HRDF_bit_set(dsp56k_core* cpustate, UINT16 value)
 /*****************************************/
 /* Interrupt Control Register (ICR) Bits */
 /*****************************************/
-static void ICR_set(dsp56k_core* cpustate, UINT8 value)
+static void ICR_set(dsp56k_core* cpustate, uint8_t value)
 {
 	HF1_bit_host_set(cpustate, (value & 0x10) >> 4);
 	HF0_bit_host_set(cpustate, (value & 0x08) >> 3);
@@ -460,18 +460,18 @@ static void ICR_set(dsp56k_core* cpustate, UINT8 value)
 	RREQ_bit_set(cpustate, (value & 0x01) >> 0);
 }
 
-//static UINT8 INIT_bit(dsp56k_core* cpustate); #define x_initBIT ((dsp56k.HI.ICR & 0x0080) != 0)
-//static UINT8 HM1_bit(dsp56k_core* cpustate);  #define x_hm1BIT  ((dsp56k.HI.ICR & 0x0040) != 0)
-//static UINT8 HM0_bit(dsp56k_core* cpustate);  #define x_hm0BIT  ((dsp56k.HI.ICR & 0x0020) != 0)
-//static UINT8 HF1_bit_host(dsp56k_core* cpustate);  #define x_hf1BIT  ((dsp56k.HI.ICR & 0x0010) != 0)
-//static UINT8 HF0_bit_host(dsp56k_core* cpustate);  #define x_hf0BIT  ((dsp56k.HI.ICR & 0x0008) != 0)
-//static UINT8 TREQ_bit(dsp56k_core* cpustate); #define x_treqBIT ((dsp56k.HI.ICR & 0x0002) != 0)
-//static UINT8 RREQ_bit(dsp56k_core* cpustate); #define x_rreqBIT ((dsp56k.HI.ICR & 0x0001) != 0)
+//static uint8_t INIT_bit(dsp56k_core* cpustate); #define x_initBIT ((dsp56k.HI.ICR & 0x0080) != 0)
+//static uint8_t HM1_bit(dsp56k_core* cpustate);  #define x_hm1BIT  ((dsp56k.HI.ICR & 0x0040) != 0)
+//static uint8_t HM0_bit(dsp56k_core* cpustate);  #define x_hm0BIT  ((dsp56k.HI.ICR & 0x0020) != 0)
+//static uint8_t HF1_bit_host(dsp56k_core* cpustate);  #define x_hf1BIT  ((dsp56k.HI.ICR & 0x0010) != 0)
+//static uint8_t HF0_bit_host(dsp56k_core* cpustate);  #define x_hf0BIT  ((dsp56k.HI.ICR & 0x0008) != 0)
+//static uint8_t TREQ_bit(dsp56k_core* cpustate); #define x_treqBIT ((dsp56k.HI.ICR & 0x0002) != 0)
+//static uint8_t RREQ_bit(dsp56k_core* cpustate); #define x_rreqBIT ((dsp56k.HI.ICR & 0x0001) != 0)
 
-//static void INIT_bit_set(dsp56k_core* cpustate, UINT8 value); #define CLEAR_x_initBIT() (dsp56k.HI.ICR &= (~0x0080))
-//static void HM1_bit_set(dsp56k_core* cpustate, UINT8 value);  #define CLEAR_x_hm1BIT()  (dsp56k.HI.ICR &= (~0x0040))
-//static void HM0_bit_set(dsp56k_core* cpustate, UINT8 value);  #define CLEAR_x_hm0BIT()  (dsp56k.HI.ICR &= (~0x0020))
-static void HF1_bit_host_set(dsp56k_core* cpustate, UINT8 value)
+//static void INIT_bit_set(dsp56k_core* cpustate, uint8_t value); #define CLEAR_x_initBIT() (dsp56k.HI.ICR &= (~0x0080))
+//static void HM1_bit_set(dsp56k_core* cpustate, uint8_t value);  #define CLEAR_x_hm1BIT()  (dsp56k.HI.ICR &= (~0x0040))
+//static void HM0_bit_set(dsp56k_core* cpustate, uint8_t value);  #define CLEAR_x_hm0BIT()  (dsp56k.HI.ICR &= (~0x0020))
+static void HF1_bit_host_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ICR &= ~(0x10);
@@ -479,7 +479,7 @@ static void HF1_bit_host_set(dsp56k_core* cpustate, UINT8 value)
 
 	HF1_bit_set(cpustate, value);		// 5-14
 }
-static void HF0_bit_host_set(dsp56k_core* cpustate, UINT8 value)
+static void HF0_bit_host_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ICR &= ~(0x08);
@@ -487,13 +487,13 @@ static void HF0_bit_host_set(dsp56k_core* cpustate, UINT8 value)
 
 	HF0_bit_set(cpustate, value);		// 5-13
 }
-static void TREQ_bit_set(dsp56k_core* cpustate, UINT8 value)
+static void TREQ_bit_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ICR &= ~(0x02);
 	ICR |=  (value << 1);
 }
-static void RREQ_bit_set(dsp56k_core* cpustate, UINT8 value)
+static void RREQ_bit_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ICR &= ~(0x01);
@@ -511,16 +511,16 @@ static void RREQ_bit_set(dsp56k_core* cpustate, UINT8 value)
 /**************************************/
 /* Command Vector Register (CVR) Bits */
 /**************************************/
-static UINT8 HV_bits(dsp56k_core* cpustate) { return (CVR & 0x1f); }
+static uint8_t HV_bits(dsp56k_core* cpustate) { return (CVR & 0x1f); }
 
-static void CVR_set(dsp56k_core* cpustate, UINT8 value)
+static void CVR_set(dsp56k_core* cpustate, uint8_t value)
 {
 	/* A single, unified place to run all callbacks for each of the bits */
 	HC_bit_set(cpustate, (value & 0x80) >> 7);
 	HV_bits_set(cpustate, (value & 0x1f));
 }
 
-static void HC_bit_set(dsp56k_core* cpustate, UINT8 value)
+static void HC_bit_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	CVR &= ~(0x80);
@@ -528,7 +528,7 @@ static void HC_bit_set(dsp56k_core* cpustate, UINT8 value)
 
 	HCP_bit_set(cpustate, value);	// 5-9 & 5-11
 }
-static void HV_bits_set(dsp56k_core* cpustate, UINT8 value)
+static void HV_bits_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x1f;
 	CVR &= ~(0x1f);
@@ -539,23 +539,23 @@ static void HV_bits_set(dsp56k_core* cpustate, UINT8 value)
 /****************************************/
 /* Interrupt Status Register (ISR) Bits */
 /****************************************/
-static UINT8 TXDE_bit(dsp56k_core* cpustate) { return ((ISR & 0x0002) != 0); }
-static UINT8 RXDF_bit(dsp56k_core* cpustate) { return ((ISR & 0x0001) != 0); }
+static uint8_t TXDE_bit(dsp56k_core* cpustate) { return ((ISR & 0x0002) != 0); }
+static uint8_t RXDF_bit(dsp56k_core* cpustate) { return ((ISR & 0x0001) != 0); }
 
-static void HF3_bit_host_set(dsp56k_core* cpustate, UINT8 value)
+static void HF3_bit_host_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ISR &= ~(0x0010);
 	ISR |=  (value << 4);
 }
-static void HF2_bit_host_set(dsp56k_core* cpustate, UINT8 value)
+static void HF2_bit_host_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ISR &= ~(0x0008);
 	ISR |=  (value << 3);
 }
 
-static void TXDE_bit_set(dsp56k_core* cpustate, UINT8 value)
+static void TXDE_bit_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ISR &= ~(0x0002);
@@ -566,7 +566,7 @@ static void TXDE_bit_set(dsp56k_core* cpustate, UINT8 value)
 		dsp56k_host_interface_host_to_HTX(cpustate);
 }
 
-static void RXDF_bit_set(dsp56k_core* cpustate, UINT8 value)
+static void RXDF_bit_set(dsp56k_core* cpustate, uint8_t value)
 {
 	value = value & 0x01;
 	ISR &= ~(0x0001);
@@ -610,7 +610,7 @@ static void dsp56k_host_interface_reset(dsp56k_core* cpustate)
 
 /* These two functions are exposed to the outside world */
 /* They represent the host side of the dsp56k's host interface */
-void dsp56k_host_interface_write(running_device* device, UINT8 offset, UINT8 data)
+void dsp56k_host_interface_write(running_device* device, uint8_t offset, uint8_t data)
 {
 	dsp56k_core* cpustate = get_safe_token(device);
 
@@ -706,7 +706,7 @@ void dsp56k_host_interface_write(running_device* device, UINT8 offset, UINT8 dat
 	}
 }
 
-UINT8 dsp56k_host_interface_read(running_device* device, UINT8 offset)
+uint8_t dsp56k_host_interface_read(running_device* device, uint8_t offset)
 {
 	dsp56k_core* cpustate = get_safe_token(device);
 
@@ -759,7 +759,7 @@ UINT8 dsp56k_host_interface_read(running_device* device, UINT8 offset)
 				return 0xbf;
 			else
 			{
-				UINT8 value = RXL;	// TODO: Maybe not exactly right?  I'm just being safe.
+				uint8_t value = RXL;	// TODO: Maybe not exactly right?  I'm just being safe.
 				RXDF_bit_set(cpustate, 0);
 				return value;
 			}
@@ -795,7 +795,7 @@ static void dsp56k_host_interface_host_to_HTX(dsp56k_core* cpustate)
     I/O INTERFACE
 ***************************************************************************/
 /* BCR */
-static void BCR_set(dsp56k_core* cpustate, UINT16 value)
+static void BCR_set(dsp56k_core* cpustate, uint16_t value)
 {
 	RH_bit_set(cpustate, (value & 0x8000) >> 15);
 	BS_bit_set(cpustate, (value & 0x4000) >> 14);
@@ -803,12 +803,12 @@ static void BCR_set(dsp56k_core* cpustate, UINT16 value)
 	external_p_wait_states_set(cpustate, (value & 0x001f) >> 0);
 }
 
-//static UINT16 RH_bit(dsp56k_core* cpustate);
-//static UINT16 BS_bit(dsp56k_core* cpustate);
-//static UINT16 external_x_wait_states(dsp56k_core* cpustate);
-//static UINT16 external_p_wait_states(dsp56k_core* cpustate);
+//static uint16_t RH_bit(dsp56k_core* cpustate);
+//static uint16_t BS_bit(dsp56k_core* cpustate);
+//static uint16_t external_x_wait_states(dsp56k_core* cpustate);
+//static uint16_t external_p_wait_states(dsp56k_core* cpustate);
 
-static void RH_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void RH_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x0001;
 	BCR &= ~(0x8000);
@@ -816,7 +816,7 @@ static void RH_bit_set(dsp56k_core* cpustate, UINT16 value)
 
 	// TODO: 4-6 Assert BR pin?
 }
-static void BS_bit_set(dsp56k_core* cpustate, UINT16 value)
+static void BS_bit_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x0001;
 	BCR &= ~(0x4000);
@@ -824,13 +824,13 @@ static void BS_bit_set(dsp56k_core* cpustate, UINT16 value)
 
 	// TODO: 4-6 Respond to BR pin?
 }
-static void external_x_wait_states_set(dsp56k_core* cpustate, UINT16 value)
+static void external_x_wait_states_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x001f;
 	BCR &= ~(0x03e0);
 	BCR |= (value << 5);
 }
-static void external_p_wait_states_set(dsp56k_core* cpustate, UINT16 value)
+static void external_p_wait_states_set(dsp56k_core* cpustate, uint16_t value)
 {
 	value = value & 0x001f;
 	BCR &= ~(0x001f);
@@ -839,7 +839,7 @@ static void external_p_wait_states_set(dsp56k_core* cpustate, UINT16 value)
 
 
 /* Port B Control Register PBC */
-static void PBC_set(dsp56k_core* cpustate, UINT16 value)
+static void PBC_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0xfffe)
 		logerror("Dsp56k : Attempting to set reserved bits in the PBC.  Ignoring.\n");
@@ -858,7 +858,7 @@ static int host_interface_active(dsp56k_core* cpustate)
 #endif
 
 /* Port B Data Direction Register (PBDDR) */
-static void PBDDR_set(dsp56k_core* cpustate, UINT16 value)
+static void PBDDR_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0x8000)
 		logerror("Dsp56k : Attempting to set reserved bits in the PBDDR.  Ignoring.\n");
@@ -871,7 +871,7 @@ static void PBDDR_set(dsp56k_core* cpustate, UINT16 value)
 }
 
 /* Port B Data Register (PBD) */
-static void PBD_set(dsp56k_core* cpustate, UINT16 value)
+static void PBD_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0x8000)
 		logerror("Dsp56k : Attempting to set reserved bits in the PBD.  Ignoring.\n");
@@ -884,7 +884,7 @@ static void PBD_set(dsp56k_core* cpustate, UINT16 value)
 }
 
 /* Port C Control Register (PCC) */
-static void PCC_set(dsp56k_core* cpustate, UINT16 value)
+static void PCC_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0xf000)
 		logerror("Dsp56k : Attempting to set reserved bits in the PCC.  Ignoring.\n");
@@ -897,7 +897,7 @@ static void PCC_set(dsp56k_core* cpustate, UINT16 value)
 }
 
 /* Port C Data Direction Register (PCDDR) */
-static void PCDDR_set(dsp56k_core* cpustate, UINT16 value)
+static void PCDDR_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0xf000)
 		logerror("Dsp56k : Attempting to set reserved bits in the PCDDR.  Ignoring.\n");
@@ -910,7 +910,7 @@ static void PCDDR_set(dsp56k_core* cpustate, UINT16 value)
 }
 
 /* Port C Data Register (PCD) */
-static void PCD_set(dsp56k_core* cpustate, UINT16 value)
+static void PCD_set(dsp56k_core* cpustate, uint16_t value)
 {
 	if (value & 0xf000)
 		logerror("Dsp56k : Attempting to set reserved bits in the PCD.  Ignoring.\n");
@@ -934,7 +934,7 @@ static void dsp56k_io_reset(dsp56k_core* cpustate)
 
 
 /* MISC*/
-UINT16 dsp56k_get_peripheral_memory(running_device* device, UINT16 addr)
+uint16_t dsp56k_get_peripheral_memory(running_device* device, uint16_t addr)
 {
 	// TODO // THIS COMES BACK dsp56k_core* cpustate = get_safe_token(device);
 	return dsp56k_peripheral_ram[A2O(addr)];

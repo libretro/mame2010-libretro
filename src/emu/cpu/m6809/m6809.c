@@ -12,9 +12,9 @@
         6809 Microcomputer Programming & Interfacing with Experiments"
             by Andrew C. Staugaard, Jr.; Howard W. Sams & Co., Inc.
 
-    System dependencies:    UINT16 must be 16 bit unsigned int
-                            UINT8 must be 8 bit unsigned int
-                            UINT32 must be more than 16 bits
+    System dependencies:    uint16_t must be 16 bit unsigned int
+                            uint8_t must be 8 bit unsigned int
+                            uint32_t must be more than 16 bits
                             arrays up to 65536 bytes must be supported
                             machine must be twos complement
 
@@ -93,9 +93,9 @@ struct _m68_state_t
 	PAIR	dp; 		/* Direct Page register (page in MSB) */
 	PAIR	u, s;		/* Stack pointers */
 	PAIR	x, y;		/* Index registers */
-	UINT8	cc;
-	UINT8	ireg;		/* First opcode */
-	UINT8	irq_state[2];
+	uint8_t	cc;
+	uint8_t	ireg;		/* First opcode */
+	uint8_t	irq_state[2];
 
 	int 	extra_cycles; /* cycles used up by interrupts */
 	device_irq_callback irq_callback;
@@ -107,8 +107,8 @@ struct _m68_state_t
 	/* Memory spaces */
     const address_space *program;
 
-	UINT8	int_state;	/* SYNC and CWAI flags */
-	UINT8	nmi_state;
+	uint8_t	int_state;	/* SYNC and CWAI flags */
+	uint8_t	nmi_state;
 };
 
 INLINE m68_state_t *get_safe_token(running_device *device)
@@ -218,8 +218,8 @@ INLINE void fetch_effective_address( m68_state_t *m68_state );
 
 /* macros for CC -- CC bits affected should be reset before calling */
 #define SET_Z(a)		if(!a)SEZ
-#define SET_Z8(a)		SET_Z((UINT8)a)
-#define SET_Z16(a)		SET_Z((UINT16)a)
+#define SET_Z8(a)		SET_Z((uint8_t)a)
+#define SET_Z16(a)		SET_Z((uint16_t)a)
 #define SET_N8(a)		CC|=((a&0x80)>>4)
 #define SET_N16(a)		CC|=((a&0x8000)>>12)
 #define SET_H(a,b,r)	CC|=(((a^b^r)&0x10)<<1)
@@ -240,7 +240,7 @@ INLINE void fetch_effective_address( m68_state_t *m68_state );
 #define NXORV			((CC&CC_N)^((CC&CC_V)<<2))
 
 /* for treating an unsigned byte as a signed word */
-#define SIGNED(b) ((UINT16)(b&0x80?b|0xff00:b))
+#define SIGNED(b) ((uint16_t)(b&0x80?b|0xff00:b))
 
 /* macros for addressing modes (postbytes have their own code) */
 #define DIRECT	EAD = DPD; IMMBYTE(m68_state->ea.b.l)
@@ -271,7 +271,7 @@ INLINE void fetch_effective_address( m68_state_t *m68_state );
 
 /* macros for branch instructions */
 #define BRANCH(f) { 					\
-	UINT8 t;							\
+	uint8_t t;							\
 	IMMBYTE(t); 						\
 	if( f ) 							\
 	{									\
@@ -291,13 +291,13 @@ INLINE void fetch_effective_address( m68_state_t *m68_state );
 
 /* macros for setting/getting registers in TFR/EXG instructions */
 
-INLINE UINT32 RM16(m68_state_t *m68_state, UINT32 Addr )
+INLINE uint32_t RM16(m68_state_t *m68_state, uint32_t Addr )
 {
-	UINT32 result = RM(Addr) << 8;
+	uint32_t result = RM(Addr) << 8;
 	return result | RM((Addr+1)&0xffff);
 }
 
-INLINE void WM16( m68_state_t *m68_state, UINT32 Addr, PAIR *p )
+INLINE void WM16( m68_state_t *m68_state, uint32_t Addr, PAIR *p )
 {
 	WM( Addr, p->b.h );
 	WM( (Addr+1)&0xffff, p->b.l );
@@ -780,7 +780,7 @@ static CPU_EXECUTE( m6809 )	/* NS 970908 */
 
 INLINE void fetch_effective_address( m68_state_t *m68_state )
 {
-	UINT8 postbyte = ROP_ARG(PCD);
+	uint8_t postbyte = ROP_ARG(PCD);
 	PC++;
 
 	switch(postbyte)

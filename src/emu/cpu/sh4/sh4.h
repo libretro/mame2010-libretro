@@ -78,17 +78,17 @@ struct sh4_config
 
 struct sh4_ddt_dma
 {
-	UINT32 source;
-	UINT32 length;
-	UINT32 size;
-	UINT32 destination;
+	uint32_t source;
+	uint32_t length;
+	uint32_t size;
+	uint32_t destination;
 	void *buffer;
 	int direction;
 	int channel;
 	int mode;
 };
 
-typedef void (*sh4_ftcsr_callback)(UINT32);
+typedef void (*sh4_ftcsr_callback)(uint32_t);
 
 DECLARE_LEGACY_CPU_DEVICE(SH4, sh4);
 

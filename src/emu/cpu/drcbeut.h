@@ -43,11 +43,11 @@ struct _drchash_state
 
 	drccodeptr		nocodeptr;			/* pointer to code which will handle missing entries */
 
-	UINT8			l1bits;				/* bits worth of entries in l1 hash tables */
-	UINT8			l1shift;			/* shift to apply to the PC to get the l1 hash entry */
+	uint8_t			l1bits;				/* bits worth of entries in l1 hash tables */
+	uint8_t			l1shift;			/* shift to apply to the PC to get the l1 hash entry */
 	offs_t			l1mask;				/* mask to apply after shifting */
-	UINT8			l2bits;				/* bits worth of entries in l2 hash tables */
-	UINT8			l2shift;			/* shift to apply to the PC to get the l2 hash entry */
+	uint8_t			l2bits;				/* bits worth of entries in l2 hash tables */
+	uint8_t			l2shift;			/* shift to apply to the PC to get the l2 hash entry */
 	offs_t			l2mask;				/* mask to apply after shifting */
 
 	drccodeptr **	emptyl1;			/* pointer to empty l1 hash table */
@@ -71,7 +71,7 @@ drchash_state *drchash_alloc(drccache *cache, int modes, int addrbits, int ignor
 int drchash_reset(drchash_state *drchash);
 
 /* note the beginning of a block */
-void drchash_block_begin(drchash_state *drchash, drcuml_block *block, const drcuml_instruction *instlist, UINT32 numinst);
+void drchash_block_begin(drchash_state *drchash, drcuml_block *block, const drcuml_instruction *instlist, uint32_t numinst);
 
 /* note the end of a block */
 void drchash_block_end(drchash_state *drchash, drcuml_block *block);
@@ -80,14 +80,14 @@ void drchash_block_end(drchash_state *drchash, drcuml_block *block);
 void drchash_set_default_codeptr(drchash_state *drchash, drccodeptr code);
 
 /* set the codeptr for the given mode/pc */
-int drchash_set_codeptr(drchash_state *drchash, UINT32 mode, UINT32 pc, drccodeptr code);
+int drchash_set_codeptr(drchash_state *drchash, uint32_t mode, uint32_t pc, drccodeptr code);
 
 
 
 /* ----- code map management ----- */
 
 /* allocate memory in the cache for the code mapper (it auto-frees with the cache) */
-drcmap_state *drcmap_alloc(drccache *cache, UINT64 uniquevalue);
+drcmap_state *drcmap_alloc(drccache *cache, uint64_t uniquevalue);
 
 /* note the beginning of a block */
 void drcmap_block_begin(drcmap_state *drcmap, drcuml_block *block);
@@ -96,13 +96,13 @@ void drcmap_block_begin(drcmap_state *drcmap, drcuml_block *block);
 void drcmap_block_end(drcmap_state *drcmap, drcuml_block *block);
 
 /* set a map value for the given code pointer */
-void drcmap_set_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar, UINT32 newvalue);
+void drcmap_set_value(drcmap_state *drcmap, drccodeptr codebase, uint32_t mapvar, uint32_t newvalue);
 
 /* return a map value for the given code pointer */
-UINT32 drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, UINT32 mapvar);
+uint32_t drcmap_get_value(drcmap_state *drcmap, drccodeptr codebase, uint32_t mapvar);
 
 /* return the most recently set map value */
-UINT32 drcmap_get_last_value(drcmap_state *drcmap, UINT32 mapvar);
+uint32_t drcmap_get_last_value(drcmap_state *drcmap, uint32_t mapvar);
 
 
 
@@ -134,7 +134,7 @@ void drclabel_set_codeptr(drclabel_list *list, drcuml_codelabel label, drccodept
     allocated for the given mode/pc
 -------------------------------------------------*/
 
-INLINE drccodeptr drchash_get_codeptr(drchash_state *drchash, UINT32 mode, UINT32 pc)
+INLINE drccodeptr drchash_get_codeptr(drchash_state *drchash, uint32_t mode, uint32_t pc)
 {
 	assert(mode < drchash->modes);
 	return drchash->base[mode][(pc >> drchash->l1shift) & drchash->l1mask][(pc >> drchash->l2shift) & drchash->l2mask];
@@ -146,7 +146,7 @@ INLINE drccodeptr drchash_get_codeptr(drchash_state *drchash, UINT32 mode, UINT3
     a matching hash entry for the given mode/pc
 -------------------------------------------------*/
 
-INLINE int drchash_code_exists(drchash_state *drchash, UINT32 mode, UINT32 pc)
+INLINE int drchash_code_exists(drchash_state *drchash, uint32_t mode, uint32_t pc)
 {
 	return (drchash_get_codeptr(drchash, mode, pc) != drchash->nocodeptr);
 }

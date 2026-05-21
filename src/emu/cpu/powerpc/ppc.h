@@ -145,12 +145,12 @@ enum
     STRUCTURES AND TYPEDEFS
 ***************************************************************************/
 
-typedef void (*ppc4xx_spu_tx_handler)(running_device *device, UINT8 data);
+typedef void (*ppc4xx_spu_tx_handler)(running_device *device, uint8_t data);
 
 typedef struct _powerpc_config powerpc_config;
 struct _powerpc_config
 {
-	UINT32		bus_frequency;
+	uint32_t		bus_frequency;
 };
 
 
@@ -159,12 +159,12 @@ struct _powerpc_config
     PUBLIC FUNCTIONS
 ***************************************************************************/
 
-void ppcdrc_set_options(running_device *device, UINT32 options);
-void ppcdrc_add_fastram(running_device *device, offs_t start, offs_t end, UINT8 readonly, void *base);
-void ppcdrc_add_hotspot(running_device *device, offs_t pc, UINT32 opcode, UINT32 cycles);
+void ppcdrc_set_options(running_device *device, uint32_t options);
+void ppcdrc_add_fastram(running_device *device, offs_t start, offs_t end, uint8_t readonly, void *base);
+void ppcdrc_add_hotspot(running_device *device, offs_t pc, uint32_t opcode, uint32_t cycles);
 
 void ppc4xx_spu_set_tx_handler(running_device *device, ppc4xx_spu_tx_handler handler);
-void ppc4xx_spu_receive_byte(running_device *device, UINT8 byteval);
+void ppc4xx_spu_receive_byte(running_device *device, uint8_t byteval);
 
 
 DECLARE_LEGACY_CPU_DEVICE(PPC403GA, ppc403ga);

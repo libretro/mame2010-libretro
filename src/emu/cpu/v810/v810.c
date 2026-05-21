@@ -26,14 +26,14 @@
 typedef struct _v810_state v810_state;
 struct _v810_state
 {
-	UINT32 reg[65];
-	UINT8 irq_line;
-	UINT8 nmi_line;
+	uint32_t reg[65];
+	uint8_t irq_line;
+	uint8_t nmi_line;
 	device_irq_callback irq_cb;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
-	UINT32 PPC;
+	uint32_t PPC;
 	int icount;
 };
 
@@ -141,25 +141,25 @@ INLINE v810_state *get_safe_token(running_device *device)
 #define D9(x) ((x&0x1ff)|((x&0x100)?0xfffffe00:0))
 #define SO(opcode) (((opcode)&0xfc00)>>10)
 
-#define CHECK_CY(x)	cpustate->PSW=(cpustate->PSW & ~8)|(((x) & (((UINT64)1) << 32)) ? 8 : 0)
+#define CHECK_CY(x)	cpustate->PSW=(cpustate->PSW & ~8)|(((x) & (((uint64_t)1) << 32)) ? 8 : 0)
 #define CHECK_OVADD(x,y,z)	cpustate->PSW=(cpustate->PSW & ~0x00000004) |(( ((x) ^ (z)) & ((y) ^ (z)) & 0x80000000) ? 4: 0)
 #define CHECK_OVSUB(x,y,z)	cpustate->PSW=(cpustate->PSW & ~0x00000004) |(( ((y) ^ (z)) & ((x) ^ (y)) & 0x80000000) ? 4: 0)
-#define CHECK_ZS(x)	cpustate->PSW=(cpustate->PSW & ~3)|((UINT32)(x)==0)|(((x)&0x80000000) ? 2: 0)
+#define CHECK_ZS(x)	cpustate->PSW=(cpustate->PSW & ~3)|((uint32_t)(x)==0)|(((x)&0x80000000) ? 2: 0)
 
 
-#define ADD(dst, src)		{ UINT64 res=(UINT64)(dst)+(UINT64)(src); SetCF(res); SetOF_Add(res,src,dst); SetSZPF(res); dst=(UINT32)res; }
-#define SUB(dst, src)		{ UINT64 res=(UINT64)(dst)-(INT64)(src); SetCF(res); SetOF_Sub(res,src,dst); SetSZPF(res); dst=(UINT32)res; }
+#define ADD(dst, src)		{ uint64_t res=(uint64_t)(dst)+(uint64_t)(src); SetCF(res); SetOF_Add(res,src,dst); SetSZPF(res); dst=(uint32_t)res; }
+#define SUB(dst, src)		{ uint64_t res=(uint64_t)(dst)-(int64_t)(src); SetCF(res); SetOF_Sub(res,src,dst); SetSZPF(res); dst=(uint32_t)res; }
 
 
 
 
-static void SETREG(v810_state *cpustate,UINT32 reg,UINT32 val)
+static void SETREG(v810_state *cpustate,uint32_t reg,uint32_t val)
 {
 	if(reg)
 		cpustate->reg[reg]=val;
 }
 
-static UINT32 GETREG(v810_state *cpustate,UINT32 reg)
+static uint32_t GETREG(v810_state *cpustate,uint32_t reg)
 {
 	if(reg)
 		return cpustate->reg[reg];
@@ -167,31 +167,31 @@ static UINT32 GETREG(v810_state *cpustate,UINT32 reg)
 		return 0;
 }
 
-static UINT32 opUNDEF(v810_state *cpustate,UINT32 op)
+static uint32_t opUNDEF(v810_state *cpustate,uint32_t op)
 {
 	logerror("V810: Unknown opcode %x @ %x",op,cpustate->PC-2);
 	return clkIF;
 }
 
-static UINT32 opMOVr(v810_state *cpustate,UINT32 op) // mov reg1, reg2
+static uint32_t opMOVr(v810_state *cpustate,uint32_t op) // mov reg1, reg2
 {
 	SETREG(cpustate,GET2,GETREG(cpustate,GET1));
 	return clkIF;
 }
 
-static UINT32 opMOVEA(v810_state *cpustate,UINT32 op)	// movea imm16, reg1, reg2
+static uint32_t opMOVEA(v810_state *cpustate,uint32_t op)	// movea imm16, reg1, reg2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	op2=I16(op2);
 	SETREG(cpustate,GET2,op1+op2);
 	return clkIF;
 }
 
-static UINT32 opMOVHI(v810_state *cpustate,UINT32 op)	// movhi imm16, reg1 ,reg2
+static uint32_t opMOVHI(v810_state *cpustate,uint32_t op)	// movhi imm16, reg1 ,reg2
 {
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	op2=UI16(op2);
 	op2<<=16;
@@ -199,17 +199,17 @@ static UINT32 opMOVHI(v810_state *cpustate,UINT32 op)	// movhi imm16, reg1 ,reg2
 	return clkIF;
 }
 
-static UINT32 opMOVi(v810_state *cpustate,UINT32 op)	// mov imm5,r2
+static uint32_t opMOVi(v810_state *cpustate,uint32_t op)	// mov imm5,r2
 {
 	SETREG(cpustate,GET2,I5(op));
 	return clkIF;
 }
 
-static UINT32 opADDr(v810_state *cpustate,UINT32 op)	// add r1,r2
+static uint32_t opADDr(v810_state *cpustate,uint32_t op)	// add r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 res=(UINT64)op2+(UINT64)op1;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t res=(uint64_t)op2+(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVADD(op1,op2,res);
 	CHECK_ZS(res);
@@ -217,11 +217,11 @@ static UINT32 opADDr(v810_state *cpustate,UINT32 op)	// add r1,r2
 	return clkIF;
 }
 
-static UINT32 opADDi(v810_state *cpustate,UINT32 op)	// add imm5,r2
+static uint32_t opADDi(v810_state *cpustate,uint32_t op)	// add imm5,r2
 {
-	UINT32 op1=I5(op);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 res=(UINT64)op2+(UINT64)op1;
+	uint32_t op1=I5(op);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t res=(uint64_t)op2+(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVADD(op1,op2,res);
 	CHECK_ZS(res);
@@ -230,14 +230,14 @@ static UINT32 opADDi(v810_state *cpustate,UINT32 op)	// add imm5,r2
 }
 
 
-static UINT32 opADDI(v810_state *cpustate,UINT32 op)	// addi imm16, reg1, reg2
+static uint32_t opADDI(v810_state *cpustate,uint32_t op)	// addi imm16, reg1, reg2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
-	UINT64 res;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
+	uint64_t res;
 	cpustate->PC+=2;
 	op2=I16(op2);
-	res=(UINT64)op2+(UINT64)op1;
+	res=(uint64_t)op2+(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVADD(op1,op2,res);
 	CHECK_ZS(res);
@@ -245,11 +245,11 @@ static UINT32 opADDI(v810_state *cpustate,UINT32 op)	// addi imm16, reg1, reg2
 	return clkIF;
 }
 
-static UINT32 opSUBr(v810_state *cpustate,UINT32 op)	// sub r1,r2
+static uint32_t opSUBr(v810_state *cpustate,uint32_t op)	// sub r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 res=(UINT64)op2-(UINT64)op1;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t res=(uint64_t)op2-(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVSUB(op1,op2,res);
 	CHECK_ZS(res);
@@ -258,42 +258,42 @@ static UINT32 opSUBr(v810_state *cpustate,UINT32 op)	// sub r1,r2
 }
 
 
-static UINT32 opCMPr(v810_state *cpustate,UINT32 op)	// cmp r1,r2
+static uint32_t opCMPr(v810_state *cpustate,uint32_t op)	// cmp r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 res=(UINT64)op2-(UINT64)op1;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t res=(uint64_t)op2-(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVSUB(op1,op2,res);
 	CHECK_ZS(res);
 	return clkIF;
 }
 
-static UINT32 opCMPi(v810_state *cpustate,UINT32 op)	// cmpi imm5,r2
+static uint32_t opCMPi(v810_state *cpustate,uint32_t op)	// cmpi imm5,r2
 {
-	UINT32 op1=I5(op);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 res=(UINT64)op2-(UINT64)op1;
+	uint32_t op1=I5(op);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t res=(uint64_t)op2-(uint64_t)op1;
 	CHECK_CY(res);
 	CHECK_OVSUB(op1,op2,res);
 	CHECK_ZS(res);
 	return clkIF;
 }
 
-static UINT32 opSETFi(v810_state *cpustate,UINT32 op)	// setf imm5,r2
+static uint32_t opSETFi(v810_state *cpustate,uint32_t op)	// setf imm5,r2
 {
-	UINT32 op1=I5(op);
-	UINT32 op2=cpustate->PSW&0xf;
+	uint32_t op1=I5(op);
+	uint32_t op2=cpustate->PSW&0xf;
 	op1&=0xf;
 	SETREG(cpustate,GET2,(op1==op2)?1:0);
 	return clkIF;
 }
 
 
-static UINT32 opANDr(v810_state *cpustate,UINT32 op)	// and r1,r2
+static uint32_t opANDr(v810_state *cpustate,uint32_t op)	// and r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
 	op2&=op1;
 	CHECK_ZS(op2);
 	SET_OV(0);
@@ -301,10 +301,10 @@ static UINT32 opANDr(v810_state *cpustate,UINT32 op)	// and r1,r2
 	return clkIF;
 }
 
-static UINT32 opANDI(v810_state *cpustate,UINT32 op)	// andi imm16,r1,r2
+static uint32_t opANDI(v810_state *cpustate,uint32_t op)	// andi imm16,r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	op2=UI16(op2);
 	op2&=op1;
@@ -315,10 +315,10 @@ static UINT32 opANDI(v810_state *cpustate,UINT32 op)	// andi imm16,r1,r2
 	return clkIF;
 }
 
-static UINT32 opORr(v810_state *cpustate,UINT32 op)	// or r1,r2
+static uint32_t opORr(v810_state *cpustate,uint32_t op)	// or r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
 	op2|=op1;
 	CHECK_ZS(op2);
 	SET_OV(0);
@@ -326,10 +326,10 @@ static UINT32 opORr(v810_state *cpustate,UINT32 op)	// or r1,r2
 	return clkIF;
 }
 
-static UINT32 opORI(v810_state *cpustate,UINT32 op)	// ori imm16,r1,r2
+static uint32_t opORI(v810_state *cpustate,uint32_t op)	// ori imm16,r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	op2=UI16(op2);
 	op2|=op1;
@@ -340,10 +340,10 @@ static UINT32 opORI(v810_state *cpustate,UINT32 op)	// ori imm16,r1,r2
 	return clkIF;
 }
 
-static UINT32 opXORr(v810_state *cpustate,UINT32 op)	// xor r1,r2
+static uint32_t opXORr(v810_state *cpustate,uint32_t op)	// xor r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
 	op2^=op1;
 	CHECK_ZS(op2);
 	SET_OV(0);
@@ -352,25 +352,25 @@ static UINT32 opXORr(v810_state *cpustate,UINT32 op)	// xor r1,r2
 }
 
 
-static UINT32 opLDSR(v810_state *cpustate,UINT32 op) // ldsr reg2,regID
+static uint32_t opLDSR(v810_state *cpustate,uint32_t op) // ldsr reg2,regID
 {
-	UINT32 op1=UI5(op);
+	uint32_t op1=UI5(op);
 	SETREG(cpustate,32+op1,GETREG(cpustate,GET2));
 	return clkIF;
 }
 
-static UINT32 opSTSR(v810_state *cpustate,UINT32 op) // ldsr regID,reg2
+static uint32_t opSTSR(v810_state *cpustate,uint32_t op) // ldsr regID,reg2
 {
-	UINT32 op1=UI5(op);
+	uint32_t op1=UI5(op);
 	SETREG(cpustate,GET2,GETREG(cpustate,32+op1));
 	return clkIF;
 }
 
 
-static UINT32 opXORI(v810_state *cpustate,UINT32 op)	// xori imm16,r1,r2
+static uint32_t opXORI(v810_state *cpustate,uint32_t op)	// xori imm16,r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=R_OP(cpustate,cpustate->PC);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	op2=UI16(op2);
 	op2^=op1;
@@ -381,20 +381,20 @@ static UINT32 opXORI(v810_state *cpustate,UINT32 op)	// xori imm16,r1,r2
 	return clkIF;
 }
 
-static UINT32 opNOTr(v810_state *cpustate,UINT32 op)	// not r1,r2
+static uint32_t opNOTr(v810_state *cpustate,uint32_t op)	// not r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=~op1;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=~op1;
 	CHECK_ZS(op2);
 	SET_OV(0);
 	SETREG(cpustate,GET2,op2);
 	return clkIF;
 }
 
-static UINT32 opSHLr(v810_state *cpustate,UINT32 op)	// shl r1,r2
+static uint32_t opSHLr(v810_state *cpustate,uint32_t op)	// shl r1,r2
 {
-	UINT64 tmp;
-	UINT32 count=GETREG(cpustate,GET1);
+	uint64_t tmp;
+	uint32_t count=GETREG(cpustate,GET1);
 	count&=0x1f;
 
 	SET_OV(0);
@@ -411,10 +411,10 @@ static UINT32 opSHLr(v810_state *cpustate,UINT32 op)	// shl r1,r2
 	return clkIF;
 }
 
-static UINT32 opSHLi(v810_state *cpustate,UINT32 op)	// shl imm5,r2
+static uint32_t opSHLi(v810_state *cpustate,uint32_t op)	// shl imm5,r2
 {
-	UINT64 tmp;
-	UINT32 count=UI5(op);
+	uint64_t tmp;
+	uint32_t count=UI5(op);
 
 	SET_OV(0);
 	SET_CY(0);
@@ -430,10 +430,10 @@ static UINT32 opSHLi(v810_state *cpustate,UINT32 op)	// shl imm5,r2
 	return clkIF;
 }
 
-static UINT32 opSHRr(v810_state *cpustate,UINT32 op)	// shr r1,r2
+static uint32_t opSHRr(v810_state *cpustate,uint32_t op)	// shr r1,r2
 {
-	UINT64 tmp;
-	UINT32 count=GETREG(cpustate,GET1);
+	uint64_t tmp;
+	uint32_t count=GETREG(cpustate,GET1);
 	count&=0x1f;
 	SET_OV(0);
 	SET_CY(0);
@@ -448,10 +448,10 @@ static UINT32 opSHRr(v810_state *cpustate,UINT32 op)	// shr r1,r2
 	return clkIF;
 }
 
-static UINT32 opSHRi(v810_state *cpustate,UINT32 op)	// shr imm5,r2
+static uint32_t opSHRi(v810_state *cpustate,uint32_t op)	// shr imm5,r2
 {
-	UINT64 tmp;
-	UINT32 count=UI5(op);
+	uint64_t tmp;
+	uint32_t count=UI5(op);
 	SET_OV(0);
 	SET_CY(0);
 	if(count)
@@ -466,10 +466,10 @@ static UINT32 opSHRi(v810_state *cpustate,UINT32 op)	// shr imm5,r2
 	return clkIF;
 }
 
-static UINT32 opSARr(v810_state *cpustate,UINT32 op)	// sar r1,r2
+static uint32_t opSARr(v810_state *cpustate,uint32_t op)	// sar r1,r2
 {
-	INT32 tmp;
-	UINT32 count=GETREG(cpustate,GET1);
+	int32_t tmp;
+	uint32_t count=GETREG(cpustate,GET1);
 	count&=0x1f;
 	SET_OV(0);
 	SET_CY(0);
@@ -485,10 +485,10 @@ static UINT32 opSARr(v810_state *cpustate,UINT32 op)	// sar r1,r2
 	return clkIF;
 }
 
-static UINT32 opSARi(v810_state *cpustate,UINT32 op)	// sar imm5,r2
+static uint32_t opSARi(v810_state *cpustate,uint32_t op)	// sar imm5,r2
 {
-	INT32 tmp;
-	UINT32 count=UI5(op);
+	int32_t tmp;
+	uint32_t count=UI5(op);
 	SET_OV(0);
 	SET_CY(0);
 	if(count)
@@ -503,23 +503,23 @@ static UINT32 opSARi(v810_state *cpustate,UINT32 op)	// sar imm5,r2
 	return clkIF;
 }
 
-static UINT32 opJMPr(v810_state *cpustate,UINT32 op)
+static uint32_t opJMPr(v810_state *cpustate,uint32_t op)
 {
 	cpustate->PC=GETREG(cpustate,GET1)&~1;
 	return clkIF+2;
 }
 
 
-static UINT32 opJR(v810_state *cpustate,UINT32 op)
+static uint32_t opJR(v810_state *cpustate,uint32_t op)
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC=cpustate->PC-2+(D26(op,tmp)&~1);
 	return clkIF+2;
 }
 
-static UINT32 opJAL(v810_state *cpustate,UINT32 op)
+static uint32_t opJAL(v810_state *cpustate,uint32_t op)
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	cpustate->R31=cpustate->PC;
 	cpustate->PC+=D26(op,tmp);
@@ -529,25 +529,25 @@ static UINT32 opJAL(v810_state *cpustate,UINT32 op)
 }
 
 
-static UINT32 opEI(v810_state *cpustate,UINT32 op)
+static uint32_t opEI(v810_state *cpustate,uint32_t op)
 {
 	SET_ID(0);
 	return clkIF;
 }
 
-static UINT32 opDI(v810_state *cpustate,UINT32 op)
+static uint32_t opDI(v810_state *cpustate,uint32_t op)
 {
 	SET_ID(1);
 	return clkIF;
 }
 
-static UINT32 opHALT(v810_state *cpustate,UINT32 op)
+static uint32_t opHALT(v810_state *cpustate,uint32_t op)
 {
 	logerror("V810: HALT @ %X",cpustate->PC-2);
 	return clkIF;
 }
 
-static UINT32 opB(v810_state *cpustate,UINT32 op)
+static uint32_t opB(v810_state *cpustate,uint32_t op)
 {
 	int doBranch=0;
 	switch((op>>9)&0xf)
@@ -623,9 +623,9 @@ static UINT32 opB(v810_state *cpustate,UINT32 op)
 	return clkIF;
 }
 
-static UINT32 opLDB(v810_state *cpustate,UINT32 op)	// ld.b disp16[reg1],reg2
+static uint32_t opLDB(v810_state *cpustate,uint32_t op)	// ld.b disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -635,9 +635,9 @@ static UINT32 opLDB(v810_state *cpustate,UINT32 op)	// ld.b disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opLDH(v810_state *cpustate,UINT32 op)	// ld.h disp16[reg1],reg2
+static uint32_t opLDH(v810_state *cpustate,uint32_t op)	// ld.h disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -647,9 +647,9 @@ static UINT32 opLDH(v810_state *cpustate,UINT32 op)	// ld.h disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opLDW(v810_state *cpustate,UINT32 op)	// ld.w disp16[reg1],reg2
+static uint32_t opLDW(v810_state *cpustate,uint32_t op)	// ld.w disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -658,9 +658,9 @@ static UINT32 opLDW(v810_state *cpustate,UINT32 op)	// ld.w disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opINB(v810_state *cpustate,UINT32 op)	// in.b disp16[reg1],reg2
+static uint32_t opINB(v810_state *cpustate,uint32_t op)	// in.b disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -669,15 +669,15 @@ static UINT32 opINB(v810_state *cpustate,UINT32 op)	// in.b disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opCAXI(v810_state *cpustate,UINT32 op)	// caxi disp16[reg1],reg2
+static uint32_t opCAXI(v810_state *cpustate,uint32_t op)	// caxi disp16[reg1],reg2
 {
 	cpustate->PC+=2;
 	return clkIF;
 }
 
-static UINT32 opINH(v810_state *cpustate,UINT32 op)	// in.h disp16[reg1],reg2
+static uint32_t opINH(v810_state *cpustate,uint32_t op)	// in.h disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -686,9 +686,9 @@ static UINT32 opINH(v810_state *cpustate,UINT32 op)	// in.h disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opINW(v810_state *cpustate,UINT32 op)	// in.w disp16[reg1],reg2
+static uint32_t opINW(v810_state *cpustate,uint32_t op)	// in.w disp16[reg1],reg2
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -697,9 +697,9 @@ static UINT32 opINW(v810_state *cpustate,UINT32 op)	// in.w disp16[reg1],reg2
 	return clkIF+clkMEM;
 }
 
-static UINT32 opSTB(v810_state *cpustate,UINT32 op)	// st.b reg2, disp16[reg1]
+static uint32_t opSTB(v810_state *cpustate,uint32_t op)	// st.b reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -707,9 +707,9 @@ static UINT32 opSTB(v810_state *cpustate,UINT32 op)	// st.b reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opSTH(v810_state *cpustate,UINT32 op)	// st.h reg2, disp16[reg1]
+static uint32_t opSTH(v810_state *cpustate,uint32_t op)	// st.h reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -717,9 +717,9 @@ static UINT32 opSTH(v810_state *cpustate,UINT32 op)	// st.h reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opSTW(v810_state *cpustate,UINT32 op)	// st.w reg2, disp16[reg1]
+static uint32_t opSTW(v810_state *cpustate,uint32_t op)	// st.w reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -727,9 +727,9 @@ static UINT32 opSTW(v810_state *cpustate,UINT32 op)	// st.w reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opOUTB(v810_state *cpustate,UINT32 op)	// out.b reg2, disp16[reg1]
+static uint32_t opOUTB(v810_state *cpustate,uint32_t op)	// out.b reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -737,9 +737,9 @@ static UINT32 opOUTB(v810_state *cpustate,UINT32 op)	// out.b reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opOUTH(v810_state *cpustate,UINT32 op)	// out.h reg2, disp16[reg1]
+static uint32_t opOUTH(v810_state *cpustate,uint32_t op)	// out.h reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -747,9 +747,9 @@ static UINT32 opOUTH(v810_state *cpustate,UINT32 op)	// out.h reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opOUTW(v810_state *cpustate,UINT32 op)	// out.w reg2, disp16[reg1]
+static uint32_t opOUTW(v810_state *cpustate,uint32_t op)	// out.w reg2, disp16[reg1]
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	tmp=D16(tmp);
 	tmp+=GETREG(cpustate,GET1);
@@ -757,12 +757,12 @@ static UINT32 opOUTW(v810_state *cpustate,UINT32 op)	// out.w reg2, disp16[reg1]
 	return clkIF+clkMEM;
 }
 
-static UINT32 opMULr(v810_state *cpustate,UINT32 op)	// mul r1,r2
+static uint32_t opMULr(v810_state *cpustate,uint32_t op)	// mul r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 tmp;
-	tmp=(INT64)(INT32)op1*(INT64)(INT32)op2;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t tmp;
+	tmp=(int64_t)(int32_t)op1*(int64_t)(int32_t)op2;
 	op2=tmp&0xffffffff;
 	tmp>>=32;
 	CHECK_ZS(tmp);//z = bad!
@@ -774,12 +774,12 @@ static UINT32 opMULr(v810_state *cpustate,UINT32 op)	// mul r1,r2
 	return clkIF;
 }
 
-static UINT32 opMULUr(v810_state *cpustate,UINT32 op)	// mulu r1,r2
+static uint32_t opMULUr(v810_state *cpustate,uint32_t op)	// mulu r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
-	UINT64 tmp;
-	tmp=(UINT64)op1*(UINT64)op2;
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
+	uint64_t tmp;
+	tmp=(uint64_t)op1*(uint64_t)op2;
 	op2=tmp&0xffffffff;
 	tmp>>=32;
 	CHECK_ZS(tmp);//z = bad!
@@ -791,35 +791,35 @@ static UINT32 opMULUr(v810_state *cpustate,UINT32 op)	// mulu r1,r2
 	return clkIF;
 }
 
-static UINT32 opDIVr(v810_state *cpustate,UINT32 op)	// div r1,r2
+static uint32_t opDIVr(v810_state *cpustate,uint32_t op)	// div r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
 	if(op1)
 	{
-		SETREG(cpustate,30,(INT32)((INT32)op2%(INT32)op1));
-		SETREG(cpustate,GET2,(INT32)((INT32)op2/(INT32)op1));
+		SETREG(cpustate,30,(int32_t)((int32_t)op2%(int32_t)op1));
+		SETREG(cpustate,GET2,(int32_t)((int32_t)op2/(int32_t)op1));
 		SET_OV((op1^op2^GETREG(cpustate,GET2)) == 0x80000000);
 		CHECK_ZS(GETREG(cpustate,GET2));
 	}
 	return clkIF;
 }
 
-static UINT32 opDIVUr(v810_state *cpustate,UINT32 op)	// divu r1,r2
+static uint32_t opDIVUr(v810_state *cpustate,uint32_t op)	// divu r1,r2
 {
-	UINT32 op1=GETREG(cpustate,GET1);
-	UINT32 op2=GETREG(cpustate,GET2);
+	uint32_t op1=GETREG(cpustate,GET1);
+	uint32_t op2=GETREG(cpustate,GET2);
 	if(op1)
 	{
-		SETREG(cpustate,30,(INT32)(op2%op1));
-		SETREG(cpustate,GET2,(INT32)(op2/op1));
+		SETREG(cpustate,30,(int32_t)(op2%op1));
+		SETREG(cpustate,GET2,(int32_t)(op2/op1));
 		SET_OV((op1^op2^GETREG(cpustate,GET2)) == 0x80000000);
 		CHECK_ZS(GETREG(cpustate,GET2));
 	}
 	return clkIF;
 }
 
-static void opADDF(v810_state *cpustate,UINT32 op)
+static void opADDF(v810_state *cpustate,uint32_t op)
 {
 	//TODO: CY
 	float val1=u2f(GETREG(cpustate,GET1));
@@ -831,7 +831,7 @@ static void opADDF(v810_state *cpustate,UINT32 op)
 	SETREG(cpustate,GET2,f2u(val2));
 }
 
-static void opSUBF(v810_state *cpustate,UINT32 op)
+static void opSUBF(v810_state *cpustate,uint32_t op)
 {
 	float val1=u2f(GETREG(cpustate,GET1));
 	float val2=u2f(GETREG(cpustate,GET2));
@@ -843,7 +843,7 @@ static void opSUBF(v810_state *cpustate,UINT32 op)
 	SETREG(cpustate,GET2,f2u(val2));
 }
 
-static void opMULF(v810_state *cpustate,UINT32 op)
+static void opMULF(v810_state *cpustate,uint32_t op)
 {
 	//TODO: CY
 	float val1=u2f(GETREG(cpustate,GET1));
@@ -855,7 +855,7 @@ static void opMULF(v810_state *cpustate,UINT32 op)
 	SETREG(cpustate,GET2,f2u(val2));
 }
 
-static void opDIVF(v810_state *cpustate,UINT32 op)
+static void opDIVF(v810_state *cpustate,uint32_t op)
 {
 	//TODO: CY
 	float val1=u2f(GETREG(cpustate,GET1));
@@ -868,16 +868,16 @@ static void opDIVF(v810_state *cpustate,UINT32 op)
 	SETREG(cpustate,GET2,f2u(val2));
 }
 
-static void opTRNC(v810_state *cpustate,UINT32 op)
+static void opTRNC(v810_state *cpustate,uint32_t op)
 {
 	float val1=u2f(GETREG(cpustate,GET1));
 	SET_OV(0);
 	SET_Z((val1==0.0)?1:0);
 	SET_S((val1<0.0)?1:0);
-	SETREG(cpustate,GET2,(INT32)val1);
+	SETREG(cpustate,GET2,(int32_t)val1);
 }
 
-static void opCMPF(v810_state *cpustate,UINT32 op)
+static void opCMPF(v810_state *cpustate,uint32_t op)
 {
 	float val1=u2f(GETREG(cpustate,GET1));
 	float val2=u2f(GETREG(cpustate,GET2));
@@ -888,16 +888,16 @@ static void opCMPF(v810_state *cpustate,UINT32 op)
 	SET_S((val2<0.0)?1:0);
 }
 
-static void opCVTS(v810_state *cpustate,UINT32 op)
+static void opCVTS(v810_state *cpustate,uint32_t op)
 {
 	float val1=u2f(GETREG(cpustate,GET1));
 	SET_OV(0);
 	SET_Z((val1==0.0)?1:0);
 	SET_S((val1<0.0)?1:0);
-	SETREG(cpustate,GET2,(INT32)val1);
+	SETREG(cpustate,GET2,(int32_t)val1);
 }
 
-static void opCVTW(v810_state *cpustate,UINT32 op)
+static void opCVTW(v810_state *cpustate,uint32_t op)
 {
 	//TODO: CY
 	float val1=GETREG(cpustate,GET1);
@@ -907,9 +907,9 @@ static void opCVTW(v810_state *cpustate,UINT32 op)
 	SETREG(cpustate,GET2,f2u(val1));
 }
 
-static UINT32 opFpoint(v810_state *cpustate,UINT32 op)
+static uint32_t opFpoint(v810_state *cpustate,uint32_t op)
 {
-	UINT32 tmp=R_OP(cpustate,cpustate->PC);
+	uint32_t tmp=R_OP(cpustate,cpustate->PC);
 	cpustate->PC+=2;
 	switch((tmp&0xfc00)>>10)
 	{
@@ -925,7 +925,7 @@ static UINT32 opFpoint(v810_state *cpustate,UINT32 op)
 	return clkIF+1;
 }
 
-static UINT32 (*const OpCodeTable[64])(v810_state *cpustate,UINT32 op) =
+static uint32_t (*const OpCodeTable[64])(v810_state *cpustate,uint32_t op) =
 {
 	/* 0x00 */ opMOVr,  	// mov r1,r2            1
 	/* 0x01 */ opADDr,  	// add r1,r2            1
@@ -1027,7 +1027,7 @@ static CPU_EXECUTE( v810 )
 
 	while(cpustate->icount>0)
 	{
-		UINT32 op;
+		uint32_t op;
 
 		cpustate->PPC=cpustate->PC;
 		debugger_instruction_hook(device, cpustate->PC);

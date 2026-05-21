@@ -19,18 +19,18 @@ static void configure_memory_8bit(i8086_state *cpustate)
     16-bit memory accessors
  *****************************************************************************/
 
-static UINT16 read_word_16le(const address_space *space, offs_t addr)
+static uint16_t read_word_16le(const address_space *space, offs_t addr)
 {
 	if (!(addr & 1))
 		return memory_read_word_16le(space, addr);
 	else
 	{
-		UINT16 result = memory_read_byte_16le(space, addr);
+		uint16_t result = memory_read_byte_16le(space, addr);
 		return result | (memory_read_byte_16le(space, addr + 1) << 8);
 	}
 }
 
-static void write_word_16le(const address_space *space, offs_t addr, UINT16 data)
+static void write_word_16le(const address_space *space, offs_t addr, uint16_t data)
 {
 	if (!(addr & 1))
 		memory_write_word_16le(space, addr, data);

@@ -439,7 +439,7 @@ INLINE void tstf(m68_state_t *m68_state);
 INLINE void tst_ix(m68_state_t *m68_state);
 INLINE void tstw(m68_state_t *m68_state);
 
-static const UINT8 flags8i[256]=	 /* increment */
+static const uint8_t flags8i[256]=	 /* increment */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -458,7 +458,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 };
-static const UINT8 flags8d[256]= /* decrement */
+static const uint8_t flags8d[256]= /* decrement */
 {
 CC_Z,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -478,7 +478,7 @@ CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,
 CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N,CC_N
 };
 
-static const UINT8 index_cycle_em[256] = {        /* Index Loopup cycle counts, emulated 6809 */
+static const uint8_t index_cycle_em[256] = {        /* Index Loopup cycle counts, emulated 6809 */
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 
 /* 0x0X */      1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -499,7 +499,7 @@ static const UINT8 index_cycle_em[256] = {        /* Index Loopup cycle counts, 
 /* 0xFX */      4,    6,   20,    6,    3,    4,    4,    4,    4,    7,    4,    7,    4,    8,    7,   20
 };
 
-static const UINT8 index_cycle_na[256] = {         /* Index Loopup cycle counts,
+static const uint8_t index_cycle_na[256] = {         /* Index Loopup cycle counts,
 native 6309 */
 /*       X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, XA, XB, XC, XD, XE, XF */
 
@@ -524,7 +524,7 @@ native 6309 */
 #define IIP0	19			/* Illegal instruction cycle count page 0 */
 #define IIP1	20			/* Illegal instruction cycle count page 01 & 11 */
 
-static const UINT8 ccounts_page0_em[256] =    /* Cycle Counts Page zero, Emulated 6809 */
+static const uint8_t ccounts_page0_em[256] =    /* Cycle Counts Page zero, Emulated 6809 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */     6,    6,    6,    6,    6,    6,    6,    6,    6,    6,    6,    6,    6,    6,    3,    6,
@@ -545,7 +545,7 @@ static const UINT8 ccounts_page0_em[256] =    /* Cycle Counts Page zero, Emulate
 /* 0xFX */     5,    5,    5,    7,    5,    5,    5,    5,    5,    5,    5,    5,    6,    6,    6,    6
 };
 
-static const UINT8 ccounts_page0_na[256] =   /* Cycle Counts Page zero, Native 6309 */
+static const uint8_t ccounts_page0_na[256] =   /* Cycle Counts Page zero, Native 6309 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */     5,    6,    6,    5,    5,    6,    5,    5,    5,    5,    5,    6,    5,    4,    2,    5,
@@ -566,7 +566,7 @@ static const UINT8 ccounts_page0_na[256] =   /* Cycle Counts Page zero, Native 6
 /* 0xFX */     4,    4,    4,    5,    4,    4,    4,    4,    4,    4,    4,    4,    5,    5,    5,    5
 };
 
-static const UINT8 ccounts_page01_em[256] =    /* Cycle Counts Page 01, Emulated 6809 */
+static const uint8_t ccounts_page01_em[256] =    /* Cycle Counts Page 01, Emulated 6809 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,
@@ -587,7 +587,7 @@ static const UINT8 ccounts_page01_em[256] =    /* Cycle Counts Page 01, Emulated
 /* 0xFX */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,    9,    9,    7,    7
 };
 
-static const UINT8 ccounts_page01_na[256] =   /* Cycle Counts Page 01, Native 6309 */
+static const uint8_t ccounts_page01_na[256] =   /* Cycle Counts Page 01, Native 6309 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,
@@ -608,7 +608,7 @@ static const UINT8 ccounts_page01_na[256] =   /* Cycle Counts Page 01, Native 63
 /* 0xFX */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,    8,    8,    6,    6
 };
 
-static const UINT8 ccounts_page11_em[256] =    /* Cycle Counts Page 11, Emulated 6809 */
+static const uint8_t ccounts_page11_em[256] =    /* Cycle Counts Page 11, Emulated 6809 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,
@@ -629,7 +629,7 @@ static const UINT8 ccounts_page11_em[256] =    /* Cycle Counts Page 11, Emulated
 /* 0xFX */      6,    6, IIP1, IIP1, IIP1, IIP1,    6,    6, IIP1, IIP1, IIP1,    6, IIP1, IIP1, IIP1, IIP1
 };
 
-static const UINT8 ccounts_page11_na[256] =    /* Cycle Counts Page 11, Native 6309 */
+static const uint8_t ccounts_page11_na[256] =    /* Cycle Counts Page 11, Native 6309 */
 {
 /*           0xX0, 0xX1, 0xX2, 0xX3, 0xX4, 0xX5, 0xX6, 0xX7, 0xX8, 0xX9, 0xXA, 0xXB, 0xXC, 0xXD, 0xXE, 0xXF */
 /* 0x0X */   IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1, IIP1,

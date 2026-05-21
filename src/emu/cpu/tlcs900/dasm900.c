@@ -1439,8 +1439,8 @@ CPU_DISASSEMBLE( tlcs900 )
 	const tlcs900inst *dasm;
 	char *dst = buffer;
 	char buf[32];
-	UINT8	op, op1;
-	UINT32	imm;
+	uint8_t	op, op1;
+	uint32_t	imm;
 	int		flags = 0;
 	int		pos = 0;
 
@@ -1561,7 +1561,7 @@ CPU_DISASSEMBLE( tlcs900 )
 				case 0x13:
 					imm = oprom[ pos++ ];
 					imm = imm | ( oprom[ pos++ ] << 8 );
-					sprintf( buf, "0x%06x", pc + pos + (INT16)imm );
+					sprintf( buf, "0x%06x", pc + pos + (int16_t)imm );
 					break;
 				}
 				break;
@@ -1654,7 +1654,7 @@ CPU_DISASSEMBLE( tlcs900 )
 				case 0x13:
 					imm = oprom[ pos++ ];
 					imm = imm | ( oprom[ pos++ ] << 8 );
-					sprintf( buf, "0x%06x", pc + pos + (INT16)imm );
+					sprintf( buf, "0x%06x", pc + pos + (int16_t)imm );
 					break;
 				}
 				break;
@@ -1748,7 +1748,7 @@ CPU_DISASSEMBLE( tlcs900 )
 				case 0x13:
 					imm = oprom[ pos++ ];
 					imm = imm | ( oprom[ pos++ ] << 8 );
-					sprintf( buf, "0x%06x", pc + pos + (INT16)imm );
+					sprintf( buf, "0x%06x", pc + pos + (int16_t)imm );
 					break;
 				}
 				break;
@@ -1841,7 +1841,7 @@ CPU_DISASSEMBLE( tlcs900 )
 				case 0x13:
 					imm = oprom[ pos++ ];
 					imm = imm | ( oprom[ pos++ ] << 8 );
-					sprintf( buf, "0x%06x", pc + pos + (INT16)imm );
+					sprintf( buf, "0x%06x", pc + pos + (int16_t)imm );
 					break;
 				}
 				break;
@@ -1984,13 +1984,13 @@ CPU_DISASSEMBLE( tlcs900 )
 
 	case _D8:
 		imm = oprom[ pos++ ];
-		dst += sprintf( dst, " 0x%06x", ( pc + pos + (INT8)imm ) & 0xFFFFFF );
+		dst += sprintf( dst, " 0x%06x", ( pc + pos + (int8_t)imm ) & 0xFFFFFF );
 		break;
 
 	case _D16:
 		imm = oprom[ pos++ ];
 		imm = imm | ( oprom[ pos++ ] << 8 );
-		dst += sprintf( dst, " 0x%06x", ( pc + pos + (INT16)imm ) & 0xFFFFFF );
+		dst += sprintf( dst, " 0x%06x", ( pc + pos + (int16_t)imm ) & 0xFFFFFF );
 		break;
 
 	case _F:
@@ -2167,13 +2167,13 @@ CPU_DISASSEMBLE( tlcs900 )
 
 	case _D8:
 		imm = oprom[ pos++ ];
-		dst += sprintf( dst, ",0x%06x", ( pc + pos + (INT8)imm ) & 0xFFFFFF );
+		dst += sprintf( dst, ",0x%06x", ( pc + pos + (int8_t)imm ) & 0xFFFFFF );
 		break;
 
 	case _D16:
 		imm = oprom[ pos++ ];
 		imm = imm | ( oprom[ pos++ ] << 8 );
-		dst += sprintf( dst, ",0x%06x", ( pc + pos + (INT16)imm ) & 0xFFFFFF );
+		dst += sprintf( dst, ",0x%06x", ( pc + pos + (int16_t)imm ) & 0xFFFFFF );
 		break;
 
 	case _F:

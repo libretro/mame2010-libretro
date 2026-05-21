@@ -62,8 +62,8 @@ enum
 typedef cdp1802_control_mode (*cdp1802_mode_read_func)(running_device *device);
 #define CDP1802_MODE_READ(name) cdp1802_control_mode name(running_device *device)
 
-typedef UINT8 (*cdp1802_ef_read_func)(running_device *device);
-#define CDP1802_EF_READ(name) UINT8 name(running_device *device)
+typedef uint8_t (*cdp1802_ef_read_func)(running_device *device);
+#define CDP1802_EF_READ(name) uint8_t name(running_device *device)
 
 typedef void (*cdp1802_sc_write_func)(running_device *device, cdp1802_state_code state, int sc0, int sc1);
 #define CDP1802_SC_WRITE(name) void name(running_device *device, cdp1802_state_code state, int sc0, int sc1)

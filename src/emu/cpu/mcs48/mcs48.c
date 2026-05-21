@@ -121,33 +121,33 @@ T0 output clock
 typedef struct _mcs48_state mcs48_state;
 struct _mcs48_state
 {
-	UINT16		prevpc;				/* 16-bit previous program counter */
-	UINT16		pc;					/* 16-bit program counter */
+	uint16_t		prevpc;				/* 16-bit previous program counter */
+	uint16_t		pc;					/* 16-bit program counter */
 
-	UINT8		a;					/* 8-bit accumulator */
-	UINT8 *		regptr;				/* pointer to r0-r7 */
-	UINT8		psw;				/* 8-bit cpustate->psw */
-	UINT8		p1;					/* 8-bit latched port 1 */
-	UINT8		p2;					/* 8-bit latched port 2 */
-	UINT8		ea;					/* 1-bit latched ea input */
-	UINT8		timer;				/* 8-bit timer */
-	UINT8		prescaler;			/* 5-bit timer prescaler */
-	UINT8		t1_history;			/* 8-bit history of the T1 input */
-	UINT8		sts;				/* 8-bit status register (UPI-41 only, except for F1) */
-	UINT8		dbbi;				/* 8-bit input data buffer (UPI-41 only) */
-	UINT8		dbbo;				/* 8-bit output data buffer (UPI-41 only) */
+	uint8_t		a;					/* 8-bit accumulator */
+	uint8_t *		regptr;				/* pointer to r0-r7 */
+	uint8_t		psw;				/* 8-bit cpustate->psw */
+	uint8_t		p1;					/* 8-bit latched port 1 */
+	uint8_t		p2;					/* 8-bit latched port 2 */
+	uint8_t		ea;					/* 1-bit latched ea input */
+	uint8_t		timer;				/* 8-bit timer */
+	uint8_t		prescaler;			/* 5-bit timer prescaler */
+	uint8_t		t1_history;			/* 8-bit history of the T1 input */
+	uint8_t		sts;				/* 8-bit status register (UPI-41 only, except for F1) */
+	uint8_t		dbbi;				/* 8-bit input data buffer (UPI-41 only) */
+	uint8_t		dbbo;				/* 8-bit output data buffer (UPI-41 only) */
 
-	UINT8		irq_state;			/* TRUE if an IRQ is pending */
-	UINT8		irq_in_progress;	/* TRUE if an IRQ is in progress */
-	UINT8		timer_overflow;		/* TRUE on a timer overflow; cleared by taking interrupt */
-	UINT8		timer_flag;			/* TRUE on a timer overflow; cleared on JTF */
-	UINT8		tirq_enabled;		/* TRUE if the timer IRQ is enabled */
-	UINT8		xirq_enabled;		/* TRUE if the external IRQ is enabled */
-	UINT8		timecount_enabled;	/* bitmask of timer/counter enabled */
-	UINT8		flags_enabled;		/* TRUE if I/O flags have been enabled (UPI-41 only) */
-	UINT8		dma_enabled;		/* TRUE if DMA has been enabled (UPI-41 only) */
+	uint8_t		irq_state;			/* TRUE if an IRQ is pending */
+	uint8_t		irq_in_progress;	/* TRUE if an IRQ is in progress */
+	uint8_t		timer_overflow;		/* TRUE on a timer overflow; cleared by taking interrupt */
+	uint8_t		timer_flag;			/* TRUE on a timer overflow; cleared on JTF */
+	uint8_t		tirq_enabled;		/* TRUE if the timer IRQ is enabled */
+	uint8_t		xirq_enabled;		/* TRUE if the external IRQ is enabled */
+	uint8_t		timecount_enabled;	/* bitmask of timer/counter enabled */
+	uint8_t		flags_enabled;		/* TRUE if I/O flags have been enabled (UPI-41 only) */
+	uint8_t		dma_enabled;		/* TRUE if DMA has been enabled (UPI-41 only) */
 
-	UINT16		a11;				/* A11 value, either 0x000 or 0x800 */
+	uint16_t		a11;				/* A11 value, either 0x000 or 0x800 */
 
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
@@ -158,10 +158,10 @@ struct _mcs48_state
     const address_space *data;
     const address_space *io;
 
-	UINT8		feature_mask;		/* processor feature flags */
-	UINT16		int_rom_size;		/* internal rom size */
+	uint8_t		feature_mask;		/* processor feature flags */
+	uint16_t		int_rom_size;		/* internal rom size */
 
-	UINT8		rtemp;				/* temporary for import/export */
+	uint8_t		rtemp;				/* temporary for import/export */
 };
 
 
@@ -245,7 +245,7 @@ INLINE mcs48_state *get_safe_token(running_device *device)
     opcode_fetch - fetch an opcode byte
 -------------------------------------------------*/
 
-INLINE UINT8 opcode_fetch(mcs48_state *cpustate)
+INLINE uint8_t opcode_fetch(mcs48_state *cpustate)
 {
 	return memory_decrypted_read_byte(cpustate->program, cpustate->pc++);
 }
@@ -256,7 +256,7 @@ INLINE UINT8 opcode_fetch(mcs48_state *cpustate)
     byte
 -------------------------------------------------*/
 
-INLINE UINT8 argument_fetch(mcs48_state *cpustate)
+INLINE uint8_t argument_fetch(mcs48_state *cpustate)
 {
 	return memory_raw_read_byte(cpustate->program, cpustate->pc++);
 }
@@ -269,7 +269,7 @@ INLINE UINT8 argument_fetch(mcs48_state *cpustate)
 
 INLINE void update_regptr(mcs48_state *cpustate)
 {
-	cpustate->regptr = (UINT8 *)memory_get_write_ptr(cpustate->data, (cpustate->psw & B_FLAG) ? 24 : 0);
+	cpustate->regptr = (uint8_t *)memory_get_write_ptr(cpustate->data, (cpustate->psw & B_FLAG) ? 24 : 0);
 }
 
 
@@ -280,7 +280,7 @@ INLINE void update_regptr(mcs48_state *cpustate)
 
 INLINE void push_pc_psw(mcs48_state *cpustate)
 {
-	UINT8 sp = cpustate->psw & 0x07;
+	uint8_t sp = cpustate->psw & 0x07;
 	ram_w(8 + 2*sp, cpustate->pc);
 	ram_w(9 + 2*sp, ((cpustate->pc >> 8) & 0x0f) | (cpustate->psw & 0xf0));
 	cpustate->psw = (cpustate->psw & 0xf8) | ((sp + 1) & 0x07);
@@ -294,7 +294,7 @@ INLINE void push_pc_psw(mcs48_state *cpustate)
 
 INLINE void pull_pc_psw(mcs48_state *cpustate)
 {
-	UINT8 sp = (cpustate->psw - 1) & 0x07;
+	uint8_t sp = (cpustate->psw - 1) & 0x07;
 	cpustate->pc = ram_r(8 + 2*sp);
 	cpustate->pc |= ram_r(9 + 2*sp) << 8;
 	cpustate->psw = ((cpustate->pc >> 8) & 0xf0) | 0x08 | sp;
@@ -310,7 +310,7 @@ INLINE void pull_pc_psw(mcs48_state *cpustate)
 
 INLINE void pull_pc(mcs48_state *cpustate)
 {
-	UINT8 sp = (cpustate->psw - 1) & 0x07;
+	uint8_t sp = (cpustate->psw - 1) & 0x07;
 	cpustate->pc = ram_r(8 + 2*sp);
 	cpustate->pc |= ram_r(9 + 2*sp) << 8;
 	cpustate->pc &= 0xfff;
@@ -323,10 +323,10 @@ INLINE void pull_pc(mcs48_state *cpustate)
     instruction
 -------------------------------------------------*/
 
-INLINE void execute_add(mcs48_state *cpustate, UINT8 dat)
+INLINE void execute_add(mcs48_state *cpustate, uint8_t dat)
 {
-	UINT16 temp = cpustate->a + dat;
-	UINT16 temp4 = (cpustate->a & 0x0f) + (dat & 0x0f);
+	uint16_t temp = cpustate->a + dat;
+	uint16_t temp4 = (cpustate->a & 0x0f) + (dat & 0x0f);
 
 	cpustate->psw &= ~(C_FLAG | A_FLAG);
 	cpustate->psw |= (temp4 << 2) & A_FLAG;
@@ -340,11 +340,11 @@ INLINE void execute_add(mcs48_state *cpustate, UINT8 dat)
     instruction
 -------------------------------------------------*/
 
-INLINE void execute_addc(mcs48_state *cpustate, UINT8 dat)
+INLINE void execute_addc(mcs48_state *cpustate, uint8_t dat)
 {
-	UINT8 carryin = (cpustate->psw & C_FLAG) >> 7;
-	UINT16 temp = cpustate->a + dat + carryin;
-	UINT16 temp4 = (cpustate->a & 0x0f) + (dat & 0x0f) + carryin;
+	uint8_t carryin = (cpustate->psw & C_FLAG) >> 7;
+	uint16_t temp = cpustate->a + dat + carryin;
+	uint16_t temp4 = (cpustate->a & 0x0f) + (dat & 0x0f) + carryin;
 
 	cpustate->psw &= ~(C_FLAG | A_FLAG);
 	cpustate->psw |= (temp4 << 2) & A_FLAG;
@@ -358,9 +358,9 @@ INLINE void execute_addc(mcs48_state *cpustate, UINT8 dat)
     instruction
 -------------------------------------------------*/
 
-INLINE void execute_jmp(mcs48_state *cpustate, UINT16 address)
+INLINE void execute_jmp(mcs48_state *cpustate, uint16_t address)
 {
-	UINT16 a11 = (cpustate->irq_in_progress) ? 0 : cpustate->a11;
+	uint16_t a11 = (cpustate->irq_in_progress) ? 0 : cpustate->a11;
 	cpustate->pc = address | a11;
 }
 
@@ -370,7 +370,7 @@ INLINE void execute_jmp(mcs48_state *cpustate, UINT16 address)
     instruction
 -------------------------------------------------*/
 
-INLINE void execute_call(mcs48_state *cpustate, UINT16 address)
+INLINE void execute_call(mcs48_state *cpustate, uint16_t address)
 {
 	push_pc_psw(cpustate);
 	execute_jmp(cpustate, address);
@@ -382,9 +382,9 @@ INLINE void execute_call(mcs48_state *cpustate, UINT16 address)
     conditional jump instruction
 -------------------------------------------------*/
 
-INLINE void execute_jcc(mcs48_state *cpustate, UINT8 result)
+INLINE void execute_jcc(mcs48_state *cpustate, uint8_t result)
 {
-	UINT8 offset = argument_fetch(cpustate);
+	uint8_t offset = argument_fetch(cpustate);
 	if (result != 0)
 		cpustate->pc = ((cpustate->pc - 1) & 0xf00) | offset;
 }
@@ -395,9 +395,9 @@ INLINE void execute_jcc(mcs48_state *cpustate, UINT8 result)
     code can directly affect
 -------------------------------------------------*/
 
-INLINE UINT8 p2_mask(mcs48_state *cpustate)
+INLINE uint8_t p2_mask(mcs48_state *cpustate)
 {
-	UINT8 result = 0xff;
+	uint8_t result = 0xff;
 	if ((cpustate->feature_mask & UPI41_FEATURE) == 0)
 		return result;
 	if (cpustate->flags_enabled)
@@ -413,7 +413,7 @@ INLINE UINT8 p2_mask(mcs48_state *cpustate)
     the 8243 expander chip
 -------------------------------------------------*/
 
-INLINE void expander_operation(mcs48_state *cpustate, UINT8 operation, UINT8 port)
+INLINE void expander_operation(mcs48_state *cpustate, uint8_t operation, uint8_t port)
 {
 	/* put opcode/data on low 4 bits of P2 */
 	port_w(2, cpustate->p2 = (cpustate->p2 & 0xf0) | (operation << 2) | (port & 3));
@@ -703,7 +703,7 @@ OPHANDLER( orld_p7_a )		{ expander_operation(cpustate, MCS48_EXPANDER_OP_OR, 7);
 
 OPHANDLER( outl_bus_a )		{ bus_w(cpustate->a); return 2; }
 OPHANDLER( outl_p1_a )		{ port_w(1, cpustate->p1 = cpustate->a); return 2; }
-OPHANDLER( outl_p2_a )		{ UINT8 mask = p2_mask(cpustate); port_w(2, cpustate->p2 = (cpustate->p2 & ~mask) | (cpustate->a & mask)); return 2; }
+OPHANDLER( outl_p2_a )		{ uint8_t mask = p2_mask(cpustate); port_w(2, cpustate->p2 = (cpustate->p2 & ~mask) | (cpustate->a & mask)); return 2; }
 OPHANDLER( out_dbb_a )
 {
 	/* copy to the DBBO and update the bit in STS */
@@ -728,10 +728,10 @@ OPHANDLER( retr )
 }
 
 OPHANDLER( rl_a )			{ cpustate->a = (cpustate->a << 1) | (cpustate->a >> 7); return 1; }
-OPHANDLER( rlc_a )			{ UINT8 newc = cpustate->a & C_FLAG; cpustate->a = (cpustate->a << 1) | (cpustate->psw >> 7); cpustate->psw = (cpustate->psw & ~C_FLAG) | newc; return 1; }
+OPHANDLER( rlc_a )			{ uint8_t newc = cpustate->a & C_FLAG; cpustate->a = (cpustate->a << 1) | (cpustate->psw >> 7); cpustate->psw = (cpustate->psw & ~C_FLAG) | newc; return 1; }
 
 OPHANDLER( rr_a )			{ cpustate->a = (cpustate->a >> 1) | (cpustate->a << 7); return 1; }
-OPHANDLER( rrc_a )			{ UINT8 newc = (cpustate->a << 7) & C_FLAG; cpustate->a = (cpustate->a >> 1) | (cpustate->psw & C_FLAG); cpustate->psw = (cpustate->psw & ~C_FLAG) | newc; return 1; }
+OPHANDLER( rrc_a )			{ uint8_t newc = (cpustate->a << 7) & C_FLAG; cpustate->a = (cpustate->a >> 1) | (cpustate->psw & C_FLAG); cpustate->psw = (cpustate->psw & ~C_FLAG) | newc; return 1; }
 
 OPHANDLER( sel_mb0 )		{ cpustate->a11 = 0x000; return 1; }
 OPHANDLER( sel_mb1 )		{ cpustate->a11 = 0x800; return 1; }
@@ -746,19 +746,19 @@ OPHANDLER( strt_t )			{ cpustate->timecount_enabled = TIMER_ENABLED; cpustate->p
 
 OPHANDLER( swap_a )			{ cpustate->a = (cpustate->a << 4) | (cpustate->a >> 4); return 1; }
 
-OPHANDLER( xch_a_r0 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R0; cpustate->R0 = tmp; return 1; }
-OPHANDLER( xch_a_r1 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R1; cpustate->R1 = tmp; return 1; }
-OPHANDLER( xch_a_r2 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R2; cpustate->R2 = tmp; return 1; }
-OPHANDLER( xch_a_r3 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R3; cpustate->R3 = tmp; return 1; }
-OPHANDLER( xch_a_r4 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R4; cpustate->R4 = tmp; return 1; }
-OPHANDLER( xch_a_r5 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R5; cpustate->R5 = tmp; return 1; }
-OPHANDLER( xch_a_r6 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R6; cpustate->R6 = tmp; return 1; }
-OPHANDLER( xch_a_r7 )		{ UINT8 tmp = cpustate->a; cpustate->a = cpustate->R7; cpustate->R7 = tmp; return 1; }
-OPHANDLER( xch_a_xr0 )		{ UINT8 tmp = cpustate->a; cpustate->a = ram_r(cpustate->R0); ram_w(cpustate->R0, tmp); return 1; }
-OPHANDLER( xch_a_xr1 )		{ UINT8 tmp = cpustate->a; cpustate->a = ram_r(cpustate->R1); ram_w(cpustate->R1, tmp); return 1; }
+OPHANDLER( xch_a_r0 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R0; cpustate->R0 = tmp; return 1; }
+OPHANDLER( xch_a_r1 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R1; cpustate->R1 = tmp; return 1; }
+OPHANDLER( xch_a_r2 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R2; cpustate->R2 = tmp; return 1; }
+OPHANDLER( xch_a_r3 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R3; cpustate->R3 = tmp; return 1; }
+OPHANDLER( xch_a_r4 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R4; cpustate->R4 = tmp; return 1; }
+OPHANDLER( xch_a_r5 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R5; cpustate->R5 = tmp; return 1; }
+OPHANDLER( xch_a_r6 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R6; cpustate->R6 = tmp; return 1; }
+OPHANDLER( xch_a_r7 )		{ uint8_t tmp = cpustate->a; cpustate->a = cpustate->R7; cpustate->R7 = tmp; return 1; }
+OPHANDLER( xch_a_xr0 )		{ uint8_t tmp = cpustate->a; cpustate->a = ram_r(cpustate->R0); ram_w(cpustate->R0, tmp); return 1; }
+OPHANDLER( xch_a_xr1 )		{ uint8_t tmp = cpustate->a; cpustate->a = ram_r(cpustate->R1); ram_w(cpustate->R1, tmp); return 1; }
 
-OPHANDLER( xchd_a_xr0 )		{ UINT8 oldram = ram_r(cpustate->R0); ram_w(cpustate->R0, (oldram & 0xf0) | (cpustate->a & 0x0f)); cpustate->a = (cpustate->a & 0xf0) | (oldram & 0x0f); return 1; }
-OPHANDLER( xchd_a_xr1 )		{ UINT8 oldram = ram_r(cpustate->R1); ram_w(cpustate->R1, (oldram & 0xf0) | (cpustate->a & 0x0f)); cpustate->a = (cpustate->a & 0xf0) | (oldram & 0x0f); return 1; }
+OPHANDLER( xchd_a_xr0 )		{ uint8_t oldram = ram_r(cpustate->R0); ram_w(cpustate->R0, (oldram & 0xf0) | (cpustate->a & 0x0f)); cpustate->a = (cpustate->a & 0xf0) | (oldram & 0x0f); return 1; }
+OPHANDLER( xchd_a_xr1 )		{ uint8_t oldram = ram_r(cpustate->R1); ram_w(cpustate->R1, (oldram & 0xf0) | (cpustate->a & 0x0f)); cpustate->a = (cpustate->a & 0xf0) | (oldram & 0x0f); return 1; }
 
 OPHANDLER( xrl_a_r0 )		{ cpustate->a ^= cpustate->R0; return 1; }
 OPHANDLER( xrl_a_r1 )		{ cpustate->a ^= cpustate->R1; return 1; }
@@ -839,7 +839,7 @@ static const mcs48_ophandler opcode_table[256]=
     mcs48_init - generic MCS-48 initialization
 -------------------------------------------------*/
 
-static void mcs48_init(legacy_cpu_device *device, device_irq_callback irqcallback, UINT8 feature_mask, UINT16 romsize)
+static void mcs48_init(legacy_cpu_device *device, device_irq_callback irqcallback, uint8_t feature_mask, uint16_t romsize)
 {
 	mcs48_state *cpustate = get_safe_token(device);
 
@@ -1078,7 +1078,7 @@ static void burn_cycles(mcs48_state *cpustate, int count)
 	/* if the timer is enabled, accumulate prescaler cycles */
 	if (cpustate->timecount_enabled & TIMER_ENABLED)
 	{
-		UINT8 oldtimer = cpustate->timer;
+		uint8_t oldtimer = cpustate->timer;
 		cpustate->prescaler += count;
 		cpustate->timer += cpustate->prescaler >> 5;
 		cpustate->prescaler &= 0x1f;
@@ -1159,7 +1159,7 @@ static CPU_EXECUTE( mcs48 )
     read
 -------------------------------------------------*/
 
-UINT8 upi41_master_r(running_device *device, UINT8 a0)
+uint8_t upi41_master_r(running_device *device, uint8_t a0)
 {
 	mcs48_state *cpustate = get_safe_token(device);
 
@@ -1187,8 +1187,8 @@ static TIMER_CALLBACK( master_callback )
 {
 	legacy_cpu_device *device = (legacy_cpu_device *)ptr;
 	mcs48_state *cpustate = get_safe_token(device);
-	UINT8 a0 = (param >> 8) & 1;
-	UINT8 data = param;
+	uint8_t a0 = (param >> 8) & 1;
+	uint8_t data = param;
 
 	/* data always goes to the input buffer */
 	cpustate->dbbi = data;
@@ -1208,7 +1208,7 @@ static TIMER_CALLBACK( master_callback )
 		cpustate->sts |= STS_F1;
 }
 
-void upi41_master_w(running_device *_device, UINT8 a0, UINT8 data)
+void upi41_master_w(running_device *_device, uint8_t a0, uint8_t data)
 {
 	legacy_cpu_device *device = downcast<legacy_cpu_device *>(_device);
 	timer_call_after_resynch(device->machine, (void *)device, (a0 << 8) | data, master_callback);
@@ -1414,7 +1414,7 @@ static CPU_GET_INFO( mcs48 )
     CPU-SPECIFIC CONTEXT ACCESS
 ***************************************************************************/
 
-static void mcs48_generic_get_info(const device_config *devconfig, legacy_cpu_device *device, UINT32 state, cpuinfo *info, UINT8 features, int romsize, int ramsize, const char *name)
+static void mcs48_generic_get_info(const device_config *devconfig, legacy_cpu_device *device, uint32_t state, cpuinfo *info, uint8_t features, int romsize, int ramsize, const char *name)
 {
 	switch (state)
 	{

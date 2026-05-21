@@ -93,11 +93,11 @@ struct _superfx_config
 DECLARE_LEGACY_CPU_DEVICE(SUPERFX, superfx);
 
 CPU_DISASSEMBLE( superfx );
-extern offs_t superfx_dasm_one(char *buffer, offs_t pc, UINT8 op, UINT8 param0, UINT8 param1, UINT16 alt);
+extern offs_t superfx_dasm_one(char *buffer, offs_t pc, uint8_t op, uint8_t param0, uint8_t param1, uint16_t alt);
 
-UINT8 superfx_mmio_read(running_device *cpu, UINT32 addr);
-void superfx_mmio_write(running_device *cpu, UINT32 addr, UINT8 data);
-void superfx_add_clocks(running_device *cpu, INT32 clocks);
+uint8_t superfx_mmio_read(running_device *cpu, uint32_t addr);
+void superfx_mmio_write(running_device *cpu, uint32_t addr, uint8_t data);
+void superfx_add_clocks(running_device *cpu, int32_t clocks);
 int superfx_access_ram(running_device *cpu);
 int superfx_access_rom(running_device *cpu);
 

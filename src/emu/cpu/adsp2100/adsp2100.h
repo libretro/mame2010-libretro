@@ -24,8 +24,8 @@ DECLARE_LEGACY_CPU_DEVICE(ADSP2115, adsp2115);
 DECLARE_LEGACY_CPU_DEVICE(ADSP2181, adsp2181);
 
 /* transmit and receive data callbacks types */
-typedef INT32 (*adsp21xx_rx_func)(cpu_device &device, int port);
-typedef void  (*adsp21xx_tx_func)(cpu_device &device, int port, INT32 data);
+typedef int32_t (*adsp21xx_rx_func)(cpu_device &device, int port);
+typedef void  (*adsp21xx_tx_func)(cpu_device &device, int port, int32_t data);
 typedef void  (*adsp21xx_timer_func)(cpu_device &device, int enable);
 
 struct adsp21xx_config
@@ -104,7 +104,7 @@ enum
 #define ADSP2104_SPORT0_TX	4		/* SPORT0 transmit IRQ */
 #define ADSP2104_TIMER		5		/* internal timer IRQ */
 
-void adsp2104_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
+void adsp2104_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 
 
 /**************************************************************************
@@ -118,7 +118,7 @@ void adsp2104_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
 #define ADSP2105_IRQ2		2		/* IRQ2 */
 #define ADSP2105_TIMER		5		/* internal timer IRQ */
 
-void adsp2105_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
+void adsp2105_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 
 
 /**************************************************************************
@@ -134,7 +134,7 @@ void adsp2105_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
 #define ADSP2115_SPORT0_TX	4		/* SPORT0 transmit IRQ */
 #define ADSP2115_TIMER		5		/* internal timer IRQ */
 
-void adsp2115_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
+void adsp2115_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
 
 
 /**************************************************************************
@@ -153,11 +153,11 @@ void adsp2115_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
 #define ADSP2181_IRQL1		7		/* IRQL1 */
 #define ADSP2181_IRQL2		8		/* IRQL2 */
 
-void adsp2181_load_boot_data(UINT8 *srcdata, UINT32 *dstdata);
-void adsp2181_idma_addr_w(running_device *device, UINT16 data);
-UINT16 adsp2181_idma_addr_r(running_device *device);
-void adsp2181_idma_data_w(running_device *device, UINT16 data);
-UINT16 adsp2181_idma_data_r(running_device *device);
+void adsp2181_load_boot_data(uint8_t *srcdata, uint32_t *dstdata);
+void adsp2181_idma_addr_w(running_device *device, uint16_t data);
+uint16_t adsp2181_idma_addr_r(running_device *device);
+void adsp2181_idma_data_w(running_device *device, uint16_t data);
+uint16_t adsp2181_idma_data_r(running_device *device);
 
 
 #endif /* __ADSP2100_H__ */

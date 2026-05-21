@@ -59,25 +59,25 @@
 typedef union _z8000_reg_file z8000_reg_file;
 union _z8000_reg_file
 {
-    UINT8   B[16]; /* RL0,RH0,RL1,RH1...RL7,RH7 */
-    UINT16  W[16]; /* R0,R1,R2...R15 */
-    UINT32  L[8];  /* RR0,RR2,RR4..RR14 */
-    UINT64  Q[4];  /* RQ0,RQ4,..RQ12 */
+    uint8_t   B[16]; /* RL0,RH0,RL1,RH1...RL7,RH7 */
+    uint16_t  W[16]; /* R0,R1,R2...R15 */
+    uint32_t  L[8];  /* RR0,RR2,RR4..RR14 */
+    uint64_t  Q[4];  /* RQ0,RQ4,..RQ12 */
 };
 
 /* In z8000cpu.h: typedef struct _z8000_state z8000_state; */
 struct _z8000_state
 {
-    UINT16  op[4];      /* opcodes/data of current instruction */
-	UINT32	ppc;		/* previous program counter */
-    UINT32  pc;         /* program counter */
-    UINT16  psap;       /* program status pointer */
-    UINT16  fcw;        /* flags and control word */
-    UINT16  refresh;    /* refresh timer/counter */
-    UINT16  nsp;        /* system stack pointer */
-    UINT16  irq_req;    /* CPU is halted, interrupt or trap request */
-    UINT16  irq_srv;    /* serviced interrupt request */
-    UINT16  irq_vec;    /* interrupt vector */
+    uint16_t  op[4];      /* opcodes/data of current instruction */
+	uint32_t	ppc;		/* previous program counter */
+    uint32_t  pc;         /* program counter */
+    uint16_t  psap;       /* program status pointer */
+    uint16_t  fcw;        /* flags and control word */
+    uint16_t  refresh;    /* refresh timer/counter */
+    uint16_t  nsp;        /* system stack pointer */
+    uint16_t  irq_req;    /* CPU is halted, interrupt or trap request */
+    uint16_t  irq_srv;    /* serviced interrupt request */
+    uint16_t  irq_vec;    /* interrupt vector */
     z8000_reg_file regs;/* registers */
 	int nmi_state;		/* NMI line state */
 	int irq_state[2];	/* IRQ line states (NVI, VI) */
@@ -101,56 +101,56 @@ INLINE z8000_state *get_safe_token(running_device *device)
 Z8000_exec *z8000_exec = NULL;
 
 /* zero, sign and parity flags for logical byte operations */
-static UINT8 z8000_zsp[256];
+static uint8_t z8000_zsp[256];
 
 /* conversion table for Z8000 DAB opcode */
 #include "z8000dab.h"
 
-INLINE UINT16 RDOP(z8000_state *cpustate)
+INLINE uint16_t RDOP(z8000_state *cpustate)
 {
-	UINT16 res = memory_decrypted_read_word(cpustate->program, cpustate->pc);
+	uint16_t res = memory_decrypted_read_word(cpustate->program, cpustate->pc);
     cpustate->pc += 2;
     return res;
 }
 
-INLINE UINT8 RDMEM_B(z8000_state *cpustate, UINT32 addr)
+INLINE uint8_t RDMEM_B(z8000_state *cpustate, uint32_t addr)
 {
 	return memory_read_byte_16be(cpustate->program, addr);
 }
 
-INLINE UINT16 RDMEM_W(z8000_state *cpustate, UINT32 addr)
+INLINE uint16_t RDMEM_W(z8000_state *cpustate, uint32_t addr)
 {
 	addr &= ~1;
 	return memory_read_word_16be(cpustate->program, addr);
 }
 
-INLINE UINT32 RDMEM_L(z8000_state *cpustate, UINT32 addr)
+INLINE uint32_t RDMEM_L(z8000_state *cpustate, uint32_t addr)
 {
-	UINT32 result;
+	uint32_t result;
 	addr &= ~1;
 	result = memory_read_word_16be(cpustate->program, addr) << 16;
 	return result + memory_read_word_16be(cpustate->program, addr + 2);
 }
 
-INLINE void WRMEM_B(z8000_state *cpustate, UINT32 addr, UINT8 value)
+INLINE void WRMEM_B(z8000_state *cpustate, uint32_t addr, uint8_t value)
 {
 	memory_write_byte_16be(cpustate->program, addr, value);
 }
 
-INLINE void WRMEM_W(z8000_state *cpustate, UINT32 addr, UINT16 value)
+INLINE void WRMEM_W(z8000_state *cpustate, uint32_t addr, uint16_t value)
 {
 	addr &= ~1;
 	memory_write_word_16be(cpustate->program, addr, value);
 }
 
-INLINE void WRMEM_L(z8000_state *cpustate, UINT32 addr, UINT32 value)
+INLINE void WRMEM_L(z8000_state *cpustate, uint32_t addr, uint32_t value)
 {
 	addr &= ~1;
 	memory_write_word_16be(cpustate->program, addr, value >> 16);
-	memory_write_word_16be(cpustate->program, (UINT16)(addr + 2), value & 0xffff);
+	memory_write_word_16be(cpustate->program, (uint16_t)(addr + 2), value & 0xffff);
 }
 
-INLINE UINT8 RDPORT_B(z8000_state *cpustate, int mode, UINT16 addr)
+INLINE uint8_t RDPORT_B(z8000_state *cpustate, int mode, uint16_t addr)
 {
 	if(mode == 0)
 	{
@@ -163,12 +163,12 @@ INLINE UINT8 RDPORT_B(z8000_state *cpustate, int mode, UINT16 addr)
 	}
 }
 
-INLINE UINT16 RDPORT_W(z8000_state *cpustate, int mode, UINT16 addr)
+INLINE uint16_t RDPORT_W(z8000_state *cpustate, int mode, uint16_t addr)
 {
 	if(mode == 0)
 	{
-		return memory_read_byte_8le(cpustate->io, (UINT16)(addr)) +
-			  (memory_read_byte_8le(cpustate->io, (UINT16)(addr+1)) << 8);
+		return memory_read_byte_8le(cpustate->io, (uint16_t)(addr)) +
+			  (memory_read_byte_8le(cpustate->io, (uint16_t)(addr+1)) << 8);
 	}
 	else
 	{
@@ -177,7 +177,7 @@ INLINE UINT16 RDPORT_W(z8000_state *cpustate, int mode, UINT16 addr)
 	}
 }
 
-INLINE void WRPORT_B(z8000_state *cpustate, int mode, UINT16 addr, UINT8 value)
+INLINE void WRPORT_B(z8000_state *cpustate, int mode, uint16_t addr, uint8_t value)
 {
 	if(mode == 0)
 	{
@@ -189,12 +189,12 @@ INLINE void WRPORT_B(z8000_state *cpustate, int mode, UINT16 addr, UINT8 value)
     }
 }
 
-INLINE void WRPORT_W(z8000_state *cpustate, int mode, UINT16 addr, UINT16 value)
+INLINE void WRPORT_W(z8000_state *cpustate, int mode, uint16_t addr, uint16_t value)
 {
 	if(mode == 0)
 	{
-		memory_write_byte_8le(cpustate->io, (UINT16)(addr),value & 0xff);
-		memory_write_byte_8le(cpustate->io, (UINT16)(addr+1),(value >> 8) & 0xff);
+		memory_write_byte_8le(cpustate->io, (uint16_t)(addr),value & 0xff);
+		memory_write_byte_8le(cpustate->io, (uint16_t)(addr+1),(value >> 8) & 0xff);
 	}
 	else
 	{
@@ -202,9 +202,9 @@ INLINE void WRPORT_W(z8000_state *cpustate, int mode, UINT16 addr, UINT16 value)
     }
 }
 
-INLINE UINT16 fetch(z8000_state *cpustate)
+INLINE uint16_t fetch(z8000_state *cpustate)
 {
-	UINT16 data = memory_decrypted_read_word(cpustate->program, cpustate->pc);
+	uint16_t data = memory_decrypted_read_word(cpustate->program, cpustate->pc);
 
 	cpustate->pc+=2;
 
@@ -263,7 +263,7 @@ INLINE void set_irq(z8000_state *cpustate, int type)
 
 INLINE void Interrupt(z8000_state *cpustate)
 {
-    UINT16 fcw = cpustate->fcw;
+    uint16_t fcw = cpustate->fcw;
 
     if (cpustate->irq_req & Z8000_NVI)
     {

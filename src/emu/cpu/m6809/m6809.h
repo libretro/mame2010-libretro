@@ -26,7 +26,7 @@ CPU_DISASSEMBLE( m6809 );
 typedef struct _m6809_config m6809_config;
 struct _m6809_config
 {
-	UINT8	encrypt_only_first_byte;		/* encrypt only the first byte in 10 xx and 11 xx opcodes */
+	uint8_t	encrypt_only_first_byte;		/* encrypt only the first byte in 10 xx and 11 xx opcodes */
 };
 
 #endif /* __M6809_H__ */

@@ -13,26 +13,26 @@
 #define RECOMPILE_END_OF_STRING			0x0002
 #define RECOMPILE_ADD_DISPATCH			0x0004
 
-INLINE void emit_mov_r64_m64(x86code **emitptr, UINT8 reghi, UINT8 reglo, DECLARE_MEMPARAMS)
+INLINE void emit_mov_r64_m64(x86code **emitptr, uint8_t reghi, uint8_t reglo, DECLARE_MEMPARAMS)
 {
 	emit_mov_r32_m32(emitptr, reglo, MEMPARAMS);
 	emit_mov_r32_m32(emitptr, reghi, base, index, scale, disp+4);
 }
 
-INLINE void emit_mov_m64_r64(x86code **emitptr, DECLARE_MEMPARAMS, UINT8 reghi, UINT8 reglo)
+INLINE void emit_mov_m64_r64(x86code **emitptr, DECLARE_MEMPARAMS, uint8_t reghi, uint8_t reglo)
 {
 	emit_mov_m32_r32(emitptr, MEMPARAMS, reglo);
 	emit_mov_m32_r32(emitptr, base, index, scale, disp+4, reghi);
 }
 
 
-static UINT32 compile_one(drc_core *drc, UINT32 pc);
+static uint32_t compile_one(drc_core *drc, uint32_t pc);
 
-static void append_generate_exception(drc_core *drc, UINT8 exception);
+static void append_generate_exception(drc_core *drc, uint8_t exception);
 static void append_check_interrupts(drc_core *drc, int inline_generate);
-static UINT32 recompile_instruction(drc_core *drc, UINT32 pc, UINT32 *opptr);
+static uint32_t recompile_instruction(drc_core *drc, uint32_t pc, uint32_t *opptr);
 
-static UINT32 temp_ppc_pc;
+static uint32_t temp_ppc_pc;
 
 static void ppcdrc_init(void)
 {
@@ -48,8 +48,8 @@ static void ppcdrc_init(void)
 	drconfig.uses_sse         = USE_SSE2;
 	drconfig.pc_in_memory     = 0;
 	drconfig.icount_in_memory = 0;
-	drconfig.pcptr            = (UINT32 *)&ppc.pc;
-	drconfig.icountptr        = (UINT32 *)&ppc_icount;
+	drconfig.pcptr            = (uint32_t *)&ppc.pc;
+	drconfig.icountptr        = (uint32_t *)&ppc_icount;
 	drconfig.esiptr           = NULL;
 	drconfig.cb_reset         = CPU_RESET_NAME(ppcdrc);
 	drconfig.cb_recompile     = ppcdrc_recompile;
@@ -115,10 +115,10 @@ static CPU_EXIT( ppcdrc )
 	drc_exit(ppc.drc);
 }
 
-static UINT32 *ppcdrc_getopptr(UINT32 address)
+static uint32_t *ppcdrc_getopptr(uint32_t address)
 {
-	UINT32 *result;
-	UINT32 offset = 0;
+	uint32_t *result;
+	uint32_t offset = 0;
 
 	if (ppc.is603 || ppc.is602)
 	{
@@ -132,7 +132,7 @@ static UINT32 *ppcdrc_getopptr(UINT32 address)
 		address &= ~0x07;
 	}
 
-	result = (UINT32 *) memory_decrypted_read_ptr(ppc.core->program, address);
+	result = (uint32_t *) memory_decrypted_read_ptr(ppc.core->program, address);
 	if (result)
 		result += offset;
 	return result;
@@ -142,8 +142,8 @@ static void ppcdrc_recompile(drc_core *drc)
 {
 	int remaining = MAX_INSTRUCTIONS;
 	x86code *start = drc->cache_top;
-	UINT32 pc = ppc.pc;
-	UINT32 *opptr;
+	uint32_t pc = ppc.pc;
+	uint32_t *opptr;
 
 	(void)start;
 
@@ -162,11 +162,11 @@ static void ppcdrc_recompile(drc_core *drc)
 	/* loop until we hit an unconditional branch */
 	while (--remaining != 0)
 	{
-		UINT32 result;
+		uint32_t result;
 
 		/* compile one instruction */
 		result = compile_one(drc, pc);
-		pc += (INT8)(result >> 24);
+		pc += (int8_t)(result >> 24);
 		if (result & RECOMPILE_END_OF_STRING)
 			break;
 
@@ -226,11 +226,11 @@ static void ppcdrc_entrygen(drc_core *drc)
 	append_check_interrupts(drc, 0);
 }
 
-static UINT32 compile_one(drc_core *drc, UINT32 pc)
+static uint32_t compile_one(drc_core *drc, uint32_t pc)
 {
 	int pcdelta, cycles;
-	UINT32 *opptr;
-	UINT32 result;
+	uint32_t *opptr;
+	uint32_t result;
 
 	/* register this instruction */
 	drc_register_code_at_cache_top(drc, pc);
@@ -274,8 +274,8 @@ static UINT32 compile_one(drc_core *drc, UINT32 pc)
 	if (!(result & RECOMPILE_SUCCESSFUL))
 		fatalerror("Unimplemented op %08X", *opptr);
 
-	pcdelta = (INT8)(result >> 24);
-	cycles = (INT8)(result >> 16);
+	pcdelta = (int8_t)(result >> 24);
+	cycles = (int8_t)(result >> 16);
 
 	/* epilogue */
 	update_counters(drc);
@@ -284,12 +284,12 @@ static UINT32 compile_one(drc_core *drc, UINT32 pc)
 	if (result & RECOMPILE_ADD_DISPATCH)
 		drc_append_dispatcher(drc);
 
-	return (result & 0xffff) | ((UINT8)cycles << 16) | ((UINT8)pcdelta << 24);
+	return (result & 0xffff) | ((uint8_t)cycles << 16) | ((uint8_t)pcdelta << 24);
 }
 
-static UINT32 recompile_instruction(drc_core *drc, UINT32 pc, UINT32 *opptr)
+static uint32_t recompile_instruction(drc_core *drc, uint32_t pc, uint32_t *opptr)
 {
-	UINT32 opcode;
+	uint32_t opcode;
 	temp_ppc_pc = pc;
 
 	opcode = *opptr;
@@ -310,14 +310,14 @@ static UINT32 recompile_instruction(drc_core *drc, UINT32 pc, UINT32 *opptr)
 }
 
 
-static const UINT32 exception_vector[32] =
+static const uint32_t exception_vector[32] =
 {
 	0x0000, 0x0500, 0x0900, 0x0700, 0x0c00, 0x1400, 0x0300, 0x0400,
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
 	0x0000, 0x0000, 0x0000, 0x0000, 0x1000, 0x1010, 0x1020
 };
 
-static void append_generate_exception(drc_core *drc, UINT8 exception)
+static void append_generate_exception(drc_core *drc, uint8_t exception)
 {
 	emit_link link1, link2, link3;
 
@@ -469,7 +469,7 @@ static void append_check_interrupts(drc_core *drc, int inline_generate)
 	}
 }
 
-static void append_branch_or_dispatch(drc_core *drc, UINT32 newpc, int cycles)
+static void append_branch_or_dispatch(drc_core *drc, uint32_t newpc, int cycles)
 {
 	void *code = drc_get_code_at_pc(drc, newpc);
 	emit_mov_r32_imm(DRCTOP, REG_EDI, newpc);
@@ -488,7 +488,7 @@ static void append_branch_or_dispatch(drc_core *drc, UINT32 newpc, int cycles)
 
 /*
 // this table translates x86 SF and ZF flags to PPC CR values
-static const UINT8 condition_table[4] =
+static const uint8_t condition_table[4] =
 {
     0x4,    // x86 SF == 0, ZF == 0   -->   PPC GT (positive)
     0x2,    // x86 SF == 0, ZF == 1   -->   PPC EQ (zero)
@@ -536,7 +536,7 @@ static void append_set_cr1(drc_core *drc)
 }
 #endif
 
-static UINT32 recompile_addx(drc_core *drc, UINT32 op)
+static uint32_t recompile_addx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
 	emit_add_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -553,7 +553,7 @@ static UINT32 recompile_addx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addcx(drc_core *drc, UINT32 op)
+static uint32_t recompile_addcx(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&XER));
@@ -578,7 +578,7 @@ static UINT32 recompile_addcx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addex(drc_core *drc, UINT32 op)
+static uint32_t recompile_addex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -588,7 +588,7 @@ static UINT32 recompile_addex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addi(drc_core *drc, UINT32 op)
+static uint32_t recompile_addi(drc_core *drc, uint32_t op)
 {
 	if (RA == 0)
 	{
@@ -604,7 +604,7 @@ static UINT32 recompile_addi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addic(drc_core *drc, UINT32 op)
+static uint32_t recompile_addic(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&XER));
@@ -621,7 +621,7 @@ static UINT32 recompile_addic(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addic_rc(drc_core *drc, UINT32 op)
+static uint32_t recompile_addic_rc(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&XER));
@@ -640,7 +640,7 @@ static UINT32 recompile_addic_rc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addis(drc_core *drc, UINT32 op)
+static uint32_t recompile_addis(drc_core *drc, uint32_t op)
 {
 	if (RA == 0)
 	{
@@ -656,7 +656,7 @@ static UINT32 recompile_addis(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addmex(drc_core *drc, UINT32 op)
+static uint32_t recompile_addmex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -666,7 +666,7 @@ static UINT32 recompile_addmex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_addzex(drc_core *drc, UINT32 op)
+static uint32_t recompile_addzex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -676,7 +676,7 @@ static UINT32 recompile_addzex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_andx(drc_core *drc, UINT32 op)
+static uint32_t recompile_andx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_and_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -689,7 +689,7 @@ static UINT32 recompile_andx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_andcx(drc_core *drc, UINT32 op)
+static uint32_t recompile_andcx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -704,7 +704,7 @@ static UINT32 recompile_andcx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_andi_rc(drc_core *drc, UINT32 op)
+static uint32_t recompile_andi_rc(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_and_r32_imm(DRCTOP, REG_EDX, UIMM16);
@@ -715,7 +715,7 @@ static UINT32 recompile_andi_rc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_andis_rc(drc_core *drc, UINT32 op)
+static uint32_t recompile_andis_rc(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_and_r32_imm(DRCTOP, REG_EDX, UIMM16 << 16);
@@ -726,10 +726,10 @@ static UINT32 recompile_andis_rc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_bx(drc_core *drc, UINT32 op)
+static uint32_t recompile_bx(drc_core *drc, uint32_t op)
 {
-	UINT32 newpc;
-	INT32 li = op & 0x3fffffc;
+	uint32_t newpc;
+	int32_t li = op & 0x3fffffc;
 	if( li & 0x2000000 )
 		li |= 0xfc000000;
 
@@ -748,11 +748,11 @@ static UINT32 recompile_bx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(0,0) | RECOMPILE_END_OF_STRING;
 }
 
-static UINT32 recompile_bcx(drc_core *drc, UINT32 op)
+static uint32_t recompile_bcx(drc_core *drc, uint32_t op)
 {
 	emit_link link1 = {0}, link2 = {0};
 	int do_link1 = 0, do_link2 = 0;
-	UINT32 newpc;
+	uint32_t newpc;
 
 	if( AABIT ) {
 		newpc = SIMM16 & ~0x3;
@@ -824,7 +824,7 @@ static UINT32 recompile_bcx(drc_core *drc, UINT32 op)
 	}
 }
 
-static UINT32 recompile_bcctrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_bcctrx(drc_core *drc, uint32_t op)
 {
 	emit_link link1 = {0} ,link2 = {0};
 	int do_link1 = 0, do_link2 = 0;
@@ -901,7 +901,7 @@ static UINT32 recompile_bcctrx(drc_core *drc, UINT32 op)
 	}
 }
 
-static UINT32 recompile_bclrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_bclrx(drc_core *drc, uint32_t op)
 {
 	emit_link link1 = {0}, link2 = {0};
 	int do_link1 = 0, do_link2 = 0;
@@ -978,7 +978,7 @@ static UINT32 recompile_bclrx(drc_core *drc, UINT32 op)
 	}
 }
 
-static UINT32 recompile_cmp(drc_core *drc, UINT32 op)
+static uint32_t recompile_cmp(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_xor_r32_r32(DRCTOP, REG_EBX, REG_EBX);
@@ -1001,7 +1001,7 @@ static UINT32 recompile_cmp(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_cmpi(drc_core *drc, UINT32 op)
+static uint32_t recompile_cmpi(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_xor_r32_r32(DRCTOP, REG_EBX, REG_EBX);
@@ -1024,7 +1024,7 @@ static UINT32 recompile_cmpi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_cmpl(drc_core *drc, UINT32 op)
+static uint32_t recompile_cmpl(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_xor_r32_r32(DRCTOP, REG_EBX, REG_EBX);
@@ -1047,7 +1047,7 @@ static UINT32 recompile_cmpl(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_cmpli(drc_core *drc, UINT32 op)
+static uint32_t recompile_cmpli(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_xor_r32_r32(DRCTOP, REG_EBX, REG_EBX);
@@ -1070,7 +1070,7 @@ static UINT32 recompile_cmpli(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_cntlzw(drc_core *drc, UINT32 op)
+static uint32_t recompile_cntlzw(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EBX, REG_EBX);
 	emit_mov_r32_imm(DRCTOP, REG_EDX, 31);
@@ -1088,7 +1088,7 @@ static UINT32 recompile_cntlzw(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crand(drc_core *drc, UINT32 op)
+static uint32_t recompile_crand(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1098,7 +1098,7 @@ static UINT32 recompile_crand(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crandc(drc_core *drc, UINT32 op)
+static uint32_t recompile_crandc(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1108,7 +1108,7 @@ static UINT32 recompile_crandc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_creqv(drc_core *drc, UINT32 op)
+static uint32_t recompile_creqv(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1118,7 +1118,7 @@ static UINT32 recompile_creqv(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crnand(drc_core *drc, UINT32 op)
+static uint32_t recompile_crnand(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1128,7 +1128,7 @@ static UINT32 recompile_crnand(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crnor(drc_core *drc, UINT32 op)
+static uint32_t recompile_crnor(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1138,7 +1138,7 @@ static UINT32 recompile_crnor(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_cror(drc_core *drc, UINT32 op)
+static uint32_t recompile_cror(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1148,7 +1148,7 @@ static UINT32 recompile_cror(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crorc(drc_core *drc, UINT32 op)
+static uint32_t recompile_crorc(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1158,7 +1158,7 @@ static UINT32 recompile_crorc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_crxor(drc_core *drc, UINT32 op)
+static uint32_t recompile_crxor(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1168,37 +1168,37 @@ static UINT32 recompile_crxor(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbf(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbf(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbi(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbi(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbst(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbst(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbt(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbt(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbtst(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbtst(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcbz(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcbz(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_divwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_divwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1208,7 +1208,7 @@ static UINT32 recompile_divwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_divwux(drc_core *drc, UINT32 op)
+static uint32_t recompile_divwux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1218,12 +1218,12 @@ static UINT32 recompile_divwux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_eieio(drc_core *drc, UINT32 op)
+static uint32_t recompile_eieio(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_eqvx(drc_core *drc, UINT32 op)
+static uint32_t recompile_eqvx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_xor_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -1237,7 +1237,7 @@ static UINT32 recompile_eqvx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_extsbx(drc_core *drc, UINT32 op)
+static uint32_t recompile_extsbx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_movsx_r32_r8(DRCTOP, REG_EDX, REG_DL);
@@ -1250,7 +1250,7 @@ static UINT32 recompile_extsbx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_extshx(drc_core *drc, UINT32 op)
+static uint32_t recompile_extshx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_movsx_r32_r16(DRCTOP, REG_EDX, REG_DX);
@@ -1263,17 +1263,17 @@ static UINT32 recompile_extshx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_icbi(drc_core *drc, UINT32 op)
+static uint32_t recompile_icbi(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_isync(drc_core *drc, UINT32 op)
+static uint32_t recompile_isync(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lbz(drc_core *drc, UINT32 op)
+static uint32_t recompile_lbz(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	if (RA == 0)
@@ -1295,7 +1295,7 @@ static UINT32 recompile_lbz(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lbzu(drc_core *drc, UINT32 op)
+static uint32_t recompile_lbzu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1311,7 +1311,7 @@ static UINT32 recompile_lbzu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lbzux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lbzux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1327,7 +1327,7 @@ static UINT32 recompile_lbzux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lbzx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lbzx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1345,7 +1345,7 @@ static UINT32 recompile_lbzx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lha(drc_core *drc, UINT32 op)
+static uint32_t recompile_lha(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	if (RA == 0)
@@ -1367,7 +1367,7 @@ static UINT32 recompile_lha(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhau(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhau(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1383,7 +1383,7 @@ static UINT32 recompile_lhau(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhaux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhaux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1399,7 +1399,7 @@ static UINT32 recompile_lhaux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhax(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhax(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1417,7 +1417,7 @@ static UINT32 recompile_lhax(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhbrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhbrx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1436,7 +1436,7 @@ static UINT32 recompile_lhbrx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhz(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhz(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	if (RA == 0)
@@ -1457,7 +1457,7 @@ static UINT32 recompile_lhz(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhzu(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhzu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1472,7 +1472,7 @@ static UINT32 recompile_lhzu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhzux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhzux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1487,7 +1487,7 @@ static UINT32 recompile_lhzux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lhzx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lhzx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1504,7 +1504,7 @@ static UINT32 recompile_lhzx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lmw(drc_core *drc, UINT32 op)
+static uint32_t recompile_lmw(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1515,7 +1515,7 @@ static UINT32 recompile_lmw(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lswi(drc_core *drc, UINT32 op)
+static uint32_t recompile_lswi(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1526,7 +1526,7 @@ static UINT32 recompile_lswi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lswx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lswx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1537,7 +1537,7 @@ static UINT32 recompile_lswx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwarx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwarx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1548,7 +1548,7 @@ static UINT32 recompile_lwarx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwbrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwbrx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1566,7 +1566,7 @@ static UINT32 recompile_lwbrx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwz(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwz(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	if (RA == 0)
@@ -1587,7 +1587,7 @@ static UINT32 recompile_lwz(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwzu(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwzu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1602,7 +1602,7 @@ static UINT32 recompile_lwzu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwzux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwzux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -1617,7 +1617,7 @@ static UINT32 recompile_lwzux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lwzx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lwzx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -1634,7 +1634,7 @@ static UINT32 recompile_lwzx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mcrf(drc_core *drc, UINT32 op)
+static uint32_t recompile_mcrf(drc_core *drc, uint32_t op)
 {
 	emit_mov_r8_m8(DRCTOP, REG_AL, MABS(&ppc.cr[RA >> 2]));
 	emit_mov_m8_r8(DRCTOP, MABS(&ppc.cr[RT >> 2]), REG_AL);
@@ -1642,13 +1642,13 @@ static UINT32 recompile_mcrf(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mcrxr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mcrxr(drc_core *drc, uint32_t op)
 {
 	mame_printf_debug("PPCDRC: recompile mcrxr\n");
 	return RECOMPILE_UNIMPLEMENTED;
 }
 
-static UINT32 recompile_mfcr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfcr(drc_core *drc, uint32_t op)
 {
 	int i;
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
@@ -1666,7 +1666,7 @@ static UINT32 recompile_mfcr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mfmsr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfmsr(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&ppc.msr));
 	emit_mov_m32_r32(DRCTOP, MABS(&REG(RT)), REG_EAX);
@@ -1674,7 +1674,7 @@ static UINT32 recompile_mfmsr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mfspr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfspr(drc_core *drc, uint32_t op)
 {
 	if (SPR == SPR_LR)			// optimized case, LR
 	{
@@ -1697,7 +1697,7 @@ static UINT32 recompile_mfspr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtcrf(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtcrf(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1708,7 +1708,7 @@ static UINT32 recompile_mtcrf(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtmsr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtmsr(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -1720,7 +1720,7 @@ static UINT32 recompile_mtmsr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtspr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtspr(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
 	if (SPR == SPR_LR)			// optimized case, LR
@@ -1744,7 +1744,7 @@ static UINT32 recompile_mtspr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mulhwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_mulhwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RA)));
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&REG(RB)));
@@ -1758,7 +1758,7 @@ static UINT32 recompile_mulhwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mulhwux(drc_core *drc, UINT32 op)
+static uint32_t recompile_mulhwux(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RA)));
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&REG(RB)));
@@ -1772,7 +1772,7 @@ static UINT32 recompile_mulhwux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mulli(drc_core *drc, UINT32 op)
+static uint32_t recompile_mulli(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RA)));
 	emit_mov_r32_imm(DRCTOP, REG_EBX, SIMM16);
@@ -1782,7 +1782,7 @@ static UINT32 recompile_mulli(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mullwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_mullwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RA)));
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&REG(RB)));
@@ -1802,7 +1802,7 @@ static UINT32 recompile_mullwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_nandx(drc_core *drc, UINT32 op)
+static uint32_t recompile_nandx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_and_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -1816,7 +1816,7 @@ static UINT32 recompile_nandx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_negx(drc_core *drc, UINT32 op)
+static uint32_t recompile_negx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
 	emit_neg_r32(DRCTOP, REG_EDX);
@@ -1829,7 +1829,7 @@ static UINT32 recompile_negx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_norx(drc_core *drc, UINT32 op)
+static uint32_t recompile_norx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_or_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -1843,7 +1843,7 @@ static UINT32 recompile_norx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_orx(drc_core *drc, UINT32 op)
+static uint32_t recompile_orx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_or_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -1856,7 +1856,7 @@ static UINT32 recompile_orx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_orcx(drc_core *drc, UINT32 op)
+static uint32_t recompile_orcx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
 	emit_not_r32(DRCTOP, REG_EDX);
@@ -1870,7 +1870,7 @@ static UINT32 recompile_orcx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_ori(drc_core *drc, UINT32 op)
+static uint32_t recompile_ori(drc_core *drc, uint32_t op)
 {
 
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -1880,7 +1880,7 @@ static UINT32 recompile_ori(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_oris(drc_core *drc, UINT32 op)
+static uint32_t recompile_oris(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
 	emit_or_r32_imm(DRCTOP, REG_EAX, UIMM16 << 16);
@@ -1889,7 +1889,7 @@ static UINT32 recompile_oris(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_rfi(drc_core *drc, UINT32 op)
+static uint32_t recompile_rfi(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDI, MABS(&ppc.srr0));	/* get saved PC from SRR0 */
@@ -1903,9 +1903,9 @@ static UINT32 recompile_rfi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,0) | RECOMPILE_END_OF_STRING | RECOMPILE_ADD_DISPATCH;
 }
 
-static UINT32 recompile_rlwimix(drc_core *drc, UINT32 op)
+static uint32_t recompile_rlwimix(drc_core *drc, uint32_t op)
 {
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
 
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RA)));
@@ -1922,9 +1922,9 @@ static UINT32 recompile_rlwimix(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_rlwinmx(drc_core *drc, UINT32 op)
+static uint32_t recompile_rlwinmx(drc_core *drc, uint32_t op)
 {
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
 
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_rol_r32_imm(DRCTOP, REG_EDX, (SH));
@@ -1938,9 +1938,9 @@ static UINT32 recompile_rlwinmx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_rlwnmx(drc_core *drc, UINT32 op)
+static uint32_t recompile_rlwnmx(drc_core *drc, uint32_t op)
 {
-	UINT32 mask = GET_ROTATE_MASK(MB, ME);
+	uint32_t mask = GET_ROTATE_MASK(MB, ME);
 
 	emit_mov_r32_m32(DRCTOP, REG_ECX, MABS(&REG(RB)));		// x86 rotate instruction use only 5 bits, so no need to mask this
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
@@ -1955,14 +1955,14 @@ static UINT32 recompile_rlwnmx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sc(drc_core *drc, UINT32 op)
+static uint32_t recompile_sc(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_imm(DRCTOP, MABS(&SRR0), temp_ppc_pc + 4);
 	emit_jmp(DRCTOP, ppc.generate_syscall_exception);
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_slwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_slwx(drc_core *drc, uint32_t op)
 {
 #if USE_SSE2
 	emit_mov_r32_m32(DRCTOP, REG_ECX, MABS(&REG(RB)));
@@ -1987,7 +1987,7 @@ static UINT32 recompile_slwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_srawx(drc_core *drc, UINT32 op)
+static uint32_t recompile_srawx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -1998,7 +1998,7 @@ static UINT32 recompile_srawx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_srawix(drc_core *drc, UINT32 op)
+static uint32_t recompile_srawix(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2009,7 +2009,7 @@ static UINT32 recompile_srawix(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_srwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_srwx(drc_core *drc, uint32_t op)
 {
 #if USE_SSE2
 	emit_mov_r32_m32(DRCTOP, REG_ECX, MABS(&REG(RB)));
@@ -2034,7 +2034,7 @@ static UINT32 recompile_srwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stb(drc_core *drc, UINT32 op)
+static uint32_t recompile_stb(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2058,7 +2058,7 @@ static UINT32 recompile_stb(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stbu(drc_core *drc, UINT32 op)
+static uint32_t recompile_stbu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2076,7 +2076,7 @@ static UINT32 recompile_stbu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stbux(drc_core *drc, UINT32 op)
+static uint32_t recompile_stbux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2094,7 +2094,7 @@ static UINT32 recompile_stbux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stbx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stbx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2114,7 +2114,7 @@ static UINT32 recompile_stbx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sth(drc_core *drc, UINT32 op)
+static uint32_t recompile_sth(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2138,7 +2138,7 @@ static UINT32 recompile_sth(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sthbrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_sthbrx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2160,7 +2160,7 @@ static UINT32 recompile_sthbrx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sthu(drc_core *drc, UINT32 op)
+static uint32_t recompile_sthu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2178,7 +2178,7 @@ static UINT32 recompile_sthu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sthux(drc_core *drc, UINT32 op)
+static uint32_t recompile_sthux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2196,7 +2196,7 @@ static UINT32 recompile_sthux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sthx(drc_core *drc, UINT32 op)
+static uint32_t recompile_sthx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2216,7 +2216,7 @@ static UINT32 recompile_sthx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stmw(drc_core *drc, UINT32 op)
+static uint32_t recompile_stmw(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2227,7 +2227,7 @@ static UINT32 recompile_stmw(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stswi(drc_core *drc, UINT32 op)
+static uint32_t recompile_stswi(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2238,7 +2238,7 @@ static UINT32 recompile_stswi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stswx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stswx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2249,7 +2249,7 @@ static UINT32 recompile_stswx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stw(drc_core *drc, UINT32 op)
+static uint32_t recompile_stw(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_m32(DRCTOP, MABS(&REG(RS)));
@@ -2270,7 +2270,7 @@ static UINT32 recompile_stw(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stwbrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stwbrx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RS)));
@@ -2290,7 +2290,7 @@ static UINT32 recompile_stwbrx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stwcx_rc(drc_core *drc, UINT32 op)
+static uint32_t recompile_stwcx_rc(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2301,7 +2301,7 @@ static UINT32 recompile_stwcx_rc(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stwu(drc_core *drc, UINT32 op)
+static uint32_t recompile_stwu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_m32(DRCTOP, MABS(&REG(RS)));
@@ -2317,7 +2317,7 @@ static UINT32 recompile_stwu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stwux(drc_core *drc, UINT32 op)
+static uint32_t recompile_stwux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_m32(DRCTOP, MABS(&REG(RS)));
@@ -2333,7 +2333,7 @@ static UINT32 recompile_stwux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_m32(DRCTOP, MABS(&REG(RS)));
@@ -2351,7 +2351,7 @@ static UINT32 recompile_stwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfx(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
 	emit_sub_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -2368,7 +2368,7 @@ static UINT32 recompile_subfx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfcx(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfcx(drc_core *drc, uint32_t op)
 {
 	if (OEBIT)
 	{
@@ -2402,7 +2402,7 @@ static UINT32 recompile_subfcx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfex(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfex(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&XER));
@@ -2430,7 +2430,7 @@ static UINT32 recompile_subfex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfic(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfic(drc_core *drc, uint32_t op)
 {
 	emit_xor_r32_r32(DRCTOP, REG_EAX, REG_EAX);
 	emit_mov_r32_m32(DRCTOP, REG_EBX, MABS(&XER));
@@ -2446,7 +2446,7 @@ static UINT32 recompile_subfic(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfmex(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfmex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2457,7 +2457,7 @@ static UINT32 recompile_subfmex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_subfzex(drc_core *drc, UINT32 op)
+static uint32_t recompile_subfzex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2468,12 +2468,12 @@ static UINT32 recompile_subfzex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_sync(drc_core *drc, UINT32 op)
+static uint32_t recompile_sync(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tw(drc_core *drc, UINT32 op)
+static uint32_t recompile_tw(drc_core *drc, uint32_t op)
 {
 	emit_link link1 = {0}, link2 = {0}, link3 = {0}, link4 = {0}, link5 = {0}, link6 = {0};
 	int do_link1 = 0;
@@ -2533,7 +2533,7 @@ static UINT32 recompile_tw(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_twi(drc_core *drc, UINT32 op)
+static uint32_t recompile_twi(drc_core *drc, uint32_t op)
 {
 	emit_link link1 = {0}, link2 = {0}, link3 = {0}, link4 = {0}, link5 = {0}, link6 = {0};
 	int do_link1 = 0;
@@ -2593,7 +2593,7 @@ static UINT32 recompile_twi(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_xorx(drc_core *drc, UINT32 op)
+static uint32_t recompile_xorx(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_xor_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RB)));
@@ -2606,7 +2606,7 @@ static UINT32 recompile_xorx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_xori(drc_core *drc, UINT32 op)
+static uint32_t recompile_xori(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_xor_r32_imm(DRCTOP, REG_EDX, UIMM16);
@@ -2615,7 +2615,7 @@ static UINT32 recompile_xori(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_xoris(drc_core *drc, UINT32 op)
+static uint32_t recompile_xoris(drc_core *drc, uint32_t op)
 {
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RS)));
 	emit_xor_r32_imm(DRCTOP, REG_EDX, UIMM16 << 16);
@@ -2624,38 +2624,38 @@ static UINT32 recompile_xoris(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dccci(drc_core *drc, UINT32 op)
+static uint32_t recompile_dccci(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcread(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcread(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_icbt(drc_core *drc, UINT32 op)
+static uint32_t recompile_icbt(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_iccci(drc_core *drc, UINT32 op)
+static uint32_t recompile_iccci(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_icread(drc_core *drc, UINT32 op)
+static uint32_t recompile_icread(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_rfci(drc_core *drc, UINT32 op)
+static uint32_t recompile_rfci(drc_core *drc, uint32_t op)
 {
 	mame_printf_debug("PPCDRC: recompile rfci\n");
 	return RECOMPILE_UNIMPLEMENTED;
 }
 
-static UINT32 recompile_mfdcr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfdcr(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2666,7 +2666,7 @@ static UINT32 recompile_mfdcr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtdcr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtdcr(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2677,7 +2677,7 @@ static UINT32 recompile_mtdcr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_wrtee(drc_core *drc, UINT32 op)
+static uint32_t recompile_wrtee(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2688,7 +2688,7 @@ static UINT32 recompile_wrtee(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_wrteei(drc_core *drc, UINT32 op)
+static uint32_t recompile_wrteei(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2702,7 +2702,7 @@ static UINT32 recompile_wrteei(drc_core *drc, UINT32 op)
 
 
 
-static UINT32 recompile_invalid(drc_core *drc, UINT32 op)
+static uint32_t recompile_invalid(drc_core *drc, uint32_t op)
 {
 	mame_printf_debug("PPCDRC: Invalid opcode %08X PC : %X\n", op, ppc.pc);
 	return RECOMPILE_UNIMPLEMENTED;
@@ -2712,7 +2712,7 @@ static UINT32 recompile_invalid(drc_core *drc, UINT32 op)
 
 /* PowerPC 60x Recompilers */
 
-static UINT32 recompile_lfs(drc_core *drc,UINT32 op)
+static uint32_t recompile_lfs(drc_core *drc,uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2741,7 +2741,7 @@ static UINT32 recompile_lfs(drc_core *drc,UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfsu(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfsu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2764,7 +2764,7 @@ static UINT32 recompile_lfsu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfd(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfd(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	if (RA == 0)
@@ -2785,7 +2785,7 @@ static UINT32 recompile_lfd(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfdu(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfdu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -2800,7 +2800,7 @@ static UINT32 recompile_lfdu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfs(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfs(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2830,7 +2830,7 @@ static UINT32 recompile_stfs(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfsu(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfsu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2855,7 +2855,7 @@ static UINT32 recompile_stfsu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfd(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfd(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r64_m64(DRCTOP, REG_EDX, REG_EAX, MABS(&FPR(RT)));
@@ -2878,7 +2878,7 @@ static UINT32 recompile_stfd(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfdu(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfdu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r64_m64(DRCTOP, REG_EDX, REG_EAX, MABS(&FPR(RT)));
@@ -2896,7 +2896,7 @@ static UINT32 recompile_stfdu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfdux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfdux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EDX, MABS(&REG(RA)));
@@ -2911,7 +2911,7 @@ static UINT32 recompile_lfdux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfdx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfdx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r32_m32(DRCTOP, REG_EAX, MABS(&REG(RB)));
@@ -2928,7 +2928,7 @@ static UINT32 recompile_lfdx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfsux(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfsux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2951,7 +2951,7 @@ static UINT32 recompile_lfsux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_lfsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_lfsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -2976,7 +2976,7 @@ static UINT32 recompile_lfsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mfsr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfsr(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2987,7 +2987,7 @@ static UINT32 recompile_mfsr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mfsrin(drc_core *drc, UINT32 op)
+static uint32_t recompile_mfsrin(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -2998,7 +2998,7 @@ static UINT32 recompile_mfsrin(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mftb(drc_core *drc, UINT32 op)
+static uint32_t recompile_mftb(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3009,7 +3009,7 @@ static UINT32 recompile_mftb(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtsr(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtsr(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3020,7 +3020,7 @@ static UINT32 recompile_mtsr(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtsrin(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtsrin(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3031,12 +3031,12 @@ static UINT32 recompile_mtsrin(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dcba(drc_core *drc, UINT32 op)
+static uint32_t recompile_dcba(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfdux(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfdux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r64_m64(DRCTOP, REG_EDX, REG_EAX, MABS(&FPR(RT)));
@@ -3054,7 +3054,7 @@ static UINT32 recompile_stfdux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfdx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfdx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_mov_r64_m64(DRCTOP, REG_EDX, REG_EAX, MABS(&FPR(RT)));
@@ -3078,7 +3078,7 @@ static UINT32 recompile_stfdx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfiwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfiwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -3104,7 +3104,7 @@ static UINT32 recompile_stfiwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfsux(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfsux(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -3129,7 +3129,7 @@ static UINT32 recompile_stfsux(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_stfsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_stfsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 #if USE_SSE2
@@ -3156,34 +3156,34 @@ static UINT32 recompile_stfsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tlbia(drc_core *drc, UINT32 op)
+static uint32_t recompile_tlbia(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tlbie(drc_core *drc, UINT32 op)
+static uint32_t recompile_tlbie(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tlbsync(drc_core *drc, UINT32 op)
+static uint32_t recompile_tlbsync(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_eciwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_eciwx(drc_core *drc, uint32_t op)
 {
 	mame_printf_debug("PPCDRC: eciwx unimplemented\n");
 	return RECOMPILE_UNIMPLEMENTED;
 }
 
-static UINT32 recompile_ecowx(drc_core *drc, UINT32 op)
+static uint32_t recompile_ecowx(drc_core *drc, uint32_t op)
 {
 	mame_printf_debug("PPCDRC: ecowx unimplemented\n");
 	return RECOMPILE_UNIMPLEMENTED;
 }
 
-static UINT32 recompile_fabsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fabsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3203,7 +3203,7 @@ static UINT32 recompile_fabsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_faddx(drc_core *drc, UINT32 op)
+static uint32_t recompile_faddx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3224,7 +3224,7 @@ static UINT32 recompile_faddx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fcmpo(drc_core *drc, UINT32 op)
+static uint32_t recompile_fcmpo(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3235,7 +3235,7 @@ static UINT32 recompile_fcmpo(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fcmpu(drc_core *drc, UINT32 op)
+static uint32_t recompile_fcmpu(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3246,7 +3246,7 @@ static UINT32 recompile_fcmpu(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fctiwx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fctiwx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3257,7 +3257,7 @@ static UINT32 recompile_fctiwx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fctiwzx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fctiwzx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3268,7 +3268,7 @@ static UINT32 recompile_fctiwzx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fdivx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fdivx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3290,7 +3290,7 @@ static UINT32 recompile_fdivx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmrx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmrx(drc_core *drc, uint32_t op)
 {
 #if USE_SSE2
 	emit_movq_r128_m64(DRCTOP, REG_XMM0, MABS(&FPR(RB)));
@@ -3310,7 +3310,7 @@ static UINT32 recompile_fmrx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnabsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnabsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3331,7 +3331,7 @@ static UINT32 recompile_fnabsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnegx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnegx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3352,7 +3352,7 @@ static UINT32 recompile_fnegx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_frspx(drc_core *drc, UINT32 op)
+static uint32_t recompile_frspx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3370,7 +3370,7 @@ static UINT32 recompile_frspx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_frsqrtex(drc_core *drc, UINT32 op)
+static uint32_t recompile_frsqrtex(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3381,7 +3381,7 @@ static UINT32 recompile_frsqrtex(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fsqrtx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fsqrtx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3392,7 +3392,7 @@ static UINT32 recompile_fsqrtx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fsubx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fsubx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3414,7 +3414,7 @@ static UINT32 recompile_fsubx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mffsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_mffsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3425,7 +3425,7 @@ static UINT32 recompile_mffsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtfsb0x(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtfsb0x(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3436,7 +3436,7 @@ static UINT32 recompile_mtfsb0x(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtfsb1x(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtfsb1x(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3447,7 +3447,7 @@ static UINT32 recompile_mtfsb1x(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtfsfx(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtfsfx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3458,7 +3458,7 @@ static UINT32 recompile_mtfsfx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mtfsfix(drc_core *drc, UINT32 op)
+static uint32_t recompile_mtfsfix(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3469,7 +3469,7 @@ static UINT32 recompile_mtfsfix(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_mcrfs(drc_core *drc, UINT32 op)
+static uint32_t recompile_mcrfs(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3480,7 +3480,7 @@ static UINT32 recompile_mcrfs(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_faddsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_faddsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3502,7 +3502,7 @@ static UINT32 recompile_faddsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fdivsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fdivsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3524,7 +3524,7 @@ static UINT32 recompile_fdivsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fresx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fresx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3535,7 +3535,7 @@ static UINT32 recompile_fresx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fsqrtsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fsqrtsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3546,7 +3546,7 @@ static UINT32 recompile_fsqrtsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fsubsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fsubsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3568,7 +3568,7 @@ static UINT32 recompile_fsubsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmaddx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmaddx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3592,7 +3592,7 @@ static UINT32 recompile_fmaddx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmsubx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmsubx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3616,7 +3616,7 @@ static UINT32 recompile_fmsubx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmulx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmulx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3638,7 +3638,7 @@ static UINT32 recompile_fmulx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnmaddx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnmaddx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3649,7 +3649,7 @@ static UINT32 recompile_fnmaddx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnmsubx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnmsubx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3660,7 +3660,7 @@ static UINT32 recompile_fnmsubx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fselx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fselx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3671,7 +3671,7 @@ static UINT32 recompile_fselx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmaddsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmaddsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3695,7 +3695,7 @@ static UINT32 recompile_fmaddsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmsubsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmsubsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3719,7 +3719,7 @@ static UINT32 recompile_fmsubsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fmulsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fmulsx(drc_core *drc, uint32_t op)
 {
 #if !COMPILE_FPU || !USE_SSE2
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
@@ -3741,7 +3741,7 @@ static UINT32 recompile_fmulsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnmaddsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnmaddsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3752,7 +3752,7 @@ static UINT32 recompile_fnmaddsx(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_fnmsubsx(drc_core *drc, UINT32 op)
+static uint32_t recompile_fnmsubsx(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3766,7 +3766,7 @@ static UINT32 recompile_fnmsubsx(drc_core *drc, UINT32 op)
 
 // PPC602
 
-static UINT32 recompile_esa(drc_core *drc, UINT32 op)
+static uint32_t recompile_esa(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3777,7 +3777,7 @@ static UINT32 recompile_esa(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_dsa(drc_core *drc, UINT32 op)
+static uint32_t recompile_dsa(drc_core *drc, uint32_t op)
 {
 	emit_mov_m32_r32(DRCTOP, MABS(&ppc_icount), REG_EBP);
 	emit_push_imm(DRCTOP, op);
@@ -3788,12 +3788,12 @@ static UINT32 recompile_dsa(drc_core *drc, UINT32 op)
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tlbli(drc_core *drc, UINT32 op)
+static uint32_t recompile_tlbli(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }
 
-static UINT32 recompile_tlbld(drc_core *drc, UINT32 op)
+static uint32_t recompile_tlbld(drc_core *drc, uint32_t op)
 {
 	return RECOMPILE_SUCCESSFUL_CP(1,4);
 }

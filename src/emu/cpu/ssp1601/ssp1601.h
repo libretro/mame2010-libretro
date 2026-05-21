@@ -17,6 +17,6 @@ enum
 
 DECLARE_LEGACY_CPU_DEVICE(SSP1601, ssp1601);
 
-extern unsigned dasm_ssp1601(char *buffer, unsigned pc, const UINT8 *oprom);
+extern unsigned dasm_ssp1601(char *buffer, unsigned pc, const uint8_t *oprom);
 
 #endif /* __SSP1601_H__ */

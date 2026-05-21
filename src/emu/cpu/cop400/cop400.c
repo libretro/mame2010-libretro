@@ -93,36 +93,36 @@ struct _cop400_state
     const address_space *data;
     const address_space *io;
 
-    UINT8 featuremask;
+    uint8_t featuremask;
 
 	/* registers */
-	UINT16	pc;				/* 9/10/11-bit ROM address program counter */
-	UINT16	prevpc;			/* previous value of program counter */
-	UINT8	a;				/* 4-bit accumulator */
-	UINT8	b;				/* 5/6/7-bit RAM address register */
+	uint16_t	pc;				/* 9/10/11-bit ROM address program counter */
+	uint16_t	prevpc;			/* previous value of program counter */
+	uint8_t	a;				/* 4-bit accumulator */
+	uint8_t	b;				/* 5/6/7-bit RAM address register */
 	int		c;				/* 1-bit carry register */
-	UINT8	n;				/* 2-bit stack pointer (COP440 only) */
-	UINT8	en;				/* 4-bit enable register */
-	UINT8	g;				/* 4-bit general purpose I/O port */
-	UINT8	q;				/* 8-bit latch for L port */
-	UINT16	sa, sb, sc;		/* subroutine save registers (not present in COP440) */
-	UINT8	sio;			/* 4-bit shift register and counter */
+	uint8_t	n;				/* 2-bit stack pointer (COP440 only) */
+	uint8_t	en;				/* 4-bit enable register */
+	uint8_t	g;				/* 4-bit general purpose I/O port */
+	uint8_t	q;				/* 8-bit latch for L port */
+	uint16_t	sa, sb, sc;		/* subroutine save registers (not present in COP440) */
+	uint8_t	sio;			/* 4-bit shift register and counter */
 	int		skl;			/* 1-bit latch for SK output */
-	UINT8	h;				/* 4-bit general purpose I/O port (COP440 only) */
-	UINT8	r;				/* 8-bit general purpose I/O port (COP440 only) */
-	UINT8	flags;			// used for I/O only
+	uint8_t	h;				/* 4-bit general purpose I/O port (COP440 only) */
+	uint8_t	r;				/* 8-bit general purpose I/O port (COP440 only) */
+	uint8_t	flags;			// used for I/O only
 
 	/* counter */
-	UINT8	t;				/* 8-bit timer */
+	uint8_t	t;				/* 8-bit timer */
 	int		skt_latch;		/* timer overflow latch */
 
 	/* input/output ports */
-	UINT8	g_mask;			/* G port mask */
-	UINT8	d_mask;			/* D port mask */
-	UINT8	in_mask;		/* IN port mask */
-	UINT8	il;				/* IN latch */
-	UINT8	in[4];			/* IN port shift register */
-	UINT8	si;				/* serial input */
+	uint8_t	g_mask;			/* G port mask */
+	uint8_t	d_mask;			/* D port mask */
+	uint8_t	in_mask;		/* IN port mask */
+	uint8_t	il;				/* IN latch */
+	uint8_t	in[4];			/* IN port shift register */
+	uint8_t	si;				/* serial input */
 
 	/* skipping logic */
 	int skip;				/* skip next instruction */
@@ -149,7 +149,7 @@ struct _cop400_state
 	emu_timer *microbus_timer;
 };
 
-typedef void (*cop400_opcode_func) (cop400_state *cpustate, UINT8 opcode);
+typedef void (*cop400_opcode_func) (cop400_state *cpustate, uint8_t opcode);
 
 struct _cop400_opcode_map {
 	unsigned cycles;
@@ -218,7 +218,7 @@ INLINE cop400_state *get_safe_token(running_device *device)
 	return (cop400_state *)downcast<legacy_cpu_device *>(device)->token();
 }
 
-INLINE void PUSH(cop400_state *cpustate, UINT16 data)
+INLINE void PUSH(cop400_state *cpustate, uint16_t data)
 {
 	if (cpustate->featuremask != COP410_FEATURE)
 	{
@@ -240,7 +240,7 @@ INLINE void POP(cop400_state *cpustate)
 	}
 }
 
-INLINE void WRITE_Q(cop400_state *cpustate, UINT8 data)
+INLINE void WRITE_Q(cop400_state *cpustate, uint8_t data)
 {
 	Q = data;
 
@@ -250,7 +250,7 @@ INLINE void WRITE_Q(cop400_state *cpustate, UINT8 data)
 	}
 }
 
-INLINE void WRITE_G(cop400_state *cpustate, UINT8 data)
+INLINE void WRITE_G(cop400_state *cpustate, uint8_t data)
 {
 	if (cpustate->intf->microbus == COP400_MICROBUS_ENABLED)
 	{
@@ -266,7 +266,7 @@ INLINE void WRITE_G(cop400_state *cpustate, UINT8 data)
     OPCODE HANDLERS
 ***************************************************************************/
 
-#define INSTRUCTION(mnemonic) INLINE void (mnemonic)(cop400_state *cpustate, UINT8 opcode)
+#define INSTRUCTION(mnemonic) INLINE void (mnemonic)(cop400_state *cpustate, uint8_t opcode)
 
 INSTRUCTION(illegal)
 {
@@ -318,9 +318,9 @@ static const cop400_opcode_map COP410_OPCODE_23_MAP[] =
 	{1, illegal 	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	}
 };
 
-static void cop410_op23(cop400_state *cpustate, UINT8 opcode)
+static void cop410_op23(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode23 = ROM(PC++);
+	uint8_t opcode23 = ROM(PC++);
 
 	(*(COP410_OPCODE_23_MAP[opcode23].function))(cpustate, opcode23);
 }
@@ -364,9 +364,9 @@ static const cop400_opcode_map COP410_OPCODE_33_MAP[] =
 	{1, illegal 	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	}
 };
 
-static void cop410_op33(cop400_state *cpustate, UINT8 opcode)
+static void cop410_op33(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode33 = ROM(PC++);
+	uint8_t opcode33 = ROM(PC++);
 
 	(*(COP410_OPCODE_33_MAP[opcode33].function))(cpustate, opcode33);
 }
@@ -449,9 +449,9 @@ static const cop400_opcode_map COP420_OPCODE_23_MAP[] =
 	{1, illegal 	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	}
 };
 
-static void cop420_op23(cop400_state *cpustate, UINT8 opcode)
+static void cop420_op23(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode23 = ROM(PC++);
+	uint8_t opcode23 = ROM(PC++);
 
 	(*(COP420_OPCODE_23_MAP[opcode23].function))(cpustate, opcode23);
 }
@@ -495,9 +495,9 @@ static const cop400_opcode_map COP420_OPCODE_33_MAP[] =
 	{1, illegal 	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	},{1, illegal	}
 };
 
-static void cop420_op33(cop400_state *cpustate, UINT8 opcode)
+static void cop420_op33(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode33 = ROM(PC++);
+	uint8_t opcode33 = ROM(PC++);
 
 	(*(COP420_OPCODE_33_MAP[opcode33].function))(cpustate, opcode33);
 }
@@ -580,9 +580,9 @@ static const cop400_opcode_map COP444_OPCODE_23_MAP[256] =
 	{1, xad			},{1, xad		},{1, xad		},{1, xad		},{1, xad		},{1, xad		},{1, xad		},{1, xad		},
 };
 
-static void cop444_op23(cop400_state *cpustate, UINT8 opcode)
+static void cop444_op23(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode23 = ROM(PC++);
+	uint8_t opcode23 = ROM(PC++);
 
 	(*(COP444_OPCODE_23_MAP[opcode23].function))(cpustate, opcode23);
 }
@@ -626,9 +626,9 @@ static const cop400_opcode_map COP444_OPCODE_33_MAP[256] =
 	{1, lbi			},{1, lbi		},{1, lbi		},{1, lbi		},{1, lbi		},{1, lbi		},{1, lbi		},{1, lbi		},
 };
 
-static void cop444_op33(cop400_state *cpustate, UINT8 opcode)
+static void cop444_op33(cop400_state *cpustate, uint8_t opcode)
 {
-	UINT8 opcode33 = ROM(PC++);
+	uint8_t opcode33 = ROM(PC++);
 
 	(*(COP444_OPCODE_33_MAP[opcode33].function))(cpustate, opcode33);
 }
@@ -772,7 +772,7 @@ static TIMER_CALLBACK( counter_tick )
 static TIMER_CALLBACK( inil_tick )
 {
 	cop400_state *cpustate = (cop400_state *)ptr;
-	UINT8 in;
+	uint8_t in;
 	int i;
 
 	in = IN_IN();
@@ -791,7 +791,7 @@ static TIMER_CALLBACK( inil_tick )
 static TIMER_CALLBACK( microbus_tick )
 {
 	cop400_state *cpustate = (cop400_state *)ptr;
-	UINT8 in;
+	uint8_t in;
 
 	in = IN_IN();
 
@@ -864,7 +864,7 @@ static void define_state_table(running_device *device)
 		state->state_add(COP400_T,    "T",         cpustate->t);
 }
 
-static void cop400_init(legacy_cpu_device *device, UINT8 g_mask, UINT8 d_mask, UINT8 in_mask, int has_counter, int has_inil)
+static void cop400_init(legacy_cpu_device *device, uint8_t g_mask, uint8_t d_mask, uint8_t in_mask, int has_counter, int has_inil)
 {
 	cop400_state *cpustate = get_safe_token(device);
 
@@ -1125,7 +1125,7 @@ static CPU_EXECUTE( cop400 )
 {
 	cop400_state *cpustate = get_safe_token(device);
 
-	UINT8 opcode;
+	uint8_t opcode;
 
 	do
 	{

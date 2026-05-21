@@ -40,36 +40,36 @@
 
 typedef struct
 {
-	UINT32	ppc;
-	UINT32	pc, spc;
-	UINT32	pr;
-	UINT32	sr, ssr;
-	UINT32	gbr, vbr;
-	UINT32	mach, macl;
-	UINT32	r[16], rbnk[2][8], sgr;
-	UINT32  fr[16], xf[16];
-	UINT32	ea;
-	UINT32	delay;
-	UINT32	cpu_off;
-	UINT32	pending_irq;
-	UINT32  test_irq;
-	UINT32  fpscr;
-	UINT32  fpul;
-	UINT32  dbr;
+	uint32_t	ppc;
+	uint32_t	pc, spc;
+	uint32_t	pr;
+	uint32_t	sr, ssr;
+	uint32_t	gbr, vbr;
+	uint32_t	mach, macl;
+	uint32_t	r[16], rbnk[2][8], sgr;
+	uint32_t  fr[16], xf[16];
+	uint32_t	ea;
+	uint32_t	delay;
+	uint32_t	cpu_off;
+	uint32_t	pending_irq;
+	uint32_t  test_irq;
+	uint32_t  fpscr;
+	uint32_t  fpul;
+	uint32_t  dbr;
 
-	UINT32	exception_priority[128];
+	uint32_t	exception_priority[128];
 	int		exception_requesting[128];
 
-	INT8	irq_line_state[17];
+	int8_t	irq_line_state[17];
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *internal;
 	const address_space *program;
 	const address_space *io;
-	UINT32	*m;
-	INT8	nmi_line_state;
+	uint32_t	*m;
+	int8_t	nmi_line_state;
 
-	UINT8 sleep_mode;
+	uint8_t sleep_mode;
 
 	int		frt_input;
 	int		irln;
@@ -80,7 +80,7 @@ typedef struct
 	emu_timer *refresh_timer;
 	emu_timer *rtc_timer;
 	emu_timer *timer[3];
-	UINT32	refresh_timer_base;
+	uint32_t	refresh_timer_base;
 	int     dma_timer_active[4];
 
 	int 	sh4_icount;
@@ -90,13 +90,13 @@ typedef struct
 	int		ioport16_pullup, ioport16_direction;
 	int		ioport4_pullup, ioport4_direction;
 
-	void	(*ftcsr_read_callback)(UINT32 data);
+	void	(*ftcsr_read_callback)(uint32_t data);
 
 
 	/* This MMU simulation is good for the simple remap used on Naomi GD-ROM SQ access *ONLY* */
-	UINT32 sh4_tlb_address[64];
-	UINT32 sh4_tlb_data[64];
-	UINT8 sh4_mmu_enabled;
+	uint32_t sh4_tlb_address[64];
+	uint32_t sh4_tlb_data[64];
+	uint8_t sh4_mmu_enabled;
 
 } sh4_state;
 

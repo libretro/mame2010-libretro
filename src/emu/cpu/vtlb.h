@@ -39,7 +39,7 @@
 ***************************************************************************/
 
 /* represents an entry in the VTLB */
-typedef UINT32 vtlb_entry;
+typedef uint32_t vtlb_entry;
 
 
 /* opaque structure describing VTLB state */

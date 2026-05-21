@@ -1,7 +1,7 @@
 
-static UINT32 EA;
-static UINT16 EO;
-static UINT16 E16;
+static uint32_t EA;
+static uint16_t EO;
+static uint16_t E16;
 
 static unsigned EA_000(nec_state_t *nec_state) { EO=nec_state->regs.w[BW]+nec_state->regs.w[IX]; EA=DefaultBase(DS0)+EO; return EA; }
 static unsigned EA_001(nec_state_t *nec_state) { EO=nec_state->regs.w[BW]+nec_state->regs.w[IY]; EA=DefaultBase(DS0)+EO; return EA; }
@@ -12,23 +12,23 @@ static unsigned EA_005(nec_state_t *nec_state) { EO=nec_state->regs.w[IY]; EA=De
 static unsigned EA_006(nec_state_t *nec_state) { EO=FETCH(); EO+=FETCH()<<8; EA=DefaultBase(DS0)+EO; return EA; }
 static unsigned EA_007(nec_state_t *nec_state) { EO=nec_state->regs.w[BW]; EA=DefaultBase(DS0)+EO; return EA; }
 
-static unsigned EA_100(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+nec_state->regs.w[IX]+(INT8)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_101(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+nec_state->regs.w[IY]+(INT8)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_102(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+nec_state->regs.w[IX]+(INT8)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_103(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+nec_state->regs.w[IY]+(INT8)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_104(nec_state_t *nec_state) { EO=(nec_state->regs.w[IX]+(INT8)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_105(nec_state_t *nec_state) { EO=(nec_state->regs.w[IY]+(INT8)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_106(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+(INT8)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_107(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+(INT8)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_100(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+nec_state->regs.w[IX]+(int8_t)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_101(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+nec_state->regs.w[IY]+(int8_t)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_102(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+nec_state->regs.w[IX]+(int8_t)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_103(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+nec_state->regs.w[IY]+(int8_t)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_104(nec_state_t *nec_state) { EO=(nec_state->regs.w[IX]+(int8_t)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_105(nec_state_t *nec_state) { EO=(nec_state->regs.w[IY]+(int8_t)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_106(nec_state_t *nec_state) { EO=(nec_state->regs.w[BP]+(int8_t)FETCH()); EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_107(nec_state_t *nec_state) { EO=(nec_state->regs.w[BW]+(int8_t)FETCH()); EA=DefaultBase(DS0)+EO; return EA; }
 
-static unsigned EA_200(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+nec_state->regs.w[IX]+(INT16)E16; EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_201(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+nec_state->regs.w[IY]+(INT16)E16; EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_202(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+nec_state->regs.w[IX]+(INT16)E16; EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_203(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+nec_state->regs.w[IY]+(INT16)E16; EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_204(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[IX]+(INT16)E16; EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_205(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[IY]+(INT16)E16; EA=DefaultBase(DS0)+EO; return EA; }
-static unsigned EA_206(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+(INT16)E16; EA=DefaultBase(SS)+EO; return EA; }
-static unsigned EA_207(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+(INT16)E16; EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_200(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+nec_state->regs.w[IX]+(int16_t)E16; EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_201(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+nec_state->regs.w[IY]+(int16_t)E16; EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_202(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+nec_state->regs.w[IX]+(int16_t)E16; EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_203(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+nec_state->regs.w[IY]+(int16_t)E16; EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_204(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[IX]+(int16_t)E16; EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_205(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[IY]+(int16_t)E16; EA=DefaultBase(DS0)+EO; return EA; }
+static unsigned EA_206(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BP]+(int16_t)E16; EA=DefaultBase(SS)+EO; return EA; }
+static unsigned EA_207(nec_state_t *nec_state) { E16=FETCH(); E16+=FETCH()<<8; EO=nec_state->regs.w[BW]+(int16_t)E16; EA=DefaultBase(DS0)+EO; return EA; }
 
 static unsigned (*const GetEA[192])(nec_state_t *)={
 	EA_000, EA_001, EA_002, EA_003, EA_004, EA_005, EA_006, EA_007,

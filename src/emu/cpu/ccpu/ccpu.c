@@ -20,26 +20,26 @@
 typedef struct _ccpu_state ccpu_state;
 struct _ccpu_state
 {
-    UINT16				PC;
-    UINT16				A;
-    UINT16				B;
-    UINT8				I;
-    UINT16				J;
-    UINT8				P;
-    UINT16				X;
-    UINT16				Y;
-    UINT16				T;
-    UINT16 *			acc;
+    uint16_t				PC;
+    uint16_t				A;
+    uint16_t				B;
+    uint8_t				I;
+    uint16_t				J;
+    uint8_t				P;
+    uint16_t				X;
+    uint16_t				Y;
+    uint16_t				T;
+    uint16_t *			acc;
 
-    UINT16				a0flag, ncflag, cmpacc, cmpval;
-    UINT16				miflag, nextmiflag, nextnextmiflag;
-    UINT16				drflag;
+    uint16_t				a0flag, ncflag, cmpacc, cmpval;
+    uint16_t				miflag, nextmiflag, nextnextmiflag;
+    uint16_t				drflag;
 
 	ccpu_input_func 	external_input;
 	ccpu_vector_func	vector_callback;
 
-	UINT8				waiting;
-	UINT8				watchdog;
+	uint8_t				waiting;
+	uint8_t				watchdog;
 
 	int					icount;
 
@@ -89,7 +89,7 @@ INLINE ccpu_state *get_safe_token(running_device *device)
 
 #define STANDARD_ACC_OP(C,resexp,cmpval) \
 do { \
-	UINT16 result = resexp; \
+	uint16_t result = resexp; \
 	SET_A0(C);						/* set the A0 bit based on the previous 'A' value */ \
 	SET_CMP_VAL(C,cmpval);			/* set the compare values to the previous accumulator and the cmpval */ \
 	SET_NC(C,result);				/* set the NC flag based on the unmasked result */ \
@@ -102,7 +102,7 @@ do { \
     INITIALIZATION AND SHUTDOWN
 ***************************************************************************/
 
-static UINT8 read_jmi(running_device *device)
+static uint8_t read_jmi(running_device *device)
 {
 	/* this routine is called when there is no external input */
 	/* and the JMI jumper is present */
@@ -202,8 +202,8 @@ static CPU_EXECUTE( ccpu )
 
 	do
 	{
-		UINT16 tempval;
-		UINT8 opcode;
+		uint16_t tempval;
+		uint8_t opcode;
 
 		/* update the delayed MI flag */
 		cpustate->miflag = cpustate->nextmiflag;
@@ -436,7 +436,7 @@ static CPU_EXECUTE( ccpu )
 				cpustate->I = (cpustate->P << 4) + (opcode & 0x0f);
 				tempval = RDMEM(cpustate, cpustate->I);
 				{
-					UINT16 result = *cpustate->acc + (tempval ^ 0xfff) + 1;
+					uint16_t result = *cpustate->acc + (tempval ^ 0xfff) + 1;
 					SET_A0(cpustate);
 					SET_CMP_VAL(cpustate, tempval);
 					SET_NC(cpustate, result);
@@ -468,11 +468,11 @@ static CPU_EXECUTE( ccpu )
 			/* DV */
 			case 0xe0:
 				{
-					INT16 stopX = (INT16)(cpustate->A << 4) >> 4;
-					INT16 stopY = (INT16)(cpustate->B << 4) >> 4;
+					int16_t stopX = (int16_t)(cpustate->A << 4) >> 4;
+					int16_t stopY = (int16_t)(cpustate->B << 4) >> 4;
 
-					stopX = ((INT16)(stopX - cpustate->X) >> cpustate->T) + cpustate->X;
-					stopY = ((INT16)(stopY - cpustate->Y) >> cpustate->T) + cpustate->Y;
+					stopX = ((int16_t)(stopX - cpustate->X) >> cpustate->T) + cpustate->X;
+					stopY = ((int16_t)(stopY - cpustate->Y) >> cpustate->T) + cpustate->Y;
 
 					(*cpustate->vector_callback)(device, cpustate->X, cpustate->Y, stopX, stopY, cpustate->T);
 
@@ -514,10 +514,10 @@ static CPU_EXECUTE( ccpu )
 				{
 					if (cpustate->A & 1)
 					{
-						UINT16 result;
+						uint16_t result;
 						cpustate->cmpacc = cpustate->B;
 						cpustate->A = (cpustate->A >> 1) | ((cpustate->B << 11) & 0x800);
-						cpustate->B = ((INT16)(cpustate->B << 4) >> 5) & 0xfff;
+						cpustate->B = ((int16_t)(cpustate->B << 4) >> 5) & 0xfff;
 						result = cpustate->B + tempval;
 						SET_NC(cpustate, result);
 						SET_MI(cpustate, result);
@@ -525,20 +525,20 @@ static CPU_EXECUTE( ccpu )
 					}
 					else
 					{
-						UINT16 result;
+						uint16_t result;
 						cpustate->cmpacc = cpustate->A;
 						result = cpustate->A + tempval;
 						cpustate->A = (cpustate->A >> 1) | ((cpustate->B << 11) & 0x800);
-						cpustate->B = ((INT16)(cpustate->B << 4) >> 5) & 0xfff;
+						cpustate->B = ((int16_t)(cpustate->B << 4) >> 5) & 0xfff;
 						SET_NC(cpustate, result);
 						SET_MI(cpustate, result);
 					}
 				}
 				else
 				{
-					UINT16 result;
+					uint16_t result;
 					cpustate->cmpacc = cpustate->B;
-					cpustate->B = ((INT16)(cpustate->B << 4) >> 5) & 0xfff;
+					cpustate->B = ((int16_t)(cpustate->B << 4) >> 5) & 0xfff;
 					result = cpustate->B + tempval;
 					SET_NC(cpustate, result);
 					SET_MI(cpustate, result);
@@ -622,7 +622,7 @@ static CPU_EXECUTE( ccpu )
 			/* SHR */
 			case 0xeb:
 			case 0xfb:
-				tempval = ((cpustate->acc == &cpustate->A) ? (cpustate->A >> 1) : ((INT16)(cpustate->B << 4) >> 5)) & 0xfff;
+				tempval = ((cpustate->acc == &cpustate->A) ? (cpustate->A >> 1) : ((int16_t)(cpustate->B << 4) >> 5)) & 0xfff;
 				tempval |= (*cpustate->acc + (0xb0b | (opcode & 0xf0))) & 0x1000;
 				STANDARD_ACC_OP(cpustate, tempval, 0xb0b | (opcode & 0xf0));
 				NEXT_ACC_A(cpustate); CYCLES(cpustate, 1);
@@ -640,7 +640,7 @@ static CPU_EXECUTE( ccpu )
 			/* ASR */
 			case 0xed:
 			case 0xfd:
-				tempval = ((INT16)(*cpustate->acc << 4) >> 5) & 0xfff;
+				tempval = ((int16_t)(*cpustate->acc << 4) >> 5) & 0xfff;
 				STANDARD_ACC_OP(cpustate, tempval, 0xd0d | (opcode & 0xf0));
 				NEXT_ACC_A(cpustate); CYCLES(cpustate, 1);
 				break;
@@ -651,10 +651,10 @@ static CPU_EXECUTE( ccpu )
 				if (cpustate->acc == &cpustate->A)
 				{
 					tempval = (cpustate->A >> 1) | ((cpustate->B << 11) & 0x800);
-					cpustate->B = ((INT16)(cpustate->B << 4) >> 5) & 0xfff;
+					cpustate->B = ((int16_t)(cpustate->B << 4) >> 5) & 0xfff;
 				}
 				else
-					tempval = ((INT16)(cpustate->B << 4) >> 5) & 0xfff;
+					tempval = ((int16_t)(cpustate->B << 4) >> 5) & 0xfff;
 				tempval |= (*cpustate->acc + (0xe0e | (opcode & 0xf0))) & 0x1000;
 				STANDARD_ACC_OP(cpustate, tempval, 0xe0e | (opcode & 0xf0));
 				NEXT_ACC_A(cpustate); CYCLES(cpustate, 1);
@@ -677,8 +677,8 @@ static CPU_EXECUTE( ccpu )
 
 			/* IV */
 			case 0xf0:
-				cpustate->X = (INT16)(cpustate->A << 4) >> 4;
-				cpustate->Y = (INT16)(cpustate->B << 4) >> 4;
+				cpustate->X = (int16_t)(cpustate->A << 4) >> 4;
+				cpustate->Y = (int16_t)(cpustate->B << 4) >> 4;
 				NEXT_ACC_A(cpustate); CYCLES(cpustate, 1);
 				break;
 		}

@@ -20,47 +20,47 @@
 #define NUM_TIMERS_8BIT	(10)
 #define NUM_IRQ_GROUPS (31)
 
-extern int mn102_disassemble(char *buffer, UINT32 pc, const UINT8 *oprom);
+extern int mn102_disassemble(char *buffer, uint32_t pc, const uint8_t *oprom);
 
 typedef struct _mn102_info mn102_info;
 struct _mn102_info
 {
 	// The UINT32s are really UINT24
-	UINT32 pc;
-	UINT32 d[4];
-	UINT32 a[4];
+	uint32_t pc;
+	uint32_t d[4];
+	uint32_t a[4];
 
-	UINT8 nmicr, iagr;
-	UINT8 icrl[NUM_IRQ_GROUPS], icrh[NUM_IRQ_GROUPS];
-	UINT16 psw;
-	UINT16 mdr;
+	uint8_t nmicr, iagr;
+	uint8_t icrl[NUM_IRQ_GROUPS], icrh[NUM_IRQ_GROUPS];
+	uint16_t psw;
+	uint16_t mdr;
 
 	struct _simple_timer {
-	UINT8 mode;
-	UINT8 base;
-	UINT8 cur;
+	uint8_t mode;
+	uint8_t base;
+	uint8_t cur;
 	} simple_timer[NUM_TIMERS_8BIT];
 
 	emu_timer *timer_timers[NUM_TIMERS_8BIT];
 
 	struct _prescaler {
-	UINT8 cycles;
-	UINT8 mode;
+	uint8_t cycles;
+	uint8_t mode;
 	} prescaler[NUM_PRESCALERS];
 
 	struct _dma {
-	UINT32 adr;
-	UINT32 count;
-	UINT16 iadr;
-	UINT8 ctrll, ctrlh, irq;
+	uint32_t adr;
+	uint32_t count;
+	uint16_t iadr;
+	uint8_t ctrll, ctrlh, irq;
 	} dma[8];
 
 	struct _serial {
-	UINT8 ctrll, ctrlh;
-	UINT8 buf;
+	uint8_t ctrll, ctrlh;
+	uint8_t buf;
 	} serial[2];
 
-	UINT8 ddr[8];
+	uint8_t ddr[8];
 
 	int cycles;
 
@@ -69,10 +69,10 @@ struct _mn102_info
 	const address_space *io;
 };
 
-static void mn10200_w(mn102_info *mn102, UINT32 adr, UINT32 data, int type);
-static UINT32 mn10200_r(mn102_info *mn102, UINT32 adr, int type);
+static void mn10200_w(mn102_info *mn102, uint32_t adr, uint32_t data, int type);
+static uint32_t mn10200_r(mn102_info *mn102, uint32_t adr, int type);
 
-INLINE UINT8 mn102_read_byte(mn102_info *mn102, UINT32 address)
+INLINE uint8_t mn102_read_byte(mn102_info *mn102, uint32_t address)
 {
 	if (address >= 0xfc00 && address < 0x10000)
 	{
@@ -82,7 +82,7 @@ INLINE UINT8 mn102_read_byte(mn102_info *mn102, UINT32 address)
 	return memory_read_byte_16le(mn102->program, address);
 }
 
-INLINE UINT16 mn102_read_word(mn102_info *mn102, UINT32 address)
+INLINE uint16_t mn102_read_word(mn102_info *mn102, uint32_t address)
 {
 	if (address >= 0xfc00 && address < 0x10000)
 	{
@@ -97,7 +97,7 @@ INLINE UINT16 mn102_read_word(mn102_info *mn102, UINT32 address)
 	return memory_read_word_16le(mn102->program, address);
 }
 
-INLINE void mn102_write_byte(mn102_info *mn102, UINT32 address, UINT8 data)
+INLINE void mn102_write_byte(mn102_info *mn102, uint32_t address, uint8_t data)
 {
 	if (address >= 0xfc00 && address < 0x10000)
 	{
@@ -108,7 +108,7 @@ INLINE void mn102_write_byte(mn102_info *mn102, UINT32 address, UINT8 data)
 	memory_write_byte_16le(mn102->program, address, data);
 }
 
-INLINE void mn102_write_word(mn102_info *mn102, UINT32 address, UINT16 data)
+INLINE void mn102_write_word(mn102_info *mn102, uint32_t address, uint16_t data)
 {
 	if (address >= 0xfc00 && address < 0x10000)
 	{
@@ -126,12 +126,12 @@ INLINE void mn102_write_word(mn102_info *mn102, UINT32 address, UINT16 data)
 	memory_write_word_16le(mn102->program, address, data);
 }
 
-INLINE INT32 r24u(mn102_info *mn102, offs_t adr)
+INLINE int32_t r24u(mn102_info *mn102, offs_t adr)
 {
 	return mn102_read_word(mn102, adr)|(mn102_read_byte(mn102, adr+2)<<16);
 }
 
-INLINE void w24(mn102_info *mn102, offs_t adr, UINT32 val)
+INLINE void w24(mn102_info *mn102, offs_t adr, uint32_t val)
 {
 /*  if(adr == 0x4075aa || adr == 0x40689a || adr == 0x4075a2) {
         log_write("TRACE", adr, val, MEM_LONG);
@@ -141,7 +141,7 @@ INLINE void w24(mn102_info *mn102, offs_t adr, UINT32 val)
 	mn102_write_byte(mn102, adr+2, val>>16);
 }
 
-INLINE void mn102_change_pc(mn102_info *mn102, UINT32 pc)
+INLINE void mn102_change_pc(mn102_info *mn102, uint32_t pc)
 {
 	 mn102->pc = pc & 0xffffff;
 }
@@ -177,12 +177,12 @@ static void refresh_timer(mn102_info *cpustate, int tmr)
 	// enabled?
 	if (cpustate->simple_timer[tmr].mode & 0x80)
 	{
-		UINT8 source = (cpustate->simple_timer[tmr].mode & 3);
+		uint8_t source = (cpustate->simple_timer[tmr].mode & 3);
 
 		// source is a prescaler?
 		if (source >= 2)
 		{
-			INT32 rate;
+			int32_t rate;
 
 			// is prescaler enabled?
 			if (cpustate->prescaler[source-2].mode & 0x80)
@@ -338,9 +338,9 @@ static void unemul(mn102_info *mn102)
 	fatalerror("MN10200: unknown opcode @ PC=%x\n", mn102->pc);
 }
 
-static UINT32 do_add(mn102_info *mn102, UINT32 a, UINT32 b)
+static uint32_t do_add(mn102_info *mn102, uint32_t a, uint32_t b)
 {
-	UINT32 r24, r16;
+	uint32_t r24, r16;
 	r24 = (a & 0xffffff) + (b & 0xffffff);
 	r16 = (a & 0xffff)   + (b & 0xffff);
 
@@ -364,9 +364,9 @@ static UINT32 do_add(mn102_info *mn102, UINT32 a, UINT32 b)
 	return r24 & 0xffffff;
 }
 
-static UINT32 do_addc(mn102_info *mn102, UINT32 a, UINT32 b)
+static uint32_t do_addc(mn102_info *mn102, uint32_t a, uint32_t b)
 {
-	UINT32 r24, r16;
+	uint32_t r24, r16;
 	r24 = (a & 0xffffff) + (b & 0xffffff);
 	r16 = (a & 0xffff)   + (b & 0xffff);
 
@@ -395,9 +395,9 @@ static UINT32 do_addc(mn102_info *mn102, UINT32 a, UINT32 b)
 	return r24 & 0xffffff;
 }
 
-static UINT32 do_sub(mn102_info *mn102, UINT32 a, UINT32 b)
+static uint32_t do_sub(mn102_info *mn102, uint32_t a, uint32_t b)
 {
-	UINT32 r24, r16;
+	uint32_t r24, r16;
 	r24 = (a & 0xffffff) - (b & 0xffffff);
 	r16 = (a & 0xffff)   - (b & 0xffff);
 
@@ -421,9 +421,9 @@ static UINT32 do_sub(mn102_info *mn102, UINT32 a, UINT32 b)
 	return r24 & 0xffffff;
 }
 
-static UINT32 do_subc(mn102_info *mn102, UINT32 a, UINT32 b)
+static uint32_t do_subc(mn102_info *mn102, uint32_t a, uint32_t b)
 {
-	UINT32 r24, r16;
+	uint32_t r24, r16;
 	r24 = (a & 0xffffff) - (b & 0xffffff);
 	r16 = (a & 0xffff)   - (b & 0xffff);
 
@@ -452,7 +452,7 @@ static UINT32 do_subc(mn102_info *mn102, UINT32 a, UINT32 b)
 	return r24 & 0xffffff;
 }
 
-INLINE void test_nz16(mn102_info *mn102, UINT16 v)
+INLINE void test_nz16(mn102_info *mn102, uint16_t v)
 {
 	mn102->psw &= 0xfff0;
 	if(v & 0x8000)
@@ -461,7 +461,7 @@ INLINE void test_nz16(mn102_info *mn102, UINT16 v)
 		mn102->psw |= 1;
 }
 
-INLINE void do_jsr(mn102_info *mn102, UINT32 to, UINT32 ret)
+INLINE void do_jsr(mn102_info *mn102, uint32_t to, uint32_t ret)
 {
 	mn102_change_pc(mn102, to & 0xffffff);
 	mn102->a[3] -= 4;
@@ -514,7 +514,7 @@ static CPU_EXECUTE(mn10200)
 
 	while(mn102->cycles > 0)
 	{
-		UINT8 opcode;
+		uint8_t opcode;
 
 		debugger_instruction_hook(device, mn102->pc);
 
@@ -524,7 +524,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06: case 0x07:
 		case 0x08: case 0x09: case 0x0a: case 0x0b: case 0x0c: case 0x0d: case 0x0e: case 0x0f:
 			mn102->cycles -= 1;
-			mn102_write_word(mn102, mn102->a[(opcode>>2)&3], (UINT16)mn102->d[opcode & 3]);
+			mn102_write_word(mn102, mn102->a[(opcode>>2)&3], (uint16_t)mn102->d[opcode & 3]);
 			mn102->pc += 1;
 			break;
 
@@ -532,7 +532,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
 		case 0x18: case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 			mn102->cycles -= 1;
-			mn102_write_byte(mn102, mn102->a[(opcode>>2)&3], (UINT8)mn102->d[opcode & 3]);
+			mn102_write_byte(mn102, mn102->a[(opcode>>2)&3], (uint8_t)mn102->d[opcode & 3]);
 			mn102->pc += 1;
 			break;
 
@@ -540,7 +540,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x20: case 0x21: case 0x22: case 0x23: case 0x24: case 0x25: case 0x26: case 0x27:
 		case 0x28: case 0x29: case 0x2a: case 0x2b: case 0x2c: case 0x2d: case 0x2e: case 0x2f:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, mn102->a[(opcode>>2)&3]);
+			mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, mn102->a[(opcode>>2)&3]);
 			mn102->pc += 1;
 			break;
 
@@ -556,7 +556,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x40: case 0x41: case 0x42: case 0x43: case 0x44: case 0x45: case 0x46: case 0x47:
 		case 0x48: case 0x49: case 0x4a: case 0x4b: case 0x4c: case 0x4d: case 0x4e: case 0x4f:
 			mn102->cycles -= 1;
-			mn102_write_word(mn102, (mn102->a[(opcode>>2)&3]+(INT8)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff, (UINT16)mn102->d[opcode & 3]);
+			mn102_write_word(mn102, (mn102->a[(opcode>>2)&3]+(int8_t)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff, (uint16_t)mn102->d[opcode & 3]);
 			mn102->pc += 2;
 			break;
 
@@ -564,7 +564,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x50: case 0x51: case 0x52: case 0x53: case 0x54: case 0x55: case 0x56: case 0x57:
 		case 0x58: case 0x59: case 0x5a: case 0x5b: case 0x5c: case 0x5d: case 0x5e: case 0x5f:
 			mn102->cycles -= 2;
-			w24(mn102, (mn102->a[(opcode>>2)&3]+(INT8)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff, mn102->a[opcode & 3]);
+			w24(mn102, (mn102->a[(opcode>>2)&3]+(int8_t)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff, mn102->a[opcode & 3]);
 			mn102->pc += 2;
 			break;
 
@@ -572,7 +572,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x60: case 0x61: case 0x62: case 0x63: case 0x64: case 0x65: case 0x66: case 0x67:
 		case 0x68: case 0x69: case 0x6a: case 0x6b: case 0x6c: case 0x6d: case 0x6e: case 0x6f:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + (INT8)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff);
+			mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + (int8_t)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff);
 			mn102->pc += 2;
 			break;
 
@@ -580,7 +580,7 @@ static CPU_EXECUTE(mn10200)
 		case 0x70: case 0x71: case 0x72: case 0x73: case 0x74: case 0x75: case 0x76: case 0x77:
 		case 0x78: case 0x79: case 0x7a: case 0x7b: case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 			mn102->cycles -= 2;
-			mn102->a[opcode & 3] = r24u(mn102, (mn102->a[(opcode>>2) & 3] + (INT8)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff);
+			mn102->a[opcode & 3] = r24u(mn102, (mn102->a[(opcode>>2) & 3] + (int8_t)mn102_read_byte(mn102, mn102->pc+1)) & 0xffffff);
 			mn102->pc += 2;
 			break;
 
@@ -595,7 +595,7 @@ static CPU_EXECUTE(mn10200)
 		// mov imm8, dn
 		case 0x80: case 0x85: case 0x8a: case 0x8f:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT8)mn102_read_byte(mn102, mn102->pc+1);
+			mn102->d[opcode & 3] = (int8_t)mn102_read_byte(mn102, mn102->pc+1);
 			mn102->pc += 2;
 			break;
 
@@ -618,49 +618,49 @@ static CPU_EXECUTE(mn10200)
 		// extx dn
 		case 0xb0: case 0xb1: case 0xb2: case 0xb3:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT16)mn102->d[opcode & 3] & 0xffffff;
+			mn102->d[opcode & 3] = (int16_t)mn102->d[opcode & 3] & 0xffffff;
 			mn102->pc += 1;
 			break;
 
 		// extxu dn
 		case 0xb4: case 0xb5: case 0xb6: case 0xb7:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (UINT16)mn102->d[opcode & 3];
+			mn102->d[opcode & 3] = (uint16_t)mn102->d[opcode & 3];
 			mn102->pc += 1;
 			break;
 
 		// extxb dn
 		case 0xb8: case 0xb9: case 0xba: case 0xbb:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT8)mn102->d[opcode & 3] & 0xffffff;
+			mn102->d[opcode & 3] = (int8_t)mn102->d[opcode & 3] & 0xffffff;
 			mn102->pc += 1;
 			break;
 
 		// extxbu dn
 		case 0xbc: case 0xbd: case 0xbe: case 0xbf:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (UINT8)mn102->d[opcode & 3];
+			mn102->d[opcode & 3] = (uint8_t)mn102->d[opcode & 3];
 			mn102->pc += 1;
 			break;
 
 		// mov dn, (imm16)
 		case 0xc0: case 0xc1: case 0xc2: case 0xc3:
 			mn102->cycles -= 2;
-			mn102_write_word(mn102, mn102_read_word(mn102, mn102->pc+1), (UINT16)mn102->d[opcode & 3]);
+			mn102_write_word(mn102, mn102_read_word(mn102, mn102->pc+1), (uint16_t)mn102->d[opcode & 3]);
 			mn102->pc += 3;
 			break;
 
 		// movb dn, (imm16)
 		case 0xc4: case 0xc5: case 0xc6: case 0xc7:
 			mn102->cycles -= 1;
-			mn102_write_byte(mn102, mn102_read_word(mn102, mn102->pc+1), (UINT8)mn102->d[opcode & 3]);
+			mn102_write_byte(mn102, mn102_read_word(mn102, mn102->pc+1), (uint8_t)mn102->d[opcode & 3]);
 			mn102->pc += 3;
 			break;
 
 		// mov (abs16), dn
 		case 0xc8: case 0xc9: case 0xca: case 0xcb:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, mn102_read_word(mn102, mn102->pc+1));
+			mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, mn102_read_word(mn102, mn102->pc+1));
 			mn102->pc += 3;
 			break;
 
@@ -674,21 +674,21 @@ static CPU_EXECUTE(mn10200)
 		// add imm8, an
 		case 0xd0: case 0xd1: case 0xd2: case 0xd3:
 			mn102->cycles -= 1;
-			mn102->a[opcode & 3] = do_add(mn102, mn102->a[opcode & 3], (INT8)mn102_read_byte(mn102, mn102->pc+1));
+			mn102->a[opcode & 3] = do_add(mn102, mn102->a[opcode & 3], (int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			mn102->pc += 2;
 			break;
 
 		// add imm8, dn
 		case 0xd4: case 0xd5: case 0xd6: case 0xd7:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = do_add(mn102, mn102->d[opcode & 3], (INT8)mn102_read_byte(mn102, mn102->pc+1));
+			mn102->d[opcode & 3] = do_add(mn102, mn102->d[opcode & 3], (int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			mn102->pc += 2;
 			break;
 
 		// cmp imm8, dn
 		case 0xd8: case 0xd9: case 0xda: case 0xdb:
 			mn102->cycles -= 1;
-			do_sub(mn102, mn102->d[opcode & 3], (INT8)mn102_read_byte(mn102, mn102->pc+1));
+			do_sub(mn102, mn102->d[opcode & 3], (int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			mn102->pc += 2;
 			break;
 
@@ -704,7 +704,7 @@ static CPU_EXECUTE(mn10200)
 			if(((mn102->psw & 0x0a) == 2) || ((mn102->psw & 0x0a) == 8))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -718,7 +718,7 @@ static CPU_EXECUTE(mn10200)
 			if(((mn102->psw & 0x0b) == 0) || ((mn102->psw & 0x0b) == 0xa))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -732,7 +732,7 @@ static CPU_EXECUTE(mn10200)
 			if(((mn102->psw & 0x0a) == 0) || ((mn102->psw & 0x0a) == 0xa))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -746,7 +746,7 @@ static CPU_EXECUTE(mn10200)
 			if((mn102->psw & 0x01) || ((mn102->psw & 0x0a) == 2) || ((mn102->psw & 0x0a) == 8))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -760,7 +760,7 @@ static CPU_EXECUTE(mn10200)
 			if(mn102->psw & 0x04)
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -774,7 +774,7 @@ static CPU_EXECUTE(mn10200)
 			if(!(mn102->psw & 0x05))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -788,7 +788,7 @@ static CPU_EXECUTE(mn10200)
 			if(!(mn102->psw & 0x04))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -802,7 +802,7 @@ static CPU_EXECUTE(mn10200)
 			if(mn102->psw & 0x05)
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -816,7 +816,7 @@ static CPU_EXECUTE(mn10200)
 			if(mn102->psw & 0x01)
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -830,7 +830,7 @@ static CPU_EXECUTE(mn10200)
 			if(!(mn102->psw & 0x01))
 			{
 				mn102->cycles -= 2;
-				mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+				mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			}
 			else
 			{
@@ -842,7 +842,7 @@ static CPU_EXECUTE(mn10200)
 		// bra label8
 		case 0xea:
 			mn102->cycles -= 2;
-			mn102_change_pc(mn102, mn102->pc+2+(INT8)mn102_read_byte(mn102, mn102->pc+1));
+			mn102_change_pc(mn102, mn102->pc+2+(int8_t)mn102_read_byte(mn102, mn102->pc+1));
 			break;
 
 		// rti
@@ -878,7 +878,7 @@ static CPU_EXECUTE(mn10200)
 				// bset dm, (an)
 				case 0x20: case 0x21: case 0x22: case 0x23: case 0x24: case 0x25: case 0x26: case 0x27:
 				case 0x28: case 0x29: case 0x2a: case 0x2b: case 0x2c: case 0x2d: case 0x2e: case 0x2f: {
-				UINT8 v;
+				uint8_t v;
 				mn102->cycles -= 5;
 				v = mn102_read_byte(mn102, mn102->a[(opcode>>2) & 3]);
 				test_nz16(mn102, v & mn102->d[opcode & 3]);
@@ -890,7 +890,7 @@ static CPU_EXECUTE(mn10200)
 				// bclr dm, (an)
 				case 0x30: case 0x31: case 0x32: case 0x33: case 0x34: case 0x35: case 0x36: case 0x37:
 				case 0x38: case 0x39: case 0x3a: case 0x3b: case 0x3c: case 0x3d: case 0x3e: case 0x3f: {
-				UINT8 v;
+				uint8_t v;
 				mn102->cycles -= 5;
 				v = mn102_read_byte(mn102, mn102->a[(opcode>>2) & 3]);
 				test_nz16(mn102, v & mn102->d[opcode & 3]);
@@ -909,7 +909,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x70: case 0x71: case 0x72: case 0x73: case 0x74: case 0x75: case 0x76: case 0x77:
 				case 0x78: case 0x79: case 0x7a: case 0x7b: case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = (INT8)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3] + mn102->d[(opcode>>4) & 3]) & 0xffffff);
+				mn102->d[opcode & 3] = (int8_t)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3] + mn102->d[(opcode>>4) & 3]) & 0xffffff);
 				mn102->pc += 2;
 				break;
 
@@ -1121,7 +1121,7 @@ static CPU_EXECUTE(mn10200)
 
 				// rol dn
 				case 0x30: case 0x31: case 0x32: case 0x33: {
-				UINT32 d = mn102->d[opcode & 3];
+				uint32_t d = mn102->d[opcode & 3];
 				mn102->cycles -= 2;
 				test_nz16(mn102, mn102->d[opcode & 3] = (d & 0xff0000) | ((d << 1) & 0x00fffe) | ((mn102->psw & 0x04) ? 1 : 0));
 				if(d & 0x8000)
@@ -1132,7 +1132,7 @@ static CPU_EXECUTE(mn10200)
 
 				// ror dn
 				case 0x34: case 0x35: case 0x36: case 0x37: {
-				UINT32 d = mn102->d[opcode & 3];
+				uint32_t d = mn102->d[opcode & 3];
 				mn102->cycles -= 2;
 				test_nz16(mn102, mn102->d[opcode & 3] = (d & 0xff0000) | ((d >> 1) & 0x007fff) | ((mn102->psw & 0x04) ? 0x8000 : 0));
 				if(d & 1)
@@ -1143,7 +1143,7 @@ static CPU_EXECUTE(mn10200)
 
 				// asr dn
 				case 0x38: case 0x39: case 0x3a: case 0x3b: {
-				UINT32 d = mn102->d[opcode & 3];
+				uint32_t d = mn102->d[opcode & 3];
 				mn102->cycles -= 2;
 				test_nz16(mn102, mn102->d[opcode & 3] = (d & 0xff8000) | ((d >> 1) & 0x007fff));
 				if(d & 1)
@@ -1154,7 +1154,7 @@ static CPU_EXECUTE(mn10200)
 
 				// lsr dn
 				case 0x3c: case 0x3d: case 0x3e: case 0x3f: {
-				UINT32 d = mn102->d[opcode & 3];
+				uint32_t d = mn102->d[opcode & 3];
 				mn102->cycles -= 2;
 				test_nz16(mn102, mn102->d[opcode & 3] = (d & 0xff0000) | ((d >> 1) & 0x007fff));
 				if(d & 1)
@@ -1166,9 +1166,9 @@ static CPU_EXECUTE(mn10200)
 				// mul dn, dm
 				case 0x40: case 0x41: case 0x42: case 0x43: case 0x44: case 0x45: case 0x46: case 0x47:
 				case 0x48: case 0x49: case 0x4a: case 0x4b: case 0x4c: case 0x4d: case 0x4e: case 0x4f: {
-				UINT32 res;
+				uint32_t res;
 				mn102->cycles -= 12;
-				res = ((INT16)mn102->d[opcode & 3])*((INT16)mn102->d[(opcode>>2) & 3]);
+				res = ((int16_t)mn102->d[opcode & 3])*((int16_t)mn102->d[(opcode>>2) & 3]);
 				mn102->d[opcode & 3] = res & 0xffffff;
 				mn102->psw &= 0xff00;
 				if(res & 0x80000000)
@@ -1183,9 +1183,9 @@ static CPU_EXECUTE(mn10200)
 				// mulu dn, dm
 				case 0x50: case 0x51: case 0x52: case 0x53: case 0x54: case 0x55: case 0x56: case 0x57:
 				case 0x58: case 0x59: case 0x5a: case 0x5b: case 0x5c: case 0x5d: case 0x5e: case 0x5f: {
-				UINT32 res;
+				uint32_t res;
 				mn102->cycles -= 12;
-				res = ((UINT16)mn102->d[opcode & 3])*((UINT16)mn102->d[(opcode>>2) & 3]);
+				res = ((uint16_t)mn102->d[opcode & 3])*((uint16_t)mn102->d[(opcode>>2) & 3]);
 				mn102->d[opcode & 3] = res & 0xffffff;
 				mn102->psw &= 0xff00;
 				if(res & 0x80000000)
@@ -1200,13 +1200,13 @@ static CPU_EXECUTE(mn10200)
 				// divu dn, dm
 				case 0x60: case 0x61: case 0x62: case 0x63: case 0x64: case 0x65: case 0x66: case 0x67:
 				case 0x68: case 0x69: case 0x6a: case 0x6b: case 0x6c: case 0x6d: case 0x6e: case 0x6f: {
-				UINT32 n, d, q, r;
+				uint32_t n, d, q, r;
 				mn102->cycles -= 13;
 				mn102->pc += 2;
 				mn102->psw &= 0xff00;
 
-				n = (mn102->mdr<<16)|(UINT16)mn102->d[opcode & 3];
-				d = (UINT16)mn102->d[(opcode>>2) & 3];
+				n = (mn102->mdr<<16)|(uint16_t)mn102->d[opcode & 3];
+				d = (uint16_t)mn102->d[(opcode>>2) & 3];
 				if(!d) {
 				mn102->psw |= 8;
 				break;
@@ -1398,7 +1398,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x80: case 0x81: case 0x82: case 0x83: case 0x84: case 0x85: case 0x86: case 0x87:
 				case 0x88: case 0x89: case 0x8a: case 0x8b: case 0x8c: case 0x8d: case 0x8e: case 0x8f:
 				mn102->cycles -= 3;
-				mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + r24u(mn102, mn102->pc+2)) & 0xffffff);
+				mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + r24u(mn102, mn102->pc+2)) & 0xffffff);
 				mn102->pc += 5;
 				break;
 
@@ -1414,7 +1414,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xa0: case 0xa1: case 0xa2: case 0xa3: case 0xa4: case 0xa5: case 0xa6: case 0xa7:
 				case 0xa8: case 0xa9: case 0xaa: case 0xab: case 0xac: case 0xad: case 0xae: case 0xaf:
 				mn102->cycles -= 3;
-				mn102->d[opcode & 3] = (INT8)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3] + r24u(mn102, mn102->pc+2)) & 0xffffff);
+				mn102->d[opcode & 3] = (int8_t)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3] + r24u(mn102, mn102->pc+2)) & 0xffffff);
 				mn102->pc += 5;
 				break;
 
@@ -1429,14 +1429,14 @@ static CPU_EXECUTE(mn10200)
 				// mov (abs24), dn
 				case 0xc0: case 0xc1: case 0xc2: case 0xc3:
 				mn102->cycles -= 3;
-				mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, r24u(mn102, mn102->pc+2));
+				mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, r24u(mn102, mn102->pc+2));
 				mn102->pc += 5;
 				break;
 
 				// movb (abs24), dn
 				case 0xc4: case 0xc5: case 0xc6: case 0xc7:
 				mn102->cycles -= 3;
-				mn102->d[opcode & 3] = (INT8)mn102_read_byte(mn102, r24u(mn102, mn102->pc+2));
+				mn102->d[opcode & 3] = (int8_t)mn102_read_byte(mn102, r24u(mn102, mn102->pc+2));
 				mn102->pc += 5;
 				break;
 
@@ -1509,7 +1509,7 @@ static CPU_EXECUTE(mn10200)
 				// addnf imm8, an
 				case 0x0c: case 0x0d: case 0x0e: case 0x0f:
 				mn102->cycles -= 2;
-				mn102->a[opcode & 3] = mn102->a[opcode & 3] +(INT8)mn102_read_byte(mn102, mn102->pc+2);
+				mn102->a[opcode & 3] = mn102->a[opcode & 3] +(int8_t)mn102_read_byte(mn102, mn102->pc+2);
 				mn102->pc += 3;
 				break;
 
@@ -1517,7 +1517,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x17:
 				case 0x18: case 0x19: case 0x1a: case 0x1b: case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 				mn102->cycles -= 2;
-				mn102_write_byte(mn102, (mn102->a[(opcode>>2) & 3]+(INT8)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff, mn102->d[opcode & 3]);
+				mn102_write_byte(mn102, (mn102->a[(opcode>>2) & 3]+(int8_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff, mn102->d[opcode & 3]);
 				mn102->pc += 3;
 				break;
 
@@ -1525,7 +1525,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x20: case 0x21: case 0x22: case 0x23: case 0x24: case 0x25: case 0x26: case 0x27:
 				case 0x28: case 0x29: case 0x2a: case 0x2b: case 0x2c: case 0x2d: case 0x2e: case 0x2f:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = (INT8)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3]+(INT8)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
+				mn102->d[opcode & 3] = (int8_t)mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3]+(int8_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
 				mn102->pc += 3;
 				break;
 
@@ -1533,7 +1533,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x30: case 0x31: case 0x32: case 0x33: case 0x34: case 0x35: case 0x36: case 0x37:
 				case 0x38: case 0x39: case 0x3a: case 0x3b: case 0x3c: case 0x3d: case 0x3e: case 0x3f:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3]+(INT8)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
+				mn102->d[opcode & 3] = mn102_read_byte(mn102, (mn102->a[(opcode>>2) & 3]+(int8_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
 				mn102->pc += 3;
 				break;
 
@@ -1541,7 +1541,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x50: case 0x51: case 0x52: case 0x53: case 0x54: case 0x55: case 0x56: case 0x57:
 				case 0x58: case 0x59: case 0x5a: case 0x5b: case 0x5c: case 0x5d: case 0x5e: case 0x5f:
 				mn102->cycles -= 3;
-				w24(mn102, (mn102->a[(opcode>>2) & 3]+(INT8)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff, mn102->d[opcode & 3]);
+				w24(mn102, (mn102->a[(opcode>>2) & 3]+(int8_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff, mn102->d[opcode & 3]);
 				mn102->pc += 3;
 				break;
 
@@ -1549,7 +1549,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x70: case 0x71: case 0x72: case 0x73: case 0x74: case 0x75: case 0x76: case 0x77:
 				case 0x78: case 0x79: case 0x7a: case 0x7b: case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 				mn102->cycles -= 3;
-				mn102->d[opcode & 3] = r24u(mn102, (mn102->a[(opcode>>2) & 3]+(INT8)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
+				mn102->d[opcode & 3] = r24u(mn102, (mn102->a[(opcode>>2) & 3]+(int8_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff);
 				mn102->pc += 3;
 				break;
 
@@ -1557,7 +1557,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe0:
 				if(((mn102->psw & 0xa0) == 0x20) || ((mn102->psw & 0xa0) == 0x80)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1568,7 +1568,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe1:
 				if(((mn102->psw & 0xb0) == 0) || ((mn102->psw & 0xb0) == 0xa0)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1579,7 +1579,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe2:
 				if(((mn102->psw & 0xa0) == 0) || ((mn102->psw & 0xa0) == 0xa0)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1590,7 +1590,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe3:
 				if((mn102->psw & 0x10) || ((mn102->psw & 0xa0) == 0x20) || ((mn102->psw & 0xa0) == 0x80)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1601,7 +1601,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe4:
 				if(mn102->psw & 0x40) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1612,7 +1612,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe5:
 				if(!(mn102->psw & 0x50)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1623,7 +1623,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe6:
 				if(!(mn102->psw & 0x40)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1634,7 +1634,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe7:
 				if(mn102->psw & 0x50) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1645,7 +1645,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe8:
 				if(mn102->psw & 0x10) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1656,7 +1656,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xe9:
 				if(!(mn102->psw & 0x10)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1668,7 +1668,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xfe:
 				if(!(mn102->psw & 0x02)) {
 				mn102->cycles -= 3;
-				mn102_change_pc(mn102, mn102->pc+3+(INT8)mn102_read_byte(mn102, mn102->pc+2));
+				mn102_change_pc(mn102, mn102->pc+3+(int8_t)mn102_read_byte(mn102, mn102->pc+2));
 				} else {
 				mn102->cycles -= 2;
 				mn102->pc += 3;
@@ -1701,14 +1701,14 @@ static CPU_EXECUTE(mn10200)
 				// add imm16, an
 				case 0x08: case 0x09: case 0x0a: case 0x0b:
 				mn102->cycles -= 2;
-				mn102->a[opcode & 3] = do_add(mn102, mn102->a[opcode & 3], (INT16)mn102_read_word(mn102, mn102->pc+2));
+				mn102->a[opcode & 3] = do_add(mn102, mn102->a[opcode & 3], (int16_t)mn102_read_word(mn102, mn102->pc+2));
 				mn102->pc += 4;
 				break;
 
 				// sub imm16, an
 				case 0x0c: case 0x0d: case 0x0e: case 0x0f:
 				mn102->cycles -= 2;
-				mn102->a[opcode & 3] = do_sub(mn102, mn102->a[opcode & 3], (INT16)mn102_read_word(mn102, mn102->pc+2));
+				mn102->a[opcode & 3] = do_sub(mn102, mn102->a[opcode & 3], (int16_t)mn102_read_word(mn102, mn102->pc+2));
 				mn102->pc += 4;
 				break;
 
@@ -1729,14 +1729,14 @@ static CPU_EXECUTE(mn10200)
 				// add imm16, dn
 				case 0x18: case 0x19: case 0x1a: case 0x1b:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = do_add(mn102, mn102->d[opcode & 3], (INT16)mn102_read_word(mn102, mn102->pc+2));
+				mn102->d[opcode & 3] = do_add(mn102, mn102->d[opcode & 3], (int16_t)mn102_read_word(mn102, mn102->pc+2));
 				mn102->pc += 4;
 				break;
 
 				// sub imm16, dn
 				case 0x1c: case 0x1d: case 0x1e: case 0x1f:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = do_sub(mn102, mn102->d[opcode & 3], (INT16)mn102_read_word(mn102, mn102->pc+2));
+				mn102->d[opcode & 3] = do_sub(mn102, mn102->d[opcode & 3], (int16_t)mn102_read_word(mn102, mn102->pc+2));
 				mn102->pc += 4;
 				break;
 
@@ -1750,7 +1750,7 @@ static CPU_EXECUTE(mn10200)
 				// cmp imm16, dn
 				case 0x48: case 0x49: case 0x4a: case 0x4b:
 				mn102->cycles -= 2;
-				do_sub(mn102, mn102->d[opcode & 3], (INT16)mn102_read_word(mn102, mn102->pc+2));
+				do_sub(mn102, mn102->d[opcode & 3], (int16_t)mn102_read_word(mn102, mn102->pc+2));
 				mn102->pc += 4;
 				break;
 
@@ -1765,7 +1765,7 @@ static CPU_EXECUTE(mn10200)
 				case 0x80: case 0x81: case 0x82: case 0x83: case 0x84: case 0x85: case 0x86: case 0x87:
 				case 0x88: case 0x89: case 0x8a: case 0x8b: case 0x8c: case 0x8d: case 0x8e: case 0x8f:
 				mn102->cycles -= 2;
-				mn102_write_word(mn102, (mn102->a[(opcode>>2)&3]+(INT16)mn102_read_word(mn102, mn102->pc+2)) & 0xffffff, (UINT16)mn102->d[opcode & 3]);
+				mn102_write_word(mn102, (mn102->a[(opcode>>2)&3]+(int16_t)mn102_read_word(mn102, mn102->pc+2)) & 0xffffff, (uint16_t)mn102->d[opcode & 3]);
 				mn102->pc += 4;
 				break;
 
@@ -1773,7 +1773,7 @@ static CPU_EXECUTE(mn10200)
 				case 0xc0: case 0xc1: case 0xc2: case 0xc3: case 0xc4: case 0xc5: case 0xc6: case 0xc7:
 				case 0xc8: case 0xc9: case 0xca: case 0xcb: case 0xcc: case 0xcd: case 0xce: case 0xcf:
 				mn102->cycles -= 2;
-				mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + (INT16)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff) & 0xffffff;
+				mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, (mn102->a[(opcode>>2) & 3] + (int16_t)mn102_read_byte(mn102, mn102->pc+2)) & 0xffffff) & 0xffffff;
 				mn102->pc += 4;
 				break;
 
@@ -1787,20 +1787,20 @@ static CPU_EXECUTE(mn10200)
 		// mov imm16, dn
 		case 0xf8: case 0xf9: case 0xfa: case 0xfb:
 			mn102->cycles -= 1;
-			mn102->d[opcode & 3] = (INT16)mn102_read_word(mn102, mn102->pc+1);
+			mn102->d[opcode & 3] = (int16_t)mn102_read_word(mn102, mn102->pc+1);
 			mn102->pc += 3;
 			break;
 
 		// jmp label16
 		case 0xfc:
 			mn102->cycles -= 2;
-			mn102_change_pc(mn102, mn102->pc+3+(INT16)mn102_read_word(mn102, mn102->pc+1));
+			mn102_change_pc(mn102, mn102->pc+3+(int16_t)mn102_read_word(mn102, mn102->pc+1));
 			break;
 
 		// jsr label16
 		case 0xfd:
 			mn102->cycles -= 4;
-			do_jsr(mn102, mn102->pc+3+(INT16)mn102_read_word(mn102, mn102->pc+1), mn102->pc+3);
+			do_jsr(mn102, mn102->pc+3+(int16_t)mn102_read_word(mn102, mn102->pc+1), mn102->pc+3);
 			break;
 
 		// rts
@@ -1830,7 +1830,7 @@ static const char *const inames[10][4] = {
   { "key", "a/d", "?", "?" }
 };
 
-static void mn10200_w(mn102_info *mn102, UINT32 adr, UINT32 data, int type)
+static void mn10200_w(mn102_info *mn102, uint32_t adr, uint32_t data, int type)
 {
   if(type == MEM_WORD) {
     mn10200_w(mn102, adr, data & 0xff, MEM_BYTE);
@@ -2254,7 +2254,7 @@ static void mn10200_w(mn102_info *mn102, UINT32 adr, UINT32 data, int type)
   }
 }
 
-static UINT32 mn10200_r(mn102_info *mn102, UINT32 adr, int type)
+static uint32_t mn10200_r(mn102_info *mn102, uint32_t adr, int type)
 {
 	if(type == MEM_WORD)
 	{

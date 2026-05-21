@@ -40,39 +40,39 @@
 typedef struct _mb88_state mb88_state;
 struct _mb88_state
 {
-	UINT8	PC; 	/* Program Counter: 6 bits */
-	UINT8	PA; 	/* Page Address: 4 bits */
-	UINT16	SP[4];	/* Stack is 4*10 bit addresses deep, but we also use 3 top bits per address to store flags during irq */
-	UINT8	SI;		/* Stack index: 2 bits */
-	UINT8	A;		/* Accumulator: 4 bits */
-	UINT8	X;		/* Index X: 4 bits */
-	UINT8	Y;		/* Index Y: 4 bits */
-	UINT8	st;		/* State flag: 1 bit */
-	UINT8	zf;		/* Zero flag: 1 bit */
-	UINT8	cf;		/* Carry flag: 1 bit */
-	UINT8	vf;		/* Timer overflow flag: 1 bit */
-	UINT8	sf;		/* Serial Full/Empty flag: 1 bit */
-	UINT8	nf;		/* Interrupt flag: 1 bit */
+	uint8_t	PC; 	/* Program Counter: 6 bits */
+	uint8_t	PA; 	/* Page Address: 4 bits */
+	uint16_t	SP[4];	/* Stack is 4*10 bit addresses deep, but we also use 3 top bits per address to store flags during irq */
+	uint8_t	SI;		/* Stack index: 2 bits */
+	uint8_t	A;		/* Accumulator: 4 bits */
+	uint8_t	X;		/* Index X: 4 bits */
+	uint8_t	Y;		/* Index Y: 4 bits */
+	uint8_t	st;		/* State flag: 1 bit */
+	uint8_t	zf;		/* Zero flag: 1 bit */
+	uint8_t	cf;		/* Carry flag: 1 bit */
+	uint8_t	vf;		/* Timer overflow flag: 1 bit */
+	uint8_t	sf;		/* Serial Full/Empty flag: 1 bit */
+	uint8_t	nf;		/* Interrupt flag: 1 bit */
 
     /* Peripheral Control */
-    UINT8	pio; /* Peripheral enable bits: 8 bits */
+    uint8_t	pio; /* Peripheral enable bits: 8 bits */
 
     /* Timer registers */
-    UINT8	TH;	/* Timer High: 4 bits */
-    UINT8	TL;	/* Timer Low: 4 bits */
-    UINT8	TP; /* Timer Prescale: 6 bits? */
-    UINT8	ctr; /* current external counter value */
+    uint8_t	TH;	/* Timer High: 4 bits */
+    uint8_t	TL;	/* Timer Low: 4 bits */
+    uint8_t	TP; /* Timer Prescale: 6 bits? */
+    uint8_t	ctr; /* current external counter value */
 
     /* Serial registers */
-    UINT8	SB;	/* Serial buffer: 4 bits */
-    UINT16	SBcount;	/* number of bits received */
+    uint8_t	SB;	/* Serial buffer: 4 bits */
+    uint16_t	SBcount;	/* number of bits received */
     emu_timer *serial;
 
     /* PLA configuration */
-    UINT8 *	PLA;
+    uint8_t *	PLA;
 
     /* IRQ handling */
-    UINT8 pending_interrupt;
+    uint8_t pending_interrupt;
     device_irq_callback irqcallback;
     legacy_cpu_device *device;
     const address_space *program;
@@ -253,7 +253,7 @@ static void set_irq_line(mb88_state *cpustate, int state)
 	cpustate->nf = (state != CLEAR_LINE) ? 1 : 0;
 }
 
-static void update_pio_enable( mb88_state *cpustate, UINT8 newpio )
+static void update_pio_enable( mb88_state *cpustate, uint8_t newpio )
 {
 	/* if the serial state has changed, configure the timer */
 	if ((cpustate->pio ^ newpio) & 0x30)
@@ -340,7 +340,7 @@ static CPU_EXECUTE( mb88 )
 
 	while (cpustate->icount > 0)
 	{
-		UINT8 opcode, arg, oc;
+		uint8_t opcode, arg, oc;
 
 		/* fetch the opcode */
 		debugger_instruction_hook(device, GETPC());

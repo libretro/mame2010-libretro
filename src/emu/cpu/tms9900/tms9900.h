@@ -205,6 +205,6 @@ typedef struct tms99110areset_param
 } tms99110areset_param;
 
 
-unsigned Dasm9900 (char *buffer, unsigned pc, int model_id, const UINT8 *oprom, const UINT8 *opram);
+unsigned Dasm9900 (char *buffer, unsigned pc, int model_id, const uint8_t *oprom, const uint8_t *opram);
 
 #endif /* __TMS9900_H__ */

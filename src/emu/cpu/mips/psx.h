@@ -78,8 +78,8 @@ enum
 #define PSXCPU_IRQ4	( 4 )
 #define PSXCPU_IRQ5	( 5 )
 
-#define PSXCPU_BYTE_EXTEND( a ) ( (INT32)(INT8)a )
-#define PSXCPU_WORD_EXTEND( a ) ( (INT32)(INT16)a )
+#define PSXCPU_BYTE_EXTEND( a ) ( (int32_t)(int8_t)a )
+#define PSXCPU_WORD_EXTEND( a ) ( (int32_t)(int16_t)a )
 
 #define INS_OP( op ) ( ( op >> 26 ) & 63 )
 #define INS_RS( op ) ( ( op >> 21 ) & 31 )
@@ -206,13 +206,13 @@ typedef struct _DasmPSXCPU_state DasmPSXCPU_state;
 
 struct _DasmPSXCPU_state
 {
-	UINT32 pc;
+	uint32_t pc;
 	int delayr;
-	UINT32 delayv;
-	UINT32 r[ 32 ];
+	uint32_t delayv;
+	uint32_t r[ 32 ];
 };
 
-extern unsigned DasmPSXCPU( DasmPSXCPU_state *state, char *buffer, UINT32 pc, const UINT8 *opram );
+extern unsigned DasmPSXCPU( DasmPSXCPU_state *state, char *buffer, uint32_t pc, const uint8_t *opram );
 
 DECLARE_LEGACY_CPU_DEVICE(PSXCPU, psxcpu);
 DECLARE_LEGACY_CPU_DEVICE(CXD8661R, cxd8661r);

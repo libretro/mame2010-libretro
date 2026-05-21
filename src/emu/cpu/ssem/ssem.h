@@ -18,6 +18,6 @@ enum
 
 DECLARE_LEGACY_CPU_DEVICE(SSEM, ssem);
 
-extern offs_t ssem_dasm_one(char *buffer, offs_t pc, UINT32 op);
+extern offs_t ssem_dasm_one(char *buffer, offs_t pc, uint32_t op);
 
 #endif /* __SSEM_H__ */

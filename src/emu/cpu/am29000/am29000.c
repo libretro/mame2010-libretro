@@ -77,59 +77,59 @@
 
 typedef struct _am29000_state
 {
-	INT32			icount;
-	UINT32			pc;
+	int32_t			icount;
+	uint32_t			pc;
 
 	/* General purpose */
-	UINT32			r[256];		// TODO: There's only 192 implemented!
+	uint32_t			r[256];		// TODO: There's only 192 implemented!
 
 	/* TLB */
-	UINT32			tlb[128];
+	uint32_t			tlb[128];
 
 	/* Protected SPRs */
-	UINT32			vab;
-	UINT32			ops;
-	UINT32			cps;
-	UINT32			cfg;
-	UINT32			cha;
-	UINT32			chd;
-	UINT32			chc;
-	UINT32			rbp;
-	UINT32			tmc;
-	UINT32			tmr;
-	UINT32			pc0;
-	UINT32			pc1;
-	UINT32			pc2;
-	UINT32			mmu;
-	UINT32			lru;
+	uint32_t			vab;
+	uint32_t			ops;
+	uint32_t			cps;
+	uint32_t			cfg;
+	uint32_t			cha;
+	uint32_t			chd;
+	uint32_t			chc;
+	uint32_t			rbp;
+	uint32_t			tmc;
+	uint32_t			tmr;
+	uint32_t			pc0;
+	uint32_t			pc1;
+	uint32_t			pc2;
+	uint32_t			mmu;
+	uint32_t			lru;
 
 	/* Unprotected SPRs */
-	UINT32			ipc;
-	UINT32			ipa;
-	UINT32			ipb;
-	UINT32			q;
-	UINT32			alu;
-	UINT32			fpe;
-	UINT32			inte;
-	UINT32			fps;
+	uint32_t			ipc;
+	uint32_t			ipa;
+	uint32_t			ipb;
+	uint32_t			q;
+	uint32_t			alu;
+	uint32_t			fpe;
+	uint32_t			inte;
+	uint32_t			fps;
 
 	/* Pipeline state */
-	UINT32			exceptions;
-	UINT32			exception_queue[MAX_EXCEPTIONS];
+	uint32_t			exceptions;
+	uint32_t			exception_queue[MAX_EXCEPTIONS];
 
-	UINT8			irq_active;
-	UINT8			irq_lines;
+	uint8_t			irq_active;
+	uint8_t			irq_lines;
 
-	UINT32			exec_ir;
-	UINT32			next_ir;
+	uint32_t			exec_ir;
+	uint32_t			next_ir;
 
-	UINT32			pl_flags;
-	UINT32			next_pl_flags;
+	uint32_t			pl_flags;
+	uint32_t			next_pl_flags;
 
-	UINT32			iret_pc;
+	uint32_t			iret_pc;
 
-	UINT32			exec_pc;
-	UINT32			next_pc;
+	uint32_t			exec_pc;
+	uint32_t			next_pc;
 
 	const address_space *program;
 	const address_space *data;
@@ -227,7 +227,7 @@ static CPU_EXIT( am29000 )
 }
 
 
-static void signal_exception(am29000_state *am29000, UINT32 type)
+static void signal_exception(am29000_state *am29000, uint32_t type)
 {
 	am29000->exception_queue[am29000->exceptions++] = type;
 }
@@ -263,7 +263,7 @@ static void external_irq_check(am29000_state *am29000)
 	}
 }
 
-static UINT32 read_program_word(am29000_state *state, UINT32 address)
+static uint32_t read_program_word(am29000_state *state, uint32_t address)
 {
 	/* TODO: ROM enable? */
 	if (state->cps & CPS_PI || state->cps & CPS_RE)
@@ -279,7 +279,7 @@ static UINT32 read_program_word(am29000_state *state, UINT32 address)
     HELPER FUNCTIONS
 ***************************************************************************/
 
-INLINE UINT32 get_abs_reg(am29000_state *am29000, UINT8 r, UINT32 iptr)
+INLINE uint32_t get_abs_reg(am29000_state *am29000, uint8_t r, uint32_t iptr)
 {
 	if (r & 0x80)
 	{
@@ -313,7 +313,7 @@ INLINE UINT32 get_abs_reg(am29000_state *am29000, UINT8 r, UINT32 iptr)
 
 INLINE void fetch_decode(am29000_state *am29000)
 {
-	UINT32 inst;
+	uint32_t inst;
 	op_info op;
 
 	inst = read_program_word(am29000, am29000->pc);
@@ -384,7 +384,7 @@ INLINE void fetch_decode(am29000_state *am29000)
 static CPU_EXECUTE( am29000 )
 {
 	am29000_state *am29000 = get_safe_token(device);
-	UINT32 call_debugger = (device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0;
+	uint32_t call_debugger = (device->machine->debug_flags & DEBUG_FLAG_ENABLED) != 0;
 
 	external_irq_check(am29000);
 
@@ -413,8 +413,8 @@ static CPU_EXECUTE( am29000 )
 
 			if (am29000->cfg & CFG_VF)
 			{
-				UINT32 vaddr = am29000->vab | am29000->exception_queue[0] * 4;
-				UINT32 vect = memory_decrypted_read_dword(am29000->data, vaddr);
+				uint32_t vaddr = am29000->vab | am29000->exception_queue[0] * 4;
+				uint32_t vect = memory_decrypted_read_dword(am29000->data, vaddr);
 
 				am29000->pc = vect & ~3;
 				am29000->next_pc = am29000->pc;

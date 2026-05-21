@@ -52,9 +52,9 @@ static int n[12];	/* opcode nibbles */
 static int b[6];	/* opcode bytes */
 static int w[3];	/* opcode words */
 
-static void GET_OP(const UINT8 *oprom, int i, unsigned offset)
+static void GET_OP(const uint8_t *oprom, int i, unsigned offset)
 {
-	UINT16 opcode = (oprom[offset] << 8) | oprom[offset + 1];
+	uint16_t opcode = (oprom[offset] << 8) | oprom[offset + 1];
 	w[i] = opcode;
 	b[i*2+0] = opcode >> 8;
 	b[i*2+1] = opcode & 0xff;
@@ -84,7 +84,7 @@ CPU_DISASSEMBLE( z8000 )
 	char *dst = buffer;
 	const char *src;
 	Z8000_exec *o;
-	UINT32 flags = 0;
+	uint32_t flags = 0;
 
 	/* already initialized? */
 	if(z8000_exec == NULL)
@@ -144,7 +144,7 @@ CPU_DISASSEMBLE( z8000 )
 						/* absolute immediate 8bit (rl/rr) */
 						src++;
 						i = *src++ - '0';
-						dst += sprintf(dst, "#%d", ((INT8)b[i]<0) ? -(INT8)b[i] : b[i]);
+						dst += sprintf(dst, "#%d", ((int8_t)b[i]<0) ? -(int8_t)b[i] : b[i]);
 						break;
 					case '+':
 						/* imm4m1 (inc/dec value) */
@@ -247,7 +247,7 @@ CPU_DISASSEMBLE( z8000 )
 								dst += sprintf(dst, "#$%04x", tmp);
 								break;
 							case 1: /* disp8 */
-								tmp = new_pc + 2 * (INT8)(w[0] & 0xff);
+								tmp = new_pc + 2 * (int8_t)(w[0] & 0xff);
 								dst += sprintf(dst, "#$%04x", tmp);
 								break;
 							case 2: /* disp12 */

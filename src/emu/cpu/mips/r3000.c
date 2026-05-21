@@ -87,8 +87,8 @@ CPU_DISASSEMBLE( r3000le );
 #define RTVAL		r[RTREG]
 #define RDVAL		r[RDREG]
 
-#define SIMMVAL		((INT16)op)
-#define UIMMVAL		((UINT16)op)
+#define SIMMVAL		((int16_t)op)
+#define UIMMVAL		((uint16_t)op)
 #define LIMMVAL		(op & 0x03ffffff)
 
 #define ADDPC(R,x)		do { (R)->nextpc = (R)->pc + ((x) << 2); } while (0)
@@ -120,19 +120,19 @@ typedef struct _r3000_state r3000_state;
 struct _r3000_state
 {
 	/* core registers */
-	UINT32		pc;
-	UINT32		hi;
-	UINT32		lo;
-	UINT32		r[32];
+	uint32_t		pc;
+	uint32_t		hi;
+	uint32_t		lo;
+	uint32_t		r[32];
 
 	/* COP registers */
-	UINT32		cpr[4][32];
-	UINT32		ccr[4][32];
-	UINT8		cf[4];
+	uint32_t		cpr[4][32];
+	uint32_t		ccr[4][32];
+	uint8_t		cf[4];
 
 	/* internal stuff */
-	UINT32		ppc;
-	UINT32		nextpc;
+	uint32_t		ppc;
+	uint32_t		nextpc;
 	int			op;
 	int			icount;
 	int			interrupt_cycles;
@@ -142,21 +142,21 @@ struct _r3000_state
 	const address_space *program;
 
 	/* endian-dependent load/store */
-	void		(*lwl)(r3000_state *r3000, UINT32 op);
-	void		(*lwr)(r3000_state *r3000, UINT32 op);
-	void		(*swl)(r3000_state *r3000, UINT32 op);
-	void		(*swr)(r3000_state *r3000, UINT32 op);
+	void		(*lwl)(r3000_state *r3000, uint32_t op);
+	void		(*lwr)(r3000_state *r3000, uint32_t op);
+	void		(*swl)(r3000_state *r3000, uint32_t op);
+	void		(*swr)(r3000_state *r3000, uint32_t op);
 
 	/* memory accesses */
-	UINT8		bigendian;
+	uint8_t		bigendian;
 	data_accessors cur;
 	const data_accessors *memory_hand;
 	const data_accessors *cache_hand;
 
 	/* cache memory */
-	UINT32 *	cache;
-	UINT32 *	icache;
-	UINT32 *	dcache;
+	uint32_t *	cache;
+	uint32_t *	icache;
+	uint32_t *	dcache;
 	size_t		cache_size;
 	size_t		icache_size;
 	size_t		dcache_size;
@@ -177,29 +177,29 @@ INLINE r3000_state *get_safe_token(running_device *device)
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static void lwl_be(r3000_state *r3000, UINT32 op);
-static void lwr_be(r3000_state *r3000, UINT32 op);
-static void swl_be(r3000_state *r3000, UINT32 op);
-static void swr_be(r3000_state *r3000, UINT32 op);
+static void lwl_be(r3000_state *r3000, uint32_t op);
+static void lwr_be(r3000_state *r3000, uint32_t op);
+static void swl_be(r3000_state *r3000, uint32_t op);
+static void swr_be(r3000_state *r3000, uint32_t op);
 
-static void lwl_le(r3000_state *r3000, UINT32 op);
-static void lwr_le(r3000_state *r3000, UINT32 op);
-static void swl_le(r3000_state *r3000, UINT32 op);
-static void swr_le(r3000_state *r3000, UINT32 op);
+static void lwl_le(r3000_state *r3000, uint32_t op);
+static void lwr_le(r3000_state *r3000, uint32_t op);
+static void swl_le(r3000_state *r3000, uint32_t op);
+static void swr_le(r3000_state *r3000, uint32_t op);
 
-static UINT8 readcache_be(const address_space *space, offs_t offset);
-static UINT16 readcache_be_word(const address_space *space, offs_t offset);
-static UINT32 readcache_be_dword(const address_space *space, offs_t offset);
-static void writecache_be(const address_space *space, offs_t offset, UINT8 data);
-static void writecache_be_word(const address_space *space, offs_t offset, UINT16 data);
-static void writecache_be_dword(const address_space *space, offs_t offset, UINT32 data);
+static uint8_t readcache_be(const address_space *space, offs_t offset);
+static uint16_t readcache_be_word(const address_space *space, offs_t offset);
+static uint32_t readcache_be_dword(const address_space *space, offs_t offset);
+static void writecache_be(const address_space *space, offs_t offset, uint8_t data);
+static void writecache_be_word(const address_space *space, offs_t offset, uint16_t data);
+static void writecache_be_dword(const address_space *space, offs_t offset, uint32_t data);
 
-static UINT8 readcache_le(const address_space *space, offs_t offset);
-static UINT16 readcache_le_word(const address_space *space, offs_t offset);
-static UINT32 readcache_le_dword(const address_space *space, offs_t offset);
-static void writecache_le(const address_space *space, offs_t offset, UINT8 data);
-static void writecache_le_word(const address_space *space, offs_t offset, UINT16 data);
-static void writecache_le_dword(const address_space *space, offs_t offset, UINT32 data);
+static uint8_t readcache_le(const address_space *space, offs_t offset);
+static uint16_t readcache_le_word(const address_space *space, offs_t offset);
+static uint32_t readcache_le_dword(const address_space *space, offs_t offset);
+static void writecache_le(const address_space *space, offs_t offset, uint8_t data);
+static void writecache_le_word(const address_space *space, offs_t offset, uint16_t data);
+static void writecache_le_dword(const address_space *space, offs_t offset, uint32_t data);
 
 
 
@@ -263,7 +263,7 @@ INLINE void generate_exception(r3000_state *r3000, int exception)
 }
 
 
-INLINE void invalid_instruction(r3000_state *r3000, UINT32 op)
+INLINE void invalid_instruction(r3000_state *r3000, uint32_t op)
 {
 	generate_exception(r3000, EXCEPTION_INVALIDOP);
 }
@@ -302,8 +302,8 @@ static CPU_INIT( r3000 )
 	r3000_state *r3000 = get_safe_token(device);
 
 	/* allocate memory */
-	r3000->icache = auto_alloc_array(device->machine, UINT32, configdata->icache/4);
-	r3000->dcache = auto_alloc_array(device->machine, UINT32, configdata->dcache/4);
+	r3000->icache = auto_alloc_array(device->machine, uint32_t, configdata->icache/4);
+	r3000->dcache = auto_alloc_array(device->machine, uint32_t, configdata->dcache/4);
 
 	r3000->icache_size = configdata->icache;
 	r3000->dcache_size = configdata->dcache;
@@ -371,12 +371,12 @@ static CPU_EXIT( r3000 )
     COP0 (SYSTEM) EXECUTION HANDLING
 ***************************************************************************/
 
-INLINE UINT32 get_cop0_reg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop0_reg(r3000_state *r3000, int idx)
 {
 	return r3000->cpr[0][idx];
 }
 
-INLINE void set_cop0_reg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop0_reg(r3000_state *r3000, int idx, uint32_t val)
 {
 	if (idx == COP0_Cause)
 	{
@@ -387,8 +387,8 @@ INLINE void set_cop0_reg(r3000_state *r3000, int idx, UINT32 val)
 	}
 	else if (idx == COP0_Status)
 	{
-		UINT32 oldsr = r3000->cpr[0][idx];
-		UINT32 diff = oldsr ^ val;
+		uint32_t oldsr = r3000->cpr[0][idx];
+		uint32_t diff = oldsr ^ val;
 
 		/* handle cache isolation */
 		if (diff & SR_IsC)
@@ -416,17 +416,17 @@ INLINE void set_cop0_reg(r3000_state *r3000, int idx, UINT32 val)
 		r3000->cpr[0][idx] = val;
 }
 
-INLINE UINT32 get_cop0_creg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop0_creg(r3000_state *r3000, int idx)
 {
 	return r3000->ccr[0][idx];
 }
 
-INLINE void set_cop0_creg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop0_creg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->ccr[0][idx] = val;
 }
 
-INLINE void handle_cop0(r3000_state *r3000, UINT32 op)
+INLINE void handle_cop0(r3000_state *r3000, uint32_t op)
 {
 	if (!(r3000->SR & SR_COP0) && (r3000->SR & SR_KUc))
 		generate_exception(r3000, EXCEPTION_BADCOP);
@@ -484,27 +484,27 @@ INLINE void handle_cop0(r3000_state *r3000, UINT32 op)
     COP1 (FPU) EXECUTION HANDLING
 ***************************************************************************/
 
-INLINE UINT32 get_cop1_reg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop1_reg(r3000_state *r3000, int idx)
 {
 	return r3000->cpr[1][idx];
 }
 
-INLINE void set_cop1_reg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop1_reg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->cpr[1][idx] = val;
 }
 
-INLINE UINT32 get_cop1_creg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop1_creg(r3000_state *r3000, int idx)
 {
 	return r3000->ccr[1][idx];
 }
 
-INLINE void set_cop1_creg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop1_creg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->ccr[1][idx] = val;
 }
 
-INLINE void handle_cop1(r3000_state *r3000, UINT32 op)
+INLINE void handle_cop1(r3000_state *r3000, uint32_t op)
 {
 	if (!(r3000->SR & SR_COP1))
 		generate_exception(r3000, EXCEPTION_BADCOP);
@@ -553,27 +553,27 @@ INLINE void handle_cop1(r3000_state *r3000, UINT32 op)
     COP2 (CUSTOM) EXECUTION HANDLING
 ***************************************************************************/
 
-INLINE UINT32 get_cop2_reg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop2_reg(r3000_state *r3000, int idx)
 {
 	return r3000->cpr[2][idx];
 }
 
-INLINE void set_cop2_reg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop2_reg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->cpr[2][idx] = val;
 }
 
-INLINE UINT32 get_cop2_creg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop2_creg(r3000_state *r3000, int idx)
 {
 	return r3000->ccr[2][idx];
 }
 
-INLINE void set_cop2_creg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop2_creg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->ccr[2][idx] = val;
 }
 
-INLINE void handle_cop2(r3000_state *r3000, UINT32 op)
+INLINE void handle_cop2(r3000_state *r3000, uint32_t op)
 {
 	if (!(r3000->SR & SR_COP2))
 		generate_exception(r3000, EXCEPTION_BADCOP);
@@ -620,27 +620,27 @@ INLINE void handle_cop2(r3000_state *r3000, UINT32 op)
     COP3 (CUSTOM) EXECUTION HANDLING
 ***************************************************************************/
 
-INLINE UINT32 get_cop3_reg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop3_reg(r3000_state *r3000, int idx)
 {
 	return r3000->cpr[3][idx];
 }
 
-INLINE void set_cop3_reg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop3_reg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->cpr[3][idx] = val;
 }
 
-INLINE UINT32 get_cop3_creg(r3000_state *r3000, int idx)
+INLINE uint32_t get_cop3_creg(r3000_state *r3000, int idx)
 {
 	return r3000->ccr[3][idx];
 }
 
-INLINE void set_cop3_creg(r3000_state *r3000, int idx, UINT32 val)
+INLINE void set_cop3_creg(r3000_state *r3000, int idx, uint32_t val)
 {
 	r3000->ccr[3][idx] = val;
 }
 
-INLINE void handle_cop3(r3000_state *r3000, UINT32 op)
+INLINE void handle_cop3(r3000_state *r3000, uint32_t op)
 {
 	if (!(r3000->SR & SR_COP3))
 		generate_exception(r3000, EXCEPTION_BADCOP);
@@ -701,8 +701,8 @@ static CPU_EXECUTE( r3000 )
 	/* core execution loop */
 	do
 	{
-		UINT32 op;
-		UINT64 temp64;
+		uint32_t op;
+		uint64_t temp64;
 		int temp;
 
 		/* debugging */
@@ -729,10 +729,10 @@ static CPU_EXECUTE( r3000 )
 				{
 					case 0x00:	/* SLL */		if (RDREG) r3000->RDVAL = r3000->RTVAL << SHIFT;						break;
 					case 0x02:	/* SRL */		if (RDREG) r3000->RDVAL = r3000->RTVAL >> SHIFT;						break;
-					case 0x03:	/* SRA */		if (RDREG) r3000->RDVAL = (INT32)r3000->RTVAL >> SHIFT;					break;
+					case 0x03:	/* SRA */		if (RDREG) r3000->RDVAL = (int32_t)r3000->RTVAL >> SHIFT;					break;
 					case 0x04:	/* SLLV */		if (RDREG) r3000->RDVAL = r3000->RTVAL << (r3000->RSVAL & 31);			break;
 					case 0x06:	/* SRLV */		if (RDREG) r3000->RDVAL = r3000->RTVAL >> (r3000->RSVAL & 31);			break;
-					case 0x07:	/* SRAV */		if (RDREG) r3000->RDVAL = (INT32)r3000->RTVAL >> (r3000->RSVAL & 31);	break;
+					case 0x07:	/* SRAV */		if (RDREG) r3000->RDVAL = (int32_t)r3000->RTVAL >> (r3000->RSVAL & 31);	break;
 					case 0x08:	/* JR */		SETPC(r3000, r3000->RSVAL);												break;
 					case 0x09:	/* JALR */		SETPCL(r3000, r3000->RSVAL, RDREG);										break;
 					case 0x0c:	/* SYSCALL */	generate_exception(r3000, EXCEPTION_SYSCALL);							break;
@@ -743,22 +743,22 @@ static CPU_EXECUTE( r3000 )
 					case 0x12:	/* MFLO */		if (RDREG) r3000->RDVAL = r3000->lo;									break;
 					case 0x13:	/* MTLO */		r3000->lo = r3000->RSVAL;												break;
 					case 0x18:	/* MULT */
-						temp64 = (INT64)(INT32)r3000->RSVAL * (INT64)(INT32)r3000->RTVAL;
-						r3000->lo = (UINT32)temp64;
-						r3000->hi = (UINT32)(temp64 >> 32);
+						temp64 = (int64_t)(int32_t)r3000->RSVAL * (int64_t)(int32_t)r3000->RTVAL;
+						r3000->lo = (uint32_t)temp64;
+						r3000->hi = (uint32_t)(temp64 >> 32);
 						r3000->icount -= 11;
 						break;
 					case 0x19:	/* MULTU */
-						temp64 = (UINT64)r3000->RSVAL * (UINT64)r3000->RTVAL;
-						r3000->lo = (UINT32)temp64;
-						r3000->hi = (UINT32)(temp64 >> 32);
+						temp64 = (uint64_t)r3000->RSVAL * (uint64_t)r3000->RTVAL;
+						r3000->lo = (uint32_t)temp64;
+						r3000->hi = (uint32_t)(temp64 >> 32);
 						r3000->icount -= 11;
 						break;
 					case 0x1a:	/* DIV */
 						if (r3000->RTVAL)
 						{
-							r3000->lo = (INT32)r3000->RSVAL / (INT32)r3000->RTVAL;
-							r3000->hi = (INT32)r3000->RSVAL % (INT32)r3000->RTVAL;
+							r3000->lo = (int32_t)r3000->RSVAL / (int32_t)r3000->RTVAL;
+							r3000->hi = (int32_t)r3000->RSVAL % (int32_t)r3000->RTVAL;
 						}
 						r3000->icount -= 34;
 						break;
@@ -784,8 +784,8 @@ static CPU_EXECUTE( r3000 )
 					case 0x25:	/* OR */		if (RDREG) r3000->RDVAL = r3000->RSVAL | r3000->RTVAL;					break;
 					case 0x26:	/* XOR */		if (RDREG) r3000->RDVAL = r3000->RSVAL ^ r3000->RTVAL;					break;
 					case 0x27:	/* NOR */		if (RDREG) r3000->RDVAL = ~(r3000->RSVAL | r3000->RTVAL);				break;
-					case 0x2a:	/* SLT */		if (RDREG) r3000->RDVAL = (INT32)r3000->RSVAL < (INT32)r3000->RTVAL;	break;
-					case 0x2b:	/* SLTU */		if (RDREG) r3000->RDVAL = (UINT32)r3000->RSVAL < (UINT32)r3000->RTVAL;	break;
+					case 0x2a:	/* SLT */		if (RDREG) r3000->RDVAL = (int32_t)r3000->RSVAL < (int32_t)r3000->RTVAL;	break;
+					case 0x2b:	/* SLTU */		if (RDREG) r3000->RDVAL = (uint32_t)r3000->RSVAL < (uint32_t)r3000->RTVAL;	break;
 					case 0x30:	/* TEQ */		invalid_instruction(r3000, op);											break;
 					case 0x31:	/* TGEU */		invalid_instruction(r3000, op);											break;
 					case 0x32:	/* TLT */		invalid_instruction(r3000, op);											break;
@@ -799,8 +799,8 @@ static CPU_EXECUTE( r3000 )
 			case 0x01:	/* REGIMM */
 				switch (RTREG)
 				{
-					case 0x00:	/* BLTZ */		if ((INT32)r3000->RSVAL < 0) ADDPC(r3000, SIMMVAL);						break;
-					case 0x01:	/* BGEZ */		if ((INT32)r3000->RSVAL >= 0) ADDPC(r3000, SIMMVAL);					break;
+					case 0x00:	/* BLTZ */		if ((int32_t)r3000->RSVAL < 0) ADDPC(r3000, SIMMVAL);						break;
+					case 0x01:	/* BGEZ */		if ((int32_t)r3000->RSVAL >= 0) ADDPC(r3000, SIMMVAL);					break;
 					case 0x02:	/* BLTZL */		invalid_instruction(r3000, op);											break;
 					case 0x03:	/* BGEZL */		invalid_instruction(r3000, op);											break;
 					case 0x08:	/* TGEI */		invalid_instruction(r3000, op);											break;
@@ -809,8 +809,8 @@ static CPU_EXECUTE( r3000 )
 					case 0x0b:	/* TLTIU */		invalid_instruction(r3000, op);											break;
 					case 0x0c:	/* TEQI */		invalid_instruction(r3000, op);											break;
 					case 0x0e:	/* TNEI */		invalid_instruction(r3000, op);											break;
-					case 0x10:	/* BLTZAL */	if ((INT32)r3000->RSVAL < 0) ADDPCL(r3000,SIMMVAL,31);					break;
-					case 0x11:	/* BGEZAL */	if ((INT32)r3000->RSVAL >= 0) ADDPCL(r3000,SIMMVAL,31);					break;
+					case 0x10:	/* BLTZAL */	if ((int32_t)r3000->RSVAL < 0) ADDPCL(r3000,SIMMVAL,31);					break;
+					case 0x11:	/* BGEZAL */	if ((int32_t)r3000->RSVAL >= 0) ADDPCL(r3000,SIMMVAL,31);					break;
 					case 0x12:	/* BLTZALL */	invalid_instruction(r3000, op);											break;
 					case 0x13:	/* BGEZALL */	invalid_instruction(r3000, op);											break;
 					default:	/* ??? */		invalid_instruction(r3000, op);											break;
@@ -821,15 +821,15 @@ static CPU_EXECUTE( r3000 )
 			case 0x03:	/* JAL */		ABSPCL(r3000, LIMMVAL,31);														break;
 			case 0x04:	/* BEQ */		if (r3000->RSVAL == r3000->RTVAL) ADDPC(r3000, SIMMVAL);						break;
 			case 0x05:	/* BNE */		if (r3000->RSVAL != r3000->RTVAL) ADDPC(r3000, SIMMVAL);						break;
-			case 0x06:	/* BLEZ */		if ((INT32)r3000->RSVAL <= 0) ADDPC(r3000, SIMMVAL);							break;
-			case 0x07:	/* BGTZ */		if ((INT32)r3000->RSVAL > 0) ADDPC(r3000, SIMMVAL);								break;
+			case 0x06:	/* BLEZ */		if ((int32_t)r3000->RSVAL <= 0) ADDPC(r3000, SIMMVAL);							break;
+			case 0x07:	/* BGTZ */		if ((int32_t)r3000->RSVAL > 0) ADDPC(r3000, SIMMVAL);								break;
 			case 0x08:	/* ADDI */
 				if (ENABLE_OVERFLOWS && r3000->RSVAL > ~SIMMVAL) generate_exception(r3000, EXCEPTION_OVERFLOW);
 				else if (RTREG) r3000->RTVAL = r3000->RSVAL + SIMMVAL;
 				break;
 			case 0x09:	/* ADDIU */		if (RTREG) r3000->RTVAL = r3000->RSVAL + SIMMVAL;								break;
-			case 0x0a:	/* SLTI */		if (RTREG) r3000->RTVAL = (INT32)r3000->RSVAL < (INT32)SIMMVAL;					break;
-			case 0x0b:	/* SLTIU */		if (RTREG) r3000->RTVAL = (UINT32)r3000->RSVAL < (UINT32)SIMMVAL;				break;
+			case 0x0a:	/* SLTI */		if (RTREG) r3000->RTVAL = (int32_t)r3000->RSVAL < (int32_t)SIMMVAL;					break;
+			case 0x0b:	/* SLTIU */		if (RTREG) r3000->RTVAL = (uint32_t)r3000->RSVAL < (uint32_t)SIMMVAL;				break;
 			case 0x0c:	/* ANDI */		if (RTREG) r3000->RTVAL = r3000->RSVAL & UIMMVAL;								break;
 			case 0x0d:	/* ORI */		if (RTREG) r3000->RTVAL = r3000->RSVAL | UIMMVAL;								break;
 			case 0x0e:	/* XORI */		if (RTREG) r3000->RTVAL = r3000->RSVAL ^ UIMMVAL;								break;
@@ -842,12 +842,12 @@ static CPU_EXECUTE( r3000 )
 			case 0x15:	/* BNEL */		invalid_instruction(r3000, op);													break;
 			case 0x16:	/* BLEZL */		invalid_instruction(r3000, op);													break;
 			case 0x17:	/* BGTZL */		invalid_instruction(r3000, op);													break;
-			case 0x20:	/* LB */		temp = RBYTE(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (INT8)temp; break;
-			case 0x21:	/* LH */		temp = RWORD(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (INT16)temp; break;
+			case 0x20:	/* LB */		temp = RBYTE(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (int8_t)temp; break;
+			case 0x21:	/* LH */		temp = RWORD(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (int16_t)temp; break;
 			case 0x22:	/* LWL */		(*r3000->lwl)(r3000, op);														break;
 			case 0x23:	/* LW */		temp = RLONG(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = temp;		break;
-			case 0x24:	/* LBU */		temp = RBYTE(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (UINT8)temp; break;
-			case 0x25:	/* LHU */		temp = RWORD(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (UINT16)temp; break;
+			case 0x24:	/* LBU */		temp = RBYTE(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (uint8_t)temp; break;
+			case 0x25:	/* LHU */		temp = RWORD(r3000, SIMMVAL+r3000->RSVAL); if (RTREG) r3000->RTVAL = (uint16_t)temp; break;
 			case 0x26:	/* LWR */		(*r3000->lwr)(r3000, op);														break;
 			case 0x28:	/* SB */		WBYTE(r3000, SIMMVAL+r3000->RSVAL, r3000->RTVAL);								break;
 			case 0x29:	/* SH */		WWORD(r3000, SIMMVAL+r3000->RSVAL, r3000->RTVAL);								break;
@@ -892,88 +892,88 @@ static CPU_EXECUTE( r3000 )
     CACHE I/O
 ***************************************************************************/
 
-static UINT8 readcache_be(const address_space *space, offs_t offset)
+static uint8_t readcache_be(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
 	return (offset * 4 < r3000->cache_size) ? r3000->cache[BYTE4_XOR_BE(offset)] : 0xff;
 }
 
-static UINT16 readcache_be_word(const address_space *space, offs_t offset)
+static uint16_t readcache_be_word(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	return (offset * 4 < r3000->cache_size) ? *(UINT16 *)&r3000->cache[WORD_XOR_BE(offset)] : 0xffff;
+	return (offset * 4 < r3000->cache_size) ? *(uint16_t *)&r3000->cache[WORD_XOR_BE(offset)] : 0xffff;
 }
 
-static UINT32 readcache_be_dword(const address_space *space, offs_t offset)
+static uint32_t readcache_be_dword(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	return (offset * 4 < r3000->cache_size) ? *(UINT32 *)&r3000->cache[offset] : 0xffffffff;
+	return (offset * 4 < r3000->cache_size) ? *(uint32_t *)&r3000->cache[offset] : 0xffffffff;
 }
 
-static void writecache_be(const address_space *space, offs_t offset, UINT8 data)
+static void writecache_be(const address_space *space, offs_t offset, uint8_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
 	if (offset * 4 < r3000->cache_size) r3000->cache[BYTE4_XOR_BE(offset)] = data;
 }
 
-static void writecache_be_word(const address_space *space, offs_t offset, UINT16 data)
+static void writecache_be_word(const address_space *space, offs_t offset, uint16_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	if (offset * 4 < r3000->cache_size) *(UINT16 *)&r3000->cache[WORD_XOR_BE(offset)] = data;
+	if (offset * 4 < r3000->cache_size) *(uint16_t *)&r3000->cache[WORD_XOR_BE(offset)] = data;
 }
 
-static void writecache_be_dword(const address_space *space, offs_t offset, UINT32 data)
+static void writecache_be_dword(const address_space *space, offs_t offset, uint32_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	if (offset * 4 < r3000->cache_size) *(UINT32 *)&r3000->cache[offset] = data;
+	if (offset * 4 < r3000->cache_size) *(uint32_t *)&r3000->cache[offset] = data;
 }
 
-static UINT8 readcache_le(const address_space *space, offs_t offset)
+static uint8_t readcache_le(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
 	return (offset * 4 < r3000->cache_size) ? r3000->cache[BYTE4_XOR_LE(offset)] : 0xff;
 }
 
-static UINT16 readcache_le_word(const address_space *space, offs_t offset)
+static uint16_t readcache_le_word(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	return (offset * 4 < r3000->cache_size) ? *(UINT16 *)&r3000->cache[WORD_XOR_LE(offset)] : 0xffff;
+	return (offset * 4 < r3000->cache_size) ? *(uint16_t *)&r3000->cache[WORD_XOR_LE(offset)] : 0xffff;
 }
 
-static UINT32 readcache_le_dword(const address_space *space, offs_t offset)
+static uint32_t readcache_le_dword(const address_space *space, offs_t offset)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	return (offset * 4 < r3000->cache_size) ? *(UINT32 *)&r3000->cache[offset] : 0xffffffff;
+	return (offset * 4 < r3000->cache_size) ? *(uint32_t *)&r3000->cache[offset] : 0xffffffff;
 }
 
-static void writecache_le(const address_space *space, offs_t offset, UINT8 data)
+static void writecache_le(const address_space *space, offs_t offset, uint8_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
 	if (offset * 4 < r3000->cache_size) r3000->cache[BYTE4_XOR_LE(offset)] = data;
 }
 
-static void writecache_le_word(const address_space *space, offs_t offset, UINT16 data)
+static void writecache_le_word(const address_space *space, offs_t offset, uint16_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	if (offset * 4 < r3000->cache_size) *(UINT16 *)&r3000->cache[WORD_XOR_LE(offset)] = data;
+	if (offset * 4 < r3000->cache_size) *(uint16_t *)&r3000->cache[WORD_XOR_LE(offset)] = data;
 }
 
-static void writecache_le_dword(const address_space *space, offs_t offset, UINT32 data)
+static void writecache_le_dword(const address_space *space, offs_t offset, uint32_t data)
 {
 	r3000_state *r3000 = get_safe_token(space->cpu);
 	offset &= 0x1fffffff;
-	if (offset * 4 < r3000->cache_size) *(UINT32 *)&r3000->cache[offset] = data;
+	if (offset * 4 < r3000->cache_size) *(uint32_t *)&r3000->cache[offset] = data;
 }
 
 
@@ -982,10 +982,10 @@ static void writecache_le_dword(const address_space *space, offs_t offset, UINT3
     COMPLEX OPCODE IMPLEMENTATIONS
 ***************************************************************************/
 
-static void lwl_be(r3000_state *r3000, UINT32 op)
+static void lwl_be(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
-	UINT32 temp = RLONG(r3000, offs & ~3);
+	uint32_t temp = RLONG(r3000, offs & ~3);
 	if (RTREG)
 	{
 		if (!(offs & 3)) r3000->RTVAL = temp;
@@ -997,10 +997,10 @@ static void lwl_be(r3000_state *r3000, UINT32 op)
 	}
 }
 
-static void lwr_be(r3000_state *r3000, UINT32 op)
+static void lwr_be(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
-	UINT32 temp = RLONG(r3000, offs & ~3);
+	uint32_t temp = RLONG(r3000, offs & ~3);
 	if (RTREG)
 	{
 		if ((offs & 3) == 3) r3000->RTVAL = temp;
@@ -1012,26 +1012,26 @@ static void lwr_be(r3000_state *r3000, UINT32 op)
 	}
 }
 
-static void swl_be(r3000_state *r3000, UINT32 op)
+static void swl_be(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
 	if (!(offs & 3)) WLONG(r3000, offs, r3000->RTVAL);
 	else
 	{
-		UINT32 temp = RLONG(r3000, offs & ~3);
+		uint32_t temp = RLONG(r3000, offs & ~3);
 		int shift = 8 * (offs & 3);
 		WLONG(r3000, offs & ~3, (temp & (0xffffff00 << (24 - shift))) | (r3000->RTVAL >> shift));
 	}
 }
 
 
-static void swr_be(r3000_state *r3000, UINT32 op)
+static void swr_be(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
 	if ((offs & 3) == 3) WLONG(r3000, offs & ~3, r3000->RTVAL);
 	else
 	{
-		UINT32 temp = RLONG(r3000, offs & ~3);
+		uint32_t temp = RLONG(r3000, offs & ~3);
 		int shift = 8 * (offs & 3);
 		WLONG(r3000, offs & ~3, (temp & (0x00ffffff >> shift)) | (r3000->RTVAL << (24 - shift)));
 	}
@@ -1039,10 +1039,10 @@ static void swr_be(r3000_state *r3000, UINT32 op)
 
 
 
-static void lwl_le(r3000_state *r3000, UINT32 op)
+static void lwl_le(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
-	UINT32 temp = RLONG(r3000, offs & ~3);
+	uint32_t temp = RLONG(r3000, offs & ~3);
 	if (RTREG)
 	{
 		if (!(offs & 3)) r3000->RTVAL = temp;
@@ -1054,10 +1054,10 @@ static void lwl_le(r3000_state *r3000, UINT32 op)
 	}
 }
 
-static void lwr_le(r3000_state *r3000, UINT32 op)
+static void lwr_le(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
-	UINT32 temp = RLONG(r3000, offs & ~3);
+	uint32_t temp = RLONG(r3000, offs & ~3);
 	if (RTREG)
 	{
 		if ((offs & 3) == 3) r3000->RTVAL = temp;
@@ -1069,25 +1069,25 @@ static void lwr_le(r3000_state *r3000, UINT32 op)
 	}
 }
 
-static void swl_le(r3000_state *r3000, UINT32 op)
+static void swl_le(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
 	if (!(offs & 3)) WLONG(r3000, offs, r3000->RTVAL);
 	else
 	{
-		UINT32 temp = RLONG(r3000, offs & ~3);
+		uint32_t temp = RLONG(r3000, offs & ~3);
 		int shift = 8 * (offs & 3);
 		WLONG(r3000, offs & ~3, (temp & (0x00ffffff >> (24 - shift))) | (r3000->RTVAL << shift));
 	}
 }
 
-static void swr_le(r3000_state *r3000, UINT32 op)
+static void swr_le(r3000_state *r3000, uint32_t op)
 {
 	offs_t offs = SIMMVAL + r3000->RSVAL;
 	if ((offs & 3) == 3) WLONG(r3000, offs & ~3, r3000->RTVAL);
 	else
 	{
-		UINT32 temp = RLONG(r3000, offs & ~3);
+		uint32_t temp = RLONG(r3000, offs & ~3);
 		int shift = 8 * (offs & 3);
 		WLONG(r3000, offs & ~3, (temp & (0xffffff00 << shift)) | (r3000->RTVAL >> (24 - shift)));
 	}

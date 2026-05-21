@@ -19,13 +19,13 @@
     FUNCTION PROTOTYPES
 ***************************************************************************/
 
-static int describe_instruction_special(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_regimm(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_idt(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop0(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop1(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop1x(mips3_state *mips, UINT32 op, opcode_desc *desc);
-static int describe_instruction_cop2(mips3_state *mips, UINT32 op, opcode_desc *desc);
+static int describe_instruction_special(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_regimm(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_idt(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop0(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop1(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop1x(mips3_state *mips, uint32_t op, opcode_desc *desc);
+static int describe_instruction_cop2(mips3_state *mips, uint32_t op, opcode_desc *desc);
 
 
 
@@ -41,7 +41,7 @@ static int describe_instruction_cop2(mips3_state *mips, UINT32 op, opcode_desc *
 int mips3fe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
 {
 	mips3_state *mips = (mips3_state *)param;
-	UINT32 op, opswitch;
+	uint32_t op, opswitch;
 
 	/* compute the physical PC */
 	if (!mips3com_translate_address(mips, ADDRESS_SPACE_PROGRAM, TRANSLATE_FETCH, &desc->physpc))
@@ -235,7 +235,7 @@ int mips3fe_describe(void *param, opcode_desc *desc, const opcode_desc *prev)
     'special' group
 -------------------------------------------------*/
 
-static int describe_instruction_special(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_special(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	switch (op & 63)
 	{
@@ -387,7 +387,7 @@ static int describe_instruction_special(mips3_state *mips, UINT32 op, opcode_des
     'regimm' group
 -------------------------------------------------*/
 
-static int describe_instruction_regimm(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_regimm(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	switch (RTREG)
 	{
@@ -445,7 +445,7 @@ static int describe_instruction_regimm(mips3_state *mips, UINT32 op, opcode_desc
     IDT-specific group
 -------------------------------------------------*/
 
-static int describe_instruction_idt(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_idt(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	/* only on the R4650 */
 	if (mips->flavor != MIPS3_TYPE_R4650)
@@ -477,7 +477,7 @@ static int describe_instruction_idt(mips3_state *mips, UINT32 op, opcode_desc *d
     COP0 group
 -------------------------------------------------*/
 
-static int describe_instruction_cop0(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop0(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	/* any COP0 instruction can potentially cause an exception */
 	desc->flags |= OPFLAG_CAN_CAUSE_EXCEPTION;
@@ -553,7 +553,7 @@ static int describe_instruction_cop0(mips3_state *mips, UINT32 op, opcode_desc *
     COP1 group
 -------------------------------------------------*/
 
-static int describe_instruction_cop1(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop1(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	/* any COP1 instruction can potentially cause an exception */
 //  desc->flags |= OPFLAG_CAN_CAUSE_EXCEPTION;
@@ -672,7 +672,7 @@ static int describe_instruction_cop1(mips3_state *mips, UINT32 op, opcode_desc *
     COP1X group
 -------------------------------------------------*/
 
-static int describe_instruction_cop1x(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop1x(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	/* any COP1 instruction can potentially cause an exception */
 //  desc->flags |= OPFLAG_CAN_CAUSE_EXCEPTION;
@@ -716,7 +716,7 @@ static int describe_instruction_cop1x(mips3_state *mips, UINT32 op, opcode_desc 
     COP2 group
 -------------------------------------------------*/
 
-static int describe_instruction_cop2(mips3_state *mips, UINT32 op, opcode_desc *desc)
+static int describe_instruction_cop2(mips3_state *mips, uint32_t op, opcode_desc *desc)
 {
 	/* any COP2 instruction can potentially cause an exception */
 	desc->flags |= OPFLAG_CAN_CAUSE_EXCEPTION;

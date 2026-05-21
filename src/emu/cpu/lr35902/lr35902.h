@@ -9,8 +9,8 @@ typedef void (*lr35902_timer_fired_func)(running_device *device, int cycles);
 typedef struct _lr35902_cpu_core lr35902_cpu_core;
 struct _lr35902_cpu_core
 {
-	const UINT16	*regs;
-	UINT8			features;
+	const uint16_t	*regs;
+	uint8_t			features;
 	lr35902_timer_fired_func timer_fired_func;
 };
 

@@ -45,9 +45,9 @@ static void PREFIX186(_popa)(i8086_state *cpustate)    /* Opcode 0x61 */
 static void PREFIX186(_bound)(i8086_state *cpustate)    /* Opcode 0x62 */
 {
 	unsigned ModRM = FETCHOP;
-	int low = (INT16)GetRMWord(ModRM);
-    int high= (INT16)GetnextRMWord;
-	int tmp= (INT16)RegWord(ModRM);
+	int low = (int16_t)GetRMWord(ModRM);
+    int high= (int16_t)GetnextRMWord;
+	int tmp= (int16_t)RegWord(ModRM);
 	if (tmp<low || tmp>high) {
 		cpustate->pc-=2;
 		PREFIX86(_interrupt)(cpustate, 5);
@@ -72,15 +72,15 @@ static void PREFIX186(_imul_d16)(i8086_state *cpustate)    /* Opcode 0x69 */
 
 	ICOUNT -= (ModRM >= 0xc0) ? timing.imul_rri16 : timing.imul_rmi16;
 
-	dst = (INT32)((INT16)src)*(INT32)((INT16)src2);
-	cpustate->CarryVal = cpustate->OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1);
+	dst = (int32_t)((int16_t)src)*(int32_t)((int16_t)src2);
+	cpustate->CarryVal = cpustate->OverVal = (((int32_t)dst) >> 15 != 0) && (((int32_t)dst) >> 15 != -1);
 	RegWord(ModRM)=(WORD)dst;
 }
 
 
 static void PREFIX186(_push_d8)(i8086_state *cpustate)    /* Opcode 0x6a */
 {
-	unsigned tmp = (WORD)((INT16)((INT8)FETCH));
+	unsigned tmp = (WORD)((int16_t)((int8_t)FETCH));
 
 	ICOUNT -= timing.push_imm;
 	PUSH(tmp);
@@ -89,12 +89,12 @@ static void PREFIX186(_push_d8)(i8086_state *cpustate)    /* Opcode 0x6a */
 static void PREFIX186(_imul_d8)(i8086_state *cpustate)    /* Opcode 0x6b */
 {
 	DEF_r16w(dst,src);
-	unsigned src2= (WORD)((INT16)((INT8)FETCH));
+	unsigned src2= (WORD)((int16_t)((int8_t)FETCH));
 
 	ICOUNT -= (ModRM >= 0xc0) ? timing.imul_rri8 : timing.imul_rmi8;
 
-	dst = (INT32)((INT16)src)*(INT32)((INT16)src2);
-	cpustate->CarryVal = cpustate->OverVal = (((INT32)dst) >> 15 != 0) && (((INT32)dst) >> 15 != -1);
+	dst = (int32_t)((int16_t)src)*(int32_t)((int16_t)src2);
+	cpustate->CarryVal = cpustate->OverVal = (((int32_t)dst) >> 15 != 0) && (((int32_t)dst) >> 15 != -1);
 	RegWord(ModRM)=(WORD)dst;
 }
 

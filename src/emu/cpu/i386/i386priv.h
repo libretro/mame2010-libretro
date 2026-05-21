@@ -10,7 +10,7 @@
 #define PENTIUMOP(XX)	pentium_##XX
 #define MMXOP(XX)		mmx_##XX
 
-extern int i386_dasm_one(char *buffer, UINT32 pc, const UINT8 *oprom, int mode);
+extern int i386_dasm_one(char *buffer, uint32_t pc, const uint8_t *oprom, int mode);
 
 typedef enum { ES, CS, SS, DS, FS, GS } SREGS;
 
@@ -149,33 +149,33 @@ enum
 };
 
 typedef struct {
-	UINT16 selector;
-	UINT16 flags;
-	UINT32 base;
-	UINT32 limit;
+	uint16_t selector;
+	uint16_t flags;
+	uint32_t base;
+	uint32_t limit;
 	int d;		// Operand size
 } I386_SREG;
 
 typedef struct {
-	UINT32 base;
-	UINT16 limit;
+	uint32_t base;
+	uint16_t limit;
 } I386_SYS_TABLE;
 
 typedef struct {
-	UINT16 segment;
-	UINT16 flags;
-	UINT32 base;
-	UINT32 limit;
+	uint16_t segment;
+	uint16_t flags;
+	uint32_t base;
+	uint32_t limit;
 } I386_SEG_DESC;
 
 typedef union {
-	UINT32 d[8];
-	UINT16 w[16];
-	UINT8 b[32];
+	uint32_t d[8];
+	uint16_t w[16];
+	uint8_t b[32];
 } I386_GPR;
 
 typedef union {
-	UINT64 i;
+	uint64_t i;
 	double f;
 } X87_REG;
 
@@ -184,29 +184,29 @@ struct _i386_state
 {
 	I386_GPR reg;
 	I386_SREG sreg[6];
-	UINT32 eip;
-	UINT32 pc;
-	UINT32 prev_eip;
-	UINT32 eflags;
-	UINT32 eflags_mask;
-	UINT8 CF;
-	UINT8 DF;
-	UINT8 SF;
-	UINT8 OF;
-	UINT8 ZF;
-	UINT8 PF;
-	UINT8 AF;
-	UINT8 IF;
-	UINT8 TF;
-	UINT8 IOP1;
-	UINT8 IOP2;
-	UINT8 NT;
+	uint32_t eip;
+	uint32_t pc;
+	uint32_t prev_eip;
+	uint32_t eflags;
+	uint32_t eflags_mask;
+	uint8_t CF;
+	uint8_t DF;
+	uint8_t SF;
+	uint8_t OF;
+	uint8_t ZF;
+	uint8_t PF;
+	uint8_t AF;
+	uint8_t IF;
+	uint8_t TF;
+	uint8_t IOP1;
+	uint8_t IOP2;
+	uint8_t NT;
 
-	UINT8 performed_intersegment_jump;
+	uint8_t performed_intersegment_jump;
 
-	UINT32 cr[5];		// Control registers
-	UINT32 dr[8];		// Debug registers
-	UINT32 tr[8];		// Test registers
+	uint32_t cr[5];		// Control registers
+	uint32_t dr[8];		// Debug registers
+	uint32_t tr[8];		// Test registers
 
 	I386_SYS_TABLE gdtr;	// Global Descriptor Table Register
 	I386_SYS_TABLE idtr;	// Interrupt Descriptor Table Register
@@ -223,29 +223,29 @@ struct _i386_state
 
 	int cycles;
 	int base_cycles;
-	UINT8 opcode;
+	uint8_t opcode;
 
-	UINT8 irq_state;
+	uint8_t irq_state;
 	device_irq_callback irq_callback;
 	legacy_cpu_device *device;
 	const address_space *program;
 	const address_space *io;
-	UINT32 a20_mask;
+	uint32_t a20_mask;
 
 	int cpuid_max_input_value_eax;
-	UINT32 cpuid_id0, cpuid_id1, cpuid_id2;
-	UINT32 cpu_version;
-	UINT32 feature_flags;
-	UINT64 tsc;
+	uint32_t cpuid_id0, cpuid_id1, cpuid_id2;
+	uint32_t cpu_version;
+	uint32_t feature_flags;
+	uint64_t tsc;
 
 	// FPU
 	X87_REG fpu_reg[8];
-	UINT16 fpu_control_word;
-	UINT16 fpu_status_word;
-	UINT16 fpu_tag_word;
-	UINT64 fpu_data_ptr;
-	UINT64 fpu_inst_ptr;
-	UINT16 fpu_opcode;
+	uint16_t fpu_control_word;
+	uint16_t fpu_status_word;
+	uint16_t fpu_tag_word;
+	uint64_t fpu_data_ptr;
+	uint64_t fpu_inst_ptr;
+	uint16_t fpu_opcode;
 	int fpu_top;
 
 	void (*opcode_table1_16[256])(i386_state *cpustate);
@@ -253,8 +253,8 @@ struct _i386_state
 	void (*opcode_table2_16[256])(i386_state *cpustate);
 	void (*opcode_table2_32[256])(i386_state *cpustate);
 
-	UINT8 *cycle_table_pm;
-	UINT8 *cycle_table_rm;
+	uint8_t *cycle_table_pm;
+	uint8_t *cycle_table_rm;
 };
 
 INLINE i386_state *get_safe_token(running_device *device)
@@ -283,16 +283,16 @@ extern int i386_parity_table[256];
 
 #define SetCF8(x)			{cpustate->CF = ((x) & 0x100) ? 1 : 0; }
 #define SetCF16(x)			{cpustate->CF = ((x) & 0x10000) ? 1 : 0; }
-#define SetCF32(x)			{cpustate->CF = ((x) & (((UINT64)1) << 32)) ? 1 : 0; }
+#define SetCF32(x)			{cpustate->CF = ((x) & (((uint64_t)1) << 32)) ? 1 : 0; }
 
 #define SetSF(x)			(cpustate->SF = (x))
 #define SetZF(x)			(cpustate->ZF = (x))
 #define SetAF(x,y,z)		(cpustate->AF = (((x) ^ ((y) ^ (z))) & 0x10) ? 1 : 0)
 #define SetPF(x)			(cpustate->PF = i386_parity_table[(x) & 0xFF])
 
-#define SetSZPF8(x)			{cpustate->ZF = ((UINT8)(x)==0);  cpustate->SF = ((x)&0x80) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
-#define SetSZPF16(x)		{cpustate->ZF = ((UINT16)(x)==0);  cpustate->SF = ((x)&0x8000) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
-#define SetSZPF32(x)		{cpustate->ZF = ((UINT32)(x)==0);  cpustate->SF = ((x)&0x80000000) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
+#define SetSZPF8(x)			{cpustate->ZF = ((uint8_t)(x)==0);  cpustate->SF = ((x)&0x80) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
+#define SetSZPF16(x)		{cpustate->ZF = ((uint16_t)(x)==0);  cpustate->SF = ((x)&0x8000) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
+#define SetSZPF32(x)		{cpustate->ZF = ((uint32_t)(x)==0);  cpustate->SF = ((x)&0x80000000) ? 1 : 0; cpustate->PF = i386_parity_table[x & 0xFF]; }
 
 /***********************************************************************************/
 
@@ -333,23 +333,23 @@ extern MODRM_TABLE i386_MODRM_table[256];
 
 /***********************************************************************************/
 
-INLINE UINT32 i386_translate(i386_state *cpustate, int segment, UINT32 ip)
+INLINE uint32_t i386_translate(i386_state *cpustate, int segment, uint32_t ip)
 {
 	// TODO: segment limit
 	return cpustate->sreg[segment].base + ip;
 }
 
-INLINE int translate_address(i386_state *cpustate, UINT32 *address)
+INLINE int translate_address(i386_state *cpustate, uint32_t *address)
 {
-	UINT32 a = *address;
-	UINT32 pdbr = cpustate->cr[3] & 0xfffff000;
-	UINT32 directory = (a >> 22) & 0x3ff;
-	UINT32 table = (a >> 12) & 0x3ff;
-	UINT32 offset = a & 0xfff;
-	UINT32 page_entry;
+	uint32_t a = *address;
+	uint32_t pdbr = cpustate->cr[3] & 0xfffff000;
+	uint32_t directory = (a >> 22) & 0x3ff;
+	uint32_t table = (a >> 12) & 0x3ff;
+	uint32_t offset = a & 0xfff;
+	uint32_t page_entry;
 
 	// TODO: 4MB pages
-	UINT32 page_dir = memory_read_dword_32le(cpustate->program, pdbr + directory * 4);
+	uint32_t page_dir = memory_read_dword_32le(cpustate->program, pdbr + directory * 4);
 	if (!(cpustate->cr[4] & 0x10)) {
 		page_entry = memory_read_dword_32le(cpustate->program, (page_dir & 0xfffff000) + (table * 4));
 		*address = (page_entry & 0xfffff000) | offset;
@@ -364,9 +364,9 @@ INLINE int translate_address(i386_state *cpustate, UINT32 *address)
 	return 1;
 }
 
-INLINE void CHANGE_PC(i386_state *cpustate, UINT32 pc)
+INLINE void CHANGE_PC(i386_state *cpustate, uint32_t pc)
 {
-	UINT32 address;
+	uint32_t address;
 	cpustate->pc = i386_translate(cpustate, CS, pc );
 
 	address = cpustate->pc;
@@ -377,9 +377,9 @@ INLINE void CHANGE_PC(i386_state *cpustate, UINT32 pc)
 	}
 }
 
-INLINE void NEAR_BRANCH(i386_state *cpustate, INT32 offs)
+INLINE void NEAR_BRANCH(i386_state *cpustate, int32_t offs)
 {
-	UINT32 address;
+	uint32_t address;
 	/* TODO: limit */
 	cpustate->eip += offs;
 	cpustate->pc += offs;
@@ -392,10 +392,10 @@ INLINE void NEAR_BRANCH(i386_state *cpustate, INT32 offs)
 	}
 }
 
-INLINE UINT8 FETCH(i386_state *cpustate)
+INLINE uint8_t FETCH(i386_state *cpustate)
 {
-	UINT8 value;
-	UINT32 address = cpustate->pc;
+	uint8_t value;
+	uint32_t address = cpustate->pc;
 
 	if (cpustate->cr[0] & 0x80000000)		// page translation enabled
 	{
@@ -407,10 +407,10 @@ INLINE UINT8 FETCH(i386_state *cpustate)
 	cpustate->pc++;
 	return value;
 }
-INLINE UINT16 FETCH16(i386_state *cpustate)
+INLINE uint16_t FETCH16(i386_state *cpustate)
 {
-	UINT16 value;
-	UINT32 address = cpustate->pc;
+	uint16_t value;
+	uint32_t address = cpustate->pc;
 
 	if( address & 0x1 ) {		/* Unaligned read */
 		value = (FETCH(cpustate) << 0) |
@@ -427,10 +427,10 @@ INLINE UINT16 FETCH16(i386_state *cpustate)
 	}
 	return value;
 }
-INLINE UINT32 FETCH32(i386_state *cpustate)
+INLINE uint32_t FETCH32(i386_state *cpustate)
 {
-	UINT32 value;
-	UINT32 address = cpustate->pc;
+	uint32_t value;
+	uint32_t address = cpustate->pc;
 
 	if( cpustate->pc & 0x3 ) {		/* Unaligned read */
 		value = (FETCH(cpustate) << 0) |
@@ -451,9 +451,9 @@ INLINE UINT32 FETCH32(i386_state *cpustate)
 	return value;
 }
 
-INLINE UINT8 READ8(i386_state *cpustate,UINT32 ea)
+INLINE uint8_t READ8(i386_state *cpustate,uint32_t ea)
 {
-	UINT32 address = ea;
+	uint32_t address = ea;
 
 	if (cpustate->cr[0] & 0x80000000)		// page translation enabled
 	{
@@ -463,10 +463,10 @@ INLINE UINT8 READ8(i386_state *cpustate,UINT32 ea)
 	address &= cpustate->a20_mask;
 	return memory_read_byte_32le(cpustate->program, address);
 }
-INLINE UINT16 READ16(i386_state *cpustate,UINT32 ea)
+INLINE uint16_t READ16(i386_state *cpustate,uint32_t ea)
 {
-	UINT16 value;
-	UINT32 address = ea;
+	uint16_t value;
+	uint32_t address = ea;
 
 	if( ea & 0x1 ) {		/* Unaligned read */
 		value = (READ8( cpustate, address+0 ) << 0) |
@@ -482,10 +482,10 @@ INLINE UINT16 READ16(i386_state *cpustate,UINT32 ea)
 	}
 	return value;
 }
-INLINE UINT32 READ32(i386_state *cpustate,UINT32 ea)
+INLINE uint32_t READ32(i386_state *cpustate,uint32_t ea)
 {
-	UINT32 value;
-	UINT32 address = ea;
+	uint32_t value;
+	uint32_t address = ea;
 
 	if( ea & 0x3 ) {		/* Unaligned read */
 		value = (READ8( cpustate, address+0 ) << 0) |
@@ -504,20 +504,20 @@ INLINE UINT32 READ32(i386_state *cpustate,UINT32 ea)
 	return value;
 }
 
-INLINE UINT64 READ64(i386_state *cpustate,UINT32 ea)
+INLINE uint64_t READ64(i386_state *cpustate,uint32_t ea)
 {
-	UINT64 value;
-	UINT32 address = ea;
+	uint64_t value;
+	uint32_t address = ea;
 
 	if( ea & 0x7 ) {		/* Unaligned read */
-		value = (((UINT64) READ8( cpustate, address+0 )) << 0) |
-				(((UINT64) READ8( cpustate, address+1 )) << 8) |
-				(((UINT64) READ8( cpustate, address+2 )) << 16) |
-				(((UINT64) READ8( cpustate, address+3 )) << 24) |
-				(((UINT64) READ8( cpustate, address+4 )) << 32) |
-				(((UINT64) READ8( cpustate, address+5 )) << 40) |
-				(((UINT64) READ8( cpustate, address+6 )) << 48) |
-				(((UINT64) READ8( cpustate, address+7 )) << 56);
+		value = (((uint64_t) READ8( cpustate, address+0 )) << 0) |
+				(((uint64_t) READ8( cpustate, address+1 )) << 8) |
+				(((uint64_t) READ8( cpustate, address+2 )) << 16) |
+				(((uint64_t) READ8( cpustate, address+3 )) << 24) |
+				(((uint64_t) READ8( cpustate, address+4 )) << 32) |
+				(((uint64_t) READ8( cpustate, address+5 )) << 40) |
+				(((uint64_t) READ8( cpustate, address+6 )) << 48) |
+				(((uint64_t) READ8( cpustate, address+7 )) << 56);
 	} else {
 		if (cpustate->cr[0] & 0x80000000)		// page translation enabled
 		{
@@ -525,15 +525,15 @@ INLINE UINT64 READ64(i386_state *cpustate,UINT32 ea)
 		}
 
 		address &= cpustate->a20_mask;
-		value = (((UINT64) memory_read_dword_32le( cpustate->program, address+0 )) << 0) |
-				(((UINT64) memory_read_dword_32le( cpustate->program, address+4 )) << 32);
+		value = (((uint64_t) memory_read_dword_32le( cpustate->program, address+0 )) << 0) |
+				(((uint64_t) memory_read_dword_32le( cpustate->program, address+4 )) << 32);
 	}
 	return value;
 }
 
-INLINE void WRITE8(i386_state *cpustate,UINT32 ea, UINT8 value)
+INLINE void WRITE8(i386_state *cpustate,uint32_t ea, uint8_t value)
 {
-	UINT32 address = ea;
+	uint32_t address = ea;
 
 	if (cpustate->cr[0] & 0x80000000)		// page translation enabled
 	{
@@ -543,9 +543,9 @@ INLINE void WRITE8(i386_state *cpustate,UINT32 ea, UINT8 value)
 	address &= cpustate->a20_mask;
 	memory_write_byte_32le(cpustate->program, address, value);
 }
-INLINE void WRITE16(i386_state *cpustate,UINT32 ea, UINT16 value)
+INLINE void WRITE16(i386_state *cpustate,uint32_t ea, uint16_t value)
 {
-	UINT32 address = ea;
+	uint32_t address = ea;
 
 	if( ea & 0x1 ) {		/* Unaligned write */
 		WRITE8( cpustate, address+0, value & 0xff );
@@ -560,9 +560,9 @@ INLINE void WRITE16(i386_state *cpustate,UINT32 ea, UINT16 value)
 		memory_write_word_32le(cpustate->program, address, value);
 	}
 }
-INLINE void WRITE32(i386_state *cpustate,UINT32 ea, UINT32 value)
+INLINE void WRITE32(i386_state *cpustate,uint32_t ea, uint32_t value)
 {
-	UINT32 address = ea;
+	uint32_t address = ea;
 
 	if( ea & 0x3 ) {		/* Unaligned write */
 		WRITE8( cpustate, address+0, value & 0xff );
@@ -580,9 +580,9 @@ INLINE void WRITE32(i386_state *cpustate,UINT32 ea, UINT32 value)
 	}
 }
 
-INLINE void WRITE64(i386_state *cpustate,UINT32 ea, UINT64 value)
+INLINE void WRITE64(i386_state *cpustate,uint32_t ea, uint64_t value)
 {
-	UINT32 address = ea;
+	uint32_t address = ea;
 
 	if( ea & 0x7 ) {		/* Unaligned write */
 		WRITE8( cpustate, address+0, value & 0xff );
@@ -607,193 +607,193 @@ INLINE void WRITE64(i386_state *cpustate,UINT32 ea, UINT64 value)
 
 /***********************************************************************************/
 
-INLINE UINT8 OR8(i386_state *cpustate,UINT8 dst, UINT8 src)
+INLINE uint8_t OR8(i386_state *cpustate,uint8_t dst, uint8_t src)
 {
-	UINT8 res = dst | src;
+	uint8_t res = dst | src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF8(res);
 	return res;
 }
-INLINE UINT16 OR16(i386_state *cpustate,UINT16 dst, UINT16 src)
+INLINE uint16_t OR16(i386_state *cpustate,uint16_t dst, uint16_t src)
 {
-	UINT16 res = dst | src;
+	uint16_t res = dst | src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF16(res);
 	return res;
 }
-INLINE UINT32 OR32(i386_state *cpustate,UINT32 dst, UINT32 src)
+INLINE uint32_t OR32(i386_state *cpustate,uint32_t dst, uint32_t src)
 {
-	UINT32 res = dst | src;
+	uint32_t res = dst | src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF32(res);
 	return res;
 }
 
-INLINE UINT8 AND8(i386_state *cpustate,UINT8 dst, UINT8 src)
+INLINE uint8_t AND8(i386_state *cpustate,uint8_t dst, uint8_t src)
 {
-	UINT8 res = dst & src;
+	uint8_t res = dst & src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF8(res);
 	return res;
 }
-INLINE UINT16 AND16(i386_state *cpustate,UINT16 dst, UINT16 src)
+INLINE uint16_t AND16(i386_state *cpustate,uint16_t dst, uint16_t src)
 {
-	UINT16 res = dst & src;
+	uint16_t res = dst & src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF16(res);
 	return res;
 }
-INLINE UINT32 AND32(i386_state *cpustate,UINT32 dst, UINT32 src)
+INLINE uint32_t AND32(i386_state *cpustate,uint32_t dst, uint32_t src)
 {
-	UINT32 res = dst & src;
+	uint32_t res = dst & src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF32(res);
 	return res;
 }
 
-INLINE UINT8 XOR8(i386_state *cpustate,UINT8 dst, UINT8 src)
+INLINE uint8_t XOR8(i386_state *cpustate,uint8_t dst, uint8_t src)
 {
-	UINT8 res = dst ^ src;
+	uint8_t res = dst ^ src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF8(res);
 	return res;
 }
-INLINE UINT16 XOR16(i386_state *cpustate,UINT16 dst, UINT16 src)
+INLINE uint16_t XOR16(i386_state *cpustate,uint16_t dst, uint16_t src)
 {
-	UINT16 res = dst ^ src;
+	uint16_t res = dst ^ src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF16(res);
 	return res;
 }
-INLINE UINT32 XOR32(i386_state *cpustate,UINT32 dst, UINT32 src)
+INLINE uint32_t XOR32(i386_state *cpustate,uint32_t dst, uint32_t src)
 {
-	UINT32 res = dst ^ src;
+	uint32_t res = dst ^ src;
 	cpustate->CF = cpustate->OF = 0;
 	SetSZPF32(res);
 	return res;
 }
 
 #define SUB8(cpu, dst, src) SBB8(cpu, dst, src, 0)
-INLINE UINT8 SBB8(i386_state *cpustate,UINT8 dst, UINT8 src, UINT8 b)
+INLINE uint8_t SBB8(i386_state *cpustate,uint8_t dst, uint8_t src, uint8_t b)
 {
-	UINT16 res = (UINT16)dst - (UINT16)src - (UINT8)b;
+	uint16_t res = (uint16_t)dst - (uint16_t)src - (uint8_t)b;
 	SetCF8(res);
 	SetOF_Sub8(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF8(res);
-	return (UINT8)res;
+	return (uint8_t)res;
 }
 
 #define SUB16(cpu, dst, src) SBB16(cpu, dst, src, 0)
-INLINE UINT16 SBB16(i386_state *cpustate,UINT16 dst, UINT16 src, UINT16 b)
+INLINE uint16_t SBB16(i386_state *cpustate,uint16_t dst, uint16_t src, uint16_t b)
 {
-	UINT32 res = (UINT32)dst - (UINT32)src - (UINT32)b;
+	uint32_t res = (uint32_t)dst - (uint32_t)src - (uint32_t)b;
 	SetCF16(res);
 	SetOF_Sub16(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF16(res);
-	return (UINT16)res;
+	return (uint16_t)res;
 }
 
 #define SUB32(cpu, dst, src) SBB32(cpu, dst, src, 0)
-INLINE UINT32 SBB32(i386_state *cpustate,UINT32 dst, UINT32 src, UINT32 b)
+INLINE uint32_t SBB32(i386_state *cpustate,uint32_t dst, uint32_t src, uint32_t b)
 {
-	UINT64 res = (UINT64)dst - (UINT64)src - (UINT64) b;
+	uint64_t res = (uint64_t)dst - (uint64_t)src - (uint64_t) b;
 	SetCF32(res);
 	SetOF_Sub32(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF32(res);
-	return (UINT32)res;
+	return (uint32_t)res;
 }
 
 #define ADD8(cpu, dst, src) ADC8(cpu, dst, src, 0)
-INLINE UINT8 ADC8(i386_state *cpustate,UINT8 dst, UINT8 src, UINT8 c)
+INLINE uint8_t ADC8(i386_state *cpustate,uint8_t dst, uint8_t src, uint8_t c)
 {
-	UINT16 res = (UINT16)dst + (UINT16)src + (UINT16)c;
+	uint16_t res = (uint16_t)dst + (uint16_t)src + (uint16_t)c;
 	SetCF8(res);
 	SetOF_Add8(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF8(res);
-	return (UINT8)res;
+	return (uint8_t)res;
 }
 
 #define ADD16(cpu, dst, src) ADC16(cpu, dst, src, 0)
-INLINE UINT16 ADC16(i386_state *cpustate,UINT16 dst, UINT16 src, UINT8 c)
+INLINE uint16_t ADC16(i386_state *cpustate,uint16_t dst, uint16_t src, uint8_t c)
 {
-	UINT32 res = (UINT32)dst + (UINT32)src + (UINT32)c;
+	uint32_t res = (uint32_t)dst + (uint32_t)src + (uint32_t)c;
 	SetCF16(res);
 	SetOF_Add16(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF16(res);
-	return (UINT16)res;
+	return (uint16_t)res;
 }
 
 #define ADD32(cpu, dst, src) ADC32(cpu, dst, src, 0)
-INLINE UINT32 ADC32(i386_state *cpustate,UINT32 dst, UINT32 src, UINT32 c)
+INLINE uint32_t ADC32(i386_state *cpustate,uint32_t dst, uint32_t src, uint32_t c)
 {
-	UINT64 res = (UINT64)dst + (UINT64)src + (UINT64) c;
+	uint64_t res = (uint64_t)dst + (uint64_t)src + (uint64_t) c;
 	SetCF32(res);
 	SetOF_Add32(res,src,dst);
 	SetAF(res,src,dst);
 	SetSZPF32(res);
-	return (UINT32)res;
+	return (uint32_t)res;
 }
 
-INLINE UINT8 INC8(i386_state *cpustate,UINT8 dst)
+INLINE uint8_t INC8(i386_state *cpustate,uint8_t dst)
 {
-	UINT16 res = (UINT16)dst + 1;
+	uint16_t res = (uint16_t)dst + 1;
 	SetOF_Add8(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF8(res);
-	return (UINT8)res;
+	return (uint8_t)res;
 }
-INLINE UINT16 INC16(i386_state *cpustate,UINT16 dst)
+INLINE uint16_t INC16(i386_state *cpustate,uint16_t dst)
 {
-	UINT32 res = (UINT32)dst + 1;
+	uint32_t res = (uint32_t)dst + 1;
 	SetOF_Add16(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF16(res);
-	return (UINT16)res;
+	return (uint16_t)res;
 }
-INLINE UINT32 INC32(i386_state *cpustate,UINT32 dst)
+INLINE uint32_t INC32(i386_state *cpustate,uint32_t dst)
 {
-	UINT64 res = (UINT64)dst + 1;
+	uint64_t res = (uint64_t)dst + 1;
 	SetOF_Add32(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF32(res);
-	return (UINT32)res;
+	return (uint32_t)res;
 }
 
-INLINE UINT8 DEC8(i386_state *cpustate,UINT8 dst)
+INLINE uint8_t DEC8(i386_state *cpustate,uint8_t dst)
 {
-	UINT16 res = (UINT16)dst - 1;
+	uint16_t res = (uint16_t)dst - 1;
 	SetOF_Sub8(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF8(res);
-	return (UINT8)res;
+	return (uint8_t)res;
 }
-INLINE UINT16 DEC16(i386_state *cpustate,UINT16 dst)
+INLINE uint16_t DEC16(i386_state *cpustate,uint16_t dst)
 {
-	UINT32 res = (UINT32)dst - 1;
+	uint32_t res = (uint32_t)dst - 1;
 	SetOF_Sub16(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF16(res);
-	return (UINT16)res;
+	return (uint16_t)res;
 }
-INLINE UINT32 DEC32(i386_state *cpustate,UINT32 dst)
+INLINE uint32_t DEC32(i386_state *cpustate,uint32_t dst)
 {
-	UINT64 res = (UINT64)dst - 1;
+	uint64_t res = (uint64_t)dst - 1;
 	SetOF_Sub32(res,1,dst);
 	SetAF(res,1,dst);
 	SetSZPF32(res);
-	return (UINT32)res;
+	return (uint32_t)res;
 }
 
 
 
-INLINE void PUSH16(i386_state *cpustate,UINT16 value)
+INLINE void PUSH16(i386_state *cpustate,uint16_t value)
 {
-	UINT32 ea;
+	uint32_t ea;
 	if( STACK_32BIT ) {
 		REG32(ESP) -= 2;
 		ea = i386_translate(cpustate, SS, REG32(ESP) );
@@ -804,9 +804,9 @@ INLINE void PUSH16(i386_state *cpustate,UINT16 value)
 		WRITE16(cpustate, ea, value );
 	}
 }
-INLINE void PUSH32(i386_state *cpustate,UINT32 value)
+INLINE void PUSH32(i386_state *cpustate,uint32_t value)
 {
-	UINT32 ea;
+	uint32_t ea;
 	if( STACK_32BIT ) {
 		REG32(ESP) -= 4;
 		ea = i386_translate(cpustate, SS, REG32(ESP) );
@@ -817,19 +817,19 @@ INLINE void PUSH32(i386_state *cpustate,UINT32 value)
 		WRITE32(cpustate, ea, value );
 	}
 }
-INLINE void PUSH8(i386_state *cpustate,UINT8 value)
+INLINE void PUSH8(i386_state *cpustate,uint8_t value)
 {
 	if( cpustate->operand_size ) {
-		PUSH32(cpustate,(INT32)(INT8)value);
+		PUSH32(cpustate,(int32_t)(int8_t)value);
 	} else {
-		PUSH16(cpustate,(INT16)(INT8)value);
+		PUSH16(cpustate,(int16_t)(int8_t)value);
 	}
 }
 
-INLINE UINT8 POP8(i386_state *cpustate)
+INLINE uint8_t POP8(i386_state *cpustate)
 {
-	UINT8 value;
-	UINT32 ea;
+	uint8_t value;
+	uint32_t ea;
 	if( STACK_32BIT ) {
 		ea = i386_translate(cpustate, SS, REG32(ESP) );
 		value = READ8(cpustate, ea );
@@ -841,10 +841,10 @@ INLINE UINT8 POP8(i386_state *cpustate)
 	}
 	return value;
 }
-INLINE UINT16 POP16(i386_state *cpustate)
+INLINE uint16_t POP16(i386_state *cpustate)
 {
-	UINT16 value;
-	UINT32 ea;
+	uint16_t value;
+	uint32_t ea;
 	if( STACK_32BIT ) {
 		ea = i386_translate(cpustate, SS, REG32(ESP) );
 		value = READ16(cpustate, ea );
@@ -856,10 +856,10 @@ INLINE UINT16 POP16(i386_state *cpustate)
 	}
 	return value;
 }
-INLINE UINT32 POP32(i386_state *cpustate)
+INLINE uint32_t POP32(i386_state *cpustate)
 {
-	UINT32 value;
-	UINT32 ea;
+	uint32_t value;
+	uint32_t ea;
 	if( STACK_32BIT ) {
 		ea = i386_translate(cpustate, SS, REG32(ESP) );
 		value = READ32(cpustate, ea );

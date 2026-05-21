@@ -21,19 +21,19 @@ static const char *const reg_names32[8]		=	{"ER0", "ER1", "ER2", "ER3", "ER4", "
 static const char *const reg_names16[16]	=	{"R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7"};
 static const char *const reg_names8[16]		=	{"R0H", "R1H", "R2H", "R3H", "R4H", "R5H", "R6H", "R7H","R0L", "R1L", "R2L", "R3L", "R4L", "R5L", "R6L", "R7L"};
 
-static UINT32 h8disasm_0(UINT32 address, UINT32 opcode, char *output, const UINT8 *oprom);
-static UINT32 h8disasm_1(UINT32 address, UINT32 opcode, char *output, const UINT8 *oprom);
-static UINT32 h8disasm_5(UINT32 address, UINT32 opcode, char *output, const UINT8 *oprom);
-static UINT32 h8disasm_6(UINT32 address, UINT32 opcode, char *output, const UINT8 *oprom, UINT32 addr_mask);
-static UINT32 h8disasm_7(UINT32 address, UINT32 opcode, char *output, const UINT8 *oprom, UINT32 addr_mask);
+static uint32_t h8disasm_0(uint32_t address, uint32_t opcode, char *output, const uint8_t *oprom);
+static uint32_t h8disasm_1(uint32_t address, uint32_t opcode, char *output, const uint8_t *oprom);
+static uint32_t h8disasm_5(uint32_t address, uint32_t opcode, char *output, const uint8_t *oprom);
+static uint32_t h8disasm_6(uint32_t address, uint32_t opcode, char *output, const uint8_t *oprom, uint32_t addr_mask);
+static uint32_t h8disasm_7(uint32_t address, uint32_t opcode, char *output, const uint8_t *oprom, uint32_t addr_mask);
 
 #define h8_mem_read16(x) ((oprom[x] << 8) | oprom[(x) + 1])
 #define h8_mem_read32(x) ((oprom[x] << 24) | (oprom[(x) + 1] << 16) | (oprom[(x) + 2] << 8) | oprom[(x) + 3])
 
-static offs_t h8_disasm(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram, UINT32 addr_mask)
+static offs_t h8_disasm(char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram, uint32_t addr_mask)
 {
-	UINT32 size = 0;
-	UINT16 opcode;
+	uint32_t size = 0;
+	uint16_t opcode;
 
 	opcode = h8_mem_read16(0);
 
@@ -58,7 +58,7 @@ static offs_t h8_disasm(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8
 		// bcc @xx:8
 	case 0x4:
 		pc += 2;
-		sprintf(buffer, "%4.4x %s %8.8x", opcode, branch_instr[(opcode >> 8) & 0xf], (pc + (INT8)(opcode &0xff))&addr_mask);
+		sprintf(buffer, "%4.4x %s %8.8x", opcode, branch_instr[(opcode >> 8) & 0xf], (pc + (int8_t)(opcode &0xff))&addr_mask);
 		size = 2;
 		break;
 		// group 5
@@ -120,13 +120,13 @@ static offs_t h8_disasm(char *buffer, offs_t pc, const UINT8 *oprom, const UINT8
 	return size | DASMFLAG_SUPPORTED;
 }
 
-static UINT32 h8disasm_0(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *oprom)
+static uint32_t h8disasm_0(uint32_t pc, uint32_t opcode, char *buffer, const uint8_t *oprom)
 {
-	UINT32 size = 2;
-	UINT16 data16;
-	INT16 sdata16;
-	INT32 sdata32;
-	UINT16 ext16;
+	uint32_t size = 2;
+	uint16_t data16;
+	int16_t sdata16;
+	int32_t sdata32;
+	uint16_t ext16;
 
 	switch((opcode>>8)&0xf)
 	{
@@ -432,9 +432,9 @@ static UINT32 h8disasm_0(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *op
 	return size;
 }
 
-static UINT32 h8disasm_1(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *oprom)
+static uint32_t h8disasm_1(uint32_t pc, uint32_t opcode, char *buffer, const uint8_t *oprom)
 {
-	UINT32 size = 2; //, mode8;
+	uint32_t size = 2; //, mode8;
 	switch((opcode>>8)&0xf)
 	{
 	case 0x0:
@@ -794,11 +794,11 @@ static UINT32 h8disasm_1(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *op
 	return size;
 }
 
-static UINT32 h8disasm_5(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *oprom)
+static uint32_t h8disasm_5(uint32_t pc, uint32_t opcode, char *buffer, const uint8_t *oprom)
 {
-	UINT32 size = 2;
-	UINT32 data32;
-	INT16 data16;
+	uint32_t size = 2;
+	uint32_t data32;
+	int16_t data16;
 
 	switch((opcode>>8)&0xf)
 	{
@@ -836,7 +836,7 @@ static UINT32 h8disasm_5(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *op
 		break;
 		// bsr 8
 	case 0x5:
-		sprintf(buffer, "%4.4x bsr %x", opcode, pc+2 + ((INT8)opcode& 0xff));
+		sprintf(buffer, "%4.4x bsr %x", opcode, pc+2 + ((int8_t)opcode& 0xff));
 		size = 2 | DASMFLAG_STEP_OVER;
 		break;
 		// rte
@@ -874,7 +874,7 @@ static UINT32 h8disasm_5(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *op
 		{
 			data16 = h8_mem_read16(2);
 			pc += 4;
-			sprintf(buffer, "%4.4x %s %8.8x", opcode, branch_instr[(opcode >> 4) & 0xf], pc + (INT16)(data16));
+			sprintf(buffer, "%4.4x %s %8.8x", opcode, branch_instr[(opcode >> 4) & 0xf], pc + (int16_t)(data16));
 			size = 4;
 		}
 		break;
@@ -931,11 +931,11 @@ static UINT32 h8disasm_5(UINT32 pc, UINT32 opcode, char *buffer, const UINT8 *op
 	return size;
 }
 
-static UINT32 h8disasm_6(UINT32 address, UINT32 opcode, char *buffer, const UINT8 *oprom, UINT32 addr_mask)
+static uint32_t h8disasm_6(uint32_t address, uint32_t opcode, char *buffer, const uint8_t *oprom, uint32_t addr_mask)
 {
-	UINT32 size = 2;
-	UINT32 data32;
-	INT16 data16;
+	uint32_t size = 2;
+	uint32_t data32;
+	int16_t data16;
 
 	switch((opcode>>8)&0xf)
 	{
@@ -1118,11 +1118,11 @@ static UINT32 h8disasm_6(UINT32 address, UINT32 opcode, char *buffer, const UINT
 	return size;
 }
 
-static UINT32 h8disasm_7(UINT32 address, UINT32 opcode, char *buffer, const UINT8 *oprom, UINT32 addr_mask)
+static uint32_t h8disasm_7(uint32_t address, uint32_t opcode, char *buffer, const uint8_t *oprom, uint32_t addr_mask)
 {
-	UINT32 size = 2;
-	UINT32 data32;
-	UINT16 data16;
+	uint32_t size = 2;
+	uint32_t data32;
+	uint16_t data16;
 
 	switch((opcode>>8)&0xf)
 	{

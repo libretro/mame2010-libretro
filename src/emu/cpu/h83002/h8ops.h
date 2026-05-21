@@ -1,114 +1,114 @@
-static UINT32 udata32, address24;
-static INT32 sdata32;
-static UINT16 udata16, ext16;
-static INT16 sdata16;
-static UINT8 udata8;
-static INT8 sdata8;
-static UINT8 srcreg, dstreg;
+static uint32_t udata32, address24;
+static int32_t sdata32;
+static uint16_t udata16, ext16;
+static int16_t sdata16;
+static uint8_t udata8;
+static int8_t sdata8;
+static uint8_t srcreg, dstreg;
 
-static void h8_group0(h83xx_state *h8, UINT16 opcode);
-static void h8_group1(h83xx_state *h8, UINT16 opcode);
-static void h8_group5(h83xx_state *h8, UINT16 opcode);
-static void h8_group6(h83xx_state *h8, UINT16 opcode);
-static void h8_group7(h83xx_state *h8, UINT16 opcode);
+static void h8_group0(h83xx_state *h8, uint16_t opcode);
+static void h8_group1(h83xx_state *h8, uint16_t opcode);
+static void h8_group5(h83xx_state *h8, uint16_t opcode);
+static void h8_group6(h83xx_state *h8, uint16_t opcode);
+static void h8_group7(h83xx_state *h8, uint16_t opcode);
 
-static int h8_branch(h83xx_state *h8, UINT8 condition);
+static int h8_branch(h83xx_state *h8, uint8_t condition);
 
-static UINT8 h8_mov8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_mov16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_mov32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_mov8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_mov16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_mov32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_add8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT16 h8_add16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static UINT32 h8_add32(h83xx_state *h8, UINT32 src, UINT32 dst);
+static uint8_t h8_add8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint16_t h8_add16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static uint32_t h8_add32(h83xx_state *h8, uint32_t src, uint32_t dst);
 
-static UINT8 h8_sub8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT16 h8_sub16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static UINT32 h8_sub32(h83xx_state *h8, UINT32 src, UINT32 dst);
+static uint8_t h8_sub8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint16_t h8_sub16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static uint32_t h8_sub32(h83xx_state *h8, uint32_t src, uint32_t dst);
 
-static UINT8 h8_addx8(h83xx_state *h8, UINT8 src, UINT8 dst);
+static uint8_t h8_addx8(h83xx_state *h8, uint8_t src, uint8_t dst);
 
-static void h8_cmp8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static void h8_cmp16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static void h8_cmp32(h83xx_state *h8, UINT32 src, UINT32 dst);
-static UINT8 h8_subx8(h83xx_state *h8, UINT8 src, UINT8 dst);
+static void h8_cmp8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static void h8_cmp16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static void h8_cmp32(h83xx_state *h8, uint32_t src, uint32_t dst);
+static uint8_t h8_subx8(h83xx_state *h8, uint8_t src, uint8_t dst);
 
-static UINT8 h8_or8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT16 h8_or16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static UINT32 h8_or32(h83xx_state *h8, UINT32 src, UINT32 dst);
+static uint8_t h8_or8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint16_t h8_or16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static uint32_t h8_or32(h83xx_state *h8, uint32_t src, uint32_t dst);
 
-static UINT8 h8_xor8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT16 h8_xor16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static UINT32 h8_xor32(h83xx_state *h8, UINT32 src, UINT32 dst);
+static uint8_t h8_xor8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint16_t h8_xor16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static uint32_t h8_xor32(h83xx_state *h8, uint32_t src, uint32_t dst);
 
-static UINT8 h8_and8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT16 h8_and16(h83xx_state *h8, UINT16 src, UINT16 dst);
-static UINT32 h8_and32(h83xx_state *h8, UINT32 src, UINT32 dst);
+static uint8_t h8_and8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint16_t h8_and16(h83xx_state *h8, uint16_t src, uint16_t dst);
+static uint32_t h8_and32(h83xx_state *h8, uint32_t src, uint32_t dst);
 
-static INT8 h8_neg8(h83xx_state *h8, INT8 src);
-static INT16 h8_neg16(h83xx_state *h8, INT16 src);
-static INT32 h8_neg32(h83xx_state *h8, INT32 src);
+static int8_t h8_neg8(h83xx_state *h8, int8_t src);
+static int16_t h8_neg16(h83xx_state *h8, int16_t src);
+static int32_t h8_neg32(h83xx_state *h8, int32_t src);
 
-static UINT16 h8_divxu8 (h83xx_state *h8, UINT16 dst, UINT8  src);
-static UINT32 h8_divxu16(h83xx_state *h8, UINT32 dst, UINT16 src);
+static uint16_t h8_divxu8 (h83xx_state *h8, uint16_t dst, uint8_t  src);
+static uint32_t h8_divxu16(h83xx_state *h8, uint32_t dst, uint16_t src);
 
-static UINT8 h8_not8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_not16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_not32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_not8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_not16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_not32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_rotl8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_rotl16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_rotl32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_rotl8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_rotl16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_rotl32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_rotxl8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_rotxl16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_rotxl32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_rotxl8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_rotxl16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_rotxl32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_rotxr8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_rotxr16(h83xx_state *h8, UINT16 src);
+static uint8_t h8_rotxr8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_rotxr16(h83xx_state *h8, uint16_t src);
 
-static UINT8 h8_shll8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_shll16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_shll32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_shll8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_shll16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_shll32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_shlr8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_shlr16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_shlr32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_shlr8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_shlr16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_shlr32(h83xx_state *h8, uint32_t src);
 
-static INT8 h8_shal8(h83xx_state *h8, INT8 src);
-static INT16 h8_shal16(h83xx_state *h8, INT16 src);
-static INT32 h8_shal32(h83xx_state *h8, INT32 src);
+static int8_t h8_shal8(h83xx_state *h8, int8_t src);
+static int16_t h8_shal16(h83xx_state *h8, int16_t src);
+static int32_t h8_shal32(h83xx_state *h8, int32_t src);
 
-static INT8 h8_shar8(h83xx_state *h8, INT8 src);
-static INT16 h8_shar16(h83xx_state *h8, INT16 src);
-static INT32 h8_shar32(h83xx_state *h8, INT32 src);
+static int8_t h8_shar8(h83xx_state *h8, int8_t src);
+static int16_t h8_shar16(h83xx_state *h8, int16_t src);
+static int32_t h8_shar32(h83xx_state *h8, int32_t src);
 
-static UINT8 h8_dec8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_dec16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_dec32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_dec8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_dec16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_dec32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_inc8(h83xx_state *h8, UINT8 src);
-static UINT16 h8_inc16(h83xx_state *h8, UINT16 src);
-static UINT32 h8_inc32(h83xx_state *h8, UINT32 src);
+static uint8_t h8_inc8(h83xx_state *h8, uint8_t src);
+static uint16_t h8_inc16(h83xx_state *h8, uint16_t src);
+static uint32_t h8_inc32(h83xx_state *h8, uint32_t src);
 
-static UINT8 h8_bnot8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT8 h8_bst8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT8 h8_bist8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT8 h8_bset8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static UINT8 h8_bclr8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static void h8_btst8(h83xx_state *h8, UINT8 src, UINT8 dst);
-static void h8_bld8(h83xx_state *h8, UINT8 src, UINT8 dst); // loads to carry
-static void h8_bild8(h83xx_state *h8, UINT8 src, UINT8 dst); // inverts and loads to carry
-static void h8_bor8(h83xx_state *h8, UINT8 src, UINT8 dst); // result in carry
-//static void h8_bxor8(h83xx_state *h8, UINT8 src, UINT8 dst);
+static uint8_t h8_bnot8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint8_t h8_bst8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint8_t h8_bist8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint8_t h8_bset8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static uint8_t h8_bclr8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static void h8_btst8(h83xx_state *h8, uint8_t src, uint8_t dst);
+static void h8_bld8(h83xx_state *h8, uint8_t src, uint8_t dst); // loads to carry
+static void h8_bild8(h83xx_state *h8, uint8_t src, uint8_t dst); // inverts and loads to carry
+static void h8_bor8(h83xx_state *h8, uint8_t src, uint8_t dst); // result in carry
+//static void h8_bxor8(h83xx_state *h8, uint8_t src, uint8_t dst);
 
-static INT32 h8_mulxs16(h83xx_state *h8, INT16 src, INT16 dst);
-static UINT32 h8_divxs16(h83xx_state *h8, INT16 src, INT32 dst);
+static int32_t h8_mulxs16(h83xx_state *h8, int16_t src, int16_t dst);
+static uint32_t h8_divxs16(h83xx_state *h8, int16_t src, int32_t dst);
 
 static CPU_EXECUTE(h8)
 {
 	h83xx_state *h8 = get_safe_token(device);
-	UINT16 opcode=0;
+	uint16_t opcode=0;
 
 	h8_check_irqs(h8);
 
@@ -224,7 +224,7 @@ static CPU_EXECUTE(h8)
 	}
 }
 
-static void h8_group0(h83xx_state *h8, UINT16 opcode)
+static void h8_group0(h83xx_state *h8, uint16_t opcode)
 {
 	switch((opcode>>8)&0xf)
 	{
@@ -705,7 +705,7 @@ static void h8_group0(h83xx_state *h8, UINT16 opcode)
 	}
 }
 
-static void h8_group1(h83xx_state *h8, UINT16 opcode)
+static void h8_group1(h83xx_state *h8, uint16_t opcode)
 {
 	switch((opcode>>8)&0xf)
 	{
@@ -1177,7 +1177,7 @@ static void h8_group1(h83xx_state *h8, UINT16 opcode)
 }
 
 
-static void h8_group5(h83xx_state *h8, UINT16 opcode)
+static void h8_group5(h83xx_state *h8, uint16_t opcode)
 {
 	switch((opcode>>8)&0xf)
 	{
@@ -1253,7 +1253,7 @@ static void h8_group5(h83xx_state *h8, UINT16 opcode)
 		if(opcode == 0x5670)
 		{
 			// restore CCR
-			udata8 = (UINT8)h8_mem_read16(h8, h8_getreg32(h8, H8_SP));
+			udata8 = (uint8_t)h8_mem_read16(h8, h8_getreg32(h8, H8_SP));
 			h8_setreg32(h8, H8_SP, h8_getreg32(h8, H8_SP)+2);
 
 			// check if PC is 16 or 24/32 bits wide
@@ -1368,13 +1368,13 @@ static void h8_group5(h83xx_state *h8, UINT16 opcode)
 	}
 }
 
-static void h8_group6(h83xx_state *h8, UINT16 opcode)
+static void h8_group6(h83xx_state *h8, uint16_t opcode)
 {
 	switch((opcode>>8)&0xf)
 	{
 	case 0:case 1:case 2:case 3:
 		{
-			UINT8 bitnr;
+			uint8_t bitnr;
 
 			dstreg = opcode & 0xf;
 			udata8 = h8_getreg8(h8, dstreg);
@@ -1676,13 +1676,13 @@ static void h8_group6(h83xx_state *h8, UINT16 opcode)
 	}
 }
 
-static void h8_group7(h83xx_state *h8, UINT16 opcode)
+static void h8_group7(h83xx_state *h8, uint16_t opcode)
 {
 	switch((opcode>>8)&0xf)
 	{
 	case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:
 		{
-			UINT8 bitnr;
+			uint8_t bitnr;
 
 			dstreg = opcode & 0xf;
 			udata8 = h8_getreg8(h8, dstreg);
@@ -1775,7 +1775,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 		}
 		else
 		{
-			UINT16 dst16;
+			uint16_t dst16;
 			udata16 = h8_mem_read16(h8, h8->pc);
 			h8->pc += 2;
 			dstreg = opcode&0xf;
@@ -1806,7 +1806,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 		}
 		else
 		{
-			UINT32 dst32;
+			uint32_t dst32;
 			udata32 = h8_mem_read32(h8, h8->pc);
 			dstreg = opcode&0x7;
 			h8->pc +=4;
@@ -1843,7 +1843,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 				}
 				else
 				{
-					UINT16 cnt = h8_getreg16(h8, 4);
+					uint16_t cnt = h8_getreg16(h8, 4);
 
 					H8_IFETCH_TIMING(2);
 					H8_BYTE_TIMING((2*cnt)+2, h8->regs[5]);
@@ -1871,7 +1871,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 				}
 				else
 				{
-					UINT8 cnt = h8_getreg8(h8, 8+4);
+					uint8_t cnt = h8_getreg8(h8, 8+4);
 
 					H8_IFETCH_TIMING(2);
 					H8_BYTE_TIMING((2*cnt)+2, h8->regs[5]);
@@ -1896,7 +1896,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 		// bxx.b #xx:3, @rd
 	case 0xc:
 		{
-			UINT8 bitnr;
+			uint8_t bitnr;
 
 			address24 = h8_getreg32(h8, (opcode>>4) & 0x7);
 			udata8 = h8_mem_read8(address24);
@@ -1991,7 +1991,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 	case 0xe:
 	case 0xf:
 		{
-			UINT8 bitnr=0;
+			uint8_t bitnr=0;
 			ext16 = h8_mem_read16(h8, h8->pc);
 			h8->pc += 2;
 			address24 = 0xffff00 + (opcode & 0xff);
@@ -2083,7 +2083,7 @@ static void h8_group7(h83xx_state *h8, UINT16 opcode)
 }
 
 
-static UINT8 h8_mov8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_mov8(h83xx_state *h8, uint8_t src)
 {
 	// N and Z modified
 	h8->h8nflag = (src>>7) & 1;
@@ -2102,7 +2102,7 @@ static UINT8 h8_mov8(h83xx_state *h8, UINT8 src)
 	return src;
 }
 
-static UINT16 h8_mov16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_mov16(h83xx_state *h8, uint16_t src)
 {
 	// N and Z modified
 	h8->h8nflag = (src>>15) & 1;
@@ -2120,7 +2120,7 @@ static UINT16 h8_mov16(h83xx_state *h8, UINT16 src)
 	return src;
 }
 
-static UINT32 h8_mov32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_mov32(h83xx_state *h8, uint32_t src)
 {
 	// N and Z modified
 	h8->h8nflag = (src>>31) & 1;
@@ -2139,11 +2139,11 @@ static UINT32 h8_mov32(h83xx_state *h8, UINT32 src)
 	return src;
 }
 
-static UINT8 h8_sub8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_sub8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 
-	res = (UINT16)dst - src;
+	res = (uint16_t)dst - src;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res>>7) & 1;
 	h8->h8vflag = (((src^dst) & (res^dst))>>7) & 1;
@@ -2164,11 +2164,11 @@ static UINT8 h8_sub8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT16 h8_sub16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static uint16_t h8_sub16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT32 res;
+	uint32_t res;
 
-	res = (UINT32)dst - src;
+	res = (uint32_t)dst - src;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res>>15) & 1;
 	h8->h8vflag = (((src^dst) & (res^dst))>>15) & 1;
@@ -2190,11 +2190,11 @@ static UINT16 h8_sub16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	return res;
 }
 
-static UINT32 h8_sub32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static uint32_t h8_sub32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT64 res;
+	uint64_t res;
 
-	res = (UINT64)dst - src;
+	res = (uint64_t)dst - src;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res>>31) & 1;
 	h8->h8vflag = (((src^dst) & (res^dst))>>31) & 1;
@@ -2219,11 +2219,11 @@ static UINT32 h8_sub32(h83xx_state *h8, UINT32 src, UINT32 dst)
 
 
 
-static UINT8 h8_add8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_add8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 
-	res = (UINT16)src + dst;
+	res = (uint16_t)src + dst;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res & 0x80) ? 1 : 0;
 	h8->h8vflag = ((src^res) & (dst^res) & 0x80) ? 1 : 0;
@@ -2231,14 +2231,14 @@ static UINT8 h8_add8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	h8->h8zflag = (res & 0xff) ? 0 : 1;
 	h8->h8hflag = ((src^dst^res) & 0x10) ? 1 : 0;
 
-	return (UINT8)res;
+	return (uint8_t)res;
 }
 
-static UINT16 h8_add16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static uint16_t h8_add16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT32 res;
+	uint32_t res;
 
-	res = (UINT32)src + dst;
+	res = (uint32_t)src + dst;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res & 0x8000) ? 1 : 0;
 	h8->h8vflag = ((src^res) & (dst^res) & 0x8000) ? 1 : 0;
@@ -2249,15 +2249,15 @@ static UINT16 h8_add16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	return res;
 }
 
-static UINT32 h8_add32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static uint32_t h8_add32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT64 res;
+	uint64_t res;
 
-	res = (UINT64)src + dst;
+	res = (uint64_t)src + dst;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res & 0x80000000) ? 1 : 0;
 	h8->h8vflag = (((src^res) & (dst^res)) & 0x80000000) ? 1 : 0;
-	h8->h8cflag = ((res) & (((UINT64)1) << 32)) ? 1 : 0;
+	h8->h8cflag = ((res) & (((uint64_t)1) << 32)) ? 1 : 0;
 	h8->h8zflag = (res & 0xffffffff) ? 0 : 1;
 	h8->h8hflag = ((src^dst^res) & 0x10000000) ? 1 : 0;
 
@@ -2265,11 +2265,11 @@ static UINT32 h8_add32(h83xx_state *h8, UINT32 src, UINT32 dst)
 }
 
 
-static UINT8 h8_addx8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_addx8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 
-	res = (UINT16)src + dst + h8->h8cflag;
+	res = (uint16_t)src + dst + h8->h8cflag;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res & 0x80) ? 1 : 0;
 	h8->h8vflag = ((src^res) & (dst^res) & 0x80) ? 1 : 0;
@@ -2277,12 +2277,12 @@ static UINT8 h8_addx8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	h8->h8hflag = ((src^dst^res) & 0x10) ? 1 : 0;
 	h8->h8zflag = (res & 0xff) ? 0 : h8->h8zflag;
 
-	return (UINT8)res;
+	return (uint8_t)res;
 }
 
-static void h8_cmp8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static void h8_cmp8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT16 res = (UINT16)dst - src;
+	uint16_t res = (uint16_t)dst - src;
 
 	h8->h8cflag = (res & 0x100) ? 1 : 0;
 	h8->h8vflag = (((dst) ^ (src)) & ((dst) ^ (res)) & 0x80) ? 1 : 0;
@@ -2291,9 +2291,9 @@ static void h8_cmp8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	h8->h8hflag = ((src^dst^res) & 0x10) ? 1 : 0;
 }
 
-static void h8_cmp16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static void h8_cmp16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT32 res = (UINT32)dst - src;
+	uint32_t res = (uint32_t)dst - src;
 
 	h8->h8cflag = (res & 0x10000) ? 1 : 0;
 	h8->h8vflag = (((dst) ^ (src)) & ((dst) ^ (res)) & 0x8000) ? 1 : 0;
@@ -2302,11 +2302,11 @@ static void h8_cmp16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	h8->h8hflag = ((src^dst^res) & 0x1000) ? 1 : 0;
 }
 
-static void h8_cmp32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static void h8_cmp32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT64 res = (UINT64)dst - src;
+	uint64_t res = (uint64_t)dst - src;
 
-	h8->h8cflag = (res & (UINT64)U64(0x100000000)) ? 1 : 0;
+	h8->h8cflag = (res & (uint64_t)U64(0x100000000)) ? 1 : 0;
 	h8->h8vflag = (((dst) ^ (src)) & ((dst) ^ (res)) & 0x80000000) ? 1 : 0;
 	h8->h8zflag = ((res & 0xffffffff) == 0) ? 1 : 0;
 	h8->h8nflag = (res & 0x80000000) ? 1 : 0;
@@ -2314,11 +2314,11 @@ static void h8_cmp32(h83xx_state *h8, UINT32 src, UINT32 dst)
 }
 
 
-static UINT8 h8_subx8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_subx8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 
-	res = (UINT16)dst - src - (h8->h8cflag) ? 1 : 0;
+	res = (uint16_t)dst - src - (h8->h8cflag) ? 1 : 0;
 	// H,N,Z,V,C modified
 	h8->h8nflag = (res>>7) & 1;
 	h8->h8vflag = (((src^dst) & (res^dst))>>7) & 1;
@@ -2339,9 +2339,9 @@ static UINT8 h8_subx8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT8 h8_or8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_or8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT8 res;
+	uint8_t res;
 	res = src | dst;
 
 	h8->h8nflag = (res>>7) & 1;
@@ -2360,9 +2360,9 @@ static UINT8 h8_or8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT16 h8_or16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static uint16_t h8_or16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 	res = src | dst;
 
 	h8->h8nflag = (res>>15) & 1;
@@ -2381,9 +2381,9 @@ static UINT16 h8_or16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	return res;
 }
 
-static UINT32 h8_or32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static uint32_t h8_or32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT32 res;
+	uint32_t res;
 	res = src | dst;
 
 	h8->h8nflag = (res>>31) & 1;
@@ -2402,9 +2402,9 @@ static UINT32 h8_or32(h83xx_state *h8, UINT32 src, UINT32 dst)
 	return res;
 }
 
-static UINT8 h8_xor8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_xor8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT8 res;
+	uint8_t res;
 	res = src ^ dst;
 
 	h8->h8nflag = (res>>7) & 1;
@@ -2423,9 +2423,9 @@ static UINT8 h8_xor8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT16 h8_xor16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static uint16_t h8_xor16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 	res = src ^ dst;
 
 	h8->h8nflag = (res>>15) & 1;
@@ -2444,9 +2444,9 @@ static UINT16 h8_xor16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	return res;
 }
 
-static UINT32 h8_xor32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static uint32_t h8_xor32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT32 res;
+	uint32_t res;
 	res = src ^ dst;
 
 	h8->h8nflag = (res>>31) & 1;
@@ -2465,9 +2465,9 @@ static UINT32 h8_xor32(h83xx_state *h8, UINT32 src, UINT32 dst)
 	return res;
 }
 
-static UINT8 h8_and8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_and8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = src & dst;
 	// N and Z modified
@@ -2487,9 +2487,9 @@ static UINT8 h8_and8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT16 h8_and16(h83xx_state *h8, UINT16 src, UINT16 dst)
+static uint16_t h8_and16(h83xx_state *h8, uint16_t src, uint16_t dst)
 {
-	UINT16 res;
+	uint16_t res;
 
 	res = src & dst;
 	// N and Z modified
@@ -2509,9 +2509,9 @@ static UINT16 h8_and16(h83xx_state *h8, UINT16 src, UINT16 dst)
 	return res;
 }
 
-static UINT32 h8_and32(h83xx_state *h8, UINT32 src, UINT32 dst)
+static uint32_t h8_and32(h83xx_state *h8, uint32_t src, uint32_t dst)
 {
-	UINT32 res;
+	uint32_t res;
 
 	res = src & dst;
 	// N and Z modified
@@ -2531,7 +2531,7 @@ static UINT32 h8_and32(h83xx_state *h8, UINT32 src, UINT32 dst)
 	return res;
 }
 
-static void h8_btst8(h83xx_state *h8, UINT8 bit, UINT8 dst)
+static void h8_btst8(h83xx_state *h8, uint8_t bit, uint8_t dst)
 {
 	// test single bit and update Z flag
 	if( (dst & (1<<bit)) == 0)
@@ -2544,27 +2544,27 @@ static void h8_btst8(h83xx_state *h8, UINT8 bit, UINT8 dst)
 	}
 }
 
-static void h8_bld8(h83xx_state *h8, UINT8 bit, UINT8 dst)
+static void h8_bld8(h83xx_state *h8, uint8_t bit, uint8_t dst)
 {
 	// load bit to carry
 	h8->h8cflag = (dst >> bit) & 1;
 }
 
-static void h8_bild8(h83xx_state *h8, UINT8 bit, UINT8 dst)
+static void h8_bild8(h83xx_state *h8, uint8_t bit, uint8_t dst)
 {
 	// load inverted bit to carry
 	h8->h8cflag = ((~dst) >> bit) & 1;
 }
 
-static UINT8 h8_bnot8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_bnot8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
 	// invert single bit, no effect on C flag
 	return dst ^ (1<<src);
 }
 
-static UINT8 h8_bst8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_bst8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT8 res;
+	uint8_t res;
 
 	// store carry flag in bit position
 	if(h8->h8cflag == 1)
@@ -2578,9 +2578,9 @@ static UINT8 h8_bst8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT8 h8_bist8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_bist8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
-	UINT8 res;
+	uint8_t res;
 
 	// store inverse of carry flag in bit position
 	if(h8->h8cflag == 0)
@@ -2594,26 +2594,26 @@ static UINT8 h8_bist8(h83xx_state *h8, UINT8 src, UINT8 dst)
 	return res;
 }
 
-static UINT8 h8_bset8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_bset8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
 	// pass
-	UINT8 res;
+	uint8_t res;
 	res = dst | (1<<src);
 	return res;
 }
 
 // does not affect result, res in C flag only
-static void h8_bor8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static void h8_bor8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
 	// pass
-	UINT8 res;
+	uint8_t res;
 
 	res = dst & (1<<src);
 	h8->h8cflag |= res ? 1 : 0;
 }
 
 #ifdef UNUSED_FUNCTION
-static void h8_bxor8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static void h8_bxor8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
 	dst >>= src;
 	dst &= 0x1;
@@ -2621,23 +2621,23 @@ static void h8_bxor8(h83xx_state *h8, UINT8 src, UINT8 dst)
 }
 #endif
 
-static UINT8 h8_bclr8(h83xx_state *h8, UINT8 src, UINT8 dst)
+static uint8_t h8_bclr8(h83xx_state *h8, uint8_t src, uint8_t dst)
 {
 	// pass
-	UINT8 res;
+	uint8_t res;
 	res = dst & ~(1<<src);
 	return res;
 }
 
-static INT8 h8_neg8(h83xx_state *h8, INT8 src)
+static int8_t h8_neg8(h83xx_state *h8, int8_t src)
 {
-	INT8 res;
+	int8_t res;
 
-	if((UINT8)src == 0x80)
+	if((uint8_t)src == 0x80)
 	{
 		// overflow !
 		h8->h8vflag = 1;
-		res = (INT8)0x80;
+		res = (int8_t)0x80;
 	}
 	else
 	{
@@ -2663,15 +2663,15 @@ static INT8 h8_neg8(h83xx_state *h8, INT8 src)
 	return res;
 }
 
-static INT16 h8_neg16(h83xx_state *h8, INT16 src)
+static int16_t h8_neg16(h83xx_state *h8, int16_t src)
 {
-	INT16 res;
+	int16_t res;
 
-	if((UINT16)src == 0x8000)
+	if((uint16_t)src == 0x8000)
 	{
 		// overflow !
 		h8->h8vflag = 1;
-		res = (INT16)0x8000;
+		res = (int16_t)0x8000;
 	}
 	else
 	{
@@ -2697,11 +2697,11 @@ static INT16 h8_neg16(h83xx_state *h8, INT16 src)
 	return res;
 }
 
-static INT32 h8_neg32(h83xx_state *h8, INT32 src)
+static int32_t h8_neg32(h83xx_state *h8, int32_t src)
 {
-	INT32 res;
+	int32_t res;
 
-	if((UINT32)src == 0x80000000)
+	if((uint32_t)src == 0x80000000)
 	{
 		// overflow !
 		h8->h8vflag = 1;
@@ -2731,9 +2731,9 @@ static INT32 h8_neg32(h83xx_state *h8, INT32 src)
 	return res;
 }
 
-static UINT8 h8_not8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_not8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = ~src;
 
@@ -2754,9 +2754,9 @@ static UINT8 h8_not8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_not16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_not16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	res = ~src;
 
@@ -2777,9 +2777,9 @@ static UINT16 h8_not16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_not32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_not32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 
 	res = ~src;
 
@@ -2800,9 +2800,9 @@ static UINT32 h8_not32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static UINT8 h8_rotxr8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_rotxr8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	// rotate through carry right
 	res = src>>1;
@@ -2826,9 +2826,9 @@ static UINT8 h8_rotxr8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_rotxr16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_rotxr16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	// rotate through carry right
 	res = src>>1;
@@ -2852,9 +2852,9 @@ static UINT16 h8_rotxr16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT8 h8_rotxl8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_rotxl8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	// rotate through carry
 	res = src<<1;
@@ -2878,9 +2878,9 @@ static UINT8 h8_rotxl8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_rotxl16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_rotxl16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	// rotate through carry
 	res = src<<1;
@@ -2904,9 +2904,9 @@ static UINT16 h8_rotxl16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_rotxl32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_rotxl32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 
 	// rotate through carry
 	res = src<<1;
@@ -2931,9 +2931,9 @@ static UINT32 h8_rotxl32(h83xx_state *h8, UINT32 src)
 }
 
 
-static UINT8 h8_rotl8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_rotl8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	// rotate
 	res = src<<1;
@@ -2957,9 +2957,9 @@ static UINT8 h8_rotl8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_rotl16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_rotl16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	// rotate
 	res = src<<1;
@@ -2983,9 +2983,9 @@ static UINT16 h8_rotl16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_rotl32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_rotl32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 
 	// rotate
 	res = src<<1;
@@ -3009,9 +3009,9 @@ static UINT32 h8_rotl32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static UINT8 h8_shll8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_shll8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 	h8->h8cflag = (src>>7) & 1;
 	res = src<<1;
 	// N and Z modified
@@ -3031,9 +3031,9 @@ static UINT8 h8_shll8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_shll16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_shll16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 	h8->h8cflag = (src>>15) & 1;
 	res = src<<1;
 	// N and Z modified
@@ -3053,9 +3053,9 @@ static UINT16 h8_shll16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_shll32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_shll32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 	h8->h8cflag = (src>>31) & 1;
 	res = src<<1;
 	// N and Z modified
@@ -3075,9 +3075,9 @@ static UINT32 h8_shll32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static UINT8 h8_shlr8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_shlr8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 	h8->h8cflag = src&1;
 	res = src>>1;
 	// N and Z modified
@@ -3097,9 +3097,9 @@ static UINT8 h8_shlr8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_shlr16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_shlr16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 	h8->h8cflag = src&1;
 	res = src>>1;
 	// N and Z modified
@@ -3119,9 +3119,9 @@ static UINT16 h8_shlr16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_shlr32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_shlr32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 	h8->h8cflag = src&1;
 	res = src>>1;
 
@@ -3142,9 +3142,9 @@ static UINT32 h8_shlr32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static INT8 h8_shar8(h83xx_state *h8, INT8 src)
+static int8_t h8_shar8(h83xx_state *h8, int8_t src)
 {
-	INT8 res;
+	int8_t res;
 	h8->h8cflag = src&1;
 	res = (src>>1)|(src&0x80);
 	// N and Z modified
@@ -3164,9 +3164,9 @@ static INT8 h8_shar8(h83xx_state *h8, INT8 src)
 	return res;
 }
 
-static INT16 h8_shar16(h83xx_state *h8, INT16 src)
+static int16_t h8_shar16(h83xx_state *h8, int16_t src)
 {
-	INT16 res;
+	int16_t res;
 	h8->h8cflag = src&1;
 	res = (src>>1)|(src&0x8000);
 	// N and Z modified
@@ -3186,9 +3186,9 @@ static INT16 h8_shar16(h83xx_state *h8, INT16 src)
 	return res;
 }
 
-static INT32 h8_shar32(h83xx_state *h8, INT32 src)
+static int32_t h8_shar32(h83xx_state *h8, int32_t src)
 {
-	INT32 res;
+	int32_t res;
 
 	h8->h8cflag = src&1;
 	res = (src>>1)|(src&0x80000000);
@@ -3209,9 +3209,9 @@ static INT32 h8_shar32(h83xx_state *h8, INT32 src)
 	return res;
 }
 
-static INT8 h8_shal8(h83xx_state *h8, INT8 src)
+static int8_t h8_shal8(h83xx_state *h8, int8_t src)
 {
-	INT8 res;
+	int8_t res;
 
 	h8->h8cflag = (src>>7)&1;
 	res = src<<1;
@@ -3232,9 +3232,9 @@ static INT8 h8_shal8(h83xx_state *h8, INT8 src)
 	return res;
 }
 
-static INT16 h8_shal16(h83xx_state *h8, INT16 src)
+static int16_t h8_shal16(h83xx_state *h8, int16_t src)
 {
-	INT16 res;
+	int16_t res;
 
 	h8->h8cflag = (src>>15)&1;
 	res = src<<1;
@@ -3255,9 +3255,9 @@ static INT16 h8_shal16(h83xx_state *h8, INT16 src)
 	return res;
 }
 
-static INT32 h8_shal32(h83xx_state *h8, INT32 src)
+static int32_t h8_shal32(h83xx_state *h8, int32_t src)
 {
-	INT32 res;
+	int32_t res;
 
 	h8->h8cflag = (src>>31)&1;
 	res = src<<1;
@@ -3278,9 +3278,9 @@ static INT32 h8_shal32(h83xx_state *h8, INT32 src)
 	return res;
 }
 
-static UINT8 h8_dec8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_dec8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = src - 1;
 	// N and Z modified
@@ -3307,9 +3307,9 @@ static UINT8 h8_dec8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_dec16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_dec16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	res = src - 1;
 	// N and Z modified
@@ -3336,9 +3336,9 @@ static UINT16 h8_dec16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_dec32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_dec32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 
 	res = src - 1;
 	// N and Z modified
@@ -3365,9 +3365,9 @@ static UINT32 h8_dec32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static UINT8 h8_inc8(h83xx_state *h8, UINT8 src)
+static uint8_t h8_inc8(h83xx_state *h8, uint8_t src)
 {
-	UINT8 res;
+	uint8_t res;
 
 	res = src + 1;
 	// N and Z modified
@@ -3394,9 +3394,9 @@ static UINT8 h8_inc8(h83xx_state *h8, UINT8 src)
 	return res;
 }
 
-static UINT16 h8_inc16(h83xx_state *h8, UINT16 src)
+static uint16_t h8_inc16(h83xx_state *h8, uint16_t src)
 {
-	UINT16 res;
+	uint16_t res;
 
 	res = src + 1;
 	// N and Z modified
@@ -3423,9 +3423,9 @@ static UINT16 h8_inc16(h83xx_state *h8, UINT16 src)
 	return res;
 }
 
-static UINT32 h8_inc32(h83xx_state *h8, UINT32 src)
+static uint32_t h8_inc32(h83xx_state *h8, uint32_t src)
 {
-	UINT32 res;
+	uint32_t res;
 
 	res = src + 1;
 	// N and Z modified
@@ -3452,11 +3452,11 @@ static UINT32 h8_inc32(h83xx_state *h8, UINT32 src)
 	return res;
 }
 
-static INT32 h8_mulxs16(h83xx_state *h8, INT16 src, INT16 dst)
+static int32_t h8_mulxs16(h83xx_state *h8, int16_t src, int16_t dst)
 {
-	INT32 res;
+	int32_t res;
 
-	res = (INT32)src * dst;
+	res = (int32_t)src * dst;
 
 	// N and Z modified
 	h8->h8nflag = (res>>31)&1;
@@ -3472,11 +3472,11 @@ static INT32 h8_mulxs16(h83xx_state *h8, INT16 src, INT16 dst)
 	return res;
 }
 
-static UINT32 h8_divxs16(h83xx_state *h8, INT16 src, INT32 dst)
+static uint32_t h8_divxs16(h83xx_state *h8, int16_t src, int32_t dst)
 {
 	// NOT tested !
-	UINT32 res,r1,r2;
-	INT16 remainder, quotient;
+	uint32_t res,r1,r2;
+	int16_t remainder, quotient;
 
 	if(src!=0)
 	{
@@ -3500,10 +3500,10 @@ static UINT32 h8_divxs16(h83xx_state *h8, INT16 src, INT32 dst)
 
 }
 
-static UINT16 h8_divxu8(h83xx_state *h8, UINT16 dst, UINT8 src)
+static uint16_t h8_divxu8(h83xx_state *h8, uint16_t dst, uint8_t src)
 {
-	UINT8 remainder, quotient;
-	UINT16 res = 0;
+	uint8_t remainder, quotient;
+	uint16_t res = 0;
 	// N and Z modified
 	h8->h8nflag = (src>>7)&1;
 	// zflag
@@ -3522,10 +3522,10 @@ static UINT16 h8_divxu8(h83xx_state *h8, UINT16 dst, UINT8 src)
 	return res;
 }
 
-static UINT32 h8_divxu16(h83xx_state *h8, UINT32 dst, UINT16 src)
+static uint32_t h8_divxu16(h83xx_state *h8, uint32_t dst, uint16_t src)
 {
-	UINT16 remainder, quotient;
-	UINT32 res = 0;
+	uint16_t remainder, quotient;
+	uint32_t res = 0;
 	// N and Z modified
 	h8->h8nflag = (src>>15)&1;
 	// zflag
@@ -3546,7 +3546,7 @@ static UINT32 h8_divxu16(h83xx_state *h8, UINT32 dst, UINT16 src)
 
 // input: branch condition
 // output: 1 if condition met, 0 if not condition met
-static int h8_branch(h83xx_state *h8, UINT8 condition)
+static int h8_branch(h83xx_state *h8, uint8_t condition)
 {
 	int taken = 0;
 

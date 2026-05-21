@@ -45,8 +45,8 @@ static CPU_RESET( dsp56k );
     ONBOARD MEMORY ALLOCATION
 ***************************************************************************/
 // TODO: Put these in the cpustate!!!
-static UINT16 *dsp56k_peripheral_ram;
-static UINT16 *dsp56k_program_ram;
+static uint16_t *dsp56k_peripheral_ram;
+static uint16_t *dsp56k_program_ram;
 
 
 /***************************************************************************
@@ -75,7 +75,7 @@ static DIRECT_UPDATE_HANDLER( dsp56k_direct_handler )
 {
 	if (address >= (0x0000<<1) && address <= (0x07ff<<1))
 	{
-		direct->raw = direct->decrypted = (UINT8 *)(dsp56k_program_ram - (0x0000<<1));
+		direct->raw = direct->decrypted = (uint8_t *)(dsp56k_program_ram - (0x0000<<1));
 		return ~0;
 	}
 
@@ -395,8 +395,8 @@ static CPU_SET_INFO( dsp56k )
 		case CPUINFO_INT_REGISTER + DSP56K_X:			X   = info->i & 0xffffffff;				break;
 		case CPUINFO_INT_REGISTER + DSP56K_Y:			Y   = info->i & 0xffffffff;				break;
 
-		case CPUINFO_INT_REGISTER + DSP56K_A:			A   = info->i & (UINT64)U64(0xffffffffffffffff); break;	/* could benefit from a better mask? */
-		case CPUINFO_INT_REGISTER + DSP56K_B:			B   = info->i & (UINT64)U64(0xffffffffffffffff); break;	/* could benefit from a better mask? */
+		case CPUINFO_INT_REGISTER + DSP56K_A:			A   = info->i & (uint64_t)U64(0xffffffffffffffff); break;	/* could benefit from a better mask? */
+		case CPUINFO_INT_REGISTER + DSP56K_B:			B   = info->i & (uint64_t)U64(0xffffffffffffffff); break;	/* could benefit from a better mask? */
 
 		case CPUINFO_INT_REGISTER + DSP56K_R0:			R0  = info->i & 0xffff;					break;
 		case CPUINFO_INT_REGISTER + DSP56K_R1:			R1  = info->i & 0xffff;					break;

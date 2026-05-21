@@ -567,7 +567,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 	FLAG_C  = (cpustate->spc_int16 > 0xff) ? CFLAG_SET : 0;		\
 	FLAG_V =  (~((A) ^ (B))) & (((A) ^ cpustate->spc_int16) & 0x80); \
 	FLAG_H = (((cpustate->spc_int16 & 0x0f) - TMP1) & 0x10) >> 1;	\
-	FLAG_NZ = (UINT8)cpustate->spc_int16
+	FLAG_NZ = (uint8_t)cpustate->spc_int16
 
 
 /* Add With Carry */
@@ -575,7 +575,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			CLK(BCLK);				\
 			SRC     = OPER_8_##MODE(cpustate);		\
 			SUBOP_ADC(SRC, REG_A);			\
-			REG_A = (UINT8)cpustate->spc_int16;
+			REG_A = (uint8_t)cpustate->spc_int16;
 
 
 /* Add With Carry to memory */
@@ -584,7 +584,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			SRC     = OPER_8_##SMODE(cpustate);		\
 			DST     = EA_##DMODE(cpustate);			\
 			SUBOP_ADC(SRC, read_8_##DMODE(DST));	\
-			write_8_##DMODE(DST, (UINT8)cpustate->spc_int16)
+			write_8_##DMODE(DST, (uint8_t)cpustate->spc_int16)
 
 /* Add word */
 #define OP_ADDW(BCLK)						\
@@ -598,7 +598,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			FLAG_C = (TMP3 > 0xff) ? CFLAG_SET : 0;	\
 			FLAG_H = ((unsigned) ((((DST) >> 8) & 0x0F) + \
 				(((SRC) >> 8) & 0x0F) + TMP2)) > 0x0F ? HFLAG_SET : 0; \
-			FLAG_V = (~((DST) ^ (SRC)) & ((SRC) ^ (UINT16) cpustate->spc_int16) & 0x8000) ? VFLAG_SET : 0; \
+			FLAG_V = (~((DST) ^ (SRC)) & ((SRC) ^ (uint16_t) cpustate->spc_int16) & 0x8000) ? VFLAG_SET : 0; \
 			FLAG_Z = (cpustate->spc_int16 != 0);		\
 			FLAG_N = (cpustate->spc_int16>>8);		\
 			SET_REG_YA(cpustate, cpustate->spc_int16);
@@ -1151,7 +1151,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			TMP2 = REG_A - SRC - (CFLAG_AS_1() ^ 1); \
 			SUBOP_ADC(REG_A, ~SRC);			\
 			FLAG_C = (TMP2 <= 0xff) ? CFLAG_SET : 0; \
-			REG_A = (UINT8)cpustate->spc_int16;
+			REG_A = (uint8_t)cpustate->spc_int16;
 
 /* Subtract With Carry to memory */
 #define OP_SBCM(BCLK, SMODE, DMODE)				\
@@ -1162,7 +1162,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			TMP2 = TMP3 - SRC - (CFLAG_AS_1() ^ 1);	\
 			SUBOP_ADC(~SRC, TMP3);			\
 			FLAG_C = (TMP2 <= 0xff) ? CFLAG_SET : 0; \
-			write_8_##DMODE(DST, (UINT8)cpustate->spc_int16)
+			write_8_##DMODE(DST, (uint8_t)cpustate->spc_int16)
 
 /* Set Carry flag */
 #define OP_SETC(BCLK)														\
@@ -1205,7 +1205,7 @@ INLINE void SET_FLAG_I(spc700i_cpu *cpustate, uint value)
 			FLAG_C = (TMP3 <= 0xff) ? CFLAG_SET : 0;	\
 			FLAG_H = ((unsigned) ((((DST) >> 8) & 0x0F) - \
 				(((SRC) >> 8) & 0x0F) - TMP2)) > 0x0F ?  0: HFLAG_SET; \
-			FLAG_V = (((DST) ^ (SRC)) & ((DST) ^ (UINT16) cpustate->spc_int16) & 0x8000) ? VFLAG_SET : 0; \
+			FLAG_V = (((DST) ^ (SRC)) & ((DST) ^ (uint16_t) cpustate->spc_int16) & 0x8000) ? VFLAG_SET : 0; \
 			FLAG_Z = (cpustate->spc_int16 != 0);		\
 			FLAG_N = (cpustate->spc_int16>>8);		\
 			SET_REG_YA(cpustate, cpustate->spc_int16);

@@ -47,19 +47,19 @@ typedef enum {
 #define SetZF(x)		(nec_state->ZeroVal = (x))
 #define SetPF(x)		(nec_state->ParityVal = (x))
 
-#define SetSZPF_Byte(x) (nec_state->SignVal=nec_state->ZeroVal=nec_state->ParityVal=(INT8)(x))
-#define SetSZPF_Word(x) (nec_state->SignVal=nec_state->ZeroVal=nec_state->ParityVal=(INT16)(x))
+#define SetSZPF_Byte(x) (nec_state->SignVal=nec_state->ZeroVal=nec_state->ParityVal=(int8_t)(x))
+#define SetSZPF_Word(x) (nec_state->SignVal=nec_state->ZeroVal=nec_state->ParityVal=(int16_t)(x))
 
 #define SetOFW_Add(x,y,z)	(nec_state->OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x8000)
 #define SetOFB_Add(x,y,z)	(nec_state->OverVal = ((x) ^ (y)) & ((x) ^ (z)) & 0x80)
 #define SetOFW_Sub(x,y,z)	(nec_state->OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x8000)
 #define SetOFB_Sub(x,y,z)	(nec_state->OverVal = ((z) ^ (y)) & ((z) ^ (x)) & 0x80)
 
-#define ADDB { UINT32 res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define ADDW { UINT32 res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define ADDB { uint32_t res=dst+src; SetCFB(res); SetOFB_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define ADDW { uint32_t res=dst+src; SetCFW(res); SetOFW_Add(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
-#define SUBB { UINT32 res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
-#define SUBW { UINT32 res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
+#define SUBB { uint32_t res=dst-src; SetCFB(res); SetOFB_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Byte(res); dst=(BYTE)res; }
+#define SUBW { uint32_t res=dst-src; SetCFW(res); SetOFW_Sub(res,src,dst); SetAF(res,src,dst); SetSZPF_Word(res); dst=(WORD)res; }
 
 #define ORB dst|=src; nec_state->CarryVal=nec_state->OverVal=nec_state->AuxVal=0; SetSZPF_Byte(dst)
 #define ORW dst|=src; nec_state->CarryVal=nec_state->OverVal=nec_state->AuxVal=0; SetSZPF_Word(dst)
@@ -115,7 +115,7 @@ typedef enum {
 #define PUSH(val) { nec_state->regs.w[SP]-=2; write_word((((nec_state->sregs[SS]<<4)+nec_state->regs.w[SP])),val); }
 #define POP(var) { var = read_word((((nec_state->sregs[SS]<<4)+nec_state->regs.w[SP]))); nec_state->regs.w[SP]+=2; }
 
-#define GetModRM UINT32 ModRM=FETCH()
+#define GetModRM uint32_t ModRM=FETCH()
 
 /* Cycle count macros:
     CLK  - cycle count is the same on all processors
@@ -130,10 +130,10 @@ typedef enum {
 */
 
 #define CLK(all) nec_state->icount-=all
-#define CLKS(v20,v30,v33) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33; nec_state->icount-=(ccount>>nec_state->chip_type)&0x7f; }
-#define CLKW(v20o,v30o,v33o,v20e,v30e,v33e,addr) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; nec_state->icount-=(addr&1)?((ocount>>nec_state->chip_type)&0x7f):((ecount>>nec_state->chip_type)&0x7f); }
-#define CLKM(v20,v30,v33,v20m,v30m,v33m) { const UINT32 ccount=(v20<<16)|(v30<<8)|v33, mcount=(v20m<<16)|(v30m<<8)|v33m; nec_state->icount-=( ModRM >=0xc0 )?((ccount>>nec_state->chip_type)&0x7f):((mcount>>nec_state->chip_type)&0x7f); }
-#define CLKR(v20o,v30o,v33o,v20e,v30e,v33e,vall,addr) { const UINT32 ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; if (ModRM >=0xc0) nec_state->icount-=vall; else nec_state->icount-=(addr&1)?((ocount>>nec_state->chip_type)&0x7f):((ecount>>nec_state->chip_type)&0x7f); }
+#define CLKS(v20,v30,v33) { const uint32_t ccount=(v20<<16)|(v30<<8)|v33; nec_state->icount-=(ccount>>nec_state->chip_type)&0x7f; }
+#define CLKW(v20o,v30o,v33o,v20e,v30e,v33e,addr) { const uint32_t ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; nec_state->icount-=(addr&1)?((ocount>>nec_state->chip_type)&0x7f):((ecount>>nec_state->chip_type)&0x7f); }
+#define CLKM(v20,v30,v33,v20m,v30m,v33m) { const uint32_t ccount=(v20<<16)|(v30<<8)|v33, mcount=(v20m<<16)|(v30m<<8)|v33m; nec_state->icount-=( ModRM >=0xc0 )?((ccount>>nec_state->chip_type)&0x7f):((mcount>>nec_state->chip_type)&0x7f); }
+#define CLKR(v20o,v30o,v33o,v20e,v30e,v33e,vall,addr) { const uint32_t ocount=(v20o<<16)|(v30o<<8)|v33o, ecount=(v20e<<16)|(v30e<<8)|v33e; if (ModRM >=0xc0) nec_state->icount-=vall; else nec_state->icount-=(addr&1)?((ocount>>nec_state->chip_type)&0x7f):((ecount>>nec_state->chip_type)&0x7f); }
 
 /************************************************************************/
 #define CompressFlags() (WORD)(CF | (PF << 2) | (AF << 4) | (ZF << 6) \
@@ -173,10 +173,10 @@ typedef enum {
 #define JMP(flag)							\
 	int tmp;								\
 	EMPTY_PREFETCH();						\
-	tmp = (int)((INT8)FETCH());				\
+	tmp = (int)((int8_t)FETCH());				\
 	if (flag)								\
 	{										\
-		static const UINT8 table[3]={3,10,10};	\
+		static const uint8_t table[3]={3,10,10};	\
 		nec_state->ip = (WORD)(nec_state->ip+tmp);			\
 		nec_state->icount-=table[nec_state->chip_type/8];	\
 		CHANGE_PC;							\
@@ -186,7 +186,7 @@ typedef enum {
 #define ADJ4(param1,param2)					\
 	if (AF || ((nec_state->regs.b[AL] & 0xf) > 9))	\
 	{										\
-		UINT16 tmp;							\
+		uint16_t tmp;							\
 		tmp = nec_state->regs.b[AL] + param1;		\
 		nec_state->regs.b[AL] = tmp;					\
 		nec_state->AuxVal = 1;						\
@@ -258,8 +258,8 @@ typedef enum {
 #define SHL_WORD(c) nec_state->icount-=c; dst <<= c;	SetCFW(dst); SetSZPF_Word(dst);	PutbackRMWord(ModRM,(WORD)dst)
 #define SHR_BYTE(c) nec_state->icount-=c; dst >>= c-1; nec_state->CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
 #define SHR_WORD(c) nec_state->icount-=c; dst >>= c-1; nec_state->CarryVal = dst & 0x1; dst >>= 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
-#define SHRA_BYTE(c) nec_state->icount-=c; dst = ((INT8)dst) >> (c-1);	nec_state->CarryVal = dst & 0x1;	dst = ((INT8)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
-#define SHRA_WORD(c) nec_state->icount-=c; dst = ((INT16)dst) >> (c-1);	nec_state->CarryVal = dst & 0x1;	dst = ((INT16)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
+#define SHRA_BYTE(c) nec_state->icount-=c; dst = ((int8_t)dst) >> (c-1);	nec_state->CarryVal = dst & 0x1;	dst = ((int8_t)((BYTE)dst)) >> 1; SetSZPF_Byte(dst); PutbackRMByte(ModRM,(BYTE)dst)
+#define SHRA_WORD(c) nec_state->icount-=c; dst = ((int16_t)dst) >> (c-1);	nec_state->CarryVal = dst & 0x1;	dst = ((int16_t)((WORD)dst)) >> 1; SetSZPF_Word(dst); PutbackRMWord(ModRM,(WORD)dst)
 
 #define DIVUB												\
 	uresult = nec_state->regs.w[AW];									\
@@ -272,9 +272,9 @@ typedef enum {
 	}
 
 #define DIVB												\
-	result = (INT16)nec_state->regs.w[AW];							\
-	result2 = result % (INT16)((INT8)tmp);					\
-	if ((result /= (INT16)((INT8)tmp)) > 0xff) {			\
+	result = (int16_t)nec_state->regs.w[AW];							\
+	result2 = result % (int16_t)((int8_t)tmp);					\
+	if ((result /= (int16_t)((int8_t)tmp)) > 0xff) {			\
 		nec_interrupt(nec_state, 0,0); break;							\
 	} else {												\
 		nec_state->regs.b[AL] = result;								\
@@ -282,7 +282,7 @@ typedef enum {
 	}
 
 #define DIVUW												\
-	uresult = (((UINT32)nec_state->regs.w[DW]) << 16) | nec_state->regs.w[AW];\
+	uresult = (((uint32_t)nec_state->regs.w[DW]) << 16) | nec_state->regs.w[AW];\
 	uresult2 = uresult % tmp;								\
 	if ((uresult /= tmp) > 0xffff) {						\
 		nec_interrupt(nec_state, 0,0); break;							\
@@ -292,9 +292,9 @@ typedef enum {
 	}
 
 #define DIVW												\
-	result = ((UINT32)nec_state->regs.w[DW] << 16) + nec_state->regs.w[AW];	\
-	result2 = result % (INT32)((INT16)tmp);					\
-	if ((result /= (INT32)((INT16)tmp)) > 0xffff) {			\
+	result = ((uint32_t)nec_state->regs.w[DW] << 16) + nec_state->regs.w[AW];	\
+	result2 = result % (int32_t)((int16_t)tmp);					\
+	if ((result /= (int32_t)((int16_t)tmp)) > 0xffff) {			\
 		nec_interrupt(nec_state, 0,0); break;							\
 	} else {												\
 		nec_state->regs.w[AW]=result;								\
@@ -306,7 +306,7 @@ typedef enum {
 	int count = (nec_state->regs.b[CL]+1)/2;							\
 	unsigned di = nec_state->regs.w[IY];								\
 	unsigned si = nec_state->regs.w[IX];								\
-	static const UINT8 table[3]={18,19,19};					\
+	static const uint8_t table[3]={18,19,19};					\
 	if (nec_state->seg_prefix) logerror("%06x: Warning: seg_prefix defined for add4s\n",PC(nec_state));	\
 	nec_state->ZeroVal = nec_state->CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
@@ -331,7 +331,7 @@ typedef enum {
 	int i,v1,v2,result;										\
     unsigned di = nec_state->regs.w[IY];								\
 	unsigned si = nec_state->regs.w[IX];								\
-	static const UINT8 table[3]={18,19,19};					\
+	static const uint8_t table[3]={18,19,19};					\
 	if (nec_state->seg_prefix) logerror("%06x: Warning: seg_prefix defined for sub4s\n",PC(nec_state));	\
 	nec_state->ZeroVal = nec_state->CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\
@@ -361,7 +361,7 @@ typedef enum {
 	int i,v1,v2,result;										\
     unsigned di = nec_state->regs.w[IY];								\
 	unsigned si = nec_state->regs.w[IX];								\
-	static const UINT8 table[3]={14,19,19};					\
+	static const uint8_t table[3]={14,19,19};					\
 	if (nec_state->seg_prefix) logerror("%06x: Warning: seg_prefix defined for cmp4s\n",PC(nec_state));	\
 	nec_state->ZeroVal = nec_state->CarryVal = 0;								\
 	for (i=0;i<count;i++) {									\

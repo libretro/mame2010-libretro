@@ -123,7 +123,7 @@
 /***************************************************************
  *  RDMEM   read memory
  ***************************************************************/
-INLINE UINT8 RDMEM(h6280_Regs* cpustate, offs_t addr) {
+INLINE uint8_t RDMEM(h6280_Regs* cpustate, offs_t addr) {
 	CHECK_VDC_VCE_PENALTY(addr);
 	return memory_read_byte_8le(cpustate->program, TRANSLATED(addr));
 }
@@ -131,7 +131,7 @@ INLINE UINT8 RDMEM(h6280_Regs* cpustate, offs_t addr) {
 /***************************************************************
  *  WRMEM   write memory
  ***************************************************************/
-INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
+INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, uint8_t data) {
 	CHECK_VDC_VCE_PENALTY(addr);
 	memory_write_byte_8le(cpustate->program, TRANSLATED(addr),data);
 }
@@ -340,7 +340,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 #define WR_IDY	EA_IDY; WRMEM(cpustate, EAD, tmp)
 
 /* write back a value from tmp to the last EA */
-#define WB_ACC	A = (UINT8)tmp;
+#define WB_ACC	A = (uint8_t)tmp;
 #define WB_EA	WRMEM(cpustate, EAD, tmp)
 #define WB_EAZ	WRMEMZ(EAD, tmp)
 #define WB_TFL  WRMEMZ(EAD, tflagtemp)
@@ -406,7 +406,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 				P |= _fV;										\
 			if (sum & 0xff00)									\
 				P |= _fC;										\
-			tflagtemp = (UINT8) sum;							\
+			tflagtemp = (uint8_t) sum;							\
 		}														\
 		SET_NZ(tflagtemp);										\
 		WB_TFL;													\
@@ -445,7 +445,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 				P |= _fV;										\
 			if (sum & 0xff00)									\
 				P |= _fC;										\
-			A = (UINT8) sum;									\
+			A = (uint8_t) sum;									\
 		}														\
 		SET_NZ(A);												\
 	}
@@ -458,7 +458,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 		int tflagtemp;											\
 		CLEAR_T;												\
 		RD_TFL;													\
-		tflagtemp = (UINT8)(tflagtemp & tmp);					\
+		tflagtemp = (uint8_t)(tflagtemp & tmp);					\
 		WB_TFL;													\
 		SET_NZ(tflagtemp);										\
 		H6280_CYCLES(3);										\
@@ -468,7 +468,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	if(P & _fT)													\
 		TAND													\
 	else {														\
-		A = (UINT8)(A & tmp);									\
+		A = (uint8_t)(A & tmp);									\
 		SET_NZ(A);												\
 	}
 
@@ -478,7 +478,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 #define ASL 													\
 	CLEAR_T;													\
 	P = (P & ~_fC) | ((tmp >> 7) & _fC);						\
-	tmp = (UINT8)(tmp << 1);									\
+	tmp = (uint8_t)(tmp << 1);									\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -646,7 +646,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	P &= ~_fC;													\
 	if (A >= tmp)												\
 		P |= _fC;												\
-	SET_NZ((UINT8)(A - tmp))
+	SET_NZ((uint8_t)(A - tmp))
 
 /* 6280 ********************************************************
  *  CPX Compare index X
@@ -656,7 +656,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	P &= ~_fC;													\
 	if (X >= tmp)												\
 		P |= _fC;												\
-	SET_NZ((UINT8)(X - tmp))
+	SET_NZ((uint8_t)(X - tmp))
 
 /* 6280 ********************************************************
  *  CPY Compare index Y
@@ -666,14 +666,14 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	P &= ~_fC;													\
 	if (Y >= tmp)												\
 		P |= _fC;												\
-	SET_NZ((UINT8)(Y - tmp))
+	SET_NZ((uint8_t)(Y - tmp))
 
 /* 6280 ********************************************************
  *  DEA Decrement accumulator
  ***************************************************************/
 #define DEA                                                     \
 	CLEAR_T;													\
-	A = (UINT8)(A - 1);											\
+	A = (uint8_t)(A - 1);											\
     SET_NZ(A)
 
 /* 6280 ********************************************************
@@ -681,7 +681,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define DEC 													\
 	CLEAR_T;													\
-	tmp = (UINT8)(tmp-1);										\
+	tmp = (uint8_t)(tmp-1);										\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -689,7 +689,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define DEX 													\
 	CLEAR_T;													\
-	X = (UINT8)(X - 1);											\
+	X = (uint8_t)(X - 1);											\
 	SET_NZ(X)
 
 /* 6280 ********************************************************
@@ -697,7 +697,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define DEY 													\
 	CLEAR_T;													\
-	Y = (UINT8)(Y - 1);											\
+	Y = (uint8_t)(Y - 1);											\
 	SET_NZ(Y)
 
 /* 6280 ********************************************************
@@ -708,7 +708,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 		int tflagtemp;											\
 		CLEAR_T;												\
 		RD_TFL;													\
-		tflagtemp = (UINT8)(tflagtemp ^ tmp);					\
+		tflagtemp = (uint8_t)(tflagtemp ^ tmp);					\
 		WB_TFL;													\
 		SET_NZ(tflagtemp);										\
 		H6280_CYCLES(3);										\
@@ -718,7 +718,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	if(P & _fT)													\
 		TEOR													\
 	else {														\
-		A = (UINT8)(A ^ tmp);									\
+		A = (uint8_t)(A ^ tmp);									\
 		SET_NZ(A);												\
 	}
 
@@ -727,7 +727,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define INA                                                     \
 	CLEAR_T;													\
-	A = (UINT8)(A + 1);											\
+	A = (uint8_t)(A + 1);											\
     SET_NZ(A)
 
 /* 6280 ********************************************************
@@ -735,7 +735,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define INC 													\
 	CLEAR_T;													\
-	tmp = (UINT8)(tmp+1);										\
+	tmp = (uint8_t)(tmp+1);										\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -743,7 +743,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define INX 													\
 	CLEAR_T;													\
-	X = (UINT8)(X + 1);											\
+	X = (uint8_t)(X + 1);											\
 	SET_NZ(X)
 
 /* 6280 ********************************************************
@@ -751,7 +751,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define INY 													\
 	CLEAR_T;													\
-	Y = (UINT8)(Y + 1);											\
+	Y = (uint8_t)(Y + 1);											\
 	SET_NZ(Y)
 
 /* 6280 ********************************************************
@@ -779,7 +779,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define LDA 													\
 	CLEAR_T;													\
-	A = (UINT8)tmp; 											\
+	A = (uint8_t)tmp; 											\
 	SET_NZ(A)
 
 /* 6280 ********************************************************
@@ -787,7 +787,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define LDX 													\
 	CLEAR_T;													\
-	X = (UINT8)tmp; 											\
+	X = (uint8_t)tmp; 											\
 	SET_NZ(X)
 
 /* 6280 ********************************************************
@@ -795,7 +795,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
  ***************************************************************/
 #define LDY 													\
 	CLEAR_T;													\
-	Y = (UINT8)tmp; 											\
+	Y = (uint8_t)tmp; 											\
 	SET_NZ(Y)
 
 /* 6280 ********************************************************
@@ -805,7 +805,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 #define LSR 													\
 	CLEAR_T;													\
 	P = (P & ~_fC) | (tmp & _fC);								\
-	tmp = (UINT8)tmp >> 1;										\
+	tmp = (uint8_t)tmp >> 1;										\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -822,7 +822,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 		int tflagtemp;											\
 		CLEAR_T;												\
 		RD_TFL;													\
-		tflagtemp = (UINT8)(tflagtemp | tmp);					\
+		tflagtemp = (uint8_t)(tflagtemp | tmp);					\
 		WB_TFL;													\
 		SET_NZ(tflagtemp);										\
 		H6280_CYCLES(3);										\
@@ -832,7 +832,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	if(P & _fT)													\
 		TORA													\
 	else {														\
-		A = (UINT8)(A | tmp);									\
+		A = (uint8_t)(A | tmp);									\
 		SET_NZ(A);												\
 	}
 
@@ -924,7 +924,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	CLEAR_T;													\
 	tmp = (tmp << 1) | (P & _fC);								\
 	P = (P & ~_fC) | ((tmp >> 8) & _fC);						\
-	tmp = (UINT8)tmp;											\
+	tmp = (uint8_t)tmp;											\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -935,7 +935,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 	CLEAR_T;													\
 	tmp |= (P & _fC) << 8;										\
 	P = (P & ~_fC) | (tmp & _fC);								\
-	tmp = (UINT8)(tmp >> 1);									\
+	tmp = (uint8_t)(tmp >> 1);									\
 	SET_NZ(tmp)
 
 /* 6280 ********************************************************
@@ -1025,7 +1025,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 				P |= _fV;										\
 			if ((sum & 0xff00) == 0)							\
 				P |= _fC;										\
-			tflagtemp = (UINT8) sum;							\
+			tflagtemp = (uint8_t) sum;							\
 		}														\
 		SET_NZ(tflagtemp);										\
 		WB_TFL;													\
@@ -1063,7 +1063,7 @@ INLINE void WRMEM(h6280_Regs* cpustate, offs_t addr, UINT8 data) {
 				P |= _fV;										\
 			if ((sum & 0xff00) == 0)							\
 				P |= _fC;										\
-			A = (UINT8) sum;									\
+			A = (uint8_t) sum;									\
 		}														\
 		SET_NZ(A);												\
 	}

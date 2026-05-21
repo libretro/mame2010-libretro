@@ -18,13 +18,13 @@
 
 #define F12LOADOPBYTE(cs, num)							\
 	if ((cs)->flag##num)								\
-		appb = (UINT8)(cs)->reg[(cs)->op##num];			\
+		appb = (uint8_t)(cs)->reg[(cs)->op##num];			\
 	else												\
 		appb = MemRead8((cs)->program, (cs)->op##num);
 
 #define F12LOADOPHALF(cs, num)							\
 	if ((cs)->flag##num)								\
-		apph = (UINT16)(cs)->reg[(cs)->op##num];		\
+		apph = (uint16_t)(cs)->reg[(cs)->op##num];		\
 	else												\
 		apph = MemRead16((cs)->program, (cs)->op##num);
 
@@ -74,7 +74,7 @@
 
 // Decode the first operand of the instruction and prepare
 // writing to the second operand.
-static void F12DecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1)
+static void F12DecodeFirstOperand(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1)
 {
 	cpustate->instflags = OpRead8(cpustate->program, cpustate->PC + 1);
 
@@ -107,10 +107,10 @@ static void F12DecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_s
 				switch (dim1)
 				{
 				case 0:
-					cpustate->op1 = (UINT8)cpustate->reg[cpustate->instflags & 0x1F];
+					cpustate->op1 = (uint8_t)cpustate->reg[cpustate->instflags & 0x1F];
 					break;
 				case 1:
-					cpustate->op1 = (UINT16)cpustate->reg[cpustate->instflags & 0x1F];
+					cpustate->op1 = (uint16_t)cpustate->reg[cpustate->instflags & 0x1F];
 					break;
 				case 2:
 					cpustate->op1 = cpustate->reg[cpustate->instflags & 0x1F];
@@ -130,7 +130,7 @@ static void F12DecodeFirstOperand(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_s
 	}
 }
 
-static void F12WriteSecondOperand(v60_state *cpustate, UINT8 dim2)
+static void F12WriteSecondOperand(v60_state *cpustate, uint8_t dim2)
 {
 	cpustate->moddim = dim2;
 
@@ -175,9 +175,9 @@ static void F12WriteSecondOperand(v60_state *cpustate, UINT8 dim2)
 
 
 // Decode both format 1 / 2 operands
-static void F12DecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state *), UINT8 dim1, UINT32 (*DecodeOp2)(v60_state *), UINT8 dim2)
+static void F12DecodeOperands(v60_state *cpustate, uint32_t (*DecodeOp1)(v60_state *), uint8_t dim1, uint32_t (*DecodeOp2)(v60_state *), uint8_t dim2)
 {
-	UINT8 _if12 = OpRead8(cpustate->program, cpustate->PC + 1);
+	uint8_t _if12 = OpRead8(cpustate->program, cpustate->PC + 1);
 
 	// Check if F1 or F2
 	if (_if12 & 0x80)
@@ -211,10 +211,10 @@ static void F12DecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 				switch (dim2)
 				{
 				case 0:
-					cpustate->op2 = (UINT8)cpustate->reg[_if12 & 0x1F];
+					cpustate->op2 = (uint8_t)cpustate->reg[_if12 & 0x1F];
 					break;
 				case 1:
-					cpustate->op2 = (UINT16)cpustate->reg[_if12 & 0x1F];
+					cpustate->op2 = (uint16_t)cpustate->reg[_if12 & 0x1F];
 					break;
 				case 2:
 					cpustate->op2 = cpustate->reg[_if12 & 0x1F];
@@ -243,10 +243,10 @@ static void F12DecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 				switch (dim1)
 				{
 				case 0:
-					cpustate->op1 = (UINT8)cpustate->reg[_if12 & 0x1F];
+					cpustate->op1 = (uint8_t)cpustate->reg[_if12 & 0x1F];
 					break;
 				case 1:
-					cpustate->op1 = (UINT16)cpustate->reg[_if12 & 0x1F];
+					cpustate->op1 = (uint16_t)cpustate->reg[_if12 & 0x1F];
 					break;
 				case 2:
 					cpustate->op1 = cpustate->reg[_if12 & 0x1F];
@@ -265,78 +265,78 @@ static void F12DecodeOperands(v60_state *cpustate, UINT32 (*DecodeOp1)(v60_state
 	}
 }
 
-static UINT32 opADDB(v60_state *cpustate) /* TRUSTED (C too!)*/
+static uint32_t opADDB(v60_state *cpustate) /* TRUSTED (C too!)*/
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	ADDB(appb, (UINT8)cpustate->op1);
+	ADDB(appb, (uint8_t)cpustate->op1);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opADDH(v60_state *cpustate) /* TRUSTED (C too!)*/
+static uint32_t opADDH(v60_state *cpustate) /* TRUSTED (C too!)*/
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	ADDW(apph, (UINT16)cpustate->op1);
+	ADDW(apph, (uint16_t)cpustate->op1);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opADDW(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opADDW(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	ADDL(appw, (UINT32)cpustate->op1);
+	ADDL(appw, (uint32_t)cpustate->op1);
 
 	F12STOREOP2WORD(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opADDCB(v60_state *cpustate)
+static uint32_t opADDCB(v60_state *cpustate)
 {
-	UINT8 appb, temp;
+	uint8_t appb, temp;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	temp = ((UINT8)cpustate->op1 + (cpustate->_CY?1:0));
+	temp = ((uint8_t)cpustate->op1 + (cpustate->_CY?1:0));
 	ADDB(appb, temp);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opADDCH(v60_state *cpustate)
+static uint32_t opADDCH(v60_state *cpustate)
 {
-	UINT16 apph, temp;
+	uint16_t apph, temp;
 
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	temp = ((UINT16)cpustate->op1 + (cpustate->_CY?1:0));
+	temp = ((uint16_t)cpustate->op1 + (cpustate->_CY?1:0));
 	ADDW(apph, temp);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opADDCW(v60_state *cpustate)
+static uint32_t opADDCW(v60_state *cpustate)
 {
-	UINT32 appw, temp;
+	uint32_t appw, temp;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
@@ -349,9 +349,9 @@ static UINT32 opADDCW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opANDB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opANDB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
@@ -365,9 +365,9 @@ static UINT32 opANDB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opANDH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opANDH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
@@ -381,9 +381,9 @@ static UINT32 opANDH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opANDW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opANDW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -397,7 +397,7 @@ static UINT32 opANDW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opCALL(v60_state *cpustate) /* TRUSTED */
+static uint32_t opCALL(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeOperands(cpustate, ReadAMAddress, 0,ReadAMAddress, 2);
 
@@ -412,7 +412,7 @@ static UINT32 opCALL(v60_state *cpustate) /* TRUSTED */
 	return 0;
 }
 
-static UINT32 opCHKAR(v60_state *cpustate)
+static uint32_t opCHKAR(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAM, 0);
 
@@ -424,7 +424,7 @@ static UINT32 opCHKAR(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opCHKAW(v60_state *cpustate)
+static uint32_t opCHKAW(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAM, 0);
 
@@ -436,7 +436,7 @@ static UINT32 opCHKAW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opCHKAE(v60_state *cpustate)
+static uint32_t opCHKAE(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAM, 0);
 
@@ -448,9 +448,9 @@ static UINT32 opCHKAE(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opCHLVL(v60_state *cpustate)
+static uint32_t opCHLVL(v60_state *cpustate)
 {
-	UINT32 oldPSW;
+	uint32_t oldPSW;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAM, 0);
 
@@ -478,9 +478,9 @@ static UINT32 opCHLVL(v60_state *cpustate)
 	return 0;
 }
 
-static UINT32 opCLR1(v60_state *cpustate) /* TRUSTED */
+static uint32_t opCLR1(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -494,48 +494,48 @@ static UINT32 opCLR1(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opCMPB(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opCMPB(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAM, 0);
 
-	appb = (UINT8)cpustate->op2;
-	SUBB(appb, (UINT8)cpustate->op1);
+	appb = (uint8_t)cpustate->op2;
+	SUBB(appb, (uint8_t)cpustate->op1);
 
 	F12END(cpustate);
 }
 
-static UINT32 opCMPH(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opCMPH(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAM, 1);
 
-	apph = (UINT16)cpustate->op2;
-	SUBW(apph, (UINT16)cpustate->op1);
+	apph = (uint16_t)cpustate->op2;
+	SUBW(apph, (uint16_t)cpustate->op1);
 
 	F12END(cpustate);
 }
 
 
-static UINT32 opCMPW(v60_state *cpustate) /* TRUSTED (C too!)*/
+static uint32_t opCMPW(v60_state *cpustate) /* TRUSTED (C too!)*/
 {
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAM, 2);
 
-	SUBL(cpustate->op2, (UINT32)cpustate->op1);
+	SUBL(cpustate->op2, (uint32_t)cpustate->op1);
 
 	F12END(cpustate);
 }
 
-static UINT32 opDIVB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	cpustate->_OV = ((appb == 0x80) && (cpustate->op1 == 0xFF));
 	if (cpustate->op1 && !cpustate->_OV)
-		appb= (INT8)appb / (INT8)cpustate->op1;
+		appb= (int8_t)appb / (int8_t)cpustate->op1;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
 
@@ -543,16 +543,16 @@ static UINT32 opDIVB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opDIVH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	cpustate->_OV = ((apph == 0x8000) && (cpustate->op1 == 0xFFFF));
 	if (cpustate->op1 && !cpustate->_OV)
-		apph = (INT16)apph / (INT16)cpustate->op1;
+		apph = (int16_t)apph / (int16_t)cpustate->op1;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
 
@@ -560,16 +560,16 @@ static UINT32 opDIVH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opDIVW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
 	cpustate->_OV = ((appw == 0x80000000) && (cpustate->op1 == 0xFFFFFFFF));
 	if (cpustate->op1 && !cpustate->_OV)
-		appw = (INT32)appw / (INT32)cpustate->op1;
+		appw = (int32_t)appw / (int32_t)cpustate->op1;
 	cpustate->_Z = (appw == 0);
 	cpustate->_S = ((appw & 0x80000000) != 0);
 
@@ -577,10 +577,10 @@ static UINT32 opDIVW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opDIVX(v60_state *cpustate)
+static uint32_t opDIVX(v60_state *cpustate)
 {
-	UINT32 a, b;
-	INT64 dv;
+	uint32_t a, b;
+	int64_t dv;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 3);
 
@@ -595,10 +595,10 @@ static UINT32 opDIVX(v60_state *cpustate)
 		b = MemRead32(cpustate->program, cpustate->op2 + 4);
 	}
 
-	dv = ((UINT64)b << 32) | ((UINT64)a);
+	dv = ((uint64_t)b << 32) | ((uint64_t)a);
 
-	a = dv / (INT64)((INT32)cpustate->op1);
-	b = dv % (INT64)((INT32)cpustate->op1);
+	a = dv / (int64_t)((int32_t)cpustate->op1);
+	b = dv % (int64_t)((int32_t)cpustate->op1);
 
 	cpustate->_S = ((a & 0x80000000) != 0);
 	cpustate->_Z = (a == 0);
@@ -617,10 +617,10 @@ static UINT32 opDIVX(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opDIVUX(v60_state *cpustate)
+static uint32_t opDIVUX(v60_state *cpustate)
 {
-	UINT32 a, b;
-	UINT64 dv;
+	uint32_t a, b;
+	uint64_t dv;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 3);
 
@@ -635,9 +635,9 @@ static UINT32 opDIVUX(v60_state *cpustate)
 		b = MemRead32(cpustate->program, cpustate->op2 + 4);
 	}
 
-	dv = (UINT64)(((UINT64)b << 32) | (UINT64)a);
-	a = (UINT32)(dv / (UINT64)cpustate->op1);
-	b = (UINT32)(dv % (UINT64)cpustate->op1);
+	dv = (uint64_t)(((uint64_t)b << 32) | (uint64_t)a);
+	a = (uint32_t)(dv / (uint64_t)cpustate->op1);
+	b = (uint32_t)(dv % (uint64_t)cpustate->op1);
 
 	cpustate->_S = ((a & 0x80000000) != 0);
 	cpustate->_Z = (a == 0);
@@ -657,15 +657,15 @@ static UINT32 opDIVUX(v60_state *cpustate)
 }
 
 
-static UINT32 opDIVUB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVUB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	cpustate->_OV = 0;
-	if (cpustate->op1)	appb /= (UINT8)cpustate->op1;
+	if (cpustate->op1)	appb /= (uint8_t)cpustate->op1;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
 
@@ -673,15 +673,15 @@ static UINT32 opDIVUB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opDIVUH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVUH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	cpustate->_OV = 0;
-	if (cpustate->op1)	apph /= (UINT16)cpustate->op1;
+	if (cpustate->op1)	apph /= (uint16_t)cpustate->op1;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
 
@@ -689,9 +689,9 @@ static UINT32 opDIVUH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opDIVUW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opDIVUW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -705,7 +705,7 @@ static UINT32 opDIVUW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opINB(v60_state *cpustate)
+static uint32_t opINB(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 0);
 	cpustate->modwritevalb = MemRead8(cpustate->io, cpustate->op1);
@@ -720,7 +720,7 @@ static UINT32 opINB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opINH(v60_state *cpustate)
+static uint32_t opINH(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 1);
 	cpustate->modwritevalh = MemRead16(cpustate->io, cpustate->op1);
@@ -735,7 +735,7 @@ static UINT32 opINH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opINW(v60_state *cpustate)
+static uint32_t opINW(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 2);
 	cpustate->modwritevalw = MemRead32(cpustate->io, cpustate->op1);
@@ -750,7 +750,7 @@ static UINT32 opINW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opLDPR(v60_state *cpustate)
+static uint32_t opLDPR(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAMAddress, 2,ReadAM, 2);
 	if (cpustate->op2 >= 0 && cpustate->op2 <= 28)
@@ -767,7 +767,7 @@ static UINT32 opLDPR(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opLDTASK(v60_state *cpustate)
+static uint32_t opLDTASK(v60_state *cpustate)
 {
 	int i;
 	F12DecodeOperands(cpustate, ReadAMAddress, 2,ReadAM, 2);
@@ -809,9 +809,9 @@ static UINT32 opLDTASK(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMOVD(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVD(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 a, b;
+	uint32_t a, b;
 
 	F12DecodeOperands(cpustate, ReadAMAddress, 3,ReadAMAddress, 3);
 
@@ -840,23 +840,23 @@ static UINT32 opMOVD(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVB(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
-	cpustate->modwritevalb = (UINT8)cpustate->op1;
+	cpustate->modwritevalb = (uint8_t)cpustate->op1;
 	F12WriteSecondOperand(cpustate, 0);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVH(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
-	cpustate->modwritevalh = (UINT16)cpustate->op1;
+	cpustate->modwritevalh = (uint16_t)cpustate->op1;
 	F12WriteSecondOperand(cpustate, 1);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
 	cpustate->modwritevalw = cpustate->op1;
@@ -864,7 +864,7 @@ static UINT32 opMOVW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVEAB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVEAB(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 0);
 	cpustate->modwritevalw = cpustate->op1;
@@ -872,7 +872,7 @@ static UINT32 opMOVEAB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVEAH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVEAH(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 1);
 	cpustate->modwritevalw = cpustate->op1;
@@ -880,7 +880,7 @@ static UINT32 opMOVEAH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVEAW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVEAW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAMAddress, 2);
 	cpustate->modwritevalw = cpustate->op1;
@@ -888,34 +888,34 @@ static UINT32 opMOVEAW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVSBH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVSBH(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
-	cpustate->modwritevalh = (INT8)(cpustate->op1 & 0xFF);
+	cpustate->modwritevalh = (int8_t)(cpustate->op1 & 0xFF);
 	F12WriteSecondOperand(cpustate, 1);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVSBW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVSBW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
-	cpustate->modwritevalw = (INT8)(cpustate->op1 & 0xFF);
+	cpustate->modwritevalw = (int8_t)(cpustate->op1 & 0xFF);
 	F12WriteSecondOperand(cpustate, 2);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVSHW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVSHW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
-	cpustate->modwritevalw = (INT16)(cpustate->op1 & 0xFFFF);
+	cpustate->modwritevalw = (int16_t)(cpustate->op1 & 0xFFFF);
 	F12WriteSecondOperand(cpustate, 2);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVTHB(v60_state *cpustate)
+static uint32_t opMOVTHB(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
-	cpustate->modwritevalb = (UINT8)(cpustate->op1 & 0xFF);
+	cpustate->modwritevalb = (uint8_t)(cpustate->op1 & 0xFF);
 
 	// Check for overflow: the truncated bits must match the sign
 	//  of the result, otherwise overflow
@@ -929,10 +929,10 @@ static UINT32 opMOVTHB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMOVTWB(v60_state *cpustate)
+static uint32_t opMOVTWB(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
-	cpustate->modwritevalb = (UINT8)(cpustate->op1 & 0xFF);
+	cpustate->modwritevalb = (uint8_t)(cpustate->op1 & 0xFF);
 
 	// Check for overflow: the truncated bits must match the sign
 	//  of the result, otherwise overflow
@@ -946,10 +946,10 @@ static UINT32 opMOVTWB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMOVTWH(v60_state *cpustate)
+static uint32_t opMOVTWH(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
-	cpustate->modwritevalh = (UINT16)(cpustate->op1 & 0xFFFF);
+	cpustate->modwritevalh = (uint16_t)(cpustate->op1 & 0xFFFF);
 
 	// Check for overflow: the truncated bits must match the sign
 	//  of the result, otherwise overflow
@@ -964,15 +964,15 @@ static UINT32 opMOVTWH(v60_state *cpustate)
 }
 
 
-static UINT32 opMOVZBH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVZBH(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
-	cpustate->modwritevalh = (UINT16)cpustate->op1;
+	cpustate->modwritevalh = (uint16_t)cpustate->op1;
 	F12WriteSecondOperand(cpustate, 1);
 	F12END(cpustate);
 }
 
-static UINT32 opMOVZBW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVZBW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
 	cpustate->modwritevalw = cpustate->op1;
@@ -980,7 +980,7 @@ static UINT32 opMOVZBW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMOVZHW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opMOVZHW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
 	cpustate->modwritevalw = cpustate->op1;
@@ -988,16 +988,16 @@ static UINT32 opMOVZHW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opMULB(v60_state *cpustate)
+static uint32_t opMULB(v60_state *cpustate)
 {
-	UINT8 appb;
-	UINT32 tmp;
+	uint8_t appb;
+	uint32_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	// @@@ OV not set!!
-	tmp = (INT8)appb * (INT32)(INT8)cpustate->op1;
+	tmp = (int8_t)appb * (int32_t)(int8_t)cpustate->op1;
 	appb = tmp;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
@@ -1007,16 +1007,16 @@ static UINT32 opMULB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULH(v60_state *cpustate)
+static uint32_t opMULH(v60_state *cpustate)
 {
-	UINT16 apph;
-	UINT32 tmp;
+	uint16_t apph;
+	uint32_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	// @@@ OV not set!!
-	tmp = (INT16)apph * (INT32)(INT16)cpustate->op1;
+	tmp = (int16_t)apph * (int32_t)(int16_t)cpustate->op1;
 	apph = tmp;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
@@ -1026,16 +1026,16 @@ static UINT32 opMULH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULW(v60_state *cpustate)
+static uint32_t opMULW(v60_state *cpustate)
 {
-	UINT32 appw;
-	UINT64 tmp;
+	uint32_t appw;
+	uint64_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
 	// @@@ OV not set!!
-	tmp = (INT32)appw * (INT64)(INT32)cpustate->op1;
+	tmp = (int32_t)appw * (int64_t)(int32_t)cpustate->op1;
 	appw = tmp;
 	cpustate->_Z = (appw == 0);
 	cpustate->_S = ((appw & 0x80000000) != 0);
@@ -1045,16 +1045,16 @@ static UINT32 opMULW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULUB(v60_state *cpustate)
+static uint32_t opMULUB(v60_state *cpustate)
 {
-	UINT8 appb;
-	UINT32 tmp;
+	uint8_t appb;
+	uint32_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	// @@@ OV not set!!
-	tmp = appb * (UINT8)cpustate->op1;
+	tmp = appb * (uint8_t)cpustate->op1;
 	appb = tmp;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
@@ -1064,16 +1064,16 @@ static UINT32 opMULUB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULUH(v60_state *cpustate)
+static uint32_t opMULUH(v60_state *cpustate)
 {
-	UINT16 apph;
-	UINT32 tmp;
+	uint16_t apph;
+	uint32_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	// @@@ OV not set!!
-	tmp = apph * (UINT16)cpustate->op1;
+	tmp = apph * (uint16_t)cpustate->op1;
 	apph = tmp;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
@@ -1083,16 +1083,16 @@ static UINT32 opMULUH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULUW(v60_state *cpustate)
+static uint32_t opMULUW(v60_state *cpustate)
 {
-	UINT32 appw;
-	UINT64 tmp;
+	uint32_t appw;
+	uint64_t tmp;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
 	// @@@ OV not set!!
-	tmp = (UINT64)appw * (UINT64)cpustate->op1;
+	tmp = (uint64_t)appw * (uint64_t)cpustate->op1;
 	appw = tmp;
 	cpustate->_Z = (appw == 0);
 	cpustate->_S = ((appw & 0x80000000) != 0);
@@ -1102,40 +1102,40 @@ static UINT32 opMULUW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opNEGB(v60_state *cpustate) /* TRUSTED  (C too!)*/
+static uint32_t opNEGB(v60_state *cpustate) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
 
 	cpustate->modwritevalb = 0;
-	SUBB(cpustate->modwritevalb, (INT8)cpustate->op1);
+	SUBB(cpustate->modwritevalb, (int8_t)cpustate->op1);
 
 	F12WriteSecondOperand(cpustate, 0);
 	F12END(cpustate);
 }
 
-static UINT32 opNEGH(v60_state *cpustate) /* TRUSTED  (C too!)*/
+static uint32_t opNEGH(v60_state *cpustate) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
 
 	cpustate->modwritevalh = 0;
-	SUBW(cpustate->modwritevalh, (INT16)cpustate->op1);
+	SUBW(cpustate->modwritevalh, (int16_t)cpustate->op1);
 
 	F12WriteSecondOperand(cpustate, 1);
 	F12END(cpustate);
 }
 
-static UINT32 opNEGW(v60_state *cpustate) /* TRUSTED  (C too!)*/
+static uint32_t opNEGW(v60_state *cpustate) /* TRUSTED  (C too!)*/
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
 
 	cpustate->modwritevalw = 0;
-	SUBL(cpustate->modwritevalw, (INT32)cpustate->op1);
+	SUBL(cpustate->modwritevalw, (int32_t)cpustate->op1);
 
 	F12WriteSecondOperand(cpustate, 2);
 	F12END(cpustate);
 }
 
-static UINT32 opNOTB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opNOTB(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
 	cpustate->modwritevalb=~cpustate->op1;
@@ -1148,7 +1148,7 @@ static UINT32 opNOTB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opNOTH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opNOTH(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 1);
 	cpustate->modwritevalh=~cpustate->op1;
@@ -1161,7 +1161,7 @@ static UINT32 opNOTH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opNOTW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opNOTW(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
 	cpustate->modwritevalw=~cpustate->op1;
@@ -1174,9 +1174,9 @@ static UINT32 opNOTW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opNOT1(v60_state *cpustate) /* TRUSTED */
+static uint32_t opNOT1(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -1193,76 +1193,76 @@ static UINT32 opNOT1(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opORB(v60_state *cpustate) /* TRUSTED  (C too!)*/
+static uint32_t opORB(v60_state *cpustate) /* TRUSTED  (C too!)*/
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	ORB(appb, (UINT8)cpustate->op1);
+	ORB(appb, (uint8_t)cpustate->op1);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opORH(v60_state *cpustate) /* TRUSTED (C too!)*/
+static uint32_t opORH(v60_state *cpustate) /* TRUSTED (C too!)*/
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	ORW(apph, (UINT16)cpustate->op1);
+	ORW(apph, (uint16_t)cpustate->op1);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opORW(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opORW(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	ORL(appw, (UINT32)cpustate->op1);
+	ORL(appw, (uint32_t)cpustate->op1);
 
 	F12STOREOP2WORD(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opOUTB(v60_state *cpustate)
+static uint32_t opOUTB(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 2);
-	MemWrite8(cpustate->io, cpustate->op2,(UINT8)cpustate->op1);
+	MemWrite8(cpustate->io, cpustate->op2,(uint8_t)cpustate->op1);
 	F12END(cpustate);
 }
 
-static UINT32 opOUTH(v60_state *cpustate)
+static uint32_t opOUTH(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 2);
-	MemWrite16(cpustate->io, cpustate->op2,(UINT16)cpustate->op1);
+	MemWrite16(cpustate->io, cpustate->op2,(uint16_t)cpustate->op1);
 	F12END(cpustate);
 }
 
-static UINT32 opOUTW(v60_state *cpustate)
+static uint32_t opOUTW(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 	MemWrite32(cpustate->io, cpustate->op2, cpustate->op1);
 	F12END(cpustate);
 }
 
-static UINT32 opREMB(v60_state *cpustate)
+static uint32_t opREMB(v60_state *cpustate)
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	cpustate->_OV = 0;
 	if (cpustate->op1)
-		appb= (INT8)appb % (INT8)cpustate->op1;
+		appb= (int8_t)appb % (int8_t)cpustate->op1;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
 
@@ -1270,16 +1270,16 @@ static UINT32 opREMB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opREMH(v60_state *cpustate)
+static uint32_t opREMH(v60_state *cpustate)
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	cpustate->_OV = 0;
 	if (cpustate->op1)
-		apph = (INT16)apph % (INT16)cpustate->op1;
+		apph = (int16_t)apph % (int16_t)cpustate->op1;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
 
@@ -1287,16 +1287,16 @@ static UINT32 opREMH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opREMW(v60_state *cpustate)
+static uint32_t opREMW(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
 	cpustate->_OV = 0;
 	if (cpustate->op1)
-		appw = (INT32)appw % (INT32)cpustate->op1;
+		appw = (int32_t)appw % (int32_t)cpustate->op1;
 	cpustate->_Z = (appw == 0);
 	cpustate->_S = ((appw & 0x80000000) != 0);
 
@@ -1304,16 +1304,16 @@ static UINT32 opREMW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opREMUB(v60_state *cpustate)
+static uint32_t opREMUB(v60_state *cpustate)
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
 	cpustate->_OV = 0;
 	if (cpustate->op1)
-		appb %= (UINT8)cpustate->op1;
+		appb %= (uint8_t)cpustate->op1;
 	cpustate->_Z = (appb == 0);
 	cpustate->_S = ((appb & 0x80) != 0);
 
@@ -1321,16 +1321,16 @@ static UINT32 opREMUB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opREMUH(v60_state *cpustate)
+static uint32_t opREMUH(v60_state *cpustate)
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
 	cpustate->_OV = 0;
 	if (cpustate->op1)
-		apph %= (UINT16)cpustate->op1;
+		apph %= (uint16_t)cpustate->op1;
 	cpustate->_Z = (apph == 0);
 	cpustate->_S = ((apph & 0x8000) != 0);
 
@@ -1338,9 +1338,9 @@ static UINT32 opREMUH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opREMUW(v60_state *cpustate)
+static uint32_t opREMUW(v60_state *cpustate)
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -1355,16 +1355,16 @@ static UINT32 opREMUW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opROTB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
-	INT8 i, count;
+	uint8_t appb;
+	int8_t i, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
@@ -1391,16 +1391,16 @@ static UINT32 opROTB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opROTH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
-	INT8 i, count;
+	uint16_t apph;
+	int8_t i, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
@@ -1427,16 +1427,16 @@ static UINT32 opROTH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opROTW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
-	INT8 i, count;
+	uint32_t appw;
+	int8_t i, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
@@ -1463,23 +1463,23 @@ static UINT32 opROTW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opROTCB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTCB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
-	INT8 i, cy, count;
+	uint8_t appb;
+	int8_t i, cy, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 	NORMALIZEFLAGS(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
 		{
 			cy = cpustate->_CY;
-			cpustate->_CY = (UINT8)((appb & 0x80) >> 7);
+			cpustate->_CY = (uint8_t)((appb & 0x80) >> 7);
 			appb = (appb << 1) | cy;
 		}
 	}
@@ -1504,23 +1504,23 @@ static UINT32 opROTCB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opROTCH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTCH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
-	INT8 i, cy, count;
+	uint16_t apph;
+	int8_t i, cy, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 	NORMALIZEFLAGS(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
 		{
 			cy = cpustate->_CY;
-			cpustate->_CY = (UINT8)((apph & 0x8000) >> 15);
+			cpustate->_CY = (uint8_t)((apph & 0x8000) >> 15);
 			apph = (apph << 1) | cy;
 		}
 	}
@@ -1530,8 +1530,8 @@ static UINT32 opROTCH(v60_state *cpustate) /* TRUSTED */
 		for (i = 0;i < count;i++)
 		{
 			cy = cpustate->_CY;
-			cpustate->_CY = (UINT8)(apph & 1);
-			apph = (apph >> 1) | ((UINT16)cy << 15);
+			cpustate->_CY = (uint8_t)(apph & 1);
+			apph = (apph >> 1) | ((uint16_t)cy << 15);
 		}
 	}
 	else
@@ -1545,23 +1545,23 @@ static UINT32 opROTCH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opROTCW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opROTCW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
-	INT8 i, cy, count;
+	uint32_t appw;
+	int8_t i, cy, count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 	NORMALIZEFLAGS(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		for (i = 0;i < count;i++)
 		{
 			cy = cpustate->_CY;
-			cpustate->_CY = (UINT8)((appw & 0x80000000) >> 31);
+			cpustate->_CY = (uint8_t)((appw & 0x80000000) >> 31);
 			appw = (appw << 1) | cy;
 		}
 	}
@@ -1571,8 +1571,8 @@ static UINT32 opROTCW(v60_state *cpustate) /* TRUSTED */
 		for (i = 0;i < count;i++)
 		{
 			cy = cpustate->_CY;
-			cpustate->_CY = (UINT8)(appw & 1);
-			appw = (appw >> 1) | ((UINT32)cy << 31);
+			cpustate->_CY = (uint8_t)(appw & 1);
+			appw = (appw >> 1) | ((uint32_t)cy << 31);
 		}
 	}
 	else
@@ -1586,11 +1586,11 @@ static UINT32 opROTCW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opRVBIT(v60_state *cpustate)
+static uint32_t opRVBIT(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
 
-	cpustate->modwritevalb =(UINT8)
+	cpustate->modwritevalb =(uint8_t)
 								(((cpustate->op1 & (1 << 0)) << 7) |
 								 ((cpustate->op1 & (1 << 1)) << 5) |
 								 ((cpustate->op1 & (1 << 2)) << 3) |
@@ -1604,7 +1604,7 @@ static UINT32 opRVBIT(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opRVBYT(v60_state *cpustate) /* TRUSTED */
+static uint32_t opRVBYT(v60_state *cpustate) /* TRUSTED */
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
 
@@ -1617,9 +1617,9 @@ static UINT32 opRVBYT(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opSET1(v60_state *cpustate) /* TRUSTED */
+static uint32_t opSET1(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
@@ -1634,7 +1634,7 @@ static UINT32 opSET1(v60_state *cpustate) /* TRUSTED */
 }
 
 
-static UINT32 opSETF(v60_state *cpustate)
+static uint32_t opSETF(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 0);
 
@@ -1715,7 +1715,7 @@ static UINT32 opSETF(v60_state *cpustate)
 /*
 #define SHIFTLEFT_OY(val, count, bitsize) \
 {\
-    UINT32 tmp = ((val) >> (bitsize - 1)) & 1; \
+    uint32_t tmp = ((val) >> (bitsize - 1)) & 1; \
     tmp <<= count; \
     tmp -= 1; \
     tmp <<= (bitsize - (count)); \
@@ -1727,7 +1727,7 @@ static UINT32 opSETF(v60_state *cpustate)
 // During the shift, the overflow is set if the sign bit changes at any point during the shift
 #define SHIFTLEFT_OV(val, count, bitsize) \
 {\
-	UINT32 tmp; \
+	uint32_t tmp; \
 	if (count == 32) \
 		tmp = 0xFFFFFFFF; \
 	else \
@@ -1740,7 +1740,7 @@ static UINT32 opSETF(v60_state *cpustate)
 }
 
 #define SHIFTLEFT_CY(val, count, bitsize) \
-	cpustate->_CY = (UINT8)(((val) >> (bitsize - count)) & 1);
+	cpustate->_CY = (uint8_t)(((val) >> (bitsize - count)) & 1);
 
 
 
@@ -1748,20 +1748,20 @@ static UINT32 opSETF(v60_state *cpustate)
 	cpustate->_OV = 0;
 
 #define SHIFTARITHMETICRIGHT_CY(val, count, bitsize) \
-	cpustate->_CY = (UINT8)(((val) >> (count - 1)) & 1);
+	cpustate->_CY = (uint8_t)(((val) >> (count - 1)) & 1);
 
 
 
-static UINT32 opSHAB(v60_state *cpustate)
+static uint32_t opSHAB(v60_state *cpustate)
 {
-	UINT8 appb;
-	INT8 count;
+	uint8_t appb;
+	int8_t count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 
 	// Special case: destination unchanged, flags set
 	if (count == 0)
@@ -1795,7 +1795,7 @@ static UINT32 opSHAB(v60_state *cpustate)
 		if (count >= 8)
 			appb = (appb & 0x80) ? 0xFF : 0;
 		else
-			appb = ((INT8)appb) >> count;
+			appb = ((int8_t)appb) >> count;
 
 		SetSZPF_Byte(appb);
 	}
@@ -1806,16 +1806,16 @@ static UINT32 opSHAB(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opSHAH(v60_state *cpustate)
+static uint32_t opSHAH(v60_state *cpustate)
 {
-	UINT16 apph;
-	INT8 count;
+	uint16_t apph;
+	int8_t count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 
 	// Special case: destination unchanged, flags set
 	if (count == 0)
@@ -1849,7 +1849,7 @@ static UINT32 opSHAH(v60_state *cpustate)
 		if (count >= 16)
 			apph = (apph & 0x8000) ? 0xFFFF : 0;
 		else
-			apph = ((INT16)apph) >> count;
+			apph = ((int16_t)apph) >> count;
 
 		SetSZPF_Word(apph);
 	}
@@ -1860,16 +1860,16 @@ static UINT32 opSHAH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opSHAW(v60_state *cpustate)
+static uint32_t opSHAW(v60_state *cpustate)
 {
-	UINT32 appw;
-	INT8 count;
+	uint32_t appw;
+	int8_t count;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 
 	// Special case: destination unchanged, flags set
 	if (count == 0)
@@ -1903,7 +1903,7 @@ static UINT32 opSHAW(v60_state *cpustate)
 		if (count >= 32)
 			appw = (appw & 0x80000000) ? 0xFFFFFFFF : 0;
 		else
-			appw = ((INT32)appw) >> count;
+			appw = ((int32_t)appw) >> count;
 
 		SetSZPF_Long(appw);
 	}
@@ -1915,17 +1915,17 @@ static UINT32 opSHAW(v60_state *cpustate)
 }
 
 
-static UINT32 opSHLB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opSHLB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb;
-	INT8 count;
-	UINT32 tmp;
+	uint8_t appb;
+	int8_t count;
+	uint32_t tmp;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		// left shift flags:
@@ -1960,7 +1960,7 @@ static UINT32 opSHLB(v60_state *cpustate) /* TRUSTED */
 			// overflow always cleared
 			tmp = appb & 0xff;
 			tmp >>= ((-count) - 1);
-			cpustate->_CY = (UINT8)(tmp & 0x1);
+			cpustate->_CY = (uint8_t)(tmp & 0x1);
 			cpustate->_OV = 0;
 
 			appb >>= -count;
@@ -1974,17 +1974,17 @@ static UINT32 opSHLB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opSHLH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opSHLH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph;
-	INT8 count;
-	UINT32 tmp;
+	uint16_t apph;
+	int8_t count;
+	uint32_t tmp;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 //  mame_printf_debug("apph: %x count: %d  ", apph, count);
 	if (count > 0)
 	{
@@ -2020,7 +2020,7 @@ static UINT32 opSHLH(v60_state *cpustate) /* TRUSTED */
 			// overflow always cleared
 			tmp = apph & 0xffff;
 			tmp >>= ((-count) - 1);
-			cpustate->_CY = (UINT8)(tmp & 0x1);
+			cpustate->_CY = (uint8_t)(tmp & 0x1);
 			cpustate->_OV = 0;
 
 			apph >>= -count;
@@ -2034,17 +2034,17 @@ static UINT32 opSHLH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opSHLW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opSHLW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw;
-	INT8 count;
-	UINT64 tmp;
+	uint32_t appw;
+	int8_t count;
+	uint64_t tmp;
 
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	count = (INT8)(cpustate->op1 & 0xFF);
+	count = (int8_t)(cpustate->op1 & 0xFF);
 	if (count > 0)
 	{
 		// left shift flags:
@@ -2077,9 +2077,9 @@ static UINT32 opSHLW(v60_state *cpustate) /* TRUSTED */
 			// right shift flags:
 			// carry = last bit shifted out
 			// overflow always cleared
-			tmp = (UINT64)(appw & 0xffffffff);
+			tmp = (uint64_t)(appw & 0xffffffff);
 			tmp >>= ((-count) - 1);
-			cpustate->_CY = (UINT8)(tmp & 0x1);
+			cpustate->_CY = (uint8_t)(tmp & 0x1);
 			cpustate->_OV = 0;
 
 			appw >>= -count;
@@ -2093,7 +2093,7 @@ static UINT32 opSHLW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate);
 }
 
-static UINT32 opSTPR(v60_state *cpustate)
+static uint32_t opSTPR(v60_state *cpustate)
 {
 	F12DecodeFirstOperand(cpustate, ReadAM, 2);
 	if (cpustate->op1 >= 0 && cpustate->op1 <= 28)
@@ -2107,94 +2107,94 @@ static UINT32 opSTPR(v60_state *cpustate)
 }
 
 
-static UINT32 opSUBB(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opSUBB(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	SUBB(appb, (UINT8)cpustate->op1);
+	SUBB(appb, (uint8_t)cpustate->op1);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opSUBH(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opSUBH(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	SUBW(apph, (UINT16)cpustate->op1);
+	SUBW(apph, (uint16_t)cpustate->op1);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opSUBW(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opSUBW(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	SUBL(appw, (UINT32)cpustate->op1);
+	SUBL(appw, (uint32_t)cpustate->op1);
 
 	F12STOREOP2WORD(cpustate);
 	F12END(cpustate);
 }
 
 
-static UINT32 opSUBCB(v60_state *cpustate)
+static uint32_t opSUBCB(v60_state *cpustate)
 {
-	UINT8 appb;
-	UINT8 src;
+	uint8_t appb;
+	uint8_t src;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	src = (UINT8)cpustate->op1 + (cpustate->_CY?1:0);
+	src = (uint8_t)cpustate->op1 + (cpustate->_CY?1:0);
 	SUBB(appb, src);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opSUBCH(v60_state *cpustate)
+static uint32_t opSUBCH(v60_state *cpustate)
 {
-	UINT16 apph;
-	UINT16 src;
+	uint16_t apph;
+	uint16_t src;
 
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	src = (UINT16)cpustate->op1 + (cpustate->_CY?1:0);
+	src = (uint16_t)cpustate->op1 + (cpustate->_CY?1:0);
 	SUBW(apph, src);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opSUBCW(v60_state *cpustate)
+static uint32_t opSUBCW(v60_state *cpustate)
 {
-	UINT32 appw;
-	UINT32 src;
+	uint32_t appw;
+	uint32_t src;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	src = (UINT32)cpustate->op1 + (cpustate->_CY?1:0);
+	src = (uint32_t)cpustate->op1 + (cpustate->_CY?1:0);
 	SUBL(appw, src);
 
 	F12STOREOP2WORD(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opTEST1(v60_state *cpustate)
+static uint32_t opTEST1(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAM, 2);
 
@@ -2204,7 +2204,7 @@ static UINT32 opTEST1(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opUPDPSWW(v60_state *cpustate)
+static uint32_t opUPDPSWW(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAM, 2);
 
@@ -2216,7 +2216,7 @@ static UINT32 opUPDPSWW(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opUPDPSWH(v60_state *cpustate)
+static uint32_t opUPDPSWH(v60_state *cpustate)
 {
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAM, 2);
 
@@ -2228,9 +2228,9 @@ static UINT32 opUPDPSWH(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opXCHB(v60_state *cpustate) /* TRUSTED */
+static uint32_t opXCHB(v60_state *cpustate) /* TRUSTED */
 {
-	UINT8 appb, temp;
+	uint8_t appb, temp;
 
 	F12DecodeOperands(cpustate, ReadAMAddress, 0,ReadAMAddress, 0);
 
@@ -2244,9 +2244,9 @@ static UINT32 opXCHB(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate)
 }
 
-static UINT32 opXCHH(v60_state *cpustate) /* TRUSTED */
+static uint32_t opXCHH(v60_state *cpustate) /* TRUSTED */
 {
-	UINT16 apph, temp;
+	uint16_t apph, temp;
 
 	F12DecodeOperands(cpustate, ReadAMAddress, 1,ReadAMAddress, 1);
 
@@ -2260,9 +2260,9 @@ static UINT32 opXCHH(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate)
 }
 
-static UINT32 opXCHW(v60_state *cpustate) /* TRUSTED */
+static uint32_t opXCHW(v60_state *cpustate) /* TRUSTED */
 {
-	UINT32 appw, temp;
+	uint32_t appw, temp;
 
 	F12DecodeOperands(cpustate, ReadAMAddress, 2,ReadAMAddress, 2);
 
@@ -2276,49 +2276,49 @@ static UINT32 opXCHW(v60_state *cpustate) /* TRUSTED */
 	F12END(cpustate)
 }
 
-static UINT32 opXORB(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opXORB(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT8 appb;
+	uint8_t appb;
 	F12DecodeOperands(cpustate, ReadAM, 0,ReadAMAddress, 0);
 
 	F12LOADOP2BYTE(cpustate);
 
-	XORB(appb, (UINT8)cpustate->op1);
+	XORB(appb, (uint8_t)cpustate->op1);
 
 	F12STOREOP2BYTE(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opXORH(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opXORH(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT16 apph;
+	uint16_t apph;
 	F12DecodeOperands(cpustate, ReadAM, 1,ReadAMAddress, 1);
 
 	F12LOADOP2HALF(cpustate);
 
-	XORW(apph, (UINT16)cpustate->op1);
+	XORW(apph, (uint16_t)cpustate->op1);
 
 	F12STOREOP2HALF(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opXORW(v60_state *cpustate) /* TRUSTED (C too!) */
+static uint32_t opXORW(v60_state *cpustate) /* TRUSTED (C too!) */
 {
-	UINT32 appw;
+	uint32_t appw;
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 2);
 
 	F12LOADOP2WORD(cpustate);
 
-	XORL(appw, (UINT32)cpustate->op1);
+	XORL(appw, (uint32_t)cpustate->op1);
 
 	F12STOREOP2WORD(cpustate);
 	F12END(cpustate);
 }
 
-static UINT32 opMULX(v60_state *cpustate)
+static uint32_t opMULX(v60_state *cpustate)
 {
-	INT32 a, b;
-	INT64 res;
+	int32_t a, b;
+	int64_t res;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 3);
 
@@ -2331,10 +2331,10 @@ static UINT32 opMULX(v60_state *cpustate)
 		a = MemRead32(cpustate->program, cpustate->op2);
 	}
 
-	res = (INT64)a * (INT64)(INT32)cpustate->op1;
+	res = (int64_t)a * (int64_t)(int32_t)cpustate->op1;
 
-	b = (INT32)((res >> 32)&0xffffffff);
-	a = (INT32)(res & 0xffffffff);
+	b = (int32_t)((res >> 32)&0xffffffff);
+	a = (int32_t)(res & 0xffffffff);
 
 	cpustate->_S = ((b & 0x80000000) != 0);
 	cpustate->_Z = (a == 0 && b == 0);
@@ -2353,10 +2353,10 @@ static UINT32 opMULX(v60_state *cpustate)
 	F12END(cpustate);
 }
 
-static UINT32 opMULUX(v60_state *cpustate)
+static uint32_t opMULUX(v60_state *cpustate)
 {
-	INT32 a, b;
-	UINT64 res;
+	int32_t a, b;
+	uint64_t res;
 
 	F12DecodeOperands(cpustate, ReadAM, 2,ReadAMAddress, 3);
 
@@ -2369,9 +2369,9 @@ static UINT32 opMULUX(v60_state *cpustate)
 		a = MemRead32(cpustate->program, cpustate->op2);
 	}
 
-	res = (UINT64)a * (UINT64)cpustate->op1;
-	b = (INT32)((res >> 32)&0xffffffff);
-	a = (INT32)(res & 0xffffffff);
+	res = (uint64_t)a * (uint64_t)cpustate->op1;
+	b = (int32_t)((res >> 32)&0xffffffff);
+	a = (int32_t)(res & 0xffffffff);
 
 	cpustate->_S = ((b & 0x80000000) != 0);
 	cpustate->_Z = (a == 0 && b == 0);

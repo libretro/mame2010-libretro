@@ -57,7 +57,7 @@ enum
 typedef struct _mb88_cpu_core mb88_cpu_core;
 struct _mb88_cpu_core
 {
-	UINT8		*PLA_config;		/* PLA configuration (32 byte values), if NULL assume direct output */
+	uint8_t		*PLA_config;		/* PLA configuration (32 byte values), if NULL assume direct output */
 };
 
 /***************************************************************************

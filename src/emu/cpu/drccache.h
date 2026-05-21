@@ -32,7 +32,7 @@
 ***************************************************************************/
 
 /* generic code pointer */
-typedef UINT8 *drccodeptr;
+typedef uint8_t *drccodeptr;
 
 /* opaque cache state */
 typedef struct _drccache drccache;
@@ -97,7 +97,7 @@ void *drccache_memory_alloc_temporary(drccache *cache, size_t bytes);
 /* ----- code generation ----- */
 
 /* begin code generation */
-drccodeptr *drccache_begin_codegen(drccache *cache, UINT32 reserve_bytes);
+drccodeptr *drccache_begin_codegen(drccache *cache, uint32_t reserve_bytes);
 
 /* complete code generation */
 drccodeptr drccache_end_codegen(drccache *cache);

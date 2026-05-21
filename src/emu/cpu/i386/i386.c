@@ -29,8 +29,8 @@ MODRM_TABLE i386_MODRM_table[256];
 
 static void i386_load_protected_mode_segment(i386_state *cpustate, I386_SREG *seg )
 {
-	UINT32 v1,v2;
-	UINT32 base, limit;
+	uint32_t v1,v2;
+	uint32_t base, limit;
 	int entry;
 
 	if ( seg->selector & 0x4 )
@@ -79,9 +79,9 @@ static void i386_load_segment_descriptor(i386_state *cpustate, int segment )
 	}
 }
 
-static UINT32 get_flags(i386_state *cpustate)
+static uint32_t get_flags(i386_state *cpustate)
 {
-	UINT32 f = 0x2;
+	uint32_t f = 0x2;
 	f |= cpustate->CF;
 	f |= cpustate->PF << 2;
 	f |= cpustate->AF << 4;
@@ -97,7 +97,7 @@ static UINT32 get_flags(i386_state *cpustate)
 	return (cpustate->eflags & cpustate->eflags_mask) | (f & 0xffff);
 }
 
-static void set_flags(i386_state *cpustate, UINT32 f )
+static void set_flags(i386_state *cpustate, uint32_t f )
 {
 	cpustate->CF = (f & 0x1) ? 1 : 0;
 	cpustate->PF = (f & 0x4) ? 1 : 0;
@@ -114,12 +114,12 @@ static void set_flags(i386_state *cpustate, UINT32 f )
 	cpustate->eflags = f & cpustate->eflags_mask;
 }
 
-static void sib_byte(i386_state *cpustate,UINT8 mod, UINT32* out_ea, UINT8* out_segment)
+static void sib_byte(i386_state *cpustate,uint8_t mod, uint32_t* out_ea, uint8_t* out_segment)
 {
-	UINT32 ea = 0;
-	UINT8 segment = 0;
-	UINT8 scale, i, base;
-	UINT8 sib = FETCH(cpustate);
+	uint32_t ea = 0;
+	uint8_t segment = 0;
+	uint8_t scale, i, base;
+	uint8_t sib = FETCH(cpustate);
 	scale = (sib >> 6) & 0x3;
 	i = (sib >> 3) & 0x7;
 	base = sib & 0x7;
@@ -161,15 +161,15 @@ static void sib_byte(i386_state *cpustate,UINT8 mod, UINT32* out_ea, UINT8* out_
 	*out_segment = segment;
 }
 
-static void modrm_to_EA(i386_state *cpustate,UINT8 mod_rm, UINT32* out_ea, UINT8* out_segment)
+static void modrm_to_EA(i386_state *cpustate,uint8_t mod_rm, uint32_t* out_ea, uint8_t* out_segment)
 {
-	INT8 disp8;
-	INT16 disp16;
-	INT32 disp32;
-	UINT8 mod = (mod_rm >> 6) & 0x3;
-	UINT8 rm = mod_rm & 0x7;
-	UINT32 ea;
-	UINT8 segment;
+	int8_t disp8;
+	int16_t disp16;
+	int32_t disp32;
+	uint8_t mod = (mod_rm >> 6) & 0x3;
+	uint8_t rm = mod_rm & 0x7;
+	uint32_t ea;
+	uint8_t segment;
 
 	if( mod_rm >= 0xc0 )
 		fatalerror("i386: Called modrm_to_EA with modrm value %02X !",mod_rm);
@@ -195,7 +195,7 @@ static void modrm_to_EA(i386_state *cpustate,UINT8 mod_rm, UINT32* out_ea, UINT8
 		}
 		if( mod == 1 ) {
 			disp8 = FETCH(cpustate);
-			ea += (INT32)disp8;
+			ea += (int32_t)disp8;
 		} else if( mod == 2 ) {
 			disp32 = FETCH32(cpustate);
 			ea += disp32;
@@ -228,10 +228,10 @@ static void modrm_to_EA(i386_state *cpustate,UINT8 mod_rm, UINT32* out_ea, UINT8
 		}
 		if( mod == 1 ) {
 			disp8 = FETCH(cpustate);
-			ea += (INT32)disp8;
+			ea += (int32_t)disp8;
 		} else if( mod == 2 ) {
 			disp16 = FETCH16(cpustate);
-			ea += (INT32)disp16;
+			ea += (int32_t)disp16;
 		}
 
 		if( cpustate->segment_prefix )
@@ -242,18 +242,18 @@ static void modrm_to_EA(i386_state *cpustate,UINT8 mod_rm, UINT32* out_ea, UINT8
 	}
 }
 
-static UINT32 GetNonTranslatedEA(i386_state *cpustate,UINT8 modrm)
+static uint32_t GetNonTranslatedEA(i386_state *cpustate,uint8_t modrm)
 {
-	UINT8 segment;
-	UINT32 ea;
+	uint8_t segment;
+	uint32_t ea;
 	modrm_to_EA(cpustate, modrm, &ea, &segment );
 	return ea;
 }
 
-static UINT32 GetEA(i386_state *cpustate,UINT8 modrm)
+static uint32_t GetEA(i386_state *cpustate,uint8_t modrm)
 {
-	UINT8 segment;
-	UINT32 ea;
+	uint8_t segment;
+	uint32_t ea;
 	modrm_to_EA(cpustate, modrm, &ea, &segment );
 	return i386_translate(cpustate, segment, ea );
 }
@@ -280,9 +280,9 @@ static void i386_trap(i386_state *cpustate,int irq, int irq_gate)
      *  0x0f    Reserved
      *  0x10    Coprocessor error
      */
-	UINT32 v1, v2;
-	UINT32 offset;
-	UINT16 segment;
+	uint32_t v1, v2;
+	uint32_t offset;
+	uint16_t segment;
 	int entry = irq * (PROTECTED_MODE ? 8 : 4);
 
 	/* Check if IRQ is out of IDTR's bounds */
@@ -366,8 +366,8 @@ static void i386_check_irq_line(i386_state *cpustate)
 
 #include "cycles.h"
 
-static UINT8 *cycle_table_rm[X86_NUM_CPUS];
-static UINT8 *cycle_table_pm[X86_NUM_CPUS];
+static uint8_t *cycle_table_rm[X86_NUM_CPUS];
+static uint8_t *cycle_table_pm[X86_NUM_CPUS];
 
 #define CYCLES_NUM(x)	(cpustate->cycles -= (x))
 
@@ -414,8 +414,8 @@ static void build_cycle_table(running_machine *machine)
 	int i, j;
 	for (j=0; j < X86_NUM_CPUS; j++)
 	{
-		cycle_table_rm[j] = auto_alloc_array(machine, UINT8, CYCLES_NUM_OPCODES);
-		cycle_table_pm[j] = auto_alloc_array(machine, UINT8, CYCLES_NUM_OPCODES);
+		cycle_table_rm[j] = auto_alloc_array(machine, uint8_t, CYCLES_NUM_OPCODES);
+		cycle_table_pm[j] = auto_alloc_array(machine, uint8_t, CYCLES_NUM_OPCODES);
 
 		for (i=0; i < sizeof(x86_cycle_table)/sizeof(X86_CYCLE_TABLE); i++)
 		{
@@ -461,17 +461,17 @@ static void I386OP(decode_two_byte)(i386_state *cpustate)
 
 /*************************************************************************/
 
-static UINT64 i386_debug_segbase(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t i386_debug_segbase(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
 	legacy_cpu_device *device = (legacy_cpu_device *)ref;
 	i386_state *cpustate = get_safe_token(device);
-	UINT32 result;
+	uint32_t result;
 	I386_SREG seg;
 
 	if (PROTECTED_MODE)
 	{
 		memset(&seg, 0, sizeof(seg));
-		seg.selector = (UINT16) param[0];
+		seg.selector = (uint16_t) param[0];
 		i386_load_protected_mode_segment(cpustate,&seg);
 		result = seg.base;
 	}
@@ -482,17 +482,17 @@ static UINT64 i386_debug_segbase(void *globalref, void *ref, UINT32 params, cons
 	return result;
 }
 
-static UINT64 i386_debug_seglimit(void *globalref, void *ref, UINT32 params, const UINT64 *param)
+static uint64_t i386_debug_seglimit(void *globalref, void *ref, uint32_t params, const uint64_t *param)
 {
 	legacy_cpu_device *device = (legacy_cpu_device *)ref;
 	i386_state *cpustate = get_safe_token(device);
-	UINT32 result = 0;
+	uint32_t result = 0;
 	I386_SREG seg;
 
 	if (PROTECTED_MODE)
 	{
 		memset(&seg, 0, sizeof(seg));
-		seg.selector = (UINT16) param[0];
+		seg.selector = (uint16_t) param[0];
 		i386_load_protected_mode_segment(cpustate,&seg);
 		result = seg.limit;
 	}
@@ -607,7 +607,7 @@ static CPU_INIT( i386 )
 	state_save_register_postload(device->machine, i386_postload, (void *)device);
 }
 
-static void build_opcode_table(i386_state *cpustate, UINT32 features)
+static void build_opcode_table(i386_state *cpustate, uint32_t features)
 {
 	int i;
 	for (i=0; i < 256; i++)

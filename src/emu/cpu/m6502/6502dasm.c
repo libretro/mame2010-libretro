@@ -130,8 +130,8 @@ static const char *const token[]=
 
 struct op6502_info
 {
-	UINT8 opc;
-	UINT8 arg;
+	uint8_t opc;
+	uint8_t arg;
 };
 
 static const struct op6502_info op6502[256] = {
@@ -542,15 +542,15 @@ static const struct op6502_info opdeco16[256] =
 /*****************************************************************************
  * Disassemble a single opcode starting at pc
  *****************************************************************************/
-static unsigned internal_m6502_dasm(const struct op6502_info *opinfo, char *buffer, offs_t pc, const UINT8 *oprom, const UINT8 *opram)
+static unsigned internal_m6502_dasm(const struct op6502_info *opinfo, char *buffer, offs_t pc, const uint8_t *oprom, const uint8_t *opram)
 {
 	char *dst = buffer;
-	INT8 offset;
-	INT16 offset16;
+	int8_t offset;
+	int16_t offset16;
 	unsigned PC = pc;
-	UINT16 addr;
-	UINT8 op, opc, arg, value;
-	UINT32 flags;
+	uint16_t addr;
+	uint8_t op, opc, arg, value;
+	uint32_t flags;
 	int pos = 0;
 
 	op = oprom[pos++];
@@ -592,7 +592,7 @@ static unsigned internal_m6502_dasm(const struct op6502_info *opinfo, char *buff
 		break;
 
 	case rel:
-		offset = (INT8) opram[pos++];
+		offset = (int8_t) opram[pos++];
 		pc++;
 		dst += sprintf(dst, "$%04X", (pc + offset) & 0xFFFF);
 		break;
@@ -650,7 +650,7 @@ static unsigned internal_m6502_dasm(const struct op6502_info *opinfo, char *buff
 		addr = opram[pos++];
 		pc++;
 		dst += sprintf(dst,"$%02X", addr);
-		offset = (INT8) opram[pos++];
+		offset = (int8_t) opram[pos++];
 		pc++;
 		dst += sprintf(dst,",$%04X", pc + offset);
 		break;
@@ -712,7 +712,7 @@ static unsigned internal_m6502_dasm(const struct op6502_info *opinfo, char *buff
 		break;
 
 	case idz:
-		addr = (INT8) opram[pos++];
+		addr = (int8_t) opram[pos++];
 		pc++;
 		dst += sprintf(dst,"($%02X),z", addr);
 		break;
