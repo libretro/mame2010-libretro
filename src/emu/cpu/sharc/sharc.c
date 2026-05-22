@@ -267,7 +267,23 @@ static uint32_t sharc_iop_r(SHARC_REGS *cpustate, uint32_t address)
 			}
 			return r;
 		}
-		default:		fatalerror("sharc_iop_r: Unimplemented IOP reg %02X at %08X", address, cpustate->pc);
+		default:
+		{
+			/* Most SHARC firmwares poke a few IOP registers we don't
+			 * model during init (e.g. VIRPT at 0x04, interrupt mask
+			 * shadows, etc.).  fatalerror'ing here used to terminate
+			 * the whole core process and made the affected games
+			 * (lastbrnx among them) unable to boot at all.  Return
+			 * zero and report once per reg so the firmware sees a
+			 * benign 0 and continues. */
+			static uint8_t reported[0x100] = {0};
+			if (!reported[address & 0xff])
+			{
+				logerror("sharc_iop_r: unimplemented IOP reg %02X at %08X (returning 0)\n", address, cpustate->pc);
+				reported[address & 0xff] = 1;
+			}
+			return 0;
+		}
 	}
 	return 0;
 }
@@ -324,7 +340,21 @@ static void sharc_iop_w(SHARC_REGS *cpustate, uint32_t address, uint32_t data)
 		case 0x4e: cpustate->dma[7].ext_modifier = data; return;
 		case 0x4f: cpustate->dma[7].ext_count = data; return;
 
-		default:		fatalerror("sharc_iop_w: Unimplemented IOP reg %02X, %08X at %08X", address, data, cpustate->pc);
+		default:
+		{
+			/* Same rationale as sharc_iop_r above - lastbrnx writes
+			 * to VIRPT (reg 0x04) during init and was killing the
+			 * core via fatalerror.  Absorb the write and report once
+			 * per (reg, value) pair so a novel address that maps to
+			 * a register we genuinely need still surfaces. */
+			static uint8_t reported[0x100] = {0};
+			if (!reported[address & 0xff])
+			{
+				logerror("sharc_iop_w: unimplemented IOP reg %02X = %08X at %08X (absorbed)\n", address, data, cpustate->pc);
+				reported[address & 0xff] = 1;
+			}
+			return;
+		}
 	}
 }
 
