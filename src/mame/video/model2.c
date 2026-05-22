@@ -967,6 +967,7 @@ static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *
 
 	extra->lumabase = ((tri->texheader[1] & 0xFF) << 7) + ((tri->luma >> 5) ^ 0x7);
 	extra->colorbase = (tri->texheader[3] >> 6) & 0x3FF;
+	extra->luma = tri->luma;
 
 	if (renderer & 2)
 	{

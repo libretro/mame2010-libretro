@@ -65,9 +65,7 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	const uint16_t *colortable_r = (const uint16_t *)&model2_colorxlat[0x0000/4];
 	const uint16_t *colortable_g = (const uint16_t *)&model2_colorxlat[0x4000/4];
 	const uint16_t *colortable_b = (const uint16_t *)&model2_colorxlat[0x8000/4];
-	const uint16_t *lumaram = (const uint16_t *)model2_lumaram;
 	const uint16_t *palram = (const uint16_t *)model2_paletteram32;
-	uint32_t	lumabase = extra->lumabase;
 	uint32_t	color = extra->colorbase;
 	uint8_t	luma;
 	uint32_t	tr, tg, tb;
@@ -78,7 +76,11 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	return;
 #else
 
-	luma = lumaram[BYTE_XOR_LE(lumabase + (0xf << 3))] & 0x3F;
+	/* flat-shaded polygons use the per-polygon luma directly (shifted to
+	 * 6 bits to match the colortable index width); the previous fixed
+	 * (0xf << 3) lumaram lookup produced the same brightness for every
+	 * solid polygon regardless of lighting. */
+	luma = extra->luma >> 2;
 
 	color = palram[BYTE_XOR_LE(color + 0x1000)] & 0x7fff;
 
