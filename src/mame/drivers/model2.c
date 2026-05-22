@@ -1500,11 +1500,21 @@ static ADDRESS_MAP_START( model2_base_mem, ADDRESS_SPACE_PROGRAM, 32 )
 
 
 	AM_RANGE(0x00980004, 0x00980007) AM_READ(fifoctl_r)
-	AM_RANGE(0x0098000c, 0x0098000f) AM_READ(videoctl_r)
+	AM_RANGE(0x0098000c, 0x0098000f) AM_READ(videoctl_r) AM_WRITENOP
+
+	/* CPU wait-state / configuration registers - i960 internal,
+	 * the maincpu writes 14 dwords here once at boot to configure
+	 * its bus.  Real hardware accepts these; we just need somewhere
+	 * for them to land so the unmapped-memory logger doesn't fire. */
+	AM_RANGE(0x00e00000, 0x00e0003f) AM_RAM
 
 	AM_RANGE(0x00e80000, 0x00e80007) AM_READWRITE(model2_irq_r, model2_irq_w)
 
 	AM_RANGE(0x00f00000, 0x00f0000f) AM_READWRITE(timers_r, timers_w)
+	/* Single stray write at boot from PC 0x8B4; not modelled by
+	 * upstream either, but logging it every reset is noisy.  NOP
+	 * so the boot path stays silent. */
+	AM_RANGE(0x00f80000, 0x00f80003) AM_WRITENOP
 
 	AM_RANGE(0x01000000, 0x0100ffff) AM_READWRITE(sys24_tile32_r, sys24_tile32_w) AM_MIRROR(0x100000)
 	AM_RANGE(0x01020000, 0x01020003) AM_WRITENOP AM_MIRROR(0x100000)		// Unknown, always 0
@@ -2022,6 +2032,11 @@ static ADDRESS_MAP_START( model1_snd, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0xc40012, 0xc40013) AM_WRITENOP
 	AM_RANGE(0xc50000, 0xc50001) AM_DEVWRITE( "sega1", m1_snd_mpcm_bnk_w )
 	AM_RANGE(0xc60000, 0xc60007) AM_DEVREADWRITE8( "sega2", multipcm_r, multipcm_w, 0x00ff )
+	/* Parallel of 0xc40012 for the second MultiPCM ("sega2") - the audio
+	 * firmware writes the same control byte to both chips' c?0012 mute
+	 * registers.  Upstream's segam1audio map only NOPs c40012, but the
+	 * 2010 logger spammed once per boot regardless; cover c60012 too. */
+	AM_RANGE(0xc60012, 0xc60013) AM_WRITENOP
 	AM_RANGE(0xc70000, 0xc70001) AM_DEVWRITE( "sega2", m1_snd_mpcm_bnk_w )
 	AM_RANGE(0xd00000, 0xd00007) AM_DEVREADWRITE8( "ymsnd", ym3438_r, ym3438_w, 0x00ff )
 	AM_RANGE(0xf00000, 0xf0ffff) AM_RAM
