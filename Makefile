@@ -13,6 +13,17 @@ NATIVE :=0
 UNAME=$(shell uname -a)
 BUILD_BIN2C ?= 0
 
+# Accept DEBUG=1 as a convenience alias for MDEBUG=1.  MAME upstream and
+# most libretro cores use DEBUG=1 to request -O0 -g, and that is what
+# people reach for first; the internal flag here is MDEBUG to avoid a
+# clash with any -DDEBUG macro consumers might expect.  Promote DEBUG to
+# MDEBUG when only the former is set so either invocation works.
+ifeq ($(MDEBUG),)
+ifeq ($(DEBUG),1)
+MDEBUG := 1
+endif
+endif
+
 ifeq ($(platform),)
 platform = unix
 ifeq ($(UNAME),)
@@ -686,6 +697,11 @@ CCOMFLAGS += -pipe
 
 ifeq ($(MDEBUG),1)
 CCOMFLAGS +=  -O0 -g
+# -O0 surfaces additional uninitialized / unused-result warnings that
+# the optimized build hides; with -Werror they would block the debug
+# build for reasons unrelated to debuggability.  Turn -Werror off for
+# debug unless the caller already forced NOWERROR.
+NOWERROR ?= 1
 else
 # add the optimization flag
 CCOMFLAGS += -O$(OPTIMIZE)
