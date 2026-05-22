@@ -746,6 +746,18 @@ static READ32_HANDLER( copro_ctl1_r )
    return model2_coproctl;
 }
 
+/* Polled by the i960 in a busy loop after kicking the copro.  Returns
+ * all-ones until at least one dword has been uploaded into the copro
+ * program memory; zero afterwards.  VF2 hits PC 0x10FD8 hundreds of
+ * times per frame on this register; without it the unmapped logger
+ * fires from every poll. */
+static READ32_HANDLER( copro_status_r )
+{
+   if (model2_coprocnt == 0)
+      return 0xffffffffU;
+   return 0;
+}
+
 static WRITE32_HANDLER( copro_ctl1_w )
 {
 	// did hi bit change?
@@ -1501,6 +1513,7 @@ static ADDRESS_MAP_START( model2_base_mem, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x00980004, 0x00980007) AM_READ(fifoctl_r)
 	AM_RANGE(0x0098000c, 0x0098000f) AM_READ(videoctl_r) AM_WRITENOP
+	AM_RANGE(0x00980014, 0x00980017) AM_READ(copro_status_r)
 
 	/* CPU wait-state / configuration registers - i960 internal,
 	 * the maincpu writes 14 dwords here once at boot to configure
@@ -2150,7 +2163,14 @@ static WRITE32_HANDLER(copro_tgp_buffer_w)
 
 static ADDRESS_MAP_START( copro_tgp_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00000000, 0x00007fff) AM_RAM AM_BASE(&tgp_program)
-	AM_RANGE(0x00400000, 0x00407fff) AM_READWRITE(copro_tgp_buffer_r, copro_tgp_buffer_w)
+	/* The bufferram window the TGP sees is actually 32K dwords (128 KB),
+	 * not the 8 KB originally declared here.  The handler already masks
+	 * offset & 0x7fff against the 128 KB model2_bufferram allocation, but
+	 * with the old narrow AM_RANGE any bank-relative access past byte
+	 * 0x00407fff (e.g. VF2's mailbox at bufferram[0x7FFE/0x7FFF]) went to
+	 * the unmapped logger.  Widening to cover the full window so the
+	 * handler is reachable for the whole valid range. */
+	AM_RANGE(0x00400000, 0x0041ffff) AM_READWRITE(copro_tgp_buffer_r, copro_tgp_buffer_w)
 	AM_RANGE(0xff800000, 0xff9fffff) AM_ROM AM_REGION("tgp", 0)
 ADDRESS_MAP_END
 
