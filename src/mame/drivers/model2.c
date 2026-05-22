@@ -1217,6 +1217,22 @@ static const uint8_t DCOPKey1326[]=
 };
 static int protstate, protpos;
 static uint8_t protram[256];
+/* 32 KB of RAM the protection chip presents at 0x01d80000-0x01d87fff on
+ * real boards (model2_0229_mem in upstream).  DOA's i960 writes seed
+ * bytes into the low end of this window during the protection handshake
+ * (PC=0x2a3c hammers offsets 0..5) and may later read them back as part
+ * of normal data structures - the protection chip is wired to a RAM
+ * window plus a few control regs at the very top, not a single
+ * write-only port.  Without backing this with real storage every write
+ * to the protection RAM area is silently dropped, every read returns
+ * zero, and any pointer or counter the firmware tries to keep here
+ * comes back as a literal NULL on the next access.  That's exactly the
+ * shape of bug we see now in DOA: the firmware proceeds past the
+ * protection step, hits a code path that wants to dereference data it
+ * had previously stored in this RAM, gets zero, and ends up either
+ * spinning on a stale character-select frame or chasing a corrupted
+ * pointer (e.g. unmapped reads from 0x7FFFD918). */
+static uint32_t prot_ram[0x2000];
 
 static READ32_HANDLER( model2_prot_r )
 {
@@ -1247,6 +1263,14 @@ static READ32_HANDLER( model2_prot_r )
 		else
 			return 0xfff0;
 	}
+	else if (offset < 0x2000)
+	{
+		/* Fall through to the backing RAM window.  Reads to offsets the
+		 * specific-purpose branches above didn't claim just return
+		 * whatever the i960 (or another path through this very handler)
+		 * last stored there. */
+		return prot_ram[offset];
+	}
 	else logerror("Unhandled Protection READ @ %x mask %x (PC=%x)\n", offset, mem_mask, cpu_get_pc(space->cpu));
 
 	return retval;
@@ -1254,6 +1278,9 @@ static READ32_HANDLER( model2_prot_r )
 
 static WRITE32_HANDLER( model2_prot_w )
 {
+	uint32_t orig_data = data;
+	uint32_t orig_mask = mem_mask;
+
 	if (mem_mask == 0xffff0000)
 	{
 		data >>= 16;
@@ -1316,6 +1343,24 @@ static WRITE32_HANDLER( model2_prot_w )
 			protstate = 0;
 			strcpy((char *)protram, "  TECMO LTD.  DEAD OR ALIVE  1996.10.22  VER. 1.00");
 		}
+	}
+	else if (offset == 0x7ff4/4)
+	{
+		/* data_w_doa on upstream - the i960 streams data bytes here to
+		 * be encrypted/decrypted by the 0229 protection device.  We
+		 * don't implement the crypto, but absorbing the write keeps the
+		 * log clean and lets the firmware progress past the streaming
+		 * phase. */
+	}
+	else if (offset < 0x2000)
+	{
+		/* RAM backing window - store the write in our buffer so a later
+		 * read at the same offset returns the same value.  Use the
+		 * original (un-shifted) data with the original mask so partial
+		 * writes (bytes / halfwords) compose correctly. */
+		uint32_t v = prot_ram[offset];
+		v = (v & ~orig_mask) | (orig_data & orig_mask);
+		prot_ram[offset] = v;
 	}
 	else logerror("Unhandled Protection WRITE %x @ %x mask %x (PC=%x)\n", data, offset, mem_mask, cpu_get_pc(space->cpu));
 
