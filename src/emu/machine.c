@@ -409,12 +409,15 @@ void running_machine::retro_machineexit()
 
 }
 
-extern int RLOOP;
 extern int ENDEXEC;
 
 void running_machine::retro_loop()
 {
-   while (RLOOP==1)
+   /* Pump emulation forward until the OSD video update path signals that
+    * a full frame has been rendered into the libretro framebuffer. See the
+    * commentary above retro_frame_drawn() in retromain.h for the
+    * audio/video framing contract. */
+   while (!retro_frame_drawn())
    {
       /* execute CPUs if not paused */
       if (!m_paused)

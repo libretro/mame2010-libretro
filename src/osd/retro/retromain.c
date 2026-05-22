@@ -86,7 +86,14 @@ static retro_input_state_t input_state_cb = NULL;
 static retro_audio_sample_batch_t audio_batch_cb = NULL;
 static retro_input_poll_t input_poll_cb = NULL;
 
-int RLOOP=1;
+/* See retromain.h for the frame-ready signalling contract. Kept file-static
+ * here so the only way for the rest of the codebase to touch the flag is
+ * through the three accessor functions below. */
+static volatile bool s_retro_frame_drawn = false;
+
+bool retro_frame_drawn(void)         { return s_retro_frame_drawn; }
+void retro_signal_frame_drawn(void)  { s_retro_frame_drawn = true; }
+void retro_clear_frame_drawn(void)   { s_retro_frame_drawn = false; }
 
 // rendering target
 static render_target *our_target = NULL;
@@ -578,7 +585,7 @@ void osd_update(running_machine *machine,int skip_redraw)
    else
       draw_this_frame = false;
 
-   RLOOP=0;
+   retro_signal_frame_drawn();
 
    if(ui_ipt_pushchar!=-1)
    {
@@ -912,7 +919,7 @@ void retro_run (void)
 	retro_poll_mame_input();
 	retro_main_loop();
 
-	RLOOP = 1;
+	retro_clear_frame_drawn();
 
 	if (draw_this_frame)
       		video_cb(videoBuffer,rtwi, rthe, topw << PITCH);

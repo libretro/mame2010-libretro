@@ -55,7 +55,22 @@ extern int osd_num_processors;
 // use if you want to print something with the verbose flag
 void CLIB_DECL mame_printf_verbose(const char *text, ...) ATTR_PRINTF(1,2);
 
-extern int RLOOP;
+/* libretro frame-ready signalling.
+ *
+ * The OSD video update path calls retro_signal_frame_drawn() once it has
+ * pushed a render primitive list into the frontend's pixel buffer. The
+ * per-frame inner scheduler loop (running_machine::retro_loop) polls
+ * retro_frame_drawn() and exits as soon as the flag is set, so each call
+ * to retro_run pumps exactly one video frame's worth of emulation through
+ * MAME's scheduler. The flag is then cleared by retro_clear_frame_drawn()
+ * from retro_run before returning, in preparation for the next call.
+ *
+ * Audio is independent of this flag: MAME's streams subsystem keeps
+ * producing samples as the scheduler advances, and osd_update_audio_stream
+ * forwards them to the frontend via audio_batch_cb as they appear. */
+extern bool retro_frame_drawn(void);
+extern void retro_signal_frame_drawn(void);
+extern void retro_clear_frame_drawn(void);
 
 extern const char* core_name;
 

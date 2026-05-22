@@ -208,8 +208,6 @@ int mame_execute(core_options *options)
    return error;
 }
 
-extern int RLOOP;
-extern void retro_loop(running_machine *machine);
 extern void retro_execute();
 extern core_options *retro_global_options;
 
@@ -239,14 +237,6 @@ void retro_main_loop(void)
       retro_execute();
 
    }
-
-/*
-	device_scheduler * scheduler;
-	scheduler = &(retro_global_machine->scheduler());
-	while (RLOOP==1) {
-		scheduler->timeslice();
-	}
-*/
 }
 
 /* libretro: expose the live machine for the serialize interface */
