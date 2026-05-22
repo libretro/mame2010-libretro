@@ -119,9 +119,9 @@ void gfx_init(running_machine *machine)
 
 		/* if there are extended offsets, copy them over top */
 		if (glcopy.extxoffs != NULL)
-			memcpy(extxoffs, glcopy.extxoffs, glcopy.width * sizeof(extxoffs[0]));
+			memcpy(extxoffs, glcopy.extxoffs, MIN(glcopy.width, MAX_ABS_GFX_SIZE) * sizeof(extxoffs[0]));
 		if (glcopy.extyoffs != NULL)
-			memcpy(extyoffs, glcopy.extyoffs, glcopy.height * sizeof(extyoffs[0]));
+			memcpy(extyoffs, glcopy.extyoffs, MIN(glcopy.height, MAX_ABS_GFX_SIZE) * sizeof(extyoffs[0]));
 
 		/* always use the extended offsets here */
 		glcopy.extxoffs = extxoffs;
