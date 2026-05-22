@@ -224,7 +224,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 2, 3, 0); break;
 					}
 					else
-						sample_start(state->samples, 2, 3, 0); break;
+						sample_start(state->samples, 2, 3, 0);
+					break;
 
 				case 3:
 					if (sample_playing(state->samples, 3))
@@ -233,7 +234,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 3, 4, 0); break;
 					}
 					else
-						sample_start(state->samples, 3, 4, 0); break;
+						sample_start(state->samples, 3, 4, 0);
+					break;
 
 				case 4:
 					if (sample_playing(state->samples, 4))
@@ -242,7 +244,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 4, 5, 0); break;
 					}
 					else
-						sample_start(state->samples, 4, 5, 0); break;
+						sample_start(state->samples, 4, 5, 0);
+					break;
 
 				case 5:
 					if (sample_playing(state->samples, 5))
@@ -251,7 +254,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 5, 6, 0); break;
 					}
 					else
-						sample_start(state->samples, 5, 6, 0); break;
+						sample_start(state->samples, 5, 6, 0);
+					break;
 
 				case 6:
 					if (sample_playing(state->samples, 6))
@@ -260,7 +264,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 6, 7, 0); break;
 					}
 					else
-						sample_start(state->samples, 6, 7, 0); break;
+						sample_start(state->samples, 6, 7, 0);
+					break;
 
 				case 7:
 					if (sample_playing(state->samples, 7))
@@ -269,7 +274,8 @@ static WRITE8_HANDLER( cosmica_sound_output_w )
 						sample_start(state->samples, 7, 8, 0); break;
 					}
 					else
-						sample_start(state->samples, 7, 8, 0); break;
+						sample_start(state->samples, 7, 8, 0);
+					break;
 				}
 			}
 
