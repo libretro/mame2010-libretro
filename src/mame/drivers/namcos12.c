@@ -1511,6 +1511,11 @@ static DRIVER_INIT( ghlpanic )
 	system11gun_install(machine);
 }
 
+static const c352_interface namcos12_c352_interface =
+{
+	288	/* spec-correct C352 voice-cycle divider */
+};
+
 static MACHINE_DRIVER_START( coh700 )
 	/* basic machine hardware */
 	MDRV_CPU_ADD("maincpu",  CXD8661R, XTAL_100MHz )
@@ -1541,7 +1546,15 @@ static MACHINE_DRIVER_START( coh700 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 16737350)
+	/* C352 fed from oscillator 2061 pin 9; PCB measurement is 29.168 MHz
+	 * but the value that actually keeps the chip's effective output rate
+	 * matching the hardware is 16737350 * 1.5 (a documented compromise --
+	 * the literal measurement plays back too high-pitched). Combined with
+	 * the spec-correct /288 voice-cycle divider, this gives the same
+	 * effective output sample rate as the historical "16737350 / 192"
+	 * shorthand, but expressed in hardware-honest terms. */
+	MDRV_SOUND_ADD("c352", C352, 16737350*1.5)
+	MDRV_SOUND_CONFIG(namcos12_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
