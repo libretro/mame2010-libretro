@@ -127,7 +127,7 @@ static int dsp_type;
 
 
 
-#define COPRO_FIFOIN_SIZE	32000
+#define COPRO_FIFOIN_SIZE	0x20000
 static int copro_fifoin_rpos, copro_fifoin_wpos;
 static uint32_t copro_fifoin_data[COPRO_FIFOIN_SIZE];
 static int copro_fifoin_num = 0;
@@ -140,7 +140,7 @@ static int copro_fifoin_pop(running_device *device, uint32_t *result)
 		if (dsp_type == DSP_TYPE_TGP)
 			return 0;
 
-		fatalerror("Copro FIFOIN underflow (at %08X)", cpu_get_pc(device));
+		logerror("Copro FIFOIN underflow (at %08X)\n", cpu_get_pc(device));
 		return 0;
 	}
 
@@ -173,7 +173,12 @@ static void copro_fifoin_push(running_device *device, uint32_t data)
 {
 	if (copro_fifoin_num == COPRO_FIFOIN_SIZE)
 	{
-		fatalerror("Copro FIFOIN overflow (at %08X)", cpu_get_pc(device));
+		/* drop on overflow instead of killing the process - the i960 has
+		 * no back-pressure mechanism wired up to its push path, so a
+		 * burst that outruns the consumer would otherwise abort the
+		 * whole core via fatalerror.  Data loss here corrupts a frame's
+		 * geometry but the next frame recovers. */
+		logerror("Copro FIFOIN overflow (at %08X)\n", cpu_get_pc(device));
 		return;
 	}
 
@@ -195,7 +200,7 @@ static void copro_fifoin_push(running_device *device, uint32_t data)
 }
 
 
-#define COPRO_FIFOOUT_SIZE	32000
+#define COPRO_FIFOOUT_SIZE	0x20000
 static int copro_fifoout_rpos, copro_fifoout_wpos;
 static uint32_t copro_fifoout_data[COPRO_FIFOOUT_SIZE];
 static int copro_fifoout_num = 0;
@@ -246,7 +251,14 @@ static void copro_fifoout_push(running_device *device, uint32_t data)
 	//if (copro_fifoout_wpos == copro_fifoout_rpos)
 	if (copro_fifoout_num == COPRO_FIFOOUT_SIZE)
 	{
-		fatalerror("Copro FIFOOUT overflow (at %08X)", cpu_get_pc(device));
+		/* drop on overflow instead of killing the process.  With the TGP
+		 * clocked at its real 50 MHz it can outrun the i960's poll on
+		 * the output FIFO during heavy frames; without a back-pressure
+		 * stall wired into the TGP push path, a burst would otherwise
+		 * abort the whole core via fatalerror.  Data loss here corrupts
+		 * a frame's geometry but the next frame recovers, which is a
+		 * much better failure mode than terminating the emulator. */
+		logerror("Copro FIFOOUT overflow (at %08X)\n", cpu_get_pc(device));
 		return;
 	}
 

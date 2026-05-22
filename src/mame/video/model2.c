@@ -555,12 +555,16 @@ static void model2_3d_process_quad( uint32_t attr )
 			{
 				triangle	*tri;
 
-				tri = &raster.tri_list[raster.tri_list_index++];
-
+				/* skip this triangle if the list is full rather than
+				 * killing the process via fatalerror.  At worst we lose
+				 * polygons past the cap on a single frame; the next frame
+				 * rebuilds the list from scratch and recovers. */
 				if ( raster.tri_list_index >= MAX_TRIANGLES )
 				{
-					fatalerror( "SEGA 3D: Max triangle limit exceeded\n" );
+					logerror( "SEGA 3D: Max triangle limit exceeded, dropping\n" );
+					break;
 				}
+				tri = &raster.tri_list[raster.tri_list_index++];
 
 				/* copy the object information */
 				tri->z = object.z;
@@ -802,12 +806,16 @@ static void model2_3d_process_triangle( uint32_t attr )
 			{
 				triangle	*tri;
 
-				tri = &raster.tri_list[raster.tri_list_index++];
-
+				/* skip this triangle if the list is full rather than
+				 * killing the process via fatalerror.  At worst we lose
+				 * polygons past the cap on a single frame; the next frame
+				 * rebuilds the list from scratch and recovers. */
 				if ( raster.tri_list_index >= MAX_TRIANGLES )
 				{
-					fatalerror( "SEGA 3D: Max triangle limit exceeded\n" );
+					logerror( "SEGA 3D: Max triangle limit exceeded, dropping\n" );
+					break;
 				}
+				tri = &raster.tri_list[raster.tri_list_index++];
 
 				/* copy the object information */
 				tri->z = object.z;
