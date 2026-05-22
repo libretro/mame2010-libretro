@@ -13,7 +13,7 @@ retromain.h
 #include "osdepend.h"
 #include "libretro.h"
 
-#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
+#if !defined(HAVE_RGB32)
    #define M16B
 #endif
 

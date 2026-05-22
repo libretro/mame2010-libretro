@@ -2919,10 +2919,6 @@ $(LIBOBJ)/softfloat/softfloat.o: $(LIBSRC)/softfloat/softfloat.c \
 
 MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
-ifeq ($(VRENDER),opengl)
-GLOBJ = $(OBJ)/osd/$(OSD)/glsym
-OBJDIRS += $(GLOBJ)
-endif
 OBJDIRS += $(MINIOBJ) \
 			  $(OBJ)/osd/$(OSD)/libretro-common
 
@@ -2949,14 +2945,6 @@ endif
 #-------------------------------------------------
 # OSD mini library
 #-------------------------------------------------
-ifeq ($(VRENDER),opengl)
-OSDOBJS += $(MINIOBJ)/libretro-common/glsym/rglgen.o
-ifeq ($(GLES), 1)
-OSDOBJS += $(MINIOBJ)/libretro-common/glsym/glsym_es2.o
-else
-OSDOBJS += $(MINIOBJ)/libretro-common/glsym/glsym_gl.o
-endif
-endif
 OSDOBJS += $(OBJ)/osd/retro/retromain.o
 #-------------------------------------------------
 # rules for building the libaries

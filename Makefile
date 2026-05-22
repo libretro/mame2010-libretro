@@ -88,8 +88,6 @@ endif
 # which is already located at ./precompile
 
 
-VRENDER ?= soft
-
 PLATCFLAGS += -D__LIBRETRO__
 CCOMFLAGS  += -D__LIBRETRO__
 
@@ -98,11 +96,6 @@ ALIGNED = 0
 
 # If X86_SH2DRC = 1 , X86-SH2 dynamic recompile code is enabled at compile time, and if X86_SH2DRC = 0 , it is not used.
 X86_SH2DRC = 1
-
-ifeq ($(VRENDER),opengl)  
-	PLATCFLAGS += -DHAVE_OPENGL
-	CCOMFLAGS  += -DHAVE_OPENGL
-endif
 
 UNAME=$(shell uname -m)
 
@@ -145,9 +138,6 @@ ifeq ($(BUILD_BIN2C), 1)
    CCOMFLAGS += -DCOMPILE_DATS
 endif
    PLATCFLAGS += -fstrict-aliasing -fno-merge-constants
-ifeq ($(VRENDER),opengl)  
-   LIBS += -lGL
-endif
 LDFLAGS += $(SHARED)
    NATIVELD = g++
    NATIVELDFLAGS = -Wl,--warn-common -lstdc++
@@ -502,9 +492,6 @@ else ifeq ($(platform), wincross)
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
 endif
-ifeq ($(VRENDER),opengl)  
-	LIBS += -lopengl32
-endif
 	LDFLAGS +=   $(SHARED)
 	EXE = .exe
 	DEFS = -DCRLF=3
@@ -525,9 +512,6 @@ endif
 CCOMFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
-endif
-ifeq ($(VRENDER),opengl)  
-	LIBS += -lopengl32
 endif
 	LDFLAGS +=   $(SHARED)
 	EXE = .exe

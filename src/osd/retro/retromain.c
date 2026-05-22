@@ -29,10 +29,6 @@ mame2010 - libretro port of mame 0.139
 	#define PITCH 1 * 2
 #endif
 
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
-#include "retroogl.c"
-#endif
-
 const char* core_name = "mame2010";
 char libretro_content_directory[1024];
 char libretro_save_directory[1024];
@@ -335,19 +331,6 @@ bool retro_load_game(const struct retro_game_info *info)
    memset(videoBuffer, 0, 1024*1024*2);
 #else
    memset(videoBuffer, 0, 1024*1024*2*2);
-#endif
-
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
-#ifdef HAVE_OPENGLES
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
-#else
-   hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
-#endif
-   hw_render.context_reset = context_reset;
-   hw_render.context_destroy = context_destroy;
-
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
-      return false;
 #endif
 
    init_input_descriptors();
@@ -931,14 +914,10 @@ void retro_run (void)
 
 	RLOOP = 1;
 
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
-	do_gl2d();
-#else
 	if (draw_this_frame)
       		video_cb(videoBuffer,rtwi, rthe, topw << PITCH);
    	else
       		video_cb(NULL,rtwi, rthe, topw << PITCH);
-#endif
    turbo_state > turbo_delay ? turbo_state = 0 : turbo_state++;
 }
 
