@@ -1541,7 +1541,7 @@ static MACHINE_DRIVER_START( coh700 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 16737350*1.5) /* C352 is clocked from a separate oscillator (2061 pin 9); 1.5x the H8/3002 base rate gives the right pitch -- the literal measured 29.168MHz plays back too high */
+	MDRV_SOUND_ADD("c352", C352, 16737350)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
