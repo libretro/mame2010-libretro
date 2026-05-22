@@ -144,9 +144,34 @@ void sound_init(running_machine *machine)
 	global->rightmix = auto_alloc_array(machine, int32_t, machine->sample_rate);
 	global->finalmix = auto_alloc_array(machine, int16_t, machine->sample_rate);
 
-	/* allocate a global timer for sound timing */
-	global->update_timer = timer_alloc(machine, sound_update, NULL);
-	timer_adjust_periodic(global->update_timer, STREAMS_UPDATE_ATTOTIME, 0, STREAMS_UPDATE_ATTOTIME);
+	/* allocate a global timer for sound timing. The default 50 Hz cadence
+	 * (STREAMS_UPDATE_ATTOTIME) is decoupled from the screen refresh,
+	 * which for a typical 60 Hz arcade game produces a 5:6 beat -- the
+	 * mixer tick fires inside five out of every six retro_run windows
+	 * and skips the sixth, repeating every 100 ms. Each firing carries a
+	 * ~960-sample audio batch and the work to mix it; the empty frame
+	 * doesn't. The frontend's frame-time metric sees that pattern as a
+	 * periodic spike with a zero between spikes.
+	 *
+	 * Driving the periodic timer off the primary screen's frame_period
+	 * instead lines the mixer ticks up with the video frames -- exactly
+	 * one tick per frame, irrespective of whether the game runs 60.0,
+	 * 60.06, 59.94, 53.6 or 50 Hz. Each retro_run then carries the same
+	 * audio mix load, batches arrive at a steady N-samples-per-call
+	 * cadence the frontend's resampler is happy with, and the beat
+	 * disappears.
+	 *
+	 * Screenless machines (where machine->primary_screen is NULL) keep
+	 * the historical 50 Hz cadence as a defensive fallback; they have
+	 * no visible jitter to clean up anyway. */
+	{
+		attotime sound_update_period = STREAMS_UPDATE_ATTOTIME;
+		if (machine->primary_screen != NULL)
+			sound_update_period = machine->primary_screen->frame_period();
+
+		global->update_timer = timer_alloc(machine, sound_update, NULL);
+		timer_adjust_periodic(global->update_timer, sound_update_period, 0, sound_update_period);
+	}
 
 	/* finally, do all the routing */
 	VPRINTF(("route_sound\n"));
