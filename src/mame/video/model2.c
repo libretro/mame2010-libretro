@@ -155,8 +155,9 @@ struct _poly_extra_data
 /* contrast/black-level translator applied to all final pixel colors.
  * The video DAC effectively crushes the bottom of the 0..255 range to
  * black and rescales the rest, which the original simple pal5bit() path
- * does not do; without it everything looks washed out. */
-static uint8_t model2_gamma_table[256];
+ * does not do; without it everything looks washed out.  Exposed via
+ * model2.h so the driver palette path (chcolor) can use it too. */
+uint8_t model2_gamma_table[256];
 
 static void model2_build_gamma_table(void)
 {
