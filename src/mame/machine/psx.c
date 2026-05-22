@@ -465,7 +465,36 @@ READ32_HANDLER( psx_dma_r )
 	return 0;
 }
 
-/* Root Counters */
+/* Root Counters
+ *
+ * The PSX has three root counters mapped at 1F801100 + N*10 (N = 0..2).
+ * Each counter is 16 bits wide and has three registers: current value
+ * (offset 0), mode (offset 4), and target (offset 8).
+ *
+ * Counter Mode register (1F801104+N*10) bit layout:
+ *
+ *   bit 0     Synchronization Enable (0 = Free Run, 1 = Synchronize via 1-2)
+ *   bits 1-2  Synchronization Mode (per-counter, see below)
+ *                Counter 0: 0 = Pause during Hblank,    1 = Reset at Hblank,
+ *                           2 = Reset at Hblank+pause,  3 = Pause until Hblank
+ *                Counter 1: same, with Vblank substituted for Hblank
+ *                Counter 2: 0 or 3 = Stop forever, 1 or 2 = Free Run
+ *   bit 3     Reset counter (0 = after FFFFh, 1 = after Target)
+ *   bit 4     IRQ when Counter == Target
+ *   bit 5     IRQ when Counter == FFFFh
+ *   bit 6     IRQ One-shot / Repeat (0 = one-shot, 1 = repeat)
+ *   bit 7     IRQ Pulse / Toggle mode
+ *   bits 8-9  Clock source (per-counter, see below)
+ *                Counter 0: 0 or 2 = SysClk,   1 or 3 = Dotclock
+ *                Counter 1: 0 or 2 = SysClk,   1 or 3 = Hblank
+ *                Counter 2: 0 or 1 = SysClk,   2 or 3 = SysClk/8
+ *   bit 10    Interrupt Request (W = 1, R: read-and-clear after writing 1)
+ *   bit 11    Reached Target Value (R, reset after reading)
+ *   bit 12    Reached FFFFh Value (R, reset after reading)
+ *
+ * The current implementation maps a subset of these bits to RC_* macros below.
+ * Bits not in the macro list are not modelled. See psx-spx for the full
+ * register layout. */
 
 static emu_timer *m_p_timer_root[ 3 ];
 static uint16_t m_p_n_root_count[ 3 ];
@@ -473,26 +502,62 @@ static uint16_t m_p_n_root_mode[ 3 ];
 static uint16_t m_p_n_root_target[ 3 ];
 static uint64_t m_p_n_root_start[ 3 ];
 
-#define RC_STOP ( 0x01 )
-#define RC_RESET ( 0x04 ) /* guess */
-#define RC_COUNTTARGET ( 0x08 )
-#define RC_IRQTARGET ( 0x10 )
-#define RC_IRQOVERFLOW ( 0x20 )
-#define RC_REPEAT ( 0x40 )
-#define RC_CLC ( 0x100 )
-#define RC_DIV ( 0x200 )
+/* RC_STOP labels mode bit 0 (Synchronization Enable). Treating it as a
+ * "stop the timer" flag is a simplification that happens to work for the
+ * Counter 2 sync-mode-0/3 case (which actually does stop the counter); for
+ * Counter 0/1 the real hardware behaviour depends on the Hblank/Vblank gate
+ * encoded in bits 1-2, which the rest of the file does not model. */
+#define RC_STOP        ( 0x01 )
+#define RC_RESET       ( 0x04 ) /* guess; this is part of the sync-mode field */
+#define RC_COUNTTARGET ( 0x08 ) /* bit 3: reset to 0 after reaching Target */
+#define RC_IRQTARGET   ( 0x10 ) /* bit 4: IRQ on Counter == Target */
+#define RC_IRQOVERFLOW ( 0x20 ) /* bit 5: IRQ on Counter == FFFFh */
+#define RC_REPEAT      ( 0x40 ) /* bit 6: 0 = one-shot IRQ, 1 = repeat */
+#define RC_CLC         ( 0x100 ) /* bit 8 of clock source (Counter 0 / 1) */
+#define RC_DIV         ( 0x200 ) /* bit 9 of clock source (Counter 2 /8 mode) */
 
+/* TODO: psxcpu_gettotalcycles() should round down to the start of the
+ * current tick. Currently it returns total_cycles() * 2, which is the
+ * fine-grained CPU cycle count. When `root_current` divides this by
+ * `root_divider(n)` to compute the current counter value, the result is
+ * floored, which is *almost* what we want. The bug is at the read side:
+ * a partial divider window between the last counter increment and "now"
+ * is invisible to the counter (the divide drops it), but it is visible
+ * the next time root_start is rebased -- so a fast caller doing
+ * { read; read; } can see the counter value go down by 1.
+ *
+ * The proper fix is to round the returned cycle count down to a multiple
+ * of the per-counter divider before subtracting root_start. Doing that
+ * here is awkward because gettotalcycles() doesn't know which counter is
+ * asking; the fix probably belongs in root_current() instead, but is
+ * preserved here as a marker. */
 static uint64_t psxcpu_gettotalcycles( running_machine *machine )
 {
-	/* TODO: should return the start of the current tick. */
 	return machine->firstcpu->total_cycles() * 2;
 }
 
+/* TODO: Counter 0 in dotclock mode (RC_CLC set) has a divider that depends
+ * on the GPU's current horizontal resolution mode. On real hardware:
+ *
+ *     H-res mode     pixel divider
+ *     256 wide       10
+ *     320 wide        8
+ *     368 wide        7
+ *     512 wide        5
+ *     640 wide        4
+ *
+ * The hard-coded `return 5` here picks the 512-wide divider, which is
+ * close enough for the arcade games this driver currently targets (most
+ * use 640 or 512 modes) but is wrong for anything using a narrower
+ * display mode. A real fix needs the root counter to query the GPU for
+ * the current H-res; mame2010's GPU emulation does not expose this
+ * cleanly. Counter 1's hblank-source divider 2150 is similarly an
+ * approximation of the average h-rate rather than a true per-line tick.
+ */
 static int root_divider( int n_counter )
 {
 	if( n_counter == 0 && ( m_p_n_root_mode[ n_counter ] & RC_CLC ) != 0 )
 	{
-		/* TODO: pixel clock, probably based on resolution */
 		return 5;
 	}
 	else if( n_counter == 1 && ( m_p_n_root_mode[ n_counter ] & RC_CLC ) != 0 )
@@ -520,7 +585,23 @@ static uint16_t root_current( running_machine *machine, int n_counter )
 		n_current += m_p_n_root_count[ n_counter ];
 		if( n_current > 0xffff )
 		{
-			/* TODO: use timer for wrap on 0x10000. */
+			/* TODO: this lazy wrap should be driven by the root_finished
+			 * timer instead. The timer is currently only rearmed in
+			 * root_finished when RC_REPEAT is set, so a one-shot wrap
+			 * past 0x10000 has to be detected here on the next read.
+			 * That means: (a) for non-COUNTTARGET mode the wrap point
+			 * is FFFFh, but root_target() may have aimed the timer at
+			 * the user-supplied target value via RC_IRQTARGET, leaving
+			 * no scheduled event for the FFFFh wrap; (b) root_count is
+			 * written with the full 64-bit value, relying on the implicit
+			 * uint16_t truncation in the return to give the correct
+			 * mod-FFFFh value, which is fragile.
+			 *
+			 * Fixing this properly requires restructuring root_finished
+			 * to always re-arm the timer (independent of RC_REPEAT) for
+			 * the next wrap event, and to mask root_count to 16 bits
+			 * here. See also the TODO at root_finished() about how the
+			 * COUNTTARGET and IRQTARGET cases need to be separated. */
 			m_p_n_root_count[ n_counter ] = n_current;
 			m_p_n_root_start[ n_counter ] = psxcpu_gettotalcycles(machine);
 		}
@@ -567,7 +648,34 @@ static TIMER_CALLBACK( root_finished )
 	verboselog( machine, 2, "root_finished( %d ) %04x\n", n_counter, root_current( machine, n_counter ) );
 //  if( ( m_p_n_root_mode[ n_counter ] & RC_COUNTTARGET ) != 0 )
 	{
-		/* TODO: wrap should be handled differently as RC_COUNTTARGET & RC_IRQTARGET don't have to be the same. */
+		/* TODO: RC_COUNTTARGET (mode bit 3) and RC_IRQTARGET (mode bit 4)
+		 * are independent on real hardware:
+		 *
+		 *   bit 3 = 0: counter wraps at FFFFh (target value is ignored
+		 *              for wrap purposes; if bit 4 is also 1 an IRQ
+		 *              fires when the counter passes the target value,
+		 *              but the counter keeps counting toward FFFFh)
+		 *   bit 3 = 1: counter resets to 0 after Counter == Target;
+		 *              when bit 4 is also 1 the reset coincides with
+		 *              the Target-IRQ.
+		 *
+		 * The current code lumps these together: root_target() picks
+		 * the user-supplied target whenever either bit is set, and
+		 * root_finished unconditionally resets root_count to 0 on every
+		 * fire and OR-combines the two IRQ enable bits when deciding
+		 * whether to assert. So the (bit 3 = 0, bit 4 = 1) case --
+		 * "fire IRQ at Target but keep counting to FFFFh" -- is wrong:
+		 * the counter is wrongly reset to 0 at the Target value, and
+		 * the second wrap event at FFFFh (which should fire bit 5's
+		 * IRQ if enabled) is lost.
+		 *
+		 * Correctly modelling this requires the timer to schedule a
+		 * separate event for the Target-IRQ (when bit 3 = 0 && bit 4 =
+		 * 1) without resetting the counter, and another for the FFFFh
+		 * wrap. It also requires tracking which fire path we took, so
+		 * the read-side status flags (mode bits 11 "Reached Target" and
+		 * 12 "Reached FFFFh", neither modelled today) can be set
+		 * correctly. None of this is small. */
 		m_p_n_root_count[ n_counter ] = 0;
 		m_p_n_root_start[ n_counter ] = psxcpu_gettotalcycles(machine);
 	}
