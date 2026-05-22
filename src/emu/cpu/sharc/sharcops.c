@@ -260,10 +260,53 @@ static void systemreg_write_latency_effect(SHARC_REGS *cpustate)
 			}
 			break;
 		}
-		default:	fatalerror("SHARC: systemreg_latency_op: unknown register %02X at %08X", cpustate->systemreg_latency_reg, cpustate->pc);
+		default:
+		{
+			/* Latency-effect for a system register we don't model.  Soft-
+			 * fail (one log per offending reg) instead of fatalerror -
+			 * a never-caught fatalerror used to terminate the whole core. */
+			static uint8_t reported[256] = {0};
+			int slot = cpustate->systemreg_latency_reg & 0xff;
+			if (!reported[slot])
+			{
+				logerror("SHARC: systemreg_latency_op: unimplemented register %02X at %08X (skipped)\n",
+				         cpustate->systemreg_latency_reg, cpustate->pc);
+				reported[slot] = 1;
+			}
+			break;
+		}
 	}
 
 	cpustate->systemreg_latency_reg = -1;
+}
+
+/* One-shot soft-fail logging for unimplemented user-register slots.  GET
+ * returns 0, SET discards.  This is the same pattern used for the IOP-side
+ * unknown-register handling and exists for the same reason: a fatalerror
+ * thrown from one of these helpers propagates up uncaught and terminates
+ * the entire core process, taking the game with it.  lastbrnx hits
+ * GET_UREG(0x78) (case 0x7 inner default) during early SHARC boot and was
+ * dying there. */
+static void sharc_get_ureg_unimpl(SHARC_REGS *cpustate, int ureg)
+{
+	static uint8_t reported[256] = {0};
+	int slot = ureg & 0xff;
+	if (!reported[slot])
+	{
+		logerror("SHARC: GET_UREG: unimplemented register %02X at %08X (returning 0)\n", ureg, cpustate->pc);
+		reported[slot] = 1;
+	}
+}
+
+static void sharc_set_ureg_unimpl(SHARC_REGS *cpustate, int ureg, uint32_t data)
+{
+	static uint8_t reported[256] = {0};
+	int slot = ureg & 0xff;
+	if (!reported[slot])
+	{
+		logerror("SHARC: SET_UREG: unimplemented register %02X = %08X at %08X (absorbed)\n", ureg, data, cpustate->pc);
+		reported[slot] = 1;
+	}
 }
 
 static uint32_t GET_UREG(SHARC_REGS *cpustate, int ureg)
@@ -332,7 +375,7 @@ static uint32_t GET_UREG(SHARC_REGS *cpustate, int ureg)
 			switch(reg)
 			{
 				case 0x4:	return cpustate->pcstack[cpustate->pcstkp];		/* PCSTK */
-				default:	fatalerror("SHARC: GET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_get_ureg_unimpl(cpustate, ureg); return 0;
 			}
 			break;
 		}
@@ -358,7 +401,7 @@ static uint32_t GET_UREG(SHARC_REGS *cpustate, int ureg)
 				}
 				case 0xd:	return cpustate->imask;			/* IMASK */
 				case 0xe:	return cpustate->stky;			/* STKY */
-				default:	fatalerror("SHARC: GET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_get_ureg_unimpl(cpustate, ureg); return 0;
 			}
 			break;
 		}
@@ -371,13 +414,14 @@ static uint32_t GET_UREG(SHARC_REGS *cpustate, int ureg)
 				case 0xb:	return (uint32_t)(cpustate->px);			/* PX */
 				case 0xc:	return (uint16_t)(cpustate->px);			/* PX1 */
 				case 0xd:	return (uint32_t)(cpustate->px >> 16);	/* PX2 */
-				default:	fatalerror("SHARC: GET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_get_ureg_unimpl(cpustate, ureg); return 0;
 			}
 			break;
 		}
 
-		default:			fatalerror("SHARC: GET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+		default:			sharc_get_ureg_unimpl(cpustate, ureg); return 0;
 	}
+	return 0;
 }
 
 static void SET_UREG(SHARC_REGS *cpustate, int ureg, uint32_t data)
@@ -441,7 +485,7 @@ static void SET_UREG(SHARC_REGS *cpustate, int ureg, uint32_t data)
 			{
 				case 0x5:	cpustate->pcstkp = data; break;		/* PCSTKP */
 				case 0x8:	cpustate->lcntr = data; break;		/* LCNTR */
-				default:	fatalerror("SHARC: SET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_set_ureg_unimpl(cpustate, ureg, data); break;
 			}
 			break;
 
@@ -471,7 +515,7 @@ static void SET_UREG(SHARC_REGS *cpustate, int ureg, uint32_t data)
 				}
 
 				case 0xe:	cpustate->stky = data; break;		/* STKY */
-				default:	fatalerror("SHARC: SET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_set_ureg_unimpl(cpustate, ureg, data); break;
 			}
 			break;
 
@@ -480,11 +524,11 @@ static void SET_UREG(SHARC_REGS *cpustate, int ureg, uint32_t data)
 			{
 				case 0xc:	cpustate->px &= U64(0xffffffffffff0000); cpustate->px |= (data & 0xffff); break;		/* PX1 */
 				case 0xd:	cpustate->px &= U64(0x000000000000ffff); cpustate->px |= (uint64_t)data << 16; break;		/* PX2 */
-				default:	fatalerror("SHARC: SET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+				default:	sharc_set_ureg_unimpl(cpustate, ureg, data); break;
 			}
 			break;
 
-		default:			fatalerror("SHARC: SET_UREG: unknown register %08X at %08X", ureg, cpustate->pc);
+		default:			sharc_set_ureg_unimpl(cpustate, ureg, data); break;
 	}
 }
 
