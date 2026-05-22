@@ -130,6 +130,7 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	const uint16_t *palram = (const uint16_t *)model2_paletteram32;
 	uint32_t	colorbase = extra->colorbase;
 	uint32_t	lumabase = extra->lumabase;
+	uint32_t	poly_luma = extra->luma;
 	uint32_t	tex_x = extra->texx;
 	uint32_t	tex_y = extra->texy;
 	uint32_t	tex_x_mask, tex_y_mask;
@@ -183,7 +184,18 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 		if ( t == 0x0f )
 			continue;
 #endif
-		luma = lumaram[BYTE_XOR_LE(lumabase + (t << 3))] & 0x3f;
+		/* fetch the per-texel base luma at this texture's "fully lit"
+		 * row (row 0 of the lumaram entry; lumabase no longer carries
+		 * a polygon-luma row offset) and scale it by the geometry
+		 * engine's per-polygon luma.  Clamp to the 6-bit colortable
+		 * index range to defend against polygons that program a luma
+		 * above 0x3f. */
+		{
+			uint32_t lv = (uint32_t)(lumaram[BYTE_XOR_LE(lumabase + (t << 3))] & 0x3f);
+			lv = (lv * poly_luma) >> 8;
+			if (lv > 0x3f) lv = 0x3f;
+			luma = (uint8_t)lv;
+		}
 
 		/* we have the 6 bits of luma information along with 5 bits per color component */
 		/* now build and index into the master color lookup table and extract the raw RGB values */

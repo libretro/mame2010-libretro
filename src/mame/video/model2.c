@@ -965,7 +965,14 @@ static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *
 	if ( vp.min_y < cliprect->min_y ) vp.min_y = cliprect->min_y;
 	if ( vp.max_y > cliprect->max_y ) vp.max_y = cliprect->max_y;
 
-	extra->lumabase = ((tri->texheader[1] & 0xFF) << 7) + ((tri->luma >> 5) ^ 0x7);
+	/* lumabase points at the per-texture luma table; the polygon's own
+	 * luma is kept separate and applied per-pixel as a multiplier below
+	 * in the textured renderer.  The previous formula baked an
+	 * ((luma >> 5) ^ 0x7) row offset into lumabase, which gave only 8
+	 * coarse shading levels per texture and re-used the same offset for
+	 * every texel; the multiplication approach gives continuous shading
+	 * scaled by the geometry engine's per-polygon luma. */
+	extra->lumabase = (tri->texheader[1] & 0xFF) << 7;
 	extra->colorbase = (tri->texheader[3] >> 6) & 0x3FF;
 	extra->luma = tri->luma;
 
