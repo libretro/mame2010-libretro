@@ -201,9 +201,22 @@ static void copro_fifoin_push(running_device *device, uint32_t data)
 
 
 #define COPRO_FIFOOUT_SIZE	0x20000
+/* Back-pressure between the TGP (producer) and i960 (consumer) on the
+ * output FIFO.  When the FIFO crosses the high-water mark the TGP
+ * voluntarily stalls via cpu_spinuntil_trigger; when the i960 pops
+ * data and the count drops below the low-water mark we wake the TGP
+ * back up by firing the trigger.  Two thresholds rather than one
+ * avoids the TGP repeatedly stalling and unstalling at every push
+ * when the FIFO sits near the boundary.  The trigger id is a magic
+ * number chosen to not collide with other devices that use the same
+ * scheduler-wide trigger namespace (voodoo uses 51324+index). */
+#define COPRO_FIFOOUT_TRIGGER		51400
+#define COPRO_FIFOOUT_HIGH_WATER	((COPRO_FIFOOUT_SIZE * 7) / 8)
+#define COPRO_FIFOOUT_LOW_WATER		(COPRO_FIFOOUT_SIZE / 8)
 static int copro_fifoout_rpos, copro_fifoout_wpos;
 static uint32_t copro_fifoout_data[COPRO_FIFOOUT_SIZE];
 static int copro_fifoout_num = 0;
+static int copro_fifoout_tgp_stalled = 0;
 static uint32_t copro_fifoout_pop(const address_space *space)
 {
 	uint32_t r;
@@ -227,6 +240,21 @@ static uint32_t copro_fifoout_pop(const address_space *space)
 	}
 
 	copro_fifoout_num--;
+
+	/* If the TGP put itself to sleep waiting for room on this FIFO,
+	 * and we have now drained below the low-water mark, wake it up.
+	 * This is the consumer half of the back-pressure pair; the
+	 * producer half is the cpu_spinuntil_trigger call in
+	 * copro_fifoout_push.  Without this the TGP-at-50MHz can outrun
+	 * the i960 consumer and pile data into the FIFO faster than the
+	 * i960 reads it, eventually overflowing and dropping geometry
+	 * mid-frame. */
+	if (copro_fifoout_tgp_stalled && copro_fifoout_num <= COPRO_FIFOOUT_LOW_WATER)
+	{
+		copro_fifoout_tgp_stalled = 0;
+		if (dsp_type == DSP_TYPE_TGP)
+			cpuexec_trigger(space->machine, COPRO_FIFOOUT_TRIGGER);
+	}
 
 //  logerror("COPRO FIFOOUT POP %08X, %f, %d\n", r, *(float*)&r,copro_fifoout_num);
 
@@ -271,6 +299,24 @@ static void copro_fifoout_push(running_device *device, uint32_t data)
 	}
 
 	copro_fifoout_num++;
+
+	/* Back-pressure: if the FIFO is filling faster than the i960 is
+	 * draining it, ask the TGP to stop running until the consumer
+	 * pops below the low-water mark.  cpu_spinuntil_trigger doesn't
+	 * abort this in-flight push - the data we just stored stays - but
+	 * marks the TGP as spinning on the next scheduler slice, so its
+	 * subsequent pushes don't happen until the matching cpuexec_trigger
+	 * in copro_fifoout_pop wakes it back up.  This matches what
+	 * upstream MAME does via its MB86234 stall() callback and keeps
+	 * frames from overflowing the FIFO and dropping geometry when the
+	 * 50 MHz TGP outpaces the i960. */
+	if (dsp_type == DSP_TYPE_TGP
+		&& !copro_fifoout_tgp_stalled
+		&& copro_fifoout_num >= COPRO_FIFOOUT_HIGH_WATER)
+	{
+		copro_fifoout_tgp_stalled = 1;
+		cpu_spinuntil_trigger(device, COPRO_FIFOOUT_TRIGGER);
+	}
 
 	// set SHARC flag 1: 0 if space available, 1 if FIFO full
 	if (dsp_type == DSP_TYPE_SHARC)
@@ -392,6 +438,16 @@ static MACHINE_RESET(model2_common)
 	model2_timers[3] = machine->device<timer_device>("timer3");
 	for (i=0; i<4; i++)
 		model2_timers[i]->reset();
+
+	/* Reset the copro FIFOs so a soft reset doesn't leave the TGP
+	 * stalled forever waiting on a trigger we'll never fire. */
+	copro_fifoin_num = 0;
+	copro_fifoin_rpos = 0;
+	copro_fifoin_wpos = 0;
+	copro_fifoout_num = 0;
+	copro_fifoout_rpos = 0;
+	copro_fifoout_wpos = 0;
+	copro_fifoout_tgp_stalled = 0;
 }
 
 static MACHINE_RESET(model2o)
