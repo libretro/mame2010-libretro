@@ -15,7 +15,7 @@
  *
  ***********************************************************************
  *
- * Each sound primative DSS_xxxx or DST_xxxx has its own implementation
+ * Each sound primitive DSS_xxxx or DST_xxxx has its own implementation
  * file. All discrete sound primatives MUST implement the following
  * API:
  *
@@ -38,7 +38,6 @@
 #include "wavwrite.h"
 #include "discrete.h"
 
-
 /*************************************
  *
  *  Performance
@@ -60,23 +59,6 @@
 
 /*************************************
  *
- *  Debugging
- *
- *************************************/
-
-#define DISCRETE_DEBUGLOG			(0)
-
-
-/*************************************
- *
- *  Profiling Nodes
- *
- *************************************/
-
-#define DISCRETE_PROFILING			(0)
-
-/*************************************
- *
  *  Prototypes
  *
  *************************************/
@@ -88,8 +70,6 @@ static DEVICE_RESET( discrete );
 static STREAM_UPDATE( discrete_stream_update );
 static STREAM_UPDATE( buffer_stream_update );
 
-static int profiling = 0;
-
 /*************************************
  *
  *  Debug logging
@@ -98,20 +78,6 @@ static int profiling = 0;
 
 static void CLIB_DECL ATTR_PRINTF(2,3) discrete_log(const discrete_info *disc_info, const char *text, ...)
 {
-	if (DISCRETE_DEBUGLOG)
-	{
-		va_list arg;
-		va_start(arg, text);
-
-		if(disc_info->disclogfile)
-		{
-			vfprintf(disc_info->disclogfile, text, arg);
-			fprintf(disc_info->disclogfile, "\n");
-			fflush(disc_info->disclogfile);
-		}
-
-		va_end(arg);
-	}
 }
 
 /*************************************
@@ -319,29 +285,12 @@ INLINE void step_nodes_in_list(const linked_list_entry *list)
 {
 	const linked_list_entry *entry;
 
-	if (EXPECTED(!profiling))
+	for (entry = list; entry != NULL; entry = entry->next)
 	{
-		for (entry = list; entry != NULL; entry = entry->next)
-		{
-			node_description *node = (node_description *) entry->ptr;
+		node_description *node = (node_description *) entry->ptr;
 
-			/* Now step the node */
-			(*node->step)(node);
-		}
-	}
-	else
-	{
-		osd_ticks_t last = get_profile_ticks();
-
-		for (entry = list; entry != NULL; entry = entry->next)
-		{
-			node_description *node = (node_description *) entry->ptr;
-
-			node->run_time -= last;
-			(*node->step)(node);
-			last = get_profile_ticks();
-			node->run_time += last;
-		}
+		/* Now step the node */
+		(*node->step)(node);
 	}
 }
 
@@ -480,7 +429,6 @@ static DEVICE_START( discrete )
 	const linked_list_entry *entry;
 	const discrete_sound_block *intf_start = (discrete_sound_block *)device->baseconfig().static_config();
 	discrete_info *info = get_safe_token(device);
-	char name[32];
 
 	info->device = device;
 
@@ -494,15 +442,6 @@ static DEVICE_START( discrete )
 
 	info->total_samples = 0;
 	info->total_stream_updates = 0;
-
-	/* create the logfile */
-	sprintf(name, "discrete%s.log", device->tag());
-	if (DISCRETE_DEBUGLOG)
-		info->disclogfile = fopen(name, "w");
-
-	/* enable profiling */
-	if (getenv("DISCRETE_PROFILING"))
-		profiling = atoi(getenv("DISCRETE_PROFILING"));
 
 	/* Build the final block list */
 	info->block_list = NULL;
@@ -553,66 +492,12 @@ static DEVICE_START( discrete )
  *
  *************************************/
 
-static uint64_t list_run_time(const linked_list_entry *list)
-{
-	const linked_list_entry *entry;
-	uint64_t total = 0;
-
-	for (entry = list; entry != NULL; entry = entry->next)
-	{
-		node_description *node = (node_description *) entry->ptr;
-
-		total += node->run_time;
-	}
-	return total;
-}
-
-static void display_profiling(const discrete_info *info)
-{
-	int count;
-	uint64_t total;
-	uint64_t tresh;
-	double tt;
-	linked_list_entry *entry;
-
-	/* calculate total time */
-	total = list_run_time(info->node_list);
-	count = linked_list_count(info->node_list);
-	/* print statistics */
-	printf("Total Samples  : %16" I64FMT "d\n", info->total_samples);
-	tresh = total / count;
-	printf("Threshold (mean): %16" I64FMT "d\n", tresh / info->total_samples );
-	for (entry = info->node_list; entry != NULL; entry = entry->next)
-	{
-		node_description *node = (node_description *) entry->ptr;
-
-		if (node->run_time > tresh)
-			printf("%3d: %20s %8.2f %10.2f\n", NODE_BLOCKINDEX(node), node->module->name, (float) node->run_time / (float) total * 100.0, ((float) node->run_time) / (float) info->total_samples);
-	}
-
-	/* Task information */
-	for (entry = info->task_list; entry != 0; entry = entry->next)
-	{
-		discrete_task *task = (discrete_task *) entry->ptr;
-		tt =  list_run_time(task->list);
-
-		printf("Task(%d): %8.2f %15.2f\n", task->task_group, tt / (double) total * 100.0, tt / (double) info->total_samples);
-	}
-
-	printf("Average samples/stream_update: %8.2f\n", (double) info->total_samples / (double) info->total_stream_updates);
-}
-
 static DEVICE_STOP( discrete )
 {
 	discrete_info *info = get_safe_token(device);
 	const linked_list_entry *entry;
 
 	osd_work_queue_free(info->queue);
-
-	if (profiling)
-	{
-		display_profiling(info);
-	}
 
 	/* Process nodes which have a stop func */
 
@@ -622,14 +507,6 @@ static DEVICE_STOP( discrete )
 
 		if (node->module->stop)
 			(*node->module->stop)(node);
-	}
-
-	if (DISCRETE_DEBUGLOG)
-	{
-		/* close the debug log */
-	    if (info->disclogfile)
-	    	fclose(info->disclogfile);
-		info->disclogfile = NULL;
 	}
 }
 
@@ -787,15 +664,7 @@ static STREAM_UPDATE( discrete_stream_update )
 		osd_work_item_queue(info->queue, task_callback, (void *) info->task_list, WORK_ITEM_FLAG_AUTO_RELEASE);
 	}
 	osd_work_queue_wait(info->queue, osd_ticks_per_second()*10);
-
-	if (profiling)
-	{
-		info->total_samples += samples;
-		info->total_stream_updates++;
-	}
-
 }
-
 
 
 /*************************************
