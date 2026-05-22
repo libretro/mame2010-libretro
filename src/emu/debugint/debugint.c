@@ -1440,7 +1440,6 @@ static void update_views(void)
 
 void debugint_wait_for_debugger(running_device *device, int firststop)
 {
-
 	if (firststop && list == NULL)
 	{
 		DView *dv;
@@ -1463,19 +1462,14 @@ void debugint_wait_for_debugger(running_device *device, int firststop)
 
 	followers_set_cpu(device);
 
-	//ui_update_and_render(device->machine, render_container_get_ui());
 	update_views();
 	osd_update(device->machine, FALSE);
 	handle_menus(device->machine);
 	handle_mouse(device->machine);
-	//osd_sleep(osd_ticks_per_second()/60);
-
 }
 
 void debugint_update_during_game(running_machine *machine)
 {
 	if (!debug_cpu_is_stopped(machine) && machine->phase() == MACHINE_PHASE_RUNNING)
-	{
 		update_views();
-	}
 }

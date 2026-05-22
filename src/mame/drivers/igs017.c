@@ -260,66 +260,9 @@ static void draw_sprites(running_machine *machine, bitmap_t *bitmap,const rectan
 	}
 }
 
-// A simple gfx viewer (toggle with T)
-static int debug_viewer(running_machine *machine, bitmap_t *bitmap,const rectangle *cliprect)
-{
-#ifdef MAME_DEBUG
-	if (input_code_pressed_once(machine, KEYCODE_T))	toggle = 1-toggle;
-	if (toggle)	{
-		int h = 256, w = debug_width, a = debug_addr;
-
-		if (input_code_pressed(machine, KEYCODE_O))		w += 1;
-		if (input_code_pressed(machine, KEYCODE_I))		w -= 1;
-
-		if (input_code_pressed(machine, KEYCODE_U))		w += 8;
-		if (input_code_pressed(machine, KEYCODE_Y))		w -= 8;
-
-		if (input_code_pressed(machine, KEYCODE_RIGHT))	a += 1;
-		if (input_code_pressed(machine, KEYCODE_LEFT))	a -= 1;
-
-		if (input_code_pressed(machine, KEYCODE_DOWN))	a += w;
-		if (input_code_pressed(machine, KEYCODE_UP))		a -= w;
-
-		if (input_code_pressed(machine, KEYCODE_PGDN))	a += w * h;
-		if (input_code_pressed(machine, KEYCODE_PGUP))	a -= w * h;
-
-		if (a < 0)		a = 0;
-		if (a > sprites_gfx_size)	a = sprites_gfx_size;
-
-		if (w <= 0)		w = 0;
-		if (w > 1024)	w = 1024;
-
-		bitmap_fill(bitmap,cliprect,0);
-
-		draw_sprite(machine, bitmap, cliprect, 0,0, w,h, 0,0, 0, a);
-
-		popmessage("a: %08X w: %03X p: %02X-%02x-%02x",a,w,sprites_gfx[a/3*3+0],sprites_gfx[a/3*3+1],sprites_gfx[a/3*3+2]);
-		debug_addr = a;
-		debug_width = w;
-		osd_sleep(200000);
-		return 1;
-	}
-#endif
-	return 0;
-}
-
 static VIDEO_UPDATE( igs017 )
 {
 	int layers_ctrl = -1;
-
-#ifdef MAME_DEBUG
-	if (input_code_pressed(screen->machine, KEYCODE_Z))
-	{
-		int mask = 0;
-		if (input_code_pressed(screen->machine, KEYCODE_Q))	mask |= 1;
-		if (input_code_pressed(screen->machine, KEYCODE_W))	mask |= 2;
-		if (input_code_pressed(screen->machine, KEYCODE_A))	mask |= 4;
-		if (mask != 0) layers_ctrl &= mask;
-	}
-#endif
-
-	if (debug_viewer(screen->machine, bitmap,cliprect))
-		return 0;
 
 	bitmap_fill(bitmap, cliprect, get_black_pen(screen->machine));
 
