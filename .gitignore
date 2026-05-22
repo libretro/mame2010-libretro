@@ -5,6 +5,8 @@
 !/.gitignore
 !/makefile
 !/*.md
+!/mame2010_audio_classes.txt
+!/mame2010_video_classes.txt
 !/*.mri
 !/Makefile.tiny
 !/*.
