@@ -170,7 +170,6 @@ static void update_refresh_speed(running_machine *machine);
 
 /* screen snapshots */
 static void create_snapshot_bitmap(device_t *screen);
-static file_error mame_fopen_next(running_machine *machine, const char *pathoption, const char *extension, mame_file **file);
 
 /* movie recording */
 static void video_mng_record_frame(running_machine *machine);
@@ -860,10 +859,10 @@ static osd_ticks_t throttle_until_ticks(running_machine *machine, osd_ticks_t ta
 
 	/* we're allowed to sleep via the OSD code only if we're configured to do so
        and we're not frameskipping due to autoframeskip, or if we're paused */
-    if (options_get_bool(machine->options(), OPTION_SLEEP) && (!effective_autoframeskip(machine) || effective_frameskip() == 0))
-    	allowed_to_sleep = TRUE;
-    if (machine->paused())
-    	allowed_to_sleep = TRUE;
+	if (options_get_bool(machine->options(), OPTION_SLEEP) && (!effective_autoframeskip(machine) || effective_frameskip() == 0))
+		allowed_to_sleep = TRUE;
+	if (machine->paused())
+		allowed_to_sleep = TRUE;
 
 	/* loop until we reach our target */
 	while (current_ticks < target_ticks)
@@ -1078,7 +1077,6 @@ void screen_save_snapshot(running_machine *machine, device_t *screen, mame_file 
 {
 	png_info pnginfo = { 0 };
 	const rgb_t *palette;
-	png_error error;
 	char text[256];
 
 	/* validate */
@@ -1096,7 +1094,7 @@ void screen_save_snapshot(running_machine *machine, device_t *screen, mame_file 
 
 	/* now do the actual work */
 	palette = (machine->palette != NULL) ? palette_entry_list_adjusted(machine->palette) : NULL;
-	error = png_write_bitmap(mame_core_file(fp), &pnginfo, global.snap_bitmap, machine->total_colors(), palette);
+	png_write_bitmap(mame_core_file(fp), &pnginfo, global.snap_bitmap, machine->total_colors(), palette);
 
 	/* free any data allocated */
 	png_free(&pnginfo);
@@ -1155,68 +1153,6 @@ static void create_snapshot_bitmap(device_t *screen)
 	osd_lock_acquire(primlist->lock);
 	rgb888_draw_primitives(primlist->head, global.snap_bitmap->base, width, height, global.snap_bitmap->rowpixels);
 	osd_lock_release(primlist->lock);
-}
-
-
-/*-------------------------------------------------
-    mame_fopen_next - open the next non-existing
-    file of type filetype according to our
-    numbering scheme
--------------------------------------------------*/
-
-static file_error mame_fopen_next(running_machine *machine, const char *pathoption, const char *extension, mame_file **file)
-{
-	const char *snapname = options_get_string(machine->options(), OPTION_SNAPNAME);
-	file_error filerr;
-	astring snapstr;
-	astring fname;
-	int index;
-
-	/* handle defaults */
-	if (snapname == NULL || snapname[0] == 0)
-		snapname = "%g/%i";
-	snapstr.cpy(snapname);
-
-	/* strip any extension in the provided name and add our own */
-	index = snapstr.rchr(0, '.');
-	if (index != -1)
-		snapstr.substr(0, index);
-	snapstr.cat(".").cat(extension);
-
-	/* substitute path and gamename up front */
-	snapstr.replace(0, "/", PATH_SEPARATOR);
-	snapstr.replace(0, "%g", machine->basename());
-
-	/* determine if the template has an index; if not, we always use the same name */
-	if (snapstr.find(0, "%i") == -1)
-		snapstr.cpy(snapstr);
-
-	/* otherwise, we scan for the next available filename */
-	else
-	{
-		int seq;
-
-		/* try until we succeed */
-		for (seq = 0; ; seq++)
-		{
-			char seqtext[10];
-
-			/* make text for the sequence number */
-			sprintf(seqtext, "%04d", seq);
-
-			/* build up the filename */
-			fname.cpy(snapstr).replace(0, "%i", seqtext);
-
-			/* try to open the file; stop when we fail */
-			filerr = mame_fopen(pathoption, fname, OPEN_FLAG_READ, file);
-			if (filerr != FILERR_NONE)
-				break;
-			mame_fclose(*file);
-		}
-	}
-
-	/* create the final file */
-    return mame_fopen(pathoption, fname, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, file);
 }
 
 

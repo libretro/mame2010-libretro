@@ -1270,58 +1270,58 @@ static avi_error read_movie_data(avi_file *file)
 	if (avierr != AVIERR_NONE)
 		goto error;
 
-		/* find the avih chunk */
-		avierr = find_first_chunk(file, CHUNKTYPE_AVIH, &hdrl, &avih);
+	/* find the avih chunk */
+	avierr = find_first_chunk(file, CHUNKTYPE_AVIH, &hdrl, &avih);
+	if (avierr != AVIERR_NONE)
+		goto error;
+
+	/* parse the avih chunk */
+	avierr = parse_avih_chunk(file, &avih);
+	if (avierr != AVIERR_NONE)
+		goto error;
+
+	/* loop over strl LIST chunks */
+	strindex = 0;
+	for (avierr = find_first_list(file, LISTTYPE_STRL, &hdrl, &strl); avierr == AVIERR_NONE; avierr = find_next_list(file, LISTTYPE_STRL, &hdrl, &strl))
+	{
+		/* if we have too many, it's a bad file */
+		if (strindex >= file->streams)
+			goto error;
+
+		/* find the strh chunk */
+		avierr = find_first_chunk(file, CHUNKTYPE_STRH, &strl, &strh);
 		if (avierr != AVIERR_NONE)
 			goto error;
 
-		/* parse the avih chunk */
-		avierr = parse_avih_chunk(file, &avih);
+		/* parse the data */
+		avierr = parse_strh_chunk(file, &file->stream[strindex], &strh);
 		if (avierr != AVIERR_NONE)
 			goto error;
 
-		/* loop over strl LIST chunks */
-		strindex = 0;
-		for (avierr = find_first_list(file, LISTTYPE_STRL, &hdrl, &strl); avierr == AVIERR_NONE; avierr = find_next_list(file, LISTTYPE_STRL, &hdrl, &strl))
-		{
-			/* if we have too many, it's a bad file */
-			if (strindex >= file->streams)
-				goto error;
-
-			/* find the strh chunk */
-			avierr = find_first_chunk(file, CHUNKTYPE_STRH, &strl, &strh);
-			if (avierr != AVIERR_NONE)
-				goto error;
-
-			/* parse the data */
-			avierr = parse_strh_chunk(file, &file->stream[strindex], &strh);
-			if (avierr != AVIERR_NONE)
-				goto error;
-
-			/* find the strf chunk */
-			avierr = find_first_chunk(file, CHUNKTYPE_STRF, &strl, &strf);
-			if (avierr != AVIERR_NONE)
-				goto error;
-
-			/* parse the data */
-			avierr = parse_strf_chunk(file, &file->stream[strindex], &strf);
-			if (avierr != AVIERR_NONE)
-				goto error;
-
-			/* find the indx chunk, if present */
-			avierr = find_first_chunk(file, CHUNKTYPE_INDX, &strl, &indx);
-			if (avierr == AVIERR_NONE)
-				avierr = parse_indx_chunk(file, &file->stream[strindex], &indx);
-
-			/* next stream */
-			strindex++;
-		}
-
-		/* normalize the error after parsing the stream headers */
-		if (avierr == AVIERR_END)
-			avierr = AVIERR_NONE;
+		/* find the strf chunk */
+		avierr = find_first_chunk(file, CHUNKTYPE_STRF, &strl, &strf);
 		if (avierr != AVIERR_NONE)
 			goto error;
+
+		/* parse the data */
+		avierr = parse_strf_chunk(file, &file->stream[strindex], &strf);
+		if (avierr != AVIERR_NONE)
+			goto error;
+
+		/* find the indx chunk, if present */
+		avierr = find_first_chunk(file, CHUNKTYPE_INDX, &strl, &indx);
+		if (avierr == AVIERR_NONE)
+			avierr = parse_indx_chunk(file, &file->stream[strindex], &indx);
+
+		/* next stream */
+		strindex++;
+	}
+
+	/* normalize the error after parsing the stream headers */
+	if (avierr == AVIERR_END)
+		avierr = AVIERR_NONE;
+	if (avierr != AVIERR_NONE)
+		goto error;
 
 	/* find the base of the movi data */
 	avierr = find_first_list(file, LISTTYPE_MOVI, &riff, &movi);
@@ -1513,10 +1513,10 @@ error:
 
 static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk *strf)
 {
-	uint32_t entries, entry, id;
+	uint32_t entries, entry;
 	uint8_t *chunkdata = NULL;
 	uint16_t longs_per_entry;
-	uint8_t subtype, type;
+	uint8_t type;
 	uint64_t baseoffset;
 	avi_error avierr;
 
@@ -1527,10 +1527,8 @@ static avi_error parse_indx_chunk(avi_file *file, avi_stream *stream, avi_chunk 
 
 	/* extract the data */
 	longs_per_entry = fetch_16bits(&chunkdata[0]);
-	subtype = chunkdata[2];
 	type = chunkdata[3];
 	entries = fetch_32bits(&chunkdata[4]);
-	id = fetch_32bits(&chunkdata[8]);
 	baseoffset = fetch_64bits(&chunkdata[12]);
 
 	/* if this is a superindex, loop over entries and call ourselves recursively */

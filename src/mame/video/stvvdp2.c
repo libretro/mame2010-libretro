@@ -3859,14 +3859,12 @@ static void stv_vdp2_check_tilemap_with_linescroll(running_machine *machine, bit
 	int scroll_values_equal;
 	int lines;
 	int16_t scrollx, scrolly;
-	int32_t incx;
 	int linescroll_enable, vertical_linescroll_enable, linezoom_enable;
 	int vertical_linescroll_index = -1;
 
 	// read original scroll values
 	scrollx = stv2_current_tilemap.scrollx;
 	scrolly = stv2_current_tilemap.scrolly;
-	incx = stv2_current_tilemap.incx;
 
 	// prepare linescroll flags
 	linescroll_enable = stv2_current_tilemap.linescroll_enable;
@@ -4048,7 +4046,6 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 	uint32_t address;
 	uint16_t *line;
 	uint16_t pix;
-	uint32_t coeff_line_color_screen_data;
 	int32_t clipxmask = 0, clipymask = 0;
 
 
@@ -4212,7 +4209,6 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 					case 0:
 						address = coeff_table_offset + ((RP.kast + RP.dkast*(vcnt>>vcnt_shift)) >> 16) * 4;
 						coeff_table_val = coeff_table_base[ address / 4 ];
-						coeff_line_color_screen_data = (coeff_table_val & 0x7f000000) >> 24;
 						coeff_msb = (coeff_table_val & 0x80000000) > 0;
 						if ( coeff_table_val & 0x00800000 )
 						{
@@ -4231,7 +4227,6 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 							coeff_table_val >>= 16;
 						}
 						coeff_table_val &= 0xffff;
-						coeff_line_color_screen_data = 0;
 						coeff_msb = (coeff_table_val & 0x8000) > 0;
 						if ( coeff_table_val & 0x4000 )
 						{
@@ -4309,7 +4304,6 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 					case 0:
 						address = coeff_table_offset + ((RP.kast + RP.dkast*(vcnt>>vcnt_shift) + RP.dkax*hcnt) >> 16) * 4;
 						coeff_table_val = coeff_table_base[ address / 4 ];
-						coeff_line_color_screen_data = (coeff_table_val & 0x7f000000) >> 24;
 						coeff_msb = (coeff_table_val & 0x80000000) > 0;
 						if ( coeff_table_val & 0x00800000 )
 						{
@@ -4328,7 +4322,6 @@ static void stv_vdp2_copy_roz_bitmap(bitmap_t *bitmap,
 							coeff_table_val >>= 16;
 						}
 						coeff_table_val &= 0xffff;
-						coeff_line_color_screen_data = 0;
 						coeff_msb = (coeff_table_val & 0x8000) > 0;
 						if ( coeff_table_val & 0x4000 )
 						{

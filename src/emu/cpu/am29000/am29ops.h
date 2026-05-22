@@ -1059,7 +1059,6 @@ static void LOADM(am29000_state *am29000)
 static void STORE(am29000_state *am29000)
 {
 	uint32_t addr = INST_M_BIT ? I8: GET_RB_VAL;
-	uint32_t r;
 
 	if (INST_UA_BIT)
 		fatalerror("Am29000: UA bit set on LOAD\n");
@@ -1067,7 +1066,6 @@ static void STORE(am29000_state *am29000)
 	if (INST_CE_BIT)
 	{
 		logerror("Am29000: Attempting a co-processor LOAD!\n");
-		r = 0;
 	}
 	else
 	{
