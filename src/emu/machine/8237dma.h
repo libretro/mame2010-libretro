@@ -47,7 +47,7 @@ DECLARE_LEGACY_DEVICE(I8237, i8237);
 	MDRV_DEVICE_CONFIG(_config)
 
 #define I8237_INTERFACE(_name) \
-	const i8237_interface (_name) =
+	const i8237_interface _name =
 
 /***************************************************************************
     TYPE DEFINITIONS
