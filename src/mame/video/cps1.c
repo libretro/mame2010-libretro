@@ -954,12 +954,11 @@ static const struct gfx_range mapper_KR63B_table[] =
 static const struct gfx_range mapper_S9263B_table[] =
 {
 	// verified from PAL dump:
-	// FIXME there is some problem with this dump since pin 14 is never enabled
-	// instead of being the same as pin 15 as expected
 	// bank0 = pin 19 (ROMs 1,3) & pin 18 (ROMs 2,4)
 	// bank1 = pin 17 (ROMs 5,7) & pin 16 (ROMs 6,8)
 	// bank2 = pin 15 (ROMs 10,12) & pin 14 (ROMs 11,13)
-	// pins 12 and 13 are the same as 14 and 15
+	// pins 12,13 are unused, however pin 13 does have logic which
+	// is fed back internally to form the final output for pins 14,15
 
 	/* type            start    end      bank */
 	{ GFXTYPE_SPRITES, 0x00000, 0x07fff, 0 },
