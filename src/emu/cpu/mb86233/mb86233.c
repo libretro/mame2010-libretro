@@ -349,9 +349,13 @@ static uint32_t GETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offse
             uint32_t off2   = ((GETEXTPORT()[0x2a] >> 11) & 0x1fff) ^ 0x1000;
             uint32_t value  = cpustate->Tables[off2 * 2 + (0x30000/4) + 1];
             uint32_t srcexp = (GETEXTPORT()[0x2a] >> 24) & 0x7f;
-            value &= 0x7FFFFFFFu;
-            if (GETEXTPORT()[0x2a] & (1u << 31))
-                value |= 1u << 31;
+            /* Pass the table entry through ScaleExp with its sign bit
+             * intact - upstream's copro_isqrt_r at offset 1 returns
+             * (table & 0x807FFFFF) | (new_exp << 23), i.e. the sign comes
+             * straight from the isqrt table, not re-derived from the
+             * base register.  ScaleExp only rewrites the exponent field
+             * and leaves bit 31 alone, so a single call is enough; no
+             * mask-and-OR dance needed. */
             return ScaleExp(value, 0x3f - srcexp);
         }
 
