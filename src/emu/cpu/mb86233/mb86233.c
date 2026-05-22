@@ -352,35 +352,36 @@ static uint32_t GETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offse
 
     addr = (EB & 0xFFFF0000u) | (offset & 0xFFFFu);
 
-    /* Upstream-style I/O bank semantics: when bits 22 (bufferram) or 23
-     * (ROM) of the resulting address are set, route through the upstream
-     * decode path instead of the legacy byte-address one.  VF2's TGP
-     * firmware writes 0x400000 to RF[3] to select bufferram, then reads
-     * and writes the mailbox at bufferram[0x7FFE/0x7FFF] - in the legacy
-     * convention that EB value produces a byte address in /dev/null. */
+    /* Upstream-style I/O bank semantics: when bit 22 of the bank-relative
+     * address is set the access lands in the 32K-dword bufferram window,
+     * bit 23 indicates a read from the TGP-side data ROM (mounted at
+     * word-coord 0xff800000 / byte 0xfe000000).  VF2's TGP firmware
+     * writes 0x400000 to RF[3] (= bank bit 22) to drive the mailbox in
+     * bufferram[0x7FFE/0x7FFF]; the legacy byte-address convention put
+     * those writes nowhere. */
     {
         uint32_t adr = (EB & 0x00ff0000u) | (offset & 0xffffu);
 
         if (adr & 0x800000u)
         {
-            if (cpustate->rom_base && cpustate->rom_word_hi > cpustate->rom_word_lo)
-                return cpustate->rom_base[adr & (cpustate->rom_word_hi - cpustate->rom_word_lo - 1u)];
-            /* fall through to legacy ROM cache below */
+            /* AM_RANGE on the TGP map is in word units (addrbus_shift=-2),
+             * so word 0xff800000 + idx covers the full 8 MB tgp ROM with
+             * a 2M-dword mask.  RDMEM's <<2 turns this into byte 0xfe000000
+             * + idx*4 which lands inside the AM_ROM region. */
+            return RDMEM(0xff800000u | (adr & 0x1fffffu));
         }
-        else if (adr & 0x400000u)
+        if (adr & 0x400000u)
         {
-            /* bufferram: 32K-dword window, masked to wrap.  RDMEM input is
-             * a word address, <<2 in the macro converts to byte = 0x00400000
-             * + (adr & 0x7fff)*4 - reaches the widened copro_tgp_buffer
-             * handler. */
-            return RDMEM(0x00100000u + (adr & 0x7fffu));
+            /* bufferram lives at word-coord 0x00400000..0x00407FFF (byte
+             * 0x01000000..0x0101FFFC), so RDMEM input = 0x00400000 +
+             * (adr & 0x7fff) reaches the existing copro_tgp_buffer handler. */
+            return RDMEM(0x00400000u + (adr & 0x7fffu));
         }
     }
 
     /* Legacy fallback: byte-address convention from the original 2010 driver,
-     * preserved so any game whose firmware uses it (e.g. Daytona's pre-baked
-     * EB values for math-table ROM lookups outside the special 0x20-0x2f
-     * range) still works. */
+     * preserved so any game whose firmware uses it (e.g. for ROM lookups
+     * outside the special 0x20-0x2f math range) still works. */
     if (cpustate->bufferram_base &&
         addr >= cpustate->bufferram_word_lo && addr < cpustate->bufferram_word_hi)
         return cpustate->bufferram_base[addr - cpustate->bufferram_word_lo];
@@ -412,9 +413,7 @@ static void SETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offset, u
     addr = (EB & 0xFFFF0000u) | (offset & 0xFFFFu);
 
     /* Upstream-style I/O bank semantics, see GETEXTERNAL.  Writes only
-     * land in bufferram (bit 22); the ROM region (bit 23) is read-only
-     * and writes are silently ignored - matching upstream's
-     * copro_tgp_memory_w which has no ROM-write path. */
+     * land in bufferram (bit 22); ROM bank (bit 23) is read-only. */
     {
         uint32_t adr = (EB & 0x00ff0000u) | (offset & 0xffffu);
 
@@ -422,7 +421,7 @@ static void SETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offset, u
             return;
         if (adr & 0x400000u)
         {
-            WRMEM(0x00100000u + (adr & 0x7fffu), value);
+            WRMEM(0x00400000u + (adr & 0x7fffu), value);
             return;
         }
     }

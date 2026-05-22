@@ -2163,14 +2163,7 @@ static WRITE32_HANDLER(copro_tgp_buffer_w)
 
 static ADDRESS_MAP_START( copro_tgp_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00000000, 0x00007fff) AM_RAM AM_BASE(&tgp_program)
-	/* The bufferram window the TGP sees is actually 32K dwords (128 KB),
-	 * not the 8 KB originally declared here.  The handler already masks
-	 * offset & 0x7fff against the 128 KB model2_bufferram allocation, but
-	 * with the old narrow AM_RANGE any bank-relative access past byte
-	 * 0x00407fff (e.g. VF2's mailbox at bufferram[0x7FFE/0x7FFF]) went to
-	 * the unmapped logger.  Widening to cover the full window so the
-	 * handler is reachable for the whole valid range. */
-	AM_RANGE(0x00400000, 0x0041ffff) AM_READWRITE(copro_tgp_buffer_r, copro_tgp_buffer_w)
+	AM_RANGE(0x00400000, 0x00407fff) AM_READWRITE(copro_tgp_buffer_r, copro_tgp_buffer_w)
 	AM_RANGE(0xff800000, 0xff9fffff) AM_ROM AM_REGION("tgp", 0)
 ADDRESS_MAP_END
 
