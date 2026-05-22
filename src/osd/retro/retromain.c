@@ -471,9 +471,18 @@ void osd_update(running_machine *machine,int skip_redraw)
 
 		if (adjust_opt[2])
 		{
+			double prev_rate = refresh_rate;
 			adjust_opt[2] = 0;
 			refresh_rate = (machine->primary_screen == NULL) ? screen_device::k_default_frame_rate : ATTOSECONDS_TO_HZ(machine->primary_screen->frame_period().attoseconds);
-			update_geometry();
+			if (refresh_rate != prev_rate)
+			{
+				/* fps changed: SET_GEOMETRY ignores timing, so push full AV info */
+				struct retro_system_av_info av_info;
+				retro_get_system_av_info(&av_info);
+				environ_cb(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO, &av_info);
+			}
+			else
+				update_geometry();
 		}
 
 		if ((adjust_opt[3] || adjust_opt[4] || adjust_opt[5]) && adjust_opt[1])
@@ -867,6 +876,16 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    float display_ratio 	= set_par ? (vertical ? (float)rthe / (float)rtwi : (float)rtwi / (float)rthe) : (vertical ? 3.0f / 4.0f : 4.0f / 3.0f);
    info->geometry.aspect_ratio = display_ratio;
 
+   {
+      /* Report the driver's true refresh rate. The machine exists by the
+         time the frontend first queries av_info (created during
+         retro_load_game), and since the core no longer throttles, the
+         frontend owns all pacing - a stale 60Hz here makes non-60Hz
+         drivers run at the wrong speed with drifting audio. */
+      running_machine *avmachine = retro_get_machine();
+      if (avmachine != NULL && avmachine->primary_screen != NULL)
+         refresh_rate = ATTOSECONDS_TO_HZ(avmachine->primary_screen->frame_period().attoseconds);
+   }
    info->timing.fps            = refresh_rate;
    info->timing.sample_rate    = (double)sample_rate;
 
