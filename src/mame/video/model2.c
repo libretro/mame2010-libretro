@@ -2471,7 +2471,7 @@ static uint32_t * geo_texture_data( uint32_t opcode, uint32_t *input )
 /* Command 05: Polygon Data */
 static uint32_t * geo_polygon_data( uint32_t opcode, uint32_t *input )
 {
-	uint32_t	address, count, i;
+	uint32_t	address, count, i, base, limit;
 	uint32_t *p;
 
 	(void)opcode;
@@ -2479,20 +2479,47 @@ static uint32_t * geo_polygon_data( uint32_t opcode, uint32_t *input )
 	/* read in the address */
 	address = *input++;
 
-	/* prepare the pointer */
+	/* prepare the pointer.  polygon_ram0 / polygon_ram1 are each
+	 * 0x8000 entries; the address is masked to the same 0x7fff window
+	 * regardless of which half is selected. */
+	base = address & 0x7FFF;
 	if ( address & 0x01000000 )
 	{
 		/* Fast polygon RAM */
-		p = &geo.polygon_ram0[address & 0x7FFF];
+		p = &geo.polygon_ram0[base];
 	}
 	else
 	{
 		/* Slow Polygon RAM */
-		p = &geo.polygon_ram1[address & 0x7FFF];
+		p = &geo.polygon_ram1[base];
 	}
 
 	/* read the count */
 	count = *input++;
+
+	/* Clamp the count to the remaining space in the destination RAM.
+	 * A desynced geometry stream can drop a multi-million-word value
+	 * here (the function is opcode 5, Polygon Data Write, and reads
+	 * the count blindly from the FIFO); without this guard the loop
+	 * walks straight past the end of the 0x8000-entry buffer into
+	 * unmapped memory and segfaults inside the per-frame render path.
+	 * Daytona reaches this with count ~ 1.5M into a 32K buffer.  When
+	 * we clamp we still advance the input pointer past the entire
+	 * declared block so subsequent opcodes see a sensible position. */
+	limit = 0x8000 - base;
+	if ( count > limit )
+	{
+		uint32_t skip;
+		logerror( "SEGA GEO: geo_polygon_data count %u exceeds %u-entry window at base %04x; clamping\n",
+				  count, limit, base );
+		/* copy what fits */
+		for ( i = 0; i < limit; i++ )
+			*p++ = *input++;
+		/* drop the rest on the floor but consume the stream so we stay aligned */
+		skip = count - limit;
+		input += skip;
+		return input;
+	}
 
 	/* move the data */
 	for( i = 0; i < count; i++ )
@@ -2910,11 +2937,29 @@ static uint32_t * geo_process_command( uint32_t opcode, uint32_t *input )
 
 static void geo_parse( void )
 {
-	uint32_t	address = (geo_read_start_address/4);
+	/* mask the start address to the 17-bit buffer extent (0x1FFFF
+	 * bytes / 0x7FFF dwords).  geo_read_start_address gets through to
+	 * here with up to 20 bits set from its writer mask, which after /4
+	 * indexes 0x3FFFF dwords - twice the size of the bufferram
+	 * allocation.  Anything starting past 0x20000 dwords would have
+	 * failed the while-loop bound on the very first check and silently
+	 * skipped the entire frame's command stream; masking keeps the
+	 * start inside the buffer the same way the wider hardware does. */
+	uint32_t	address = (geo_read_start_address & 0x1FFFF) / 4;
 	uint32_t *input = &model2_bufferram[address];
 	uint32_t	opcode;
+	uint32_t	op_count = 0;
 
-	while( input != NULL && (input - model2_bufferram) < 0x20000  )
+	/* Backstop against a runaway command stream (a corrupted jump
+	 * target that loops back into itself, or a frame where the desync
+	 * paths in the per-poly parsers leave the input pointer never
+	 * approaching the buffer end).  0x8000 ops is roughly the maximum
+	 * a sane frame ever issues; past that we are clearly off the
+	 * rails and continuing only risks segfaulting in a downstream
+	 * command handler that trusts a length word it read from garbage. */
+	while( input != NULL
+		&& (input - model2_bufferram) < 0x20000
+		&& op_count++ < 0x8000 )
 	{
 		/* read in the opcode */
 		opcode = *input++;
