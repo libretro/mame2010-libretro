@@ -540,11 +540,19 @@ static void c352_init(c352_state *info, running_device *device)
 static DEVICE_START( c352 )
 {
 	c352_state *info = get_safe_token(device);
+	const c352_interface *intf = (const c352_interface *)device->baseconfig().static_config();
+	int divider = (intf != NULL && intf->divider != 0) ? intf->divider : 192;
 
 	info->c352_rom_samples = *device->region();
 	info->c352_rom_length = device->region()->bytes();
 
-	info->sample_rate_base = device->clock() / 192;
+	/* The C352's output sample rate is input_clock / divider, where the
+	 * divider matches the chip's per-voice processing cycle. The historical
+	 * default in this codebase is 192, which existing drivers were tuned
+	 * against. New/corrected drivers can pass a c352_interface with the
+	 * spec-correct divider (288) and a matching 1.5x clock to get the same
+	 * effective output rate via hardware-honest math. */
+	info->sample_rate_base = device->clock() / divider;
 
 	info->stream = stream_create(device, 0, 4, info->sample_rate_base, info, c352_update);
 
