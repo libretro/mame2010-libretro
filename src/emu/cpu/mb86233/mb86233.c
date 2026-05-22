@@ -135,6 +135,26 @@ struct _mb86233_state
     /* CPU plumbing */
     legacy_cpu_device *device;
     const address_space *program;
+    /* Cached pointer to the AM_BASE-mapped instruction RAM at program-space
+     * offset 0.  When non-NULL, opcode fetches go directly through this
+     * array instead of memory_decrypted_read_dword, saving the address-space
+     * lookup on every cycle of the hot execute loop.  Set once at CPU_INIT
+     * time - the RAM region itself is allocated by the host driver via
+     * AM_RAM AM_BASE(&tgp_program) and never moves. */
+    uint32_t *program_base;
+    /* Cached pointers to the two external regions GETEXTERNAL reaches
+     * through cpustate->program for non-math-unit reads: the i960<->TGP
+     * shared bufferram (byte 0x00400000+, word 0x00100000+) and the
+     * coefficient/math-table ROM (byte 0xff800000+, word 0x3fe00000+).
+     * Resolved once at init via memory_get_read_ptr; NULL means the host
+     * mapped that region with handlers rather than plain memory, and the
+     * fallback RDMEM/WRMEM path takes over. */
+    uint32_t *bufferram_base;
+    uint32_t  bufferram_word_lo;     /* inclusive word start */
+    uint32_t  bufferram_word_hi;     /* exclusive word end */
+    uint32_t *rom_base;
+    uint32_t  rom_word_lo;
+    uint32_t  rom_word_hi;
     int icount;
 };
 
@@ -151,7 +171,9 @@ INLINE mb86233_state *get_safe_token(running_device *device)
 #define GETEXTPORT()    cpustate->extport
 #define GETSHIFT()      cpustate->sft
 
-#define ROPCODE(a)      memory_decrypted_read_dword(cpustate->program, (a) << 2)
+#define ROPCODE(a)      (cpustate->program_base \
+                            ? cpustate->program_base[(a) & 0x7fff] \
+                            : memory_decrypted_read_dword(cpustate->program, (a) << 2))
 #define RDMEM(a)        memory_read_dword_32le(cpustate->program, (a) << 2)
 #define WRMEM(a,v)      memory_write_dword_32le(cpustate->program, (a) << 2, v)
 
@@ -329,6 +351,14 @@ static uint32_t GETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offse
     }
 
     addr = (EB & 0xFFFF0000u) | (offset & 0xFFFFu);
+    /* Direct pointer reads for the two large mapped regions - skips the
+     * address-space-table walk that memory_read_dword_32le would do. */
+    if (cpustate->bufferram_base &&
+        addr >= cpustate->bufferram_word_lo && addr < cpustate->bufferram_word_hi)
+        return cpustate->bufferram_base[addr - cpustate->bufferram_word_lo];
+    if (cpustate->rom_base &&
+        addr >= cpustate->rom_word_lo && addr < cpustate->rom_word_hi)
+        return cpustate->rom_base[addr - cpustate->rom_word_lo];
     return RDMEM(addr);
 }
 
@@ -352,6 +382,18 @@ static void SETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offset, u
     }
 
     addr = (EB & 0xFFFF0000u) | (offset & 0xFFFFu);
+    /* Direct pointer writes for bufferram (writable shared RAM with the
+     * i960).  ROM is not writable, so falls through to WRMEM where it'll
+     * just be ignored by the read-only handler.  Skipping the address-
+     * space-table walk on the bufferram side alone gets us most of the
+     * benefit since the TGP writes geometry results back here every
+     * frame. */
+    if (cpustate->bufferram_base &&
+        addr >= cpustate->bufferram_word_lo && addr < cpustate->bufferram_word_hi)
+    {
+        cpustate->bufferram_base[addr - cpustate->bufferram_word_lo] = value;
+        return;
+    }
     WRMEM(addr, value);
 }
 
@@ -942,6 +984,28 @@ static CPU_INIT( mb86233 )
     memset(cpustate, 0, sizeof(*cpustate));
     cpustate->device  = device;
     cpustate->program = device->space(AS_PROGRAM);
+
+    /* Cache a direct pointer to the instruction RAM at program-space
+     * offset 0 if the host driver mapped it as plain RAM via AM_BASE -
+     * the model2 driver does, so we skip memory_decrypted_read_dword and
+     * its address-space lookup on every TGP cycle.  If the lookup fails
+     * we leave program_base NULL and ROPCODE falls back to the slow
+     * path automatically. */
+    cpustate->program_base = (uint32_t *)memory_get_read_ptr(cpustate->program, 0);
+
+    /* Same trick for the two external regions GETEXTERNAL hits constantly
+     * during gameplay: i960<->TGP bufferram and the math-table ROM.  The
+     * model2 driver maps bufferram at byte 0x00400000 (word 0x00100000)
+     * for 8K dwords, and the math-table ROM at byte 0xff800000 (word
+     * 0x3fe00000).  If either lookup fails we leave the cache pointer
+     * NULL and the GETEXTERNAL fallback reads via memory_read_dword_32le
+     * as before. */
+    cpustate->bufferram_base = (uint32_t *)memory_get_read_ptr(cpustate->program, 0x00400000);
+    cpustate->bufferram_word_lo = 0x00100000;
+    cpustate->bufferram_word_hi = 0x00102000;
+    cpustate->rom_base = (uint32_t *)memory_get_read_ptr(cpustate->program, 0xff800000);
+    cpustate->rom_word_lo = 0x3fe00000;
+    cpustate->rom_word_hi = 0x3fe80000;
 
     if (_config)
     {
