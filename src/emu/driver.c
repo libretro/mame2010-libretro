@@ -101,17 +101,25 @@ const game_driver *driver_get_clone(const game_driver *driver)
 
 void driver_list_get_approx_matches(const game_driver * const driverlist[], const char *name, int matches, const game_driver **list)
 {
-#undef rand
-
 	int matchnum, drvnum;
 	int *penalty;
 
-	/* if no name, pick random entries */
+	/* if no name, return the first N valid (non-NO_STANDALONE) entries.
+	   This branch is reachable from the in-game game-select menu when the
+	   search box is empty. The historical implementation shuffled the
+	   list via libc rand() seeded from osd_ticks(), so each invocation
+	   would surface a different sampling of drivers. That has been
+	   removed because seeding libc's *global* PRNG state from wall-clock
+	   ticks is the only place anything emu-side touches libc rand at
+	   all, and it pollutes a global that's read elsewhere in the tree
+	   (validity.c's math primitive tests, video.c's burn-in test
+	   pattern). The shuffle existed for cosmetic 'fresh look' value in
+	   the standalone-MAME menu; in the libretro core that menu is not
+	   surfaced by the frontend, so the visible behaviour is unaffected. */
 	if (name == NULL || name[0] == 0)
 	{
 		const game_driver **templist;
 		int driver_count;
-		int shufnum;
 
 		/* allocate a temporary list */
 		templist = global_alloc_array(const game_driver *, driver_list_get_count(driverlist));
@@ -121,24 +129,9 @@ void driver_list_get_approx_matches(const game_driver * const driverlist[], cons
 			if ((driverlist[drvnum]->flags & GAME_NO_STANDALONE) == 0)
 				templist[driver_count++] = driverlist[drvnum];
 
-		/* seed the RNG first */
-		srand(osd_ticks());
-
-		/* shuffle */
-		for (shufnum = 0; shufnum < 4 * driver_count; shufnum++)
-		{
-			int item1 = rand() % driver_count;
-			int item2 = rand() % driver_count;
-			const game_driver *temp;
-
-			temp = templist[item1];
-			templist[item1] = templist[item2];
-			templist[item2] = temp;
-		}
-
 		/* copy out the first few entries */
 		for (matchnum = 0; matchnum < matches; matchnum++)
-			list[matchnum] = templist[matchnum % driver_count];
+			list[matchnum] = (driver_count > 0) ? templist[matchnum % driver_count] : NULL;
 
 		global_free(templist);
 		return;
