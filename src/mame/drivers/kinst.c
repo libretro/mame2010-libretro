@@ -147,6 +147,7 @@ Notes:
 static uint32_t *rambase, *rambase2, *rombase;
 static uint32_t *video_base;
 static uint32_t *kinst_control;
+static uint32_t *kinst_speedup;
 
 static const uint8_t *control_map;
 
@@ -409,6 +410,62 @@ static READ32_HANDLER( rom_r )
 	 * (the R4600 itself runs full-speed throughout). */
 	cpu_adjust_icount(space->cpu, -128);
 	return rombase[offset];
+}
+
+
+/*************************************
+ *
+ *  Per-game CPU speedups
+ *
+ *  KI and KI2 each ship a calibrated busy-wait loop in their main code: the
+ *  game loads a counter cell from RAM, subtracts it from R26, and compares
+ *  the result against R3, looping until the difference reaches the limit.
+ *  On real hardware the time elapsed during the spin is governed by the
+ *  R4600 instruction rate; under MAME the same wall-clock window is spent
+ *  dispatching thousands of polling reads through the address map.
+ *
+ *  We intercept reads of the polled cell at the specific PC where the
+ *  comparison happens. When we see that the loop still has work left
+ *  (r26 < r3), we know the loop will spin for exactly (r3 - r26) more
+ *  iterations of two instructions each, so we schedule a one-shot wake
+ *  event at that cycle count and yield the CPU via cpu_spinuntil_int().
+ *  end_spin() then issues the matching cpu_triggerint(), which is the
+ *  scheduler wake-up partner of spinuntil_int (not a real hardware IRQ).
+ *
+ *  Hot-loop polled-cell addresses (KSEG0-stripped to physical, since the
+ *  mame2010 address map uses physical addresses):
+ *      KI : virt 0x8808f5bc -> phys 0x0808f5bc
+ *      KI2: virt 0x887ff544 -> phys 0x087ff544
+ *
+ *  PC values are the full virtual KSEG0 addresses as cpu_get_pc() reports
+ *  them on MIPS3 (no high-bit stripping):
+ *      KI : 0x88029890
+ *      KI2: 0x8802c2d0
+ *
+ *************************************/
+
+static TIMER_CALLBACK( end_spin )
+{
+	cpu_triggerint(machine->firstcpu);
+}
+
+
+static READ32_HANDLER( kinst_speedup_r )
+{
+	if (cpu_get_pc(space->cpu) == 0x88029890 ||  /* KI  */
+	    cpu_get_pc(space->cpu) == 0x8802c2d0)    /* KI2 */
+	{
+		uint32_t r3  = cpu_get_reg(space->cpu, MIPS3_R3);
+		uint32_t r26 = cpu_get_reg(space->cpu, MIPS3_R26) - *kinst_speedup;
+		if (r26 < r3)
+		{
+			timer_set(space->machine,
+			          space->machine->firstcpu->cycles_to_attotime((r3 - r26) * 2),
+			          NULL, 0, end_spin);
+			cpu_spinuntil_int(space->cpu);
+		}
+	}
+	return *kinst_speedup;
 }
 
 
@@ -915,6 +972,11 @@ static DRIVER_INIT( kinst )
 
 	/* set up the control register mapping */
 	control_map = kinst_control_map;
+
+	/* install the per-game busy-wait speedup hook on the polled cell */
+	kinst_speedup = memory_install_read32_handler(
+		cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM),
+		0x0808f5bc, 0x0808f5bf, 0, 0, kinst_speedup_r);
 }
 
 
@@ -933,6 +995,11 @@ static DRIVER_INIT( kinst2 )
 
 	/* set up the control register mapping */
 	control_map = kinst2_control_map;
+
+	/* install the per-game busy-wait speedup hook on the polled cell */
+	kinst_speedup = memory_install_read32_handler(
+		cputag_get_address_space(machine, "maincpu", ADDRESS_SPACE_PROGRAM),
+		0x087ff544, 0x087ff547, 0, 0, kinst_speedup_r);
 }
 
 
