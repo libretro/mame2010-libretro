@@ -13,6 +13,9 @@
           the test relies on executing out of the cache while it tromps
           over (and eventually restores) the instructions it is executing;
           this will likely never be fixed
+        * waitstates on memory access are only modelled for the boot EPROMs
+          (during the blue-screen bootup sequence); other regions still
+          assume zero-waitstate timing
 
 ****************************************************************************
 
@@ -192,10 +195,17 @@ static MACHINE_START( kinst )
 	/* set the fastest DRC options */
 	mips3drc_set_options(machine->device("maincpu"), MIPS3DRC_FASTEST_OPTIONS);
 
-	/* configure fast RAM regions for DRC */
+	/* the boot EPROM mapping is no longer pulled into the address map via
+	 * AM_BASE; grab the region pointer here so the rom_r handler can
+	 * service reads against it */
+	rombase = (uint32_t *)memory_region(machine, "user1");
+
+	/* configure fast RAM regions for DRC -- note the boot ROM region is
+	 * deliberately omitted so that the DRC dispatches ROM reads through
+	 * the rom_r handler, which charges 128 RdRdy waitstates per access to
+	 * match the EPROM bus timing on real hardware */
 	mips3drc_add_fastram(machine->device("maincpu"), 0x08000000, 0x087fffff, FALSE, rambase2);
 	mips3drc_add_fastram(machine->device("maincpu"), 0x00000000, 0x0007ffff, FALSE, rambase);
-	mips3drc_add_fastram(machine->device("maincpu"), 0x1fc00000, 0x1fc7ffff, TRUE,  rombase);
 }
 
 
@@ -378,6 +388,30 @@ static WRITE32_HANDLER( kinst_control_w )
 
 
 
+static READ32_HANDLER( rom_r )
+{
+	/* Add RdRdy clocks on every EPROM access. The four boot EPROMs at
+	 * U98/U102/U103/U104 are slow relative to the 50MHz R4600; on real
+	 * hardware accesses to them are stretched by the bus controller via
+	 * RdRdy, which the previous mapping (direct AM_ROM into the DRC
+	 * fastram table) did not model. The visible symptom was the blue-screen
+	 * bootup running approximately twice as fast as real hardware -- about
+	 * three seconds instead of the seven-or-so seconds it takes on the PCB.
+	 * The DCS sound CPU has not finished its own startup self-test by then,
+	 * so when the main CPU subsequently jumps into the attract loop and
+	 * tries to start the music, the latch write is dropped on the floor and
+	 * attract-mode music stays silent until the player enters and exits
+	 * service mode (which gives the sound CPU another chance to settle).
+	 *
+	 * 128 cycles per access lines up the boot timing well enough that the
+	 * sound CPU is ready by the time the attract loop wants music. Note
+	 * that this is the EPROM bus waitstate count, not a CPU clock divider
+	 * (the R4600 itself runs full-speed throughout). */
+	cpu_adjust_icount(space->cpu, -128);
+	return rombase[offset];
+}
+
+
 /*************************************
  *
  *  Main CPU memory handlers
@@ -391,7 +425,7 @@ static ADDRESS_MAP_START( main_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x10000080, 0x100000ff) AM_READWRITE(kinst_control_r, kinst_control_w) AM_BASE(&kinst_control)
 	AM_RANGE(0x10000100, 0x1000013f) AM_DEVREADWRITE("ide", kinst_ide_r, kinst_ide_w)
 	AM_RANGE(0x10000170, 0x10000173) AM_DEVREADWRITE("ide", kinst_ide_extra_r, kinst_ide_extra_w)
-	AM_RANGE(0x1fc00000, 0x1fc7ffff) AM_ROM AM_REGION("user1", 0) AM_BASE(&rombase)
+	AM_RANGE(0x1fc00000, 0x1fc7ffff) AM_READ(rom_r)
 ADDRESS_MAP_END
 
 
