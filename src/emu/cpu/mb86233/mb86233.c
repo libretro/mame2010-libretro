@@ -200,7 +200,15 @@ INLINE uint32_t set_exp(uint32_t val, uint32_t exp)
 
 INLINE uint32_t set_mant(uint32_t val, uint32_t mant)
 {
-    return (val & 0x07f80000u) | ((mant & 0x00800000u) << 8) | (mant & 0x007fffffu);
+    /* preserve val's exponent (bits 23-30), pull sign + low-23 mantissa
+     * from `mant` (mant's bit 23 -> result's bit 31).  The mask here is
+     * the IEEE 754 exponent field; the original transcription dropped a
+     * hex digit and used 0x07f80000 (bits 19-26), which silently
+     * corrupted the exponent on every set_mant write and produced
+     * wildly-scaled floats from any TGP code that merges mantissas
+     * back into a, b, d or p (cases 0x12 / 0x15 / 0x1b / 0x1e in
+     * write_reg). */
+    return (val & 0x7f800000u) | ((mant & 0x00800000u) << 8) | (mant & 0x007fffffu);
 }
 
 INLINE uint32_t get_exp(uint32_t val)
