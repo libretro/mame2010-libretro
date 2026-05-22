@@ -11,40 +11,118 @@ Sound emulation by Philip Bennett
 
 SCSI code by ElSemi
 
-ToDo: (in order or priority?)
+Known Issues:
 
-Street Fighter 3 2nd Impact uses flipped tilemaps during flashing, emulate this.
+ Whole screen flip is not emulated. SFIII 2nd Impact uses it during the
+ SIMM-flashing/boot animation; this is part of the more general screen-flip
+ register and not specific to that game.
 
-Figure out proper IRQ10 generation:
- If we generate on DMA operations only then Warzard is OK, otherwise it hangs during attract
- HOWEVER, SFIII2 sometimes has messed up character profiles unless we also generate it periodicly.
- I think the corrupt background on some of the lighning effects may be realted to this + the DMA
- status flags.
+Miscellaneous TO-DOs:
 
-Alpha Blending Effects
-    These are actually palette manipulation effects, not true blending.  How the values are used is
-    not currently 100% understood.  They are incorrect if you use player 2 in Warzard
+DMA ack IRQ10 generation:
+ Character and Palette DMA completion drives IRQ10 on real hardware. The
+ effective speed of each DMA is unknown and would need to be measured; the
+ current emulation triggers the completion IRQ immediately, which keeps
+ Warzard's attract loop happy but may produce subtly incorrect timing in
+ places that overlap DMAs with foreground game logic.
 
-Linezoom
-    Is it used anywhere??
+Alpha Blending Effects:
+ These are palette manipulation effects, not true blending. The blend bit
+ paths in cps3_drawgfxzoom are still approximate; verify against real
+ hardware where possible.
 
-Palette DMA effects
-    Verify them, they might not be 100% accurate at the moment
+Tilemap Linezoom:
+ Appears unused by retail games; may be enabled in the jojo/jojoba dev
+ menu's BG test (P2 button 4).
 
-Verify Full Screen Zoom on real hardware
- Which is which, x & y registers, how far can it zoom etc.
+Palette DMA effects:
+ Verify; the multi-stage fade/mask path may not be 100% accurate.
 
-Verify CRT registers
- Only SFIII2 changes them, for widescreen mode.  What other modes are possible?
+Verify Full Screen Zoom on real hardware:
+ How far can it zoom in each direction etc.
 
-Sprite positioning glitches
- Some sprites are still in the wrong places, seems the placement of zooming sprites is imperfect
- eg. warzard intro + cutscenes leave the left most 16 pixels uncovered because the sprite is positioned incorrectly,
-     the same occurs in the sf games.  doesn't look like the origin is correct when zooming in all cases.
+Verify CRT registers:
+ The actual pixel clock for the H Start and H Blank registers is unknown.
+ It is not known which is the base pixel clock and how it is affected by
+ the bits of register 0x40C0080. See the PPU register table below.
 
-Gaps in Sprite Zooming
- probably cause by use of drawgfx instead of processing as a single large sprite, but could also be due to the
- positioning of each part of the sprite.  Warzard is confirmed to have gaps during some cutscenes on real hardware.
+Sprite positioning glitches:
+ Some sprites are still in the wrong places; the placement of zooming
+ sprites is imperfect. e.g. the warzard intro and cutscenes leave the
+ left-most 16 pixels uncovered because the sprite is positioned
+ incorrectly, the same occurs in the sf games. Doesn't look like the
+ origin is correct when zooming in all cases.
+
+Gaps in Sprite Zooming:
+ Warzard is confirmed to have gaps during some cutscenes on real
+ hardware, so the visible gaps there are authentic. Elsewhere they may
+ still be an artefact of drawing scaled sprites tile-by-tile rather than
+ as a single large primitive.
+
+---
+
+PPU and SS register layout (write-side; offsets in the 0x040C0000 / 0x05050000
+windows). Captured here for reference -- not every register is currently
+modelled by this driver, but having the table next to the address map keeps
+the mapping decisions auditable.
+
+PPU read regs at 0x040C0000-0x040C000D:
+  +0C  bit 2  Palette DMA active
+       bit 1  Character DMA active
+       bit 0  Sprite list DMA / copy active (paired with reg 0x82 at +0x80)
+
+PPU write regs at 0x040C0000-0x040C00AF:
+  +00..+1F  Global scrolls 0..7 (x,y pairs, 10-bit fields)
+  +20..+5F  Tilemap 0..3 control (scroll x/y, width, flip, line-scroll/zoom
+            base, tile base) -- four blocks of 0x10 bytes each
+  +60..+7F  CRT timing: H/V sync end, blank end, screen end, total end, plus
+            H/V zoom master, zoom offset, zoom size, zoom scale (see code
+            below for the field-by-field layout)
+  +80       bits 0..2 Pixel clock (3 = /5 divider, 5 = /4 divider; base
+                       clock is 42.954545MHz)
+            bits 3..4 Flip screen X/Y
+            bit  5    Always 1 in 15kHz modes (pixel clock divider?)
+            bit  6    Cleared by BIOS init, set after video mode select
+            bit  15   Always 0
+  +82       Sprite list DMA / copy to PPU on-chip RAM (the 8/9/8/9 trigger;
+            wait for read reg 0x0C bit 0 to clear, then write 0)
+  +84       Always set to 0x0800 (bit 11)
+  +86       Character RAM bank, 4 bits
+  +88       GFX flash ROM bank, 6 bits
+  +8A       Cleared by BIOS init, never written later
+  +8E       Char/Pal DMA IRQ enable: BIOS init writes 0xA0 once
+  +96..+98  Character DMA Source (16+6 bits) + start bit at +98 bit 14
+  +A0..+A6  Palette DMA Source (high 11 + low 16 bits), Destination
+            (high 1 + low 16 bits)
+  +A8..+AA  Palette DMA Fade low/high (the 32-bit fadeval consumed by
+            cps3_set_mame_colours)
+  +AC..+AE  Palette DMA Length low/high + start bit at +AE bit 1
+
+CRT timing fields (offsets inside the +60..+7F block):
+   +60 H Sync end       +68 H zoom master?   +70 V Sync end
+   +62 H Blank end      +6A H zoom offset?   +72 V Blank end
+   +64 H Screen end     +6C H zoom size?     +74 V Screen end
+   +66 H Total end      +6E H Zoom Scale     +76 V Total end
+                                              +78 V zoom master?
+                                              +7A V zoom offset?
+                                              +7C V zoom size?
+                                              +7E V Zoom Scale
+
+H Total is fixed at 454 for all 15kHz modes; the unused 24kHz 512x384 mode
+uses H Total 293 / V Total 424.
+
+SS layer ("Score Screen" text tilemap) write regs at 0x05050000-0x05050029,
+even bytes only (umask 0x00FF00FF on dword writes):
+  +00 H Sync         +0A V Start L       +12 Palette base
+  +01 H Start L      +0B V Start H       +13 Pixel clock (low 3 bits)
+  +02 H Start H      +0C V Blank L       +14 Flip screen X/Y
+  +03 H Blank L      +0D V Blank H
+  +04 H Blank H      +0E V Total L
+  +05 H Total L      +0F V Total H
+  +06 H Total H      +10 V Scroll L
+  +07 H Scroll L     +11 V Scroll H
+  +08 H Scroll H
+  +09 V Sync
 
 ---
 
