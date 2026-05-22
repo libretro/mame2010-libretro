@@ -1636,7 +1636,11 @@ static ADDRESS_MAP_START( model2b_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x00804000, 0x00807fff) AM_READWRITE(geo_prg_r, geo_prg_w)
 	//AM_RANGE(0x00804000, 0x00807fff) AM_READWRITE(geo_sharc_fifo_r, geo_sharc_fifo_w)
-	//AM_RANGE(0x00840000, 0x00840fff) AM_WRITE(geo_sharc_iop_w)
+	/* geo SHARC IOP window - firmware writes here during geo boot
+	 * (0x0084003C, 0x00840070, 0x00840100-0x00840108).  We don't model
+	 * the geo-side SHARC IOP, so silently absorb the writes instead of
+	 * flooding the unmapped-memory logger once per game boot. */
+	AM_RANGE(0x00840000, 0x00840fff) AM_WRITENOP
 
 	AM_RANGE(0x00880000, 0x00883fff) AM_WRITE(copro_function_port_w)
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_fifo_r, copro_fifo_w)
@@ -1646,6 +1650,11 @@ static ADDRESS_MAP_START( model2b_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
 	//AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_sharc_ctl1_w )
+
+	/* SHARC bank control reg - all games just set this to 0 during
+	 * copro/geo program upload.  We don't need the value, just silence
+	 * the unmapped-memory logger. */
+	AM_RANGE(0x00980020, 0x00980023) AM_WRITENOP
 
 	AM_RANGE(0x009c0000, 0x009cffff) AM_READWRITE( model2_serial_r, model2_serial_w )
 
@@ -1657,9 +1666,15 @@ static ADDRESS_MAP_START( model2b_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x01c00000, 0x01c00003) AM_READ_PORT("1c00000") AM_WRITE( ctrl0_w )
 	AM_RANGE(0x01c00004, 0x01c00007) AM_READ_PORT("1c00004")
 	AM_RANGE(0x01c00008, 0x01c0000f) AM_READNOP AM_WRITENOP
-	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010")
-	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014")
-	AM_RANGE(0x01c00018, 0x01c0001b) AM_READ( hotd_unk_r )
+	/* The 315-5649 I/O chip's port-direction registers configure these
+	 * 8-bit ports as outputs on some boards.  DOA in particular hammers
+	 * 0x01c00010 with alternating 0x5E / 0x4E lamp values every cycle of
+	 * its main wait loop, which spams the unmapped-memory logger and
+	 * makes the rest of the log unreadable.  Pair the existing read
+	 * mappings with WRITENOP so the writes are silently absorbed. */
+	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010") AM_WRITENOP
+	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014") AM_WRITENOP
+	AM_RANGE(0x01c00018, 0x01c0001b) AM_READ( hotd_unk_r ) AM_WRITENOP
 	AM_RANGE(0x01c0001c, 0x01c0001f) AM_READ_PORT("1c0001c") AM_WRITE( analog_2b_w )
    AM_RANGE(0x01c00040, 0x01c00043) AM_WRITENOP
 	AM_RANGE(0x01c80000, 0x01c80003) AM_READWRITE( model2_serial_r, model2_serial_w )
@@ -1672,10 +1687,13 @@ static ADDRESS_MAP_START( model2c_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x00200000, 0x0023ffff) AM_RAM
 
 	AM_RANGE(0x00804000, 0x00807fff) AM_READWRITE(geo_prg_r, geo_prg_w)
+	/* See comment in model2b_crx_mem above. */
+	AM_RANGE(0x00840000, 0x00840fff) AM_WRITENOP
 	AM_RANGE(0x00884000, 0x00887fff) AM_READWRITE(copro_prg_r, copro_prg_w)
 
    AM_RANGE(0x00980000, 0x00980003) AM_READWRITE(copro_ctl1_r,copro_ctl1_w)
 	AM_RANGE(0x00980008, 0x0098000b) AM_WRITE( geo_ctl1_w )
+	AM_RANGE(0x00980020, 0x00980023) AM_WRITENOP
 	AM_RANGE(0x009c0000, 0x009cffff) AM_READWRITE( model2_serial_r, model2_serial_w )
 
 	AM_RANGE(0x11000000, 0x111fffff) AM_RAM	AM_BASE(&model2_textureram0)	// texture RAM 0 (2b/2c)
@@ -1685,9 +1703,9 @@ static ADDRESS_MAP_START( model2c_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x01c00000, 0x01c00003) AM_READ_PORT("1c00000") AM_WRITE( ctrl0_w )
 	AM_RANGE(0x01c00004, 0x01c00007) AM_READ_PORT("1c00004")
 	AM_RANGE(0x01c00008, 0x01c0000f) AM_READNOP AM_WRITENOP
-	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010")
-	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014")
-	AM_RANGE(0x01c00018, 0x01c0001b) AM_READ( hotd_unk_r )
+	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010") AM_WRITENOP
+	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014") AM_WRITENOP
+	AM_RANGE(0x01c00018, 0x01c0001b) AM_READ( hotd_unk_r ) AM_WRITENOP
 	AM_RANGE(0x01c0001c, 0x01c0001f) AM_READ_PORT("1c0001c") AM_WRITE( analog_2b_w )
 	AM_RANGE(0x01c80000, 0x01c80003) AM_READWRITE( model2_serial_r, model2_serial_w )
 
