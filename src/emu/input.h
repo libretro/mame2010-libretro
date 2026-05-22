@@ -35,7 +35,7 @@
 #define INPUT_ABSOLUTE_MAX				65536
 
 /* flags in the top 4 bits of the input code */
-#define INPUT_CODE_INTERNAL				(1 << 31)
+#define INPUT_CODE_INTERNAL				(1u << 31)
 
 /* extract components of the input code */
 #define INPUT_CODE_IS_INTERNAL(c)		(((c) & INPUT_CODE_INTERNAL) != 0)
