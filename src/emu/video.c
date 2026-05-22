@@ -275,7 +275,6 @@ static TIMER_CALLBACK( screenless_update_callback )
 
 void video_frame_update(running_machine *machine, int debug)
 {
-	attotime current_time = timer_get_time(machine);
 	int skipped_it = global.skipping_this_frame;
 	int phase = machine->phase();
 
