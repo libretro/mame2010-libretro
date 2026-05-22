@@ -755,6 +755,34 @@ static const gfx_layout cps3_tiles8x8_layout =
 
 static uint32_t* cps3_ss_ram;
 
+/* CPS-3 palette fade. The 32-bit `fadeval` is three 8-bit per-channel fade
+ * descriptors plus padding -- bits 24:31 = R, 16:23 = G, 0:7 = B (the middle
+ * byte 8:15 is unused). Each per-channel byte is laid out as:
+ *
+ *    bit 7      unused (masked out)
+ *    bit 6      fade enable: when 0, the channel passes through unchanged
+ *    bit 5      fade mode:   0 = fade toward black (multiplicative attenuate)
+ *                            1 = fade toward white (invert / multiply / invert)
+ *    bits 4..0  fade value:  0 = full effect, 0x1f = no effect
+ *
+ * The earlier mame2010 implementation just multiplied each channel by a 6-bit
+ * `fadeval` field unconditionally, which produced wrong results whenever the
+ * game wrote a fade value with the enable bit clear (e.g. several Warzard
+ * effects involving Player 2, and various places in the SFIII family). It
+ * also dropped the fade-mode bit entirely, so fades meant to ramp toward
+ * white came out as fades toward black. */
+INLINE int cps3_get_fade(int c, int f)
+{
+	if (f & 0x40) /* fade enable */
+	{
+		if (f & 0x20)
+			c = ((((c ^ 0x1f) * (~f & 0x1f)) >> 5) ^ 0x1f); /* invert mode */
+		else
+			c = (c * (f & 0x1f)) >> 5;                      /* multiply-down */
+	}
+	return c;
+}
+
 static void cps3_set_mame_colours(running_machine *machine, int colournum, uint16_t data, uint32_t fadeval )
 {
 	int r,g,b;
@@ -765,25 +793,16 @@ static void cps3_set_mame_colours(running_machine *machine, int colournum, uint1
 	g = (data >> 5) & 0x1f;
 	b = (data >> 10) & 0x1f;
 
-	/* is this 100% correct? */
-	if (fadeval!=0)
+	/* Only touch a channel when its fade-enable bit (0x40 in the channel
+	 * byte) is set; the combined mask 0x40400040 lets us short-circuit the
+	 * common "no fade enabled" path with a single test. */
+	if (fadeval & 0x40400040)
 	{
-		int fade;
-		//printf("fadeval %08x\n",fadeval);
-
-		fade = (fadeval & 0x3f000000)>>24;
-		r = (r*fade)>>5;
-		if (r>0x1f) r = 0x1f;
-
-		fade = (fadeval & 0x003f0000)>>16;
-		g = (g*fade)>>5;
-		if (g>0x1f) g = 0x1f;
-
-		fade = (fadeval & 0x0000003f)>>0;
-		b = (b*fade)>>5;
-		if (b>0x1f) b = 0x1f;
-
-		data = (r <<0) | (g << 5) | (b << 10);
+		r = cps3_get_fade(r, (fadeval & 0x7f000000) >> 24);
+		g = cps3_get_fade(g, (fadeval & 0x007f0000) >> 16);
+		b = cps3_get_fade(b, (fadeval & 0x0000007f) >> 0);
+		/* preserve bit 15 of the original colour word */
+		data = (data & 0x8000) | (r << 0) | (g << 5) | (b << 10);
 	}
 
 	dst[colournum] = data;
