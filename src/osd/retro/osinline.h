@@ -27,7 +27,7 @@ empty
 #define osd_exchange64 _osd_exchange64
 #endif /* __x86_64__ */
 #elif defined(__ppc__) || defined (__PPC__) || defined(__ppc64__) || defined(__PPC64__)
-#define osd_yield_pocessor() __asm__ __volatile__ ( " nop \n nop \n" )
+#define osd_yield_processor() __asm__ __volatile__ ( " nop \n nop \n" )
 #if defined(__ppc64__) || defined(__PPC64__)
 #define _osd_exchange64(ptr, exchange) (register int64_t ret; __asm__ __volatile__ ("1: ldarx  %[ret], 0, %[ptr]      \n""   stdcx. %[exchange], 0, %[ptr] \n""   bne-   1b                     \n": [ret]      "=&r" (ret): [ptr]      "r"   (ptr), [exchange] "r"   (exchange): "cr0"); ret)
 #define osd_exchange64 _osd_exchange64
