@@ -1552,11 +1552,25 @@ static ADDRESS_MAP_START( model2o_mem, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x01c00000, 0x01c00003) AM_READ_PORT("1c00000")
 	AM_RANGE(0x01c00004, 0x01c00007) AM_READ_PORT("1c00004")
-	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010")
-	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014")
-	AM_RANGE(0x01c0001c, 0x01c0001f) AM_READ( desert_unk_r )
-	AM_RANGE(0x01c00040, 0x01c00043) AM_READ( daytona_unk_r )
+	/* Gaps in the I/O register region get poked at thousands of times
+	 * per frame by Daytona (looking for dual-port-RAM-mailbox slots the
+	 * original hardware has at 0x01c00000-0x01c00fff that 2010 doesn't
+	 * fully model).  Each unmapped access fires the generic
+	 * "unmapped program memory" logger, which under libretro's log
+	 * callback ends up being expensive enough on its own to dominate
+	 * the per-frame budget.  Cover the gaps and the missing write sides
+	 * with explicit NOPs so the accesses become silent fall-throughs
+	 * instead of going through the unmapped-handler logging path. */
+	AM_RANGE(0x01c00008, 0x01c0000f) AM_READNOP AM_WRITENOP
+	AM_RANGE(0x01c00010, 0x01c00013) AM_READ_PORT("1c00010") AM_WRITENOP
+	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014") AM_WRITENOP
+	AM_RANGE(0x01c00018, 0x01c0001b) AM_READNOP AM_WRITENOP
+	AM_RANGE(0x01c0001c, 0x01c0001f) AM_READ( desert_unk_r ) AM_WRITENOP
+	AM_RANGE(0x01c00020, 0x01c0003f) AM_READNOP AM_WRITENOP
+	AM_RANGE(0x01c00040, 0x01c00043) AM_READ( daytona_unk_r ) AM_WRITENOP
+	AM_RANGE(0x01c00044, 0x01c000ff) AM_READNOP AM_WRITENOP
 	AM_RANGE(0x01c00200, 0x01c002ff) AM_RAM AM_BASE( &model2_backup2 )
+	AM_RANGE(0x01c00300, 0x01c00fff) AM_READNOP AM_WRITENOP
 	AM_RANGE(0x01c80000, 0x01c80003) AM_READWRITE( model2_serial_r, model2o_serial_w )
 
 	AM_IMPORT_FROM(model2_base_mem)
@@ -1994,6 +2008,14 @@ static WRITE16_HANDLER( m1_snd_68k_latch2_w )
 static ADDRESS_MAP_START( model1_snd, ADDRESS_SPACE_PROGRAM, 16 )
 	AM_RANGE(0x000000, 0x07ffff) AM_ROM
 	AM_RANGE(0x080000, 0x0bffff) AM_ROM AM_REGION("audiocpu", 0x20000)	// mirror of second program ROM
+	/* Daytona's audio M68k pokes into 0x0c0000-0x0c1ffff every frame -
+	 * looks like a polled mailbox slot that has no register on the
+	 * Model 1 sound board.  Cover the gap with READNOP/WRITENOP so the
+	 * unmapped-memory logger doesn't fire every audio frame; with the
+	 * libretro log callback enabled the logger spam is what was
+	 * actually capping in-game FPS in the 40s, not the SCSP/M68k or
+	 * the TGP. */
+	AM_RANGE(0xc00000, 0xc1ffff) AM_READNOP AM_WRITENOP
 	AM_RANGE(0xc20000, 0xc20001) AM_READWRITE( m1_snd_68k_latch_r, m1_snd_68k_latch1_w )
 	AM_RANGE(0xc20002, 0xc20003) AM_READWRITE( m1_snd_v60_ready_r, m1_snd_68k_latch2_w )
 	AM_RANGE(0xc40000, 0xc40007) AM_DEVREADWRITE8( "sega1", multipcm_r, multipcm_w, 0x00ff )
