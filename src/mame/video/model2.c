@@ -981,10 +981,14 @@ static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *
 	{
 		extra->texwidth = 32 << ((tri->texheader[0] >> 0) & 0x7);
 		extra->texheight = 32 << ((tri->texheader[0] >> 3) & 0x7);
-		extra->texx = 32 * ((tri->texheader[2] >> 0) & 0x1f);
-		extra->texy = 32 * (((tri->texheader[2] >> 6) & 0x1f) + ( tri->texheader[2] & 0x20 ));
-		extra->texmirrorx = (tri->texheader[0] >> 9) & 1;
-		extra->texmirrory = (tri->texheader[0] >> 8) & 1;
+		/* texx is 6 bits (tiles 0..63 across the 2048-wide sheet); bit 5
+		 * of texheader[2] belongs here, not in texy.  texy is just 5 bits
+		 * (tiles 0..31 down the 1024-tall sheet).  Mirror flags: bit 8 of
+		 * texheader[0] mirrors X, bit 9 mirrors Y. */
+		extra->texx = 32 * ((tri->texheader[2] >> 0) & 0x3f);
+		extra->texy = 32 * ((tri->texheader[2] >> 6) & 0x1f);
+		extra->texmirrorx = (tri->texheader[0] >> 8) & 1;
+		extra->texmirrory = (tri->texheader[0] >> 9) & 1;
 		extra->texsheet = (tri->texheader[2] & 0x1000) ? model2_textureram1 : model2_textureram0;
 
 		tri->v[0].pz = 1.0f / (1.0f + tri->v[0].pz);
