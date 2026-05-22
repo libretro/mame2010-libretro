@@ -28,12 +28,10 @@
     COMPILE-TIME VALIDATION
 ***************************************************************************/
 
-/* if the following lines error during compile, your PTR64 switch is set incorrectly in the makefile */
-#ifdef PTR64
-uint8_t your_ptr64_flag_is_wrong[(int)(sizeof(void *) - 7)];
-#else
-uint8_t your_ptr64_flag_is_wrong[(int)(5 - sizeof(void *))];
-#endif
+/* (Historical: a negative-array-bound trick lived here to catch a mismatched
+ * -DPTR64 flag. PTR64 is now derived from the compiler's own view of
+ * sizeof(void *) in osdcomm.h, so the check is provably tautological and has
+ * been removed.) */
 
 
 
@@ -1155,11 +1153,8 @@ bool mame_validitychecks(const game_driver *curdriver)
 	if (sizeof(uint32_t) != 4)	{ mame_printf_error("UINT32 must be 32 bits\n"); error = true; }
 	if (sizeof(int64_t)  != 8)	{ mame_printf_error("INT64 must be 64 bits\n"); error = true; }
 	if (sizeof(uint64_t) != 8)	{ mame_printf_error("UINT64 must be 64 bits\n"); error = true; }
-#ifdef PTR64
-	if (sizeof(void *) != 8)	{ mame_printf_error("PTR64 flag enabled, but was compiled for 32-bit target\n"); error = true; }
-#else
-	if (sizeof(void *) != 4)	{ mame_printf_error("PTR64 flag not enabled, but was compiled for 64-bit target\n"); error = true; }
-#endif
+	/* PTR64 is now derived from sizeof(void *) in osdcomm.h, so a "PTR64
+	 * vs sizeof(void *)" mismatch is no longer representable. */
 	lsbtest = 0;
 	*(uint8_t *)&lsbtest = 0xff;
 #ifdef MSB_FIRST
