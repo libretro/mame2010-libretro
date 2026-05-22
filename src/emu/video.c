@@ -61,7 +61,6 @@
 ***************************************************************************/
 
 #define SUBSECONDS_PER_SPEED_UPDATE	(ATTOSECONDS_PER_SECOND / 4)
-#define PAUSED_REFRESH_RATE			(30)
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -72,12 +71,6 @@ struct _video_global
 {
 	/* screenless systems */
 	emu_timer *				screenless_frame_timer;	/* timer to signal VBLANK start */
-
-	/* throttling calculations */
-	osd_ticks_t				throttle_last_ticks;	/* osd_ticks the last call to throttle */
-	attotime				throttle_realtime;		/* real time the last call to throttle */
-	attotime				throttle_emutime;		/* emulated time the last call to throttle */
-	uint32_t					throttle_history;		/* history of frames where we were fast enough */
 
 	/* dynamic speed computation */
 	osd_ticks_t 			speed_last_realtime;	/* real time at the last speed calculation */
@@ -102,9 +95,7 @@ struct _video_global
 	uint8_t					empty_skip_count;		/* number of empty frames we have skipped */
 	uint8_t					frameskip_level;		/* current frameskip level */
 	uint8_t					frameskip_counter;		/* counter that counts through the frameskip steps */
-	int8_t					frameskip_adjust;
 	uint8_t					skipping_this_frame;	/* flag: TRUE if we are skipping the current frame */
-	osd_ticks_t				average_oversleep;		/* average number of ticks the OSD oversleeps */
 
 	/* snapshot stuff */
 	render_target *			snap_target;			/* screen shapshot target */
@@ -162,8 +153,6 @@ static int finish_screen_updates(running_machine *machine);
 static TIMER_CALLBACK( screenless_update_callback );
 
 /* throttling/frameskipping/performance */
-static void update_throttle(running_machine *machine, attotime emutime);
-static osd_ticks_t throttle_until_ticks(running_machine *machine, osd_ticks_t target_ticks);
 static void update_frameskip(running_machine *machine);
 static void recompute_speed(running_machine *machine, attotime emutime);
 static void update_refresh_speed(running_machine *machine);
@@ -215,22 +204,6 @@ INLINE int effective_frameskip(void)
 
 	/* otherwise, it's up to the user */
 	return global.frameskip_level;
-}
-
-
-/*-------------------------------------------------
-    effective_throttle - return the effective
-    throttle value, accounting for fast
-    forward and user interface
--------------------------------------------------*/
-
-INLINE int effective_throttle(running_machine *machine)
-{
-	/* libretro: the frontend owns all frame pacing. The core must
-	   never throttle/sleep/spin to wall-clock internally - doing so
-	   wedges frontend fast-forward and hurts pacing/determinism. */
-	(void)machine;
-	return FALSE;
 }
 
 
@@ -442,9 +415,12 @@ void video_frame_update(running_machine *machine, int debug)
 	/* update the internal render debugger */
 	debugint_update_during_game(machine);
 
-	/* if we're throttling, synchronize before rendering */
-	if (!debug && !skipped_it && effective_throttle(machine))
-		update_throttle(machine, current_time);
+	/* libretro: the frontend owns frame pacing; the historical
+	   if-throttling-synchronise-before-rendering branch that used to
+	   sit here only ever called the now-gone update_throttle/
+	   throttle_until_ticks pair, both of which were short-circuited by
+	   effective_throttle() returning FALSE unconditionally. Nothing to
+	   do here -- we just hand the frame straight to the OSD. */
 
 	/* ask the OSD to update */
 	osd_update(machine, !debug && skipped_it);
@@ -688,270 +664,24 @@ void video_set_fastforward(int _fastforward)
 }
 
 
-/*-------------------------------------------------
-    update_throttle - throttle to the game's
-    natural speed
--------------------------------------------------*/
-
-static void update_throttle(running_machine *machine, attotime emutime)
-{
-/*
-
-   Throttling theory:
-
-   This routine is called periodically with an up-to-date emulated time.
-   The idea is to synchronize real time with emulated time. We do this
-   by "throttling", or waiting for real time to catch up with emulated
-   time.
-
-   In an ideal world, it will take less real time to emulate and render
-   each frame than the emulated time, so we need to slow things down to
-   get both times in sync.
-
-   There are many complications to this model:
-
-       * some games run too slow, so each frame we get further and
-           further behind real time; our only choice here is to not
-           throttle
-
-       * some games have very uneven frame rates; one frame will take
-           a long time to emulate, and the next frame may be very fast
-
-       * we run on top of multitasking OSes; sometimes execution time
-           is taken away from us, and this means we may not get enough
-           time to emulate one frame
-
-       * we may be paused, and emulated time may not be marching
-           forward
-
-       * emulated time could jump due to resetting the machine or
-           restoring from a saved state
-
-*/
-	static const uint8_t popcount[256] =
-	{
-		0,1,1,2,1,2,2,3, 1,2,2,3,2,3,3,4, 1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,
-		1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5, 2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,
-		1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5, 2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,
-		2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6, 3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,
-		1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5, 2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,
-		2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6, 3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,
-		2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6, 3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,
-		3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7, 4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8
-	};
-	attoseconds_t real_delta_attoseconds;
-	attoseconds_t emu_delta_attoseconds;
-	attoseconds_t real_is_ahead_attoseconds;
-	attoseconds_t attoseconds_per_tick;
-	osd_ticks_t ticks_per_second;
-	osd_ticks_t target_ticks;
-	osd_ticks_t diff_ticks;
-
-	/* apply speed factor to emu time */
-	if (global.speed != 0 && global.speed != 100)
-	{
-		/* multiply emutime by 100, then divide by the global speed factor */
-		emutime = attotime_div(attotime_mul(emutime, 100), global.speed);
-	}
-
-	/* compute conversion factors up front */
-	ticks_per_second = osd_ticks_per_second();
-	attoseconds_per_tick = ATTOSECONDS_PER_SECOND / ticks_per_second;
-
-	/* if we're paused, emutime will not advance; instead, we subtract a fixed
-       amount of time (1/60th of a second) from the emulated time that was passed in,
-       and explicitly reset our tracked real and emulated timers to that value ...
-       this means we pretend that the last update was exactly 1/60th of a second
-       ago, and was in sync in both real and emulated time */
-	if (machine->paused())
-	{
-		global.throttle_emutime = attotime_sub_attoseconds(emutime, ATTOSECONDS_PER_SECOND / PAUSED_REFRESH_RATE);
-		global.throttle_realtime = global.throttle_emutime;
-	}
-
-	/* attempt to detect anomalies in the emulated time by subtracting the previously
-       reported value from our current value; this should be a small value somewhere
-       between 0 and 1/10th of a second ... anything outside of this range is obviously
-       wrong and requires a resync */
-	emu_delta_attoseconds = attotime_to_attoseconds(attotime_sub(emutime, global.throttle_emutime));
-	if (emu_delta_attoseconds < 0 || emu_delta_attoseconds > ATTOSECONDS_PER_SECOND / 10)
-	{
-#if 0
-      logerror("Resync due to weird emutime delta: %s\n", attotime_string(attotime_make(0, emu_delta_attoseconds), 18));
-#endif
-		goto resync;
-	}
-
-	/* now determine the current real time in OSD-specified ticks; we have to be careful
-       here because counters can wrap, so we only use the difference between the last
-       read value and the current value in our computations */
-	diff_ticks = osd_ticks() - global.throttle_last_ticks;
-	global.throttle_last_ticks += diff_ticks;
-
-	/* if it has been more than a full second of real time since the last call to this
-       function, we just need to resynchronize */
-	if (diff_ticks >= ticks_per_second)
-	{
-#if 0
-      logerror("Resync due to real time advancing by more than 1 second\n");
-#endif
-		goto resync;
-	}
-
-	/* convert this value into attoseconds for easier comparison */
-	real_delta_attoseconds = diff_ticks * attoseconds_per_tick;
-
-	/* now update our real and emulated timers with the current values */
-	global.throttle_emutime = emutime;
-	global.throttle_realtime = attotime_add_attoseconds(global.throttle_realtime, real_delta_attoseconds);
-
-	/* keep a history of whether or not emulated time beat real time over the last few
-       updates; this can be used for future heuristics */
-	global.throttle_history = (global.throttle_history << 1) | (emu_delta_attoseconds > real_delta_attoseconds);
-
-	/* determine how far ahead real time is versus emulated time; note that we use the
-       accumulated times for this instead of the deltas for the current update because
-       we want to track time over a longer duration than a single update */
-	real_is_ahead_attoseconds = attotime_to_attoseconds(attotime_sub(global.throttle_emutime, global.throttle_realtime));
-
-	/* if we're more than 1/10th of a second out, or if we are behind at all and emulation
-       is taking longer than the real frame, we just need to resync */
-	if (real_is_ahead_attoseconds < -ATTOSECONDS_PER_SECOND / 10 ||
-		(real_is_ahead_attoseconds < 0 && popcount[global.throttle_history & 0xff] < 6))
-	{
-#if 0
-      logerror("Resync due to being behind: %s (history=%08X)\n", attotime_string(attotime_make(0, -real_is_ahead_attoseconds), 18), global.throttle_history);
-#endif
-		goto resync;
-	}
-
-	/* if we're behind, it's time to just get out */
-	if (real_is_ahead_attoseconds < 0)
-		return;
-
-	/* compute the target real time, in ticks, where we want to be */
-	target_ticks = global.throttle_last_ticks + real_is_ahead_attoseconds / attoseconds_per_tick;
-
-	/* throttle until we read the target, and update real time to match the final time */
-	diff_ticks = throttle_until_ticks(machine, target_ticks) - global.throttle_last_ticks;
-	global.throttle_last_ticks += diff_ticks;
-	global.throttle_realtime = attotime_add_attoseconds(global.throttle_realtime, diff_ticks * attoseconds_per_tick);
-	return;
-
-resync:
-	/* reset realtime and emutime to the same value */
-	global.throttle_realtime = global.throttle_emutime = emutime;
-}
-
 
 /*-------------------------------------------------
-    throttle_until_ticks - spin until the
-    specified target time, calling the OSD code
-    to sleep if possible
--------------------------------------------------*/
-
-static osd_ticks_t throttle_until_ticks(running_machine *machine, osd_ticks_t target_ticks)
-{
-	osd_ticks_t minimum_sleep = osd_ticks_per_second() / 1000;
-	osd_ticks_t current_ticks = osd_ticks();
-	osd_ticks_t new_ticks;
-	int allowed_to_sleep = FALSE;
-
-	/* we're allowed to sleep via the OSD code only if we're configured to do so
-       and we're not frameskipping due to autoframeskip, or if we're paused */
-	if (options_get_bool(machine->options(), OPTION_SLEEP) && (!effective_autoframeskip(machine) || effective_frameskip() == 0))
-		allowed_to_sleep = TRUE;
-	if (machine->paused())
-		allowed_to_sleep = TRUE;
-
-	/* loop until we reach our target */
-	while (current_ticks < target_ticks)
-	{
-		osd_ticks_t delta;
-		int slept = FALSE;
-
-		/* compute how much time to sleep for, taking into account the average oversleep */
-		delta = (target_ticks - current_ticks) * 1000 / (1000 + global.average_oversleep);
-
-		/* see if we can sleep */
-		if (allowed_to_sleep && delta >= minimum_sleep)
-		{
-			osd_sleep(delta);
-			slept = TRUE;
-		}
-
-		/* read the new value */
-		new_ticks = osd_ticks();
-
-		/* keep some metrics on the sleeping patterns of the OSD layer */
-		if (slept)
-		{
-			osd_ticks_t actual_ticks = new_ticks - current_ticks;
-
-			/* if we overslept, keep an average of the amount */
-			if (actual_ticks > delta)
-			{
-				osd_ticks_t oversleep_milliticks = 1000 * (actual_ticks - delta) / delta;
-
-				/* take 90% of the previous average plus 10% of the new value */
-				global.average_oversleep = (global.average_oversleep * 99 + oversleep_milliticks) / 100;
-
-#if 0
-            logerror("Slept for %d ticks, got %d ticks, avgover = %d\n", (int)delta, (int)actual_ticks, (int)global.average_oversleep);
-#endif
-			}
-		}
-		current_ticks = new_ticks;
-	}
-
-	return current_ticks;
-}
-
-
-/*-------------------------------------------------
-    update_frameskip - update frameskipping
-    counters and periodically update autoframeskip
+    update_frameskip - advance the frameskip
+    counter and decide whether the next frame
+    should be skipped
 -------------------------------------------------*/
 
 static void update_frameskip(running_machine *machine)
 {
-	/* if we're throttling and autoframeskip is on, adjust */
-	if (effective_throttle(machine) && effective_autoframeskip(machine) && global.frameskip_counter == 0)
-	{
-		double speed = global.speed * 0.01;
-
-		/* if we're too fast, attempt to increase the frameskip */
-		if (global.speed_percent >= 0.995 * speed)
-		{
-			/* but only after 3 consecutive frames where we are too fast */
-			if (++global.frameskip_adjust >= 3)
-			{
-				global.frameskip_adjust = 0;
-				if (global.frameskip_level > 0)
-					global.frameskip_level--;
-			}
-		}
-
-		/* if we're too slow, attempt to increase the frameskip */
-		else
-		{
-			/* if below 80% speed, be more aggressive */
-			if (global.speed_percent < 0.80 *  speed)
-				global.frameskip_adjust -= (0.90 * speed - global.speed_percent) / 0.05;
-
-			/* if we're close, only force it up to frameskip 8 */
-			else if (global.frameskip_level < 8)
-				global.frameskip_adjust--;
-
-			/* perform the adjustment */
-			while (global.frameskip_adjust <= -2)
-			{
-				global.frameskip_adjust += 2;
-				if (global.frameskip_level < MAX_FRAMESKIP)
-					global.frameskip_level++;
-			}
-		}
-	}
+	/* libretro: the historical 'if throttling and autoframeskip, adjust
+	   frameskip_level based on speed_percent' block that used to sit
+	   here is dead -- effective_throttle() returned FALSE
+	   unconditionally and effective_autoframeskip() is only true when
+	   not fast-forwarding, so the gate could never open. The auto
+	   adjustment logic and the frameskip_adjust state it carried are
+	   gone with the rest of the throttle path; only the deterministic
+	   counter walk and skip-table lookup remain. */
+	(void)machine;
 
 	/* increment the frameskip counter and determine if we will skip the next frame */
 	global.frameskip_counter = (global.frameskip_counter + 1) % FRAMESKIP_LEVELS;
