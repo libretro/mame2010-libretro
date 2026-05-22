@@ -119,9 +119,6 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	bitmap_t *destmap = (bitmap_t *)dest;
 	uint32_t *p = BITMAP_ADDR32(destmap, scanline, 0);
 
-	uint32_t	tex_width = extra->texwidth;
-	uint32_t	tex_height = extra->texheight;
-
 	/* extract color information */
 	const uint16_t *colortable_r = (const uint16_t *)&model2_colorxlat[0x0000/4];
 	const uint16_t *colortable_g = (const uint16_t *)&model2_colorxlat[0x4000/4];
@@ -131,22 +128,23 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	uint32_t	colorbase = extra->colorbase;
 	uint32_t	lumabase = extra->lumabase;
 	uint32_t	poly_luma = extra->luma;
-	uint32_t	tex_x = extra->texx;
-	uint32_t	tex_y = extra->texy;
-	uint32_t	tex_x_mask, tex_y_mask;
-	uint32_t	tex_mirr_x = extra->texmirrorx;
-	uint32_t	tex_mirr_y = extra->texmirrory;
-	uint32_t *sheet = extra->texsheet;
 	float ooz = extent->param[0].start;
 	float uoz = extent->param[1].start;
 	float voz = extent->param[2].start;
 	float dooz = extent->param[0].dpdx;
 	float duoz = extent->param[1].dpdx;
 	float dvoz = extent->param[2].dpdx;
+	/* maximum mip level: go down to 2x2 (clz of min(w,h) tells us how
+	 * many doublings we need; 30 because clz(2) = 30 for the 32-bit
+	 * representation we use) */
+	uint32_t	min_dim = (extra->texwidth < extra->texheight) ? extra->texwidth : extra->texheight;
+	int32_t		max_level = 30 - model2_clz32(min_dim);
 	int		x;
-
-	tex_x_mask	= tex_width - 1;
-	tex_y_mask	= tex_height - 1;
+#if defined(MODEL2_TRANSLUCENT)
+	const int	translucent = 1;
+#else
+	const int	translucent = 0;
+#endif
 
 	colorbase = palram[BYTE_XOR_LE(colorbase + 0x1000)] & 0x7fff;
 
@@ -156,49 +154,60 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 
 	for(x = extent->startx; x < extent->stopx; x++, uoz += duoz, voz += dvoz, ooz += dooz)
 	{
-		float z = recip_approx(ooz) * 256.0f;
-		int32_t u = uoz * z;
-		int32_t v = voz * z;
-		uint32_t	tr, tg, tb;
-		uint16_t	t;
-		uint8_t luma;
-		int u2;
-		int v2;
+		float    z;
+		int32_t  u, v;
+		int32_t  mml, level, frac;
+		uint32_t t, t2;
+		uint32_t lv;
+		uint32_t tr, tg, tb;
+		uint8_t  luma;
 
 #if defined(MODEL2_CHECKER)
 		if ( ((x^scanline) & 1) == 0 )
 			continue;
 #endif
-		u2 = (u >> 8) & tex_x_mask;
-		v2 = (v >> 8) & tex_y_mask;
+		/* perspective-correct: 1/(1/z) -> z, then derive a mip level
+		 * from log2(z) and the polygon's texlod offset.  Larger z
+		 * (farther) -> higher mip level -> smaller texture. */
+		z = 1.0f / ooz;
+		mml = -extra->texlod + model2_fast_log2(z);
+		level = mml >> 7;
+		if (level < 0) level = 0;
+		if (level > max_level) level = max_level;
 
-		if ( tex_mirr_x )
-			u2 = ( tex_width - 1 ) - u2;
+		/* texture coords as 24.8 fixed point */
+		u = (int32_t)(uoz * z * 256.0f);
+		v = (int32_t)(voz * z * 256.0f);
 
-		if ( tex_mirr_y )
-			v2 = ( tex_height - 1 ) - v2;
+		t = fetch_bilinear_texel(extra, level, u, v, translucent);
 
-		t = get_texel( tex_x, tex_y, u2, v2, sheet );
-
-#if defined(MODEL2_TRANSLUCENT)
-		if ( t == 0x0f )
-			continue;
-#endif
-		/* fetch the per-texel base luma at this texture's "fully lit"
-		 * row (row 0 of the lumaram entry; lumabase no longer carries
-		 * a polygon-luma row offset) and scale it by the geometry
-		 * engine's per-polygon luma.  Clamp to the 6-bit colortable
-		 * index range to defend against polygons that program a luma
-		 * above 0x3f. */
+		/* if we're not at the smallest level and the LOD calculation
+		 * has fractional bits, blend with the next coarser level for
+		 * trilinear-style smoothing between mips */
+		if (mml > 0 && level < max_level)
 		{
-			uint32_t lv = (uint32_t)(lumaram[BYTE_XOR_LE(lumabase + (t << 3))] & 0x3f);
-			lv = (lv * poly_luma) >> 8;
-			if (lv > 0x3f) lv = 0x3f;
-			luma = (uint8_t)lv;
+			t2 = fetch_bilinear_texel(extra, level + 1, u, v, translucent);
+			frac = (mml & 127) << 1;
+			t = (uint32_t)model2_lerp((int32_t)t, (int32_t)t2, (uint32_t)frac);
 		}
 
-		/* we have the 6 bits of luma information along with 5 bits per color component */
-		/* now build and index into the master color lookup table and extract the raw RGB values */
+#if defined(MODEL2_TRANSLUCENT)
+		/* alpha under 50% -> drop the pixel */
+		if (t < 0x00400000u)
+			continue;
+		/* strip the alpha tag before consuming as a luma index */
+		t &= 0xff;
+#endif
+
+		/* bilinear gives an 8-bit smooth texel value; the luma table
+		 * has 128 (7-bit) entries per texture, so the lookup index is
+		 * (t >> 1).  Then scale by the per-polygon luma to apply the
+		 * geometry engine's continuous shading and clamp to the 6-bit
+		 * colortable index range. */
+		lv = (uint32_t)(lumaram[BYTE_XOR_LE(lumabase + (t >> 1))] & 0x3f);
+		lv = (lv * poly_luma) >> 8;
+		if (lv > 0x3f) lv = 0x3f;
+		luma = (uint8_t)lv;
 
 		tr = colortable_r[BYTE_XOR_LE(luma)] & 0xff;
 		tg = colortable_g[BYTE_XOR_LE(luma)] & 0xff;

@@ -128,6 +128,7 @@ typedef struct
 	uint8_t				luma;
 	int16_t				viewport[4];
 	int16_t				center[2];
+	int32_t				texlod;
 } triangle;
 
 typedef struct
@@ -143,12 +144,15 @@ struct _poly_extra_data
 {
 	uint32_t		lumabase;
 	uint32_t		colorbase;
-	uint32_t *	texsheet;
+	uint32_t *	texsheet[2];	/* alternating per-mip-level texture sheets */
 	uint32_t		texwidth;
 	uint32_t		texheight;
 	uint32_t		texx, texy;
+	int32_t		texlod;		/* base texture LOD for this polygon */
 	uint8_t		texmirrorx;
 	uint8_t		texmirrory;
+	uint8_t		texwrapx;	/* smooth wrap horizontally */
+	uint8_t		texwrapy;	/* smooth wrap vertically */
 	uint8_t		luma;
 };
 
@@ -386,6 +390,7 @@ static void model2_3d_process_quad( uint32_t attr )
 	_quad_m2	object;
 	uint16_t		*th, *tp;
 	int32_t		tho;
+	int32_t		texlod;
 	uint32_t		cull, i;
 	float		zvalue;
 	float		min_z, max_z;
@@ -464,6 +469,13 @@ static void model2_3d_process_quad( uint32_t attr )
 
 	/* set the luma value of this quad */
 	object.luma = (raster.command_buffer[9] >> 15) & 0xFF;
+
+	/* set the texture LOD of this polygon: a signed offset around 0x3f80
+	 * (the IEEE 1.0 exponent biased into the 8-bit log field) plus a
+	 * per-poly log-RAM lookup that the geo engine pre-computes for the
+	 * mip-level selection done in the textured rasterizer */
+	texlod  = ((int32_t)(raster.command_buffer[10] >> 8) & 0x7f80) - 0x3f80;
+	texlod += raster.log_ram[raster.command_buffer[10] & 0x7fff];
 
 	/* determine wether we can cull this quad */
 	cull = 0;
@@ -557,6 +569,7 @@ static void model2_3d_process_quad( uint32_t attr )
 				tri->texheader[2] = object.texheader[2];
 				tri->texheader[3] = object.texheader[3];
 				tri->luma = object.luma;
+				tri->texlod = texlod;
 
 				/* set the viewport */
 				tri->viewport[0] = raster.viewport[0];
@@ -628,6 +641,7 @@ static void model2_3d_process_triangle( uint32_t attr )
 	triangle	object;
 	uint16_t		*th, *tp;
 	int32_t		tho;
+	int32_t		texlod;
 	uint32_t		cull, i;
 	float		zvalue;
 	float		min_z, max_z;
@@ -702,6 +716,13 @@ static void model2_3d_process_triangle( uint32_t attr )
 
 	/* set the luma value of this quad */
 	object.luma = (raster.command_buffer[9] >> 15) & 0xFF;
+
+	/* set the texture LOD of this polygon: a signed offset around 0x3f80
+	 * (the IEEE 1.0 exponent biased into the 8-bit log field) plus a
+	 * per-poly log-RAM lookup that the geo engine pre-computes for the
+	 * mip-level selection done in the textured rasterizer */
+	texlod  = ((int32_t)(raster.command_buffer[10] >> 8) & 0x7f80) - 0x3f80;
+	texlod += raster.log_ram[raster.command_buffer[10] & 0x7fff];
 
 	/* determine wether we can cull this quad */
 	cull = 0;
@@ -795,6 +816,7 @@ static void model2_3d_process_triangle( uint32_t attr )
 				tri->texheader[2] = object.texheader[2];
 				tri->texheader[3] = object.texheader[3];
 				tri->luma = object.luma;
+				tri->texlod = texlod;
 
 				/* set the viewport */
 				tri->viewport[0] = raster.viewport[0];
@@ -893,6 +915,143 @@ INLINE uint16_t get_texel( uint32_t base_x, uint32_t base_y, int x, int y, uint3
 		texel >>= 4;
 
 	return (texel & 0x0f);
+}
+
+/* count_leading_zeros_32: portable, returns 32 for v == 0.
+ * Used to compute the max mip level: max_level = 30 - clz(min(width, height)). */
+INLINE int model2_clz32( uint32_t v )
+{
+	int n = 0;
+	if (v == 0) return 32;
+	if ((v & 0xFFFF0000u) == 0) { n += 16; v <<= 16; }
+	if ((v & 0xFF000000u) == 0) { n +=  8; v <<=  8; }
+	if ((v & 0xF0000000u) == 0) { n +=  4; v <<=  4; }
+	if ((v & 0xC0000000u) == 0) { n +=  2; v <<=  2; }
+	if ((v & 0x80000000u) == 0) { n +=  1; }
+	return n;
+}
+
+/* fast_log2: returns log2 of a positive float as a 1.7 fixed-point value
+ * (the integer exponent in the high byte and a 7-bit fractional part
+ * looked up from the top 7 bits of the mantissa).  Used to derive the
+ * mip-level index from the perspective-corrected 1/z value. */
+INLINE int32_t model2_fast_log2( float value )
+{
+	static const uint8_t s_log2_table[128] =
+	{
+		  0,   2,   5,   8,  11,  14,  16,  19,  22,  25,  27,  30,  33,  35,  38,  40,
+		 43,  46,  48,  51,  53,  56,  58,  61,  63,  65,  68,  70,  73,  75,  77,  80,
+		 82,  84,  87,  89,  91,  93,  96,  98, 100, 102, 104, 106, 109, 111, 113, 115,
+		117, 119, 121, 123, 125, 127, 129, 132, 134, 136, 138, 140, 141, 143, 145, 147,
+		149, 151, 153, 155, 157, 159, 161, 162, 164, 166, 168, 170, 172, 173, 175, 177,
+		179, 181, 182, 184, 186, 188, 189, 191, 193, 194, 196, 198, 200, 201, 203, 205,
+		206, 208, 209, 211, 213, 214, 216, 218, 219, 221, 222, 224, 225, 227, 229, 230,
+		232, 233, 235, 236, 238, 239, 241, 242, 244, 245, 247, 248, 250, 251, 253, 254
+	};
+	uint32_t ival;
+	int32_t  exp;
+	if (value < 0.0f) return 0;
+	ival = f2u(value) >> 16;
+	exp = (int32_t)((ival >> 7) - 127);
+	return (exp << 8) | s_log2_table[ival & 127];
+}
+
+/* 2-tap linear interpolation, 8-bit fractional weight.  Operates in
+ * signed space so it works whether y is larger or smaller than x. */
+INLINE int32_t model2_lerp( int32_t x, int32_t y, uint32_t a )
+{
+	return x + (((y - x) * (int32_t)a) >> 8);
+}
+
+/* Fetch one bilinearly-filtered texel at mip level `level` (or the
+ * level-0 path when level == 0).  u/v are 24.8 fixed-point texture
+ * coordinates already perspective-corrected by the caller.  Result
+ * is an 8-bit smoothed texel in 0..240 (the four corner 4-bit texels
+ * are shifted left by 4 before interpolation), with bit 23 used to
+ * flag a transparent corner when translucent rendering is on. */
+INLINE uint32_t fetch_bilinear_texel(const poly_extra_data *extra,
+                                     int32_t level, int32_t u, int32_t v,
+                                     int translucent)
+{
+	uint32_t tex_width, tex_height;
+	uint32_t tex_x, tex_y;
+	uint32_t *sheet;
+	uint32_t ufrac, vfrac;
+	int      u0, u1, v0, v1;
+	uint32_t tex00, tex01, tex10, tex11;
+	int32_t  tex0x, tex1x;
+
+	/* per-mip texture window inside the sheet: at level 0 we start at the
+	 * polygon's (texx, texy); each mip step halves the dimensions and the
+	 * window origin steps by (2048>>level, 1024>>level) along the sheet.
+	 * Sheets alternate between the two halves with the level's LSB. */
+	tex_width  = extra->texwidth  >> level;
+	tex_height = extra->texheight >> level;
+	tex_x = ((extra->texx - 2048) >> level) & 2047;
+	tex_y = ((extra->texy - 1024) >> level) & 1023;
+	sheet = extra->texsheet[level & 1];
+	u >>= level;
+	v >>= level;
+
+	/* mirror across the texture extent if requested */
+	if (extra->texmirrorx && (u & ((int32_t)tex_width  << 8))) u = ~u;
+	if (extra->texmirrory && (v & ((int32_t)tex_height << 8))) v = ~v;
+
+	/* subtract half a texel to center the sample point on a corner */
+	u -= 0x80;
+	v -= 0x80;
+
+	ufrac = (uint32_t)u & 0xff;
+	vfrac = (uint32_t)v & 0xff;
+
+	u0 = (u >> 8) & ((int32_t)tex_width  - 1);
+	u1 = (u0 + 1) & ((int32_t)tex_width  - 1);
+	v0 = (v >> 8) & ((int32_t)tex_height - 1);
+	v1 = (v0 + 1) & ((int32_t)tex_height - 1);
+
+	/* if smooth wrapping is disabled, clamp at the edge instead of
+	 * letting the right/bottom blend into column/row 0 */
+	if (!extra->texwrapx && u1 == 0)
+	{
+		if (ufrac >= 0x80) { u0 = u1; u1 = (u1 + 1) & ((int32_t)tex_width  - 1); ufrac = 0; }
+		else               { u1 = u0; u0 = (u0 - 1 + (int32_t)tex_width)  & ((int32_t)tex_width  - 1); ufrac = 0x100; }
+	}
+	if (!extra->texwrapy && v1 == 0)
+	{
+		if (vfrac >= 0x80) { v0 = 0; v1 = 1; vfrac = 0; }
+		else               { v1 = v0; v0 = (v0 - 1 + (int32_t)tex_height) & ((int32_t)tex_height - 1); vfrac = 0x100; }
+	}
+
+	tex00 = (uint32_t)get_texel(tex_x, tex_y, u0, v0, sheet) << 4;
+	tex01 = (uint32_t)get_texel(tex_x, tex_y, u1, v0, sheet) << 4;
+	tex10 = (uint32_t)get_texel(tex_x, tex_y, u0, v1, sheet) << 4;
+	tex11 = (uint32_t)get_texel(tex_x, tex_y, u1, v1, sheet) << 4;
+
+	if (translucent)
+	{
+		/* tag opaque corners (texel != 0xf -> opaque); a transparent
+		 * corner adopts its horizontal neighbor's luma so the blend
+		 * doesn't pull a 0 value into the result. */
+		if (tex00 != 0xf0) tex00 |= 0x00800000u;
+		if (tex01 != 0xf0) tex01 |= 0x00800000u;
+		if (tex10 != 0xf0) tex10 |= 0x00800000u;
+		if (tex11 != 0xf0) tex11 |= 0x00800000u;
+		if (tex00 == 0x000000f0u) tex00 = tex01 & 0xff;
+		if (tex01 == 0x000000f0u) tex01 = tex00 & 0xff;
+		if (tex10 == 0x000000f0u) tex10 = tex11 & 0xff;
+		if (tex11 == 0x000000f0u) tex11 = tex10 & 0xff;
+	}
+
+	tex0x = model2_lerp((int32_t)tex00, (int32_t)tex01, ufrac);
+	tex1x = model2_lerp((int32_t)tex10, (int32_t)tex11, ufrac);
+
+	if (translucent)
+	{
+		if (tex0x == 0x000000f0) tex0x = tex1x & 0xff;
+		if (tex1x == 0x000000f0) tex1x = tex0x & 0xff;
+	}
+
+	return (uint32_t)model2_lerp(tex0x, tex1x, vfrac);
 }
 
 /* checker = 0, textured = 0, transparent = 0 */
@@ -1008,7 +1167,15 @@ static void model2_3d_render( bitmap_t *bitmap, triangle *tri, const rectangle *
 		extra->texy = 32 * ((tri->texheader[2] >> 6) & 0x1f);
 		extra->texmirrorx = (tri->texheader[0] >> 8) & 1;
 		extra->texmirrory = (tri->texheader[0] >> 9) & 1;
-		extra->texsheet = (tri->texheader[2] & 0x1000) ? model2_textureram1 : model2_textureram0;
+		/* smooth wrap flags are bits 6/7; disable smooth wrap when the
+		 * corresponding mirror flag is on (they're mutually exclusive) */
+		extra->texwrapx = ((tri->texheader[0] >> 6) & 1) & ~extra->texmirrorx;
+		extra->texwrapy = ((tri->texheader[0] >> 7) & 1) & ~extra->texmirrory;
+		/* mipmaps alternate between the two texture sheets; sheet[0] is
+		 * the level-0 source and sheet[1] is the level-1 source */
+		extra->texsheet[0] = (tri->texheader[2] & 0x1000) ? model2_textureram1 : model2_textureram0;
+		extra->texsheet[1] = (tri->texheader[2] & 0x1000) ? model2_textureram0 : model2_textureram1;
+		extra->texlod = tri->texlod;
 
 		tri->v[0].pz = 1.0f / (1.0f + tri->v[0].pz);
 		tri->v[0].pu = tri->v[0].pu * tri->v[0].pz * (1.0f / 8.0f);
