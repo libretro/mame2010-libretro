@@ -93,6 +93,10 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 	tg = colortable_g[BYTE_XOR_LE(luma)] & 0xff;
 	tb = colortable_b[BYTE_XOR_LE(luma)] & 0xff;
 
+	tr = model2_gamma_table[tr];
+	tg = model2_gamma_table[tg];
+	tb = model2_gamma_table[tb];
+
 	/* build the final color */
 	color = MAKE_RGB(tr, tg, tb);
 
@@ -185,6 +189,10 @@ static void MODEL2_FUNC_NAME(void *dest, int32_t scanline, const poly_extent *ex
 		tr = colortable_r[BYTE_XOR_LE(luma)] & 0xff;
 		tg = colortable_g[BYTE_XOR_LE(luma)] & 0xff;
 		tb = colortable_b[BYTE_XOR_LE(luma)] & 0xff;
+
+		tr = model2_gamma_table[tr];
+		tg = model2_gamma_table[tg];
+		tb = model2_gamma_table[tb];
 
 		p[x] = MAKE_RGB(tr, tg, tb);
 	}

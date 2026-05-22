@@ -149,7 +149,26 @@ struct _poly_extra_data
 	uint32_t		texx, texy;
 	uint8_t		texmirrorx;
 	uint8_t		texmirrory;
+	uint8_t		luma;
 };
+
+/* contrast/black-level translator applied to all final pixel colors.
+ * The video DAC effectively crushes the bottom of the 0..255 range to
+ * black and rescales the rest, which the original simple pal5bit() path
+ * does not do; without it everything looks washed out. */
+static uint8_t model2_gamma_table[256];
+
+static void model2_build_gamma_table(void)
+{
+	int i;
+	for (i = 0; i < 256; i++)
+	{
+		double v = ((double)i - 64.0) * 255.0 / 191.0;
+		if (v < 0.0) v = 0.0;
+		if (v > 255.0) v = 255.0;
+		model2_gamma_table[i] = (uint8_t)v;
+	}
+}
 
 
 /*******************************************
@@ -2705,6 +2724,9 @@ VIDEO_START(model2)
 
 	/* initialize the hardware rasterizer */
 	model2_3d_init( machine, (uint16_t*)memory_region(machine, "user3") );
+
+	/* build the contrast/black-level translation table */
+	model2_build_gamma_table();
 }
 
 static void convert_bitmap( running_machine *machine, bitmap_t *dst, bitmap_t *src, const rectangle *rect )

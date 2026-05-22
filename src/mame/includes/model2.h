@@ -16,3 +16,5 @@ VIDEO_START(model2);
 VIDEO_UPDATE(model2);
 
 void model2_3d_set_zclip( uint8_t clip );
+
+extern uint8_t model2_gamma_table[256];

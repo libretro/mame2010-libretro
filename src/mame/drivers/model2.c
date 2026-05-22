@@ -439,7 +439,15 @@ static MACHINE_RESET(model2c)
 
 static void chcolor(running_machine *machine, pen_t color, uint16_t data)
 {
-	palette_set_color_rgb(machine, color, pal5bit(data >> 0), pal5bit(data >> 5), pal5bit(data >> 10));
+	uint8_t r = pal5bit(data >> 0);
+	uint8_t g = pal5bit(data >> 5);
+	uint8_t b = pal5bit(data >> 10);
+
+	r = model2_gamma_table[r];
+	g = model2_gamma_table[g];
+	b = model2_gamma_table[b];
+
+	palette_set_color_rgb(machine, color, r, g, b);
 }
 
 static WRITE32_HANDLER( pal32_w )
