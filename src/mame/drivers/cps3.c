@@ -2142,6 +2142,74 @@ static WRITE32_HANDLER( cps3_irq12_ack_w )
 	cputag_set_input_line(space->machine, "maincpu", 12, CLEAR_LINE); return;
 }
 
+/* IRQ 14 and 6 are documented as "unused" -- no driver code asserts them, so
+ * a write here only needs to clear the line in case some boot-time IRQ-vector
+ * sanity check is in play. The game writes to these once on init. */
+static WRITE32_HANDLER( cps3_irq14_ack_w )
+{
+	cputag_set_input_line(space->machine, "maincpu", 14, CLEAR_LINE); return;
+}
+
+static WRITE32_HANDLER( cps3_irq6_ack_w )
+{
+	cputag_set_input_line(space->machine, "maincpu", 6, CLEAR_LINE); return;
+}
+
+/* PPU register 0x8E (32-bit slot at 0x040C008C, accessed with mask 0x0000ffff).
+ * Per documented register layout: "set to 0x00A0 by BIOS init after Pal/Char
+ * DMA registers, never written later (Char/Pal DMA IRQ enable?)". One-shot
+ * BIOS init; mame2010 generates Pal/Char DMA completion IRQs directly without
+ * a separate enable gate, so we accept the write silently. */
+static WRITE32_HANDLER( cps3_dma_irq_enable_w )
+{
+}
+
+/* IOU (DL-2929) output port at 0x05000C00 -- coin counters, coin lockout,
+ * start-button LEDs, and similar JAMMA-edge outputs. Lower 16 bits carry the
+ * bit-mask of outputs. Driven continuously during gameplay as inputs are
+ * pressed and credits change. mame2010 doesn't drive physical JAMMA outputs,
+ * so we accept the writes silently. The companion writes at +0x10/+0x14/+0x18
+ * are one-shot BIOS clears of further IOU output registers. */
+static WRITE32_HANDLER( cps3_outputs_w )
+{
+}
+
+/* GLL1 (DL-3429) DMA/bus-controller register area at 0x07FF0000-0x07FF00FF.
+ * Used by the BIOS to set up bus timing (one-shot writes to +0x00/+0x04/+0x08
+ * at boot) and by the flash-identify routine to gate per-SIMM access via
+ * +0x0C and +0x48 (toggled 1/0 around each chip read). mame2010 services
+ * SIMM/flash reads directly through the flash_r/flash_w and gfxflash_r/w
+ * handlers (with bank selection via cram_gfxflash_bank_w), so the
+ * higher-level GLL1 gating is functionally a no-op for us. */
+static WRITE32_HANDLER( cps3_gll1_w )
+{
+}
+
+/* Region 0x40000000-0x4000003F -- early BIOS writes (PC ~0x4CC, before the
+ * encrypted code path) of the constant 0x00000410 at stride 0x10. This is
+ * CPS-3 board-specific hardware initialization, likely cache/bus-timing
+ * configuration on the secondary memory bus shadow. One-shot, no in-game
+ * reads, no observable effect. */
+static WRITE32_HANDLER( cps3_unk_40000000_w )
+{
+}
+
+/* I/O register area continuation at 0x05000A20-0x05000A2F. The reads in the
+ * adjacent 0x05000A00-0x05000A1F window are already handled by cps3_unk_io_r;
+ * these writes are one-shot BIOS init in the same I/O block. */
+static WRITE32_HANDLER( cps3_unk_5000a_w )
+{
+}
+
+/* Single-register slot at 0x05150000 -- one-shot BIOS writes with values like
+ * 0x640F and 0x4642 (low 16 bits). Adjacent to the IRQ-ack series at
+ * 0x05100000-0x05130000 and the SCSI window at 0x05140000, but the values are
+ * data-shaped rather than ack-shaped. Function not yet documented; no
+ * observable game effect when discarded. */
+static WRITE32_HANDLER( cps3_unk_5150000_w )
+{
+}
+
 static WRITE32_HANDLER( cps3_unk_vidregs_w )
 {
 	COMBINE_DATA(&cps3_unk_vidregs[offset]);
@@ -2208,6 +2276,7 @@ static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x040C0084, 0x040C0087) AM_WRITE(cram_bank_w)
 	AM_RANGE(0x040C0088, 0x040C008b) AM_WRITE(cram_gfxflash_bank_w)
+	AM_RANGE(0x040C008c, 0x040C008f) AM_WRITE(cps3_dma_irq_enable_w)
 
 	AM_RANGE(0x040e0000, 0x040e02ff) AM_READWRITE(cps3_sound_r, cps3_sound_w)
 
@@ -2220,6 +2289,9 @@ static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x05000008, 0x0500000b) AM_WRITENOP // ?? every frame
 
 	AM_RANGE(0x05000a00, 0x05000a1f) AM_READ( cps3_unk_io_r ) // ?? every frame
+	AM_RANGE(0x05000a20, 0x05000a2f) AM_WRITE( cps3_unk_5000a_w )
+
+	AM_RANGE(0x05000c00, 0x05000c1f) AM_WRITE( cps3_outputs_w )
 
 	AM_RANGE(0x05001000, 0x05001203) AM_READWRITE( cps3_eeprom_r, cps3_eeprom_w )
 
@@ -2228,14 +2300,23 @@ static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x05050000, 0x0505001f) AM_WRITE( cps3_ss_regs_w )
 	AM_RANGE(0x05050020, 0x05050023) AM_WRITE( cps3_ss_bank_base_w )
 	AM_RANGE(0x05050024, 0x05050027) AM_WRITE( cps3_ss_pal_base_w )
+	AM_RANGE(0x05050028, 0x0505002b) AM_WRITE( cps3_ss_regs_w )
 
 	AM_RANGE(0x05100000, 0x05100003) AM_WRITE( cps3_irq12_ack_w )
 	AM_RANGE(0x05110000, 0x05110003) AM_WRITE( cps3_irq10_ack_w )
+	AM_RANGE(0x05120000, 0x05120003) AM_WRITE( cps3_irq14_ack_w )
+	AM_RANGE(0x05130000, 0x05130003) AM_WRITE( cps3_irq6_ack_w )
 
 	AM_RANGE(0x05140000, 0x05140003) AM_READWRITE( cps3_cdrom_r, cps3_cdrom_w )
 
+	AM_RANGE(0x05150000, 0x05150003) AM_WRITE( cps3_unk_5150000_w )
+
 	AM_RANGE(0x06000000, 0x067fffff) AM_READWRITE( cps3_flash1_r, cps3_flash1_w ) /* Flash ROMs simm 1 */
 	AM_RANGE(0x06800000, 0x06ffffff) AM_READWRITE( cps3_flash2_r, cps3_flash2_w ) /* Flash ROMs simm 2 */
+
+	AM_RANGE(0x07ff0000, 0x07ff00ff) AM_WRITE( cps3_gll1_w )
+
+	AM_RANGE(0x40000000, 0x4000003f) AM_WRITE( cps3_unk_40000000_w )
 
 	AM_RANGE(0xc0000000, 0xc00003ff) AM_RAM_WRITE( cps3_0xc0000000_ram_w ) AM_BASE(&cps3_0xc0000000_ram) /* Executes code from here */
 ADDRESS_MAP_END
