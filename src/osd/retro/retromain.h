@@ -135,6 +135,9 @@ enum
    RETROPAD_TOTAL
 };
 
+#if defined(__GNUC__)
+__attribute__((unused))
+#endif
 static const char *Buttons_Name[16]=
 {
    "B",		//0
