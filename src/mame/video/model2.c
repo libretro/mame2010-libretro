@@ -2663,7 +2663,13 @@ static uint32_t * geo_code_jump( uint32_t opcode, uint32_t *input )
 
 static uint32_t * geo_process_command( uint32_t opcode, uint32_t *input )
 {
-	switch( opcode >> 23 )
+	/* The command field is 5 bits.  Without the mask, any bits above bit
+	 * 27 push the switch value out of range 0..0x1f, the case falls
+	 * through unmatched, the command's argument words are NOT consumed,
+	 * and the loop then re-interprets those arg words as fresh opcodes.
+	 * Result: complete parse corruption for any opcode that uses the
+	 * upper bits (e.g. as a block id / tag). */
+	switch( (opcode >> 23) & 0x1f )
 	{
 		case 0x00: input = geo_nop( opcode, input );				break;
 		case 0x01: input = geo_object_data( opcode, input );		break;
@@ -2716,8 +2722,12 @@ static void geo_parse( void )
 		/* if it's a jump opcode, do the jump */
 		if ( opcode & 0x80000000 )
 		{
-			/* get the address */
-			address = (opcode & 0x7FFFF) / 4;
+			/* get the address.  The buffer is 0x20000 dwords (17 bits);
+			 * the wider 0x7FFFF mask let through jump targets past the
+			 * end of the buffer, where the (input - bufferram) < 0x20000
+			 * bounds check then cut off parsing prematurely.  Mask to
+			 * 0x1FFFF so jump addresses always wrap into the buffer. */
+			address = (opcode & 0x1FFFF) / 4;
 
 			/* update our pointer */
 			input = &model2_bufferram[address];
