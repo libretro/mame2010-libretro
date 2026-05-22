@@ -887,7 +887,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
          refresh_rate = ATTOSECONDS_TO_HZ(avmachine->primary_screen->frame_period().attoseconds);
    }
    info->timing.fps            = refresh_rate;
-   info->timing.sample_rate    = (double)sample_rate;
+   info->timing.sample_rate    = (double)(retro_get_machine() != NULL ? retro_get_machine()->sample_rate : sample_rate);
 
 #if 0	/* Test */
 	int common_factor = 1;

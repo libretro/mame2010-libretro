@@ -80,6 +80,12 @@ int stream_get_sample_rate(sound_stream *stream);
 /* set the sample rate on a given stream */
 void stream_set_sample_rate(sound_stream *stream, int sample_rate);
 
+/* libretro: if every pure-source stream shares one sample rate, return it (else 0) */
+int stream_single_source_rate(running_machine *machine);
+
+/* libretro: force every input-consuming stream (mixers, filters) to a given rate */
+void stream_set_consumer_rates(running_machine *machine, int sample_rate);
+
 /* return the emulation time of the next sample to be generated on the stream */
 attotime stream_get_time(sound_stream *stream);
 

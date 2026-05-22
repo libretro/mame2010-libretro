@@ -122,6 +122,19 @@ void sound_init(running_machine *machine)
 	global->nosound_mode = !options_get_bool(machine->options(), OPTION_SOUND);
 	if (global->nosound_mode)
 		machine->sample_rate = 11025;
+	else
+	{
+		/* libretro: when every sound source shares one native rate, run the
+		   whole mixer chain at that rate so the core resamples nowhere; the
+		   frontend then does the single, higher-quality conversion to the
+		   host rate.  Multi-rate machines keep the configured output rate. */
+		int single_rate = stream_single_source_rate(machine);
+		/* only adopt sane audio rates: FM cores (~50-62k), PCM/fixed (44.1k),
+		   ADPCM (low-kHz). Skip oversampled streams like AY/SN (clk/8 ~ 100-
+		   250k) - using those as the output rate only multiplies mixing work. */
+		if (single_rate >= 8000 && single_rate <= 96000)
+			machine->sample_rate = single_rate;
+	}
 
 	/* count the speakers */
 	VPRINTF(("total speakers = %d\n", speaker_output_count(machine->config)));
@@ -138,6 +151,11 @@ void sound_init(running_machine *machine)
 	/* finally, do all the routing */
 	VPRINTF(("route_sound\n"));
 	route_sound(machine);
+
+	/* libretro: speaker mixers (and any filters) were created at the default
+	   rate during device start; align them to the final output rate so a
+	   single-rate machine resamples nowhere inside the core */
+	stream_set_consumer_rates(machine, machine->sample_rate);
 
 	/* open the output WAV file if specified */
 	filename = options_get_string(machine->options(), OPTION_WAVWRITE);

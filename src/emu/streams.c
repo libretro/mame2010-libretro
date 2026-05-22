@@ -567,6 +567,55 @@ void stream_set_sample_rate(sound_stream *stream, int sample_rate)
 
 
 /*-------------------------------------------------
+    stream_single_source_rate - if every pure
+    source stream (one with no inputs) shares a
+    single sample rate, return it; otherwise 0
+-------------------------------------------------*/
+
+int stream_single_source_rate(running_machine *machine)
+{
+	streams_private *strdata = machine->streams_data;
+	sound_stream *stream;
+	int rate = 0;
+
+	if (strdata == NULL)
+		return 0;
+
+	for (stream = strdata->stream_head; stream != NULL; stream = stream->next)
+	{
+		if (stream->inputs != 0)
+			continue;				/* skip mixers and filters; sources only */
+		if (rate == 0)
+			rate = (int)stream->sample_rate;
+		else if (rate != (int)stream->sample_rate)
+			return 0;				/* more than one distinct source rate */
+	}
+	return rate;
+}
+
+
+/*-------------------------------------------------
+    stream_set_consumer_rates - align every stream
+    that consumes inputs (mixers, filters) to the
+    given rate, so a single-rate machine resamples
+    nowhere inside the core
+-------------------------------------------------*/
+
+void stream_set_consumer_rates(running_machine *machine, int sample_rate)
+{
+	streams_private *strdata = machine->streams_data;
+	sound_stream *stream;
+
+	if (strdata == NULL)
+		return;
+
+	for (stream = strdata->stream_head; stream != NULL; stream = stream->next)
+		if (stream->inputs != 0)
+			stream_set_sample_rate(stream, sample_rate);
+}
+
+
+/*-------------------------------------------------
     stream_get_time - return the emulation time
     of the next sample to be generated on the
     stream
