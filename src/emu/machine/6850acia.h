@@ -32,7 +32,7 @@ DECLARE_LEGACY_DEVICE(ACIA6850, acia6850);
 	MDRV_DEVICE_CONFIG(_config)
 
 #define ACIA6850_INTERFACE(_name) \
-	const acia6850_interface(_name) =
+	const acia6850_interface _name =
 
 
 /***************************************************************************

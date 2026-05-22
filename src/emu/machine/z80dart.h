@@ -61,7 +61,7 @@ enum
 	MDRV_DEVICE_REMOVE(_tag)
 
 #define Z80DART_INTERFACE(_name) \
-	const z80dart_interface (_name) =
+	const z80dart_interface _name =
 
 
 

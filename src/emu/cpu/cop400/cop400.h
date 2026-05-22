@@ -106,7 +106,7 @@ struct _cop400_interface
 	cop400_cko_bond		cko;			/* CKO bonding option */
 	cop400_microbus		microbus;		/* microbus option */
 };
-#define COP400_INTERFACE(name) const cop400_interface (name) =
+#define COP400_INTERFACE(name) const cop400_interface name =
 
 /***************************************************************************
     MACROS

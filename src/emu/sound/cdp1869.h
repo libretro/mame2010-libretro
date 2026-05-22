@@ -106,7 +106,7 @@ DECLARE_LEGACY_SOUND_DEVICE(CDP1869, cdp1869);
 	MDRV_PALETTE_INIT(cdp1869)
 
 #define CDP1869_INTERFACE(_name) \
-	const cdp1869_interface (_name) =
+	const cdp1869_interface _name =
 
 #define CDP1869_CHAR_RAM_READ(name) uint8_t name(running_device *device, uint16_t pma, uint8_t cma)
 #define CDP1869_CHAR_RAM_WRITE(name) void name(running_device *device, uint16_t pma, uint8_t cma, uint8_t data)

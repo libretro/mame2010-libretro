@@ -90,7 +90,7 @@ struct _cdp1802_interface
 	/* if specified, this gets called for every DMA write */
 	devcb_write8			out_dma_func;
 };
-#define CDP1802_INTERFACE(name) const cdp1802_interface (name) =
+#define CDP1802_INTERFACE(name) const cdp1802_interface name =
 
 DECLARE_LEGACY_CPU_DEVICE(CDP1802, cdp1802);
 

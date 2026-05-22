@@ -56,10 +56,10 @@ DECLARE_LEGACY_DEVICE(MOS8520, cia8520);
 	MDRV_DEVICE_CONFIG(_config)
 
 #define MOS6526_INTERFACE(name) \
-	const mos6526_interface (name)=
+	const mos6526_interface name=
 
 #define MOS8520_INTERFACE(name) \
-	const mos6526_interface (name)=
+	const mos6526_interface name=
 
 /***************************************************************************
     TYPE DEFINITIONS

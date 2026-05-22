@@ -41,7 +41,7 @@ DECLARE_LEGACY_DEVICE(CDP1852, cdp1852);
 	MDRV_DEVICE_CONFIG(_config)
 
 #define CDP1852_INTERFACE(_name) \
-	const cdp1852_interface (_name)=
+	const cdp1852_interface _name =
 
 /***************************************************************************
     TYPE DEFINITIONS

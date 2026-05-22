@@ -45,7 +45,7 @@
 	MDRV_DEVICE_CONFIG(_config)
 
 #define Z80DMA_INTERFACE(_name) \
-	const z80dma_interface (_name) =
+	const z80dma_interface _name =
 
 
 

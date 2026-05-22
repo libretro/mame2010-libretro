@@ -34,7 +34,7 @@ DECLARE_LEGACY_SOUND_DEVICE(CDP1863, cdp1863);
 	MDRV_DEVICE_CONFIG_DATA32(cdp1863_config, clock2, _clock2)
 
 #define CDP1863_INTERFACE(name) \
-	const cdp1863_interface (name) =
+	const cdp1863_interface name =
 
 /***************************************************************************
     TYPE DEFINITIONS

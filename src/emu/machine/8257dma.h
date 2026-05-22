@@ -47,7 +47,7 @@ DECLARE_LEGACY_DEVICE(I8257, i8257);
 	MDRV_DEVICE_CONFIG(_config)
 
 #define I8257_INTERFACE(_name) \
-	const i8257_interface (_name) =
+	const i8257_interface _name =
 
 #define I8257_NUM_CHANNELS		(4)
 

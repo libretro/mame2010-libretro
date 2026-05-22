@@ -88,7 +88,7 @@ struct _superfx_config
 {
 	devcb_write_line	out_irq_func;			/* IRQ changed callback */
 };
-#define SUPERFX_CONFIG(name) const superfx_config (name) =
+#define SUPERFX_CONFIG(name) const superfx_config name =
 
 DECLARE_LEGACY_CPU_DEVICE(SUPERFX, superfx);
 

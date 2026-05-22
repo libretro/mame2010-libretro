@@ -27,7 +27,7 @@ struct _scmp_config
 	devcb_read_line		senseb_func;
 	devcb_write_line	halt_func;
 };
-#define SCMP_CONFIG(name) const scmp_config (name) =
+#define SCMP_CONFIG(name) const scmp_config name =
 
 /***************************************************************************
     FUNCTION PROTOTYPES

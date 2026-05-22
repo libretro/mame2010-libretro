@@ -44,7 +44,7 @@
 	MDRV_DEVICE_ADD((_tag), Z80STI, _clock)	\
 	MDRV_DEVICE_CONFIG(_config)
 
-#define Z80STI_INTERFACE(name) const z80sti_interface (name) =
+#define Z80STI_INTERFACE(name) const z80sti_interface name =
 
 
 

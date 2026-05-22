@@ -87,7 +87,7 @@ DECLARE_LEGACY_SOUND_DEVICE(CDP1864, cdp1864);
 	MDRV_SCREEN_RAW_PARAMS(_clock, CDP1864_SCREEN_WIDTH, CDP1864_HBLANK_END, CDP1864_HBLANK_START, CDP1864_TOTAL_SCANLINES, CDP1864_SCANLINE_VBLANK_END, CDP1864_SCANLINE_VBLANK_START)
 
 #define CDP1864_INTERFACE(name) \
-	const cdp1864_interface (name) =
+	const cdp1864_interface name =
 
 /***************************************************************************
     TYPE DEFINITIONS

@@ -46,7 +46,7 @@ DECLARE_LEGACY_DEVICE(I8255A, i8255a);
 	MDRV_DEVICE_CONFIG(_intrf)
 
 #define I8255A_INTERFACE(name) \
-	const i8255a_interface (name)=
+	const i8255a_interface name=
 
 /***************************************************************************
     TYPE DEFINITIONS
