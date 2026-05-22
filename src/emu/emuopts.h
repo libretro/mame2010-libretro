@@ -58,8 +58,6 @@
 #define OPTION_AUTOFRAMESKIP		"autoframeskip"
 #define OPTION_FRAMESKIP			"frameskip"
 #define OPTION_SECONDS_TO_RUN		"seconds_to_run"
-#define OPTION_THROTTLE				"throttle"
-#define OPTION_SLEEP				"sleep"
 #define OPTION_SPEED				"speed"
 #define OPTION_REFRESHSPEED			"refreshspeed"
 

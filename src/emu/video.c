@@ -48,14 +48,6 @@
 #include "aviio.h"
 #include "crsshair.h"
 
-#include "lh/snap.lh"
-
-
-
-/***************************************************************************
-    DEBUGGING
-***************************************************************************/
-
 /***************************************************************************
     CONSTANTS
 ***************************************************************************/
@@ -81,12 +73,8 @@ struct _video_global
 	/* overall speed computation */
 	uint32_t					overall_real_seconds;	/* accumulated real seconds at normal speed */
 	osd_ticks_t				overall_real_ticks;		/* accumulated real ticks at normal speed */
-	attotime				overall_emutime;		/* accumulated emulated time at normal speed */
-	uint32_t					overall_valid_counter;	/* number of consecutive valid time periods */
 
 	/* configuration */
-	uint8_t					throttle;				/* flag: TRUE if we're currently throttled */
-	uint8_t					fastforward;			/* flag: TRUE if we're currently fast-forwarding */
 	uint32_t					seconds_to_run;			/* number of seconds to run before quitting */
 	uint8_t					auto_frameskip;			/* flag: TRUE if we're automatically frameskipping */
 	uint32_t					speed;					/* overall speed (*100) */
@@ -96,20 +84,6 @@ struct _video_global
 	uint8_t					frameskip_level;		/* current frameskip level */
 	uint8_t					frameskip_counter;		/* counter that counts through the frameskip steps */
 	uint8_t					skipping_this_frame;	/* flag: TRUE if we are skipping the current frame */
-
-	/* snapshot stuff */
-	render_target *			snap_target;			/* screen shapshot target */
-	bitmap_t *				snap_bitmap;			/* screen snapshot bitmap */
-	uint8_t					snap_native;			/* are we using native per-screen layouts? */
-	int32_t					snap_width;				/* width of snapshots (0 == auto) */
-	int32_t					snap_height;			/* height of snapshots (0 == auto) */
-
-	/* movie recording */
-	mame_file *				mngfile;				/* handle to the open movie file */
-	avi_file *				avifile;				/* handle to the open movie file */
-	attotime				movie_frame_period;		/* period of a single movie frame */
-	attotime				movie_next_frame_time;	/* time of next frame */
-	uint32_t					movie_frame;			/* current movie frame number */
 };
 
 
@@ -157,18 +131,6 @@ static void update_frameskip(running_machine *machine);
 static void recompute_speed(running_machine *machine, attotime emutime);
 static void update_refresh_speed(running_machine *machine);
 
-/* screen snapshots */
-static void create_snapshot_bitmap(device_t *screen);
-
-/* movie recording */
-static void video_mng_record_frame(running_machine *machine);
-static void video_avi_record_frame(running_machine *machine);
-
-/* software rendering */
-static void rgb888_draw_primitives(const render_primitive *primlist, void *dstdata, uint32_t width, uint32_t height, uint32_t pitch);
-
-
-
 /***************************************************************************
     INLINE FUNCTIONS
 ***************************************************************************/
@@ -181,8 +143,8 @@ static void rgb888_draw_primitives(const render_primitive *primlist, void *dstda
 
 INLINE int effective_autoframeskip(running_machine *machine)
 {
-	/* if we're fast forwarding or paused, autoframeskip is disabled */
-	if (global.fastforward || machine->paused())
+	/* if we're paused, autoframeskip is disabled */
+	if (machine->paused())
 		return FALSE;
 
 	/* otherwise, it's up to the user */
@@ -198,11 +160,7 @@ INLINE int effective_autoframeskip(running_machine *machine)
 
 INLINE int effective_frameskip(void)
 {
-	/* if we're fast forwarding, use the maximum frameskip */
-	if (global.fastforward)
-		return FRAMESKIP_LEVELS - 1;
-
-	/* otherwise, it's up to the user */
+	/* it's up to the user */
 	return global.frameskip_level;
 }
 
@@ -229,9 +187,6 @@ INLINE int original_speed_setting(void)
 
 void video_init(running_machine *machine)
 {
-	const char *filename;
-	const char *viewname;
-
 	/* validate */
 	assert(machine != NULL);
 	assert(machine->config != NULL);
@@ -246,7 +201,6 @@ void video_init(running_machine *machine)
 	/* extract initial execution state from global configuration settings */
 	global.speed = original_speed_setting();
 	update_refresh_speed(machine);
-	global.throttle = options_get_bool(machine->options(), OPTION_THROTTLE);
 	global.auto_frameskip = options_get_bool(machine->options(), OPTION_AUTOFRAMESKIP);
 	global.frameskip_level = options_get_int(machine->options(), OPTION_FRAMESKIP);
 	global.seconds_to_run = options_get_int(machine->options(), OPTION_SECONDS_TO_RUN);
@@ -258,40 +212,6 @@ void video_init(running_machine *machine)
 	/* call the PALETTE_INIT function */
 	if (machine->config->m_init_palette != NULL)
 		(*machine->config->m_init_palette)(machine, memory_region(machine, "proms"));
-
-	/* create a render target for snapshots */
-	viewname = options_get_string(machine->options(), OPTION_SNAPVIEW);
-	global.snap_native = (machine->primary_screen != NULL && (viewname[0] == 0 || strcmp(viewname, "native") == 0));
-
-	/* the native target is hard-coded to our internal layout and has all options disabled */
-	if (global.snap_native)
-	{
-		global.snap_target = render_target_alloc(machine, layout_snap, RENDER_CREATE_SINGLE_FILE | RENDER_CREATE_HIDDEN);
-		assert(global.snap_target != NULL);
-		render_target_set_layer_config(global.snap_target, 0);
-	}
-
-	/* other targets select the specified view and turn off effects */
-	else
-	{
-		global.snap_target = render_target_alloc(machine, NULL, RENDER_CREATE_HIDDEN);
-		assert(global.snap_target != NULL);
-		render_target_set_view(global.snap_target, video_get_view_for_target(machine, global.snap_target, viewname, 0, 1));
-		render_target_set_layer_config(global.snap_target, render_target_get_layer_config(global.snap_target) & ~LAYER_CONFIG_ENABLE_SCREEN_OVERLAY);
-	}
-
-	/* extract snap resolution if present */
-	if (sscanf(options_get_string(machine->options(), OPTION_SNAPSIZE), "%dx%d", &global.snap_width, &global.snap_height) != 2)
-		global.snap_width = global.snap_height = 0;
-
-	/* start recording movie if specified */
-	filename = options_get_string(machine->options(), OPTION_MNGWRITE);
-	if (filename[0] != 0)
-		video_mng_begin_recording(machine, filename);
-
-	filename = options_get_string(machine->options(), OPTION_AVIWRITE);
-	if (filename[0] != 0)
-		video_avi_begin_recording(machine, filename);
 
 	/* if no screens, create a periodic timer to drive updates */
 	if (machine->primary_screen == NULL)
@@ -310,28 +230,9 @@ static void video_exit(running_machine &machine)
 {
 	int i;
 
-	/* stop recording any movie */
-	video_mng_end_recording(&machine);
-	video_avi_end_recording(&machine);
-
 	/* free all the graphics elements */
 	for (i = 0; i < MAX_GFX_ELEMENTS; i++)
 		gfx_element_free(machine.gfx[i]);
-
-	/* free the snapshot target */
-	if (global.snap_target != NULL)
-		render_target_free(global.snap_target);
-	if (global.snap_bitmap != NULL)
-		global_free(global.snap_bitmap);
-
-	/* print a final result if we have at least 5 seconds' worth of data */
-	if (global.overall_emutime.seconds >= 5)
-	{
-		osd_ticks_t tps = osd_ticks_per_second();
-		double final_real_time = (double)global.overall_real_seconds + (double)global.overall_real_ticks / (double)tps;
-		double final_emu_time = attotime_to_double(global.overall_emutime);
-		mame_printf_info("Average speed: %.2f%% (%d seconds)\n", 100 * final_emu_time / final_real_time, attotime_add_attoseconds(global.overall_emutime, ATTOSECONDS_PER_SECOND / 2).seconds);
-	}
 }
 
 
@@ -415,11 +316,7 @@ void video_frame_update(running_machine *machine, int debug)
 	/* update the internal render debugger */
 	debugint_update_during_game(machine);
 
-	/* libretro: the frontend owns frame pacing; the historical
-	   if-throttling-synchronise-before-rendering branch that used to
-	   sit here only ever called the now-gone update_throttle/
-	   throttle_until_ticks pair, both of which were short-circuited by
-	   effective_throttle() returning FALSE unconditionally. Nothing to
+	/* libretro: the frontend owns frame pacing. Nothing to
 	   do here -- we just hand the frame straight to the OSD. */
 
 	/* ask the OSD to update */
@@ -472,9 +369,6 @@ static int finish_screen_updates(running_machine *machine)
 	/* update our movie recording and burn-in state */
 	if (!machine->paused())
 	{
-		video_mng_record_frame(machine);
-		video_avi_record_frame(machine);
-
 		/* iterate over screens and update the burnin for the ones that care */
 		for (screen_device *screen = screen_first(*machine); screen != NULL; screen = screen_next(screen))
 			screen->update_burnin();
@@ -543,10 +437,6 @@ const char *video_get_speed_text(running_machine *machine)
 	/* if we're paused, just display Paused */
 	if (paused)
 		dest += sprintf(dest, "paused");
-
-	/* if we're fast forwarding, just display Fast-forward */
-	else if (global.fastforward)
-		dest += sprintf(dest, "fast ");
 
 	/* if we're auto frameskipping, display that plus the level */
 	else if (effective_autoframeskip(machine))
@@ -618,51 +508,6 @@ void video_set_frameskip(int frameskip)
 		global.frameskip_level = frameskip;
 	}
 }
-
-
-/*-------------------------------------------------
-    video_get_throttle - return the current
-    actual throttle
--------------------------------------------------*/
-
-int video_get_throttle(void)
-{
-	return global.throttle;
-}
-
-
-/*-------------------------------------------------
-    video_set_throttle - set the current
-    actual throttle
--------------------------------------------------*/
-
-void video_set_throttle(int throttle)
-{
-	global.throttle = throttle;
-}
-
-
-/*-------------------------------------------------
-    video_get_fastforward - return the current
-    fastforward value
--------------------------------------------------*/
-
-int video_get_fastforward(void)
-{
-	return global.fastforward;
-}
-
-
-/*-------------------------------------------------
-    video_set_fastforward - set the current
-    fastforward value
--------------------------------------------------*/
-
-void video_set_fastforward(int _fastforward)
-{
-	global.fastforward = _fastforward;
-}
-
 
 
 /*-------------------------------------------------
@@ -763,24 +608,6 @@ static void recompute_speed(running_machine *machine, attotime emutime)
 		/* remember the last times */
 		global.speed_last_realtime = realtime;
 		global.speed_last_emutime = emutime;
-
-		/* if we're throttled, this time period counts for overall speed; otherwise, we reset the counter */
-		if (!global.fastforward)
-			global.overall_valid_counter++;
-		else
-			global.overall_valid_counter = 0;
-
-		/* if we've had at least 4 consecutive valid periods, accumulate stats */
-		if (global.overall_valid_counter >= 4)
-		{
-			global.overall_real_ticks += delta_realtime;
-			while (global.overall_real_ticks >= tps)
-			{
-				global.overall_real_ticks -= tps;
-				global.overall_real_seconds++;
-			}
-			global.overall_emutime = attotime_add_attoseconds(global.overall_emutime, delta_emutime);
-		}
 	}
 
 	/* if we're past the "time-to-execute" requested, signal an exit */
@@ -792,291 +619,9 @@ static void recompute_speed(running_machine *machine, attotime emutime)
 	}
 }
 
-
-
-/***************************************************************************
-    SCREEN SNAPSHOTS
-***************************************************************************/
-
-/*-------------------------------------------------
-    screen_save_snapshot - save a snapshot
-    to  the given file handle
--------------------------------------------------*/
-
-void screen_save_snapshot(running_machine *machine, device_t *screen, mame_file *fp)
-{
-	png_info pnginfo = { 0 };
-	const rgb_t *palette;
-	char text[256];
-
-	/* validate */
-	assert(!global.snap_native || screen != NULL);
-	assert(fp != NULL);
-
-	/* create the bitmap to pass in */
-	create_snapshot_bitmap(screen);
-
-	/* add two text entries describing the image */
-	sprintf(text, APPNAME " %s", build_version);
-	png_add_text(&pnginfo, "Software", text);
-	sprintf(text, "%s %s", machine->gamedrv->manufacturer, machine->gamedrv->description);
-	png_add_text(&pnginfo, "System", text);
-
-	/* now do the actual work */
-	palette = (machine->palette != NULL) ? palette_entry_list_adjusted(machine->palette) : NULL;
-	png_write_bitmap(mame_core_file(fp), &pnginfo, global.snap_bitmap, machine->total_colors(), palette);
-
-	/* free any data allocated */
-	png_free(&pnginfo);
-}
-
-
-/*-------------------------------------------------
-    video_save_active_screen_snapshots - save a
-    snapshot of all active screens
--------------------------------------------------*/
-
-void video_save_active_screen_snapshots(running_machine *machine)
-{
-
-}
-
-
-/*-------------------------------------------------
-    creare_snapshot_bitmap - creates a
-    bitmap containing the screenshot for the
-    given screen
--------------------------------------------------*/
-
-static void create_snapshot_bitmap(device_t *screen)
-{
-	const render_primitive_list *primlist;
-	int32_t width, height;
-	int view_index;
-
-	/* select the appropriate view in our dummy target */
-	if (global.snap_native && screen != NULL)
-	{
-		view_index = screen->machine->m_devicelist.index(SCREEN, screen->tag());
-		assert(view_index != -1);
-		render_target_set_view(global.snap_target, view_index);
-	}
-
-	/* get the minimum width/height and set it on the target */
-	width = global.snap_width;
-	height = global.snap_height;
-	if (width == 0 || height == 0)
-		render_target_get_minimum_size(global.snap_target, &width, &height);
-	render_target_set_bounds(global.snap_target, width, height, 0);
-
-	/* if we don't have a bitmap, or if it's not the right size, allocate a new one */
-	if (global.snap_bitmap == NULL || width != global.snap_bitmap->width || height != global.snap_bitmap->height)
-	{
-		if (global.snap_bitmap != NULL)
-			global_free(global.snap_bitmap);
-		global.snap_bitmap = global_alloc(bitmap_t(width, height, BITMAP_FORMAT_RGB32));
-		assert(global.snap_bitmap != NULL);
-	}
-
-	/* render the screen there */
-	primlist = render_target_get_primitives(global.snap_target);
-	osd_lock_acquire(primlist->lock);
-	rgb888_draw_primitives(primlist->head, global.snap_bitmap->base, width, height, global.snap_bitmap->rowpixels);
-	osd_lock_release(primlist->lock);
-}
-
-
-
-/***************************************************************************
-    MNG MOVIE RECORDING
-***************************************************************************/
-
-/*-------------------------------------------------
-    video_mng_is_movie_active - return true if a
-    MNG movie is currently being recorded
--------------------------------------------------*/
-
-int video_mng_is_movie_active(running_machine *machine)
-{
-	return (global.mngfile != NULL);
-}
-
-
-/*-------------------------------------------------
-    video_mng_begin_recording - begin recording
-    of a MNG movie
--------------------------------------------------*/
-
-void video_mng_begin_recording(running_machine *machine, const char *name)
-{
-
-}
-
-
-/*-------------------------------------------------
-    video_mng_end_recording - stop recording of
-    a MNG movie
--------------------------------------------------*/
-
-void video_mng_end_recording(running_machine *machine)
-{
-	/* close the file if it exists */
-	if (global.mngfile != NULL)
-	{
-		mng_capture_stop(mame_core_file(global.mngfile));
-		mame_fclose(global.mngfile);
-		global.mngfile = NULL;
-		global.movie_frame = 0;
-	}
-}
-
-
-/*-------------------------------------------------
-    video_mng_record_frame - record a frame of a
-    movie
--------------------------------------------------*/
-
-static void video_mng_record_frame(running_machine *machine)
-{
-	/* only record if we have a file */
-	if (global.mngfile != NULL)
-	{
-		attotime curtime = timer_get_time(machine);
-		png_info pnginfo = { 0 };
-		png_error error;
-
-		/* create the bitmap */
-		create_snapshot_bitmap(NULL);
-
-		/* loop until we hit the right time */
-		while (attotime_compare(global.movie_next_frame_time, curtime) <= 0)
-		{
-			const rgb_t *palette;
-
-			/* set up the text fields in the movie info */
-			if (global.movie_frame == 0)
-			{
-				char text[256];
-
-				sprintf(text, APPNAME " %s", build_version);
-				png_add_text(&pnginfo, "Software", text);
-				sprintf(text, "%s %s", machine->gamedrv->manufacturer, machine->gamedrv->description);
-				png_add_text(&pnginfo, "System", text);
-			}
-
-			/* write the next frame */
-			palette = (machine->palette != NULL) ? palette_entry_list_adjusted(machine->palette) : NULL;
-			error = mng_capture_frame(mame_core_file(global.mngfile), &pnginfo, global.snap_bitmap, machine->total_colors(), palette);
-			png_free(&pnginfo);
-			if (error != PNGERR_NONE)
-			{
-				video_mng_end_recording(machine);
-				break;
-			}
-
-			/* advance time */
-			global.movie_next_frame_time = attotime_add(global.movie_next_frame_time, global.movie_frame_period);
-			global.movie_frame++;
-		}
-	}
-}
-
-
-
-/***************************************************************************
-    AVI MOVIE RECORDING
-***************************************************************************/
-
-/*-------------------------------------------------
-    video_avi_begin_recording - begin recording
-    of an AVI movie
--------------------------------------------------*/
-
-void video_avi_begin_recording(running_machine *machine, const char *name)
-{
-
-}
-
-
-/*-------------------------------------------------
-    video_avi_end_recording - stop recording of
-    a avi movie
--------------------------------------------------*/
-
-void video_avi_end_recording(running_machine *machine)
-{
-	/* close the file if it exists */
-	if (global.avifile != NULL)
-	{
-		avi_close(global.avifile);
-		global.avifile = NULL;
-		global.movie_frame = 0;
-	}
-}
-
-
-/*-------------------------------------------------
-    video_avi_record_frame - record a frame of a
-    movie
--------------------------------------------------*/
-
-static void video_avi_record_frame(running_machine *machine)
-{
-	/* only record if we have a file */
-	if (global.avifile != NULL)
-	{
-		attotime curtime = timer_get_time(machine);
-		avi_error avierr;
-
-		/* create the bitmap */
-		create_snapshot_bitmap(NULL);
-
-		/* loop until we hit the right time */
-		while (attotime_compare(global.movie_next_frame_time, curtime) <= 0)
-		{
-			/* write the next frame */
-			avierr = avi_append_video_frame_rgb32(global.avifile, global.snap_bitmap);
-			if (avierr != AVIERR_NONE)
-			{
-				video_avi_end_recording(machine);
-				break;
-			}
-
-			/* advance time */
-			global.movie_next_frame_time = attotime_add(global.movie_next_frame_time, global.movie_frame_period);
-			global.movie_frame++;
-		}
-	}
-}
-
-
-/*-------------------------------------------------
-    video_avi_add_sound - add sound to an AVI
-    recording
--------------------------------------------------*/
-
-void video_avi_add_sound(running_machine *machine, const int16_t *sound, int numsamples)
-{
-	/* only record if we have a file */
-	if (global.avifile != NULL)
-	{
-		avi_error avierr;
-
-		/* write the next frame */
-		avierr = avi_append_sound_samples(global.avifile, 0, sound + 0, numsamples, 1);
-		if (avierr == AVIERR_NONE)
-			avierr = avi_append_sound_samples(global.avifile, 1, sound + 1, numsamples, 1);
-		if (avierr != AVIERR_NONE)
-			video_avi_end_recording(machine);
-	}
-}
-
-
-
 /***************************************************************************
     BURN-IN GENERATION
 ***************************************************************************/
-
 
 /***************************************************************************
     CONFIGURATION HELPERS
@@ -1445,7 +990,6 @@ void screen_device::device_start()
 void screen_device::device_post_load()
 {
 	realloc_screen_bitmaps();
-	global.movie_next_frame_time = timer_get_time(machine);
 }
 
 
@@ -1593,10 +1137,6 @@ bool screen_device::update_partial(int scanline)
 	// validate arguments
 	assert(scanline >= 0);
 
-#if 0
-	LOG_PARTIAL_UPDATES(("Partial: update_partial(%s, %d): ", tag(), scanline));
-#endif
-
 	// these two checks only apply if we're allowed to skip frames
 	if (!(machine->config->m_video_attributes & VIDEO_ALWAYS_UPDATE))
 	{
@@ -1606,7 +1146,7 @@ bool screen_device::update_partial(int scanline)
 			return FALSE;
 
 		// skip if this screen is not visible anywhere
-      /* skipped because screen not live */
+		/* skipped because screen not live */
 		if (!render_is_live_screen(this))
 			return FALSE;
 	}
@@ -1628,10 +1168,6 @@ bool screen_device::update_partial(int scanline)
 	if (clip.min_y <= clip.max_y)
 	{
 		uint32_t flags = UPDATE_HAS_NOT_CHANGED;
-
-#if 0
-		LOG_PARTIAL_UPDATES(("updating %d-%d\n", clip.min_y, clip.max_y));
-#endif
 
 		if (machine->config->m_video_update != NULL)
 			flags = (*machine->config->m_video_update)(this, m_bitmap[m_curbitmap], &clip);
@@ -1991,22 +1527,5 @@ void screen_device::finalize_burnin()
 {
 
 }
-
-
-
-//**************************************************************************
-//  SOFTWARE RENDERING
-//**************************************************************************
-
-#define FUNC_PREFIX(x)		rgb888_##x
-#define PIXEL_TYPE			uint32_t
-#define SRCSHIFT_R			0
-#define SRCSHIFT_G			0
-#define SRCSHIFT_B			0
-#define DSTSHIFT_R			16
-#define DSTSHIFT_G			8
-#define DSTSHIFT_B			0
-
-#include "rendersw.c"
 
 const device_type SCREEN = screen_device_config::static_alloc_device_config;

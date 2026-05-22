@@ -341,7 +341,7 @@ void video_init(running_machine *machine);
 void video_frame_update(running_machine *machine, int debug);
 
 
-/* ----- throttling/frameskipping/performance ----- */
+/* ----- frameskipping/performance ----- */
 
 /* are we skipping the current frame? */
 int video_skip_this_frame(void);
@@ -360,40 +360,10 @@ double video_get_speed_percent(running_machine *machine);
 int video_get_frameskip(void);
 void video_set_frameskip(int frameskip);
 
-/* get/set the current throttle */
-int video_get_throttle(void);
-void video_set_throttle(int throttle);
-
-/* get/set the current fastforward state */
-int video_get_fastforward(void);
-void video_set_fastforward(int fastforward);
-
-
-/* ----- snapshots ----- */
-
-/* save a snapshot of a given screen */
-void screen_save_snapshot(running_machine *machine, device_t *screen, mame_file *fp);
-
-/* save a snapshot of all the active screens */
-void video_save_active_screen_snapshots(running_machine *machine);
-
-
-/* ----- movie recording ----- */
-
-int video_mng_is_movie_active(running_machine *machine);
-void video_mng_begin_recording(running_machine *machine, const char *name);
-void video_mng_end_recording(running_machine *machine);
-
-void video_avi_begin_recording(running_machine *machine, const char *name);
-void video_avi_end_recording(running_machine *machine);
-void video_avi_add_sound(running_machine *machine, const int16_t *sound, int numsamples);
-
-
 /* ----- configuration helpers ----- */
 
 /* select a view for a given target */
 int video_get_view_for_target(running_machine *machine, render_target *target, const char *viewname, int targetindex, int numtargets);
-
 
 /* ----- debugging helpers ----- */
 

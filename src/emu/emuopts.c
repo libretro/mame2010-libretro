@@ -78,8 +78,6 @@ const options_entry mame_core_options[] =
 	{ "autoframeskip;afs",           "0",         OPTION_BOOLEAN,    "enable automatic frameskip selection" },
 	{ "frameskip;fs(0-10)",          "0",         0,                 "set frameskip to fixed value, 0-10 (autoframeskip must be disabled)" },
 	{ "seconds_to_run;str",          "0",         0,                 "number of emulated seconds to run before automatically exiting" },
-	{ "throttle",                    "1",         OPTION_BOOLEAN,    "enable throttling to keep game running in sync with real time" },
-	{ "sleep",                       "1",         OPTION_BOOLEAN,    "enable sleeping, which gives time back to other applications when idle" },
 	{ "speed(0.01-100)",             "1.0",       0,                 "controls the speed of gameplay, relative to realtime; smaller numbers are slower" },
 	{ "refreshspeed;rs",             "0",         OPTION_BOOLEAN,    "automatically adjusts the speed of gameplay to keep the refresh rate lower than the screen" },
 

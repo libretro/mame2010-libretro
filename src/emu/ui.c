@@ -137,7 +137,6 @@ static uint32_t handler_messagebox(running_machine *machine, render_container *c
 static uint32_t handler_messagebox_ok(running_machine *machine, render_container *container, uint32_t state);
 static uint32_t handler_messagebox_anykey(running_machine *machine, render_container *container, uint32_t state);
 static uint32_t handler_ingame(running_machine *machine, render_container *container, uint32_t state);
-static uint32_t handler_load_save(running_machine *machine, render_container *container, uint32_t state);
 
 /* slider controls */
 static slider_state *slider_alloc(running_machine *machine, const char *title, int32_t minval, int32_t defval, int32_t maxval, int32_t incval, slider_update update, void *arg);
@@ -1399,34 +1398,8 @@ static uint32_t handler_ingame(running_machine *machine, render_container *conta
 	if (ui_input_pressed(machine, IPT_UI_SHOW_PROFILER))
 		ui_set_show_profiler(!ui_get_show_profiler());
 
-	/* toggle throttle? */
-	if (ui_input_pressed(machine, IPT_UI_THROTTLE))
-		video_set_throttle(!video_get_throttle());
-
-	/* check for fast forward */
-	if (input_type_pressed(machine, IPT_UI_FAST_FORWARD, 0))
-	{
-		video_set_fastforward(TRUE);
-		ui_show_fps_temp(0.5);
-	}
-	else
-		video_set_fastforward(FALSE);
-
 	return 0;
 }
-
-
-/*-------------------------------------------------
-    handler_load_save - leads the user through
-    specifying a game to save or load
--------------------------------------------------*/
-
-static uint32_t handler_load_save(running_machine *machine, render_container *container, uint32_t state)
-{
-    return 0;
-}
-
-
 
 /***************************************************************************
     SLIDER CONTROLS

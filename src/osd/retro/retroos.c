@@ -87,17 +87,6 @@ osd_ticks_t osd_ticks_per_second(void)
 }
 
 //============================================================
-//  osd_sleep
-//============================================================
-
-void osd_sleep(osd_ticks_t duration)
-{
-	/* libretro: never sleep. Frame pacing is the frontend's job;
-	   any internal sleeping breaks fast-forward and frame pacing. */
-	(void)duration;
-}
-
-//============================================================
 //  osd_num_processors
 //============================================================
 

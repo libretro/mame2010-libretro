@@ -42,13 +42,12 @@ void osd_update(running_machine* machine,int skip_redraw);
 void osd_update_audio_stream(running_machine* machine,short *buffer, int samples_this_frame);
 void osd_exit(running_machine &machine);
 
-void retro_poll_mame_input();
 void retro_init (void);
 void prep_retro_rotation(int rot);
 void init_input_descriptors(void);
 
-extern void retro_finish();
-extern void retro_main_loop();
+extern void retro_finish(void);
+extern void retro_main_loop(void);
 
 extern int osd_num_processors;
 
