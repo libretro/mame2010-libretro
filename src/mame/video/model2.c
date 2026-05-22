@@ -230,11 +230,14 @@ INLINE void vector_cross3( poly_vertex *dst, poly_vertex *v0, poly_vertex *v1, p
 	dst->pz = (p1.x * p2.y) - (p1.y * p2.x);
 }
 
-/* 1.8.23 float to 4.12 float converter, courtesy of Aaron Giles */
-static uint16_t float_to_zval( float floatval )
+/* 1.8.23 float to 4.12 float converter, courtesy of Aaron Giles.
+ * z_adjust is the raw IEEE float bit pattern of the polygon z-sort base;
+ * its exponent byte is used as the conversion's reference exponent so
+ * different z ranges sort consistently. */
+static uint16_t float_to_zval( float floatval, int32_t z_adjust )
 {
 	int32_t fpint = f2u(floatval);
-	int32_t exponent = ((fpint >> 23) & 0xff) - 127;
+	int32_t exponent = ((fpint >> 23) & 0xff) - ((z_adjust >> 23) & 0xff);
 	uint32_t mantissa = fpint & 0x7fffff;
 
 	/* round the low bits and reduce to 12 */
@@ -328,7 +331,7 @@ typedef struct
 	int16_t				center[4][2];		/* Centers (eye 0[x,y],1[x,y],2[x,y],3[x,y]) */
 	uint16_t				center_sel;			/* Selected center */
 	uint32_t				reverse;			/* Left/Right Reverse */
-	float				z_adjust;			/* ZSort Mode */
+	int32_t				z_adjust;			/* ZSort Mode (raw IEEE float bit pattern; the high byte holds the exponent reference used by float_to_zval) */
 	float				triangle_z;			/* Current Triangle z value */
 	uint8_t				master_z_clip;		/* Master Z-Clip value */
 	uint32_t				cur_command;		/* Current command */
@@ -477,8 +480,10 @@ static void model2_3d_process_quad( uint32_t attr )
 	if ( ((attr >> 8) & 3) == 0 )
 		cull = 1;
 
-	/* if the minimum z value is bigger than the master z clip value, don't render */
-	if ( (int32_t)(1.0/min_z) > raster.master_z_clip )
+	/* if the minimum z value is bigger than the master z clip value, don't render.
+	 * 0xff is the "disable z clipping" signal - skip the test then, otherwise
+	 * close-up scenes (e.g. menu previews) where (1/depth) > 255 get killed. */
+	if ( raster.master_z_clip != 0xff && (int32_t)(1.0/min_z) > raster.master_z_clip )
 		cull = 1;
 
 	/* if the maximum z value is < 0 then we can safely clip the entire polygon */
@@ -522,7 +527,7 @@ static void model2_3d_process_quad( uint32_t attr )
 			triangle *ztri;
 
 			/* adjust and set the object z-sort value */
-			object.z = float_to_zval( zvalue + raster.z_adjust );
+			object.z = float_to_zval( zvalue, raster.z_adjust );
 
 			/* get our list read to add the triangles */
 			ztri = raster.tri_sorted_list[object.z];
@@ -713,8 +718,9 @@ static void model2_3d_process_triangle( uint32_t attr )
 	if ( ((attr >> 8) & 3) == 0 )
 		cull = 1;
 
-	/* if the minimum z value is bigger than the master z clip value, don't render */
-	if ( (int32_t)(1.0/min_z) > raster.master_z_clip )
+	/* if the minimum z value is bigger than the master z clip value, don't render.
+	 * 0xff means "no z clipping" - skip the test then. */
+	if ( raster.master_z_clip != 0xff && (int32_t)(1.0/min_z) > raster.master_z_clip )
 		cull = 1;
 
 	/* if the maximum z value is < 0 then we can safely clip the entire polygon */
@@ -759,7 +765,7 @@ static void model2_3d_process_triangle( uint32_t attr )
 			triangle *ztri;
 
 			/* adjust and set the object z-sort value */
-			object.z = float_to_zval( zvalue + raster.z_adjust );
+			object.z = float_to_zval( zvalue, raster.z_adjust );
 
 			/* get our list read to add the triangles */
 			ztri = raster.tri_sorted_list[object.z];
@@ -1288,8 +1294,9 @@ static void model2_3d_push( uint32_t input )
 
 			case 0x08:	/* ZSort mode */
 			{
-				/* save the zsort mode value */
-				raster.z_adjust = u2f( raster.command_buffer[0] << 8 );
+				/* save the zsort mode value (raw bit pattern; only the
+				 * exponent byte is consumed by float_to_zval) */
+				raster.z_adjust = raster.command_buffer[0] << 8;
 
 				/* done with this command */
 				raster.cur_command = 0;
