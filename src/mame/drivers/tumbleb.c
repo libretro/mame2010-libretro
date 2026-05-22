@@ -2009,7 +2009,7 @@ static MACHINE_RESET( tumbleb )
 	state->music_is_playing = 0;
 	state->flipscreen = 0;
 	state->tilebank = 0;
-	memset(state->control_0, 0, ARRAY_LENGTH(state->control_0));
+	memset(state->control_0, 0, sizeof(state->control_0));
 }
 
 static MACHINE_DRIVER_START( tumblepb )
