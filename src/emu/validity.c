@@ -871,9 +871,18 @@ static void validate_dip_settings(const input_field_config *field, const game_dr
 	{
 		int strindex = get_defstr_index(defstr_map, setting->name, driver, error);
 
-		/* note any coinage strings */
-		if (strindex >= INPUT_STRING_9C_1C && strindex <= INPUT_STRING_1C_9C)
-			coin_list[strindex - INPUT_STRING_9C_1C] = 1;
+		/* note any coinage strings -- compute the offset once and bounds-check
+		 * the unsigned form so out-of-range negatives become huge positives
+		 * that the same comparison catches. This is equivalent to the pair
+		 * (strindex >= 9C_1C && strindex <= 1C_9C) but encodes the safety
+		 * predicate in a shape GCC's value-range propagation can follow
+		 * through inlining, suppressing a false-positive
+		 * -Wstringop-overflow that fires on GCC 12+. */
+		{
+			const unsigned coin_idx = (unsigned)(strindex - INPUT_STRING_9C_1C);
+			if (coin_idx < sizeof(coin_list))
+				coin_list[coin_idx] = 1;
+		}
 
 		/* make sure demo sounds default to on */
 		if (field->name == demo_sounds && strindex == INPUT_STRING_On && field->defvalue != setting->value)
