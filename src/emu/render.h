@@ -330,9 +330,6 @@ void render_init(running_machine *machine);
 /* return a boolean indicating if the screen is live */
 int render_is_live_screen(device_t *screen);
 
-/* return the smallest maximum update rate across all targets */
-float render_get_max_update_rate(void);
-
 /* select the UI target */
 void render_set_ui_target(render_target *target);
 
@@ -366,12 +363,6 @@ void render_target_get_bounds(render_target *target, int32_t *width, int32_t *he
 
 /* set the bounds and pixel aspect of a target */
 void render_target_set_bounds(render_target *target, int32_t width, int32_t height, float pixel_aspect);
-
-/* get the maximum update rate (refresh rate) of a target, or 0 if no maximum */
-float render_target_get_max_update_rate(render_target *target);
-
-/* set the maximum update rate (refresh rate) of a target, or 0 if no maximum */
-void render_target_set_max_update_rate(render_target *target, float updates_per_second);
 
 /* get the orientation of a target */
 int render_target_get_orientation(render_target *target);

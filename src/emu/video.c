@@ -118,7 +118,6 @@ static TIMER_CALLBACK( screenless_update_callback );
 
 /* throttling/frameskipping/performance */
 static void update_frameskip(running_machine *machine);
-static void update_refresh_speed(running_machine *machine);
 
 /***************************************************************************
     INLINE FUNCTIONS
@@ -188,7 +187,6 @@ void video_init(running_machine *machine)
 
 	/* extract initial execution state from global configuration settings */
 	global.speed = original_speed_setting();
-	update_refresh_speed(machine);
 	global.auto_frameskip = options_get_bool(machine->options(), OPTION_AUTOFRAMESKIP);
 	global.frameskip_level = options_get_int(machine->options(), OPTION_FRAMESKIP);
 
@@ -522,48 +520,6 @@ static void update_frameskip(running_machine *machine)
 	global.skipping_this_frame = skiptable[effective_frameskip()][global.frameskip_counter];
 }
 
-
-/*-------------------------------------------------
-    update_refresh_speed - update the global.speed
-    based on the maximum refresh rate supported
--------------------------------------------------*/
-
-static void update_refresh_speed(running_machine *machine)
-{
-	/* only do this if the refreshspeed option is used */
-	if (options_get_bool(machine->options(), OPTION_REFRESHSPEED))
-	{
-		float minrefresh = render_get_max_update_rate();
-		if (minrefresh != 0)
-		{
-			attoseconds_t min_frame_period = ATTOSECONDS_PER_SECOND;
-			uint32_t original_speed = original_speed_setting();
-			uint32_t target_speed;
-
-			/* find the screen with the shortest frame period (max refresh rate) */
-			/* note that we first check the token since this can get called before all screens are created */
-			for (screen_device *screen = screen_first(*machine); screen != NULL; screen = screen_next(screen))
-			{
-				attoseconds_t period = screen->frame_period().attoseconds;
-				if (period != 0)
-					min_frame_period = MIN(min_frame_period, period);
-			}
-
-			/* compute a target speed as an integral percentage */
-			/* note that we lop 0.25Hz off of the minrefresh when doing the computation to allow for
-               the fact that most refresh rates are not accurate to 10 digits... */
-			target_speed = floor((minrefresh - 0.25f) * 100.0 / ATTOSECONDS_TO_HZ(min_frame_period));
-			target_speed = MIN(target_speed, original_speed);
-
-			/* if we changed, log that verbosely */
-			if (target_speed != global.speed)
-			{
-				mame_printf_verbose("Adjusting target speed to %d%% (hw=%.2fHz, game=%.2fHz, adjusted=%.2fHz)\n", target_speed, minrefresh, ATTOSECONDS_TO_HZ(min_frame_period), ATTOSECONDS_TO_HZ(min_frame_period * 100 / target_speed));
-				global.speed = target_speed;
-			}
-		}
-	}
-}
 
 
 /***************************************************************************
@@ -984,9 +940,6 @@ void screen_device::configure(int width, int height, const rectangle &visarea, a
 
 	// start the VBLANK timer
 	timer_adjust_oneshot(m_vblank_begin_timer, time_until_vblank_start(), 0);
-
-	// adjust speed if necessary
-	update_refresh_speed(machine);
 }
 
 

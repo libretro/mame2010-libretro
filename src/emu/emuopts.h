@@ -58,7 +58,6 @@
 #define OPTION_AUTOFRAMESKIP		"autoframeskip"
 #define OPTION_FRAMESKIP			"frameskip"
 #define OPTION_SPEED				"speed"
-#define OPTION_REFRESHSPEED			"refreshspeed"
 
 /* core rotation options */
 #define OPTION_ROTATE				"rotate"

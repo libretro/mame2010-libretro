@@ -158,7 +158,6 @@ public:
 	int32_t				height;				/* height in pixels */
 	render_bounds		bounds;				/* bounds of the target */
 	float				pixel_aspect;		/* aspect ratio of individual pixels */
-	float				max_refresh;		/* maximum refresh rate, 0 or if none */
 	int					orientation;		/* orientation */
 	int					layerconfig;		/* layer configuration */
 	layout_view *		base_view;			/* the view at the time of first frame */
@@ -980,30 +979,6 @@ int render_is_live_screen(device_t *screen)
 
 
 /*-------------------------------------------------
-    render_get_max_update_rate - return the
-    smallest maximum update rate across all targets
--------------------------------------------------*/
-
-float render_get_max_update_rate(void)
-{
-	render_target *target;
-	float minimum = 0;
-
-	/* iterate over all live targets and or together their screen masks */
-	for (target = targetlist; target != NULL; target = target->next)
-		if (target->max_refresh != 0)
-		{
-			if (minimum == 0)
-				minimum = target->max_refresh;
-			else
-				minimum = MIN(target->max_refresh, minimum);
-		}
-
-	return minimum;
-}
-
-
-/*-------------------------------------------------
     render_set_ui_target - select the UI target
 -------------------------------------------------*/
 
@@ -1276,30 +1251,6 @@ void render_target_set_bounds(render_target *target, int32_t width, int32_t heig
 	target->bounds.x1 = (float)width;
 	target->bounds.y1 = (float)height;
 	target->pixel_aspect = pixel_aspect;
-}
-
-
-/*-------------------------------------------------
-    render_target_get_max_update_rate - get the
-    maximum update rate (refresh rate) of a target,
-    or 0 if no maximum
--------------------------------------------------*/
-
-float render_target_get_max_update_rate(render_target *target)
-{
-	return target->max_refresh;
-}
-
-
-/*-------------------------------------------------
-    render_target_set_max_update_rate - set the
-    maximum update rate (refresh rate) of a target,
-    or 0 if no maximum
--------------------------------------------------*/
-
-void render_target_set_max_update_rate(render_target *target, float updates_per_second)
-{
-	target->max_refresh = updates_per_second;
 }
 
 
