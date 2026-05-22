@@ -892,10 +892,25 @@ INLINE uint16_t get_texel( uint32_t base_x, uint32_t base_y, int x, int y, uint3
 	int		x2 = (int)base_x + x;
 	int		y2 = (int)base_y + y;
 
+	/* The logical texture sheet is 2048x1024 (with mip0 occupying half of
+	 * it, since mips alternate halves of texture RAM); higher mip levels
+	 * compress base_x/base_y to the same window, but x/y come from the
+	 * polygon's interpolated UVs which can exceed the per-mip extent when
+	 * the texture is set to wrap.  Without masking, an oversized x+base_x
+	 * (up to a few thousand) walks past the wraparound case below and the
+	 * sheet[] indexing scribbles past the 2MB allocation - the point-
+	 * sampling renderer rarely tripped this, but bilinear hits the corner
+	 * cases four times per pixel and Daytona reliably crashes on it.
+	 * Mask both axes to the logical sheet extent first; with x2 in
+	 * [0,2047] and y2 in [0,1023] the wrap-and-XOR below produces a
+	 * physical (x2,y2) inside the 1024x2048 storage shape, and the final
+	 * sheet[offset>>1] is provably within the 0x80000-u32 allocation. */
+	x2 &= 2047;
+	y2 &= 1023;
+
 	/* Texture sheets are addressed as 2048x1024 but stored in RAM as
 	 * 1024x2048: when the X coordinate runs past 1024, wrap back to the
-	 * left and flip the Y address by 1024.  Without this the upper half
-	 * of the sheet (tile-X 32..63) reads off the end of valid memory. */
+	 * left and flip the Y address by 1024. */
 	if (x2 >= 1024)
 	{
 		x2 -= 1024;
