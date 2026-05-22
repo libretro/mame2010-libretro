@@ -407,14 +407,18 @@ static void SETEXTERNAL(mb86233_state *cpustate, uint32_t EB, uint32_t offset, u
     {
         GETEXTPORT()[offset] = value;
 
-        /* atan compare: store sticky external bit when |a| <= |b| */
-        if (offset == 0x25 || offset == 0x24)
-        {
-            if ((GETEXTPORT()[0x24] & 0x7fffffff) <= (GETEXTPORT()[0x25] & 0x7fffffff))
-                GETSR() |= F_CPD;     /* reuse cpd as the "external" sticky bit */
-            else
-                GETSR() &= ~F_CPD;
-        }
+        /* atan compare: a write to any of the atan base slots (0x24-0x27)
+         * latches the |atan_base[0]| <= |atan_base[1]| result into gpio0,
+         * which conditional branches reach via cond 0x0a.  Previous version
+         * stashed it in F_CPD, but nothing in the branch dispatch reads
+         * F_CPD - so any TGP firmware that did an atan and branched on the
+         * result always saw the same answer (gpio0 = 0).  That breaks
+         * IK / angle code that picks one of two formulas based on which
+         * input is larger, which is exactly the sort of thing VF2's bone
+         * rig math wants. */
+        if (offset >= 0x24 && offset <= 0x27)
+            cpustate->gpio0 = ((GETEXTPORT()[0x24] & 0x7fffffffu)
+                            <= (GETEXTPORT()[0x25] & 0x7fffffffu)) ? 1 : 0;
         return;
     }
 
