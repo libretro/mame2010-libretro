@@ -498,7 +498,10 @@ else ifeq ($(platform), wincross)
 	NATIVELD = $(LD)
 	CC_AS ?= gcc
 
-	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
+	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=src/osd/retro/link.T
+ifneq ($(MDEBUG),1)
+	SHARED += -s
+endif
 	CCOMFLAGS +=-D__WIN32__ -D__WIN32_LIBRETRO__ 
 ifeq ($(BUILD_BIN2C), 1)
 	CCOMFLAGS += -DCOMPILE_DATS
@@ -516,7 +519,7 @@ else
 	NATIVELD = $(LD)
 	CC_AS ?= gcc
    BUILD_ZLIB = 1
-	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
+	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=src/osd/retro/link.T
 ifneq ($(MDEBUG),1)
 	SHARED += -s
 endif
