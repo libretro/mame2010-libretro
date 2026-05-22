@@ -859,18 +859,31 @@ static void model2_3d_process_triangle( uint32_t attr )
 
 INLINE uint16_t get_texel( uint32_t base_x, uint32_t base_y, int x, int y, uint32_t *sheet )
 {
-	uint32_t	baseoffs = ((base_y/2)*512)+(base_x/2);
-	uint32_t	texeloffs = ((y/2)*512)+(x/2);
-	uint32_t	offset = baseoffs + texeloffs;
-	uint32_t	texel = sheet[offset>>1];
+	uint32_t	offset;
+	uint32_t	texel;
+	int		x2 = (int)base_x + x;
+	int		y2 = (int)base_y + y;
+
+	/* Texture sheets are addressed as 2048x1024 but stored in RAM as
+	 * 1024x2048: when the X coordinate runs past 1024, wrap back to the
+	 * left and flip the Y address by 1024.  Without this the upper half
+	 * of the sheet (tile-X 32..63) reads off the end of valid memory. */
+	if (x2 >= 1024)
+	{
+		x2 -= 1024;
+		y2 ^= 1024;
+	}
+
+	offset = ((uint32_t)(y2/2)*512) + (uint32_t)(x2/2);
+	texel = sheet[offset>>1];
 
 	if ( offset & 1 )
 		texel >>= 16;
 
-	if ( (y & 1) == 0 )
+	if ( (y2 & 1) == 0 )
 		texel >>= 8;
 
-	if ( (x & 1) == 0 )
+	if ( (x2 & 1) == 0 )
 		texel >>= 4;
 
 	return (texel & 0x0f);
