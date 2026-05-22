@@ -182,6 +182,11 @@ state_save_error state_save_write_file(running_machine *machine, mame_file *file
 /* read in a save state file */
 state_save_error state_save_read_file(running_machine *machine, mame_file *file);
 
+/* libretro: uncompressed in-memory save/restore */
+uint32_t state_save_get_size(running_machine *machine);
+state_save_error state_save_write_buffer(running_machine *machine, void *buf, size_t size);
+state_save_error state_save_read_buffer(running_machine *machine, const void *buf, size_t size);
+
 
 
 /* ----- debugging ----- */

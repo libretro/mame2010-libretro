@@ -181,9 +181,29 @@ static void initInput(running_machine* machine);
 /*********************************************/
 
 
-size_t retro_serialize_size(void){ return 0; }
-bool retro_serialize(void *data, size_t size){ return false; }
-bool retro_unserialize(const void * data, size_t size){ return false; }
+size_t retro_serialize_size(void)
+{
+   running_machine *machine = retro_get_machine();
+   if (machine == NULL)
+      return 0;
+   return state_save_get_size(machine);
+}
+
+bool retro_serialize(void *data, size_t size)
+{
+   running_machine *machine = retro_get_machine();
+   if (machine == NULL)
+      return false;
+   return state_save_write_buffer(machine, data, size) == STATERR_NONE;
+}
+
+bool retro_unserialize(const void *data, size_t size)
+{
+   running_machine *machine = retro_get_machine();
+   if (machine == NULL)
+      return false;
+   return state_save_read_buffer(machine, data, size) == STATERR_NONE;
+}
 
 unsigned retro_get_region (void) {return RETRO_REGION_NTSC;}
 void *retro_get_memory_data(unsigned type) {return 0;}

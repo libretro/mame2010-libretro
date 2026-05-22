@@ -104,6 +104,9 @@ core_options *mame_options(void);
 /* return true if the given machine is valid */
 int mame_is_valid_machine(running_machine *machine);
 
+/* libretro: live running_machine accessor (mame.c) */
+running_machine *retro_get_machine(void);
+
 
 
 /* ----- output management ----- */

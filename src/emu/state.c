@@ -598,6 +598,134 @@ state_save_error state_save_read_file(running_machine *machine, mame_file *file)
 	return STATERR_NONE;
 }
 
+/*-------------------------------------------------
+    state_save_get_size - exact size of an
+    uncompressed in-memory save state
+-------------------------------------------------*/
+
+uint32_t state_save_get_size(running_machine *machine)
+{
+	state_private *global = machine->state_data;
+	state_entry *entry;
+	uint32_t size = HEADER_SIZE;
+
+	if (global == NULL || global->illegal_regs > 0)
+		return 0;
+
+	for (entry = global->entrylist; entry != NULL; entry = entry->next)
+		size += entry->typesize * entry->typecount;
+
+	return size;
+}
+
+
+/*-------------------------------------------------
+    state_save_write_buffer - write the machine
+    state, uncompressed, into a memory buffer
+    (used by the libretro serialize interface)
+-------------------------------------------------*/
+
+state_save_error state_save_write_buffer(running_machine *machine, void *buf, size_t size)
+{
+	state_private *global = machine->state_data;
+	uint32_t signature = get_signature(machine);
+	uint8_t *dst = (uint8_t *)buf;
+	uint8_t header[HEADER_SIZE];
+	state_callback *func;
+	state_entry *entry;
+	uint32_t offset;
+
+	/* if we have illegal registrations, return an error */
+	if (global->illegal_regs > 0)
+		return STATERR_ILLEGAL_REGISTRATIONS;
+
+	/* refuse to write if the buffer is too small */
+	if (size < state_save_get_size(machine))
+		return STATERR_WRITE_ERROR;
+
+	/* generate the header (data is written native-endian, like the file path) */
+	memcpy(&header[0], ss_magic_num, 8);
+	header[8] = SAVE_VERSION;
+	header[9] = NATIVE_ENDIAN_VALUE_LE_BE(0, SS_MSB_FIRST);
+	strncpy((char *)&header[0x0a], machine->gamedrv->name, 0x1c - 0x0a);
+	*(uint32_t *)&header[0x1c] = LITTLE_ENDIANIZE_INT32(signature);
+
+	memcpy(dst, header, HEADER_SIZE);
+	offset = HEADER_SIZE;
+
+	/* call the pre-save functions */
+	for (func = global->prefunclist; func != NULL; func = func->next)
+		(*func->func.presave)(machine, func->param);
+
+	/* then write all the data */
+	for (entry = global->entrylist; entry != NULL; entry = entry->next)
+	{
+		uint32_t totalsize = entry->typesize * entry->typecount;
+		memcpy(dst + offset, entry->data, totalsize);
+		offset += totalsize;
+	}
+
+	return STATERR_NONE;
+}
+
+
+/*-------------------------------------------------
+    state_save_read_buffer - restore the machine
+    state from an uncompressed memory buffer
+    (used by the libretro unserialize interface)
+-------------------------------------------------*/
+
+state_save_error state_save_read_buffer(running_machine *machine, const void *buf, size_t size)
+{
+	state_private *global = machine->state_data;
+	uint32_t signature = get_signature(machine);
+	const uint8_t *src = (const uint8_t *)buf;
+	uint8_t header[HEADER_SIZE];
+	state_callback *func;
+	state_entry *entry;
+	uint32_t offset;
+	int flip;
+
+	/* if we have illegal registrations, return an error */
+	if (global->illegal_regs > 0)
+		return STATERR_ILLEGAL_REGISTRATIONS;
+
+	/* must at least contain the header */
+	if (size < HEADER_SIZE)
+		return STATERR_READ_ERROR;
+
+	/* verify the header; no error callback - this runs every frame under runahead */
+	memcpy(header, src, HEADER_SIZE);
+	if (validate_header(header, machine->gamedrv->name, signature, NULL, "") != STATERR_NONE)
+		return STATERR_INVALID_HEADER;
+
+	/* ensure the buffer is large enough for the full payload */
+	if (size < state_save_get_size(machine))
+		return STATERR_READ_ERROR;
+
+	offset = HEADER_SIZE;
+
+	/* determine whether or not to flip the data (only across an endian mismatch) */
+	flip = NATIVE_ENDIAN_VALUE_LE_BE((header[9] & SS_MSB_FIRST) != 0, (header[9] & SS_MSB_FIRST) == 0);
+
+	/* read all the data, flipping if necessary */
+	for (entry = global->entrylist; entry != NULL; entry = entry->next)
+	{
+		uint32_t totalsize = entry->typesize * entry->typecount;
+		memcpy(entry->data, src + offset, totalsize);
+		offset += totalsize;
+
+		if (flip)
+			flip_data(entry);
+	}
+
+	/* call the post-load functions */
+	for (func = global->postfunclist; func != NULL; func = func->next)
+		(*func->func.postload)(machine, func->param);
+
+	return STATERR_NONE;
+}
+
 
 
 /***************************************************************************

@@ -249,6 +249,12 @@ void retro_main_loop(void)
 */
 }
 
+/* libretro: expose the live machine for the serialize interface */
+running_machine *retro_get_machine(void)
+{
+   return global_machine;
+}
+
 void free_machineconfig(void)
 {
    global_free(retro_global_machine);
