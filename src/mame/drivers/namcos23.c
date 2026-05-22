@@ -2871,6 +2871,12 @@ static const mips3_config config =
 	8192				/* data cache size - VERIFIED */
 };
 
+static const c352_interface namcos23_c352_interface =
+{
+	296	/* System 23 boards use /296, not the /288 spec default
+		   (per-board pin-configured divider) */
+};
+
 static MACHINE_DRIVER_START( gorgon )
 
 	/* basic machine hardware */
@@ -2911,7 +2917,12 @@ static MACHINE_DRIVER_START( gorgon )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 14745600)
+	/* C352 clock value 22732800 = 14745600 * 296/192; effective output
+	 * rate 22732800 / 296 = 76800 Hz, identical to the legacy
+	 * 14745600 / 192. Numeric clock value is a placeholder until the
+	 * physical 2061ASC-1 pin-9 measurement is folded in. */
+	MDRV_SOUND_ADD("c352", C352, 22732800)
+	MDRV_SOUND_CONFIG(namcos23_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
@@ -2957,7 +2968,12 @@ static MACHINE_DRIVER_START( s23 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 14745600)
+	/* C352 clock value 22732800 = 14745600 * 296/192; effective output
+	 * rate 22732800 / 296 = 76800 Hz, identical to the legacy
+	 * 14745600 / 192. Numeric clock value is a placeholder until the
+	 * physical 2061ASC-1 pin-9 measurement is folded in. */
+	MDRV_SOUND_ADD("c352", C352, 22732800)
+	MDRV_SOUND_CONFIG(namcos23_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
@@ -2999,7 +3015,12 @@ static MACHINE_DRIVER_START( ss23 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 14745600)
+	/* C352 clock value 22732800 = 14745600 * 296/192; effective output
+	 * rate 22732800 / 296 = 76800 Hz, identical to the legacy
+	 * 14745600 / 192. Numeric clock value is a placeholder until the
+	 * physical 2061ASC-1 pin-9 measurement is folded in. */
+	MDRV_SOUND_ADD("c352", C352, 22732800)
+	MDRV_SOUND_CONFIG(namcos23_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)

@@ -590,6 +590,11 @@ static MACHINE_RESET( namcofl )
 }
 
 
+static const c352_interface namcofl_c352_interface =
+{
+	288	/* spec-correct C352 voice-cycle divider */
+};
+
 static MACHINE_DRIVER_START( namcofl )
 	MDRV_CPU_ADD("maincpu", I960, 20000000)	// i80960KA-20 == 20 MHz part
 	MDRV_CPU_PROGRAM_MAP(namcofl_mem)
@@ -617,7 +622,10 @@ static MACHINE_DRIVER_START( namcofl )
 	MDRV_VIDEO_UPDATE(namcofl)
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-	MDRV_SOUND_ADD("c352", C352, 48384000/3)
+	/* C352 fed half the OSC3 48.384 MHz, /288. Effective output rate
+	 * 24192000 / 288 = 84000 Hz, identical to the legacy 48384000/3 / 192. */
+	MDRV_SOUND_ADD("c352", C352, 48384000/2)
+	MDRV_SOUND_CONFIG(namcofl_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)

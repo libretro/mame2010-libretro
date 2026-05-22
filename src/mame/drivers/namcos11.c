@@ -959,6 +959,11 @@ static MACHINE_RESET( namcos11 )
 	psx_machine_init(machine);
 }
 
+static const c352_interface namcos11_c352_interface =
+{
+	228	/* per-voice cycle empirically derived from PCB recordings */
+};
+
 static MACHINE_DRIVER_START( coh100 )
 	/* basic machine hardware */
 	MDRV_CPU_ADD("maincpu",  PSXCPU, XTAL_67_7376MHz )
@@ -987,9 +992,13 @@ static MACHINE_DRIVER_START( coh100 )
 	MDRV_VIDEO_UPDATE( psx )
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-   // note: C352 internal divider is currently set to 192, but that sounds wrong with an input clock of 20MHz.
-	// 228.0 here is a guess, estimated from PCB recordings sound/music pitch.
-	MDRV_SOUND_ADD("c352", C352, 20000000 / (228.0/192.0))
+	/* C352 fed 20.0132 MHz from 2061ASC-1 MCLKOUT (PCB doc); /228 is the
+	 * empirical per-voice cycle for System 11 PCBs (originally guessed
+	 * from PCB recording pitch and confirmed to match). Effective output
+	 * rate 20000000 / 228 = 87719 Hz, identical to the legacy
+	 * 20000000 / (228.0/192.0) / 192. */
+	MDRV_SOUND_ADD("c352", C352, 20000000)
+	MDRV_SOUND_CONFIG(namcos11_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)

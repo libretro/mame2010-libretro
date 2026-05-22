@@ -2868,6 +2868,11 @@ static INTERRUPT_GEN( mcu_interrupt )
 	}
 }
 
+static const c352_interface namcos22_c352_interface =
+{
+	288	/* spec-correct C352 voice-cycle divider */
+};
+
 static MACHINE_DRIVER_START( namcos22s )
 	MDRV_CPU_ADD("maincpu", M68EC020,SS22_MASTER_CLOCK/2)
 	MDRV_CPU_PROGRAM_MAP(namcos22s_am)
@@ -2908,7 +2913,11 @@ static MACHINE_DRIVER_START( namcos22s )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/3)
+	/* C352 fed 24.576 MHz (= 49.152/2) per the PCB doc, /288 voice cycle.
+	 * Effective output rate 24576000 / 288 = 85333 Hz, identical to the
+	 * legacy SS22_MASTER_CLOCK/3 / 192. */
+	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/2)
+	MDRV_SOUND_CONFIG(namcos22_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
@@ -3321,7 +3330,11 @@ static MACHINE_DRIVER_START( namcos22 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/3)
+	/* C352 fed 24.576 MHz (= 49.152/2) per the PCB doc, /288 voice cycle.
+	 * Effective output rate 24576000 / 288 = 85333 Hz, identical to the
+	 * legacy SS22_MASTER_CLOCK/3 / 192. */
+	MDRV_SOUND_ADD("c352", C352, SS22_MASTER_CLOCK/2)
+	MDRV_SOUND_CONFIG(namcos22_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)

@@ -281,6 +281,11 @@ static INTERRUPT_GEN( mcu_interrupt )
   - The level 1 interrupt to the 68k has been measured at 60Hz.
 *******************************************/
 
+static const c352_interface namcond1_c352_interface =
+{
+	288	/* spec-correct C352 voice-cycle divider */
+};
+
 static MACHINE_DRIVER_START( namcond1 )
 
 	/* basic machine hardware */
@@ -322,7 +327,11 @@ static MACHINE_DRIVER_START( namcond1 )
 	/* sound hardware */
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
 
-	MDRV_SOUND_ADD("c352", C352, 16384000)
+	/* C352 fed 24.576 MHz (= 49.152/2) per the PCB doc above; /288 is the
+	 * chip's per-voice processing cycle. Effective output rate
+	 * 24576000 / 288 = 85333 Hz, identical to the legacy 16384000 / 192. */
+	MDRV_SOUND_ADD("c352", C352, 24576000)
+	MDRV_SOUND_CONFIG(namcond1_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)

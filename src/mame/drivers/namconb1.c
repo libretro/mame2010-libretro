@@ -1011,6 +1011,11 @@ ADDRESS_MAP_END
 
 #define MASTER_CLOCK_HZ 48384000
 
+static const c352_interface namconb1_c352_interface =
+{
+	288	/* spec-correct C352 voice-cycle divider */
+};
+
 static MACHINE_DRIVER_START( namconb1 )
 	MDRV_CPU_ADD("maincpu", M68EC020,MASTER_CLOCK_HZ/2)
 	MDRV_CPU_PROGRAM_MAP(namconb1_am)
@@ -1037,7 +1042,11 @@ static MACHINE_DRIVER_START( namconb1 )
 	MDRV_VIDEO_UPDATE(namconb1)
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-	MDRV_SOUND_ADD("c352", C352, MASTER_CLOCK_HZ/3)
+	/* C352 fed MASTER_CLOCK_HZ/2 (24.192 MHz), /288 voice cycle.
+	 * Effective output rate 24192000 / 288 = 84000 Hz, identical to
+	 * the legacy MASTER_CLOCK_HZ/3 / 192. */
+	MDRV_SOUND_ADD("c352", C352, MASTER_CLOCK_HZ/2)
+	MDRV_SOUND_CONFIG(namconb1_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
@@ -1070,7 +1079,11 @@ static MACHINE_DRIVER_START( namconb2 )
 	MDRV_VIDEO_UPDATE(namconb2)
 
 	MDRV_SPEAKER_STANDARD_STEREO("lspeaker", "rspeaker")
-	MDRV_SOUND_ADD("c352", C352, MASTER_CLOCK_HZ/3)
+	/* C352 fed MASTER_CLOCK_HZ/2 (24.192 MHz), /288 voice cycle.
+	 * Effective output rate 24192000 / 288 = 84000 Hz, identical to
+	 * the legacy MASTER_CLOCK_HZ/3 / 192. */
+	MDRV_SOUND_ADD("c352", C352, MASTER_CLOCK_HZ/2)
+	MDRV_SOUND_CONFIG(namconb1_c352_interface)
 	MDRV_SOUND_ROUTE(0, "rspeaker", 1.00)
 	MDRV_SOUND_ROUTE(1, "lspeaker", 1.00)
 	MDRV_SOUND_ROUTE(2, "rspeaker", 1.00)
