@@ -227,16 +227,11 @@ INLINE int effective_frameskip(void)
 
 INLINE int effective_throttle(running_machine *machine)
 {
-	/* if we're paused, or if the UI is active, we always throttle */
-	if (machine->paused() || ui_is_menu_active())
-		return TRUE;
-
-	/* if we're fast forwarding, we don't throttle */
-	if (global.fastforward)
-		return FALSE;
-
-	/* otherwise, it's up to the user */
-	return global.throttle;
+	/* libretro: the frontend owns all frame pacing. The core must
+	   never throttle/sleep/spin to wall-clock internally - doing so
+	   wedges frontend fast-forward and hurts pacing/determinism. */
+	(void)machine;
+	return FALSE;
 }
 
 
