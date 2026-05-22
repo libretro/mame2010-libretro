@@ -1629,6 +1629,45 @@ static READ32_HANDLER( cps3_vbl_r )
 	return 0x00000000;
 }
 
+/* PPU register 0x82 (32-bit slot at 0x040C0080, accessed with mask 0x0000ffff).
+ * "Sprite list DMA / copy to PPU on-chip RAM." After uploading a new sprite
+ * list to sprite RAM, the game writes the 8/9/8/9... pattern (clocking the DMA
+ * engine) and then a final 0 to release. Real hardware uses this to copy the
+ * list from main sprite RAM into a small on-chip RAM that the rasterizer reads
+ * from. mame2010 renders straight out of sprite RAM with no DMA step, so the
+ * trigger is a no-op for us; we accept the writes silently to keep the log
+ * clean. cps3_vbl_r at 0x040C000C already returns 0 for bit 0 ("sprite list
+ * DMA active"), so the game's polling loop after the 8/9 pattern exits on the
+ * first read and proceeds to the final 0-write naturally. */
+static WRITE32_HANDLER( cps3_spritedma_w )
+{
+}
+
+/* SS layer ("Score Screen" text tilemap) CRT timing and scroll registers
+ * at 0x05050000-0x0505001F. Even bytes carry the data (upstream uses
+ * .umask32(0x00ff00ff)). Layout per documentation:
+ *
+ *   00 H Sync       0a V Start L
+ *   01 H Start L    0b V Start H
+ *   02 H Start H    0c V Blank L
+ *   03 H Blank L    0d V Blank H
+ *   04 H Blank H    0e V Total L
+ *   05 H Total L    0f V Total H
+ *   06 H Total H    10 V Scroll L
+ *   07 H Scroll L   11 V Scroll H
+ *   08 H Scroll H
+ *   09 V Sync
+ *
+ * These are programmed once at boot for the active video mode and never read
+ * back. mame2010 uses fixed SS-layer rendering timing, so the per-game tweaks
+ * have no effect; we accept the writes silently to suppress log spam. The
+ * existing ss_bank_base_w (offset 0x10 / dword 0x05050020) and ss_pal_base_w
+ * (offset 0x12 / dword 0x05050024) continue to handle the registers they
+ * already covered. */
+static WRITE32_HANDLER( cps3_ss_regs_w )
+{
+}
+
 static READ32_HANDLER( cps3_unk_io_r )
 {
 	//  warzard will crash before booting if you return anything here
@@ -2159,6 +2198,8 @@ static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x040C0060, 0x040C007f) AM_RAM AM_BASE(&cps3_fullscreenzoom)
 
 
+	AM_RANGE(0x040C0080, 0x040C0083) AM_WRITE(cps3_spritedma_w)
+
 	AM_RANGE(0x040C0094, 0x040C009b) AM_WRITE(cps3_characterdma_w)
 
 
@@ -2184,6 +2225,7 @@ static ADDRESS_MAP_START( cps3_map, ADDRESS_SPACE_PROGRAM, 32 )
 
 	AM_RANGE(0x05040000, 0x0504ffff) AM_READWRITE(cps3_ssram_r,cps3_ssram_w) // 'SS' RAM (Score Screen) (text tilemap + toles)
 	//0x25050020
+	AM_RANGE(0x05050000, 0x0505001f) AM_WRITE( cps3_ss_regs_w )
 	AM_RANGE(0x05050020, 0x05050023) AM_WRITE( cps3_ss_bank_base_w )
 	AM_RANGE(0x05050024, 0x05050027) AM_WRITE( cps3_ss_pal_base_w )
 
