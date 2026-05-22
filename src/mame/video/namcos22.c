@@ -131,7 +131,35 @@ UpdateVideoMixer( void )
 		mixer.gFadeColor  = nthbyte( namcos22_gamma, 0x0013 )*256 + nthbyte( namcos22_gamma, 0x0014 );
 		mixer.bFadeColor  = nthbyte( namcos22_gamma, 0x0015 )*256 + nthbyte( namcos22_gamma, 0x0016 );
 
-		mixer.fadeFactor  = 0x100 - mixer.rFadeColor; // hack
+		/* The C305 Display Controller's R/G/B "Display Fader" registers at
+		 * +0x11/+0x13/+0x15 are per-channel multipliers (8.8 fixed-point
+		 * where 0x0100 = 1.0), gated by the Fader Enable bit at +0x0002.
+		 * The old code here ignored the enable bit and used the bare red
+		 * channel as a brightness fader -- so any time a game left non-zero
+		 * fade values in those registers without enabling the fader (or wrote
+		 * chromatic-fade combinations like R=0,G/B!=0), the screen would
+		 * darken haphazardly. Most visible in Rave Racer (ravracw) while
+		 * driving: brightness would dim and recover for no reason.
+		 *
+		 * The poly renderer downstream only supports a single (fadeFactor,
+		 * fadeColor) pair rather than per-channel multipliers, so we still
+		 * can't reproduce the C305 exactly, but we can at least:
+		 *   1. only fade when the enable bit is set;
+		 *   2. average the three RGB multipliers when it is, so chromatic
+		 *      writes don't all land on the red channel. */
+		{
+			const int fader_enabled = nthbyte( namcos22_gamma, 0x0002 ) | nthbyte( namcos22_gamma, 0x0003 );
+			if (fader_enabled)
+			{
+				const int avg = (mixer.rFadeColor + mixer.gFadeColor + mixer.bFadeColor) / 3;
+				const int factor = 0x100 - avg;
+				mixer.fadeFactor = (factor < 0) ? 0 : (factor > 0xff ? 0xff : factor);
+			}
+			else
+			{
+				mixer.fadeFactor = 0;
+			}
+		}
 		mixer.rFadeColor  = 0;
 		mixer.gFadeColor  = 0;
 		mixer.bFadeColor  = 0;
