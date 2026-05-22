@@ -1419,8 +1419,24 @@ static CPU_EXECUTE( mb86233 )
                 cpustate->m = opcode;
                 break;
             default:
-                logerror("mb86233: unimplemented opcode 0d/%x at PC:%04x\n", sub2, cpustate->ppc);
+            {
+                /* Cap the per-sub-op log to a small number of hits.  These
+                 * unknown sub-ops appear to be no-ops (or extra flag-toggle
+                 * variants whose effect we don't model), and the ALU side
+                 * of the instruction still runs via alu_pre/alu_post above.
+                 * The hot-path concern is that with the libretro log
+                 * callback enabled, an unbounded logerror() per TGP cycle
+                 * becomes the wall-clock bottleneck and desyncs the
+                 * i960<->TGP handshake - exactly the kind of "in-game runs
+                 * for a second then bugs out" symptom seen on VF2. */
+                static int reported[8] = {0,0,0,0,0,0,0,0};
+                if (reported[sub2] < 8)
+                {
+                    logerror("mb86233: unimplemented opcode 0d/%x at PC:%04x\n", sub2, cpustate->ppc);
+                    reported[sub2]++;
+                }
                 break;
+            }
             }
             break;
         }
@@ -1486,8 +1502,26 @@ static CPU_EXECUTE( mb86233 )
                 /* set - flag mapping not fully known */
                 break;
             default:
-                logerror("mb86233: unimplemented opcode 0f/%x at PC:%04x\n", sub2, cpustate->ppc);
+            {
+                /* Sub-ops 4-7 of opcode 0x0f are undocumented set/clr
+                 * variants whose exact flag mapping we don't model, but
+                 * the ALU side of the instruction (alu_pre/alu_post_1
+                 * called either side of this switch) still does real work
+                 * and the firmware uses them as plain ALU carriers.  VF2
+                 * runs sub-op 7 hundreds of times per frame, so logging
+                 * each one with the libretro log callback enabled used
+                 * to bottleneck the TGP enough to desync it from the
+                 * i960 and make the game "bug out" shortly after going
+                 * in-game.  Cap to the first few hits per sub-op to
+                 * preserve diagnostic value without the runaway spam. */
+                static int reported[8] = {0,0,0,0,0,0,0,0};
+                if (reported[sub2] < 8)
+                {
+                    logerror("mb86233: unimplemented opcode 0f/%x at PC:%04x\n", sub2, cpustate->ppc);
+                    reported[sub2]++;
+                }
                 break;
+            }
             }
             if (do_stall) break;
             alu_post_1(cpustate, alu);
