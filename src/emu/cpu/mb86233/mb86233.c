@@ -1456,10 +1456,13 @@ static CPU_EXECUTE( mb86233 )
                 uint8_t r = (opcode & 0x8000) ? (uint8_t)read_reg(cpustate, opcode) : (uint8_t)opcode;
                 if (cpustate->stall) { do_stall = 1; break; }
                 cpustate->r = r;
-                /* skip the trailing repeat-decrement logic for this instruction
-                 * - we'll continue with r != 1 and the outer loop will rewind */
-                alu_post_1(cpustate, alu);
-                /* do NOT touch m_pc / m_r decrement */
+                /* No alu_post_1 here - matches upstream's 'goto rep_start',
+                 * which jumps past the alu writeback for rep instructions.
+                 * Without this skip, any rep opcode whose alu field is non-
+                 * zero clobbers d at the rep itself, breaking the matrix /
+                 * skeleton math the repeated body would otherwise rely on.
+                 * The 'continue' here also skips the outer if(r != 1)
+                 * rewind so we don't immediately undo the m_r we just set. */
                 cpustate->icount--;
                 continue;
             }
