@@ -102,7 +102,7 @@ public:
 template<class T> class resource_pool_object : public resource_pool_item
 {
 private:
-	resource_pool_object<T>(const resource_pool_object<T> &);
+	resource_pool_object(const resource_pool_object<T> &);
 	resource_pool_object<T> &operator=(const resource_pool_object<T> &);
 
 public:
@@ -121,7 +121,7 @@ private:
 template<class T> class resource_pool_array : public resource_pool_item
 {
 private:
-	resource_pool_array<T>(const resource_pool_array<T> &);
+	resource_pool_array(const resource_pool_array<T> &);
 	resource_pool_array<T> &operator=(const resource_pool_array<T> &);
 
 public:
@@ -218,13 +218,19 @@ inline void *operator new[](std::size_t size) throw (std::bad_alloc)
 	return result;
 }
 
-inline void operator delete(void *ptr)
+/* libstdc++ declares the global operator delete with an empty
+ * exception specification (effectively noexcept); match it so newer
+ * GCCs don't flag the conflict.  In C++98 throw() means the same
+ * thing as the C++11+ noexcept and is the spelling libstdc++ uses
+ * via its _GLIBCXX_USE_NOEXCEPT alias when compiled in pre-C++11
+ * modes - which is what -std=gnu++98 builds end up in. */
+inline void operator delete(void *ptr) throw()
 {
 	if (ptr != NULL)
 		free_file_line(ptr, NULL, 0);
 }
 
-inline void operator delete[](void *ptr)
+inline void operator delete[](void *ptr) throw()
 {
 	if (ptr != NULL)
 		free_file_line(ptr, NULL, 0);
