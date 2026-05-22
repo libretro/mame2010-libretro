@@ -50,6 +50,31 @@
 
 
 /***************************************************************************
+    POINTER-WIDTH DETECTION
+***************************************************************************/
+
+/* Auto-detect 64-bit pointer ABI from the compiler. PTR64 was historically
+ * set via -D in the Makefile; sources should not have to depend on a build
+ * flag to know how wide their own pointers are. If something upstream still
+ * defines PTR64 manually we honour it; otherwise we figure it out here.
+ *
+ * Predicates, in order of preference:
+ *   - __SIZEOF_POINTER__ : GCC >= 4.5, Clang >= 3.0, MSVC >= 2017
+ *   - _WIN64             : MSVC fallback for older versions
+ *   - __LP64__ / _LP64   : older Unix toolchains
+ *
+ * The choice is target-aware (it asks the compiler about its target ABI),
+ * which is strictly better than uname -m on the build host. */
+#ifndef PTR64
+  #if defined(__SIZEOF_POINTER__) && __SIZEOF_POINTER__ == 8
+    #define PTR64 1
+  #elif defined(_WIN64) || defined(__LP64__) || defined(_LP64)
+    #define PTR64 1
+  #endif
+#endif
+
+
+/***************************************************************************
     COMPILER-SPECIFIC NASTINESS
 ***************************************************************************/
 
