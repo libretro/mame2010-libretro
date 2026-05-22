@@ -44,7 +44,7 @@ struct _i8085_config
 	devcb_read_line		in_sid_func;		/* SID changed callback (8085A only) */
 	devcb_write_line	out_sod_func;		/* SOD changed callback (8085A only) */
 };
-#define I8085_CONFIG(name) const i8085_config (name) =
+#define I8085_CONFIG(name) const i8085_config name =
 
 /***************************************************************************
     FUNCTION PROTOTYPES

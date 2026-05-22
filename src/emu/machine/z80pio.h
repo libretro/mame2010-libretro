@@ -45,7 +45,7 @@
 	MDRV_DEVICE_CONFIG(_intrf)
 
 #define Z80PIO_INTERFACE(_name) \
-	const z80pio_interface (_name) =
+	const z80pio_interface _name =
 
 
 

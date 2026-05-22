@@ -29,7 +29,7 @@ const int NOTIMER_3 = (1<<3);
 //**************************************************************************
 
 #define Z80CTC_INTERFACE(name) \
-	const z80ctc_interface (name)=
+	const z80ctc_interface name=
 
 
 #define MDRV_Z80CTC_ADD(_tag, _clock, _intrf) \
