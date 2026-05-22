@@ -670,10 +670,10 @@ DEFS       += -DMSB_FIRST
 PLATCFLAGS += -DMSB_FIRST
 endif
 
-# define PTR64 if we are a 64-bit target
-ifeq ($(PTR64),1)
-DEFS += -DPTR64
-endif
+# PTR64 is auto-detected in src/osd/osdcomm.h via __SIZEOF_POINTER__,
+# so we no longer need to pass it as a -D flag. The Makefile variable
+# $(PTR64) is still consulted below (and in Makefile.common) to pick the
+# DRC backend object file.
 
 DEFS += -DNDEBUG 
 
