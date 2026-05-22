@@ -128,6 +128,16 @@ static int dsp_type;
 
 
 #define COPRO_FIFOIN_SIZE	0x20000
+/* Back-pressure between the i960 (producer) and the TGP (consumer) on the
+ * input FIFO.  When the TGP tries to pop from an empty FIFO it calls
+ * cpu_spinuntil_trigger to suspend itself until the i960 pushes new data
+ * and fires the matching trigger.  Without this the TGP burns its entire
+ * timeslice spinning on the same "read FIFOIN" instruction (the new
+ * MB86233 decoder correctly stalls and rolls back PC on empty reads,
+ * which is much more correct than the old behaviour of returning 0 and
+ * advancing, but if the TGP keeps getting re-entered it just burns
+ * cycles for no work). */
+#define COPRO_FIFOIN_TRIGGER		51401
 static int copro_fifoin_rpos, copro_fifoin_wpos;
 static uint32_t copro_fifoin_data[COPRO_FIFOIN_SIZE];
 static int copro_fifoin_num = 0;
@@ -138,7 +148,15 @@ static int copro_fifoin_pop(running_device *device, uint32_t *result)
 	if (copro_fifoin_num == 0)
 	{
 		if (dsp_type == DSP_TYPE_TGP)
+		{
+			/* Suspend the TGP until the i960 pushes - the producer side
+			 * fires the matching trigger in copro_fifoin_push.  This
+			 * eats the TGP's remaining icount so its scheduler slice
+			 * yields immediately rather than busy-spinning the rest of
+			 * the slice on a re-executing read. */
+			cpu_spinuntil_trigger(device, COPRO_FIFOIN_TRIGGER);
 			return 0;
+		}
 
 		logerror("Copro FIFOIN underflow (at %08X)\n", cpu_get_pc(device));
 		return 0;
@@ -191,6 +209,13 @@ static void copro_fifoin_push(running_device *device, uint32_t data)
 	}
 
 	copro_fifoin_num++;
+
+	/* Wake the TGP if it had stalled itself on an empty pop - the
+	 * scheduler resumes it on the next slice with the same PC the
+	 * stall rolled back to, so the previously-failed read retries
+	 * and now sees the data we just pushed. */
+	if (dsp_type == DSP_TYPE_TGP)
+		cpuexec_trigger(device->machine, COPRO_FIFOIN_TRIGGER);
 
 	// clear FIFO empty flag on SHARC
 	if (dsp_type == DSP_TYPE_SHARC)
