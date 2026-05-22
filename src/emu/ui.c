@@ -276,15 +276,14 @@ static void ui_exit(running_machine &machine)
 int ui_display_startup_screens(running_machine *machine, int first_time, int show_disclaimer)
 {
 	const int maxstate = 3;
-	int str = options_get_int(machine->options(), OPTION_SECONDS_TO_RUN);
 	int show_gameinfo = !options_get_bool(machine->options(), OPTION_SKIP_GAMEINFO);
 	int show_warnings = !options_get_bool(machine->options(), OPTION_SKIP_WARNINGS);
 	int state;
 	show_gameinfo = show_warnings = show_disclaimer = FALSE;
 
-	/* disable everything if we are using -str for 300 or fewer seconds, or if we're the empty driver,
+	/* disable everything if this isn't the first time through, or if we're the empty driver,
        or if we are debugging */
-	if (!first_time || (str > 0 && str < 60*5) || machine->gamedrv == &GAME_NAME(empty) || (machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
+	if (!first_time || machine->gamedrv == &GAME_NAME(empty) || (machine->debug_flags & DEBUG_FLAG_ENABLED) != 0)
 		show_gameinfo = show_warnings = show_disclaimer = FALSE;
 
 	/* initialize the on-screen display system */

@@ -49,12 +49,6 @@
 #include "crsshair.h"
 
 /***************************************************************************
-    CONSTANTS
-***************************************************************************/
-
-#define SUBSECONDS_PER_SPEED_UPDATE	(ATTOSECONDS_PER_SECOND / 4)
-
-/***************************************************************************
     TYPE DEFINITIONS
 ***************************************************************************/
 
@@ -64,10 +58,7 @@ struct _video_global
 	/* screenless systems */
 	emu_timer *				screenless_frame_timer;	/* timer to signal VBLANK start */
 
-	/* dynamic speed computation */
-	osd_ticks_t 			speed_last_realtime;	/* real time at the last speed calculation */
-	attotime				speed_last_emutime;		/* emulated time at the last speed calculation */
-	double					speed_percent;			/* most recent speed percentage */
+	/* partial updates */
 	uint32_t					partial_updates_this_frame;/* partial update counter this frame */
 
 	/* overall speed computation */
@@ -75,7 +66,6 @@ struct _video_global
 	osd_ticks_t				overall_real_ticks;		/* accumulated real ticks at normal speed */
 
 	/* configuration */
-	uint32_t					seconds_to_run;			/* number of seconds to run before quitting */
 	uint8_t					auto_frameskip;			/* flag: TRUE if we're automatically frameskipping */
 	uint32_t					speed;					/* overall speed (*100) */
 
@@ -128,7 +118,6 @@ static TIMER_CALLBACK( screenless_update_callback );
 
 /* throttling/frameskipping/performance */
 static void update_frameskip(running_machine *machine);
-static void recompute_speed(running_machine *machine, attotime emutime);
 static void update_refresh_speed(running_machine *machine);
 
 /***************************************************************************
@@ -196,14 +185,12 @@ void video_init(running_machine *machine)
 
 	/* reset our global state */
 	memset(&global, 0, sizeof(global));
-	global.speed_percent = 1.0;
 
 	/* extract initial execution state from global configuration settings */
 	global.speed = original_speed_setting();
 	update_refresh_speed(machine);
 	global.auto_frameskip = options_get_bool(machine->options(), OPTION_AUTOFRAMESKIP);
 	global.frameskip_level = options_get_int(machine->options(), OPTION_FRAMESKIP);
-	global.seconds_to_run = options_get_int(machine->options(), OPTION_SECONDS_TO_RUN);
 
 	/* create spriteram buffers if necessary */
 	if (machine->config->m_video_attributes & VIDEO_BUFFERS_SPRITERAM)
@@ -330,10 +317,6 @@ void video_frame_update(running_machine *machine, int debug)
 	if (!debug)
 		update_frameskip(machine);
 
-	/* update speed computations */
-	if (!debug && !skipped_it)
-		recompute_speed(machine, current_time);
-
 	/* call the end-of-frame callback */
 	if (phase == MACHINE_PHASE_RUNNING)
 	{
@@ -446,10 +429,6 @@ const char *video_get_speed_text(running_machine *machine)
 	else
 		dest += sprintf(dest, "skip %d/%d", effective_frameskip(), MAX_FRAMESKIP);
 
-	/* append the speed for all cases except paused */
-	if (!paused)
-		dest += sprintf(dest, "%4d%%", (int)(100 * global.speed_percent + 0.5));
-
 	/* display the number of partial updates as well */
 	if (global.partial_updates_this_frame > 1)
 		dest += sprintf(dest, "\n%d partial updates", global.partial_updates_this_frame);
@@ -461,12 +440,23 @@ const char *video_get_speed_text(running_machine *machine)
 
 /*-------------------------------------------------
     video_get_speed_percent - return the current
-    effective speed percentage
+    effective speed percentage. libretro: the
+    frontend owns frame pacing; the historical
+    wall-clock-derived speed_percent calculation has
+    been removed because (a) it leaked osd_ticks()
+    state into the inptport.c INP record path,
+    breaking deterministic input playback, and (b)
+    the only remaining consumer beyond the INP
+    record was the OSD status line, which the
+    libretro frontend does not surface. A constant
+    1.0 keeps the inptport.c writer producing a
+    fixed, deterministic 0x00100000 word per frame.
 -------------------------------------------------*/
 
 double video_get_speed_percent(running_machine *machine)
 {
-	return global.speed_percent;
+	(void)machine;
+	return 1.0;
 }
 
 
@@ -576,48 +566,6 @@ static void update_refresh_speed(running_machine *machine)
 	}
 }
 
-
-/*-------------------------------------------------
-    recompute_speed - recompute the current
-    overall speed; we assume this is called only
-    if we did not skip a frame
--------------------------------------------------*/
-
-static void recompute_speed(running_machine *machine, attotime emutime)
-{
-	attoseconds_t delta_emutime;
-
-	/* if we don't have a starting time yet, or if we're paused, reset our starting point */
-	if (global.speed_last_realtime == 0 || machine->paused())
-	{
-		global.speed_last_realtime = osd_ticks();
-		global.speed_last_emutime = emutime;
-	}
-
-	/* if it has been more than the update interval, update the time */
-	delta_emutime = attotime_to_attoseconds(attotime_sub(emutime, global.speed_last_emutime));
-	if (delta_emutime > SUBSECONDS_PER_SPEED_UPDATE)
-	{
-		osd_ticks_t realtime = osd_ticks();
-		osd_ticks_t delta_realtime = realtime - global.speed_last_realtime;
-		osd_ticks_t tps = osd_ticks_per_second();
-
-		/* convert from ticks to attoseconds */
-		global.speed_percent = (double)delta_emutime * (double)tps / ((double)delta_realtime * (double)ATTOSECONDS_PER_SECOND);
-
-		/* remember the last times */
-		global.speed_last_realtime = realtime;
-		global.speed_last_emutime = emutime;
-	}
-
-	/* if we're past the "time-to-execute" requested, signal an exit */
-	if (global.seconds_to_run != 0 && emutime.seconds >= global.seconds_to_run)
-	{
-
-		/* schedule our demise */
-		machine->schedule_exit();
-	}
-}
 
 /***************************************************************************
     BURN-IN GENERATION
