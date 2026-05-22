@@ -1902,10 +1902,11 @@ static void geo_parse_nn_ns( uint32_t *input, uint32_t count )
 	model2_3d_push( f2u(point.y) >> 8 );
 	model2_3d_push( f2u(point.pz) >> 8 );
 
-	/* skip 4 */
-	input += 4;
-
-	/* loop through the following links */
+	/* loop through the following links.  Each polygon link has a
+	 * 3-word normal placeholder before its point data; we ignore the
+	 * stored normal and compute one from the cross product of the
+	 * already-seen vertices, but the placeholder still occupies the
+	 * stream and must be skipped per polygon. */
 	for( i = 0; i < count; i++ )
 	{
 		/* read in the attributes */
@@ -1920,6 +1921,10 @@ static void geo_parse_nn_ns( uint32_t *input, uint32_t count )
 			float				coef, face;
 			int32_t				luma;
 			texture_parameter *	texparam;
+
+			/* skip the per-polygon normal placeholder (3 words);
+			 * normals are computed locally below from the points */
+			input += 3;
 
 			/* read in the next point */
 			point.x = u2f( *input++ );
@@ -2096,10 +2101,11 @@ static void geo_parse_nn_s( uint32_t *input, uint32_t count )
 	model2_3d_push( f2u(point.y) >> 8 );
 	model2_3d_push( f2u(point.pz) >> 8 );
 
-	/* skip 4 */
-	input += 4;
-
-	/* loop through the following links */
+	/* loop through the following links.  Each polygon link has a
+	 * 3-word normal placeholder before its point data; we ignore the
+	 * stored normal and compute one from the cross product of the
+	 * already-seen vertices, but the placeholder still occupies the
+	 * stream and must be skipped per polygon. */
 	for( i = 0; i < count; i++ )
 	{
 		/* read in the attributes */
@@ -2114,6 +2120,10 @@ static void geo_parse_nn_s( uint32_t *input, uint32_t count )
 			float				coef, face;
 			int32_t				luma;
 			texture_parameter *	texparam;
+
+			/* skip the per-polygon normal placeholder (3 words);
+			 * normals are computed locally below from the points */
+			input += 3;
 
 			/* read in the next point */
 			point.x = u2f( *input++ );
