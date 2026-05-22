@@ -1669,7 +1669,14 @@ static ADDRESS_MAP_START( model2a_crx_mem, ADDRESS_SPACE_PROGRAM, 32 )
 	AM_RANGE(0x01c00014, 0x01c00017) AM_READ_PORT("1c00014") AM_WRITENOP
 	AM_RANGE(0x01c00018, 0x01c0001b) AM_READ( hotd_unk_r )
 	AM_RANGE(0x01c0001c, 0x01c0001f) AM_READ_PORT("1c0001c") AM_WRITE( analog_2b_w )
+	/* 315-5649 I/O chip control registers - VF2 writes "SEGA" (0x53 0x45
+	 * 0x47 0x41) to 0x01c00034/0x01c00038 and a heartbeat pattern to
+	 * 0x01c00024 / 0x01c00044 during boot.  These are output ports that
+	 * we don't model; absorbing the writes silently keeps the boot log
+	 * readable so other diagnostics remain visible. */
+	AM_RANGE(0x01c00020, 0x01c0003f) AM_READNOP AM_WRITENOP
    AM_RANGE(0x01c00040, 0x01c00043) AM_WRITENOP
+	AM_RANGE(0x01c00044, 0x01c000ff) AM_READNOP AM_WRITENOP
 	AM_RANGE(0x01c80000, 0x01c80003) AM_READWRITE( model2_serial_r, model2_serial_w )
 
 	AM_IMPORT_FROM(model2_base_mem)
