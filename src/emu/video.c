@@ -346,14 +346,6 @@ static int finish_screen_updates(running_machine *machine)
 		if (screen->update_quads())
 			anything_changed = true;
 
-	/* update our movie recording and burn-in state */
-	if (!machine->paused())
-	{
-		/* iterate over screens and update the burnin for the ones that care */
-		for (screen_device *screen = screen_first(*machine); screen != NULL; screen = screen_next(screen))
-			screen->update_burnin();
-	}
-
 	/* draw any crosshairs */
 	for (screen_device *screen = screen_first(*machine); screen != NULL; screen = screen_next(screen))
 		crosshair_render(*screen);
@@ -753,7 +745,6 @@ screen_device::screen_device(running_machine &_machine, const screen_device_conf
 	  m_width(m_config.m_width),
 	  m_height(m_config.m_height),
 	  m_visarea(m_config.m_visarea),
-	  m_burnin(NULL),
 	  m_curbitmap(0),
 	  m_curtexture(0),
 	  m_texture_format(0),
@@ -787,8 +778,6 @@ screen_device::~screen_device()
 		render_texture_free(m_texture[0]);
 	if (m_texture[1] != NULL)
 		render_texture_free(m_texture[1]);
-	if (m_burnin != NULL)
-		finalize_burnin();
 }
 
 
@@ -832,22 +821,6 @@ void screen_device::device_start()
 	// start the timer to generate per-scanline updates
 	if ((machine->config->m_video_attributes & VIDEO_UPDATE_SCANLINE) != 0)
 		timer_adjust_oneshot(m_scanline_timer, time_until_pos(0), 0);
-
-	// create burn-in bitmap
-	if (options_get_int(machine->options(), OPTION_BURNIN) > 0)
-	{
-		/* libretro: historically the dimensions came from -snapsize via
-		   sscanf("%dx%d", ...), with a 300x300 fallback when parsing
-		   failed or the option was 'auto'. With the snap* options gone
-		   from this fork (snapshot/movie writers were stripped), use
-		   the fallback unconditionally. */
-		const int width = 300;
-		const int height = 300;
-		m_burnin = auto_alloc(machine, bitmap_t(width, height, BITMAP_FORMAT_INDEXED64));
-		if (m_burnin == NULL)
-			fatalerror("Error allocating burn-in bitmap for screen at (%dx%d)\n", width, height);
-		bitmap_fill(m_burnin, NULL, 0);
-	}
 
 	state_save_register_device_item(this, 0, m_width);
 	state_save_register_device_item(this, 0, m_height);
@@ -1333,82 +1306,5 @@ bool screen_device::update_quads()
 	return result;
 }
 
-
-//-------------------------------------------------
-//  update_burnin - update the burnin bitmap
-//-------------------------------------------------
-
-void screen_device::update_burnin()
-{
-#undef rand
-	if (m_burnin == NULL)
-		return;
-
-	bitmap_t *srcbitmap = m_bitmap[m_curtexture];
-	if (srcbitmap == NULL)
-		return;
-
-	int srcwidth = srcbitmap->width;
-	int srcheight = srcbitmap->height;
-	int dstwidth = m_burnin->width;
-	int dstheight = m_burnin->height;
-	int xstep = (srcwidth << 16) / dstwidth;
-	int ystep = (srcheight << 16) / dstheight;
-	int xstart = ((uint32_t)rand() % 32767) * xstep / 32767;
-	int ystart = ((uint32_t)rand() % 32767) * ystep / 32767;
-	int srcx, srcy;
-	int x, y;
-
-	// iterate over rows in the destination
-	for (y = 0, srcy = ystart; y < dstheight; y++, srcy += ystep)
-	{
-		uint64_t *dst = BITMAP_ADDR64(m_burnin, y, 0);
-
-		// handle the 16-bit palettized case
-		if (srcbitmap->format == BITMAP_FORMAT_INDEXED16)
-		{
-			const uint16_t *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
-			const rgb_t *palette = palette_entry_list_adjusted(machine->palette);
-			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
-			{
-				rgb_t pixel = palette[src[srcx >> 16]];
-				dst[x] += RGB_GREEN(pixel) + RGB_RED(pixel) + RGB_BLUE(pixel);
-			}
-		}
-
-		// handle the 15-bit RGB case
-		else if (srcbitmap->format == BITMAP_FORMAT_RGB15)
-		{
-			const uint16_t *src = BITMAP_ADDR16(srcbitmap, srcy >> 16, 0);
-			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
-			{
-				rgb15_t pixel = src[srcx >> 16];
-				dst[x] += ((pixel >> 10) & 0x1f) + ((pixel >> 5) & 0x1f) + ((pixel >> 0) & 0x1f);
-			}
-		}
-
-		// handle the 32-bit RGB case
-		else if (srcbitmap->format == BITMAP_FORMAT_RGB32)
-		{
-			const uint32_t *src = BITMAP_ADDR32(srcbitmap, srcy >> 16, 0);
-			for (x = 0, srcx = xstart; x < dstwidth; x++, srcx += xstep)
-			{
-				rgb_t pixel = src[srcx >> 16];
-				dst[x] += RGB_GREEN(pixel) + RGB_RED(pixel) + RGB_BLUE(pixel);
-			}
-		}
-	}
-}
-
-
-//-------------------------------------------------
-//  video_finalize_burnin - finalize the burnin
-//  bitmap
-//-------------------------------------------------
-
-void screen_device::finalize_burnin()
-{
-
-}
 
 const device_type SCREEN = screen_device_config::static_alloc_device_config;

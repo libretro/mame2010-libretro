@@ -197,7 +197,6 @@ public:
 
 	// internal to the video system
 	bool update_quads();
-	void update_burnin();
 
 	// globally accessible constants
 	static const int k_default_frame_rate = 60;
@@ -225,8 +224,6 @@ private:
 	static TIMER_CALLBACK( static_scanline_update_callback ) { reinterpret_cast<screen_device *>(ptr)->scanline_update_callback(param); }
 	void scanline_update_callback(int scanline);
 
-	void finalize_burnin();
-
 	// internal state
 	const screen_device_config &m_config;
 
@@ -238,7 +235,6 @@ private:
 	// textures and bitmaps
 	render_texture *		m_texture[2];			// 2x textures for the screen bitmap
 	bitmap_t *				m_bitmap[2];			// 2x bitmaps for rendering
-	bitmap_t *				m_burnin;				// burn-in bitmap
 	uint8_t					m_curbitmap;			// current bitmap index
 	uint8_t					m_curtexture;			// current texture index
 	int32_t					m_texture_format;		// texture format of bitmap for this screen

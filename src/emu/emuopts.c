@@ -64,7 +64,6 @@ const options_entry mame_core_options[] =
 	{ "state",                       NULL,        0,                 "saved state to load" },
 	{ "autosave",                    "0",         OPTION_BOOLEAN,    "enable automatic restore at startup, and automatic save at exit time" },
 	{ "playback;pb",                 NULL,        0,                 "playback an input file" },
-	{ "burnin",                      "0",         OPTION_BOOLEAN,    "create burn-in snapshots for each screen" },
 
 	/* performance options */
 	{ NULL,                          NULL,        OPTION_HEADER,     "CORE PERFORMANCE OPTIONS" },

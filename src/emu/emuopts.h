@@ -45,7 +45,6 @@
 #define OPTION_STATE				"state"
 #define OPTION_AUTOSAVE				"autosave"
 #define OPTION_PLAYBACK				"playback"
-#define OPTION_BURNIN				"burnin"
 
 /* core performance options */
 #define OPTION_AUTOFRAMESKIP		"autoframeskip"
