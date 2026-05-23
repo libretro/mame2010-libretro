@@ -603,7 +603,7 @@ static TGP_FUNCTION( distance3 )
 	a -= d;
 	b -= e;
 	c -= f;
-	fifoout_push_f((a*a+b*b+c*c)/sqrt(a*a+b*b+c*c));
+	fifoout_push_f((float)sqrt(a*a+b*b+c*c));
 	next_fn();
 }
 
@@ -842,13 +842,12 @@ static TGP_FUNCTION( vlength )
 	float a = fifoin_pop_f() - tgp_vr_base[0];
 	float b = fifoin_pop_f() - tgp_vr_base[1];
 	float c = fifoin_pop_f() - tgp_vr_base[2];
+	float len;
 	logerror("TGP vlength %f, %f, %f (%x)\n", a, b, c, pushpc);
 
-	a = (a*a+b*b+c*c);
-	b = 1/sqrt(a);
-	c = a * b;
-	c -= tgp_vr_base[3];
-	fifoout_push_f(c);
+	len = (float)sqrt(a*a+b*b+c*c);
+	len -= tgp_vr_base[3];
+	fifoout_push_f(len);
 	next_fn();
 }
 
@@ -1205,7 +1204,7 @@ static TGP_FUNCTION( distance )
 	logerror("TGP distance (%f, %f), (%f, %f) (%x)\n", a, b, c, d, pushpc);
 	c -= a;
 	d -= b;
-	fifoout_push_f((c*c+d*d)/sqrt(c*c+d*d));
+	fifoout_push_f((float)sqrt(c*c+d*d));
 	next_fn();
 }
 
