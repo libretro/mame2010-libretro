@@ -64,13 +64,6 @@ const options_entry mame_core_options[] =
 	{ "state",                       NULL,        0,                 "saved state to load" },
 	{ "autosave",                    "0",         OPTION_BOOLEAN,    "enable automatic restore at startup, and automatic save at exit time" },
 	{ "playback;pb",                 NULL,        0,                 "playback an input file" },
-	{ "record;rec",                  NULL,        0,                 "record an input file" },
-	{ "mngwrite",                    NULL,        0,                 "optional filename to write a MNG movie of the current session" },
-	{ "aviwrite",                    NULL,        0,                 "optional filename to write an AVI movie of the current session" },
-	{ "wavwrite",                    NULL,        0,                 "optional filename to write a WAV file of the current session" },
-	{ "snapname",                    "%g/%i",     0,                 "override of the default snapshot/movie naming; %g == gamename, %i == index" },
-	{ "snapsize",                    "auto",      0,                 "specify snapshot/movie resolution (<width>x<height>) or 'auto' to use minimal size " },
-	{ "snapview",                    "internal",  0,                 "specify snapshot/movie view or 'internal' to use internal pixel-aspect views" },
 	{ "burnin",                      "0",         OPTION_BOOLEAN,    "create burn-in snapshots for each screen" },
 
 	/* performance options */

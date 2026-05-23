@@ -435,27 +435,6 @@ const char *video_get_speed_text(running_machine *machine)
 }
 
 
-/*-------------------------------------------------
-    video_get_speed_percent - return the current
-    effective speed percentage. libretro: the
-    frontend owns frame pacing; the historical
-    wall-clock-derived speed_percent calculation has
-    been removed because (a) it leaked osd_ticks()
-    state into the inptport.c INP record path,
-    breaking deterministic input playback, and (b)
-    the only remaining consumer beyond the INP
-    record was the OSD status line, which the
-    libretro frontend does not surface. A constant
-    1.0 keeps the inptport.c writer producing a
-    fixed, deterministic 0x00100000 word per frame.
--------------------------------------------------*/
-
-double video_get_speed_percent(running_machine *machine)
-{
-	(void)machine;
-	return 1.0;
-}
-
 
 /*-------------------------------------------------
     video_get_frameskip - return the current
@@ -857,9 +836,13 @@ void screen_device::device_start()
 	// create burn-in bitmap
 	if (options_get_int(machine->options(), OPTION_BURNIN) > 0)
 	{
-		int width, height;
-		if (sscanf(options_get_string(machine->options(), OPTION_SNAPSIZE), "%dx%d", &width, &height) != 2 || width == 0 || height == 0)
-			width = height = 300;
+		/* libretro: historically the dimensions came from -snapsize via
+		   sscanf("%dx%d", ...), with a 300x300 fallback when parsing
+		   failed or the option was 'auto'. With the snap* options gone
+		   from this fork (snapshot/movie writers were stripped), use
+		   the fallback unconditionally. */
+		const int width = 300;
+		const int height = 300;
 		m_burnin = auto_alloc(machine, bitmap_t(width, height, BITMAP_FORMAT_INDEXED64));
 		if (m_burnin == NULL)
 			fatalerror("Error allocating burn-in bitmap for screen at (%dx%d)\n", width, height);

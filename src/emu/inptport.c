@@ -264,9 +264,8 @@ struct _input_port_private
 	attotime					last_frame_time;	/* time of the last frame callback */
 	attoseconds_t				last_delta_nsec;	/* nanoseconds that passed since the previous callback */
 
-	/* playback/record information */
-	mame_file *					record_file;		/* recording file (NULL if not recording) */
-	mame_file *					playback_file;		/* playback file (NULL if not recording) */
+	/* playback information */
+	mame_file *					playback_file;		/* playback file (NULL if not playing back) */
 	uint64_t						playback_accumulated_speed;/* accumulated speed during playback */
 	uint32_t						playback_accumulated_frames;/* accumulated frames during playback */
 };
@@ -821,12 +820,6 @@ static void playback_end(running_machine *machine, const char *message);
 static void playback_frame(running_machine *machine, attotime curtime);
 static void playback_port(const input_port_config *port);
 
-/* input recording */
-static void record_init(running_machine *machine);
-static void record_end(running_machine *machine, const char *message);
-static void record_frame(running_machine *machine, attotime curtime);
-static void record_port(const input_port_config *port);
-
 
 
 /***************************************************************************
@@ -1002,9 +995,8 @@ time_t input_port_init(running_machine *machine, const input_port_token *tokens)
 	/* register callbacks for when we load configurations */
 	config_register(machine, "input", load_config_callback, save_config_callback);
 
-	/* open playback and record files if specified */
+	/* open playback file if specified */
 	basetime = playback_init(machine);
-	record_init(machine);
 
 	return basetime;
 }
@@ -1017,9 +1009,8 @@ time_t input_port_init(running_machine *machine, const input_port_token *tokens)
 
 static void input_port_exit(running_machine &machine)
 {
-	/* close any playback or recording files */
+	/* close any playback file */
 	playback_end(&machine, NULL);
-	record_end(&machine, NULL);
 }
 
 
@@ -2469,9 +2460,8 @@ static void frame_update(running_machine *machine)
 
 profiler_mark_start(PROFILER_INPUT);
 
-	/* record/playback information about the current frame */
+	/* playback information about the current frame */
 	playback_frame(machine, curtime);
-	record_frame(machine, curtime);
 
 	/* track the duration of the previous frame */
 	portdata->last_delta_nsec = attotime_to_attoseconds(attotime_sub(curtime, portdata->last_frame_time)) / ATTOSECONDS_PER_NANOSECOND;
@@ -2524,9 +2514,8 @@ profiler_mark_start(PROFILER_INPUT);
 		/* hook for MESS's natural keyboard support */
 		input_port_update_hook(machine, port, &port->state->digital);
 
-		/* handle playback/record */
+		/* handle playback */
 		playback_port(port);
-		record_port(port);
 
 		/* call device line changed handlers */
 		newvalue = input_port_read_direct(port);
@@ -4514,192 +4503,6 @@ static void playback_port(const input_port_config *port)
 }
 
 
-
-/***************************************************************************
-    INPUT RECORDING
-***************************************************************************/
-
-/*-------------------------------------------------
-    record_write_uint8 - write an 8-bit value
-    to the record file
--------------------------------------------------*/
-
-static void record_write_uint8(running_machine *machine, uint8_t data)
-{
-	input_port_private *portdata = machine->input_port_data;
-	uint8_t result = data;
-
-	/* protect against NULL handles if previous reads fail */
-	if (portdata->record_file == NULL)
-		return;
-
-	/* read the value; if we fail, end playback */
-	if (mame_fwrite(portdata->record_file, &result, sizeof(result)) != sizeof(result))
-		record_end(machine, "Out of space");
-}
-
-
-/*-------------------------------------------------
-    record_write_uint32 - write a 32-bit value
-    to the record file
--------------------------------------------------*/
-
-static void record_write_uint32(running_machine *machine, uint32_t data)
-{
-	input_port_private *portdata = machine->input_port_data;
-	uint32_t result = LITTLE_ENDIANIZE_INT32(data);
-
-	/* protect against NULL handles if previous reads fail */
-	if (portdata->record_file == NULL)
-		return;
-
-	/* read the value; if we fail, end playback */
-	if (mame_fwrite(portdata->record_file, &result, sizeof(result)) != sizeof(result))
-		record_end(machine, "Out of space");
-}
-
-
-/*-------------------------------------------------
-    record_write_uint64 - write a 64-bit value
-    to the record file
--------------------------------------------------*/
-
-static void record_write_uint64(running_machine *machine, uint64_t data)
-{
-	input_port_private *portdata = machine->input_port_data;
-	uint64_t result = LITTLE_ENDIANIZE_INT64(data);
-
-	/* protect against NULL handles if previous reads fail */
-	if (portdata->record_file == NULL)
-		return;
-
-	/* read the value; if we fail, end playback */
-	if (mame_fwrite(portdata->record_file, &result, sizeof(result)) != sizeof(result))
-		record_end(machine, "Out of space");
-}
-
-
-/*-------------------------------------------------
-    record_init - initialize INP recording
--------------------------------------------------*/
-
-static void record_init(running_machine *machine)
-{
-	const char *filename = options_get_string(machine->options(), OPTION_RECORD);
-	input_port_private *portdata = machine->input_port_data;
-	uint8_t header[INP_HEADER_SIZE];
-	system_time systime;
-	file_error filerr;
-
-	/* if no file, nothing to do */
-	if (filename[0] == 0)
-		return;
-
-	/* open the record file  */
-	filerr = mame_fopen(input_directory, filename, OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS, &portdata->record_file);
-	assert_always(filerr == FILERR_NONE, "Failed to open file for recording");
-
-	/* get the base time */
-	machine->base_datetime(systime);
-
-	/* fill in the header */
-	memset(header, 0, sizeof(header));
-	memcpy(header, "MAMEINP\0", 8);
-	header[0x08] = systime.time >> 0;
-	header[0x09] = systime.time >> 8;
-	header[0x0a] = systime.time >> 16;
-	header[0x0b] = systime.time >> 24;
-	header[0x0c] = systime.time >> 32;
-	header[0x0d] = systime.time >> 40;
-	header[0x0e] = systime.time >> 48;
-	header[0x0f] = systime.time >> 56;
-	header[0x10] = INP_HEADER_MAJVERSION;
-	header[0x11] = INP_HEADER_MINVERSION;
-	strcpy((char *)header + 0x14, machine->gamedrv->name);
-	sprintf((char *)header + 0x20, APPNAME " %s", build_version);
-
-	/* write it */
-	mame_fwrite(portdata->record_file, header, sizeof(header));
-
-	/* enable compression */
-	mame_fcompress(portdata->record_file, FCOMPRESS_MEDIUM);
-}
-
-
-/*-------------------------------------------------
-    record_end - end INP recording
--------------------------------------------------*/
-
-static void record_end(running_machine *machine, const char *message)
-{
-	input_port_private *portdata = machine->input_port_data;
-
-	/* only applies if we have a live file */
-	if (portdata->record_file != NULL)
-	{
-		/* close the file */
-		mame_fclose(portdata->record_file);
-		portdata->record_file = NULL;
-
-		/* pop a message */
-		if (message != NULL)
-			popmessage("Recording Ended\nReason: %s", message);
-	}
-}
-
-
-/*-------------------------------------------------
-    record_frame - start of frame callback for
-    recording
--------------------------------------------------*/
-
-static void record_frame(running_machine *machine, attotime curtime)
-{
-	input_port_private *portdata = machine->input_port_data;
-
-	/* if recording, record information about the current frame */
-	if (portdata->record_file != NULL)
-	{
-		/* first the absolute time */
-		record_write_uint32(machine, curtime.seconds);
-		record_write_uint64(machine, curtime.attoseconds);
-
-		/* then the current speed */
-		record_write_uint32(machine, video_get_speed_percent(machine) * (double)(1 << 20));
-	}
-}
-
-
-/*-------------------------------------------------
-    record_port - per-port callback for record
--------------------------------------------------*/
-
-static void record_port(const input_port_config *port)
-{
-	input_port_private *portdata = port->machine->input_port_data;
-
-	/* if recording, store information about this port */
-	if (portdata->record_file != NULL)
-	{
-		analog_field_state *analog;
-
-		/* store the default value and digital state */
-		record_write_uint32(port->machine, port->state->defvalue);
-		record_write_uint32(port->machine, port->state->digital);
-
-		/* loop over analog ports and save their data */
-		for (analog = port->state->analoglist; analog != NULL; analog = analog->next)
-		{
-			/* store current and previous values */
-			record_write_uint32(port->machine, analog->accum);
-			record_write_uint32(port->machine, analog->previous);
-
-			/* store configuration information */
-			record_write_uint32(port->machine, analog->sensitivity);
-			record_write_uint8(port->machine, analog->reverse);
-		}
-	}
-}
 
 int input_machine_has_keyboard(running_machine *machine)
 {

@@ -15,7 +15,6 @@
 #include "streams.h"
 #include "config.h"
 #include "profiler.h"
-#include "sound/wavwrite.h"
 
 
 
@@ -54,8 +53,6 @@ struct _sound_private
 	int attenuation;
 	int enabled;
 	int nosound_mode;
-
-	wav_file *wavfile;
 };
 
 
@@ -114,7 +111,6 @@ INLINE speaker_device *index_to_input(running_machine *machine, int index, int &
 void sound_init(running_machine *machine)
 {
 	sound_private *global;
-	const char *filename;
 
 	machine->sound_data = global = auto_alloc_clear(machine, sound_private);
 
@@ -182,11 +178,6 @@ void sound_init(running_machine *machine)
 	   single-rate machine resamples nowhere inside the core */
 	stream_set_consumer_rates(machine, machine->sample_rate);
 
-	/* open the output WAV file if specified */
-	filename = options_get_string(machine->options(), OPTION_WAVWRITE);
-	if (filename[0] != 0)
-		global->wavfile = wav_open(filename, machine->sample_rate, 2);
-
 	/* enable sound by default */
 	global->enabled = TRUE;
 	global->muted = FALSE;
@@ -208,11 +199,6 @@ void sound_init(running_machine *machine)
 static void sound_exit(running_machine &machine)
 {
 	sound_private *global = machine.sound_data;
-
-	/* close any open WAV file */
-	if (global->wavfile != NULL)
-		wav_close(global->wavfile);
-	global->wavfile = NULL;
 
 	/* reset variables */
 	global->totalsnd = 0;
@@ -477,11 +463,7 @@ static TIMER_CALLBACK( sound_update )
 
    /* play the result */
    if (finalmix_offset > 0)
-   {
       osd_update_audio_stream(machine, finalmix, finalmix_offset / 2);
-      if (global->wavfile != NULL)
-         wav_add_data_16(global->wavfile, finalmix, finalmix_offset);
-   }
 
    /* update the streamer */
    streams_update(machine);
