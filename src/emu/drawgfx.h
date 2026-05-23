@@ -52,7 +52,11 @@ enum
 {
 	DRAWMODE_NONE,
 	DRAWMODE_SOURCE,
-	DRAWMODE_SHADOW
+	DRAWMODE_SHADOW,
+	DRAWMODE_SHADOW_PRI		/* high-priority shadow: reapplies the shadow table to
+							   any SOURCE pixels drawn afterwards on the same priority-
+							   bitmap pixel. Only meaningful with the priority-aware
+							   PIXEL_OP_REMAP_TRANSTABLE*_PRIORITY paths. */
 };
 
 

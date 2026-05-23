@@ -3678,7 +3678,7 @@ void k053245_sprites_draw( running_device *device, bitmap_t *bitmap, const recta
 		ox -= (zoomx * w) >> 13;
 		oy -= (zoomy * h) >> 13;
 
-		drawmode_table[k053245->gfx->color_granularity - 1] = shadow ? DRAWMODE_SHADOW : DRAWMODE_SOURCE;
+		drawmode_table[k053245->gfx->color_granularity - 1] = shadow ? DRAWMODE_SHADOW_PRI : DRAWMODE_SOURCE;
 
 		for (y = 0; y < h; y++)
 		{
