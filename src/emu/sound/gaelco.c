@@ -36,14 +36,12 @@ Registers per channel:
 #include "emu.h"
 #include "streams.h"
 #include "gaelco.h"
-#include "wavwrite.h"
 
 #define VERBOSE_SOUND 0
 #define VERBOSE_READ_WRITES 0
 #define LOG_SOUND(x) do { if (VERBOSE_SOUND) logerror x; } while (0)
 #define LOG_READ_WRITES(x) do { if (VERBOSE_READ_WRITES) logerror x; } while (0)
 
-#define LOG_WAVE  0
 //#define ALT_MIX
 
 #define GAELCO_NUM_CHANNELS 	0x07
@@ -73,7 +71,6 @@ struct _gaelco_sound_state
 	int16_t volume_table[VOLUME_LEVELS][256];
 };
 
-static wav_file *	wavraw;					/* raw waveform */
 
 INLINE gaelco_sound_state *get_safe_token(running_device *device)
 {
@@ -183,9 +180,6 @@ static STREAM_UPDATE( gaelco_update )
 		outputs[0][j] = output_l;
 		outputs[1][j] = output_r;
 	}
-
-	if (wavraw)
-		wav_add_data_32lr(wavraw, outputs[0], outputs[1], samples, 0);
 }
 
 /*============================================================================
@@ -269,17 +263,11 @@ static DEVICE_START( gaelco )
 			info->volume_table[vol][(j ^ 0x80) & 0xff] = (vol*j*256)/(VOLUME_LEVELS - 1);
 		}
 	}
-
-	if (LOG_WAVE)
-		wavraw = wav_open("gae1_snd.wav", 8000, 2);
 }
 
 
 static DEVICE_STOP( gaelco )
 {
-	if (wavraw)
-		wav_close(wavraw);
-	wavraw = NULL;
 }
 
 

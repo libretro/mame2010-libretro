@@ -271,7 +271,6 @@ EMUSOUNDOBJS = \
 	$(EMUOBJ)/sound/filter.o \
 	$(EMUOBJ)/sound/flt_vol.o \
 	$(EMUOBJ)/sound/flt_rc.o \
-	$(EMUOBJ)/sound/wavwrite.o \
 
 EMUAUDIOOBJS = \
 	$(EMUAUDIO)/generic.o \

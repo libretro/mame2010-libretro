@@ -35,7 +35,6 @@
 
 #include "emu.h"
 #include "streams.h"
-#include "wavwrite.h"
 #include "discrete.h"
 
 /*************************************
@@ -167,7 +166,6 @@ static const discrete_module module_list[] =
 {
 	{ DSO_OUTPUT      ,"DSO_OUTPUT"      , 0 ,0                                      ,dso_output_reset      ,dso_output_step      ,NULL                  ,NULL                 },
 	{ DSO_CSVLOG      ,"DSO_CSVLOG"      , 0 ,sizeof(struct dso_csvlog_context)      ,NULL                  ,dso_csvlog_step      ,dso_csvlog_start      ,dso_csvlog_stop      },
-	{ DSO_WAVELOG     ,"DSO_WAVELOG"     , 0 ,sizeof(struct dso_wavelog_context)     ,NULL                  ,dso_wavelog_step     ,dso_wavelog_start     ,dso_wavelog_stop     },
 	{ DSO_IMPORT      ,"DSO_IMPORT"      , 0 ,0                                      ,NULL                  ,NULL                 ,NULL                  ,NULL                 },
 
 	/* parallel modules */
@@ -753,10 +751,6 @@ static void init_nodes(discrete_info *info, const linked_list_entry *block_list,
 
 				/* CSVlog Node for debugging */
 				case DSO_CSVLOG:
-					break;
-
-				/* Wavelog Node for debugging */
-				case DSO_WAVELOG:
 					break;
 
 				/* Task processing */

@@ -25,9 +25,6 @@
  * http://www.ibiblio.org/obp/electricCircuits/
  * For a free circuit simulator:
  * http://qucs.sourceforge.net/index.html
- * For a free waveform editor to view DISCRETE_WAVELOG dumps:
- * http://audacity.sourceforge.net/
- * http://www.sonicvisualiser.org/
  *
  ***********************************************************************
  *
@@ -325,8 +322,6 @@
  * DISCRETE_CSVLOG3(NODE1,NODE2,NODE3)
  * DISCRETE_CSVLOG4(NODE1,NODE2,NODE3,NODE4)
  * DISCRETE_CSVLOG5(NODE1,NODE2,NODE3,NODE4,NODE5)
- * DISCRETE_WAVELOG1(NODE1,GAIN1)
- * DISCRETE_WAVELOG2(NODE1,GAIN1,NODE2,GAIN2)
  * DISCRETE_OUTPUT(OPNODE,GAIN)
  *
  ***********************************************************************
@@ -3368,33 +3363,6 @@
  *  The resulting file can be imported to a spreadsheet.
  *
  ************************************************************************
- *
- * DISCRETE_WAVELOG - Dump nodes into a wav file
- *
- *  Declaration syntax
- *
- *     DISCRETE_WAVELOG1(node,
- *                       static gain for node)
- *
- *     DISCRETE_WAVELOG2(left node,
- *                       static gain for left node,
- *                       right node,
- *                       static gain for right node)
- *
- *  Use this to monitor nodes while debugging the driver.  You should
- *  remove these nodes from the final driver.  You can use up to a maximum
- *  of DISCRETE_MAX_WAVELOGS.  Each file will be called discreteX_Y.wav,
- *  where X is the sound tag.  Y is 0-9, in the order the file is
- *  created in the driver.
- *
- *  This can be used to monitor how a node's input affects it's output.
- *  Monitor the input trigger against the final effect, etc.  The resulting
- *  file can be played/viewed etc. by music player/editor software.
- *
- *  When logging nodes that are voltage levels, you may want to use a
- *  gain of 1000.  This will make the wav sample level reflect milli-volts.
- *
- ************************************************************************
  =======================================================================
  * Must be last module.
  =======================================================================
@@ -3423,7 +3391,6 @@
  ************************************************************************/
 
 #include "streams.h"
-#include "wavwrite.h"
 
 
 
@@ -4341,7 +4308,6 @@ enum
 
 	/* Debugging */
 	DSO_CSVLOG,			/* Dump nodes as csv file */
-	DSO_WAVELOG,		/* Dump nodes as wav file */
 
 	/* Parallel execution */
 	DSO_TASK_START,	/* start of parallel task */
@@ -4537,8 +4503,6 @@ enum
 #define DISCRETE_CSVLOG3(NODE1,NODE2,NODE3)                             { NODE_SPECIAL, DSO_CSVLOG   , 3, { (int)(NODE1),(int)(NODE2),(int)(NODE3) }, { NODE1,NODE2,NODE3 }, NULL, "DISCRETE_CSVLOG3" },
 #define DISCRETE_CSVLOG4(NODE1,NODE2,NODE3,NODE4)                       { NODE_SPECIAL, DSO_CSVLOG   , 4, { (int)(NODE1),(int)(NODE2),(int)(NODE3),(int)(NODE4) }, { NODE1,NODE2,NODE3,NODE4 }, NULL, "DISCRETE_CSVLOG4" },
 #define DISCRETE_CSVLOG5(NODE1,NODE2,NODE3,NODE4,NODE5)                 { NODE_SPECIAL, DSO_CSVLOG   , 5, { (int)(NODE1),(int)(NODE2),(int)(NODE3),(int)(NODE4),(int)(NODE5) }, { NODE1,NODE2,NODE3,NODE4,NODE5 }, NULL, "DISCRETE_CSVLOG5" },
-#define DISCRETE_WAVELOG1(NODE1,GAIN1)                                  { NODE_SPECIAL, DSO_WAVELOG  , 2, { (int)(NODE1),(int)(NODE_NC) }, { NODE1,GAIN1 }, NULL, "DISCRETE_WAVELOG1" },
-#define DISCRETE_WAVELOG2(NODE1,GAIN1,NODE2,GAIN2)                      { NODE_SPECIAL, DSO_WAVELOG  , 4, { (int)(NODE1),(int)(NODE_NC),(int)(NODE2),(int)(NODE_NC) }, { NODE1,GAIN1,NODE2,GAIN2 }, NULL, "DISCRETE_WAVELOG2" },
 
 /* import */
 #define DISCRETE_IMPORT(INFO)                                           { NODE_SPECIAL, DSO_IMPORT   , 0, { 0 }, { 0 }, &(INFO##_discrete_interface), "DISCRETE_IMPORT" },

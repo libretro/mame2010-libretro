@@ -19,11 +19,6 @@
 
 #define LOG_COMMANDS			0
 #define RAINE_CHECK				0
-#define MAKE_WAVS				0
-
-#if MAKE_WAVS
-#include "wavwrite.h"
-#endif
 
 
 #define MAX_SAMPLE_CHUNK		10000
@@ -120,10 +115,6 @@ struct _es5506_state
 	int16_t *		ulaw_lookup;
 	uint16_t *	volume_lookup;
 	running_device *device;
-
-#if MAKE_WAVS
-	void *		wavraw;					/* raw waveform */
-#endif
 };
 
 
@@ -779,15 +770,6 @@ static STREAM_UPDATE( es5506_update )
 	stream_sample_t *ldest = outputs[0];
 	stream_sample_t *rdest = outputs[1];
 
-#if MAKE_WAVS
-	/* start the logging once we have a sample rate */
-	if (chip->sample_rate)
-	{
-		if (!chip->wavraw)
-			chip->wavraw = wav_open("raw.wav", chip->sample_rate, 2);
-	}
-#endif
-
 	/* loop until all samples are output */
 	while (samples)
 	{
@@ -805,12 +787,6 @@ static STREAM_UPDATE( es5506_update )
 			*ldest++ = lsrc[samp] >> 4;
 			*rdest++ = rsrc[samp] >> 4;
 		}
-
-#if MAKE_WAVS
-		/* log the raw data */
-		if (chip->wavraw)
-			wav_add_data_32lr(chip->wavraw, lsrc, rsrc, length, 4);
-#endif
 
 		/* account for these samples */
 		samples -= length;
@@ -934,18 +910,6 @@ static DEVICE_STOP( es5506 )
 		fclose(eslog);
 		eslog = NULL;
 	}
-
-#if MAKE_WAVS
-{
-	int i;
-
-	for (i = 0; i < MAX_ES5506; i++)
-	{
-		if (es5506[i].wavraw)
-			wav_close(es5506[i].wavraw);
-	}
-}
-#endif
 }
 
 

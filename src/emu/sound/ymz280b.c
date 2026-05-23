@@ -27,7 +27,6 @@
 
 
 #define MAX_SAMPLE_CHUNK	10000
-#define MAKE_WAVS			0
 
 #define FRAC_BITS			14
 #define FRAC_ONE			(1 << FRAC_BITS)
@@ -35,10 +34,6 @@
 
 #define INTERNAL_BUFFER_SIZE	(1 << 15)
 #define INTERNAL_SAMPLE_RATE	(chip->master_clock * 2.0)
-
-#if MAKE_WAVS
-#include "wavwrite.h"
-#endif
 
 
 /* struct describing a single playing ADPCM voice */
@@ -92,10 +87,6 @@ struct _ymz280b_state
 	uint32_t rom_readback_addr;		/* where the CPU can read the ROM */
 	devcb_resolved_read8 ext_ram_read;		/* external RAM read handler */
 	devcb_resolved_write8 ext_ram_write;	/* external RAM write handler */
-
-#if MAKE_WAVS
-	void *		wavresample;			/* resampled waveform */
-#endif
 
 	int16_t *scratch;
 	running_device *device;
@@ -696,10 +687,6 @@ static DEVICE_START( ymz280b )
 	}
 
 	state_save_register_postload(device->machine, YMZ280B_state_save_update_step, chip);
-
-#if MAKE_WAVS
-	chip->wavresample = wav_open("resamp.wav", INTERNAL_SAMPLE_RATE, 2);
-#endif
 }
 
 

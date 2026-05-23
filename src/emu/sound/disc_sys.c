@@ -23,12 +23,6 @@ struct dso_csvlog_context
 	char name[32];
 };
 
-struct dso_wavelog_context
-{
-	wav_file *wavfile;
-	char name[32];
-};
-
 
 /*************************************
  *
@@ -212,50 +206,4 @@ static DISCRETE_STEP( dso_csvlog )
 		fprintf(context->csv_file, ", %f", *node->input[nodenum]);
 	}
 	fprintf(context->csv_file, "\n");
-}
-
-static DISCRETE_START( dso_wavelog )
-{
-	struct dso_wavelog_context *context = (struct dso_wavelog_context *) node->context;
-	int log_num;
-
-	log_num = node_module_index(node);
-	sprintf(context->name, "discrete_%s_%d.wav", node->info->device->tag(), log_num);
-	context->wavfile = wav_open(context->name, node->info->sample_rate, node->active_inputs/2);
-}
-
-static DISCRETE_STOP( dso_wavelog )
-{
-	struct dso_wavelog_context *context = (struct dso_wavelog_context *) node->context;
-
-	/* close any wave files */
-	if (context->wavfile)
-		wav_close(context->wavfile);
-}
-
-static DISCRETE_STEP( dso_wavelog )
-{
-	struct dso_wavelog_context *context = (struct dso_wavelog_context *) node->context;
-	double val;
-	int16_t wave_data_l, wave_data_r;
-
-	/* Dump any wave logs */
-	/* get nodes to be logged and apply gain, then clip to 16 bit */
-	val = DISCRETE_INPUT(0) * DISCRETE_INPUT(1);
-	val = (val < -32768) ? -32768 : (val > 32767) ? 32767 : val;
-	wave_data_l = (int16_t)val;
-	if (node->active_inputs == 2)
-	{
-		/* DISCRETE_WAVELOG1 */
-		wav_add_data_16(context->wavfile, &wave_data_l, 1);
-	}
-	else
-	{
-		/* DISCRETE_WAVELOG2 */
-		val = DISCRETE_INPUT(2) * DISCRETE_INPUT(3);
-		val = (val < -32768) ? -32768 : (val > 32767) ? 32767 : val;
-		wave_data_r = (int16_t)val;
-
-		wav_add_data_16lr(context->wavfile, &wave_data_l, &wave_data_r, 1);
-	}
 }

@@ -29,7 +29,6 @@
 
 #include "emu.h"
 #include "streams.h"
-#include "wavwrite.h"
 #include "sn76477.h"
 
 
@@ -41,29 +40,6 @@
  *****************************************************************************/
 
 #define VERBOSE					1
-
-/* if 1, create a .wav file of the sound produced */
-#define LOG_WAV					0
-
-/* if 1 and LOG_WAV is 1, only logs to .wav file in chip is enabled */
-#define LOG_WAV_ENABLED_ONLY	0
-
-/* determines what value will be logged in the left channel of the .wav file */
-#define LOG_WAV_VALUE_L			0	/* 0 = OUT voltage */
-									/* 1 = enable line */
-									/* 2 = one-shot cap voltage */
-									/* 3 = a/d cap voltage */
-									/* 4 = slf cap voltage */
-									/* 5 = vco cap voltage */
-									/* 6 = noise filter cap voltage */
-
-/* determines what value will be logged in the right channel of the .wav file
-   same values as for the left channel above */
-#define LOG_WAV_VALUE_R			3
-
-#define LOG_WAV_GAIN_FACTOR		1000
-
-#define LOG_WAV_FILE_NAME		"sn76477_%s.wav"
 
 
 #define LOG(n,x) do { if (VERBOSE >= (n)) logerror x; } while (0)
@@ -256,8 +232,6 @@ struct _sn76477_state
 	sound_stream *channel;				/* returned by stream_create() */
 	int sample_rate;					/* from machine->sample_rate */
 	running_device *device;
-
-	wav_file *file;						/* handle of the wave file to produce */
 };
 
 
@@ -901,37 +875,6 @@ static void log_complete_state(sn76477_state *sn)
 	log_attack_time(sn);
 	log_decay_time(sn);
 	log_voltage_out(sn);
-}
-
-
-
-/*****************************************************************************
- *
- *  .WAV file functions
- *
- *****************************************************************************/
-
-
-static void open_wav_file(sn76477_state *sn)
-{
-	char wav_file_name[30];
-
-	sprintf(wav_file_name, LOG_WAV_FILE_NAME, sn->device->tag());
-	sn->file = wav_open(wav_file_name, sn->sample_rate, 2);
-
-	LOG(1, ("SN76477 '%s':         Logging output: %s\n", sn->device->tag(), wav_file_name));
-}
-
-
-static void close_wav_file(sn76477_state *sn)
-{
-	wav_close(sn->file);
-}
-
-
-static void add_wav_data(sn76477_state *sn, int16_t data_l, int16_t data_r)
-{
-	wav_add_data_16lr(sn->file, &data_l, &data_r, 1);
 }
 
 
@@ -2277,46 +2220,6 @@ static STREAM_UPDATE( SN76477_update )
                       \ Vcen - Vmin    /
          */
 		*buffer++ = (((voltage_out - OUT_LOW_CLIP_THRESHOLD) / (OUT_CENTER_LEVEL_VOLTAGE - OUT_LOW_CLIP_THRESHOLD)) - 1) * 32767;
-
-		if (LOG_WAV && LOG_WAV_ENABLED_ONLY && !sn->enable)
-		{
-			int16_t log_data_l;
-			int16_t log_data_r;
-
-			switch (LOG_WAV_VALUE_L)
-			{
-			case 0:
-				log_data_l = LOG_WAV_GAIN_FACTOR * voltage_out;
-				log_data_r = LOG_WAV_GAIN_FACTOR * voltage_out;
-				break;
-			case 1:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->enable;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->enable;
-				break;
-			case 2:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->one_shot_cap_voltage;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->one_shot_cap_voltage;
-				break;
-			case 3:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->attack_decay_cap_voltage;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->attack_decay_cap_voltage;
-				break;
-			case 4:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->slf_cap_voltage;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->slf_cap_voltage;
-				break;
-			case 5:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->vco_cap_voltage;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->vco_cap_voltage;
-				break;
-			case 6:
-				log_data_l = LOG_WAV_GAIN_FACTOR * sn->noise_filter_cap_voltage;
-				log_data_r = LOG_WAV_GAIN_FACTOR * sn->noise_filter_cap_voltage;
-				break;
-			}
-
-			add_wav_data(sn, log_data_l, log_data_r);
-		}
 	}
 }
 
@@ -2454,18 +2357,11 @@ static DEVICE_START( sn76477 )
 	state_save_register(device, sn);
 
 	log_complete_state(sn);
-
-	if (LOG_WAV)
-		open_wav_file(sn);
 }
 
 
 static DEVICE_STOP( sn76477 )
 {
-	sn76477_state *sn = get_safe_token(device);
-
-	if (LOG_WAV)
-		close_wav_file(sn);
 }
 
 
