@@ -397,8 +397,14 @@ static READ16_HANDLER( ssriders_protection_r )
 			/* collision table */
 			data = -memory_read_word(space, 0x105818);
 			data = ((data / 8 - 4) & 0x1f) * 0x40;
-			data += ((memory_read_word(space, 0x105cb0) +
-						256 * k052109_r(state->k052109, 0x1a01) + k052109_r(state->k052109, 0x1a00) - 6) / 8 + 12) & 0x3f;
+			/* 0x1040c8 is the x scroll buffer the game keeps in main RAM;
+			   reading it here (instead of querying the k052109 scroll
+			   registers at 0x1a00/0x1a01) avoids visible stutter on slopes
+			   while scrolling, and is also more authentic from a hardware
+			   perspective -- both the protection chip and the game's
+			   collision logic read from main RAM directly, with the
+			   k052109 sitting downstream as the consumer of those values. */
+			data += ((memory_read_word(space, 0x105cb0) + memory_read_word(space, 0x1040c8) - 6) / 8 + 12) & 0x3f;
 			return data;
 
 		default:
