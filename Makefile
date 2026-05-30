@@ -535,8 +535,12 @@ endif
 
 ifneq (,$(or $(findstring webos,$(CROSS_COMPILE)),$(findstring starfish,$(CROSS_COMPILE))))
   FORCE_DRC_C_BACKEND = 1
-  PTR64 = 0
   CCOMFLAGS += -DWEBOS
+  ifneq (,$(findstring aarch64,$(CROSS_COMPILE)))
+    PTR64 = 1
+  else
+    PTR64 = 0
+  endif
 endif
 
 ifeq ($(ALIGNED),1)
