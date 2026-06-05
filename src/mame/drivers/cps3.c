@@ -742,12 +742,10 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 	   16.16 fixed-point index stepping and per-pixel >>16 are pure
 	   overhead.  This path reproduces the exact same source-pixel mapping
 	   -- including x/y flip and edge clipping -- using integer steps, and
-	   has been verified bit-identical to the general path for the
-	   non-blend transparency modes.  The PEN_INDEX_BLEND mode is left to
-	   the general path (it draws with a non-deterministic mame_rand term),
-	   as is anything with gfx == NULL. */
-	if( gfx && scalex == 0x10000 && scaley == 0x10000 &&
-	    transparency != CPS3_TRANSPARENCY_PEN_INDEX_BLEND )
+	   has been verified bit-identical to the general path for all of the
+	   transparency modes including PEN_INDEX_BLEND.  Only gfx == NULL is
+	   left to the general path. */
+	if( gfx && scalex == 0x10000 && scaley == 0x10000 )
 	{
 		uint32_t palbase = (color_granularity * color) & 0x1ffff;
 		const pen_t *pal = &cps3_mame_colours[palbase];
@@ -822,7 +820,7 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 					}
 				}
 			}
-			else /* CPS3_TRANSPARENCY_PEN_INDEX */
+			else if (transparency == CPS3_TRANSPARENCY_PEN_INDEX)
 			{
 				if (sxd == 1 && transparent_color == 0)
 				{
@@ -850,6 +848,58 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
 						int x, sxi = sxi_base;
 						for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = c | palbase; sxi += sxd; }
+						syi += syd;
+					}
+				}
+			}
+			else /* CPS3_TRANSPARENCY_PEN_INDEX_BLEND */
+			{
+				/* Blend ORs fixed bits into the existing destination pixel
+				   based on low bits of the source index; it does not write a
+				   new colour.  Semantics reproduced exactly from the general
+				   scaler.  The granularity==64 upper-nibble case is
+				   intentionally a no-op (see the determinism note in the
+				   general path).  Scalar for now; this case steps the source
+				   in either direction so a kernel would need a reverse load. */
+				if (color_granularity == 64)
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						int x, sxi = sxi_base;
+						for( x=sx; x<ex; x++ )
+						{
+							int c = source[sxi];
+							if( c != transparent_color )
+							{
+								if (c&0x01) dest[x] |= 0x2000;
+								if (c&0x02) dest[x] |= 0x4000;
+								if (c&0x04) dest[x] |= 0x8000;
+								if (c&0x08) dest[x] |= 0x10000;
+							}
+							sxi += sxd;
+						}
+						syi += syd;
+					}
+				}
+				else
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						int x, sxi = sxi_base;
+						for( x=sx; x<ex; x++ )
+						{
+							int c = source[sxi];
+							if( c != transparent_color )
+							{
+								if (c&0x01) dest[x] |= 0x8000;
+								if (color&0x100) dest[x] |= 0x10000;
+							}
+							sxi += sxd;
+						}
 						syi += syd;
 					}
 				}
