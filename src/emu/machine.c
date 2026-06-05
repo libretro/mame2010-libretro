@@ -373,8 +373,6 @@ void running_machine::start()
 
 int running_machine::run(bool firstrun)
 {
-   int error = MAMERR_NONE;
-
    /* move to the init phase */
    m_current_phase = MACHINE_PHASE_INIT;
 
