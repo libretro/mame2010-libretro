@@ -857,6 +857,177 @@ static void cps3_blit_row_blend64_flip(uint32_t *dest, const uint8_t *srcrow, in
 	}
 }
 
+/* Forward non-granularity-64 blend row.  For each non-zero source index,
+   OR 0x8000 when bit 0 is set, and OR colorbit (which is 0x10000 when
+   color&0x100 was set, else 0) unconditionally -- but still only for
+   non-zero pixels.  colorbit is resolved once at the call site.  The
+   0x8000 contribution is self-gated (bit 0 set implies the index is
+   non-zero); the colorbit contribution must be masked by the non-zero
+   test explicitly, since it does not depend on the index value. */
+static void cps3_blit_row_blendother(uint32_t *dest, const uint8_t *src, int n, uint32_t colorbit)
+{
+	int x = 0;
+#if defined(CPS3_HAVE_SSE2)
+	if (n >= 16)
+	{
+		__m128i zero = _mm_setzero_si128();
+		__m128i b8000 = _mm_set1_epi32(0x8000);
+		__m128i vcolorbit = _mm_set1_epi32((int)colorbit);
+		__m128i m1 = _mm_set1_epi32(1);
+		__m128i all = _mm_set1_epi32(-1);
+		for (; x+16 <= n; x += 16)
+		{
+			__m128i bytes = _mm_loadu_si128((const __m128i*)(src+x));
+			__m128i lo8 = _mm_unpacklo_epi8(bytes, zero);
+			__m128i hi8 = _mm_unpackhi_epi8(bytes, zero);
+			__m128i v[4];
+			int g;
+			v[0] = _mm_unpacklo_epi16(lo8, zero);
+			v[1] = _mm_unpackhi_epi16(lo8, zero);
+			v[2] = _mm_unpacklo_epi16(hi8, zero);
+			v[3] = _mm_unpackhi_epi16(hi8, zero);
+			for (g = 0; g < 4; g++)
+			{
+				__m128i c = v[g];
+				__m128i nz = _mm_andnot_si128(_mm_cmpeq_epi32(c, zero), all);   /* ones where c != 0 */
+				__m128i o = zero;
+				uint32_t *d = dest + x + g*4;
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m1), m1), b8000));
+				o = _mm_or_si128(o, _mm_and_si128(nz, vcolorbit));
+				_mm_storeu_si128((__m128i*)d, _mm_or_si128(_mm_loadu_si128((const __m128i*)d), o));
+			}
+		}
+	}
+#elif defined(CPS3_HAVE_NEON)
+	if (n >= 16)
+	{
+		uint32x4_t zero = vdupq_n_u32(0);
+		uint32x4_t b8000 = vdupq_n_u32(0x8000);
+		uint32x4_t vcolorbit = vdupq_n_u32(colorbit);
+		uint32x4_t m1 = vdupq_n_u32(1);
+		for (; x+16 <= n; x += 16)
+		{
+			uint8x16_t bytes = vld1q_u8(src+x);
+			uint16x8_t lo16 = vmovl_u8(vget_low_u8(bytes));
+			uint16x8_t hi16 = vmovl_u8(vget_high_u8(bytes));
+			uint32x4_t v[4];
+			int g;
+			v[0] = vmovl_u16(vget_low_u16(lo16));
+			v[1] = vmovl_u16(vget_high_u16(lo16));
+			v[2] = vmovl_u16(vget_low_u16(hi16));
+			v[3] = vmovl_u16(vget_high_u16(hi16));
+			for (g = 0; g < 4; g++)
+			{
+				uint32x4_t c = v[g];
+				uint32x4_t nz = vmvnq_u32(vceqq_u32(c, zero));   /* ones where c != 0 */
+				uint32x4_t o = zero;
+				uint32_t *d = dest + x + g*4;
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m1), m1), b8000));
+				o = vorrq_u32(o, vandq_u32(nz, vcolorbit));
+				vst1q_u32(d, vorrq_u32(vld1q_u32(d), o));
+			}
+		}
+	}
+#endif
+	for (; x < n; x++)
+	{
+		int c = src[x];
+		if (c != 0)
+		{
+			if (c&0x01) dest[x] |= 0x8000;
+			dest[x] |= colorbit;
+		}
+	}
+}
+
+/* Flipped variant of the non-granularity-64 blend row. */
+static void cps3_blit_row_blendother_flip(uint32_t *dest, const uint8_t *srcrow, int sxi_base, int n, uint32_t colorbit)
+{
+	int x = 0;
+#if defined(CPS3_HAVE_SSE2)
+	if (n >= 16)
+	{
+		__m128i zero = _mm_setzero_si128();
+		__m128i b8000 = _mm_set1_epi32(0x8000);
+		__m128i vcolorbit = _mm_set1_epi32((int)colorbit);
+		__m128i m1 = _mm_set1_epi32(1);
+		__m128i all = _mm_set1_epi32(-1);
+		for (; x+16 <= n; x += 16)
+		{
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			__m128i bytes = _mm_loadu_si128((const __m128i*)p);
+			__m128i v[4];
+			int g;
+			bytes = _mm_or_si128(_mm_slli_epi16(bytes, 8), _mm_srli_epi16(bytes, 8));
+			bytes = _mm_shufflelo_epi16(bytes, 0x1B);
+			bytes = _mm_shufflehi_epi16(bytes, 0x1B);
+			bytes = _mm_shuffle_epi32(bytes, 0x4E);
+			{
+				__m128i lo8 = _mm_unpacklo_epi8(bytes, zero);
+				__m128i hi8 = _mm_unpackhi_epi8(bytes, zero);
+				v[0] = _mm_unpacklo_epi16(lo8, zero);
+				v[1] = _mm_unpackhi_epi16(lo8, zero);
+				v[2] = _mm_unpacklo_epi16(hi8, zero);
+				v[3] = _mm_unpackhi_epi16(hi8, zero);
+			}
+			for (g = 0; g < 4; g++)
+			{
+				__m128i c = v[g];
+				__m128i nz = _mm_andnot_si128(_mm_cmpeq_epi32(c, zero), all);
+				__m128i o = zero;
+				uint32_t *d = dest + x + g*4;
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m1), m1), b8000));
+				o = _mm_or_si128(o, _mm_and_si128(nz, vcolorbit));
+				_mm_storeu_si128((__m128i*)d, _mm_or_si128(_mm_loadu_si128((const __m128i*)d), o));
+			}
+		}
+	}
+#elif defined(CPS3_HAVE_NEON)
+	if (n >= 16)
+	{
+		uint32x4_t zero = vdupq_n_u32(0);
+		uint32x4_t b8000 = vdupq_n_u32(0x8000);
+		uint32x4_t vcolorbit = vdupq_n_u32(colorbit);
+		uint32x4_t m1 = vdupq_n_u32(1);
+		for (; x+16 <= n; x += 16)
+		{
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			uint8x16_t bytes = vld1q_u8(p);
+			uint16x8_t lo16, hi16;
+			uint32x4_t v[4];
+			int g;
+			bytes = vrev64q_u8(bytes);
+			bytes = vcombine_u8(vget_high_u8(bytes), vget_low_u8(bytes));
+			lo16 = vmovl_u8(vget_low_u8(bytes));
+			hi16 = vmovl_u8(vget_high_u8(bytes));
+			v[0] = vmovl_u16(vget_low_u16(lo16));
+			v[1] = vmovl_u16(vget_high_u16(lo16));
+			v[2] = vmovl_u16(vget_low_u16(hi16));
+			v[3] = vmovl_u16(vget_high_u16(hi16));
+			for (g = 0; g < 4; g++)
+			{
+				uint32x4_t c = v[g];
+				uint32x4_t nz = vmvnq_u32(vceqq_u32(c, zero));
+				uint32x4_t o = zero;
+				uint32_t *d = dest + x + g*4;
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m1), m1), b8000));
+				o = vorrq_u32(o, vandq_u32(nz, vcolorbit));
+				vst1q_u32(d, vorrq_u32(vld1q_u32(d), o));
+			}
+		}
+	}
+#endif
+	for (; x < n; x++)
+	{
+		int c = srcrow[sxi_base - x];
+		if (c != 0)
+		{
+			if (c&0x01) dest[x] |= 0x8000;
+			dest[x] |= colorbit;
+		}
+	}
+}
+
 static void cps3_blit_row_pen(uint32_t *dest, const uint8_t *src, int n, const uint32_t *pal)
 {
 	/* Transparent-pen colour-table variant.  The per-pixel work is a gather
@@ -1087,22 +1258,44 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 				}
 				else
 				{
-					for( y=sy; y<ey; y++ )
+					uint32_t colorbit = (color & 0x100) ? 0x10000 : 0;
+					if (sxd == 1 && transparent_color == 0)
 					{
-						const uint8_t *source = source_base + syi * gfx->line_modulo;
-						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-						int x, sxi = sxi_base;
-						for( x=sx; x<ex; x++ )
+						for( y=sy; y<ey; y++ )
 						{
-							int c = source[sxi];
-							if( c != transparent_color )
-							{
-								if (c&0x01) dest[x] |= 0x8000;
-								if (color&0x100) dest[x] |= 0x10000;
-							}
-							sxi += sxd;
+							const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
+							cps3_blit_row_blendother(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n, colorbit);
+							syi += syd;
 						}
-						syi += syd;
+					}
+					else if (sxd == -1 && transparent_color == 0)
+					{
+						for( y=sy; y<ey; y++ )
+						{
+							const uint8_t *source = source_base + syi * gfx->line_modulo;
+							cps3_blit_row_blendother_flip(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, sxi_base, n, colorbit);
+							syi += syd;
+						}
+					}
+					else
+					{
+						for( y=sy; y<ey; y++ )
+						{
+							const uint8_t *source = source_base + syi * gfx->line_modulo;
+							uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+							int x, sxi = sxi_base;
+							for( x=sx; x<ex; x++ )
+							{
+								int c = source[sxi];
+								if( c != transparent_color )
+								{
+									if (c&0x01) dest[x] |= 0x8000;
+									if (color&0x100) dest[x] |= 0x10000;
+								}
+								sxi += sxd;
+							}
+							syi += syd;
+						}
 					}
 				}
 			}
