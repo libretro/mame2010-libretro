@@ -404,6 +404,17 @@ Notes:
 #include "includes/cps3.h"
 #include "machine/wd33c93.h"
 
+/* SIMD acceleration for the native-scale tile blit inner loop.  The kernels
+   below are bit-exact with the scalar path and are selected at compile time;
+   when neither SSE2 nor NEON is targeted the scalar fallback is used.  */
+#if defined(__SSE2__)
+#include <emmintrin.h>
+#define CPS3_HAVE_SSE2 1
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+#include <arm_neon.h>
+#define CPS3_HAVE_NEON 1
+#endif
+
 #define MASTER_CLOCK	42954500
 
 /* load extracted cd content? */
@@ -461,6 +472,89 @@ uint32_t cps3_user5region_length;
 #define CPS3_TRANSPARENCY_PEN 1
 #define CPS3_TRANSPARENCY_PEN_INDEX 2
 #define CPS3_TRANSPARENCY_PEN_INDEX_BLEND 3
+
+/* Forward (non-flipped, contiguous-source) row blit for the native-scale
+   fast path.  These take pen indices straight from the source and write the
+   renderbuffer.  Three transparency modes are handled:
+     - NONE       : opaque, dest = pal[c]
+     - PEN        : dest = pal[c] when c != 0
+     - PEN_INDEX  : dest = c | palbase when c != 0   (CPS3's usual layer/sprite mode)
+   The SSE2 and NEON bodies are verified bit-exact against the scalar tail,
+   which also handles any trailing pixels (width not a multiple of 16) and the
+   case where SIMD is not compiled in. */
+
+static void cps3_blit_row_penindex(uint32_t *dest, const uint8_t *src, int n, uint32_t palbase)
+{
+	int x = 0;
+#if defined(CPS3_HAVE_SSE2)
+	{
+		__m128i vpal = _mm_set1_epi32((int)palbase);
+		__m128i zero = _mm_setzero_si128();
+		for (; x+16 <= n; x += 16)
+		{
+			__m128i bytes = _mm_loadu_si128((const __m128i*)(src+x));
+			__m128i lo8 = _mm_unpacklo_epi8(bytes, zero);
+			__m128i hi8 = _mm_unpackhi_epi8(bytes, zero);
+			__m128i v[4];
+			int g;
+			v[0] = _mm_unpacklo_epi16(lo8, zero);
+			v[1] = _mm_unpackhi_epi16(lo8, zero);
+			v[2] = _mm_unpacklo_epi16(hi8, zero);
+			v[3] = _mm_unpackhi_epi16(hi8, zero);
+			for (g = 0; g < 4; g++)
+			{
+				uint32_t *d = dest + x + g*4;
+				__m128i ored = _mm_or_si128(v[g], vpal);
+				__m128i mask = _mm_cmpeq_epi32(v[g], zero);     /* ones where transparent */
+				__m128i dold = _mm_loadu_si128((const __m128i*)d);
+				_mm_storeu_si128((__m128i*)d, _mm_or_si128(_mm_and_si128(mask, dold), _mm_andnot_si128(mask, ored)));
+			}
+		}
+	}
+#elif defined(CPS3_HAVE_NEON)
+	{
+		uint32x4_t vpal = vdupq_n_u32(palbase);
+		uint32x4_t vzero = vdupq_n_u32(0);
+		for (; x+16 <= n; x += 16)
+		{
+			uint8x16_t bytes = vld1q_u8(src+x);
+			uint16x8_t lo16 = vmovl_u8(vget_low_u8(bytes));
+			uint16x8_t hi16 = vmovl_u8(vget_high_u8(bytes));
+			uint32x4_t v[4];
+			int g;
+			v[0] = vmovl_u16(vget_low_u16(lo16));
+			v[1] = vmovl_u16(vget_high_u16(lo16));
+			v[2] = vmovl_u16(vget_low_u16(hi16));
+			v[3] = vmovl_u16(vget_high_u16(hi16));
+			for (g = 0; g < 4; g++)
+			{
+				uint32_t *d = dest + x + g*4;
+				uint32x4_t ored = vorrq_u32(v[g], vpal);
+				uint32x4_t mask = vceqq_u32(v[g], vzero);       /* ones where transparent */
+				uint32x4_t dold = vld1q_u32(d);
+				vst1q_u32(d, vbslq_u32(mask, dold, ored));
+			}
+		}
+	}
+#endif
+	for (; x < n; x++) { int c = src[x]; if (c != 0) dest[x] = c | palbase; }
+}
+
+static void cps3_blit_row_pen(uint32_t *dest, const uint8_t *src, int n, const uint32_t *pal)
+{
+	/* Transparent-pen colour-table variant.  The per-pixel work is a gather
+	   through pal[], which does not vectorise usefully under SSE2/NEON, so
+	   this stays scalar; it is only used by the SS/text path. */
+	int x;
+	for (x = 0; x < n; x++) { int c = src[x]; if (c != 0) dest[x] = pal[c]; }
+}
+
+static void cps3_blit_row_none(uint32_t *dest, const uint8_t *src, int n, const uint32_t *pal)
+{
+	/* Opaque colour-table variant; also a gather through pal[], kept scalar. */
+	int x;
+	for (x = 0; x < n; x++) dest[x] = pal[src[x]];
+}
 
 INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
@@ -544,38 +638,75 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 		{
 			int y;
 			int syi = syi_base;
+			int n = ex - sx;
 
 			if (transparency == CPS3_TRANSPARENCY_NONE)
 			{
-				for( y=sy; y<ey; y++ )
+				if (sxd == 1)
 				{
-					const uint8_t *source = source_base + syi * gfx->line_modulo;
-					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-					int x, sxi = sxi_base;
-					for( x=sx; x<ex; x++ ) { dest[x] = pal[source[sxi]]; sxi += sxd; }
-					syi += syd;
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
+						cps3_blit_row_none(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n, pal);
+						syi += syd;
+					}
+				}
+				else
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						int x, sxi = sxi_base;
+						for( x=sx; x<ex; x++ ) { dest[x] = pal[source[sxi]]; sxi += sxd; }
+						syi += syd;
+					}
 				}
 			}
 			else if (transparency == CPS3_TRANSPARENCY_PEN)
 			{
-				for( y=sy; y<ey; y++ )
+				if (sxd == 1 && transparent_color == 0)
 				{
-					const uint8_t *source = source_base + syi * gfx->line_modulo;
-					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-					int x, sxi = sxi_base;
-					for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = pal[c]; sxi += sxd; }
-					syi += syd;
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
+						cps3_blit_row_pen(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n, pal);
+						syi += syd;
+					}
+				}
+				else
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						int x, sxi = sxi_base;
+						for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = pal[c]; sxi += sxd; }
+						syi += syd;
+					}
 				}
 			}
 			else /* CPS3_TRANSPARENCY_PEN_INDEX */
 			{
-				for( y=sy; y<ey; y++ )
+				if (sxd == 1 && transparent_color == 0)
 				{
-					const uint8_t *source = source_base + syi * gfx->line_modulo;
-					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
-					int x, sxi = sxi_base;
-					for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = c | palbase; sxi += sxd; }
-					syi += syd;
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
+						cps3_blit_row_penindex(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n, palbase);
+						syi += syd;
+					}
+				}
+				else
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+						int x, sxi = sxi_base;
+						for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = c | palbase; sxi += sxd; }
+						syi += syd;
+					}
 				}
 			}
 		}
