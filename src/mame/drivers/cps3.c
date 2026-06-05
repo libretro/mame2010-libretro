@@ -459,6 +459,52 @@ static uint32_t* cps3_mame_colours;//[0x20000]; // actual values to write to 32-
 static bitmap_t *renderbuffer_bitmap;
 static rectangle renderbuffer_clip;
 
+/* Ordered draw list for the CPS3 compositor.
+
+   VIDEO_UPDATE walks the sprite list and composites sprite cells and the
+   four tilemap layers into renderbuffer_bitmap.  The relative order of those
+   operations is the z-order, encoded by their position in the sprite list.
+   Rather than blit inline while walking, the walk now emits an ordered list
+   of draw commands which is then rasterized in order.  The output is
+   identical -- this is a pure restructuring of the same operations in the
+   same order -- but it gives a single backend-agnostic command stream that a
+   future hardware compositor can consume directly instead of the software
+   blitter.
+
+   The two command kinds are a single sprite tile blit and a "draw tilemap
+   layer N" marker (there are at most four of the latter per frame).  The
+   list lives in a fixed pre-allocated buffer so there is no per-frame
+   allocation; if a frame ever emits more than the cap the list is flushed
+   (rasterized in order) and reused, which keeps the z-order correct and can
+   never overflow. */
+enum
+{
+	CPS3_CMD_SPRITE = 0,
+	CPS3_CMD_TILEMAP = 1
+};
+
+typedef struct _cps3_draw_cmd
+{
+	int      type;
+	/* sprite tile fields */
+	int      tileno;
+	int      pal;
+	int      flipx;
+	int      flipy;
+	int      xpos;
+	int      ypos;
+	int      transparency;
+	int      color_granularity;
+	uint32_t xinc;
+	uint32_t yinc;
+	/* tilemap field */
+	int      tilemapnum;
+} cps3_draw_cmd;
+
+#define CPS3_DRAW_LIST_MAX 16384
+static cps3_draw_cmd cps3_draw_list[CPS3_DRAW_LIST_MAX];
+static int cps3_draw_list_count;
+
 static uint8_t* cps3_user4region;
 uint8_t* cps3_user5region;
 /* Byte length of the user5 (sample) region, exported so the sound device
@@ -1427,6 +1473,66 @@ static void cps3_draw_tilemapsprite(running_machine *machine, int tmnum, bitmap_
 	}
 }
 
+/* Rasterize the accumulated draw list in order into renderbuffer_bitmap and
+   reset it.  Sprite commands go through the same blitter as before; tilemap
+   commands draw the whole layer via cps3_draw_tilemapsprite.  Called both
+   when the list fills mid-frame (flush and continue, preserving order) and
+   once at the end of the sprite walk. */
+static void cps3_flush_draw_list(running_machine *machine)
+{
+	int i;
+	for (i = 0; i < cps3_draw_list_count; i++)
+	{
+		const cps3_draw_cmd *c = &cps3_draw_list[i];
+		if (c->type == CPS3_CMD_SPRITE)
+		{
+			cps3_drawgfxzoom(renderbuffer_bitmap, &renderbuffer_clip, machine->gfx[1],
+				c->tileno, c->pal, c->flipx, c->flipy, c->xpos, c->ypos,
+				c->transparency, 0, c->xinc, c->yinc, NULL, 0, c->color_granularity);
+		}
+		else /* CPS3_CMD_TILEMAP */
+		{
+			cps3_draw_tilemapsprite(machine, c->tilemapnum, renderbuffer_bitmap, &renderbuffer_clip);
+		}
+	}
+	cps3_draw_list_count = 0;
+}
+
+static void cps3_emit_sprite(running_machine *machine, int tileno, int pal, int flipx, int flipy,
+	int xpos, int ypos, int transparency, uint32_t xinc, uint32_t yinc, int color_granularity)
+{
+	cps3_draw_cmd *c;
+	/* flush-and-continue if the fixed buffer is full; rasterizing the
+	   current prefix in order before appending keeps z-order intact and
+	   makes overflow impossible. */
+	if (cps3_draw_list_count >= CPS3_DRAW_LIST_MAX)
+		cps3_flush_draw_list(machine);
+
+	c = &cps3_draw_list[cps3_draw_list_count++];
+	c->type              = CPS3_CMD_SPRITE;
+	c->tileno            = tileno;
+	c->pal               = pal;
+	c->flipx             = flipx;
+	c->flipy             = flipy;
+	c->xpos              = xpos;
+	c->ypos              = ypos;
+	c->transparency      = transparency;
+	c->color_granularity = color_granularity;
+	c->xinc              = xinc;
+	c->yinc              = yinc;
+}
+
+static void cps3_emit_tilemap(running_machine *machine, int tilemapnum)
+{
+	cps3_draw_cmd *c;
+	if (cps3_draw_list_count >= CPS3_DRAW_LIST_MAX)
+		cps3_flush_draw_list(machine);
+
+	c = &cps3_draw_list[cps3_draw_list_count++];
+	c->type       = CPS3_CMD_TILEMAP;
+	c->tilemapnum = tilemapnum;
+}
+
 static VIDEO_UPDATE(cps3)
 {
 	int y,x, count;
@@ -1480,6 +1586,8 @@ static VIDEO_UPDATE(cps3)
 	renderbuffer_clip.max_y = ((224*fszx)>>16)-1;
 
 	bitmap_fill(renderbuffer_bitmap,&renderbuffer_clip,0);
+
+	cps3_draw_list_count = 0;
 
 	/* Sprites */
 	{
@@ -1572,7 +1680,7 @@ static VIDEO_UPDATE(cps3)
 
 					if (bg_drawn[tilemapnum]==0)
 					{
-						cps3_draw_tilemapsprite(screen->machine, tilemapnum, renderbuffer_bitmap, &renderbuffer_clip );
+						cps3_emit_tilemap(screen->machine, tilemapnum);
 					}
 					bg_drawn[tilemapnum] = 1;
 				}
@@ -1659,11 +1767,11 @@ static VIDEO_UPDATE(cps3)
 
 									if (global_alpha || alpha)
 									{
-										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,0,xinc,yinc, NULL, 0, color_granularity);
+										cps3_emit_sprite(screen->machine,realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,xinc,yinc,color_granularity);
 									}
 									else
 									{
-										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,0,xinc,yinc, NULL, 0, color_granularity);
+										cps3_emit_sprite(screen->machine,realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,xinc,yinc,color_granularity);
 									}
 									count++;
 								}
@@ -1677,6 +1785,9 @@ static VIDEO_UPDATE(cps3)
 			}
 		}
 	}
+
+	/* Rasterize the ordered draw list built during the sprite walk. */
+	cps3_flush_draw_list(screen->machine);
 
 	/* copy render bitmap with zoom */
 	{
