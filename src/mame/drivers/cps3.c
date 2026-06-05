@@ -763,6 +763,100 @@ static void cps3_blit_row_blend64(uint32_t *dest, const uint8_t *src, int n)
 	}
 }
 
+/* Flipped (flipx) variant of the granularity-64 blend row.  Output pixel x
+   reads srcrow[sxi_base - x]; the 16-byte source span backing each output
+   block is loaded and byte-reversed (as in the flipped PEN_INDEX kernel)
+   before the same branchless OR-blend is applied. */
+static void cps3_blit_row_blend64_flip(uint32_t *dest, const uint8_t *srcrow, int sxi_base, int n)
+{
+	int x = 0;
+#if defined(CPS3_HAVE_SSE2)
+	if (n >= 16)
+	{
+		__m128i zero = _mm_setzero_si128();
+		__m128i b2000 = _mm_set1_epi32(0x2000), b4000 = _mm_set1_epi32(0x4000);
+		__m128i b8000 = _mm_set1_epi32(0x8000), b10000 = _mm_set1_epi32(0x10000);
+		__m128i m1 = _mm_set1_epi32(1), m2 = _mm_set1_epi32(2), m4 = _mm_set1_epi32(4), m8 = _mm_set1_epi32(8);
+		for (; x+16 <= n; x += 16)
+		{
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			__m128i bytes = _mm_loadu_si128((const __m128i*)p);
+			__m128i v[4];
+			int g;
+			bytes = _mm_or_si128(_mm_slli_epi16(bytes, 8), _mm_srli_epi16(bytes, 8));
+			bytes = _mm_shufflelo_epi16(bytes, 0x1B);
+			bytes = _mm_shufflehi_epi16(bytes, 0x1B);
+			bytes = _mm_shuffle_epi32(bytes, 0x4E);
+			{
+				__m128i lo8 = _mm_unpacklo_epi8(bytes, zero);
+				__m128i hi8 = _mm_unpackhi_epi8(bytes, zero);
+				v[0] = _mm_unpacklo_epi16(lo8, zero);
+				v[1] = _mm_unpackhi_epi16(lo8, zero);
+				v[2] = _mm_unpacklo_epi16(hi8, zero);
+				v[3] = _mm_unpackhi_epi16(hi8, zero);
+			}
+			for (g = 0; g < 4; g++)
+			{
+				__m128i c = v[g];
+				__m128i o = zero;
+				uint32_t *d = dest + x + g*4;
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m1), m1), b2000));
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m2), m2), b4000));
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m4), m4), b8000));
+				o = _mm_or_si128(o, _mm_and_si128(_mm_cmpeq_epi32(_mm_and_si128(c, m8), m8), b10000));
+				_mm_storeu_si128((__m128i*)d, _mm_or_si128(_mm_loadu_si128((const __m128i*)d), o));
+			}
+		}
+	}
+#elif defined(CPS3_HAVE_NEON)
+	if (n >= 16)
+	{
+		uint32x4_t b2000 = vdupq_n_u32(0x2000), b4000 = vdupq_n_u32(0x4000);
+		uint32x4_t b8000 = vdupq_n_u32(0x8000), b10000 = vdupq_n_u32(0x10000);
+		uint32x4_t m1 = vdupq_n_u32(1), m2 = vdupq_n_u32(2), m4 = vdupq_n_u32(4), m8 = vdupq_n_u32(8);
+		uint32x4_t z = vdupq_n_u32(0);
+		for (; x+16 <= n; x += 16)
+		{
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			uint8x16_t bytes = vld1q_u8(p);
+			uint16x8_t lo16, hi16;
+			uint32x4_t v[4];
+			int g;
+			bytes = vrev64q_u8(bytes);
+			bytes = vcombine_u8(vget_high_u8(bytes), vget_low_u8(bytes));
+			lo16 = vmovl_u8(vget_low_u8(bytes));
+			hi16 = vmovl_u8(vget_high_u8(bytes));
+			v[0] = vmovl_u16(vget_low_u16(lo16));
+			v[1] = vmovl_u16(vget_high_u16(lo16));
+			v[2] = vmovl_u16(vget_low_u16(hi16));
+			v[3] = vmovl_u16(vget_high_u16(hi16));
+			for (g = 0; g < 4; g++)
+			{
+				uint32x4_t c = v[g];
+				uint32x4_t o = z;
+				uint32_t *d = dest + x + g*4;
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m1), m1), b2000));
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m2), m2), b4000));
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m4), m4), b8000));
+				o = vorrq_u32(o, vandq_u32(vceqq_u32(vandq_u32(c, m8), m8), b10000));
+				vst1q_u32(d, vorrq_u32(vld1q_u32(d), o));
+			}
+		}
+	}
+#endif
+	for (; x < n; x++)
+	{
+		int c = srcrow[sxi_base - x];
+		if (c != 0)
+		{
+			if (c&0x01) dest[x] |= 0x2000;
+			if (c&0x02) dest[x] |= 0x4000;
+			if (c&0x04) dest[x] |= 0x8000;
+			if (c&0x08) dest[x] |= 0x10000;
+		}
+	}
+}
+
 static void cps3_blit_row_pen(uint32_t *dest, const uint8_t *src, int n, const uint32_t *pal)
 {
 	/* Transparent-pen colour-table variant.  The per-pixel work is a gather
@@ -956,6 +1050,15 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 						{
 							const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
 							cps3_blit_row_blend64(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n);
+							syi += syd;
+						}
+					}
+					else if (sxd == -1 && transparent_color == 0)
+					{
+						for( y=sy; y<ey; y++ )
+						{
+							const uint8_t *source = source_base + syi * gfx->line_modulo;
+							cps3_blit_row_blend64_flip(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, sxi_base, n);
 							syi += syd;
 						}
 					}
