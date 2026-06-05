@@ -486,7 +486,13 @@ uint32_t cps3_user5region_length;
 static void cps3_blit_row_penindex(uint32_t *dest, const uint8_t *src, int n, uint32_t palbase)
 {
 	int x = 0;
+	/* Only enter the vectorised path when there is at least one full
+	   16-pixel block to process.  Narrow rows -- e.g. tiles clipped to a
+	   few pixels at a screen edge -- would otherwise pay for the SIMD
+	   constant setup and then fall straight through to the scalar tail,
+	   which measured slower than just running the scalar loop. */
 #if defined(CPS3_HAVE_SSE2)
+	if (n >= 16)
 	{
 		__m128i vpal = _mm_set1_epi32((int)palbase);
 		__m128i zero = _mm_setzero_si128();
@@ -512,6 +518,7 @@ static void cps3_blit_row_penindex(uint32_t *dest, const uint8_t *src, int n, ui
 		}
 	}
 #elif defined(CPS3_HAVE_NEON)
+	if (n >= 16)
 	{
 		uint32x4_t vpal = vdupq_n_u32(palbase);
 		uint32x4_t vzero = vdupq_n_u32(0);
