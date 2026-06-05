@@ -1091,8 +1091,16 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
 void retro_deinit(void)
 {
+   /* retro_load_ok is the guard that prevents tearing down a session
+      that was never started -- but it must also be cleared once we have
+      finished, otherwise a second deinit (content close followed by a
+      core unload, or a reload) runs the whole teardown again over
+      already-freed state and hangs. */
    if (retro_load_ok)
-	   retro_finish();
+   {
+      retro_finish();
+      retro_load_ok = false;
+   }
 }
 
 void retro_reset (void)

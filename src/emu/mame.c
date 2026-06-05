@@ -227,8 +227,20 @@ void retro_main_loop(void)
          ;//exit_pending = true;
 
       // destroy the machine and the config
-      global_free(retro_global_machine);
-      global_free(retro_global_config);
+      // Null the pointers after freeing so a later free_machineconfig()
+      // (reached on content close / deinit) does not free them again --
+      // a double global_free corrupts the resource pool and hangs
+      // teardown.
+      if (retro_global_machine != NULL)
+      {
+         global_free(retro_global_machine);
+         retro_global_machine = NULL;
+      }
+      if (retro_global_config != NULL)
+      {
+         global_free(retro_global_config);
+         retro_global_config = NULL;
+      }
       global_machine = NULL;
 
       // reset the options
@@ -247,8 +259,23 @@ running_machine *retro_get_machine(void)
 
 void free_machineconfig(void)
 {
-   global_free(retro_global_machine);
-   global_free(retro_global_config);
+   /* This can be reached more than once on a content close / reload
+      (retro_deinit -> retro_finish, and the ENDEXEC path in
+      retro_main_loop both free these).  global_free on an
+      already-freed pointer corrupts the global resource pool's
+      bookkeeping lists, which then loops forever when the pool is
+      walked during teardown.  Free each object at most once and clear
+      the pointers so any later call is a no-op. */
+   if (retro_global_machine != NULL)
+   {
+      global_free(retro_global_machine);
+      retro_global_machine = NULL;
+   }
+   if (retro_global_config != NULL)
+   {
+      global_free(retro_global_config);
+      retro_global_config = NULL;
+   }
    global_machine = NULL;
 }
 
@@ -256,7 +283,12 @@ extern void free_opt();
 
 void retro_finish(void)
 {
-	retro_global_machine->retro_machineexit();
+	/* Guard against being entered twice for a single content session.
+	   free_machineconfig() now clears retro_global_machine, so if a
+	   second close/deinit arrives there is nothing left to tear down
+	   and we must not dereference the freed machine. */
+	if (retro_global_machine != NULL)
+		retro_global_machine->retro_machineexit();
 	free_machineconfig();
 	free_opt();
 }
