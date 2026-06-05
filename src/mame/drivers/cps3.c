@@ -547,6 +547,89 @@ static void cps3_blit_row_penindex(uint32_t *dest, const uint8_t *src, int n, ui
 	for (; x < n; x++) { int c = src[x]; if (c != 0) dest[x] = c | palbase; }
 }
 
+/* Flipped (flipx) forward-Y variant of the PEN_INDEX row blit.  Output pixel
+   x reads srcrow[sxi_base - x], i.e. the source row is consumed in reverse.
+   The kernel loads the contiguous 16-byte source span that backs a 16-pixel
+   output block, reverses the bytes, then performs the same widen / OR /
+   masked-store as the forward kernel.  Bit-exact with the scalar reverse
+   loop; the scalar tail handles widths not a multiple of 16 and non-SIMD
+   builds. */
+static void cps3_blit_row_penindex_flip(uint32_t *dest, const uint8_t *srcrow, int sxi_base, int n, uint32_t palbase)
+{
+	int x = 0;
+#if defined(CPS3_HAVE_SSE2)
+	if (n >= 16)
+	{
+		__m128i vpal = _mm_set1_epi32((int)palbase);
+		__m128i zero = _mm_setzero_si128();
+		for (; x+16 <= n; x += 16)
+		{
+			/* output [x..x+15] reads srcrow[base-x .. base-x-15], which is
+			   the contiguous span srcrow[base-x-15 .. base-x] reversed. */
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			__m128i bytes = _mm_loadu_si128((const __m128i*)p);
+			__m128i v[4];
+			int g;
+			/* byte-reverse the 16-byte vector (SSE2, no SSSE3):
+			   swap bytes within each 16-bit lane, reverse the 8 lanes,
+			   then swap the two 64-bit halves. */
+			bytes = _mm_or_si128(_mm_slli_epi16(bytes, 8), _mm_srli_epi16(bytes, 8));
+			bytes = _mm_shufflelo_epi16(bytes, 0x1B);
+			bytes = _mm_shufflehi_epi16(bytes, 0x1B);
+			bytes = _mm_shuffle_epi32(bytes, 0x4E);
+			{
+				__m128i lo8 = _mm_unpacklo_epi8(bytes, zero);
+				__m128i hi8 = _mm_unpackhi_epi8(bytes, zero);
+				v[0] = _mm_unpacklo_epi16(lo8, zero);
+				v[1] = _mm_unpackhi_epi16(lo8, zero);
+				v[2] = _mm_unpacklo_epi16(hi8, zero);
+				v[3] = _mm_unpackhi_epi16(hi8, zero);
+			}
+			for (g = 0; g < 4; g++)
+			{
+				uint32_t *d = dest + x + g*4;
+				__m128i ored = _mm_or_si128(v[g], vpal);
+				__m128i mask = _mm_cmpeq_epi32(v[g], zero);
+				__m128i dold = _mm_loadu_si128((const __m128i*)d);
+				_mm_storeu_si128((__m128i*)d, _mm_or_si128(_mm_and_si128(mask, dold), _mm_andnot_si128(mask, ored)));
+			}
+		}
+	}
+#elif defined(CPS3_HAVE_NEON)
+	if (n >= 16)
+	{
+		uint32x4_t vpal = vdupq_n_u32(palbase);
+		uint32x4_t vzero = vdupq_n_u32(0);
+		for (; x+16 <= n; x += 16)
+		{
+			const uint8_t *p = srcrow + (sxi_base - x - 15);
+			uint8x16_t bytes = vld1q_u8(p);
+			uint16x8_t lo16, hi16;
+			uint32x4_t v[4];
+			int g;
+			/* byte-reverse: reverse within each 64-bit half, then swap halves */
+			bytes = vrev64q_u8(bytes);
+			bytes = vcombine_u8(vget_high_u8(bytes), vget_low_u8(bytes));
+			lo16 = vmovl_u8(vget_low_u8(bytes));
+			hi16 = vmovl_u8(vget_high_u8(bytes));
+			v[0] = vmovl_u16(vget_low_u16(lo16));
+			v[1] = vmovl_u16(vget_high_u16(lo16));
+			v[2] = vmovl_u16(vget_low_u16(hi16));
+			v[3] = vmovl_u16(vget_high_u16(hi16));
+			for (g = 0; g < 4; g++)
+			{
+				uint32_t *d = dest + x + g*4;
+				uint32x4_t ored = vorrq_u32(v[g], vpal);
+				uint32x4_t mask = vceqq_u32(v[g], vzero);
+				uint32x4_t dold = vld1q_u32(d);
+				vst1q_u32(d, vbslq_u32(mask, dold, ored));
+			}
+		}
+	}
+#endif
+	for (; x < n; x++) { int c = srcrow[sxi_base - x]; if (c != 0) dest[x] = c | palbase; }
+}
+
 static void cps3_blit_row_pen(uint32_t *dest, const uint8_t *src, int n, const uint32_t *pal)
 {
 	/* Transparent-pen colour-table variant.  The per-pixel work is a gather
@@ -701,6 +784,15 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 					{
 						const uint8_t *source = source_base + syi * gfx->line_modulo + sxi_base;
 						cps3_blit_row_penindex(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, n, palbase);
+						syi += syd;
+					}
+				}
+				else if (sxd == -1 && transparent_color == 0)
+				{
+					for( y=sy; y<ey; y++ )
+					{
+						const uint8_t *source = source_base + syi * gfx->line_modulo;
+						cps3_blit_row_penindex_flip(BITMAP_ADDR32(dest_bmp, y, 0) + sx, source, sxi_base, n, palbase);
 						syi += syd;
 					}
 				}
