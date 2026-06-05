@@ -465,7 +465,7 @@ uint32_t cps3_user5region_length;
 INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_element *gfx,
 		unsigned int code,unsigned int color,int flipx,int flipy,int sx,int sy,
 		int transparency,int transparent_color,
-		int scalex, int scaley,bitmap_t *pri_buffer,uint32_t pri_mask)
+		int scalex, int scaley,bitmap_t *pri_buffer,uint32_t pri_mask,int color_granularity)
 {
 	rectangle myclip;
 
@@ -519,7 +519,7 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 	if( gfx && scalex == 0x10000 && scaley == 0x10000 &&
 	    transparency != CPS3_TRANSPARENCY_PEN_INDEX_BLEND )
 	{
-		uint32_t palbase = (gfx->color_granularity * color) & 0x1ffff;
+		uint32_t palbase = (color_granularity * color) & 0x1ffff;
 		const pen_t *pal = &cps3_mame_colours[palbase];
 		const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 		int gw = gfx->width;
@@ -588,7 +588,7 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 		if( gfx )
 		{
 //          const pen_t *pal = &gfx->colortable[gfx->color_granularity * (color % gfx->total_colors)];
-			uint32_t palbase = (gfx->color_granularity * color) & 0x1ffff;
+			uint32_t palbase = (color_granularity * color) & 0x1ffff;
 			const pen_t *pal = &cps3_mame_colours[palbase];
 			const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
 
@@ -732,7 +732,7 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 									if( c != transparent_color )
 									{
 										/* blending isn't 100% understood */
-										if (gfx->color_granularity == 64)
+										if (color_granularity == 64)
 										{
 											// OK for sfiii2 spotlight
 											if (c&0x01) dest[x] |= 0x2000;
@@ -1101,10 +1101,7 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 			yflip  = (dat & 0x00000800)>>11;
 			xflip  = (dat & 0x00001000)>>12;
 
-			if (!bpp) machine->gfx[1]->color_granularity=256;
-			else machine->gfx[1]->color_granularity=64;
-
-			cps3_drawgfxzoom(bitmap,&clip,machine->gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,drawline-tilesubline,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0);
+			cps3_drawgfxzoom(bitmap,&clip,machine->gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,drawline-tilesubline,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0, bpp ? 64 : 256);
 		}
 	}
 }
@@ -1193,10 +1190,7 @@ static void cps3_draw_tilemapsprite(running_machine *machine, int tmnum, bitmap_
 			int yflip  = (dat & 0x00000800)>>11;
 			int xflip  = (dat & 0x00001000)>>12;
 
-			if (!bpp) machine->gfx[1]->color_granularity=256;
-			else machine->gfx[1]->color_granularity=64;
-
-			cps3_drawgfxzoom(bitmap,&clip,machine->gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,sy,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0);
+			cps3_drawgfxzoom(bitmap,&clip,machine->gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,sy,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0, bpp ? 64 : 256);
 		}
 
 		drawline = band_end+1;
@@ -1418,15 +1412,16 @@ static VIDEO_UPDATE(cps3)
 								}
 
 								/* use the bpp value from the main list or the sublists? */
+								int color_granularity;
 								if (whichbpp)
 								{
-									if (!global_bpp) screen->machine->gfx[1]->color_granularity=256;
-									else screen->machine->gfx[1]->color_granularity=64;
+									if (!global_bpp) color_granularity=256;
+									else color_granularity=64;
 								}
 								else
 								{
-									if (!bpp) screen->machine->gfx[1]->color_granularity=256;
-									else screen->machine->gfx[1]->color_granularity=64;
+									if (!bpp) color_granularity=256;
+									else color_granularity=64;
 								}
 
 								{
@@ -1434,11 +1429,11 @@ static VIDEO_UPDATE(cps3)
 
 									if (global_alpha || alpha)
 									{
-										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,0,xinc,yinc, NULL, 0);
+										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,0,xinc,yinc, NULL, 0, color_granularity);
 									}
 									else
 									{
-										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,0,xinc,yinc, NULL, 0);
+										cps3_drawgfxzoom(renderbuffer_bitmap,&renderbuffer_clip,screen->machine->gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,0,xinc,yinc, NULL, 0, color_granularity);
 									}
 									count++;
 								}
@@ -1504,7 +1499,7 @@ static VIDEO_UPDATE(cps3)
 				pal += cps3_ss_pal_base << 5;
 				tile+=0x200;
 
-				cps3_drawgfxzoom(bitmap, cliprect, screen->machine->gfx[0],tile,pal,flipx,flipy,x*8,y*8,CPS3_TRANSPARENCY_PEN,0,0x10000,0x10000,NULL,0);
+				cps3_drawgfxzoom(bitmap, cliprect, screen->machine->gfx[0],tile,pal,flipx,flipy,x*8,y*8,CPS3_TRANSPARENCY_PEN,0,0x10000,0x10000,NULL,0, screen->machine->gfx[0]->color_granularity);
 				count++;
 			}
 		}
