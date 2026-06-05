@@ -711,6 +711,11 @@ static void scsicd_delete_instance( SCSIInstance *scsiInstance )
 	if( our_this->cdrom )
 	{
 		cdrom_close( our_this->cdrom );
+		/* Null the handle after closing so a second delete -- which can
+		   happen on a content close / reload teardown -- does not call
+		   cdrom_close() a second time on an already-freed cdrom_file and
+		   crash. */
+		our_this->cdrom = NULL;
 	}
 #endif
 }

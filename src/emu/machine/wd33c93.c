@@ -808,7 +808,18 @@ void wd33c93_exit( const struct WD33C93interface *interface )
 
 	for (i = 0; i < interface->scsidevs->devs_present; i++)
 	{
-		SCSIDeleteInstance( devices[interface->scsidevs->devices[i].scsiID] );
+		int id = interface->scsidevs->devices[i].scsiID;
+		/* Delete each instance once and clear the slot.  This routine can
+		   be reached more than once across a content close / reload, and
+		   the device instances live in the machine resource pool which is
+		   freed when the machine is destroyed; deleting a slot twice would
+		   operate on freed memory.  Nulling the slot makes a repeat call a
+		   no-op. */
+		if (devices[id])
+		{
+			SCSIDeleteInstance( devices[id] );
+			devices[id] = NULL;
+		}
 	}
 }
 
