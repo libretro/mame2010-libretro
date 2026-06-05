@@ -2211,6 +2211,97 @@ static void cps1_find_last_sprite( running_machine *machine )    /* Find the off
 }
 
 
+/*
+    cps1_drawgfx - hoisted sprite blitter for CPS1/CPS2.
+
+    CPS1/2 sprites use only a narrow slice of the core pdrawgfx_transpen
+    behaviour: a 16bpp (INDEXED16) destination, 4bpp packed source gfx
+    (GFX_ELEMENT_PACKED), a transparent pen of 15, an 8bpp priority bitmap
+    and a non-NULL clip.  By owning that one path here the sprite inner loop
+    becomes available for CPS-specific optimisation without touching the
+    shared core, which serves every other driver.
+
+    This first version is a faithful, behaviour-preserving reproduction of
+    the core packed transpen+priority path (including the pen_usage
+    fully-transparent skip and fully-opaque fast paths and the code/color
+    range reduction), verified bit-identical to the core macros.  It is
+    deliberately scalar; later changes optimise it.
+*/
+static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_element *gfx,
+		uint32_t code, uint32_t color, int flipx, int flipy, int destx, int desty,
+		bitmap_t *priority, uint32_t pmask, uint32_t transpen)
+{
+	const pen_t *paldata;
+	const uint8_t *base;
+	int destendx, destendy;
+	int srcx, srcy;
+	int sxdir, sydir;
+	int dy, cy;
+	int opaque;
+
+	/* range-reduce code/color exactly as the core does */
+	code %= gfx->total_elements;
+	color %= gfx->total_colors;
+	paldata = &gfx->machine->pens[gfx->color_base + gfx->color_granularity * color];
+
+	/* pen_usage fast paths (skip fully transparent, opaque-blit fully opaque) */
+	opaque = 0;
+	if (gfx->pen_usage != NULL && !gfx->dirty[code])
+	{
+		uint32_t usage = gfx->pen_usage[code];
+		if ((usage & ~(1u << transpen)) == 0)
+			return;
+		if ((usage & (1u << transpen)) == 0)
+			opaque = 1;
+	}
+
+	/* high bit of the mask is implicitly on */
+	pmask |= 1u << 31;
+
+	destendx = destx + (int)gfx->width - 1;
+	destendy = desty + (int)gfx->height - 1;
+	if (destx > clip->max_x || destendx < clip->min_x)
+		return;
+	if (desty > clip->max_y || destendy < clip->min_y)
+		return;
+
+	srcx = 0;
+	srcy = 0;
+	if (destx < clip->min_x) { srcx = clip->min_x - destx; destx = clip->min_x; }
+	if (destendx > clip->max_x) destendx = clip->max_x;
+	if (desty < clip->min_y) { srcy = clip->min_y - desty; desty = clip->min_y; }
+	if (destendy > clip->max_y) destendy = clip->max_y;
+
+	if (flipx) srcx = (int)gfx->width - 1 - srcx;
+	if (flipy) srcy = (int)gfx->height - 1 - srcy;
+	sxdir = flipx ? -1 : 1;
+	sydir = flipy ? -1 : 1;
+	dy = sydir;
+
+	base = gfx_element_get_data(gfx, code);
+
+	cy = srcy;
+	for ( ; desty <= destendy; desty++, cy += dy)
+	{
+		const uint8_t *rowbase = base + cy * (int)gfx->line_modulo;
+		uint16_t *d = BITMAP_ADDR16(dest, desty, 0);
+		uint8_t *p = BITMAP_ADDR8(priority, desty, 0);
+		int dx = destx;
+		int cx = srcx;
+		for ( ; dx <= destendx; dx++, cx += sxdir)
+		{
+			uint8_t b = rowbase[cx >> 1];
+			int c = (cx & 1) ? (b >> 4) : (b & 15);
+			if (opaque || c != (int)transpen)
+			{
+				if (((1 << (p[dx] & 0x1f)) & pmask) == 0)
+					d[dx] = paldata[c];
+				p[dx] = 31;
+			}
+		}
+	}
+}
+
 static void cps1_render_sprites( running_machine *machine, bitmap_t *bitmap, const rectangle *cliprect )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
@@ -2218,14 +2309,14 @@ static void cps1_render_sprites( running_machine *machine, bitmap_t *bitmap, con
 #define DRAWSPRITE(CODE,COLOR,FLIPX,FLIPY,SX,SY)					\
 {																	\
 	if (flip_screen_get(machine))											\
-		pdrawgfx_transpen(bitmap,\
+		cps1_drawgfx(bitmap,\
 				cliprect,machine->gfx[2],							\
 				CODE,												\
 				COLOR,												\
 				!(FLIPX),!(FLIPY),									\
 				511-16-(SX),255-16-(SY),	machine->priority_bitmap,0x02,15);					\
 	else															\
-		pdrawgfx_transpen(bitmap,\
+		cps1_drawgfx(bitmap,\
 				cliprect,machine->gfx[2],							\
 				CODE,												\
 				COLOR,												\
@@ -2461,14 +2552,14 @@ static void cps2_render_sprites( running_machine *machine, bitmap_t *bitmap, con
 #define DRAWSPRITE(CODE,COLOR,FLIPX,FLIPY,SX,SY)									\
 {																					\
 	if (flip_screen_get(machine))															\
-		pdrawgfx_transpen(bitmap,\
+		cps1_drawgfx(bitmap,\
 				cliprect,machine->gfx[2],											\
 				CODE,																\
 				COLOR,																\
 				!(FLIPX),!(FLIPY),													\
 				511-16-(SX),255-16-(SY),				machine->priority_bitmap,primasks[priority],15);					\
 	else																			\
-		pdrawgfx_transpen(bitmap,\
+		cps1_drawgfx(bitmap,\
 				cliprect,machine->gfx[2],											\
 				CODE,																\
 				COLOR,																\
