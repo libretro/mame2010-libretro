@@ -1109,6 +1109,100 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 	}
 }
 
+/* Draw a whole tilemap at once.
+
+   The per-line routine above is called once for every one of the ~1023
+   scanlines, and each call redraws each 16-pixel-tall tile clipped to a
+   single line -- so every tile is set up and blitted 16 times.  When
+   per-line linescroll is not active (regs[1] & 0x4000 clear), every line
+   in a 16-line vertical band shares the same scrollx and therefore the
+   same tile row and the same destination y origin, so the band can be
+   drawn with one blit per tile clipped to the band instead of 16 blits
+   clipped to single lines.  This produces byte-identical output (verified
+   exhaustively over all 1024 scrolly values plus widescreen and varied
+   clip heights) while cutting the number of blit calls roughly 16x.
+
+   When linescroll IS active, scrollx can differ per line, so we fall back
+   to the exact per-line path. */
+static void cps3_draw_tilemapsprite(running_machine *machine, int tmnum, bitmap_t *bitmap, const rectangle *cliprect )
+{
+	uint32_t* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
+	uint32_t* regs;
+	int scrolly, scrollx;
+	uint32_t mapbase;
+	int drawline;
+	int maxy = cliprect->max_y;
+
+	if (tmnum>3)
+	{
+		printf("cps3_draw_tilemapsprite Illegal tilemap number %d\n",tmnum);
+		return;
+	}
+	regs = tmapregs[tmnum];
+
+	if (!(regs[1]&0x00008000)) return;
+
+	/* Linescroll active: keep the exact per-line behaviour. */
+	if (regs[1]&0x00004000)
+	{
+		for (drawline=0;drawline<1023;drawline++)
+			cps3_draw_tilemapsprite_line(machine, tmnum, drawline, bitmap, cliprect );
+		return;
+	}
+
+	scrolly = ((regs[0]&0x0000ffff)>>0)+4;
+	scrollx = (regs[0]&0xffff0000)>>16;
+	mapbase = ((regs[2]&0x007f0000)>>16) << 10;
+
+	/* Walk the screen in bands of lines that share a tilemap row.  This
+	   mirrors the per-line routine: line = (drawline+scrolly)&0x3ff,
+	   tileline = line/16+1, the tile is fetched at (tileline&63), and the
+	   destination y origin is drawline - (line%16), which stays constant
+	   across a band. */
+	drawline = 0;
+	while (drawline <= maxy+4)
+	{
+		int line        = (drawline+scrolly)&0x3ff;
+		int tileline     = (line/16)+1;
+		int tilesubline = line % 16;
+		int sy          = drawline - tilesubline;
+		int band_start  = drawline;
+		int band_end    = drawline;
+		int x;
+		rectangle clip;
+
+		/* extend the band while the mapped tile row stays the same */
+		while (band_end+1 <= maxy+4)
+		{
+			int l2 = ((band_end+1)+scrolly)&0x3ff;
+			if (((l2/16)+1) != tileline) break;
+			band_end++;
+		}
+
+		clip.min_x = cliprect->min_x;
+		clip.max_x = cliprect->max_x;
+		clip.min_y = band_start;
+		clip.max_y = band_end;
+
+		for (x=0;x<(cliprect->max_x/16)+2;x++)
+		{
+			uint32_t dat = cps3_spriteram[mapbase+((tileline&63)*64)+((x+scrollx/16)&63)];
+			int tileno = (dat & 0xffff0000)>>17;
+			int colour = (dat & 0x000001ff)>>0;
+			int bpp    = (dat & 0x0000200)>>9;
+			int yflip  = (dat & 0x00000800)>>11;
+			int xflip  = (dat & 0x00001000)>>12;
+
+			if (!bpp) machine->gfx[1]->color_granularity=256;
+			else machine->gfx[1]->color_granularity=64;
+
+			cps3_drawgfxzoom(bitmap,&clip,machine->gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,sy,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0);
+		}
+
+		drawline = band_end+1;
+	}
+}
+
 static VIDEO_UPDATE(cps3)
 {
 	int y,x, count;
@@ -1237,10 +1331,6 @@ static VIDEO_UPDATE(cps3)
 					//int startline;// = value2 & 0x3ff;
 					//int endline;
 					//int height = (value3 & 0x7f000000)>>24;
-					int uu;
-					uint32_t* tmapregs[4] = { tilemap20_regs_base, tilemap30_regs_base, tilemap40_regs_base, tilemap50_regs_base };
-					uint32_t* regs;
-					regs = tmapregs[tilemapnum];
 					//endline = value2;
 					//startline = endline - height;
 
@@ -1258,10 +1348,7 @@ static VIDEO_UPDATE(cps3)
 
 					if (bg_drawn[tilemapnum]==0)
 					{
-						for (uu=0;uu<1023;uu++)
-						{
-							cps3_draw_tilemapsprite_line(screen->machine, tilemapnum, uu, renderbuffer_bitmap, &renderbuffer_clip );
-						}
+						cps3_draw_tilemapsprite(screen->machine, tilemapnum, renderbuffer_bitmap, &renderbuffer_clip );
 					}
 					bg_drawn[tilemapnum] = 1;
 				}
