@@ -12,6 +12,23 @@
 #include "emu.h"
 #include "profiler.h"
 
+/* SIMD acceleration for the INDEXED16 scanline compositors.  These are the
+   hot inner loops used by every driver that renders to an indexed (paletted)
+   16bpp bitmap, which is the large majority of 2D hardware.  The per-pixel
+   work is a 16-bit add of a palette offset plus an 8-bit priority blend, with
+   an optional per-pixel transparency mask -- all of which vectorise cleanly.
+   The kernels are bit-identical to the scalar code and fall back to it on any
+   platform without SSE2/NEON, so output is unchanged everywhere. */
+#if defined(__SSE2__)
+#include <emmintrin.h>
+#define TILEMAP_HAVE_SIMD 1
+#define TILEMAP_HAVE_SSE2 1
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+#include <arm_neon.h>
+#define TILEMAP_HAVE_SIMD 1
+#define TILEMAP_HAVE_NEON 1
+#endif
+
 
 /***************************************************************************
     CONSTANTS
@@ -2008,7 +2025,7 @@ static void scanline_draw_opaque_ind16(void *_dest, const uint16_t *source, int 
 {
 	uint16_t *dest = (uint16_t *)_dest;
 	int pal = pcode >> 16;
-	int i;
+	int i = 0;
 
 	/* special case for no palette offset */
 	if (pal == 0)
@@ -2018,7 +2035,16 @@ static void scanline_draw_opaque_ind16(void *_dest, const uint16_t *source, int 
 		/* priority if necessary */
 		if (pcode != 0xff00)
 		{
-			for (i = 0; i < count; i++)
+#if defined(TILEMAP_HAVE_SSE2)
+			__m128i va = _mm_set1_epi8((char)(pcode >> 8)), vo = _mm_set1_epi8((char)pcode);
+			for ( ; i + 16 <= count; i += 16)
+				_mm_storeu_si128((__m128i*)(pri+i), _mm_or_si128(_mm_and_si128(_mm_loadu_si128((const __m128i*)(pri+i)), va), vo));
+#elif defined(TILEMAP_HAVE_NEON)
+			uint8x16_t va = vdupq_n_u8((uint8_t)(pcode >> 8)), vo = vdupq_n_u8((uint8_t)pcode);
+			for ( ; i + 16 <= count; i += 16)
+				vst1q_u8(pri+i, vorrq_u8(vandq_u8(vld1q_u8(pri+i), va), vo));
+#endif
+			for ( ; i < count; i++)
 				pri[i] = (pri[i] & (pcode >> 8)) | pcode;
 		}
 	}
@@ -2026,7 +2052,28 @@ static void scanline_draw_opaque_ind16(void *_dest, const uint16_t *source, int 
 	/* priority case */
 	else if ((pcode & 0xffff) != 0xff00)
 	{
-		for (i = 0; i < count; i++)
+#if defined(TILEMAP_HAVE_SSE2)
+		__m128i vpal = _mm_set1_epi16((short)pal);
+		__m128i va = _mm_set1_epi8((char)(pcode >> 8)), vo = _mm_set1_epi8((char)pcode);
+		int j = 0;
+		for ( ; i + 8 <= count; i += 8)
+			_mm_storeu_si128((__m128i*)(dest+i), _mm_add_epi16(_mm_loadu_si128((const __m128i*)(source+i)), vpal));
+		for ( ; j + 16 <= count; j += 16)
+			_mm_storeu_si128((__m128i*)(pri+j), _mm_or_si128(_mm_and_si128(_mm_loadu_si128((const __m128i*)(pri+j)), va), vo));
+		for ( ; j < count; j++)
+			pri[j] = (pri[j] & (pcode >> 8)) | pcode;
+#elif defined(TILEMAP_HAVE_NEON)
+		uint16x8_t vpal = vdupq_n_u16((uint16_t)pal);
+		uint8x16_t va = vdupq_n_u8((uint8_t)(pcode >> 8)), vo = vdupq_n_u8((uint8_t)pcode);
+		int j = 0;
+		for ( ; i + 8 <= count; i += 8)
+			vst1q_u16(dest+i, vaddq_u16(vld1q_u16(source+i), vpal));
+		for ( ; j + 16 <= count; j += 16)
+			vst1q_u8(pri+j, vorrq_u8(vandq_u8(vld1q_u8(pri+j), va), vo));
+		for ( ; j < count; j++)
+			pri[j] = (pri[j] & (pcode >> 8)) | pcode;
+#endif
+		for ( ; i < count; i++)
 		{
 			dest[i] = source[i] + pal;
 			pri[i] = (pri[i] & (pcode >> 8)) | pcode;
@@ -2036,7 +2083,16 @@ static void scanline_draw_opaque_ind16(void *_dest, const uint16_t *source, int 
 	/* no priority case */
 	else
 	{
-		for (i = 0; i < count; i++)
+#if defined(TILEMAP_HAVE_SSE2)
+		__m128i vpal = _mm_set1_epi16((short)pal);
+		for ( ; i + 8 <= count; i += 8)
+			_mm_storeu_si128((__m128i*)(dest+i), _mm_add_epi16(_mm_loadu_si128((const __m128i*)(source+i)), vpal));
+#elif defined(TILEMAP_HAVE_NEON)
+		uint16x8_t vpal = vdupq_n_u16((uint16_t)pal);
+		for ( ; i + 8 <= count; i += 8)
+			vst1q_u16(dest+i, vaddq_u16(vld1q_u16(source+i), vpal));
+#endif
+		for ( ; i < count; i++)
 			dest[i] = source[i] + pal;
 	}
 }
@@ -2051,12 +2107,66 @@ static void scanline_draw_masked_ind16(void *_dest, const uint16_t *source, cons
 {
 	uint16_t *dest = (uint16_t *)_dest;
 	int pal = pcode >> 16;
-	int i;
+	int i = 0;
+	int has_pri = ((pcode & 0xffff) != 0xff00);
+
+#if defined(TILEMAP_HAVE_SSE2)
+	{
+		__m128i vpal = _mm_set1_epi16((short)pal);
+		__m128i vmaskb = _mm_set1_epi8((char)(mask & 0xff));
+		__m128i vvalb = _mm_set1_epi8((char)(value & 0xff));
+		__m128i va = _mm_set1_epi8((char)(pcode >> 8)), vo = _mm_set1_epi8((char)pcode);
+		for ( ; i + 16 <= count; i += 16)
+		{
+			__m128i mb = _mm_loadu_si128((const __m128i*)(maskptr+i));
+			__m128i testb = _mm_cmpeq_epi8(_mm_and_si128(mb, vmaskb), vvalb);
+			__m128i tlo = _mm_unpacklo_epi8(testb, testb);
+			__m128i thi = _mm_unpackhi_epi8(testb, testb);
+			__m128i n0 = _mm_add_epi16(_mm_loadu_si128((const __m128i*)(source+i)), vpal);
+			__m128i n1 = _mm_add_epi16(_mm_loadu_si128((const __m128i*)(source+i+8)), vpal);
+			__m128i o0 = _mm_loadu_si128((const __m128i*)(dest+i));
+			__m128i o1 = _mm_loadu_si128((const __m128i*)(dest+i+8));
+			_mm_storeu_si128((__m128i*)(dest+i),   _mm_or_si128(_mm_and_si128(tlo, n0), _mm_andnot_si128(tlo, o0)));
+			_mm_storeu_si128((__m128i*)(dest+i+8), _mm_or_si128(_mm_and_si128(thi, n1), _mm_andnot_si128(thi, o1)));
+			if (has_pri)
+			{
+				__m128i p = _mm_loadu_si128((const __m128i*)(pri+i));
+				__m128i np = _mm_or_si128(_mm_and_si128(p, va), vo);
+				_mm_storeu_si128((__m128i*)(pri+i), _mm_or_si128(_mm_and_si128(testb, np), _mm_andnot_si128(testb, p)));
+			}
+		}
+	}
+#elif defined(TILEMAP_HAVE_NEON)
+	{
+		uint16x8_t vpal = vdupq_n_u16((uint16_t)pal);
+		uint8x16_t vmaskb = vdupq_n_u8((uint8_t)(mask & 0xff));
+		uint8x16_t vvalb = vdupq_n_u8((uint8_t)(value & 0xff));
+		uint8x16_t va = vdupq_n_u8((uint8_t)(pcode >> 8)), vo = vdupq_n_u8((uint8_t)pcode);
+		for ( ; i + 16 <= count; i += 16)
+		{
+			uint8x16_t mb = vld1q_u8(maskptr+i);
+			uint8x16_t testb = vceqq_u8(vandq_u8(mb, vmaskb), vvalb);
+			uint8x16x2_t z = vzipq_u8(testb, testb);
+			uint16x8_t tlo = vreinterpretq_u16_u8(z.val[0]);
+			uint16x8_t thi = vreinterpretq_u16_u8(z.val[1]);
+			uint16x8_t n0 = vaddq_u16(vld1q_u16(source+i), vpal);
+			uint16x8_t n1 = vaddq_u16(vld1q_u16(source+i+8), vpal);
+			vst1q_u16(dest+i,   vbslq_u16(tlo, n0, vld1q_u16(dest+i)));
+			vst1q_u16(dest+i+8, vbslq_u16(thi, n1, vld1q_u16(dest+i+8)));
+			if (has_pri)
+			{
+				uint8x16_t p = vld1q_u8(pri+i);
+				uint8x16_t np = vorrq_u8(vandq_u8(p, va), vo);
+				vst1q_u8(pri+i, vbslq_u8(testb, np, p));
+			}
+		}
+	}
+#endif
 
 	/* priority case */
-	if ((pcode & 0xffff) != 0xff00)
+	if (has_pri)
 	{
-		for (i = 0; i < count; i++)
+		for ( ; i < count; i++)
 			if ((maskptr[i] & mask) == value)
 			{
 				dest[i] = source[i] + pal;
@@ -2067,7 +2177,7 @@ static void scanline_draw_masked_ind16(void *_dest, const uint16_t *source, cons
 	/* no priority case */
 	else
 	{
-		for (i = 0; i < count; i++)
+		for ( ; i < count; i++)
 			if ((maskptr[i] & mask) == value)
 				dest[i] = source[i] + pal;
 	}
