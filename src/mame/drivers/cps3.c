@@ -506,6 +506,82 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 		clip=&myclip;
 	}
 
+	/* Fast path for the common native-scale (1:1) case.  When scalex and
+	   scaley are both 0x10000 the general scaler below reduces to a plain
+	   per-pixel copy with a unit source step (dx==dy==0x10000), so the
+	   16.16 fixed-point index stepping and per-pixel >>16 are pure
+	   overhead.  This path reproduces the exact same source-pixel mapping
+	   -- including x/y flip and edge clipping -- using integer steps, and
+	   has been verified bit-identical to the general path for the
+	   non-blend transparency modes.  The PEN_INDEX_BLEND mode is left to
+	   the general path (it draws with a non-deterministic mame_rand term),
+	   as is anything with gfx == NULL. */
+	if( gfx && scalex == 0x10000 && scaley == 0x10000 &&
+	    transparency != CPS3_TRANSPARENCY_PEN_INDEX_BLEND )
+	{
+		uint32_t palbase = (gfx->color_granularity * color) & 0x1ffff;
+		const pen_t *pal = &cps3_mame_colours[palbase];
+		const uint8_t *source_base = gfx_element_get_data(gfx, code % gfx->total_elements);
+		int gw = gfx->width;
+		int gh = gfx->height;
+		int ex = sx + gw;
+		int ey = sy + gh;
+		/* first source column/row and per-step direction (handles flip) */
+		int sxi_base = flipx ? (gw-1) : 0;
+		int syi_base = flipy ? (gh-1) : 0;
+		int sxd = flipx ? -1 : 1;
+		int syd = flipy ? -1 : 1;
+
+		if( clip )
+		{
+			if( sx < clip->min_x ) { int pixels = clip->min_x-sx; sx += pixels; sxi_base += pixels*sxd; }
+			if( sy < clip->min_y ) { int pixels = clip->min_y-sy; sy += pixels; syi_base += pixels*syd; }
+			if( ex > clip->max_x+1 ) ex = clip->max_x+1;
+			if( ey > clip->max_y+1 ) ey = clip->max_y+1;
+		}
+
+		if( ex > sx )
+		{
+			int y;
+			int syi = syi_base;
+
+			if (transparency == CPS3_TRANSPARENCY_NONE)
+			{
+				for( y=sy; y<ey; y++ )
+				{
+					const uint8_t *source = source_base + syi * gfx->line_modulo;
+					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+					int x, sxi = sxi_base;
+					for( x=sx; x<ex; x++ ) { dest[x] = pal[source[sxi]]; sxi += sxd; }
+					syi += syd;
+				}
+			}
+			else if (transparency == CPS3_TRANSPARENCY_PEN)
+			{
+				for( y=sy; y<ey; y++ )
+				{
+					const uint8_t *source = source_base + syi * gfx->line_modulo;
+					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+					int x, sxi = sxi_base;
+					for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = pal[c]; sxi += sxd; }
+					syi += syd;
+				}
+			}
+			else /* CPS3_TRANSPARENCY_PEN_INDEX */
+			{
+				for( y=sy; y<ey; y++ )
+				{
+					const uint8_t *source = source_base + syi * gfx->line_modulo;
+					uint32_t *dest = BITMAP_ADDR32(dest_bmp, y, 0);
+					int x, sxi = sxi_base;
+					for( x=sx; x<ex; x++ ) { int c = source[sxi]; if( c != transparent_color ) dest[x] = c | palbase; sxi += sxd; }
+					syi += syd;
+				}
+			}
+		}
+		return;
+	}
+
 
 	/* 32-bit ONLY */
 	{
