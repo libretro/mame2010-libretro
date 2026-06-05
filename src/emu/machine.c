@@ -302,6 +302,14 @@ void running_machine::start()
 	/* initialize the streams engine before the sound devices start */
 	streams_init(this);
 
+	/* The machine RNG (mame_rand) is a fixed-seed LCG, so it is
+	   deterministic from boot -- but its running seed must travel in the
+	   save state too.  Otherwise a save/load (and therefore rewind,
+	   run-ahead and netplay, which save and restore state continuously)
+	   resumes the sequence from a different point than an uninterrupted
+	   run would, desynchronising any driver that reads mame_rand. */
+	state_save_register_global(this, m_rand_seed);
+
 	/* first load ROMs, then populate memory, and finally initialize CPUs
 	   these operations must proceed in this order */
 	rom_init(this);

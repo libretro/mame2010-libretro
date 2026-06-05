@@ -663,7 +663,17 @@ INLINE void cps3_drawgfxzoom(bitmap_t *dest_bmp,const rectangle *clip,const gfx_
 											if (c&0x02) dest[x] |= 0x4000;
 											if (c&0x04) dest[x] |= 0x8000;
 											if (c&0x08) dest[x] |= 0x10000;
-											if (c&0xf0) dest[x] |= mame_rand(gfx->machine); // ?? not used?
+											/* The upper-nibble case (c & 0xf0) is not understood.
+											   It must not pull a value from the machine RNG: this
+											   runs inside the video update, and a libretro core's
+											   render path has to be deterministic -- a global RNG
+											   read here advances shared state every time a frame is
+											   drawn, so it desynchronises run-ahead, rewind, and
+											   netplay (each of which re-renders speculatively) and
+											   sprays a different palette index into the pixel each
+											   frame, showing up as flickering noise.  Leave the
+											   pixel with the low-nibble blend flags already applied
+											   above until the real behaviour is known. */
 										}
 										else
 										{
