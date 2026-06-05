@@ -11,6 +11,7 @@
 
 static sound_stream *cps3_stream;
 extern uint8_t* cps3_user5region;
+extern uint32_t cps3_user5region_length;
 
 typedef struct _cps3_voice_
 {
@@ -87,7 +88,18 @@ static STREAM_UPDATE( cps3_stream_update )
 					}
 				}
 
-				sample = chip.base[BYTE4_XOR_LE(start + pos)];
+				/* Bound the fetch to the sample region.  In normal play the
+				   address is always in range (the >= end test above keeps it
+				   below the programmed end), so this changes nothing audible;
+				   it only prevents an out-of-bounds read if a voice's start/
+				   end/loop registers ever point past the region. */
+				{
+					uint32_t addr = BYTE4_XOR_LE(start + pos);
+					if (cps3_user5region_length && addr < cps3_user5region_length)
+						sample = chip.base[addr];
+					else
+						sample = 0;
+				}
 				frac += step;
 
 				outputs[0][j] += (sample * (vol_l >> 8));

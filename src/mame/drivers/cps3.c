@@ -450,6 +450,10 @@ static rectangle renderbuffer_clip;
 
 static uint8_t* cps3_user4region;
 uint8_t* cps3_user5region;
+/* Byte length of the user5 (sample) region, exported so the sound device
+   can bound its sample fetches and never read outside the region even if a
+   voice's registers point past the end. */
+uint32_t cps3_user5region_length;
 #define USER4REGION_LENGTH 0x800000*2
 #define USER5REGION_LENGTH 0x800000*10
 
@@ -770,6 +774,11 @@ static DRIVER_INIT( cps3 )
 
 	if (!cps3_user4region) cps3_user4region = auto_alloc_array(machine, uint8_t, USER4REGION_LENGTH);
 	if (!cps3_user5region) cps3_user5region = auto_alloc_array(machine, uint8_t, USER5REGION_LENGTH);
+
+	/* The user5 region is always USER5REGION_LENGTH bytes, whether it came
+	   from the ROM region or was just allocated above.  Publish that length
+	   so the sound device can clamp its sample fetches into range. */
+	cps3_user5region_length = USER5REGION_LENGTH;
 
 	// set strict verify
 	sh2drc_set_options(machine->device("maincpu"), SH2DRC_STRICT_VERIFY);
