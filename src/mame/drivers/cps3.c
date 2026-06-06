@@ -2892,11 +2892,21 @@ static uint32_t ProcessByte8(running_machine *machine,uint8_t b,uint32_t dst_off
 	{
 		int i;
 		int rle=(b+1)&0xff;
+		uint32_t last_code = 0xffffffff;
 
 		for(i=0;i<rle;++i)
 		{
+			uint32_t code = (dst_offset&0x7fffff)/0x100;
+
 			destRAM[(dst_offset&0x7fffff)^3] = lastb;
-			gfx_element_mark_dirty(machine->gfx[1], (dst_offset&0x7fffff)/0x100);
+
+			/* one mark covers a whole 0x100-byte tile, so only mark when the
+			   run crosses into a new tile rather than once per byte */
+			if (code != last_code)
+			{
+				gfx_element_mark_dirty(machine->gfx[1], code);
+				last_code = code;
+			}
 
 			dst_offset++;
 			++l;
