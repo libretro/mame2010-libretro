@@ -2230,11 +2230,11 @@ static void cps1_find_last_sprite( running_machine *machine )    /* Find the off
     becomes available for CPS-specific optimisation without touching the
     shared core, which serves every other driver.
 
-    This first version is a faithful, behaviour-preserving reproduction of
-    the core packed transpen+priority path (including the pen_usage
-    fully-transparent skip and fully-opaque fast paths and the code/color
-    range reduction), verified bit-identical to the core macros.  It is
-    deliberately scalar; later changes optimise it.
+    The packed transpen+priority path is reproduced faithfully (including the
+    pen_usage fully-transparent skip and fully-opaque fast paths and the code/
+    color range reduction), and was verified bit-identical to the core macros.
+    The priority test hoists its only per-pixel variable shift into a small
+    table built once per blit; everything else is a straight per-pixel copy.
 */
 static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_element *gfx,
 		uint32_t code, uint32_t color, int flipx, int flipy, int destx, int desty,
@@ -2247,6 +2247,8 @@ static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_elemen
 	int sxdir, sydir;
 	int dy, cy;
 	int opaque;
+	uint8_t allow[32];
+	int q;
 
 	/* range-reduce code/color exactly as the core does */
 	code %= gfx->total_elements;
@@ -2266,6 +2268,12 @@ static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_elemen
 
 	/* high bit of the mask is implicitly on */
 	pmask |= 1u << 31;
+
+	/* the per-pixel priority test asks whether bit (p & 0x1f) is set in pmask;
+	   pmask is constant for the whole blit, so precompute the 32 answers once
+	   here rather than recomputing 1 << (p & 0x1f) for every pixel */
+	for (q = 0; q < 32; q++)
+		allow[q] = ((1u << q) & pmask) ? 0 : 1;
 
 	destendx = destx + (int)gfx->width - 1;
 	destendy = desty + (int)gfx->height - 1;
@@ -2303,7 +2311,7 @@ static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_elemen
 			int c = (cx & 1) ? (b >> 4) : (b & 15);
 			if (opaque || c != (int)transpen)
 			{
-				if (((1 << (p[dx] & 0x1f)) & pmask) == 0)
+				if (allow[p[dx] & 0x1f])
 					d[dx] = paldata[c];
 				p[dx] = 31;
 			}
