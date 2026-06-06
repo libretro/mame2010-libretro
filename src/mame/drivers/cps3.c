@@ -2790,13 +2790,25 @@ static uint32_t process_byte( running_machine *machine, uint8_t real_byte, uint3
 	if (real_byte&0x40)
 	{
 		int tranfercount = 0;
+		uint32_t last_code = 0xffffffff;
 
 		cps3_rle_length = (real_byte&0x3f)+1;
 
 		while (cps3_rle_length)
 		{
-			dest[((destination+tranfercount)&0x7fffff)^3] = (last_normal_byte&0x3f);
-			gfx_element_mark_dirty(machine->gfx[1], ((destination+tranfercount)&0x7fffff)/0x100);
+			uint32_t addr = (destination+tranfercount)&0x7fffff;
+			uint32_t code = addr/0x100;
+
+			dest[addr^3] = (last_normal_byte&0x3f);
+
+			/* a single mark covers a whole 0x100-byte tile, so within an RLE
+			   run only mark when we cross into a new tile rather than once
+			   per byte */
+			if (code != last_code)
+			{
+				gfx_element_mark_dirty(machine->gfx[1], code);
+				last_code = code;
+			}
 
 			tranfercount++;
 			cps3_rle_length--;
