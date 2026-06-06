@@ -16,8 +16,6 @@ static uint16_t *glist;
 enum { FRAC_SHIFT = 16 };
 
 static int render_done;
-static uint16_t *render_snapshot = 0;
-static int snapshot_valid = 0;
 static uint16_t *tgp_ram;
 static float trans_mat[12];
 static uint16_t *paletteram16;
@@ -748,11 +746,6 @@ static void push_object(running_machine *machine, uint32_t tex_adr, uint32_t pol
 		poly_data=(float *) poly_rom;
 
 	poly_adr &= 0x7fffff;
-	/* poly_adr is masked to 0x7fffff but poly_rom (user1) and poly_ram are
-	 * only 0x400000 words; a stale list entry can point past the end.
-	 * Bail out rather than reading out of bounds. */
-	if(poly_adr >= 0x400000)
-		return;
 #if 0
 	dump = poly_adr == 0x944ea;
 	dump = 0;
@@ -804,12 +797,6 @@ static void push_object(running_machine *machine, uint32_t tex_adr, uint32_t pol
 	poly_adr += 6;
 
 	for(i=0; i<size; i++) {
-		/* Guard against a stale display-list entry driving poly_adr or the
-		 * quad/point pools out of bounds (size may be 0xffffffff here). */
-		if(poly_adr+10 >= 0x400000)
-			break;
-		if(pointpt - pointdb >= 1000000*2 - 8 || quadpt - quaddb >= 1000000 - 2)
-			break;
 #if 0
 		LOG_TGP(("VIDEO:     %08x (%f, %f, %f) (%f, %f, %f) (%f, %f, %f)\n",
 				 *(uint32_t *)(poly_data+poly_adr) & ~(0x01800303),
@@ -992,8 +979,6 @@ static uint16_t *push_direct(uint16_t *list)
 	list += 18;
 
 	for(;;) {
-		if(pointpt - pointdb >= 1000000*2 - 8 || quadpt - quaddb >= 1000000 - 2)
-			break;
 		flags = readi(list);
 
 		type = flags & 3;
@@ -1161,11 +1146,8 @@ static uint16_t *draw_direct(uint16_t *list, bitmap_t *bitmap, const rectangle *
 
 static uint16_t *get_list(void)
 {
-	if(!(listctl[0] & 4)) {
-		if(snapshot_valid && render_snapshot)
-			return render_snapshot;
+	if(!(listctl[0] & 4))
 		listctl[0] = (listctl[0] & ~0x40) | (listctl[0] & 8 ? 0x40 : 0);
-	}
 	return listctl[0] & 0x40 ? model1_display_list1 : model1_display_list0;
 }
 
@@ -1192,20 +1174,7 @@ READ16_HANDLER( model1_listctl_r )
 
 WRITE16_HANDLER( model1_listctl_w )
 {
-	uint16_t prev = listctl[0];
 	COMBINE_DATA(listctl+offset);
-	/* When the V60 controls buffering (bit 2 clear) it toggles the display-
-	 * select bit (bit 3) after finishing a buffer.  The renderer (run from
-	 * VIDEO_UPDATE) can otherwise sample a buffer the V60 is still writing,
-	 * which during active gameplay yields empty/garbage frames.  Snapshot the
-	 * just-completed buffer into a stable buffer the V60 cannot overwrite. */
-	if(offset == 0 && !(listctl[0] & 4) && ((prev ^ listctl[0]) & 8)) {
-		if(render_snapshot) {
-			uint16_t *src = (prev & 8) ? model1_display_list1 : model1_display_list0;
-			memcpy(render_snapshot, src, 0x8000 * sizeof(uint16_t));
-			snapshot_valid = 1;
-		}
-	}
 	LOG_TGP(("VIDEO: control=%08x\n", (listctl[1]<<16)|listctl[0]));
 }
 
@@ -1214,7 +1183,6 @@ static void tgp_render(running_machine *machine, bitmap_t *bitmap, const rectang
 	render_done = 1;
 	if((listctl[1] & 0x1f) == 0x1f) {
 		uint16_t *list = get_list();
-		uint16_t *list_base = list;
 		int zz = 0;
 		LOG_TGP(("VIDEO: render list %d\n", get_list_number()));
 
@@ -1224,10 +1192,7 @@ static void tgp_render(running_machine *machine, bitmap_t *bitmap, const rectang
 		trans_mat[8] = 1.0;
 
 		for(;;) {
-			int type;
-			if(list - list_base >= 0x8000)
-				break;
-			type = (list[1]<<16)|list[0];
+			int type = (list[1]<<16)|list[0];
 			glist=list;
 			switch(type & 15) {
 			case 0:
@@ -1382,14 +1347,10 @@ static void tgp_scan(void)
 #endif
 	if(!render_done && (listctl[1] & 0x1f) == 0x1f) {
 		uint16_t *list = get_list();
-		uint16_t *scan_base = list;
 		// Skip everything but the data uploads
 		LOG_TGP(("VIDEO: scan list %d\n", get_list_number()));
 		for(;;) {
-			int type;
-			if(list - scan_base >= 0x8000)
-				break;
-			type = (list[1]<<16)|list[0];
+			int type = (list[1]<<16)|list[0];
 			switch(type) {
 			case 0:
 				list += 2;
@@ -1492,7 +1453,6 @@ VIDEO_START(model1)
 
 	pointpt = pointdb;
 	quadpt = quaddb;
-	render_snapshot = auto_alloc_array_clear(machine, uint16_t, 0x8000);
 	listctl[0] = listctl[1] = 0;
 
 	state_save_register_global_pointer(machine, tgp_ram, 0x100000-0x40000);
