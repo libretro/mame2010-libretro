@@ -412,28 +412,15 @@ static int comp_quads(const void *q1, const void *q2)
 {
 	float z1 = (*(const struct quad_m1 **)q1)->z;
 	float z2 = (*(const struct quad_m1 **)q2)->z;
-	int i1 = (int)(*(const struct quad_m1 **)q1 - quaddb);
-	int i2 = (int)(*(const struct quad_m1 **)q2 - quaddb);
-
-	/* Hardware sorts polygons by the reciprocal of the nearest vertex Z (1/Z),
-	   quantized to 4.12 fixed point. Polygons whose quantized 1/Z is equal keep
-	   their arrival (display-list) order, matching the hardware's stable sort. */
-	if(z1 > 0 && z2 > 0) {
-		int r1 = (int)(4096.0f / z1);
-		int r2 = (int)(4096.0f / z2);
-		if(r1 < r2)
-			return +1;
-		if(r1 > r2)
-			return -1;
-		return (i1 < i2) ? -1 : +1;
-	}
 
 	if(z1<z2)
 		return +1;
 	if(z1>z2)
 		return -1;
-	if (i1 < i2)
+
+	if (*(const struct quad_m1 **)q1 - quaddb < *(const struct quad_m1 **)q2 - quaddb)
 		return -1;
+
 	return +1;
 }
 
