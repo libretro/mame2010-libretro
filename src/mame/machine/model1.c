@@ -314,11 +314,26 @@ static TGP_FUNCTION( normalize )
 	float a = fifoin_pop_f();
 	float b = fifoin_pop_f();
 	float c = fifoin_pop_f();
-	float n = (a*a+b*b+c*c) / sqrt(a*a+b*b+c*c);
+	double mag2 = (double)a*a + (double)b*b + (double)c*c;
 	logerror("TGP normalize %f, %f, %f (%x)\n", a, b, c, pushpc);
-	fifoout_push_f(a/n);
-	fifoout_push_f(b/n);
-	fifoout_push_f(c/n);
+	/* For a zero-length input the hardware's reciprocal-sqrt comes from a
+	   ROM lookup table and is always finite, so the result stays bounded;
+	   it never produces a NaN the way a naive 0/sqrt(0) would.  Guard the
+	   degenerate case and emit the (already normalised) zero vector rather
+	   than letting a NaN propagate into vertex coordinates. */
+	if (mag2 > 0.0)
+	{
+		float n = (float)(mag2 / sqrt(mag2));
+		fifoout_push_f(a/n);
+		fifoout_push_f(b/n);
+		fifoout_push_f(c/n);
+	}
+	else
+	{
+		fifoout_push_f(0);
+		fifoout_push_f(0);
+		fifoout_push_f(0);
+	}
 	next_fn();
 }
 
