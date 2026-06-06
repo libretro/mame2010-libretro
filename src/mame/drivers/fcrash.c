@@ -36,6 +36,7 @@ from 2.bin to 9.bin program eproms
 #include "cpu/z80/z80.h"
 #include "cpu/m68000/m68000.h"
 #include "includes/cps1.h"
+#include "video/cps_tilemap.h"
 #include "sound/2203intf.h"
 #include "sound/msm5205.h"
 
@@ -120,9 +121,9 @@ static void fcrash_update_transmasks( running_machine *machine )
 		else
 			mask = 0xffff;	/* completely transparent if priority masks not defined (mercs, qad) */
 
-		tilemap_set_transmask(state->bg_tilemap[0], i, mask, 0x8000);
-		tilemap_set_transmask(state->bg_tilemap[1], i, mask, 0x8000);
-		tilemap_set_transmask(state->bg_tilemap[2], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[0], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[1], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[2], i, mask, 0x8000);
 	}
 }
 
@@ -171,7 +172,7 @@ static void fcrash_render_layer( running_machine *machine, bitmap_t *bitmap, con
 		case 1:
 		case 2:
 		case 3:
-			tilemap_draw(bitmap, cliprect, state->bg_tilemap[layer - 1], TILEMAP_DRAW_LAYER1, primask);
+			cps_tm_draw(state->bg_tilemap[layer - 1], machine, bitmap, cliprect, CPS_TM_DRAW_LAYER1, primask);
 			break;
 	}
 }
@@ -188,7 +189,7 @@ static void fcrash_render_high_layer( running_machine *machine, bitmap_t *bitmap
 		case 1:
 		case 2:
 		case 3:
-			tilemap_draw(NULL, cliprect, state->bg_tilemap[layer - 1], TILEMAP_DRAW_LAYER0, 1);
+			cps_tm_draw(state->bg_tilemap[layer - 1], machine, NULL, cliprect, CPS_TM_DRAW_LAYER0, 1);
 			break;
 	}
 }
@@ -225,6 +226,13 @@ static VIDEO_UPDATE( fcrash )
 
 	flip_screen_set(screen->machine, videocontrol & 0x8000);
 
+	{
+		uint32_t flipattr = (videocontrol & 0x8000) ? (TILEMAP_FLIPX | TILEMAP_FLIPY) : 0;
+		cps_tm_set_flip(state->bg_tilemap[0], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[1], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[2], flipattr);
+	}
+
 	layercontrol = state->cps_b_regs[0x20 / 2];
 
 	/* Get video memory base registers */
@@ -235,8 +243,8 @@ static VIDEO_UPDATE( fcrash )
 
 	fcrash_update_transmasks(screen->machine);
 
-	tilemap_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x - 62);
-	tilemap_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
+	cps_tm_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x - 62);
+	cps_tm_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
 
 	if (videocontrol & 0x01)	/* linescroll enable */
 	{
@@ -244,28 +252,28 @@ static VIDEO_UPDATE( fcrash )
 		int i;
 		int otheroffs;
 
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1024);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1024);
 
 		otheroffs = state->cps_a_regs[CPS1_ROWSCROLL_OFFS];
 
 		for (i = 0; i < 256; i++)
-			tilemap_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
+			cps_tm_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
 	}
 	else
 	{
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1);
-		tilemap_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x - 60);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1);
+		cps_tm_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x - 60);
 	}
-	tilemap_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
-	tilemap_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x - 64);
-	tilemap_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
+	cps_tm_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
+	cps_tm_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x - 64);
+	cps_tm_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
 
 
 	/* turn all tilemaps on regardless of settings in get_video_base() */
 	/* write a custom get_video_base for this bootleg hardware? */
-	tilemap_set_enable(state->bg_tilemap[0], 1);
-	tilemap_set_enable(state->bg_tilemap[1], 1);
-	tilemap_set_enable(state->bg_tilemap[2], 1);
+	cps_tm_set_enable(state->bg_tilemap[0], 1);
+	cps_tm_set_enable(state->bg_tilemap[1], 1);
+	cps_tm_set_enable(state->bg_tilemap[2], 1);
 
 	/* Blank screen */
 	bitmap_fill(bitmap, cliprect, 0xbff);
@@ -305,6 +313,13 @@ static VIDEO_UPDATE( kodb )
 
 	flip_screen_set(screen->machine, videocontrol & 0x8000);
 
+	{
+		uint32_t flipattr = (videocontrol & 0x8000) ? (TILEMAP_FLIPX | TILEMAP_FLIPY) : 0;
+		cps_tm_set_flip(state->bg_tilemap[0], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[1], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[2], flipattr);
+	}
+
 	layercontrol = state->cps_b_regs[0x20 / 2];
 
 	/* Get video memory base registers */
@@ -315,8 +330,8 @@ static VIDEO_UPDATE( kodb )
 
 	fcrash_update_transmasks(screen->machine);
 
-	tilemap_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x);
-	tilemap_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
+	cps_tm_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x);
+	cps_tm_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
 
 	if (videocontrol & 0x01)	/* linescroll enable */
 	{
@@ -324,29 +339,29 @@ static VIDEO_UPDATE( kodb )
 		int i;
 		int otheroffs;
 
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1024);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1024);
 
 		otheroffs = state->cps_a_regs[CPS1_ROWSCROLL_OFFS];
 
 		for (i = 0; i < 256; i++)
-			tilemap_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
+			cps_tm_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
 	}
 	else
 	{
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1);
-		tilemap_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1);
+		cps_tm_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x);
 	}
 
-	tilemap_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
-	tilemap_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x);
-	tilemap_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
+	cps_tm_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
+	cps_tm_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x);
+	cps_tm_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
 
 
 	/* turn all tilemaps on regardless of settings in get_video_base() */
 	/* write a custom get_video_base for this bootleg hardware? */
-	tilemap_set_enable(state->bg_tilemap[0], 1);
-	tilemap_set_enable(state->bg_tilemap[1], 1);
-	tilemap_set_enable(state->bg_tilemap[2], 1);
+	cps_tm_set_enable(state->bg_tilemap[0], 1);
+	cps_tm_set_enable(state->bg_tilemap[1], 1);
+	cps_tm_set_enable(state->bg_tilemap[2], 1);
 
 	/* Blank screen */
 	bitmap_fill(bitmap, cliprect, 0xbff);
