@@ -1552,22 +1552,6 @@ static void cps3_decrypt_bios(running_machine *machine)
 		uint32_t xormask = cps3_mask(i, cps3_key1, cps3_key2);
 		decrypted_bios[i/4] = dword ^ xormask;
 	}
-#if 0
-	/* Dump to file */
-	{
-		FILE *fp;
-		const char *gamename = machine->gamedrv->name;
-		char filename[256];
-		sprintf(filename, "%s_bios.dump", gamename);
-
-		fp=fopen(filename, "w+b");
-		if (fp)
-		{
-			fwrite(decrypted_bios, 0x080000, 1, fp);
-			fclose(fp);
-		}
-	}
-#endif
 }
 
 
@@ -1754,11 +1738,8 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 	uint32_t* regs;
 	int line;
 	int scrolly;
-	if (tmnum>3)
-	{
-		printf("cps3_draw_tilemapsprite_line Illegal tilemap number %d\n",tmnum);
+	if (tmnum>3) /* cps3_draw_tilemapsprite_line Illegal tilemap number */
 		return;
-	}
 	regs = tmapregs[tmnum];
 
 	scrolly =  ((regs[0]&0x0000ffff)>>0)+4;
@@ -1783,13 +1764,9 @@ static void cps3_draw_tilemapsprite_line(running_machine *machine, int tmnum, in
 		linebase = linebase << 10;
 
 		if (!linescroll_enable)
-		{
 			scrollx =  (regs[0]&0xffff0000)>>16;
-		}
 		else
 		{
-		//  printf("linebase %08x\n", linebase);
-
 			scrollx =  (regs[0]&0xffff0000)>>16;
 			scrollx+= (cps3_spriteram[linebase+((line+16-4)&0x3ff)]>>16)&0x3ff;
 
@@ -1851,11 +1828,8 @@ static void cps3_draw_tilemapsprite(running_machine *machine, int tmnum, bitmap_
 	int drawline;
 	int maxy = cliprect->max_y;
 
-	if (tmnum>3)
-	{
-		printf("cps3_draw_tilemapsprite Illegal tilemap number %d\n",tmnum);
+	if (tmnum>3) /* cps3_draw_tilemapsprite Illegal tilemap number */
 		return;
-	}
 	regs = tmapregs[tmnum];
 
 	if (!(regs[1]&0x00008000)) return;
@@ -2038,7 +2012,6 @@ static VIDEO_UPDATE(cps3)
 	{
 		int i;
 
-		//printf("Spritelist start:\n");
 		for (i=0x00000/4;i<0x2000/4;i+=4)
 		{
 			int xpos =  	(cps3_spriteram[i+1]&0x03ff0000)>>16;
@@ -2097,36 +2070,15 @@ static VIDEO_UPDATE(cps3)
 				uint32_t xinc,yinc;
 
 				if (ysize2==0)
-				{
-				//  printf("invalid sprite ysize of 0 tiles\n");
 					continue;
-				}
 
 				if (xsize2==0) // xsize of 0 tiles seems to be a special command to draw tilemaps
 				{
 					int tilemapnum = ((value3 & 0x00000030)>>4);
-					//int startline;// = value2 & 0x3ff;
-					//int endline;
-					//int height = (value3 & 0x7f000000)>>24;
-					//endline = value2;
-					//startline = endline - height;
-
-					//startline &=0x3ff;
-					//endline &=0x3ff;
-
-					//printf("tilemap draw %01x %02x %02x %02x\n",tilemapnum, value2, height, regs[0]&0x000003ff );
-
-					//printf("tilemap draw %01x %d %d\n",tilemapnum, startline, endline );
-
-
 					/* Urgh, the startline / endline seem to be direct screen co-ordinates regardless of fullscreen zoom
                        which probably means the fullscreen zoom is applied when rendering everything, not aftewards */
-					//for (uu=startline;uu<endline+1;uu++)
-
 					if (bg_drawn[tilemapnum]==0)
-					{
 						cps3_emit_tilemap(screen->machine, tilemapnum);
-					}
 					bg_drawn[tilemapnum] = 1;
 				}
 				else
@@ -2224,8 +2176,6 @@ static VIDEO_UPDATE(cps3)
 						}
 					}
 	//              */
-
-				//  printf("cell %08x %08x %08x\n",value1, value2, value3);
 				}
 			}
 		}
@@ -2325,8 +2275,6 @@ static WRITE32_HANDLER( cps3_0xc0000000_ram_w )
 
 static DIRECT_UPDATE_HANDLER( cps3_direct_handler )
 {
-//  if(DEBUG_PRINTF) printf("address %04x\n",address);
-
 	/* BIOS ROM */
 	if (address < 0x80000)
 	{
@@ -2378,14 +2326,8 @@ static WRITE32_HANDLER( cram_bank_w )
 		//bank_w 00000006, ffff0000
 		//bank_w 00000007, ffff0000
 		// during CHARACTER RAM test..
-			if(DEBUG_PRINTF) printf("bank_w %08x, %08x\n",data,mem_mask);
 
 		}
-	}
-	else
-	{
-		if(DEBUG_PRINTF) printf("bank_w LSB32 %08x, %08x\n",data,mem_mask);
-
 	}
 }
 
@@ -2417,30 +2359,14 @@ static READ32_HANDLER( cps3_gfxflash_r )
 	flash1 += cram_gfxflash_bank&0x3e;
 	flash2 += cram_gfxflash_bank&0x3e;
 
-	if(DEBUG_PRINTF) printf("gfxflash_r\n");
-
 	if (ACCESSING_BITS_24_31)	// GFX Flash 1
-	{
-		logerror("read GFX flash chip %d addr %02x\n", flash1-8, (offset<<1));
 		result |= intelflash_read(flash1, (offset<<1) ) << 24;
-	}
 	if (ACCESSING_BITS_16_23)	// GFX Flash 2
-	{
-		logerror("read GFX flash chip %d addr %02x\n", flash2-8, (offset<<1));
 		result |= intelflash_read(flash2, (offset<<1) ) << 16;
-	}
 	if (ACCESSING_BITS_8_15)	// GFX Flash 1
-	{
-		logerror("read GFX flash chip %d addr %02x\n", flash1-8, (offset<<1)+1);
 		result |= intelflash_read(flash1, (offset<<1)+0x1 ) << 8;
-	}
 	if (ACCESSING_BITS_0_7)	// GFX Flash 2
-	{
-		logerror("read GFX flash chip %d addr %02x\n", flash2-8, (offset<<1)+1);
 		result |= intelflash_read(flash2, (offset<<1)+0x1 ) << 0;
-	}
-
-	//printf("read GFX flash chips addr %02x returning %08x mem_mask %08x crambank %08x gfxbank %08x\n", offset*2, result,mem_mask,  cram_bank, cram_gfxflash_bank  );
 
 	return result;
 }
@@ -2455,32 +2381,24 @@ static WRITE32_HANDLER( cps3_gfxflash_w )
 	flash1 += cram_gfxflash_bank&0x3e;
 	flash2 += cram_gfxflash_bank&0x3e;
 
-
-//  if(DEBUG_PRINTF) printf("cps3_gfxflash_w %08x %08x %08x\n", offset *2, data, mem_mask);
-
-
 	if (ACCESSING_BITS_24_31)	// GFX Flash 1
 	{
 		command = (data >> 24) & 0xff;
-		logerror("write to GFX flash chip %d addr %02x cmd %02x\n", flash1-8, (offset<<1), command);
 		intelflash_write(flash1, (offset<<1), command);
 	}
 	if (ACCESSING_BITS_16_23)	// GFX Flash 2
 	{
 		command = (data >> 16) & 0xff;
-		logerror("write to GFX flash chip %d addr %02x cmd %02x\n", flash2-8, (offset<<1), command);
 		intelflash_write(flash2, (offset<<1), command);
 	}
 	if (ACCESSING_BITS_8_15)	// GFX Flash 1
 	{
 		command = (data >> 8) & 0xff;
-		logerror("write to GFX flash chip %d addr %02x cmd %02x\n", flash1-8, (offset<<1)+1, command);
 		intelflash_write(flash1, (offset<<1)+0x1, command);
 	}
 	if (ACCESSING_BITS_0_7)	// GFX Flash 2
 	{
 		command = (data >> 0) & 0xff;
-		//if ( ((offset<<1)+1) != 0x555) printf("write to GFX flash chip %d addr %02x cmd %02x\n", flash1-8, (offset<<1)+1, command);
 		intelflash_write(flash2, (offset<<1)+0x1, command);
 	}
 
@@ -2499,7 +2417,6 @@ static WRITE32_HANDLER( cps3_gfxflash_w )
                   (ptr2[((offset*2)&0xfffffffe)+0]<<0)  |
                   (ptr2[((offset*2)&0xfffffffe)+1]<<16));
 
-//      printf("flashcrap %08x %08x %08x\n", offset *2, romdata[real_offset/4], newdata);
 		romdata[real_offset/4] = newdata;
 	}
 }
@@ -2511,27 +2428,13 @@ static uint32_t cps3_flashmain_r(int base, uint32_t offset, uint32_t mem_mask)
 	uint32_t result = 0;
 
 	if (ACCESSING_BITS_24_31)	// Flash 1
-	{
-//      logerror("read flash chip %d addr %02x\n", base+0, offset*4 );
 		result |= (intelflash_read(base+0, offset)<<24);
-	}
 	if (ACCESSING_BITS_16_23)	// Flash 1
-	{
-//      logerror("read flash chip %d addr %02x\n", base+1, offset*4 );
 		result |= (intelflash_read(base+1, offset)<<16);
-	}
 	if (ACCESSING_BITS_8_15)	// Flash 1
-	{
-//      logerror("read flash chip %d addr %02x\n", base+2, offset*4 );
 		result |= (intelflash_read(base+2, offset)<<8);
-	}
 	if (ACCESSING_BITS_0_7)	// Flash 1
-	{
-//      logerror("read flash chip %d addr %02x\n", base+3, offset*4 );
 		result |= (intelflash_read(base+3, offset)<<0);
-	}
-
-//  if (base==4) logerror("read flash chips addr %02x returning %08x\n", offset*4, result );
 
 	return result;
 }
@@ -2564,25 +2467,21 @@ static void cps3_flashmain_w(running_machine *machine, int base, uint32_t offset
 	if (ACCESSING_BITS_24_31)	// Flash 1
 	{
 		command = (data >> 24) & 0xff;
-		logerror("write to flash chip %d addr %02x cmd %02x\n", base+0, offset, command);
 		intelflash_write(base+0, offset, command);
 	}
 	if (ACCESSING_BITS_16_23)	// Flash 2
 	{
 		command = (data >> 16) & 0xff;
-		logerror("write to flash chip %d addr %02x cmd %02x\n", base+1, offset, command);
 		intelflash_write(base+1, offset, command);
 	}
 	if (ACCESSING_BITS_8_15)	// Flash 2
 	{
 		command = (data >> 8) & 0xff;
-		logerror("write to flash chip %d addr %02x cmd %02x\n", base+2, offset, command);
 		intelflash_write(base+2, offset, command);
 	}
 	if (ACCESSING_BITS_0_7)	// Flash 2
 	{
 		command = (data >> 0) & 0xff;
-		logerror("write to flash chip %d addr %02x cmd %02x\n", base+3, offset, command);
 		intelflash_write(base+3, offset, command);
 	}
 
@@ -2611,8 +2510,6 @@ static void cps3_flashmain_w(running_machine *machine, int base, uint32_t offset
                   (ptr3[offset]<<8) |
                   (ptr4[offset]<<0);
 
-		//printf("%08x %08x %08x %08x %08x\n",offset, romdata2[offset], romdata[offset], newdata,  newdata^cps3_mask(0x6000000+real_offset, cps3_key1, cps3_key2)  );
-
 		romdata[offset] = newdata;
 		romdata2[offset] = newdata^cps3_mask(0x6000000+real_offset, cps3_key1, cps3_key2);
 	}
@@ -2632,54 +2529,48 @@ static WRITE32_HANDLER( cram_gfxflash_bank_w )
 {
 	if (ACCESSING_BITS_24_31)
 	{
-		//printf("cram_gfxflash_bank_w MSB32 %08x\n",data);
-/*
-    SIMM 3 (Rom 30/31)
-    cram_gfxflash_bank_w MSB32 00020000  // first half of gfx 0 + 1
-    cram_gfxflash_bank_w MSB32 00030000  // 2nd half of gfx 0 + 1
-    cram_gfxflash_bank_w MSB32 00040000  // first half of gfx 2 + 3
-    cram_gfxflash_bank_w MSB32 00050000
-    cram_gfxflash_bank_w MSB32 00060000  // first half of gfx 4 + 5
-    cram_gfxflash_bank_w MSB32 00070000
-    cram_gfxflash_bank_w MSB32 00080000  // first half of gfx 6 + 7
-    cram_gfxflash_bank_w MSB32 00090000
-    SIMM 4 (Rom 40/41)
-    cram_gfxflash_bank_w MSB32 000a0000  // first half of gfx 8 + 9
-    cram_gfxflash_bank_w MSB32 000b0000
-    cram_gfxflash_bank_w MSB32 000c0000  // first half of gfx 10 + 11
-    cram_gfxflash_bank_w MSB32 000d0000
-    cram_gfxflash_bank_w MSB32 000e0000  // first half of gfx 12 + 13
-    cram_gfxflash_bank_w MSB32 000f0000
-    cram_gfxflash_bank_w MSB32 00100000  // first half of gfx 14 + 15
-    cram_gfxflash_bank_w MSB32 00110000
-    SIMM 5 (Rom 50/51)
-    cram_gfxflash_bank_w MSB32 00120000  // first half of gfx 16 + 17
-    cram_gfxflash_bank_w MSB32 00130000
-    cram_gfxflash_bank_w MSB32 00140000  // first half of gfx 18 + 19
-    cram_gfxflash_bank_w MSB32 00150000
-    cram_gfxflash_bank_w MSB32 00160000  // first half of gfx 20 + 21
-    cram_gfxflash_bank_w MSB32 00170000
-    cram_gfxflash_bank_w MSB32 00180000  // first half of gfx 22 + 23
-    cram_gfxflash_bank_w MSB32 00190000
-    SIMM 6 (Rom 60/61)
-    cram_gfxflash_bank_w MSB32 001a0000  // first half of gfx 24 + 25
-    cram_gfxflash_bank_w MSB32 001b0000
-    cram_gfxflash_bank_w MSB32 001c0000  // first half of gfx 26 + 27
-    cram_gfxflash_bank_w MSB32 001d0000
-    cram_gfxflash_bank_w MSB32 001e0000  // first half of gfx 28 + 29
-    cram_gfxflash_bank_w MSB32 001f0000
-    cram_gfxflash_bank_w MSB32 00200000  // first half of gfx 30 + 31
-    cram_gfxflash_bank_w MSB32 00210000
-    SIMM 7 (Rom 70/71) ** NOT USED (would follow on in sequence tho)
+		/*
+		   SIMM 3 (Rom 30/31)
+		   cram_gfxflash_bank_w MSB32 00020000  // first half of gfx 0 + 1
+		   cram_gfxflash_bank_w MSB32 00030000  // 2nd half of gfx 0 + 1
+		   cram_gfxflash_bank_w MSB32 00040000  // first half of gfx 2 + 3
+		   cram_gfxflash_bank_w MSB32 00050000
+		   cram_gfxflash_bank_w MSB32 00060000  // first half of gfx 4 + 5
+		   cram_gfxflash_bank_w MSB32 00070000
+		   cram_gfxflash_bank_w MSB32 00080000  // first half of gfx 6 + 7
+		   cram_gfxflash_bank_w MSB32 00090000
+		   SIMM 4 (Rom 40/41)
+		   cram_gfxflash_bank_w MSB32 000a0000  // first half of gfx 8 + 9
+		   cram_gfxflash_bank_w MSB32 000b0000
+		   cram_gfxflash_bank_w MSB32 000c0000  // first half of gfx 10 + 11
+		   cram_gfxflash_bank_w MSB32 000d0000
+		   cram_gfxflash_bank_w MSB32 000e0000  // first half of gfx 12 + 13
+		   cram_gfxflash_bank_w MSB32 000f0000
+		   cram_gfxflash_bank_w MSB32 00100000  // first half of gfx 14 + 15
+		   cram_gfxflash_bank_w MSB32 00110000
+		   SIMM 5 (Rom 50/51)
+		   cram_gfxflash_bank_w MSB32 00120000  // first half of gfx 16 + 17
+		   cram_gfxflash_bank_w MSB32 00130000
+		   cram_gfxflash_bank_w MSB32 00140000  // first half of gfx 18 + 19
+		   cram_gfxflash_bank_w MSB32 00150000
+		   cram_gfxflash_bank_w MSB32 00160000  // first half of gfx 20 + 21
+		   cram_gfxflash_bank_w MSB32 00170000
+		   cram_gfxflash_bank_w MSB32 00180000  // first half of gfx 22 + 23
+		   cram_gfxflash_bank_w MSB32 00190000
+		   SIMM 6 (Rom 60/61)
+		   cram_gfxflash_bank_w MSB32 001a0000  // first half of gfx 24 + 25
+		   cram_gfxflash_bank_w MSB32 001b0000
+		   cram_gfxflash_bank_w MSB32 001c0000  // first half of gfx 26 + 27
+		   cram_gfxflash_bank_w MSB32 001d0000
+		   cram_gfxflash_bank_w MSB32 001e0000  // first half of gfx 28 + 29
+		   cram_gfxflash_bank_w MSB32 001f0000
+		   cram_gfxflash_bank_w MSB32 00200000  // first half of gfx 30 + 31
+		   cram_gfxflash_bank_w MSB32 00210000
+		   SIMM 7 (Rom 70/71) ** NOT USED (would follow on in sequence tho)
 
-    */
+		 */
 		cram_gfxflash_bank = (data & 0xffff0000) >> 16;
 		cram_gfxflash_bank-= 0x0002;// as with sound access etc. first 4 meg is 'special' and skipped
-	}
-
-	if (ACCESSING_BITS_0_7)
-	{
-	/*  if(DEBUG_PRINTF)*/ printf("cram_gfxflash_bank_LSB_w LSB32 %08x\n",data);
 	}
 }
 
@@ -2754,27 +2645,20 @@ static READ32_HANDLER( cps3_eeprom_r )
 
 	if (addr>=0x100 && addr<=0x17f)
 	{
-		if (ACCESSING_BITS_24_31) cps3_current_eeprom_read = (cps3_eeprom[offset-0x100/4] & 0xffff0000)>>16;
-		else cps3_current_eeprom_read = (cps3_eeprom[offset-0x100/4] & 0x0000ffff)>>0;
+		if (ACCESSING_BITS_24_31)
+			cps3_current_eeprom_read = (cps3_eeprom[offset-0x100/4] & 0xffff0000)>>16;
+		else
+			cps3_current_eeprom_read = (cps3_eeprom[offset-0x100/4] & 0x0000ffff)>>0;
 		// read word to latch...
-		return 0x00000000;
 	}
 	else if (addr == 0x200)
 	{
 		// busy flag / read data..
-		if (ACCESSING_BITS_24_31) return 0;
-		else
-		{
-			//if(DEBUG_PRINTF) printf("reading %04x from eeprom\n", cps3_current_eeprom_read);
-			return cps3_current_eeprom_read;
-		}
+		if (ACCESSING_BITS_24_31)
+			return 0;
+		return cps3_current_eeprom_read;
 	}
-	else
-	{
-	//  if(DEBUG_PRINTF) printf("unk read eeprom addr %04x, mask %08x\n", addr, mem_mask);
-		return 0x00000000;
-	}
-	return 0x00000000;
+	return 0;
 }
 
 static WRITE32_HANDLER( cps3_eeprom_w )
@@ -2788,15 +2672,6 @@ static WRITE32_HANDLER( cps3_eeprom_w )
 		// write word to storage
 
 	}
-	else if (addr>=0x180 && addr<=0x1ff)
-	{
-		// always 00000000 ? incrememnt access?
-	}
-	else
-	{
-	//  if(DEBUG_PRINTF) printf("unk write eeprom addr %04x, data %08x, mask %08x\n", addr, data, mem_mask);
-	}
-
 }
 
 static READ32_HANDLER( cps3_cdrom_r )
@@ -2804,14 +2679,10 @@ static READ32_HANDLER( cps3_cdrom_r )
 	uint32_t retval = 0;
 
 	if (ACCESSING_BITS_24_31)
-	{
 		retval |= ((uint16_t)wd33c93_r(space,0))<<16;
-	}
 
 	if (ACCESSING_BITS_0_7)
-	{
 		retval |= (uint16_t)wd33c93_r(space,1);
-	}
 
 	return retval;
 }
@@ -2834,24 +2705,12 @@ static WRITE32_HANDLER( cps3_ss_bank_base_w )
 	// might be scroll registers or something else..
 	// used to display bank with 'insert coin' on during sfiii2 attract intro
 	COMBINE_DATA(&cps3_ss_bank_base);
-
-//  printf("cps3_ss_bank_base_w %08x %08x\n", data, mem_mask);
 }
 
 static WRITE32_HANDLER( cps3_ss_pal_base_w )
 {
-	 if(DEBUG_PRINTF) printf ("cps3_ss_pal_base_w %08x %08x\n", data, mem_mask);
-
 	if(ACCESSING_BITS_24_31)
-	{
 		cps3_ss_pal_base = (data & 0x00ff0000)>>16;
-
-		if (data & 0xff000000) printf("cps3_ss_pal_base MSB32 upper bits used %04x \n", data);
-	}
-	else
-	{
-	//  printf("cps3_ss_pal_base LSB32 used %04x \n", data);
-	}
 }
 
 //<ElSemi> +0 X  +2 Y +4 unknown +6 enable (&0x8000) +8 low part tilemap base, high part linescroll base
@@ -2893,13 +2752,10 @@ static WRITE32_HANDLER( cps3_palettedma_w )
 			{
 				int i;
 				uint16_t* src = (uint16_t*)cps3_user5region;
-			//  if(DEBUG_PRINTF) printf("CPS3 pal dma start %08x (real: %08x) dest %08x fade %08x other2 %08x (length %04x)\n", paldma_source, paldma_realsource, paldma_dest, paldma_fade, paldma_other2, paldma_length);
 
 				for (i=0;i<paldma_length;i++)
 				{
 					uint16_t coldata = src[BYTE_XOR_BE(((paldma_realsource>>1)+i))];
-
-					//if (paldma_fade!=0) printf("%08x\n",paldma_fade);
 
 					cps3_set_mame_colours(space->machine, (paldma_dest+i)^1, coldata, paldma_fade);
 				}
@@ -2929,24 +2785,18 @@ static uint32_t process_byte( running_machine *machine, uint8_t real_byte, uint3
 {
 	uint8_t* dest       = (uint8_t*)cps3_char_ram;
 
-	//printf("process byte for destination %08x\n", destination);
-
 	destination&=0x7fffff;
 
 	if (real_byte&0x40)
 	{
 		int tranfercount = 0;
 
-		//printf("Set RLE Mode\n");
 		cps3_rle_length = (real_byte&0x3f)+1;
-
-		//printf("RLE Operation (length %08x\n", cps3_rle_length );
 
 		while (cps3_rle_length)
 		{
 			dest[((destination+tranfercount)&0x7fffff)^3] = (last_normal_byte&0x3f);
 			gfx_element_mark_dirty(machine->gfx[1], ((destination+tranfercount)&0x7fffff)/0x100);
-			//printf("RLE WRite Byte %08x, %02x\n", destination+tranfercount, real_byte);
 
 			tranfercount++;
 			cps3_rle_length--;
@@ -2961,7 +2811,6 @@ static uint32_t process_byte( running_machine *machine, uint8_t real_byte, uint3
 	}
 	else
 	{
-		//printf("Write Normal Data\n");
 		dest[(destination&0x7fffff)^3] = real_byte;
 		last_normal_byte = real_byte;
 		gfx_element_mark_dirty(machine->gfx[1], (destination&0x7fffff)/0x100);
@@ -3099,8 +2948,6 @@ static void cps3_process_character_dma(running_machine *machine, uint32_t addres
 {
 	int i;
 
-	//printf("charDMA start:\n");
-
 	for (i = 0; i < 0x1000; i += 3)
 	{
 		uint32_t dat1 = LITTLE_ENDIANIZE_INT32(cps3_char_ram[i + 0 + (address)]);
@@ -3112,8 +2959,6 @@ static void cps3_process_character_dma(running_machine *machine, uint32_t addres
 
 		/* 0x01000000 is the end of list marker, 0x13131313 is our default fill */
 		if ((dat1 == 0x01000000) || (dat1 == 0x13131313)) break;
-
-        //printf("%08x %08x %08x real_source %08x (rom %d offset %08x) real_destination %08x, real_length %08x\n", dat1, dat2, dat3, real_source, real_source/0x800000, real_source%0x800000, real_destination, real_length);
 
 		if  ((dat1 & 0x00e00000) == 0x00800000)
 		{
@@ -3139,29 +2984,16 @@ static void cps3_process_character_dma(running_machine *machine, uint32_t addres
 			cps3_do_alt_char_dma( machine, real_source, real_destination, real_length);
 			cputag_set_input_line(machine, "maincpu", 10, ASSERT_LINE);
 		}
-		else
-		{
-			printf("Unknown DMA List Command Type\n"); // warzard uses command 0, uncompressed? but for what?
-		}
-
 	}
 }
 
 static WRITE32_HANDLER( cps3_characterdma_w )
 {
-	if(DEBUG_PRINTF) printf("chardma_w %08x %08x %08x\n", offset, data, mem_mask);
-
 	if (offset==0)
 	{
 		//COMBINE_DATA(&chardma_source);
 		if (ACCESSING_BITS_0_7)
-		{
 			chardma_source = data & 0x0000ffff;
-		}
-		if (ACCESSING_BITS_24_31)
-		{
-			if(DEBUG_PRINTF) printf("chardma_w accessing MSB32 of offset 0");
-		}
 	}
 	else if (offset==1)
 	{
@@ -3173,21 +3005,8 @@ static WRITE32_HANDLER( cps3_characterdma_w )
 			{
 				uint32_t list_address;
 				list_address = (chardma_source | ((chardma_other&0x003f0000)));
-
-				//printf("chardma_w activated %08x %08x (address = cram %08x)\n", chardma_source, chardma_other, list_address*4 );
 				cps3_process_character_dma(space->machine, list_address);
 			}
-			else
-			{
-				if(DEBUG_PRINTF) printf("chardma_w NOT activated %08x %08x\n", chardma_source, chardma_other );
-			}
-
-			if ((data>>16) & 0xff80)
-				if(DEBUG_PRINTF) printf("chardma_w unknown bits in activate command %08x %08x\n", chardma_source, chardma_other );
-		}
-		else
-		{
-			if(DEBUG_PRINTF) printf("chardma_w LSB32 write to activate command %08x %08x\n", chardma_source, chardma_other );
 		}
 	}
 }
@@ -3517,8 +3336,6 @@ static void precopy_to_flash(running_machine *machine)
 		romdata = (uint32_t*)cps3_user5region;
 		for (thebase = 0;thebase < len/2; thebase+=0x200000)
 		{
-		//  printf("flashnums %d. %d\n",flashnum, flashnum+1);
-
 			for (i=0;i<0x200000;i+=2)
 			{
 				uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(flashnum);
@@ -3554,7 +3371,6 @@ static void copy_from_nvram(running_machine *machine)
 
 		data = ((ptr1[i/4]<<24) | (ptr2[i/4]<<16) | (ptr3[i/4]<<8) | (ptr4[i/4]<<0));
 
-	//  printf("%08x %08x %08x %08x\n",romdata[i/4],data, romdata2[i/4], data ^ cps3_mask(i+0x6000000, cps3_key1, cps3_key2));
 		romdata[i/4] = data;
 		romdata2[i/4] = data ^ cps3_mask(i+0x6000000, cps3_key1, cps3_key2);
 
@@ -3573,7 +3389,6 @@ static void copy_from_nvram(running_machine *machine)
 
 		data = ((ptr1[i/4]<<24) | (ptr2[i/4]<<16) | (ptr3[i/4]<<8) | (ptr4[i/4]<<0));
 
-	//  printf("%08x %08x %08x %08x\n",romdata[i/4],data, romdata2[i/4],  data ^ cps3_mask(i+0x6800000, cps3_key1, cps3_key2) );
 		romdata[i/4] = data;
 		romdata2[i/4] = data ^ cps3_mask(i+0x6800000, cps3_key1, cps3_key2);
 	}
@@ -3587,8 +3402,6 @@ static void copy_from_nvram(running_machine *machine)
 		romdata = (uint32_t*)cps3_user5region;
 		for (thebase = 0;thebase < len/2; thebase+=0x200000)
 		{
-		//  printf("flashnums %d. %d\n",flashnum, flashnum+1);
-
 			for (i=0;i<0x200000;i+=2)
 			{
 				uint8_t* ptr1 = (uint8_t*)intelflash_getmemptr(flashnum);
@@ -3598,7 +3411,6 @@ static void copy_from_nvram(running_machine *machine)
 							 (ptr2[i+0]<<0) |
 							 (ptr2[i+1]<<16);
 
-				//printf("%08x %08x\n",romdata[countoffset],dat);
 				romdata[countoffset] = dat;
 
 				countoffset++;
@@ -3606,24 +3418,6 @@ static void copy_from_nvram(running_machine *machine)
 			flashnum+=2;
 		}
 	}
-
-
-	/*
-    {
-        FILE *fp;
-        const char *gamename = machine->gamedrv->name;
-        char filename[256];
-        sprintf(filename, "%s_bios.dump", gamename);
-
-        fp=fopen(filename, "w+b");
-        if (fp)
-        {
-            fwrite(rom, 0x080000, 1, fp);
-            fclose(fp);
-        }
-    }
-    */
-
 }
 
 static NVRAM_HANDLER( cps3 )
@@ -3632,14 +3426,12 @@ static NVRAM_HANDLER( cps3 )
 
 	if (read_or_write)
 	{
-		//printf("read_write\n");
 		mame_fwrite(file, cps3_eeprom, 0x400);
 		for (i=0;i<48;i++)
 			nvram_handler_intelflash( machine, i, file, read_or_write );
 	}
 	else if (file)
 	{
-		//printf("file\n");
 		mame_fread(file, cps3_eeprom, 0x400);
 		for (i=0;i<48;i++)
 			nvram_handler_intelflash( machine, i, file, read_or_write );
@@ -3648,7 +3440,6 @@ static NVRAM_HANDLER( cps3 )
 	}
 	else
 	{
-		//printf("nothing?\n");
 		precopy_to_flash(machine);  // attempt to copy data from user regions into flash roms (incase this is a NOCD set)
 		copy_from_nvram(machine); // copy data from flashroms back into user regions + decrypt into regions we execute/draw from.
 	}
@@ -3694,10 +3485,6 @@ static int cps3_dma_callback(uint32_t src, uint32_t dst, uint32_t data, int size
 	{
 		int offs = (src&0x07fffff)>>2;
 		if (!cps3_altEncryption) data = data ^ cps3_mask(0x6800000+offs*4, cps3_key1, cps3_key2);
-	}
-	else
-	{
-		//printf("%s :src %08x, dst %08x, returning %08x\n", cpuexec_describe_context(machine), src, dst, data);
 	}
 
 	/* I doubt this is endian safe.. needs checking / fixing */
