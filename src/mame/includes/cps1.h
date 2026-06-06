@@ -1,6 +1,9 @@
 #ifndef _CPS1_H_
 #define _CPS1_H_
 
+/* driver-owned tilemap (see video/cps_tilemap.h) */
+typedef struct _cps_tm cps_tm;
+
 struct gfx_range
 {
 	// start and end are as passed by the game (shift adjusted to be all
@@ -88,7 +91,7 @@ public:
 	uint16_t *     gigamn2_dummyqsound_ram;
 
 	/* video-related */
-	tilemap_t      *bg_tilemap[3];
+	cps_tm         *bg_tilemap[3];
 	int          scanline1;
 	int          scanline2;
 	int          scancalls;

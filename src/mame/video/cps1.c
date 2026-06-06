@@ -329,6 +329,7 @@ The games seem to use them to mark platforms, kill zones and no-go areas.
 
 #include "emu.h"
 #include "includes/cps1.h"
+#include "video/cps_tilemap.h"
 
 #define VERBOSE 0
 
@@ -1721,17 +1722,17 @@ void cps1_get_video_base( running_machine *machine )
 	if (state->scroll1 != cps1_base(machine, CPS1_SCROLL1_BASE, state->scroll_size))
 	{
 		state->scroll1 = cps1_base(machine, CPS1_SCROLL1_BASE, state->scroll_size);
-		tilemap_mark_all_tiles_dirty(state->bg_tilemap[0]);
+		cps_tm_mark_all_dirty(state->bg_tilemap[0]);
 	}
 	if (state->scroll2 != cps1_base(machine, CPS1_SCROLL2_BASE, state->scroll_size))
 	{
 		state->scroll2 = cps1_base(machine, CPS1_SCROLL2_BASE, state->scroll_size);
-		tilemap_mark_all_tiles_dirty(state->bg_tilemap[1]);
+		cps_tm_mark_all_dirty(state->bg_tilemap[1]);
 	}
 	if (state->scroll3 != cps1_base(machine, CPS1_SCROLL3_BASE, state->scroll_size))
 	{
 		state->scroll3 = cps1_base(machine, CPS1_SCROLL3_BASE, state->scroll_size);
-		tilemap_mark_all_tiles_dirty(state->bg_tilemap[2]);
+		cps_tm_mark_all_dirty(state->bg_tilemap[2]);
 	}
 
 	/* Some of the sf2 hacks use only sprite port 0x9100 and the scroll layers are offset */
@@ -1768,9 +1769,9 @@ void cps1_get_video_base( running_machine *machine )
 	/* Get layer enable bits */
 	layercontrol = state->cps_b_regs[state->game_config->layer_control / 2];
 	videocontrol = state->cps_a_regs[CPS1_VIDEOCONTROL];
-	tilemap_set_enable(state->bg_tilemap[0],layercontrol & state->game_config->layer_enable_mask[0]);
-	tilemap_set_enable(state->bg_tilemap[1],(layercontrol & state->game_config->layer_enable_mask[1]) && (videocontrol & 4));
-	tilemap_set_enable(state->bg_tilemap[2],(layercontrol & state->game_config->layer_enable_mask[2]) && (videocontrol & 8));
+	cps_tm_set_enable(state->bg_tilemap[0],layercontrol & state->game_config->layer_enable_mask[0]);
+	cps_tm_set_enable(state->bg_tilemap[1],(layercontrol & state->game_config->layer_enable_mask[1]) && (videocontrol & 4));
+	cps_tm_set_enable(state->bg_tilemap[2],(layercontrol & state->game_config->layer_enable_mask[2]) && (videocontrol & 8));
 	state->stars_enabled[0] = layercontrol & state->game_config->layer_enable_mask[3];
 	state->stars_enabled[1] = layercontrol & state->game_config->layer_enable_mask[4];
 
@@ -1812,13 +1813,13 @@ WRITE16_HANDLER( cps1_gfxram_w )
 	COMBINE_DATA(&state->gfxram[offset]);
 
 	if (page == (state->cps_a_regs[CPS1_SCROLL1_BASE] & 0x3c0))
-		tilemap_mark_tile_dirty(state->bg_tilemap[0], offset / 2 & 0x0fff);
+		cps_tm_mark_tile_dirty(state->bg_tilemap[0], offset / 2 & 0x0fff);
 
 	if (page == (state->cps_a_regs[CPS1_SCROLL2_BASE] & 0x3c0))
-		tilemap_mark_tile_dirty(state->bg_tilemap[1], offset / 2 & 0x0fff);
+		cps_tm_mark_tile_dirty(state->bg_tilemap[1], offset / 2 & 0x0fff);
 
 	if (page == (state->cps_a_regs[CPS1_SCROLL3_BASE] & 0x3c0))
-		tilemap_mark_tile_dirty(state->bg_tilemap[2], offset / 2 & 0x0fff);
+		cps_tm_mark_tile_dirty(state->bg_tilemap[2], offset / 2 & 0x0fff);
 }
 
 
@@ -1874,25 +1875,25 @@ static int gfxrom_bank_mapper( running_machine *machine, int type, int code )
 
 ***************************************************************************/
 
-static TILEMAP_MAPPER( tilemap0_scan )
+static int tilemap0_scan( int col, int row )
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x1f) + ((col & 0x3f) << 5) + ((row & 0x20) << 6);
 }
 
-static TILEMAP_MAPPER( tilemap1_scan )
+static int tilemap1_scan( int col, int row )
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x0f) + ((col & 0x3f) << 4) + ((row & 0x30) << 6);
 }
 
-static TILEMAP_MAPPER( tilemap2_scan )
+static int tilemap2_scan( int col, int row )
 {
 	/* logical (col,row) -> memory offset */
 	return (row & 0x07) + ((col & 0x3f) << 3) + ((row & 0x38) << 6);
 }
 
-static TILE_GET_INFO( get_tile0_info )
+static void get_tile0_info( running_machine *machine, tile_data *tileinfo, int tile_index )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int code = state->scroll1[2 * tile_index];
@@ -1919,7 +1920,7 @@ static TILE_GET_INFO( get_tile0_info )
 		tileinfo->pen_data = state->empty_tile8x8;
 }
 
-static TILE_GET_INFO( get_tile1_info )
+static void get_tile1_info( running_machine *machine, tile_data *tileinfo, int tile_index )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int code = state->scroll2[2 * tile_index];
@@ -1939,7 +1940,7 @@ static TILE_GET_INFO( get_tile1_info )
 		tileinfo->pen_data = state->empty_tile;
 }
 
-static TILE_GET_INFO( get_tile2_info )
+static void get_tile2_info( running_machine *machine, tile_data *tileinfo, int tile_index )
 {
 	cps_state *state = (cps_state *)machine->driver_data;
 	int code = state->scroll3[2 * tile_index] & 0x3fff;
@@ -1977,15 +1978,23 @@ static void cps1_update_transmasks( running_machine *machine )
 		else
 			mask = 0xffff;	/* completely transparent if priority masks not defined (qad) */
 
-		tilemap_set_transmask(state->bg_tilemap[0], i, mask, 0x8000);
-		tilemap_set_transmask(state->bg_tilemap[1], i, mask, 0x8000);
-		tilemap_set_transmask(state->bg_tilemap[2], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[0], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[1], i, mask, 0x8000);
+		cps_tm_set_transmask(state->bg_tilemap[2], i, mask, 0x8000);
 	}
 }
 
 static STATE_POSTLOAD( cps_postload )
 {
+	cps_state *state = (cps_state *)machine->driver_data;
+
 	cps1_get_video_base(machine);
+
+	/* the tilemap pixmap is a derived cache that is not saved; force a full
+	   rebuild from the restored video RAM on the next frame */
+	cps_tm_mark_all_dirty(state->bg_tilemap[0]);
+	cps_tm_mark_all_dirty(state->bg_tilemap[1]);
+	cps_tm_mark_all_dirty(state->bg_tilemap[2]);
 }
 
 static VIDEO_START( cps )
@@ -2005,9 +2014,9 @@ static VIDEO_START( cps )
 	state->stars_rom_size = 0x2000;	/* first 0x4000 of gfx ROM are used, but 0x0000-0x1fff is == 0x2000-0x3fff */
 
 	/* create tilemaps */
-	state->bg_tilemap[0] = tilemap_create(machine, get_tile0_info, tilemap0_scan,  8,  8, 64, 64);
-	state->bg_tilemap[1] = tilemap_create(machine, get_tile1_info, tilemap1_scan, 16, 16, 64, 64);
-	state->bg_tilemap[2] = tilemap_create(machine, get_tile2_info, tilemap2_scan, 32, 32, 64, 64);
+	state->bg_tilemap[0] = cps_tm_create(machine, get_tile0_info, tilemap0_scan,  8,  8, 64, 64);
+	state->bg_tilemap[1] = cps_tm_create(machine, get_tile1_info, tilemap1_scan, 16, 16, 64, 64);
+	state->bg_tilemap[2] = cps_tm_create(machine, get_tile2_info, tilemap2_scan, 32, 32, 64, 64);
 
 	/* create empty tiles */
 	memset(state->empty_tile8x8, 0x0f, sizeof(state->empty_tile8x8));
@@ -2773,7 +2782,7 @@ static void cps1_render_layer( running_machine *machine, bitmap_t *bitmap, const
 		case 1:
 		case 2:
 		case 3:
-			tilemap_draw(bitmap, cliprect, state->bg_tilemap[layer - 1], TILEMAP_DRAW_LAYER1, primask);
+			cps_tm_draw(state->bg_tilemap[layer - 1], machine, bitmap, cliprect, CPS_TM_DRAW_LAYER1, primask);
 			break;
 	}
 }
@@ -2789,7 +2798,7 @@ static void cps1_render_high_layer( running_machine *machine, bitmap_t *bitmap, 
 		case 1:
 		case 2:
 		case 3:
-			tilemap_draw(NULL, cliprect, state->bg_tilemap[layer - 1], TILEMAP_DRAW_LAYER0, 1);
+			cps_tm_draw(state->bg_tilemap[layer - 1], machine, NULL, cliprect, CPS_TM_DRAW_LAYER0, 1);
 			break;
 	}
 }
@@ -2809,6 +2818,15 @@ VIDEO_UPDATE( cps1 )
 
 	flip_screen_set(screen->machine, videocontrol & 0x8000);
 
+	/* the driver-owned tilemaps are not on the global flip registry, so push
+	   the flip state to them explicitly */
+	{
+		uint32_t flipattr = (videocontrol & 0x8000) ? (TILEMAP_FLIPX | TILEMAP_FLIPY) : 0;
+		cps_tm_set_flip(state->bg_tilemap[0], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[1], flipattr);
+		cps_tm_set_flip(state->bg_tilemap[2], flipattr);
+	}
+
 	layercontrol = state->cps_b_regs[state->game_config->layer_control / 2];
 
 	/* Get video memory base registers */
@@ -2824,8 +2842,8 @@ VIDEO_UPDATE( cps1 )
 
 	cps1_update_transmasks(screen->machine);
 
-	tilemap_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x);
-	tilemap_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
+	cps_tm_set_scrollx(state->bg_tilemap[0], 0, state->scroll1x);
+	cps_tm_set_scrolly(state->bg_tilemap[0], 0, state->scroll1y);
 
 	if (videocontrol & 0x01)	/* linescroll enable */
 	{
@@ -2833,21 +2851,21 @@ VIDEO_UPDATE( cps1 )
 		int i;
 		int otheroffs;
 
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1024);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1024);
 
 		otheroffs = state->cps_a_regs[CPS1_ROWSCROLL_OFFS];
 
 		for (i = 0; i < 256; i++)
-			tilemap_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
+			cps_tm_set_scrollx(state->bg_tilemap[1], (i - scrly) & 0x3ff, state->scroll2x + state->other[(i + otheroffs) & 0x3ff]);
 	}
 	else
 	{
-		tilemap_set_scroll_rows(state->bg_tilemap[1], 1);
-		tilemap_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x);
+		cps_tm_set_scroll_rows(state->bg_tilemap[1], 1);
+		cps_tm_set_scrollx(state->bg_tilemap[1], 0, state->scroll2x);
 	}
-	tilemap_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
-	tilemap_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x);
-	tilemap_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
+	cps_tm_set_scrolly(state->bg_tilemap[1], 0, state->scroll2y);
+	cps_tm_set_scrollx(state->bg_tilemap[2], 0, state->scroll3x);
+	cps_tm_set_scrolly(state->bg_tilemap[2], 0, state->scroll3y);
 
 
 	/* Blank screen */
