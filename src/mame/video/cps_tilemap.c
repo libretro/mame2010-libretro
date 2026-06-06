@@ -34,6 +34,8 @@ struct _cps_tm
 	cps_tm_get_info_func	get_info;
 	cps_tm_scan_func		scan;
 	int *					logical_to_memory;	/* [cols*rows], built from scan */
+	int *					memory_to_logical;	/* [max_memindex+1], reverse map */
+	int						max_memindex;
 	uint8_t *					pen_to_flags;		/* [CPS_TM_NUM_GROUPS*256] */
 	bitmap_t *				pixmap;				/* INDEXED16 derived cache */
 	bitmap_t *				flagsmap;			/* INDEXED8 per-pixel flags */
@@ -503,9 +505,23 @@ cps_tm *cps_tm_create(running_machine *machine, cps_tm_get_info_func get_info,
 	t->scrollcols = 1;
 
 	t->logical_to_memory = auto_alloc_array(machine, int, cols * rows);
+	t->max_memindex = 0;
 	for (r = 0; r < rows; r++)
 		for (c = 0; c < cols; c++)
-			t->logical_to_memory[r * cols + c] = (*scan)(c, r);
+		{
+			int mi = (*scan)(c, r);
+			t->logical_to_memory[r * cols + c] = mi;
+			if (mi > t->max_memindex)
+				t->max_memindex = mi;
+		}
+
+	/* reverse map for O(1) mark_tile_dirty on the hot VRAM-write path */
+	t->memory_to_logical = auto_alloc_array(machine, int, t->max_memindex + 1);
+	for (c = 0; c <= t->max_memindex; c++)
+		t->memory_to_logical[c] = -1;
+	for (r = 0; r < rows; r++)
+		for (c = 0; c < cols; c++)
+			t->memory_to_logical[t->logical_to_memory[r * cols + c]] = r * cols + c;
 
 	t->pen_to_flags = auto_alloc_array_clear(machine, uint8_t, CPS_TM_MAX_PEN_TO_FLAGS * CPS_TM_NUM_GROUPS);
 	t->tileflags = auto_alloc_array(machine, uint8_t, cols * rows);
@@ -573,16 +589,14 @@ void cps_tm_set_flip(cps_tm *t, uint32_t attributes)
 
 void cps_tm_mark_tile_dirty(cps_tm *t, int memindex)
 {
-	int logindex;
-	/* memindex -> logindex: CPS scan is invertible by search; but the driver
-	   marks by memory index, so flag every logical cell mapping to it.  CPS
-	   maps are 1:1, so a linear search is acceptable and rare. */
-	for (logindex = 0; logindex < t->cols * t->rows; logindex++)
-		if (t->logical_to_memory[logindex] == memindex)
-		{
+	/* O(1) reverse lookup; the CPS map is 1:1 so a memory index maps to a
+	   single logical cell (or none, if out of range) */
+	if (memindex >= 0 && memindex <= t->max_memindex)
+	{
+		int logindex = t->memory_to_logical[memindex];
+		if (logindex >= 0)
 			t->tileflags[logindex] = CPS_TM_FLAG_DIRTY;
-			break;
-		}
+	}
 }
 
 void cps_tm_mark_all_dirty(cps_tm *t)
