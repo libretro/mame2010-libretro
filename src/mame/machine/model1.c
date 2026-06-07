@@ -1919,8 +1919,12 @@ READ16_HANDLER( model1_tgp_copro_ram_r )
 	if(!offset) {
 		logerror("TGP f0 ram read %04x, %08x (%f) (%x)\n", ram_adr, ram_data[ram_adr], u2f(ram_data[ram_adr]), cpu_get_pc(space->cpu));
 		return ram_data[ram_adr];
-	} else
-		return ram_data[ram_adr++] >> 16;
+	} else {
+		uint16_t r = ram_data[ram_adr] >> 16;
+		if(ram_adr & 0x8000)
+			ram_adr++;
+		return r;
+	}
 }
 
 WRITE16_HANDLER( model1_tgp_copro_ram_w )
@@ -1930,7 +1934,8 @@ WRITE16_HANDLER( model1_tgp_copro_ram_w )
 		uint32_t v = ram_latch[0]|(ram_latch[1]<<16);
 		logerror("TGP f0 ram write %04x, %08x (%f) (%x)\n", ram_adr, v, u2f(v), cpu_get_pc(space->cpu));
 		ram_data[ram_adr] = v;
-		ram_adr++;
+		if(ram_adr & 0x8000)
+			ram_adr++;
 	}
 }
 
