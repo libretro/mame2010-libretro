@@ -1572,8 +1572,6 @@ static TGP_FUNCTION( groundbox_set )
 
 static TGP_FUNCTION( f102 )
 {
-	static int ccount = 0;
-	float px, py, pz;
 	float a = fifoin_pop_f();
 	float b = fifoin_pop_f();
 	float c = fifoin_pop_f();
@@ -1583,41 +1581,30 @@ static TGP_FUNCTION( f102 )
 	uint32_t g = fifoin_pop();
 	uint32_t h = fifoin_pop();
 
-	ccount++;
+	logerror("TGP f0 mve_calc %f, %f, %f, %f, %f, %d, %d, %d (%x)\n", a, b, c, d, e, f, g, h, pushpc);
 
-	logerror("TGP f0 mve_calc %f, %f, %f, %f, %f, %d, %d, %d (%d) (%x)\n", a, b, c, d, e, f, g, h, ccount, pushpc);
-
-	px = u2f(ram_data[ram_scanadr+0x16]);
-	py = u2f(ram_data[ram_scanadr+0x17]);
-	pz = u2f(ram_data[ram_scanadr+0x18]);
-
-	//  memset(cmat, 0, sizeof(cmat));
-	//  cmat[0] = 1.0;
-	//  cmat[4] = 1.0;
-	//  cmat[8] = 1.0;
-
-	px = c;
-	py = d;
-	pz = e;
-
-#if 1
+	/* Advance the current matrix translation by the input displacement
+	 * rotated into the parent frame (the bone moves along its own axes). */
 	cmat[ 9] += cmat[0]*a+cmat[3]*b+cmat[6]*c;
 	cmat[10] += cmat[1]*a+cmat[4]*b+cmat[7]*c;
 	cmat[11] += cmat[2]*a+cmat[5]*b+cmat[8]*c;
-#else
-	cmat[ 9] += px;
-	cmat[10] += py;
-	cmat[11] += pz;
-#endif
 
-	logerror("    f0 mve_calc %f, %f, %f\n", px, py, pz);
-
-	fifoout_push_f(c);
-	fifoout_push_f(d);
-	fifoout_push_f(e);
-	fifoout_push(f);
-	fifoout_push(g);
-	fifoout_push(h);
+	/* mve_calc is a chain joint: it emits the transformed tip position so the
+	 * next link receives its parent's position.  Output the (c,d,e) offset
+	 * passed through the full current matrix (rotation + translation) rather
+	 * than the raw input, so the bone chain (e.g. Pai's braid) accumulates
+	 * along the body instead of collapsing to the origin. */
+	{
+		float tc = cmat[0]*c + cmat[3]*d + cmat[6]*e + cmat[ 9];
+		float td = cmat[1]*c + cmat[4]*d + cmat[7]*e + cmat[10];
+		float te = cmat[2]*c + cmat[5]*d + cmat[8]*e + cmat[11];
+		fifoout_push_f(tc);
+		fifoout_push_f(td);
+		fifoout_push_f(te);
+		fifoout_push(f);
+		fifoout_push(g);
+		fifoout_push(h);
+	}
 
 
 	next_fn();
