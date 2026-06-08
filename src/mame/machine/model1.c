@@ -1570,6 +1570,8 @@ static TGP_FUNCTION( groundbox_set )
 	next_fn();
 }
 
+static float mve_prev_x, mve_prev_y, mve_prev_z;
+static int mve_prev_valid;
 static TGP_FUNCTION( f102 )
 {
 	float a = fifoin_pop_f();
@@ -1593,22 +1595,42 @@ static TGP_FUNCTION( f102 )
 	cmat[10] += cmat[1]*a+cmat[4]*b+cmat[7]*c + d;
 	cmat[11] += cmat[2]*a+cmat[5]*b+cmat[8]*c + e;
 
-	/* mve_calc is a chain joint: it emits the transformed tip position so the
-	 * next link receives its parent's position.  Output the (c,d,e) offset
-	 * passed through the full current matrix (rotation + translation) rather
-	 * than the raw input, so the bone chain (e.g. Pai's braid) accumulates
-	 * along the body instead of collapsing to the origin. */
-	{
-		float tc = cmat[0]*c + cmat[3]*d + cmat[6]*e + cmat[ 9];
-		float td = cmat[1]*c + cmat[4]*d + cmat[7]*e + cmat[10];
-		float te = cmat[2]*c + cmat[5]*d + cmat[8]*e + cmat[11];
-		fifoout_push_f(tc);
-		fifoout_push_f(td);
-		fifoout_push_f(te);
-		fifoout_push(f);
-		fifoout_push(g);
-		fifoout_push(h);
+	/* Orient the link along the chain (look-at the previous link) so the braid
+	 * tilts with the body during animation instead of keeping a fixed
+	 * orientation (which made it detach on e.g. a kick).  Derived from the
+	 * link positions, which already follow the body, so it tracks any pose.
+	 * mve_prev_valid is cleared at chain start by mve_setadr (f103). */
+	if(mve_prev_valid) {
+		float dx = cmat[ 9] - mve_prev_x;
+		float dy = cmat[10] - mve_prev_y;
+		float dz = cmat[11] - mve_prev_z;
+		float L  = (float)sqrt(dx*dx + dy*dy + dz*dz);
+		if(L > 1e-5f) {
+			float ux = dx/L, uy = dy/L, uz = dz/L;   /* link Y-axis = chain direction */
+			float rx = uz, rz = -ux;                  /* right = perpendicular in XZ */
+			float rl = (float)sqrt(rx*rx + rz*rz);
+			if(rl > 1e-5f) { rx /= rl; rz /= rl; } else { rx = 1.0f; rz = 0.0f; }
+			cmat[0] = rx;   cmat[1] = ux;   cmat[2] = uy*rz;        /* forward = up x right */
+			cmat[3] = 0.0f; cmat[4] = uy;   cmat[5] = uz*rx - ux*rz;
+			cmat[6] = rz;   cmat[7] = uz;   cmat[8] = -uy*rx;
+		}
 	}
+	mve_prev_x = cmat[ 9];
+	mve_prev_y = cmat[10];
+	mve_prev_z = cmat[11];
+	mve_prev_valid = 1;
+
+	/* mve_calc is a chain joint.  The chain point is already resolved in the
+	 * input (c,d,e) (f,g,h are zero for the braid) and is fed back as the next
+	 * link's input by the V60; emit it unchanged.  Passing it through the
+	 * accumulated current matrix instead folded the running rotation back into
+	 * the chain and drove the braid's X off-screen. */
+	fifoout_push_f(c);
+	fifoout_push_f(d);
+	fifoout_push_f(e);
+	fifoout_push(f);
+	fifoout_push(g);
+	fifoout_push(h);
 
 
 	next_fn();
@@ -1617,6 +1639,7 @@ static TGP_FUNCTION( f102 )
 static TGP_FUNCTION( f103 )
 {
     ram_scanadr = fifoin_pop() - 0x8000;
+	mve_prev_valid = 0;   /* new chain: no previous link yet */
 	logerror("TGP f0 mve_setadr 0x%x (%x)\n", ram_scanadr, pushpc);
 	ram_get_i();
 	next_fn();
