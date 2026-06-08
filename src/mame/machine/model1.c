@@ -1584,10 +1584,14 @@ static TGP_FUNCTION( f102 )
 	logerror("TGP f0 mve_calc %f, %f, %f, %f, %f, %d, %d, %d (%x)\n", a, b, c, d, e, f, g, h, pushpc);
 
 	/* Advance the current matrix translation by the input displacement
-	 * rotated into the parent frame (the bone moves along its own axes). */
+	 * rotated into the parent frame (the bone moves along its own axes).
+	 * The chain HANG is carried in d and the lateral sag in e; the stub took
+	 * the Y term solely from cmat[4]*b (b approximately zero) so every link
+	 * stayed at body height -- the braid (e.g. Virtua Fighter's Pai) rendered
+	 * flat/detached.  Add d to Y and e to Z so each link hangs from the head. */
 	cmat[ 9] += cmat[0]*a+cmat[3]*b+cmat[6]*c;
-	cmat[10] += cmat[1]*a+cmat[4]*b+cmat[7]*c;
-	cmat[11] += cmat[2]*a+cmat[5]*b+cmat[8]*c;
+	cmat[10] += cmat[1]*a+cmat[4]*b+cmat[7]*c + d;
+	cmat[11] += cmat[2]*a+cmat[5]*b+cmat[8]*c + e;
 
 	/* mve_calc is a chain joint: it emits the transformed tip position so the
 	 * next link receives its parent's position.  Output the (c,d,e) offset
