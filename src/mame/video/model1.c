@@ -18,6 +18,23 @@ enum { FRAC_SHIFT = 16 };
 static int render_done;
 static uint16_t *tgp_ram;
 static float trans_mat[12];
+/* Pai-braid re-anchor: the ponytail chain is built on the static character root and misses the
+   animated head-node advance during motion, detaching.  Re-anchor each braid link to the head node's
+   world matrix via a per-link local offset captured at rest, applied only while the head has moved
+   from that reference so the resting pose stays bit-exact. */
+static float gb_head[2][12]; static int gb_head_have[2];
+static float gb_headref[2][3]; static int gb_ref_set[2];
+static float gb_loff[2][16][12]; static int gb_loff_set[2][16];
+static void bf_mul(const float*A,const float*B,float*O){
+  O[0]=A[0]*B[0]+A[3]*B[1]+A[6]*B[2]; O[3]=A[0]*B[3]+A[3]*B[4]+A[6]*B[5]; O[6]=A[0]*B[6]+A[3]*B[7]+A[6]*B[8];
+  O[1]=A[1]*B[0]+A[4]*B[1]+A[7]*B[2]; O[4]=A[1]*B[3]+A[4]*B[4]+A[7]*B[5]; O[7]=A[1]*B[6]+A[4]*B[7]+A[7]*B[8];
+  O[2]=A[2]*B[0]+A[5]*B[1]+A[8]*B[2]; O[5]=A[2]*B[3]+A[5]*B[4]+A[8]*B[5]; O[8]=A[2]*B[6]+A[5]*B[7]+A[8]*B[8];
+  O[9]=A[0]*B[9]+A[3]*B[10]+A[6]*B[11]+A[9]; O[10]=A[1]*B[9]+A[4]*B[10]+A[7]*B[11]+A[10]; O[11]=A[2]*B[9]+A[5]*B[10]+A[8]*B[11]+A[11];
+}
+static void bf_inv(const float*M,float*O){
+  O[0]=M[0];O[3]=M[1];O[6]=M[2]; O[1]=M[3];O[4]=M[4];O[7]=M[5]; O[2]=M[6];O[5]=M[7];O[8]=M[8];
+  O[9]=-(O[0]*M[9]+O[3]*M[10]+O[6]*M[11]); O[10]=-(O[1]*M[9]+O[4]*M[10]+O[7]*M[11]); O[11]=-(O[2]*M[9]+O[5]*M[10]+O[8]*M[11]);
+}
 static uint16_t *paletteram16;
 
 static float vxx, vyy, vzz, ayy, ayyc, ayys;
@@ -1206,6 +1223,19 @@ static void tgp_render(running_machine *machine, bitmap_t *bitmap, const rectang
 				// 5 = decor
 				// 6 = ??  draw object (57bd4, 387460, 2ad)
 
+				{ uint32_t _ob=readi(list+2);
+					if(_ob==0x47b6e){ int p=(trans_mat[9]<0)?0:1; int k;
+						if(gb_ref_set[p]){ float jx=trans_mat[9]-gb_headref[p][0], jz=trans_mat[11]-gb_headref[p][2]; if(jx*jx+jz*jz > 9.0f){ gb_ref_set[p]=0; { int li; for(li=0;li<16;li++) gb_loff_set[p][li]=0; } } }
+						for(k=0;k<12;k++) gb_head[p][k]=trans_mat[k]; gb_head_have[p]=1;
+						if(!gb_ref_set[p]){ gb_headref[p][0]=trans_mat[9]; gb_headref[p][1]=trans_mat[10]; gb_headref[p][2]=trans_mat[11]; gb_ref_set[p]=1; } }
+					else if(_ob>=0x47181 && _ob<=0x47205){ int p=(trans_mat[9]<0)?0:1; int li=((_ob-0x47181)/0xe)&15;
+						if(gb_head_have[p]){
+							if(!gb_loff_set[p][li]){ float hi[12]; bf_inv(gb_head[p],hi); bf_mul(hi,trans_mat,gb_loff[p][li]); gb_loff_set[p][li]=1; }
+							else { float dx=gb_head[p][9]-gb_headref[p][0], dy=gb_head[p][10]-gb_headref[p][1], dz=gb_head[p][11]-gb_headref[p][2];
+								if(dx*dx+dy*dy+dz*dz > 0.0009f){ float nm[12]; bf_mul(gb_head[p],gb_loff[p][li],nm); int k; for(k=0;k<12;k++) trans_mat[k]=nm[k]; } }
+						}
+					}
+				}
 				if(1 || zz >= 666)
 					push_object(machine, readi(list+2), readi(list+4), readi(list+6));
 				list += 8;
