@@ -405,9 +405,34 @@ static TGP_FUNCTION( matrix_ident )
 	next_fn();
 }
 
+static float hair_ref_x[2]; static int hair_ref_set[2];
 static TGP_FUNCTION( matrix_read )
 {
 	int i;
+	/* Keep hair/ponytail bone-chains following the body during motion.
+
+	   The TGP HLE emits each hair bone-chain object's world matrix at these chain read sites with a
+	   translation built from static node data, so the chain's world X is pinned to the resting
+	   position.  While a character is in motion (dash, lunge) the body advances in world X but the
+	   hair does not, so it lags behind and visibly detaches from the head.  This affects every
+	   character whose hair hangs off the head joint, not just one.
+
+	   The parent head joint is vmat slot 15 and does carry the animated world X.  Add the head joint's
+	   world-X advance, measured from a resting reference, to the emitted chain matrix so the hair
+	   tracks the body.  The advance is zero while standing, so the resting pose is unchanged; a large
+	   jump in the head position (round restart or character change) re-takes the reference. */
+	if(pushpc == 0xffc818 || pushpc == 0xff2f6d) {
+		float head_x = mat_vector[15][9];
+		if(mat_vector[15][9] || mat_vector[15][11]) {
+			int side = (head_x < 0.0f) ? 0 : 1;
+			if(!hair_ref_set[side]) { hair_ref_x[side] = head_x; hair_ref_set[side] = 1; }
+			else {
+				float advance = head_x - hair_ref_x[side];
+				if(advance > 3.0f || advance < -3.0f) hair_ref_x[side] = head_x;
+				else cmat[9] += advance;
+			}
+		}
+	}
 	logerror("TGP matrix_read (%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f) (%x)\n",
 			 cmat[0], cmat[1], cmat[2], cmat[3], cmat[4], cmat[5], cmat[6], cmat[7], cmat[8], cmat[9], cmat[10], cmat[11], pushpc);
 	for(i=0; i<12; i++)
