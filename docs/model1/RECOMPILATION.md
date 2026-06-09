@@ -850,3 +850,29 @@ halves (7,5,3,1) above.  Recomp: walk 64x64 8x8 tiles per layer/category with
 scroll applied, sample the 8-pixel mask to pick the active paired layer, write
 pen!=0 with the decoded colour (shadow/highlight bank on bit15).  Everything is in
 RAM (no gfx ROMs), so the rasteriser reads the tile RAM image directly.
+
+## AD. Keyframe stream channel grammar (type byte / interpolation), verified
+
+Full detail in `KEYFRAME_FORMAT.md`; this records the recomp hook.  Extends
+sections N/S/Z/AA with the per-channel keyframe grammar from the FF597C decoder.
+
+Move-state -> keyframe pointer (FF597C): bank in 0x21 (E00004); state = entity
+[-0x38]; if state < 0xF3 base = 0x100000, index = state-1; if state >= 0xF3 base =
+0x200004, index = state-0xF3.  A rate-shift flag R20 (1 or 2) comes from whether
+the pointer is below 0x200000.
+
+Each keyframe record = 43 channels (stride 0x2B); two cursors one stride apart
+(entity 0x4AE current, 0x4B2 next) interpolate between the current and next
+record using a per-period step from entity 0x650.
+
+Per-channel grammar, in order: [type byte] (0/1 = static/held, other =
+interpolated -> add the step); [duration byte] (0 = use the period 0x650, else the
+count scaled by the rate shift); [16-bit value] (raw word for some channels;
+SIGNED 16-bit sign-extended + cvt.ws to float for the TGP-fed channels, streamed
+via port R24 and read back from R23).  A second pass (39 entries) copies resolved
+pose halfwords to the render work area at entity 0x45C.
+
+Recomp: resolve the pointer with the 0xF3 split + rate flag (off-by-one shifts the
+whole animation); apply the type-byte rule, the zero-duration-defaults-to-period
+rule, and the signed-16 -> float conversion; compute the linear blend between the
+two records in floats and skip the TGP round-trip for pose-only channels.
