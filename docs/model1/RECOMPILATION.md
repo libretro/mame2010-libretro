@@ -820,3 +820,33 @@ Recomp strategy: the 68000 need not be emulated.  Implement the ring-buffer
 producer off the main CPU's latch write, run the engine tick off a YM timer-A-rate
 timer, keep the command grammar and the channel-to-chip / bank / master-volume
 behaviour, and drive MultiPCM + YM3438 via existing cores or native synthesis.
+
+## AC. 2D tilemap layer (Sega System 24 tile hardware), verified
+
+Full detail in `TILEMAP.md`; this records the recomp hook.  The Model 1 reuses the
+System 24 tilemap chip for its 2D overlay (life bars, scores, attract text,
+backdrops), drawn around the 3D scene.
+
+V60 map: 700000 tile RAM, 780000 character RAM, 900000 palette RAM (loaded from
+ROM 0xFD0770), 910000 colour translation.  Tile RAM word layout: 0x0000-0x3fff
+four 64x64 name tables (layer0 scroll/window = 0x0000/0x1000, layer1 = 0x2000/
+0x3000); 0x4000+0x200*layer per-line H-scroll tables; 0x5000/0x5004 per-pair H/V
+scroll + control; 0x6000/0x6800 8-pixel layer-select masks.
+
+Name-table entry (16 bits): bit15 = category/priority, bits14-7 = colour, low bits
+& 0x3fff = tile number.  Tiles are 8x8, 4bpp, 32 bytes, pen 0 transparent, char
+words big-endian (WORD_XOR_BE).
+
+Four layers in two pairs; an 8-pixel-granular mask selects which layer of a pair
+shows per 8-pixel column (windowing).  vscr bit15 = layer disable.  Per-line
+H-scroll when hscr bit15 + control bits 13-14 (modes 1/2/3 = swap/clip variants).
+
+Palette (16-bit): R=((w&0xf)<<4)|(w&0x1000?8:0), G=(w&0xf0)|(w&0x2000?8:0),
+B=((w&0xf00)>>4)|(w&0x4000?8:0), each |= >>5; bit15 = highlight (a shadow/highlight
+copy stored at index + total_colors/2).
+
+Draw order: low-priority halves (layers 6,4,2,0) below the 3D scene, high-priority
+halves (7,5,3,1) above.  Recomp: walk 64x64 8x8 tiles per layer/category with
+scroll applied, sample the 8-pixel mask to pick the active paired layer, write
+pen!=0 with the decoded colour (shadow/highlight bank on bit15).  Everything is in
+RAM (no gfx ROMs), so the rasteriser reads the tile RAM image directly.
