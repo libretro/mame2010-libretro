@@ -423,3 +423,85 @@ VERIFIED TGP COMMAND-WORD ENCODING (cmd = index<<23), confirmed from emitted imm
 NOTE on false positives: many collision command-word byte-matches in epr-16080.4 fall inside the
 move-data region (0xFC06E4+) and are DATA, not code; only emissions verified as 'mov.w #cmd,[R24]' in
 the code ROM (epr-16081.5) are real FIFO writes (e.g. the FEF180 routine above).
+
+## Q. Input sampling & edge-detection (verified code, located at runtime)
+The per-frame input routine is at 0xFE41CC-0xFE424F (epr-16081.5), found by instrumenting the input
+read at runtime (V60 PC fe41e1/e7/f7 read IN2/IN1/IN0). Decoded:
+  FE41CC: save last frame's input: 0x40BF90 (current) -> 0x40BF94 (previous).
+  FE41DA: R11 = 0xC00016 (just past the digital ports); read backwards via pre-decrement [-R11]:
+          FE41E1 IN2 (P2, 0xC00014) -> R2; <<8; FE41E7 IN1 (P1, 0xC00012) -> R2; <<8;
+          FE41ED IN0 (system, 0xC00010) byte; <<8; FE41F7 final byte. Assembles all inputs into R2.
+  FE41FA: not -> active-high; store to 0x40BF90 (CURRENT input word).
+  FE4204: 0x40BF98 = current AND NOT previous = JUST-PRESSED (rising edge). [move-trigger source]
+  FE4227: 0x40BF9C = HELD inputs (current).
+  FE422E-4F: 0x40BF7C = a toggle/edge-latched input set (XOR logic) for another consumer.
+  Also 0x5012C0 |= pressed, masked &0x30 (the START1/START2 bits 0x10/0x20) - coin/start handling.
+
+INPUT STATE VARIABLES (work RAM, the recomp's input block):
+  0x40BF90 = current input (active-high; P2<<16 | P1<<8 | system, per the assembly packing).
+  0x40BF94 = previous-frame input.
+  0x40BF98 = just-pressed (edge) - what the move/command interpreter keys on.
+  0x40BF9C = held input.
+  0x40BF7C = edge-latched/toggle input set.
+  0x5012C0 = start/coin latch (bits 0x10/0x20 = START1/START2).
+  Bit layout within each player byte (from section I): b0 GUARD, b1 PUNCH, b2 KICK, b4 DOWN, b5 UP,
+  b6 RIGHT, b7 LEFT.
+
+So the MOVE/COMMAND INTERPRETER reads 0x40BF98 (just-pressed) + 0x40BF9C (held) + per-player stick
+history to recognize VF command inputs (e.g. punch, kick, throw = P+G, crouch = down+attack, directional
+specials) and calls the move loader FEE1FD(moveID) (section O). The interpreter itself is reached via
+the per-state entity update; with the input block now located (0x40BF90-9C), the interpreter is the code
+that consumes 0x40BF98/9C and writes the entity's move - traceable from here. The input ACQUISITION +
+edge-detection (this section) is fully mapped and verified.
+
+GAME-LOGIC RECOMP STATUS: input acquisition+edges (this section), state machine, entity struct,
+animation playback, move loader, move database, collision/ground test - all verified. Remaining: the
+command-recognition logic that maps 0x40BF98/9C patterns -> move IDs (the VF input-buffer system), and
+the per-word move-record semantics.
+
+## R. Input consumers: coin/credit & menu front-end (verified code)
+Tracing the readers of the input-state block (section Q) found the FRONT-END input handlers (verified):
+
+COIN / CREDIT handler (FE4820, verified):
+  - Reads 0x40BF98 (just-pressed) & 0x808 (service/test-type bits) -> bsr FE48FE/FE48D3 (service menu).
+  - Reads 0x40BF9C (held) & 0x3 (COIN1/COIN2 bits) -> per-coin: bsr FE4933 (add credit), using credit
+    counters in work RAM 0x40BD00/0x40BD10/0x40BD18 and 0x40FA00/0x40FA04/0x40FA08/0x40FA0C.
+  - FE4AAF = coin-timer/credit routine; writes the hardware coin counter at 0xC0001E (clr1/set1).
+  So coins -> credits is: read held coin bits -> debounce/timer (FE4AAF) -> increment credit counter.
+
+MENU / MODE navigation (FE42E6, verified):
+  - Reads 0x40BF98 (pressed); test bit 0x10 of 0x40BFA0 (START1) -> menu advance.
+  - Reads 0x40BF88 and table-branches (tb R0, FE43A6) on it; dispatches on menu state 0x5012AC
+    (cmp #1/#2/#3 -> different screens) = the attract/title/character-select navigation state machine.
+  0x5012AC = front-end mode/screen state; 0x40BF88 = a processed-input/direction word for menus.
+
+IN-MATCH MOVE INTERPRETER (location note): the per-player FIGHT command interpreter is NOT these
+front-end handlers; it runs inside the match state (entity update) and operates on the per-player
+packed bytes of the input block (P1 = byte at 0x40BF9x>>8, P2 = >>16; bits b0 GUARD/b1 PUNCH/b2 KICK/
+b4-7 stick per section I/Q). It recognizes button+stick patterns and calls the move loader FEE1FD
+(section O). It is reached only during the match game-state; to locate it precisely, trap reads of the
+P1/P2 input bytes during an actual fight frame (runtime PC trap, as used for the input routine in Q),
+rather than the front-end which dominates the attract/menu frames sampled here.
+
+GAME-LOGIC RECOMP MAP (verified, cumulative):
+  boot/init (G) -> main loop (G) -> state dispatch (K) -> { front-end: coin (R) / menu (R) } |
+  { match: entity update (L,M) -> [move interpreter -> FEE1FD move loader (O)] -> animation playback
+  (N) -> skeleton render via TGP (L) -> ground/hit collision (P) }.
+  Input acquisition+edges (Q). All blocks verified except the in-match move-interpreter internals
+  (located to the match entity-update path; exact pattern-match code is the last item) and the
+  per-word move-record semantics.
+
+## S. Move record format (cross-validated from two moves)
+Comparing move1 (@0xFC0C80) and move2 (@0xFC1402) header words:
+  move1: 2003 0040 010C 0020 C000 0605 050A 0C00
+  move2: 0083 0000 0119 0020 C000 0908 0A14 1E00
+  word0 = move TYPE/property flags (2003 vs 0083 - per-move).
+  word1 = param (0040 vs 0000 - per-move; flag/aux).
+  word2 = a per-move ID/param (010C vs 0119; both ~0x100-0x120 - likely animation/pose-set selector).
+  word3 = 0020 in BOTH = fixed structural field (count/stride marker).
+  word4 = C000 in BOTH = fixed header constant/marker (record-start sentinel).
+  word5+ = per-move animation/timing/keyframe stream (differs: 0605 050A 0C00 vs 0908 0A14 1E00).
+So a move record = a small fixed header (with constant markers word3=0x0020, word4=0xC000) + per-move
+type/param words + a keyframe stream that drives the playback fields (period 0x650, mode 0x647, the
+per-channel 0x671+ accumulators). Exact keyframe-stream grammar (frame deltas, hit-box activation,
+cancel windows) is the remaining data-format item; the header layout is confirmed.
