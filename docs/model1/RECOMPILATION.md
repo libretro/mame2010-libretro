@@ -775,3 +775,48 @@ animation streams in banked ROM, 43 channels/keyframe, move-state-indexed (this 
 work-RAM layout (Q/T/U/V). The fight engine's control flow AND every data structure it touches are
 documented and verified. Residual = bulk per-move labeling and the exact per-channel type-byte semantics
 (diff many keyframes), both mechanical; no structural unknowns remain for the game logic.
+
+## AB. Sound subsystem (68000 program, host protocol, MultiPCM/YM3438), verified
+
+The sound board is fully documented in `SOUND.md`; this section records how it
+plugs into the recompilation.  Source: disassembly of the VF sound ROM
+(epr-16120/epr-16121, word-swapped to big-endian m68k order) cross-checked against
+the driver memory map and machine config.
+
+Hardware: TMP68000 @10 MHz, two Sega 315-5560 MultiPCM @8 MHz ("sega1"/"sega2"),
+one YM3438 @8 MHz.  Only IRQ level 2 is used; the main CPU asserts it on every
+sound-command write.
+
+Sound 68000 map: 000000-0bffff ROM (epr-16120 @0, epr-16121 @020000 and reloaded
+@080000); c20000/c20003 host command latch + handshake; c40000-7/c50000 MultiPCM#1
++ bank; c60000-7/c70000 MultiPCM#2 + bank; d00000-7 YM3438 (two address/data
+banks); c10001 board control; f00000-f0ffff work RAM (SSP=0f0fffe).
+
+Vectors: reset PC=000200, IRQ2=000120, everything else=000100 (nop;rte).
+
+Command path (the contract the recomp must preserve):
+- The V60 sound-latch write pushes one byte to a ring buffer and raises IRQ2.
+- IRQ2 handler (000120) decodes the lead byte: 0xff = idle (ignored), >=0xf0 =
+  control (not enqueued), bit-7-set = multibyte (length 2 for 0xc0-0xdf, 3 for
+  >=0xe0).  Bytes are queued at f00000.., wrapping at f01000; f01007 counts
+  complete commands.
+- The foreground loop (0003f0) is gated by the YM3438 timer-A flag (d00001 bit 1):
+  on each tick it runs the sequencer step (000424, a 36-entry event list at
+  f01504 stride 0x0e) and a per-voice volume refresh; between ticks it drains the
+  command queue (0006da).
+- Command grammar: high nibble = opcode (0x8n note-off, 0x9n note-on, 0xCn/0xDn
+  parameter), low nibble = channel (1 of 13 blocks at f01300).  A software master
+  volume at f0101e multiplies each channel level (>>8) on top of the MultiPCM
+  envelope.
+
+Chip protocols:
+- MultiPCM write = poll status (port+1 bit0), write reg index to port+5, poll,
+  write data to port+1.  Voices split across the two chips by bit 3 of the voice
+  control byte; bank select is one byte to c50001/c70001 at 0x100000 granularity.
+- YM3438 write = poll d00001 bit7, write reg to address port, poll, write data to
+  data port; part 0 = d00001/d00003 (ch 1-3), part 1 = d00005/d00007 (ch 4-6).
+
+Recomp strategy: the 68000 need not be emulated.  Implement the ring-buffer
+producer off the main CPU's latch write, run the engine tick off a YM timer-A-rate
+timer, keep the command grammar and the channel-to-chip / bank / master-volume
+behaviour, and drive MultiPCM + YM3438 via existing cores or native synthesis.
