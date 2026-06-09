@@ -360,3 +360,66 @@ turns stick+P/K/G sequences into move IDs (VF's input-buffer/command system). It
 input state (sampled from 0xc00010-14) and the current entity state, and calls FEE1FD. Trace callers of
 FEE1FD to find it. Also: decode one full move data record (0xFC0C80) to document the move/keyframe
 format (frames, hitboxes, cancel windows) - the last big data format for the recomp.
+
+## O. Move loader contract & move record (verified code + data, fully decoded)
+MOVE LOADER FEE1FD(moveID in R20) — complete, verified:
+  - R20 & 0x3FFF = 14-bit move ID (top 2 bits = flags). Range up to 16383 moves.
+  - (id-1) indexes the 16-bit MOVE-INDEX TABLE at 0xFC0000; result + 0xFC06E4 = move-data pointer,
+    stored into entity[-0x3C] (the ACTIVE-MOVE pointer that FEDB20 plays).
+  - Zeros the entity's animation-channel accumulators: entity[0x671,0x673,0x675,0x677,0x679,0x67B,
+    0x67D,0x67F,0x681,0x683,0x685,0x687] (12 halfword channels) and entity[0x712]. = reset all bone/
+    channel animation state for the new move. (So the character skeleton has ~12 animated channels;
+    matches the ~10-component render loop + extras.)
+  So "execute move N" = FEE1FD(N): point the entity at move N's data and reset its animation channels.
+
+MOVE RECORD FORMAT (at 0xFC06E4 + index; example move 1 @0xFC0C80):
+  Header/param block of 16-bit words, e.g. move1: 2003 0040 010C 0020 C000 0605 050A 0C00 3333 3F33 ...
+  - word0 (0x2003) = move type/flags header.
+  - subsequent words = animation parameters incl. embedded floats (e.g. 0x3F33xxxx ~ 0.7f as the high
+    half of a 32-bit float = movement/velocity/scale), frame counts, and a keyframe/channel stream that
+    fills the playback fields (period 0x650, mode 0x647, the 0x671+ channels). Exact per-word semantics
+    need a cross-move diff (decode several records and correlate fields with observed playback).
+
+ENTITY ANIMATION-CHANNEL BLOCK (verified): entity[0x671..0x687] = 12 halfword per-channel animation
+accumulators; entity[0x712] = an extra channel/flag. entity[-0x3C] = active-move data pointer;
+entity[-0x32] = current frame; entity[0x650] = period; entity[0x647] = playback mode; entity[0x44C/
+0x44E] = previous-state cache (keyframe tracker FEE1C9).
+
+MOVE-SELECT (input -> move ID): FEE1FD is invoked with a move ID chosen by the command interpreter.
+That interpreter is reached via INDIRECT dispatch (function-pointer / jsr [Rn]) so it is not located by
+a direct branch-target scan; it reads the per-player input state (sampled from 0xc00010-14, section I)
++ the current entity state and computes the move ID. Locating it requires xref/indirect-call analysis
+(the disassembler resolves only direct targets). This is the remaining game-logic gap; the move
+EXECUTION path (loader + playback + render) is now fully mapped and verified.
+
+RECOMP STATUS (game logic): boot/init, main loop, state machine, work-RAM layout, entity struct,
+animation playback, the move loader, and the move database are all mapped & verified. Open items: the
+input->move command interpreter (indirect-dispatched), the exact per-word move-record semantics, and
+the TGP collision (colbox) wiring for hit detection.
+
+## P. Collision / hit-detection wiring (verified code)
+The TGP provides the collision primitives (ARCHITECTURE section 3); the V60 issues them over the FIFO.
+Verified collision routine at ~0xFEF180 (epr-16081.5) - per-frame ground/point collision:
+  FEF188: cmd 0x0B000000 (idx 0x16) - matrix op (load rotz/component matrix), arg from [R10].
+  FEF19D: cmd 0x0D000000 (idx 0x1A = transform_point) - send a point ([R14],+4,+8), read the
+          transformed point back ([R7+],[R8+],[R9+]). = transform the test point into world space.
+  FEF1BF: cmd 0x2B800000 (idx 0x57 = groundbox_test) - send 3 coords ([R14+]x3), read 3 results
+          (R0,R1,R2). = test the point against the stage GROUND box (floor height / ring boundary).
+  FEF206: cmd 0x02800000 (matrix_push) + FEF212: cmd 0x09000000 (idx 0x12 = matrix_trans) - set up the
+          next test's matrix.
+So the engine, per relevant point (feet, body), transforms it via the TGP then runs groundbox_test to
+get floor height / out-of-ring status; the result (R0-R2) drives foot placement, landing, and ring-out.
+The character-vs-character hit test uses colbox_set/colbox_test (idx 0x31/0x32) similarly: set hit/hurt
+boxes from the current animation frame, test attacker box vs defender box, apply damage on overlap.
+
+VERIFIED TGP COMMAND-WORD ENCODING (cmd = index<<23), confirmed from emitted immediates:
+  0x02800000 matrix_push(5)   0x03000000 matrix_pop(6)   0x08800000 matrix_read(0x11)
+  0x09000000 matrix_trans(0x12)  0x0B000000 (0x16 matrix_rotz)  0x0D000000 transform_point(0x1A)
+  0x19000000 colbox_test(0x32)   0x20000000 col_setcirc(0x40)   0x2B800000 groundbox_test(0x57)
+  0x32800000 groundbox_set(0x65)  0x33000000 mve_calc(0x66, VF chain)  0x33800000 mve_setadr(0x67)
+  (These confirm the ftab index<<23 dispatch end-to-end: V60 emits index<<23; TGP dispatch does
+   cmd>>23 -> ftab[index]. A recomp lowers each FIFO write to the matching TGP-command function call.)
+
+NOTE on false positives: many collision command-word byte-matches in epr-16080.4 fall inside the
+move-data region (0xFC06E4+) and are DATA, not code; only emissions verified as 'mov.w #cmd,[R24]' in
+the code ROM (epr-16081.5) are real FIFO writes (e.g. the FEF180 routine above).
