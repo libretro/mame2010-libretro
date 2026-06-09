@@ -1595,8 +1595,6 @@ static TGP_FUNCTION( groundbox_set )
 	next_fn();
 }
 
-static float mve_prev_x, mve_prev_y, mve_prev_z;
-static int mve_prev_valid;
 static TGP_FUNCTION( f102 )
 {
 	float a = fifoin_pop_f();
@@ -1620,31 +1618,32 @@ static TGP_FUNCTION( f102 )
 	cmat[10] += cmat[1]*a+cmat[4]*b+cmat[7]*c + d;
 	cmat[11] += cmat[2]*a+cmat[5]*b+cmat[8]*c + e;
 
-	/* Orient the link along the chain (look-at the previous link) so the braid
-	 * tilts with the body during animation instead of keeping a fixed
-	 * orientation (which made it detach on e.g. a kick).  Derived from the
-	 * link positions, which already follow the body, so it tracks any pose.
-	 * mve_prev_valid is cleared at chain start by mve_setadr (f103). */
-	if(mve_prev_valid) {
-		float dx = cmat[ 9] - mve_prev_x;
-		float dy = cmat[10] - mve_prev_y;
-		float dz = cmat[11] - mve_prev_z;
-		float L  = (float)sqrt(dx*dx + dy*dy + dz*dz);
-		if(L > 1e-5f) {
-			float ux = dx/L, uy = dy/L, uz = dz/L;   /* link Y-axis = chain direction */
-			float rx = uz, rz = -ux;                  /* right = perpendicular in XZ */
-			float rl = (float)sqrt(rx*rx + rz*rz);
-			if(rl > 1e-5f) { rx /= rl; rz /= rl; } else { rx = 1.0f; rz = 0.0f; }
-			cmat[0] = rx;   cmat[1] = ux;   cmat[2] = uy*rz;        /* forward = up x right */
-			cmat[3] = 0.0f; cmat[4] = uy;   cmat[5] = uz*rx - ux*rz;
-			cmat[6] = rz;   cmat[7] = uz;   cmat[8] = -uy*rx;
+	/* Orient the link from the joint arguments: the bone Y axis is the
+	 * normalised input vector (b, d, c), matching the hardware geometry for
+	 * every link; the roll is fixed by completing an orthonormal basis against
+	 * world-down (Z = normalize(Y x worldDown), X = Y x Z), written as columns
+	 * [X | Y | Z].  Replaces the look-at, whose Y axis was derived from inter-
+	 * link spacing and so mis-oriented the bones during motion. */
+	{
+		float yx = b, yy = d, yz = c;
+		float yl = (float)sqrt(yx*yx + yy*yy + yz*yz);
+		if(yl > 1e-5f) {
+			float zx, zy, zz, zl, xx, xy, xz;
+			yx /= yl; yy /= yl; yz /= yl;
+			zx = yy*0.0f - yz*(-1.0f);
+			zy = yz*0.0f - yx*0.0f;
+			zz = yx*(-1.0f) - yy*0.0f;
+			zl = (float)sqrt(zx*zx + zy*zy + zz*zz);
+			if(zl > 1e-5f) { zx /= zl; zy /= zl; zz /= zl; }
+			else { zx = 1.0f; zy = 0.0f; zz = 0.0f; }
+			xx = yy*zz - yz*zy;
+			xy = yz*zx - yx*zz;
+			xz = yx*zy - yy*zx;
+			cmat[0] = xx; cmat[1] = yx; cmat[2] = zx;
+			cmat[3] = xy; cmat[4] = yy; cmat[5] = zy;
+			cmat[6] = xz; cmat[7] = yz; cmat[8] = zz;
 		}
 	}
-	mve_prev_x = cmat[ 9];
-	mve_prev_y = cmat[10];
-	mve_prev_z = cmat[11];
-	mve_prev_valid = 1;
-
 	/* mve_calc is a chain joint.  The chain point is already resolved in the
 	 * input (c,d,e) (f,g,h are zero for the braid) and is fed back as the next
 	 * link's input by the V60; emit it unchanged.  Passing it through the
@@ -1664,7 +1663,6 @@ static TGP_FUNCTION( f102 )
 static TGP_FUNCTION( f103 )
 {
     ram_scanadr = fifoin_pop() - 0x8000;
-	mve_prev_valid = 0;   /* new chain: no previous link yet */
 	logerror("TGP f0 mve_setadr 0x%x (%x)\n", ram_scanadr, pushpc);
 	ram_get_i();
 	next_fn();
