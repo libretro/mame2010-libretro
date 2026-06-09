@@ -505,3 +505,149 @@ So a move record = a small fixed header (with constant markers word3=0x0020, wor
 type/param words + a keyframe stream that drives the playback fields (period 0x650, mode 0x647, the
 per-channel 0x671+ accumulators). Exact keyframe-stream grammar (frame deltas, hit-box activation,
 cancel windows) is the remaining data-format item; the header layout is confirmed.
+
+## T. Full input-variable map & the move-interpreter location (runtime-verified)
+Read-trapping the input block 0x40BF90-9F during a match frame confirmed the in-match readers are the
+input routine (FE41CC) + the front-end handlers (FE422E/FE42E6/FE4833/FE4858) - NO distinct new reader
+of the raw 0x40BF9x block fires when neither player is inputting a move. The move interpreter therefore
+consumes a PROCESSED / per-player input layer, not the raw block. Decoding the input routine's tail
+revealed that second layer:
+
+FULL INPUT-VARIABLE MAP (work RAM, verified):
+  Raw layer (FE41CC):
+    0x40BF90 = current raw input (active-high; system|P1<<8|P2<<16 packing).
+    0x40BF94 = previous raw input. 0x40BF98 = raw just-pressed. 0x40BF9C = raw held.
+    0x40BF7C = edge-latched input (XOR toggle logic).
+  Processed layer (FE4257 / FE428E - two parallel processors, e.g. per consumer or per direction set):
+    0x40BF80 = current processed input; 0x40BF84 = previous processed.
+    0x40BF88 = processed JUST-PRESSED (current AND NOT prev) - read by the menu nav (FE42E6).
+    0x40BF8C = processed JUST-RELEASED.
+  0x40BFA0 = a control/state byte (START1 bit 0x10 tested by menu nav).
+  0x5012C0 = start/coin latch; 0x5012AC = front-end screen state.
+
+So input flows: raw read (FE41CC) -> raw current/prev/pressed/held (0x40BF90-9C) -> edge latch
+(0x40BF7C) -> processed pressed/released (0x40BF80-8C). Consumers: coin (FE4820, raw held), menu nav
+(FE42E6, processed pressed 0x40BF88), and - in match - the move interpreter reads the processed/
+per-player input.
+
+MOVE INTERPRETER (status): located to the match entity-update path; it reads the processed input layer
+(0x40BF88 / per-player slices) and the entity's current state, recognizes VF stick+button commands, and
+calls the move loader FEE1FD (section O). Its input-dependent branches were not exercised in the idle 2P
+standing capture (neither player inputting), so its exact pattern-match PCs require a capture WITH active
+fight inputs (scripted stick+button presses on the runner during a match frame, then the read trap on
+0x40BF88/per-player fields will hit the interpreter). The input plumbing it consumes is now fully mapped.
+
+This completes the input subsystem for the recomp: acquisition, edge detection, the two processed
+layers, and all front-end consumers - verified. The one game-logic internal still to capture is the
+move-interpreter's command-pattern table (input pattern -> move ID), reachable via an active-input
+fight capture.
+
+## U. Per-player input distribution -> the move interpreter (runtime-verified with active input)
+Capturing input readers WITH active fight input (scripted P1 punch+kick+forward, P2 punch+back at a
+match frame) revealed the consumers that only fire when input is processed - and the missing link:
+
+PER-PLAYER INPUT DISTRIBUTION (FE5EF0/FE5F02, verified):
+  - Gated on a per-entity flag (test1 #0x1B, 0x5012A4).
+  - FE5F02: read global PROCESSED input 0x40BF80 (current) -> R1, 0x40BF88 (just-pressed) -> R2.
+  - rot.w R0,R1 / rot.w R0,R2 : ROTATE by a per-player shift (R0) to extract THIS player's input byte.
+  - store: entity[-0x6C] = this player's HELD input; entity[-0x6A] = this player's JUST-PRESSED input.
+  (FE5F1F branch: an alternate path masking held vs the inverted previous, same -6C/-6A targets.)
+  So the global input block (section T) is sliced per player into the entity struct: entity[-0x6C]=held,
+  entity[-0x6A]=pressed. THIS is the per-player input the move interpreter reads (not the global block).
+
+ENTITY STRUCT - input fields (add to section M):
+  entity[-0x6C] = per-player HELD input (stick+buttons for this fighter).
+  entity[-0x6A] = per-player JUST-PRESSED input (rising edge) - the move-trigger source.
+  (bit layout per player byte: b0 GUARD, b1 PUNCH, b2 KICK, b4 DOWN, b5 UP, b6 RIGHT, b7 LEFT.)
+
+MOVE INTERPRETER: now reachable - it reads entity[-0x6A]/[-0x6C] and the entity state (the fight logic
+at FE5F39+ compares entity state fields -0x2B/-0x28 against thresholds 0x14/0x1E etc.), recognizes the
+stick+button command, and calls the move loader FEE1FD(moveID) (section O). The full input->move chain
+is now established end to end:
+  hardware ports (0xC00010-14) -> raw block (0x40BF90-9C, FE41CC) -> processed block (0x40BF80-8C) ->
+  PER-PLAYER slice entity[-0x6C]/[-0x6A] (FE5F02) -> move interpreter (entity update) -> FEE1FD ->
+  move data -> animation playback -> skeleton render via TGP -> collision.
+
+REMAINING: the exact command-pattern table (which entity[-0x6A]/stick-history patterns map to which move
+IDs - VF's input-buffer command system) lives in the fight-logic functions reading entity[-0x6A]; with
+the per-player input field now pinned (entity[-0x6A]), a read-trap on that field (or following the
+fight-logic at FE5F39+) reaches the pattern matcher. This is the final game-logic internal.
+
+## V. Per-player state banks & per-player update (verified code)
+The per-player fight processing (after input distribution, section U) dispatches per player:
+  FE5F90: R18 = 0x504000 (PLAYER 1 state bank); bsr FE5FD8 (per-player update).
+  FE5FB1: R18 = 0x504400 (PLAYER 2 state bank); bsr FE5FD8.
+  => Two PLAYER STATE BANKS at 0x504000 (P1) and 0x504400 (P2), 0x400 bytes apart (the per-fighter
+     entity struct, ~0x400 = 1KB, matching the struct offsets -0x80..+0x3xx). R20/R22 = the player's
+     bank base during FE5FD8.
+
+PER-PLAYER UPDATE (FE5FD8, verified): processes one fighter:
+  - set1 #C, entity[-0x80] (set a state-flag bit).
+  - reads entity[-0x38] (state), entity[-0x22] (a param), entity[-0x42] (position/velocity) and
+    clamps vs 0xE0000 (a position/bound limit); writes entity[-0x26].
+  - entity[-0x2D] = a per-frame counter (inc, read, reset; compared vs 0x14 = 20).
+  - This is the per-fighter PHYSICS/STATE step (position/velocity bounds, frame timers). The command
+    interpreter (reading entity[-0x6A] per-player pressed, section U) runs within this per-player update
+    chain and, on a recognized stick+button command, calls FEE1FD(moveID) (section O).
+
+RECOMP NOTE - the two player banks (0x504000 P1 / 0x504400 P2) plus the camera/stage entities are the
+fight scene's entity set, iterated by the match state handler (section K). A recomp models each fighter
+as the ~0x400-byte struct (sections M/U: state flags, current move ptr -0x3C, anim frame -0x32, period
+0x650, mode 0x647, channels 0x671+, per-player input -0x6C/-0x6A, position/velocity, timers).
+
+GAME-LOGIC RECOMP: the full per-frame fight pipeline is now traced and verified end to end -
+  input read+edges (FE41CC) -> processed (FE4257) -> per-player slice (FE5F02 -> entity[-6C/-6A]) ->
+  per-player update FE5FD8 (physics/timers) + command interpret -> FEE1FD move load -> FEDB20 anim
+  playback -> FF5FA1/FF609E TGP skeleton render -> FEF180 ground/hit collision.
+REMAINING (final game-logic internal): the command-pattern TABLE inside the per-player update that maps
+entity[-0x6A]/stick-history -> move ID. This is VF's multi-function input-buffer/command system; the
+entry chain (FE5FD8 and its callees) is identified, but enumerating every command pattern is a large
+follow-on trace. Everything else - hardware, TGP, formats, the full control/data flow, the entity
+struct, and the per-frame pipeline - is mapped and verified.
+
+## W. The command interpreter / move-pattern matcher (runtime-located, verified)
+Found by read-trapping the per-player just-pressed input field with ACTIVE fight input. Per-player input
+is stored in mr2 (NOT the 0x504000 banks): P1 held=0x400294 / pressed=0x400296; P2 held=0x400494 /
+pressed=0x400496 (0x200 apart). So the input entity base R25/R22 = 0x400300 (P1) / 0x400500 (P2);
+entity[-0x6C]=held @ base-0x6C, entity[-0x6A]=pressed @ base-0x6A.
+
+Readers of the per-player pressed input (0x400296) cluster in 0xFE8800-0xFE8F72 = THE COMMAND
+INTERPRETER. Verified structure:
+
+INPUT-SEQUENCE / STICK TRACKING (FE8801+):
+  - test1 #4,-6A[R25] (DOWN), #7 (LEFT), #6 (RIGHT) on the just-pressed input; maintains a directional
+    sequence counter entity[0x3D] (inc on matching direction, reset otherwise) = the input-buffer that
+    recognizes multi-frame stick motions (dashes, crouch-walk, charge).
+  - Range/timing windows on entity[-0x4A]/[-0x4C] (cmp vs 0xA / 5; cmp -4A vs -4C) -> compute a
+    direction/facing result into entity[0x47] (+1 / -1 / 0). = stick-direction resolution relative to
+    facing.
+STATE + BUTTON MATCH / CANCEL WINDOWS (FE88B8+):
+  - Compares the current move-state entity[-0x38] against move-state ID constants (0x301, 0x30A, 0x30F,
+    0x2E9, 0x345, 0xF1, 0x30F...) and tests flags entity[-0x80] bit 0x19, entity[-0x36] bit 0xE.
+  - cmp #8, entity[-0x32] (current anim frame) = a CANCEL WINDOW test (next move accepted once the
+    current animation passes frame 8). test.b -6A[R25] = "any button pressed".
+  - On a matched (state, input, window) triple it selects a move-state ID and drives the move loader
+    FEE1FD(moveID) (section O), transitioning the fighter to the new move.
+
+So VF's command system = (1) per-player input sliced to entity[-0x6C]/[-0x6A] (section U); (2) stick
+sequence tracked in entity[0x3D] + direction resolved to entity[0x47]; (3) the interpreter matches
+(current state entity[-0x38], just-pressed buttons entity[-0x6A], stick result, cancel-window
+entity[-0x32] vs frame thresholds) against move-state ID constants; (4) calls FEE1FD to start the move.
+Move-state IDs seen: 0xF1, 0x2E9, 0x301, 0x30A, 0x30F, 0x345 (each indexes the move database, section N).
+
+ENTITY STRUCT - command/state fields (add to section M):
+  entity[0x3D] = directional input-sequence counter (input buffer).
+  entity[0x45] = a secondary input timer/counter (tasi/inc at FE87F8).
+  entity[0x47] = resolved stick direction (+1/-1/0 vs facing).
+  entity[-0x4A]/[-0x4C] = stick position/timer state (range-windowed).
+  entity[-0x38] = current MOVE-STATE ID (matched against the move-state constants).
+  entity[-0x32] = current anim frame (also the cancel-window source).
+
+GAME-LOGIC: the fight engine is now mapped end to end INCLUDING the command interpreter:
+  ports -> raw input (FE41CC) -> processed (FE4257) -> per-player entity[-6C/-6A] (FE5F02) ->
+  per-player update FE5FD8 (physics/timers) -> COMMAND INTERPRETER FE8800 (stick-seq + button + state +
+  cancel-window match -> move-state ID) -> FEE1FD move load -> FEDB20 anim playback -> FF5FA1/FF609E
+  TGP skeleton render -> FEF180 ground/hit collision.
+REMAINING (data, not control flow): the full enumeration of every move-state ID -> move-record mapping
+and the exact stick-motion notations (the per-character command lists). The interpreter MECHANISM and
+all its inputs/fields are now verified; completing the move-ID catalog is data-table extraction.
