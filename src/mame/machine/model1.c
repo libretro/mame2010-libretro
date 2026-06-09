@@ -405,7 +405,7 @@ static TGP_FUNCTION( matrix_ident )
 	next_fn();
 }
 
-static float hair_ref_x[2], hair_ref_y[2], hair_ref_z[2]; static int hair_ref_set[2];
+static float hair_ref_x[2]; static int hair_ref_set[2];
 static TGP_FUNCTION( matrix_read )
 {
 	int i;
@@ -423,36 +423,13 @@ static TGP_FUNCTION( matrix_read )
 	   jump in the head position (round restart or character change) re-takes the reference. */
 	if(pushpc == 0xffc818 || pushpc == 0xff2f6d) {
 		float head_x = mat_vector[15][9];
-		float head_y = mat_vector[15][10];
-		float head_z = mat_vector[15][11];
 		if(mat_vector[15][9] || mat_vector[15][11]) {
 			int side = (head_x < 0.0f) ? 0 : 1;
-			if(!hair_ref_set[side]) {
-				hair_ref_x[side] = head_x; hair_ref_y[side] = head_y; hair_ref_z[side] = head_z;
-				hair_ref_set[side] = 1;
-			}
+			if(!hair_ref_set[side]) { hair_ref_x[side] = head_x; hair_ref_set[side] = 1; }
 			else {
-				float adv_x = head_x - hair_ref_x[side];
-				float adv_y = head_y - hair_ref_y[side];
-				float adv_z = head_z - hair_ref_z[side];
-				/* A large jump on any axis is a cut, not motion (round restart,
-				   character change, attract/select model): re-take the reference on
-				   all axes and apply nothing this frame.  Otherwise advance the chain
-				   root by the head joint motion on all three axes -- the prior version
-				   tracked X only, so the braid held resting height/depth and floated
-				   off the head in any non-flat pose. */
-				if(adv_x > 3.0f || adv_x < -3.0f ||
-				   adv_y > 3.0f || adv_y < -3.0f ||
-				   adv_z > 3.0f || adv_z < -3.0f) {
-					hair_ref_x[side] = head_x;
-					hair_ref_y[side] = head_y;
-					hair_ref_z[side] = head_z;
-				}
-				else {
-					cmat[ 9] += adv_x;
-					cmat[10] += adv_y;
-					cmat[11] += adv_z;
-				}
+				float advance = head_x - hair_ref_x[side];
+				if(advance > 3.0f || advance < -3.0f) hair_ref_x[side] = head_x;
+				else cmat[9] += advance;
 			}
 		}
 	}
@@ -2038,7 +2015,6 @@ void model1_tgp_reset(running_machine *machine, int swa)
 	cmat[4] = 1.0;
 	cmat[8] = 1.0;
 
-	hair_ref_set[0] = hair_ref_set[1] = 0;
 	model1_dump = 0;
 	model1_swa = swa;
 	next_fn();
