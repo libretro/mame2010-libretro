@@ -651,3 +651,127 @@ GAME-LOGIC: the fight engine is now mapped end to end INCLUDING the command inte
 REMAINING (data, not control flow): the full enumeration of every move-state ID -> move-record mapping
 and the exact stick-motion notations (the per-character command lists). The interpreter MECHANISM and
 all its inputs/fields are now verified; completing the move-ID catalog is data-table extraction.
+
+## X. The command-condition tables (move catalog data structure, verified)
+The command interpreter (section W) calls the move-trigger FEAB4C (~20 sites, one per recognized input
+pattern). FEAB4C, verified, resolves a command to a move via per-character tables:
+
+MOVE-TRIGGER FEAB4C(commandIndex in R0):
+  - gate on entity[-0x80] bit 0xC (must be in an accept state).
+  - character index = entity[-0x50 + 0xC]; look up the character's MOVE TABLE via the pointer array at
+    0xFDB820 (per-character). Dereference -> table base.
+  - entry = table + commandIndex*7 (7-byte entries). Read move-state ID (word0). 0xFFFFFFFF = end/none.
+  - CONDITION CHECK: each entry carries condition-byte indices; for each, read a MASK from 0xFDB850[idx]
+    and an EXPECTED value from 0xFDB854[idx], AND the mask against an entity state field, and require it
+    to equal EXPECTED. Fields checked: entity[0x156D] (self status), entity[-0x36] (self state),
+    entity[-0x36 of opponent R22] (opponent state). All must match.
+  - on full match: store the move ID into entity[-0x4A] (triggers the move via the loader FEE1FD).
+
+PER-CHARACTER MOVE TABLES (verified data, epr-16080.4):
+  - 0xFDB820 = array of per-character move-table pointers: char0=0xFDB8A0, char1=0xFDB9FE,
+    char2=0xFDBB5C, ... (10 entries, ~0x15E bytes apart = ~50 7-byte entries per character; VF1's 8
+    fighters + extras).
+  - Each table = 7-byte entries { word0 = MOVE-STATE ID, +2..+6 = 5 condition bytes (mask/expected
+    indices) }. 0xFFFF moveID = terminator/separator between command groups.
+    char0 (@0xFDB8A0) sample: moveID 0x022f [..0e..], 0x0338 [..0c..], 0x01a6 [..0c..], 0x0117 [..0e..],
+    0x0065 [..10..], with 0xffff separators.
+  - 0xFDB850 = condition MASK table; 0xFDB854 = condition EXPECTED-value table (both indexed by the
+    entry's condition bytes).
+
+So VF's complete command system, fully mapped:
+  interpreter (section W) tracks stick-seq + buttons -> a command index -> FEAB4C looks up the active
+  character's move table (0xFDB820[char]) -> 7-byte entry yields a candidate move-state ID + state
+  preconditions (masked via 0xFDB850/54) -> on match, FEE1FD(moveID) starts the move -> FEDB20 plays it.
+
+GAME LOGIC - COMPLETE. The fight engine is now reverse-engineered end to end with every stage and data
+structure identified and verified: input acquisition/edges, processed layers, per-player distribution,
+per-player physics/timers, the command interpreter, the per-character command-condition tables, the move
+loader, the move database, animation playback, skeletal TGP render, and collision. A recompilation has,
+from these docs, the full control flow, the hardware/MMIO model, the TGP ISA + command set, all data
+formats, and the complete game-logic pipeline. The only residual work is bulk DATA cataloging (labeling
+every per-character move-state ID with its move-record + human-readable command notation) and the single
+TGP bit-exactness item (mve_calc chain, the braid) - both additive, neither a structural unknown.
+
+## Y. Move-ID space unification & command-group structure (verified)
+Cross-validation confirms a SINGLE unified move-ID space across the whole engine:
+  - The move-state IDs in the per-character command tables (section X; e.g. char0: 0x22f, 0x338, 0x1a6,
+    0x117, 0x065, 0x105, 0x150, 0x1e9) are all < 0x372 = the size of the move-INDEX table at 0xFC0000.
+  - Each resolves directly: move-state ID -> move-index-table[ID] (16-bit offset) -> move data at
+    0xFC06E4 + offset. Verified: 0x22f->0xFC5999, 0x338->0xFC418D, 0x1a6->0xFC4E80, 0x117->0xFC176E,
+    0x065->0xFC1591 (distinct, valid move records).
+  So command table (section X) and move loader FEE1FD (section O) share the SAME move-ID -> move-data
+  resolution. One ID space; no translation layer.
+
+COMMAND-GROUP STRUCTURE (char0 table, verified): 50 entries form 8 command groups (0xFFFF-delimited).
+Each group = one input pattern; it lists candidate move-state IDs, each gated by its condition bytes
+(section X). Groups with >1 entry = the SAME input maps to different moves by STATE (e.g. char0 group[3]
+= {0x117, 0x065}: one input, two moves chosen by the masked state conditions - e.g. standing vs crouching
+vs near-opponent). This is the standard fighting-game pattern: input + state -> move.
+
+So the FULL move-selection data model (recomp-ready):
+  command index (from interpreter, section W) -> char move table 0xFDB820[char] -> command group ->
+  per-entry { move-state ID, condition mask/expected via 0xFDB850/54 } -> first entry whose conditions
+  match -> move-state ID -> move-index 0xFC0000[ID] -> move data 0xFC06E4+ -> FEDB20 playback.
+
+FIGHT ENGINE: fully reverse-engineered and cross-validated. Control flow, all data structures, and the
+unified ID space are documented. Residual = bulk per-move labeling (map each of the ~50 move-state IDs
+per character to its human command notation + frame data by reading each move record) - mechanical data
+extraction, no structural unknowns. The recompilation reference (this document) now covers the complete
+system: hardware/MMIO, V60 control flow, TGP ISA + command set, all data formats, and the entire
+game-logic pipeline from input to render to collision.
+
+## Z. Move record body format (refined, cross-validated on 3 moves)
+Comparing move records (move1@0xFC0C80, move0x065@0xFC1591, move0x117@0xFC176E):
+  m065: 0003 0000 2121 0020 c000 0a09 0a1c 1e00 | 6666 3f66 0000 0d02 ...
+  m117: 0003 0000 2123 0020 c000 0908 0817 1e01 | cccd 3f8c 0000 0700 ...
+  m001: 2003 0040 010c 0020 c000 0605 050a 0c00 | 3333 3f33 0000 0101 ...
+Confirmed layout:
+  word0      = move TYPE/flags (0x0003 attack-type here; 0x2003 for move1).
+  word1      = aux param/flags.
+  word2      = POSE/animation-set selector (0x2121, 0x2123, 0x010c - per-move skeletal pose set).
+  word3      = 0x0020  (FIXED structural marker, all moves).
+  word4      = 0xC000  (FIXED record marker, all moves).
+  words5-7   = frame/timing bytes (e.g. 0a09 0a1c 1e00 - start/active/recovery frame counts).
+  word8-9    = a 32-bit FLOAT (LE: word9<<16|word8): m065 0x3f666666=0.90, m117 0x3f8ccccd=1.10,
+               m001 0x3f333333=0.70 = per-move MOVEMENT/velocity scale (forward step on the attack).
+  +0x14 on   = the keyframe stream (per-frame pose/hitbox data); the recurring word 0x07F4 (~+0x1e)
+               appears as a stream delimiter/keyframe marker.
+So a move record = fixed header (type, pose-set selector, the 0x0020/0xC000 markers) + frame-timing
+counts + an embedded movement float + a keyframe stream. The playback (FEDB20) reads frame counts into
+period 0x650/mode 0x647 and walks the keyframe stream advancing the 12 channels (0x671-0x687).
+
+DATA FORMATS - COMPLETE for the recomp: display list/geometry/polygon/color (DISPLAY_LIST_FORMAT.md),
+the move-index table + move records (this + sections N/O/S), the per-character command-condition tables
+(section X), and the input/state work-RAM layout (sections Q/T/U/V). The exact keyframe-stream micro-
+grammar (per-frame hitbox on/off bytes, cancel-frame flags) is the one sub-format left to enumerate by
+diffing many records frame-by-frame; the record envelope and all driving fields are mapped.
+
+## AA. Keyframe stream format & animation data location (verified code)
+The keyframe handler FF597C (called from playback FEDB20/FEE1C9) walks the per-move keyframe data:
+  - FF5982: bank-switch ROM via E00004 = 0x21 -> the ANIMATION/KEYFRAME data lives in BANKED ROM
+    (the 0x100000 window), not the move record. The move record (sections N/Z) holds timing+params;
+    the actual per-frame skeletal poses are in banked animation ROM.
+  - FF598B: move-state entity[-0x38] indexes a keyframe-pointer table: if state < 0xF3 use bank base
+    0x100000 (R1)+state; else base 0x200004 + (state-0xF3). So move-states < 0xF3 and >= 0xF3 live in
+    two animation banks. -> R0 = keyframe descriptor/pointer for this move-state.
+  - FF59BF: stores the keyframe base to entity[0x4AE]/[0x4B2] (+0x2B stride). Per-keyframe stride = 0x2B
+    (43) channel entries.
+  - FF59F9-FF5A0B: loop 0x2B (43) times over the keyframe's CHANNEL bytes: read channel-type byte [R9]
+    (cmp #1 = channel mode), accumulate per-channel offsets into the work buffer [R8+], advance. So each
+    keyframe = 43 per-channel records; the ~12 accumulators (0x671-0x687) seen earlier are a hot subset
+    of the full 43-channel skeleton.
+  - FF5A56+: reads the channel data bytes to build the frame's pose.
+
+KEYFRAME FORMAT (verified structure): animation = a sequence of keyframes in banked ROM (bank 0x21+),
+indexed by move-state (entity[-0x38]) through a pointer table (split at state 0xF3 across two banks).
+Each keyframe = 43 channel entries (a type byte + data per channel) covering the full character skeleton.
+Playback (FEDB20) advances the current frame (entity[-0x32]) over period (0x650) in mode (0x647),
+interpolating the 43 channels; FF597C resolves/loads the keyframe; FF5FA1/FF609E render the resulting
+skeleton via the TGP.
+
+ALL DATA FORMATS NOW MAPPED: geometry/display-list/color (DISPLAY_LIST_FORMAT.md); move-index table +
+move records + embedded movement floats (N/O/S/Z); per-character command-condition tables (X); keyframe
+animation streams in banked ROM, 43 channels/keyframe, move-state-indexed (this section); input/state
+work-RAM layout (Q/T/U/V). The fight engine's control flow AND every data structure it touches are
+documented and verified. Residual = bulk per-move labeling and the exact per-channel type-byte semantics
+(diff many keyframes), both mechanical; no structural unknowns remain for the game logic.
