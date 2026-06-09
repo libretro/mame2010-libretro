@@ -1,0 +1,54 @@
+=== V60 braid routine (epr-16081.5, the real hardware code the HLE reimplements) ===
+
+FFC764: mov.w #33800000, [R24]   ; mve_setadr command to copro
+FFC76C: mov.w #11500, [R24]      ; scanadr 0x9500 (->copro RAM 0x1500)
+FFC774: add.w #D, R15            ; advance arg pointer
+FFC777: movz.bw [R15+], -34[R25] ; load link COUNT into -34[R25]
+FFC77C: bsr FFC790               ; call per-link routine
+FFC77F: inc.w -30[R25]           ; link index++
+FFC782: dec.w -34[R25]           ; count--
+FFC785: bne FFC77C               ; loop over links
+FFC787: mov.w #3000000, [R24]    ; matrix_pop (end chain)
+FFC78F: rsr
+
+FFC790: (per-link mve_calc subroutine)
+  mov.w #2800000, [R24]          ; matrix_push
+  mov.w #33000000, [R24]         ; mve_calc command
+  mov.w 4[R15],  [R24]           ; arg: send 8 words
+  mov.w 8[R15],  [R24]
+  mov.w 0[R21],  [R24]           ; args from R21 (the PER-LINK accumulated block!)
+  mov.w 4[R21],  [R24]
+  mov.w 8[R21],  [R24]
+  mov.w C[R21],  [R24]
+  mov.w 10[R21], [R24]
+  mov.w 14[R21], [R24]
+  in.w  [R23], 0[R21]            ; READ 6 VALUES BACK into R21[0,4,8,C,10,14]
+  in.w  [R23], 4[R21]            ; <- these 6 = the bit-exact f102 output
+  in.w  [R23], 8[R21]           ;    AND become the next link's input (chain accumulation!)
+  in.w  [R23], C[R21]
+  in.w  [R23], 10[R21]
+  in.w  [R23], 14[R21]
+  (rsr)
+
+FFC818: (matrix_read emit) mov.w #8800000,[R24]; then 12x in.w [R23],[FP+] = the 0xB matrix to renderer
+
+=== copro mve_calc routine at 0x62a (315-5571.bin), the actual transform ===
+  0x62a-0x62e: read 3 input values
+  0x62f-0x630: call/branch to 0x636
+  0x631-0x634: LOOP (bf000632 branches back) - matrix-vector computation
+  0x636-0x63a: more compute (43000200, 1c1f680c, 3c048034...)
+  -> this routine computes the 6 return values from the inputs + the 0x9500 RAM block.
+
+=== KEY STRUCTURE (the bit-exact algorithm) ===
+The per-link block R21[0,4,8,C,10,14] (6 words) is BOTH read back from the copro AND fed as input to
+the next link's mve_calc. So mve_calc is: f(2 args from R15 + 6-word R21 state + 0x9500 block) ->
+6-word new R21 state. The chain ACCUMULATES through R21. The copro routine at 0x62a does this transform.
+
+The HLE f102 pushes (c,d,e,f,g,h) - it must instead push the 6 values the copro routine at 0x62a
+computes. Implementing the 0x62a routine's math (a matrix-vector transform using the 0x9500 joint
+block) as the HLE f102 = bit-exact.
+
+NEXT: decode the copro 0x62a-0x63a routine's exact arithmetic (the loop = matrix x vector using the
+joint block rows), OR run it in the interpreter with the correct R21 input state to capture its 6
+outputs per link. The interpreter currently doesn't reach the push (out=0) because the per-link R21
+input state isn't set up - need to seed R21 from the chain start and iterate.
