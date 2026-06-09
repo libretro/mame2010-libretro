@@ -876,3 +876,32 @@ Recomp: resolve the pointer with the 0xF3 split + rate flag (off-by-one shifts t
 whole animation); apply the type-byte rule, the zero-duration-defaults-to-period
 rule, and the signed-16 -> float conversion; compute the linear blend between the
 two records in floats and skip the TGP round-trip for pose-only channels.
+
+## AE. Per-character move catalog (command -> move-state table), verified
+
+Full detail in `MOVE_CATALOG.md`; this records the recomp hook.  Resolves the
+per-character command->move table walked by the trigger FEAB4C (sections W/X/Y).
+
+Tables: FDB820 = per-character pointer array (one 32-bit pointer per fighter,
+0x15E apart; verified [0]=FDB8A0, [1]=FDB9FE, [2]=FDBB5C ... 8 fighters + extras);
+FDB850/FDB854 = condition mask / expected-value tables.  Each character table is
+0x15E (350) bytes = 25 entries of 14 (0x0E) bytes.
+
+Entry layout (14 bytes, verified): +0 word = move-state ID (unified space with the
+move-index and keyframe tables; FFFF = empty slot / group separator); +2..+4 =
+stick/direction sub-conditions; +5 = cancel-window / frame threshold vs entity
+-0x32 (common 0x0C/0x0E); +6 = 00; +7..+10 = condition value block (FF FF FF FF =
+wildcard, else masked self 0x156D/-0x36 + opponent -0x36 comparison via FDB850/
+FDB854); +11..+13 = move modifier/flags.
+
+Resolution: FEAB4C takes the character index from entity[-0x50+0xC], looks up the
+table, and linearly scans the matching command group's entries; it checks the
+cancel-window (+5 vs -0x32) and the masked state values (+7..+10, FF = wildcard),
+and on the first match stores the move-state ID (+0) into entity[-0x4A] for the
+move loader FEE1FD.  Groups with multiple non-FFFF entries = one input mapping to
+state-gated alternative moves.
+
+Recomp: rebuild the 25 x 14-byte tables from ROM; the move-state IDs index the
+move and keyframe tables directly; the matcher is the linear scan above.  Human
+command notation (P/K/G/df+P) is not in ROM -- it is implied by the command-group
+position and the character-independent stick/button decode (section W).
