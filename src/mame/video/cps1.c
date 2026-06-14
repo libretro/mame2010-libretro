@@ -2305,15 +2305,92 @@ static void cps1_drawgfx(bitmap_t *dest, const rectangle *clip, const gfx_elemen
 		uint8_t *p = BITMAP_ADDR8(priority, desty, 0);
 		int dx = destx;
 		int cx = srcx;
-		for ( ; dx <= destendx; dx++, cx += sxdir)
+
+		/* Pair-unrolled forward path: walks source bytes once per two
+		 * destination pixels, eliminating the (cx & 1) parity branch
+		 * that the scalar loop pays on every iteration.  Each byte
+		 * holds two 4-bit pen indices (low = even cx, high = odd cx);
+		 * with cx pre-aligned to even by an at-most-1-pixel prologue,
+		 * each iteration reads one byte and emits both pens with no
+		 * conditional nibble select. */
+		if (sxdir == 1)
 		{
-			uint8_t b = rowbase[cx >> 1];
-			int c = (cx & 1) ? (b >> 4) : (b & 15);
-			if (opaque || c != (int)transpen)
+			/* Prologue: peel off one pixel if cx starts odd (uses the
+			 * high nibble of the current byte) so the main loop sees
+			 * pair-aligned source. */
+			if ((cx & 1) && dx <= destendx)
 			{
-				if (allow[p[dx] & 0x1f])
-					d[dx] = paldata[c];
-				p[dx] = 31;
+				uint8_t b = rowbase[cx >> 1];
+				int c = b >> 4;
+				if (opaque || c != (int)transpen)
+				{
+					if (allow[p[dx] & 0x1f])
+						d[dx] = paldata[c];
+					p[dx] = 31;
+				}
+				dx++; cx++;
+			}
+
+			/* Main pair loop: cx is now even.  Read one byte, emit
+			 * two pens.  xi indexes the source byte; the *2 stride
+			 * on the destination side is implicit in the dx += 2. */
+			{
+				int xi = cx >> 1;
+				while (dx + 1 <= destendx)
+				{
+					uint8_t b = rowbase[xi];
+					int c_lo = b & 0x0F;
+					int c_hi = b >> 4;
+					if (opaque || c_lo != (int)transpen)
+					{
+						if (allow[p[dx] & 0x1f])
+							d[dx] = paldata[c_lo];
+						p[dx] = 31;
+					}
+					if (opaque || c_hi != (int)transpen)
+					{
+						if (allow[p[dx + 1] & 0x1f])
+							d[dx + 1] = paldata[c_hi];
+						p[dx + 1] = 31;
+					}
+					dx += 2;
+					xi++;
+				}
+				cx = xi << 1;  /* keep cx consistent for the tail */
+			}
+
+			/* Tail: at most one pixel if the (destendx - destx + 1)
+			 * span has odd parity relative to the prologue.  Uses
+			 * the low nibble (cx is even). */
+			if (dx <= destendx)
+			{
+				uint8_t b = rowbase[cx >> 1];
+				int c = b & 0x0F;
+				if (opaque || c != (int)transpen)
+				{
+					if (allow[p[dx] & 0x1f])
+						d[dx] = paldata[c];
+					p[dx] = 31;
+				}
+			}
+		}
+		else
+		{
+			/* flipx: cx walks backward; the analogous pair-unroll has
+			 * different parity alignment (an odd cx makes the pair
+			 * share a byte rather than an even one).  Left as scalar
+			 * for now -- a separate kernel can be added later if
+			 * profiling shows flipped sprites dominating any title. */
+			for ( ; dx <= destendx; dx++, cx += sxdir)
+			{
+				uint8_t b = rowbase[cx >> 1];
+				int c = (cx & 1) ? (b >> 4) : (b & 15);
+				if (opaque || c != (int)transpen)
+				{
+					if (allow[p[dx] & 0x1f])
+						d[dx] = paldata[c];
+					p[dx] = 31;
+				}
 			}
 		}
 	}
