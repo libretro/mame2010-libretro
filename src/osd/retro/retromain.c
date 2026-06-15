@@ -540,7 +540,8 @@ extern "C"
 int mmain(int argc, const char *argv)
 {
 	static char gameName[1024];
-	strncpy(gameName, argv, 1024);
+	strncpy(gameName, argv, sizeof(gameName) - 1);
+	gameName[sizeof(gameName) - 1] = '\0';
 	if(execute_game(gameName))
 		return -1;
 	return 1;
@@ -548,7 +549,8 @@ int mmain(int argc, const char *argv)
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-	strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory));
+	strncpy(libretro_content_directory, info->path, sizeof(libretro_content_directory) - 1);
+	libretro_content_directory[sizeof(libretro_content_directory) - 1] = '\0';
 	path_basedir(libretro_content_directory);
 
 	retro_log(RETRO_LOG_INFO, "[MAME 2010] libretro_content_directory: %s\n", libretro_content_directory);  
