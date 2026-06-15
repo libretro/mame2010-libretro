@@ -129,7 +129,32 @@ void sound_init(running_machine *machine)
 		   ADPCM (low-kHz). Skip oversampled streams like AY/SN (clk/8 ~ 100-
 		   250k) - using those as the output rate only multiplies mixing work. */
 		if (single_rate >= 8000 && single_rate <= 96000)
-			machine->sample_rate = single_rate;
+		{
+			/* mame2010_sample_rate_mode (set from the core option):
+			 *   0 = FIXED  : honour the user-chosen rate, do not adopt
+			 *   1 = AUTO   : adopt the native rate, snapped to the ladder
+			 *   2 = MANUAL : adopt the exact native rate */
+			extern unsigned mame2010_sample_rate_mode;
+			if (mame2010_sample_rate_mode == 1)
+			{
+				static const int ladder[] =
+					{ 8000, 11025, 22050, 32000, 44100, 48000, 96000 };
+				int best = ladder[0];
+				int bd   = (single_rate > ladder[0]) ?
+					(single_rate - ladder[0]) : (ladder[0] - single_rate);
+				unsigned li;
+				for (li = 1; li < sizeof(ladder) / sizeof(ladder[0]); li++)
+				{
+					int d = (single_rate > ladder[li]) ?
+						(single_rate - ladder[li]) : (ladder[li] - single_rate);
+					if (d < bd) { bd = d; best = ladder[li]; }
+				}
+				machine->sample_rate = best;
+			}
+			else if (mame2010_sample_rate_mode == 2)
+				machine->sample_rate = single_rate;
+			/* mode 0 (FIXED): leave the user-configured rate in place */
+		}
 	}
 
 	/* count the speakers */

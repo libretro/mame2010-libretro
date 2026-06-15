@@ -105,6 +105,15 @@ static bool set_par = false;
 static double refresh_rate = 60.0;
 static int set_frame_skip;
 static unsigned sample_rate = 48000;
+/* Audio sample-rate selection mode, read from the core option and consumed
+ * by sound_init() in src/emu/sound.c:
+ *   0 = FIXED  : force the user-chosen rate; do not adopt the native rate
+ *   1 = AUTO   : adopt the machine's native single-source rate, rounded to
+ *                the nearest standard rate (biased to the frontend target)
+ *   2 = MANUAL : adopt the machine's exact native single-source rate
+ * Defined here (and extern'd in sound.c) following the mosd_num_processors
+ * sharing pattern. */
+unsigned mame2010_sample_rate_mode = 0;
 unsigned use_external_hiscore = 0;
 static unsigned adjust_opt[6] = {0/*Enable/Disable*/, 0/*Limit*/, 0/*GetRefreshRate*/, 0/*Brightness*/, 0/*Contrast*/, 0/*Gamma*/};
 static float arroffset[3] = {0/*For brightness*/, 0/*For contrast*/, 0/*For gamma*/};
@@ -822,7 +831,7 @@ void retro_set_environment(retro_environment_t cb)
       { "mame_current_turbo_button", "Enable autofire; disabled|button 1|button 2|R2 to button 1 mapping|R2 to button 2 mapping" },
       { "mame_current_turbo_delay", "Set autofire pulse speed; medium|slow|fast" },
       { "mame_current_frame_skip", "Set frameskip; 0|1|2|3|4|5|6|7|8|9|10" },
-      { "mame_current_sample_rate", "Set sample rate (Restart); 48000Hz|44100Hz|32000Hz|22050Hz" },
+      { "mame_current_sample_rate", "Sample rate hint (Restart); 48000Hz|44100Hz|32000Hz|22050Hz|11025Hz|8000Hz|96000Hz|Auto|Manual" },
       { "mame_current_multithreading", "Enable multithreading (Restart); disabled|enabled" },
       { "mame_current_adj_brightness",
 	"Set brightness; default|+1%|+2%|+3%|+4%|+5%|+6%|+7%|+8%|+9%|+10%|+11%|+12%|+13%|+14%|+15%|+16%|+17%|+18%|+19%|+20%|-20%|-19%|-18%|-17%|-16%|-15%|-14%|-13%|-12%|-11%|-10%|-9%|-8%|-7%|-6%|-5%|-4%|-3%|-2%|-1%" },
@@ -838,6 +847,47 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 
    cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
+}
+
+/* Older libretro.h revisions predate this environment call.  Define it
+ * defensively; on frontends that do not implement it the callback simply
+ * returns false and we fall back to a sensible default. */
+#ifndef RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE
+#define RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE (81 | 0x10000)
+#endif
+
+/* Snap an arbitrary rate to the nearest entry on the standard ladder. */
+static int snap_to_standard_rate(int rate)
+{
+   static const int ladder[] = { 8000, 11025, 22050, 32000, 44100, 48000, 96000 };
+   int      best      = ladder[0];
+   int      best_dist = (rate > ladder[0]) ? (rate - ladder[0]) : (ladder[0] - rate);
+   unsigned i;
+
+   for (i = 1; i < sizeof(ladder) / sizeof(ladder[0]); i++)
+   {
+      int dist = (rate > ladder[i]) ? (rate - ladder[i]) : (ladder[i] - rate);
+      if (dist < best_dist)
+      {
+         best_dist = dist;
+         best      = ladder[i];
+      }
+   }
+   return best;
+}
+
+/* Seed the base output rate from the frontend's target rate (rounded to the
+ * standard ladder), falling back to 48000 when the frontend does not report
+ * one.  This is the pre-machine-init base rate; the true native-rate
+ * adoption for Auto/Manual happens in sound_init() once the streams exist. */
+static int resolve_auto_sample_rate(void)
+{
+   unsigned target = 0;
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE, &target) && target != 0)
+      return snap_to_standard_rate((int)target);
+
+   return 48000;
 }
 
 static void check_variables(void)
@@ -928,7 +978,29 @@ static void check_variables(void)
    var.key = "mame_current_sample_rate";
    var.value = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-	sample_rate = atoi(var.value);
+   {
+      if (!strcmp(var.value, "Auto"))
+      {
+         /* Adopt the machine's native single-source rate, rounded to the
+          * nearest standard rate.  Seed the base rate from the frontend's
+          * target so multi-rate machines (which keep the configured rate)
+          * still land somewhere sensible. */
+         mame2010_sample_rate_mode = 1;
+         sample_rate = resolve_auto_sample_rate();
+      }
+      else if (!strcmp(var.value, "Manual"))
+      {
+         /* Report the machine's exact native rate, no rounding. */
+         mame2010_sample_rate_mode = 2;
+         sample_rate = resolve_auto_sample_rate();
+      }
+      else
+      {
+         /* A fixed rate: force it, overriding native-rate adoption. */
+         mame2010_sample_rate_mode = 0;
+         sample_rate = atoi(var.value);
+      }
+   }
 
    var.key = "mame_current_multithreading";
    var.value = NULL;
