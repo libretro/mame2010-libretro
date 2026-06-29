@@ -190,7 +190,7 @@ static const int64_t k054539_voltab_q31[256] =
 static const int64_t k054539_pantab_q31[15] =
 {
 	0, 573939147, 811672525, 994091763, 1147878294, 1283366947, 1405858053, 1518500250,
-	1623345051, 1721817440, 1814954942, 1903540802, 1988183525, 2069367023, 2147483648
+	1623345051, 1721817440, 1814954942, 1903540802, 1988183525, 2069367023, 2147483648LL
 };
 
 /* 1.80 in Q31 (output volume cap) */
@@ -251,11 +251,13 @@ static STREAM_UPDATE( k054539_update )
 			if (bval > 255) bval = 255;
 
 			pan = base1[0x05];
-// DJ Main: 81-87 right, 88 middle, 89-8f left
-if (pan >= 0x81 && pan <= 0x8f)
-pan -= 0x81;
-else
-			if (pan >= 0x11 && pan <= 0x1f) pan -= 0x11; else pan = 0x18 - 0x11;
+			// DJ Main: 81-87 right, 88 middle, 89-8f left
+			if (pan >= 0x81 && pan <= 0x8f)
+				pan -= 0x81;
+			else if (pan >= 0x11 && pan <= 0x1f)
+				pan -= 0x11;
+			else
+				pan = 0x18 - 0x11;
 
 			gain = info->k054539_gain[ch];		/* Q16 */
 
