@@ -682,9 +682,6 @@ endif
 
 DEFS += -DNDEBUG 
 
-# need to ensure FLAC functions are statically linked
-DEFS += -DFLAC__NO_DLL
-
 # CFLAGS is defined based on C or C++ targets
 # (remember, expansion only happens when used, so doing it here is ok)
 CFLAGS = $(CCOMFLAGS) $(CPPONLYFLAGS)
