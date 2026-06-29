@@ -203,7 +203,13 @@ static void c352_mix_one_channel(c352_state *info, unsigned long ch, long sample
 		// apply linear interpolation
 		if ( (flag & (C352_FLG_FILTER | C352_FLG_NOISE)) == 0 )
 		{
-			sample = (short)(sample + ((nextsample-sample) * (((double)(0x0000ffff&offset) )/0x10000)));
+			// 16.16 fixed-point linear interpolation (was a per-sample double multiply).
+			// Bit-identical to the old float path (frac is an exact binary fraction,
+			// products fit in an int64, truncation toward zero matches the (short) cast).
+			{
+				int64_t interp = ((int64_t)sample << 16) + (int64_t)(nextsample - sample) * (int)(offset & 0xffff);
+				sample = (short)(interp >= 0 ? (interp >> 16) : -((-interp) >> 16));
+			}
 		}
 
 		if ( flag & C352_FLG_PHASEFL )
