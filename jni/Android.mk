@@ -34,6 +34,7 @@ include $(CORE_DIR)/Makefile.common
 
 COREFLAGS := $(DEFS) $(INCFLAGS)
 COREFLAGS += -DCRLF=2 -DINLINE="static inline" -Wno-c++11-narrowing -Wno-reserved-user-defined-literal -Wno-deprecated
+COREFLAGS += -fno-delete-null-pointer-checks
 
 # For testing only, remove before PR
 COREFLAGS += -Wno-implicit-exception-spec-mismatch -Wno-inline-new-delete -Wno-tautological-undefined-compare
