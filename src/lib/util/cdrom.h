@@ -152,7 +152,6 @@ void cdrom_convert_subtype_string_to_pregap_info(const char *typestring, cdrom_t
 const char *cdrom_get_type_string(uint32_t trktype);
 const char *cdrom_get_subtype_string(uint32_t subtype);
 chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc);
-chd_error cdrom_write_metadata(chd_file *chd, const cdrom_toc *toc);
 
 
 

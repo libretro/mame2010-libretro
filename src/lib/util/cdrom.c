@@ -754,28 +754,3 @@ chd_error cdrom_parse_metadata(chd_file *chd, cdrom_toc *toc)
 	return CHDERR_NONE;
 }
 
-
-/*-------------------------------------------------
-    cdrom_write_metadata - write metadata
--------------------------------------------------*/
-
-chd_error cdrom_write_metadata(chd_file *chd, const cdrom_toc *toc)
-{
-	chd_error err;
-	int i;
-
-	/* write the metadata */
-	for (i = 0; i < toc->numtrks; i++)
-	{
-		char metadata[512];
-		sprintf(metadata, CDROM_TRACK_METADATA2_FORMAT, i + 1, cdrom_get_type_string(toc->tracks[i].trktype),
-				cdrom_get_subtype_string(toc->tracks[i].subtype), toc->tracks[i].frames, toc->tracks[i].pregap,
-				cdrom_get_type_string(toc->tracks[i].pgtype), cdrom_get_subtype_string(toc->tracks[i].pgsub),
-				toc->tracks[i].postgap);
-
-		err = chd_set_metadata(chd, CDROM_TRACK_METADATA2_TAG, i, metadata, strlen(metadata) + 1, CHD_MDFLAGS_CHECKSUM);
-		if (err != CHDERR_NONE)
-			return err;
-	}
-	return CHDERR_NONE;
-}

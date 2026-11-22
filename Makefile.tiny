@@ -2773,7 +2773,6 @@ OBJDIRS += \
 
 UTILOBJS = \
 	$(LIBOBJ)/util/astring.o \
-	$(LIBOBJ)/util/avcomp.o \
 	$(LIBOBJ)/util/aviio.o \
 	$(LIBOBJ)/util/bitmap.o \
 	$(LIBOBJ)/util/cdrom.o \
@@ -2782,7 +2781,6 @@ UTILOBJS = \
 	$(LIBOBJ)/util/corestr.o \
 	$(LIBOBJ)/util/coreutil.o \
 	$(LIBOBJ)/util/harddisk.o \
-	$(LIBOBJ)/util/huffman.o \
 	$(LIBOBJ)/util/imageutl.o \
 	$(LIBOBJ)/util/jedparse.o \
 	$(LIBOBJ)/util/md5.o \
@@ -2889,6 +2887,9 @@ OBJDIRS += $(MINIOBJ) \
 			  $(OBJ)/osd/$(OSD)/libretro-common/encodings \
 			  $(OBJ)/osd/$(OSD)/libretro-common/features \
 			  $(OBJ)/osd/$(OSD)/libretro-common/file \
+			  $(OBJ)/osd/$(OSD)/libretro-common/formats/7z \
+			  $(OBJ)/osd/$(OSD)/libretro-common/formats/chd \
+			  $(OBJ)/osd/$(OSD)/libretro-common/formats/flac \
 			  $(OBJ)/osd/$(OSD)/libretro-common/hash \
 			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads \
 			  $(OBJ)/osd/$(OSD)/libretro-common/streams \
@@ -2907,7 +2908,11 @@ endif
 # libretro-common, and the OSD code built on it, is C: compiled without
 # the core's INLINE, which libretro-common defines for itself, and held
 # to the warnings it is held to in RetroArch
-RETRO_CDEFS = $(filter-out -DINLINE="static inline",$(CDEFS))
+# CHDs are read by rchd, with every codec MAME writes
+RETRO_CHD_DEFS = -DHAVE_RCHD -DHAVE_RCHD_DEFLATE -DHAVE_RCHD_LZMA \
+                 -DHAVE_RCHD_FLAC -DHAVE_RFLAC -DHAVE_RZSTD -DHAVE_RCHD_ZSTD
+
+RETRO_CDEFS = $(filter-out -DINLINE="static inline",$(CDEFS)) $(RETRO_CHD_DEFS)
 ifeq ($(RETRO_THREADS), 1)
 RETRO_CDEFS += -DHAVE_THREADS
 endif
@@ -2933,10 +2938,16 @@ OSDCOREOBJS += \
 	$(MINIOBJ)/libretro-common/compat/fopen_utf8.o \
 	$(MINIOBJ)/libretro-common/encodings/encoding_crc32.o \
 	$(MINIOBJ)/libretro-common/encodings/encoding_deflate.o \
+	$(MINIOBJ)/libretro-common/encodings/encoding_huffman.o \
+	$(MINIOBJ)/libretro-common/encodings/encoding_rzstd.o \
 	$(MINIOBJ)/libretro-common/encodings/encoding_utf.o \
+	$(MINIOBJ)/libretro-common/encodings/encoding_xxh64.o \
 	$(MINIOBJ)/libretro-common/features/features_cpu.o \
 	$(MINIOBJ)/libretro-common/file/file_path.o \
 	$(MINIOBJ)/libretro-common/file/file_path_io.o \
+	$(MINIOBJ)/libretro-common/formats/7z/r7z_lzma.o \
+	$(MINIOBJ)/libretro-common/formats/chd/rchd.o \
+	$(MINIOBJ)/libretro-common/formats/flac/rflac.o \
 	$(MINIOBJ)/libretro-common/hash/lrc_hash.o \
 	$(MINIOBJ)/libretro-common/streams/file_stream.o \
 	$(MINIOBJ)/libretro-common/string/rstrtod.o \

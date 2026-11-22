@@ -58,7 +58,7 @@ SOURCES_C        := $(filter-out $(RETRO_C_PATTERNS),$(SOURCES_C))
 include $(CLEAR_VARS)
 LOCAL_MODULE        := retro-common
 LOCAL_SRC_FILES     := $(SOURCES_RETRO_C)
-LOCAL_CFLAGS        := -std=gnu89 -DHAVE_THREADS $(DEFS) $(INCFLAGS)
+LOCAL_CFLAGS        := -std=gnu89 -DHAVE_THREADS $(RETRO_CHD_DEFS) $(DEFS) $(INCFLAGS)
 include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)

@@ -4,8 +4,8 @@
  *
  * Reads streams written by zlib (fixtures.h) through core_fcompress,
  * zip_file_decompress and png_read_bitmap, round-trips data through the
- * writers (core_fcompress, png_write_bitmap, CHD zlib compression), and
- * checks crc32 and SHA-1 against published values.  Files are written to the current
+ * writers (core_fcompress and png_write_bitmap), and checks crc32 and
+ * SHA-1 against published values.  Files are written to the current
  * directory.  Exits non-zero on the first failure.
  */
 
@@ -18,7 +18,6 @@
 #include "corefile.h"
 #include "unzip.h"
 #include "png.h"
-#include "chd.h"
 #include "bitmap.h"
 #include "palette.h"
 
@@ -113,11 +112,6 @@ void osd_break_into_debugger(const char *message)
 osd_ticks_t osd_ticks_per_second(void)
 {
    return 1000000;
-}
-
-int osd_num_processors(void)
-{
-   return 2;
 }
 
 /*-------------------------------------------------
@@ -373,89 +367,6 @@ static void test_png(void)
    }
 }
 
-#define TEST_HUNKBYTES 4096
-#define TEST_HUNKS     12
-
-/* compressible, empty and incompressible hunks, so both the zlib and
- * the uncompressed hunk types are written */
-static void chd_hunk(uint8_t *out, int hunk)
-{
-   uint32_t x = 2463534242u + (uint32_t)hunk;
-   int i;
-   switch (hunk % 3)
-   {
-      case 0:
-         test_pattern(out, TEST_HUNKBYTES, 100 + hunk);
-         break;
-      case 1:
-         memset(out, 0, TEST_HUNKBYTES);
-         break;
-      default:
-         for (i = 0; i < TEST_HUNKBYTES; i++)
-         {
-            x ^= x << 13;
-            x ^= x >> 17;
-            x ^= x << 5;
-            out[i] = (uint8_t)(x >> 24);
-         }
-         break;
-   }
-}
-
-static void test_chd(void)
-{
-   static uint8_t data[TEST_HUNKBYTES], got[TEST_HUNKBYTES];
-   chd_verify_result verify;
-   chd_file *chd;
-   chd_error err;
-   double    ratio;
-   int       hunk;
-
-   err = chd_create("zc_test.chd", (uint64_t)TEST_HUNKBYTES * TEST_HUNKS, TEST_HUNKBYTES,
-         CHDCOMPRESSION_ZLIB, NULL);
-   CHECK(err == CHDERR_NONE, "chd create: %d", (int)err);
-   if (failures)
-      return;
-   err = chd_open("zc_test.chd", CHD_OPEN_READWRITE, NULL, &chd);
-   CHECK(err == CHDERR_NONE, "chd open for write: %d", (int)err);
-   if (failures)
-      return;
-   CHECK(chd_compress_begin(chd) == CHDERR_NONE, "chd compress begin");
-   for (hunk = 0; hunk < TEST_HUNKS; hunk++)
-   {
-      chd_hunk(data, hunk);
-      err = chd_compress_hunk(chd, data, &ratio);
-      CHECK(err == CHDERR_NONE, "chd compress hunk %d: %d", hunk, (int)err);
-   }
-   CHECK(chd_compress_finish(chd, TRUE) == CHDERR_NONE, "chd compress finish");
-   chd_close(chd);
-
-   err = chd_open("zc_test.chd", CHD_OPEN_READ, NULL, &chd);
-   CHECK(err == CHDERR_NONE, "chd open for read: %d", (int)err);
-   if (failures)
-      return;
-   for (hunk = 0; hunk < TEST_HUNKS; hunk++)
-   {
-      chd_hunk(data, hunk);
-      err = chd_read(chd, hunk, got);
-      CHECK(err == CHDERR_NONE && !memcmp(got, data, TEST_HUNKBYTES),
-            "chd hunk %d: error %d or contents differ", hunk, (int)err);
-   }
-
-   /* the SHA-1 recomputed over the data matches the one written while
-    * compressing */
-   CHECK(chd_verify_begin(chd) == CHDERR_NONE, "chd verify begin");
-   for (hunk = 0; hunk < TEST_HUNKS; hunk++)
-   {
-      err = chd_verify_hunk(chd);
-      CHECK(err == CHDERR_NONE, "chd verify hunk %d: %d", hunk, (int)err);
-   }
-   CHECK(chd_verify_finish(chd, &verify) == CHDERR_NONE, "chd verify finish");
-   CHECK(!memcmp(verify.rawsha1, chd_get_header(chd)->rawsha1, CHD_SHA1_BYTES),
-         "chd raw SHA-1 differs from the header's");
-   chd_close(chd);
-}
-
 int main(void)
 {
    test_crc32();
@@ -465,7 +376,6 @@ int main(void)
    test_corefile_roundtrip(FCOMPRESS_MAX);
    test_zip();
    test_png();
-   test_chd();
 
    if (failures)
    {

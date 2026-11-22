@@ -45,7 +45,6 @@
 #include "osdcore.h"
 #include "bitmap.h"
 #include "corefile.h"
-#include "avcomp.h"
 
 
 /***************************************************************************
@@ -155,7 +154,6 @@
 #define CHDCOMPRESSION_AV			3
 
 /* A/V codec configuration parameters */
-#define AV_CODEC_COMPRESS_CONFIG	1
 #define AV_CODEC_DECOMPRESS_CONFIG	2
 
 /* metadata parameters */
@@ -265,14 +263,17 @@ struct _chd_header
 };
 
 
-/* structure for returning information about a verification pass */
-typedef struct _chd_verify_result chd_verify_result;
-struct _chd_verify_result
+/* where an A/V hunk is decoded to, set with chd_codec_config() */
+typedef struct _av_codec_decompress_config av_codec_decompress_config;
+struct _av_codec_decompress_config
 {
-	uint8_t		md5[CHD_MD5_BYTES];			/* overall MD5 checksum */
-	uint8_t		sha1[CHD_SHA1_BYTES];		/* overall SHA1 checksum */
-	uint8_t		rawsha1[CHD_SHA1_BYTES];	/* SHA1 checksum of raw data */
-	uint8_t		metasha1[CHD_SHA1_BYTES];	/* SHA1 checksum of metadata */
+	bitmap_t *	video;						/* pointer to video bitmap */
+	uint32_t		maxsamples;					/* maximum number of samples per channel */
+	uint32_t *	actsamples;					/* actual number of samples per channel */
+	int16_t *		audio[16];					/* pointer to individual audio channels */
+	uint32_t		maxmetalength;				/* maximum length of metadata */
+	uint32_t *	actmetalength;				/* actual length of metadata */
+	uint8_t *		metadata;					/* pointer to metadata buffer */
 };
 
 
@@ -284,10 +285,8 @@ struct _chd_verify_result
 
 /* ----- CHD file management ----- */
 
-/* create a new CHD file fitting the given description */
-chd_error chd_create(const char *filename, uint64_t logicalbytes, uint32_t hunkbytes, uint32_t compression, chd_file *parent);
-
-/* same as chd_create(), but accepts an already-opened core_file object */
+/* create a diff of the parent CHD in an already-opened core_file; only
+   uncompressed diffs of a parent can be created */
 chd_error chd_create_file(core_file *file, uint64_t logicalbytes, uint32_t hunkbytes, uint32_t compression, chd_file *parent);
 
 /* open an existing CHD file */
@@ -299,9 +298,6 @@ chd_error chd_open_file(core_file *file, int mode, chd_file *parent, chd_file **
 /* close a CHD file */
 void chd_close(chd_file *chd);
 
-/* return the associated core_file */
-core_file *chd_core_file(chd_file *chd);
-
 /* return an error string for the given CHD error */
 const char *chd_error_string(chd_error err);
 
@@ -311,12 +307,6 @@ const char *chd_error_string(chd_error err);
 
 /* return a pointer to the extracted CHD header data */
 const chd_header *chd_get_header(chd_file *chd);
-
-/* set a modified header */
-chd_error chd_set_header(const char *filename, const chd_header *header);
-
-/* same as chd_set_header(), but accepts an already-opened core_file object */
-chd_error chd_set_header_file(core_file *file, const chd_header *header);
 
 
 
@@ -331,10 +321,7 @@ chd_error chd_read_async(chd_file *chd, uint32_t hunknum, void *buffer);
 /* write one hunk to a CHD file */
 chd_error chd_write(chd_file *chd, uint32_t hunknum, const void *buffer);
 
-/* write one hunk to a CHD file asynchronously */
-chd_error chd_write_async(chd_file *chd, uint32_t hunknum, const void *buffer);
-
-/* wait for a previously issued async read/write to complete and return the error */
+/* wait for a previously issued async read to complete and return the error */
 chd_error chd_async_complete(chd_file *chd);
 
 
@@ -344,47 +331,12 @@ chd_error chd_async_complete(chd_file *chd);
 /* get indexed metadata of a particular sort */
 chd_error chd_get_metadata(chd_file *chd, uint32_t searchtag, uint32_t searchindex, void *output, uint32_t outputlen, uint32_t *resultlen, uint32_t *resulttag, uint8_t *resultflags);
 
-/* set indexed metadata of a particular sort */
-chd_error chd_set_metadata(chd_file *chd, uint32_t metatag, uint32_t metaindex, const void *inputbuf, uint32_t inputlen, uint8_t flags);
-
-/* clone all of the metadata from one CHD to another */
-chd_error chd_clone_metadata(chd_file *source, chd_file *dest);
-
-
-
-/* ----- compression management ----- */
-
-/* begin compressing data to a CHD */
-chd_error chd_compress_begin(chd_file *chd);
-
-/* compress the next hunk of data */
-chd_error chd_compress_hunk(chd_file *chd, const void *data, double *curratio);
-
-/* finish compressing data to a CHD */
-chd_error chd_compress_finish(chd_file *chd, int write_protect);
-
-
-
-/* ----- verification management ----- */
-
-/* begin verifying a CHD */
-chd_error chd_verify_begin(chd_file *chd);
-
-/* verify a single hunk of data */
-chd_error chd_verify_hunk(chd_file *chd);
-
-/* finish verifying a CHD, returning the computed MD5 and SHA1 */
-chd_error chd_verify_finish(chd_file *chd, chd_verify_result *result);
-
 
 
 /* ----- codec interfaces ----- */
 
 /* set internal codec parameters */
 chd_error chd_codec_config(chd_file *chd, int param, void *config);
-
-/* return a string description of a codec */
-const char *chd_get_codec_name(uint32_t codec);
 
 
 #endif /* __CHD_H__ */
