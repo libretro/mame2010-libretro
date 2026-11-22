@@ -50,9 +50,21 @@ SOURCES_OBJ  := $(filter-out %.a,$(OBJECTS)) $(foreach LIB,$(LIBS_UPPER),$($(LIB
 SOURCES_UNIQ := $(call uniq,$(SOURCES_OBJ))
 SOURCES_C    := $(SOURCES_UNIQ:%.o=%.c)
 
+# libretro-common and the OSD code built on it are C
+RETRO_C_PATTERNS := $(OBJ)/osd/retro/retrothread.c $(OBJ)/osd/retro/libretro-common/%
+SOURCES_RETRO_C  := $(filter $(RETRO_C_PATTERNS),$(SOURCES_C))
+SOURCES_C        := $(filter-out $(RETRO_C_PATTERNS),$(SOURCES_C))
+
+include $(CLEAR_VARS)
+LOCAL_MODULE        := retro-common
+LOCAL_SRC_FILES     := $(SOURCES_RETRO_C)
+LOCAL_CFLAGS        := -std=gnu89 -DHAVE_THREADS $(DEFS) $(INCFLAGS)
+include $(BUILD_STATIC_LIBRARY)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE        := retro
 LOCAL_SRC_FILES     := $(SOURCES_C)
+LOCAL_STATIC_LIBRARIES := retro-common
 LOCAL_CPPFLAGS      := -std=gnu++11 $(COREFLAGS)
 LOCAL_CPP_FEATURES  := exceptions rtti
 LOCAL_CPP_EXTENSION := .c

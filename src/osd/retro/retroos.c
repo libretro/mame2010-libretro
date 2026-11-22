@@ -21,6 +21,7 @@ const char build_version[] = "0.139 (" __DATE__ ")";
 
 // MAME headers
 #include "osdcore.h"
+#include "retroos.h"
 
 #ifdef WIN32
 static osd_ticks_t ticks_per_second = 0;

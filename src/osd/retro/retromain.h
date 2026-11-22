@@ -49,7 +49,6 @@ void init_input_descriptors(void);
 extern void retro_finish(void);
 extern void retro_main_loop(void);
 
-extern int osd_num_processors;
 
 // use if you want to print something with the verbose flag
 void CLIB_DECL mame_printf_verbose(const char *text, ...) ATTR_PRINTF(1,2);

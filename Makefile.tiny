@@ -2919,7 +2919,25 @@ $(LIBOBJ)/softfloat/softfloat.o: $(LIBSRC)/softfloat/softfloat.c \
 MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
 OBJDIRS += $(MINIOBJ) \
-			  $(OBJ)/osd/$(OSD)/libretro-common
+			  $(OBJ)/osd/$(OSD)/libretro-common \
+			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads
+
+# work queues and locks run on libretro-common threads; without them,
+# work items run on the thread that queues them
+ifeq ($(platform), wiiu)
+RETRO_THREADS ?= 0
+else
+RETRO_THREADS ?= 1
+endif
+
+# libretro-common, and the OSD code built on it, is C: compiled without
+# the core's INLINE, which libretro-common defines for itself, and held
+# to the warnings it is held to in RetroArch
+RETRO_CDEFS = $(filter-out -DINLINE="static inline",$(CDEFS))
+ifeq ($(RETRO_THREADS), 1)
+RETRO_CDEFS += -DHAVE_THREADS
+endif
+RETRO_CFLAGS = $(filter-out -Werror -Wundef,$(CCOMFLAGS)) -x c -std=gnu89
 
 #-------------------------------------------------
 # OSD core library
@@ -2931,15 +2949,22 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retromisc.o \
 	$(MINIOBJ)/retroos.o
 
-ifeq ($(platform), wiiu)
+OSDCOREOBJS += $(MINIOBJ)/retrothread.o
+
+ifneq ($(STATIC_LINKING), 1)
+ifeq ($(RETRO_THREADS), 1)
 OSDCOREOBJS += \
-	$(MINIOBJ)/minisync.o \
-	$(MINIOBJ)/miniwork.o 
-else
-OSDCOREOBJS += \
-	$(MINIOBJ)/retrosync.o \
-	$(MINIOBJ)/retrowork.o 
+	$(MINIOBJ)/libretro-common/rthreads/rthreads.o \
+	$(MINIOBJ)/libretro-common/rthreads/retro_eventcount.o \
+	$(MINIOBJ)/libretro-common/rthreads/tpool.o
 endif
+endif
+
+$(MINIOBJ)/retrothread.o: $(MINISRC)/retrothread.c | $(OSPREBUILD)
+	$(CC) $(RETRO_CDEFS) $(RETRO_CFLAGS) -c $< -o $@
+
+$(MINIOBJ)/libretro-common/%.o: $(MINISRC)/libretro-common/%.c | $(OSPREBUILD)
+	$(CC) $(RETRO_CDEFS) $(RETRO_CFLAGS) -c $< -o $@
 
 #-------------------------------------------------
 # OSD mini library

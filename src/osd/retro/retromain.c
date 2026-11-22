@@ -15,6 +15,7 @@ mame2010 - libretro port of mame 0.139
 
 #include "libretro.h" 
 #include "retromain.h"
+#include "retroos.h"
 #include "file/file_path.h"
 
 #include "rendersw.c"
@@ -215,8 +216,8 @@ static int FirstTimeUpdate = 1;
 bool retro_load_ok  = false;
 int pauseg = 0;
 
-/* worker-thread count hook, defined in retrowork.c (0 = host CPU count) */
-extern int mosd_num_processors;
+/* worker-thread count hook, defined in retrothread.c (0 = host CPU count) */
+extern "C" int mosd_num_processors;
 
 /*********************************************
    LOCAL FUNCTION PROTOTYPES
@@ -1175,6 +1176,7 @@ void retro_deinit(void)
       retro_finish();
       retro_load_ok = false;
    }
+   osd_thread_cleanup();
 }
 
 void retro_reset (void)
