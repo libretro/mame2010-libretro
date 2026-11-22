@@ -178,6 +178,41 @@ void free_file_line(void *memory, const char *file, int line)
 
 
 /*-------------------------------------------------
+    standard new/delete operators
+-------------------------------------------------*/
+
+void *operator new(std::size_t size) throw (std::bad_alloc)
+{
+	void *result = malloc_file_line(size, NULL, 0);
+	if (result == NULL)
+		throw std::bad_alloc();
+	return result;
+}
+
+void *operator new[](std::size_t size) throw (std::bad_alloc)
+{
+	void *result = malloc_file_line(size, NULL, 0);
+	if (result == NULL)
+		throw std::bad_alloc();
+	return result;
+}
+
+/* throw() matches the empty exception specification libstdc++ gives
+ * the global operator delete in -std=gnu++98 builds. */
+void operator delete(void *ptr) throw()
+{
+	if (ptr != NULL)
+		free_file_line(ptr, NULL, 0);
+}
+
+void operator delete[](void *ptr) throw()
+{
+	if (ptr != NULL)
+		free_file_line(ptr, NULL, 0);
+}
+
+
+/*-------------------------------------------------
     dump_unfreed_mem - called from the exit path
     of any code that wants to check for unfreed
     memory

@@ -201,40 +201,12 @@ void dump_unfreed_mem();
 //  INLINE FUNCTIONS
 //**************************************************************************
 
-// standard new/delete operators (try to avoid using)
-inline void *operator new(std::size_t size) throw (std::bad_alloc)
-{
-	void *result = malloc_file_line(size, NULL, 0);
-	if (result == NULL)
-		throw std::bad_alloc();
-	return result;
-}
-
-inline void *operator new[](std::size_t size) throw (std::bad_alloc)
-{
-	void *result = malloc_file_line(size, NULL, 0);
-	if (result == NULL)
-		throw std::bad_alloc();
-	return result;
-}
-
-/* libstdc++ declares the global operator delete with an empty
- * exception specification (effectively noexcept); match it so newer
- * GCCs don't flag the conflict.  In C++98 throw() means the same
- * thing as the C++11+ noexcept and is the spelling libstdc++ uses
- * via its _GLIBCXX_USE_NOEXCEPT alias when compiled in pre-C++11
- * modes - which is what -std=gnu++98 builds end up in. */
-inline void operator delete(void *ptr) throw()
-{
-	if (ptr != NULL)
-		free_file_line(ptr, NULL, 0);
-}
-
-inline void operator delete[](void *ptr) throw()
-{
-	if (ptr != NULL)
-		free_file_line(ptr, NULL, 0);
-}
+// standard new/delete operators (try to avoid using); replacement
+// functions must not be inline, so they are defined in emualloc.c
+void *operator new(std::size_t size) throw (std::bad_alloc);
+void *operator new[](std::size_t size) throw (std::bad_alloc);
+void operator delete(void *ptr) throw();
+void operator delete[](void *ptr) throw();
 
 
 // file/line new/delete operators
