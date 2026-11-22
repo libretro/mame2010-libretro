@@ -5,7 +5,7 @@
  * Reads streams written by zlib (fixtures.h) through core_fcompress,
  * zip_file_decompress and png_read_bitmap, round-trips data through the
  * writers (core_fcompress, png_write_bitmap, CHD zlib compression), and
- * checks crc32 against its check value.  Files are written to the current
+ * checks crc32 and SHA-1 against published values.  Files are written to the current
  * directory.  Exits non-zero on the first failure.
  */
 
@@ -23,6 +23,9 @@
 #include "palette.h"
 
 #include <encodings/crc32.h>
+#undef INLINE
+#define INLINE inline
+#include <lrc_hash.h>
 
 #include "fixtures.h"
 
@@ -196,6 +199,43 @@ static void test_crc32(void)
             (const uint8_t *)"56789", 5) == 0xCBF43926u, "crc32 continued");
 }
 
+static void sha1_hex(const uint8_t *digest, char *out)
+{
+   int i;
+   for (i = 0; i < 20; i++)
+      sprintf(out + i * 2, "%02x", digest[i]);
+}
+
+static void test_sha1(void)
+{
+   static uint8_t million[1000000];
+   struct sha1_state sha1;
+   uint8_t digest[20];
+   char    hex[41];
+   size_t  done = 0, piece = 1;
+
+   /* FIPS 180 test vectors */
+   sha1_stream_init(&sha1);
+   sha1_stream_update(&sha1, (const uint8_t *)"abc", 3);
+   CHECK(sha1_stream_final(&sha1, digest), "sha1 abc final");
+   sha1_hex(digest, hex);
+   CHECK(!strcmp(hex, "a9993e364706816aba3e25717850c26c9cd0d89d"), "sha1 abc: %s", hex);
+
+   /* a million 'a', fed in uneven pieces as chd.c feeds hunks */
+   memset(million, 'a', sizeof(million));
+   sha1_stream_init(&sha1);
+   while (done < sizeof(million))
+   {
+      size_t n = (piece > sizeof(million) - done) ? sizeof(million) - done : piece;
+      sha1_stream_update(&sha1, million + done, n);
+      done += n;
+      piece = piece * 7 % 4099 + 1;
+   }
+   CHECK(sha1_stream_final(&sha1, digest), "sha1 million final");
+   sha1_hex(digest, hex);
+   CHECK(!strcmp(hex, "34aa973cd4c4daa4f61eeb2bdbad27316534016f"), "sha1 million a: %s", hex);
+}
+
 static void test_corefile_reads_zlib(void)
 {
    uint8_t *plain = (uint8_t *)malloc(FIXTURE_PLAIN_LENGTH);
@@ -365,6 +405,7 @@ static void chd_hunk(uint8_t *out, int hunk)
 static void test_chd(void)
 {
    static uint8_t data[TEST_HUNKBYTES], got[TEST_HUNKBYTES];
+   chd_verify_result verify;
    chd_file *chd;
    chd_error err;
    double    ratio;
@@ -400,12 +441,25 @@ static void test_chd(void)
       CHECK(err == CHDERR_NONE && !memcmp(got, data, TEST_HUNKBYTES),
             "chd hunk %d: error %d or contents differ", hunk, (int)err);
    }
+
+   /* the SHA-1 recomputed over the data matches the one written while
+    * compressing */
+   CHECK(chd_verify_begin(chd) == CHDERR_NONE, "chd verify begin");
+   for (hunk = 0; hunk < TEST_HUNKS; hunk++)
+   {
+      err = chd_verify_hunk(chd);
+      CHECK(err == CHDERR_NONE, "chd verify hunk %d: %d", hunk, (int)err);
+   }
+   CHECK(chd_verify_finish(chd, &verify) == CHDERR_NONE, "chd verify finish");
+   CHECK(!memcmp(verify.rawsha1, chd_get_header(chd)->rawsha1, CHD_SHA1_BYTES),
+         "chd raw SHA-1 differs from the header's");
    chd_close(chd);
 }
 
 int main(void)
 {
    test_crc32();
+   test_sha1();
    test_corefile_reads_zlib();
    test_corefile_roundtrip(FCOMPRESS_MIN);
    test_corefile_roundtrip(FCOMPRESS_MAX);

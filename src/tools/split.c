@@ -44,7 +44,15 @@
 #include "astring.h"
 #include "corefile.h"
 #include "corestr.h"
-#include "sha1.h"
+/* lrc_hash.h writes "static INLINE": give it a plain inline, then restore
+   the core's */
+#undef INLINE
+#define INLINE inline
+#include <lrc_hash.h>
+#undef INLINE
+#define INLINE static inline
+
+#define SHA1_DIGEST_SIZE	20
 
 #define DEFAULT_SPLIT_SIZE		100
 #define MAX_PARTS				1000
@@ -65,14 +73,13 @@ static void compute_hash_as_string(astring *buffer, void *data, uint32_t length)
 {
 	char expanded[SHA1_DIGEST_SIZE * 2];
 	uint8_t sha1digest[SHA1_DIGEST_SIZE];
-	struct sha1_ctx sha1;
+	struct sha1_state sha1;
 	int ch;
 
 	// compute the SHA1
-	sha1_init(&sha1);
-	sha1_update(&sha1, length, (const uint8_t *)data);
-	sha1_final(&sha1);
-	sha1_digest(&sha1, sizeof(sha1digest), sha1digest);
+	sha1_stream_init(&sha1);
+	sha1_stream_update(&sha1, (const uint8_t *)data, length);
+	sha1_stream_final(&sha1, sha1digest);
 
 	// expand the digest to a string
 	for (ch = 0; ch < SHA1_DIGEST_SIZE; ch++)

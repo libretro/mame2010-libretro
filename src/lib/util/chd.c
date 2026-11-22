@@ -40,7 +40,13 @@
 #include "chd.h"
 #include "avcomp.h"
 #include "md5.h"
-#include "sha1.h"
+/* lrc_hash.h writes "static INLINE": give it a plain inline, then restore
+   the core's */
+#undef INLINE
+#define INLINE inline
+#include <lrc_hash.h>
+#undef INLINE
+#define INLINE static inline
 #include <encodings/crc32.h>
 #include <encodings/deflate.h>
 #include <time.h>
@@ -179,12 +185,12 @@ struct _chd_file
 
 	uint8_t					compressing;	/* are we compressing? */
 	struct MD5Context		compmd5;		/* running MD5 during compression */
-	struct sha1_ctx			compsha1;		/* running SHA1 during compression */
+	struct sha1_state			compsha1;		/* running SHA1 during compression */
 	uint32_t					comphunk;		/* next hunk we will compress */
 
 	uint8_t					verifying;		/* are we verifying? */
 	struct MD5Context		vermd5; 		/* running MD5 during verification */
-	struct sha1_ctx			versha1;		/* running SHA1 during verification */
+	struct sha1_state			versha1;		/* running SHA1 during verification */
 	uint32_t					verhunk;		/* next hunk we will verify */
 
 	osd_work_queue *		workqueue;		/* pointer to work queue for async operations */
@@ -1404,7 +1410,7 @@ chd_error chd_compress_begin(chd_file *chd)
 
 	/* init the MD5/SHA1 computations */
 	MD5Init(&chd->compmd5);
-	sha1_init(&chd->compsha1);
+	sha1_stream_init(&chd->compsha1);
 	chd->compressing = TRUE;
 	chd->comphunk = 0;
 
@@ -1450,7 +1456,7 @@ chd_error chd_compress_hunk(chd_file *chd, const void *data, double *curratio)
 	if (bytestochecksum > 0)
 	{
 		MD5Update(&chd->compmd5, (const unsigned char *)crcdata, bytestochecksum);
-		sha1_update(&chd->compsha1, bytestochecksum, (const uint8_t *)crcdata);
+		sha1_stream_update(&chd->compsha1, (const uint8_t *)crcdata, bytestochecksum);
 	}
 
 	/* update our CRC map */
@@ -1482,8 +1488,7 @@ chd_error chd_compress_finish(chd_file *chd, int write_protect)
 
 	/* compute the final MD5/SHA1 values */
 	MD5Final(chd->header.md5, &chd->compmd5);
-	sha1_final(&chd->compsha1);
-	sha1_digest(&chd->compsha1, SHA1_DIGEST_SIZE, chd->header.rawsha1);
+	sha1_stream_final(&chd->compsha1, chd->header.rawsha1);
 	metadata_compute_hash(chd, chd->header.rawsha1, chd->header.sha1);
 
 	/* turn off the writeable flag and re-write the header */
@@ -1519,7 +1524,7 @@ chd_error chd_verify_begin(chd_file *chd)
 
 	/* init the MD5/SHA1 computations */
 	MD5Init(&chd->vermd5);
-	sha1_init(&chd->versha1);
+	sha1_stream_init(&chd->versha1);
 	chd->verifying = TRUE;
 	chd->verhunk = 0;
 
@@ -1555,7 +1560,7 @@ chd_error chd_verify_hunk(chd_file *chd)
 		if (bytestochecksum > 0)
 		{
 			MD5Update(&chd->vermd5, chd->cache, bytestochecksum);
-			sha1_update(&chd->versha1, bytestochecksum, chd->cache);
+			sha1_stream_update(&chd->versha1, chd->cache, bytestochecksum);
 		}
 	}
 
@@ -1583,8 +1588,7 @@ chd_error chd_verify_finish(chd_file *chd, chd_verify_result *result)
 	MD5Final(result->md5, &chd->vermd5);
 
 	/* compute the final SHA1 */
-	sha1_final(&chd->versha1);
-	sha1_digest(&chd->versha1, SHA1_DIGEST_SIZE, result->rawsha1);
+	sha1_stream_final(&chd->versha1, result->rawsha1);
 
 	/* compute the overall hash including metadata */
 	metadata_compute_hash(chd, result->rawsha1, result->sha1);
@@ -2536,7 +2540,7 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 {
 	metadata_hash *hasharray = NULL;
 	chd_error err = CHDERR_NONE;
-	struct sha1_ctx sha1;
+	struct sha1_state sha1;
 	uint32_t hashindex = 0;
 	uint32_t hashalloc = 0;
 	uint64_t offset, next;
@@ -2544,7 +2548,7 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 	/* only works for V4 and above */
 	if (chd->header.version < 4)
 	{
-		memcpy(finalsha1, rawsha1, SHA1_DIGEST_SIZE);
+		memcpy(finalsha1, rawsha1, CHD_SHA1_BYTES);
 		return CHDERR_NONE;
 	}
 
@@ -2594,9 +2598,8 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 		}
 
 		/* compute this entry's hash */
-		sha1_init(&sha1);
-		sha1_update(&sha1, metalength, tempbuffer);
-		sha1_final(&sha1);
+		sha1_stream_init(&sha1);
+		sha1_stream_update(&sha1, tempbuffer, metalength);
 		free(tempbuffer);
 
 		/* expand the hasharray if necessary */
@@ -2613,7 +2616,7 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 
 		/* fill in the entry */
 		put_bigendian_uint32(hasharray[hashindex].tag, metatag);
-		sha1_digest(&sha1, SHA1_DIGEST_SIZE, hasharray[hashindex].sha1);
+		sha1_stream_final(&sha1, hasharray[hashindex].sha1);
 		hashindex++;
 	}
 
@@ -2622,11 +2625,10 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 		qsort(hasharray, hashindex, sizeof(hasharray[0]), metadata_hash_compare);
 
 	/* compute the SHA1 of the raw plus the various metadata */
-	sha1_init(&sha1);
-	sha1_update(&sha1, CHD_SHA1_BYTES, rawsha1);
-	sha1_update(&sha1, hashindex * sizeof(hasharray[0]), (const uint8_t *)hasharray);
-	sha1_final(&sha1);
-	sha1_digest(&sha1, SHA1_DIGEST_SIZE, finalsha1);
+	sha1_stream_init(&sha1);
+	sha1_stream_update(&sha1, rawsha1, CHD_SHA1_BYTES);
+	sha1_stream_update(&sha1, (const uint8_t *)hasharray, hashindex * sizeof(hasharray[0]));
+	sha1_stream_final(&sha1, finalsha1);
 
 cleanup:
 	if (hasharray != NULL)

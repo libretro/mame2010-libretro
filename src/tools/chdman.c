@@ -42,7 +42,13 @@
 #include "avcomp.h"
 #include "bitmap.h"
 #include "md5.h"
-#include "sha1.h"
+/* lrc_hash.h writes "static INLINE": give it a plain inline, then restore
+   the core's */
+#undef INLINE
+#define INLINE inline
+#include <lrc_hash.h>
+#undef INLINE
+#define INLINE static inline
 #include "vbiparse.h"
 #include <stdarg.h>
 #include <stdlib.h>

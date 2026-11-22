@@ -2791,7 +2791,6 @@ UTILOBJS = \
 	$(LIBOBJ)/util/palette.o \
 	$(LIBOBJ)/util/png.o \
 	$(LIBOBJ)/util/pool.o \
-	$(LIBOBJ)/util/sha1.o \
 	$(LIBOBJ)/util/tagmap.o \
 	$(LIBOBJ)/util/unicode.o \
 	$(LIBOBJ)/util/unzip.o \
@@ -2886,10 +2885,16 @@ MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
 OBJDIRS += $(MINIOBJ) \
 			  $(OBJ)/osd/$(OSD)/libretro-common \
+			  $(OBJ)/osd/$(OSD)/libretro-common/compat \
 			  $(OBJ)/osd/$(OSD)/libretro-common/encodings \
 			  $(OBJ)/osd/$(OSD)/libretro-common/features \
+			  $(OBJ)/osd/$(OSD)/libretro-common/file \
+			  $(OBJ)/osd/$(OSD)/libretro-common/hash \
 			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads \
-			  $(OBJ)/osd/$(OSD)/libretro-common/time
+			  $(OBJ)/osd/$(OSD)/libretro-common/streams \
+			  $(OBJ)/osd/$(OSD)/libretro-common/string \
+			  $(OBJ)/osd/$(OSD)/libretro-common/time \
+			  $(OBJ)/osd/$(OSD)/libretro-common/vfs
 
 # work queues and locks run on libretro-common threads; without them,
 # work items run on the thread that queues them
@@ -2922,10 +2927,22 @@ OSDCOREOBJS += $(MINIOBJ)/retrothread.o
 
 ifneq ($(STATIC_LINKING), 1)
 OSDCOREOBJS += \
+	$(MINIOBJ)/libretro-common/compat/compat_posix_string.o \
+	$(MINIOBJ)/libretro-common/compat/compat_strcasestr.o \
+	$(MINIOBJ)/libretro-common/compat/compat_strl.o \
+	$(MINIOBJ)/libretro-common/compat/fopen_utf8.o \
 	$(MINIOBJ)/libretro-common/encodings/encoding_crc32.o \
 	$(MINIOBJ)/libretro-common/encodings/encoding_deflate.o \
+	$(MINIOBJ)/libretro-common/encodings/encoding_utf.o \
 	$(MINIOBJ)/libretro-common/features/features_cpu.o \
-	$(MINIOBJ)/libretro-common/time/rtime.o
+	$(MINIOBJ)/libretro-common/file/file_path.o \
+	$(MINIOBJ)/libretro-common/file/file_path_io.o \
+	$(MINIOBJ)/libretro-common/hash/lrc_hash.o \
+	$(MINIOBJ)/libretro-common/streams/file_stream.o \
+	$(MINIOBJ)/libretro-common/string/rstrtod.o \
+	$(MINIOBJ)/libretro-common/string/stdstring.o \
+	$(MINIOBJ)/libretro-common/time/rtime.o \
+	$(MINIOBJ)/libretro-common/vfs/vfs_implementation.o
 ifeq ($(RETRO_THREADS), 1)
 OSDCOREOBJS += \
 	$(MINIOBJ)/libretro-common/rthreads/rthreads.o \

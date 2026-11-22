@@ -1,0 +1,205 @@
+/* Copyright  (C) 2010-2020 The RetroArch team
+*
+* ---------------------------------------------------------------------------------------
+* The following license statement only applies to this file (vfs_implementation.h).
+* ---------------------------------------------------------------------------------------
+*
+* Permission is hereby granted, free of charge,
+* to any person obtaining a copy of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the rights to
+* use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+* and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#ifndef __LIBRETRO_SDK_VFS_H
+#define __LIBRETRO_SDK_VFS_H
+
+#include <stdio.h>
+#include <retro_common_api.h>
+#include <boolean.h>
+#include <stdint.h>
+
+#ifdef RARCH_INTERNAL
+#ifndef VFS_FRONTEND
+#define VFS_FRONTEND
+#endif
+#endif
+
+RETRO_BEGIN_DECLS
+
+#ifdef _WIN32
+typedef void* HANDLE;
+#endif
+
+#ifdef HAVE_CDROM
+struct cdrom_toc;
+typedef struct
+{
+   int64_t byte_pos;
+   uint64_t disc_bytes; /* cooked 2048-byte image; zero for CD paths */
+   struct cdrom_toc *toc;
+   char *cue_buf;
+   size_t cue_len;
+   unsigned cur_lba;
+   unsigned last_frame_lba;
+   unsigned char cur_min;
+   unsigned char cur_sec;
+   unsigned char cur_frame;
+   unsigned char cur_track;
+   unsigned char last_frame[2352];
+   char drive;
+   bool last_frame_valid;
+   bool logical_blocks;
+   bool device_only;
+   bool media_changed; /* bound geometry is stale; reopen before reading */
+   bool io_error;
+} vfs_cdrom_t;
+#endif
+
+/* File mapping is available through POSIX mmap (HAVE_MMAP, chosen by
+ * the build) or through Win32 file mappings (always available there).
+ * Consumers gate on this umbrella so the two backends stay one code
+ * path everywhere except the actual map/unmap calls. */
+#if defined(HAVE_MMAP) || (defined(_WIN32) && !defined(_XBOX))
+#define VFS_HAVE_FILE_MAPPING 1
+#endif
+
+/* Descriptor-backed I/O: open()/read()/close() with no stdio layer in
+ * between.  The code for it is compiled on every target - it is the
+ * path a file mapping falls back to - but until this existed it was
+ * only ever *reached* where VFS_HAVE_FILE_MAPPING was defined, since
+ * that was the sole gate on the hint that selects it.  Everything
+ * else was pinned to stdio no matter what the caller asked for.
+ *
+ * That matters most on the targets that were excluded.  With newlib,
+ * fread() on a buffered stream refills through the stream buffer and
+ * memcpy()s each refill into the caller's buffer (see _fread_r), so a
+ * whole-file read costs one read() per buffer-full plus a second copy
+ * of every byte; glibc's fread() bypasses its buffer once the request
+ * reaches a block, which is why this is invisible on desktop.
+ *
+ * Listed rather than assumed: the descriptor path compiles everywhere
+ * but has only ever run on the mapping targets, so a platform joins
+ * this list once its open()/read()/lseek() have been exercised.  A
+ * target that is not listed keeps the behaviour it has today.
+ *
+ * The POSIX desktops are listed for themselves too: RetroArch reaches
+ * the path on them with HAVE_MMAP, and a core built without it (most
+ * are) gets the same descriptor reads, and with them the identity,
+ * volume and fs-verity answers a stream needs a descriptor for. */
+#ifndef VFS_HAVE_DESCRIPTOR_IO
+#if defined(VFS_HAVE_FILE_MAPPING) \
+ || ((defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) \
+      || defined(__NetBSD__) || defined(__OpenBSD__) \
+      || defined(__DragonFly__)) \
+     && !defined(ORBIS) && !defined(PS2) && !defined(PSP) \
+     && !defined(VITA) && !defined(__SWITCH__) && !defined(GEKKO) \
+     && !defined(_3DS) && !defined(WIIU)) \
+ || defined(VITA) \
+ || defined(_3DS) \
+ || (defined(WIIU) && defined(HAVE_WIIU_DESCRIPTOR_IO)) \
+ || defined(__SWITCH__) \
+ || defined(GEKKO) \
+ || defined(PSP) \
+ || defined(PS2)
+#define VFS_HAVE_DESCRIPTOR_IO 1
+#endif
+#endif
+
+/* Wii U takes the descriptor path only when built with
+ * HAVE_WIIU_DESCRIPTOR_IO (Makefile.wiiu), until it has run on
+ * hardware. Its SD reads land by DMA in whole cache lines, so a
+ * whole-file read there allocates its buffer on a line and asks for
+ * whole lines, which lets the read land in place in one FS call;
+ * VFS_DESCRIPTOR_READ_ALIGN is that line. */
+#if defined(WIIU) && defined(HAVE_WIIU_DESCRIPTOR_IO) \
+ && !defined(VFS_DESCRIPTOR_READ_ALIGN)
+#define VFS_DESCRIPTOR_READ_ALIGN 64
+#endif
+
+/* Descriptor-backed I/O for one-shot writers as well: a stream opened
+ * for writing with RETRO_VFS_FILE_ACCESS_HINT_SEQUENTIAL_BULK hands its
+ * bytes straight to the descriptor, so a whole-file write is one open,
+ * one write and one close.  Same listing discipline as above: a
+ * platform joins once its descriptor write path has been exercised.
+ *
+ * On Vita the descriptor path is sceIo* itself rather than newlib's
+ * open()/write(), which sit on top of those calls and add a realpath
+ * allocation, a directory stat, a strdup of the path into the fd
+ * table and a mutex round-trip per call; stdio adds a FILE, a buffer
+ * and an fstat on top of that.  On an SD card every extra stat is a
+ * directory lookup, so a bulk extraction pays for all of it per
+ * member. */
+/* The desktops (the file mapping targets) take it too, for streams
+ * opened to read and write as well as to write: a caller that writes
+ * in big pieces, or reads and writes a file in place as an emulated
+ * file system does, gets its bytes to and from the descriptor without
+ * a copy through a stdio buffer, and its writes are in the file for
+ * every other handle at once, with no flush.  A caller that writes in
+ * small pieces leaves the hint off and keeps the buffer. */
+#ifndef VFS_HAVE_DESCRIPTOR_WRITE
+#if defined(VITA) || defined(GEKKO) || defined(PSP) || defined(PS2) \
+ || defined(VFS_HAVE_FILE_MAPPING)
+#define VFS_HAVE_DESCRIPTOR_WRITE 1
+#endif
+#endif
+
+/* Gathered writes: where a descriptor-written stream can hand several
+ * pieces of memory to the kernel in one writev() call.  POSIX only;
+ * Windows and the consoles write the pieces one by one. */
+#ifndef VFS_HAVE_WRITEV
+#if defined(VFS_HAVE_DESCRIPTOR_WRITE) && defined(HAVE_MMAP) \
+ && (defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) \
+  || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)) \
+ && !defined(_WIN32) && !defined(VITA) && !defined(GEKKO) \
+ && !defined(PSP) && !defined(PS2)
+#define VFS_HAVE_WRITEV 1
+#endif
+#endif
+
+/* One piece of memory for a gathered write */
+struct retro_vfs_span
+{
+   const void *data;
+   size_t      len;
+};
+
+enum vfs_scheme
+{
+   VFS_SCHEME_NONE = 0,
+   VFS_SCHEME_CDROM,
+   VFS_SCHEME_SAF,
+   VFS_SCHEME_SMB,
+   VFS_SCHEME_NFS
+};
+
+/* Replace the following symbol with something appropriate
+ * to signify the file is being compiled for a front end instead of a core.
+ * This allows the same code to act as reference implementation
+ * for VFS and as fallbacks for when the front end does not provide VFS functionality.
+ */
+
+#ifdef VFS_FRONTEND
+typedef struct retro_vfs_file_handle libretro_vfs_implementation_file;
+#else
+typedef struct libretro_vfs_implementation_file libretro_vfs_implementation_file;
+#endif
+
+#ifdef VFS_FRONTEND
+typedef struct retro_vfs_dir_handle libretro_vfs_implementation_dir;
+#else
+typedef struct libretro_vfs_implementation_dir libretro_vfs_implementation_dir;
+#endif
+
+RETRO_END_DECLS
+
+#endif

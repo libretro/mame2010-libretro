@@ -119,7 +119,13 @@
 #include "emu.h"
 #include "hash.h"
 #include "md5.h"
-#include "sha1.h"
+/* lrc_hash.h writes "static INLINE": give it a plain inline, then restore
+   the core's */
+#undef INLINE
+#define INLINE inline
+#include <lrc_hash.h>
+#undef INLINE
+#define INLINE static inline
 
 #include <ctype.h>
 #include <encodings/crc32.h>
@@ -675,22 +681,21 @@ static void h_crc_end(uint8_t* bin_chksum)
 }
 
 
-static struct sha1_ctx sha1ctx;
+static struct sha1_state sha1ctx;
 
 static void h_sha1_begin(void)
 {
-	sha1_init(&sha1ctx);
+	sha1_stream_init(&sha1ctx);
 }
 
 static void h_sha1_buffer(const void* mem, unsigned long len)
 {
-	sha1_update(&sha1ctx, len, (uint8_t*)mem);
+	sha1_stream_update(&sha1ctx, (uint8_t*)mem, len);
 }
 
 static void h_sha1_end(uint8_t* bin_chksum)
 {
-	sha1_final(&sha1ctx);
-	sha1_digest(&sha1ctx, 20, bin_chksum);
+	sha1_stream_final(&sha1ctx, bin_chksum);
 }
 
 
