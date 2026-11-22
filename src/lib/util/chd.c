@@ -2622,7 +2622,8 @@ static chd_error metadata_compute_hash(chd_file *chd, const uint8_t *rawsha1, ui
 	}
 
 	/* sort the array */
-	qsort(hasharray, hashindex, sizeof(hasharray[0]), metadata_hash_compare);
+	if (hashindex > 0)
+		qsort(hasharray, hashindex, sizeof(hasharray[0]), metadata_hash_compare);
 
 	/* compute the SHA1 of the raw plus the various metadata */
 	sha1_init(&sha1);

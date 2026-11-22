@@ -274,7 +274,8 @@ sha1_update(struct sha1_ctx *ctx,
       unsigned left = SHA1_DATA_SIZE - ctx->index;
       if (length < left)
 	{
-	  memcpy(ctx->block + ctx->index, buffer, length);
+	  if (length)
+	    memcpy(ctx->block + ctx->index, buffer, length);
 	  ctx->index += length;
 	  return; /* Finished */
 	}
