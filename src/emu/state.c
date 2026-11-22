@@ -25,7 +25,7 @@
 
 #include "emu.h"
 
-#include <zlib.h>
+#include <encodings/crc32.h>
 
 
 
@@ -408,12 +408,12 @@ static uint32_t get_signature(running_machine *machine)
 		uint32_t temp[2];
 
 		/* add the entry name to the CRC */
-		crc = crc32(crc, (uint8_t *)entry->name.cstr(), entry->name.len());
+		crc = encoding_crc32(crc, (uint8_t *)entry->name.cstr(), entry->name.len());
 
 		/* add the type and size to the CRC */
 		temp[0] = LITTLE_ENDIANIZE_INT32(entry->typecount);
 		temp[1] = LITTLE_ENDIANIZE_INT32(entry->typesize);
-		crc = crc32(crc, (uint8_t *)&temp[0], sizeof(temp));
+		crc = encoding_crc32(crc, (uint8_t *)&temp[0], sizeof(temp));
 	}
 
 	return crc;

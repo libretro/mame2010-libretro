@@ -4,7 +4,6 @@ DEPS_DIR          = $(SRC_DIR)/lib
 
 INCFLAGS := \
 	-I$(LIBRETRO_COMM_DIR)/include \
-	-I$(LIBRETRO_COMM_DIR)/include/compat/zlib \
 	-I$(SRC_DIR)/$(TARGET) \
 	-I$(OBJ)/$(TARGET)/layout \
 	-I$(SRC_DIR)/emu \
@@ -18,15 +17,6 @@ INCFLAGS := \
 # add expat XML library
 INCFLAGS += -I$(DEPS_DIR)/expat
 EXPAT = $(OBJ)/libexpat.a
-
-# add ZLIB compression library
-ifeq ($(BUILD_ZLIB),1)
-INCFLAGS += -I$(DEPS_DIR)/zlib
-ZLIB = $(OBJ)/libz.a
-else
-LIBS += -lz
-ZLIB =
-endif
 
 # add flac library
 INCFLAGS += -I$(DEPS_DIR)/util
@@ -4552,7 +4542,6 @@ LIBOBJ = $(OBJ)/lib
 OBJDIRS += \
 	$(LIBOBJ)/util \
 	$(LIBOBJ)/expat \
-	$(LIBOBJ)/zlib \
 	$(LIBOBJ)/softfloat \
 
 
@@ -4609,28 +4598,6 @@ $(LIBOBJ)/expat/%.o: $(LIBSRC)/explat/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -c $< -o $@
 
 
-
-#-------------------------------------------------
-# zlib library objects
-#-------------------------------------------------
-
-LIBZ_OBJS = \
-	$(LIBOBJ)/zlib/adler32.o \
-	$(LIBOBJ)/zlib/compress.o \
-	$(LIBOBJ)/zlib/crc32.o \
-	$(LIBOBJ)/zlib/deflate.o \
-	$(LIBOBJ)/zlib/inffast.o \
-	$(LIBOBJ)/zlib/inflate.o \
-	$(LIBOBJ)/zlib/infback.o \
-	$(LIBOBJ)/zlib/inftrees.o \
-	$(LIBOBJ)/zlib/trees.o \
-	$(LIBOBJ)/zlib/zutil.o
-
-$(OBJ)/libz.a: $(LIBZ_OBJS)
-
-$(LIBOBJ)/zlib/%.o: $(LIBSRC)/zlib/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
-	$(CC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -c $< -o $@
 
 #-------------------------------------------------
 # SoftFloat library objects
@@ -4702,8 +4669,11 @@ OBJDIRS += $(MINIOBJ)
 ifneq ($(STATIC_LINKING), 1)
 OBJDIRS += $(OBJ)/osd/$(OSD)/libretro-common \
 			  $(OBJ)/osd/$(OSD)/libretro-common/compat \
+			  $(OBJ)/osd/$(OSD)/libretro-common/encodings \
+			  $(OBJ)/osd/$(OSD)/libretro-common/features \
 			  $(OBJ)/osd/$(OSD)/libretro-common/file \
-			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads
+			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads \
+			  $(OBJ)/osd/$(OSD)/libretro-common/time
 endif
 
 # work queues and locks run on libretro-common threads; without them,
@@ -4736,7 +4706,11 @@ ifneq ($(STATIC_LINKING), 1)
 OSDCOREOBJS += \
     $(MINIOBJ)/libretro-common/file/file_path.o \
     $(MINIOBJ)/libretro-common/compat/compat_strcasestr.o \
-    $(MINIOBJ)/libretro-common/compat/compat_strl.o    
+    $(MINIOBJ)/libretro-common/compat/compat_strl.o \
+    $(MINIOBJ)/libretro-common/encodings/encoding_crc32.o \
+    $(MINIOBJ)/libretro-common/encodings/encoding_deflate.o \
+    $(MINIOBJ)/libretro-common/features/features_cpu.o \
+    $(MINIOBJ)/libretro-common/time/rtime.o
 endif
 
 OSDCOREOBJS += $(MINIOBJ)/retrothread.o
@@ -4771,4 +4745,4 @@ LIBOCORE_OBJS := $(OSDCOREOBJS)
 
 $(LIBOCORE): $(OSDCOREOBJS)
 
-OBJECTS = $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBDASM) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(ZLIB) $(LIBOCORE) $(RESFILE)
+OBJECTS = $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBDASM) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(LIBOCORE) $(RESFILE)

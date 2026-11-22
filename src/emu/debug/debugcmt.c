@@ -27,7 +27,7 @@
 #include "debugcpu.h"
 #include "debugvw.h"
 #include "info.h"
-#include <zlib.h>
+#include <encodings/crc32.h>
 
 #include "retromain.h"
 
@@ -304,7 +304,7 @@ uint32_t debug_comment_get_opcode_crc32(device_t *device, offs_t address)
 	numbytes = device->debug()->disassemble(buff, address & addrmask, opbuf, argbuf) & DASMFLAG_LENGTHMASK;
 	numbytes = memory_address_to_byte(space, numbytes);
 
-	crc = crc32(0, argbuf, numbytes);
+	crc = encoding_crc32(0, argbuf, numbytes);
 
 	return crc;
 }

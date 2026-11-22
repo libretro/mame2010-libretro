@@ -1,0 +1,4 @@
+zlib_compat_test
+zlib_compat_test.exe
+*.o
+zc_*

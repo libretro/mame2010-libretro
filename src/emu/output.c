@@ -10,7 +10,7 @@
 ***************************************************************************/
 
 #include "emu.h"
-#include <zlib.h>
+#include <encodings/crc32.h>
 
 
 
@@ -90,7 +90,7 @@ INLINE const char *copy_string(const char *string)
 
 INLINE uint32_t get_hash(const char *string)
 {
-	return crc32(0, (uint8_t *)string, (uint32_t)strlen(string));
+	return encoding_crc32(0, (uint8_t *)string, (uint32_t)strlen(string));
 }
 
 

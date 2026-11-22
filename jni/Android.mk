@@ -68,7 +68,6 @@ LOCAL_STATIC_LIBRARIES := retro-common
 LOCAL_CPPFLAGS      := -std=gnu++11 $(COREFLAGS)
 LOCAL_CPP_FEATURES  := exceptions rtti
 LOCAL_CPP_EXTENSION := .c
-LOCAL_LDLIBS        := -lz
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
   LOCAL_ARM_NEON := true

@@ -131,6 +131,7 @@ struct _zip_file
 	zip_ecd			ecd;					/* end of central directory */
 
 	uint8_t *			cd;						/* central directory raw data */
+	void *			inflater;				/* raw DEFLATE decoder, made on first use */
 	uint32_t			cd_pos;					/* position in central directory */
 	zip_file_header	header;					/* current file header */
 

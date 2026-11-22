@@ -42,7 +42,7 @@
 
 #include <ctype.h>
 #include <stdlib.h>
-#include <zlib.h>
+#include <encodings/deflate.h>
 
 
 
@@ -425,6 +425,8 @@ static void free_zip_file(zip_file *zip)
 			free(zip->ecd.raw);
 		if (zip->cd != NULL)
 			free(zip->cd);
+		if (zip->inflater != NULL)
+			rinflate_free(zip->inflater);
 		free(zip);
 	}
 }
@@ -573,72 +575,45 @@ static zip_error decompress_data_type_0(zip_file *zip, uint64_t offset, void *bu
 
 static zip_error decompress_data_type_8(zip_file *zip, uint64_t offset, void *buffer, uint32_t length)
 {
-    uint32_t input_remaining = zip->header.compressed_length;
-    uint32_t read_length;
-    z_stream stream;
-    int filerr;
-    int zerr;
+	uint32_t input_remaining = zip->header.compressed_length;
+	uint32_t output_remaining = length;
+	int status = RDEFLATE_PROCESS_NEXT;
 
 	/* make sure we don't need a newer mechanism */
 	if (zip->header.version_needed > 0x14)
 		return ZIPERR_UNSUPPORTED;
 
-    /* reset the stream */
-    memset(&stream, 0, sizeof(stream));
-    stream.next_out = (Bytef *)buffer;
-    stream.avail_out = length;
+	/* zip entries are raw DEFLATE */
+	if (zip->inflater == NULL)
+		zip->inflater = rinflate_new(-15);
+	else
+		rinflate_reset(zip->inflater, -15);
+	if (zip->inflater == NULL)
+		return ZIPERR_OUT_OF_MEMORY;
+	rinflate_set_out(zip->inflater, (uint8_t *)buffer, length);
 
-    /* initialize the decompressor */
-    zerr = inflateInit2(&stream, -MAX_WBITS);
-    if (zerr != Z_OK)
-    	return ZIPERR_DECOMPRESS_ERROR;
-
-    /* loop until we're done */
-    while (1)
+	/* a chunk at a time until the stream ends; its last code can follow
+	 * the last byte of output */
+	while (status == RDEFLATE_PROCESS_NEXT && input_remaining > 0)
 	{
-		/* read in the next chunk of data */
-		filerr = osd_read(zip->file, zip->buffer, offset, MIN(input_remaining, sizeof(zip->buffer)), &read_length);
+		uint32_t read_length;
+		size_t wrote = 0;
+		int filerr = osd_read(zip->file, zip->buffer, offset, MIN(input_remaining, sizeof(zip->buffer)), &read_length);
+
 		if (filerr != FILERR_NONE)
-		{
-			inflateEnd(&stream);
-	    	return ZIPERR_FILE_ERROR;
-	    }
-		offset += read_length;
-
-		/* if we read nothing, but still have data left, the file is truncated */
-		if (read_length == 0 && input_remaining > 0)
-		{
-			inflateEnd(&stream);
+			return ZIPERR_FILE_ERROR;
+		if (read_length == 0)
 			return ZIPERR_FILE_TRUNCATED;
-		}
-
-		/* fill out the input data */
-		stream.next_in = zip->buffer;
-		stream.avail_in = read_length;
+		offset += read_length;
 		input_remaining -= read_length;
 
-		/* add a dummy byte at end of compressed data */
-		if (input_remaining == 0)
-			stream.avail_in++;
-
-		/* now inflate */
-        zerr = inflate(&stream, Z_NO_FLUSH);
-        if (zerr == Z_STREAM_END)
-			break;
-		if (zerr != Z_OK)
-		{
-			inflateEnd(&stream);
-			return ZIPERR_DECOMPRESS_ERROR;
-		}
-    }
-
-	/* finish decompression */
-	zerr = inflateEnd(&stream);
-	if (zerr != Z_OK)
-		return ZIPERR_DECOMPRESS_ERROR;
+		rinflate_set_in(zip->inflater, zip->buffer, read_length);
+		status = rinflate_process(zip->inflater, NULL, &wrote);
+		output_remaining -= (uint32_t)wrote;
+	}
 
 	/* if anything looks funny, report an error */
-	if (stream.avail_out > 0 || input_remaining > 0)
+	if (status != RDEFLATE_PROCESS_END || output_remaining > 0 || input_remaining > 0)
 		return ZIPERR_DECOMPRESS_ERROR;
 
 	return ZIPERR_NONE;

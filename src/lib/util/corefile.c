@@ -39,7 +39,7 @@
 
 #include "corefile.h"
 #include "unicode.h"
-#include <zlib.h>
+#include <encodings/deflate.h>
 
 #include <stdarg.h>
 #include <ctype.h>
@@ -85,10 +85,13 @@ typedef enum _text_file_type text_file_type;
 typedef struct _zlib_data zlib_data;
 struct _zlib_data
 {
-	z_stream		stream;
+	void *			stream;			/* rinflate when reading, rdeflate when writing */
+	uint64_t		realoffset;		/* offset in the file of the next compressed byte */
+	uint64_t		nextoffset;		/* offset in the uncompressed data */
+	uint32_t		bufferbytes;	/* reading: buffer bytes not yet inflated;
+									   writing: buffer bytes deflated, not yet written */
+	int				ended;			/* reading: the stream has ended */
 	uint8_t			buffer[1024];
-	uint64_t			realoffset;
-	uint64_t			nextoffset;
 };
 
 
@@ -252,7 +255,7 @@ void core_fclose(core_file *file)
 
 /*-------------------------------------------------
     core_fcompress - enable/disable streaming file
-    compression via zlib; level is 0 to disable
+    compression (zlib format); level is 0 to disable
     compression, or up to 9 for max compression
 -------------------------------------------------*/
 
@@ -267,68 +270,62 @@ file_error core_fcompress(core_file *file, int level)
 	/* if we have been compressing, flush and free the data */
 	if (file->zdata != NULL && level == FCOMPRESS_NONE)
 	{
-		int zerr = Z_OK;
+		zlib_data *zdata = file->zdata;
 
-		/* flush any remaining data if we are writing */
-		while ((file->openflags & OPEN_FLAG_WRITE) != 0 && zerr != Z_STREAM_END)
-		{
-			uint32_t actualdata;
-			file_error filerr;
-
-			/* deflate some more */
-			zerr = deflate(&file->zdata->stream, Z_FINISH);
-			if (zerr != Z_STREAM_END && zerr != Z_OK)
-			{
-				result = FILERR_INVALID_DATA;
-				break;
-			}
-
-			/* write the data */
-			if (file->zdata->stream.avail_out != sizeof(file->zdata->buffer))
-			{
-				filerr = osd_write(file->file, file->zdata->buffer, file->zdata->realoffset, sizeof(file->zdata->buffer) - file->zdata->stream.avail_out, &actualdata);
-				if (filerr != FILERR_NONE)
-					break;
-				file->zdata->realoffset += actualdata;
-				file->zdata->stream.next_out = file->zdata->buffer;
-				file->zdata->stream.avail_out = sizeof(file->zdata->buffer);
-			}
-		}
-
-		/* end the appropriate operation */
 		if ((file->openflags & OPEN_FLAG_WRITE) != 0)
-			deflateEnd(&file->zdata->stream);
+		{
+			/* write out the rest of the stream */
+			int status = RDEFLATE_PROCESS_NEXT;
+			rdeflate_finish(zdata->stream);
+			while (status == RDEFLATE_PROCESS_NEXT)
+			{
+				size_t wrote = 0;
+				rdeflate_set_out(zdata->stream, zdata->buffer + zdata->bufferbytes, sizeof(zdata->buffer) - zdata->bufferbytes);
+				status = rdeflate_process(zdata->stream, NULL, &wrote);
+				zdata->bufferbytes += (uint32_t)wrote;
+				if (status == RDEFLATE_PROCESS_ERROR || (status == RDEFLATE_PROCESS_NEXT && wrote == 0 && zdata->bufferbytes < sizeof(zdata->buffer)))
+				{
+					result = FILERR_INVALID_DATA;
+					break;
+				}
+				if (zdata->bufferbytes == sizeof(zdata->buffer) || (status == RDEFLATE_PROCESS_END && zdata->bufferbytes > 0))
+				{
+					uint32_t actualdata;
+					file_error filerr = osd_write(file->file, zdata->buffer, zdata->realoffset, zdata->bufferbytes, &actualdata);
+					if (filerr != FILERR_NONE)
+					{
+						result = filerr;
+						break;
+					}
+					zdata->realoffset += actualdata;
+					zdata->bufferbytes = 0;
+				}
+			}
+			rdeflate_free(zdata->stream);
+		}
 		else
-			inflateEnd(&file->zdata->stream);
+			rinflate_free(zdata->stream);
 
 		/* free memory */
-		free(file->zdata);
+		free(zdata);
 		file->zdata = NULL;
 	}
 
 	/* if we are just starting to compress, allocate a new buffer */
 	if (file->zdata == NULL && level > FCOMPRESS_NONE)
 	{
-		int zerr;
-
 		/* allocate memory */
 		file->zdata = (zlib_data *)malloc(sizeof(*file->zdata));
 		if (file->zdata == NULL)
 			return FILERR_OUT_OF_MEMORY;
 		memset(file->zdata, 0, sizeof(*file->zdata));
 
-		/* initialize the stream and compressor */
+		/* the streams are zlib-wrapped */
 		if ((file->openflags & OPEN_FLAG_WRITE) != 0)
-		{
-			file->zdata->stream.next_out = file->zdata->buffer;
-			file->zdata->stream.avail_out = sizeof(file->zdata->buffer);
-			zerr = deflateInit(&file->zdata->stream, level);
-		}
+			file->zdata->stream = rdeflate_new(level, 15);
 		else
-			zerr = inflateInit(&file->zdata->stream);
-
-		/* on error, return an error */
-		if (zerr != Z_OK)
+			file->zdata->stream = rinflate_new(15);
+		if (file->zdata->stream == NULL)
 		{
 			free(file->zdata);
 			file->zdata = NULL;
@@ -953,49 +950,57 @@ static uint32_t safe_buffer_copy(const void *source, uint32_t sourceoffs, uint32
 
 static file_error osd_or_zlib_read(core_file *file, void *buffer, uint64_t offset, uint32_t length, uint32_t *actual)
 {
+	zlib_data *zdata = file->zdata;
+	uint32_t done = 0;
+	file_error result = FILERR_NONE;
+
 	/* if no compression, just pass through */
-	if (file->zdata == NULL)
+	if (zdata == NULL)
 		return osd_read(file->file, buffer, offset, length, actual);
 
 	/* if the offset doesn't match the next offset, fail */
-	if (offset != file->zdata->nextoffset)
+	if (offset != zdata->nextoffset)
 		return FILERR_INVALID_ACCESS;
 
-	/* set up the destination */
-	file->zdata->stream.next_out = (Bytef *)buffer;
-	file->zdata->stream.avail_out = length;
-	while (file->zdata->stream.avail_out != 0)
+	rinflate_set_out(zdata->stream, (uint8_t *)buffer, length);
+	while (done < length && !zdata->ended)
 	{
-		file_error filerr;
-		uint32_t actualdata;
-		int zerr = Z_OK;
+		size_t consumed = 0, wrote = 0;
+		int status;
 
-		/* if we didn't make progress, report an error or the end */
-		if (file->zdata->stream.avail_in != 0)
-			zerr = inflate(&file->zdata->stream, Z_SYNC_FLUSH);
-		if (zerr != Z_OK)
+		/* fetch more data if the buffer is used up */
+		if (zdata->bufferbytes == 0)
 		{
-			*actual = length - file->zdata->stream.avail_out;
-			file->zdata->nextoffset += *actual;
-			return (zerr == Z_STREAM_END) ? FILERR_NONE : FILERR_INVALID_DATA;
-		}
-
-		/* fetch more data if needed */
-		if (file->zdata->stream.avail_in == 0)
-		{
-			filerr = osd_read(file->file, file->zdata->buffer, file->zdata->realoffset, sizeof(file->zdata->buffer), &actualdata);
+			uint32_t actualdata;
+			file_error filerr = osd_read(file->file, zdata->buffer, zdata->realoffset, sizeof(zdata->buffer), &actualdata);
 			if (filerr != FILERR_NONE)
 				return filerr;
-			file->zdata->realoffset += actualdata;
-			file->zdata->stream.next_in = file->zdata->buffer;
-			file->zdata->stream.avail_in = sizeof(file->zdata->buffer);
+			/* the file ends before the stream does */
+			if (actualdata == 0)
+			{
+				result = FILERR_INVALID_DATA;
+				break;
+			}
+			zdata->realoffset += actualdata;
+			zdata->bufferbytes = actualdata;
+			rinflate_set_in(zdata->stream, zdata->buffer, actualdata);
+		}
+
+		status = rinflate_process(zdata->stream, &consumed, &wrote);
+		zdata->bufferbytes -= (uint32_t)consumed;
+		done += (uint32_t)wrote;
+		if (status == RDEFLATE_PROCESS_END)
+			zdata->ended = TRUE;
+		else if (status == RDEFLATE_PROCESS_ERROR || (consumed == 0 && wrote == 0 && zdata->bufferbytes > 0))
+		{
+			result = FILERR_INVALID_DATA;
+			break;
 		}
 	}
 
-	/* we read everything */
-	*actual = length;
-	file->zdata->nextoffset += *actual;
-	return FILERR_NONE;
+	*actual = done;
+	zdata->nextoffset += done;
+	return result;
 }
 
 
@@ -1006,47 +1011,48 @@ static file_error osd_or_zlib_read(core_file *file, void *buffer, uint64_t offse
 
 static file_error osd_or_zlib_write(core_file *file, const void *buffer, uint64_t offset, uint32_t length, uint32_t *actual)
 {
+	zlib_data *zdata = file->zdata;
+	uint32_t done = 0;
+
 	/* if no compression, just pass through */
-	if (file->zdata == NULL)
+	if (zdata == NULL)
 		return osd_write(file->file, buffer, offset, length, actual);
 
 	/* if the offset doesn't match the next offset, fail */
-	if (offset != file->zdata->nextoffset)
+	if (offset != zdata->nextoffset)
 		return FILERR_INVALID_ACCESS;
 
-	/* set up the source */
-	file->zdata->stream.next_in = (Bytef *)buffer;
-	file->zdata->stream.avail_in = length;
-	while (file->zdata->stream.avail_in != 0)
+	rdeflate_set_in(zdata->stream, (const uint8_t *)buffer, length);
+	while (done < length)
 	{
-		file_error filerr;
-		uint32_t actualdata;
-		int zerr;
+		size_t consumed = 0, wrote = 0;
+		int status;
 
-		/* if we didn't make progress, report an error or the end */
-		zerr = deflate(&file->zdata->stream, Z_NO_FLUSH);
-		if (zerr != Z_OK)
+		rdeflate_set_out(zdata->stream, zdata->buffer + zdata->bufferbytes, sizeof(zdata->buffer) - zdata->bufferbytes);
+		status = rdeflate_process(zdata->stream, &consumed, &wrote);
+		done += (uint32_t)consumed;
+		zdata->bufferbytes += (uint32_t)wrote;
+		if (status == RDEFLATE_PROCESS_ERROR || (consumed == 0 && wrote == 0))
 		{
-			*actual = length - file->zdata->stream.avail_in;
-			file->zdata->nextoffset += *actual;
+			*actual = done;
+			zdata->nextoffset += done;
 			return FILERR_INVALID_DATA;
 		}
 
 		/* write more data if we are full up */
-		if (file->zdata->stream.avail_out == 0)
+		if (zdata->bufferbytes == sizeof(zdata->buffer))
 		{
-			filerr = osd_write(file->file, file->zdata->buffer, file->zdata->realoffset, sizeof(file->zdata->buffer), &actualdata);
+			uint32_t actualdata;
+			file_error filerr = osd_write(file->file, zdata->buffer, zdata->realoffset, sizeof(zdata->buffer), &actualdata);
 			if (filerr != FILERR_NONE)
 				return filerr;
-			file->zdata->realoffset += actualdata;
-			file->zdata->stream.next_out = file->zdata->buffer;
-			file->zdata->stream.avail_out = sizeof(file->zdata->buffer);
+			zdata->realoffset += actualdata;
+			zdata->bufferbytes = 0;
 		}
 	}
 
-	/* we read everything */
 	*actual = length;
-	file->zdata->nextoffset += *actual;
+	zdata->nextoffset += length;
 	return FILERR_NONE;
 }
 

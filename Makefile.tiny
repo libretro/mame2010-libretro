@@ -18,15 +18,6 @@ INCFLAGS := \
 INCFLAGS += -I$(DEPS_DIR)/expat
 EXPAT = $(OBJ)/libexpat.a
 
-# add ZLIB compression library
-ifeq ($(BUILD_ZLIB),1)
-INCFLAGS += -I$(DEPS_DIR)/zlib
-ZLIB = $(OBJ)/libz.a
-else
-LIBS += -lz
-ZLIB =
-endif
-
 # add flac library
 INCFLAGS += -I$(DEPS_DIR)/util
 FLAC_LIB = $(OBJ)/libflac.a
@@ -2772,7 +2763,6 @@ LIBOBJ = $(OBJ)/lib
 OBJDIRS += \
 	$(LIBOBJ)/util \
 	$(LIBOBJ)/expat \
-	$(LIBOBJ)/zlib \
 	$(LIBOBJ)/softfloat \
 
 
@@ -2829,30 +2819,6 @@ $(LIBOBJ)/expat/%.o: $(LIBSRC)/explat/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -c $< -o $@
 
 
-
-#-------------------------------------------------
-# zlib library objects
-#-------------------------------------------------
-
-ZLIBOBJS = \
-	$(LIBOBJ)/zlib/adler32.o \
-	$(LIBOBJ)/zlib/compress.o \
-	$(LIBOBJ)/zlib/crc32.o \
-	$(LIBOBJ)/zlib/deflate.o \
-	$(LIBOBJ)/zlib/gzio.o \
-	$(LIBOBJ)/zlib/inffast.o \
-	$(LIBOBJ)/zlib/inflate.o \
-	$(LIBOBJ)/zlib/infback.o \
-	$(LIBOBJ)/zlib/inftrees.o \
-	$(LIBOBJ)/zlib/trees.o \
-	$(LIBOBJ)/zlib/uncompr.o \
-	$(LIBOBJ)/zlib/zutil.o
-
-$(OBJ)/libz.a: $(ZLIBOBJS)
-
-$(LIBOBJ)/zlib/%.o: $(LIBSRC)/zlib/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
-	$(CC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -c $< -o $@
 
 #-------------------------------------------------
 # SoftFloat library objects
@@ -2920,7 +2886,10 @@ MINISRC = $(SRC_DIR)/osd/$(OSD)
 MINIOBJ = $(OBJ)/osd/$(OSD)
 OBJDIRS += $(MINIOBJ) \
 			  $(OBJ)/osd/$(OSD)/libretro-common \
-			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads
+			  $(OBJ)/osd/$(OSD)/libretro-common/encodings \
+			  $(OBJ)/osd/$(OSD)/libretro-common/features \
+			  $(OBJ)/osd/$(OSD)/libretro-common/rthreads \
+			  $(OBJ)/osd/$(OSD)/libretro-common/time
 
 # work queues and locks run on libretro-common threads; without them,
 # work items run on the thread that queues them
@@ -2952,6 +2921,11 @@ OSDCOREOBJS := \
 OSDCOREOBJS += $(MINIOBJ)/retrothread.o
 
 ifneq ($(STATIC_LINKING), 1)
+OSDCOREOBJS += \
+	$(MINIOBJ)/libretro-common/encodings/encoding_crc32.o \
+	$(MINIOBJ)/libretro-common/encodings/encoding_deflate.o \
+	$(MINIOBJ)/libretro-common/features/features_cpu.o \
+	$(MINIOBJ)/libretro-common/time/rtime.o
 ifeq ($(RETRO_THREADS), 1)
 OSDCOREOBJS += \
 	$(MINIOBJ)/libretro-common/rthreads/rthreads.o \
@@ -2976,4 +2950,4 @@ OSDOBJS += $(OBJ)/osd/retro/retromain.o
 
 $(LIBOCORE): $(OSDCOREOBJS)
 
-OBJECTS = $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBDASM) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(ZLIB) $(LIBOCORE) $(RESFILE)
+OBJECTS = $(DRVLIBS) $(LIBOSD) $(LIBCPU) $(LIBEMU) $(LIBDASM) $(LIBSOUND) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(LIBOCORE) $(RESFILE)

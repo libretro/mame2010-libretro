@@ -80,9 +80,6 @@ ifneq ($(GIT_VERSION)," unknown")
 	CCOMFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
 
-# uncomment next line to build zlib as part of MAME build
-#BUILD_ZLIB = 1
-
 # uncomment next line to build PortMidi as part of MAME/MESS build
 #BUILD_MIDILIB = 1
 
@@ -430,7 +427,6 @@ else ifeq ($(platform), classic_armv8_a35)
 	HAVE_NEON = 1
 	ARCH = arm
 	BUILTIN_GPU = neon
-   BUILD_ZLIB=1
    LIBS += -lstdc++ -lpthread
    LDFLAGS += $(SHARED)
 #######################################
@@ -519,7 +515,6 @@ else
 	LD ?= g++
 	NATIVELD = $(LD)
 	CC_AS ?= gcc
-   BUILD_ZLIB = 1
 	SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=src/osd/retro/link.T
 ifneq ($(MDEBUG),1)
 	SHARED += -s

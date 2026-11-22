@@ -13,7 +13,7 @@
 #include "rendfont.h"
 #include "rendutil.h"
 #include "emuopts.h"
-#include "zlib.h"
+#include <encodings/crc32.h>
 
 #include "bdc/uismall.fh"
 
@@ -441,7 +441,7 @@ static int render_font_load_cached_bdf(render_font *font, const char *filename)
 	bytes = mame_fread(file, data, MIN(CACHED_BDF_HASH_SIZE, font->rawsize));
 	if (bytes != MIN(CACHED_BDF_HASH_SIZE, font->rawsize))
 		goto error;
-	hash = crc32(0, (const uint8_t*)data, bytes) ^ (uint32_t)font->rawsize;
+	hash = encoding_crc32(0, (const uint8_t*)data, bytes) ^ (uint32_t)font->rawsize;
 
 	/* create the cached filename */
 	cachedname = mame_strdup(filename);

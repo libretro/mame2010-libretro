@@ -41,7 +41,8 @@
 #include "avcomp.h"
 #include "md5.h"
 #include "sha1.h"
-#include <zlib.h>
+#include <encodings/crc32.h>
+#include <encodings/deflate.h>
 #include <time.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -80,7 +81,6 @@
 #define CHD_V1_SECTOR_SIZE			512			/* size of a "sector" in the V1 header */
 
 #define COOKIE_VALUE				0xbaadf00d
-#define MAX_ZLIB_ALLOCS				64
 
 #define END_OF_LIST_COOKIE			"EndOfListCookie"
 
@@ -198,9 +198,7 @@ struct _chd_file
 typedef struct _zlib_codec_data zlib_codec_data;
 struct _zlib_codec_data
 {
-	z_stream				inflater;
-	z_stream				deflater;
-	uint32_t *				allocptr[MAX_ZLIB_ALLOCS];
+	void *					inflater;		/* raw DEFLATE, reset for each hunk */
 };
 
 
@@ -272,8 +270,6 @@ static chd_error zlib_codec_init(chd_file *chd);
 static void zlib_codec_free(chd_file *chd);
 static chd_error zlib_codec_compress(chd_file *chd, const void *src, uint32_t *length);
 static chd_error zlib_codec_decompress(chd_file *chd, uint32_t srclength, void *dest);
-static voidpf zlib_fast_alloc(voidpf opaque, uInt items, uInt size);
-static void zlib_fast_free(voidpf opaque, voidpf address);
 
 /* A/V compression codec */
 static chd_error av_codec_init(chd_file *chd);
@@ -1565,7 +1561,7 @@ chd_error chd_verify_hunk(chd_file *chd)
 
 	/* validate the CRC if we have one */
 	entry = &chd->map[thishunk];
-	if (!(entry->flags & MAP_ENTRY_FLAG_NO_CRC) && entry->crc != crc32(0, chd->cache, chd->header.hunkbytes))
+	if (!(entry->flags & MAP_ENTRY_FLAG_NO_CRC) && entry->crc != encoding_crc32(0, chd->cache, chd->header.hunkbytes))
 		return CHDERR_DECOMPRESSION_ERROR;
 
 	return CHDERR_NONE;
@@ -2009,7 +2005,7 @@ static chd_error hunk_write_from_memory(chd_file *chd, uint32_t hunknum, const u
 	/* first compute the CRC of the original data */
 	newentry.crc = 0;
 	if (src != NULL)
-		newentry.crc = crc32(0, &src[0], chd->header.hunkbytes);
+		newentry.crc = encoding_crc32(0, &src[0], chd->header.hunkbytes);
 
 	/* if we're not a lossy codec, compute the CRC and look for matches */
 	if (!chd->codecintf->lossy && src != NULL)
@@ -2066,7 +2062,7 @@ static chd_error hunk_write_from_memory(chd_file *chd, uint32_t hunknum, const u
 	{
 		err = (*chd->codecintf->decompress)(chd, bytes, chd->cache);
 		if (err == CHDERR_NONE)
-			newentry.crc = crc32(0, chd->cache, chd->header.hunkbytes);
+			newentry.crc = encoding_crc32(0, chd->cache, chd->header.hunkbytes);
 	}
 
 	/* if we succeeded in compressing the data, replace our data pointer and mark it so */
@@ -2659,54 +2655,24 @@ static int CLIB_DECL metadata_hash_compare(const void *elem1, const void *elem2)
     zlib_codec_init - initialize the ZLIB codec
 -------------------------------------------------*/
 
+/* CHD hunks are raw DEFLATE: no zlib header or checksum */
+#define CHD_DEFLATE_WINDOW_BITS		(-15)
+
 static chd_error zlib_codec_init(chd_file *chd)
 {
-	zlib_codec_data *data;
-	chd_error err;
-	int zerr;
-
-	/* allocate memory for the 2 stream buffers */
-	data = (zlib_codec_data *)malloc(sizeof(*data));
+	zlib_codec_data *data = (zlib_codec_data *)malloc(sizeof(*data));
 	if (data == NULL)
 		return CHDERR_OUT_OF_MEMORY;
 
-	/* clear the buffers */
-	memset(data, 0, sizeof(*data));
-
-	/* init the inflater first */
-	data->inflater.next_in = (Bytef *)data;	/* bogus, but that's ok */
-	data->inflater.avail_in = 0;
-	data->inflater.zalloc = zlib_fast_alloc;
-	data->inflater.zfree = zlib_fast_free;
-	data->inflater.opaque = data;
-	zerr = inflateInit2(&data->inflater, -MAX_WBITS);
-
-	/* if that worked, initialize the deflater */
-	if (zerr == Z_OK)
+	data->inflater = rinflate_new(CHD_DEFLATE_WINDOW_BITS);
+	if (data->inflater == NULL)
 	{
-		data->deflater.next_in = (Bytef *)data;	/* bogus, but that's ok */
-		data->deflater.avail_in = 0;
-		data->deflater.zalloc = zlib_fast_alloc;
-		data->deflater.zfree = zlib_fast_free;
-		data->deflater.opaque = data;
-		zerr = deflateInit2(&data->deflater, Z_BEST_COMPRESSION, Z_DEFLATED, -MAX_WBITS, 8, Z_DEFAULT_STRATEGY);
+		free(data);
+		return CHDERR_OUT_OF_MEMORY;
 	}
 
-	/* convert errors */
-	if (zerr == Z_MEM_ERROR)
-		err = CHDERR_OUT_OF_MEMORY;
-	else if (zerr != Z_OK)
-		err = CHDERR_CODEC_ERROR;
-	else
-		err = CHDERR_NONE;
-
-	/* handle an error */
-	if (err == CHDERR_NONE)
-		chd->codecdata = data;
-	else
-		free(data);
-
-	return err;
+	chd->codecdata = data;
+	return CHDERR_NONE;
 }
 
 
@@ -2719,18 +2685,9 @@ static void zlib_codec_free(chd_file *chd)
 {
 	zlib_codec_data *data = (zlib_codec_data *)chd->codecdata;
 
-	/* deinit the streams */
 	if (data != NULL)
 	{
-		int i;
-
-		inflateEnd(&data->inflater);
-		deflateEnd(&data->deflater);
-
-		/* free our fast memory */
-		for (i = 0; i < MAX_ZLIB_ALLOCS; i++)
-			if (data->allocptr[i])
-				free(data->allocptr[i]);
+		rinflate_free(data->inflater);
 		free(data);
 	}
 }
@@ -2743,29 +2700,24 @@ static void zlib_codec_free(chd_file *chd)
 
 static chd_error zlib_codec_compress(chd_file *chd, const void *src, uint32_t *length)
 {
-	zlib_codec_data *data = (zlib_codec_data *)chd->codecdata;
-	int zerr;
+	size_t wrote = 0;
+	int status;
+	void *deflater = rdeflate_new(9, CHD_DEFLATE_WINDOW_BITS);
 
-	/* reset the decompressor */
-	data->deflater.next_in = (Bytef *)src;
-	data->deflater.avail_in = chd->header.hunkbytes;
-	data->deflater.total_in = 0;
-	data->deflater.next_out = chd->compressed;
-	data->deflater.avail_out = chd->header.hunkbytes;
-	data->deflater.total_out = 0;
-	zerr = deflateReset(&data->deflater);
-	if (zerr != Z_OK)
+	if (deflater == NULL)
+		return CHDERR_OUT_OF_MEMORY;
+
+	/* the hunk must shrink, so the output gets no more room than the input */
+	rdeflate_set_in(deflater, (const uint8_t *)src, chd->header.hunkbytes);
+	rdeflate_set_out(deflater, chd->compressed, chd->header.hunkbytes);
+	rdeflate_finish(deflater);
+	status = rdeflate_process(deflater, NULL, &wrote);
+	rdeflate_free(deflater);
+
+	if (status != RDEFLATE_PROCESS_END || wrote >= chd->header.hunkbytes)
 		return CHDERR_COMPRESSION_ERROR;
 
-	/* do it */
-	zerr = deflate(&data->deflater, Z_FINISH);
-
-	/* if we ended up with more data than we started with, return an error */
-	if (zerr != Z_STREAM_END || data->deflater.total_out >= chd->header.hunkbytes)
-		return CHDERR_COMPRESSION_ERROR;
-
-	/* otherwise, fill in the length and return success */
-	*length = data->deflater.total_out;
+	*length = (uint32_t)wrote;
 	return CHDERR_NONE;
 }
 
@@ -2778,92 +2730,16 @@ static chd_error zlib_codec_compress(chd_file *chd, const void *src, uint32_t *l
 static chd_error zlib_codec_decompress(chd_file *chd, uint32_t srclength, void *dest)
 {
 	zlib_codec_data *data = (zlib_codec_data *)chd->codecdata;
-	int zerr;
+	size_t wrote = 0;
 
-	/* reset the decompressor */
-	data->inflater.next_in = chd->compressed;
-	data->inflater.avail_in = srclength;
-	data->inflater.total_in = 0;
-	data->inflater.next_out = (Bytef *)dest;
-	data->inflater.avail_out = chd->header.hunkbytes;
-	data->inflater.total_out = 0;
-	zerr = inflateReset(&data->inflater);
-	if (zerr != Z_OK)
-		return CHDERR_DECOMPRESSION_ERROR;
-
-	/* do it */
-	zerr = inflate(&data->inflater, Z_FINISH);
-	if (data->inflater.total_out != chd->header.hunkbytes)
+	rinflate_reset(data->inflater, CHD_DEFLATE_WINDOW_BITS);
+	rinflate_set_in(data->inflater, chd->compressed, srclength);
+	rinflate_set_out(data->inflater, (uint8_t *)dest, chd->header.hunkbytes);
+	if (rinflate_process(data->inflater, NULL, &wrote) == RDEFLATE_PROCESS_ERROR
+			|| wrote != chd->header.hunkbytes)
 		return CHDERR_DECOMPRESSION_ERROR;
 
 	return CHDERR_NONE;
-}
-
-
-/*-------------------------------------------------
-    zlib_fast_alloc - fast malloc for ZLIB, which
-    allocates and frees memory frequently
--------------------------------------------------*/
-
-static voidpf zlib_fast_alloc(voidpf opaque, uInt items, uInt size)
-{
-	zlib_codec_data *data = (zlib_codec_data *)opaque;
-	uint32_t *ptr;
-	int i;
-
-	/* compute the size, rounding to the nearest 1k */
-	size = (size * items + 0x3ff) & ~0x3ff;
-
-	/* reuse a hunk if we can */
-	for (i = 0; i < MAX_ZLIB_ALLOCS; i++)
-	{
-		ptr = data->allocptr[i];
-		if (ptr && size == *ptr)
-		{
-			/* set the low bit of the size so we don't match next time */
-			*ptr |= 1;
-			return ptr + 1;
-		}
-	}
-
-	/* alloc a new one */
-	ptr = (uint32_t *)malloc(size + sizeof(uint32_t));
-	if (!ptr)
-		return NULL;
-
-	/* put it into the list */
-	for (i = 0; i < MAX_ZLIB_ALLOCS; i++)
-		if (!data->allocptr[i])
-		{
-			data->allocptr[i] = ptr;
-			break;
-		}
-
-	/* set the low bit of the size so we don't match next time */
-	*ptr = size | 1;
-	return ptr + 1;
-}
-
-
-/*-------------------------------------------------
-    zlib_fast_free - fast free for ZLIB, which
-    allocates and frees memory frequently
--------------------------------------------------*/
-
-static void zlib_fast_free(voidpf opaque, voidpf address)
-{
-	zlib_codec_data *data = (zlib_codec_data *)opaque;
-	uint32_t *ptr = (uint32_t *)address - 1;
-	int i;
-
-	/* find the hunk */
-	for (i = 0; i < MAX_ZLIB_ALLOCS; i++)
-		if (ptr == data->allocptr[i])
-		{
-			/* clear the low bit of the size to allow matches */
-			*ptr &= ~1;
-			return;
-		}
 }
 
 

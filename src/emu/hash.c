@@ -122,7 +122,7 @@
 #include "sha1.h"
 
 #include <ctype.h>
-#include <zlib.h>
+#include <encodings/crc32.h>
 
 #define ASSERT(x)
 
@@ -663,7 +663,7 @@ static void h_crc_begin(void)
 
 static void h_crc_buffer(const void* mem, unsigned long len)
 {
-	crc = crc32(crc, (uint8_t*)mem, len);
+	crc = encoding_crc32(crc, (uint8_t*)mem, len);
 }
 
 static void h_crc_end(uint8_t* bin_chksum)

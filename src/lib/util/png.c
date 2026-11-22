@@ -40,7 +40,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include <zlib.h>
+#include <encodings/crc32.h>
+#include <encodings/deflate.h>
 #include "png.h"
 
 
@@ -216,7 +217,7 @@ static png_error read_chunk(core_file *fp, uint8_t **data, uint32_t *type, uint3
 		return PNGERR_NONE;
 
 	/* start the CRC with the chunk type (but not the length) */
-	crc = crc32(0, tempbuff, 4);
+	crc = encoding_crc32(0, tempbuff, 4);
 
 	/* read the chunk itself into an allocated memory buffer */
 	*data = NULL;
@@ -236,7 +237,7 @@ static png_error read_chunk(core_file *fp, uint8_t **data, uint32_t *type, uint3
 		}
 
 		/* update the CRC */
-		crc = crc32(crc, *data, *length);
+		crc = encoding_crc32(crc, *data, *length);
 	}
 
 	/* read the CRC */
@@ -450,8 +451,9 @@ static png_error process_image(png_private *png)
 	png_error error = PNGERR_NONE;
 	image_data_chunk *idat;
 	uint8_t *src, *dst;
-	z_stream stream;
-	int zerr, y;
+	void *inflater;
+	int status = RDEFLATE_PROCESS_NEXT;
+	int y;
 
 	/* compute some basic parameters */
 	bpp = compute_bpp(png->pnginfo);
@@ -463,40 +465,21 @@ static png_error process_image(png_private *png)
 	if (png->pnginfo->image == NULL)
 		return PNGERR_OUT_OF_MEMORY;
 
-	/* initialize the stream */
-	memset(&stream, 0, sizeof(stream));
-	stream.next_out = png->pnginfo->image;
-	stream.avail_out = imagesize;
-	zerr = inflateInit(&stream);
-	if (zerr != Z_OK)
+	/* the IDAT chunks hold one zlib stream between them */
+	inflater = rinflate_new(15);
+	if (inflater == NULL)
 	{
-		error = PNGERR_DECOMPRESS_ERROR;
+		error = PNGERR_OUT_OF_MEMORY;
 		goto handle_error;
 	}
-
-	/* loop over IDAT and decompress each as part of a larger stream */
-	for (idat = png->idata; idat != NULL; idat = idat->next)
+	rinflate_set_out(inflater, png->pnginfo->image, imagesize);
+	for (idat = png->idata; idat != NULL && status == RDEFLATE_PROCESS_NEXT; idat = idat->next)
 	{
-		/* decompress this chunk */
-		stream.next_in = idat->data;
-		stream.avail_in = idat->length;
-		zerr = inflate(&stream, Z_NO_FLUSH);
-
-		/* stop at the end of the stream */
-		if (zerr == Z_STREAM_END)
-			break;
-
-		/* other errors are fatal */
-		if (zerr != Z_OK)
-		{
-			error = PNGERR_DECOMPRESS_ERROR;
-			goto handle_error;
-		}
+		rinflate_set_in(inflater, idat->data, idat->length);
+		status = rinflate_process(inflater, NULL, NULL);
 	}
-
-	/* clean up */
-	zerr = inflateEnd(&stream);
-	if (zerr != Z_OK)
+	rinflate_free(inflater);
+	if (status == RDEFLATE_PROCESS_ERROR)
 	{
 		error = PNGERR_DECOMPRESS_ERROR;
 		goto handle_error;
@@ -788,7 +771,7 @@ static png_error write_chunk(core_file *fp, const uint8_t *data, uint32_t type, 
 	/* stuff the length/type into the buffer */
 	put_32bit(tempbuff + 0, length);
 	put_32bit(tempbuff + 4, type);
-	crc = crc32(0, tempbuff + 4, 4);
+	crc = encoding_crc32(0, tempbuff + 4, 4);
 
 	/* write that data */
 	if (core_fwrite(fp, tempbuff, 8) != 8)
@@ -799,7 +782,7 @@ static png_error write_chunk(core_file *fp, const uint8_t *data, uint32_t type, 
 	{
 		if (core_fwrite(fp, data, length) != length)
 			return PNGERR_FILE_ERROR;
-		crc = crc32(crc, data, length);
+		crc = encoding_crc32(crc, data, length);
 	}
 
 	/* write the CRC */
@@ -820,64 +803,47 @@ static png_error write_deflated_chunk(core_file *fp, uint8_t *data, uint32_t typ
 {
 	uint64_t lengthpos = core_ftell(fp);
 	uint8_t tempbuff[8192];
-    uint32_t zlength = 0;
-    z_stream stream;
+	uint32_t zlength = 0;
 	uint32_t crc;
-	int zerr;
+	void *deflater;
+	int status;
 
 	/* stuff the length/type into the buffer */
 	put_32bit(tempbuff + 0, length);
 	put_32bit(tempbuff + 4, type);
-	crc = crc32(0, tempbuff + 4, 4);
+	crc = encoding_crc32(0, tempbuff + 4, 4);
 
 	/* write that data */
 	if (core_fwrite(fp, tempbuff, 8) != 8)
 		return PNGERR_FILE_ERROR;
 
-	/* initialize the stream */
-	memset(&stream, 0, sizeof(stream));
-	stream.next_in = data;
-	stream.avail_in = length;
-    zerr = deflateInit(&stream, Z_BEST_COMPRESSION);
-    if (zerr != Z_OK)
-    	return PNGERR_COMPRESS_ERROR;
+	deflater = rdeflate_new(9, 15);
+	if (deflater == NULL)
+		return PNGERR_COMPRESS_ERROR;
+	rdeflate_set_in(deflater, data, length);
+	rdeflate_finish(deflater);
 
-	/* now loop until we run out of data */
-	for ( ; ; )
+	/* compress a buffer's worth at a time, writing each out */
+	do
 	{
-		/* compress this chunk */
-		stream.next_out = tempbuff;
-		stream.avail_out = sizeof(tempbuff);
-		zerr = deflate(&stream, Z_FINISH);
-
-		/* if there's data to write, do it */
-		if (stream.avail_out < sizeof(tempbuff))
+		size_t wrote = 0;
+		rdeflate_set_out(deflater, tempbuff, sizeof(tempbuff));
+		status = rdeflate_process(deflater, NULL, &wrote);
+		if (wrote > 0)
 		{
-			int bytes = sizeof(tempbuff) - stream.avail_out;
-			if (core_fwrite(fp, tempbuff, bytes) != bytes)
+			if (core_fwrite(fp, tempbuff, (uint32_t)wrote) != wrote)
 			{
-				deflateEnd(&stream);
+				rdeflate_free(deflater);
 				return PNGERR_FILE_ERROR;
 			}
-			crc = crc32(crc, tempbuff, bytes);
-			zlength += bytes;
+			crc = encoding_crc32(crc, tempbuff, wrote);
+			zlength += (uint32_t)wrote;
 		}
-
-		/* stop at the end of the stream */
-		if (zerr == Z_STREAM_END)
-			break;
-
-		/* other errors are fatal */
-		if (zerr != Z_OK)
-		{
-			deflateEnd(&stream);
-			return PNGERR_COMPRESS_ERROR;
-		}
-	}
-
-	/* clean up deflater(maus) */
-	zerr = deflateEnd(&stream);
-	if (zerr != Z_OK)
+		else if (status == RDEFLATE_PROCESS_NEXT)
+			status = RDEFLATE_PROCESS_ERROR;
+	} while (status == RDEFLATE_PROCESS_NEXT);
+	rdeflate_free(deflater);
+	if (status != RDEFLATE_PROCESS_END)
 		return PNGERR_COMPRESS_ERROR;
 
 	/* write the CRC */
